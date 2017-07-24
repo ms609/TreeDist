@@ -74,3 +74,63 @@ SuccessiveApproximations <- function (tree, data, outgroup = NULL, k = 3, max.su
   cat('Stability not reached.')
   return(bests)
 }
+
+#' Search for most parsimonious trees
+#'
+#' Run standard search algorithms (\acronym{NNI}, \acronym{SPR} or \acronym{TBR}) 
+#' to search for a more parsimonious tree.
+#'  
+#' @param tree a fully-resolved starting tree in \code{\link{phylo}} format, with the desired outgroup; edge lengths are not supported and will be deleted;
+#' @template datasetParam
+#' @param outgroup a vector listing the taxa in the outgroup;
+#' @param concavity concavity constant for implied weighting (not currently implemented!); 
+#' @param method rearrangements to perform; one of \kbd{NNI}, \kbd{SPR}, or \kbd{TBR};
+#' @param maxiter the maximum number of iterations to perform before abandoning the search;
+#' @param maxhits the maximum times to hit the best pscore before abandoning the search;
+#' @param forest.size the maximum number of trees to return - useful in concert with \code{\link{consensus}};
+#' @param cluster a cluster prepared using \code{\link{PrepareCluster}}; may speed up search on multicore machines;
+#' @param verbosity higher values provide more verbose user feedback in stdout;
+#' @param \dots other arguments to pass to subsequent functions.
+#' 
+#' @return{
+#' This function returns a tree, with an attribute \code{pscore} conveying its parsimony score.
+#' Note that the parsimony score will be inherited from the tree's attributes, which is only valid if it 
+#' was generated using the same \code{data} that is passed here.
+#' }
+#' @author Martin R. Smith
+#'
+#' @seealso
+#' \itemize{
+#' \item \code{\link{InapplicableFitch}}, calculates parsimony score, supports inapplicable tokens;
+#' \item \code{\link{RootedNNI}}, conducts tree rearrangements;
+#' \item \code{\link{SectorialSearch}}, alternative heuristic, useful for larger trees;
+#' \item \code{\link{Ratchet}}, alternative heuristic, useful to escape local optima.
+#' }
+#'
+#' @examples
+#' data('SigSut')
+#' outgroup <- c('Lingula', 'Mickwitzia', 'Neocrania')
+#' njtree <- Root(nj(dist.hamming(SigSut.phy)), outgroup, resolve.root=TRUE)
+#' njtree$edge.length <- NULL; njtree<-SetOutgroup(njtree, outgroup)
+#'
+#' \dontrun{
+#' TreeSearch(njtree, SigSut.phy, outgroup, maxiter=20, method='NNI')
+#' TreeSearch(njtree, SigSut.phy, outgroup, maxiter=20, method='SPR')
+#' TreeSearch(njtree, SigSut.phy, outgroup, maxiter=20, method='TBR')}
+#' 
+#' @keywords  tree 
+#' 
+#' @export
+TreeSearch <- function 
+(tree, dataset, method='NNI', maxiter=100, maxhits=20, forest.size=1, cluster=NULL, 
+ verbosity=1, ...) {
+  # Initialize morphy object
+  if (class(dataset) != 'phyDat') stop ("dataset must be of class phyDat, not ", class(dataset))
+  tree <- RenumberTips(tree, names(dataset))
+  morphyObj <- LoadMorphy(dataset)
+  ret <- DoTreeSearch(tree, morphyObj, method, maxiter, maxhits, forest.size, cluster, 
+                      verbosity, ...)
+  morphyObj <- UnloadMorphy(morphyObj)
+  return (ret)
+}
+

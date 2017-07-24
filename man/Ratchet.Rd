@@ -50,7 +50,7 @@ Ratchet(RandomTree(Lobo.phy), SigSut.phy, outgroup='Cricocosmia')
 Nixon, K. C. (1999). \cite{The Parsimony Ratchet, a new method for rapid parsimony analysis.} Cladistics, 15(4), 407-414. doi:\href{http://dx.doi.org/10.1111/j.1096-0031.1999.tb00277.x}{10.1111/j.1096-0031.1999.tb00277.x}
 }
 \seealso{
-\code{\link{pratchet}}
+\code{\link{Ratchet}}
 
 \code{\link{TreeSearch}}
 

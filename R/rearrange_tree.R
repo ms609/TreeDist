@@ -1,3 +1,101 @@
+#' Reorder tree Cladewise
+#' 
+#' A wrapper for \code{ape:::.reorder_ape}
+#'
+#' @template treeParam
+#' @param nTaxa (optional) number of tips in the tree
+#' @param edge (optional) the value of tree$edge
+#'
+#' @return A tree with nodes numbered in postorder
+#' @author Modified by Martin R. Smith from \code{.reorder_ape} in \pkg{ape} (Emmanuel Paradis)
+#'
+#' @keywords internal
+#' @export
+Cladewise <- function (tree, nTaxa = NULL, edge = tree$edge) {
+  if (!is.null(attr(tree, "order")) && attr(tree, "order") == "cladewise") return(tree)
+  if (is.null(nTaxa)) nTaxa <- length(tree$tip.label)
+  if (is.null(edge)) edge <- tree$edge
+  nb.edge <- dim(edge)[1]
+  nb.node <- tree$Nnode
+  if (nb.node == 1) return(tree)
+  if (nb.node >= nTaxa) stop("tree apparently badly conformed")
+  
+  neworder <- .C('ape_neworder_phylo', as.integer(nTaxa), as.integer(edge[, 1]),
+                 as.integer(edge[, 2]), as.integer(nb.edge), 
+                 integer(nb.edge), as.integer(1), NAOK = TRUE, PACKAGE='TreeSearch')[[5]]
+                 
+  tree$edge <- edge[neworder, ]
+  if (!is.null(tree$edge.length)) tree$edge.length <- tree$edge.length[neworder]
+  attr(tree, "order") <- "cladewise"
+  tree
+}
+
+
+#' @describeIn Cladewise Reorder tree in Postorder
+#' @export
+Postorder <- function (tree, nTaxa = length(tree$tip.label), edge = tree$edge) {
+  if (!is.null(attr(tree, "order")) && attr(tree, "order") == "postorder") return(tree)
+  nb.edge <- dim(edge)[1]
+  nb.node <- tree$Nnode
+  if (nb.node == 1) return(tree)
+  if (nb.node >= nTaxa) stop("tree apparently badly conformed")
+  neworder <- .C('ape_neworder_phylo', as.integer(nTaxa), as.integer(edge[, 1]),
+                 as.integer(edge[, 2]), as.integer(nb.edge), 
+                 integer(nb.edge), as.integer(2), NAOK = TRUE, PACKAGE='TreeSearch')[[5]]
+  tree$edge <- edge[neworder, ]
+  if (!is.null(tree$edge.length)) tree$edge.length <- tree$edge.length[neworder]
+  attr(tree, "order") <- "postorder"
+  tree
+}
+
+#' @describeIn Cladewise Reorder tree Pruningwise
+#' @export
+Pruningwise <- function (tree, nTaxa = length(tree$tip.label), edge = tree$edge) {
+  if (!is.null(attr(tree, "order")) && attr(tree, "order") == 'pruningwise') return(tree)
+  nb.edge <- dim(edge)[1]
+  nb.node <- tree$Nnode
+  if (nb.node == 1) return(tree)
+  if (nb.node >= nTaxa) stop("tree apparently badly conformed")
+  tree <- Cladewise(tree, nTaxa, edge)
+  neworder <- .C('ape_neworder_pruningwise', as.integer(nTaxa), as.integer(nb.node), 
+                 as.integer(tree$edge[, 1]), as.integer(tree$edge[, 2]),
+                 as.integer(nb.edge), integer(nb.edge), PACKAGE='TreeSearch')[[6]]
+  tree$edge <- tree$edge[neworder, ]
+  if (!is.null(tree$edge.length)) tree$edge.length <- tree$edge.length[neworder]
+  attr(tree, "order") <- 'pruningwise'
+  tree
+}
+
+#' Reorder tips
+#'
+#' \code{RenumberTips(tree, tipOrder)} sorts the tips of a phylogenetic tree 
+#' such that the indices in \code{tree$edge[, 2]} correspond to the order of
+#' tips given in \code{tipOrder}
+#'
+#' @template treeParam
+#' @param tipOrder A character vector containing the values of 
+#'        \code{tree$tip.label} in the desired sort order
+#' 
+#' @examples
+#' Data(SigSut) # Loads the phyDat object SigSut.phy
+#' tree <- RandomTree(SigSut.phy) # 
+#' tree <- RenumberTips(tree, names(SigSut.phy))
+#'
+#' @author Martin R. Smith
+#' @export
+RenumberTips <- function (tree, tipOrder) {
+  startOrder <- tree$tip.label
+  if (identical(startOrder, tipOrder)) return (tree)
+  
+  nTip <- length(startOrder)
+  child <- tree$edge[, 2]
+  tips <- child <= nTip
+  
+  tree$edge[tips, 2] <- match(startOrder, tipOrder)
+  tree$tip.label <- tipOrder
+  tree
+}
+
 #' @title Tree rearrangement functions
 #' 
 #' These functions performs a single random \acronym{TBR}, \acronym{SPR} or \acronym{NNI} iteration.
@@ -150,50 +248,6 @@ RootedNNI <- function (tree) { # From inapplicable
   # TODO validate tree length swaps.
 }
 
-
-function (tree) { # FROM INAPPLICABLE
-  edge <- matrix(tree$edge, ncol = 2)
-  parent <- edge[, 1]
-  child <- edge[, 2]
-  sampleableChild <- child
-  sampleableChild[which(parent == as.integer(parent[!match(parent, child, 0)][1]))] <- -1 # Don't want to switch across the root
-  nTips <- min(parent) - 1
-  sampleable <- sum(sampleableChild %in% parent)
-  n <- sample(sampleable, 1)
-  ind <- which(sampleableChild > nTips)[n] # Internal nodes
-  
-  p1 <- parent[ind]
-  p2 <- child[ind]
-  ind1 <- which(parent == p1)
-  ind1 <- ind1[ind1 != ind][1]
-  ind2 <- which(parent == p2)[sample(2,1)]
-  e1 <- child[ind1]
-  e2 <- child[ind2]
-  tree$edge[ind1, 2] <- e2
-  tree$edge[ind2, 2] <- e1
-  if(!is.null(tree$edge.length)) {
-    warning("Edge lengths have been deleted")
-    tree$edge.length <- NULL
-  }
-  # TODO Don't use this function; see NNI
-  ReorderPruning <- function (x) {
-    edge <- x$edge
-    parents <- as.integer(edge[, 1])
-    child <- as.integer(edge[, 2])
-    root <- as.integer(parents[!match(parents, child, 0)][1])
-    n_edge <- length(parents)
-    max_edge <- max(edge)
-    neworder <- .C("phangorn_reorder", parents, child, as.integer(n_edge), 
-        as.integer(max_edge), integer(n_edge), as.integer(root - 1L), PACKAGE = "inapplicable")[[5]]
-    x$edge <- edge[neworder, ]
-    x$edge.length <- x$edge.length[neworder]
-    attr(x, "order") <- "pruningwise"
-    x
-  }
-
-  tree <- Renumber(ReorderPruning(tree))  
-}
-
 #' Rooted SPR rearrangement
 #'
 #' @importFrom ape is.rooted 
@@ -238,8 +292,11 @@ RootedSPR <- function(tree) { # FROM INAPPLICABLE
   edge[c(leading.edge, sister.edge, graft.edge), 2] <- edge[c(sister.edge, graft.edge, leading.edge), 2]
   
   nEdge <- length(child)
-  reordered.edge <- .C('order_edges', as.integer(edge[,1]), as.integer(edge[,2]), as.integer(nTips-1L), as.integer(nEdge), PACKAGE='inapplicable')
-  numbered.edge <- .C('number_nodes', as.integer(reordered.edge[[1]]), as.integer(reordered.edge[[2]]), as.integer(root), as.integer(nEdge), PACKAGE='inapplicable')
+  reordered.edge <- .C('order_edges', as.integer(edge[,1]), as.integer(edge[,2]),
+                        as.integer(nTips-1L), as.integer(nEdge), PACKAGE='TreeSearch')
+  numbered.edge <- .C('number_nodes', as.integer(reordered.edge[[1]]), 
+                       as.integer(reordered.edge[[2]]), as.integer(root), as.integer(nEdge),
+                       PACKAGE='TreeSearch')
   tree$edge <- matrix(c(numbered.edge[[1]], numbered.edge[[2]]), ncol=2)
   tree
 }
@@ -328,8 +385,11 @@ SPR <- function(tree) { # FROM INAPPLICABLE
     edge[c(leading.edge, sister.edge, graft.edge), 2] <- edge[c(sister.edge, graft.edge, leading.edge), 2]
   }
   
-  reordered.edge <- .C('order_edges', as.integer(edge[,1]), as.integer(edge[,2]), as.integer(nTips-1), as.integer(nEdge), PACKAGE='inapplicable')
-  numbered.edge <- .C('number_nodes', as.integer(reordered.edge[[1]]), as.integer(reordered.edge[[2]]), as.integer(root), as.integer(nEdge), PACKAGE='inapplicable')
+  reordered.edge <- .C('order_edges', as.integer(edge[,1]), as.integer(edge[,2]), as.integer(nTips-1),
+                       as.integer(nEdge), PACKAGE='TreeSearch')
+  numbered.edge <- .C('number_nodes', as.integer(reordered.edge[[1]]),
+                        as.integer(reordered.edge[[2]]), as.integer(root), as.integer(nEdge), 
+                        PACKAGE='TreeSearch')
   tree$edge <- matrix(c(numbered.edge[[1]], numbered.edge[[2]]), ncol=2)
   tree
 }
@@ -454,10 +514,10 @@ SPR_FROMPP <- function(tree) { # From ProfileParsimony
   }
   
   reordered.edge <- .C('order_edges', as.integer(edge[,1]), as.integer(edge[,2]),
-                       as.integer(nTips-1L), as.integer(nEdge), PACKAGE='ProfileParsimony')
+                       as.integer(nTips-1L), as.integer(nEdge), PACKAGE='TreeSearch')
   numbered.edge <- .C('number_nodes', as.integer(reordered.edge[[1]]), 
                       as.integer(reordered.edge[[2]]), as.integer(root), as.integer(nEdge), 
-                      PACKAGE='ProfileParsimony')
+                      PACKAGE='TreeSearch')
   tree$edge <- matrix(c(numbered.edge[[1]], numbered.edge[[2]]), ncol=2)
   tree
 }

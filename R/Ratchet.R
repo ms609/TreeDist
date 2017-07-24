@@ -24,7 +24,7 @@
 #' 
 #' Adapted from \code{\link[phangorn]{pratchet}} in the \pkg{phangorn} package, which does not preserve the position of the root.
 #' 
-#' @seealso \code{\link{pratchet}}
+#' @seealso \code{\link{Ratchet}}
 #' @seealso \code{\link{TreeSearch}}
 #' @seealso \code{\link{SectorialSearch}}
 #' 
@@ -51,23 +51,23 @@ Ratchet <- function (tree, data, ParsimonyScorer=ProfileScore, all=FALSE, outgro
   iterations.completed <- 0
   for (i in 1:pratchiter) {
     if (track >= 0) cat ("\n - Running NNI on bootstrapped dataset. ")
-    bstree <- Bootstrap(phy=tree, x=data, maxiter=searchiter, maxhits=searchhits,
+    bstree <- BootstrapTree(phy=tree, x=data, maxiter=searchiter, maxhits=searchhits,
                         ParsimonyScorer=ParsimonyScorer,  track=track - 1, ...)
     
     if (track >= 0) cat ("\n - Running", ifelse(is.null(rearrangements), "NNI", rearrangements), "from new candidate tree:")
     if (rearrangements == "TBR") {
-      candidate <- TreeSearch(bstree,    data, ParsimonyScorer=ParsimonyScorer, method='TBR', track=track, maxiter=searchiter, maxhits=searchhits, ...)
-      candidate <- TreeSearch(candidate, data, ParsimonyScorer=ParsimonyScorer, method='SPR', track=track, maxiter=searchiter, maxhits=searchhits, ...)
-      candidate <- TreeSearch(candidate, data, ParsimonyScorer=ParsimonyScorer, method='NNI', track=track, maxiter=searchiter, maxhits=searchhits, ...)
+      candidate <- DoTreeSearch(bstree,    data, ParsimonyScorer=ParsimonyScorer, method='TBR', track=track, maxiter=searchiter, maxhits=searchhits, ...)
+      candidate <- DoTreeSearch(candidate, data, ParsimonyScorer=ParsimonyScorer, method='SPR', track=track, maxiter=searchiter, maxhits=searchhits, ...)
+      candidate <- DoTreeSearch(candidate, data, ParsimonyScorer=ParsimonyScorer, method='NNI', track=track, maxiter=searchiter, maxhits=searchhits, ...)
     } else if (rearrangements == "TBR only") {  
-      candidate <- TreeSearch(bstree,    data, ParsimonyScorer=ParsimonyScorer, method='TBR', track=track, maxiter=searchiter, maxhits=searchhits, ...)
+      candidate <- DoTreeSearch(bstree,    data, ParsimonyScorer=ParsimonyScorer, method='TBR', track=track, maxiter=searchiter, maxhits=searchhits, ...)
     } else if (rearrangements == "SPR") {       
-      candidate <- TreeSearch(bstree,    data, ParsimonyScorer=ParsimonyScorer, method='SPR', track=track, maxiter=searchiter, maxhits=searchhits, ...)
-      candidate <- TreeSearch(candidate, data, ParsimonyScorer=ParsimonyScorer, method='NNI', track=track, maxiter=searchiter, maxhits=searchhits, ...)
+      candidate <- DoTreeSearch(bstree,    data, ParsimonyScorer=ParsimonyScorer, method='SPR', track=track, maxiter=searchiter, maxhits=searchhits, ...)
+      candidate <- DoTreeSearch(candidate, data, ParsimonyScorer=ParsimonyScorer, method='NNI', track=track, maxiter=searchiter, maxhits=searchhits, ...)
     } else if (rearrangements == "SPR only") {  
-      candidate <- TreeSearch(bstree,    data, ParsimonyScorer=ParsimonyScorer, method='SPR', track=track, maxiter=searchiter, maxhits=searchhits, ...)
+      candidate <- DoTreeSearch(bstree,    data, ParsimonyScorer=ParsimonyScorer, method='SPR', track=track, maxiter=searchiter, maxhits=searchhits, ...)
     } else {  
-      candidate <- TreeSearch(bstree,    data, ParsimonyScorer=ParsimonyScorer, method='NNI', track=track, maxiter=searchiter, maxhits=searchhits, ...)
+      candidate <- DoTreeSearch(bstree,    data, ParsimonyScorer=ParsimonyScorer, method='NNI', track=track, maxiter=searchiter, maxhits=searchhits, ...)
     }
     cand.score <- attr(candidate, 'score')
     if ((cand.score + epsilon) < best.score) {

@@ -1,4 +1,3 @@
-
 #' DoTreeSearch
 #'
 #' Performs a tree search
@@ -8,13 +7,12 @@
 #' It is also called directly by Ratchet and Sectorial functions
 #'
 #' @template labelledTreeParam
-
 #'
 #' @author Martin R. Smith
 #' 
 #' @keywords internal
 #' @export
-DoTreeSearch <- function (tree, data, ParsimonyScorer = ProfileScore,  method = 'NNI', 
+DoTreeSearch <- function (tree, data, ParsimonyScorer = phangorn:::fitch,  method = 'NNI', 
                         maxiter = 100, maxhits = 20, forest.size = 1,
                         cluster = NULL, track = 1, ...) {
   tree$edge.length <- NULL # Edge lengths are not supported

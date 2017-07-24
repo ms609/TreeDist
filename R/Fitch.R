@@ -5,7 +5,7 @@ Fitch <- function (tree, data, at = NULL) {
   n.char  <- at$nr # strictly, transformation series patterns; these'll be upweighted later
   weight <- at$weight
   info <- at$info.amounts
-  if (is.null(at$order) || at$order == "cladewise") tree <- reorder(tree, "postorder")
+  if (is.null(at$order) || at$order == "cladewise") tree <- Postorder(tree)
   tree.edge <- tree$edge
   parent <- tree.edge[, 1]
   child <- tree.edge[, 2]

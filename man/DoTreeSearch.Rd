@@ -4,7 +4,7 @@
 \alias{DoTreeSearch}
 \title{DoTreeSearch}
 \usage{
-DoTreeSearch(tree, data, ParsimonyScorer = ProfileScore, method = "NNI",
+DoTreeSearch(tree, data, ParsimonyScorer = phangorn:::fitch, method = "NNI",
   maxiter = 100, maxhits = 20, forest.size = 1, cluster = NULL,
   track = 1, ...)
 }
