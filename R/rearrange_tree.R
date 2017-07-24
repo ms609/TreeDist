@@ -223,7 +223,6 @@ NNI <- function (tree) {
   
   end1  <- parent[chosenInternalEdge]
   end2  <- child[chosenInternalEdge]
-  
   ind1    <- which(parent == end1)
   ind1    <- ind1[ind1 != chosenInternalEdge][1]
   ind2    <- which(parent == end2)[sample(2, 1)]
@@ -288,25 +287,19 @@ RootedNNI <- function (tree) {
   rootNode <- nTips + 1L
   nEdge <- length(parent)
   nNode <- tree$Nnode
-  
   if (nNode == 1) return(tree)
-  p1      <- parent[ind]
-  p2      <- child[ind]
-  ind1    <- which(parent == p1)
-  ind1    <- ind1[ind1 != ind][1]
-  ind2    <- which(parent == p2)[sample(2, 1)]
+  
+  end1  <- parent[chosenInternalEdge]
+  end2  <- child[chosenInternalEdge]
+  ind1    <- which(parent == end1)
+  ind1    <- ind1[ind1 != chosenInternalEdge][1]
+  ind2    <- which(parent == end2)[sample(2, 1)]
   new_ind <- c(ind2, ind1)
   old_ind <- c(ind1, ind2)
   child_swap <- child[new_ind]
-  edge [old_ind, 2L] <- child_swap
   child[old_ind] <- child_swap
-
-  
-  # TODO do all this in a single C function, to minimise number of calls.
-  neworder <- NeworderPhylo(nTips, parent, child, nEdge, 2L)
-  tree$edge <- OrderEdgesNumberNodes(edge[neworder, 1], edge[neworder, 2], nTips, nEdge)
+  tree$edge <- OrderEdgesNumberNodes(parent, child, nTips, nEdge)
   tree
-  # TODO validate tree length swaps.
 }
 
 #' Rooted SPR rearrangement
