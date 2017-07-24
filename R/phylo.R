@@ -459,19 +459,17 @@ DoDescendants <- function (edge1, edge2, nTip, node, just.tips = FALSE, just.int
 #' @examples TwoTipTree('Homo', 'Pan')
 #' @keywords  tree 
 #' 
-#' @importFrom ape read.tree
 #' @export
 TwoTipTree <- function (tip1, tip2) {
   ret <- list(
-    edge = matrix(as.integer(c(3, 3, 1, 2)), 2, 2),
+    edge = matrix(c(3L, 3L, 1L, 2L), 2, 2),
     tip.label = c(tip1, tip2),
-    Nnode = as.integer(1)
+    Nnode = 1L
   )
   attr(ret, 'class') <- 'phylo'
   attr(ret, 'order') <- 'cladewise'
   ret
 }
-
 
 #' Bind trees
 #'
