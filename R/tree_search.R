@@ -1,0 +1,76 @@
+Suboptimality <- function (trees, proportional = FALSE) {
+  scores <- vapply(trees, attr, double(1), 'score')
+  if (proportional) {
+    return ((scores - min(scores)) / min(scores))
+  } else {
+    return(scores - min(scores))
+  }
+}
+
+ProfileScore <- function (tree, data) {
+    # Data
+  if (class(data) == 'phyDat') data <- PrepareDataFitch(data)
+  if (class(data) != 'fitchDat') stop('Invalid data type; try ProfileScore(tree, data <- 
+                                      PrepareDataFitch(valid.phyDat.object)).')
+  at <- attributes(data)
+  n.char  <- at$nr # strictly, transformation series patterns; these'll be upweighted later
+  weight <- at$weight
+  steps <- Fitch(tree, data, at)
+  info <- at$info.amounts
+  # Return a negative rather than positive value because algorithms assume that 
+  # smaller numbers are better
+  return(-sum(info[max(0, (steps - 1)) * n.char + seq_len(n.char)] * weight))
+}
+
+SuccessiveWeights <- function(tree, data) {
+  # Data
+  if (class(data) == 'phyDat') data <- PrepareDataFitch(data)
+  if (class(data) != 'fitchDat') {
+    stop('Invalid data type; prepare data with PhyDat() or PrepareDataFitch().')
+  }
+  at <- attributes(data)
+  weight <- at$weight
+  sa.weights <- at$sa.weights
+  if (is.null(sa.weights)) sa.weights <- rep(1, length(weight))
+  steps <- Fitch(tree, data, at)
+  return(sum(steps * sa.weights * weight))
+}
+
+SuccessiveApproximations <- function (tree, data, outgroup = NULL, k = 3, max.succiter = 20,
+                                      pratchhits = 100, searchhits = 50, searchiter = 500,
+                                      pratchiter = 5000, track = 0, suboptimal = 0.1) {
+  
+  if (k < 1) stop ('k should be at least 1, see Farris 1969 p.379')
+  attr(data, 'sa.weights') <- rep(1, length(attr(data, 'weight')))
+  collect.suboptimal <- suboptimal > 0
+  
+  max.node <- max(tree$edge[, 1])
+  n.tip <- length(tree$tip.label)
+  n.node <- max.node - n.tip
+  bests <- vector('list', max.succiter + 1)
+  bests.consensus <- vector('list', max.succiter + 1)
+  best <- bests[[1]] <- bests.consensus[[1]] <- Root(tree, outgroup)
+  for (i in seq_len(max.succiter) + 1) {
+    if (track > 0) cat('\nSuccessive Approximations Iteration', i - 1)
+    attr(best, 'score') <- NULL
+    if (suboptimal > 0) {
+      suboptimal.search <- suboptimal * sum(attr(data, 'sa.weights') * attr(data, 'weight'))
+    }
+    trees <- Ratchet(best, data, ParsimonyScorer = SuccessiveWeights, all = collect.suboptimal, 
+                           suboptimal=suboptimal.search,    rearrangements='NNI',
+                           pratchhits=pratchhits, searchhits=searchhits, searchiter=searchiter, 
+                           pratchiter=pratchiter, outgroup = outgroup, track=track - 1)
+    trees <- unique(trees)
+    bests[[i]] <- trees
+    suboptimality <- Suboptimality(trees)
+    bests.consensus[[i]] <- consensus(trees[suboptimality == 0])
+    if (all.equal(bests.consensus[[i]], bests.consensus[[i - 1]])) return(bests[2:i])
+    best <- trees[suboptimality == 0][[1]]
+    l.i <- Fitch(best, data)
+    p.i <- l.i / (n.node - 1)
+    w.i <- ((p.i)^-k) - 1
+    attr(data, 'sa.weights') <- w.i
+  }
+  cat('Stability not reached.')
+  return(bests)
+}
