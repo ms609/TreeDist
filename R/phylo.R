@@ -235,7 +235,7 @@ AddTip <- function (tree, where, label) {
 #' @aliases Root
 #' 
 #' @export SetOutgroup Root
-SetOutgroup <- Root <- function (tree, outgroup) {
+SetOutgroup <- function (tree, outgroup) {
   if (class(tree) != 'phylo') stop ('"tree" must be of class "phylo"')
   tip <- tree$tip.label
   if (is.character(outgroup)) {outgroup <- match(outgroup, tip, nomatch=0); outgroup <- outgroup[as.logical(outgroup)]}
@@ -319,6 +319,8 @@ SetOutgroup <- Root <- function (tree, outgroup) {
   tree$edge <- new.edges
   tree
 }
+#' @export
+Root <- SetOutgroup
 
 #' Get Ancestors
 #'
@@ -353,16 +355,25 @@ GetAncestors <- function (parent, child, node) {
   } else AllAncestors(parent, child)[node]
 }
 
-#' TITLE GOES HERE
+#' List all ancestral nodes
 #'
-#' \code{FUNCTIONNAME} does something useful
+#' \code{AllAncestors} lists ancestors of each parent node in a tree
 #'
-#' @param PARAM is a parameter you should send to it
+#' Note that the tree's edges must be listed in an order whereby each entry in tr$edge[, 1] (with
+#' the exception of the root) has appeared already in tr$edge[, 2]
+#'
+#' @template treeParent
+#' @template treeChild
 #' 
 #' @examples
-#' to_do <- TRUE
+#' tr <- rtree(20, br=NULL)
+#' edge <- tr$edge
+#' AllAncestors(edge[, 1], edge[, 2])
 #' 
-#' @return This function returns :
+#' @return This function returns a list. Entry i contains a vector containing, in order,
+#' the nodes encountered when traversing the tree from node i to the root node.  The last 
+#' entry of each member of the list will therefore be the root node, with the exeption of the 
+#' entry for the root node itself, which will be NULL.
 #'   
 #' @author Martin R. Smith
 #' @export
@@ -375,26 +386,22 @@ AllAncestors <- function (parent, child) {
   res
 }
 
-#' TITLE GOES HERE
+#' Get Descendants
 #'
-#' \code{FUNCTIONNAME} does something useful
+#' \code{GetDescendants} returns the descendants of a specified node
 #'
-#' @param PARAM is a parameter you should send to it
+#' @template treeParam
+#' @param node the number of the internal node whose descendants should be returned
+#' @parem just.tips , should return value include all nodes or just tips?
 #' 
 #' @examples
 #' to_do <- TRUE
 #' 
-#' @return This function returns :
+#' @return This function returnsa vector containing descendant nodes in numerical order
 #'   
 #' @author Martin R. Smith
 #' @export
 GetDescendants <- function (tree, node, ...) {
-# ARGUMENTS:
-#   "tree", a phydat object
-#   "node", number of an internal node
-#   "just.tips", should return value include all nodes or just tips?
-# RETURN:
-#   vector containing descendant nodes in numerical order
   nTip <- length(tree$tip.label)
   edge <- tree$edge
   edge1 <- edge[,1]
@@ -404,25 +411,21 @@ GetDescendants <- function (tree, node, ...) {
 
 #' TITLE GOES HERE
 #'
-#' \code{FUNCTIONNAME} does something useful
+#' \code{DoDescendants} does something useful
 #'
-#' @param PARAM is a parameter you should send to it
+#' @param edge1 parent nodes: from tree$edge[,1]
+#' @param edge2 parent nodes: from tree$edge[,2]
+#' @param node  number of an internal node
+#' @param just.tips (logical) should return value include all nodes or just tips?
 #' 
 #' @examples
-#' to_do <- TRUE
+#' warning(to_do <- TRUE)
 #' 
-#' @return This function returns :
+#' @return This function returns a vector containing descendant nodes in numerical order
 #'   
 #' @author Martin R. Smith
 #' @export
 DoDescendants <- function (edge1, edge2, nTip, node, just.tips = FALSE, just.internal=FALSE, include.ancestor = FALSE) {
-  # ARGUMENTS:
-  #   "edge1", parent nodes: from tree$edge[,1]
-  #   "edge2", parent nodes: from tree$edge[,2]
-  #   "node", number of an internal node
-  #   "just.tips", should return value include all nodes or just tips?
-  # RETURN:
-  #   vector containing descendant nodes in numerical order
   is.descendant <- blank <- logical((nTip * 2) - 1)
   if (include.ancestor) is.descendant[node] <- TRUE;
   node.children <- function (node, is.descendant) {
@@ -438,7 +441,7 @@ DoDescendants <- function (edge1, edge2, nTip, node, just.tips = FALSE, just.int
 
 #' TwoTipTree
 #'
-#'  Two-tipped tree
+#' Two-tipped tree
 #'
 #' This function generates a tree of class \code{\link{phylo}} containing two tips.
 #'
@@ -458,7 +461,17 @@ DoDescendants <- function (edge1, edge2, nTip, node, just.tips = FALSE, just.int
 #' 
 #' @importFrom ape read.tree
 #' @export
-TwoTipTree <- function (tip1, tip2) read.tree(text=paste0('(', tip1, ',', tip2, ');')) #TODO make this more efficient?
+TwoTipTree <- function (tip1, tip2) {
+  ret <- list(
+    edge = matrix(as.integer(c(3, 3, 1, 2)), 2, 2),
+    tip.label = c(tip1, tip2),
+    Nnode = as.integer(1)
+  )
+  attr(ret, 'class') <- 'phylo'
+  attr(ret, 'order') <- 'cladewise'
+  ret
+}
+
 
 #' Bind trees
 #'
