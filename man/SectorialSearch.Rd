@@ -67,8 +67,7 @@ function (start.tree, dataset, outgroup, rearrangements='NNI') {
   best.score <- attr(start.tree, 'pscore')
   if (length(best.score) == 0) best.score <- InapplicableParsimony(start.tree, dataset)
   sect <- InapplicableSectorial(start.tree, dataset, outgroup=outgroup, verbosity=0, maxit=30,
-              maxiter=200, maxhits=15, smallest.sector=6, largest.sector=length(start.tree$edge[,2])*0.25,
-              rearrangements=rearrangements)
+              maxiter=200, maxhits=15, smallest.sector=6,
   sect <- DoTreeSearch(sect, dataset, outgroup, method='NNI', maxiter=2000, maxhits=20, verbosity=3)
   sect <- DoTreeSearch(sect, dataset, outgroup, method='TBR', maxiter=2000, maxhits=25, verbosity=3)
   sect <- DoTreeSearch(sect, dataset, outgroup, method='SPR', maxiter=2000, maxhits=50, verbosity=3)

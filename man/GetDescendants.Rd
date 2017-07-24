@@ -10,6 +10,8 @@ GetDescendants(tree, node, ...)
 \item{tree}{A tree of class \code{\link{phylo}}}
 
 \item{node}{the number of the internal node whose descendants should be returned}
+
+\item{just.tips}{, should return value include all nodes or just tips?}
 }
 \value{
 This function returnsa vector containing descendant nodes in numerical order
@@ -18,7 +20,8 @@ This function returnsa vector containing descendant nodes in numerical order
 \code{GetDescendants} returns the descendants of a specified node
 }
 \examples{
-to_do <- TRUE
+tr <- ape::rtree(20)
+GetDescendants(tr, 25)
 
 }
 \author{

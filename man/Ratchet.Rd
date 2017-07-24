@@ -4,13 +4,15 @@
 \alias{Ratchet}
 \title{Parsimony Ratchet}
 \usage{
-Ratchet(tree, data, ParsimonyScorer = ProfileScore, all = FALSE,
+Ratchet(tree, data, ParsimonyScorer = phangorn::fitch, all = FALSE,
   outgroup = NULL, pratchiter = 100, searchiter = 5000, searchhits = 40,
   pratchhits = 10, track = 0, rearrangements = "NNI",
   suboptimal = 1e-08, ...)
 }
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}}
+
+\item{data}{a dataset in the format required by ParsimonyScorer}
 
 \item{all}{Set to \code{TRUE} to report all MPTs encountered during the search, perhaps to analyze consensus}
 
@@ -20,9 +22,6 @@ Ratchet(tree, data, ParsimonyScorer = ProfileScore, all = FALSE,
 a vector containing any combination of the strings "NNI", "SPR" or "TBR";}
 
 \item{\dots}{other arguments to pass to subsequent functions.}
-
-\item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
-correspond to the labels of any accompanying tree}
 
 \item{concavity}{concavity constant for implied weighting (not currently implemented!)}
 

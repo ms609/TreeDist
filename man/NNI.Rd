@@ -11,7 +11,7 @@ or tree bisection and reconnection algorithms.
 NNI and SPR are based on the corresponding phangorn functions, but have been re-coded to 
 improve their speed.
 
-Branch lengths are supported by NNI, but not (yet) SPR or TBR.}
+Branch lengths are not supported.}
 \usage{
 NNI(tree)
 }
