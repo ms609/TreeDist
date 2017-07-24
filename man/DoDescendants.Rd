@@ -8,16 +8,22 @@ DoDescendants(edge1, edge2, nTip, node, just.tips = FALSE,
   just.internal = FALSE, include.ancestor = FALSE)
 }
 \arguments{
-\item{PARAM}{is a parameter you should send to it}
+\item{edge1}{parent nodes: from tree$edge[,1]}
+
+\item{edge2}{parent nodes: from tree$edge[,2]}
+
+\item{node}{number of an internal node}
+
+\item{just.tips}{(logical) should return value include all nodes or just tips?}
 }
 \value{
-This function returns :
+This function returns a vector containing descendant nodes in numerical order
 }
 \description{
-\code{FUNCTIONNAME} does something useful
+\code{DoDescendants} does something useful
 }
 \examples{
-to_do <- TRUE
+warning(to_do <- TRUE)
 
 }
 \author{

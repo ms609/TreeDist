@@ -3,7 +3,7 @@
 #' \code{Ratchet} uses the parsimony ratchet (Nixon 1999) to search for a more parsimonious tree.
 #'
 #' @template treeParam 
-#' @template datasetParam
+#' @template data a dataset in the format required by ParsimonyScorer
 #' @template concavityParam
 #' @param all Set to \code{TRUE} to report all MPTs encountered during the search, perhaps to analyze consensus
 #' @param outgroup a vector specifying all tips in the outgroup; if unspecified then identical trees with different roots will be considered unique;
@@ -35,8 +35,6 @@
 Ratchet <- function (tree, data, ParsimonyScorer=ProfileScore, all=FALSE, outgroup=NULL, 
                       pratchiter=100, searchiter=5000, searchhits=40, pratchhits=10, track=0, 
                       rearrangements="NNI", suboptimal=1e-08, ...) {
-  if (class(data) == 'phyDat') data <- PrepareDataFitch(data)
-  if (class(data) != 'fitchDat') stop("data must be a phyDat object, or the output of PrepareDataFitch(phyDat object).")
   epsilon <- 1e-08
   if (is.null(attr(tree, "score"))) attr(tree, "score") <- ParsimonyScorer(tree, data)
   best.score <- attr(tree, "score")

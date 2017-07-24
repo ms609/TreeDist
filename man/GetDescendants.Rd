@@ -2,18 +2,20 @@
 % Please edit documentation in R/phylo.R
 \name{GetDescendants}
 \alias{GetDescendants}
-\title{TITLE GOES HERE}
+\title{Get Descendants}
 \usage{
 GetDescendants(tree, node, ...)
 }
 \arguments{
-\item{PARAM}{is a parameter you should send to it}
+\item{tree}{A tree of class \code{\link{phylo}}}
+
+\item{node}{the number of the internal node whose descendants should be returned}
 }
 \value{
-This function returns :
+This function returnsa vector containing descendant nodes in numerical order
 }
 \description{
-\code{FUNCTIONNAME} does something useful
+\code{GetDescendants} returns the descendants of a specified node
 }
 \examples{
 to_do <- TRUE

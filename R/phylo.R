@@ -392,10 +392,11 @@ AllAncestors <- function (parent, child) {
 #'
 #' @template treeParam
 #' @param node the number of the internal node whose descendants should be returned
-#' @parem just.tips , should return value include all nodes or just tips?
+#' @param just.tips , should return value include all nodes or just tips?
 #' 
 #' @examples
-#' to_do <- TRUE
+#' tr <- ape::rtree(20)
+#' GetDescendants(tr, 25)
 #' 
 #' @return This function returnsa vector containing descendant nodes in numerical order
 #'   

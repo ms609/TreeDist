@@ -5,6 +5,9 @@ Date: 2017-07-24
 Authors@R: person('Smith', "Martin R.", email="martins@gmail.com", role=c("aut", "cre"))
 Description: Conduct tree search using a user-specified optimality criterion
 Depends: ape, phangorn
+Suggests: testthat
 LazyData: true
 License: MIT
+URL: https://github.com/ms609/TreeSearch
+BugReports: https://github.com/ms609/TreeSearch/issues
 RoxygenNote: 6.0.1
