@@ -4,8 +4,17 @@
 #include <R.h> 
 #include <Rinternals.h>
 
-void order_edges(int *parent, int *child, const int *n_node, const int *n_edge) {
-  int i, q_pos = 0, o_node, root_node;
+void report_calloc_error() {
+  Rprintf("Error allocating memory in calloc");  
+}
+
+static R_NativePrimitiveArgType order_edges_number_nodes_t[] = {
+  INTSXP, INTSXP, INTSXP, INTSXP
+};
+void order_edges_number_nodes(int *parent, int *child, const int *n_node, const int *n_edge)
+{
+  int i, q_pos = 0, o_node, next_node;
+  const int n_allnodes = *n_edge + 1L, root_node = *n_node + 2L;
   int * start_p = calloc(*n_edge, sizeof(int));
   int * start_c = calloc(*n_edge, sizeof(int));
   int * child_l  = calloc(*n_node, sizeof(int));
@@ -13,7 +22,6 @@ void order_edges(int *parent, int *child, const int *n_node, const int *n_edge) 
   int * queue_p  = calloc(*n_node, sizeof(int));
   int * queue_c  = calloc(*n_node, sizeof(int));
   // TODO check that calloc has returned a non-null pointer; clean-up and exit if calloc has failed
-  root_node = *n_node + 2L;
   for (i = 0; i < *n_edge; i++) {
     // Initialize
     start_p[i] = parent[i];
@@ -51,22 +59,23 @@ void order_edges(int *parent, int *child, const int *n_node, const int *n_edge) 
   free(child_r);
   free(queue_p);
   free(queue_c);
-}
-
-void number_nodes(int *parent, int *child, const int *root_node, const int *n_edge) {
-  int i, next_node, n_allnodes = *n_edge + 1L;
+  
+  // Now number nodes:
   int * renumber = calloc(n_allnodes, sizeof(int));
-  // TODO check that calloc has returned a non-null pointer; clean-up and exit if calloc has failed
-  next_node = *root_node;
-  for (i = 0; i < n_allnodes; i++) renumber[i] = i + 1L;
-  for (i = 0; i < *n_edge; i++) {
-    if (child[i] > *root_node) renumber[child[i]-1L] = ++(next_node);
+  if (renumber != NULL) {
+    next_node = root_node;
+    for (i = 0; i < n_allnodes; i++) renumber[i] = i + 1;
+    for (i = 0; i < *n_edge; i++) {
+      if (child[i] > root_node) renumber[child[i]-1] = ++(next_node);
+    }
+    for (i = 0; i < *n_edge; i++) {
+      parent[i] = renumber[parent[i]-1L];
+      child[i] = renumber[child[i]-1L];
+    }
+    free(renumber);
+  } else {
+    report_calloc_error();
   }
-  for (i = 0; i < *n_edge; i++) {
-    parent[i] = renumber[parent[i]-1L];
-    child[i] = renumber[child[i]-1L];
-  }
-  free(renumber);
 }
 
 void tabulate
@@ -161,6 +170,9 @@ void ape_bar_reorder(int node, int n_tips, int n_nodes, int *parent, int *child,
 	}
 }
 
+static R_NativePrimitiveArgType ape_neworder_phylo_t[] = {
+  INTSXP, INTSXP, INTSXP, INTSXP, INTSXP, INTSXP
+};
 void ape_neworder_phylo(int *n_tips, int *parent, int *child, int *n_edges, int *neworder, int *order)
 /* n_tips: nb of tips
    n_nodes: nb of nodes
@@ -218,6 +230,9 @@ void ape_neworder_phylo(int *n_tips, int *parent, int *child, int *n_edges, int 
 	nextI++;\
     }
 
+static R_NativePrimitiveArgType ape_neworder_pruningwise_t[] = {
+  INTSXP, INTSXP, INTSXP, INTSXP, INTSXP, INTSXP
+};
 void ape_neworder_pruningwise(int *ntip, int *nnode, int *edge1,
 			  int *edge2, int *nedge, int *neworder)
 {
@@ -274,3 +289,14 @@ void ape_neworder_pruningwise(int *ntip, int *nnode, int *edge1,
     }
 }
 
+static const R_CMethodDef cMethods[] = {
+  {"order_edges_number_nodes", (DL_FUNC) &order_edges_number_nodes, 4, order_edges_number_nodes_t},
+  {"ape_neworder_phylo", (DL_FUNC) &ape_neworder_phylo, 6, ape_neworder_phylo_t},
+  {"ape_neworder_pruningwise", (DL_FUNC) &ape_neworder_pruningwise, 6, ape_neworder_pruningwise_t},
+  {NULL, NULL, 0, NULL}
+};
+void R_init_myLib(DllInfo *info) {
+  R_registerRoutines(info, cMethods, NULL, NULL, NULL);
+  R_useDynamicSymbols(info, FALSE);
+  R_forceSymbols(info, TRUE);
+}
