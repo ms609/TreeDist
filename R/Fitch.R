@@ -21,7 +21,7 @@ Fitch <- function (tree, data, at = NULL) {
                        length(parent) + 1L - match(allNodes, rev(parent)))]
   fitch <- .Call("FITCH", data[, tree$tip.label], as.integer(n.char),
         as.integer(parent), as.integer(child), as.integer(n.edge),
-        as.double(weight), as.integer(max.node), as.integer(n.tip), PACKAGE='phangorn')
+        as.double(weight), as.integer(max.node), as.integer(n.tip), PACKAGE='TreeSearch')
   return(fitch[[2]])
 #
 #  TODO: link library "inapplicable" to support inapplicable data...

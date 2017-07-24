@@ -50,8 +50,8 @@
 #'   best.score <- attr(start.tree, 'pscore')
 #'   if (length(best.score) == 0) best.score <- InapplicableParsimony(start.tree, dataset)
 #'   sect <- InapplicableSectorial(start.tree, dataset, outgroup=outgroup, verbosity=0, maxit=30,
-#'               maxiter=200, maxhits=15, smallest.sector=6, largest.sector=length(start.tree$edge[,2])*0.25,
-#'               rearrangements=rearrangements)
+#'               maxiter=200, maxhits=15, smallest.sector=6,
+#                largest.sector=length(start.tree$edge[,2])*0.25, rearrangements=rearrangements)
 #'   sect <- DoTreeSearch(sect, dataset, outgroup, method='NNI', maxiter=2000, maxhits=20, verbosity=3)
 #'   sect <- DoTreeSearch(sect, dataset, outgroup, method='TBR', maxiter=2000, maxhits=25, verbosity=3)
 #'   sect <- DoTreeSearch(sect, dataset, outgroup, method='SPR', maxiter=2000, maxhits=50, verbosity=3)
@@ -94,7 +94,7 @@ SectorialSearch <- function (tree, dataset, concavity = NULL, rearrangements='NN
 #' @author Martin R. Smith
 #' @importFrom ape root
 #' @export
-InapplicableSectorial <- function (tree, dataset, maxit=100, 
+InapplicableSectorial <- function (tree, dataset, ParsimonyScorer = phangorn::fitch, maxit=100, 
     maxiter=500, k=5, verbosity=0, smallest.sector=4, largest.sector=1e+06, rearrangements="NNI", ...) {
   if (class(dataset) != 'phyDat') stop("dataset must be a phyDat object.")
   if (is.null(tree)) stop("a starting tree must be provided")
@@ -149,7 +149,7 @@ InapplicableSectorial <- function (tree, dataset, maxit=100,
     } 
     if (verbosity >= 0) cat(' Sector OK.')
     crown <- root(AddTip(crown, 0, 'SECTOR_ROOT'), length(crown$tip.label) + 1, resolve.root=TRUE) ## TODO use Root or add ape::root to includeFrom in NAMESPACE
-    initial.p <- InapplicableFitch(crown, crown.data, ...)
+    initial.p <- ParsimonyScorer(crown, crown.data, ...)
     attr(crown, 'pscore') <- initial.p
     if (verbosity >= 0) cat("\n - Running", rearrangements, "search on sector", sector)
     candidate <- TreeSearch(crown, crown.data, 'SECTOR_ROOT', method=rearrangements, verbosity=verbosity-1, maxiter=maxiter, ...)

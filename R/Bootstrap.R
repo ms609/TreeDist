@@ -5,7 +5,7 @@
 #'
 #' @return A tree that is optimal under a random sampling of the original characters
 #' @export  
-BootstrapTree <- function (phy, x, maxiter, maxhits, ParsimonyScorer = ProfileScore, track=1, ...) {
+BootstrapTree <- function (phy, x, maxiter, maxhits, ParsimonyScorer = phangorn::fitch, track=1, ...) {
 ## Simplified version of phangorn::bootstrap.phyDat, with bs=1 and multicore=FALSE
   at <- attributes(x)
   weight <- at$weight
