@@ -1,7 +1,7 @@
 #' Bootstrap tree search with inapplicable data
 #' 
 #' @template labelledTreeParam
-#' @template morphyObjParam
+
 #'
 #' @return A tree that is optimal under a random sampling of the original characters
 #' @export  

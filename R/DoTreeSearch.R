@@ -8,7 +8,7 @@
 #' It is also called directly by Ratchet and Sectorial functions
 #'
 #' @template labelledTreeParam
-#' @template morphyObjParam
+
 #'
 #' @author Martin R. Smith
 #' 

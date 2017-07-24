@@ -1,4 +1,4 @@
-#' Tree rearrangement functions
+#' @title Tree rearrangement functions
 #' 
 #' These functions performs a single random \acronym{TBR}, \acronym{SPR} or \acronym{NNI} iteration.
 #'
@@ -9,10 +9,10 @@
 #' 
 #' Branch lengths are supported by NNI, but not (yet) SPR or TBR.
 #' 
-#' @value Returns a tree with class \code{phylo}.
+#' @return Returns a tree with class \code{phylo}.
 #'
-#' @param tree a fully resolved tree in \code{\link{phyDat}} format;
-#' @param edge.to.break the index of an edge to bisect, generated randomly if not specified.
+#' @template treeParam
+#' @param edge.to.break the index of an edge to bisect, generated randomly if not specified
 #' 
 #' 
 #' 
@@ -27,18 +27,6 @@
 #' NNI(tree)
 #' SPR(tree)
 #' TBR(tree)
-#' @export
-
-#' Perform one NNI rearrangement at a given branch
-#'
-#' @template treeParam
-#'
-#' @return One of the two trees resulting when a NNI rearrangement is 
-#'         performed at a random internal edge
-#' @references
-#' The algorithm is summarized in
-#' Felsenstein, J. 2004. \cite{Inferring Phylogenies.} Sinauer Associates, Sunderland, Massachusetts.
-#' 
 #' @export
 NNI <- function (tree) { # From inapplicable
   edge    <- tree$edge
@@ -64,15 +52,15 @@ NNI <- function (tree) { # From inapplicable
   child[old_ind] <- child_swap
   neworder <- .C('ape_neworder_phylo', as.integer(nTips), as.integer(parent), 
                  as.integer(child), as.integer(nEdge), integer(nEdge), 
-                 as.integer(2), NAOK = TRUE, PACKAGE='inapplicable')[[5]] # from .reorder_ape
+                 as.integer(2), NAOK = TRUE, PACKAGE='TreeSearch')[[5]] # from .reorder_ape
   if (!is.null(tree$edge.length)) {
       lengths[old_ind] <- lengths[new_ind]
       tree$edge.length <- lengths[neworder]
   }
   reorderedEdge <- .C('order_edges', as.integer(edge[neworder, 1]), as.integer(edge[neworder, 2]),
-                       as.integer(nTips-1L), as.integer(nEdge), PACKAGE='inapplicable')
+                       as.integer(nTips-1L), as.integer(nEdge), PACKAGE='TreeSearch')
   numberedEdge  <- .C('number_nodes', as.integer(reorderedEdge[[1]]), as.integer(reorderedEdge[[2]]),
-                       as.integer(rootNode), as.integer(nEdge), PACKAGE='inapplicable')
+                       as.integer(rootNode), as.integer(nEdge), PACKAGE='TreeSearch')
   tree$edge <- matrix(c(numberedEdge[[1]], numberedEdge[[2]]), ncol=2)
   tree
 }
@@ -423,9 +411,9 @@ TBR <- function(tree, edge.to.break=NULL) { # FROM INAPPLICABLE
   Renumber(ret)
 }
 
-#' @describeIn NNI
+
 #' @export
-SPR <- function(tree) { # From ProfileParsimony
+SPR_FROMPP <- function(tree) { # From ProfileParsimony
   tip.label <- tree$tip.label
   nTips <- length(tip.label)
   edge  <- tree$edge; parent <- edge[,1L]; child <- edge[,2L]
@@ -474,9 +462,9 @@ SPR <- function(tree) { # From ProfileParsimony
   tree
 }
 
-#' @describeIn NNI
+
 #' @export
-TBR <- function(tree, edge.to.break=NULL) { #From ProfileParsimony
+TBR_FROMPP <- function(tree, edge.to.break=NULL) { #From ProfileParsimony
   nTips <- tree$Nnode + 1
   if (nTips < 3) return (tree)
   tree.edge <- tree$edge

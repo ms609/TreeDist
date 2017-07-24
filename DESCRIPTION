@@ -1,0 +1,10 @@
+Package: TreeSearch
+Title: Accelerated tree search in R
+Version: 0.0.0
+Date: 2017-07-24
+Authors@R: person('Smith', "Martin R.", email="martins@gmail.com", role=c("aut", "cre"))
+Description: Conduct tree search using a user-specified optimality criterion
+Depends: ape, phangorn
+LazyData: true
+License: MIT
+RoxygenNote: 6.0.1
