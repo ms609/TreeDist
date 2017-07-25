@@ -563,7 +563,8 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   
   tippyBroken <- parent == extractedHead
   a__f <- child  == extractedFoot  # Read a__f as "edge with parent a and child f"
-  f__b <- parent == extractedFoot
+  footChildren <- parent == extractedFoot
+  f__b <- footChildren
   f__b[edgeToBreak] <- FALSE
   rootyNoChange <- c(which(a__f), which(f__b))
   
@@ -611,6 +612,7 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
     
     
     cat(" - Rooty edges:", which(rootyEdges), "\n - Tippy Edges:", which(tippyEdges), "\n")
+       
     repeat {
       rootyTarget <- which(rootyEdges) # Pick an edge from the subtree that contains the root
       tippyTarget <- which(tippyEdges) # Pick an edge from the subtree that lacks the root
@@ -618,10 +620,13 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
       if (length(tippyTarget) > 1) tippyTarget <- sample(tippyTarget, 1)
       if (!(rootyTarget %in% rootyNoChange) || !(tippyTarget %in% tippyBrokenEdges)) break;
     }
+    
     cat(" - Rooty target:", rootyTarget, "\n - Tippy target:", tippyTarget, "\n")
+    
+    
     if (any(a__f)) {
       parent[c(f__b, a__f, rootyTarget)] <- parent[c(a__f, rootyTarget, edgeToBreak)]
-      if (!(tippyTarget %in% tippyNoChange)) {
+      if (tippyTarget %in% tippyNoChange) {
         # tippyEdges remain the same!
       } else {
         tippySide <- 2 - as.integer(tippyTarget %in% which(tippyLeft))
@@ -631,10 +636,16 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
         parent[h__y] <- child[h__x]
         child[h__x] <- parent[tippyTarget]
         parent[tippyTarget] <- extractedHead
-       
       }
-    } else {
+    } else { # edgeToBreak is the Root edge
+      side1 <- parent == child[footChildren][1]
+      side2 <- parent == child[footChildren][2]
+      child[side1]
+      child[side1] <- c(child[tippyTarget], parent[tippyTarget])
+      child[side2] <- c(child[rootyTarget], parent[rootyTarget])
       
+      child[parent == child[footChildren]] <- c(child[tippyTarget], parent[tippyTarget])
+      child[edgeToBreak] <- parent[edgeToBreak] # Reposition root
     } 
   } else { #edgeToBreak leads to a tip
     if (is.null(mergeEdges)) {
