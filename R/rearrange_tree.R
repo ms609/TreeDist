@@ -649,8 +649,8 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   #### edgelabels(edge=adriftReconnectionEdge, bg='cyan')    #### DEBUGGING AID
   #### edgelabels(edge=rootedReconnectionEdge, bg='magenta') #### DEBUGGING AID
   
-  Assert(edgesOnAdriftSegment[adriftReconnectionEdge])
-  Assert(!edgesOnAdriftSegment[rootedReconnectionEdge])
+  ######Assert(edgesOnAdriftSegment[adriftReconnectionEdge])
+  ######Assert(!edgesOnAdriftSegment[rootedReconnectionEdge])
   
   if (!nearBrokenEdge[adriftReconnectionEdge]) {
     edgesToInvert <- EdgeAncestry(adriftReconnectionEdge, parent, child, stopAt = edgeToBreak)
@@ -667,12 +667,12 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
     
     repurposedDaughterEdge <- brokenEdgeDaughters & reconnectionSideEdges
     spareDaughterEdge      <- brokenEdgeDaughters & !reconnectionSideEdges
-    Assert(identical(sum(repurposedDaughterEdge), sum(spareDaughterEdge), 1))
+    ######Assert(identical(sum(repurposedDaughterEdge), sum(spareDaughterEdge), 1))
     #### which(repurposedDaughterEdge)
     #### which(spareDaughterEdge)
     child[repurposedDaughterEdge] <- child[spareDaughterEdge]
     child[spareDaughterEdge] <- parent[adriftReconnectionEdge]
-    Assert(parent[spareDaughterEdge] == brokenEdge.childNode)
+    ######Assert(parent[spareDaughterEdge] == brokenEdge.childNode)
     parent[adriftReconnectionEdge] <- brokenEdge.childNode
   }
   if (!nearBrokenEdge[rootedReconnectionEdge]) {
@@ -684,13 +684,14 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
       child[rootedReconnectionEdge] <- spareNode
     } else {
       parent[brokenEdgeSister] <- parent[brokenEdgeParent]
+      parent[brokenEdgeSister] <- parent[brokenEdgeParent]
       parent[brokenEdgeParent] <- parent[rootedReconnectionEdge]
       parent[rootedReconnectionEdge] <- brokenEdge.parentNode
     }
   }
   
-  Assert(identical(unique(table(parent)), 2L))
-  Assert(identical(unique(table(child)),  1L))
+  ######Assert(identical(unique(table(parent)), 2L))
+  ######Assert(identical(unique(table(child)),  1L))
   ####   matrix(c(parent, child), ncol=2)
   
   retTree <- tree
