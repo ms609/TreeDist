@@ -21,6 +21,7 @@ test_that("TBR works", {
   expect_warning(expect_identical(TBR(tree, 3, 2), tree))
   expect_warning(expect_identical(TBR(tree, 3, 3), tree))
   expect_warning(expect_identical(TBR(tree, 3, 4), tree))
+  expect_warning(expect_identical(TBR(tree, 3, 44), tree))
   expect_equal(TBR(tree, 3, 5 ), read.tree(text="((((a, b), (c, d)), (e, f)), (g, h));"))
   expect_equal(TBR(tree, 3, 6 ), read.tree(text="(((b, (a, (c, d))), (e, f)), (g, h));"))
   expect_equal(TBR(tree, 3, 7 ), read.tree(text="(((b, ((a, c), d)), (e, f)), (g, h));"))
@@ -36,8 +37,10 @@ test_that("TBR works", {
   expect_equal(TBR(tree, 6, c(1 , 6)), read.tree(text="((((a, b), (e, f)), (c, d)), (g, h));"))
   expect_equal(TBR(tree, 6, c(1 , 7)), read.tree(text="((((a, b), (e, f)), (c, d)), (g, h));"))
   expect_equal(TBR(tree, 6, c(1 , 8)), read.tree(text="((((a, b), (e, f)), (c, d)), (g, h));"))
-  expect_equal(TBR(tree, 6, c(2 , 6)), read.tree(text="(((a, b), (e, f)), (g, h));"))
-  expect_equal(TBR(tree, 6, c(3 , 6)), read.tree(text="(((a, b), (e, f)), (g, h));"))
+  expect_equal(TBR(tree, 6, c(2 , 6)), TBR(tree, 6, c(2 , 7)))
+  expect_equal(TBR(tree, 6, c(2 , 6)), TBR(tree, 6, c(2 , 8)))
+  expect_equal(TBR(tree, 6, c(2 , 6)), read.tree(text="((((a, b), (c, d)), (e, f)), (g, h));"))
+  expect_equal(TBR(tree, 6, c(3 , 6)), read.tree(text="(((((c, d), a), b), (e, f)), (g, h));"))
   expect_equal(TBR(tree, 6, c(4 , 6)), read.tree(text="(((a, b), (e, f)), (g, h));"))
   expect_equal(TBR(tree, 6, c(5 , 6)), read.tree(text="(((a, b), (e, f)), (g, h));"))
   expect_equal(TBR(tree, 6, c(6 , 6)), read.tree(text="(((a, b), (e, f)), (g, h));"))
@@ -49,6 +52,7 @@ test_that("TBR works", {
   expect_equal(TBR(tree, 6, c(12, 6)), read.tree(text="(((a, b), (e, f)), (g, h));"))
   expect_equal(TBR(tree, 6, c(13, 6)), read.tree(text="(((a, b), (e, f)), (g, h));"))
   expect_equal(TBR(tree, 6, c(14, 6)), read.tree(text="(((a, b), (e, f)), (g, h));"))
+  expect_warning(expect_identical(TBR(tree, 6, c(6, 15)), tree))
   
   expect_equal(TBR(tree, 4, c(1, 5)),  read.tree(text="(((a, (e, f)), (b, (c, d))), (g, h));"))
   expect_equal(TBR(tree, 4, c(1, 6)),  read.tree(text="(((a, (e, f)), (b, (c, d))), (g, h));"))
@@ -57,7 +61,19 @@ test_that("TBR works", {
 
                                                 
   
-  TBRit(tree, 4, c(1 , 7))
+  TBRit(tree, 6, c(4 , 6)) # causes error?
+  TBRit(tree, 6, c(5 , 6))
+  TBRit(tree, 6, c(6 , 6))
+  TBRit(tree, 6, c(7 , 6))
+  TBRit(tree, 6, c(8 , 6))
+  TBRit(tree, 6, c(9 , 6))
+  TBRit(tree, 6, c(10, 6))
+  TBRit(tree, 6, c(11, 6))
+  TBRit(tree, 6, c(12, 6))
+  TBRit(tree, 6, c(13, 6))
+  TBRit(tree, 6, c(14, 6))
+  TBRit(tree, 6, c(15, 6))
+  TBRit(tree, 6, c(16, 6))
   
   
 })
