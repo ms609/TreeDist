@@ -625,7 +625,7 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
       }
       if (length(samplable) == 0) return(TBRWarning(tree, "No reconnection site would modify the tree; check mergeEdge"))
       rootedReconnectionEdge <- if (length(samplable) == 1) samplable else sample(samplable, 1)
-      cat(" - Selected rooted Reconnection Edge: ", rootedReconnectionEdge, "\n")
+      #### cat(" - Selected rooted Reconnection Edge: ", rootedReconnectionEdge, "\n")  #### DEBUGGING AID
     } else {
       rootedReconnectionEdge <- mergeEdges
       if (nearBrokenEdge[mergeEdges]) {
@@ -635,7 +635,7 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
       }
       if (length(samplable) == 0) return(TBRWarning(tree, "No reconnection site would modify the tree; check mergeEdge"))
       adriftReconnectionEdge <- if (length(samplable) == 1) samplable else sample(samplable, 1)
-      cat(" - Selected adrift Reconnection Edge: ", adriftReconnectionEdge, "\n")
+      #### cat(" - Selected adrift Reconnection Edge: ", adriftReconnectionEdge, "\n") #### DEBUGGING AID
     }
   } else {
     whichAdrift <- edgesOnAdriftSegment[mergeEdges]
@@ -645,9 +645,9 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   }
   if(nearBrokenEdge[rootedReconnectionEdge] && nearBrokenEdge[adriftReconnectionEdge]) 
     return(TBRWarning(tree, "Selected mergeEdges will not change tree topology."))
-  edgelabels(edge = edgeToBreak, bg='orange', cex=1.8)
-  edgelabels(edge=adriftReconnectionEdge, bg='cyan')
-  edgelabels(edge=rootedReconnectionEdge, bg='magenta')
+  #### edgelabels(edge = edgeToBreak, bg='orange', cex=1.8)  #### DEBUGGING AID
+  #### edgelabels(edge=adriftReconnectionEdge, bg='cyan')    #### DEBUGGING AID
+  #### edgelabels(edge=rootedReconnectionEdge, bg='magenta') #### DEBUGGING AID
   
   Assert(edgesOnAdriftSegment[adriftReconnectionEdge])
   Assert(!edgesOnAdriftSegment[rootedReconnectionEdge])
@@ -655,7 +655,7 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   if (!nearBrokenEdge[adriftReconnectionEdge]) {
     edgesToInvert <- EdgeAncestry(adriftReconnectionEdge, parent, child, stopAt = edgeToBreak)
     edgesToInvert[edgeToBreak] <- FALSE
-    which(edgesToInvert)
+    #### which(edgesToInvert)
     if (any(edgesToInvert)) {
       tmp <- parent[edgesToInvert]
       parent[edgesToInvert] <- child[edgesToInvert]
@@ -668,8 +668,8 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
     repurposedDaughterEdge <- brokenEdgeDaughters & reconnectionSideEdges
     spareDaughterEdge      <- brokenEdgeDaughters & !reconnectionSideEdges
     Assert(identical(sum(repurposedDaughterEdge), sum(spareDaughterEdge), 1))
-    which(repurposedDaughterEdge)
-    which(spareDaughterEdge)
+    #### which(repurposedDaughterEdge)
+    #### which(spareDaughterEdge)
     child[repurposedDaughterEdge] <- child[spareDaughterEdge]
     child[spareDaughterEdge] <- parent[adriftReconnectionEdge]
     Assert(parent[spareDaughterEdge] == brokenEdge.childNode)
@@ -691,138 +691,11 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   
   Assert(identical(unique(table(parent)), 2L))
   Assert(identical(unique(table(child)),  1L))
-  #   matrix(c(parent, child), ncol=2)
+  ####   matrix(c(parent, child), ncol=2)
   
   retTree <- tree
   retTree$edge <- OrderEdgesNumberNodes(parent, child, nTips, nEdge)
   retTree
-  
-  
-#  tippyBroken <- parent == extractedHead
-#  a__f <- child  == extractedFoot  # Read a__f as "edge with parent a and child f"
-#  footChildren <- parent == extractedFoot
-#  f__b <- footChildren
-#  f__b[edgeToBreak] <- FALSE
-#  rootyNoChange <- c(which(a__f), which(f__b))
-#  
-#  
-#  
-#  if (any(tippyBroken)) {
-#    
-#    tippyBrokenEdges <- which(tippyBroken)
-#    tippyRight <- DescendantEdges(tippyBrokenEdges[1], parent, child)
-#    tippyLeft  <- DescendantEdges(tippyBrokenEdges[2], parent, child)
-#    tippyEdges <- tippyLeft | tippyRight
-#    tippyNoChange <- c(edgeToBreak, tippyBrokenEdges)
-#    tippyEdges[tippyNoChange] <- TRUE 
-#
-#    rootyEdges <- !tippyEdges
-#    
-#    if (is.null(mergeEdges)) {
-#      rootyEdges[1] <- FALSE # to avoid root edge being listed twice
-#      tippyEdges[edgeToBreak] <- FALSE 
-#      tippyEdges[tippyBrokenEdges[2]] <- FALSE # tippyBrokenEdges[2] duplicates tBE[1]
-#      Assert(tippyEdges[1] == FALSE)
-#    } else {
-#      if (length(mergeEdges) == 1) {
-#        if (tippyEdges[mergeEdges]) {
-#          tippyEdges[-mergeEdges] <- FALSE
-#        } else if (rootyEdges[mergeEdges]) {
-#          rootyEdges[-mergeEdges] <- FALSE 
-#        } else {
-#          return(TBRWarning(tree, paste0("mergeEdges value", mergeEdges,  " does not correspond to a mergeable branch")))
-#        }
-#      } else { # length == 2
-#        if (tippyEdges[mergeEdges[1]] && rootyEdges[mergeEdges[2]]) {
-#          tippyEdges[-mergeEdges[1]] <- FALSE
-#          rootyEdges[-mergeEdges[2]] <- FALSE
-#          if (which(tippyEdges) %in% tippyNoChange && which(rootyEdges) %in% rootyNoChange)
-#            return(TBRWarning(tree, "tree not modified by given mergeEdges values"))
-#        } else if (tippyEdges[mergeEdges[2]] && rootyEdges[mergeEdges[1]]) {
-#          tippyEdges[-mergeEdges[2]] <- FALSE
-#          rootyEdges[-mergeEdges[1]] <- FALSE
-#          if (which(tippyEdges) %in% tippyNoChange && which(rootyEdges) %in% rootyNoChange)
-#            return(TBRWarning(tree, "tree not modified by given mergeEdges values"))
-#        } else {
-#          return(TBRWarning(tree, paste0("mergeEdges values invalid - on same side of edgeToBreak?")))
-#        }
-#      }
-#    }
-#    
-#    
-#    cat(" - Rooty edges:", which(rootyEdges), "\n - Tippy Edges:", which(tippyEdges), "\n")
-#       
-#    repeat {
-#      rootyTarget <- which(rootyEdges) # Pick an edge from the subtree that contains the root
-#      tippyTarget <- which(tippyEdges) # Pick an edge from the subtree that lacks the root
-#      if (length(rootyTarget) > 1) rootyTarget <- sample(rootyTarget, 1)
-#      if (length(tippyTarget) > 1) tippyTarget <- sample(tippyTarget, 1)
-#      if (!(rootyTarget %in% rootyNoChange) || !(tippyTarget %in% tippyBrokenEdges)) break;
-#    }
-#    
-#    cat(" - Rooty target:", rootyTarget, "\n - Tippy target:", tippyTarget, "\n")
-#    
-#    
-#    if (any(a__f)) {
-#      parent[c(f__b, a__f, rootyTarget)] <- parent[c(a__f, rootyTarget, edgeToBreak)]
-#      if (tippyTarget %in% tippyNoChange) {
-#        # tippyEdges remain the same!
-#      } else {
-#        tippySide <- 2 - as.integer(tippyTarget %in% which(tippyLeft))
-#        h__x <- tippyBrokenEdges[3 - tippySide] # h__x leads to chosen edge
-#        h__y <- tippyBrokenEdges[tippySide]
-#        
-#        parent[h__y] <- child[h__x]
-#        child[h__x] <- parent[tippyTarget]
-#        parent[tippyTarget] <- extractedHead
-#      }
-#    } else { # edgeToBreak is the Root edge
-#      side1 <- parent == child[footChildren][1]
-#      side2 <- parent == child[footChildren][2]
-#      child[side1]
-#      child[side1] <- c(child[tippyTarget], parent[tippyTarget])
-#      child[side2] <- c(child[rootyTarget], parent[rootyTarget])
-#      
-#      child[parent == child[footChildren]] <- c(child[tippyTarget], parent[tippyTarget])
-#      child[edgeToBreak] <- parent[edgeToBreak] # Reposition root
-#    } 
-#  } else { #edgeToBreak leads to a tip
-#    if (is.null(mergeEdges)) {
-#      rootyEdges <- logical(nEdge) # Countably faster than !logical(nEdge) at large nEdge
-#      rootyEdges[!(parent == extractedFoot | child == extractedFoot)] <- TRUE
-#      rootyEdges[1] <- FALSE # So root edge not represented twice
-#      Assert (nEdge > 4) # and therefore:
-#      Assert (length(which(rootyEdges)) > 1)
-#      rootyTarget <- sample(which(rootyEdges), 1)
-#    } else {
-#      if (length(mergeEdges) == 1) {
-#        if (mergeEdges %in% rootyNoChange)
-#          return(TBRWarning(tree, "mergeEdges makes no change to tree"))
-#        rootyTarget <- mergeEdges       
-#      } else { # length == 2
-#        rootyTarget <- mergeEdges[mergeEdges != edgeToBreak]
-#        if (length(rootyTarget) != 1) return(TBRWarning(tree, 'mergeEdges selection not valid'))
-#        if (rootyTarget %in% rootyNoChange) return(TBRWarning(tree, "mergeEdges makes no change to tree"))
-#      }
-#    }
-#    fusedEdge   <- child==extractedFoot 
-#    lostEdge    <- parent==extractedFoot
-#    lostEdge[edgeToBreak] <- FALSE
-#    child[fusedEdge] <- child[lostEdge]
-#    insertEdge <- lostEdge
-#    child[insertEdge] <- child[rootyTarget]
-#    child[rootyTarget] <- parent[edgeToBreak]
-#  }
-#  
-#  
-#  
-#  Assert(identical(unique(table(parent)), 2L))
-#  Assert(identical(unique(table(child)),  1L))
-#  #   matrix(c(parent, child), ncol=2)
-#  
-#  retTree <- tree
-#  retTree$edge <- OrderEdgesNumberNodes(parent, child, nTips, nEdge)
-#  retTree
 }
 
 #' Rooted TBR 
