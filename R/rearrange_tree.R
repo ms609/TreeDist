@@ -493,6 +493,28 @@ DescendantEdges <- function (edge, parent, child, nEdge = length(parent)) {
   EdgeChildren(edge)
 }
 
+#' @keyword internal
+#' @export
+AncestorEdge <- function (edge, parent, child) child == parent[edge]
+
+#' Descendant Edges
+#'
+#' Quickly identifies edges that are 'ancestral' to a particular edge in a tree
+#'
+#' @param edge number of the edge whose child edges are required
+#' @template treeParent
+#' @template treeChild
+#' @param stopAt number of the edge at which the search should terminate; defaults to the root edges
+#' @param nEdge number of edges (calcluated from length(parent) if not supplied)
+#' @return a logical vector stating whether each edge in turn is a descendant of the speficied edge
+#' @export
+EdgeAncestry <- function (edge, parent, child, stopAt = (parent==min(parent))) {
+  ret <- edge <- AncestorEdge(edge, parent, child)
+  repeat {
+    if (any(ret[stopAt])) return(ret)
+    ret[edge <- AncestorEdge(edge, parent, child)] <- TRUE    
+  }
+}
 
 Assert <- function (statement) if (!statement) stop(deparse(statement), " is FALSE")
 
@@ -549,8 +571,9 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   
   # Pick an edge at random
   if (is.null(edgeToBreak)) edgeToBreak <- sample(2:nEdge, 1) # Only include one root edge
-  extractedFoot <- parent[edgeToBreak]
-  extractedHead <-  child[edgeToBreak]
+  brokenEdge.parentNode <- parent[edgeToBreak]
+  brokenEdge.childNode  <-  child[edgeToBreak]
+  
   
   if (!is.null(mergeEdges)) { # Quick sanity checks
     if (any(mergeEdges > nEdge)) return(TBRWarning(tree, "mergeEdges value > number of edges"))
@@ -561,12 +584,59 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
       return(TBRWarning(tree, "mergeEdges values must differ"))
   }
   
+  cutAdriftRoots <- parent == extractedHead
+  edgesCutAdrift <- DescendantEdges(edgeToBreak, parent, child)
+  edgesRemaining <- !edgesCutAdrift
+  edgesRemaining[edgeToBreak] <- FALSE
+  edgesOnAdriftSegment <- edgesCutAdrift
+  edgesOnAdriftSegment[edgeToBreak] <- TRUE
+  
+  ## TODO Generate mergeEdges ##
+  whichAdrift <- edgesOnAdriftSegment[mergeEdges]
+  if (sum(whichAdrift) != 1) return(TBRWarning(tree, paste("Invalid edges selected to merge:", mergeEdges[1], mergeEdges[2])))
+  adriftReconnectionEdge <- mergeEdges[whichAdrift]
+  rootedReconnectionEdge <- mergeEdges[!whichAdrift]
+  
+  brokenEdgeSister <- parent == parent[edgeToBreak]
+  brokenEdgeSister[edgeToBreak] <- FALSE
+  brokenEdgeParent <- child == parent[edgeToBreak]
+  brokenEdgeDaughters <- parent == child[edgeToBreak]
+  
+  edgesToInvert <- EdgeAncestry(adriftReconnectionEdge, parent, child, stopAt = edgeToBreak)
+  edgesToInvert[edgeToBreak] <- FALSE
+  tmp <- parent[edgesToInvert]
+  parent[edgesToInvert] <- child[edgesToInvert]
+  child[edgesToInvert] <- tmp
+  remove(tmp)
+  
+  repurposedDaughterEdge <- brokenEdgeDaughters & edgesToInvert
+  spareDaughterEdge      <- brokenEdgeDaughters & !edgesToInvert
+  child[repurposedDaughterEdge] <- child[spareDaughterEdge]
+  Assert(parent[spareDaughterEdge] == brokenEdge.childNode)
+  child[spareDaughterEdge] <- parent[adriftReconnectionEdge]
+  parent[adriftReconnectionEdge] <- brokenEdge.childNode
+  
+  parent[brokenEdgeSister] <- parent[brokenEdgeParent] 
+  parent[brokenEdgeParent] <- parent[rootedReconnectionEdge]
+  parent[rootedReconnectionEdge] <- brokenEdge.parentNode
+  
+  Assert(identical(unique(table(parent)), 2L))
+  Assert(identical(unique(table(child)),  1L))
+  #   matrix(c(parent, child), ncol=2)
+  
+  retTree <- tree
+  retTree$edge <- OrderEdgesNumberNodes(parent, child, nTips, nEdge)
+  retTree
+  
+  
   tippyBroken <- parent == extractedHead
   a__f <- child  == extractedFoot  # Read a__f as "edge with parent a and child f"
   footChildren <- parent == extractedFoot
   f__b <- footChildren
   f__b[edgeToBreak] <- FALSE
   rootyNoChange <- c(which(a__f), which(f__b))
+  
+  
   
   if (any(tippyBroken)) {
     
