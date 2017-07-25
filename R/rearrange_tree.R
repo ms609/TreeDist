@@ -532,21 +532,25 @@ TBR <- function(tree, edgeToBreak = NULL) {
   
   # Pick an edge at random
   if (is.null(edgeToBreak)) edgeToBreak <- sample(2:nEdge, 1) # Only include one root edge
+  extractedFoot <- parent[edgeToBreak]
+  extractedHead <-  child[edgeToBreak]
   
-  tippyBroken <- parent == child[edgeToBreak]
+  tippyBroken <- parent == extractedHead
   if (any(tippyBroken)) {
     tippyBrokenEdges <- which(tippyBroken)
+    h__y <- tippyBrokenEdges[1]
+    h__x <- tippyBrokenEdges[2]
     tippyRight <- DescendantEdges(tippyBrokenEdges[1], parent, child)
     tippyLeft  <- DescendantEdges(tippyBrokenEdges[2], parent, child)
     tippyEdges <- tippyLeft | tippyRight
-    tippyEdges[tippyBrokenEdges[1]] <- TRUE
+    tippyEdges[tippyBrokenEdges[1]] <- TRUE # tippyBrokenEdges[2] not an option
     rootyEdges <- !tippyEdges
     
     
-    edgeAP <- child == parent[edgeToBreak]
-    edgePB <- parent == parent[edgeToBreak]
-    tippyEdges[edgePB] <- FALSE
-    edgePB[edgeToBreak] <- FALSE
+    a__f <- child  == extractedFoot  # Read a__f as "edge with parent a and child f"
+    f__b <- parent == extractedFoot
+    tippyEdges[f__b] <- FALSE
+    f__b[edgeToBreak] <- FALSE
     
     rootyEdges[1] <- tippyEdges[1] <- FALSE # Otherwise root branch is represented twice
 
@@ -556,53 +560,53 @@ TBR <- function(tree, edgeToBreak = NULL) {
       tippyTarget <- which(tippyEdges) # Pick an edge from the subtree that lacks the root
       if (length(rootyTarget) > 1) rootyTarget <- sample(rootyTarget, 1)
       if (length(tippyTarget) > 1) tippyTarget <- sample(tippyTarget, 1)
-      if (rootyTarget != which(edgePB) || tippyTarget != tippyBrokenEdges[1]) break;
+      if (rootyTarget != which(f__b) || tippyTarget != tippyBrokenEdges[1]) break; # tippyBrokenEdges[2] not an option
     }
       
-  #  A              X
-  #   \ eAP        / eQX
-  #    P---eToB---Q     parent[edgeToBreak] == P; child[eTB] == Q
-  #   / ePB        \ eQY
-  #  B              Y
+#  A              X --[]-- tippyTarget
+#   \ eAF        / eHX
+#    F---eToB---H     parent[edgeToBreak] == F; child[eTB] == H
+#   / eFB        \ eHY
+#  B              Y
     
     # New edge to 'bypass' parent of edgeToBreak
-    parent[edgePB] <- parent[edgeAP] 
-  #  A              X
-  #  |             / eQX
-  #  |   P--eToB--Q     parent[edgeToBreak] == P; child[eTB] == Q
-  #  | X           \ eQY
-  #  B              Y
-    
-    # Now wire in P to its new position
-    parent[edgeAP] <- parent[rootyTarget]
-    parent[rootyTarget] <- parent[edgeToBreak]
-    # rootyTarget has now had the parent of edgeToBreak spliced in:  
-  #  rootyA              X
-  #   x    \ eAP        / eQX
-  #   x     P---eToB---Q     parent[edgeToBreak] == P; child[eTB] == Q
-  #   x    / ePB        \ eQY
-  #  rootyB              Y 
+    parent[f__b] <- parent[a__f] # f__b becomes a__b
+#  A              X --[]-- tippyTarget
+#  |             / eHX
+#  |   F--eToB--H     parent[edgeToBreak] == F; child[eTB] == H
+#  | X           \ eHY
+#  B              Y
+  
+    # Now wire in F to its new position
+    parent[a__f] <- parent[rootyTarget] # a__f becomes rootfoot__f
+    parent[rootyTarget] <- extractedFoot # creating branch f__roothead
+    # rootyTarget has now had the parent of edgeToBreak (=extractedFoot) spliced in:  
+#  rootyH              X --[]-- tippyTarget
+#   x    \ eAF        / eHX
+#   x     F---eToB---H     parent[edgeToBreak] == F; child[eTB] == H
+#   x    / eFB        \ eHY
+#  rootyF              Y 
         
-    if (tippyTarget == tippyBrokenEdges[1]) {
+    if (tippyTarget == tippyBrokenEdges[1]) { # tippyBrokenEdges[2] not an option
       # tippyEdges remain the same!
     } else {    
-      tippyKeeper <- 2 - as.integer(tippyTarget %in% which(tippyLeft))
-      tippyKeepEdge <- tippyBrokenEdges[tippyKeeper]
-      tippyLoseEdge <- tippyBrokenEdges[3 - tippyKeeper]
-      # TODO!
+      tippySide <- 2 - as.integer(tippyTarget %in% which(tippyLeft))
+      h__x <- tippyBrokenEdges[3 - tippySide] # h__x leads to chosen edge
+      h__y <- tippyBrokenEdges[tippySide]
+      
+      # TODO you are here     
+     
     }
      
   } else { #edgeToBreak leads to a tip
     rootyEdges <- logical(nEdge) # Countably faster than !logical(nEdge) at large nEdge
-    extractedNode <- parent[edgeToBreak]
-    extractedTip  <- child[edgeToBreak]
-    rootyEdges[!(parent == extractedNode | child == extractedNode)] <- TRUE
+    rootyEdges[!(parent == extractedFoot | child == extractedFoot)] <- TRUE
     rootyEdges[1] <- FALSE # So root edge not represented twice
     # assert (nEdge > 4) # and therefore:
     # assert (length(which(rootyEdges)) > 1)
     rootyTarget <- sample(which(rootyEdges), 1)
-    fusedEdge   <- child==extractedNode 
-    lostEdge    <- parent==extractedNode
+    fusedEdge   <- child==extractedFoot 
+    lostEdge    <- parent==extractedFoot
     lostEdge[edgeToBreak] <- FALSE
     child[fusedEdge] <- child[lostEdge]
     insertEdge <- lostEdge
