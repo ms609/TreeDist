@@ -483,14 +483,23 @@ RootedSPR <- function(tree) {
 #' @return a logical vector stating whether each edge in turn is a descendant of the speficied edge
 #' @export
 DescendantEdges <- function (edge, parent, child, nEdge = length(parent)) {
-  EdgeChildren <- function (edge, isDescendant = logical(nEdge)) {
-    edgeChild <- child[edge]
-    nextEdges <- parent %in% edgeChild
-    isDescendant[nextEdges] <- TRUE
-    if (any(nextEdges)) isDescendant <- EdgeChildren(nextEdges, isDescendant)
-    isDescendant
+  ret <- logical(nEdge)
+  edgeSister <- parent == parent[edge]
+  edgeSister[edge] <- FALSE
+  edgeSister <- which(edgeSister)
+  if (edgeSister > edge) {
+    ret[edge:(edgeSister - 1L)] <- TRUE 
+    return(ret)
+  } else {
+    nextEdge <- edge
+    repeat {
+      if (any(descendants <- (parent == child[nextEdge]))) {
+        nextEdge <- which(descendants)[2]
+      } else break;
+    }
+    ret[edge:nextEdge] <- TRUE 
+    return(ret)
   }
-  EdgeChildren(edge)
 }
 
 #' @keyword internal
