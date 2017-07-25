@@ -560,7 +560,7 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
     if (length(mergeEdges) == 2 && mergeEdges[1] == mergeEdges[2]) 
       return(TBRWarning(tree, "mergeEdges values must differ"))
   }
-    
+  
   tippyBroken <- parent == extractedHead
   if (any(tippyBroken)) {
     
@@ -571,12 +571,17 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
     tippyRight <- DescendantEdges(tippyBrokenEdges[1], parent, child)
     tippyLeft  <- DescendantEdges(tippyBrokenEdges[2], parent, child)
     tippyEdges <- tippyLeft | tippyRight
-    tippyEdges[c(edgeToBreak, tippyBrokenEdges)] <- TRUE 
+    tippyNoChange <- c(edgeToBreak, tippyBrokenEdges)
+    tippyEdges[tippyNoChange] <- TRUE 
     Assert(tippyEdges[1] == FALSE)
     
     rootyEdges <- !tippyEdges   
     
-    if (!is.null(mergeEdges)) {
+    if (is.null(mergeEdges)) {
+      rootyEdges[1] <- FALSE # to avoid root edge being listed twice
+      tippyEdges[edgeToBreak] <- FALSE 
+      tippyEdges[tippyBrokenEdges[2]] <- FALSE # tippyBrokenEdges[2] duplicates tBE[1]
+    } else {
       if (length(mergeEdges) == 1) {
         if (tippyEdges[mergeEdges]) {
           tippyEdges[-mergeEdges] <- FALSE
@@ -589,23 +594,19 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
         if (tippyEdges[mergeEdges[1]] && rootyEdges[mergeEdges[2]]) {
           tippyEdges[-mergeEdges[1]] <- FALSE
           rootyEdges[-mergeEdges[2]] <- FALSE
-          if (all(rootyEdges == f__b) && (which(tippyEdges) %in% tippyBrokenEdges))
+          if (all(rootyEdges == f__b) && (which(tippyEdges) %in% tippyNoChange))
             return(TBRWarning("tree not modified by given mergeEdges values"))
         } else if (tippyEdges[mergeEdges[2]] && rootyEdges[mergeEdges[1]]) {
           tippyEdges[-mergeEdges[2]] <- FALSE
           rootyEdges[-mergeEdges[1]] <- FALSE
-          if (all(rootyEdges == f__b) && (which(tippyEdges) %in% tippyBrokenEdges))
+          if (all(rootyEdges == f__b) && (which(tippyEdges) %in% tippyNoChange))
             return(TBRWarning("tree not modified by given mergeEdges values"))
         } else {
           return(TBRWarning(tree, paste0("mergeEdges values invalid - on same side of edgeToBreak?")))
         }
       }
-    } else {
-      rootyEdges[1] <- FALSE # to avoid root edge being listed twice
-      tippyEdges[edgeToBreak] <- FALSE 
-      tippyEdges[tippyBrokenEdges[2]] <- FALSE # tippyBrokenEdges[2] duplicates tBE[1]
     }
-    cat(" - Rooty edges:", which(rootyEdges), "\n - Tippy Edges:", which(tippyEdges))
+    cat(" - Rooty edges:", which(rootyEdges), "\n - Tippy Edges:", which(tippyEdges), "\n")
     repeat {
       rootyTarget <- which(rootyEdges) # Pick an edge from the subtree that contains the root
       tippyTarget <- which(tippyEdges) # Pick an edge from the subtree that lacks the root
@@ -613,6 +614,7 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
       if (length(tippyTarget) > 1) tippyTarget <- sample(tippyTarget, 1)
       if (rootyTarget != which(f__b) || !(tippyTarget %in% tippyBrokenEdges)) break;
     }
+    cat(" - Rooty target:", rootyTarget, "\n - Tippy target:", tippyTarget, "\n")
       
 #  A              X --[]-- tippyTarget
 #   \ eAF        / eHX
@@ -638,9 +640,9 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
 #   x    / eFB        \ eHY
 #  rootyF              Y 
         
-    if (tippyTarget %in% tippyBrokenEdges) {
+    if (tippyTarget %in% tippyNoChange) {
       # tippyEdges remain the same!
-    } else {    
+    } else {
       tippySide <- 2 - as.integer(tippyTarget %in% which(tippyLeft))
       h__x <- tippyBrokenEdges[3 - tippySide] # h__x leads to chosen edge
       h__y <- tippyBrokenEdges[tippySide]
@@ -679,10 +681,10 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   }
   
   
-  #matrix(c(parent, child), ncol=2)
   
   Assert(identical(unique(table(parent)), 2L))
   Assert(identical(unique(table(child)),  1L))
+  #   matrix(c(parent, child), ncol=2)
   
   retTree <- tree
   retTree$edge <- OrderEdgesNumberNodes(parent, child, nTips, nEdge)
