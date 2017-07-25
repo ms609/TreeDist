@@ -575,14 +575,14 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
     tippyEdges <- tippyLeft | tippyRight
     tippyNoChange <- c(edgeToBreak, tippyBrokenEdges)
     tippyEdges[tippyNoChange] <- TRUE 
-    Assert(tippyEdges[1] == FALSE)
-    
-    rootyEdges <- !tippyEdges   
+
+    rootyEdges <- !tippyEdges
     
     if (is.null(mergeEdges)) {
       rootyEdges[1] <- FALSE # to avoid root edge being listed twice
       tippyEdges[edgeToBreak] <- FALSE 
       tippyEdges[tippyBrokenEdges[2]] <- FALSE # tippyBrokenEdges[2] duplicates tBE[1]
+      Assert(tippyEdges[1] == FALSE)
     } else {
       if (length(mergeEdges) == 1) {
         if (tippyEdges[mergeEdges]) {
