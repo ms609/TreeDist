@@ -570,7 +570,15 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   
   # Pick an edge at random
   allEdges <- seq_len(nEdge - 1L) + 1L # Only include one root edge
-  if (is.null(edgeToBreak)) edgeToBreak <- sample(allEdges, 1L)
+  not1 <- !logical(nEdge)
+  not1[1] <- FALSE
+  if (is.null(edgeToBreak)) {
+    edgeToBreak <- sample(allEdges, 1L)
+  } else {
+    if (edgeToBreak > nEdge) return(tree, TBRWarning("edgeToBreak > nEdge"))
+    if (edgeToBreak < 1) return(tree, TBRWarning("edgeToBreak < 1"))
+    if (edgeToBreak == 1) edgeToBreak <- which(parent == parent[1])[-1] # Use other side of root
+  }
   brokenEdge.parentNode <- parent[edgeToBreak]
   brokenEdge.childNode  <-  child[edgeToBreak]
   
@@ -590,12 +598,17 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   edgesOnAdriftSegment <- edgesCutAdrift
   edgesOnAdriftSegment[edgeToBreak] <- TRUE
   
+  brokenEdgeParent <- child == parent[edgeToBreak]
   brokenEdgeSister <- parent == parent[edgeToBreak]
   brokenEdgeSister[edgeToBreak] <- FALSE
-  brokenEdgeParent <- child == parent[edgeToBreak]
   brokenEdgeDaughters <- parent == child[edgeToBreak]
   nearBrokenEdge <- brokenEdgeSister | brokenEdgeParent | brokenEdgeDaughters
   nearBrokenEdge[edgeToBreak] <- TRUE
+  if (breakingRootEdge <- !any(brokenEdgeParent)) { 
+    # Edge to break is the Root Node.
+    brokenRootDaughters <- parent == child[brokenEdgeSister]
+    nearBrokenEdge <- nearBrokenEdge | brokenRootDaughters
+  }
   
   if (is.null(mergeEdges)) {
     candidateEdges <- which(!nearBrokenEdge)
@@ -606,21 +619,23 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
     if (edgesOnAdriftSegment[mergeEdges]) {
       adriftReconnectionEdge <- mergeEdges
       if (nearBrokenEdge[mergeEdges]) {
-        samplable <- !edgesOnAdriftSegment & !nearBrokenEdge
+        samplable <- which(!edgesOnAdriftSegment & !nearBrokenEdge & not1)
       } else {
-        samplable <- !edgesOnAdriftSegment
-      }      
-      if (!length(samplable)) return(TBRWarning(tree, "No reconnection site would modify the tree; check mergeEdge")
-      rootedReconnectionEdge <- if (length(samplable) == 1) samplable else sample(which(samplable), 1)
+        samplable <- which(!edgesOnAdriftSegment & not1)
+      }
+      if (length(samplable) == 0) return(TBRWarning(tree, "No reconnection site would modify the tree; check mergeEdge"))
+      rootedReconnectionEdge <- if (length(samplable) == 1) samplable else sample(samplable, 1)
+      cat(" - Selected rooted Reconnection Edge: ", rootedReconnectionEdge, "\n")
     } else {
       rootedReconnectionEdge <- mergeEdges
       if (nearBrokenEdge[mergeEdges]) {
-        samplable <- which(edgesOnAdriftSegment & !nearBrokenEdge)
+        samplable <- which(edgesOnAdriftSegment & !nearBrokenEdge & not1)
       } else {
-        samplable <- which(edgesOnAdriftSegment)
+        samplable <- which(edgesOnAdriftSegment & not1)
       }
-      if (!length(samplable)) return(TBRWarning(tree, "No reconnection site would modify the tree; check mergeEdge")
-      adriftReconnectionEdge <- if (length(samplable) == 1) samplable else sample(which(samplable), 1)
+      if (length(samplable) == 0) return(TBRWarning(tree, "No reconnection site would modify the tree; check mergeEdge"))
+      adriftReconnectionEdge <- if (length(samplable) == 1) samplable else sample(samplable, 1)
+      cat(" - Selected adrift Reconnection Edge: ", adriftReconnectionEdge, "\n")
     }
   } else {
     whichAdrift <- edgesOnAdriftSegment[mergeEdges]
@@ -628,42 +643,46 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
     adriftReconnectionEdge <- mergeEdges[whichAdrift]
     rootedReconnectionEdge <- mergeEdges[!whichAdrift]
   }
+  if(nearBrokenEdge[rootedReconnectionEdge] && nearBrokenEdge[adriftReconnectionEdge]) 
+    return(TBRWarning(tree, "Selected mergeEdges will not change tree topology."))
   edgelabels(edge = edgeToBreak, bg='orange', cex=1.8)
   edgelabels(edge=adriftReconnectionEdge, bg='cyan')
   edgelabels(edge=rootedReconnectionEdge, bg='magenta')
   
-  Assert(!(nearBrokenEdge[rootedReconnectionEdge] && nearBrokenEdge[adriftReconnectionEdge]))
   Assert(edgesOnAdriftSegment[adriftReconnectionEdge])
   Assert(!edgesOnAdriftSegment[rootedReconnectionEdge])
   
-  
-  if (!nearBrokenEdge[adriftReconnectionEdge]) {    
-    edgesToInvert <- EdgeAncestry(adriftReconnectionEdge, parent, child, stopAt = edgeToBreak)
-    edgesToInvert[edgeToBreak] <- FALSE
-    which(edgesToInvert)
-    if (any(edgesToInvert)) {
-      tmp <- parent[edgesToInvert]
-      parent[edgesToInvert] <- child[edgesToInvert]
-      child[edgesToInvert] <- tmp
-      remove(tmp)
-    }
-    reconnectionSideEdges <- edgesToInvert
-    reconnectionSideEdges[adriftReconnectionEdge] <- TRUE
+  if (breakingRootEdge) {
     
-    repurposedDaughterEdge <- brokenEdgeDaughters & reconnectionSideEdges
-    spareDaughterEdge      <- brokenEdgeDaughters & !reconnectionSideEdges
-    Assert(identical(sum(repurposedDaughterEdge), sum(spareDaughterEdge), 1))
-    which(repurposedDaughterEdge)
-    which(spareDaughterEdge)
-    child[repurposedDaughterEdge] <- child[spareDaughterEdge]
-    Assert(parent[spareDaughterEdge] == brokenEdge.childNode)
-    child[spareDaughterEdge] <- parent[adriftReconnectionEdge]
-    parent[adriftReconnectionEdge] <- brokenEdge.childNode
-  }
-  if (!nearBrokenEdge[rootedReconnectionEdge]) {
-    parent[brokenEdgeSister] <- parent[brokenEdgeParent] 
-    parent[brokenEdgeParent] <- parent[rootedReconnectionEdge]
-    parent[rootedReconnectionEdge] <- brokenEdge.parentNode
+  } else {    
+    if (!nearBrokenEdge[adriftReconnectionEdge]) {
+      edgesToInvert <- EdgeAncestry(adriftReconnectionEdge, parent, child, stopAt = edgeToBreak)
+      edgesToInvert[edgeToBreak] <- FALSE
+      which(edgesToInvert)
+      if (any(edgesToInvert)) {
+        tmp <- parent[edgesToInvert]
+        parent[edgesToInvert] <- child[edgesToInvert]
+        child[edgesToInvert] <- tmp
+        remove(tmp)
+      }
+      reconnectionSideEdges <- edgesToInvert
+      reconnectionSideEdges[adriftReconnectionEdge] <- TRUE
+      
+      repurposedDaughterEdge <- brokenEdgeDaughters & reconnectionSideEdges
+      spareDaughterEdge      <- brokenEdgeDaughters & !reconnectionSideEdges
+      Assert(identical(sum(repurposedDaughterEdge), sum(spareDaughterEdge), 1))
+      which(repurposedDaughterEdge)
+      which(spareDaughterEdge)
+      child[repurposedDaughterEdge] <- child[spareDaughterEdge]
+      Assert(parent[spareDaughterEdge] == brokenEdge.childNode)
+      child[spareDaughterEdge] <- parent[adriftReconnectionEdge]
+      parent[adriftReconnectionEdge] <- brokenEdge.childNode
+    }
+    if (!nearBrokenEdge[rootedReconnectionEdge]) {
+      parent[brokenEdgeSister] <- parent[brokenEdgeParent] 
+      parent[brokenEdgeParent] <- parent[rootedReconnectionEdge]
+      parent[rootedReconnectionEdge] <- brokenEdge.parentNode
+    }
   }
   
   Assert(identical(unique(table(parent)), 2L))
