@@ -427,7 +427,7 @@ GetDescendants <- function (tree, node, ...) {
 #' @author Martin R. Smith
 #' @export
 DoDescendants <- function (edge1, edge2, nTip, node, just.tips = FALSE, just.internal=FALSE, include.ancestor = FALSE) {
-  is.descendant <- blank <- logical((nTip * 2) - 1)
+  is.descendant <- logical((nTip * 2) - 1)
   if (include.ancestor) is.descendant[node] <- TRUE;
   node.children <- function (node, is.descendant) {
     nc <- edge2[edge1 %in% node]
