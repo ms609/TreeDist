@@ -611,9 +611,8 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   }
   
   if (is.null(mergeEdges)) {
-    candidateEdges <- which(!nearBrokenEdge)
-    if (candidateEdges[1] == 1L) candidateEdges <- candidateEdges[-1L]
-    mergeEdges <- sample(candidateEdges, 1L)
+    candidateEdges <- which(!nearBrokenEdge & not1)
+    if (length(candidateEdges) > 1) mergeEdges <- sample(candidateEdges, 1L) else mergeEdges <- candidateEdges
   }
   if (length(mergeEdges) == 1) {
     if (edgesOnAdriftSegment[mergeEdges]) {
@@ -622,6 +621,7 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
         samplable <- which(!edgesOnAdriftSegment & !nearBrokenEdge & not1)
       } else {
         samplable <- which(!edgesOnAdriftSegment & not1)
+        if (all(edgesOnAdriftSegment == not1) && breakingRootEdge) samplable <- 1
       }
       if (length(samplable) == 0) return(TBRWarning(tree, "No reconnection site would modify the tree; check mergeEdge"))
       rootedReconnectionEdge <- if (length(samplable) == 1) samplable else sample(samplable, 1)

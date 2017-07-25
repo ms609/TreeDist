@@ -16,10 +16,17 @@ test_that("NNI works", {
 })
 context("tree rearrangement")
 test_that("TBR can swap over root", {
-  TBR(read.tree(text='(a, (b, (c, (d, e))));'), 1) 
-  TBR(read.tree(text='(a, (b, (c, (d, e))));'), 2)
-  TBR(read.tree(text='((a, b), (c, (d, e)));'), 1)
-  TBR(read.tree(text='((a, b), (c, (d, e)));'), 4)
+  tree <- tree5a <- read.tree(text='(a, (b, (c, (d, e))));')
+  tree <- tree5b <- read.tree(text='((a, b), (c, (d, e)));')
+  expect_equal(TBR(tree5a, 1, c(7, 1)), read.tree(text='(a, (d, (e, (c, b))));'))
+  expect_equal(TBR(tree5a, 2, c(5, 2)), read.tree(text='(a, (c, (b, (d, e))));'))
+  TBRit(tree5a, 2, c(5, 2))
+  TBRit(tree5b, 1, c(1, 7))
+  TBRit(tree5b, 4, c(1, 7))
+  
+  tree <- read.tree(text="((((a, b), (c, d)), e), ((f, (g, (h, i))), (j, k)));"); tree$edge.length = rep(1, 20) 
+  
+  
 })
 
 test_that("TBR works", {
@@ -69,6 +76,6 @@ test_that("TBR works", {
   expect_equal(TBR(tree, 4, c(1, 7)),  read.tree(text="(((a, (e, f)), (c, (b, d))), (g, h));"))
   expect_equal(TBR(tree, 4, c(1, 8)),  read.tree(text="(((a, (e, f)), (d, (b, c))), (g, h));"))
 
-  
+  tree <- read.tree(text="((((a, b), (c, d)), e), ((f, (g, (h, i))), (j, k)));"); tree$edge.length = rep(1, 20) 
   
 })
