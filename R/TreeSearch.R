@@ -24,7 +24,7 @@
 #'
 #' @seealso
 #' \itemize{
-#' \item \code{\link{InapplicableFitch}}, calculates parsimony score, supports inapplicable tokens;
+#' \item \code{\link{Fitch}}, calculates parsimony score;
 #' \item \code{\link{RootedNNI}}, conducts tree rearrangements;
 #' \item \code{\link{SectorialSearch}}, alternative heuristic, useful for larger trees;
 #' \item \code{\link{Ratchet}}, alternative heuristic, useful to escape local optima.

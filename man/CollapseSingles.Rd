@@ -2,22 +2,16 @@
 % Please edit documentation in R/phylo.R
 \name{CollapseSingles}
 \alias{CollapseSingles}
-\title{TITLE GOES HERE}
+\title{Collapse Single Nodes}
 \usage{
 CollapseSingles(tree)
 }
 \arguments{
-\item{PARAM}{is a parameter you should send to it}
-}
-\value{
-This function returns :
+\item{tree}{A tree of class \code{\link{phylo}}}
 }
 \description{
-\code{FUNCTIONNAME} does something useful
-}
-\examples{
-to_do <- TRUE
-
+\code{CollapseSingles} is duplicated from ape::collapse.singles and modified to improve
+its running speed.
 }
 \author{
 Martin R. Smith

@@ -888,17 +888,13 @@ DropTipNoSubtree <- function(phy, tip, root.edge = 0, rooted = is.rooted(phy), i
   CollapseSingles(phy)
 }
 
-#' TITLE GOES HERE
+#' Collapse Single Nodes
 #'
-#' \code{FUNCTIONNAME} does something useful
+#' \code{CollapseSingles} is duplicated from ape::collapse.singles and modified to improve
+#' its running speed. 
 #'
-#' @param PARAM is a parameter you should send to it
+#' @template treeParam
 #' 
-#' @examples
-#' to_do <- TRUE
-#' 
-#' @return This function returns :
-#'   
 #' @author Martin R. Smith
 #' @export
 CollapseSingles <- function (tree) {

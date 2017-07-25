@@ -63,19 +63,23 @@ InapplicableSectorial(njtree, SigSut.phy, outgroup, maxit=1, maxiter=50, largest
 \dontrun{SectorialSearch(njtree, SigSut.phy, outgroup, 'SPR') # Will be time-consuming}
 
 ## SectorialSearch is currently defined as
-function (start.tree, dataset, outgroup, rearrangements='NNI') {
-  best.score <- attr(start.tree, 'pscore')
-  if (length(best.score) == 0) best.score <- InapplicableParsimony(start.tree, dataset)
-  sect <- InapplicableSectorial(start.tree, dataset, outgroup=outgroup, verbosity=0, maxit=30,
-              maxiter=200, maxhits=15, smallest.sector=6,
-  sect <- DoTreeSearch(sect, dataset, outgroup, method='NNI', maxiter=2000, maxhits=20, verbosity=3)
-  sect <- DoTreeSearch(sect, dataset, outgroup, method='TBR', maxiter=2000, maxhits=25, verbosity=3)
-  sect <- DoTreeSearch(sect, dataset, outgroup, method='SPR', maxiter=2000, maxhits=50, verbosity=3)
-  sect <- DoTreeSearch(sect, dataset, outgroup, method='NNI', maxiter=2000, maxhits=50, verbosity=3)
-  if (attr(sect, 'pscore') <= best.score) {
-    return (sect)
-  } else return (SetOutgroup(start.tree, outgroup))
-}
+# function (start.tree, dataset, outgroup, rearrangements='NNI') {
+#   best.score <- attr(start.tree, 'pscore')
+#   if (length(best.score) == 0) best.score <- InapplicableParsimony(start.tree, dataset)
+#   sect <- InapplicableSectorial(start.tree, dataset, outgroup=outgroup, verbosity=0, maxit=30,
+#               maxiter=200, maxhits=15, smallest.sector=6,
+#   sect <- DoTreeSearch(sect, dataset, outgroup, method='NNI', 
+#                        maxiter=2000, maxhits=20, verbosity=3)
+#   sect <- DoTreeSearch(sect, dataset, outgroup, method='TBR',
+#                        maxiter=2000, maxhits=25, verbosity=3)
+#   sect <- DoTreeSearch(sect, dataset, outgroup, method='SPR',
+#                        maxiter=2000, maxhits=50, verbosity=3)
+#   sect <- DoTreeSearch(sect, dataset, outgroup, method='NNI',
+#                        maxiter=2000, maxhits=50, verbosity=3)
+#   if (attr(sect, 'pscore') <= best.score) {
+#     return (sect)
+#   } else return (SetOutgroup(start.tree, outgroup))
+# }
 }
 
 }
