@@ -562,11 +562,13 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   }
   
   tippyBroken <- parent == extractedHead
+  a__f <- child  == extractedFoot  # Read a__f as "edge with parent a and child f"
+  f__b <- parent == extractedFoot
+  f__b[edgeToBreak] <- FALSE
+  rootyNoChange <- c(which(a__f), which(f__b))
+  
   if (any(tippyBroken)) {
     
-    a__f <- child  == extractedFoot  # Read a__f as "edge with parent a and child f"
-    f__b <- parent == extractedFoot
-    f__b[edgeToBreak] <- FALSE
     tippyBrokenEdges <- which(tippyBroken)
     tippyRight <- DescendantEdges(tippyBrokenEdges[1], parent, child)
     tippyLeft  <- DescendantEdges(tippyBrokenEdges[2], parent, child)
@@ -594,12 +596,12 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
         if (tippyEdges[mergeEdges[1]] && rootyEdges[mergeEdges[2]]) {
           tippyEdges[-mergeEdges[1]] <- FALSE
           rootyEdges[-mergeEdges[2]] <- FALSE
-          if (which(tippyEdges) %in% tippyNoChange && which(rootyEdges) %in% c(which(a__f), which(f__b)))
+          if (which(tippyEdges) %in% tippyNoChange && which(rootyEdges) %in% rootyNoChange)
             return(TBRWarning(tree, "tree not modified by given mergeEdges values"))
         } else if (tippyEdges[mergeEdges[2]] && rootyEdges[mergeEdges[1]]) {
           tippyEdges[-mergeEdges[2]] <- FALSE
           rootyEdges[-mergeEdges[1]] <- FALSE
-          if (which(tippyEdges) %in% tippyNoChange && which(rootyEdges) %in% c(which(a__f), which(f__b)))
+          if (which(tippyEdges) %in% tippyNoChange && which(rootyEdges) %in% rootyNoChange)
             return(TBRWarning(tree, "tree not modified by given mergeEdges values"))
         } else {
           return(TBRWarning(tree, paste0("mergeEdges values invalid - on same side of edgeToBreak?")))
@@ -614,7 +616,7 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
       tippyTarget <- which(tippyEdges) # Pick an edge from the subtree that lacks the root
       if (length(rootyTarget) > 1) rootyTarget <- sample(rootyTarget, 1)
       if (length(tippyTarget) > 1) tippyTarget <- sample(tippyTarget, 1)
-      if ((rootyTarget != which(a__f) && rootyTarget != which(f__b)) || !(tippyTarget %in% tippyBrokenEdges)) break;
+      if (!(rootyTarget %in% rootyNoChange) || !(tippyTarget %in% tippyBrokenEdges)) break;
     }
     cat(" - Rooty target:", rootyTarget, "\n - Tippy target:", tippyTarget, "\n")
       
@@ -665,12 +667,13 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
       rootyTarget <- sample(which(rootyEdges), 1)
     } else {
       if (length(mergeEdges) == 1) {
-        if (mergeEdges == edgeToBreak || (parent == extractedFoot | child == extractedFoot)[mergeEdges])
+        if (mergeEdges %in% rootyNoChange)
           return(TBRWarning(tree, "mergeEdges makes no change to tree"))
         rootyTarget <- mergeEdges       
       } else { # length == 2
         rootyTarget <- mergeEdges[mergeEdges != edgeToBreak]
         if (length(rootyTarget) != 1) return(TBRWarning(tree, 'mergeEdges selection not valid'))
+        if (rootyTarget %in% rootyNoChange) return(TBRWarning(tree, "mergeEdges makes no change to tree"))
       }
     }
     fusedEdge   <- child==extractedFoot 
