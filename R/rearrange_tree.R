@@ -619,44 +619,23 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
       if (!(rootyTarget %in% rootyNoChange) || !(tippyTarget %in% tippyBrokenEdges)) break;
     }
     cat(" - Rooty target:", rootyTarget, "\n - Tippy target:", tippyTarget, "\n")
-      
-#  A              X --[]-- tippyTarget
-#   \ eAF        / eHX
-#    F---eToB---H     parent[edgeToBreak] == F; child[eTB] == H
-#   / eFB        \ eHY
-#  B              Y
-    
-    # New edge to 'bypass' parent of edgeToBreak
-    parent[f__b] <- parent[a__f] # f__b becomes a__b
-#  A              X --[]-- tippyTarget
-#  |             / eHX
-#  |   F--eToB--H     parent[edgeToBreak] == F; child[eTB] == H
-#  | X           \ eHY
-#  B              Y
-  
-    # Now wire in F to its new position
-    parent[a__f] <- parent[rootyTarget] # a__f becomes rootfoot__f
-    parent[rootyTarget] <- extractedFoot # creating branch f__roothead
-    # rootyTarget has now had the parent of edgeToBreak (=extractedFoot) spliced in:  
-#  rootyH              X --[]-- tippyTarget
-#   x    \ eAF        / eHX
-#   x     F---eToB---H     parent[edgeToBreak] == F; child[eTB] == H
-#   x    / eFB        \ eHY
-#  rootyF              Y 
+    if (any(a__f)) {
+      parent[c(f__b, a__f, rootyTarget)] <- parent[c(a__f, rootyTarget, edgeToBreak)]
+      if (!(tippyTarget %in% tippyNoChange)) {
+        # tippyEdges remain the same!
+      } else {
+        tippySide <- 2 - as.integer(tippyTarget %in% which(tippyLeft))
+        h__x <- tippyBrokenEdges[3 - tippySide] # h__x leads to chosen edge
+        h__y <- tippyBrokenEdges[tippySide]
         
-    if (tippyTarget %in% tippyNoChange) {
-      # tippyEdges remain the same!
+        parent[h__y] <- child[h__x]
+        child[h__x] <- parent[tippyTarget]
+        parent[tippyTarget] <- extractedHead
+       
+      }
     } else {
-      tippySide <- 2 - as.integer(tippyTarget %in% which(tippyLeft))
-      h__x <- tippyBrokenEdges[3 - tippySide] # h__x leads to chosen edge
-      h__y <- tippyBrokenEdges[tippySide]
       
-      parent[h__y] <- child[h__x]
-      child[h__x] <- parent[tippyTarget]
-      parent[tippyTarget] <- extractedHead
-     
-    }
-     
+    } 
   } else { #edgeToBreak leads to a tip
     if (is.null(mergeEdges)) {
       rootyEdges <- logical(nEdge) # Countably faster than !logical(nEdge) at large nEdge
