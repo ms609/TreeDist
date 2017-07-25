@@ -555,8 +555,8 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   if (!is.null(mergeEdges)) { # Quick sanity checks
     if (any(mergeEdges > nEdge)) return(TBRWarning(tree, "mergeEdges value > number of edges"))
     if (length(mergeEdges) > 2 || length(mergeEdges) == 0) 
-        return(TBRWarning(tree, "mergeEdges value ", paste(mergeEdges, collapse='|'),  
-               " invalid; must be NULL or a vector of length 1 or 2\n  "))
+        return(TBRWarning(tree, paste0("mergeEdges value ", paste(mergeEdges, collapse='|'),  
+               " invalid; must be NULL or a vector of length 1 or 2\n  ")))
     if (length(mergeEdges) == 2 && mergeEdges[1] == mergeEdges[2]) 
       return(TBRWarning(tree, "mergeEdges values must differ"))
   }
@@ -589,15 +589,15 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
         if (tippyEdges[mergeEdges[1]] && rootyEdges[mergeEdges[2]]) {
           tippyEdges[-mergeEdges[1]] <- FALSE
           rootyEdges[-mergeEdges[2]] <- FALSE
-          if (rootyTarget == which(f__b) && (tippyTarget %in% tippyBrokenEdges))
+          if (all(rootyEdges == f__b) && (which(tippyEdges) %in% tippyBrokenEdges))
             return(TBRWarning("tree not modified by given mergeEdges values"))
         } else if (tippyEdges[mergeEdges[2]] && rootyEdges[mergeEdges[1]]) {
           tippyEdges[-mergeEdges[2]] <- FALSE
           rootyEdges[-mergeEdges[1]] <- FALSE
-          if (rootyTarget == which(f__b) && (tippyTarget %in% tippyBrokenEdges))
+          if (all(rootyEdges == f__b) && (which(tippyEdges) %in% tippyBrokenEdges))
             return(TBRWarning("tree not modified by given mergeEdges values"))
         } else {
-          return(TBRWarning(tree, paste0("mergeEdges values not valid")))
+          return(TBRWarning(tree, paste0("mergeEdges values invalid - on same side of edgeToBreak?")))
         }
       }
     } else {
@@ -661,7 +661,7 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
       rootyTarget <- sample(which(rootyEdges), 1)
     } else {
       if (length(mergeEdges) == 1) {
-        if (mergeEdges == edgeToBreak)
+        if (mergeEdges == edgeToBreak || (parent == extractedFoot | child == extractedFoot)[mergeEdges])
           return(TBRWarning(tree, "mergeEdges makes no change to tree"))
         rootyTarget <- mergeEdges       
       } else { # length == 2
