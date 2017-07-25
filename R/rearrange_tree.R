@@ -195,7 +195,7 @@ RenumberTips <- function (tree, tipOrder) {
 #' @return Returns a tree with class \code{phylo}.
 #'
 #' @template treeParam
-#' @param edge.to.break the index of an edge to bisect, generated randomly if not specified
+#' @param edgeToBreak the index of an edge to bisect, generated randomly if not specified
 #' 
 #' @references
 #' The algorithms are summarized in
@@ -472,38 +472,25 @@ RootedSPR <- function(tree) {
   tree
 }
 
-#' Rooted TBR 
-#' @describeIn TBR Perform \acronym{TBR} rearrangement, retaining position of root
-#' @importFrom ape is.rooted
-#' @importFrom stats runif
+#' Descendant Edges
+#'
+#' Quickly identifies edges that are 'descended' from a particular edge in a tree
+#'
+#' @param edge number of the edge whose child edges are required
+#' @template treeParent
+#' @template treeChild
+#' @param nEdge number of edges (calcluated from length(parent) if not supplied)
+#' @return a logical vector stating whether each edge in turn is a descendant of the speficied edge
 #' @export
-RootedTBR <- function(tree) { 
-  if (!is.rooted(tree)) warning("Tree root is not resolved.  Try:  tree <- SetOutgroup(tree, outgroup).")
-  edge <- tree$edge; parent <- edge[,1L]; child <- edge[,2L]
-  root <- 1 + (nTips <- dim(edge)[1] - tree$Nnode + 1L)
-  root.children <- child[parent==root]
-  size <- c(left.size <- sum(DoDescendants(parent, child, nTips, root.children[1L])) + 1L,
-            (nTips * 2L - 1L) - left.size - 1L)
-  if (min(size) == 1L) {
-    outgroup <- tree$tip.label[root.children[size==1L]]
-    tree <- TBR(tree)
-    return(Root(tree, outgroup))
-  } else {
-    tip.label <- tree$tip.label
-    moves <- (size-3L) * (size-2L) / 2
-    subtree.root <- root.children[1L + (runif(1, min=0, max=sum(moves)) > moves[1L])]
-    in.crown <- DoDescendants(parent, child, nTips, subtree.root)
-    in.crown[subtree.root] <- TRUE
-    crown.edges <- parent %in% which(in.crown)
-    in.stump <- !in.crown
-    in.stump[root] <- FALSE
-    stump.edges <- parent %in% which(in.stump)
-    stump <- KeepEdges(edge, tip.label, nTips, stump.edges) # faster than DropTip
-    crown <- ExtractClade(tree, subtree.root) # faster than KeepEdges
-    new.crown <- TBR(crown)
-    new.crown$root.edge <- 1
-    return (stump + new.crown)
+DescendantEdges <- function (edge, parent, child, nEdge = length(parent)) {
+  EdgeChildren <- function (edge, isDescendant = logical(nEdge)) {
+    edgeChild <- child[edge]
+    nextEdges <- parent %in% edgeChild
+    isDescendant[nextEdges] <- TRUE
+    if (any(nextEdges)) isDescendant <- EdgeChildren(nextEdges, isDescendant)
+    isDescendant
   }
+  EdgeChildren(edge)
 }
 
 #' TBR
@@ -513,7 +500,7 @@ RootedTBR <- function(tree) {
 #' \code{TBR} performs a single random \acronym{TBR} iteration.
 #'
 #' @param tree A bifurcating tree of class \code{\link{phylo}}, with all nodes resolved;
-#' @param edge.to.break the index of an edge to bisect, generated randomly if not specified.
+#' @param edgeToBreak the index of an edge to bisect, generated randomly if not specified.
 #' 
 #' @details Branch lengths are not (yet) supported.
 #' 
@@ -531,54 +518,136 @@ RootedTBR <- function(tree) {
 #' tree <- rtree(20, br=NULL)
 #' TBR(tree)
 #' }
+#' @importFrom ape root
 #' @export
-TBR <- function(tree, edge.to.break=NULL) { # FROM INAPPLICABLE
-# Improvement targets: Root; ExtractClade; DropTip
+TBR <- function(tree, edgeToBreak = NULL) {
+# Improvement targets: ape::root; ExtractClade; DropTip
   nTips <- tree$Nnode + 1
   if (nTips < 3) return (tree)
-  tree.edge <- tree$edge
-  tree.parent <- tree.edge[, 1]
-  tree.child  <- tree.edge[, 2]
-  if (nTips == 3) return (Root(tree, sample(tree.child[tree.parent==max(tree.parent)], 1L)))
-  all.nodes <- seq_len(2 * (nTips - 1))
-  root <- nTips + 1
-  if (is.null(edge.to.break)) edge.to.break <- sample(2:nrow(tree.edge), 1) # Only include one root edge
-  subtree.root <- tree.child[edge.to.break]
-  #cat("\n - ", edge.to.break, subtree.root)
-  stump <- if (subtree.root <= nTips) {
-    DropTipNoSubtree(tree, subtree.root, root.edge=1)
-  } else {
-    in.crown <- DoDescendants(tree.parent, tree.child, nTips, subtree.root, just.tips=TRUE)
-    DropTipNoSubtree(tree, which(in.crown), root.edge=1)
-  }
-  stump.len <- dim(stump$edge)[1]
-  crown <- ExtractClade(tree, subtree.root) # ~ 2x faster than DropTip
-  crown.edge <- crown$edge
-  crown.len <- dim(crown.edge)[1]  
-  if (crown.len > 1) {
-    if (crown.len == 2) {
-      rerooted.crown <- crown
-    } else {
-      crown.parent <- crown.edge[, 1]
-      crown.child <- crown.edge[, 2]
-      crown.nNode <- crown$Nnode
-      crown.tips <- crown.nNode + 1L
-      crown.root <- min(crown.parent)
-      new.root.candidates <- crown.child[-1] # Include existing root once only
-      new.root.node <- sample(new.root.candidates, 1L)
-      if (new.root.node <= crown.tips) new.outgroup <- new.root.node else new.outgroup <- which(DoDescendants(crown.parent, crown.child, crown.tips, new.root.node, just.tips=TRUE))
-      rerooted.crown <- Root(crown, new.outgroup)
+  edge   <- tree$edge
+  parent <- edge[, 1]
+  child  <- edge[, 2]
+  nEdge <- length(parent)
+  if (nTips == 3) return (root(tree, sample(child[parent==max(parent)], 1L)))
+  
+  # Pick an edge at random
+  if (is.null(edgeToBreak)) edgeToBreak <- sample(2:nEdge, 1) # Only include one root edge
+  
+  tippyBroken <- parent == child[edgeToBreak]
+  if (any(tippyBroken)) {
+    tippyBrokenEdges <- which(tippyBroken)
+    tippyRight <- DescendantEdges(tippyBrokenEdges[1], parent, child)
+    tippyLeft  <- DescendantEdges(tippyBrokenEdges[2], parent, child)
+    tippyEdges <- tippyLeft | tippyRight
+    tippyEdges[tippyBrokenEdges[1]] <- TRUE
+    rootyEdges <- !tippyEdges
+    
+    
+    edgeAP <- child == parent[edgeToBreak]
+    edgePB <- parent == parent[edgeToBreak]
+    tippyEdges[edgePB] <- FALSE
+    edgePB[edgeToBreak] <- FALSE
+    
+    rootyEdges[1] <- tippyEdges[1] <- FALSE # Otherwise root branch is represented twice
+
+    cat(" - Rooty edges:", which(rootyEdges), "\n - Tippy Edges:", which(tippyEdges))
+    repeat {
+      rootyTarget <- which(rootyEdges) # Pick an edge from the subtree that contains the root
+      tippyTarget <- which(tippyEdges) # Pick an edge from the subtree that lacks the root
+      if (length(rootyTarget) > 1) rootyTarget <- sample(rootyTarget, 1)
+      if (length(tippyTarget) > 1) tippyTarget <- sample(tippyTarget, 1)
+      if (rootyTarget != which(edgePB) || tippyTarget != tippyBrokenEdges[1]) break;
     }
-    rerooted.crown$root.edge <- 1L
-    if (stump.len > 1) {
-      bind.location <- sample(seq_len(stump.len), 1L)
-      ret <- BindTree(stump, rerooted.crown, position=1, where=bind.location)
-    } else {
-      ret <- AddTip(rerooted.crown, crown.root, stump$tip.label)
+      
+  #  A              X
+  #   \ eAP        / eQX
+  #    P---eToB---Q     parent[edgeToBreak] == P; child[eTB] == Q
+  #   / ePB        \ eQY
+  #  B              Y
+    
+    # New edge to 'bypass' parent of edgeToBreak
+    parent[edgePB] <- parent[edgeAP] 
+  #  A              X
+  #  |             / eQX
+  #  |   P--eToB--Q     parent[edgeToBreak] == P; child[eTB] == Q
+  #  | X           \ eQY
+  #  B              Y
+    
+    # Now wire in P to its new position
+    parent[edgeAP] <- parent[rootyTarget]
+    parent[rootyTarget] <- parent[edgeToBreak]
+    # rootyTarget has now had the parent of edgeToBreak spliced in:  
+  #  rootyA              X
+  #   x    \ eAP        / eQX
+  #   x     P---eToB---Q     parent[edgeToBreak] == P; child[eTB] == Q
+  #   x    / ePB        \ eQY
+  #  rootyB              Y 
+        
+    if (tippyTarget == tippyBrokenEdges[1]) {
+      # tippyEdges remain the same!
+    } else {    
+      tippyKeeper <- 2 - as.integer(tippyTarget %in% which(tippyLeft))
+      tippyKeepEdge <- tippyBrokenEdges[tippyKeeper]
+      tippyLoseEdge <- tippyBrokenEdges[3 - tippyKeeper]
+      # TODO!
     }
-  } else {
-    bind.location <- stump$edge[sample(2L:stump.len, 1L), 2L]
-    ret <- AddTip(stump, bind.location, crown$tip.label)
+     
+  } else { #edgeToBreak leads to a tip
+    rootyEdges <- logical(nEdge) # Countably faster than !logical(nEdge) at large nEdge
+    extractedNode <- parent[edgeToBreak]
+    extractedTip  <- child[edgeToBreak]
+    rootyEdges[!(parent == extractedNode | child == extractedNode)] <- TRUE
+    rootyEdges[1] <- FALSE # So root edge not represented twice
+    # assert (nEdge > 4) # and therefore:
+    # assert (length(which(rootyEdges)) > 1)
+    rootyTarget <- sample(which(rootyEdges), 1)
+    fusedEdge   <- child==extractedNode 
+    lostEdge    <- parent==extractedNode
+    lostEdge[edgeToBreak] <- FALSE
+    child[fusedEdge] <- child[lostEdge]
+    insertEdge <- lostEdge
+    child[insertEdge] <- child[rootyTarget]
+    child[rootyTarget] <- parent[edgeToBreak]
   }
-  Renumber(ret)
+  
+  
+  matrix(c(parent, child), ncol=2)
+  
+  oTree <- tree
+  oTree$edge <- OrderEdgesNumberNodes(parent, child, nTips, nEdge)
+  oTree
+}
+
+#' Rooted TBR 
+#' @describeIn TBR Perform \acronym{TBR} rearrangement, retaining position of root
+#' @importFrom ape is.rooted
+#' @importFrom stats runif
+#' @export
+RootedTBR <- function(tree) { 
+  if (!is.rooted(tree)) warning("Tree root is not resolved.  Try:  tree <- SetOutgroup(tree, outgroup).")
+  edge <- tree$edge; parent <- edge[,1L]; child <- edge[,2L]
+  tree.root <- 1 + (nTips <- dim(edge)[1] - tree$Nnode + 1L)
+  root.children <- child[parent==tree.root]
+  size <- c(left.size <- sum(DoDescendants(parent, child, nTips, root.children[1L])) + 1L,
+            (nTips * 2L - 1L) - left.size - 1L)
+  if (min(size) == 1L) {
+    outgroup <- tree$tip.label[root.children[size==1L]]
+    tree <- TBR(tree)
+    return(root(tree, outgroup))
+  } else {
+    tip.label <- tree$tip.label
+    moves <- (size-3L) * (size-2L) / 2
+    subtree.root <- root.children[1L + (runif(1, min=0, max=sum(moves)) > moves[1L])]
+    in.crown <- DoDescendants(parent, child, nTips, subtree.root)
+    in.crown[subtree.root] <- TRUE
+    crown.edges <- parent %in% which(in.crown)
+    in.stump <- !in.crown
+    in.stump[root] <- FALSE
+    stump.edges <- parent %in% which(in.stump)
+    stump <- KeepEdges(edge, tip.label, nTips, stump.edges) # faster than DropTip
+    crown <- ExtractClade(tree, subtree.root) # faster than KeepEdges
+    new.crown <- TBR(crown)
+    new.crown$root.edge <- 1
+    return (stump + new.crown)
+  }
 }
