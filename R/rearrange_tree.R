@@ -600,7 +600,6 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
       return(TBRWarning(tree, "mergeEdges values must differ"))
   }  
   
-  cutAdriftRoots <- parent == extractedHead
   edgesCutAdrift <- DescendantEdges(edgeToBreak, parent, child)
   edgesRemaining <- !edgesCutAdrift
   edgesRemaining[edgeToBreak] <- FALSE
@@ -741,3 +740,12 @@ RootedTBR <- function(tree) {
     return (stump + new.crown)
   }
 }
+
+#' Generate random tree topology from dataset
+#' 
+#' @param dataset A dataset in \code{\link[phangorn]{phyDat}} format
+#' 
+#' @author Martin R. Smith 
+#' @importFrom ape rtree
+#' @export
+RandomTree <- function (dataset) rtree(length(dataset), tip.label=names(dataset), br=NULL)
