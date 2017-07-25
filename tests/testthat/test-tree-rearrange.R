@@ -16,17 +16,12 @@ test_that("NNI works", {
 })
 context("tree rearrangement")
 test_that("TBR can swap over root", {
-  tree <- tree5a <- read.tree(text='(a, (b, (c, (d, e))));')
-  tree <- tree5b <- read.tree(text='((a, b), (c, (d, e)));')
+  tree5a <- read.tree(text='(a, (b, (c, (d, e))));')
+  tree5b <- read.tree(text='((a, b), (c, (d, e)));')
   expect_equal(TBR(tree5a, 1, c(7, 1)), read.tree(text='(a, (d, (e, (c, b))));'))
-  expect_equal(TBR(tree5a, 2, c(5, 2)), read.tree(text='(a, (c, (b, (d, e))));'))
-  TBRit(tree5a, 2, c(5, 2))
-  TBRit(tree5b, 1, c(1, 7))
-  TBRit(tree5b, 4, c(1, 7))
-  
-  tree <- read.tree(text="((((a, b), (c, d)), e), ((f, (g, (h, i))), (j, k)));"); tree$edge.length = rep(1, 20) 
-  
-  
+  expect_equal(TBR(tree5a, 2, c(5, 1)), read.tree(text='(a, (c, (b, (d, e))));'))
+  expect_equal(TBR(tree5b, 1, c(7, 1)), read.tree(text='((a, b), (d, (c, e)));'))
+  expect_equal(TBR(tree5b, 4, c(7, 1)), read.tree(text='((a, b), (d, (c, e)));'))
 })
 
 test_that("TBR works", {
@@ -75,7 +70,12 @@ test_that("TBR works", {
   expect_equal(TBR(tree, 4, c(1, 6)),  read.tree(text="(((a, (e, f)), (b, (c, d))), (g, h));"))
   expect_equal(TBR(tree, 4, c(1, 7)),  read.tree(text="(((a, (e, f)), (c, (b, d))), (g, h));"))
   expect_equal(TBR(tree, 4, c(1, 8)),  read.tree(text="(((a, (e, f)), (d, (b, c))), (g, h));"))
-
-  tree <- read.tree(text="((((a, b), (c, d)), e), ((f, (g, (h, i))), (j, k)));"); tree$edge.length = rep(1, 20) 
   
+  tree <- tree11 <- read.tree(text="((((a, b), (c, d)), e), ((f, (g, (h, i))), (j, k)));")
+  tree$edge.length = rep(1, 20) 
+  expect_equal(TBR(tree11, 11, c(8, 17)), read.tree(text='((j, k), (e, ((a, b), (c, (d, (i, (h, (g, f))))))));'))
+  expect_equal(TBR(tree11, 11, c(2, 11)), read.tree(text='((j, k), (e, (((a, b), (c, d)), (f, (g, (i, h))))));'))
+  expect_warning(TBR(tree11, 10, c(2, 11)))
+  expect_equal(TBR(tree11, 10, c(3, 11)), read.tree(text='(e, ((c, d), ((a, b), ((j, k), (f, (g, (h, i)))))));'))
+    
 })
