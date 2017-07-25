@@ -24,7 +24,7 @@ test_that("TBR can swap over root", {
 
 test_that("TBR works", {
   tree <- read.tree(text="(((a, (b, (c, d))), (e, f)), (g, h));")
-  expect_equal(TBR(tree, 3, 1 ),read.tree(text="((a, ((b, (c, d)), (e, f))), (g, h));"))
+  expect_equal(TBR(tree, 3, 1 ), read.tree(text="((a, ((b, (c, d)), (e, f))), (g, h));"))
   expect_warning(expect_identical(TBR(tree, 3, 2), tree))
   expect_warning(expect_identical(TBR(tree, 3, 3), tree))
   expect_warning(expect_identical(TBR(tree, 3, 4), tree))
