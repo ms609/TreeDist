@@ -64,7 +64,7 @@ RearrangeTree <- function (tree, data, Rearrange = NNI, ParsimonyScorer = phango
     hits <- sum(best.trees)
     if (track > 1) cat("\n    * Iteration", iter, "- New best score", min.score, "found on", hits, "trees")
   }
-  if (length(return.single) && return.single) trees <- sample(trees, 1)[[1]]
+  if (length(return.single) && return.single) trees <- sample(trees, 1L)[[1]]
   attr(trees, 'hits') <- hits
   attr(trees, 'score') <- min.score
   trees
@@ -215,7 +215,7 @@ NNI <- function (tree) {
   child   <- edge[, 2]
   nTips  <- length(tree$tip.label)
   rootNode <- nTips + 1L
-  chosenInternalEdge <- sample(which(child > nTips), 1)
+  chosenInternalEdge <- Sample1(which(child > nTips))
   if(is.na(chosenInternalEdge)) return(NULL)
   nEdge <- length(parent)
   nNode <- tree$Nnode
@@ -225,7 +225,7 @@ NNI <- function (tree) {
   end2  <- child[chosenInternalEdge]
   ind1    <- which(parent == end1)
   ind1    <- ind1[ind1 != chosenInternalEdge][1]
-  ind2    <- which(parent == end2)[sample(2, 1)]
+  ind2    <- which(parent == end2)[sample.int(2L, 1L, useHash=FALSE)]
   new_ind <- c(ind2, ind1)
   old_ind <- c(ind1, ind2)
   child_swap <- child[new_ind]
@@ -281,7 +281,7 @@ RootedNNI <- function (tree) {
   child   <- edge[, 2]
   sampleableChild <- child
   sampleableChild[which(parent == as.integer(parent[!match(parent, child, 0)][1]))] <- -1 # Don't want to switch across the root
-  ind     <- sample(which(sampleableChild > nTips), 1)
+  ind     <- Sample1(which(sampleableChild > nTips))
   if(is.na(ind)) return(NULL)
   
   rootNode <- nTips + 1L
@@ -293,7 +293,7 @@ RootedNNI <- function (tree) {
   end2  <- child[chosenInternalEdge]
   ind1    <- which(parent == end1)
   ind1    <- ind1[ind1 != chosenInternalEdge][1]
-  ind2    <- which(parent == end2)[sample(2, 1)]
+  ind2    <- which(parent == end2)[sample.int(2L, 1L, useHash=FALSE)]
   new_ind <- c(ind2, ind1)
   old_ind <- c(ind1, ind2)
   child_swap <- child[new_ind]
@@ -326,12 +326,12 @@ SPR <- function(tree) {
   root   <- nTips + 1
   pruning.candidates <- seq(nEdge + 1)[-root]
   repeat {
-    prune.node <- sample(pruning.candidates, 1)
+    prune.node <- Sample1(pruning.candidates)
     moving.subnodes <- c(prune.node, which(DoDescendants(parent, child, nTips, prune.node)))
     moving.nodes <- c(prune.parent <- parent[child==prune.node], moving.subnodes)
     dont.graft.here <- c(moving.nodes, child[parent==prune.parent])
     graft.node <- c(pruning.candidates[!pruning.candidates %in% dont.graft.here])
-    if (length(graft.node) > 1) graft.node <- sample(graft.node, 1)
+    if (length(graft.node) > 1) graft.node <- Sample1(graft.node)
     if (any(graft.node)) break;
     pruning.candidates <- pruning.candidates[-match(prune.node, pruning.candidates)]
     if (!any(pruning.candidates)) stop('No place to graft pruned tree')
@@ -374,7 +374,7 @@ RootIrrelevantSPR <- function(tree) {
   root   <- nTips + 1
   pruning.candidates <- seq(nEdge + 1)[-root]
   repeat {
-    prune.node <- sample(pruning.candidates, 1)
+    prune.node <- Sample1(pruning.candidates)
     moving.subnodes <- c(prune.node, which(DoDescendants(parent, child, nTips, prune.node)))
     moving.nodes <- c(prune.parent <- parent[child==prune.node], moving.subnodes)
     if (prune.parent == root) {
@@ -384,7 +384,7 @@ RootIrrelevantSPR <- function(tree) {
       dont.graft.here <- c(moving.nodes, child[parent==prune.parent])
     }
     graft.node <- c(pruning.candidates[!pruning.candidates %in% dont.graft.here])
-    if (length(graft.node) > 1) graft.node <- sample(graft.node, 1)
+    if (length(graft.node) > 1) graft.node <- Sample1(graft.node)
     if (any(graft.node)) break;
     pruning.candidates <- pruning.candidates[-match(prune.node, pruning.candidates)]
     if (!any(pruning.candidates)) stop('No place to graft pruned tree')
@@ -450,14 +450,14 @@ RootedSPR <- function(tree) {
   subtree.basal.tip <- subtree.base < root
   if (any(subtree.basal.tip)) pruning.candidates <- pruning.candidates[-match(subtree.base[!subtree.basal.tip], pruning.candidates)]
   
-  prune.node <- sample(pruning.candidates, 1)
+  prune.node <- Sample1(pruning.candidates)
   moving.subnodes <- c(prune.node, which(DoDescendants(parent, child, nTips, prune.node)))
   moving.nodes <- c(prune.parent <- parent[child==prune.node], moving.subnodes)
   dont.graft.here <- c(moving.nodes, child[parent==prune.parent])
   graft.candidates <- c(root.children[choose.right + 1L], pruning.candidates)
   graft.candidates <- graft.candidates[!graft.candidates %in% dont.graft.here]
 
-  graft.child  <- sample(graft.candidates, 1)
+  graft.child  <- Sample1(graft.candidates)
   graft.edge   <- match(graft.child, child)
   graft.parent <- parent[graft.edge]
   
@@ -541,6 +541,16 @@ TBRWarning <- function (tree, error) {
   return(tree)
 }
 
+#' Quick sample
+#' 
+#' Faster than inbuilt sample because it avoids some checks
+#' @param x vector to sample
+#' @param len length of vector
+#' @keywords internal
+#' @export
+Sample1 <- function (x, len = length(x)) x[sample.int(len, 1L, FALSE, NULL, FALSE)]
+
+
 #' TBR
 #' 
 #' Tree bisection and reconnection
@@ -575,14 +585,14 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   parent <- edge[, 1]
   child  <- edge[, 2]
   nEdge <- length(parent)
-  if (nTips == 3) return (ape::root(tree, sample(child[parent==max(parent)], 1L)))
+  if (nTips == 3) return (ape::root(tree, Sample1(child[parent==max(parent)], len=2L)))
   
   # Pick an edge at random
   allEdges <- seq_len(nEdge - 1L) + 1L # Only include one root edge
   not1 <- !logical(nEdge)
   not1[1] <- FALSE
   if (is.null(edgeToBreak)) {
-    edgeToBreak <- sample(allEdges, 1L)
+    edgeToBreak <- Sample1(allEdges, len=nEdge - 1L)
   } else {
     if (edgeToBreak > nEdge) return(tree, TBRWarning("edgeToBreak > nEdge"))
     if (edgeToBreak < 1) return(tree, TBRWarning("edgeToBreak < 1"))
@@ -620,7 +630,8 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   
   if (is.null(mergeEdges)) {
     candidateEdges <- which(!nearBrokenEdge & not1)
-    if (length(candidateEdges) > 1) mergeEdges <- sample(candidateEdges, 1L) else mergeEdges <- candidateEdges
+    nCandidates <- length(candidateEdges)
+    if (nCandidates > 1) mergeEdges <- Sample1(candidateEdges, len=nCandidates) else mergeEdges <- candidateEdges
   }
   if (length(mergeEdges) == 1) {
     if (edgesOnAdriftSegment[mergeEdges]) {
@@ -631,8 +642,9 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
         samplable <- which(!edgesOnAdriftSegment & not1)
         if (all(edgesOnAdriftSegment == not1) && breakingRootEdge) samplable <- 1
       }
-      if (length(samplable) == 0) return(TBRWarning(tree, "No reconnection site would modify the tree; check mergeEdge"))
-      rootedReconnectionEdge <- if (length(samplable) == 1) samplable else sample(samplable, 1)
+      nSamplable <- length(samplable)
+      if (nSamplable == 0) return(TBRWarning(tree, "No reconnection site would modify the tree; check mergeEdge"))
+      rootedReconnectionEdge <- if (nSamplable == 1) samplable else Sample1(samplable, len=nSamplable)
       #### cat(" - Selected rooted Reconnection Edge: ", rootedReconnectionEdge, "\n")  #### DEBUGGING AID
     } else {
       rootedReconnectionEdge <- mergeEdges
@@ -641,8 +653,9 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
       } else {
         samplable <- which(edgesOnAdriftSegment & not1)
       }
-      if (length(samplable) == 0) return(TBRWarning(tree, "No reconnection site would modify the tree; check mergeEdge"))
-      adriftReconnectionEdge <- if (length(samplable) == 1) samplable else sample(samplable, 1)
+      nSamplable <- length(samplable)
+      if (nSamplable == 0) return(TBRWarning(tree, "No reconnection site would modify the tree; check mergeEdge"))
+      adriftReconnectionEdge <- if (nSamplable == 1) samplable else Sample1(samplable)
       #### cat(" - Selected adrift Reconnection Edge: ", adriftReconnectionEdge, "\n") #### DEBUGGING AID
     }
   } else {
@@ -668,7 +681,6 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
       tmp <- parent[edgesToInvert]
       parent[edgesToInvert] <- child[edgesToInvert]
       child[edgesToInvert] <- tmp
-      remove(tmp)
     }
     reconnectionSideEdges <- edgesToInvert
     reconnectionSideEdges[adriftReconnectionEdge] <- TRUE
