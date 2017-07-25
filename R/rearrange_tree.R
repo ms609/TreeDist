@@ -361,7 +361,7 @@ SPR <- function(tree) {
   tree
 }
 
-#' @describein SPR Root position irrelevant SPR
+#' @describeIn SPR Root position irrelevant SPR
 #' @export
 RootIrrelevantSPR <- function(tree) { 
   tip.label <- tree$tip.label
@@ -502,7 +502,7 @@ DescendantEdges <- function (edge, parent, child, nEdge = length(parent)) {
   }
 }
 
-#' @keyword internal
+#' @keywords internal
 #' @export
 AncestorEdge <- function (edge, parent, child) child == parent[edge]
 
@@ -534,7 +534,7 @@ Assert <- function (statement) if (!statement) stop(deparse(statement), " is FAL
 #' @param tree tree to return
 #' @param error error message to report
 #' @author Martin R. Smith
-#' @keyword internal
+#' @keywords internal
 #' @export
 TBRWarning <- function (tree, error) {
   warning ("No TBR operation performed.\n  > ", error)

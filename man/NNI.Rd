@@ -18,7 +18,7 @@ NNI(tree)
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}}
 
-\item{edge.to.break}{the index of an edge to bisect, generated randomly if not specified}
+\item{edgeToBreak}{the index of an edge to bisect, generated randomly if not specified}
 }
 \value{
 Returns a tree with class \code{phylo}.
