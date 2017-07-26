@@ -188,14 +188,14 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   rootNode <- parent[1]
   rootEdges <- parent == rootNode
   nEdge <- length(parent)
-  selectableEdges <- seq_along(parent)[!rootEdges]
   rightTree <- DescendantEdges(1, parent, child)
+  selectableEdges <- !rootEdges
   if (sum( rightTree) < 3) selectableEdges[ rightTree] <- FALSE
   if (sum(!rightTree) < 3) selectableEdges[!rightTree] <- FALSE
   if (!any(selectableEdges)) TBRWarning(tree, 'No opportunity to rearrange tree due to root position')
 
   if (is.null(edgeToBreak)) {
-    edgeToBreak <- SampleOne(selectableEdges, len=nEdge - 2L) # Pick an edge at random
+    edgeToBreak <- SampleOne(which(selectableEdges), len=nEdge - 2L) # Pick an edge at random
   } else {
     if (edgeToBreak > nEdge) return(TBRWarning(tree, "edgeToBreak > nEdge"))
     if (edgeToBreak < 1) return(TBRWarning(tree, "edgeToBreak < 1"))
