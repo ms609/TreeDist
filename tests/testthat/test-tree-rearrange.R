@@ -37,7 +37,9 @@ test_that("TBR works", {
   ### expect_equal(TBR(tree, 3, 13), read.tree(text="(((b, (c, d)), (e, f)), ((g, a), h));"))
   ### expect_equal(TBR(tree, 3, 14), read.tree(text="(((b, (c, d)), (e, f)), (g, (a, h)));"))
   
-  #TBRit(tree, 6, c(1, 6))
+  library(devtools); library(testthat); library(ape); load_all()
+  
+  tree <- read.tree(text="(((a, (b, (c, d))), (e, f)), (g, h));")
   expect_equal(TBR(tree, 6, c(1 , 6)), read.tree(text="((((a, b), (e, f)), (c, d)), (g, h));"))
   expect_equal(TBR(tree, 6, c(1 , 7)), read.tree(text="((((a, b), (e, f)), (c, d)), (g, h));"))
   expect_equal(TBR(tree, 6, c(1 , 8)), read.tree(text="((((a, b), (e, f)), (c, d)), (g, h));"))
@@ -71,4 +73,8 @@ test_that("TBR works", {
   expect_warning(TBR(tree11, 10, c(2, 11)))
   expect_equal(TBR(tree11, 10, c(3, 11)), read.tree(text='(e, ((c, d), ((a, b), ((j, k), (f, (g, (h, i)))))));'))
     
+})
+
+test_that("RootedTBR fails", {
+  expect_warning(RootedTBR(read.tree(text='(((a, b), c), (d, (e, f)));')))
 })

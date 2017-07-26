@@ -733,16 +733,20 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   }
   repeat {
     edgeInRight <- rightTree[edgeToBreak]
-    subtreeEdges <- if (edgeInRight) rightTree else !rightTree
+    subtreeEdges <- !rootEdges & if (edgeInRight) rightTree else !rightTree
     if (sum(edgesCutAdrift <- DescendantEdges(edgeToBreak, parent, child)) > 2) break;
     if (sum(subtreeEdges, -edgesCutAdrift) > 2) break; # the edge itself, and somewheres else
     # TODO check that all expected selections are valid
     selectableEdges[edgeToBreak] <- FALSE
+    Assert(any(selectableEdges))
     edgeToBreak <- SampleOne(selectableEdges, len=nEdge - 2L)
   }
-  brokenEdge <- seq_along(edge) == edgeToBreak
+  brokenEdge <- seq_along(parent) == edgeToBreak
   brokenEdge.parentNode <- parent[edgeToBreak]
   brokenEdge.childNode  <-  child[edgeToBreak]
+  
+  edgesRemaining <- !edgesCutAdrift & subtreeEdges
+  edgesOnAdriftSegment <- edgesCutAdrift | brokenEdge
   
   if (!is.null(mergeEdges)) { # Quick sanity checks
     if (any(mergeEdges > nEdge)) return(TBRWarning(tree, "mergeEdges value > number of edges"))
@@ -751,34 +755,29 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
                " invalid; must be NULL or a vector of length 1 or 2\n  ")))
     if (length(mergeEdges) == 2 && mergeEdges[1] == mergeEdges[2]) 
       return(TBRWarning(tree, "mergeEdges values must differ"))
+    if (!all(edgesOnAdriftSegment[mergeEdges])) stop("mergeEdges invalid.")
   }  
-  
-  edgesRemaining <- !edgesCutAdrift & subtreeEdges
-  edgesOnAdriftSegment <- edgesCutAdrift | brokenEdge
   
   brokenEdgeParent <- child  == brokenEdge.childNode
   brokenEdgeSister <- parent == brokenEdge.parentNode & !brokenEdge
   
   brokenEdgeDaughters <- parent == brokenEdge.childNode
   nearBrokenEdge <- brokenEdgeSister | brokenEdgeParent | brokenEdgeDaughters | brokenEdge
-  if (breakingRootEdge <- !any(brokenEdgeParent)) { 
-    # Edge to break is the Root Node.
-    stop("something's gone wrong")
-  }
+  Assert(any(brokenEdgeParent))
   
   if (is.null(mergeEdges)) {
-    candidateEdges <- which(!nearBrokenEdge & not1)
-    nCandidates <- length(candidateEdges)
-    if (nCandidates > 1) mergeEdges <- SampleOne(candidateEdges, len=nCandidates) else mergeEdges <- candidateEdges
+    mergeEdges  <- which(subtreeEdges & !nearBrokenEdge)
+    nCandidates <- length(mergeEdges)
+    if (nCandidates > 1) mergeEdges <- SampleOne(mergeEdges, len=nCandidates)
   }
   if (length(mergeEdges) == 1) {
     if (edgesOnAdriftSegment[mergeEdges]) {
       adriftReconnectionEdge <- mergeEdges
       if (nearBrokenEdge[mergeEdges]) {
-        samplable <- which(!edgesOnAdriftSegment & !nearBrokenEdge & not1)
+        samplable <- which(subtreeEdges & !edgesOnAdriftSegment & !nearBrokenEdge)
       } else {
-        samplable <- which(!edgesOnAdriftSegment & not1)
-        if (all(edgesOnAdriftSegment == not1) && breakingRootEdge) samplable <- 1
+        samplable <- which(subtreeEdges & !edgesOnAdriftSegment)
+        Assert(length(samplable) > 0)
       }
       nSamplable <- length(samplable)
       if (nSamplable == 0) return(TBRWarning(tree, "No reconnection site would modify the tree; check mergeEdge"))
@@ -787,18 +786,21 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
     } else {
       rootedReconnectionEdge <- mergeEdges
       if (nearBrokenEdge[mergeEdges]) {
-        samplable <- which(edgesOnAdriftSegment & !nearBrokenEdge & not1)
+        samplable <- which(subtreeEdges & edgesOnAdriftSegment & !nearBrokenEdge)
       } else {
-        samplable <- which(edgesOnAdriftSegment & not1)
+        samplable <- which(subtreeEdges & edgesOnAdriftSegment)
       }
       nSamplable <- length(samplable)
       if (nSamplable == 0) return(TBRWarning(tree, "No reconnection site would modify the tree; check mergeEdge"))
-      adriftReconnectionEdge <- if (nSamplable == 1) samplable else SampleOne(samplable)
+      adriftReconnectionEdge <- if (nSamplable == 1) samplable else SampleOne(samplable, len=nSamplable)
       #### cat(" - Selected adrift Reconnection Edge: ", adriftReconnectionEdge, "\n") #### DEBUGGING AID
     }
   } else {
     whichAdrift <- edgesOnAdriftSegment[mergeEdges]
-    if (sum(whichAdrift) != 1) return(TBRWarning(tree, paste("Invalid edges selected to merge:", mergeEdges[1], mergeEdges[2])))
+    if (sum(whichAdrift) != 1) return(TBRWarning(tree, paste("Invalid edges selected to merge:",
+            mergeEdges[1], mergeEdges[2])))
+    if (!all(subtreeEdges[mergeEdges])) return(TBRWarning(tree, paste("mergeEdges", 
+            mergeEdges[1], mergeEdges[2], "not on same side of root as edgeToBreak", edgeToBreak)))
     adriftReconnectionEdge <- mergeEdges[whichAdrift]
     rootedReconnectionEdge <- mergeEdges[!whichAdrift]
   }
@@ -808,13 +810,11 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   #### edgelabels(edge=adriftReconnectionEdge, bg='cyan')    #### DEBUGGING AID
   #### edgelabels(edge=rootedReconnectionEdge, bg='magenta') #### DEBUGGING AID
   
-  ######Assert(edgesOnAdriftSegment[adriftReconnectionEdge])
-  ######Assert(!edgesOnAdriftSegment[rootedReconnectionEdge])
+  Assert(edgesOnAdriftSegment[adriftReconnectionEdge])
+  Assert(!edgesOnAdriftSegment[rootedReconnectionEdge])
   
   if (!nearBrokenEdge[adriftReconnectionEdge]) {
-    edgesToInvert <- EdgeAncestry(adriftReconnectionEdge, parent, child, stopAt = edgeToBreak)
-    edgesToInvert[edgeToBreak] <- FALSE
-    #### which(edgesToInvert)
+    edgesToInvert <- EdgeAncestry(adriftReconnectionEdge, parent, child, stopAt = edgeToBreak) & !edgeToBreak
     if (any(edgesToInvert)) {
       tmp <- parent[edgesToInvert]
       parent[edgesToInvert] <- child[edgesToInvert]
@@ -825,12 +825,12 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
     
     repurposedDaughterEdge <- brokenEdgeDaughters & reconnectionSideEdges
     spareDaughterEdge      <- brokenEdgeDaughters & !reconnectionSideEdges
-    ######Assert(identical(sum(repurposedDaughterEdge), sum(spareDaughterEdge), 1))
+    Assert(identical(sum(repurposedDaughterEdge), sum(spareDaughterEdge), 1))
     #### which(repurposedDaughterEdge)
     #### which(spareDaughterEdge)
     child[repurposedDaughterEdge] <- child[spareDaughterEdge]
     child[spareDaughterEdge] <- parent[adriftReconnectionEdge]
-    ######Assert(parent[spareDaughterEdge] == brokenEdge.childNode)
+    Assert(parent[spareDaughterEdge] == brokenEdge.childNode)
     parent[adriftReconnectionEdge] <- child[edgeToBreak]
   }
   if (!nearBrokenEdge[rootedReconnectionEdge]) {
@@ -847,12 +847,13 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
     }
   }
   
-  ######Assert(identical(unique(table(parent)), 2L))
-  ######Assert(identical(unique(table(child)),  1L))
+  Assert(identical(unique(table(parent)), 2L))
+  Assert(identical(unique(table(child)),  1L))
   ####   matrix(c(parent, child), ncol=2)
   
-  tree$edge <- OrderEdgesNumberNodes(parent, child, nTips, nEdge)
-  tree
+  retTree <- tree
+  retTree$edge <- OrderEdgesNumberNodes(parent, child, nTips, nEdge)
+  retTree
 }
 
 #' Generate random tree topology from dataset
