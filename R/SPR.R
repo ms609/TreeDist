@@ -1,45 +1,41 @@
-#' TBR Warning
-#' Print a warning and return given tree
-#'
-#' @usage return(TBRWarning(tree, 'Message text')
-#' @param tree tree to return
-#' @param error error message to report
-#' @author Martin R. Smith
+#' @describeIn TBRWarning for SPR rearrangements
 #' @keywords internal
 #' @export
-TBRWarning <- function (tree, error) {
-  warning ("No TBR operation performed.\n  > ", error)
+SPRWarning <- function (tree, error) {
+  warning ("No SPR operation performed.\n  > ", error)
   return(tree)
 }
-
-#' TBR
+#' Subtree Pruning and Rearrangement 
+#'
+#' Perform one \acronym{SPR} rearrangement on a tree
 #' 
-#' Tree bisection and reconnection
+#' Equivalent to phangorn's kSPR, but faster.
+#' Note that rearrangements that only change the position of the root WILL be returned by 
+#' \code{SPR}.  If the position of the root is irrelevant (as in Fitch parsimony, for example)
+#' then this function will occasionally return a functionally equivalent topology.  
+#' \code{RootIrrelevantSPR} will search tree space more efficiently in these cases.
+#' Branch lengths are not (yet) supported.
 #'
-#' \code{TBR} performs a single random \acronym{TBR} iteration.
-#'
-#' @param tree A bifurcating tree of class \code{\link{phylo}}, with all nodes resolved;
+#' @template treeParam
 #' @param edgeToBreak the index of an edge to bisect, generated randomly if not specified.
+#' @return This function returns a tree in \code{phyDat} format that has undergone one \acronym{SPR} iteration.
 #' 
-#' @details Branch lengths are not (yet) supported.
-#' 
-#' @return This function returns a tree in \code{phyDat} format that has undergone one \acronym{TBR} iteration.
-#' @references The \acronym{TBR} algorithm is summarized in
+#' @references The \acronym{SPR} algorithm is summarized in
 #' Felsenstein, J. 2004. \cite{Inferring Phylogenies.} Sinauer Associates, Sunderland, Massachusetts.
-#' 
 #' 
 #' @author Martin R. Smith
 #' 
-#' @seealso RootedTBR useful when the position of the root node should be retained.
+#' @seealso RootedSPR useful when the position of the root node should be retained.
+#' @seealso TBR
+#' @seealso NNI
 #' 
 #' @examples{
-#' library('ape')
-#' tree <- rtree(20, br=NULL)
-#' TBR(tree)
+#' tree <- RandomTree(20, br=NULL)
+#' SPR(tree)
 #' }
 #' @importFrom ape root
 #' @export
-TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
+SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   nTips <- tree$Nnode + 1
   if (nTips < 3) return (tree)
   edge   <- tree$edge
@@ -63,13 +59,13 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   brokenEdge.parentNode <- parent[edgeToBreak]
   brokenEdge.childNode  <-  child[edgeToBreak]
   
-  if (!is.null(mergeEdges)) { # Quick sanity checks
-    if (any(mergeEdges > nEdge)) return(TBRWarning(tree, "mergeEdges value > number of edges"))
-    if (length(mergeEdges) > 2 || length(mergeEdges) == 0) 
-        return(TBRWarning(tree, paste0("mergeEdges value ", paste(mergeEdges, collapse='|'),  
+  if (!is.null(mergeEdge)) { # Quick sanity checks
+    if (any(mergeEdge > nEdge)) return(TBRWarning(tree, "mergeEdge value > number of edges"))
+    if (length(mergeEdge) > 2 || length(mergeEdge) == 0) 
+        return(TBRWarning(tree, paste0("mergeEdge value ", paste(mergeEdge, collapse='|'),  
                " invalid; must be NULL or a vector of length 1 or 2\n  ")))
-    if (length(mergeEdges) == 2 && mergeEdges[1] == mergeEdges[2]) 
-      return(TBRWarning(tree, "mergeEdges values must differ"))
+    if (length(mergeEdge) == 2 && mergeEdge[1] == mergeEdge[2]) 
+      return(TBRWarning(tree, "mergeEdge values must differ"))
   }  
   
   edgesCutAdrift <- DescendantEdges(edgeToBreak, parent, child)
@@ -86,15 +82,15 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
     nearBrokenEdge <- nearBrokenEdge | brokenRootDaughters
   }
   
-  if (is.null(mergeEdges)) {
+  if (is.null(mergeEdge)) {
     candidateEdges <- which(!nearBrokenEdge & not1)
     nCandidates <- length(candidateEdges)
-    if (nCandidates > 1) mergeEdges <- SampleOne(candidateEdges, len=nCandidates) else mergeEdges <- candidateEdges
+    if (nCandidates > 1) mergeEdge <- SampleOne(candidateEdges, len=nCandidates) else mergeEdge <- candidateEdges
   }
-  if (length(mergeEdges) == 1) {
-    if (edgesOnAdriftSegment[mergeEdges]) {
-      adriftReconnectionEdge <- mergeEdges
-      if (nearBrokenEdge[mergeEdges]) {
+  if (length(mergeEdge) == 1) {
+    if (edgesOnAdriftSegment[mergeEdge]) {
+      adriftReconnectionEdge <- mergeEdge
+      if (nearBrokenEdge[mergeEdge]) {
         samplable <- which(!edgesOnAdriftSegment & !nearBrokenEdge & not1)
       } else {
         samplable <- which(!edgesOnAdriftSegment & not1)
@@ -105,8 +101,8 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
       rootedReconnectionEdge <- if (nSamplable == 1) samplable else SampleOne(samplable, len=nSamplable)
       #### cat(" - Selected rooted Reconnection Edge: ", rootedReconnectionEdge, "\n")  #### DEBUGGING AID
     } else {
-      rootedReconnectionEdge <- mergeEdges
-      if (nearBrokenEdge[mergeEdges]) {
+      rootedReconnectionEdge <- mergeEdge
+      if (nearBrokenEdge[mergeEdge]) {
         samplable <- which(edgesOnAdriftSegment & !nearBrokenEdge & not1)
       } else {
         samplable <- which(edgesOnAdriftSegment & not1)
@@ -117,13 +113,13 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
       #### cat(" - Selected adrift Reconnection Edge: ", adriftReconnectionEdge, "\n") #### DEBUGGING AID
     }
   } else {
-    whichAdrift <- edgesOnAdriftSegment[mergeEdges]
-    if (sum(whichAdrift) != 1) return(TBRWarning(tree, paste("Invalid edges selected to merge:", mergeEdges[1], mergeEdges[2])))
-    adriftReconnectionEdge <- mergeEdges[whichAdrift]
-    rootedReconnectionEdge <- mergeEdges[!whichAdrift]
+    whichAdrift <- edgesOnAdriftSegment[mergeEdge]
+    if (sum(whichAdrift) != 1) return(TBRWarning(tree, paste("Invalid edges selected to merge:", mergeEdge[1], mergeEdge[2])))
+    adriftReconnectionEdge <- mergeEdge[whichAdrift]
+    rootedReconnectionEdge <- mergeEdge[!whichAdrift]
   }
   if(nearBrokenEdge[rootedReconnectionEdge] && nearBrokenEdge[adriftReconnectionEdge]) 
-    return(TBRWarning(tree, "Selected mergeEdges will not change tree topology."))
+    return(TBRWarning(tree, "Selected mergeEdge will not change tree topology."))
   #### edgelabels(edge = edgeToBreak, bg='orange', cex=1.8)  #### DEBUGGING AID
   #### edgelabels(edge=adriftReconnectionEdge, bg='cyan')    #### DEBUGGING AID
   #### edgelabels(edge=rootedReconnectionEdge, bg='magenta') #### DEBUGGING AID
@@ -174,11 +170,11 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   tree
 }
 
-#' Rooted TBR 
-#' @describeIn TBR Perform \acronym{TBR} rearrangement, retaining position of root
+#' Rooted SPR 
+#' @describeIn SPR Perform \acronym{TBR} rearrangement, retaining position of root
 #' @importFrom ape root
 #' @export
-RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
+RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   nTips <- tree$Nnode + 1
   if (nTips < 4) return (TBRWarning(tree, 'Fewer than 4 tips'))
   edge   <- tree$edge
@@ -218,15 +214,15 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   edgesRemaining <- !edgesCutAdrift & subtreeEdges
   edgesOnAdriftSegment <- edgesCutAdrift | brokenEdge
   
-  if (!is.null(mergeEdges)) { # Quick sanity checks
-    if (any(mergeEdges > nEdge)) return(TBRWarning(tree, "mergeEdges value > number of edges"))
-    if (length(mergeEdges) > 2 || length(mergeEdges) == 0) 
-        return(TBRWarning(tree, paste0("mergeEdges value ", paste(mergeEdges, collapse='|'),  
+  if (!is.null(mergeEdge)) { # Quick sanity checks
+    if (any(mergeEdge > nEdge)) return(TBRWarning(tree, "mergeEdge value > number of edges"))
+    if (length(mergeEdge) > 2 || length(mergeEdge) == 0) 
+        return(TBRWarning(tree, paste0("mergeEdge value ", paste(mergeEdge, collapse='|'),  
                " invalid; must be NULL or a vector of length 1 or 2\n  ")))
-    if (length(mergeEdges) == 2 && mergeEdges[1] == mergeEdges[2]) 
-      return(TBRWarning(tree, "mergeEdges values must differ"))
-    if (!all(subtreeWithRoot[mergeEdges])) return(TBRWarning(tree, paste("mergeEdges", 
-          mergeEdges[1], mergeEdges[2], "not on same side of root as edgeToBreak", edgeToBreak)))
+    if (length(mergeEdge) == 2 && mergeEdge[1] == mergeEdge[2]) 
+      return(TBRWarning(tree, "mergeEdge values must differ"))
+    if (!all(subtreeWithRoot[mergeEdge])) return(TBRWarning(tree, paste("mergeEdge", 
+          mergeEdge[1], mergeEdge[2], "not on same side of root as edgeToBreak", edgeToBreak)))
   }  
   
   brokenEdgeParent <- child  == brokenEdge.parentNode
@@ -236,15 +232,15 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   nearBrokenEdge <- brokenEdgeSister | brokenEdgeParent | brokenEdgeDaughters | brokenEdge
   Assert(any(brokenEdgeParent))
   
-  if (is.null(mergeEdges)) {
-    mergeEdges  <- which(subtreeEdges & !nearBrokenEdge)
-    nCandidates <- length(mergeEdges)
-    if (nCandidates > 1) mergeEdges <- SampleOne(mergeEdges, len=nCandidates)
+  if (is.null(mergeEdge)) {
+    mergeEdge  <- which(subtreeEdges & !nearBrokenEdge)
+    nCandidates <- length(mergeEdge)
+    if (nCandidates > 1) mergeEdge <- SampleOne(mergeEdge, len=nCandidates)
   }
-  if (length(mergeEdges) == 1) {
-    if (edgesOnAdriftSegment[mergeEdges]) {
-      adriftReconnectionEdge <- mergeEdges
-      if (nearBrokenEdge[mergeEdges]) {
+  if (length(mergeEdge) == 1) {
+    if (edgesOnAdriftSegment[mergeEdge]) {
+      adriftReconnectionEdge <- mergeEdge
+      if (nearBrokenEdge[mergeEdge]) {
         samplable <- which(subtreeEdges & !edgesOnAdriftSegment & !nearBrokenEdge)
       } else {
         samplable <- which(subtreeEdges & !edgesOnAdriftSegment)
@@ -255,8 +251,8 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
       rootedReconnectionEdge <- if (nSamplable == 1) samplable else SampleOne(samplable, len=nSamplable)
       #### cat(" - Selected rooted Reconnection Edge: ", rootedReconnectionEdge, "\n")  #### DEBUGGING AID
     } else {
-      rootedReconnectionEdge <- mergeEdges
-      if (nearBrokenEdge[mergeEdges]) {
+      rootedReconnectionEdge <- mergeEdge
+      if (nearBrokenEdge[mergeEdge]) {
         samplable <- which(subtreeEdges & edgesOnAdriftSegment & !nearBrokenEdge)
       } else {
         samplable <- which(subtreeEdges & edgesOnAdriftSegment)
@@ -267,14 +263,14 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
       #### cat(" - Selected adrift Reconnection Edge: ", adriftReconnectionEdge, "\n") #### DEBUGGING AID
     }
   } else {
-    whichAdrift <- edgesOnAdriftSegment[mergeEdges]
+    whichAdrift <- edgesOnAdriftSegment[mergeEdge]
     if (sum(whichAdrift) != 1) return(TBRWarning(tree, paste("Invalid edges selected to merge:",
-            mergeEdges[1], mergeEdges[2])))
-    adriftReconnectionEdge <- mergeEdges[whichAdrift]
-    rootedReconnectionEdge <- mergeEdges[!whichAdrift]
+            mergeEdge[1], mergeEdge[2])))
+    adriftReconnectionEdge <- mergeEdge[whichAdrift]
+    rootedReconnectionEdge <- mergeEdge[!whichAdrift]
   }
   if(nearBrokenEdge[rootedReconnectionEdge] && nearBrokenEdge[adriftReconnectionEdge]) 
-    return(TBRWarning(tree, "Selected mergeEdges will not change tree topology."))
+    return(TBRWarning(tree, "Selected mergeEdge will not change tree topology."))
   #### edgelabels(edge = edgeToBreak, bg='orange', cex=1.8)  #### DEBUGGING AID
   #### edgelabels(edge=adriftReconnectionEdge, bg='cyan')    #### DEBUGGING AID
   #### edgelabels(edge=rootedReconnectionEdge, bg='magenta') #### DEBUGGING AID
