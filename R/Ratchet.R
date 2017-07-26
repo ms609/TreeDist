@@ -28,7 +28,7 @@
 #' @seealso \code{\link{TreeSearch}}
 #' @seealso \code{\link{SectorialSearch}}
 #' 
-#' @examples Ratchet(RandomTree(Lobo.phy), SigSut.phy, outgroup='Cricocosmia')
+#' @examples Ratchet(RandomTree(Lobo.phy), Lobo.phy, outgroup='Cricocosmia')
 #' 
 #' @keywords  tree 
 #' @export
@@ -50,7 +50,7 @@ Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, outgrou
   iterationsCompleted <- 0
   for (i in 1:ratchIter) {
     if (track >= 0) cat ("\n - Running NNI on bootstrapped dataset. ")
-    bootstrapTree <- BootstrapTree(phy=tree, x=data, maxIter=searchIter, maxHits=searchHits,
+    bootstrapTree <- BootstrapTree(tree, data, maxIter=searchIter, maxHits=searchHits,
                         TreeScorer=TreeScorer, track=track-1, ...)
     
     if (track >= 0) cat ("\n - Running", ifelse(is.null(rearrangements), "NNI", rearrangements), "from new candidate tree:")
