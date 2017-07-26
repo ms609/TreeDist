@@ -4,8 +4,9 @@
 \alias{SectorialSearch}
 \title{Sectorial Search}
 \usage{
-SectorialSearch(tree, dataset, concavity = NULL, rearrangements = "NNI",
-  maxiter = 2000, cluster = NULL, verbosity = 3, ...)
+SectorialSearch(tree, dataset, ParsimonyScorer = FitchScore,
+  concavity = NULL, rearrangements = "NNI", maxiter = 2000,
+  cluster = NULL, verbosity = 3, ...)
 }
 \arguments{
 \item{tree}{a rooted, resolved tree in \code{\link{phylo}} format from which to start the search;}

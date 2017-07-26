@@ -68,10 +68,10 @@
 #' 
 #' @keywords  tree 
 #' @export
-SectorialSearch <- function (tree, dataset, concavity = NULL, rearrangements='NNI', maxiter=2000, cluster=NULL, verbosity=3, ...) {
+SectorialSearch <- function (tree, dataset, ParsimonyScorer = FitchScore, concavity = NULL, rearrangements='NNI', maxiter=2000, cluster=NULL, verbosity=3, ...) {
   best.score <- attr(tree, 'pscore')
   tree <- RenumberTips(tree, names(dataset))
-  if (length(best.score) == 0) best.score <- InapplicableFitch(tree, dataset, ...)[[1]]
+  if (length(best.score) == 0) best.score <- ParsimonyScorer(tree, dataset, ...)[[1]]
   sect <- InapplicableSectorial(tree, dataset, cluster=cluster,
     verbosity=verbosity-1, maxit=30, maxiter=maxiter, maxhits=15, smallest.sector=6, 
     largest.sector=length(tree$edge[,2L])*0.25, rearrangements=rearrangements)
@@ -98,7 +98,7 @@ SectorialSearch <- function (tree, dataset, concavity = NULL, rearrangements='NN
 #' @author Martin R. Smith
 #' @importFrom ape root
 #' @export
-InapplicableSectorial <- function (tree, dataset, ParsimonyScorer = phangorn::fitch, maxit=100, 
+InapplicableSectorial <- function (tree, dataset, ParsimonyScorer = FitchScore, maxit=100, 
     maxiter=500, k=5, verbosity=0, smallest.sector=4, largest.sector=1e+06, rearrangements="NNI", ...) {
   if (class(dataset) != 'phyDat') stop("dataset must be a phyDat object.")
   if (is.null(tree)) stop("a starting tree must be provided")
@@ -176,3 +176,4 @@ InapplicableSectorial <- function (tree, dataset, ParsimonyScorer = phangorn::fi
   attr(tree, 'hits') <- NULL
   tree
 }  # InapplicableSectorial
+

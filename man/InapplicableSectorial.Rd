@@ -4,7 +4,7 @@
 \alias{InapplicableSectorial}
 \title{Sectorial Search with inapplicable data}
 \usage{
-InapplicableSectorial(tree, dataset, ParsimonyScorer = phangorn::fitch,
+InapplicableSectorial(tree, dataset, ParsimonyScorer = FitchScore,
   maxit = 100, maxiter = 500, k = 5, verbosity = 0,
   smallest.sector = 4, largest.sector = 1e+06, rearrangements = "NNI",
   ...)

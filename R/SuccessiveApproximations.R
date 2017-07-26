@@ -54,9 +54,9 @@ Suboptimality <- function (trees, proportional = FALSE) {
 #' @export
 SuccessiveWeights <- function(tree, data) {
   # Data
-  if (class(data) == 'phyDat') data <- PrepareDataFitch(data)
-  if (class(data) != 'fitchDat') {
-    stop('Invalid data type; prepare data with PhyDat() or PrepareDataFitch().')
+  if (class(data) == 'phyDat') data <- PrepareDataSA(data)
+  if (class(data) != 'saDat') {
+    stop('Invalid data type; prepare data with PhyDat() or PrepareDataSA().')
   }
   at <- attributes(data)
   weight <- at$weight
@@ -64,4 +64,32 @@ SuccessiveWeights <- function(tree, data) {
   if (is.null(sa.weights)) sa.weights <- rep(1, length(weight))
   steps <- Fitch(tree, data, at)
   return(sum(steps * sa.weights * weight))
+}
+
+PrepareDataSA <- function (data) {
+# Written with reference to phangorn:::prepareDataFitch
+  at <- attributes(data)
+  nam <- at$names
+  nLevel <- length(at$level)
+  nChar <- at$nr
+  cont <- attr(data, "contrast")
+  nTip <- length(data)
+  
+  at$names <- NULL
+  powers.of.2 <- 2L ^ c(0L:(nLevel - 1L))
+  tmp <- cont %*% powers.of.2
+  tmp <- as.integer(tmp)
+  data <- unlist(data, FALSE, FALSE)
+  ret <- tmp[data] 
+  ret <- as.integer(ret)
+  attributes(ret) <- at
+  inappLevel <- which(at$levels == "-")
+  attr(ret, 'inappLevel') <- 2 ^ (inappLevel - 1)
+  attr(ret, 'dim') <- c(nChar, nTip)  
+  attr(ret, 'unique.tokens') <- apply(ret, 1, function(x) min(x, inappLevel))
+  applicableTokens <- setdiff(powers.of.2, 2 ^ (inappLevel - 1))
+  attr(ret, 'split.sizes') <- t(apply(ret, 1, function(x) vapply(applicableTokens, function (y) sum(x == y), integer(1))))
+  dimnames(ret) <- list(NULL, nam)
+  class(ret) <- 'saDat'
+  ret
 }
