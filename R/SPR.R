@@ -65,6 +65,7 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
     if (length(mergeEdge) !=  1) 
         return(SPRWarning(tree, paste0("mergeEdge value ", paste(mergeEdge, collapse='|'),  
                " invalid; must be NULL or a vector of length 1\n")))
+    if(nearBrokenEdge[mergeEdge]) return(SPRWarning(tree, "Selected mergeEdge will not change tree topology."))
   }  
   
   edgesCutAdrift <- DescendantEdges(edgeToBreak, parent, child)
@@ -87,49 +88,21 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
     if (nCandidates > 1) mergeEdge <- SampleOne(mergeEdge, len=nCandidates)
   }
   
-  adriftReconnectionEdge <- warning("mergeEdge[whichAdrift]")
-  rootedReconnectionEdge <- warning("mergeEdge[!whichAdrift]")
-1
+  if (breakingRootEdge) {
+    parent[brokenRootDaughters] <- brokenEdge.parentNode
+    spareNode <- child[brokenEdgeSister]
+    child [brokenEdgeSister] <- child[mergeEdge]
+    parent[c(edgeToBreak, brokenEdgeSister)] <- spareNode
+    child[mergeEdge] <- spareNode
+  } else {
+    parent[brokenEdgeSister] <- parent[brokenEdgeParent]
+    parent[brokenEdgeParent] <- parent[mergeEdge]
+    parent[mergeEdge] <- brokenEdge.parentNode
+  }
 
-  if(nearBrokenEdge[mergeEdge]) return(SPRWarning(tree, "Selected mergeEdge will not change tree topology."))
   
-  if (!nearBrokenEdge[adriftReconnectionEdge]) {
-    edgesToInvert <- EdgeAncestry(adriftReconnectionEdge, parent, child, stopAt = edgeToBreak) & !brokenEdge
-    #### which(edgesToInvert)
-    if (any(edgesToInvert)) {
-      tmp <- parent[edgesToInvert]
-      parent[edgesToInvert] <- child[edgesToInvert]
-      child[edgesToInvert] <- tmp
-    }
-    reconnectionSideEdges <- edgesToInvert
-    reconnectionSideEdges[adriftReconnectionEdge] <- TRUE
-    
-    repurposedDaughterEdge <- brokenEdgeDaughters & reconnectionSideEdges
-    spareDaughterEdge      <- brokenEdgeDaughters & !reconnectionSideEdges
-    ######Assert(identical(sum(repurposedDaughterEdge), sum(spareDaughterEdge), 1))
-    #### which(repurposedDaughterEdge)
-    #### which(spareDaughterEdge)
-    child[repurposedDaughterEdge] <- child[spareDaughterEdge]
-    child[spareDaughterEdge] <- parent[adriftReconnectionEdge]
-    ######Assert(parent[spareDaughterEdge] == brokenEdge.childNode)
-    parent[adriftReconnectionEdge] <- brokenEdge.childNode
-  }
-  if (!nearBrokenEdge[rootedReconnectionEdge]) {
-    if (breakingRootEdge) {
-      parent[brokenRootDaughters] <- brokenEdge.parentNode
-      spareNode <- child[brokenEdgeSister]
-      child [brokenEdgeSister] <- child[rootedReconnectionEdge]
-      parent[c(edgeToBreak, brokenEdgeSister)] <- spareNode
-      child[rootedReconnectionEdge] <- spareNode
-    } else {
-      parent[brokenEdgeSister] <- parent[brokenEdgeParent]
-      parent[brokenEdgeParent] <- parent[rootedReconnectionEdge]
-      parent[rootedReconnectionEdge] <- brokenEdge.parentNode
-    }
-  }
-  
-  ######Assert(identical(unique(table(parent)), 2L))
-  ######Assert(identical(unique(table(child)),  1L))
+  Assert(identical(unique(table(parent)), 2L))
+  Assert(identical(unique(table(child)),  1L))
   ####   matrix(c(parent, child), ncol=2)
   
   tree$edge <- OrderEdgesNumberNodes(parent, child, nTips, nEdge)
