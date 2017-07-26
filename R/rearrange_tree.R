@@ -281,8 +281,8 @@ RootedNNI <- function (tree) {
   child   <- edge[, 2]
   sampleableChild <- child
   sampleableChild[which(parent == as.integer(parent[!match(parent, child, 0)][1]))] <- -1 # Don't want to switch across the root
-  ind     <- Sample1(which(sampleableChild > nTips))
-  if(is.na(ind)) return(NULL)
+  chosenInternalEdge <- Sample1(which(sampleableChild > nTips))
+  if(is.na(chosenInternalEdge)) return(NULL)
   
   rootNode <- nTips + 1L
   nEdge <- length(parent)
