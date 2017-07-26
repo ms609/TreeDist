@@ -4,8 +4,14 @@ Version: 0.0.3
 Date: 2017-07-25
 Authors@R: person('Smith', "Martin R.", email="martins@gmail.com", role=c("aut", "cre"))
 Description: Searches for phylogenetic trees that are optimal using a user-defined criterion.
-Depends: R (>= 3.4.0), ape
-Suggests: testthat, phangorn
+Depends: R (>= 3.4.0)
+Imports: ape
+Suggests: 
+    phangorn,
+    testthat
+Enhances:
+    ape,
+    phangorn
 LazyData: true
 License: CC0
 URL: https://github.com/ms609/TreeSearch
