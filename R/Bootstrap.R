@@ -8,18 +8,15 @@
 BootstrapTree <- function (phy, x, maxiter, maxhits, ParsimonyScorer = phangorn::fitch, track=1, ...) {
 ## Simplified version of phangorn::bootstrap.phyDat, with bs=1 and multicore=FALSE
   at <- attributes(x)
-  weight <- at$weight
-  v <- rep(1:length(weight), weight)
-  BS <- tabulate(sample(v, replace=TRUE), length(weight)) 
-  keep <- BS > 0
-  ind <- which(keep)
-  x <- x[ind, ]
-  attr(x, 'weight') <- BS[ind]
+  bootstrapped <- BootstrapWeightings(at)
+  keep <- bootstrapped > 0
+  x <- x[keep, ] ## TODO use TipsAreColumns family
+  attr(x, 'weight') <- bootstrapped[which(keep)]
   attr(x, 'min.steps') <- at$min.steps[keep]
   attr(x, 'info.amounts') <- at$info.amounts[keep, ]
   attr(x, 'unique.tokens') <- at$unique.tokens[keep]
   attr(x, 'sa.weights') <- at$sa.weights[keep]
-  attr(x, 'nr') <- length(ind)
+  attr(x, 'nr') <- sum(keep)
   attr(x, 'inapp.level') <- at$inapp.level
   attr(phy, 'score') <- NULL
   class(x) <- 'fitchDat'
@@ -28,4 +25,12 @@ BootstrapTree <- function (phy, x, maxiter, maxhits, ParsimonyScorer = phangorn:
   attr(res, 'score') <- NULL
   attr(res, 'hits') <- NULL
   res
+}
+
+BootstrapWeightings <- function (attribs) {
+  weight <- attribs$weight
+  v <- rep(1:length(weight), weight)
+  BS <- tabulate(sample(v, replace=TRUE), length(weight)) 
+  
+
 }
