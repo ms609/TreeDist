@@ -25,13 +25,13 @@ C_Fitch <- function (characters, nChar, parent, child, nEdge, weight, maxNode, n
 
 #' @keywords internal
 #' @export
-TipsAreNames <- function(data, tips) unlist(data[tips])
+TipsAreNames <- function(data, tips) as.integer(unlist(data[tips]))
 #' @keywords internal
 #' @export
-TipsAreRows <- function(data, tips) data[tips, ]
+TipsAreRows <- function(data, tips) as.integer(data[tips, ])
 #' @keywords internal
 #' @export
-TipsAreColumns <- function(data, tips) t(data[, tips])
+TipsAreColumns <- function(data, tips) as.integer(data[, tips])
 
 #' Fitch score
 #' 
@@ -61,7 +61,9 @@ Fitch <- function (tree, data, TipData = TipsAreNames, at = attributes(data),
       weight = at$weight, 
       maxNode = parent[1], #max(parent),
       nTip = length(tipLabel)
-    )
+    ) 
+    
+    FitchFunction(TipData(data, tipLabel), at$nr, parent, child, length(parent), at$weight, parent[1], nTip = length(tipLabel))
   )
 }
 #' @describeIn Fitch returns the parsimony score only
