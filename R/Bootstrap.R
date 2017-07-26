@@ -20,6 +20,7 @@ BootstrapTree <- function (phy, x, maxIter, maxHits, TreeScorer = FitchScore, tr
   for (attrName in at$bootstrap) {
     attribute <- at[attrName][[1]]
     if (length(dim(attribute)) == 2) {
+      if (dim(attribute)[2] != length(keep)) warning("Bootstrap mismatch for attribute", attrName)
       attr(x, attrName) <- attribute[, keep]
     } else if (length(attribute) == length(keep)) {
       attr(x, attrName) <- attribute[keep]

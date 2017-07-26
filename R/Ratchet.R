@@ -32,6 +32,7 @@
 #' 
 #' @keywords  tree 
 #' @export
+## TODO use Rooted NNI / SPR / TBR 
 Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, outgroup=NULL, 
                       ratchIter=100, searchIter=5000, searchHits=40, ratchHits=10, track=0, 
                       rearrangements="NNI", suboptimal=1e-08, ...) {
@@ -50,7 +51,7 @@ Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, outgrou
   for (i in 1:ratchIter) {
     if (track >= 0) cat ("\n - Running NNI on bootstrapped dataset. ")
     bootstrapTree <- BootstrapTree(phy=tree, x=data, maxIter=searchIter, maxHits=searchHits,
-                        TreeScorer=TreeScorer,  track=track - 1, ...)
+                        TreeScorer=TreeScorer, track=track-1, ...)
     
     if (track >= 0) cat ("\n - Running", ifelse(is.null(rearrangements), "NNI", rearrangements), "from new candidate tree:")
     if (rearrangements == "TBR") {
