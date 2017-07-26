@@ -61,10 +61,10 @@ Fitch <- function (tree, data, TipData = TipsAreNames, at = attributes(data),
       weight = at$weight, 
       maxNode = parent[1], #max(parent),
       nTip = length(tipLabel)
-    ) 
-    
-    FitchFunction(TipData(data, tipLabel), at$nr, parent, child, length(parent), at$weight, parent[1], nTip = length(tipLabel))
+    )   
   )
+  # TODO DELTE debugging line:
+  #    FitchFunction(TipData(data, tipLabel), at$nr, parent, child, length(parent), at$weight, parent[1], nTip = length(tipLabel))
 }
 #' @describeIn Fitch returns the parsimony score only
 #' @export

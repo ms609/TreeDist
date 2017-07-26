@@ -4,16 +4,17 @@
 \alias{Ratchet}
 \title{Parsimony Ratchet}
 \usage{
-Ratchet(tree, data, TreeScorer = FitchScore, all = FALSE, outgroup = NULL,
-  pratchiter = 100, searchiter = 5000, searchhits = 40, pratchhits = 10,
-  track = 0, rearrangements = "NNI", suboptimal = 1e-08, ...)
+Ratchet(tree, data, TreeScorer = FitchScore, returnAll = FALSE,
+  outgroup = NULL, ratchIter = 100, searchIter = 5000, searchHits = 40,
+  ratchHits = 10, track = 0, rearrangements = "NNI", suboptimal = 1e-08,
+  ...)
 }
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}}
 
 \item{data}{a dataset in the format required by TreeScorer}
 
-\item{all}{Set to \code{TRUE} to report all MPTs encountered during the search, perhaps to analyze consensus}
+\item{returnAll}{Set to \code{TRUE} to report all MPTs encountered during the search, perhaps to analyze consensus}
 
 \item{outgroup}{a vector specifying all tips in the outgroup; if unspecified then identical trees with different roots will be considered unique;}
 
