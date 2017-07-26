@@ -15,3 +15,68 @@ Min <- function (x, inappLevel) {
 #' @keywords internal
 #' @export
 SampleOne <- function (x, len = length(x)) x[sample.int(len, 1L, FALSE, NULL, FALSE)]
+
+Assert <- function (statement) if (!statement) stop(deparse(statement), " is FALSE")
+
+#' Descendant Edges
+#'
+#' Quickly identifies edges that are 'descended' from a particular edge in a tree
+#'
+#' @param edge number of the edge whose child edges are required
+#' @template treeParent
+#' @template treeChild
+#' @param nEdge number of edges (calcluated from length(parent) if not supplied)
+#' @return a logical vector stating whether each edge in turn is a descendant of the speficied edge
+#'         (or the edge itself)
+#' @export
+DescendantEdges <- function (edge, parent, child, nEdge = length(parent)) {
+  ret <- logical(nEdge)
+  edgeSister <- parent == parent[edge]
+  edgeSister[edge] <- FALSE
+  edgeSister <- which(edgeSister)
+  if (edgeSister > edge) {
+    ret[edge:(edgeSister - 1L)] <- TRUE 
+    return(ret)
+  } else {
+    nextEdge <- edge
+    repeat {
+      if (any(descendants <- (parent == child[nextEdge]))) {
+        nextEdge <- which(descendants)[2]
+      } else break;
+    }
+    ret[edge:nextEdge] <- TRUE 
+    return(ret)
+  }
+}
+
+#' @keywords internal
+#' @export
+AncestorEdge <- function (edge, parent, child) child == parent[edge]
+
+#' Descendant Edges
+#'
+#' Quickly identifies edges that are 'ancestral' to a particular edge in a tree
+#'
+#' @param edge number of the edge whose child edges are required
+#' @template treeParent
+#' @template treeChild
+#' @param stopAt number of the edge at which the search should terminate; defaults to the root edges
+#' @param nEdge number of edges (calcluated from length(parent) if not supplied)
+#' @return a logical vector stating whether each edge in turn is a descendant of the speficied edge
+#' @export
+EdgeAncestry <- function (edge, parent, child, stopAt = (parent==min(parent))) {
+  ret <- edge <- AncestorEdge(edge, parent, child)
+  repeat {
+    if (any(ret[stopAt])) return(ret)
+    ret[edge <- AncestorEdge(edge, parent, child)] <- TRUE    
+  }
+}
+
+#' Generate random tree topology from dataset
+#' 
+#' @param dataset A dataset in \code{\link[phangorn]{phyDat}} format
+#' 
+#' @author Martin R. Smith 
+#' @importFrom ape rtree
+#' @export
+RandomTree <- function (dataset) rtree(length(dataset), tip.label=names(dataset), br=NULL)
