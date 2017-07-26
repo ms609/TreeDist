@@ -59,15 +59,7 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   brokenEdge <- seq_along(parent) == edgeToBreak
   brokenEdge.parentNode <- parent[edgeToBreak]
   brokenEdge.childNode  <-  child[edgeToBreak]
-  
-  if (!is.null(mergeEdge)) { # Quick sanity checks
-    if (mergeEdge > nEdge) return(SPRWarning(tree, "mergeEdge value > number of edges"))
-    if (length(mergeEdge) !=  1) 
-        return(SPRWarning(tree, paste0("mergeEdge value ", paste(mergeEdge, collapse='|'),  
-               " invalid; must be NULL or a vector of length 1\n")))
-    if(nearBrokenEdge[mergeEdge]) return(SPRWarning(tree, "Selected mergeEdge will not change tree topology."))
-  }  
-  
+    
   edgesCutAdrift <- DescendantEdges(edgeToBreak, parent, child)
   edgesRemaining <- !edgesCutAdrift & !brokenEdge
   edgesOnAdriftSegment <- edgesCutAdrift | brokenEdge
@@ -81,6 +73,14 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
     brokenRootDaughters <- parent == child[brokenEdgeSister]
     nearBrokenEdge <- nearBrokenEdge | brokenRootDaughters
   }
+    
+  if (!is.null(mergeEdge)) { # Quick sanity checks
+    if (mergeEdge > nEdge) return(SPRWarning(tree, "mergeEdge value > number of edges"))
+    if (length(mergeEdge) !=  1) 
+        return(SPRWarning(tree, paste0("mergeEdge value ", paste(mergeEdge, collapse='|'),  
+               " invalid; must be NULL or a vector of length 1\n")))
+    if(nearBrokenEdge[mergeEdge]) return(SPRWarning(tree, "Selected mergeEdge will not change tree topology."))
+  }  
   
   if (is.null(mergeEdge)) {
     mergeEdge <- which(!nearBrokenEdge & !edgesOnAdriftSegment & not1)
