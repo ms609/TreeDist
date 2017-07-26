@@ -1,11 +1,15 @@
 #' Bootstrap tree search with inapplicable data
 #' 
 #' @template labelledTreeParam
-
+#' @param x a dataset in the format required by TreeScorer
+#' @param maxIter maximum number of iterations to perform in tree search
+#' @param maxHits number of times to find optimal tree length before stopping tree search
+#' @template TreeScorerParam
+#' @template trackParam
 #'
 #' @return A tree that is optimal under a random sampling of the original characters
 #' @export  
-BootstrapTree <- function (phy, x, maxIter, maxHits, TreeScorer = FitchScore, track=1, ...) {
+BootstrapTree <- function (tree, x, maxIter, maxHits, TreeScorer = FitchScore, track=1, ...) {
 ## Simplified version of phangorn::bootstrap.phyDat, with bs=1 and multicore=FALSE
   at <- attributes(x)
   bootstrappedWeight <- BootstrapWeightings(at)
@@ -28,8 +32,8 @@ BootstrapTree <- function (phy, x, maxIter, maxHits, TreeScorer = FitchScore, tr
   }
   attr(x, 'nr') <- sum(keep)
   
-  attr(phy, 'score') <- NULL
-  res <- DoTreeSearch(phy, x, TreeScorer=TreeScorer, method='NNI', maxIter=maxIter,
+  attr(tree, 'score') <- NULL
+  res <- DoTreeSearch(tree, x, TreeScorer=TreeScorer, method='NNI', maxIter=maxIter,
                       maxHits=maxHits, track=track-1, ...)
   attr(res, 'score') <- NULL
   attr(res, 'hits') <- NULL

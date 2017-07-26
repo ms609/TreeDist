@@ -30,9 +30,9 @@
 #'   }
 #' 
 #' @examples
-#' data('SigSut')
-#' random.tree <- RandomTree(SigSut.phy)
-#' RearrangeTree(random.tree, SigSut.phy, RootedNNI)
+#' data('Lobo')
+#' random.tree <- RandomTree(Lobo.phy)
+#' RearrangeTree(random.tree, Lobo.phy, RootedNNI)
 #' 
 #' @importFrom parallel clusterCall
 #' @export
@@ -161,9 +161,9 @@ Pruningwise <- function (tree, nTaxa = length(tree$tip.label), edge = tree$edge)
 #'        \code{tree$tip.label} in the desired sort order
 #' 
 #' @examples
-#' Data(SigSut) # Loads the phyDat object SigSut.phy
-#' tree <- RandomTree(SigSut.phy) # 
-#' tree <- RenumberTips(tree, names(SigSut.phy))
+#' Data(Lobo) # Loads the phyDat object Lobo.phy
+#' tree <- RandomTree(Lobo.phy) # 
+#' tree <- RenumberTips(tree, names(Lobo.phy))
 #'
 #' @author Martin R. Smith
 #' @export

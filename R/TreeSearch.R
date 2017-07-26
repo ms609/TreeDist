@@ -7,7 +7,7 @@
 #' @template datasetParam
 #' @param outgroup a vector listing the taxa in the outgroup;
 #' @param concavity concavity constant for implied weighting (not currently implemented!); 
-#' @param method rearrangements to perform; one of \kbd{NNI}, \kbd{SPR}, or \kbd{TBR};
+#' @param Rearrange rearrangement function to use; perhaps one of \kbd{NNI}, \kbd{SPR}, or \kbd{TBR};
 #' @param maxIter the maximum number of iterations to perform before abandoning the search;
 #' @param maxHits the maximum times to hit the best pscore before abandoning the search;
 #' @param forestSize the maximum number of trees to return - useful in concert with \code{\link{consensus}};
@@ -31,26 +31,26 @@
 #' }
 #'
 #' @examples
-#' data('SigSut')
+#' data('Lobo')
 #' outgroup <- c('Lingula', 'Mickwitzia', 'Neocrania')
-#' njtree <- Root(nj(dist.hamming(SigSut.phy)), outgroup, resolve.root=TRUE)
+#' njtree <- Root(nj(dist.hamming(Lobo.phy)), outgroup, resolve.root=TRUE)
 #' njtree$edge.length <- NULL; njtree<-SetOutgroup(njtree, outgroup)
 #'
 #' \dontrun{
-#' TreeSearch(njtree, SigSut.phy, outgroup, maxIter=20, method='NNI')
-#' TreeSearch(njtree, SigSut.phy, outgroup, maxIter=20, method='SPR')
-#' TreeSearch(njtree, SigSut.phy, outgroup, maxIter=20, method='TBR')}
+#' TreeSearch(njtree, Lobo.phy, outgroup, maxIter=20, Rearrange=NNI)
+#' TreeSearch(njtree, Lobo.phy, outgroup, maxIter=20, Rearrange=SPR)
+#' TreeSearch(njtree, Lobo.phy, outgroup, maxIter=20, Rearrange=TBR)}
 #' 
 #' @keywords  tree 
 #' 
 #' @export
 TreeSearch <- function 
-(tree, dataset, method='NNI', maxIter=100, maxHits=20, forestSize=1, cluster=NULL, 
+(tree, dataset, Rearrange=NNI, maxIter=100, maxHits=20, forestSize=1, cluster=NULL, 
  verbosity=1, ...) {
   # Initialize morphy object
   if (class(dataset) != 'phyDat') stop ("dataset must be of class phyDat, not ", class(dataset))
   tree <- RenumberTips(tree, names(dataset))
-  ret <- DoTreeSearch(tree, dataset, method, maxIter, maxHits, forestSize, cluster, 
+  ret <- DoTreeSearch(tree, dataset, Rearrange, maxIter, maxHits, forestSize, cluster, 
                       verbosity, ...)
   return (ret)
 }
@@ -93,7 +93,7 @@ DoTreeSearch <- function (tree, data, TreeScorer = FitchScore, Rearrange = NNI,
   }
   if (is.null(attr(tree, 'score'))) attr(tree, 'score') <- TreeScorer(tree, data)
   bestScore <- attr(tree, 'score')
-  if (track > 0) cat("\n  - Performing", method, "search.  Initial score:", bestScore)
+  if (track > 0) cat("\n  - Performing", deparse(Rearrange), "search.  Initial score:", bestScore)
   returnSingle <- !(forestSize > 1)
   
   for (iter in 1:maxIter) {
@@ -123,7 +123,7 @@ DoTreeSearch <- function (tree, data, TreeScorer = FitchScore, Rearrange = NNI,
     }
     if (attr(trees, 'hits') >= maxHits) break
   }
-  if (track > 0) cat("\n  - Final score", attr(tree, 'score'), "found", attr(tree, 'hits'), "times after", iter, method, "iterations\n")  
+  if (track > 0) cat("\n  - Final score", attr(tree, 'score'), "found", attr(tree, 'hits'), "times after", iter, deparse(Rearrange), "iterations\n")  
   if (forestSize > 1) {
     if (hits < forestSize) forest <- forest[-((hits+1):forestSize)]
     attr(forest, 'hits') <- hits

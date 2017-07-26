@@ -4,7 +4,7 @@
 \alias{TreeSearch}
 \title{Search for most parsimonious trees}
 \usage{
-TreeSearch(tree, dataset, method = "NNI", maxIter = 100, maxHits = 20,
+TreeSearch(tree, dataset, Rearrange = NNI, maxIter = 100, maxHits = 20,
   forestSize = 1, cluster = NULL, verbosity = 1, ...)
 }
 \arguments{
@@ -13,7 +13,7 @@ TreeSearch(tree, dataset, method = "NNI", maxIter = 100, maxHits = 20,
 \item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
 correspond to the labels of any accompanying tree}
 
-\item{method}{rearrangements to perform; one of \kbd{NNI}, \kbd{SPR}, or \kbd{TBR};}
+\item{Rearrange}{rearrangement function to use; perhaps one of \kbd{NNI}, \kbd{SPR}, or \kbd{TBR};}
 
 \item{maxIter}{the maximum number of iterations to perform before abandoning the search;}
 
@@ -43,15 +43,15 @@ Run standard search algorithms (\acronym{NNI}, \acronym{SPR} or \acronym{TBR})
 to search for a more parsimonious tree.
 }
 \examples{
-data('SigSut')
+data('Lobo')
 outgroup <- c('Lingula', 'Mickwitzia', 'Neocrania')
-njtree <- Root(nj(dist.hamming(SigSut.phy)), outgroup, resolve.root=TRUE)
+njtree <- Root(nj(dist.hamming(Lobo.phy)), outgroup, resolve.root=TRUE)
 njtree$edge.length <- NULL; njtree<-SetOutgroup(njtree, outgroup)
 
 \dontrun{
-TreeSearch(njtree, SigSut.phy, outgroup, maxIter=20, method='NNI')
-TreeSearch(njtree, SigSut.phy, outgroup, maxIter=20, method='SPR')
-TreeSearch(njtree, SigSut.phy, outgroup, maxIter=20, method='TBR')}
+TreeSearch(njtree, Lobo.phy, outgroup, maxIter=20, Rearrange=NNI)
+TreeSearch(njtree, Lobo.phy, outgroup, maxIter=20, Rearrange=SPR)
+TreeSearch(njtree, Lobo.phy, outgroup, maxIter=20, Rearrange=TBR)}
 
 }
 \seealso{

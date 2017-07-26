@@ -18,9 +18,9 @@ such that the indices in \code{tree$edge[, 2]} correspond to the order of
 tips given in \code{tipOrder}
 }
 \examples{
-Data(SigSut) # Loads the phyDat object SigSut.phy
-tree <- RandomTree(SigSut.phy) # 
-tree <- RenumberTips(tree, names(SigSut.phy))
+Data(Lobo) # Loads the phyDat object Lobo.phy
+tree <- RandomTree(Lobo.phy) # 
+tree <- RenumberTips(tree, names(Lobo.phy))
 
 }
 \author{

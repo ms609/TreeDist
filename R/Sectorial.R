@@ -38,12 +38,12 @@
 #' @seealso \code{\link{Ratchet}}
 #' 
 #' @examples{
-#' data('SigSut')
+#' data('Lobo')
 #' outgroup <- c('Lingula', 'Mickwitzia', 'Neocrania')
-#' njtree <- Root(nj(dist.hamming(SigSut.phy)), outgroup, resolve.root=TRUE)
+#' njtree <- Root(nj(dist.hamming(Lobo.phy)), outgroup, resolve.root=TRUE)
 #' njtree$edge.length <- NULL; njtree<-SetOutgroup(njtree, outgroup)
-#' InapplicableSectorial(njtree, SigSut.phy, outgroup, maxit=1, maxIter=50, largest.sector=7)
-#' \dontrun{SectorialSearch(njtree, SigSut.phy, outgroup, 'SPR') # Will be time-consuming}
+#' InapplicableSectorial(njtree, Lobo.phy, outgroup, maxit=1, maxIter=50, largest.sector=7)
+#' \dontrun{SectorialSearch(njtree, Lobo.phy, outgroup, 'SPR') # Will be time-consuming}
 #' 
 #' ## SectorialSearch is currently defined as
 #' # function (start.tree, dataset, outgroup, rearrangements='NNI') {

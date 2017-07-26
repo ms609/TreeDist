@@ -45,9 +45,9 @@ Rearrange phylogenetic tree
 \code{RearrangeTree} performs one tree rearrangement of a specified type
 }
 \examples{
-data('SigSut')
-random.tree <- RandomTree(SigSut.phy)
-RearrangeTree(random.tree, SigSut.phy, RootedNNI)
+data('Lobo')
+random.tree <- RandomTree(Lobo.phy)
+RearrangeTree(random.tree, Lobo.phy, RootedNNI)
 
 }
 \seealso{
