@@ -42,7 +42,7 @@ This function returns a tree modified by parsimony ratchet iteration, retaining 
 \code{Ratchet} uses the parsimony ratchet (Nixon 1999) to search for a more parsimonious tree.
 }
 \examples{
-Ratchet(RandomTree(Lobo.phy), SigSut.phy, outgroup='Cricocosmia')
+Ratchet(RandomTree(Lobo.phy), Lobo.phy, outgroup='Cricocosmia')
 
 }
 \references{
