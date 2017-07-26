@@ -1,28 +1,69 @@
-
-#' @export
-Fitch <- function (tree, data, at = NULL) {
-  if (is.null(at)) at <- attributes(data)
-  n.char  <- at$nr # strictly, transformation series patterns; these'll be upweighted later
-  weight <- at$weight
-  info <- at$info.amounts
-  if (is.null(at$order) || at$order == "cladewise") tree <- Postorder(tree)
-  tree.edge <- tree$edge
-  parent <- tree.edge[, 1]
-  child <- tree.edge[, 2]
-  tip.label <- tree$tip.label
-  n.edge <- length(parent)
-  max.node <- parent[1] #max(parent)
-  n.tip <- length(tip.label)
-  n.node <- max.node - n.tip
-  inapp <- at$inapp.level
-  parent.of <- parent[match((n.tip + 2L):max.node, child )]
-  allNodes <- (n.tip + 1L):max.node
-  child.of <- child [c(match(allNodes, parent),
-                       length(parent) + 1L - match(allNodes, rev(parent)))]
-  fitch <- .Call("FITCH", data[, tree$tip.label], as.integer(n.char),
-        as.integer(parent), as.integer(child), as.integer(n.edge),
-        as.double(weight), as.integer(max.node), as.integer(n.tip), PACKAGE='TreeSearch')
-  return(fitch[[2]])
-#
-#  TODO: link library "inapplicable" to support inapplicable data...
+#' @useDynLib TreeSearch FITCH
+C_Fitch_Score <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
+  .Call("FITCH", characters, as.integer(nChar),
+        as.integer(parent), as.integer(child), as.integer(nEdge),
+        as.double(weight), as.integer(maxNode), as.integer(nTip))[[1]]
 }
+#' @useDynLib TreeSearch FITCH
+C_Fitch_Steps <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
+  .Call("FITCH", characters, as.integer(nChar),
+        as.integer(parent), as.integer(child), as.integer(nEdge),
+        as.double(weight), as.integer(maxNode), as.integer(nTip))[[2]]
+}
+#' @useDynLib TreeSearch FITCH
+C_Fitch <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
+  .Call("FITCH", characters, as.integer(nChar),
+        as.integer(parent), as.integer(child), as.integer(nEdge),
+        as.double(weight), as.integer(maxNode), as.integer(nTip))
+}
+
+#' @keywords internal
+#' @export
+TipsAreNames <- function(data, tips) data[tips]
+#' @keywords internal
+#' @export
+TipsAreRows <- function(data, tips) data[tips, ]
+#' @keywords internal
+#' @export
+TipsAreColumns <- function(data, tips) data[, tips]
+
+#' Fitch score
+#' 
+#' @template treeParam
+#' @param data A list or matrix whose list entries, rows or columns (as specified in TipData)
+#'             correspond to the character data associated with the tips of the tree. 
+#'             Likely of class \code{phyDat}.
+#' @param TipData function to be used to match tree tips to dataset; probably one of 
+#'                \code{TipsAreNames}, \code{TipsAreRows}, or \code{TipsAreColumns}
+#' @param at Attributes of the dataset (looked up automatically if not supplied)
+#' @param FitchFunction function to be used to calculte parsimony score.
+#' @return A vector listing the number of 'parsimony steps' calculated for each character
+#' @export
+Fitch <- function (tree, data, TipData = TipsAreNames, at = attributes(data),
+                        FitchFunction = C_Fitch_Score) { 
+  if (is.null(at$order) || at$order == "cladewise") tree <- Postorder(tree)
+  treeEdge <- tree$edge
+  parent <- treeEdge[, 1]
+  child <- treeEdge[, 2]
+  tipLabel <- tree$tip.label
+  
+  return(FitchFunction(
+      characters = TipData(data, tipLabel), 
+      nChar = at$nr,
+      parent, child, 
+      nEdge = length(parent), 
+      weight = at$weight, 
+      maxNode = parent[1], #max(parent),
+      nTip = length(tipLabel)
+    )
+  )
+}
+#' @describeIn Fitch FitchScore returns the parsimony score only
+#' @export
+FitchScore <- function (tree, data, TipData = TipsAreNames, at = attributes(data))
+  Fitch(tree, data, TipData, at, C_Fitch_Score)
+
+#' @describeIn Fitch FitchSteps returns a vector listing the number of steps for each character
+#' @export
+FitchSteps <- function (tree, data, TipData = TipsAreNames, at = attributes(data))
+  Fitch(tree, data, TipData, at, C_Fitch_Steps)
