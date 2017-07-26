@@ -4,8 +4,8 @@
 \alias{TreeSearch}
 \title{Search for most parsimonious trees}
 \usage{
-TreeSearch(tree, dataset, method = "NNI", maxiter = 100, maxhits = 20,
-  forest.size = 1, cluster = NULL, verbosity = 1, ...)
+TreeSearch(tree, dataset, method = "NNI", maxIter = 100, maxHits = 20,
+  forestSize = 1, cluster = NULL, verbosity = 1, ...)
 }
 \arguments{
 \item{tree}{a fully-resolved starting tree in \code{\link{phylo}} format, with the desired outgroup; edge lengths are not supported and will be deleted;}
@@ -15,11 +15,11 @@ correspond to the labels of any accompanying tree}
 
 \item{method}{rearrangements to perform; one of \kbd{NNI}, \kbd{SPR}, or \kbd{TBR};}
 
-\item{maxiter}{the maximum number of iterations to perform before abandoning the search;}
+\item{maxIter}{the maximum number of iterations to perform before abandoning the search;}
 
-\item{maxhits}{the maximum times to hit the best pscore before abandoning the search;}
+\item{maxHits}{the maximum times to hit the best pscore before abandoning the search;}
 
-\item{forest.size}{the maximum number of trees to return - useful in concert with \code{\link{consensus}};}
+\item{forestSize}{the maximum number of trees to return - useful in concert with \code{\link{consensus}};}
 
 \item{cluster}{a cluster prepared using \code{\link{PrepareCluster}}; may speed up search on multicore machines;}
 
@@ -49,9 +49,9 @@ njtree <- Root(nj(dist.hamming(SigSut.phy)), outgroup, resolve.root=TRUE)
 njtree$edge.length <- NULL; njtree<-SetOutgroup(njtree, outgroup)
 
 \dontrun{
-TreeSearch(njtree, SigSut.phy, outgroup, maxiter=20, method='NNI')
-TreeSearch(njtree, SigSut.phy, outgroup, maxiter=20, method='SPR')
-TreeSearch(njtree, SigSut.phy, outgroup, maxiter=20, method='TBR')}
+TreeSearch(njtree, SigSut.phy, outgroup, maxIter=20, method='NNI')
+TreeSearch(njtree, SigSut.phy, outgroup, maxIter=20, method='SPR')
+TreeSearch(njtree, SigSut.phy, outgroup, maxIter=20, method='TBR')}
 
 }
 \seealso{

@@ -20,7 +20,7 @@ SuccessiveApproximations <- function (tree, data, outgroup = NULL, k = 3, max.su
     if (suboptimal > 0) {
       suboptimal.search <- suboptimal * sum(attr(data, 'sa.weights') * attr(data, 'weight'))
     }
-    trees <- Ratchet(best, data, ParsimonyScorer = SuccessiveWeights, all = collect.suboptimal, 
+    trees <- Ratchet(best, data, TreeScorer = SuccessiveWeights, all = collect.suboptimal, 
                            suboptimal=suboptimal.search,    rearrangements='NNI',
                            pratchhits=pratchhits, searchhits=searchhits, searchiter=searchiter, 
                            pratchiter=pratchiter, outgroup = outgroup, track=track - 1)
@@ -86,10 +86,10 @@ PrepareDataSA <- function (data) {
   inappLevel <- which(at$levels == "-")
   attr(ret, 'inappLevel') <- 2 ^ (inappLevel - 1)
   attr(ret, 'dim') <- c(nChar, nTip)  
-  attr(ret, 'unique.tokens') <- apply(ret, 1, function(x) min(x, inappLevel))
   applicableTokens <- setdiff(powers.of.2, 2 ^ (inappLevel - 1))
   attr(ret, 'split.sizes') <- t(apply(ret, 1, function(x) vapply(applicableTokens, function (y) sum(x == y), integer(1))))
   dimnames(ret) <- list(NULL, nam)
+  attr(ret, 'bootstrap') <- list('split.sizes', 'sa.weights')
   class(ret) <- 'saDat'
   ret
 }

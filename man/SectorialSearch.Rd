@@ -4,9 +4,9 @@
 \alias{SectorialSearch}
 \title{Sectorial Search}
 \usage{
-SectorialSearch(tree, dataset, ParsimonyScorer = FitchScore,
-  concavity = NULL, rearrangements = "NNI", maxiter = 2000,
-  cluster = NULL, verbosity = 3, ...)
+SectorialSearch(tree, dataset, TreeScorer = FitchScore, concavity = NULL,
+  rearrangements = "NNI", maxIter = 2000, cluster = NULL, verbosity = 3,
+  ...)
 }
 \arguments{
 \item{tree}{a rooted, resolved tree in \code{\link{phylo}} format from which to start the search;}
@@ -18,7 +18,7 @@ correspond to the labels of any accompanying tree}
 
 \item{rearrangements}{method to use when rearranging subtrees: NNI, SPR or TBR;}
 
-\item{maxiter}{maximum number of rearrangements to perform on each sectorial iteration;}
+\item{maxIter}{maximum number of rearrangements to perform on each sectorial iteration;}
 
 \item{cluster}{a cluster prepared using \code{\link{PrepareCluster}}; may speed up search on multicore machines;}
 
@@ -60,7 +60,7 @@ data('SigSut')
 outgroup <- c('Lingula', 'Mickwitzia', 'Neocrania')
 njtree <- Root(nj(dist.hamming(SigSut.phy)), outgroup, resolve.root=TRUE)
 njtree$edge.length <- NULL; njtree<-SetOutgroup(njtree, outgroup)
-InapplicableSectorial(njtree, SigSut.phy, outgroup, maxit=1, maxiter=50, largest.sector=7)
+InapplicableSectorial(njtree, SigSut.phy, outgroup, maxit=1, maxIter=50, largest.sector=7)
 \dontrun{SectorialSearch(njtree, SigSut.phy, outgroup, 'SPR') # Will be time-consuming}
 
 ## SectorialSearch is currently defined as
@@ -68,15 +68,15 @@ InapplicableSectorial(njtree, SigSut.phy, outgroup, maxit=1, maxiter=50, largest
 #   best.score <- attr(start.tree, 'pscore')
 #   if (length(best.score) == 0) best.score <- InapplicableParsimony(start.tree, dataset)
 #   sect <- InapplicableSectorial(start.tree, dataset, outgroup=outgroup, verbosity=0, maxit=30,
-#               maxiter=200, maxhits=15, smallest.sector=6,
+#               maxIter=200, maxHits=15, smallest.sector=6,
 #   sect <- DoTreeSearch(sect, dataset, outgroup, method='NNI', 
-#                        maxiter=2000, maxhits=20, verbosity=3)
+#                        maxIter=2000, maxHits=20, verbosity=3)
 #   sect <- DoTreeSearch(sect, dataset, outgroup, method='TBR',
-#                        maxiter=2000, maxhits=25, verbosity=3)
+#                        maxIter=2000, maxHits=25, verbosity=3)
 #   sect <- DoTreeSearch(sect, dataset, outgroup, method='SPR',
-#                        maxiter=2000, maxhits=50, verbosity=3)
+#                        maxIter=2000, maxHits=50, verbosity=3)
 #   sect <- DoTreeSearch(sect, dataset, outgroup, method='NNI',
-#                        maxiter=2000, maxhits=50, verbosity=3)
+#                        maxIter=2000, maxHits=50, verbosity=3)
 #   if (attr(sect, 'pscore') <= best.score) {
 #     return (sect)
 #   } else return (SetOutgroup(start.tree, outgroup))

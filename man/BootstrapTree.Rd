@@ -4,7 +4,7 @@
 \alias{BootstrapTree}
 \title{Bootstrap tree search with inapplicable data}
 \usage{
-BootstrapTree(phy, x, maxiter, maxhits, ParsimonyScorer = phangorn::fitch,
+BootstrapTree(phy, x, maxIter, maxHits, TreeScorer = phangorn::fitch,
   track = 1, ...)
 }
 \arguments{

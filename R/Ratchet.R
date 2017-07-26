@@ -3,13 +3,13 @@
 #' \code{Ratchet} uses the parsimony ratchet (Nixon 1999) to search for a more parsimonious tree.
 #'
 #' @template treeParam 
-#' @param data a dataset in the format required by ParsimonyScorer
+#' @param data a dataset in the format required by TreeScorer
 #' @template concavityParam
 #' @param all Set to \code{TRUE} to report all MPTs encountered during the search, perhaps to analyze consensus
 #' @param outgroup a vector specifying all tips in the outgroup; if unspecified then identical trees with different roots will be considered unique;
 #' @param maxit   maximum ratchet iterations to perform;
-#' @param maxiter maximum rearrangements to perform on each bootstrap or ratchet iteration;
-#' @param maxhits maximum times to hit best score before terminating a tree search within a pratchet iteration;
+#' @param maxIter maximum rearrangements to perform on each bootstrap or ratchet iteration;
+#' @param maxHits maximum times to hit best score before terminating a tree search within a pratchet iteration;
 #' @param k stop when k ratchet iterations have found the same best score;
 #' @param verbosity larger numbers provides more verbose feedback to the user;
 #' @param rearrangements method(s) to use when rearranging trees: 
@@ -32,11 +32,11 @@
 #' 
 #' @keywords  tree 
 #' @export
-Ratchet <- function (tree, data, ParsimonyScorer=FitchScore, all=FALSE, outgroup=NULL, 
+Ratchet <- function (tree, data, TreeScorer=FitchScore, all=FALSE, outgroup=NULL, 
                       pratchiter=100, searchiter=5000, searchhits=40, pratchhits=10, track=0, 
                       rearrangements="NNI", suboptimal=1e-08, ...) {
   epsilon <- 1e-08
-  if (is.null(attr(tree, "score"))) attr(tree, "score") <- ParsimonyScorer(tree, data)
+  if (is.null(attr(tree, "score"))) attr(tree, "score") <- TreeScorer(tree, data)
   best.score <- attr(tree, "score")
   if (track >= 0) cat("\n* Initial score:", best.score)
   if (all) {
@@ -49,23 +49,23 @@ Ratchet <- function (tree, data, ParsimonyScorer=FitchScore, all=FALSE, outgroup
   iterations.completed <- 0
   for (i in 1:pratchiter) {
     if (track >= 0) cat ("\n - Running NNI on bootstrapped dataset. ")
-    bstree <- BootstrapTree(phy=tree, x=data, maxiter=searchiter, maxhits=searchhits,
-                        ParsimonyScorer=ParsimonyScorer,  track=track - 1, ...)
+    bstree <- BootstrapTree(phy=tree, x=data, maxIter=searchiter, maxHits=searchhits,
+                        TreeScorer=TreeScorer,  track=track - 1, ...)
     
     if (track >= 0) cat ("\n - Running", ifelse(is.null(rearrangements), "NNI", rearrangements), "from new candidate tree:")
     if (rearrangements == "TBR") {
-      candidate <- DoTreeSearch(bstree,    data, ParsimonyScorer=ParsimonyScorer, method='TBR', track=track, maxiter=searchiter, maxhits=searchhits, ...)
-      candidate <- DoTreeSearch(candidate, data, ParsimonyScorer=ParsimonyScorer, method='SPR', track=track, maxiter=searchiter, maxhits=searchhits, ...)
-      candidate <- DoTreeSearch(candidate, data, ParsimonyScorer=ParsimonyScorer, method='NNI', track=track, maxiter=searchiter, maxhits=searchhits, ...)
+      candidate <- DoTreeSearch(bstree,    data, TreeScorer=TreeScorer, method='TBR', track=track, maxIter=searchiter, maxHits=searchhits, ...)
+      candidate <- DoTreeSearch(candidate, data, TreeScorer=TreeScorer, method='SPR', track=track, maxIter=searchiter, maxHits=searchhits, ...)
+      candidate <- DoTreeSearch(candidate, data, TreeScorer=TreeScorer, method='NNI', track=track, maxIter=searchiter, maxHits=searchhits, ...)
     } else if (rearrangements == "TBR only") {  
-      candidate <- DoTreeSearch(bstree,    data, ParsimonyScorer=ParsimonyScorer, method='TBR', track=track, maxiter=searchiter, maxhits=searchhits, ...)
+      candidate <- DoTreeSearch(bstree,    data, TreeScorer=TreeScorer, method='TBR', track=track, maxIter=searchiter, maxHits=searchhits, ...)
     } else if (rearrangements == "SPR") {       
-      candidate <- DoTreeSearch(bstree,    data, ParsimonyScorer=ParsimonyScorer, method='SPR', track=track, maxiter=searchiter, maxhits=searchhits, ...)
-      candidate <- DoTreeSearch(candidate, data, ParsimonyScorer=ParsimonyScorer, method='NNI', track=track, maxiter=searchiter, maxhits=searchhits, ...)
+      candidate <- DoTreeSearch(bstree,    data, TreeScorer=TreeScorer, method='SPR', track=track, maxIter=searchiter, maxHits=searchhits, ...)
+      candidate <- DoTreeSearch(candidate, data, TreeScorer=TreeScorer, method='NNI', track=track, maxIter=searchiter, maxHits=searchhits, ...)
     } else if (rearrangements == "SPR only") {  
-      candidate <- DoTreeSearch(bstree,    data, ParsimonyScorer=ParsimonyScorer, method='SPR', track=track, maxiter=searchiter, maxhits=searchhits, ...)
+      candidate <- DoTreeSearch(bstree,    data, TreeScorer=TreeScorer, method='SPR', track=track, maxIter=searchiter, maxHits=searchhits, ...)
     } else {  
-      candidate <- DoTreeSearch(bstree,    data, ParsimonyScorer=ParsimonyScorer, method='NNI', track=track, maxiter=searchiter, maxhits=searchhits, ...)
+      candidate <- DoTreeSearch(bstree,    data, TreeScorer=TreeScorer, method='NNI', track=track, maxIter=searchiter, maxHits=searchhits, ...)
     }
     cand.score <- attr(candidate, 'score')
     if ((cand.score + epsilon) < best.score) {

@@ -18,7 +18,7 @@
 #' @param outgroup a vector listing the taxa that form the outgroup;
 #' @template concavityParam
 #' @param maxit maximum number of sectorial iterations to perform;
-#' @param maxiter maximum number of rearrangements to perform on each sectorial iteration;
+#' @param maxIter maximum number of rearrangements to perform on each sectorial iteration;
 #' @param cluster a cluster prepared using \code{\link{PrepareCluster}}; may speed up search on multicore machines;
 #' @param k stop when \code{k} searches have improved their sectorial score;
 #' @param verbosity integer determining how verbose the reporting to stdout will be;
@@ -42,7 +42,7 @@
 #' outgroup <- c('Lingula', 'Mickwitzia', 'Neocrania')
 #' njtree <- Root(nj(dist.hamming(SigSut.phy)), outgroup, resolve.root=TRUE)
 #' njtree$edge.length <- NULL; njtree<-SetOutgroup(njtree, outgroup)
-#' InapplicableSectorial(njtree, SigSut.phy, outgroup, maxit=1, maxiter=50, largest.sector=7)
+#' InapplicableSectorial(njtree, SigSut.phy, outgroup, maxit=1, maxIter=50, largest.sector=7)
 #' \dontrun{SectorialSearch(njtree, SigSut.phy, outgroup, 'SPR') # Will be time-consuming}
 #' 
 #' ## SectorialSearch is currently defined as
@@ -50,16 +50,16 @@
 #' #   best.score <- attr(start.tree, 'pscore')
 #' #   if (length(best.score) == 0) best.score <- InapplicableParsimony(start.tree, dataset)
 #' #   sect <- InapplicableSectorial(start.tree, dataset, outgroup=outgroup, verbosity=0, maxit=30,
-#' #               maxiter=200, maxhits=15, smallest.sector=6,
+#' #               maxIter=200, maxHits=15, smallest.sector=6,
 #  #               largest.sector=length(start.tree$edge[,2])*0.25, rearrangements=rearrangements)
 #' #   sect <- DoTreeSearch(sect, dataset, outgroup, method='NNI', 
-#' #                        maxiter=2000, maxhits=20, verbosity=3)
+#' #                        maxIter=2000, maxHits=20, verbosity=3)
 #' #   sect <- DoTreeSearch(sect, dataset, outgroup, method='TBR',
-#' #                        maxiter=2000, maxhits=25, verbosity=3)
+#' #                        maxIter=2000, maxHits=25, verbosity=3)
 #' #   sect <- DoTreeSearch(sect, dataset, outgroup, method='SPR',
-#' #                        maxiter=2000, maxhits=50, verbosity=3)
+#' #                        maxIter=2000, maxHits=50, verbosity=3)
 #' #   sect <- DoTreeSearch(sect, dataset, outgroup, method='NNI',
-#' #                        maxiter=2000, maxhits=50, verbosity=3)
+#' #                        maxIter=2000, maxHits=50, verbosity=3)
 #' #   if (attr(sect, 'pscore') <= best.score) {
 #' #     return (sect)
 #' #   } else return (SetOutgroup(start.tree, outgroup))
@@ -68,17 +68,17 @@
 #' 
 #' @keywords  tree 
 #' @export
-SectorialSearch <- function (tree, dataset, ParsimonyScorer = FitchScore, concavity = NULL, rearrangements='NNI', maxiter=2000, cluster=NULL, verbosity=3, ...) {
+SectorialSearch <- function (tree, dataset, TreeScorer = FitchScore, concavity = NULL, rearrangements='NNI', maxIter=2000, cluster=NULL, verbosity=3, ...) {
   best.score <- attr(tree, 'pscore')
   tree <- RenumberTips(tree, names(dataset))
-  if (length(best.score) == 0) best.score <- ParsimonyScorer(tree, dataset, ...)[[1]]
+  if (length(best.score) == 0) best.score <- TreeScorer(tree, dataset, ...)[[1]]
   sect <- InapplicableSectorial(tree, dataset, cluster=cluster,
-    verbosity=verbosity-1, maxit=30, maxiter=maxiter, maxhits=15, smallest.sector=6, 
+    verbosity=verbosity-1, maxit=30, maxIter=maxIter, maxHits=15, smallest.sector=6, 
     largest.sector=length(tree$edge[,2L])*0.25, rearrangements=rearrangements)
-  sect <- DoTreeSearch(sect, dataset, method='NNI', maxiter=maxiter, maxhits=30, cluster=cluster, verbosity=verbosity)
-  sect <- DoTreeSearch(sect, dataset, method='TBR', maxiter=maxiter, maxhits=20, cluster=cluster, verbosity=verbosity)
-  sect <- DoTreeSearch(sect, dataset, method='SPR', maxiter=maxiter, maxhits=50, cluster=cluster, verbosity=verbosity)
-  sect <- DoTreeSearch(sect, dataset, method='NNI', maxiter=maxiter, maxhits=60, cluster=cluster, verbosity=verbosity)
+  sect <- DoTreeSearch(sect, dataset, method='NNI', maxIter=maxIter, maxHits=30, cluster=cluster, verbosity=verbosity)
+  sect <- DoTreeSearch(sect, dataset, method='TBR', maxIter=maxIter, maxHits=20, cluster=cluster, verbosity=verbosity)
+  sect <- DoTreeSearch(sect, dataset, method='SPR', maxIter=maxIter, maxHits=50, cluster=cluster, verbosity=verbosity)
+  sect <- DoTreeSearch(sect, dataset, method='NNI', maxIter=maxIter, maxHits=60, cluster=cluster, verbosity=verbosity)
   if (attr(sect, 'pscore') <= best.score) {
     return (sect)
   } else return (tree)
@@ -98,8 +98,8 @@ SectorialSearch <- function (tree, dataset, ParsimonyScorer = FitchScore, concav
 #' @author Martin R. Smith
 #' @importFrom ape root
 #' @export
-InapplicableSectorial <- function (tree, dataset, ParsimonyScorer = FitchScore, maxit=100, 
-    maxiter=500, k=5, verbosity=0, smallest.sector=4, largest.sector=1e+06, rearrangements="NNI", ...) {
+InapplicableSectorial <- function (tree, dataset, TreeScorer = FitchScore, maxit=100, 
+    maxIter=500, k=5, verbosity=0, smallest.sector=4, largest.sector=1e+06, rearrangements="NNI", ...) {
   if (class(dataset) != 'phyDat') stop("dataset must be a phyDat object.")
   if (is.null(tree)) stop("a starting tree must be provided")
   tree <- RenumberTips(tree, names(dataset))
@@ -153,10 +153,10 @@ InapplicableSectorial <- function (tree, dataset, ParsimonyScorer = FitchScore, 
     } 
     if (verbosity >= 0) cat(' Sector OK.')
     crown <- root(AddTip(crown, 0, 'SECTOR_ROOT'), length(crown$tip.label) + 1, resolve.root=TRUE) ## TODO use Root or add ape::root to includeFrom in NAMESPACE
-    initial.p <- ParsimonyScorer(crown, crown.data, ...)
+    initial.p <- TreeScorer(crown, crown.data, ...)
     attr(crown, 'pscore') <- initial.p
     if (verbosity >= 0) cat("\n - Running", rearrangements, "search on sector", sector)
-    candidate <- TreeSearch(crown, crown.data, 'SECTOR_ROOT', method=rearrangements, verbosity=verbosity-1, maxiter=maxiter, ...)
+    candidate <- TreeSearch(crown, crown.data, 'SECTOR_ROOT', method=rearrangements, verbosity=verbosity-1, maxIter=maxIter, ...)
     candidate.p <- attr(candidate, 'pscore')
     
     if((candidate.p + eps) < initial.p) {

@@ -8,9 +8,9 @@
 #' @param outgroup a vector listing the taxa in the outgroup;
 #' @param concavity concavity constant for implied weighting (not currently implemented!); 
 #' @param method rearrangements to perform; one of \kbd{NNI}, \kbd{SPR}, or \kbd{TBR};
-#' @param maxiter the maximum number of iterations to perform before abandoning the search;
-#' @param maxhits the maximum times to hit the best pscore before abandoning the search;
-#' @param forest.size the maximum number of trees to return - useful in concert with \code{\link{consensus}};
+#' @param maxIter the maximum number of iterations to perform before abandoning the search;
+#' @param maxHits the maximum times to hit the best pscore before abandoning the search;
+#' @param forestSize the maximum number of trees to return - useful in concert with \code{\link{consensus}};
 #' @param cluster a cluster prepared using \code{\link{PrepareCluster}}; may speed up search on multicore machines;
 #' @param verbosity higher values provide more verbose user feedback in stdout;
 #' @param \dots other arguments to pass to subsequent functions.
@@ -37,20 +37,20 @@
 #' njtree$edge.length <- NULL; njtree<-SetOutgroup(njtree, outgroup)
 #'
 #' \dontrun{
-#' TreeSearch(njtree, SigSut.phy, outgroup, maxiter=20, method='NNI')
-#' TreeSearch(njtree, SigSut.phy, outgroup, maxiter=20, method='SPR')
-#' TreeSearch(njtree, SigSut.phy, outgroup, maxiter=20, method='TBR')}
+#' TreeSearch(njtree, SigSut.phy, outgroup, maxIter=20, method='NNI')
+#' TreeSearch(njtree, SigSut.phy, outgroup, maxIter=20, method='SPR')
+#' TreeSearch(njtree, SigSut.phy, outgroup, maxIter=20, method='TBR')}
 #' 
 #' @keywords  tree 
 #' 
 #' @export
 TreeSearch <- function 
-(tree, dataset, method='NNI', maxiter=100, maxhits=20, forest.size=1, cluster=NULL, 
+(tree, dataset, method='NNI', maxIter=100, maxHits=20, forestSize=1, cluster=NULL, 
  verbosity=1, ...) {
   # Initialize morphy object
   if (class(dataset) != 'phyDat') stop ("dataset must be of class phyDat, not ", class(dataset))
   tree <- RenumberTips(tree, names(dataset))
-  ret <- DoTreeSearch(tree, dataset, method, maxiter, maxhits, forest.size, cluster, 
+  ret <- DoTreeSearch(tree, dataset, method, maxIter, maxHits, forestSize, cluster, 
                       verbosity, ...)
   return (ret)
 }
@@ -64,41 +64,51 @@ TreeSearch <- function
 #' It is also called directly by Ratchet and Sectorial functions
 #'
 #' @template labelledTreeParam
+#' @param data dataset in the format expected by TreeScorer
+#' @param TreeScorer function to generate optimality score; defaults to \code{\link{FitchScore}}
+#' @param Rearrange function to be used for tree rearrangements: probably \link{\code{NNI}},
+#'        \link{\code{SPR}} or \link{\code{TBR}}
+#' @param maxIter Maximum iterations
+#' @param maxHits stop search after finding optimal score \code{maxHits} times
+#' @param forestSize number of trees to store in memory
+#' @param track Verbosity of reporting
+#'
+#' @return a tree of class \code{phylo} with attributes "hits" (number of times hit) and "pscore"
+#'         (score given by TreeScorer)
 #'
 #' @author Martin R. Smith
 #' 
 #' @keywords internal
 #' @export
-DoTreeSearch <- function (tree, data, ParsimonyScorer = phangorn:::fitch,  method = 'NNI', 
-                        maxiter = 100, maxhits = 20, forest.size = 1,
+DoTreeSearch <- function (tree, data, TreeScorer = FitchScore, Rearrange = NNI,
+                        maxIter = 100, maxHits = 20, forestSize = 1,
                         cluster = NULL, track = 1, ...) {
   tree$edge.length <- NULL # Edge lengths are not supported
   attr(tree, 'hits') <- 1
-  if (exists("forest.size") && length(forest.size) && forest.size > 1) {
-    forest <- empty.forest <- vector('list', forest.size)
+  if (exists("forestSize") && length(forestSize) && forestSize > 1) {
+    forest <- empty.forest <- vector('list', forestSize)
     forest[[1]] <- tree
   } else {
-    forest.size <- 1 
+    forestSize <- 1 
   }
-  if (is.null(attr(tree, 'score'))) attr(tree, 'score') <- ParsimonyScorer(tree, data)
-  best.score <- attr(tree, 'score')
-  if (track > 0) cat("\n  - Performing", method, "search.  Initial score:", best.score)
-  Rearrange <- switch(method, 'TBR' = TBR, 'SPR' = SPR, 'NNI' = NNI)
-  return.single <- !(forest.size > 1)
+  if (is.null(attr(tree, 'score'))) attr(tree, 'score') <- TreeScorer(tree, data)
+  bestScore <- attr(tree, 'score')
+  if (track > 0) cat("\n  - Performing", method, "search.  Initial score:", bestScore)
+  returnSingle <- !(forestSize > 1)
   
-  for (iter in 1:maxiter) {
-    trees <- RearrangeTree(tree, data, Rearrange, ParsimonyScorer, min.score=best.score,
-                           return.single=return.single, iter=iter, cluster=cluster, track=track)
+  for (iter in 1:maxIter) {
+    trees <- RearrangeTree(tree, data, Rearrange, TreeScorer, min.score=bestScore,
+                           returnSingle=returnSingle, iter=iter, cluster=cluster, track=track)
     iter.score <- attr(trees, 'score')
-    if (length(forest.size) && forest.size > 1) {
+    if (length(forestSize) && forestSize > 1) {
       hits <- attr(trees, 'hits')
-      if (iter.score == best.score) {
+      if (iter.score == bestScore) {
         forest[(hits-length(trees)+1L):hits] <- trees
         tree <- sample(forest[1:hits], 1)[[1]]
         attr(tree, 'score') <- iter.score
         attr(tree, 'hits') <- hits
-      } else if (iter.score < best.score) {
-        best.score <- iter.score
+      } else if (iter.score < bestScore) {
+        bestScore <- iter.score
         forest <- empty.forest
         forest[1:hits] <- trees
         tree <- sample(trees, 1)[[1]]
@@ -106,18 +116,18 @@ DoTreeSearch <- function (tree, data, ParsimonyScorer = phangorn:::fitch,  metho
         attr(tree, 'hits') <- hits
       }      
     } else {
-      if (iter.score <= best.score) {
-        best.score <- iter.score
+      if (iter.score <= bestScore) {
+        bestScore <- iter.score
         tree <- trees
       }
     }
-    if (attr(trees, 'hits') >= maxhits) break
+    if (attr(trees, 'hits') >= maxHits) break
   }
   if (track > 0) cat("\n  - Final score", attr(tree, 'score'), "found", attr(tree, 'hits'), "times after", iter, method, "iterations\n")  
-  if (forest.size > 1) {
-    if (hits < forest.size) forest <- forest[-((hits+1):forest.size)]
+  if (forestSize > 1) {
+    if (hits < forestSize) forest <- forest[-((hits+1):forestSize)]
     attr(forest, 'hits') <- hits
-    attr(forest, 'score') <- best.score
+    attr(forest, 'score') <- bestScore
     return(unique(forest))
   } else {
     return(tree)
