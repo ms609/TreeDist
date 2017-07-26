@@ -184,15 +184,14 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   edge   <- tree$edge
   parent <- edge[, 1]
   child  <- edge[, 2]
-  if (nTips == 4) return (ape::root(tree, SampleOne(child[parent==max(parent)], len=2L)))
   rootNode <- parent[1]
   rootEdges <- parent == rootNode
   nEdge <- length(parent)
   rightTree <- DescendantEdges(1, parent, child)
   selectableEdges <- !rootEdges
-  if (sum( rightTree) < 3) selectableEdges[ rightTree] <- FALSE
-  if (sum(!rightTree) < 3) selectableEdges[!rightTree] <- FALSE
-  if (!any(selectableEdges)) TBRWarning(tree, 'No opportunity to rearrange tree due to root position')
+  if (sum( rightTree) < 4) selectableEdges[ rightTree] <- FALSE
+  if (sum(!rightTree) < 4) selectableEdges[!rightTree] <- FALSE
+  if (!any(selectableEdges)) return(TBRWarning(tree, 'No opportunity to rearrange tree due to root position'))
 
   if (is.null(edgeToBreak)) {
     edgeToBreak <- SampleOne(which(selectableEdges), len=nEdge - 2L) # Pick an edge at random
