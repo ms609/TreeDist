@@ -1,6 +1,11 @@
 library(ape)
 
 context("tree rearrangement")
+tree5a <- read.tree(text='(a, (b, (c, (d, e))));')
+tree5b <- read.tree(text='((a, b), (c, (d, e)));')
+tree8 <- read.tree(text="(((a, (b, (c, d))), (e, f)), (g, h));")
+tree11 <- read.tree(text="((((a, b), (c, d)), e), ((f, (g, (h, i))), (j, k)));")
+
 test_that("NNI works", {
   trComb    <- read.tree(text = "(((((1,2),3),4),5),6);")
   set.seed(0)
@@ -11,8 +16,6 @@ test_that("NNI works", {
 })
 
 test_that("TBR can swap over root", {
-  tree5a <- read.tree(text='(a, (b, (c, (d, e))));')
-  tree5b <- read.tree(text='((a, b), (c, (d, e)));')
   expect_equal(TBR(tree5a, 1, c(7, 1)), read.tree(text='(a, (d, (e, (c, b))));'))
   expect_equal(TBR(tree5a, 2, c(5, 1)), read.tree(text='(a, (c, (b, (d, e))));'))
   expect_equal(TBR(tree5b, 1, c(7, 1)), read.tree(text='((a, b), (d, (c, e)));'))
@@ -20,7 +23,7 @@ test_that("TBR can swap over root", {
 })
 
 test_that("TBR works", {
-  tree <- read.tree(text="(((a, (b, (c, d))), (e, f)), (g, h));")
+  tree <- tree8
   ### expect_equal(TBR(tree, 3, 1 ), read.tree(text="((a, ((b, (c, d)), (e, f))), (g, h));"))
   ### expect_warning(expect_identical(TBR(tree, 3, 2), tree))
   ### expect_warning(expect_identical(TBR(tree, 3, 3), tree))
@@ -37,9 +40,7 @@ test_that("TBR works", {
   ### expect_equal(TBR(tree, 3, 13), read.tree(text="(((b, (c, d)), (e, f)), ((g, a), h));"))
   ### expect_equal(TBR(tree, 3, 14), read.tree(text="(((b, (c, d)), (e, f)), (g, (a, h)));"))
   
-  library(devtools); library(testthat); library(ape); load_all()
-  
-  tree <- read.tree(text="(((a, (b, (c, d))), (e, f)), (g, h));")
+  tree <- tree8
   expect_equal(TBR(tree, 6, c(1 , 6)), read.tree(text="((((a, b), (e, f)), (c, d)), (g, h));"))
   expect_equal(TBR(tree, 6, c(1 , 7)), read.tree(text="((((a, b), (e, f)), (c, d)), (g, h));"))
   expect_equal(TBR(tree, 6, c(1 , 8)), read.tree(text="((((a, b), (e, f)), (c, d)), (g, h));"))
@@ -66,7 +67,7 @@ test_that("TBR works", {
   expect_equal(TBR(tree, 4, c(1, 7)),  read.tree(text="(((a, (e, f)), (c, (b, d))), (g, h));"))
   expect_equal(TBR(tree, 4, c(1, 8)),  read.tree(text="(((a, (e, f)), (d, (b, c))), (g, h));"))
   
-  tree <- tree11 <- read.tree(text="((((a, b), (c, d)), e), ((f, (g, (h, i))), (j, k)));")
+  tree <- tree11 
   tree$edge.length = rep(1, 20) 
   expect_equal(TBR(tree11, 11, c(8, 17)), read.tree(text='((j, k), (e, ((a, b), (c, (d, (i, (h, (g, f))))))));'))
   expect_equal(TBR(tree11, 11, c(2, 11)), read.tree(text='((j, k), (e, (((a, b), (c, d)), (f, (g, (i, h))))));'))
@@ -76,5 +77,13 @@ test_that("TBR works", {
 })
 
 test_that("RootedTBR fails", {
+  #  tree8 <- read.tree(text="(((a, (b, (c, d))), (e, f)), (g, h));")
+  #  tree11 <- read.tree(text="((((a, b), (c, d)), e), ((f, (g, (h, i))), (j, k)));")
+
+  library(devtools); library(testthat); library(ape); load_all()
+  expect_equal(TBR(tree8, 4, c(3, 7)), RootedTBR(tree8, 4, c(3, 7)))
+  expect_equal(TBR(tree8, 4, c(1, 5)), RootedTBR(tree8, 4, c(1, 5)))
+  RootedTBR(tree5a)
+  expect_warning(RootedTBR(tree8, 4, c(13, 6)))
   expect_warning(RootedTBR(read.tree(text='(((a, b), c), (d, (e, f)));')))
 })
