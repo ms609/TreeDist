@@ -1,13 +1,5 @@
 // Can't link to the latest version of phangorn:fitch.c, so copied and pasted here from 
 // phangorn version 2.2.1 (August 2017).
-#define USE_RINTERNALS
-
-#include <Rmath.h>
-#include <math.h>
-#include <R.h> 
-#include <Rinternals.h>
-
-
 
 // use R_len_t stat int, e.g. nr
 double huge = 1.0e300;
@@ -223,6 +215,7 @@ void fitch9(int *dat, int nr, int *node, int *edge, int nl, double *weight, doub
 
 
 // in fitch
+
 SEXP FITCH(SEXP dat, SEXP nrx, SEXP node, SEXP edge, SEXP l, SEXP weight, SEXP mx, SEXP q){   
     int *data, *nr=INTEGER(nrx), m=INTEGER(mx)[0], i, n=INTEGER(q)[0];   
     double *pvtmp;  

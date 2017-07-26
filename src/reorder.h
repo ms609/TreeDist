@@ -1,9 +1,3 @@
-#define USE_RINTERNALS
-#include <Rmath.h>
-#include <math.h>
-#include <R.h> 
-#include <Rinternals.h>
-
 void report_calloc_error() {
   Rprintf("Error allocating memory in calloc");  
 }
@@ -287,16 +281,4 @@ void ape_neworder_pruningwise(int *ntip, int *nnode, int *edge1,
         neworder[nextI] = i + 1;
         nextI++;
     }
-}
-
-static const R_CMethodDef cMethods[] = {
-  {"order_edges_number_nodes", (DL_FUNC) &order_edges_number_nodes, 4, order_edges_number_nodes_t},
-  {"ape_neworder_phylo", (DL_FUNC) &ape_neworder_phylo, 6, ape_neworder_phylo_t},
-  {"ape_neworder_pruningwise", (DL_FUNC) &ape_neworder_pruningwise, 6, ape_neworder_pruningwise_t},
-  {NULL, NULL, 0, NULL}
-};
-void R_init_myLib(DllInfo *info) {
-  R_registerRoutines(info, cMethods, NULL, NULL, NULL);
-  R_useDynamicSymbols(info, FALSE);
-  R_forceSymbols(info, TRUE);
 }
