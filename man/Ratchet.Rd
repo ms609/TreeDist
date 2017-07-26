@@ -4,7 +4,7 @@
 \alias{Ratchet}
 \title{Parsimony Ratchet}
 \usage{
-Ratchet(tree, data, ParsimonyScorer = phangorn::fitch, all = FALSE,
+Ratchet(tree, data, ParsimonyScorer = FitchScore, all = FALSE,
   outgroup = NULL, pratchiter = 100, searchiter = 5000, searchhits = 40,
   pratchhits = 10, track = 0, rearrangements = "NNI",
   suboptimal = 1e-08, ...)

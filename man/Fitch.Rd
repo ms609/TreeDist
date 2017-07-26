@@ -35,8 +35,8 @@ Fitch score
 }
 \section{Functions}{
 \itemize{
-\item \code{FitchScore}: FitchScore returns the parsimony score only
+\item \code{FitchScore}: returns the parsimony score only
 
-\item \code{FitchSteps}: FitchSteps returns a vector listing the number of steps for each character
+\item \code{FitchSteps}: returns a vector listing the number of steps for each character
 }}
 

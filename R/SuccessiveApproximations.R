@@ -1,3 +1,5 @@
+#' @importFrom ape consensus
+#' @export
 SuccessiveApproximations <- function (tree, data, outgroup = NULL, k = 3, max.succiter = 20,
                                       pratchhits = 100, searchhits = 50, searchiter = 500,
                                       pratchiter = 5000, track = 0, suboptimal = 0.1) {
@@ -25,7 +27,7 @@ SuccessiveApproximations <- function (tree, data, outgroup = NULL, k = 3, max.su
     trees <- unique(trees)
     bests[[i]] <- trees
     suboptimality <- Suboptimality(trees)
-    bests.consensus[[i]] <- consensus(trees[suboptimality == 0])
+    bests.consensus[[i]] <- ape::consensus(trees[suboptimality == 0])
     if (all.equal(bests.consensus[[i]], bests.consensus[[i - 1]])) return(bests[2:i])
     best <- trees[suboptimality == 0][[1]]
     l.i <- Fitch(best, data)
@@ -35,4 +37,31 @@ SuccessiveApproximations <- function (tree, data, outgroup = NULL, k = 3, max.su
   }
   cat('Stability not reached.')
   return(bests)
+}
+
+#' @keywords internal
+#' @export
+Suboptimality <- function (trees, proportional = FALSE) {
+  scores <- vapply(trees, attr, double(1), 'score')
+  if (proportional) {
+    return ((scores - min(scores)) / min(scores))
+  } else {
+    return(scores - min(scores))
+  }
+}
+
+#' @keywords internal
+#' @export
+SuccessiveWeights <- function(tree, data) {
+  # Data
+  if (class(data) == 'phyDat') data <- PrepareDataFitch(data)
+  if (class(data) != 'fitchDat') {
+    stop('Invalid data type; prepare data with PhyDat() or PrepareDataFitch().')
+  }
+  at <- attributes(data)
+  weight <- at$weight
+  sa.weights <- at$sa.weights
+  if (is.null(sa.weights)) sa.weights <- rep(1, length(weight))
+  steps <- Fitch(tree, data, at)
+  return(sum(steps * sa.weights * weight))
 }

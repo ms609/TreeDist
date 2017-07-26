@@ -27,10 +27,10 @@ BootstrapTree <- function (phy, x, maxiter, maxhits, ParsimonyScorer = phangorn:
   res
 }
 
+#' @keywords internal
+#' @export
 BootstrapWeightings <- function (attribs) {
   weight <- attribs$weight
   v <- rep(1:length(weight), weight)
   BS <- tabulate(sample(v, replace=TRUE), length(weight)) 
-  
-
 }
