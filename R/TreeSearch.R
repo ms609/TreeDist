@@ -97,27 +97,27 @@ DoTreeSearch <- function (tree, data, TreeScorer = FitchScore, Rearrange = NNI,
   returnSingle <- !(forestSize > 1)
   
   for (iter in 1:maxIter) {
-    trees <- RearrangeTree(tree, data, Rearrange, TreeScorer, min.score=bestScore,
+    trees <- RearrangeTree(tree, data, Rearrange, TreeScorer, minScore=bestScore,
                            returnSingle=returnSingle, iter=iter, cluster=cluster, track=track)
-    iter.score <- attr(trees, 'score')
+    iterScore <- attr(trees, 'score')
     if (length(forestSize) && forestSize > 1) {
       hits <- attr(trees, 'hits')
-      if (iter.score == bestScore) {
+      if (iterScore == bestScore) {
         forest[(hits-length(trees)+1L):hits] <- trees
         tree <- sample(forest[1:hits], 1)[[1]]
-        attr(tree, 'score') <- iter.score
+        attr(tree, 'score') <- iterScore
         attr(tree, 'hits') <- hits
-      } else if (iter.score < bestScore) {
-        bestScore <- iter.score
+      } else if (iterScore < bestScore) {
+        bestScore <- iterScore
         forest <- empty.forest
         forest[1:hits] <- trees
         tree <- sample(trees, 1)[[1]]
-        attr(tree, 'score') <- iter.score
+        attr(tree, 'score') <- iterScore
         attr(tree, 'hits') <- hits
       }      
     } else {
-      if (iter.score <= bestScore) {
-        bestScore <- iter.score
+      if (iterScore <= bestScore) {
+        bestScore <- iterScore
         tree <- trees
       }
     }

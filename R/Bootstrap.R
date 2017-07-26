@@ -5,7 +5,7 @@
 #'
 #' @return A tree that is optimal under a random sampling of the original characters
 #' @export  
-BootstrapTree <- function (phy, x, maxIter, maxHits, TreeScorer = phangorn::fitch, track=1, ...) {
+BootstrapTree <- function (phy, x, maxIter, maxHits, TreeScorer = FitchScore, track=1, ...) {
 ## Simplified version of phangorn::bootstrap.phyDat, with bs=1 and multicore=FALSE
   at <- attributes(x)
   bootstrappedWeight <- BootstrapWeightings(at)
@@ -29,7 +29,7 @@ BootstrapTree <- function (phy, x, maxIter, maxHits, TreeScorer = phangorn::fitc
   
   attr(phy, 'score') <- NULL
   res <- DoTreeSearch(phy, x, TreeScorer=TreeScorer, method='NNI', maxIter=maxIter,
-                    maxHits=maxHits, track=track-1, ...)
+                      maxHits=maxHits, track=track-1, ...)
   attr(res, 'score') <- NULL
   attr(res, 'hits') <- NULL
   res
