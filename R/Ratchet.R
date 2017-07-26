@@ -32,7 +32,7 @@
 #' 
 #' @keywords  tree 
 #' @export
-Ratchet <- function (tree, data, ParsimonyScorer=phangorn::fitch, all=FALSE, outgroup=NULL, 
+Ratchet <- function (tree, data, ParsimonyScorer=FitchScore, all=FALSE, outgroup=NULL, 
                       pratchiter=100, searchiter=5000, searchhits=40, pratchhits=10, track=0, 
                       rearrangements="NNI", suboptimal=1e-08, ...) {
   epsilon <- 1e-08

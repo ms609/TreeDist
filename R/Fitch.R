@@ -2,7 +2,7 @@
 #' @keywords internal
 #' @export
 C_Fitch_Score <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
-  .Call("FITCH", characters, as.integer(nChar),
+  .Call("FITCH", as.integer(characters), as.integer(nChar),
         as.integer(parent), as.integer(child), as.integer(nEdge),
         as.double(weight), as.integer(maxNode), as.integer(nTip))[[1]]
 }
@@ -10,7 +10,7 @@ C_Fitch_Score <- function (characters, nChar, parent, child, nEdge, weight, maxN
 #' @keywords internal
 #' @export
 C_Fitch_Steps <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
-  .Call("FITCH", characters, as.integer(nChar),
+  .Call("FITCH", as.integer(characters), as.integer(nChar),
         as.integer(parent), as.integer(child), as.integer(nEdge),
         as.double(weight), as.integer(maxNode), as.integer(nTip))[[2]]
 }
@@ -18,14 +18,14 @@ C_Fitch_Steps <- function (characters, nChar, parent, child, nEdge, weight, maxN
 #' @keywords internal
 #' @export
 C_Fitch <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
-  .Call("FITCH", characters, as.integer(nChar),
+  .Call("FITCH", as.integer(characters), as.integer(nChar),
         as.integer(parent), as.integer(child), as.integer(nEdge),
         as.double(weight), as.integer(maxNode), as.integer(nTip))
 }
 
 #' @keywords internal
 #' @export
-TipsAreNames <- function(data, tips) data[tips]
+TipsAreNames <- function(data, tips) unlist(data[tips])
 #' @keywords internal
 #' @export
 TipsAreRows <- function(data, tips) data[tips, ]
