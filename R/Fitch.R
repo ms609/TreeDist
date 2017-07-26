@@ -1,16 +1,22 @@
 #' @useDynLib TreeSearch FITCH
+#' @keywords internal
+#' @export
 C_Fitch_Score <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
   .Call("FITCH", characters, as.integer(nChar),
         as.integer(parent), as.integer(child), as.integer(nEdge),
         as.double(weight), as.integer(maxNode), as.integer(nTip))[[1]]
 }
 #' @useDynLib TreeSearch FITCH
+#' @keywords internal
+#' @export
 C_Fitch_Steps <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
   .Call("FITCH", characters, as.integer(nChar),
         as.integer(parent), as.integer(child), as.integer(nEdge),
         as.double(weight), as.integer(maxNode), as.integer(nTip))[[2]]
 }
 #' @useDynLib TreeSearch FITCH
+#' @keywords internal
+#' @export
 C_Fitch <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
   .Call("FITCH", characters, as.integer(nChar),
         as.integer(parent), as.integer(child), as.integer(nEdge),
@@ -25,7 +31,7 @@ TipsAreNames <- function(data, tips) data[tips]
 TipsAreRows <- function(data, tips) data[tips, ]
 #' @keywords internal
 #' @export
-TipsAreColumns <- function(data, tips) data[, tips]
+TipsAreColumns <- function(data, tips) t(data[, tips])
 
 #' Fitch score
 #' 
@@ -58,12 +64,12 @@ Fitch <- function (tree, data, TipData = TipsAreNames, at = attributes(data),
     )
   )
 }
-#' @describeIn Fitch FitchScore returns the parsimony score only
+#' @describeIn Fitch returns the parsimony score only
 #' @export
 FitchScore <- function (tree, data, TipData = TipsAreNames, at = attributes(data))
   Fitch(tree, data, TipData, at, C_Fitch_Score)
 
-#' @describeIn Fitch FitchSteps returns a vector listing the number of steps for each character
+#' @describeIn Fitch returns a vector listing the number of steps for each character
 #' @export
 FitchSteps <- function (tree, data, TipData = TipsAreNames, at = attributes(data))
   Fitch(tree, data, TipData, at, C_Fitch_Steps)
