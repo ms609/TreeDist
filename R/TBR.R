@@ -72,7 +72,7 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
       return(TBRWarning(tree, "mergeEdges values must differ"))
   }  
   
-  edgesCutAdrift <- DescendantEdges(edgeToBreak, parent, child)
+  edgesCutAdrift <- DescendantEdges(edgeToBreak, parent, child, nEdge)
   edgesRemaining <- !edgesCutAdrift & !brokenEdge
   edgesOnAdriftSegment <- edgesCutAdrift | brokenEdge
   
@@ -157,7 +157,7 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
       parent[brokenRootDaughters] <- brokenEdge.parentNode
       spareNode <- child[brokenEdgeSister]
       child [brokenEdgeSister] <- child[rootedReconnectionEdge]
-      parent[c(edgeToBreak, brokenEdgeSister)] <- spareNode
+      parent[brokenEdge | brokenEdgeSister] <- spareNode
       child[rootedReconnectionEdge] <- spareNode
     } else {
       parent[brokenEdgeSister] <- parent[brokenEdgeParent]
@@ -187,7 +187,7 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   rootNode <- parent[1]
   rootEdges <- parent == rootNode
   nEdge <- length(parent)
-  rightTree <- DescendantEdges(1, parent, child)
+  rightTree <- DescendantEdges(1, parent, child, nEdge)
   selectableEdges <- !rootEdges
   if (sum( rightTree) < 4) selectableEdges[ rightTree] <- FALSE
   if (sum(!rightTree) < 4) selectableEdges[!rightTree] <- FALSE
@@ -204,7 +204,7 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
     edgeInRight <- rightTree[edgeToBreak]
     subtreeWithRoot <- if (edgeInRight) rightTree else !rightTree
     subtreeEdges <- !rootEdges & subtreeWithRoot
-    if (sum(edgesCutAdrift <- DescendantEdges(edgeToBreak, parent, child)) > 2) break;
+    if (sum(edgesCutAdrift <- DescendantEdges(edgeToBreak, parent, child, nEdge)) > 2) break;
     if (sum(subtreeEdges, -edgesCutAdrift) > 2) break; # the edge itself, and somewheres else
     # TODO check that all expected selections are valid
     selectableEdges[edgeToBreak] <- FALSE

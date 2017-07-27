@@ -80,7 +80,6 @@ test_that("RootedTBR fails", {
   #  tree8 <- read.tree(text="(((a, (b, (c, d))), (e, f)), (g, h));")
   #  tree11 <- read.tree(text="((((a, b), (c, d)), e), ((f, (g, (h, i))), (j, k)));")
 
-  library(devtools); library(testthat); library(ape); load_all()
   expect_equal(TBR(tree8, 4, c(3, 7)), RootedTBR(tree8, 4, c(3, 7)))
   expect_equal(TBR(tree8, 4, c(1, 5)), RootedTBR(tree8, 4, c(1, 5)))
   expect_warning(RootedTBR(tree5a, edgeToBreak = 1))
@@ -92,10 +91,12 @@ test_that("RootedTBR fails", {
 })
 
 test_that("SPR is special case of TBR", {
+  library(devtools); library(testthat); library(ape); load_all()
+  Plot <- function (x) {plot(x); nodelabels(cex=0.8); edgelabels()}
+  
   expect_equal(SPR(tree11, 3, 9), TBR(tree11, 3, c(3, 9)))
   expect_equal(SPR(tree11, 12, 9), TBR(tree11, 12, c(12, 9)))
-  TBR(tree11, 1, c(1, 14))
-  SPR(tree11, 1, 14)
-  expect_equal(SPR(tree11, 1, 14), TBR(tree11, 1, c(1, 14)))
-
+  expect_equal(ape::root(SPR(tree11, 1, 14), letters[1:5], resolve.root=TRUE), TBR(tree11, 1, c(1, 14)))
+  expect_error(SPR(tree11, 1, 6))
+  
 })
