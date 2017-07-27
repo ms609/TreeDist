@@ -1,11 +1,12 @@
 Package: TreeSearch
 Title: Accelerated tree search in R
 Version: 0.0.3
-Date: 2017-07-25
+Date: 2017-07-27
 Authors@R: person('Smith', "Martin R.", email="martins@gmail.com", role=c("aut", "cre"))
 Description: Searches for phylogenetic trees that are optimal using a user-defined criterion.
 Depends: R (>= 3.4.0)
-Imports: ape
+Imports: 
+    ape
 Suggests: 
     phangorn,
     testthat

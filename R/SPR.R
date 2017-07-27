@@ -1,4 +1,4 @@
-#' @describeIn SPRWarning for SPR rearrangements
+#' @describeIn TBRWarning for SPR rearrangements
 #' @keywords internal
 #' @export
 SPRWarning <- function (tree, error) {
@@ -37,30 +37,45 @@ SPRWarning <- function (tree, error) {
 #' @importFrom ape root
 #' @export
 SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
-  nTips <- tree$Nnode + 1
-  if (nTips < 3) return (tree)
+  nTips <- tree$Nnode + 1L
+  if (nTips < 3L) return (tree)
   edge   <- tree$edge
   parent <- edge[, 1]
   child  <- edge[, 2]
   nEdge <- length(parent)
-  if (nTips == 3) return (ape::root(tree, SampleOne(child[parent==max(parent)], len=2L)))
+  if (nTips == 3L) return (ape::root(tree, SampleOne(child[parent==max(parent)], len=2L)))
   
   # Pick an edge at random
   allEdges <- seq_len(nEdge - 1L) + 1L # Only include one root edge
-  not1 <- !logical(nEdge)
+  dontBreak <- logical(nEdge)
+  not1 <- !dontBreak
   not1[1] <- FALSE
+  
+  rightTree <- DescendantEdges(1, parent, child, nEdge)
+  nEdgeRight <- sum(rightTree)
+  if (nEdgeRight == 1L) {
+    stop("TODO")
+    dontBreak[rightTree] <- TRUE
+  } else if (nEdgeRight == nEdge - 1L) {
+    stop("TODO")
+  } else if (nEdgeRight == 3L) {
+    dontBreak <- dontBreak | rightTree
+  } else if (nEdgeRight == nEdge - 3L) {
+    dontBreak <- dontBreak | !rightTree
+  }
+  
   if (is.null(edgeToBreak)) {
     edgeToBreak <- SampleOne(allEdges, len=nEdge - 1L)
   } else {
     if (edgeToBreak > nEdge) return(tree, SPRWarning("edgeToBreak > nEdge"))
     if (edgeToBreak < 1) return(tree, SPRWarning("edgeToBreak < 1"))
-    if (edgeToBreak == 1) edgeToBreak <- which(parent == parent[1])[-1] # Use other side of root
+    ###if (edgeToBreak == 1) edgeToBreak <- which(parent == parent[1])[-1] # Use other side of root
   }
   brokenEdge <- seq_along(parent) == edgeToBreak
   brokenEdge.parentNode <- parent[edgeToBreak]
   brokenEdge.childNode  <-  child[edgeToBreak]
     
-  edgesCutAdrift <- DescendantEdges(edgeToBreak, parent, child)
+  edgesCutAdrift <- DescendantEdges(edgeToBreak, parent, child, nEdge)
   edgesRemaining <- !edgesCutAdrift & !brokenEdge
   edgesOnAdriftSegment <- edgesCutAdrift | brokenEdge
   
@@ -80,11 +95,13 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
         return(SPRWarning(tree, paste0("mergeEdge value ", paste(mergeEdge, collapse='|'),  
                " invalid; must be NULL or a vector of length 1\n")))
     if(nearBrokenEdge[mergeEdge]) return(SPRWarning(tree, "Selected mergeEdge will not change tree topology."))
-  }  
+    if(DescendantEdges(edgeToBreak, parent, child, nEdge)[mergeEdge]) stop("mergeEdge is within pruned subtree")
+  }
   
   if (is.null(mergeEdge)) {
     mergeEdge <- which(!nearBrokenEdge & !edgesOnAdriftSegment & not1)
     nCandidates <- length(mergeEdge)
+    Assert(nCandidates > 0)
     if (nCandidates > 1) mergeEdge <- SampleOne(mergeEdge, len=nCandidates)
   }
   
@@ -92,7 +109,7 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
     parent[brokenRootDaughters] <- brokenEdge.parentNode
     spareNode <- child[brokenEdgeSister]
     child [brokenEdgeSister] <- child[mergeEdge]
-    parent[c(edgeToBreak, brokenEdgeSister)] <- spareNode
+    parent[brokenEdge | brokenEdgeSister] <- spareNode
     child[mergeEdge] <- spareNode
   } else {
     parent[brokenEdgeSister] <- parent[brokenEdgeParent]
@@ -122,7 +139,7 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   rootNode <- parent[1]
   rootEdges <- parent == rootNode
   nEdge <- length(parent)
-  rightTree <- DescendantEdges(1, parent, child)
+  rightTree <- DescendantEdges(1, parent, child, nEdge)
   selectableEdges <- !rootEdges
   if (sum( rightTree) < 4) selectableEdges[ rightTree] <- FALSE
   if (sum(!rightTree) < 4) selectableEdges[!rightTree] <- FALSE
@@ -139,7 +156,7 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
     edgeInRight <- rightTree[edgeToBreak]
     subtreeWithRoot <- if (edgeInRight) rightTree else !rightTree
     subtreeEdges <- !rootEdges & subtreeWithRoot
-    if (sum(edgesCutAdrift <- DescendantEdges(edgeToBreak, parent, child)) > 2) break;
+    if (sum(edgesCutAdrift <- DescendantEdges(edgeToBreak, parent, child, nEdge)) > 2) break;
     if (sum(subtreeEdges, -edgesCutAdrift) > 2) break; # the edge itself, and somewheres else
     # TODO check that all expected selections are valid
     selectableEdges[edgeToBreak] <- FALSE
