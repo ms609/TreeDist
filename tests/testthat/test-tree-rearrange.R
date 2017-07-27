@@ -90,3 +90,12 @@ test_that("RootedTBR fails", {
   expect_warning(RootedTBR(tree8, 4, c(13, 6)))
   expect_warning(RootedTBR(read.tree(text='((a, b), (c, d));')))
 })
+
+test_that("SPR is special case of TBR", {
+  expect_equal(SPR(tree11, 3, 9), TBR(tree11, 3, c(3, 9)))
+  expect_equal(SPR(tree11, 12, 9), TBR(tree11, 12, c(12, 9)))
+  TBR(tree11, 1, c(1, 14))
+  SPR(tree11, 1, 14)
+  expect_equal(SPR(tree11, 1, 14), TBR(tree11, 1, c(1, 14)))
+
+})
