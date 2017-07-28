@@ -43,35 +43,31 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   parent <- edge[, 1]
   child  <- edge[, 2]
   nEdge <- length(parent)
-  if (nTips == 3L) return (ape::root(tree, SampleOne(child[parent==max(parent)], len=2L)))
+  if (nTips == 3) return (ape::root(tree, SampleOne(child[parent==max(parent)], len=2L)))
   
-  # Pick an edge at random
   notDuplicateRoot <- !logical(nEdge)
-  
   rightTree <- DescendantEdges(1, parent, child, nEdge)
   nEdgeRight <- sum(rightTree)
-  if (nEdgeRight == 1L) {
+  if (nEdgeRight == 1) {
     notDuplicateRoot[2] <- FALSE
-  } else if (nEdgeRight == 3L) {
+  } else if (nEdgeRight == 3) {
     notDuplicateRoot[4] <- FALSE
   } else {
     notDuplicateRoot[1] <- FALSE
   }
   
   if (is.null(edgeToBreak)) {
+    # Pick an edge at random
     edgeToBreak <- SampleOne(which(notDuplicateRoot), len=nEdge - 1L)
-##    cat("Breaking edge", edgeToBreak, "\n")
   } else {
     if (edgeToBreak > nEdge) return(tree, SPRWarning("edgeToBreak > nEdge"))
     if (edgeToBreak < 1) return(tree, SPRWarning("edgeToBreak < 1"))
-    ###if (edgeToBreak == 1) edgeToBreak <- which(parent == parent[1])[-1] # Use other side of root
   }
   brokenEdge <- seq_along(parent) == edgeToBreak
   brokenEdge.parentNode <- parent[edgeToBreak]
   brokenEdge.childNode  <-  child[edgeToBreak]
     
   edgesCutAdrift <- DescendantEdges(edgeToBreak, parent, child, nEdge)
-  edgesRemaining <- !edgesCutAdrift & !brokenEdge
   edgesOnAdriftSegment <- edgesCutAdrift | brokenEdge
   
   brokenEdgeParent <- child == brokenEdge.parentNode
@@ -91,12 +87,10 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
                " invalid; must be NULL or a vector of length 1\n")))
     if(nearBrokenEdge[mergeEdge]) return(SPRWarning(tree, "Selected mergeEdge will not change tree topology."))
     if(DescendantEdges(edgeToBreak, parent, child, nEdge)[mergeEdge]) stop("mergeEdge is within pruned subtree")
-  }
-  
-  if (is.null(mergeEdge)) {
+  } else {
     mergeEdge <- which(!nearBrokenEdge & !edgesOnAdriftSegment & notDuplicateRoot)
     nCandidates <- length(mergeEdge)
-    Assert(nCandidates > 0)
+    #####Assert(nCandidates > 0)
     if (nCandidates > 1) mergeEdge <- SampleOne(mergeEdge, len=nCandidates)
   }
   
@@ -111,10 +105,9 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
     parent[brokenEdgeParent] <- parent[mergeEdge]
     parent[mergeEdge] <- brokenEdge.parentNode
   }
-
   
-  Assert(identical(unique(table(parent)), 2L))
-  Assert(identical(unique(table(child)),  1L))
+  #####Assert(identical(unique(table(parent)), 2L))
+  #####Assert(identical(unique(table(child)),  1L))
   ####   matrix(c(parent, child), ncol=2)
   
   tree$edge <- OrderEdgesNumberNodes(parent, child, nTips, nEdge)
@@ -155,14 +148,13 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
     if (sum(subtreeEdges, -edgesCutAdrift) > 2) break; # the edge itself, and somewheres else
     # TODO check that all expected selections are valid
     selectableEdges[edgeToBreak] <- FALSE
-    Assert(any(selectableEdges))
+    #####Assert(any(selectableEdges))
     edgeToBreak <- SampleOne(selectableEdges, len=nEdge - 2L)
   }
   brokenEdge <- seq_along(parent) == edgeToBreak
   brokenEdge.parentNode <- parent[edgeToBreak]
   brokenEdge.childNode  <-  child[edgeToBreak]
   
-  edgesRemaining <- !edgesCutAdrift & subtreeEdges
   edgesOnAdriftSegment <- edgesCutAdrift | brokenEdge
   
   if (!is.null(mergeEdge)) { # Quick sanity checks
@@ -181,7 +173,7 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   
   brokenEdgeDaughters <- parent == brokenEdge.childNode
   nearBrokenEdge <- brokenEdgeSister | brokenEdgeParent | brokenEdgeDaughters | brokenEdge
-  Assert(any(brokenEdgeParent))
+  #####Assert(any(brokenEdgeParent))
   
   if (is.null(mergeEdge)) {
     mergeEdge  <- which(subtreeEdges & !nearBrokenEdge)
@@ -195,7 +187,7 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
         samplable <- which(subtreeEdges & !edgesOnAdriftSegment & !nearBrokenEdge)
       } else {
         samplable <- which(subtreeEdges & !edgesOnAdriftSegment)
-        Assert(length(samplable) > 0)
+        #####Assert(length(samplable) > 0)
       }
       nSamplable <- length(samplable)
       if (nSamplable == 0) return(SPRWarning(tree, "No reconnection site would modify the tree; check mergeEdge"))
@@ -226,8 +218,8 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   #### edgelabels(edge=adriftReconnectionEdge, bg='cyan')    #### DEBUGGING AID
   #### edgelabels(edge=rootedReconnectionEdge, bg='magenta') #### DEBUGGING AID
   
-  Assert(edgesOnAdriftSegment[adriftReconnectionEdge])
-  Assert(!edgesOnAdriftSegment[rootedReconnectionEdge])
+  #####Assert(edgesOnAdriftSegment[adriftReconnectionEdge])
+  #####Assert(!edgesOnAdriftSegment[rootedReconnectionEdge])
   
   if (!nearBrokenEdge[adriftReconnectionEdge]) {
     edgesToInvert <- EdgeAncestry(adriftReconnectionEdge, parent, child, stopAt = edgeToBreak) & !brokenEdge
@@ -241,12 +233,12 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
     
     repurposedDaughterEdge <- brokenEdgeDaughters & reconnectionSideEdges
     spareDaughterEdge      <- brokenEdgeDaughters & !reconnectionSideEdges
-    Assert(identical(sum(repurposedDaughterEdge), sum(spareDaughterEdge), 1))
+    #####Assert(identical(sum(repurposedDaughterEdge), sum(spareDaughterEdge), 1))
     #### which(repurposedDaughterEdge)
     #### which(spareDaughterEdge)
     child[repurposedDaughterEdge] <- child[spareDaughterEdge]
     child[spareDaughterEdge] <- parent[adriftReconnectionEdge]
-    Assert(parent[spareDaughterEdge] == brokenEdge.childNode)
+    #####Assert(parent[spareDaughterEdge] == brokenEdge.childNode)
     parent[adriftReconnectionEdge] <- child[edgeToBreak]
   }
   if (!nearBrokenEdge[rootedReconnectionEdge]) {
@@ -255,8 +247,8 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
     parent[rootedReconnectionEdge] <- brokenEdge.parentNode
   }
   
-  Assert(identical(unique(table(parent)), 2L))
-  Assert(identical(unique(table(child)),  1L))
+  #####Assert(identical(unique(table(parent)), 2L))
+  #####Assert(identical(unique(table(child)),  1L))
   ####   matrix(c(parent, child), ncol=2)
   
   retTree <- tree
