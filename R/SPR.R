@@ -46,26 +46,21 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   if (nTips == 3L) return (ape::root(tree, SampleOne(child[parent==max(parent)], len=2L)))
   
   # Pick an edge at random
-  allEdges <- seq_len(nEdge - 1L) + 1L # Only include one root edge
-  dontBreak <- logical(nEdge)
-  not1 <- !dontBreak
-  not1[1] <- FALSE
+  notDuplicateRoot <- !logical(nEdge)
   
   rightTree <- DescendantEdges(1, parent, child, nEdge)
   nEdgeRight <- sum(rightTree)
   if (nEdgeRight == 1L) {
-    stop("TODO")
-    dontBreak[rightTree] <- TRUE
-  } else if (nEdgeRight == nEdge - 1L) {
-    stop("TODO")
+    notDuplicateRoot[2] <- FALSE
   } else if (nEdgeRight == 3L) {
-    dontBreak <- dontBreak | rightTree
-  } else if (nEdgeRight == nEdge - 3L) {
-    dontBreak <- dontBreak | !rightTree
+    notDuplicateRoot[4] <- FALSE
+  } else {
+    notDuplicateRoot[1] <- FALSE
   }
   
   if (is.null(edgeToBreak)) {
-    edgeToBreak <- SampleOne(allEdges, len=nEdge - 1L)
+    edgeToBreak <- SampleOne(which(notDuplicateRoot), len=nEdge - 1L)
+##    cat("Breaking edge", edgeToBreak, "\n")
   } else {
     if (edgeToBreak > nEdge) return(tree, SPRWarning("edgeToBreak > nEdge"))
     if (edgeToBreak < 1) return(tree, SPRWarning("edgeToBreak < 1"))
@@ -99,7 +94,7 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   }
   
   if (is.null(mergeEdge)) {
-    mergeEdge <- which(!nearBrokenEdge & !edgesOnAdriftSegment & not1)
+    mergeEdge <- which(!nearBrokenEdge & !edgesOnAdriftSegment & notDuplicateRoot)
     nCandidates <- length(mergeEdge)
     Assert(nCandidates > 0)
     if (nCandidates > 1) mergeEdge <- SampleOne(mergeEdge, len=nCandidates)
