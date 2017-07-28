@@ -90,6 +90,13 @@ test_that("RootedTBR fails", {
   expect_warning(RootedTBR(read.tree(text='((a, b), (c, d));')))
 })
 
+test_that("RootedSPR fails", {
+  expect_warning(RootedSPR(read.tree(text='((a, b), (c, d));')))
+  expect_warning(RootedSPR(tree8, edgeToBreak=1))
+  expect_warning(RootedSPR(tree8, edgeToBreak=2))
+  expect_warning(RootedSPR(tree8, edgeToBreak=10))
+})
+
 test_that("SPR is special case of TBR", {
   library(devtools); library(testthat); library(ape); load_all()
   Plot <- function (x) {plot(x); nodelabels(cex=0.8); edgelabels()}
