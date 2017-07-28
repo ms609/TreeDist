@@ -60,7 +60,6 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
     # Pick an edge at random
     edgeToBreak <- SampleOne(which(notDuplicateRoot), len=nEdge - 1L)
   } else {
-    if (!breakable[edgeToBreak]) return(SPRWarning(tree, "nowhere to regraft specified edge"))
     if (edgeToBreak > nEdge) return(SPRWarning(tree, "edgeToBreak > nEdge"))
     if (edgeToBreak < 1) return(SPRWarning(tree, "edgeToBreak < 1"))
   }
@@ -120,6 +119,8 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
 #' @importFrom ape root
 #' @export
 RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
+dev.set(2); plot(tree); edgelabels()
+
   nTips <- tree$Nnode + 1L
   if (nTips < 3L) return (tree)
   edge   <- tree$edge
@@ -130,39 +131,37 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   rootEdges <- parent == rootNode
   if (nTips == 3) return (SPRWarning(tree, "Only 3 tips - nothing to rearrange!"))
   
-  breakable <- notDuplicateRoot <- !logical(nEdge)
+  breakable <- !logical(nEdge) & !rootEdges
   rightSide <- DescendantEdges(1, parent, child, nEdge)
   leftSide  <- !rightSide
-  nEdgeRight <- rootEdges[2] - 1
-  nEdgeLeft <- nEdge - nEdgeRight + 1
+  nEdgeRight <- which(rootEdges)[2] - 1
+  nEdgeLeft <- nEdge - nEdgeRight
   if (nEdgeRight < 4) {
     if (nEdgeLeft < 4) return(SPRWarning(tree, "No rearrangement possible with this root position."))
 
-    notDuplicateRoot[nEdgeRight + 1] <- FALSE
-
     breakable <- breakable & !rightSide
     rightHalfOfLeftSide <- DescendantEdges(nEdgeRight + 2L, parent, child, nEdge)
-     leftHalfOfLeftSide <- leftSide & !rightHalfOfLeftSide
+     leftHalfOfLeftSide <- leftSide & !rightHalfOfLeftSide & !rootEdges
+      if (sum(rightHalfOfLeftSide) == 1) breakable[nEdgeRight + 3] <- FALSE
+      if (sum( leftHalfOfLeftSide) == 1) breakable[nEdgeRight + 2] <- FALSE
   } else {
-    notDuplicateRoot[1] <- FALSE
-
     if (nEdgeLeft < 4) {
       breakable <- breakable & rightSide
     } else {
       rightHalfOfLeftSide <- DescendantEdges(nEdgeRight + 2L , parent, child, nEdge)
-       leftHalfOfLeftSide <- leftSide & !rightHalfOfLeftSide
-      if (sum(rightHalfOfLeftSide) == 1) breakable[nEdge] <- FALSE
-      if (sum( leftHalfOfLeftSide) == 1) breakable[rootEdges[2] + 1] <- FALSE
+       leftHalfOfLeftSide <- leftSide & !rightHalfOfLeftSide & !rootEdges
+      if (sum(rightHalfOfLeftSide) == 1) breakable[nEdgeRight + 3] <- FALSE
+      if (sum( leftHalfOfLeftSide) == 1) breakable[nEdgeRight + 2] <- FALSE
     }
     rightHalfOfRightSide <- DescendantEdges(2L , parent, child, nEdge)
-     leftHalfOfRightSide <- RightSide & !rightHalfOfRightSide     
-    if (sum(rightHalfOfRightSide) == 1) breakable[rootEdges[2] - 1] <- FALSE
+     leftHalfOfRightSide <- rightSide & !rightHalfOfRightSide & !rootEdges
+    if (sum(rightHalfOfRightSide) == 1) breakable[3] <- FALSE
     if (sum( leftHalfOfRightSide) == 1) breakable[2] <- FALSE
   }  
   
   if (is.null(edgeToBreak)) {
     # Pick an edge at random
-    edgeToBreak <- SampleOne(which(notDuplicateRoot), len=nEdge - 1L)
+    edgeToBreak <- SampleOne(which(breakable))
   } else {
     if (!breakable[edgeToBreak]) return(SPRWarning(tree, paste("Nowhere to regraft if pruning on edge", edgeToBreak)))
     if (edgeToBreak > nEdge) return(SPRWarning(tree, "edgeToBreak > nEdge"))
@@ -171,7 +170,6 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   brokenEdge <- seq_along(parent) == edgeToBreak
   brokenEdge.parentNode <- parent[edgeToBreak]
   brokenEdge.childNode  <-  child[edgeToBreak]
-  modifyingRightSide <- rightSide[edgeToBreak]
   
   edgesCutAdrift <- DescendantEdges(edgeToBreak, parent, child, nEdge)
   edgesOnAdriftSegment <- edgesCutAdrift | brokenEdge
@@ -180,11 +178,6 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   brokenEdgeSister <- parent == brokenEdge.parentNode & !brokenEdge
   brokenEdgeDaughters <- parent == brokenEdge.childNode
   nearBrokenEdge <- brokenEdge | brokenEdgeSister | brokenEdgeParent | brokenEdgeDaughters
-  if (breakingRootEdge <- !any(brokenEdgeParent)) { 
-    # Edge to break is the Root Node.
-    brokenRootDaughters <- parent == child[brokenEdgeSister]
-    nearBrokenEdge <- nearBrokenEdge | brokenRootDaughters
-  }
     
   if (!is.null(mergeEdge)) { # Quick sanity checks
     if (mergeEdge > nEdge) return(SPRWarning(tree, "mergeEdge value > number of edges"))
@@ -194,28 +187,30 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
     if(nearBrokenEdge[mergeEdge]) return(SPRWarning(tree, "Selected mergeEdge will not change tree topology."))
     if(DescendantEdges(edgeToBreak, parent, child, nEdge)[mergeEdge]) stop("mergeEdge is within pruned subtree")
   } else {
-    mergeEdge <- which(!nearBrokenEdge & !edgesOnAdriftSegment & notDuplicateRoot)
+
+edgelabels(edge=edgeToBreak, bg='orange', cex=1.8)##
+  
+    edgesOnThisSide <- if (rightSide[edgeToBreak]) rightSide else leftSide
+    mergeEdge <- which(edgesOnThisSide & !nearBrokenEdge & !edgesOnAdriftSegment)
     nCandidates <- length(mergeEdge)
-    #####Assert(nCandidates > 0)
+    Assert(nCandidates > 0)
     if (nCandidates > 1) mergeEdge <- SampleOne(mergeEdge, len=nCandidates)
   }
   
-  if (breakingRootEdge) {
-    parent[brokenRootDaughters] <- brokenEdge.parentNode
-    spareNode <- child[brokenEdgeSister]
-    child [brokenEdgeSister] <- child[mergeEdge]
-    parent[brokenEdge | brokenEdgeSister] <- spareNode
-    child[mergeEdge] <- spareNode
-  } else {
-    parent[brokenEdgeSister] <- parent[brokenEdgeParent]
-    parent[brokenEdgeParent] <- parent[mergeEdge]
-    parent[mergeEdge] <- brokenEdge.parentNode
-  }
+  parent[brokenEdgeSister] <- parent[brokenEdgeParent]
+  parent[brokenEdgeParent] <- parent[mergeEdge]
+  parent[mergeEdge] <- brokenEdge.parentNode
   
   #####Assert(identical(unique(table(parent)), 2L))
   #####Assert(identical(unique(table(child)),  1L))
   ####   matrix(c(parent, child), ncol=2)
   
   tree$edge <- RenumberTree(parent, child, nEdge)
+  
+  
+  edgelabels(edge=mergeEdge, bg='purple')
+  dev.set(3); plot(tree)
+  
+  
   tree
 }

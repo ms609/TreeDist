@@ -95,6 +95,10 @@ test_that("RootedSPR fails", {
   expect_warning(RootedSPR(tree8, edgeToBreak=1))
   expect_warning(RootedSPR(tree8, edgeToBreak=2))
   expect_warning(RootedSPR(tree8, edgeToBreak=10))
+  expect_warning(RootedSPR(read.tree(text='((a, (b, (c, d))), (e, (f, (g, h))));'), 3))
+  expect_warning(RootedSPR(read.tree(text='((a, (b, (c, d))), (e, (f, (g, h))));'), 9))
+  expect_warning(RootedSPR(read.tree(text='((a, (b, (c, d))), (((e, f), g), h));'), 14))
+  expect_warning(RootedSPR(read.tree(text='((a, (b, (c, d))), (((e, f), g), h));'), 8))
 })
 
 test_that("SPR is special case of TBR", {
