@@ -6,7 +6,6 @@
 #include <Rinternals.h>
 
 #include "ape_reorder.h"
-#include "phangorn_fitch.h"
 #include "renumber_tree.h"
 
 // Abandoned: attempts to link to ape / phangorn functions
@@ -28,7 +27,6 @@ static const R_CMethodDef cMethods[] = {
 };
 
 static const R_CallMethodDef callMethods[] = {
-  {"FITCH", (DL_FUNC) &FITCH, 3},
   {"RENUMBER_TREE", (DL_FUNC) &RENUMBER_TREE, 3},
   {NULL, NULL, 0}
 };
