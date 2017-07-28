@@ -3,18 +3,19 @@ void report_calloc_error() {
 }
 
 static R_NativePrimitiveArgType order_edges_number_nodes_t[] = {
-  INTSXP, INTSXP, INTSXP, INTSXP
+  INTSXP, INTSXP, INTSXP
 };
-void order_edges_number_nodes(int *parent, int *child, const int *n_node, const int *n_edge)
+void order_edges_number_nodes(int *parent, int *child, const int *n_edge)
 {
   int i, q_pos = 0, o_node, next_node;
-  const int n_allnodes = *n_edge + 1L, root_node = *n_node + 2L;
+  const int n_node = *n_edge / 2;
+  const int n_allnodes = *n_edge + 1L, root_node = n_node + 2L;
   int * start_p = calloc(*n_edge, sizeof(int));
   int * start_c = calloc(*n_edge, sizeof(int));
-  int * child_l  = calloc(*n_node, sizeof(int));
-  int * child_r  = calloc(*n_node, sizeof(int));
-  int * queue_p  = calloc(*n_node, sizeof(int));
-  int * queue_c  = calloc(*n_node, sizeof(int));
+  int * child_l  = calloc(n_node, sizeof(int));
+  int * child_r  = calloc(n_node, sizeof(int));
+  int * queue_p  = calloc(n_node, sizeof(int));
+  int * queue_c  = calloc(n_node, sizeof(int));
   // TODO check that calloc has returned a non-null pointer; clean-up and exit if calloc has failed
   for (i = 0; i < *n_edge; i++) {
     // Initialize
@@ -70,4 +71,30 @@ void order_edges_number_nodes(int *parent, int *child, const int *n_node, const 
   } else {
     report_calloc_error();
   }
+}
+
+SEXP RENUMBER(SEXP par, SEXP chi, SEXP ned){   
+    int *data, *nr=INTEGER(nrx), m=INTEGER(mx)[0], i, n=INTEGER(q)[0];   
+    double *pvtmp;  
+    SEXP DAT, pars, pvec, pscore, RESULT;
+    PROTECT(RESULT = allocVector(VECSXP, 4L));
+    PROTECT(pars = allocVector(INTSXP, *nr));
+    PROTECT(pscore = allocVector(REALSXP, 1L));
+    PROTECT(DAT = allocMatrix(INTSXP, nr[0], m));
+    PROTECT(pvec = allocVector(REALSXP, m));
+    pvtmp = REAL(pvec);
+    data = INTEGER(DAT);
+    for(i=0; i<m; i++) pvtmp[i] = 0.0;
+    for(i=0; i<*nr; i++) INTEGER(pars)[i] = 0L;
+    REAL(pscore)[0]=0.0;
+    for(i=0; i<(*nr * n); i++)data[i] = INTEGER(dat)[i];
+    
+    fitch8(data, nr, INTEGER(pars), INTEGER(node), INTEGER(edge), INTEGER(l), REAL(weight), pvtmp, REAL(pscore));
+    
+    SET_VECTOR_ELT(RESULT, 0, pscore);
+    SET_VECTOR_ELT(RESULT, 1, pars);
+    SET_VECTOR_ELT(RESULT, 2, DAT);
+    SET_VECTOR_ELT(RESULT, 3, pvec);
+    UNPROTECT(5);
+    return(RESULT); 
 }

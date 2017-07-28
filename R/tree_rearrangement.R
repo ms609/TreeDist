@@ -84,8 +84,14 @@ NeworderPruningwise <- function (nTaxa, nb.node, parent, child, nb.edge) {
 #' @useDynLib TreeSearch order_edges_number_nodes
 OrderEdgesNumberNodes <- function (parent, child, nTips, nEdge) {
   matrix(unlist(.C('order_edges_number_nodes', as.integer(parent), as.integer(child),
-  as.integer(nTips-1L), as.integer(nEdge))[1:2]), ncol=2)
+  as.integer(nEdge))[1:2]), ncol=2)
 }
+
+# #' @useDynLib TreeSearch OENN
+# RenumberTree <- function (parent, child, nTips, nEdge) {
+#   matrix(unlist(.Call('order_edges_number_nodes', as.integer(parent), as.integer(child),
+#   as.integer(nTips-1L), as.integer(nEdge))), ncol=2)
+# }
 
 #' Reorder tree Cladewise
 #' 

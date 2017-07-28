@@ -31,17 +31,17 @@ Assert <- function (statement) if (!statement) stop(deparse(statement), " is FAL
 #' @export
 DescendantEdges <- function (edge, parent, child, nEdge = length(parent)) {
   ret <- logical(nEdge)
-  edgeSister <- parent == parent[edge]
-  edgeSister[edge] <- FALSE
-  edgeSister <- which(edgeSister)
-  if (edgeSister > edge) {
-    ret[edge:(edgeSister - 1L)] <- TRUE 
+  edgeSister <- match(parent[edge], parent[-edge])
+  if (edgeSister >= edge) {
+    # edgeSister is really 1 higher than you think, because we knocked out edge 'edge' in the match
+    ret[edge:edgeSister] <- TRUE
     return(ret)
   } else {
     nextEdge <- edge
+    revParent <- rev(parent)
     repeat {
-      if (any(descendants <- (parent == child[nextEdge]))) {
-        nextEdge <- which(descendants)[2]
+      if (revDescendant <- match(child[nextEdge], revParent, nomatch=FALSE)) {
+        nextEdge <- 1 + nEdge - revDescendant
       } else break;
     }
     ret[edge:nextEdge] <- TRUE 
