@@ -73,28 +73,18 @@ void order_edges_number_nodes(int *parent, int *child, const int *n_edge)
   }
 }
 
-SEXP RENUMBER(SEXP par, SEXP chi, SEXP ned){   
-    int *data, *nr=INTEGER(nrx), m=INTEGER(mx)[0], i, n=INTEGER(q)[0];   
-    double *pvtmp;  
-    SEXP DAT, pars, pvec, pscore, RESULT;
-    PROTECT(RESULT = allocVector(VECSXP, 4L));
-    PROTECT(pars = allocVector(INTSXP, *nr));
-    PROTECT(pscore = allocVector(REALSXP, 1L));
-    PROTECT(DAT = allocMatrix(INTSXP, nr[0], m));
-    PROTECT(pvec = allocVector(REALSXP, m));
-    pvtmp = REAL(pvec);
-    data = INTEGER(DAT);
-    for(i=0; i<m; i++) pvtmp[i] = 0.0;
-    for(i=0; i<*nr; i++) INTEGER(pars)[i] = 0L;
-    REAL(pscore)[0]=0.0;
-    for(i=0; i<(*nr * n); i++)data[i] = INTEGER(dat)[i];
+SEXP RENUMBER_TREE(SEXP par, SEXP chi, SEXP ned){   
+    int i, *parent = INTEGER(par), *child = INTEGER(chi);
+    const int n_edge = INTEGER(ned)[0];
+    SEXP RESULT;
+    PROTECT(RESULT = allocVector(INTSXP, n_edge * 2));
     
-    fitch8(data, nr, INTEGER(pars), INTEGER(node), INTEGER(edge), INTEGER(l), REAL(weight), pvtmp, REAL(pscore));
+    order_edges_number_nodes(parent, child, &n_edge);
+    for (i = 0; i < n_edge; i++) {
+      INTEGER(RESULT)[i] = parent[i];
+      INTEGER(RESULT)[i + n_edge] = child[i];
+    }
     
-    SET_VECTOR_ELT(RESULT, 0, pscore);
-    SET_VECTOR_ELT(RESULT, 1, pars);
-    SET_VECTOR_ELT(RESULT, 2, DAT);
-    SET_VECTOR_ELT(RESULT, 3, pvec);
-    UNPROTECT(5);
+    UNPROTECT(1);
     return(RESULT); 
 }

@@ -47,7 +47,7 @@ NNI <- function (tree) {
   old_ind <- c(ind1, ind2)
   child_swap <- child[new_ind]
   child[old_ind] <- child_swap
-  tree$edge <- OrderEdgesNumberNodes(parent, child, nTips, nEdge)
+  tree$edge <- RenumberTree(parent, child, nEdge)
   tree
 }
 
@@ -115,6 +115,6 @@ RootedNNI <- function (tree) {
   old_ind <- c(ind1, ind2)
   child_swap <- child[new_ind]
   child[old_ind] <- child_swap
-  tree$edge <- OrderEdgesNumberNodes(parent, child, nTips, nEdge)
+  tree$edge <- RenumberTree(parent, child, nEdge)
   tree
 }

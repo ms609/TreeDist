@@ -110,7 +110,7 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   #####Assert(identical(unique(table(child)),  1L))
   ####   matrix(c(parent, child), ncol=2)
   
-  tree$edge <- OrderEdgesNumberNodes(parent, child, nTips, nEdge)
+  tree$edge <- RenumberTree(parent, child, nEdge)
   tree
 }
 
@@ -252,6 +252,6 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   ####   matrix(c(parent, child), ncol=2)
   
   retTree <- tree
-  retTree$edge <- OrderEdgesNumberNodes(parent, child, nTips, nEdge)
+  retTree$edge <- RenumberTree(parent, child, nEdge)
   retTree
 }
