@@ -69,16 +69,16 @@ RearrangeTree <- function (tree, data, Rearrange = NNI, TreeScorer = FitchScore,
   trees
 }
 
-#' @useDynLib TreeSearch ape_neworder_phylo
+#' @useDynLib ape neworder_phylo
 NeworderPhylo <- function (nTaxa, parent, child, nb.edge, whichwise) {
-  .C('ape_neworder_phylo', as.integer(nTaxa), as.integer(parent), as.integer(child), 
-     as.integer(nb.edge), integer(nb.edge), as.integer(whichwise), NAOK = TRUE)[[5]]
+  .C('neworder_phylo', as.integer(nTaxa), as.integer(parent), as.integer(child), 
+     as.integer(nb.edge), integer(nb.edge), as.integer(whichwise), NAOK = TRUE, PACKAGE='ape')[[5]]
 }
 
-#' @useDynLib TreeSearch ape_neworder_pruningwise
+#' @useDynLib ape neworder_pruningwise
 NeworderPruningwise <- function (nTaxa, nb.node, parent, child, nb.edge) {
-  .C('ape_neworder_pruningwise', as.integer(nTaxa), as.integer(nb.node), as.integer(parent), 
-     as.integer(child), as.integer(nb.edge), integer(nb.edge))[[6]]
+  .C('neworder_pruningwise', as.integer(nTaxa), as.integer(nb.node), as.integer(parent), 
+     as.integer(child), as.integer(nb.edge), integer(nb.edge), PACKAGE='ape')[[6]]
 }
 
 #' @useDynLib TreeSearch order_edges_number_nodes
