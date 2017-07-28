@@ -119,8 +119,6 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
 #' @importFrom ape root
 #' @export
 RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
-dev.set(2); plot(tree); edgelabels()
-
   nTips <- tree$Nnode + 1L
   if (nTips < 3L) return (tree)
   edge   <- tree$edge
@@ -187,9 +185,6 @@ dev.set(2); plot(tree); edgelabels()
     if(nearBrokenEdge[mergeEdge]) return(SPRWarning(tree, "Selected mergeEdge will not change tree topology."))
     if(DescendantEdges(edgeToBreak, parent, child, nEdge)[mergeEdge]) stop("mergeEdge is within pruned subtree")
   } else {
-
-edgelabels(edge=edgeToBreak, bg='orange', cex=1.8)##
-  
     edgesOnThisSide <- if (rightSide[edgeToBreak]) rightSide else leftSide
     mergeEdge <- which(edgesOnThisSide & !nearBrokenEdge & !edgesOnAdriftSegment)
     nCandidates <- length(mergeEdge)
@@ -206,11 +201,5 @@ edgelabels(edge=edgeToBreak, bg='orange', cex=1.8)##
   ####   matrix(c(parent, child), ncol=2)
   
   tree$edge <- RenumberTree(parent, child, nEdge)
-  
-  
-  edgelabels(edge=mergeEdge, bg='purple')
-  dev.set(3); plot(tree)
-  
-  
   tree
 }
