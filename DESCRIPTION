@@ -6,7 +6,8 @@ Authors@R: person('Smith', "Martin R.", email="martins@gmail.com", role=c("aut",
 Description: Searches for phylogenetic trees that are optimal using a user-defined criterion.
 Depends: R (>= 3.4.0)
 Imports: 
-    ape
+    ape,
+    phangorn
 Suggests: 
     phangorn,
     testthat

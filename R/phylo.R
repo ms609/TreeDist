@@ -680,15 +680,13 @@ BindTree <- function(x, y, where = "root", position = 0) {
     x
 }
 
-## Abandoned effort....
-## #' @useDynLib TreeSearch ape_node_depth
-## #' @useDynLib ape node_depth
-## C_node_depth <- function (nTip, nNode, parent, child, nEdge) {
-##   .C("ape_node_depth", as.integer(nTip), as.integer(nNode), as.integer(parent), 
-##      as.integer(child), as.integer(nEdge), double(nTip + nNode))[[6]]
-## }
+#' @useDynLib ape node_depth
+C_node_depth <- function (nTip, nNode, parent, child, nEdge) {
+  .C("node_depth", as.integer(nTip), as.integer(nNode), as.integer(parent), 
+     as.integer(child), as.integer(nEdge), double(nTip + nNode), PACKAGE='ape')[[6]]
+}
 
-#' TITLE GOES HERE
+#' Drop Tip
 #'
 #' \code{FUNCTIONNAME} does something useful
 #'
