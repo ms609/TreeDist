@@ -5,11 +5,14 @@
 #' @param maxIter maximum number of iterations to perform in tree search
 #' @param maxHits number of times to find optimal tree length before stopping tree search
 #' @template TreeScorerParam
+#' @param rooted set to FALSE if position of root may change, TRUE if position and composition of
+#'               outgroup is fixed
 #' @template trackParam
 #'
 #' @return A tree that is optimal under a random sampling of the original characters
 #' @export  
-BootstrapTree <- function (tree, x, maxIter, maxHits, TreeScorer = FitchScore, track=1, ...) {
+BootstrapTree <- function (tree, x, maxIter, maxHits, TreeScorer = FitchScore, 
+  rooted = TRUE, track=1, ...) {
 ## Simplified version of phangorn::bootstrap.phyDat, with bs=1 and multicore=FALSE
   at <- attributes(x)
   bootstrappedWeight <- BootstrapWeightings(at)
@@ -20,6 +23,7 @@ BootstrapTree <- function (tree, x, maxIter, maxHits, TreeScorer = FitchScore, t
   mostattributes(x) <- at
   dim(x) <- xDim
   dimnames(x) <- xDimNames
+  names(x) <- at$names
   attr(x, 'weight') <- bootstrappedWeight[keep]
   for (attrName in at$bootstrap) {
     attribute <- at[attrName][[1]]
@@ -28,13 +32,18 @@ BootstrapTree <- function (tree, x, maxIter, maxHits, TreeScorer = FitchScore, t
       attr(x, attrName) <- attribute[, keep]
     } else if (length(attribute) == length(keep)) {
       attr(x, attrName) <- attribute[keep]
-    } 
+    }
   }
   attr(x, 'nr') <- sum(keep)
+  ## Not sure that this is a good idea...
+  ## atNames <- names(at)
+  ## for (attrName in atNames[!atNames %in% names(attributes(x))]) {
+  ##   attr(x, attrName) <- at[[attrName]]
+  ## }
   
   attr(tree, 'score') <- NULL
   res <- DoTreeSearch(tree, x, TreeScorer=TreeScorer, method='NNI', maxIter=maxIter,
-                      maxHits=maxHits, track=track-1, ...)
+                      maxHits=maxHits, track=max(0, track - 1), ...)
   attr(res, 'score') <- NULL
   attr(res, 'hits') <- NULL
   res
