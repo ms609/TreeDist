@@ -1,4 +1,3 @@
-
 static R_NativePrimitiveArgType ape_node_depth_t[] = {
   INTSXP, INTSXP, INTSXP, INTSXP, 
   INTSXP, REALSXP, INTSXP
@@ -120,7 +119,7 @@ void ape_bar_reorder(int node, int n_tips, int n_nodes, int *parent, int *child,
 		k = child[L[i + n_nodes * j]];
 		if (k > n_tips)
 			ape_bar_reorder(k, n_tips, n_nodes, parent, child, neworder, L, pos);
-	1}
+	}
 }
 
 static R_NativePrimitiveArgType ape_neworder_phylo_t[] = {

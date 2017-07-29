@@ -75,7 +75,7 @@ NeworderPhylo <- function (nTaxa, parent, child, nb.edge, whichwise) {
      as.integer(nb.edge), integer(nb.edge), as.integer(whichwise), NAOK = TRUE)[[5]]
 }
 
-#' @useDynLib TreeSarch ape_neworder_pruningwise
+#' @useDynLib TreeSearch ape_neworder_pruningwise
 NeworderPruningwise <- function (nTaxa, nb.node, parent, child, nb.edge) {
   .C('ape_neworder_pruningwise', as.integer(nTaxa), as.integer(nb.node), as.integer(parent), 
      as.integer(child), as.integer(nb.edge), integer(nb.edge))[[6]]

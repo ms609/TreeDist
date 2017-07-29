@@ -96,13 +96,13 @@ test_that("RootedSPR fails", {
   expect_warning(RootedSPR(tree8, edgeToBreak=13))
   expect_warning(RootedSPR(tree8, edgeToBreak=14))
   expect_warning(RootedSPR(read.tree(text='((a, (b, (c, d))), (e, (f, (g, h))));'), 3))
-  expect_warning(RootedSPR(read.tree(text='((a, (b, (c, d))), (e, (f, (g, h))));'), 9))
-  expect_warning(RootedSPR(read.tree(text='((a, (b, (c, d))), (((e, f), g), h));'), 14))
+  expect_warning(RootedSPR(read.tree(text='((a, (b, (c, d))), (e, (f, (g, h))));'), 10))
+  expect_warning(RootedSPR(read.tree(text='((a, (b, (c, d))), (((e, f), g), h));'), 9))
   expect_warning(RootedSPR(read.tree(text='((a, (b, (c, d))), (((e, f), g), h));'), 8))
 })
 
 test_that("SPR is special case of TBR", {
-  library(devtools); library(testthat); library(ape); load_all()
+  #library(devtools); library(testthat); library(ape); load_all()
   Plot <- function (x) {plot(x); nodelabels(cex=0.8); edgelabels()}
   
   expect_equal(SPR(tree11, 3, 9), TBR(tree11, 3, c(3, 9)))

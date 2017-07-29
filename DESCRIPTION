@@ -8,10 +8,8 @@ Depends: R (>= 3.4.0)
 Imports: 
     ape
 Suggests: 
-    phangorn,
     testthat
 Enhances:
-    ape,
     phangorn
 LazyData: true
 License: CC0
