@@ -1,3 +1,6 @@
+#' Fitch Score
+#' Calculate the parsimony score of a tree (number of steps) using the Fitch algoritgh
+#' @return the parsimony score (an integer)
 #' @useDynLib TreeSearch FITCH
 #' @keywords internal
 #' @export
@@ -6,6 +9,8 @@ C_Fitch_Score <- function (characters, nChar, parent, child, nEdge, weight, maxN
         as.integer(parent), as.integer(child), as.integer(nEdge),
         as.double(weight), as.integer(maxNode), as.integer(nTip))[[1]]
 }
+#' Fitch steps
+#' @return the number of steps the tree enforces on each character
 #' @useDynLib TreeSearch FITCH
 #' @keywords internal
 #' @export
@@ -14,6 +19,8 @@ C_Fitch_Steps <- function (characters, nChar, parent, child, nEdge, weight, maxN
         as.integer(parent), as.integer(child), as.integer(nEdge),
         as.double(weight), as.integer(maxNode), as.integer(nTip))[[2]]
 }
+#' Wrapper to FITCH
+#' @return the full return of the phangorn C function FITCH
 #' @useDynLib TreeSearch FITCH
 #' @keywords internal
 #' @export

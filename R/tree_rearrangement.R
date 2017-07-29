@@ -69,25 +69,45 @@ RearrangeTree <- function (tree, data, Rearrange = NNI, TreeScorer = FitchScore,
   trees
 }
 
+#' neworder_phylo
+#' Wrapper for the ape function
 #' @useDynLib TreeSearch ape_neworder_phylo
+#' @keywords internal
+#' @export
 NeworderPhylo <- function (nTaxa, parent, child, nb.edge, whichwise) {
-  .C('neworder_phylo', as.integer(nTaxa), as.integer(parent), as.integer(child), 
+  .C('ape_neworder_phylo', as.integer(nTaxa), as.integer(parent), as.integer(child), 
      as.integer(nb.edge), integer(nb.edge), as.integer(whichwise), NAOK = TRUE)[[5]]
 }
 
+#' neworder_pruningwise
+#' Wrapper for the ape function
 #' @useDynLib TreeSearch ape_neworder_pruningwise
+#' @keywords internal
+#' @export
 NeworderPruningwise <- function (nTaxa, nb.node, parent, child, nb.edge) {
   .C('ape_neworder_pruningwise', as.integer(nTaxa), as.integer(nb.node), as.integer(parent), 
      as.integer(child), as.integer(nb.edge), integer(nb.edge))[[6]]
 }
 
+
+#' Order edges and number nodes
+#' Wrapper for the C function
+#' @return an edge matrix for a tree following the usual convention for edge and node numbering
 #' @useDynLib TreeSearch order_edges_number_nodes
+#' @keywords internal
+#' @export
 OrderEdgesNumberNodes <- function (parent, child, nTips, nEdge = length(parent)) {
   matrix(unlist(.C('order_edges_number_nodes', as.integer(parent), as.integer(child),
   as.integer(nEdge))[1:2]), ncol=2)
 }
 
+#' Renumber tree
+#' Order edges and number nodes
+#' Wrapper for the C function RENUMBER_TREE
+#' @return an edge matrix for a tree following the usual convention for edge and node numbering
 #' @useDynLib TreeSearch RENUMBER_TREE
+#' @keywords internal
+#' @export
 RenumberTree <- function (parent, child, nEdge = length(parent)) {
   matrix(.Call('RENUMBER_TREE', as.integer(parent), as.integer(child), as.integer(nEdge)), ncol=2)
 }
