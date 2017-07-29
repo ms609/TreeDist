@@ -3,13 +3,16 @@
 \name{Fitch}
 \alias{Fitch}
 \alias{FitchScore}
+\alias{FasterFitchScore}
 \alias{FitchSteps}
 \title{Fitch score}
 \usage{
 Fitch(tree, data, TipData = TipsAreNames, at = attributes(data),
   FitchFunction = C_Fitch_Score)
 
-FitchScore(tree, data, TipData = TipsAreNames, at = attributes(data))
+FitchScore(tree, data, TipData = NULL, at = attributes(data))
+
+FasterFitchScore(tree, data, TipData = TipsAreNames, at = attributes(data))
 
 FitchSteps(tree, data, TipData = TipsAreNames, at = attributes(data))
 }
@@ -37,6 +40,9 @@ Fitch score
 \itemize{
 \item \code{FitchScore}: returns the parsimony score only
 
+\item \code{FasterFitchScore}: returns the parsimony score only, without checking that data is well formatted
+
 \item \code{FitchSteps}: returns a vector listing the number of steps for each character
 }}
 
+\keyword{internal}

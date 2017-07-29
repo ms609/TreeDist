@@ -30,12 +30,24 @@ C_Fitch <- function (characters, nChar, parent, child, nEdge, weight, maxNode, n
         as.double(weight), as.integer(maxNode), as.integer(nTip))
 }
 
+#' Extract character data from dataset
+#'
+#' Speficies how characters are stored in a data object
+#' 
+#' @param data a matrix or list containing symbols associated with each tip; for example,
+#'             a dataset of class \code{phyDat}
+#' @param tips vector detailing the tips to be selected, whether as their
+#'        names or numbers corresponding to their rows/columns
+#' @return an integer vector, listing the tokens associated with each character for each tip in turn
+#'         - ready to send to FITCH or equivalent C routine
 #' @keywords internal
 #' @export
 TipsAreNames <- function(data, tips) as.integer(unlist(data[tips]))
+#' @describeIn TipsAreNames use if each row in a matrix corresponds to a tip
 #' @keywords internal
 #' @export
 TipsAreRows <- function(data, tips) as.integer(data[tips, ])
+#' @describeIn TipsAreNames use if each column in a matrix corresponds to a tip
 #' @keywords internal
 #' @export
 TipsAreColumns <- function(data, tips) as.integer(data[, tips])
@@ -75,9 +87,23 @@ Fitch <- function (tree, data, TipData = TipsAreNames, at = attributes(data),
 }
 #' @describeIn Fitch returns the parsimony score only
 #' @export
-FitchScore <- function (tree, data, TipData = TipsAreNames, at = attributes(data))
+FitchScore <- function (tree, data, TipData = NULL, at = attributes(data)) {
+  if (is.null(TipData)) {
+    if (class(data) != 'phyDat') stop("Expected a phyDat object. Please specify the TipData function relevant
+      to the class of data that you have provided")
+    TipData <- TipsAreNames
+    if (!all(tree$tip.label %in% names(data))) stop ("Some tips could not be found in the data provided.")
+  }
+  Fitch(tree, data, TipData, at, C_Fitch_Score)
+}
+
+#' @describeIn Fitch returns the parsimony score only, without checking that data is well formatted
+#' @keywords internal
+#' @export
+FasterFitchScore <- function (tree, data, TipData = TipsAreNames, at = attributes(data))
   Fitch(tree, data, TipData, at, C_Fitch_Score)
 
+  
 #' @describeIn Fitch returns a vector listing the number of steps for each character
 #' @export
 FitchSteps <- function (tree, data, TipData = TipsAreNames, at = attributes(data))
