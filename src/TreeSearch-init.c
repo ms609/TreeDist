@@ -24,9 +24,9 @@
 
 static const R_CMethodDef cMethods[] = {
   {"order_edges_number_nodes", (DL_FUNC) &order_edges_number_nodes, 3, order_edges_number_nodes_t},
-  {"ape_neworder_phylo", (DL_FUNC) &ape_neworder_phylo, 3, ape_neworder_phylo_t},
+  {"ape_neworder_phylo", (DL_FUNC) &ape_neworder_phylo, 6, ape_neworder_phylo_t},
   {"ape_node_depth", (DL_FUNC) &ape_node_depth, 7, ape_node_depth_t},
-  {"ape_neworder_pruningwise", (DL_FUNC) &ape_neworder_pruningwise, 3, ape_neworder_pruningwise_t},
+  {"ape_neworder_pruningwise", (DL_FUNC) &ape_neworder_pruningwise, 6, ape_neworder_pruningwise_t},
   {NULL, NULL, 0, NULL}
 };
 
@@ -38,6 +38,7 @@ static const R_CallMethodDef callMethods[] = {
 
 void R_init_TreeSearch(DllInfo *info) {
   R_registerRoutines(info, cMethods, callMethods, NULL, NULL);
+  R_RegisterCCallable("TreeSearch", "order_edges_number_nodes", order_edges_number_nodes);
   R_useDynamicSymbols(info, FALSE);
   R_forceSymbols(info, TRUE);
 }
