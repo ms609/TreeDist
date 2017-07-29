@@ -680,10 +680,14 @@ BindTree <- function(x, y, where = "root", position = 0) {
     x
 }
 
+#' node depth
+#' Wrapper for the ape function
 #' @useDynLib TreeSearch ape_node_depth
+#' @keywords internal
+#' @export
 C_node_depth <- function (nTip, nNode, parent, child, nEdge) {
   .C("ape_node_depth", as.integer(nTip), as.integer(nNode), as.integer(parent), 
-     as.integer(child), as.integer(nEdge), double(nTip + nNode))[[6]]
+     as.integer(child), as.integer(nEdge), double(nTip + nNode), 1L)[[6]]
 }
 
 #' TITLE GOES HERE
@@ -728,11 +732,11 @@ DropTip <- function(phy, tip, trim.internal = TRUE, subtree = FALSE, root.edge =
     trim.internal <- TRUE
     tr <- Pruningwise(phy)
     tr.edge <- tr$edge
-    N <- .C("node_depth", as.integer(Ntip), as.integer(Nnode),
-            as.integer(tr.edge[, 1]), as.integer(tr.edge[, 2]),
-            as.integer(Nedge), double(Ntip + Nnode), 
-            PACKAGE = "TreeSearch")[[6]]
-    ## N <- C_node_depth(Ntip, Nnode, tr.edge[, 1], tr.edge[, 2], Nedge)
+    ## N <- .C("node_depth", as.integer(Ntip), as.integer(Nnode),
+    ##         as.integer(tr.edge[, 1]), as.integer(tr.edge[, 2]),
+    ##         as.integer(Nedge), double(Ntip + Nnode),
+    ##         PACKAGE = "TreeSearch")[[6]]
+    N <- C_node_depth(Ntip, Nnode, tr.edge[, 1], tr.edge[, 2], Nedge)
   }
   edge1 <- phy.edge[, 1] # local copies
   edge2 <- phy.edge[, 2] #
