@@ -1,3 +1,5 @@
 *.dll
 *.o
 *.out
+src-x64
+src-i386

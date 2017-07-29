@@ -1,26 +1,26 @@
-#' @useDynLib phangorn FITCH
+#' @useDynLib TreeSearch FITCH
 #' @keywords internal
 #' @export
 C_Fitch_Score <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
   .Call("FITCH", as.integer(characters), as.integer(nChar),
         as.integer(parent), as.integer(child), as.integer(nEdge),
-        as.double(weight), as.integer(maxNode), as.integer(nTip), PACKAGE='phangorn')[[1]]
+        as.double(weight), as.integer(maxNode), as.integer(nTip))[[1]]
 }
-#' @useDynLib phangorn FITCH
+#' @useDynLib TreeSearch FITCH
 #' @keywords internal
 #' @export
 C_Fitch_Steps <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
   .Call("FITCH", as.integer(characters), as.integer(nChar),
         as.integer(parent), as.integer(child), as.integer(nEdge),
-        as.double(weight), as.integer(maxNode), as.integer(nTip), PACKAGE='phangorn')[[2]]
+        as.double(weight), as.integer(maxNode), as.integer(nTip))[[2]]
 }
-#' @useDynLib phangorn FITCH
+#' @useDynLib TreeSearch FITCH
 #' @keywords internal
 #' @export
 C_Fitch <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
   .Call("FITCH", as.integer(characters), as.integer(nChar),
         as.integer(parent), as.integer(child), as.integer(nEdge),
-        as.double(weight), as.integer(maxNode), as.integer(nTip), PACKAGE='phangorn')
+        as.double(weight), as.integer(maxNode), as.integer(nTip))
 }
 
 #' @keywords internal
