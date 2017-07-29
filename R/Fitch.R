@@ -57,7 +57,9 @@ TipsAreColumns <- function(data, tips) as.integer(data[, tips])
 #' @template treeParam
 #' @param data A list or matrix whose list entries, rows or columns (as specified in TipData)
 #'             correspond to the character data associated with the tips of the tree. 
-#'             Likely of class \code{phyDat}.
+#'             Likely of class \code{phyDat}.  The number of characters should be stored
+#'             as the attribute data$nr, and the weight of each character in data$weight;
+#'             if data is a matrix, they will be calculated automatically (weights set to 1).
 #' @param TipData function to be used to match tree tips to dataset; probably one of 
 #'                \code{TipsAreNames}, \code{TipsAreRows}, or \code{TipsAreColumns}
 #' @param at Attributes of the dataset (looked up automatically if not supplied)
@@ -66,21 +68,27 @@ TipsAreColumns <- function(data, tips) as.integer(data[, tips])
 #' @export
 Fitch <- function (tree, data, TipData = TipsAreNames, at = attributes(data),
                         FitchFunction = C_Fitch_Score) { 
-  if (is.null(at$order) || at$order == "cladewise") tree <- Postorder(tree)
+  treeOrder <- attr(tree, 'order')
+  if (is.null(treeOrder) || treeOrder == "cladewise") tree <- Postorder(tree)
   treeEdge <- tree$edge
   parent <- treeEdge[, 1]
   child <- treeEdge[, 2]
   tipLabel <- tree$tip.label
+  nr <- at$nr
+  if (is.null(at$nr)) nr <- dim(data)
+  nr <- if (nr[1] == length(tipLabel)) nr[2] else nr[1]
+  charWeights <- at$weight
+  if (is.null(charWeights)) charWeights <- rep(1, nr)
   
   return(FitchFunction(
       characters = TipData(data, tipLabel), 
-      nChar = at$nr,
-      parent, child, 
+      nChar = nr,
+      parent, child,
       nEdge = length(parent), 
-      weight = at$weight, 
+      weight = charWeights, 
       maxNode = parent[1], #max(parent),
       nTip = length(tipLabel)
-    )   
+    )
   )
   # TODO DELTE debugging line:
   #    FitchFunction(TipData(data, tipLabel), at$nr, parent, child, length(parent), at$weight, parent[1], nTip = length(tipLabel))
