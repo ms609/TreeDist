@@ -75,8 +75,13 @@ EdgeAncestry <- function (edge, parent, child, stopAt = (parent==min(parent))) {
 #' Generate random tree topology from dataset
 #' 
 #' @param dataset A dataset in \code{\link[phangorn]{phyDat}} format
+#' @param root Taxon to use as root (if desired; FALSE otherwise)
 #' 
 #' @author Martin R. Smith 
 #' @importFrom ape rtree
+#' @importFrom ape root
 #' @export
-RandomTree <- function (dataset) rtree(length(dataset), tip.label=names(dataset), br=NULL)
+RandomTree <- function (dataset, root = FALSE) {
+  tree <- ape::rtree(length(dataset), tip.label=names(dataset), br=NULL)
+  return (if (root != FALSE) ape::root(tree, root, resolve.root=TRUE) else tree)
+}
