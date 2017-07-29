@@ -5,7 +5,7 @@
 \title{Parsimony Ratchet}
 \usage{
 Ratchet(tree, data, TreeScorer = FitchScore, returnAll = FALSE,
-  outgroup = NULL, ratchIter = 100, searchIter = 5000, searchHits = 40,
+  rooted = TRUE, ratchIter = 100, searchIter = 5000, searchHits = 40,
   ratchHits = 10, track = 0, rearrangements = "NNI", suboptimal = 1e-08,
   ...)
 }
@@ -16,12 +16,15 @@ Ratchet(tree, data, TreeScorer = FitchScore, returnAll = FALSE,
 
 \item{returnAll}{Set to \code{TRUE} to report all MPTs encountered during the search, perhaps to analyze consensus}
 
-\item{outgroup}{a vector specifying all tips in the outgroup; if unspecified then identical trees with different roots will be considered unique;}
+\item{rooted}{Retain the position of the root in tree search}
 
-\item{rearrangements}{method(s) to use when rearranging trees: 
-a vector containing any combination of the strings "NNI", "SPR" or "TBR";}
+\item{rearrangements}{method(s) to use when rearranging trees. Provide:
+the character string "TBR" to conduct TBR, SPR and NNI rearrangements, or "TBR only"
+to just perform TBR rearrangements (retaining the position of the root if \code{outgroup = TRUE})
+OR: a list of functions to use, one at a time, as the \code{Rearrange} parameter
+    in successive calls to DoTreeSearch}
 
-\item{\dots}{other arguments to pass to subsequent functions.}
+\item{\dots}{other arguments to pass to TreeScorer function (e.g. \code{\link{TipsAreColumns}})}
 
 \item{concavity}{concavity constant for implied weighting (not currently implemented!)}
 
@@ -42,7 +45,7 @@ This function returns a tree modified by parsimony ratchet iteration, retaining 
 \code{Ratchet} uses the parsimony ratchet (Nixon 1999) to search for a more parsimonious tree.
 }
 \examples{
-Ratchet(RandomTree(Lobo.phy), Lobo.phy, outgroup='Cricocosmia')
+Ratchet(RandomTree(Lobo.phy), Lobo.phy, rooted=TRUE)
 
 }
 \references{

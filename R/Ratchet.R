@@ -6,15 +6,19 @@
 #' @param data a dataset in the format required by TreeScorer
 #' @template concavityParam
 #' @param returnAll Set to \code{TRUE} to report all MPTs encountered during the search, perhaps to analyze consensus
-#' @param outgroup a vector specifying all tips in the outgroup; if unspecified then identical trees with different roots will be considered unique;
+#' @param rooted Retain the position of the root in tree search
 #' @param maxit   maximum ratchet iterations to perform;
 #' @param maxIter maximum rearrangements to perform on each bootstrap or ratchet iteration;
 #' @param maxHits maximum times to hit best score before terminating a tree search within a pratchet iteration;
 #' @param k stop when k ratchet iterations have found the same best score;
 #' @param verbosity larger numbers provides more verbose feedback to the user;
-#' @param rearrangements method(s) to use when rearranging trees: 
-#'        a vector containing any combination of the strings "NNI", "SPR" or "TBR";
-#' @param \dots other arguments to pass to subsequent functions.
+#' @param rearrangements method(s) to use when rearranging trees. Provide:
+#'        the character string "TBR" to conduct TBR, SPR and NNI rearrangements, or "TBR only"
+#'        to just perform TBR rearrangements (retaining the position of the root if \code{outgroup = TRUE})
+#'        OR: a list of functions to use, one at a time, as the \code{Rearrange} parameter
+#'            in successive calls to DoTreeSearch
+#'        
+#' @param \dots other arguments to pass to TreeScorer function (e.g. \code{\link{TipsAreColumns}})
 #' 
 #' @return This function returns a tree modified by parsimony ratchet iteration, retaining the position of the root.
 #'
@@ -28,16 +32,16 @@
 #' @seealso \code{\link{TreeSearch}}
 #' @seealso \code{\link{SectorialSearch}}
 #' 
-#' @examples Ratchet(RandomTree(Lobo.phy), Lobo.phy, outgroup='Cricocosmia')
+#' @examples Ratchet(RandomTree(Lobo.phy), Lobo.phy, rooted=TRUE)
 #' 
 #' @keywords  tree 
 #' @export
 ## TODO use Rooted NNI / SPR / TBR 
-Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, outgroup=NULL, 
+Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, rooted=TRUE, 
                       ratchIter=100, searchIter=5000, searchHits=40, ratchHits=10, track=0, 
                       rearrangements="NNI", suboptimal=1e-08, ...) {
   epsilon <- 1e-08
-  if (is.null(attr(tree, "score"))) attr(tree, "score") <- TreeScorer(tree, data)
+  if (is.null(attr(tree, "score"))) attr(tree, "score") <- TreeScorer(tree, data, ...)
   bestScore <- attr(tree, "score")
   if (track >= 0) cat("\n* Initial score:", bestScore)
   if (returnAll) {
@@ -54,33 +58,39 @@ Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, outgrou
                         TreeScorer=TreeScorer, track=track-1, ...)
     
     if (track >= 0) cat ("\n - Running", ifelse(is.null(rearrangements), "NNI", rearrangements), "from new candidate tree:")
-    if (rearrangements == "TBR") {
-      candidate <- DoTreeSearch(bootstrapTree, data, TreeScorer=TreeScorer, method='TBR',
-                                track=track, maxIter=searchIter, maxHits=searchHits, ...)
-      candidate <- DoTreeSearch(candidate, data, TreeScorer=TreeScorer, method='SPR', 
-                                track=track, maxIter=searchIter, maxHits=searchHits, ...)
-      candidate <- DoTreeSearch(candidate, data, TreeScorer=TreeScorer, method='NNI', 
-                                track=track, maxIter=searchIter, maxHits=searchHits, ...)
-    } else if (rearrangements == "TBR only") {  
-      candidate <- DoTreeSearch(bootstrapTree, data, TreeScorer=TreeScorer, method='TBR', 
-                                track=track, maxIter=searchIter, maxHits=searchHits, ...)
-    } else if (rearrangements == "SPR") {       
-      candidate <- DoTreeSearch(bootstrapTree, data, TreeScorer=TreeScorer, method='SPR', 
-                                track=track, maxIter=searchIter, maxHits=searchHits, ...)
-      candidate <- DoTreeSearch(candidate, data, TreeScorer=TreeScorer, method='NNI', 
-                                track=track, maxIter=searchIter, maxHits=searchHits, ...)
-    } else if (rearrangements == "SPR only") {  
-      candidate <- DoTreeSearch(bootstrapTree,    data, TreeScorer=TreeScorer, method='SPR', 
-                                track=track, maxIter=searchIter, maxHits=searchHits, ...)
-    } else {  
-      candidate <- DoTreeSearch(bootstrapTree,    data, TreeScorer=TreeScorer, method='NNI', 
+    Rearrangements <- if (outgroup) {
+      if (rearrangements == "TBR") 
+        list(RootedTBR, RootedSPR, RootedNNI) else 
+      if (rearrangements == "TBR only") 
+        list(RootedTBR) else
+      if (rearrangements == "SPR") 
+        list(RootedSPR, RootedNNI) else 
+      if (rearrangements == "SPR only") 
+        list(RootedSPR) else 
+      if (class(rearrangements) == 'character') list(RootedNNI) else rearrangements
+    } else {
+      if (rearrangements == "TBR") 
+        list(TBR, SPR, NNI) else 
+      if (rearrangements == "TBR only") 
+        list(TBR) else
+      if (rearrangements == "SPR") 
+        list(SPR, NNI) else 
+      if (rearrangements == "SPR only") 
+        list(SPR) else 
+      if (class(rearrangements) == 'character') list(NNI) else rearrangements
+    }
+    
+    candidate <- bootstrapTree
+    for (Func in Rearrangements) {
+      candidate <- DoTreeSearch(candidate, data, TreeScorer=TreeScorer, Rearrange=Func, 
                                 track=track, maxIter=searchIter, maxHits=searchHits, ...)
     }
+    
     candScore <- attr(candidate, 'score')
     if ((candScore + epsilon) < bestScore) {
       # New 'best' tree
       if (returnAll) {
-        forest[[i]] <- if (is.null(outgroup)) candidate else Root(candidate, outgroup) # TODO Improve this function
+        forest[[i]] <- candidate
         forest.scores[i] <- candScore
       }
       tree <- candidate
@@ -90,11 +100,11 @@ Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, outgrou
       bestScoreHits <- bestScoreHits + 1
       tree <- candidate
       if (returnAll) {
-        forest[[i]] <- if (is.null(outgroup)) candidate else Root(candidate, outgroup)
+        forest[[i]] <- candidate
         forest.scores[i] <- candScore
       }
     } else if (candScore < (bestScore + suboptimal) && returnAll) {
-      forest[[i]] <- if (is.null(outgroup)) candidate else Root(candidate, outgroup)
+      forest[[i]] <- candidate
       forest.scores[i] <- candScore
     }
     if (track >= 0) cat("\n* Best score after", i, "/", ratchIter, "pratchet iterations:", bestScore, "( hit", bestScoreHits, "/", ratchHits, ")")
@@ -121,7 +131,7 @@ Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, outgrou
     }
     scores.unique <- vapply(ret, attr, double(1), 'score')
     cat('Found', sum(scores.unique == min(scores.unique)), 'unique MPTs and', length(ret) - sum(scores.unique == min(scores.unique)), 'suboptimal trees.\n')
-    if (is.null(outgroup)) warning('"outgroup" not specified, so some "unique" trees may have same topology but distinct roots.')
+    if (!outgroup) warning('"outgroup" not specified, so some "unique" trees may have same topology but distinct roots.')
   } else {
     ret <- tree
     attr(ret, 'hits') <- NULL
