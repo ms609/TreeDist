@@ -75,13 +75,24 @@ Fitch <- function (tree, data, TipData = TipsAreNames, at = attributes(data),
   child <- treeEdge[, 2]
   tipLabel <- tree$tip.label
   nr <- at$nr
-  if (is.null(at$nr)) nr <- dim(data)
-  nr <- if (nr[1] == length(tipLabel)) nr[2] else nr[1]
+  if (is.null(at$nr)) {
+    nr <- dim(data)
+    nr <- if (nr[1] == length(tipLabel)) nr[2] else nr[1]
+  }
   charWeights <- at$weight
   if (is.null(charWeights)) charWeights <- rep(1, nr)
+  if (class(data) =='phyDat') {
+    levs <- attr(data, 'levels')
+    contrast <- attr(data, 'contrast')
+    index <- as.integer(contrast %*% 2L ^ (seq_along(attr(data, 'levels')) - 1))
+    data <- vapply(data, function (X) index[X], integer(nr))
+    characters <- TipsAreColumns(data, tipLabel)
+  } else {
+    characters <- TipData(data, tipLabel)
+  }
   
   return(FitchFunction(
-      characters = TipData(data, tipLabel), 
+      characters = characters, 
       nChar = nr,
       parent, child,
       nEdge = length(parent), 
