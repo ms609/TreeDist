@@ -55,7 +55,7 @@ Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, rooted=
   for (i in 1:ratchIter) {
     if (track >= 0) cat ("\n - Running NNI on bootstrapped dataset. ")
     bootstrapTree <- BootstrapTree(tree, data, maxIter=searchIter, maxHits=searchHits,
-                        TreeScorer=TreeScorer, track=track-1, ...)
+                        rooted=rooted, TreeScorer=TreeScorer, track=track-1, ...)
     
     if (track >= 0) cat ("\n - Running", ifelse(is.null(rearrangements), "NNI", rearrangements), "from new candidate tree:")
     Rearrangements <- if (outgroup) {
