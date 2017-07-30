@@ -173,9 +173,8 @@ DoSectorial <- function (tree, dataset, TreeScorer = FitchScore, maxSectIter=100
     
     if (verbosity >= 0) cat("\n - Rearranging sector", sector)
     for (Rearrange in Rearrangements) {
-      candidate <- DoTreeSearch(candidate, dataset, TreeScorer, Rearrange, verbosity=verbosity-1, maxIter=maxIter
-      , ...)
-      warning("TODO: These scores don't seem right")
+      candidate <- DoTreeSearch(candidate, dataset, TreeScorer, Rearrange,
+                                verbosity=verbosity-1, maxIter=maxIter, ...) 
     }
     candidateScore <- attr(candidate, 'score')
     
