@@ -426,7 +426,9 @@ GetDescendants <- function (tree, node, ...) {
 #'   
 #' @author Martin R. Smith
 #' @export
-DoDescendants <- function (edge1, edge2, nTip, node, just.tips = FALSE, just.internal=FALSE, include.ancestor = FALSE) {
+DoDescendants <- function (edge1, edge2, nTip = length(edge1) / 2 + 1, node, 
+                           just.tips = FALSE, just.internal=FALSE, 
+                           include.ancestor = FALSE) {
   is.descendant <- logical((nTip * 2) - 1)
   if (include.ancestor) is.descendant[node] <- TRUE;
   node.children <- function (node, is.descendant) {
@@ -441,6 +443,7 @@ DoDescendants <- function (edge1, edge2, nTip, node, just.tips = FALSE, just.int
 }
 
 #' Clade sizes
+#' @template treeParam
 #' @param nodes whose descendants should be returned
 #' @return the number of nodes (including tips) that are descended from each node in nodes
 #' @importFrom phangorn allDescendants
