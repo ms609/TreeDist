@@ -38,14 +38,14 @@
 #' @export
 ## TODO use Rooted NNI / SPR / TBR 
 Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, rooted=TRUE, 
-                      ratchIter=100, searchIter=2000, searchHits=40, ratchHits=10, track=0, 
+                      ratchIter=100, searchIter=2000, searchHits=40, ratchHits=10, verbosity=0, 
                       rearrangements="NNI", suboptimal=1e-08, ...) {
   if (attr(tree, 'order') != 'cladewise') tree <- Preorder(tree)
   
   epsilon <- 1e-08
   if (is.null(attr(tree, "score"))) attr(tree, "score") <- TreeScorer(tree, data, ...)
   bestScore <- attr(tree, "score")
-  if (track >= 0) cat("\n* Initial score:", bestScore)
+  if (verbosity >= 0) cat("\n* Initial score:", bestScore)
   if (returnAll) {
     null.forest <- vector('list', ratchIter)
     forest <- null.forest
@@ -55,11 +55,11 @@ Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, rooted=
   bestScoreHits <- 0
   iterationsCompleted <- 0
   for (i in 1:ratchIter) {
-    if (track >= 0) cat ("\n - Running NNI on bootstrapped dataset. ")
+    if (verbosity >= 0) cat ("\n - Running NNI on bootstrapped dataset. ")
     bootstrapTree <- BootstrapTree(tree, data, maxIter=searchIter, maxHits=searchHits,
-                        rooted=rooted, TreeScorer=TreeScorer, track=track-1, ...)
+                        rooted=rooted, TreeScorer=TreeScorer, verbosity=verbosity-1, ...)
     
-    if (track >= 0) cat ("\n - Rearranging from new candidate tree:")
+    if (verbosity >= 0) cat ("\n - Rearranging from new candidate tree:")
     if (is.character(rearrangements)) {
       Rearrangements <- if (rooted) {
         if (rearrangements == "TBR") 
@@ -85,7 +85,7 @@ Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, rooted=
     candidate <- bootstrapTree
     for (Func in Rearrangements) {
       candidate <- DoTreeSearch(candidate, data, TreeScorer=TreeScorer, Rearrange=Func, 
-                                track=track, maxIter=searchIter, maxHits=searchHits, ...)
+                                verbosity=verbosity, maxIter=searchIter, maxHits=searchHits, ...)
     }
     
     candScore <- attr(candidate, 'score')
@@ -109,14 +109,14 @@ Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, rooted=
       forest[[i]] <- candidate
       forest.scores[i] <- candScore
     }
-    if (track >= 0) cat("\n* Best score after", i, "/", ratchIter, "pratchet iterations:", bestScore, "( hit", bestScoreHits, "/", ratchHits, ")")
+    if (verbosity >= 0) cat("\n* Best score after", i, "/", ratchIter, "pratchet iterations:", bestScore, "( hit", bestScoreHits, "/", ratchHits, ")")
     if (bestScoreHits >= ratchHits) {
       iterationsCompleted <- i
       break()
     }
   } # end for
   if (iterationsCompleted == 0) iterationsCompleted <- ratchIter
-  if (track >= 0) cat ("\nCompleted parsimony ratchet after", iterationsCompleted, "iterations with score", bestScore, "\n")
+  if (verbosity >= 0) cat ("\nCompleted parsimony ratchet after", iterationsCompleted, "iterations with score", bestScore, "\n")
    
   if (returnAll) {
     keepers <- !is.na(forest.scores) & forest.scores < bestScore + suboptimal

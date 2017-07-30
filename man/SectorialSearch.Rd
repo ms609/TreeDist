@@ -4,7 +4,7 @@
 \alias{SectorialSearch}
 \title{Sectorial Search}
 \usage{
-SectorialSearch(tree, dataset, TreeScorer = FitchScore, concavity = NULL,
+SectorialSearch(tree, dataset, TreeScorer = FitchScore,
   rearrangements = "NNI", maxIter = 2000, cluster = NULL, verbosity = 3,
   ...)
 }
@@ -13,8 +13,6 @@ SectorialSearch(tree, dataset, TreeScorer = FitchScore, concavity = NULL,
 
 \item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
 correspond to the labels of any accompanying tree}
-
-\item{concavity}{concavity constant for implied weighting (not currently implemented!)}
 
 \item{rearrangements}{method to use when rearranging subtrees: NNI, SPR or TBR;}
 
@@ -27,6 +25,8 @@ correspond to the labels of any accompanying tree}
 \item{\dots}{other arguments to pass to subsequent functions.}
 
 \item{outgroup}{a vector listing the taxa that form the outgroup;}
+
+\item{concavity}{concavity constant for implied weighting (not currently implemented!)}
 
 \item{maxit}{maximum number of sectorial iterations to perform;}
 

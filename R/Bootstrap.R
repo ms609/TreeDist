@@ -7,12 +7,12 @@
 #' @template TreeScorerParam
 #' @param rooted set to FALSE if position of root may change, TRUE if position and composition of
 #'               outgroup is fixed
-#' @template trackParam
+#' @template verbosityParam
 #'
 #' @return A tree that is optimal under a random sampling of the original characters
 #' @export  
 BootstrapTree <- function (tree, x, maxIter, maxHits, TreeScorer = FitchScore, 
-  rooted = TRUE, track=1, ...) {
+  rooted = TRUE, verbosity=1, ...) {
 ## Simplified version of phangorn::bootstrap.phyDat, with bs=1 and multicore=FALSE
   at <- attributes(x)
   bootstrappedWeight <- BootstrapWeightings(at)
@@ -44,7 +44,7 @@ BootstrapTree <- function (tree, x, maxIter, maxHits, TreeScorer = FitchScore,
   if (attr(tree, 'order') != 'cladewise') tree <- Preorder(tree)
   attr(tree, 'score') <- NULL
   res <- DoTreeSearch(tree, x, TreeScorer=TreeScorer, Rearrange=if (rooted) RootedNNI else NNI,
-                      maxIter=maxIter, maxHits=maxHits, track=max(0, track - 1), ...)
+                      maxIter=maxIter, maxHits=maxHits, verbosity=max(0, verbosity - 1), ...)
   attr(res, 'score') <- NULL
   attr(res, 'hits') <- NULL
   res

@@ -32,6 +32,7 @@ the second will be chosen at random}
 Returns a tree with class \code{phylo}.
 }
 \examples{
+library(ape)
 tree <- ape:::rtree(20, br=NULL)
 NNI(tree)
 SPR(tree)

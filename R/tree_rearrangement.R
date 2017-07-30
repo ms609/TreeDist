@@ -37,7 +37,7 @@
 #' @export
 RearrangeTree <- function (tree, data, Rearrange = NNI, TreeScorer = FitchScore, 
                            minScore=NULL, returnSingle=TRUE, iter='<unknown>', cluster=NULL,
-                           track=0) {
+                           verbosity=0) {
   if (is.null(attr(tree, 'score'))) bestScore <- 1e+07 else bestScore <- attr(tree, 'score')
   if (is.null(attr(tree, 'hits'))) hits <- 1 else hits <- attr(tree, 'hits')
   if (is.null(cluster)) {
@@ -55,13 +55,13 @@ RearrangeTree <- function (tree, data, Rearrange = NNI, TreeScorer = FitchScore,
     trees <- candidates[bestTrees]
   }
   if (bestScore < minScore) {
-    if (track > 3) cat("\n    . Iteration", iter, '- Min score', minScore, ">", bestScore)
+    if (verbosity > 3) cat("\n    . Iteration", iter, '- Min score', minScore, ">", bestScore)
   } else if (bestScore == minScore) {
     hits <- hits + sum(bestTrees)
-    if (track > 2) cat("\n    - Iteration", iter, "- Best score", minScore, "hit", hits, "times")
+    if (verbosity > 2) cat("\n    - Iteration", iter, "- Best score", minScore, "hit", hits, "times")
   } else {
     hits <- sum(bestTrees)
-    if (track > 1) cat("\n    * Iteration", iter, "- New best score", minScore, "found on", hits, "trees")
+    if (verbosity > 1) cat("\n    * Iteration", iter, "- New best score", minScore, "found on", hits, "trees")
   }
   if (length(returnSingle) && returnSingle) trees <- sample(trees, 1L)[[1]]
   attr(trees, 'hits') <- hits

@@ -5,7 +5,7 @@
 \title{Bootstrap tree search with inapplicable data}
 \usage{
 BootstrapTree(tree, x, maxIter, maxHits, TreeScorer = FitchScore,
-  rooted = TRUE, track = 1, ...)
+  rooted = TRUE, verbosity = 1, ...)
 }
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}, with internal numbering in cladewise order
@@ -20,7 +20,7 @@ BootstrapTree(tree, x, maxIter, maxHits, TreeScorer = FitchScore,
 \item{rooted}{set to FALSE if position of root may change, TRUE if position and composition of
 outgroup is fixed}
 
-\item{track}{verbosity of output written to terminal; higher values print more messages}
+\item{verbosity}{verbosity of output written to terminal; higher values print more messages}
 
 \item{function}{by which trees should be scored; default \code{\link{FitchScore}}}
 }

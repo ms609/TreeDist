@@ -6,7 +6,7 @@
 \usage{
 RearrangeTree(tree, data, Rearrange = NNI, TreeScorer = FitchScore,
   minScore = NULL, returnSingle = TRUE, iter = "<unknown>",
-  cluster = NULL, track = 0)
+  cluster = NULL, verbosity = 0)
 }
 \arguments{
 \item{tree}{a rooted bifurcating phylogenetic tree with the desired outgroup, with its labels
@@ -30,9 +30,9 @@ will be discarded;}
 \item{cluster}{a cluster, prepared with \code{\link{PrepareCluster}}, to accelerate 
 searches on multicore machines;}
 
-\item{concavity}{concavity constant for implied weighting (not currently implemented!)}
-
 \item{verbosity}{determines how much information to output to screen.}
+
+\item{concavity}{concavity constant for implied weighting (not currently implemented!)}
 }
 \value{
 {This function returns the most parsimonious of the trees generated, with attributes \code{hits} and \code{pscore}

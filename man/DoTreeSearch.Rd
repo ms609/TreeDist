@@ -4,9 +4,9 @@
 \alias{DoTreeSearch}
 \title{DoTreeSearch}
 \usage{
-DoTreeSearch(tree, data, TreeScorer = FitchScore, Rearrange = NNI,
+DoTreeSearch(tree, data, TreeScorer = FitchScore, Rearrange = TBR,
   maxIter = 100, maxHits = 20, forestSize = 1, cluster = NULL,
-  track = 1, ...)
+  verbosity = 1, ...)
 }
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}, with internal numbering in cladewise order
@@ -25,7 +25,7 @@ DoTreeSearch(tree, data, TreeScorer = FitchScore, Rearrange = NNI,
 
 \item{forestSize}{number of trees to store in memory}
 
-\item{track}{Verbosity of reporting}
+\item{verbosity}{Verbosity of reporting}
 }
 \value{
 a tree of class \code{phylo} with attributes "hits" (number of times hit) and "pscore"

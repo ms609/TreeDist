@@ -2,7 +2,7 @@
 % Please edit documentation in R/phylo.R
 \name{DropTip}
 \alias{DropTip}
-\title{TITLE GOES HERE}
+\title{Drop tip}
 \usage{
 DropTip(phy, tip, trim.internal = TRUE, subtree = FALSE, root.edge = 0,
   rooted = is.rooted(phy), interactive = FALSE)
@@ -14,7 +14,7 @@ DropTip(phy, tip, trim.internal = TRUE, subtree = FALSE, root.edge = 0,
 This function returns :
 }
 \description{
-\code{FUNCTIONNAME} does something useful
+\code{DropTip} drops a tip from a tree
 }
 \examples{
 to_do <- TRUE

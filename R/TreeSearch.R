@@ -71,7 +71,7 @@ TreeSearch <- function
 #' @param maxIter Maximum iterations
 #' @param maxHits stop search after finding optimal score \code{maxHits} times
 #' @param forestSize number of trees to store in memory
-#' @param track Verbosity of reporting
+#' @param verbosity Verbosity of reporting
 #'
 #' @return a tree of class \code{phylo} with attributes "hits" (number of times hit) and "pscore"
 #'         (score given by TreeScorer)
@@ -80,9 +80,9 @@ TreeSearch <- function
 #' 
 #' @keywords internal
 #' @export
-DoTreeSearch <- function (tree, data, TreeScorer = FitchScore, Rearrange = NNI,
+DoTreeSearch <- function (tree, data, TreeScorer = FitchScore, Rearrange = TBR,
                         maxIter = 100, maxHits = 20, forestSize = 1,
-                        cluster = NULL, track = 1, ...) {
+                        cluster = NULL, verbosity = 1, ...) {
   if (attr(tree, 'order') != 'cladewise') tree <- Preorder(tree)
   tree$edge.length <- NULL # Edge lengths are not supported
   attr(tree, 'hits') <- 1
@@ -94,12 +94,12 @@ DoTreeSearch <- function (tree, data, TreeScorer = FitchScore, Rearrange = NNI,
   }
   if (is.null(attr(tree, 'score'))) attr(tree, 'score') <- TreeScorer(tree, data)
   bestScore <- attr(tree, 'score')
-  if (track > 0) cat("\n  - Performing", deparse(Rearrange), "search.  Initial score:", bestScore)
+  if (verbosity > 0) cat("\n  - Performing", deparse(Rearrange), "search.  Initial score:", bestScore)
   returnSingle <- !(forestSize > 1)
   
   for (iter in 1:maxIter) {
     trees <- RearrangeTree(tree, data, Rearrange, TreeScorer, minScore=bestScore,
-                           returnSingle=returnSingle, iter=iter, cluster=cluster, track=track)
+                           returnSingle=returnSingle, iter=iter, cluster=cluster, verbosity=verbosity)
     iterScore <- attr(trees, 'score')
     if (length(forestSize) && forestSize > 1) {
       hits <- attr(trees, 'hits')
@@ -124,7 +124,7 @@ DoTreeSearch <- function (tree, data, TreeScorer = FitchScore, Rearrange = NNI,
     }
     if (attr(trees, 'hits') >= maxHits) break
   }
-  if (track > 0) cat("\n  - Final score", attr(tree, 'score'), "found", attr(tree, 'hits'), "times after", iter, deparse(Rearrange), "iterations\n")  
+  if (verbosity > 0) cat("\n  - Final score", attr(tree, 'score'), "found", attr(tree, 'hits'), "times after", iter, deparse(Rearrange), "iterations\n")  
   if (forestSize > 1) {
     if (hits < forestSize) forest <- forest[-((hits+1):forestSize)]
     attr(forest, 'hits') <- hits

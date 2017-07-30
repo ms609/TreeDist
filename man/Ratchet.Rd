@@ -5,9 +5,9 @@
 \title{Parsimony Ratchet}
 \usage{
 Ratchet(tree, data, TreeScorer = FitchScore, returnAll = FALSE,
-  rooted = TRUE, ratchIter = 100, searchIter = 5000, searchHits = 40,
-  ratchHits = 10, track = 0, rearrangements = "NNI", suboptimal = 1e-08,
-  ...)
+  rooted = TRUE, ratchIter = 100, searchIter = 2000, searchHits = 40,
+  ratchHits = 10, verbosity = 0, rearrangements = "NNI",
+  suboptimal = 1e-08, ...)
 }
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}}
@@ -16,7 +16,9 @@ Ratchet(tree, data, TreeScorer = FitchScore, returnAll = FALSE,
 
 \item{returnAll}{Set to \code{TRUE} to report all MPTs encountered during the search, perhaps to analyze consensus}
 
-\item{rooted}{Retain the position of the root in tree search}
+\item{rooted}{whether to retain the position of the root in tree search (TRUE by default)}
+
+\item{verbosity}{larger numbers provides more verbose feedback to the user;}
 
 \item{rearrangements}{method(s) to use when rearranging trees. Provide:
 the character string "TBR" to conduct TBR, SPR and NNI rearrangements, or "TBR only"
@@ -35,8 +37,6 @@ OR: a list of functions to use, one at a time, as the \code{Rearrange} parameter
 \item{maxHits}{maximum times to hit best score before terminating a tree search within a pratchet iteration;}
 
 \item{k}{stop when k ratchet iterations have found the same best score;}
-
-\item{verbosity}{larger numbers provides more verbose feedback to the user;}
 }
 \value{
 This function returns a tree modified by parsimony ratchet iteration, retaining the position of the root.
