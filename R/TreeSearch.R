@@ -94,7 +94,7 @@ DoTreeSearch <- function (tree, data, TreeScorer = FitchScore, Rearrange = TBR,
   }
   if (is.null(attr(tree, 'score'))) attr(tree, 'score') <- TreeScorer(tree, data)
   bestScore <- attr(tree, 'score')
-  if (verbosity > 0) cat("\n  - Performing", deparse(Rearrange), "search.  Initial score:", bestScore)
+  if (verbosity > 0) cat("\n  - Performing tree search.  Initial score:", bestScore)
   returnSingle <- !(forestSize > 1)
   
   for (iter in 1:maxIter) {
@@ -124,7 +124,7 @@ DoTreeSearch <- function (tree, data, TreeScorer = FitchScore, Rearrange = TBR,
     }
     if (attr(trees, 'hits') >= maxHits) break
   }
-  if (verbosity > 0) cat("\n  - Final score", attr(tree, 'score'), "found", attr(tree, 'hits'), "times after", iter, deparse(Rearrange), "iterations\n")  
+  if (verbosity > 0) cat("\n  - Final score", attr(tree, 'score'), "found", attr(tree, 'hits'), "times after", iter, "iterations\n")  
   if (forestSize > 1) {
     if (hits < forestSize) forest <- forest[-((hits+1):forestSize)]
     attr(forest, 'hits') <- hits
