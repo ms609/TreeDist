@@ -71,7 +71,7 @@ RearrangeTree <- function (tree, data, Rearrange = NNI, TreeScorer = FitchScore,
 
 #' neworder_phylo
 #' Wrapper for the ape function
-#' @useDynLib TreeSearch ape_neworder_phylo
+## @useDynLib TreeSearch ape_neworder_phylo
 #' @keywords internal
 #' @export
 NeworderPhylo <- function (nTaxa, parent, child, nb.edge, whichwise) {
@@ -81,7 +81,7 @@ NeworderPhylo <- function (nTaxa, parent, child, nb.edge, whichwise) {
 
 #' neworder_pruningwise
 #' Wrapper for the ape function
-#' @useDynLib TreeSearch ape_neworder_pruningwise
+## @useDynLib TreeSearch ape_neworder_pruningwise
 #' @keywords internal
 #' @export
 NeworderPruningwise <- function (nTaxa, nb.node, parent, child, nb.edge) {

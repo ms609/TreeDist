@@ -682,7 +682,7 @@ BindTree <- function(x, y, where = "root", position = 0) {
 
 #' node depth
 #' Wrapper for the ape function
-#' @useDynLib TreeSearch ape_node_depth
+## @useDynLib TreeSearch ape_node_depth
 #' @keywords internal
 #' @export
 C_node_depth <- function (nTip, nNode, parent, child, nEdge) {
