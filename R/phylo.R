@@ -440,6 +440,17 @@ DoDescendants <- function (edge1, edge2, nTip, node, just.tips = FALSE, just.int
   return (is.descendant)
 }
 
+#' Clade sizes
+#' @param nodes whose descendants should be returned
+#' @return the number of nodes (including tips) that are descended from each node in nodes
+#' @importFrom phangorn allDescendants
+#' @keywords internal
+#' @export
+CladeSizes <- function (tree, nodes) {
+  vapply(phangorn:::allDescendants(tree)[nodes], length, integer(1))
+}
+    
+
 #' TwoTipTree
 #'
 #' Two-tipped tree

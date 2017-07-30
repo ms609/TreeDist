@@ -32,7 +32,7 @@ correspond to the labels of any accompanying tree}
 
 \item{k}{stop when \code{k} searches have improved their sectorial score;}
 
-\item{smallest.sector}{sectors with fewer than \code{smallest.sector} taxa will not be selected; \kbd{4} is the smallest sensible value;}
+\item{smallestSector}{sectors with fewer than \code{smallestSector} taxa will not be selected; \kbd{4} is the smallest sensible value;}
 
 \item{largest.sector}{sectors with more than \code{largest.sector} taxa will not be selected;}
 }
@@ -68,7 +68,7 @@ InapplicableSectorial(njtree, Lobo.phy, outgroup, maxit=1, maxIter=50, largest.s
 #   best.score <- attr(start.tree, 'pscore')
 #   if (length(best.score) == 0) best.score <- InapplicableParsimony(start.tree, dataset)
 #   sect <- InapplicableSectorial(start.tree, dataset, outgroup=outgroup, verbosity=0, maxit=30,
-#               maxIter=200, maxHits=15, smallest.sector=6,
+#               maxIter=200, maxHits=15, smallestSector=6,
 #   sect <- DoTreeSearch(sect, dataset, outgroup, method='NNI', 
 #                        maxIter=2000, maxHits=20, verbosity=3)
 #   sect <- DoTreeSearch(sect, dataset, outgroup, method='TBR',
