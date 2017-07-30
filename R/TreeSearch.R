@@ -12,7 +12,7 @@
 #' @param maxHits the maximum times to hit the best pscore before abandoning the search;
 #' @param forestSize the maximum number of trees to return - useful in concert with \code{\link{consensus}};
 #' @param cluster a cluster prepared using \code{\link{PrepareCluster}}; may speed up search on multicore machines;
-#' @param verbosity higher values provide more verbose user feedback in stdout;
+#' @template verbosityParam
 #' @param \dots other arguments to pass to subsequent functions.
 #' 
 #' @return{
@@ -71,7 +71,7 @@ TreeSearch <- function
 #' @param maxIter Maximum iterations
 #' @param maxHits stop search after finding optimal score \code{maxHits} times
 #' @param forestSize number of trees to store in memory
-#' @param verbosity Verbosity of reporting
+#' @template verbosityParam
 #'
 #' @return a tree of class \code{phylo} with attributes "hits" (number of times hit) and "pscore"
 #'         (score given by TreeScorer)

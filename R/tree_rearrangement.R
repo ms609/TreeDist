@@ -16,7 +16,7 @@
 #'   \item{iter}{iteration number of calling function, for reporting to user only;
 #' @param  cluster a cluster, prepared with \code{\link{PrepareCluster}}, to accelerate 
 #'     searches on multicore machines;
-#' @param verbosity determines how much information to output to screen.
+#' @template verbosityParam
 #' 
 #' @return{This function returns the most parsimonious of the trees generated, with attributes \code{hits} and \code{pscore}
 #'  as described for argument \code{tree}, and with tip labels ordered to match morphyObj.}

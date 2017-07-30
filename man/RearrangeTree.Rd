@@ -30,7 +30,7 @@ will be discarded;}
 \item{cluster}{a cluster, prepared with \code{\link{PrepareCluster}}, to accelerate 
 searches on multicore machines;}
 
-\item{verbosity}{determines how much information to output to screen.}
+\item{verbosity}{verbosity of output written to terminal; higher values print more messages}
 
 \item{concavity}{concavity constant for implied weighting (not currently implemented!)}
 }

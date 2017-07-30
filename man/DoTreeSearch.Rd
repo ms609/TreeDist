@@ -25,7 +25,7 @@ DoTreeSearch(tree, data, TreeScorer = FitchScore, Rearrange = TBR,
 
 \item{forestSize}{number of trees to store in memory}
 
-\item{verbosity}{Verbosity of reporting}
+\item{verbosity}{verbosity of output written to terminal; higher values print more messages}
 }
 \value{
 a tree of class \code{phylo} with attributes "hits" (number of times hit) and "pscore"

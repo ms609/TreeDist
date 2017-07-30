@@ -23,7 +23,7 @@ correspond to the labels of any accompanying tree}
 
 \item{cluster}{a cluster prepared using \code{\link{PrepareCluster}}; may speed up search on multicore machines;}
 
-\item{verbosity}{higher values provide more verbose user feedback in stdout;}
+\item{verbosity}{verbosity of output written to terminal; higher values print more messages}
 
 \item{\dots}{other arguments to pass to subsequent functions.}
 
