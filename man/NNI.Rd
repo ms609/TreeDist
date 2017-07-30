@@ -13,12 +13,20 @@ improve their speed.
 
 Branch lengths are not supported.}
 \usage{
-NNI(tree)
+NNI(tree, edgeToBreak = NULL)
+ SPR(tree, edgeToBreak = NULL, mergeEdges = NULL)
+ TBR(tree, edgeToBreak = NULL, mergeEdges = NULL)
 }
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}}
 
-\item{edgeToBreak}{the index of an edge to bisect, generated randomly if not specified}
+\item{edgeToBreak}{(optional) integer specifying which edge should be broken (pruned)}
+
+\item{mergeEdges}{(optional) vector of length 1 or 2, listing edge(s) to be joined:
+In SPR, this is where the pruned subtree will be reconnected.
+In TBR, these edges will be reconnected (so must be on opposite
+sides of \code{edgeToBreak}); if only a single edge is specified,
+the second will be chosen at random}
 }
 \value{
 Returns a tree with class \code{phylo}.

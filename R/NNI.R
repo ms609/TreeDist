@@ -9,11 +9,16 @@
 #' 
 #' Branch lengths are not supported.
 #' 
-#' @return Returns a tree with class \code{phylo}.
+#' @usage 
+#'  NNI(tree, edgeToBreak = NULL)
+#'  SPR(tree, edgeToBreak = NULL, mergeEdges = NULL)
+#'  TBR(tree, edgeToBreak = NULL, mergeEdges = NULL)
 #'
 #' @template treeParam
 #' @template edgeBreakingParams
 #' 
+#' @return Returns a tree with class \code{phylo}.
+#'
 #' @references
 #' The algorithms are summarized in
 #' Felsenstein, J. 2004. \cite{Inferring Phylogenies.} Sinauer Associates, Sunderland, Massachusetts.
