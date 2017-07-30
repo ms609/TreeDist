@@ -1,7 +1,6 @@
 #' Fitch Score
 #' Calculate the parsimony score of a tree (number of steps) using the Fitch algoritgh
 #' @return the parsimony score (an integer)
-#' @useDynLib TreeSearch FITCH
 #' @keywords internal
 #' @export
 C_Fitch_Score <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
@@ -9,7 +8,6 @@ C_Fitch_Score <- function (characters, nChar, parent, child, nEdge, weight, maxN
 }
 #' Fitch steps
 #' @return the number of steps the tree enforces on each character
-#' @useDynLib TreeSearch FITCH
 #' @keywords internal
 #' @export
 C_Fitch_Steps <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
@@ -17,13 +15,28 @@ C_Fitch_Steps <- function (characters, nChar, parent, child, nEdge, weight, maxN
 }
 #' Wrapper to FITCH
 #' @return the full return of the phangorn C function FITCH
-#' @useDynLib TreeSearch FITCH
+## @useDynLib TreeSearch phangorn_FITCH
 #' @keywords internal
 #' @export
 C_Fitch <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
   .Call("FITCH", as.integer(characters), as.integer(nChar),
         as.integer(parent), as.integer(child), as.integer(nEdge),
         as.double(weight), as.integer(maxNode), as.integer(nTip), PACKAGE='phangorn')
+}
+
+#' @describeIn C_Fitch Checks parameters before running \code{C_Fitch}
+#' @keywords internal
+#' @export
+C_Fitch_Checks <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
+  iCharacters <- as.integer(characters)
+  Assert(length(iCharacters) == nChar * nTip)
+  Assert(length(parent) == length(child))
+  Assert(length(parent) == nEdge)
+  Assert(length(weight) == nChar)
+  Assert(maxNode == max(parent))
+  Assert(parent[1] == max(parent)) # Are nodes numbered in Postorder??    
+  Assert(nTip == length(tipLabel))
+  C_Fitch(characters, nChar, parent, child, nEdge, weight, maxNode, nTip)
 }
 
 #' Extract character data from dataset
@@ -93,13 +106,14 @@ Fitch <- function (tree, data, TipData = TipsAreNames, at = attributes(data),
       parent, child,
       nEdge = length(parent), 
       weight = charWeights, 
-      maxNode = parent[1], #max(parent),
+      maxNode = max(parent) #parent[1] IF tree in postorder
       nTip = length(tipLabel)
     )
   )
   # TODO DELTE debugging line:
   #    FitchFunction(TipData(data, tipLabel), at$nr, parent, child, length(parent), at$weight, parent[1], nTip = length(tipLabel))
 }
+
 #' @describeIn Fitch returns the parsimony score only
 #' @export
 FitchScore <- function (tree, data, TipData = NULL, at = attributes(data)) {
