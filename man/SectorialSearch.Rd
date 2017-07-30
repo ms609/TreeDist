@@ -5,7 +5,9 @@
 \title{Sectorial Search}
 \usage{
 SectorialSearch(tree, dataset, TreeScorer = FitchScore,
-  rearrangements = list(RootedNNI), maxIter = 2000, cluster = NULL,
+  sectRearrangements = list(RootedNNI),
+  searchRearrangements = list(RootedNNI, RootedTBR, RootedNNI),
+  maxHits = c(30, 40, 60), maxIter = 2000, cluster = NULL,
   verbosity = 3, ...)
 }
 \arguments{
@@ -14,9 +16,17 @@ SectorialSearch(tree, dataset, TreeScorer = FitchScore,
 \item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
 correspond to the labels of any accompanying tree}
 
-\item{rearrangements}{method to use when rearranging subtrees: NNI, SPR or TBR;}
+\item{sectRearrangements}{A list of functions to be applied when rearranging trees in sectorial 
+search. Note: these must retain the position of the root of the tree}
 
-\item{maxIter}{maximum number of rearrangements to perform on each sectorial iteration;}
+\item{searchRearrangements}{A list of functions to be applied, in turn, during tree search.
+Default: \code{list(\link{RootedTBR}, \link{RootedNNI})}}
+
+\item{maxHits}{maximum number of hits to accomplish on each search iteration - provide a list or vector 
+with each entry corresponding to an entry in Rearrangements, or a single entry to be used for all}
+
+\item{maxIter}{maximum number of rearrangements to perform on each search iteration - provide a list or vector 
+with each entry corresponding to an entry in Rearrangements, or a single entry to be used for all}
 
 \item{cluster}{a cluster prepared using \code{\link{PrepareCluster}}; may speed up search on multicore machines;}
 
@@ -27,8 +37,6 @@ correspond to the labels of any accompanying tree}
 \item{outgroup}{a vector listing the taxa that form the outgroup;}
 
 \item{concavity}{concavity constant for implied weighting (not currently implemented!)}
-
-\item{maxit}{maximum number of sectorial iterations to perform;}
 
 \item{k}{stop when \code{k} searches have improved their sectorial score;}
 
@@ -53,36 +61,6 @@ that of the original tree.
 
 \code{SectorialSearch} is a basic recipe that runs \code{DoSectorial} followed by a few rounds
 of tree rearrangement, returning a tree whose \var{pscore} is no worse than that of \code{start.tree}.
-}
-\examples{
-{
-data('Lobo')
-outgroup <- c('Lingula', 'Mickwitzia', 'Neocrania')
-njtree <- Root(nj(dist.hamming(Lobo.phy)), outgroup, resolve.root=TRUE)
-njtree$edge.length <- NULL; njtree<-SetOutgroup(njtree, outgroup)
-DoSectorial(njtree, Lobo.phy, outgroup, maxit=1, maxIter=50, largestSector=7)
-\dontrun{SectorialSearch(njtree, Lobo.phy, outgroup, 'SPR') # Will be time-consuming}
-
-## SectorialSearch is currently defined as
-# function (start.tree, dataset, outgroup, rearrangements='NNI') {
-#   best.score <- attr(start.tree, 'score')
-#   if (length(best.score) == 0) best.score <- InapplicableParsimony(start.tree, dataset)
-#   sect <- DoSectorial(start.tree, dataset, outgroup=outgroup, verbosity=0, maxit=30,
-#               maxIter=200, maxHits=15, smallestSector=6,
-#   sect <- DoTreeSearch(sect, dataset, outgroup, method='NNI', 
-#                        maxIter=2000, maxHits=20, verbosity=3)
-#   sect <- DoTreeSearch(sect, dataset, outgroup, method='TBR',
-#                        maxIter=2000, maxHits=25, verbosity=3)
-#   sect <- DoTreeSearch(sect, dataset, outgroup, method='SPR',
-#                        maxIter=2000, maxHits=50, verbosity=3)
-#   sect <- DoTreeSearch(sect, dataset, outgroup, method='NNI',
-#                        maxIter=2000, maxHits=50, verbosity=3)
-#   if (attr(sect, 'score') <= best.score) {
-#     return (sect)
-#   } else return (SetOutgroup(start.tree, outgroup))
-# }
-}
-
 }
 \references{
 Goloboff, P. (1999). \cite{Analyzing large data sets in reasonable times: solutions for composite optima.}

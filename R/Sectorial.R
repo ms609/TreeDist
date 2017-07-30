@@ -17,14 +17,19 @@
 #' @template datasetParam
 #' @param outgroup a vector listing the taxa that form the outgroup;
 #' @template concavityParam
-#' @param maxit maximum number of sectorial iterations to perform;
-#' @param maxIter maximum number of rearrangements to perform on each sectorial iteration;
+#' @param maxIter maximum number of rearrangements to perform on each search iteration - provide a list or vector 
+#'                with each entry corresponding to an entry in Rearrangements, or a single entry to be used for all
+#' @param maxHits maximum number of hits to accomplish on each search iteration - provide a list or vector 
+#'                with each entry corresponding to an entry in Rearrangements, or a single entry to be used for all
 #' @param cluster a cluster prepared using \code{\link{PrepareCluster}}; may speed up search on multicore machines;
 #' @param k stop when \code{k} searches have improved their sectorial score;
 #' @template verbosityParam
 #' @param smallestSector sectors with fewer than \code{smallestSector} taxa will not be selected; \kbd{4} is the smallest sensible value;
 #' @param largestSector sectors with more than \code{largestSector} taxa will not be selected;
-#' @param rearrangements method to use when rearranging subtrees: NNI, SPR or TBR;
+#' @param sectRearrangements A list of functions to be applied when rearranging trees in sectorial 
+#'                           search. Note: these must retain the position of the root of the tree
+#' @param searchRearrangements A list of functions to be applied, in turn, during tree search.
+#'                             Default: \code{list(\link{RootedTBR}, \link{RootedNNI})}
 #' @param \dots other arguments to pass to subsequent functions.
 #' 
 #' @return a rooted tree of class \code{phylo}.
@@ -38,50 +43,31 @@
 #' @seealso \code{\link{Ratchet}}
 #' 
 #' @examples{
-#' data('Lobo')
-#' outgroup <- c('Lingula', 'Mickwitzia', 'Neocrania')
-#' njtree <- Root(nj(dist.hamming(Lobo.phy)), outgroup, resolve.root=TRUE)
-#' njtree$edge.length <- NULL; njtree<-SetOutgroup(njtree, outgroup)
-#' DoSectorial(njtree, Lobo.phy, outgroup, maxit=1, maxIter=50, largestSector=7)
-#' \dontrun{SectorialSearch(njtree, Lobo.phy, outgroup, 'SPR') # Will be time-consuming}
 #' 
-#' ## SectorialSearch is currently defined as
-#' # function (start.tree, dataset, outgroup, rearrangements='NNI') {
-#' #   best.score <- attr(start.tree, 'score')
-#' #   if (length(best.score) == 0) best.score <- InapplicableParsimony(start.tree, dataset)
-#' #   sect <- DoSectorial(start.tree, dataset, outgroup=outgroup, verbosity=0, maxit=30,
-#' #               maxIter=200, maxHits=15, smallestSector=6,
-#  #               largestSector=length(dim(start.tree$edge)[1])*0.25, rearrangements=rearrangements)
-#' #   sect <- DoTreeSearch(sect, dataset, outgroup, method='NNI', 
-#' #                        maxIter=2000, maxHits=20, verbosity=3)
-#' #   sect <- DoTreeSearch(sect, dataset, outgroup, method='TBR',
-#' #                        maxIter=2000, maxHits=25, verbosity=3)
-#' #   sect <- DoTreeSearch(sect, dataset, outgroup, method='SPR',
-#' #                        maxIter=2000, maxHits=50, verbosity=3)
-#' #   sect <- DoTreeSearch(sect, dataset, outgroup, method='NNI',
-#' #                        maxIter=2000, maxHits=50, verbosity=3)
-#' #   if (attr(sect, 'score') <= best.score) {
-#' #     return (sect)
-#' #   } else return (SetOutgroup(start.tree, outgroup))
-#' # }
-#' }
+#' data('Lobo')
+#' startTree <- RandomTree(Lobo.phy, 'Cricocosmia') # Position of root will be fixed
+#' firstEstimate <- SectorialSearch(startTree, Lobo.phy, maxIter=50, largestSector=8, verbosity=5)
+#' \dontrun{SectorialSearch(firstEstimate, Lobo.phy, sectRearrangements=list(RootedNNI, RootedTBR, RootedNNI)) # Will be time-consuming}
 #' 
 #' @keywords  tree 
 #' @export
-SectorialSearch <- function (tree, dataset, TreeScorer = FitchScore, rearrangements=list(RootedNNI), 
-                             maxIter=2000, cluster=NULL, verbosity=3, ...) {
+SectorialSearch <- function (tree, dataset, TreeScorer = FitchScore, sectRearrangements=list(RootedNNI), 
+                             searchRearrangements=list(RootedNNI, RootedTBR, RootedNNI), 
+                             maxHits=c(30, 40, 60), maxIter=2000, cluster=NULL, verbosity=3, ...) {
   best.score <- attr(tree, 'score')
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
  
   tree <- RenumberTips(tree, names(dataset))
   if (length(best.score) == 0) best.score <- TreeScorer(tree, dataset, ...)
   sect <- DoSectorial(tree, dataset, cluster=cluster,
-    verbosity=verbosity-1, maxit=30, maxIter=maxIter, maxHits=15, smallestSector=6, 
-    largestSector=dim(tree$edge)[1]*0.25, rearrangements=rearrangements)
-  sect <- DoTreeSearch(sect, dataset, method='NNI', maxIter=maxIter, maxHits=30, cluster=cluster, verbosity=verbosity)
-  sect <- DoTreeSearch(sect, dataset, method='TBR', maxIter=maxIter, maxHits=20, cluster=cluster, verbosity=verbosity)
-  sect <- DoTreeSearch(sect, dataset, method='SPR', maxIter=maxIter, maxHits=50, cluster=cluster, verbosity=verbosity)
-  sect <- DoTreeSearch(sect, dataset, method='NNI', maxIter=maxIter, maxHits=60, cluster=cluster, verbosity=verbosity)
+    verbosity=verbosity-1, maxit=30, maxIter=max(maxIter), maxHits=15, smallestSector=6, 
+    largestSector=dim(tree$edge)[1]*0.25, Rearrangements=sectRearrangements)
+  for (i in seq_along(Rearrangements)) {
+    iters <- if (length(maxIter) <= i) maxIter[[i]] else min(maxIter)
+    hits  <- if (length(maxHits) <= i) maxHits[[i]] else min(maxHits)
+    sect <- DoTreeSearch(sect, dataset, TreeScorer, Rearrangements[[i]], maxIter=iters,
+                         maxHits=hits, cluster=cluster, verbosity=verbosity-1)
+  }
   if (attr(sect, 'score') <= best.score) {
     return (sect)
   } else return (tree)
@@ -149,7 +135,7 @@ DoSectorial <- function (tree, dataset, TreeScorer = FitchScore, maxSectIter=100
   
   eps <- 1e-08
   improvements <- 1
-  for (i in seq_len(maxit)) {
+  for (i in seq_len(maxSectIter)) {
     nodeLengths <- CladeSizes(tree, nonRootNodes)
     candidateNodes <- nonRootNodes[nodeLengths >= smallestSector & nodeLengths <= largestSector]
     if (verbosity >= 0) cat ("\n - Iteration", i, "- attempting sectorial search on node ")
