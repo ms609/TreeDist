@@ -40,7 +40,7 @@ TBRWarning <- function (tree, error) {
 #' @importFrom ape root
 #' @export
 TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
-  if (attr(tree, 'order') != 'preorder') {
+  if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') {
     tree <- Preorder(tree)
     if (!is.null(edgeToBreak)) {
       warning("Edge numbering modified as tree not in preorder;
@@ -188,7 +188,7 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
 #' @importFrom ape root
 #' @export
 RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
-  if (attr(tree, 'order') != 'preorder') tree <- Preorder(tree)
+  if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
   nTips <- tree$Nnode + 1
   if (nTips < 4) return (TBRWarning(tree, 'Fewer than 4 tips'))
   edge   <- tree$edge

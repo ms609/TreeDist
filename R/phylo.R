@@ -67,7 +67,7 @@ SingleTaxonTree <- function (label) {
 #' @usage Subtree(tree, node)
 #' 
 #' 
-#' @template cladewiseTreeParam
+#' @template preorderTreeParam
 #' @param node The number of the node at the base of the clade to be extracted.
 #' 
 #' @details
@@ -87,7 +87,7 @@ SingleTaxonTree <- function (label) {
 #' @author Martin R. Smith
 #' @export
 Subtree <- function (tree, node) {
-  if (attr(tree, 'order') != 'preorder') stop("Tree must be in preorder")
+  if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') stop("Tree must be in preorder")
   tipLabel <- tree$tip.label
   nTip <- length(tipLabel)
   if (node <= nTip) return(SingleTaxonTree(tipLabel[node]))

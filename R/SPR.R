@@ -37,7 +37,7 @@ SPRWarning <- function (tree, error) {
 #' @importFrom ape root
 #' @export
 SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
-  if (attr(tree, 'order') != 'cladewise') tree <- Preorder(tree)
+  if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
   nTips <- tree$Nnode + 1L
   if (nTips < 3L) return (tree)
   edge   <- tree$edge
@@ -120,7 +120,7 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
 #' @importFrom ape root
 #' @export
 RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
-  if (attr(tree, 'order') != 'cladewise') tree <- Preorder(tree)
+  if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
   nTips <- tree$Nnode + 1L
   if (nTips < 3L) return (tree)
   edge   <- tree$edge

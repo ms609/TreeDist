@@ -40,8 +40,8 @@
 Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, rooted=TRUE, 
                       ratchIter=100, searchIter=2000, searchHits=40, ratchHits=10, verbosity=0, 
                       rearrangements="NNI", suboptimal=1e-08, ...) {
-  if (attr(tree, 'order') != 'preorder') tree <- Preorder(tree)
-  
+  if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
+   
   epsilon <- 1e-08
   if (is.null(attr(tree, "score"))) attr(tree, "score") <- TreeScorer(tree, data, ...)
   bestScore <- attr(tree, "score")
