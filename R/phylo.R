@@ -452,7 +452,7 @@ DoDescendants <- function (edge1, edge2, nTip = length(edge1) / 2 + 1, node,
 #' @keywords internal
 #' @export
 CladeSizes <- function (tree, nodes) {
-  if (attr(tree, 'order') != 'postorder') tree <- Postorder(tree)
+  if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'postorder') tree <- Postorder(tree)
   vapply(phangorn:::allDescendants(tree)[nodes], length, integer(1))
 }
     
