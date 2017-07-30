@@ -63,7 +63,7 @@ TreeSearch <- function
 #' End-users are expected to access this function through its wrapper, TreeSearch
 #' It is also called directly by Ratchet and Sectorial functions
 #'
-#' @template labelledTreeParam
+#' @template cladewiseTreeParam
 #' @param data dataset in the format expected by TreeScorer
 #' @param TreeScorer function to generate optimality score; defaults to \code{\link{FitchScore}}
 #' @param Rearrange function to be used for tree rearrangements: probably \link{\code{NNI}},
@@ -83,6 +83,7 @@ TreeSearch <- function
 DoTreeSearch <- function (tree, data, TreeScorer = FitchScore, Rearrange = NNI,
                         maxIter = 100, maxHits = 20, forestSize = 1,
                         cluster = NULL, track = 1, ...) {
+  if (attr(tree, 'order') != 'cladewise') tree <- Preorder(tree)
   tree$edge.length <- NULL # Edge lengths are not supported
   attr(tree, 'hits') <- 1
   if (exists("forestSize") && length(forestSize) && forestSize > 1) {

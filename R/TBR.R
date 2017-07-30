@@ -42,7 +42,7 @@ TBRWarning <- function (tree, error) {
 TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   if (attr(tree, 'order') != 'cladewise') {
     warning("Reordering tree EDGEISE")
-    tree <- Edgewise(tree)
+    tree <- Preorder(tree)
     if (!is.null(edgeToBreak)) {
       warning("Edge numbering modified as tree not in cladewise order;
                edgeToBreak and mergeEdges ignored.")
@@ -84,6 +84,7 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   edgesCutAdrift <- DescendantEdges(edgeToBreak, parent, child, nEdge)
   edgesRemaining <- !edgesCutAdrift & !brokenEdge
   edgesOnAdriftSegment <- edgesCutAdrift | brokenEdge
+  Assert(identical(edgesCutAdrift, edgesOnAdriftSegment)) # If always true, we can remove the previous line
   
   brokenEdgeParent <- child == brokenEdge.parentNode
   brokenEdgeSister <- parent == brokenEdge.parentNode & !brokenEdge
@@ -188,7 +189,7 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
 #' @importFrom ape root
 #' @export
 RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
-  if (attr(tree, 'order') != 'cladewise') tree <- Edgewise(tree)
+  if (attr(tree, 'order') != 'cladewise') tree <- Preorder(tree)
   nTips <- tree$Nnode + 1
   if (nTips < 4) return (TBRWarning(tree, 'Fewer than 4 tips'))
   edge   <- tree$edge

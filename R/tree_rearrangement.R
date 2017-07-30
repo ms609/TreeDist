@@ -174,9 +174,9 @@ Pruningwise <- function (tree, nTaxa = length(tree$tip.label), edge = tree$edge)
   tree
 }
 
-#' @describeIn Cladewise Reorder tree 'edgewise' (special case of cladewise)
+#' @describeIn Cladewise Reorder tree in Preorder (special case of cladewise)
 #' @export
-Edgewise <- function (tree) {
+Preorder <- function (tree) {
   edge <- tree$edge
   parent <- edge[, 1]
   child <- edge[, 2]

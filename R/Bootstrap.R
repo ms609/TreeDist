@@ -41,7 +41,7 @@ BootstrapTree <- function (tree, x, maxIter, maxHits, TreeScorer = FitchScore,
   ##   attr(x, attrName) <- at[[attrName]]
   ## }
   
-  if (attr(tree, 'order') != 'cladewise') tree <- Edgewise(tree)
+  if (attr(tree, 'order') != 'cladewise') tree <- Preorder(tree)
   attr(tree, 'score') <- NULL
   res <- DoTreeSearch(tree, x, TreeScorer=TreeScorer, Rearrange=if (rooted) RootedNNI else NNI,
                       maxIter=maxIter, maxHits=maxHits, track=max(0, track - 1), ...)

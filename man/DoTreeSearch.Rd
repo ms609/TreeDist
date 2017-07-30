@@ -10,7 +10,7 @@ DoTreeSearch(tree, data, TreeScorer = FitchScore, Rearrange = NNI,
 }
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}, with internal numbering in cladewise order
-(use \code{\link{Edgewise}(tree)} or (slower) \code{\link{Cladewise}(tree)})}
+(use \code{\link{Preorder}(tree)} or (slower) \code{\link{Cladewise}(tree)})}
 
 \item{data}{dataset in the format expected by TreeScorer}
 

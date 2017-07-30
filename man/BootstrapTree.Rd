@@ -9,7 +9,7 @@ BootstrapTree(tree, x, maxIter, maxHits, TreeScorer = FitchScore,
 }
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}, with internal numbering in cladewise order
-(use \code{\link{Edgewise}(tree)} or (slower) \code{\link{Cladewise}(tree)})}
+(use \code{\link{Preorder}(tree)} or (slower) \code{\link{Cladewise}(tree)})}
 
 \item{x}{a dataset in the format required by TreeScorer}
 
