@@ -174,6 +174,18 @@ Pruningwise <- function (tree, nTaxa = length(tree$tip.label), edge = tree$edge)
   tree
 }
 
+#' @describeIn Cladewise Reorder tree 'edgewise' (special case of cladewise)
+#' @export
+Edgewise <- function (tree) {
+  edge <- tree$edge
+  parent <- edge[, 1]
+  child <- edge[, 2]
+  tree$edge <- RenumberTree(parent, child)
+  attr(tree, 'order') <- 'cladewise'
+  tree
+}
+
+
 #' Reorder tips
 #'
 #' \code{RenumberTips(tree, tipOrder)} sorts the tips of a phylogenetic tree 

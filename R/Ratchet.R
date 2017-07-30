@@ -40,6 +40,8 @@
 Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, rooted=TRUE, 
                       ratchIter=100, searchIter=5000, searchHits=40, ratchHits=10, track=0, 
                       rearrangements="NNI", suboptimal=1e-08, ...) {
+  if (attr(tree, 'order') != 'edgewise') tree <- Edgewise(tree)
+  
   epsilon <- 1e-08
   if (is.null(attr(tree, "score"))) attr(tree, "score") <- TreeScorer(tree, data, ...)
   bestScore <- attr(tree, "score")

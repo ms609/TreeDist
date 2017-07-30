@@ -106,7 +106,7 @@ Fitch <- function (tree, data, TipData = TipsAreNames, at = attributes(data),
       parent, child,
       nEdge = length(parent), 
       weight = charWeights, 
-      maxNode = max(parent) #parent[1] IF tree in postorder
+      maxNode = max(parent), #parent[1] IF tree in postorder
       nTip = length(tipLabel)
     )
   )

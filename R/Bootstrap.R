@@ -1,6 +1,6 @@
 #' Bootstrap tree search with inapplicable data
 #' 
-#' @template labelledTreeParam
+#' @template cladewiseTreeParam
 #' @param x a dataset in the format required by TreeScorer
 #' @param maxIter maximum number of iterations to perform in tree search
 #' @param maxHits number of times to find optimal tree length before stopping tree search
@@ -41,9 +41,10 @@ BootstrapTree <- function (tree, x, maxIter, maxHits, TreeScorer = FitchScore,
   ##   attr(x, attrName) <- at[[attrName]]
   ## }
   
+  if (attr(tree, 'order') != 'cladewise') tree <- Edgewise(tree)
   attr(tree, 'score') <- NULL
-  res <- DoTreeSearch(tree, x, TreeScorer=TreeScorer, method='NNI', maxIter=maxIter,
-                      maxHits=maxHits, track=max(0, track - 1), ...)
+  res <- DoTreeSearch(tree, x, TreeScorer=TreeScorer, Rearrange=if (rooted) RootedNNI else NNI,
+                      maxIter=maxIter, maxHits=maxHits, track=max(0, track - 1), ...)
   attr(res, 'score') <- NULL
   attr(res, 'hits') <- NULL
   res

@@ -40,6 +40,15 @@ TBRWarning <- function (tree, error) {
 #' @importFrom ape root
 #' @export
 TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
+  if (attr(tree, 'order') != 'cladewise') {
+    warning("Reordering tree EDGEISE")
+    tree <- Edgewise(tree)
+    if (!is.null(edgeToBreak)) {
+      warning("Edge numbering modified as tree not in cladewise order;
+               edgeToBreak and mergeEdges ignored.")
+      edgeToBreak <- mergeEdges <- NULL
+    }
+  }
   nTips <- tree$Nnode + 1
   if (nTips < 3) return (tree)
   edge   <- tree$edge
@@ -70,7 +79,7 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
                " invalid; must be NULL or a vector of length 1 or 2\n  ")))
     if (length(mergeEdges) == 2 && mergeEdges[1] == mergeEdges[2]) 
       return(TBRWarning(tree, "mergeEdges values must differ"))
-  }  
+  }
   
   edgesCutAdrift <- DescendantEdges(edgeToBreak, parent, child, nEdge)
   edgesRemaining <- !edgesCutAdrift & !brokenEdge
@@ -179,6 +188,7 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
 #' @importFrom ape root
 #' @export
 RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
+  if (attr(tree, 'order') != 'cladewise') tree <- Edgewise(tree)
   nTips <- tree$Nnode + 1
   if (nTips < 4) return (TBRWarning(tree, 'Fewer than 4 tips'))
   edge   <- tree$edge

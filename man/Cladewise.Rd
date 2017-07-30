@@ -4,6 +4,7 @@
 \alias{Cladewise}
 \alias{Postorder}
 \alias{Pruningwise}
+\alias{Edgewise}
 \title{Reorder tree Cladewise}
 \usage{
 Cladewise(tree, nTaxa = NULL, edge = tree$edge)
@@ -11,6 +12,8 @@ Cladewise(tree, nTaxa = NULL, edge = tree$edge)
 Postorder(tree, nTaxa = length(tree$tip.label), edge = tree$edge)
 
 Pruningwise(tree, nTaxa = length(tree$tip.label), edge = tree$edge)
+
+Edgewise(tree)
 }
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}}
@@ -30,6 +33,8 @@ A wrapper for \code{ape:::.reorder_ape}
 \item \code{Postorder}: Reorder tree in Postorder
 
 \item \code{Pruningwise}: Reorder tree Pruningwise
+
+\item \code{Edgewise}: Reorder tree 'edgewise' (special case of cladewise)
 }}
 
 \author{
