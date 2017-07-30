@@ -686,13 +686,13 @@ BindTree <- function(x, y, where = "root", position = 0) {
 #' @keywords internal
 #' @export
 C_node_depth <- function (nTip, nNode, parent, child, nEdge) {
-  .C("ape_node_depth", as.integer(nTip), as.integer(nNode), as.integer(parent), 
-     as.integer(child), as.integer(nEdge), double(nTip + nNode), 1L)[[6]]
+  .C("node_depth", as.integer(nTip), as.integer(nNode), as.integer(parent), 
+     as.integer(child), as.integer(nEdge), double(nTip + nNode), 1L, PACKAGE='ape')[[6]]
 }
 
-#' TITLE GOES HERE
+#' Drop tip
 #'
-#' \code{FUNCTIONNAME} does something useful
+#' \code{DropTip} drops a tip from a tree
 #'
 #' @param PARAM is a parameter you should send to it
 #' 
