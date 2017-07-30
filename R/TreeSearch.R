@@ -83,7 +83,7 @@ TreeSearch <- function
 DoTreeSearch <- function (tree, data, TreeScorer = FitchScore, Rearrange = TBR,
                         maxIter = 100, maxHits = 20, forestSize = 1,
                         cluster = NULL, verbosity = 1, ...) {
-  if (attr(tree, 'order') != 'cladewise') tree <- Preorder(tree)
+  if (attr(tree, 'order') != 'preorder') tree <- Preorder(tree)
   tree$edge.length <- NULL # Edge lengths are not supported
   attr(tree, 'hits') <- 1
   if (exists("forestSize") && length(forestSize) && forestSize > 1) {

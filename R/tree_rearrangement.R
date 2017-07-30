@@ -181,7 +181,7 @@ Preorder <- function (tree) {
   parent <- edge[, 1]
   child <- edge[, 2]
   tree$edge <- RenumberTree(parent, child)
-  attr(tree, 'order') <- 'cladewise'
+  attr(tree, 'order') <- 'preorder'
   tree
 }
 

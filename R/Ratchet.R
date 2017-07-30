@@ -11,7 +11,7 @@
 #' @param maxIter maximum rearrangements to perform on each bootstrap or ratchet iteration;
 #' @param maxHits maximum times to hit best score before terminating a tree search within a pratchet iteration;
 #' @param k stop when k ratchet iterations have found the same best score;
-#' @param verbosity larger numbers provides more verbose feedback to the user;
+#' @template verbosityParam
 #' @param rearrangements method(s) to use when rearranging trees. Provide:
 #'        the character string "TBR" to conduct TBR, SPR and NNI rearrangements, or "TBR only"
 #'        to just perform TBR rearrangements (retaining the position of the root if \code{outgroup = TRUE})
@@ -40,7 +40,7 @@
 Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, rooted=TRUE, 
                       ratchIter=100, searchIter=2000, searchHits=40, ratchHits=10, verbosity=0, 
                       rearrangements="NNI", suboptimal=1e-08, ...) {
-  if (attr(tree, 'order') != 'cladewise') tree <- Preorder(tree)
+  if (attr(tree, 'order') != 'preorder') tree <- Preorder(tree)
   
   epsilon <- 1e-08
   if (is.null(attr(tree, "score"))) attr(tree, "score") <- TreeScorer(tree, data, ...)

@@ -18,7 +18,7 @@ Ratchet(tree, data, TreeScorer = FitchScore, returnAll = FALSE,
 
 \item{rooted}{whether to retain the position of the root in tree search (TRUE by default)}
 
-\item{verbosity}{larger numbers provides more verbose feedback to the user;}
+\item{verbosity}{verbosity of output written to terminal; higher values print more messages}
 
 \item{rearrangements}{method(s) to use when rearranging trees. Provide:
 the character string "TBR" to conduct TBR, SPR and NNI rearrangements, or "TBR only"
