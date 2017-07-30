@@ -63,7 +63,7 @@ TreeSearch <- function
 #' End-users are expected to access this function through its wrapper, TreeSearch
 #' It is also called directly by Ratchet and Sectorial functions
 #'
-#' @template cladewiseTreeParam
+#' @template preorderTreeParam
 #' @param data dataset in the format expected by TreeScorer
 #' @param TreeScorer function to generate optimality score; defaults to \code{\link{FitchScore}}
 #' @param Rearrange function to be used for tree rearrangements: probably \link{\code{NNI}},
