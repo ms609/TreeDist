@@ -26,6 +26,7 @@
 #' @author Martin R. Smith
 #' 
 #' @examples
+#' library(ape)
 #' tree <- ape:::rtree(20, br=NULL)
 #' NNI(tree)
 #' SPR(tree)
