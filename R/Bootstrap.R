@@ -1,6 +1,6 @@
 #' Bootstrap tree search with inapplicable data
 #' 
-#' @template cladewiseTreeParam
+#' @template preorderTreeParam
 #' @param x a dataset in the format required by TreeScorer
 #' @param maxIter maximum number of iterations to perform in tree search
 #' @param maxHits number of times to find optimal tree length before stopping tree search
