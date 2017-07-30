@@ -78,7 +78,7 @@ TipsAreColumns <- function(data, tips) as.integer(data[, tips])
 Fitch <- function (tree, data, TipData = TipsAreNames, at = attributes(data),
                         FitchFunction = C_Fitch_Score) { 
   treeOrder <- attr(tree, 'order')
-  if (is.null(treeOrder) || treeOrder == "cladewise") tree <- Postorder(tree)
+  if (is.null(treeOrder) || treeOrder != 'postorder') tree <- Postorder(tree)
   treeEdge <- tree$edge
   parent <- treeEdge[, 1]
   child <- treeEdge[, 2]
@@ -94,8 +94,8 @@ Fitch <- function (tree, data, TipData = TipsAreNames, at = attributes(data),
     levs <- attr(data, 'levels')
     contrast <- attr(data, 'contrast')
     index <- as.integer(contrast %*% 2L ^ (seq_along(attr(data, 'levels')) - 1))
-    data <- vapply(data, function (X) index[X], integer(nr))
-    characters <- TipsAreColumns(data, tipLabel)
+    reformedData <- vapply(data, function (X) index[X], integer(nr))
+    characters <- TipsAreColumns(reformedData, tipLabel)
   } else {
     characters <- TipData(data, tipLabel)
   }
