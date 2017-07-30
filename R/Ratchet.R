@@ -6,7 +6,7 @@
 #' @param data a dataset in the format required by TreeScorer
 #' @template concavityParam
 #' @param returnAll Set to \code{TRUE} to report all MPTs encountered during the search, perhaps to analyze consensus
-#' @param rooted Retain the position of the root in tree search
+#' @param rooted whether to retain the position of the root in tree search (TRUE by default)
 #' @param maxit   maximum ratchet iterations to perform;
 #' @param maxIter maximum rearrangements to perform on each bootstrap or ratchet iteration;
 #' @param maxHits maximum times to hit best score before terminating a tree search within a pratchet iteration;
@@ -38,7 +38,7 @@
 #' @export
 ## TODO use Rooted NNI / SPR / TBR 
 Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, rooted=TRUE, 
-                      ratchIter=100, searchIter=5000, searchHits=40, ratchHits=10, track=0, 
+                      ratchIter=100, searchIter=2000, searchHits=40, ratchHits=10, track=0, 
                       rearrangements="NNI", suboptimal=1e-08, ...) {
   if (attr(tree, 'order') != 'cladewise') tree <- Preorder(tree)
   
@@ -59,28 +59,28 @@ Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, rooted=
     bootstrapTree <- BootstrapTree(tree, data, maxIter=searchIter, maxHits=searchHits,
                         rooted=rooted, TreeScorer=TreeScorer, track=track-1, ...)
     
-    if (track >= 0) cat ("\n - Running", ifelse(is.null(rearrangements), "NNI", rearrangements), "from new candidate tree:")
-    Rearrangements <- if (outgroup) {
-      if (rearrangements == "TBR") 
-        list(RootedTBR, RootedSPR, RootedNNI) else 
-      if (rearrangements == "TBR only") 
-        list(RootedTBR) else
-      if (rearrangements == "SPR") 
-        list(RootedSPR, RootedNNI) else 
-      if (rearrangements == "SPR only") 
-        list(RootedSPR) else 
-      if (class(rearrangements) == 'character') list(RootedNNI) else rearrangements
-    } else {
-      if (rearrangements == "TBR") 
-        list(TBR, SPR, NNI) else 
-      if (rearrangements == "TBR only") 
-        list(TBR) else
-      if (rearrangements == "SPR") 
-        list(SPR, NNI) else 
-      if (rearrangements == "SPR only") 
-        list(SPR) else 
-      if (class(rearrangements) == 'character') list(NNI) else rearrangements
-    }
+    if (track >= 0) cat ("\n - Rearranging from new candidate tree:")
+    if (is.character(rearrangements)) {
+      Rearrangements <- if (rooted) {
+        if (rearrangements == "TBR") 
+          list(RootedTBR, RootedSPR, RootedNNI) else 
+        if (rearrangements == "TBR only") 
+          list(RootedTBR) else
+        if (rearrangements == "SPR") 
+          list(RootedSPR, RootedNNI) else 
+        if (rearrangements == "SPR only") 
+          list(RootedSPR) else list(RootedNNI)
+      } else {
+        if (rearrangements == "TBR") 
+          list(TBR, SPR, NNI) else 
+        if (rearrangements == "TBR only") 
+          list(TBR) else
+        if (rearrangements == "SPR") 
+          list(SPR, NNI) else 
+        if (rearrangements == "SPR only") 
+          list(SPR) else list(NNI)
+      }
+    } else Rearrangements <- rearrangements
     
     candidate <- bootstrapTree
     for (Func in Rearrangements) {
@@ -133,7 +133,6 @@ Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, rooted=
     }
     scores.unique <- vapply(ret, attr, double(1), 'score')
     cat('Found', sum(scores.unique == min(scores.unique)), 'unique MPTs and', length(ret) - sum(scores.unique == min(scores.unique)), 'suboptimal trees.\n')
-    if (!outgroup) warning('"outgroup" not specified, so some "unique" trees may have same topology but distinct roots.')
   } else {
     ret <- tree
     attr(ret, 'hits') <- NULL
