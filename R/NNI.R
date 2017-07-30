@@ -12,7 +12,7 @@
 #' @return Returns a tree with class \code{phylo}.
 #'
 #' @template treeParam
-#' @param edgeToBreak the index of an edge to bisect, generated randomly if not specified
+#' @template edgeBreakingParams
 #' 
 #' @references
 #' The algorithms are summarized in
@@ -26,27 +26,32 @@
 #' SPR(tree)
 #' TBR(tree)
 #' @export
-NNI <- function (tree) {
+NNI <- function (tree, edgeToBreak=NULL) {
   edge    <- tree$edge
   parent  <- edge[, 1]
   child   <- edge[, 2]
   nTips  <- length(tree$tip.label)
   rootNode <- nTips + 1L
-  chosenInternalEdge <- SampleOne(which(child > nTips))
-  if(is.na(chosenInternalEdge)) return(NULL)
+  samplable <- child > nTips
+  if (is.null(edgeToBreak)) { 
+    edgeToBreak <- SampleOne(which(samplable))
+  } else {
+    if (!samplable[edgeToBreak]) stop("edgeToBreak must be an internal edge")
+  }
+  if (is.na(edgeToBreak)) stop("Cannot find a valid rearrangement")
   nEdge <- length(parent)
   nNode <- tree$Nnode
-  if (nNode == 1) return(tree)
+  if (nNode == 1) stop("Tree too small to rearrange")
   
-  end1  <- parent[chosenInternalEdge]
-  end2  <- child[chosenInternalEdge]
-  ind1    <- which(parent == end1)
-  ind1    <- ind1[ind1 != chosenInternalEdge][1]
-  ind2    <- which(parent == end2)[sample.int(2L, 1L, useHash=FALSE)]
-  new_ind <- c(ind2, ind1)
-  old_ind <- c(ind1, ind2)
-  child_swap <- child[new_ind]
-  child[old_ind] <- child_swap
+  end1   <- parent[edgeToBreak]
+  end2   <- child[edgeToBreak]
+  ind1   <- which(parent == end1)
+  ind1   <- ind1[ind1 != edgeToBreak][1]
+  ind2   <- which(parent == end2)[sample.int(2L, 1L, useHash=FALSE)]
+  newInd <- c(ind2, ind1)
+  oldInd <- c(ind1, ind2)
+  childSwap <- child[newInd]
+  child[oldInd] <- childSwap
   tree$edge <- RenumberTree(parent, child, nEdge)
   tree
 }
@@ -64,7 +69,8 @@ NNI <- function (tree) {
 #' RootedSPR(tree)
 #' RootedTBR(tree)
 #'
-#' @param tree A bifurcating tree of class \code{\link{phylo}}, with all nodes resolved;
+#' @param tree A bifurcating tree of class \code{\link{phylo}}, with all nodes resolved
+#' @template edgeBreakingParams
 #' 
 #' @return This function returns a tree, in \code{phylo} format.
 #'
@@ -91,30 +97,33 @@ NNI <- function (tree) {
 #' 
 #'
 #' @export
-RootedNNI <- function (tree) {
+RootedNNI <- function (tree, edgeToBreak = NULL) {
   nTips  <- length(tree$tip.label)
+  rootNode <- nTips + 1L
   edge    <- tree$edge
   parent  <- edge[, 1]
   child   <- edge[, 2]
-  sampleableChild <- child
-  sampleableChild[which(parent == as.integer(parent[!match(parent, child, 0)][1]))] <- -1 # Don't want to switch across the root
-  chosenInternalEdge <- SampleOne(which(sampleableChild > nTips))
-  if(is.na(chosenInternalEdge)) return(NULL)
+  samplable <- parent != rootNode & child > nTips
+  if (is.null(edgeToBreak)) { 
+    edgeToBreak <- SampleOne(which(samplable))
+  } else {
+    if (!samplable[edgeToBreak]) stop("edgeToBreak cannot include a tip or the root node")
+  }
   
-  rootNode <- nTips + 1L
+  if (is.na(edgeToBreak)) stop("Cannot find a valid rearrangement")
   nEdge <- length(parent)
   nNode <- tree$Nnode
-  if (nNode == 1) return(tree)
+  if (nNode == 1) stop("Tree too small to rearrange")
   
-  end1  <- parent[chosenInternalEdge]
-  end2  <- child[chosenInternalEdge]
-  ind1    <- which(parent == end1)
-  ind1    <- ind1[ind1 != chosenInternalEdge][1]
-  ind2    <- which(parent == end2)[sample.int(2L, 1L, useHash=FALSE)]
-  new_ind <- c(ind2, ind1)
-  old_ind <- c(ind1, ind2)
-  child_swap <- child[new_ind]
-  child[old_ind] <- child_swap
+  end1   <- parent[edgeToBreak]
+  end2   <- child[edgeToBreak]
+  ind1   <- which(parent == end1)
+  ind1   <- ind1[ind1 != edgeToBreak][1]
+  ind2   <- which(parent == end2)[sample.int(2L, 1L, useHash=FALSE)]
+  newInd <- c(ind2, ind1)
+  oldInd <- c(ind1, ind2)
+  child_swap <- child[newInd]
+  child[oldInd] <- child_swap
   tree$edge <- RenumberTree(parent, child, nEdge)
   tree
 }
