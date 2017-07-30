@@ -61,27 +61,21 @@ SingleTaxonTree <- function (label) {
   res
 }
 
-#' ExtractClade
+#' Extract subtree
 #'
-#'  Extract a clade
 #' @description Safely extracts a clade from a phylogenetic tree.
-#' @usage ExtractClade(phy, node)
+#' @usage Subtree(tree, node)
 #' 
 #' 
-#' @param phy A phylogenetic tree in \code{phylo} format;
+#' @template cladewiseTreeParam
 #' @param node The number of the node at the base of the clade to be extracted.
 #' 
 #' @details
 #' Modified from the \pkg{ape} function \code{\link{extract.clade}}, which sometimes behaves erratically.  
-#' The function is intended for use with the function \code{\link{TBR}}, and features present in 
-#' \code{extract.clade} but unnecessary for this goal have been removed. Unlike extract.clade, 
-#' this function supports the extraction of 'clades' that constitute a single tip.
+#' Unlike extract.clade, this function supports the extraction of 'clades' that constitute a single tip.
 #' 
-#' @return This function returns a phylogenetic tree that represents a clade extracted from the original tree.
-#' 
-#' @author Martin R. Smith
-#' 
-#' @seealso extract.clade
+#' @return This function returns a tree of class \code{phylo} that represents a clade 
+#'         extracted from the original tree.
 #'
 #' @examples{
 #' library('phangorn')
@@ -90,38 +84,46 @@ SingleTaxonTree <- function (label) {
 #' plot(ExtractClade(tree, 33))
 #' }
 #' 
+#' @author Martin R. Smith
 #' @export
-ExtractClade <- function (phy, node) {
-  phy.tip.label <- phy$tip.label
-  phy.edge <- phy$edge
-  phy.child <- phy.edge[,2L]
-  nTip <- length(phy.tip.label)
-  if (node <= nTip) return(SingleTaxonTree(phy.tip.label[node]))
-  if (node == nTip + 1L) return(phy)
-  nodes.to.keep <- DoDescendants(phy.edge[,1L], phy.child, nTip, node)
-  edges.to.keep <- phy.child %in% which(nodes.to.keep)
-  phy.edge <- phy.edge[edges.to.keep, ]
+Subtree <- function (tree, node) {
+  if (attr(tree, 'order') != 'preorder') stop("Tree must be in preorder")
+  tipLabel <- tree$tip.label
+  nTip <- length(tipLabel)
+  if (node <= nTip) return(SingleTaxonTree(tipLabel[node]))
+  if (node == nTip + 1L) return(tree)
 
-  phy.edge1 <- phy.edge[,1L]
-  phy.edge2 <- phy.edge[,2L]
-  TIPS <- phy.edge2 <= nTip
-  tip <- phy.edge2[TIPS]
-  name <- vector("character", length(tip))
-  name[order(tip)] <- phy.tip.label[tip]
-  phy$tip.label <- name
-  new.nTip <- length(name)
-  phy.edge2[TIPS] <- order(tip)
+  edge <- tree$edge
+  parent <- edge[, 1]
+  child <- edge[, 2]
+  subtreeParentEdge <- match(node, child)
+  keepEdge <- DescendantEdges(subtreeParentEdge, parent, child)
+  keepEdge[subtreeParentEdge] <- FALSE
   
+  edge <- edge[keepEdge, ]
+  edge1 <- edge[, 1]
+  edge2 <- edge[, 2]
+  
+  isTip <- edge2 <= nTip
+  tips  <- edge2[isTip]
+  new.nTip <- length(tips)
+  name <- character(new.nTip)
+  name[order(tips)] <- tipLabel[tips]
+  edge2[isTip] <- order(tips)
+    
   ## renumber nodes:
-  phy.edge2[!TIPS] <- (phy.edge2[!TIPS] - node) + new.nTip + 1L
-  phy.edge1 <- (phy.edge1 - node) + new.nTip + 1L
-  phy$Nnode <- dim(phy.edge)[1] - new.nTip + 1L
-  phy.edge[,1] <- phy.edge1;  phy.edge[,2] <- phy.edge2
-  phy$edge <- phy.edge
-  
-  phy
+  nodeAdjust <- new.nTip + 1 - node
+  edge2[!isTip] <- edge2[!isTip] + nodeAdjust
+  edge[, 1] <- edge1 + nodeAdjust
+  edge[, 2] <- edge2
+  newtree <- list(
+    tip.label = name,
+    Nnode = dim(edge)[1] - new.nTip + 1L,
+    edge = edge
+  )
+  class(newtree)<-'phylo'
+  newtree
 }
-ecr <- ExtractClade
 
 #' Add a tip to a phylogenetic tree
 #' 
@@ -438,7 +440,7 @@ DoDescendants <- function (edge1, edge2, nTip = length(edge1) / 2 + 1, node,
     is.descendant
   }
   is.descendant <- node.children(node, is.descendant)
-  if (just.tips) return (is.descendant[1:nTip]) else if (just.internal) is.descendant[1:nTip] <- FALSE 
+  if (just.tips) return (is.descendant[seq_len(nTip)]) else if (just.internal) is.descendant[seq_len(nTip)] <- FALSE 
   return (is.descendant)
 }
 
@@ -482,7 +484,7 @@ TwoTipTree <- function (tip1, tip2) {
     Nnode = 1L
   )
   attr(ret, 'class') <- 'phylo'
-  attr(ret, 'order') <- 'cladewise'
+  attr(ret, 'order') <- 'preorder'
   ret
 }
 
