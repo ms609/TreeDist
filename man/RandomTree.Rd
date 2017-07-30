@@ -4,10 +4,12 @@
 \alias{RandomTree}
 \title{Generate random tree topology from dataset}
 \usage{
-RandomTree(dataset)
+RandomTree(dataset, root = FALSE)
 }
 \arguments{
 \item{dataset}{A dataset in \code{\link[phangorn]{phyDat}} format}
+
+\item{root}{Taxon to use as root (if desired; FALSE otherwise)}
 }
 \description{
 Generate random tree topology from dataset

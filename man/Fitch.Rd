@@ -21,7 +21,9 @@ FitchSteps(tree, data, TipData = TipsAreNames, at = attributes(data))
 
 \item{data}{A list or matrix whose list entries, rows or columns (as specified in TipData)
 correspond to the character data associated with the tips of the tree. 
-Likely of class \code{phyDat}.}
+Likely of class \code{phyDat}.  The number of characters should be stored
+as the attribute data$nr, and the weight of each character in data$weight;
+if data is a matrix, they will be calculated automatically (weights set to 1).}
 
 \item{TipData}{function to be used to match tree tips to dataset; probably one of 
 \code{TipsAreNames}, \code{TipsAreRows}, or \code{TipsAreColumns}}
