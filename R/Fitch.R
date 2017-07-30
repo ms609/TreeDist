@@ -5,9 +5,7 @@
 #' @keywords internal
 #' @export
 C_Fitch_Score <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
-  .Call("FITCH", as.integer(characters), as.integer(nChar),
-        as.integer(parent), as.integer(child), as.integer(nEdge),
-        as.double(weight), as.integer(maxNode), as.integer(nTip))[[1]]
+  C_Fitch(characters, nChar, parent, child, nEdge, weight, maxNode, nTip)[[1]]
 }
 #' Fitch steps
 #' @return the number of steps the tree enforces on each character
@@ -15,9 +13,7 @@ C_Fitch_Score <- function (characters, nChar, parent, child, nEdge, weight, maxN
 #' @keywords internal
 #' @export
 C_Fitch_Steps <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
-  .Call("FITCH", as.integer(characters), as.integer(nChar),
-        as.integer(parent), as.integer(child), as.integer(nEdge),
-        as.double(weight), as.integer(maxNode), as.integer(nTip))[[2]]
+  C_Fitch(characters, nChar, parent, child, nEdge, weight, maxNode, nTip)[[2]]
 }
 #' Wrapper to FITCH
 #' @return the full return of the phangorn C function FITCH
@@ -27,7 +23,7 @@ C_Fitch_Steps <- function (characters, nChar, parent, child, nEdge, weight, maxN
 C_Fitch <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
   .Call("FITCH", as.integer(characters), as.integer(nChar),
         as.integer(parent), as.integer(child), as.integer(nEdge),
-        as.double(weight), as.integer(maxNode), as.integer(nTip))
+        as.double(weight), as.integer(maxNode), as.integer(nTip), PACKAGE='phangorn')
 }
 
 #' Extract character data from dataset
