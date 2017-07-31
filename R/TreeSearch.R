@@ -97,7 +97,7 @@ DoTreeSearch <- function (tree, dataset, TreeScorer = FitchScore, Rearrange = Ro
   returnSingle <- !(forestSize > 1)
   
   for (iter in 1:maxIter) {
-    trees <- RearrangeTree(tree, dataset, Rearrange, TreeScorer, minScore=bestScore,
+    trees <- RearrangeTree(tree, dataset, TreeScorer, Rearrange, minScore=bestScore,
                            returnSingle=returnSingle, iter=iter, cluster=cluster,
                            verbosity=verbosity, ...)
     iterScore <- attr(trees, 'score')
