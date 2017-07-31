@@ -4,7 +4,7 @@
 \alias{RearrangeTree}
 \title{Rearrange phylogenetic tree}
 \usage{
-RearrangeTree(tree, data, Rearrange = NNI, TreeScorer = FitchScore,
+RearrangeTree(tree, dataset, TreeScorer = FitchScore, Rearrange = NNI,
   minScore = NULL, returnSingle = TRUE, iter = "<unknown>",
   cluster = NULL, verbosity = 0)
 }
@@ -14,12 +14,8 @@ in an order that matches the Morphy object, and the attributes
 \code{pscore}, the tree's parsimony score, and 
 \code{hits}, the number of times the best score has been hit in the calling function;}
 
-\item{data}{a dataset in the format required by TreeScorer}
-
 \item{Rearrange}{a rearrangement function: probably one of 
 \code{\link{RootedNNI}}, \code{\link{RootedSPR}} or \code{\link{RootedTBR}};}
-
-\item{TreeScorer}{a function that returns a score to be optimised}
 
 \item{minScore}{trees longer than \code{minScore}, probably the score of the starting tree,
 will be discarded;}

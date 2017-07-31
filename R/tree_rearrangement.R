@@ -5,10 +5,9 @@
 #'             in an order that matches the Morphy object, and the attributes
 #'             \code{pscore}, the tree's parsimony score, and 
 #'             \code{hits}, the number of times the best score has been hit in the calling function;
-#' @param data a dataset in the format required by TreeScorer
+#' @param datasetTreeScorerParam
 #' @param Rearrange a rearrangement function: probably one of 
 #'     \code{\link{RootedNNI}}, \code{\link{RootedSPR}} or \code{\link{RootedTBR}};
-#' @param TreeScorer a function that returns a score to be optimised
 #' @param  minScore trees longer than \code{minScore}, probably the score of the starting tree,
 #'     will be discarded;
 #' @template concavityParam 
@@ -29,13 +28,13 @@
 #'   }
 #' 
 #' @examples
-#' data('Lobo')
+#' dataset('Lobo')
 #' random.tree <- RandomTree(Lobo.phy)
 #' RearrangeTree(random.tree, Lobo.phy, RootedNNI)
 #' 
 #' @importFrom parallel clusterCall
 #' @export
-RearrangeTree <- function (tree, data, Rearrange = NNI, TreeScorer = FitchScore, 
+RearrangeTree <- function (tree, dataset, TreeScorer = FitchScore, Rearrange = NNI, 
                            minScore=NULL, returnSingle=TRUE, iter='<unknown>', cluster=NULL,
                            verbosity=0) {
   if (is.null(attr(tree, 'score'))) bestScore <- 1e+07 else bestScore <- attr(tree, 'score')
@@ -43,13 +42,13 @@ RearrangeTree <- function (tree, data, Rearrange = NNI, TreeScorer = FitchScore,
   if (is.null(cluster)) {
     rearrTree <- Rearrange(tree)
     trees <- list(rearrTree)
-    minScore <- TreeScorer(rearrTree, data)
+    minScore <- TreeScorer(rearrTree, dataset)
     bestTrees <- c(TRUE)
   } else {
-    #candidates <- clusterCall(cluster, function(re, tr, k) {ret <- re(tr); attr(ret, 'score') <- TreeScorer(ret, cl.data, k); ret}, Rearrange, tree)
+    #candidates <- clusterCall(cluster, function(re, tr, k) {ret <- re(tr); attr(ret, 'score') <- TreeScorer(ret, cl.dataset, k); ret}, Rearrange, tree)
     #scores <- vapply(candidates, function(x) attr(x, 'ps'), 1)
     candidates <- clusterCall(cluster, Rearrange, tree)
-    scores <- vapply(candidates, TreeScorer, 1, data, target=minScore) # ~3x faster to do this in serial in r233.
+    scores <- vapply(candidates, TreeScorer, 1, dataset, target=minScore) # ~3x faster to do this in serial in r233.
     minScore <- min(scores)
     bestTrees <- scores == minScore
     trees <- candidates[bestTrees]
