@@ -25,7 +25,7 @@
 #' @param smallestSector sectors with fewer than \code{smallestSector} taxa will not be selected; \kbd{4} is the smallest sensible value;
 #' @param largestSector sectors with more than \code{largestSector} taxa will not be selected;
 #' @param rearrangements method to use when rearranging subtrees: NNI, SPR or TBR;
-#' @param \dots other arguments to pass to subsequent functions.
+#' @template treeScorerDots
 #' 
 #' @return a rooted tree of class \code{phylo}.
 #' 
@@ -128,7 +128,7 @@ SectorHasData <- function (dataset, tips) {
 #' @param smallestSector integer giving size of smallest sector to rearrange
 #' @param largestSector integer giving size of largest sector to rearrange (rounded down if non-integral)
 #' @template verbosityParam
-#' @param \dots other parameters to pass to \code{TreeScorer}
+#' @template treeScorerDots
 #'  
 #' @return a tree of class \code{phylo} with a \code{TreeScorer} score as good or better than that of \code{tree}
 #'   

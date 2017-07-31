@@ -4,14 +4,17 @@
 \alias{TreeSearch}
 \title{Search for most parsimonious trees}
 \usage{
-TreeSearch(tree, dataset, Rearrange = NNI, maxIter = 100, maxHits = 20,
-  forestSize = 1, cluster = NULL, verbosity = 1, ...)
+TreeSearch(tree, dataset, TreeScorer = FitchScore, Rearrange = NNI,
+  maxIter = 100, maxHits = 20, forestSize = 1, cluster = NULL,
+  verbosity = 1, ...)
 }
 \arguments{
 \item{tree}{a fully-resolved starting tree in \code{\link{phylo}} format, with the desired outgroup; edge lengths are not supported and will be deleted;}
 
 \item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
 correspond to the labels of any accompanying tree}
+
+\item{TreeScorer}{function by which trees should be scored; default \code{\link{FitchScore}}}
 
 \item{Rearrange}{rearrangement function to use; perhaps one of \kbd{NNI}, \kbd{SPR}, or \kbd{TBR};}
 
@@ -25,7 +28,7 @@ correspond to the labels of any accompanying tree}
 
 \item{verbosity}{verbosity of output written to terminal; higher values print more messages}
 
-\item{\dots}{other arguments to pass to subsequent functions.}
+\item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}})}
 
 \item{outgroup}{a vector listing the taxa in the outgroup;}
 

@@ -17,8 +17,8 @@
 #'        to just perform TBR rearrangements (retaining the position of the root if \code{outgroup = TRUE})
 #'        OR: a list of functions to use, one at a time, as the \code{Rearrange} parameter
 #'            in successive calls to DoTreeSearch
-#'        
-#' @param \dots other arguments to pass to TreeScorer function (e.g. \code{\link{TipsAreColumns}})
+#'
+#' @template treeScorerDots
 #' 
 #' @return This function returns a tree modified by parsimony ratchet iteration, retaining the position of the root.
 #'

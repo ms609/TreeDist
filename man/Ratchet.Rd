@@ -26,7 +26,7 @@ to just perform TBR rearrangements (retaining the position of the root if \code{
 OR: a list of functions to use, one at a time, as the \code{Rearrange} parameter
     in successive calls to DoTreeSearch}
 
-\item{\dots}{other arguments to pass to TreeScorer function (e.g. \code{\link{TipsAreColumns}})}
+\item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}})}
 
 \item{concavity}{concavity constant for implied weighting (not currently implemented!)}
 
