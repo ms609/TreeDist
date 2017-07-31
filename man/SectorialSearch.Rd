@@ -32,7 +32,7 @@ with each entry corresponding to an entry in Rearrangements, or a single entry t
 
 \item{verbosity}{verbosity of output written to terminal; higher values print more messages}
 
-\item{\dots}{other arguments to pass to subsequent functions.}
+\item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}})}
 
 \item{outgroup}{a vector listing the taxa that form the outgroup;}
 

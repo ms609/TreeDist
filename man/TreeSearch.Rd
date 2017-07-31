@@ -16,7 +16,7 @@ correspond to the labels of any accompanying tree}
 
 \item{TreeScorer}{function by which trees should be scored; default \code{\link{FitchScore}}}
 
-\item{Rearrange}{rearrangement function to use; perhaps one of \kbd{NNI}, \kbd{SPR}, or \kbd{TBR};}
+\item{Rearrange}{rearrangement function to use; perhaps one of \kbd{RootedNNI}, \kbd{SPR}, or \kbd{TBR};}
 
 \item{maxIter}{the maximum number of iterations to perform before abandoning the search;}
 

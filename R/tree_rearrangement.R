@@ -28,7 +28,7 @@
 #'   }
 #' 
 #' @examples
-#' dataset('Lobo')
+#' data('Lobo')
 #' random.tree <- RandomTree(Lobo.phy)
 #' RearrangeTree(random.tree, Lobo.phy, RootedNNI)
 #' 
@@ -62,7 +62,9 @@ RearrangeTree <- function (tree, dataset, TreeScorer = FitchScore, Rearrange = N
     hits <- sum(bestTrees)
     if (verbosity > 1) cat("\n    * Iteration", iter, "- New best score", minScore, "found on", hits, "trees")
   }
-  if (length(returnSingle) && returnSingle) trees <- sample(trees, 1L)[[1]]
+  if (length(returnSingle) && returnSingle) {
+    trees <- if (length(trees) > 1) sample(trees, 1L)[[1]] else trees[[1]]
+  }
   attr(trees, 'hits') <- hits
   attr(trees, 'score') <- minScore
   trees

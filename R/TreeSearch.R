@@ -7,7 +7,7 @@
 #' @template datasetTreeScorerParams
 #' @param outgroup a vector listing the taxa in the outgroup;
 #' @param concavity concavity constant for implied weighting (not currently implemented!); 
-#' @param Rearrange rearrangement function to use; perhaps one of \kbd{NNI}, \kbd{SPR}, or \kbd{TBR};
+#' @param Rearrange rearrangement function to use; perhaps one of \kbd{RootedNNI}, \kbd{SPR}, or \kbd{TBR};
 #' @param maxIter the maximum number of iterations to perform before abandoning the search;
 #' @param maxHits the maximum times to hit the best pscore before abandoning the search;
 #' @param forestSize the maximum number of trees to return - useful in concert with \code{\link{consensus}};
@@ -79,7 +79,7 @@ TreeSearch <- function
 #' 
 #' @keywords internal
 #' @export
-DoTreeSearch <- function (tree, dataset, TreeScorer = FitchScore, Rearrange = TBR,
+DoTreeSearch <- function (tree, dataset, TreeScorer = FitchScore, Rearrange = RootedTBR,
                         maxIter = 100, maxHits = 20, forestSize = 1,
                         cluster = NULL, verbosity = 1, ...) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree) # TODO could this be moved to TreeSearch?
@@ -98,7 +98,8 @@ DoTreeSearch <- function (tree, dataset, TreeScorer = FitchScore, Rearrange = TB
   
   for (iter in 1:maxIter) {
     trees <- RearrangeTree(tree, dataset, Rearrange, TreeScorer, minScore=bestScore,
-                           returnSingle=returnSingle, iter=iter, cluster=cluster, verbosity=verbosity)
+                           returnSingle=returnSingle, iter=iter, cluster=cluster,
+                           verbosity=verbosity, ...)
     iterScore <- attr(trees, 'score')
     if (length(forestSize) && forestSize > 1) {
       hits <- attr(trees, 'hits')

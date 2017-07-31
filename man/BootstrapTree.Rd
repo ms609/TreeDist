@@ -4,14 +4,17 @@
 \alias{BootstrapTree}
 \title{Bootstrap tree search with inapplicable data}
 \usage{
-BootstrapTree(tree, x, maxIter, maxHits, TreeScorer = FitchScore,
+BootstrapTree(tree, dataset, TreeScorer = FitchScore, maxIter, maxHits,
   rooted = TRUE, verbosity = 1, ...)
 }
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}, with internal numbering in cladewise order
 (use \code{\link{Preorder}(tree)} or (slower) \code{\link{Cladewise}(tree)})}
 
-\item{x}{a dataset in the format required by TreeScorer}
+\item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
+correspond to the labels of any accompanying tree}
+
+\item{TreeScorer}{function by which trees should be scored; default \code{\link{FitchScore}}}
 
 \item{maxIter}{maximum number of iterations to perform in tree search}
 
@@ -21,8 +24,6 @@ BootstrapTree(tree, x, maxIter, maxHits, TreeScorer = FitchScore,
 outgroup is fixed}
 
 \item{verbosity}{verbosity of output written to terminal; higher values print more messages}
-
-\item{function}{by which trees should be scored; default \code{\link{FitchScore}}}
 }
 \value{
 A tree that is optimal under a random sampling of the original characters
