@@ -96,10 +96,13 @@ test_that("RootedSPR fails", {
   expect_warning(RootedSPR(tree8, edgeToBreak=1))
   expect_warning(RootedSPR(tree8, edgeToBreak=13))
   expect_warning(RootedSPR(tree8, edgeToBreak=14))
-  expect_warning(RootedSPR(read.tree(text='((a, (b, (c, d))), (e, (f, (g, h))));'), 3))
-  expect_warning(RootedSPR(read.tree(text='((a, (b, (c, d))), (e, (f, (g, h))));'), 10))
-  expect_warning(RootedSPR(read.tree(text='((a, (b, (c, d))), (((e, f), g), h));'), 9))
-  expect_warning(RootedSPR(read.tree(text='((a, (b, (c, d))), (((e, f), g), h));'), 8))
+  warnTree1 <- read.tree(text='((a, (b, (c, d))), (e, (f, (g, h))));')
+  warnTree2 <- read.tree(text='((a, (b, (c, d))), (((e, f), g), h));')
+  attr(warnTree1, 'order') <- attr(warnTree2, 'order') <- 'preorder'
+  expect_warning(RootedSPR(warnTree1, 3))
+  expect_warning(RootedSPR(warnTree1), 10))
+  expect_warning(RootedSPR(warnTree2, 9))
+  expect_warning(RootedSPR(warnTree2, 8))
 })
 
 test_that("SPR is special case of TBR", {
