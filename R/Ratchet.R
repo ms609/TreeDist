@@ -16,7 +16,7 @@
 #'        the character string "TBR" to conduct TBR, SPR and NNI rearrangements, or "TBR only"
 #'        to just perform TBR rearrangements (retaining the position of the root if \code{outgroup = TRUE})
 #'        OR: a list of functions to use, one at a time, as the \code{Rearrange} parameter
-#'            in successive calls to DoTreeSearch
+#'            in successive calls to TreeSearch
 #'
 #' @template treeScorerDots
 #' 
@@ -85,7 +85,7 @@ Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, rooted=
     
     candidate <- bootstrapTree
     for (Func in Rearrangements) {
-      candidate <- DoTreeSearch(candidate, data, TreeScorer=TreeScorer, Rearrange=Func, 
+      candidate <- TreeSearch(candidate, data, TreeScorer=TreeScorer, Rearrange=Func, 
                                 verbosity=verbosity, maxIter=searchIter, maxHits=searchHits, ...)
     }
     

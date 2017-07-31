@@ -44,42 +44,7 @@
 #' @keywords  tree 
 #' 
 #' @export
-TreeSearch <- function 
-(tree, dataset, TreeScorer = FitchScore, Rearrange=NNI, maxIter=100, maxHits=20, forestSize=1, cluster=NULL, 
- verbosity=1, ...) {
-  tree <- RenumberTips(tree, names(dataset))
-  ret <- DoTreeSearch(tree, dataset, TreeScorer, Rearrange, maxIter, maxHits, forestSize, cluster, 
-                      verbosity, ...)
-  return (ret)
-}
-
-#' DoTreeSearch
-#'
-#' Performs a tree search
-#' 
-#' Does the hard work of searching for a most parsimonious tree.
-#' End-users are expected to access this function through its wrapper, TreeSearch
-#' It is also called directly by Ratchet and Sectorial functions
-#'
-#' @template preorderTreeParam
-#' @template datasetTreeScorerParams
-#' @param Rearrange function to be used for tree rearrangements: probably \link{\code{NNI}},
-#'        \link{\code{SPR}} or \link{\code{TBR}}
-#' @param maxIter Maximum iterations
-#' @param maxHits stop search after finding optimal score \code{maxHits} times
-#' @param forestSize number of trees to store in memory
-#' @template verbosityParam
-#' @template treeScorerDots
-#'
-#'
-#' @return a tree of class \code{phylo} with attributes "hits" (number of times hit) and "pscore"
-#'         (score given by TreeScorer)
-#'
-#' @author Martin R. Smith
-#' 
-#' @keywords internal
-#' @export
-DoTreeSearch <- function (tree, dataset, TreeScorer = FitchScore, Rearrange = RootedTBR,
+TreeSearch <- function (tree, dataset, TreeScorer = FitchScore, Rearrange = RootedTBR,
                         maxIter = 100, maxHits = 20, forestSize = 1,
                         cluster = NULL, verbosity = 1, ...) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree) # TODO could this be moved to TreeSearch?

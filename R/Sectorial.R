@@ -65,7 +65,7 @@ SectorialSearch <- function (tree, dataset, TreeScorer = FitchScore, sectRearran
   for (i in seq_along(Rearrangements)) {
     iters <- if (length(maxIter) <= i) maxIter[[i]] else min(maxIter)
     hits  <- if (length(maxHits) <= i) maxHits[[i]] else min(maxHits)
-    sect <- DoTreeSearch(sect, dataset, TreeScorer, Rearrangements[[i]], maxIter=iters,
+    sect <- TreeSearch(sect, dataset, TreeScorer, Rearrangements[[i]], maxIter=iters,
                          maxHits=hits, cluster=cluster, verbosity=verbosity-1)
   }
   if (attr(sect, 'score') <= best.score) {
@@ -159,7 +159,7 @@ DoSectorial <- function (tree, dataset, TreeScorer = FitchScore, maxSectIter=100
     
     if (verbosity >= 0) cat("\n - Rearranging sector", sector)
     for (Rearrange in Rearrangements) {
-      candidate <- DoTreeSearch(candidate, dataset, TreeScorer, Rearrange,
+      candidate <- TreeSearch(candidate, dataset, TreeScorer, Rearrange,
                                 verbosity=verbosity-1, maxIter=maxIter, ...) 
     }
     candidateScore <- attr(candidate, 'score')

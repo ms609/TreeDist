@@ -42,7 +42,7 @@ BootstrapTree <- function (tree, dataset, TreeScorer = FitchScore,
   
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
   attr(tree, 'score') <- NULL
-  res <- DoTreeSearch(tree, dataset, TreeScorer=TreeScorer, Rearrange=if (rooted) RootedNNI else NNI,
+  res <- TreeSearch(tree, dataset, TreeScorer=TreeScorer, Rearrange=if (rooted) RootedNNI else NNI,
                       maxIter=maxIter, maxHits=maxHits, verbosity=max(0, verbosity - 1), ...)
   attr(res, 'score') <- NULL
   attr(res, 'hits') <- NULL
