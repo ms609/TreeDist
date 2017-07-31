@@ -77,7 +77,7 @@ TreeSearch <- function
 #' 
 #' @keywords internal
 #' @export
-DoTreeSearch <- function (tree, data, TreeScorer = FitchScore, Rearrange = TBR,
+DoTreeSearch <- function (tree, dataset, TreeScorer = FitchScore, Rearrange = TBR,
                         maxIter = 100, maxHits = 20, forestSize = 1,
                         cluster = NULL, verbosity = 1, ...) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree) # TODO could this be moved to TreeSearch?
@@ -89,13 +89,13 @@ DoTreeSearch <- function (tree, data, TreeScorer = FitchScore, Rearrange = TBR,
   } else {
     forestSize <- 1 
   }
-  if (is.null(attr(tree, 'score'))) attr(tree, 'score') <- TreeScorer(tree, data, ...)
+  if (is.null(attr(tree, 'score'))) attr(tree, 'score') <- TreeScorer(tree, dataset, ...)
   bestScore <- attr(tree, 'score')
   if (verbosity > 0) cat("\n  - Performing tree search.  Initial score:", bestScore)
   returnSingle <- !(forestSize > 1)
   
   for (iter in 1:maxIter) {
-    trees <- RearrangeTree(tree, data, Rearrange, TreeScorer, minScore=bestScore,
+    trees <- RearrangeTree(tree, dataset, Rearrange, TreeScorer, minScore=bestScore,
                            returnSingle=returnSingle, iter=iter, cluster=cluster, verbosity=verbosity)
     iterScore <- attr(trees, 'score')
     if (length(forestSize) && forestSize > 1) {
