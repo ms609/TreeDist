@@ -13,5 +13,5 @@ test_that("Tree can be found", {
   expect_equal(TreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000, Rearrange = RootedSPR, verbosity=0), comb11)
   expect_equal(TreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000, Rearrange = RootedNNI, verbosity=0), comb11)
   expect_equal(Ratchet(RandomTree(phy11, 'a'), phy11, searchIter=300, searchHits = 20, ratchHits=3, verbosity=-1), comb11)
-  expect_equal(SectorialSearch(RandomTree(phy11, 'a'), phy11, verbosity=-1), comb11)
+  expect_equal(SectorialSearch(RandomTree(phy11, 'a'), phy11, verbosity=-1), comb11) # TODO: not working yet!
 })
