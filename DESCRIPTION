@@ -8,7 +8,7 @@ Depends: R (>= 3.4.0)
 Imports: 
     ape,
     parallel,
-    phangorn
+    phangorn (>= 2.2.1)
 Suggests: 
     testthat
 LazyData: true
