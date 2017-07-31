@@ -28,7 +28,7 @@ Unlike extract.clade, this function supports the extraction of 'clades' that con
 library('phangorn')
 tree <- rtree(20, br=NULL)
 plot(tree); nodelabels(); nodelabels(33, 33, bg='yellow'); dev.new()
-plot(ExtractClade(tree, 33))
+plot(Subtree(tree, 33))
 }
 
 }

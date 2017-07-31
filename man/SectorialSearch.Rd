@@ -5,8 +5,10 @@
 \title{Sectorial Search}
 \usage{
 SectorialSearch(tree, dataset, TreeScorer = FitchScore,
-  rearrangements = "NNI", maxIter = 2000, cluster = NULL, verbosity = 3,
-  ...)
+  sectRearrangements = list(RootedNNI),
+  searchRearrangements = list(RootedNNI, RootedTBR, RootedNNI),
+  maxHits = c(30, 40, 60), maxIter = 2000, cluster = NULL,
+  verbosity = 3, ...)
 }
 \arguments{
 \item{tree}{a rooted, resolved tree in \code{\link{phylo}} format from which to start the search;}
@@ -14,13 +16,21 @@ SectorialSearch(tree, dataset, TreeScorer = FitchScore,
 \item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
 correspond to the labels of any accompanying tree}
 
-\item{rearrangements}{method to use when rearranging subtrees: NNI, SPR or TBR;}
+\item{sectRearrangements}{A list of functions to be applied when rearranging trees in sectorial 
+search. Note: these must retain the position of the root of the tree}
 
-\item{maxIter}{maximum number of rearrangements to perform on each sectorial iteration;}
+\item{searchRearrangements}{A list of functions to be applied, in turn, during tree search.
+Default: \code{list(\link{RootedTBR}, \link{RootedNNI})}}
+
+\item{maxHits}{maximum number of hits to accomplish on each search iteration - provide a list or vector 
+with each entry corresponding to an entry in Rearrangements, or a single entry to be used for all}
+
+\item{maxIter}{maximum number of rearrangements to perform on each search iteration - provide a list or vector 
+with each entry corresponding to an entry in Rearrangements, or a single entry to be used for all}
 
 \item{cluster}{a cluster prepared using \code{\link{PrepareCluster}}; may speed up search on multicore machines;}
 
-\item{verbosity}{integer determining how verbose the reporting to stdout will be;}
+\item{verbosity}{verbosity of output written to terminal; higher values print more messages}
 
 \item{\dots}{other arguments to pass to subsequent functions.}
 
@@ -28,13 +38,11 @@ correspond to the labels of any accompanying tree}
 
 \item{concavity}{concavity constant for implied weighting (not currently implemented!)}
 
-\item{maxit}{maximum number of sectorial iterations to perform;}
-
 \item{k}{stop when \code{k} searches have improved their sectorial score;}
 
 \item{smallestSector}{sectors with fewer than \code{smallestSector} taxa will not be selected; \kbd{4} is the smallest sensible value;}
 
-\item{largest.sector}{sectors with more than \code{largest.sector} taxa will not be selected;}
+\item{largestSector}{sectors with more than \code{largestSector} taxa will not be selected;}
 }
 \value{
 a rooted tree of class \code{phylo}.
@@ -43,46 +51,16 @@ a rooted tree of class \code{phylo}.
 \code{SectorialSearch} performs a sectorial search on a tree, preserving the position of the root.
 }
 \details{
-\code{InapplicableSectorial} performs a sectorial search on the tree specified. A sectorial search 
+\code{DoSectorial} performs a sectorial search on the tree specified. A sectorial search 
 detaches a random part of the tree, performs rearrangments on this subtree, then reattaches it 
 to the main tree (Goloboff, 1999).
 The improvement to local \var{pscore} hopefully (but not necessarily) improves the overall \var{pscore}.
-As such, the output of \code{InapplicableSectorial} should be treated by further \acronym{TBR (/SPR/NNI)}
+As such, the output of \code{DoSectorial} should be treated by further \acronym{TBR (/SPR/NNI)}
 rearrangements and only retained if the ultimate parsimony score is better than 
 that of the original tree.
 
-\code{SectorialSearch} is a basic recipe that runs \code{InapplicableSectorial} followed by a few rounds
+\code{SectorialSearch} is a basic recipe that runs \code{DoSectorial} followed by a few rounds
 of tree rearrangement, returning a tree whose \var{pscore} is no worse than that of \code{start.tree}.
-}
-\examples{
-{
-data('Lobo')
-outgroup <- c('Lingula', 'Mickwitzia', 'Neocrania')
-njtree <- Root(nj(dist.hamming(Lobo.phy)), outgroup, resolve.root=TRUE)
-njtree$edge.length <- NULL; njtree<-SetOutgroup(njtree, outgroup)
-InapplicableSectorial(njtree, Lobo.phy, outgroup, maxit=1, maxIter=50, largest.sector=7)
-\dontrun{SectorialSearch(njtree, Lobo.phy, outgroup, 'SPR') # Will be time-consuming}
-
-## SectorialSearch is currently defined as
-# function (start.tree, dataset, outgroup, rearrangements='NNI') {
-#   best.score <- attr(start.tree, 'pscore')
-#   if (length(best.score) == 0) best.score <- InapplicableParsimony(start.tree, dataset)
-#   sect <- InapplicableSectorial(start.tree, dataset, outgroup=outgroup, verbosity=0, maxit=30,
-#               maxIter=200, maxHits=15, smallestSector=6,
-#   sect <- DoTreeSearch(sect, dataset, outgroup, method='NNI', 
-#                        maxIter=2000, maxHits=20, verbosity=3)
-#   sect <- DoTreeSearch(sect, dataset, outgroup, method='TBR',
-#                        maxIter=2000, maxHits=25, verbosity=3)
-#   sect <- DoTreeSearch(sect, dataset, outgroup, method='SPR',
-#                        maxIter=2000, maxHits=50, verbosity=3)
-#   sect <- DoTreeSearch(sect, dataset, outgroup, method='NNI',
-#                        maxIter=2000, maxHits=50, verbosity=3)
-#   if (attr(sect, 'pscore') <= best.score) {
-#     return (sect)
-#   } else return (SetOutgroup(start.tree, outgroup))
-# }
-}
-
 }
 \references{
 Goloboff, P. (1999). \cite{Analyzing large data sets in reasonable times: solutions for composite optima.}

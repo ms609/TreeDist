@@ -4,8 +4,8 @@
 \alias{DoDescendants}
 \title{TITLE GOES HERE}
 \usage{
-DoDescendants(edge1, edge2, nTip, node, just.tips = FALSE,
-  just.internal = FALSE, include.ancestor = FALSE)
+DoDescendants(edge1, edge2, nTip = length(edge1)/2 + 1, node,
+  just.tips = FALSE, just.internal = FALSE, include.ancestor = FALSE)
 }
 \arguments{
 \item{edge1}{parent nodes: from tree$edge[,1]}
