@@ -368,7 +368,8 @@ GetAncestors <- function (parent, child, node) {
 #' @template treeChild
 #' 
 #' @examples
-#' tr <- rtree(20, br=NULL)
+#' 
+#' tr <- ape::rtree(20, br=NULL)
 #' edge <- tr$edge
 #' AllAncestors(edge[, 1], edge[, 2])
 #' 
