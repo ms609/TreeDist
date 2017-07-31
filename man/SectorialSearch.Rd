@@ -62,6 +62,13 @@ that of the original tree.
 \code{SectorialSearch} is a basic recipe that runs \code{DoSectorial} followed by a few rounds
 of tree rearrangement, returning a tree whose \var{pscore} is no worse than that of \code{start.tree}.
 }
+\examples{
+data('Lobo')
+startTree <- RandomTree(Lobo.phy, 'Cricocosmia') # Position of root will be fixed
+firstEstimate <- SectorialSearch(startTree, Lobo.phy, maxIter=50, largestSector=8, verbosity=5)
+\dontrun{SectorialSearch(firstEstimate, Lobo.phy, sectRearrangements=list(RootedNNI, RootedTBR, RootedNNI)) # Will be time-consuming}
+
+}
 \references{
 Goloboff, P. (1999). \cite{Analyzing large data sets in reasonable times: solutions for composite optima.}
 Cladistics, 15(4), 415-428. doi:\href{http://dx.doi.org/10.1006/clad.1999.0122}{10.1006/clad.1999.0122}

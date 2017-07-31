@@ -4,7 +4,7 @@
 \alias{TreeSearch}
 \title{Search for most parsimonious trees}
 \usage{
-TreeSearch(tree, dataset, TreeScorer = FitchScore, Rearrange = NNI,
+TreeSearch(tree, dataset, TreeScorer = FitchScore, Rearrange = RootedTBR,
   maxIter = 100, maxHits = 20, forestSize = 1, cluster = NULL,
   verbosity = 1, ...)
 }

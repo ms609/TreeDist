@@ -24,7 +24,7 @@ Ratchet(tree, data, TreeScorer = FitchScore, returnAll = FALSE,
 the character string "TBR" to conduct TBR, SPR and NNI rearrangements, or "TBR only"
 to just perform TBR rearrangements (retaining the position of the root if \code{outgroup = TRUE})
 OR: a list of functions to use, one at a time, as the \code{Rearrange} parameter
-    in successive calls to DoTreeSearch}
+    in successive calls to TreeSearch}
 
 \item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}})}
 

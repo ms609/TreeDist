@@ -42,8 +42,7 @@
 #' @seealso \code{\link{TreeSearch}}
 #' @seealso \code{\link{Ratchet}}
 #' 
-#' @examples{
-#' 
+#' @examples
 #' data('Lobo')
 #' startTree <- RandomTree(Lobo.phy, 'Cricocosmia') # Position of root will be fixed
 #' firstEstimate <- SectorialSearch(startTree, Lobo.phy, maxIter=50, largestSector=8, verbosity=5)
