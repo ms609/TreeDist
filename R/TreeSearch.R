@@ -4,7 +4,7 @@
 #' to search for a more parsimonious tree.
 #'  
 #' @param tree a fully-resolved starting tree in \code{\link{phylo}} format, with the desired outgroup; edge lengths are not supported and will be deleted;
-#' @template datasetParam
+#' @template datasetTreeScorerParams
 #' @param outgroup a vector listing the taxa in the outgroup;
 #' @param concavity concavity constant for implied weighting (not currently implemented!); 
 #' @param Rearrange rearrangement function to use; perhaps one of \kbd{NNI}, \kbd{SPR}, or \kbd{TBR};
@@ -45,12 +45,10 @@
 #' 
 #' @export
 TreeSearch <- function 
-(tree, dataset, Rearrange=NNI, maxIter=100, maxHits=20, forestSize=1, cluster=NULL, 
+(tree, dataset, TreeScorer = FitchScore, Rearrange=NNI, maxIter=100, maxHits=20, forestSize=1, cluster=NULL, 
  verbosity=1, ...) {
-  # Initialize morphy object
-  if (class(dataset) != 'phyDat') stop ("dataset must be of class phyDat, not ", class(dataset))
   tree <- RenumberTips(tree, names(dataset))
-  ret <- DoTreeSearch(tree, dataset, Rearrange, maxIter, maxHits, forestSize, cluster, 
+  ret <- DoTreeSearch(tree, dataset, TreeScorer, Rearrange, maxIter, maxHits, forestSize, cluster, 
                       verbosity, ...)
   return (ret)
 }
@@ -64,8 +62,7 @@ TreeSearch <- function
 #' It is also called directly by Ratchet and Sectorial functions
 #'
 #' @template preorderTreeParam
-#' @param data dataset in the format expected by TreeScorer
-#' @param TreeScorer function to generate optimality score; defaults to \code{\link{FitchScore}}
+#' @template datasetTreeScorerParams
 #' @param Rearrange function to be used for tree rearrangements: probably \link{\code{NNI}},
 #'        \link{\code{SPR}} or \link{\code{TBR}}
 #' @param maxIter Maximum iterations
@@ -83,7 +80,7 @@ TreeSearch <- function
 DoTreeSearch <- function (tree, data, TreeScorer = FitchScore, Rearrange = TBR,
                         maxIter = 100, maxHits = 20, forestSize = 1,
                         cluster = NULL, verbosity = 1, ...) {
-  if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
+  if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree) # TODO could this be moved to TreeSearch?
   tree$edge.length <- NULL # Edge lengths are not supported
   attr(tree, 'hits') <- 1
   if (exists("forestSize") && length(forestSize) && forestSize > 1) {
@@ -92,7 +89,7 @@ DoTreeSearch <- function (tree, data, TreeScorer = FitchScore, Rearrange = TBR,
   } else {
     forestSize <- 1 
   }
-  if (is.null(attr(tree, 'score'))) attr(tree, 'score') <- TreeScorer(tree, data)
+  if (is.null(attr(tree, 'score'))) attr(tree, 'score') <- TreeScorer(tree, data, ...)
   bestScore <- attr(tree, 'score')
   if (verbosity > 0) cat("\n  - Performing tree search.  Initial score:", bestScore)
   returnSingle <- !(forestSize > 1)

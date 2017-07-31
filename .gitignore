@@ -2,4 +2,5 @@ src-*
 *.dll
 *.o
 *.out
-*.RDataTmp
+*.RData*
+*.Rhistory
