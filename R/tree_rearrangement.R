@@ -111,8 +111,7 @@ OrderEdgesNumberNodes <- function (parent, child, nTips, nEdge = length(parent))
 #' @keywords internal
 #' @export
 RenumberTree <- function (parent, child, nEdge = length(parent)) {
-  matrix(.Call('RENUMBER_TREE', as.integer(parent), as.integer(child), as.integer(nEdge),
-               PACKAGE='TreeSearch'), ncol=2)
+  matrix(.Call('RENUMBER_TREE', as.integer(parent), as.integer(child), as.integer(nEdge)), ncol=2)
 }
 
 #' Reorder tree Cladewise
