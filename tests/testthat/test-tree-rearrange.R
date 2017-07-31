@@ -100,7 +100,7 @@ test_that("RootedSPR fails", {
   warnTree2 <- read.tree(text='((a, (b, (c, d))), (((e, f), g), h));')
   attr(warnTree1, 'order') <- attr(warnTree2, 'order') <- 'preorder'
   expect_warning(RootedSPR(warnTree1, 3))
-  expect_warning(RootedSPR(warnTree1), 10))
+  expect_warning(RootedSPR(warnTree1, 10))
   expect_warning(RootedSPR(warnTree2, 9))
   expect_warning(RootedSPR(warnTree2, 8))
 })
