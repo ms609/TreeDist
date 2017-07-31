@@ -4,7 +4,7 @@
 \alias{DoTreeSearch}
 \title{DoTreeSearch}
 \usage{
-DoTreeSearch(tree, data, TreeScorer = FitchScore, Rearrange = TBR,
+DoTreeSearch(tree, dataset, TreeScorer = FitchScore, Rearrange = TBR,
   maxIter = 100, maxHits = 20, forestSize = 1, cluster = NULL,
   verbosity = 1, ...)
 }
@@ -12,9 +12,10 @@ DoTreeSearch(tree, data, TreeScorer = FitchScore, Rearrange = TBR,
 \item{tree}{A tree of class \code{\link{phylo}}, with internal numbering in cladewise order
 (use \code{\link{Preorder}(tree)} or (slower) \code{\link{Cladewise}(tree)})}
 
-\item{data}{dataset in the format expected by TreeScorer}
+\item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
+correspond to the labels of any accompanying tree}
 
-\item{TreeScorer}{function to generate optimality score; defaults to \code{\link{FitchScore}}}
+\item{TreeScorer}{function by which trees should be scored; default \code{\link{FitchScore}}}
 
 \item{Rearrange}{function to be used for tree rearrangements: probably \link{\code{NNI}},
 \link{\code{SPR}} or \link{\code{TBR}}}
@@ -26,6 +27,8 @@ DoTreeSearch(tree, data, TreeScorer = FitchScore, Rearrange = TBR,
 \item{forestSize}{number of trees to store in memory}
 
 \item{verbosity}{verbosity of output written to terminal; higher values print more messages}
+
+\item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}})}
 }
 \value{
 a tree of class \code{phylo} with attributes "hits" (number of times hit) and "pscore"

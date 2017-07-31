@@ -30,7 +30,7 @@
 #'                           search. Note: these must retain the position of the root of the tree
 #' @param searchRearrangements A list of functions to be applied, in turn, during tree search.
 #'                             Default: \code{list(\link{RootedTBR}, \link{RootedNNI})}
-#' @param \dots other arguments to pass to subsequent functions.
+#' @template treeScorerDots
 #' 
 #' @return a rooted tree of class \code{phylo}.
 #' 
@@ -114,7 +114,7 @@ SectorHasData <- function (dataset, tips) {
 #' @param smallestSector integer giving size of smallest sector to rearrange
 #' @param largestSector integer giving size of largest sector to rearrange (rounded down if non-integral)
 #' @template verbosityParam
-#' @param \dots other parameters to pass to \code{TreeScorer}
+#' @template treeScorerDots
 #'  
 #' @return a tree of class \code{phylo} with a \code{TreeScorer} score as good or better than that of \code{tree}
 #'   

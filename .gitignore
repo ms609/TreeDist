@@ -1,5 +1,6 @@
+src-*
 *.dll
 *.o
 *.out
-src-x64
-src-i386
+*.RData*
+*.Rhistory

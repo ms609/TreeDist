@@ -17,8 +17,8 @@
 #'        to just perform TBR rearrangements (retaining the position of the root if \code{outgroup = TRUE})
 #'        OR: a list of functions to use, one at a time, as the \code{Rearrange} parameter
 #'            in successive calls to DoTreeSearch
-#'        
-#' @param \dots other arguments to pass to TreeScorer function (e.g. \code{\link{TipsAreColumns}})
+#'
+#' @template treeScorerDots
 #' 
 #' @return This function returns a tree modified by parsimony ratchet iteration, retaining the position of the root.
 #'
@@ -56,8 +56,9 @@ Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, rooted=
   iterationsCompleted <- 0
   for (i in 1:ratchIter) {
     if (verbosity >= 0) cat ("\n - Running NNI on bootstrapped dataset. ")
-    bootstrapTree <- BootstrapTree(tree, data, maxIter=searchIter, maxHits=searchHits,
-                        rooted=rooted, TreeScorer=TreeScorer, verbosity=verbosity-1, ...)
+    bootstrapTree <- BootstrapTree(tree, data, TreeScorer=TreeScorer,
+                                   maxIter=searchIter, maxHits=searchHits, 
+                                   rooted=rooted, verbosity=verbosity-1, ...)
     
     if (verbosity >= 0) cat ("\n - Rearranging from new candidate tree:")
     if (is.character(rearrangements)) {
