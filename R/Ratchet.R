@@ -7,10 +7,10 @@
 #' @template concavityParam
 #' @param returnAll Set to \code{TRUE} to report all MPTs encountered during the search, perhaps to analyze consensus
 #' @param rooted whether to retain the position of the root in tree search (TRUE by default)
-#' @param maxit   maximum ratchet iterations to perform;
+#' @param ratchIter stop when this many ratchet iterations have been performed
+#' @param ratchHits stop when this many ratchet iterations have found the same best score
 #' @param maxIter maximum rearrangements to perform on each bootstrap or ratchet iteration;
-#' @param maxHits maximum times to hit best score before terminating a tree search within a pratchet iteration;
-#' @param k stop when k ratchet iterations have found the same best score;
+#' @param maxHits maximum times to hit best score before terminating a tree search within a ratchet iteration;
 #' @template verbosityParam
 #' @param rearrangements method(s) to use when rearranging trees. Provide:
 #'        the character string "TBR" to conduct TBR, SPR and NNI rearrangements, or "TBR only"
@@ -47,20 +47,20 @@ Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, rooted=
   bestScore <- attr(tree, "score")
   if (verbosity >= 0) cat("\n* Initial score:", bestScore)
   if (returnAll) {
-    null.forest <- vector('list', ratchIter)
-    forest <- null.forest
-    forest.scores <- rep(NA, ratchIter)
+    nullForest <- vector('list', ratchIter)
+    forest <- nullForest
+    forestScores <- rep(NA, ratchIter)
   }
 
   bestScoreHits <- 0
   iterationsCompleted <- 0
   for (i in 1:ratchIter) {
-    if (verbosity >= 0) cat ("\n - Running NNI on bootstrapped dataset. ")
+    if (verbosity >= 1) cat ("\n - Running NNI on bootstrapped dataset. ")
     bootstrapTree <- BootstrapTree(tree, data, TreeScorer=TreeScorer,
-                                   maxIter=searchIter, maxHits=searchHits, 
-                                   rooted=rooted, verbosity=verbosity-1, ...)
+                                   maxIter=bootstrapIter, maxHits=bootstrapHits, 
+                                   rooted=rooted, verbosity=verbosity-2, ...)
     
-    if (verbosity >= 0) cat ("\n - Rearranging from new candidate tree:")
+    if (verbosity >= 1) cat ("\n - Rearranging from new candidate tree:")
     if (is.character(rearrangements)) {
       Rearrangements <- if (rooted) {
         if (rearrangements == "TBR") 
@@ -90,27 +90,22 @@ Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, rooted=
     }
     
     candScore <- attr(candidate, 'score')
+    if (verbosity >= 1) cat("\n - Candidate tree scored ", candScore)
+    if (returnAll && candScore < (bestScore + suboptimal)) { # Worth saving this tree in forest
+      forest[[i]] <- candidate
+      forestScores[i] <- candScore
+    }
     if ((candScore + epsilon) < bestScore) {
       # New 'best' tree
-      if (returnAll) {
-        forest[[i]] <- candidate
-        forest.scores[i] <- candScore
-      }
       tree <- candidate
       bestScore <- candScore
-      bestScoreHits <- 1
+      bestScoreHits <- 1L
+      
     } else if (bestScore + epsilon > candScore) { # i.e. best == cand, allowing for floating point error
       bestScoreHits <- bestScoreHits + 1
       tree <- candidate
-      if (returnAll) {
-        forest[[i]] <- candidate
-        forest.scores[i] <- candScore
-      }
-    } else if (candScore < (bestScore + suboptimal) && returnAll) {
-      forest[[i]] <- candidate
-      forest.scores[i] <- candScore
     }
-    if (verbosity >= 0) cat("\n* Best score after", i, "/", ratchIter, "pratchet iterations:", bestScore, "( hit", bestScoreHits, "/", ratchHits, ")")
+    if (verbosity >= 0) cat("\n* Best score after", i, "/", ratchIter, "ratchet iterations:", bestScore, "( hit", bestScoreHits, "/", ratchHits, ")")
     if (bestScoreHits >= ratchHits) {
       iterationsCompleted <- i
       break()
@@ -120,20 +115,22 @@ Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, rooted=
   if (verbosity >= 0) cat ("\nCompleted parsimony ratchet after", iterationsCompleted, "iterations with score", bestScore, "\n")
    
   if (returnAll) {
-    keepers <- !is.na(forest.scores) & forest.scores < bestScore + suboptimal
-    forest.scores <- forest.scores[keepers]
+    keepers <- !is.na(forestScores) & forestScores < bestScore + suboptimal
+    forestScores <- forestScores[keepers]
     forest <- forest[keepers]
+    if (verbosity >=0 ) cat("\n - Keeping", sum(keepers), "trees from iterations numbered:\n   ", which(keepers))
     if (length(forest) > 1) {
       class(forest) <- 'multiPhylo'
       ret <- unique(forest)
+      if (verbosity >=0) cat("\n - Removing duplicates leaves", length(ret), "unique trees")
     } else if (length(forest) == 1) {
       class(forest) <- 'phylo'
       ret <- forest
     } else {
-      stop('No trees!? Is suboptimal set to a sensible (positive) value?')
+      stop('\nNo trees!? Is suboptimal set to a sensible (positive) value?')
     }
     scores.unique <- vapply(ret, attr, double(1), 'score')
-    cat('Found', sum(scores.unique == min(scores.unique)), 'unique MPTs and', length(ret) - sum(scores.unique == min(scores.unique)), 'suboptimal trees.\n')
+    cat('\nFound', sum(scores.unique == min(scores.unique)), 'unique MPTs and', length(ret) - sum(scores.unique == min(scores.unique)), 'suboptimal trees.\n')
   } else {
     ret <- tree
     attr(ret, 'hits') <- NULL
