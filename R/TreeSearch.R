@@ -11,7 +11,6 @@
 #' @param maxIter the maximum number of iterations to perform before abandoning the search;
 #' @param maxHits the maximum times to hit the best pscore before abandoning the search;
 #' @param forestSize the maximum number of trees to return - useful in concert with \code{\link{consensus}};
-#' @param cluster a cluster prepared using \code{\link{PrepareCluster}}; may speed up search on multicore machines;
 #' @template verbosityParam
 #' @template treeScorerDots
 #' 
@@ -54,7 +53,6 @@ TreeSearch <- function (tree, dataset,
   # initialize tree and data
   InitializeData(tree, dataset)
   on.exit(CleanUpData)
-  nChar <- attr(dataset, 'nr')
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
   tree$edge.length <- NULL # Edge lengths are not supported
   attr(tree, 'hits') <- 1
@@ -64,13 +62,13 @@ TreeSearch <- function (tree, dataset,
   } else {
     forestSize <- 1 
   }
-  if (is.null(attr(tree, 'score'))) attr(tree, 'score') <- TreeScorer(tree=tree, dataset=dataset, nChar=nChar, ...)
+  if (is.null(attr(tree, 'score'))) attr(tree, 'score') <- TreeScorer(tree=tree, ...)
   bestScore <- attr(tree, 'score')
   if (verbosity > 0) cat("\n  - Performing tree search.  Initial score:", bestScore)
   returnSingle <- !(forestSize > 1)
   
   for (iter in 1:maxIter) {
-    trees <- RearrangeTree(tree, TreeScorer, nChar=nChar, Rearrange, minScore=bestScore,
+    trees <- RearrangeTree(tree, TreeScorer, Rearrange, minScore=bestScore,
                            returnSingle=returnSingle, iter=iter, verbosity=verbosity, ...)
     iterScore <- attr(trees, 'score')
     if (length(forestSize) && forestSize > 1) {
