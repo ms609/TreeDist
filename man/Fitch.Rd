@@ -3,6 +3,7 @@
 \name{Fitch}
 \alias{Fitch}
 \alias{FitchScore}
+\alias{IFitchScore}
 \alias{FasterFitchScore}
 \alias{FitchSteps}
 \title{Fitch score}
@@ -11,6 +12,8 @@ Fitch(tree, data, TipData = TipsAreNames, at = attributes(data),
   FitchFunction = C_Fitch_Score)
 
 FitchScore(tree, data, TipData = NULL, at = attributes(data))
+
+IFitchScore(tree, nChar)
 
 FasterFitchScore(tree, data, TipData = TipsAreNames, at = attributes(data))
 
@@ -41,6 +44,8 @@ Fitch score
 \section{Functions}{
 \itemize{
 \item \code{FitchScore}: returns the parsimony score only
+
+\item \code{IFitchScore}: returns the parsimony score only, when a Fitch instance has already been initiated
 
 \item \code{FasterFitchScore}: returns the parsimony score only, without checking that data is well formatted
 

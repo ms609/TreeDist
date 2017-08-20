@@ -44,10 +44,18 @@
 #' @keywords  tree 
 #' 
 #' @export
-TreeSearch <- function (tree, dataset, TreeScorer = FitchScore, Rearrange = RootedTBR,
+TreeSearch <- function (tree, dataset, 
+                        InitializeData = InitFitch,
+                        CleanUpData = DestroyFitch,
+                        TreeScorer = IFitchScore,
+                        Rearrange = RootedTBR,
                         maxIter = 100, maxHits = 20, forestSize = 1,
-                        cluster = NULL, verbosity = 1, ...) {
-  if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree) # TODO could this be moved to TreeSearch?
+                        verbosity = 1, ...) {
+  # initialize tree and data
+  InitializeData(tree, dataset)
+  on.exit(CleanUpData)
+  nChar <- attr(dataset, 'nr')
+  if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
   tree$edge.length <- NULL # Edge lengths are not supported
   attr(tree, 'hits') <- 1
   if (exists("forestSize") && length(forestSize) && forestSize > 1) {
@@ -56,27 +64,26 @@ TreeSearch <- function (tree, dataset, TreeScorer = FitchScore, Rearrange = Root
   } else {
     forestSize <- 1 
   }
-  if (is.null(attr(tree, 'score'))) attr(tree, 'score') <- TreeScorer(tree, dataset, ...)
+  if (is.null(attr(tree, 'score'))) attr(tree, 'score') <- TreeScorer(tree=tree, dataset=dataset, nChar=nChar, ...)
   bestScore <- attr(tree, 'score')
   if (verbosity > 0) cat("\n  - Performing tree search.  Initial score:", bestScore)
   returnSingle <- !(forestSize > 1)
   
   for (iter in 1:maxIter) {
-    trees <- RearrangeTree(tree, dataset, TreeScorer, Rearrange, minScore=bestScore,
-                           returnSingle=returnSingle, iter=iter, cluster=cluster,
-                           verbosity=verbosity, ...)
+    trees <- RearrangeTree(tree, TreeScorer, nChar=nChar, Rearrange, minScore=bestScore,
+                           returnSingle=returnSingle, iter=iter, verbosity=verbosity, ...)
     iterScore <- attr(trees, 'score')
     if (length(forestSize) && forestSize > 1) {
       hits <- attr(trees, 'hits')
       if (iterScore == bestScore) {
-        forest[(hits-length(trees)+1L):hits] <- trees
+        forest[(hits - length(trees) + 1):hits] <- trees
         tree <- sample(forest[1:hits], 1)[[1]]
         attr(tree, 'score') <- iterScore
         attr(tree, 'hits') <- hits
       } else if (iterScore < bestScore) {
         bestScore <- iterScore
         forest <- empty.forest
-        forest[1:hits] <- trees
+        forest[seq_len(hits)] <- trees
         tree <- sample(trees, 1)[[1]]
         attr(tree, 'score') <- iterScore
         attr(tree, 'hits') <- hits

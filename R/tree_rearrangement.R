@@ -13,8 +13,6 @@
 #' @template concavityParam 
 #' @param  returnSingle returns all trees if \kbd{FALSE} or a randomly selected tree if \kbd{TRUE};}
 #'   \item{iter}{iteration number of calling function, for reporting to user only;
-#' @param  cluster a cluster, prepared with \code{\link{PrepareCluster}}, to accelerate 
-#'     searches on multicore machines;
 #' @template verbosityParam
 #' @template treeScorerDots
 #' 
@@ -33,27 +31,16 @@
 #' random.tree <- RandomTree(Lobo.phy)
 #' RearrangeTree(random.tree, Lobo.phy, RootedNNI)
 #' 
-#' @importFrom parallel clusterCall
 #' @export
-RearrangeTree <- function (tree, dataset, TreeScorer = FitchScore, Rearrange = RootedNNI, 
-                           minScore=NULL, returnSingle=TRUE, iter='<unknown>', cluster=NULL,
-                           verbosity=0, ...) {
+RearrangeTree <- function (tree, TreeScorer = FitchScore, Rearrange = RootedNNI, 
+                           minScore=NULL, returnSingle=TRUE, iter='<unknown>', verbosity=0, ...) {
   if (is.null(attr(tree, 'score'))) bestScore <- 1e+07 else bestScore <- attr(tree, 'score')
   if (is.null(attr(tree, 'hits'))) hits <- 1 else hits <- attr(tree, 'hits')
-  if (is.null(cluster)) {
-    rearrTree <- Rearrange(tree)
-    trees <- list(rearrTree)
-    minScore <- TreeScorer(rearrTree, dataset, ...)
-    bestTrees <- c(TRUE)
-  } else {
-    #candidates <- clusterCall(cluster, function(re, tr, k) {ret <- re(tr); attr(ret, 'score') <- TreeScorer(ret, cl.dataset, k); ret}, Rearrange, tree)
-    #scores <- vapply(candidates, function(x) attr(x, 'ps'), 1)
-    candidates <- clusterCall(cluster, Rearrange, tree)
-    scores <- vapply(candidates, TreeScorer, 1, dataset, target=minScore, ...) # ~3x faster to do this in serial in r233.
-    minScore <- min(scores)
-    bestTrees <- scores == minScore
-    trees <- candidates[bestTrees]
-  }
+  rearrTree <- Rearrange(tree)
+  trees <- list(rearrTree)
+  minScore <- TreeScorer(tree=rearrTree, ...)
+  bestTrees <- c(TRUE)
+
   if (bestScore < minScore) {
     if (verbosity > 3) cat("\n    . Iteration", iter, '- Min score', minScore, ">", bestScore)
   } else if (bestScore == minScore) {

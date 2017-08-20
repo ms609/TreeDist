@@ -4,18 +4,15 @@
 \alias{RearrangeTree}
 \title{Rearrange phylogenetic tree}
 \usage{
-RearrangeTree(tree, dataset, TreeScorer = FitchScore, Rearrange = RootedNNI,
+RearrangeTree(tree, TreeScorer = FitchScore, Rearrange = RootedNNI,
   minScore = NULL, returnSingle = TRUE, iter = "<unknown>",
-  cluster = NULL, verbosity = 0, ...)
+  verbosity = 0, ...)
 }
 \arguments{
 \item{tree}{a rooted bifurcating phylogenetic tree with the desired outgroup, with its labels
 in an order that matches the Morphy object, and the attributes
 \code{pscore}, the tree's parsimony score, and 
 \code{hits}, the number of times the best score has been hit in the calling function;}
-
-\item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
-correspond to the labels of any accompanying tree}
 
 \item{TreeScorer}{function by which trees should be scored; default \code{\link{FitchScore}}}
 
@@ -28,12 +25,12 @@ will be discarded;}
 \item{returnSingle}{returns all trees if \kbd{FALSE} or a randomly selected tree if \kbd{TRUE};}
 \item{iter}{iteration number of calling function, for reporting to user only;}
 
-\item{cluster}{a cluster, prepared with \code{\link{PrepareCluster}}, to accelerate 
-searches on multicore machines;}
-
 \item{verbosity}{verbosity of output written to terminal; higher values print more messages}
 
 \item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}})}
+
+\item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
+correspond to the labels of any accompanying tree}
 
 \item{concavity}{concavity constant for implied weighting (not currently implemented!)}
 }

@@ -114,6 +114,21 @@ Fitch <- function (tree, data, TipData = TipsAreNames, at = attributes(data),
   #    FitchFunction(TipData(data, tipLabel), at$nr, parent, child, length(parent), at$weight, parent[1], nTip = length(tipLabel))
 }
 
+
+InitFitch <- function (tree, dataset) {
+  weight <- attr(dataset, "weight")
+  nr <- as.integer(attr(dataset, "nr"))
+  nTips <- length(tree$tip.label)
+  m <- nr * (2L * nTips - 1L)
+  .C("fitch_init", as.integer(dataset), as.integer(nTips * nr), as.integer(m), as.double(weight), 
+     as.integer(nr), PACKAGE='phangorn')
+  return(TRUE)
+}
+
+DestroyFitch <- function() {
+  .C("fitch_free", PACKAGE='phangorn')
+}
+
 #' @describeIn Fitch returns the parsimony score only
 #' @export
 FitchScore <- function (tree, data, TipData = NULL, at = attributes(data)) {
@@ -126,12 +141,22 @@ FitchScore <- function (tree, data, TipData = NULL, at = attributes(data)) {
   Fitch(tree, data, TipData, at, C_Fitch_Score)
 }
 
+#' @describeIn Fitch returns the parsimony score only, when a Fitch instance has already been initiated
+#' @export
+IFitchScore <- function (tree, nChar) {
+  phangorn:::fast.fitch(tree, nChar, ps=FALSE)
+}
+
 #' @describeIn Fitch returns the parsimony score only, without checking that data is well formatted
 #' @keywords internal
 #' @export
 FasterFitchScore <- function (tree, data, TipData = TipsAreNames, at = attributes(data))
   Fitch(tree, data, TipData, at, C_Fitch_Score)
 
+
+IFitchSteps <- function (tree, nChar) {
+  phangorn:::fast.fitch(tree, nChar, ps=FALSE)
+}
   
 #' @describeIn Fitch returns a vector listing the number of steps for each character
 #' @export

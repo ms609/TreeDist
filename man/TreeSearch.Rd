@@ -4,8 +4,9 @@
 \alias{TreeSearch}
 \title{Search for most parsimonious trees}
 \usage{
-TreeSearch(tree, dataset, TreeScorer = FitchScore, Rearrange = RootedTBR,
-  maxIter = 100, maxHits = 20, forestSize = 1, cluster = NULL,
+TreeSearch(tree, dataset, InitializeData = InitFitch,
+  CleanUpData = DestroyFitch, TreeScorer = IFitchScore,
+  Rearrange = RootedTBR, maxIter = 100, maxHits = 20, forestSize = 1,
   verbosity = 1, ...)
 }
 \arguments{
@@ -24,8 +25,6 @@ correspond to the labels of any accompanying tree}
 
 \item{forestSize}{the maximum number of trees to return - useful in concert with \code{\link{consensus}};}
 
-\item{cluster}{a cluster prepared using \code{\link{PrepareCluster}}; may speed up search on multicore machines;}
-
 \item{verbosity}{verbosity of output written to terminal; higher values print more messages}
 
 \item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}})}
@@ -33,6 +32,8 @@ correspond to the labels of any accompanying tree}
 \item{outgroup}{a vector listing the taxa in the outgroup;}
 
 \item{concavity}{concavity constant for implied weighting (not currently implemented!);}
+
+\item{cluster}{a cluster prepared using \code{\link{PrepareCluster}}; may speed up search on multicore machines;}
 }
 \value{
 {

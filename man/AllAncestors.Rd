@@ -25,7 +25,8 @@ Note that the tree's edges must be listed in an order whereby each entry in tr$e
 the exception of the root) has appeared already in tr$edge[, 2]
 }
 \examples{
-tr <- rtree(20, br=NULL)
+
+tr <- ape::rtree(20, br=NULL)
 edge <- tr$edge
 AllAncestors(edge[, 1], edge[, 2])
 
