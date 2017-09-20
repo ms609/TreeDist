@@ -6,7 +6,7 @@ Heuristic searches such as the Parsimony Ratchet are implemented.
 
 The library is currently in development and is not ready for use.
 
-The library requires the latest versions of ape and phangorn:
+The library requires the latest (working) versions of ape and phangorn:
 
 ```
 install.packages('ape', '.', repos = 'http://ape-package.ird.fr/')
