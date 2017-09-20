@@ -10,6 +10,7 @@ Imports:
     phangorn (>= 2.2.1)
 Suggests: 
     testthat
+Remotes: KlausVigo/phangorn
 LazyData: true
 License: CC0
 URL: https://github.com/ms609/TreeSearch
