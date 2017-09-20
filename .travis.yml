@@ -13,6 +13,8 @@ r_packages:
  - testthat
   
 install:
+ - R -e "install.packages('devtools')"
+ - R -e "install.packages('testthat')"
  - R -e "install.packages('ape', '.', repos = 'http://ape-package.ird.fr/')"
  - R -e "devtools::install_github('KlausVigo/phangorn', ref='1167f0be62f13cfad0fca8ae8224318c407195bf')"
 
