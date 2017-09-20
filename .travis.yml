@@ -10,6 +10,7 @@ git:
 
 r_packages:
  - devtools
+ - testthat
   
 install:
  - R -e "install.packages('ape', '.', repos = 'http://ape-package.ird.fr/')"
