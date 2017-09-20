@@ -1,0 +1,6 @@
+language: r
+cache: packages
+warnings_are_errors: false
+   
+git:
+  depth: 5
