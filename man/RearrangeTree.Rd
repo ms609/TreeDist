@@ -47,7 +47,7 @@ Rearrange phylogenetic tree
 \examples{
 data('Lobo')
 random.tree <- RandomTree(Lobo.phy)
-RearrangeTree(random.tree, Lobo.phy, RootedNNI)
+RearrangeTree(random.tree, Rearrange=RootedNNI)
 
 }
 \seealso{

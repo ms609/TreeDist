@@ -32,8 +32,6 @@ correspond to the labels of any accompanying tree}
 \item{outgroup}{a vector listing the taxa in the outgroup;}
 
 \item{concavity}{concavity constant for implied weighting (not currently implemented!);}
-
-\item{cluster}{a cluster prepared using \code{\link{PrepareCluster}}; may speed up search on multicore machines;}
 }
 \value{
 {
