@@ -3,7 +3,7 @@
 #' \code{Ratchet} uses the parsimony ratchet (Nixon 1999) to search for a more parsimonious tree.
 #'
 #' @template treeParam 
-#' @param data a dataset in the format required by TreeScorer
+#' @param dataset a dataset in the format required by TreeScorer
 #' @template concavityParam
 #' @param returnAll Set to \code{TRUE} to report all MPTs encountered during the search, perhaps to analyze consensus
 #' @param rooted whether to retain the position of the root in tree search (TRUE by default)
@@ -39,14 +39,14 @@
 #' @keywords  tree 
 #' @export
 ## TODO use Rooted NNI / SPR / TBR 
-Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, rooted=TRUE, 
+Ratchet <- function (tree, dataset, TreeScorer=FitchScore, returnAll=FALSE, rooted=TRUE, 
                       ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
                       bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=0, 
                       rearrangements="NNI", suboptimal=1e-08, ...) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
    
   epsilon <- 1e-08
-  if (is.null(attr(tree, "score"))) attr(tree, "score") <- TreeScorer(tree, data, ...)
+  if (is.null(attr(tree, "score"))) attr(tree, "score") <- TreeScorer(tree, dataset, ...)
   bestScore <- attr(tree, "score")
   if (verbosity >= 0) cat("\n* Initial score:", bestScore)
   if (returnAll) {
@@ -59,7 +59,7 @@ Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, rooted=
   iterationsCompleted <- 0
   for (i in 1:ratchIter) {
     if (verbosity >= 1) cat ("\n - Running NNI on bootstrapped dataset. ")
-    bootstrapTree <- BootstrapTree(tree, data, TreeScorer=TreeScorer,
+    bootstrapTree <- BootstrapTree(tree, dataset, TreeScorer=TreeScorer,
                                    maxIter=bootstrapIter, maxHits=bootstrapHits, 
                                    rooted=rooted, verbosity=verbosity-2, ...)
     
@@ -88,7 +88,7 @@ Ratchet <- function (tree, data, TreeScorer=FitchScore, returnAll=FALSE, rooted=
     
     candidate <- bootstrapTree
     for (Func in Rearrangements) {
-      candidate <- TreeSearch(candidate, data, TreeScorer=TreeScorer, Rearrange=Func, 
+      candidate <- TreeSearch(candidate, dataset, TreeScorer=TreeScorer, Rearrange=Func, 
                                 verbosity=verbosity, maxIter=searchIter, maxHits=searchHits, ...)
     }
     
