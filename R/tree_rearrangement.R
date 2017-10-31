@@ -13,7 +13,7 @@
 #' @param  returnSingle returns all trees if \kbd{FALSE} or a randomly selected tree if \kbd{TRUE};}
 #'   \item{iter}{iteration number of calling function, for reporting to user only;
 #' @template verbosityParam
-
+#'
 #' @template treeScorerDots
 #' 
 #' @return{This function returns the most parsimonious of the trees generated, with attributes \code{hits} and \code{pscore}
@@ -29,7 +29,7 @@
 #' @examples
 #' data('Lobo')
 #' random.tree <- RandomTree(Lobo.phy)
-#' RearrangeTree(random.tree, Rearrange=RootedNNI)
+#' RearrangeTree(random.tree, dataset=Lobo.phy, Rearrange=RootedNNI)
 #' 
 #' @export
 RearrangeTree <- function (tree, TreeScorer = FitchScore, Rearrange = RootedNNI, 

@@ -32,7 +32,7 @@ DoSectorial(tree, dataset, TreeScorer = FitchScore, maxSectIter = 100,
 
 \item{verbosity}{verbosity of output written to terminal; higher values print more messages}
 
-\item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}})}
+\item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}}, \code{dataset})}
 }
 \value{
 a tree of class \code{phylo} with a \code{TreeScorer} score as good or better than that of \code{tree}

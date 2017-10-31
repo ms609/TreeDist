@@ -25,7 +25,7 @@ outgroup is fixed}
 
 \item{verbosity}{verbosity of output written to terminal; higher values print more messages}
 
-\item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}})}
+\item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}}, \code{dataset})}
 }
 \value{
 A tree that is optimal under a random sampling of the original characters

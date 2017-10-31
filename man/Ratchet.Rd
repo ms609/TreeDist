@@ -42,7 +42,7 @@ OR: a list of functions to use, one at a time, as the \code{Rearrange} parameter
 
 \item{suboptimal}{retain trees that are suboptimal by this score. Defaults to 1e-08 to counter rounding errors.}
 
-\item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}})}
+\item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}}, \code{dataset})}
 }
 \value{
 This function returns a tree modified by parsimony ratchet iteration, retaining the position of the root.

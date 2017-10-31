@@ -27,7 +27,7 @@ will be discarded;}
 
 \item{verbosity}{verbosity of output written to terminal; higher values print more messages}
 
-\item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}})}
+\item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}}, \code{dataset})}
 }
 \value{
 {This function returns the most parsimonious of the trees generated, with attributes \code{hits} and \code{pscore}
@@ -42,7 +42,7 @@ Rearrange phylogenetic tree
 \examples{
 data('Lobo')
 random.tree <- RandomTree(Lobo.phy)
-RearrangeTree(random.tree, Rearrange=RootedNNI)
+RearrangeTree(random.tree, dataset=Lobo.phy, Rearrange=RootedNNI)
 
 }
 \seealso{

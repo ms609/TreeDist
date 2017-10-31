@@ -5,14 +5,16 @@
 \alias{RootedSPR}
 \title{Subtree Pruning and Rearrangement}
 \usage{
-SPR(tree, edgeToBreak = NULL, mergeEdges = NULL)
+SPR(tree, edgeToBreak = NULL, mergeEdge = NULL)
 
-RootedSPR(tree, edgeToBreak = NULL, mergeEdges = NULL)
+RootedSPR(tree, edgeToBreak = NULL, mergeEdge = NULL)
 }
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}}
 
 \item{edgeToBreak}{the index of an edge to bisect, generated randomly if not specified.}
+
+\item{mergeEdge}{the index of an edge on which to merge the broken edge.}
 }
 \value{
 This function returns a tree in \code{phyDat} format that has undergone one \acronym{SPR} iteration.
