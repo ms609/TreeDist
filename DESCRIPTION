@@ -1,11 +1,13 @@
 Package: TreeSearch
-Title: Accelerated tree search in R
+Title: Phylogenetic Tree Search Using Custom Optimality Criteria
 Version: 0.1.0
 Date: 2017-10-31
-Authors@R: person('Smith', "Martin R.",
+Authors@R: c(person('Smith', "Martin R.",
                   email="martins@gmail.com", 
-                  role=c("aut", "cre"), 
+                  role=c("aut", "cre", "cph"), 
                   comment=c(ORCID = "0000-0001-5660-1727"))
+            )
+Copyright: Incorporates C code from the ape and phangorn packages by Emmanuel Paradis and Klaus Schliep.
 Description: Searches for phylogenetic trees that are optimal using a user-defined criterion.
 Depends: R (>= 3.4.0)
 Imports: 
@@ -15,7 +17,7 @@ Suggests:
     testthat
 Remotes: KlausVigo/phangorn
 LazyData: true
-License: CC0
+License: GPL (>= 2)
 URL: https://github.com/ms609/TreeSearch
 BugReports: https://github.com/ms609/TreeSearch/issues
 RoxygenNote: 6.0.1
