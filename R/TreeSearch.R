@@ -9,6 +9,8 @@
 #' @param maxIter the maximum number of iterations to perform before abandoning the search;
 #' @param maxHits the maximum times to hit the best pscore before abandoning the search;
 #' @param forestSize the maximum number of trees to return - useful in concert with \code{\link{consensus}};
+#' @param InitializeData function to set up data object to prepare for tree search
+#' @param CleanUpData function to destroy data object on function exit
 #' @template verbosityParam
 #' @template treeScorerDots
 #' 
