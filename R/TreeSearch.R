@@ -32,14 +32,13 @@
 #'
 #' @examples
 #' data('Lobo')
-#' outgroup <- c('Lingula', 'Mickwitzia', 'Neocrania')
-#' njtree <- ape::root(ape::nj(dist.hamming(Lobo.phy)), outgroup, resolve.root=TRUE)
-#' njtree$edge.length <- NULL; njtree<-SetOutgroup(njtree, outgroup)
+#' njtree <- ape::root(ape::nj(phangorn::dist.hamming(Lobo.phy)), 'Cricocosmia', resolve.root=TRUE)
+#' njtree$edge.length <- NULL
 #'
 #' \dontrun{
-#' TreeSearch(njtree, Lobo.phy, outgroup, maxIter=20, Rearrange=NNI)
-#' TreeSearch(njtree, Lobo.phy, outgroup, maxIter=20, Rearrange=SPR)
-#' TreeSearch(njtree, Lobo.phy, outgroup, maxIter=20, Rearrange=TBR)}
+#' TreeSearch(njtree, Lobo.phy, maxIter=20, Rearrange=NNI)
+#' TreeSearch(njtree, Lobo.phy, maxIter=20, Rearrange=SPR)
+#' TreeSearch(njtree, Lobo.phy, maxIter=20, Rearrange=TBR)}
 #' 
 #' @keywords  tree 
 #' 
