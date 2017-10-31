@@ -5,7 +5,7 @@
 #'             in an order that matches the Morphy object, and the attributes
 #'             \code{pscore}, the tree's parsimony score, and 
 #'             \code{hits}, the number of times the best score has been hit in the calling function;
-#' @template datasetTreeScorerParams
+#' @template treeScorerParam
 #' @param Rearrange a rearrangement function: probably one of 
 #'     \code{\link{RootedNNI}}, \code{\link{RootedSPR}} or \code{\link{RootedTBR}};
 #' @param  minScore trees longer than \code{minScore}, probably the score of the starting tree,
@@ -14,6 +14,7 @@
 #' @param  returnSingle returns all trees if \kbd{FALSE} or a randomly selected tree if \kbd{TRUE};}
 #'   \item{iter}{iteration number of calling function, for reporting to user only;
 #' @template verbosityParam
+
 #' @template treeScorerDots
 #' 
 #' @return{This function returns the most parsimonious of the trees generated, with attributes \code{hits} and \code{pscore}
