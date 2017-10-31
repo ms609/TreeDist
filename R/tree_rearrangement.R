@@ -186,7 +186,7 @@ Preorder <- function (tree) {
 #'        \code{tree$tip.label} in the desired sort order
 #' 
 #' @examples
-#' Data(Lobo) # Loads the phyDat object Lobo.phy
+#' data(Lobo) # Loads the phyDat object Lobo.phy
 #' tree <- RandomTree(Lobo.phy) # 
 #' tree <- RenumberTips(tree, names(Lobo.phy))
 #'
