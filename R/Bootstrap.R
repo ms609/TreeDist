@@ -50,6 +50,11 @@ BootstrapTree <- function (tree, dataset, TreeScorer = FitchScore,
   res
 }
 
+#' Bootstrap Weightings
+#' 
+#' Resamples edges according to their prior weights
+#' @param attribs Attribtues of a phyDat object
+#' @return a vector giving bootstrapped weights for each character, corresponding to attribs$weights
 #' @keywords internal
 #' @export
 BootstrapWeightings <- function (attribs) {
