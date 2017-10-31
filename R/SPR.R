@@ -36,7 +36,7 @@ SPRWarning <- function (tree, error) {
 #' }
 #' @importFrom ape root
 #' @export
-SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
+SPR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
   nTips <- tree$Nnode + 1L
   if (nTips < 3L) return (tree)
@@ -81,30 +81,30 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
     nearBrokenEdge <- nearBrokenEdge | brokenRootDaughters
   }
     
-  if (!is.null(mergeEdge)) { # Quick sanity checks
-    if (mergeEdge > nEdge) return(SPRWarning(tree, "mergeEdge value > number of edges"))
-    if (length(mergeEdge) !=  1) 
-        return(SPRWarning(tree, paste0("mergeEdge value ", paste(mergeEdge, collapse='|'),  
+  if (!is.null(mergeEdges)) { # Quick sanity checks
+    if (mergeEdges > nEdge) return(SPRWarning(tree, "mergeEdges value > number of edges"))
+    if (length(mergeEdges) !=  1) 
+        return(SPRWarning(tree, paste0("mergeEdges value ", paste(mergeEdges, collapse='|'),  
                " invalid; must be NULL or a vector of length 1\n")))
-    if(nearBrokenEdge[mergeEdge]) return(SPRWarning(tree, "Selected mergeEdge will not change tree topology."))
-    if(DescendantEdges(edgeToBreak, parent, child, nEdge)[mergeEdge]) stop("mergeEdge is within pruned subtree")
+    if(nearBrokenEdge[mergeEdges]) return(SPRWarning(tree, "Selected mergeEdges will not change tree topology."))
+    if(DescendantEdges(edgeToBreak, parent, child, nEdge)[mergeEdges]) stop("mergeEdges is within pruned subtree")
   } else {
-    mergeEdge <- which(!nearBrokenEdge & !edgesOnAdriftSegment & notDuplicateRoot)
-    nCandidates <- length(mergeEdge)
+    mergeEdges <- which(!nearBrokenEdge & !edgesOnAdriftSegment & notDuplicateRoot)
+    nCandidates <- length(mergeEdges)
     #####Assert(nCandidates > 0)
-    if (nCandidates > 1) mergeEdge <- SampleOne(mergeEdge, len=nCandidates)
+    if (nCandidates > 1) mergeEdges <- SampleOne(mergeEdges, len=nCandidates)
   }
   
   if (breakingRootEdge) {
     parent[brokenRootDaughters] <- brokenEdge.parentNode
     spareNode <- child[brokenEdgeSister]
-    child [brokenEdgeSister] <- child[mergeEdge]
+    child [brokenEdgeSister] <- child[mergeEdges]
     parent[brokenEdge | brokenEdgeSister] <- spareNode
-    child[mergeEdge] <- spareNode
+    child[mergeEdges] <- spareNode
   } else {
     parent[brokenEdgeSister] <- parent[brokenEdgeParent]
-    parent[brokenEdgeParent] <- parent[mergeEdge]
-    parent[mergeEdge] <- brokenEdge.parentNode
+    parent[brokenEdgeParent] <- parent[mergeEdges]
+    parent[mergeEdges] <- brokenEdge.parentNode
   }
   
   #####Assert(identical(unique(table(parent)), 2L))
@@ -119,7 +119,7 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
 #' @describeIn SPR Perform \acronym{SPR} rearrangement, retaining position of root
 #' @importFrom ape root
 #' @export
-RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
+RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
   nTips <- tree$Nnode + 1L
   if (nTips < 3L) return (tree)
@@ -179,24 +179,24 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   brokenEdgeDaughters <- parent == brokenEdge.childNode
   nearBrokenEdge <- brokenEdge | brokenEdgeSister | brokenEdgeParent | brokenEdgeDaughters
     
-  if (!is.null(mergeEdge)) { # Quick sanity checks
-    if (mergeEdge > nEdge) return(SPRWarning(tree, "mergeEdge value > number of edges"))
-    if (length(mergeEdge) !=  1) 
-        return(SPRWarning(tree, paste0("mergeEdge value ", paste(mergeEdge, collapse='|'),  
+  if (!is.null(mergeEdges)) { # Quick sanity checks
+    if (mergeEdges > nEdge) return(SPRWarning(tree, "mergeEdges value > number of edges"))
+    if (length(mergeEdges) !=  1) 
+        return(SPRWarning(tree, paste0("mergeEdges value ", paste(mergeEdges, collapse='|'),  
                " invalid; must be NULL or a vector of length 1\n")))
-    if(nearBrokenEdge[mergeEdge]) return(SPRWarning(tree, "Selected mergeEdge will not change tree topology."))
-    if(DescendantEdges(edgeToBreak, parent, child, nEdge)[mergeEdge]) stop("mergeEdge is within pruned subtree")
+    if(nearBrokenEdge[mergeEdges]) return(SPRWarning(tree, "Selected mergeEdges will not change tree topology."))
+    if(DescendantEdges(edgeToBreak, parent, child, nEdge)[mergeEdges]) stop("mergeEdges is within pruned subtree")
   } else {
     edgesOnThisSide <- if (rightSide[edgeToBreak]) rightSide else leftSide
-    mergeEdge <- which(edgesOnThisSide & !nearBrokenEdge & !edgesOnAdriftSegment)
-    nCandidates <- length(mergeEdge)
+    mergeEdges <- which(edgesOnThisSide & !nearBrokenEdge & !edgesOnAdriftSegment)
+    nCandidates <- length(mergeEdges)
     Assert(nCandidates > 0)
-    if (nCandidates > 1) mergeEdge <- SampleOne(mergeEdge, len=nCandidates)
+    if (nCandidates > 1) mergeEdges <- SampleOne(mergeEdges, len=nCandidates)
   }
   
   parent[brokenEdgeSister] <- parent[brokenEdgeParent]
-  parent[brokenEdgeParent] <- parent[mergeEdge]
-  parent[mergeEdge] <- brokenEdge.parentNode
+  parent[brokenEdgeParent] <- parent[mergeEdges]
+  parent[mergeEdges] <- brokenEdge.parentNode
   
   #####Assert(identical(unique(table(parent)), 2L))
   #####Assert(identical(unique(table(child)),  1L))
