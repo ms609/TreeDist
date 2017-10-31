@@ -39,12 +39,12 @@
 #' @seealso \code{\link{TreeSearch}}
 #' @seealso \code{\link{Ratchet}}
 #' 
-#' @examples
-#' data('Lobo')
-#' startTree <- RandomTree(Lobo.phy, 'Cricocosmia') # Position of root will be fixed
-#' firstEstimate <- SectorialSearch(startTree, Lobo.phy, maxIter=50, largestSector=8, verbosity=5)
-#' \dontrun{SectorialSearch(firstEstimate, Lobo.phy,
-#'          sectRearrangements=list(RootedNNI, RootedTBR, RootedNNI)) # Will be time-consuming}
+##' @examples
+##' data('Lobo')
+##' startTree <- RandomTree(Lobo.phy, 'Cricocosmia') # Position of root will be fixed
+##' \dontrun{firstEstimate <- SectorialSearch(startTree, Lobo.phy, maxIter=50, verbosity=5)}
+##' \dontrun{SectorialSearch(firstEstimate, Lobo.phy,
+##'          sectRearrangements=list(RootedNNI, RootedTBR, RootedNNI)) # Will be time-consuming}
 #' 
 #' @keywords  tree 
 #' @export
