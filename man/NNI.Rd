@@ -2,41 +2,42 @@
 % Please edit documentation in R/NNI.R
 \name{NNI}
 \alias{NNI}
-\title{Tree rearrangement functions}
+\alias{RootedNNI}
+\title{NNI}
 \usage{
 NNI(tree, edgeToBreak = NULL)
+
+RootedNNI(tree, edgeToBreak = NULL)
 }
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}}
 
 \item{edgeToBreak}{(optional) integer specifying the index of an edge to bisect/prune, generated randomly if not specified}
-
-\item{mergeEdges}{(optional) vector of length 1 or 2, listing edge(s) to be joined:
-In SPR, this is where the pruned subtree will be reconnected.
-In TBR, these edges will be reconnected (so must be on opposite
-sides of \code{edgeToBreak}); if only a single edge is specified,
-the second will be chosen at random}
 }
 \value{
 Returns a tree with class \code{phylo}.
 }
 \description{
-These functions performs a single random \acronym{TBR}, \acronym{SPR} or \acronym{NNI} iteration.
+Nearest Neighbour Interchange
+
+Rooted NNI
 }
 \details{
-Performs a single iteration of the nearest-neigbour interchange, subtree pruning and regrafting,
-or tree bisection and reconnection algorithms.
-NNI and SPR are based on the corresponding phangorn functions, but have been re-coded to 
-improve their speed.
+This function performs a single random \acronym{NNI} iteration.
+
+Performs a single iteration of the nearest-neigbour interchange algorithm.
+Based on the corresponding phangorn function, but re-coded to improve speed.
 
 Branch lengths are not supported.
 }
+\section{Functions}{
+\itemize{
+\item \code{RootedNNI}: Perform \acronym{NNI} rearrangement, retaining position of root
+}}
+
 \examples{
-library(ape)
 tree <- ape:::rtree(20, br=NULL)
 NNI(tree)
-SPR(tree)
-TBR(tree)
 
 }
 \references{

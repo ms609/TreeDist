@@ -4,10 +4,10 @@
 \alias{TreeSearch}
 \title{Search for most parsimonious trees}
 \usage{
-TreeSearch(tree, dataset, InitializeData = InitFitch,
-  CleanUpData = DestroyFitch, TreeScorer = IFitchScore,
-  Rearrange = RootedTBR, maxIter = 100, maxHits = 20, forestSize = 1,
-  verbosity = 1, ...)
+TreeSearch(tree, dataset, InitializeData = function(tree, dataset)
+  return(NULL), CleanUpData = function(tree, dataset) return(NULL),
+  TreeScorer = FitchScore, Rearrange = RootedTBR, maxIter = 100,
+  maxHits = 20, forestSize = 1, verbosity = 1, ...)
 }
 \arguments{
 \item{tree}{a fully-resolved starting tree in \code{\link{phylo}} format, with the desired outgroup; edge lengths are not supported and will be deleted;}

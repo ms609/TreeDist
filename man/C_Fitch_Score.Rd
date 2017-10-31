@@ -3,7 +3,7 @@
 \name{C_Fitch_Score}
 \alias{C_Fitch_Score}
 \title{Fitch Score
-Calculate the parsimony score of a tree (number of steps) using the Fitch algoritgh}
+Calculate the parsimony score of a tree (number of steps) using the Fitch algorithm}
 \usage{
 C_Fitch_Score(characters, nChar, parent, child, nEdge, weight, maxNode, nTip)
 }
@@ -12,6 +12,6 @@ the parsimony score (an integer)
 }
 \description{
 Fitch Score
-Calculate the parsimony score of a tree (number of steps) using the Fitch algoritgh
+Calculate the parsimony score of a tree (number of steps) using the Fitch algorithm
 }
 \keyword{internal}

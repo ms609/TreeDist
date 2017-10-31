@@ -3,30 +3,21 @@
 \name{Fitch}
 \alias{Fitch}
 \alias{FitchScore}
-\alias{IFitchScore}
-\alias{FasterFitchScore}
-\alias{FitchSteps}
 \title{Fitch score}
 \usage{
-Fitch(tree, data, TipData = TipsAreNames, at = attributes(data),
+Fitch(tree, dataset, TipData = TipsAreNames, at = attributes(dataset),
   FitchFunction = C_Fitch_Score)
 
-FitchScore(tree, data, TipData = NULL, at = attributes(data))
-
-IFitchScore(tree, nChar)
-
-FasterFitchScore(tree, data, TipData = TipsAreNames, at = attributes(data))
-
-FitchSteps(tree, data, TipData = TipsAreNames, at = attributes(data))
+FitchScore(tree, dataset, TipData = NULL, at = attributes(dataset))
 }
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}}
 
-\item{data}{A list or matrix whose list entries, rows or columns (as specified in TipData)
+\item{dataset}{A list or matrix whose list entries, rows or columns (as specified in TipData)
 correspond to the character data associated with the tips of the tree. 
 Likely of class \code{phyDat}.  The number of characters should be stored
-as the attribute data$nr, and the weight of each character in data$weight;
-if data is a matrix, they will be calculated automatically (weights set to 1).}
+as the attribute dataset$nr, and the weight of each character in dataset$weight;
+if dataset is a matrix, they will be calculated automatically (weights set to 1).}
 
 \item{TipData}{function to be used to match tree tips to dataset; probably one of 
 \code{TipsAreNames}, \code{TipsAreRows}, or \code{TipsAreColumns}}
@@ -44,12 +35,5 @@ Fitch score
 \section{Functions}{
 \itemize{
 \item \code{FitchScore}: returns the parsimony score only
-
-\item \code{IFitchScore}: returns the parsimony score only, when a Fitch instance has already been initiated
-
-\item \code{FasterFitchScore}: returns the parsimony score only, without checking that data is well formatted
-
-\item \code{FitchSteps}: returns a vector listing the number of steps for each character
 }}
 
-\keyword{internal}

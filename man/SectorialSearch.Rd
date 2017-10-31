@@ -15,6 +15,8 @@ SectorialSearch(tree, dataset, TreeScorer = FitchScore,
 \item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
 correspond to the labels of any accompanying tree}
 
+\item{TreeScorer}{function by which trees should be scored; default \code{\link{FitchScore}}}
+
 \item{sectRearrangements}{A list of functions to be applied when rearranging trees in sectorial 
 search. Note: these must retain the position of the root of the tree}
 

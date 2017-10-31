@@ -1,5 +1,5 @@
 #' Fitch Score
-#' Calculate the parsimony score of a tree (number of steps) using the Fitch algoritgh
+#' Calculate the parsimony score of a tree (number of steps) using the Fitch algorithm
 #' @return the parsimony score (an integer)
 #' @keywords internal
 #' @export
@@ -40,9 +40,9 @@ C_Fitch <- function (characters, nChar, parent, child, nEdge, weight, maxNode, n
 
 #' Extract character data from dataset
 #'
-#' Speficies how characters are stored in a data object
+#' Speficies how characters are stored in a dataset object
 #' 
-#' @param data a matrix or list containing symbols associated with each tip; for example,
+#' @param dataset a matrix or list containing symbols associated with each tip; for example,
 #'             a dataset of class \code{phyDat}
 #' @param tips vector detailing the tips to be selected, whether as their
 #'        names or numbers corresponding to their rows/columns
@@ -50,24 +50,26 @@ C_Fitch <- function (characters, nChar, parent, child, nEdge, weight, maxNode, n
 #'         - ready to send to FITCH or equivalent C routine
 #' @keywords internal
 #' @export
-TipsAreNames <- function(data, tips) as.integer(unlist(data[tips]))
-#' @describeIn TipsAreNames use if each row in a matrix corresponds to a tip
-#' @keywords internal
-#' @export
-TipsAreRows <- function(data, tips) as.integer(data[tips, ])
+TipsAreNames <- function(dataset, tips) as.integer(unlist(dataset[tips]))
+
+###   #' @describeIn TipsAreNames use if each row in a matrix corresponds to a tip
+###   #' @keywords internal
+###   #' @export
+###   TipsAreRows <- function(dataset, tips) as.integer(dataset[tips, ])
+
 #' @describeIn TipsAreNames use if each column in a matrix corresponds to a tip
 #' @keywords internal
 #' @export
-TipsAreColumns <- function(data, tips) as.integer(data[, tips])
+TipsAreColumns <- function(dataset, tips) as.integer(dataset[, tips])
 
 #' Fitch score
 #' 
 #' @template treeParam
-#' @param data A list or matrix whose list entries, rows or columns (as specified in TipData)
+#' @param dataset A list or matrix whose list entries, rows or columns (as specified in TipData)
 #'             correspond to the character data associated with the tips of the tree. 
 #'             Likely of class \code{phyDat}.  The number of characters should be stored
-#'             as the attribute data$nr, and the weight of each character in data$weight;
-#'             if data is a matrix, they will be calculated automatically (weights set to 1).
+#'             as the attribute dataset$nr, and the weight of each character in dataset$weight;
+#'             if dataset is a matrix, they will be calculated automatically (weights set to 1).
 #' @param TipData function to be used to match tree tips to dataset; probably one of 
 #'                \code{TipsAreNames}, \code{TipsAreRows}, or \code{TipsAreColumns}
 #' @param at Attributes of the dataset (looked up automatically if not supplied)
@@ -75,7 +77,7 @@ TipsAreColumns <- function(data, tips) as.integer(data[, tips])
 #' @return A vector listing the number of 'parsimony steps' calculated for each character
 #' @importFrom phangorn fitch
 #' @export
-Fitch <- function (tree, data, TipData = TipsAreNames, at = attributes(data),
+Fitch <- function (tree, dataset, TipData = TipsAreNames, at = attributes(dataset),
                         FitchFunction = C_Fitch_Score) {
   treeOrder <- attr(tree, 'order')
   if (is.null(treeOrder) || treeOrder != 'postorder') tree <- Postorder(tree)
@@ -85,19 +87,19 @@ Fitch <- function (tree, data, TipData = TipsAreNames, at = attributes(data),
   tipLabel <- tree$tip.label
   nr <- at$nr
   if (is.null(at$nr)) {
-    nr <- dim(data)
+    nr <- dim(dataset)
     nr <- if (nr[1] == length(tipLabel)) nr[2] else nr[1]
   }
   charWeights <- at$weight
   if (is.null(charWeights)) charWeights <- rep(1, nr)
-  if (class(data) =='phyDat') {
-    levs <- attr(data, 'levels')
-    contrast <- attr(data, 'contrast')
-    index <- as.integer(contrast %*% 2L ^ (seq_along(attr(data, 'levels')) - 1))
-    reformedData <- vapply(data, function (X) index[X], integer(nr))
+  if (class(dataset) =='phyDat') {
+    levs <- attr(dataset, 'levels')
+    contrast <- attr(dataset, 'contrast')
+    index <- as.integer(contrast %*% 2L ^ (seq_along(attr(dataset, 'levels')) - 1))
+    reformedData <- vapply(dataset, function (X) index[X], integer(nr))
     characters <- TipsAreColumns(reformedData, tipLabel)
   } else {
-    characters <- TipData(data, tipLabel)
+    characters <- TipData(dataset, tipLabel)
   }
   
   return(FitchFunction(
@@ -111,7 +113,7 @@ Fitch <- function (tree, data, TipData = TipsAreNames, at = attributes(data),
     )
   )
   # TODO DELTE debugging line:
-  #    FitchFunction(TipData(data, tipLabel), at$nr, parent, child, length(parent), at$weight, parent[1], nTip = length(tipLabel))
+  #    FitchFunction(TipData(dataset, tipLabel), at$nr, parent, child, length(parent), at$weight, parent[1], nTip = length(tipLabel))
 }
 
 
@@ -131,14 +133,14 @@ Fitch <- function (tree, data, TipData = TipsAreNames, at = attributes(data),
 
 #' @describeIn Fitch returns the parsimony score only
 #' @export
-FitchScore <- function (tree, data, TipData = NULL, at = attributes(data)) {
+FitchScore <- function (tree, dataset, TipData = NULL, at = attributes(dataset)) {
   if (is.null(TipData)) {
-    if (class(data) != 'phyDat') stop("Expected a phyDat object. Please specify the TipData function relevant
-      to the class of data that you have provided")
+    if (class(dataset) != 'phyDat') stop("Expected a phyDat object. Please specify the TipData function relevant
+      to the class of dataset that you have provided")
     TipData <- TipsAreNames
-    if (!all(tree$tip.label %in% names(data))) stop ("Some tips could not be found in the data provided.")
+    if (!all(tree$tip.label %in% names(dataset))) stop ("Some tips could not be found in the dataset provided.")
   }
-  Fitch(tree, data, TipData, at, C_Fitch_Score)
+  Fitch(tree, dataset, TipData, at, C_Fitch_Score)
 }
 
 ###   #' @describeIn Fitch returns the parsimony score only, when a Fitch instance has already been initiated
@@ -147,11 +149,11 @@ FitchScore <- function (tree, data, TipData = NULL, at = attributes(data)) {
 ###     phangorn:::fast.fitch(tree, nChar, ps=FALSE)
 ###   }
 ###   
-###   #' @describeIn Fitch returns the parsimony score only, without checking that data is well formatted
+###   #' @describeIn Fitch returns the parsimony score only, without checking that dataset is well formatted
 ###   #' @keywords internal
 ###   #' @export
-###   FasterFitchScore <- function (tree, data, TipData = TipsAreNames, at = attributes(data))
-###     Fitch(tree, data, TipData, at, C_Fitch_Score)
+###   FasterFitchScore <- function (tree, dataset, TipData = TipsAreNames, at = attributes(dataset))
+###     Fitch(tree, dataset, TipData, at, C_Fitch_Score)
 ###
 ###
 ###   IFitchSteps <- function (tree, nChar) {
@@ -160,5 +162,5 @@ FitchScore <- function (tree, data, TipData = NULL, at = attributes(data)) {
 ###     
 ###   #' @describeIn Fitch returns a vector listing the number of steps for each character
 ###   #' @export
-###   FitchSteps <- function (tree, data, TipData = TipsAreNames, at = attributes(data))
-###     Fitch(tree, data, TipData, at, C_Fitch_Steps)
+###   FitchSteps <- function (tree, dataset, TipData = TipsAreNames, at = attributes(dataset))
+###     Fitch(tree, dataset, TipData, at, C_Fitch_Steps)

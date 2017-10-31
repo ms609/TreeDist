@@ -45,8 +45,8 @@
 #' 
 #' @export
 TreeSearch <- function (tree, dataset, 
-                        InitializeData = function() return (NULL),
-                        CleanUpData = function() return (NULL),
+                        InitializeData = function(tree, dataset) return (NULL),
+                        CleanUpData = function(tree, dataset) return (NULL),
                         TreeScorer = FitchScore,
                         Rearrange = RootedTBR,
                         maxIter = 100, maxHits = 20, forestSize = 1,

@@ -2,12 +2,9 @@
 % Please edit documentation in R/Fitch.R
 \name{C_Fitch}
 \alias{C_Fitch}
-\alias{C_Fitch_Checks}
 \title{Wrapper to FITCH}
 \usage{
 C_Fitch(characters, nChar, parent, child, nEdge, weight, maxNode, nTip)
-
-C_Fitch_Checks(characters, nChar, parent, child, nEdge, weight, maxNode, nTip)
 }
 \value{
 the full return of the phangorn C function FITCH
@@ -15,9 +12,4 @@ the full return of the phangorn C function FITCH
 \description{
 Wrapper to FITCH
 }
-\section{Functions}{
-\itemize{
-\item \code{C_Fitch_Checks}: Checks parameters before running \code{C_Fitch}
-}}
-
 \keyword{internal}

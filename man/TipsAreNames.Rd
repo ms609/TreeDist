@@ -2,18 +2,15 @@
 % Please edit documentation in R/Fitch.R
 \name{TipsAreNames}
 \alias{TipsAreNames}
-\alias{TipsAreRows}
 \alias{TipsAreColumns}
 \title{Extract character data from dataset}
 \usage{
-TipsAreNames(data, tips)
+TipsAreNames(dataset, tips)
 
-TipsAreRows(data, tips)
-
-TipsAreColumns(data, tips)
+TipsAreColumns(dataset, tips)
 }
 \arguments{
-\item{data}{a matrix or list containing symbols associated with each tip; for example,
+\item{dataset}{a matrix or list containing symbols associated with each tip; for example,
 a dataset of class \code{phyDat}}
 
 \item{tips}{vector detailing the tips to be selected, whether as their
@@ -24,12 +21,10 @@ an integer vector, listing the tokens associated with each character for each ti
         - ready to send to FITCH or equivalent C routine
 }
 \description{
-Speficies how characters are stored in a data object
+Speficies how characters are stored in a dataset object
 }
 \section{Functions}{
 \itemize{
-\item \code{TipsAreRows}: use if each row in a matrix corresponds to a tip
-
 \item \code{TipsAreColumns}: use if each column in a matrix corresponds to a tip
 }}
 
