@@ -222,7 +222,7 @@ AddTip <- function (tree, where, label) {
 #' 
 #' @return This function returns a list. Entry i contains a vector containing, in order,
 #' the nodes encountered when traversing the tree from node i to the root node.  The last 
-#' entry of each member of the list will therefore be the root node, with the exeption of the 
+#' entry of each member of the list will therefore be the root node, with the exception of the 
 #' entry for the root node itself, which will be NULL.
 #'   
 #' @author Martin R. Smith

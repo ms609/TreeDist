@@ -41,7 +41,7 @@ C_Fitch <- function (characters, nChar, parent, child, nEdge, weight, maxNode, n
 
 #' Extract character data from dataset
 #'
-#' Speficies how characters are stored in a dataset object
+#' Specifies how characters are stored in a dataset object
 #' 
 #' @param dataset a matrix or list containing symbols associated with each tip; for example,
 #'             a dataset of class \code{phyDat}
@@ -74,7 +74,7 @@ TipsAreColumns <- function(dataset, tips) as.integer(dataset[, tips])
 #' @param TipData function to be used to match tree tips to dataset; probably one of 
 #'                \code{TipsAreNames}, \code{TipsAreRows}, or \code{TipsAreColumns}
 #' @param at Attributes of the dataset (looked up automatically if not supplied)
-#' @param FitchFunction function to be used to calculte parsimony score.
+#' @param FitchFunction function to be used to calculate parsimony score.
 #' @return A vector listing the number of 'parsimony steps' calculated for each character
 #' @importFrom phangorn fitch
 #' @export
