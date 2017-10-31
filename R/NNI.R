@@ -85,7 +85,6 @@ NNI <- function (tree, edgeToBreak=NULL) {
 #' 
 #' @seealso
 #' \itemize{
-#' \item \code{\link{SetOutgroup}}, set the outgroup of the phylogenetic tree
 #' \item \code{\link{NNI}}, unrooted \acronym{NNI} and \acronym{SPR}
 #' \item \code{\link{TBR}}, unrooted \acronym{TBR}
 #' }
@@ -93,7 +92,7 @@ NNI <- function (tree, edgeToBreak=NULL) {
 #' @examples{
 #'   require('ape')
 #'   tree <- read.tree(text='(((a,b),c),(d,(e,f)));')
-#'   tree <- SetOutgroup(tree, c('e', 'f'))
+#'   tree <- root(tree, c('e', 'f'), resolve.root=TRUE)
 #'   plot(tree)
 #'   dev.new()
 #'   plot(RootedNNI(tree))
