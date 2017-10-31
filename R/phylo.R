@@ -271,62 +271,6 @@ AllAncestors <- function (parent, child) {
   res
 }
 
-#' Get Descendants
-#'
-#' \code{GetDescendants} returns the descendants of a specified node
-#'
-#' @template treeParam
-#' @param node the number of the internal node whose descendants should be returned
-#' @param just.tips , should return value include all nodes or just tips?
-#' 
-#' @examples
-#' tr <- ape::rtree(20)
-#' GetDescendants(tr, 25)
-#' 
-#' @return This function returnsa vector containing descendant nodes in numerical order
-#'   
-#' @author Martin R. Smith
-#' @export
-GetDescendants <- function (tree, node, ...) {
-  nTip <- length(tree$tip.label)
-  edge <- tree$edge
-  edge1 <- edge[,1]
-  edge2 <- edge[,2]
-  return (which(DoDescendants(edge1, edge2, nTip, node, ...)))
-}
-
-#' TITLE GOES HERE
-#'
-#' \code{DoDescendants} does something useful
-#'
-#' @param edge1 parent nodes: from tree$edge[,1]
-#' @param edge2 parent nodes: from tree$edge[,2]
-#' @param node  number of an internal node
-#' @param just.tips (logical) should return value include all nodes or just tips?
-#' 
-#' @examples
-#' warning(to_do <- TRUE)
-#' 
-#' @return This function returns a vector containing descendant nodes in numerical order
-#'   
-#' @author Martin R. Smith
-#' @export
-DoDescendants <- function (edge1, edge2, nTip = length(edge1) / 2 + 1, node, 
-                           just.tips = FALSE, just.internal=FALSE, 
-                           include.ancestor = FALSE) {
-  is.descendant <- logical((nTip * 2) - 1)
-  if (include.ancestor) is.descendant[node] <- TRUE;
-  node.children <- function (node, is.descendant) {
-    nc <- edge2[edge1 %in% node]
-    is.descendant[nc] <- TRUE
-    if (length(nc)) is.descendant <- node.children(nc, is.descendant)
-    is.descendant
-  }
-  is.descendant <- node.children(node, is.descendant)
-  if (just.tips) return (is.descendant[seq_len(nTip)]) else if (just.internal) is.descendant[seq_len(nTip)] <- FALSE 
-  return (is.descendant)
-}
-
 #' Clade sizes
 #' @template treeParam
 #' @param nodes whose descendants should be returned
