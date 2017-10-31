@@ -1,11 +1,11 @@
 #' @importFrom ape consensus
 #' @export
-SuccessiveApproximations <- function (tree, data, outgroup = NULL, k = 3, max.succiter = 20,
+SuccessiveApproximations <- function (tree, dataset, outgroup = NULL, k = 3, max.succiter = 20,
                                       pratchhits = 100, searchhits = 50, searchiter = 500,
                                       pratchiter = 5000, verbosity = 0, suboptimal = 0.1) {
   
   if (k < 1) stop ('k should be at least 1, see Farris 1969 p.379')
-  attr(data, 'sa.weights') <- rep(1, length(attr(data, 'weight')))
+  attr(dataset, 'sa.weights') <- rep(1, length(attr(dataset, 'weight')))
   collect.suboptimal <- suboptimal > 0
   
   max.node <- max(tree$edge[, 1])
@@ -13,14 +13,14 @@ SuccessiveApproximations <- function (tree, data, outgroup = NULL, k = 3, max.su
   n.node <- max.node - n.tip
   bests <- vector('list', max.succiter + 1)
   bests.consensus <- vector('list', max.succiter + 1)
-  best <- bests[[1]] <- bests.consensus[[1]] <- Root(tree, outgroup) #TODO does ape::root work here?
+  best <- bests[[1]] <- bests.consensus[[1]] <- ape::root(tree, outgroup, resolve.root=TRUE)
   for (i in seq_len(max.succiter) + 1) {
     if (verbosity > 0) cat('\nSuccessive Approximations Iteration', i - 1)
     attr(best, 'score') <- NULL
     if (suboptimal > 0) {
-      suboptimal.search <- suboptimal * sum(attr(data, 'sa.weights') * attr(data, 'weight'))
+      suboptimal.search <- suboptimal * sum(attr(dataset, 'sa.weights') * attr(dataset, 'weight'))
     }
-    trees <- Ratchet(best, data, TreeScorer = SuccessiveWeights, all = collect.suboptimal, 
+    trees <- Ratchet(best, dataset, TreeScorer = SuccessiveWeights, all = collect.suboptimal, 
                            suboptimal=suboptimal.search,    rearrangements='NNI',
                            pratchhits=pratchhits, searchhits=searchhits, searchiter=searchiter, 
                            pratchiter=pratchiter, outgroup = outgroup, verbosity=verbosity - 1)
@@ -30,10 +30,10 @@ SuccessiveApproximations <- function (tree, data, outgroup = NULL, k = 3, max.su
     bests.consensus[[i]] <- ape::consensus(trees[suboptimality == 0])
     if (all.equal(bests.consensus[[i]], bests.consensus[[i - 1]])) return(bests[2:i])
     best <- trees[suboptimality == 0][[1]]
-    l.i <- Fitch(best, data)
+    l.i <- Fitch(best, dataset)
     p.i <- l.i / (n.node - 1)
     w.i <- ((p.i)^-k) - 1
-    attr(data, 'sa.weights') <- w.i
+    attr(dataset, 'sa.weights') <- w.i
   }
   cat('Stability not reached.')
   return(bests)
@@ -52,35 +52,35 @@ Suboptimality <- function (trees, proportional = FALSE) {
 
 #' @keywords internal
 #' @export
-SuccessiveWeights <- function(tree, data) {
+SuccessiveWeights <- function(tree, dataset) {
   # Data
-  if (class(data) == 'phyDat') data <- PrepareDataSA(data)
-  if (class(data) != 'saDat') {
+  if (class(dataset) == 'phyDat') dataset <- PrepareDataSA(dataset)
+  if (class(dataset) != 'saDat') {
     stop('Invalid data type; prepare data with PhyDat() or PrepareDataSA().')
   }
-  at <- attributes(data)
+  at <- attributes(dataset)
   weight <- at$weight
   sa.weights <- at$sa.weights
   if (is.null(sa.weights)) sa.weights <- rep(1, length(weight))
-  steps <- Fitch(tree, data, at)
+  steps <- Fitch(tree, dataset, at)
   return(sum(steps * sa.weights * weight))
 }
 
-PrepareDataSA <- function (data) {
+PrepareDataSA <- function (dataset) {
 # Written with reference to phangorn:::prepareDataFitch
-  at <- attributes(data)
+  at <- attributes(dataset)
   nam <- at$names
   nLevel <- length(at$level)
   nChar <- at$nr
-  cont <- attr(data, "contrast")
-  nTip <- length(data)
+  cont <- attr(dataset, "contrast")
+  nTip <- length(dataset)
   
   at$names <- NULL
   powers.of.2 <- 2L ^ c(0L:(nLevel - 1L))
   tmp <- cont %*% powers.of.2
   tmp <- as.integer(tmp)
-  data <- unlist(data, FALSE, FALSE)
-  ret <- tmp[data] 
+  dataset <- unlist(dataset, FALSE, FALSE)
+  ret <- tmp[dataset] 
   ret <- as.integer(ret)
   attributes(ret) <- at
   inappLevel <- which(at$levels == "-")
