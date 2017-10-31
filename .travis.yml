@@ -2,8 +2,6 @@ language: r
 cache: packages
 warnings_are_errors: false
 #r_github_packages: KlausVigo/phangorn
-repos: 
-  ape: http://ape-package.ird.fr/
    
 git:
   depth: 5
@@ -12,11 +10,13 @@ r_packages:
  - devtools
  - roxygen2
  - testthat
+ - covr
    
 install:
  - R -e "install.packages('devtools')"
- - R -e "install.packages('ape', '.', repos = 'http://ape-package.ird.fr/')"
- - R -e "devtools::install_github('KlausVigo/phangorn', ref='1167f0be62f13cfad0fca8ae8224318c407195bf')"
+ - R -e "install.packages('ape')"
+ - R -e "devtools::install_github('KlausVigo/phangorn', ref='73b97c645b0a49b72793c16f6015786a573f925d')"
+ - R -e "#devtools::install_github('KlausVigo/phangorn', ref='1167f0be62f13cfad0fca8ae8224318c407195bf')"
  - R -e "install.packages('testthat')"
  - R -e "install.packages('roxygen2')"
  - R -e "devtools::document()"
@@ -26,3 +26,7 @@ bioc_required: true
 bioc_packages:
   - seqLogo
   - Biostrings
+  
+  
+after_success:
+  - Rscript -e 'library(covr); codecov()'
