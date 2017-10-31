@@ -246,7 +246,7 @@ AllAncestors <- function (parent, child) {
 #' @export
 CladeSizes <- function (tree, nodes) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'postorder') tree <- Postorder(tree)
-  vapply(phangorn:::allDescendants(tree)[nodes], length, integer(1))
+  vapply(phangorn::allDescendants(tree)[nodes], length, integer(1))
 }
     
 
