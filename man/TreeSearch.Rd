@@ -5,7 +5,7 @@
 \title{Search for most parsimonious trees}
 \usage{
 TreeSearch(tree, dataset, InitializeData = function(tree, dataset)
-  return(NULL), CleanUpData = function(tree, dataset) return(NULL),
+  return(FALSE), CleanUpData = function(tree, dataset) return(NULL),
   TreeScorer = FitchScore, Rearrange = RootedTBR, maxIter = 100,
   maxHits = 20, forestSize = 1, verbosity = 1, ...)
 }
@@ -15,7 +15,7 @@ TreeSearch(tree, dataset, InitializeData = function(tree, dataset)
 \item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
 correspond to the labels of any accompanying tree}
 
-\item{InitializeData}{function to set up data object to prepare for tree search}
+\item{InitializeData}{function to set up data object to prepare for tree search. Should return TRUE, unless a dataset needs to be sent to TreeScorer}
 
 \item{CleanUpData}{function to destroy data object on function exit}
 
