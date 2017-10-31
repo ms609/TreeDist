@@ -44,14 +44,13 @@ Renumber <- function (tree) {
 
 #' SingleTaxonTree
 #'
-#'  Single taxon tree
+#' Single taxon tree
 #'
 #' Create a phylogenetic 'tree' that comprises a single taxon.
 #'
 #' @usage SingleTaxonTree(label)
-#' @param   label a character vector specifying the label of the tip.
+#' @param  label a character vector specifying the label of the tip.
 #' @return This function returns a \code{phylo} object containing a single tip with the specified label.
-#' @seealso \code{\link{TwoTipTree}}
 #' @examples SingleTaxonTree('Homo_sapiens')
 #' @keywords  tree 
 #' @export
@@ -204,39 +203,6 @@ AddTip <- function (tree, where, label) {
   tree$edge <- tree.edge
   tree
   
-}
-
-#' Get Ancestors
-#'
-#' \code{GetAncestors} gets the ancestors of each node in a tree
-#' It's a more efficient version of \code{\link[phangorn]{Ancestors}}
-#'
-#' @param PARAM is a parameter you should send to it
-#' 
-#' @examples
-#' to_do <- TRUE
-#' 
-#' @return This function returns :
-#'   
-#' @author Martin R. Smith
-#' @export
-GetAncestors <- function (parent, child, node) {
-  if (length(node) == 1) {
-    pvector <- numeric(max(parent))
-    pvector[child] <- parent
-    anc <- function(pvector, node) {
-      res <- numeric(0)
-      repeat {
-        anc <- pvector[node]
-        if (anc == 0) 
-            break
-        res <- c(res, anc)
-        node <- anc
-      }
-      res
-    }
-    return(anc(pvector, node))
-  } else AllAncestors(parent, child)[node]
 }
 
 #' List all ancestral nodes

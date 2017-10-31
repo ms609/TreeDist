@@ -1,4 +1,4 @@
-#' @title Tree rearrangement functions
+#' Tree rearrangement functions
 #' 
 #' These functions performs a single random \acronym{TBR}, \acronym{SPR} or \acronym{NNI} iteration.
 #'
@@ -69,11 +69,6 @@ NNI <- function (tree, edgeToBreak=NULL) {
 #' A single \acronym{NNI}, \acronym{SPR} or \acronym{TBR} rearrangement is performed, subject to the constraint that 
 #' no taxon may be moved to the opposite side of the root node.
 #' Branch lengths are not (yet) supported.
-#' 
-#' @usage
-#' RootedNNI(tree)
-#' RootedSPR(tree)
-#' RootedTBR(tree)
 #'
 #' @param tree A bifurcating tree of class \code{\link{phylo}}, with all nodes resolved
 #' @template edgeBreakingParams
