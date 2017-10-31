@@ -49,6 +49,12 @@ DescendantEdges <- function (edge, parent, child, nEdge = length(parent)) {
   }
 }
 
+#' Ancestral edge
+#'
+#' @param edge Number of an edge
+#' @param parent parent nodes (given by phylo.object$edge[, 1])
+#' @param child  child nodes (given by phylo.object$edge[, 2])
+#' @return a logical vector identifying whether each edge is the edge that is ancestral to the given edge.
 #' @keywords internal
 #' @export
 AncestorEdge <- function (edge, parent, child) child == parent[edge]
