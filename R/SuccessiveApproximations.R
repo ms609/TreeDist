@@ -75,6 +75,14 @@ Suboptimality <- function (trees, proportional = FALSE) {
   }
 }
 
+#' Successive Weights
+#' 
+#' Calculate weight for tree scored by successive approximations
+#' 
+#' @template treeParam
+#' @template datasetParam
+#'
+#' @return Score of a tree, given the weighting instructions specified in the attributes of the dataset
 #' @keywords internal
 #' @export
 SuccessiveWeights <- function(tree, dataset) {
