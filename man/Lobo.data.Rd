@@ -3,7 +3,7 @@
 \docType{data}
 \name{Lobo.data}
 \alias{Lobo.data}
-\title{Raw data from Zhang et al 2016}
+\title{Raw data from Zhang et al. 2016}
 \format{An object of class \code{list} of length 48.}
 \source{
 Zhang X-G, Smith MR, Yang J, Hou J-B. 2016 Onychophoran-like musculature in a phosphatized Cambrian lobopodian. Biol. Lett. 12: 20160492. \url{http://dx.doi.org/10.1098/rsbl.2016.0492}
@@ -12,7 +12,7 @@ Zhang X-G, Smith MR, Yang J, Hou J-B. 2016 Onychophoran-like musculature in a ph
 Lobo.data
 }
 \description{
-Raw data from Zhang et al 2016
+Raw data from Zhang et al. 2016
 
 Modified so that absences are treated appropriately:
 \describe{

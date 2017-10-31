@@ -25,7 +25,7 @@ Rooted NNI
 \details{
 This function performs a single random \acronym{NNI} iteration.
 
-Performs a single iteration of the nearest-neigbour interchange algorithm.
+Performs a single iteration of the nearest-neighbour interchange algorithm.
 Based on the corresponding phangorn function, but re-coded to improve speed.
 
 Branch lengths are not supported.

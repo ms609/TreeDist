@@ -16,7 +16,7 @@ EdgeAncestry(edge, parent, child, stopAt = (parent == min(parent)))
 \item{stopAt}{number of the edge at which the search should terminate; defaults to the root edges}
 }
 \value{
-a logical vector stating whether each edge in turn is a descendant of the speficied edge
+a logical vector stating whether each edge in turn is a descendant of the specified edge
 }
 \description{
 Descendant Edges

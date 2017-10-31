@@ -24,7 +24,7 @@ if dataset is a matrix, they will be calculated automatically (weights set to 1)
 
 \item{at}{Attributes of the dataset (looked up automatically if not supplied)}
 
-\item{FitchFunction}{function to be used to calculte parsimony score.}
+\item{FitchFunction}{function to be used to calculate parsimony score.}
 }
 \value{
 A vector listing the number of 'parsimony steps' calculated for each character

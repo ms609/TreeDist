@@ -21,7 +21,7 @@ an integer vector, listing the tokens associated with each character for each ti
         - ready to send to FITCH or equivalent C routine
 }
 \description{
-Speficies how characters are stored in a dataset object
+Specifies how characters are stored in a dataset object
 }
 \section{Functions}{
 \itemize{

@@ -13,10 +13,10 @@ DescendantEdges(edge, parent, child, nEdge = length(parent))
 
 \item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
 
-\item{nEdge}{number of edges (calcluated from length(parent) if not supplied)}
+\item{nEdge}{number of edges (calculated from length(parent) if not supplied)}
 }
 \value{
-a logical vector stating whether each edge in turn is a descendant of the speficied edge
+a logical vector stating whether each edge in turn is a descendant of the specified edge
         (or the edge itself)
 }
 \description{
