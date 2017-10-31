@@ -7,9 +7,8 @@ This package exists to allow parsiomony-style tree searches in R.
 It extends the basic functionality available in phangorn, with a view to making tree search faster and more efficient.
 Heuristic searches such as the Parsimony Ratchet are implemented.
 
-The library requires the latest (working) versions of ape and phangorn:
+The library requires a working version of phangorn > 2.2.1, which is not yet available through CRAN:
 
 ```
-install.packages('ape', '.', repos = 'http://ape-package.ird.fr/')
-devtools::install_github('KlausVigo/phangorn', ref='1167f0be62f13cfad0fca8ae8224318c407195bf')
+devtools::install_github('KlausVigo/phangorn', ref='7192bfb4403c35c16a7b735160525d272736b061') # 30 oct 2017
 ```
