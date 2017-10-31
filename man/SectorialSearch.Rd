@@ -41,7 +41,7 @@ a rooted tree of class \code{phylo}.
 }
 \details{
 \code{DoSectorial} performs a sectorial search on the tree specified. A sectorial search 
-detaches a random part of the tree, performs rearrangments on this subtree, then reattaches it 
+detaches a random part of the tree, performs rearrangements on this subtree, then reattaches it 
 to the main tree (Goloboff, 1999).
 The improvement to local \var{pscore} hopefully (but not necessarily) improves the overall \var{pscore}.
 As such, the output of \code{DoSectorial} should be treated by further \acronym{TBR (/SPR/NNI)}
