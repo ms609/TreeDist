@@ -16,6 +16,7 @@ C_Fitch_Steps <- function (characters, nChar, parent, child, nEdge, weight, maxN
 #' Wrapper to FITCH
 #' @return the full return of the phangorn C function FITCH
 ## @useDynLib TreeSearch phangorn_FITCH
+#' @useDynLib TreeSearch, .registration = TRUE
 #' @keywords internal
 #' @export
 C_Fitch <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
