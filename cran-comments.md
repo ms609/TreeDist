@@ -5,7 +5,14 @@
 ## R CMD check results
 There were no ERRORs or WARNINGs.
 
-There was 1 NOTE:
+There were 2 NOTEs:
+
+* checking CRAN incoming feasibility ... NOTE
+  Maintainer: 'Smith Martin R. <martins@gmail.com>'
+  
+  New submission
+  
+This is indeed a new submission.
 
 * checking compiled code ... NOTE
   File 'TreeSearch/libs/x64/TreeSearch.dll':
@@ -20,7 +27,7 @@ I've followed the instructions at
 https://cran.r-project.org/doc/manuals/R-exts.html#Registering-native-routines
 and the suggestions at
 https://stackoverflow.com/questions/42313373
-to no avail.  As such, I suspect that the NOTE may be a false positive - if not, I can't work out how to get around it.
+to no avail.  As such, I suspect that the latter NOTE may be a false positive - if not, I can't work out how to get around it.
 
 ## Downstream dependencies
 There are currently no downstream dependencies for this package.
