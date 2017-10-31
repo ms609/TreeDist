@@ -50,6 +50,8 @@ DescendantEdges <- function (edge, parent, child, nEdge = length(parent)) {
 #' @export
 AncestorEdge <- function (edge, parent, child) child == parent[edge]
 
+#' EdgeAncestry
+#'
 #' Descendant Edges
 #'
 #' Quickly identifies edges that are 'ancestral' to a particular edge in a tree
@@ -58,8 +60,9 @@ AncestorEdge <- function (edge, parent, child) child == parent[edge]
 #' @template treeParent
 #' @template treeChild
 #' @param stopAt number of the edge at which the search should terminate; defaults to the root edges
-#' @param nEdge number of edges (calcluated from length(parent) if not supplied)
 #' @return a logical vector stating whether each edge in turn is a descendant of the speficied edge
+#'
+#' @author Martin R. Smith
 #' @export
 EdgeAncestry <- function (edge, parent, child, stopAt = (parent==min(parent))) {
   ret <- edge <- AncestorEdge(edge, parent, child)
