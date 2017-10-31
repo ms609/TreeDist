@@ -9,10 +9,12 @@ warnings_are_errors: false
 git:
   depth: 5
 
+r_binary_packages:
+ - testthat
+  
 r_packages:
  - devtools
  - roxygen2
- - testthat
  - covr
    
 install:
