@@ -15,8 +15,7 @@ r_packages:
 install:
  - R -e "install.packages('devtools')"
  - R -e "install.packages('ape')"
- - R -e "devtools::install_github('KlausVigo/phangorn', ref='73b97c645b0a49b72793c16f6015786a573f925d')"
- - R -e "#devtools::install_github('KlausVigo/phangorn', ref='1167f0be62f13cfad0fca8ae8224318c407195bf')"
+ - R -e "devtools::install_github('KlausVigo/phangorn', ref='7192bfb4403c35c16a7b735160525d272736b061')"
  - R -e "install.packages('testthat')"
  - R -e "install.packages('roxygen2')"
  - R -e "devtools::document()"
