@@ -1,28 +1,28 @@
-###   #' Fitch Score
-###   #' Calculate the parsimony score of a tree (number of steps) using the Fitch algoritgh
-###   #' @return the parsimony score (an integer)
-###   #' @keywords internal
-###   #' @export
-###   C_Fitch_Score <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
-###     C_Fitch(characters, nChar, parent, child, nEdge, weight, maxNode, nTip)[[1]]
-###   }
-###   #' Fitch steps
-###   #' @return the number of steps the tree enforces on each character
-###   #' @keywords internal
-###   #' @export
-###   C_Fitch_Steps <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
-###     C_Fitch(characters, nChar, parent, child, nEdge, weight, maxNode, nTip)[[2]]
-###   }
-###   #' Wrapper to FITCH
-###   #' @return the full return of the phangorn C function FITCH
-###   ## @useDynLib TreeSearch phangorn_FITCH
-###   #' @keywords internal
-###   #' @export
-###   C_Fitch <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
-###     .Call("phangorn_FITCH", as.integer(characters), as.integer(nChar),
-###           as.integer(parent), as.integer(child), as.integer(nEdge),
-###           as.double(weight), as.integer(maxNode), as.integer(nTip))
-###   }
+#' Fitch Score
+#' Calculate the parsimony score of a tree (number of steps) using the Fitch algoritgh
+#' @return the parsimony score (an integer)
+#' @keywords internal
+#' @export
+C_Fitch_Score <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
+  C_Fitch(characters, nChar, parent, child, nEdge, weight, maxNode, nTip)[[1]]
+}
+#' Fitch steps
+#' @return the number of steps the tree enforces on each character
+#' @keywords internal
+#' @export
+C_Fitch_Steps <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
+  C_Fitch(characters, nChar, parent, child, nEdge, weight, maxNode, nTip)[[2]]
+}
+#' Wrapper to FITCH
+#' @return the full return of the phangorn C function FITCH
+## @useDynLib TreeSearch phangorn_FITCH
+#' @keywords internal
+#' @export
+C_Fitch <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
+  .Call("phangorn_FITCH", as.integer(characters), as.integer(nChar),
+        as.integer(parent), as.integer(child), as.integer(nEdge),
+        as.double(weight), as.integer(maxNode), as.integer(nTip))
+}
 ###   
 ###   #' @describeIn C_Fitch Checks parameters before running \code{C_Fitch}
 ###   #' @keywords internal
@@ -73,9 +73,10 @@ TipsAreColumns <- function(data, tips) as.integer(data[, tips])
 #' @param at Attributes of the dataset (looked up automatically if not supplied)
 #' @param FitchFunction function to be used to calculte parsimony score.
 #' @return A vector listing the number of 'parsimony steps' calculated for each character
+#' @importFrom phangorn fitch
 #' @export
 Fitch <- function (tree, data, TipData = TipsAreNames, at = attributes(data),
-                        FitchFunction = C_Fitch_Score) { 
+                        FitchFunction = C_Fitch_Score) {
   treeOrder <- attr(tree, 'order')
   if (is.null(treeOrder) || treeOrder != 'postorder') tree <- Postorder(tree)
   treeEdge <- tree$edge
@@ -156,8 +157,8 @@ FitchScore <- function (tree, data, TipData = NULL, at = attributes(data)) {
 ###   IFitchSteps <- function (tree, nChar) {
 ###     phangorn:::fast.fitch(tree, nChar, ps=FALSE)
 ###   }
-  
-#' @describeIn Fitch returns a vector listing the number of steps for each character
-#' @export
-FitchSteps <- function (tree, data, TipData = TipsAreNames, at = attributes(data))
-  Fitch(tree, data, TipData, at, C_Fitch_Steps)
+###     
+###   #' @describeIn Fitch returns a vector listing the number of steps for each character
+###   #' @export
+###   FitchSteps <- function (tree, data, TipData = TipsAreNames, at = attributes(data))
+###     Fitch(tree, data, TipData, at, C_Fitch_Steps)
