@@ -5,7 +5,8 @@
 #' @param error error message to report
 #'
 #' @return the tree specified in tree
-#' @example return(TBRWarning(tree, 'Message text'))
+#' @examples
+#'  return(TBRWarning(tree, 'Message text'))
 #'
 #' @author Martin R. Smith
 #' @keywords internal
