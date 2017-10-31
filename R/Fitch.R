@@ -1,42 +1,42 @@
-#' Fitch Score
-#' Calculate the parsimony score of a tree (number of steps) using the Fitch algoritgh
-#' @return the parsimony score (an integer)
-#' @keywords internal
-#' @export
-C_Fitch_Score <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
-  C_Fitch(characters, nChar, parent, child, nEdge, weight, maxNode, nTip)[[1]]
-}
-#' Fitch steps
-#' @return the number of steps the tree enforces on each character
-#' @keywords internal
-#' @export
-C_Fitch_Steps <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
-  C_Fitch(characters, nChar, parent, child, nEdge, weight, maxNode, nTip)[[2]]
-}
-#' Wrapper to FITCH
-#' @return the full return of the phangorn C function FITCH
-## @useDynLib TreeSearch phangorn_FITCH
-#' @keywords internal
-#' @export
-C_Fitch <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
-  .Call("FITCH", as.integer(characters), as.integer(nChar),
-        as.integer(parent), as.integer(child), as.integer(nEdge),
-        as.double(weight), as.integer(maxNode), as.integer(nTip), PACKAGE='phangorn')
-}
-
-#' @describeIn C_Fitch Checks parameters before running \code{C_Fitch}
-#' @keywords internal
-#' @export
-C_Fitch_Checks <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
-  iCharacters <- as.integer(characters)
-  Assert(length(iCharacters) == nChar * nTip)
-  Assert(length(parent) == length(child))
-  Assert(length(parent) == nEdge)
-  Assert(length(weight) == nChar)
-  Assert(maxNode == max(parent))
-  Assert(parent[1] == max(parent)) # Are nodes numbered in Postorder??    
-  C_Fitch(characters, nChar, parent, child, nEdge, weight, maxNode, nTip)
-}
+###   #' Fitch Score
+###   #' Calculate the parsimony score of a tree (number of steps) using the Fitch algoritgh
+###   #' @return the parsimony score (an integer)
+###   #' @keywords internal
+###   #' @export
+###   C_Fitch_Score <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
+###     C_Fitch(characters, nChar, parent, child, nEdge, weight, maxNode, nTip)[[1]]
+###   }
+###   #' Fitch steps
+###   #' @return the number of steps the tree enforces on each character
+###   #' @keywords internal
+###   #' @export
+###   C_Fitch_Steps <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
+###     C_Fitch(characters, nChar, parent, child, nEdge, weight, maxNode, nTip)[[2]]
+###   }
+###   #' Wrapper to FITCH
+###   #' @return the full return of the phangorn C function FITCH
+###   ## @useDynLib TreeSearch phangorn_FITCH
+###   #' @keywords internal
+###   #' @export
+###   C_Fitch <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
+###     .Call("phangorn_FITCH", as.integer(characters), as.integer(nChar),
+###           as.integer(parent), as.integer(child), as.integer(nEdge),
+###           as.double(weight), as.integer(maxNode), as.integer(nTip))
+###   }
+###   
+###   #' @describeIn C_Fitch Checks parameters before running \code{C_Fitch}
+###   #' @keywords internal
+###   #' @export
+###   C_Fitch_Checks <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
+###     iCharacters <- as.integer(characters)
+###     Assert(length(iCharacters) == nChar * nTip)
+###     Assert(length(parent) == length(child))
+###     Assert(length(parent) == nEdge)
+###     Assert(length(weight) == nChar)
+###     Assert(maxNode == max(parent))
+###     Assert(parent[1] == max(parent)) # Are nodes numbered in Postorder??    
+###     C_Fitch(characters, nChar, parent, child, nEdge, weight, maxNode, nTip)
+###   }
 
 #' Extract character data from dataset
 #'
@@ -140,11 +140,11 @@ FitchScore <- function (tree, data, TipData = NULL, at = attributes(data)) {
   Fitch(tree, data, TipData, at, C_Fitch_Score)
 }
 
-#' @describeIn Fitch returns the parsimony score only, when a Fitch instance has already been initiated
-#' @export
-IFitchScore <- function (tree, nChar) {
-  phangorn:::fast.fitch(tree, nChar, ps=FALSE)
-}
+# #' @describeIn Fitch returns the parsimony score only, when a Fitch instance has already been initiated
+# #' @export
+# IFitchScore <- function (tree, nChar) {
+#   phangorn:::fast.fitch(tree, nChar, ps=FALSE)
+# }
 
 #' @describeIn Fitch returns the parsimony score only, without checking that data is well formatted
 #' @keywords internal
@@ -153,9 +153,9 @@ FasterFitchScore <- function (tree, data, TipData = TipsAreNames, at = attribute
   Fitch(tree, data, TipData, at, C_Fitch_Score)
 
 
-IFitchSteps <- function (tree, nChar) {
-  phangorn:::fast.fitch(tree, nChar, ps=FALSE)
-}
+# IFitchSteps <- function (tree, nChar) {
+#   phangorn:::fast.fitch(tree, nChar, ps=FALSE)
+# }
   
 #' @describeIn Fitch returns a vector listing the number of steps for each character
 #' @export

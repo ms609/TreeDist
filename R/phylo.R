@@ -256,6 +256,6 @@ CladeSizes <- function (tree, nodes) {
 #' @keywords internal
 #' @export
 C_node_depth <- function (nTip, nNode, parent, child, nEdge) {
-  .C("node_depth", as.integer(nTip), as.integer(nNode), as.integer(parent), 
-     as.integer(child), as.integer(nEdge), double(nTip + nNode), 1L, PACKAGE='ape')[[6]]
+  .C("ape_node_depth", as.integer(nTip), as.integer(nNode), as.integer(parent), 
+     as.integer(child), as.integer(nEdge), double(nTip + nNode), 1L)[[6]]
 }
