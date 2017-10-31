@@ -1,34 +1,52 @@
-#' @importFrom ape consensus
+#' Tree Search using Successive Approximations
+#'
+#' Searches for a tree that is optimal under the Successive Approximations criterion
+#'
+#' @template treeParam
+#' @template datasetParam
+#' @param outgroup if not NULL, taxa on which the tree should be rooted
+#' @param k Constant for successive approximations, see Farris 1969 p. 379
+#' @param maxSuccIter maximum iterations of successive approximation
+#' @param ratchetHits maximum hits for parsimony ratchet 
+#' @param searchHits maximum hits in tree search
+#' @param searchIter maximum iterations in tree search
+#' @param ratchetIter maximum iterations of parsimony ratchet
+#' @param verbosity integer (default 0) specifying how much detail to print to stdout
+#' @param suboptimal retain trees that are this proportion less optimal than the optimal tree
+#' 
+#' @return list of optimal (and slightly suboptimal, if suboptimal > 0) trees
+#'
+#' @importFrom ape consensus root
 #' @export
-SuccessiveApproximations <- function (tree, dataset, outgroup = NULL, k = 3, max.succiter = 20,
-                                      pratchhits = 100, searchhits = 50, searchiter = 500,
-                                      pratchiter = 5000, verbosity = 0, suboptimal = 0.1) {
+SuccessiveApproximations <- function (tree, dataset, outgroup = NULL, k = 3, maxSuccIter = 20,
+                                      ratchetHits = 100, searchHits = 50, searchIter = 500,
+                                      ratchetIter = 5000, verbosity = 0, suboptimal = 0.1) {
   
   if (k < 1) stop ('k should be at least 1, see Farris 1969 p.379')
   attr(dataset, 'sa.weights') <- rep(1, length(attr(dataset, 'weight')))
-  collect.suboptimal <- suboptimal > 0
+  collectSuboptimal <- suboptimal > 0
   
   max.node <- max(tree$edge[, 1])
   n.tip <- length(tree$tip.label)
   n.node <- max.node - n.tip
-  bests <- vector('list', max.succiter + 1)
-  bests.consensus <- vector('list', max.succiter + 1)
-  best <- bests[[1]] <- bests.consensus[[1]] <- ape::root(tree, outgroup, resolve.root=TRUE)
-  for (i in seq_len(max.succiter) + 1) {
+  bests <- vector('list', maxSuccIter + 1)
+  bestsConsensus <- vector('list', maxSuccIter + 1)
+  best <- bests[[1]] <- bestsConsensus[[1]] <- ape::root(tree, outgroup, resolve.root=TRUE)
+  for (i in seq_len(maxSuccIter) + 1) {
     if (verbosity > 0) cat('\nSuccessive Approximations Iteration', i - 1)
     attr(best, 'score') <- NULL
     if (suboptimal > 0) {
-      suboptimal.search <- suboptimal * sum(attr(dataset, 'sa.weights') * attr(dataset, 'weight'))
+      suboptimalSearch <- suboptimal * sum(attr(dataset, 'sa.weights') * attr(dataset, 'weight'))
     }
-    trees <- Ratchet(best, dataset, TreeScorer = SuccessiveWeights, all = collect.suboptimal, 
-                           suboptimal=suboptimal.search,    rearrangements='NNI',
-                           pratchhits=pratchhits, searchhits=searchhits, searchiter=searchiter, 
-                           pratchiter=pratchiter, outgroup = outgroup, verbosity=verbosity - 1)
+    trees <- Ratchet(best, dataset, TreeScorer = SuccessiveWeights, all = collectSuboptimal, 
+                           suboptimal=suboptimalSearch,    rearrangements='NNI',
+                           ratchetHits=ratchetHits, searchHits=searchHits, searchIter=searchIter, 
+                           ratchetIter=ratchetIter, outgroup = outgroup, verbosity=verbosity - 1)
     trees <- unique(trees)
     bests[[i]] <- trees
     suboptimality <- Suboptimality(trees)
-    bests.consensus[[i]] <- ape::consensus(trees[suboptimality == 0])
-    if (all.equal(bests.consensus[[i]], bests.consensus[[i - 1]])) return(bests[2:i])
+    bestsConsensus[[i]] <- ape::consensus(trees[suboptimality == 0])
+    if (all.equal(bestsConsensus[[i]], bestsConsensus[[i - 1]])) return(bests[2:i])
     best <- trees[suboptimality == 0][[1]]
     l.i <- Fitch(best, dataset)
     p.i <- l.i / (n.node - 1)
@@ -39,6 +57,13 @@ SuccessiveApproximations <- function (tree, dataset, outgroup = NULL, k = 3, max
   return(bests)
 }
 
+#' Tree suboptimality
+#'
+#' How suboptimal is a tree?
+#'
+#' @param trees list of trees, to include an optimal tree
+#' @param proprtional logical stating whether to normalise results to lowest score
+#' @return a vector listing, for each tree, how much their score differs from the optimal (lowest) score.
 #' @keywords internal
 #' @export
 Suboptimality <- function (trees, proportional = FALSE) {
