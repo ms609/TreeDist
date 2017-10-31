@@ -5,7 +5,7 @@ void report_calloc_error() {
 static R_NativePrimitiveArgType order_edges_number_nodes_t[] = {
   INTSXP, INTSXP, INTSXP
 };
-void order_edges_number_nodes(int *parent, int *child, const int *n_edge)
+extern void order_edges_number_nodes(int *parent, int *child, const int *n_edge)
 {
   int i, q_pos = 0, o_node, next_node;
   const int n_node = *n_edge / 2;
@@ -73,7 +73,7 @@ void order_edges_number_nodes(int *parent, int *child, const int *n_edge)
   }
 }
 
-SEXP RENUMBER_TREE(SEXP par, SEXP chi, SEXP ned){   
+extern SEXP RENUMBER_TREE(SEXP par, SEXP chi, SEXP ned){   
     int i, *parent = INTEGER(par), *child = INTEGER(chi);
     const int n_edge = INTEGER(ned)[0];
     SEXP RESULT;

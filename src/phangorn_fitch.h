@@ -213,7 +213,7 @@ void fitch9(int *dat, int nr, int *node, int *edge, int nl, double *weight, doub
 
 
 // in fitch
-SEXP phangorn_FITCH(SEXP dat, SEXP nrx, SEXP node, SEXP edge, SEXP l, SEXP weight, SEXP mx, SEXP q){   
+extern SEXP phangorn_FITCH(SEXP dat, SEXP nrx, SEXP node, SEXP edge, SEXP l, SEXP weight, SEXP mx, SEXP q){   
     int *data, *nr=INTEGER(nrx), m=INTEGER(mx)[0], i, n=INTEGER(q)[0];   
     double *pvtmp;  
     SEXP DAT, pars, pvec, pscore, RESULT;

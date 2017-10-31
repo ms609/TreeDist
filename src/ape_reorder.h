@@ -2,7 +2,7 @@ static R_NativePrimitiveArgType ape_node_depth_t[] = {
   INTSXP, INTSXP, INTSXP, INTSXP, 
   INTSXP, REALSXP, INTSXP
 };
-void ape_node_depth(int *ntip, int *nnode, int *e1, int *e2,
+extern void ape_node_depth(int *ntip, int *nnode, int *e1, int *e2,
 		int *nedge, double *xx, int *method)
 /* method == 1: the node depths are proportional to the number of tips
    method == 2: the node depths are evenly spaced */
@@ -125,7 +125,7 @@ void ape_bar_reorder(int node, int n_tips, int n_nodes, int *parent, int *child,
 static R_NativePrimitiveArgType ape_neworder_phylo_t[] = {
   INTSXP, INTSXP, INTSXP, INTSXP, INTSXP, INTSXP
 };
-void ape_neworder_phylo(int *n_tips, int *parent, int *child, int *n_edges, int *neworder, int *order)
+extern void ape_neworder_phylo(int *n_tips, int *parent, int *child, int *n_edges, int *neworder, int *order)
 /* n_tips: nb of tips
    n_nodes: nb of nodes
    n_edges: nb of edges */
@@ -185,7 +185,7 @@ void ape_neworder_phylo(int *n_tips, int *parent, int *child, int *n_edges, int 
 static R_NativePrimitiveArgType ape_neworder_pruningwise_t[] = {
   INTSXP, INTSXP, INTSXP, INTSXP, INTSXP, INTSXP
 };
-void ape_neworder_pruningwise(int *ntip, int *nnode, int *edge1,
+extern void ape_neworder_pruningwise(int *ntip, int *nnode, int *edge1,
 			  int *edge2, int *nedge, int *neworder)
 {
     int *ready, *Ndegr, i, j, node, nextI, n_tips;
