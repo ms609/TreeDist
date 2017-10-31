@@ -7,7 +7,7 @@
 #' @param rooted set to FALSE if position of root may change, TRUE if position and composition of
 #'               outgroup is fixed
 #' @template verbosityParam
-#' @param \dots additional arguments to \code{TreeSearch}
+#' @template treeScorerDots
 #'
 #' @return A tree that is optimal under a random sampling of the original characters
 #' @export  
