@@ -32,7 +32,7 @@ SPRWarning <- function (tree, error) {
 #' @seealso NNI
 #' 
 #' @examples{
-#' tree <- RandomTree(20)
+#' tree <- ape::rtree(20, br=FALSE)
 #' SPR(tree)
 #' }
 #' @importFrom ape root
