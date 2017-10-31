@@ -9,11 +9,6 @@
 #' 
 #' Branch lengths are not supported.
 #' 
-#' @usage 
-#'  NNI(tree, edgeToBreak = NULL)
-#'  SPR(tree, edgeToBreak = NULL, mergeEdges = NULL)
-#'  TBR(tree, edgeToBreak = NULL, mergeEdges = NULL)
-#'
 #' @template treeParam
 #' @template edgeBreakingParams
 #' 
@@ -31,6 +26,7 @@
 #' NNI(tree)
 #' SPR(tree)
 #' TBR(tree)
+#'
 #' @export
 NNI <- function (tree, edgeToBreak=NULL) {
   edge    <- tree$edge
