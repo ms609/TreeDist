@@ -1,9 +1,12 @@
 #' TBR Warning
 #' Print a warning and return given tree
 #'
-#' @usage return(TBRWarning(tree, 'Message text')
+#' @usage return(TBRWarning(tree, 'Message text'))
 #' @param tree tree to return
 #' @param error error message to report
+#'
+#' @return the tree specified in tree
+#'
 #' @author Martin R. Smith
 #' @keywords internal
 #' @export
