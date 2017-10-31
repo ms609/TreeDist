@@ -117,7 +117,6 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
 
 #' Rooted SPR 
 #' @describeIn SPR Perform \acronym{SPR} rearrangement, retaining position of root
-#' @importFrom ape root
 #' @export
 RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)

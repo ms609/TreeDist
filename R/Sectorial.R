@@ -15,6 +15,7 @@
 #' 
 #' @param tree a rooted, resolved tree in \code{\link{phylo}} format from which to start the search;
 #' @template datasetParam
+#' @template treeScorerParam
 #' @param maxIter maximum number of rearrangements to perform on each search iteration - provide a list or vector 
 #'                with each entry corresponding to an entry in Rearrangements, or a single entry to be used for all
 #' @param maxHits maximum number of hits to accomplish on each search iteration - provide a list or vector 

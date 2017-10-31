@@ -1,17 +1,16 @@
-#' Tree rearrangement functions
-#' 
-#' These functions performs a single random \acronym{TBR}, \acronym{SPR} or \acronym{NNI} iteration.
+#' NNI
 #'
-#' Performs a single iteration of the nearest-neigbour interchange, subtree pruning and regrafting,
-#' or tree bisection and reconnection algorithms.
-#' NNI and SPR are based on the corresponding phangorn functions, but have been re-coded to 
-#' improve their speed.
+#' Nearest Neighbour Interchange
+#' 
+#' This function performs a single random \acronym{NNI} iteration.
+#'
+#' Performs a single iteration of the nearest-neigbour interchange algorithm.
+#' Based on the corresponding phangorn function, but re-coded to improve speed.
 #' 
 #' Branch lengths are not supported.
 #' 
 #' @template treeParam
 #' @template edgeToBreakParam
-#' @template mergeEdgesParam
 #' 
 #' @return Returns a tree with class \code{phylo}.
 #'
@@ -22,11 +21,8 @@
 #' @author Martin R. Smith
 #' 
 #' @examples
-#' library(ape)
 #' tree <- ape:::rtree(20, br=NULL)
 #' NNI(tree)
-#' SPR(tree)
-#' TBR(tree)
 #'
 #' @export
 NNI <- function (tree, edgeToBreak=NULL) {
@@ -59,41 +55,8 @@ NNI <- function (tree, edgeToBreak=NULL) {
   tree
 }
 
-#' Rearrange a rooted tree
-#'
-#' This function performs a rearrangement iteration on a tree, retaining the position of the root.
-#'
-#' A single \acronym{NNI}, \acronym{SPR} or \acronym{TBR} rearrangement is performed, subject to the constraint that 
-#' no taxon may be moved to the opposite side of the root node.
-#' Branch lengths are not (yet) supported.
-#'
-#' @param tree A bifurcating tree of class \code{\link{phylo}}, with all nodes resolved
-#' @template edgeToBreakParam
-#' @template mergeEdgesParam
-#' 
-#' @return This function returns a tree, in \code{phylo} format.
-#'
-#' @author Martin R. Smith
-#' \code{RootedNNI} is abridged from the \pkg{phangorn} function \code{nnin}
-#' 
-#' @seealso
-#' \itemize{
-#' \item \code{\link{NNI}}, unrooted \acronym{NNI} and \acronym{SPR}
-#' \item \code{\link{TBR}}, unrooted \acronym{TBR}
-#' }
-#' 
-#' @examples{
-#'   require('ape')
-#'   tree <- read.tree(text='(((a,b),c),(d,(e,f)));')
-#'   tree <- root(tree, c('e', 'f'), resolve.root=TRUE)
-#'   plot(tree)
-#'   dev.new()
-#'   plot(RootedNNI(tree))
-#'   plot(RootedSPR(tree))
-#'   plot(RootedTBR(tree))
-#' }
-#' 
-#'
+#' Rooted NNI 
+#' @describeIn NNI Perform \acronym{NNI} rearrangement, retaining position of root
 #' @export
 RootedNNI <- function (tree, edgeToBreak = NULL) {
   edge    <- tree$edge
