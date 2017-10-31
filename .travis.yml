@@ -32,4 +32,4 @@ bioc_packages:
   - Biostrings
   
 after_success:
-  - Rscript -e 'install.packages('covr'); library(covr); codecov()'
+  - Rscript -e "install.packages('covr'); covr::codecov()"
