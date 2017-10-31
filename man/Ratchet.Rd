@@ -14,6 +14,8 @@ Ratchet(tree, dataset, TreeScorer = FitchScore, returnAll = FALSE,
 
 \item{dataset}{a dataset in the format required by TreeScorer}
 
+\item{TreeScorer}{Function to score trees, to receive arguments \code{tree} and \code{dataset}.}
+
 \item{returnAll}{Set to \code{TRUE} to report all MPTs encountered during the search, perhaps to analyze consensus}
 
 \item{rooted}{whether to retain the position of the root in tree search (TRUE by default)}
@@ -21,6 +23,10 @@ Ratchet(tree, dataset, TreeScorer = FitchScore, returnAll = FALSE,
 \item{ratchIter}{stop when this many ratchet iterations have been performed}
 
 \item{ratchHits}{stop when this many ratchet iterations have found the same best score}
+
+\item{searchIter}{maximum rearrangements to perform on each bootstrap or ratchet iteration;}
+
+\item{searchHits}{maximum times to hit best score before terminating a tree search within a ratchet iteration;}
 
 \item{bootstrapIter}{maximum rearrangements to perform on each bootstrap  iteration (default: \code{maxIter})}
 
@@ -34,13 +40,9 @@ to just perform TBR rearrangements (retaining the position of the root if \code{
 OR: a list of functions to use, one at a time, as the \code{Rearrange} parameter
     in successive calls to TreeSearch}
 
+\item{suboptimal}{retain trees that are suboptimal by this score. Defaults to 1e-08 to counter rounding errors.}
+
 \item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}})}
-
-\item{concavity}{concavity constant for implied weighting (not currently implemented!)}
-
-\item{maxIter}{maximum rearrangements to perform on each bootstrap or ratchet iteration;}
-
-\item{maxHits}{maximum times to hit best score before terminating a tree search within a ratchet iteration;}
 }
 \value{
 This function returns a tree modified by parsimony ratchet iteration, retaining the position of the root.

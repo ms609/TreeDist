@@ -2,7 +2,7 @@
 % Please edit documentation in R/helper_functions.R
 \name{EdgeAncestry}
 \alias{EdgeAncestry}
-\title{Descendant Edges}
+\title{EdgeAncestry}
 \usage{
 EdgeAncestry(edge, parent, child, stopAt = (parent == min(parent)))
 }
@@ -14,12 +14,16 @@ EdgeAncestry(edge, parent, child, stopAt = (parent == min(parent)))
 \item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
 
 \item{stopAt}{number of the edge at which the search should terminate; defaults to the root edges}
-
-\item{nEdge}{number of edges (calcluated from length(parent) if not supplied)}
 }
 \value{
 a logical vector stating whether each edge in turn is a descendant of the speficied edge
 }
 \description{
+Descendant Edges
+}
+\details{
 Quickly identifies edges that are 'ancestral' to a particular edge in a tree
+}
+\author{
+Martin R. Smith
 }

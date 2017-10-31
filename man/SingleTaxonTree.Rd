@@ -21,7 +21,4 @@ Create a phylogenetic 'tree' that comprises a single taxon.
 \examples{
 SingleTaxonTree('Homo_sapiens')
 }
-\seealso{
-\code{\link{TwoTipTree}}
-}
 \keyword{tree}

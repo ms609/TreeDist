@@ -7,8 +7,7 @@
 SectorialSearch(tree, dataset, TreeScorer = FitchScore,
   sectRearrangements = list(RootedNNI),
   searchRearrangements = list(RootedNNI, RootedTBR, RootedNNI),
-  maxHits = c(30, 40, 60), maxIter = 2000, cluster = NULL,
-  verbosity = 3, ...)
+  maxHits = c(30, 40, 60), maxIter = 2000, verbosity = 3, ...)
 }
 \arguments{
 \item{tree}{a rooted, resolved tree in \code{\link{phylo}} format from which to start the search;}
@@ -27,8 +26,6 @@ with each entry corresponding to an entry in Rearrangements, or a single entry t
 
 \item{maxIter}{maximum number of rearrangements to perform on each search iteration - provide a list or vector 
 with each entry corresponding to an entry in Rearrangements, or a single entry to be used for all}
-
-\item{cluster}{a cluster prepared using \code{\link{PrepareCluster}}; may speed up search on multicore machines;}
 
 \item{verbosity}{verbosity of output written to terminal; higher values print more messages}
 
@@ -66,7 +63,8 @@ of tree rearrangement, returning a tree whose \var{pscore} is no worse than that
 data('Lobo')
 startTree <- RandomTree(Lobo.phy, 'Cricocosmia') # Position of root will be fixed
 firstEstimate <- SectorialSearch(startTree, Lobo.phy, maxIter=50, largestSector=8, verbosity=5)
-\dontrun{SectorialSearch(firstEstimate, Lobo.phy, sectRearrangements=list(RootedNNI, RootedTBR, RootedNNI)) # Will be time-consuming}
+\dontrun{SectorialSearch(firstEstimate, Lobo.phy,
+         sectRearrangements=list(RootedNNI, RootedTBR, RootedNNI)) # Will be time-consuming}
 
 }
 \references{

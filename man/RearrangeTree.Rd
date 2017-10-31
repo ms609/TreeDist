@@ -29,9 +29,6 @@ will be discarded;}
 
 \item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}})}
 
-\item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
-correspond to the labels of any accompanying tree}
-
 \item{concavity}{concavity constant for implied weighting (not currently implemented!)}
 }
 \value{

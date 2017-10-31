@@ -4,14 +4,12 @@
 \alias{RootedNNI}
 \title{Rearrange a rooted tree}
 \usage{
-RootedNNI(tree)
-RootedSPR(tree)
-RootedTBR(tree)
+RootedNNI(tree, edgeToBreak = NULL)
 }
 \arguments{
 \item{tree}{A bifurcating tree of class \code{\link{phylo}}, with all nodes resolved}
 
-\item{edgeToBreak}{(optional) integer specifying which edge should be broken (pruned)}
+\item{edgeToBreak}{(optional) integer specifying the index of an edge to bisect/prune, generated randomly if not specified}
 
 \item{mergeEdges}{(optional) vector of length 1 or 2, listing edge(s) to be joined:
 In SPR, this is where the pruned subtree will be reconnected.
@@ -34,7 +32,7 @@ Branch lengths are not (yet) supported.
 {
   require('ape')
   tree <- read.tree(text='(((a,b),c),(d,(e,f)));')
-  tree <- SetOutgroup(tree, c('e', 'f'))
+  tree <- root(tree, c('e', 'f'), resolve.root=TRUE)
   plot(tree)
   dev.new()
   plot(RootedNNI(tree))
@@ -46,7 +44,6 @@ Branch lengths are not (yet) supported.
 }
 \seealso{
 \itemize{
-\item \code{\link{SetOutgroup}}, set the outgroup of the phylogenetic tree
 \item \code{\link{NNI}}, unrooted \acronym{NNI} and \acronym{SPR}
 \item \code{\link{TBR}}, unrooted \acronym{TBR}
 }

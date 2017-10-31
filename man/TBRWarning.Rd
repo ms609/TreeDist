@@ -8,12 +8,15 @@ Print a warning and return given tree}
 \usage{
 SPRWarning(tree, error)
 
-return(TBRWarning(tree, 'Message text')
+TBRWarning(tree, error)
 }
 \arguments{
 \item{tree}{tree to return}
 
 \item{error}{error message to report}
+}
+\value{
+the tree specified in tree
 }
 \description{
 TBR Warning
@@ -24,6 +27,10 @@ Print a warning and return given tree
 \item \code{SPRWarning}: for SPR rearrangements
 }}
 
+\examples{
+ return(TBRWarning(tree, 'Message text'))
+
+}
 \author{
 Martin R. Smith
 }

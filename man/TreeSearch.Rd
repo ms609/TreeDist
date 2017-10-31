@@ -15,7 +15,9 @@ TreeSearch(tree, dataset, InitializeData = InitFitch,
 \item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
 correspond to the labels of any accompanying tree}
 
-\item{TreeScorer}{function by which trees should be scored; default \code{\link{FitchScore}}}
+\item{InitializeData}{function to set up data object to prepare for tree search}
+
+\item{CleanUpData}{function to destroy data object on function exit}
 
 \item{Rearrange}{rearrangement function to use; perhaps one of \kbd{RootedNNI}, \kbd{SPR}, or \kbd{TBR};}
 
@@ -28,10 +30,6 @@ correspond to the labels of any accompanying tree}
 \item{verbosity}{verbosity of output written to terminal; higher values print more messages}
 
 \item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}})}
-
-\item{outgroup}{a vector listing the taxa in the outgroup;}
-
-\item{concavity}{concavity constant for implied weighting (not currently implemented!);}
 }
 \value{
 {
@@ -47,7 +45,7 @@ to search for a more parsimonious tree.
 \examples{
 data('Lobo')
 outgroup <- c('Lingula', 'Mickwitzia', 'Neocrania')
-njtree <- Root(nj(dist.hamming(Lobo.phy)), outgroup, resolve.root=TRUE)
+njtree <- ape::root(nj(dist.hamming(Lobo.phy)), outgroup, resolve.root=TRUE)
 njtree$edge.length <- NULL; njtree<-SetOutgroup(njtree, outgroup)
 
 \dontrun{
