@@ -4,7 +4,7 @@
 \alias{Ratchet}
 \title{Parsimony Ratchet}
 \usage{
-Ratchet(tree, data, TreeScorer = FitchScore, returnAll = FALSE,
+Ratchet(tree, dataset, TreeScorer = FitchScore, returnAll = FALSE,
   rooted = TRUE, ratchIter = 100, ratchHits = 10, searchIter = 2000,
   searchHits = 40, bootstrapIter = searchIter, bootstrapHits = searchHits,
   verbosity = 0, rearrangements = "NNI", suboptimal = 1e-08, ...)
@@ -12,7 +12,7 @@ Ratchet(tree, data, TreeScorer = FitchScore, returnAll = FALSE,
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}}
 
-\item{data}{a dataset in the format required by TreeScorer}
+\item{dataset}{a dataset in the format required by TreeScorer}
 
 \item{returnAll}{Set to \code{TRUE} to report all MPTs encountered during the search, perhaps to analyze consensus}
 
