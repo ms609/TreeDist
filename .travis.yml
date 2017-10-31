@@ -1,4 +1,7 @@
 language: r
+r:
+ - 3.4.0
+ - devel
 cache: packages
 warnings_are_errors: false
 #r_github_packages: KlausVigo/phangorn
