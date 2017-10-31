@@ -140,22 +140,22 @@ FitchScore <- function (tree, data, TipData = NULL, at = attributes(data)) {
   Fitch(tree, data, TipData, at, C_Fitch_Score)
 }
 
-# #' @describeIn Fitch returns the parsimony score only, when a Fitch instance has already been initiated
-# #' @export
-# IFitchScore <- function (tree, nChar) {
-#   phangorn:::fast.fitch(tree, nChar, ps=FALSE)
-# }
-
-#' @describeIn Fitch returns the parsimony score only, without checking that data is well formatted
-#' @keywords internal
-#' @export
-FasterFitchScore <- function (tree, data, TipData = TipsAreNames, at = attributes(data))
-  Fitch(tree, data, TipData, at, C_Fitch_Score)
-
-
-# IFitchSteps <- function (tree, nChar) {
-#   phangorn:::fast.fitch(tree, nChar, ps=FALSE)
-# }
+###   #' @describeIn Fitch returns the parsimony score only, when a Fitch instance has already been initiated
+###   #' @export
+###   IFitchScore <- function (tree, nChar) {
+###     phangorn:::fast.fitch(tree, nChar, ps=FALSE)
+###   }
+###   
+###   #' @describeIn Fitch returns the parsimony score only, without checking that data is well formatted
+###   #' @keywords internal
+###   #' @export
+###   FasterFitchScore <- function (tree, data, TipData = TipsAreNames, at = attributes(data))
+###     Fitch(tree, data, TipData, at, C_Fitch_Score)
+###
+###
+###   IFitchSteps <- function (tree, nChar) {
+###     phangorn:::fast.fitch(tree, nChar, ps=FALSE)
+###   }
   
 #' @describeIn Fitch returns a vector listing the number of steps for each character
 #' @export
