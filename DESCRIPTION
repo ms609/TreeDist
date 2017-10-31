@@ -1,6 +1,6 @@
 Package: TreeSearch
 Title: Accelerated tree search in R
-Version: 0.0.6.9000
+Version: 0.1.0
 Date: 2017-10-31
 Authors@R: person('Smith', "Martin R.",
                   email="martins@gmail.com", 
