@@ -10,7 +10,7 @@
 #' @param maxIter the maximum number of iterations to perform before abandoning the search;
 #' @param maxHits the maximum times to hit the best pscore before abandoning the search;
 #' @param forestSize the maximum number of trees to return - useful in concert with \code{\link{consensus}};
-#' @param InitializeData function to set up data object to prepare for tree search
+#' @param InitializeData function to set up data object to prepare for tree search. Should return TRUE, unless a dataset needs to be sent to TreeScorer
 #' @param CleanUpData function to destroy data object on function exit
 #' @template verbosityParam
 #' @template treeScorerDots
@@ -45,14 +45,14 @@
 #' 
 #' @export
 TreeSearch <- function (tree, dataset, 
-                        InitializeData = function(tree, dataset) return (NULL),
+                        InitializeData = function(tree, dataset) return (FALSE),
                         CleanUpData = function(tree, dataset) return (NULL),
                         TreeScorer = FitchScore,
                         Rearrange = RootedTBR,
                         maxIter = 100, maxHits = 20, forestSize = 1,
                         verbosity = 1, ...) {
   # initialize tree and data
-  InitializeData(tree, dataset)
+  dataInitialized <- InitializeData(tree, dataset)
   on.exit(CleanUpData(tree, dataset))
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
   tree$edge.length <- NULL # Edge lengths are not supported
@@ -63,14 +63,21 @@ TreeSearch <- function (tree, dataset,
   } else {
     forestSize <- 1 
   }
-  if (is.null(attr(tree, 'score'))) attr(tree, 'score') <- TreeScorer(tree=tree, dataset=dataset, ...)
+  if (is.null(attr(tree, 'score'))) {
+    attr(tree, 'score') <- if (dataInitialized) TreeScorer(tree=tree, ...) else TreeScorer(tree=tree, dataset=dataset, ...)
+  }
   bestScore <- attr(tree, 'score')
   if (verbosity > 0) cat("\n  - Performing tree search.  Initial score:", bestScore)
   returnSingle <- !(forestSize > 1)
   
   for (iter in 1:maxIter) {
-    trees <- RearrangeTree(tree, TreeScorer, Rearrange, minScore=bestScore,
-                           returnSingle=returnSingle, iter=iter, verbosity=verbosity, ...)
+    if (dataInitialized) {
+      trees <- RearrangeTree(tree, TreeScorer, Rearrange, minScore=bestScore,
+                             returnSingle=returnSingle, iter=iter, verbosity=verbosity, ...)
+    } else {
+      trees <- RearrangeTree(tree, TreeScorer, Rearrange, minScore=bestScore,
+                             returnSingle=returnSingle, iter=iter, verbosity=verbosity, dataset=dataset, ...)
+    }
     iterScore <- attr(trees, 'score')
     if (length(forestSize) && forestSize > 1) {
       hits <- attr(trees, 'hits')
