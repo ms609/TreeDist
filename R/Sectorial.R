@@ -115,8 +115,9 @@ SectorHasData <- function (dataset, tips) {
 #' @template treeScorerDots
 #'  
 #' @return a tree of class \code{phylo} with a \code{TreeScorer} score as good or better than that of \code{tree}
-#'   
+#' 
 #' @author Martin R. Smith
+#' @importFrom ape root
 #' @export
 DoSectorial <- function (tree, dataset, TreeScorer = FitchScore, maxSectIter=100, 
                          maxIter=500, maxImprovements=5, smallestSector=4, largestSector=1e+06, 
@@ -150,8 +151,8 @@ DoSectorial <- function (tree, dataset, TreeScorer = FitchScore, maxSectIter=100
       if (length(candidateNodes == 0)) stop('No selectable sectors contain parsimony information! Either "largestSector" is close to "smallestSector" or your dataset is short of parsimony information.')
     }
     if (verbosity >= 0) cat(' Sector OK.')
-    ###
-    #####crown <- root(AddTip(crown, 0, 'SECTOR_ROOT'), length(crown$tip.label) + 1, resolve.root=TRUE) ## TODO use Root or add ape::root to includeFrom in NAMESPACE
+    
+    crown <- ape::root(AddTip(crown, 0, 'SECTOR_ROOT'), length(crown$tip.label) + 1, resolve.root=TRUE)
     initialScore <- TreeScorer(candidate, dataset, ...)
     attr(candidate, 'score') <- initialScore
     
