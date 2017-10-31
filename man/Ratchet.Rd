@@ -51,7 +51,8 @@ This function returns a tree modified by parsimony ratchet iteration, retaining 
 \code{Ratchet} uses the parsimony ratchet (Nixon 1999) to search for a more parsimonious tree.
 }
 \examples{
-Ratchet(RandomTree(Lobo.phy), Lobo.phy, rooted=TRUE, ratchHits=2, ratchIter=5)
+Ratchet(RandomTree(Lobo.phy), Lobo.phy, rooted=TRUE,
+                  ratchHits=2, ratchIter=5, searchIter=200, searchHits=5)
 
 }
 \references{

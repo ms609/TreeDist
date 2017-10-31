@@ -35,7 +35,8 @@
 #' @seealso \code{\link{TreeSearch}}
 #' @seealso \code{\link{SectorialSearch}}
 #' 
-#' @examples Ratchet(RandomTree(Lobo.phy), Lobo.phy, rooted=TRUE, ratchHits=2, ratchIter=5)
+#' @examples Ratchet(RandomTree(Lobo.phy), Lobo.phy, rooted=TRUE,
+#'                   ratchHits=2, ratchIter=5, searchIter=200, searchHits=5)
 #' 
 #' @keywords  tree 
 #' @export
