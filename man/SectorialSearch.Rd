@@ -48,6 +48,8 @@ As such, the output of \code{DoSectorial} should be treated by further \acronym{
 rearrangements and only retained if the ultimate parsimony score is better than 
 that of the original tree.
 
+NOTE. This function is not fully implemented, or tested; it may not work for many datasets.  It's on the TODO list.
+
 \code{SectorialSearch} is a basic recipe that runs \code{DoSectorial} followed by a few rounds
 of tree rearrangement, returning a tree whose \var{pscore} is no worse than that of \code{start.tree}.
 }
