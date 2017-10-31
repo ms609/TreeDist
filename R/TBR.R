@@ -23,7 +23,7 @@ TBRWarning <- function (tree, error) {
 #' \code{TBR} performs a single random \acronym{TBR} iteration.
 #'
 #' @param tree A bifurcating tree of class \code{\link{phylo}}, with all nodes resolved;
-#' @param edgeToBreak the index of an edge to bisect, generated randomly if not specified.
+#' @template edgeBreakingParams
 #' 
 #' @details Branch lengths are not (yet) supported.
 #' 
