@@ -35,7 +35,6 @@ C_Fitch_Checks <- function (characters, nChar, parent, child, nEdge, weight, max
   Assert(length(weight) == nChar)
   Assert(maxNode == max(parent))
   Assert(parent[1] == max(parent)) # Are nodes numbered in Postorder??    
-  Assert(nTip == length(tipLabel))
   C_Fitch(characters, nChar, parent, child, nEdge, weight, maxNode, nTip)
 }
 
