@@ -21,7 +21,6 @@
 #'                with each entry corresponding to an entry in Rearrangements, or a single entry to be used for all
 #' @param maxHits maximum number of hits to accomplish on each search iteration - provide a list or vector 
 #'                with each entry corresponding to an entry in Rearrangements, or a single entry to be used for all
-#' @param cluster a cluster prepared using \code{\link{PrepareCluster}}; may speed up search on multicore machines;
 #' @param k stop when \code{k} searches have improved their sectorial score;
 #' @template verbosityParam
 #' @param smallestSector sectors with fewer than \code{smallestSector} taxa will not be selected; \kbd{4} is the smallest sensible value;
@@ -52,20 +51,20 @@
 #' @export
 SectorialSearch <- function (tree, dataset, TreeScorer = FitchScore, sectRearrangements=list(RootedNNI), 
                              searchRearrangements=list(RootedNNI, RootedTBR, RootedNNI), 
-                             maxHits=c(30, 40, 60), maxIter=2000, cluster=NULL, verbosity=3, ...) {
+                             maxHits=c(30, 40, 60), maxIter=2000, verbosity=3, ...) {
   best.score <- attr(tree, 'score')
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
  
   tree <- RenumberTips(tree, names(dataset))
   if (length(best.score) == 0) best.score <- TreeScorer(tree, dataset, ...)
-  sect <- DoSectorial(tree, dataset, cluster=cluster,
-    verbosity=verbosity-1, maxit=30, maxIter=max(maxIter), maxHits=15, smallestSector=6, 
+  sect <- DoSectorial(tree, dataset, verbosity=verbosity-1, maxit=30, 
+    maxIter=max(maxIter), maxHits=15, smallestSector=6, 
     largestSector=dim(tree$edge)[1]*0.25, Rearrangements=sectRearrangements)
   for (i in seq_along(Rearrangements)) {
     iters <- if (length(maxIter) <= i) maxIter[[i]] else min(maxIter)
     hits  <- if (length(maxHits) <= i) maxHits[[i]] else min(maxHits)
     sect <- TreeSearch(sect, dataset, TreeScorer, Rearrangements[[i]], maxIter=iters,
-                         maxHits=hits, cluster=cluster, verbosity=verbosity-1)
+                         maxHits=hits, verbosity=verbosity-1)
   }
   if (attr(sect, 'score') <= best.score) {
     return (sect)
