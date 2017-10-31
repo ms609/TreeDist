@@ -28,7 +28,11 @@ Print a warning and return given tree
 }}
 
 \examples{
+testFunction <- function (tree) {
  return(TBRWarning(tree, 'Message text'))
+}
+\dontrun{testFunction(0) # will trigger warning}
+
 
 }
 \author{

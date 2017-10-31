@@ -16,11 +16,11 @@ C_Fitch_Steps <- function (characters, nChar, parent, child, nEdge, weight, maxN
 #' Wrapper to FITCH
 #' @return the full return of the phangorn C function FITCH
 ## @useDynLib TreeSearch phangorn_FITCH
-#' @useDynLib TreeSearch, .registration = TRUE
+#' @useDynLib TreeSearch, .registration = TRUE, .fixes="C_"
 #' @keywords internal
 #' @export
 C_Fitch <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
-  .Call("phangorn_FITCH", as.integer(characters), as.integer(nChar),
+  .Call(C_phangorn_FITCH, as.integer(characters), as.integer(nChar),
         as.integer(parent), as.integer(child), as.integer(nEdge),
         as.double(weight), as.integer(maxNode), as.integer(nTip))
 }

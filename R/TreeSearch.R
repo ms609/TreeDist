@@ -33,7 +33,7 @@
 #' @examples
 #' data('Lobo')
 #' outgroup <- c('Lingula', 'Mickwitzia', 'Neocrania')
-#' njtree <- ape::root(nj(dist.hamming(Lobo.phy)), outgroup, resolve.root=TRUE)
+#' njtree <- ape::root(ape::nj(dist.hamming(Lobo.phy)), outgroup, resolve.root=TRUE)
 #' njtree$edge.length <- NULL; njtree<-SetOutgroup(njtree, outgroup)
 #'
 #' \dontrun{

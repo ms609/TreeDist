@@ -38,8 +38,8 @@ static const R_CallMethodDef callMethods[] = {
 
 void R_init_TreeSearch(DllInfo *dll) {
   R_registerRoutines(dll, cMethods, callMethods, NULL, NULL);
-  R_RegisterCCallable("TreeSearch", "RENUMBER_TREE", (DL_FUNC) &RENUMBER_TREE);
+  //R_RegisterCCallable("TreeSearch", "RENUMBER_TREE", (DL_FUNC) &RENUMBER_TREE);
   R_useDynamicSymbols(dll, FALSE);
-  //R_forceSymbols(dll, TRUE);
+  R_forceSymbols(dll, TRUE);
 }
 

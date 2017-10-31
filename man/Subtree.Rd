@@ -25,9 +25,8 @@ Unlike extract.clade, this function supports the extraction of 'clades' that con
 }
 \examples{
 {
-library('phangorn')
-tree <- rtree(20, br=NULL)
-plot(tree); nodelabels(); nodelabels(33, 33, bg='yellow'); dev.new()
+tree <- Preorder(ape::rtree(20, br=NULL))
+plot(tree); ape::nodelabels(); ape::nodelabels(33, 33, bg='yellow'); dev.new()
 plot(Subtree(tree, 33))
 }
 

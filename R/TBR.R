@@ -6,7 +6,11 @@
 #'
 #' @return the tree specified in tree
 #' @examples
+#' testFunction <- function (tree) {
 #'  return(TBRWarning(tree, 'Message text'))
+#' }
+#' \dontrun{testFunction(0) # will trigger warning}
+#' 
 #'
 #' @author Martin R. Smith
 #' @keywords internal

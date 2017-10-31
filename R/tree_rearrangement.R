@@ -64,7 +64,7 @@ RearrangeTree <- function (tree, TreeScorer = FitchScore, Rearrange = RootedNNI,
 #' @keywords internal
 #' @export
 NeworderPhylo <- function (nTaxa, parent, child, nb.edge, whichwise) {
-  .C('ape_neworder_phylo', as.integer(nTaxa), as.integer(parent), as.integer(child), 
+  .C(C_ape_neworder_phylo, as.integer(nTaxa), as.integer(parent), as.integer(child), 
      as.integer(nb.edge), integer(nb.edge), as.integer(whichwise), NAOK = TRUE)[[5]]
 }
 
@@ -74,7 +74,7 @@ NeworderPhylo <- function (nTaxa, parent, child, nb.edge, whichwise) {
 #' @keywords internal
 #' @export
 NeworderPruningwise <- function (nTaxa, nb.node, parent, child, nb.edge) {
-  .C('ape_neworder_pruningwise', as.integer(nTaxa), as.integer(nb.node), as.integer(parent), 
+  .C(C_ape_neworder_pruningwise, as.integer(nTaxa), as.integer(nb.node), as.integer(parent), 
      as.integer(child), as.integer(nb.edge), integer(nb.edge))[[6]]
 }
 
@@ -86,7 +86,7 @@ NeworderPruningwise <- function (nTaxa, nb.node, parent, child, nb.edge) {
 #' @keywords internal
 #' @export
 OrderEdgesNumberNodes <- function (parent, child, nTips, nEdge = length(parent)) {
-  matrix(unlist(.C('order_edges_number_nodes', as.integer(parent), as.integer(child),
+  matrix(unlist(.C(C_order_edges_number_nodes, as.integer(parent), as.integer(child),
   as.integer(nEdge))[1:2]), ncol=2)
 }
 
@@ -98,7 +98,7 @@ OrderEdgesNumberNodes <- function (parent, child, nTips, nEdge = length(parent))
 #' @keywords internal
 #' @export
 RenumberTree <- function (parent, child, nEdge = length(parent)) {
-  matrix(.Call('RENUMBER_TREE', as.integer(parent), as.integer(child), as.integer(nEdge)), ncol=2)
+  matrix(.Call(C_RENUMBER_TREE, as.integer(parent), as.integer(child), as.integer(nEdge)), ncol=2)
 }
 
 #' Reorder tree Cladewise
