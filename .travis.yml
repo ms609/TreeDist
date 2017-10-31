@@ -31,6 +31,5 @@ bioc_packages:
   - seqLogo
   - Biostrings
   
-  
 after_success:
   - Rscript -e 'install.packages('covr'); library(covr); codecov()'
