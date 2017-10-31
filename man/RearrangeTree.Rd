@@ -28,8 +28,6 @@ will be discarded;}
 \item{verbosity}{verbosity of output written to terminal; higher values print more messages}
 
 \item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}})}
-
-\item{concavity}{concavity constant for implied weighting (not currently implemented!)}
 }
 \value{
 {This function returns the most parsimonious of the trees generated, with attributes \code{hits} and \code{pscore}

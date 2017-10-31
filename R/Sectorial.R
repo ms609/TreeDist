@@ -15,16 +15,11 @@
 #' 
 #' @param tree a rooted, resolved tree in \code{\link{phylo}} format from which to start the search;
 #' @template datasetParam
-#' @param outgroup a vector listing the taxa that form the outgroup;
-#' @template concavityParam
 #' @param maxIter maximum number of rearrangements to perform on each search iteration - provide a list or vector 
 #'                with each entry corresponding to an entry in Rearrangements, or a single entry to be used for all
 #' @param maxHits maximum number of hits to accomplish on each search iteration - provide a list or vector 
 #'                with each entry corresponding to an entry in Rearrangements, or a single entry to be used for all
-#' @param k stop when \code{k} searches have improved their sectorial score;
 #' @template verbosityParam
-#' @param smallestSector sectors with fewer than \code{smallestSector} taxa will not be selected; \kbd{4} is the smallest sensible value;
-#' @param largestSector sectors with more than \code{largestSector} taxa will not be selected;
 #' @param sectRearrangements A list of functions to be applied when rearranging trees in sectorial 
 #'                           search. Note: these must retain the position of the root of the tree
 #' @param searchRearrangements A list of functions to be applied, in turn, during tree search.

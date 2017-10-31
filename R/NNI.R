@@ -10,7 +10,8 @@
 #' Branch lengths are not supported.
 #' 
 #' @template treeParam
-#' @template edgeBreakingParams
+#' @template edgeToBreakParam
+#' @template mergeEdgesParam
 #' 
 #' @return Returns a tree with class \code{phylo}.
 #'
@@ -67,7 +68,8 @@ NNI <- function (tree, edgeToBreak=NULL) {
 #' Branch lengths are not (yet) supported.
 #'
 #' @param tree A bifurcating tree of class \code{\link{phylo}}, with all nodes resolved
-#' @template edgeBreakingParams
+#' @template edgeToBreakParam
+#' @template mergeEdgesParam
 #' 
 #' @return This function returns a tree, in \code{phylo} format.
 #'

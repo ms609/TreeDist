@@ -4,7 +4,8 @@
 #' to search for a more parsimonious tree.
 #'  
 #' @param tree a fully-resolved starting tree in \code{\link{phylo}} format, with the desired outgroup; edge lengths are not supported and will be deleted;
-#' @template datasetTreeScorerParams
+#' @template datasetParam
+#' @template treeScorerParam
 #' @param Rearrange rearrangement function to use; perhaps one of \kbd{RootedNNI}, \kbd{SPR}, or \kbd{TBR};
 #' @param maxIter the maximum number of iterations to perform before abandoning the search;
 #' @param maxHits the maximum times to hit the best pscore before abandoning the search;

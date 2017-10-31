@@ -1,7 +1,8 @@
 #' Bootstrap tree search with inapplicable data
 #' 
 #' @template preorderTreeParam
-#' @template datasetTreeScorerParams
+#' @template datasetParam
+#' @template treeScorerParam
 #' @param maxIter maximum number of iterations to perform in tree search
 #' @param maxHits number of times to find optimal tree length before stopping tree search
 #' @param rooted set to FALSE if position of root may change, TRUE if position and composition of

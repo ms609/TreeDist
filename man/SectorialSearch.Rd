@@ -30,16 +30,6 @@ with each entry corresponding to an entry in Rearrangements, or a single entry t
 \item{verbosity}{verbosity of output written to terminal; higher values print more messages}
 
 \item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}})}
-
-\item{outgroup}{a vector listing the taxa that form the outgroup;}
-
-\item{concavity}{concavity constant for implied weighting (not currently implemented!)}
-
-\item{k}{stop when \code{k} searches have improved their sectorial score;}
-
-\item{smallestSector}{sectors with fewer than \code{smallestSector} taxa will not be selected; \kbd{4} is the smallest sensible value;}
-
-\item{largestSector}{sectors with more than \code{largestSector} taxa will not be selected;}
 }
 \value{
 a rooted tree of class \code{phylo}.

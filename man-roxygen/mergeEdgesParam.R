@@ -1,4 +1,3 @@
-#' @param edgeToBreak (optional) integer specifying the index of an edge to bisect/prune, generated randomly if not specified
 #' @param mergeEdges (optional) vector of length 1 or 2, listing edge(s) to be joined:
 #'                   In SPR, this is where the pruned subtree will be reconnected.
 #'                   In TBR, these edges will be reconnected (so must be on opposite

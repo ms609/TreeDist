@@ -10,7 +10,6 @@
 #'     \code{\link{RootedNNI}}, \code{\link{RootedSPR}} or \code{\link{RootedTBR}};
 #' @param  minScore trees longer than \code{minScore}, probably the score of the starting tree,
 #'     will be discarded;
-#' @template concavityParam 
 #' @param  returnSingle returns all trees if \kbd{FALSE} or a randomly selected tree if \kbd{TRUE};}
 #'   \item{iter}{iteration number of calling function, for reporting to user only;
 #' @template verbosityParam
@@ -65,8 +64,8 @@ RearrangeTree <- function (tree, TreeScorer = FitchScore, Rearrange = RootedNNI,
 #' @keywords internal
 #' @export
 NeworderPhylo <- function (nTaxa, parent, child, nb.edge, whichwise) {
-  .C('neworder_phylo', as.integer(nTaxa), as.integer(parent), as.integer(child), 
-     as.integer(nb.edge), integer(nb.edge), as.integer(whichwise), NAOK = TRUE, PACKAGE='ape')[[5]]
+  .C('ape_neworder_phylo', as.integer(nTaxa), as.integer(parent), as.integer(child), 
+     as.integer(nb.edge), integer(nb.edge), as.integer(whichwise), NAOK = TRUE)[[5]]
 }
 
 #' neworder_pruningwise
@@ -75,8 +74,8 @@ NeworderPhylo <- function (nTaxa, parent, child, nb.edge, whichwise) {
 #' @keywords internal
 #' @export
 NeworderPruningwise <- function (nTaxa, nb.node, parent, child, nb.edge) {
-  .C('neworder_pruningwise', as.integer(nTaxa), as.integer(nb.node), as.integer(parent), 
-     as.integer(child), as.integer(nb.edge), integer(nb.edge), PACKAGE='ape')[[6]]
+  .C('ape_neworder_pruningwise', as.integer(nTaxa), as.integer(nb.node), as.integer(parent), 
+     as.integer(child), as.integer(nb.edge), integer(nb.edge))[[6]]
 }
 
 

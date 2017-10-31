@@ -14,6 +14,8 @@ BootstrapTree(tree, dataset, TreeScorer = FitchScore, maxIter, maxHits,
 \item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
 correspond to the labels of any accompanying tree}
 
+\item{TreeScorer}{function by which trees should be scored; default \code{\link{FitchScore}}}
+
 \item{maxIter}{maximum number of iterations to perform in tree search}
 
 \item{maxHits}{number of times to find optimal tree length before stopping tree search}
