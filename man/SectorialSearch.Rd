@@ -56,7 +56,7 @@ of tree rearrangement, returning a tree whose \var{pscore} is no worse than that
 \examples{
 data('Lobo')
 startTree <- RandomTree(Lobo.phy, 'Cricocosmia') # Position of root will be fixed
-firstEstimate <- SectorialSearch(startTree, Lobo.phy, maxIter=50, largestSector=8, verbosity=5)
+\dontrun{firstEstimate <- SectorialSearch(startTree, Lobo.phy, maxIter=50, verbosity=5)}
 \dontrun{SectorialSearch(firstEstimate, Lobo.phy,
          sectRearrangements=list(RootedNNI, RootedTBR, RootedNNI)) # Will be time-consuming}
 

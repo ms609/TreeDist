@@ -39,7 +39,7 @@ Branch lengths are not (yet) supported.
 
 \examples{
 {
-tree <- RandomTree(20)
+tree <- ape::rtree(20, br=FALSE)
 SPR(tree)
 }
 }
