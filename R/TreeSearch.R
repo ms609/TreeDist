@@ -53,7 +53,7 @@ TreeSearch <- function (tree, dataset,
                         verbosity = 1, ...) {
   # initialize tree and data
   InitializeData(tree, dataset)
-  on.exit(CleanUpData)
+  on.exit(CleanUpData(tree, dataset))
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
   tree$edge.length <- NULL # Edge lengths are not supported
   attr(tree, 'hits') <- 1
@@ -63,7 +63,7 @@ TreeSearch <- function (tree, dataset,
   } else {
     forestSize <- 1 
   }
-  if (is.null(attr(tree, 'score'))) attr(tree, 'score') <- TreeScorer(tree=tree, ...)
+  if (is.null(attr(tree, 'score'))) attr(tree, 'score') <- TreeScorer(tree=tree, dataset=dataset, ...)
   bestScore <- attr(tree, 'score')
   if (verbosity > 0) cat("\n  - Performing tree search.  Initial score:", bestScore)
   returnSingle <- !(forestSize > 1)
