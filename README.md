@@ -15,3 +15,13 @@ Heuristic searches such as the Parsimony Ratchet are implemented (function: `Rat
 
 The key function is `TreeSearch`, which takes a tree and a dataset; functions can be specified to 'load' the 
 data (perhaps sending it to C?) and to score a tree (the Fitch algorithm is used by default).
+
+# Installation
+
+The library requires a working version of phangorn > 2.2.1.  The version on the CRAN repository at 2 Nov 2017 
+has caused some issues during installation; an alternative is to install from a known working version of 30 Oct 2017:
+
+```
+if (!require(devtools)) install.packages('devtools')
+devtools::install_github('KlausVigo/phangorn', ref='7192bfb4403c35c16a7b735160525d272736b061') 
+```
