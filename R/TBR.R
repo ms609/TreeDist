@@ -230,7 +230,6 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
 
   if (is.null(edgeToBreak)) {
     edgeToBreak <- SampleOne(which(selectableEdges)) # Pick an edge at random
-    cat("Selecting edgeToBreak", edgeToBreak, "\n")
   } else {
     if (edgeToBreak > nEdge) return(TBRWarning(tree, "edgeToBreak > nEdge"))
     if (edgeToBreak < 1) return(TBRWarning(tree, "edgeToBreak < 1"))
