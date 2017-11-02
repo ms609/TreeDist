@@ -229,7 +229,8 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   if (!any(selectableEdges)) return(TBRWarning(tree, 'No opportunity to rearrange tree due to root position'))
 
   if (is.null(edgeToBreak)) {
-    edgeToBreak <- SampleOne(which(selectableEdges), len=nEdge - 2L) # Pick an edge at random
+    edgeToBreak <- SampleOne(which(selectableEdges)) # Pick an edge at random
+    cat("Selecting edgeToBreak", edgeToBreak, "\n")
   } else {
     if (edgeToBreak > nEdge) return(TBRWarning(tree, "edgeToBreak > nEdge"))
     if (edgeToBreak < 1) return(TBRWarning(tree, "edgeToBreak < 1"))
@@ -246,7 +247,7 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
     # TODO check that all expected selections are valid
     selectableEdges[edgeToBreak] <- FALSE
     ###Assert(any(selectableEdges))
-    edgeToBreak <- SampleOne(which(selectableEdges), len=nEdge - 2L)
+    edgeToBreak <- SampleOne(which(selectableEdges))
   }
   brokenEdge <- seq_along(parent) == edgeToBreak
   brokenEdge.parentNode <- parent[edgeToBreak]
