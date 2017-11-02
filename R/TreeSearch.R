@@ -53,6 +53,7 @@ TreeSearch <- function (tree, dataset,
   # initialize tree and data
   dataInitialized <- InitializeData(tree, dataset)
   on.exit(CleanUpData(tree, dataset))
+  if (dim(tree$edge)[1] != 2 * tree$Nnode) stop("tree must be bifurcating; try rooting with ape::root")
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
   tree$edge.length <- NULL # Edge lengths are not supported
   attr(tree, 'hits') <- 1

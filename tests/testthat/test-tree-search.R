@@ -3,12 +3,14 @@ library(phangorn)
 
 context("tree search")
 comb11 <- read.tree(text="(a, (b, (c, (d, (e, (f, (g, (h, (i, (j, k))))))))));")
+unrooted11 <- read.tree(text="(a, b, (c, (d, (e, (f, (g, (h, (i, (j, k)))))))));")
 data11 <- cbind(upper.tri(matrix(FALSE, 11, 11))[, 3:10], lower.tri(matrix(FALSE, 11, 11))[, 2:9])
 rownames(data11) <- letters[1:11]
 phy11 <- phyDat(data11, type='USER', levels=c(FALSE, TRUE))
 
 test_that("Tree can be found", {
   set.seed(0)
+  expect_error(TreeSearch(tree=unrooted11, dataset=phy11))
   expect_equal(TreeSearch(tree=RandomTree(phy11, 'a'), dataset=phy11,
                maxIter=2500, Rearrange = RootedTBR, verbosity=0), comb11)
   expect_equal(TreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000, Rearrange = RootedSPR, verbosity=0), comb11)
