@@ -207,18 +207,24 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   nEdge <- length(parent)
   rightTree <- DescendantEdges(1, parent, child, nEdge)
   selectableEdges <- !rootEdges
-  if (sum( rightTree) < 4) selectableEdges[ rightTree] <- FALSE
-  if (sum(!rightTree) < 4) selectableEdges[!rightTree] <- FALSE
-  
-  rootChildren <- child[rootEdges]
-  rightGrandchildEdges   <- parent==rootChildren[1]
-  rightGrandchildren     <- child[rightGrandchildEdges]
-  rightGrandchildrenTips <- rightGrandchildren <= nTips
-  if (any(rightGrandchildrenTips)) selectableEdges[which(rightGrandchildEdges)[!rightGrandchildrenTips]] <- FALSE  
-   leftGrandchildEdges   <- parent==rootChildren[2]
-   leftGrandchildren     <- child[ leftGrandchildEdges]
-   leftGrandchildrenTips <-  leftGrandchildren <= nTips
-  if (any( leftGrandchildrenTips)) selectableEdges[which( leftGrandchildEdges)[! leftGrandchildrenTips]] <- FALSE
+  if (sum( rightTree) < 4) {
+    selectableEdges[ rightTree] <- FALSE
+  } else if (sum( rightTree) < 6) {
+    rootChildren <- child[rootEdges]
+    rightGrandchildEdges   <- parent==rootChildren[1]
+    rightGrandchildren     <- child[rightGrandchildEdges]
+    rightGrandchildrenTips <- rightGrandchildren <= nTips
+    if (any(rightGrandchildrenTips)) selectableEdges[which(rightGrandchildEdges)[!rightGrandchildrenTips]] <- FALSE  
+  }
+  if (sum(!rightTree) < 4) {
+    selectableEdges[!rightTree] <- FALSE
+  } else if (sum(!rightTree) < 6) {
+    rootChildren <- child[rootEdges]
+     leftGrandchildEdges   <- parent==rootChildren[2]
+     leftGrandchildren     <- child[ leftGrandchildEdges]
+     leftGrandchildrenTips <-  leftGrandchildren <= nTips
+    if (any( leftGrandchildrenTips)) selectableEdges[which( leftGrandchildEdges)[! leftGrandchildrenTips]] <- FALSE  
+  }
   
   if (!any(selectableEdges)) return(TBRWarning(tree, 'No opportunity to rearrange tree due to root position'))
 
