@@ -287,7 +287,7 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   } else {
     whichAdrift <- edgesOnAdriftSegment[mergeEdges]
     if (sum(whichAdrift) != 1) return(TBRWarning(tree, paste("Invalid edges selected to merge:",
-            mergeEdges[1], mergeEdges[2])))
+            mergeEdges[1], mergeEdges[2], " - etb= ", edgeToBreak)))
     adriftReconnectionEdge <- mergeEdges[whichAdrift]
     rootedReconnectionEdge <- mergeEdges[!whichAdrift]
   }
