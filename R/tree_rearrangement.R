@@ -195,12 +195,15 @@ Preorder <- function (tree) {
 RenumberTips <- function (tree, tipOrder) {
   startOrder <- tree$tip.label
   if (identical(startOrder, tipOrder)) return (tree)
+  if (length(startOrder) != length(tipOrder)) stop("Tree labels and tipOrder must match")
   
   nTip <- length(startOrder)
   child <- tree$edge[, 2]
   tips <- child <= nTip
   
-  tree$edge[tips, 2] <- match(startOrder, tipOrder)[tree$edge[tips, 2]]
+  matchOrder <- match(startOrder, tipOrder)
+  if (any(is.na(matchOrder))) stop("All tree labels must occur in tipOrder")  
+  tree$edge[tips, 2] <- matchOrder[tree$edge[tips, 2]]
   tree$tip.label <- tipOrder
   tree
 }
