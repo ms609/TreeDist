@@ -228,7 +228,7 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
     if (edgeToBreak > nEdge) return(TBRWarning(tree, "edgeToBreak > nEdge"))
     if (edgeToBreak < 1) return(TBRWarning(tree, "edgeToBreak < 1"))
     if (rootEdges[edgeToBreak]) return(TBRWarning(tree, "RootedTBR cannot break root edge; try TBR"))
-    if (!selectableEdges[edgeToBreak]) return(TBRWarning(tree, paste0("Breaking edge", edgeToBreak,
+    if (!selectableEdges[edgeToBreak]) return(TBRWarning(tree, paste("Breaking edge", edgeToBreak,
                                               "does not allow a changing reconnection")))
   }
   repeat {
