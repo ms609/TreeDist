@@ -85,3 +85,42 @@ RandomTree <- function (dataset, root = FALSE) {
   tree <- ape::rtree(length(dataset), tip.label=names(dataset), br=NULL)
   return (if (root != FALSE) ape::root(tree, root, resolve.root=TRUE) else tree)
 }
+
+#' Force taxa to form an outgroup
+#'
+#' Given a tree or a list of taxa, rearrange the ingroup and outgroup taxa such that the two
+#' are sister taxa across the root, without altering the relationships within the ingroup
+#' or within the outgroup.
+#'
+#' @param tree either a tree of class \code{phylo}, or a character vector listing the names of 
+#'        all the taxa in the tree, from which a random tree will be generated.
+#' @param outgroup a vector containing the names of taxa to include in the outgroup
+#'
+#' @return a tree where all outgroup taxa are sister to all remaining taxa, 
+#'         otherwise retaining the topology of the ingroup.
+#' @author Martin R. Smith
+#' @importFrom ape rtree
+#' @importFrom ape root
+#' @export
+EnforceOutgroup <- function (tree, outgroup) {
+  if (class(tree) == 'phylo') {
+    taxa <- tree$tip.label
+  } else if (class(tree) == 'character') {    
+    tree <- ape::root(ape::rtree(length(taxa), tip.label=taxa, br=NULL), taxa[1], resolve.root=TRUE)
+  } else {
+    stop ("tree must be of class phylo")
+  }
+  
+  if (length(outgroup) == 1) return (ape::root(tree, outgroup, resolve.root=TRUE))
+  
+  ingroup <- taxa[!(taxa %in% outgroup)]
+  if (!all(outgroup %in% taxa) || length(ingroup) + length(outgroup) != length(taxa)) {
+    stop ("All outgroup taxa must occur in speficied taxa")
+  }
+  
+  ingroup.branch <- ape::drop.tip(tree, outgroup)
+  outgroup.branch <- ape::drop.tip(tree, ingroup)
+  
+  result <- ape::root(ape::bind.tree(outgroup.branch, ingroup.branch, 0, 1), outgroup, resolve.root=TRUE)
+  RenumberTips(Renumber(result), taxa)
+}
