@@ -259,6 +259,9 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
     nCandidates <- length(mergeEdges)
     if (nCandidates > 1) mergeEdges <- SampleOne(mergeEdges, len=nCandidates)
   }
+  if (length(mergeEdges) == 0) {
+    return(TBRWarning(tree, paste("Selected edge", edgeToBreak, "does not allow any merge operation.")))
+  }
   if (length(mergeEdges) == 1) {
     if (edgesOnAdriftSegment[mergeEdges]) {
       adriftReconnectionEdge <- mergeEdges
