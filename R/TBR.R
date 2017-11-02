@@ -227,7 +227,7 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
     # TODO check that all expected selections are valid
     selectableEdges[edgeToBreak] <- FALSE
     ###Assert(any(selectableEdges))
-    edgeToBreak <- SampleOne(selectableEdges, len=nEdge - 2L)
+    edgeToBreak <- SampleOne(which(selectableEdges), len=nEdge - 2L)
   }
   brokenEdge <- seq_along(parent) == edgeToBreak
   brokenEdge.parentNode <- parent[edgeToBreak]
