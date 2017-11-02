@@ -13,8 +13,7 @@ Authors@R: c(person("Martin R.", 'Smith',
             )
 Copyright: Incorporates C code from the ape and phangorn packages by Emmanuel Paradis and Klaus Schliep. 
     Code is copied rather than linked in the absence of a suitable R interface.
-Description: Searches for phylogenetic trees that are optimal using a user-defined criterion.
-    Employed in Brazeau Guillerme and Smith (2017) <doi:10.1101/209775>
+Description: Searches for phylogenetic trees that are optimal using a user-defined criterion. Employed in Brazeau Guillerme and Smith (2017) <doi:10.1101/209775>.
 Depends: R (>= 3.4.0)
 Imports: 
     ape (>= 4.1),
