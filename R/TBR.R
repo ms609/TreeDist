@@ -209,6 +209,17 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   selectableEdges <- !rootEdges
   if (sum( rightTree) < 4) selectableEdges[ rightTree] <- FALSE
   if (sum(!rightTree) < 4) selectableEdges[!rightTree] <- FALSE
+  
+  rootChildren <- child[rootEdges]
+  rightGrandchildEdges   <- parent==rootChildren[1]
+  rightGrandchildren     <- child[rightGrandchildEdges]
+  rightGrandchildrenTips <- rightGrandchildren <= nTips
+  if (any(rightGrandchildrenTips)) selectableEdges[which(rightGrandchildEdges)[!rightGrandchildrenTips]] <- FALSE  
+   leftGrandchildEdges   <- parent==rootChildren[2]
+   leftGrandchildren     <- child[ leftGrandchildEdges]
+   leftGrandchildrenTips <-  leftGrandchildren <= nTips
+  if (any( leftGrandchildrenTips)) selectableEdges[which( leftGrandchildEdges)[! leftGrandchildrenTips]] <- FALSE
+  
   if (!any(selectableEdges)) return(TBRWarning(tree, 'No opportunity to rearrange tree due to root position'))
 
   if (is.null(edgeToBreak)) {
@@ -217,6 +228,8 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
     if (edgeToBreak > nEdge) return(TBRWarning(tree, "edgeToBreak > nEdge"))
     if (edgeToBreak < 1) return(TBRWarning(tree, "edgeToBreak < 1"))
     if (rootEdges[edgeToBreak]) return(TBRWarning(tree, "RootedTBR cannot break root edge; try TBR"))
+    if (!selectableEdges[edgeToBreak]) return(TBRWarning(tree, paste0("Breaking edge", edgeToBreak,
+                                              "does not allow a changing reconnection")))
   }
   repeat {
     edgeInRight <- rightTree[edgeToBreak]
