@@ -12,7 +12,11 @@ There were 2 NOTEs:
   
   New submission
   
-This is indeed a new submission.
+This was submitted and reviewed by Swetlana Herbrandt, who identified issues that we have
+now resolved:
+
+- Copyright holders have now been added to the Authors@R field
+- A reference has been added to the Descroption field of the DESCRIPTION file.
 
 * checking compiled code ... NOTE
   File 'TreeSearch/libs/x64/TreeSearch.dll':
