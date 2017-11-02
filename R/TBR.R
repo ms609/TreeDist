@@ -210,20 +210,20 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   if (sum( rightTree) < 4) {
     selectableEdges[ rightTree] <- FALSE
   } else if (sum( rightTree) < 6) {
-    rootChildren <- child[rootEdges]
-    rightGrandchildEdges   <- parent==rootChildren[1]
+    rightChild <- child[1]
+    rightGrandchildEdges   <- parent==rightChild
     rightGrandchildren     <- child[rightGrandchildEdges]
     rightGrandchildrenTips <- rightGrandchildren <= nTips
-    if (any(rightGrandchildrenTips)) selectableEdges[which(rightGrandchildEdges)[!rightGrandchildrenTips]] <- FALSE  
+    selectableEdges[which(rightGrandchildEdges)[!rightGrandchildrenTips]] <- FALSE  
   }
   if (sum(!rightTree) < 4) {
     selectableEdges[!rightTree] <- FALSE
   } else if (sum(!rightTree) < 6) {
-    rootChildren <- child[rootEdges]
-     leftGrandchildEdges   <- parent==rootChildren[2]
+     leftChild <- child[rootEdges][2]
+     leftGrandchildEdges   <- parent==leftChild
      leftGrandchildren     <- child[ leftGrandchildEdges]
      leftGrandchildrenTips <-  leftGrandchildren <= nTips
-    if (any( leftGrandchildrenTips)) selectableEdges[which( leftGrandchildEdges)[! leftGrandchildrenTips]] <- FALSE  
+     selectableEdges[which( leftGrandchildEdges)[! leftGrandchildrenTips]] <- FALSE  
   }
   
   if (!any(selectableEdges)) return(TBRWarning(tree, 'No opportunity to rearrange tree due to root position'))
