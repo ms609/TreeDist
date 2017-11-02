@@ -19,7 +19,7 @@ tips given in \code{tipOrder}
 }
 \examples{
 data(Lobo) # Loads the phyDat object Lobo.phy
-tree <- RandomTree(Lobo.phy) # 
+tree <- RandomTree(Lobo.phy)
 tree <- RenumberTips(tree, names(Lobo.phy))
 
 }
