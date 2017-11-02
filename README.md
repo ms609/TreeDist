@@ -18,6 +18,12 @@ data (perhaps sending it to C?) and to score a tree (the Fitch algorithm is used
 
 # Installation
 
+Install and load the library from CRAN as follows:
+```
+install.packages('TreeSearch')
+library('TreeSearch')
+```
+
 The library requires a working version of phangorn > 2.2.1.  The version on the CRAN repository at 2 Nov 2017 
 has caused some issues during installation; an alternative is to install from a known working version of 30 Oct 2017:
 
