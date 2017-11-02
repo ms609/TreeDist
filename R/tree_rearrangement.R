@@ -187,7 +187,7 @@ Preorder <- function (tree) {
 #' 
 #' @examples
 #' data(Lobo) # Loads the phyDat object Lobo.phy
-#' tree <- RandomTree(Lobo.phy) # 
+#' tree <- RandomTree(Lobo.phy)
 #' tree <- RenumberTips(tree, names(Lobo.phy))
 #'
 #' @author Martin R. Smith
@@ -200,7 +200,7 @@ RenumberTips <- function (tree, tipOrder) {
   child <- tree$edge[, 2]
   tips <- child <= nTip
   
-  tree$edge[tips, 2] <- match(startOrder, tipOrder)
+  tree$edge[tips, 2] <- match(startOrder, tipOrder)[tree$edge[tips, 2]]
   tree$tip.label <- tipOrder
   tree
 }
