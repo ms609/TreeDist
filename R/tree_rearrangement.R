@@ -103,7 +103,8 @@ RenumberTree <- function (parent, child, nEdge = length(parent)) {
 
 #' Reorder tree Cladewise
 #' 
-#' A wrapper for \code{ape:::.reorder_ape}
+#' A wrapper for \code{ape:::.reorder_ape}.  Calling this C function directly is approximately twice as fast as using
+#' \code{ape::\link[ape]{cladewise}} or \code{ape::\link[ape]{postorder}}
 #'
 #' @template treeParam
 #' @param nTaxa (optional) number of tips in the tree
