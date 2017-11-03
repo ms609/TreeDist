@@ -56,7 +56,7 @@ TreeSearch <- function (tree, dataset,
   if (dim(tree$edge)[1] != 2 * tree$Nnode) stop("tree must be bifurcating; try rooting with ape::root")
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
   tree$edge.length <- NULL # Edge lengths are not supported
-  attr(tree, 'hits') <- 1
+  attr(tree, 'hits') <- 0
   if (exists("forestSize") && length(forestSize) && forestSize > 1) {
     forest <- empty.forest <- vector('list', forestSize)
     forest[[1]] <- tree
