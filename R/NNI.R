@@ -33,6 +33,7 @@ NNI <- function (tree, edgeToBreak=NULL) {
   nTips   <- (nEdge / 2L) + 1L
   rootNode <- nTips + 1L
   
+  samplable <- child > nTips
   if (!any(samplable)) stop("Not enough edges to allow NNI rearrangement")
   
   if (is.null(edgeToBreak)) { 
