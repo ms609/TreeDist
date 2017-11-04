@@ -12,10 +12,13 @@ RootedNNI(tree, edgeToBreak = NULL)
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}}
 
-\item{edgeToBreak}{(optional) integer specifying the index of an edge to bisect/prune, generated randomly if not specified}
+\item{edgeToBreak}{(optional) integer specifying the index of an edge to bisect/prune,
+generated randomly if not specified.  Alternatively, set to \code{-1} to return a complete list
+of all trees one step from the input tree.}
 }
 \value{
-Returns a tree with class \code{phylo}.
+Returns a tree with class \code{phylo} (if \code{returnAll = FALSE}) or 
+        a set of trees, with class \code{multiPhylo} (if \code{returnAll = TRUE}).
 }
 \description{
 Nearest Neighbour Interchange
@@ -34,8 +37,9 @@ Branch lengths are not supported.
 }}
 
 \examples{
-tree <- ape:::rtree(20, br=NULL)
+tree <- ape::rtree(20, br=NULL)
 NNI(tree)
+NNI(tree, all=TRUE)
 
 }
 \references{
