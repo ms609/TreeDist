@@ -35,16 +35,15 @@ NNI <- function (tree, edgeToBreak=NULL) {
   
   if (!any(samplable)) stop("Not enough edges to allow NNI rearrangement")
   
-  if (edgeToBreak == -1) {
+  if (is.null(edgeToBreak)) { 
+    edgeToBreak <- SampleOne(which(samplable))
+  } else if (edgeToBreak == -1) {
     # newEdges <- vapply(which(samplable), DoubleNNI, parent=parent, child=child, list(matrix(0L, nEdge, 2), matrix(0L, nEdge, 2)))
     newEdges <- unlist(lapply(which(samplable), DoubleNNI, parent=parent, child=child), recursive=FALSE) # Quicker than vapply, surprisingly
     newTrees <- lapply(newEdges, function (edges) {tree$edge <- edges; tree}) # Quicker than vapply, surprisingly
     return(newTrees)
-  } else if (is.null(edgeToBreak)) { 
-    edgeToBreak <- SampleOne(which(samplable))
-  } else {
-    if (!samplable[edgeToBreak]) stop("edgeToBreak must be an internal edge")
-  }
+  } else if (!samplable[edgeToBreak]) stop("edgeToBreak must be an internal edge")
+
   if (is.na(edgeToBreak)) stop("Cannot find a valid rearrangement")
   
   end1   <- parent[edgeToBreak]
@@ -111,15 +110,15 @@ RootedNNI <- function (tree, edgeToBreak = NULL) {
   rootNode <- nTips + 1L
   
   samplable <- parent != rootNode & child > nTips
-  if (edgeToBreak == -1) {
+
+  if (is.null(edgeToBreak)) { 
+    edgeToBreak <- SampleOne(which(samplable))
+  } else if (edgeToBreak == -1) {
     newEdges <- unlist(lapply(which(samplable), DoubleNNI, parent=parent, child=child), recursive=FALSE) # Quicker than vapply, surprisingly
     newTrees <- lapply(newEdges, function (edges) {tree$edge <- edges; tree}) # Quicker than vapply, surprisingly
     return(newTrees)   
-  } else if (is.null(edgeToBreak)) { 
-    edgeToBreak <- SampleOne(which(samplable))
-  } else {
-    if (!samplable[edgeToBreak]) stop("edgeToBreak cannot include a tip or the root node")
-  }
+  } else if (!samplable[edgeToBreak]) stop("edgeToBreak cannot include a tip or the root node")
+  
   if (is.na(edgeToBreak)) stop("Cannot find a valid rearrangement")
   
   end1   <- parent[edgeToBreak]
