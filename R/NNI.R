@@ -42,9 +42,11 @@ NNI <- function (tree, edgeToBreak=NULL) {
     newEdges <- unlist(lapply(which(samplable), DoubleNNI, parent=parent, child=child), recursive=FALSE) # Quicker than vapply, surprisingly
     newTrees <- lapply(newEdges, function (edges) {tree$edge <- edges; tree}) # Quicker than vapply, surprisingly
     return(newTrees)
-  } else if (!samplable[edgeToBreak]) stop("edgeToBreak must be an internal edge")
-
-  if (is.na(edgeToBreak)) stop("Cannot find a valid rearrangement")
+  } else if (!samplable[edgeToBreak]) {
+    stop("edgeToBreak must be an internal edge")
+  } else if (is.na(edgeToBreak)) {
+    stop("Cannot find a valid rearrangement")
+  }
   
   end1   <- parent[edgeToBreak]
   end2   <- child[edgeToBreak]
@@ -59,7 +61,6 @@ NNI <- function (tree, edgeToBreak=NULL) {
   
   tree$edge <- RenumberTree(parent, child)
   return(tree)
-  }
 }
 
 #' Double NNI
@@ -117,9 +118,11 @@ RootedNNI <- function (tree, edgeToBreak = NULL) {
     newEdges <- unlist(lapply(which(samplable), DoubleNNI, parent=parent, child=child), recursive=FALSE) # Quicker than vapply, surprisingly
     newTrees <- lapply(newEdges, function (edges) {tree$edge <- edges; tree}) # Quicker than vapply, surprisingly
     return(newTrees)   
-  } else if (!samplable[edgeToBreak]) stop("edgeToBreak cannot include a tip or the root node")
-  
-  if (is.na(edgeToBreak)) stop("Cannot find a valid rearrangement")
+  } else if (!samplable[edgeToBreak]) {
+    stop("edgeToBreak cannot include a tip or the root node")
+  } else if (is.na(edgeToBreak)) {
+    stop("Cannot find a valid rearrangement")
+  }
   
   end1   <- parent[edgeToBreak]
   end2   <- child[edgeToBreak]
