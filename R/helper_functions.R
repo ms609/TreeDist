@@ -82,8 +82,8 @@ EdgeAncestry <- function (edge, parent, child, stopAt = (parent==min(parent))) {
 #' @importFrom ape root
 #' @export
 RandomTree <- function (dataset, root = FALSE) {
-  tree <- ape::rtree(length(dataset), tip.label=names(dataset), br=NULL)
-  return (if (root != FALSE) ape::root(tree, root, resolve.root=TRUE) else tree)
+  tree <- rtree(length(dataset), tip.label=names(dataset), br=NULL)
+  return (if (root != FALSE) root(tree, root, resolve.root=TRUE) else tree)
 }
 
 #' Force taxa to form an outgroup
@@ -106,21 +106,21 @@ EnforceOutgroup <- function (tree, outgroup) {
   if (class(tree) == 'phylo') {
     taxa <- tree$tip.label
   } else if (class(tree) == 'character') {    
-    tree <- ape::root(ape::rtree(length(taxa), tip.label=taxa, br=NULL), taxa[1], resolve.root=TRUE)
+    tree <- root(rtree(length(taxa), tip.label=taxa, br=NULL), taxa[1], resolve.root=TRUE)
   } else {
     stop ("tree must be of class phylo")
   }
   
-  if (length(outgroup) == 1) return (ape::root(tree, outgroup, resolve.root=TRUE))
+  if (length(outgroup) == 1) return (root(tree, outgroup, resolve.root=TRUE))
   
   ingroup <- taxa[!(taxa %in% outgroup)]
   if (!all(outgroup %in% taxa) || length(ingroup) + length(outgroup) != length(taxa)) {
     stop ("All outgroup taxa must occur in speficied taxa")
   }
   
-  ingroup.branch <- ape::drop.tip(tree, outgroup)
-  outgroup.branch <- ape::drop.tip(tree, ingroup)
+  ingroup.branch <- drop.tip(tree, outgroup)
+  outgroup.branch <- drop.tip(tree, ingroup)
   
-  result <- ape::root(ape::bind.tree(outgroup.branch, ingroup.branch, 0, 1), outgroup, resolve.root=TRUE)
+  result <- root(bind.tree(outgroup.branch, ingroup.branch, 0, 1), outgroup, resolve.root=TRUE)
   RenumberTips(Renumber(result), taxa)
 }

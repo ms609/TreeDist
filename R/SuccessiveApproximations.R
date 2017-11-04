@@ -31,7 +31,7 @@ SuccessiveApproximations <- function (tree, dataset, outgroup = NULL, k = 3, max
   n.node <- max.node - n.tip
   bests <- vector('list', maxSuccIter + 1)
   bestsConsensus <- vector('list', maxSuccIter + 1)
-  best <- bests[[1]] <- bestsConsensus[[1]] <- ape::root(tree, outgroup, resolve.root=TRUE)
+  best <- bests[[1]] <- bestsConsensus[[1]] <- root(tree, outgroup, resolve.root=TRUE)
   for (i in seq_len(maxSuccIter) + 1) {
     if (verbosity > 0) cat('\nSuccessive Approximations Iteration', i - 1)
     attr(best, 'score') <- NULL
@@ -45,7 +45,7 @@ SuccessiveApproximations <- function (tree, dataset, outgroup = NULL, k = 3, max
     trees <- unique(trees)
     bests[[i]] <- trees
     suboptimality <- Suboptimality(trees)
-    bestsConsensus[[i]] <- ape::consensus(trees[suboptimality == 0])
+    bestsConsensus[[i]] <- consensus(trees[suboptimality == 0])
     if (all.equal(bestsConsensus[[i]], bestsConsensus[[i - 1]])) return(bests[2:i])
     best <- trees[suboptimality == 0][[1]]
     l.i <- Fitch(best, dataset)

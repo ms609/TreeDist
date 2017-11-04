@@ -45,7 +45,7 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   parent <- edge[, 1]
   child  <- edge[, 2]
   nEdge <- length(parent)
-  if (nTips == 3) return (ape::root(tree, SampleOne(child[parent==max(parent)], len=2L)))
+  if (nTips == 3) return (root(tree, SampleOne(child[parent==max(parent)], len=2L)))
   
   notDuplicateRoot <- !logical(nEdge)
   rightSide <- DescendantEdges(1, parent, child, nEdge)
