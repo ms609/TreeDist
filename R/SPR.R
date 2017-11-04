@@ -64,7 +64,7 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   } else if (edgeToBreak == -1) {
     return(unique(unlist(lapply(which(notDuplicateRoot), AllSPR,
       parent=parent, child=child, nEdge=nEdge, notDuplicateRoot=notDuplicateRoot),
-      recursive=FALSE))) # TODO the fact that we need to use unique indicates that 
+      recursive=FALSE))) # TODO the fact that we need to use `unique` indicates that 
                          #      we're being inefficient here.
   } else if (edgeToBreak > nEdge) {
     return(SPRWarning(tree, "edgeToBreak > nEdge"))
@@ -229,6 +229,11 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   if (is.null(edgeToBreak)) {
     # Pick an edge at random
     edgeToBreak <- SampleOne(which(breakable))
+  } else if (edgeToBreak == -1) {
+    return(unique(unlist(lapply(which(breakable), AllSPR,
+      parent=parent, child=child, nEdge=nEdge, notDuplicateRoot=notDuplicateRoot),
+      recursive=FALSE))) # TODO the fact that we need to use `unique` indicates that 
+                         #      we're being inefficient here.
   } else {
     if (!breakable[edgeToBreak]) return(SPRWarning(tree, paste("Nowhere to regraft if pruning on edge", edgeToBreak)))
     if (edgeToBreak > nEdge) return(SPRWarning(tree, "edgeToBreak > nEdge"))
