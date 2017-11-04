@@ -26,7 +26,8 @@ Preorder(tree)
 A tree with nodes numbered in postorder
 }
 \description{
-A wrapper for \code{ape:::.reorder_ape}
+A wrapper for \code{ape:::.reorder_ape}.  Calling this C function directly is approximately twice as fast as using
+\code{ape::\link[ape]{cladewise}} or \code{ape::\link[ape]{postorder}}
 }
 \section{Functions}{
 \itemize{

@@ -38,7 +38,7 @@ DoSectorial(tree, dataset, TreeScorer = FitchScore, maxSectIter = 100,
 a tree of class \code{phylo} with a \code{TreeScorer} score as good or better than that of \code{tree}
 }
 \description{
-\code{DoSectorial} is called by SectorialSearch
+\code{DoSectorial} is called by Sectorial
 }
 \author{
 Martin R. Smith
