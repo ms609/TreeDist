@@ -22,7 +22,7 @@
 #' @examples
 #' tree <- ape::rtree(20, br=NULL)
 #' NNI(tree)
-#' NNI(tree, all=TRUE)
+#' NNI(tree, edgeToBreak = -1)
 #'
 #' @export
 NNI <- function (tree, edgeToBreak=NULL) {
