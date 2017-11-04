@@ -33,7 +33,7 @@
 #' 
 #' @seealso \code{\link{Ratchet}}
 #' @seealso \code{\link{TreeSearch}}
-#' @seealso \code{\link{SectorialSearch}}
+#' @seealso \code{\link{Sectorial}}
 #' 
 #' @examples Ratchet(RandomTree(Lobo.phy), Lobo.phy, rooted=TRUE,
 #'                   ratchHits=2, ratchIter=5, searchIter=200, searchHits=5)

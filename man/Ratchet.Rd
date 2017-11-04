@@ -63,7 +63,7 @@ Nixon, K. C. (1999). \cite{The Parsimony Ratchet, a new method for rapid parsimo
 
 \code{\link{TreeSearch}}
 
-\code{\link{SectorialSearch}}
+\code{\link{Sectorial}}
 }
 \author{
 Martin R. Smith
