@@ -1,18 +1,18 @@
 #' Sectorial Search
 #'
-#' \code{SectorialSearch} performs a sectorial search on a tree, preserving the position of the root.
+#' \code{Sectorial} performs a sectorial search on a tree, preserving the position of the root.
 #'
 #' \code{DoSectorial} performs a sectorial search on the tree specified. A sectorial search 
 #' detaches a random part of the tree, performs rearrangements on this subtree, then reattaches it 
 #' to the main tree (Goloboff, 1999).
-#' The improvement to local \var{pscore} hopefully (but not necessarily) improves the overall \var{pscore}.
+#' The improvement to local \var{score} hopefully (but not necessarily) improves the overall \var{score}.
 #' As such, the output of \code{DoSectorial} should be treated by further \acronym{TBR (/SPR/NNI)}
 #' rearrangements and only retained if the ultimate parsimony score is better than 
 #' that of the original tree.
 #' 
 #' NOTE. This function is not fully implemented, or tested; it may not work for many datasets.  It's on the TODO list.
 #' 
-#' \code{SectorialSearch} is a basic recipe that runs \code{DoSectorial} followed by a few rounds
+#' \code{Sectorial} is a basic recipe that runs \code{DoSectorial} followed by a few rounds
 #' of tree rearrangement, returning a tree whose \var{pscore} is no worse than that of \code{start.tree}.
 #' 
 #' @param tree a rooted, resolved tree in \code{\link{phylo}} format from which to start the search;
@@ -42,13 +42,13 @@
 ##' @examples
 ##' data('Lobo')
 ##' startTree <- RandomTree(Lobo.phy, 'Cricocosmia') # Position of root will be fixed
-##' \dontrun{firstEstimate <- SectorialSearch(startTree, Lobo.phy, maxIter=50, verbosity=5)}
-##' \dontrun{SectorialSearch(firstEstimate, Lobo.phy,
+##' \dontrun{firstEstimate <- Sectorial(startTree, Lobo.phy, maxIter=50, verbosity=5)}
+##' \dontrun{Sectorial(firstEstimate, Lobo.phy,
 ##'          sectRearrangements=list(RootedNNI, RootedTBR, RootedNNI)) # Will be time-consuming}
 #' 
 #' @keywords  tree 
 #' @export
-SectorialSearch <- function (tree, dataset, TreeScorer = FitchScore, sectRearrangements=list(RootedNNI), 
+Sectorial <- function (tree, dataset, TreeScorer = FitchScore, sectRearrangements=list(RootedNNI), 
                              searchRearrangements=list(RootedNNI, RootedTBR, RootedNNI), 
                              maxHits=c(30, 40, 60), maxIter=2000, verbosity=3, ...) {
   best.score <- attr(tree, 'score')
@@ -98,7 +98,7 @@ SectorHasData <- function (dataset, tips) {
 
 #' Sectorial Search with inapplicable data
 #'
-#' \code{DoSectorial} is called by SectorialSearch
+#' \code{DoSectorial} is called by Sectorial
 #'
 #' @template preorderTreeParam
 #' @param dataset a dataset in the format expected by \code{TreeScorer}

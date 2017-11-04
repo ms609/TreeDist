@@ -106,7 +106,7 @@ Subtree <- function (tree, node) {
   tips  <- edge2[isTip]
   new.nTip <- length(tips)
   name <- character(new.nTip)
-  name[order(tips)] <- tipLabel[tips]
+  name[order(tips)] <- tipLabel[tips] ## TODO: Check whether using order(method='radix') improves search speed
   edge2[isTip] <- order(tips)
     
   ## renumber nodes:
