@@ -44,9 +44,9 @@ NNI <- function (tree, edgeToBreak=NULL) {
     return(newTrees)
   } else if (!samplable[edgeToBreak]) {
     stop("edgeToBreak must be an internal edge")
-  } else if (is.na(edgeToBreak)) {
-    stop("Cannot find a valid rearrangement")
   }
+
+  if (is.na(edgeToBreak)) stop("Cannot find a valid rearrangement")
   
   end1   <- parent[edgeToBreak]
   end2   <- child[edgeToBreak]
@@ -120,9 +120,9 @@ RootedNNI <- function (tree, edgeToBreak = NULL) {
     return(newTrees)   
   } else if (!samplable[edgeToBreak]) {
     stop("edgeToBreak cannot include a tip or the root node")
-  } else if (is.na(edgeToBreak)) {
-    stop("Cannot find a valid rearrangement")
   }
+  
+  if (is.na(edgeToBreak)) stop("Cannot find a valid rearrangement")
   
   end1   <- parent[edgeToBreak]
   end2   <- child[edgeToBreak]
