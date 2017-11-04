@@ -1,6 +1,7 @@
 src-*
 *.dll
 *.o
+*.gcno
 *.out
 *.RData*
 *.Rhistory
