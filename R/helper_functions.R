@@ -100,7 +100,7 @@ RandomTree <- function (dataset, root = FALSE) {
 #'         otherwise retaining the topology of the ingroup.
 #' @author Martin R. Smith
 #' @importFrom ape rtree
-#' @importFrom ape root
+#' @importFrom ape root drop.tip bind.tree
 #' @export
 EnforceOutgroup <- function (tree, outgroup) {
   if (class(tree) == 'phylo') {

@@ -23,10 +23,8 @@ Nearest Neighbour Interchange
 Rooted NNI
 }
 \details{
-This function performs a single random \acronym{NNI} iteration.
-
 Performs a single iteration of the nearest-neighbour interchange algorithm.
-Based on the corresponding phangorn function, but re-coded to improve speed.
+Based on the corresponding \code{phangorn} function, but re-coded to improve speed.
 
 Branch lengths are not supported.
 }
@@ -41,7 +39,7 @@ NNI(tree)
 
 }
 \references{
-The algorithms are summarized in
+The algorithm is summarized in
 Felsenstein, J. 2004. \cite{Inferring Phylogenies.} Sinauer Associates, Sunderland, Massachusetts.
 }
 \author{
