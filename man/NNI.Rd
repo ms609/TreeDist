@@ -39,6 +39,7 @@ Branch lengths are not supported.
 \examples{
 tree <- ape::rtree(20, br=NULL)
 NNI(tree)
+NNI(tree, edgeToBreak = -1)
 
 }
 \references{
