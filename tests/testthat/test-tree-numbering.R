@@ -28,6 +28,7 @@ CheckTreeSanity <- function (tree) {
 context("Test tree rearrangement")
 small_tree <- rtree(8)
 large_tree <- rtree(80)  
+set.seed(0)
 test_that("NNI trees conform to phylo expectations", {
   for (i in 1:100)  CheckTreeSanity(small_tree <- NNI(small_tree))
   for (i in 1:1000) CheckTreeSanity(large_tree <- NNI(large_tree))
