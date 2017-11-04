@@ -61,10 +61,17 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   if (is.null(edgeToBreak)) {
     # Pick an edge at random
     edgeToBreak <- SampleOne(which(notDuplicateRoot), len=nEdge - 1L)
-  } else {
-    if (edgeToBreak > nEdge) return(SPRWarning(tree, "edgeToBreak > nEdge"))
-    if (edgeToBreak < 1) return(SPRWarning(tree, "edgeToBreak < 1"))
+  } else if (edgeToBreak == -1) {
+    return(unique(unlist(lapply(which(notDuplicateRoot), AllSPR,
+      parent=parent, child=child, nEdge=nEdge, notDuplicateRoot=notDuplicateRoot),
+      recursive=FALSE))) # TODO the fact that we need to use unique indicates that 
+                         #      we're being inefficient here.
+  } else if (edgeToBreak > nEdge) {
+    return(SPRWarning(tree, "edgeToBreak > nEdge"))
+  } else if (edgeToBreak < 1) {
+    return(SPRWarning(tree, "edgeToBreak < 1"))
   }
+  # Breaking a single edge
   brokenEdge <- seq_along(parent) == edgeToBreak
   brokenEdge.parentNode <- parent[edgeToBreak]
   brokenEdge.childNode  <-  child[edgeToBreak]
@@ -81,7 +88,7 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
     brokenRootDaughters <- parent == child[brokenEdgeSister]
     nearBrokenEdge <- nearBrokenEdge | brokenRootDaughters
   }
-    
+  
   if (!is.null(mergeEdge)) { # Quick sanity checks
     if (mergeEdge > nEdge) return(SPRWarning(tree, "mergeEdge value > number of edges"))
     if (length(mergeEdge) !=  1) 
@@ -114,6 +121,66 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   
   tree$edge <- RenumberTree(parent, child, nEdge)
   tree
+}
+
+
+#' All SPR trees
+#'
+#' @template treeParent
+#' @template treeChild
+#' @template treeNEdge
+#' @param notDuplicateRoot vector of length nEdge, specifying for each edge whether it is 
+#'                         the second edge leading to the root (in which case its breaking will be
+#'                         equivalent to breaking the other root edge... except insofar as it moves 
+#'                         the position of the root.)
+#' @template edgeToBreakParam
+#' 
+#' @return a list of edge matrices for all trees one SPR rearrangement from the starting tree
+#'
+#' @author Martin R. Smith
+#' 
+AllSPR <- function (parent, child, nEdge, notDuplicateRoot, edgeToBreak) {
+
+  brokenEdge <- seq_along(parent) == edgeToBreak
+  brokenEdge.parentNode <- parent[edgeToBreak]
+  brokenEdge.childNode  <-  child[edgeToBreak]
+    
+  edgesCutAdrift <- DescendantEdges(edgeToBreak, parent, child, nEdge)
+  edgesOnAdriftSegment <- edgesCutAdrift | brokenEdge
+  
+  brokenEdgeParent <- child == brokenEdge.parentNode
+  brokenEdgeSister <- parent == brokenEdge.parentNode & !brokenEdge
+  brokenEdgeDaughters <- parent == brokenEdge.childNode
+  nearBrokenEdge <- brokenEdge | brokenEdgeSister | brokenEdgeParent | brokenEdgeDaughters
+  if (breakingRootEdge <- !any(brokenEdgeParent)) { 
+    # Edge to break is the Root Node.
+    brokenRootDaughters <- parent == child[brokenEdgeSister]
+    nearBrokenEdge <- nearBrokenEdge | brokenRootDaughters
+  }
+  
+  mergeEdges <- which(!nearBrokenEdge & !edgesOnAdriftSegment & notDuplicateRoot)
+  nCandidates <- length(mergeEdges)
+  
+  if (breakingRootEdge) {
+    newEdges <- lapply(mergeEdges, function (mergeEdge) {
+      newParent <- parent
+      newChild <- child
+      newParent[brokenRootDaughters] <- brokenEdge.parentNode
+      newChild [brokenEdgeSister] <- child[mergeEdge]
+      newParent[brokenEdge | brokenEdgeSister] <- child[brokenEdgeSister]
+      newChild[mergeEdge] <- child[brokenEdgeSister]
+      return(RenumberTree(newParent, newChild, nEdge))
+    }) # lapply faster than vapply
+  } else {
+    newEdges <- lapply(mergeEdges, function (mergeEdge) {
+      newParent <- parent
+      newParent[brokenEdgeSister] <- parent[brokenEdgeParent]
+      newParent[brokenEdgeParent] <- newParent[mergeEdge]
+      newParent[mergeEdge] <- brokenEdge.parentNode
+      return(RenumberTree(newParent, child, nEdge))
+    }) # lapply faster than vapply
+  }
+  return(lapply(newEdges, function (newEdge) {tree$edge <- newEdge; tree}))
 }
 
 #' Rooted SPR 
