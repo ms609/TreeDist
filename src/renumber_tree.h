@@ -10,12 +10,12 @@ extern void order_edges_number_nodes(int *parent, int *child, const int *n_edge)
   int i, q_pos = 0, o_node, next_node;
   const int n_node = *n_edge / 2;
   const int n_allnodes = *n_edge + 1L, root_node = n_node + 2L;
-  int * start_p = calloc(*n_edge, sizeof(int));
+  int * start_p = calloc(*n_edge, sizeof(int)); // calloc zero-initializes
   int * start_c = calloc(*n_edge, sizeof(int));
-  int * child_l  = calloc(n_node, sizeof(int));
-  int * child_r  = calloc(n_node, sizeof(int));
-  int * queue_p  = calloc(n_node, sizeof(int));
-  int * queue_c  = calloc(n_node, sizeof(int));
+  int * child_l = calloc( n_node, sizeof(int));
+  int * child_r = calloc( n_node, sizeof(int));
+  int * queue_p = calloc( n_node, sizeof(int));
+  int * queue_c = calloc( n_node, sizeof(int));
   // TODO check that calloc has returned a non-null pointer; clean-up and exit if calloc has failed
   for (i = 0; i < *n_edge; i++) {
     // Initialize
@@ -73,18 +73,18 @@ extern void order_edges_number_nodes(int *parent, int *child, const int *n_edge)
   }
 }
 
-extern SEXP RENUMBER_TREE(SEXP par, SEXP chi, SEXP ned){   
-    int i, *parent = INTEGER(par), *child = INTEGER(chi);
-    const int n_edge = INTEGER(ned)[0];
-    SEXP RESULT;
-    PROTECT(RESULT = allocVector(INTSXP, n_edge * 2));
-    
-    order_edges_number_nodes(parent, child, &n_edge);
-    for (i = 0; i < n_edge; i++) {
-      INTEGER(RESULT)[i] = parent[i];
-      INTEGER(RESULT)[i + n_edge] = child[i];
-    }
-    
-    UNPROTECT(1);
-    return(RESULT); 
+extern SEXP RENUMBER_TREE(SEXP parent, SEXP child, SEXP ned) {
+  int i;
+  const int n_edge = INTEGER(ned)[0];
+  SEXP RESULT;
+  PROTECT(RESULT = allocVector(INTSXP, n_edge * 2));
+  for (i = 0; i < n_edge; i++) {
+    INTEGER(RESULT)[i] = INTEGER(parent)[i];
+    INTEGER(RESULT)[i + n_edge] = INTEGER(child)[i];
+  }
+  
+  order_edges_number_nodes(INTEGER(RESULT), INTEGER(RESULT) + n_edge, &n_edge);
+  
+  UNPROTECT(1);
+  return(RESULT);
 }
