@@ -2,10 +2,8 @@
 #'
 #' Nearest Neighbour Interchange
 #' 
-#' This function performs a single random \acronym{NNI} iteration.
-#'
 #' Performs a single iteration of the nearest-neighbour interchange algorithm.
-#' Based on the corresponding phangorn function, but re-coded to improve speed.
+#' Based on the corresponding \code{phangorn} function, but re-coded to improve speed.
 #' 
 #' Branch lengths are not supported.
 #' 
@@ -15,7 +13,7 @@
 #' @return Returns a tree with class \code{phylo}.
 #'
 #' @references
-#' The algorithms are summarized in
+#' The algorithm is summarized in
 #' Felsenstein, J. 2004. \cite{Inferring Phylogenies.} Sinauer Associates, Sunderland, Massachusetts.
 #' 
 #' @author Martin R. Smith
@@ -29,7 +27,7 @@ NNI <- function (tree, edgeToBreak=NULL) {
   edge    <- tree$edge
   parent  <- edge[, 1]
   child   <- edge[, 2]
-  nTips  <- length(tree$tip.label)
+  nTips  <- (length(parent) / 2L) + 1L
   rootNode <- nTips + 1L
   
   samplable <- child > nTips
@@ -62,7 +60,7 @@ RootedNNI <- function (tree, edgeToBreak = NULL) {
   edge    <- tree$edge
   parent  <- edge[, 1]
   child   <- edge[, 2]
-  nTips  <- length(tree$tip.label)
+  nTips  <- (length(parent) / 2L) + 1L
   rootNode <- nTips + 1L
   
   samplable <- parent != rootNode & child > nTips
