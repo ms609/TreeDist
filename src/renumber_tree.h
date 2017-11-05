@@ -88,3 +88,23 @@ extern SEXP RENUMBER_TREE(SEXP parent, SEXP child, SEXP ned) {
   UNPROTECT(1);
   return(RESULT);
 }
+
+extern SEXP RENUMBER_TREE_LIST(SEXP parent, SEXP child, SEXP ned) {
+  int i;
+  const int n_edge = INTEGER(ned)[0];
+  SEXP RESULT, PARENT, CHILD;
+  PROTECT(RESULT = allocVector(VECSXP, 2L));
+  PROTECT(PARENT = allocVector(INTSXP, n_edge));
+  PROTECT(CHILD  = allocVector(INTSXP, n_edge));
+  for (i = 0; i < n_edge; i++) {
+    INTEGER(PARENT)[i] = INTEGER(parent)[i];
+    INTEGER(CHILD )[i] = INTEGER(child )[i];
+  }
+  
+  order_edges_number_nodes(INTEGER(PARENT), INTEGER(CHILD), &n_edge);
+    
+  SET_VECTOR_ELT(RESULT, 0, PARENT);
+  SET_VECTOR_ELT(RESULT, 1, CHILD);
+  UNPROTECT(3);
+  return(RESULT);
+}

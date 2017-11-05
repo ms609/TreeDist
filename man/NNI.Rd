@@ -2,12 +2,19 @@
 % Please edit documentation in R/NNI.R
 \name{NNI}
 \alias{NNI}
+\alias{NNICore}
 \alias{RootedNNI}
+\alias{RootedNNICore}
 \title{NNI}
 \usage{
 NNI(tree, edgeToBreak = NULL)
 
+NNICore(parent, child, nTips = (length(parent)/2L) + 1L, edgeToBreak = NULL)
+
 RootedNNI(tree, edgeToBreak = NULL)
+
+RootedNNICore(parent, child, nTips = (length(parent)/2L) + 1L,
+  edgeToBreak = NULL)
 }
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}}
@@ -15,10 +22,26 @@ RootedNNI(tree, edgeToBreak = NULL)
 \item{edgeToBreak}{(optional) integer specifying the index of an edge to bisect/prune,
 generated randomly if not specified.  Alternatively, set to \code{-1} to return a complete list
 of all trees one step from the input tree.}
+
+\item{parent}{the first column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 1]}
+
+\item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
+
+\item{nTips}{(optional) Number of tips.}
+
+\item{parent}{the first column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 1]}
+
+\item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
+
+\item{nTips}{Number of tips}
 }
 \value{
 Returns a tree with class \code{phylo} (if \code{returnAll = FALSE}) or 
         a set of trees, with class \code{multiPhylo} (if \code{returnAll = TRUE}).
+
+a list containing two elements, corresponding in turn to the rearranged parent and child parameters
+
+a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 }
 \description{
 Nearest Neighbour Interchange
@@ -33,7 +56,11 @@ Branch lengths are not supported.
 }
 \section{Functions}{
 \itemize{
+\item \code{NNICore}: faster version that takes and returns parent and child parameters
+
 \item \code{RootedNNI}: Perform \acronym{NNI} rearrangement, retaining position of root
+
+\item \code{RootedNNICore}: faster version that takes and returns parent and child parameters
 }}
 
 \examples{

@@ -1,9 +1,9 @@
 #' @describeIn TBRWarning for SPR rearrangements
 #' @keywords internal
 #' @export
-SPRWarning <- function (tree, error) {
+SPRWarning <- function (parent, child, error) {
   warning ("No SPR operation performed.\n  > ", error)
-  return(tree)
+  return(list(parent, child))
 }
 
 #' Subtree Pruning and Rearrangement 
@@ -39,13 +39,34 @@ SPRWarning <- function (tree, error) {
 #' @export
 SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
-  nTips <- tree$Nnode + 1L
-  if (nTips < 3L) return (tree)
-  edge   <- tree$edge
-  parent <- edge[, 1]
-  child  <- edge[, 2]
-  nEdge <- length(parent)
-  if (nTips == 3) return (root(tree, SampleOne(child[parent==max(parent)], len=2L)))
+  edge <- tree$edge
+  if (!is.null(edgeToBreak) && edgeToBreak == -1) {
+    parent <- edge[, 1]
+    child <- edge[, 2]
+    nEdge <- length(parent)
+    stop('TODO')
+    return(unique(unlist(lapply(which(notDuplicateRoot), AllSPR,
+      parent=parent, child=child, nEdge=nEdge, notDuplicateRoot=notDuplicateRoot),
+      recursive=FALSE))) # TODO the fact that we need to use `unique` indicates that 
+                         #      we're being inefficient here.
+  } else {
+    tree$edge <- ListToMatrix(SPRCore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak, 
+                                      mergeEdge=mergeEdge))
+    return(tree)
+  }
+}
+
+## TODO Do edges need to be pre-ordered before coming here?
+#' @describeIn SPR faster version that takes and returns parent and child parameters
+#' @template treeParent
+#' @template treeChild
+#' @param nEdge (optional) Number of edges.
+#' @return a list containing two elements, corresponding in turn to the rearranged parent and child parameters
+#' @export
+SPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
+                     edgeToBreak=NULL, mergeEdge=NULL) {
+  
+  if (nEdge < 5) return (list(parent, child)) #TODO we need to re-root this tree...
   
   notDuplicateRoot <- !logical(nEdge)
   rightSide <- DescendantEdges(1, parent, child, nEdge)
@@ -61,15 +82,10 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   if (is.null(edgeToBreak)) {
     # Pick an edge at random
     edgeToBreak <- SampleOne(which(notDuplicateRoot), len=nEdge - 1L)
-  } else if (edgeToBreak == -1) {
-    return(unique(unlist(lapply(which(notDuplicateRoot), AllSPR,
-      parent=parent, child=child, nEdge=nEdge, notDuplicateRoot=notDuplicateRoot),
-      recursive=FALSE))) # TODO the fact that we need to use `unique` indicates that 
-                         #      we're being inefficient here.
   } else if (edgeToBreak > nEdge) {
-    return(SPRWarning(tree, "edgeToBreak > nEdge"))
+    return(SPRWarning(parent, child, "edgeToBreak > nEdge"))
   } else if (edgeToBreak < 1) {
-    return(SPRWarning(tree, "edgeToBreak < 1"))
+    return(SPRWarning(parent, child, "edgeToBreak < 1"))
   }
   # Breaking a single edge
   brokenEdge <- seq_along(parent) == edgeToBreak
@@ -90,11 +106,11 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   }
   
   if (!is.null(mergeEdge)) { # Quick sanity checks
-    if (mergeEdge > nEdge) return(SPRWarning(tree, "mergeEdge value > number of edges"))
+    if (mergeEdge > nEdge) return(SPRWarning(parent, child, "mergeEdge value > number of edges"))
     if (length(mergeEdge) !=  1) 
-        return(SPRWarning(tree, paste0("mergeEdge value ", paste(mergeEdge, collapse='|'),  
+        return(SPRWarning(parent, child, paste0("mergeEdge value ", paste(mergeEdge, collapse='|'),  
                " invalid; must be NULL or a vector of length 1\n")))
-    if(nearBrokenEdge[mergeEdge]) return(SPRWarning(tree, "Selected mergeEdge will not change tree topology."))
+    if(nearBrokenEdge[mergeEdge]) return(SPRWarning(parent, child, "Selected mergeEdge will not change tree topology."))
     if(DescendantEdges(edgeToBreak, parent, child, nEdge)[mergeEdge]) stop("mergeEdge is within pruned subtree")
   } else {
     mergeEdge <- which(!nearBrokenEdge & !edgesOnAdriftSegment & notDuplicateRoot)
@@ -117,10 +133,7 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   
   #####Assert(identical(unique(table(parent)), 2L))
   #####Assert(identical(unique(table(child)),  1L))
-  ####   matrix(c(parent, child), ncol=2)
-  
-  tree$edge <- RenumberTree(parent, child, nEdge)
-  tree
+  return (RenumberTreeList(parent, child, nEdge))
 }
 
 
@@ -188,15 +201,33 @@ AllSPR <- function (parent, child, nEdge, notDuplicateRoot, edgeToBreak) {
 #' @export
 RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
-  nTips <- tree$Nnode + 1L
-  if (nTips < 3L) return (tree)
   edge   <- tree$edge
-  parent <- edge[, 1]
-  child  <- edge[, 2]
-  nEdge <- length(parent)
+  if (!is.null(edgeToBreak) && edgeToBreak == -1) {
+    return(unique(unlist(lapply(which(breakable), AllSPR,
+      parent=parent, child=child, nEdge=nEdge, notDuplicateRoot=notDuplicateRoot),
+      recursive=FALSE))) # TODO the fact that we need to use `unique` indicates that 
+                         #      we're being inefficient here.
+  } else { 
+    tree$edge <- ListToMatrix(RootedSPRCore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak,
+                                            mergeEdge=mergeEdge))
+    return (tree)
+  }
+}
+
+## TODO Do edges need to be pre-ordered before coming here?
+#' @describeIn SPR faster version that takes and returns parent and child parameters
+#' @template treeParent
+#' @template treeChild
+#' @param nEdge (optional) Number of edges.
+#' @return a list containing two elements, corresponding in turn to the rearranged parent and child parameters
+#' @export
+RootedSPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
+                     edgeToBreak=NULL, mergeEdge=NULL) {
+  
+  if (nEdge < 5) return (SPRWarning(parent, child, "Too few tips to rearrange."))
+  
   rootNode <- parent[1]
   rootEdges <- parent == rootNode
-  if (nTips == 3) return (SPRWarning(tree, "Only 3 tips - nothing to rearrange!"))
   
   breakable <- !logical(nEdge) & !rootEdges
   rightSide <- DescendantEdges(1, parent, child, nEdge)
@@ -204,7 +235,7 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   nEdgeRight <- which(rootEdges)[2] - 1
   nEdgeLeft <- nEdge - nEdgeRight
   if (nEdgeRight < 4) {
-    if (nEdgeLeft < 4) return(SPRWarning(tree, "No rearrangement possible with this root position."))
+    if (nEdgeLeft < 4) return(SPRWarning(parent, child, "No rearrangement possible with this root position."))
 
     breakable <- breakable & !rightSide
     rightHalfOfLeftSide <- DescendantEdges(nEdgeRight + 2L, parent, child, nEdge)
@@ -229,15 +260,10 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   if (is.null(edgeToBreak)) {
     # Pick an edge at random
     edgeToBreak <- SampleOne(which(breakable))
-  } else if (edgeToBreak == -1) {
-    return(unique(unlist(lapply(which(breakable), AllSPR,
-      parent=parent, child=child, nEdge=nEdge, notDuplicateRoot=notDuplicateRoot),
-      recursive=FALSE))) # TODO the fact that we need to use `unique` indicates that 
-                         #      we're being inefficient here.
   } else {
-    if (!breakable[edgeToBreak]) return(SPRWarning(tree, paste("Nowhere to regraft if pruning on edge", edgeToBreak)))
-    if (edgeToBreak > nEdge) return(SPRWarning(tree, "edgeToBreak > nEdge"))
-    if (edgeToBreak < 1) return(SPRWarning(tree, "edgeToBreak < 1"))
+    if (!breakable[edgeToBreak]) return(SPRWarning(parent, child, paste("Nowhere to regraft if pruning on edge", edgeToBreak)))
+    if (edgeToBreak > nEdge)     return(SPRWarning(parent, child, "edgeToBreak > nEdge"))
+    if (edgeToBreak < 1)         return(SPRWarning(parent, child, "edgeToBreak < 1"))
   }
   brokenEdge <- seq_along(parent) == edgeToBreak
   brokenEdge.parentNode <- parent[edgeToBreak]
@@ -252,11 +278,11 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   nearBrokenEdge <- brokenEdge | brokenEdgeSister | brokenEdgeParent | brokenEdgeDaughters
     
   if (!is.null(mergeEdge)) { # Quick sanity checks
-    if (mergeEdge > nEdge) return(SPRWarning(tree, "mergeEdge value > number of edges"))
+    if (mergeEdge > nEdge) return(SPRWarning(parent, child, "mergeEdge value > number of edges"))
     if (length(mergeEdge) !=  1) 
-        return(SPRWarning(tree, paste0("mergeEdge value ", paste(mergeEdge, collapse='|'),  
+        return(SPRWarning(parent, child, paste0("mergeEdge value ", paste(mergeEdge, collapse='|'),  
                " invalid; must be NULL or a vector of length 1\n")))
-    if(nearBrokenEdge[mergeEdge]) return(SPRWarning(tree, "Selected mergeEdge will not change tree topology."))
+    if(nearBrokenEdge[mergeEdge]) return(SPRWarning(parent, child, "Selected mergeEdge will not change tree topology."))
     if(DescendantEdges(edgeToBreak, parent, child, nEdge)[mergeEdge]) stop("mergeEdge is within pruned subtree")
   } else {
     edgesOnThisSide <- if (rightSide[edgeToBreak]) rightSide else leftSide
@@ -272,8 +298,5 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   
   #####Assert(identical(unique(table(parent)), 2L))
   #####Assert(identical(unique(table(child)),  1L))
-  ####   matrix(c(parent, child), ncol=2)
-  
-  tree$edge <- RenumberTree(parent, child, nEdge)
-  tree
+  return(RenumberTreeList(parent, child, nEdge))  
 }

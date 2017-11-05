@@ -2,12 +2,20 @@
 % Please edit documentation in R/SPR.R
 \name{SPR}
 \alias{SPR}
+\alias{SPRCore}
 \alias{RootedSPR}
+\alias{RootedSPRCore}
 \title{Subtree Pruning and Rearrangement}
 \usage{
 SPR(tree, edgeToBreak = NULL, mergeEdge = NULL)
 
+SPRCore(parent, child, nEdge = length(parent), nNode = nEdge/2L,
+  edgeToBreak = NULL, mergeEdge = NULL)
+
 RootedSPR(tree, edgeToBreak = NULL, mergeEdge = NULL)
+
+RootedSPRCore(parent, child, nEdge = length(parent), nNode = nEdge/2L,
+  edgeToBreak = NULL, mergeEdge = NULL)
 }
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}}
@@ -15,9 +23,25 @@ RootedSPR(tree, edgeToBreak = NULL, mergeEdge = NULL)
 \item{edgeToBreak}{the index of an edge to bisect, generated randomly if not specified.}
 
 \item{mergeEdge}{the index of an edge on which to merge the broken edge.}
+
+\item{parent}{the first column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 1]}
+
+\item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
+
+\item{nEdge}{(optional) Number of edges.}
+
+\item{parent}{the first column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 1]}
+
+\item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
+
+\item{nEdge}{(optional) Number of edges.}
 }
 \value{
 This function returns a tree in \code{phyDat} format that has undergone one \acronym{SPR} iteration.
+
+a list containing two elements, corresponding in turn to the rearranged parent and child parameters
+
+a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 }
 \description{
 Perform one \acronym{SPR} rearrangement on a tree
@@ -34,7 +58,11 @@ Branch lengths are not (yet) supported.
 }
 \section{Functions}{
 \itemize{
+\item \code{SPRCore}: faster version that takes and returns parent and child parameters
+
 \item \code{RootedSPR}: Perform \acronym{SPR} rearrangement, retaining position of root
+
+\item \code{RootedSPRCore}: faster version that takes and returns parent and child parameters
 }}
 
 \examples{

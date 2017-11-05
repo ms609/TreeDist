@@ -25,19 +25,19 @@ CheckTreeSanity <- function (tree) {
   expect_true(all(child[!tips] > parent[!tips]), info="Parent nodes must be > child nodes")
 }
 
-context("Test tree rearrangement")
+context("Recursive tree rearrangements")
 set.seed(0)
-small_tree <- rtree(8, br=NULL)
-large_tree <- rtree(80, br=NULL)  
+small_tree <- rtree(8)
+large_tree <- rtree(80)  
 test_that("NNI trees conform to phylo expectations", {
-  for (i in 1:100)  CheckTreeSanity(small_tree <- NNI(small_tree))
-  for (i in 1:1000) CheckTreeSanity(large_tree <- NNI(large_tree))
+  for (i in 1:60)  CheckTreeSanity(small_tree <- NNI(small_tree))
+  for (i in 1:250) CheckTreeSanity(large_tree <- NNI(large_tree))
 })
 test_that("SPR trees conform to phylo expectations", {
-  for (i in 1:100)  CheckTreeSanity(small_tree <- SPR(small_tree))
-  for (i in 1:1000) CheckTreeSanity(large_tree <- SPR(large_tree))
+  for (i in 1:60)  CheckTreeSanity(small_tree <- SPR(small_tree))
+  for (i in 1:250) CheckTreeSanity(large_tree <- SPR(large_tree))
 })
 test_that("TBR trees conform to phylo expectations", {
-  for (i in 1:100)  CheckTreeSanity(small_tree <- TBR(small_tree))
-  for (i in 1:1000) CheckTreeSanity(large_tree <- TBR(large_tree))
+  for (i in 1:60)  CheckTreeSanity(small_tree <- TBR(small_tree))
+  for (i in 1:250) CheckTreeSanity(large_tree <- TBR(large_tree))
 })

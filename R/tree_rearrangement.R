@@ -101,6 +101,14 @@ RenumberTree <- function (parent, child, nEdge = length(parent)) {
   matrix(.Call(C_RENUMBER_TREE, as.integer(parent), as.integer(child), as.integer(nEdge)), ncol=2)
 }
 
+#' @describeIn RenumberTree Instead returns a list containing two items corresponding to the new parent and child vectors
+## @useDynLib TreeSearch RENUMBER_TREE_LIST
+#' @keywords internal
+#' @export
+RenumberTreeList <- function (parent, child, nEdge = length(parent)) {
+  .Call(C_RENUMBER_TREE_LIST, as.integer(parent), as.integer(child), as.integer(nEdge))
+}
+
 #' Reorder tree Cladewise
 #' 
 #' A wrapper for \code{ape:::.reorder_ape}.  Calling this C function directly is approximately twice as fast as using
