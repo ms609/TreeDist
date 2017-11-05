@@ -8,7 +8,7 @@ Print a warning and return given tree}
 \usage{
 SPRWarning(parent, child, error)
 
-TBRWarning(tree, error)
+TBRWarning(parent, child, error)
 }
 \arguments{
 \item{error}{error message to report}
@@ -29,7 +29,7 @@ Print a warning and return given tree
 
 \examples{
 testFunction <- function (tree) {
- return(TBRWarning(tree, 'Message text'))
+ return(TBRWarning(parent, child, 'Message text'))
 }
 \dontrun{testFunction(0) # will trigger warning}
 

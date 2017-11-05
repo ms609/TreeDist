@@ -4,18 +4,18 @@
 \alias{SPR}
 \alias{SPRCore}
 \alias{RootedSPR}
-\alias{SPRCore}
+\alias{RootedSPRCore}
 \title{Subtree Pruning and Rearrangement}
 \usage{
 SPR(tree, edgeToBreak = NULL, mergeEdge = NULL)
 
 SPRCore(parent, child, nEdge = length(parent), nNode = nEdge/2L,
-  edgeToBreak = NULL, mergeEdges = NULL)
+  edgeToBreak = NULL, mergeEdge = NULL)
 
 RootedSPR(tree, edgeToBreak = NULL, mergeEdge = NULL)
 
-SPRCore(parent, child, nEdge = length(parent), nNode = nEdge/2L,
-  edgeToBreak = NULL, mergeEdges = NULL)
+RootedSPRCore(parent, child, nEdge = length(parent), nNode = nEdge/2L,
+  edgeToBreak = NULL, mergeEdge = NULL)
 }
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}}
@@ -28,13 +28,13 @@ SPRCore(parent, child, nEdge = length(parent), nNode = nEdge/2L,
 
 \item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
 
-\item{nTips}{Number of tips}
+\item{nEdge}{(optional) Number of edges.}
 
 \item{parent}{the first column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 1]}
 
 \item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
 
-\item{nTips}{Number of tips}
+\item{nEdge}{(optional) Number of edges.}
 }
 \value{
 This function returns a tree in \code{phyDat} format that has undergone one \acronym{SPR} iteration.
@@ -62,7 +62,7 @@ Branch lengths are not (yet) supported.
 
 \item \code{RootedSPR}: Perform \acronym{SPR} rearrangement, retaining position of root
 
-\item \code{SPRCore}: faster version that takes and returns parent and child parameters
+\item \code{RootedSPRCore}: faster version that takes and returns parent and child parameters
 }}
 
 \examples{

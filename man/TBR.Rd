@@ -2,10 +2,14 @@
 % Please edit documentation in R/TBR.R
 \name{TBR}
 \alias{TBR}
+\alias{TBRCore}
 \alias{RootedTBR}
 \title{TBR}
 \usage{
 TBR(tree, edgeToBreak = NULL, mergeEdges = NULL)
+
+TBRCore(parent, child, nEdge = length(parent), edgeToBreak = NULL,
+  mergeEdges = NULL)
 
 RootedTBR(tree, edgeToBreak = NULL, mergeEdges = NULL)
 }
@@ -19,9 +23,17 @@ In SPR, this is where the pruned subtree will be reconnected.
 In TBR, these edges will be reconnected (so must be on opposite
 sides of \code{edgeToBreak}); if only a single edge is specified,
 the second will be chosen at random}
+
+\item{parent}{the first column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 1]}
+
+\item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
+
+\item{nEdge}{(optional) Number of edges.}
 }
 \value{
 This function returns a tree in \code{phyDat} format that has undergone one \acronym{TBR} iteration.
+
+a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 }
 \description{
 Tree bisection and reconnection
@@ -35,6 +47,8 @@ Branch lengths are not (yet) supported.
 }
 \section{Functions}{
 \itemize{
+\item \code{TBRCore}: faster version that takes and returns parent and child parameters
+
 \item \code{RootedTBR}: Perform \acronym{TBR} rearrangement, retaining position of root
 }}
 

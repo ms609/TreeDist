@@ -48,13 +48,13 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
 #' @describeIn SPR faster version that takes and returns parent and child parameters
 #' @template treeParent
 #' @template treeChild
-#' @param nTips Number of tips 
+#' @param nEdge (optional) Number of edges.
 #' @return a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 #' @export
 SPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
                      edgeToBreak=NULL, mergeEdge=NULL) {
   
-  if (nEdge < 5) return (list(parent, child))
+  if (nEdge < 5) return (list(parent, child)) #TODO we need to re-root this tree...
   
   notDuplicateRoot <- !logical(nEdge)
   rightSide <- DescendantEdges(1, parent, child, nEdge)
@@ -136,7 +136,7 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
 #' @describeIn SPR faster version that takes and returns parent and child parameters
 #' @template treeParent
 #' @template treeChild
-#' @param nTips Number of tips 
+#' @param nEdge (optional) Number of edges.
 #' @return a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 #' @export
 RootedSPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
