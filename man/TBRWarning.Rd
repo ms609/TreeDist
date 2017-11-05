@@ -6,14 +6,14 @@
 \title{TBR Warning
 Print a warning and return given tree}
 \usage{
-SPRWarning(tree, error)
+SPRWarning(parent, child, error)
 
 TBRWarning(tree, error)
 }
 \arguments{
-\item{tree}{tree to return}
-
 \item{error}{error message to report}
+
+\item{tree}{tree to return}
 }
 \value{
 the tree specified in tree

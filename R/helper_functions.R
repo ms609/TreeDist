@@ -9,6 +9,10 @@ SampleOne <- function (x, len = length(x)) x[sample.int(len, 1L, FALSE, NULL, FA
 
 Assert <- function (statement) if (!statement) stop(deparse(statement), " is FALSE")
 
+#' Edge list to edge matrix
+#' Converts list(parent, child) to the format expected by tree$edge.
+ListToMatrix <- function (edgeList, nEdge=NULL) matrix(c(edgeList[[1]], edgeList[[2]]), ncol=2)
+
 #' Descendant Edges
 #'
 #' Quickly identifies edges that are 'descended' from a particular edge in a tree
