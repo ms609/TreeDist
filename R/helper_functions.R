@@ -12,6 +12,7 @@ Assert <- function (statement) if (!statement) stop(deparse(statement), " is FAL
 #' Edge list to edge matrix
 #' @param edgeList tree edges in the format list(parent, child).
 #' @return edges in the format expected by tree$edge.
+#' @keywords internal
 ListToMatrix <- function (edgeList) matrix(c(edgeList[[1]], edgeList[[2]]), ncol=2)
 
 #' Descendant Edges
