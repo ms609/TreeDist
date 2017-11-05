@@ -40,7 +40,8 @@ SPRWarning <- function (parent, child, error) {
 SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
   edge <- tree$edge
-  tree$edge <- ListToMatrix(SPRCore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak, mergeEdge=mergeEdge))
+  tree$edge <- ListToMatrix(SPRCore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak, 
+                                    mergeEdge=mergeEdge))
   tree
 }
 
@@ -128,7 +129,8 @@ SPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
 RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
   edge   <- tree$edge  
-  tree$edge <- ListToMatrix(RootedSPRCore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak, mergeEdge=mergeEdge))
+  tree$edge <- ListToMatrix(RootedSPRCore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak,
+                                          mergeEdge=mergeEdge))
   tree
 }
 
@@ -216,5 +218,5 @@ RootedSPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge 
   
   #####Assert(identical(unique(table(parent)), 2L))
   #####Assert(identical(unique(table(child)),  1L))
-  return(list(parent, child))  
+  return(RenumberTreeList(parent, child, nEdge))  
 }
