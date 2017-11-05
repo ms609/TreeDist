@@ -42,10 +42,8 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   nTips <- tree$Nnode + 1L
   if (nTips < 3L) return (tree)
   edge   <- tree$edge
-  parent <- edge[, 1]
-  child  <- edge[, 2]
   
-  tree$edge <- ListToMatrix(SPRCore(parent, child, nEdge, edgeToBreak, mergeEdge))
+  tree$edge <- ListToMatrix(SPRCore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak, mergeEdge=mergeEdge))
   tree
 }
 
