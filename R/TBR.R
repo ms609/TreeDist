@@ -59,7 +59,8 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   }
   
   edge <- tree$edge  
-  tree$edge <- ListToMatrix(TBRCore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak, mergeEdges=mergeEdges))
+  tree$edge <- ListToMatrix(TBRCore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak, 
+                                    mergeEdges=mergeEdges))
   tree
 }
 
@@ -203,7 +204,8 @@ TBRCore <- function(parent, child, nEdge = length(parent), edgeToBreak=NULL, mer
 RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
   edge   <- tree$edge
-  tree$edge <- RootedTBRCore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak, mergeEdges=mergeEdges)
+  tree$edge <- ListToMatrix(RootedTBRCore(edge[, 1], edge[, 2], 
+                            edgeToBreak=edgeToBreak, mergeEdges=mergeEdges))
   tree
 }
 
