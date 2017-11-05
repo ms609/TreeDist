@@ -4,6 +4,7 @@
 \alias{TBR}
 \alias{TBRCore}
 \alias{RootedTBR}
+\alias{RootedTBRCore}
 \title{TBR}
 \usage{
 TBR(tree, edgeToBreak = NULL, mergeEdges = NULL)
@@ -12,6 +13,9 @@ TBRCore(parent, child, nEdge = length(parent), edgeToBreak = NULL,
   mergeEdges = NULL)
 
 RootedTBR(tree, edgeToBreak = NULL, mergeEdges = NULL)
+
+RootedTBRCore(parent, child, nEdge = length(parent), edgeToBreak = NULL,
+  mergeEdges = NULL)
 }
 \arguments{
 \item{tree}{A bifurcating tree of class \code{\link{phylo}}, with all nodes resolved;}
@@ -52,6 +56,8 @@ Branch lengths are not (yet) supported.
 \item \code{TBRCore}: faster version that takes and returns parent and child parameters
 
 \item \code{RootedTBR}: Perform \acronym{TBR} rearrangement, retaining position of root
+
+\item \code{RootedTBRCore}: faster version that takes and returns parent and child parameters
 }}
 
 \examples{

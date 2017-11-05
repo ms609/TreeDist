@@ -61,6 +61,7 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
 #' @template treeParent
 #' @template treeChild
 #' @param nEdge (optional) Number of edges.
+#' @param nNode (optional) Number of nodes.
 #' @return a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 #' @export
 SPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
@@ -216,9 +217,6 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
 
 ## TODO Do edges need to be pre-ordered before coming here?
 #' @describeIn SPR faster version that takes and returns parent and child parameters
-#' @template treeParent
-#' @template treeChild
-#' @param nEdge (optional) Number of edges.
 #' @return a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 #' @export
 RootedSPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
