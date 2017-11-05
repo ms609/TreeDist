@@ -25,7 +25,7 @@
 #' @export
 NNI <- function (tree, edgeToBreak=NULL) {
   edge <- tree$edge
-  tree$edge <- matrix(unlist(NNICore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak)), ncol=2)
+  tree$edge <- ListToMatrix(NNICore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak))
   tree
 }
 
@@ -62,9 +62,9 @@ NNICore <- function (parent, child, nTips = (length(parent) / 2L) + 1L, edgeToBr
 #' Rooted NNI 
 #' @describeIn NNI Perform \acronym{NNI} rearrangement, retaining position of root
 #' @export
-NNI <- function (tree, edgeToBreak=NULL) {
+RootedNNI <- function (tree, edgeToBreak=NULL) {
   edge <- tree$edge
-  tree$edge <- matrix(unlist(RootedNNICore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak)), ncol=2)
+  tree$edge <- ListToMatrix(RootedNNICore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak))
   tree
 }
 
@@ -74,7 +74,7 @@ NNI <- function (tree, edgeToBreak=NULL) {
 #' @param nTips Number of tips 
 #' @return a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 #' @export
-RootedNNICore <- function (parent, child, nTips = (length(parent) / 2L) + 1L), edgeToBreak = NULL) {
+RootedNNICore <- function (parent, child, nTips = (length(parent) / 2L) + 1L, edgeToBreak = NULL) {
   rootNode <- nTips + 1L
   
   samplable <- parent != rootNode & child > nTips
