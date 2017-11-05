@@ -39,10 +39,7 @@ SPRWarning <- function (parent, child, error) {
 #' @export
 SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
-  nTips <- tree$Nnode + 1L
-  if (nTips < 3L) return (tree)
-  edge   <- tree$edge
-  
+  edge <- tree$edge
   tree$edge <- ListToMatrix(SPRCore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak, mergeEdge=mergeEdge))
   tree
 }
@@ -130,11 +127,8 @@ SPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
 #' @export
 RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
-  nTips <- tree$Nnode + 1L
-  if (nTips < 3L) return (tree)
-  edge   <- tree$edge
-  
-  tree$edge <- ListToMatrix(RootedSPRCore(edge[, 1], edge[, 2]))
+  edge   <- tree$edge  
+  tree$edge <- ListToMatrix(RootedSPRCore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak, mergeEdge=mergeEdge))
   tree
 }
 
