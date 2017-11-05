@@ -1,6 +1,6 @@
 library(ape)
 
-context("tree rearrangement")
+context("Tree rearrangement")
 tree5a <- read.tree(text='(a, (b, (c, (d, e))));')
 tree5b <- read.tree(text='((a, b), (c, (d, e)));')
 tree8  <- read.tree(text="(((a, (b, (c, d))), (e, f)), (g, h));")

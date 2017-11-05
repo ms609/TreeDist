@@ -1,7 +1,7 @@
 library(ape)
 library(phangorn)
 
-context("tree search")
+context("Testing tree search")
 comb11 <- read.tree(text="(a, (b, (c, (d, (e, (f, (g, (h, (i, (j, k))))))))));")
 unrooted11 <- read.tree(text="(a, b, (c, (d, (e, (f, (g, (h, (i, (j, k)))))))));")
 data11 <- cbind(upper.tri(matrix(FALSE, 11, 11))[, 3:10], lower.tri(matrix(FALSE, 11, 11))[, 2:9])

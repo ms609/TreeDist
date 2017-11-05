@@ -25,7 +25,7 @@ CheckTreeSanity <- function (tree) {
   expect_true(all(child[!tips] > parent[!tips]), info="Parent nodes must be > child nodes")
 }
 
-context("Test tree rearrangement")
+context("Checking sanity of re-rearranged trees")
 small_tree <- rtree(8)
 large_tree <- rtree(80)  
 test_that("NNI trees conform to phylo expectations", {
