@@ -147,7 +147,7 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
 #' @param nTips Number of tips 
 #' @return a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 #' @export
-SPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
+RootedSPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
                      edgeToBreak=NULL, mergeEdges=NULL) {
   
   if (nEdge < 5) return (SPRWarning(parent, child, "Too few tips to rearrange."))
