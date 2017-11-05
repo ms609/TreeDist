@@ -203,7 +203,7 @@ TBRCore <- function(parent, child, nEdge = length(parent), edgeToBreak=NULL, mer
 RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
   edge   <- tree$edge
-  tree$edge <- RenumberTree(parent, child, nEdge)
+  tree$edge <- RootedTBRCore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak, mergeEdges=mergeEdges)
   tree
 }
 
