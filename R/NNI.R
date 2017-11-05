@@ -24,12 +24,19 @@
 #'
 #' @export
 NNI <- function (tree, edgeToBreak=NULL) {
-  edge    <- tree$edge
-  parent  <- edge[, 1]
-  child   <- edge[, 2]
-  nTips  <- (length(parent) / 2L) + 1L
-  rootNode <- nTips + 1L
-  
+  edge <- tree$edge
+  tree$edge <- matrix(unlist(NNICore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak)), ncol=2)
+  tree
+}
+
+#' @describeIn NNI faster version that takes and returns parent and child parameters
+#' @template treeParent
+#' @template treeChild
+#' @param nTips (optional) Number of tips.
+#' @return a list containing two elements, corresponding in turn to the rearranged parent and child parameters
+#' @export
+NNICore <- function (parent, child, nTips = (length(parent) / 2L) + 1L, edgeToBreak=NULL) {
+  rootNode  <- nTips + 1L
   samplable <- child > nTips
   if (is.null(edgeToBreak)) { 
     edgeToBreak <- SampleOne(which(samplable))
@@ -49,18 +56,25 @@ NNI <- function (tree, edgeToBreak=NULL) {
   childSwap <- child[newInd]
   child[oldInd] <- childSwap
   
-  tree$edge <- RenumberTree(parent, child)
-  tree
+  RenumberTreeList(parent, child)
 }
 
 #' Rooted NNI 
 #' @describeIn NNI Perform \acronym{NNI} rearrangement, retaining position of root
 #' @export
-RootedNNI <- function (tree, edgeToBreak = NULL) {
-  edge    <- tree$edge
-  parent  <- edge[, 1]
-  child   <- edge[, 2]
-  nTips  <- (length(parent) / 2L) + 1L
+NNI <- function (tree, edgeToBreak=NULL) {
+  edge <- tree$edge
+  tree$edge <- matrix(unlist(RootedNNICore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak)), ncol=2)
+  tree
+}
+
+#' @describeIn NNI faster version that takes and returns parent and child parameters
+#' @template treeParent
+#' @template treeChild
+#' @param nTips Number of tips 
+#' @return a list containing two elements, corresponding in turn to the rearranged parent and child parameters
+#' @export
+RootedNNICore <- function (parent, child, nTips = (length(parent) / 2L) + 1L), edgeToBreak = NULL) {
   rootNode <- nTips + 1L
   
   samplable <- parent != rootNode & child > nTips
@@ -82,6 +96,5 @@ RootedNNI <- function (tree, edgeToBreak = NULL) {
   
   child_swap <- child[newInd]
   child[oldInd] <- child_swap
-  tree$edge <- RenumberTree(parent, child)
-  tree
+  RenumberTreeList(parent, child)
 }

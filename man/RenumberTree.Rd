@@ -2,11 +2,14 @@
 % Please edit documentation in R/tree_rearrangement.R
 \name{RenumberTree}
 \alias{RenumberTree}
+\alias{RenumberTreeList}
 \title{Renumber tree
 Order edges and number nodes
 Wrapper for the C function RENUMBER_TREE}
 \usage{
 RenumberTree(parent, child, nEdge = length(parent))
+
+RenumberTreeList(parent, child, nEdge = length(parent))
 }
 \value{
 an edge matrix for a tree following the usual convention for edge and node numbering
@@ -16,4 +19,9 @@ Renumber tree
 Order edges and number nodes
 Wrapper for the C function RENUMBER_TREE
 }
+\section{Functions}{
+\itemize{
+\item \code{RenumberTreeList}: Instead returns a list containing two items corresponding to the new parent and child vectors
+}}
+
 \keyword{internal}

@@ -2,10 +2,13 @@
 % Please edit documentation in R/NNI.R
 \name{NNI}
 \alias{NNI}
+\alias{NNICore}
 \alias{RootedNNI}
 \title{NNI}
 \usage{
 NNI(tree, edgeToBreak = NULL)
+
+NNICore(parent, child, edgeToBreak = NULL)
 
 RootedNNI(tree, edgeToBreak = NULL)
 }
@@ -13,9 +16,13 @@ RootedNNI(tree, edgeToBreak = NULL)
 \item{tree}{A tree of class \code{\link{phylo}}}
 
 \item{edgeToBreak}{(optional) integer specifying the index of an edge to bisect/prune, generated randomly if not specified}
+
+\item{parent}{the first column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 1]}
 }
 \value{
 Returns a tree with class \code{phylo}.
+
+a list
 }
 \description{
 Nearest Neighbour Interchange
@@ -30,6 +37,8 @@ Branch lengths are not supported.
 }
 \section{Functions}{
 \itemize{
+\item \code{NNICore}: takes and returns parent and child parameters; about twice as fast as pulling these out of a tree
+
 \item \code{RootedNNI}: Perform \acronym{NNI} rearrangement, retaining position of root
 }}
 
