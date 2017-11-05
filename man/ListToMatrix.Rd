@@ -2,12 +2,16 @@
 % Please edit documentation in R/helper_functions.R
 \name{ListToMatrix}
 \alias{ListToMatrix}
-\title{Edge list to edge matrix
-Converts list(parent, child) to the format expected by tree$edge.}
+\title{Edge list to edge matrix}
 \usage{
-ListToMatrix(edgeList, nEdge = NULL)
+ListToMatrix(edgeList)
+}
+\arguments{
+\item{edgeList}{tree edges in the format list(parent, child).}
+}
+\value{
+edges in the format expected by tree$edge.
 }
 \description{
 Edge list to edge matrix
-Converts list(parent, child) to the format expected by tree$edge.
 }

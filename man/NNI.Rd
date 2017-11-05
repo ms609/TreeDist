@@ -26,12 +26,6 @@ RootedNNICore(parent, child, nTips = (length(parent)/2L) + 1L,
 \item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
 
 \item{nTips}{(optional) Number of tips.}
-
-\item{parent}{the first column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 1]}
-
-\item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
-
-\item{nTips}{Number of tips}
 }
 \value{
 Returns a tree with class \code{phylo}.

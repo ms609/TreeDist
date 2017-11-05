@@ -30,11 +30,7 @@ RootedSPRCore(parent, child, nEdge = length(parent), nNode = nEdge/2L,
 
 \item{nEdge}{(optional) Number of edges.}
 
-\item{parent}{the first column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 1]}
-
-\item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
-
-\item{nEdge}{(optional) Number of edges.}
+\item{nNode}{(optional) Number of nodes.}
 }
 \value{
 This function returns a tree in \code{phyDat} format that has undergone one \acronym{SPR} iteration.

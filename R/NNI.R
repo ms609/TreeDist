@@ -69,9 +69,6 @@ RootedNNI <- function (tree, edgeToBreak=NULL) {
 }
 
 #' @describeIn NNI faster version that takes and returns parent and child parameters
-#' @template treeParent
-#' @template treeChild
-#' @param nTips Number of tips 
 #' @return a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 #' @export
 RootedNNICore <- function (parent, child, nTips = (length(parent) / 2L) + 1L, edgeToBreak = NULL) {
