@@ -102,6 +102,7 @@ RandomTree <- function (dataset, root = FALSE) {
 #' @author Martin R. Smith
 #' @importFrom ape nj root
 #' @importFrom phangorn dist.hamming
+#' @export
 NJTree <- function (dataset) {
   nj.tree <- nj(dist.hamming(dataset))
   nj.tree <- root(nj.tree, outgroup=names(dataset)[1], resolve.root=TRUE)
