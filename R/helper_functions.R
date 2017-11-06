@@ -91,6 +91,24 @@ RandomTree <- function (dataset, root = FALSE) {
   return (if (root != FALSE) root(tree, root, resolve.root=TRUE) else tree)
 }
 
+#' Neighbour Joining Tree
+#' 
+#' Generates a rooted neighbour joining tree, with no edge lengths
+#'
+#' @template datasetParam
+#' 
+#' @return an object of class \code{phylo}
+#'
+#' @author Martin R. Smith
+#' @importFrom ape nj root
+#' @importFrom phangorn dist.hamming
+NJTree <- function (dataset) {
+  nj.tree <- nj(dist.hamming(dataset))
+  nj.tree <- root(nj.tree, outgroup=names(dataset)[1], resolve.root=TRUE)
+  nj.tree$edge.length <- NULL
+  nj.tree
+}
+
 #' Force taxa to form an outgroup
 #'
 #' Given a tree or a list of taxa, rearrange the ingroup and outgroup taxa such that the two
