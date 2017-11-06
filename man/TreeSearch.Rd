@@ -46,8 +46,7 @@ to search for a more parsimonious tree.
 }
 \examples{
 data('Lobo')
-njtree <- ape::root(ape::nj(phangorn::dist.hamming(Lobo.phy)), 'Cricocosmia', resolve.root=TRUE)
-njtree$edge.length <- NULL
+njtree <- NJTree(Lobo.phy)
 
 \dontrun{
 TreeSearch(njtree, Lobo.phy, maxIter=20, Rearrange=NNI)

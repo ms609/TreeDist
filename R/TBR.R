@@ -213,6 +213,7 @@ RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
 #' @export
 RootedTBRCore <- function (parent, child, nEdge=length(parent), edgeToBreak=NULL, mergeEdges=NULL) {
   if (nEdge < 5) return (TBRWarning(parent, child, 'Fewer than 4 tips'))
+  nTips <- (nEdge / 2L) + 1L
   rootNode <- parent[1]
   rootEdges <- parent == rootNode
   rightTree <- DescendantEdges(1, parent, child, nEdge)
