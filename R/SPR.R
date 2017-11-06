@@ -134,7 +134,7 @@ SPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
   
   #####Assert(identical(unique(table(parent)), 2L))
   #####Assert(identical(unique(table(child)),  1L))
-  return (RenumberTreeList(parent, child, nEdge))
+  return (RenumberEdges(parent, child, nEdge))
 }
 
 
@@ -296,5 +296,5 @@ RootedSPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge 
   
   #####Assert(identical(unique(table(parent)), 2L))
   #####Assert(identical(unique(table(child)),  1L))
-  return(RenumberTreeList(parent, child, nEdge))  
+  return(RenumberEdges(parent, child, nEdge))  
 }

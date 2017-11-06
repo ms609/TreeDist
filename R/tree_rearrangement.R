@@ -102,11 +102,11 @@ RenumberTree <- function (parent, child, nEdge = length(parent)) {
 }
 
 #' @describeIn RenumberTree Instead returns a list containing two items corresponding to the new parent and child vectors
-## @useDynLib TreeSearch RENUMBER_TREE_LIST
+## @useDynLib TreeSearch RENUMBER_EDGES
 #' @keywords internal
 #' @export
-RenumberTreeList <- function (parent, child, nEdge = length(parent)) {
-  .Call(C_RENUMBER_TREE_LIST, as.integer(parent), as.integer(child), as.integer(nEdge))
+RenumberEdges <- function (parent, child, nEdge = length(parent)) {
+  .Call(C_RENUMBER_EDGES, as.integer(parent), as.integer(child), as.integer(nEdge))
 }
 
 #' Reorder tree Cladewise

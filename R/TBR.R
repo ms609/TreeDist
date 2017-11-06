@@ -195,7 +195,7 @@ TBRCore <- function(parent, child, nEdge = length(parent), edgeToBreak=NULL, mer
   
   #########Assert(identical(unique(table(parent)), 2L))
   #########Assert(identical(unique(table(child)),  1L))
-  return (RenumberTreeList(parent, child, nEdge))
+  return (RenumberEdges(parent, child, nEdge))
 }
 
 #' Rooted TBR 
@@ -360,5 +360,5 @@ RootedTBRCore <- function (parent, child, nEdge=length(parent), edgeToBreak=NULL
   
   ###Assert(identical(unique(table(parent)), 2L))
   ###Assert(identical(unique(table(child)),  1L))
-  return (RenumberTreeList(parent, child, nEdge))
+  return (RenumberEdges(parent, child, nEdge))
 }

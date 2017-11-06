@@ -31,9 +31,9 @@ static const R_CMethodDef cMethods[] = {
 };
 
 static const R_CallMethodDef callMethods[] = {
-  {"phangorn_FITCH",     (DL_FUNC) &phangorn_FITCH,     8},
-  {"RENUMBER_TREE",      (DL_FUNC) &RENUMBER_TREE,      3},
-  {"RENUMBER_TREE_LIST", (DL_FUNC) &RENUMBER_TREE_LIST, 3},
+  {"phangorn_FITCH", (DL_FUNC) &phangorn_FITCH, 8},
+  {"RENUMBER_TREE",  (DL_FUNC) &RENUMBER_TREE,  3},
+  {"RENUMBER_EDGES", (DL_FUNC) &RENUMBER_EDGES, 3},
   {NULL, NULL, 0}
 };
 

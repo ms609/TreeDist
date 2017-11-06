@@ -71,7 +71,7 @@ NNICore <- function (parent, child, nTips = (length(parent) / 2L) + 1L, edgeToBr
   oldInd <- c(ind1, ind2)
   childSwap <- child[newInd]
   child[oldInd] <- childSwap
-  RenumberTreeList(parent, child)
+  RenumberEdges(parent, child)
 }
 
 ## TODO use RenumberList
@@ -159,5 +159,5 @@ RootedNNICore <- function (parent, child, nTips = (length(parent) / 2L) + 1L, ed
   
   child_swap <- child[newInd]
   child[oldInd] <- child_swap
-  RenumberTreeList(parent, child)
+  RenumberEdges(parent, child)
 }
