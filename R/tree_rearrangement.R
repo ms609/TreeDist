@@ -156,6 +156,19 @@ Postorder <- function (tree, nTaxa = length(tree$tip.label), edge = tree$edge) {
   tree
 }
 
+#' @describeIn Cladewise Reorder parent and child edges in Postorder
+#' @template edgeListParam
+#' @template nTaxa
+#' @export
+PostorderEdges <- function (edgeList, 
+                            nEdge = length(parent), 
+                            nNode = nEdge / 2L, 
+                            nTaxa = nNode + 1L) {
+  if (nNode == 1) return(list(parent, child))
+  newOrder <- NeworderPhylo(nTaxa, parent, child, nEdge, 2)
+  list(parent[newOrder], child[newOrder])
+}
+
 #' @describeIn Cladewise Reorder tree Pruningwise
 #' @export
 Pruningwise <- function (tree, nTaxa = length(tree$tip.label), edge = tree$edge) {
