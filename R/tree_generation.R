@@ -83,5 +83,6 @@ EnforceOutgroup <- function (tree, outgroup) {
 #' @export
 RandomPostorder <- function (nTip) {  
   # Return:
-  .Call('BUILD_POSTORDER', as.integer(nTip), sample.int(nTip, nTip) - 1L)
+  .Call('BUILD_POSTORDER', as.integer(nTip), (1:nTip) - 1L)
+  #.Call('BUILD_POSTORDER', as.integer(nTip), sample.int(nTip, nTip) - 1L)
 }
