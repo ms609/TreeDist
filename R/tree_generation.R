@@ -69,20 +69,3 @@ EnforceOutgroup <- function (tree, outgroup) {
   result <- root(bind.tree(outgroup.branch, ingroup.branch, 0, 1), outgroup, resolve.root=TRUE)
   RenumberTips(Renumber(result), taxa)
 }
-
-#' Random postorder tree
-#' 
-#' @param nTip number of tips
-#' @return a list of three integer vectors: 
-#'          First entry: parentOf: For each node, numbered in postorder, the number of its parent node.
-#'          Second entry: leftChild: For each internal node, numbered in postorder, the number of its left 
-#'                   child node or tip.
-#'          Third entry: rightChild: For each internal node, numbered in postorder, the number of its right
-#'                   child node or tip.
-#' @useDynLib TreeSearch BUILD_POSTORDER
-#' @export
-RandomPostorder <- function (nTip) {  
-  # Return:
-  .Call('BUILD_POSTORDER', as.integer(nTip), (1:nTip) - 1L)
-  #.Call('BUILD_POSTORDER', as.integer(nTip), sample.int(nTip, nTip) - 1L)
-}
