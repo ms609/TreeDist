@@ -157,10 +157,11 @@ Postorder <- function (tree, nTaxa = length(tree$tip.label), edge = tree$edge) {
 }
 
 #' @describeIn Cladewise Reorder parent and child edges in Postorder
-#' @template edgeListParam
+#' @template treeParent
+#' @template treeChild
 #' @template nTaxa
 #' @export
-PostorderEdges <- function (edgeList, 
+PostorderEdges <- function (parent, child, 
                             nEdge = length(parent), 
                             nNode = nEdge / 2L, 
                             nTaxa = nNode + 1L) {
