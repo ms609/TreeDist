@@ -3,6 +3,7 @@
 \name{Cladewise}
 \alias{Cladewise}
 \alias{Postorder}
+\alias{PostorderEdges}
 \alias{Pruningwise}
 \alias{Preorder}
 \title{Reorder tree Cladewise}
@@ -10,6 +11,9 @@
 Cladewise(tree, nTaxa = NULL, edge = tree$edge)
 
 Postorder(tree, nTaxa = length(tree$tip.label), edge = tree$edge)
+
+PostorderEdges(parent, child, nEdge = length(parent), nNode = nEdge/2L,
+  nTaxa = nNode + 1L)
 
 Pruningwise(tree, nTaxa = length(tree$tip.label), edge = tree$edge)
 
@@ -21,6 +25,12 @@ Preorder(tree)
 \item{nTaxa}{(optional) number of tips in the tree}
 
 \item{edge}{(optional) the value of tree$edge}
+
+\item{parent}{the first column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 1]}
+
+\item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
+
+\item{nTaxa}{Number of terminal taxa in tree.}
 }
 \value{
 A tree with nodes numbered in postorder
@@ -32,6 +42,8 @@ A wrapper for \code{ape:::.reorder_ape}.  Calling this C function directly is ap
 \section{Functions}{
 \itemize{
 \item \code{Postorder}: Reorder tree in Postorder
+
+\item \code{PostorderEdges}: Reorder parent and child edges in Postorder
 
 \item \code{Pruningwise}: Reorder tree Pruningwise
 
