@@ -44,7 +44,7 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
     parent <- edge[, 1]
     child <- edge[, 2]
     nEdge <- length(parent)
-    stop('TODO')
+    stop('Negative edgeToBreak not yet supported; on TODO list for next release')
     return(unique(unlist(lapply(which(notDuplicateRoot), AllSPR,
       parent=parent, child=child, nEdge=nEdge, notDuplicateRoot=notDuplicateRoot),
       recursive=FALSE))) # TODO the fact that we need to use `unique` indicates that 
