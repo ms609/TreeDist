@@ -3,5 +3,8 @@
 - Separate out NNICore functions to allow more efficient rearrangement of edgeLists
 - Add functions to allow recovery of all trees one rearrangement from that input
 
+# TreeSearch 0.0.7
+- Handle inapplicable data via API to Martin Brazeau's Morphy Phylogenetic Library
+
 # TreeSearch 0.0.6
 - Submitted to CRAN
