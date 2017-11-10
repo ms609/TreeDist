@@ -22,7 +22,7 @@ MorphyBootstrap(edgeList, morphyObj, maxIter, maxHits, verbosity = 1L, ...)
 \item{verbosity}{Level of detail to display in console: larger numbers provide
 more verbose feedback to the user.}
 
-\item{\dots}{further parameters to send to \code{DoTreeSearch}}
+\item{\dots}{further parameters to send to \code{MorphyTreeSearch}}
 }
 \value{
 A tree that is optimal under a random sampling of the original characters
