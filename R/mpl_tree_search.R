@@ -49,7 +49,7 @@ RatchetSearch <- function
   eps <- 1e-08
   bestScore <- attr(tree, "score")
   if (is.null(bestScore)) {
-    bestScore <- MorphyLength(edgeList[[1]], edgeList[[2]], morphyObj, ...)
+    bestScore <- ParentChildMorphyLength(edgeList[[1]], edgeList[[2]], morphyObj, ...)
   }
   if (verbosity > 0L) cat("* Initial score:", bestScore)
   if (!is.null(stopAtScore) && bestScore < stopAtScore + eps) return(tree)
@@ -124,7 +124,7 @@ RatchetConsensus <- function (tree, dataset, maxIt=5000, maxIter=500, maxHits=20
 #' @param maxIter maximum number of iterations to perform in tree search
 #' @param maxHits maximum number of hits to accomplish in tree search
 #' @template verbosityParam
-#' @param \dots further parameters to send to \code{DoTreeSearch}
+#' @param \dots further parameters to send to \code{MorphyTreeSearch}
 #'
 #' @return A tree that is optimal under a random sampling of the original characters
 #' @export
@@ -138,16 +138,16 @@ MorphyBootstrap <- function (edgeList, morphyObj, maxIter, maxHits, verbosity=1L
          mpl_set_charac_weight(i, BS[i], morphyObj), integer(1))
   mpl_apply_tipdata(morphyObj)
   # TODO Optimisation exploration: is NNICore better than TBRCore?
-  res <- DoTreeSearch(edgeList, morphyObj, Rearrange=NNICore, maxIter=maxIter, maxHits=maxHits, verbosity=verbosity-1L, ...)
+  res <- MorphyTreeSearch(edgeList, morphyObj, Rearrange=NNICore, maxIter=maxIter, maxHits=maxHits, verbosity=verbosity-1L, ...)
   vapply(eachChar, function (i) 
          mpl_set_charac_weight(i, startWeights[i], morphyObj), integer(1))
   mpl_apply_tipdata(morphyObj)
   res[1:2]
 }
 
-#' DoTreeSearch
+#' Tree Search
 #'
-#' Performs a tree search
+#' Performs a tree search using a Morphy object
 #' 
 #' Does the hard work of searching for a most parsimonious tree, given the
 #' parent and child vectors of a tree arranged in preorder (perhaps with 
@@ -172,7 +172,7 @@ MorphyBootstrap <- function (edgeList, morphyObj, maxIter, maxHits, verbosity=1L
 #' @keywords internal
 #' @export
 
-DoTreeSearch <- function (edgeList, morphyObj, Rearrange, maxIter=100, maxHits=20, 
+MorphyTreeSearch <- function (edgeList, morphyObj, Rearrange, maxIter=100, maxHits=20, 
                           stopAtScore=NULL, forestSize=1L, 
                           cluster=NULL, verbosity=1L, ...) {
   eps <- 1e-07                        
@@ -186,7 +186,7 @@ DoTreeSearch <- function (edgeList, morphyObj, Rearrange, maxIter=100, maxHits=2
     }
   }
   if (length(edgeList) < 3) {
-    bestScore <- MorphyLength(edgeList[[1]], edgeList[[2]], morphyObj)
+    bestScore <- ParentChildMorphyLength(edgeList[[1]], edgeList[[2]], morphyObj)
   } else {
     bestScore <- edgeList[[3]]
   }
@@ -302,7 +302,7 @@ BasicSearch <- function
     cluster <- NULL
     on.exit(morphyObj <- UnloadMorphy(morphyObj))
   }
-  ret <- DoTreeSearch(edgeList, morphyObj, Rearrange=Rearrange,
+  ret <- MorphyTreeSearch(edgeList, morphyObj, Rearrange=Rearrange,
                       maxIter=maxIter, maxHits=maxHits, forestSize=forestSize, cluster=cluster, 
                       verbosity, ...)
   return (ret)

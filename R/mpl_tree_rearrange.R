@@ -80,7 +80,7 @@ MorphyRearrange <- function (parent, child, morphyObj, inputScore=1e+07, hits=0,
   if (is.null(cluster)) {
     rearrangedEdges <- RearrangeEdges(parent, child) # TODO we probably want to get ALL trees 1 REARRANGE step away
     edgeLists <- list(rearrangedEdges)
-    minScore <- MorphyLength(rearrangedEdges[[1]], rearrangedEdges[[2]], morphyObj)
+    minScore <- ParentChildMorphyLength(rearrangedEdges[[1]], rearrangedEdges[[2]], morphyObj)
     bestTrees <- c(TRUE)
   } else {
     stop("Cluster not implemented.")
