@@ -13,7 +13,7 @@ Sectorial(tree, dataset, TreeScorer = FitchScore,
 \item{tree}{a rooted, resolved tree in \code{\link{phylo}} format from which to start the search;}
 
 \item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
-correspond to the labels of any accompanying tree}
+correspond to the labels of any accompanying tree.}
 
 \item{TreeScorer}{function by which trees should be scored; default \code{\link{FitchScore}}}
 
@@ -29,7 +29,8 @@ with each entry corresponding to an entry in Rearrangements, or a single entry t
 \item{maxIter}{maximum number of rearrangements to perform on each search iteration - provide a list or vector 
 with each entry corresponding to an entry in Rearrangements, or a single entry to be used for all}
 
-\item{verbosity}{verbosity of output written to terminal; higher values print more messages}
+\item{verbosity}{Level of detail to display in console: larger numbers provide
+more verbose feedback to the user.}
 
 \item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}}, \code{dataset})}
 }

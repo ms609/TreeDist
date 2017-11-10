@@ -12,7 +12,7 @@ BootstrapTree(tree, dataset, TreeScorer = FitchScore, maxIter, maxHits,
 (use \code{\link{Preorder}(tree)} or (slower) \code{\link{Cladewise}(tree)})}
 
 \item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
-correspond to the labels of any accompanying tree}
+correspond to the labels of any accompanying tree.}
 
 \item{TreeScorer}{function by which trees should be scored; default \code{\link{FitchScore}}}
 
@@ -23,7 +23,8 @@ correspond to the labels of any accompanying tree}
 \item{rooted}{set to FALSE if position of root may change, TRUE if position and composition of
 outgroup is fixed}
 
-\item{verbosity}{verbosity of output written to terminal; higher values print more messages}
+\item{verbosity}{Level of detail to display in console: larger numbers provide
+more verbose feedback to the user.}
 
 \item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}}, \code{dataset})}
 }

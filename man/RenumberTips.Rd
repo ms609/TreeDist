@@ -7,7 +7,7 @@
 RenumberTips(tree, tipOrder)
 }
 \arguments{
-\item{tree}{A tree of class \code{\link{phylo}}}
+\item{tree}{A tree of class \code{\link{phylo}}.}
 
 \item{tipOrder}{A character vector containing the values of 
 \code{tree$tip.label} in the desired sort order}

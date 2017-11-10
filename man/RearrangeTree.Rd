@@ -25,7 +25,8 @@ will be discarded;}
 \item{returnSingle}{returns all trees if \kbd{FALSE} or a randomly selected tree if \kbd{TRUE};}
 \item{iter}{iteration number of calling function, for reporting to user only;}
 
-\item{verbosity}{verbosity of output written to terminal; higher values print more messages}
+\item{verbosity}{Level of detail to display in console: larger numbers provide
+more verbose feedback to the user.}
 
 \item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}}, \code{dataset})}
 }

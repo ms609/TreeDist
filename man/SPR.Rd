@@ -18,7 +18,7 @@ RootedSPRCore(parent, child, nEdge = length(parent), nNode = nEdge/2L,
   edgeToBreak = NULL, mergeEdge = NULL)
 }
 \arguments{
-\item{tree}{A tree of class \code{\link{phylo}}}
+\item{tree}{A tree of class \code{\link{phylo}}.}
 
 \item{edgeToBreak}{the index of an edge to bisect, generated randomly if not specified.}
 

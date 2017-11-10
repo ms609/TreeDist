@@ -17,7 +17,7 @@ RootedNNICore(parent, child, nTips = (length(parent)/2L) + 1L,
   edgeToBreak = NULL)
 }
 \arguments{
-\item{tree}{A tree of class \code{\link{phylo}}}
+\item{tree}{A tree of class \code{\link{phylo}}.}
 
 \item{edgeToBreak}{(optional) integer specifying the index of an edge to bisect/prune,
 generated randomly if not specified.  Alternatively, set to \code{-1} to return a complete list

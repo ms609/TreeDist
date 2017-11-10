@@ -9,10 +9,10 @@ SuccessiveApproximations(tree, dataset, outgroup = NULL, k = 3,
   searchIter = 500, ratchetIter = 5000, verbosity = 0, suboptimal = 0.1)
 }
 \arguments{
-\item{tree}{A tree of class \code{\link{phylo}}}
+\item{tree}{A tree of class \code{\link{phylo}}.}
 
 \item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
-correspond to the labels of any accompanying tree}
+correspond to the labels of any accompanying tree.}
 
 \item{outgroup}{if not NULL, taxa on which the tree should be rooted}
 

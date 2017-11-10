@@ -20,7 +20,7 @@ Pruningwise(tree, nTaxa = length(tree$tip.label), edge = tree$edge)
 Preorder(tree)
 }
 \arguments{
-\item{tree}{A tree of class \code{\link{phylo}}}
+\item{tree}{A tree of class \code{\link{phylo}}.}
 
 \item{nTaxa}{(optional) number of tips in the tree}
 

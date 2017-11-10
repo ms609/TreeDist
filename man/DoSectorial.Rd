@@ -30,7 +30,8 @@ DoSectorial(tree, dataset, TreeScorer = FitchScore, maxSectIter = 100,
 \item{Rearrangements}{a list of tree rearrangement functions that retain the root of the tree
 (e.g. \code{list(RootedSPR)})}
 
-\item{verbosity}{verbosity of output written to terminal; higher values print more messages}
+\item{verbosity}{Level of detail to display in console: larger numbers provide
+more verbose feedback to the user.}
 
 \item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}}, \code{dataset})}
 }

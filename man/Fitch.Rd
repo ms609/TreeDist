@@ -11,7 +11,7 @@ Fitch(tree, dataset, TipData = TipsAreNames, at = attributes(dataset),
 FitchScore(tree, dataset, TipData = NULL, at = attributes(dataset))
 }
 \arguments{
-\item{tree}{A tree of class \code{\link{phylo}}}
+\item{tree}{A tree of class \code{\link{phylo}}.}
 
 \item{dataset}{A list or matrix whose list entries, rows or columns (as specified in TipData)
 correspond to the character data associated with the tips of the tree. 

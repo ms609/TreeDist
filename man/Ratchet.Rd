@@ -10,7 +10,7 @@ Ratchet(tree, dataset, TreeScorer = FitchScore, returnAll = FALSE,
   verbosity = 0, rearrangements = "NNI", suboptimal = 1e-08, ...)
 }
 \arguments{
-\item{tree}{A tree of class \code{\link{phylo}}}
+\item{tree}{A tree of class \code{\link{phylo}}.}
 
 \item{dataset}{a dataset in the format required by TreeScorer}
 
@@ -32,7 +32,8 @@ Ratchet(tree, dataset, TreeScorer = FitchScore, returnAll = FALSE,
 
 \item{bootstrapHits}{maximum times to hit best score on each bootstrap  iteration (default: \code{maxHits})}
 
-\item{verbosity}{verbosity of output written to terminal; higher values print more messages}
+\item{verbosity}{Level of detail to display in console: larger numbers provide
+more verbose feedback to the user.}
 
 \item{rearrangements}{method(s) to use when rearranging trees. Provide:
 the character string "TBR" to conduct TBR, SPR and NNI rearrangements, or "TBR only"

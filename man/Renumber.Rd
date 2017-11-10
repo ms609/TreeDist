@@ -7,7 +7,7 @@
 Renumber(tree)
 }
 \arguments{
-\item{tree}{A tree of class \code{\link{phylo}}}
+\item{tree}{A tree of class \code{\link{phylo}}.}
 }
 \value{
 This function returns a tree of class \code{phylo}

@@ -13,7 +13,7 @@ TreeSearch(tree, dataset, InitializeData = function(tree, dataset)
 \item{tree}{a fully-resolved starting tree in \code{\link{phylo}} format, with the desired outgroup; edge lengths are not supported and will be deleted;}
 
 \item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
-correspond to the labels of any accompanying tree}
+correspond to the labels of any accompanying tree.}
 
 \item{InitializeData}{function to set up data object to prepare for tree search. Should return TRUE, unless a dataset needs to be sent to TreeScorer}
 
@@ -29,7 +29,8 @@ correspond to the labels of any accompanying tree}
 
 \item{forestSize}{the maximum number of trees to return - useful in concert with \code{\link{consensus}};}
 
-\item{verbosity}{verbosity of output written to terminal; higher values print more messages}
+\item{verbosity}{Level of detail to display in console: larger numbers provide
+more verbose feedback to the user.}
 
 \item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}}, \code{dataset})}
 }
