@@ -30,7 +30,7 @@
 InapplicableFitch <- function (tree, dataset) {
   if (class(dataset) != 'phyDat') stop('Invalid data type ', class(dataset), '; should be phyDat.')
   tree <- RenumberTips(Renumber(tree), names(dataset))
-  morphyObj <- LoadMorphy(dataset)
+  morphyObj <- PhyDat2Morphy(dataset)
   on.exit(morphyObj <- UnloadMorphy(morphyObj))
   MorphyTreeLength(tree, morphyObj)
 }
@@ -42,7 +42,7 @@ InapplicableFitch <- function (tree, dataset) {
 #'
 #' @return The length of the tree (after weighting)
 #'
-#' @seealso LoadMorphy
+#' @seealso PhyDat2Morphy
 #'
 #' @author Martin R. Smith
 #' @keywords internal

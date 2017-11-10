@@ -67,7 +67,7 @@ SetMorphyWeights <- function (weight, morphyObj, checkInput = TRUE) {
 #' @author Martin R. Smith
 #' @importFrom phangorn phyDat
 #' @export
-LoadMorphy <- function (phy) {
+PhyDat2Morphy <- function (phy) {
   morphyObj <- mpl_new_Morphy()
   nTax <- length(phy)
   weight <- attr(phy, 'weight')

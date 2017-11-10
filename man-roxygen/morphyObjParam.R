@@ -1,1 +1,1 @@
-#' @param morphyObj A morphy object created with \code{\link{LoadMorphy}}.
+#' @param morphyObj A morphy object, perhaps created with \code{\link{PhyDat2Morphy}}.

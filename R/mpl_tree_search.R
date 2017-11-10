@@ -41,7 +41,7 @@ RatchetSearch <- function
 (tree, dataset, keepAll=FALSE, maxIt=100, maxIter=5000, maxHits=40, k=10, stopAtScore=NULL,
   verbosity=1L, rearrangements=list(TBRCore, SPRCore, NNICore), ...) {
   if (class(dataset) != 'phyDat') stop("dataset must be of class phyDat, not", class(dataset))
-  morphyObj <- LoadMorphy(dataset)
+  morphyObj <- PhyDat2Morphy(dataset)
   on.exit(morphyObj <- UnloadMorphy(morphyObj))
   tree <- RenumberTips(tree, names(dataset))
   edge <- tree$edge
@@ -180,7 +180,7 @@ DoTreeSearch <- function (edgeList, morphyObj, Rearrange, maxIter=100, maxHits=2
     if (forestSize > 1L) {
       stop("TODO: Forests not supported")
       forest <- empty.forest <- vector('list', forestSize)
-      forest[[1]] <- tree
+      forest[[1]] <- edgeList
     } else {
       forestSize <- 1L
     }
@@ -204,7 +204,7 @@ DoTreeSearch <- function (edgeList, morphyObj, Rearrange, maxIter=100, maxHits=2
     if (forestSize > 1L) {
       stop("TODO re-code this")
       if (scoreThisIteration == bestScore) {
-        forest[(hits-length(edgeLists)+1L):hits] <- trees ## TODO Check that length still hojlds
+        forest[(hits-length(candidateLists)+1L):hits] <- candidateLists ## TODO Check that length still holds
         edgeList <- sample(forest[1:hits], 1)[[1]]
         attr(edgeList, 'score') <- scoreThisIteration
         attr(edgeList, 'hits') <- hits
@@ -294,11 +294,11 @@ BasicSearch <- function
     ### cluster <- snow::makeCluster(nCores)
     ### on.exit(snow::stopCluster(cluster), add=TRUE)
     ### snow::clusterEvalQ(cluster, {library(inapplicable); NULL})
-    ### morphyObj <- lapply(seq_len(nCores), function(xx) LoadMorphy(dataset))
+    ### morphyObj <- lapply(seq_len(nCores), function(xx) PhyDat2Morphy(dataset))
     ### on.exit(morphyObj <- vapply(morphyObj, UnloadMorphy, integer(1)), add=TRUE)
     ### snow::clusterExport(cluster, c('dataset'))
   } else {
-    morphyObj <- LoadMorphy(dataset)
+    morphyObj <- PhyDat2Morphy(dataset)
     cluster <- NULL
     on.exit(morphyObj <- UnloadMorphy(morphyObj))
   }
@@ -356,7 +356,7 @@ BasicSearch <- function
 ###    subsequentRearrangements = list(TreeSearch::RootedNNI, TreeSearch::RootedTBR, 
 ###     TreeSearch::RootedSPR, TreeSearch::RootedNNI), verbosity=3, ...) {
 ###     if (class(dataset) != 'phyDat') stop("dataset must be of class phyDat, not", class(dataset))
-###     morphyObj <- LoadMorphy(dataset)
+###     morphyObj <- PhyDat2Morphy(dataset)
 ###     on.exit(morphyObj <- UnloadMorphy(morphyObj))
 ###     tree <- TreeSearch::RenumberTips(TreeSearch::Renumber(tree), names(dataset))
 ###     if (is.null(attr(tree, "score"))) {
