@@ -78,7 +78,7 @@ MorphyRearrange <- function (parent, child, morphyObj, inputScore=1e+07, hits=0,
                              iter='?', cluster=NULL, verbosity=0L) {
   bestScore <- inputScore
   if (is.null(cluster)) {
-    rearrangedEdges <- Rearrange(parent, child) # TODO we probably want to get ALL trees 1 REARRANGE step away
+    rearrangedEdges <- RearrangeEdges(parent, child) # TODO we probably want to get ALL trees 1 REARRANGE step away
     edgeLists <- list(rearrangedEdges)
     minScore <- MorphyLength(rearrangedEdges[[1]], rearrangedEdges[[2]], morphyObj)
     bestTrees <- c(TRUE)
