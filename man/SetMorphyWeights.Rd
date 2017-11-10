@@ -9,7 +9,7 @@ SetMorphyWeights(weight, morphyObj, checkInput = TRUE)
 \arguments{
 \item{weight}{A vector listing the new weights to be applied to each character}
 
-\item{morphyObj}{A morphy object created with \code{\link{LoadMorphy}}.}
+\item{morphyObj}{A morphy object, perhaps created with \code{\link{PhyDat2Morphy}}.}
 
 \item{checkInput}{Whether to sanity-check input data before applying. 
 Defaults to TRUE to protect the user from crashes.}

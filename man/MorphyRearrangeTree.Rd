@@ -18,7 +18,7 @@ in an order that matches the Morphy object, and the attributes
 \code{score}, the tree's optimality score, and 
 \code{hits}, the number of times the best score has been hit in the calling function.}
 
-\item{morphyObj}{A morphy object created with \code{\link{LoadMorphy}}.}
+\item{morphyObj}{A morphy object, perhaps created with \code{\link{PhyDat2Morphy}}.}
 
 \item{Rearrange}{a rearrangement function that returns a tree: probably one of 
 \code{\link[TreeSearch]{RootedNNI}}, \code{\link[TreeSearch]{RootedSPR}} or

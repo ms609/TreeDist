@@ -21,7 +21,7 @@ C_MorphyLength(parentOf, leftChild, rightChild, morphyObj)
 \code{\link[TreeSearch]{RenumberTips}}, i.e. corresponding to the sequence of taxa 
 in the corresponding Morphy object.}
 
-\item{morphyObj}{A morphy object created with \code{\link{LoadMorphy}}.}
+\item{morphyObj}{A morphy object, perhaps created with \code{\link{PhyDat2Morphy}}.}
 
 \item{parent}{the first column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 1]}
 
@@ -61,7 +61,7 @@ Calculate parsimony score with inapplicable data
 }}
 
 \seealso{
-LoadMorphy
+PhyDat2Morphy
 }
 \author{
 Martin R. Smith

@@ -13,7 +13,7 @@ MorphyBootstrap(edgeList, morphyObj, maxIter, maxHits, verbosity = 1L, ...)
 - (optionally) score of the tree
 - (optionally, if score provided) number of times this score has been hit}
 
-\item{morphyObj}{A morphy object created with \code{\link{LoadMorphy}}.}
+\item{morphyObj}{A morphy object, perhaps created with \code{\link{PhyDat2Morphy}}.}
 
 \item{maxIter}{maximum number of iterations to perform in tree search}
 

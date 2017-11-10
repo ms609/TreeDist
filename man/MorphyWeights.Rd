@@ -7,7 +7,7 @@
 MorphyWeights(morphyObj)
 }
 \arguments{
-\item{morphyObj}{A morphy object created with \code{\link{LoadMorphy}}.}
+\item{morphyObj}{A morphy object, perhaps created with \code{\link{PhyDat2Morphy}}.}
 }
 \value{
 a matrix of dimensions (2, number of characters); row 1 lists the

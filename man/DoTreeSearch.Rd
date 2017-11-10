@@ -15,7 +15,7 @@ DoTreeSearch(edgeList, morphyObj, Rearrange, maxIter = 100, maxHits = 20,
 - (optionally) score of the tree
 - (optionally, if score provided) number of times this score has been hit}
 
-\item{morphyObj}{A morphy object created with \code{\link{LoadMorphy}}.}
+\item{morphyObj}{A morphy object, perhaps created with \code{\link{PhyDat2Morphy}}.}
 
 \item{Rearrange}{Function to use to rearrange trees; example: 
 \code{TreeSearch::\link[TreeSearch]{RootedTBR}}.}
