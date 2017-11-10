@@ -33,6 +33,7 @@ RandomMorphyTree <- function (nTip) {
   .Call('RANDOM_TREE', as.integer(nTip))
 }
 
+#' @importFrom graphics plot
 plot.morphyTree <- function (morphyTree) {
   parentOf <- morphyTree[[1]]
   left <- morphyTree[[2]]
