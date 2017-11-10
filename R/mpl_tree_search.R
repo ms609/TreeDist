@@ -64,7 +64,7 @@ RatchetSearch <- function
     
     for (Rearrange in rearrangements) {
       if (verbosity > 0L) cat ("\n - Rearranging new candidate tree...")
-      candidate <- DoTreeSearch(candidate, morphyObj, Rearrange=Rearrange, stopAtScore=stopAtScore,
+      candidate <- MorphyTreeSearch(candidate, morphyObj, Rearrange=Rearrange, stopAtScore=stopAtScore,
                                 verbosity=verbosity-1L, maxIter=maxIter, maxHits=maxHits, ...)
       candScore <- candidate[[3]]
       if (!is.null(stopAtScore) && candScore < stopAtScore + eps) return(candidate)
