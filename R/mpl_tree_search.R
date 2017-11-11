@@ -127,6 +127,7 @@ RatchetConsensus <- function (tree, dataset, maxIt=5000, maxIter=500, maxHits=20
 #' 
 #' @template edgeListParam
 #' @template morphyObjParam
+#' @template RearrangeEdgesParam
 #' @param maxIter maximum number of iterations to perform in tree search
 #' @param maxHits maximum number of hits to accomplish in tree search
 #' @template verbosityParam
@@ -134,8 +135,8 @@ RatchetConsensus <- function (tree, dataset, maxIt=5000, maxIter=500, maxHits=20
 #'
 #' @return A tree that is optimal under a random sampling of the original characters
 #' @export
-MorphyBootstrap <- function (edgeList, morphyObj, maxIter, maxHits, verbosity=1L, 
-                             RearrangeEdges = NNICore...) {
+MorphyBootstrap <- function (edgeList, morphyObj, RearrangeEdges = NNICore, 
+                             maxIter, maxHits, verbosity=1L, ...) {
 ## Simplified version of phangorn::bootstrap.phyDat, with bs=1 and multicore=FALSE
   startWeights <- MorphyWeights(morphyObj)[1, ]
   eachChar <- seq_along(startWeights)

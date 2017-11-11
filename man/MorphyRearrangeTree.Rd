@@ -52,6 +52,8 @@ and returns a list with modified vectors; for example
 \value{
 {This function returns the most parsimonious of the trees generated, with attributes \code{hits} and \code{score}
  as described for argument \code{tree}, and with tip labels ordered to match morphyObj.}
+
+a rearranged edgeList.
 }
 \description{
 Rearrange phylogenetic tree
@@ -73,4 +75,7 @@ Rearrange phylogenetic tree
 }
 \author{
 Martin R. Smith
+
+Martin R. Smith
 }
+\keyword{internal}

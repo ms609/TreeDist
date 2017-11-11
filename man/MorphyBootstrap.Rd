@@ -4,7 +4,8 @@
 \alias{MorphyBootstrap}
 \title{Bootstrap tree search with inapplicable data}
 \usage{
-MorphyBootstrap(edgeList, morphyObj, maxIter, maxHits, verbosity = 1L, ...)
+MorphyBootstrap(edgeList, morphyObj, RearrangeEdges = NNICore, maxIter,
+  maxHits, verbosity = 1L, ...)
 }
 \arguments{
 \item{edgeList}{a list containing the following:
@@ -14,6 +15,10 @@ MorphyBootstrap(edgeList, morphyObj, maxIter, maxHits, verbosity = 1L, ...)
 - (optionally, if score provided) number of times this score has been hit}
 
 \item{morphyObj}{A morphy object, perhaps created with \code{\link{PhyDat2Morphy}}.}
+
+\item{RearrangeEdges}{a function that rearranges a parent and child vector, 
+and returns a list with modified vectors; for example
+\code{\link[TreeSearch]{SPRCore}}.}
 
 \item{maxIter}{maximum number of iterations to perform in tree search}
 

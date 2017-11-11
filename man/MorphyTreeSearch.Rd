@@ -4,7 +4,7 @@
 \alias{MorphyTreeSearch}
 \title{Tree Search}
 \usage{
-MorphyTreeSearch(edgeList, morphyObj, Rearrange, maxIter = 100,
+MorphyTreeSearch(edgeList, morphyObj, RearrangeEdges, maxIter = 100,
   maxHits = 20, stopAtScore = NULL, forestSize = 1L, cluster = NULL,
   verbosity = 1L, ...)
 }
@@ -16,9 +16,6 @@ MorphyTreeSearch(edgeList, morphyObj, Rearrange, maxIter = 100,
 - (optionally, if score provided) number of times this score has been hit}
 
 \item{morphyObj}{A morphy object, perhaps created with \code{\link{PhyDat2Morphy}}.}
-
-\item{Rearrange}{Function to use to rearrange trees; example: 
-\code{TreeSearch::\link[TreeSearch]{RootedTBR}}.}
 
 \item{maxIter}{maximum iterations to conduct.}
 
@@ -35,6 +32,9 @@ searches on multicore machines. #TODO not tested. #TODO restore code link}
 more verbose feedback to the user.}
 
 \item{\dots}{additional variables to pass to \code{\link{MorphyRearrangeTree}}.}
+
+\item{Rearrange}{Function to use to rearrange trees; example: 
+\code{TreeSearch::\link[TreeSearch]{RootedTBR}}.}
 }
 \description{
 Performs a tree search using a Morphy object

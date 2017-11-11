@@ -70,9 +70,12 @@ MorphyRearrangeTree <- function (tree, morphyObj, Rearrange, minScore=NULL, retu
 #' @template treeChild
 #' @param inputScore the score of the tree, if known
 #' @param hits number of times that this score has been hit
-#' @param RearrangeEdges a function that rearranges a parent and child vector, 
-#'                       and returns a list with modified vectors; for example
-#'                       \code{\link[TreeSearch]{SPRCore}}.
+#' @template RearrangeEdgesParam
+#' @return a rearranged edgeList.
+#'
+#' @author Martin R. Smith
+#' @keywords internal
+#' @export
 MorphyRearrange <- function (parent, child, morphyObj, inputScore=1e+07, hits=0, 
                              RearrangeEdges, minScore=NULL, returnSingle=TRUE,
                              iter='?', cluster=NULL, verbosity=0L) {
