@@ -14,11 +14,17 @@ test_that("tree search finds shortest tree", {
   on.exit(morphyObj <- UnloadMorphy(morphyObj))
   
  ## TODO FIX VERBOISTY
-  expect_equal(3, MorphySearch(start_tree, dataset, Rearrange=NNICore, verbosity=-1)[[3]],
+  expect_equal(3, attr(MorphySearch(start_tree, dataset, Rearrange=NNICore, verbosity=-1), 'score'),
                InapplicableFitch(true_tree, dataset))
-  expect_equal(3, MorphySearch(start_tree, dataset, Rearrange=SPRCore, verbosity=-1)[[3]],
+  expect_equal(3, attr(MorphySearch(start_tree, dataset, Rearrange=SPRCore, verbosity=-1), 'score'),
                InapplicableFitch(true_tree, dataset))
-  expect_equal(3, MorphySearch(start_tree, dataset, Rearrange=TBRCore, verbosity=-1)[[3]],
+  expect_equal(3, attr(MorphySearch(start_tree, dataset, Rearrange=TBRCore, verbosity=-1), 'score'),
+               InapplicableFitch(true_tree, dataset))
+  expect_equal(3, attr(MorphySearch(start_tree, dataset, Rearrange=RootedNNICore, verbosity=-1), 'score'),
+               InapplicableFitch(true_tree, dataset))
+  expect_equal(3, attr(MorphySearch(start_tree, dataset, Rearrange=RootedSPRCore, verbosity=-1), 'score'),
+               InapplicableFitch(true_tree, dataset))
+  expect_equal(3, attr(MorphySearch(start_tree, dataset, Rearrange=RootedTBRCore, verbosity=-1), 'score'),
                InapplicableFitch(true_tree, dataset))
   ratchetScore <- attr(MorphyRatchet(start_tree, dataset, 
                   rearrangements=list(RootedTBRCore, RootedSPRCore, RootedNNICore),

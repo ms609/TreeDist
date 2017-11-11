@@ -191,7 +191,7 @@ MorphyTreeSearch <- function (edgeList, morphyObj, Rearrange, maxIter=100, maxHi
       forestSize <- 1L
     }
   }
-  if (length(edgeList) < 3) {
+  if (length(edgeList) < 3L) {
     bestScore <- ParentChildMorphyLength(edgeList[[1]], edgeList[[2]], morphyObj)
   } else {
     bestScore <- edgeList[[3]]
@@ -289,7 +289,7 @@ MorphyTreeSearch <- function (edgeList, morphyObj, Rearrange, maxIter=100, maxHi
 #' @export
 MorphySearch <- function 
 (tree, dataset, Rearrange=TBRCore, maxIter=100, maxHits=20, forestSize=1, 
- nCores=1L, verbosity=1, ...) {
+ nCores=1L, verbosity=1L, ...) {
   # Initialize morphy object
   if (class(dataset) != 'phyDat') stop ("dataset must be of class phyDat, not ", class(dataset))
   if (dim(tree$edge)[1] != 2 * tree$Nnode) stop("tree must be bifurcating; try rooting with ape::root")
@@ -310,9 +310,9 @@ MorphySearch <- function
     on.exit(morphyObj <- UnloadMorphy(morphyObj))
   }
   
-  searchResult <- MorphyTreeSearch(edgeList, morphyObj, Rearrange=Rearrange,
+  searchResult <- MorphyTreeSearch(edgeList=edgeList, morphyObj=morphyObj, Rearrange=Rearrange,
                       maxIter=maxIter, maxHits=maxHits, forestSize=forestSize, cluster=cluster, 
-                      verbosity, ...)
+                      verbosity=verbosity, ...)
   ret <- list(edge = ListToMatrix(searchResult),
               Nnode = length(edgeList[[1]]) / 2,
               tip.label = names(dataset)
