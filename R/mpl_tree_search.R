@@ -252,7 +252,7 @@ MorphyTreeSearch <- function (edgeList, morphyObj, EdgeSwapper, maxIter=100, max
 #' @param tree a fully-resolved starting tree in \code{\link{phylo}} format, with the desired outgroup; 
 #'        edge lengths are not supported and will be deleted.
 #' @template datasetParam
-#' @param Rearrange Function used to rearrange trees; default: \code{\link{RootedTBR}}.
+#' @template EdgeSwapperParam
 #' @param maxIter the maximum number of iterations to perform before abandoning the search.
 #' @param maxHits the maximum times to hit the best score before abandoning the search.
 #' @param forestSize the maximum number of trees to return - useful in concert with \code{\link{consensus}}.
@@ -288,8 +288,7 @@ MorphyTreeSearch <- function (edgeList, morphyObj, EdgeSwapper, maxIter=100, max
 #' @keywords  tree 
 #' 
 #' @export
-MorphySearch <- function 
-(tree, dataset, Rearrange=TBRSwap, maxIter=100, maxHits=20, forestSize=1, 
+MorphySearch <- function (tree, dataset, EdgeSwapper=TBRSwap, maxIter=100, maxHits=20, forestSize=1, 
  nCores=1L, verbosity=1L, ...) {
   # Initialize morphy object
   if (class(dataset) != 'phyDat') stop ("dataset must be of class phyDat, not ", class(dataset))

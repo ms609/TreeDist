@@ -57,6 +57,8 @@ TreeSearch <- function (tree, dataset,
                         EdgeSwapper    = RootedTBRSwap,
                         maxIter = 100, maxHits = 20, forestSize = 1,
                         verbosity = 1, ...) {
+  eps <- 1e-07
+  hits <- 0L
   # initialize tree and data
   if (dim(tree$edge)[1] != 2 * tree$Nnode) stop("tree must be bifurcating; try rooting with ape::root")
   edgeList <- MatrixToList(tree$edge)
@@ -80,9 +82,12 @@ TreeSearch <- function (tree, dataset,
   returnSingle <- !(forestSize > 1)
   
   for (iter in 1:maxIter) {
-    candidateEdges <- RearrangeEdges(edgeList[[1]], edgeList[[2]], TreeScorer, EdgeSwapper=EdgeSwapper, minScore=bestScore,
-                             returnSingle=returnSingle, iter=iter, verbosity=verbosity, ...)
-    iterScore <- attr(trees, 'score')
+    candidateEdges <- RearrangeEdges(edgeList[[1]], edgeList[[2]], dataset=initializedData, 
+                             TreeScorer=TreeScorer, hits=hits, inputScore=bestScore,
+                             EdgeSwapper=EdgeSwapper, minScore=bestScore,
+                             returnSingle=returnSingle, 
+                             verbosity=verbosity, ...)
+    iterScore <- candidateEdges[[3]]
     if (length(forestSize) && forestSize > 1) {
       hits <- attr(trees, 'hits')
       if (iterScore == bestScore) {
@@ -99,14 +104,15 @@ TreeSearch <- function (tree, dataset,
         attr(tree, 'hits') <- hits
       }      
     } else {
-      if (iterScore <= bestScore) {
+      if (iterScore < bestScore + eps) {
+        hits <- candidateEdges[[4]]
         bestScore <- iterScore
-        tree <- trees
+        edgeList <- candidateEdges
       }
     }
     if (attr(trees, 'hits') >= maxHits) break
   }
-  if (verbosity > 0) cat("\n  - Final score", attr(tree, 'score'), "found", attr(tree, 'hits'), "times after", iter, "iterations\n")  
+  if (verbosity > 0) cat("\n  - Final score", bestScore, "found", hits, "times after", iter, "iterations\n")  
   if (forestSize > 1) {
     if (hits < forestSize) forest <- forest[-((hits+1):forestSize)]
     attr(forest, 'hits') <- hits
