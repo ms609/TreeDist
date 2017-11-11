@@ -70,17 +70,17 @@ MorphyRearrangeTree <- function (tree, morphyObj, Rearrange, minScore=NULL, retu
 #' @template treeChild
 #' @param inputScore the score of the tree, if known
 #' @param hits number of times that this score has been hit
-#' @template RearrangeEdgesParam
+#' @template EdgeSwapper Param
 #' @return a rearranged edgeList.
 #'
 #' @author Martin R. Smith
 #' @keywords internal
 #' @export
 MorphyRearrange <- function (parent, child, morphyObj, inputScore=1e+07, hits=0, 
-                             RearrangeEdges, minScore=NULL, returnSingle=TRUE,
+                             EdgeSwapper, minScore=NULL, returnSingle=TRUE,
                              iter='?', cluster=NULL, verbosity=0L) {
   RearrangeEdges(parent, child, dataset=morphyObj, TreeScorer=ParentChildMorphyLength, 
-                 inputScore=inputScore, hits=hits, RearrangeEdges=RearrangeEdges, 
+                 inputScore=inputScore, hits=hits, EdgeSwapper=EdgeSwapper, 
                  minScore=minScore, returnSingle=returnSingle, iter=iter,
                  cluster=cluster, verbosity=verbosity)
 }

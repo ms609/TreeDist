@@ -6,7 +6,7 @@
 #' @param tree a fully-resolved starting tree in \code{\link{phylo}} format, with the desired outgroup; edge lengths are not supported and will be deleted;
 #' @template datasetParam
 #' @template treeScorerParam
-#' @template RearrangeEdgesParam
+#' @template EdgeSwapperParam
 #' @param maxIter the maximum number of iterations to perform before abandoning the search.
 #' @param maxHits the maximum times to hit the best pscore before abandoning the search.
 #' @param forestSize the maximum number of trees to return - useful in concert with \code{\link{consensus}}.
@@ -54,7 +54,7 @@ TreeSearch <- function (tree, dataset,
                         InitializeData = PhyDat2Morphy,
                         CleanUpData    = UnloadMorphy,
                         TreeScorer     = FitchScore,
-                        RearrangeEdges = RootedTBRCore,
+                        EdgeSwapper    = RootedTBRCore,
                         maxIter = 100, maxHits = 20, forestSize = 1,
                         verbosity = 1, ...) {
   # initialize tree and data
@@ -72,7 +72,7 @@ TreeSearch <- function (tree, dataset,
     forestSize <- 1 
   }
   bestScore <- if (is.null(attr(tree, 'score'))) {
-    TreeScorer(tree=tree, initializedData=initializedData, ...)
+    TreeScorer(edgeList[[1]], edgeList[[2]], initializedData, ...)
   } else {
     attr(tree, 'score')
   }
@@ -80,7 +80,8 @@ TreeSearch <- function (tree, dataset,
   returnSingle <- !(forestSize > 1)
   
   for (iter in 1:maxIter) {
-    candidateEdges <- MorphyRearrangeTree(edgeList[[1]], edgeList[[2]], TreeScorer, RearrangeEdges, minScore=bestScore,
+    candidateEdges <- RearrangeEdges(edgeList[[1]], edgeList[[2]], TreeScorer, EdgeSwapper=EdgeSwapper)
+, minScore=bestScore,
                              returnSingle=returnSingle, iter=iter, verbosity=verbosity, ...)
     iterScore <- attr(trees, 'score')
     if (length(forestSize) && forestSize > 1) {

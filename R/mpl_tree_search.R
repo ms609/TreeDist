@@ -60,7 +60,7 @@ MorphyRatchet <- function
   for (i in 1:maxIt) {
     if (verbosity > 0L) cat ("\n* Ratchet iteration", i, "- Running NNI on bootstrapped dataset. ")
     candidate <- MorphyBootstrap(edgeList=edgeList, morphyObj=morphyObj, maxIter=maxIter, maxHits=maxHits,
-                               verbosity=verbosity-1L, RearrangeEdges=rearrangements[[1]], ...)
+                               verbosity=verbosity-1L, EdgeSwapper=rearrangements[[1]], ...)
     
     for (Rearrange in rearrangements) {
       if (verbosity > 0L) cat ("\n - Rearranging new candidate tree...")
@@ -127,7 +127,7 @@ RatchetConsensus <- function (tree, dataset, maxIt=5000, maxIter=500, maxHits=20
 #' 
 #' @template edgeListParam
 #' @template morphyObjParam
-#' @template RearrangeEdgesParam
+#' @template EdgeSwapperParam
 #' @param maxIter maximum number of iterations to perform in tree search
 #' @param maxHits maximum number of hits to accomplish in tree search
 #' @template verbosityParam
@@ -135,7 +135,7 @@ RatchetConsensus <- function (tree, dataset, maxIt=5000, maxIter=500, maxHits=20
 #'
 #' @return A tree that is optimal under a random sampling of the original characters
 #' @export
-MorphyBootstrap <- function (edgeList, morphyObj, RearrangeEdges = NNICore, 
+MorphyBootstrap <- function (edgeList, morphyObj, EdgeSwapper = NNICore, 
                              maxIter, maxHits, verbosity=1L, ...) {
 ## Simplified version of phangorn::bootstrap.phyDat, with bs=1 and multicore=FALSE
   startWeights <- MorphyWeights(morphyObj)[1, ]
@@ -145,7 +145,7 @@ MorphyBootstrap <- function (edgeList, morphyObj, RearrangeEdges = NNICore,
   vapply(eachChar, function (i) 
          mpl_set_charac_weight(i, BS[i], morphyObj), integer(1))
   mpl_apply_tipdata(morphyObj)
-  res <- MorphyTreeSearch(edgeList, morphyObj, RearrangeEdges=RearrangeEdges, maxIter=maxIter, maxHits=maxHits, verbosity=verbosity-1L, ...)
+  res <- MorphyTreeSearch(edgeList, morphyObj, EdgeSwapper=EdgeSwapper, maxIter=maxIter, maxHits=maxHits, verbosity=verbosity-1L, ...)
   vapply(eachChar, function (i) 
          mpl_set_charac_weight(i, startWeights[i], morphyObj), integer(1))
   mpl_apply_tipdata(morphyObj)
@@ -179,7 +179,7 @@ MorphyBootstrap <- function (edgeList, morphyObj, RearrangeEdges = NNICore,
 #' @keywords internal
 #' @export
 
-MorphyTreeSearch <- function (edgeList, morphyObj, RearrangeEdges, maxIter=100, maxHits=20, 
+MorphyTreeSearch <- function (edgeList, morphyObj, EdgeSwapper, maxIter=100, maxHits=20, 
                           stopAtScore=NULL, forestSize=1L, 
                           cluster=NULL, verbosity=1L, ...) {
   eps <- 1e-07                        
@@ -204,7 +204,7 @@ MorphyTreeSearch <- function (edgeList, morphyObj, RearrangeEdges, maxIter=100, 
   
   for (iter in 1:maxIter) {
     candidateLists <- MorphyRearrange(edgeList[[1]], edgeList[[2]], morphyObj, 
-                             inputScore=bestScore, hits=hits, RearrangeEdges=RearrangeEdges,
+                             inputScore=bestScore, hits=hits, EdgeSwapper=EdgeSwapper,
                              minScore=bestScore, returnSingle=returnSingle, iter=iter, 
                              cluster=cluster, verbosity=verbosity, ...)
     scoreThisIteration <- candidateLists[[3]]

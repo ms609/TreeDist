@@ -77,11 +77,11 @@ RearrangeTree <- function (tree, TreeScorer = FitchScore, Rearrange = RootedNNI,
 #' 
 #' @export
 RearrangeEdges <- function (parent, child, dataset, TreeScorer, inputScore=1e+07, hits=0, 
-                             RearrangeEdges, minScore=NULL, returnSingle=TRUE,
+                             EdgeSwapper, minScore=NULL, returnSingle=TRUE,
                              iter='?', cluster=NULL, verbosity=0L) {
   bestScore <- inputScore
   if (is.null(cluster)) {
-    rearrangedEdges <- RearrangeEdges(parent, child) # TODO we probably want to get ALL trees 1 REARRANGE step away
+    rearrangedEdges <- EdgeSwapper(parent, child) # TODO we probably want to get ALL trees 1 REARRANGE step away
     edgeLists <- list(rearrangedEdges)
     minScore <- TreeScorer(rearrangedEdges[[1]], rearrangedEdges[[2]], dataset)
     bestTrees <- c(TRUE)
