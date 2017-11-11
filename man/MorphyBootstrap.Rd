@@ -18,7 +18,7 @@ MorphyBootstrap(edgeList, morphyObj, RearrangeEdges = NNICore, maxIter,
 
 \item{RearrangeEdges}{a function that rearranges a parent and child vector, 
 and returns a list with modified vectors; for example
-\code{\link[TreeSearch]{SPRCore}}.}
+\code{\link{SPRCore}}.}
 
 \item{maxIter}{maximum number of iterations to perform in tree search}
 

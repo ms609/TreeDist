@@ -21,8 +21,8 @@ in an order that matches the Morphy object, and the attributes
 \item{morphyObj}{A morphy object, perhaps created with \code{\link{PhyDat2Morphy}}.}
 
 \item{Rearrange}{a rearrangement function that returns a tree: probably one of 
-\code{\link[TreeSearch]{RootedNNI}}, \code{\link[TreeSearch]{RootedSPR}} or
-\code{\link[TreeSearch]{RootedTBR}}.}
+\code{\link{RootedNNI}}, \code{\link{RootedSPR}} or
+\code{\link{RootedTBR}}.}
 
 \item{minScore}{trees longer than \code{min.score}, probably the score of the starting tree,
 will be discarded.}
@@ -47,7 +47,7 @@ more verbose feedback to the user.}
 
 \item{RearrangeEdges}{a function that rearranges a parent and child vector, 
 and returns a list with modified vectors; for example
-\code{\link[TreeSearch]{SPRCore}}.}
+\code{\link{SPRCore}}.}
 }
 \value{
 {This function returns the most parsimonious of the trees generated, with attributes \code{hits} and \code{score}
@@ -68,9 +68,9 @@ Rearrange phylogenetic tree
 
 \seealso{
 \itemize{
-    \item \code{\link[TreeSearch]{RootedNNI}}
-    \item \code{\link[TreeSearch]{RootedSPR}}
-    \item \code{\link[TreeSearch]{RootedTBR}}
+    \item \code{\link{RootedNNI}}
+    \item \code{\link{RootedSPR}}
+    \item \code{\link{RootedTBR}}
   }
 }
 \author{

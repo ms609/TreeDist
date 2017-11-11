@@ -44,9 +44,13 @@ ProfileScore <- function (tree, dataset) {
 }
 
 #' @describeIn ProfileScore Faster version if dataset has been initialized
+#' @param nChar Integer specifying number of characters in dataset.
+#' @param weight Vector of integers listing weight to be applied to each character.
+#' @param info Matrix listing information content of each extra step, for each character.
+#' @param nRowInfo ??? #TODO Document
 #' @export
 IProfileScore <- function (tree, nChar, weight, info, nRowInfo) {
-  steps <- TreeSearch::IFitchSteps(tree, nChar)
+  steps <- IFitchSteps(tree, nChar)
  #info <- at$info.amounts
   return (-sum(vapply(seq_len(nChar), function (i) {
     stepRow <- max(0L, steps[i] - 1L) + 1L
@@ -61,7 +65,7 @@ ProfileTreeSearch <- function (tree, dataset, Rearrange = RootedTBR,
   if (class(dataset) != 'profileDat') stop("Unrecognized dataset class; should be phyDat or profileDat")
   at <- attributes(dataset)
   
-  TreeSearch::TreeSearch(tree, dataset, nChar=at$nr, weight=at$weight, info=at$info.amounts,
+  TreeSearch(tree, dataset, nChar=at$nr, weight=at$weight, info=at$info.amounts,
                          nRowInfo=nrow(at$info.amounts), 
                          InitializeData = InitFitch,
                          CleanUpData = DestroyFitch,

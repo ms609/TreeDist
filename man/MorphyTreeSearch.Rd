@@ -34,7 +34,7 @@ more verbose feedback to the user.}
 \item{\dots}{additional variables to pass to \code{\link{MorphyRearrangeTree}}.}
 
 \item{Rearrange}{Function to use to rearrange trees; example: 
-\code{TreeSearch::\link[TreeSearch]{RootedTBR}}.}
+\code{\link{RootedTBR}}.}
 }
 \description{
 Performs a tree search using a Morphy object
@@ -42,7 +42,7 @@ Performs a tree search using a Morphy object
 \details{
 Does the hard work of searching for a most parsimonious tree, given the
 parent and child vectors of a tree arranged in preorder (perhaps with 
-\code{\link[TreeSearch]{RenumberEdges}}).
+\code{\link{RenumberEdges}}).
 End-users are expected to access this function through its wrapper, TreeSearch
 It is also called directly by MorphyRatchet and Sectorial functions
 }

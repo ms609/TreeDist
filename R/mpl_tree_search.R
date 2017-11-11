@@ -12,7 +12,7 @@
 #' @template stopAtScoreParam
 #' @template verbosityParam
 #' @param rearrangements (list of) function(s) to use when rearranging trees
-#'        e.g. \code{list(TreeSearch::RootedTBRCore, TreeSearch::NNICore)}
+#'        e.g. \code{list(RootedTBRCore, NNICore)}
 #' @param \dots other arguments to pass to subsequent functions.
 #' @param nSearch Number of Ratchet searches to conduct (for RatchetConsensus)
 #' 
@@ -32,7 +32,7 @@
 #' @examples{
 #' data('inapplicable.datasets')
 #' my.phyDat <- inapplicable.phyData[[1]]
-#' MorphyRatchet(tree=TreeSearch::RandomTree(my.phyDat, root=names(my.phyDat)[1]), 
+#' MorphyRatchet(tree=RandomTree(my.phyDat, root=names(my.phyDat)[1]), 
 #'         dataset=my.phyDat, maxIt=1, maxIter=50)
 #' }
 #' @keywords  tree 
@@ -158,14 +158,14 @@ MorphyBootstrap <- function (edgeList, morphyObj, RearrangeEdges = NNICore,
 #' 
 #' Does the hard work of searching for a most parsimonious tree, given the
 #' parent and child vectors of a tree arranged in preorder (perhaps with 
-#' \code{\link[TreeSearch]{RenumberEdges}}).
+#' \code{\link{RenumberEdges}}).
 #' End-users are expected to access this function through its wrapper, TreeSearch
 #' It is also called directly by MorphyRatchet and Sectorial functions
 #'
 #' @template edgeListParam
 #' @template morphyObjParam
 #' @param Rearrange Function to use to rearrange trees; example: 
-#'                  \code{TreeSearch::\link[TreeSearch]{RootedTBR}}.
+#'                  \code{\link{RootedTBR}}.
 #' @param maxIter maximum iterations to conduct.
 #' @param maxHits stop search after this many hits.
 #' @template stopAtScoreParam
@@ -252,7 +252,7 @@ MorphyTreeSearch <- function (edgeList, morphyObj, RearrangeEdges, maxIter=100, 
 #' @param tree a fully-resolved starting tree in \code{\link{phylo}} format, with the desired outgroup; 
 #'        edge lengths are not supported and will be deleted.
 #' @template datasetParam
-#' @param Rearrange Function used to rearrange trees; default: \code{\link[TreeSearch]{RootedTBR}}.
+#' @param Rearrange Function used to rearrange trees; default: \code{\link{RootedTBR}}.
 #' @param maxIter the maximum number of iterations to perform before abandoning the search.
 #' @param maxHits the maximum times to hit the best score before abandoning the search.
 #' @param forestSize the maximum number of trees to return - useful in concert with \code{\link{consensus}}.
@@ -270,7 +270,7 @@ MorphyTreeSearch <- function (edgeList, morphyObj, RearrangeEdges, maxIter=100, 
 #' @seealso
 #' \itemize{
 #' \item \code{\link{InapplicableFitch}}, calculates parsimony score, supports inapplicable tokens;
-#' \item \code{\link[TreeSearch]{RootedNNI}}, conducts tree rearrangements;
+#' \item \code{\link{RootedNNI}}, conducts tree rearrangements;
 ### #' \item \code{\link{SectorialSearch}}, alternative heuristic, useful for larger trees;
 #' \item \code{\link{MorphyRatchet}}, alternative heuristic, useful to escape local optima.
 #' }
@@ -278,11 +278,11 @@ MorphyTreeSearch <- function (edgeList, morphyObj, RearrangeEdges, maxIter=100, 
 #' @examples
 #' data('inapplicable.datasets')
 #' my.phyDat <- inapplicable.phyData[[1]]
-#' njtree <- TreeSearch::NJTree(my.phyDat)
+#' njtree <- NJTree(my.phyDat)
 #'
 #' \dontrun{
-#' TreeSearch(njtree, my.phyDat, maxIter=20, Rearrange=TreeSearch::NNI)
-#' TreeSearch(njtree, my.phyDat, maxIter=20, Rearrange=TreeSearch::RootedSPR)
+#' TreeSearch(njtree, my.phyDat, maxIter=20, Rearrange=NNI)
+#' TreeSearch(njtree, my.phyDat, maxIter=20, Rearrange=RootedSPR)
 #' }
 #' 
 #' @keywords  tree 
