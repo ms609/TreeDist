@@ -43,28 +43,34 @@ ProfileScore <- function (tree, dataset) {
   }, double(1)) * weight))
 }
 
-#' @describeIn ProfileScore Faster version if dataset has been initialized
-#' @param nChar Integer specifying number of characters in dataset.
-#' @param weight Vector of integers listing weight to be applied to each character.
-#' @param info Matrix listing information content of each extra step, for each character.
-#' @param nRowInfo ??? #TODO Document
+#' @describeIn ProfileScoreMorphy Scorer for initialized dataset.
+#' @template treeParent
+#' @template treeChild
+#' @param dataset Dataset, initialized using \code{ProfileInitMorphy} and destroyed using \code{ProfileDestroyMorphy}
 #' @export
-ProfileScoreMorphy <- function (tree, nChar, weight, info, nRowInfo) {
-  steps <- IFitchSteps(tree, nChar)
- #info <- at$info.amounts
-  return (-sum(vapply(seq_len(nChar), function (i) {
+ProfileScoreMorphy <- function (parent, child, dataset) {
+  steps <- vapply(attr(dataset, 'morphyObjs'), ParentChildMorphyLength, parent=parent, child=child, integer(1))
+  info <- attr(dataset, 'info.amounts')
+  nRowInfo <- nrow(info)
+  # Return:
+  -sum(vapply(seq_along(steps), function (i) {
     stepRow <- max(0L, steps[i] - 1L) + 1L
     return(if (stepRow > nRowInfo) 0 else info[stepRow, i])
-  }, double(1)) * weight))
+  }, double(1)) * attr(dataset, 'weight'))
 }
 
-ProfileInitMorphy <- function (tree, dataset) {
-  dataTable <- FastTable(dataset)
-  apply(dataTable$dataset, 1, SingleCharMorphy)
+#' @describeIn ProfileScoreMorphy Initialize dataset by adding morphyObjs.
+#' @export
+ProfileInitMorphy <- function (dataset) {
+  attr(dataset, 'morphyObjs') <- apply(dataset, 1, SingleCharMorphy)
+  # Return:
+  dataset
 }
 
-ProfileDestroyMorphy <- function (tree, dataset, dataInitialized) {
-  vapply(dataInitialized, UnloadMorphy, integer(1))
+#' @describeIn ProfileScoreMorphy Free memory from morphyObjs initialized by \kbd{ProfileScoreMorphy}.
+#' @export
+ProfileDestroyMorphy <- function (dataset) {
+  vapply(attr(dataset, 'morphyObjs'), UnloadMorphy, integer(1))
 }
 
 ProfileTreeSearch <- function (tree, dataset, Rearrange = RootedTBR,
