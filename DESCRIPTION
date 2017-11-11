@@ -27,9 +27,9 @@ BugReports: https://github.com/ms609/TreeSearch/issues
 Depends: R (>= 3.4.0)
 Imports: 
     ape (>= 5.0),
-    memoise, 
+    memoise,
     parallel,
-    phangorn (>= 2.2.1)
+    phangorn (>= 2.2.1),
     R.cache,
     stats
 Suggests:
