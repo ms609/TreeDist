@@ -1,3 +1,7 @@
-man-roxygen
+/^src\-/
 cran-comments.md
-\.yml$
+man-roxygen
+/^\.git/
+^.*\.o$
+^.*\.dll$
+^.*\.yml$
