@@ -195,7 +195,7 @@ MorphyTreeSearch <- function (edgeList, morphyObj, Rearrange, maxIter=100, maxHi
   } else {
     bestScore <- edgeList[[3]]
   }
-  hits <- if (length(edgeList) < 4) 0 else edgeList[[4]]
+  hits <- if (length(edgeList) < 4) 0L else edgeList[[4]]
   if (verbosity > 0L) cat("  - Initial score:", bestScore)
   if (!is.null(stopAtScore) && bestScore < stopAtScore + eps) return(edgeList)
   returnSingle <- !(forestSize > 1L)
@@ -210,9 +210,9 @@ MorphyTreeSearch <- function (edgeList, morphyObj, Rearrange, maxIter=100, maxHi
       stop("TODO re-code this")
       if (scoreThisIteration == bestScore) {
         forest[(hits-length(candidateLists)+1L):hits] <- candidateLists ## TODO Check that length still holds
-        edgeList <- sample(forest[1:hits], 1)[[1]]
-        attr(edgeList, 'score') <- scoreThisIteration
-        attr(edgeList, 'hits') <- hits
+        edgeList  <- sample(forest[1:hits], 1)[[1]]
+        bestScore <- scoreThisIteration
+        hits      <- hits + 1L
       } else if (scoreThisIteration < bestScore) {
         bestScore <- scoreThisIteration
         forest <- empty.forest
@@ -221,15 +221,16 @@ MorphyTreeSearch <- function (edgeList, morphyObj, Rearrange, maxIter=100, maxHi
         attr(edgeList, 'score') <- scoreThisIteration
       }
     } else {
-      if (scoreThisIteration <= bestScore) {
+      if (scoreThisIteration < bestScore + eps) {
+        hits <- if (bestScore < scoreThisIteration + eps) hits + 1L else 1L
         bestScore <- scoreThisIteration
-        edgeList <- candidateLists
+        edgeList  <- candidateLists
         if (!is.null(stopAtScore) && bestScore < stopAtScore + eps) return(edgeList)
       }
     }
     if (hits >= maxHits) break
   }
-  if (verbosity > 0L) cat("\n  - Final score", attr(edgeList, 'score'), "found", attr(edgeList, 'hits'), "times after", iter, "rearrangements\n")  
+  if (verbosity > 0L) cat("\n  - Final score", bestScore, "found", hits, "times after", iter, "rearrangements\n")  
   if (forestSize > 1L) {
     if (hits < forestSize) forest <- forest[-((hits+1):forestSize)]
     attr(forest, 'hits') <- hits
@@ -307,10 +308,18 @@ MorphySearch <- function
     cluster <- NULL
     on.exit(morphyObj <- UnloadMorphy(morphyObj))
   }
-  ret <- MorphyTreeSearch(edgeList, morphyObj, Rearrange=Rearrange,
+  
+  searchResult <- MorphyTreeSearch(edgeList, morphyObj, Rearrange=Rearrange,
                       maxIter=maxIter, maxHits=maxHits, forestSize=forestSize, cluster=cluster, 
                       verbosity, ...)
-  return (ret)
+  ret <- list(edge = ListToMatrix(searchResult),
+              Nnode = length(edgeList[[1]]) / 2,
+              tip.label = names(dataset)
+              )
+  class(ret) <- 'phylo'
+  attr(ret, 'score') <- searchResult[[3]]
+  # Return:
+  ret
 }
 
 ###   #' Sectorial Search
