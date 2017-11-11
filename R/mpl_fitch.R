@@ -7,8 +7,8 @@
 #' @template datasetParam
 #' 
 #' @examples
-#' data(inapplicable.datasets)
-#' tree <- TreeSearch::RandomTree(inapplicable.phyData[[1]])
+#' data('inapplicable.datasets')
+#' tree <- RandomTree(inapplicable.phyData[[1]])
 #' result <- InapplicableFitch(tree, inapplicable.phyData[[1]])
 #' 
 #' @return This function returns the elements from a list containing:
@@ -22,7 +22,7 @@
 #' If multiple elements are requested then these will be returned in a list.
 #' 
 #' @seealso \code{\link{MorphyDat}}
-#' @seealso \code{\link{BasicSearch}}
+#' @seealso \code{\link{MorphySearch}}
 #' 
 #' @author Martin R. Smith (using C code adapted from MorphyLib, author Martin Brazeau)
 #' @importFrom phangorn phyDat

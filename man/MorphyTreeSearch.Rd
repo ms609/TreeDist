@@ -44,7 +44,7 @@ Does the hard work of searching for a most parsimonious tree, given the
 parent and child vectors of a tree arranged in preorder (perhaps with 
 \code{\link[TreeSearch]{RenumberEdges}}).
 End-users are expected to access this function through its wrapper, TreeSearch
-It is also called directly by RatchetSearch and Sectorial functions
+It is also called directly by MorphyRatchet and Sectorial functions
 }
 \author{
 Martin R. Smith

@@ -28,15 +28,15 @@ Uses code modified from the Morphy library to calculate a parsimony score
 in datasets that contain inapplicable data
 }
 \examples{
-data(inapplicable.datasets)
-tree <- TreeSearch::RandomTree(inapplicable.phyData[[1]])
+data('inapplicable.datasets')
+tree <- RandomTree(inapplicable.phyData[[1]])
 result <- InapplicableFitch(tree, inapplicable.phyData[[1]])
 
 }
 \seealso{
 \code{\link{MorphyDat}}
 
-\code{\link{BasicSearch}}
+\code{\link{MorphySearch}}
 }
 \author{
 Martin R. Smith (using C code adapted from MorphyLib, author Martin Brazeau)

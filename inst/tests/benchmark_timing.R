@@ -31,7 +31,7 @@ scores <- c(
 "Zanol2014" =      1311, #              
 "Zhu2013" =        638 ) #              
 
-nj.tree <- lapply(inapplicable.phyData, TreeSearch::NJTree)
+nj.tree <- lapply(inapplicable.phyData, NJTree)
 timestart <- double(length(scores))
 timeend   <- double(length(scores))
 names(timestart) <- names(timeend) <- names(scores)
@@ -41,7 +41,7 @@ install_github('ms609/inapplicable', rel='cefb5669352aca6425516805f60108063383b6
 for (dataset in names(inapplicable.phyData)) {
   cat("\n ========", format(Sys.time(), "%b %d %X"), ":", dataset, "========\n")
   timestart[dataset] <- Sys.time()
-  oTree <- RatchetSearch(nj.tree[[dataset]], inapplicable.phyData[[dataset]], stopAtScore=scores[[dataset]],
+  oTree <- MorphyRatchet(nj.tree[[dataset]], inapplicable.phyData[[dataset]], stopAtScore=scores[[dataset]],
   k=1000, maxIt=10000, maxIter=3200, maxHits=12, verbosity=0)
   timeend[dataset] <- Sys.time()
   cat("\n > Time taken: ", (timeend[dataset] - timestart[dataset]) / 60, "mins\n")

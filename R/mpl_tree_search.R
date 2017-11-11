@@ -1,6 +1,6 @@
 #' Parsimony Ratchet
 #'
-#' \code{RatchetSearch} uses the parsimony ratchet (Nixon 1999) to search for a more parsimonious tree.
+#' \code{MorphyRatchet} uses the parsimony ratchet (Nixon 1999) to search for a more parsimonious tree.
 #'
 #' @template treeParam 
 #' @template datasetParam
@@ -26,18 +26,18 @@
 #' Adapted from \code{\link[phangorn]{pratchet}} in the \pkg{phangorn} package, which does not preserve the position of the root.
 #' 
 #' @seealso \code{\link[phangorn]{pratchet}}
-#' @seealso \code{\link{BasicSearch}}
+#' @seealso \code{\link{MorphySearch}}
 ### #' @seealso \code{\link{SectorialSearch}}
 #' 
 #' @examples{
 #' data('inapplicable.datasets')
 #' my.phyDat <- inapplicable.phyData[[1]]
-#' RatchetSearch(tree=TreeSearch::RandomTree(my.phyDat, root=names(my.phyDat)[1]), 
+#' MorphyRatchet(tree=TreeSearch::RandomTree(my.phyDat, root=names(my.phyDat)[1]), 
 #'         dataset=my.phyDat, maxIt=1, maxIter=50)
 #' }
 #' @keywords  tree 
 #' @export
-RatchetSearch <- function 
+MorphyRatchet <- function 
 (tree, dataset, keepAll=FALSE, maxIt=100, maxIter=5000, maxHits=40, k=10, stopAtScore=NULL,
   verbosity=1L, rearrangements=list(TBRCore, SPRCore, NNICore), ...) {
   if (class(dataset) != 'phyDat') stop("dataset must be of class phyDat, not", class(dataset))
@@ -110,11 +110,11 @@ RatchetSearch <- function
   ret
 }
 
-#' @describeIn RatchetSearch returns a list of optimal trees produced by nSearch Ratchet searches
+#' @describeIn MorphyRatchet returns a list of optimal trees produced by nSearch Ratchet searches
 #' @export
 RatchetConsensus <- function (tree, dataset, maxIt=5000, maxIter=500, maxHits=20, k=10, verbosity=0L, 
   rearrangements=list(RootedNNI), nSearch=10, ...) {
-  trees <- lapply(1:nSearch, function (x) RatchetSearch(tree, dataset, maxIt=maxIt, 
+  trees <- lapply(1:nSearch, function (x) MorphyRatchet(tree, dataset, maxIt=maxIt, 
               maxIter=maxIter, maxHits=maxHits, k=1, verbosity=verbosity, rearrangements=rearrangements, ...))
   scores <- vapply(trees, function (x) attr(x, 'score'), double(1))
   trees <- unique(trees[scores == min(scores)])
@@ -158,7 +158,7 @@ MorphyBootstrap <- function (edgeList, morphyObj, maxIter, maxHits, verbosity=1L
 #' parent and child vectors of a tree arranged in preorder (perhaps with 
 #' \code{\link[TreeSearch]{RenumberEdges}}).
 #' End-users are expected to access this function through its wrapper, TreeSearch
-#' It is also called directly by RatchetSearch and Sectorial functions
+#' It is also called directly by MorphyRatchet and Sectorial functions
 #'
 #' @template edgeListParam
 #' @template morphyObjParam
@@ -269,7 +269,7 @@ MorphyTreeSearch <- function (edgeList, morphyObj, Rearrange, maxIter=100, maxHi
 #' \item \code{\link{InapplicableFitch}}, calculates parsimony score, supports inapplicable tokens;
 #' \item \code{\link[TreeSearch]{RootedNNI}}, conducts tree rearrangements;
 ### #' \item \code{\link{SectorialSearch}}, alternative heuristic, useful for larger trees;
-#' \item \code{\link{RatchetSearch}}, alternative heuristic, useful to escape local optima.
+#' \item \code{\link{MorphyRatchet}}, alternative heuristic, useful to escape local optima.
 #' }
 #'
 #' @examples
@@ -285,7 +285,7 @@ MorphyTreeSearch <- function (edgeList, morphyObj, Rearrange, maxIter=100, maxHi
 #' @keywords  tree 
 #' 
 #' @export
-BasicSearch <- function 
+MorphySearch <- function 
 (tree, dataset, Rearrange=TBRCore, maxIter=100, maxHits=20, forestSize=1, 
  nCores=1L, verbosity=1, ...) {
   # Initialize morphy object
@@ -298,7 +298,7 @@ BasicSearch <- function
     stop("Clusters are not yet supported (#23).")
     ### cluster <- snow::makeCluster(nCores)
     ### on.exit(snow::stopCluster(cluster), add=TRUE)
-    ### snow::clusterEvalQ(cluster, {library(inapplicable); NULL})
+    ### snow::clusterEvalQ(cluster, {library(TreeSearch); NULL})
     ### morphyObj <- lapply(seq_len(nCores), function(xx) PhyDat2Morphy(dataset))
     ### on.exit(morphyObj <- vapply(morphyObj, UnloadMorphy, integer(1)), add=TRUE)
     ### snow::clusterExport(cluster, c('dataset'))
@@ -341,8 +341,8 @@ BasicSearch <- function
 ###   #' 
 ###   #' @author Martin R. Smith
 ###   #' 
-###   #' @seealso \code{\link{BasicSearch}}
-###   #' @seealso \code{\link{RatchetSearch}}
+###   #' @seealso \code{\link{MorphySearch}}
+###   #' @seealso \code{\link{MorphyRatchet}}
 ###   #' 
 ###   #' @examples
 ###   #' require('ape')
@@ -379,7 +379,7 @@ BasicSearch <- function
 ###     sect <- MorphySectorial(tree, morphyObj, verbosity=verbosity-1, maxIt=30, 
 ###       maxIter=maxIter, maxHits=15, smallest.sector=6, 
 ###       largest.sector=length(tree$edge[,2L])*0.25, rearrangements=rearrangements)
-###     sect <- BasicSearch(sect, dataset, Rearrange=subsequentRearrangements, maxIter=maxIter, maxHits=30, cluster=cluster, verbosity=verbosity)
+###     sect <- MorphySearch(sect, dataset, Rearrange=subsequentRearrangements, maxIter=maxIter, maxHits=30, cluster=cluster, verbosity=verbosity)
 ###     if (attr(sect, 'score') <= bestScore) {
 ###       return (sect)
 ###     } else return (tree)

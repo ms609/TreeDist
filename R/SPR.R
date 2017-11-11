@@ -202,17 +202,10 @@ AllSPR <- function (parent, child, nEdge, notDuplicateRoot, edgeToBreak) {
 #' @export
 RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
-  edge   <- tree$edge
-  if (!is.null(edgeToBreak) && edgeToBreak == -1) {
-    return(unique(unlist(lapply(which(breakable), AllSPR,
-      parent=parent, child=child, nEdge=nEdge, notDuplicateRoot=notDuplicateRoot),
-      recursive=FALSE))) # TODO the fact that we need to use `unique` indicates that 
-                         #      we're being inefficient here.
-  } else { 
-    tree$edge <- ListToMatrix(RootedSPRCore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak,
-                                            mergeEdge=mergeEdge))
-    return (tree)
-  }
+  edge <- tree$edge
+  tree$edge <- ListToMatrix(RootedSPRCore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak,
+                                          mergeEdge=mergeEdge))
+  return (tree)
 }
 
 ## TODO Do edges need to be pre-ordered before coming here?
@@ -226,8 +219,15 @@ RootedSPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge 
   
   rootNode <- parent[1]
   rootEdges <- parent == rootNode
-  
   breakable <- !logical(nEdge) & !rootEdges
+  
+  if (!is.null(edgeToBreak) && edgeToBreak == -1) {
+    return(unique(unlist(lapply(which(breakable), AllSPR,
+      parent=parent, child=child, nEdge=nEdge, notDuplicateRoot=notDuplicateRoot),
+      recursive=FALSE))) # TODO the fact that we need to use `unique` indicates that 
+                         #      we're being inefficient here.
+  }
+  
   rightSide <- DescendantEdges(1, parent, child, nEdge)
   leftSide  <- !rightSide
   nEdgeRight <- which(rootEdges)[2] - 1

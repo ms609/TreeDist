@@ -110,7 +110,7 @@ comparison and interpretation easier later on.
 
 ```{r Basic NNI search}
 better.tree <- BasicSearch(tree=rooted.tree, dataset=my.phyDat, 
-                           Rearrange=TreeSearch::RootedNNI, verbosity=3)
+                           Rearrange=NNICore, verbosity=3)
 ```
 
 This score is better than the 85 of the original neighbour-joining tree, but is this the best we can do?
