@@ -74,14 +74,14 @@ RatchetSearch <- function
         forest <- vector('list', maxIter)
         forest[[i]] <- candidate
       }
-      tree <- candidate
+      edgeList <- candidate
       bestScore <- candScore
       kmax <- 1
     } else {
       if (bestScore + eps > candScore) { # i.e. best == cand, allowing for floating point error
         kmax <- kmax + 1
         candidate$tip.label <- names(dataset)
-        tree <- candidate
+        edgeList <- candidate
         if (keepAll) forest[[i]] <- candidate
       }
     }
@@ -93,16 +93,21 @@ RatchetSearch <- function
     cat ("\n* Completed ratchet search with score", bestScore, "\n")
     
   if (keepAll) {
+    # TODO this probably won't work
     forest <- forest[!vapply(forest, is.null, logical(1))]
     class(forest) <- 'multiPhylo'
     ret <- unique(forest)
     cat('Found', length(ret), 'unique MPTs.')
   } else {
-    ret <- tree
-    ret$tip.label <- names(dataset)
-    attr(ret, 'hits') <- NULL
+    ret <- list(
+      edge = ListToMatrix(edgeList),
+      tip.label = names(dataset), # TODO VALIDATE
+      Nnode = length(edgeList[[1]]) / 2L
+    )
+    class(ret) <- 'phylo'
   }
-  return (ret)
+  #Return:
+  ret
 }
 
 #' @describeIn RatchetSearch returns a list of optimal trees produced by nSearch Ratchet searches
