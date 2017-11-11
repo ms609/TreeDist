@@ -297,7 +297,6 @@ LogisticPoints <- function (x, fittedModel) {
 #' @template treeParam
 #' @template datasetParam
 #' @template warnParam
-#' @importFrom TreeSearch Fitch C_Fitch_Steps
 #' @importFrom stats nls
 #' @export
 Evaluate <- function (tree, dataset, warn=TRUE) {

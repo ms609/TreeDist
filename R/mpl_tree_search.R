@@ -368,13 +368,13 @@ MorphySearch <- function
 ###   #' @keywords  tree 
 ###   #' @export
 ###   SectorialSearch <- function
-###   (tree, dataset, SectorialRearrangements=TreeSearch::NNI, maxIter=2000,
-###    subsequentRearrangements = list(TreeSearch::RootedNNI, TreeSearch::RootedTBR, 
-###     TreeSearch::RootedSPR, TreeSearch::RootedNNI), verbosity=3, ...) {
+###   (tree, dataset, SectorialRearrangements=NNI, maxIter=2000,
+###    subsequentRearrangements = list(RootedNNI, RootedTBR, 
+###     RootedSPR, RootedNNI), verbosity=3, ...) {
 ###     if (class(dataset) != 'phyDat') stop("dataset must be of class phyDat, not", class(dataset))
 ###     morphyObj <- PhyDat2Morphy(dataset)
 ###     on.exit(morphyObj <- UnloadMorphy(morphyObj))
-###     tree <- TreeSearch::RenumberTips(TreeSearch::Renumber(tree), names(dataset))
+###     tree <- RenumberTips(Renumber(tree), names(dataset))
 ###     if (is.null(attr(tree, "score"))) {
 ###       attr(tree, "score") <- MorphyTreeLength(tree, morphyObj, ...)
 ###     }
@@ -385,7 +385,7 @@ MorphySearch <- function
 ###     if (class(SectorialRearrangements) != 'function') stop("SectorialRearrangements must be a function, e.g. TreeSearch::NNI")
 ###     
 ###     bestScore <- attr(tree, 'score')
-###     tree <- TreeSearch::RenumberTips(TreeSearch::Renumber(tree), names(dataset))
+###     tree <- RenumberTips(Renumber(tree), names(dataset))
 ###     if (length(bestScore) == 0) bestScore <- InapplicableFitch(tree, dataset, ...)[[1]]
 ###     sect <- MorphySectorial(tree, morphyObj, verbosity=verbosity-1, maxIt=30, 
 ###       maxIter=maxIter, maxHits=15, smallest.sector=6, 

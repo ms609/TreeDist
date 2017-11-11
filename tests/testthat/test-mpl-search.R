@@ -1,6 +1,5 @@
 library(ape)
 library(testthat)
-library(TreeSearch)
 
 context("Morphy: tree search")
 test_that("tree search finds shortest tree", {
