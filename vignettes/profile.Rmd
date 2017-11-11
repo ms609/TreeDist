@@ -1,0 +1,240 @@
+\name{ProfileParsimony-package}
+\alias{ProfileParsimony-package}
+\alias{ProfileParsimony}
+\docType{package}
+\title{Phylogenetic Inference using Profile Parsimony}
+\description{
+This package implements the Profile Parsimony approach of Faith & Trueman (2001), which finds 
+the tree that is most faithful to the information contained within a given dataset.
+It also provides functions to rearrange trees whilst preserving the outgroup. 
+The package also contains heuristic search methods to locate the most parsimonious tree.
+}
+\details{
+This package calculates the parsimony score on phylogenetic trees.  It can also be used to find
+the most parsimonious tree.  The \emph{Examples} section below provides a step-by-step guide to 
+using this package on your own data.
+
+Character data are read from a \emph{restricted} \acronym{NEXUS} format using the R function
+\code{\link{read.nexus.data}}; see the latter function's \link[=read.nexus.data]{documentation} for details.
+
+\acronym{NEXUS} files can be edited in any standard text editor,
+ for example \href{http://notepad-plus-plus.org/}{Notepad++}.
+ 
+A notable annoyance is that the parser cannot interpret curly braces, for example {01}.  
+Ambiguous tokens of this nature should be replaced with a separate character, for example 
+'A' to denote {01}, 'B' to denote {12}, perhaps using a search-and-replace operation in your 
+favourite text editor.
+
+The algorithm is currently implemented only for binary characters.  This shortcoming will 
+be addressed soon.
+
+The package includes 100 simulated datasets (from Congreve & Lamsdell 2016), used in Smith (201X)
+as a test of the efficacy of Profile Parsimony.
+}
+
+\author{
+Martin R. Smith
+}
+\references{
+\itemize{
+\item Congreve, C. R., & Lamsdell, J. C. (2016). \cite{Implied weighting and its utility in 
+  palaeontological datasets: a study using modelled phylogenetic matrices.} Palaeontology, 
+  online ahead of print. doi:10.1111/pala.12236
+
+\item Congreve, C. R., & Lamsdell, J. C. (2016). Data from: Implied weighting and its utility in 
+palaeontological datasets: a study using modelled phylogenetic matrices. Dryad Digital
+Repository, \href{http://dx.doi.org/10.5061/dryad.7dq0j}{doi:10.5061/dryad.7dq0j}
+
+\item Faith, D. P. & Trueman, J. W. H. (2001). \cite{Towards an inclusive philosophy for phylogenetic
+inference.} Systematic Biology 50:3, 331-350, doi:
+\href{http://dx.doi.org/10.1080/10635150118627}{10.1080/10635150118627}
+
+\item Smith, M. R. (201X). \cite{Trade-Offs between Resolution and Accuracy under Different Methods of
+Phylogenetic Inference.} Syst. Biol. 
+
+}
+}
+\keyword{ package }
+\keyword{ tree }
+\seealso{
+\itemize{
+\item \code{\link[ape:ape-package]{ape}}
+\item \code{\link[phangorn:phangorn-package]{phangorn}}
+}}
+\examples{
+\dontrun{
+
+## Walkthrough of package functions
+
+## To use this script on your own data, launch R, and type (or copy-paste) the following text
+## into the R console.  Lines starting with '#' are comments and do not need to be copied.
+
+
+## To install the package for the first time, type
+install.packages('ProfileParsimony')
+
+## Once the package has been installed, load it using
+library(ProfileParsimony)
+
+## Data can be read from a nexus file (note the restrictions detailed above):
+my.data <- read.nexus.data('C:/path/to/filename.nex')
+
+## Alternatively you can use a built-in dataset:
+data(SigSut); my.data <- SigSut.data
+
+## A contrast matrix translates the tokens used in your dataset to the character states to 
+##    which they correspond: for example decoding 'A' to {01}.
+##    For more details, see the 'phangorn-specials' vignette in the phangorn package, accesible 
+##    by typing '?phangorn' in the R prompt and navigating to index > package vignettes.
+
+contrast.matrix <- matrix(data=c(
+# 0 1 -  # Each column corresponds to a character-state
+  1,0,0, # Each row corresponds to a token, here 0, denoting the character-state set {0} 
+  0,1,0, # 1 | {1}
+  0,0,1, # - | {-}
+  1,1,0, # A | {01}
+  1,1,0, # + | {01}
+  1,1,1  # ? | {01-}
+), ncol=3, byrow=TRUE); # ncol should correspond to the number of columns in the matrix
+dimnames(contrast.matrix) <- list(
+  c(0, 1, '-', 'A', '+', '?'), # A list of the tokens corresponding to each row
+                               # in the contrast matrix
+  c(0, 1, '-') # A list of the character-states corresponding to the columns 
+               # in the contrast matrix
+)
+
+## To see the annotated contrast matrix, type
+contrast.matrix
+
+## Apply the contrast matrix, using the phyDat format...
+my.phyDat <- PhyDat(my.data, type='USER', contrast=contrast.matrix)
+
+## ... and prepare the data for analysis 
+my.prepdata <- PrepareDataProfile(my.phyDat)
+
+## Specify the names of the outgroup taxa
+my.outgroup <- c('taxon1', 'taxon2')
+
+## Load a bifurcating tree,
+tree <- read.nexus('treename.nex')
+## or generate a random starting tree, 
+tree <- RandomTree(my.phyDat)
+## or use neighbour joining to generate a starting tree
+tree <- root(nj(dist.hamming(my.phyDat)), my.outgroup, resolve.root=TRUE)
+tree$edge.length <- NULL;
+
+## View the starting tree by typing
+plot(tree)
+
+## Calculate the tree's parsimony score
+FitchInfoFast(tree, my.prepdata)
+
+## Search for a better tree
+better.tree <- TreeSearch(tree, my.prepdata, my.outgroup, method='SPR')
+## Try the parsimony ratchet (Nixon, 1999)
+better.tree <- Pratchet(better.tree, my.prepdata, my.outgroup, maxhits=50, k=20)
+## The default parameters may not be enough to find the most parsimonious tree; type 
+##    ?Pratchet to view all search parameters.
+
+## View the results
+plot(better.tree)
+
+## Collect all trees that are suboptimal by up to 1.5 bits
+## The trick here is to use large values of k and pratchiter, and small values of searchhits
+## and searchiter, so that many runs don't quite hit the optimal tree.
+suboptimals <- Pratchet(RandomTree(my.prepdata), PrepareDataProfile(my.prepdata), 
+                        all=TRUE, outgroup=my.outgroup, suboptimal=1.5, k=250, 
+                        searchhits=10, searchiter=50, pratchiter=5000, rearrangements='TBR')
+
+## Calculate and display a consensus tree that includes slightly suboptimal trees
+plot(my.consensus <- consensus(suboptimals))
+}
+}
+
+```{r}
+path = "C:/work/fun/implied_weight/goloboff/clM_bin33exp/"; repl=4;
+require(devtools)
+install(tsPath <- "C:/Research/R/TreeSearch")
+install(profPath <- "C:/work/information/ProfileParsimony")
+require(phangorn)
+require(TreeSearch)
+require(ProfileParsimony)
+PP_SUBOPTIMAL_VALUES <- c(1e-08, round(0.73^((19:0) - 10), 5))
+ROOT <- paste0(path, '../../') ## DELETE once we can call library('SlowQuartet') in tree_statistics
+source(paste0(ROOT, 'R/treegen_functions.R'))
+source(paste0(ROOT, 'R/tree_statistics.R'))
+data(referenceTree)
+
+  fileRoot <- paste0(path, 'PP/R', repl, '/', repl)
+  matrixFile <- paste0(fileRoot, '_PP.nex')
+  if (!file.exists(matrixFile)) stop("\n File not found: ", matrixFile)
+  nexusData <- read.nexus.data(matrixFile)
+  tokens <- unique(unlist(nexusData))
+  if (sum(as.character(0:9) %in% tokens) != 2) stop("Currently, Profile Parsimony requires exactly two tokens per TS")
+  dataset <- PhyDat(read.nexus.data(matrixFile), 0:9)
+  
+  ready2 <- PrepareDataProfile(dataset, precision=12000)
+  ready3 <- PrepareDataProfile(dataset, precision=4e+05)
+  ready4 <- PrepareDataProfile(dataset, precision=8e+05)
+  ready5 <- PrepareDataProfile(dataset, precision=1.6e+06)
+  
+info2 <- attr(ready2, 'info.amounts') # Quick, but far from brilliant I must confess!
+info3 <- attr(ready3, 'info.amounts')
+info4 <- attr(ready4, 'info.amounts')
+info5 <- attr(ready5, 'info.amounts')
+
+
+diff32 <- as.double(info3 - info2)
+diff42 <- as.double(info4 - info2)
+diff43 <- as.double(info4 - info3)
+diff54 <- as.double(info5 - info4)
+nonzero <- info4 > 0.00001
+
+hist (diff32)
+hist (diff43)
+hist (thisDiff <- diff54); quantile(thisDiff, probs=c(0, 5, 10, 50, 90, 95, 100)/100)
+hist (diff42)
+hist(100*(diff32 / info4)[nonzero])
+hist(100*(diff42 / info4)[nonzero])
+hist(100*(diff43 / info4)[nonzero])
+
+
+
+
+hist(info1 - info2)
+hist(info3 - info2)
+hist(info3 - info1)
+hist(info4 - info2)
+
+  sillyData <- lapply(1:22, function (i) c( rep(0, i - 1), rep(1, 22 - i), rep(1, 22 - i), rep(0, i - 1)))#, sample(2, 20, replace=TRUE)-1))
+  names(sillyData) <- as.character(1:22)
+  dataset <- PhyDat(sillyData, 0:1)
+  readyData <- PrepareDataProfile(dataset, 12000)
+  
+  rTree <- randomTree <- RandomTree(dataset, '1')
+  FitchScore(rTree, dataset, TipsAreNames)
+  FitchScore(rTree, readyData, TipsAreColumns)
+  FitchScore(referenceTree, dataset, TipsAreNames)
+  FitchScore(referenceTree, readyData, TipsAreColumns)
+  
+  ProfileScore(rTree, readyData)
+  ProfileScore(referenceTree, readyData)
+
+
+  quickTS <- TreeSearch(rTree, readyData, TreeScorer = ProfileScore, Rearrange=RootedNNI, maxIter=1000, maxHits=40) # then without the Do
+  quickTS <- TreeSearch(rTree, dataset, TreeScorer = FitchScore  , Rearrange=RootedNNI, maxIter=1000, maxHits=40) # then without the Do
+  
+  quickFitch <- Ratchet(rTree, dataset, TreeScorer = FitchScore, suboptimal=max(PP_SUBOPTIMAL_VALUES),
+                        ratchHits=6, searchHits=25, searchIter=500, ratchIter=500,
+                        rearrangements='TBR')
+                   
+  quick <- Ratchet(rTree, readyData, TreeScorer = ProfileScore, returnAll = FALSE, rooted=TRUE,
+                   ratchHits=5, searchHits=30, searchIter=100, ratchIter=50,
+                   rearrangements='TBR')
+    
+    
+    
+    
+   C_Fitch(characters = as.integer(data[whichChar<-1, tipLabel]), 
+   nChar = length(whichChar), parent, child, nEdge = length(parent), weight = charWeights, maxNode = max(parent), nTip = length(tipLabel))
+    ```
