@@ -118,21 +118,6 @@ Fitch <- function (tree, dataset, TipData = TipsAreNames, at = attributes(datase
   #    FitchFunction(TipData(dataset, tipLabel), at$nr, parent, child, length(parent), at$weight, parent[1], nTip = length(tipLabel))
 }
 
-
-# InitFitch <- function (tree, dataset) {
-#   weight <- attr(dataset, "weight")
-#   nr <- as.integer(attr(dataset, "nr"))
-#   nTips <- length(tree$tip.label)
-#   m <- nr * (2L * nTips - 1L)
-#   .C("fitch_init", as.integer(dataset), as.integer(nTips * nr), as.integer(m), as.double(weight), 
-#      as.integer(nr), PACKAGE='phangorn')
-#   return(TRUE)
-# }
-# 
-# DestroyFitch <- function() {
-#   .C("fitch_free", PACKAGE='phangorn')
-# }
-
 #' @describeIn Fitch returns the parsimony score only
 #' @export
 FitchScore <- function (tree, dataset, TipData = NULL, at = attributes(dataset)) {
