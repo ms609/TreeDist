@@ -151,4 +151,4 @@ UnloadMorphy <- function (morphyObj) {
 
 #' Unload this library
 #' @export
-UnloadInapplicable <- function () detach("package:inapplicable", unload=TRUE)
+UnloadTreeSearch <- function () detach("package:TreeSearch", unload=TRUE)

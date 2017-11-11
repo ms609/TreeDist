@@ -1,5 +1,4 @@
 library(ape)
-library(inapplicable)
 
 
 context("Tree search")

@@ -166,11 +166,6 @@ NUnrootedMult  <- function (splits) {  # Carter et al. 1990, Theorem 2
 #'   character <- c(rep(1, 10), rep(2, 5))
 #'   ICSteps (character)
 #' }
-#' @importFrom inapplicable mpl_new_Morphy mpl_translate_error mpl_init_Morphy 
-#'             mpl_attach_rawdata mpl_set_num_internal_nodes mpl_set_parsim_t
-#'             mpl_set_charac_weight mpl_apply_tipdata 
-#'             SingleCharMorphy MorphyLength UnloadMorphy 
-#'             RandomTreeScore
 #' @export
 ICSteps <- function (char, ambiguousToken = 0, expectedMinima = 25, maxIter = 10000,
                      warn = TRUE) {
