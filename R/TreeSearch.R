@@ -6,16 +6,24 @@
 #' @param tree a fully-resolved starting tree in \code{\link{phylo}} format, with the desired outgroup; edge lengths are not supported and will be deleted;
 #' @template datasetParam
 #' @template treeScorerParam
-#' @param Rearrange rearrangement function to use; perhaps one of \kbd{RootedNNI}, \kbd{SPR}, or \kbd{TBR};
-#' @param maxIter the maximum number of iterations to perform before abandoning the search;
-#' @param maxHits the maximum times to hit the best pscore before abandoning the search;
-#' @param forestSize the maximum number of trees to return - useful in concert with \code{\link{consensus}};
-#' @param InitializeData function to set up data object to prepare for tree search. Should return TRUE, unless a dataset needs to be sent to TreeScorer
-#' @param CleanUpData function to destroy data object on function exit
+#' @template RearrangeEdgesParam
+#' @param maxIter the maximum number of iterations to perform before abandoning the search.
+#' @param maxHits the maximum times to hit the best pscore before abandoning the search.
+#' @param forestSize the maximum number of trees to return - useful in concert with \code{\link{consensus}}.
+#'
+#' @param InitializeData function to set up data object to prepare for tree search. 
+#'        The function will be passed the \kbd{dataset} parameter.
+#'        Its return value will be passed to TreeScorer and CleanUpData.
+#' @param TreeScorer function to score a given tree.
+#'        The function will be passed two parameters: the first a MorphyTree list, and the
+#'        second the value returned by \kbd{InitializeData}.
+#' @param CleanUpData function to destroy data object on function exit.
+#'        The function will be passed the value returned by \kbd{InitializeData}.
+#'
 #' @template verbosityParam
 #' @template treeScorerDots
 #' 
-#' @return{
+#' @return {
 #' This function returns a tree, with an attribute \code{pscore} conveying its parsimony score.
 #' Note that the parsimony score will be inherited from the tree's attributes, which is only valid if it 
 #' was generated using the same \code{data} that is passed here.
@@ -43,40 +51,37 @@
 #' 
 #' @export
 TreeSearch <- function (tree, dataset, 
-                        InitializeData = function(tree, dataset) return (FALSE),
-                        CleanUpData = function(tree, dataset) return (NULL),
-                        TreeScorer = FitchScore,
-                        Rearrange = RootedTBR,
+                        InitializeData = PhyDat2Morphy,
+                        CleanUpData    = UnloadMorphy,
+                        TreeScorer     = FitchScore,
+                        RearrangeEdges = RootedTBRCore,
                         maxIter = 100, maxHits = 20, forestSize = 1,
                         verbosity = 1, ...) {
   # initialize tree and data
-  dataInitialized <- InitializeData(tree, dataset)
-  on.exit(CleanUpData(tree, dataset))
   if (dim(tree$edge)[1] != 2 * tree$Nnode) stop("tree must be bifurcating; try rooting with ape::root")
-  if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
-  tree$edge.length <- NULL # Edge lengths are not supported
-  attr(tree, 'hits') <- 0
+  edgeList <- MatrixToList(tree$edge)
+
+  initializedData <- InitializeData(dataset)
+  on.exit(CleanUpData(initializedData))
+
   if (exists("forestSize") && length(forestSize) && forestSize > 1) {
+    # TODO ForestSize > 1 not supported
     forest <- empty.forest <- vector('list', forestSize)
-    forest[[1]] <- tree
+    forest[[1]] <- edgeList
   } else {
     forestSize <- 1 
   }
-  if (is.null(attr(tree, 'score'))) {
-    attr(tree, 'score') <- if (dataInitialized) TreeScorer(tree=tree, ...) else TreeScorer(tree=tree, dataset=dataset, ...)
+  bestScore <- if (is.null(attr(tree, 'score'))) {
+    TreeScorer(tree=tree, initializedData=initializedData, ...)
+  } else {
+    attr(tree, 'score')
   }
-  bestScore <- attr(tree, 'score')
   if (verbosity > 0) cat("\n  - Performing tree search.  Initial score:", bestScore)
   returnSingle <- !(forestSize > 1)
   
   for (iter in 1:maxIter) {
-    if (dataInitialized) {
-      trees <- RearrangeTree(tree, TreeScorer, Rearrange, minScore=bestScore,
+    candidateEdges <- MorphyRearrangeTree(edgeList[[1]], edgeList[[2]], TreeScorer, RearrangeEdges, minScore=bestScore,
                              returnSingle=returnSingle, iter=iter, verbosity=verbosity, ...)
-    } else {
-      trees <- RearrangeTree(tree, TreeScorer, Rearrange, minScore=bestScore,
-                             returnSingle=returnSingle, iter=iter, verbosity=verbosity, dataset=dataset, ...)
-    }
     iterScore <- attr(trees, 'score')
     if (length(forestSize) && forestSize > 1) {
       hits <- attr(trees, 'hits')

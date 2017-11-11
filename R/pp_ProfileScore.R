@@ -49,7 +49,7 @@ ProfileScore <- function (tree, dataset) {
 #' @param info Matrix listing information content of each extra step, for each character.
 #' @param nRowInfo ??? #TODO Document
 #' @export
-IProfileScore <- function (tree, nChar, weight, info, nRowInfo) {
+ProfileScoreMorphy <- function (tree, nChar, weight, info, nRowInfo) {
   steps <- IFitchSteps(tree, nChar)
  #info <- at$info.amounts
   return (-sum(vapply(seq_len(nChar), function (i) {
@@ -58,19 +58,28 @@ IProfileScore <- function (tree, nChar, weight, info, nRowInfo) {
   }, double(1)) * weight))
 }
 
+ProfileInitMorphy <- function (tree, dataset) {
+  dataTable <- FastTable(dataset)
+  apply(dataTable$dataset, 1, SingleCharMorphy)
+}
+
+ProfileDestroyMorphy <- function (tree, dataset, dataInitialized) {
+  vapply(dataInitialized, UnloadMorphy, integer(1))
+}
+
 ProfileTreeSearch <- function (tree, dataset, Rearrange = RootedTBR,
                         maxIter = 100, maxHits = 20, forestSize = 1,
                         verbosity = 1, precision=40000, ...) {
-  if (class(dataset) == 'phyDat')  dataset <- PrepareDataProfile(dataset, precision)
+  if (class(dataset) == 'phyDat') dataset <- PrepareDataProfile(dataset, precision)
   if (class(dataset) != 'profileDat') stop("Unrecognized dataset class; should be phyDat or profileDat")
   at <- attributes(dataset)
   
   TreeSearch(tree, dataset, nChar=at$nr, weight=at$weight, info=at$info.amounts,
-                         nRowInfo=nrow(at$info.amounts), 
-                         InitializeData = InitFitch,
-                         CleanUpData = DestroyFitch,
-                         TreeScorer = IProfileScore,
-                         Rearrange = Rearrange, 
-                         maxIter = maxIter, maxHits = maxhits, forestSize = forestSize,
-                         verbosity = verbosity, ...)
+             nRowInfo=nrow(at$info.amounts), 
+             InitializeData = ProfileInitMorphy,
+             CleanUpData = ProfileDestroyMorphy,
+             TreeScorer = ProfileScoreMorphy,
+             Rearrange = Rearrange, 
+             maxIter = maxIter, maxHits = maxhits, forestSize = forestSize,
+             verbosity = verbosity, ...)
 }
