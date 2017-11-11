@@ -341,6 +341,9 @@ Evaluate <- function (tree, dataset, warn=TRUE) {
 
 #' Amount of information in each character
 #'
+#' As presently implemented, this function requires that there be no ambiguous tokens 
+#' and two applicable tokens, '1' and '2'.
+#'
 #' @template datasetParam
 #' @param precision number of random trees to generate when calculating Profile curves
 #' @template warnParam
@@ -352,7 +355,6 @@ Evaluate <- function (tree, dataset, warn=TRUE) {
 #' @export
 InfoAmounts <- function (dataset, precision=1e+06, warn=TRUE) {
   # The below is simplified from info_extra_step.r::evaluate
-  # Assumes no ambiguous tokens & 2 tokens, '1' and '2'
   dataNr <- attr(dataset, "nr")
   chars <- if (is.null(dim(dataset))) {
     matrix(c(unlist(dataset), rep(1, dataNr), rep(2, dataNr)), dataNr)
