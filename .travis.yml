@@ -13,23 +13,20 @@ r_binary_packages:
  - testthat
   
 r_packages:
- - devtools
- - roxygen2
  - covr
+ - devtools
+ - memoise
+ - R.cache
+ - roxygen2
    
 install:
- - R -e "install.packages('devtools')"
  - R -e "install.packages('ape')"
- - R -e "devtools::install_github('KlausVigo/phangorn', ref='7192bfb4403c35c16a7b735160525d272736b061')"
- - R -e "install.packages('testthat')"
+ - R -e "install.packages('devtools')"
+ - R -e "install.packages('phangorn')"
  - R -e "install.packages('roxygen2')"
+ - R -e "install.packages('R.cache')"
+ - R -e "install.packages('testthat')"
  - R -e "devtools::document()"
-
-# Needed for phangorn install?  
-bioc_required: true
-bioc_packages:
-  - seqLogo
-  - Biostrings
   
 after_success:
   - Rscript -e "install.packages('covr'); covr::codecov()"
