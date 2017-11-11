@@ -252,7 +252,6 @@ CladeSizes <- function (tree, nodes) {
 
 #' node depth
 #' Wrapper for the ape function
-## @useDynLib TreeSearch ape_node_depth
 #' @keywords internal
 #' @export
 C_node_depth <- function (nTip, nNode, parent, child, nEdge) {

@@ -32,7 +32,7 @@ This function returns a matrix of class \code{*phyDat}.
 Converts a PhyDat object to allow processing by MorphyDat
 }
 \examples{
-data(inapplicable.datasets)
+data('inapplicable.datasets')
 morphy <- MorphyDat(inapplicable.phyData[[1]])
 
 }

@@ -60,7 +60,6 @@ RearrangeTree <- function (tree, TreeScorer = FitchScore, Rearrange = RootedNNI,
 
 #' neworder_phylo
 #' Wrapper for the ape function
-## @useDynLib TreeSearch ape_neworder_phylo
 #' @keywords internal
 #' @export
 NeworderPhylo <- function (nTaxa, parent, child, nb.edge, whichwise) {
@@ -70,7 +69,6 @@ NeworderPhylo <- function (nTaxa, parent, child, nb.edge, whichwise) {
 
 #' neworder_pruningwise
 #' Wrapper for the ape function
-## @useDynLib TreeSearch ape_neworder_pruningwise
 #' @keywords internal
 #' @export
 NeworderPruningwise <- function (nTaxa, nb.node, parent, child, nb.edge) {
@@ -82,7 +80,6 @@ NeworderPruningwise <- function (nTaxa, nb.node, parent, child, nb.edge) {
 #' Order edges and number nodes
 #' Wrapper for the C function
 #' @return an edge matrix for a tree following the usual convention for edge and node numbering
-## @useDynLib TreeSearch order_edges_number_nodes
 #' @keywords internal
 #' @export
 OrderEdgesNumberNodes <- function (parent, child, nTips, nEdge = length(parent)) {
@@ -94,7 +91,6 @@ OrderEdgesNumberNodes <- function (parent, child, nTips, nEdge = length(parent))
 #' Order edges and number nodes
 #' Wrapper for the C function RENUMBER_TREE
 #' @return an edge matrix for a tree in following the usual preorder convention for edge and node numbering 
-## @useDynLib TreeSearch RENUMBER_TREE
 #' @keywords internal
 #' @export
 RenumberTree <- function (parent, child, nEdge = length(parent)) {
@@ -102,7 +98,6 @@ RenumberTree <- function (parent, child, nEdge = length(parent)) {
 }
 
 #' @describeIn RenumberTree Instead returns a list containing two items corresponding to the new parent and child vectors
-## @useDynLib TreeSearch RENUMBER_EDGES
 #' @keywords internal
 #' @export
 RenumberEdges <- function (parent, child, nEdge = length(parent)) {
