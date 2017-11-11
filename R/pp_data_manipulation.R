@@ -21,11 +21,13 @@ FastTable <- function (dataset) {
 #'
 #' A convenient wrapper for \pkg{phangorn}'s \code{phyDat}
 #'
-#' @param dataset data table, perhaps from read.nexus.data
-#' @param levels tokens - values that all characters migkt take
-#' @param compress Compress identical transformation series into a single row of the phyDat object
+#' @param dataset data table, perhaps from read.nexus.data.
+#' @param levels tokens - values that all characters might take.
+#' @param compress Compress identical transformation series into a single row of the phyDat object.
 #' For simplicity I have not retained support for contrast matrices or ambiguity.
-#' @return a \code{phyDat} object
+#'
+#' @return a \code{phyDat} object.
+#'
 #' @importFrom stats na.omit
 #' @export
 PhyDat <- function (dataset, levels = NULL, compress = TRUE) {
