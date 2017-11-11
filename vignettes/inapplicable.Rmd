@@ -117,13 +117,13 @@ rearrangements are better at escaping local optima, and find better trees
 further away in tree space.  Using more hits (`maxHits`) and more iterations (`maxIter`) also
 means we'll move closer to an optimal tree.
 ```{r SPR and TBR}
-better.tree <- MorphySearch(better.tree, my.phyDat, maxHits=40, maxIter=100000,
+better.tree <- MorphySearch(better.tree, my.phyDat, maxHits=8, maxIter=10000,
                            Rearrange=RootedSPRCore, verbosity=2)
-better.tree <- MorphySearch(better.tree, my.phyDat, maxHits=40, maxIter=100000, 
+better.tree <- MorphySearch(better.tree, my.phyDat, maxHits=20, maxIter=40000, 
                            Rearrange=RootedTBRCore, verbosity=2)
 ```
 
-That score's looking better, but we might still be caught in a local optimum. 
+That score's looking better, but these are only quick searches, and we could be caught in a local optimum. 
 A more comprehensive search of tree space can be accomplished using the parsimony ratchet (Nixon 1999).
 It might take a couple of minutes to run.
 
@@ -133,14 +133,16 @@ best.tree <- MorphyRatchet(better.tree, my.phyDat, verbosity=0, k=5,
 attr(best.tree, 'score') # Each tree is labelled with its score during tree search
 ```
 
-No better trees were found.  We can be pretty confident that there are no better trees than this one.
-Let's take a look at it:
+The best tree for this dataset has a score of 79.  This relatively quick Ratchet search always seems
+to find a tree with this score.
+
+Let's take a look at the one it's found on this occasion:
 ```{r Plot best tree}
 par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
 plot(best.tree)
 ```
 
-This is, of course, just one most parsimonious tree; perhaps there are many.
+This is, of course, just one most parsimonious tree; with this dataset, there are many.
 
 One way to make a strict consensus of multiple optimal trees is to collect a 
 number of trees from independent Ratchet iterations.
@@ -169,6 +171,6 @@ plot(ape::consensus(my.consensus))
 
 # References
 
-BRAZEAU, M. D., GUILLERME, T. and SMITH, M. R. 2017. [Morphological phylogenetic analysis with inapplicable data](https://www.biorxiv.org/content/early/2017/10/26/209775). _BioRxiv_. doi:10.1101/209775
+BRAZEAU, M. D., GUILLERME, T. and SMITH, M. R. 2017. [Morphological phylogenetic analysis with inapplicable data](https://www.biorxiv.org/content/early/2017/10/26/209775). _BioRxiv_. <doi:10.1101/209775>
 
-NIXON, K. C. 1999. [The Parsimony Ratchet, a new method for rapid parsimony analysis](http://doi.wiley.com/10.1111/j.1096-0031.1999.tb00277.x). _Cladistics_, 15, 407--414. doi:10.1111/j.1096-0031.1999.tb00277.x
+NIXON, K. C. 1999. [The Parsimony Ratchet, a new method for rapid parsimony analysis](http://doi.wiley.com/10.1111/j.1096-0031.1999.tb00277.x). _Cladistics_, 15, 407--414. <doi:10.1111/j.1096-0031.1999.tb00277.x>
