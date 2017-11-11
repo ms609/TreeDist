@@ -24,9 +24,6 @@
 #'   ProfileScore(referenceTree, dataset)
 #'
 #' @author Martin R. Smith
-#'
-#' @importFrom TreeSearch Fitch C_Fitch_Steps TipsAreColumns
-#' @importFrom TreeSearch TipsAreColumns
 #' @keywords tree
 #' @export
 ProfileScore <- function (tree, dataset) {
