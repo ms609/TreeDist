@@ -70,7 +70,7 @@ MorphyRearrangeTree <- function (tree, morphyObj, Rearrange, minScore=NULL, retu
 #' @template treeChild
 #' @param inputScore the score of the tree, if known
 #' @param hits number of times that this score has been hit
-#' @template EdgeSwapper Param
+#' @template EdgeSwapperParam
 #' @return a rearranged edgeList.
 #'
 #' @author Martin R. Smith

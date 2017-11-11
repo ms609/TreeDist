@@ -4,8 +4,8 @@
 \alias{MorphyBootstrap}
 \title{Bootstrap tree search with inapplicable data}
 \usage{
-MorphyBootstrap(edgeList, morphyObj, RearrangeEdges = NNICore, maxIter,
-  maxHits, verbosity = 1L, ...)
+MorphyBootstrap(edgeList, morphyObj, EdgeSwapper = NNISwap, maxIter, maxHits,
+  verbosity = 1L, ...)
 }
 \arguments{
 \item{edgeList}{a list containing the following:
@@ -16,10 +16,6 @@ MorphyBootstrap(edgeList, morphyObj, RearrangeEdges = NNICore, maxIter,
 
 \item{morphyObj}{A morphy object, perhaps created with \code{\link{PhyDat2Morphy}}.}
 
-\item{RearrangeEdges}{a function that rearranges a parent and child vector, 
-and returns a list with modified vectors; for example
-\code{\link{SPRCore}}.}
-
 \item{maxIter}{maximum number of iterations to perform in tree search}
 
 \item{maxHits}{maximum number of hits to accomplish in tree search}
@@ -28,6 +24,10 @@ and returns a list with modified vectors; for example
 more verbose feedback to the user.}
 
 \item{\dots}{further parameters to send to \code{MorphyTreeSearch}}
+
+\item{RearrangeEdges}{a function that rearranges a parent and child vector, 
+and returns a list with modified vectors; for example
+\code{\link{SPRSwap}}.}
 }
 \value{
 A tree that is optimal under a random sampling of the original characters

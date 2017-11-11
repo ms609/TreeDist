@@ -4,7 +4,7 @@
 \alias{MorphyTreeSearch}
 \title{Tree Search}
 \usage{
-MorphyTreeSearch(edgeList, morphyObj, RearrangeEdges, maxIter = 100,
+MorphyTreeSearch(edgeList, morphyObj, EdgeSwapper, maxIter = 100,
   maxHits = 20, stopAtScore = NULL, forestSize = 1L, cluster = NULL,
   verbosity = 1L, ...)
 }

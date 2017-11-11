@@ -2,19 +2,19 @@
 % Please edit documentation in R/SPR.R
 \name{SPR}
 \alias{SPR}
-\alias{SPRCore}
+\alias{SPRSwap}
 \alias{RootedSPR}
-\alias{RootedSPRCore}
+\alias{RootedSPRSwap}
 \title{Subtree Pruning and Rearrangement}
 \usage{
 SPR(tree, edgeToBreak = NULL, mergeEdge = NULL)
 
-SPRCore(parent, child, nEdge = length(parent), nNode = nEdge/2L,
+SPRSwap(parent, child, nEdge = length(parent), nNode = nEdge/2L,
   edgeToBreak = NULL, mergeEdge = NULL)
 
 RootedSPR(tree, edgeToBreak = NULL, mergeEdge = NULL)
 
-RootedSPRCore(parent, child, nEdge = length(parent), nNode = nEdge/2L,
+RootedSPRSwap(parent, child, nEdge = length(parent), nNode = nEdge/2L,
   edgeToBreak = NULL, mergeEdge = NULL)
 }
 \arguments{
@@ -54,11 +54,11 @@ Branch lengths are not (yet) supported.
 }
 \section{Functions}{
 \itemize{
-\item \code{SPRCore}: faster version that takes and returns parent and child parameters
+\item \code{SPRSwap}: faster version that takes and returns parent and child parameters
 
 \item \code{RootedSPR}: Perform \acronym{SPR} rearrangement, retaining position of root
 
-\item \code{RootedSPRCore}: faster version that takes and returns parent and child parameters
+\item \code{RootedSPRSwap}: faster version that takes and returns parent and child parameters
 }}
 
 \examples{

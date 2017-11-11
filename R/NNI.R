@@ -37,7 +37,7 @@ NNI <- function (tree, edgeToBreak=NULL) {
     newTrees <- lapply(newEdges, function (edges) {tree$edge <- edges; tree}) # Quicker than vapply, surprisingly
     return(newTrees)
   } else {
-    tree$edge <- ListToMatrix(NNICore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak))
+    tree$edge <- ListToMatrix(NNISwap(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak))
     return (tree)
   }
 }
@@ -48,7 +48,7 @@ NNI <- function (tree, edgeToBreak=NULL) {
 #' @param nTips (optional) Number of tips.
 #' @return a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 #' @export
-NNICore <- function (parent, child, nTips = (length(parent) / 2L) + 1L, edgeToBreak=NULL) {
+NNISwap <- function (parent, child, nTips = (length(parent) / 2L) + 1L, edgeToBreak=NULL) {
   rootNode  <- nTips + 1L
   samplable <- child > nTips
   if (!any(samplable)) stop("Not enough edges to allow NNI rearrangement")
@@ -127,7 +127,7 @@ RootedNNI <- function (tree, edgeToBreak=NULL) {
     newTrees <- lapply(newEdges, function (edges) {tree$edge <- edges; tree}) # Quicker than vapply, surprisingly
     return(newTrees)   
   } else {
-    tree$edge <- ListToMatrix(RootedNNICore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak))
+    tree$edge <- ListToMatrix(RootedNNISwap(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak))
     return (tree)
   }
 }
@@ -135,7 +135,7 @@ RootedNNI <- function (tree, edgeToBreak=NULL) {
 #' @describeIn NNI faster version that takes and returns parent and child parameters
 #' @return a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 #' @export
-RootedNNICore <- function (parent, child, nTips = (length(parent) / 2L) + 1L, edgeToBreak = NULL) {
+RootedNNISwap <- function (parent, child, nTips = (length(parent) / 2L) + 1L, edgeToBreak = NULL) {
   rootNode <- nTips + 1L
   
   samplable <- parent != rootNode & child > nTips

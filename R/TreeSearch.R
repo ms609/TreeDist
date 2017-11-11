@@ -54,7 +54,7 @@ TreeSearch <- function (tree, dataset,
                         InitializeData = PhyDat2Morphy,
                         CleanUpData    = UnloadMorphy,
                         TreeScorer     = FitchScore,
-                        EdgeSwapper    = RootedTBRCore,
+                        EdgeSwapper    = RootedTBRSwap,
                         maxIter = 100, maxHits = 20, forestSize = 1,
                         verbosity = 1, ...) {
   # initialize tree and data
@@ -80,8 +80,7 @@ TreeSearch <- function (tree, dataset,
   returnSingle <- !(forestSize > 1)
   
   for (iter in 1:maxIter) {
-    candidateEdges <- RearrangeEdges(edgeList[[1]], edgeList[[2]], TreeScorer, EdgeSwapper=EdgeSwapper)
-, minScore=bestScore,
+    candidateEdges <- RearrangeEdges(edgeList[[1]], edgeList[[2]], TreeScorer, EdgeSwapper=EdgeSwapper, minScore=bestScore,
                              returnSingle=returnSingle, iter=iter, verbosity=verbosity, ...)
     iterScore <- attr(trees, 'score')
     if (length(forestSize) && forestSize > 1) {

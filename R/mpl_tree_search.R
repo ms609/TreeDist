@@ -12,7 +12,7 @@
 #' @template stopAtScoreParam
 #' @template verbosityParam
 #' @param rearrangements (list of) function(s) to use when rearranging trees
-#'        e.g. \code{list(RootedTBRCore, NNICore)}
+#'        e.g. \code{list(RootedTBRSwap, NNISwap)}
 #' @param \dots other arguments to pass to subsequent functions.
 #' @param nSearch Number of Ratchet searches to conduct (for RatchetConsensus)
 #' 
@@ -39,7 +39,7 @@
 #' @export
 MorphyRatchet <- function 
 (tree, dataset, keepAll=FALSE, maxIt=100, maxIter=5000, maxHits=40, k=10, stopAtScore=NULL,
-  verbosity=1L, rearrangements=list(TBRCore, SPRCore, NNICore), ...) {
+  verbosity=1L, rearrangements=list(TBRSwap, SPRSwap, NNISwap), ...) {
   if (class(dataset) != 'phyDat') stop("dataset must be of class phyDat, not", class(dataset))
   morphyObj <- PhyDat2Morphy(dataset)
   on.exit(morphyObj <- UnloadMorphy(morphyObj))
@@ -114,7 +114,7 @@ MorphyRatchet <- function
 #' @describeIn MorphyRatchet returns a list of optimal trees produced by nSearch Ratchet searches
 #' @export
 RatchetConsensus <- function (tree, dataset, maxIt=5000, maxIter=500, maxHits=20, k=10, verbosity=0L, 
-  rearrangements=list(RootedNNICore), nSearch=10, ...) {
+  rearrangements=list(RootedNNISwap), nSearch=10, ...) {
   trees <- lapply(1:nSearch, function (x) MorphyRatchet(tree, dataset, maxIt=maxIt, 
               maxIter=maxIter, maxHits=maxHits, k=1, verbosity=verbosity, rearrangements=rearrangements, ...))
   scores <- vapply(trees, function (x) attr(x, 'score'), double(1))
@@ -135,7 +135,7 @@ RatchetConsensus <- function (tree, dataset, maxIt=5000, maxIter=500, maxHits=20
 #'
 #' @return A tree that is optimal under a random sampling of the original characters
 #' @export
-MorphyBootstrap <- function (edgeList, morphyObj, EdgeSwapper = NNICore, 
+MorphyBootstrap <- function (edgeList, morphyObj, EdgeSwapper = NNISwap, 
                              maxIter, maxHits, verbosity=1L, ...) {
 ## Simplified version of phangorn::bootstrap.phyDat, with bs=1 and multicore=FALSE
   startWeights <- MorphyWeights(morphyObj)[1, ]
@@ -289,7 +289,7 @@ MorphyTreeSearch <- function (edgeList, morphyObj, EdgeSwapper, maxIter=100, max
 #' 
 #' @export
 MorphySearch <- function 
-(tree, dataset, Rearrange=TBRCore, maxIter=100, maxHits=20, forestSize=1, 
+(tree, dataset, Rearrange=TBRSwap, maxIter=100, maxHits=20, forestSize=1, 
  nCores=1L, verbosity=1L, ...) {
   # Initialize morphy object
   if (class(dataset) != 'phyDat') stop ("dataset must be of class phyDat, not ", class(dataset))

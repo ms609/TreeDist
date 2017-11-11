@@ -9,7 +9,7 @@ MorphyRearrangeTree(tree, morphyObj, Rearrange, minScore = NULL,
   returnSingle = TRUE, iter = "?", cluster = NULL, verbosity = 0L)
 
 MorphyRearrange(parent, child, morphyObj, inputScore = 1e+07, hits = 0,
-  RearrangeEdges, minScore = NULL, returnSingle = TRUE, iter = "?",
+  EdgeSwapper, minScore = NULL, returnSingle = TRUE, iter = "?",
   cluster = NULL, verbosity = 0L)
 }
 \arguments{
@@ -47,7 +47,7 @@ more verbose feedback to the user.}
 
 \item{RearrangeEdges}{a function that rearranges a parent and child vector, 
 and returns a list with modified vectors; for example
-\code{\link{SPRCore}}.}
+\code{\link{SPRSwap}}.}
 }
 \value{
 {This function returns the most parsimonious of the trees generated, with attributes \code{hits} and \code{score}

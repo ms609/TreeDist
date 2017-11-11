@@ -2,18 +2,18 @@
 % Please edit documentation in R/NNI.R
 \name{NNI}
 \alias{NNI}
-\alias{NNICore}
+\alias{NNISwap}
 \alias{RootedNNI}
-\alias{RootedNNICore}
+\alias{RootedNNISwap}
 \title{NNI}
 \usage{
 NNI(tree, edgeToBreak = NULL)
 
-NNICore(parent, child, nTips = (length(parent)/2L) + 1L, edgeToBreak = NULL)
+NNISwap(parent, child, nTips = (length(parent)/2L) + 1L, edgeToBreak = NULL)
 
 RootedNNI(tree, edgeToBreak = NULL)
 
-RootedNNICore(parent, child, nTips = (length(parent)/2L) + 1L,
+RootedNNISwap(parent, child, nTips = (length(parent)/2L) + 1L,
   edgeToBreak = NULL)
 }
 \arguments{
@@ -50,11 +50,11 @@ Branch lengths are not supported.
 }
 \section{Functions}{
 \itemize{
-\item \code{NNICore}: faster version that takes and returns parent and child parameters
+\item \code{NNISwap}: faster version that takes and returns parent and child parameters
 
 \item \code{RootedNNI}: Perform \acronym{NNI} rearrangement, retaining position of root
 
-\item \code{RootedNNICore}: faster version that takes and returns parent and child parameters
+\item \code{RootedNNISwap}: faster version that takes and returns parent and child parameters
 }}
 
 \examples{

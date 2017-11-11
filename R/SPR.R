@@ -50,7 +50,7 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
       recursive=FALSE))) # TODO the fact that we need to use `unique` indicates that 
                          #      we're being inefficient here.
   } else {
-    tree$edge <- ListToMatrix(SPRCore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak, 
+    tree$edge <- ListToMatrix(SPRSwap(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak, 
                                       mergeEdge=mergeEdge))
     return(tree)
   }
@@ -64,7 +64,7 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
 #' @param nNode (optional) Number of nodes.
 #' @return a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 #' @export
-SPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
+SPRSwap <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
                      edgeToBreak=NULL, mergeEdge=NULL) {
   
   if (nEdge < 5) return (list(parent, child)) #TODO we need to re-root this tree...
@@ -203,7 +203,7 @@ AllSPR <- function (parent, child, nEdge, notDuplicateRoot, edgeToBreak) {
 RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
   edge <- tree$edge
-  tree$edge <- ListToMatrix(RootedSPRCore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak,
+  tree$edge <- ListToMatrix(RootedSPRSwap(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak,
                                           mergeEdge=mergeEdge))
   return (tree)
 }
@@ -212,7 +212,7 @@ RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
 #' @describeIn SPR faster version that takes and returns parent and child parameters
 #' @return a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 #' @export
-RootedSPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
+RootedSPRSwap <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
                      edgeToBreak=NULL, mergeEdge=NULL) {
   
   if (nEdge < 5) return (SPRWarning(parent, child, "Too few tips to rearrange."))

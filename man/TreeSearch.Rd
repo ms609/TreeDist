@@ -4,10 +4,10 @@
 \alias{TreeSearch}
 \title{Search for most parsimonious trees}
 \usage{
-TreeSearch(tree, dataset, InitializeData = function(tree, dataset)
-  return(FALSE), CleanUpData = function(tree, dataset) return(NULL),
-  TreeScorer = FitchScore, Rearrange = RootedTBR, maxIter = 100,
-  maxHits = 20, forestSize = 1, verbosity = 1, ...)
+TreeSearch(tree, dataset, InitializeData = PhyDat2Morphy,
+  CleanUpData = UnloadMorphy, TreeScorer = FitchScore,
+  EdgeSwapper = RootedTBRSwap, maxIter = 100, maxHits = 20,
+  forestSize = 1, verbosity = 1, ...)
 }
 \arguments{
 \item{tree}{a fully-resolved starting tree in \code{\link{phylo}} format, with the desired outgroup; edge lengths are not supported and will be deleted;}
@@ -15,24 +15,33 @@ TreeSearch(tree, dataset, InitializeData = function(tree, dataset)
 \item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
 correspond to the labels of any accompanying tree.}
 
-\item{InitializeData}{function to set up data object to prepare for tree search. Should return TRUE, unless a dataset needs to be sent to TreeScorer}
+\item{InitializeData}{function to set up data object to prepare for tree search. 
+The function will be passed the \kbd{dataset} parameter.
+Its return value will be passed to TreeScorer and CleanUpData.}
 
-\item{CleanUpData}{function to destroy data object on function exit}
+\item{CleanUpData}{function to destroy data object on function exit.
+The function will be passed the value returned by \kbd{InitializeData}.}
 
 \item{TreeScorer}{function by which trees should be scored; default \code{\link{FitchScore}}}
 
-\item{Rearrange}{rearrangement function to use; perhaps one of \kbd{RootedNNI}, \kbd{SPR}, or \kbd{TBR};}
+\item{maxIter}{the maximum number of iterations to perform before abandoning the search.}
 
-\item{maxIter}{the maximum number of iterations to perform before abandoning the search;}
+\item{maxHits}{the maximum times to hit the best pscore before abandoning the search.}
 
-\item{maxHits}{the maximum times to hit the best pscore before abandoning the search;}
-
-\item{forestSize}{the maximum number of trees to return - useful in concert with \code{\link{consensus}};}
+\item{forestSize}{the maximum number of trees to return - useful in concert with \code{\link{consensus}}.}
 
 \item{verbosity}{Level of detail to display in console: larger numbers provide
 more verbose feedback to the user.}
 
 \item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}}, \code{dataset})}
+
+\item{RearrangeEdges}{a function that rearranges a parent and child vector, 
+and returns a list with modified vectors; for example
+\code{\link{SPRSwap}}.}
+
+\item{TreeScorer}{function to score a given tree.
+The function will be passed two parameters: the first a MorphyTree list, and the
+second the value returned by \kbd{InitializeData}.}
 }
 \value{
 {

@@ -13,20 +13,20 @@ test_that("tree search finds shortest tree", {
   on.exit(morphyObj <- UnloadMorphy(morphyObj))
   
  ## TODO FIX VERBOISTY
-  expect_equal(3, attr(MorphySearch(start_tree, dataset, Rearrange=NNICore, verbosity=-1), 'score'),
+  expect_equal(3, attr(MorphySearch(start_tree, dataset, Rearrange=NNISwap, verbosity=-1), 'score'),
                InapplicableFitch(true_tree, dataset))
-  expect_equal(3, attr(MorphySearch(start_tree, dataset, Rearrange=SPRCore, verbosity=-1), 'score'),
+  expect_equal(3, attr(MorphySearch(start_tree, dataset, Rearrange=SPRSwap, verbosity=-1), 'score'),
                InapplicableFitch(true_tree, dataset))
-  expect_equal(3, attr(MorphySearch(start_tree, dataset, Rearrange=TBRCore, verbosity=-1), 'score'),
+  expect_equal(3, attr(MorphySearch(start_tree, dataset, Rearrange=TBRSwap, verbosity=-1), 'score'),
                InapplicableFitch(true_tree, dataset))
-  expect_equal(3, attr(MorphySearch(start_tree, dataset, Rearrange=RootedNNICore, verbosity=-1), 'score'),
+  expect_equal(3, attr(MorphySearch(start_tree, dataset, Rearrange=RootedNNISwap, verbosity=-1), 'score'),
                InapplicableFitch(true_tree, dataset))
-  expect_equal(3, attr(MorphySearch(start_tree, dataset, Rearrange=RootedSPRCore, verbosity=-1), 'score'),
+  expect_equal(3, attr(MorphySearch(start_tree, dataset, Rearrange=RootedSPRSwap, verbosity=-1), 'score'),
                InapplicableFitch(true_tree, dataset))
-  expect_equal(3, attr(MorphySearch(start_tree, dataset, Rearrange=RootedTBRCore, verbosity=-1), 'score'),
+  expect_equal(3, attr(MorphySearch(start_tree, dataset, Rearrange=RootedTBRSwap, verbosity=-1), 'score'),
                InapplicableFitch(true_tree, dataset))
   ratchetScore <- attr(MorphyRatchet(start_tree, dataset, 
-                  rearrangements=list(RootedTBRCore, RootedSPRCore, RootedNNICore),
+                  rearrangements=list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap),
                   k=3, maxHits=5, verbosity=0), 'score')
   expect_equal(3, InapplicableFitch(true_tree, dataset), ratchetScore)
 })

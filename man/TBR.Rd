@@ -2,19 +2,19 @@
 % Please edit documentation in R/TBR.R
 \name{TBR}
 \alias{TBR}
-\alias{TBRCore}
+\alias{TBRSwap}
 \alias{RootedTBR}
-\alias{RootedTBRCore}
+\alias{RootedTBRSwap}
 \title{TBR}
 \usage{
 TBR(tree, edgeToBreak = NULL, mergeEdges = NULL)
 
-TBRCore(parent, child, nEdge = length(parent), edgeToBreak = NULL,
+TBRSwap(parent, child, nEdge = length(parent), edgeToBreak = NULL,
   mergeEdges = NULL)
 
 RootedTBR(tree, edgeToBreak = NULL, mergeEdges = NULL)
 
-RootedTBRCore(parent, child, nEdge = length(parent), edgeToBreak = NULL,
+RootedTBRSwap(parent, child, nEdge = length(parent), edgeToBreak = NULL,
   mergeEdges = NULL)
 }
 \arguments{
@@ -53,11 +53,11 @@ Branch lengths are not (yet) supported.
 }
 \section{Functions}{
 \itemize{
-\item \code{TBRCore}: faster version that takes and returns parent and child parameters
+\item \code{TBRSwap}: faster version that takes and returns parent and child parameters
 
 \item \code{RootedTBR}: Perform \acronym{TBR} rearrangement, retaining position of root
 
-\item \code{RootedTBRCore}: faster version that takes and returns parent and child parameters
+\item \code{RootedTBRSwap}: faster version that takes and returns parent and child parameters
 }}
 
 \examples{
