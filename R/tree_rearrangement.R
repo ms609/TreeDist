@@ -58,6 +58,66 @@ RearrangeTree <- function (tree, TreeScorer = FitchScore, Rearrange = RootedNNI,
   trees
 }
 
+#' @describeIn RearrangeTree Rearrange edges
+#' @param tree a rooted bifurcating phylogenetic tree with the desired outgroup, with its labels
+#'             in an order that matches the Morphy object, and the attributes
+#'             \code{score}, the tree's optimality score, and 
+#'             \code{hits}, the number of times the best score has been hit in the calling function.
+#' @param dataset A dataset; will be the third argument passed to TreeScorer
+#' @param TreeScorer Function to score trees. Will be sent three parameters: parent, child and dataset.
+#' @param Rearrange a rearrangement function that returns a tree: probably one of 
+#'     \code{\link{RootedNNI}}, \code{\link{RootedSPR}} or
+#'     \code{\link{RootedTBR}}.
+#' @param minScore trees longer than \code{min.score}, probably the score of the starting tree,
+#'     will be discarded.
+#' @param returnSingle returns all trees if \kbd{FALSE} or a randomly selected tree if \kbd{TRUE}.
+#' @param iter iteration number of calling function, for reporting to user only.
+#' @template clusterParam
+#' @template verbosityParam
+#' 
+#' @export
+RearrangeEdges <- function (parent, child, dataset, TreeScorer, inputScore=1e+07, hits=0, 
+                             RearrangeEdges, minScore=NULL, returnSingle=TRUE,
+                             iter='?', cluster=NULL, verbosity=0L) {
+  bestScore <- inputScore
+  if (is.null(cluster)) {
+    rearrangedEdges <- RearrangeEdges(parent, child) # TODO we probably want to get ALL trees 1 REARRANGE step away
+    edgeLists <- list(rearrangedEdges)
+    minScore <- TreeScorer(rearrangedEdges[[1]], rearrangedEdges[[2]], dataset)
+    bestTrees <- c(TRUE)
+  } else {
+    stop("Cluster not implemented.")
+    # candidates <- clusterCall(cluster, function(re, tr, k) {ret <- re(tr); attr(ret, 'score') <- InapplicableFitch(ret, cl.data, k); ret}, rearrange, tree, concavity)
+    # scores <- vapply(candidates, function(x) attr(x, 'ps'), 1)
+    # candidates <- lapply(seq_along(cl), function (x) Rearrange(tree)) # TODO don't pick the same tree twice
+    # warning("Not tested; likely to fail.")
+    # 
+    # scores <- parLapply(cluster, seq_along(cluster), function (i) MorphyTreeLength(candidates[[i]], morphyObj[[i]])) # ~3x faster to do this in serial in r233.
+    # minScore <- min(scores)
+    # bestTrees <- scores == minScore
+    # trees <- candidates[bestTrees]
+  }
+  if (bestScore < minScore) {
+    if (verbosity > 3L) cat("\n    . Iteration", iter, '- Min score', minScore, ">", bestScore)
+  } else if (bestScore == minScore) {
+    hits <- hits + sum(bestTrees)
+    if (verbosity > 2L) cat("\n    - Iteration", iter, "- Best score", minScore, "hit", hits, "times")
+  } else {
+    hits <- sum(bestTrees)
+    if (verbosity > 1L) cat("\n    * Iteration", iter, "- New best score", minScore, "found on", hits, "trees")
+  }
+  if (length(returnSingle) && returnSingle) {
+    ret <- sample(edgeLists, 1)[[1]]
+    ret[3:4] <- c(minScore, hits)
+    # Return:
+    ret 
+    # It's faster not to call return().
+  } else {
+    # Return:
+    lapply(edgeLists, function (x) x[3:4] <- c(minScore, hits))
+  }
+}
+
 #' neworder_phylo
 #' Wrapper for the ape function
 #' @keywords internal

@@ -79,41 +79,8 @@ MorphyRearrangeTree <- function (tree, morphyObj, Rearrange, minScore=NULL, retu
 MorphyRearrange <- function (parent, child, morphyObj, inputScore=1e+07, hits=0, 
                              RearrangeEdges, minScore=NULL, returnSingle=TRUE,
                              iter='?', cluster=NULL, verbosity=0L) {
-  bestScore <- inputScore
-  if (is.null(cluster)) {
-    rearrangedEdges <- RearrangeEdges(parent, child) # TODO we probably want to get ALL trees 1 REARRANGE step away
-    edgeLists <- list(rearrangedEdges)
-    minScore <- ParentChildMorphyLength(rearrangedEdges[[1]], rearrangedEdges[[2]], morphyObj)
-    bestTrees <- c(TRUE)
-  } else {
-    stop("Cluster not implemented.")
-    # candidates <- clusterCall(cluster, function(re, tr, k) {ret <- re(tr); attr(ret, 'score') <- InapplicableFitch(ret, cl.data, k); ret}, rearrange, tree, concavity)
-    # scores <- vapply(candidates, function(x) attr(x, 'ps'), 1)
-    # candidates <- lapply(seq_along(cl), function (x) Rearrange(tree)) # TODO don't pick the same tree twice
-    # warning("Not tested; likely to fail.")
-    # 
-    # scores <- parLapply(cluster, seq_along(cluster), function (i) MorphyTreeLength(candidates[[i]], morphyObj[[i]])) # ~3x faster to do this in serial in r233.
-    # minScore <- min(scores)
-    # bestTrees <- scores == minScore
-    # trees <- candidates[bestTrees]
-  }
-  if (bestScore < minScore) {
-    if (verbosity > 3L) cat("\n    . Iteration", iter, '- Min score', minScore, ">", bestScore)
-  } else if (bestScore == minScore) {
-    hits <- hits + sum(bestTrees)
-    if (verbosity > 2L) cat("\n    - Iteration", iter, "- Best score", minScore, "hit", hits, "times")
-  } else {
-    hits <- sum(bestTrees)
-    if (verbosity > 1L) cat("\n    * Iteration", iter, "- New best score", minScore, "found on", hits, "trees")
-  }
-  if (length(returnSingle) && returnSingle) {
-    ret <- sample(edgeLists, 1)[[1]]
-    ret[3:4] <- c(minScore, hits)
-    # Return:
-    ret 
-    # It's faster not to call return().
-  } else {
-    # Return:
-    lapply(edgeLists, function (x) x[3:4] <- c(minScore, hits))
-  }
+  RearrangeEdges(parent, child, dataset=morphyObj, TreeScorer=ParentChildMorphyLength, 
+                 inputScore=inputScore, hits=hits, RearrangeEdges=RearrangeEdges, 
+                 minScore=minScore, returnSingle=returnSingle, iter=iter,
+                 cluster=cluster, verbosity=verbosity)
 }
