@@ -114,7 +114,7 @@ MorphyRatchet <- function
 #' @describeIn MorphyRatchet returns a list of optimal trees produced by nSearch Ratchet searches
 #' @export
 RatchetConsensus <- function (tree, dataset, maxIt=5000, maxIter=500, maxHits=20, k=10, verbosity=0L, 
-  rearrangements=list(RootedNNI), nSearch=10, ...) {
+  rearrangements=list(RootedNNICore), nSearch=10, ...) {
   trees <- lapply(1:nSearch, function (x) MorphyRatchet(tree, dataset, maxIt=maxIt, 
               maxIter=maxIter, maxHits=maxHits, k=1, verbosity=verbosity, rearrangements=rearrangements, ...))
   scores <- vapply(trees, function (x) attr(x, 'score'), double(1))

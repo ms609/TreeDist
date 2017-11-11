@@ -40,7 +40,7 @@ install.packages('ape', type='source', INSTALL_opts='--byte-compile')
 
 Once installed, load the inapplicable package into R using
 ```{r Load library}
-library(TreeSearch)
+library('TreeSearch')
 ```
 
 # Scoring a tree, and conducting a tree search
@@ -100,14 +100,14 @@ plot(rooted.tree)
 
 Now let's see whether a few Nearest-neighbour interchanges can find us a better tree score. 
 This tends to be the quickest search to run, if not the most exhaustive.
-Using `RootedNNI` instead of `NNI` stops taxa from moving from one side of the root to another,
+Using `RootedNNICore` instead of `NNICore` stops taxa from moving from one side of the root to another,
 which we need to do if we're going to enforce our outgroup constraint.  Even if we are using a
-single-taxon outgroup, using `RootedNNI` retains the position of the root, which makes tree
+single-taxon outgroup, using `RootedNNICore` retains the position of the root, which makes tree
 comparison and interpretation easier later on.
 
 ```{r Basic NNI search}
 better.tree <- MorphySearch(tree=rooted.tree, dataset=my.phyDat, 
-                           Rearrange=NNICore, verbosity=3)
+                           Rearrange=RootedNNICore, verbosity=3)
 ```
 
 This score is better than the 85 of the original neighbour-joining tree, but is this the best we can do?
@@ -128,7 +128,8 @@ A more comprehensive search of tree space can be accomplished using the parsimon
 It might take a couple of minutes to run.
 
 ```{r Ratchet search}
-best.tree <- MorphyRatchet(better.tree, my.phyDat, verbosity=0, k=5)
+best.tree <- MorphyRatchet(better.tree, my.phyDat, verbosity=0, k=5,
+                           rearrangements=list(RootedTBRCore, RootedSPRCore, RootedNNICore))
 attr(best.tree, 'score') # Each tree is labelled with its score during tree search
 ```
 
@@ -147,9 +148,12 @@ number of trees from independent Ratchet iterations.
 For each Ratchet iteration, we'll conduct a TBR search to scan tree space, 
 then an NNI search to hone in on the local optimum.
 
+Note that it's especially important to retain the position of the root here:
+a single topology, if rooted in different places, can lead to an unresolved consensus.
+
 ```{r Consensus}
 my.consensus <- RatchetConsensus(best.tree, my.phyDat, rearrangements=
-                                 list(TBRCore, NNICore))
+                                 list(RootedTBRCore, RootedNNICore))
 ```
 
 If ten independent runs all ended up at different trees, there are probably many more optimal trees out there to 
