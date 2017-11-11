@@ -100,11 +100,12 @@ MorphyRatchet <- function
     cat('Found', length(ret), 'unique MPTs.')
   } else {
     ret <- list(
-      edge = ListToMatrix(edgeList),
-      tip.label = names(dataset), # TODO VALIDATE
-      Nnode = length(edgeList[[1]]) / 2L
+      edge      = ListToMatrix(edgeList),
+      tip.label = names(dataset),
+      Nnode     = length(edgeList[[1]]) / 2L
     )
     class(ret) <- 'phylo'
+    attr(ret, 'score') <- edgeList[[3]]
   }
   #Return:
   ret
