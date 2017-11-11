@@ -20,8 +20,8 @@ test_that("tree search finds shortest tree", {
                InapplicableFitch(true_tree, dataset))
   expect_equal(3, MorphySearch(start_tree, dataset, Rearrange=TBRCore, verbosity=-1)[[3]],
                InapplicableFitch(true_tree, dataset))
-  ratchetScore <- MorphyRatchet(start_tree, dataset, 
-                  rearrangements=list(TreeSearch::TBR, TreeSearch::SPR, TreeSearch::NNI),
-                  k=3, maxHits=5, verbosity=0)[[3]]
+  ratchetScore <- attr(MorphyRatchet(start_tree, dataset, 
+                  rearrangements=list(RootedTBRCore, RootedSPRCore, RootedNNICore),
+                  k=3, maxHits=5, verbosity=0), 'score')
   expect_equal(3, InapplicableFitch(true_tree, dataset), ratchetScore)
 })
