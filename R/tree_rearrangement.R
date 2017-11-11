@@ -65,9 +65,7 @@ RearrangeTree <- function (tree, TreeScorer = FitchScore, Rearrange = RootedNNI,
 #'             \code{hits}, the number of times the best score has been hit in the calling function.
 #' @param dataset A dataset; will be the third argument passed to TreeScorer
 #' @param TreeScorer Function to score trees. Will be sent three parameters: parent, child and dataset.
-#' @param Rearrange a rearrangement function that returns a tree: probably one of 
-#'     \code{\link{RootedNNI}}, \code{\link{RootedSPR}} or
-#'     \code{\link{RootedTBR}}.
+#' @template EdgeSwapperParam
 #' @param minScore trees longer than \code{min.score}, probably the score of the starting tree,
 #'     will be discarded.
 #' @param returnSingle returns all trees if \kbd{FALSE} or a randomly selected tree if \kbd{TRUE}.
