@@ -2,13 +2,13 @@
 % Please edit documentation in R/phylo.R
 \name{C_node_depth}
 \alias{C_node_depth}
-\title{node depth
+\title{Node depth
 Wrapper for the ape function}
 \usage{
 C_node_depth(nTip, nNode, parent, child, nEdge)
 }
 \description{
-node depth
+Node depth
 Wrapper for the ape function
 }
 \keyword{internal}

@@ -74,7 +74,9 @@ TipsAreColumns <- function(dataset, tips) as.integer(dataset[, tips])
 #'                \code{TipsAreNames}, \code{TipsAreRows}, or \code{TipsAreColumns}
 #' @param at Attributes of the dataset (looked up automatically if not supplied)
 #' @param FitchFunction function to be used to calculate parsimony score.
+#'
 #' @return A vector listing the number of 'parsimony steps' calculated for each character
+#'
 #' @importFrom phangorn fitch
 #' @export
 Fitch <- function (tree, dataset, TipData = TipsAreNames, at = attributes(dataset),
