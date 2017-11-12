@@ -15,14 +15,20 @@ TreeSearch(tree, dataset, InitializeData = PhyDat2Morphy,
 \item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
 correspond to the labels of any accompanying tree.}
 
-\item{InitializeData}{function to set up data object to prepare for tree search. 
+\item{InitializeData}{Function that sets up data object to prepare for tree search. 
 The function will be passed the \kbd{dataset} parameter.
 Its return value will be passed to TreeScorer and CleanUpData.}
 
-\item{CleanUpData}{function to destroy data object on function exit.
+\item{CleanUpData}{Function to destroy data object on function exit.
 The function will be passed the value returned by \kbd{InitializeData}.}
 
-\item{TreeScorer}{function by which trees should be scored; default \code{\link{FitchScore}}}
+\item{TreeScorer}{function to score a given tree.
+The function will be passed two parameters: the first a MorphyTree list, and the
+second the value returned by \kbd{InitializeData}.}
+
+\item{EdgeSwapper}{a function that rearranges a parent and child vector, 
+and returns a list with modified vectors; for example
+\code{\link{SPRSwap}}.}
 
 \item{maxIter}{the maximum number of iterations to perform before abandoning the search.}
 
@@ -34,14 +40,6 @@ The function will be passed the value returned by \kbd{InitializeData}.}
 more verbose feedback to the user.}
 
 \item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}}, \code{dataset})}
-
-\item{RearrangeEdges}{a function that rearranges a parent and child vector, 
-and returns a list with modified vectors; for example
-\code{\link{SPRSwap}}.}
-
-\item{TreeScorer}{function to score a given tree.
-The function will be passed two parameters: the first a MorphyTree list, and the
-second the value returned by \kbd{InitializeData}.}
 }
 \value{
 {

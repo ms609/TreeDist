@@ -5,20 +5,14 @@
 #'  
 #' @param tree a fully-resolved starting tree in \code{\link{phylo}} format, with the desired outgroup; edge lengths are not supported and will be deleted;
 #' @template datasetParam
-#' @template treeScorerParam
 #' @template EdgeSwapperParam
 #' @param maxIter the maximum number of iterations to perform before abandoning the search.
 #' @param maxHits the maximum times to hit the best pscore before abandoning the search.
 #' @param forestSize the maximum number of trees to return - useful in concert with \code{\link{consensus}}.
 #'
-#' @param InitializeData function to set up data object to prepare for tree search. 
-#'        The function will be passed the \kbd{dataset} parameter.
-#'        Its return value will be passed to TreeScorer and CleanUpData.
-#' @param TreeScorer function to score a given tree.
-#'        The function will be passed two parameters: the first a MorphyTree list, and the
-#'        second the value returned by \kbd{InitializeData}.
-#' @param CleanUpData function to destroy data object on function exit.
-#'        The function will be passed the value returned by \kbd{InitializeData}.
+#' @template InitializeDataParam
+#' @template CleanUpDataParam
+#' @template TreeScorerParam
 #'
 #' @template verbosityParam
 #' @template treeScorerDots
@@ -50,7 +44,7 @@
 #' @keywords  tree 
 #' 
 #' @export
-TreeSearch <- function (tree, dataset, 
+TreeSearch <- function (tree, dataset,
                         InitializeData = PhyDat2Morphy,
                         CleanUpData    = UnloadMorphy,
                         TreeScorer     = MorphyLength,

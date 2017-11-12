@@ -6,6 +6,8 @@
 #' @param dataset Dataset of class \code{profileDat} (see \code{\link{PrepareDataProfile}})
 #'                Alternatively, a dataset of class \code{phyDat} can be provided, and will 
 #'                be (time-consumingly) converted within the function.
+#'                In subsidiary functions, the dataset will have been initialized using 
+#'                \code{ProfileInitMorphy}, must be destroyed using \code{ProfileDestroyMorphy}.
 #'
 #' @return Zero minus the profile score (because the optimization algorithm assumes that
 #'         smaller numbers are better)
@@ -46,7 +48,6 @@ ProfileScore <- function (tree, dataset) {
 #' @describeIn ProfileScore Scorer for initialized dataset.
 #' @template treeParent
 #' @template treeChild
-#' @param dataset Dataset, initialized using \code{ProfileInitMorphy} and destroyed using \code{ProfileDestroyMorphy}
 #' @export
 ProfileScoreMorphy <- function (parent, child, dataset) {
   steps <- vapply(attr(dataset, 'morphyObjs'), MorphyLength, parent=parent, child=child, integer(1))

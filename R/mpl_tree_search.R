@@ -1,120 +1,9 @@
-#' Parsimony Ratchet
-#'
-#' \code{MorphyRatchet} uses the parsimony ratchet (Nixon 1999) to search for a more parsimonious tree.
-#'
-#' @template treeParam 
-#' @template datasetParam
-#' @param keepAll Set to \kbd{TRUE} to report all MPTs encountered during the search, perhaps to analyze consensus
-#' @param maxIt   maximum ratchet iterations to perform;
-#' @param maxIter maximum rearrangements to perform on each bootstrap or ratchet iteration;
-#' @param maxHits maximum times to hit best score before terminating a tree search within a pratchet iteration;
-#' @param k stop when k ratchet iterations have found the same best score;
-#' @template stopAtScoreParam
-#' @template verbosityParam
-#' @param rearrangements (list of) function(s) to use when rearranging trees
-#'        e.g. \code{list(RootedTBRSwap, NNISwap)}
-#' @param \dots other arguments to pass to subsequent functions.
+#' @describeIn Ratchet returns a list of optimal trees produced by nSearch Ratchet searches
 #' @param nSearch Number of Ratchet searches to conduct (for RatchetConsensus)
-#' 
-#' @return This function returns a tree modified by parsimony ratchet iteration, retaining the position of the root.
-#'
-#' @references Nixon, K. C. (1999). \cite{The Parsimony Ratchet, a new method for rapid parsimony analysis.}
-#'  Cladistics, 15(4), 407-414. doi:\href{http://dx.doi.org/10.1111/j.1096-0031.1999.tb00277.x}{10.1111/j.1096-0031.1999.tb00277.x}
-#'
-#' @author Martin R. Smith
-#' 
-#' Adapted from \code{\link[phangorn]{pratchet}} in the \pkg{phangorn} package, which does not preserve the position of the root.
-#' 
-#' @seealso \code{\link[phangorn]{pratchet}}
-#' @seealso \code{\link{TreeSearch}}
-### #' @seealso \code{\link{SectorialSearch}}
-#' 
-#' @examples{
-#' data('inapplicable.datasets')
-#' my.phyDat <- inapplicable.phyData[[1]]
-#' MorphyRatchet(tree=RandomTree(my.phyDat, root=names(my.phyDat)[1]), 
-#'         dataset=my.phyDat, maxIt=1, maxIter=50)
-#' }
-#' @keywords  tree 
 #' @export
-MorphyRatchet <- function 
-(tree, dataset, keepAll=FALSE, maxIt=100, maxIter=5000, maxHits=40, k=10, stopAtScore=NULL,
-  verbosity=1L, swappers=list(TBRSwap, SPRSwap, NNISwap), ...) {
-  morphyObj <- PhyDat2Morphy(dataset)
-  on.exit(morphyObj <- UnloadMorphy(morphyObj))
-  tree <- RenumberTips(tree, names(dataset))
-  edge <- tree$edge
-  edgeList <- RenumberEdges(edge[, 1], edge[, 2])
-  epsilon <- 1e-08
-  bestScore <- attr(tree, "score")
-  if (is.null(bestScore)) {
-    bestScore <- MorphyLength(edgeList[[1]], edgeList[[2]], morphyObj, ...)
-  }
-  if (verbosity > 0L) cat("* Initial score:", bestScore)
-  if (!is.null(stopAtScore) && bestScore < stopAtScore + epsilon) return(tree)
-  if (keepAll) forest <- vector('list', maxIter)
-
-  if (class(swappers) == 'function') swappers <- list(swappers)
-  kmax <- 0 
-  for (i in 1:maxIt) {
-    if (verbosity > 0L) cat ("\n* Ratchet iteration", i, "- Running NNI on bootstrapped dataset. ")
-    candidate <- MorphyBootstrap(edgeList=edgeList, morphyObj=morphyObj, maxIter=maxIter, maxHits=maxHits,
-                               verbosity=verbosity-1L, EdgeSwapper=swappers[[1]], ...)
-    
-    for (EdgeSwapper in swappers) {
-      if (verbosity > 0L) cat ("\n - Rearranging new candidate tree...")
-      candidate <- DoMorphySearch(candidate, morphyObj, EdgeSwapper=EdgeSwapper, stopAtScore=stopAtScore,
-                                verbosity=verbosity-1L, maxIter=maxIter, maxHits=maxHits, ...)
-      candScore <- candidate[[3]]
-      if (!is.null(stopAtScore) && candScore < stopAtScore + epsilon) return(candidate)
-    }
-    if ((candScore + epsilon) < bestScore) {
-      if (keepAll) {
-        forest <- vector('list', maxIter)
-        forest[[i]] <- candidate
-      }
-      edgeList <- candidate
-      bestScore <- candScore
-      kmax <- 1
-    } else {
-      if (bestScore + epsilon > candScore) { # i.e. best == cand, allowing for floating point error
-        kmax <- kmax + 1
-        candidate$tip.label <- names(dataset)
-        edgeList <- candidate
-        if (keepAll) forest[[i]] <- candidate
-      }
-    }
-    if (verbosity > 0L) cat("\n* Best score after", i, "/", maxIt, "ratchet iterations:", 
-                           bestScore, "( hit", kmax, "/", k, ")\n")
-    if (kmax >= k) break()
-  } # for
-  if (verbosity > 0L)
-    cat ("\n* Completed ratchet search with score", bestScore, "\n")
-    
-  if (keepAll) {
-    # TODO this probably won't work
-    # forest <- forest[!vapply(forest, is.null, logical(1))]
-    # class(forest) <- 'multiPhylo'
-    # ret <- unique(forest)
-    # cat('Found', length(ret), 'unique MPTs.')
-  } else {
-    ret <- list(
-      edge      = ListToMatrix(edgeList),
-      tip.label = names(dataset),
-      Nnode     = length(edgeList[[1]]) / 2L
-    )
-    class(ret) <- 'phylo'
-    attr(ret, 'score') <- edgeList[[3]]
-  }
-  #Return:
-  ret
-}
-
-#' @describeIn MorphyRatchet returns a list of optimal trees produced by nSearch Ratchet searches
-#' @export
-RatchetConsensus <- function (tree, dataset, maxIt=5000, maxIter=500, maxHits=20, k=10, verbosity=0L, 
+RatchetConsensus <- function (tree, dataset, ratchIter=5000, maxIter=500, maxHits=20, k=10, verbosity=0L, 
   swappers=list(RootedNNISwap), nSearch=10, ...) {
-  trees <- lapply(1:nSearch, function (x) MorphyRatchet(tree, dataset, maxIt=maxIt, 
+  trees <- lapply(1:nSearch, function (x) MorphyRatchet(tree, dataset, ratchIter=ratchIter, 
               maxIter=maxIter, maxHits=maxHits, k=1, verbosity=verbosity, swappers=swappers, ...))
   scores <- vapply(trees, function (x) attr(x, 'score'), double(1))
   trees <- unique(trees[scores == min(scores)])
@@ -280,7 +169,7 @@ DoMorphySearch <- function (edgeList, morphyObj, EdgeSwapper, maxIter=100, maxHi
 ###   #' outgroup <- c('Lingula', 'Mickwitzia', 'Neocrania')
 ###   #' njtree <- ape::root(nj(dist.hamming(SigSut.phy)), outgroup, resolve.root=TRUE)
 ###   #' njtree$edge.length <- NULL; njtree<-ape::root(njtree, outgroup, resolve.root=TRUE)
-###   #' InapplicableSectorial(njtree, SigSut.phy, maxIt=1, maxIter=50, largest.sector=7)
+###   #' InapplicableSectorial(njtree, SigSut.phy, ratchIter=1, maxIter=50, largest.sector=7)
 ###   #' \dontrun{SectorialSearch(njtree, SigSut.phy) # Will be time-consuming }
 ###   #' 
 ###   #' 
@@ -306,7 +195,7 @@ DoMorphySearch <- function (edgeList, morphyObj, EdgeSwapper, maxIter=100, maxHi
 ###     bestScore <- attr(tree, 'score')
 ###     tree <- RenumberTips(Renumber(tree), names(dataset))
 ###     if (length(bestScore) == 0) bestScore <- InapplicableFitch(tree, dataset, ...)[[1]]
-###     sect <- MorphySectorial(tree, morphyObj, verbosity=verbosity-1, maxIt=30, 
+###     sect <- MorphySectorial(tree, morphyObj, verbosity=verbosity-1, ratchIter=30, 
 ###       maxIter=maxIter, maxHits=15, smallest.sector=6, 
 ###       largest.sector=length(tree$edge[,2L])*0.25, rearrangements=rearrangements)
 ###     sect <- TreeSearch(sect, dataset, Rearrange=subsequentRearrangements, maxIter=maxIter, maxHits=30, cluster=cluster, verbosity=verbosity)

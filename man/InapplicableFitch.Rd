@@ -36,7 +36,7 @@ result <- InapplicableFitch(tree, inapplicable.phyData[[1]])
 \seealso{
 \code{\link{MorphyDat}}
 
-\code{\link{MorphySearch}}
+\code{\link{TreeSearch}}
 }
 \author{
 Martin R. Smith (using C code adapted from MorphyLib, author Martin Brazeau)

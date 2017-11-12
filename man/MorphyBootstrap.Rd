@@ -16,6 +16,10 @@ MorphyBootstrap(edgeList, morphyObj, EdgeSwapper = NNISwap, maxIter, maxHits,
 
 \item{morphyObj}{A morphy object, perhaps created with \code{\link{PhyDat2Morphy}}.}
 
+\item{EdgeSwapper}{a function that rearranges a parent and child vector, 
+and returns a list with modified vectors; for example
+\code{\link{SPRSwap}}.}
+
 \item{maxIter}{maximum number of iterations to perform in tree search}
 
 \item{maxHits}{maximum number of hits to accomplish in tree search}
@@ -24,10 +28,6 @@ MorphyBootstrap(edgeList, morphyObj, EdgeSwapper = NNISwap, maxIter, maxHits,
 more verbose feedback to the user.}
 
 \item{\dots}{further parameters to send to \code{DoMorphySearch}}
-
-\item{RearrangeEdges}{a function that rearranges a parent and child vector, 
-and returns a list with modified vectors; for example
-\code{\link{SPRSwap}}.}
 }
 \value{
 A tree that is optimal under a random sampling of the original characters

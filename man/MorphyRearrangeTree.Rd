@@ -45,7 +45,7 @@ more verbose feedback to the user.}
 
 \item{hits}{number of times that this score has been hit}
 
-\item{RearrangeEdges}{a function that rearranges a parent and child vector, 
+\item{EdgeSwapper}{a function that rearranges a parent and child vector, 
 and returns a list with modified vectors; for example
 \code{\link{SPRSwap}}.}
 }

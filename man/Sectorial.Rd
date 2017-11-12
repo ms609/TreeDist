@@ -15,7 +15,9 @@ Sectorial(tree, dataset, TreeScorer = FitchScore,
 \item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
 correspond to the labels of any accompanying tree.}
 
-\item{TreeScorer}{function by which trees should be scored; default \code{\link{FitchScore}}}
+\item{TreeScorer}{function to score a given tree.
+The function will be passed two parameters: the first a MorphyTree list, and the
+second the value returned by \kbd{InitializeData}.}
 
 \item{sectRearrangements}{A list of functions to be applied when rearranging trees in sectorial 
 search. Note: these must retain the position of the root of the tree}

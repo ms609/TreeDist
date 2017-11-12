@@ -14,7 +14,9 @@ BootstrapTree(tree, dataset, TreeScorer = FitchScore, maxIter, maxHits,
 \item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
 correspond to the labels of any accompanying tree.}
 
-\item{TreeScorer}{function by which trees should be scored; default \code{\link{FitchScore}}}
+\item{TreeScorer}{function to score a given tree.
+The function will be passed two parameters: the first a MorphyTree list, and the
+second the value returned by \kbd{InitializeData}.}
 
 \item{maxIter}{maximum number of iterations to perform in tree search}
 
