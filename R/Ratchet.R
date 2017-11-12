@@ -43,12 +43,17 @@
 ## TODO use Rooted NNI / SPR / TBR
 ## TODO Use swappers instead of rearrangements
 ## TODO Initialize and destroy data
-Ratchet <- function (tree, dataset, TreeScorer=FitchScore, returnAll=FALSE, rooted=TRUE, 
-                      ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
-                      bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=0, 
-                      rearrangements="NNI", suboptimal=1e-08, ...) {
+Ratchet <- function (tree, dataset, 
+                     InitializeData = PhyDat2Morphy,
+                     CleanUpData    = UnloadMorphy,
+                     TreeScorer     = MorphyLength,
+                     EdgeSwapper    = RootedTBRSwap,
+                     returnAll=FALSE, rooted=TRUE, 
+                     ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
+                     bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=0, 
+                     rearrangements="NNI", suboptimal=1e-08, ...) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
-   
+  
   epsilon <- 1e-08
   if (is.null(attr(tree, "score"))) attr(tree, "score") <- TreeScorer(tree, dataset, ...)
   bestScore <- attr(tree, "score")

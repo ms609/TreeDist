@@ -131,7 +131,7 @@ DoSectorial <- function (tree, dataset, TreeScorer = FitchScore, maxSectIter=100
   nTip <- (nEdge / 2) + 1
   nonRootNodes <- (nTip + 2):(nEdge + 1)
   
-  eps <- 1e-08
+  epsilon <- 1e-08
   improvements <- 1
   for (i in seq_len(maxSectIter)) {
     nodeLengths <- CladeSizes(tree, nonRootNodes)
@@ -151,7 +151,7 @@ DoSectorial <- function (tree, dataset, TreeScorer = FitchScore, maxSectIter=100
     }
     if (verbosity >= 0) cat(' Sector OK.')
     
-    crown <- ape::root(AddTip(crown, 0, 'SECTOR_ROOT'), length(crown$tip.label) + 1, resolve.root=TRUE)
+    crown <- root(AddTip(crown, 0, 'SECTOR_ROOT'), length(crown$tip.label) + 1, resolve.root=TRUE)
     initialScore <- TreeScorer(candidate, dataset, ...)
     attr(candidate, 'score') <- initialScore
     
@@ -162,7 +162,7 @@ DoSectorial <- function (tree, dataset, TreeScorer = FitchScore, maxSectIter=100
     }
     candidateScore <- attr(candidate, 'score')
     
-    if((candidateScore + eps) < initialScore) {
+    if((candidateScore + epsilon) < initialScore) {
       improvements <- improvements + 1
       
       subtree.labels <- crownTips

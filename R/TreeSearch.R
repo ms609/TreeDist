@@ -57,7 +57,7 @@ TreeSearch <- function (tree, dataset,
                         EdgeSwapper    = RootedTBRSwap,
                         maxIter = 100, maxHits = 20, forestSize = 1,
                         verbosity = 1, ...) {
-  eps <- 1e-07
+  epsilon <- 1e-07
   hits <- 0L
   # initialize tree and data
   if (dim(tree$edge)[1] != 2 * tree$Nnode) stop("tree must be bifurcating; try rooting with ape::root")
@@ -107,7 +107,7 @@ TreeSearch <- function (tree, dataset,
       ###  attr(tree, 'hits') <- hits
       ###}      
     } else {
-      if (iterScore < bestScore + eps) {
+      if (iterScore < bestScore + epsilon) {
         hits <- candidateEdges[[4]]
         bestScore <- iterScore
         edgeList <- candidateEdges

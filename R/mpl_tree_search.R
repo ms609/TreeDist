@@ -45,13 +45,13 @@ MorphyRatchet <- function
   tree <- RenumberTips(tree, names(dataset))
   edge <- tree$edge
   edgeList <- RenumberEdges(edge[, 1], edge[, 2])
-  eps <- 1e-08
+  epsilon <- 1e-08
   bestScore <- attr(tree, "score")
   if (is.null(bestScore)) {
     bestScore <- MorphyLength(edgeList[[1]], edgeList[[2]], morphyObj, ...)
   }
   if (verbosity > 0L) cat("* Initial score:", bestScore)
-  if (!is.null(stopAtScore) && bestScore < stopAtScore + eps) return(tree)
+  if (!is.null(stopAtScore) && bestScore < stopAtScore + epsilon) return(tree)
   if (keepAll) forest <- vector('list', maxIter)
 
   if (class(swappers) == 'function') swappers <- list(swappers)
@@ -66,9 +66,9 @@ MorphyRatchet <- function
       candidate <- DoMorphySearch(candidate, morphyObj, EdgeSwapper=EdgeSwapper, stopAtScore=stopAtScore,
                                 verbosity=verbosity-1L, maxIter=maxIter, maxHits=maxHits, ...)
       candScore <- candidate[[3]]
-      if (!is.null(stopAtScore) && candScore < stopAtScore + eps) return(candidate)
+      if (!is.null(stopAtScore) && candScore < stopAtScore + epsilon) return(candidate)
     }
-    if ((candScore + eps) < bestScore) {
+    if ((candScore + epsilon) < bestScore) {
       if (keepAll) {
         forest <- vector('list', maxIter)
         forest[[i]] <- candidate
@@ -77,7 +77,7 @@ MorphyRatchet <- function
       bestScore <- candScore
       kmax <- 1
     } else {
-      if (bestScore + eps > candScore) { # i.e. best == cand, allowing for floating point error
+      if (bestScore + epsilon > candScore) { # i.e. best == cand, allowing for floating point error
         kmax <- kmax + 1
         candidate$tip.label <- names(dataset)
         edgeList <- candidate
@@ -181,7 +181,7 @@ MorphyBootstrap <- function (edgeList, morphyObj, EdgeSwapper = NNISwap,
 DoMorphySearch <- function (edgeList, morphyObj, EdgeSwapper, maxIter=100, maxHits=20, 
                           stopAtScore=NULL, forestSize=1L, 
                           cluster=NULL, verbosity=1L, ...) {
-  eps <- 1e-07                        
+  epsilon <- 1e-07                        
   if (!is.null(forestSize) && length(forestSize)) {
     if (forestSize > 1L) {
       stop("TODO: Forests not supported")
@@ -198,7 +198,7 @@ DoMorphySearch <- function (edgeList, morphyObj, EdgeSwapper, maxIter=100, maxHi
   }
   hits <- if (length(edgeList) < 4) 0L else edgeList[[4]]
   if (verbosity > 0L) cat("  - Initial score:", bestScore)
-  if (!is.null(stopAtScore) && bestScore < stopAtScore + eps) return(edgeList)
+  if (!is.null(stopAtScore) && bestScore < stopAtScore + epsilon) return(edgeList)
   returnSingle <- !(forestSize > 1L)
   
   for (iter in 1:maxIter) {
@@ -222,11 +222,11 @@ DoMorphySearch <- function (edgeList, morphyObj, EdgeSwapper, maxIter=100, maxHi
         attr(edgeList, 'score') <- scoreThisIteration
       }
     } else {
-      if (scoreThisIteration < bestScore + eps) {
-        hits <- if (bestScore < scoreThisIteration + eps) hits + 1L else 1L
+      if (scoreThisIteration < bestScore + epsilon) {
+        hits <- if (bestScore < scoreThisIteration + epsilon) hits + 1L else 1L
         bestScore <- scoreThisIteration
         edgeList  <- candidateLists
-        if (!is.null(stopAtScore) && bestScore < stopAtScore + eps) return(edgeList)
+        if (!is.null(stopAtScore) && bestScore < stopAtScore + epsilon) return(edgeList)
       }
     }
     if (hits >= maxHits) break
