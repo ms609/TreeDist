@@ -1,10 +1,11 @@
 #' @describeIn Ratchet returns a list of optimal trees produced by nSearch Ratchet searches
 #' @param nSearch Number of Ratchet searches to conduct (for RatchetConsensus)
 #' @export
-RatchetConsensus <- function (tree, dataset, ratchIter=5000, maxIter=500, maxHits=20, k=10, verbosity=0L, 
-  swappers=list(RootedNNISwap), nSearch=10, ...) {
-  trees <- lapply(1:nSearch, function (x) MorphyRatchet(tree, dataset, ratchIter=ratchIter, 
-              maxIter=maxIter, maxHits=maxHits, k=1, verbosity=verbosity, swappers=swappers, ...))
+RatchetConsensus <- function (tree, dataset, ratchHits=10,
+                              searchIter=500, searchHits=20, verbosity=0L, 
+                              swappers=list(RootedNNISwap), nSearch=10, ...) {
+  trees <- lapply(logical(nSearch), function (x) MorphyRatchet(tree, dataset, ratchIter=1, 
+              searchIter=searchIter, searchHits=searchHits, verbosity=verbosity, swappers=swappers, ...))
   scores <- vapply(trees, function (x) attr(x, 'score'), double(1))
   trees <- unique(trees[scores == min(scores)])
   cat ("Found", length(trees), 'unique trees from ', nSearch, 'searches.')

@@ -13,9 +13,9 @@ Ratchet(tree, dataset, InitializeData = PhyDat2Morphy,
   searchIter = 2000, searchHits = 40, bootstrapIter = searchIter,
   bootstrapHits = searchHits, verbosity = 1L, suboptimal = 1e-08, ...)
 
-RatchetConsensus(tree, dataset, ratchIter = 5000, maxIter = 500,
-  maxHits = 20, k = 10, verbosity = 0L, swappers = list(RootedNNISwap),
-  nSearch = 10, ...)
+RatchetConsensus(tree, dataset, ratchIter = 5000, ratchHits = 10,
+  searchIter = 500, searchHits = 20, verbosity = 0L,
+  swappers = list(RootedNNISwap), nSearch = 10, ...)
 }
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}.}
