@@ -12,17 +12,17 @@ test_that("tree search finds shortest tree", {
   morphyObj <- PhyDat2Morphy(dataset)
   on.exit(morphyObj <- UnloadMorphy(morphyObj))
   
-  expect_equal(3, attr(MorphySearch(start_tree, dataset, EdgeSwapper=NNISwap, verbosity=-1), 'score'),
+  expect_equal(3, attr(TreeSearch(start_tree, dataset, EdgeSwapper=NNISwap, verbosity=0), 'score'),
                InapplicableFitch(true_tree, dataset))
-  expect_equal(3, attr(MorphySearch(start_tree, dataset, EdgeSwapper=SPRSwap, verbosity=-1), 'score'),
+  expect_equal(3, attr(TreeSearch(start_tree, dataset, EdgeSwapper=SPRSwap, verbosity=-1), 'score'),
                InapplicableFitch(true_tree, dataset))
-  expect_equal(3, attr(MorphySearch(start_tree, dataset, EdgeSwapper=TBRSwap, verbosity=-1), 'score'),
+  expect_equal(3, attr(TreeSearch(start_tree, dataset, EdgeSwapper=TBRSwap, verbosity=-1), 'score'),
                InapplicableFitch(true_tree, dataset))
-  expect_equal(3, attr(MorphySearch(start_tree, dataset, EdgeSwapper=RootedNNISwap, verbosity=-1), 'score'),
+  expect_equal(3, attr(TreeSearch(start_tree, dataset, EdgeSwapper=RootedNNISwap, verbosity=-1), 'score'),
                InapplicableFitch(true_tree, dataset))
-  expect_equal(3, attr(MorphySearch(start_tree, dataset, EdgeSwapper=RootedSPRSwap, verbosity=-1), 'score'),
+  expect_equal(3, attr(TreeSearch(start_tree, dataset, EdgeSwapper=RootedSPRSwap, verbosity=-1), 'score'),
                InapplicableFitch(true_tree, dataset))
-  expect_equal(3, attr(MorphySearch(start_tree, dataset, EdgeSwapper=RootedTBRSwap, verbosity=-1), 'score'),
+  expect_equal(3, attr(TreeSearch(start_tree, dataset, EdgeSwapper=RootedTBRSwap, verbosity=-1), 'score'),
                InapplicableFitch(true_tree, dataset))
   ratchetScore <- attr(MorphyRatchet(start_tree, dataset, 
                   swappers=list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap),

@@ -22,13 +22,12 @@
 #' If multiple elements are requested then these will be returned in a list.
 #' 
 #' @seealso \code{\link{MorphyDat}}
-#' @seealso \code{\link{MorphySearch}}
+#' @seealso \code{\link{TreeSearch}}
 #' 
 #' @author Martin R. Smith (using C code adapted from MorphyLib, author Martin Brazeau)
 #' @importFrom phangorn phyDat
 #' @export
 InapplicableFitch <- function (tree, dataset) {
-  if (class(dataset) != 'phyDat') stop('Invalid data type ', class(dataset), '; should be phyDat.')
   tree <- RenumberTips(Renumber(tree), names(dataset))
   morphyObj <- PhyDat2Morphy(dataset)
   on.exit(morphyObj <- UnloadMorphy(morphyObj))
