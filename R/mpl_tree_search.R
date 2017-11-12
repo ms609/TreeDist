@@ -64,7 +64,7 @@ MorphyRatchet <- function
     
     for (Rearrange in rearrangements) {
       if (verbosity > 0L) cat ("\n - Rearranging new candidate tree...")
-      candidate <- MorphyTreeSearch(candidate, morphyObj, Rearrange=Rearrange, stopAtScore=stopAtScore,
+      candidate <- DoMorphySearch(candidate, morphyObj, Rearrange=Rearrange, stopAtScore=stopAtScore,
                                 verbosity=verbosity-1L, maxIter=maxIter, maxHits=maxHits, ...)
       candScore <- candidate[[3]]
       if (!is.null(stopAtScore) && candScore < stopAtScore + eps) return(candidate)
@@ -131,7 +131,7 @@ RatchetConsensus <- function (tree, dataset, maxIt=5000, maxIter=500, maxHits=20
 #' @param maxIter maximum number of iterations to perform in tree search
 #' @param maxHits maximum number of hits to accomplish in tree search
 #' @template verbosityParam
-#' @param \dots further parameters to send to \code{MorphyTreeSearch}
+#' @param \dots further parameters to send to \code{DoMorphySearch}
 #'
 #' @return A tree that is optimal under a random sampling of the original characters
 #' @export
@@ -145,7 +145,7 @@ MorphyBootstrap <- function (edgeList, morphyObj, EdgeSwapper = NNISwap,
   vapply(eachChar, function (i) 
          mpl_set_charac_weight(i, BS[i], morphyObj), integer(1))
   mpl_apply_tipdata(morphyObj)
-  res <- MorphyTreeSearch(edgeList, morphyObj, EdgeSwapper=EdgeSwapper, maxIter=maxIter, maxHits=maxHits, verbosity=verbosity-1L, ...)
+  res <- DoMorphySearch(edgeList, morphyObj, EdgeSwapper=EdgeSwapper, maxIter=maxIter, maxHits=maxHits, verbosity=verbosity-1L, ...)
   vapply(eachChar, function (i) 
          mpl_set_charac_weight(i, startWeights[i], morphyObj), integer(1))
   mpl_apply_tipdata(morphyObj)
@@ -179,7 +179,7 @@ MorphyBootstrap <- function (edgeList, morphyObj, EdgeSwapper = NNISwap,
 #' @keywords internal
 #' @export
 
-MorphyTreeSearch <- function (edgeList, morphyObj, EdgeSwapper, maxIter=100, maxHits=20, 
+DoMorphySearch <- function (edgeList, morphyObj, EdgeSwapper, maxIter=100, maxHits=20, 
                           stopAtScore=NULL, forestSize=1L, 
                           cluster=NULL, verbosity=1L, ...) {
   eps <- 1e-07                        
@@ -310,7 +310,7 @@ MorphySearch <- function (tree, dataset, EdgeSwapper=TBRSwap, maxIter=100, maxHi
     on.exit(morphyObj <- UnloadMorphy(morphyObj))
   }
   
-  searchResult <- MorphyTreeSearch(edgeList=edgeList, morphyObj=morphyObj, Rearrange=Rearrange,
+  searchResult <- DoMorphySearch(edgeList=edgeList, morphyObj=morphyObj, EdgeSwapper=EdgeSwapper,
                       maxIter=maxIter, maxHits=maxHits, forestSize=forestSize, cluster=cluster, 
                       verbosity=verbosity, ...)
   ret <- list(edge = ListToMatrix(searchResult),
