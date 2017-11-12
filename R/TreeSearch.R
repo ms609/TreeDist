@@ -61,10 +61,12 @@ TreeSearch <- function (tree, dataset,
   hits <- 0L
   # initialize tree and data
   if (dim(tree$edge)[1] != 2 * tree$Nnode) stop("tree must be bifurcating; try rooting with ape::root")
+  tree <- RenumberTips(tree, names(dataset))
   edgeList <- MatrixToList(tree$edge)
+  edgeList <- RenumberEdges(edge[, 1], edge[, 2])
 
   initializedData <- InitializeData(dataset)
-  on.exit(CleanUpData(initializedData))
+  on.exit(initializedData <- CleanUpData(initializedData))
 
   if (exists("forestSize") && length(forestSize) && forestSize > 1) {
     # TODO ForestSize > 1 not supported

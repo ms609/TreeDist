@@ -26,7 +26,7 @@
 #' Adapted from \code{\link[phangorn]{pratchet}} in the \pkg{phangorn} package, which does not preserve the position of the root.
 #' 
 #' @seealso \code{\link[phangorn]{pratchet}}
-#' @seealso \code{\link{MorphySearch}}
+#' @seealso \code{\link{TreeSearch}}
 ### #' @seealso \code{\link{SectorialSearch}}
 #' 
 #' @examples{
@@ -243,85 +243,6 @@ DoMorphySearch <- function (edgeList, morphyObj, EdgeSwapper, maxIter=100, maxHi
   }
 }
 
-#' Search for most parsimonious trees
-#'
-#' Run standard search algorithms (\acronym{NNI}, \acronym{SPR} or \acronym{TBR}) 
-#' to search for a more parsimonious tree.
-#'  
-#' @param tree a fully-resolved starting tree in \code{\link{phylo}} format, with the desired outgroup; 
-#'        edge lengths are not supported and will be deleted.
-#' @template datasetParam
-#' @template EdgeSwapperParam
-#' @param maxIter the maximum number of iterations to perform before abandoning the search.
-#' @param maxHits the maximum times to hit the best score before abandoning the search.
-#' @param forestSize the maximum number of trees to return - useful in concert with \code{\link{consensus}}.
-#' @template nCoresParam
-#' @template verbosityParam
-#' @param \dots other arguments to pass to subsequent functions.
-#' 
-#' @return{
-#' This function returns a tree, with an attribute \code{score} conveying its parsimony score.
-#' Note that the parsimony score will be inherited from the tree's attributes, which is only valid if it 
-#' was generated using the same \code{data} that is passed here.
-#' }
-#' @author Martin R. Smith
-#'
-#' @seealso
-#' \itemize{
-#' \item \code{\link{InapplicableFitch}}, calculates parsimony score, supports inapplicable tokens;
-#' \item \code{\link{RootedNNI}}, conducts tree rearrangements;
-### #' \item \code{\link{SectorialSearch}}, alternative heuristic, useful for larger trees;
-#' \item \code{\link{MorphyRatchet}}, alternative heuristic, useful to escape local optima.
-#' }
-#'
-#' @examples
-#' data('inapplicable.datasets')
-#' my.phyDat <- inapplicable.phyData[[1]]
-#' njtree <- NJTree(my.phyDat)
-#'
-#' \dontrun{
-#' MorphySearch(njtree, my.phyDat, maxIter=20, EdgeSwapper=NNISwap)
-#' MorphySearch(njtree, my.phyDat, maxIter=20, EdgeSwapper=RootedSPRSwap)
-#' }
-#' 
-#' @keywords  tree 
-#' 
-#' @export
-
-MorphySearch <- function (tree, dataset, EdgeSwapper=TBRSwap, maxIter=100, maxHits=20, forestSize=1, 
- nCores=1L, verbosity=1L, ...) {
-  # Initialize morphy object
-  if (dim(tree$edge)[1] != 2 * tree$Nnode) stop("tree must be bifurcating; try rooting with ape::root")
-  tree <- RenumberTips(tree, names(dataset))
-  edge <- tree$edge
-  edgeList <- RenumberEdges(edge[, 1], edge[, 2])
-  if (nCores > 1L) {
-    stop("Clusters are not yet supported (#23).")
-    ### cluster <- snow::makeCluster(nCores)
-    ### on.exit(snow::stopCluster(cluster), add=TRUE)
-    ### snow::clusterEvalQ(cluster, {library(TreeSearch); NULL})
-    ### morphyObj <- lapply(seq_len(nCores), function(xx) PhyDat2Morphy(dataset))
-    ### on.exit(morphyObj <- vapply(morphyObj, UnloadMorphy, integer(1)), add=TRUE)
-    ### snow::clusterExport(cluster, c('dataset'))
-  } else {
-    morphyObj <- PhyDat2Morphy(dataset)
-    cluster <- NULL
-    on.exit(morphyObj <- UnloadMorphy(morphyObj))
-  }
-  
-  searchResult <- DoMorphySearch(edgeList=edgeList, morphyObj=morphyObj, EdgeSwapper=EdgeSwapper,
-                      maxIter=maxIter, maxHits=maxHits, forestSize=forestSize, cluster=cluster, 
-                      verbosity=verbosity, ...)
-  ret <- list(edge = ListToMatrix(searchResult),
-              Nnode = length(edgeList[[1]]) / 2,
-              tip.label = names(dataset)
-              )
-  class(ret) <- 'phylo'
-  attr(ret, 'score') <- searchResult[[3]]
-  # Return:
-  ret
-}
-
 ###   #' Sectorial Search
 ###   #'
 ###   #' \code{SectorialSearch} performs a sectorial search on a tree, preserving the position of the root.
@@ -350,7 +271,7 @@ MorphySearch <- function (tree, dataset, EdgeSwapper=TBRSwap, maxIter=100, maxHi
 ###   #' 
 ###   #' @author Martin R. Smith
 ###   #' 
-###   #' @seealso \code{\link{MorphySearch}}
+###   #' @seealso \code{\link{TreeSearch}}
 ###   #' @seealso \code{\link{MorphyRatchet}}
 ###   #' 
 ###   #' @examples
@@ -388,7 +309,7 @@ MorphySearch <- function (tree, dataset, EdgeSwapper=TBRSwap, maxIter=100, maxHi
 ###     sect <- MorphySectorial(tree, morphyObj, verbosity=verbosity-1, maxIt=30, 
 ###       maxIter=maxIter, maxHits=15, smallest.sector=6, 
 ###       largest.sector=length(tree$edge[,2L])*0.25, rearrangements=rearrangements)
-###     sect <- MorphySearch(sect, dataset, Rearrange=subsequentRearrangements, maxIter=maxIter, maxHits=30, cluster=cluster, verbosity=verbosity)
+###     sect <- TreeSearch(sect, dataset, Rearrange=subsequentRearrangements, maxIter=maxIter, maxHits=30, cluster=cluster, verbosity=verbosity)
 ###     if (attr(sect, 'score') <= bestScore) {
 ###       return (sect)
 ###     } else return (tree)
