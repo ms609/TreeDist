@@ -5,7 +5,7 @@
 \title{Search for most parsimonious trees}
 \usage{
 TreeSearch(tree, dataset, InitializeData = PhyDat2Morphy,
-  CleanUpData = UnloadMorphy, TreeScorer = FitchScore,
+  CleanUpData = UnloadMorphy, TreeScorer = MorphyLength,
   EdgeSwapper = RootedTBRSwap, maxIter = 100, maxHits = 20,
   forestSize = 1, verbosity = 1, ...)
 }

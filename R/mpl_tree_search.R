@@ -40,7 +40,6 @@
 MorphyRatchet <- function 
 (tree, dataset, keepAll=FALSE, maxIt=100, maxIter=5000, maxHits=40, k=10, stopAtScore=NULL,
   verbosity=1L, swappers=list(TBRSwap, SPRSwap, NNISwap), ...) {
-  if (class(dataset) != 'phyDat') stop("dataset must be of class phyDat, not", class(dataset))
   morphyObj <- PhyDat2Morphy(dataset)
   on.exit(morphyObj <- UnloadMorphy(morphyObj))
   tree <- RenumberTips(tree, names(dataset))
@@ -49,7 +48,7 @@ MorphyRatchet <- function
   eps <- 1e-08
   bestScore <- attr(tree, "score")
   if (is.null(bestScore)) {
-    bestScore <- ParentChildMorphyLength(edgeList[[1]], edgeList[[2]], morphyObj, ...)
+    bestScore <- MorphyLength(edgeList[[1]], edgeList[[2]], morphyObj, ...)
   }
   if (verbosity > 0L) cat("* Initial score:", bestScore)
   if (!is.null(stopAtScore) && bestScore < stopAtScore + eps) return(tree)
@@ -94,10 +93,10 @@ MorphyRatchet <- function
     
   if (keepAll) {
     # TODO this probably won't work
-    forest <- forest[!vapply(forest, is.null, logical(1))]
-    class(forest) <- 'multiPhylo'
-    ret <- unique(forest)
-    cat('Found', length(ret), 'unique MPTs.')
+    # forest <- forest[!vapply(forest, is.null, logical(1))]
+    # class(forest) <- 'multiPhylo'
+    # ret <- unique(forest)
+    # cat('Found', length(ret), 'unique MPTs.')
   } else {
     ret <- list(
       edge      = ListToMatrix(edgeList),
@@ -193,7 +192,7 @@ DoMorphySearch <- function (edgeList, morphyObj, EdgeSwapper, maxIter=100, maxHi
     }
   }
   if (length(edgeList) < 3L) {
-    bestScore <- ParentChildMorphyLength(edgeList[[1]], edgeList[[2]], morphyObj)
+    bestScore <- MorphyLength(edgeList[[1]], edgeList[[2]], morphyObj)
   } else {
     bestScore <- edgeList[[3]]
   }
@@ -288,10 +287,10 @@ DoMorphySearch <- function (edgeList, morphyObj, EdgeSwapper, maxIter=100, maxHi
 #' @keywords  tree 
 #' 
 #' @export
+
 MorphySearch <- function (tree, dataset, EdgeSwapper=TBRSwap, maxIter=100, maxHits=20, forestSize=1, 
  nCores=1L, verbosity=1L, ...) {
   # Initialize morphy object
-  if (class(dataset) != 'phyDat') stop ("dataset must be of class phyDat, not ", class(dataset))
   if (dim(tree$edge)[1] != 2 * tree$Nnode) stop("tree must be bifurcating; try rooting with ape::root")
   tree <- RenumberTips(tree, names(dataset))
   edge <- tree$edge

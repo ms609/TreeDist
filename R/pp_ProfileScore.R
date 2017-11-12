@@ -49,7 +49,7 @@ ProfileScore <- function (tree, dataset) {
 #' @param dataset Dataset, initialized using \code{ProfileInitMorphy} and destroyed using \code{ProfileDestroyMorphy}
 #' @export
 ProfileScoreMorphy <- function (parent, child, dataset) {
-  steps <- vapply(attr(dataset, 'morphyObjs'), ParentChildMorphyLength, parent=parent, child=child, integer(1))
+  steps <- vapply(attr(dataset, 'morphyObjs'), MorphyLength, parent=parent, child=child, integer(1))
   info <- attr(dataset, 'info.amounts')
   nRowInfo <- nrow(info)
   # Return:

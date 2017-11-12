@@ -2,17 +2,17 @@
 % Please edit documentation in R/mpl_fitch.R
 \name{MorphyTreeLength}
 \alias{MorphyTreeLength}
-\alias{ParentChildMorphyLength}
 \alias{MorphyLength}
+\alias{GetMorphyLength}
 \alias{C_MorphyLength}
 \title{Calculate parsimony score with inapplicable data}
 \usage{
 MorphyTreeLength(tree, morphyObj)
 
-ParentChildMorphyLength(parent, child, morphyObj, inPostorder = FALSE,
+MorphyLength(parent, child, morphyObj, inPostorder = FALSE,
   nTaxa = mpl_get_numtaxa(morphyObj))
 
-MorphyLength(parentOf, leftChild, rightChild, morphyObj)
+GetMorphyLength(parentOf, leftChild, rightChild, morphyObj)
 
 C_MorphyLength(parentOf, leftChild, rightChild, morphyObj)
 }
@@ -53,9 +53,9 @@ Calculate parsimony score with inapplicable data
 }
 \section{Functions}{
 \itemize{
-\item \code{ParentChildMorphyLength}: Faster function that requires internal tree parameters
+\item \code{MorphyLength}: Faster function that requires internal tree parameters
 
-\item \code{MorphyLength}: Fastest function that requires internal tree parameters
+\item \code{GetMorphyLength}: Fastest function that requires internal tree parameters
 
 \item \code{C_MorphyLength}: Direct call to C function. Use with caution.
 }}

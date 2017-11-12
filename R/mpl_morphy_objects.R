@@ -68,6 +68,7 @@ SetMorphyWeights <- function (weight, morphyObj, checkInput = TRUE) {
 #' @importFrom phangorn phyDat
 #' @export
 PhyDat2Morphy <- function (phy) {
+  if (class(phy) != 'phyDat') stop('Invalid data type ', class(phy), '; should be phyDat.')
   morphyObj <- mpl_new_Morphy()
   nTax <- length(phy)
   weight <- attr(phy, 'weight')

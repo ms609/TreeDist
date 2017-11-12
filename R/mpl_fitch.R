@@ -54,7 +54,7 @@ MorphyTreeLength <- function (tree, morphyObj) {
   inPostorder <- (!is.null(treeOrder) && treeOrder == "postorder")
   tree.edge <- tree$edge
   # Return:
-  ParentChildMorphyLength(tree.edge[, 1], tree.edge[, 2], morphyObj, inPostorder, nTaxa)
+  MorphyLength(tree.edge[, 1], tree.edge[, 2], morphyObj, inPostorder, nTaxa)
 }
 
 #' @describeIn MorphyTreeLength Faster function that requires internal tree parameters
@@ -63,7 +63,7 @@ MorphyTreeLength <- function (tree, morphyObj) {
 #' @author Martin R. Smith
 #' @keywords internal
 #' @export
-ParentChildMorphyLength <- function (parent, child, morphyObj, inPostorder=FALSE, nTaxa=mpl_get_numtaxa(morphyObj)) {
+MorphyLength <- function (parent, child, morphyObj, inPostorder=FALSE, nTaxa=mpl_get_numtaxa(morphyObj)) {
   if (!inPostorder) {
     edgeList <- PostorderEdges(parent, child, nTaxa=nTaxa)
     parent <- edgeList[[1]]
@@ -92,7 +92,7 @@ ParentChildMorphyLength <- function (parent, child, morphyObj, inPostorder=FALSE
 #' @author Martin R. Smith
 #' @keywords internal
 #' @export
-MorphyLength <- function (parentOf, leftChild, rightChild, morphyObj) {
+GetMorphyLength <- function (parentOf, leftChild, rightChild, morphyObj) {
   # Return:
   .Call('MORPHYLENGTH', as.integer(parentOf), as.integer(leftChild), 
                as.integer(rightChild), morphyObj)

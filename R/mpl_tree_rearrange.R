@@ -47,7 +47,7 @@ MorphyRearrangeTree <- function (tree, morphyObj, Rearrange, minScore=NULL, retu
     # 
     # scores <- parLapply(cluster, seq_along(cluster), function (i) MorphyTreeLength(candidates[[i]], morphyObj[[i]])) # ~3x faster to do this in serial in r233.
     # minScore <- min(scores)
-    # bestTrees <- scores == minScore
+    # bestTrees <- scores == minScore 
     # trees <- candidates[bestTrees]
   }
   if (bestScore < minScore) {
@@ -79,7 +79,7 @@ MorphyRearrangeTree <- function (tree, morphyObj, Rearrange, minScore=NULL, retu
 MorphyRearrange <- function (parent, child, morphyObj, inputScore=1e+07, hits=0, 
                              EdgeSwapper, minScore=NULL, returnSingle=TRUE,
                              iter='?', cluster=NULL, verbosity=0L) {
-  RearrangeEdges(parent, child, dataset=morphyObj, TreeScorer=ParentChildMorphyLength, 
+  RearrangeEdges(parent, child, dataset=morphyObj, TreeScorer=MorphyLength, 
                  inputScore=inputScore, hits=hits, EdgeSwapper=EdgeSwapper, 
                  minScore=minScore, returnSingle=returnSingle, iter=iter,
                  cluster=cluster, verbosity=verbosity)

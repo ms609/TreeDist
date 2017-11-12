@@ -23,7 +23,7 @@ MorphyBootstrap(edgeList, morphyObj, EdgeSwapper = NNISwap, maxIter, maxHits,
 \item{verbosity}{Level of detail to display in console: larger numbers provide
 more verbose feedback to the user.}
 
-\item{\dots}{further parameters to send to \code{MorphyTreeSearch}}
+\item{\dots}{further parameters to send to \code{DoMorphySearch}}
 
 \item{RearrangeEdges}{a function that rearranges a parent and child vector, 
 and returns a list with modified vectors; for example

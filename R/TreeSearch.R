@@ -53,7 +53,7 @@
 TreeSearch <- function (tree, dataset, 
                         InitializeData = PhyDat2Morphy,
                         CleanUpData    = UnloadMorphy,
-                        TreeScorer     = FitchScore,
+                        TreeScorer     = MorphyLength,
                         EdgeSwapper    = RootedTBRSwap,
                         maxIter = 100, maxHits = 20, forestSize = 1,
                         verbosity = 1, ...) {
@@ -89,20 +89,21 @@ TreeSearch <- function (tree, dataset,
                              verbosity=verbosity, ...)
     iterScore <- candidateEdges[[3]]
     if (length(forestSize) && forestSize > 1) {
-      hits <- attr(trees, 'hits')
-      if (iterScore == bestScore) {
-        forest[(hits - length(trees) + 1):hits] <- trees
-        tree <- sample(forest[1:hits], 1)[[1]]
-        attr(tree, 'score') <- iterScore
-        attr(tree, 'hits') <- hits
-      } else if (iterScore < bestScore) {
-        bestScore <- iterScore
-        forest <- empty.forest
-        forest[seq_len(hits)] <- trees
-        tree <- sample(trees, 1)[[1]]
-        attr(tree, 'score') <- iterScore
-        attr(tree, 'hits') <- hits
-      }      
+      ### TODO
+      ###hits <- attr(trees, 'hits')
+      ###if (iterScore == bestScore) {
+      ###  forest[(hits - length(trees) + 1):hits] <- trees
+      ###  tree <- sample(forest[1:hits], 1)[[1]]
+      ###  attr(tree, 'score') <- iterScore
+      ###  attr(tree, 'hits') <- hits
+      ###} else if (iterScore < bestScore) {
+      ###  bestScore <- iterScore
+      ###  forest <- empty.forest
+      ###  forest[seq_len(hits)] <- trees
+      ###  tree <- sample(trees, 1)[[1]]
+      ###  attr(tree, 'score') <- iterScore
+      ###  attr(tree, 'hits') <- hits
+      ###}      
     } else {
       if (iterScore < bestScore + eps) {
         hits <- candidateEdges[[4]]
@@ -110,7 +111,7 @@ TreeSearch <- function (tree, dataset,
         edgeList <- candidateEdges
       }
     }
-    if (attr(trees, 'hits') >= maxHits) break
+    if (hits >= maxHits) break
   }
   if (verbosity > 0) cat("\n  - Final score", bestScore, "found", hits, "times after", iter, "iterations\n")  
   if (forestSize > 1) {
@@ -119,6 +120,9 @@ TreeSearch <- function (tree, dataset,
     attr(forest, 'score') <- bestScore
     return(unique(forest))
   } else {
+    tree$edge <- ListToMatrix(edgeList)
+    attr(tree, 'hits') <- hits
+    attr(tree, 'score') <- bestScore
     return(tree)
   }
 }

@@ -40,7 +40,9 @@
 #' 
 #' @keywords  tree 
 #' @export
-## TODO use Rooted NNI / SPR / TBR 
+## TODO use Rooted NNI / SPR / TBR
+## TODO Use swappers instead of rearrangements
+## TODO Initialize and destroy data
 Ratchet <- function (tree, dataset, TreeScorer=FitchScore, returnAll=FALSE, rooted=TRUE, 
                       ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
                       bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=0, 
