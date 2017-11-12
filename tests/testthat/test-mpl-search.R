@@ -25,7 +25,7 @@ test_that("tree search finds shortest tree", {
   expect_equal(3, attr(MorphySearch(start_tree, dataset, EdgeSwapper=RootedTBRSwap, verbosity=-1), 'score'),
                InapplicableFitch(true_tree, dataset))
   ratchetScore <- attr(MorphyRatchet(start_tree, dataset, 
-                  rearrangements=list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap),
+                  swappers=list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap),
                   k=3, maxHits=5, verbosity=0), 'score')
   expect_equal(3, InapplicableFitch(true_tree, dataset), ratchetScore)
 })
