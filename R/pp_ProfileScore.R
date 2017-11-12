@@ -43,7 +43,7 @@ ProfileScore <- function (tree, dataset) {
   }, double(1)) * weight))
 }
 
-#' @describeIn ProfileScoreMorphy Scorer for initialized dataset.
+#' @describeIn ProfileScore Scorer for initialized dataset.
 #' @template treeParent
 #' @template treeChild
 #' @param dataset Dataset, initialized using \code{ProfileInitMorphy} and destroyed using \code{ProfileDestroyMorphy}
@@ -59,7 +59,7 @@ ProfileScoreMorphy <- function (parent, child, dataset) {
   }, double(1)) * attr(dataset, 'weight'))
 }
 
-#' @describeIn ProfileScoreMorphy Initialize dataset by adding morphyObjs.
+#' @describeIn ProfileScore Initialize dataset by adding morphyObjs.
 #' @export
 ProfileInitMorphy <- function (dataset) {
   attr(dataset, 'morphyObjs') <- apply(dataset, 1, SingleCharMorphy)
@@ -67,7 +67,7 @@ ProfileInitMorphy <- function (dataset) {
   dataset
 }
 
-#' @describeIn ProfileScoreMorphy Free memory from morphyObjs initialized by \kbd{ProfileScoreMorphy}.
+#' @describeIn ProfileScore Free memory from morphyObjs initialized by \kbd{ProfileScoreMorphy}.
 #' @export
 ProfileDestroyMorphy <- function (dataset) {
   vapply(attr(dataset, 'morphyObjs'), UnloadMorphy, integer(1))
