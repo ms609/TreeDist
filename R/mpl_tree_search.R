@@ -39,7 +39,7 @@
 #' @export
 MorphyRatchet <- function 
 (tree, dataset, keepAll=FALSE, maxIt=100, maxIter=5000, maxHits=40, k=10, stopAtScore=NULL,
-  verbosity=1L, rearrangements=list(TBRSwap, SPRSwap, NNISwap), ...) {
+  verbosity=1L, swappers=list(TBRSwap, SPRSwap, NNISwap), ...) {
   if (class(dataset) != 'phyDat') stop("dataset must be of class phyDat, not", class(dataset))
   morphyObj <- PhyDat2Morphy(dataset)
   on.exit(morphyObj <- UnloadMorphy(morphyObj))
@@ -55,16 +55,16 @@ MorphyRatchet <- function
   if (!is.null(stopAtScore) && bestScore < stopAtScore + eps) return(tree)
   if (keepAll) forest <- vector('list', maxIter)
 
-  if (class(rearrangements) == 'function') rearrangements <- list(rearrangements)
+  if (class(swappers) == 'function') swappers <- list(swappers)
   kmax <- 0 
   for (i in 1:maxIt) {
     if (verbosity > 0L) cat ("\n* Ratchet iteration", i, "- Running NNI on bootstrapped dataset. ")
     candidate <- MorphyBootstrap(edgeList=edgeList, morphyObj=morphyObj, maxIter=maxIter, maxHits=maxHits,
-                               verbosity=verbosity-1L, EdgeSwapper=rearrangements[[1]], ...)
+                               verbosity=verbosity-1L, EdgeSwapper=swappers[[1]], ...)
     
-    for (Rearrange in rearrangements) {
+    for (EdgeSwapper in swappers) {
       if (verbosity > 0L) cat ("\n - Rearranging new candidate tree...")
-      candidate <- DoMorphySearch(candidate, morphyObj, Rearrange=Rearrange, stopAtScore=stopAtScore,
+      candidate <- DoMorphySearch(candidate, morphyObj, EdgeSwapper=EdgeSwapper, stopAtScore=stopAtScore,
                                 verbosity=verbosity-1L, maxIter=maxIter, maxHits=maxHits, ...)
       candScore <- candidate[[3]]
       if (!is.null(stopAtScore) && candScore < stopAtScore + eps) return(candidate)
@@ -114,9 +114,9 @@ MorphyRatchet <- function
 #' @describeIn MorphyRatchet returns a list of optimal trees produced by nSearch Ratchet searches
 #' @export
 RatchetConsensus <- function (tree, dataset, maxIt=5000, maxIter=500, maxHits=20, k=10, verbosity=0L, 
-  rearrangements=list(RootedNNISwap), nSearch=10, ...) {
+  swappers=list(RootedNNISwap), nSearch=10, ...) {
   trees <- lapply(1:nSearch, function (x) MorphyRatchet(tree, dataset, maxIt=maxIt, 
-              maxIter=maxIter, maxHits=maxHits, k=1, verbosity=verbosity, rearrangements=rearrangements, ...))
+              maxIter=maxIter, maxHits=maxHits, k=1, verbosity=verbosity, swappers=swappers, ...))
   scores <- vapply(trees, function (x) attr(x, 'score'), double(1))
   trees <- unique(trees[scores == min(scores)])
   cat ("Found", length(trees), 'unique trees from ', nSearch, 'searches.')
@@ -164,15 +164,15 @@ MorphyBootstrap <- function (edgeList, morphyObj, EdgeSwapper = NNISwap,
 #'
 #' @template edgeListParam
 #' @template morphyObjParam
-#' @param Rearrange Function to use to rearrange trees; example: 
-#'                  \code{\link{RootedTBR}}.
+#' @param EdgeSwapper Function to use to rearrange trees; example: 
+#'                  \code{\link{TBRSwap}}.
 #' @param maxIter maximum iterations to conduct.
 #' @param maxHits stop search after this many hits.
 #' @template stopAtScoreParam
 #' @param forestSize how many trees to hold.
 #' @template clusterParam
 #' @template verbosityParam
-#' @param \dots additional variables to pass to \code{\link{MorphyRearrangeTree}}.
+#' @param \dots additional variables to pass to \code{\link{MorphyRearrange}}.
 #'
 #' @author Martin R. Smith
 #' 
@@ -281,8 +281,8 @@ DoMorphySearch <- function (edgeList, morphyObj, EdgeSwapper, maxIter=100, maxHi
 #' njtree <- NJTree(my.phyDat)
 #'
 #' \dontrun{
-#' TreeSearch(njtree, my.phyDat, maxIter=20, Rearrange=NNI)
-#' TreeSearch(njtree, my.phyDat, maxIter=20, Rearrange=RootedSPR)
+#' MorphySearch(njtree, my.phyDat, maxIter=20, EdgeSwapper=NNISwap)
+#' MorphySearch(njtree, my.phyDat, maxIter=20, EdgeSwapper=RootedSPRSwap)
 #' }
 #' 
 #' @keywords  tree 
