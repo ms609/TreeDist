@@ -110,7 +110,6 @@ PrepareDataProfile <- function (dataset, precision = 1e+06, warn = TRUE) {
   tmp <- as.integer(tmp)
   unlisted <- unlist(dataset, recursive=FALSE, use.names=FALSE)
   binaryMatrix <- tmp[unlisted]
-  binaryMatrix <- as.integer(unlisted)
   attr(binaryMatrix, 'dim') <- c(nChar, nTip)
   
   attr(dataset, 'info.amounts') <- InfoAmounts(binaryMatrix, precision, warn=warn)

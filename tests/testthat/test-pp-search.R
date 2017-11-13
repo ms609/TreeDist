@@ -20,10 +20,10 @@ test_that("Profile parsimony works in tree search", {
                         verbosity=0L)
   expect_equal(42, attr(quickFitch, 'score'))
                    
-  quick <- ProfileRatchet(rTree, readyData, 
+  quickProf <- ProfileRatchet(rTree, readyData, 
                    swappers = RootySwappers,
                    BootstrapSwapper = RootedSPRSwap,
                    ratchIter=50, ratchHits=5, searchIter=100, searchHits=30,
                    verbosity=0L)
-  expect_equal(quick, quickFitch)
+  expect_equal(quickProf, quickFitch)
 })

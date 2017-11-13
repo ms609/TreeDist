@@ -358,7 +358,7 @@ InfoAmounts <- function (tokenTable, precision=1e+06, warn=TRUE) {
   # The below is simplified from info_extra_step.r::evaluate
   if (length(unique(as.integer(tokenTable))) > 2) stop ("Cannot calculate information amouts for",
         "characters unless only tokens are 1 and 2. See ?InfoAmounts.")
-  splits <- apply(tokenTable, 1, table) - 1
+  splits <- apply(tokenTable, 1, table)
   infoLosses <- apply(splits, 2, ICPerStep, maxIter=precision, warn=warn)
   
   blankReturn <- double(max(colSums(splits)))
