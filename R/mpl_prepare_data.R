@@ -57,7 +57,7 @@ ConvertToString <- function (phyByTaxon, phyLevels, phyChars, phyContrast, phyIn
   }
 
   if (!byTaxon) ret <- t(ret)
-  ret <- if (concatenate) {
+  ret <- if (concatenate || is.null(dim(ret))) {
     paste0(c(ret, ps), collapse='')
   } else {
     paste0(apply(ret, 1, paste0, collapse=''), ps)
