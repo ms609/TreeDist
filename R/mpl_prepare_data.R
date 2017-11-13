@@ -67,10 +67,11 @@ PhyToString <- function (phy, ps='', useIndex=TRUE, byTaxon=TRUE, concatenate=TR
   )		
   if (any(ambigToken <- apply(phyContrast, 1, all))) levelTranslation[ambigToken] <- '?'		
   ret <- vapply(phy, function (x) levelTranslation[x[phyIndex]], character(length(phyIndex)))		
-  if (byTaxon) ret <- t(ret) # Make each row correspond to a taxon
   ret <- if (concatenate || is.null(dim(ret))) { # If only one row, don't need to apply
+    if (!byTaxon) ret <- t(ret)
     paste0(c(ret, ps), collapse='')		
   } else {		
+    if (byTaxon) ret <- t(ret)
     paste0(apply(ret, 1, paste0, collapse=''), ps)		
   }
   # Return:
