@@ -24,7 +24,7 @@
 #' @examples
 #' data('Lobo')
 #' random.tree <- RandomTree(Lobo.phy)
-#' RearrangeTree(random.tree, dataset=Lobo.phy, Rearrange=RootedNNI)
+#' RearrangeTree(random.tree, dataset=Lobo.phy, EdgeSwapper=RootedNNISwap)
 #' 
 #' @export
 RearrangeEdges <- function (parent, child, dataset, TreeScorer, scoreToBeat=TreeScorer(parent, child, dataset),

@@ -11,10 +11,10 @@ test_that("tree can be found", {
   set.seed(0)
   expect_error(TreeSearch(tree=unrooted11, dataset=phy11))
   expect_equal(comb11, TreeSearch(tree=RandomTree(phy11, 'a'), dataset=phy11,
-               maxIter=2500, Rearrange = RootedTBR, verbosity=0))
-  expect_equal(comb11, TreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000, Rearrange = RootedSPR,
+               maxIter=2500, EdgeSwapper = RootedTBRSwap, verbosity=0))
+  expect_equal(comb11, TreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000, EdgeSwapper = RootedSPRSwap,
               verbosity=0))
-  expect_equal(comb11, TreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000, Rearrange = RootedNNI, verbosity=0))
+  expect_equal(comb11, TreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000, EdgeSwapper = RootedNNISwap, verbosity=0))
   expect_equal(comb11, Ratchet(RandomTree(phy11, 'a'), phy11, searchIter=300, searchHits = 20, swappers = RootySwappers, ratchHits=3, verbosity=0))
   expect_equal('multiPhylo', class(
     Ratchet(RandomTree(phy11, 'a'), phy11, searchIter=300, searchHits = 20,
