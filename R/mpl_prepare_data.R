@@ -47,9 +47,15 @@ ConvertToString <- function (phyByTaxon, phyLevels, phyChars, phyContrast, phyIn
   levelTranslation <- apply(phyContrast, 1, function (x)
     ifelse(sum(x) == 1, as.character(outLevels[x]), paste0(c('{', outLevels[x], '}'), collapse=''))
   )
-  names(levelTranslation) <- apply(phyContrast, 1, function (x) sum(2^(seq_along(x) - 1)[x]))
   if (any(ambigToken <- apply(phyContrast, 1, all))) levelTranslation[ambigToken] <- '?'
-  ret <- vapply(phyByTaxon, function (x) levelTranslation[as.character(x[phyIndex])], character(length(phyIndex)))
+  
+  if (max(unlist(phyByTaxon)) > length(levelTranslation)) {
+    names(levelTranslation) <- apply(phyContrast, 1, function (x) sum(2^(seq_along(x) - 1)[x]))
+    ret <- vapply(phyByTaxon, function (x) levelTranslation[as.character(x[phyIndex])], character(length(phyIndex)))
+  } else {
+    ret <- vapply(phyByTaxon, function (x) levelTranslation[x[phyIndex]], character(length(phyIndex)))
+  }
+
   if (!byTaxon) ret <- t(ret)
   ret <- if (concatenate) {
     paste0(c(ret, ps), collapse='')
