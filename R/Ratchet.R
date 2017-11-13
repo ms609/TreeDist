@@ -81,16 +81,16 @@ Ratchet <- function (tree, dataset,
     if (verbosity > 1L) cat ("\n* Ratchet iteration", i, "- Generating new tree by bootstrapping dataset. ")
     candidate <- Bootstrapper(edgeList, initializedData, maxIter=bootstrapIter, maxHits=bootstrapHits, 
                                   verbosity=verbosity-2L, EdgeSwapper=BootstrapSwapper, ...)
+    candScore <- 1e+08
     if (verbosity > 2L) cat ("\n - Rearranging from new candidate tree:")
     for (EdgeSwapper in swappers) {    
       candidate <- RearrangeEdges(candidate[[1]], candidate[[2]], dataset=initializedData,
-                                  TreeScorer=TreeScorer, hits=bestScoreHits, inputScore=bestScore,
-                                  EdgeSwapper=EdgeSwapper, minScore=bestScore, returnSingle=!returnAll,
-                                  verbosity=verbosity-2L, maxIter=searchIter, maxHits=searchHits, iter=i
-                                  , ...)
+                                  TreeScorer=TreeScorer, hits=bestScoreHits, scoreToBeat=candScore,
+                                  EdgeSwapper=EdgeSwapper, maxIter=searchIter, maxHits=searchHits, iter=i,
+                                  verbosity=verbosity-2L, ...)
+      candScore <- candidate[[3]]        
     }
     
-    candScore <- candidate[[3]]
     if (verbosity > 2L) cat("\n - Rearranged candidate tree scored ", candScore)
     if (returnAll && candScore < (bestScore + suboptimal)) { # Worth saving this tree in forest
       forest[[i]] <- candidate
