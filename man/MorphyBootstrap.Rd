@@ -27,7 +27,7 @@ and returns a list with modified vectors; for example
 \item{verbosity}{Level of detail to display in console: larger numbers provide
 more verbose feedback to the user.}
 
-\item{\dots}{further parameters to send to \code{DoMorphySearch}}
+\item{\dots}{further parameters to send to \code{TreeScorer}}
 }
 \value{
 A tree that is optimal under a random sampling of the original characters

@@ -9,7 +9,7 @@ Ratchet(tree, dataset, InitializeData = PhyDat2Morphy,
   CleanUpData = UnloadMorphy, TreeScorer = MorphyLength,
   Bootstrapper = MorphyBootstrap, swappers = list(TBRSwap, SPRSwap,
   NNISwap), BootstrapSwapper = swappers[[1]], returnAll = FALSE,
-  rooted = TRUE, stopAtScore = NULL, ratchIter = 100, ratchHits = 10,
+  stopAtScore = NULL, ratchIter = 100, ratchHits = 10,
   searchIter = 2000, searchHits = 40, bootstrapIter = searchIter,
   bootstrapHits = searchHits, verbosity = 1L, suboptimal = 1e-08, ...)
 
@@ -45,8 +45,6 @@ or \code{\link{RootedTBRSwap}} if the position of the root should be retained.}
 within \code{Bootstrapper}.}
 
 \item{returnAll}{Set to \code{TRUE} to report all MPTs encountered during the search, perhaps to analyze consensus.}
-
-\item{rooted}{whether to retain the position of the root in tree search (TRUE by default).}
 
 \item{stopAtScore}{stop search as soon as this score is hit or beaten.}
 
