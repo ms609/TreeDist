@@ -117,7 +117,6 @@ PrepareDataSA <- function (dataset) {
   ret <- as.integer(ret)
   attributes(ret) <- at
   inappLevel <- which(at$levels == "-")
-  attr(ret, 'inappLevel') <- 2 ^ (inappLevel - 1)
   attr(ret, 'dim') <- c(nChar, nTip)  
   applicableTokens <- setdiff(powers.of.2, 2 ^ (inappLevel - 1))
   attr(ret, 'split.sizes') <- t(apply(ret, 1, function(x) vapply(applicableTokens, function (y) sum(x == y), integer(1))))
