@@ -118,7 +118,7 @@ Ratchet <- function (tree, dataset,
     keepers <- !is.na(forestScores) & forestScores < bestScore + suboptimal
     forestScores <- forestScores[keepers]
     forest <- forest[keepers]
-    if (verbosity >=0 ) cat("\n - Keeping", sum(keepers), "trees from iterations numbered:\n   ", which(keepers))
+    if (verbosity > 1L) cat("\n - Keeping", sum(keepers), "trees from iterations numbered:\n   ", which(keepers))
     if (length(forest) > 1) {
       forest <- lapply(forest, function (phy) {
         x <- tree
@@ -128,7 +128,7 @@ Ratchet <- function (tree, dataset,
         x})
       class(forest) <- 'multiPhylo'
       ret <- unique(forest)
-      if (verbosity >=0) cat("\n - Removing duplicates leaves", length(ret), "unique trees")
+      if (verbosity > 1L) cat("\n - Removing duplicates leaves", length(ret), "unique trees")
       uniqueScores <- vapply(ret, attr, double(1), 'score')
     } else if (length(forest) == 1) {
       ret <- tree
@@ -137,7 +137,7 @@ Ratchet <- function (tree, dataset,
     } else {
       stop("\nNo trees!? Is suboptimal set to a sensible (positive) value?")
     }
-    cat('\nFound', sum(uniqueScores == min(uniqueScores)), 'unique MPTs and', length(ret) - sum(uniqueScores == min(uniqueScores)), 'suboptimal trees.\n')
+    if (verbosity > 0L) cat('\nFound', sum(uniqueScores == min(uniqueScores)), 'unique MPTs and', length(ret) - sum(uniqueScores == min(uniqueScores)), 'suboptimal trees.\n')
     # Return:
     ret
   } else {
