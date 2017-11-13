@@ -81,11 +81,11 @@ Ratchet <- function (tree, dataset,
   iterationsCompleted <- 0
   for (i in 1:ratchIter) {
     if (verbosity > 1L) cat ("\n* Ratchet iteration", i, "- Generating new tree by bootstrapping dataset. ")
-    candidate <- Bootstrapper(edgeList, dataset, maxIter=bootstrapIter, maxHits=bootstrapHits, 
+    candidate <- Bootstrapper(edgeList, initializedData, maxIter=bootstrapIter, maxHits=bootstrapHits, 
                                   verbosity=verbosity-2L, EdgeSwapper=BootstrapSwapper, ...)
     if (verbosity > 2L) cat ("\n - Rearranging from new candidate tree:")
     for (EdgeSwapper in swappers) {    
-      candidate <- RearrangeEdges(candidate[[1]], candidate[[2]], dataset=initializedDataset,
+      candidate <- RearrangeEdges(candidate[[1]], candidate[[2]], dataset=initializedData,
                                   TreeScorer=TreeScorer, hits=bestScoreHits, inputScore=bestScore,
                                   EdgeSwapper=EdgeSwapper, minScore=bestScore, returnSingle=!returnAll,
                                   verbosity=verbosity-2L, maxIter=searchIter, maxHits=searchHits, ...)
@@ -138,5 +138,6 @@ Ratchet <- function (tree, dataset,
     tree$edge <- ListToMatrix(edgeList)
     attr(tree, 'score') <- bestScore
   }
-  return (ret)
+  # Return:
+  tree
 }
