@@ -62,7 +62,7 @@ SetMorphyWeights <- function (weight, morphyObj, checkInput = TRUE) {
 #' 
 #' Creates a new Morphy object with the same size and characters as the phyDat object 
 #'
-#' @param phy An object of class \code{\link{phyDat}} or \code{profileDat}.
+#' @param phy An object of class \code{\link{phyDat}}.
 #' @return A pointer to an initialized Morphy object.
 #' 
 #' @author Martin R. Smith
@@ -70,8 +70,8 @@ SetMorphyWeights <- function (weight, morphyObj, checkInput = TRUE) {
 #' @export
 PhyDat2Morphy <- function (phy) {
   
-  if (!(class(phy) %in% c('phyDat', 'profileDat'))) {
-    stop('Invalid data type ', class(phy), '; should be phyDat or profileDat.')
+  if (class(phy) != 'phyDat') {
+    stop('Invalid data type ', class(phy), '; should be phyDat.')
   }
   
   morphyObj <- mpl_new_Morphy()
@@ -82,14 +82,8 @@ PhyDat2Morphy <- function (phy) {
   if (mpl_init_Morphy(nTax, nChar, morphyObj) -> error) {
     stop("Error ", mpl_translate_error(error), " in mpl_init_Morphy")
   }
-  error <- if (class(phy) == 'phyDat') {
-    mpl_attach_rawdata(PhyToString(phy, ps=';', useIndex=FALSE, byTaxon=TRUE, concatenate=TRUE),
-                          morphyObj)
-  } else { # if not profileDat, we'd already have stopped.
-    mpl_attach_rawdata(ProfileToString(phy, ps=';', useIndex=FALSE, byTaxon=TRUE, concatenate=TRUE),
-      morphyObj)
-  }
-  if (error) {
+  if (mpl_attach_rawdata(PhyToString(phy, ps=';', useIndex=FALSE, byTaxon=TRUE, concatenate=TRUE),
+                          morphyObj) -> error) {
     stop("Error ", mpl_translate_error(error), " in mpl_attach_rawdata")
   }
   if (mpl_set_num_internal_nodes(nTax - 1L, morphyObj) -> error) { # One is the 'dummy root'

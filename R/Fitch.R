@@ -4,7 +4,7 @@
 #' in datasets that contain inapplicable data
 #'
 #' @template treeParam 
-#' @template phyDatOrProfileDat
+#' @template datasetParam
 #' 
 #' @examples
 #' data('inapplicable.datasets')
@@ -28,13 +28,7 @@
 #' @importFrom phangorn phyDat
 #' @export
 Fitch <- function (tree, dataset) {
-  if (class(dataset) == 'phyDat') {
-    tree <- RenumberTips(Renumber(tree), names(dataset))
-  } else if (class(dataset) == 'profileDat') {
-    tree <- RenumberTips(Renumber(tree), colnames(dataset))
-  } else {
-    stop("Dataset must be of class phyDat or profileDat, not ", class(dataset), ".")
-  }
+  tree <- RenumberTips(Renumber(tree), names(dataset))
   morphyObj <- PhyDat2Morphy(dataset)
   on.exit(morphyObj <- UnloadMorphy(morphyObj))
   MorphyTreeLength(tree, morphyObj)
@@ -61,12 +55,11 @@ Fitch <- function (tree, dataset) {
 FitchSteps <- function (tree, dataset) {
   if (class(dataset) == 'phyDat') {
     characters <- PhyToString(dataset, ps='', useIndex=FALSE, byTaxon=FALSE, concatenate=FALSE)
-  } else if (class(dataset) == 'profileDat') {
-    characters <- ProfileToString(dataset, ps='', useIndex=FALSE, byTaxon=FALSE, concatenate=FALSE)
   } else {
-    stop ("Dataset must be of class phyDat or profileDat, not ", class(dataset))
+    stop ("Dataset must be of class phyDat, not ", class(dataset))
   }
   morphyObjects <- lapply(characters, SingleCharMorphy)
+  on.exit(morphyObjects <- vapply(morphyObjects, UnloadMorphy, integer(1)))
   # Return:
   vapply(morphyObjects, MorphyTreeLength, tree=tree, integer(1))
 }

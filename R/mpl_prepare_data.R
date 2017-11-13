@@ -60,7 +60,7 @@ ConvertToString <- function (phyByTaxon, phyLevels, phyContrast, phyIndex,
   }
   # ret is a matrix with nChar rows and nTaxa columns.
   
-  if (byTaxon) ret <- t(ret) # Make each row correspond to a taxon
+  if (!byTaxon) ret <- t(ret) # Make each row correspond to a taxon
   ret <- if (concatenate || is.null(dim(ret))) {
     paste0(c(ret, ps), collapse='')
   } else {
@@ -95,17 +95,6 @@ PhyToString <- function (phy, ps='', useIndex=TRUE, byTaxon=TRUE, concatenate=TR
     ps = ps, byTaxon = byTaxon, concatenate = concatenate)
 }
 
-#' @describeIn PhyToString Convert from profileDat object.
-#' @export
-ProfileToString <- function (dataset, ps='', useIndex=TRUE, byTaxon=TRUE, concatenate=TRUE) {
-  at <- attributes(dataset)
-  # Return:
-  ConvertToString(phyByTaxon = lapply(seq_len(ncol(dataset)), function(i) dataset[, i]),
-    phyLevels = at$allLevels,
-    phyContrast = at$contrast == 1,
-    phyIndex = if (useIndex) at$index else seq_len(at$nr),
-    ps = ps, byTaxon = byTaxon, concatenate = concatenate)
-}
 
 
 #' @name AsBinary

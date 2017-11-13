@@ -3,9 +3,10 @@
 #' Calculate a tree's Profile Parsimony score with a given dataset, after Faith and Trueman (2001)
 #'
 #' @template treeParam
-#' @param dataset Dataset of class \code{profileDat} (see \code{\link{PrepareDataProfile}})
-#'                Alternatively, a dataset of class \code{phyDat} can be provided, and will 
-#'                be (time-consumingly) converted within the function.
+#' @param dataset Dataset of class \code{phyDat}.  The dataset should have been prepared using
+#'                \code{dataset <- \link{PrepareDataProfile}(dataset)}; if this step
+#'                has not been completed, the dataset will 
+#'                be (time-consumingly) prepared within the function.
 #'                In subsidiary functions, the dataset will have been initialized using 
 #'                \code{ProfileInitMorphy}, must be destroyed using \code{ProfileDestroyMorphy}.
 #'
@@ -29,10 +30,10 @@
 #' @keywords tree
 #' @export
 ProfileScore <- function (tree, dataset) {
-  if (class(dataset) == 'phyDat') dataset <- PrepareDataProfile(dataset)
-  if (class(dataset) != 'profileDat') {
-    stop('Invalid dataset type; prepare dataset with PhyDat() or PrepareDataProfile().')
+  if (class(dataset) != 'phyDat') {
+    stop('Invalid dataset type; prepare dataset with PhyDat() and PrepareDataProfile().')
   }
+  if (!('info.amounts' %in% names(attributes(dataset)))) dataset <- PrepareDataProfile(dataset)
   at <- attributes(dataset)
   nChar  <- at$nr # strictly, transformation series patterns; these'll be upweighted later
   weight <- at$weight
@@ -77,8 +78,8 @@ ProfileDestroyMorphy <- function (dataset) {
 ProfileTreeSearch <- function (tree, dataset, Rearrange = RootedTBR,
                         maxIter = 100, maxHits = 20, forestSize = 1,
                         verbosity = 1, precision=40000, ...) {
-  if (class(dataset) == 'phyDat') dataset <- PrepareDataProfile(dataset, precision)
-  if (class(dataset) != 'profileDat') stop("Unrecognized dataset class; should be phyDat or profileDat")
+  if (class(dataset) != 'phyDat') stop("Unrecognized dataset class; should be phyDat, not ", class(dataset), '.')
+  if (!('info.amounts' %in% names(attributes(dataset)))) dataset <- PrepareDataProfile(dataset, precision)
   at <- attributes(dataset)
   
   TreeSearch(tree, dataset, nChar=at$nr, weight=at$weight, info=at$info.amounts,

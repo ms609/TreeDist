@@ -100,7 +100,6 @@ PhyDat <- function (dataset, levels = NULL, compress = TRUE) {
 #' @export
 PrepareDataProfile <- function (dataset, precision = 1e+06, warn = TRUE) {
   at <- attributes(dataset)
-  nam <- at$names
   nLevel <- length(at$level)
   nChar <- at$nr
   cont <- attr(dataset, "contrast")
@@ -110,18 +109,21 @@ PrepareDataProfile <- function (dataset, precision = 1e+06, warn = TRUE) {
   tmp <- cont %*% powers.of.2
   tmp <- as.integer(tmp)
   unlisted <- unlist(dataset, recursive=FALSE, use.names=FALSE)
-  
   binaryMatrix <- tmp[unlisted]
   binaryMatrix <- as.integer(unlisted)
   attr(binaryMatrix, 'dim') <- c(nChar, nTip)
   
-  inappLevel <- which(at$levels == "-")
-  applicableTokens <- setdiff(powers.of.2, 2 ^ (inappLevel - 1))
-  
+  attr(dataset, 'info.amounts') <- InfoAmounts(binaryMatrix, precision, warn=warn)
+  if (!any(attr(dataset, 'bootstrap') == 'info.amounts')) {
+    attr(dataset, 'bootstrap') <- c(attr(dataset, 'bootstrap'), 'info.amounts')
+  }
+
+####  applicableTokens <- setdiff(powers.of.2, 2 ^ (inappLevel - 1))
+####  inappLevel <- which(at$levels == "-")
+####  
 ####  attr(dataset, 'split.sizes') <- apply(binaryMatrix, 1, function(x) {
 ####      vapply(applicableTokens, function (y) sum(x == y), integer(1))
 ####    })
-  attr(dataset, 'info.amounts') <- InfoAmounts(binaryMatrix, precision, warn=warn)
-  attr(dataset, 'bootstrap') <- unique(c(attr(dataset, 'bootstrap'), 'info.amounts'))
+
   dataset
 }
