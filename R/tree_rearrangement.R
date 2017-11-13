@@ -28,7 +28,7 @@
 #' 
 #' @export
 RearrangeEdges <- function (parent, child, dataset, TreeScorer, scoreToBeat=TreeScorer(parent, child, dataset),
-                            EdgeSwapper, iter='?', verbosity=0L, ...) {
+                            EdgeSwapper, iter='?', hits=0L, verbosity=0L, ...) {
   eps <- 1e-08
   rearrangedEdges <- EdgeSwapper(parent, child) 
   # TODO we probably want to get ALL trees 1 REARRANGE step away
@@ -38,13 +38,14 @@ RearrangeEdges <- function (parent, child, dataset, TreeScorer, scoreToBeat=Tree
   if (candidateScore > (scoreToBeat + eps)) {
     if (verbosity > 3L) cat("\n    . Iteration", iter, '- Rearranged tree score', candidateScore, "> target", scoreToBeat)
   } else if (candidateScore + eps > scoreToBeat) { # i.e. scores are equal
+    hits <- hits + 1L
     if (verbosity > 2L) cat("\n    - Iteration", iter, "- Best score", scoreToBeat, "hit", hits, "times")
   } else {
     hits <- 1L
     if (verbosity > 1L) cat("\n    * Iteration", iter, "- New best score", candidateScore, "found on", hits, "trees")
   }
   # TODO when we search multiple trees at once in this function, update hits to the number of best trees.
-  rearrangedEdges[3:4] <- c(candidateScore, 1L)
+  rearrangedEdges[3:4] <- c(candidateScore, hits)
   # Return:
   rearrangedEdges
 }
