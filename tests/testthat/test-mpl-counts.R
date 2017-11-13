@@ -61,23 +61,27 @@ test_that("Morphy generates correct lengths", {
   }
   ## Test combined matrix
   bigPhy <- StringToPhyDat(paste0(characters, collapse='\n'), tree$tip.label, byTaxon=FALSE)
+  expect_identical(characters, PhyToString(bigPhy, byTaxon=FALSE, concatenate=FALSE))
+  expect_identical(paste0(collapse='', vapply(characters, substr, start=0, stop=1, character(1))),
+                   substr(PhyToString(phy, ps=';', useIndex=TRUE, byTaxon=TRUE, concatenate=TRUE),
+                    start=0, stop=length(characters)))
   morphyObj <- PhyDat2Morphy(bigPhy)
   tree_length <- MorphyTreeLength(tree, morphyObj)
   expect_equal(tree_length, sum(expected_results))
 
   ## Run the bigger tree tests
-  tree <- read.tree(text = "((1,2),((3,(4,5)),(6,(7,(8,(9,(10,((11,(12,(13,(14,15)))),(16,(17,(18,(19,20))))))))))));")
-  characters <- c("11111---111---11---1" # 1
-                  )
+  bigTree <- read.tree(text = "((1,2),((3,(4,5)),(6,(7,(8,(9,(10,((11,(12,(13,(14,15)))),(16,(17,(18,(19,20))))))))))));")
+  bigChars <- c("11111---111---11---1")
   ## Results
   expected_results <- c(3)
 
   ## Run the tests
-  for(test in 1:length(characters)) {
-    phy <- StringToPhyDat(characters[test], tree$tip.label)
+  for(test in 1:length(bigChars)) {
+    phy <- StringToPhyDat(bigChars[test], bigTree$tip.label)
+    # Presently a good test to confirm that PhyDat2Morphy works with single-character phys
     morphyObj <- PhyDat2Morphy(phy)
-    tree_length <- MorphyTreeLength(tree, morphyObj)
-    #if (tree_length != expected_results[test]) cat("Test case", test - 1, characters[test], "unequal: Morphy calcluates",
+    tree_length <- MorphyTreeLength(bigTree, morphyObj)
+    #if (tree_length != expected_results[test]) cat("Test case", test - 1, bigChars[test], "unequal: Morphy calcluates",
     #  tree_length, "instead of", expected_results[test],"\n")
     expect_equal(tree_length, expected_results[test])
     UnloadMorphy(morphyObj)
