@@ -344,7 +344,8 @@ Evaluate <- function (tree, dataset, warn=TRUE) {
 #' As presently implemented, this function requires that there be no ambiguous tokens 
 #' and two applicable tokens, '1' and '2'.
 #'
-#' @template datasetParam
+#' @param tokenTable A matrix, where each row corresponds to a character, each column to 
+#'                   a tip, and each entry to the value (1 or 2) of the character at that tip.
 #' @param precision number of random trees to generate when calculating Profile curves
 #' @template warnParam
 #'
@@ -353,17 +354,11 @@ Evaluate <- function (tree, dataset, warn=TRUE) {
 #' @author Martin R. Smith
 #'
 #' @export
-InfoAmounts <- function (dataset, precision=1e+06, warn=TRUE) {
+InfoAmounts <- function (tokenTable, precision=1e+06, warn=TRUE) {
   # The below is simplified from info_extra_step.r::evaluate
-  dataNr <- attr(dataset, "nr")
-  chars <- if (is.null(dim(dataset))) {
-    matrix(c(unlist(dataset), rep(1, dataNr), rep(2, dataNr)), dataNr)
-  } else {
-    cbind(dataset[seq_len(dataNr), ], matrix(c(1, 2), nrow=dataNr, ncol=2, byrow=TRUE))
-  }
-  if (length(unique(as.integer(chars))) > 2) stop ("Cannot calculate information amouts for",
+  if (length(unique(as.integer(tokenTable))) > 2) stop ("Cannot calculate information amouts for",
         "characters unless only tokens are 1 and 2. See ?InfoAmounts.")
-  splits <- apply(chars, 1, table) - 1
+  splits <- apply(tokenTable, 1, table) - 1
   infoLosses <- apply(splits, 2, ICPerStep, maxIter=precision, warn=warn)
   
   blankReturn <- double(max(colSums(splits)))
