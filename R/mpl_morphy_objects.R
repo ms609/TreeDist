@@ -61,26 +61,38 @@ SetMorphyWeights <- function (weight, morphyObj, checkInput = TRUE) {
 #' Initialize a Morphy Object from a phyDat object
 #' 
 #' Creates a new Morphy object with the same size and characters as the phyDat object 
-#' @param phy an object of class \code{\link{phyDat}}
-#' @return a pointer to a Morphy object, with the attribute "weight" corres
+#'
+#' @param phy An object of class \code{\link{phyDat}} or \code{profileDat}.
+#' @return A pointer to an initialized Morphy object.
 #' 
 #' @author Martin R. Smith
 #' @importFrom phangorn phyDat
 #' @export
 PhyDat2Morphy <- function (phy) {
-  if (class(phy) != 'phyDat') stop('Invalid data type ', class(phy), '; should be phyDat.')
+  
+  if (!(class(phy) %in% c('phyDat', 'profileDat'))) {
+    stop('Invalid data type ', class(phy), '; should be phyDat or profileDat.')
+  }
+  
   morphyObj <- mpl_new_Morphy()
   nTax <- length(phy)
   weight <- attr(phy, 'weight')
   nChar <- attr(phy, 'nr')
-  if(mpl_init_Morphy(nTax, nChar, morphyObj) -> error) {
+  
+  if (mpl_init_Morphy(nTax, nChar, morphyObj) -> error) {
     stop("Error ", mpl_translate_error(error), " in mpl_init_Morphy")
   }
-  if(mpl_attach_rawdata(PhyToString(phy, ps=';', useIndex=FALSE, byTaxon=TRUE, concatenate=TRUE),
-                        morphyObj) -> error) {
+  error <- if (class(phy) == 'phyDat') {
+    mpl_attach_rawdata(PhyToString(phy, ps=';', useIndex=FALSE, byTaxon=TRUE, concatenate=TRUE),
+                          morphyObj)
+  } else { # if not profileDat, we'd already have stopped.
+    mpl_attach_rawdata(ProfileToString(phy, ps=';', useIndex=FALSE, byTaxon=TRUE, concatenate=TRUE),
+      morphyObj)
+  }
+  if (error) {
     stop("Error ", mpl_translate_error(error), " in mpl_attach_rawdata")
   }
-  if(mpl_set_num_internal_nodes(nTax - 1L, morphyObj) -> error) { # One is the 'dummy root'
+  if (mpl_set_num_internal_nodes(nTax - 1L, morphyObj) -> error) { # One is the 'dummy root'
     stop("Error ", mpl_translate_error(error), " in mpl_set_num_internal_nodes")
   }
   if (any(vapply(seq_len(nChar), function (i) mpl_set_parsim_t(i, 'FITCH', morphyObj), integer(1)) 
@@ -91,7 +103,7 @@ PhyDat2Morphy <- function (phy) {
       integer(1)) -> error)) {
     stop("Error ", mpl_translate_error(min(error)), "in mpl_set_charac_weight")
   }
-  if(mpl_apply_tipdata(morphyObj) -> error) {
+  if (mpl_apply_tipdata(morphyObj) -> error) {
     stop("Error ", mpl_translate_error(error), "in mpl_apply_tipdata")
   }
   class(morphyObj) <- 'morphyPtr'

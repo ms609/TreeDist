@@ -4,7 +4,7 @@
 #' in datasets that contain inapplicable data
 #'
 #' @template treeParam 
-#' @template datasetParam
+#' @template phyDatOrProfileDat
 #' 
 #' @examples
 #' data('inapplicable.datasets')
@@ -28,7 +28,13 @@
 #' @importFrom phangorn phyDat
 #' @export
 Fitch <- function (tree, dataset) {
-  tree <- RenumberTips(Renumber(tree), names(dataset))
+  if (class(dataset) == 'phyDat') {
+    tree <- RenumberTips(Renumber(tree), names(dataset))
+  } else if (class(dataset) == 'profileDat') {
+    tree <- RenumberTips(Renumber(tree), colnames(dataset))
+  } else {
+    stop("Dataset must be of class phyDat or profileDat, not ", class(dataset), ".")
+  }
   morphyObj <- PhyDat2Morphy(dataset)
   on.exit(morphyObj <- UnloadMorphy(morphyObj))
   MorphyTreeLength(tree, morphyObj)

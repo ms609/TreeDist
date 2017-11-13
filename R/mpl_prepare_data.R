@@ -58,8 +58,9 @@ ConvertToString <- function (phyByTaxon, phyLevels, phyContrast, phyIndex,
   } else {
     ret <- vapply(phyByTaxon, function (x) levelTranslation[x[phyIndex]], character(length(phyIndex)))
   }
-
-  if (!byTaxon) ret <- t(ret)
+  # ret is a matrix with nChar rows and nTaxa columns.
+  
+  if (byTaxon) ret <- t(ret) # Make each row correspond to a taxon
   ret <- if (concatenate || is.null(dim(ret))) {
     paste0(c(ret, ps), collapse='')
   } else {
