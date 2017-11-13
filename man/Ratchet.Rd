@@ -9,16 +9,18 @@
 Ratchet(tree, dataset, InitializeData = PhyDat2Morphy,
   CleanUpData = UnloadMorphy, TreeScorer = MorphyLength,
   Bootstrapper = MorphyBootstrap, swappers = list(TBRSwap, SPRSwap,
-  NNISwap), BootstrapSwapper = swappers[[1]], returnAll = FALSE,
+  NNISwap), BootstrapSwapper = swappers[[length(swappers)]],
+  returnAll = FALSE, stopAtScore = NULL, ratchIter = 100,
+  ratchHits = 10, searchIter = 2000, searchHits = 40,
+  bootstrapIter = ceiling(searchIter/5),
+  bootstrapHits = ceiling(searchHits/5), verbosity = 1L,
+  suboptimal = 1e-08, ...)
+
+ProfileRatchet(tree, dataset, swappers = list(TBRSwap, SPRSwap, NNISwap),
+  BootstrapSwapper = swappers[[length(swappers)]], returnAll = FALSE,
   stopAtScore = NULL, ratchIter = 100, ratchHits = 10,
   searchIter = 2000, searchHits = 40, bootstrapIter = searchIter,
   bootstrapHits = searchHits, verbosity = 1L, suboptimal = 1e-08, ...)
-
-ProfileRatchet(tree, dataset, swappers = list(TBRSwap, SPRSwap, NNISwap),
-  BootstrapSwapper = swappers[[1]], returnAll = FALSE, stopAtScore = NULL,
-  ratchIter = 100, ratchHits = 10, searchIter = 2000, searchHits = 40,
-  bootstrapIter = searchIter, bootstrapHits = searchHits, verbosity = 1L,
-  suboptimal = 1e-08, ...)
 
 RatchetConsensus(tree, dataset, ratchHits = 10, searchIter = 500,
   searchHits = 20, verbosity = 0L, swappers = list(RootedNNISwap),
@@ -44,9 +46,12 @@ second the value returned by \kbd{InitializeData}.}
 First arguments will be an edgeList and a dataset, initialized using \code{InitializeData}
 Should return a rearranged edgeList.}
 
-\item{swappers}{A list of functions to use to conduct edge rearrangement.
+\item{swappers}{A list of functions to use to conduct edge rearrangement during tree search.
 Provide functions like \code{\link{NNISwap}} to shuffle root position,
-or \code{\link{RootedTBRSwap}} if the position of the root should be retained.}
+or \code{\link{RootedTBRSwap}} if the position of the root should be retained.
+You may wish to use extreme swappers (such as \acronym{TBR}) early in the list,
+and a more subtle rearranger (such as \acronym{NNI}) later in the list to make
+incremental tinkerings once an almost-optimal tree has been found.}
 
 \item{BootstrapSwapper}{Function such as \code{\link{RootedNNISwap}} to use to rearrange trees
 within \code{Bootstrapper}.}
@@ -75,6 +80,13 @@ more verbose feedback to the user.}
 \item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}}, \code{dataset})}
 
 \item{nSearch}{Number of Ratchet searches to conduct (for RatchetConsensus)}
+
+\item{swappers}{A list of functions to use to conduct edge rearrangement during tree search.
+Provide functions like \code{\link{NNISwap}} to shuffle root position,
+or \code{\link{RootedTBRSwap}} if the position of the root should be retained.
+You may wish to use extreme swappers (such as \acronym{TBR}) early in the list,
+and a more subtle rearranger (such as \acronym{NNI}) later in the list to make
+incremental tinkerings once an almost-optimal tree has been found.}
 }
 \value{
 This function returns a tree modified by parsimony ratchet iterations.
