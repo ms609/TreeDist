@@ -100,6 +100,7 @@ MorphyLength <- function (parent, child, morphyObj, inPostorder=FALSE, nTaxa=mpl
     child <- edgeList[[2]]
   }
   if (nTaxa < 1L) stop("Error: ", mpl_translate_error(nTaxa))
+  if (class(morphyObj) != 'morphyPtr') stop("morphyObj must be a morphy pointer. See ?LoadMorphy().")
   maxNode <- nTaxa + mpl_get_num_internal_nodes(morphyObj)
   rootNode <- nTaxa + 1L
   allNodes <- rootNode:maxNode
