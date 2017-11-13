@@ -37,13 +37,15 @@ ProfileScore <- function (tree, dataset) {
   at <- attributes(dataset)
   nChar  <- at$nr # strictly, transformation series patterns; these'll be upweighted later
   weight <- at$weight
-  steps <- FitchSteps(tree, dataset) 
+  steps <- FitchSteps(tree, dataset)
   info <- at$info.amounts
   nRowInfo <- nrow(info)
-  return (-sum(vapply(seq_len(nChar), function (i) {
-    stepRow <- max(0L, steps[i] - 1L) + 1L
-    return(if (stepRow > nRowInfo) 0 else info[stepRow, i])
-  }, double(1)) * weight))
+  infoPerChar <- vapply(seq_len(nChar), function (i) {
+      stepRow <- max(0L, steps[i] - 1L) + 1L
+      return(if (stepRow > nRowInfo) 0 else info[stepRow, i])
+    }, double(1))
+  # Return:
+  -sum(infoPerChar * weight)
 }
 
 #' @describeIn ProfileScore Scorer for initialized dataset.
