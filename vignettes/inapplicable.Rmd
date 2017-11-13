@@ -158,7 +158,7 @@ my.consensus <- RatchetConsensus(best.tree, my.phyDat, swappers=
                                  list(RootedTBRSwap, RootedNNISwap))
 ```
 
-If ten independent runs all ended up at different trees, there are probably many more optimal trees out there to 
+If ten independent runs ended up at a number of different trees, there may be many more optimal trees out there to 
 be found; perhaps we could repeat `RatchetConsensus` with `nSearch = 250` for a more
 exhaustive sampling of tree space.  That would take a while though; for now, let's check out our consensus tree:
 
