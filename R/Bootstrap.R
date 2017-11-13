@@ -40,6 +40,7 @@ ProfileBootstrap <- function (edgeList, dataset, EdgeSwapper = NNISwap,
   sampled <- resampling != 0
   sampledData <- lapply(dataset, function (x) x[sampled])
   sampledAtt <- att
+  sampledAtt[['weight']] <- resampling[sampled]
   sampledAtt[['index']] <- rep(seq_len(sum(sampled)), resampling[sampled])
   sampledAtt[['info.amounts']] <- att[['info.amounts']][, sampled]
   sampledAtt[['morphyObjs']] <- att[['morphyObjs']][sampled]
