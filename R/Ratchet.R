@@ -75,7 +75,7 @@ Ratchet <- function (tree, dataset,
     forestScores <- rep(NA, ratchIter)
   }
 
-  bestScoreHits <- 0
+  iterationsWithBestScore <- 0
   iterationsCompleted <- 0
   for (i in 1:ratchIter) {
     if (verbosity > 1L) cat ("\n* Ratchet iteration", i, "- Generating new tree by bootstrapping dataset. ")
@@ -83,12 +83,11 @@ Ratchet <- function (tree, dataset,
                                   verbosity=verbosity-2L, EdgeSwapper=BootstrapSwapper, ...)
     candScore <- 1e+08
     if (verbosity > 2L) cat ("\n - Rearranging from new candidate tree:")
-    for (EdgeSwapper in swappers) {    
+    for (EdgeSwapper in swappers) {
       candidate <- EdgeListSearch(candidate, dataset=initializedData, TreeScorer=TreeScorer, 
                                   EdgeSwapper=EdgeSwapper, maxIter=searchIter, maxHits=searchHits,
                                   verbosity=verbosity-2L, ...)                                  
       candScore <- candidate[[3]]
-      bestScoreHits <- candidate[[4]]
     }
     
     if (verbosity > 2L) cat("\n - Rearranged candidate tree scored ", candScore)
@@ -100,14 +99,14 @@ Ratchet <- function (tree, dataset,
       # New 'best' tree
       edgeList <- candidate
       bestScore <- candScore
-      bestScoreHits <- 1L
+      iterationsWithBestScore <- 1L
     } else if (bestScore + epsilon > candScore) { # i.e. best == cand, allowing for floating point error
-      bestScoreHits <- bestScoreHits + 1
+      iterationsWithBestScore <- iterationsWithBestScore + 1L
       edgeList <- candidate
     }
     if (verbosity > 1L) cat("\n* Best score after", i, "/", ratchIter, "ratchet iterations:",
-                            bestScore, "( hit", bestScoreHits, "/", ratchHits, ")")
-    if (bestScoreHits >= ratchHits) {
+                            bestScore, "( hit", iterationsWithBestScore, "/", ratchHits, ")")
+    if (iterationsWithBestScore >= ratchHits) {
       iterationsCompleted <- i
       break()
     }
