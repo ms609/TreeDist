@@ -42,7 +42,7 @@ for (dataset in names(inapplicable.phyData)) {
   cat("\n ========", format(Sys.time(), "%b %d %X"), ":", dataset, "========\n")
   timestart[dataset] <- Sys.time()
   oTree <- Ratchet(nj.tree[[dataset]], inapplicable.phyData[[dataset]], stopAtScore=scores[[dataset]],
-  ratchHits=1000, ratchIter=10000, searchIter=3200, searchHits=12, verbosity=0L)
+  ratchHits=1000, ratchIter=10000, searchIter=3200, searchHits=12, verbosity=2L)
   timeend[dataset] <- Sys.time()
   cat("\n > Time taken: ", (timeend[dataset] - timestart[dataset]) / 60, "mins\n")
 }
