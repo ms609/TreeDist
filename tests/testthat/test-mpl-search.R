@@ -1,23 +1,25 @@
-library(ape)
-
 context("Morphy: Tree search")
 
-comb11 <- read.tree(text="(a, (b, (c, (d, (e, (f, (g, (h, (i, (j, k))))))))));")
-unrooted11 <- read.tree(text="(a, b, (c, (d, (e, (f, (g, (h, (i, (j, k)))))))));")
+comb11 <- ape::read.tree(text="(a, (b, (c, (d, (e, (f, (g, (h, (i, (j, k))))))))));")
+unrooted11 <- ape::read.tree(text="(a, b, (c, (d, (e, (f, (g, (h, (i, (j, k)))))))));")
 data11 <- cbind(upper.tri(matrix(FALSE, 11, 11))[, 3:10], lower.tri(matrix(FALSE, 11, 11))[, 2:9])
 rownames(data11) <- letters[1:11]
-phy11 <- phyDat(data11, type='USER', levels=c(FALSE, TRUE))
-RootySwappers <-  list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap)
+phy11 <- phangorn::phyDat(data11, type='USER', levels=c(FALSE, TRUE))
+RootySwappers <- list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap)
 
 test_that("tree can be found", {
   set.seed(0)
   expect_error(TreeSearch(tree=unrooted11, dataset=phy11))
-  expect_equal(TreeSearch(tree=RandomTree(phy11, 'a'), dataset=phy11,
-               maxIter=2500, Rearrange = RootedTBR, verbosity=0), comb11)
-  expect_equal(TreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000, Rearrange = RootedSPR, verbosity=0), comb11)
-  expect_equal(TreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000, Rearrange = RootedNNI, verbosity=0), comb11)
-  expect_equal(Ratchet(RandomTree(phy11, 'a'), phy11, searchIter=300, searchHits = 20, swappers = RootySwappers, ratchHits=3, verbosity=0), comb11)
-  expect_equal('multiPhylo', class(Ratchet(RandomTree(phy11, 'a'), phy11, searchIter=300, searchHits = 20, swappers = RootySwappers, ratchHits=3, verbosity=-1, returnAll=TRUE)))
+  expect_equal(comb11, TreeSearch(tree=RandomTree(phy11, 'a'), dataset=phy11,
+               maxIter=2500, Rearrange = RootedTBR, verbosity=0))
+  expect_equal(comb11, TreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000, Rearrange = RootedSPR,
+              verbosity=0))
+  expect_equal(comb11, TreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000, Rearrange = RootedNNI, verbosity=0))
+  expect_equal(comb11, Ratchet(RandomTree(phy11, 'a'), phy11, searchIter=300, searchHits = 20, swappers = RootySwappers, ratchHits=3, verbosity=0))
+  expect_equal('multiPhylo', class(
+    Ratchet(RandomTree(phy11, 'a'), phy11, searchIter=300, searchHits = 20,
+    ratchHits=3, verbosity=0L, returnAll=TRUE)
+    ))
   # expect_equal(Sectorial(RandomTree(phy11, 'a'), phy11, verbosity=-1), comb11) # TODO: Sectorial Search not working yet!
 })
 
