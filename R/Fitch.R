@@ -53,11 +53,12 @@ Fitch <- function (tree, dataset) {
 #' @template bgsReference
 #' @export
 FitchSteps <- function (tree, dataset) {
-  if (class(dataset) == 'phyDat') {
-    characters <- PhyToString(dataset, ps='', useIndex=FALSE, byTaxon=FALSE, concatenate=FALSE)
-  } else {
+  if (class(dataset) != 'phyDat') {
     stop ("Dataset must be of class phyDat, not ", class(dataset))
   }
+  
+  tree <- RenumberTips(Renumber(tree), names(dataset))  
+  characters <- PhyToString(dataset, ps='', useIndex=FALSE, byTaxon=FALSE, concatenate=FALSE)
   morphyObjects <- lapply(characters, SingleCharMorphy)
   on.exit(morphyObjects <- vapply(morphyObjects, UnloadMorphy, integer(1)))
   # Return:
