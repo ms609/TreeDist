@@ -27,49 +27,6 @@ StringToPhyDat <- StringToPhydat <- function (string, tips, byTaxon = TRUE) {
   phy
 }
 
-#' @describeIn PhyToString Generic underlying function
-#' @param phyByTaxon a phyDat object or other list of character values, a taxon at a time
-#' @param phyLevels The \code{levels} attribute of a phyDat object, or equivalent.
-#' @param phyContrast The \code{contrast} attribute of a phyDat object, or equivalent.
-#' @param phyIndex The \code{index} attribute of a phyDat object, or equivalent.
-#' @keywords internal
-#' @export
-ConvertToString <- function (phyByTaxon, phyLevels, phyContrast, phyIndex,
-                             ps, byTaxon, concatenate) {
-  outLevels <- seq_len(ncol(phyContrast)) - 1
-  if (any(inappLevel <- phyLevels == '-')) outLevels[which(phyContrast[inappLevel])] <- '-'
-  levelLengths <- vapply(outLevels, nchar, integer(1))
-  longLevels <- levelLengths > 1
-  if (any(longLevels)) {
-    if ('10' %in% outLevels && !(0 %in% outLevels)) {
-      outLevels[outLevels == '10'] <- '0'
-      longLevels['10'] <- FALSE
-    }
-    outLevels[longLevels] <- LETTERS[seq_len(sum(longLevels))]
-  }
-  levelTranslation <- apply(phyContrast, 1, function (x)
-    ifelse(sum(x) == 1, as.character(outLevels[x]), paste0(c('{', outLevels[x], '}'), collapse=''))
-  )
-  if (any(ambigToken <- apply(phyContrast, 1, all))) levelTranslation[ambigToken] <- '?'
-  
-  if (max(unlist(phyByTaxon)) > length(levelTranslation)) {
-    names(levelTranslation) <- apply(phyContrast, 1, function (x) sum(2^(seq_along(x) - 1)[x]))
-    ret <- vapply(phyByTaxon, function (x) levelTranslation[as.character(x[phyIndex])], character(length(phyIndex)))
-  } else {
-    ret <- vapply(phyByTaxon, function (x) levelTranslation[x[phyIndex]], character(length(phyIndex)))
-  }
-  # ret is a matrix with nChar rows and nTaxa columns.
-  
-  if (!byTaxon) ret <- t(ret) # Make each row correspond to a taxon
-  ret <- if (concatenate || is.null(dim(ret))) {
-    paste0(c(ret, ps), collapse='')
-  } else {
-    paste0(apply(ret, 1, paste0, collapse=''), ps)
-  }
-  # Return:
-  ret
-}
-
 #' Extract character data from a phyDat object as a string
 #' 
 #' 
@@ -88,14 +45,37 @@ ConvertToString <- function (phyByTaxon, phyLevels, phyContrast, phyIndex,
 #' @export
 PhyToString <- function (phy, ps='', useIndex=TRUE, byTaxon=TRUE, concatenate=TRUE) {
   at <- attributes(phy)
+  phyLevels <- at$allLevels		
+  phyChars <- at$nr		
+  phyContrast <- at$contrast == 1		
+  phyIndex <- if (useIndex) at$index else seq_len(phyChars)		
+  outLevels <- seq_len(ncol(phyContrast)) - 1		
+  if (any(inappLevel <- phyLevels == '-')) outLevels[which(phyContrast[inappLevel])] <- '-'		
+
+  levelLengths <- vapply(outLevels, nchar, integer(1))
+  longLevels <- levelLengths > 1
+  if (any(longLevels)) {
+    if ('10' %in% outLevels && !(0 %in% outLevels)) {
+      outLevels[outLevels == '10'] <- '0'
+      longLevels['10'] <- FALSE
+    }
+    outLevels[longLevels] <- LETTERS[seq_len(sum(longLevels))]
+  }
+  
+  levelTranslation <- apply(phyContrast, 1, function (x)		
+    ifelse(sum(x) == 1, as.character(outLevels[x]), paste0(c('{', outLevels[x], '}'), collapse=''))		
+  )		
+  if (any(ambigToken <- apply(phyContrast, 1, all))) levelTranslation[ambigToken] <- '?'		
+  ret <- vapply(phy, function (x) levelTranslation[x[phyIndex]], character(length(phyIndex)))		
+  if (!byTaxon) ret <- t(ret) # Make each row correspond to a taxon
+  ret <- if (concatenate || is.null(dim(ret))) { # If only one row, don't need to apply
+    paste0(c(ret, ps), collapse='')		
+  } else {		
+    paste0(apply(ret, 1, paste0, collapse=''), ps)		
+  }
   # Return:
-  ConvertToString(phyByTaxon = phy, phyLevels = at$allLevels, 
-    phyContrast = at$contrast == 1,
-    phyIndex = if (useIndex) at$index else seq_len(at$nr),
-    ps = ps, byTaxon = byTaxon, concatenate = concatenate)
+  ret
 }
-
-
 
 #' @name AsBinary
 #' @aliases AsBinary
