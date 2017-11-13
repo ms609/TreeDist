@@ -39,7 +39,6 @@ Fitch <- function (tree, dataset) {
 #' 
 #' @template treeParam
 #' @template datasetParam
-#' @param at Attributes of the dataset (looked up automatically if not supplied)
 #'
 #' @return A vector listing the number of 'parsimony steps' calculated by the 
 #'         Fitch algorithm for each character.  Inapplicable tokens are treated
@@ -53,14 +52,17 @@ Fitch <- function (tree, dataset) {
 #'
 #' @template bgsReference
 #' @export
-FitchSteps <- function (tree, dataset, at=NULL) {
+FitchSteps <- function (tree, dataset) {
   if (class(dataset) == 'phyDat') {
     characters <- PhyToString(dataset, ps='', useIndex=FALSE, byTaxon=FALSE, concatenate=FALSE)
-    morphyObjects <- lapply(characters, SingleCharMorphy)
   } else if (class(dataset) == 'profileDat') {
-    morphyObjects <- ProfileToString(dataset, ps='', useIndex=FALSE, byTaxon=FALSE, concatenate=FALSE)
-    
+    characters <- ProfileToString(dataset, ps='', useIndex=FALSE, byTaxon=FALSE, concatenate=FALSE)
+  } else {
+    stop ("Dataset must be of class phyDat or profileDat, not ", class(dataset))
   }
+  morphyObjects <- lapply(characters, SingleCharMorphy)
+  # Return:
+  vapply(morphyObjects, MorphyTreeLength, tree=tree, integer(1))
 }
 
 #' Calculate parsimony score with inapplicable data

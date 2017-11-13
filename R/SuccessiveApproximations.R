@@ -95,7 +95,7 @@ SuccessiveWeights <- function(tree, dataset) {
   weight <- at$weight
   sa.weights <- at$sa.weights
   if (is.null(sa.weights)) sa.weights <- rep(1, length(weight))
-  steps <- FitchSteps(tree, dataset, at)
+  steps <- FitchSteps(tree, dataset)
   return(sum(steps * sa.weights * weight))
 }
 

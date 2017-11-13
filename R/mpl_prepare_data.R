@@ -29,9 +29,12 @@ StringToPhyDat <- StringToPhydat <- function (string, tips, byTaxon = TRUE) {
 
 #' @describeIn PhyToString Generic underlying function
 #' @param phyByTaxon a phyDat object or other list of character values, a taxon at a time
+#' @param phyLevels The \code{levels} attribute of a phyDat object, or equivalent.
+#' @param phyContrast The \code{contrast} attribute of a phyDat object, or equivalent.
+#' @param phyIndex The \code{index} attribute of a phyDat object, or equivalent.
 #' @keywords internal
 #' @export
-ConvertToString <- function (phyByTaxon, phyLevels, phyChars, phyContrast, phyIndex,
+ConvertToString <- function (phyByTaxon, phyLevels, phyContrast, phyIndex,
                              ps, byTaxon, concatenate) {
   outLevels <- seq_len(ncol(phyContrast)) - 1
   if (any(inappLevel <- phyLevels == '-')) outLevels[which(phyContrast[inappLevel])] <- '-'
@@ -85,9 +88,9 @@ ConvertToString <- function (phyByTaxon, phyLevels, phyChars, phyContrast, phyIn
 PhyToString <- function (phy, ps='', useIndex=TRUE, byTaxon=TRUE, concatenate=TRUE) {
   at <- attributes(phy)
   # Return:
-  ConvertToString(phyByTaxon = phy, phyLevels = at$allLevels, phyChars = at$nr, 
+  ConvertToString(phyByTaxon = phy, phyLevels = at$allLevels, 
     phyContrast = at$contrast == 1,
-    phyIndex = if (useIndex) at$index else seq_len(phyChars),
+    phyIndex = if (useIndex) at$index else seq_len(at$nr),
     ps = ps, byTaxon = byTaxon, concatenate = concatenate)
 }
 
@@ -97,9 +100,9 @@ ProfileToString <- function (dataset, ps='', useIndex=TRUE, byTaxon=TRUE, concat
   at <- attributes(dataset)
   # Return:
   ConvertToString(phyByTaxon = lapply(seq_len(ncol(dataset)), function(i) dataset[, i]),
-    phyLevels = at$allLevels, phyChars = at$nr,
+    phyLevels = at$allLevels,
     phyContrast = at$contrast == 1,
-    phyIndex = if (useIndex) at$index else seq_len(phyChars),
+    phyIndex = if (useIndex) at$index else seq_len(at$nr),
     ps = ps, byTaxon = byTaxon, concatenate = concatenate)
 }
 
