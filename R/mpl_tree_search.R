@@ -24,7 +24,7 @@ RatchetConsensus <- function (tree, dataset, ratchHits=10,
 #' It is also called directly by MorphyRatchet and Sectorial functions
 #'
 #' @template edgeListParam
-#' @template morphyObjParam
+#' @template dataForFunction
 #' @param EdgeSwapper Function to use to rearrange trees; example: 
 #'                  \code{\link{TBRSwap}}.
 #' @param maxIter maximum iterations to conduct.
@@ -40,67 +40,75 @@ RatchetConsensus <- function (tree, dataset, ratchHits=10,
 #' @keywords internal
 #' @export
 
-DoMorphySearch <- function (edgeList, morphyObj, EdgeSwapper, maxIter=100, maxHits=20, 
+EdgeListSearch <- function (edgeList, dataset,
+                          TreeScorer = MorphyLength,
+                          EdgeSwapper = RootedTBRSwap,
+                          #morphyObj, 
+                          maxIter=100, maxHits=20, 
+                          bestScore=NULL,
                           stopAtScore=NULL, forestSize=1L, 
                           cluster=NULL, verbosity=1L, ...) {
   epsilon <- 1e-07                        
   if (!is.null(forestSize) && length(forestSize)) {
     if (forestSize > 1L) {
       stop("TODO: Forests not supported")
-      forest <- empty.forest <- vector('list', forestSize)
-      forest[[1]] <- edgeList
+      #### forest <- empty.forest <- vector('list', forestSize)
+      #### forest[[1]] <- edgeList
     } else {
       forestSize <- 1L
     }
   }
-  if (length(edgeList) < 3L) {
-    bestScore <- MorphyLength(edgeList[[1]], edgeList[[2]], morphyObj)
-  } else {
-    bestScore <- edgeList[[3]]
+  if (is.null(bestScore)) {
+    if (length(edgeList) < 3L) {
+      bestScore <- TreeScorer(edgeList[[1]], edgeList[[2]], dataset)
+    } else {
+      bestScore <- edgeList[[3]]
+    }
   }
-  hits <- if (length(edgeList) < 4) 0L else edgeList[[4]]
-  if (verbosity > 0L) cat("  - Initial score:", bestScore)
+  hitsThisTime <- 0 
+  if (verbosity > 0L) cat("\n  - Performing tree search.  Initial score:", bestScore)
   if (!is.null(stopAtScore) && bestScore < stopAtScore + epsilon) return(edgeList)
   returnSingle <- !(forestSize > 1L)
   
   for (iter in 1:maxIter) {
-    candidateLists <- MorphyRearrange(edgeList[[1]], edgeList[[2]], morphyObj, 
-                             inputScore=bestScore, hits=hits, EdgeSwapper=EdgeSwapper,
-                             minScore=bestScore, returnSingle=returnSingle, iter=iter, 
-                             cluster=cluster, verbosity=verbosity, ...)
+    candidateLists <- RearrangeEdges(edgeList[[1]], edgeList[[2]], dataset=dataset, 
+                             TreeScorer=TreeScorer, hits=hits, inputScore=bestScore,
+                             EdgeSwapper=EdgeSwapper, minScore=bestScore,
+                             returnSingle=returnSingle, iter=iter,
+                             verbosity=verbosity, ...)
     scoreThisIteration <- candidateLists[[3]]
     if (forestSize > 1L) {
       stop("TODO re-code this")
-      if (scoreThisIteration == bestScore) {
-        forest[(hits-length(candidateLists)+1L):hits] <- candidateLists ## TODO Check that length still holds
-        edgeList  <- sample(forest[1:hits], 1)[[1]]
-        bestScore <- scoreThisIteration
-        hits      <- hits + 1L
-      } else if (scoreThisIteration < bestScore) {
-        bestScore <- scoreThisIteration
-        forest <- empty.forest
-        forest[1:hits] <- candidateLists
-        edgeList <- sample(candidateLists , 1)[[1]]
-        attr(edgeList, 'score') <- scoreThisIteration
-      }
+      ###if (scoreThisIteration == bestScore) {
+      ###  forest[(hitsThisTime-length(candidateLists)+1L):hitsThisTime] <- candidateLists ## TODO Check that length still holds
+      ###  edgeList  <- sample(forest[1:hitsThisTime], 1)[[1]]
+      ###  bestScore <- scoreThisIteration
+      ###  hitsThisTime      <- hitsThisTime + 1L
+      ###} else if (scoreThisIteration < bestScore) {
+      ###  bestScore <- scoreThisIteration
+      ###  forest <- empty.forest
+      ###  forest[1:hitsThisTime] <- candidateLists
+      ###  edgeList <- sample(candidateLists , 1)[[1]]
+      ###  attr(edgeList, 'score') <- scoreThisIteration
+      ###}
     } else {
       if (scoreThisIteration < bestScore + epsilon) {
-        hits <- if (bestScore < scoreThisIteration + epsilon) hits + 1L else 1L
+        hitsThisTime <- candidateLists[[4]] + if (bestScore < scoreThisIteration + epsilon) hitsThisTime else 0L
         bestScore <- scoreThisIteration
         edgeList  <- candidateLists
         if (!is.null(stopAtScore) && bestScore < stopAtScore + epsilon) return(edgeList)
       }
     }
-    if (hits >= maxHits) break
+    if (hitsThisTime >= maxHits) break
   }
-  if (verbosity > 0L) cat("\n  - Final score", bestScore, "found", hits, "times after", iter, "rearrangements\n")  
+  if (verbosity > 0L) cat("\n  - Final score", bestScore, "found", hitsThisTime, "times after", iter, "rearrangements\n")  
   if (forestSize > 1L) {
-    if (hits < forestSize) forest <- forest[-((hits+1):forestSize)]
-    attr(forest, 'hits') <- hits
+    if (hitsThisTime < forestSize) forest <- forest[-((hitsThisTime+1):forestSize)]
+    attr(forest, 'hits') <- hitsThisTime
     attr(forest, 'score') <- bestScore
     return (unique(forest))
   } else {
-    edgeList[3:4] <- c(bestScore, hits)
+    edgeList[3:4] <- c(bestScore, hitsThisTime)
     return(edgeList)
   }
 }
