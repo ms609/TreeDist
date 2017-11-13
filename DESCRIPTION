@@ -8,15 +8,12 @@ Authors@R: c(person("Martin R.", 'Smith',
                   comment=c(ORCID = "0000-0001-5660-1727")),
                person(given = "Emmanuel", family="Paradis",
                role = c("cph")),
-               person(given = "Klaus", family="Schliep",
-               role = c("cph")),
                person(given = "Martin", family="Brazeau",
                role = c("cph"))
             )
 License: GPL (>= 3)
 Copyright: Incorporates C code from:
    ape by Emmanuel Paradis;
-   phangorn by Klaus Schliep;
    Morphy Phylogenetic Library by Martin Brazeau <https://github.com/mbrazeau/MorphyLib> (GPL3)
 Description: Searches for phylogenetic trees that are optimal using a user-defined criterion. 
   Implements Profile Parsimony (Faith and Trueman, 2001) <doi:10.1080/10635150118627>, and

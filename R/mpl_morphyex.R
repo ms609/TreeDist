@@ -50,7 +50,6 @@ mpl_new_Morphy <- function() {
     .Call("_R_wrap_mpl_new_Morphy")
 }
 
-
 #' Destroys an instance of a Morphy object.
 #'
 #' Destroys an instance of the Morphy object, calling all
