@@ -106,7 +106,8 @@ Ratchet <- function (tree, dataset,
     }
     if (verbosity > 1L) cat("\n* Best score after", i, "/", ratchIter, "ratchet iterations:",
                             bestScore, "( hit", iterationsWithBestScore, "/", ratchHits, ")")
-    if (iterationsWithBestScore >= ratchHits) {
+    if ((!is.null(stopAtScore) && bestScore < stopAtScore + epsilon) 
+    || (iterationsWithBestScore >= ratchHits)) {
       iterationsCompleted <- i
       break()
     }
@@ -171,11 +172,13 @@ ProfileRatchet <- function (tree, dataset,
 #' @describeIn Ratchet returns a list of optimal trees produced by nSearch Ratchet searches
 #' @param nSearch Number of Ratchet searches to conduct (for RatchetConsensus)
 #' @export
-RatchetConsensus <- function (tree, dataset, ratchHits=10,
+RatchetConsensus <- function (tree, dataset, ratchHits=10, 
                               searchIter=500, searchHits=20, verbosity=0L, 
-                              swappers=list(RootedNNISwap), nSearch=10, ...) {
+                              swappers=list(RootedNNISwap), nSearch=10, 
+                              stopAtScore=NULL, ...) {
   trees <- lapply(logical(nSearch), function (x) Ratchet(tree, dataset, ratchIter=1, 
-              searchIter=searchIter, searchHits=searchHits, verbosity=verbosity, swappers=swappers, ...))
+              searchIter=searchIter, searchHits=searchHits, verbosity=verbosity, swappers=swappers, 
+              stopAtScore=stopAtScore, ...))
   scores <- vapply(trees, function (x) attr(x, 'score'), double(1))
   trees <- unique(trees[scores == min(scores)])
   cat ("Found", length(trees), 'unique trees from', nSearch, 'searches.')
