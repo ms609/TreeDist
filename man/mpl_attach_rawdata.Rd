@@ -9,14 +9,14 @@ mpl_attach_rawdata(rawdata, morphyobj)
 \arguments{
 \item{morphyobj}{An instance of the Morphy object.}
 
-\item{rawmatrix}{C-style string corresponding to the tip data.}
+\item{rawmatrix}{C-style string corresponding to the tip data for each taxon in turn.}
 }
 \value{
 Morphy error code.
 }
 \description{
 Attaches a raw data character state matrix in the form of a C-style
-(i.e. NULL-terminated string). This can be the matrix block extracted from a
+(i.e. NULL-terminated) string. This can be the matrix block extracted from a
 Nexus file or an xread table format. The matrix should contain no terminal or
 tip labels.
 }

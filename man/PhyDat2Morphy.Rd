@@ -7,10 +7,10 @@
 PhyDat2Morphy(phy)
 }
 \arguments{
-\item{phy}{an object of class \code{\link{phyDat}}}
+\item{phy}{An object of class \code{\link{phyDat}}.}
 }
 \value{
-a pointer to a Morphy object, with the attribute "weight" corres
+A pointer to an initialized Morphy object.
 }
 \description{
 Creates a new Morphy object with the same size and characters as the phyDat object
