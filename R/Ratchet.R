@@ -13,7 +13,6 @@
 #' @param BootstrapSwapper Function such as \code{\link{RootedNNISwap}} to use to rearrange trees
 #'                         within \code{Bootstrapper}.
 #' @param returnAll Set to \code{TRUE} to report all MPTs encountered during the search, perhaps to analyze consensus.
-#' @param rooted whether to retain the position of the root in tree search (TRUE by default).
 #' @param ratchIter stop when this many ratchet iterations have been performed.
 #' @param ratchHits stop when this many ratchet iterations have found the same best score.
 #' @param searchIter maximum rearrangements to perform on each bootstrap or ratchet iteration.
@@ -46,8 +45,7 @@ Ratchet <- function (tree, dataset,
                      Bootstrapper   = MorphyBootstrap,
                      swappers = list(TBRSwap, SPRSwap, NNISwap),
                      BootstrapSwapper = swappers[[1]],
-                     returnAll=FALSE, rooted=TRUE, 
-                     stopAtScore=NULL,
+                     returnAll=FALSE, stopAtScore=NULL,
                      ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
                      bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=1L, 
                      suboptimal=1e-08, ...) {
@@ -67,7 +65,7 @@ Ratchet <- function (tree, dataset,
   } else {
     attr(tree, 'score')
   }
-  if (verbosity > 0L) cat("\n* Beginning Parsimony Ratchet. with initial score", bestScore)
+  if (verbosity > 0L) cat("\n* Beginning Parsimony Ratchet, with initial score", bestScore)
   if (!is.null(stopAtScore) && bestScore < stopAtScore + epsilon) return(tree)
   if (class(swappers) == 'function') swappers <- list(swappers)
   
@@ -88,7 +86,8 @@ Ratchet <- function (tree, dataset,
       candidate <- RearrangeEdges(candidate[[1]], candidate[[2]], dataset=initializedData,
                                   TreeScorer=TreeScorer, hits=bestScoreHits, inputScore=bestScore,
                                   EdgeSwapper=EdgeSwapper, minScore=bestScore, returnSingle=!returnAll,
-                                  verbosity=verbosity-2L, maxIter=searchIter, maxHits=searchHits, ...)
+                                  verbosity=verbosity-2L, maxIter=searchIter, maxHits=searchHits, iter=i
+                                  , ...)
     }
     
     candScore <- candidate[[3]]

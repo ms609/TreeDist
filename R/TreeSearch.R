@@ -81,7 +81,7 @@ TreeSearch <- function (tree, dataset,
     candidateEdges <- RearrangeEdges(edgeList[[1]], edgeList[[2]], dataset=initializedData, 
                              TreeScorer=TreeScorer, hits=hits, inputScore=bestScore,
                              EdgeSwapper=EdgeSwapper, minScore=bestScore,
-                             returnSingle=returnSingle, 
+                             returnSingle=returnSingle, iter=iter,
                              verbosity=verbosity, ...)
     iterScore <- candidateEdges[[3]]
     if (length(forestSize) && forestSize > 1) {
