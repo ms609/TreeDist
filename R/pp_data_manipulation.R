@@ -89,7 +89,12 @@ PhyDat <- function (dataset, levels = NULL, compress = TRUE) {
 #'                  
 #' @template warnParam
 #'
-#' @return a dataset of class 'profileDat'
+#' @return An object of class phyDat with additional attributes:
+#'         \code{info.amounts}: details the information represented by each character when subject to N 
+#'         additional steps.
+#'         \code{split.sizes}: The size of the splits implied by each character
+#'         \code{bootstrap}: The character vector \code{c('info.amounts', 'split.sizes')}, indicating 
+#'                           attributes to sample when bootstrapping the dataset 9e.g. in Ratchet searches).
 #'
 #' @author Martin R. Smith; written with reference to phangorn:::prepareDataFitch
 #' @export
@@ -101,22 +106,22 @@ PrepareDataProfile <- function (dataset, precision = 1e+06, warn = TRUE) {
   cont <- attr(dataset, "contrast")
   nTip <- length(dataset)
   
-  at$names <- NULL
   powers.of.2 <- 2L ^ c(0L:(nLevel - 1L))
   tmp <- cont %*% powers.of.2
   tmp <- as.integer(tmp)
-  dataset <- unlist(dataset, recursive=FALSE, use.names=FALSE)
-  ret <- tmp[dataset]
-  ret <- as.integer(ret)
-  attributes(ret) <- at
+  unlisted <- unlist(dataset, recursive=FALSE, use.names=FALSE)
+  
+  binaryMatrix <- tmp[unlisted]
+  binaryMatrix <- as.integer(unlisted)
+  attr(binaryMatrix, 'dim') <- c(nChar, nTip)
+  
   inappLevel <- which(at$levels == "-")
-  attr(ret, 'inappLevel') <- 2 ^ (inappLevel - 1)
-  attr(ret, 'dim') <- c(nChar, nTip)
   applicableTokens <- setdiff(powers.of.2, 2 ^ (inappLevel - 1))
-  attr(ret, 'split.sizes') <- apply(ret, 1, function(x) vapply(applicableTokens, function (y) sum(x == y), integer(1)))
-  attr(ret, 'info.amounts') <- InfoAmounts(ret, precision, warn=warn)
-  attr(ret, 'bootstrap') <- c('info.amounts', 'split.sizes')
-  dimnames(ret) <- list(NULL, nam)
-  class(ret) <- 'profileDat'
-  ret
+  
+####  attr(dataset, 'split.sizes') <- apply(binaryMatrix, 1, function(x) {
+####      vapply(applicableTokens, function (y) sum(x == y), integer(1))
+####    })
+  attr(dataset, 'info.amounts') <- InfoAmounts(binaryMatrix, precision, warn=warn)
+  attr(dataset, 'bootstrap') <- unique(c(attr(dataset, 'bootstrap'), 'info.amounts'))
+  dataset
 }
