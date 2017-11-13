@@ -30,7 +30,7 @@
 RearrangeEdges <- function (parent, child, dataset, TreeScorer, scoreToBeat=TreeScorer(parent, child, dataset),
                             EdgeSwapper, iter='?', hits=0L, verbosity=0L, ...) {
   eps <- 1e-08
-  rearrangedEdges <- EdgeSwapper(parent, child) 
+  rearrangedEdges <- EdgeSwapper(parent, child)
   # TODO we probably want to get ALL trees 1 REARRANGE step away
   # One benefit of this is that if NONE of these trees are as good or better, we can give up immediately, 
   # as there's no way out of this local optimum.
