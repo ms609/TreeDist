@@ -79,7 +79,7 @@ ProfileDestroyMorphy <- function (dataset) {
   vapply(attr(dataset, 'morphyObjs'), UnloadMorphy, integer(1))
 }
 
-ProfileTreeSearch <- function (tree, dataset, Rearrange = RootedTBR,
+ProfileTreeSearch <- function (tree, dataset, EdgeSwapper = RootedTBR,
                         maxIter = 100, maxHits = 20, forestSize = 1,
                         verbosity = 1, precision=40000, ...) {
   if (class(dataset) != 'phyDat') stop("Unrecognized dataset class; should be phyDat, not ", class(dataset), '.')
@@ -91,7 +91,7 @@ ProfileTreeSearch <- function (tree, dataset, Rearrange = RootedTBR,
              InitializeData = ProfileInitMorphy,
              CleanUpData = ProfileDestroyMorphy,
              TreeScorer = ProfileScoreMorphy,
-             Rearrange = Rearrange, 
-             maxIter = maxIter, maxHits = maxhits, forestSize = forestSize,
+             EdgeSwapper = EdgeSwapper, 
+             maxIter = maxIter, maxHits = maxHits, forestSize = forestSize,
              verbosity = verbosity, ...)
 }
