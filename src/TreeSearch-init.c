@@ -8,7 +8,6 @@
 #include <R_ext/Rdynload.h>
 
 #include "ape_reorder.h"
-#include "phangorn_fitch.h"
 #include "renumber_tree.h"
 
 #include "mpl.h"
@@ -51,7 +50,6 @@ static const R_CallMethodDef callMethods[] = {
   {"RANDOM_TREE",                   (DL_FUNC) &RANDOM_TREE, 1},
   {"RANDOM_TREE_SCORE",             (DL_FUNC) &RANDOM_TREE_SCORE, 2},
 
-  {"phangorn_FITCH", (DL_FUNC) &phangorn_FITCH, 8},
   {"RENUMBER_TREE",  (DL_FUNC) &RENUMBER_TREE,  3},
   {"RENUMBER_EDGES", (DL_FUNC) &RENUMBER_EDGES, 3},
   {NULL, NULL, 0}
