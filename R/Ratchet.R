@@ -115,23 +115,29 @@ Ratchet <- function (tree, dataset,
   if (verbosity > 0L) cat ("\nCompleted parsimony ratchet after", iterationsCompleted, "iterations with score", bestScore, "\n")
    
   if (returnAll) {
-## TODO
-#    keepers <- !is.na(forestScores) & forestScores < bestScore + suboptimal
-#    forestScores <- forestScores[keepers]
-#    forest <- forest[keepers]
-#    if (verbosity >=0 ) cat("\n - Keeping", sum(keepers), "trees from iterations numbered:\n   ", which(keepers))
-#    if (length(forest) > 1) {
-#      class(forest) <- 'multiPhylo'
-#      ret <- unique(forest)
-#      if (verbosity >=0) cat("\n - Removing duplicates leaves", length(ret), "unique trees")
-#    } else if (length(forest) == 1) {
-#      class(forest) <- 'phylo'
-#      ret <- forest
-#    } else {
-#      stop('\nNo trees!? Is suboptimal set to a sensible (positive) value?')
-#    }
-#    scores.unique <- vapply(ret, attr, double(1), 'score')
-#    cat('\nFound', sum(scores.unique == min(scores.unique)), 'unique MPTs and', length(ret) - sum(scores.unique == min(scores.unique)), 'suboptimal trees.\n')
+    keepers <- !is.na(forestScores) & forestScores < bestScore + suboptimal
+    forestScores <- forestScores[keepers]
+    forest <- forest[keepers]
+    if (verbosity >=0 ) cat("\n - Keeping", sum(keepers), "trees from iterations numbered:\n   ", which(keepers))
+    if (length(forest) > 1) {
+      forest <- lapply(forest, function (phy) {
+        x <- tree
+        x$edge <- ListToMatrix(phy)
+        attr(x, 'score') <- phy[[3]]
+        # Return to lapply: 
+        x})
+      class(forest) <- 'multiPhylo'
+      ret <- unique(forest)
+      if (verbosity >=0) cat("\n - Removing duplicates leaves", length(ret), "unique trees")
+      uniqueScores <- vapply(ret, attr, double(1), 'score')
+    } else if (length(forest) == 1) {
+      ret <- tree
+      ret$edge <- ListToMatrix(forest[[1]])
+      uniqueScores <- forest[[1]][[3]]
+    } else {
+      stop("\nNo trees!? Is suboptimal set to a sensible (positive) value?")
+    }
+    cat('\nFound', sum(uniqueScores == min(uniqueScores)), 'unique MPTs and', length(ret) - sum(uniqueScores == min(uniqueScores)), 'suboptimal trees.\n')
   } else {
     tree$edge <- ListToMatrix(edgeList)
     attr(tree, 'score') <- bestScore
