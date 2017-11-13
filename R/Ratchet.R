@@ -150,7 +150,7 @@ Ratchet <- function (tree, dataset,
 
 #' @describeIn Ratchet Shortcut for Ratchet search under Profile Parsimony
 #' @export
-ProfileRatchet(tree, dataset,             
+ProfileRatchet <- function (tree, dataset,
                swappers = list(TBRSwap, SPRSwap, NNISwap),
                BootstrapSwapper = swappers[[1]],
                returnAll=FALSE, stopAtScore=NULL,
@@ -158,16 +158,12 @@ ProfileRatchet(tree, dataset,
                bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=1L, 
                suboptimal=1e-08, ...) {
   Ratchet(tree=tree, dataset=dataset,
-    InitializeData=ProfileInitMorphy, 
-    TreeScorer=ProfileScoreMorphy, 
-    CleanUpData=ProfileDestroyMorphy,
-    Bootstrapper=ProfileBootstrap,
-                     swappers = swappers
-                     BootstrapSwapper = BootstrapSwapper,
-                     returnAll=returnAll, stopAtScore=stopAtScore,
-                     ratchIter=ratchIter, ratchHits=ratchHits,
-                     searchIter=searchIter, searchHits=searchHits,
-                     bootstrapIter=searchIter, bootstrapHits=bootstrapHits, 
-                     verbosity=verbosity, 
-                     suboptimal=suboptimal, ...)
+    InitializeData=ProfileInitMorphy, CleanUpData=ProfileDestroyMorphy,
+    TreeScorer=ProfileScoreMorphy, Bootstrapper=ProfileBootstrap,
+    swappers = swappers, BootstrapSwapper = BootstrapSwapper,
+    returnAll=returnAll, suboptimal=suboptimal, stopAtScore=stopAtScore,
+    ratchIter=ratchIter, ratchHits=ratchHits,
+    searchIter=searchIter, searchHits=searchHits,
+    bootstrapIter=searchIter, bootstrapHits=bootstrapHits, 
+    verbosity=verbosity,  ...)
 }
