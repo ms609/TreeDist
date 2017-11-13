@@ -12,17 +12,18 @@
 #' @export
 MorphyBootstrap <- function (edgeList, morphyObj, EdgeSwapper = NNISwap, 
                              maxIter, maxHits, verbosity=1L, ...) {
-## Simplified version of phangorn::bootstrap.phyDat, with bs=1 and multicore=FALSE
   startWeights <- MorphyWeights(morphyObj)[1, ]
   eachChar <- seq_along(startWeights)
-  v <- rep(eachChar, startWeights)
-  BS <- tabulate(sample(v, replace=TRUE), length(startWeights))
-  vapply(eachChar, function (i) 
-         mpl_set_charac_weight(i, BS[i], morphyObj), integer(1))
-  mpl_apply_tipdata(morphyObj)
+  deindexedChars <- rep(eachChar, startWeights)
+  resampling <- tabulate(sample(deindexedChars, replace=TRUE), length(startWeights))
+  errors <- vapply(eachChar, function (i) 
+         mpl_set_charac_weight(i, resampling[i], morphyObj), integer(1))
+  if (any(errors)) stop ("Error resampling morphy object: ", mpl_translate_error(unique(errors[errors < 0L])))
+  if (mpl_apply_tipdata(morphyObj) -> error) stop("Error applying tip data: ", mpl_translate_error(error))
   res <- DoMorphySearch(edgeList, morphyObj, EdgeSwapper=EdgeSwapper, maxIter=maxIter, maxHits=maxHits, verbosity=verbosity-1L, ...)
-  vapply(eachChar, function (i) 
+  errors <- vapply(eachChar, function (i) 
          mpl_set_charac_weight(i, startWeights[i], morphyObj), integer(1))
-  mpl_apply_tipdata(morphyObj)
+  if (any(errors)) stop ("Error resampling morphy object: ", mpl_translate_error(unique(errors[errors < 0L])))
+  if (mpl_apply_tipdata(morphyObj) -> error) stop("Error applying tip data: ", mpl_translate_error(error))
   res[1:2]
 }
