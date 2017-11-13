@@ -76,7 +76,8 @@ PhyDat2Morphy <- function (phy) {
   if(mpl_init_Morphy(nTax, nChar, morphyObj) -> error) {
     stop("Error ", mpl_translate_error(error), " in mpl_init_Morphy")
   }
-  if(mpl_attach_rawdata(PhyToString(phy, ';', useIndex=FALSE), morphyObj) -> error) {
+  if(mpl_attach_rawdata(PhyToString(phy, ps=';', useIndex=FALSE, byTaxon=TRUE, concatenate=TRUE),
+                        morphyObj) -> error) {
     stop("Error ", mpl_translate_error(error), " in mpl_attach_rawdata")
   }
   if(mpl_set_num_internal_nodes(nTax - 1L, morphyObj) -> error) { # One is the 'dummy root'
