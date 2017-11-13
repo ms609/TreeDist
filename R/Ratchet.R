@@ -138,10 +138,12 @@ Ratchet <- function (tree, dataset,
       stop("\nNo trees!? Is suboptimal set to a sensible (positive) value?")
     }
     cat('\nFound', sum(uniqueScores == min(uniqueScores)), 'unique MPTs and', length(ret) - sum(uniqueScores == min(uniqueScores)), 'suboptimal trees.\n')
+    # Return:
+    ret
   } else {
     tree$edge <- ListToMatrix(edgeList)
     attr(tree, 'score') <- bestScore
+    # Return:
+    tree
   }
-  # Return:
-  tree
 }
