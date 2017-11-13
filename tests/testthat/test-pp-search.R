@@ -7,9 +7,9 @@ test_that("Profile parsimony works in tree search", {
   
   set.seed(0)
   rTree <- randomTree <- RandomTree(dataset, '1')
-  expect_equal(Fitch(rTree, readyData, TipsAreColumns), Fitch(rTree, dataset, TipsAreNames))
-  expect_equal(90, Fitch(referenceTree, dataset, TipsAreNames))
-  expect_equal(90, Fitch(referenceTree, readyData, TipsAreColumns))
+  expect_equal(Fitch(rTree, readyData), Fitch(rTree, dataset))
+  expect_equal(90, Fitch(referenceTree, dataset))
+  expect_equal(90, Fitch(referenceTree, readyData))
   
   expect_true(ProfileScore(rTree, readyData) > ProfileScore(referenceTree, readyData))
 

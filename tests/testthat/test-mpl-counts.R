@@ -5,7 +5,7 @@ library(testthat)
 context("Morphy: Correct step counting")
 test_that("Morphy generates correct lengths", {
   ## Tree
-  tree <- read.tree(text = "((((((1,2),3),4),5),6),(7,(8,(9,(10,(11,12))))));")
+  tree <- ape::read.tree(text = "((((((1,2),3),4),5),6),(7,(8,(9,(10,(11,12))))));")
   characters <- c("23--1??--032", # 0,  expect score = 5
                   "1---1111---1", # 1,  expect score = 2
                   "1100----1100", # 2,  expect score = 3
@@ -52,8 +52,7 @@ test_that("Morphy generates correct lengths", {
   ##plot(tree); nodelabels(12:22); tiplabels(0:11)
   ## Run the tests
   for(test in seq_along(characters)) {
-    phy <- StringToPhyDat(characters[test], tree$tip.label)
-    morphyObj <- PhyDat2Morphy(phy)
+    morphyObj <- SingleCharMorphy(characters[test])
     tree_length <- MorphyTreeLength(tree, morphyObj)
     #if (tree_length != expected_results[test]) cat("Test case", test - 1, characters[test], "unequal: Morphy calcluates",
     #  tree_length, "instead of", expected_results[test],"\n")
