@@ -2,9 +2,13 @@
 % Please edit documentation in R/Bootstrap.R
 \name{MorphyBootstrap}
 \alias{MorphyBootstrap}
-\title{Bootstrap tree search with inapplicable data}
+\alias{ProfileBootstrap}
+\title{Ratchet bootstrapper}
 \usage{
 MorphyBootstrap(edgeList, morphyObj, EdgeSwapper = NNISwap, maxIter, maxHits,
+  verbosity = 1L, ...)
+
+ProfileBootstrap(edgeList, dataset, EdgeSwapper = NNISwap, maxIter, maxHits,
   verbosity = 1L, ...)
 }
 \arguments{
@@ -33,5 +37,10 @@ more verbose feedback to the user.}
 A tree that is optimal under a random sampling of the original characters
 }
 \description{
-Bootstrap tree search with inapplicable data
+Ratchet bootstrapper
 }
+\section{Functions}{
+\itemize{
+\item \code{ProfileBootstrap}: Bootstrapper for Profile Parsimony
+}}
+

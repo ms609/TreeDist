@@ -2,6 +2,7 @@
 % Please edit documentation in R/Ratchet.R, R/mpl_tree_search.R
 \name{Ratchet}
 \alias{Ratchet}
+\alias{ProfileRatchet}
 \alias{RatchetConsensus}
 \title{Parsimony Ratchet}
 \usage{
@@ -12,6 +13,12 @@ Ratchet(tree, dataset, InitializeData = PhyDat2Morphy,
   stopAtScore = NULL, ratchIter = 100, ratchHits = 10,
   searchIter = 2000, searchHits = 40, bootstrapIter = searchIter,
   bootstrapHits = searchHits, verbosity = 1L, suboptimal = 1e-08, ...)
+
+ProfileRatchet(tree, dataset, swappers = list(TBRSwap, SPRSwap, NNISwap),
+  BootstrapSwapper = swappers[[1]], returnAll = FALSE, stopAtScore = NULL,
+  ratchIter = 100, ratchHits = 10, searchIter = 2000, searchHits = 40,
+  bootstrapIter = searchIter, bootstrapHits = searchHits, verbosity = 1L,
+  suboptimal = 1e-08, ...)
 
 RatchetConsensus(tree, dataset, ratchHits = 10, searchIter = 500,
   searchHits = 20, verbosity = 0L, swappers = list(RootedNNISwap),
@@ -77,6 +84,8 @@ This function returns a tree modified by parsimony ratchet iterations.
 }
 \section{Functions}{
 \itemize{
+\item \code{ProfileRatchet}: Shortcut for Ratchet search under Profile Parsimony
+
 \item \code{RatchetConsensus}: returns a list of optimal trees produced by nSearch Ratchet searches
 }}
 
