@@ -10,6 +10,7 @@
 #' @param Bootstrapper Function to perform bootstrapped rearrangements of tree. 
 #'                     First arguments will be an edgeList and a dataset, initialized using \code{InitializeData}
 #'                     Should return a rearranged edgeList.
+#' @template swappersParam
 #' @param BootstrapSwapper Function such as \code{\link{RootedNNISwap}} to use to rearrange trees
 #'                         within \code{Bootstrapper}.
 #' @param returnAll Set to \code{TRUE} to report all MPTs encountered during the search, perhaps to analyze consensus.
@@ -155,7 +156,7 @@ Ratchet <- function (tree, dataset,
 #' @export
 ProfileRatchet <- function (tree, dataset,
                swappers = list(TBRSwap, SPRSwap, NNISwap),
-               BootstrapSwapper = swappers[[1]],
+               BootstrapSwapper = swappers[[length(swappers)]],
                returnAll=FALSE, stopAtScore=NULL,
                ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
                bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=1L, 
