@@ -76,9 +76,9 @@ data('Lobo')
 njtree <- NJTree(Lobo.phy)
 
 \dontrun{
-TreeSearch(njtree, Lobo.phy, maxIter=20, Rearrange=NNI)
-TreeSearch(njtree, Lobo.phy, maxIter=20, Rearrange=SPR)
-TreeSearch(njtree, Lobo.phy, maxIter=20, Rearrange=TBR)}
+TreeSearch(njtree, Lobo.phy, maxIter=20, EdgeSwapper=NNISwap)
+TreeSearch(njtree, Lobo.phy, maxIter=20, EdgeSwapper=RootedSPRSwap)
+TreeSearch(njtree, Lobo.phy, maxIter=20, EdgeSwapper=TBRSwap)}
 
 }
 \seealso{
