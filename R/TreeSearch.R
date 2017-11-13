@@ -7,7 +7,6 @@
 EdgeListSearch <- function (edgeList, dataset,
                           TreeScorer = MorphyLength,
                           EdgeSwapper = RootedTBRSwap,
-                          #morphyObj, 
                           maxIter=100, maxHits=20, 
                           bestScore=NULL,
                           stopAtScore=NULL, forestSize=1L, 
