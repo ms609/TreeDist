@@ -5,19 +5,20 @@
 #' @template treeChild
 #' @param dataset Third argument to pass to \code{TreeScorer}.
 #' @template TreeScorerParam
-#' @param inputScore double giving score of input tree.
+#' @param scoreToBeat Double giving score of input tree.
 #' @param hits Integer giving number of times the input tree has already been hit.
 #' @template EdgeSwapperParam
-#' @param  minScore trees longer than \code{minScore}, probably the score of the starting tree,
+#' @param  minScore trees longer than \code{minScore}, probably the score of the best previously known tree,
 #'     will be discarded;
-#' @param returnSingle returns all trees if \kbd{FALSE} or a randomly selected tree if \kbd{TRUE}.
+##' @param returnSingle returns all trees if \kbd{FALSE} or a randomly selected tree if \kbd{TRUE}.
 #' @param iter iteration number of calling function, for reporting to user only.
-#' @template clusterParam
+##' @template clusterParam
 #' @template verbosityParam
 #' @template treeScorerDots
 #'
 #' @author Martin R. Smith
 #'
+#' @template returnEdgeList
 #' 
 #' @examples
 #' data('Lobo')
@@ -25,46 +26,27 @@
 #' RearrangeTree(random.tree, dataset=Lobo.phy, Rearrange=RootedNNI)
 #' 
 #' @export
-RearrangeEdges <- function (parent, child, dataset, TreeScorer, inputScore=1e+07, hits=0L, 
-                             EdgeSwapper, minScore=NULL, returnSingle=TRUE,
-                             iter='?', cluster=NULL, verbosity=0L, ...) {
-  bestScore <- inputScore
-  if (is.null(cluster)) {
-    rearrangedEdges <- EdgeSwapper(parent, child) # TODO we probably want to get ALL trees 1 REARRANGE step away
-    edgeLists <- list(rearrangedEdges)
-    minScore <- TreeScorer(rearrangedEdges[[1]], rearrangedEdges[[2]], dataset)
-    bestTrees <- c(TRUE)
+RearrangeEdges <- function (parent, child, dataset, TreeScorer, scoreToBeat=TreeScorer(parent, child, dataset),
+                            hits=0L, EdgeSwapper, iter='?', verbosity=0L, ...) {
+  eps <- 1e-08
+  rearrangedEdges <- EdgeSwapper(parent, child) 
+  # TODO we probably want to get ALL trees 1 REARRANGE step away
+  # One benefit of this is that if NONE of these trees are as good or better, we can give up immediately, 
+  # as there's no way out of this local optimum.
+  candidateScore <- TreeScorer(rearrangedEdges[[1]], rearrangedEdges[[2]], dataset)
+  if (candidateScore > scoreToBeat + eps) {
+    if (verbosity > 3L) cat("\n    . Iteration", iter, '- Previous score', scoreToBeat, ">", candidateScore)
+    return (list(parent, child, scoreToBeat, hits)) # Send back original tree
+  } else if (candidateScore + eps > scoreToBeat) { # i.e. scores are equal
+    hits <- hits + 1L
+    if (verbosity > 2L) cat("\n    - Iteration", iter, "- Best score", scoreToBeat, "hit", hits, "times")
   } else {
-    stop("Cluster not implemented.")
-    # candidates <- clusterCall(cluster, function(re, tr, k) {ret <- re(tr); attr(ret, 'score') <- Fitch(ret, cl.data, k); ret}, rearrange, tree, concavity)
-    # scores <- vapply(candidates, function(x) attr(x, 'ps'), 1)
-    # candidates <- lapply(seq_along(cl), function (x) Rearrange(tree)) # TODO don't pick the same tree twice
-    # warning("Not tested; likely to fail.")
-    # 
-    # scores <- parLapply(cluster, seq_along(cluster), function (i) MorphyTreeLength(candidates[[i]], morphyObj[[i]])) # ~3x faster to do this in serial in r233.
-    # minScore <- min(scores)
-    # bestTrees <- scores == minScore
-    # trees <- candidates[bestTrees]
+    hits <- 1L
+    if (verbosity > 1L) cat("\n    * Iteration", iter, "- New best score", candidateScore, "found on", hits, "trees")
   }
-  if (bestScore < minScore) {
-    if (verbosity > 3L) cat("\n    . Iteration", iter, '- Min score', minScore, ">", bestScore)
-  } else if (bestScore == minScore) {
-    hits <- hits + sum(bestTrees)
-    if (verbosity > 2L) cat("\n    - Iteration", iter, "- Best score", minScore, "hit", hits, "times")
-  } else {
-    hits <- sum(bestTrees)
-    if (verbosity > 1L) cat("\n    * Iteration", iter, "- New best score", minScore, "found on", hits, "trees")
-  }
-  if (length(returnSingle) && returnSingle) {
-    ret <- sample(edgeLists, 1)[[1]]
-    ret[3:4] <- c(minScore, hits)
-    # Return:
-    ret 
-    # It's faster not to call return().
-  } else {
-    # Return:
-    lapply(edgeLists, function (x) x[3:4] <- c(minScore, hits))
-  }
+  rearrangedEdges[3:4] <- c(candidateScore, hits)
+  # Return:
+  rearrangedEdges
 }
 
 #' neworder_phylo
