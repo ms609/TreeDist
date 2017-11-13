@@ -144,6 +144,30 @@ Ratchet <- function (tree, dataset,
     tree$edge <- ListToMatrix(edgeList)
     attr(tree, 'score') <- bestScore
     # Return:
-    tree
+    tree  
   }
+}
+
+#' @describeIn Ratchet Shortcut for Ratchet search under Profile Parsimony
+#' @export
+ProfileRatchet(tree, dataset,             
+               swappers = list(TBRSwap, SPRSwap, NNISwap),
+               BootstrapSwapper = swappers[[1]],
+               returnAll=FALSE, stopAtScore=NULL,
+               ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
+               bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=1L, 
+               suboptimal=1e-08, ...) {
+  Ratchet(tree=tree, dataset=dataset,
+    InitializeData=ProfileInitMorphy, 
+    TreeScorer=ProfileScoreMorphy, 
+    CleanUpData=ProfileDestroyMorphy,
+    Bootstrapper=ProfileBootstrap,
+                     swappers = swappers
+                     BootstrapSwapper = BootstrapSwapper,
+                     returnAll=returnAll, stopAtScore=stopAtScore,
+                     ratchIter=ratchIter, ratchHits=ratchHits,
+                     searchIter=searchIter, searchHits=searchHits,
+                     bootstrapIter=searchIter, bootstrapHits=bootstrapHits, 
+                     verbosity=verbosity, 
+                     suboptimal=suboptimal, ...)
 }
