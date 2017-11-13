@@ -1,6 +1,6 @@
-#' @title String to phyDat
+#' String to phyDat
 #'
-#' @description Converts a PhyDat object to allow processing by MorphyDat
+#' Converts a PhyDat object to allow processing by MorphyDat
 #'
 #' @param string a string of tokens, optionally containing whitespace, with no terminating semi-colon.  Polytomies not (yet) supported; each character must correspond to a unique state, ?, or the inapplicable token (-)
 #' @param tips, a character vector corresponding to the names (in order) of each taxon in the matrix
