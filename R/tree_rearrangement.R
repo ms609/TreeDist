@@ -36,7 +36,7 @@ RearrangeEdges <- function (parent, child, dataset, TreeScorer, inputScore=1e+07
     bestTrees <- c(TRUE)
   } else {
     stop("Cluster not implemented.")
-    # candidates <- clusterCall(cluster, function(re, tr, k) {ret <- re(tr); attr(ret, 'score') <- InapplicableFitch(ret, cl.data, k); ret}, rearrange, tree, concavity)
+    # candidates <- clusterCall(cluster, function(re, tr, k) {ret <- re(tr); attr(ret, 'score') <- Fitch(ret, cl.data, k); ret}, rearrange, tree, concavity)
     # scores <- vapply(candidates, function(x) attr(x, 'ps'), 1)
     # candidates <- lapply(seq_along(cl), function (x) Rearrange(tree)) # TODO don't pick the same tree twice
     # warning("Not tested; likely to fail.")

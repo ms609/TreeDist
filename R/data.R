@@ -11,7 +11,7 @@
 #' @keywords datasets
 #' @template inapplicableSources
 #'
-#' @template studyReference
+#' @template bgsReference
 "inapplicable.datasets"
 
 #' Thirty Datasets with Inapplicable data
@@ -26,7 +26,7 @@
 #'
 #' @template inapplicableSources
 #'
-#' @template studyReference
+#' @template bgsReference
 #'
 #' @keywords datasets
 "inapplicable.phyData"
@@ -40,7 +40,7 @@
 #'
 #' @template inapplicableSources
 #'
-#' @template studyReference
+#' @template bgsReference
 #'
 #' @keywords datasets
 "inapplicable.citations"

@@ -4,18 +4,23 @@
 \alias{PhyToString}
 \title{Extract character data from a phyDat object as a string}
 \usage{
-PhyToString(phy, ps = "", useIndex = TRUE, byTaxon = TRUE)
+PhyToString(phy, ps = "", useIndex = TRUE, byTaxon = TRUE,
+  concatenate = TRUE)
 }
 \arguments{
-\item{phy}{an object of class \code{\link{phyDat}}}
+\item{phy}{An object of class \code{\link{phyDat}}}
 
-\item{ps}{text, perhaps ';', to append to the end of the string}
+\item{ps}{Character specifying text, perhaps ';', to append to the end of the string}
 
 \item{useIndex}{(default: TRUE) Print duplicate characters multiple 
 times, as they appeared in the original matrix}
 
 \item{byTaxon}{If TRUE, write one taxon followed by the next.
-If FALSE, write one character followed by the next}
+If FALSE, write one character followed by the next.}
+
+\item{concatenate}{Logical specifying whether to concatenate all characters/taxa
+into a single string, or to return a separate string
+for each entry.}
 }
 \description{
 Extract character data from a phyDat object as a string

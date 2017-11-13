@@ -7,22 +7,22 @@ test_that("Profile parsimony works in tree search", {
   
   set.seed(0)
   rTree <- randomTree <- RandomTree(dataset, '1')
-  expect_equal(FitchScore(rTree, readyData, TipsAreColumns), FitchScore(rTree, dataset, TipsAreNames))
-  expect_equal(90, FitchScore(referenceTree, dataset, TipsAreNames))
-  expect_equal(90, FitchScore(referenceTree, readyData, TipsAreColumns))
+  expect_equal(Fitch(rTree, readyData, TipsAreColumns), Fitch(rTree, dataset, TipsAreNames))
+  expect_equal(90, Fitch(referenceTree, dataset, TipsAreNames))
+  expect_equal(90, Fitch(referenceTree, readyData, TipsAreColumns))
   
   expect_true(ProfileScore(rTree, readyData) > ProfileScore(referenceTree, readyData))
 
   quickTS <- TreeSearch(rTree, dataset, TreeScorer=MorphyLength, EdgeSwapper=NNISwap, 
                         maxIter=10000, maxHits=40, verbosity=0)
   expect_equal(42, attr(quickTS, 'score'))
-  quickFitch <- Ratchet(rTree, dataset, TreeScorer = FitchScore, suboptimal=max(PP_SUBOPTIMAL_VALUES),
+  quickFitch <- Ratchet(rTree, dataset, TreeScorer = MorphyLength, suboptimal=2,
                         ratchHits=3, searchHits=15, searchIter=500, ratchIter=500,
-                        rearrangements='TBR', verbosity=-1)
+                        verbosity=0L)
   expect_equal(42, attr(quickFitch, 'score'))
                    
   quick <- Ratchet(rTree, readyData, TreeScorer = ProfileScore, returnAll = FALSE, rooted=TRUE,
                    ratchHits=5, searchHits=30, searchIter=100, ratchIter=50,
-                   rearrangements='TBR', verbosity=-1)
+                   verbosity=0L)
   expect_equal(quick, quickFitch)
 })

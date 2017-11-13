@@ -295,7 +295,7 @@ LogisticPoints <- function (x, fittedModel) {
 #' @importFrom stats nls
 #' @export
 Evaluate <- function (tree, dataset, warn=TRUE) {
-  totalSteps <- Fitch(tree, dataset, FitchFunction = C_Fitch_Steps)
+  totalSteps <- Fitch(tree, dataset)
   chars <- matrix(unlist(dataset), attr(dataset, 'nr'))
   ambiguousToken <- which(attr(dataset, 'allLevels') == "?")
   as.splits <- apply(chars, 1, function (x) {

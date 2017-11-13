@@ -48,7 +48,7 @@ SuccessiveApproximations <- function (tree, dataset, outgroup = NULL, k = 3, max
     bestsConsensus[[i]] <- consensus(trees[suboptimality == 0])
     if (all.equal(bestsConsensus[[i]], bestsConsensus[[i - 1]])) return(bests[2:i])
     best <- trees[suboptimality == 0][[1]]
-    l.i <- Fitch(best, dataset)
+    l.i <- FitchSteps(best, dataset)
     p.i <- l.i / (n.node - 1)
     w.i <- ((p.i)^-k) - 1
     attr(dataset, 'sa.weights') <- w.i
@@ -95,7 +95,7 @@ SuccessiveWeights <- function(tree, dataset) {
   weight <- at$weight
   sa.weights <- at$sa.weights
   if (is.null(sa.weights)) sa.weights <- rep(1, length(weight))
-  steps <- Fitch(tree, dataset, at)
+  steps <- FitchSteps(tree, dataset, at)
   return(sum(steps * sa.weights * weight))
 }
 

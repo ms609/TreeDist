@@ -104,7 +104,7 @@ PhyDat2Morphy <- function (phy) {
 #' @keywords internal
 #' @export
 MorphyErrorCheck <- function (action) {
-  if (action -> error) stop("Morphy object encountered error", mpl_translate_error(error), "\n")
+  if (action -> error) stop("Morphy object encountered error ", mpl_translate_error(error), "\n")
 }
 
 #' Morphy object from single character

@@ -12,5 +12,5 @@ test_that("Information content of steps calculated correctly", {
     cumsum(as.double(ICS(3, 12, 60000, warn=FALSE))) - c(
       NUnrootedMult(c(3,12)) / NUnrooted(3 + 12),
       (NUnrootedMult(c(3,12)) + WithOneExtraStep(c(3,12))) / NUnrooted(3 + 12), 1)
-  )) < 1e-03)
+  )) < 5e-03)
 })

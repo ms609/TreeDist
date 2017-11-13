@@ -8,24 +8,24 @@ test_that("tree search finds shortest tree", {
   dataset <- StringToPhyDat('110000 111000 111100', 1:6, byTaxon=FALSE)
   expect_error(TreeSearch(malformed_tree, dataset))
   start_tree <- RenumberTips(read.tree(text = "(((1, 6), 3), (2, (4, 5)));"), true_tree$tip.label)
-  expect_equal(InapplicableFitch(start_tree, dataset), 6)
+  expect_equal(Fitch(start_tree, dataset), 6)
   morphyObj <- PhyDat2Morphy(dataset)
   on.exit(morphyObj <- UnloadMorphy(morphyObj))
   
   expect_equal(3, attr(TreeSearch(start_tree, dataset, EdgeSwapper=NNISwap, verbosity=0), 'score'),
-               InapplicableFitch(true_tree, dataset))
+               Fitch(true_tree, dataset))
   expect_equal(3, attr(TreeSearch(start_tree, dataset, EdgeSwapper=SPRSwap, verbosity=-1), 'score'),
-               InapplicableFitch(true_tree, dataset))
+               Fitch(true_tree, dataset))
   expect_equal(3, attr(TreeSearch(start_tree, dataset, EdgeSwapper=TBRSwap, verbosity=-1), 'score'),
-               InapplicableFitch(true_tree, dataset))
+               Fitch(true_tree, dataset))
   expect_equal(3, attr(TreeSearch(start_tree, dataset, EdgeSwapper=RootedNNISwap, verbosity=-1), 'score'),
-               InapplicableFitch(true_tree, dataset))
+               Fitch(true_tree, dataset))
   expect_equal(3, attr(TreeSearch(start_tree, dataset, EdgeSwapper=RootedSPRSwap, verbosity=-1), 'score'),
-               InapplicableFitch(true_tree, dataset))
+               Fitch(true_tree, dataset))
   expect_equal(3, attr(TreeSearch(start_tree, dataset, EdgeSwapper=RootedTBRSwap, verbosity=-1), 'score'),
-               InapplicableFitch(true_tree, dataset))
+               Fitch(true_tree, dataset))
   ratchetScore <- attr(Ratchet(start_tree, dataset, 
                   swappers=list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap),
                   ratchIter=3, searchHits=5, verbosity=0), 'score')
-  expect_equal(3, InapplicableFitch(true_tree, dataset), ratchetScore)
+  expect_equal(3, Fitch(true_tree, dataset), ratchetScore)
 })
