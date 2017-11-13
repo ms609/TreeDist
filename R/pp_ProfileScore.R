@@ -66,7 +66,9 @@ ProfileScoreMorphy <- function (parent, child, dataset) {
 #' @describeIn ProfileScore Initialize dataset by adding morphyObjs.
 #' @export
 ProfileInitMorphy <- function (dataset) {
-  attr(dataset, 'morphyObjs') <- apply(dataset, 1, SingleCharMorphy)
+  attr(dataset, 'morphyObjs') <- 
+    lapply(PhyToString(dataset, byTaxon=FALSE, useIndex=FALSE, concatenate=FALSE), 
+           SingleCharMorphy)
   # Return:
   dataset
 }
