@@ -15,7 +15,7 @@ MorphyWith <- function (char) {
 }
 
 
-context("Test tree randomness")
+context("Profile Parsimony: Test tree randomness")
 test_that("four-tip trees are randomly distributed", {
   nTrees <- 36000
   stringency <- 0.005 # low numbers mean you'll rarely fail by chance
