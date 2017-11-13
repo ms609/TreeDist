@@ -57,8 +57,8 @@ FitchSteps <- function (tree, dataset, at=NULL) {
   if (class(dataset) == 'phyDat') {
     characters <- PhyToString(dataset, ps='', useIndex=FALSE, byTaxon=FALSE, concatenate=FALSE)
     morphyObjects <- lapply(characters, SingleCharMorphy)
-  } else {
-    attr(dataset, 'morphyObjs') <- apply(dataset, 1, SingleCharMorphy)
+  } else if (class(dataset) == 'profileDat') {
+    morphyObjects <- ProfileToString(dataset, ps='', useIndex=FALSE, byTaxon=FALSE, concatenate=FALSE)
     
   }
 }

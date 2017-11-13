@@ -361,6 +361,8 @@ InfoAmounts <- function (dataset, precision=1e+06, warn=TRUE) {
   } else {
     cbind(dataset[seq_len(dataNr), ], matrix(c(1, 2), nrow=dataNr, ncol=2, byrow=TRUE))
   }
+  if (length(unique(as.integer(chars))) > 2) stop ("Cannot calculate information amouts for",
+        "characters unless only tokens are 1 and 2. See ?InfoAmounts.")
   splits <- apply(chars, 1, table) - 1
   infoLosses <- apply(splits, 2, ICPerStep, maxIter=precision, warn=warn)
   

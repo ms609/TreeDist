@@ -27,6 +27,37 @@ StringToPhyDat <- StringToPhydat <- function (string, tips, byTaxon = TRUE) {
   phy
 }
 
+
+#' @param phyByTaxon a phyDat object or other list of character values, a taxon at a time
+ConvertToString <- function (phyByTaxon, phyLevels, phyChars, phyContrast, phyIndex,
+                             ps, byTaxon, concatenate) {
+  outLevels <- seq_len(ncol(phyContrast)) - 1
+  if (any(inappLevel <- phyLevels == '-')) outLevels[which(phyContrast[inappLevel])] <- '-'
+  levelLengths <- vapply(outLevels, nchar, integer(1))
+  longLevels <- levelLengths > 1
+  if (any(longLevels)) {
+    if ('10' %in% outLevels && !(0 %in% outLevels)) {
+      outLevels[outLevels == '10'] <- '0'
+      longLevels['10'] <- FALSE
+    }
+    outLevels[longLevels] <- LETTERS[seq_len(sum(longLevels))]
+  }
+  levelTranslation <- apply(phyContrast, 1, function (x)
+    ifelse(sum(x) == 1, as.character(outLevels[x]), paste0(c('{', outLevels[x], '}'), collapse=''))
+  )
+  names(levelTranslation) <- apply(phyContrast, 1, function (x) sum(2^(seq_along(x) - 1)[x]))
+  if (any(ambigToken <- apply(phyContrast, 1, all))) levelTranslation[ambigToken] <- '?'
+  ret <- vapply(phyByTaxon, function (x) levelTranslation[as.character(x[phyIndex])], character(length(phyIndex)))
+  if (!byTaxon) ret <- t(ret)
+  ret <- if (concatenate) {
+    paste0(c(ret, ps), collapse='')
+  } else {
+    paste0(apply(ret, 1, paste0, collapse=''), ps)
+  }
+  # Return:
+  ret
+}
+
 #' Extract character data from a phyDat object as a string
 #' 
 #' 
@@ -45,26 +76,25 @@ StringToPhyDat <- StringToPhydat <- function (string, tips, byTaxon = TRUE) {
 #' @export
 PhyToString <- function (phy, ps='', useIndex=TRUE, byTaxon=TRUE, concatenate=TRUE) {
   at <- attributes(phy)
-  phyLevels <- at$allLevels
-  phyChars <- at$nr
-  phyContrast <- at$contrast == 1
-  phyIndex <- if (useIndex) at$index else seq_len(phyChars)
-  outLevels <- seq_len(ncol(phyContrast)) - 1
-  if (any(inappLevel <- phyLevels == '-')) outLevels[which(phyContrast[inappLevel])] <- '-'
-  levelTranslation <- apply(phyContrast, 1, function (x)
-    ifelse(sum(x) == 1, as.character(outLevels[x]), paste0(c('{', outLevels[x], '}'), collapse=''))
-  )
-  if (any(ambigToken <- apply(phyContrast, 1, all))) levelTranslation[ambigToken] <- '?'
-  ret <- vapply(phy, function (x) levelTranslation[x[phyIndex]], character(length(phyIndex)))
-  if (!byTaxon) ret <- t(ret)
-  ret <- if (concatenate) {
-    paste0(c(ret, ps), collapse='')
-  } else {
-    paste0(apply(ret, 1, paste0, collapse=''), ps)
-  }
   # Return:
-  ret
+  ConvertToString(phyByTaxon = phy, phyLevels = at$allLevels, phyChars = at$nr, 
+    phyContrast = at$contrast == 1,
+    phyIndex = if (useIndex) at$index else seq_len(phyChars),
+    ps = ps, byTaxon = byTaxon, concatenate = concatenate)
 }
+
+#' @describeIn PhyToString Convert from profileDat object.
+#' @export
+ProfileToString <- function (dataset, ps='', useIndex=TRUE, byTaxon=TRUE, concatenate=TRUE) {
+  at <- attributes(dataset)
+  # Return:
+  ConvertToString(phyByTaxon = lapply(seq_len(ncol(dataset)), function(i) dataset[, i]),
+    phyLevels = at$allLevels, phyChars = at$nr,
+    phyContrast = at$contrast == 1,
+    phyIndex = if (useIndex) at$index else seq_len(phyChars),
+    ps = ps, byTaxon = byTaxon, concatenate = concatenate)
+}
+
 
 #' @name AsBinary
 #' @aliases AsBinary
