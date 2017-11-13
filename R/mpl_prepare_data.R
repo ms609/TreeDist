@@ -27,8 +27,10 @@ StringToPhyDat <- StringToPhydat <- function (string, tips, byTaxon = TRUE) {
   phy
 }
 
-
+#' @describeIn PhyToString Generic underlying function
 #' @param phyByTaxon a phyDat object or other list of character values, a taxon at a time
+#' @keywords internal
+#' @export
 ConvertToString <- function (phyByTaxon, phyLevels, phyChars, phyContrast, phyIndex,
                              ps, byTaxon, concatenate) {
   outLevels <- seq_len(ncol(phyContrast)) - 1
