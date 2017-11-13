@@ -1,3 +1,82 @@
+#' @describeIn TreeSearch Tree Search from Edge lists
+#' @template edgeListParam
+#' @template dataForFunction
+#' @author Martin R. Smith
+#' @keywords internal
+#' @export
+EdgeListSearch <- function (edgeList, dataset,
+                          TreeScorer = MorphyLength,
+                          EdgeSwapper = RootedTBRSwap,
+                          #morphyObj, 
+                          maxIter=100, maxHits=20, 
+                          bestScore=NULL,
+                          stopAtScore=NULL, forestSize=1L, 
+                          cluster=NULL, verbosity=1L, ...) {
+  epsilon <- 1e-07                        
+  if (!is.null(forestSize) && length(forestSize)) {
+    if (forestSize > 1L) {
+      stop("TODO: Forests not supported")
+      #### forest <- empty.forest <- vector('list', forestSize)
+      #### forest[[1]] <- edgeList
+    } else {
+      forestSize <- 1L
+    }
+  }
+  if (is.null(bestScore)) {
+    if (length(edgeList) < 3L) {
+      bestScore <- TreeScorer(edgeList[[1]], edgeList[[2]], dataset)
+    } else {
+      bestScore <- edgeList[[3]]
+    }
+  }
+  if (verbosity > 0L) cat("\n  - Performing tree search.  Initial score:", bestScore)
+  if (!is.null(stopAtScore) && bestScore < stopAtScore + epsilon) return(edgeList)
+  returnSingle <- !(forestSize > 1L)
+  hits <- 0L
+  
+  for (iter in 1:maxIter) {
+    candidateLists <- RearrangeEdges(edgeList[[1]], edgeList[[2]], dataset=dataset, 
+                             TreeScorer=TreeScorer, hits=hits, inputScore=bestScore,
+                             EdgeSwapper=EdgeSwapper, minScore=bestScore,
+                             returnSingle=returnSingle, iter=iter,
+                             verbosity=verbosity, ...)
+    scoreThisIteration <- candidateLists[[3]]
+    hits <- candidateLists[[4]]
+    if (forestSize > 1L) {
+      stop("TODO re-code this")
+      ###if (scoreThisIteration == bestScore) {
+      ###  forest[(hits-length(candidateLists)+1L):hits] <- candidateLists ## TODO Check that length still holds
+      ###  edgeList  <- sample(forest[1:hits], 1)[[1]]
+      ###  bestScore <- scoreThisIteration
+      ###  hits      <- hits + 1L
+      ###} else if (scoreThisIteration < bestScore) {
+      ###  bestScore <- scoreThisIteration
+      ###  forest <- empty.forest
+      ###  forest[1:hits] <- candidateLists
+      ###  edgeList <- sample(candidateLists , 1)[[1]]
+      ###  attr(edgeList, 'score') <- scoreThisIteration
+      ###}
+    } else {
+      if (scoreThisIteration < bestScore + epsilon) {
+        bestScore <- scoreThisIteration
+        edgeList  <- candidateLists
+        if (!is.null(stopAtScore) && bestScore < stopAtScore + epsilon) return(edgeList)
+      }
+    }
+    if (hits >= maxHits) break
+  }
+  if (verbosity > 0L) cat("\n  - Final score", bestScore, "found", hits, "times after", iter, "rearrangements\n")  
+  if (forestSize > 1L) {
+    if (hits < forestSize) forest <- forest[-((hits+1):forestSize)]
+    attr(forest, 'hits') <- hits
+    attr(forest, 'score') <- bestScore
+    return (unique(forest))
+  } else {
+    edgeList[3:4] <- c(bestScore, hits)
+    return(edgeList)
+  }
+}
+
 #' Search for most parsimonious trees
 #'
 #' Run standard search algorithms (\acronym{NNI}, \acronym{SPR} or \acronym{TBR}) 
@@ -68,6 +147,5 @@ TreeSearch <- function (tree, dataset,
   attr(tree, 'score') <- edgeList[[3]]
   attr(tree, 'hits') <- edgeList[[4]]
   # Return:
-  tree
-  
+  tree 
 }
