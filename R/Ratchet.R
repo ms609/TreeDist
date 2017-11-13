@@ -44,10 +44,11 @@ Ratchet <- function (tree, dataset,
                      TreeScorer     = MorphyLength,
                      Bootstrapper   = MorphyBootstrap,
                      swappers = list(TBRSwap, SPRSwap, NNISwap),
-                     BootstrapSwapper = swappers[[1]],
+                     BootstrapSwapper = swappers[[length(swappers)]],
                      returnAll=FALSE, stopAtScore=NULL,
                      ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
-                     bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=1L, 
+                     bootstrapIter=ceiling(searchIter/5), bootstrapHits=ceiling(searchHits/5),
+                     verbosity=1L, 
                      suboptimal=1e-08, ...) {
   epsilon <- 1e-08
   hits <- 0L
@@ -88,6 +89,7 @@ Ratchet <- function (tree, dataset,
                                   EdgeSwapper=EdgeSwapper, maxIter=searchIter, maxHits=searchHits,
                                   verbosity=verbosity-2L, ...)                                  
       candScore <- candidate[[3]]
+      if (!is.null(stopAtScore) && candScore < stopAtScore + epsilon) break;
     }
     
     if (verbosity > 2L) cat("\n - Rearranged candidate tree scored ", candScore)
