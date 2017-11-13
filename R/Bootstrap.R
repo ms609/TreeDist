@@ -1,4 +1,4 @@
-#' Bootstrap tree search with inapplicable data
+#' Ratchet bootstrapper
 #' 
 #' @template edgeListParam
 #' @template morphyObjParam
@@ -10,7 +10,6 @@
 #'
 #' @return A tree that is optimal under a random sampling of the original characters
 #' @export
-## TODO Generalize this function
 MorphyBootstrap <- function (edgeList, morphyObj, EdgeSwapper = NNISwap, 
                              maxIter, maxHits, verbosity=1L, ...) {
   startWeights <- MorphyWeights(morphyObj)[1, ]
@@ -26,5 +25,28 @@ MorphyBootstrap <- function (edgeList, morphyObj, EdgeSwapper = NNISwap,
          mpl_set_charac_weight(i, startWeights[i], morphyObj), integer(1))
   if (any(errors)) stop ("Error resampling morphy object: ", mpl_translate_error(unique(errors[errors < 0L])))
   if (mpl_apply_tipdata(morphyObj) -> error) stop("Error applying tip data: ", mpl_translate_error(error))
+  res[1:2]
+}
+
+#' @describeIn MorphyBootstrap Bootstrapper for Profile Parsimony
+#' @export
+ProfileBootstrap <- function (edgeList, dataset, EdgeSwapper = NNISwap, 
+                             maxIter, maxHits, verbosity=1L, ...) {
+  att <- attributes(dataset)
+  startWeights <- att[['weight']]
+  eachChar <- seq_along(startWeights)
+  deindexedChars <- rep(eachChar, startWeights)
+  resampling <- tabulate(sample(deindexedChars, replace=TRUE), length(startWeights))
+  sampled <- resampling != 0
+  sampledData <- lapply(dataset, function (x) x[sampled])
+  sampledAtt <- att
+  sampledAtt[['index']] <- rep(seq_len(sum(sampled)), resampling[sampled])
+  sampledAtt[['info.amounts']] <- att[['info.amounts']][, sampled]
+  sampledAtt[['morphyObjs']] <- att[['morphyObjs']][sampled]
+  attributes(sampledData) <- sampledAtt
+  
+  res <- EdgeListSearch(edgeList, sampledData, TreeScorer=ProfileScoreMorphy,
+      EdgeSwapper=EdgeSwapper, maxIter=maxIter, maxHits=maxHits, verbosity=verbosity-1L, ...)
+  
   res[1:2]
 }
