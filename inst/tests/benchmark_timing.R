@@ -1,4 +1,4 @@
-data(inapplicable.datasets)
+data('inapplicable.datasets')
 scores <- c(
 "Agnarsson2004" =  778 , # 0.044 mins             
 "Aguado2009" =     579 , # 4.979             
