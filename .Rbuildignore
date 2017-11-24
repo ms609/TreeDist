@@ -5,3 +5,5 @@ man-roxygen
 ^.*\.o$
 ^.*\.dll$
 ^.*\.yml$
+^.*\.Rproj$
+^\.Rproj\.user$
