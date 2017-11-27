@@ -6,7 +6,7 @@
 [![Project Status: Active – – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 
 # TreeSearch
-This package exists to allow parsiomony-style tree searches in R.
+This package exists to allow parsimony-style tree searches in R.
 
 It extends the basic functionality available in phangorn, with a view to making tree search faster and more efficient, 
 and allowing user-defined optimality criteria to be employed.
