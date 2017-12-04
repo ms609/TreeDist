@@ -57,7 +57,7 @@ This dataset is small enough that it runs reasonably quickly, but its phylogenet
 signal is obscure enough that it can require Ratchet searches to escape from local optima.
 
 ```{r Load data}
-data(inapplicable.datasets)
+data('inapplicable.datasets')
 my.data <- inapplicable.datasets[['Vinther2008']]
 my.phyDat <- phangorn::phyDat(my.data, type='USER', levels=c(0:9, '-'))
 ```

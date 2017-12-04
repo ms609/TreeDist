@@ -13,7 +13,6 @@ r_binary_packages:
  - testthat
   
 r_packages:
- - ape
  - covr
  - devtools
  - memoise
@@ -27,3 +26,4 @@ before_script:
   
 after_success:
   - Rscript -e "covr::codecov()"
+  
