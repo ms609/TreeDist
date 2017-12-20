@@ -14,14 +14,15 @@ vignette: >
 
 # Installation
 ## Simple installation
-To use `TreeSearch` you will first need to [install R](https://cloud.r-project.org/).
+To use `TreeSearch` you will first need to [install R](https://cloud.r-project.org/).  Many people like to 
+use [Rstudio](https://www.rstudio.com/) ([overview](https://dss.princeton.edu/training/RStudio101.pdf)), which is a front-end that makes several of R's features easier to use.
 
 The TreeSearch package can be installed as any other package. 
 To get the latest stable version from CRAN, type
 ```r
 install.packages('TreeSearch')
 ```
-into the R command line.  
+into the R (or Rstudio) command line.
 
 ## For advanced users
 To get the latest development version from GitHub, type

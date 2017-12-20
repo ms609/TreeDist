@@ -32,7 +32,8 @@ Imports:
 Suggests:
     knitr,
     rmarkdown,
-    testthat
+    testthat,
+    xlsx
 LazyData: true
 ByteCompile: true
 VignetteBuilder: knitr

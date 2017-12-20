@@ -10,33 +10,16 @@ vignette: >
 ---
 
 
-`TreeSearch` is an R package that allows, among other things, parsimony search on morphological datasets that contain
-inapplicable data, following the algorithm proposed by Brazeau, Guillerme and Smith (2017).
+`TreeSearch` is an R package that allows, among other things, parsimony search on
+morphological datasets that contain inapplicable data, following the algorithm proposed
+by Brazeau, Guillerme and Smith (2017).
 
 In brief, this algorithm modifies the Fitch algorithm to count the total number of homoplasious 
 events on a tree.
 
-# Installation
-The TreeSearch package can be installed as any other package. 
-To get the latest stable version from CRAN, type
-```r
-install.packages('TreeSearch')
-```
-into the R command line.  To get the latest development version from GitHub, it's
-```r
-if (!require('devtools')) install.packages('devtools')
-devtools::install_github('ms609/TreeSearch')
-```
-
-You'll probably need to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) before 
-you installing from the GitHub source code, which may be complicated.  
-
-If you do already have Rtools installed, then you 
-may wish to install a byte-compiled version of `ape` for additional speed:
-
-```r
-install.packages('ape', type='source', INSTALL_opts='--byte-compile')
-```
+# Getting started
+[A companion vignette](getting-started.html) gives details on installing the package
+and getting up and running.
 
 Once installed, load the inapplicable package into R using
 ```{r Load library}
@@ -46,13 +29,9 @@ library('TreeSearch')
 # Scoring a tree, and conducting a tree search
 
 Here's an example of using the package to conduct tree search.
-You can load your own dataset like so:
+You can (load your own dataset)[load-data.html], but for now, we'll use the 
+Vinther _et al._ dataset that comes bundled with the package.
 
-```r
-my.data <- ape::read.nexus.data('path/to/file')
-```
-
-But for now, we'll use the Vinther _et al._ dataset that's bundled with the package.
 This dataset is small enough that it runs reasonably quickly, but its phylogenetic
 signal is obscure enough that it can require Ratchet searches to escape from local optima.
 
