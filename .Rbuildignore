@@ -1,4 +1,4 @@
 man-roxygen
 cran-comments.md
 \.yml$
-*.Rdata
+\.Rdata$
