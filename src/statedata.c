@@ -154,8 +154,7 @@ int mpl_create_state_dictionary(Morphyp handl)
     int i           = 0;
     int gappush     = 0;
     int numsymbs    = handl->symbols.numstates;
-    char *symbols   = mpl_get_symbols((Morphy)handl);
-    assert(symbols);
+    mpl_get_symbols((Morphy)handl);
     
     if (!handl->symbols.packed) {
         

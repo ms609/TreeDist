@@ -719,14 +719,7 @@ int mpl_fitch_NA_local_reopt
     int steps       = 0;
     const int* indices  = part->charindices;
     int nchars          = part->ncharsinpart;
-    MPLstate* tgt1d1    = tgt1set->downpass1;
-    MPLstate* tgt2d1    = tgt2set->downpass1;
-    MPLstate* tgt1f     = tgt1set->uppass2;
-    MPLstate* tgt2f     = tgt2set->uppass2;
-    MPLstate* src       = srcset->downpass2; // TODO: Verify this.
-    
-    unsigned long* weights = part->intwts;
-    
+   
     for (i = 0; i < nchars; ++i) {
         
         j = indices[i];
