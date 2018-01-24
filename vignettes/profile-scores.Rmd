@@ -70,9 +70,7 @@ hist(info4 - info2)
 # References
 
 Congreve, C. R., & Lamsdell, J. C. (2016). \cite{Implied weighting and its utility in 
-  palaeontological datasets: a study using modelled phylogenetic matrices.} Palaeontology, 
-  online ahead of print. doi:10.1111/pala.12236
+  palaeontological datasets: a study using modelled phylogenetic matrices.} Palaeontology,59:447--462. doi:10.1111/pala.12236
 
-Congreve, C. R., & Lamsdell, J. C. (2016). Data from: Implied weighting and its utility in 
-palaeontological datasets: a study using modelled phylogenetic matrices. Dryad Digital
+Congreve, C. R., & Lamsdell, J. C. (2016). Data from: Implied weighting and its utility in palaeontological datasets: a study using modelled phylogenetic matrices. Dryad Digital
 Repository, doi:[10.5061/dryad.7dq0j](http://dx.doi.org/10.5061/dryad.7dq0j)
