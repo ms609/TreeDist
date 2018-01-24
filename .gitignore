@@ -4,7 +4,6 @@ src/*.so
 src/*.dll
 *.gcno
 *.out
-*.RData*
 *.Rhistory
 *.out
 *.log
