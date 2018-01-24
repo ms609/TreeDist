@@ -86,7 +86,7 @@ The next stage is to get the raw data into a format that `TreeSearch` can unders
 
 # ToDo explain levels
 # TODO explain `-` level
-```{r load phangorn}
+```r load phangorn
 library('phangorn')
 my_data <- phyDat(raw_data, type='USER', levels=c(0:9, '-'))
 ```
