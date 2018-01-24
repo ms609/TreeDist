@@ -5,13 +5,13 @@
 //  Created by mbrazeau on 23/04/2017.
 //  Copyright © 2017 brazeaulab. All rights reserved.
 //
+#include "mpl.h"
 #include "morphydefs.h"
-#include "mplerror.h"
 #include "morphy.h"
+#include "mplerror.h"
 #include "statedata.h"
 #include "fitch.h"
 #include "wagner.h"
-#include "mpl.h"
 
 void *mpl_alloc(size_t size, int setval)
 {
@@ -39,7 +39,7 @@ Morphyp mpl_new_Morphy_t(void)
 }
 
 
-void* mpl_get_from_matrix
+/*void* mpl_get_from_matrix
 (const int      row,
  const int      col,
  const int      ncol,
@@ -47,7 +47,7 @@ void* mpl_get_from_matrix
  const void*    data)
 {
     return (void*)(data + (row * ncol * size + (size * col)));
-}
+}*/
 
 
 int mpl_get_gaphandl(Morphyp handl)
@@ -328,20 +328,36 @@ void mpl_assign_fitch_fxns(MPLpartition* part)
     assert(part);
     
     if (part->isNAtype) {
-        part->inappdownfxn  = mpl_NA_fitch_second_downpass;
-        part->inappupfxn    = mpl_NA_fitch_second_uppass;
-        part->prelimfxn     = mpl_NA_fitch_first_downpass;//mpl_NA_fitch_second_downpass;
-        part->finalfxn      = mpl_NA_fitch_first_uppass;
-        part->tipupdate     = mpl_fitch_NA_tip_update;
-        part->tipfinalize   = mpl_fitch_NA_tip_finalize;
+        part->inappdownfxn      = mpl_NA_fitch_second_downpass;
+        part->inappupfxn        = mpl_NA_fitch_second_uppass;
+        part->prelimfxn         = mpl_NA_fitch_first_downpass;//mpl_NA_fitch_second_downpass;
+        part->finalfxn          = mpl_NA_fitch_first_uppass;
+        part->tipupdate         = mpl_fitch_NA_tip_update;
+        part->tipfinalize       = mpl_fitch_NA_tip_finalize;
+        part->tiproot           = mpl_fitch_NA_first_one_branch;
+        part->tiprootfinal      = mpl_fitch_NA_second_one_branch;
+        part->loclfxn           = mpl_fitch_NA_local_reopt;
+        part->downrecalc1       = mpl_NA_fitch_first_update_downpass;
+        part->uprecalc1         = mpl_NA_fitch_first_update_uppass;
+        part->inappdownrecalc2  = mpl_NA_fitch_second_update_downpass;
+        part->inapuprecalc2     = mpl_NA_fitch_second_update_uppass;
+        part->tipupdaterecalc   = mpl_fitch_NA_tip_recalc_update;
+        part->tiprootrecalc     = mpl_fitch_NA_first_one_branch;
+        part->tiprootupdaterecalc = mpl_fitch_NA_second_one_branch_recalc;
     }
     else {
-        part->prelimfxn     = mpl_fitch_downpass;
-        part->finalfxn      = mpl_fitch_uppass;
-        part->tipupdate     = mpl_fitch_tip_update;
-        part->tipfinalize   = NULL;
-        part->inappdownfxn  = NULL; // Not necessary, but safe & explicit
-        part->inappupfxn    = NULL;
+        part->prelimfxn         = mpl_fitch_downpass;
+        part->finalfxn          = mpl_fitch_uppass;
+        part->tipupdate         = mpl_fitch_tip_update;
+        part->tiproot           = mpl_fitch_one_branch;
+        part->tipfinalize       = NULL;
+        part->inappdownfxn      = NULL; // Not necessary, but safe & explicit
+        part->inappupfxn        = NULL;
+        part->loclfxn           = mpl_fitch_local_reopt;
+        part->downrecalc1       = NULL;
+        part->uprecalc1         = NULL;
+        part->inappdownrecalc2  = NULL;
+        part->inapuprecalc2     = NULL;
     }
 }
 
@@ -356,14 +372,17 @@ void mpl_assign_wagner_fxns(MPLpartition* part)
 //        part->finalfxn      = NULL;
 //        part->tipupdate     = NULL;
 //        part->tipfinalize   = NULL;
+//        part->loclfxn       = NULL;
 //    }
 //    else {
         part->prelimfxn     = mpl_wagner_downpass;
         part->finalfxn      = mpl_wagner_uppass;
         part->tipupdate     = mpl_wagner_tip_update;
+    // TODO: Wagner tiproot function!
         part->tipfinalize   = NULL;
         part->inappdownfxn  = NULL; // Not necessary, but safe & explicit
         part->inappupfxn    = NULL;
+        part->loclfxn       = NULL;
 //    }
 }
 
@@ -474,6 +493,7 @@ int mpl_delete_partition(MPLpartition* part)
     int err = ERR_UNEXP_NULLPTR;
     
     if (part) {
+        
         if (part->charindices) {
             free(part->charindices);
             part->charindices   = NULL;
@@ -696,6 +716,48 @@ int mpl_put_partitions_in_handle(MPLpartition* first, Morphyp handl)
 }
 
 
+void mpl_delete_all_update_buffers(Morphyp handl)
+{
+    /* Erases all the update buffers */
+    int i = 0;
+    for (i = 0; i < handl->numparts; ++i) {
+        MPLpartition* p = handl->partitions[i];
+        if (p->update_indices) {
+            free(p->update_indices);
+            p->update_indices = NULL;
+        }
+        if (p->update_NA_indices) {
+            free(p->update_NA_indices);
+            p->update_NA_indices = NULL;
+        }
+    }
+}
+
+
+int mpl_allocate_update_buffers(Morphyp handl)
+{
+    /* Allocates memory for an array of indices needed update on the tree */
+    int i = 0;
+    for (i = 0; i < handl->numparts; ++i) {
+        MPLpartition* p = handl->partitions[i];
+        p->update_indices = (int*)calloc(p->ncharsinpart, sizeof(int));
+        if (!p->update_indices) {
+            mpl_delete_all_update_buffers(handl);
+            return ERR_BAD_MALLOC;
+        }
+        p->update_NA_indices = (int*)calloc(p->ncharsinpart, sizeof(int));
+        if (!p->update_NA_indices) {
+            mpl_delete_all_update_buffers(handl);
+            return ERR_BAD_MALLOC;
+        }
+        
+        p->ntoupdate = 0;
+        p->nNAtoupdate = 0;
+    }
+    
+    return ERR_NO_ERROR;
+}
+
 int mpl_setup_partitions(Morphyp handl)
 {
     assert(handl);
@@ -751,6 +813,7 @@ int mpl_setup_partitions(Morphyp handl)
     
     handl->numparts = numparts;
     err = mpl_put_partitions_in_handle(first, handl);
+    mpl_allocate_update_buffers(handl);
     
     return err;
 }
@@ -825,6 +888,7 @@ int mpl_allocate_stset_stringptrs(const int nchars, MPLndsets* set)
     return ERR_NO_ERROR;
 }
 
+
 MPLndsets* mpl_alloc_stateset(int numchars)
 {
     MPLndsets* new = (MPLndsets*)calloc(1, sizeof(MPLndsets));
@@ -862,30 +926,40 @@ MPLndsets* mpl_alloc_stateset(int numchars)
         return NULL;
     }
     
-    new->subtree_downpass1 = (MPLstate*)calloc(numchars, sizeof(MPLstate));
-    if (!new->subtree_downpass1) {
+    new->temp_subtr_actives = (MPLstate*)calloc(numchars, sizeof(MPLstate));
+    if (!new->temp_subtr_actives) {
         mpl_free_stateset(numchars, new);
         return NULL;
     }
     
-    new->subtree_uppass1 = (MPLstate*)calloc(numchars, sizeof(MPLstate));
-    if (!new->subtree_uppass1) {
+    new->temp_downpass1 = (MPLstate*)calloc(numchars, sizeof(MPLstate));
+    if (!new->temp_downpass1) {
         mpl_free_stateset(numchars, new);
         return NULL;
     }
     
-    new->subtree_downpass2 = (MPLstate*)calloc(numchars, sizeof(MPLstate));
-    if (!new->subtree_downpass1) {
+    new->temp_uppass1 = (MPLstate*)calloc(numchars, sizeof(MPLstate));
+    if (!new->temp_uppass1) {
         mpl_free_stateset(numchars, new);
         return NULL;
     }
     
-    new->subtree_uppass2 = (MPLstate*)calloc(numchars, sizeof(MPLstate));
-    if (!new->subtree_uppass2) {
+    new->temp_downpass2 = (MPLstate*)calloc(numchars, sizeof(MPLstate));
+    if (!new->temp_downpass1) {
         mpl_free_stateset(numchars, new);
         return NULL;
     }
     
+    new->temp_uppass2 = (MPLstate*)calloc(numchars, sizeof(MPLstate));
+    if (!new->temp_uppass2) {
+        mpl_free_stateset(numchars, new);
+        return NULL;
+    }
+    new->changes = (bool*)calloc(numchars, sizeof(bool));
+    if (!new->changes) {
+        mpl_free_stateset(numchars, new);
+        return NULL;
+    }
     mpl_allocate_stset_stringptrs(numchars, new);
     
     return new;
@@ -917,21 +991,29 @@ void mpl_free_stateset(const int nchars, MPLndsets* statesets)
         free(statesets->subtree_actives);
         statesets->subtree_actives = NULL;
     }
-    if (statesets->subtree_downpass1) {
-        free(statesets->subtree_downpass1);
-        statesets->subtree_downpass1 = NULL;
+    if (statesets->temp_subtr_actives) {
+        free(statesets->temp_subtr_actives);
+        statesets->temp_subtr_actives = NULL;
     }
-    if (statesets->subtree_uppass1) {
-        free(statesets->subtree_uppass1);
-        statesets->subtree_uppass1 = NULL;
+    if (statesets->temp_downpass1) {
+        free(statesets->temp_downpass1);
+        statesets->temp_downpass1 = NULL;
     }
-    if (statesets->subtree_downpass2) {
-        free(statesets->subtree_downpass2);
-        statesets->subtree_downpass2 = NULL;
+    if (statesets->temp_uppass1) {
+        free(statesets->temp_uppass1);
+        statesets->temp_uppass1 = NULL;
     }
-    if (statesets->subtree_uppass2) {
-        free(statesets->subtree_uppass2);
-        statesets->subtree_uppass2 = NULL;
+    if (statesets->temp_downpass2) {
+        free(statesets->temp_downpass2);
+        statesets->temp_downpass2 = NULL;
+    }
+    if (statesets->temp_uppass2) {
+        free(statesets->temp_uppass2);
+        statesets->temp_uppass2 = NULL;
+    }
+    if (statesets->changes) {
+        free(statesets->changes);
+        statesets->changes = NULL;
     }
     
     mpl_delete_nodal_strings(nchars, statesets);
@@ -1027,6 +1109,8 @@ int mpl_copy_data_into_tips(Morphyp handl)
         for (j = 0; j < nchar; ++j) {
             nsets[i]->downpass1[j] =
             handl->inmatrix.cells[i * nchar + j].asint;
+            nsets[i]->uppass1[j] = nsets[i]->downpass1[j];
+            nsets[i]->uppass2[j] = nsets[i]->downpass1[j];
             nsets[i]->downpass2[j] = nsets[i]->downpass1[j];
         }
     }
@@ -1101,8 +1185,41 @@ int mpl_update_NA_root(MPLndsets* lower, MPLndsets* upper, MPLpartition* part)
         
         // Some of these assignments are a bit overkill, but they should
         // be fairly safe in case of changes in how the nodal functions work.
-        lower->uppass2[j]  = lower->downpass1[j];
-        lower->downpass1[j]   = lower->downpass1[j];
+        lower->uppass2[j]   = upper->downpass2[j];
+        lower->downpass1[j] = lower->downpass1[j];
+        lower->uppass1[j]   = lower->downpass1[j];
+        
+        // Must also store the root states in temp;
+        lower->temp_downpass1[j] = lower->downpass1[j];
+        lower->temp_uppass1[j] = lower->uppass1[j];
+        lower->temp_downpass2[j] = lower->downpass2[j];
+        lower->temp_uppass2[j] = lower->uppass2[j];
+    }
+    
+    return 0;
+}
+
+int mpl_update_NA_root_recalculation(MPLndsets* lower, MPLndsets* upper, MPLpartition* part)
+{
+    int i = 0;
+    int j = 0;
+    int nchar = part->nNAtoupdate;
+    int *indices = part->update_NA_indices;
+    
+    for (i = 0; i < nchar; ++i) {
+        j = indices[i];
+        
+        if (upper->downpass1[j] & ISAPPLIC) {
+            lower->downpass1[j] = upper->downpass1[j] & ISAPPLIC;
+        }
+        else {
+            lower->downpass1[j] = NA;
+        }
+        
+        // Some of these assignments are a bit overkill, but they should
+        // be fairly safe in case of changes in how the nodal functions work.
+        lower->uppass2[j]   = upper->downpass2[j];
+        lower->downpass1[j] = lower->downpass1[j];
         lower->uppass1[j]   = lower->downpass1[j];
     }
     

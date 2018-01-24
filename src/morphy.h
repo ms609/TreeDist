@@ -21,19 +21,11 @@
 #include <string.h>
 #include <float.h>
 #include <math.h>
-//#include <glib.h>
-
-//typedef struct mplarray_s {
-//    int nelems;
-//    int maxelems;
-//    size_t elemsize;
-//    void **data;
-//} MPLarray;
 
 /* Function prototypes */
 
 Morphyp         mpl_new_Morphy_t(void);
-void*           mpl_get_from_matrix(const int row, const int col, const int ncol, const size_t size, const void* data);
+//void*           mpl_get_from_matrix(const int row, const int col, const int ncol, const size_t size, const void* data);
 int             mpl_set_numtaxa(const int ntax, Morphyp m);
 int             mpl_set_num_charac(const int ncharac, Morphyp m);
 int             mpl_get_gaphandl(Morphyp handl);
@@ -52,6 +44,9 @@ int             mpl_part_remove_index(int index, MPLpartition* part);
 int             mpl_delete_partition(MPLpartition* part);
 MPLpartition*   mpl_new_partition(const MPLchtype chtype, const bool hasNA);
 int             mpl_count_gaps_in_columns(Morphyp handl);
+int             mpl_put_partitions_in_handle(MPLpartition* first, Morphyp handl);
+void            mpl_delete_all_update_buffers(Morphyp handl);
+int             mpl_allocate_update_buffers(Morphyp handl);
 int             mpl_setup_partitions(Morphyp handle);
 int             mpl_get_numparts(Morphyp handl);
 MPLndsets*      mpl_alloc_stateset(int numchars);
@@ -64,6 +59,7 @@ int             mpl_copy_data_into_tips(Morphyp handl);
 int             mpl_assign_intwts_to_partitions(Morphyp handl);
 int             mpl_update_root(MPLndsets* lower, MPLndsets* upper, MPLpartition* part);
 int             mpl_update_NA_root(MPLndsets* lower, MPLndsets* upper, MPLpartition* part);
+int             mpl_update_NA_root_recalculation(MPLndsets* lower, MPLndsets* upper, MPLpartition* part);
 
 //MPLarray*   mpl_new_array(size_t elemsize);
 //void        mpl_destroy_array(MPLarray* arr);

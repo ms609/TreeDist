@@ -5,11 +5,11 @@
 //  Created by mbrazeau on 26/04/2017.
 //  Copyright © 2017 brazeaulab. All rights reserved.
 //
-#include "morphydefs.h"
-#include "mplerror.h"
-#include "morphy.h"
-#include "statedata.h"
 #include "mpl.h"
+#include "morphydefs.h"
+#include "morphy.h"
+#include "mplerror.h"
+#include "statedata.h"
 
 char* mpl_skip_closure(const char *closure, const char openc, const char closec)
 {
@@ -94,7 +94,7 @@ int mpl_get_states_from_rawdata(Morphyp handl)
     char *rawmatrix = handl->char_t_matrix;
     char *current = NULL;
     int listmax = MAXSTATES + 1; // +1 for terminal null.
-    char statesymbols[listmax];
+    char* statesymbols = (char*)calloc(listmax, sizeof(char));//[listmax];
 //    int dbg_loopcount = 0;
     
     statesymbols[0] = '\0';
@@ -129,6 +129,7 @@ int mpl_get_states_from_rawdata(Morphyp handl)
     int numstates = (int)strlen(statesymbols);
     mpl_set_numsymbols(numstates, handl);
     mpl_assign_symbol_list_from_matrix(statesymbols, &handl->symbols);
+    free(statesymbols);
     return count-1;
 }
 
@@ -153,6 +154,8 @@ int mpl_create_state_dictionary(Morphyp handl)
     int i           = 0;
     int gappush     = 0;
     int numsymbs    = handl->symbols.numstates;
+    char *symbols   = mpl_get_symbols((Morphy)handl);
+    assert(symbols);
     
     if (!handl->symbols.packed) {
         
@@ -182,14 +185,14 @@ MPLstate mpl_convert_gap_symbol(Morphyp handl, bool over_cutoff)
             return NA;
         }
         else {
-            return MPL_MISSING;
+            return MISSING;
         }
     }
     else if (handl->gaphandl == GAP_NEWSTATE) {
         return (MPLstate)1;
     }
     else if (handl->gaphandl == GAP_MISSING) {
-        return MPL_MISSING;
+        return MISSING;
     }
     
     return ERR_NO_DATA;
@@ -251,7 +254,7 @@ int mpl_convert_cells(Morphyp handl)
                 cell->asint = mpl_convert_gap_symbol(handl, over_cutoff);
             }
             else if (*celldata == handl->symbols.missing) {
-                cell->asint = MPL_MISSING;
+                cell->asint = MISSING;
             }
             else {
                 cell->asint = mpl_convert_char_to_MPLstate(celldata, handl);
@@ -433,7 +436,7 @@ MPLstate mpl_gap_value(Morphyp handl)
         case GAP_INAPPLIC:
             return NA;
         case GAP_MISSING:
-            return MPL_MISSING;
+            return MISSING;
         case GAP_NEWSTATE:
             return (MPLstate)1;
         case GAP_MAX:
@@ -444,62 +447,6 @@ MPLstate mpl_gap_value(Morphyp handl)
     
     return -2;
 }
-
-
-MPLmatrix* mpl_new_mpl_matrix
-(const int ntaxa, const int nchar, const int nstates)
-{
-    assert(nstates);
-    MPLmatrix* ret = NULL;
-    
-    ret = (MPLmatrix*)calloc(1, sizeof(MPLmatrix));
-    if (!ret) {
-        return NULL;
-    }
-    
-//    ret->chtypes = (MPLchtype*)calloc(nchar, sizeof(MPLchtype));
-//    if (!ret->chtypes) {
-//        mpl_delete_mpl_matrix(ret);
-//        return NULL;
-//    }
-//    
-//    ret->intweights = (int*)calloc(nchar, sizeof(int));
-//    if (!ret->intweights) {
-//        mpl_delete_mpl_matrix(ret);
-//        return NULL;
-//    }
-//    
-//    ret->fltweights = (Mflt*)calloc(nchar, sizeof(Mflt));
-//    if (!ret->fltweights) {
-//        mpl_delete_mpl_matrix(ret);
-//        return NULL;
-//    }
-    
-    ret->cells = (MPLcell*)calloc(ntaxa * nchar, sizeof(MPLcell));
-    if (!ret->cells) {
-        mpl_delete_mpl_matrix(ret);
-        return NULL;
-    }
-    
-    ret->ncells = ntaxa * nchar;
-    int i = 0;
-    
-    for (i = 0; i < ret->ncells; ++i) {
-        ret->cells[i].asstr = (char*)calloc(nstates + 1, sizeof(char));
-        if (!ret->cells[i].asstr) {
-            int j = 0;
-            for (j = 0; j < i; ++j) {
-                free(ret->cells[i].asstr);
-                ret->cells[i].asstr = NULL;
-            }
-            mpl_delete_mpl_matrix(ret);
-            return NULL;
-        }
-    }
-    
-    return ret;
-}
-
 
 int mpl_init_inmatrix(Morphyp handl)
 {
@@ -734,7 +681,7 @@ char *mpl_translate_state2char(MPLstate cstates, Morphyp handl)
     }
     char* symbols = mpl_get_symbols((Morphy)handl);
     
-    if (cstates < (MPL_MISSING-NA)) {
+    if (cstates < (MISSING-NA)) {
         while (cstates) {
             if (1 & cstates) {
                 if (shift == 0 && gapshift) {

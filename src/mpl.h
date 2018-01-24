@@ -1,79 +1,102 @@
-/*!
- @file mpl.h
- 
- @brief Defines the Morphy Phylogenetic Library API: a library for phylogenetic
- computation accommodating morphological character hierarchies.
- 
- Copyright (C) 2017  Martin D. Brazeau
- 
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
- 
- @discussion This header includes all the externally exported definitions and
- function prototypes. A calling program creates an instance of a Morphy object 
- and interacts with its elements through the functions described in this 
- interface. The Morphy object contains no tree objects, but requires a 
- pre-specified list of indices (integers) corresponding to the node indices in 
- the calling program. Morphy will not keep track of the relationships between
- the nodes, and it is up to the caller to keep track of these. Each character
- *must* be assigned a type, and Morphy will make no default assumptions. Once 
- one or more characters are assigned a function type (which creates internal
- partitions), and a postorder list of nodes is known, then the library functions
- can be called to reconstruct state sets and deliver length estimates for each
- node.
- 
- Morphy will provide functions for local reoptimisation, partial reoptimisation
- and optimisation of subtrees.
- 
- */
+	/*!
+	 @file mpl.h
+	 
+	 @brief Defines the Morphy Phylogenetic Library API: a library for phylogenetic
+	 computation accommodating morphological character hierarchies.
+	 
+	 Copyright (C) 2017  Martin D. Brazeau
+	 
+	 This program is free software: you can redistribute it and/or modify
+	 it under the terms of the GNU General Public License as published by
+	 the Free Software Foundation, either version 3 of the License, or
+	 (at your option) any later version.
+	 
+	 This program is distributed in the hope that it will be useful,
+	 but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	 GNU General Public License for more details.
+	 
+	 You should have received a copy of the GNU General Public License
+	 along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	 
+	 @discussion This header includes all the externally exported definitions and
+	 function prototypes. A calling program creates an instance of a Morphy object 
+	 and interacts with its elements through the functions described in this 
+	 interface. The Morphy object contains no tree objects, but requires a 
+	 pre-specified list of indices (integers) corresponding to the node indices in 
+	 the calling program. Morphy will not keep track of the relationships between
+	 the nodes, and it is up to the caller to keep track of these. Each character
+	 *must* be assigned a type, and Morphy will make no default assumptions. Once 
+	 one or more characters are assigned a function type (which creates internal
+	 partitions), and a postorder list of nodes is known, then the library functions
+	 can be called to reconstruct state sets and deliver length estimates for each
+	 node.
+	 
+	 Morphy will provide functions for local reoptimisation, partial reoptimisation
+	 and optimisation of subtrees.
+	 
+	 */
 
 #ifndef mpl_h
 #define mpl_h
 
 
 #ifdef __cplusplus
-extern "C" {
+	extern "C" {
 #endif /*__cplusplus */
-    
+		
 #include <stdbool.h>
-#include "morphydefs.h"
 #include "mplerror.h"
-    
-    
-// Public functions
+		
+typedef void* Morphy;
 
-/*!
- 
- @brief Creates a new instance of a Morphy object
+typedef enum {
+    
+    NONE_T          = 0,
+    FITCH_T         = 1,
+    WAGNER_T        = 2,
+    DOLLO_T         = 3,
+    IRREVERSIBLE_T  = 4,
+    USERTYPE_T      = 5,
+    
+    MAX_CTYPE,
+    
+} MPLchtype;
 
- @discussion Creates a new empty Morphy object. All fields are unpopulated and
- uninitialised.
- 
- @return A void pointer to the Morphy instance. NULL if unsuccessful.
- 
- */
+typedef enum {
+    
+    GAP_INAPPLIC,
+    GAP_MISSING,
+    GAP_NEWSTATE,
+    
+    GAP_MAX,
+    
+} MPLgap_t;
+
+	// Public functions
+
+	/*!
+	 
+	 @brief Creates a new instance of a Morphy object
+
+	 @discussion Creates a new empty Morphy object. All fields are unpopulated and
+	 uninitialised.
+	 
+	 @return A void pointer to the Morphy instance. NULL if unsuccessful.
+	 
+	 */
 Morphy  mpl_new_Morphy
-    
-        (void);
+	
+		(void);
 
 
-/*!
- 
- @brief Destroys an instance of a Morphy object.
+	/*!
+	 
+	 @brief Destroys an instance of a Morphy object.
 
- @discussion Destroys an instance of the Morphy object, calling all destructors
- for internal object completely returning the memory to the system.
- 
+	 @discussion Destroys an instance of the Morphy object, calling all destructors
+	 for internal object completely returning the memory to the system.
+	 
  @param m A Morphy object to be destroyed.
  
  @return A Morphy error code.
@@ -590,11 +613,43 @@ int     mpl_update_tip
  */
 int     mpl_finalize_tip
 
-        (const int tip_id,
-         const int anc_id,
-         Morphy m);
+        (const int  tip_id,
+         const int  anc_id,
+         Morphy     m);
 
-    
+/*!
+ @brief Used to update a root-like tip in an unrooted tree and length added.
+ 
+ @discussion If using an unrooted tree structure, a tip is commonly used as an
+ entry point for traversals on the tree. This tip is jointed either as an extra
+ descendant or the ancestor of the calculation root node in the tree. In these
+ circumstances, a binary traversal on the tree will not give complete 
+ reconstructions or length counts for the tree. This function is called at the 
+ end of the optimization process and is required for the complete tree length of
+ an unrooted tree. This function will update the state sets of both nodes
+ reciprocally.
+ 
+ @param tip_id An index corresponding to the tip number being updated.
+ 
+ @param node_id An index of the tip's neighboring internal node.
+ 
+ @param m An instance of the Morphylib object.
+ 
+ @return The weighted number of steps (positive) or a negative number 
+ corresponding to a morphylib error code.
+ */
+        
+int     mpl_do_tiproot
+        
+        (const int  tip_id,
+         const int  node_id,
+         Morphy     m);
+        
+int     mpl_finalize_tiproot
+        
+        (const int  tip_id,
+         const int  node_id,
+         Morphy     m);
 /*!
  
  @brief Updates the nodal sets for a lower ('dummy') root node
@@ -616,21 +671,117 @@ int     mpl_finalize_tip
  */
 int     mpl_update_lower_root
     
-        (const int l_root_id,
-         const int root_id,
-         Morphy m);
+        (const int  l_root_id,
+         const int  root_id,
+         Morphy     m);
     
     
+int		mpl_na_first_down_recalculation
+
+		(const int  node_id,
+		 const int  left_id,
+		 const int  right_id,
+		 Morphy     m);
     
+
+int		mpl_na_first_up_recalculation
+
+		(const int  node_id,
+		 const int  left_id,
+		 const int  right_id,
+		 const int  anc_id,
+		 Morphy     m);
+
+
+// Returns number of steps to add
+int		mpl_na_second_down_recalculation
+
+		(const int  node_id,
+		 const int  left_id,
+		 const int  right_id,
+		 Morphy     m);
+
+// Returns number of steps to add
+int		mpl_na_second_up_recalculation
+
+		(const int  node_id,
+		 const int  left_id,
+		 const int  right_id,
+		 const int  anc_id,
+		 Morphy     m);
+        
+int     mpl_lower_root_recalculation
+        
+        (const int  l_root_id,
+         const int  root_id,
+         Morphy     m);
+
+int     mpl_na_tiproot_recalculation
+        
+        (const int  tip_id,
+         const int  node_id,
+         Morphy     m);
+
+int     mpl_na_tiproot_final_recalculation
+        
+        (const int  tip_id,
+         const int  node_id,
+         Morphy     m);
+        
 int     mpl_get_insertcost
 
         (const int  srcID,
          const int  tgt1ID,
          const int  tgt2ID,
          const bool max,
-         int        cutoff,
+         const int  cutoff,
+         Morphy     m);
+        
+int     mpl_na_update_tip
+        
+        (const int  tip_id,
+         const int  anc_id,
          Morphy     m);
 
+    
+int     mpl_get_step_recall
+        
+        (const int  node_id,
+         Morphy     m);
+        
+        
+// Indicates whether or not partitions with inapplicable characters need partial
+// reoptimisation on the target subtree. SHOULD RETURN: Number of characters
+// needing partial reoptimisation on the subtree.
+int     mpl_check_reopt_inapplics
+    
+        (Morphy m);
+        
+bool    mpl_check_updated
+        
+        (const int  node_id,
+         Morphy     m);
+        
+/*!
+ 
+ @brief Restores original state sets at a node.
+ 
+ @discussion This function restores the state sets in the tree to the ones 
+ calculated using the initial fullpass optimizations (first, and second down and
+ up functions). It is used after partial reoptimization of a tree and if the
+ client program needs to restore the state sets to their original values before
+ continuing to evaluate proposed insertions.
+ @param node_id The index value of the node having its state sets restored.
+ 
+ @param m An instance of the morphylib object.
+ 
+ @return 0 if success, a morphylib error code if there has been an error.
+ 
+ */
+int     mpl_restore_original_sets
+        
+        (const int  node_id,
+         Morphy     m);
 /*!
 
  @brief Returns the state set for a character at a given node as set bits in an
