@@ -309,9 +309,10 @@ void morphy_length (const int *ancestor, const int *left, const int *right, Morp
     *score += mpl_second_down_recon(i, left[i - n_taxa], right[i - n_taxa], handl);
   }
  
-  for (i = n_taxa; i < max_node; i++) { // Second uppass: internal nodes
-    *score += mpl_second_up_recon(i, left[i - n_taxa], right[i - n_taxa], ancestor[i], handl);
-  }
+  //for (i = n_taxa; i < max_node; i++) { // Second uppass: internal nodes 
+  // // As of Jan 2018 algorithm improvement, not needed to calculate score
+  //  *score += mpl_second_up_recon(i, left[i - n_taxa], right[i - n_taxa], ancestor[i], handl);
+  //}
   // for (i = 0; i < n_taxa; i++) { // Second uppass: finalize tips (fwiw)
   //   mpl_finalize_tip(i, ancestor[i], handl);
   // }
