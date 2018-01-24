@@ -4,7 +4,7 @@
 #' @template treeParent
 #' @template treeChild
 #' @param dataset Third argument to pass to \code{TreeScorer}.
-#' @template TreeScorerParam
+#' @template treeScorerParam
 #' @param scoreToBeat Double giving score of input tree.
 #' @param hits Integer giving number of times the input tree has already been hit.
 #' @template EdgeSwapperParam

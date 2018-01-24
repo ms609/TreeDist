@@ -90,7 +90,7 @@ EdgeListSearch <- function (edgeList, dataset,
 #'
 #' @template InitializeDataParam
 #' @template CleanUpDataParam
-#' @template TreeScorerParam
+#' @template treeScorerParam
 #'
 #' @template verbosityParam
 #' @template treeScorerDots

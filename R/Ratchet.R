@@ -6,7 +6,7 @@
 #' @param dataset a dataset in the format required by TreeScorer.
 #' @template InitializeDataParam
 #' @template CleanUpDataParam
-#' @template TreeScorerParam
+#' @template treeScorerParam
 #' @param Bootstrapper Function to perform bootstrapped rearrangements of tree. 
 #'                     First arguments will be an edgeList and a dataset, initialized using \code{InitializeData}
 #'                     Should return a rearranged edgeList.
