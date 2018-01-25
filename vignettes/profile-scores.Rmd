@@ -39,7 +39,7 @@ info1 <- attr(preci1, 'info.amounts')
 info2 <- attr(preci2, 'info.amounts')
 info3 <- attr(preci3, 'info.amounts')
 diff32 <- as.double(info3 - info2)
-hist (diff32)
+hist (diff32, breaks=seq(min(diff32)-0.002, max(diff32) + 0.005, by=0.002))
 
 if (all_the_time_in_the_world <- FALSE) {
 preci4 <- PrepareDataProfile(dataset, precision=1.6e+06)
@@ -63,7 +63,10 @@ hist(100*(diff43 / info4)[nonzero])
 ```
 
 ```{r More histograms}
-hist(info1[1:10, ] - info2)
+diff12 <- info1[1:10, ] - info2
+
+hist(diff12, breaks=seq(min(diff12)-0.01, max(diff12)+0.01, by=0.01))
+
 hist(info3 - info2)
 hist(info3 - info1[1:10, ])
 if (all_the_time_in_the_world) {
