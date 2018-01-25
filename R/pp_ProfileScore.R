@@ -79,6 +79,8 @@ ProfileDestroyMorphy <- function (dataset) {
   vapply(attr(dataset, 'morphyObjs'), UnloadMorphy, integer(1))
 }
 
+#' @describeIn TreeSearch Search using profile parsimony
+#' @export
 ProfileTreeSearch <- function (tree, dataset, EdgeSwapper = RootedTBR,
                         maxIter = 100, maxHits = 20, forestSize = 1,
                         verbosity = 1, precision=40000, ...) {
