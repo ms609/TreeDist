@@ -2,6 +2,7 @@ src-*
 src/*.o
 src/*.so
 src/*.dll
+.Rdata
 *.gcno
 *.out
 *.Rhistory
