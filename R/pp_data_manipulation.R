@@ -116,13 +116,44 @@ PrepareDataProfile <- function (dataset, precision = 1e+06, warn = TRUE) {
   if (!any(attr(dataset, 'bootstrap') == 'info.amounts')) {
     attr(dataset, 'bootstrap') <- c(attr(dataset, 'bootstrap'), 'info.amounts')
   }
+  
+  ####  inappLevel <- which(at$levels == "-")
+  ####  applicableTokens <- setdiff(powers.of.2, 2 ^ (inappLevel - 1))
+  ####  
+  ####  attr(dataset, 'split.sizes') <- apply(binaryMatrix, 1, function(x) {
+  ####      vapply(applicableTokens, function (y) sum(x == y), integer(1))
+  ####    })
+  
+  dataset
+}
 
-####  applicableTokens <- setdiff(powers.of.2, 2 ^ (inappLevel - 1))
-####  inappLevel <- which(at$levels == "-")
-####  
-####  attr(dataset, 'split.sizes') <- apply(binaryMatrix, 1, function(x) {
-####      vapply(applicableTokens, function (y) sum(x == y), integer(1))
-####    })
 
+#' @describeIn PrepareDataProfile Prepare data for implied weighting
+#' @export
+PrepareDataIW <- function (dataset) {
+  at <- attributes(dataset)
+  nLevel <- length(at$level)
+  nChar <- at$nr
+  cont <- attr(dataset, "contrast")
+  nTip <- length(dataset)
+  #############TODO YOU ARE HERE###################
+  # Calculate minimum steps                       #
+  # Not simple for character 00001111{23}{45}{34} #
+  powers.of.2 <- 2L ^ c(0L:(nLevel - 1L))
+  tmp <- cont %*% powers.of.2
+  tmp <- as.integer(tmp)
+  unlisted <- unlist(dataset, recursive=FALSE, use.names=FALSE)
+  binaryMatrix <- tmp[unlisted]
+  inappLevel <- which(at$levels == "-")
+  applicableTokens <- setdiff(powers.of.2, 2 ^ (inappLevel - 1))
+  
+  apply(binaryMatrix, 1, function(x) {
+    vapply(applicableTokens, function (y) sum(x == y), integer(1))
+  })
+  
+  attr(dataset, 'split.sizes') <- apply(binaryMatrix, 1, function(x) {
+      vapply(applicableTokens, function (y) sum(x == y), integer(1))
+    })
+  
   dataset
 }
