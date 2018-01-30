@@ -33,7 +33,7 @@ library('TreeSearch')
 
 Here's an example of using the package to conduct tree search.
 You can (load your own dataset)[load-data.html], but for now, we'll use the 
-Vinther _et al._ [-@vinther2008] dataset that comes bundled with the package.
+Vinther _et al._ [-@Vinther2008] dataset that comes bundled with the package.
 
 This dataset is small enough that it runs reasonably quickly, but its phylogenetic
 signal is obscure enough that it can require Ratchet searches to escape from local optima.
@@ -110,7 +110,7 @@ A more comprehensive search of tree space can be accomplished using the parsimon
 It might take a couple of minutes to run.
 
 ```{r Ratchet search}
-best.tree <- Ratchet(better.tree, my.phyDat, verbosity=0, k=5,
+best.tree <- Ratchet(better.tree, my.phyDat, verbosity=0, ratchIter=5,
                      swappers=list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap))
 attr(best.tree, 'score') # Each tree is labelled with its score during tree search
 ```
@@ -148,7 +148,6 @@ exhaustive sampling of tree space.  That would take a while though; for now, let
 par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
 plot(ape::consensus(my.consensus))
 ```
-
 
 
 ## References
