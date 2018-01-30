@@ -161,7 +161,7 @@ In a serious study, you would want to sample many more than 25 Ratchet hits (`ra
 ```{R Suboptimal sampling}
 suboptimals <- ProfileRatchet(better.tree, my.prepdata, 
                               swappers=list(RootedTBRSwap),
-                              returnAll=TRUE, suboptimal=1.5, 
+                              returnAll=TRUE, suboptimal=5, 
                               ratchHits=25, ratchIter=5000, 
                               bootstrapHits=15, bootstrapIter=450,
                               searchHits=10, searchIter=50)
