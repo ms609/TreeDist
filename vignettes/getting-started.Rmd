@@ -12,8 +12,10 @@ vignette: >
 
 `TreeSearch` is an R package that allows parsimony search on morphological datasets.
 
-# Installation
-## Simple installation
+## Installation
+
+### Simple installation
+
 To use `TreeSearch` you will first need to [install R](https://cloud.r-project.org/).  Many people like to 
 use [Rstudio](https://www.rstudio.com/) ([overview](https://dss.princeton.edu/training/RStudio101.pdf)), which is a front-end that makes several of R's features easier to use.
 
@@ -24,7 +26,8 @@ install.packages('TreeSearch')
 ```
 into the R (or Rstudio) command line.
 
-## For advanced users
+### For advanced users
+
 To get the latest development version from GitHub, type
 ```r
 if (!require('devtools')) install.packages('devtools')
@@ -46,7 +49,7 @@ Once installed, load the inapplicable package into R using
 library('TreeSearch')
 ```
 
-# What next?
+## What next?
 
 You might want to:
 

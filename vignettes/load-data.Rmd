@@ -3,6 +3,9 @@ title: "Loading phylogenetic data into R"
 author: "Martin R. Smith"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
+output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
 vignette: >
   %\VignetteIndexEntry{Inapplicable data}
   %\VignetteEngine{knitr::rmarkdown}
@@ -47,6 +50,7 @@ filename <- "matrix2.nex"
 ```
 
 ## Getting raw data:
+
 ###from an Excel spreadsheet
 
 If your data is in an Excel spreadsheet, one way to load it into R is using the `xlsx` package.  First you'll have to install it:
@@ -77,16 +81,36 @@ raw_data <- ape::read.nexus.data(filename)
 ```
 
 Non-standard elements of a Nexus file might be beyond 
-the capabilities of ape's parser.
+the capabilities of ape's parser.  In particular, you will need to replace spaces in 
+taxon names with an underscore, and to arrange all data into 
+a single block starting `BEGIN DATA`.  You'll need to strip out comments, 
+character definitions and separate taxon blocks.  
+
+The function `readNexus` in package `phylobase` promises to be more powerful,
+yet I've not been able to get it to work.
 
 ## Processing raw data
 
 The next stage is to get the raw data into a format that `TreeSearch` can understand.  Here we'll enlist the help of the
 `phangorn` package, which was installed when you installed `TreeSearch`:
 
-# ToDo explain levels
-# TODO explain `-` level
-```r load phangorn
+```R
 library('phangorn')
 my_data <- phyDat(raw_data, type='USER', levels=c(0:9, '-'))
 ```
+
+`type='USER'` tells the parser to expect morphological data.
+
+The `levels` parameter simply lists all the states that any character might take.  `0:9` 
+includes all the integer digits from 0 to 9.  If you have inapplicable data
+in your matrix, you should list `-` as a separate level as it represents 
+an additional state (as handled by the Morphy implementation of [@Brazeau2018]).
+
+## What next?
+
+You might want to:
+
+- Conduct parsimony search using Brazeau, Guillerme & Smith's [approach to inapplicable data](inapplicable.html), or using [Profile parsimony](profile.html).
+
+
+## References

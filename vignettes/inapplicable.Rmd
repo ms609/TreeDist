@@ -3,6 +3,9 @@ title: "Inapplicable data in morphological phylogenetics"
 author: "Martin R. Smith"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
+output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
 vignette: >
   %\VignetteIndexEntry{Inapplicable data}
   %\VignetteEngine{knitr::rmarkdown}
@@ -12,12 +15,13 @@ vignette: >
 
 `TreeSearch` is an R package that allows, among other things, parsimony search on
 morphological datasets that contain inapplicable data, following the algorithm proposed
-by Brazeau, Guillerme and Smith (2017).
+by Brazeau, Guillerme and Smith ([-@Brazeau2018]).
 
 In brief, this algorithm modifies the Fitch algorithm to count the total number of homoplasious 
 events on a tree.
 
-# Getting started
+## Getting started
+
 [A companion vignette](getting-started.html) gives details on installing the package
 and getting up and running.
 
@@ -26,11 +30,11 @@ Once installed, load the inapplicable package into R using
 library('TreeSearch')
 ```
 
-# Scoring a tree, and conducting a tree search
+## Scoring a tree, and conducting a tree search
 
 Here's an example of using the package to conduct tree search.
 You can (load your own dataset)[load-data.html], but for now, we'll use the 
-Vinther _et al._ dataset that comes bundled with the package.
+Vinther _et al._ [-@vinther2008] dataset that comes bundled with the package.
 
 This dataset is small enough that it runs reasonably quickly, but its phylogenetic
 signal is obscure enough that it can require Ratchet searches to escape from local optima.
@@ -60,7 +64,7 @@ plot(nj.tree)
 Fitch(nj.tree, my.phyDat)
 ```
 
-With the Vinther _et al._ 2008 dataset, nemerteans and brachiopods form an natural outgroup to 
+With the Vinther _et al._ [-@Vinther2008] dataset, nemerteans and brachiopods form an natural outgroup to 
 the other taxa. 
 If we wish, we can constrain this outgroup and avoid making tree rearrangements that would mix 
 ingroup and outgroup taxa.
@@ -103,7 +107,7 @@ better.tree <- TreeSearch(better.tree, my.phyDat, maxHits=20, maxIter=40000,
 ```
 
 That score's looking better, but these are only quick searches, and we could be caught in a local optimum. 
-A more comprehensive search of tree space can be accomplished using the parsimony ratchet (Nixon 1999).
+A more comprehensive search of tree space can be accomplished using the parsimony ratchet [@Nixon1999].
 It might take a couple of minutes to run.
 
 ```{r Ratchet search}
@@ -148,8 +152,4 @@ plot(ape::consensus(my.consensus))
 
 
 
-# References
-
-BRAZEAU, M. D., GUILLERME, T. and SMITH, M. R. 2017. [Morphological phylogenetic analysis with inapplicable data](https://www.biorxiv.org/content/early/2017/10/26/209775). _BioRxiv_. <doi:10.1101/209775>
-
-NIXON, K. C. 1999. [The Parsimony Ratchet, a new method for rapid parsimony analysis](http://doi.wiley.com/10.1111/j.1096-0031.1999.tb00277.x). _Cladistics_, 15, 407--414. <doi:10.1111/j.1096-0031.1999.tb00277.x>
+## References
