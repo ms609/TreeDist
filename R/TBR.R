@@ -34,7 +34,7 @@ TBRWarning <- function (parent, child, error) {
 #' 
 #' @return This function returns a tree in \code{phyDat} format that has undergone one \acronym{TBR} iteration.
 #' @references The \acronym{TBR} algorithm is summarized in
-#' Felsenstein, J. 2004. \cite{Inferring Phylogenies.} Sinauer Associates, Sunderland, Massachusetts.
+#'  \insertRef{Felsenstein2004}{TreeSearch}
 #' 
 #' 
 #' @author Martin R. Smith

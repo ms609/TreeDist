@@ -31,8 +31,7 @@
 #########' 
 #########' @return a rooted tree of class \code{phylo}.
 #########' 
-#########' @references Goloboff, P. (1999). \cite{Analyzing large data sets in reasonable times: solutions for composite optima.}
-#########' Cladistics, 15(4), 415-428. doi:\href{http://dx.doi.org/10.1006/clad.1999.0122}{10.1006/clad.1999.0122}
+#########' @references \insertRef{Goloboff1999}{TreeSearch}
 #########' 
 #########' @author Martin R. Smith
 #########' 
@@ -218,7 +217,7 @@
 ###   #' 
 ###   #' @return a rooted tree of class \code{phylo}.
 ###   #' 
-###   #' @references Goloboff, P. (1999). \cite{Analyzing large data sets in reasonable times: solutions for composite optima.} Cladistics, 15(4), 415-428. doi:\href{http://dx.doi.org/10.1006/clad.1999.0122}{10.1006/clad.1999.0122}
+###   #' @references \insertRef{Goloboff1999}{TreeSearch}
 ###   #' 
 ###   #' @author Martin R. Smith
 ###   #' 

@@ -120,7 +120,7 @@ EdgeListSearch <- function (edgeList, dataset,
 #' TreeSearch(njtree, Lobo.phy, maxIter=20, EdgeSwapper=TBRSwap)}
 #' 
 #' @keywords  tree 
-#' 
+#' @importFrom Rdpack reprompt
 #' @export
 TreeSearch <- function (tree, dataset,
                         InitializeData = PhyDat2Morphy,

@@ -58,9 +58,8 @@ DoubleFactorial <- function (ints) {
 #' @author Martin R. Smith
 #' 
 #' @references 
-#' Carter, M., Hendy, M., & Penny, D. (1990). \cite{On the distribution of lengths of evolutionary 
-#' trees.} SIAM Journal on Discrete Mathematics, 3(1), 38-47. doi:
-#' \href{http://doi.org/10.1137/0403005}{10.1137/0403005}
+#'  \insertRef{Carter1990}{TreeSearch}
+#'  
 #' @examples
 #'   NRooted(10)
 #'   NUnrooted(10)
@@ -85,9 +84,9 @@ LnRooted    <- memoise(function (tips, extra=0) LDFact(2 * tips - 3 - extra))
 #' Formula given by Given by Allen and Steel 2001.
 #'
 #' @param n Number of tips in tree.
-#' @references ALLEN, B. L. and STEEL, M. 2001. Subtree transfer operations and their 
-#'             induced metrics on evolutionary trees. \emph{Annals of Combinatorics},
-#'             5, 1--15. <doi:10.1007/s00026-001-8006-8>
+#' @references 
+#'  \insertRef{Allen2001}{TreeSearch}
+#' 
 #' @export
 N1Spr <- function (n) if (n > 2) 2 * (n - 3) * ((2 * n) - 7) else 0 
 
@@ -110,9 +109,8 @@ NUnrooted  <- function (splits) {
   return ( NUnrootedMult(splits))
 }
 #' @describeIn NRooted Log unrooted mult
-#' @references CARTER, M., HENDY, M., PENNY, D., SZEKELY, L. A. and WORMALD, N. C. 1990.
-#'             On the distribution of lengths of evolutionary trees. 
-#'             \emph{SIAM Journal on Discrete Mathematics}, 3, 38--47.
+#' @references 
+#'  \insertRef{Carter1990}{TreeSearch}
 #' @export
 LnUnrootedMult <- function (splits) {  # Carter et al. 1990, Theorem 2
   splits <- splits[splits > 0]
@@ -152,13 +150,9 @@ NUnrootedMult  <- function (splits) {  # Carter et al. 1990, Theorem 2
 #' @author{
 #' Martin R. Smith
 #' }
-#' @references{
+#' @references
+#'  \insertRef{Faith2001}{TreeSearch}
 #' 
-#' Faith, D. P. & Trueman, J. W. H. (2001). \cite{Towards an inclusive philosophy for phylogenetic
-#' inference.} Systematic Biology 50:3, 331-350, doi:
-#' \href{http://dx.doi.org/10.1080/10635150118627}{10.1080/10635150118627}
-#' 
-#' }
 #' @keywords tree
 #' 
 #' @examples{

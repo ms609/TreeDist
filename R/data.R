@@ -74,13 +74,8 @@
 #' @format A list with 100 entries, each comprising a phyDat object of 55 characters for 22 taxa
 #'
 #' @references 
-#' Congreve, C. R., & Lamsdell, J. C. (2016). \cite{Implied weighting and its utility in 
-#'   palaeontological datasets: a study using modelled phylogenetic matrices.} Palaeontology, 
-#'   online ahead of print. doi:10.1111/pala.12236
-#' 
-#' Congreve, C. R., & Lamsdell, J. C. (2016). Data from: Implied weighting and its utility in 
-#' palaeontological datasets: a study using modelled phylogenetic matrices. Dryad Digital
-#' Repository, \href{http://dx.doi.org/10.5061/dryad.7dq0j}{doi:10.5061/dryad.7dq0j}
+#'  \insertRef{Congreve2016}{TreeSearch}
+#'  \insertRef{Congreve2016dd}{TreeSearch}
 #' 
 #' @examples 
 #'   data('referenceTree')
@@ -100,13 +95,8 @@
 #' @format A single phylogenetic tree saved as an object of class \code{phylo}
 #'
 #' @references 
-#' Congreve, C. R., & Lamsdell, J. C. (2016). \cite{Implied weighting and its utility in 
-#'   palaeontological datasets: a study using modelled phylogenetic matrices.} Palaeontology, 
-#'   online ahead of print. doi:10.1111/pala.12236
-#' 
-#' Congreve, C. R., & Lamsdell, J. C. (2016). Data from: Implied weighting and its utility in 
-#' palaeontological datasets: a study using modelled phylogenetic matrices. Dryad Digital
-#' Repository, \href{http://dx.doi.org/10.5061/dryad.7dq0j}{doi:10.5061/dryad.7dq0j}
+#'  \insertRef{Congreve2016}{TreeSearch}
+#'  \insertRef{Congreve2016dd}{TreeSearch}
 #' 
 #' @examples 
 #'   data(referenceTree)
