@@ -22,7 +22,6 @@
 #' @param bootstrapHits maximum times to hit best score on each bootstrap  iteration (default: \code{maxHits}).
 #' @template stopAtScoreParam
 #' @template verbosityParam
-#' @template swappersParam
 #' @param suboptimal retain trees that are suboptimal by this score. Defaults to 1e-08 to counter rounding errors.
 #' @template treeScorerDots
 #' 

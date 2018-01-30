@@ -60,7 +60,7 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
 #' @describeIn SPR faster version that takes and returns parent and child parameters
 #' @template treeParent
 #' @template treeChild
-#' @param nEdge (optional) Number of edges.
+#' @template treeNEdgeOptional
 #' @param nNode (optional) Number of nodes.
 #' @return a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 #' @export

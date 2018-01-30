@@ -13,9 +13,10 @@ AllSPR(parent, child, nEdge, notDuplicateRoot, edgeToBreak)
 
 \item{nEdge}{the number of edges of tree of class \code{\link{phylo}}, i.e. dim(tree$edge)[1]}
 
-\item{notDuplicateRoot}{vector of length nEdge, specifying for each edge whether it is 
-the second edge leading to the root (in which case its breaking will be
-equivalent to breaking the other root edge... except insofar as it moves 
+\item{notDuplicateRoot}{logical vector of length nEdge, specifying for each edge whether
+it is the second edge leading to the root (in which case
+its breaking will be equivalent to breaking the other
+root edge... except insofar as it moves 
 the position of the root.)}
 
 \item{edgeToBreak}{(optional) integer specifying the index of an edge to bisect/prune,

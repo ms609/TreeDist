@@ -29,6 +29,7 @@ MorphyBootstrap <- function (edgeList, morphyObj, EdgeSwapper = NNISwap,
 }
 
 #' @describeIn MorphyBootstrap Bootstrapper for Profile Parsimony
+#' @template datasetParam
 #' @export
 ProfileBootstrap <- function (edgeList, dataset, EdgeSwapper = NNISwap, 
                              maxIter, maxHits, verbosity=1L, ...) {

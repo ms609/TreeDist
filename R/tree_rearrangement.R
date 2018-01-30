@@ -8,11 +8,11 @@
 #' @param scoreToBeat Double giving score of input tree.
 #' @param hits Integer giving number of times the input tree has already been hit.
 #' @template EdgeSwapperParam
-#' @param  minScore trees longer than \code{minScore}, probably the score of the best previously known tree,
-#'     will be discarded;
-##' @param returnSingle returns all trees if \kbd{FALSE} or a randomly selected tree if \kbd{TRUE}.
+## @param  minScore trees longer than \code{minScore}, probably the score of the best previously known tree,
+##     will be discarded;
+## @param returnSingle returns all trees if \kbd{FALSE} or a randomly selected tree if \kbd{TRUE}.
 #' @param iter iteration number of calling function, for reporting to user only.
-##' @template clusterParam
+## @template clusterParam
 #' @template verbosityParam
 #' @template treeScorerDots
 #'
@@ -27,7 +27,8 @@
 #' RearrangeTree(random.tree, dataset=Lobo.phy, EdgeSwapper=RootedNNISwap)
 #' 
 #' @export
-RearrangeEdges <- function (parent, child, dataset, TreeScorer, scoreToBeat=TreeScorer(parent, child, dataset),
+RearrangeEdges <- function (parent, child, dataset, TreeScorer, 
+                            scoreToBeat=TreeScorer(parent, child, dataset),
                             EdgeSwapper, iter='?', hits=0L, verbosity=0L, ...) {
   eps <- 1e-08
   rearrangedEdges <- EdgeSwapper(parent, child)

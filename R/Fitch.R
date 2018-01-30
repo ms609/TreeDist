@@ -44,11 +44,11 @@ Fitch <- function (tree, dataset) {
 #'         Fitch algorithm for each character.  Inapplicable tokens are treated
 #'         as per Brazeau, Guillerme and Smith (2017)
 #'
-#' @examples
+#' @examples {
 #  data('inapplicable.datasets')
 #  dataset <- inapplicable.phyData[[12]]
 #  tree <- NJTree(dataset)
-  
+#' }
 #'
 #' @template bgsReference
 #' @export
