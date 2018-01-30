@@ -32,6 +32,9 @@ and returns a list with modified vectors; for example
 more verbose feedback to the user.}
 
 \item{\dots}{further parameters to send to \code{TreeScorer}}
+
+\item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
+correspond to the labels of any accompanying tree.}
 }
 \value{
 A tree that is optimal under a random sampling of the original characters

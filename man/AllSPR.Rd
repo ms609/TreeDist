@@ -11,7 +11,7 @@ AllSPR(parent, child, nEdge, notDuplicateRoot, edgeToBreak)
 
 \item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
 
-\item{nEdge}{the number of edges of tree of class \code{\link{phylo}}, i.e. dim(tree$edge)[1]}
+\item{nEdge}{integer specifying the number of edges of a tree of class \code{\link{phylo}}, i.e. \code{dim(tree$edge)[1]}}
 
 \item{notDuplicateRoot}{logical vector of length nEdge, specifying for each edge whether
 it is the second edge leading to the root (in which case
