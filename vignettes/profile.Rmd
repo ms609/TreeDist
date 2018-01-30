@@ -3,6 +3,8 @@ title: "Tree Search With Profile Parsimony"
 author: "Martin R. Smith"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
 vignette: >
   %\VignetteIndexEntry{Profile parsimony}
   %\VignetteEngine{knitr::rmarkdown}
@@ -12,7 +14,7 @@ vignette: >
 
 `TreeSearch` is an R package that allows, among other things, parsimony search 
 on morphological datasets using the Profile Parsimony optimality criterion of 
-Faith & Trueman (2001).
+Faith & Trueman [-@Faith2001].
 
 Profile Parsimony finds the tree that is most faithful to the information contained 
 within a given dataset.
@@ -125,7 +127,7 @@ Search for a better tree:
 better.tree <- ProfileTreeSearch(ape::root(tree, '1', resolve.root=TRUE), my.prepdata, EdgeSwapper=RootedTBRSwap)
 ```
 
-The parsimony ratchet (Nixon, 1999) is better at finding globally optimal trees. `ProfileRatchet`
+The parsimony ratchet [@Nixon1999] is better at finding globally optimal trees. `ProfileRatchet`
 is a convenient wrapper for the underlying function `Ratchet`.
 ```r
 # Longwinded approach:
@@ -172,16 +174,3 @@ plot(my.consensus <- consensus(suboptimals))
 
 # References
 
-Congreve, C. R., & Lamsdell, J. C. (2016). \cite{Implied weighting and its utility in 
-  palaeontological datasets: a study using modelled phylogenetic matrices.} Palaeontology, 
-  online ahead of print. doi:10.1111/pala.12236
-
-Congreve, C. R., & Lamsdell, J. C. (2016). Data from: Implied weighting and its utility in 
-palaeontological datasets: a study using modelled phylogenetic matrices. Dryad Digital
-Repository, doi:[10.5061/dryad.7dq0j](http://dx.doi.org/10.5061/dryad.7dq0j)
-
-Faith, D. P. & Trueman, J. W. H. (2001). \cite{Towards an inclusive philosophy for phylogenetic
-inference.} Systematic Biology 50:3, 331-350, doi:[10.1080/10635150118627](http://dx.doi.org/10.1080/10635150118627)
-
-Smith, M. R. (201X). \cite{Trade-Offs between Resolution and Accuracy under Different Methods of
-Phylogenetic Inference.} Syst. Biol. 
