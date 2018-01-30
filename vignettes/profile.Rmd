@@ -35,7 +35,7 @@ This said, the Profile Parsimony algorithm is currently implemented only for bin
 with no ambiguous tokens.
 I hope to address this limitation soon.
 
-# Loading the package
+## Loading the package
 To install the package for the first time, type
 ```r
 install.packages('TreeSearch')
@@ -45,7 +45,7 @@ Once the package has been installed, load it using
 library('TreeSearch')
 ```
 
-# Loading data into the package
+## Loading data into the package
 To use this script on your own data, launch R, and type (or copy-paste) the following text
 into the R console.  Lines starting with '#' are comments and do not need to be copied.
 
@@ -145,17 +145,18 @@ better.tree <- ProfileRatchet(better.tree, my.prepdata,
 par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
 plot(better.tree)
 ```
+
 The default parameters may not be enough to find the optimal tree; type 
 `?Ratchet` to view all search parameters.
 
-# View the results
+## View the results
 
 In parsimony search, it is generally good practice to consider trees that are slightly suboptimal.
 Here, we'll take a consensus that includes all trees that are suboptimal by up to 1.5 bits.
 To sample this region of tree space well, the trick is to use large values of 
-\code{ratchHits} and \code{ratchIter}, and small values of \code{searchHits} and
-\code{searchiter}, so that many runs don't quite hit the optimal tree.
-In a serious study, you would want to sample many more than 25 Ratchet hits (\code{ratchHits}).
+`ratchHits` and `ratchIter`, and small values of `searchHits` and
+`searchiter`, so that many runs don't quite hit the optimal tree.
+In a serious study, you would want to sample many more than 25 Ratchet hits (`ratchHits`).
 
 ```{R Suboptimal sampling}
 suboptimals <- ProfileRatchet(better.tree, my.prepdata, 
@@ -168,9 +169,10 @@ suboptimals <- ProfileRatchet(better.tree, my.prepdata,
 
 Let's calculate and display a consensus tree that includes slightly suboptimal trees.
 ```{r Plot suboptimal consensus}
-plot(my.consensus <- consensus(suboptimals))
+par(mar=rep(0.2, 4))
+plot(my.consensus <- ape::consensus(suboptimals))
 ```
 
 
-# References
+## References
 
