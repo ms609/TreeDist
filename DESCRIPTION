@@ -28,12 +28,14 @@ Imports:
     parallel,
     phangorn (>= 2.2.1),
     R.cache,
+    Rdpack,
     stats
 Suggests:
     knitr,
     rmarkdown,
     testthat,
     xlsx
+RdMacros: Rdpack
 LazyData: true
 ByteCompile: true
 VignetteBuilder: knitr

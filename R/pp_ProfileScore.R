@@ -14,9 +14,7 @@
 #'         smaller numbers are better)
 #'
 #' @references
-#'    Faith, D. P. & Trueman, J. W. H. (2001). \cite{Towards an inclusive philosophy for 
-#'    phylogenetic inference.} Systematic Biology 50:3, 331-350, doi: 
-#'    \href{http://dx.doi.org/10.1080/10635150118627}{10.1080/10635150118627}
+#'  \insertRef{Faith2001}{TreeSearch}
 #'
 #' @examples
 #'   data(referenceTree)
