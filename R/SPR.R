@@ -45,6 +45,7 @@ SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
     child <- edge[, 2]
     nEdge <- length(parent)
     stop('Negative edgeToBreak not yet supported; on TODO list for next release')
+    notDuplicateRoot <- NonDuplicateRoot(parent, child, nEdge)
     return(unique(unlist(lapply(which(notDuplicateRoot), AllSPR,
       parent=parent, child=child, nEdge=nEdge, notDuplicateRoot=notDuplicateRoot),
       recursive=FALSE))) # TODO the fact that we need to use `unique` indicates that 
@@ -69,16 +70,7 @@ SPRSwap <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
   
   if (nEdge < 5) return (list(parent, child)) #TODO we need to re-root this tree...
   
-  notDuplicateRoot <- !logical(nEdge)
-  rightSide <- DescendantEdges(1, parent, child, nEdge)
-  nEdgeRight <- sum(rightSide)
-  if (nEdgeRight == 1) {
-    notDuplicateRoot[2] <- FALSE
-  } else if (nEdgeRight == 3) {
-    notDuplicateRoot[4] <- FALSE
-  } else {
-    notDuplicateRoot[1] <- FALSE
-  }
+  notDuplicateRoot <- NonDuplicateRoot(parent, child, nEdge)
   
   if (is.null(edgeToBreak)) {
     # Pick an edge at random
@@ -222,18 +214,9 @@ RootedSPRSwap <- function (parent, child, nEdge = length(parent), nNode = nEdge 
   rootEdges <- parent == rootNode
   breakable <- !logical(nEdge) & !rootEdges
   
-  notDuplicateRoot <- !logical(nEdge)
-  rightSide <- DescendantEdges(1, parent, child, nEdge)
-  nEdgeRight <- sum(rightSide)
-  if (nEdgeRight == 1) {
-    notDuplicateRoot[2] <- FALSE
-  } else if (nEdgeRight == 3) {
-    notDuplicateRoot[4] <- FALSE
-  } else {
-    notDuplicateRoot[1] <- FALSE
-  }
   
   if (!is.null(edgeToBreak) && edgeToBreak == -1) {
+    notDuplicateRoot <- NonDuplicateRoot(parent, child, nEdge)
     return(unique(unlist(lapply(which(breakable), AllSPR,
       parent=parent, child=child, nEdge=nEdge, notDuplicateRoot=notDuplicateRoot),
       recursive=FALSE))) # TODO the fact that we need to use `unique` indicates that 

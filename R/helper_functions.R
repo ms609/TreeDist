@@ -81,3 +81,29 @@ EdgeAncestry <- function (edge, parent, child, stopAt = (parent==min(parent))) {
     ret[edge <- AncestorEdge(edge, parent, child)] <- TRUE    
   }
 }
+
+#' Non-duplicate root
+#' 
+#' Identify, for each edge, whether it is not a duplicate of the root edge
+#' 
+#' @template treeParent
+#' @template treeChild
+#' @template treeNEdgeOptional
+#' 
+#' @author Martin R. Smith
+#' @export
+#' 
+#' @keywords internal
+NonDuplicateRoot <- function (parent, child, nEdge = length(parent)) {
+  notDuplicateRoot <- !logical(nEdge)
+  rightSide <- DescendantEdges(1, parent, child, nEdge)
+  nEdgeRight <- sum(rightSide)
+  if (nEdgeRight == 1) {
+    notDuplicateRoot[2] <- FALSE
+  } else if (nEdgeRight == 3) {
+    notDuplicateRoot[4] <- FALSE
+  } else {
+    notDuplicateRoot[1] <- FALSE
+  }
+  notDuplicateRoot
+}
