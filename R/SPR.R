@@ -143,9 +143,10 @@ SPRSwap <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
 #' @template treeParent
 #' @template treeChild
 #' @template treeNEdge
-#' @param notDuplicateRoot vector of length nEdge, specifying for each edge whether it is 
-#'                         the second edge leading to the root (in which case its breaking will be
-#'                         equivalent to breaking the other root edge... except insofar as it moves 
+#' @param notDuplicateRoot logical vector of length nEdge, specifying for each edge whether
+#'                         it is the second edge leading to the root (in which case
+#'                         its breaking will be equivalent to breaking the other
+#'                         root edge... except insofar as it moves 
 #'                         the position of the root.)
 #' @template edgeToBreakParam
 #' 
@@ -220,6 +221,17 @@ RootedSPRSwap <- function (parent, child, nEdge = length(parent), nNode = nEdge 
   rootNode <- parent[1]
   rootEdges <- parent == rootNode
   breakable <- !logical(nEdge) & !rootEdges
+  
+  notDuplicateRoot <- !logical(nEdge)
+  rightSide <- DescendantEdges(1, parent, child, nEdge)
+  nEdgeRight <- sum(rightSide)
+  if (nEdgeRight == 1) {
+    notDuplicateRoot[2] <- FALSE
+  } else if (nEdgeRight == 3) {
+    notDuplicateRoot[4] <- FALSE
+  } else {
+    notDuplicateRoot[1] <- FALSE
+  }
   
   if (!is.null(edgeToBreak) && edgeToBreak == -1) {
     return(unique(unlist(lapply(which(breakable), AllSPR,
