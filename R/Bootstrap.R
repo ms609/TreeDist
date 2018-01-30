@@ -28,11 +28,13 @@ MorphyBootstrap <- function (edgeList, morphyObj, EdgeSwapper = NNISwap,
   res[1:2]
 }
 
-#' @describeIn MorphyBootstrap Bootstrapper for Profile Parsimony
+
+#' @describeIn MorphyBootstrap Generic Bootstrapper for tree scoring functions that consider each character separately
 #' @template datasetParam
 #' @export
-ProfileBootstrap <- function (edgeList, dataset, EdgeSwapper = NNISwap, 
-                             maxIter, maxHits, verbosity=1L, ...) {
+#' @keywords internal
+CharacterwiseBootstrap <- function (edgeList, dataset, TreeScorer, EdgeSwapper = NNISwap, 
+                                   maxIter, maxHits, verbosity=1L, ...) {
   att <- attributes(dataset)
   startWeights <- att[['weight']]
   eachChar <- seq_along(startWeights)
@@ -47,8 +49,29 @@ ProfileBootstrap <- function (edgeList, dataset, EdgeSwapper = NNISwap,
   sampledAtt[['morphyObjs']] <- att[['morphyObjs']][sampled]
   attributes(sampledData) <- sampledAtt
   
-  res <- EdgeListSearch(edgeList, sampledData, TreeScorer=ProfileScoreMorphy,
-      EdgeSwapper=EdgeSwapper, maxIter=maxIter, maxHits=maxHits, verbosity=verbosity-1L, ...)
+  res <- EdgeListSearch(edgeList, sampledData, TreeScorer=TreeScorer,
+                        EdgeSwapper=EdgeSwapper, maxIter=maxIter, maxHits=maxHits, verbosity=verbosity-1L, ...)
   
   res[1:2]
 }
+
+#' @describeIn MorphyBootstrap Bootstrapper for Profile Parsimony
+#' @template datasetParam
+#' @export
+ProfileBootstrap <- function (edgeList, dataset, EdgeSwapper = NNISwap, 
+                              maxIter, maxHits, verbosity=1L, ...) {
+  CharacterwiseBootstrap(edgeList=edgeList, dataset=dataset, TreeScorer=ProfileScoreMorphy, EdgeSwapper=EdgeSwapper, 
+                         maxIter=maxIter, maxHits=maxHits, verbosity=verbosity, ...)
+}
+
+
+
+#' @describeIn MorphyBootstrap Bootstrapper for Implied weighting
+#' @template datasetParam
+#' @export
+IWBootstrap <- function (edgeList, dataset, EdgeSwapper = NNISwap, 
+                              maxIter, maxHits, verbosity=1L, ...) {
+  CharacterwiseBootstrap(edgeList=edgeList, dataset=dataset, TreeScorer=IWMorphy, EdgeSwapper=EdgeSwapper, 
+                         maxIter=maxIter, maxHits=maxHits, verbosity=verbosity, ...)
+}
+
