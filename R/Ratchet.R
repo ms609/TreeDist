@@ -154,21 +154,41 @@ Ratchet <- function (tree, dataset,
 #' @describeIn Ratchet Shortcut for Ratchet search under Profile Parsimony
 #' @export
 ProfileRatchet <- function (tree, dataset,
-               swappers = list(TBRSwap, SPRSwap, NNISwap),
-               BootstrapSwapper = swappers[[length(swappers)]],
-               returnAll=FALSE, stopAtScore=NULL,
-               ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
-               bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=1L, 
-               suboptimal=1e-08, ...) {
+                            swappers = list(TBRSwap, SPRSwap, NNISwap),
+                            BootstrapSwapper = swappers[[length(swappers)]],
+                            returnAll=FALSE, stopAtScore=NULL,
+                            ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
+                            bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=1L, 
+                            suboptimal=1e-08, ...) {
   Ratchet(tree=tree, dataset=dataset,
-    InitializeData=ProfileInitMorphy, CleanUpData=ProfileDestroyMorphy,
-    TreeScorer=ProfileScoreMorphy, Bootstrapper=ProfileBootstrap,
-    swappers = swappers, BootstrapSwapper = BootstrapSwapper,
-    returnAll=returnAll, suboptimal=suboptimal, stopAtScore=stopAtScore,
-    ratchIter=ratchIter, ratchHits=ratchHits,
-    searchIter=searchIter, searchHits=searchHits,
-    bootstrapIter=searchIter, bootstrapHits=bootstrapHits, 
-    verbosity=verbosity,  ...)
+          InitializeData=ProfileInitMorphy, CleanUpData=ProfileDestroyMorphy,
+          TreeScorer=ProfileScoreMorphy, Bootstrapper=ProfileBootstrap,
+          swappers=swappers, BootstrapSwapper=BootstrapSwapper,
+          returnAll=returnAll, suboptimal=suboptimal, stopAtScore=stopAtScore,
+          ratchIter=ratchIter, ratchHits=ratchHits,
+          searchIter=searchIter, searchHits=searchHits,
+          bootstrapIter=searchIter, bootstrapHits=bootstrapHits, 
+          verbosity=verbosity,  ...)
+}
+
+#' @describeIn Ratchet Shortcut for Ratchet search using implied weights
+#' @export
+ProfileRatchet <- function (tree, dataset,
+                            swappers = list(TBRSwap, SPRSwap, NNISwap),
+                            BootstrapSwapper = swappers[[length(swappers)]],
+                            returnAll=FALSE, stopAtScore=NULL,
+                            ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
+                            bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=1L, 
+                            suboptimal=1e-08, ...) {
+  Ratchet(tree=tree, dataset=dataset,
+          InitializeData=IWInitMorphy, CleanUpData=IWDestroyMorphy,
+          TreeScorer=IWMorphy, Bootstrapper=IWBootstrap,
+          swappers=swappers, BootstrapSwapper=BootstrapSwapper,
+          returnAll=returnAll, suboptimal=suboptimal, stopAtScore=stopAtScore,
+          ratchIter=ratchIter, ratchHits=ratchHits,
+          searchIter=searchIter, searchHits=searchHits,
+          bootstrapIter=searchIter, bootstrapHits=bootstrapHits, 
+          verbosity=verbosity,  ...)
 }
 
 #' @describeIn Ratchet returns a list of optimal trees produced by nSearch Ratchet searches

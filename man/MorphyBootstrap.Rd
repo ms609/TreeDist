@@ -2,13 +2,21 @@
 % Please edit documentation in R/Bootstrap.R
 \name{MorphyBootstrap}
 \alias{MorphyBootstrap}
+\alias{CharacterwiseBootstrap}
 \alias{ProfileBootstrap}
+\alias{IWBootstrap}
 \title{Ratchet bootstrapper}
 \usage{
 MorphyBootstrap(edgeList, morphyObj, EdgeSwapper = NNISwap, maxIter, maxHits,
   verbosity = 1L, ...)
 
+CharacterwiseBootstrap(edgeList, dataset, TreeScorer, EdgeSwapper = NNISwap,
+  maxIter, maxHits, verbosity = 1L, ...)
+
 ProfileBootstrap(edgeList, dataset, EdgeSwapper = NNISwap, maxIter, maxHits,
+  verbosity = 1L, ...)
+
+IWBootstrap(edgeList, dataset, EdgeSwapper = NNISwap, maxIter, maxHits,
   verbosity = 1L, ...)
 }
 \arguments{
@@ -35,6 +43,12 @@ more verbose feedback to the user.}
 
 \item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
 correspond to the labels of any accompanying tree.}
+
+\item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
+correspond to the labels of any accompanying tree.}
+
+\item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
+correspond to the labels of any accompanying tree.}
 }
 \value{
 A tree that is optimal under a random sampling of the original characters
@@ -44,6 +58,11 @@ Ratchet bootstrapper
 }
 \section{Functions}{
 \itemize{
+\item \code{CharacterwiseBootstrap}: Generic Bootstrapper for tree scoring functions that consider each character separately
+
 \item \code{ProfileBootstrap}: Bootstrapper for Profile Parsimony
+
+\item \code{IWBootstrap}: Bootstrapper for Implied weighting
 }}
 
+\keyword{internal}

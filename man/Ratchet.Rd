@@ -3,6 +3,7 @@
 \name{Ratchet}
 \alias{Ratchet}
 \alias{ProfileRatchet}
+\alias{ProfileRatchet}
 \alias{RatchetConsensus}
 \title{Parsimony Ratchet}
 \usage{
@@ -15,6 +16,12 @@ Ratchet(tree, dataset, InitializeData = PhyDat2Morphy,
   bootstrapIter = ceiling(searchIter/5),
   bootstrapHits = ceiling(searchHits/5), verbosity = 1L,
   suboptimal = 1e-08, ...)
+
+ProfileRatchet(tree, dataset, swappers = list(TBRSwap, SPRSwap, NNISwap),
+  BootstrapSwapper = swappers[[length(swappers)]], returnAll = FALSE,
+  stopAtScore = NULL, ratchIter = 100, ratchHits = 10,
+  searchIter = 2000, searchHits = 40, bootstrapIter = searchIter,
+  bootstrapHits = searchHits, verbosity = 1L, suboptimal = 1e-08, ...)
 
 ProfileRatchet(tree, dataset, swappers = list(TBRSwap, SPRSwap, NNISwap),
   BootstrapSwapper = swappers[[length(swappers)]], returnAll = FALSE,
@@ -90,6 +97,8 @@ This function returns a tree modified by parsimony ratchet iterations.
 \section{Functions}{
 \itemize{
 \item \code{ProfileRatchet}: Shortcut for Ratchet search under Profile Parsimony
+
+\item \code{ProfileRatchet}: Shortcut for Ratchet search using implied weights
 
 \item \code{RatchetConsensus}: returns a list of optimal trees produced by nSearch Ratchet searches
 }}

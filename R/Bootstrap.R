@@ -65,7 +65,6 @@ ProfileBootstrap <- function (edgeList, dataset, EdgeSwapper = NNISwap,
 }
 
 
-
 #' @describeIn MorphyBootstrap Bootstrapper for Implied weighting
 #' @template datasetParam
 #' @export
