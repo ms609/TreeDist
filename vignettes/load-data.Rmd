@@ -3,7 +3,6 @@ title: "Loading phylogenetic data into R"
 author: "Martin R. Smith"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
-output: rmarkdown::html_vignette
 bibliography: ../inst/REFERENCES.bib
 csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
 vignette: >
