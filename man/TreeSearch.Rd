@@ -29,8 +29,8 @@ ProfileTreeSearch(tree, dataset, EdgeSwapper = RootedTBR, maxIter = 100,
 \item{dataset}{Data in format required by \code{InitializeData}.}
 
 \item{TreeScorer}{function to score a given tree.
-The function will be passed two parameters: the first a MorphyTree list, and the
-second the value returned by \kbd{InitializeData}.}
+The function will be passed three parameters, corresponding to the 
+`parent` and `child` entries of a tree's edge list, and a dataset.}
 
 \item{EdgeSwapper}{a function that rearranges a parent and child vector, 
 and returns a list with modified vectors; for example
@@ -91,7 +91,6 @@ TreeSearch(njtree, Lobo.phy, maxIter=20, EdgeSwapper=TBRSwap)}
 \itemize{
 \item \code{\link{Fitch}}, calculates parsimony score;
 \item \code{\link{RootedNNI}}, conducts tree rearrangements;
-\item \code{\link{Sectorial}}, alternative heuristic, useful for larger trees;
 \item \code{\link{Ratchet}}, alternative heuristic, useful to escape local optima.
 }
 }

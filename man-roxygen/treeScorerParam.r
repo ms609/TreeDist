@@ -1,3 +1,3 @@
 #' @param TreeScorer function to score a given tree.
-#'        The function will be passed two parameters: the first a MorphyTree list, and the
-#'        second the value returned by \kbd{InitializeData}.
+#'        The function will be passed three parameters, corresponding to the 
+#'        `parent` and `child` entries of a tree's edge list, and a dataset.

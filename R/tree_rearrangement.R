@@ -1,5 +1,13 @@
-#' Rearrange phylogenetic tree
-#' @details \code{RearrangeTree} performs one tree rearrangement of a specified type
+#' Rearrange edges of a phylogenetic tree
+#' 
+#' Rearranges a matrix that corresponds to the edges of a phylogenetic tree,
+#' returning the score of the new tree.  Will generally be called from
+#' within a tree search function.
+#' 
+#' @details \code{RearrangeTree} performs one tree rearrangement of a
+#'  specified type, and returns the score of the tree (with the given dataset).
+#'  It also reports the number of times that this score was hit in the 
+#'  current function call.
 #' 
 #' @template treeParent
 #' @template treeChild
@@ -19,17 +27,21 @@
 #' @author Martin R. Smith
 #'
 #' @template returnEdgeList
-## Score will be correct.  Hits will be the number of times it's been hit in this function.
 #' 
 #' @examples
 #' data('Lobo')
 #' random.tree <- RandomTree(Lobo.phy)
-#' RearrangeTree(random.tree, dataset=Lobo.phy, EdgeSwapper=RootedNNISwap)
+#' edge <- random.tree$edge
+#' parent <- edge[, 1]
+#' child <- edge[, 2]
+#' dataset <- PhyDat2Morphy(Lobo.phy)
+#' RearrangeEdges(parent, child, dataset, EdgeSwapper=RootedNNISwap)
 #' 
 #' @export
-RearrangeEdges <- function (parent, child, dataset, TreeScorer, 
+RearrangeEdges <- function (parent, child, dataset, TreeScorer = MorphyLength,
+                            EdgeSwapper, 
                             scoreToBeat=TreeScorer(parent, child, dataset),
-                            EdgeSwapper, iter='?', hits=0L, verbosity=0L, ...) {
+                            iter='?', hits=0L, verbosity=0L, ...) {
   eps <- 1e-08
   rearrangedEdges <- EdgeSwapper(parent, child)
   # TODO we probably want to get ALL trees 1 REARRANGE step away

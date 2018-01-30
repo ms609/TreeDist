@@ -39,8 +39,8 @@ Its return value will be passed to TreeScorer and CleanUpData.}
 The function will be passed the value returned by \kbd{InitializeData}.}
 
 \item{TreeScorer}{function to score a given tree.
-The function will be passed two parameters: the first a MorphyTree list, and the
-second the value returned by \kbd{InitializeData}.}
+The function will be passed three parameters, corresponding to the 
+`parent` and `child` entries of a tree's edge list, and a dataset.}
 
 \item{Bootstrapper}{Function to perform bootstrapped rearrangements of tree. 
 First arguments will be an edgeList and a dataset, initialized using \code{InitializeData}
@@ -100,8 +100,6 @@ Nixon, K. C. (1999). \cite{The Parsimony Ratchet, a new method for rapid parsimo
 }
 \seealso{
 \code{\link{TreeSearch}}
-
-\code{\link{Sectorial}}
 
 Adapted from \code{\link[phangorn]{pratchet}} in the \pkg{phangorn} package.
 }

@@ -6,4 +6,5 @@ vignettes/.RData
 ^.*\.o$
 ^.*\.dll$
 ^.*\.yml$
-^.*\.Rproj.*$
+^.*\.Rproj$
+^\.Rproj\.user$

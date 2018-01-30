@@ -17,7 +17,8 @@ This function returns the elements from a list containing:
    \itemize{
 \item     The total parsimony score
 \item     The parsimony score associated with each character 
-\item     A matrix comprising character reconstructions for each node after the final pass
+\item     A matrix comprising character reconstructions for each node
+          after the final pass
   }
 The elements to return are specified by the parameter \code{detail}.  
 If a single element is requested (default) then just that element will be returned
@@ -34,8 +35,6 @@ result <- Fitch(tree, inapplicable.phyData[[1]])
 
 }
 \seealso{
-\code{\link{MorphyDat}}
-
 \code{\link{TreeSearch}}
 }
 \author{
