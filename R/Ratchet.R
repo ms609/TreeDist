@@ -33,7 +33,7 @@
 #' @author Martin R. Smith
 #' 
 #' @seealso \code{\link{TreeSearch}}
-#' @seealso \code{\link{Sectorial}}
+##### @seealso \code{\link{Sectorial}}
 #' @seealso Adapted from \code{\link[phangorn]{pratchet}} in the \pkg{phangorn} package.
 #' 
 #' @keywords  tree 

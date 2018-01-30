@@ -106,7 +106,7 @@ EdgeListSearch <- function (edgeList, dataset,
 #' \itemize{
 #' \item \code{\link{Fitch}}, calculates parsimony score;
 #' \item \code{\link{RootedNNI}}, conducts tree rearrangements;
-#' \item \code{\link{Sectorial}}, alternative heuristic, useful for larger trees;
+#### \item \code{\link{Sectorial}}, alternative heuristic, useful for larger trees;
 #' \item \code{\link{Ratchet}}, alternative heuristic, useful to escape local optima.
 #' }
 #'

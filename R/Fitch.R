@@ -21,7 +21,6 @@
 #' If a single element is requested (default) then just that element will be returned
 #' If multiple elements are requested then these will be returned in a list.
 #' 
-#' @seealso \code{\link{MorphyDat}}
 #' @seealso \code{\link{TreeSearch}}
 #' 
 #' @author Martin R. Smith (using Morphy C library, by Martin Brazeau)
