@@ -44,6 +44,9 @@ IWScore <- function (tree, dataset, concavity=4) {
 
 #' @describeIn ProfileScore Scorer for initialized dataset.
 #' @template concavityParam
+#' @param minSteps Integer vector specifying the minimum number of steps
+#'                 possible for each character in `dataset`, perhaps calculated
+#'                 using \code{\link{MinimumSteps}}.
 #' @export
 IWScoreMorphy <- function (parent, child, dataset, concavity=4, minSteps = attr(dataset, 'min.steps')) {
   steps <- vapply(attr(dataset, 'morphyObjs'), MorphyLength, parent=parent, child=child, integer(1))
