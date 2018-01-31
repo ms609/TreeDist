@@ -5,6 +5,7 @@
 \alias{ProfileRatchet}
 \alias{IWRatchet}
 \alias{RatchetConsensus}
+\alias{IWRatchetConsensus}
 \title{Parsimony Ratchet}
 \usage{
 Ratchet(tree, dataset, InitializeData = PhyDat2Morphy,
@@ -33,6 +34,10 @@ IWRatchet(tree, dataset, concavity = 4, swappers = list(TBRSwap, SPRSwap,
 RatchetConsensus(tree, dataset, ratchHits = 10, searchIter = 500,
   searchHits = 20, verbosity = 0L, swappers = list(RootedNNISwap),
   nSearch = 10, stopAtScore = NULL, ...)
+
+IWRatchetConsensus(tree, dataset, ratchHits = 10, concavity = 4,
+  searchIter = 500, searchHits = 20, verbosity = 0L,
+  swappers = list(RootedNNISwap), nSearch = 10, stopAtScore = NULL, ...)
 }
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}.}
@@ -90,6 +95,8 @@ more verbose feedback to the user.}
 \item{concavity}{A numeric value to use as the concavity constant (`k`) in implied weighting.}
 
 \item{nSearch}{Number of Ratchet searches to conduct (for RatchetConsensus)}
+
+\item{concavity}{A numeric value to use as the concavity constant (`k`) in implied weighting.}
 }
 \value{
 This function returns a tree modified by parsimony ratchet iterations.
@@ -104,6 +111,9 @@ This function returns a tree modified by parsimony ratchet iterations.
 \item \code{IWRatchet}: Shortcut for Ratchet search using implied weights
 
 \item \code{RatchetConsensus}: returns a list of optimal trees produced by nSearch Ratchet searches
+
+\item \code{IWRatchetConsensus}: returns a list of optimal trees produced by nSearch 
+Ratchet searches, using implied weighting
 }}
 
 \references{
