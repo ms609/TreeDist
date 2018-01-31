@@ -28,13 +28,11 @@ MorphyBootstrap <- function (edgeList, morphyObj, EdgeSwapper = NNISwap,
   res[1:2]
 }
 
-
-#' @describeIn MorphyBootstrap Generic Bootstrapper for tree scoring functions that consider each character separately
+#' @describeIn MorphyBootstrap Bootstrapper for Profile Parsimony
 #' @template datasetParam
 #' @export
-#' @keywords internal
-CharacterwiseBootstrap <- function (edgeList, dataset, TreeScorer, EdgeSwapper = NNISwap, 
-                                   maxIter, maxHits, verbosity=1L, ...) {
+ProfileBootstrap <- function (edgeList, dataset, EdgeSwapper = NNISwap, 
+                              maxIter, maxHits, verbosity=1L, ...) {
   att <- attributes(dataset)
   startWeights <- att[['weight']]
   eachChar <- seq_along(startWeights)
@@ -49,28 +47,34 @@ CharacterwiseBootstrap <- function (edgeList, dataset, TreeScorer, EdgeSwapper =
   sampledAtt[['morphyObjs']] <- att[['morphyObjs']][sampled]
   attributes(sampledData) <- sampledAtt
   
-  res <- EdgeListSearch(edgeList, sampledData, TreeScorer=TreeScorer,
+  res <- EdgeListSearch(edgeList, sampledData, TreeScorer=ProfileScoreMorphy,
                         EdgeSwapper=EdgeSwapper, maxIter=maxIter, maxHits=maxHits, verbosity=verbosity-1L, ...)
   
   res[1:2]
 }
-
-#' @describeIn MorphyBootstrap Bootstrapper for Profile Parsimony
-#' @template datasetParam
-#' @export
-ProfileBootstrap <- function (edgeList, dataset, EdgeSwapper = NNISwap, 
-                              maxIter, maxHits, verbosity=1L, ...) {
-  CharacterwiseBootstrap(edgeList=edgeList, dataset=dataset, TreeScorer=ProfileScoreMorphy, EdgeSwapper=EdgeSwapper, 
-                         maxIter=maxIter, maxHits=maxHits, verbosity=verbosity, ...)
-}
-
 
 #' @describeIn MorphyBootstrap Bootstrapper for Implied weighting
 #' @template datasetParam
 #' @export
 IWBootstrap <- function (edgeList, dataset, EdgeSwapper = NNISwap, 
                               maxIter, maxHits, verbosity=1L, ...) {
-  CharacterwiseBootstrap(edgeList=edgeList, dataset=dataset, TreeScorer=IWScoreMorphy, EdgeSwapper=EdgeSwapper, 
-                         maxIter=maxIter, maxHits=maxHits, verbosity=verbosity, ...)
+  att <- attributes(dataset)
+  startWeights <- att[['weight']]
+  eachChar <- seq_along(startWeights)
+  deindexedChars <- rep(eachChar, startWeights)
+  resampling <- tabulate(sample(deindexedChars, replace=TRUE), length(startWeights))
+  sampled <- resampling != 0
+  sampledData <- lapply(dataset, function (x) x[sampled])
+  sampledAtt <- att
+  sampledAtt[['weight']] <- resampling[sampled]
+  sampledAtt[['index']] <- rep(seq_len(sum(sampled)), resampling[sampled])
+  sampledAtt[['min.steps']] <- att[['min.steps']][sampled]
+  sampledAtt[['morphyObjs']] <- att[['morphyObjs']][sampled]
+  attributes(sampledData) <- sampledAtt
+  
+  res <- EdgeListSearch(edgeList, sampledData, TreeScorer=IWScoreMorphy,
+                        EdgeSwapper=EdgeSwapper, maxIter=maxIter, maxHits=maxHits, verbosity=verbosity-1L, ...)
+  
+  res[1:2]
 }
 
