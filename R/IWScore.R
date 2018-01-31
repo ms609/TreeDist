@@ -63,7 +63,7 @@ IWInitMorphy <- function (dataset) {
   attr(dataset, 'morphyObjs') <- 
     lapply(PhyToString(dataset, byTaxon=FALSE, useIndex=FALSE, concatenate=FALSE), 
            SingleCharMorphy)
-  attr(dataset, 'min.steps') <- stop("TODO")
+  
   # Return:
   dataset
 }
@@ -81,9 +81,9 @@ IWTreeSearch <- function (tree, dataset, concavity = 4, EdgeSwapper = RootedTBR,
   
   TreeSearch(tree, dataset, nChar=at$nr, weight=at$weight, info=at$info.amounts,
              nRowInfo=nrow(at$info.amounts), 
-             InitializeData = ProfileInitMorphy,
-             CleanUpData = ProfileDestroyMorphy,
-             TreeScorer = ProfileScoreMorphy,
+             InitializeData = IWInitMorphy,
+             CleanUpData = IWDestroyMorphy,
+             TreeScorer = IWScoreMorphy,
              EdgeSwapper = EdgeSwapper, 
              maxIter = maxIter, maxHits = maxHits, forestSize = forestSize,
              verbosity = verbosity,
