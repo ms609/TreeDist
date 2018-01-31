@@ -70,7 +70,7 @@ ProfileBootstrap <- function (edgeList, dataset, EdgeSwapper = NNISwap,
 #' @export
 IWBootstrap <- function (edgeList, dataset, EdgeSwapper = NNISwap, 
                               maxIter, maxHits, verbosity=1L, ...) {
-  CharacterwiseBootstrap(edgeList=edgeList, dataset=dataset, TreeScorer=IWMorphy, EdgeSwapper=EdgeSwapper, 
+  CharacterwiseBootstrap(edgeList=edgeList, dataset=dataset, TreeScorer=IWScoreMorphy, EdgeSwapper=EdgeSwapper, 
                          maxIter=maxIter, maxHits=maxHits, verbosity=verbosity, ...)
 }
 

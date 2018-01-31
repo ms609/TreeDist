@@ -182,7 +182,7 @@ IWRatchet <- function (tree, dataset,
                             suboptimal=1e-08, ...) {
   Ratchet(tree=tree, dataset=dataset,
           InitializeData=IWInitMorphy, CleanUpData=IWDestroyMorphy,
-          TreeScorer=IWMorphy, Bootstrapper=IWBootstrap,
+          TreeScorer=IWScoreMorphy, Bootstrapper=IWBootstrap,
           swappers=swappers, BootstrapSwapper=BootstrapSwapper,
           returnAll=returnAll, suboptimal=suboptimal, stopAtScore=stopAtScore,
           ratchIter=ratchIter, ratchHits=ratchHits,

@@ -47,10 +47,8 @@ IWScore <- function (tree, dataset, concavity=4) {
 #' @template treeChild
 #' @template concavityParam
 #' @export
-IWScoreMorphy <- function (parent, child, dataset, concavity=4) {
+IWScoreMorphy <- function (parent, child, dataset, concavity=4, minSteps = attr(dataset, 'min.steps')) {
   steps <- vapply(attr(dataset, 'morphyObjs'), MorphyLength, parent=parent, child=child, integer(1))
-  minSteps <- attr(dataset, 'min.steps')
-  nRowInfo <- nrow(info)
   homoplasies <- steps - minSteps
   fit <- homoplasies / (homoplasies + concavity)
   # Return:
@@ -74,18 +72,17 @@ IWInitMorphy <- function (dataset) {
 #' @export
 IWTreeSearch <- function (tree, dataset, concavity = 4, EdgeSwapper = RootedTBR,
                         maxIter = 100, maxHits = 20, forestSize = 1,
-                        verbosity = 1, precision=40000, ...) {
+                        verbosity = 1, ...) {
   if (class(dataset) != 'phyDat') stop("Unrecognized dataset class; should be phyDat, not ", class(dataset), '.')
   if (!('min.steps' %in% names(attributes(dataset)))) dataset <- PrepareDataIW(dataset)
   at <- attributes(dataset)
   
-  TreeSearch(tree, dataset, nChar=at$nr, weight=at$weight, info=at$info.amounts,
-             nRowInfo=nrow(at$info.amounts), 
+  TreeSearch(tree, dataset, nChar=at$nr, weight=at$weight, 
+             minSteps=at$min.steps, concavity = concavity,
              InitializeData = IWInitMorphy,
              CleanUpData = IWDestroyMorphy,
              TreeScorer = IWScoreMorphy,
              EdgeSwapper = EdgeSwapper, 
              maxIter = maxIter, maxHits = maxHits, forestSize = forestSize,
-             verbosity = verbosity,
-             concavity = concavity, ...)
+             verbosity = verbosity, ...)
 }
