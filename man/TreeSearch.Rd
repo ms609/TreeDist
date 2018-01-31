@@ -8,8 +8,7 @@
 \title{Search for most parsimonious trees}
 \usage{
 IWTreeSearch(tree, dataset, concavity = 4, EdgeSwapper = RootedTBR,
-  maxIter = 100, maxHits = 20, forestSize = 1, verbosity = 1,
-  precision = 40000, ...)
+  maxIter = 100, maxHits = 20, forestSize = 1, verbosity = 1, ...)
 
 EdgeListSearch(edgeList, dataset, TreeScorer = MorphyLength,
   EdgeSwapper = RootedTBRSwap, maxIter = 100, maxHits = 20,

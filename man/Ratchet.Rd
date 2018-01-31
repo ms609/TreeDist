@@ -23,11 +23,12 @@ ProfileRatchet(tree, dataset, swappers = list(TBRSwap, SPRSwap, NNISwap),
   searchIter = 2000, searchHits = 40, bootstrapIter = searchIter,
   bootstrapHits = searchHits, verbosity = 1L, suboptimal = 1e-08, ...)
 
-IWRatchet(tree, dataset, swappers = list(TBRSwap, SPRSwap, NNISwap),
-  BootstrapSwapper = swappers[[length(swappers)]], returnAll = FALSE,
-  stopAtScore = NULL, ratchIter = 100, ratchHits = 10,
-  searchIter = 2000, searchHits = 40, bootstrapIter = searchIter,
-  bootstrapHits = searchHits, verbosity = 1L, suboptimal = 1e-08, ...)
+IWRatchet(tree, dataset, concavity = 4, swappers = list(TBRSwap, SPRSwap,
+  NNISwap), BootstrapSwapper = swappers[[length(swappers)]],
+  returnAll = FALSE, stopAtScore = NULL, ratchIter = 100,
+  ratchHits = 10, searchIter = 2000, searchHits = 40,
+  bootstrapIter = searchIter, bootstrapHits = searchHits, verbosity = 1L,
+  suboptimal = 1e-08, ...)
 
 RatchetConsensus(tree, dataset, ratchHits = 10, searchIter = 500,
   searchHits = 20, verbosity = 0L, swappers = list(RootedNNISwap),
