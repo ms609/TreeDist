@@ -95,8 +95,6 @@ more verbose feedback to the user.}
 \item{concavity}{A numeric value to use as the concavity constant (`k`) in implied weighting.}
 
 \item{nSearch}{Number of Ratchet searches to conduct (for RatchetConsensus)}
-
-\item{concavity}{A numeric value to use as the concavity constant (`k`) in implied weighting.}
 }
 \value{
 This function returns a tree modified by parsimony ratchet iterations.
@@ -122,7 +120,7 @@ Ratchet searches, using implied weighting
 \seealso{
 \code{\link{TreeSearch}}
 
-Adapted from \code{\link[phangorn:fitch]{pratchet}} in the \pkg{phangorn} package.
+Adapted from \code{\link[phangorn]{pratchet}} in the \pkg{phangorn} package.
 }
 \author{
 Martin R. Smith

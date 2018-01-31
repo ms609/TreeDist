@@ -34,7 +34,7 @@
 #' 
 #' @seealso \code{\link{TreeSearch}}
 ##### @seealso \code{\link{Sectorial}}
-#' @seealso Adapted from \code{\link[phangorn::fitch]{pratchet}} in the \pkg{phangorn} package.
+#' @seealso Adapted from \code{\link[phangorn]{pratchet}} in the \pkg{phangorn} package.
 #' 
 #' @keywords  tree 
 #' @export
