@@ -3,7 +3,7 @@
 \name{Ratchet}
 \alias{Ratchet}
 \alias{ProfileRatchet}
-\alias{ProfileRatchet}
+\alias{IWRatchet}
 \alias{RatchetConsensus}
 \title{Parsimony Ratchet}
 \usage{
@@ -23,7 +23,7 @@ ProfileRatchet(tree, dataset, swappers = list(TBRSwap, SPRSwap, NNISwap),
   searchIter = 2000, searchHits = 40, bootstrapIter = searchIter,
   bootstrapHits = searchHits, verbosity = 1L, suboptimal = 1e-08, ...)
 
-ProfileRatchet(tree, dataset, swappers = list(TBRSwap, SPRSwap, NNISwap),
+IWRatchet(tree, dataset, swappers = list(TBRSwap, SPRSwap, NNISwap),
   BootstrapSwapper = swappers[[length(swappers)]], returnAll = FALSE,
   stopAtScore = NULL, ratchIter = 100, ratchHits = 10,
   searchIter = 2000, searchHits = 40, bootstrapIter = searchIter,
@@ -98,7 +98,7 @@ This function returns a tree modified by parsimony ratchet iterations.
 \itemize{
 \item \code{ProfileRatchet}: Shortcut for Ratchet search under Profile Parsimony
 
-\item \code{ProfileRatchet}: Shortcut for Ratchet search using implied weights
+\item \code{IWRatchet}: Shortcut for Ratchet search using implied weights
 
 \item \code{RatchetConsensus}: returns a list of optimal trees produced by nSearch Ratchet searches
 }}

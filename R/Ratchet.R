@@ -173,7 +173,7 @@ ProfileRatchet <- function (tree, dataset,
 
 #' @describeIn Ratchet Shortcut for Ratchet search using implied weights
 #' @export
-ProfileRatchet <- function (tree, dataset,
+IWRatchet <- function (tree, dataset,
                             swappers = list(TBRSwap, SPRSwap, NNISwap),
                             BootstrapSwapper = swappers[[length(swappers)]],
                             returnAll=FALSE, stopAtScore=NULL,
