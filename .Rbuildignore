@@ -8,3 +8,5 @@ vignettes/.RData
 ^.*\.yml$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+\.yml$
+\.Rdata$
