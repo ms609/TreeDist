@@ -10,7 +10,8 @@
 #'
 #' @template inapplicableSources
 #'
-#' @template bgsReference
+#' @references
+#'  \insertRef{Brazeau2018}{TreeSearch}
 #' 
 #' @keywords datasets
 "inapplicable.datasets"
@@ -27,7 +28,8 @@
 #'
 #' @template inapplicableSources
 #'
-#' @template bgsReference
+#' @references
+#'  \insertRef{Brazeau2018}{TreeSearch}
 #'
 #' @keywords datasets
 "inapplicable.phyData"
@@ -35,13 +37,14 @@
 #' Thirty Datasets with Inapplicable data
 #' 
 #' These are the datasets used to evaluate the behaviour of the inapplicable algorithm 
-#' in Brazeau, Guillerme and Smith (2017).
+#' in Brazeau, Guillerme and Smith (2018).
 #'
 #' The name of each item corresponds to the datasets listed below.  The value gives its citation.
 #'
 #' @template inapplicableSources
 #'
-#' @template bgsReference
+#' @references
+#'  \insertRef{Brazeau2018}{TreeSearch}
 #'
 #' @keywords datasets
 "inapplicable.citations"
@@ -51,7 +54,8 @@
 #'
 #' @template LoboMods
 #'
-#' @source Zhang X-G, Smith MR, Yang J, Hou J-B. 2016 Onychophoran-like musculature in a phosphatized Cambrian lobopodian. Biol. Lett. 12: 20160492. \url{http://dx.doi.org/10.1098/rsbl.2016.0492}
+#' @source 
+#'  \insertRef{Zhang2016}{TreeSearch}
 #' 
 #' @keywords datasets
 "Lobo.data"
@@ -60,7 +64,8 @@
 #'
 #' @template LoboMods
 #'
-#' @source Zhang X-G, Smith MR, Yang J, Hou J-B. 2016 Onychophoran-like musculature in a phosphatized Cambrian lobopodian. Biol. Lett. 12: 20160492. \url{http://dx.doi.org/10.1098/rsbl.2016.0492}
+#' @source
+#'  \insertRef{Zhang2016}{TreeSearch}
 #' 
 #' @keywords datasets
 "Lobo.phy"

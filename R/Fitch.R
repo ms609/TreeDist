@@ -50,7 +50,8 @@ Fitch <- function (tree, dataset) {
 #  tree <- NJTree(dataset)
 #' }
 #'
-#' @template bgsReference
+#' @references
+#'  \insertRef{Brazeau2018}{TreeSearch}
 #' @export
 FitchSteps <- function (tree, dataset) {
   if (class(dataset) != 'phyDat') {
