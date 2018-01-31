@@ -124,7 +124,8 @@
 #'
 #' @template inapplicableSources
 #'
-#' @template studyReference
+#' @references
+#'  \insertRef{Brazeau2018}{TreeSearch}
 #'
 #' @keywords datasets
 "inapplicable.datasets"
@@ -141,7 +142,8 @@
 #'
 #' @template inapplicableSources
 #'
-#' @template studyReference
+#' @references
+#'  \insertRef{Brazeau2018}{TreeSearch}
 #'
 #' @keywords datasets
 "inapplicable.phyData"
@@ -155,7 +157,8 @@
 #'
 #' @template inapplicableSources
 #'
-#' @template studyReference
+#' @references
+#'  \insertRef{Brazeau2018}{TreeSearch}
 #'
 #' @keywords datasets
 "inapplicable.citations"

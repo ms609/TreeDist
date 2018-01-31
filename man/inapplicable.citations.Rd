@@ -224,7 +224,7 @@ inapplicable.citations
 }
 \description{
 These are the datasets used to evaluate the behaviour of the inapplicable algorithm 
-in Brazeau, Guillerme and Smith (2017).
+in Brazeau, Guillerme and Smith (2018).
 
 These are the datasets used to evaluate the behaviour of the inapplicable algorithm 
 in Brazeau, Guillerme and Smith (2017).
@@ -235,10 +235,8 @@ The name of each item corresponds to the datasets listed below.  The value gives
 The name of each item corresponds to the datasets listed below.  The value gives its citation.
 }
 \references{
-BRAZEAU, M. D., GUILLERME, T. and SMITH, M. R. 2017.
-Morphological phylogenetic analysis with inapplicable data. BioRxiv.
+\insertRef{Brazeau2018}{TreeSearch}
 
-BRAZEAU, M. D., GUILLERME, T. and SMITH, M. R. 2017.
-Morphological phylogenetic analysis with inapplicable data. BioRxiv.
+\insertRef{Brazeau2018}{TreeSearch}
 }
 \keyword{datasets}

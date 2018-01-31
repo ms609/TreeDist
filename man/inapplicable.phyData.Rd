@@ -241,10 +241,8 @@ the first subset comprise simpler datasets with faster processing times.
 The value is the dataset in \code{phyDat} format.
 }
 \references{
-BRAZEAU, M. D., GUILLERME, T. and SMITH, M. R. 2017.
-Morphological phylogenetic analysis with inapplicable data. BioRxiv.
+\insertRef{Brazeau2018}{TreeSearch}
 
-BRAZEAU, M. D., GUILLERME, T. and SMITH, M. R. 2017.
-Morphological phylogenetic analysis with inapplicable data. BioRxiv.
+\insertRef{Brazeau2018}{TreeSearch}
 }
 \keyword{datasets}

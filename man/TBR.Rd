@@ -69,7 +69,7 @@ TBR(tree)
 }
 \references{
 The \acronym{TBR} algorithm is summarized in
-Felsenstein, J. 2004. \cite{Inferring Phylogenies.} Sinauer Associates, Sunderland, Massachusetts.
+ \insertRef{Felsenstein2004}{TreeSearch}
 }
 \seealso{
 RootedTBR useful when the position of the root node should be retained.

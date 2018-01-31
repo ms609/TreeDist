@@ -69,7 +69,7 @@ SPR(tree)
 }
 \references{
 The \acronym{SPR} algorithm is summarized in
-Felsenstein, J. 2004. \cite{Inferring Phylogenies.} Sinauer Associates, Sunderland, Massachusetts.
+ \insertRef{Felsenstein2004}{TreeSearch}
 }
 \seealso{
 RootedSPR useful when the position of the root node should be retained.
