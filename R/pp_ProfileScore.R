@@ -77,6 +77,10 @@ ProfileDestroyMorphy <- function (dataset) {
   vapply(attr(dataset, 'morphyObjs'), UnloadMorphy, integer(1))
 }
 
+#' @describeIn IWScore Free memory from morphyObjs initialized by \kbd{IWScoreMorphy}.
+#' @export
+IWDestroyMorphy <- ProfileDestroyMorphy
+
 #' @describeIn TreeSearch Search using profile parsimony
 #' @export
 ProfileTreeSearch <- function (tree, dataset, EdgeSwapper = RootedTBR,

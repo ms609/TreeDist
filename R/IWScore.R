@@ -68,9 +68,6 @@ IWInitMorphy <- function (dataset) {
   dataset
 }
 
-#' @describeIn IWScore Free memory from morphyObjs initialized by \kbd{IWScoreMorphy}.
-#' @export
-IWDestroyMorphy <- ProfileDestroyMorphy
 
 #' @describeIn TreeSearch Search using profile parsimony
 #' @template concavityParam
