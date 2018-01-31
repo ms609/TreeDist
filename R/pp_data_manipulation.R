@@ -136,9 +136,7 @@ PrepareDataIW <- function (dataset) {
   nChar <- at$nr
   cont <- attr(dataset, "contrast")
   nTip <- length(dataset)
-  #############TODO YOU ARE HERE###################
-  # Calculate minimum steps                       #
-  # Not simple for character 00001111{23}{45}{34} #
+  
   powers.of.2 <- 2L ^ c(0L:(nLevel - 1L))
   inappLevel <- which(at$levels == "-")
   cont[, inappLevel] <- 0
@@ -165,11 +163,12 @@ PrepareDataIW <- function (dataset) {
 #' @return An integer specifying the minimum number of steps that the character must contain
 MinimumSteps <- function (states) {
   
-  tokens <- AsBinary(unique(states)) > 0
+  tokens <- AsBinary(unique(states[states>0])) > 0
   lastDim <- dim(tokens)
   tokensUsed <- 0
   
   repeat {
+    tokens <- tokens[, !duplicated(t(tokens))]
     unambiguous <- rowSums(tokens) == 1
     tokenNecessary <- apply(tokens[unambiguous, , drop=FALSE], 2, any)
     statesRemaining <- !unambiguous
@@ -178,22 +177,18 @@ MinimumSteps <- function (states) {
     
     if (!any(statesRemaining)) return (tokensUsed - 1)
     
-    tokens <- tokens[statesRemaining, !duplicated(t(tokens))]
-    if (identical(dim(tokens), lastDim)) break;
+    tokens <- tokens[statesRemaining, !tokenNecessary]
+    if (identical(dim(tokens), lastDim)) {
+      unnecessary <- colSums(tokens) == 1
+      if (any(unnecessary)) {
+        tokens <- tokens[, !unnecessary]
+      } else {
+        stop("The token configuration [", paste(states, collapse=" "), 
+             "] is not correctly handled by MinimumSteps.\n Please report this bug at ",
+             "https://github.com/ms609/TreeSearch/issues/new")
+      }
+    }
     lastDim <- dim(tokens)
   }
   
-  
-  
-  if (any(statesRemaining)) {
-    ## This could be massively optimised by bitwise comparisons in C.
-    candidates <- which(!tokenNecessary & colSums(tokens) > 1)
-    ## If an optional token only occurs in a single taxon, leave it for now
-    
-    # Return:
-    
-  } else {
-    # Return:
-    sum(tokenNecessary) - 1L
-  }
 }
