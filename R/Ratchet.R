@@ -213,7 +213,6 @@ RatchetConsensus <- function (tree, dataset, ratchHits=10,
 
 #' @describeIn Ratchet returns a list of optimal trees produced by nSearch 
 #'                     Ratchet searches, using implied weighting
-#' @template concavityParam
 #' @export
 IWRatchetConsensus <- function (tree, dataset, ratchHits=10, concavity=4,
                               searchIter=500, searchHits=20, verbosity=0L, 
