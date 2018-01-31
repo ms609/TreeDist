@@ -122,7 +122,7 @@ Ratchet searches, using implied weighting
 \seealso{
 \code{\link{TreeSearch}}
 
-Adapted from \code{\link[phangorn]{pratchet}} in the \pkg{phangorn} package.
+Adapted from \code{\link[phangorn:fitch]{pratchet}} in the \pkg{phangorn} package.
 }
 \author{
 Martin R. Smith

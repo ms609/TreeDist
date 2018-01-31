@@ -150,4 +150,17 @@ plot(ape::consensus(my.consensus))
 ```
 
 
+## Implied weighting
+Equal weights produces trees that are less accurate and less precise than implied weights [@SmithTern]; equally weighted analysis should never be conducted without also considering the results of implied weights [@Goloboff1997], ideally under a range of concavity constants [cf. @Smith2014].
+
+The simplest way to conduct an implied weights search is to use the functions
+```R 
+IWTreeSearch
+IWRatchet
+IWRatchetConsensus
+```
+which operate in the same fashion as their equally-weighted counterparts,
+with the option of specifying a concavity constant (_k_) using 
+the parameter `concavity=k` (default = 4).
+
 ## References
