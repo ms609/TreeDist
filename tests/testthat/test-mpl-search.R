@@ -64,7 +64,8 @@ test_that("tree can be found", {
   expect_equal(comb11, IWRatchet(RandomTree(phy11, 'a'), phy11, searchIter=300, searchHits = 20, 
                                  swappers = RootySwappers, ratchHits=3, verbosity=0))
   expect_equal('multiPhylo', class(
-    IWRatchet(RandomTree(phy11, 'a'), phy11, searchIter=300, searchHits = 20,
+    IWRatchet(tree=RandomTree(phy11, 'a'), dataset=phy11, concavity=4,
+              searchIter=300, searchHits = 20,
             ratchHits=3, verbosity=0L, returnAll=TRUE)
   ))
   # expect_equal(IWSectorial(RandomTree(phy11, 'a'), phy11, verbosity=-1), comb11) # TODO: Sectorial Search not working yet!
