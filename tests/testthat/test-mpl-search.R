@@ -51,3 +51,22 @@ test_that("tree search finds shortest tree", {
                   ratchIter=3, searchHits=5, verbosity=0), 'score')
   expect_equal(3, Fitch(true_tree, dataset), ratchetScore)
 })
+
+context("Implied weights: Tree search")
+test_that("tree can be found", {
+  set.seed(0)
+  expect_error(IWTreeSearch(tree=unrooted11, dataset=phy11))
+  expect_equal(comb11, IWTreeSearch(tree=RandomTree(phy11, 'a'), dataset=phy11,
+                                  maxIter=2500, EdgeSwapper = RootedTBRSwap, verbosity=0))
+  expect_equal(comb11, IWTreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000, EdgeSwapper = RootedSPRSwap,
+                                  verbosity=0))
+  expect_equal(comb11, IWTreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000, EdgeSwapper = RootedNNISwap, verbosity=0))
+  expect_equal(comb11, IWRatchet(RandomTree(phy11, 'a'), phy11, searchIter=300, searchHits = 20, 
+                                 swappers = RootySwappers, ratchHits=3, verbosity=0))
+  expect_equal('multiPhylo', class(
+    IWRatchet(RandomTree(phy11, 'a'), phy11, searchIter=300, searchHits = 20,
+            ratchHits=3, verbosity=0L, returnAll=TRUE)
+  ))
+  # expect_equal(IWSectorial(RandomTree(phy11, 'a'), phy11, verbosity=-1), comb11) # TODO: Sectorial Search not working yet!
+})
+
