@@ -180,7 +180,9 @@ IWRatchet <- function (tree, dataset, concavity=4,
                             ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
                             bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=1L, 
                             suboptimal=1e-08, ...) {
-  Ratchet(tree=tree, dataset=dataset, concavity=concavity,
+  dataset <- PrepareDataIW(dataset)
+  Ratchet(tree=tree, dataset=dataset, 
+          concavity=concavity, minSteps=attr(dataset, 'min.steps'), 
           InitializeData=IWInitMorphy, CleanUpData=IWDestroyMorphy,
           TreeScorer=IWScoreMorphy, Bootstrapper=IWBootstrap,
           swappers=swappers, BootstrapSwapper=BootstrapSwapper,
