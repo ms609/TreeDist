@@ -173,14 +173,14 @@ ProfileRatchet <- function (tree, dataset,
 
 #' @describeIn Ratchet Shortcut for Ratchet search using implied weights
 #' @export
-IWRatchet <- function (tree, dataset,
+IWRatchet <- function (tree, dataset, concavity=4,
                             swappers = list(TBRSwap, SPRSwap, NNISwap),
                             BootstrapSwapper = swappers[[length(swappers)]],
                             returnAll=FALSE, stopAtScore=NULL,
                             ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
                             bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=1L, 
                             suboptimal=1e-08, ...) {
-  Ratchet(tree=tree, dataset=dataset,
+  Ratchet(tree=tree, dataset=dataset, concavity=concavity,
           InitializeData=IWInitMorphy, CleanUpData=IWDestroyMorphy,
           TreeScorer=IWScoreMorphy, Bootstrapper=IWBootstrap,
           swappers=swappers, BootstrapSwapper=BootstrapSwapper,
@@ -188,7 +188,7 @@ IWRatchet <- function (tree, dataset,
           ratchIter=ratchIter, ratchHits=ratchHits,
           searchIter=searchIter, searchHits=searchHits,
           bootstrapIter=searchIter, bootstrapHits=bootstrapHits, 
-          verbosity=verbosity,  ...)
+          verbosity=verbosity, ...)
 }
 
 #' @describeIn Ratchet returns a list of optimal trees produced by nSearch Ratchet searches
