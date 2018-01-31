@@ -37,6 +37,11 @@ IWScore <- function (tree, dataset, concavity=4) {
   steps <- FitchSteps(tree, dataset)
   minSteps <- at$min.steps
   homoplasies <- steps - minSteps
+  
+  # TODO remove this paranoid check once 100% happy with minSteps calculation.
+  if (homoplasies < 0) stop("Minimum steps have been miscalculated.
+                            Please report this bug at
+                            https://github.com/ms609/TreeSearch/issues/new")
   fit <- homoplasies / (homoplasies + concavity)
   # Return:
   sum(fit * weight)
