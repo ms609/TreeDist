@@ -140,20 +140,60 @@ PrepareDataIW <- function (dataset) {
   # Calculate minimum steps                       #
   # Not simple for character 00001111{23}{45}{34} #
   powers.of.2 <- 2L ^ c(0L:(nLevel - 1L))
-  tmp <- cont %*% powers.of.2
-  tmp <- as.integer(tmp)
-  unlisted <- unlist(dataset, recursive=FALSE, use.names=FALSE)
-  binaryMatrix <- tmp[unlisted]
   inappLevel <- which(at$levels == "-")
-  applicableTokens <- setdiff(powers.of.2, 2 ^ (inappLevel - 1))
+  cont[, inappLevel] <- 0
+  tmp <- as.integer(cont %*% powers.of.2)
+  unlisted <- unlist(dataset, use.names=FALSE)
+  binaryMatrix <- matrix(tmp[unlisted], nChar, nTip, byrow=FALSE)
   
-  apply(binaryMatrix, 1, function(x) {
-    vapply(applicableTokens, function (y) sum(x == y), integer(1))
-  })
+  attr(dataset, 'min.steps') <- apply(binaryMatrix, 1, MinimumSteps)
   
-  attr(dataset, 'split.sizes') <- apply(binaryMatrix, 1, function(x) {
-      vapply(applicableTokens, function (y) sum(x == y), integer(1))
-    })
-  
+  # Return:
   dataset
+}
+
+#' Minimum steps
+#' 
+#' Smallest number of steps that a character can take on any tree
+#' 
+#' @param states Integer vector listing the tokens that may be present at each tip along a single character,
+#'               with each token represented as a binary digit; e.g. a value of 11 means that
+#'               the tip may have tokens 0, 1 or 3 (as 11 = 2^0 + 2^1 + 2^3).
+#'               As the minimum steps can be found when inapplicables occur together,
+#'               inapplicable tokens can be denoted as ?s or with the integer 0 (not 2^0).
+#'               
+#' @return An integer specifying the minimum number of steps that the character must contain
+MinimumSteps <- function (states) {
+  
+  tokens <- AsBinary(unique(states)) > 0
+  lastDim <- dim(tokens)
+  tokensUsed <- 0
+  
+  repeat {
+    unambiguous <- rowSums(tokens) == 1
+    tokenNecessary <- apply(tokens[unambiguous, , drop=FALSE], 2, any)
+    statesRemaining <- !unambiguous
+    statesRemaining[statesRemaining] <- rowSums(tokens[statesRemaining, tokenNecessary, drop=FALSE]) == 0
+    tokensUsed <- tokensUsed + sum(tokenNecessary)
+    
+    if (!any(statesRemaining)) return (tokensUsed - 1)
+    
+    tokens <- tokens[statesRemaining, !duplicated(t(tokens))]
+    if (identical(dim(tokens), lastDim)) break;
+    lastDim <- dim(tokens)
+  }
+  
+  
+  
+  if (any(statesRemaining)) {
+    ## This could be massively optimised by bitwise comparisons in C.
+    candidates <- which(!tokenNecessary & colSums(tokens) > 1)
+    ## If an optional token only occurs in a single taxon, leave it for now
+    
+    # Return:
+    
+  } else {
+    # Return:
+    sum(tokenNecessary) - 1L
+  }
 }
