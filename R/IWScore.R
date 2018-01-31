@@ -43,8 +43,6 @@ IWScore <- function (tree, dataset, concavity=4) {
 }
 
 #' @describeIn ProfileScore Scorer for initialized dataset.
-#' @template treeParent
-#' @template treeChild
 #' @template concavityParam
 #' @export
 IWScoreMorphy <- function (parent, child, dataset, concavity=4, minSteps = attr(dataset, 'min.steps')) {

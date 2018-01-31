@@ -172,6 +172,7 @@ ProfileRatchet <- function (tree, dataset,
 }
 
 #' @describeIn Ratchet Shortcut for Ratchet search using implied weights
+#' @template concavityParam
 #' @export
 IWRatchet <- function (tree, dataset, concavity=4,
                             swappers = list(TBRSwap, SPRSwap, NNISwap),

@@ -87,6 +87,8 @@ more verbose feedback to the user.}
 
 \item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}}, \code{dataset})}
 
+\item{concavity}{A numeric value to use as the concavity constant (`k`) in implied weighting.}
+
 \item{nSearch}{Number of Ratchet searches to conduct (for RatchetConsensus)}
 }
 \value{
