@@ -168,7 +168,7 @@ MinimumSteps <- function (states) {
   tokensUsed <- 0
   
   repeat {
-    tokens <- tokens[, !duplicated(t(tokens))]
+    tokens <- tokens[, !duplicated(t(tokens)), drop=FALSE]
     unambiguous <- rowSums(tokens) == 1
     tokenNecessary <- apply(tokens[unambiguous, , drop=FALSE], 2, any)
     statesRemaining <- !unambiguous
@@ -181,7 +181,7 @@ MinimumSteps <- function (states) {
     if (identical(dim(tokens), lastDim)) {
       unnecessary <- colSums(tokens) == 1
       if (any(unnecessary)) {
-        tokens <- tokens[, !unnecessary]
+        tokens <- tokens[, !unnecessary, drop=FALSE]
       } else {
         stop("The token configuration [", paste(states, collapse=" "), 
              "] is not correctly handled by MinimumSteps.\n Please report this bug at ",
