@@ -163,7 +163,9 @@ PrepareDataIW <- function (dataset) {
 #' @return An integer specifying the minimum number of steps that the character must contain
 MinimumSteps <- function (states) {
   
-  tokens <- AsBinary(unique(states[states>0])) > 0
+  uniqueStates <- unique(states[states>0])
+  if (length(uniqueStates) < 2) return (0)
+  tokens <- AsBinary(uniqueStates) > 0
   lastDim <- dim(tokens)
   tokensUsed <- 0
   
