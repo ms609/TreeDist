@@ -179,7 +179,7 @@ MinimumSteps <- function (states) {
     
     if (!any(statesRemaining)) return (tokensUsed - 1)
     
-    tokens <- tokens[statesRemaining, !tokenNecessary]
+    tokens <- tokens[statesRemaining, !tokenNecessary, drop=FALSE]
     if (identical(dim(tokens), lastDim)) {
       unnecessary <- colSums(tokens) == 1
       if (any(unnecessary)) {
