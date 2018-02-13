@@ -116,10 +116,10 @@ MorphyErrorCheck <- function (action) {
 
 #' Morphy object from single character
 #' 
-#' @param char state of each character at each tip in turn, in a format that will be converted
+#' @param char State of each character at each tip in turn, in a format that will be converted
 #'             to a character string by \code{\link{paste0}(char, ';', collapse='')}.
 #'
-#' @return a pointer to a morphyObj. Don't forget to unload it when you're done with it:
+#' @return A pointer to a morphyObj. Don't forget to unload it when you're done with it:
 #'         \code{morphyObj <- \link{UnloadMorphy}(morphyObj)}.
 #'
 #' @author Martin R. Smith
@@ -127,7 +127,8 @@ MorphyErrorCheck <- function (action) {
 #' @export
 SingleCharMorphy <- function (char) {
   char <- paste0(c(char, ';'), collapse='')
-  nTip <- nchar(char) - 1L
+  entries <- gregexpr("\\{[^\\{]+\\}|\\([^\\()]+\\)|[^;]", char)
+  nTip <- length(entries[[1]])
   morphyObj <- mpl_new_Morphy()
   MorphyErrorCheck(mpl_init_Morphy(nTip, 1, morphyObj)) 
   MorphyErrorCheck(mpl_attach_rawdata(char, morphyObj)) 
