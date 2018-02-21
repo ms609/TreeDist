@@ -11,15 +11,13 @@ git:
   depth: 5
 
 r_binary_packages:
- - testthat
-  
-r_packages:
  - covr
  - devtools
  - memoise
  - phangorn
  - R.cache
  - roxygen2
+ - testthat
    
 before_script:
  - R -e "devtools::document()"
