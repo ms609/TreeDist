@@ -13,13 +13,16 @@ git:
 r_binary_packages:
  - ape
  - covr
- - devtools
  - memoise
  - phangorn
  - R.cache
  - Rdpack
  - roxygen2
  - testthat
+ 
+r_packages:
+# Can't use current devtools on R 3.4.0
+ - devtools
 
 before_script:
  - R -e "devtools::document()"
