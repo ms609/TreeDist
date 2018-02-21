@@ -11,6 +11,7 @@ git:
   depth: 5
 
 r_binary_packages:
+ - ape
  - covr
  - devtools
  - memoise
@@ -19,7 +20,7 @@ r_binary_packages:
  - Rdpack
  - roxygen2
  - testthat
-   
+
 before_script:
  - R -e "devtools::document()"
   
