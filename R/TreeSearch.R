@@ -11,7 +11,7 @@ EdgeListSearch <- function (edgeList, dataset,
                           bestScore=NULL,
                           stopAtScore=NULL, forestSize=1L, 
                           cluster=NULL, verbosity=1L, ...) {
-  epsilon <- 1e-07                        
+  epsilon <- 1e-07
   if (!is.null(forestSize) && length(forestSize)) {
     if (forestSize > 1L) {
       stop("TODO: Forests not supported")

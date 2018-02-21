@@ -83,7 +83,7 @@ IWTreeSearch <- function (tree, dataset, concavity = 4, EdgeSwapper = RootedTBR,
   if (!('min.steps' %in% names(attributes(dataset)))) dataset <- PrepareDataIW(dataset)
   at <- attributes(dataset)
   
-  TreeSearch(tree, dataset, nChar=at$nr, weight=at$weight, 
+  TreeSearch(tree, dataset, nChar=at$nr, weight=at$weight,
              minSteps=at$min.steps, concavity = concavity,
              InitializeData = IWInitMorphy,
              CleanUpData = IWDestroyMorphy,
