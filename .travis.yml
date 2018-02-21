@@ -16,6 +16,7 @@ r_binary_packages:
  - memoise
  - phangorn
  - R.cache
+ - Rdpack
  - roxygen2
  - testthat
    
