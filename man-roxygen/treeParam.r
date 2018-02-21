@@ -1,1 +1,1 @@
-#' @param tree A tree of class \code{\link{phylo}}
+#' @param tree A tree of class \code{\link{phylo}}.

@@ -2,23 +2,23 @@
 % Please edit documentation in R/SPR.R
 \name{SPR}
 \alias{SPR}
-\alias{SPRCore}
+\alias{SPRSwap}
 \alias{RootedSPR}
-\alias{RootedSPRCore}
+\alias{RootedSPRSwap}
 \title{Subtree Pruning and Rearrangement}
 \usage{
 SPR(tree, edgeToBreak = NULL, mergeEdge = NULL)
 
-SPRCore(parent, child, nEdge = length(parent), nNode = nEdge/2L,
+SPRSwap(parent, child, nEdge = length(parent), nNode = nEdge/2L,
   edgeToBreak = NULL, mergeEdge = NULL)
 
 RootedSPR(tree, edgeToBreak = NULL, mergeEdge = NULL)
 
-RootedSPRCore(parent, child, nEdge = length(parent), nNode = nEdge/2L,
+RootedSPRSwap(parent, child, nEdge = length(parent), nNode = nEdge/2L,
   edgeToBreak = NULL, mergeEdge = NULL)
 }
 \arguments{
-\item{tree}{A tree of class \code{\link{phylo}}}
+\item{tree}{A tree of class \code{\link{phylo}}.}
 
 \item{edgeToBreak}{the index of an edge to bisect, generated randomly if not specified.}
 
@@ -28,7 +28,7 @@ RootedSPRCore(parent, child, nEdge = length(parent), nNode = nEdge/2L,
 
 \item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
 
-\item{nEdge}{(optional) Number of edges.}
+\item{nEdge}{(optional) integer specifying the number of edges of a tree of class \code{\link{phylo}}, i.e. \code{dim(tree$edge)[1]}}
 
 \item{nNode}{(optional) Number of nodes.}
 }
@@ -54,11 +54,11 @@ Branch lengths are not (yet) supported.
 }
 \section{Functions}{
 \itemize{
-\item \code{SPRCore}: faster version that takes and returns parent and child parameters
+\item \code{SPRSwap}: faster version that takes and returns parent and child parameters
 
 \item \code{RootedSPR}: Perform \acronym{SPR} rearrangement, retaining position of root
 
-\item \code{RootedSPRCore}: faster version that takes and returns parent and child parameters
+\item \code{RootedSPRSwap}: faster version that takes and returns parent and child parameters
 }}
 
 \examples{
@@ -69,7 +69,7 @@ SPR(tree)
 }
 \references{
 The \acronym{SPR} algorithm is summarized in
-Felsenstein, J. 2004. \cite{Inferring Phylogenies.} Sinauer Associates, Sunderland, Massachusetts.
+ \insertRef{Felsenstein2004}{TreeSearch}
 }
 \seealso{
 RootedSPR useful when the position of the root node should be retained.

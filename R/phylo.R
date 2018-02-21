@@ -238,9 +238,12 @@ AllAncestors <- function (parent, child) {
 }
 
 #' Clade sizes
+#'
 #' @template treeParam
 #' @param nodes whose descendants should be returned
+#'
 #' @return the number of nodes (including tips) that are descended from each node in nodes
+#'
 #' @importFrom phangorn allDescendants
 #' @keywords internal
 #' @export
@@ -250,9 +253,9 @@ CladeSizes <- function (tree, nodes) {
 }
     
 
-#' node depth
+#' Node depth
 #' Wrapper for the ape function
-## @useDynLib TreeSearch ape_node_depth
+#'
 #' @keywords internal
 #' @export
 C_node_depth <- function (nTip, nNode, parent, child, nEdge) {

@@ -2,24 +2,26 @@
 % Please edit documentation in R/NNI.R
 \name{NNI}
 \alias{NNI}
-\alias{NNICore}
+\alias{NNISwap}
 \alias{RootedNNI}
-\alias{RootedNNICore}
+\alias{RootedNNISwap}
 \title{NNI}
 \usage{
 NNI(tree, edgeToBreak = NULL)
 
-NNICore(parent, child, nTips = (length(parent)/2L) + 1L, edgeToBreak = NULL)
+NNISwap(parent, child, nTips = (length(parent)/2L) + 1L, edgeToBreak = NULL)
 
 RootedNNI(tree, edgeToBreak = NULL)
 
-RootedNNICore(parent, child, nTips = (length(parent)/2L) + 1L,
+RootedNNISwap(parent, child, nTips = (length(parent)/2L) + 1L,
   edgeToBreak = NULL)
 }
 \arguments{
-\item{tree}{A tree of class \code{\link{phylo}}}
+\item{tree}{A tree of class \code{\link{phylo}}.}
 
-\item{edgeToBreak}{(optional) integer specifying the index of an edge to bisect/prune, generated randomly if not specified}
+\item{edgeToBreak}{(optional) integer specifying the index of an edge to bisect/prune,
+generated randomly if not specified.  Alternatively, set to \code{-1} to return a complete list
+of all trees one step from the input tree.}
 
 \item{parent}{the first column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 1]}
 
@@ -28,7 +30,8 @@ RootedNNICore(parent, child, nTips = (length(parent)/2L) + 1L,
 \item{nTips}{(optional) Number of tips.}
 }
 \value{
-Returns a tree with class \code{phylo}.
+Returns a tree with class \code{phylo} (if \code{returnAll = FALSE}) or 
+        a set of trees, with class \code{multiPhylo} (if \code{returnAll = TRUE}).
 
 a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 
@@ -47,21 +50,22 @@ Branch lengths are not supported.
 }
 \section{Functions}{
 \itemize{
-\item \code{NNICore}: faster version that takes and returns parent and child parameters
+\item \code{NNISwap}: faster version that takes and returns parent and child parameters
 
 \item \code{RootedNNI}: Perform \acronym{NNI} rearrangement, retaining position of root
 
-\item \code{RootedNNICore}: faster version that takes and returns parent and child parameters
+\item \code{RootedNNISwap}: faster version that takes and returns parent and child parameters
 }}
 
 \examples{
-tree <- ape:::rtree(20, br=NULL)
+tree <- ape::rtree(20, br=NULL)
 NNI(tree)
+NNI(tree, edgeToBreak = -1)
 
 }
 \references{
 The algorithm is summarized in
-Felsenstein, J. 2004. \cite{Inferring Phylogenies.} Sinauer Associates, Sunderland, Massachusetts.
+ \insertRef{Felsenstein2004}{TreeSearch}
 }
 \author{
 Martin R. Smith

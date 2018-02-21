@@ -1,1 +1,2 @@
-#' @param verbosity verbosity of output written to terminal; higher values print more messages
+#' @param verbosity Level of detail to display in console: larger numbers provide
+#'  more verbose feedback to the user.

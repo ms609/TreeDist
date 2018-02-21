@@ -34,7 +34,7 @@ TBRWarning <- function (parent, child, error) {
 #' 
 #' @return This function returns a tree in \code{phyDat} format that has undergone one \acronym{TBR} iteration.
 #' @references The \acronym{TBR} algorithm is summarized in
-#' Felsenstein, J. 2004. \cite{Inferring Phylogenies.} Sinauer Associates, Sunderland, Massachusetts.
+#'  \insertRef{Felsenstein2004}{TreeSearch}
 #' 
 #' 
 #' @author Martin R. Smith
@@ -59,7 +59,7 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   }
   
   edge <- tree$edge  
-  tree$edge <- ListToMatrix(TBRCore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak, 
+  tree$edge <- ListToMatrix(TBRSwap(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak, 
                                     mergeEdges=mergeEdges))
   tree
 }
@@ -71,7 +71,7 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
 #' @param nEdge (optional) Number of edges.
 #' @return a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 #' @export
-TBRCore <- function(parent, child, nEdge = length(parent), edgeToBreak=NULL, mergeEdges=NULL) {
+TBRSwap <- function(parent, child, nEdge = length(parent), edgeToBreak=NULL, mergeEdges=NULL) {
   if (nEdge < 5) return (list(parent, child)) #TODO do we need to re-root this tree?
   
   # Pick an edge at random
@@ -195,7 +195,7 @@ TBRCore <- function(parent, child, nEdge = length(parent), edgeToBreak=NULL, mer
   
   #########Assert(identical(unique(table(parent)), 2L))
   #########Assert(identical(unique(table(child)),  1L))
-  return (RenumberTreeList(parent, child, nEdge))
+  return (RenumberEdges(parent, child, nEdge))
 }
 
 #' Rooted TBR 
@@ -204,14 +204,14 @@ TBRCore <- function(parent, child, nEdge = length(parent), edgeToBreak=NULL, mer
 RootedTBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
   edge   <- tree$edge
-  tree$edge <- ListToMatrix(RootedTBRCore(edge[, 1], edge[, 2], 
+  tree$edge <- ListToMatrix(RootedTBRSwap(edge[, 1], edge[, 2], 
                             edgeToBreak=edgeToBreak, mergeEdges=mergeEdges))
   tree
 }
 
 #' @describeIn TBR faster version that takes and returns parent and child parameters
 #' @export
-RootedTBRCore <- function (parent, child, nEdge=length(parent), edgeToBreak=NULL, mergeEdges=NULL) {
+RootedTBRSwap <- function (parent, child, nEdge=length(parent), edgeToBreak=NULL, mergeEdges=NULL) {
   if (nEdge < 5) return (TBRWarning(parent, child, 'Fewer than 4 tips'))
   nTips <- (nEdge / 2L) + 1L
   rootNode <- parent[1]
@@ -361,5 +361,5 @@ RootedTBRCore <- function (parent, child, nEdge=length(parent), edgeToBreak=NULL
   
   ###Assert(identical(unique(table(parent)), 2L))
   ###Assert(identical(unique(table(child)),  1L))
-  return (RenumberTreeList(parent, child, nEdge))
+  return (RenumberEdges(parent, child, nEdge))
 }

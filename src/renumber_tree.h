@@ -89,7 +89,7 @@ extern SEXP RENUMBER_TREE(SEXP parent, SEXP child, SEXP ned) {
   return(RESULT);
 }
 
-extern SEXP RENUMBER_TREE_LIST(SEXP parent, SEXP child, SEXP ned) {
+extern SEXP RENUMBER_EDGES(SEXP parent, SEXP child, SEXP ned) {
   int i;
   const int n_edge = INTEGER(ned)[0];
   SEXP RESULT, PARENT, CHILD;

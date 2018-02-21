@@ -1,4 +1,12 @@
-man-roxygen
+/^src\-/
 cran-comments.md
+man-roxygen
+vignettes/.RData
+/^\.git/
+^.*\.o$
+^.*\.dll$
+^.*\.yml$
+^.*\.Rproj$
+^\.Rproj\.user$
 \.yml$
-\.Rdata$
+^\.Rdata$

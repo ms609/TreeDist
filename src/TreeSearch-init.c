@@ -8,19 +8,12 @@
 #include <R_ext/Rdynload.h>
 
 #include "ape_reorder.h"
-#include "phangorn_fitch.h"
 #include "renumber_tree.h"
 
-// Abandoned: attempts to link to ape / phangorn functions
-// static R_NativePrimitiveArgType ape_node_depth_t[] = {
-//   INTSXP, INTSXP, INTSXP, INTSXP, INTSXP, REALSXP, INTSXP
-// };
-// void ape_node_depth(int *ntip, int *nnode, int *e1, int *e2,
-// 		int *nedge, double *xx, int *method) {
-//   typedef int (*Fun)(int*, int*, int*, int*, int*, double*, int*);
-//   Fun fun = (Fun) R_GetCCallable( "ape", "node_depth" );   
-//   fun(ntip, nnode, e1, e2, nedge, xx, method);
-// }
+#include "mpl.h"
+#include "RMorphyUtils.h"
+#include "RMorphy.h"
+#include "build_postorder.h"
 
 static const R_CMethodDef cMethods[] = {
   {"order_edges_number_nodes", (DL_FUNC) &order_edges_number_nodes, 3, order_edges_number_nodes_t},
@@ -31,16 +24,39 @@ static const R_CMethodDef cMethods[] = {
 };
 
 static const R_CallMethodDef callMethods[] = {
-  {"phangorn_FITCH",     (DL_FUNC) &phangorn_FITCH,     8},
-  {"RENUMBER_TREE",      (DL_FUNC) &RENUMBER_TREE,      3},
-  {"RENUMBER_TREE_LIST", (DL_FUNC) &RENUMBER_TREE_LIST, 3},
+  {"_R_wrap_mpl_new_Morphy",        (DL_FUNC) &_R_wrap_mpl_new_Morphy, 0},
+  {"_R_wrap_mpl_delete_Morphy",     (DL_FUNC) &_R_wrap_mpl_delete_Morphy, 1},
+  {"_R_wrap_mpl_init_Morphy",       (DL_FUNC) &_R_wrap_mpl_init_Morphy, 3},
+  {"_R_wrap_mpl_get_numtaxa",       (DL_FUNC) &_R_wrap_mpl_get_numtaxa, 1},
+  {"_R_wrap_mpl_get_num_charac",    (DL_FUNC) &_R_wrap_mpl_get_num_charac, 1},
+  {"_R_wrap_mpl_attach_symbols",    (DL_FUNC) &_R_wrap_mpl_attach_symbols, 2},
+  {"_R_wrap_mpl_get_symbols",       (DL_FUNC) &_R_wrap_mpl_get_symbols, 1},
+  {"_R_wrap_mpl_attach_rawdata",    (DL_FUNC) &_R_wrap_mpl_attach_rawdata, 2},
+  {"_R_wrap_mpl_delete_rawdata",    (DL_FUNC) &_R_wrap_mpl_delete_rawdata, 1},
+  {"_R_wrap_mpl_set_parsim_t",      (DL_FUNC) &_R_wrap_mpl_set_parsim_t, 3},
+  {"_R_wrap_mpl_set_gaphandl",      (DL_FUNC) &_R_wrap_mpl_set_gaphandl, 2},
+  {"_R_wrap_mpl_set_num_internal_nodes", (DL_FUNC) &_R_wrap_mpl_set_num_internal_nodes, 2},
+  {"_R_wrap_mpl_get_num_internal_nodes", (DL_FUNC) &_R_wrap_mpl_get_num_internal_nodes, 1},
+  {"_R_wrap_mpl_apply_tipdata",     (DL_FUNC) &_R_wrap_mpl_apply_tipdata, 1},
+  {"_R_wrap_mpl_set_charac_weight", (DL_FUNC) &_R_wrap_mpl_set_charac_weight, 3},
+  {"_R_wrap_mpl_get_charac_weight", (DL_FUNC) &_R_wrap_mpl_get_charac_weight, 2},
+  {"_R_wrap_mpl_first_down_recon",  (DL_FUNC) &_R_wrap_mpl_first_down_recon, 4},
+  {"_R_wrap_mpl_first_up_recon",    (DL_FUNC) &_R_wrap_mpl_first_up_recon, 5},
+  {"_R_wrap_mpl_second_down_recon", (DL_FUNC) &_R_wrap_mpl_second_down_recon, 4},
+  {"_R_wrap_mpl_second_up_recon",   (DL_FUNC) &_R_wrap_mpl_second_up_recon, 5},
+  {"_R_wrap_mpl_update_tip",        (DL_FUNC) &_R_wrap_mpl_update_tip, 3},
+  {"_R_wrap_mpl_update_lower_root", (DL_FUNC) &_R_wrap_mpl_update_lower_root, 3},
+  {"MORPHYLENGTH",                  (DL_FUNC) &MORPHYLENGTH, 4},
+  {"RANDOM_TREE",                   (DL_FUNC) &RANDOM_TREE, 1},
+  {"RANDOM_TREE_SCORE",             (DL_FUNC) &RANDOM_TREE_SCORE, 2},
+
+  {"RENUMBER_TREE",  (DL_FUNC) &RENUMBER_TREE,  3},
+  {"RENUMBER_EDGES", (DL_FUNC) &RENUMBER_EDGES, 3},
   {NULL, NULL, 0}
 };
 
 void R_init_TreeSearch(DllInfo *dll) {
   R_registerRoutines(dll, cMethods, callMethods, NULL, NULL);
-  //R_RegisterCCallable("TreeSearch", "RENUMBER_TREE", (DL_FUNC) &RENUMBER_TREE);
   R_useDynamicSymbols(dll, FALSE);
   R_forceSymbols(dll, TRUE);
 }
-

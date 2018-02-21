@@ -23,7 +23,7 @@ SPRWarning <- function (parent, child, error) {
 #' @return This function returns a tree in \code{phyDat} format that has undergone one \acronym{SPR} iteration.
 #' 
 #' @references The \acronym{SPR} algorithm is summarized in
-#' Felsenstein, J. 2004. \cite{Inferring Phylogenies.} Sinauer Associates, Sunderland, Massachusetts.
+#'  \insertRef{Felsenstein2004}{TreeSearch}
 #' 
 #' @author Martin R. Smith
 #' 
@@ -40,42 +40,47 @@ SPRWarning <- function (parent, child, error) {
 SPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
   edge <- tree$edge
-  tree$edge <- ListToMatrix(SPRCore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak, 
-                                    mergeEdge=mergeEdge))
-  tree
+  if (!is.null(edgeToBreak) && edgeToBreak == -1) {
+    parent <- edge[, 1]
+    child <- edge[, 2]
+    nEdge <- length(parent)
+    stop('Negative edgeToBreak not yet supported; on TODO list for next release')
+    notDuplicateRoot <- NonDuplicateRoot(parent, child, nEdge)
+    return(unique(unlist(lapply(which(notDuplicateRoot), AllSPR,
+      parent=parent, child=child, nEdge=nEdge, notDuplicateRoot=notDuplicateRoot),
+      recursive=FALSE))) # TODO the fact that we need to use `unique` indicates that 
+                         #      we're being inefficient here.
+  } else {
+    tree$edge <- ListToMatrix(SPRSwap(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak, 
+                                      mergeEdge=mergeEdge))
+    return(tree)
+  }
 }
 
 ## TODO Do edges need to be pre-ordered before coming here?
 #' @describeIn SPR faster version that takes and returns parent and child parameters
 #' @template treeParent
 #' @template treeChild
-#' @param nEdge (optional) Number of edges.
+#' @template treeNEdgeOptional
 #' @param nNode (optional) Number of nodes.
 #' @return a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 #' @export
-SPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
+SPRSwap <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
                      edgeToBreak=NULL, mergeEdge=NULL) {
   
   if (nEdge < 5) return (list(parent, child)) #TODO we need to re-root this tree...
   
-  notDuplicateRoot <- !logical(nEdge)
-  rightSide <- DescendantEdges(1, parent, child, nEdge)
-  nEdgeRight <- sum(rightSide)
-  if (nEdgeRight == 1) {
-    notDuplicateRoot[2] <- FALSE
-  } else if (nEdgeRight == 3) {
-    notDuplicateRoot[4] <- FALSE
-  } else {
-    notDuplicateRoot[1] <- FALSE
-  }
+  notDuplicateRoot <- NonDuplicateRoot(parent, child, nEdge)
   
   if (is.null(edgeToBreak)) {
     # Pick an edge at random
     edgeToBreak <- SampleOne(which(notDuplicateRoot), len=nEdge - 1L)
-  } else {
-    if (edgeToBreak > nEdge) return(SPRWarning(parent, child, "edgeToBreak > nEdge"))
-    if (edgeToBreak < 1) return(SPRWarning(parent, child, "edgeToBreak < 1"))
+  } else if (edgeToBreak > nEdge) {
+    return(SPRWarning(parent, child, "edgeToBreak > nEdge"))
+  } else if (edgeToBreak < 1) {
+    return(SPRWarning(parent, child, "edgeToBreak < 1"))
   }
+  # Breaking a single edge
   brokenEdge <- seq_along(parent) == edgeToBreak
   brokenEdge.parentNode <- parent[edgeToBreak]
   brokenEdge.childNode  <-  child[edgeToBreak]
@@ -92,7 +97,7 @@ SPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
     brokenRootDaughters <- parent == child[brokenEdgeSister]
     nearBrokenEdge <- nearBrokenEdge | brokenRootDaughters
   }
-    
+  
   if (!is.null(mergeEdge)) { # Quick sanity checks
     if (mergeEdge > nEdge) return(SPRWarning(parent, child, "mergeEdge value > number of edges"))
     if (length(mergeEdge) !=  1) 
@@ -121,7 +126,68 @@ SPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
   
   #####Assert(identical(unique(table(parent)), 2L))
   #####Assert(identical(unique(table(child)),  1L))
-  return (RenumberTreeList(parent, child, nEdge))
+  return (RenumberEdges(parent, child, nEdge))
+}
+
+
+#' All SPR trees
+#'
+#' @template treeParent
+#' @template treeChild
+#' @template treeNEdge
+#' @param notDuplicateRoot logical vector of length nEdge, specifying for each edge whether
+#'                         it is the second edge leading to the root (in which case
+#'                         its breaking will be equivalent to breaking the other
+#'                         root edge... except insofar as it moves 
+#'                         the position of the root.)
+#' @template edgeToBreakParam
+#' 
+#' @return a list of edge matrices for all trees one SPR rearrangement from the starting tree
+#'
+#' @author Martin R. Smith
+#' 
+AllSPR <- function (parent, child, nEdge, notDuplicateRoot, edgeToBreak) {
+
+  brokenEdge <- seq_along(parent) == edgeToBreak
+  brokenEdge.parentNode <- parent[edgeToBreak]
+  brokenEdge.childNode  <-  child[edgeToBreak]
+    
+  edgesCutAdrift <- DescendantEdges(edgeToBreak, parent, child, nEdge)
+  edgesOnAdriftSegment <- edgesCutAdrift | brokenEdge
+  
+  brokenEdgeParent <- child == brokenEdge.parentNode
+  brokenEdgeSister <- parent == brokenEdge.parentNode & !brokenEdge
+  brokenEdgeDaughters <- parent == brokenEdge.childNode
+  nearBrokenEdge <- brokenEdge | brokenEdgeSister | brokenEdgeParent | brokenEdgeDaughters
+  if (breakingRootEdge <- !any(brokenEdgeParent)) { 
+    # Edge to break is the Root Node.
+    brokenRootDaughters <- parent == child[brokenEdgeSister]
+    nearBrokenEdge <- nearBrokenEdge | brokenRootDaughters
+  }
+  
+  mergeEdges <- which(!nearBrokenEdge & !edgesOnAdriftSegment & notDuplicateRoot)
+  nCandidates <- length(mergeEdges)
+  
+  if (breakingRootEdge) {
+    newEdges <- lapply(mergeEdges, function (mergeEdge) {
+      newParent <- parent
+      newChild <- child
+      newParent[brokenRootDaughters] <- brokenEdge.parentNode
+      newChild [brokenEdgeSister] <- child[mergeEdge]
+      newParent[brokenEdge | brokenEdgeSister] <- child[brokenEdgeSister]
+      newChild[mergeEdge] <- child[brokenEdgeSister]
+      return(RenumberTree(newParent, newChild, nEdge))
+    }) # lapply faster than vapply
+  } else {
+    newEdges <- lapply(mergeEdges, function (mergeEdge) {
+      newParent <- parent
+      newParent[brokenEdgeSister] <- parent[brokenEdgeParent]
+      newParent[brokenEdgeParent] <- newParent[mergeEdge]
+      newParent[mergeEdge] <- brokenEdge.parentNode
+      return(RenumberTree(newParent, child, nEdge))
+    }) # lapply faster than vapply
+  }
+  return(lapply(newEdges, function (newEdge) {tree$edge <- newEdge; tree}))
 }
 
 #' Rooted SPR 
@@ -129,25 +195,34 @@ SPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
 #' @export
 RootedSPR <- function(tree, edgeToBreak = NULL, mergeEdge = NULL) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
-  edge   <- tree$edge  
-  tree$edge <- ListToMatrix(RootedSPRCore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak,
+  edge <- tree$edge
+  tree$edge <- ListToMatrix(RootedSPRSwap(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak,
                                           mergeEdge=mergeEdge))
-  tree
+  return (tree)
 }
 
 ## TODO Do edges need to be pre-ordered before coming here?
 #' @describeIn SPR faster version that takes and returns parent and child parameters
 #' @return a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 #' @export
-RootedSPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
+RootedSPRSwap <- function (parent, child, nEdge = length(parent), nNode = nEdge / 2L,
                      edgeToBreak=NULL, mergeEdge=NULL) {
   
   if (nEdge < 5) return (SPRWarning(parent, child, "Too few tips to rearrange."))
   
   rootNode <- parent[1]
   rootEdges <- parent == rootNode
-  
   breakable <- !logical(nEdge) & !rootEdges
+  
+  
+  if (!is.null(edgeToBreak) && edgeToBreak == -1) {
+    notDuplicateRoot <- NonDuplicateRoot(parent, child, nEdge)
+    return(unique(unlist(lapply(which(breakable), AllSPR,
+      parent=parent, child=child, nEdge=nEdge, notDuplicateRoot=notDuplicateRoot),
+      recursive=FALSE))) # TODO the fact that we need to use `unique` indicates that 
+                         #      we're being inefficient here.
+  }
+  
   rightSide <- DescendantEdges(1, parent, child, nEdge)
   leftSide  <- !rightSide
   nEdgeRight <- which(rootEdges)[2] - 1
@@ -216,5 +291,5 @@ RootedSPRCore <- function (parent, child, nEdge = length(parent), nNode = nEdge 
   
   #####Assert(identical(unique(table(parent)), 2L))
   #####Assert(identical(unique(table(child)),  1L))
-  return(RenumberTreeList(parent, child, nEdge))  
+  return(RenumberEdges(parent, child, nEdge))  
 }

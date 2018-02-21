@@ -10,23 +10,36 @@
 #' @template treeParam
 #' @template edgeToBreakParam
 #' 
-#' @return Returns a tree with class \code{phylo}.
+#' @return Returns a tree with class \code{phylo} (if \code{returnAll = FALSE}) or 
+#'         a set of trees, with class \code{multiPhylo} (if \code{returnAll = TRUE}).
 #'
 #' @references
 #' The algorithm is summarized in
-#' Felsenstein, J. 2004. \cite{Inferring Phylogenies.} Sinauer Associates, Sunderland, Massachusetts.
+#'  \insertRef{Felsenstein2004}{TreeSearch}
 #' 
 #' @author Martin R. Smith
 #' 
 #' @examples
-#' tree <- ape:::rtree(20, br=NULL)
+#' tree <- ape::rtree(20, br=NULL)
 #' NNI(tree)
+#' NNI(tree, edgeToBreak = -1)
 #'
 #' @export
 NNI <- function (tree, edgeToBreak=NULL) {
   edge <- tree$edge
-  tree$edge <- ListToMatrix(NNICore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak))
-  tree
+  if (!is.null(edgeToBreak) && edgeToBreak == -1) {
+    parent <- edge[, 1]
+    child  <- edge[, 2]
+    nTips <- (length(parent) / 2L) + 1L
+    samplable <- child > nTips
+    # newEdges <- vapply(which(samplable), DoubleNNI, parent=parent, child=child, list(matrix(0L, nEdge, 2), matrix(0L, nEdge, 2)))
+    newEdges <- unlist(lapply(which(samplable), DoubleNNI, parent=parent, child=child), recursive=FALSE) # Quicker than vapply, surprisingly
+    newTrees <- lapply(newEdges, function (edges) {tree$edge <- edges; tree}) # Quicker than vapply, surprisingly
+    return(newTrees)
+  } else {
+    tree$edge <- ListToMatrix(NNISwap(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak))
+    return (tree)
+  }
 }
 
 #' @describeIn NNI faster version that takes and returns parent and child parameters
@@ -35,14 +48,17 @@ NNI <- function (tree, edgeToBreak=NULL) {
 #' @param nTips (optional) Number of tips.
 #' @return a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 #' @export
-NNICore <- function (parent, child, nTips = (length(parent) / 2L) + 1L, edgeToBreak=NULL) {
+NNISwap <- function (parent, child, nTips = (length(parent) / 2L) + 1L, edgeToBreak=NULL) {
   rootNode  <- nTips + 1L
   samplable <- child > nTips
+  if (!any(samplable)) stop("Not enough edges to allow NNI rearrangement")
+  
   if (is.null(edgeToBreak)) { 
     edgeToBreak <- SampleOne(which(samplable))
-  } else {
-    if (!samplable[edgeToBreak]) stop("edgeToBreak must be an internal edge")
+  } else if (!samplable[edgeToBreak]) {
+    stop("edgeToBreak must be an internal edge")
   }
+
   if (is.na(edgeToBreak)) stop("Cannot find a valid rearrangement")
   
   end1   <- parent[edgeToBreak]
@@ -55,8 +71,45 @@ NNICore <- function (parent, child, nTips = (length(parent) / 2L) + 1L, edgeToBr
   oldInd <- c(ind1, ind2)
   childSwap <- child[newInd]
   child[oldInd] <- childSwap
+  RenumberEdges(parent, child)
+}
+
+## TODO use RenumberList
+#' Double NNI
+#' 
+#' Returns the edge parameter of the two trees consistent with the speficied \acronym{NNI} rearrangement
+#'
+#' @param parent tree$edge[, 1]
+#' @param child  tree$edge[, 2]
+#' @param edgeToBreak index of edge to break
+#'
+#' @return the \code{tree$edge} parameter of the two trees consistent with the specified rearrangement
+#'
+#' @keywords internal
+#' @author Martin R. Smith
+#' 
+DoubleNNI <- function (parent, child, edgeToBreak) {
+  end1   <- parent[edgeToBreak]
+  end2   <- child[edgeToBreak]
+  ind1   <- which(parent == end1)
+  ind1   <- ind1[ind1 != edgeToBreak][1]
+  ind2.3 <- which(parent == end2)
+  ind2   <- ind2.3[1]
+  ind3   <- ind2.3[2]
+
+  newInd <- c(ind2, ind1)
+  oldInd <- c(ind1, ind2)
+  child2 <- child
+  childSwap <- child[newInd]
+  child2[oldInd] <- childSwap
   
-  RenumberTreeList(parent, child)
+  newInd <- c(ind3, ind1)
+  oldInd <- c(ind1, ind3)
+  childSwap <- child[newInd]
+  child[oldInd] <- childSwap
+  
+  nEdge <- length(parent)
+  return(list(RenumberTree(parent, child, nEdge), RenumberTree(parent, child2, nEdge)))
 }
 
 #' Rooted NNI 
@@ -64,22 +117,35 @@ NNICore <- function (parent, child, nTips = (length(parent) / 2L) + 1L, edgeToBr
 #' @export
 RootedNNI <- function (tree, edgeToBreak=NULL) {
   edge <- tree$edge
-  tree$edge <- ListToMatrix(RootedNNICore(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak))
-  tree
+  if (!is.null(edgeToBreak) && edgeToBreak == -1) {
+    parent <- edge[, 1]
+    child  <- edge[, 2]
+    nTips <- (length(parent) / 2L) + 1L
+    rootNode <- nTips + 1L
+    samplable <- parent != rootNode & child > nTips
+    newEdges <- unlist(lapply(which(samplable), DoubleNNI, parent=parent, child=child), recursive=FALSE) # Quicker than vapply, surprisingly
+    newTrees <- lapply(newEdges, function (edges) {tree$edge <- edges; tree}) # Quicker than vapply, surprisingly
+    return(newTrees)   
+  } else {
+    tree$edge <- ListToMatrix(RootedNNISwap(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak))
+    return (tree)
+  }
 }
 
 #' @describeIn NNI faster version that takes and returns parent and child parameters
 #' @return a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 #' @export
-RootedNNICore <- function (parent, child, nTips = (length(parent) / 2L) + 1L, edgeToBreak = NULL) {
+RootedNNISwap <- function (parent, child, nTips = (length(parent) / 2L) + 1L, edgeToBreak = NULL) {
   rootNode <- nTips + 1L
   
   samplable <- parent != rootNode & child > nTips
+
   if (is.null(edgeToBreak)) { 
     edgeToBreak <- SampleOne(which(samplable))
-  } else {
-    if (!samplable[edgeToBreak]) stop("edgeToBreak cannot include a tip or the root node")
+  } else if (!samplable[edgeToBreak]) {
+    stop("edgeToBreak cannot include a tip or the root node")
   }
+  
   if (is.na(edgeToBreak)) stop("Cannot find a valid rearrangement")
   
   end1   <- parent[edgeToBreak]
@@ -93,5 +159,5 @@ RootedNNICore <- function (parent, child, nTips = (length(parent) / 2L) + 1L, ed
   
   child_swap <- child[newInd]
   child[oldInd] <- child_swap
-  RenumberTreeList(parent, child)
+  RenumberEdges(parent, child)
 }
