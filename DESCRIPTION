@@ -24,13 +24,13 @@ BugReports: https://github.com/ms609/TreeSearch/issues
 Depends: R (>= 3.4.0)
 Imports: 
     ape (>= 5.0),
+    devtools,
     memoise,
     phangorn (>= 2.2.1),
     R.cache,
     Rdpack,
     stats
 Suggests:
-    devtools,
     knitr,
     rmarkdown,
     testthat,
