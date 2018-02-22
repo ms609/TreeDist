@@ -10,6 +10,10 @@ r_check_args: --as-cran
 git:
   depth: 5
 
+build_script:
+  - travis-tool.sh install_github hadley/devtools
+  - travis-tool.sh install_deps
+  
 r_binary_packages:
  - ape
  - covr
@@ -21,7 +25,7 @@ r_binary_packages:
  - testthat
  
 r_packages:
-# Can't use current devtools on R 3.4.0
+# Current devtools binary too new for R 3.4.0
  - devtools
 
 before_script:
