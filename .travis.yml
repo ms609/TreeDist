@@ -12,7 +12,7 @@ git:
   
 r_packages:
 # Current devtools binary too new for R 3.4.0
-  - devtools
+ - devtools
  - ape
  - covr
  - memoise
