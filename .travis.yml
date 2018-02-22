@@ -3,18 +3,16 @@ r:
  - 3.4.0
  - devel
 cache: packages
-sudo: required
+sudo: false
 warnings_are_errors: true
 r_check_args: --as-cran
    
 git:
   depth: 5
-
-build_script:
-  - travis-tool.sh install_github hadley/devtools
-  - travis-tool.sh install_deps
   
-r_binary_packages:
+r_packages:
+# Current devtools binary too new for R 3.4.0
+  - devtools
  - ape
  - covr
  - memoise
@@ -23,10 +21,6 @@ r_binary_packages:
  - Rdpack
  - roxygen2
  - testthat
- 
-r_packages:
-# Current devtools binary too new for R 3.4.0
- - devtools
 
 before_script:
  - R -e "devtools::document()"
