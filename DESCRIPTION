@@ -30,6 +30,7 @@ Imports:
     Rdpack,
     stats
 Suggests:
+    devtools,
     knitr,
     rmarkdown,
     testthat,
