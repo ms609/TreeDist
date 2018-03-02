@@ -23,7 +23,7 @@ EdgeListSearch <- function (edgeList, dataset,
   }
   if (is.null(bestScore)) {
     if (length(edgeList) < 3L) {
-      bestScore <- TreeScorer(edgeList[[1]], edgeList[[2]], dataset)
+      bestScore <- TreeScorer(edgeList[[1]], edgeList[[2]], dataset, ...)
     } else {
       bestScore <- edgeList[[3]]
     }

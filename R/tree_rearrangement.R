@@ -40,7 +40,7 @@
 #' @export
 RearrangeEdges <- function (parent, child, dataset, TreeScorer = MorphyLength,
                             EdgeSwapper, 
-                            scoreToBeat=TreeScorer(parent, child, dataset),
+                            scoreToBeat=TreeScorer(parent, child, dataset, ...),
                             iter='?', hits=0L, verbosity=0L, ...) {
   eps <- 1e-08
   rearrangedEdges <- EdgeSwapper(parent, child)

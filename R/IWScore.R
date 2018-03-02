@@ -26,7 +26,7 @@
 #' @author Martin R. Smith
 #' @keywords tree
 #' @export
-IWScore <- function (tree, dataset, concavity=4) {
+IWScore <- function (tree, dataset, concavity=4, ...) {
   if (class(dataset) != 'phyDat') {
     stop('Invalid dataset type; prepare dataset with PhyDat() and PrepareDataIW().')
   }
@@ -52,8 +52,11 @@ IWScore <- function (tree, dataset, concavity=4) {
 #' @param minSteps Integer vector specifying the minimum number of steps
 #'                 possible for each character in `dataset`, perhaps calculated
 #'                 using \code{\link{MinimumSteps}}.
+#' @template pointlessDots
+#'                 
 #' @export
-IWScoreMorphy <- function (parent, child, dataset, concavity=4, minSteps = attr(dataset, 'min.steps')) {
+IWScoreMorphy <- function (parent, child, dataset, concavity=4, 
+                           minSteps = attr(dataset, 'min.steps'), ...) {
   steps <- vapply(attr(dataset, 'morphyObjs'), MorphyLength, parent=parent, child=child, integer(1))
   homoplasies <- steps - minSteps
   fit <- homoplasies / (homoplasies + concavity)
