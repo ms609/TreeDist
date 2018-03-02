@@ -182,6 +182,8 @@ IWRatchet <- function (tree, dataset, concavity=4,
                             bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=1L, 
                             suboptimal=1e-08, ...) {
   dataset <- PrepareDataIW(dataset)
+  if (verbosity > 1L) cat("\n* Using implied weighting with concavity constant k =", concavity)
+  
   Ratchet(tree=tree, dataset=dataset, 
           concavity=concavity, minSteps=attr(dataset, 'min.steps'), 
           InitializeData=IWInitMorphy, CleanUpData=IWDestroyMorphy,
