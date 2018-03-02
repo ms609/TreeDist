@@ -243,7 +243,7 @@ SectorialSearch <- function (tree, dataset,
                              returnAll=FALSE, stopAtScore=NULL,
                              sectIter=400L, sectHits=20L,
                              searchIter=sectIter * 5L, searchHits=sectHits * 2L,
-                             verbosity=1L, ...)
+                             verbosity=1L, ...) {
   epsilon <- 1e-08
   hits <- 0L
   # initialize tree and data
