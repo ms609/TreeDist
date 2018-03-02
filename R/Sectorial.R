@@ -288,3 +288,50 @@ SectorialSearch <- function (tree, dataset,
     tree
   } 
 }
+
+
+### TODO BELOW -- copy in final parameter list, and update subsequent function
+### call accordingly
+
+#' @describeIn Ratchet Shortcut for Ratchet search under Profile Parsimony
+#' @export
+ProfileSectorial <- function (tree, dataset,
+                            swappers = list(TBRSwap, SPRSwap, NNISwap),
+                            BootstrapSwapper = swappers[[length(swappers)]],
+                            returnAll=FALSE, stopAtScore=NULL,
+                            ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
+                            bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=1L, 
+                            suboptimal=1e-08, ...) {
+  SectorialSearch(tree=tree, dataset=dataset,
+                  InitializeData=ProfileInitMorphy, CleanUpData=ProfileDestroyMorphy,
+                  TreeScorer=ProfileScoreMorphy, Bootstrapper=ProfileBootstrap,
+                  swappers=swappers, BootstrapSwapper=BootstrapSwapper,
+                  returnAll=returnAll, suboptimal=suboptimal, stopAtScore=stopAtScore,
+                  ratchIter=ratchIter, ratchHits=ratchHits,
+                  searchIter=searchIter, searchHits=searchHits,
+                  bootstrapIter=searchIter, bootstrapHits=bootstrapHits, 
+                  verbosity=verbosity,  ...)
+}
+
+#' @describeIn Ratchet Shortcut for Ratchet search using implied weights
+#' @template concavityParam
+#' @export
+IWSectorial <- function (tree, dataset, concavity=4,
+                       swappers = list(TBRSwap, SPRSwap, NNISwap),
+                       BootstrapSwapper = swappers[[length(swappers)]],
+                       returnAll=FALSE, stopAtScore=NULL,
+                       ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
+                       bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=1L, 
+                       suboptimal=1e-08, ...) {
+  dataset <- PrepareDataIW(dataset)
+  SectorialSearch(tree=tree, dataset=dataset, 
+                  concavity=concavity, minSteps=attr(dataset, 'min.steps'), 
+                  InitializeData=IWInitMorphy, CleanUpData=IWDestroyMorphy,
+                  TreeScorer=IWScoreMorphy, Bootstrapper=IWBootstrap,
+                  swappers=swappers, BootstrapSwapper=BootstrapSwapper,
+                  returnAll=returnAll, suboptimal=suboptimal, stopAtScore=stopAtScore,
+                  ratchIter=ratchIter, ratchHits=ratchHits,
+                  searchIter=searchIter, searchHits=searchHits,
+                  bootstrapIter=searchIter, bootstrapHits=bootstrapHits, 
+                  verbosity=verbosity, ...)
+}
