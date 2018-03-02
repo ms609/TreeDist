@@ -1,52 +1,4 @@
-#########' Sectorial Search
-#########'
-#########' \code{Sectorial} performs a sectorial search on a tree, preserving the position of the root.
-#########'
-#########' \code{DoSectorial} performs a sectorial search on the tree specified. A sectorial search 
-#########' detaches a random part of the tree, performs rearrangements on this subtree, then reattaches it 
-#########' to the main tree (Goloboff, 1999).
-#########' The improvement to local \var{score} hopefully (but not necessarily) improves the overall \var{score}.
-#########' As such, the output of \code{DoSectorial} should be treated by further \acronym{TBR (/SPR/NNI)}
-#########' rearrangements and only retained if the ultimate parsimony score is better than 
-#########' that of the original tree.
-#########' 
-#########' NOTE. This function is not fully implemented, or tested; it may not work for many datasets.  It's on the TODO list.
-#########' 
-#########' \code{Sectorial} is a basic recipe that runs \code{DoSectorial} followed by a few rounds
-#########' of tree rearrangement, returning a tree whose \var{pscore} is no worse than that of \code{start.tree}.
-#########' 
-#########' @param tree a rooted, resolved tree in \code{\link{phylo}} format from which to start the search;
-#########' @template datasetParam
-#########' @template treeScorerParam
-#########' @param maxIter maximum number of rearrangements to perform on each search iteration - provide a list or vector 
-#########'                with each entry corresponding to an entry in Rearrangements, or a single entry to be used for all
-#########' @param maxHits maximum number of hits to accomplish on each search iteration - provide a list or vector 
-#########'                with each entry corresponding to an entry in Rearrangements, or a single entry to be used for all
-#########' @template verbosityParam
-#########' @param sectRearrangements A list of functions to be applied when rearranging trees in sectorial 
-#########'                           search. Note: these must retain the position of the root of the tree
-#########' @param searchRearrangements A list of functions to be applied, in turn, during tree search.
-#########'                             Default: \code{list(\link{RootedTBR}, \link{RootedNNI})}
-#########' @template treeScorerDots
-#########' 
-#########' @return a rooted tree of class \code{phylo}.
-#########' 
-#########' @references \insertRef{Goloboff1999}{TreeSearch}
-#########' 
-#########' @author Martin R. Smith
-#########' 
-#########' @seealso \code{\link{TreeSearch}}
-#########' @seealso \code{\link{Ratchet}}
-#########' 
-##########' @examples
-##########' data('Lobo')
-##########' startTree <- RandomTree(Lobo.phy, 'Cricocosmia') # Position of root will be fixed
-##########' \dontrun{firstEstimate <- Sectorial(startTree, Lobo.phy, maxIter=50, verbosity=5)}
-##########' \dontrun{Sectorial(firstEstimate, Lobo.phy,
-##########'          sectRearrangements=list(RootedNNI, RootedTBR, RootedNNI)) # Will be time-consuming}
-#########' 
-#########' @keywords  tree 
-#########' @export
+
 ########Sectorial <- function (tree, dataset, TreeScorer = TODO, sectRearrangements=list(RootedNNI), 
 ########                             searchRearrangements=list(RootedNNI, RootedTBR, RootedNNI), 
 ########                             maxHits=c(30, 40, 60), maxIter=2000, verbosity=3, ...) {
@@ -192,76 +144,147 @@
 ########
 ########
 
-#### - Morphy flavoured version
-###   #' Sectorial Search
-###   #'
-###   #' \code{SectorialSearch} performs a sectorial search on a tree, preserving the position of the root.
-###   #'
-###   #' \code{InapplicableSectorial} performs a sectorial search on the tree specified. A sectorial search 
-###   #' detaches a random part of the tree, performs rearrangments on this subtree, then reattaches it 
-###   #' to the main tree (Goloboff, 1999).
-###   #' The improvement to local \var{score} hopefully (but not necessarily) improves the overall \var{score}.
-###   #' As such, the output of \code{InapplicableSectorial} should be treated by further \acronym{TBR (/SPR/NNI)}
-###   #' rearrangements and only retained if the ultimate parsimony score is better than 
-###   #' that of the original tree.
-###   #' 
-###   #' \code{SectorialSearch} is a basic recipe that runs \code{InapplicableSectorial} followed by a few rounds
-###   #' of tree rearrangement, returning a tree whose \var{score} is no worse than that of \code{start.tree}.
-###   #' 
-###   #' @param tree a rooted, resolved tree in \code{\link{phylo}} format from which to start the search;
-###   #' @template datasetParam
-###   #' @param maxIter maximum number of rearrangements to perform on each sectorial iteration;
-###   #' @template verbosityParam
-###   #' @param rearrangements method to use when rearranging subtrees: NNI, SPR or TBR;
-###   #' @param \dots other arguments to pass to subsequent functions.
-###   #' 
-###   #' @return a rooted tree of class \code{phylo}.
-###   #' 
-###   #' @references \insertRef{Goloboff1999}{TreeSearch}
-###   #' 
-###   #' @author Martin R. Smith
-###   #' 
-###   #' @seealso \code{\link{TreeSearch}}
-###   #' @seealso \code{\link{MorphyRatchet}}
-###   #' 
-###   #' @examples
-###   #' require('ape')
-###   #' data('SigSut')
-###   #' outgroup <- c('Lingula', 'Mickwitzia', 'Neocrania')
-###   #' njtree <- ape::root(nj(dist.hamming(SigSut.phy)), outgroup, resolve.root=TRUE)
-###   #' njtree$edge.length <- NULL; njtree<-ape::root(njtree, outgroup, resolve.root=TRUE)
-###   #' InapplicableSectorial(njtree, SigSut.phy, ratchIter=1, maxIter=50, largest.sector=7)
-###   #' \dontrun{SectorialSearch(njtree, SigSut.phy) # Will be time-consuming }
-###   #' 
-###   #' 
-###   #' @keywords  tree 
-###   #' @export
-###   SectorialSearch <- function
-###   (tree, dataset, SectorialRearrangements=NNI, maxIter=2000,
-###    subsequentRearrangements = list(RootedNNI, RootedTBR, 
-###     RootedSPR, RootedNNI), verbosity=3, ...) {
-###     if (class(dataset) != 'phyDat') stop("dataset must be of class phyDat, not", class(dataset))
-###     morphyObj <- PhyDat2Morphy(dataset)
-###     on.exit(morphyObj <- UnloadMorphy(morphyObj))
-###     tree <- RenumberTips(Renumber(tree), names(dataset))
-###     if (is.null(attr(tree, "score"))) {
-###       attr(tree, "score") <- MorphyTreeLength(tree, morphyObj, ...)
-###     }
-###     bestScore <- attr(tree, "score")
-###     if (verbosity > 0) cat("* Initial score:", bestScore)
-###   
-###     if (class(subsequentRearrangements) == 'function') rearrangements <- list(rearrangements)
-###     if (class(SectorialRearrangements) != 'function') stop("SectorialRearrangements must be a function, e.g. TreeSearch::NNI")
-###     
-###     bestScore <- attr(tree, 'score')
-###     tree <- RenumberTips(Renumber(tree), names(dataset))
-###     if (length(bestScore) == 0) bestScore <- Fitch(tree, dataset, ...)
-###     sect <- MorphySectorial(tree, morphyObj, verbosity=verbosity-1, ratchIter=30, 
-###       maxIter=maxIter, maxHits=15, smallest.sector=6, 
-###       largest.sector=length(tree$edge[,2L])*0.25, rearrangements=rearrangements)
-###     sect <- TreeSearch(sect, dataset, Rearrange=subsequentRearrangements, maxIter=maxIter, maxHits=30, cluster=cluster, verbosity=verbosity)
-###     if (attr(sect, 'score') <= bestScore) {
-###       return (sect)
-###     } else return (tree)
-###   }
-###   
+#########' Sectorial Search
+#########'
+#########' \code{Sectorial} performs a sectorial search on a tree, preserving the position of the root.
+#########'
+#########' \code{DoSectorial} performs a sectorial search on the tree specified. A sectorial search 
+#########' detaches a random part of the tree, performs rearrangements on this subtree, then reattaches it 
+#########' to the main tree (Goloboff, 1999).
+#########' The improvement to local \var{score} hopefully (but not necessarily) improves the overall \var{score}.
+#########' As such, the output of \code{DoSectorial} should be treated by further \acronym{TBR (/SPR/NNI)}
+#########' rearrangements and only retained if the ultimate parsimony score is better than 
+#########' that of the original tree.
+#########' 
+#########' NOTE. This function is not fully implemented, or tested; it may not work for many datasets.  It's on the TODO list.
+#########' 
+#########' \code{Sectorial} is a basic recipe that runs \code{DoSectorial} followed by a few rounds
+#########' of tree rearrangement, returning a tree whose \var{pscore} is no worse than that of \code{start.tree}.
+#########' 
+#########' @param tree a rooted, resolved tree in \code{\link{phylo}} format from which to start the search;
+#########' @template datasetParam
+#########' @template treeScorerParam
+#########' @param maxIter maximum number of rearrangements to perform on each search iteration - provide a list or vector 
+#########'                with each entry corresponding to an entry in Rearrangements, or a single entry to be used for all
+#########' @param maxHits maximum number of hits to accomplish on each search iteration - provide a list or vector 
+#########'                with each entry corresponding to an entry in Rearrangements, or a single entry to be used for all
+#########' @template verbosityParam
+#########' @param sectRearrangements A list of functions to be applied when rearranging trees in sectorial 
+#########'                           search. Note: these must retain the position of the root of the tree
+#########' @param searchRearrangements A list of functions to be applied, in turn, during tree search.
+#########'                             Default: \code{list(\link{RootedTBR}, \link{RootedNNI})}
+#########' @template treeScorerDots
+#########' 
+#########' @return a rooted tree of class \code{phylo}.
+#########' 
+#########' @references \insertRef{Goloboff1999}{TreeSearch}
+#########' 
+
+#' Sectorial Search
+#'
+#' \code{SectorialSearch} performs a sectorial search on a tree.
+#' 
+#' A sectorial search detaches a random part of the tree, performs rearrangments
+#'  on this subtree, then reattaches it to the main tree (Goloboff, 1999).
+#' The improvement to local \var{score} hopefully (but not necessarily) improves 
+#' the overall \var{score}.
+#' 
+#' \code{SectorialSearch} then uses this tree as a starting point for a series
+#'  of tree rearrangements, by default using NNI, SPR and TBR swappers.
+#' It returns the new tree, unless the starting tree had a better score, 
+#' in which case the starting tree is returned.
+#'
+#''
+#' @template treeParam 
+#' @param dataset a dataset in the format required by TreeScorer.
+#' @template InitializeDataParam
+#' @template CleanUpDataParam
+#' @template treeScorerParam
+###' @param Bootstrapper Function to perform bootstrapped rearrangements of tree. 
+###'                     First arguments will be an edgeList and a dataset, initialized using \code{InitializeData}
+###'                     Should return a rearranged edgeList.
+#' @template swappersParam
+#' @param SectorialSwapper Function such as \code{\link{RootedNNISwap}} to use 
+#'                         to rearrange sector.
+#' @param sectIter stop sectorial search when this many rearrangements have been performed.
+#' @param sectHits stop sectorial search when this many rearrangements have 
+#'                 found the same best score.
+#' @param searchIter maximum rearrangements for subsequent search on whole tree.
+#' @param searchHits maximum times to hit best score before terminating whole-tree search.
+#' @template verbosityParam
+#' @template treeScorerDots
+#' 
+#' @return a rooted tree of class \code{phylo}.
+#' 
+#' @references \insertRef{Goloboff1999}{TreeSearch}
+#' 
+#' @author Martin R. Smith
+#' 
+#' @seealso \code{\link{TreeSearch}}
+#' @seealso \code{\link{MorphyRatchet}}
+#' 
+#' @examples
+#' data('Lobo')
+#' njtree <- NJTree(Lobo.phy)
+#'
+#' \dontrun{
+#' SectorialSearch(njtree, Lobo.phy, maxIter=20, EdgeSwapper=NNISwap,
+#'  ratchIter=1, maxIter=50, largest.sector=7)} # Will be time-consuming }
+#' 
+#' @keywords  tree 
+#' @export
+SectorialSearch <- function (tree, dataset, 
+                             InitializeData = PhyDat2Morphy,
+                             CleanUpData    = UnloadMorphy,
+                             TreeScorer     = MorphyLength,
+                             Bootstrapper   = MorphyBootstrap,
+                             swappers = list(TBRSwap, SPRSwap, NNISwap),
+                             SectorialSwapper = swappers[[length(swappers)]],
+                             returnAll=FALSE, stopAtScore=NULL,
+                             sectIter=400L, sectHits=20L,
+                             searchIter=sectIter * 5L, searchHits=sectHits * 2L,
+                             verbosity=1L, ...)
+  epsilon <- 1e-08
+  hits <- 0L
+  # initialize tree and data
+  if (dim(tree$edge)[1] != 2 * tree$Nnode) stop("tree must be bifurcating; try rooting with ape::root")
+  tree <- RenumberTips(tree, names(dataset))
+  edgeList <- MatrixToList(tree$edge)
+  edgeList <- RenumberEdges(edgeList[[1]], edgeList[[2]])
+  
+  initializedData <- InitializeData(dataset)
+  on.exit(initializedData <- CleanUpData(initializedData))
+  
+  bestScore <- if (is.null(attr(tree, 'score'))) {
+    TreeScorer(edgeList[[1]], edgeList[[2]], initializedData, ...)
+  } else {
+    attr(tree, 'score')
+  }
+  
+  if (verbosity > 0L) cat("\n* Beginning Sectorial Search, with initial score", bestScore)
+  if (!is.null(stopAtScore) && bestScore < stopAtScore + epsilon) return(tree)
+  
+  
+  # Rearrange a sector of the tree:
+  sect <- MorphySectorial(tree, morphyObj, verbosity=verbosity-1, ratchIter=30, 
+    maxIter=maxIter, maxHits=15, smallest.sector=6, 
+    largest.sector=length(edgeList[[1]]) * 0.25, rearrangements=rearrangements)
+  
+  if (class(swappers) == 'function') swappers <- list(swappers)
+  # Now use sectorially rearranged tree as starting point for conventional search
+  edgeList <- EdgeListSearch(edgeList, initializedData, TreeScorer=TreeScorer,
+                             EdgeSwapper=swappers, maxIter = maxIter, 
+                             maxHits = maxHits, forestSize = forestSize, 
+                             verbosity = verbosity - 1L)
+  
+  if (edgeList[[3]] <= bestScore) {
+    sect$edge <- ListToMatrix(edgeList)
+    attr(sect, 'score') <- edgeList[[3]]
+    attr(sect, 'hits') <- edgeList[[4]]
+    # Return:
+    sect
+  } else {
+    # Return:
+    tree
+  } 
+}

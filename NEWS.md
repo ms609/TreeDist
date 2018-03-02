@@ -3,6 +3,7 @@
 - Separate out NNISwap functions to allow more efficient rearrangement of edgeLists
 - Add functions to allow recovery of all trees one rearrangement from that input
 - [9002] Improve efficiency by using three-pass algorithm in place of four-pass precursor.
+- [9003] Add sectorial search
 
 # TreeSearch 0.0.7
 
