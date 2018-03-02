@@ -10,6 +10,7 @@
 #'                In subsidiary functions, the dataset will have been initialized using 
 #'                \code{IWInitMorphy}, must be destroyed using \code{IWDestroyMorphy}.
 #' @template concavityParam
+#' @template pointlessDots
 #'
 #' @return The 'fit', `h / h + k`, where `h` is the amount of homoplasy ('extra steps') 
 #'         and `k` is a constant (the 'concavity constant')
@@ -52,7 +53,6 @@ IWScore <- function (tree, dataset, concavity=4, ...) {
 #' @param minSteps Integer vector specifying the minimum number of steps
 #'                 possible for each character in `dataset`, perhaps calculated
 #'                 using \code{\link{MinimumSteps}}.
-#' @template pointlessDots
 #'                 
 #' @export
 IWScoreMorphy <- function (parent, child, dataset, concavity=4, 
