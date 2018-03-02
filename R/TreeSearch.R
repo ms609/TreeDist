@@ -130,7 +130,9 @@ TreeSearch <- function (tree, dataset,
                         maxIter = 100L, maxHits = 20L, forestSize = 1L,
                         verbosity = 1L, ...) {
   # initialize tree and data
-  if (dim(tree$edge)[1] != 2 * tree$Nnode) stop("tree must be bifurcating; try rooting with ape::root")
+  if (dim(tree$edge)[1] != 2 * tree$Nnode) {
+    stop("tree must be bifurcating; try rooting with ape::root")
+  }
   tree <- RenumberTips(tree, names(dataset))
   edgeList <- MatrixToList(tree$edge)
   edgeList <- RenumberEdges(edgeList[[1]], edgeList[[2]])
@@ -139,8 +141,10 @@ TreeSearch <- function (tree, dataset,
   on.exit(initializedData <- CleanUpData(initializedData))
 
   bestScore <- attr(tree, 'score')
-  edgeList <- EdgeListSearch(edgeList, initializedData, TreeScorer=TreeScorer, EdgeSwapper=EdgeSwapper,
-                 maxIter = maxIter, maxHits = maxHits, forestSize = forestSize, verbosity = verbosity)
+  edgeList <- EdgeListSearch(edgeList, initializedData, TreeScorer=TreeScorer, 
+                             EdgeSwapper=EdgeSwapper, maxIter = maxIter, 
+                             maxHits = maxHits, forestSize = forestSize, 
+                             verbosity = verbosity, ...)
   
   tree$edge <- ListToMatrix(edgeList)
   attr(tree, 'score') <- edgeList[[3]]
