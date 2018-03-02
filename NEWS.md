@@ -4,6 +4,7 @@
 - Add functions to allow recovery of all trees one rearrangement from that input
 - [9002] Improve efficiency by using three-pass algorithm in place of four-pass precursor.
 - [9003] Add sectorial search
+- [9003] Bug fix: user now able to specify value of concavity constant (was overriden to k = 4)
 
 # TreeSearch 0.0.7
 
