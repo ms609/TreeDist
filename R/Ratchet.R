@@ -219,6 +219,7 @@ RatchetConsensus <- function (tree, dataset, ratchHits=10,
 IWRatchetConsensus <- function (tree, dataset, ratchHits=10, concavity=4,
                               searchIter=500, searchHits=20, verbosity=0L, 
                               swappers=list(RootedNNISwap), nSearch=10, 
+                              suboptimal=suboptimal,
                               stopAtScore=NULL, ...) {
   trees <- lapply(logical(nSearch), function (x) IWRatchet(tree, dataset, ratchIter=1, 
                                                          searchIter=searchIter, searchHits=searchHits, verbosity=verbosity, swappers=swappers, 
