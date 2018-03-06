@@ -80,8 +80,9 @@ Ratchet <- function (tree, dataset,
   iterationsCompleted <- 0
   for (i in 1:ratchIter) {
     if (verbosity > 1L) cat ("\n* Ratchet iteration", i, "- Generating new tree by bootstrapping dataset. ")
-    candidate <- Bootstrapper(edgeList, initializedData, maxIter=bootstrapIter, maxHits=bootstrapHits, 
-                                  verbosity=verbosity-2L, EdgeSwapper=BootstrapSwapper, ...)
+    candidate <- Bootstrapper(edgeList, initializedData, maxIter=bootstrapIter,
+                              maxHits=bootstrapHits, verbosity=verbosity-2L,
+                              EdgeSwapper=BootstrapSwapper, ...)
     candScore <- 1e+08
     if (verbosity > 2L) cat ("\n - Rearranging from new candidate tree:")
     for (EdgeSwapper in swappers) {

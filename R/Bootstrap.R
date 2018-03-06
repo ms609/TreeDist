@@ -48,7 +48,8 @@ ProfileBootstrap <- function (edgeList, dataset, EdgeSwapper = NNISwap,
   attributes(sampledData) <- sampledAtt
   
   res <- EdgeListSearch(edgeList, sampledData, TreeScorer=ProfileScoreMorphy,
-                        EdgeSwapper=EdgeSwapper, maxIter=maxIter, maxHits=maxHits, verbosity=verbosity-1L, ...)
+                        EdgeSwapper=EdgeSwapper, maxIter=maxIter, maxHits=maxHits,
+                        verbosity=verbosity-1L, ...)
   
   res[1:2]
 }
