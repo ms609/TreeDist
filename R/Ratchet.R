@@ -47,7 +47,7 @@ Ratchet <- function (tree, dataset,
                      BootstrapSwapper = swappers[[length(swappers)]],
                      returnAll=FALSE, stopAtScore=NULL,
                      ratchIter=100, ratchHits=10, searchIter=4000, searchHits=30,
-                     bootstrapIter=ceiling(searchIter/5), bootstrapHits=ceiling(searchHits/5),
+                     bootstrapIter=searchIter, bootstrapHits=searchHits,
                      verbosity=1L, 
                      suboptimal=1e-08, ...) {
   epsilon <- 1e-08
