@@ -71,7 +71,8 @@ test_that("Morphy generates correct lengths", {
                     start=0, stop=length(characters)))
   morphyObj <- PhyDat2Morphy(bigPhy)
   moSummary <- summary(morphyObj)
-  expect_equal(c(12, 35, 11), c(moSummary$nTax, moSummary$nChar, moSummary$nInternal))
+  expect_equal(c(length(bigPhy), attr(bigPhy, 'nr'), length(bigPhy) - 1),
+               c(moSummary$nTax, moSummary$nChar, moSummary$nInternal))
   expect_equal('0123', moSummary$allStates)
   tree_length <- MorphyTreeLength(tree, morphyObj)
   expect_equal(tree_length, sum(expected_results))
