@@ -9,7 +9,7 @@
 - [9002] Improve efficiency by using three-pass algorithm in place of four-pass precursor.
 
 ## Bug fixes
-- [9003] User now able to specify value of concavity constant (was overriden to k = 4)
+- [9003] User now able to specify value of concavity constant (was overridden to k = 4)
 - [9003] Bootstrap replicates now scored correctly (and without warning) under implied weights
 
 # TreeSearch 0.0.7
