@@ -10,7 +10,7 @@ r_check_args: --as-cran
 git:
   depth: 5
   
-r_packages:
+r_binary_packages:
 # Current devtools binary too new for R 3.4.0
  - devtools
  - ape
