@@ -16,3 +16,4 @@ vignettes/*.pdf
 vignettes/*_files
 *.Rproj*
 .Rproj.user
+*.site
