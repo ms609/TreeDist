@@ -1,10 +1,10 @@
 data('inapplicable.datasets')
 scores <- c(
-"Agnarsson2004" =  778 , # 0.044 mins             
-"Aguado2009" =     579 , # 4.979             
-"Aria2015" =       143 , # 0.041             
+"Agnarsson2004" =  778 , # 0.044 mins   
+"Aguado2009" =     579 , # 4.979        
+"Aria2015" =       143 , # 0.041        
 "Asher2005" =      345 , # 0.00328      
-"Capa2011" =       385 , # 0.131       
+"Capa2011" =       385 , # 0.131        
 "Conrad2008" =     1761, # 0.119        
 "DeAssis2011" =    64  , # 0            
 "Dikow2009" =      1611, # 22.35        # This is a slow one [22 mins]
@@ -47,20 +47,3 @@ for (dataset in names(inapplicable.phyData)) {
   cat("\n > Time taken: ", (timeend[dataset] - timestart[dataset]) / 60, "mins\n")
 }
 
-
-## And previously:
-install_github('ms609/inapplicable', rel='cefb5669352aca6425516805f60108063383b6c2')
-library('inapplicable')
-for (dataset in names(inapplicable.phyData)) {
-  cat("\n ========", format(Sys.time(), "%b %d %X"), ":", dataset, "========\n")
-  timestart[dataset] <- Sys.time()
-  oTree <- MorphyRatchet(nj.tree[[dataset]], inapplicable.phyData[[dataset]], stopAtScore=scores[[dataset]],
-  r=1000, maxIt=10000, maxIter=3200, maxHits=12, verbosity=0)
-  timeend[dataset] <- Sys.time()
-  cat("\n > Time taken: ", (timeend[dataset] - timestart[dataset]) / 60, "mins\n")
-}
-
-timetaken <- timeend - timestart
-sum(timetaken)
-
-                   
