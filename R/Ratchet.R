@@ -46,7 +46,7 @@ Ratchet <- function (tree, dataset,
                      swappers = list(TBRSwap, SPRSwap, NNISwap),
                      BootstrapSwapper = swappers[[length(swappers)]],
                      returnAll=FALSE, stopAtScore=NULL,
-                     ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
+                     ratchIter=100, ratchHits=10, searchIter=4000, searchHits=30,
                      bootstrapIter=ceiling(searchIter/5), bootstrapHits=ceiling(searchHits/5),
                      verbosity=1L, 
                      suboptimal=1e-08, ...) {
