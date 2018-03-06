@@ -49,8 +49,9 @@ ProfileScore <- function (tree, dataset) {
 #' @describeIn ProfileScore Scorer for initialized dataset.
 #' @template treeParent
 #' @template treeChild
+#' @template pointlessDots
 #' @export
-ProfileScoreMorphy <- function (parent, child, dataset) {
+ProfileScoreMorphy <- function (parent, child, dataset, ...) {
   steps <- vapply(attr(dataset, 'morphyObjs'), MorphyLength, parent=parent, child=child, integer(1))
   info <- attr(dataset, 'info.amounts')
   nRowInfo <- nrow(info)

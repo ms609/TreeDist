@@ -48,14 +48,16 @@ ProfileBootstrap <- function (edgeList, dataset, EdgeSwapper = NNISwap,
   attributes(sampledData) <- sampledAtt
   
   res <- EdgeListSearch(edgeList, sampledData, TreeScorer=ProfileScoreMorphy,
-                        EdgeSwapper=EdgeSwapper, maxIter=maxIter, maxHits=maxHits, verbosity=verbosity-1L, ...)
+                        EdgeSwapper=EdgeSwapper, maxIter=maxIter, maxHits=maxHits,
+                        verbosity=verbosity-1L, ...)
   
   res[1:2]
 }
 
 #' @describeIn MorphyBootstrap Bootstrapper for Implied weighting
+#' @template concavityParam
 #' @export
-IWBootstrap <- function (edgeList, dataset, EdgeSwapper = NNISwap, 
+IWBootstrap <- function (edgeList, dataset, concavity=4L, EdgeSwapper = NNISwap, 
                               maxIter, maxHits, verbosity=1L, ...) {
   att <- attributes(dataset)
   startWeights <- att[['weight']]
@@ -67,12 +69,14 @@ IWBootstrap <- function (edgeList, dataset, EdgeSwapper = NNISwap,
   sampledAtt <- att
   sampledAtt[['weight']] <- resampling[sampled]
   sampledAtt[['index']] <- rep(seq_len(sum(sampled)), resampling[sampled])
-  sampledAtt[['min.steps']] <- att[['min.steps']][sampled]
+  #sampledAtt[['min.steps']] <- att[['min.steps']][sampled] # Can probably delete but I'm too nervous to... MS, 2018-03-06
   sampledAtt[['morphyObjs']] <- att[['morphyObjs']][sampled]
   attributes(sampledData) <- sampledAtt
   
   res <- EdgeListSearch(edgeList, sampledData, TreeScorer=IWScoreMorphy,
-                        EdgeSwapper=EdgeSwapper, maxIter=maxIter, maxHits=maxHits, verbosity=verbosity-1L, ...)
+                        concavity=concavity, minSteps = att[['min.steps']][sampled],
+                        EdgeSwapper=EdgeSwapper, maxIter=maxIter, maxHits=maxHits,
+                        verbosity=verbosity-1L)
   
   res[1:2]
 }

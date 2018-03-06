@@ -12,8 +12,8 @@ MorphyBootstrap(edgeList, morphyObj, EdgeSwapper = NNISwap, maxIter, maxHits,
 ProfileBootstrap(edgeList, dataset, EdgeSwapper = NNISwap, maxIter, maxHits,
   verbosity = 1L, ...)
 
-IWBootstrap(edgeList, dataset, EdgeSwapper = NNISwap, maxIter, maxHits,
-  verbosity = 1L, ...)
+IWBootstrap(edgeList, dataset, concavity = 4L, EdgeSwapper = NNISwap,
+  maxIter, maxHits, verbosity = 1L, ...)
 }
 \arguments{
 \item{edgeList}{a list containing the following:
@@ -39,6 +39,8 @@ more verbose feedback to the user.}
 
 \item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
 correspond to the labels of any accompanying tree.}
+
+\item{concavity}{A numeric value to use as the concavity constant (`k`) in implied weighting.}
 }
 \value{
 A tree that is optimal under a random sampling of the original characters

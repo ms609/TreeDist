@@ -46,7 +46,7 @@ Ratchet <- function (tree, dataset,
                      swappers = list(TBRSwap, SPRSwap, NNISwap),
                      BootstrapSwapper = swappers[[length(swappers)]],
                      returnAll=FALSE, stopAtScore=NULL,
-                     ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
+                     ratchIter=100, ratchHits=10, searchIter=4000, searchHits=30,
                      bootstrapIter=ceiling(searchIter/5), bootstrapHits=ceiling(searchHits/5),
                      verbosity=1L, 
                      suboptimal=1e-08, ...) {
@@ -80,8 +80,9 @@ Ratchet <- function (tree, dataset,
   iterationsCompleted <- 0
   for (i in 1:ratchIter) {
     if (verbosity > 1L) cat ("\n* Ratchet iteration", i, "- Generating new tree by bootstrapping dataset. ")
-    candidate <- Bootstrapper(edgeList, initializedData, maxIter=bootstrapIter, maxHits=bootstrapHits, 
-                                  verbosity=verbosity-2L, EdgeSwapper=BootstrapSwapper, ...)
+    candidate <- Bootstrapper(edgeList, initializedData, maxIter=bootstrapIter,
+                              maxHits=bootstrapHits, verbosity=verbosity-2L,
+                              EdgeSwapper=BootstrapSwapper, ...)
     candScore <- 1e+08
     if (verbosity > 2L) cat ("\n - Rearranging from new candidate tree:")
     for (EdgeSwapper in swappers) {
@@ -182,6 +183,8 @@ IWRatchet <- function (tree, dataset, concavity=4,
                             bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=1L, 
                             suboptimal=1e-08, ...) {
   dataset <- PrepareDataIW(dataset)
+  if (verbosity > 1L) cat("\n* Using implied weighting with concavity constant k =", concavity)
+  
   Ratchet(tree=tree, dataset=dataset, 
           concavity=concavity, minSteps=attr(dataset, 'min.steps'), 
           InitializeData=IWInitMorphy, CleanUpData=IWDestroyMorphy,
@@ -217,6 +220,7 @@ RatchetConsensus <- function (tree, dataset, ratchHits=10,
 IWRatchetConsensus <- function (tree, dataset, ratchHits=10, concavity=4,
                               searchIter=500, searchHits=20, verbosity=0L, 
                               swappers=list(RootedNNISwap), nSearch=10, 
+                              suboptimal=suboptimal,
                               stopAtScore=NULL, ...) {
   trees <- lapply(logical(nSearch), function (x) IWRatchet(tree, dataset, ratchIter=1, 
                                                          searchIter=searchIter, searchHits=searchHits, verbosity=verbosity, swappers=swappers, 
