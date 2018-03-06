@@ -1,9 +1,16 @@
 # TreeSearch 0.1.0
+
+## New functions
 - Added NJTree function as shortcut to generate Neighbour-Joining tree from a dataset
-- Separate out NNISwap functions to allow more efficient rearrangement of edgeLists
 - Add functions to allow recovery of all trees one rearrangement from that input
+
+## Efficiency gains
+- Separate out NNISwap functions to allow more efficient rearrangement of edgeLists
 - [9002] Improve efficiency by using three-pass algorithm in place of four-pass precursor.
-- [9003] Bug fix: user now able to specify value of concavity constant (was overriden to k = 4)
+
+## Bug fixes
+- [9003] User now able to specify value of concavity constant (was overriden to k = 4)
+- [9003] Bootstrap replicates now scored correctly (and without warning) under implied weights
 
 # TreeSearch 0.0.7
 
@@ -17,4 +24,4 @@
 - Persistent memoization with R.cache
 
 # TreeSearch 0.0.6
-- Submitted to CRAN
+- First CRAN submission
