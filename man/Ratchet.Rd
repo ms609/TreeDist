@@ -13,7 +13,7 @@ Ratchet(tree, dataset, InitializeData = PhyDat2Morphy,
   Bootstrapper = MorphyBootstrap, swappers = list(TBRSwap, SPRSwap,
   NNISwap), BootstrapSwapper = swappers[[length(swappers)]],
   returnAll = FALSE, stopAtScore = NULL, ratchIter = 100,
-  ratchHits = 10, searchIter = 2000, searchHits = 40,
+  ratchHits = 10, searchIter = 4000, searchHits = 30,
   bootstrapIter = ceiling(searchIter/5),
   bootstrapHits = ceiling(searchHits/5), verbosity = 1L,
   suboptimal = 1e-08, ...)
@@ -37,7 +37,8 @@ RatchetConsensus(tree, dataset, ratchHits = 10, searchIter = 500,
 
 IWRatchetConsensus(tree, dataset, ratchHits = 10, concavity = 4,
   searchIter = 500, searchHits = 20, verbosity = 0L,
-  swappers = list(RootedNNISwap), nSearch = 10, stopAtScore = NULL, ...)
+  swappers = list(RootedNNISwap), nSearch = 10, suboptimal = suboptimal,
+  stopAtScore = NULL, ...)
 }
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}.}

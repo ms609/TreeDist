@@ -85,7 +85,9 @@ SingleTaxonTree <- function (label) {
 #' @author Martin R. Smith
 #' @export
 Subtree <- function (tree, node) {
-  if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') stop("Tree must be in preorder")
+  if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') {
+    stop("Tree must be in preorder")
+  }
   tipLabel <- tree$tip.label
   nTip <- length(tipLabel)
   if (node <= nTip) return(SingleTaxonTree(tipLabel[node]))
@@ -251,7 +253,7 @@ CladeSizes <- function (tree, nodes) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'postorder') tree <- Postorder(tree)
   vapply(allDescendants(tree)[nodes], length, integer(1))
 }
-    
+
 
 #' Node depth
 #' Wrapper for the ape function

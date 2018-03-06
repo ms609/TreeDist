@@ -40,14 +40,14 @@
 #' @export
 RearrangeEdges <- function (parent, child, dataset, TreeScorer = MorphyLength,
                             EdgeSwapper, 
-                            scoreToBeat=TreeScorer(parent, child, dataset),
+                            scoreToBeat=TreeScorer(parent, child, dataset, ...),
                             iter='?', hits=0L, verbosity=0L, ...) {
   eps <- 1e-08
   rearrangedEdges <- EdgeSwapper(parent, child)
   # TODO we probably want to get ALL trees 1 REARRANGE step away
   # One benefit of this is that if NONE of these trees are as good or better, we can give up immediately, 
   # as there's no way out of this local optimum.
-  candidateScore <- TreeScorer(rearrangedEdges[[1]], rearrangedEdges[[2]], dataset)
+  candidateScore <- TreeScorer(rearrangedEdges[[1]], rearrangedEdges[[2]], dataset, ...)
   if (candidateScore > (scoreToBeat + eps)) {
     if (verbosity > 3L) cat("\n    . Iteration", iter, '- Rearranged tree score', candidateScore, "> target", scoreToBeat)
   } else if (candidateScore + eps > scoreToBeat) { # i.e. scores are equal

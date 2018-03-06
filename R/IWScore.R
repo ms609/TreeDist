@@ -10,6 +10,7 @@
 #'                In subsidiary functions, the dataset will have been initialized using 
 #'                \code{IWInitMorphy}, must be destroyed using \code{IWDestroyMorphy}.
 #' @template concavityParam
+#' @template pointlessDots
 #'
 #' @return The 'fit', `h / h + k`, where `h` is the amount of homoplasy ('extra steps') 
 #'         and `k` is a constant (the 'concavity constant')
@@ -26,7 +27,7 @@
 #' @author Martin R. Smith
 #' @keywords tree
 #' @export
-IWScore <- function (tree, dataset, concavity=4) {
+IWScore <- function (tree, dataset, concavity=4, ...) {
   if (class(dataset) != 'phyDat') {
     stop('Invalid dataset type; prepare dataset with PhyDat() and PrepareDataIW().')
   }
@@ -52,8 +53,10 @@ IWScore <- function (tree, dataset, concavity=4) {
 #' @param minSteps Integer vector specifying the minimum number of steps
 #'                 possible for each character in `dataset`, perhaps calculated
 #'                 using \code{\link{MinimumSteps}}.
+#'                 
 #' @export
-IWScoreMorphy <- function (parent, child, dataset, concavity=4, minSteps = attr(dataset, 'min.steps')) {
+IWScoreMorphy <- function (parent, child, dataset, concavity=4, 
+                           minSteps = attr(dataset, 'min.steps'), ...) {
   steps <- vapply(attr(dataset, 'morphyObjs'), MorphyLength, parent=parent, child=child, integer(1))
   homoplasies <- steps - minSteps
   fit <- homoplasies / (homoplasies + concavity)
@@ -88,7 +91,7 @@ IWTreeSearch <- function (tree, dataset, concavity = 4, EdgeSwapper = RootedTBR,
              InitializeData = IWInitMorphy,
              CleanUpData = IWDestroyMorphy,
              TreeScorer = IWScoreMorphy,
-             EdgeSwapper = EdgeSwapper, 
+             EdgeSwapper = EdgeSwapper,
              maxIter = maxIter, maxHits = maxHits, forestSize = forestSize,
              verbosity = verbosity, ...)
 }
