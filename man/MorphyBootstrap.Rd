@@ -13,7 +13,7 @@ ProfileBootstrap(edgeList, dataset, EdgeSwapper = NNISwap, maxIter, maxHits,
   verbosity = 1L, ...)
 
 IWBootstrap(edgeList, dataset, concavity = 4L, EdgeSwapper = NNISwap,
-  maxIter, maxHits, verbosity = 1L)
+  maxIter, maxHits, verbosity = 1L, ...)
 }
 \arguments{
 \item{edgeList}{a list containing the following:

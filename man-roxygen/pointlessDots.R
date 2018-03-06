@@ -1,2 +1,2 @@
-#' @param \dots unused, but allows additional parameters to be passed using `...` to be 
-#'              accepted (nad ignored) by the function
+#' @param \dots unused; allows additional parameters specified within \dots to be 
+#'              received by the function without throwing an error.

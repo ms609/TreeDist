@@ -58,7 +58,7 @@ ProfileBootstrap <- function (edgeList, dataset, EdgeSwapper = NNISwap,
 #' @template concavityParam
 #' @export
 IWBootstrap <- function (edgeList, dataset, concavity=4L, EdgeSwapper = NNISwap, 
-                              maxIter, maxHits, verbosity=1L) {
+                              maxIter, maxHits, verbosity=1L, ...) {
   att <- attributes(dataset)
   startWeights <- att[['weight']]
   eachChar <- seq_along(startWeights)
