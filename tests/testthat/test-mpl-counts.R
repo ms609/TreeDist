@@ -48,6 +48,9 @@ test_that("Morphy generates correct lengths", {
                   ) 
   ## Results
   expected_results <- c(5, 2, 3, 2, 1, 5, 5, 2, 5, 2, 2, 4, 3, 2, 5, 0, 5, 2, 4, 5, 2, 4, 3, 3, 2, 5, 1, 4, 4, 0, 5, 5, 4, 5, 2, 1, 3, 5, 2)
+  expected_minSteps <- c(3, 0,1, 1, 0, 1, 1, 1, 3, 0, 1, 1, 1, 0, 2, 0, 3, 0, 0,
+                         3, 1, 1, 1, 1, 1, 2, 0, 1, 2, 0, 3, 3, 3, 3, 1, 0, 1, 3, 1)
+  expected_homoplasies <- expected_results - expected_minSteps
 
   ##plot(tree); nodelabels(12:22); tiplabels(0:11)
   ## Run the tests
@@ -68,6 +71,10 @@ test_that("Morphy generates correct lengths", {
   morphyObj <- PhyDat2Morphy(bigPhy)
   tree_length <- MorphyTreeLength(tree, morphyObj)
   expect_equal(tree_length, sum(expected_results))
+  
+  tree_score_iw <- IWScore(tree, bigPhy, concavity=4)
+  expected_fit <- expected_homoplasies / (expected_homoplasies + 4)
+  expect_equal(sum(expected_fit), tree_score_iw)
 
   ## Run the bigger tree tests
   bigTree <- read.tree(text = "((1,2),((3,(4,5)),(6,(7,(8,(9,(10,((11,(12,(13,(14,15)))),(16,(17,(18,(19,20))))))))))));")
