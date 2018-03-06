@@ -17,9 +17,15 @@ MorphyBootstrap <- function (edgeList, morphyObj, EdgeSwapper = NNISwap,
   deindexedChars <- rep(eachChar, startWeights)
   resampling <- tabulate(sample(deindexedChars, replace=TRUE), length(startWeights))
   errors <- vapply(eachChar, function (i) 
-         mpl_set_charac_weight(i, resampling[i], morphyObj), integer(1))
-  if (any(errors)) stop ("Error resampling morphy object: ", mpl_translate_error(unique(errors[errors < 0L])))
-  if (mpl_apply_tipdata(morphyObj) -> error) stop("Error applying tip data: ", mpl_translate_error(error))
+            mpl_set_charac_weight(i, resampling[i], morphyObj), integer(1))
+  if (any(errors)) {
+    stop ("Error resampling morphy object: ", mpl_translate_error(unique(errors[errors < 0L])))
+  }
+  if (mpl_apply_tipdata(morphyObj) -> error) {
+    stop("Error applying tip data: ", mpl_translate_error(error))
+  }
+  
+  edgeList[[3]] <- NULL
   res <- EdgeListSearch(edgeList, morphyObj, EdgeSwapper=EdgeSwapper, maxIter=maxIter, maxHits=maxHits, verbosity=verbosity-1L, ...)
   errors <- vapply(eachChar, function (i) 
          mpl_set_charac_weight(i, startWeights[i], morphyObj), integer(1))
@@ -46,6 +52,7 @@ ProfileBootstrap <- function (edgeList, dataset, EdgeSwapper = NNISwap,
   sampledAtt[['info.amounts']] <- att[['info.amounts']][, sampled]
   sampledAtt[['morphyObjs']] <- att[['morphyObjs']][sampled]
   attributes(sampledData) <- sampledAtt
+  edgeList[[3]] <- NULL
   
   res <- EdgeListSearch(edgeList, sampledData, TreeScorer=ProfileScoreMorphy,
                         EdgeSwapper=EdgeSwapper, maxIter=maxIter, maxHits=maxHits, verbosity=verbosity-1L, ...)
@@ -70,6 +77,7 @@ IWBootstrap <- function (edgeList, dataset, EdgeSwapper = NNISwap,
   sampledAtt[['min.steps']] <- att[['min.steps']][sampled]
   sampledAtt[['morphyObjs']] <- att[['morphyObjs']][sampled]
   attributes(sampledData) <- sampledAtt
+  edgeList[[3]] <- NULL
   
   res <- EdgeListSearch(edgeList, sampledData, TreeScorer=IWScoreMorphy,
                         EdgeSwapper=EdgeSwapper, maxIter=maxIter, maxHits=maxHits, verbosity=verbosity-1L, ...)
