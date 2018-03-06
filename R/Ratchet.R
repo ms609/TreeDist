@@ -87,8 +87,8 @@ Ratchet <- function (tree, dataset,
     if (verbosity > 2L) cat ("\n - Rearranging from new candidate tree:")
     for (EdgeSwapper in swappers) {
       candidate <- EdgeListSearch(candidate, dataset=initializedData, TreeScorer=TreeScorer, 
-                                  EdgeSwapper=EdgeSwapper, maxIter=searchIter, maxHits=searchHits,
-                                  verbosity=verbosity-2L, ...)                                  
+                                  EdgeSwapper=EdgeSwapper, maxIter=searchIter, 
+                                  maxHits=searchHits, verbosity=verbosity-2L, ...)
       candScore <- candidate[[3]]
       if (!is.null(stopAtScore) && candScore < stopAtScore + epsilon) break;
     }
