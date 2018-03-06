@@ -1,7 +1,8 @@
 language: r
 r:
  - 3.4.0
- - devel
+ - release
+# - devel
 cache: packages
 sudo: required # required if r_binary_packages; false otherwise
 warnings_are_errors: true
