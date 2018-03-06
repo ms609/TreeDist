@@ -3,7 +3,7 @@ r:
  - 3.4.0
  - devel
 cache: packages
-sudo: false
+sudo: required # required if r_binary_packages; false otherwise
 warnings_are_errors: true
 r_check_args: --as-cran
    
