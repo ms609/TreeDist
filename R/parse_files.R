@@ -26,7 +26,6 @@ ReadTntTree <- function (filename) {
     tipNames <- rownames(ReadTntCharacters(taxonFile, 1))
     trees <- lapply(trees, function (tree) {
       tree$tip.label <- tipNames[as.integer(tree$tip.label) + 1]
-      # Return:
       tree
     })
   }
