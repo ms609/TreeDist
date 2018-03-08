@@ -38,7 +38,8 @@
 #' plot(quickResult)
 #' # IW search is currently much slower:
 #' quickIWResult <- IWRatchet(quickResult, Lobo.phy, concavity=2.5,
-#'                            swappers=list(RootedTBRSwap))
+#'                            ratchIter=1, searchIter = 25, searchHits=2,
+#'                            swappers=RootedTBRSwap, verbosity=5)
 #'  
 #' @author Martin R. Smith
 #' 
@@ -54,7 +55,6 @@ Ratchet <- function (tree, dataset,
                      TreeScorer     = MorphyLength,
                      Bootstrapper   = MorphyBootstrap,
                      swappers = list(TBRSwap, SPRSwap, NNISwap),
-                     BootstrapSwapper = swappers[[length(swappers)]],
                      BootstrapSwapper = if (class(swappers) == 'list')
                       swappers[[length(swappers)]] else swappers,
                      returnAll=FALSE, stopAtScore=NULL,
@@ -168,11 +168,11 @@ Ratchet <- function (tree, dataset,
 #' @export
 ProfileRatchet <- function (tree, dataset,
                             swappers = list(TBRSwap, SPRSwap, NNISwap),
-                            BootstrapSwapper = swappers[[length(swappers)]],
                             BootstrapSwapper = if (class(swappers) == 'list')
                               swappers[[length(swappers)]] else swappers,
                             returnAll=FALSE, stopAtScore=NULL,
-                            ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
+                            ratchIter=100, ratchHits=10, 
+                            searchIter=2000, searchHits=40,
                             bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=1L, 
                             suboptimal=1e-08, ...) {
   Ratchet(tree=tree, dataset=dataset,
@@ -191,7 +191,8 @@ ProfileRatchet <- function (tree, dataset,
 #' @export
 IWRatchet <- function (tree, dataset, concavity=4,
                             swappers = list(TBRSwap, SPRSwap, NNISwap),
-                            BootstrapSwapper = swappers[[length(swappers)]],
+                            BootstrapSwapper = if (class(swappers) == 'list')
+                              swappers[[length(swappers)]] else swappers,
                             returnAll=FALSE, stopAtScore=NULL,
                             ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
                             bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=1L, 
