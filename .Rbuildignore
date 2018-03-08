@@ -10,3 +10,4 @@ vignettes/.RData
 ^\.Rproj\.user$
 \.yml$
 ^\.Rdata$
+^\.R+prof.*$
