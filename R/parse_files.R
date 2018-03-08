@@ -254,7 +254,7 @@ ReadTntCharacters <- function (filepath, character_num=NULL, session=NULL) {
 #' 
 #' @param tokens matrix of tokens, probably created with [ReadCharacters] 
 #'               or [ReadTntCharacters].
-#' @return an object of class \cod{phyDat}
+#' @return an object of class \code{phyDat}
 #' 
 #' @author Martin R. Smith
 #' @keywords internal
