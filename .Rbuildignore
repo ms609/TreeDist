@@ -1,6 +1,7 @@
 /^src\-/
 cran-comments.md
 man-roxygen
+data-raw
 vignettes/.RData
 /^\.git/
 ^.*\.o$
