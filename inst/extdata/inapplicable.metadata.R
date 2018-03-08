@@ -1,6 +1,6 @@
 inapplicable.citations <- c(
   Agnarsson2004 = 
-    "AGNARSSON, I. 2004. Morphological phylogeny of cobweb spiders and their relatives (Araneae, Araneoidea, Theridiidae). Zoological Journal of the Linnean Society, 141, 447–626." ,
+    "AGNARSSON, I. 2004. Morphological phylogeny of cobweb spiders and their relatives (Araneae, Araneoidea, Theridiidae). Zoological Journal of the Linnean Society, 141, 447-626.",
   Aguado2009 = 
     "AGUADO, M. T. and SAN MARTÍN, G. 2009. Phylogeny of Syllidae (Polychaeta) based on morphological data. Zoologica Scripta, 38, 379–402." ,
   Aria2015 = 
