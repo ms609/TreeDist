@@ -29,7 +29,17 @@
 #'
 #' @references 
 #'  \insertRef{Nixon1999}{TreeSearch}
-#' 
+#'
+#' @examples
+#' data('Lobo')
+#' njtree <- NJTree(Lobo.phy)
+#' # Increase value of ratchIter and searchHits to do a proper search
+#' quickResult <- Ratchet(njtree, Lobo.phy, ratchIter=2, searchHits=3)
+#' plot(quickResult)
+#' quickIWResult <- IWRatchet(quickResult, Lobo.phy, concavity=2.5,
+#'                            ratchIter=1, searchHits=2, verbosity=5,
+#'                            swappers=list(RootedTBRSwap))
+#'  
 #' @author Martin R. Smith
 #' 
 #' @seealso \code{\link{TreeSearch}}
