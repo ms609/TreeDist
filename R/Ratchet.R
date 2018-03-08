@@ -18,8 +18,8 @@
 #' @param ratchHits stop when this many ratchet iterations have found the same best score.
 #' @param searchIter maximum rearrangements to perform on each bootstrap or ratchet iteration.
 #' @param searchHits maximum times to hit best score before terminating a tree search within a ratchet iteration.
-#' @param bootstrapIter maximum rearrangements to perform on each bootstrap  iteration (default: \code{maxIter}).
-#' @param bootstrapHits maximum times to hit best score on each bootstrap  iteration (default: \code{maxHits}).
+#' @param bootstrapIter maximum rearrangements to perform on each bootstrap iteration (default: \code{searchIter}).
+#' @param bootstrapHits maximum times to hit best score on each bootstrap iteration (default: \code{searchHits}).
 #' @template stopAtScoreParam
 #' @template verbosityParam
 #' @param suboptimal retain trees that are suboptimal by this score. Defaults to 1e-08 to counter rounding errors.
@@ -97,6 +97,11 @@ Ratchet <- function (tree, dataset,
                               maxHits=bootstrapHits, verbosity=verbosity-2L,
                               EdgeSwapper=BootstrapSwapper, ...)
     candScore <- 1e+08
+    
+    # debugTree <- tree
+    # debugTree$edge <- ListToMatrix(candidate)
+    # plot(debugTree)
+    
     if (verbosity > 2L) cat ("\n - Rearranging from new candidate tree:")
     for (EdgeSwapper in swappers) {
       candidate <- EdgeListSearch(candidate, dataset=initializedData, TreeScorer=TreeScorer, 
