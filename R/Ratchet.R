@@ -58,7 +58,8 @@ Ratchet <- function (tree, dataset,
                      BootstrapSwapper = if (class(swappers) == 'list')
                       swappers[[length(swappers)]] else swappers,
                      returnAll=FALSE, stopAtScore=NULL,
-                     ratchIter=100, ratchHits=10, searchIter=4000, searchHits=30,
+                     ratchIter=100, ratchHits=10,
+                     searchIter=4000, searchHits=42,
                      bootstrapIter=searchIter, bootstrapHits=searchHits,
                      verbosity=1L, 
                      suboptimal=1e-08, ...) {

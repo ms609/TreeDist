@@ -85,4 +85,3 @@ IWBootstrap <- function (edgeList, dataset, concavity=4L, EdgeSwapper = NNISwap,
   
   res[1:2]
 }
-
