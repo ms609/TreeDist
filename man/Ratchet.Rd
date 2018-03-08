@@ -11,25 +11,25 @@
 Ratchet(tree, dataset, InitializeData = PhyDat2Morphy,
   CleanUpData = UnloadMorphy, TreeScorer = MorphyLength,
   Bootstrapper = MorphyBootstrap, swappers = list(TBRSwap, SPRSwap,
-  NNISwap), BootstrapSwapper = swappers[[length(swappers)]],
-  returnAll = FALSE, stopAtScore = NULL, ratchIter = 100,
-  ratchHits = 10, searchIter = 4000, searchHits = 30,
-  bootstrapIter = ceiling(searchIter/5),
-  bootstrapHits = ceiling(searchHits/5), verbosity = 1L,
-  suboptimal = 1e-08, ...)
+  NNISwap), BootstrapSwapper = if (class(swappers) == "list")
+  swappers[[length(swappers)]] else swappers, returnAll = FALSE,
+  stopAtScore = NULL, ratchIter = 100, ratchHits = 10,
+  searchIter = 4000, searchHits = 42, bootstrapIter = searchIter,
+  bootstrapHits = searchHits, verbosity = 1L, suboptimal = 1e-08, ...)
 
 ProfileRatchet(tree, dataset, swappers = list(TBRSwap, SPRSwap, NNISwap),
-  BootstrapSwapper = swappers[[length(swappers)]], returnAll = FALSE,
+  BootstrapSwapper = if (class(swappers) == "list")
+  swappers[[length(swappers)]] else swappers, returnAll = FALSE,
   stopAtScore = NULL, ratchIter = 100, ratchHits = 10,
   searchIter = 2000, searchHits = 40, bootstrapIter = searchIter,
   bootstrapHits = searchHits, verbosity = 1L, suboptimal = 1e-08, ...)
 
 IWRatchet(tree, dataset, concavity = 4, swappers = list(TBRSwap, SPRSwap,
-  NNISwap), BootstrapSwapper = swappers[[length(swappers)]],
-  returnAll = FALSE, stopAtScore = NULL, ratchIter = 100,
-  ratchHits = 10, searchIter = 2000, searchHits = 40,
-  bootstrapIter = searchIter, bootstrapHits = searchHits, verbosity = 1L,
-  suboptimal = 1e-08, ...)
+  NNISwap), BootstrapSwapper = if (class(swappers) == "list")
+  swappers[[length(swappers)]] else swappers, returnAll = FALSE,
+  stopAtScore = NULL, ratchIter = 100, ratchHits = 10,
+  searchIter = 2000, searchHits = 40, bootstrapIter = searchIter,
+  bootstrapHits = searchHits, verbosity = 1L, suboptimal = 1e-08, ...)
 
 RatchetConsensus(tree, dataset, ratchHits = 10, searchIter = 500,
   searchHits = 20, verbosity = 0L, swappers = list(RootedNNISwap),
@@ -82,9 +82,9 @@ within \code{Bootstrapper}.}
 
 \item{searchHits}{maximum times to hit best score before terminating a tree search within a ratchet iteration.}
 
-\item{bootstrapIter}{maximum rearrangements to perform on each bootstrap  iteration (default: \code{maxIter}).}
+\item{bootstrapIter}{maximum rearrangements to perform on each bootstrap iteration (default: \code{searchIter}).}
 
-\item{bootstrapHits}{maximum times to hit best score on each bootstrap  iteration (default: \code{maxHits}).}
+\item{bootstrapHits}{maximum times to hit best score on each bootstrap iteration (default: \code{searchHits}).}
 
 \item{verbosity}{Level of detail to display in console: larger numbers provide
 more verbose feedback to the user.}
@@ -115,6 +115,18 @@ This function returns a tree modified by parsimony ratchet iterations.
 Ratchet searches, using implied weighting
 }}
 
+\examples{
+data('Lobo')
+njtree <- NJTree(Lobo.phy)
+# Increase value of ratchIter and searchHits to do a proper search
+quickResult <- Ratchet(njtree, Lobo.phy, ratchIter=2, searchHits=3)
+plot(quickResult)
+# IW search is currently much slower:
+quickIWResult <- IWRatchet(quickResult, Lobo.phy, concavity=2.5,
+                           ratchIter=1, searchIter = 25, searchHits=2,
+                           swappers=RootedTBRSwap, verbosity=5)
+ 
+}
 \references{
 \insertRef{Nixon1999}{TreeSearch}
 }

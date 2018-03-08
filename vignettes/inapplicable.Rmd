@@ -14,7 +14,7 @@ vignette: >
 
 `TreeSearch` is an R package that allows, among other things, parsimony search on
 morphological datasets that contain inapplicable data, following the algorithm proposed
-by Brazeau, Guillerme and Smith ([-@Brazeau2018]).
+by Brazeau, Guillerme and Smith [-@Brazeau2018].
 
 In brief, this algorithm modifies the Fitch algorithm to count the total number of homoplasious 
 events on a tree.
@@ -32,7 +32,7 @@ library('TreeSearch')
 ## Scoring a tree, and conducting a tree search
 
 Here's an example of using the package to conduct tree search.
-You can (load your own dataset)[load-data.html], but for now, we'll use the 
+You can [load your own dataset](load-data.html), but for now, we'll use the 
 Vinther _et al._ [-@Vinther2008] dataset that comes bundled with the package.
 
 This dataset is small enough that it runs reasonably quickly, but its phylogenetic

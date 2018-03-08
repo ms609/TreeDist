@@ -18,8 +18,8 @@
 #' @param ratchHits stop when this many ratchet iterations have found the same best score.
 #' @param searchIter maximum rearrangements to perform on each bootstrap or ratchet iteration.
 #' @param searchHits maximum times to hit best score before terminating a tree search within a ratchet iteration.
-#' @param bootstrapIter maximum rearrangements to perform on each bootstrap  iteration (default: \code{maxIter}).
-#' @param bootstrapHits maximum times to hit best score on each bootstrap  iteration (default: \code{maxHits}).
+#' @param bootstrapIter maximum rearrangements to perform on each bootstrap iteration (default: \code{searchIter}).
+#' @param bootstrapHits maximum times to hit best score on each bootstrap iteration (default: \code{searchHits}).
 #' @template stopAtScoreParam
 #' @template verbosityParam
 #' @param suboptimal retain trees that are suboptimal by this score. Defaults to 1e-08 to counter rounding errors.
@@ -29,7 +29,18 @@
 #'
 #' @references 
 #'  \insertRef{Nixon1999}{TreeSearch}
-#' 
+#'
+#' @examples
+#' data('Lobo')
+#' njtree <- NJTree(Lobo.phy)
+#' # Increase value of ratchIter and searchHits to do a proper search
+#' quickResult <- Ratchet(njtree, Lobo.phy, ratchIter=2, searchHits=3)
+#' plot(quickResult)
+#' # IW search is currently much slower:
+#' quickIWResult <- IWRatchet(quickResult, Lobo.phy, concavity=2.5,
+#'                            ratchIter=1, searchIter = 25, searchHits=2,
+#'                            swappers=RootedTBRSwap, verbosity=5)
+#'  
 #' @author Martin R. Smith
 #' 
 #' @seealso \code{\link{TreeSearch}}
@@ -44,10 +55,12 @@ Ratchet <- function (tree, dataset,
                      TreeScorer     = MorphyLength,
                      Bootstrapper   = MorphyBootstrap,
                      swappers = list(TBRSwap, SPRSwap, NNISwap),
-                     BootstrapSwapper = swappers[[length(swappers)]],
+                     BootstrapSwapper = if (class(swappers) == 'list')
+                      swappers[[length(swappers)]] else swappers,
                      returnAll=FALSE, stopAtScore=NULL,
-                     ratchIter=100, ratchHits=10, searchIter=4000, searchHits=30,
-                     bootstrapIter=ceiling(searchIter/5), bootstrapHits=ceiling(searchHits/5),
+                     ratchIter=100, ratchHits=10,
+                     searchIter=4000, searchHits=42,
+                     bootstrapIter=searchIter, bootstrapHits=searchHits,
                      verbosity=1L, 
                      suboptimal=1e-08, ...) {
   epsilon <- 1e-08
@@ -84,11 +97,16 @@ Ratchet <- function (tree, dataset,
                               maxHits=bootstrapHits, verbosity=verbosity-2L,
                               EdgeSwapper=BootstrapSwapper, ...)
     candScore <- 1e+08
+    
+    # debugTree <- tree
+    # debugTree$edge <- ListToMatrix(candidate)
+    # plot(debugTree)
+    
     if (verbosity > 2L) cat ("\n - Rearranging from new candidate tree:")
     for (EdgeSwapper in swappers) {
       candidate <- EdgeListSearch(candidate, dataset=initializedData, TreeScorer=TreeScorer, 
-                                  EdgeSwapper=EdgeSwapper, maxIter=searchIter, maxHits=searchHits,
-                                  verbosity=verbosity-2L, ...)                                  
+                                  EdgeSwapper=EdgeSwapper, maxIter=searchIter, 
+                                  maxHits=searchHits, verbosity=verbosity-2L, ...)
       candScore <- candidate[[3]]
       if (!is.null(stopAtScore) && candScore < stopAtScore + epsilon) break;
     }
@@ -156,9 +174,11 @@ Ratchet <- function (tree, dataset,
 #' @export
 ProfileRatchet <- function (tree, dataset,
                             swappers = list(TBRSwap, SPRSwap, NNISwap),
-                            BootstrapSwapper = swappers[[length(swappers)]],
+                            BootstrapSwapper = if (class(swappers) == 'list')
+                              swappers[[length(swappers)]] else swappers,
                             returnAll=FALSE, stopAtScore=NULL,
-                            ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
+                            ratchIter=100, ratchHits=10, 
+                            searchIter=2000, searchHits=40,
                             bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=1L, 
                             suboptimal=1e-08, ...) {
   Ratchet(tree=tree, dataset=dataset,
@@ -177,7 +197,8 @@ ProfileRatchet <- function (tree, dataset,
 #' @export
 IWRatchet <- function (tree, dataset, concavity=4,
                             swappers = list(TBRSwap, SPRSwap, NNISwap),
-                            BootstrapSwapper = swappers[[length(swappers)]],
+                            BootstrapSwapper = if (class(swappers) == 'list')
+                              swappers[[length(swappers)]] else swappers,
                             returnAll=FALSE, stopAtScore=NULL,
                             ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
                             bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=1L, 

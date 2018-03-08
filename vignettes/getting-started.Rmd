@@ -3,6 +3,8 @@ title: "Installing R and TreeSearch"
 author: "Martin R. Smith"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
 vignette: >
   %\VignetteIndexEntry{Getting started}
   %\VignetteEngine{knitr::rmarkdown}
@@ -16,7 +18,7 @@ vignette: >
 
 ### Simple installation
 
-To use `TreeSearch` you will first need to [install R](https://cloud.r-project.org/).  Many people like to 
+To use `TreeSearch` you will first need to [install R](https://CRAN.R-project.org/).  Many people like to 
 use [Rstudio](https://www.rstudio.com/) ([overview](https://dss.princeton.edu/training/RStudio101.pdf)), which is a front-end that makes several of R's features easier to use.
 
 The TreeSearch package can be installed as any other package. 
