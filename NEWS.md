@@ -1,4 +1,4 @@
-# TreeSearch 0.1.0
+# TreeSearch 0.0.8
 
 ## New functions
 - Added NJTree function as shortcut to generate Neighbour-Joining tree from a dataset
@@ -6,7 +6,7 @@
 
 ## Efficiency gains
 - Separate out NNISwap functions to allow more efficient rearrangement of edgeLists
-- [9002] Improve efficiency by using three-pass algorithm in place of four-pass precursor.
+- [9002] Improve efficiency by using three-pass algorithm in place of four-pass precursor
 - [9004] Bootstrap search improvements
 
 ## Bug fixes

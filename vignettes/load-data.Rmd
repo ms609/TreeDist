@@ -50,7 +50,7 @@ filename <- "matrix2.nex"
 
 ## Getting raw data:
 
-###from an Excel spreadsheet
+### From an Excel spreadsheet
 
 If your data is in an Excel spreadsheet, one way to load it into R is using the `xlsx` package.  First you'll have to install it:
 ```r
