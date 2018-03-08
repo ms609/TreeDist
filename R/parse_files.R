@@ -1,6 +1,6 @@
 #' Parse TNT Tree
 #' 
-#' Reads a tree from TNT's paranthetical output
+#' Reads a tree from TNT's paranthetical output.
 #' 
 #' @param filename character string specifying path to TNT `.tre file
 #' 
@@ -9,19 +9,30 @@
 #' @author Martin R. Smith
 #' @export
 #' 
-ParseTntTree <- function (filename) {
-  fileText <- readLines(filename, n=2)
-  treeText <- gsub("(\\d+)", "\\1,", fileText[2], perl=TRUE)
-  treeText <- gsub(")(", "),(", treeText, fixed=TRUE)
-  tree <- read.tree(text=gsub(", )", ")", treeText, fixed=TRUE))
+ReadTntTree <- function (filename) {
+  fileText <- readLines(filename)
+  trees <- lapply(fileText[2:(length(fileText)-1)], function (treeText) {
+    treeText <- gsub("(\\d+)", "\\1,", treeText, perl=TRUE)
+    treeText <- gsub(")(", "),(", treeText, fixed=TRUE)
+    # Return:
+    read.tree(text=gsub(", )", ")", treeText, fixed=TRUE))
+  })
   
   taxonFile <- gsub("tread 'tree(s) from TNT, for data in ", '', fileText[1], fixed=TRUE)
   taxonFile <- gsub("'", '', gsub('\\', '/', taxonFile, fixed=TRUE), fixed=TRUE)
   if (!file.exists(taxonFile)) {
     warning("Cannot find linked data file ", taxonFile)
   } else {
-    tree$tip.label <- rownames(ReadTntCharacters(taxonFile, 1))[as.integer(tree$tip.label) + 1]
+    tipNames <- rownames(ReadTntCharacters(taxonFile, 1))
+    trees <- lapply(trees, function (tree) {
+      tree$tip.label <- tipNames[as.integer(tree$tip.label) + 1]
+      # Return:
+      tree
+    })
   }
+  
+  # Return:
+  trees
 }
 
 #' Extract taxa from a matrix block
