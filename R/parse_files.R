@@ -4,7 +4,7 @@
 #' 
 #' @param filename character string specifying path to TNT `.tre file
 #' 
-#' @returns a tree of class \code{phylo}.
+#' @return a tree of class \code{phylo}.
 #' 
 #' @author Martin R. Smith
 #' @export
@@ -17,9 +17,74 @@ ParseTntTree <- function (filename) {
   
   taxonFile <- gsub("tread 'tree(s) from TNT, for data in ", '', fileText[1], fixed=TRUE)
   taxonFile <- gsub("'", '', gsub('\\', '/', taxonFile, fixed=TRUE), fixed=TRUE)
-  if (!file.exists(taxonFile)) warning("Cannot find linked data file ", taxonFile)
-  View(taxonFile)
-  ReadCharacters(taxonFile)
+  if (!file.exists(taxonFile)) {
+    warning("Cannot find linked data file ", taxonFile)
+  } else {
+    tree$tip.label <- rownames(ReadTntCharacters(taxonFile, 1))[as.integer(tree$tip.label) + 1]
+  }
+}
+
+#' Extract taxa from a matrix block
+#' 
+#' @param matrixLines lines of a file containing a phylogenetic matrix
+#'  (see ReadCharacters for expected format)
+#' @template characterNumParam
+#' @template sessionParam
+#' 
+#' @return Matrix with n rows, each named for the relevant taxon, and c columns,
+#' each corresponding to the respective character specified in `character_num`
+#' 
+#' @keywords internal
+#' @export
+ExtractTaxa <- function (matrixLines, character_num=NULL, session=NULL) {
+  taxonLine.pattern <- "('([^']+)'|\"([^\"+])\"|(\\S+))\\s+(.+)$"
+  
+  taxonLines <- regexpr(taxonLine.pattern, matrixLines, perl=TRUE) > -1
+  # If a line does not start with a taxon name, join it to the preceding line
+  taxonLineNumber <- which(taxonLines)
+  previousTaxon <- vapply(which(!taxonLines), function (x) {
+    max(taxonLineNumber[taxonLineNumber < x])
+  }, integer(1))
+  
+  
+  taxa <- sub(taxonLine.pattern, "\\2\\3\\4", matrixLines, perl=TRUE)
+  taxa <- gsub(" ", "_", taxa, fixed=TRUE)
+  taxa[!taxonLines] <- taxa[previousTaxon]
+  uniqueTaxa <- unique(taxa)
+  
+  tokens <- sub(taxonLine.pattern, "\\5", matrixLines, perl=TRUE)
+  tokens <- gsub("\t", "", gsub(" ", "", tokens, fixed=TRUE), fixed=TRUE)
+  tokens <- vapply(uniqueTaxa, function (taxon) paste0(tokens[taxa==taxon], collapse=''), character(1))
+  
+  tokens.pattern <- "\\([^\\)]+\\)|\\[[^\\]]+\\]|\\{[^\\}]+\\}|."
+  matches <- gregexpr(tokens.pattern, tokens, perl=TRUE)
+  
+  n_char <- length(matches[[1]])
+  
+  if (!is.null(session)) {
+    updateNumericInput(session, 'character_num', max=n_char)
+  }
+  
+  if (!exists("character_num") || is.null(character_num)) {
+    character_num <- seq_len(n_char)
+  } else if (any(character_num > n_char) || any(character_num < 1)) {
+    return(list("Character number must be between 1 and ", n_char, "."))
+    character_num[character_num < 1] <- 1
+    character_num[character_num > n_char] <- n_char
+  }
+  
+  tokens <- t(vapply(regmatches(tokens, matches),
+                     function (x) x[character_num, drop=FALSE],
+                     character(length(character_num))))
+  if (length(character_num) == 1) {
+    tokens <- t(tokens)
+  } else if (length(character_num) == 0) {
+    stop("No characters selected")
+  }
+  rownames(tokens) <- uniqueTaxa
+  
+  # Return:
+  tokens
 }
 
 #' Read characters from Nexus file
@@ -33,10 +98,9 @@ ParseTntTree <- function (filename) {
 #' incorrectly parsed files.
 #'
 #' @param filepath character string specifying location of file
-#' @param character_num Index of character(s) to return.
-#'                      `NULL`, the default, returns all characters.
-#' @param session (optionally) a Shiny session with a numericInput named character_num
-#'        whose maximum should be updated.
+#' @template characterNumParam
+#' @template sessionParam
+#'
 #' @return A matrix whose row names correspond to tip labels, and column names
 #'         correspond to character labels, with the attribute `state.labels`
 #'         listing the state labels for each character; or a character string
@@ -46,7 +110,7 @@ ParseTntTree <- function (filename) {
 #' @references
 #'   Maddison, D. R., Swofford, D. L. and Maddison, W. P. (1997)
 #'   NEXUS: an extensible file format for systematic information.
-#'   Systematic Biology, 46, 590–621.
+#'   Systematic Biology, 46, 590-621.
 #' @export
 #'
 ReadCharacters <- function (filepath, character_num=NULL, session=NULL) {
@@ -70,51 +134,7 @@ ReadCharacters <- function (filepath, character_num=NULL, session=NULL) {
     if (lines[matrixEnd] == ';') matrixEnd <- matrixEnd - 1
     
     matrixLines <- lines[(matrixStart + 1):matrixEnd]
-    taxonLine.pattern <- "('([^']+)'|\"([^\"+])\"|(\\S+))\\s+(.+)$"
-    
-    taxonLines <- regexpr(taxonLine.pattern, matrixLines, perl=TRUE) > -1
-    # If a line does not start with a taxon name, join it to the preceding line
-    taxonLineNumber <- which(taxonLines)
-    previousTaxon <- vapply(which(!taxonLines), function (x) {
-      max(taxonLineNumber[taxonLineNumber < x])
-    }, integer(1))
-    
-    
-    taxa <- sub(taxonLine.pattern, "\\2\\3\\4", matrixLines, perl=TRUE)
-    taxa <- gsub(" ", "_", taxa, fixed=TRUE)
-    taxa[!taxonLines] <- taxa[previousTaxon]
-    uniqueTaxa <- unique(taxa)
-    
-    tokens <- sub(taxonLine.pattern, "\\5", matrixLines, perl=TRUE)
-    tokens <- gsub("\t", "", gsub(" ", "", tokens, fixed=TRUE), fixed=TRUE)
-    tokens <- vapply(uniqueTaxa, function (taxon) paste0(tokens[taxa==taxon], collapse=''), character(1))
-    
-    tokens.pattern <- "\\([^\\)]+\\)|\\{[^\\}]+\\}|."
-    matches <- gregexpr(tokens.pattern, tokens, perl=TRUE)
-    
-    n_char <- length(matches[[1]])
-    
-    if (!is.null(session)) {
-      updateNumericInput(session, 'character_num', max=n_char)
-    }
-    
-    if (!exists("character_num") || is.null(character_num)) {
-      character_num <- seq_len(n_char)
-    } else if (any(character_num > n_char) || any(character_num < 1)) {
-      return(list("Character number must be between 1 and ", n_char, "."))
-      character_num[character_num < 1] <- 1
-      character_num[character_num > n_char] <- n_char
-    }
-    
-    tokens <- t(vapply(regmatches(tokens, matches),
-                       function (x) x[character_num, drop=FALSE],
-                       character(length(character_num))))
-    if (length(character_num) == 1) {
-      tokens <- t(tokens)
-    } else if (length(character_num) == 0) {
-      stop("No characters selected")
-    }
-    rownames(tokens) <- uniqueTaxa
+    tokens <- ExtractTaxa(matrixLines, character_num, session)
     
     labelStart <- which(upperLines == 'CHARLABELS')
     if (length(labelStart) == 1) {
@@ -127,11 +147,19 @@ ReadCharacters <- function (filepath, character_num=NULL, session=NULL) {
         return(list("Multiple CharLabels blocks in Nexus file."))
     }
     
-    
-    GetStates <- function (stateLines) {
-      ## Written with MorphoBank format in mind: each label on separate line,
-      ## each character introduced by integer and terminated with comma.
+    ## Written with MorphoBank format in mind: each label on separate line,
+    ## each character introduced by integer and terminated with comma.
+    labelStart <- which(upperLines == 'CHARLABELS')
+    if (length(labelStart) == 1) {
+      labelEnd <- semicolons[semicolons > labelStart][1]
+      if (lines[labelEnd] == ';') labelEnd <- labelEnd - 1
+      #attr(dat, 'char.labels')
+      colnames(tokens) <- lines[labelStart + character_num]
+    } else {
+      if (length(labelStart) > 1)
+        return(list("Multiple CharLabels blocks in Nexus file."))
     }
+    
     stateStart <- which(upperLines == 'STATELABELS')
     if (length(stateStart) == 1) {
       stateEnd <- semicolons[semicolons > stateStart][1]
@@ -148,7 +176,7 @@ ReadCharacters <- function (filepath, character_num=NULL, session=NULL) {
       }
     } else {
       if (length(labelStart) > 1) {
-        eturn(list("Multiple StateLabels blocks in Nexus file."))
+        return(list("Multiple StateLabels blocks in Nexus file."))
       }
     }
   }
@@ -157,12 +185,82 @@ ReadCharacters <- function (filepath, character_num=NULL, session=NULL) {
   tokens
 }
 
-#' @describeIn read.characters Read characters as phyDat object
+
+#' @describeIn ReadCharacters Read characters from TNT file
+ReadTntCharacters <- function (filepath, character_num=NULL, session=NULL) {
+  
+  lines <- readLines(filepath)
+  tntComment.pattern <- "'[^']*']"
+  lines <- gsub(tntComment.pattern, "", lines)
+  lines <- trimws(lines)
+  lines <- lines[lines != ""]
+  
+  semicolons <- which(RightmostCharacter(lines) == ';')
+  upperLines <- toupper(lines)
+  
+  matrixStart <- which(upperLines == '&[NUM]')
+  if (length(matrixStart) == 0) {
+    return(list("&[num] entry not found in TNT file."))
+  } else if (length (matrixStart) > 1) {
+    return(list("Multiple &[num] entries found in TNT file."))
+  } else {
+    matrixEnd <- semicolons[semicolons > matrixStart][1]
+    if (lines[matrixEnd] == ';') matrixEnd <- matrixEnd - 1
+    
+    matrixLines <- lines[(matrixStart + 1):matrixEnd]
+    tokens <- ExtractTaxa(matrixLines, character_num, session)
+    labelStart <- which(upperLines == 'CHARLABELS')
+    if (length(labelStart) == 1) {
+      labelEnd <- semicolons[semicolons > labelStart][1]
+      if (lines[labelEnd] == ';') labelEnd <- labelEnd - 1
+      #attr(dat, 'char.labels')
+      colnames(tokens) <- lines[labelStart + character_num]
+    } else {
+      if (length(labelStart) > 1)
+        return(list("Multiple CharLabels blocks in Nexus file."))
+    }
+    
+    
+    labelStart <- which(upperLines == 'CNAMES')
+    if (length(labelStart) == 1) {
+      labelEnd <- semicolons[semicolons > labelStart][1]
+      if (lines[labelEnd] == ';') labelEnd <- labelEnd - 1
+      charLines <- lines[labelStart + character_num]
+      charLine.pattern <- "^\\S+\\s\\d+\\s(\\w+)(.*)\\s*;\\s*$"
+      
+      # Character labels
+      charNames <- gsub(charLine.pattern, "\\1", charLines, perl=TRUE)
+      colnames(tokens) <- gsub("_", " ", charNames, fixed=TRUE)
+      
+      # State labels
+      stateNames <- gsub(charLine.pattern, "\\2", charLines, perl=TRUE)
+      attr(tokens, 'state.labels') <- lapply(stateNames, function (line) {
+        states <- strsplit(trimws(line), "\\s+", perl=TRUE)[[1]]
+        trimws(gsub("_", " ", states, fixed=TRUE))
+      })
+    } else {
+      if (length(labelStart) > 1)
+        return(list("Multiple cnames entries in TNT file."))
+    }
+  }
+  
+  # Return:
+  tokens
+}
+
+#' Matrix to phydat
+#' 
+#' Converts a matrix of tokens to a phyDat object
+#' 
+#' @param tokens matrix of tokens, probably created with [ReadCharacters] 
+#'               or [ReadTntCharacters].
+#' @return an object of class \cod{phyDat}
+#' 
 #' @author Martin R. Smith
-#' @importFrom phangorn phyDat
+#' @keywords internal
 #' @export
-ReadAsPhyDat <- function (filepath) {
-  tokens <- read.characters(filepath)
+#' 
+MatrixToPhyDat <- function (tokens) {
   allTokens <- unique(as.character(tokens))
   tokenNumbers <- seq_along(allTokens)
   names(tokenNumbers) <- allTokens
@@ -174,6 +272,26 @@ ReadAsPhyDat <- function (filepath) {
   rownames(contrast) <- allTokens
   colnames(contrast) <- levels
   dat <- phangorn::phyDat(tokens, type='USER', contrast=contrast)
+  
+  # Return:
+  dat
+}
+
+#' @describeIn ReadCharacters Read nexus characters as phyDat object
+#' @author Martin R. Smith
+#' @importFrom phangorn phyDat
+#' @export
+ReadAsPhyDat <- function (filepath) {
+  MatrixToPhyDat(ReadCharacters(filepath))
+}
+
+
+#' @describeIn ReadCharacters Read TNT characters as phyDat object
+#' @author Martin R. Smith
+#' @importFrom phangorn phyDat
+#' @export
+ReadTntAsPhyDat <- function (filepath) {
+  MatrixToPhyDat(ReadTntCharacters(filepath))
 }
 
 #' Rightmost character of string

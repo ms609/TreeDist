@@ -1,5 +1,8 @@
 # TreeSearch 0.0.9
 
+## New functions
+- [9005] Helper functions to read nexus and TNT files.
+
 ## Bug fixes
 - [9005] IWRatchetConsensus wasn't passing concavity value forwards
 
