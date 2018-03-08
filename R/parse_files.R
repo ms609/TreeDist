@@ -32,7 +32,15 @@ ReadTntTree <- function (filename) {
   }
   
   # Return:
-  trees
+  if (length(trees) == 1) {
+    trees[[1]]
+  } else if (length(trees) == 0) {
+    NULL
+  } else {
+    class(trees) <- 'multiPhylo'
+    trees
+  }
+  
 }
 
 #' Extract taxa from a matrix block
