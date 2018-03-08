@@ -87,7 +87,7 @@
 #'   data('congreveLamsdellMatrices')
 #'   ProfileScore(referenceTree, PrepareDataProfile(congreveLamsdellMatrices[[17]]))
 #'
-#' @source \url{http://datadryad.org/resource/doi:10.5061/dryad.7dq0j}
+#' @source \url{https://datadryad.org/resource/doi:10.5061/dryad.7dq0j}
 #' 
 #' @keywords datasets
 "congreveLamsdellMatrices"
@@ -107,7 +107,7 @@
 #'   data(referenceTree)
 #'   plot(referenceTree)
 #' 
-#' @source \url{http://dx.doi.org/10.1111/pala.12236}
+#' @source \url{https://dx.doi.org/10.1111/pala.12236}
 #' 
 #' @keywords datasets
 "referenceTree"

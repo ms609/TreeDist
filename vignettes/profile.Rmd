@@ -24,7 +24,7 @@ Character data are read from a \emph{restricted} \acronym{NEXUS} format using th
 \code{\link{read.nexus.data}}; see the latter function's \link[=read.nexus.data]{documentation} for details.
 
 \acronym{NEXUS} files can be edited in any standard text editor,
- for example \href{http://notepad-plus-plus.org/}{Notepad++}.
+ for example \href{https://notepad-plus-plus.org/}{Notepad++}.
  
 A notable limitation is that the parser cannot interpret curly braces, for example {01}.  
 Ambiguous tokens of this nature should be replaced with a separate character, for example 
