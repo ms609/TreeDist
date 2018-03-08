@@ -36,8 +36,8 @@
 #' # Increase value of ratchIter and searchHits to do a proper search
 #' quickResult <- Ratchet(njtree, Lobo.phy, ratchIter=2, searchHits=3)
 #' plot(quickResult)
+#' # IW search is currently much slower:
 #' quickIWResult <- IWRatchet(quickResult, Lobo.phy, concavity=2.5,
-#'                            ratchIter=1, searchHits=2, verbosity=5,
 #'                            swappers=list(RootedTBRSwap))
 #'  
 #' @author Martin R. Smith
@@ -55,6 +55,8 @@ Ratchet <- function (tree, dataset,
                      Bootstrapper   = MorphyBootstrap,
                      swappers = list(TBRSwap, SPRSwap, NNISwap),
                      BootstrapSwapper = swappers[[length(swappers)]],
+                     BootstrapSwapper = if (class(swappers) == 'list')
+                      swappers[[length(swappers)]] else swappers,
                      returnAll=FALSE, stopAtScore=NULL,
                      ratchIter=100, ratchHits=10, searchIter=4000, searchHits=30,
                      bootstrapIter=searchIter, bootstrapHits=searchHits,
@@ -167,6 +169,8 @@ Ratchet <- function (tree, dataset,
 ProfileRatchet <- function (tree, dataset,
                             swappers = list(TBRSwap, SPRSwap, NNISwap),
                             BootstrapSwapper = swappers[[length(swappers)]],
+                            BootstrapSwapper = if (class(swappers) == 'list')
+                              swappers[[length(swappers)]] else swappers,
                             returnAll=FALSE, stopAtScore=NULL,
                             ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
                             bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=1L, 
