@@ -13,8 +13,7 @@
 #'  @author Martin R. Smith
 #'  @importFrom ape consensus drop.tip
 #'  @export
-
 ConsensusWithout <- function (trees, tip) {
-  ape::consensus(lapply(trees, drop.tip, tip=tip))
+  consensus(lapply(trees, drop.tip, tip=tip))
 }
 
