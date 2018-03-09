@@ -8,16 +8,17 @@
 #' @param trees A list of phylogenetic trees, of class `multiPhylo` or `list`
 #' @param tip A character vector specifying the names (or numbers) of tips to
 #'                drop (using ape::drop.tip)
+#' @param \dots Additional parameters to pass to ape::[consensus]
 #'                
 #' @return A consensus tree without the excluded taxa
 #' @author Martin R. Smith
 #' @importFrom ape consensus drop.tip
 #' @export
-ConsensusWithout <- function (trees, tip) {
+ConsensusWithout <- function (trees, tip, ...) {
   if (class(trees) == 'phylo') {
     drop.tip(trees, tip=tip) 
   } else {
-    consensus(lapply(trees, drop.tip, tip=tip))
+    consensus(lapply(trees, drop.tip, tip=tip), ...)
   }
 }
 
