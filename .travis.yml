@@ -10,6 +10,16 @@ r_check_args: --as-cran
    
 git:
   depth: 5
+  
+r_binary_packages:
+ - ape
+ - covr
+ - memoise
+ - phangorn
+ - R.cache
+ - Rdpack
+ - roxygen2
+ - testthat
 
 before_script:
  - R -e "devtools::document()"
