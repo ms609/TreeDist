@@ -27,7 +27,7 @@ typedef double Mflt;
 
 typedef unsigned int MPLstate;
 
-#define NA              ((MPLstate)0b1)
+#define NA              ((MPLstate)01) // 0b1 is not C11 compliant
 #define MISSING         ((MPLstate)~0)
 #define ISAPPLIC        (((MPLstate)~0)^NA)
 #define MAXSTATES       (CHAR_BIT * sizeof(MPLstate))
