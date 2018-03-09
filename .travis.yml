@@ -2,7 +2,7 @@ language: r
 r:
  - 3.4.0
  - release
-# - devel
+ - devel
 cache: packages
 sudo: required # required if r_binary_packages; false otherwise
 warnings_are_errors: true
@@ -10,18 +10,6 @@ r_check_args: --as-cran
    
 git:
   depth: 5
-  
-r_binary_packages:
-# Current devtools binary too new for R 3.4.0
- - devtools
- - ape
- - covr
- - memoise
- - phangorn
- - R.cache
- - Rdpack
- - roxygen2
- - testthat
 
 before_script:
  - R -e "devtools::document()"
