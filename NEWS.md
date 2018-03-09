@@ -1,3 +1,9 @@
+# TreeSearch 0.0.9
+
+## Bug fixes
+- [9005] IWRatchetConsensus wasn't passing concavity value forwards
+
+
 # TreeSearch 0.0.8
 
 ## New functions
