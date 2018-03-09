@@ -1,4 +1,4 @@
-context("Parser functions: TNT")
+context("Parser functions")
 test_that("Nexus file can be parsed", {
   filename <- 'test-parse-nexus.nexus'
   read <- ReadCharacters(filename)
