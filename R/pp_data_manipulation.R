@@ -17,66 +17,6 @@ FastTable <- function (dataset) {
   result                                                                              
 }   
 
-#' Load phyDat object
-#'
-#' A convenient wrapper for \pkg{phangorn}'s \code{phyDat}
-#'
-#' @param dataset data table, perhaps from read.nexus.data.
-#' @param levels tokens - values that all characters might take.
-#' @param compress Compress identical transformation series into a single row of the phyDat object.
-#' For simplicity I have not retained support for contrast matrices or ambiguity.
-#'
-#' @return a \code{phyDat} object.
-#'
-#' @importFrom stats na.omit
-#' @export
-PhyDat <- function (dataset, levels = NULL, compress = TRUE) {
-  if (is.null(levels)) stop("Levels not supplied")
-  nam <- names(dataset)
-  # dataset <- as.data.frame(t(dataset), stringsAsFactors = FALSE)
-  if (length(dataset[[1]]) == 1) {
-      compress <- FALSE
-  }
-  if (compress) {
-    ddd     <- FastTable(dataset)
-    dataset <- ddd$dataset
-    weight  <- ddd$weight
-    index   <- ddd$index
-    n.rows  <- length(dataset[[1]])
-  } else {
-    n.rows <- length(dataset[[1]])
-    weight <- rep(1, n.rows)
-    index <- 1:n.rows
-  }
-  n.levels <- length(levels)
-  contrast <- diag(n.levels)
-  all.levels <- levels
-  att <- attributes(dataset)
-  dataset <- lapply(dataset, match, all.levels)
-  attributes(dataset) <- att
-  row.names(dataset) <- as.character(1:n.rows)
-  dataset <- na.omit(dataset)
-  tmp  <- match(index, attr(dataset, "na.action"))
-  index <- index[is.na(tmp)]
-  index <- match(index, unique(index))
-  rn <- as.numeric(rownames(dataset))
-  attr(dataset, "na.action") <- NULL
-  weight <- weight[rn]
-  n.rows <- dim(dataset)[1]
-  names(dataset) <- nam
-  attr(dataset, "row.names") <- NULL
-  attr(dataset, "weight")    <- weight
-  attr(dataset, "nr")        <- n.rows
-  attr(dataset, "nc")        <- length(levels)
-  attr(dataset, "index")     <- index
-  attr(dataset, "levels")    <- levels
-  attr(dataset, "allLevels") <- all.levels
-  attr(dataset, "type")      <- "USER"
-  attr(dataset, "contrast")  <- contrast
-  class(dataset)             <- "phyDat"
-  dataset
-}
-
 #' Prepare data for Profile Parsimony
 #' 
 #' @param dataset dataset of class \code{phyDat}

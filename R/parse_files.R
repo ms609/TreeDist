@@ -313,6 +313,23 @@ ReadTntAsPhyDat <- function (filepath) {
   MatrixToPhyDat(ReadTntCharacters(filepath))
 }
 
+
+#' @describeIn ReadCharacters A convenient wrapper for \pkg{phangorn}'s \code{phyDat},
+#' which converts a list of morphological characters into a phyDat object.
+#'
+#' @param dataset list of taxa and characters, in the format produced by [read.nexus.data].
+#'
+#' @export
+PhyDat <- function (dataset) {
+  nChar <- length(dataset[[1]])
+  if (nChar == 1) {
+    mat <- matrix(unlist(dataset), dimnames=list(names(dataset), NULL))
+  } else {
+    mat <- t(vapply(dataset, I, dataset[[1]]))
+  }
+  MatrixToPhyDat(mat)
+}
+
 #' Rightmost character of string
 #'
 #' @author Martin R. Smith

@@ -3,7 +3,7 @@ RootySwappers <- list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap)
 test_that("Profile parsimony works in tree search", {
   sillyData <- lapply(1:22, function (i) c( rep(0, i - 1), rep(1, 22 - i), rep(1, 22 - i), rep(0, i - 1)))#, sample(2, 20, replace=TRUE)-1))
   names(sillyData) <- as.character(1:22)
-  dataset <- PhyDat(sillyData, 0:1)
+  dataset <- PhyDat(sillyData)
   readyData <- PrepareDataProfile(dataset, 12000, warn=FALSE)
   
   set.seed(0)
