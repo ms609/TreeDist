@@ -14,6 +14,7 @@ ReadTntTree <- function (filename) {
   trees <- lapply(fileText[2:(length(fileText)-1)], function (treeText) {
     treeText <- gsub("(\\d+)", "\\1,", treeText, perl=TRUE)
     treeText <- gsub(")(", "),(", treeText, fixed=TRUE)
+    treeText <- gsub("*", ";", treeText, fixed=TRUE)
     # Return:
     read.tree(text=gsub(", )", ")", treeText, fixed=TRUE))
   })
