@@ -7,8 +7,8 @@
 #' @return a tree of class \code{phylo}.
 #' 
 #' @author Martin R. Smith
+#' @importFrom ape read.tree
 #' @export
-#' 
 ReadTntTree <- function (filename) {
   fileText <- readLines(filename)
   trees <- lapply(fileText[2:(length(fileText)-1)], function (treeText) {
@@ -80,7 +80,7 @@ ExtractTaxa <- function (matrixLines, character_num=NULL, session=NULL) {
   n_char <- length(matches[[1]])
   
   if (!is.null(session)) {
-    updateNumericInput(session, 'character_num', max=n_char)
+    shiny::updateNumericInput(session, 'character_num', max=n_char)
   }
   
   if (!exists("character_num") || is.null(character_num)) {
