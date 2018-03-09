@@ -14,5 +14,19 @@
 #' @importFrom ape consensus drop.tip
 #' @export
 ConsensusWithout <- function (trees, tip) {
-  consensus(lapply(trees, drop.tip, tip=tip))
+  if (class(trees) == 'phylo') {
+    drop.tip(trees, tip=tip) 
+  } else {
+    consensus(lapply(trees, drop.tip, tip=tip))
+  }
+}
+
+#' @describeIn ConsensusWithout Adds missing taxa to a plotted consensus tree
+#' @param position Where to plot the missing taxa.  See [legend] for options.
+#' @param \dots Other parameters to pass to [legend]
+#' @importFrom graphics legend
+#' @export
+#' @author Martin R. Smith
+MarkMissing <- function (tip, position='bottomleft', ...) {
+  legend(position, legend=tip, lwd=1, lty=2, bty='n')
 }
