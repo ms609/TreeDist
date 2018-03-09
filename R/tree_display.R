@@ -28,5 +28,5 @@ ConsensusWithout <- function (trees, tip) {
 #' @export
 #' @author Martin R. Smith
 MarkMissing <- function (tip, position='bottomleft', ...) {
-  legend(position, legend=tip, lwd=1, lty=2, bty='n')
+  legend(position, legend=tip, lwd=1, lty=2, bty='n', ...)
 }
