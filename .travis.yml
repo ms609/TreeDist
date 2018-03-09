@@ -4,7 +4,7 @@ r:
  - release
  - devel
 cache: packages
-sudo: required # required if r_binary_packages; false otherwise
+sudo: false
 warnings_are_errors: true
 r_check_args: --as-cran
    
