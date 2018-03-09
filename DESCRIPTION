@@ -32,6 +32,7 @@ Imports:
 Suggests:
     knitr,
     rmarkdown,
+    shiny,
     testthat,
     xlsx
 RdMacros: Rdpack
