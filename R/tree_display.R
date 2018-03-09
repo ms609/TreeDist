@@ -9,11 +9,10 @@
 #' @param tip A character vector specifying the names (or numbers) of tips to
 #'                drop (using ape::drop.tip)
 #'                
-#'  @return A consensus tree without the excluded taxa
-#'  @author Martin R. Smith
-#'  @importFrom ape consensus drop.tip
-#'  @export
+#' @return A consensus tree without the excluded taxa
+#' @author Martin R. Smith
+#' @importFrom ape consensus drop.tip
+#' @export
 ConsensusWithout <- function (trees, tip) {
   consensus(lapply(trees, drop.tip, tip=tip))
 }
-
