@@ -1,16 +1,16 @@
-# TreeSearch 0.0.9
+# TreeSearch 0.1.0
 
-## New functions
-- [9005] Helper functions to read Nexus and TNT data and trees.
+## New features
+- Helper functions to read Nexus and TNT data and trees.
 
 ## Bug fixes
-- [9005] IWRatchetConsensus wasn't passing concavity value forwards
-- [9005] C11 compliance
+- C11 compliance
+- IWRatchetConsensus now relays concavity value to subsequent functions
 
 
 # TreeSearch 0.0.8
 
-## New functions
+## New features
 - Added NJTree function as shortcut to generate Neighbour-Joining tree from a dataset
 - Add functions to allow recovery of all trees one rearrangement from that input
 
@@ -22,6 +22,7 @@
 ## Bug fixes
 - [9003] User now able to specify value of concavity constant (was overridden to k = 4)
 - [9003] Bootstrap replicates now scored correctly (and without warning) under implied weights
+
 
 # TreeSearch 0.0.7
 
