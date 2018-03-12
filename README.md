@@ -42,10 +42,10 @@ It is also possible to specify bespoke optimality criteria.
 
 Brazeau, M. D., Guillerme, T. and Smith, M. R. 2017. 
   [Morphological phylogenetic analysis with inapplicable data](https://www.biorxiv.org/content/early/2017/10/26/209775). 
-  BioRχiv. doi:[https://dx.doi.org/10.1101/209775](10.1101/209775)
+  BioRχiv. doi:[10.1101/209775](https://dx.doi.org/10.1101/209775)
 
 D. P. Faith, J. W. H. Trueman, Towards an inclusive philosophy for phylogenetic inference.
-  Syst. Biol. 50, 331–350 (2001).   doi:[https://dx.doi.org/](10.1080/10635150118627)
+  Syst. Biol. 50, 331–350 (2001).   doi:[10.1080/10635150118627](https://dx.doi.org/10.1080/10635150118627)
 
 Farris, J. S. (1969). A successive approximations approach to character weighting. 
-  Systematic Biology, 18(4), 374–385.  doi:[https://dx.doi.org/10.2307/2412182](10.2307/2412182)
+  Systematic Biology, 18(4), 374–385.  doi:[10.2307/2412182](https://dx.doi.org/10.2307/2412182)
