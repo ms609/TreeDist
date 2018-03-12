@@ -5,7 +5,8 @@
 
 ## Bug fixes
 - C11 compliance
-- IWRatchetConsensus now relays concavity value to subsequent functions
+- `IWRatchetConsensus` now relays concavity value to subsequent functions
+- `ReadCharacters` returns labels for all characters and states if `character_num = NULL`
 
 
 # TreeSearch 0.0.8

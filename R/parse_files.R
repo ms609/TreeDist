@@ -154,17 +154,7 @@ ReadCharacters <- function (filepath, character_num=NULL, session=NULL) {
     
     matrixLines <- lines[(matrixStart + 1):matrixEnd]
     tokens <- ExtractTaxa(matrixLines, character_num, session)
-    
-    labelStart <- which(upperLines == 'CHARLABELS')
-    if (length(labelStart) == 1) {
-      labelEnd <- semicolons[semicolons > labelStart][1]
-      if (lines[labelEnd] == ';') labelEnd <- labelEnd - 1
-      #attr(dat, 'char.labels')
-      colnames(tokens) <- lines[labelStart + character_num]
-    } else {
-      if (length(labelStart) > 1)
-        return(list("Multiple CharLabels blocks in Nexus file."))
-    }
+    if (is.null(character_num)) character_num <- seq_len(ncol(tokens))
     
     ## Written with MorphoBank format in mind: each label on separate line,
     ## each character introduced by integer and terminated with comma.
