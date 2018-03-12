@@ -11,7 +11,7 @@ r_check_args: --as-cran
 git:
   depth: 5
   
-r_binary_packages:
+r_packages:
  - ape
  - covr
  - memoise
