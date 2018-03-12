@@ -8,7 +8,7 @@
 #' @param trees A list of phylogenetic trees, of class `multiPhylo` or `list`
 #' @param tip A character vector specifying the names (or numbers) of tips to
 #'                drop (using ape::drop.tip)
-#' @param \dots Additional parameters to pass to ape::[consensus]
+#' @param \dots Additional parameters to pass on to ape::[consensus] or [legend]
 #'                
 #' @return A consensus tree without the excluded taxa
 #' @author Martin R. Smith
@@ -24,7 +24,6 @@ ConsensusWithout <- function (trees, tip, ...) {
 
 #' @describeIn ConsensusWithout Adds missing taxa to a plotted consensus tree
 #' @param position Where to plot the missing taxa.  See [legend] for options.
-#' @param \dots Other parameters to pass to [legend]
 #' @importFrom graphics legend
 #' @export
 #' @author Martin R. Smith
