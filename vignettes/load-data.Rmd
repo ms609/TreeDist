@@ -73,6 +73,17 @@ rownames(raw_data) <- taxon_names
 ```
 
 ### From a Nexus file
+
+`TreeSearch` contains an inbuilt NEXUS parser:
+
+```R
+raw_data <- ReadCharacters(filename)
+# Or, to go straight to PhyDat format:
+as_phydat <- ReadAsPhyDat(filename)
+```
+
+This will extract character names and codings from a dataset.  It's been written to work with datasets downloaded from [MorphoBank](https://morphobank.org/), but should work with most valid (and many invalid) NEXUS files.  If there's a file that's not being read correctly, please [let me know](https://github.com/ms609/TreeSearch/issues/new?title=Unsupported+NEXUS+file&body=Please%20attach%20the%20problematic%20NEXUS%20file%20and%20describe%20the%20issue&labels=enhancement) and I'll try to fix it.
+
 If your data is in a NEXUS file, you can read it using the preinstalled package `ape`:
 
 ```R
@@ -88,9 +99,36 @@ character definitions and separate taxon blocks.
 The function `readNexus` in package `phylobase` promises to be more powerful,
 yet I've not been able to get it to work.
 
+### From a TNT file
+
+A TNT format dataset downloaded from [MorphoBank](https://morphobank.org/) can be parsed with `ReadTntCharacters`, which might also handle other TNT-compatible files.  If there's a file that's not being read correctly, please [let me know](https://github.com/ms609/TreeSearch/issues/new?title=Unsupported+TNT+file&body=Please%20attach%20the%20problematic%20TNT%20file%20and%20describe%20the%20issue&labels=enhancement) and I'll try to fix it.
+
+```R
+raw_data <- ReadTntCharacters(filename)
+# Or, to go straight to PhyDat format:
+my_data <- ReadTntAsPhyDat(filename)
+```
+
 ## Processing raw data
 
-The next stage is to get the raw data into a format that `TreeSearch` can understand.  Here we'll enlist the help of the
+The next stage is to get the raw data into a format that `TreeSearch` can understand.  If you've used the `ReadAsPhyDat` or `ReadTntAsPhyDat` functions, then you can skip this step -- you're already there.
+
+Otherwise, you can try 
+
+```R 
+my_data <- PhyDat(raw_data)
+```
+
+or if that doesn't work, 
+
+```R
+my_data <- MatrixToPhyDat(raw_data)
+```
+
+These functions haven't been exhaustively tested -- if they don't work on your dataset, please  [let me know](https://github.com/ms609/TreeSearch/issues/new?title=data+to+PhyDat+conversion+issue&body=Please%20describe+the+problem+here:&labels=bug).  
+
+
+Failing that, you can enlist the help of the
 `phangorn` package, which was installed when you installed `TreeSearch`:
 
 ```R

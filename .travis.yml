@@ -1,17 +1,16 @@
-language: r
+language: R
 r:
  - 3.4.0
  - release
  - devel
-cache: packages
-sudo: required # required if r_binary_packages; false otherwise
+sudo: false
 warnings_are_errors: true
 r_check_args: --as-cran
    
 git:
   depth: 5
   
-r_binary_packages:
+r_packages:
  - ape
  - covr
  - memoise
