@@ -2,6 +2,10 @@
 
 ## New features
 - Helper functions to read Nexus and TNT data and trees.
+- Brewer palette in local data to allow easier colouring
+
+## Enhancements
+- Allow additional parameters to be passed to `consensus` via `ConsensusWithout`
 
 ## Bug fixes
 - C11 compliance

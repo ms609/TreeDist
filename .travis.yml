@@ -3,14 +3,15 @@ r:
  - 3.4.0
  - release
  - devel
-sudo: false
+cache: packages
+sudo: required # required if r_binary_packages; false otherwise
 warnings_are_errors: true
 r_check_args: --as-cran
    
 git:
   depth: 5
   
-r_packages:
+r_binary_packages:
  - ape
  - covr
  - memoise
