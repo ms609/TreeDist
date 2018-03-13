@@ -2,7 +2,7 @@ language: R
 r:
  - 3.4.0
  - release
- - devel
+# - devel # Incompatible with devtools
 cache: packages
 sudo: required # required if r_binary_packages; false otherwise
 warnings_are_errors: true
