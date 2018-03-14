@@ -1,8 +1,8 @@
-language: r
+language: R
 r:
  - 3.4.0
  - release
-# - devel
+# - devel # Incompatible with devtools
 cache: packages
 sudo: required # required if r_binary_packages; false otherwise
 warnings_are_errors: true
@@ -12,8 +12,6 @@ git:
   depth: 5
   
 r_binary_packages:
-# Current devtools binary too new for R 3.4.0
- - devtools
  - ape
  - covr
  - memoise
