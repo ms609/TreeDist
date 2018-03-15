@@ -1,3 +1,8 @@
+# TreeSearch 0.1.1
+
+## Bug fixes
+- Fix CRAN notes and warnings
+
 # TreeSearch 0.1.0
 
 ## New features
