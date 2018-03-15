@@ -10,13 +10,11 @@ There was one NOTE:
 > NOTE
 > Maintainer: 'Martin R. Smith <martins@gmail.com>'
 > 
-> Days since last update: 5
+> Days since last update: 1
 
-Brian Ripley kindly pointed out that the recently-uploaded v0.0.8 triggered errors in certain build environments.  This resubmission fixes, I hope, the warnings and notes.
+Version 0.1.0 fixed an error in the C code that had been flagged by the CRAN package check.  Fixing this error exposed some new warnings, which this resubmission addresses.
 
-If there is a way for me to test the package in the environments that CRAN
-uses ahead of submission, to avoid this situation recurring, I'd be glad
-to hear of it.
+I'm sorry that this has meant multiple submissions in a short space of time.  If there is a way for me to test the package in the environments that CRAN uses ahead of submission, to avoid this situation recurring, please do let me know.
 
 
 ## Downstream dependencies

@@ -1,7 +1,8 @@
 # TreeSearch 0.1.1
 
 ## Bug fixes
-- Fix CRAN notes and warnings
+- Fix C warnings in MorphyLib
+- Remove non-ASCII characters from data
 
 # TreeSearch 0.1.0
 
