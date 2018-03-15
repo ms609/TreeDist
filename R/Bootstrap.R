@@ -1,65 +1,87 @@
-#' Bootstrap tree search with inapplicable data
+#' Ratchet bootstrapper
 #' 
-#' @template preorderTreeParam
-#' @template datasetParam
-#' @template treeScorerParam
+#' @template edgeListParam
+#' @template morphyObjParam
+#' @template EdgeSwapperParam
 #' @param maxIter maximum number of iterations to perform in tree search
-#' @param maxHits number of times to find optimal tree length before stopping tree search
-#' @param rooted set to FALSE if position of root may change, TRUE if position and composition of
-#'               outgroup is fixed
+#' @param maxHits maximum number of hits to accomplish in tree search
 #' @template verbosityParam
-#' @template treeScorerDots
+#' @param \dots further parameters to send to \code{TreeScorer}
 #'
 #' @return A tree that is optimal under a random sampling of the original characters
-#' @export  
-BootstrapTree <- function (tree, dataset, TreeScorer = FitchScore, 
-                           maxIter, maxHits, rooted = TRUE, verbosity=1, ...) {
-## Simplified version of phangorn::bootstrap.phyDat, with bs=1 and multicore=FALSE
-  at <- attributes(dataset)
-  bootstrappedWeight <- BootstrapWeightings(at)
-  keep <- bootstrappedWeight > 0
-  if (is.null(at$names)) dataset <- dataset[keep, ] else dataset <- lapply(dataset, function (i) i[keep])
-  xDim <- dim(dataset)
-  xDimNames <- dimnames(dataset)
-  mostattributes(dataset) <- at
-  dim(dataset) <- xDim
-  dimnames(dataset) <- xDimNames
-  names(dataset) <- at$names
-  attr(dataset, 'weight') <- bootstrappedWeight[keep]
-  for (attrName in at$bootstrap) {
-    attribute <- at[attrName][[1]]
-    if (length(dim(attribute)) == 2) {
-      if (dim(attribute)[2] != length(keep)) warning("Bootstrap mismatch for attribute", attrName)
-      attr(dataset, attrName) <- attribute[, keep]
-    } else if (length(attribute) == length(keep)) {
-      attr(dataset, attrName) <- attribute[keep]
-    }
+#' @export
+MorphyBootstrap <- function (edgeList, morphyObj, EdgeSwapper = NNISwap, 
+                             maxIter, maxHits, verbosity=1L, ...) {
+  startWeights <- MorphyWeights(morphyObj)[1, ]
+  eachChar <- seq_along(startWeights)
+  deindexedChars <- rep(eachChar, startWeights)
+  resampling <- tabulate(sample(deindexedChars, replace=TRUE), length(startWeights))
+  errors <- vapply(eachChar, function (i) 
+            mpl_set_charac_weight(i, resampling[i], morphyObj), integer(1))
+  if (any(errors)) {
+    stop ("Error resampling morphy object: ", mpl_translate_error(unique(errors[errors < 0L])))
   }
-  attr(dataset, 'nr') <- sum(keep)
-  ## Not sure that this is a good idea...
-  ## atNames <- names(at)
-  ## for (attrName in atNames[!atNames %in% names(attributes(dataset))]) {
-  ##   attr(dataset, attrName) <- at[[attrName]]
-  ## }
+  if (mpl_apply_tipdata(morphyObj) -> error) {
+    stop("Error applying tip data: ", mpl_translate_error(error))
+  }
   
-  if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') tree <- Preorder(tree)
-  attr(tree, 'score') <- NULL
-  res <- TreeSearch(tree, dataset, TreeScorer=TreeScorer, Rearrange=if (rooted) RootedNNI else NNI,
-                      maxIter=maxIter, maxHits=maxHits, verbosity=max(0, verbosity - 1), ...)
-  attr(res, 'score') <- NULL
-  attr(res, 'hits') <- NULL
-  res
+  res <- EdgeListSearch(edgeList[1:2], morphyObj, EdgeSwapper=EdgeSwapper, maxIter=maxIter, maxHits=maxHits, verbosity=verbosity-1L, ...)
+  errors <- vapply(eachChar, function (i) 
+         mpl_set_charac_weight(i, startWeights[i], morphyObj), integer(1))
+  if (any(errors)) stop ("Error resampling morphy object: ", mpl_translate_error(unique(errors[errors < 0L])))
+  if (mpl_apply_tipdata(morphyObj) -> error) stop("Error applying tip data: ", mpl_translate_error(error))
+  res[1:2]
 }
 
-#' Bootstrap Weightings
-#' 
-#' Resamples edges according to their prior weights
-#' @param attribs Attribtues of a phyDat object
-#' @return a vector giving bootstrapped weights for each character, corresponding to attribs$weights
-#' @keywords internal
+#' @describeIn MorphyBootstrap Bootstrapper for Profile Parsimony
+#' @template datasetParam
 #' @export
-BootstrapWeightings <- function (attribs) {
-  weight <- attribs$weight
-  v <- rep(1:length(weight), weight)
-  BS <- tabulate(sample(v, replace=TRUE), length(weight)) 
+ProfileBootstrap <- function (edgeList, dataset, EdgeSwapper = NNISwap, 
+                              maxIter, maxHits, verbosity=1L, ...) {
+  att <- attributes(dataset)
+  startWeights <- att[['weight']]
+  eachChar <- seq_along(startWeights)
+  deindexedChars <- rep(eachChar, startWeights)
+  resampling <- tabulate(sample(deindexedChars, replace=TRUE), length(startWeights))
+  sampled <- resampling != 0
+  sampledData <- lapply(dataset, function (x) x[sampled])
+  sampledAtt <- att
+  sampledAtt[['weight']] <- resampling[sampled]
+  sampledAtt[['index']] <- rep(seq_len(sum(sampled)), resampling[sampled])
+  sampledAtt[['info.amounts']] <- att[['info.amounts']][, sampled]
+  sampledAtt[['morphyObjs']] <- att[['morphyObjs']][sampled]
+  attributes(sampledData) <- sampledAtt
+  
+  res <- EdgeListSearch(edgeList[1:2], sampledData, TreeScorer=ProfileScoreMorphy,
+                        EdgeSwapper=EdgeSwapper, maxIter=maxIter, maxHits=maxHits,
+                        verbosity=verbosity-1L, ...)
+  
+  res[1:2]
+}
+
+#' @describeIn MorphyBootstrap Bootstrapper for Implied weighting
+#' @template concavityParam
+#' @export
+IWBootstrap <- function (edgeList, dataset, concavity=4L, EdgeSwapper = NNISwap, 
+                              maxIter, maxHits, verbosity=1L, ...) {
+  att <- attributes(dataset)
+  startWeights <- att[['weight']]
+  eachChar <- seq_along(startWeights)
+  deindexedChars <- rep(eachChar, startWeights)
+  resampling <- tabulate(sample(deindexedChars, replace=TRUE), length(startWeights))
+  sampled <- resampling != 0
+  sampledData <- lapply(dataset, function (x) x[sampled])
+  sampledAtt <- att
+  sampledAtt[['weight']] <- resampling[sampled]
+  sampledAtt[['index']] <- rep(seq_len(sum(sampled)), resampling[sampled])
+  sampledAtt[['min.steps']] <- minSteps <- att[['min.steps']][sampled] # Can probably delete but I'm too nervous to... MS, 2018-03-06
+  sampledAtt[['morphyObjs']] <- att[['morphyObjs']][sampled]
+  attributes(sampledData) <- sampledAtt
+  
+  res <- EdgeListSearch(edgeList[1:2], sampledData, TreeScorer=IWScoreMorphy,
+                        concavity=concavity, minSteps = minSteps,
+                        EdgeSwapper=EdgeSwapper, maxIter=maxIter, maxHits=maxHits,
+                        verbosity=verbosity-1L)
+  
+  res[1:2]
 }

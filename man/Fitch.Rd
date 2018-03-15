@@ -2,38 +2,41 @@
 % Please edit documentation in R/Fitch.R
 \name{Fitch}
 \alias{Fitch}
-\alias{FitchScore}
-\title{Fitch score}
+\title{Calculate parsimony score with inapplicable data}
 \usage{
-Fitch(tree, dataset, TipData = TipsAreNames, at = attributes(dataset),
-  FitchFunction = C_Fitch_Score)
-
-FitchScore(tree, dataset, TipData = NULL, at = attributes(dataset))
+Fitch(tree, dataset)
 }
 \arguments{
-\item{tree}{A tree of class \code{\link{phylo}}}
+\item{tree}{A tree of class \code{\link{phylo}}.}
 
-\item{dataset}{A list or matrix whose list entries, rows or columns (as specified in TipData)
-correspond to the character data associated with the tips of the tree. 
-Likely of class \code{phyDat}.  The number of characters should be stored
-as the attribute dataset$nr, and the weight of each character in dataset$weight;
-if dataset is a matrix, they will be calculated automatically (weights set to 1).}
-
-\item{TipData}{function to be used to match tree tips to dataset; probably one of 
-\code{TipsAreNames}, \code{TipsAreRows}, or \code{TipsAreColumns}}
-
-\item{at}{Attributes of the dataset (looked up automatically if not supplied)}
-
-\item{FitchFunction}{function to be used to calculate parsimony score.}
+\item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
+correspond to the labels of any accompanying tree.}
 }
 \value{
-A vector listing the number of 'parsimony steps' calculated for each character
+This function returns the elements from a list containing:
+   \itemize{
+\item     The total parsimony score
+\item     The parsimony score associated with each character 
+\item     A matrix comprising character reconstructions for each node
+          after the final pass
+  }
+The elements to return are specified by the parameter \code{detail}.  
+If a single element is requested (default) then just that element will be returned
+If multiple elements are requested then these will be returned in a list.
 }
 \description{
-Fitch score
+Uses code modified from the Morphy library to calculate a parsimony score 
+in datasets that contain inapplicable data
 }
-\section{Functions}{
-\itemize{
-\item \code{FitchScore}: returns the parsimony score only
-}}
+\examples{
+data('inapplicable.datasets')
+tree <- RandomTree(inapplicable.phyData[[1]])
+result <- Fitch(tree, inapplicable.phyData[[1]])
 
+}
+\seealso{
+\code{\link{TreeSearch}}
+}
+\author{
+Martin R. Smith (using Morphy C library, by Martin Brazeau)
+}

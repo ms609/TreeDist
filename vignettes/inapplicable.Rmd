@@ -1,0 +1,165 @@
+---
+title: "Inapplicable data in morphological phylogenetics"
+author: "Martin R. Smith"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
+vignette: >
+  %\VignetteIndexEntry{Inapplicable data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+`TreeSearch` is an R package that allows, among other things, parsimony search on
+morphological datasets that contain inapplicable data, following the algorithm proposed
+by Brazeau, Guillerme and Smith [-@Brazeau2018].
+
+In brief, this algorithm modifies the Fitch algorithm to count the total number of homoplasious 
+events on a tree.
+
+## Getting started
+
+[A companion vignette](getting-started.html) gives details on installing the package
+and getting up and running.
+
+Once installed, load the inapplicable package into R using
+```{r Load library}
+library('TreeSearch')
+```
+
+## Scoring a tree, and conducting a tree search
+
+Here's an example of using the package to conduct tree search.
+You can [load your own dataset](load-data.html), but for now, we'll use the 
+Vinther _et al._ [-@Vinther2008] dataset that comes bundled with the package.
+
+This dataset is small enough that it runs reasonably quickly, but its phylogenetic
+signal is obscure enough that it can require Ratchet searches to escape from local optima.
+
+```{r Load data}
+my.data <- TreeSearch::inapplicable.datasets[['Vinther2008']]
+my.phyDat <- phangorn::phyDat(my.data, type='USER', levels=c(0:9, '-'))
+```
+
+We can generate a random tree and calculate its parsimony score thus:
+```{r Random tree}
+# Set random seed so that random functions will generate consistent output in this document
+set.seed(0)
+random.tree <- RandomTree(my.phyDat)
+par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
+plot(random.tree)
+Fitch(random.tree, my.phyDat)
+```
+
+We might save some wasted time in tree search if we can start with a tree that's a little 
+closer to optimal: perhaps a neighbour-joining tree.
+```{r Neighbour-joining}
+nj.tree <- NJTree(my.phyDat)
+par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
+plot(nj.tree)
+Fitch(nj.tree, my.phyDat)
+```
+
+With the Vinther _et al._ [-@Vinther2008] dataset, nemerteans and brachiopods form an natural outgroup to 
+the other taxa. 
+If we wish, we can constrain this outgroup and avoid making tree rearrangements that would mix 
+ingroup and outgroup taxa.
+This will accellerate tree search, but it's worth thinking carefully whether you can be perfectly
+confident that the ingroup and outgroup are mutually monophyletic.
+
+To constrain an outgroup, we first need to make the outgroup and ingroup monophyletic on our tree:
+
+```{r Outgroup}
+outgroup <- c('Nemertean', 'Lingula', 'Terebratulina')
+rooted.tree <- EnforceOutgroup(nj.tree, outgroup)
+par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
+plot(rooted.tree)
+```
+
+
+Now let's see whether a few Nearest-neighbour interchanges can find us a better tree score. 
+This tends to be the quickest search to run, if not the most exhaustive.
+Using `RootedNNISwap` instead of `NNISwap` stops taxa from moving from one side of the root to another,
+which we need to do if we're going to enforce our outgroup constraint.  Even if we are using a
+single-taxon outgroup, using `RootedNNISwap` retains the position of the root, which makes tree
+comparison and interpretation easier later on.
+
+```{r Basic NNI search}
+better.tree <- TreeSearch(tree=rooted.tree, dataset=my.phyDat, 
+                           EdgeSwapper=RootedNNISwap, verbosity=3)
+```
+
+This score is better than the 85 of the original neighbour-joining tree, but is this the best we can do?
+
+Using NNI helps to explore the region of treespace close to the local optimum, but SPR and TBR 
+rearrangements are better at escaping local optima, and find better trees
+further away in tree space.  Using more hits (`maxHits`) and more iterations (`maxIter`) also
+means we'll move closer to an optimal tree.
+```{r SPR and TBR}
+better.tree <- TreeSearch(better.tree, my.phyDat, maxHits=8, maxIter=10000,
+                           EdgeSwapper=RootedSPRSwap, verbosity=2)
+better.tree <- TreeSearch(better.tree, my.phyDat, maxHits=20, maxIter=40000, 
+                           EdgeSwapper=RootedTBRSwap, verbosity=2)
+```
+
+That score's looking better, but these are only quick searches, and we could be caught in a local optimum. 
+A more comprehensive search of tree space can be accomplished using the parsimony ratchet [@Nixon1999].
+It might take a couple of minutes to run.
+
+```{r Ratchet search}
+best.tree <- Ratchet(better.tree, my.phyDat, verbosity=0, ratchIter=5,
+                     swappers=list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap))
+attr(best.tree, 'score') # Each tree is labelled with its score during tree search
+```
+
+The best tree for this dataset has a score of 79.  This relatively quick Ratchet search always seems
+to find a tree with this score.
+
+Let's take a look at the one it's found on this occasion:
+```{r Plot best tree}
+par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
+plot(best.tree)
+```
+
+This is, of course, just one most parsimonious tree; with this dataset, there are many.
+
+One way to make a strict consensus of multiple optimal trees is to collect a 
+number of trees from independent Ratchet iterations.
+
+For each Ratchet iteration, we'll conduct a TBR search to scan tree space, 
+then an NNI search to hone in on the local optimum.
+
+Note that it's especially important to retain the position of the root here:
+a single topology, if rooted in different places, can lead to an unresolved consensus.
+
+```{r Consensus}
+my.consensus <- RatchetConsensus(best.tree, my.phyDat, swappers=
+                                 list(RootedTBRSwap, RootedNNISwap))
+```
+
+If ten independent runs ended up at a number of different trees, there may be many more optimal trees out there to 
+be found; perhaps we could repeat `RatchetConsensus` with `nSearch = 250` for a more
+exhaustive sampling of tree space.  That would take a while though; for now, let's check out our consensus tree:
+
+```{r Plot consensus}
+par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
+plot(ape::consensus(my.consensus))
+```
+
+
+## Implied weighting
+Equal weights produces trees that are less accurate and less precise than implied weights [@SmithTern]; equally weighted analysis should never be conducted without also considering the results of implied weights [@Goloboff1997], ideally under a range of concavity constants [cf. @Smith2014].
+
+The simplest way to conduct an implied weights search is to use the functions
+```R 
+IWTreeSearch
+IWRatchet
+IWRatchetConsensus
+```
+which operate in the same fashion as their equally-weighted counterparts,
+with the option of specifying a concavity constant (_k_) using 
+the parameter `concavity=k` (default = 4).
+
+## References

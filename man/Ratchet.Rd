@@ -2,72 +2,140 @@
 % Please edit documentation in R/Ratchet.R
 \name{Ratchet}
 \alias{Ratchet}
+\alias{ProfileRatchet}
+\alias{IWRatchet}
+\alias{RatchetConsensus}
+\alias{IWRatchetConsensus}
 \title{Parsimony Ratchet}
 \usage{
-Ratchet(tree, dataset, TreeScorer = FitchScore, returnAll = FALSE,
-  rooted = TRUE, ratchIter = 100, ratchHits = 10, searchIter = 2000,
-  searchHits = 40, bootstrapIter = searchIter, bootstrapHits = searchHits,
-  verbosity = 0, rearrangements = "NNI", suboptimal = 1e-08, ...)
+Ratchet(tree, dataset, InitializeData = PhyDat2Morphy,
+  CleanUpData = UnloadMorphy, TreeScorer = MorphyLength,
+  Bootstrapper = MorphyBootstrap, swappers = list(TBRSwap, SPRSwap,
+  NNISwap), BootstrapSwapper = if (class(swappers) == "list")
+  swappers[[length(swappers)]] else swappers, returnAll = FALSE,
+  stopAtScore = NULL, ratchIter = 100, ratchHits = 10,
+  searchIter = 4000, searchHits = 42, bootstrapIter = searchIter,
+  bootstrapHits = searchHits, verbosity = 1L, suboptimal = 1e-08, ...)
+
+ProfileRatchet(tree, dataset, swappers = list(TBRSwap, SPRSwap, NNISwap),
+  BootstrapSwapper = if (class(swappers) == "list")
+  swappers[[length(swappers)]] else swappers, returnAll = FALSE,
+  stopAtScore = NULL, ratchIter = 100, ratchHits = 10,
+  searchIter = 2000, searchHits = 40, bootstrapIter = searchIter,
+  bootstrapHits = searchHits, verbosity = 1L, suboptimal = 1e-08, ...)
+
+IWRatchet(tree, dataset, concavity = 4, swappers = list(TBRSwap, SPRSwap,
+  NNISwap), BootstrapSwapper = if (class(swappers) == "list")
+  swappers[[length(swappers)]] else swappers, returnAll = FALSE,
+  stopAtScore = NULL, ratchIter = 100, ratchHits = 10,
+  searchIter = 2000, searchHits = 40, bootstrapIter = searchIter,
+  bootstrapHits = searchHits, verbosity = 1L, suboptimal = 1e-08, ...)
+
+RatchetConsensus(tree, dataset, ratchHits = 10, searchIter = 500,
+  searchHits = 20, verbosity = 0L, swappers = list(RootedNNISwap),
+  nSearch = 10, stopAtScore = NULL, ...)
+
+IWRatchetConsensus(tree, dataset, ratchHits = 10, concavity = 4,
+  searchIter = 500, searchHits = 20, verbosity = 0L,
+  swappers = list(RootedNNISwap), nSearch = 10, suboptimal = suboptimal,
+  stopAtScore = NULL, ...)
 }
 \arguments{
-\item{tree}{A tree of class \code{\link{phylo}}}
+\item{tree}{A tree of class \code{\link{phylo}}.}
 
-\item{dataset}{a dataset in the format required by TreeScorer}
+\item{dataset}{a dataset in the format required by TreeScorer.}
 
-\item{TreeScorer}{Function to score trees, to receive arguments \code{tree} and \code{dataset}.}
+\item{InitializeData}{Function that sets up data object to prepare for tree search. 
+The function will be passed the \kbd{dataset} parameter.
+Its return value will be passed to TreeScorer and CleanUpData.}
 
-\item{returnAll}{Set to \code{TRUE} to report all MPTs encountered during the search, perhaps to analyze consensus}
+\item{CleanUpData}{Function to destroy data object on function exit.
+The function will be passed the value returned by \kbd{InitializeData}.}
 
-\item{rooted}{whether to retain the position of the root in tree search (TRUE by default)}
+\item{TreeScorer}{function to score a given tree.
+The function will be passed three parameters, corresponding to the 
+`parent` and `child` entries of a tree's edge list, and a dataset.}
 
-\item{ratchIter}{stop when this many ratchet iterations have been performed}
+\item{Bootstrapper}{Function to perform bootstrapped rearrangements of tree. 
+First arguments will be an edgeList and a dataset, initialized using \code{InitializeData}
+Should return a rearranged edgeList.}
 
-\item{ratchHits}{stop when this many ratchet iterations have found the same best score}
+\item{swappers}{A list of functions to use to conduct edge rearrangement during tree search.
+Provide functions like \code{\link{NNISwap}} to shuffle root position,
+or \code{\link{RootedTBRSwap}} if the position of the root should be retained.
+You may wish to use extreme swappers (such as \acronym{TBR}) early in the list,
+and a more subtle rearranger (such as \acronym{NNI}) later in the list to make
+incremental tinkerings once an almost-optimal tree has been found.}
 
-\item{searchIter}{maximum rearrangements to perform on each bootstrap or ratchet iteration;}
+\item{BootstrapSwapper}{Function such as \code{\link{RootedNNISwap}} to use to rearrange trees
+within \code{Bootstrapper}.}
 
-\item{searchHits}{maximum times to hit best score before terminating a tree search within a ratchet iteration;}
+\item{returnAll}{Set to \code{TRUE} to report all MPTs encountered during the search, perhaps to analyze consensus.}
 
-\item{bootstrapIter}{maximum rearrangements to perform on each bootstrap  iteration (default: \code{maxIter})}
+\item{stopAtScore}{stop search as soon as this score is hit or beaten.}
 
-\item{bootstrapHits}{maximum times to hit best score on each bootstrap  iteration (default: \code{maxHits})}
+\item{ratchIter}{stop when this many ratchet iterations have been performed.}
 
-\item{verbosity}{verbosity of output written to terminal; higher values print more messages}
+\item{ratchHits}{stop when this many ratchet iterations have found the same best score.}
 
-\item{rearrangements}{method(s) to use when rearranging trees. Provide:
-the character string "TBR" to conduct TBR, SPR and NNI rearrangements, or "TBR only"
-to just perform TBR rearrangements (retaining the position of the root if \code{outgroup = TRUE})
-OR: a list of functions to use, one at a time, as the \code{Rearrange} parameter
-    in successive calls to TreeSearch}
+\item{searchIter}{maximum rearrangements to perform on each bootstrap or ratchet iteration.}
+
+\item{searchHits}{maximum times to hit best score before terminating a tree search within a ratchet iteration.}
+
+\item{bootstrapIter}{maximum rearrangements to perform on each bootstrap iteration (default: \code{searchIter}).}
+
+\item{bootstrapHits}{maximum times to hit best score on each bootstrap iteration (default: \code{searchHits}).}
+
+\item{verbosity}{Level of detail to display in console: larger numbers provide
+more verbose feedback to the user.}
 
 \item{suboptimal}{retain trees that are suboptimal by this score. Defaults to 1e-08 to counter rounding errors.}
 
 \item{\dots}{further arguments to pass to \code{TreeScorer} function (e.g. \code{\link{TipsAreColumns}}, \code{dataset})}
+
+\item{concavity}{A numeric value to use as the concavity constant (`k`) in implied weighting.}
+
+\item{nSearch}{Number of Ratchet searches to conduct (for RatchetConsensus)}
 }
 \value{
-This function returns a tree modified by parsimony ratchet iteration, retaining the position of the root.
+This function returns a tree modified by parsimony ratchet iterations.
 }
 \description{
 \code{Ratchet} uses the parsimony ratchet (Nixon 1999) to search for a more parsimonious tree.
 }
-\examples{
-Ratchet(RandomTree(Lobo.phy), Lobo.phy, rooted=TRUE,
-                  ratchHits=2, ratchIter=5, searchIter=200, searchHits=5)
+\section{Functions}{
+\itemize{
+\item \code{ProfileRatchet}: Shortcut for Ratchet search under Profile Parsimony
 
+\item \code{IWRatchet}: Shortcut for Ratchet search using implied weights
+
+\item \code{RatchetConsensus}: returns a list of optimal trees produced by nSearch Ratchet searches
+
+\item \code{IWRatchetConsensus}: returns a list of optimal trees produced by nSearch 
+Ratchet searches, using implied weighting
+}}
+
+\examples{
+data('Lobo')
+njtree <- NJTree(Lobo.phy)
+# Increase value of ratchIter and searchHits to do a proper search
+quickResult <- Ratchet(njtree, Lobo.phy, ratchIter=2, searchHits=3)
+plot(quickResult)
+# IW search is currently much slower:
+quickIWResult <- IWRatchet(quickResult, Lobo.phy, concavity=2.5,
+                           ratchIter=1, searchIter = 25, searchHits=2,
+                           swappers=RootedTBRSwap, verbosity=5)
+ 
 }
 \references{
-Nixon, K. C. (1999). \cite{The Parsimony Ratchet, a new method for rapid parsimony analysis.} Cladistics, 15(4), 407-414. doi:\href{http://dx.doi.org/10.1111/j.1096-0031.1999.tb00277.x}{10.1111/j.1096-0031.1999.tb00277.x}
+\insertRef{Nixon1999}{TreeSearch}
 }
 \seealso{
-\code{\link{Ratchet}}
-
 \code{\link{TreeSearch}}
 
-\code{\link{Sectorial}}
+Adapted from \code{\link[phangorn]{pratchet}} in the \pkg{phangorn} package.
 }
 \author{
 Martin R. Smith
-
-Adapted from \code{\link[phangorn]{pratchet}} in the \pkg{phangorn} package, which does not preserve the position of the root.
 }
 \keyword{tree}

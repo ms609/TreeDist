@@ -1,0 +1,178 @@
+---
+title: "Tree Search With Profile Parsimony"
+author: "Martin R. Smith"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
+vignette: >
+  %\VignetteIndexEntry{Profile parsimony}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+`TreeSearch` is an R package that allows, among other things, parsimony search 
+on morphological datasets using the Profile Parsimony optimality criterion of 
+Faith & Trueman [-@Faith2001].
+
+Profile Parsimony finds the tree that is most faithful to the information contained 
+within a given dataset.
+
+
+Character data are read from a \emph{restricted} \acronym{NEXUS} format using the R function
+\code{\link{read.nexus.data}}; see the latter function's \link[=read.nexus.data]{documentation} for details.
+
+\acronym{NEXUS} files can be edited in any standard text editor,
+ for example \href{https://notepad-plus-plus.org/}{Notepad++}.
+ 
+A notable limitation is that the parser cannot interpret curly braces, for example {01}.  
+Ambiguous tokens of this nature should be replaced with a separate character, for example 
+'A' to denote {01}, 'B' to denote {12}, perhaps using a search-and-replace operation in your 
+favourite text editor.
+
+This said, the Profile Parsimony algorithm is currently implemented only for binary characters
+with no ambiguous tokens.
+I hope to address this limitation soon.
+
+## Loading the package
+To install the package for the first time, type
+```r
+install.packages('TreeSearch')
+```
+Once the package has been installed, load it using
+```{r Load library}
+library('TreeSearch')
+```
+
+## Loading data into the package
+To use this script on your own data, launch R, and type (or copy-paste) the following text
+into the R console.  Lines starting with '#' are comments and do not need to be copied.
+
+Data can be read from a nexus file (note the restrictions detailed above):
+```r
+my.data <- read.nexus.data('C:/path/to/filename.nex')
+```
+
+Alternatively you can use a built-in dataset:
+```{r Load Longrich data}
+data(congreveLamsdellMatrices)
+my.data <- congreveLamsdellMatrices[[10]]
+```
+
+A contrast matrix translates the tokens used in your dataset to the character states to 
+   which they correspond: for example decoding 'A' to {01}.
+   For more details, see the 'phangorn-specials' vignette in the phangorn package, accesible 
+   by typing '?phangorn' in the R prompt and navigating to index > package vignettes.
+
+```{r Contrast matrix}
+contrast.matrix <- matrix(data=c(
+# 0 1 -  # Each column corresponds to a character-state
+  1,0,0, # Each row corresponds to a token, here 0, denoting the character-state set {0} 
+  0,1,0, # 1 | {1}
+  0,0,1, # - | {-}
+  1,1,0, # A | {01}
+  1,1,0, # + | {01}
+  1,1,1  # ? | {01-}
+), ncol=3, byrow=TRUE); # ncol should correspond to the number of columns in the matrix
+dimnames(contrast.matrix) <- list(
+  c(0, 1, '-', 'A', '+', '?'), # A list of the tokens corresponding to each row
+                               # in the contrast matrix
+  c(0, 1, '-') # A list of the character-states corresponding to the columns 
+               # in the contrast matrix
+)
+
+contrast.matrix
+```
+
+If you need to use a contrast matrix, convert the data using 
+```r
+my.phyDat <- phyDat(my.data, type='USER', contrast=contrast.matrix)
+```
+
+We don't have any such ambiguities in our dataset, so we can go straight in with
+```{r Prepare data}
+my.phyDat <- phangorn::phyDat(my.data, type='USER', levels=c(1, 2))
+```
+
+We then need to prepare our dataset for Profile Parsimony by calculating the 
+information loss implied by each additional step in each character.
+Ideally we'd pick a high value of precision (> 1e+06): this takes a while, 
+but only needs doing once for each dataset of a given size.
+
+```{r Prepare the data for analysis}
+my.prepdata <- PrepareDataProfile(my.phyDat, precision=4e+04)
+```
+
+To start analysis, we need to load a starting tree.  We can do this at random:
+```{r Random tree}
+set.seed(888)
+tree <- RandomTree(my.phyDat)
+```
+
+Or using a neighbour joining method, to start at a reasonably good tree:
+```{r NJ Tree}
+tree <- NJTree(my.phyDat)
+par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
+plot(tree)
+```
+
+Calculate the tree's parsimony score:
+```{R Starting score}
+ProfileScore(tree, my.prepdata)
+```
+
+Search for a better tree:
+```{r Tree search}
+better.tree <- ProfileTreeSearch(ape::root(tree, '1', resolve.root=TRUE), my.prepdata, EdgeSwapper=RootedTBRSwap)
+```
+
+The parsimony ratchet [@Nixon1999] is better at finding globally optimal trees. `ProfileRatchet`
+is a convenient wrapper for the underlying function `Ratchet`.
+```r
+# Longwinded approach:
+better.tree <- Ratchet(better.tree, my.prepdata, searchHits=10, searchIter=100, ratchIter=5,
+                       swappers=list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap),
+                       InitializeData=ProfileInitMorphy, CleanUpData=ProfileDestroyMorphy,
+                       TreeScorer=ProfileScoreMorphy, Bootstrapper=ProfileBootstrap)
+```
+```{r Ratchet search}
+# Less typing!
+RootedSwappers <- list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap)
+better.tree <- ProfileRatchet(better.tree, my.prepdata,
+                              swappers=RootedSwappers,
+                              searchHits=10, searchIter=100, ratchIter=5)
+par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
+plot(better.tree)
+```
+
+The default parameters may not be enough to find the optimal tree; type 
+`?Ratchet` to view all search parameters.
+
+## View the results
+
+In parsimony search, it is generally good practice to consider trees that are slightly suboptimal.
+Here, we'll take a consensus that includes all trees that are suboptimal by up to 1.5 bits.
+To sample this region of tree space well, the trick is to use large values of 
+`ratchHits` and `ratchIter`, and small values of `searchHits` and
+`searchiter`, so that many runs don't quite hit the optimal tree.
+In a serious study, you would want to sample many more than 25 Ratchet hits (`ratchHits`).
+
+```{R Suboptimal sampling}
+suboptimals <- ProfileRatchet(better.tree, my.prepdata, 
+                              swappers=list(RootedTBRSwap),
+                              returnAll=TRUE, suboptimal=5, 
+                              ratchHits=25, ratchIter=5000, 
+                              bootstrapHits=15, bootstrapIter=450,
+                              searchHits=10, searchIter=50)
+```
+
+Let's calculate and display a consensus tree that includes slightly suboptimal trees.
+```{r Plot suboptimal consensus}
+par(mar=rep(0.2, 4))
+plot(my.consensus <- ape::consensus(suboptimals))
+```
+
+
+## References
+

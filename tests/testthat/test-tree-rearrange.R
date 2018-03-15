@@ -1,6 +1,6 @@
 library(ape)
 
-context("Known tree rearrangements")
+context("Arboriculture: Specified tree rearrangements")
 tree5a <- read.tree(text='(a, (b, (c, (d, e))));')
 tree5b <- read.tree(text='((a, b), (c, (d, e)));')
 tree8  <- read.tree(text="(((a, (b, (c, d))), (e, f)), (g, h));")

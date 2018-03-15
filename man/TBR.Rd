@@ -2,25 +2,27 @@
 % Please edit documentation in R/TBR.R
 \name{TBR}
 \alias{TBR}
-\alias{TBRCore}
+\alias{TBRSwap}
 \alias{RootedTBR}
-\alias{RootedTBRCore}
+\alias{RootedTBRSwap}
 \title{TBR}
 \usage{
 TBR(tree, edgeToBreak = NULL, mergeEdges = NULL)
 
-TBRCore(parent, child, nEdge = length(parent), edgeToBreak = NULL,
+TBRSwap(parent, child, nEdge = length(parent), edgeToBreak = NULL,
   mergeEdges = NULL)
 
 RootedTBR(tree, edgeToBreak = NULL, mergeEdges = NULL)
 
-RootedTBRCore(parent, child, nEdge = length(parent), edgeToBreak = NULL,
+RootedTBRSwap(parent, child, nEdge = length(parent), edgeToBreak = NULL,
   mergeEdges = NULL)
 }
 \arguments{
 \item{tree}{A bifurcating tree of class \code{\link{phylo}}, with all nodes resolved;}
 
-\item{edgeToBreak}{(optional) integer specifying the index of an edge to bisect/prune, generated randomly if not specified}
+\item{edgeToBreak}{(optional) integer specifying the index of an edge to bisect/prune,
+generated randomly if not specified.  Alternatively, set to \code{-1} to return a complete list
+of all trees one step from the input tree.}
 
 \item{mergeEdges}{(optional) vector of length 1 or 2, listing edge(s) to be joined:
 In SPR, this is where the pruned subtree will be reconnected.
@@ -51,11 +53,11 @@ Branch lengths are not (yet) supported.
 }
 \section{Functions}{
 \itemize{
-\item \code{TBRCore}: faster version that takes and returns parent and child parameters
+\item \code{TBRSwap}: faster version that takes and returns parent and child parameters
 
 \item \code{RootedTBR}: Perform \acronym{TBR} rearrangement, retaining position of root
 
-\item \code{RootedTBRCore}: faster version that takes and returns parent and child parameters
+\item \code{RootedTBRSwap}: faster version that takes and returns parent and child parameters
 }}
 
 \examples{
@@ -67,7 +69,7 @@ TBR(tree)
 }
 \references{
 The \acronym{TBR} algorithm is summarized in
-Felsenstein, J. 2004. \cite{Inferring Phylogenies.} Sinauer Associates, Sunderland, Massachusetts.
+ \insertRef{Felsenstein2004}{TreeSearch}
 }
 \seealso{
 RootedTBR useful when the position of the root node should be retained.

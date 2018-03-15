@@ -85,7 +85,9 @@ SingleTaxonTree <- function (label) {
 #' @author Martin R. Smith
 #' @export
 Subtree <- function (tree, node) {
-  if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') stop("Tree must be in preorder")
+  if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'preorder') {
+    stop("Tree must be in preorder")
+  }
   tipLabel <- tree$tip.label
   nTip <- length(tipLabel)
   if (node <= nTip) return(SingleTaxonTree(tipLabel[node]))
@@ -238,9 +240,12 @@ AllAncestors <- function (parent, child) {
 }
 
 #' Clade sizes
+#'
 #' @template treeParam
 #' @param nodes whose descendants should be returned
+#'
 #' @return the number of nodes (including tips) that are descended from each node in nodes
+#'
 #' @importFrom phangorn allDescendants
 #' @keywords internal
 #' @export
@@ -248,11 +253,11 @@ CladeSizes <- function (tree, nodes) {
   if (is.null(treeOrder <- attr(tree, 'order')) || treeOrder != 'postorder') tree <- Postorder(tree)
   vapply(allDescendants(tree)[nodes], length, integer(1))
 }
-    
 
-#' node depth
+
+#' Node depth
 #' Wrapper for the ape function
-## @useDynLib TreeSearch ape_node_depth
+#'
 #' @keywords internal
 #' @export
 C_node_depth <- function (nTip, nNode, parent, child, nEdge) {

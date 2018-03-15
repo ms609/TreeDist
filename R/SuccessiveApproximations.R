@@ -48,7 +48,7 @@ SuccessiveApproximations <- function (tree, dataset, outgroup = NULL, k = 3, max
     bestsConsensus[[i]] <- consensus(trees[suboptimality == 0])
     if (all.equal(bestsConsensus[[i]], bestsConsensus[[i - 1]])) return(bests[2:i])
     best <- trees[suboptimality == 0][[1]]
-    l.i <- Fitch(best, dataset)
+    l.i <- FitchSteps(best, dataset)
     p.i <- l.i / (n.node - 1)
     w.i <- ((p.i)^-k) - 1
     attr(dataset, 'sa.weights') <- w.i
@@ -95,7 +95,7 @@ SuccessiveWeights <- function(tree, dataset) {
   weight <- at$weight
   sa.weights <- at$sa.weights
   if (is.null(sa.weights)) sa.weights <- rep(1, length(weight))
-  steps <- Fitch(tree, dataset, at)
+  steps <- FitchSteps(tree, dataset)
   return(sum(steps * sa.weights * weight))
 }
 
@@ -117,7 +117,6 @@ PrepareDataSA <- function (dataset) {
   ret <- as.integer(ret)
   attributes(ret) <- at
   inappLevel <- which(at$levels == "-")
-  attr(ret, 'inappLevel') <- 2 ^ (inappLevel - 1)
   attr(ret, 'dim') <- c(nChar, nTip)  
   applicableTokens <- setdiff(powers.of.2, 2 ^ (inappLevel - 1))
   attr(ret, 'split.sizes') <- t(apply(ret, 1, function(x) vapply(applicableTokens, function (y) sum(x == y), integer(1))))

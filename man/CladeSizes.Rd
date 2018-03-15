@@ -7,7 +7,7 @@
 CladeSizes(tree, nodes)
 }
 \arguments{
-\item{tree}{A tree of class \code{\link{phylo}}}
+\item{tree}{A tree of class \code{\link{phylo}}.}
 
 \item{nodes}{whose descendants should be returned}
 }

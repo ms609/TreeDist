@@ -11,9 +11,15 @@ Assert <- function (statement) if (!statement) stop(deparse(statement), " is FAL
 
 #' Edge list to edge matrix
 #' @param edgeList tree edges in the format list(parent, child).
-#' @return edges in the format expected by tree$edge.
+#' @return edges in the format expected by \code{tree$edge},
+#'         where \code{tree} is a tree of class \code{phylo}.
 #' @keywords internal
 ListToMatrix <- function (edgeList) matrix(c(edgeList[[1]], edgeList[[2]]), ncol=2)
+
+#' Edge matrix to edge list
+#' @param edge edges in the matrix format used by \code{tree$edge}, where \code{tree} is a tree of class \code{phylo}
+#' @return tree edges in the format list(parent, child).
+MatrixToList <- function (edge) list(edge[, 1], edge[, 2])
 
 #' Descendant Edges
 #'
@@ -78,55 +84,28 @@ EdgeAncestry <- function (edge, parent, child, stopAt = (parent==min(parent))) {
   }
 }
 
-#' Generate random tree topology from dataset
+#' Non-duplicate root
 #' 
-#' @param dataset A dataset in \code{\link[phangorn]{phyDat}} format
-#' @param root Taxon to use as root (if desired; FALSE otherwise)
+#' Identify, for each edge, whether it is not a duplicate of the root edge
 #' 
-#' @author Martin R. Smith 
-#' @importFrom ape rtree
-#' @importFrom ape root
-#' @export
-RandomTree <- function (dataset, root = FALSE) {
-  tree <- rtree(length(dataset), tip.label=names(dataset), br=NULL)
-  return (if (root != FALSE) root(tree, root, resolve.root=TRUE) else tree)
-}
-
-#' Force taxa to form an outgroup
-#'
-#' Given a tree or a list of taxa, rearrange the ingroup and outgroup taxa such that the two
-#' are sister taxa across the root, without altering the relationships within the ingroup
-#' or within the outgroup.
-#'
-#' @param tree either a tree of class \code{phylo}, or a character vector listing the names of 
-#'        all the taxa in the tree, from which a random tree will be generated.
-#' @param outgroup a vector containing the names of taxa to include in the outgroup
-#'
-#' @return a tree where all outgroup taxa are sister to all remaining taxa, 
-#'         otherwise retaining the topology of the ingroup.
+#' @template treeParent
+#' @template treeChild
+#' @template treeNEdgeOptional
+#' 
 #' @author Martin R. Smith
-#' @importFrom ape rtree
-#' @importFrom ape root drop.tip bind.tree
 #' @export
-EnforceOutgroup <- function (tree, outgroup) {
-  if (class(tree) == 'phylo') {
-    taxa <- tree$tip.label
-  } else if (class(tree) == 'character') {    
-    tree <- root(rtree(length(taxa), tip.label=taxa, br=NULL), taxa[1], resolve.root=TRUE)
+#' 
+#' @keywords internal
+NonDuplicateRoot <- function (parent, child, nEdge = length(parent)) {
+  notDuplicateRoot <- !logical(nEdge)
+  rightSide <- DescendantEdges(1, parent, child, nEdge)
+  nEdgeRight <- sum(rightSide)
+  if (nEdgeRight == 1) {
+    notDuplicateRoot[2] <- FALSE
+  } else if (nEdgeRight == 3) {
+    notDuplicateRoot[4] <- FALSE
   } else {
-    stop ("tree must be of class phylo")
+    notDuplicateRoot[1] <- FALSE
   }
-  
-  if (length(outgroup) == 1) return (root(tree, outgroup, resolve.root=TRUE))
-  
-  ingroup <- taxa[!(taxa %in% outgroup)]
-  if (!all(outgroup %in% taxa) || length(ingroup) + length(outgroup) != length(taxa)) {
-    stop ("All outgroup taxa must occur in speficied taxa")
-  }
-  
-  ingroup.branch <- drop.tip(tree, outgroup)
-  outgroup.branch <- drop.tip(tree, ingroup)
-  
-  result <- root(bind.tree(outgroup.branch, ingroup.branch, 0, 1), outgroup, resolve.root=TRUE)
-  RenumberTips(Renumber(result), taxa)
+  notDuplicateRoot
 }

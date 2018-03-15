@@ -1,43 +1,147 @@
-#' Fitch Score
-#' Calculate the parsimony score of a tree (number of steps) using the Fitch algorithm
-#' @return the parsimony score (an integer)
+#' @title Calculate parsimony score with inapplicable data
+#'
+#' @description Uses code modified from the Morphy library to calculate a parsimony score 
+#' in datasets that contain inapplicable data
+#'
+#' @template treeParam 
+#' @template datasetParam
+#' 
+#' @examples
+#' data('inapplicable.datasets')
+#' tree <- RandomTree(inapplicable.phyData[[1]])
+#' result <- Fitch(tree, inapplicable.phyData[[1]])
+#' 
+#' @return This function returns the elements from a list containing:
+#'    \itemize{
+#' \item     The total parsimony score
+#' \item     The parsimony score associated with each character 
+#' \item     A matrix comprising character reconstructions for each node
+#'           after the final pass
+#'   }
+#' The elements to return are specified by the parameter \code{detail}.  
+#' If a single element is requested (default) then just that element will be returned
+#' If multiple elements are requested then these will be returned in a list.
+#' 
+#' @seealso \code{\link{TreeSearch}}
+#' 
+#' @author Martin R. Smith (using Morphy C library, by Martin Brazeau)
+#' @importFrom phangorn phyDat
+#' @export
+Fitch <- function (tree, dataset) {
+  tree <- RenumberTips(Renumber(tree), names(dataset))
+  morphyObj <- PhyDat2Morphy(dataset)
+  on.exit(morphyObj <- UnloadMorphy(morphyObj))
+  MorphyTreeLength(tree, morphyObj)
+}
+
+
+#' Fitch score
+#' 
+#' @template treeParam
+#' @template datasetParam
+#'
+#' @return A vector listing the number of 'parsimony steps' calculated by the 
+#'         Fitch algorithm for each character.  Inapplicable tokens are treated
+#'         as per Brazeau, Guillerme and Smith (2017)
+#'
+#' @examples {
+#  data('inapplicable.datasets')
+#  dataset <- inapplicable.phyData[[12]]
+#  tree <- NJTree(dataset)
+#' }
+#'
+#' @references
+#'  \insertRef{Brazeau2018}{TreeSearch}
+#' @export
+FitchSteps <- function (tree, dataset) {
+  if (class(dataset) != 'phyDat') {
+    stop ("Dataset must be of class phyDat, not ", class(dataset))
+  }
+  
+  tree <- RenumberTips(Renumber(tree), names(dataset))  
+  characters <- PhyToString(dataset, ps='', useIndex=FALSE, byTaxon=FALSE, concatenate=FALSE)
+  morphyObjects <- lapply(characters, SingleCharMorphy)
+  on.exit(morphyObjects <- vapply(morphyObjects, UnloadMorphy, integer(1)))
+  # Return:
+  vapply(morphyObjects, MorphyTreeLength, tree=tree, integer(1))
+}
+
+#' Calculate parsimony score with inapplicable data
+#' 
+#' @template labelledTreeParam
+#' @template morphyObjParam
+#'
+#' @return The length of the tree (after weighting)
+#'
+#' @seealso PhyDat2Morphy
+#'
+#' @author Martin R. Smith
 #' @keywords internal
 #' @export
-C_Fitch_Score <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
-  C_Fitch(characters, nChar, parent, child, nEdge, weight, maxNode, nTip)[[1]]
+MorphyTreeLength <- function (tree, morphyObj) {
+  nTaxa <- mpl_get_numtaxa(morphyObj)
+  if (nTaxa != length(tree$tip.label)) stop ("Number of taxa in morphy object (", nTaxa, ") not equal to number of tips in tree")
+  treeOrder <- attr(tree, 'order')
+  inPostorder <- (!is.null(treeOrder) && treeOrder == "postorder")
+  tree.edge <- tree$edge
+  # Return:
+  MorphyLength(tree.edge[, 1], tree.edge[, 2], morphyObj, inPostorder, nTaxa)
 }
-#' Fitch steps
-#' @return the number of steps the tree enforces on each character
+
+#' @describeIn MorphyTreeLength Faster function that requires internal tree parameters
+#' @template treeParent
+#' @template treeChild
+#' @author Martin R. Smith
 #' @keywords internal
 #' @export
-C_Fitch_Steps <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
-  C_Fitch(characters, nChar, parent, child, nEdge, weight, maxNode, nTip)[[2]]
+MorphyLength <- function (parent, child, morphyObj, inPostorder=FALSE, nTaxa=mpl_get_numtaxa(morphyObj)) {
+  if (!inPostorder) {
+    edgeList <- PostorderEdges(parent, child, nTaxa=nTaxa)
+    parent <- edgeList[[1]]
+    child <- edgeList[[2]]
+  }
+  if (nTaxa < 1L) stop("Error: ", mpl_translate_error(nTaxa))
+  if (class(morphyObj) != 'morphyPtr') stop("morphyObj must be a morphy pointer. See ?LoadMorphy().")
+  maxNode <- nTaxa + mpl_get_num_internal_nodes(morphyObj)
+  rootNode <- nTaxa + 1L
+  allNodes <- rootNode:maxNode
+  
+  parentOf <- parent[match(1:maxNode, child)]
+  # parentOf[rootNode] <- maxNode + 1 # Root node's parent is a dummy node
+  parentOf[rootNode] <- rootNode # Root node's parent is a dummy node
+  leftChild <- child[length(parent) + 1L - match(allNodes, rev(parent))]
+  rightChild <- child[match(allNodes, parent)]
+  
+  # Return:
+  .Call('MORPHYLENGTH', as.integer(parentOf -1L), as.integer(leftChild -1L), 
+               as.integer(rightChild -1L), morphyObj)
 }
-#' Wrapper to FITCH
-#' @return the full return of the phangorn C function FITCH
-## @useDynLib TreeSearch phangorn_FITCH
-#' @useDynLib TreeSearch, .registration = TRUE, .fixes="C_"
+
+#' @describeIn MorphyTreeLength Fastest function that requires internal tree parameters
+#' @template parentOfParam
+#' @template leftChildParam
+#' @template rightChildParam
+#' @author Martin R. Smith
 #' @keywords internal
 #' @export
-C_Fitch <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
-  .Call(C_phangorn_FITCH, as.integer(characters), as.integer(nChar),
-        as.integer(parent), as.integer(child), as.integer(nEdge),
-        as.double(weight), as.integer(maxNode), as.integer(nTip))
+GetMorphyLength <- function (parentOf, leftChild, rightChild, morphyObj) {
+  # Return:
+  .Call('MORPHYLENGTH', as.integer(parentOf), as.integer(leftChild), 
+               as.integer(rightChild), morphyObj)
 }
-###   
-###   #' @describeIn C_Fitch Checks parameters before running \code{C_Fitch}
-###   #' @keywords internal
-###   #' @export
-###   C_Fitch_Checks <- function (characters, nChar, parent, child, nEdge, weight, maxNode, nTip) {
-###     iCharacters <- as.integer(characters)
-###     Assert(length(iCharacters) == nChar * nTip)
-###     Assert(length(parent) == length(child))
-###     Assert(length(parent) == nEdge)
-###     Assert(length(weight) == nChar)
-###     Assert(maxNode == max(parent))
-###     Assert(parent[1] == max(parent)) # Are nodes numbered in Postorder??    
-###     C_Fitch(characters, nChar, parent, child, nEdge, weight, maxNode, nTip)
-###   }
+
+#' @describeIn MorphyTreeLength Direct call to C function. Use with caution.
+#' @param parentOf For each node, numbered in postorder, the number of its parent node.
+#' @param leftChild  For each internal node, numbered in postorder, the number of its left 
+#'                   child node or tip.
+#' @param rightChild For each internal node, numbered in postorder, the number of its right
+#'                   child node or tip.
+#' @keywords internal
+#' @export
+C_MorphyLength <- function (parentOf, leftChild, rightChild, morphyObj) {
+  .Call('MORPHYLENGTH', as.integer(parentOf -1L), as.integer(leftChild -1L), 
+               as.integer(rightChild -1L), morphyObj)
+}
 
 #' Extract character data from dataset
 #'
@@ -62,106 +166,3 @@ TipsAreNames <- function(dataset, tips) as.integer(unlist(dataset[tips]))
 #' @keywords internal
 #' @export
 TipsAreColumns <- function(dataset, tips) as.integer(dataset[, tips])
-
-#' Fitch score
-#' 
-#' @template treeParam
-#' @param dataset A list or matrix whose list entries, rows or columns (as specified in TipData)
-#'             correspond to the character data associated with the tips of the tree. 
-#'             Likely of class \code{phyDat}.  The number of characters should be stored
-#'             as the attribute dataset$nr, and the weight of each character in dataset$weight;
-#'             if dataset is a matrix, they will be calculated automatically (weights set to 1).
-#' @param TipData function to be used to match tree tips to dataset; probably one of 
-#'                \code{TipsAreNames}, \code{TipsAreRows}, or \code{TipsAreColumns}
-#' @param at Attributes of the dataset (looked up automatically if not supplied)
-#' @param FitchFunction function to be used to calculate parsimony score.
-#' @return A vector listing the number of 'parsimony steps' calculated for each character
-#' @importFrom phangorn fitch
-#' @export
-Fitch <- function (tree, dataset, TipData = TipsAreNames, at = attributes(dataset),
-                        FitchFunction = C_Fitch_Score) {
-  treeOrder <- attr(tree, 'order')
-  if (is.null(treeOrder) || treeOrder != 'postorder') tree <- Postorder(tree)
-  treeEdge <- tree$edge
-  parent <- treeEdge[, 1]
-  child <- treeEdge[, 2]
-  tipLabel <- tree$tip.label
-  nr <- at$nr
-  if (is.null(at$nr)) {
-    nr <- dim(dataset)
-    nr <- if (nr[1] == length(tipLabel)) nr[2] else nr[1]
-  }
-  charWeights <- at$weight
-  if (is.null(charWeights)) charWeights <- rep(1, nr)
-  if (class(dataset) =='phyDat') {
-    levs <- attr(dataset, 'levels')
-    contrast <- attr(dataset, 'contrast')
-    index <- as.integer(contrast %*% 2L ^ (seq_along(attr(dataset, 'levels')) - 1))
-    reformedData <- vapply(dataset, function (X) index[X], integer(nr))
-    characters <- TipsAreColumns(reformedData, tipLabel)
-  } else {
-    characters <- TipData(dataset, tipLabel)
-  }
-  
-  return(FitchFunction(
-      characters = characters, 
-      nChar = nr,
-      parent, child,
-      nEdge = length(parent), 
-      weight = charWeights, 
-      maxNode = max(parent), #parent[1] IF tree in postorder
-      nTip = length(tipLabel)
-    )
-  )
-  # TODO DELTE debugging line:
-  #    FitchFunction(TipData(dataset, tipLabel), at$nr, parent, child, length(parent), at$weight, parent[1], nTip = length(tipLabel))
-}
-
-
-# InitFitch <- function (tree, dataset) {
-#   weight <- attr(dataset, "weight")
-#   nr <- as.integer(attr(dataset, "nr"))
-#   nTips <- length(tree$tip.label)
-#   m <- nr * (2L * nTips - 1L)
-#   .C("fitch_init", as.integer(dataset), as.integer(nTips * nr), as.integer(m), as.double(weight), 
-#      as.integer(nr), PACKAGE='phangorn')
-#   return(TRUE)
-# }
-# 
-# DestroyFitch <- function() {
-#   .C("fitch_free", PACKAGE='phangorn')
-# }
-
-#' @describeIn Fitch returns the parsimony score only
-#' @export
-FitchScore <- function (tree, dataset, TipData = NULL, at = attributes(dataset)) {
-  if (is.null(TipData)) {
-    if (class(dataset) != 'phyDat') stop("Expected a phyDat object. Please specify the TipData function relevant
-      to the class of dataset that you have provided")
-    TipData <- TipsAreNames
-    if (!all(tree$tip.label %in% names(dataset))) stop ("Some tips could not be found in the dataset provided.")
-  }
-  Fitch(tree, dataset, TipData, at, C_Fitch_Score)
-}
-
-###   #' @describeIn Fitch returns the parsimony score only, when a Fitch instance has already been initiated
-###   #' @export
-###   IFitchScore <- function (tree, nChar) {
-###     phangorn:::fast.fitch(tree, nChar, ps=FALSE)
-###   }
-###   
-###   #' @describeIn Fitch returns the parsimony score only, without checking that dataset is well formatted
-###   #' @keywords internal
-###   #' @export
-###   FasterFitchScore <- function (tree, dataset, TipData = TipsAreNames, at = attributes(dataset))
-###     Fitch(tree, dataset, TipData, at, C_Fitch_Score)
-###
-###
-###   IFitchSteps <- function (tree, nChar) {
-###     phangorn:::fast.fitch(tree, nChar, ps=FALSE)
-###   }
-###     
-###   #' @describeIn Fitch returns a vector listing the number of steps for each character
-###   #' @export
-###   FitchSteps <- function (tree, dataset, TipData = TipsAreNames, at = attributes(dataset))
-###     Fitch(tree, dataset, TipData, at, C_Fitch_Steps)
