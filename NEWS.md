@@ -1,7 +1,7 @@
 # TreeSearch 0.1.1
 
 ## Bug fixes
-- Fix C warnings in MorphyLib library
+- Update MorphyLib library to fix C warnings
 - Remove non-ASCII characters from data
 
 

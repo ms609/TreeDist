@@ -1,5 +1,6 @@
 ## Test environments
 * local Windows 10 install, R 3.4.3
+* Windows 10 via win_build(), R devel
 * ubuntu 14.04.5 (on travis-ci), R 3.4.0 and release
 
 ## R CMD check results
@@ -10,7 +11,7 @@ There was one NOTE:
 > NOTE
 > Maintainer: 'Martin R. Smith <martins@gmail.com>'
 > 
-> Days since last update: 1
+> Days since last update: 2
 
 Version 0.1.0 fixed an error in the C code that had been flagged by the CRAN package check.  Fixing this error exposed some new warnings, which this resubmission addresses.
 
