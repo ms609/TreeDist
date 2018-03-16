@@ -82,8 +82,8 @@ typedef struct {
 } MPLcell;
 
 
-typedef struct charinfo_s MPLcharinfo;
-typedef struct charinfo_s {
+typedef struct MPLcharinfo MPLcharinfo;
+struct MPLcharinfo {
   
   int         charindex;
   int         ninapplics;
@@ -102,7 +102,7 @@ typedef struct charinfo_s {
   Mflt         HIndex;
   Mflt         RetIndex;
   
-} MPLcharinfo;
+};
 
 
 typedef struct {
