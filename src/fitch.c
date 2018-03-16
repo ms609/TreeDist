@@ -154,7 +154,7 @@ int mpl_NA_fitch_first_downpass
         
         nt[j] = n[j]; // Store a copy for partially reoptimising the subtree
 #ifdef DEBUG
-        assert(n[j]);
+        assert(npre[j]);
 #endif
     }
     
