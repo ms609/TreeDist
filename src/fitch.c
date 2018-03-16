@@ -208,10 +208,10 @@ int mpl_nadown2_simpl
   MPLstate*       right   = rset->downpass2;
   MPLstate*       setstat = nset->uppass1;
   MPLstate*       npre    = nset->downpass2;
-  MPLstate*       stacts  = nset->subtree_actives;
-  MPLstate*       tstatcs = nset->temp_subtr_actives;
-  MPLstate*       lacts   = lset->subtree_actives;
-  MPLstate*       racts   = rset->subtree_actives;
+  //MPLstate*       stacts  = nset->subtree_actives;
+  //MPLstate*       tstatcs = nset->temp_subtr_actives;
+  //MPLstate*       lacts   = lset->subtree_actives;
+  //MPLstate*       racts   = rset->subtree_actives;
   MPLstate        temp    = 0;
   unsigned long*  weights = part->intwts;
   
@@ -366,8 +366,8 @@ int mpl_naupp1_simpl
   int         j       = 0;
   const int*  indices = part->charindices;
   int         nchars  = part->ncharsinpart;
-  MPLstate*   left    = lset->downpass1;
-  MPLstate*   right   = rset->downpass1;
+  //MPLstate*   left    = lset->downpass1;
+  //MPLstate*   right   = rset->downpass1;
   MPLstate*   npre    = nset->downpass1;
   MPLstate*   nifin   = nset->uppass1;
   MPLstate*   anc     = ancset->uppass1;
@@ -757,13 +757,13 @@ int mpl_fitch_NA_local_reopt
   int steps       = 0;
   const int* indices  = part->charindices;
   int nchars          = part->ncharsinpart;
-  MPLstate* tgt1d1    = tgt1set->downpass1;
-  MPLstate* tgt2d1    = tgt2set->downpass1;
-  MPLstate* tgt1f     = tgt1set->uppass2;
-  MPLstate* tgt2f     = tgt2set->uppass2;
-  MPLstate* src       = srcset->downpass2; // TODO: Verify this.
+//  MPLstate* tgt1d1    = tgt1set->downpass1;
+//  MPLstate* tgt2d1    = tgt2set->downpass1;
+  //MPLstate* tgt1f     = tgt1set->uppass2;
+//  MPLstate* tgt2f     = tgt2set->uppass2;
+//  MPLstate* src       = srcset->downpass2; // TODO: Verify this.
   
-  unsigned long* weights = part->intwts;
+//  unsigned long* weights = part->intwts;
   
   for (i = 0; i < nchars; ++i) {
     
