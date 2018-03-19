@@ -13,3 +13,4 @@ release_questions <- function() {
 #check_on_centos() 
 #check_with_valgrind() # runs the build and check on Linux, in valgrind to find memory leaks and pointer errors.
 #check_with_sanitizers() # runs all package package tests, examples and vignettes with Address Sanitizer and Undefined Behavior Sanitizer.
+#list_my_checks() # list_package_checks
