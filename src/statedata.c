@@ -399,7 +399,7 @@ int mpl_check_nexus_matrix_dimensions
             else {
                 err = mpl_skip_closure(current, '{', '}');
             }
-            if (err <= 0) {
+            if (*err <= 0) {
                 return ERR_MATCHING_PARENTHS;
             }
             

@@ -4,7 +4,7 @@ author: "Martin R. Smith"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 bibliography: ../inst/REFERENCES.bib
-csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
+csl: ../inst/apa-old-doi-prefix.csl
 vignette: >
   %\VignetteIndexEntry{Inapplicable data}
   %\VignetteEngine{knitr::rmarkdown}
@@ -101,7 +101,7 @@ yet I've not been able to get it to work.
 
 ### From a TNT file
 
-A TNT format dataset downloaded from [MorphoBank](https://morphobank.org/) can be parsed with `ReadTntCharacters`, which might also handle other TNT-compatible files.  If there's a file that's not being read correctly, please [let me know](https://github.com/ms609/TreeSearch/issues/new?title=Unsupported+TNT+file&body=Please%20attach%20the%20problematic%20TNT%20file%20and%20describe%20the%20issue&labels=enhancement) and I'll try to fix it.
+A TNT format dataset downloaded from [MorphoBank](https://morphobank.org) can be parsed with `ReadTntCharacters`, which might also handle other TNT-compatible files.  If there's a file that's not being read correctly, please [let me know](https://github.com/ms609/TreeSearch/issues/new?title=Unsupported+TNT+file&body=Please%20attach%20the%20problematic%20TNT%20file%20and%20describe%20the%20issue&labels=enhancement) and I'll try to fix it.
 
 ```R
 raw_data <- ReadTntCharacters(filename)

@@ -1,6 +1,12 @@
 ## Test environments
+### Windows 10:
 * local Windows 10 install, R 3.4.3
+* Windows x86_64-w64-mingw32, via R-hub, R 3.4.4
+* Windows 10 via win_build(), R devel
+
+### Linux:
 * ubuntu 14.04.5 (on travis-ci), R 3.4.0 and release
+* Debian, Ubuntu, Fedora and Centos, via R-hub, R 3.4.3
 
 ## R CMD check results
 There were no ERRORs or WARNINGs. 
@@ -12,11 +18,9 @@ There was one NOTE:
 > 
 > Days since last update: 5
 
-Brian Ripley kindly pointed out that the recently-uploaded v0.0.8 triggered errors in certain build environments.  This resubmission fixes, I hope, the warnings and notes.
+Version 0.1.0 fixed an error in the C code that had been flagged by the CRAN package check.  Fixing this error exposed some new C warnings, which this version 0.1.1 addressed.
 
-If there is a way for me to test the package in the environments that CRAN
-uses ahead of submission, to avoid this situation recurring, I'd be glad
-to hear of it.
+Uwe pointed out an issue building vignettes on certain platforms, and I've removed the probelmatic code in the present submission, v0.1.2.
 
 
 ## Downstream dependencies

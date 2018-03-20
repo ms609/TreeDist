@@ -10,8 +10,10 @@ ListToMatrix(edgeList)
 \item{edgeList}{tree edges in the format list(parent, child).}
 }
 \value{
-edges in the format expected by \code{tree$edge}, where \code{tree} is a tree of class \code{phylo}.
+edges in the format expected by \code{tree$edge},
+        where \code{tree} is a tree of class \code{phylo}.
 }
 \description{
 Edge list to edge matrix
 }
+\keyword{internal}

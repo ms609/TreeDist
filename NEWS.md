@@ -1,3 +1,11 @@
+# TreeSearch 0.1.2
+
+## Bug fixes
+- Update MorphyLib library to fix C warnings
+- Remove non-ASCII characters from data
+- Disable slow-building and problematic vignette
+- Use local copy of citation style when building vignettes
+
 # TreeSearch 0.1.0
 
 ## New features
