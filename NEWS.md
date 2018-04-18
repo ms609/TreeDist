@@ -1,3 +1,8 @@
+# TreeSearch 0.1.2.9000
+
+## Enhancements
+- Improve portability of function `ReadTntTree`
+
 # TreeSearch 0.1.2
 
 ## Bug fixes
