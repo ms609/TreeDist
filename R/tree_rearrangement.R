@@ -62,3 +62,27 @@ RearrangeEdges <- function (parent, child, dataset, TreeScorer = MorphyLength,
   # Return:
   rearrangedEdges
 }
+
+#' Root Tree on specified tips
+#' 
+#' Roots a tree on the smallest clade containing the specified tips.
+#' 
+#' @template treeParam
+#' @param outgroupTips Character vector specifying the names of the tips to 
+#'                     include in the outgroup
+#'                     
+#' @return A tree of class phylo, rooted on the smallest clade that contains the specified tips
+#' 
+#' @author Martin R. Smith
+#' @importFrom phangorn Ancestors Descendants
+RootTree <- function (tree, outgroupTips) {
+  tipLabels <- tree$tip.label
+  if (!all(outgroupTips %in% tipLabels)) {
+    stop("Outgroup tips", paste(outgroupTips, collapse=', '), 
+         "not found in tree's tip labels.")
+  }
+  tipNos <- which(tipLabels %in% outgroupTips)
+  ancestry <- unlist(Ancestors(tree, tipNos))
+  lca <- max(ancestry[duplicated(ancestry)])
+  root(tree, Descendants(tree, lca)[[1]], resolve.root = TRUE)
+}

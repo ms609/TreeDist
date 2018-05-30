@@ -1,5 +1,8 @@
 # TreeSearch 0.1.2.9000
 
+## New features
+ - `RootTree` function allows rooting of tree on incompletely specified outgroup
+ 
 ## Enhancements
  - Add new 12-colour colourblind-friendly palette
  - FitchSteps now supports datasets with tips not found in tree
