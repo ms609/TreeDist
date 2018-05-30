@@ -84,5 +84,5 @@ RootTree <- function (tree, outgroupTips) {
   tipNos <- which(tipLabels %in% outgroupTips)
   ancestry <- unlist(Ancestors(tree, tipNos))
   lca <- max(ancestry[duplicated(ancestry)])
-  root(tree, Descendants(tree, lca)[[1]], resolve.root = TRUE)
+  Renumber(root(tree, Descendants(tree, lca)[[1]], resolve.root = TRUE))
 }
