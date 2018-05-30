@@ -2,14 +2,52 @@
 #' 
 #' Reads a tree from TNT's paranthetical output.
 #' 
-#' @param filename character string specifying path to TNT `.tre file
+#' @param filename character string specifying path to TNT `.tre` file
+#' @param relativePath (optional) character string specifying location of the matrix 
+#'                     file used to generate the TNT results, 
+#'                     relative to the current working directory, for portability.
+#' @param keepEnd (optional, default 1) integer specifying how many elements of the file
+#'                path to conserve when creating relative path (see examples)
+#'                     
 #' 
 #' @return a tree of class \code{phylo}.
+#' 
+#' @examples {
+#'   \dontrun{
+#'   # TNT read a matrix from c:/myproject/tnt/coding1/dataset.nex
+#'   # The results of an analysis were written to c:/myproject/tnt/output/results1.tnt
+#'   # results1.tnt will contain a hard-coded reference to 
+#'   # "c:/myproject/tnt/coding1/dataset.nex"
+#'   
+#'   getwd() # Gives the current working directory
+#'   
+#'   # Say that working directory is c:/myproject, which perhaps corresponds to a
+#'   # Git repository.
+#'   # This directory may be saved into another location by collaborators, or on a 
+#'   # different filesystem by a continuous integration platform.
+#'   
+#'   # Works on local machine but not elsewhere:
+#'   ReadTntTree('tnt/output/results1.tnt')
+#'   
+#'   # Takes only the filename from the results
+#'   ReadTntTree('tnt/output.results1.tnt', 'tnt/coding1')
+#'   
+#'   # Uses the last three elements of c:/myproject/tnt/coding1/dataset.nex
+#'   #                                               3     2       1
+#'   # '.' means "relative to the current directory", which is c:/myproject
+#'   ReadTntTree('tnt/output/results1.tnt', '.', 3)
+#'   
+#'   # If the current working directory was c:/myproject/rscripts/testing,
+#'   # you could navigate up the directory path with '..':
+#'   ReadTntTree('../../tnt/output/results1.tnt', '../..', 3)
+#'   
+#'   }
+#' }
 #' 
 #' @author Martin R. Smith
 #' @importFrom ape read.tree
 #' @export
-ReadTntTree <- function (filename) {
+ReadTntTree <- function (filename, relativePath = NULL, keepEnd = 1L) {
   fileText <- readLines(filename)
   trees <- lapply(fileText[2:(length(fileText)-1)], function (treeText) {
     treeText <- gsub("(\\d+)", "\\1,", treeText, perl=TRUE)
@@ -21,6 +59,16 @@ ReadTntTree <- function (filename) {
   
   taxonFile <- gsub("tread 'tree(s) from TNT, for data in ", '', fileText[1], fixed=TRUE)
   taxonFile <- gsub("'", '', gsub('\\', '/', taxonFile, fixed=TRUE), fixed=TRUE)
+  if (!is.null(relativePath)) {
+    taxonFileParts <- strsplit(taxonFile, '/')[[1]]
+    nParts <- length(taxonFileParts)
+    if (nParts < keepEnd) {
+      stop("Taxon file path (", taxonFile, ") contains fewer than keepEnd (",
+           keepEnd, ") components.")
+    }
+    taxonFile <- paste0(c(relativePath, taxonFileParts[(nParts + 1L - keepEnd):nParts]),
+                        collapse='/')
+  }
   if (!file.exists(taxonFile)) {
     warning("Cannot find linked data file ", taxonFile)
   } else {
