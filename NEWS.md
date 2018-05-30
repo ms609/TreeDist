@@ -1,3 +1,8 @@
+# TreeSearch 0.1.2.9000
+
+## Enhancements
+ - FitchSteps now supports datasets with tips not found in tree
+
 # TreeSearch 0.1.2
 
 ## Bug fixes

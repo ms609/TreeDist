@@ -57,6 +57,15 @@ FitchSteps <- function (tree, dataset) {
   if (class(dataset) != 'phyDat') {
     stop ("Dataset must be of class phyDat, not ", class(dataset))
   }
+  if (length(tree$tip.label) < length(dataset)) {
+    if (all(tree$tip.label %in% names(dataset))) {
+      dataset[!(names(dataset)%in% tree$tip.label)] <- NULL
+    } else {
+      stop ("Tree tips", 
+            paste(tree$tip.label[!(tree$tip.label %in% names(dataset))], sep = ', '), 
+            "not found in dataset.")
+    }
+  }
   
   tree <- RenumberTips(Renumber(tree), names(dataset))  
   characters <- PhyToString(dataset, ps='', useIndex=FALSE, byTaxon=FALSE, concatenate=FALSE)
