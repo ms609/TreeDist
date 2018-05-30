@@ -14,6 +14,7 @@ git:
 r_binary_packages:
  - ape
  - covr
+ - devtools
  - memoise
  - phangorn
  - R.cache
