@@ -101,7 +101,7 @@ Ratchet <- function (tree, dataset,
     if (verbosity > 1L) cat ("\n* Ratchet iteration", i, "- Generating new tree by bootstrapping dataset. ")
     candidate <- Bootstrapper(edgeList, initializedData, maxIter=bootstrapIter,
                               maxHits=bootstrapHits, verbosity=verbosity-2L,
-                              EdgeSwapper=BootstrapSwapper, stopAtPeak=StopAtPeak,
+                              EdgeSwapper=BootstrapSwapper, stopAtPeak=stopAtPeak,
                               stopAtPlateau=stopAtPlateau, ...)
     candScore <- 1e+08
     
@@ -119,6 +119,7 @@ Ratchet <- function (tree, dataset,
       if (!is.null(stopAtScore) && candScore < stopAtScore + epsilon) {
         BREAK <- TRUE
         if (verbosity > 1L) cat("\n  * Target score", stopAtScore, "met; terminating tree search.")
+        bestScore <- candScore
         break
       }
     }
@@ -149,7 +150,6 @@ Ratchet <- function (tree, dataset,
     }
   } # end for
 
-  if (iterationsCompleted == 0) iterationsCompleted <- ratchIter
   if (verbosity > 0L) cat ("\nCompleted parsimony ratchet after", iterationsCompleted, "iterations with score", bestScore, "\n")
    
   if (returnAll) {
