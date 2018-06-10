@@ -224,7 +224,7 @@ TBRMoves <- function(parent, child, nEdge = length(parent), avoid=NULL, retainRo
   }
 
   isBreakable[avoid] <- FALSE
-  if (!any(breakable)) return (NULL) # no rearrangements possible
+  if (!any(isBreakable)) return (NULL) # no rearrangements possible
   breakable <- which(isBreakable)
   
   mergeable <- lapply(breakable, function (edgeToBreak) {
