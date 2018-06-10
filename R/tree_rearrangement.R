@@ -56,7 +56,7 @@ RearrangeEdges <- function (parent, child, dataset, TreeScorer = MorphyLength,
     } else if (candidateScore + eps > scoreToBeat) { # i.e. scores are equal
       hits <- hits + nBest
       if (verbosity > 2L) cat("\n    - Iteration", iter, "- Best score", scoreToBeat, 
-                              "hit", nBest, " more times; ", hits, " altogether")
+                              "found again", nBest, "times; now found", hits, "times.")
     } else {
       hits <- nBest
       if (verbosity > 1L) cat("\n    * Iteration", iter, "- New best score", candidateScore, 
