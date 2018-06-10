@@ -100,8 +100,6 @@ TBRSwap <- function(parent, child, nEdge = length(parent), edgeToBreak=NULL, mer
   
   edgesCutAdrift <- DescendantEdges(edgeToBreak, parent, child, nEdge)
   edgesRemaining <- !edgesCutAdrift & !brokenEdge
-  edgesOnAdriftSegment <- edgesCutAdrift | brokenEdge
-  Assert(identical(edgesCutAdrift, edgesOnAdriftSegment)) # If always true, we can remove the previous line
   
   brokenEdgeParent <- child == brokenEdge.parentNode
   brokenEdgeSister <- parent == brokenEdge.parentNode & !brokenEdge

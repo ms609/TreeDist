@@ -281,7 +281,6 @@ RootedSPRSwap <- function (parent, child, nEdge = length(parent), nNode = nEdge 
     edgesOnThisSide <- if (rightSide[edgeToBreak]) rightSide else leftSide
     mergeEdge <- which(edgesOnThisSide & !nearBrokenEdge & !edgesOnAdriftSegment)
     nCandidates <- length(mergeEdge)
-    Assert(nCandidates > 0)
     if (nCandidates > 1) mergeEdge <- SampleOne(mergeEdge, len=nCandidates)
   }
   
