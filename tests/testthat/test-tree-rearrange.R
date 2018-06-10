@@ -139,5 +139,6 @@ test_that("TBR move lister works", {
   rootedMoves <- TBRMoves(parent, child, retainRoot=TRUE)
   expect_equal(matrix(c(2,2,4,5,7,7 ,9,10,
                         4,5,2,2,9,10,7,7 ), ncol=2), rootedMoves)
+  expect_equal(length(AllTBR(parent, child, retainRoot=TRUE)), 4)
 
 })

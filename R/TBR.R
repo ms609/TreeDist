@@ -253,6 +253,17 @@ TBRMoves <- function(parent, child, nEdge = length(parent), avoid=NULL, retainRo
   matrix(c(rep(breakable, vapply(mergeable, length, 1L)), unlist(mergeable)), ncol=2)
 }
 
+#' @describeIn TBR All unique trees one TBR move away
+#' @return a list of trees, in parent-child format
+#' @export
+AllTBR <- function (parent, child, nEdge = length(parent), avoid=NULL, retainRoot=FALSE) {
+  moves <- TBRMoves(parent, child, nEdge=nEdge, avoid=avoid, retainRoot=retainRoot)
+  newTrees <- apply(moves, 1, function (edges) {
+    TBRSwap(parent, child, nEdge, edges[1], edges[2])
+  })
+  unique(newTrees)
+}
+
 #' Rooted TBR 
 #' @describeIn TBR Perform \acronym{TBR} rearrangement, retaining position of root
 #' @export
