@@ -12,6 +12,8 @@ test_that("tree can be found", {
   expect_error(TreeSearch(tree=unrooted11, dataset=phy11))
   expect_equal(comb11, TreeSearch(tree=RandomTree(phy11, 'a'), dataset=phy11,
                maxIter=2500, EdgeSwapper = RootedTBRSwap, verbosity=0))
+  expect_equal(comb11, TreeSearch(tree=RandomTree(phy11, 'a'), dataset=phy11,
+               maxIter=2500, EdgeSwapper = AllTBR, stopAtPeak=TRUE, stopAtPlateau=10, verbosity=5L))
   expect_equal(comb11, TreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000, EdgeSwapper = RootedSPRSwap,
               verbosity=0))
   expect_equal(comb11, TreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000, EdgeSwapper = RootedNNISwap, verbosity=0))

@@ -8,8 +8,9 @@ EdgeListSearch <- function (edgeList, dataset,
                           TreeScorer = MorphyLength,
                           EdgeSwapper = RootedTBRSwap,
                           maxIter=100, maxHits=20, 
-                          bestScore=NULL,
-                          stopAtScore=NULL, forestSize=1L, 
+                          bestScore=NULL, stopAtScore=NULL, 
+                          stopAtPeak=FALSE, stopAtPlateau=0L,
+                          forestSize=1L, 
                           cluster=NULL, verbosity=1L, ...) {
   epsilon <- 1e-07
   if (!is.null(forestSize) && length(forestSize)) {
@@ -32,10 +33,12 @@ EdgeListSearch <- function (edgeList, dataset,
   if (!is.null(stopAtScore) && bestScore < stopAtScore + epsilon) return(edgeList)
   returnSingle <- !(forestSize > 1L)
   hits <- 0L
+  unimprovedSince <- 0L
   
   for (iter in 1:maxIter) {
     candidateLists <- RearrangeEdges(edgeList[[1]], edgeList[[2]], dataset=dataset, 
-                             TreeScorer=TreeScorer, EdgeSwapper=EdgeSwapper,
+                             TreeScorer=TreeScorer, EdgeSwapper=EdgeSwapper, 
+                             stopAtPeak=stopAtPeak,
                              hits=hits, iter=iter, verbosity=verbosity, ...)
     scoreThisIteration <- candidateLists[[3]]
     hits <- candidateLists[[4]]
@@ -57,10 +60,24 @@ EdgeListSearch <- function (edgeList, dataset,
       if (scoreThisIteration < bestScore + epsilon) {
         bestScore <- scoreThisIteration
         edgeList  <- candidateLists
+        if (scoreThisIteration + epsilon < bestScore) unimprovedSince <- -1L
         if (!is.null(stopAtScore) && bestScore < stopAtScore + epsilon) return(edgeList)
+      } else if (stopAtPeak && scoreThisIteration > bestScore + epsilon) {
+        if (verbosity > 1L) cat("\n    ! Iteration", iter, "- No TBR rearrangement improves score.",
+                                scoreThisIteration, "doesn't beat", bestScore)
+        break
+      }
+      unimprovedSince <- unimprovedSince + 1L
+      if (stopAtPlateau > 1L && unimprovedSince >= stopAtPlateau) {
+        if (verbosity > 1L) cat("\n  - Terminating search, as score has not improved over past",
+                                unimprovedSince, "searches.")
+        break
       }
     }
-    if (hits >= maxHits) break
+    if (hits >= maxHits) {
+      if (verbosity > 1L) cat("\n  - Terminating search; hit best score ", hits, "times.")
+      break
+    }
   }
   if (verbosity > 0L) cat("\n  - Final score", bestScore, "found", hits, "times after", iter, "rearrangements\n")  
   if (forestSize > 1L) {

@@ -39,25 +39,42 @@
 #' 
 #' @export
 RearrangeEdges <- function (parent, child, dataset, TreeScorer = MorphyLength,
-                            EdgeSwapper, 
+                            EdgeSwapper, stopAtPeak = FALSE,
                             scoreToBeat=TreeScorer(parent, child, dataset, ...),
                             iter='?', hits=0L, verbosity=0L, ...) {
   eps <- 1e-08
   rearrangedEdges <- EdgeSwapper(parent, child)
-  # TODO we probably want to get ALL trees 1 REARRANGE step away
-  # One benefit of this is that if NONE of these trees are as good or better, we can give up immediately, 
-  # as there's no way out of this local optimum.
-  candidateScore <- TreeScorer(rearrangedEdges[[1]], rearrangedEdges[[2]], dataset, ...)
-  if (candidateScore > (scoreToBeat + eps)) {
-    if (verbosity > 3L) cat("\n    . Iteration", iter, '- Rearranged tree score', candidateScore, "> target", scoreToBeat)
-  } else if (candidateScore + eps > scoreToBeat) { # i.e. scores are equal
-    hits <- hits + 1L
-    if (verbosity > 2L) cat("\n    - Iteration", iter, "- Best score", scoreToBeat, "hit", hits, "times")
+  if (class(rearrangedEdges[[1]]) == 'list') {
+    # Then we've been sent a list of possible trees
+    candidateScores <- vapply(rearrangedEdges, function (edges) TreeScorer(edges[[1]], edges[[2]], dataset, ...), double(1))
+    candidateScore <- min(candidateScores)
+    best <- candidateScores == candidateScore
+    nBest <- sum(best)
+    if (candidateScore > (scoreToBeat + eps)) {
+      if (verbosity > 3L) cat("\n    . Iteration", iter, '- Rearranged tree score', candidateScore, 
+                              "> target", scoreToBeat)
+    } else if (candidateScore + eps > scoreToBeat) { # i.e. scores are equal
+      hits <- hits + nBest
+      if (verbosity > 2L) cat("\n    - Iteration", iter, "- Best score", scoreToBeat, 
+                              "hit", nBest, " more times; ", hits, " altogether")
+    } else {
+      hits <- nBest
+      if (verbosity > 1L) cat("\n    * Iteration", iter, "- New best score", candidateScore, 
+                              "found on", hits, "trees")
+    }
+    rearrangedEdges <- rearrangedEdges[[SampleOne(which(best), nBest)]]
   } else {
-    hits <- 1L
-    if (verbosity > 1L) cat("\n    * Iteration", iter, "- New best score", candidateScore, "found on", hits, "trees")
+    candidateScore <- TreeScorer(rearrangedEdges[[1]], rearrangedEdges[[2]], dataset, ...)
+    if (candidateScore > (scoreToBeat + eps)) {
+      if (verbosity > 3L) cat("\n    . Iteration", iter, '- Rearranged tree score', candidateScore, "> target", scoreToBeat)
+    } else if (candidateScore + eps > scoreToBeat) { # i.e. scores are equal
+      hits <- hits + 1L
+      if (verbosity > 2L) cat("\n    - Iteration", iter, "- Best score", scoreToBeat, "hit", hits, "times")
+    } else {
+      hits <- 1L
+      if (verbosity > 1L) cat("\n    * Iteration", iter, "- New best score", candidateScore, "found on", hits, "trees")
+    }
   }
-  # TODO when we search multiple trees at once in this function, update hits to the number of best trees.
   rearrangedEdges[3:4] <- c(candidateScore, hits)
   # Return:
   rearrangedEdges
