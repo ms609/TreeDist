@@ -3,6 +3,7 @@ library(ape)
 context("Arboriculture: Specified tree rearrangements")
 tree5a <- read.tree(text='(a, (b, (c, (d, e))));')
 tree5b <- read.tree(text='((a, b), (c, (d, e)));')
+tree6  <- read.tree(text="((a, (b, (c, d))), (e, f));")
 tree8  <- read.tree(text="(((a, (b, (c, d))), (e, f)), (g, h));")
 tree11 <- read.tree(text="((((a, b), (c, d)), e), ((f, (g, (h, i))), (j, k)));")
 attr(tree5a, 'order') <- attr(tree5b, 'order') <- attr(tree8, 'order') <- attr(tree11, 'order') <- 'preorder'
@@ -113,5 +114,15 @@ test_that("SPR is special case of TBR", {
   expect_equal(SPR(tree11, 12, 9), TBR(tree11, 12, c(12, 9)))
   expect_equal(root(SPR(tree11, 1, 14), letters[1:5], resolve.root=TRUE), TBR(tree11, 1, c(1, 14)))
   expect_error(SPR(tree11, 1, 6))
-  
+})
+
+test_that("TBR move lister works", {
+  tree6 <- Preorder(tree6)
+  edge <- tree6$edge
+  parent <- edge[, 1]
+  child <- edge[, 2]
+  moves <- TBRMoves(parent, child)
+  expect_equal(rep(2:10, c(7, 5, 6, 4, 6, 6, 4, 6, 6)), moves[, 1])
+  expect_equal(c(4:10, 6:10, 2, 6:10, 2, 8:10, 
+                 rep(c(2:4, 8:10), 2), 4:7, 2:7, 2:7), moves[, 2])
 })

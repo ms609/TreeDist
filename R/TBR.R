@@ -197,14 +197,12 @@ TBRSwap <- function(parent, child, nEdge = length(parent), edgeToBreak=NULL, mer
   return (RenumberEdges(parent, child, nEdge))
 }
 
-#' @describeIn TBR Returns all trees 1 TBR step away
-#' @template treeParent
-#' @template treeChild
+#' @describeIn TBR Possible TBR moves
 #' @param avoid Integer vector specifying which edges should not be broken
 #' @return a matrix with two columns, each row listing an edge that can be broken
 #'         and an edge into which it can be merged
 #' @export
-TBRBreaks <- function(parent, child, nEdge = length(parent), avoid=NULL) {
+TBRMoves <- function(parent, child, nEdge = length(parent), avoid=NULL) {
   if (nEdge < 5) stop("No TBR rearrangements possible on a tree with < 5 edges")
   
   # Pick an edge at random
