@@ -49,8 +49,8 @@ dataset <- inapplicable.phyData[[dataName]]
 
 Rprof()
 Ratchet(nj.tree[[dataName]], inapplicable.phyData[[dataName]], swappers=AllTBR, stopAtScore=scores[[dataName]], 
-        ratchHits=1000, ratchIter=10000, searchIter=3200, searchHits=35, stopAtPeak=TRUE,
-        stopAtPlateau=10, verbosity=5L)
+        ratchHits=1000, ratchIter=10000, searchIter=3200, searchHits=35, bootstrapIter = 6L, stopAtPeak=TRUE,
+        stopAtPlateau=10, verbosity=50L)
 Rprof(NULL)
 summaryRprof()
 
