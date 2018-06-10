@@ -118,13 +118,13 @@ TBRSwap <- function(parent, child, nEdge = length(parent), edgeToBreak=NULL, mer
     if (nCandidates > 1) mergeEdges <- SampleOne(candidateEdges, len=nCandidates) else mergeEdges <- candidateEdges
   }
   if (length(mergeEdges) == 1) {
-    if (edgesOnAdriftSegment[mergeEdges]) {
+    if (edgesCutAdrift[mergeEdges]) {
       adriftReconnectionEdge <- mergeEdges
       if (nearBrokenEdge[mergeEdges]) {
-        samplable <- which(!edgesOnAdriftSegment & !nearBrokenEdge & not1)
+        samplable <- which(!edgesCutAdrift & !nearBrokenEdge & not1)
       } else {
-        samplable <- which(!edgesOnAdriftSegment & not1)
-        if (all(edgesOnAdriftSegment == not1) && breakingRootEdge) samplable <- 1
+        samplable <- which(!edgesCutAdrift & not1)
+        if (all(edgesCutAdrift == not1) && breakingRootEdge) samplable <- 1
       }
       nSamplable <- length(samplable)
       if (nSamplable == 0) return(TBRWarning(parent, child, "No reconnection site would modify the tree; check mergeEdge"))
@@ -133,9 +133,9 @@ TBRSwap <- function(parent, child, nEdge = length(parent), edgeToBreak=NULL, mer
     } else {
       rootedReconnectionEdge <- mergeEdges
       if (nearBrokenEdge[mergeEdges]) {
-        samplable <- which(edgesOnAdriftSegment & !nearBrokenEdge & not1)
+        samplable <- which(edgesCutAdrift & !nearBrokenEdge & not1)
       } else {
-        samplable <- which(edgesOnAdriftSegment & not1)
+        samplable <- which(edgesCutAdrift & not1)
       }
       nSamplable <- length(samplable)
       if (nSamplable == 0) return(TBRWarning(parent, child, "No reconnection site would modify the tree; check mergeEdge"))
@@ -143,7 +143,7 @@ TBRSwap <- function(parent, child, nEdge = length(parent), edgeToBreak=NULL, mer
       #### cat(" - Selected adrift Reconnection Edge: ", adriftReconnectionEdge, "\n") #### DEBUGGING AID
     }
   } else {
-    whichAdrift <- edgesOnAdriftSegment[mergeEdges]
+    whichAdrift <- edgesCutAdrift[mergeEdges]
     if (sum(whichAdrift) != 1) return(TBRWarning(parent, child, paste("Invalid edges selected to merge:", mergeEdges[1], mergeEdges[2])))
     adriftReconnectionEdge <- mergeEdges[whichAdrift]
     rootedReconnectionEdge <- mergeEdges[!whichAdrift]
@@ -153,9 +153,6 @@ TBRSwap <- function(parent, child, nEdge = length(parent), edgeToBreak=NULL, mer
   #### edgelabels(edge = edgeToBreak, bg='orange', cex=1.8)  #### DEBUGGING AID
   #### edgelabels(edge=adriftReconnectionEdge, bg='cyan')    #### DEBUGGING AID
   #### edgelabels(edge=rootedReconnectionEdge, bg='magenta') #### DEBUGGING AID
-  
-  #########Assert(edgesOnAdriftSegment[adriftReconnectionEdge])
-  #########Assert(!edgesOnAdriftSegment[rootedReconnectionEdge])
   
   if (!nearBrokenEdge[adriftReconnectionEdge]) {
     edgesToInvert <- EdgeAncestry(adriftReconnectionEdge, parent, child, stopAt = edgeToBreak) & !brokenEdge
