@@ -219,6 +219,7 @@ TBRMoves <- function(parent, child, nEdge = length(parent), avoid=NULL, retainRo
   
   if (retainRoot) {
     leftRootEdge <- match(TRUE, parent[-1] == parent[1])+ 1L
+    avoid <- c(avoid, leftRootEdge)
     rightEdges <- descendants[1, ]
     leftEdges <- !rightEdges
     if (sum(rightEdges) < 4) avoid <- c(avoid, which(rightEdges))

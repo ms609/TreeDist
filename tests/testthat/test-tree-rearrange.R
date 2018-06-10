@@ -133,10 +133,11 @@ test_that("TBR move lister works", {
                         6,2, 6,3, 6,4, 
                         7,2, 7,3, 7,4), ncol=2, byrow=TRUE), rootedMoves)
   
-  edge <- tree6a$edge
+  edge <- tree6b$edge
   parent <- edge[, 1]
   child <- edge[, 2]
   rootedMoves <- TBRMoves(parent, child, retainRoot=TRUE)
-  expect_equal(NA, rootedMoves)
+  expect_equal(matrix(c(2,2,4,5,7,7 ,9,10,
+                        4,5,2,2,9,10,7,7 ), ncol=2), rootedMoves)
 
 })
