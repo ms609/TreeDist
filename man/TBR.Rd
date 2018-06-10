@@ -3,6 +3,8 @@
 \name{TBR}
 \alias{TBR}
 \alias{TBRSwap}
+\alias{TBRMoves}
+\alias{AllTBR}
 \alias{RootedTBR}
 \alias{RootedTBRSwap}
 \title{TBR}
@@ -11,6 +13,12 @@ TBR(tree, edgeToBreak = NULL, mergeEdges = NULL)
 
 TBRSwap(parent, child, nEdge = length(parent), edgeToBreak = NULL,
   mergeEdges = NULL)
+
+TBRMoves(parent, child, nEdge = length(parent), avoid = NULL,
+  retainRoot = FALSE)
+
+AllTBR(parent, child, nEdge = length(parent), avoid = NULL,
+  retainRoot = FALSE)
 
 RootedTBR(tree, edgeToBreak = NULL, mergeEdges = NULL)
 
@@ -35,11 +43,20 @@ the second will be chosen at random}
 \item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
 
 \item{nEdge}{(optional) Number of edges.}
+
+\item{avoid}{Integer vector specifying which edges should not be broken}
+
+\item{retainRoot}{logical specifying whether taxa may be swapped across the root}
 }
 \value{
 This function returns a tree in \code{phyDat} format that has undergone one \acronym{TBR} iteration.
 
 a list containing two elements, corresponding in turn to the rearranged parent and child parameters
+
+a matrix with two columns, each row listing an edge that can be broken
+        and an edge into which it can be merged
+
+a list of trees, in parent-child format
 }
 \description{
 Tree bisection and reconnection
@@ -54,6 +71,10 @@ Branch lengths are not (yet) supported.
 \section{Functions}{
 \itemize{
 \item \code{TBRSwap}: faster version that takes and returns parent and child parameters
+
+\item \code{TBRMoves}: Possible TBR moves
+
+\item \code{AllTBR}: All unique trees one TBR move away
 
 \item \code{RootedTBR}: Perform \acronym{TBR} rearrangement, retaining position of root
 

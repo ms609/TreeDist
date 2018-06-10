@@ -1,12 +1,9 @@
 # TreeSearch 0.1.2.9001
 
- - Faster tree search by searching all trees one rearrangement away
- 
-
-# TreeSearch 0.1.2.9000
-
 ## New features
  - `RootTree` function allows rooting of tree on incompletely specified outgroup
+ - `AllTBR` returns all trees one TBR rearrangement away
+ - `TBRMoves` reports all possible TBR rearrangements
  
 ## Enhancements
  - Add new 12-colour colourblind-friendly palette
