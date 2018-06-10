@@ -30,7 +30,11 @@ EdgeListSearch <- function (edgeList, dataset,
     }
   }
   if (verbosity > 0L) cat("\n  - Performing tree search.  Initial score:", bestScore)
-  if (!is.null(stopAtScore) && bestScore < stopAtScore + epsilon) return(edgeList)
+  if (!is.null(stopAtScore) && bestScore < stopAtScore + epsilon) {
+    if (verbosity > 0L) cat("\n  - Aborting tree search as tree score", bestScore, "already below target of", stopAtScore)
+    edgeList[[3]] <- bestScore
+    return(edgeList)
+  }
   returnSingle <- !(forestSize > 1L)
   hits <- 0L
   unimprovedSince <- 0L
@@ -75,7 +79,7 @@ EdgeListSearch <- function (edgeList, dataset,
       }
     }
     if (hits >= maxHits) {
-      if (verbosity > 1L) cat("\n  - Terminating search; hit best score ", hits, "times.")
+      if (verbosity > 1L) cat("\n  - Terminating search; hit best score", hits, "times.")
       break
     }
   }

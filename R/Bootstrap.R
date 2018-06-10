@@ -11,7 +11,7 @@
 #' @return A tree that is optimal under a random sampling of the original characters
 #' @export
 MorphyBootstrap <- function (edgeList, morphyObj, EdgeSwapper = NNISwap, 
-                             maxIter, maxHits, verbosity=1L, ...) {
+                             maxIter, maxHits, verbosity=1L, stopAtPeak=FALSE, stopAtPlateau=0L, ...) {
   startWeights <- MorphyWeights(morphyObj)[1, ]
   eachChar <- seq_along(startWeights)
   deindexedChars <- rep(eachChar, startWeights)

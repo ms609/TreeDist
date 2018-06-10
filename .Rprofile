@@ -1,4 +1,5 @@
 library("devtools")
 library("testthat")
+library("microbenchmark")
 library("ape")
 load_all()

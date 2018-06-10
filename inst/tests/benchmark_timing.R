@@ -40,8 +40,27 @@ names(timestart) <- names(timeend) <- names(scores)
 
 #install_github('ms609/inapplicable', rel='cefb5669352aca6425516805f60108063383b6c2')
 
+myDataset <- 1
 ## Find a good searchHits value
-dataName <- names(scores)[1]
+dataName <- names(scores)[myDataset]
+
+tree <- nj.tree[[dataName]]
+dataset <- inapplicable.phyData[[dataName]]
+
+Rprof()
+Ratchet(nj.tree[[dataName]], inapplicable.phyData[[dataName]], swappers=AllTBR, stopAtScore=scores[[dataName]], 
+        ratchHits=1000, ratchIter=10000, searchIter=3200, searchHits=35, stopAtPeak=TRUE,
+        stopAtPlateau=10, verbosity=5L)
+Rprof(NULL)
+summaryRprof()
+
+Rprof()
+Ratchet(nj.tree[[dataName]], inapplicable.phyData[[dataName]], 
+        swappers=list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap), stopAtScore=scores[[dataName]], 
+        ratchHits=1000, ratchIter=10000, searchIter=3200, searchHits=35, verbosity=3L)
+Rprof(NULL)
+summaryRprof()
+
 
 candidates <- c(4, 6, 8, 10, 12, 15, 18, 22, 26, 30, 35, 40, 50, 60, 75, 90, 120, 150)
 bench <- function (searchHits, bootHits = searchHits) system.time(Ratchet(nj.tree[[dataName]], inapplicable.phyData[[dataName]],                    swappers=list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap), stopAtScore=scores[[dataName]], ratchHits=1000, ratchIter=10000, searchIter=3200, 
