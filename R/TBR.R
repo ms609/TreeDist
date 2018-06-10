@@ -199,25 +199,35 @@ TBRSwap <- function(parent, child, nEdge = length(parent), edgeToBreak=NULL, mer
 
 #' @describeIn TBR Possible TBR moves
 #' @param avoid Integer vector specifying which edges should not be broken
+#' @param retainRoot logical specifying whether taxa may be swapped across the root
 #' @return a matrix with two columns, each row listing an edge that can be broken
 #'         and an edge into which it can be merged
 #' @export
-TBRMoves <- function(parent, child, nEdge = length(parent), avoid=NULL) {
+TBRMoves <- function(parent, child, nEdge = length(parent), avoid=NULL, retainRoot=FALSE) {
   if (nEdge < 5) stop("No TBR rearrangements possible on a tree with < 5 edges")
   
   # Pick an edge at random
   allEdges <- seq_len(nEdge - 1L) + 1L # Only include one root edge
   logicals <- diag(nEdge) == 1
   isBreakable <- !logicals[1, ]
+  descendants <- AllDescendantEdges(parent, child, nEdge)
   # not1 <- isBreakable
   
   if (length(avoid) > 0 && any(avoid > nEdge || avoid < 1)) {
     warning("Invalid edges in `avoid` parameter: edges are numbered from 1 to ", nEdge)
   }
   
-  breakable <- allEdges[!allEdges %in% avoid]
-  isBreakable[breakable] <- TRUE
-  descendants <- AllDescendantEdges(parent, child, nEdge)
+  if (retainRoot) {
+    leftRootEdge <- match(TRUE, parent[-1] == parent[1])+ 1L
+    rightEdges <- descendants[1, ]
+    leftEdges <- !rightEdges
+    if (sum(rightEdges) < 4) avoid <- c(avoid, which(rightEdges))
+    if (sum(leftEdges) < 4) avoid <- c(avoid, which(leftEdges))
+  }
+
+  isBreakable[avoid] <- FALSE
+  if (!any(breakable)) return (NULL) # no rearrangements possible
+  breakable <- which(isBreakable)
   
   mergeable <- lapply(breakable, function (edgeToBreak) {
     brokenEdge <- logicals[edgeToBreak, ]
@@ -236,7 +246,11 @@ TBRMoves <- function(parent, child, nEdge = length(parent), avoid=NULL) {
       brokenRootDaughters <- parent == child[brokenEdgeSister]
       nearBrokenEdge <- nearBrokenEdge | brokenRootDaughters
     }
-    which(!nearBrokenEdge & isBreakable)
+    candidates <- !nearBrokenEdge & isBreakable
+    if (retainRoot) {
+      candidates <- candidates & if (rightEdges[edgeToBreak]) rightEdges else leftEdges
+    }
+    which(candidates)
   })
   matrix(c(rep(breakable, vapply(mergeable, length, 1L)), unlist(mergeable)), ncol=2)
 }
