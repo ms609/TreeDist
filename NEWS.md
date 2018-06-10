@@ -1,3 +1,8 @@
+# TreeSearch 0.1.2.9001
+
+ - Faster tree search by searching all trees one rearrangement away
+ 
+
 # TreeSearch 0.1.2.9000
 
 ## New features

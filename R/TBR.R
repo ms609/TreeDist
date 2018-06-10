@@ -64,6 +64,7 @@ TBR <- function(tree, edgeToBreak = NULL, mergeEdges = NULL) {
   tree
 }
 
+
 ## TODO Do edges need to be pre-ordered before coming here?
 #' @describeIn TBR faster version that takes and returns parent and child parameters
 #' @template treeParent
@@ -92,8 +93,8 @@ TBRSwap <- function(parent, child, nEdge = length(parent), edgeToBreak=NULL, mer
   if (!is.null(mergeEdges)) { # Quick sanity checks
     if (any(mergeEdges > nEdge)) return(TBRWarning(parent, child, "mergeEdges value > number of edges"))
     if (length(mergeEdges) > 2 || length(mergeEdges) == 0) 
-        return(TBRWarning(parent, child, paste0("mergeEdges value ", paste(mergeEdges, collapse='|'),  
-               " invalid; must be NULL or a vector of length 1 or 2\n  ")))
+      return(TBRWarning(parent, child, paste0("mergeEdges value ", paste(mergeEdges, collapse='|'),  
+                                              " invalid; must be NULL or a vector of length 1 or 2\n  ")))
     if (length(mergeEdges) == 2 && mergeEdges[1] == mergeEdges[2]) 
       return(TBRWarning(parent, child, "mergeEdges values must differ"))
   }
@@ -194,6 +195,52 @@ TBRSwap <- function(parent, child, nEdge = length(parent), edgeToBreak=NULL, mer
   #########Assert(identical(unique(table(parent)), 2L))
   #########Assert(identical(unique(table(child)),  1L))
   return (RenumberEdges(parent, child, nEdge))
+}
+
+#' @describeIn TBR Returns all trees 1 TBR step away
+#' @template treeParent
+#' @template treeChild
+#' @param avoid Integer vector specifying which edges should not be broken
+#' @return a matrix with two columns, each row listing an edge that can be broken
+#'         and an edge into which it can be merged
+#' @export
+TBRBreaks <- function(parent, child, nEdge = length(parent), avoid=NULL) {
+  if (nEdge < 5) stop("No TBR rearrangements possible on a tree with < 5 edges")
+  
+  # Pick an edge at random
+  allEdges <- seq_len(nEdge - 1L) + 1L # Only include one root edge
+  logicals <- diag(nEdge) == 1
+  isBreakable <- !logicals[1, ]
+  # not1 <- isBreakable
+  
+  if (length(avoid) > 0 && any(avoid > nEdge || avoid < 1)) {
+    warning("Invalid edges in `avoid` parameter: edges are numbered from 1 to ", nEdge)
+  }
+  
+  breakable <- allEdges[!allEdges %in% avoid]
+  isBreakable[breakable] <- TRUE
+  descendants <- AllDescendantEdges(parent, child, nEdge)
+  
+  mergeable <- lapply(breakable, function (edgeToBreak) {
+    brokenEdge <- logicals[edgeToBreak, ]
+    brokenEdge.parentNode <- parent[edgeToBreak]
+    brokenEdge.childNode  <-  child[edgeToBreak]
+  
+    edgesCutAdrift <- descendants[edgeToBreak, ]
+    edgesRemaining <- !edgesCutAdrift & !brokenEdge
+    
+    brokenEdgeParent <- child == brokenEdge.parentNode
+    brokenEdgeSister <- parent == brokenEdge.parentNode & !brokenEdge
+    brokenEdgeDaughters <- parent == brokenEdge.childNode
+    nearBrokenEdge <- brokenEdge | brokenEdgeSister | brokenEdgeParent | brokenEdgeDaughters
+    if (breakingRootEdge <- !any(brokenEdgeParent)) { 
+      # Edge to break is the Root Node.
+      brokenRootDaughters <- parent == child[brokenEdgeSister]
+      nearBrokenEdge <- nearBrokenEdge | brokenRootDaughters
+    }
+    which(!nearBrokenEdge & isBreakable)
+  })
+  matrix(c(rep(breakable, vapply(mergeable, length, 1L)), unlist(mergeable)), ncol=2)
 }
 
 #' Rooted TBR 

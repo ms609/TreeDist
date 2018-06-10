@@ -52,6 +52,26 @@ DescendantEdges <- function (edge, parent, child, nEdge = length(parent)) {
   }
 }
 
+#' All Descendant Edges
+#'
+#'
+#' @template treeParent
+#' @template treeChild
+#' @param nEdge number of edges (calculated from length(parent) if not supplied)
+#' @return a matrix of class logical, with row N specifying whether each edge is a descendant of edge N
+#'         (or the edge itself)
+#' @describeIn DescendantEdges Quickly identifies edges that are 'descended' from each edge in a tree
+AllDescendantEdges <- function (parent, child, nEdge = length(parent)) {
+  ret <- diag(nEdge) == 1
+  blankLogical <- logical(nEdge)
+  allEdges <- seq_len(nEdge)
+  for (edge in rev(allEdges[child > parent[1]])) {
+    ret[edge, ] <- apply(ret[parent == child[edge], ], 2, any)
+    ret[edge, edge] <- TRUE
+  }
+  ret
+}
+
 #' Ancestral edge
 #'
 #' @param edge Number of an edge
