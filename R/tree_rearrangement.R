@@ -39,8 +39,7 @@
 #' 
 #' @export
 RearrangeEdges <- function (parent, child, dataset, TreeScorer = MorphyLength,
-                            EdgeSwapper, stopAtPeak = FALSE,
-                            scoreToBeat=TreeScorer(parent, child, dataset, ...),
+                            EdgeSwapper, scoreToBeat=TreeScorer(parent, child, dataset, ...),
                             iter='?', hits=0L, verbosity=0L, ...) {
   eps <- 1e-08
   rearrangedEdges <- EdgeSwapper(parent, child)
@@ -60,7 +59,7 @@ RearrangeEdges <- function (parent, child, dataset, TreeScorer = MorphyLength,
     } else {
       hits <- nBest
       if (verbosity > 1L) cat("\n    * Iteration", iter, "- New best score", candidateScore, 
-                              "found on", hits, "trees")
+                              "found on", hits, "trees.")
     }
     rearrangedEdges <- rearrangedEdges[[SampleOne(which(best), nBest)]]
   } else {
@@ -69,10 +68,10 @@ RearrangeEdges <- function (parent, child, dataset, TreeScorer = MorphyLength,
       if (verbosity > 3L) cat("\n    . Iteration", iter, '- Rearranged tree score', candidateScore, "> target", scoreToBeat)
     } else if (candidateScore + eps > scoreToBeat) { # i.e. scores are equal
       hits <- hits + 1L
-      if (verbosity > 2L) cat("\n    - Iteration", iter, "- Best score", scoreToBeat, "hit", hits, "times")
+      if (verbosity > 2L) cat("\n    - Iteration", iter, "- Best score", scoreToBeat, "hit", hits, "times.")
     } else {
       hits <- 1L
-      if (verbosity > 1L) cat("\n    * Iteration", iter, "- New best score", candidateScore, "found on", hits, "trees")
+      if (verbosity > 1L) cat("\n    * Iteration", iter, "- New best score", candidateScore, "found on", hits, "trees.")
     }
   }
   rearrangedEdges[3:4] <- c(candidateScore, hits)

@@ -113,7 +113,7 @@ Ratchet <- function (tree, dataset,
     for (EdgeSwapper in swappers) {
       candidate <- EdgeListSearch(candidate, dataset=initializedData, TreeScorer=TreeScorer, 
                                   EdgeSwapper=EdgeSwapper, maxIter=searchIter, 
-                                  stopAtScore=stopAtScore,
+                                  stopAtScore=stopAtScore, stopAtPeak=stopAtPeak, stopAtPlateau = stopAtPlateau,
                                   maxHits=searchHits, verbosity=verbosity-2L, ...)
       candScore <- candidate[[3]]
       if (!is.null(stopAtScore) && candScore < stopAtScore + epsilon) {

@@ -42,7 +42,6 @@ EdgeListSearch <- function (edgeList, dataset,
   for (iter in 1:maxIter) {
     candidateLists <- RearrangeEdges(edgeList[[1]], edgeList[[2]], dataset=dataset, 
                              TreeScorer=TreeScorer, EdgeSwapper=EdgeSwapper, 
-                             stopAtPeak=stopAtPeak,
                              hits=hits, iter=iter, verbosity=verbosity, ...)
     scoreThisIteration <- candidateLists[[3]]
     hits <- candidateLists[[4]]
@@ -72,7 +71,8 @@ EdgeListSearch <- function (edgeList, dataset,
         break
       }
       unimprovedSince <- unimprovedSince + 1L
-      if (stopAtPlateau > 1L && unimprovedSince >= stopAtPlateau) {
+      if (stopAtPlateau > 0L && verbosity > 1L) cat(" Last improvement", unimprovedSince, "iterations ago.")
+      if (stopAtPlateau > 0L && unimprovedSince >= stopAtPlateau) {
         if (verbosity > 1L) cat("\n  - Terminating search, as score has not improved over past",
                                 unimprovedSince, "searches.")
         break
@@ -147,6 +147,7 @@ TreeSearch <- function (tree, dataset,
                         TreeScorer     = MorphyLength,
                         EdgeSwapper    = RootedTBRSwap,
                         maxIter = 100L, maxHits = 20L, forestSize = 1L,
+                        stopAtPeak = NULL, stopAtPlateau = 0L,
                         verbosity = 1L, ...) {
   # initialize tree and data
   if (dim(tree$edge)[1] != 2 * tree$Nnode) {
@@ -161,8 +162,9 @@ TreeSearch <- function (tree, dataset,
 
   bestScore <- attr(tree, 'score')
   edgeList <- EdgeListSearch(edgeList, initializedData, TreeScorer=TreeScorer, 
-                             EdgeSwapper=EdgeSwapper, maxIter = maxIter, 
+                             EdgeSwapper = EdgeSwapper, maxIter = maxIter, 
                              maxHits = maxHits, forestSize = forestSize, 
+                             stopAtPeak = stopAtPeak, stopAtPlateau = stopAtPlateau,
                              verbosity = verbosity, ...)
   
   tree$edge <- ListToMatrix(edgeList)
