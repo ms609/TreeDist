@@ -47,21 +47,23 @@ dataName <- names(scores)[myDataset]
 tree <- nj.tree[[dataName]]
 dataset <- inapplicable.phyData[[dataName]]
 
-attr(AllTBR, 'stopAtPlateau') <- 4L
+attr(AllTBR, 'stopAtPlateau') <- 6L
+oTree <- nj.tree[[dataName]]
+nMoves <- nrow(TBRMoves(oTree$edge[, 1], oTree$edge[, 2]))
 
 Rprof()
 Ratchet(nj.tree[[dataName]], inapplicable.phyData[[dataName]],
           swappers=list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap, AllTBR), BootstrapSwapper=RootedNNISwap,
-        stopAtScore=scores[[dataName]], ratchHits=1000, ratchIter=10000, searchIter=3200, searchHits=35, verbosity=5L)
- 
-
+        stopAtScore=scores[[dataName]], ratchHits=1000, ratchIter=10000, searchIter=nMoves * 10, searchHits=35, 
+        retainRoot=TRUE,
+        verbosity=5L)
 Rprof(NULL)
 summaryRprof()
 
 Rprof()
 Ratchet(nj.tree[[dataName]], inapplicable.phyData[[dataName]], 
         swappers=list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap), stopAtScore=scores[[dataName]], 
-        ratchHits=1000, ratchIter=10000, searchIter=3200, searchHits=35, verbosity=3L)
+        ratchHits=1000, ratchIter=10000, searchIter=nMoves * 10, searchHits=35, verbosity=3L)
 Rprof(NULL)
 summaryRprof()
 
