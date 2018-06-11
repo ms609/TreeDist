@@ -263,6 +263,9 @@ AllTBR <- function (parent, child, nEdge = length(parent), avoid=NULL, retainRoo
   })
   unique(newTrees)
 }
+# Set sensible defaults for search parameters
+attr(AllTBR, 'stopAtPlateau') <- 10L
+attr(AllTBR, 'stopAtPeak') <- TRUE
 
 #' Rooted TBR 
 #' @describeIn TBR Perform \acronym{TBR} rearrangement, retaining position of root

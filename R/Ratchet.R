@@ -16,8 +16,10 @@
 #' @param returnAll Set to \code{TRUE} to report all MPTs encountered during the search, perhaps to analyze consensus.
 #' @param ratchIter stop when this many ratchet iterations have been performed.
 #' @param ratchHits stop when this many ratchet iterations have found the same best score.
-#' @param searchIter maximum rearrangements to perform on each bootstrap or ratchet iteration.
+#' @param searchIter maximum rearrangements to perform on each bootstrap or ratchet iteration.  
+#'                   To override this value for a single swapper function, set e.g. `attr(SwapperFunction, 'searchIter') <- 99`
 #' @param searchHits maximum times to hit best score before terminating a tree search within a ratchet iteration.
+#'                   To override this value for a single swapper function, set e.g. `attr(SwapperFunction, 'searchHits') <- 99`
 #' @param bootstrapIter maximum rearrangements to perform on each bootstrap iteration (default: \code{searchIter}).
 #' @param bootstrapHits maximum times to hit best score on each bootstrap iteration (default: \code{searchHits}).
 #' @template stopAtScoreParam
@@ -111,10 +113,13 @@ Ratchet <- function (tree, dataset,
     
     if (verbosity > 2L) cat ("\n - Rearranging from new candidate tree:")
     for (EdgeSwapper in swappers) {
+      at <- attributes(EdgeSwapper)
+      Argument <- function (arg) if (!is.null(at[[arg]])) at[[arg]] else get(arg)
       candidate <- EdgeListSearch(candidate, dataset=initializedData, TreeScorer=TreeScorer, 
-                                  EdgeSwapper=EdgeSwapper, maxIter=searchIter, 
-                                  stopAtScore=stopAtScore, stopAtPeak=stopAtPeak, stopAtPlateau = stopAtPlateau,
-                                  maxHits=searchHits, verbosity=verbosity-2L, ...)
+                                  EdgeSwapper=EdgeSwapper, 
+                                  maxIter=Argument("searchIter"), stopAtScore=Argument("stopAtScore"), 
+                                  stopAtPeak=Argument("stopAtPeak"), stopAtPlateau=Argument("stopAtPlateau"),
+                                  maxHits=Argument("searchHits"), verbosity=verbosity-2L, ...)
       candScore <- candidate[[3]]
       if (!is.null(stopAtScore) && candScore < stopAtScore + epsilon) {
         BREAK <- TRUE
@@ -193,6 +198,7 @@ ProfileRatchet <- function (tree, dataset,
                             BootstrapSwapper = if (class(swappers) == 'list')
                               swappers[[length(swappers)]] else swappers,
                             returnAll=FALSE, stopAtScore=NULL,
+                            stopAtPeak=FALSE, stopAtPlateau=0L, 
                             ratchIter=100, ratchHits=10, 
                             searchIter=2000, searchHits=40,
                             bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=1L, 
@@ -204,6 +210,7 @@ ProfileRatchet <- function (tree, dataset,
           returnAll=returnAll, suboptimal=suboptimal, stopAtScore=stopAtScore,
           ratchIter=ratchIter, ratchHits=ratchHits,
           searchIter=searchIter, searchHits=searchHits,
+          stopAtPeak=stopAtPeak, stopAtPlateau=stopAtPlateau, 
           bootstrapIter=searchIter, bootstrapHits=bootstrapHits, 
           verbosity=verbosity,  ...)
 }
@@ -216,6 +223,7 @@ IWRatchet <- function (tree, dataset, concavity=4,
                             BootstrapSwapper = if (class(swappers) == 'list')
                               swappers[[length(swappers)]] else swappers,
                             returnAll=FALSE, stopAtScore=NULL,
+                            stopAtPeak=FALSE, stopAtPlateau=0L, 
                             ratchIter=100, ratchHits=10, searchIter=2000, searchHits=40,
                             bootstrapIter=searchIter, bootstrapHits=searchHits, verbosity=1L, 
                             suboptimal=1e-08, ...) {
@@ -229,6 +237,7 @@ IWRatchet <- function (tree, dataset, concavity=4,
           swappers=swappers, BootstrapSwapper=BootstrapSwapper,
           returnAll=returnAll, suboptimal=suboptimal, stopAtScore=stopAtScore,
           ratchIter=ratchIter, ratchHits=ratchHits,
+          stopAtPeak=stopAtPeak, stopAtPlateau=stopAtPlateau, 
           searchIter=searchIter, searchHits=searchHits,
           bootstrapIter=searchIter, bootstrapHits=bootstrapHits, 
           verbosity=verbosity, ...)
