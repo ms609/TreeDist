@@ -40,17 +40,21 @@ names(timestart) <- names(timeend) <- names(scores)
 
 #install_github('ms609/inapplicable', rel='cefb5669352aca6425516805f60108063383b6c2')
 
-myDataset <- 1
+myDataset <- 13
 ## Find a good searchHits value
 dataName <- names(scores)[myDataset]
 
 tree <- nj.tree[[dataName]]
 dataset <- inapplicable.phyData[[dataName]]
 
+attr(AllTBR, 'stopAtPlateau') <- 4L
+
 Rprof()
-Ratchet(nj.tree[[dataName]], inapplicable.phyData[[dataName]], swappers=AllTBR, stopAtScore=scores[[dataName]], 
-        ratchHits=1000, ratchIter=10000, searchIter=3200, searchHits=35, bootstrapIter = 6L, stopAtPeak=TRUE,
-        stopAtPlateau=10, verbosity=50L)
+Ratchet(nj.tree[[dataName]], inapplicable.phyData[[dataName]],
+          swappers=list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap, AllTBR), BootstrapSwapper=RootedNNISwap,
+        stopAtScore=scores[[dataName]], ratchHits=1000, ratchIter=10000, searchIter=3200, searchHits=35, verbosity=5L)
+ 
+
 Rprof(NULL)
 summaryRprof()
 
