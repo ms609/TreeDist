@@ -149,7 +149,7 @@ TreeSearch <- function (tree, dataset,
                         TreeScorer     = MorphyLength,
                         EdgeSwapper    = RootedTBRSwap,
                         maxIter = 100L, maxHits = 20L, forestSize = 1L,
-                        stopAtPeak = NULL, stopAtPlateau = 0L,
+                        stopAtPeak = FALSE, stopAtPlateau = 0L,
                         verbosity = 1L, ...) {
   # initialize tree and data
   if (dim(tree$edge)[1] != 2 * tree$Nnode) {
