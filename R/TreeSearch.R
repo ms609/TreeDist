@@ -61,9 +61,9 @@ EdgeListSearch <- function (edgeList, dataset,
       ###}
     } else {
       if (scoreThisIteration < bestScore + epsilon) {
+        if (scoreThisIteration + epsilon < bestScore) unimprovedSince <- -1L
         bestScore <- scoreThisIteration
         edgeList  <- candidateLists
-        if (scoreThisIteration + epsilon < bestScore) unimprovedSince <- -1L
         if (!is.null(stopAtScore) && bestScore < stopAtScore + epsilon) return(edgeList)
       } else if (stopAtPeak && scoreThisIteration > bestScore + epsilon) {
         if (verbosity > 1L) cat("\n    ! Iteration", iter, "- No TBR rearrangement improves score.",
