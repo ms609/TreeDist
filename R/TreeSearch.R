@@ -71,11 +71,13 @@ EdgeListSearch <- function (edgeList, dataset,
         break
       }
       unimprovedSince <- unimprovedSince + 1L
-      if (stopAtPlateau > 0L && verbosity > 1L) cat(" Last improvement", unimprovedSince, "iterations ago.")
-      if (stopAtPlateau > 0L && unimprovedSince >= stopAtPlateau) {
-        if (verbosity > 1L) cat("\n  - Terminating search, as score has not improved over past",
+      if (stopAtPlateau > 0L) {
+        if (verbosity > 2L && unimprovedSince > 0L) cat(" Last improvement", unimprovedSince, "iterations ago.")
+        if (unimprovedSince >= stopAtPlateau) {
+          if (verbosity > 1L) cat("\n  - Terminating search, as score has not improved over past",
                                 unimprovedSince, "searches.")
-        break
+          break
+        }
       }
     }
     if (hits >= maxHits) {
