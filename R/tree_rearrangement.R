@@ -97,7 +97,6 @@ RootTree <- function (tree, outgroupTips) {
     stop("Outgroup tips", paste(outgroupTips, collapse=', '), 
          "not found in tree's tip labels.")
   }
-
   tipNos <- which(tree$tip.label %in% outgroupTips)
   ancestry <- unlist(Ancestors(tree, tipNos))
   ancestryTable <- table(ancestry)
