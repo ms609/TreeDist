@@ -13,23 +13,26 @@ Ratchet(tree, dataset, InitializeData = PhyDat2Morphy,
   Bootstrapper = MorphyBootstrap, swappers = list(TBRSwap, SPRSwap,
   NNISwap), BootstrapSwapper = if (class(swappers) == "list")
   swappers[[length(swappers)]] else swappers, returnAll = FALSE,
-  stopAtScore = NULL, ratchIter = 100, ratchHits = 10,
-  searchIter = 4000, searchHits = 42, bootstrapIter = searchIter,
-  bootstrapHits = searchHits, verbosity = 1L, suboptimal = 1e-08, ...)
+  stopAtScore = NULL, stopAtPeak = FALSE, stopAtPlateau = 0L,
+  ratchIter = 100, ratchHits = 10, searchIter = 4000, searchHits = 42,
+  bootstrapIter = searchIter, bootstrapHits = searchHits, verbosity = 1L,
+  suboptimal = 1e-08, ...)
 
 ProfileRatchet(tree, dataset, swappers = list(TBRSwap, SPRSwap, NNISwap),
   BootstrapSwapper = if (class(swappers) == "list")
   swappers[[length(swappers)]] else swappers, returnAll = FALSE,
-  stopAtScore = NULL, ratchIter = 100, ratchHits = 10,
-  searchIter = 2000, searchHits = 40, bootstrapIter = searchIter,
-  bootstrapHits = searchHits, verbosity = 1L, suboptimal = 1e-08, ...)
+  stopAtScore = NULL, stopAtPeak = FALSE, stopAtPlateau = 0L,
+  ratchIter = 100, ratchHits = 10, searchIter = 2000, searchHits = 40,
+  bootstrapIter = searchIter, bootstrapHits = searchHits, verbosity = 1L,
+  suboptimal = 1e-08, ...)
 
 IWRatchet(tree, dataset, concavity = 4, swappers = list(TBRSwap, SPRSwap,
   NNISwap), BootstrapSwapper = if (class(swappers) == "list")
   swappers[[length(swappers)]] else swappers, returnAll = FALSE,
-  stopAtScore = NULL, ratchIter = 100, ratchHits = 10,
-  searchIter = 2000, searchHits = 40, bootstrapIter = searchIter,
-  bootstrapHits = searchHits, verbosity = 1L, suboptimal = 1e-08, ...)
+  stopAtScore = NULL, stopAtPeak = FALSE, stopAtPlateau = 0L,
+  ratchIter = 100, ratchHits = 10, searchIter = 2000, searchHits = 40,
+  bootstrapIter = searchIter, bootstrapHits = searchHits, verbosity = 1L,
+  suboptimal = 1e-08, ...)
 
 RatchetConsensus(tree, dataset, ratchHits = 10, searchIter = 500,
   searchHits = 20, verbosity = 0L, swappers = list(RootedNNISwap),
@@ -74,13 +77,31 @@ within \code{Bootstrapper}.}
 
 \item{stopAtScore}{stop search as soon as this score is hit or beaten.}
 
+\item{stopAtPeak}{Logical specifying whether to terminate search once a subsequent 
+iteration recovers a sub-optimal score. Useful with methods that
+return all trees one rearrangement from the current tree, such 
+as \code{\link{AllTBR}}.  Will be overridden if a passed function
+has an attribute `stopAtPeak` set by
+`attr(FunctionName, 'stopAtPeak') <- TRUE`.}
+
+\item{stopAtPlateau}{Integer. If > 0, tree search will terminate if the score 
+has not improved after `stopAtPlateau` iterations.
+Useful with methods that return all trees one
+rearrangement from the current tree, such as 
+\code{\link{AllTBR}}.
+Will be overridden if a passed function has an attribute
+`stopAtPlateau` set by `attr(FunctionName,
+'stopAtPlateau') <- TRUE`.}
+
 \item{ratchIter}{stop when this many ratchet iterations have been performed.}
 
 \item{ratchHits}{stop when this many ratchet iterations have found the same best score.}
 
-\item{searchIter}{maximum rearrangements to perform on each bootstrap or ratchet iteration.}
+\item{searchIter}{maximum rearrangements to perform on each bootstrap or ratchet iteration.
+To override this value for a single swapper function, set e.g. `attr(SwapperFunction, 'searchIter') <- 99`}
 
-\item{searchHits}{maximum times to hit best score before terminating a tree search within a ratchet iteration.}
+\item{searchHits}{maximum times to hit best score before terminating a tree search within a ratchet iteration.
+To override this value for a single swapper function, set e.g. `attr(SwapperFunction, 'searchHits') <- 99`}
 
 \item{bootstrapIter}{maximum rearrangements to perform on each bootstrap iteration (default: \code{searchIter}).}
 

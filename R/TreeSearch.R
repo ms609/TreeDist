@@ -107,6 +107,8 @@ EdgeListSearch <- function (edgeList, dataset,
 #' @template EdgeSwapperParam
 #' @param maxIter the maximum number of iterations to perform before abandoning the search.
 #' @param maxHits the maximum times to hit the best pscore before abandoning the search.
+#' @template stopAtPeakParam
+#' @template stopAtPlateauParam
 #' @param forestSize the maximum number of trees to return - useful in concert with \code{\link{consensus}}.
 #'
 #' @template InitializeDataParam

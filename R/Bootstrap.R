@@ -5,6 +5,8 @@
 #' @template EdgeSwapperParam
 #' @param maxIter maximum number of iterations to perform in tree search
 #' @param maxHits maximum number of hits to accomplish in tree search
+#' @template stopAtPeakParam
+#' @template stopAtPlateauParam
 #' @template verbosityParam
 #' @param \dots further parameters to send to \code{TreeScorer}
 #'
