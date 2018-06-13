@@ -49,13 +49,7 @@
 #' @export
 ReadTntTree <- function (filename, relativePath = NULL, keepEnd = 1L) {
   fileText <- readLines(filename)
-  trees <- lapply(fileText[2:(length(fileText)-1)], function (treeText) {
-    treeText <- gsub("(\\d+)", "\\1,", treeText, perl=TRUE)
-    treeText <- gsub(")(", "),(", treeText, fixed=TRUE)
-    treeText <- gsub("*", ";", treeText, fixed=TRUE)
-    # Return:
-    read.tree(text=gsub(", )", ")", treeText, fixed=TRUE))
-  })
+  trees <- lapply(fileText[2:(length(fileText)-1)], TNTText2Tree)
   
   taxonFile <- gsub("tread 'tree(s) from TNT, for data in ", '', fileText[1], fixed=TRUE)
   taxonFile <- gsub("'", '', gsub('\\', '/', taxonFile, fixed=TRUE), fixed=TRUE)
@@ -89,6 +83,17 @@ ReadTntTree <- function (filename, relativePath = NULL, keepEnd = 1L) {
     trees
   }
   
+}
+
+#' @documentIn ReadTntTree Converts text representation of a tree in TNT to an object of class `phylo`
+#' @author Martin R. Smith
+#' @export
+TNTText2Tree <- function (treeText) {
+  treeText <- gsub("(\\d+)", "\\1,", treeText, perl=TRUE)
+  treeText <- gsub(")(", "),(", treeText, fixed=TRUE)
+  treeText <- gsub("*", ";", treeText, fixed=TRUE)
+  # Return:
+  read.tree(text=gsub(", )", ")", treeText, fixed=TRUE))
 }
 
 #' Extract taxa from a matrix block
