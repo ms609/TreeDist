@@ -97,9 +97,16 @@ RootTree <- function (tree, outgroupTips) {
     stop("Outgroup tips", paste(outgroupTips, collapse=', '), 
          "not found in tree's tip labels.")
   }
-  tipNos <- which(tree$tip.label %in% outgroupTips)
+  tipNos <- which(tipLabels %in% outgroupTips)
   ancestry <- unlist(Ancestors(tree, tipNos))
   ancestryTable <- table(ancestry)
-  lca <- max(as.integer(names(ancestryTable[ancestryTable == length(outgroupTips)])))
+  lineage <- as.integer(names(ancestryTable))
+  lca <- max(lineage[ancestryTable == length(outgroupTips)])
+  
+  rootNode <- length(tipLabels) + 1L
+  if (lca == rootNode) {
+    lca <- lineage[lineage - c(lineage[-1], 0) != -1][1] + 1L
+  }
+  
   Renumber(root(tree, Descendants(tree, lca)[[1]], resolve.root = TRUE))
 }
