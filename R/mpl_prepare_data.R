@@ -45,12 +45,18 @@ StringToPhyDat <- StringToPhydat <- function (string, tips, byTaxon = TRUE) {
 #' @export
 PhyToString <- function (phy, ps='', useIndex=TRUE, byTaxon=TRUE, concatenate=TRUE) {
   at <- attributes(phy)
-  phyLevels <- at$allLevels		
-  phyChars <- at$nr		
-  phyContrast <- at$contrast == 1		
-  phyIndex <- if (useIndex) at$index else seq_len(phyChars)		
-  outLevels <- seq_len(ncol(phyContrast)) - 1		
-  if (any(inappLevel <- phyLevels == '-')) outLevels[which(phyContrast[inappLevel])] <- '-'		
+  phyLevels <- at$allLevels
+  phyChars <- at$nr
+  phyContrast <- at$contrast == 1
+  phyIndex <- if (useIndex) at$index else seq_len(phyChars)
+  outLevels <- seq_len(ncol(phyContrast)) - 1
+  if (any(inappLevel <- phyLevels == '-')) {
+    inappColumn <- which(phyContrast[inappLevel])
+    if (length(inappColumn) > 1) {
+      warning("More than one inapplicable column identified.  Is phy$contrast malformed?")
+    }
+    outLevels[inappColumn] <- '-'
+  }
 
   levelLengths <- vapply(outLevels, nchar, integer(1))
   longLevels <- levelLengths > 1
