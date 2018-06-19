@@ -28,6 +28,8 @@ ConsensusWithout <- function (trees, tip, ...) {
 #' @export
 #' @author Martin R. Smith
 MarkMissing <- function (tip, position='bottomleft', ...) {
-  legend(position, legend=gsub('_', ' ', tip, fixed=TRUE),
+  if (length(tip) > 0) {
+    legend(position, legend=gsub('_', ' ', tip, fixed=TRUE),
          lwd=1, lty=2, bty='n', ...)
+  }
 }
