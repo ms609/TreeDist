@@ -53,7 +53,7 @@ PhyToString <- function (phy, ps='', useIndex=TRUE, byTaxon=TRUE, concatenate=TR
   if (any(inappLevel <- phyLevels == '-')) {
     inappColumn <- which(phyContrast[inappLevel])
     if (length(inappColumn) > 1) {
-      warning("More than one inapplicable column identified.  Is phy$contrast malformed?")
+      warning("More than one inapplicable level identified.  Is phy$levels malformed?")
     }
     outLevels[inappColumn] <- '-'
   }
