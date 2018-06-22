@@ -245,6 +245,17 @@ IWRatchet <- function (tree, dataset, concavity=4,
           verbosity=verbosity, ...)
 }
 
+#' Unique trees (ignoring 'hits' attribute)
+#' @author Martin R. Smith
+#' @keywords internal
+#' @export
+UniqueExceptHits <- function (trees) {
+  unique(lapply(trees, function(tree) {
+    attr(tree, 'hits') <- NULL
+    tree
+  }))
+}
+
 #' @describeIn Ratchet returns a list of optimal trees produced by nSearch Ratchet searches
 #' @param nSearch Number of Ratchet searches to conduct (for RatchetConsensus)
 #' @export
@@ -256,7 +267,7 @@ RatchetConsensus <- function (tree, dataset, ratchHits=10,
                                                          searchIter=searchIter, searchHits=searchHits, verbosity=verbosity, swappers=swappers, 
                                                          stopAtScore=stopAtScore, ...))
   scores <- vapply(trees, function (x) attr(x, 'score'), double(1))
-  trees <- unique(trees[scores == min(scores)])
+  trees <- UniqueExceptHits(trees[scores == min(scores)])
   cat ("Found", length(trees), 'unique trees from', nSearch, 'searches.')
   return (trees)
 }
@@ -277,7 +288,8 @@ IWRatchetConsensus <- function (tree, dataset, ratchHits=10, concavity=4,
                               verbosity=verbosity, swappers=swappers, 
                               stopAtScore=stopAtScore, ...))
   scores <- vapply(trees, function (x) attr(x, 'score'), double(1))
-  trees <- unique(trees[scores == min(scores)])
+  trees <- UniqueExceptHits(trees[scores == min(scores)])
+  
   cat ("Found", length(trees), 'unique trees from', nSearch, 'searches.')
   return (trees)
 }
