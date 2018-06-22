@@ -10,6 +10,10 @@
  - FitchSteps now supports datasets with tips not found in tree
  - Improve portability of function `ReadTntTree`
 
+## Bug fixes
+ - [IW]RatchetConsensus now considers trees identical even if they've been hit 
+   a different number of times
+
 # TreeSearch 0.1.2
 
 ## Bug fixes
