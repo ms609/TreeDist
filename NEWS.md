@@ -6,6 +6,8 @@
  - `TBRMoves` reports all possible TBR rearrangements
  
 ## Enhancements
+ - [IW]RatchetConsensus renamed to [IW]MultiRatchet, giving a better description 
+     of the function's purpose
  - Don't warn about missing EOL when reading Nexus or TNT files
  - Add new 12-colour colourblind-friendly palette
  - FitchSteps now supports datasets with tips not found in tree

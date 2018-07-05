@@ -256,10 +256,12 @@ UniqueExceptHits <- function (trees) {
   }))
 }
 
-#' @describeIn Ratchet returns a list of optimal trees produced by nSearch Ratchet searches
+#' @describeIn Ratchet returns a list of optimal trees produced by nSearch 
+#'  Ratchet searches, from which a consensus tree can be generated using 
+#'  [ape::consensus] or [ConsensusWithout].
 #' @param nSearch Number of Ratchet searches to conduct (for RatchetConsensus)
 #' @export
-RatchetConsensus <- function (tree, dataset, ratchHits=10, 
+MultiRatchet <- function (tree, dataset, ratchHits=10, 
                               searchIter=500, searchHits=20, verbosity=0L, 
                               swappers=list(RootedNNISwap), nSearch=10, 
                               stopAtScore=NULL, ...) {
@@ -272,11 +274,10 @@ RatchetConsensus <- function (tree, dataset, ratchHits=10,
   return (trees)
 }
 
-
 #' @describeIn Ratchet returns a list of optimal trees produced by nSearch 
 #'                     Ratchet searches, using implied weighting
 #' @export
-IWRatchetConsensus <- function (tree, dataset, ratchHits=10, concavity=4,
+IWMultiRatchet <- function (tree, dataset, ratchHits=10, concavity=4,
                               searchIter=500, searchHits=20, verbosity=0L, 
                               swappers=list(RootedNNISwap), nSearch=10, 
                               suboptimal=suboptimal,
@@ -293,3 +294,8 @@ IWRatchetConsensus <- function (tree, dataset, ratchHits=10, concavity=4,
   cat ("Found", length(trees), 'unique trees from', nSearch, 'searches.')
   return (trees)
 }
+
+#' @describeIn Ratchet deprecated alias for MultiRatchet
+RatchetConsensus <- MultiRatchet
+#' @describeIn Ratchet deprecated alias for MultiRatchet
+IWRatchetConsensus <- IWMultiRatchet
