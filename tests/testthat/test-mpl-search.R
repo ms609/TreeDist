@@ -64,15 +64,36 @@ test_that("Jackknife supports are correct", {
   expect_equal(1, length(unique(list(true_tree), list(start_tree)))) # Right tree found
   jackTrees <- Jackknife(strict, dataset, resampleFreq=4/7, searchIter=200L, searchHits=7L, 
                          EdgeSwapper=RootedTBRSwap, jackIter=20L, verbosity=0L)
-  expect_equal(c(20, 20, 18, 19, 18, 18), as.numeric(SplitFrequency(strict, jackTrees)))
+  # Note: one cause of failure could be a change in characters sampled, due to randomness
+  expect_true(length(unique(jackTrees)) > 2L)
 })
 
-test_that("Node support colours consistent") {
+test_that("Node supports calculated correctly", {
+  treeSample <- list(
+    correct = ape::read.tree(text = "((((((A,B),C),D),E),F),out);"),
+    swapFE  = ape::read.tree(text = "((((((A,B),C),D),F),E),out);"),
+    DEClade = ape::read.tree(text = "(((((A,B),C),(D,E)),F),out);"),
+    swapBC  = ape::read.tree(text = "((((((A,C),B),D),E),F),out);"),
+    DbyA    = ape::read.tree(text = "((((((A,D),C),B),E),F),out);")
+  )
+  #plot(strict); nodelabels(SplitFrequency(strict, treeSample))
+  expect_equal(c(5, 5, 4, 4, 4, 3), 
+               as.numeric(SplitFrequency(treeSample$correct, treeSample)))
+  
+  balanced <- ape::read.tree(text="((D, (E, (F, out))), (C, (A, B)));")
+  # Internal nodes on each side of root
+  # plot(balanced); nodelabels(SplitFrequency(balanced, treeSample))
+  expect_equal(c(5, 4, 4, 4, 4, 3), 
+               as.numeric(SplitFrequency(balanced, treeSample)))
+  
+})
+
+test_that("Node support colours consistent", {
   expect_equal('red', SupportColour(NA))
   expect_equal('red', SupportColour(2))
   expect_equal('red', SupportColor(-2)) # Check alternative spelling 
   expect_equal('#ffffff00', SupportColour(1, show1=FALSE))
-}
+})
 
 context("Implied weights: Tree search")
 test_that("tree can be found", {
