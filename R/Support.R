@@ -17,7 +17,7 @@ SplitFrequency <- function(referenceTree, forest) {
     as.character(min(c(sum(powersOf2[included]), sum(powersOf2[!included]))))
   }
   
-  treeSplits <- Descendants(referenceTree, nTip + seq_len(Nnode(referenceTree)),
+  treeSplits <- Descendants(referenceTree, nTip + seq_len(referenceTree$Nnode),
                             type='tips')
   splitNumbers <- vapply(treeSplits, SplitNumber, character(1), referenceTree)
   
