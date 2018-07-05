@@ -135,17 +135,16 @@ Note that it's especially important to retain the position of the root here:
 a single topology, if rooted in different places, can lead to an unresolved consensus.
 
 ```{r Consensus}
-my.consensus <- RatchetConsensus(best.tree, my.phyDat, swappers=
-                                 list(RootedTBRSwap, RootedNNISwap))
+some.optimal.trees <- MultiRatchet(best.tree, my.phyDat, swappers=
+                                   list(RootedTBRSwap, RootedNNISwap))
 ```
 
-If ten independent runs ended up at a number of different trees, there may be many more optimal trees out there to 
-be found; perhaps we could repeat `RatchetConsensus` with `nSearch = 250` for a more
-exhaustive sampling of tree space.  That would take a while though; for now, let's check out our consensus tree:
+If ten independent runs ended up at a number of different trees, there may be many more optimal trees out there to  be found; perhaps we could repeat `MultiRatchet` with `nSearch = 250` for a more exhaustive sampling of tree space.
+That would take a while though; for now, let's check out our consensus tree:
 
 ```{r Plot consensus}
 par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
-plot(ape::consensus(my.consensus))
+plot(ape::consensus(some.optimal.trees))
 ```
 
 
@@ -156,7 +155,7 @@ The simplest way to conduct an implied weights search is to use the functions
 ```R 
 IWTreeSearch
 IWRatchet
-IWRatchetConsensus
+IWMultiRatchet
 ```
 which operate in the same fashion as their equally-weighted counterparts,
 with the option of specifying a concavity constant (_k_) using 
