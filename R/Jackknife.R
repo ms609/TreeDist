@@ -32,9 +32,12 @@ Jackknife <- function (tree, dataset, resampleFreq = 2/3,
     stop("resampleFreq of ", resampleFreq, " is too high; can't keep all ",
          length(deindexedChars), " characters.")
   }
+  if (verbosity > 10L) cat("\n * Beginning search:")
+  
+  # Conduct jackIter replicates:
   jackEdges <- vapply(seq_len(jackIter), function (x) {
     if (verbosity > 0L) {
-      cat(" * Jackknife iteration", x, "/", jackIter)
+      cat("\n * Jackknife iteration", x, "/", jackIter)
     }
     resampling <- tabulate(sample(deindexedChars, charsToKeep, replace=FALSE),
                            nbins=length(startWeights))
@@ -51,10 +54,7 @@ Jackknife <- function (tree, dataset, resampleFreq = 2/3,
                           verbosity=verbosity-1L, ...)
     res[1:2]
   }, edgeList)
-  errors <- vapply(eachChar, function (i) 
-    mpl_set_charac_weight(i, startWeights[i], morphyObj), integer(1))
-  if (any(errors)) stop ("Error resampling morphy object: ", mpl_translate_error(unique(errors[errors < 0L])))
-  if (mpl_apply_tipdata(morphyObj) -> error) stop("Error applying tip data: ", mpl_translate_error(error))
+  
   jackTrees <- apply(jackEdges, 2, function(edgeList) {
     ret <- tree
     ret$edge <- ListToMatrix(edgeList)

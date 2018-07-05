@@ -39,10 +39,14 @@ SplitFrequency <- function(referenceTree, forest) {
 #' @return A string containing the hexadecimal code for a colour picked from a
 #'         diverging scale, or `red` if a value is invalid.
 #' @importFrom colorspace diverge_hcl
+#' @export
 SupportColour <- function (support, show1=TRUE) {
   # continuousScale <- rev(colorspace::heat_hcl(101, h=c(300, 75), c.=c(35, 95), l=c(15, 90), power=c(0.8, 1.2))) # Viridis prefered
   divergingScale <- rev(diverge_hcl(101, h=c(260, 0), c=100, l=c(50, 90), power=1.0))
   ifelse(is.na(support) | support < 0 | support > 1 | support == '', 'red',
          ifelse(support == 1 & !show1, "#ffffff00", divergingScale[(support * 100) + 1L]))
 }
+
+#' @export
+SupportColor <- SupportColour
 

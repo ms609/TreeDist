@@ -135,7 +135,7 @@ Note that it's especially important to retain the position of the root here:
 a single topology, if rooted in different places, can lead to an unresolved consensus.
 
 ```{r Consensus}
-some.optimal.trees <- MultiRatchet(best.tree, my.phyDat, swappers=
+some.optimal.trees <- MultiRatchet(best.tree, nSearch=20, my.phyDat, swappers=
                                    list(RootedTBRSwap, RootedNNISwap))
 ```
 
@@ -157,7 +157,8 @@ plot(majority.consensus)
 
 node.frequency <- SplitFrequency(majority.consensus, some.optimal.trees) /
   length(some.optimal.trees)
-nodelabels(paste('\n\n', node.frequency), col=SupportColour(node.frequency), 
+nodelabels(paste('\n\n', signif(node.frequency, 2)), 
+           col=SupportColour(node.frequency), 
            adj=0, pos=2, frame='none')
 
 ```
@@ -165,11 +166,15 @@ nodelabels(paste('\n\n', node.frequency), col=SupportColour(node.frequency),
 Node support can be generated using Jackknife resampling:
 
 ```{r Jackknife-annotations}
-jack.trees <- Jackknife(best.tree, my.phyDat, EdgeSwapper=RootedTBRSwap,
-                        jackIter=10, verbosity=1)
-jack.support <- SplitFrequency(strict.consensus, jack.trees)
+#jack.trees <- Jackknife(best.tree, my.phyDat, EdgeSwapper=RootedTBRSwap,
+#                        jackIter=10, verbosity=1)
 par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
 plot(strict.consensus)
+
+jack.support <- SplitFrequency(strict.consensus, jack.trees) / length(jack.trees)
+nodelabels(paste('\n\n', signif(jack.support, 2)), 
+           col=SupportColour(jack.support), 
+           adj=0, pos=2, frame='none')
 ```
 
 
