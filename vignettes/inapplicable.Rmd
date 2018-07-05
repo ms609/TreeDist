@@ -167,7 +167,7 @@ Node support can be generated using Jackknife resampling:
 
 ```{r Jackknife-annotations}
 jack.trees <- Jackknife(best.tree, my.phyDat, EdgeSwapper=RootedTBRSwap,
-                        jackIter=50, verbosity=0)
+                        jackIter=25, verbosity=0)
 par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
 plot(strict.consensus)
 

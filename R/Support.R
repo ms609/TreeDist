@@ -27,8 +27,12 @@ SplitFrequency <- function(referenceTree, forest) {
   }, character(nTip - 1L)))
   
   occurrences <- forestSplits[splitNumbers]
-  # Root split appears twice!
-  occurrences[duplicated(splitNumbers)] <- occurrences[2] <- occurrences[2] / 2L
+  repeatedRoot <- duplicated(splitNumbers)
+  if (any(repeatedRoot)) {
+    # Will occur iff both descendants of root are internal nodes
+    # Causes double counting
+    occurrences[repeatedRoot] <- occurrences[2] <- occurrences[2] / 2L
+  }
   occurrences
 }
 
