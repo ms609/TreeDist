@@ -6,6 +6,7 @@
  - `TBRMoves` reports all possible TBR rearrangements
  
 ## Enhancements
+ - Don't warn about missing EOL when reading Nexus or TNT files
  - Add new 12-colour colourblind-friendly palette
  - FitchSteps now supports datasets with tips not found in tree
  - Improve portability of function `ReadTntTree`

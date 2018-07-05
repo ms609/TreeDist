@@ -187,7 +187,8 @@ ExtractTaxa <- function (matrixLines, character_num=NULL, session=NULL) {
 #'
 ReadCharacters <- function (filepath, character_num=NULL, session=NULL) {
   
-  lines <- readLines(filepath)
+  lines <- readLines(filepath, warn=FALSE) # Missing EOL is quite common, so 
+                                           # warning not helpful
   nexusComment.pattern <- "\\[[^\\]*\\]"
   lines <- gsub(nexusComment.pattern, "", lines)
   lines <- trimws(lines)
@@ -251,7 +252,8 @@ ReadCharacters <- function (filepath, character_num=NULL, session=NULL) {
 #' @describeIn ReadCharacters Read characters from TNT file
 ReadTntCharacters <- function (filepath, character_num=NULL, session=NULL) {
   
-  lines <- readLines(filepath)
+  lines <- readLines(filepath, warn=FALSE) # Missing EOL might occur in user-
+                                           # generated file, so warning not helpful
   tntComment.pattern <- "'[^']*']"
   lines <- gsub(tntComment.pattern, "", lines)
   lines <- trimws(lines)
