@@ -144,7 +144,18 @@ That would take a while though; for now, let's check out our consensus tree:
 
 ```{r Plot consensus}
 par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
-plot(ape::consensus(some.optimal.trees))
+strict.consensus <- ape::consensus(some.optimal.trees)
+plot(strict.consensus)
+```
+
+Node support can be generated using Jackknife resampling:
+
+```{r Plot consensus}
+jack.trees <- JackknifeTrees(best.tree, my.phydat, swappers=
+                             list(RootedTBRSwap, RootedNNISwap))
+
+par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
+plot(strict.consensus)
 ```
 
 

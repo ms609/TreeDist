@@ -4,6 +4,7 @@
  - `RootTree` function allows rooting of tree on incompletely specified outgroup
  - `AllTBR` returns all trees one TBR rearrangement away
  - `TBRMoves` reports all possible TBR rearrangements
+ - `Jackknife` conducts Jackknife resampling
  
 ## Enhancements
  - [IW]RatchetConsensus renamed to [IW]MultiRatchet, giving a better description 
