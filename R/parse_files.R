@@ -85,7 +85,9 @@ ReadTntTree <- function (filename, relativePath = NULL, keepEnd = 1L) {
   
 }
 
-#' @documentIn ReadTntTree Converts text representation of a tree in TNT to an object of class `phylo`
+#' @describeIn ReadTntTree Converts text representation of a tree in TNT to an object of class `phylo`
+#' @param treeText Character string describing a tree, in the parenthetical 
+#'                 format output by TNT.
 #' @author Martin R. Smith
 #' @export
 TNTText2Tree <- function (treeText) {
@@ -361,8 +363,11 @@ ReadTntAsPhyDat <- function (filepath) {
 
 #' @describeIn ReadCharacters A convenient wrapper for \pkg{phangorn}'s \code{phyDat},
 #' which converts a list of morphological characters into a phyDat object.
+#' Assumes that 
 #'
-#' @param dataset list of taxa and characters, in the format produced by [read.nexus.data].
+#' @param dataset list of taxa and characters, in the format produced by [read.nexus.data]:
+#'                a list of sequences each made of a single vector of mode character,
+#'                and named with the taxon name.
 #'
 #' @export
 PhyDat <- function (dataset) {
