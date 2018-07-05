@@ -5,6 +5,7 @@
  - `AllTBR` returns all trees one TBR rearrangement away
  - `TBRMoves` reports all possible TBR rearrangements
  - `Jackknife` conducts Jackknife resampling
+ - `SplitFrequency` reports frequency of clades in a forest
  
 ## Enhancements
  - [IW]RatchetConsensus renamed to [IW]MultiRatchet, giving a better description 

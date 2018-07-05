@@ -24,6 +24,7 @@ BugReports: https://github.com/ms609/TreeSearch/issues
 Depends: R (>= 3.4.0)
 Imports: 
     ape (>= 5.0),
+    colorspace,
     memoise,
     phangorn (>= 2.2.1),
     R.cache,
