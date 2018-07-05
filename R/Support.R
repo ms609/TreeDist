@@ -47,6 +47,7 @@ SupportColour <- function (support, show1=TRUE) {
          ifelse(support == 1 & !show1, "#ffffff00", divergingScale[(support * 100) + 1L]))
 }
 
+#' @describeIn SupportColour alternative spelling
 #' @export
 SupportColor <- SupportColour
 

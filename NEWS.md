@@ -6,6 +6,7 @@
  - `TBRMoves` reports all possible TBR rearrangements
  - `Jackknife` conducts Jackknife resampling
  - `SplitFrequency` reports frequency of clades in a forest
+ - `SupportColour` allows visual marking of support values
  
 ## Enhancements
  - [IW]RatchetConsensus renamed to [IW]MultiRatchet, giving a better description 
