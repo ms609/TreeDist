@@ -1,8 +1,11 @@
-#' @describeIn Ratchet Jackknife resampling
+#' @describeIn Ratchet Jackknife resampling. Note that at present this assumes that 
+#' `InitializeData` will return a morphy object; if this doesn't hold for you, please
+#' let me know and I'll make the function more general.
 #' @template EdgeSwapperParam
 #' @param resampleFreq Double between 0 and 1 stating proportion of characters to resample
 #' @param jackIter Integer specifying number of jackknife iterations to conduct
 #' @return a list of trees recovered after jackknife iterations
+#' @author Martin R. Smith
 #' @export
 Jackknife <- function (tree, dataset, resampleFreq = 2/3,
                        InitializeData = PhyDat2Morphy,
@@ -18,8 +21,8 @@ Jackknife <- function (tree, dataset, resampleFreq = 2/3,
   edgeList <- MatrixToList(tree$edge)
   edgeList <- RenumberEdges(edgeList[[1]], edgeList[[2]])
   
-  initializedData <- InitializeData(dataset)
-  on.exit(initializedData <- CleanUpData(initializedData))
+  morphyObj <- InitializeData(dataset)
+  on.exit(morphyObj <- CleanUpData(morphyObj))
   
   startWeights <- MorphyWeights(morphyObj)[1, ]
   eachChar <- seq_along(startWeights)
