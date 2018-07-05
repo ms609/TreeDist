@@ -74,7 +74,7 @@ rownames(raw_data) <- taxon_names
 
 ### From a Nexus file
 
-`TreeSearch` contains an inbuilt NEXUS parser:
+`TreeSearch` contains an inbuilt Nexus parser:
 
 ```R
 raw_data <- ReadCharacters(filename)
@@ -82,22 +82,18 @@ raw_data <- ReadCharacters(filename)
 as_phydat <- ReadAsPhyDat(filename)
 ```
 
-This will extract character names and codings from a dataset.  It's been written to work with datasets downloaded from [MorphoBank](https://morphobank.org/), but should work with most valid (and many invalid) NEXUS files.  If there's a file that's not being read correctly, please [let me know](https://github.com/ms609/TreeSearch/issues/new?title=Unsupported+NEXUS+file&body=Please%20attach%20the%20problematic%20NEXUS%20file%20and%20describe%20the%20issue&labels=enhancement) and I'll try to fix it.
+This will extract character names and codings from a dataset.  It's been written to work with datasets downloaded from [MorphoBank](https://morphobank.org/), but my aim is for this function to handle most valid (and many invalid) NEXUS files. 
+If you find a file that this function can't handle, please [let me know](https://github.com/ms609/TreeSearch/issues/new?title=Unsupported+NEXUS+file&body=Please%20attach%20the%20problematic%20NEXUS%20file%20and%20describe%20the%20issue&labels=enhancement) and I'll try to fix it.
 
-If your data is in a NEXUS file, you can read it using the preinstalled package `ape`:
+In the meantime, alternative Nexus parsers are available: try 
 
 ```R
 raw_data <- ape::read.nexus.data(filename)
 ```
-
-Non-standard elements of a Nexus file might be beyond 
-the capabilities of ape's parser.  In particular, you will need to replace spaces in 
-taxon names with an underscore, and to arrange all data into 
-a single block starting `BEGIN DATA`.  You'll need to strip out comments, 
-character definitions and separate taxon blocks.  
+Non-standard elements of a Nexus file might be beyond the capabilities of ape's parser.  In particular, you will need to replace spaces in taxon names with an underscore, and to arrange all data into a single block starting `BEGIN DATA`.  You'll need to strip out comments, character definitions and separate taxon blocks.  
 
 The function `readNexus` in package `phylobase` promises to be more powerful,
-yet I've not been able to get it to work.
+but I've not been able to get it to work.
 
 ### From a TNT file
 
