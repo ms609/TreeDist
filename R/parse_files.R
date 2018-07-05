@@ -362,12 +362,13 @@ ReadTntAsPhyDat <- function (filepath) {
 
 
 #' @describeIn ReadCharacters A convenient wrapper for \pkg{phangorn}'s \code{phyDat},
-#' which converts a list of morphological characters into a phyDat object.
-#' Assumes that 
+#' which converts a *list* of morphological characters into a phyDat object.
+#' If your morphological characters are in the form of a *matrix*, perhaps because
+#' they have been read using `read.table`, try [MatrixToPhyDat] instead.
 #'
 #' @param dataset list of taxa and characters, in the format produced by [read.nexus.data]:
 #'                a list of sequences each made of a single vector of mode character,
-#'                and named with the taxon name.
+#'                and named with the taxon name.  
 #'
 #' @export
 PhyDat <- function (dataset) {
