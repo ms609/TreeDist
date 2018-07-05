@@ -153,7 +153,9 @@ This function returns a tree modified by parsimony ratchet iterations.
 }
 \section{Functions}{
 \itemize{
-\item \code{Jackknife}: Jackknife resampling
+\item \code{Jackknife}: Jackknife resampling. Note that at present this assumes that 
+`InitializeData` will return a morphy object; if this doesn't hold for you, please
+let me know and I'll make the function more general.
 
 \item \code{ProfileRatchet}: Shortcut for Ratchet search under Profile Parsimony
 
@@ -192,6 +194,8 @@ quickIWResult <- IWRatchet(quickResult, Lobo.phy, concavity=2.5,
 Adapted from \code{\link[phangorn]{pratchet}} in the \pkg{phangorn} package.
 }
 \author{
+Martin R. Smith
+
 Martin R. Smith
 }
 \keyword{tree}
