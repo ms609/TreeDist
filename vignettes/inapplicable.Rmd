@@ -157,7 +157,7 @@ plot(majority.consensus)
 
 node.frequency <- SplitFrequency(majority.consensus, some.optimal.trees) /
   length(some.optimal.trees)
-nodelabels(paste('\n\n', signif(node.frequency, 2)), 
+ape::nodelabels(paste('\n\n', signif(node.frequency, 2)), 
            col=SupportColour(node.frequency), 
            adj=0, pos=2, frame='none')
 
@@ -166,13 +166,13 @@ nodelabels(paste('\n\n', signif(node.frequency, 2)),
 Node support can be generated using Jackknife resampling:
 
 ```{r Jackknife-annotations}
-#jack.trees <- Jackknife(best.tree, my.phyDat, EdgeSwapper=RootedTBRSwap,
-#                        jackIter=10, verbosity=1)
+jack.trees <- Jackknife(best.tree, my.phyDat, EdgeSwapper=RootedTBRSwap,
+                        jackIter=50, verbosity=0)
 par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
 plot(strict.consensus)
 
 jack.support <- SplitFrequency(strict.consensus, jack.trees) / length(jack.trees)
-nodelabels(paste('\n\n', signif(jack.support, 2)), 
+ape::nodelabels(paste('\n\n', signif(jack.support, 2)), 
            col=SupportColour(jack.support), 
            adj=0, pos=2, frame='none')
 ```
