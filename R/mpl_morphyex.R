@@ -86,7 +86,6 @@ mpl_init_Morphy <- function(numtaxa, numchars, morphyobj) {
     .Call("_R_wrap_mpl_init_Morphy", as.integer(numtaxa), as.integer(numchars), morphyobj)
 }
 
-
 #' Retrieve the number of taxa (rows) in the dataset.
 #'
 #' Retrieves the number of taxa (rows) in the dataset.
@@ -101,7 +100,6 @@ mpl_init_Morphy <- function(numtaxa, numchars, morphyobj) {
 mpl_get_numtaxa <- function(morphyobj) {
     .Call("_R_wrap_mpl_get_numtaxa", morphyobj)
 }
-
 
 #' Set the weight of a character in the dataset
 #'
@@ -139,7 +137,6 @@ mpl_get_charac_weight <- function (charID, morphyobj) {
                 morphyobj))
 }
 
-
 #' Retrieve the number of character (columns) in the dataset.
 #'
 #' Retrieves the number of character (columns) in the dataset.
@@ -154,7 +151,6 @@ mpl_get_charac_weight <- function (charID, morphyobj) {
 mpl_get_num_charac <- function(morphyobj) {
     .Call("_R_wrap_mpl_get_num_charac", morphyobj)
 }
-
 
 #' Attach a caller-specified list of symbols.
 #'
@@ -178,7 +174,6 @@ mpl_get_num_charac <- function(morphyobj) {
 mpl_attach_symbols <- function(symbols, morphyobj) {
     .Call("_R_wrap_mpl_attach_symbols", symbols, morphyobj)
 }
-
 
 #' Attach raw character state data (i.e. tip data).
 #'
@@ -218,7 +213,6 @@ mpl_get_symbols <- function(morphyobj) {
   .Call("_R_wrap_mpl_get_symbols", morphyobj)  
 }
 
-
 #' Sets a character's parsimony function type
 #'
 #' Set the parsimony function type to one defined in the
@@ -239,7 +233,6 @@ mpl_set_parsim_t <- function(char_id, tname = "typename", morphyobj) {
     .Call("_R_wrap_mpl_set_parsim_t", as.integer(char_id - 1L), tname, morphyobj)
 }
 
-
 #' Sets the number of internal nodes in the dataset
 #'
 #' This specifies the number of internal nodes over which
@@ -258,8 +251,6 @@ mpl_set_num_internal_nodes <- function(numnodes, morphyobj) {
     .Call("_R_wrap_mpl_set_num_internal_nodes", as.integer(numnodes), morphyobj)
 }
 
-
-
 #' Gets the number of internal nodal reconstruction sets being used by
 #' MorphyLib.
 #'
@@ -277,7 +268,6 @@ mpl_set_num_internal_nodes <- function(numnodes, morphyobj) {
 mpl_get_num_internal_nodes <- function(morphyobj) {
     .Call("_R_wrap_mpl_get_num_internal_nodes", morphyobj)
 }
-
 
 #' Commits parameters prior to nodal set calculations.
 #'
@@ -321,7 +311,6 @@ mpl_first_down_recon <- function(node_id, left_id, right_id, morphyobj) {
     .Call("_R_wrap_mpl_first_down_recon", as.integer(node_id), as.integer(left_id), as.integer(right_id), morphyobj)
 }
 
-
 #' Deletes the caller-input data.
 #'
 #' Deletes all of the user-input data and restores all parameters
@@ -337,7 +326,6 @@ mpl_first_down_recon <- function(node_id, left_id, right_id, morphyobj) {
 mpl_delete_rawdata <- function(morphyobj) {
     .Call("_R_wrap_mpl_delete_rawdata", morphyobj)
 }
-
 
 #' Reconstructs the second (uppass) nodal reconstructions.
 #'
@@ -365,7 +353,6 @@ mpl_first_up_recon <- function(node_id, left_id, right_id, anc_id, morphyobj) {
                  as.integer(right_id), as.integer(anc_id), morphyobj)
 }
 
-
 #' Performs the second nodal reconstructions for characters with
 #' inapplicability.
 #'
@@ -392,7 +379,6 @@ mpl_second_down_recon <- function(node_id, left_id, right_id, morphyobj) {
     .Call("_R_wrap_mpl_second_down_recon", as.integer(node_id), as.integer(left_id),
                  as.integer(right_id), morphyobj)
 }
-
 
 #' Finalises the ancestral state reconstructions for characters with 
 #' inapplicable values.
