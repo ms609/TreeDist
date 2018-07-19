@@ -84,8 +84,7 @@ RearrangeEdges <- function (parent, child, dataset, TreeScorer = MorphyLength,
 #' Roots a tree on the smallest clade containing the specified tips.
 #' 
 #' @template treeParam
-#' @param outgroupTips Character vector specifying the names of the tips to 
-#'                     include in the outgroup
+#' @template outgroupTipsParam
 #'                     
 #' @return A tree of class phylo, rooted on the smallest clade that contains the specified tips
 #' 
