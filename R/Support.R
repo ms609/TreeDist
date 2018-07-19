@@ -22,6 +22,7 @@
 #' @export
 #' 
 #' @examples {
+#'   library(ape)
 #'   set.seed(0) # Set seed so random trees are reproducable
 #'   tree1 <- rtree(7)
 #'   tree2 <- rtree(7)
