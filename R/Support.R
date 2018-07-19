@@ -71,11 +71,13 @@ ForestSplits <- function (forest) {
   tipIndex <- sort(forest[[1]]$tip.label)
   nTip <- length(tipIndex)
   powersOf2 <- as.bigz(2L ^ (seq_len(nTip) - 1L))
-  table(vapply(forest, function (tr) {
+  splits <- table(vapply(forest, function (tr) {
     # +2: Don't consider root node (not a node) or first node (duplicated)
     vapply(Descendants(tr, nTip + 2L + seq_len(nTip - 3L), type='tips'),
            SplitNumber, character(1), tr, tipIndex, powersOf2)
   }, character(nTip - 3L)))
+  # Return:
+  splits[names(splits) != '0'] # 0 will occur when a tree contains polytomies
 }
 
 #' Support colour
