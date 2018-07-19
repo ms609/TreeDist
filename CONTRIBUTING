@@ -1,0 +1,6 @@
+Thanks for your interest in contributing to this package.
+Here are some notes about how the code is formatted:
+
+* Code formatting
+- We follow [Google's R style guide](https://google.github.io/styleguide/Rguide.xml)
+- We use camelCase for variable names, and TitleCase for function names.
