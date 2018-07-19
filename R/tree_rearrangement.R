@@ -91,22 +91,27 @@ RearrangeEdges <- function (parent, child, dataset, TreeScorer = MorphyLength,
 #' 
 #' @author Martin R. Smith
 #' @importFrom phangorn Ancestors Descendants
+#' @importFrom ape root
 RootTree <- function (tree, outgroupTips) {
   tipLabels <- tree$tip.label
   if (!all(outgroupTips %in% tipLabels)) {
     stop("Outgroup tips", paste(outgroupTips, collapse=', '), 
          "not found in tree's tip labels.")
   }
-  tipNos <- which(tipLabels %in% outgroupTips)
-  ancestry <- unlist(Ancestors(tree, tipNos))
-  ancestryTable <- table(ancestry)
-  lineage <- as.integer(names(ancestryTable))
-  lca <- max(lineage[ancestryTable == length(outgroupTips)])
-  
-  rootNode <- length(tipLabels) + 1L
-  if (lca == rootNode) {
-    lca <- lineage[lineage - c(lineage[-1], 0) != -1][1] + 1L
+  if (length(outgroupTips) == 1) {
+    outgroup <- outgroupTips
+  } else {
+    tipNos <- which(tipLabels %in% outgroupTips)
+    ancestry <- unlist(Ancestors(tree, tipNos))
+    ancestryTable <- table(ancestry)
+    lineage <- as.integer(names(ancestryTable))
+    lca <- max(lineage[ancestryTable == length(outgroupTips)])
+    rootNode <- length(tipLabels) + 1L
+    if (lca == rootNode) {
+      lca <- lineage[lineage - c(lineage[-1], 0) != -1][1] + 1L
+    }
+    outgroup <- Descendants(tree, lca)[[1]]
   }
   
-  Renumber(root(tree, Descendants(tree, lca)[[1]], resolve.root = TRUE))
+  Renumber(root(tree, outgroup, resolve.root = TRUE))
 }
