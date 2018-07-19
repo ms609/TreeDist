@@ -54,12 +54,14 @@ SplitFrequency <- function(referenceTree, forest) {
 }
 
 #' @describeIn SplitFrequency Assign a unique integer to each split
+#' @param tips Integer vector specifying the tips of the tree within the chosen split
+#' @template treeParam
 #' @param tipIndex Character vector of tip names, in a fixed order
 #' @param powersOf2 Integer vector of same length as tipIndex, specifying a power 
 #'  of 2 to be associated with each tip in turn
 #' @export
-SplitNumber <- function (tips, tr, tipIndex, powersOf2) {
-  included <- tipIndex %in% tr$tip.label[tips]
+SplitNumber <- function (tips, tree, tipIndex, powersOf2) {
+  included <- tipIndex %in% tree$tip.label[tips]
   as.character(min(c(sum(powersOf2[included]), sum(powersOf2[!included]))))
 }
 
