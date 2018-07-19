@@ -92,6 +92,7 @@ RearrangeEdges <- function (parent, child, dataset, TreeScorer = MorphyLength,
 #' @author Martin R. Smith
 #' @importFrom phangorn Ancestors Descendants
 #' @importFrom ape root
+#' @export
 RootTree <- function (tree, outgroupTips) {
   tipLabels <- tree$tip.label
   if (!all(outgroupTips %in% tipLabels)) {
