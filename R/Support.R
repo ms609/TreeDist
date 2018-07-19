@@ -7,13 +7,15 @@
 #' constituent functions (see examples)
 #' 
 #' 
-#' @param referenceTree A tree of class phylo, or a table specifying its splits 
-#'                     (as obtained through [ForestSplits])
+#' @param reference A tree of class phylo, or a character vector specifying its splits 
+#'                     (as obtained through [TreeSplits])
 #' @param forest a list of trees of class phylo, or a multiPhylo object; or a table
 #'               enumerating the occurrences of each split in that forest 
 #'                     (as obtained through [ForestSplits])
 #'                     
-#' @return Number of trees in `forest` that contain each split in `referenceTree`.
+#' @return Number of trees in `forest` that contain each split in `reference`. 
+#'         if `reference` is a tree of class phylo, then the sequence will
+#'         correspond to the order of nodes (use `ape::nodelabels to view).
 #'         Note that the three nodes at the root of the tree correspond to a 
 #'         single split; see the example for how these might be plotted on a tree.
 #' 
@@ -41,17 +43,17 @@
 #'   plot(tree1)
 #'   nodelabels(c('-', '-', # The first two nodes do not denote unique splits
 #'                tree1Freqs))
-#'#' }
-SplitFrequency <- function(referenceTree, forest) {
-  if (class(referenceTree) %in% c('list', 'phylo')) {
-    referenceTree <- ForestSplits(referenceTree)
+#' }
+SplitFrequency <- function(reference, forest) {
+  if (class(reference) %in% c('list', 'phylo')) {
+    reference <- TreeSplits(reference)
   }
   if (class(forest) %in% c('list', 'phylo', 'multiPhylo')) {
     forest <- ForestSplits(forest)
   }
   
   # Return:
-  forest[names(referenceTree)]
+  forest[reference]
 }
 
 #' @describeIn SplitFrequency Assign a unique integer to each split
@@ -74,13 +76,24 @@ ForestSplits <- function (forest) {
   tipIndex <- sort(forest[[1]]$tip.label)
   nTip <- length(tipIndex)
   powersOf2 <- as.bigz(2L ^ (seq_len(nTip) - 1L))
-  splits <- table(vapply(forest, function (tr) {
+  # Return:
+  table(vapply(forest, function (tr) {
     # +2: Don't consider root node (not a node) or first node (duplicated)
     vapply(Descendants(tr, nTip + 2L + seq_len(nTip - 3L), type='tips'),
            SplitNumber, character(1), tr, tipIndex, powersOf2)
   }, character(nTip - 3L)))
+}
+
+#' @describeIn SplitFrequency Lists the splits in a given tree
+#' @importFrom gmp as.bigz
+#' @export
+TreeSplits <- function (tree) {
+  tipIndex <- sort(tree$tip.label)
+  nTip <- length(tipIndex)
+  powersOf2 <- as.bigz(2L ^ (seq_len(nTip) - 1L))
   # Return:
-  splits[names(splits) != '0'] # 0 will occur when a tree contains polytomies
+  vapply(Descendants(tree, nTip + 2L + seq_len(nTip - 3L), type='tips'),
+           SplitNumber, character(1), tree, tipIndex, powersOf2)
 }
 
 #' Support colour
