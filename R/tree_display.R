@@ -33,3 +33,44 @@ MarkMissing <- function (tip, position='bottomleft', ...) {
          lwd=1, lty=2, bty='n', ...)
   }
 }
+
+#' Sort tree
+#'
+#' Sorts each node into a consistent order, so similar trees look visually similar.
+#'
+#' @template treeParam
+#'
+#' @return A tree of class phylo, with each node sorted such that the larger clade is first.
+#'
+#' @author Martin R. Smith
+#' @export
+SortTree <- function(tree) {
+  edge <- tree$edge
+  parent <- edge[, 1]
+  child <- edge[, 2]
+  tipLabels <- tree$tip.label
+  tree.ntip <- length(tipLabels)
+  descendants <- Descendants(tree)
+  nDescendants <- vapply(descendants, length, integer(1))
+  MinKid <- function (tips) min(tipLabels[tips])
+  swaps <- vapply(tree.ntip + 1:Nnode(tree), function(node) {
+    kids <- child[parent == node]
+    descs <- nDescendants[kids]
+    if (all(descs == 1L)) {
+      order(tipLabels[kids])[1] == 1
+    } else if (descs[1] == descs[2]) {
+      order(vapply(descendants[kids], MinKid, character(1)))[1] == 1
+    } else {
+      descs[1] < descs[2]
+    }
+  }, logical(1))
+  for (node in tree.ntip + rev(which(swaps))) {
+    childEdges <- parent==node
+    kids <- child[childEdges]
+    child[childEdges][2:1] <- kids
+  }
+  tree$edge[, 1] <- parent
+  tree$edge[, 2] <- child
+  attr(tree, 'order') <- NULL
+  Cladewise(Renumber(tree))
+}
