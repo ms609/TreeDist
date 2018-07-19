@@ -165,13 +165,12 @@ Ratchet <- function (tree, dataset,
     forest <- forest[keepers]
     if (verbosity > 1L) cat("\n - Keeping", sum(keepers), "trees from iterations numbered:\n   ", which(keepers))
     if (length(forest) > 1) {
-      forest <- lapply(forest, function (phy) {
+      forest <- structure(lapply(forest, function (phy) {
         x <- tree
         x$edge <- ListToMatrix(phy)
         attr(x, 'score') <- phy[[3]]
         # Return to lapply: 
-        x})
-      class(forest) <- 'multiPhylo'
+        x}), class = 'multiPhylo')
       ret <- unique(forest)
       if (verbosity > 1L) cat("\n - Removing duplicates leaves", length(ret), "unique trees")
       uniqueScores <- vapply(ret, attr, double(1), 'score')

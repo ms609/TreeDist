@@ -58,11 +58,9 @@ Jackknife <- function (tree, dataset, resampleFreq = 2/3,
     res[1:2]
   }, edgeList)
   
-  jackTrees <- apply(jackEdges, 2, function(edgeList) {
+  jackTrees <- structure(apply(jackEdges, 2, function(edgeList) {
     ret <- tree
     ret$edge <- ListToMatrix(edgeList)
     ret
-  })
-  class(jackTrees) <- 'multiPhylo'
-  jackTrees
+  }), class = 'multiPhylo')
 }

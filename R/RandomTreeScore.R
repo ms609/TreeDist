@@ -41,7 +41,7 @@ plot.morphyTree <- function (morphyTree) {
   nTip <- length(left) + 1L
   
   edge <- matrix(c(rep(seq(nTip, len=nTip - 1L), 2), right, left), ncol=2) + 1L
-  tree <- list(edge=edge, Nnode=nTip - 1L, tip.label=seq_len(nTip) - 1L)
-  class(tree) <- 'phylo'
+  tree <- structure(list(edge=edge, Nnode=nTip - 1L, tip.label=seq_len(nTip) - 1L),
+                    class = 'phylo')
   plot(tree)
 }

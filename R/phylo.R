@@ -55,9 +55,8 @@ Renumber <- function (tree) {
 #' @keywords  tree 
 #' @export
 SingleTaxonTree <- function (label) {
-  res <- list(edge=matrix(c(2L,1L), 1, 2), tip.label=label, Nnode=1L)
-  class(res) <- 'phylo'
-  res
+  structure(list(edge=matrix(c(2L,1L), 1, 2), tip.label=label, Nnode=1L),
+            class = 'phylo')
 }
 
 #' Extract subtree
@@ -117,13 +116,13 @@ Subtree <- function (tree, node) {
   edge2[!isTip] <- edge2[!isTip] + nodeAdjust
   edge[, 1] <- edge1 + nodeAdjust
   edge[, 2] <- edge2
-  newtree <- list(
+  
+  # Return:
+  structure(list(
     tip.label = name,
     Nnode = dim(edge)[1] - new.nTip + 1L,
     edge = edge
-  )
-  class(newtree) <- 'phylo'
-  newtree
+  ), class = 'phylo')
 }
 
 #' Add a tip to a phylogenetic tree
