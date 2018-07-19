@@ -64,12 +64,13 @@ SplitNumber <- function (tips, tr, tipIndex, powersOf2) {
 }
 
 #' @describeIn SplitFrequency Frequency of splits in a given forest of trees
+#' @importFrom gmp as.bigz
 #' @export
 ForestSplits <- function (forest) {
   if (class(forest) == 'phylo') forest <- list(forest)
   tipIndex <- sort(forest[[1]]$tip.label)
   nTip <- length(tipIndex)
-  powersOf2 <- 2L ^ (seq_len(nTip) - 1L)
+  powersOf2 <- as.bigz(2L ^ (seq_len(nTip) - 1L))
   table(vapply(forest, function (tr) {
     # +2: Don't consider root node (not a node) or first node (duplicated)
     vapply(Descendants(tr, nTip + 2L + seq_len(nTip - 3L), type='tips'),
