@@ -1,32 +1,80 @@
 #' Frequency of splits
-#' @param referenceTree A tree of class phylo
-#' @param forest a list of trees of class phylo, or a multiPhylo object
-#' @return Number of trees in `forest` that contain each split in `referenceTree`
+#' 
+#' `SplitFrequency` provides a simple way to count the number of times that 
+#' bipartition splits, as defined by a reference tree, occur in a forest of trees.
+#' 
+#' If multiple calculations are required, some time can be saved by using the
+#' constituent functions (see examples)
+#' 
+#' 
+#' @param referenceTree A tree of class phylo, or a table specifying its splits 
+#'                     (as obtained through [ForestSplits])
+#' @param forest a list of trees of class phylo, or a multiPhylo object; or a table
+#'               enumerating the occurrences of each split in that forest 
+#'                     (as obtained through [ForestSplits])
+#'                     
+#' @return Number of trees in `forest` that contain each split in `referenceTree`.
+#'         Note that the three nodes at the root of the tree correspond to a 
+#'         single split; see the example for how these might be plotted on a tree.
 #' 
 #' @author Martin R. Smith
 #' @importFrom phangorn Descendants
 #' @export
+#' 
+#' @examples {
+#'   set.seed(0) # Set seed so random trees are reproducable
+#'   tree1 <- rtree(7)
+#'   tree2 <- rtree(7)
+#'   tree3 <- rtree(7)
+#'   forest <- list(tree1, tree2, tree2, tree3, rtree(7))
+#'   
+#'   # Simple, but means counting each split in the forest twice:
+#'   SplitFrequency(tree1, forest)
+#'   SplitFrequency(tree2, forest)
+#'   
+#'   # Takes more typing, but caches the forest splits to save time at runtime:
+#'   forestSplits <- ForestSplits(forest)
+#'   tree1Freqs <- SplitFrequency(tree1, forestSplits)
+#'   tree2Freqs <- SplitFrequency(tree2, forestSplits)
+#'   
+#'   plot(tree1)
+#'   nodelabels(c('-', '-', # The first two nodes do not denote unique splits
+#'                tree1Freqs))
+#'#' }
 SplitFrequency <- function(referenceTree, forest) {
-  tipIndex <-referenceTree$tip.label
-  nTip <- length(tipIndex)
-  powersOf2 <- 2 ^ (seq_len(nTip) - 1)
-  if (class(forest) == 'phylo') forest <- list(forest)
-  
-  SplitNumber <- function (tips, tr) {
-    included <- tipIndex %in% tr$tip.label[tips]
-    as.character(min(c(sum(powersOf2[included]), sum(powersOf2[!included]))))
+  if (class(referenceTree) %in% c('list', 'phylo')) {
+    referenceTree <- ForestSplits(referenceTree)
+  }
+  if (class(forest) %in% c('list', 'phylo', 'multiPhylo')) {
+    forest <- ForestSplits(forest)
   }
   
-  treeSplits <- Descendants(referenceTree, nTip + seq_len(referenceTree$Nnode),
-                            type='tips')
-  splitNumbers <- vapply(treeSplits, SplitNumber, character(1), referenceTree)
-  
-  forestSplits <- table(vapply(forest, function (tr) {
-    vapply(Descendants(tr, nTip + seq_len(nTip - 1L), type='tips'),
-           SplitNumber, character(1), tr)
-  }, character(nTip - 1L)))
-  
-  forestSplits[splitNumbers]
+  # Return:
+  forest[names(referenceTree)]
+}
+
+#' @describeIn SplitFrequency Assign a unique integer to each split
+#' @param tipIndex Character vector of tip names, in a fixed order
+#' @param powersOf2 Integer vector of same length as tipIndex, specifying a power 
+#'  of 2 to be associated with each tip in turn
+#' @export
+SplitNumber <- function (tips, tr, tipIndex, powersOf2) {
+  included <- tipIndex %in% tr$tip.label[tips]
+  as.character(min(c(sum(powersOf2[included]), sum(powersOf2[!included]))))
+}
+
+#' @describeIn SplitFrequency Frequency of splits in a given forest of trees
+#' @export
+ForestSplits <- function (forest) {
+  if (class(forest) == 'phylo') forest <- list(forest)
+  tipIndex <- sort(forest[[1]]$tip.label)
+  nTip <- length(tipIndex)
+  powersOf2 <- 2L ^ (seq_len(nTip) - 1L)
+  table(vapply(forest, function (tr) {
+    # +2: Don't consider root node (not a node) or first node (duplicated)
+    vapply(Descendants(tr, nTip + 2L + seq_len(nTip - 3L), type='tips'),
+           SplitNumber, character(1), tr, tipIndex, powersOf2)
+  }, character(nTip - 3L)))
 }
 
 #' Support colour
