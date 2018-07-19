@@ -79,9 +79,9 @@ test_that("Node supports calculated correctly", {
   expect_equal(c(4, 4, 4, 3), 
                as.numeric(SplitFrequency(treeSample$correct, treeSample)))
   
-  balanced <- ape::read.tree(text="((D, (E, (F, out))), (C, (A, B)));")
   # Internal nodes on each side of root
-  expect_equal(c(4, 4, 4, 3), 
+  balanced <- ape::read.tree(text="((D, (E, (F, out))), (C, (A, B)));")
+  expect_equal(c(4, 4, 4, 3),
                as.numeric(SplitFrequency(balanced, treeSample)))
   
 })
