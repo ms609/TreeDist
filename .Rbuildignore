@@ -1,4 +1,5 @@
 /^src\-/
+CONTRIBUTING
 cran-comments.md
 man-roxygen
 data-raw
