@@ -25,8 +25,8 @@ ConsensusWithout <- function (trees, tip, ...) {
 #' @describeIn ConsensusWithout Adds missing taxa to a plotted consensus tree
 #' @param position Where to plot the missing taxa.  See [legend] for options.
 #' @importFrom graphics legend
-#' @export
 #' @author Martin R. Smith
+#' @export
 MarkMissing <- function (tip, position='bottomleft', ...) {
   if (length(tip) > 0) {
     legend(position, legend=gsub('_', ' ', tip, fixed=TRUE),
