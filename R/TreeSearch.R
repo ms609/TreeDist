@@ -8,8 +8,9 @@ EdgeListSearch <- function (edgeList, dataset,
                           TreeScorer = MorphyLength,
                           EdgeSwapper = RootedTBRSwap,
                           maxIter=100, maxHits=20, 
-                          bestScore=NULL,
-                          stopAtScore=NULL, forestSize=1L, 
+                          bestScore=NULL, stopAtScore=NULL, 
+                          stopAtPeak=FALSE, stopAtPlateau=0L,
+                          forestSize=1L, 
                           cluster=NULL, verbosity=1L, ...) {
   epsilon <- 1e-07
   if (!is.null(forestSize) && length(forestSize)) {
@@ -29,13 +30,18 @@ EdgeListSearch <- function (edgeList, dataset,
     }
   }
   if (verbosity > 0L) cat("\n  - Performing tree search.  Initial score:", bestScore)
-  if (!is.null(stopAtScore) && bestScore < stopAtScore + epsilon) return(edgeList)
+  if (!is.null(stopAtScore) && bestScore < stopAtScore + epsilon) {
+    if (verbosity > 0L) cat("\n  - Aborting tree search as tree score", bestScore, "already below target of", stopAtScore)
+    edgeList[[3]] <- bestScore
+    return(edgeList)
+  }
   returnSingle <- !(forestSize > 1L)
   hits <- 0L
+  unimprovedSince <- 0L
   
   for (iter in 1:maxIter) {
     candidateLists <- RearrangeEdges(edgeList[[1]], edgeList[[2]], dataset=dataset, 
-                             TreeScorer=TreeScorer, EdgeSwapper=EdgeSwapper,
+                             TreeScorer=TreeScorer, EdgeSwapper=EdgeSwapper, 
                              hits=hits, iter=iter, verbosity=verbosity, ...)
     scoreThisIteration <- candidateLists[[3]]
     hits <- candidateLists[[4]]
@@ -55,12 +61,29 @@ EdgeListSearch <- function (edgeList, dataset,
       ###}
     } else {
       if (scoreThisIteration < bestScore + epsilon) {
+        if (scoreThisIteration + epsilon < bestScore) unimprovedSince <- -1L
         bestScore <- scoreThisIteration
         edgeList  <- candidateLists
         if (!is.null(stopAtScore) && bestScore < stopAtScore + epsilon) return(edgeList)
+      } else if (stopAtPeak && scoreThisIteration > bestScore + epsilon) {
+        if (verbosity > 1L) cat("\n    ! Iteration", iter, "- No TBR rearrangement improves score.",
+                                scoreThisIteration, "doesn't beat", bestScore)
+        break
+      }
+      unimprovedSince <- unimprovedSince + 1L
+      if (stopAtPlateau > 0L) {
+        if (verbosity > 2L && unimprovedSince > 0L) cat(" Last improvement", unimprovedSince, "iterations ago.")
+        if (unimprovedSince >= stopAtPlateau) {
+          if (verbosity > 1L) cat("\n  - Terminating search, as score has not improved over past",
+                                unimprovedSince, "searches.")
+          break
+        }
       }
     }
-    if (hits >= maxHits) break
+    if (hits >= maxHits) {
+      if (verbosity > 1L) cat("\n  - Terminating search; hit best score", hits, "times.")
+      break
+    }
   }
   if (verbosity > 0L) cat("\n  - Final score", bestScore, "found", hits, "times after", iter, "rearrangements\n")  
   if (forestSize > 1L) {
@@ -84,6 +107,8 @@ EdgeListSearch <- function (edgeList, dataset,
 #' @template EdgeSwapperParam
 #' @param maxIter the maximum number of iterations to perform before abandoning the search.
 #' @param maxHits the maximum times to hit the best pscore before abandoning the search.
+#' @template stopAtPeakParam
+#' @template stopAtPlateauParam
 #' @param forestSize the maximum number of trees to return - useful in concert with \code{\link{consensus}}.
 #'
 #' @template InitializeDataParam
@@ -126,6 +151,7 @@ TreeSearch <- function (tree, dataset,
                         TreeScorer     = MorphyLength,
                         EdgeSwapper    = RootedTBRSwap,
                         maxIter = 100L, maxHits = 20L, forestSize = 1L,
+                        stopAtPeak = FALSE, stopAtPlateau = 0L,
                         verbosity = 1L, ...) {
   # initialize tree and data
   if (dim(tree$edge)[1] != 2 * tree$Nnode) {
@@ -140,8 +166,9 @@ TreeSearch <- function (tree, dataset,
 
   bestScore <- attr(tree, 'score')
   edgeList <- EdgeListSearch(edgeList, initializedData, TreeScorer=TreeScorer, 
-                             EdgeSwapper=EdgeSwapper, maxIter = maxIter, 
+                             EdgeSwapper = EdgeSwapper, maxIter = maxIter, 
                              maxHits = maxHits, forestSize = forestSize, 
+                             stopAtPeak = stopAtPeak, stopAtPlateau = stopAtPlateau,
                              verbosity = verbosity, ...)
   
   tree$edge <- ListToMatrix(edgeList)

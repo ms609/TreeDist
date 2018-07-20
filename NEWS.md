@@ -1,12 +1,27 @@
-# TreeSearch 0.1.2.9000
+# TreeSearch 0.1.2.9001
 
 ## New features
- - `RootTree` function allows rooting of tree on incompletely specified outgroup
+ - `RootTree` function allows rooting of tree on incompletely specified
+    or single-taxon outgroup
+ - `AllTBR` returns all trees one TBR rearrangement away
+ - `TBRMoves` reports all possible TBR rearrangements
+ - `Jackknife` conducts Jackknife resampling
+ - `SplitFrequency` reports frequency of clades in a forest
+ - `SupportColour` allows visual marking of support values
+ - `ApeTime` reports the creation date of an ape-exported tree
+ - `SortTree` flips nodes into a consistent left-right order
  
 ## Enhancements
+ - [IW]RatchetConsensus renamed to [IW]MultiRatchet, giving a better description 
+     of the function's purpose
+ - Don't warn about missing EOL when reading Nexus or TNT files
  - Add new 12-colour colourblind-friendly palette
  - FitchSteps now supports datasets with tips not found in tree
  - Improve portability of function `ReadTntTree`
+
+## Bug fixes
+ - [IW]RatchetConsensus now considers trees identical even if they've been hit 
+   a different number of times
 
 # TreeSearch 0.1.2
 

@@ -7,7 +7,7 @@
 \title{Ratchet bootstrapper}
 \usage{
 MorphyBootstrap(edgeList, morphyObj, EdgeSwapper = NNISwap, maxIter, maxHits,
-  verbosity = 1L, ...)
+  verbosity = 1L, stopAtPeak = FALSE, stopAtPlateau = 0L, ...)
 
 ProfileBootstrap(edgeList, dataset, EdgeSwapper = NNISwap, maxIter, maxHits,
   verbosity = 1L, ...)
@@ -34,6 +34,22 @@ and returns a list with modified vectors; for example
 
 \item{verbosity}{Level of detail to display in console: larger numbers provide
 more verbose feedback to the user.}
+
+\item{stopAtPeak}{Logical specifying whether to terminate search once a subsequent 
+iteration recovers a sub-optimal score. Useful with methods that
+return all trees one rearrangement from the current tree, such 
+as \code{\link{AllTBR}}.  Will be overridden if a passed function
+has an attribute `stopAtPeak` set by
+`attr(FunctionName, 'stopAtPeak') <- TRUE`.}
+
+\item{stopAtPlateau}{Integer. If > 0, tree search will terminate if the score 
+has not improved after `stopAtPlateau` iterations.
+Useful with methods that return all trees one
+rearrangement from the current tree, such as 
+\code{\link{AllTBR}}.
+Will be overridden if a passed function has an attribute
+`stopAtPlateau` set by `attr(FunctionName,
+'stopAtPlateau') <- TRUE`.}
 
 \item{\dots}{further parameters to send to \code{TreeScorer}}
 

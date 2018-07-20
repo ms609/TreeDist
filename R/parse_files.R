@@ -49,13 +49,7 @@
 #' @export
 ReadTntTree <- function (filename, relativePath = NULL, keepEnd = 1L) {
   fileText <- readLines(filename)
-  trees <- lapply(fileText[2:(length(fileText)-1)], function (treeText) {
-    treeText <- gsub("(\\d+)", "\\1,", treeText, perl=TRUE)
-    treeText <- gsub(")(", "),(", treeText, fixed=TRUE)
-    treeText <- gsub("*", ";", treeText, fixed=TRUE)
-    # Return:
-    read.tree(text=gsub(", )", ")", treeText, fixed=TRUE))
-  })
+  trees <- lapply(fileText[2:(length(fileText)-1)], TNTText2Tree)
   
   taxonFile <- gsub("tread 'tree(s) from TNT, for data in ", '', fileText[1], fixed=TRUE)
   taxonFile <- gsub("'", '', gsub('\\', '/', taxonFile, fixed=TRUE), fixed=TRUE)
@@ -89,6 +83,19 @@ ReadTntTree <- function (filename, relativePath = NULL, keepEnd = 1L) {
     trees
   }
   
+}
+
+#' @describeIn ReadTntTree Converts text representation of a tree in TNT to an object of class `phylo`
+#' @param treeText Character string describing a tree, in the parenthetical 
+#'                 format output by TNT.
+#' @author Martin R. Smith
+#' @export
+TNTText2Tree <- function (treeText) {
+  treeText <- gsub("(\\d+)", "\\1,", treeText, perl=TRUE)
+  treeText <- gsub(")(", "),(", treeText, fixed=TRUE)
+  treeText <- gsub("*", ";", treeText, fixed=TRUE)
+  # Return:
+  read.tree(text=gsub(", )", ")", treeText, fixed=TRUE))
 }
 
 #' Extract taxa from a matrix block
@@ -182,7 +189,8 @@ ExtractTaxa <- function (matrixLines, character_num=NULL, session=NULL) {
 #'
 ReadCharacters <- function (filepath, character_num=NULL, session=NULL) {
   
-  lines <- readLines(filepath)
+  lines <- readLines(filepath, warn=FALSE) # Missing EOL is quite common, so 
+                                           # warning not helpful
   nexusComment.pattern <- "\\[[^\\]*\\]"
   lines <- gsub(nexusComment.pattern, "", lines)
   lines <- trimws(lines)
@@ -246,7 +254,8 @@ ReadCharacters <- function (filepath, character_num=NULL, session=NULL) {
 #' @describeIn ReadCharacters Read characters from TNT file
 ReadTntCharacters <- function (filepath, character_num=NULL, session=NULL) {
   
-  lines <- readLines(filepath)
+  lines <- readLines(filepath, warn=FALSE) # Missing EOL might occur in user-
+                                           # generated file, so warning not helpful
   tntComment.pattern <- "'[^']*']"
   lines <- gsub(tntComment.pattern, "", lines)
   lines <- trimws(lines)
@@ -353,9 +362,13 @@ ReadTntAsPhyDat <- function (filepath) {
 
 
 #' @describeIn ReadCharacters A convenient wrapper for \pkg{phangorn}'s \code{phyDat},
-#' which converts a list of morphological characters into a phyDat object.
+#' which converts a *list* of morphological characters into a phyDat object.
+#' If your morphological characters are in the form of a *matrix*, perhaps because
+#' they have been read using `read.table`, try [MatrixToPhyDat] instead.
 #'
-#' @param dataset list of taxa and characters, in the format produced by [read.nexus.data].
+#' @param dataset list of taxa and characters, in the format produced by [read.nexus.data]:
+#'                a list of sequences each made of a single vector of mode character,
+#'                and named with the taxon name.  
 #'
 #' @export
 PhyDat <- function (dataset) {

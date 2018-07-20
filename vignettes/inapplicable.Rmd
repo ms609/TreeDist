@@ -25,7 +25,7 @@ events on a tree.
 and getting up and running.
 
 Once installed, load the inapplicable package into R using
-```{r Load library}
+```{r Load-library}
 library('TreeSearch')
 ```
 
@@ -38,13 +38,13 @@ Vinther _et al._ [-@Vinther2008] dataset that comes bundled with the package.
 This dataset is small enough that it runs reasonably quickly, but its phylogenetic
 signal is obscure enough that it can require Ratchet searches to escape from local optima.
 
-```{r Load data}
+```{r Load-data}
 my.data <- TreeSearch::inapplicable.datasets[['Vinther2008']]
 my.phyDat <- phangorn::phyDat(my.data, type='USER', levels=c(0:9, '-'))
 ```
 
 We can generate a random tree and calculate its parsimony score thus:
-```{r Random tree}
+```{r Random-tree}
 # Set random seed so that random functions will generate consistent output in this document
 set.seed(0)
 random.tree <- RandomTree(my.phyDat)
@@ -86,7 +86,7 @@ which we need to do if we're going to enforce our outgroup constraint.  Even if 
 single-taxon outgroup, using `RootedNNISwap` retains the position of the root, which makes tree
 comparison and interpretation easier later on.
 
-```{r Basic NNI search}
+```{r Basic-NNI-search}
 better.tree <- TreeSearch(tree=rooted.tree, dataset=my.phyDat, 
                            EdgeSwapper=RootedNNISwap, verbosity=3)
 ```
@@ -97,7 +97,7 @@ Using NNI helps to explore the region of treespace close to the local optimum, b
 rearrangements are better at escaping local optima, and find better trees
 further away in tree space.  Using more hits (`maxHits`) and more iterations (`maxIter`) also
 means we'll move closer to an optimal tree.
-```{r SPR and TBR}
+```{r SPR-and-TBR}
 better.tree <- TreeSearch(better.tree, my.phyDat, maxHits=8, maxIter=10000,
                            EdgeSwapper=RootedSPRSwap, verbosity=2)
 better.tree <- TreeSearch(better.tree, my.phyDat, maxHits=20, maxIter=40000, 
@@ -108,7 +108,7 @@ That score's looking better, but these are only quick searches, and we could be 
 A more comprehensive search of tree space can be accomplished using the parsimony ratchet [@Nixon1999].
 It might take a couple of minutes to run.
 
-```{r Ratchet search}
+```{r Ratchet-search}
 best.tree <- Ratchet(better.tree, my.phyDat, verbosity=0, ratchIter=5,
                      swappers=list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap))
 attr(best.tree, 'score') # Each tree is labelled with its score during tree search
@@ -118,7 +118,7 @@ The best tree for this dataset has a score of 79.  This relatively quick Ratchet
 to find a tree with this score.
 
 Let's take a look at the one it's found on this occasion:
-```{r Plot best tree}
+```{r Plot-best-tree}
 par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
 plot(best.tree)
 ```
@@ -135,17 +135,46 @@ Note that it's especially important to retain the position of the root here:
 a single topology, if rooted in different places, can lead to an unresolved consensus.
 
 ```{r Consensus}
-my.consensus <- RatchetConsensus(best.tree, my.phyDat, swappers=
-                                 list(RootedTBRSwap, RootedNNISwap))
+some.optimal.trees <- MultiRatchet(best.tree, nSearch=20, my.phyDat, swappers=
+                                   list(RootedTBRSwap, RootedNNISwap))
 ```
 
-If ten independent runs ended up at a number of different trees, there may be many more optimal trees out there to 
-be found; perhaps we could repeat `RatchetConsensus` with `nSearch = 250` for a more
-exhaustive sampling of tree space.  That would take a while though; for now, let's check out our consensus tree:
+If ten independent runs ended up at a number of different trees, there may be many more optimal trees out there to  be found; perhaps we could repeat `MultiRatchet` with `nSearch = 250` for a more exhaustive sampling of tree space.
+That would take a while though; for now, let's check out our consensus tree:
 
-```{r Plot consensus}
+```{r Plot-strict-consensus}
 par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
-plot(ape::consensus(my.consensus))
+strict.consensus <- ape::consensus(some.optimal.trees)
+plot(strict.consensus)
+```
+
+We might prefer a majority-rule consensus tree:
+
+```{r Plot-majority-rule-consensus}
+par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
+majority.consensus <- ape::consensus(some.optimal.trees, p=0.5)
+plot(majority.consensus)
+
+node.frequency <- SplitFrequency(majority.consensus, some.optimal.trees) /
+  length(some.optimal.trees)
+ape::nodelabels(paste('\n\n', signif(node.frequency, 2)), 
+           col=SupportColour(node.frequency), 
+           adj=0, pos=2, frame='none')
+
+```
+
+Node support can be generated using Jackknife resampling:
+
+```{r Jackknife-annotations}
+jack.trees <- Jackknife(best.tree, my.phyDat, EdgeSwapper=RootedTBRSwap,
+                        jackIter=25, verbosity=0)
+par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
+plot(strict.consensus)
+
+jack.support <- SplitFrequency(strict.consensus, jack.trees) / length(jack.trees)
+ape::nodelabels(paste('\n\n', signif(jack.support, 2)), 
+           col=SupportColour(jack.support), 
+           adj=0, pos=2, frame='none')
 ```
 
 
@@ -156,7 +185,7 @@ The simplest way to conduct an implied weights search is to use the functions
 ```R 
 IWTreeSearch
 IWRatchet
-IWRatchetConsensus
+IWMultiRatchet
 ```
 which operate in the same fashion as their equally-weighted counterparts,
 with the option of specifying a concavity constant (_k_) using 

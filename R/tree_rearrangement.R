@@ -39,25 +39,41 @@
 #' 
 #' @export
 RearrangeEdges <- function (parent, child, dataset, TreeScorer = MorphyLength,
-                            EdgeSwapper, 
-                            scoreToBeat=TreeScorer(parent, child, dataset, ...),
+                            EdgeSwapper, scoreToBeat=TreeScorer(parent, child, dataset, ...),
                             iter='?', hits=0L, verbosity=0L, ...) {
   eps <- 1e-08
   rearrangedEdges <- EdgeSwapper(parent, child)
-  # TODO we probably want to get ALL trees 1 REARRANGE step away
-  # One benefit of this is that if NONE of these trees are as good or better, we can give up immediately, 
-  # as there's no way out of this local optimum.
-  candidateScore <- TreeScorer(rearrangedEdges[[1]], rearrangedEdges[[2]], dataset, ...)
-  if (candidateScore > (scoreToBeat + eps)) {
-    if (verbosity > 3L) cat("\n    . Iteration", iter, '- Rearranged tree score', candidateScore, "> target", scoreToBeat)
-  } else if (candidateScore + eps > scoreToBeat) { # i.e. scores are equal
-    hits <- hits + 1L
-    if (verbosity > 2L) cat("\n    - Iteration", iter, "- Best score", scoreToBeat, "hit", hits, "times")
+  if (class(rearrangedEdges[[1]]) == 'list') {
+    # Then we've been sent a list of possible trees
+    candidateScores <- vapply(rearrangedEdges, function (edges) TreeScorer(edges[[1]], edges[[2]], dataset, ...), double(1))
+    candidateScore <- min(candidateScores)
+    best <- candidateScores == candidateScore
+    nBest <- sum(best)
+    if (candidateScore > (scoreToBeat + eps)) {
+      if (verbosity > 3L) cat("\n    . Iteration", iter, '- Rearranged tree score', candidateScore, 
+                              "> target", scoreToBeat)
+    } else if (candidateScore + eps > scoreToBeat) { # i.e. scores are equal
+      hits <- hits + nBest
+      if (verbosity > 2L) cat("\n    - Iteration", iter, "- Best score", scoreToBeat, 
+                              "found again", nBest, "times; now found", hits, "times.")
+    } else {
+      hits <- nBest
+      if (verbosity > 1L) cat("\n    * Iteration", iter, "- New best score", candidateScore, 
+                              "found on", hits, "trees.")
+    }
+    rearrangedEdges <- rearrangedEdges[[SampleOne(which(best), nBest)]]
   } else {
-    hits <- 1L
-    if (verbosity > 1L) cat("\n    * Iteration", iter, "- New best score", candidateScore, "found on", hits, "trees")
+    candidateScore <- TreeScorer(rearrangedEdges[[1]], rearrangedEdges[[2]], dataset, ...)
+    if (candidateScore > (scoreToBeat + eps)) {
+      if (verbosity > 3L) cat("\n    . Iteration", iter, '- Rearranged tree score', candidateScore, "> target", scoreToBeat)
+    } else if (candidateScore + eps > scoreToBeat) { # i.e. scores are equal
+      hits <- hits + 1L
+      if (verbosity > 2L) cat("\n    - Iteration", iter, "- Best score", scoreToBeat, "hit", hits, "times.")
+    } else {
+      hits <- 1L
+      if (verbosity > 1L) cat("\n    * Iteration", iter, "- New best score", candidateScore, "found on", hits, "trees.")
+    }
   }
-  # TODO when we search multiple trees at once in this function, update hits to the number of best trees.
   rearrangedEdges[3:4] <- c(candidateScore, hits)
   # Return:
   rearrangedEdges
@@ -68,22 +84,34 @@ RearrangeEdges <- function (parent, child, dataset, TreeScorer = MorphyLength,
 #' Roots a tree on the smallest clade containing the specified tips.
 #' 
 #' @template treeParam
-#' @param outgroupTips Character vector specifying the names of the tips to 
-#'                     include in the outgroup
+#' @template outgroupTipsParam
 #'                     
 #' @return A tree of class phylo, rooted on the smallest clade that contains the specified tips
 #' 
 #' @author Martin R. Smith
 #' @importFrom phangorn Ancestors Descendants
+#' @importFrom ape root
+#' @export
 RootTree <- function (tree, outgroupTips) {
   tipLabels <- tree$tip.label
   if (!all(outgroupTips %in% tipLabels)) {
     stop("Outgroup tips", paste(outgroupTips, collapse=', '), 
          "not found in tree's tip labels.")
   }
-  tipNos <- which(tree$tip.label %in% outgroupTips)
-  ancestry <- unlist(Ancestors(tree, tipNos))
-  ancestryTable <- table(ancestry)
-  lca <- max(as.integer(names(ancestryTable[ancestryTable == length(outgroupTips)])))
-  Renumber(root(tree, Descendants(tree, lca)[[1]], resolve.root = TRUE))
+  if (length(outgroupTips) == 1) {
+    outgroup <- outgroupTips
+  } else {
+    tipNos <- which(tipLabels %in% outgroupTips)
+    ancestry <- unlist(Ancestors(tree, tipNos))
+    ancestryTable <- table(ancestry)
+    lineage <- as.integer(names(ancestryTable))
+    lca <- max(lineage[ancestryTable == length(outgroupTips)])
+    rootNode <- length(tipLabels) + 1L
+    if (lca == rootNode) {
+      lca <- lineage[lineage - c(lineage[-1], 0) != -1][1] + 1L
+    }
+    outgroup <- Descendants(tree, lca)[[1]]
+  }
+  
+  Renumber(root(tree, outgroup, resolve.root = TRUE))
 }

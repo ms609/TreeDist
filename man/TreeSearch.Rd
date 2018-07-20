@@ -12,13 +12,15 @@ IWTreeSearch(tree, dataset, concavity = 4, EdgeSwapper = RootedTBR,
 
 EdgeListSearch(edgeList, dataset, TreeScorer = MorphyLength,
   EdgeSwapper = RootedTBRSwap, maxIter = 100, maxHits = 20,
-  bestScore = NULL, stopAtScore = NULL, forestSize = 1L, cluster = NULL,
-  verbosity = 1L, ...)
+  bestScore = NULL, stopAtScore = NULL, stopAtPeak = FALSE,
+  stopAtPlateau = 0L, forestSize = 1L, cluster = NULL, verbosity = 1L,
+  ...)
 
 TreeSearch(tree, dataset, InitializeData = PhyDat2Morphy,
   CleanUpData = UnloadMorphy, TreeScorer = MorphyLength,
   EdgeSwapper = RootedTBRSwap, maxIter = 100L, maxHits = 20L,
-  forestSize = 1L, verbosity = 1L, ...)
+  forestSize = 1L, stopAtPeak = FALSE, stopAtPlateau = 0L,
+  verbosity = 1L, ...)
 
 ProfileTreeSearch(tree, dataset, EdgeSwapper = RootedTBR, maxIter = 100,
   maxHits = 20, forestSize = 1, verbosity = 1, precision = 40000, ...)
@@ -54,6 +56,22 @@ more verbose feedback to the user.}
 \item{TreeScorer}{function to score a given tree.
 The function will be passed three parameters, corresponding to the 
 `parent` and `child` entries of a tree's edge list, and a dataset.}
+
+\item{stopAtPeak}{Logical specifying whether to terminate search once a subsequent 
+iteration recovers a sub-optimal score. Useful with methods that
+return all trees one rearrangement from the current tree, such 
+as \code{\link{AllTBR}}.  Will be overridden if a passed function
+has an attribute `stopAtPeak` set by
+`attr(FunctionName, 'stopAtPeak') <- TRUE`.}
+
+\item{stopAtPlateau}{Integer. If > 0, tree search will terminate if the score 
+has not improved after `stopAtPlateau` iterations.
+Useful with methods that return all trees one
+rearrangement from the current tree, such as 
+\code{\link{AllTBR}}.
+Will be overridden if a passed function has an attribute
+`stopAtPlateau` set by `attr(FunctionName,
+'stopAtPlateau') <- TRUE`.}
 
 \item{InitializeData}{Function that sets up data object to prepare for tree search. 
 The function will be passed the \kbd{dataset} parameter.

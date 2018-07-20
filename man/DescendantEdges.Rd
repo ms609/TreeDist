@@ -2,9 +2,12 @@
 % Please edit documentation in R/helper_functions.R
 \name{DescendantEdges}
 \alias{DescendantEdges}
+\alias{AllDescendantEdges}
 \title{Descendant Edges}
 \usage{
 DescendantEdges(edge, parent, child, nEdge = length(parent))
+
+AllDescendantEdges(parent, child, nEdge = length(parent))
 }
 \arguments{
 \item{edge}{number of the edge whose child edges are required}
@@ -18,7 +21,17 @@ DescendantEdges(edge, parent, child, nEdge = length(parent))
 \value{
 a logical vector stating whether each edge in turn is a descendant of the specified edge
         (or the edge itself)
+
+a matrix of class logical, with row N specifying whether each edge is a descendant of edge N
+        (or the edge itself)
 }
 \description{
 Quickly identifies edges that are 'descended' from a particular edge in a tree
+
+All Descendant Edges
 }
+\section{Functions}{
+\itemize{
+\item \code{AllDescendantEdges}: Quickly identifies edges that are 'descended' from each edge in a tree
+}}
+

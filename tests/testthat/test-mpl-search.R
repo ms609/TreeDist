@@ -9,17 +9,18 @@ RootySwappers <- list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap)
 
 test_that("tree can be found", {
   set.seed(0)
+  random11 <- RandomTree(phy11, 'a')
   expect_error(TreeSearch(tree=unrooted11, dataset=phy11))
-  expect_equal(comb11, TreeSearch(tree=RandomTree(phy11, 'a'), dataset=phy11,
-               maxIter=2500, EdgeSwapper = RootedTBRSwap, verbosity=0))
-  expect_equal(comb11, TreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000, EdgeSwapper = RootedSPRSwap,
-              verbosity=0))
-  expect_equal(comb11, TreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000, EdgeSwapper = RootedNNISwap, verbosity=0))
-  expect_equal(comb11, Ratchet(RandomTree(phy11, 'a'), phy11, searchIter=300, searchHits = 20, swappers = RootySwappers, ratchHits=3, verbosity=0))
-  expect_equal('multiPhylo', class(
-    Ratchet(RandomTree(phy11, 'a'), phy11, searchIter=300, searchHits = 20,
-    ratchHits=3, verbosity=0L, returnAll=TRUE)
-    ))
+  expect_equal(TreeSearch(tree=random11, dataset=phy11, maxIter=2500, 
+                          EdgeSwapper=RootedTBRSwap, verbosity=0L), comb11)
+  expect_equal(TreeSearch(tree=random11, dataset=phy11, maxIter=2500, EdgeSwapper=AllTBR, 
+                          stopAtPeak=TRUE, stopAtPlateau=10L, verbosity=0L), comb11)
+  expect_equal(TreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000,
+                                  EdgeSwapper=RootedSPRSwap, verbosity=0L), comb11)
+  expect_equal(TreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000, EdgeSwapper = RootedNNISwap, verbosity=0), comb11)
+  expect_equal(Ratchet(RandomTree(phy11, 'a'), phy11, searchIter=300, searchHits = 20, swappers = RootySwappers, ratchHits=3, verbosity=0), comb11)
+  expect_equal(class(Ratchet(RandomTree(phy11, 'a'), phy11, searchIter=300, searchHits = 20,
+                             ratchHits=3, verbosity=0L, returnAll=TRUE)), 'multiPhylo')
 #  expect_equal(SectorialSearch(RandomTree(phy11, 'a'), phy11, verbosity=-1), comb11) # TODO: Sectorial Search not working yet!
 })
 
@@ -50,6 +51,46 @@ test_that("tree search finds shortest tree", {
                   swappers=list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap),
                   ratchIter=3, searchHits=5, verbosity=0), 'score')
   expect_equal(3, Fitch(true_tree, dataset), ratchetScore)
+})
+
+context("Morphy: Node support")
+test_that("Jackknife supports are correct", {
+  true_tree <-  ape::read.tree(text = "((((((A,B),C),D),E),F),out);")
+  start_tree <- ape::read.tree(text = "(((((A,D),B),E),(C,F)),out);")
+  dataset <- StringToPhyDat('1100000 1110000 1111000 1111100 1100000 1110000 1111000 1111100 1001000', 1:7, byTaxon=FALSE)
+  names(dataset) <- c(LETTERS[1:6], 'out')
+  set.seed(0)
+  strict <- TreeSearch(start_tree, dataset)
+  expect_equal(1, length(unique(list(true_tree), list(start_tree)))) # Right tree found
+  jackTrees <- Jackknife(strict, dataset, resampleFreq=4/7, searchIter=200L, searchHits=7L, 
+                         EdgeSwapper=RootedTBRSwap, jackIter=20L, verbosity=0L)
+  # Note: one cause of failure could be a change in characters sampled, due to randomness
+  expect_true(length(unique(jackTrees)) > 2L)
+})
+
+test_that("Node supports calculated correctly", {
+  treeSample <- list(
+    correct = ape::read.tree(text = "((((((A,B),C),D),E),F),out);"),
+    swapFE  = ape::read.tree(text = "((((((A,B),C),D),F),E),out);"),
+    DEClade = ape::read.tree(text = "(((((A,B),C),(D,E)),F),out);"),
+    swapBC  = ape::read.tree(text = "((((((A,C),B),D),E),F),out);"),
+    DbyA    = ape::read.tree(text = "((((((A,D),C),B),E),F),out);")
+  )
+  expect_equal(c(4, 4, 4, 3), 
+               as.numeric(SplitFrequency(treeSample$correct, treeSample)))
+  
+  # Internal nodes on each side of root
+  balanced <- ape::read.tree(text="((D, (E, (F, out))), (C, (A, B)));")
+  expect_equal(c(4, 4, 4, 3),
+               as.numeric(SplitFrequency(balanced, treeSample)))
+  
+})
+
+test_that("Node support colours consistent", {
+  expect_equal('red', SupportColour(NA))
+  expect_equal('red', SupportColour(2))
+  expect_equal('red', SupportColor(-2)) # Check alternative spelling 
+  expect_equal('#ffffff00', SupportColour(1, show1=FALSE))
 })
 
 context("Implied weights: Tree search")
