@@ -64,9 +64,19 @@ ReadTntTree <- function (filename, relativePath = NULL, keepEnd = 1L) {
                         collapse='/')
   }
   if (!file.exists(taxonFile)) {
-    warning("Cannot find linked data file ", taxonFile)
+    warning("Cannot find linked data file:\n  ", taxonFile)
   } else {
     tipNames <- rownames(ReadTntCharacters(taxonFile, 1))
+    if (is.null(tipNames)) {
+      # TNT character read failed.  Perhaps taxonFile is in NEXUS format?
+      tipNames <- rownames(ReadCharacters(taxonFile, 1))
+    }
+    if (is.null(tipNames)) {
+      warning("Could not read taxon names from linked TNT file:\n  ",
+              taxonFile, 
+              "\nIs the file in TNT or Nexus format? If failing inexplicably, please report:",
+              "\n  https://github.com/ms609/TreeSearch/issues/new")
+    }
     trees <- lapply(trees, function (tree) {
       tree$tip.label <- tipNames[as.integer(tree$tip.label) + 1]
       tree
@@ -389,4 +399,3 @@ PhyDat <- function (dataset) {
 RightmostCharacter <- function (string, len=nchar(string)) {
   substr(string, len, len)
 }
-
