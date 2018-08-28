@@ -10,6 +10,7 @@
  - `SupportColour` allows visual marking of support values
  - `ApeTime` reports the creation date of an ape-exported tree
  - `SortTree` flips nodes into a consistent left-right order
+ - `AsBinary` supports 0
  
 ## Enhancements
  - [IW]RatchetConsensus renamed to [IW]MultiRatchet, giving a better description 
