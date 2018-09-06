@@ -1,9 +1,9 @@
 Package: TreeSearch
 Title: Phylogenetic Tree Search Using Custom Optimality Criteria
-Version: 0.1.3
+Version: 0.2.0
 Date: 2018-09-06
 Authors@R: c(person("Martin R.", 'Smith',
-                  email="martins@gmail.com", 
+                  email="martin.smith@durham.ac.uk", 
                   role=c("aut", "cre", "cph"), 
                   comment=c(ORCID = "0000-0001-5660-1727")),
                person(given = "Emmanuel", family="Paradis",

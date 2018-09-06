@@ -2,7 +2,7 @@
 ### Windows 10:
 * local Windows 10 install, R 3.5.1
 * Windows x86_64-w64-mingw32, via R-hub, R 3.4.4
-* Windows 10 via win_build(), R devel
+* Windows 10 via build_win(), R devel
 
 ### Linux:
 * ubuntu 14.04.5 LTS (on travis-ci), R 3.4.0 and release
