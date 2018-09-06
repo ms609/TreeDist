@@ -1,4 +1,4 @@
-# TreeSearch 0.1.2.9003
+# TreeSearch 0.1.3
 
 ## New features
  - `RootTree` function allows rooting of tree on incompletely specified
