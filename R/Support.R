@@ -92,7 +92,7 @@ TreeSplits <- function (tree) {
   nTip <- length(tipIndex)
   powersOf2 <- as.bigz(2L ^ (seq_len(nTip) - 1L))
   # Return:
-  vapply(Descendants(tree, nTip + 2L + seq_len(nTip - 3L), type='tips'),
+  vapply(Descendants(tree, nTip + 2L + seq_len(tree$Nnode - 2L), type='tips'),
            SplitNumber, character(1), tree, tipIndex, powersOf2)
 }
 

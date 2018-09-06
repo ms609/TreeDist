@@ -41,8 +41,6 @@ a list containing two elements, corresponding in turn to the rearranged parent a
 }
 \description{
 Perform one \acronym{SPR} rearrangement on a tree
-
-Rooted SPR
 }
 \details{
 Equivalent to phangorn's kSPR, but faster.

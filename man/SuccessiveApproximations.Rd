@@ -6,7 +6,8 @@
 \usage{
 SuccessiveApproximations(tree, dataset, outgroup = NULL, k = 3,
   maxSuccIter = 20, ratchetHits = 100, searchHits = 50,
-  searchIter = 500, ratchetIter = 5000, verbosity = 0, suboptimal = 0.1)
+  searchIter = 500, ratchetIter = 5000, verbosity = 0,
+  suboptimal = 0.1)
 }
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}.}

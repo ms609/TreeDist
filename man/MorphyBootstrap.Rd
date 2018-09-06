@@ -6,11 +6,12 @@
 \alias{IWBootstrap}
 \title{Ratchet bootstrapper}
 \usage{
-MorphyBootstrap(edgeList, morphyObj, EdgeSwapper = NNISwap, maxIter, maxHits,
-  verbosity = 1L, stopAtPeak = FALSE, stopAtPlateau = 0L, ...)
+MorphyBootstrap(edgeList, morphyObj, EdgeSwapper = NNISwap, maxIter,
+  maxHits, verbosity = 1L, stopAtPeak = FALSE, stopAtPlateau = 0L,
+  ...)
 
-ProfileBootstrap(edgeList, dataset, EdgeSwapper = NNISwap, maxIter, maxHits,
-  verbosity = 1L, ...)
+ProfileBootstrap(edgeList, dataset, EdgeSwapper = NNISwap, maxIter,
+  maxHits, verbosity = 1L, ...)
 
 IWBootstrap(edgeList, dataset, concavity = 4L, EdgeSwapper = NNISwap,
   maxIter, maxHits, verbosity = 1L, ...)

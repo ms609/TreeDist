@@ -22,8 +22,8 @@ AllTBR(parent, child, nEdge = length(parent), avoid = NULL,
 
 RootedTBR(tree, edgeToBreak = NULL, mergeEdges = NULL)
 
-RootedTBRSwap(parent, child, nEdge = length(parent), edgeToBreak = NULL,
-  mergeEdges = NULL)
+RootedTBRSwap(parent, child, nEdge = length(parent),
+  edgeToBreak = NULL, mergeEdges = NULL)
 }
 \arguments{
 \item{tree}{A bifurcating tree of class \code{\link{phylo}}, with all nodes resolved;}
@@ -60,8 +60,6 @@ a list of trees, in parent-child format
 }
 \description{
 Tree bisection and reconnection
-
-Rooted TBR
 }
 \details{
 \code{TBR} performs a single random \acronym{TBR} iteration.
