@@ -83,5 +83,6 @@ SortTree <- function(tree) {
 #' 
 #' @return A character string describing `tree` in Newick format
 #' 
+#' @importFrom ape write.tree
 #' @export
 NewickTree <- function(tree) gsub('_', ' ', write.tree(tree), fixed=TRUE)
