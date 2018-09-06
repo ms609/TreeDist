@@ -12,6 +12,7 @@ src/*.dll
 *.Rd
 inst/ape
 inst/doc
+revdep/
 vignettes/*.html
 vignettes/*.pdf
 vignettes/*_files
