@@ -3,6 +3,7 @@ CONTRIBUTING
 cran-comments.md
 man-roxygen
 data-raw
+revdep
 vignettes/.RData
 /^\.git/
 ^.*\.o$
