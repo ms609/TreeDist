@@ -40,5 +40,6 @@ Suggests:
 RdMacros: Rdpack
 LazyData: true
 ByteCompile: true
+Encoding: UTF-8
 VignetteBuilder: knitr
 RoxygenNote: 6.1.0
