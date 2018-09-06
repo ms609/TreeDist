@@ -9,7 +9,8 @@
 \usage{
 NNI(tree, edgeToBreak = NULL)
 
-NNISwap(parent, child, nTips = (length(parent)/2L) + 1L, edgeToBreak = NULL)
+NNISwap(parent, child, nTips = (length(parent)/2L) + 1L,
+  edgeToBreak = NULL)
 
 RootedNNI(tree, edgeToBreak = NULL)
 
@@ -39,8 +40,6 @@ a list containing two elements, corresponding in turn to the rearranged parent a
 }
 \description{
 Nearest Neighbour Interchange
-
-Rooted NNI
 }
 \details{
 Performs a single iteration of the nearest-neighbour interchange algorithm.

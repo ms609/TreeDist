@@ -110,13 +110,13 @@ PhyToString <- function (phy, ps='', useIndex=TRUE, byTaxon=TRUE, concatenate=TR
 #' 
 #' @export
 AsBinary <- function(x) {
-	N <- length(x)
-	xMax <- max(x)	
-	ndigits <- (floor(logb(xMax, base=2))+1)
-	Base.b <- array(NA, dim=c(N, ndigits))
-	for (i in 1:ndigits){#i <- 1
-		Base.b[, i] <- (x %% 2)
-		x <- (x %/% 2)
-	}
-	if(N == 1) Base.b[1, ] else Base.b
+  N <- length(x)
+  xMax <- max(x)
+  ndigits <- max(1, (floor(logb(xMax, base=2)) + 1L))
+  Base.b <- array(NA, dim=c(N, ndigits))
+  for (i in 1:ndigits){#i <- 1
+    Base.b[, i] <- (x %% 2)
+    x <- (x %/% 2)
+  }
+  if(N == 1) Base.b[1, ] else Base.b
 }

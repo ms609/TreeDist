@@ -11,6 +11,7 @@
 #' @author Martin R. Smith
 #'
 ApeTime <- function (filename, format='double') {
+  if (length(filename) > 1L) stop("`filename` must be a character string of length 1")
   comment <- readLines(filename, n=2)[2]
   Month <- function (month) {
     months <- c('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')

@@ -13,8 +13,8 @@ IWTreeSearch(tree, dataset, concavity = 4, EdgeSwapper = RootedTBR,
 EdgeListSearch(edgeList, dataset, TreeScorer = MorphyLength,
   EdgeSwapper = RootedTBRSwap, maxIter = 100, maxHits = 20,
   bestScore = NULL, stopAtScore = NULL, stopAtPeak = FALSE,
-  stopAtPlateau = 0L, forestSize = 1L, cluster = NULL, verbosity = 1L,
-  ...)
+  stopAtPlateau = 0L, forestSize = 1L, cluster = NULL,
+  verbosity = 1L, ...)
 
 TreeSearch(tree, dataset, InitializeData = PhyDat2Morphy,
   CleanUpData = UnloadMorphy, TreeScorer = MorphyLength,
@@ -22,8 +22,9 @@ TreeSearch(tree, dataset, InitializeData = PhyDat2Morphy,
   forestSize = 1L, stopAtPeak = FALSE, stopAtPlateau = 0L,
   verbosity = 1L, ...)
 
-ProfileTreeSearch(tree, dataset, EdgeSwapper = RootedTBR, maxIter = 100,
-  maxHits = 20, forestSize = 1, verbosity = 1, precision = 40000, ...)
+ProfileTreeSearch(tree, dataset, EdgeSwapper = RootedTBR,
+  maxIter = 100, maxHits = 20, forestSize = 1, verbosity = 1,
+  precision = 40000, ...)
 }
 \arguments{
 \item{tree}{a fully-resolved starting tree in \code{\link{phylo}} format, with the desired outgroup; edge lengths are not supported and will be deleted;}

@@ -1,4 +1,4 @@
-# TreeSearch 0.1.2.9001
+# TreeSearch 0.1.3
 
 ## New features
  - `RootTree` function allows rooting of tree on incompletely specified
@@ -10,6 +10,7 @@
  - `SupportColour` allows visual marking of support values
  - `ApeTime` reports the creation date of an ape-exported tree
  - `SortTree` flips nodes into a consistent left-right order
+ - `AsBinary` supports 0
  
 ## Enhancements
  - [IW]RatchetConsensus renamed to [IW]MultiRatchet, giving a better description 
@@ -20,7 +21,7 @@
  - Improve portability of function `ReadTntTree`
 
 ## Bug fixes
- - [IW]RatchetConsensus now considers trees identical even if they've been hit 
+ - [IW]MultiRatchet now considers trees identical even if they've been hit 
    a different number of times
 
 # TreeSearch 0.1.2

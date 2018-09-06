@@ -99,7 +99,6 @@ Ratchet <- function (tree, dataset,
   }
 
   iterationsWithBestScore <- 0
-  iterationsCompleted <- 0
   BREAK <- FALSE
   for (i in 1:ratchIter) {
     if (verbosity > 1L) cat ("\n* Ratchet iteration", i, "- Generating new tree by bootstrapping dataset. ")
@@ -152,12 +151,11 @@ Ratchet <- function (tree, dataset,
                             bestScore, "( hit", iterationsWithBestScore, "/", ratchHits, ")")
     if ((!is.null(stopAtScore) && bestScore < stopAtScore + epsilon) 
     || (iterationsWithBestScore >= ratchHits)) {
-      iterationsCompleted <- i
       break
     }
   } # end for
 
-  if (verbosity > 0L) cat ("\nCompleted parsimony ratchet after", iterationsCompleted, "iterations with score", bestScore, "\n")
+  if (verbosity > 0L) cat ("\nCompleted parsimony ratchet after", i, "iterations with score", bestScore, "\n")
    
   if (returnAll) {
     keepers <- !is.na(forestScores) & forestScores < bestScore + suboptimal

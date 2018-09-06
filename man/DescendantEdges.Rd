@@ -27,8 +27,6 @@ a matrix of class logical, with row N specifying whether each edge is a descenda
 }
 \description{
 Quickly identifies edges that are 'descended' from a particular edge in a tree
-
-All Descendant Edges
 }
 \section{Functions}{
 \itemize{

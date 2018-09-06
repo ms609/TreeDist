@@ -74,3 +74,15 @@ SortTree <- function(tree) {
   attr(tree, 'order') <- NULL
   Cladewise(Renumber(tree))
 }
+
+#' Newick Tree
+#' 
+#' Writes a tree in Newick format
+#' 
+#' @template treeParam
+#' 
+#' @return A character string describing `tree` in Newick format
+#' 
+#' @importFrom ape write.tree
+#' @export
+NewickTree <- function(tree) gsub('_', ' ', write.tree(tree), fixed=TRUE)
