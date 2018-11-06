@@ -19,10 +19,10 @@ AllDescendantEdges(parent, child, nEdge = length(parent))
 \item{nEdge}{number of edges (calculated from length(parent) if not supplied)}
 }
 \value{
-a logical vector stating whether each edge in turn is a descendant of the specified edge
+`DescendantEdges` returns a logical vector stating whether each edge in turn is a descendant of the specified edge
         (or the edge itself)
 
-a matrix of class logical, with row N specifying whether each edge is a descendant of edge N
+`AllDescendantEdges` returns a matrix of class logical, with row N specifying whether each edge is a descendant of edge N
         (or the edge itself)
 }
 \description{

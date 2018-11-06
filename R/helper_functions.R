@@ -31,7 +31,7 @@ MatrixToList <- function (edge) list(edge[, 1], edge[, 2])
 #' @template treeParent
 #' @template treeChild
 #' @param nEdge number of edges (calculated from length(parent) if not supplied)
-#' @return a logical vector stating whether each edge in turn is a descendant of the specified edge
+#' @return `DescendantEdges` returns a logical vector stating whether each edge in turn is a descendant of the specified edge
 #'         (or the edge itself)
 #' @export
 DescendantEdges <- function (edge, parent, child, nEdge = length(parent)) {
@@ -56,7 +56,7 @@ DescendantEdges <- function (edge, parent, child, nEdge = length(parent)) {
 
 #' All Descendant Edges
 #'
-#' @return a matrix of class logical, with row N specifying whether each edge is a descendant of edge N
+#' @return `AllDescendantEdges` returns a matrix of class logical, with row N specifying whether each edge is a descendant of edge N
 #'         (or the edge itself)
 #' @describeIn DescendantEdges Quickly identifies edges that are 'descended' from each edge in a tree
 #' @export
