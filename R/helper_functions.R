@@ -59,6 +59,7 @@ DescendantEdges <- function (edge, parent, child, nEdge = length(parent)) {
 #' @return a matrix of class logical, with row N specifying whether each edge is a descendant of edge N
 #'         (or the edge itself)
 #' @describeIn DescendantEdges Quickly identifies edges that are 'descended' from each edge in a tree
+#' @export
 AllDescendantEdges <- function (parent, child, nEdge = length(parent)) {
   ret <- diag(nEdge) == 1
   blankLogical <- logical(nEdge)

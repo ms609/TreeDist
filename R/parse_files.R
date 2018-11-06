@@ -262,6 +262,7 @@ ReadCharacters <- function (filepath, character_num=NULL, session=NULL) {
 
 
 #' @describeIn ReadCharacters Read characters from TNT file
+#' @export
 ReadTntCharacters <- function (filepath, character_num=NULL, session=NULL) {
   
   lines <- readLines(filepath, warn=FALSE) # Missing EOL might occur in user-

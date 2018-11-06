@@ -1,3 +1,8 @@
+# TreeSearch 0.2.0.9000 (development)
+
+## Bug fixes
+ - Export missing functions
+
 # TreeSearch 0.2.0
 
 ## New features
