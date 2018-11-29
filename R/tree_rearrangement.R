@@ -115,3 +115,73 @@ RootTree <- function (tree, outgroupTips) {
   
   Renumber(root(tree, outgroup, resolve.root = TRUE))
 }
+
+#' Collapse nodes on a phylogenetic tree
+#' 
+#' @template treeParam
+#' @param nodes,edges Integer vector specifying the nodes or edges in the tree
+#'  to be dropped. 
+#' (Use [ape:nodelabels] or [ape:edgelabels] to view numbers on a plotted tree.)
+#' 
+#' @return `tree`, with the specified nodes or edges collapsed.  
+#' The length of each dropped edge will (naively) be added to each descendant edge.
+#' 
+#' @examples 
+#'   library(ape)
+#'   set.seed(1)
+#'   
+#'   tree <- rtree(7)
+#'   par(mfrow=c(2, 1), mar=rep(0.5, 4))
+#'   plot(tree)
+#'   nodelabels()
+#'   edgelabels(round(tree$edge.length, 2), cex=0.6, frame='n', adj=c(1, -1))
+#'   
+#'   newTree <- CollapseNode(tree, c(12, 13))
+#'   plot(newTree)
+#'   nodelabels()
+#'   edgelabels(round(newTree$edge.length, 2), cex=0.6, frame='n', adj=c(1, -1))
+#' 
+#' @author  Martin R. Smith
+#' @export
+CollapseNode <- function (tree, nodes) {
+  if (length(nodes) == 0) return (tree)
+  
+  edge <- tree$edge
+  lengths <- tree$edge.length
+  hasLengths <- !is.null(lengths)
+  parent <- edge[, 1]
+  child <- edge[, 2]
+  root <- min(parent)
+  nTip <- root - 1L
+  maxNode <- max(parent)
+  edgeBelow <- order(child)
+  edgeBelow <- c(edgeBelow[1:(root-1L)], NA, edgeBelow[-(1:root-1L)])
+  nodes <- unique(nodes)
+  
+  if (class(tree) != 'phylo') stop ("tree must be an object of class phylo")
+  if (!all(nodes %in% (root + 1L):maxNode)) stop("nodes must be integers between ",
+                                                 root + 1L, " and ", maxNode)
+  
+  keptEdges <- -edgeBelow[nodes]
+
+  for (node in rev(sort(nodes))) {
+    newParent <- parent[edgeBelow[node]]
+    if (hasLengths) lengths[parent == node] <- lengths[parent == node] + lengths[child == node]
+    parent[parent == node] <- newParent
+  }
+  
+  newNumber <- c(seq_len(nTip), nTip + cumsum(root:maxNode %in% parent))
+  
+  tree$edge <-cbind(newNumber[parent[keptEdges]], newNumber[child[keptEdges]])
+  tree$edge.length <- lengths[keptEdges]
+  tree$Nnode <- tree$Nnode - length(nodes)
+  
+  # TODO renumber nodes sequentially
+  tree
+}
+
+#' @rdname CollapseNode
+#' @export
+CollapseEdge <- function (tree, edges) {
+  CollapseNode(tree, tree$edge[edges, 2])
+}

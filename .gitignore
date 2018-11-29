@@ -9,7 +9,7 @@ src/*.dll
 *.Rhistory
 *.out
 *.log
-*.Rd
+/* *.Rd */
 inst/ape
 inst/doc
 revdep/

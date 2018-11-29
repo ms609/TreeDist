@@ -3,7 +3,7 @@
 \name{RenumberTree}
 \alias{RenumberTree}
 \alias{RenumberEdges}
-\title{Renumber tree
+\title{Renumber a tree
 Order edges and number nodes
 Wrapper for the C function RENUMBER_TREE}
 \usage{
@@ -15,7 +15,7 @@ RenumberEdges(parent, child, nEdge = length(parent))
 an edge matrix for a tree in following the usual preorder convention for edge and node numbering
 }
 \description{
-Renumber tree
+Renumber a tree
 Order edges and number nodes
 Wrapper for the C function RENUMBER_TREE
 }

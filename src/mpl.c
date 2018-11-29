@@ -1,10 +1,10 @@
-//
-//  mpl.c
-//  MorPhy2
-//
-//  Created by mbrazeau on 04/05/2017.
-//  Copyright © 2017 brazeaulab. All rights reserved.
-//
+/*
+*  mpl.c
+*  MorPhy2
+*
+*  Created by mbrazeau on 04/05/2017.
+*  Copyright © 2017 brazeaulab. All rights reserved.
+*/
 
 #include "mpl.h"
 #include "morphydefs.h"
@@ -12,7 +12,7 @@
 #include "mplerror.h"
 #include "statedata.h"
 
-// TODO: This is temporary
+/* TODO: This is temporary */
 #include "fitch.h"
 
 Morphy mpl_new_Morphy(void)
@@ -84,7 +84,7 @@ int mpl_init_Morphy(const int ntax, const int nchar, Morphy m)
         return ret;
     }
 
-    // TODO: Revise this?
+    /* TODO: Revise this? */
     mpl_init_charac_info(mi);
     
     return ret;
@@ -208,7 +208,7 @@ int mpl_attach_rawdata(const char* rawmatrix, Morphy m)
     }
     mpl_copy_raw_matrix(rawmatrix, m1);
     
-    // Check validity of preprocessed matrix
+    /* Check validity of preprocessed matrix */
     MPL_ERR_T err = ERR_NO_ERROR;
     err = mpl_check_nexus_matrix_dimensions(mpl_get_preprocessed_matrix(m1),
                                             mpl_get_numtaxa(m1),
@@ -232,14 +232,13 @@ int mpl_delete_rawdata(Morphy m)
     }
     Morphyp mp = (Morphyp)m;
     
-    // TODO: This must reset all matrix dependencies
+    /* TODO: This must reset all matrix dependencies */
     if (mp->char_t_matrix) {
         free(mp->char_t_matrix);
         mp->char_t_matrix = NULL;
         mpl_delete_mpl_matrix(mpl_get_mpl_matrix((Morphyp)m));
         mpl_delete_all_partitions((Morphyp)m);
         
-//        mp->inmatrix = NULL;
     }
     return ERR_NO_ERROR;
 }
@@ -253,22 +252,22 @@ int mpl_apply_tipdata(Morphy m)
     
     Morphyp mi = (Morphyp)m;
 
-    // Create dictionary and convert
+    /* Create dictionary and convert */
     mpl_create_state_dictionary(mi);
     mpl_convert_cells(mi);
     
-    // TODO: Check for existing partitions;
-    // Call here
+    /* TODO: Check for existing partitions; */
+    /* Call here */
     
-    // Setup the partitions
+    /* Setup the partitions */
     mpl_setup_partitions(mi);
     mpl_scale_all_intweights(mi);
     mpl_assign_intwts_to_partitions(mi);
     
-    // Create all the internal data memory
+    /* Create all the internal data memory */
     mpl_setup_statesets(mi);
     
-    // Apply the data to the tips
+    /* Apply the data to the tips */
     mpl_copy_data_into_tips(mi);
     
     return ERR_NO_ERROR;

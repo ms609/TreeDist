@@ -53,46 +53,6 @@ test_that("tree search finds shortest tree", {
   expect_equal(3, Fitch(true_tree, dataset), ratchetScore)
 })
 
-context("Morphy: Node support")
-test_that("Jackknife supports are correct", {
-  true_tree <-  ape::read.tree(text = "((((((A,B),C),D),E),F),out);")
-  start_tree <- ape::read.tree(text = "(((((A,D),B),E),(C,F)),out);")
-  dataset <- StringToPhyDat('1100000 1110000 1111000 1111100 1100000 1110000 1111000 1111100 1001000', 1:7, byTaxon=FALSE)
-  names(dataset) <- c(LETTERS[1:6], 'out')
-  set.seed(0)
-  strict <- TreeSearch(start_tree, dataset)
-  expect_equal(1, length(unique(list(true_tree), list(start_tree)))) # Right tree found
-  jackTrees <- Jackknife(strict, dataset, resampleFreq=4/7, searchIter=200L, searchHits=7L, 
-                         EdgeSwapper=RootedTBRSwap, jackIter=20L, verbosity=0L)
-  # Note: one cause of failure could be a change in characters sampled, due to randomness
-  expect_true(length(unique(jackTrees)) > 2L)
-})
-
-test_that("Node supports calculated correctly", {
-  treeSample <- list(
-    correct = ape::read.tree(text = "((((((A,B),C),D),E),F),out);"),
-    swapFE  = ape::read.tree(text = "((((((A,B),C),D),F),E),out);"),
-    DEClade = ape::read.tree(text = "(((((A,B),C),(D,E)),F),out);"),
-    swapBC  = ape::read.tree(text = "((((((A,C),B),D),E),F),out);"),
-    DbyA    = ape::read.tree(text = "((((((A,D),C),B),E),F),out);")
-  )
-  expect_equal(c(4, 4, 4, 3), 
-               as.numeric(SplitFrequency(treeSample$correct, treeSample)))
-  
-  # Internal nodes on each side of root
-  balanced <- ape::read.tree(text="((D, (E, (F, out))), (C, (A, B)));")
-  expect_equal(c(4, 4, 4, 3),
-               as.numeric(SplitFrequency(balanced, treeSample)))
-  
-})
-
-test_that("Node support colours consistent", {
-  expect_equal('red', SupportColour(NA))
-  expect_equal('red', SupportColour(2))
-  expect_equal('red', SupportColor(-2)) # Check alternative spelling 
-  expect_equal('#ffffff00', SupportColour(1, show1=FALSE))
-})
-
 context("Implied weights: Tree search")
 test_that("tree can be found", {
   set.seed(0)

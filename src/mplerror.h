@@ -47,7 +47,7 @@ typedef enum {
                                         function.*/
     ERR_INVALID_SYMBOL      = -1,   /*! Symbol in dataset or symbol list is not 
                                         allowed by Morphy.*/
-    ERR_NO_ERROR            =  0,   /*! No error. Everything went OK.*/
+    ERR_NO_ERROR            =  0    /*! No error. Everything went OK.*/
     
 } MPL_ERR_T;
 

@@ -44,7 +44,7 @@ mpl_translate_error <- function (errorCode) {
 #' mpl_delete_Morphy(morphyObj) # Delete when done
 #' 
 #' @author Martin Brazeau
-#' @useDynLib TreeSearch, .registration = TRUE, .fixes="C_"
+#' @useDynLib TreeSearch, .registration = TRUE
 #' @keywords internal
 #' @export
 mpl_new_Morphy <- function() {

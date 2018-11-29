@@ -7,9 +7,9 @@ cache: packages
 sudo: required # required if r_binary_packages; false otherwise
 warnings_are_errors: true
 r_check_args: --as-cran
-   
+
 git:
-  depth: 5
+  depth: 1
   
 r_binary_packages:
  - ape
@@ -18,12 +18,13 @@ r_binary_packages:
  - memoise
  - phangorn
  - R.cache
+ - Rcpp
  - Rdpack
  - roxygen2
  - testthat
 
-before_script:
- - R -e "devtools::document()"
+# before_script:
+#  - R -e "devtools::document()"
   
 after_success:
   - Rscript -e "covr::codecov()"

@@ -1,10 +1,10 @@
-//
-//  morphy.h
-//  MorPhy2
-//
-//  Created by mbrazeau on 23/04/2017.
-//  Copyright © 2017 brazeaulab. All rights reserved.
-//
+/*
+ *  morphy.h
+ *  MorPhy2
+ *
+ *  Created by mbrazeau on 23/04/2017.
+ *  Copyright © 2017 brazeaulab. All rights reserved.
+ */
 
 #ifndef morphy_h
 #define morphy_h
@@ -25,7 +25,6 @@
 /* Function prototypes */
 
 Morphyp         mpl_new_Morphy_t(void);
-//void*           mpl_get_from_matrix(const int row, const int col, const int ncol, const size_t size, const void* data);
 int             mpl_set_numtaxa(const int ntax, Morphyp m);
 int             mpl_set_num_charac(const int ncharac, Morphyp m);
 int             mpl_get_gaphandl(Morphyp handl);

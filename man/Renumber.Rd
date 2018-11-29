@@ -13,7 +13,8 @@ Renumber(tree)
 This function returns a tree of class \code{phylo}
 }
 \description{
-\code{Renumber} numbers the nodes and tips in a tree to conform with the phylo standards.
+\code{Renumber} numbers the nodes and tips in a tree to conform with the 
+phylo standards.
 }
 \examples{
 library('ape')

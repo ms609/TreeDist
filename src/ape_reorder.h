@@ -1,3 +1,5 @@
+#include <string.h> /* for memset */
+
 static R_NativePrimitiveArgType ape_node_depth_t[] = {
   INTSXP, INTSXP, INTSXP, INTSXP, 
   INTSXP, REALSXP, INTSXP

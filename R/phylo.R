@@ -1,6 +1,7 @@
 #' Renumber a tree's nodes and tips
 #'
-#' \code{Renumber} numbers the nodes and tips in a tree to conform with the phylo standards.
+#' \code{Renumber} numbers the nodes and tips in a tree to conform with the 
+#' phylo standards.
 #'
 #' @template treeParam 
 #' 

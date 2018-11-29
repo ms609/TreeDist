@@ -5,7 +5,6 @@
 #include <float.h>
 #include <R.h>
 #include <Rinternals.h>
-#include <Rmath.h>
 #include "mpl.h"
 #include "RMorphyUtils.h"
 #include "RMorphy.h"
@@ -290,49 +289,40 @@ void morphy_length (const int *ancestor, const int *left, const int *right, Morp
   const int root_node = n_taxa;
   const int max_node = n_taxa + n_internal;
   
-  for (i = max_node - 1; i >= n_taxa; i--) { // First Downpass 
+  for (i = max_node - 1; i >= n_taxa; i--) { /* First Downpass */
     *score += mpl_first_down_recon(i,  left[i - n_taxa], right[i - n_taxa], handl);
-    //Rprintf("Downpass on node %i -< %i,%i ... pscore is %i\n", i, left[i-n_taxa], right[i-n_taxa], *score);
   }
-  mpl_update_lower_root(root_node, root_node, handl); // We could use a spare internal node with index = max_node as a dummy root node.
-                                                      // Or we can just pass the root node as its own ancestor.
+  mpl_update_lower_root(root_node, root_node, handl); /* We could use a spare internal node with index = max_node as a dummy root node.
+                                                        Or we can just pass the root node as its own ancestor. */
  
-  for (i = root_node; i < max_node; i++) { // First uppass: internal nodes
+  for (i = root_node; i < max_node; i++) { /* First uppass: internal nodes */
     *score += mpl_first_up_recon(i, left[i - n_taxa], right[i - n_taxa], ancestor[i], handl);
-    //Rprintf("Uppass on node %i -< %i,%i ... pscore is %i\n", i, left[i-n_taxa], right[i-n_taxa], *score);
   }
-  for (i = 0; i < n_taxa; i++) { // First uppass: update tips
+  for (i = 0; i < n_taxa; i++) { /* First uppass: update tips */
     mpl_update_tip(i, ancestor[i], handl);
   }
   
-  for (i = max_node - 1; i >= n_taxa; i--) { // Second Downpass 
+  for (i = max_node - 1; i >= n_taxa; i--) { /* Second Downpass */
     *score += mpl_second_down_recon(i, left[i - n_taxa], right[i - n_taxa], handl);
   }
  
-  //for (i = n_taxa; i < max_node; i++) { // Second uppass: internal nodes 
-  // // As of Jan 2018 algorithm improvement, not needed to calculate score
-  //  *score += mpl_second_up_recon(i, left[i - n_taxa], right[i - n_taxa], ancestor[i], handl);
-  //}
-  // for (i = 0; i < n_taxa; i++) { // Second uppass: finalize tips (fwiw)
-  //   mpl_finalize_tip(i, ancestor[i], handl);
-  // }
 }
 
 SEXP MORPHYLENGTH(SEXP R_ancestors, SEXP R_left, SEXP R_right, SEXP MorphyHandl) {
   Morphy handl = R_ExternalPtrAddr(MorphyHandl);
-  // R_descendants and R_ancestors have already had one subtracted to convert them to an index 
+  /* R_descendants and R_ancestors have already had one subtracted to convert them to an index */
   const int *ancestor=INTEGER(R_ancestors), *left=INTEGER(R_left), 
-            *right=INTEGER(R_right); // INTEGER gives pointer to first element of an R vector
+            *right=INTEGER(R_right); /* INTEGER gives pointer to first element of an R vector*/
             
-  // Declare and protect result, to return to R
+  /* Declare and protect result, to return to R */
   SEXP Rres = PROTECT(allocVector(INTSXP, 1));
   
-  // Initialize return variables
+  /* Initialize return variables */
   int *score;
   score = INTEGER(Rres);
   *score = 0;
-  morphy_length(ancestor, left, right, handl, score); // Updates score
-  
+  morphy_length(ancestor, left, right, handl, score); /* Updates score */
+   
   UNPROTECT(1);
   return Rres;
 }

@@ -4,7 +4,7 @@
 #' @keywords internal
 #' @export
 NeworderPhylo <- function (nTaxa, parent, child, nb.edge, whichwise) {
-  .C(C_ape_neworder_phylo, as.integer(nTaxa), as.integer(parent), as.integer(child), 
+  .C('ape_neworder_phylo', as.integer(nTaxa), as.integer(parent), as.integer(child), 
      as.integer(nb.edge), integer(nb.edge), as.integer(whichwise), NAOK = TRUE)[[5]]
 }
 
@@ -13,7 +13,7 @@ NeworderPhylo <- function (nTaxa, parent, child, nb.edge, whichwise) {
 #' @keywords internal
 #' @export
 NeworderPruningwise <- function (nTaxa, nb.node, parent, child, nb.edge) {
-  .C(C_ape_neworder_pruningwise, as.integer(nTaxa), as.integer(nb.node), as.integer(parent), 
+  .C('ape_neworder_pruningwise', as.integer(nTaxa), as.integer(nb.node), as.integer(parent), 
      as.integer(child), as.integer(nb.edge), integer(nb.edge))[[6]]
 }
 
@@ -24,25 +24,25 @@ NeworderPruningwise <- function (nTaxa, nb.node, parent, child, nb.edge) {
 #' @keywords internal
 #' @export
 OrderEdgesNumberNodes <- function (parent, child, nTips, nEdge = length(parent)) {
-  matrix(unlist(.C(C_order_edges_number_nodes, as.integer(parent), as.integer(child),
+  matrix(unlist(.C('order_edges_number_nodes', as.integer(parent), as.integer(child),
   as.integer(nEdge))[1:2]), ncol=2)
 }
 
-#' Renumber tree
+#' Renumber a tree
 #' Order edges and number nodes
 #' Wrapper for the C function RENUMBER_TREE
 #' @return an edge matrix for a tree in following the usual preorder convention for edge and node numbering 
 #' @keywords internal
 #' @export
 RenumberTree <- function (parent, child, nEdge = length(parent)) {
-  matrix(.Call(C_RENUMBER_TREE, as.integer(parent), as.integer(child), as.integer(nEdge)), ncol=2)
+  matrix(.Call('RENUMBER_TREE', as.integer(parent), as.integer(child), as.integer(nEdge)), ncol=2)
 }
 
 #' @describeIn RenumberTree Instead returns a list containing two items corresponding to the new parent and child vectors
 #' @keywords internal
 #' @export
 RenumberEdges <- function (parent, child, nEdge = length(parent)) {
-  .Call(C_RENUMBER_EDGES, as.integer(parent), as.integer(child), as.integer(nEdge))
+  .Call('RENUMBER_EDGES', as.integer(parent), as.integer(child), as.integer(nEdge))
 }
 
 #' Reorder tree Cladewise

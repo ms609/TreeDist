@@ -59,7 +59,7 @@ typedef enum {
     IRREVERSIBLE_T  = 4,
     USERTYPE_T      = 5,
     
-    MAX_CTYPE,
+    MAX_CTYPE
     
 } MPLchtype;
 
@@ -69,11 +69,11 @@ typedef enum {
     GAP_MISSING,
     GAP_NEWSTATE,
     
-    GAP_MAX,
+    GAP_MAX
     
 } MPLgap_t;
 
-	// Public functions
+	/* Public functions */
 
 	/*!
 	 
@@ -351,7 +351,7 @@ int     mpl_set_charac_weight
          const double   weight,
          Morphy         m);
 
-// TODO: Document
+/* TODO: Document */
 unsigned long mpl_get_charac_weight
     
         (double*    weight,
@@ -693,7 +693,7 @@ int		mpl_na_first_up_recalculation
 		 Morphy     m);
 
 
-// Returns number of steps to add
+/* Returns number of steps to add */
 int		mpl_na_second_down_recalculation
 
 		(const int  node_id,
@@ -701,7 +701,7 @@ int		mpl_na_second_down_recalculation
 		 const int  right_id,
 		 Morphy     m);
 
-// Returns number of steps to add
+/* Returns number of steps to add */
 int		mpl_na_second_up_recalculation
 
 		(const int  node_id,
@@ -750,9 +750,9 @@ int     mpl_get_step_recall
          Morphy     m);
         
         
-// Indicates whether or not partitions with inapplicable characters need partial
-// reoptimisation on the target subtree. SHOULD RETURN: Number of characters
-// needing partial reoptimisation on the subtree.
+/* Indicates whether or not partitions with inapplicable characters need partial
+ reoptimisation on the target subtree. SHOULD RETURN: Number of characters
+ needing partial reoptimisation on the subtree. */
 int     mpl_check_reopt_inapplics
     
         (Morphy m);

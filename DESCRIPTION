@@ -1,19 +1,22 @@
 Package: TreeSearch
 Title: Phylogenetic Tree Search Using Custom Optimality Criteria
 Version: 0.2.0.9000
-Date: 2018-11-06
+Date: 2018-11-29
 Authors@R: c(person("Martin R.", 'Smith',
                   email="martin.smith@durham.ac.uk", 
                   role=c("aut", "cre", "cph"), 
                   comment=c(ORCID = "0000-0001-5660-1727")),
-               person(given = "Emmanuel", family="Paradis",
-               role = c("cph")),
-               person(given = "Martin", family="Brazeau",
-               role = c("cph"))
+               person(given = "Emmanuel", family="Paradis", role = c("cph"),
+                  comment = c(ORCID = "0000-0003-3092-2199")),
+               person(given = "Klaus", family="Schliep", role = c("cph"),
+                  comment = c(ORCID = "0000-0003-2941-0161")),
+               person(given = "Martin", family="Brazeau", role = c("cph"), 
+                  comment = c(ORCID = "0000-0002-0650-1282"))
             )
 License: GPL (>= 3)
-Copyright: Incorporates C code from:
+Copyright: Incorporates C/C++ code from:
    ape by Emmanuel Paradis;
+   phangorn by Klaus Scheip <doi:10.1093/bioinformatics/btq706>;
    Morphy Phylogenetic Library by Martin Brazeau <https://github.com/mbrazeau/MorphyLib> (GPL3)
 Description: Searches for phylogenetic trees that are optimal using a user-defined criterion. 
   Implements Profile Parsimony (Faith and Trueman, 2001) <doi:10.1080/10635150118627>, and
@@ -29,6 +32,7 @@ Imports:
     memoise,
     phangorn (>= 2.2.1),
     R.cache,
+    Rcpp,
     Rdpack,
     stats
 Suggests:
@@ -40,6 +44,7 @@ Suggests:
 RdMacros: Rdpack
 LazyData: true
 ByteCompile: true
+LinkingTo: Rcpp
 Encoding: UTF-8
 VignetteBuilder: knitr
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1

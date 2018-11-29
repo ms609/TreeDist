@@ -2,12 +2,17 @@
 #' 
 #' Reads a tree from TNT's paranthetical output.
 #' 
-#' @param filename character string specifying path to TNT `.tre` file
-#' @param relativePath (optional) character string specifying location of the matrix 
-#'                     file used to generate the TNT results, 
-#'                     relative to the current working directory, for portability.
+#' @param filename character string specifying path to TNT `.tre` file.
+#' @param relativePath (optional) character string specifying location of the
+#' matrix file used to generate the TNT results, relative to the current working
+#' directory, for portability.  Taxon names will be read from this file if they
+#' are not specified by `tipLabels`.
 #' @param keepEnd (optional, default 1) integer specifying how many elements of the file
-#'                path to conserve when creating relative path (see examples)
+#'                path to conserve when creating relative path (see examples).
+#' @param tipLabels (optional) character vector specifying the names of the 
+#' taxa, in the sequence that they appear in the TNT file.  If not specified,
+#' taxon names will be loaded from the data file linked in the first line of the
+#'  `.tre` file specified in `filename`.
 #'                     
 #' 
 #' @return a tree of class \code{phylo}.
@@ -47,41 +52,46 @@
 #' @author Martin R. Smith
 #' @importFrom ape read.tree
 #' @export
-ReadTntTree <- function (filename, relativePath = NULL, keepEnd = 1L) {
+ReadTntTree <- function (filename, relativePath = NULL, keepEnd = 1L, 
+                         tipLabels = NULL) {
   fileText <- readLines(filename)
   trees <- lapply(fileText[2:(length(fileText)-1)], TNTText2Tree)
   
-  taxonFile <- gsub("tread 'tree(s) from TNT, for data in ", '', fileText[1], fixed=TRUE)
-  taxonFile <- gsub("'", '', gsub('\\', '/', taxonFile, fixed=TRUE), fixed=TRUE)
-  if (!is.null(relativePath)) {
-    taxonFileParts <- strsplit(taxonFile, '/')[[1]]
-    nParts <- length(taxonFileParts)
-    if (nParts < keepEnd) {
-      stop("Taxon file path (", taxonFile, ") contains fewer than keepEnd (",
-           keepEnd, ") components.")
+  if (is.null(tipLabels)) {
+    taxonFile <- gsub("tread 'tree(s) from TNT, for data in ", '', fileText[1], fixed=TRUE)
+    taxonFile <- gsub("'", '', gsub('\\', '/', taxonFile, fixed=TRUE), fixed=TRUE)
+    if (!is.null(relativePath)) {
+      taxonFileParts <- strsplit(taxonFile, '/')[[1]]
+      nParts <- length(taxonFileParts)
+      if (nParts < keepEnd) {
+        stop("Taxon file path (", taxonFile, ") contains fewer than keepEnd (",
+             keepEnd, ") components.")
+      }
+      taxonFile <- paste0(c(relativePath, taxonFileParts[(nParts + 1L - keepEnd):nParts]),
+                          collapse='/')
     }
-    taxonFile <- paste0(c(relativePath, taxonFileParts[(nParts + 1L - keepEnd):nParts]),
-                        collapse='/')
+  
+    if (!file.exists(taxonFile)) {
+      warning("Cannot find linked data file:\n  ", taxonFile)
+    } else {
+      tipLabels <- rownames(ReadTntCharacters(taxonFile, 1))
+      if (is.null(tipLabels)) {
+        # TNT character read failed.  Perhaps taxonFile is in NEXUS format?
+        tipLabels <- rownames(ReadCharacters(taxonFile, 1))
+      }
+      if (is.null(tipLabels)) {
+        warning("Could not read taxon names from linked TNT file:\n  ",
+                taxonFile, 
+                "\nIs the file in TNT or Nexus format? If failing inexplicably, please report:",
+                "\n  https://github.com/ms609/TreeSearch/issues/new")
+      }
+    }
   }
-  if (!file.exists(taxonFile)) {
-    warning("Cannot find linked data file:\n  ", taxonFile)
-  } else {
-    tipNames <- rownames(ReadTntCharacters(taxonFile, 1))
-    if (is.null(tipNames)) {
-      # TNT character read failed.  Perhaps taxonFile is in NEXUS format?
-      tipNames <- rownames(ReadCharacters(taxonFile, 1))
-    }
-    if (is.null(tipNames)) {
-      warning("Could not read taxon names from linked TNT file:\n  ",
-              taxonFile, 
-              "\nIs the file in TNT or Nexus format? If failing inexplicably, please report:",
-              "\n  https://github.com/ms609/TreeSearch/issues/new")
-    }
-    trees <- lapply(trees, function (tree) {
-      tree$tip.label <- tipNames[as.integer(tree$tip.label) + 1]
-      tree
-    })
-  }
+  
+  trees <- lapply(trees, function (tree) {
+    tree$tip.label <- tipLabels[as.integer(tree$tip.label) + 1]
+    tree
+  })
   
   # Return:
   if (length(trees) == 1) {

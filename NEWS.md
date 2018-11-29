@@ -1,5 +1,14 @@
 # TreeSearch 0.2.0.9000 (development)
 
+## New features
+ - `CollapseNodes` and `CollapseEdges` allow the creation of polytomies
+ - `Tree2Splits` lists the bipartition splits implied by a tree topology
+
+## Enhancements
+ - `SplitFrequency` now supports larger trees
+ - Can specify tip labels directly to `ReadTntTree`, to avoid reliance on
+   generative file
+
 ## Bug fixes
  - Export missing functions
 
