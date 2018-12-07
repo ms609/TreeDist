@@ -1,6 +1,6 @@
      year <- "in press"
      
-     citHeader(paste0("When using the package, we would appreciate it if you would acknowledge your use of TreeSearch and (if you use it) MorphyLib in the article text, and cite Brazeau et al. (2019). For example, 'Phylogenetic search was performed using the 
+     citHeader(paste0("When using the package, we would appreciate it if you would acknowledge your use of TreeSearch and (if you use it) MorphyLib in the article text, and cite Brazeau et al. (", year, "). For example, 'Phylogenetic search was performed using the 
      R package TreeSearch v0.2.0, which uses MorphyLib to handle inapplicable data
      in accordance with Brazeau et al. (", year, ")'.  You might also wish to cite the
      individual software packages using their Zenodo dois."))
@@ -12,7 +12,6 @@
               author = personList(as.person("Martin D. Brazeau"), as.person("Thomas Guillerme"), as.person("Martin R. Smith")),
               journal = "Systematic Biology",
               year = year,
-              note = vers,
      
               textVersion =
               paste0("Brazeau, Guillerme & Smith (", year, "). ",
@@ -24,6 +23,7 @@
      citEntry(entry = "Manual",
               title = "TreeSearch: phylogenetic tree search using custom optimality criteria",
               author = personList(as.person("Martin R. Smith")),
+              note = vers,
               year = 2018,
      
               textVersion =
@@ -34,7 +34,7 @@
               title = "MorphyLib: a library for phylogenetic analysis of categorical trait data with inapplicability",
               author = personList(as.person("Martin D. Brazeau"), as.person("Martin R. Smith"), as.person("Thomas Guillerme")),
               year = 2017,
-              note = "0.0.1-alpha",
+              note = "Version 0.0.1-alpha",
      
               textVersion =
               paste0("Brazeau, Smith & Guillerme (2017). MorphyLib: a library for phylogenetic analysis of categorical trait data with inapplicability. doi: 10.5281/zenodo.815371"))
