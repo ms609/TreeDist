@@ -119,8 +119,9 @@ MorphyErrorCheck <- function (action) {
 #' @param char State of each character at each tip in turn, in a format that will be converted
 #'             to a character string by \code{\link{paste0}(char, ';', collapse='')}.
 #'
-#' @return A pointer to a morphyObj. Don't forget to unload it when you're done with it:
-#'         \code{morphyObj <- \link{UnloadMorphy}(morphyObj)}.
+#' @return A pointer to a morphyObj.
+#' Don't forget to unload it when you've finished with it:
+#' \code{morphyObj <- \link{UnloadMorphy}(morphyObj)}.
 #'
 #' @author Martin R. Smith
 #'

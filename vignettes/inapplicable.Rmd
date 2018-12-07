@@ -66,7 +66,7 @@ With the Vinther _et al._ [-@Vinther2008] dataset, nemerteans and brachiopods fo
 the other taxa. 
 If we wish, we can constrain this outgroup and avoid making tree rearrangements that would mix 
 ingroup and outgroup taxa.
-This will accellerate tree search, but it's worth thinking carefully whether you can be perfectly
+This will accelerate tree search, but it's worth thinking carefully whether you can be perfectly
 confident that the ingroup and outgroup are mutually monophyletic.
 
 To constrain an outgroup, we first need to make the outgroup and ingroup monophyletic on our tree:

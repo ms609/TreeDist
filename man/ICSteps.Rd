@@ -10,8 +10,8 @@ ICSteps(char, ambiguousToken = 0, expectedMinima = 25,
 \arguments{
 \item{char}{The character in question.}
 
-\item{ambiguousToken}{Which token, if any, corresponds to the ambigious token (?)
-(not yet fully implemented).}
+\item{ambiguousToken}{Which token, if any, corresponds to the ambiguous token
+(?) (not yet fully implemented).}
 
 \item{expectedMinima}{sample enough trees that the rarest step counts is expected to be seen
 at least this many times.}

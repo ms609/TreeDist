@@ -28,7 +28,8 @@ RootedSPRSwap(parent, child, nEdge = length(parent), nNode = nEdge/2L,
 
 \item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
 
-\item{nEdge}{(optional) integer specifying the number of edges of a tree of class \code{\link{phylo}}, i.e. \code{dim(tree$edge)[1]}}
+\item{nEdge}{(optional) integer specifying the number of edges of a tree of
+class \code{\link{phylo}}, i.e. \code{dim(tree$edge)[1]}}
 
 \item{nNode}{(optional) Number of nodes.}
 }

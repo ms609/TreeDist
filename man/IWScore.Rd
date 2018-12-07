@@ -15,12 +15,12 @@ IWDestroyMorphy(dataset)
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}.}
 
-\item{dataset}{Dataset of class \code{phyDat}.  The dataset should have been prepared using
-\code{dataset <- \link{PrepareDataIW}(dataset)}; if this step
-has not been completed, the dataset will 
-be (time-consumingly) prepared within the function.
+\item{dataset}{Dataset of class \code{phyDat}.  The dataset should have been
+prepared using \code{dataset <- \link{PrepareDataIW}(dataset)}; if this step
+has not been completed, the dataset will be (time-consumingly) prepared
+within the function.
 In subsidiary functions, the dataset will have been initialized using 
-\code{IWInitMorphy}, must be destroyed using \code{IWDestroyMorphy}.}
+\code{IWInitMorphy}, and must be destroyed using \code{IWDestroyMorphy}.}
 
 \item{concavity}{A numeric value to use as the concavity constant (`k`) in implied weighting.}
 

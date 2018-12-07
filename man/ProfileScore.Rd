@@ -24,10 +24,10 @@ ProfileDestroyMorphy(dataset)
 
 \item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
 
-\item{dataset}{Dataset of class \code{phyDat}.  The dataset should have been prepared using
-\code{dataset <- \link{PrepareDataProfile}(dataset)}; if this step
-has not been completed, the dataset will 
-be (time-consumingly) prepared within the function.
+\item{dataset}{Dataset of class \code{phyDat}.  The dataset should have been
+prepared using \code{dataset <- \link{PrepareDataProfile}(dataset)};
+if this step has not been completed, the dataset will be (time-consumingly)
+prepared within the function.
 In subsidiary functions, the dataset will have been initialized using 
 \code{ProfileInitMorphy}, must be destroyed using \code{ProfileDestroyMorphy}.}
 
@@ -43,8 +43,8 @@ received by the function without throwing an error.}
 \item{tree}{A tree of class \code{\link{phylo}}.}
 }
 \value{
-Zero minus the profile score (because the optimization algorithm assumes that
-        smaller numbers are better)
+Zero minus the profile score (because the optimization algorithm 
+treats smaller numbers as better)
 }
 \description{
 Calculate a tree's Profile Parsimony score with a given dataset, after Faith and Trueman (2001)
@@ -57,13 +57,15 @@ Calculate a tree's Profile Parsimony score with a given dataset, after Faith and
 
 \item \code{ProfileInitMorphy}: Initialize dataset by adding morphyObjs.
 
-\item \code{ProfileDestroyMorphy}: Free memory from morphyObjs initialized by \kbd{ProfileScoreMorphy}.
+\item \code{ProfileDestroyMorphy}: Free memory from morphyObjs initialized by
+\kbd{ProfileScoreMorphy}.
 }}
 
 \examples{
   data(referenceTree)
   data(congreveLamsdellMatrices)
-  # In actual use, the dataset should be prepared with a much higher precision: try 1e+06?
+  # In actual use, the dataset should be prepared with a much higher
+  # precision: try 1e+06?
   # Of course, gaining higher precision takes substantially longer.
   dataset <- PrepareDataProfile(congreveLamsdellMatrices[[42]], precision=1e+03)
   ProfileScore(referenceTree, dataset)

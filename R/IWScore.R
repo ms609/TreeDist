@@ -3,12 +3,12 @@
 #' Calculate a tree's Parsimony score with a given dataset using implied weights (Goloboff 1997)
 #'
 #' @template treeParam
-#' @param dataset Dataset of class \code{phyDat}.  The dataset should have been prepared using
-#'                \code{dataset <- \link{PrepareDataIW}(dataset)}; if this step
-#'                has not been completed, the dataset will 
-#'                be (time-consumingly) prepared within the function.
-#'                In subsidiary functions, the dataset will have been initialized using 
-#'                \code{IWInitMorphy}, must be destroyed using \code{IWDestroyMorphy}.
+#' @param dataset Dataset of class \code{phyDat}.  The dataset should have been
+#' prepared using \code{dataset <- \link{PrepareDataIW}(dataset)}; if this step
+#' has not been completed, the dataset will be (time-consumingly) prepared
+#' within the function.
+#' In subsidiary functions, the dataset will have been initialized using 
+#' \code{IWInitMorphy}, and must be destroyed using \code{IWDestroyMorphy}.
 #' @template concavityParam
 #' @template pointlessDots
 #'

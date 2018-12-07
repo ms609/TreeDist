@@ -62,8 +62,9 @@ my.data <- congreveLamsdellMatrices[[10]]
 
 A contrast matrix translates the tokens used in your dataset to the character states to 
    which they correspond: for example decoding 'A' to {01}.
-   For more details, see the 'phangorn-specials' vignette in the phangorn package, accesible 
-   by typing '?phangorn' in the R prompt and navigating to index > package vignettes.
+   For more details, see the 'phangorn-specials' vignette in the phangorn package,
+   accessible by typing '?phangorn' in the R prompt and navigating to 
+   index > package vignettes.
 
 ```{r Contrast matrix}
 contrast.matrix <- matrix(data=c(
