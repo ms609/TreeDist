@@ -21,6 +21,7 @@
 ## Bug fixes
  - Export missing functions
 
+
 # TreeSearch 0.2.0
 
 ## New features
@@ -47,6 +48,7 @@
  - [IW]MultiRatchet now considers trees identical even if they've been hit 
    a different number of times
 
+
 # TreeSearch 0.1.2
 
 ## Bug fixes
@@ -54,6 +56,7 @@
 - Remove non-ASCII characters from data
 - Disable slow-building and problematic vignette
 - Use local copy of citation style when building vignettes
+
 
 # TreeSearch 0.1.0
 
@@ -96,6 +99,7 @@
 - Integrated with this package (previously in `ProfileParsimony`)
 - Faster calculation of concavity profiles in C
 - Persistent memoization with R.cache
+
 
 # TreeSearch 0.0.6
 - First CRAN submission
