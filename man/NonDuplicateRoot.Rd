@@ -11,7 +11,8 @@ NonDuplicateRoot(parent, child, nEdge = length(parent))
 
 \item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
 
-\item{nEdge}{(optional) integer specifying the number of edges of a tree of class \code{\link{phylo}}, i.e. \code{dim(tree$edge)[1]}}
+\item{nEdge}{(optional) integer specifying the number of edges of a tree of
+class \code{\link{phylo}}, i.e. \code{dim(tree$edge)[1]}}
 }
 \description{
 Identify, for each edge, whether it is not a duplicate of the root edge

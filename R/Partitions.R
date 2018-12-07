@@ -1,16 +1,3 @@
-#    #' Calculate bipartitions using phangorn's bipCPP function
-#    #' 
-#    #' @param orig Tree edge matrix (`someTree$edge`)
-#    #' @param nTips number of tips
-#    #' 
-#    #' @return A list specifying, for each partition, the included taxa.
-#    #' 
-#    #' @export
-#    #' @keywords internal
-#    phangornBipCPP <- function(orig, nTips) {
-#      .Call(`C__TreeSearch_phangorn_bipCPP`, orig, nTips)
-#    }
-
 #' Tree2Splits
 #' 
 #' Converts a phylogenetic tree to an array of bipartition splits.

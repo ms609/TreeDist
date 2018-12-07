@@ -11,8 +11,9 @@ SingleCharMorphy(char)
 to a character string by \code{\link{paste0}(char, ';', collapse='')}.}
 }
 \value{
-A pointer to a morphyObj. Don't forget to unload it when you're done with it:
-        \code{morphyObj <- \link{UnloadMorphy}(morphyObj)}.
+A pointer to a morphyObj.
+Don't forget to unload it when you've finished with it:
+\code{morphyObj <- \link{UnloadMorphy}(morphyObj)}.
 }
 \description{
 Morphy object from single character

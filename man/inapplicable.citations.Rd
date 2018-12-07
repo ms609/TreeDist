@@ -23,10 +23,11 @@
  \item{Rousset2004}{ ROUSSET, V., ROUSE, G. W., SIDDALL, M. E., TILLIER, A. and PLEIJEL, F. 
                    2004. The phylogenetic position of Siboglinidae (Annelida) inferred from
                     18S rRNA, 28S rRNA and morphological data. Cladistics, 20, 518--533.}
- \item{Sano2011}{ SANO, M. and AKIMOTO, S.-I. 2011. Morphological phylogeny of gall-forming 
-                   aphids of the tribe Eriosomatini (Aphididae: Eriosomatinae). Systematic Entomology, 36, 607--627.}
+ \item{Sano2011}{ SANO, M. and AKIMOTO, S.-I. 2011. Morphological phylogeny of 
+ gall-forming aphids of the tribe Eriosomatini (Aphididae: Eriosomatinae). 
+ Systematic Entomology, 36, 607--627.}
  \item{Sansom2010}{ SANSOM, R. S., FREEDMAN, K., GABBOTT, S. E., ALDRIDGE, R. J. and
-                   PURNELL, M. A. 2010. Taphonomy and affinity of an enigmatic Silurian vertebrate,
+                    PURNELL, M. A. 2010. Taphonomy and affinity of an enigmatic Silurian vertebrate,
                    \emph{Jamoytius kerwoodi} White. Palaeontology, 53, 1393--1409.}
  \item{Schulze2007}{ SCHULZE, A., CUTLER, E. B. and GIRIBET, G. 2007. Phylogeny of sipunculan 
                    worms: A combined analysis of four gene regions and morphology. Molecular Phylogenetics and Evolution, 42, 171--92.}

@@ -139,8 +139,8 @@ NUnrootedMult  <- function (splits) {  # Carter et al. 1990, Theorem 2
 #' results.
 #'
 #' @param char The character in question.
-#' @param ambiguousToken Which token, if any, corresponds to the ambigious token (?)
-#'                          (not yet fully implemented).
+#' @param ambiguousToken Which token, if any, corresponds to the ambiguous token
+#' (?) (not yet fully implemented).
 #' @param expectedMinima sample enough trees that the rarest step counts is expected to be seen
 #'                          at least this many times.
 #' @param maxIter Maximum iterations to conduct.

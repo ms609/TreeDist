@@ -6,11 +6,11 @@ r:
 cache: packages
 sudo: required # required if r_binary_packages; false otherwise
 warnings_are_errors: true
-r_check_args: --as-cran
+r_check_args: --as-cran --no-manual # Workaround error compiling PDF manual
 
 git:
   depth: 1
-  
+
 r_binary_packages:
  - ape
  - covr
@@ -25,7 +25,7 @@ r_binary_packages:
 
 # before_script:
 #  - R -e "devtools::document()"
-  
+
 after_success:
   - Rscript -e "covr::codecov()"
   
