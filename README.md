@@ -34,7 +34,7 @@ devtools::install_github('ms609/TreeSearch')
 TreeSearch allows the implementation of various optimality criteria, including
 - The Profile Parsimony approach introduced by Faith and Trueman (2001).
 - Successive Approximations weighting (Farris 1969).
-- Fitch parsimony with inapplicable data (Brazeau, Guillerme and Smith, 2017).
+- Fitch parsimony with inapplicable data (Brazeau, Guillerme and Smith, 2019).
 
 It is also possible to specify bespoke optimality criteria.
 
@@ -42,7 +42,7 @@ It is also possible to specify bespoke optimality criteria.
 
 Brazeau, M. D., Guillerme, T. and Smith, M. R. in press. 
   An algorithm for morphological phylogenetic analysis with inapplicable data. 
-  Systematic Biology. doi:[10.1093/sysbio/syy083](https://dx.doi.org/10.1093/sysbio/syy083).  Preprint available at BioRχiv, doi:[10.1101/209775](https://dx.doi.org/10.1101/209775)
+  Systematic Biology. doi:[10.1093/sysbio/syy083](https://dx.doi.org/10.1093/sysbio/syy083).
 
 D. P. Faith, J. W. H. Trueman, Towards an inclusive philosophy for phylogenetic inference.
   Syst. Biol. 50, 331–350 (2001).   doi:[10.1080/10635150118627](https://dx.doi.org/10.1080/10635150118627)
