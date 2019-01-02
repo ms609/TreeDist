@@ -1,3 +1,8 @@
+# TreeSearch 0.2.2
+
+## Bug fixes 
+ - Correct vignette titles
+
 # TreeSearch 0.2.1
 
 ## New features
