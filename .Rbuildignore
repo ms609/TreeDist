@@ -1,6 +1,7 @@
 ^CRAN-RELEASE$
 /^src\-/
 CONTRIBUTING
+README.md
 cran-comments.md
 man-roxygen
 data-raw
