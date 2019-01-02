@@ -39,13 +39,13 @@ It is also possible to specify bespoke optimality criteria.
 
 # Documentation
 
-- [Package functions](https://cran.r-project.org/web/packages/TreeSearch/TreeSearch.pdf) reference manual
-- [Getting started](https://cran.r-project.org/web/packages/TreeSearch/vignettes/getting-started.html)
-- [Loading phylogenetic data into R](https://cran.r-project.org/web/packages/TreeSearch/vignettes/load-data.html)
-- [Parsimony search with inapplicable data](https://cran.r-project.org/web/packages/TreeSearch/vignettes/inapplicable.html)
+- [Package functions](https://CRAN.R-project.org/package=TreeSearch/TreeSearch.pdf) reference manual
+- [Getting started](https://CRAN.R-project.org/package=TreeSearch/vignettes/getting-started.html)
+- [Loading phylogenetic data into R](https://CRAN.R-project.org/package=TreeSearch/vignettes/load-data.html)
+- [Parsimony search with inapplicable data](https://CRAN.R-project.org/package=TreeSearch/vignettes/inapplicable.html)
 
-- [Calculating concavity profiles](https://cran.r-project.org/web/packages/TreeSearch/vignettes/profile-scores.html) for Profile Parsimony
-- [Tree search with profile parsimony](https://cran.r-project.org/web/packages/TreeSearch/vignettes/profile.html)
+- [Calculating concavity profiles](https://CRAN.R-project.org/package=TreeSearch/vignettes/profile-scores.html) for Profile Parsimony
+- [Tree search with profile parsimony](https://CRAN.R-project.org/package=TreeSearch/vignettes/profile.html)
 
 
 # References
