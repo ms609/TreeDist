@@ -15,4 +15,4 @@ LaTeX: pdfLaTeX
 BuildType: Package
 PackageUseDevtools: Yes
 PackageInstallArgs: --no-multiarch --with-keep.source
-PackageCheckArgs: --as-cran --no-stop-on-test-error
+PackageCheckArgs: --no-multiarch --as-cran --no-stop-on-test-error
