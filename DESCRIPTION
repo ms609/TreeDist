@@ -1,7 +1,7 @@
 Package: TreeSearch
 Title: Phylogenetic Tree Search Using Custom Optimality Criteria
-Version: 0.2.1.9000
-Date: 2018-12-12
+Version: 0.2.1.9001
+Date: 2019-01-02
 Authors@R: c(person("Martin R.", 'Smith',
                   email="martin.smith@durham.ac.uk", 
                   role=c("aut", "cre", "cph"), 
@@ -33,11 +33,11 @@ Imports:
     memoise,
     phangorn (>= 2.2.1),
     R.cache,
-    Rcpp,
     Rdpack,
     stats
 Suggests:
     knitr,
+    Rcpp,
     rmarkdown,
     shiny,
     testthat,
