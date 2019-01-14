@@ -20,19 +20,18 @@ Profile Parsimony finds the tree that is most faithful to the information contai
 within a given dataset.
 
 
-Character data are read from a \emph{restricted} \acronym{NEXUS} format using the R function
-\code{\link{read.nexus.data}}; see the latter function's \link[=read.nexus.data]{documentation} for details.
+Character data are read from a restricted NEXUS format using the R function `ape::read.nexus.data`; see the latter function's documentation for details.
 
-\acronym{NEXUS} files can be edited in any standard text editor,
- for example \href{https://notepad-plus-plus.org/}{Notepad++}.
+NEXUS files can be edited in any standard text editor,
+ for example [Notepad++](https://notepad-plus-plus.org).
  
-A notable limitation is that the parser cannot interpret curly braces, for example {01}.  
+A notable limitation is that the parser cannot interpret curly braces, for example `{01}`.  
 Ambiguous tokens of this nature should be replaced with a separate character, for example 
-'A' to denote {01}, 'B' to denote {12}, perhaps using a search-and-replace operation in your 
+'A' to denote `{01}`, 'B' to denote `{12}`, perhaps using a search-and-replace operation in your 
 favourite text editor.
 
-This said, the Profile Parsimony algorithm is currently implemented only for binary characters
-with no ambiguous tokens.
+This said, the Profile Parsimony algorithm is currently implemented only 
+for binary characters with no ambiguous tokens.
 I hope to address this limitation soon.
 
 ## Loading the package
