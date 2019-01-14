@@ -25,6 +25,7 @@
               author = personList(as.person("Martin R. Smith")),
               note = vers,
               year = 2018,
+              doi = "10.5281/zenodo.1042590",
      
               textVersion =
               paste0("Smith (2018). TreeSearch: phylogenetic tree search using custom optimality criteria. doi: 10.5281/zenodo.1042590"))
