@@ -1,3 +1,9 @@
+# TreeSearch 0.2.2.9000 (in development)
+
+## Bug fixes
+ - Correct some mistakes in the documentation
+
+
 # TreeSearch 0.2.2
 
 ## Bug fixes 

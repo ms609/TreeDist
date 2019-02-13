@@ -40,7 +40,10 @@ Tree2Bipartitions <- Tree2Splits
 #' 
 #' Removes equivalent duplicates from a matrix of bipartitions.
 #' 
-#' @template splitsParam
+#' @param splits A logical matrix containing one named row corresponding to each
+#' terminal leaf of a tree, and each column corresponds to a bipartition split;
+#' each split divides terminals into two bipartitions; members of one
+#' are marked `TRUE` and members of the other are marked `FALSE`.
 #' @param preserveParity Logical specifying whether to preserve the `TRUE` and
 #'  `FALSE` status within each split (which takes marginally longer).  If 
 #'  `FALSE`, each split will be defined such that taxa in the same partition
