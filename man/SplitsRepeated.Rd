@@ -8,7 +8,7 @@ SplitsRepeated(original, matches)
 }
 \arguments{
 \item{original, matches}{Logical matrix describing the bipartition splits
-defined by a tree (see [Quartet:Tree2Splits] for format).  The first row
+defined by a tree (see [Tree2Splits] for format).  The first row
 of `original` must be `FALSE` for all splits.}
 }
 \value{

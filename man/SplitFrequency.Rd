@@ -17,10 +17,10 @@ TreeSplits(tree)
 }
 \arguments{
 \item{reference}{A tree of class phylo, or a character vector specifying its splits 
-(as obtained through [Quartet::Tree2Splits])}
+(as obtained through [Tree2Splits])}
 
 \item{forest}{a list of trees of class phylo, or a multiPhylo object; or a
-list of their constituent splits (as obtained through [Quartet::Tree2Splits])}
+list of their constituent splits (as obtained through [Tree2Splits])}
 
 \item{tips}{Integer vector specifying the tips of the tree within the chosen split}
 
