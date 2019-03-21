@@ -38,6 +38,7 @@ test_that("SplitMatchProbability returns expected probabilities", {
   splitABCE <- c(rep(TRUE, 3), FALSE, TRUE, rep(FALSE, 4))
   splitCDEF <- c(rep(FALSE, 2), rep(TRUE, 4), rep(FALSE, 3))
   splitABEF <- c(rep(TRUE, 2), rep(FALSE, 2), rep(TRUE, 2), rep(FALSE, 3))
+  splitABCDE<- c(rep(TRUE, 5), rep(FALSE, 4))
   
   splitAI <- c(TRUE, rep(FALSE, 7), TRUE)
   splitBC <- c(FALSE, TRUE, TRUE, rep(FALSE, 6))
@@ -117,6 +118,12 @@ test_that("SplitMatchProbability returns expected probabilities", {
   
   Test(4/84, splitABC, splitABCD)
   Test(4/84, splitBCD, splitABCD)
+  
+  
+  expect_equal(2L, MatchingSplitDistanceSplits(cbind(splitAB), cbind(splitAI)))
+  expect_equal(2L, MatchingSplitDistanceSplits(cbind(splitAB), cbind(splitABCD)))
+  expect_equal(3L, MatchingSplitDistanceSplits(cbind(splitAB), cbind(splitABCDE)))
+  expect_equal(4L, MatchingSplitDistanceSplits(cbind(splitABC), cbind(splitAEF)))
   
 })
 

@@ -129,6 +129,23 @@ NyeTreeSimilarity <- function (tree1, tree2,
   CalculateTreeDistance(NyeSplitSimilarity, tree1, tree2, reportMatching)
 }
 
+#' Matching Split Distance
+#' 
+#' Implements the Matching Split Distance for unrooted binary phylogenetic 
+#' trees of Bogdanowicz and Giaro (2012).
+#' 
+#' @inheritParams MutualArborealInfo
+#' 
+#' @references \insertRef{Bogdanowicz2012}{TreeSearch}
+#' @concept Tree distance
+#' 
+#' @author Martin R. Smith
+#' @export
+MatchingSplitDistance <- function (tree1, tree2,
+                             reportMatching = FALSE) {
+  CalculateTreeDistance(MatchingSplitDistanceSplits, tree1, tree2, reportMatching)
+}
+
 #' Wrapper for tree distance calculations
 #' 
 #' Calls tree distance functions from trees or lists of trees
@@ -389,7 +406,6 @@ NyeSplitSimilarity <- function (splits1, splits2, reportMatching = FALSE) {
   if (dimSplits2[1] != nTerminals) {
     stop("Split rows must bear identical labels")
   }
-  lnUnrootedN <- LnUnrooted.int(nTerminals)
   
   if (dimSplits1[2] < dimSplits2[2]) {
     tmp <- splits1
@@ -433,6 +449,75 @@ NyeSplitSimilarity <- function (splits1, splits2, reportMatching = FALSE) {
     min(pairScores)
   } else {
     optimalMatching <- solve_LSAP(pairScores, TRUE)
+    
+    # Return:
+    ret <- sum(pairScores[matrix(c(seq_along(optimalMatching), optimalMatching), ncol=2L)])
+    if (reportMatching) {
+      attr(ret, 'matching') <- optimalMatching
+      attr(ret, 'pairScores') <- pairScores
+      ret
+    } else {
+      ret
+    }
+  }
+}
+
+#' @describeIn MatchingSplitDistance Takes splits instead of trees
+#' @inheritParams MutualArborealInfoSplits
+#' @export
+MatchingSplitDistanceSplits <- function (splits1, splits2, reportMatching = FALSE) {
+  
+  dimSplits1 <- dim(splits1)
+  dimSplits2 <- dim(splits2)
+  nTerminals <- dimSplits1[1]
+  if (dimSplits2[1] != nTerminals) {
+    stop("Split rows must bear identical labels")
+  }
+  
+  if (dimSplits1[2] < dimSplits2[2]) {
+    tmp <- splits1
+    splits1 <- splits2
+    splits2 <- tmp
+    
+    tmp <- dimSplits1
+    dimSplits1 <- dimSplits2
+    dimSplits2 <- tmp
+  }
+  
+  taxonNames <- rownames(splits1) 
+  
+  if (!is.null(taxonNames)) {
+    splits2 <- unname(splits2[rownames(splits1), , drop=FALSE])
+    splits1 <- unname(splits1) # split1[split2] faster without names
+  }
+  
+  nSplits1 <- dimSplits1[2]
+  nSplits2 <- dimSplits2[2]
+  
+  SymmetricDifference <- function (A, B) {
+    (A & !B) | (!A & B)
+    #TODO: Assert: These will always be the same size
+    #Therefore: Improve efficiency by only calculating one, and not dividing by 2
+  }
+  
+  pairScores <- matrix((mapply(function(i, j) {
+    A1 <- splits1[, i]
+    A2 <- splits2[, j]
+    B1 <- !A1
+    B2 <- !A2
+    
+    min(
+      sum(SymmetricDifference(A1, A2), SymmetricDifference(B1, B2)),
+      sum(SymmetricDifference(A1, A2), SymmetricDifference(B1, B2))
+    ) / 2L
+      
+  }, rep(seq_len(nSplits1), each=nSplits2), seq_len(nSplits2)
+  )), nSplits2, nSplits1)
+  
+  if (nSplits2 == 1) {
+    min(pairScores)
+  } else {
+    optimalMatching <- solve_LSAP(pairScores, FALSE)
     
     # Return:
     ret <- sum(pairScores[matrix(c(seq_along(optimalMatching), optimalMatching), ncol=2L)])

@@ -2,6 +2,8 @@
 ## New features
  - `NyeTreeSimilarity` function implements the tree similarity metric of
    Nye _et al._ (2006).
+ - `MatchingSplitDistance` function implementing the MS distance of 
+   Bogdanowicz & Giaro (2012)
 
 # TreeSearch 0.3.0
 

@@ -20,6 +20,7 @@ test_that('Tree differences are correctly calculated', {
   
   treeAb.Cdefgh <- ape::read.tree(text='((a, b), (c, d, e, f, g, h));')
   treeAbc.Defgh <- ape::read.tree(text='((a, b, c), (d, e, f, g, h));')
+  treeAcd.Befgh <- ape::read.tree(text='((a, c, d), (b, e, f, g, h));')
   treeAbcd.Efgh <- ape::read.tree(text='((a, b, c, d), (e, f, g, h));')
   treeTwoSplits <- ape::read.tree(text="(((a, b), c, d), (e, f, g, h));")
 
@@ -28,6 +29,7 @@ test_that('Tree differences are correctly calculated', {
   expect_error(VariationOfArborealInfo(treeSym8, treeBadLabel8))
   expect_error(MutualClusterInfo(treeSym8, treeBadLabel8))
   expect_error(NyeTreeDistance(treeSym8, treeBadLabel8))
+  expect_error(MatchingSplitDistance(treeSym8, treeBadLabel8))
 
   expect_equal(22.53747, round(MutualArborealInfo(treeSym8, treeSym8), 5))
   expect_equal(13.75284, round(MutualArborealInfo(treeSym8, treeBal8), 5))
@@ -37,6 +39,12 @@ test_that('Tree differences are correctly calculated', {
   expect_equal(5L, NyeTreeSimilarity(treeSym8, treeSym8))
   expect_equal(2, 3 * NyeTreeSimilarity(treeAb.Cdefgh, treeAbc.Defgh))
   expect_equal(3.8, NyeTreeSimilarity(treeSym8, treeBal8))
+  expect_true(NyeTreeSimilarity(treeSym8, treeBal8) > NyeTreeSimilarity(treeSym8, treeOpp8))
+  
+  expect_equal(0L, MatchingSplitDistance(treeSym8, treeSym8))
+  expect_equal(1L, MatchingSplitDistance(treeAb.Cdefgh, treeAbc.Defgh))
+  expect_equal(2L, MatchingSplitDistance(treeAb.Cdefgh, treeAbcd.Efgh))
+  
   expect_true(NyeTreeSimilarity(treeSym8, treeBal8) > NyeTreeSimilarity(treeSym8, treeOpp8))
   
   # TODO: These are only superficial tests of these functions.
