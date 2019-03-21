@@ -1,3 +1,8 @@
+# TreeSearch 0.3.0.9000 (development)
+## New features
+ - `NyeTreeSimilarity` function implements the tree similarity metric of
+   Nye _et al._ (2006).
+
 # TreeSearch 0.3.0
 
 ## New features
