@@ -11,8 +11,8 @@ MorphyWeights(morphyObj)
 }
 \value{
 a matrix of dimensions (2, number of characters); row 1 lists the
-        exact rates specified by the user; row 2 the approximate (integral)
-        weights used by MorphyLib
+exact rates specified by the user; row 2 the approximate (integral)
+weights used by MorphyLib
 }
 \description{
 Report the character weightings associated with a Morphy object

@@ -16,11 +16,11 @@ ForestSplits(forest, powersOf2)
 TreeSplits(tree)
 }
 \arguments{
-\item{reference}{A tree of class phylo, or a character vector specifying its splits 
-(as obtained through [Tree2Splits])}
+\item{reference}{A tree of class phylo, or a character vector specifying its splits
+(as obtained through \link{Tree2Splits})}
 
 \item{forest}{a list of trees of class phylo, or a multiPhylo object; or a
-list of their constituent splits (as obtained through [Tree2Splits])}
+list of their constituent splits (as obtained through \link{Tree2Splits})}
 
 \item{tips}{Integer vector specifying the tips of the tree within the chosen split}
 
@@ -28,18 +28,18 @@ list of their constituent splits (as obtained through [Tree2Splits])}
 
 \item{tipIndex}{Character vector of tip names, in a fixed order}
 
-\item{powersOf2}{Integer vector of same length as tipIndex, specifying a power 
+\item{powersOf2}{Integer vector of same length as tipIndex, specifying a power
 of 2 to be associated with each tip in turn}
 }
 \value{
-Number of trees in `forest` that contain each split in `reference`. 
-        if `reference` is a tree of class phylo, then the sequence will
-        correspond to the order of nodes (use `ape::nodelabels to view).
-        Note that the three nodes at the root of the tree correspond to a 
-        single split; see the example for how these might be plotted on a tree.
+Number of trees in \code{forest} that contain each split in \code{reference}.
+if \code{reference} is a tree of class phylo, then the sequence will
+correspond to the order of nodes (use `ape::nodelabels to view).
+Note that the three nodes at the root of the tree correspond to a
+single split; see the example for how these might be plotted on a tree.
 }
 \description{
-`SplitFrequency` provides a simple way to count the number of times that 
+\code{SplitFrequency} provides a simple way to count the number of times that
 bipartition splits, as defined by a reference tree, occur in a forest of trees.
 }
 \details{
@@ -52,7 +52,8 @@ constituent functions (see examples)
 
 \item \code{ForestSplits}: Frequency of splits in a given forest of trees
 
-\item \code{TreeSplits}: Lists the splits in a given tree
+\item \code{TreeSplits}: Deprecated. Listed the splits in a given tree.
+Use Quartet::Tree2Splits instead.
 }}
 
 \examples{

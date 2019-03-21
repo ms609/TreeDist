@@ -8,16 +8,16 @@ SplitsRepeated(original, matches)
 }
 \arguments{
 \item{original, matches}{Logical matrix describing the bipartition splits
-defined by a tree (see [Tree2Splits] for format).  The first row
-of `original` must be `FALSE` for all splits.}
+defined by a tree (see \link{Tree2Splits} for format).  The first row
+of \code{original} must be \code{FALSE} for all splits.}
 }
 \value{
-`SplitsRepeated` returns a logical vector of length `ncol(original)`,
-specifying whether each split listed in `original` also appears in `matches`.
+\code{SplitsRepeated} returns a logical vector of length \code{ncol(original)},
+specifying whether each split listed in \code{original} also appears in \code{matches}.
 }
 \description{
-Determines whether any of the splits described in `original` are present in
-`matches`.
+Determines whether any of the splits described in \code{original} are present in
+\code{matches}.
 }
 \author{
 Martin R. Smith

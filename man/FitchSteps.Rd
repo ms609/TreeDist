@@ -9,13 +9,13 @@ FitchSteps(tree, dataset)
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}.}
 
-\item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
-correspond to the labels of any accompanying tree.}
+\item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}},
+whose names correspond to the labels of any accompanying tree.}
 }
 \value{
-A vector listing the number of 'parsimony steps' calculated by the 
-        Fitch algorithm for each character.  Inapplicable tokens are treated
-        as per Brazeau, Guillerme and Smith (2017)
+A vector listing the number of 'parsimony steps' calculated by the
+Fitch algorithm for each character.  Inapplicable tokens are treated
+as per Brazeau, Guillerme and Smith (2017)
 }
 \description{
 Fitch score

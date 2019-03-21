@@ -60,6 +60,4 @@ int             mpl_update_root(MPLndsets* lower, MPLndsets* upper, MPLpartition
 int             mpl_update_NA_root(MPLndsets* lower, MPLndsets* upper, MPLpartition* part);
 int             mpl_update_NA_root_recalculation(MPLndsets* lower, MPLndsets* upper, MPLpartition* part);
 
-//MPLarray*   mpl_new_array(size_t elemsize);
-//void        mpl_destroy_array(MPLarray* arr);
 #endif /* morphy_h */

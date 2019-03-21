@@ -31,9 +31,9 @@ ProfileTreeSearch(tree, dataset, EdgeSwapper = RootedTBR,
 
 \item{dataset}{Data in format required by \code{InitializeData}.}
 
-\item{concavity}{A numeric value to use as the concavity constant (`k`) in implied weighting.}
+\item{concavity}{A numeric value to use as the concavity constant (\code{k}) in implied weighting.}
 
-\item{EdgeSwapper}{a function that rearranges a parent and child vector, 
+\item{EdgeSwapper}{a function that rearranges a parent and child vector,
 and returns a list with modified vectors; for example
 \code{\link{SPRSwap}}.}
 
@@ -56,44 +56,43 @@ more verbose feedback to the user.}
 - (optionally, if score provided) number of times this score has been hit}
 
 \item{TreeScorer}{function to score a given tree.
-The function will be passed three parameters, corresponding to the 
-`parent` and `child` entries of a tree's edge list, and a dataset.}
+The function will be passed three parameters, corresponding to the
+\code{parent} and \code{child} entries of a tree's edge list, and a dataset.}
 
-\item{stopAtPeak}{Logical specifying whether to terminate search once a subsequent 
+\item{stopAtPeak}{Logical specifying whether to terminate search once a subsequent
 iteration recovers a sub-optimal score. Useful with methods that
-return all trees one rearrangement from the current tree, such 
+return all trees one rearrangement from the current tree, such
 as \code{\link{AllTBR}}.  Will be overridden if a passed function
-has an attribute `stopAtPeak` set by
-`attr(FunctionName, 'stopAtPeak') <- TRUE`.}
+has an attribute \code{stopAtPeak} set by
+\code{attr(FunctionName, 'stopAtPeak') <- TRUE}.}
 
-\item{stopAtPlateau}{Integer. If > 0, tree search will terminate if the score 
-has not improved after `stopAtPlateau` iterations.
+\item{stopAtPlateau}{Integer. If > 0, tree search will terminate if the score
+has not improved after \code{stopAtPlateau} iterations.
 Useful with methods that return all trees one
-rearrangement from the current tree, such as 
+rearrangement from the current tree, such as
 \code{\link{AllTBR}}.
 Will be overridden if a passed function has an attribute
-`stopAtPlateau` set by `attr(FunctionName,
-'stopAtPlateau') <- TRUE`.}
+\code{stopAtPlateau} set by \code{attr(FunctionName, 'stopAtPlateau') <- TRUE}.}
 
-\item{InitializeData}{Function that sets up data object to prepare for tree search. 
+\item{InitializeData}{Function that sets up data object to prepare for tree search.
 The function will be passed the \kbd{dataset} parameter.
 Its return value will be passed to TreeScorer and CleanUpData.}
 
 \item{CleanUpData}{Function to destroy data object on function exit.
 The function will be passed the value returned by \kbd{InitializeData}.}
 
-\item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}}, whose names 
-correspond to the labels of any accompanying tree.}
+\item{dataset}{A phylogenetic data matrix of class \code{\link[phangorn]{phyDat}},
+whose names correspond to the labels of any accompanying tree.}
 }
 \value{
 {
 This function returns a tree, with an attribute \code{pscore} conveying its parsimony score.
-Note that the parsimony score will be inherited from the tree's attributes, which is only valid if it 
+Note that the parsimony score will be inherited from the tree's attributes, which is only valid if it
 was generated using the same \code{data} that is passed here.
 }
 }
 \description{
-Run standard search algorithms (\acronym{NNI}, \acronym{SPR} or \acronym{TBR}) 
+Run standard search algorithms (\acronym{NNI}, \acronym{SPR} or \acronym{TBR})
 to search for a more parsimonious tree.
 }
 \section{Functions}{

@@ -11,9 +11,9 @@ RandomMorphyTree(nTip)
 }
 \value{
 A list with three elements, each a vector of integers, respectively containing:
-        - The parent of each tip and node, in order
-        - The left child of each node
-        - The right child of each node.
+- The parent of each tip and node, in order
+- The left child of each node
+- The right child of each node.
 }
 \description{
 Random postorder tree

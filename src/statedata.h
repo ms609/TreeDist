@@ -1,10 +1,10 @@
-//
+/*
 //  statedata.h
 //  MorPhy2
 //
 //  Created by mbrazeau on 26/04/2017.
 //  Copyright © 2017 brazeaulab. All rights reserved.
-//
+*/
 
 #ifndef statedata_h
 #define statedata_h

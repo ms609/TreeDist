@@ -11,7 +11,7 @@ SetMorphyWeights(weight, morphyObj, checkInput = TRUE)
 
 \item{morphyObj}{A morphy object, perhaps created with \code{\link{PhyDat2Morphy}}.}
 
-\item{checkInput}{Whether to sanity-check input data before applying. 
+\item{checkInput}{Whether to sanity-check input data before applying.
 Defaults to TRUE to protect the user from crashes.}
 }
 \value{

@@ -127,3 +127,21 @@
 #' @keywords datasets
 "brewer"
 
+#' Double factorials
+#' 
+#' A vector with pre-calculated values of double factorials up to 300!!,
+#' and the logarithms of double factorials up to 50 000!!.
+#' 
+#' 301!! is too large to store as an integer; use `logDoubleFactorials` instead.
+#' 
+#' @concept Double factorial
+#' @keywords datasets
+"doubleFactorials"
+
+#' Natural logarithms of double factorials
+#' 
+#' A vector with pre-calculated values of double factorials up to 50 000!!.
+#' 
+#' @concept Double factorial
+#' @keywords datasets
+"logDoubleFactorials"

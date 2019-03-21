@@ -1,10 +1,10 @@
-//
+/*
 //  morphy.c
 //  MorPhy2
 //
 //  Created by mbrazeau on 23/04/2017.
 //  Copyright © 2017 brazeaulab. All rights reserved.
-//
+*/
 #include "mpl.h"
 #include "morphydefs.h"
 #include "morphy.h"
@@ -27,11 +27,10 @@ Morphyp mpl_new_Morphy_t(void)
 {
     Morphyp new = (Morphyp)calloc(1, sizeof(Morphy_t));
     
-    // Set defaults:
     mpl_set_gaphandl(GAP_INAPPLIC, (Morphy)new);
     new->symbols.gap        = DEFAULTGAP;
     new->symbols.missing    = DEFAULTMISSING;
-    new->nthreads           = 1; // There is always at least one thread in use
+    new->nthreads           = 1; 
     new->usrwtbase          = 0;
     new->wtbase             = 1;
     
@@ -57,7 +56,6 @@ int mpl_get_gaphandl(Morphyp handl)
 }
 
 
-//int     mpl_set_num_charac(const int nchar, Morphy m);
 int mpl_set_num_charac(const int nchar, Morphyp m)
 {
     if (!m) {
@@ -70,7 +68,6 @@ int mpl_set_num_charac(const int nchar, Morphyp m)
 }
 
 
-//int     mpl_set_numtaxa(const int ntax, Morphy m);
 int mpl_set_numtaxa(const int ntax, Morphyp m)
 {
     if (!m) {
@@ -183,20 +180,6 @@ int mpl_change_weight_base(const unsigned long wtbase, Morphyp handl)
     return 0;
 }
 
-
-//int mpl_calc_new_weightbase(const double wt)
-//{
-//    int base = 1;
-//    while (mpl_almost_equal(1.0, base * wt)) {
-//        ++base;
-//        if ((int)(base * MPLWTMIN) == 1) {
-//            break;
-//        }
-//    }
-//
-//    return base;
-//}
-
 static inline unsigned long mpl_greatest_common_denom
 (unsigned long a, unsigned long b)
 {
@@ -222,7 +205,7 @@ void mpl_set_new_weight_public
   
     
     if (wtisreal) {
-        // TODO: This assumes a user weight has been set
+        
         if (!mpl_isreal(handl->charinfo[char_id].realweight) ||
             handl->charinfo[char_id].realweight == 0.0)
         {
@@ -234,8 +217,6 @@ void mpl_set_new_weight_public
         if (mpl_isreal(handl->charinfo[char_id].realweight)) {
             --handl->numrealwts;
         }
-    
-        //handl->charinfo[char_id].intwt = wt;
     }
     
     handl->charinfo[char_id].realweight = wt;
@@ -273,56 +254,6 @@ void mpl_scale_all_intweights(Morphyp handl)
         
 }
 
-//MPLarray* mpl_new_array(size_t elemsize)
-//{
-//    MPLarray *new = calloc(1, sizeof(MPLarray));
-//    if (!new) {
-//        return NULL;
-//    }
-//    
-//    new->data = (void**)calloc(1, elemsize);
-//    if (!new->data) {
-//        free(new);
-//        return NULL;
-//    }
-//    new->elemsize = elemsize;
-//    new->maxelems = 1;
-//    new->nelems = 0;
-//    
-//    return new;
-//}
-//
-//
-//void mpl_destroy_array(MPLarray* arr)
-//{
-//    if (arr->data) {
-//        free(arr->data);
-//    }
-//    if (arr) {
-//        free(arr);
-//    }
-//}
-//
-//int mpl_array_push(void* data, MPLarray* arr)
-//{
-//    if (arr->nelems <= arr->maxelems) {
-//        arr->data[arr->nelems] = data;
-//        ++arr->nelems;
-//        return ERR_NO_ERROR;
-//    }
-//    
-//    void** newdat = realloc(arr->data, (arr->maxelems + 1) * arr->elemsize);
-//    if (!newdat) {
-//        return ERR_BAD_MALLOC;
-//    }
-//    
-//    ++arr->nelems;
-//    ++arr->maxelems;
-//    arr->data[arr->nelems] = data;
-//    
-//    return ERR_NO_ERROR;
-//}
-
 void mpl_assign_fitch_fxns(MPLpartition* part)
 {
     assert(part);
@@ -330,7 +261,7 @@ void mpl_assign_fitch_fxns(MPLpartition* part)
     if (part->isNAtype) {
         part->inappdownfxn      = mpl_NA_fitch_second_downpass;
         part->inappupfxn        = mpl_NA_fitch_second_uppass;
-        part->prelimfxn         = mpl_NA_fitch_first_downpass;//mpl_NA_fitch_second_downpass;
+        part->prelimfxn         = mpl_NA_fitch_first_downpass;
         part->finalfxn          = mpl_NA_fitch_first_uppass;
         part->tipupdate         = mpl_fitch_NA_tip_update;
         part->tipfinalize       = mpl_fitch_NA_tip_finalize;
@@ -351,7 +282,7 @@ void mpl_assign_fitch_fxns(MPLpartition* part)
         part->tipupdate         = mpl_fitch_tip_update;
         part->tiproot           = mpl_fitch_one_branch;
         part->tipfinalize       = NULL;
-        part->inappdownfxn      = NULL; // Not necessary, but safe & explicit
+        part->inappdownfxn      = NULL;
         part->inappupfxn        = NULL;
         part->loclfxn           = mpl_fitch_local_reopt;
         part->downrecalc1       = NULL;
@@ -365,25 +296,14 @@ void mpl_assign_wagner_fxns(MPLpartition* part)
 {
     assert(part);
     
-//    if (part->isNAtype) {
-//        part->inappdownfxn  = NULL;
-//        part->inappupfxn    = NULL;
-//        part->prelimfxn     = NULL; 
-//        part->finalfxn      = NULL;
-//        part->tipupdate     = NULL;
-//        part->tipfinalize   = NULL;
-//        part->loclfxn       = NULL;
-//    }
-//    else {
         part->prelimfxn     = mpl_wagner_downpass;
         part->finalfxn      = mpl_wagner_uppass;
         part->tipupdate     = mpl_wagner_tip_update;
-    // TODO: Wagner tiproot function!
         part->tipfinalize   = NULL;
-        part->inappdownfxn  = NULL; // Not necessary, but safe & explicit
+        part->inappdownfxn  = NULL; 
         part->inappupfxn    = NULL;
         part->loclfxn       = NULL;
-//    }
+
 }
 
 
@@ -405,7 +325,7 @@ int mpl_fetch_parsim_fxn_setter
             }
             break;
             
-            // TODO: Implement other functions here
+            
         default:
             err = ERR_CASE_NOT_IMPL;
             break;
@@ -419,9 +339,7 @@ int mpl_assign_partition_fxns(MPLpartition* part)
 {
     assert(part);
     int err = ERR_NO_ERROR;
-//    MPLchtype chtype = part->chtype;
-//    assert(chtype);
-    
+
     void (*pars_assign)(MPLpartition*) = NULL;
     
     err = mpl_fetch_parsim_fxn_setter(&pars_assign, part->chtype);
@@ -482,7 +400,7 @@ int mpl_part_remove_index(int index, MPLpartition* part)
     for (i = 0; i < part->ncharsinpart; ++i) {
         part->charindices[i] = part->charindices[i + 1];
     }
-    part->charindices[i] = MPLCHARMAX; // Gives some clue if an error occurs
+    part->charindices[i] = MPLCHARMAX; 
     
     return 0;
 }
@@ -595,9 +513,6 @@ int mpl_count_gaps_in_columns(Morphyp handl)
                 ++chinfo[i].ninapplics;
             }
             
-            // Once the number of NAs exceeds 2, then we can be satisfied that
-            // there are sufficient NAs to apply NA functions, otherwise, just
-            // treat it as a gap
             if (chinfo[i].ninapplics > NACUTOFF) {
                 ++numna;
                 break;
@@ -708,7 +623,6 @@ int mpl_put_partitions_in_handle(MPLpartition* first, Morphyp handl)
     }
     assert(i == handl->numparts);
     
-    // Sort the partitions.
     qsort(handl->partitions, handl->numparts, sizeof(MPLpartition*), mpl_compare_partitions);
     handl->partstack = first;
     
@@ -778,10 +692,8 @@ int mpl_setup_partitions(Morphyp handl)
     }
     
     for (i = 0; i < nchar; ++i) {
-        // Examine the character info for each character in the matrix
         chinfo = &handl->charinfo[i];
         
-        //        if (chinfo->included) {
         p = mpl_search_partitions(chinfo, first, mpl_get_gaphandl(handl));
         
         if (p) {
@@ -795,7 +707,6 @@ int mpl_setup_partitions(Morphyp handl)
                 }
             }
             p = mpl_new_partition(chinfo->chtype, hasNA);
-            //            last->next =
             mpl_part_push_index(i, p);
             if (!first) {
                 first = p;
@@ -809,7 +720,6 @@ int mpl_setup_partitions(Morphyp handl)
             ++numparts;
         }
     }
-    //    }
     
     handl->numparts = numparts;
     err = mpl_put_partitions_in_handle(first, handl);
@@ -1019,22 +929,18 @@ void mpl_free_stateset(const int nchars, MPLndsets* statesets)
     mpl_delete_nodal_strings(nchars, statesets);
     
     if (statesets->downp1str) {
-        // TODO: loop & free allocated strings
         free(statesets->downp1str);
         statesets->downp1str = NULL;
     }
     if (statesets->upp1str) {
-        // TODO: loop & free allocated strings
         free(statesets->upp1str);
         statesets->upp1str = NULL;
     }
     if (statesets->downp2str) {
-        // TODO: loop & free allocated strings
         free(statesets->downp2str);
         statesets->downp2str = NULL;
     }
     if (statesets->upp2str) {
-        // TODO: loop & free allocated strings
         free(statesets->upp2str);
         statesets->upp2str = NULL;
     }
@@ -1047,7 +953,6 @@ int mpl_setup_statesets(Morphyp handl)
 {
     MPL_ERR_T err = ERR_NO_ERROR;
     
-    // TODO: Implement total numnodes getter
     int numnodes = handl->numnodes;
     
     if (handl->statesets) {
@@ -1078,10 +983,7 @@ int mpl_setup_statesets(Morphyp handl)
 int mpl_destroy_statesets(Morphyp handl)
 {
     int i = 0;
-    // TODO: Implement total numnodes getter
     int numnodes = handl->numnodes;
-    
-    
     
     if (handl->statesets) {
         
@@ -1183,13 +1085,10 @@ int mpl_update_NA_root(MPLndsets* lower, MPLndsets* upper, MPLpartition* part)
             lower->downpass1[j] = NA;
         }
         
-        // Some of these assignments are a bit overkill, but they should
-        // be fairly safe in case of changes in how the nodal functions work.
         lower->uppass2[j]   = upper->downpass2[j];
         lower->downpass1[j] = lower->downpass1[j];
         lower->uppass1[j]   = lower->downpass1[j];
         
-        // Must also store the root states in temp;
         lower->temp_downpass1[j] = lower->downpass1[j];
         lower->temp_uppass1[j] = lower->uppass1[j];
         lower->temp_downpass2[j] = lower->downpass2[j];
@@ -1216,8 +1115,6 @@ int mpl_update_NA_root_recalculation(MPLndsets* lower, MPLndsets* upper, MPLpart
             lower->downpass1[j] = NA;
         }
         
-        // Some of these assignments are a bit overkill, but they should
-        // be fairly safe in case of changes in how the nodal functions work.
         lower->uppass2[j]   = upper->downpass2[j];
         lower->downpass1[j] = lower->downpass1[j];
         lower->uppass1[j]   = lower->downpass1[j];

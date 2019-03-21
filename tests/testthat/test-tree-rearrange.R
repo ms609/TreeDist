@@ -11,6 +11,7 @@ attr(tree5a, 'order') <- attr(tree5b, 'order') <- attr(tree8, 'order') <- attr(t
 
 test_that("NNI works", {
   trComb    <- read.tree(text = "(((((1,2),3),4),5),6);")
+  suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
   set.seed(0)
   nniComb <- NNI(trComb)
   expect_equal(nniComb$tip.label, trComb$tip.label)
@@ -148,6 +149,7 @@ test_that("CollapseNodes works", {
   expect_error(CollapseNode(1:5, tree8))
   expect_error(CollapseNode(tree8, 1))
   
+  suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
   set.seed(1)
   
   tree <- rtree(7)

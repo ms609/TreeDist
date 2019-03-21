@@ -11,7 +11,7 @@ ListToMatrix(edgeList)
 }
 \value{
 edges in the format expected by \code{tree$edge},
-        where \code{tree} is a tree of class \code{phylo}.
+where \code{tree} is a tree of class \code{phylo}.
 }
 \description{
 Edge list to edge matrix

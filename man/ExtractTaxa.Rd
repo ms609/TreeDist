@@ -11,14 +11,14 @@ ExtractTaxa(matrixLines, character_num = NULL, session = NULL)
 (see ReadCharacters for expected format)}
 
 \item{character_num}{Index of character(s) to return.
-`NULL`, the default, returns all characters.}
+\code{NULL}, the default, returns all characters.}
 
 \item{session}{(optionally) a Shiny session with a numericInput named character_num
 whose maximum should be updated.}
 }
 \value{
 Matrix with n rows, each named for the relevant taxon, and c columns,
-each corresponding to the respective character specified in `character_num`
+each corresponding to the respective character specified in \code{character_num}
 }
 \description{
 Extract taxa from a matrix block

@@ -19,12 +19,12 @@ mpl_first_down_recon(node_id, left_id, right_id, morphyobj)
 The integral parsimony length (right now)
 }
 \description{
-Reconstructs the preliminary nodal set for all characters for a 
-particular node. This function is called over a postorder sequence of internal 
+Reconstructs the preliminary nodal set for all characters for a
+particular node. This function is called over a postorder sequence of internal
 nodes where left and right descendants are known.
-Because this function needs to be fairly high-performance, it does not do much 
+Because this function needs to be fairly high-performance, it does not do much
 checking for parameter validity, thus unsafe usage of this function might not
-be caught. It is up to calling functions to ensure that the appropriate 
+be caught. It is up to calling functions to ensure that the appropriate
 parameters have been set before use.
 }
 \author{

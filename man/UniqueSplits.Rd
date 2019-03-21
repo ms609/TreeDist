@@ -7,15 +7,15 @@
 UniqueSplits(splits, preserveParity = FALSE)
 }
 \arguments{
-\item{splits}{A vector of integers listing the number of tips in each of a number of 
-tree splits (e.g. bipartitions).  For example, \kbd{c(3, 5)} states that 
-a character divides a set of eight tips into a group of three and a group
-of five.}
+\item{splits}{A logical matrix containing one named row corresponding to each
+terminal leaf of a tree, and each column corresponds to a bipartition split;
+each split divides terminals into two bipartitions; members of one
+are marked \code{TRUE} and members of the other are marked \code{FALSE}.}
 
-\item{preserveParity}{Logical specifying whether to preserve the `TRUE` and
-`FALSE` status within each split (which takes marginally longer).  If 
-`FALSE`, each split will be defined such that taxa in the same partition
-as the first element are marked `FALSE`, and other taxa marked `TRUE`.}
+\item{preserveParity}{Logical specifying whether to preserve the \code{TRUE} and
+\code{FALSE} status within each split (which takes marginally longer).  If
+\code{FALSE}, each split will be defined such that taxa in the same partition
+as the first element are marked \code{FALSE}, and other taxa marked \code{TRUE}.}
 }
 \value{
 The splits element, with all duplicate splits removed.

@@ -21,18 +21,21 @@ RootedNNISwap(parent, child, nTips = (length(parent)/2L) + 1L,
 \item{tree}{A tree of class \code{\link{phylo}}.}
 
 \item{edgeToBreak}{(optional) integer specifying the index of an edge to bisect/prune,
-generated randomly if not specified.  Alternatively, set to \code{-1} to return a complete list
+generated randomly if not specified.
+Alternatively, set to \code{-1} to return a complete list
 of all trees one step from the input tree.}
 
-\item{parent}{the first column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 1]}
+\item{parent}{the first column of the edge matrix of a tree of class
+\code{\link{phylo}}, i.e. \code{tree$edge[, 1]}}
 
-\item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
+\item{child}{the second column of the edge matrix of a tree of class
+\code{\link{phylo}}, i.e. \code{tree$edge[, 2]}}
 
 \item{nTips}{(optional) Number of tips.}
 }
 \value{
-Returns a tree with class \code{phylo} (if \code{returnAll = FALSE}) or 
-        a set of trees, with class \code{multiPhylo} (if \code{returnAll = TRUE}).
+Returns a tree with class \code{phylo} (if \code{returnAll = FALSE}) or
+a set of trees, with class \code{multiPhylo} (if \code{returnAll = TRUE}).
 
 a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 
@@ -64,7 +67,7 @@ NNI(tree, edgeToBreak = -1)
 }
 \references{
 The algorithm is summarized in
- \insertRef{Felsenstein2004}{TreeSearch}
+\insertRef{Felsenstein2004}{TreeSearch}
 }
 \author{
 Martin R. Smith

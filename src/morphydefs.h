@@ -1,10 +1,10 @@
-//
+/*
 //  morphydefs.h
 //  MorPhy2
 //
 //  Created by mbrazeau on 07/05/2017.
 //  Copyright © 2017 brazeaulab. All rights reserved.
-//
+*/
 
 #ifndef morphydefs_h
 #define morphydefs_h
@@ -16,14 +16,9 @@ extern "C" {
 #include <stdint.h>
 #include <stdbool.h>
   
-  //#ifdef MPLDBL
+  
   typedef double Mflt;
 #define MPL_EPSILON DBL_EPSILON
-  //#elif MPLLDBL
-  //typedef long double Mflt;
-  //#else
-  //typedef float Mflt;
-  //#endif
   
   typedef unsigned int MPLstate;
   
@@ -37,8 +32,7 @@ extern "C" {
 #define DEFAULTUNKNOWN  '+'
 #define DEFAULCHARTYPE  FITCH_T
 #define DEFAULTWTBASE   1
-#define NACUTOFF        2   // The max number of NA tokens that can be ignored
-  // in a column
+#define NACUTOFF        2
 #define MPLCHARMAX      INT_MAX
 #define USRWTMIN        0.00001 /*! Minimum fractional weight a caller can ask 
   for when setting weights. Anything less than 
@@ -48,7 +42,7 @@ steer pretty clear of epsilon */
 
 typedef struct MPLndsets MPLndsets;
 typedef struct MPLpartition MPLpartition;
-// Evaluator function pointers
+
 typedef int (*MPLdownfxn)
   (MPLndsets*     lset,
    MPLndsets*     rset,
@@ -75,7 +69,7 @@ typedef int (*MPLloclfxn)
    int cutoff,
    bool usemax);
 
-// Key data types
+
 typedef struct {
   MPLstate    asint;
   char*       asstr;
@@ -87,16 +81,12 @@ struct MPLcharinfo {
   
   int         charindex;
   int         ninapplics;
-  //    bool        included;
+  
   MPLchtype   chtype;
   double      realweight;
   unsigned long        basewt;
   unsigned long        intwt;
   Mflt        fltwt;
-  //    union {
-  //        unsigned long   intwt;
-  //        Mflt            fltwt;
-  //    };
   Mflt         CIndex;
   Mflt         RCIndex;
   Mflt         HIndex;
@@ -191,26 +181,26 @@ typedef struct symbols_s {
 /*! \struct*/
 typedef struct Morphy_t {
   
-  int             numtaxa;    // The number of terminal taxa
-  int             numcharacters;  // The number of characters (transformation series)
+  int             numtaxa;    
+  int             numcharacters;
   int             numrealwts;
-  MPLcharinfo*    charinfo;   // Data type information about each character
+  MPLcharinfo*    charinfo;   
   unsigned long   usrwtbase;
-  unsigned long   wtbase;   // Used to rescale factional weights (1 by default)
-  int             numparts;   // The number of data type partitions
-  MPLpartition*   partstack;  // A place for unused partitions
-  MPLpartition**  partitions; // The array of partitions
-  MPLsymbols      symbols;    // The symbols used in the dataset
-  MPLgap_t           gaphandl;   // The method of gap treatment
+  unsigned long   wtbase;   
+  int             numparts; 
+  MPLpartition*   partstack;  
+  MPLpartition**  partitions; 
+  MPLsymbols      symbols;    
+  MPLgap_t           gaphandl;
   union {
     int         asint;
     Mflt        asfloat;
-  } score;   // The score (parsimony, likelihood etc.) of the evaluated data
-  MPLmatrix       inmatrix;   // Internal representation of the matrix
-  char*           char_t_matrix;  // The matrix as a NULL-terminated string
-  int             numnodes;   // The number of nodes
-  int*            nodesequence;   // The postorder sequence of nodes.
-  int             nthreads;   // For programs that wish to multithread
+  } score;   
+  MPLmatrix       inmatrix;   
+  char*           char_t_matrix;  
+  int             numnodes;   
+  int*            nodesequence;   
+  int             nthreads; 
   MPLndsets**     statesets;
   
 } Morphy_t, *Morphyp;

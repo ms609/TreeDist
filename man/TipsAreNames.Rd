@@ -18,7 +18,7 @@ names or numbers corresponding to their rows/columns}
 }
 \value{
 an integer vector, listing the tokens associated with each character for each tip in turn
-        - ready to send to FITCH or equivalent C routine
+- ready to send to FITCH or equivalent C routine
 }
 \description{
 Specifies how characters are stored in a dataset object

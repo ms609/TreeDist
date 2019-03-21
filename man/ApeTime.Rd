@@ -9,7 +9,7 @@ ApeTime(filename, format = "double")
 \arguments{
 \item{filename}{Character string specifying path to the file}
 
-\item{format}{Format in which to return the time: 'double' as a sortable numeric; 
+\item{format}{Format in which to return the time: 'double' as a sortable numeric;
 any other value to return a string in the format YYYY-MM-DD hh:mm:ss}
 }
 \value{

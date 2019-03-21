@@ -14,14 +14,14 @@ in cladewise order (use \code{\link{Preorder}(tree)} or (slower)
 \item{node}{The number of the node at the base of the clade to be extracted.}
 }
 \value{
-This function returns a tree of class \code{phylo} that represents a clade 
-        extracted from the original tree.
+This function returns a tree of class \code{phylo} that represents a clade
+extracted from the original tree.
 }
 \description{
 Safely extracts a clade from a phylogenetic tree.
 }
 \details{
-Modified from the \pkg{ape} function \code{\link{extract.clade}}, which sometimes behaves erratically.  
+Modified from the \pkg{ape} function \code{\link{extract.clade}}, which sometimes behaves erratically.
 Unlike extract.clade, this function supports the extraction of 'clades' that constitute a single tip.
 }
 \examples{

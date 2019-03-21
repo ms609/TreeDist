@@ -12,12 +12,12 @@ SupportColor(support, show1 = TRUE)
 \arguments{
 \item{support}{A vector of doubles in the range 0-1}
 
-\item{show1}{Logical specifying whether to display values of 1. 
-A transparent white will be returned if `FALSE`.}
+\item{show1}{Logical specifying whether to display values of 1.
+A transparent white will be returned if \code{FALSE}.}
 }
 \value{
 A string containing the hexadecimal code for a colour picked from a
-        diverging scale, or `red` if a value is invalid.
+diverging scale, or \code{red} if a value is invalid.
 }
 \description{
 Support colour

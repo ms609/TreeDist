@@ -6,6 +6,7 @@ test_that("Profile parsimony works in tree search", {
   dataset <- PhyDat(sillyData)
   readyData <- PrepareDataProfile(dataset, 12000, warn=FALSE)
   
+  suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
   set.seed(0)
   rTree <- randomTree <- RandomTree(dataset, '1')
   expect_equal(Fitch(rTree, readyData), Fitch(rTree, dataset))

@@ -20,30 +20,32 @@ ProfileInitMorphy(dataset)
 ProfileDestroyMorphy(dataset)
 }
 \arguments{
-\item{parent}{the first column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 1]}
+\item{parent}{the first column of the edge matrix of a tree of class
+\code{\link{phylo}}, i.e. \code{tree$edge[, 1]}}
 
-\item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
+\item{child}{the second column of the edge matrix of a tree of class
+\code{\link{phylo}}, i.e. \code{tree$edge[, 2]}}
 
 \item{dataset}{Dataset of class \code{phyDat}.  The dataset should have been
 prepared using \code{dataset <- \link{PrepareDataProfile}(dataset)};
 if this step has not been completed, the dataset will be (time-consumingly)
 prepared within the function.
-In subsidiary functions, the dataset will have been initialized using 
+In subsidiary functions, the dataset will have been initialized using
 \code{ProfileInitMorphy}, must be destroyed using \code{ProfileDestroyMorphy}.}
 
-\item{concavity}{A numeric value to use as the concavity constant (`k`) in implied weighting.}
+\item{concavity}{A numeric value to use as the concavity constant (\code{k}) in implied weighting.}
 
 \item{minSteps}{Integer vector specifying the minimum number of steps
-possible for each character in `dataset`, perhaps calculated
+possible for each character in \code{dataset}, perhaps calculated
 using \code{\link{MinimumSteps}}.}
 
-\item{\dots}{unused; allows additional parameters specified within \dots to be 
+\item{\dots}{unused; allows additional parameters specified within \dots to be
 received by the function without throwing an error.}
 
 \item{tree}{A tree of class \code{\link{phylo}}.}
 }
 \value{
-Zero minus the profile score (because the optimization algorithm 
+Zero minus the profile score (because the optimization algorithm
 treats smaller numbers as better)
 }
 \description{

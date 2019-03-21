@@ -12,7 +12,7 @@ PhyToString(phy, ps = "", useIndex = TRUE, byTaxon = TRUE,
 
 \item{ps}{Character specifying text, perhaps ';', to append to the end of the string}
 
-\item{useIndex}{(default: TRUE) Print duplicate characters multiple 
+\item{useIndex}{(default: TRUE) Print duplicate characters multiple
 times, as they appeared in the original matrix}
 
 \item{byTaxon}{If TRUE, write one taxon followed by the next.

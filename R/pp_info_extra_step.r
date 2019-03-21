@@ -1,112 +1,20 @@
-#' Named constant
-#' @param X a vector.
-#' @param name name to apply to the vector.
-#' @return the vector, named as requested
-#'
-#' @author Martin R. Smith
-#' @export
-NamedConstant <- function(X, name) {names(X) <- name; return(X)}
-
-#' Log double factorial
-#' 
-#' Memoised version of phangorn's \code{\link[phangorn]{ldfactorial}}
-#' @param x (integer) number to crunch.
-#' @importFrom phangorn ldfactorial
-#' @importFrom memoise memoise
-#' @export
-LDFactorial <- memoise(ldfactorial)
-
-#' Log double factorial
-#' Handles odd and even inout numbers
-#' @param x a positive integer
-#' @importFrom memoise memoise
-#' @export
-LDFact <- memoise(function (x) {
-  if (x < 2) return (0) 
-  if (x %% 2) {
-    LDFactorial(x)
-  } else {
-    lfactorial(x) - LDFactorial(x - 1L)
-  }
-})
-
-#' Double factorial
-#' @param x a positive integer
-#' @export
-DFact <- memoise(function (x) exp(LDFact(x)))
-
-#' @describeIn DFact Accepts a vector as input
-#' @param ints a vector of integers
-#' @export
-DoubleFactorial <- function (ints) {
-  ints[] <- vapply(ints, DFact, double(1))
-  ints
-}
-
-#' Number of rooted/unrooted trees
-#' These functions return the number of rooted or unrooted trees consistent with a given pattern
-#'  of splits.
-#'
-#' 
-#' Functions starting N return the number of rooted or unrooted trees, functions starting Ln
-#' provide the log of this number.  Calculations follow Carter et al. 1990, Theorem 2.
-#'
-#' @param tips The number of tips.
-#' @param extra the number of points at which another branch cannot be added.
-#' @param splits vector listing the number of taxa in each tree bipartition.
-#'
-#' @author Martin R. Smith
-#' 
-#' @references 
-#'  \insertRef{Carter1990}{TreeSearch}
-#'  
-#' @examples
-#'   NRooted(10)
-#'   NUnrooted(10)
-#'   LnRooted(10)
-#'   LnUnrooted(10)
-#'   # Number of trees consistent with a character whose states are 00000 11111 222
-#'   NUnrootedMult(c(5,5,3))
-#' 
-#' @export
-NRooted     <- memoise(function (tips, extra=0)  DFact(2 * tips - 3 - extra))
-#' @describeIn NRooted Number of unrooted trees
-#' @export
-NUnrooted1  <- memoise(function (tips, extra=0)  DFact(2 * tips - 5 - extra))
-#' @describeIn NRooted  Log Number of unrooted trees
-#' @export
-LnUnrooted1 <- memoise(function (tips, extra=0) LDFact(2 * tips - 5 - extra))
-#' @describeIn NRooted  Log Number of rooted trees
-#' @export
-LnRooted    <- memoise(function (tips, extra=0) LDFact(2 * tips - 3 - extra))
-
-#' Number of trees on SPR step away
-#' Formula given by Given by Allen and Steel 2001.
-#'
-#' @param n Number of tips in tree.
-#' @references 
-#'  \insertRef{Allen2001}{TreeSearch}
-#' 
-#' @export
-N1Spr <- function (n) if (n > 2) 2 * (n - 3) * ((2 * n) - 7) else 0 
-
 #' @describeIn N1Spr Information content of trees 0 or 1 SPR step from tree with n tips.
 #' @export
-IC1Spr <- function(n) -log2((1+N1Spr(n)) / NUnrooted(n)) 
+IC1Spr <- function(n) -log2((1L + N1Spr(n)) / NUnrooted(n)) 
 
 #' @describeIn NRooted Log number of unrooted trees
 #' @export
-LnUnrooted <- function (splits) {
-  if ((n.splits <- length(splits)) < 2) return (LnUnrooted1(splits));
-  if (n.splits == 2) return (LnRooted(splits[1]) + LnRooted(splits[2]));
+LnUnrootedSplits <- function (splits) {
+  if ((nSplits <- length(splits)) < 2) return (LnUnrooted(splits));
+  if (nSplits == 2) return (LnRooted(splits[1]) + LnRooted(splits[2]));
   return (LnUnrootedMult(splits))
 }
 #' @describeIn NRooted Number of unrooted trees
 #' @export
-NUnrooted  <- function (splits) {
-  if ((n.splits <- length(splits)) < 2) return (NUnrooted1(splits));
-  if (n.splits == 2) return (NRooted(splits[1]) *  NRooted(splits[2]))
-  return ( NUnrootedMult(splits))
+NUnrootedSplits  <- function (splits) {
+  if ((nSplits <- length(splits)) < 2) return (NUnrooted(splits));
+  if (nSplits == 2) return (NRooted(splits[1]) * NRooted(splits[2]))
+  return (NUnrootedMult(splits))
 }
 #' @describeIn NRooted Log unrooted mult
 #' @references 
@@ -114,15 +22,23 @@ NUnrooted  <- function (splits) {
 #' @export
 LnUnrootedMult <- function (splits) {  # Carter et al. 1990, Theorem 2
   splits <- splits[splits > 0]
-  total.tips <- sum(splits)
-  LDFact(2 * total.tips - 5) - LDFact(2 * (total.tips - length(splits)) - 1) + sum(vapply(2 * splits - 3, LDFact, double(1)))
+  totalTips <- sum(splits)
+  
+  # Return:
+  LogDoubleFactorial(totalTips +  totalTips - 5L) -
+    LogDoubleFactorial(2L * (totalTips - length(splits)) - 1L) +
+    sum(LogDoubleFactorial(splits + splits - 3L))
 }
 #' @describeIn NRooted Number of unrooted trees (mult)
 #' @export
 NUnrootedMult  <- function (splits) {  # Carter et al. 1990, Theorem 2
   splits <- splits[splits > 0]
-  total.tips <- sum(splits)
-  round(DFact(2 * total.tips - 5) / DFact(2 * (total.tips - length(splits)) - 1) * prod(vapply(2 * splits - 3, DFact, double(1))))
+  totalTips <- sum(splits)
+  
+  # Return:
+  round(DoubleFactorial(totalTips + totalTips - 5L) /
+          DoubleFactorial(2L * (totalTips - length(splits)) - 1L)
+        * prod(DoubleFactorial(splits + splits - 3L)))
 }
 
 #' Information Content Steps
@@ -169,12 +85,16 @@ ICSteps <- function (char, ambiguousToken = 0, expectedMinima = 25, maxIter = 10
   
   split <- sort(as.integer(table(char)))
   minSteps <- length(split) - 1
-  if (minSteps == 0) return (NamedConstant(1, 0))
+  if (minSteps == 0) return (c('0' = 1L))
   
   nNoExtraSteps <- NUnrootedMult(split)
   #nOneExtraStep <- WithOneExtraStep(split)
   proportionViable <- NUnrooted(charLen) / nNoExtraSteps
-  if (proportionViable == 1) return(NamedConstant(1, minSteps))
+  if (proportionViable == 1) {
+    ret <- 1L
+    names(ret) <- minSteps
+    return(ret)
+  }
   
   nIter <- min(maxIter, round(expectedMinima * proportionViable))
   if (nIter == maxIter && warn) warning ("Will truncate number of iterations at maxIter = ", maxIter)
@@ -188,11 +108,11 @@ ICSteps <- function (char, ambiguousToken = 0, expectedMinima = 25, maxIter = 10
     # cat(c(round(analyticIc0, 3), 'bits @ 0 extra steps;', round(analyticIc1, 3),
     #    '@ 1; attempting', nIter, 'iterations.\n'))
   }
-
+  
   morphyObj <- SingleCharMorphy(char)
   on.exit(morphyObj <- UnloadMorphy(morphyObj))
   steps <- vapply(logical(maxIter), function (xx) RandomTreeScore(charLen, morphyObj), integer(1))
-
+  
   analyticSteps <- nIter * c(nNoExtraSteps) / NUnrooted(sum(split))
   #analyticSteps <- nIter * c(nNoExtraSteps, nOneExtraStep) / NUnrooted(sum(split))
   
@@ -219,7 +139,7 @@ ICSteps <- function (char, ambiguousToken = 0, expectedMinima = 25, maxIter = 10
 #' @keywords internal
 #' @export
 ICS <- addMemoization(function(a, b, m, warn=TRUE)
-                        ICSteps(c(rep(1, a), rep(2, b)), maxIter=m, warn=warn))
+  ICSteps(c(rep(1, a), rep(2, b)), maxIter=m, warn=warn))
 
 #' Information content per step
 #' @template splitsParam
@@ -234,33 +154,33 @@ ICPerStep <- function(splits, maxIter, warn=TRUE) ICS(min(splits), max(splits), 
 #' @export
 WithOneExtraStep <- function (splits) {
   # Ignore singletons, which can be added at the end...
-  splits.with.splitstables <- splits[splits > 1]
-  if (length(splits.with.splitstables) < 2) return (0)
+  splits.withSplitstables <- splits[splits > 1]
+  if (length(splits.withSplitstables) < 2) return (0)
   
   # TODO test splits: 1 1 2 4, splits: 2 2 4
   sum(vapply(seq_along(splits), function (omit) {
-    backbone.splits <- splits[-omit]
+    backboneSplits <- splits[-omit]
     omitted.tips <- splits[omit]
     if (omitted.tips < 2) return (0)
-    backbone.tips <- sum(backbone.splits)
-    backbones <- NUnrootedMult(backbone.splits)
+    backbone.tips <- sum(backboneSplits)
+    backbones <- NUnrootedMult(backboneSplits)
     backbone.edges <- max(0, 2 * backbone.tips - 3)
     backbone.attachments <- backbone.edges * (backbone.edges - 1)
     prod(sum( # Branch unambiguously splits along first group
       vapply(1:(omitted.tips - 1), function (first.group) { # For each way of splitsting up the omitted tips, e.g. 1|16, 2|15, 3|14, etc
         choose(omitted.tips, first.group) * 
-        NRooted(first.group) * NRooted(omitted.tips - first.group)
+          NRooted(first.group) * NRooted(omitted.tips - first.group)
       }, double(1))
     ) / 2, backbone.attachments, backbones) + prod(
-    # Second group added adjacent to first group, thus new edge could belong to the backbone or the omitted tip group
-    sum(vapply(1:(omitted.tips - 1), function (first.group) { # For each way of splitsting up the omitted tips, e.g. 1|16, 2|15, 3|14, etc
+      # Second group added adjacent to first group, thus new edge could belong to the backbone or the omitted tip group
+      sum(vapply(1:(omitted.tips - 1), function (first.group) { # For each way of splitsting up the omitted tips, e.g. 1|16, 2|15, 3|14, etc
         choose(omitted.tips, first.group) * 
-        NRooted(first.group) * NRooted(omitted.tips - first.group) # backbone tips have already been splits - when we selected a branch
+          NRooted(first.group) * NRooted(omitted.tips - first.group) # backbone tips have already been splits - when we selected a branch
       }, double(1))) / 2,
-    backbones,
-    backbone.edges,
-    2 # left or right of group addition location
-    / 2 # Will be counted again when 'added group' becomes the 'backbone group'
+      backbones,
+      backbone.edges,
+      2 # left or right of group addition location
+      / 2 # Will be counted again when 'added group' becomes the 'backbone group'
     )
     
   }, double(1))
@@ -292,12 +212,15 @@ Evaluate <- function (tree, dataset, warn=TRUE) {
   totalSteps <- Fitch(tree, dataset)
   chars <- matrix(unlist(dataset), attr(dataset, 'nr'))
   ambiguousToken <- which(attr(dataset, 'allLevels') == "?")
-  as.splits <- apply(chars, 1, function (x) {
+  asSplits <- apply(chars, 1, function (x) {
     ret <- table(x)
     ret[names(ret) != ambiguousToken] 
   })
-  if (class(as.splits) == 'matrix') as.splits <- lapply(seq_len(ncol(as.splits)), function(i) as.splits[, i])
-  ic.max <- round(vapply(as.splits, function (split) -log(NUnrootedMult(split)/NUnrooted(sum(split)))/log(2), double(1)), 12)
+  if (class(asSplits) == 'matrix') asSplits <- lapply(seq_len(ncol(asSplits)), function(i) asSplits[, i])
+  ic.max <- round(vapply(asSplits,
+                         function (split) -log(NUnrootedMult(split)/
+                                                 NUnrooted(sum(split)))/log(2),
+                         double(1)), 12)
   infoLosses <- apply(chars, 1, ICSteps, ambiguousToken=ambiguousToken, maxIter=1000, warn=warn)
   infoAmounts <- lapply(infoLosses, function(p) {
     #cat(length(p))
@@ -351,7 +274,7 @@ Evaluate <- function (tree, dataset, warn=TRUE) {
 InfoAmounts <- function (tokenTable, precision=1e+06, warn=TRUE) {
   # The below is simplified from info_extra_step.r::evaluate
   if (length(unique(as.integer(tokenTable))) > 2) stop ("Cannot calculate information amouts for",
-        "characters unless only tokens are 1 and 2. See ?InfoAmounts.")
+                                                        "characters unless only tokens are 1 and 2. See ?InfoAmounts.")
   splits <- apply(tokenTable, 1, table)
   infoLosses <- apply(splits, 2, ICPerStep, maxIter=precision, warn=warn)
   

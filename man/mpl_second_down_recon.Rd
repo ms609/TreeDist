@@ -22,12 +22,12 @@ mpl_second_down_recon(node_id, left_id, right_id, morphyobj)
 The integral parsimony length (right now)
 }
 \description{
-Updates the nodal sets that had ambiguous unions with the 
-inapplicable state and calculates steps involving applicable states after 
+Updates the nodal sets that had ambiguous unions with the
+inapplicable state and calculates steps involving applicable states after
 the update.
-Because this function needs to be fairly high-performance, it does not do much 
+Because this function needs to be fairly high-performance, it does not do much
 checking for parameter validity, thus unsafe usage of this function might not
-be caught. It is up to calling functions to ensure that the appropriate 
+be caught. It is up to calling functions to ensure that the appropriate
 parameters have been set before use.
 }
 \author{

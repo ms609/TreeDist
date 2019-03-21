@@ -10,13 +10,13 @@ Tree2Splits(tr)
 Tree2Bipartitions(tr)
 }
 \arguments{
-\item{tr}{A tree of class \code{\link[ape:read.tree]{phylo}}, with tips 
-bearing integer labels (i.e. `tr$tip.label == 1:N`).}
+\item{tr}{A tree of class \code{\link[ape:read.tree]{phylo}}, with tips
+bearing integer labels (i.e. \code{tr$tip.label == 1:N}).}
 }
 \value{
 Returns a two-dimensional array.  Columns correspond to unique
- bipartitions, named with the number of a node that denotes the partition.
- Rows correspond to tips `1:N`.
+bipartitions, named with the number of a node that denotes the partition.
+Rows correspond to tips \code{1:N}.
 }
 \description{
 Converts a phylogenetic tree to an array of bipartition splits.

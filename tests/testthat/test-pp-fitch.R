@@ -3,6 +3,7 @@ test_that("Profile score calculated correctly", {
   data(referenceTree)
   data(congreveLamsdellMatrices)
   tree <- referenceTree
+  suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
   set.seed(0)
   dataset <- PrepareDataProfile(congreveLamsdellMatrices[[1]], 4e+04, warn=FALSE)
   expect_equal(Fitch(tree, dataset), sum(FitchSteps(tree, dataset) * attr(dataset, 'weight')))

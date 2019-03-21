@@ -106,6 +106,7 @@ my.prepdata <- PrepareDataProfile(my.phyDat, precision=4e+04)
 
 To start analysis, we need to load a starting tree.  We can do this at random:
 ```{r Random tree}
+suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
 set.seed(888)
 tree <- RandomTree(my.phyDat)
 ```

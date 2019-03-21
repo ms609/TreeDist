@@ -10,7 +10,7 @@ NewickTree(tree)
 \item{tree}{A tree of class \code{\link{phylo}}.}
 }
 \value{
-A character string describing `tree` in Newick format
+A character string describing \code{tree} in Newick format
 }
 \description{
 Writes a tree in Newick format

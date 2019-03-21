@@ -1,3 +1,5 @@
+Meta
+doc
 src-*
 src/*.o
 src/*.so
@@ -7,7 +9,6 @@ src/*.dll
 *.gcno
 *.out
 *.Rhistory
-*.out
 *.log
 /* *.Rd */
 inst/ape

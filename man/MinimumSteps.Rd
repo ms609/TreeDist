@@ -7,15 +7,48 @@
 MinimumSteps(states)
 }
 \arguments{
-\item{states}{Integer vector listing the tokens that may be present at each tip along a single character,
-with each token represented as a binary digit; e.g. a value of 11 means that
+\item{states}{Integer vector listing the tokens that may be present at each
+tip along a single character, with each token represented as a binary digit;
+e.g. a value of 11 means that
 the tip may have tokens 0, 1 or 3 (as 11 = 2^0 + 2^1 + 2^3).
 As the minimum steps can be found when inapplicables occur together,
-inapplicable tokens can be denoted as ?s or with the integer 0 (not 2^0).}
+inapplicable tokens can be denoted as ?s or with the integer 0 (not 2^0).
+Tokens that are ambiguous for an inapplicable and an applicable
+state are not presently supported.}
 }
 \value{
-An integer specifying the minimum number of steps that the character must contain
+An integer specifying the minimum number of steps that the character
+must contain.
 }
 \description{
-Smallest number of steps that a character can take on any tree
+The smallest number of steps that a character can take on any tree.
+}
+\examples{
+{
+  data('inapplicable.datasets')
+  myPhyDat <- inapplicable.phyData[[4]] # or as.phyDat(read.nexus.data('filepath'))
+  class(myPhyDat) # phyDat object
+  
+  # Convert list of character codings to an array
+  myData <- vapply(myPhyDat, I, myPhyDat[[1]])
+  
+  # Convert phyDat's representation of states to binary
+  myContrast <- attr(myPhyDat, 'contrast')
+  tokens <- colnames(myContrast)
+  binaryContrast <- integer(length(tokens))
+  tokenApplicable <- tokens != '-'
+  binaryContrast[tokenApplicable] <- 2 ^ (seq_len(sum(tokenApplicable)) - 1)
+  binaryValues <- apply(myContrast, 1, 
+    function (row) sum(binaryContrast[as.logical(row)]))
+  myStates <- matrix(binaryValues[myData], nrow=nrow(myData),
+                     ncol=ncol(myData), dimnames=dimnames(myData))
+ 
+  # Finally, work out minimum steps 
+  apply(myStates, 1, MinimumSteps)
+  
+}
+
+}
+\author{
+Martin R. Smith
 }

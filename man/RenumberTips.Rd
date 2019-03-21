@@ -9,11 +9,11 @@ RenumberTips(tree, tipOrder)
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}.}
 
-\item{tipOrder}{A character vector containing the values of 
+\item{tipOrder}{A character vector containing the values of
 \code{tree$tip.label} in the desired sort order}
 }
 \description{
-\code{RenumberTips(tree, tipOrder)} sorts the tips of a phylogenetic tree 
+\code{RenumberTips(tree, tipOrder)} sorts the tips of a phylogenetic tree
 such that the indices in \code{tree$edge[, 2]} correspond to the order of
 tips given in \code{tipOrder}
 }

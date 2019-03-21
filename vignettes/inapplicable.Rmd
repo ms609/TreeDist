@@ -46,6 +46,7 @@ my.phyDat <- phangorn::phyDat(my.data, type='USER', levels=c(0:9, '-'))
 We can generate a random tree and calculate its parsimony score thus:
 ```{r Random-tree}
 # Set random seed so that random functions will generate consistent output in this document
+suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
 set.seed(0)
 random.tree <- RandomTree(my.phyDat)
 par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read

@@ -2,7 +2,7 @@
 % Please edit documentation in R/mpl_morphyex.R
 \name{mpl_second_up_recon}
 \alias{mpl_second_up_recon}
-\title{Finalises the ancestral state reconstructions for characters with 
+\title{Finalises the ancestral state reconstructions for characters with
 inapplicable values.}
 \usage{
 mpl_second_up_recon(node_id, left_id, right_id, anc_id, morphyobj)
@@ -25,9 +25,9 @@ The integral parsimony length (right now)
 Finalises the nodal sets for any characters that may have involved
 the inapplicable token and counts excess regions of applicability at nodes
 having at least two descendant subtrees that possess any applicable characters.
-Because this function needs to be fairly high-performance, it does not do much 
+Because this function needs to be fairly high-performance, it does not do much
 checking for parameter validity, thus unsafe usage of this function might not
-be caught. It is up to calling functions to ensure that the appropriate 
+be caught. It is up to calling functions to ensure that the appropriate
 parameters have been set before use.
 }
 \author{

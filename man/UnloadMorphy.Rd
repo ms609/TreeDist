@@ -14,7 +14,7 @@ Morphy error code, decipherable using \code{\link{mpl_translate_error}}
 }
 \description{
 Best practice is to call \code{morphyObj <- UnloadMorphy(morphyObj)}
-Failure to do so will cause a crash if UnloadMorphy is called on an object that 
+Failure to do so will cause a crash if UnloadMorphy is called on an object that
 has already been destroyed
 }
 \author{

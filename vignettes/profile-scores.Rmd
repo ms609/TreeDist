@@ -29,6 +29,7 @@ require(TreeSearch)
 data(referenceTree)
 data(congreveLamsdellMatrices)
 dataset <- congreveLamsdellMatrices[[1]]
+suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
 set.seed(0)
 ```
 

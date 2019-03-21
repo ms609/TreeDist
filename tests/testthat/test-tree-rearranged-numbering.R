@@ -26,6 +26,7 @@ CheckTreeSanity <- function (tree) {
 }
 
 context("Arboriculture: Recursive tree rearrangements")
+suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
 set.seed(0)
 small_tree <- rtree(8)
 large_tree <- rtree(80)  

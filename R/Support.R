@@ -107,17 +107,11 @@ ForestSplits <- function (forest, powersOf2) {
   }, character(nTip - 3L)))
 }
 
-#' @describeIn SplitFrequency Lists the splits in a given tree
-#' @importFrom gmp as.bigz
+#' @describeIn SplitFrequency Deprecated. Listed the splits in a given tree. 
+#' Use Quartet::Tree2Splits instead.
 #' @export
 TreeSplits <- function (tree) {
-  .Deprecated("Quartet::Tree2Splits")
-  tipIndex <- sort(tree$tip.label)
-  nTip <- length(tipIndex)
-  powersOf2 <- as.bigz(2L ^ (seq_len(nTip) - 1L))
-  # Return:
-  vapply(Descendants(tree, nTip + 2L + seq_len(tree$Nnode - 2L), type='tips'),
-           SplitNumber, character(1), tree, tipIndex, powersOf2)
+  .Deprecated("Tree2Splits")
 }
 
 #' Support colour

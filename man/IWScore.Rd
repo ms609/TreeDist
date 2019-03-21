@@ -19,17 +19,17 @@ IWDestroyMorphy(dataset)
 prepared using \code{dataset <- \link{PrepareDataIW}(dataset)}; if this step
 has not been completed, the dataset will be (time-consumingly) prepared
 within the function.
-In subsidiary functions, the dataset will have been initialized using 
+In subsidiary functions, the dataset will have been initialized using
 \code{IWInitMorphy}, and must be destroyed using \code{IWDestroyMorphy}.}
 
-\item{concavity}{A numeric value to use as the concavity constant (`k`) in implied weighting.}
+\item{concavity}{A numeric value to use as the concavity constant (\code{k}) in implied weighting.}
 
-\item{\dots}{unused; allows additional parameters specified within \dots to be 
+\item{\dots}{unused; allows additional parameters specified within \dots to be
 received by the function without throwing an error.}
 }
 \value{
-The 'fit', `h / h + k`, where `h` is the amount of homoplasy ('extra steps') 
-        and `k` is a constant (the 'concavity constant')
+The 'fit', \code{h / h + k}, where \code{h} is the amount of homoplasy ('extra steps')
+and \code{k} is a constant (the 'concavity constant')
 }
 \description{
 Calculate a tree's Parsimony score with a given dataset using implied weights (Goloboff 1997)

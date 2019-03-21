@@ -16,12 +16,12 @@ Morphy error code.
 }
 \description{
 Allows the caller to specify a list of symbols in the data matrix,
-otherwise, the symbols list used by Morphy will be extracted from the matrix. 
-The symbols list must match the symbols provided in the matrix. When Morphy 
+otherwise, the symbols list used by Morphy will be extracted from the matrix.
+The symbols list must match the symbols provided in the matrix. When Morphy
 extracts symbols from the matrix, their ordering is alphanumeric, according to
 their ASCII codes (i.e. "+0123...ABCD...abcd..."). Loading a user-specified
 symbols list will override this ordering. Symbols loaded in either the list or
-the matrix must be valid Morphy character state symbols as defined in the 
+the matrix must be valid Morphy character state symbols as defined in the
 statedata.h header file.  The list must end with a semicolon.
 }
 \author{

@@ -79,9 +79,9 @@ NNISwap <- function (parent, child, nTips = (length(parent) / 2L) + 1L, edgeToBr
 #' 
 #' Returns the edge parameter of the two trees consistent with the speficied \acronym{NNI} rearrangement
 #'
-#' @param parent tree$edge[, 1]
-#' @param child  tree$edge[, 2]
-#' @param edgeToBreak index of edge to break
+#' @template treeParent
+#' @template treeChild
+#' @template edgeToBreakParam
 #'
 #' @return the \code{tree$edge} parameter of the two trees consistent with the specified rearrangement
 #'

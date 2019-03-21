@@ -1,10 +1,10 @@
-//
+/*
 //  fitch.c
 //  MorPhy2
 //
 //  Created by mbrazeau on 02/05/2017.
 //  Copyright © 2017 brazeaulab. All rights reserved.
-//
+*/
 #include "mpl.h"
 #include "morphydefs.h"
 #include "morphy.h"
@@ -36,8 +36,6 @@ int mpl_fitch_downpass
       steps += weights[i];
     }
   }
-  
-  // TODO: rewrite for updated stateset checks.
   
   return steps;
 }
@@ -72,9 +70,6 @@ int mpl_fitch_uppass
         nfin[j] = npre[j] | anc[j];
       }
     }
-#ifdef DEBUG
-    assert(nfin[j]);
-#endif
   }
   
   return 0;
@@ -151,10 +146,7 @@ int mpl_NA_fitch_first_downpass
       }
     }
     
-    nt[j] = n[j]; // Store a copy for partially reoptimising the subtree
-#ifdef DEBUG
-    assert(n[j]);
-#endif
+    nt[j] = n[j];
   }
   
   return 0;
@@ -186,10 +178,7 @@ int mpl_nadown1_simpl
       }
     }
     
-    nt[j] = n[j]; // Store a copy for partially reoptimising the subtree
-#ifdef DEBUG
-    assert(n[j]);
-#endif
+    nt[j] = n[j];
   }
   
   return 0;
@@ -208,10 +197,6 @@ int mpl_nadown2_simpl
   MPLstate*       right   = rset->downpass2;
   MPLstate*       setstat = nset->uppass1;
   MPLstate*       npre    = nset->downpass2;
-  //MPLstate*       stacts  = nset->subtree_actives;
-  //MPLstate*       tstatcs = nset->temp_subtr_actives;
-  //MPLstate*       lacts   = lset->subtree_actives;
-  //MPLstate*       racts   = rset->subtree_actives;
   MPLstate        temp    = 0;
   unsigned long*  weights = part->intwts;
   
@@ -219,9 +204,8 @@ int mpl_nadown2_simpl
     
     j = indices[i];
     
-    // TODO: Extend and test
-    if (setstat[j] != NA) { // If the node is not in the inapplicable state
-      // Do regular Fitch parsimony (sort of)
+    
+    if (setstat[j] != NA) {
       if ((temp = (left[j] & right[j]) & ISAPPLIC)) {
         npre[j] = temp;
       }
@@ -291,10 +275,7 @@ int mpl_NA_fitch_first_update_downpass
     if (n[j] != ntemp[j]) {
       nset->updated = true;
     }
-    
-#ifdef DEBUG
-    assert(n[j]);
-#endif
+
   }
   
   return 0;
@@ -347,7 +328,6 @@ int mpl_NA_fitch_first_uppass
       nifin[j] = npre[j];
     }
     
-    // Store the set for restoration during tree searches.
     nfint[j] = nifin[j];
     
 #ifdef DEBUG
@@ -366,8 +346,6 @@ int mpl_naupp1_simpl
   int         j       = 0;
   const int*  indices = part->charindices;
   int         nchars  = part->ncharsinpart;
-  //MPLstate*   left    = lset->downpass1;
-  //MPLstate*   right   = rset->downpass1;
   MPLstate*   npre    = nset->downpass1;
   MPLstate*   nifin   = nset->uppass1;
   MPLstate*   anc     = ancset->uppass1;
@@ -383,12 +361,7 @@ int mpl_naupp1_simpl
     else {
       nifin[j] = nifin[j] & ISAPPLIC;
     }
-    // Store the set for restoration during tree searches.
     nfint[j] = nifin[j];
-    
-#ifdef DEBUG
-    assert(nifin[j]);
-#endif
   }
   
   return 0;
@@ -513,12 +486,9 @@ int mpl_NA_fitch_second_downpass
     /* Store the states active on this subtree */
     stacts[j]   = (lacts[j] | racts[j]) & ISAPPLIC;
     
-    npret[j]    = npre[j]; // Storage for temporary updates.
-    tstatcs[j]  = stacts[j]; // Storage for temporary updates.
+    npret[j]    = npre[j];
+    tstatcs[j]  = stacts[j];
     
-#ifdef DEBUG
-    assert(npre[j]);
-#endif
   }
   
   return steps;
@@ -609,9 +579,6 @@ int mpl_NA_fitch_second_uppass
   MPLstate*       nfin    = nset->uppass2;
   MPLstate*       nfint   = nset->temp_uppass2;
   MPLstate*       anc     = ancset->uppass2;
-  //    MPLstate*       lacts   = lset->subtree_actives;
-  //    MPLstate*       racts   = rset->subtree_actives;
-  //    unsigned long*  weights = part->intwts;
   
   for (i = 0; i < nchars; ++i) {
     
@@ -644,14 +611,9 @@ int mpl_NA_fitch_second_uppass
     }
     else {
       nfin[j] = npre[j];
-      
-      /*if (lacts[j] && racts[j]) {
-      steps += weights[i];
-      nset->changes[j] = true;
-    }*/
   }
     
-    nfint[j] = nfin[j]; // Storage of states for undoing temp updates
+    nfint[j] = nfin[j];
 #ifdef DEBUG
     assert(nfin[j]);
 #endif
@@ -749,7 +711,7 @@ int mpl_fitch_NA_local_reopt
    int maxlen, bool domaxlen)
 {
   
-  part->ntoupdate = 0; // V. important: resets the record of characters needing updates
+  part->ntoupdate = 0;
   
   int i           = 0;
   int j           = 0;
@@ -757,14 +719,6 @@ int mpl_fitch_NA_local_reopt
   int steps       = 0;
   const int* indices  = part->charindices;
   int nchars          = part->ncharsinpart;
-//  MPLstate* tgt1d1    = tgt1set->downpass1;
-//  MPLstate* tgt2d1    = tgt2set->downpass1;
-  //MPLstate* tgt1f     = tgt1set->uppass2;
-//  MPLstate* tgt2f     = tgt2set->uppass2;
-//  MPLstate* src       = srcset->downpass2; // TODO: Verify this.
-  
-//  unsigned long* weights = part->intwts;
-  
   for (i = 0; i < nchars; ++i) {
     
     j = indices[i];
@@ -772,31 +726,6 @@ int mpl_fitch_NA_local_reopt
     part->update_NA_indices[need_update] = j;
     ++need_update;
     
-    //        if (!(src[j] & (tgt1f[j] | tgt2f[j]))) {
-    //            
-    //            if (src[j] & ISAPPLIC) {
-    //                if ((tgt1f[j] | tgt2f[j]) & ISAPPLIC) {
-    //                    steps += weights[i];
-    //                }
-    //                else {
-    //                    
-    //                    /* NOTE: This will be written simply at first, but there are
-    //                     * possible additional checks on tgt preliminary sets that 
-    //                     * could reduce the number of characters that need to be 
-    //                     * updated. */
-    //                    
-    //                    part->update_NA_indices[need_update] = j;
-    //                    ++need_update;
-    //                }
-    //            }
-    //            else {
-    ////                This is a conservative omission for now.
-    ////                if (src[j] & (tgt1d1[j] | tgt2d1[j])) {
-    //                    part->update_NA_indices[need_update] = j;
-    //                    ++need_update;
-    ////                }
-    //            }
-    //        }
   }
   
   part->nNAtoupdate = need_update;
@@ -811,8 +740,8 @@ int mpl_fitch_tip_update(MPLndsets* tset, MPLndsets* ancset, MPLpartition* part)
   int j     = 0;
   int* indices    = part->charindices;
   int nchars      = part->ncharsinpart;
-  // TODO: Check these!!!!!!!
-  MPLstate* tprelim = tset->downpass1;
+
+    MPLstate* tprelim = tset->downpass1;
   MPLstate* tfinal  = tset->uppass1;
   MPLstate* ttfinal = tset->temp_uppass1;
   MPLstate* astates = ancset->uppass1;
@@ -826,9 +755,6 @@ int mpl_fitch_tip_update(MPLndsets* tset, MPLndsets* ancset, MPLpartition* part)
       tfinal[j] = tprelim[j];
     }
     ttfinal[j] = tfinal[j];
-#ifdef DEBUG
-    assert(tfinal[j]);
-#endif
   }
   return 0;
 }
@@ -1035,7 +961,6 @@ int mpl_fitch_NA_tip_update
     
     tpass3[j]  = tpass2[j];
     
-    // Store the temp sets for restoring after temporary updates
     ttpass1[j] = tpass1[j];
     ttpass2[j] = tpass2[j];
     ttpass3[j] = tpass3[j];
@@ -1119,15 +1044,8 @@ int mpl_fitch_NA_tip_finalize
     else {
       tfinal[j] = tpass1[j];
     }
-    
-    //stacts[j] = tfinal[j] & ISAPPLIC;
-    
-    // Store the temp buffers:
     ttfinal[j] = tfinal[j];
     tstacts[j] = stacts[j];
-#ifdef DEBUG
-    assert(tfinal[j]);
-#endif
   }
   
   return 0;

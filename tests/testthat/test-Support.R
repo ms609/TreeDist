@@ -16,6 +16,7 @@ test_that("Jackknife supports are correct", {
   start_tree <- ape::read.tree(text = "(((((A,D),B),E),(C,F)),out);")
   dataset <- StringToPhyDat('1100000 1110000 1111000 1111100 1100000 1110000 1111000 1111100 1001000', 1:7, byTaxon=FALSE)
   names(dataset) <- c(LETTERS[1:6], 'out')
+  suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
   set.seed(0)
   strict <- TreeSearch(start_tree, dataset)
   expect_equal(1, length(unique(list(true_tree), list(start_tree)))) # Right tree found

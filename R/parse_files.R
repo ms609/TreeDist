@@ -188,7 +188,7 @@ ExtractTaxa <- function (matrixLines, character_num=NULL, session=NULL) {
 #' Tested with nexus files downloaded from MorphoBank with the "no notes"
 #' option, but should also work more generally.
 #'
-#' Do [report](https://github.org/ms609/TreeSearch/issues "New GitHub Issue")
+#' Do [report](https://github.com/ms609/TreeSearch/issues/new?title=Error+parsing+Nexus+file&body=<!--Tell+me+more+and+attach+your+file...-->)
 #' incorrectly parsed files.
 #'
 #' @param filepath character string specifying location of file

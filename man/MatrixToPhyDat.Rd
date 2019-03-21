@@ -7,8 +7,8 @@
 MatrixToPhyDat(tokens)
 }
 \arguments{
-\item{tokens}{matrix of tokens, probably created with [ReadCharacters] 
-or [ReadTntCharacters].}
+\item{tokens}{matrix of tokens, probably created with \link{ReadCharacters}
+or \link{ReadTntCharacters}.}
 }
 \value{
 an object of class \code{phyDat}

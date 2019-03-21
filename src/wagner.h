@@ -1,10 +1,10 @@
-//
+/*
 //  wagner.h
 //  morphylib
 //
 //  Created by mbrazeau on 21/05/2017.
 //  Copyright © 2017 brazeaulab. All rights reserved.
-//
+*/
 
 #ifndef wagner_h
 #define wagner_h

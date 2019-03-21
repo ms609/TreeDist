@@ -70,7 +70,7 @@ IWRatchetConsensus(tree, dataset, ratchHits = 10, concavity = 4,
 
 \item{resampleFreq}{Double between 0 and 1 stating proportion of characters to resample}
 
-\item{InitializeData}{Function that sets up data object to prepare for tree search. 
+\item{InitializeData}{Function that sets up data object to prepare for tree search.
 The function will be passed the \kbd{dataset} parameter.
 Its return value will be passed to TreeScorer and CleanUpData.}
 
@@ -78,20 +78,20 @@ Its return value will be passed to TreeScorer and CleanUpData.}
 The function will be passed the value returned by \kbd{InitializeData}.}
 
 \item{TreeScorer}{function to score a given tree.
-The function will be passed three parameters, corresponding to the 
-`parent` and `child` entries of a tree's edge list, and a dataset.}
+The function will be passed three parameters, corresponding to the
+\code{parent} and \code{child} entries of a tree's edge list, and a dataset.}
 
-\item{EdgeSwapper}{a function that rearranges a parent and child vector, 
+\item{EdgeSwapper}{a function that rearranges a parent and child vector,
 and returns a list with modified vectors; for example
 \code{\link{SPRSwap}}.}
 
 \item{jackIter}{Integer specifying number of jackknife iterations to conduct}
 
 \item{searchIter}{maximum rearrangements to perform on each bootstrap or ratchet iteration.
-To override this value for a single swapper function, set e.g. `attr(SwapperFunction, 'searchIter') <- 99`}
+To override this value for a single swapper function, set e.g. \code{attr(SwapperFunction, 'searchIter') <- 99}}
 
 \item{searchHits}{maximum times to hit best score before terminating a tree search within a ratchet iteration.
-To override this value for a single swapper function, set e.g. `attr(SwapperFunction, 'searchHits') <- 99`}
+To override this value for a single swapper function, set e.g. \code{attr(SwapperFunction, 'searchHits') <- 99}}
 
 \item{verbosity}{Level of detail to display in console: larger numbers provide
 more verbose feedback to the user.}
@@ -99,7 +99,7 @@ more verbose feedback to the user.}
 \item{\dots}{further arguments to pass to \code{TreeScorer} function
 (e.g. \code{\link{TipsAreColumns}}, \code{dataset})}
 
-\item{Bootstrapper}{Function to perform bootstrapped rearrangements of tree. 
+\item{Bootstrapper}{Function to perform bootstrapped rearrangements of tree.
 First arguments will be an edgeList and a dataset, initialized using \code{InitializeData}
 Should return a rearranged edgeList.}
 
@@ -117,21 +117,20 @@ within \code{Bootstrapper}.}
 
 \item{stopAtScore}{stop search as soon as this score is hit or beaten.}
 
-\item{stopAtPeak}{Logical specifying whether to terminate search once a subsequent 
+\item{stopAtPeak}{Logical specifying whether to terminate search once a subsequent
 iteration recovers a sub-optimal score. Useful with methods that
-return all trees one rearrangement from the current tree, such 
+return all trees one rearrangement from the current tree, such
 as \code{\link{AllTBR}}.  Will be overridden if a passed function
-has an attribute `stopAtPeak` set by
-`attr(FunctionName, 'stopAtPeak') <- TRUE`.}
+has an attribute \code{stopAtPeak} set by
+\code{attr(FunctionName, 'stopAtPeak') <- TRUE}.}
 
-\item{stopAtPlateau}{Integer. If > 0, tree search will terminate if the score 
-has not improved after `stopAtPlateau` iterations.
+\item{stopAtPlateau}{Integer. If > 0, tree search will terminate if the score
+has not improved after \code{stopAtPlateau} iterations.
 Useful with methods that return all trees one
-rearrangement from the current tree, such as 
+rearrangement from the current tree, such as
 \code{\link{AllTBR}}.
 Will be overridden if a passed function has an attribute
-`stopAtPlateau` set by `attr(FunctionName,
-'stopAtPlateau') <- TRUE`.}
+\code{stopAtPlateau} set by \code{attr(FunctionName, 'stopAtPlateau') <- TRUE}.}
 
 \item{ratchIter}{stop when this many ratchet iterations have been performed.}
 
@@ -143,7 +142,7 @@ Will be overridden if a passed function has an attribute
 
 \item{suboptimal}{retain trees that are suboptimal by this score. Defaults to 1e-08 to counter rounding errors.}
 
-\item{concavity}{A numeric value to use as the concavity constant (`k`) in implied weighting.}
+\item{concavity}{A numeric value to use as the concavity constant (\code{k}) in implied weighting.}
 
 \item{nSearch}{Number of Ratchet searches to conduct (for RatchetConsensus)}
 }
@@ -157,19 +156,19 @@ This function returns a tree modified by parsimony ratchet iterations.
 }
 \section{Functions}{
 \itemize{
-\item \code{Jackknife}: Jackknife resampling. Note that at present this assumes that 
-`InitializeData` will return a morphy object; if this doesn't hold for you, please
+\item \code{Jackknife}: Jackknife resampling. Note that at present this assumes that
+\code{InitializeData} will return a morphy object; if this doesn't hold for you, please
 let me know and I'll make the function more general.
 
 \item \code{ProfileRatchet}: Shortcut for Ratchet search under Profile Parsimony
 
 \item \code{IWRatchet}: Shortcut for Ratchet search using implied weights
 
-\item \code{MultiRatchet}: returns a list of optimal trees produced by nSearch 
-Ratchet searches, from which a consensus tree can be generated using 
-[ape::consensus] or [ConsensusWithout].
+\item \code{MultiRatchet}: returns a list of optimal trees produced by nSearch
+Ratchet searches, from which a consensus tree can be generated using
+\link[ape:consensus]{ape::consensus} or \link{ConsensusWithout}.
 
-\item \code{IWMultiRatchet}: returns a list of optimal trees produced by nSearch 
+\item \code{IWMultiRatchet}: returns a list of optimal trees produced by nSearch
 Ratchet searches, using implied weighting
 
 \item \code{RatchetConsensus}: deprecated alias for MultiRatchet

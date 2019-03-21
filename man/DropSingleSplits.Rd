@@ -11,7 +11,7 @@ DropSingleSplits(split)
 }
 \value{
 The input matrix, with any columns that separate only a single pendant
- tip removed.
+tip removed.
 }
 \description{
 Removes splits that pertain only to a single taxon from a splits object.
@@ -21,7 +21,7 @@ Bipartition splits are divisions, implied by each edge or node of an unrooted
 tree topology, that divide the taxa into two groups (one of which is a clade).
 
 By default, a list of splits will include those that separate a single taxon
-(a leaf) from all others.  Such splits are, by definition, present in all 
+(a leaf) from all others.  Such splits are, by definition, present in all
 trees that contain that taxon; they are not of interest when comparing trees.
 This function removes such splits from a list of bipartitions.
 }

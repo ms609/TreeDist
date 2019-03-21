@@ -16,7 +16,7 @@ A Morphy error code.
 }
 \description{
 This specifies the number of internal nodes over which
-reconstruction sets need to be made. It is up to the caller to ensure the 
+reconstruction sets need to be made. It is up to the caller to ensure the
 correct number of nodes and the relationships between them.
 }
 \author{

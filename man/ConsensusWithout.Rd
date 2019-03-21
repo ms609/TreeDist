@@ -10,14 +10,14 @@ ConsensusWithout(trees, tip, ...)
 MarkMissing(tip, position = "bottomleft", ...)
 }
 \arguments{
-\item{trees}{A list of phylogenetic trees, of class `multiPhylo` or `list`}
+\item{trees}{A list of phylogenetic trees, of class \code{multiPhylo} or \code{list}}
 
 \item{tip}{A character vector specifying the names (or numbers) of tips to
 drop (using ape::drop.tip)}
 
-\item{\dots}{Additional parameters to pass on to ape::[consensus] or [legend]}
+\item{\dots}{Additional parameters to pass on to ape::\link{consensus} or \link{legend}}
 
-\item{position}{Where to plot the missing taxa.  See [legend] for options.}
+\item{position}{Where to plot the missing taxa.  See \link{legend} for options.}
 }
 \value{
 A consensus tree without the excluded taxa

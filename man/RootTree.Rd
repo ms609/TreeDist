@@ -9,7 +9,7 @@ RootTree(tree, outgroupTips)
 \arguments{
 \item{tree}{A tree of class \code{\link{phylo}}.}
 
-\item{outgroupTips}{Character vector specifying the names of the tips to 
+\item{outgroupTips}{Character vector specifying the names of the tips to
 include in the outgroup.}
 }
 \value{

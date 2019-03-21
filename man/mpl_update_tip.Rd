@@ -18,14 +18,14 @@ The integral parsimony length (right now)
 }
 \description{
 Ambiguous terminal state sets need to be resolved after the first uppass
-based on descendant state values in order for local reoptimisation procedures 
+based on descendant state values in order for local reoptimisation procedures
 to be accurate and for inapplicable step counting to proceed accurately. This
-function calls updaters for the records of states active on the subtrees, 
+function calls updaters for the records of states active on the subtrees,
 thereby allowing the second downpass to accurately reconstruct subtree state
 activity.
-Because this function needs to be fairly high-performance, it does not do much 
+Because this function needs to be fairly high-performance, it does not do much
 checking for parameter validity, thus unsafe usage of this function might not
-be caught. It is up to calling functions to ensure that the appropriate 
+be caught. It is up to calling functions to ensure that the appropriate
 parameters have been set before use.
 }
 \seealso{

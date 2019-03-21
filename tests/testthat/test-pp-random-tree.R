@@ -1,5 +1,4 @@
 # library(devtools); load_all(); library(testthat)
-NUnrooted <- function (tips) prod(seq(tips + tips - 5L, to=1, by=-2))
 MorphyAction <- function (Action) expect_equal("ERR_NO_ERROR", mpl_translate_error(Action))
 MorphyWith <- function (char) {
   nTip <- nchar(char) - 1L

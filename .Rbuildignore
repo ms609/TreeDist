@@ -1,3 +1,6 @@
+^Meta$
+^doc$
+^data-raw$
 ^CRAN-RELEASE$
 /^src\-/
 CONTRIBUTING

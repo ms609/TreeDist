@@ -24,9 +24,11 @@ RootedSPRSwap(parent, child, nEdge = length(parent), nNode = nEdge/2L,
 
 \item{mergeEdge}{the index of an edge on which to merge the broken edge.}
 
-\item{parent}{the first column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 1]}
+\item{parent}{the first column of the edge matrix of a tree of class
+\code{\link{phylo}}, i.e. \code{tree$edge[, 1]}}
 
-\item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
+\item{child}{the second column of the edge matrix of a tree of class
+\code{\link{phylo}}, i.e. \code{tree$edge[, 2]}}
 
 \item{nEdge}{(optional) integer specifying the number of edges of a tree of
 class \code{\link{phylo}}, i.e. \code{dim(tree$edge)[1]}}
@@ -45,9 +47,9 @@ Perform one \acronym{SPR} rearrangement on a tree
 }
 \details{
 Equivalent to phangorn's kSPR, but faster.
-Note that rearrangements that only change the position of the root WILL be returned by 
+Note that rearrangements that only change the position of the root WILL be returned by
 \code{SPR}.  If the position of the root is irrelevant (as in Fitch parsimony, for example)
-then this function will occasionally return a functionally equivalent topology.  
+then this function will occasionally return a functionally equivalent topology.
 \code{RootIrrelevantSPR} will search tree space more efficiently in these cases.
 Branch lengths are not (yet) supported.
 }
@@ -68,7 +70,7 @@ SPR(tree)
 }
 \references{
 The \acronym{SPR} algorithm is summarized in
- \insertRef{Felsenstein2004}{TreeSearch}
+\insertRef{Felsenstein2004}{TreeSearch}
 }
 \seealso{
 RootedSPR useful when the position of the root node should be retained.

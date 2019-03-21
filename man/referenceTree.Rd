@@ -12,7 +12,7 @@
 referenceTree
 }
 \description{
-The tree topology used to generate the matrices in \code{\link{congreveLamsdellMatrices}} 
+The tree topology used to generate the matrices in \code{\link{congreveLamsdellMatrices}}
 Congreve & Lamsdell (2016)
 }
 \examples{
@@ -22,6 +22,6 @@ Congreve & Lamsdell (2016)
 }
 \references{
 \insertRef{Congreve2016}{TreeSearch}
- \insertRef{Congreve2016dd}{TreeSearch}
+\insertRef{Congreve2016dd}{TreeSearch}
 }
 \keyword{datasets}

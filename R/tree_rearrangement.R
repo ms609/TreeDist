@@ -118,10 +118,14 @@ RootTree <- function (tree, outgroupTips) {
 
 #' Collapse nodes on a phylogenetic tree
 #' 
+#' Collapses specified nodes or edges on a phylogenetic tree, resulting in
+#' polytomies.
+#' 
 #' @template treeParam
 #' @param nodes,edges Integer vector specifying the nodes or edges in the tree
 #'  to be dropped. 
-#' (Use [ape:nodelabels] or [ape:edgelabels] to view numbers on a plotted tree.)
+#' (Use \code{\link[ape]{nodelabels}} or \code{\link[ape]{edgelabels}} 
+#' to view numbers on a plotted tree.)
 #' 
 #' @return `tree`, with the specified nodes or edges collapsed.  
 #' The length of each dropped edge will (naively) be added to each descendant edge.

@@ -211,17 +211,17 @@ AddTip <- function (tree, where, label) {
 #'
 #' \code{AllAncestors} lists ancestors of each parent node in a tree
 #'
-#' Note that the tree's edges must be listed in an order whereby each entry in tr$edge[, 1] (with
-#' the exception of the root) has appeared already in tr$edge[, 2]
+#' Note that the tree's edges must be listed in an order whereby each entry in 
+#' \code{tr$edge[, 1]} (with the exception of the root) has appeared already in 
+#' \code{tr$edge[, 2]}.
 #'
 #' @template treeParent
 #' @template treeChild
 #' 
 #' @examples
-#' 
-#' tr <- ape::rtree(20, br=NULL)
-#' edge <- tr$edge
-#' AllAncestors(edge[, 1], edge[, 2])
+#'   tr <- ape::rtree(20, br=NULL)
+#'   edge <- tr$edge
+#'   AllAncestors(edge[, 1], edge[, 2])
 #' 
 #' @return This function returns a list. Entry i contains a vector containing, in order,
 #' the nodes encountered when traversing the tree from node i to the root node.  The last 

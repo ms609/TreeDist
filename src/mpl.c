@@ -30,7 +30,6 @@ int mpl_delete_Morphy(Morphy m)
     }
     Morphyp m1 = (Morphyp)m;
     
-    // TODO: All Morphy destructors
     free(m1->char_t_matrix);
     m1->char_t_matrix = NULL;
     mpl_delete_mpl_matrix(&m1->inmatrix);
@@ -117,7 +116,6 @@ int mpl_set_num_internal_nodes(const int nnodes, Morphy m)
         return ERR_UNEXP_NULLPTR;
     }
     
-    // There must be numtaxa supplied:
     int ntax = 0;
     if (!(ntax = mpl_get_numtaxa(m))) {
         return ERR_NO_DIMENSIONS;
@@ -138,7 +136,6 @@ int mpl_get_num_internal_nodes(Morphy m)
     return (((Morphyp)m)->numnodes - mpl_get_numtaxa(m));
 }
 
-// Requires new matrix in order to re-set (disallows conflict)
 int mpl_attach_symbols(const char *symbols, Morphy m)
 {
     if (!symbols || !m) {
@@ -274,15 +271,6 @@ int mpl_apply_tipdata(Morphy m)
 }
 
 
-//int     mpl_set_postorder(const int nodeID, const int index, Morphy m);
-//
-
-//int     mpl_incl_charac(const int charID, Morphy m);
-//
-
-//int     mpl_excl_charac(const int charID, Morphy m);
-//
-
 int mpl_set_charac_weight(const int charID, const double weight, Morphy m)
 {
     if (!m) {
@@ -298,7 +286,6 @@ int mpl_set_charac_weight(const int charID, const double weight, Morphy m)
     }
     
     Morphyp mi = (Morphyp)m;
-//    mi->charinfo[charID].realweight = weight;
     mpl_set_new_weight_public(weight, charID, mi);
     
     return ERR_NO_ERROR;
@@ -347,7 +334,6 @@ int mpl_set_parsim_t(const int charID, const MPLchtype chtype, Morphy m)
     Morphyp handl = (Morphyp)m;
     handl->charinfo[charID].chtype = chtype;
     
-    // Setting a character to 'NONE_T' should exclude it from use.
     if (chtype == NONE_T) {
         handl->charinfo[charID].realweight = 0.0;
     }
@@ -355,13 +341,10 @@ int mpl_set_parsim_t(const int charID, const MPLchtype chtype, Morphy m)
         handl->charinfo[charID].realweight = handl->wtbase;
     }
     
-    // TODO: Update any data partitionings.
-    
     return ERR_NO_ERROR;
 }
 
 
-// TODO: Document gap_t
 int mpl_set_gaphandl(const MPLgap_t gaptype, Morphy m)
 {
     if (!m) {
@@ -408,7 +391,7 @@ int mpl_first_down_recon
         res += downfxn(lstates, rstates, nstates, handl->partitions[i]);
     }
     
-    return res; //
+    return res;
 }
 
 
@@ -438,7 +421,7 @@ int mpl_first_up_recon
         res += upfxn(lstates, rstates, nstates, astates, handl->partitions[i]);
     }
     
-    return res; //
+    return res; 
 }
 
 
@@ -502,7 +485,7 @@ int mpl_second_up_recon
         }
     }
     
-    return res; //
+    return res;
 }
 
 int mpl_update_tip(const int tip_id, const int anc_id, Morphy m)
@@ -685,7 +668,7 @@ int mpl_na_tiproot_final_recalculation
     int numparts = mpl_get_numparts(handl);
     int res = 0;
     
-    lower->updated = false; // TODO: not going to work.
+    lower->updated = false; 
     
     lower->steps_to_recall = 0;
     
@@ -712,7 +695,6 @@ int mpl_na_first_down_recalculation
     MPLndsets*  rstates = handl->statesets[right_id];
     
     int i = 0;
-    //int res = 0;
     int numparts = mpl_get_numparts(handl);
     MPLdownfxn downfxn = NULL;
     
@@ -752,12 +734,12 @@ int mpl_na_first_up_recalculation
     
     for (i = 0; i < numparts; ++i) {
         if (handl->partitions[i]->isNAtype == true) {
-            upfxn = handl->partitions[i]->uprecalc1; // Assign the appropriate recalculation function
+            upfxn = handl->partitions[i]->uprecalc1;
             upfxn(lstates, rstates, nstates, astates, handl->partitions[i]);
         }
     }
     
-    return res; //
+    return res; 
 }
 
 
@@ -816,12 +798,12 @@ int mpl_na_second_up_recalculation
     
     for (i = 0; i < numparts; ++i) {
         if (handl->partitions[i]->isNAtype == true) {
-            upfxn = handl->partitions[i]->inapuprecalc2; // Assign the appropriate recalculation function
+            upfxn = handl->partitions[i]->inapuprecalc2; 
             res += upfxn(lstates, rstates, nstates, astates, handl->partitions[i]);
         }
     }
     
-    return res; //
+    return res; 
 }
 
 
@@ -930,7 +912,7 @@ int mpl_check_reopt_inapplics(Morphy m)
     int n = 0;
     int i = 0;
     for (i = 0; i < mi->numparts; ++i) {
-        if (mi->partitions[i]->isNAtype == true) { // This is just a safety measure but could be removed for optimisation
+        if (mi->partitions[i]->isNAtype == true) { 
             n += mi->partitions[i]->nNAtoupdate;
         }
     }
@@ -1018,9 +1000,6 @@ unsigned int mpl_get_packed_states
 const char* mpl_get_stateset
 (const int nodeID, const int character, const int passnum, Morphy m)
 {
-    // TODO: This leaks memory, as it leaves the caller responsible for the
-    // memory allocated by this function. Store the strings inside the nodal set
-    // structures.
     MPLstate result = mpl_get_packed_states(nodeID, character, passnum, m);
     char* ret = mpl_translate_state2char(result, (Morphyp)m);
   

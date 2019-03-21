@@ -24,9 +24,9 @@ A null value (for now).
 Reconstructs second-pass nodal sets. For normal (all-applicable)
 characters, this is the final pass. This function is called over a preorder
 sequence of nodes where left, right, and ancestral nodes are known.
-Because this function needs to be fairly high-performance, it does not do much 
+Because this function needs to be fairly high-performance, it does not do much
 checking for parameter validity, thus unsafe usage of this function might not
-be caught. It is up to calling functions to ensure that the appropriate 
+be caught. It is up to calling functions to ensure that the appropriate
 parameters have been set before use.
 }
 \author{

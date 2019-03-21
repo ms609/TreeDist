@@ -11,22 +11,22 @@ ReadTntTree(filename, relativePath = NULL, keepEnd = 1L,
 TNTText2Tree(treeText)
 }
 \arguments{
-\item{filename}{character string specifying path to TNT `.tre` file.}
+\item{filename}{character string specifying path to TNT \code{.tre} file.}
 
 \item{relativePath}{(optional) character string specifying location of the
 matrix file used to generate the TNT results, relative to the current working
 directory, for portability.  Taxon names will be read from this file if they
-are not specified by `tipLabels`.}
+are not specified by \code{tipLabels}.}
 
 \item{keepEnd}{(optional, default 1) integer specifying how many elements of the file
 path to conserve when creating relative path (see examples).}
 
-\item{tipLabels}{(optional) character vector specifying the names of the 
+\item{tipLabels}{(optional) character vector specifying the names of the
 taxa, in the sequence that they appear in the TNT file.  If not specified,
 taxon names will be loaded from the data file linked in the first line of the
- `.tre` file specified in `filename`.}
+\code{.tre} file specified in \code{filename}.}
 
-\item{treeText}{Character string describing a tree, in the parenthetical 
+\item{treeText}{Character string describing a tree, in the parenthetical
 format output by TNT.}
 }
 \value{
@@ -37,7 +37,7 @@ Reads a tree from TNT's paranthetical output.
 }
 \section{Functions}{
 \itemize{
-\item \code{TNTText2Tree}: Converts text representation of a tree in TNT to an object of class `phylo`
+\item \code{TNTText2Tree}: Converts text representation of a tree in TNT to an object of class \code{phylo}
 }}
 
 \examples{

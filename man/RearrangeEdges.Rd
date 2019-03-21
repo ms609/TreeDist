@@ -9,17 +9,19 @@ RearrangeEdges(parent, child, dataset, TreeScorer = MorphyLength,
   iter = "?", hits = 0L, verbosity = 0L, ...)
 }
 \arguments{
-\item{parent}{the first column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 1]}
+\item{parent}{the first column of the edge matrix of a tree of class
+\code{\link{phylo}}, i.e. \code{tree$edge[, 1]}}
 
-\item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
+\item{child}{the second column of the edge matrix of a tree of class
+\code{\link{phylo}}, i.e. \code{tree$edge[, 2]}}
 
 \item{dataset}{Third argument to pass to \code{TreeScorer}.}
 
 \item{TreeScorer}{function to score a given tree.
-The function will be passed three parameters, corresponding to the 
-`parent` and `child` entries of a tree's edge list, and a dataset.}
+The function will be passed three parameters, corresponding to the
+\code{parent} and \code{child} entries of a tree's edge list, and a dataset.}
 
-\item{EdgeSwapper}{a function that rearranges a parent and child vector, 
+\item{EdgeSwapper}{a function that rearranges a parent and child vector,
 and returns a list with modified vectors; for example
 \code{\link{SPRSwap}}.}
 
@@ -37,10 +39,10 @@ more verbose feedback to the user.}
 }
 \value{
 This function returns a list with two to four elements, corresponding to a binary tree:
-        - 1. Integer vector listing the parent node of each edge;
-        - 2. Integer vector listing the child node of each edge;
-        - 3. Score of the tree;
-        - 4. Number of times that score has been hit.
+- 1. Integer vector listing the parent node of each edge;
+- 2. Integer vector listing the child node of each edge;
+- 3. Score of the tree;
+- 4. Number of times that score has been hit.
 }
 \description{
 Rearranges a matrix that corresponds to the edges of a phylogenetic tree,
@@ -49,9 +51,9 @@ within a tree search function.
 }
 \details{
 \code{RearrangeTree} performs one tree rearrangement of a
- specified type, and returns the score of the tree (with the given dataset).
- It also reports the number of times that this score was hit in the 
- current function call.
+specified type, and returns the score of the tree (with the given dataset).
+It also reports the number of times that this score was hit in the
+current function call.
 }
 \examples{
 data('Lobo')

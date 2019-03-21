@@ -8,6 +8,7 @@ phy11 <- phangorn::phyDat(data11, type='USER', levels=c(FALSE, TRUE))
 RootySwappers <- list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap)
 
 test_that("tree can be found", {
+  suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
   set.seed(0)
   random11 <- RandomTree(phy11, 'a')
   expect_error(TreeSearch(tree=unrooted11, dataset=phy11))
@@ -55,6 +56,7 @@ test_that("tree search finds shortest tree", {
 
 context("Implied weights: Tree search")
 test_that("tree can be found", {
+  suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
   set.seed(0)
   expect_error(IWTreeSearch(tree=unrooted11, dataset=phy11))
   expect_equal(comb11, IWTreeSearch(tree=RandomTree(phy11, 'a'), dataset=phy11,

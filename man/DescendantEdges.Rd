@@ -12,18 +12,20 @@ AllDescendantEdges(parent, child, nEdge = length(parent))
 \arguments{
 \item{edge}{number of the edge whose child edges are required}
 
-\item{parent}{the first column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 1]}
+\item{parent}{the first column of the edge matrix of a tree of class
+\code{\link{phylo}}, i.e. \code{tree$edge[, 1]}}
 
-\item{child}{the second column of the edge matrix of a tree of class \code{\link{phylo}}, i.e. tree$edge[, 2]}
+\item{child}{the second column of the edge matrix of a tree of class
+\code{\link{phylo}}, i.e. \code{tree$edge[, 2]}}
 
 \item{nEdge}{number of edges (calculated from length(parent) if not supplied)}
 }
 \value{
-`DescendantEdges` returns a logical vector stating whether each edge in turn is a descendant of the specified edge
-        (or the edge itself)
+\code{DescendantEdges} returns a logical vector stating whether each edge in turn is a descendant of the specified edge
+(or the edge itself)
 
-`AllDescendantEdges` returns a matrix of class logical, with row N specifying whether each edge is a descendant of edge N
-        (or the edge itself)
+\code{AllDescendantEdges} returns a matrix of class logical, with row N specifying whether each edge is a descendant of edge N
+(or the edge itself)
 }
 \description{
 Quickly identifies edges that are 'descended' from a particular edge in a tree

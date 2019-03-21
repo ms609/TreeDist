@@ -1,10 +1,10 @@
-//
+/*
 //  statedata.c
 //  MorPhy2
 //
 //  Created by mbrazeau on 26/04/2017.
 //  Copyright © 2017 brazeaulab. All rights reserved.
-//
+*/
 #include "mpl.h"
 #include "morphydefs.h"
 #include "morphy.h"

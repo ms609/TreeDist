@@ -5,13 +5,16 @@
 
 ### Linux:
 * ubuntu 14.04.5 LTS (on travis-ci), R 3.4.0 and release
+* Using check_rhub()
 
 ## R CMD check results
 There were no ERRORs, WARNINGs or NOTEs.
 
-Brian Ripley requested that I resubmit this package immediately as I had 
-inadvertently included duplicate titles for certain vignettes.
-As such, this release comes shortly after a previous release.
+Kurt Hornik requested that I resubmit this package immediately in order
+to prepare for the new random number generation system in R 3.6.0.
 
 ## Downstream dependencies
-There are currently no downstream dependencies for this package.
+There are currently two downstream dependencies for this package.
+
+`revdepcheck::revdep_check()` does not yet support the Windows platform.
+`devtools::revdep_check()` reported no packages with problems.
