@@ -395,7 +395,7 @@ VariationOfArborealInfoSplits <- function (splits1, splits2, reportMatching = FA
   }
 }
 
-#' @describeIn NyeTreeDistance Takes splits instead of trees
+#' @describeIn NyeTreeSimilarity Takes splits instead of trees
 #' @inheritParams MutualArborealInfoSplits
 #' @export
 NyeSplitSimilarity <- function (splits1, splits2, reportMatching = FALSE) {
@@ -633,4 +633,59 @@ SplitsCompatible <- function (split1, split2) {
     all(!split1[split2]) ||
     all(!split1[!split2])
   )
+}
+
+#' Visualise a matching
+#' 
+#' Depicts the bipartitions that are matched between two trees using a 
+#' specified Generalized Robinson Foulds tree distance measure.
+#' 
+#' @param Func Function used to construct tree similarity.
+#' @param tree1,tree2 Trees of class `phylo`, with tips labelled identically.
+#' @param setPar Logical specifying whether graphical parameters should be 
+#' set to display trees side by side.
+#' @param Plot Function to use to plot trees.
+#' @param \dots Additional parameters to send to `Plot`.
+#' 
+#' @author Martin R. Smith
+#' @importFrom ape nodelabels edgelabels plot.phylo
+#' @importFrom colorspace qualitative_hcl
+#' @export
+VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE, Plot = plot.phylo, ...) {
+  
+  splits1 <- Tree2Splits(tree1)
+  edge1 <- tree1$edge
+  child1 <- edge1[, 2]
+  partitionEdges1 <- vapply(colnames(splits1), 
+                            function (node) which(child1 == node), integer(1))
+  
+  splits2 <- Tree2Splits(tree2)
+  edge2 <- tree2$edge
+  child2 <- edge2[, 2]
+  partitionEdges2 <- vapply(colnames(splits2), 
+                            function (node) which(child2 == node), integer(1))
+  
+  matching <- Func(tree1, tree2, reportMatching = TRUE)
+  pairings <- attr(matching, 'matching')
+  scores <- attr(matching, 'pairScores')
+  pairScores <- signif(mapply(function (i, j) scores[i, j], seq_along(pairings), pairings), 3)
+  
+  nSplits <- length(pairings)
+  palette <- qualitative_hcl(nSplits, c=42, l=88)
+  adjNo <- c(0.5, -0.2)
+  adjVal <- c(0.5, 1.1)
+  
+  if (setPar) origPar <- par(mfrow=c(2, 1), mar=rep(0.5, 4))
+  
+  Plot(tree1)#, ...)
+  edgelabels(seq_along(pairings), partitionEdges1[pairings], bg=palette, adj=adjNo)
+  #edgelabels(seq_along(pairings), partitionEdges1, cex=0.8, font=2, frame='n', adj=adjVal)
+  edgelabels(pairScores, partitionEdges1[pairings], frame='n', adj=adjVal, cex=0.8)
+  
+  Plot(tree2)#, ...)
+  edgelabels(seq_along(pairings), partitionEdges2, bg=palette, adj=adjNo)
+  #edgelabels(seq_along(pairings), partitionEdges2, cex=0.8, font=2, frame='n', adj=adjVal)
+  edgelabels(pairScores, partitionEdges2, frame='n', adj=adjVal, cex=0.8)
+  
+  if (setPar) par(origPar)
 }

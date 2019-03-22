@@ -2,9 +2,12 @@
 % Please edit documentation in R/tree_distance.R
 \name{NyeTreeSimilarity}
 \alias{NyeTreeSimilarity}
+\alias{NyeSplitSimilarity}
 \title{Nye et al. (2006) tree comparison}
 \usage{
 NyeTreeSimilarity(tree1, tree2, reportMatching = FALSE)
+
+NyeSplitSimilarity(splits1, splits2, reportMatching = FALSE)
 }
 \arguments{
 \item{tree1}{Trees of class \code{phylo}, with tips labelled identically,
@@ -15,10 +18,27 @@ or lists of such trees to undergo pairwise comparison.}
 
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}
+
+\item{splits1}{Logical matrices where each row corresponds to a terminal,
+either listed in the same order or bearing identical names (in any sequence),
+and each column corresponds to a bipartition split, such that
+each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
+(\code{FALSE}) of the respective bipartition split.}
+
+\item{splits2}{Logical matrices where each row corresponds to a terminal,
+either listed in the same order or bearing identical names (in any sequence),
+and each column corresponds to a bipartition split, such that
+each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
+(\code{FALSE}) of the respective bipartition split.}
 }
 \description{
 Implements the tree comparison metric of Nye \emph{et al}. (2006).
 }
+\section{Functions}{
+\itemize{
+\item \code{NyeSplitSimilarity}: Takes splits instead of trees
+}}
+
 \references{
 \insertRef{Nye2006}{TreeSearch}
 }
