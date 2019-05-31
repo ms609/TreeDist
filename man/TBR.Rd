@@ -7,7 +7,7 @@
 \alias{AllTBR}
 \alias{RootedTBR}
 \alias{RootedTBRSwap}
-\title{TBR}
+\title{Tree bisection and reconnection (TBR)}
 \usage{
 TBR(tree, edgeToBreak = NULL, mergeEdges = NULL)
 
@@ -62,12 +62,13 @@ and an edge into which it can be merged
 a list of trees, in parent-child format
 }
 \description{
-Tree bisection and reconnection
+\code{TBR} performs a single random \acronym{TBR} iteration.
 }
 \details{
-\code{TBR} performs a single random \acronym{TBR} iteration.
-
 Branch lengths are not (yet) supported.
+
+All nodes in a tree must be bifurcating; \link[ape:collapse.singles]{ape::collapse.singles} and
+\link[ape:multi2di]{ape::multi2di} may help.
 }
 \section{Functions}{
 \itemize{

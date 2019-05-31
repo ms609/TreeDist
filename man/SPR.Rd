@@ -5,7 +5,7 @@
 \alias{SPRSwap}
 \alias{RootedSPR}
 \alias{RootedSPRSwap}
-\title{Subtree Pruning and Rearrangement}
+\title{Subtree Pruning and Rearrangement (SPR)}
 \usage{
 SPR(tree, edgeToBreak = NULL, mergeEdge = NULL)
 
@@ -46,12 +46,15 @@ a list containing two elements, corresponding in turn to the rearranged parent a
 Perform one \acronym{SPR} rearrangement on a tree
 }
 \details{
-Equivalent to phangorn's kSPR, but faster.
+Equivalent to phangorn's \code{kSPR}, but faster.
 Note that rearrangements that only change the position of the root WILL be returned by
 \code{SPR}.  If the position of the root is irrelevant (as in Fitch parsimony, for example)
 then this function will occasionally return a functionally equivalent topology.
 \code{RootIrrelevantSPR} will search tree space more efficiently in these cases.
 Branch lengths are not (yet) supported.
+
+All nodes in a tree must be bifurcating; \link[ape:collapse.singles]{ape::collapse.singles} and
+\link[ape:multi2di]{ape::multi2di} may help.
 }
 \section{Functions}{
 \itemize{

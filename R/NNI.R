@@ -1,11 +1,12 @@
-#' NNI
-#'
-#' Nearest Neighbour Interchange
+#' Nearest Neighbour Interchange (NNI)
 #' 
 #' Performs a single iteration of the nearest-neighbour interchange algorithm.
 #' Based on the corresponding \code{phangorn} function, but re-coded to improve speed.
 #' 
 #' Branch lengths are not supported.
+#' 
+#' All nodes in a tree must be bifurcating; [ape::collapse.singles] and
+#' [ape::multi2di] may help.
 #' 
 #' @template treeParam
 #' @template edgeToBreakParam
@@ -27,18 +28,23 @@
 #' @export
 NNI <- function (tree, edgeToBreak=NULL) {
   edge <- tree$edge
+  parent <- edge[, 1]
+  StopUnlessBifurcating(parent)
   if (!is.null(edgeToBreak) && edgeToBreak == -1) {
-    parent <- edge[, 1]
     child  <- edge[, 2]
     nTips <- (length(parent) / 2L) + 1L
     samplable <- child > nTips
     # newEdges <- vapply(which(samplable), DoubleNNI, parent=parent, child=child, list(matrix(0L, nEdge, 2), matrix(0L, nEdge, 2)))
     newEdges <- unlist(lapply(which(samplable), DoubleNNI, parent=parent, child=child), recursive=FALSE) # Quicker than vapply, surprisingly
     newTrees <- lapply(newEdges, function (edges) {tree$edge <- edges; tree}) # Quicker than vapply, surprisingly
-    return(newTrees)
+    
+    # Return:
+    newTrees
   } else {
-    tree$edge <- ListToMatrix(NNISwap(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak))
-    return (tree)
+    tree$edge <- ListToMatrix(NNISwap(parent, edge[, 2], edgeToBreak=edgeToBreak))
+    
+    # Return:
+    tree
   }
 }
 
@@ -109,7 +115,9 @@ DoubleNNI <- function (parent, child, edgeToBreak) {
   child[oldInd] <- childSwap
   
   nEdge <- length(parent)
-  return(list(RenumberTree(parent, child, nEdge), RenumberTree(parent, child2, nEdge)))
+  
+  # Return:
+  list(RenumberTree(parent, child, nEdge), RenumberTree(parent, child2, nEdge))
 }
 
 #' Rooted NNI 
@@ -125,10 +133,14 @@ RootedNNI <- function (tree, edgeToBreak=NULL) {
     samplable <- parent != rootNode & child > nTips
     newEdges <- unlist(lapply(which(samplable), DoubleNNI, parent=parent, child=child), recursive=FALSE) # Quicker than vapply, surprisingly
     newTrees <- lapply(newEdges, function (edges) {tree$edge <- edges; tree}) # Quicker than vapply, surprisingly
-    return(newTrees)   
+    
+    # Return:
+    newTrees
   } else {
     tree$edge <- ListToMatrix(RootedNNISwap(edge[, 1], edge[, 2], edgeToBreak=edgeToBreak))
-    return (tree)
+    
+    # Return:
+    tree
   }
 }
 

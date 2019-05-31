@@ -125,7 +125,8 @@ ICSteps <- function (char, ambiguousToken = 0, expectedMinima = 25, maxIter = 10
   tabSteps <- c(analyticSteps, tabSteps * (nIter - sum(analyticSteps)) / sum(tabSteps))
   pSteps <- tabSteps / sum(tabSteps)
   
-  return(pSteps)
+  # Return:
+  pSteps
 }
 
 #' @describeIn ICPerStep Memoized calculating function

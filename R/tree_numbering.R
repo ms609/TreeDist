@@ -47,8 +47,12 @@ RenumberEdges <- function (parent, child, nEdge = length(parent)) {
 
 #' Reorder tree Cladewise
 #' 
-#' A wrapper for \code{ape:::.reorder_ape}.  Calling this C function directly is approximately twice as fast as using
+#' A wrapper for \code{ape:::.reorder_ape}.  
+#' Calling this C function directly is approximately twice as fast as using
 #' \code{ape::\link[ape]{cladewise}} or \code{ape::\link[ape]{postorder}}
+#' 
+#' All nodes in a tree must be bifurcating; [ape::collapse.singles] and
+#' [ape::multi2di] may help.
 #'
 #' @template treeParam
 #' @param nTaxa (optional) number of tips in the tree
@@ -66,7 +70,7 @@ Cladewise <- function (tree, nTaxa = NULL, edge = tree$edge) {
   nb.edge <- dim(edge)[1]
   nb.node <- tree$Nnode
   if (nb.node == 1) return(tree)
-  if (nb.node >= nTaxa) stop("tree apparently badly conformed")
+  if (nb.node >= nTaxa) stop("`tree` apparently badly conformed")
   
   neworder <- NeworderPhylo(nTaxa, edge[, 1], edge[, 2], nb.edge, 1)
                  
@@ -84,7 +88,7 @@ Postorder <- function (tree, nTaxa = length(tree$tip.label), edge = tree$edge) {
   nb.edge <- dim(edge)[1]
   nb.node <- tree$Nnode
   if (nb.node == 1) return(tree)
-  if (nb.node >= nTaxa) stop("tree apparently badly conformed")
+  if (nb.node >= nTaxa) stop("`tree`` apparently badly conformed")
   neworder <- NeworderPhylo(nTaxa, edge[, 1], edge[, 2], nb.edge, 2)
   tree$edge <- edge[neworder, ]
   if (!is.null(tree$edge.length)) tree$edge.length <- tree$edge.length[neworder]
@@ -113,7 +117,7 @@ Pruningwise <- function (tree, nTaxa = length(tree$tip.label), edge = tree$edge)
   nb.edge <- dim(edge)[1]
   nb.node <- tree$Nnode
   if (nb.node == 1) return(tree)
-  if (nb.node >= nTaxa) stop("tree apparently badly conformed")
+  if (nb.node >= nTaxa) stop("`tree`` apparently badly conformed")
   tree <- Cladewise(tree, nTaxa, edge)
   neworder <- NeworderPruningwise(nTaxa, nb.node, tree$edge[, 1], tree$edge[, 2], nb.edge)
   tree$edge <- tree$edge[neworder, ]
@@ -127,6 +131,7 @@ Pruningwise <- function (tree, nTaxa = length(tree$tip.label), edge = tree$edge)
 Preorder <- function (tree) {
   edge <- tree$edge
   parent <- edge[, 1]
+  StopUnlessBifurcating(parent)
   child <- edge[, 2]
   tree$edge <- RenumberTree(parent, child)
   attr(tree, 'order') <- 'preorder'

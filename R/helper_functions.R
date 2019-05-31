@@ -40,7 +40,9 @@ DescendantEdges <- function (edge, parent, child, nEdge = length(parent)) {
   if (edgeSister >= edge) {
     # edgeSister is really 1 higher than you think, because we knocked out edge 'edge' in the match
     ret[edge:edgeSister] <- TRUE
-    return(ret)
+    
+    # Return:
+    ret
   } else {
     nextEdge <- edge
     revParent <- rev(parent)
@@ -50,7 +52,9 @@ DescendantEdges <- function (edge, parent, child, nEdge = length(parent)) {
       } else break;
     }
     ret[edge:nextEdge] <- TRUE 
-    return(ret)
+    
+    # Return:
+    ret
   }
 }
 
@@ -68,6 +72,8 @@ AllDescendantEdges <- function (parent, child, nEdge = length(parent)) {
     ret[edge, ] <- apply(ret[parent == child[edge], ], 2, any)
     ret[edge, edge] <- TRUE
   }
+  
+  # Return:
   ret
 }
 

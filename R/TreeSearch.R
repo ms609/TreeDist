@@ -86,14 +86,19 @@ EdgeListSearch <- function (edgeList, dataset,
     }
   }
   if (verbosity > 0L) cat("\n  - Final score", bestScore, "found", hits, "times after", iter, "rearrangements\n")  
+  
   if (forestSize > 1L) {
     if (hits < forestSize) forest <- forest[-((hits+1):forestSize)]
     attr(forest, 'hits') <- hits
     attr(forest, 'score') <- bestScore
-    return (unique(forest))
+    
+    # Return:
+    unique(forest)
   } else {
     edgeList[3:4] <- c(bestScore, hits)
-    return(edgeList)
+    
+    # Return:
+    edgeList
   }
 }
 

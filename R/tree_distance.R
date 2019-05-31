@@ -650,6 +650,7 @@ SplitsCompatible <- function (split1, split2) {
 #' @author Martin R. Smith
 #' @importFrom ape nodelabels edgelabels plot.phylo
 #' @importFrom colorspace qualitative_hcl
+#' @importFrom graphics par
 #' @export
 VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE, Plot = plot.phylo, ...) {
   

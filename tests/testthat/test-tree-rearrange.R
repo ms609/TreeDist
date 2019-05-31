@@ -9,6 +9,29 @@ tree8  <- read.tree(text="(((a, (b, (c, d))), (e, f)), (g, h));")
 tree11 <- read.tree(text="((((a, b), (c, d)), e), ((f, (g, (h, i))), (j, k)));")
 attr(tree5a, 'order') <- attr(tree5b, 'order') <- attr(tree8, 'order') <- attr(tree11, 'order') <- 'preorder'
 
+test_that("Malformed trees throw errors", {
+  treeDoubleNode    <- read.tree(text = "((((((1,2)),3),4),5),6);")
+  treePolytomy      <- read.tree(text = "((((1,2,3),4),5),6);")
+  treeDoublyPoly    <- read.tree(text = "(((((1,2,3)),4),5),6);")
+  
+  expect_error(Preorder(treeDoubleNode))
+  expect_error(Preorder(treePolytomy))
+  expect_error(Preorder(treeDoublyPoly))
+  
+  expect_error(NNI(treeDoubleNode))
+  expect_error(NNI(treePolytomy))
+  expect_error(NNI(treeDoublyPoly))
+  
+  expect_error(SPR(treeDoubleNode))
+  expect_error(SPR(treePolytomy))
+  expect_error(SPR(treeDoublyPoly))
+  
+  expect_error(TBR(treeDoubleNode))
+  expect_error(TBR(treePolytomy))
+  expect_error(TBR(treeDoublyPoly))
+  
+})
+
 test_that("NNI works", {
   trComb    <- read.tree(text = "(((((1,2),3),4),5),6);")
   suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0

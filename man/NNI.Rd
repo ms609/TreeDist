@@ -5,7 +5,7 @@
 \alias{NNISwap}
 \alias{RootedNNI}
 \alias{RootedNNISwap}
-\title{NNI}
+\title{Nearest Neighbour Interchange (NNI)}
 \usage{
 NNI(tree, edgeToBreak = NULL)
 
@@ -42,13 +42,14 @@ a list containing two elements, corresponding in turn to the rearranged parent a
 a list containing two elements, corresponding in turn to the rearranged parent and child parameters
 }
 \description{
-Nearest Neighbour Interchange
-}
-\details{
 Performs a single iteration of the nearest-neighbour interchange algorithm.
 Based on the corresponding \code{phangorn} function, but re-coded to improve speed.
-
+}
+\details{
 Branch lengths are not supported.
+
+All nodes in a tree must be bifurcating; \link[ape:collapse.singles]{ape::collapse.singles} and
+\link[ape:multi2di]{ape::multi2di} may help.
 }
 \section{Functions}{
 \itemize{

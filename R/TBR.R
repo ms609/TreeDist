@@ -20,17 +20,19 @@ TBRWarning <- function (parent, child, error) {
   return(list(parent, child))
 }
 
-#' TBR
-#' 
-#' Tree bisection and reconnection
+#' Tree bisection and reconnection (TBR)
 #'
 #' \code{TBR} performs a single random \acronym{TBR} iteration.
+#'
+#' Branch lengths are not (yet) supported.
+#' 
+#' All nodes in a tree must be bifurcating; [ape::collapse.singles] and
+#' [ape::multi2di] may help.
+#' 
 #'
 #' @param tree A bifurcating tree of class \code{\link{phylo}}, with all nodes resolved;
 #' @template edgeToBreakParam
 #' @template mergeEdgesParam
-#' 
-#' @details Branch lengths are not (yet) supported.
 #' 
 #' @return This function returns a tree in \code{phyDat} format that has undergone one \acronym{TBR} iteration.
 #' @references The \acronym{TBR} algorithm is summarized in

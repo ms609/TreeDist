@@ -1,9 +1,12 @@
-# TreeSearch 0.3.0.9000 (development)
+# TreeSearch 0.3.0.9001 (development)
 ## New features
  - `NyeTreeSimilarity` function implements the tree similarity metric of
    Nye _et al._ (2006).
  - `MatchingSplitDistance` function implementing the MS distance of 
    Bogdanowicz & Giaro (2012)
+
+## Bug fixes
+ - Check whether input tree is bifurcating before attempting rearrangements
 
 # TreeSearch 0.3.0
 

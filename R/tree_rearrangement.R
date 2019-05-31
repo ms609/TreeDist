@@ -189,3 +189,17 @@ CollapseNode <- function (tree, nodes) {
 CollapseEdge <- function (tree, edges) {
   CollapseNode(tree, tree$edge[edges, 2])
 }
+
+#' Check that all nodes in a tree are bifurcating.
+#' 
+#' @template treeParent
+#' 
+#' @return Returns `NULL`, but will `stop` with an error message if a tree
+#' does not appear to be bifurcating.
+#' 
+#' @author Martin R. Smith
+#' @keywords internal
+#' @export
+StopUnlessBifurcating <- function (parent) {
+  if (!all(table(parent) == 2L)) stop ("Tree must be bifurcating; try collapse.singles or multi2di.")
+}

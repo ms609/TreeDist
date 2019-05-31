@@ -54,7 +54,9 @@ SuccessiveApproximations <- function (tree, dataset, outgroup = NULL, k = 3, max
     attr(dataset, 'sa.weights') <- w.i
   }
   cat('Stability not reached.')
-  return(bests)
+  
+  # Return:
+  bests
 }
 
 #' Tree suboptimality
@@ -68,10 +70,12 @@ SuccessiveApproximations <- function (tree, dataset, outgroup = NULL, k = 3, max
 #' @export
 Suboptimality <- function (trees, proportional = FALSE) {
   scores <- vapply(trees, attr, double(1), 'score')
+  
+  # Return:
   if (proportional) {
-    return ((scores - min(scores)) / min(scores))
+    (scores - min(scores)) / min(scores)
   } else {
-    return(scores - min(scores))
+    scores - min(scores)
   }
 }
 
@@ -96,7 +100,9 @@ SuccessiveWeights <- function(tree, dataset) {
   sa.weights <- at$sa.weights
   if (is.null(sa.weights)) sa.weights <- rep(1, length(weight))
   steps <- FitchSteps(tree, dataset)
-  return(sum(steps * sa.weights * weight))
+  
+  # Return:
+  sum(steps * sa.weights * weight)
 }
 
 PrepareDataSA <- function (dataset) {
