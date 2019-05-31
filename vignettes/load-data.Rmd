@@ -15,12 +15,6 @@ vignette: >
 
 It can be a bit fiddly to get a phylogenetic dataset into R, particularly if you are not used to working with files in the NEXUS format.
 
-The first thing that you'll need to do is load the `phangorn` package, which should have been installed when you installed `TreeSearch`.
-
-```{r phangorn}
-library('phangorn')
-```
-
 ## Filesystem navigation
 To open a file, you're going to have to tell R where it is. 
 You can do this by providing the full path to the file on your system.  Be careful to use forward slashes (`/`, not `\`, which 
@@ -92,8 +86,8 @@ raw_data <- ape::read.nexus.data(filename)
 ```
 Non-standard elements of a Nexus file might be beyond the capabilities of ape's parser.  In particular, you will need to replace spaces in taxon names with an underscore, and to arrange all data into a single block starting `BEGIN DATA`.  You'll need to strip out comments, character definitions and separate taxon blocks.  
 
-The function `readNexus` in package `phylobase` promises to be more powerful,
-but I've not been able to get it to work.
+The function `readNexus` in package `phylobase` uses the NCL library and 
+promises to be more powerful, but I've not been able to get it to work.
 
 ### From a TNT file
 
