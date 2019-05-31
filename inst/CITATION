@@ -1,7 +1,7 @@
      year <- "in press"
      
      citHeader(paste0("When using the package, we would appreciate it if you would acknowledge your use of TreeSearch and (if you use it) MorphyLib in the article text, and cite Brazeau et al. (", year, "). For example, 'Phylogenetic search was performed using the 
-     R package TreeSearch v0.3.0, which uses MorphyLib to handle inapplicable data
+     R package TreeSearch v0.3.1, which uses MorphyLib to handle inapplicable data
      in accordance with Brazeau et al. (", year, ")'.  You might also wish to cite the
      individual software packages using their Zenodo dois."))
      
