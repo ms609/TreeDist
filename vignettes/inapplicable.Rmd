@@ -164,13 +164,6 @@ We might prefer a majority-rule consensus tree:
 par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
 majority.consensus <- ape::consensus(some.optimal.trees, p=0.5)
 plot(majority.consensus)
-
-node.frequency <- SplitFrequency(majority.consensus, some.optimal.trees) /
-  length(some.optimal.trees)
-ape::nodelabels(paste('\n\n', signif(node.frequency, 2)), 
-           col=SupportColour(node.frequency), 
-           adj=0, pos=2, frame='none')
-
 ```
 
 Clade support can be generated using Jackknife resampling:
