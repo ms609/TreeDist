@@ -1,5 +1,5 @@
 ---
-title: "Tree Search With Profile Parsimony"
+title: "Tree Search with Profile Parsimony"
 author: "Martin R. Smith"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -11,87 +11,48 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+Profile Parsimony [@Faith2001] finds the tree that is most faithful 
+to the information contained within a given dataset. 
+It is the 'exact solution' that implied weights parsimony approximates.
 
-`TreeSearch` is an R package that allows, among other things, parsimony search 
-on morphological datasets using the Profile Parsimony optimality criterion of 
-Faith & Trueman [-@Faith2001].
-
-Profile Parsimony finds the tree that is most faithful to the information contained 
-within a given dataset.
-
-
-Character data are read from a restricted NEXUS format using the R function `ape::read.nexus.data`; see the latter function's documentation for details.
-
-NEXUS files can be edited in any standard text editor,
- for example [Notepad++](https://notepad-plus-plus.org).
- 
-A notable limitation is that the parser cannot interpret curly braces, for example `{01}`.  
-Ambiguous tokens of this nature should be replaced with a separate character, for example 
-'A' to denote `{01}`, 'B' to denote `{12}`, perhaps using a search-and-replace operation in your 
-favourite text editor.
-
-This said, the Profile Parsimony algorithm is currently implemented only 
+Profile Parsimony is currently implemented in TreeSearch only 
 for binary characters with no ambiguous tokens.
-I hope to address this limitation soon.
 
-## Loading the package
-To install the package for the first time, type
-```r
-install.packages('TreeSearch')
-```
-Once the package has been installed, load it using
-```{r Load library}
+## Getting started
+<!--Duplicated from inapplicable.Rmd-->
+[A companion vignette](getting-started.html) gives details on installing 
+the package and getting up and running.
+
+<!--
+# message=FALSE will suppress message when loading TreeSearch
+# Temporary fix until R.oo is updated -- remove thereafter
+# https://github.com/r-lib/rlang/issues/669
+-->
+
+Once installed, load the inapplicable package into R using
+```{r Load-library, message=FALSE}
 library('TreeSearch')
 ```
 
-## Loading data into the package
-To use this script on your own data, launch R, and type (or copy-paste) the following text
-into the R console.  Lines starting with '#' are comments and do not need to be copied.
+In order to reproduce the random elements of this document, set a random seed:
 
-Data can be read from a nexus file (note the restrictions detailed above):
-```r
-my.data <- read.nexus.data('C:/path/to/filename.nex')
+```{R RNG-version, warning=FALSE}
+# Set a random seed so that random functions in this document are reproducible
+RNGversion("3.5.0") # Until we can require R3.6.0
+set.seed(888)
 ```
 
-Alternatively you can use a built-in dataset:
+
+## Scoring a tree, and conducting a tree search
+
+Here's an example of using the package to conduct tree search with profile 
+parsimony.
+You can [load your own dataset](load-data.html), but for this example,
+we'll use a simulated dataset that comes bundled with the `TreeSearch` package.
+
 ```{r Load Longrich data}
 data(congreveLamsdellMatrices)
 my.data <- congreveLamsdellMatrices[[10]]
-```
-
-A contrast matrix translates the tokens used in your dataset to the character states to 
-   which they correspond: for example decoding 'A' to {01}.
-   For more details, see the 'phangorn-specials' vignette in the phangorn package,
-   accessible by typing '?phangorn' in the R prompt and navigating to 
-   index > package vignettes.
-
-```{r Contrast matrix}
-contrast.matrix <- matrix(data=c(
-# 0 1 -  # Each column corresponds to a character-state
-  1,0,0, # Each row corresponds to a token, here 0, denoting the character-state set {0} 
-  0,1,0, # 1 | {1}
-  0,0,1, # - | {-}
-  1,1,0, # A | {01}
-  1,1,0, # + | {01}
-  1,1,1  # ? | {01-}
-), ncol=3, byrow=TRUE); # ncol should correspond to the number of columns in the matrix
-dimnames(contrast.matrix) <- list(
-  c(0, 1, '-', 'A', '+', '?'), # A list of the tokens corresponding to each row
-                               # in the contrast matrix
-  c(0, 1, '-') # A list of the character-states corresponding to the columns 
-               # in the contrast matrix
-)
-
-contrast.matrix
-```
-
-If you need to use a contrast matrix, convert the data using 
-```r
-my.phyDat <- phyDat(my.data, type='USER', contrast=contrast.matrix)
-```
-
-We don't have any such ambiguities in our dataset, so we can go straight in with
-```{r Prepare data}
 my.phyDat <- phangorn::phyDat(my.data, type='USER', levels=c(1, 2))
 ```
 
@@ -100,14 +61,12 @@ information loss implied by each additional step in each character.
 Ideally we'd pick a high value of precision (> 1e+06): this takes a while, 
 but only needs doing once for each dataset of a given size.
 
-```{r Prepare the data for analysis}
+```{r Prepare the data for analysis, warning=FALSE}
 my.prepdata <- PrepareDataProfile(my.phyDat, precision=4e+04)
 ```
 
 To start analysis, we need to load a starting tree.  We can do this at random:
-```{r Random tree}
-suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
-set.seed(888)
+```{r Random tree, eval=FALSE}
 tree <- RandomTree(my.phyDat)
 ```
 
@@ -118,31 +77,53 @@ par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
 plot(tree)
 ```
 
-Calculate the tree's parsimony score:
+Let's calculate this random tree's parsimony score,
+then search for a better tree:
+
 ```{R Starting score}
 ProfileScore(tree, my.prepdata)
-```
 
-Search for a better tree:
-```{r Tree search}
-better.tree <- ProfileTreeSearch(ape::root(tree, '1', resolve.root=TRUE), my.prepdata, EdgeSwapper=RootedTBRSwap)
+better.tree <- ProfileTreeSearch(tree, my.prepdata, EdgeSwapper=RootedTBRSwap)
 ```
 
 The parsimony ratchet [@Nixon1999] is better at finding globally optimal trees. `ProfileRatchet`
 is a convenient wrapper for the underlying function `Ratchet`.
-```r
+```{r longwinded, eval=FALSE}
 # Longwinded approach:
 better.tree <- Ratchet(better.tree, my.prepdata, searchHits=10, searchIter=100, ratchIter=5,
                        swappers=list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap),
                        InitializeData=ProfileInitMorphy, CleanUpData=ProfileDestroyMorphy,
                        TreeScorer=ProfileScoreMorphy, Bootstrapper=ProfileBootstrap)
 ```
-```{r Ratchet search}
-# Less typing!
+
+```{r Cached results of ratchet search, echo=FALSE}
+# The ratchet search takes a little while to run,
+# so I've cached its results
+better.tree <- structure(list(edge = structure(c(23L, 23L, 24L, 25L, 26L, 26L, 
+27L, 28L, 28L, 29L, 29L, 30L, 30L, 27L, 31L, 31L, 25L, 32L, 32L, 
+33L, 33L, 34L, 34L, 35L, 35L, 36L, 36L, 37L, 37L, 38L, 38L, 39L, 
+39L, 40L, 40L, 41L, 41L, 24L, 42L, 42L, 43L, 43L, 1L, 24L, 25L, 
+26L, 13L, 27L, 28L, 14L, 29L, 15L, 30L, 17L, 16L, 31L, 18L, 19L, 
+32L, 12L, 33L, 11L, 34L, 10L, 35L, 9L, 36L, 8L, 37L, 7L, 38L, 
+6L, 39L, 5L, 40L, 4L, 41L, 3L, 2L, 42L, 20L, 43L, 22L, 21L), .Dim = c(42L, 
+2L)), tip.label = c("1", "2", "3", "4", "5", "6", "7", "8", "9", 
+"10", "11", "12", "19", "18", "17", "15", "16", "13", "14", "20", 
+"21", "22"), Nnode = 21L), class = "phylo", order = "cladewise", score = -309.16150317298, hits = 2)
+```
+
+```{r Ratchet search, eval=FALSE}
+# Equivalent, but less typing!
 RootedSwappers <- list(RootedTBRSwap, RootedSPRSwap, RootedNNISwap)
 better.tree <- ProfileRatchet(better.tree, my.prepdata,
                               swappers=RootedSwappers,
                               searchHits=10, searchIter=100, ratchIter=5)
+
+```
+
+Let's see the resultant tree, and its score
+
+```{r Ratchet-search-results}
+attr(better.tree, 'score')
 par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
 plot(better.tree)
 ```
@@ -152,12 +133,13 @@ The default parameters may not be enough to find the optimal tree; type
 
 ## View the results
 
-In parsimony search, it is generally good practice to consider trees that are slightly suboptimal.
+In parsimony search, it is good practice to consider trees that are slightly suboptimal [@Smith2019].
+
 Here, we'll take a consensus that includes all trees that are suboptimal by up to 1.5 bits.
 To sample this region of tree space well, the trick is to use large values of 
 `ratchHits` and `ratchIter`, and small values of `searchHits` and
 `searchiter`, so that many runs don't quite hit the optimal tree.
-In a serious study, you would want to sample many more than 25 Ratchet hits (`ratchHits`).
+In a serious study, you would want to sample many more than the 25 Ratchet hits (`ratchHits`) we'll take here.
 
 ```{R Suboptimal sampling}
 suboptimals <- ProfileRatchet(better.tree, my.prepdata, 

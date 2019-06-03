@@ -7,6 +7,10 @@
 ## R CMD check results
 There were no ERRORs, WARNINGs or NOTEs.
 
+The previous release, v0.3.0, triggered a ` noLD ` error on building the vignettes.
+I have revised the vignettes to reduce their compile time, and do not encounter
+a `noLD` error when building the vignettes locally.
+
 ## Downstream dependencies
 There are currently two downstream dependencies for this package.
 

@@ -133,6 +133,41 @@ includes all the integer digits from 0 to 9.  If you have inapplicable data
 in your matrix, you should list `-` as a separate level as it represents 
 an additional state (as handled by the Morphy implementation of [@Brazeau2018]).
 
+If you have more complicated ambiguities, you may need to use a contrast matrix
+to decode your matrix.
+
+A contrast matrix translates the tokens used in your dataset to the
+character states to which they correspond: for example decoding 'A' to {01}.
+For more details, see the 'phangorn-specials' vignette in the phangorn package,
+   accessible by typing '?phangorn' in the R prompt and navigating to 
+   index > package vignettes.
+
+```{r Contrast matrix}
+contrast.matrix <- matrix(data=c(
+# 0 1 -  # Each column corresponds to a character-state
+  1,0,0, # Each row corresponds to a token, here 0, denoting the character-state set {0} 
+  0,1,0, # 1 | {1}
+  0,0,1, # - | {-}
+  1,1,0, # A | {01}
+  1,1,0, # + | {01}
+  1,1,1  # ? | {01-}
+), ncol=3, byrow=TRUE); # ncol should correspond to the number of columns in the matrix
+dimnames(contrast.matrix) <- list(
+  c(0, 1, '-', 'A', '+', '?'), # A list of the tokens corresponding to each row
+                               # in the contrast matrix
+  c(0, 1, '-') # A list of the character-states corresponding to the columns 
+               # in the contrast matrix
+)
+
+contrast.matrix
+```
+
+If you need to use a contrast matrix, convert the data using 
+```r
+my.phyDat <- phyDat(my.data, type='USER', contrast=contrast.matrix)
+```
+
+
 ## What next?
 
 You might want to:
