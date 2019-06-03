@@ -18,15 +18,14 @@ vignette: >
 
 ### Simple installation
 
-To use `TreeSearch` you will first need to [install R](https://CRAN.R-project.org/).  Many people like to 
-use [Rstudio](https://www.rstudio.com/) ([overview](https://dss.princeton.edu/training/RStudio101.pdf)), which is a front-end that makes several of R's features easier to use.
+To use `TreeSearch` you will first need to [install R](https://CRAN.R-project.org/).  [RStudio](https://www.rstudio.com/) ([overview](https://dss.princeton.edu/training/RStudio101.pdf)) is a popular front-end that makes several of R's features easier to use.
 
-The TreeSearch package can be installed as any other package. 
+The `TreeSearch` package can be installed as any other package. 
 To get the latest stable version from CRAN, type
 ```r
 install.packages('TreeSearch')
 ```
-into the R (or Rstudio) command line.
+into the R (or RStudio) command line.
 
 ### For advanced users
 
@@ -39,15 +38,8 @@ devtools::install_github('ms609/TreeSearch')
 You'll probably need to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) before 
 installing from the GitHub source code, which may be complicated.  
 
-If you do already have Rtools installed, then you 
-may wish to install a byte-compiled version of `ape` for additional speed:
-
-```r
-install.packages('ape', type='source', INSTALL_opts='--byte-compile')
-```
-
 Once installed, load the inapplicable package into R using
-```{r Load library}
+```r
 library('TreeSearch')
 ```
 
