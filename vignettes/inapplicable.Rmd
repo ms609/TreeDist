@@ -24,8 +24,14 @@ events on a tree.
 [A companion vignette](getting-started.html) gives details on installing the package
 and getting up and running.
 
+<!--
+# message=FALSE will suppress message when loading TreeSearch
+# Temporary fix until R.oo is updated -- remove thereafter
+# https://github.com/r-lib/rlang/issues/669
+-->
+
 Once installed, load the inapplicable package into R using
-```{r Load-library}
+```{r Load-library, message=FALSE}
 library('TreeSearch')
 ```
 
@@ -43,11 +49,14 @@ my.data <- TreeSearch::inapplicable.datasets[['Vinther2008']]
 my.phyDat <- phangorn::phyDat(my.data, type='USER', levels=c(0:9, '-'))
 ```
 
+```{R RNG-version, warning=FALSE}
+# Set a random seed so that random functions in this document are reproducible
+RNGversion("3.5.0") # Until we can require R3.6.0
+set.seed(0)
+```
+
 We can generate a random tree and calculate its parsimony score thus:
 ```{r Random-tree}
-# Set random seed so that random functions will generate consistent output in this document
-suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
-set.seed(0)
 random.tree <- RandomTree(my.phyDat)
 par(mar=rep(0.25, 4), cex=0.75) # make plot easier to read
 plot(random.tree)
@@ -80,7 +89,7 @@ plot(rooted.tree)
 ```
 
 
-Now let's see whether a few Nearest-neighbour interchanges can find us a better tree score. 
+Now let's see whether a few nearest-neighbour interchanges can find us a better tree score. 
 This tends to be the quickest search to run, if not the most exhaustive.
 Using `RootedNNISwap` instead of `NNISwap` stops taxa from moving from one side of the root to another,
 which we need to do if we're going to enforce our outgroup constraint.  Even if we are using a
@@ -164,7 +173,7 @@ ape::nodelabels(paste('\n\n', signif(node.frequency, 2)),
 
 ```
 
-Node support can be generated using Jackknife resampling:
+Clade support can be generated using Jackknife resampling:
 
 ```{r Jackknife-annotations}
 jack.trees <- Jackknife(best.tree, my.phyDat, EdgeSwapper=RootedTBRSwap,

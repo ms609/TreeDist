@@ -1,4 +1,11 @@
+# TreeSearch 0.3.2
+
+## Enhancements
+ - Update vignettes, remove warnings, and improve their build speed
+
+
 # TreeSearch 0.3.1
+
 ## New features
  - `NyeTreeSimilarity` function implements the tree similarity metric of
    Nye _et al._ (2006).
