@@ -1,3 +1,9 @@
+# TreeSearch 0.3.2.9000 (develoment)
+
+## Enhancements
+ - Improve speed of tests (by increasing probability of false positives)
+
+
 # TreeSearch 0.3.2
 
 ## Enhancements

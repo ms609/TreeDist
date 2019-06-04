@@ -11,27 +11,25 @@ test_that("tree can be found", {
   suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
   set.seed(0)
   random11 <- RandomTree(phy11, 'a')
-  expect_error(TreeSearch(tree=unrooted11, dataset=phy11))
-  expect_equal(TreeSearch(tree=random11, dataset=phy11, maxIter=2500, 
+  expect_error(TreeSearch(unrooted11, dataset=phy11))
+  expect_equal(TreeSearch(random11, dataset=phy11, maxIter=250, 
                           EdgeSwapper=RootedTBRSwap, verbosity=0L), comb11)
-  expect_equal(TreeSearch(tree=random11, dataset=phy11, maxIter=2500, EdgeSwapper=AllTBR, 
+  expect_equal(TreeSearch(random11, dataset=phy11, maxIter=250, EdgeSwapper=AllTBR, 
                           stopAtPeak=TRUE, stopAtPlateau=10L, verbosity=0L), comb11)
-  expect_equal(TreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000,
+  expect_equal(TreeSearch(random11, phy11, maxIter=400,
                                   EdgeSwapper=RootedSPRSwap, verbosity=0L), comb11)
-  expect_equal(TreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000, EdgeSwapper = RootedNNISwap, verbosity=0), comb11)
-  expect_equal(Ratchet(RandomTree(phy11, 'a'), phy11, searchIter=300, searchHits = 20, swappers = RootySwappers, ratchHits=3, verbosity=0), comb11)
-  expect_equal(class(Ratchet(RandomTree(phy11, 'a'), phy11, searchIter=300, searchHits = 20,
-                             ratchHits=3, verbosity=0L, returnAll=TRUE)), 'multiPhylo')
+  expect_equal(TreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=200, EdgeSwapper = RootedNNISwap, verbosity=0), comb11)
+  expect_equal(comb11, Ratchet(random11, phy11, searchIter=10, searchHits = 5,
+                               swappers = RootySwappers, ratchHits=3, verbosity=0))
 #  expect_equal(SectorialSearch(RandomTree(phy11, 'a'), phy11, verbosity=-1), comb11) # TODO: Sectorial Search not working yet!
 })
-
 
 test_that("tree search finds shortest tree", {
   true_tree <- ape::read.tree(text = "(((((1,2),3),4),5),6);")
   malformed_tree <- ape::read.tree(text = "((((1,2),3),4),5,6);")
   dataset <- StringToPhyDat('110000 111000 111100', 1:6, byTaxon=FALSE)
   expect_error(TreeSearch(malformed_tree, dataset))
-  start_tree <- RenumberTips(read.tree(text = "(((1, 6), 3), (2, (4, 5)));"), true_tree$tip.label)
+  start_tree <- RenumberTips(ape::read.tree(text = "(((1, 6), 3), (2, (4, 5)));"), true_tree$tip.label)
   expect_equal(Fitch(start_tree, dataset), 6)
   morphyObj <- PhyDat2Morphy(dataset)
   on.exit(morphyObj <- UnloadMorphy(morphyObj))
@@ -59,17 +57,23 @@ test_that("tree can be found", {
   suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
   set.seed(0)
   expect_error(IWTreeSearch(tree=unrooted11, dataset=phy11))
-  expect_equal(comb11, IWTreeSearch(tree=RandomTree(phy11, 'a'), dataset=phy11,
-                                  maxIter=2500, EdgeSwapper = RootedTBRSwap, verbosity=0))
-  expect_equal(comb11, IWTreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000, EdgeSwapper = RootedSPRSwap,
-                                  verbosity=0))
-  expect_equal(comb11, IWTreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=2000, EdgeSwapper = RootedNNISwap, verbosity=0))
-  expect_equal(comb11, IWRatchet(RandomTree(phy11, 'a'), phy11, searchIter=300, searchHits = 20, 
-                                 swappers = RootySwappers, ratchHits=3, verbosity=0))
+  expect_equal(comb11, IWTreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=100, 
+                                    EdgeSwapper = RootedTBRSwap, verbosity=0))
+  
+  expect_equal(comb11, IWTreeSearch(RandomTree(phy11, 'a'), phy11, maxIter=200,
+                                    EdgeSwapper = RootedSPRSwap, verbosity=0))
+  
+  expect_equal(comb11, IWTreeSearch(TBR(TBR(TBR((comb11)))), phy11, maxIter=100, 
+                                    EdgeSwapper = RootedNNISwap, verbosity=0))
+  
+  expect_equal(comb11, IWRatchet(RandomTree(phy11, 'a'), phy11, searchIter=8,
+                                 searchHits = 3, swappers = RootySwappers, 
+                                 ratchHits = 3, verbosity=0))
+  
   expect_equal('multiPhylo', class(
     IWRatchet(tree=RandomTree(phy11, 'a'), dataset=phy11, concavity=4,
-              searchIter=300, searchHits = 20,
-            ratchHits=3, verbosity=0L, returnAll=TRUE)
+              searchIter = 5, searchHits = 2,
+              ratchHits = 2, verbosity=0L, returnAll=TRUE)
   ))
   # expect_equal(IWSectorial(RandomTree(phy11, 'a'), phy11, verbosity=-1), comb11) # TODO: Sectorial Search not working yet!
 })

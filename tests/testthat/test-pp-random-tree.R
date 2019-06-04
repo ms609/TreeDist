@@ -16,6 +16,9 @@ MorphyWith <- function (char) {
 
 context("Profile Parsimony: Test tree randomness")
 test_that("four-tip trees are randomly distributed", {
+  suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
+  set.seed(0)
+  
   nTrees <- 36000
   stringency <- 0.005 # low numbers mean you'll rarely fail by chance
   nTip <- 4
@@ -34,7 +37,10 @@ test_that("four-tip trees are randomly distributed", {
 })
 
 test_that("four-tip trees are randomly scored", {
-  nTrees <- 36000
+  suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
+  set.seed(0)
+  
+  nTrees <- 6000
   stringency <- 0.005
   nTip <- 4
   
@@ -47,7 +53,10 @@ test_that("four-tip trees are randomly scored", {
 })
 
 test_that("six-tip trees are randomly scored", {
-  nTrees <- 36000
+  suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
+  set.seed(0)
+  
+  nTrees <- 6000
   stringency <- 0.005
   nTip <- 6
   
@@ -76,7 +85,10 @@ test_that("six-tip trees are randomly scored", {
 
 
 test_that("five-tip trees are randomly scored", {
-  nTrees <- 36000
+  suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
+  set.seed(0)
+  
+  nTrees <- 6000
   stringency <- 0.005
   nTip <- 5
   morphyObj <- MorphyWith('00011;')
@@ -89,7 +101,10 @@ test_that("five-tip trees are randomly scored", {
 
 
 test_that("six-tip trees are randomly scored", {
-  nTrees <- 36000
+  suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
+  set.seed(0)
+  
+  nTrees <- 6000
   stringency <- 0.005
   nTip <- 6
   
@@ -118,14 +133,23 @@ test_that("six-tip trees are randomly scored", {
 
 
 test_that("twelve-tip trees are randomly scored", {
-  nTrees <- 120000
+  suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
+  set.seed(0)
+  
+  nTrees <- 12000
   stringency <- 0.005
   nTip <- 12
   morphyObj <- MorphyWith('000000011111;')
-  expectedBounds <- qbinom(c(stringency, 1-stringency), nTrees, NUnrooted(7) * (2 * 7 - 3) * NUnrooted(5) * (2 * 5 - 3) / NUnrooted(nTip))
-  scores <- vapply(logical(nTrees), function (XX) RandomTreeScore(nTip, morphyObj), integer(1))
-  table(scores)
+  expectedBounds <- qbinom(c(stringency, 1-stringency), nTrees, 
+                           NUnrooted(7) * (2 * 7 - 3) *
+                           NUnrooted(5) * (2 * 5 - 3) / NUnrooted(nTip))
+  
+  scores <- vapply(logical(nTrees), function (XX) RandomTreeScore(nTip, morphyObj), integer(1L))
+  # table(scores)
+  
   expect_true(max(scores) == 5)
-  expect_true(expectedBounds[1] < sum(scores==1) && expectedBounds[2] > sum(scores==1))  
+  nScoring1 <- sum(scores==1)
+  expect_true(expectedBounds[1] < nScoring1)
+  expect_true(expectedBounds[2] > nScoring1)  
 })
 
