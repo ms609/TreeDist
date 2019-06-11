@@ -12,7 +12,7 @@ git:
   depth: 1
 
 r_github_packages:
- - pkgload
+ - r-lib/pkgload
 
 r_binary_packages:
  - ape
