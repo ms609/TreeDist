@@ -23,8 +23,8 @@ r_binary_packages:
  - roxygen2
  - testthat
 
-# before_script:
-#  - R -e "devtools::document()"
+before_script:
+  - R -e "devtools::document()"
 
 after_success:
   - Rscript -e "covr::codecov()"
