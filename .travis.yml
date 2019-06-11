@@ -13,11 +13,11 @@ git:
 
 r_github_packages:
  - r-lib/pkgload
+ - r-lib/devtools
 
 r_binary_packages:
  - ape
  - covr
- - devtools
  - memoise
  - phangorn
  - R.cache
