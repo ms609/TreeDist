@@ -619,7 +619,7 @@ MutualClusterInfoSplits <- function (
 #' Splits are compatible if they are concave; i.e. they can both be true
 #' simultaneously.
 #' 
-#' @template split12params
+#' @template splits12params
 #' @return `SplitsCompatible` returns a logical specifying whether the splits
 #' provided are compatible with one another.
 #' 
