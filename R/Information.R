@@ -173,7 +173,7 @@ MultiSplitInformation <- function (partitionSizes) {
 # #'   MeilaVariationOfInformation(c(F,T,T,T,T,T), c(T,T,T,T,T,F))
 # #' 
 # #' 
-# #' @template splits12Params
+# #' @template split12Params
 # #' @author Martin R. Smith
 # #' @export
 # MeilaVariationOfInformation <- function (split1, split2) {
@@ -199,7 +199,7 @@ MultiSplitInformation <- function (partitionSizes) {
 # #' Probability that two random splits of the sizes provided will be at least
 # #' as similar as the two specified.
 # #'
-# #' @template splits12Params
+# #' @template split12Params
 # #' 
 # #' @return The proportion of permissable informative splits 
 # #' splitting the terminals into bipartitions of the sizes given,
@@ -237,7 +237,7 @@ MultiSplitInformation <- function (partitionSizes) {
 #' Calculates the probability that two random splits of the sizes provided
 #' will be at least as similar as the two specified.
 #'
-#' @template splits12Params
+#' @template split12Params
 #' 
 #' @return The proportion of permissable informative splits 
 #' splitting the terminals into bipartitions of the sizes given,
@@ -430,7 +430,7 @@ LnSplitMatchProbability <- function(split1, split2) {
 #' of two splits,
 #' treating splits as subdivisions of _n_ terminals into two clusters.
 #' 
-#' @template splits12Params
+#' @template split12Params
 #' 
 #' @references 
 #' \insertRef{Meila2007}{TreeSearch}
