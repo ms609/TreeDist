@@ -11,6 +11,9 @@ r_check_args: --as-cran --no-manual # Workaround error compiling PDF manual
 git:
   depth: 1
 
+r_github_packages:
+ - pkgload
+
 r_binary_packages:
  - ape
  - covr
