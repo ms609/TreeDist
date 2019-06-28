@@ -1,6 +1,15 @@
 #' Parse TNT Tree
 #' 
-#' Reads a tree from TNT's paranthetical output.
+#' Reads a tree from TNT's paranthetical output.  
+#' 
+#' Supports trees that have been written from TNT in parenthetical notation
+#' using `tsav*`.  If taxa have been saved using their names (`taxname=`),
+#' then the tip labels will be read directly from the TNT `.tre` file.  If
+#' taxa have been saved using their numbers (`taxname-`), tip labels will be
+#' imported from the linked matrix file that is listed in the first line of the
+#'  `.tre` file.  Ensure that this file exists in the expected location -- if
+#'  it does not, use the `relativePath` argument to override this default, or
+#'  specify `tipLabels` to set manually.
 #' 
 #' @param filename character string specifying path to TNT `.tre` file.
 #' @param relativePath (optional) character string specifying location of the
@@ -57,41 +66,43 @@ ReadTntTree <- function (filename, relativePath = NULL, keepEnd = 1L,
   fileText <- readLines(filename)
   trees <- lapply(fileText[2:(length(fileText)-1)], TNTText2Tree)
   
-  if (is.null(tipLabels)) {
-    taxonFile <- gsub("tread 'tree(s) from TNT, for data in ", '', fileText[1], fixed=TRUE)
-    taxonFile <- gsub("'", '', gsub('\\', '/', taxonFile, fixed=TRUE), fixed=TRUE)
-    if (!is.null(relativePath)) {
-      taxonFileParts <- strsplit(taxonFile, '/')[[1]]
-      nParts <- length(taxonFileParts)
-      if (nParts < keepEnd) {
-        stop("Taxon file path (", taxonFile, ") contains fewer than keepEnd (",
-             keepEnd, ") components.")
+  if (!any(grepl('[A-z]', trees[[1]]$tip.label))) {
+    if (is.null(tipLabels)) {
+      taxonFile <- gsub("tread 'tree(s) from TNT, for data in ", '', fileText[1], fixed=TRUE)
+      taxonFile <- gsub("'", '', gsub('\\', '/', taxonFile, fixed=TRUE), fixed=TRUE)
+      if (!is.null(relativePath)) {
+        taxonFileParts <- strsplit(taxonFile, '/')[[1]]
+        nParts <- length(taxonFileParts)
+        if (nParts < keepEnd) {
+          stop("Taxon file path (", taxonFile, ") contains fewer than keepEnd (",
+               keepEnd, ") components.")
+        }
+        taxonFile <- paste0(c(relativePath, taxonFileParts[(nParts + 1L - keepEnd):nParts]),
+                            collapse='/')
       }
-      taxonFile <- paste0(c(relativePath, taxonFileParts[(nParts + 1L - keepEnd):nParts]),
-                          collapse='/')
+    
+      if (!file.exists(taxonFile)) {
+        warning("Cannot find linked data file:\n  ", taxonFile)
+      } else {
+        tipLabels <- rownames(ReadTntCharacters(taxonFile, 1))
+        if (is.null(tipLabels)) {
+          # TNT character read failed.  Perhaps taxonFile is in NEXUS format?
+          tipLabels <- rownames(ReadCharacters(taxonFile, 1))
+        }
+        if (is.null(tipLabels)) {
+          warning("Could not read taxon names from linked TNT file:\n  ",
+                  taxonFile, 
+                  "\nIs the file in TNT or Nexus format? If failing inexplicably, please report:",
+                  "\n  https://github.com/ms609/TreeSearch/issues/new")
+        }
+      }
     }
-  
-    if (!file.exists(taxonFile)) {
-      warning("Cannot find linked data file:\n  ", taxonFile)
-    } else {
-      tipLabels <- rownames(ReadTntCharacters(taxonFile, 1))
-      if (is.null(tipLabels)) {
-        # TNT character read failed.  Perhaps taxonFile is in NEXUS format?
-        tipLabels <- rownames(ReadCharacters(taxonFile, 1))
-      }
-      if (is.null(tipLabels)) {
-        warning("Could not read taxon names from linked TNT file:\n  ",
-                taxonFile, 
-                "\nIs the file in TNT or Nexus format? If failing inexplicably, please report:",
-                "\n  https://github.com/ms609/TreeSearch/issues/new")
-      }
-    }
+    
+    trees <- lapply(trees, function (tree) {
+      tree$tip.label <- tipLabels[as.integer(tree$tip.label) + 1]
+      tree
+    })
   }
-  
-  trees <- lapply(trees, function (tree) {
-    tree$tip.label <- tipLabels[as.integer(tree$tip.label) + 1]
-    tree
-  })
   
   # Return:
   if (length(trees) == 1) {
@@ -111,7 +122,7 @@ ReadTntTree <- function (filename, relativePath = NULL, keepEnd = 1L,
 #' @author Martin R. Smith
 #' @export
 TNTText2Tree <- function (treeText) {
-  treeText <- gsub("(\\d+)", "\\1,", treeText, perl=TRUE)
+  treeText <- gsub("(\\w+)", "\\1,", treeText, perl=TRUE)
   treeText <- gsub(")(", "),(", treeText, fixed=TRUE)
   treeText <- gsub("*", ";", treeText, fixed=TRUE)
   # Return:

@@ -1,6 +1,7 @@
-# TreeSearch 0.3.2.9000 (develoment)
+# TreeSearch 0.3.2.9001 (develoment)
 
 ## Enhancements
+ - `ReadTntTree` supports named taxa (with `taxname=`)
  - Improve speed of tests (by increasing probability of false positives)
 
 

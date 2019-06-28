@@ -15,4 +15,8 @@ test_that("TNT trees parsed correctly", {
   
   fromLabels <- ReadTntTree('test-tnt-tree.tre', tipLabels = c('Dailyatia', 'Novocrania', 'Craniops', 'Ussunia', 'Gasconsia', 'Heliomedusa_orienta', 'Micrina', 'Mickwitzia_muralensis', 'Micromitra', 'Askepasma_toddense', 'Pelagodiscus_atlanticus', 'Lingula', 'Eoobolus', 'Clupeafumosus_socialis', 'Phoronis', 'Eccentrotheca', 'Yuganotheca_elegans', 'Longtancunella_chengjiangensis', 'Paterimitra', 'Lingulellotreta_malongensis', 'Acanthotretella', 'Lingulosacculus', 'Pedunculotheca_diania', 'Haplophrentis_carinatus', 'Tomteluva_perturbata', 'Salanygolina', 'Mummpikia_nuda', 'Alisina', 'Coolinia_pecten', 'Antigonambonites_planus', 'Kutorgina_chengjiangensis', 'Nisusia_sulcata', 'Glyptoria', 'Orthis', 'Terebratulina'))
   expect_identical(trees, fromLabels)
+  
+  namedLabels <- ReadTntTree('test-tnt-namedtree.tre')[[1]]$tip.label
+  expect_equal('Flustra', namedLabels[1])
+  expect_equal(74L, length(namedLabels))
 })
