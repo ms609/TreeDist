@@ -49,6 +49,13 @@ The joint information is given by
 JointInformation(3, 1, 0, 4)
 
 }
+\seealso{
+Other Split information: \code{\link{SplitEntropy}},
+  \code{\link{SplitInformation}},
+  \code{\link{SplitMutualInformation}},
+  \code{\link{TreesMatchingSplit}},
+  \code{\link{UnrootedTreesMatchingSplit}}
+}
 \author{
 Martin R. Smith
 }

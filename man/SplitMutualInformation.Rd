@@ -76,6 +76,13 @@ the smaller of \emph{A1} and \emph{A2} also occur in the larger.
 \references{
 \insertRef{Meila2007}{TreeSearch}
 }
+\seealso{
+Other Split information: \code{\link{JointInformation}},
+  \code{\link{SplitEntropy}},
+  \code{\link{SplitInformation}},
+  \code{\link{TreesMatchingSplit}},
+  \code{\link{UnrootedTreesMatchingSplit}}
+}
 \author{
 Martin R. Smith
 }

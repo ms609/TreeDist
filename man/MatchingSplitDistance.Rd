@@ -43,6 +43,10 @@ trees of Bogdanowicz and Giaro (2012).
 \references{
 \insertRef{Bogdanowicz2012}{TreeSearch}
 }
+\seealso{
+Other Tree distance: \code{\link{MutualArborealInfo}},
+  \code{\link{NyeTreeSimilarity}}
+}
 \author{
 Martin R. Smith
 }

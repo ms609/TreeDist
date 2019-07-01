@@ -29,6 +29,13 @@ treating splits as subdivisions of \emph{n} terminals into two clusters.
 \references{
 \insertRef{Meila2007}{TreeSearch}
 }
+\seealso{
+Other Split information: \code{\link{JointInformation}},
+  \code{\link{SplitInformation}},
+  \code{\link{SplitMutualInformation}},
+  \code{\link{TreesMatchingSplit}},
+  \code{\link{UnrootedTreesMatchingSplit}}
+}
 \author{
 Martin R. Smith
 }

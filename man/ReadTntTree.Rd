@@ -35,6 +35,16 @@ a tree of class \code{phylo}.
 \description{
 Reads a tree from TNT's paranthetical output.
 }
+\details{
+Supports trees that have been written from TNT in parenthetical notation
+using \code{tsav*}.  If taxa have been saved using their names (\code{taxname=}),
+then the tip labels will be read directly from the TNT \code{.tre} file.  If
+taxa have been saved using their numbers (\code{taxname-}), tip labels will be
+imported from the linked matrix file that is listed in the first line of the
+\code{.tre} file.  Ensure that this file exists in the expected location -- if
+it does not, use the \code{relativePath} argument to override this default, or
+specify \code{tipLabels} to set manually.
+}
 \section{Functions}{
 \itemize{
 \item \code{TNTText2Tree}: Converts text representation of a tree in TNT to an object of class \code{phylo}

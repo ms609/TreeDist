@@ -4,7 +4,9 @@
 \alias{NRooted}
 \alias{NUnrooted}
 \alias{LnUnrooted}
+\alias{LnUnrooted.int}
 \alias{LnRooted}
+\alias{LnRooted.int}
 \alias{LnUnrootedSplits}
 \alias{NUnrootedSplits}
 \alias{LnUnrootedMult}
@@ -19,7 +21,11 @@ NUnrooted(tips)
 
 LnUnrooted(tips)
 
+LnUnrooted.int(tips)
+
 LnRooted(tips)
+
+LnRooted.int(tips)
 
 LnUnrootedSplits(splits)
 
@@ -44,7 +50,11 @@ provide the log of this number.  Calculations follow Carter et al. 1990, Theorem
 
 \item \code{LnUnrooted}: Log Number of unrooted trees
 
+\item \code{LnUnrooted.int}: Log Number of unrooted trees (as integer)
+
 \item \code{LnRooted}: Log Number of rooted trees
+
+\item \code{LnRooted.int}: Log Number of rooted trees (as integer)
 
 \item \code{LnUnrootedSplits}: Log number of unrooted trees
 

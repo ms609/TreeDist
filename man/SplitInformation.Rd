@@ -39,6 +39,13 @@ content.
   SplitInformation (2, 6)
 
 }
+\seealso{
+Other Split information: \code{\link{JointInformation}},
+  \code{\link{SplitEntropy}},
+  \code{\link{SplitMutualInformation}},
+  \code{\link{TreesMatchingSplit}},
+  \code{\link{UnrootedTreesMatchingSplit}}
+}
 \author{
 Martin R. Smith
 }

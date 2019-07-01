@@ -42,6 +42,10 @@ Implements the tree comparison metric of Nye \emph{et al}. (2006).
 \references{
 \insertRef{Nye2006}{TreeSearch}
 }
+\seealso{
+Other Tree distance: \code{\link{MatchingSplitDistance}},
+  \code{\link{MutualArborealInfo}}
+}
 \author{
 Martin R. Smith
 }

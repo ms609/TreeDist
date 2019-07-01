@@ -21,6 +21,13 @@ a bipartition split that divides taxa into groups of size \code{A} and \code{B}.
 \item \code{LogTreesMatchingSplit}: Logarithm of the number of trees matching a split.
 }}
 
+\seealso{
+Other Split information: \code{\link{JointInformation}},
+  \code{\link{SplitEntropy}},
+  \code{\link{SplitInformation}},
+  \code{\link{SplitMutualInformation}},
+  \code{\link{UnrootedTreesMatchingSplit}}
+}
 \author{
 Martin R. Smith
 }
