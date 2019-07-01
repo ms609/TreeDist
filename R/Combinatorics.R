@@ -15,7 +15,7 @@ globalVariables(c('doubleFactorials', 'logDoubleFactorials'), 'TreeSearch')
 #' }
 #' 
 #' @author Martin R. Smith
-#' @concept Double factorial
+#' @family Double factorial
 #' @export
 DoubleFactorial <- function (n) {
   if (any(n > 300)) stop("301!! is too large to store as an integer. Use LogDoubleFactorial instead.")
@@ -107,14 +107,18 @@ NUnrooted   <- function (tips)  DoubleFactorial(tips + tips - 5L)
 #' @describeIn NRooted  Log Number of unrooted trees
 #' @export
 LnUnrooted  <- function (tips) LogDoubleFactorial(tips + tips - 5L)
+#' @describeIn NRooted  Log Number of unrooted trees (as integer)
+#' @export
 LnUnrooted.int <- function (tips) if (tips < 3) 0 else {
   logDoubleFactorials[tips + tips - 5L]
 }
 #' @describeIn NRooted  Log Number of rooted trees
 #' @export
 LnRooted    <- function (tips) LogDoubleFactorial(tips + tips - 3L)
+#' @describeIn NRooted  Log Number of rooted trees (as integer)
+#' @export
 LnRooted.int <- function (tips) {
-  if (tips < 2) 0 else logDoubleFactorials[tips + tips - 3L]
+  if (tips < 2L) 0 else logDoubleFactorials[tips + tips - 3L]
 }
 
 #' Number of trees one SPR step away

@@ -7,7 +7,7 @@
 #' 
 #' @author Martin R. Smith
 #' 
-#' @concept Split information
+#' @family Split information
 #' @export
 TreesMatchingSplit <- function (A, B) {
   if (A == 0) NUnrooted(B) else
@@ -88,7 +88,7 @@ Entropy <- function (p) -sum(p[p > 0] * log2(p[p > 0]))
 #' @references \insertRef{Meila2007}{TreeSearch}
 #' 
 #' @author Martin R. Smith
-#' @concept Split information
+#' @family Split information
 #' @export
 SplitMutualInformation <- function(n, A1, A2 = A1) {
   (LogTreesMatchingSplit(A1, n - A1) 
@@ -125,7 +125,7 @@ SplitVariationOfInformation <- function (n, A1, A2 = A1) {
 #'   SplitInformation (2, 6)
 #' 
 #' @author Martin R. Smith
-#' @concept Split information
+#' @family Split information
 #' @export
 SplitInformation <- function (A, B) {
   -(LogTreesMatchingSplit(A, B) - LnUnrooted.int(A + B)) / log(2)
@@ -443,7 +443,7 @@ LnSplitMatchProbability <- function(split1, split2) {
 #'  * `vI` The variation of information of the splits (see Meila 2007)
 #' 
 #' @author Martin R. Smith
-#' @concept Split information
+#' @family Split information
 #' @export
 SplitEntropy <- function (split1, split2=split1) {
   A1A2 <- sum(split1 & split2)
@@ -510,7 +510,7 @@ SplitEntropy <- function (split1, split2=split1) {
 #' JointInformation(3, 1, 0, 4)
 #' 
 #' @author Martin R. Smith
-#' @concept Split information
+#' @family Split information
 #' @export
 JointInformation <- function(A1A2, A1B2, B1A2, B1B2) {
   A1 <- A1A2 + A1B2
@@ -606,7 +606,7 @@ LogTreesConsistentWithTwoSplits <- function (n, A1, A2=A1) {
 #' \insertRef{Carter1990}{TreeSearch}, Theorem 2.
 #'
 #' @author Martin R. Smith
-#' @concept Split information
+#' @family Split information
 #' @export
 UnrootedTreesMatchingSplit <- function (splits) {
   splits <- splits[splits > 0L]

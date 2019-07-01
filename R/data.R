@@ -134,7 +134,7 @@
 #' 
 #' 301!! is too large to store as an integer; use `logDoubleFactorials` instead.
 #' 
-#' @concept Double factorial
+#' @family Double factorial
 #' @keywords datasets
 "doubleFactorials"
 
@@ -142,6 +142,6 @@
 #' 
 #' A vector with pre-calculated values of double factorials up to 50 000!!.
 #' 
-#' @concept Double factorial
+#' @family Double factorial
 #' @keywords datasets
 "logDoubleFactorials"

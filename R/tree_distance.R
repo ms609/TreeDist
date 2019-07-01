@@ -89,7 +89,7 @@
 #' 
 #' @author Martin R. Smith
 #' 
-#' @concept Tree distance
+#' @family Tree distance
 #' @importFrom clue solve_LSAP
 #' @export
 MutualArborealInfo <- function (tree1, tree2, reportMatching = FALSE) {
@@ -120,7 +120,7 @@ MutualClusterInfo <- function (tree1, tree2,
 #' @inheritParams MutualArborealInfo
 #' 
 #' @references \insertRef{Nye2006}{TreeSearch}
-#' @concept Tree distance
+#' @family Tree distance
 #' 
 #' @author Martin R. Smith
 #' @export
@@ -137,7 +137,7 @@ NyeTreeSimilarity <- function (tree1, tree2,
 #' @inheritParams MutualArborealInfo
 #' 
 #' @references \insertRef{Bogdanowicz2012}{TreeSearch}
-#' @concept Tree distance
+#' @family Tree distance
 #' 
 #' @author Martin R. Smith
 #' @export
