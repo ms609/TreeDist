@@ -81,6 +81,16 @@ test_that('Tree differences are correctly calculated', {
   expect_equal(1L, MatchingSplitDistance(treeAb.Cdefgh, treeAbc.Defgh))
   expect_equal(2L, MatchingSplitDistance(treeAb.Cdefgh, treeAbcd.Efgh))
   
+  # Invariant to tree description order
+  sq_pectinate <- ape::read.tree(text='((((((1, 2), 3), 4), 5), 6), (7, (8, (9, (10, 11)))));')
+  shuffle1 <- ape::read.tree(text='(((((1, 5), 2), 6), (3, 4)), ((8, (7, 9)), (10, 11)));')
+  shuffle2 <- ape::read.tree(text='(((8, (7, 9)), (10, 11)), ((((1, 5), 2), 6), (3, 4)));')
+  expect_equal(MatchingSplitDistance(shuffle1, sq_pectinate),
+               MatchingSplitDistance(sq_pectinate, shuffle1))
+  expect_equal(0L, MatchingSplitDistance(shuffle1, shuffle2))
+  expect_equal(MatchingSplitDistance(shuffle1, sq_pectinate),
+               MatchingSplitDistance(shuffle2, sq_pectinate))
+  
   expect_true(NyeTreeSimilarity(treeSym8, treeBal8) > NyeTreeSimilarity(treeSym8, treeOpp8))
   
   # Test symmetry of small vs large splits

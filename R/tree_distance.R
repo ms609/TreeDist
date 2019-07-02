@@ -583,6 +583,7 @@ MututalPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE
 
 #' @describeIn MatchingSplitDistance Takes splits instead of trees
 #' @inheritParams MutualArborealInfoSplits
+#' @importFrom clue solve_LSAP
 #' @export
 MatchingSplitDistanceSplits <- function (splits1, splits2, reportMatching = FALSE) {
   
@@ -627,7 +628,7 @@ MatchingSplitDistanceSplits <- function (splits1, splits2, reportMatching = FALS
     
     min(
       sum(SymmetricDifference(A1, A2), SymmetricDifference(B1, B2)),
-      sum(SymmetricDifference(A1, A2), SymmetricDifference(B1, B2))
+      sum(SymmetricDifference(A1, B2), SymmetricDifference(B1, A2))
     ) / 2L
       
   }, rep(seq_len(nSplits1), each=nSplits2), seq_len(nSplits2)
