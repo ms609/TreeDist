@@ -31,8 +31,8 @@ test_that('Tree differences are correctly calculated', {
   expect_error(NyeTreeDistance(treeSym8, treeBadLabel8))
   expect_error(MatchingSplitDistance(treeSym8, treeBadLabel8))
 
-  expect_equal(22.53747, round(MutualArborealInfo(treeSym8, treeSym8), 5))
-  expect_equal(13.75284, round(MutualArborealInfo(treeSym8, treeBal8), 5))
+  expect_equal(22.53747, MutualArborealInfo(treeSym8, treeSym8), tolerance=1e-05)
+  expect_equal(13.75284, MutualArborealInfo(treeSym8, treeBal8), tolerance=1e-05)
   expect_equal(-log2(945/10395), MutualArborealInfo(treeSym8, treeAb.Cdefgh))
   expect_equal(-log2(315/10395), MutualArborealInfo(treeSym8, treeAbc.Defgh))
   
