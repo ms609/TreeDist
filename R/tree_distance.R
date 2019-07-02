@@ -114,6 +114,21 @@ VariationOfPartitionInfo <- function (tree1, tree2, reportMatching = FALSE, ...)
   ret
 }
 
+#' @describeIn MutualPartitionInfo Estimate expected Variation of Information
+#' and Mutual Information for a pair of trees of a given topology.
+#' @param samples Integer specifying how many samplings to obtain; 
+#' more will give more accurate estimates.
+#' @export
+ExpectedVariation <- function (tree1, tree2, samples = 1e+4) {
+  estimates <- replicate(samples, {
+    tree2$tip.label <- sample(tree2$tip.label)
+    c(MutualPartitionInfo = MututalPartitionInfo(tree1, tree2),
+      MutualArborealInfo = MutualArborealInfo(tree1, tree2))
+  })
+  
+  cbind(mean = rowMeans(estimates), sd = apply(estimates, 1, sd), n = samples)
+}
+
 #' Nye et al. (2006) tree comparison
 #' 
 #' Implements the tree comparison metric of Nye _et al_. (2006).
