@@ -105,8 +105,8 @@ VariationOfArborealInfo <- function (tree1, tree2, reportMatching = FALSE) {
 
 #' @describeIn MutualPartitionInfo Variation of partition information between two trees
 #' @export
-VariationOfPartitionInfo <- function (tree1, tree2, reportMatching = FALSE) {
-  mpi <- MutualPartitionInfo(tree1, tree2, reportMatching)
+VariationOfPartitionInfo <- function (tree1, tree2, reportMatching = FALSE, ...) {
+  mpi <- MutualPartitionInfo(tree1, tree2, reportMatching, ...)
   ret <- PartitionInfo(tree1) + PartitionInfo(tree2) - mpi - mpi
   
   attributes(ret) <- attributes(mpi)
@@ -145,8 +145,8 @@ NyeTreeSimilarity <- function (tree1, tree2,
 #' 
 #' @author Martin R. Smith
 #' @export
-MutualPartitionInfo <- function (tree1, tree2, reportMatching = FALSE) {
-  CalculateTreeDistance(MututalPartitionInfoSplits, tree1, tree2, reportMatching)
+MutualPartitionInfo <- function (tree1, tree2, reportMatching = FALSE, ...) {
+  CalculateTreeDistance(MututalPartitionInfoSplits, tree1, tree2, reportMatching, ...)
 }
 
 #' Matching Split Distance
@@ -515,9 +515,12 @@ NyeSplitSimilarity <- function (splits1, splits2, reportMatching = FALSE) {
   }
 }
 #' @describeIn MutualPartitionInfo Takes splits instead of trees
+#' @param MAX Defaults to `max` to use the most informative agreement bipartition.
+#' Set to `sum` to count the information from both agreement bipartitions.
 #' @inheritParams MutualArborealInfoSplits
 #' @export
-MututalPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE) {
+MututalPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE, 
+                                        MAX=max) {
   
   dimSplits1 <- dim(splits1)
   dimSplits2 <- dim(splits2)
@@ -558,7 +561,7 @@ MututalPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE
     
     agree1 <- splitI0 == splitJ0
     
-    max(AgreementInfoNats(splitI0, agree1),
+    MAX(AgreementInfoNats(splitI0, agree1),
         AgreementInfoNats(splitI0, !agree1))
     
   }, rep(seq_len(nSplits1), each=nSplits2), seq_len(nSplits2)
