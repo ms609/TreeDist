@@ -3,26 +3,17 @@
 \name{MutualArborealInfo}
 \alias{MutualArborealInfo}
 \alias{VariationOfArborealInfo}
-\alias{MutualClusterInfo}
 \alias{MutualArborealInfoSplits}
 \alias{VariationOfArborealInfoSplits}
-\alias{MutualClusterInfoSplits}
 \title{Information-based generalized Robinson-Foulds distance between two trees}
 \usage{
 MutualArborealInfo(tree1, tree2, reportMatching = FALSE)
 
 VariationOfArborealInfo(tree1, tree2, reportMatching = FALSE)
 
-MutualClusterInfo(tree1, tree2, reportMatching = FALSE,
-  bestMatchOnly = TRUE)
-
 MutualArborealInfoSplits(splits1, splits2, reportMatching = FALSE)
 
 VariationOfArborealInfoSplits(splits1, splits2, reportMatching = FALSE)
-
-MutualClusterInfoSplits(splits1, splits2, reportMatching = FALSE,
-  bestMatchOnly = TRUE,
-  partitionQualityIndex = SplitPairingInformationIndex(dim(splits1)[1]))
 }
 \arguments{
 \item{tree1, tree2}{Trees of class \code{phylo}, with tips labelled identically,
@@ -31,19 +22,11 @@ or lists of such trees to undergo pairwise comparison.}
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}
 
-\item{bestMatchOnly}{Logical specifying whether to return how informative
-each split is about its best match only (\code{TRUE})
-or how informative each split is about each other split (\code{FALSE}).}
-
 \item{splits1, splits2}{Logical matrices where each row corresponds to a terminal,
 either listed in the same order or bearing identical names (in any sequence),
 and each column corresponds to a bipartition split, such that
 each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
 (\code{FALSE}) of the respective bipartition split.}
-
-\item{partitionQualityIndex}{Output of \code{\link{SplitPairingInformationIndex}} for
-\code{n} taxa; calculated automatically if not specified, but passing a cached
-value may improve performance.}
 }
 \value{
 If \code{reportMatching = FALSE}, the functions return a numeric
@@ -92,13 +75,9 @@ different in the partitions of two trees, under an optimal matching.
 \itemize{
 \item \code{VariationOfArborealInfo}: Variation of phylogenetic information between two trees
 
-\item \code{MutualClusterInfo}: Mutual clustering information between two trees
-
 \item \code{MutualArborealInfoSplits}: Takes splits instead of trees
 
 \item \code{VariationOfArborealInfoSplits}: Calculate variation of arboreal information from splits
-
-\item \code{MutualClusterInfoSplits}: Takes splits instead of trees
 }}
 
 \examples{
@@ -150,7 +129,8 @@ different in the partitions of two trees, under an optimal matching.
 }
 \seealso{
 Other Tree distance: \code{\link{MatchingSplitDistance}},
-  \code{\link{NyeTreeSimilarity}}
+  \code{\link{NyeTreeSimilarity}},
+  \code{\link{VariationOfPartitionInfo}}
 }
 \author{
 Martin R. Smith

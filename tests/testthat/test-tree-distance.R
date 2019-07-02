@@ -26,7 +26,9 @@ test_that('Tree differences are correctly calculated', {
 
   # Labels differ
   expect_error(MutualArborealInfo(treeSym8, treeBadLabel8))
+  expect_error(MutualPartitionInfo(treeSym8, treeBadLabel8))
   expect_error(VariationOfArborealInfo(treeSym8, treeBadLabel8))
+  expect_error(VariationOfPartitionInfo(treeSym8, treeBadLabel8))
   expect_error(MutualClusterInfo(treeSym8, treeBadLabel8))
   expect_error(NyeTreeDistance(treeSym8, treeBadLabel8))
   expect_error(MatchingSplitDistance(treeSym8, treeBadLabel8))
@@ -35,6 +37,28 @@ test_that('Tree differences are correctly calculated', {
   expect_equal(13.75284, MutualArborealInfo(treeSym8, treeBal8), tolerance=1e-05)
   expect_equal(-log2(945/10395), MutualArborealInfo(treeSym8, treeAb.Cdefgh))
   expect_equal(-log2(315/10395), MutualArborealInfo(treeSym8, treeAbc.Defgh))
+  
+  BinaryToSplit <- function (binary) matrix(as.logical(binary))
+  expect_equal(MututalPartitionInfoSplits(
+    BinaryToSplit(c(1, 1, 0, 0, 0, 0, 0, 0)),
+    BinaryToSplit(c(0, 0, 1, 1, 0, 0, 0, 0))
+    ), MututalPartitionInfoSplits(
+    BinaryToSplit(c(0, 0, 0, 0, 0, 0, 1, 1)),
+    BinaryToSplit(c(0, 0, 1, 1, 0, 0, 0, 0))
+    ))
+  
+  MututalPartitionInfoSplits(BinaryToSplit(c(1, 1, 1, 1, 0, 0, 0, 0)),
+                         BinaryToSplit(c(1, 0, 1, 0, 1, 0, 1, 0)))
+  expect_equal(MutualArborealInfo(treeSym8, treeSym8),
+               MutualPartitionInfo(treeSym8, treeSym8), tolerance=1e-05)
+  expect_equal(MutualPartitionInfo(treeAb.Cdefgh, treeAbc.Defgh),
+               MutualPartitionInfo(treeAbc.Defgh, treeAb.Cdefgh))
+  expect_equal(MutualPartitionInfo(treeAbcd.Efgh, treeAb.Cdefgh),
+               MutualPartitionInfo(treeAb.Cdefgh, treeAbcd.Efgh))
+  expect_equal(-(LogTreesMatchingSplit(2, 5) - LnUnrooted.int(7)) / log(2), 
+               MutualPartitionInfo(treeAb.Cdefgh, treeAbc.Defgh))
+  expect_true(MutualPartitionInfo(treeSym8, treeBal8) > MutualPartitionInfo(treeSym8, treeOpp8))
+  
   
   expect_equal(5L, NyeTreeSimilarity(treeSym8, treeSym8))
   expect_equal(2, 3 * NyeTreeSimilarity(treeAb.Cdefgh, treeAbc.Defgh))
