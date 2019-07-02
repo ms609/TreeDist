@@ -116,6 +116,10 @@ MutualClusterInfo <- function (tree1, tree2,
 #' Nye et al. (2006) tree comparison
 #' 
 #' Implements the tree comparison metric of Nye _et al_. (2006).
+#' In short, this finds the optimal matching that pairs each branch from
+#' one tree with a branch in the second, where matchings are scored according to
+#' the size of the largest bipartition that is consistent with both of them,
+#' normalized against the Jaccard index.
 #' 
 #' @inheritParams MutualArborealInfo
 #' 
