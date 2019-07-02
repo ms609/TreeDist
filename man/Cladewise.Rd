@@ -40,7 +40,8 @@ A tree with nodes numbered in postorder
 \description{
 A wrapper for \code{ape:::.reorder_ape}.
 Calling this C function directly is approximately twice as fast as using
-\code{ape::\link[ape]{cladewise}} or \code{ape::\link[ape]{postorder}}
+\code{ape::\link[ape:reorder.phylo]{cladewise}} or
+\code{ape::\link[ape:reorder.phylo]{postorder}}
 }
 \details{
 All nodes in a tree must be bifurcating; \link[ape:collapse.singles]{ape::collapse.singles} and

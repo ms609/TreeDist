@@ -49,7 +49,8 @@ RenumberEdges <- function (parent, child, nEdge = length(parent)) {
 #' 
 #' A wrapper for \code{ape:::.reorder_ape}.  
 #' Calling this C function directly is approximately twice as fast as using
-#' \code{ape::\link[ape]{cladewise}} or \code{ape::\link[ape]{postorder}}
+#' \code{ape::\link[ape:reorder.phylo]{cladewise}} or 
+#' \code{ape::\link[ape:reorder.phylo]{postorder}}
 #' 
 #' All nodes in a tree must be bifurcating; [ape::collapse.singles] and
 #' [ape::multi2di] may help.

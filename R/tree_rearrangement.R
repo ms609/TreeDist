@@ -124,7 +124,7 @@ RootTree <- function (tree, outgroupTips) {
 #' @template treeParam
 #' @param nodes,edges Integer vector specifying the nodes or edges in the tree
 #'  to be dropped. 
-#' (Use \code{\link[ape]{nodelabels}} or \code{\link[ape]{edgelabels}} 
+#' (Use \code{\link[ape]{nodelabels}} or \code{\link[ape:nodelabels]{edgelabels}} 
 #' to view numbers on a plotted tree.)
 #' 
 #' @return `tree`, with the specified nodes or edges collapsed.  

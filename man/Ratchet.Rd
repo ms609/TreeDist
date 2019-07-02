@@ -194,7 +194,8 @@ quickIWResult <- IWRatchet(quickResult, Lobo.phy, concavity=2.5,
 \seealso{
 \code{\link{TreeSearch}}
 
-Adapted from \code{\link[phangorn]{pratchet}} in the \pkg{phangorn} package.
+Adapted from \code{\link[phangorn:parsimony]{pratchet}} in the
+\pkg{phangorn} package.
 }
 \author{
 Martin R. Smith
