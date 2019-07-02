@@ -1,4 +1,7 @@
-# TreeSearch 0.3.2.9001 (develoment)
+# TreeSearch 0.3.2.9002 (develoment)
+
+## Bug fixes
+ - Fix miscalculation of `MatchingSplitDifference`
 
 ## Enhancements
  - `ReadTntTree` supports named taxa (with `taxname=`)
