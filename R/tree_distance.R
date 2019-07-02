@@ -94,17 +94,24 @@ MutualArborealInfo <- function (tree1, tree2, reportMatching = FALSE) {
 #' @describeIn MutualArborealInfo Variation of phylogenetic information between two trees
 #' @export
 VariationOfArborealInfo <- function (tree1, tree2, reportMatching = FALSE) {
-  CalculateTreeDistance(VariationOfArborealInfoSplits, tree1, tree2, 
-                        reportMatching=reportMatching)
+  mai <- MutualArborealInfo(tree1, tree2, reportMatching)
+  ret <- PartitionInfo(tree1) + PartitionInfo(tree2) -
+    mai - mai
+  
+  attributes(ret) <- attributes(mai)
+  # Return:
+  ret
 }
 
 #' @describeIn MutualPartitionInfo Variation of partition information between two trees
 #' @export
-VariationOfPartitionInfo <- function (tree1, tree2) {
-  mpi <- MutualPartitionInfo(tree1, tree2)
+VariationOfPartitionInfo <- function (tree1, tree2, reportMatching = FALSE) {
+  mpi <- MutualPartitionInfo(tree1, tree2, reportMatching)
+  ret <- PartitionInfo(tree1) + PartitionInfo(tree2) - mpi - mpi
+  
+  attributes(ret) <- attributes(mpi)
   # Return:
-  MutualPartitionInfo(tree1, tree1) + MutualPartitionInfo(tree2, tree2) - 
-    mpi - mpi
+  ret
 }
 
 #' Nye et al. (2006) tree comparison
@@ -200,6 +207,38 @@ CalculateTreeDistance <- function (Func, tree1, tree2, reportMatching, ...) {
   }
 }
 
+#' Information content of partitions within a tree
+#' 
+#' Sums the phylogenetic information content for all partitions within a 
+#' phylogenetic tree.  This value will be greater than the total information 
+#' content of the tree where a tree contains multiple partitions, as 
+#' these partitions will contain mutual information
+#' 
+#' @param tree A tree of class `phylo`, a list of trees, or a `multiPhylo` object.
+#' 
+#' @author Martin R. Smith
+#' @keywords internal
+#' @export
+PartitionInfo <- function(tree) {
+  if (class(tree) == 'phylo') {
+    PartitionInfoSplits(Tree2Splits(tree))
+  } else {
+    splits <- lapply(tree, Tree2Splits)
+    vapply(splits, PartitionInfoSplits, double(1L))
+  }
+}
+
+#' @describeIn PartitionInfo Takes splits instead of trees
+#' @export
+PartitionInfoSplits <- function(splits) {
+  nTerminals <- nrow(splits)
+  inSplit <- colSums(splits)
+  
+  sum(vapply(inSplit, LnRooted.int, 0) + 
+      + vapply(nTerminals - inSplit,  LnRooted.int, 0)
+      - LnUnrooted.int(nTerminals)
+  ) / -log(2)
+}
 
 #' @describeIn MutualArborealInfo Takes splits instead of trees
 #' @template splits12params

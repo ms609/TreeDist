@@ -35,8 +35,19 @@ test_that('Tree differences are correctly calculated', {
 
   expect_equal(22.53747, MutualArborealInfo(treeSym8, treeSym8), tolerance=1e-05)
   expect_equal(13.75284, MutualArborealInfo(treeSym8, treeBal8), tolerance=1e-05)
+  expect_equal(VariationOfArborealInfo(treeSym8, treeAcd.Befgh),
+               VariationOfArborealInfo(treeAcd.Befgh, treeSym8), tolerance=1e-05)
+  expect_equal(22.53747 + MutualArborealInfo(treeAcd.Befgh, treeAcd.Befgh) - 
+                 (2 * MutualArborealInfo(treeSym8, treeAcd.Befgh)), 
+               VariationOfArborealInfo(treeSym8, treeAcd.Befgh), tolerance=1e-05)
+  expect_equal(-log2(945/10395), MutualArborealInfo(treeSym8, treeAb.Cdefgh))
+  expect_equal(22.53747 + MutualArborealInfo(treeBal8, treeBal8) - 13.75284 - 13.75284, 
+               VariationOfArborealInfo(treeSym8, treeBal8), tolerance=1e-05)
   expect_equal(-log2(945/10395), MutualArborealInfo(treeSym8, treeAb.Cdefgh))
   expect_equal(-log2(315/10395), MutualArborealInfo(treeSym8, treeAbc.Defgh))
+  expect_equal(0, VariationOfArborealInfo(treeSym8, treeSym8))
+  expect_equal(PartitionInfo(treeSym8) - PartitionInfo(treeAcd.Befgh),
+               VariationOfArborealInfo(treeSym8, treeAbc.Defgh))
   
   BinaryToSplit <- function (binary) matrix(as.logical(binary))
   expect_equal(MututalPartitionInfoSplits(
@@ -58,6 +69,7 @@ test_that('Tree differences are correctly calculated', {
   expect_equal(-(LogTreesMatchingSplit(2, 5) - LnUnrooted.int(7)) / log(2), 
                MutualPartitionInfo(treeAb.Cdefgh, treeAbc.Defgh))
   expect_true(MutualPartitionInfo(treeSym8, treeBal8) > MutualPartitionInfo(treeSym8, treeOpp8))
+  expect_equal(0, VariationOfPartitionInfo(treeSym8, treeSym8))
   
   
   expect_equal(5L, NyeTreeSimilarity(treeSym8, treeSym8))
@@ -70,12 +82,6 @@ test_that('Tree differences are correctly calculated', {
   expect_equal(2L, MatchingSplitDistance(treeAb.Cdefgh, treeAbcd.Efgh))
   
   expect_true(NyeTreeSimilarity(treeSym8, treeBal8) > NyeTreeSimilarity(treeSym8, treeOpp8))
-  
-  # TODO: These are only superficial tests of these functions.
-  # Write tests based on calculated values.
-  expect_equal(0, VariationOfArborealInfo(treeSym8, treeSym8))
-  expect_equal(MutualClusterInfo(treeSym8, treeSym8), 
-               MutualClusterInfo(treeBal8, treeBal8))
   
   # Test symmetry of small vs large splits
   expect_equal(MutualArborealInfo(treeSym8, treeAbc.Defgh),

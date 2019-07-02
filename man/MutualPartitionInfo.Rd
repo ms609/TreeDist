@@ -6,7 +6,7 @@
 \alias{MututalPartitionInfoSplits}
 \title{Mutual Partition Information}
 \usage{
-VariationOfPartitionInfo(tree1, tree2)
+VariationOfPartitionInfo(tree1, tree2, reportMatching = FALSE)
 
 MutualPartitionInfo(tree1, tree2, reportMatching = FALSE)
 
