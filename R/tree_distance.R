@@ -112,6 +112,7 @@ VariationOfPartitionInfo <- function (tree1, tree2, reportMatching = FALSE, ...)
 #' and Mutual Information for a pair of trees of a given topology.
 #' @param samples Integer specifying how many samplings to obtain; 
 #' accuracy of estimate increases with `sqrt(samples)`.
+#' @importFrom stats sd
 #' @export
 ExpectedVariation <- function (tree1, tree2, samples = 1e+3) {
   info1 <- PartitionInfo(tree1)
