@@ -52,13 +52,13 @@ Entropy <- function (p) -sum(p[p > 0] * log2(p[p > 0]))
 #' Split 1 divides `n` terminals into two partitions, _A1_ and _B1_.
 #' Split 2 divides the same terminals into the partitions _A2_ and _B2_.
 #' 
-#' Partitions must be named such that _A1_ overlaps with _A2_: that is to say,
-#' all taxa in _A1_ are also in _A2_, or _vice versa_.  Thus, all taxa in 
-#' the smaller of _A1_ and _A2_ also occur in the larger.
+#' Partitions must be named such that _A1_ fully overlaps with _A2_: 
+#' that is to say, all taxa in _A1_ are also in _A2_, or _vice versa_.
+#' Thus, all taxa in the smaller of _A1_ and _A2_ also occur in the larger.
 #' 
 #' @param n Integer specifying the number of terminals.
 #' @param A1,A2 Integers specifying the number of taxa in _A1_ and _A2_, 
-#' once the splits have been arranged such that _A1_ overlaps with _A2_.
+#' once the splits have been arranged such that _A1_ fully overlaps with _A2_.
 #' @return 
 #' `TreesConsistentWithTwoSplits` returns the number of unrooted bifurcating
 #' trees consistent with two splits.
@@ -522,14 +522,10 @@ JointInformation <- function(A1A2, A1B2, B1A2, B1B2) {
   A2 <- A1A2 + B1A2
   B2 <- A1B2 + B1B2
   
-  mutualInformation <- if(A1A2 == 0) {
-    -log2(TreesConsistentWithTwoSplits(n, A1, B2) / NUnrooted(n))
-  } else if(B1B2 == 0) {
+  mutualInformation <- if(A1B2 == 0 || B1A2 == 0) {
     -log2(TreesConsistentWithTwoSplits(n, A1, A2) / NUnrooted(n))
-  } else if(B1A2 == 0) {
+  } else if(A1A2 == 0 || B1B2 == 0) {
     -log2(TreesConsistentWithTwoSplits(n, A1, B2) / NUnrooted(n))
-  } else if(A1B2 == 0) {
-    -log2(TreesConsistentWithTwoSplits(n, A2, B1) / NUnrooted(n))
   } else {
     0
   }

@@ -21,13 +21,20 @@ test_that("Joint information calculated correctly", {
   # Identical splits: ABCDE:FGH, ABCDE:FGH
   expect_equal(-log2(315/10395), JointInformation(5, 0, 0, 3))
   # Agreeable splits: ABCDE:FGHI, ABC:DEFGHI
-  expect_equal(SplitInformation(5, 4) + SplitInformation(3, 6) --log2(135/135135),
-               JointInformation(3, 2, 0, 4))
+  expected_3204 <- SplitInformation(5, 4) + SplitInformation(3, 6) --log2(135/135135)
+  expect_equal(expected_3204, JointInformation(3, 2, 0, 4))
+  expect_equal(expected_3204, JointInformation(2, 3, 4, 0))
+  expect_equal(expected_3204, JointInformation(0, 4, 3, 2))
+  expect_equal(expected_3204, JointInformation(4, 0, 2, 3))
   # Perfect contradiction: AB:CDEFG, AC:BDEFG
   expect_equal(SplitInformation(2, 5) * 2, JointInformation(1, 1, 1, 4))
   # Compatible splits: AB:CDEFGH, CD:ABEFGH
-  expect_equal(SplitInformation(2, 6) - SplitInformation(2, 5),
-               JointInformation(0, 2, 2, 4))
+  expected_0224 <- SplitInformation(2, 6) - SplitInformation(2, 5)
+  expect_equal(expected_0224, JointInformation(0, 2, 2, 4))
+  expect_equal(expected_0224, JointInformation(2, 0, 4, 2))
+  expect_equal(expected_0224, JointInformation(2, 4, 0, 2))
+  expect_equal(expected_0224, JointInformation(4, 2, 2, 0))
+  
 })
 
 test_that("SplitMatchProbability returns expected probabilities", {
