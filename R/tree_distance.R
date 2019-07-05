@@ -162,6 +162,7 @@ NyeTreeSimilarity <- function (tree1, tree2,
 #' #TODO document!
 #' 
 #' @inheritParams MutualArborealInfo
+#' @param \dots Additional parameters to pass to `MutualPartitionInfoSplits` [temporary?]
 #' 
 #' @references \insertRef{SmithDist}{TreeSearch}
 #' @family Tree distance
@@ -571,6 +572,7 @@ MutualPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE,
   
   nSplits1 <- dimSplits1[2]
   nSplits2 <- dimSplits2[2]
+  if (nSplits2 == 0) return (0)
   
   AgreementInfoNats <- function (splitI, agree) {
     inAgreement <- sum(agree)

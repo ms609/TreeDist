@@ -13,7 +13,7 @@ MorphyWith <- function (char) {
 }
 
 
-context("Profile Parsimony: Test tree randomness")
+context("pp: Tree randomness")
 test_that("four-tip trees are randomly distributed", {
   suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
   set.seed(0)
