@@ -50,15 +50,15 @@ test_that('Tree differences are correctly calculated', {
                VariationOfArborealInfo(treeSym8, treeAbc.Defgh))
   
   BinaryToSplit <- function (binary) matrix(as.logical(binary))
-  expect_equal(MututalPartitionInfoSplits(
+  expect_equal(MutualPartitionInfoSplits(
     BinaryToSplit(c(1, 1, 0, 0, 0, 0, 0, 0)),
     BinaryToSplit(c(0, 0, 1, 1, 0, 0, 0, 0))
-    ), MututalPartitionInfoSplits(
+    ), MutualPartitionInfoSplits(
     BinaryToSplit(c(0, 0, 0, 0, 0, 0, 1, 1)),
     BinaryToSplit(c(0, 0, 1, 1, 0, 0, 0, 0))
     ))
   
-  MututalPartitionInfoSplits(BinaryToSplit(c(1, 1, 1, 1, 0, 0, 0, 0)),
+  MutualPartitionInfoSplits(BinaryToSplit(c(1, 1, 1, 1, 0, 0, 0, 0)),
                          BinaryToSplit(c(1, 0, 1, 0, 1, 0, 1, 0)))
   expect_equal(MutualArborealInfo(treeSym8, treeSym8),
                MutualPartitionInfo(treeSym8, treeSym8), tolerance=1e-05)
