@@ -1,4 +1,4 @@
-context("Profile Parsimony: Tree scoring")
+context("pp_ProfileScore.R")
 test_that("Profile score calculated correctly", {
   data(referenceTree)
   data(congreveLamsdellMatrices)

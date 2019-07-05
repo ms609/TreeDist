@@ -1,4 +1,4 @@
-context("Profile Parsimony: Information content of steps")
+context("pp_info_extra_step.R")
 
 test_that("Information content of steps calculated correctly", {
   expect_equal(c(1, 2), as.double(ICS(2, 2, 10000, warn=FALSE) * NUnrooted(4)))

@@ -52,8 +52,7 @@ test_that("tree search finds shortest tree", {
   expect_equal(3, Fitch(true_tree, dataset), ratchetScore)
 })
 
-context("Implied weights: Tree search")
-test_that("tree can be found", {
+test_that("Implied weights: Tree search", {
   suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
   set.seed(0)
   expect_error(IWTreeSearch(tree=unrooted11, dataset=phy11))
@@ -78,3 +77,35 @@ test_that("tree can be found", {
   # expect_equal(IWSectorial(RandomTree(phy11, 'a'), phy11, verbosity=-1), comb11) # TODO: Sectorial Search not working yet!
 })
 
+
+test_that("Profile parsimony works in tree search", {
+  sillyData <- lapply(1:22, function (i) c( rep(0, i - 1), rep(1, 22 - i), rep(1, 22 - i), rep(0, i - 1)))#, sample(2, 20, replace=TRUE)-1))
+  names(sillyData) <- as.character(1:22)
+  dataset <- PhyDat(sillyData)
+  readyData <- PrepareDataProfile(dataset, 12000, warn=FALSE)
+  
+  suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
+  set.seed(0)
+  
+  rTree <- randomTree <- RandomTree(dataset, '1')
+  expect_equal(Fitch(rTree, readyData), Fitch(rTree, dataset))
+  expect_equal(90, Fitch(referenceTree, dataset), Fitch(referenceTree, readyData))
+  expect_true(ProfileScore(rTree, readyData) > ProfileScore(referenceTree, readyData))
+  
+  quickTS <- TreeSearch(rTree, dataset, TreeScorer=MorphyLength, EdgeSwapper=RootedNNISwap, 
+                        maxIter=1600, maxHits=40, verbosity=0)
+  expect_equal(42L, attr(quickTS, 'score'))
+  
+  quickFitch <- Ratchet(rTree, dataset, TreeScorer=MorphyLength, suboptimal=2, 
+                        swappers=RootySwappers, ratchHits=3, searchHits=15, 
+                        searchIter=100, ratchIter=500,
+                        verbosity=0L)
+  expect_equal(42, attr(quickFitch, 'score'))
+  
+  quickProf <- ProfileRatchet(rTree, readyData, 
+                              swappers = RootySwappers,
+                              BootstrapSwapper = RootedSPRSwap,
+                              ratchIter=30L, ratchHits=3L, searchIter=30L, searchHits=3L,
+                              verbosity=0L)
+  expect_equal(quickProf, quickFitch)
+})

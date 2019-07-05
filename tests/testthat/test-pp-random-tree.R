@@ -1,4 +1,3 @@
-# library(devtools); load_all(); library(testthat)
 MorphyAction <- function (Action) expect_equal("ERR_NO_ERROR", mpl_translate_error(Action))
 MorphyWith <- function (char) {
   nTip <- nchar(char) - 1L
