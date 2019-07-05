@@ -20,3 +20,7 @@ test_that("TNT trees parsed correctly", {
   expect_equal('Flustra', namedLabels[1])
   expect_equal(74L, length(namedLabels))
 })
+
+test_that("File time is read correctly", {
+  expect_equal('2018-07-18 13:47:46', ApeTime('test-ape-tree.nex', 'string'))
+})
