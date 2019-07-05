@@ -85,31 +85,24 @@ different in the partitions of two trees, under an optimal matching.
   # Best possible score is obtained by matching a tree with itself
   VariationOfArborealInfo(tree1, tree1) # 0, by definition
   MutualArborealInfo(tree1, tree1)
+  PartitionInfo(tree1) # Maximum mutual arboreal or partition information
   
   # Best possible score is a function of tree shape; the partitions within
   # balanced trees are more independent and thus contain less information
-  MutualArborealInfo(tree2, tree2)
+  PartitionInfo(tree2)
   
   # How similar are two trees?
-  MutualArborealInfo(tree1, tree2)
-  VariationOfArborealInfo(tree1, tree2)
-  VariationOfArborealInfo(tree2, tree1) # Identical, by symmetry
+  MutualArborealInfo(tree1, tree2) # Amount of arboreal information in common
+  VariationOfArborealInfo(tree1, tree2) # Distance measure
+  VariationOfArborealInfo(tree2, tree1) # The metric is symmetric
   
-  
-  # Maximum possible score for Cluster information is independent
-  # of tree shape, as every possible pairing is considered
-  MutualClusterInfo(tree1, tree1)
-  MutualClusterInfo(tree2, tree2)
-  
-  # It is thus easier to interpret the value of
-  MutualClusterInfo(tree1, tree2)
-  # Although it may not be possible to find a tree pair with zero mutual
-  # cluster info.
+  # Are they more similar than two trees of this shape would be by chance?
+  ExpectedVariation(tree1, tree2, sample=12)['VariationOfArborealInfo', 'Estimate']
   
   # Every partition in tree1 is contradicted by every partition in tree3
-  # Non-arboreal matches contain clustering, but not phylogenetic, information
+  # Non-arboreal matches contain partitioning, but not arboreal, information
   MutualArborealInfo(tree1, tree3) # = 0
-  MutualClusterInfo(tree1, tree3) # > 0
+  MutualPartitionInfo(tree1, tree3) # > 0
   
 }
 

@@ -40,7 +40,7 @@ content.
 
 }
 \seealso{
-Other Split information: \code{\link{JointInformation}},
+Other split information functions: \code{\link{JointInformation}},
   \code{\link{SplitEntropy}},
   \code{\link{SplitMutualInformation}},
   \code{\link{TreesMatchingSplit}},
@@ -49,4 +49,4 @@ Other Split information: \code{\link{JointInformation}},
 \author{
 Martin R. Smith
 }
-\concept{Split information}
+\concept{split information functions}

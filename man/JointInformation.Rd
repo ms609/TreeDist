@@ -50,7 +50,7 @@ JointInformation(3, 1, 0, 4)
 
 }
 \seealso{
-Other Split information: \code{\link{SplitEntropy}},
+Other split information functions: \code{\link{SplitEntropy}},
   \code{\link{SplitInformation}},
   \code{\link{SplitMutualInformation}},
   \code{\link{TreesMatchingSplit}},
@@ -59,4 +59,4 @@ Other Split information: \code{\link{SplitEntropy}},
 \author{
 Martin R. Smith
 }
-\concept{Split information}
+\concept{split information functions}

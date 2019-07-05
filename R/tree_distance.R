@@ -49,31 +49,24 @@
 #'   # Best possible score is obtained by matching a tree with itself
 #'   VariationOfArborealInfo(tree1, tree1) # 0, by definition
 #'   MutualArborealInfo(tree1, tree1)
+#'   PartitionInfo(tree1) # Maximum mutual arboreal or partition information
 #'   
 #'   # Best possible score is a function of tree shape; the partitions within
 #'   # balanced trees are more independent and thus contain less information
-#'   MutualArborealInfo(tree2, tree2)
+#'   PartitionInfo(tree2)
 #'   
 #'   # How similar are two trees?
-#'   MutualArborealInfo(tree1, tree2)
-#'   VariationOfArborealInfo(tree1, tree2)
-#'   VariationOfArborealInfo(tree2, tree1) # Identical, by symmetry
+#'   MutualArborealInfo(tree1, tree2) # Amount of arboreal information in common
+#'   VariationOfArborealInfo(tree1, tree2) # Distance measure
+#'   VariationOfArborealInfo(tree2, tree1) # The metric is symmetric
 #'   
-#'   
-#'   # Maximum possible score for Cluster information is independent
-#'   # of tree shape, as every possible pairing is considered
-#'   MutualClusterInfo(tree1, tree1)
-#'   MutualClusterInfo(tree2, tree2)
-#'   
-#'   # It is thus easier to interpret the value of
-#'   MutualClusterInfo(tree1, tree2)
-#'   # Although it may not be possible to find a tree pair with zero mutual
-#'   # cluster info.
+#'   # Are they more similar than two trees of this shape would be by chance?
+#'   ExpectedVariation(tree1, tree2, sample=12)['VariationOfArborealInfo', 'Estimate']
 #'   
 #'   # Every partition in tree1 is contradicted by every partition in tree3
-#'   # Non-arboreal matches contain clustering, but not phylogenetic, information
+#'   # Non-arboreal matches contain partitioning, but not arboreal, information
 #'   MutualArborealInfo(tree1, tree3) # = 0
-#'   MutualClusterInfo(tree1, tree3) # > 0
+#'   MutualPartitionInfo(tree1, tree3) # > 0
 #'   
 #' }
 #' 
@@ -95,8 +88,8 @@ MutualArborealInfo <- function (tree1, tree2, reportMatching = FALSE) {
 #' @export
 VariationOfArborealInfo <- function (tree1, tree2, reportMatching = FALSE) {
   mai <- MutualArborealInfo(tree1, tree2, reportMatching)
-  ret <- PartitionInfo(tree1) + PartitionInfo(tree2) -
-    mai - mai
+  ret <- PartitionInfo(tree1) + PartitionInfo(tree2) - mai - mai
+  if (ret < 1e-13) ret <- 0 # In case of floating point inaccuracy
   
   attributes(ret) <- attributes(mai)
   # Return:
@@ -108,6 +101,7 @@ VariationOfArborealInfo <- function (tree1, tree2, reportMatching = FALSE) {
 VariationOfPartitionInfo <- function (tree1, tree2, reportMatching = FALSE, ...) {
   mpi <- MutualPartitionInfo(tree1, tree2, reportMatching, ...)
   ret <- PartitionInfo(tree1) + PartitionInfo(tree2) - mpi - mpi
+  if (ret < 1e-13) ret <- 0 # In case of floating point inaccuracy
   
   attributes(ret) <- attributes(mpi)
   # Return:
@@ -117,16 +111,30 @@ VariationOfPartitionInfo <- function (tree1, tree2, reportMatching = FALSE, ...)
 #' @describeIn MutualPartitionInfo Estimate expected Variation of Information
 #' and Mutual Information for a pair of trees of a given topology.
 #' @param samples Integer specifying how many samplings to obtain; 
-#' more will give more accurate estimates.
+#' accuracy of estimate increases with `sqrt(samples)`.
 #' @export
-ExpectedVariation <- function (tree1, tree2, samples = 1e+4) {
-  estimates <- replicate(samples, {
-    tree2$tip.label <- sample(tree2$tip.label)
-    c(MutualPartitionInfo = MututalPartitionInfo(tree1, tree2),
-      MutualArborealInfo = MutualArborealInfo(tree1, tree2))
-  })
+ExpectedVariation <- function (tree1, tree2, samples = 1e+3) {
+  info1 <- PartitionInfo(tree1)
+  info2 <- PartitionInfo(tree2)
+  splits1 <- Tree2Splits(tree1)
+  splits2 <- Tree2Splits(tree2)
+  tipLabels <- rownames(splits2)
   
-  cbind(mean = rowMeans(estimates), sd = apply(estimates, 1, sd), n = samples)
+  mutualEstimates <- vapply(seq_len(samples), function (x) {
+    rownames(splits2) <- sample(tipLabels)
+    c(MutualPartitionInfoSplits(splits1, splits2),
+      MutualArborealInfoSplits(splits1, splits2))
+  }, c(MutualPartitionInfo = 0, MutualArborealInfo = 0))
+  
+  mut <- cbind(Estimate = rowMeans(mutualEstimates),
+               sd = apply(mutualEstimates, 1, sd), n = samples)
+  # Return:
+  ret <- rbind(mut,
+        VariationOfPartitionInfo = c(info1 + info2 - mut[1, 1] - mut[1, 1], mut[1, 2] * 2, samples),
+        VariationOfArborealInfo =  c(info1 + info2 - mut[2, 1] - mut[2, 1], mut[2, 2] * 2, samples)
+        )
+  cbind(Estimate = ret[, 1], 'Std. Err.' = ret[, 'sd'] / sqrt(ret[, 'n']), ret[, 2:3])
+  
 }
 
 #' Nye et al. (2006) tree comparison
@@ -161,7 +169,7 @@ NyeTreeSimilarity <- function (tree1, tree2,
 #' @author Martin R. Smith
 #' @export
 MutualPartitionInfo <- function (tree1, tree2, reportMatching = FALSE, ...) {
-  CalculateTreeDistance(MututalPartitionInfoSplits, tree1, tree2, reportMatching, ...)
+  CalculateTreeDistance(MutualPartitionInfoSplits, tree1, tree2, reportMatching, ...)
 }
 
 #' Matching Split Distance
@@ -534,7 +542,7 @@ NyeSplitSimilarity <- function (splits1, splits2, reportMatching = FALSE) {
 #' Set to `sum` to count the information from both agreement bipartitions.
 #' @inheritParams MutualArborealInfoSplits
 #' @export
-MututalPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE, 
+MutualPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE, 
                                         MAX=max) {
   
   dimSplits1 <- dim(splits1)

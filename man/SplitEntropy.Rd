@@ -30,7 +30,7 @@ treating splits as subdivisions of \emph{n} terminals into two clusters.
 \insertRef{Meila2007}{TreeSearch}
 }
 \seealso{
-Other Split information: \code{\link{JointInformation}},
+Other split information functions: \code{\link{JointInformation}},
   \code{\link{SplitInformation}},
   \code{\link{SplitMutualInformation}},
   \code{\link{TreesMatchingSplit}},
@@ -39,4 +39,4 @@ Other Split information: \code{\link{JointInformation}},
 \author{
 Martin R. Smith
 }
-\concept{Split information}
+\concept{split information functions}

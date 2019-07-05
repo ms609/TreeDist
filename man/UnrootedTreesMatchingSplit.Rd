@@ -29,7 +29,7 @@ specified multi-partition split, using the formula of Carter \emph{et al}. (1990
 \insertRef{Carter1990}{TreeSearch}, Theorem 2.
 }
 \seealso{
-Other Split information: \code{\link{JointInformation}},
+Other split information functions: \code{\link{JointInformation}},
   \code{\link{SplitEntropy}},
   \code{\link{SplitInformation}},
   \code{\link{SplitMutualInformation}},
@@ -38,4 +38,4 @@ Other Split information: \code{\link{JointInformation}},
 \author{
 Martin R. Smith
 }
-\concept{Split information}
+\concept{split information functions}
