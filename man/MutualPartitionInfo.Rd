@@ -26,6 +26,8 @@ or lists of such trees to undergo pairwise comparison.}
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}
 
+\item{\dots}{Additional parameters to pass to \code{MutualPartitionInfoSplits} (temporary?)}
+
 \item{samples}{Integer specifying how many samplings to obtain;
 accuracy of estimate increases with \code{sqrt(samples)}.}
 

@@ -163,7 +163,7 @@ NyeTreeSimilarity <- function (tree1, tree2,
 #' #TODO document!
 #' 
 #' @inheritParams MutualArborealInfo
-#' @param \dots Additional parameters to pass to `MutualPartitionInfoSplits` [temporary?]
+#' @param \dots Additional parameters to pass to `MutualPartitionInfoSplits` (temporary?)
 #' 
 #' @references \insertRef{SmithDist}{TreeSearch}
 #' @family Tree distance

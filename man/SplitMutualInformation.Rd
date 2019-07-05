@@ -19,7 +19,7 @@ LogTreesConsistentWithTwoSplits(n, A1, A2 = A1)
 \item{n}{Integer specifying the number of terminals.}
 
 \item{A1, A2}{Integers specifying the number of taxa in \emph{A1} and \emph{A2},
-once the splits have been arranged such that \emph{A1} overlaps with \emph{A2}.}
+once the splits have been arranged such that \emph{A1} fully overlaps with \emph{A2}.}
 }
 \value{
 \code{TreesConsistentWithTwoSplits} returns the number of unrooted bifurcating
@@ -43,9 +43,9 @@ smaller number of trees will have a higher mutual information content.
 Split 1 divides \code{n} terminals into two partitions, \emph{A1} and \emph{B1}.
 Split 2 divides the same terminals into the partitions \emph{A2} and \emph{B2}.
 
-Partitions must be named such that \emph{A1} overlaps with \emph{A2}: that is to say,
-all taxa in \emph{A1} are also in \emph{A2}, or \emph{vice versa}.  Thus, all taxa in
-the smaller of \emph{A1} and \emph{A2} also occur in the larger.
+Partitions must be named such that \emph{A1} fully overlaps with \emph{A2}:
+that is to say, all taxa in \emph{A1} are also in \emph{A2}, or \emph{vice versa}.
+Thus, all taxa in the smaller of \emph{A1} and \emph{A2} also occur in the larger.
 }
 \section{Functions}{
 \itemize{
