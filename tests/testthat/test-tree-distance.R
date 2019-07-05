@@ -1,4 +1,4 @@
-context('Tree differences')
+context('tree_distance.R')
 
 test_that("Split combatibility is correctly established", {
   expect_true(SplitsCompatible(as.logical (c(0,0,1,1,0)), as.logical(c(0,0,1,1,0))))
