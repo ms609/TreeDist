@@ -1,23 +1,3 @@
-## Copied from phangorn file phyDat.R.  Edited for style and trivial efficiency gains
-FastTable <- function (dataset) {
-  if(!is.data.frame(dataset)) {
-    dataset <- as.data.frame(dataset, stringsAsFactors = FALSE)
-  }
-  da <- do.call("paste", c(dataset, sep = "\r"))
-  ind <- !duplicated(da)
-  levels <- da[ind]
-  cat <- factor(da, levels = levels)
-  nl <- length(levels(cat))
-  bin <- (as.integer(cat) - 1L)
-  pd <- nl
-  bin <- bin[!is.na(bin)]
-  if (length(bin)) bin <- bin + 1L
-  y <- tabulate(bin, pd)
-  
-  # Return:
-  list(index = bin, weights = y, dataset = dataset[ind, ])
-}
-
 #' Prepare data for Profile Parsimony
 #' 
 #' @param dataset dataset of class \code{phyDat}

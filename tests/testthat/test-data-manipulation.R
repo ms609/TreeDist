@@ -1,4 +1,4 @@
-context("Implied weights: Test minimum steps")
+context("pp_data_manipulation.R")
 test_that("minimum step counts are correctly calculated", {
   expect_equal(1, MinimumSteps(1:3))
   expect_equal(1, MinimumSteps(c(1:3, 5)))
