@@ -148,6 +148,10 @@ MultiSplitInformation <- function (partitionSizes) {
 #' 
 #' This is equivalent to the mutual clustering information (Vinh 2010).
 #' 
+#' Whereas Meila and Vinh _et al_. are concerned with the entropy, i.e. the 
+#' number of bits required to encode each tip, we are interested in the 
+#' total information content, i.e. the entropy multiplied by the number of tips.
+#' This is the value that the function returns.
 #' 
 #' @return Variation of information, measured in bits.
 #' 
@@ -191,10 +195,11 @@ MeilaVariationOfInformation <- function (split1, split2) {
   
   jointEntropies <- Entropy(probabilities)
   
-  # Return:
-  jointEntropies + jointEntropies - 
+  variationOfInformation <- jointEntropies + jointEntropies - 
     Entropy(c(p1, 1 - p1)) -
     Entropy(c(p2, 1 - p2))
+  # Return:
+  n * variationOfInformation
 }
 #' @describeIn MeilaVariationOfInformation Mutual clustering information of two splits
 #' @return Mutual information, measured in bits.
@@ -211,8 +216,9 @@ MeilaMutualInformation <- function (split1, split2) {
   
   jointEntropies <- Entropy(probabilities)
   
+  mutualInformation <- Entropy(c(p1, 1 - p1)) + Entropy(c(p2, 1 - p2)) - jointEntropies
   # Return:
-  Entropy(c(p1, 1 - p1)) + Entropy(c(p2, 1 - p2)) - jointEntropies
+  n * mutualInformation
 }
 
 #' Probability of matching this well
