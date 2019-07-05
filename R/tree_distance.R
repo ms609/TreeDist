@@ -115,6 +115,12 @@ VariationOfPartitionInfo <- function (tree1, tree2, reportMatching = FALSE) {
 #' content of the tree where a tree contains multiple partitions, as 
 #' these partitions will contain mutual information.
 #' 
+#' Note that Meila (2007) and Vinh _et al_. (2010) deal with entropy, which 
+#' denotes the bits necessary to denote the cluster to which each tip belongs,
+#' i.e. bits/tip (see Vinh _et al._ 2010).
+#' This function multiplies the entropy by the number of tips to produce a
+#' measure of the information content of the tree as a whole.
+#' 
 #' @param tree A tree of class `phylo`, a list of trees, or a `multiPhylo` object.
 #' 
 #' @return Information content, in bits.
@@ -138,8 +144,13 @@ ClusteringInfoSplits <- function (splits) {
   nTip <- nrow(splits)
   inSplit <- colSums(splits)
   splitP <- rbind(inSplit, nTip - inSplit) / nTip
+  
+  # Entropy measures the bits required to transmit the cluster label of each tip.
+  # The total information content is thus entropy * nTip.
+  # See Vinh (2010: p. 2840) 
+  # 
   # Return:
-  sum(apply(splitP, 2, Entropy)) / log(2)
+  sum(apply(splitP, 2, Entropy)) / log(2) * nTip
 }
 
 #' @describeIn MutualClusteringInfo Variation of clustering information between two trees
