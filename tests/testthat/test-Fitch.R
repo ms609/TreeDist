@@ -1,8 +1,5 @@
-library(ape)
-library(testthat)
-
 ## Test cases designed by Thomas Guillerme
-context("Morphy: Correct step counting")
+context("Fitch.R")
 test_that("Morphy generates correct lengths", {
   ## Tree
   tree <- ape::read.tree(text = "((((((1,2),3),4),5),6),(7,(8,(9,(10,(11,12))))));")

@@ -1,4 +1,4 @@
-context("Morphy: Tree search")
+context("TreeSearch.R")
 
 comb11 <- ape::read.tree(text="(a, (b, (c, (d, (e, (f, (g, (h, (i, (j, k))))))))));")
 unrooted11 <- ape::read.tree(text="(a, b, (c, (d, (e, (f, (g, (h, (i, (j, k)))))))));")
