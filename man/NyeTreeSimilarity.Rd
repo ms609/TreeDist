@@ -49,6 +49,7 @@ normalized against the Jaccard index.
 \seealso{
 Other Tree distance: \code{\link{MatchingSplitDistance}},
   \code{\link{MutualArborealInfo}},
+  \code{\link{VariationOfClusteringInfo}},
   \code{\link{VariationOfPartitionInfo}}
 }
 \author{

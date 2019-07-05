@@ -46,6 +46,7 @@ trees of Bogdanowicz and Giaro (2012).
 \seealso{
 Other Tree distance: \code{\link{MutualArborealInfo}},
   \code{\link{NyeTreeSimilarity}},
+  \code{\link{VariationOfClusteringInfo}},
   \code{\link{VariationOfPartitionInfo}}
 }
 \author{

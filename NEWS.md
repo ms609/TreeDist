@@ -1,7 +1,8 @@
-# TreeSearch 0.3.2.9003 (develoment)
+# TreeSearch 0.3.2.9004 (develoment)
 
 ## New features
-- Implement another information theoretic tree distance measure (Smith, in prep)
+ - `ClusteringInfo` Adopts Meila's (2007) clustering information as a tree distance measure (but is not yet production-ready)
+ - Implement another information theoretic tree distance measure (Smith, in prep)
  
 ## Bug fixes
  - Fix miscalculation of `MatchingSplitDifference`

@@ -72,6 +72,14 @@ test_that('Tree differences are correctly calculated', {
   expect_equal(0, VariationOfPartitionInfo(treeSym8, treeSym8))
   
   
+  expect_equal(ClusteringInfo(treeSym8), MutualClusteringInfo(treeSym8, treeSym8), tolerance=1e-05)
+  expect_equal(ClusteringInfo(treeSym8) + ClusteringInfo(treeBal8) -
+                 (2 * MutualClusteringInfo(treeBal8, treeSym8))
+               , VariationOfClusteringInfo(treeSym8, treeBal8), tolerance=1e-05)
+  expect_equal(MutualClusteringInfo(treeAb.Cdefgh, treeAbc.Defgh),
+               MutualClusteringInfo(treeAbc.Defgh, treeAb.Cdefgh),
+               tolerance=1e-05)
+  
   expect_equal(5L, NyeTreeSimilarity(treeSym8, treeSym8))
   expect_equal(2, 3 * NyeTreeSimilarity(treeAb.Cdefgh, treeAbc.Defgh))
   expect_equal(3.8, NyeTreeSimilarity(treeSym8, treeBal8))

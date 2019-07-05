@@ -1,6 +1,6 @@
 Package: TreeSearch
 Title: Phylogenetic Tree Search Using Custom Optimality Criteria
-Version: 0.3.2.9003
+Version: 0.3.2.9004
 Date: 2019-07-05
 Authors@R: c(person("Martin R.", 'Smith',
                   email="martin.smith@durham.ac.uk", 

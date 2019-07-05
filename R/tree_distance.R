@@ -89,7 +89,7 @@ MutualArborealInfo <- function (tree1, tree2, reportMatching = FALSE) {
 VariationOfArborealInfo <- function (tree1, tree2, reportMatching = FALSE) {
   mai <- MutualArborealInfo(tree1, tree2, reportMatching)
   ret <- PartitionInfo(tree1) + PartitionInfo(tree2) - mai - mai
-  if (ret < 1e-13) ret <- 0 # In case of floating point inaccuracy
+  ret[ret < 1e-13] <- 0 # In case of floating point inaccuracy
   
   attributes(ret) <- attributes(mai)
   # Return:
@@ -98,12 +98,58 @@ VariationOfArborealInfo <- function (tree1, tree2, reportMatching = FALSE) {
 
 #' @describeIn MutualPartitionInfo Variation of partition information between two trees
 #' @export
-VariationOfPartitionInfo <- function (tree1, tree2, reportMatching = FALSE, ...) {
-  mpi <- MutualPartitionInfo(tree1, tree2, reportMatching, ...)
+VariationOfPartitionInfo <- function (tree1, tree2, reportMatching = FALSE) {
+  mpi <- MutualPartitionInfo(tree1, tree2, reportMatching)
   ret <- PartitionInfo(tree1) + PartitionInfo(tree2) - mpi - mpi
-  if (ret < 1e-13) ret <- 0 # In case of floating point inaccuracy
+  ret[ret < 1e-13] <- 0 # In case of floating point inaccuracy
   
   attributes(ret) <- attributes(mpi)
+  # Return:
+  ret
+}
+
+#' Clustering information content of all partitions within a tree
+#' 
+#' Sums the clustering information content (Meila 2007) across each partition within a 
+#' phylogenetic tree.  This value will be greater than the total information 
+#' content of the tree where a tree contains multiple partitions, as 
+#' these partitions will contain mutual information.
+#' 
+#' @param tree A tree of class `phylo`, a list of trees, or a `multiPhylo` object.
+#' 
+#' @return Information content, in bits.
+#' 
+#' @references \insertRef{Meila2007}{TreeSearch}
+#' @author Martin R. Smith
+#' @keywords internal
+#' @export
+ClusteringInfo <- function(tree) {
+  if (class(tree) == 'phylo') {
+    ClusteringInfoSplits(Tree2Splits(tree))
+  } else {
+    splits <- lapply(tree, Tree2Splits)
+    vapply(splits, ClusteringInfoSplits, double(1L))
+  }
+}
+
+#' @describeIn ClusteringInfo Takes splits instead of trees
+#' @export
+ClusteringInfoSplits <- function (splits) {
+  nTip <- nrow(splits)
+  inSplit <- colSums(splits)
+  splitP <- rbind(inSplit, nTip - inSplit) / nTip
+  # Return:
+  sum(apply(splitP, 2, Entropy)) / log(2)
+}
+
+#' @describeIn MutualClusteringInfo Variation of clustering information between two trees
+#' @export
+VariationOfClusteringInfo <- function (tree1, tree2, reportMatching = FALSE) {
+  mci <- MutualClusteringInfo(tree1, tree2, reportMatching)
+  ret <- ClusteringInfo(tree1) + ClusteringInfo(tree2) - mci - mci
+  ret[ret < 1e-13] <- 0 # In case of floating point inaccuracy
+  
+  attributes(ret) <- attributes(mci)
   # Return:
   ret
 }
@@ -163,15 +209,32 @@ NyeTreeSimilarity <- function (tree1, tree2,
 #' #TODO document!
 #' 
 #' @inheritParams MutualArborealInfo
-#' @param \dots Additional parameters to pass to `MutualPartitionInfoSplits` (temporary?)
 #' 
 #' @references \insertRef{SmithDist}{TreeSearch}
 #' @family Tree distance
 #' 
 #' @author Martin R. Smith
 #' @export
-MutualPartitionInfo <- function (tree1, tree2, reportMatching = FALSE, ...) {
-  CalculateTreeDistance(MutualPartitionInfoSplits, tree1, tree2, reportMatching, ...)
+MutualPartitionInfo <- function (tree1, tree2, reportMatching = FALSE) {
+  CalculateTreeDistance(MutualPartitionInfoSplits, tree1, tree2, reportMatching)
+}
+
+#' Mutual Clustering Information
+#' 
+#' This approach sees the information content of a pair of partitions as their 
+#' mutual clustering information (Meila 2007, Vinh2010).
+#' 
+#' @inheritParams MutualArborealInfo
+#' 
+#' @references \insertRef{Meila2007}{TreeSearch}
+#' @references \insertRef{SmithDist}{TreeSearch}
+#' @references \insertRef{Vinh2010}{TreeSearch}
+#' @family Tree distance
+#' 
+#' @author Martin R. Smith
+#' @export
+MutualClusteringInfo <- function (tree1, tree2, reportMatching = FALSE, ...) {
+  CalculateTreeDistance(MutualClusteringInfoSplits, tree1, tree2, reportMatching, ...)
 }
 
 #' Matching Split Distance
@@ -539,13 +602,11 @@ NyeSplitSimilarity <- function (splits1, splits2, reportMatching = FALSE) {
     }
   }
 }
+
 #' @describeIn MutualPartitionInfo Takes splits instead of trees
-#' @param MAX Defaults to `max` to use the most informative agreement bipartition.
-#' Set to `sum` to count the information from both agreement bipartitions.
 #' @inheritParams MutualArborealInfoSplits
 #' @export
-MutualPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE, 
-                                        MAX=max) {
+MutualPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE) {
   
   dimSplits1 <- dim(splits1)
   dimSplits2 <- dim(splits2)
@@ -587,9 +648,65 @@ MutualPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE,
     
     agree1 <- splitI0 == splitJ0
     
-    MAX(AgreementInfoNats(splitI0, agree1),
+    max(AgreementInfoNats(splitI0, agree1),
         AgreementInfoNats(splitI0, !agree1))
     
+  }, rep(seq_len(nSplits1), each=nSplits2), seq_len(nSplits2)
+  )), nSplits2, nSplits1) / log(2)
+  
+  if (nSplits2 == 1) {
+    min(pairScores)
+  } else {
+    optimalMatching <- solve_LSAP(pairScores, TRUE)
+    
+    # Return:
+    ret <- sum(pairScores[matrix(c(seq_along(optimalMatching), optimalMatching), ncol=2L)])
+    if (reportMatching) {
+      attr(ret, 'matching') <- optimalMatching
+      attr(ret, 'pairScores') <- pairScores
+      ret
+    } else {
+      ret
+    }
+  }
+}
+
+#' @describeIn MutualPartitionInfo Takes splits instead of trees
+#' @inheritParams MutualArborealInfoSplits
+#' @export
+MutualClusteringInfoSplits <- function (splits1, splits2, reportMatching = FALSE) {
+  
+  dimSplits1 <- dim(splits1)
+  dimSplits2 <- dim(splits2)
+  nTerminals <- dimSplits1[1]
+  if (dimSplits2[1] != nTerminals) {
+    stop("Split rows must bear identical labels")
+  }
+  
+  if (dimSplits1[2] < dimSplits2[2]) {
+    tmp <- splits1
+    splits1 <- splits2
+    splits2 <- tmp
+    
+    tmp <- dimSplits1
+    dimSplits1 <- dimSplits2
+    dimSplits2 <- tmp
+  }
+  
+  taxonNames <- rownames(splits1) 
+  
+  if (!is.null(taxonNames)) {
+    splits2 <- unname(splits2[rownames(splits1), , drop=FALSE])
+    splits1 <- unname(splits1) # split1[split2] faster without names
+  }
+  
+  nSplits1 <- dimSplits1[2]
+  nSplits2 <- dimSplits2[2]
+  if (nSplits2 == 0) return (0)
+  
+  
+  pairScores <- matrix((mapply(function(i, j) {
+    MeilaMutualInformation(splits1[, i], splits2[, j])
   }, rep(seq_len(nSplits1), each=nSplits2), seq_len(nSplits2)
   )), nSplits2, nSplits1) / log(2)
   

@@ -140,96 +140,117 @@ MultiSplitInformation <- function (partitionSizes) {
 }
 
 
-# #' Use Variation of Information to compare partitions as clusterings
-# #' 
-# #' Compare a pair of splits solely as clusterings of taxa, disregarding their
-# #' phlogenetic information, using the information based distance proposed
-# #' by Meila (2007).
-# #' 
-# #' 
-# #' @return Variation of information, measured in bits.
-# #' 
-# #' @references {
-# #'   \insertRef{Meila2007}{TreeSearch}
-# #' }
-# #' 
-# #' @examples 
-# #'   # Maximum variation = information content of each split separately
-# #'   T <- TRUE
-# #'   F <- FALSE
-# #'   MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,T,T,T,T,T))
-# #'   Entropy(c(3, 3) / 6) + Entropy(c(0, 6) / 6)
-# #'   
-# #'   # Minimum variation = 0
-# #'   MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,T,T,F,F,F))
-# #'   
-# #'   # Not always possible for two evenly-sized splits to reach maximum
-# #'   # variation of information
-# #'   Entropy(c(3, 3) / 6) * 2  # = 2
-# #'   MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,F,T,F,T,F)) # < 2
-# #'   
-# #'   # Phylogenetically uninformative groupings contain partitioning information
-# #'   Entropy(c(1, 5) / 6)
-# #'   MeilaVariationOfInformation(c(F,T,T,T,T,T), c(T,T,T,T,T,F))
-# #' 
-# #' 
-# #' @template split12Params
-# #' @author Martin R. Smith
-# #' @export
-# MeilaVariationOfInformation <- function (split1, split2) {
-#   if (length(split1) != length(split2)) stop("Split lengths differ")
-#   n <- length(split1)
-#   
-#   associationMatrix <- c(sum(split1 & split2), sum(split1 & !split2),
-#                          sum(!split1 & split2), sum(!split1 & !split2))
-#   probabilities <- associationMatrix / n
-#   p1 <- probabilities[1] + probabilities[3]
-#   p2 <- probabilities[1] + probabilities[2]
-#   
-#   jointEntropies <- Entropy(probabilities)
-#   
-#   # Return:
-#   jointEntropies + jointEntropies - 
-#     Entropy(c(p1, 1 - p1)) -
-#     Entropy(c(p2, 1 - p2))
-# }
-# 
-# #' Probability of matching this well
-# #' 
-# #' Probability that two random splits of the sizes provided will be at least
-# #' as similar as the two specified.
-# #'
-# #' @template split12Params
-# #' 
-# #' @return The proportion of permissable informative splits 
-# #' splitting the terminals into bipartitions of the sizes given,
-# #'  that match as well as `split1` and `split2` do.
-# #'  
-# AnySizeSplitMatchProbability <- function (split1, split2) {
-#   
-#   observedEntropy <- SplitEntropy(split1, split2)
-#   
-#   possibleEntropies <- AllEntropies(length(split1))
-#   
-#   nArrangements <- iMax - minA1B2 + 1L
-# 
-#   arrangements <- vapply(minA1B2:iMax,
-#                          function (i) c(A1 - i, i, i + A2 - A1, B2 - i),
-#                          double(4))
-#   
-#   H <- function(p) -sum(p[p > 0] * log(p[p > 0]))
-#   jointEntropies <- apply(arrangements / n, 2, H)
-#   # mutualInformation <- H(c(A1,n - A1) / n) + H(c(A2, B2) / n) - jointEntropies
-#   
-#   # Meila 2007; less is best
-#   variationOfInformation <- jointEntropies+ jointEntropies - 
-#     (H(c(A1,n - A1) / n) + H(c(A2, B2) / n))
-#   
-#   choices <- apply(arrangements, 2, NPartitionPairs)
-#   
-#   # Return:
-#   sum(choices[ranking <= ranking[partitions[1, 2] + 1L - minA1B2]]) / choose(n, A1)
-# }
+#' Use Variation of Information to compare partitions as clusterings
+#' 
+#' Compare a pair of splits solely as clusterings of taxa, disregarding their
+#' phlogenetic information, using the variation of clustering information 
+#' proposed by Meila (2007).
+#' 
+#' This is equivalent to the mutual clustering information (Vinh 2010).
+#' 
+#' 
+#' @return Variation of information, measured in bits.
+#' 
+#' @references {
+#'   \insertRef{Meila2007}{TreeSearch}
+#'   \insertRef{Vinh2010}{TreeSearch}
+#' }
+#' 
+#' @examples 
+#'   # Maximum variation = information content of each split separately
+#'   T <- TRUE
+#'   F <- FALSE
+#'   MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,T,T,T,T,T))
+#'   Entropy(c(3, 3) / 6) + Entropy(c(0, 6) / 6)
+#'   
+#'   # Minimum variation = 0
+#'   MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,T,T,F,F,F))
+#'   
+#'   # Not always possible for two evenly-sized splits to reach maximum
+#'   # variation of information
+#'   Entropy(c(3, 3) / 6) * 2  # = 2
+#'   MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,F,T,F,T,F)) # < 2
+#'   
+#'   # Phylogenetically uninformative groupings contain partitioning information
+#'   Entropy(c(1, 5) / 6)
+#'   MeilaVariationOfInformation(c(F,T,T,T,T,T), c(T,T,T,T,T,F))
+#' 
+#' 
+#' @template split12Params
+#' @author Martin R. Smith
+#' @export
+MeilaVariationOfInformation <- function (split1, split2) {
+  if (length(split1) != length(split2)) stop("Split lengths differ")
+  n <- length(split1)
+  
+  associationMatrix <- c(sum(split1 & split2), sum(split1 & !split2),
+                         sum(!split1 & split2), sum(!split1 & !split2))
+  probabilities <- associationMatrix / n
+  p1 <- probabilities[1] + probabilities[3]
+  p2 <- probabilities[1] + probabilities[2]
+  
+  jointEntropies <- Entropy(probabilities)
+  
+  # Return:
+  jointEntropies + jointEntropies - 
+    Entropy(c(p1, 1 - p1)) -
+    Entropy(c(p2, 1 - p2))
+}
+#' @describeIn MeilaVariationOfInformation Mutual clustering information of two splits
+#' @return Mutual information, measured in bits.
+#' @export
+MeilaMutualInformation <- function (split1, split2) {
+  if (length(split1) != length(split2)) stop("Split lengths differ")
+  n <- length(split1)
+  
+  associationMatrix <- c(sum(split1 & split2), sum(split1 & !split2),
+                         sum(!split1 & split2), sum(!split1 & !split2))
+  probabilities <- associationMatrix / n
+  p1 <- probabilities[1] + probabilities[3]
+  p2 <- probabilities[1] + probabilities[2]
+  
+  jointEntropies <- Entropy(probabilities)
+  
+  # Return:
+  Entropy(c(p1, 1 - p1)) + Entropy(c(p2, 1 - p2)) - jointEntropies
+}
+
+#' Probability of matching this well
+#' 
+#' Probability that two random splits of the sizes provided will be at least
+#' as similar as the two specified.
+#'
+#' @template split12Params
+#' 
+#' @return The proportion of permissable informative splits 
+#' splitting the terminals into bipartitions of the sizes given,
+#'  that match as well as `split1` and `split2` do.
+#'  
+AnySizeSplitMatchProbability <- function (split1, split2) {
+  
+  observedEntropy <- SplitEntropy(split1, split2)
+  
+  possibleEntropies <- AllEntropies(length(split1))
+  
+  nArrangements <- iMax - minA1B2 + 1L
+
+  arrangements <- vapply(minA1B2:iMax,
+                         function (i) c(A1 - i, i, i + A2 - A1, B2 - i),
+                         double(4))
+  
+  H <- function(p) -sum(p[p > 0] * log(p[p > 0]))
+  jointEntropies <- apply(arrangements / n, 2, H)
+  # mutualInformation <- H(c(A1,n - A1) / n) + H(c(A2, B2) / n) - jointEntropies
+  
+  # Meila 2007; less is best
+  variationOfInformation <- jointEntropies+ jointEntropies - 
+    (H(c(A1,n - A1) / n) + H(c(A2, B2) / n))
+  
+  choices <- apply(arrangements, 2, NPartitionPairs)
+  
+  # Return:
+  sum(choices[ranking <= ranking[partitions[1, 2] + 1L - minA1B2]]) / choose(n, A1)
+}
 
 
 #' Probability of matching this well

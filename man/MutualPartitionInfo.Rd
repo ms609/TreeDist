@@ -5,16 +5,18 @@
 \alias{ExpectedVariation}
 \alias{MutualPartitionInfo}
 \alias{MutualPartitionInfoSplits}
+\alias{MutualClusteringInfoSplits}
 \title{Mutual Partition Information}
 \usage{
-VariationOfPartitionInfo(tree1, tree2, reportMatching = FALSE, ...)
+VariationOfPartitionInfo(tree1, tree2, reportMatching = FALSE)
 
 ExpectedVariation(tree1, tree2, samples = 1000)
 
-MutualPartitionInfo(tree1, tree2, reportMatching = FALSE, ...)
+MutualPartitionInfo(tree1, tree2, reportMatching = FALSE)
 
-MutualPartitionInfoSplits(splits1, splits2, reportMatching = FALSE,
-  MAX = max)
+MutualPartitionInfoSplits(splits1, splits2, reportMatching = FALSE)
+
+MutualClusteringInfoSplits(splits1, splits2, reportMatching = FALSE)
 }
 \arguments{
 \item{tree1}{Trees of class \code{phylo}, with tips labelled identically,
@@ -25,8 +27,6 @@ or lists of such trees to undergo pairwise comparison.}
 
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}
-
-\item{\dots}{Additional parameters to pass to \code{MutualPartitionInfoSplits} (temporary?)}
 
 \item{samples}{Integer specifying how many samplings to obtain;
 accuracy of estimate increases with \code{sqrt(samples)}.}
@@ -42,9 +42,6 @@ either listed in the same order or bearing identical names (in any sequence),
 and each column corresponds to a bipartition split, such that
 each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
 (\code{FALSE}) of the respective bipartition split.}
-
-\item{MAX}{Defaults to \code{max} to use the most informative agreement bipartition.
-Set to \code{sum} to count the information from both agreement bipartitions.}
 }
 \description{
 #TODO document!
@@ -57,6 +54,8 @@ Set to \code{sum} to count the information from both agreement bipartitions.}
 and Mutual Information for a pair of trees of a given topology.
 
 \item \code{MutualPartitionInfoSplits}: Takes splits instead of trees
+
+\item \code{MutualClusteringInfoSplits}: Takes splits instead of trees
 }}
 
 \references{
@@ -65,7 +64,8 @@ and Mutual Information for a pair of trees of a given topology.
 \seealso{
 Other Tree distance: \code{\link{MatchingSplitDistance}},
   \code{\link{MutualArborealInfo}},
-  \code{\link{NyeTreeSimilarity}}
+  \code{\link{NyeTreeSimilarity}},
+  \code{\link{VariationOfClusteringInfo}}
 }
 \author{
 Martin R. Smith

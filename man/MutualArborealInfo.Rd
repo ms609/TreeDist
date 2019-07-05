@@ -117,6 +117,7 @@ different in the partitions of two trees, under an optimal matching.
 \seealso{
 Other Tree distance: \code{\link{MatchingSplitDistance}},
   \code{\link{NyeTreeSimilarity}},
+  \code{\link{VariationOfClusteringInfo}},
   \code{\link{VariationOfPartitionInfo}}
 }
 \author{
