@@ -25,6 +25,9 @@ test_that("Joint information calculated correctly", {
                JointInformation(3, 2, 0, 4))
   # Perfect contradiction: AB:CDEFG, AC:BDEFG
   expect_equal(SplitInformation(2, 5) * 2, JointInformation(1, 1, 1, 4))
+  # Compatible splits: AB:CDEFGH, CD:ABEFGH
+  expect_equal(SplitInformation(2, 6) - SplitInformation(2, 5),
+               JointInformation(0, 2, 2, 4))
 })
 
 test_that("SplitMatchProbability returns expected probabilities", {

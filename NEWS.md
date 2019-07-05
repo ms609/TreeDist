@@ -1,7 +1,11 @@
-# TreeSearch 0.3.2.9002 (develoment)
+# TreeSearch 0.3.2.9003 (develoment)
 
+## New features
+- Implement another information theoretic tree distance measure (Smith, in prep)
+ 
 ## Bug fixes
  - Fix miscalculation of `MatchingSplitDifference`
+ - Fix miscalculation of `JointInformation`
 
 ## Enhancements
  - `ReadTntTree` supports named taxa (with `taxname=`)
