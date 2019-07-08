@@ -7,17 +7,27 @@
 \alias{VariationOfArborealInfoSplits}
 \title{Information-based generalized Robinson-Foulds distance between two trees}
 \usage{
-MutualArborealInfo(tree1, tree2, reportMatching = FALSE)
+MutualArborealInfo(tree1, tree2, normalize = FALSE,
+  reportMatching = FALSE)
 
-VariationOfArborealInfo(tree1, tree2, reportMatching = FALSE)
+VariationOfArborealInfo(tree1, tree2, normalize = FALSE,
+  reportMatching = FALSE)
 
-MutualArborealInfoSplits(splits1, splits2, reportMatching = FALSE)
+MutualArborealInfoSplits(splits1, splits2, normalize = TRUE,
+  reportMatching = FALSE)
 
-VariationOfArborealInfoSplits(splits1, splits2, reportMatching = FALSE)
+VariationOfArborealInfoSplits(splits1, splits2, normalize = TRUE,
+  reportMatching = FALSE)
 }
 \arguments{
 \item{tree1, tree2}{Trees of class \code{phylo}, with tips labelled identically,
 or lists of such trees to undergo pairwise comparison.}
+
+\item{normalize}{If a numeric value is provided, this will be used as a
+maximum value against which to rescale results.
+If \code{TRUE}, results will be rescaled against a maximum value calculated from
+the specified tree sizes and topology, as specified in 'details' below.
+If \code{FALSE}, results will not be rescaled.}
 
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}
@@ -32,7 +42,8 @@ each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
 If \code{reportMatching = FALSE}, the functions return a numeric
 vector specifying the requested similarities or differences.
 
-If \code{reportMatching = TRUE}, the functions additionally return
+If \code{reportMatching = TRUE}, the functions additionally return details
+of which clades are matched in the optimal matching.
 }
 \description{
 Functions reporting the distances or similarities between pairs of trees,
@@ -65,7 +76,15 @@ The returned tree similarity measures state the amount of information,
 in bits, that the partitions in two trees hold in common
 when they are optimally matched, following Smith (forthcoming).
 The complementary tree distance measures state how much information is
-different in the partitions of two trees, under an optimal matching.
+different in the partitions of two trees, under an optimal matching.Normalization
+
+If \code{normalize = TRUE}, then results will be rescaled from zero to a nominal
+maximum value, calculated thus:
+\itemize{
+\item \code{MutualArborealInfo}: The information content of the most informative tree.
+To scale against the information content of the least informative tree, use
+\code{normalize = pmax}.
+}
 }
 \section{Functions}{
 \itemize{

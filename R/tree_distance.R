@@ -30,8 +30,24 @@
 #' The complementary tree distance measures state how much information is 
 #' different in the partitions of two trees, under an optimal matching.
 #' 
+#' ## Normalization
+#' 
+#' If `normalize = TRUE`, then results will be rescaled from zero to a nominal
+#' maximum value, calculated thus:
+#' 
+#' * `MutualArborealInfo`: The information content of the most informative tree.
+#' To scale against the information content of the least informative tree, use
+#' `normalize = pmax`.
+#' 
+#' 
 #' @param tree1,tree2 Trees of class `phylo`, with tips labelled identically,
 #' or lists of such trees to undergo pairwise comparison.
+#' 
+#' @param normalize If a numeric value is provided, this will be used as a 
+#' maximum value against which to rescale results.
+#' If `TRUE`, results will be rescaled against a maximum value calculated from
+#' the specified tree sizes and topology, as specified in 'details' below.
+#' If `FALSE`, results will not be rescaled.
 #' 
 #' @param reportMatching Logical specifying whether to return the clade
 #' matchings as an attribute of the score.
@@ -39,7 +55,8 @@
 #' @return If `reportMatching = FALSE`, the functions return a numeric 
 #' vector specifying the requested similarities or differences.
 #' 
-#' If `reportMatching = TRUE`, the functions additionally return 
+#' If `reportMatching = TRUE`, the functions additionally return details
+#' of which clades are matched in the optimal matching.
 #'  
 #' @examples {
 #'   tree1 <- ape::read.tree(text='((((a, b), c), d), (e, (f, (g, h))));')
@@ -79,16 +96,25 @@
 #' @family Tree distance
 #' @importFrom clue solve_LSAP
 #' @export
-MutualArborealInfo <- function (tree1, tree2, reportMatching = FALSE) {
-  CalculateTreeDistance(MutualArborealInfoSplits, tree1, tree2, 
-                        reportMatching=reportMatching)
+MutualArborealInfo <- function (tree1, tree2, normalize = FALSE,
+                                reportMatching = FALSE) {
+  unnormalized <- CalculateTreeDistance(MutualArborealInfoSplits, tree1, tree2, 
+                                        reportMatching=reportMatching)
+  
+  # Return:
+  NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
+                InfoInTree = PartitionInfo, Combine = pmin)
 }
 
 #' @describeIn MutualArborealInfo Variation of phylogenetic information between two trees
 #' @export
-VariationOfArborealInfo <- function (tree1, tree2, reportMatching = FALSE) {
-  mai <- MutualArborealInfo(tree1, tree2, reportMatching)
-  ret <- PartitionInfo(tree1) + PartitionInfo(tree2) - mai - mai
+VariationOfArborealInfo <- function (tree1, tree2, normalize = FALSE,
+                                     reportMatching = FALSE) {
+  mai <- MutualArborealInfo(tree1, tree2, normalize = FALSE, reportMatching)
+  maxi <- outer(PartitionInfo(tree1), PartitionInfo(tree2), '+')
+  ret <- maxi - mai - mai
+  ret <- NormalizeInfo(ret, tree1, tree2, infoInBoth = maxi,
+                InfoInTree = PartitionInfo, how=normalize)
   ret[ret < 1e-13] <- 0 # In case of floating point inaccuracy
   
   attributes(ret) <- attributes(mai)
@@ -98,68 +124,34 @@ VariationOfArborealInfo <- function (tree1, tree2, reportMatching = FALSE) {
 
 #' @describeIn MutualPartitionInfo Variation of partition information between two trees
 #' @export
-VariationOfPartitionInfo <- function (tree1, tree2, reportMatching = FALSE) {
-  mpi <- MutualPartitionInfo(tree1, tree2, reportMatching)
-  ret <- PartitionInfo(tree1) + PartitionInfo(tree2) - mpi - mpi
-  ret[ret < 1e-13] <- 0 # In case of floating point inaccuracy
+VariationOfPartitionInfo <- function (tree1, tree2, normalize = FALSE,
+                                      reportMatching = FALSE) {
+  mpi <- MutualPartitionInfo(tree1, tree2, normalize = FALSE, reportMatching)
   
+  treesIndependentInfo <- outer(PartitionInfo(tree1), PartitionInfo(tree2), '+')
+  ret <- treesIndependentInfo - mpi - mpi
+  ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
+                       infoInBoth = treesIndependentInfo,
+                       InfoInTree = PartitionInfo, Combine = '+')
+  
+  ret[ret < 1e-13] <- 0 # In case of floating point inaccuracy
   attributes(ret) <- attributes(mpi)
   # Return:
   ret
 }
 
-#' Clustering information content of all partitions within a tree
-#' 
-#' Sums the clustering information content (Meila 2007) across each partition within a 
-#' phylogenetic tree.  This value will be greater than the total information 
-#' content of the tree where a tree contains multiple partitions, as 
-#' these partitions will contain mutual information.
-#' 
-#' Note that Meila (2007) and Vinh _et al_. (2010) deal with entropy, which 
-#' denotes the bits necessary to denote the cluster to which each tip belongs,
-#' i.e. bits/tip (see Vinh _et al._ 2010).
-#' This function multiplies the entropy by the number of tips to produce a
-#' measure of the information content of the tree as a whole.
-#' 
-#' @param tree A tree of class `phylo`, a list of trees, or a `multiPhylo` object.
-#' 
-#' @return Information content, in bits.
-#' 
-#' @references \insertRef{Meila2007}{TreeSearch}
-#' @author Martin R. Smith
-#' @keywords internal
-#' @export
-ClusteringInfo <- function(tree) {
-  if (class(tree) == 'phylo') {
-    ClusteringInfoSplits(Tree2Splits(tree))
-  } else {
-    splits <- lapply(tree, Tree2Splits)
-    vapply(splits, ClusteringInfoSplits, double(1L))
-  }
-}
-
-#' @describeIn ClusteringInfo Takes splits instead of trees
-#' @export
-ClusteringInfoSplits <- function (splits) {
-  nTip <- nrow(splits)
-  inSplit <- colSums(splits)
-  splitP <- rbind(inSplit, nTip - inSplit) / nTip
-  
-  # Entropy measures the bits required to transmit the cluster label of each tip.
-  # The total information content is thus entropy * nTip.
-  # See Vinh (2010: p. 2840) 
-  # 
-  # Return:
-  sum(apply(splitP, 2, Entropy)) / log(2) * nTip
-}
-
 #' @describeIn MutualClusteringInfo Variation of clustering information between two trees
 #' @export
-VariationOfClusteringInfo <- function (tree1, tree2, reportMatching = FALSE) {
-  mci <- MutualClusteringInfo(tree1, tree2, reportMatching)
-  ret <- ClusteringInfo(tree1) + ClusteringInfo(tree2) - mci - mci
-  ret[ret < 1e-13] <- 0 # In case of floating point inaccuracy
+VariationOfClusteringInfo <- function (tree1, tree2, normalize = FALSE,
+                                       reportMatching = FALSE) {
+  mci <- MutualClusteringInfo(tree1, tree2, normalize = FALSE, reportMatching)
+  treesIndependentInfo <- outer(ClusteringInfo(tree1), ClusteringInfo(tree2), '+')
+  ret <- treesIndependentInfo - mci - mci
+  ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
+                       infoInBoth = treesIndependentInfo,
+                       InfoInTree = ClusteringInfo, Combine = '+')
   
+  ret[ret < 1e-13] <- 0 # In case of floating point inaccuracy
   attributes(ret) <- attributes(mci)
   # Return:
   ret
@@ -210,9 +202,13 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+3) {
 #' 
 #' @author Martin R. Smith
 #' @export
-NyeTreeSimilarity <- function (tree1, tree2,
+NyeTreeSimilarity <- function (tree1, tree2, normalize = FALSE,
                              reportMatching = FALSE) {
-  CalculateTreeDistance(NyeSplitSimilarity, tree1, tree2, reportMatching)
+  unnormalized <- CalculateTreeDistance(NyeSplitSimilarity, tree1, tree2, 
+                                        normalize, reportMatching)
+  
+  NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
+                InfoInTree = function (tr) tr$Nnode - 2L, Combine = max)
 }
 
 #' Mutual Partition Information
@@ -226,8 +222,14 @@ NyeTreeSimilarity <- function (tree1, tree2,
 #' 
 #' @author Martin R. Smith
 #' @export
-MutualPartitionInfo <- function (tree1, tree2, reportMatching = FALSE) {
-  CalculateTreeDistance(MutualPartitionInfoSplits, tree1, tree2, reportMatching)
+MutualPartitionInfo <- function (tree1, tree2, normalize = FALSE, 
+                                 reportMatching = FALSE) {
+  unnormalized <- CalculateTreeDistance(MutualPartitionInfoSplits, tree1, tree2,
+                                        reportMatching)
+  
+  # Return:
+  NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
+                InfoInTree = PartitionInfo, Combine = pmin)
 }
 
 #' Mutual Clustering Information
@@ -244,8 +246,12 @@ MutualPartitionInfo <- function (tree1, tree2, reportMatching = FALSE) {
 #' 
 #' @author Martin R. Smith
 #' @export
-MutualClusteringInfo <- function (tree1, tree2, reportMatching = FALSE) {
-  CalculateTreeDistance(MutualClusteringInfoSplits, tree1, tree2, reportMatching)
+MutualClusteringInfo <- function (tree1, tree2, normalize = FALSE,
+                                  reportMatching = FALSE) {
+  unnormalized <- CalculateTreeDistance(MutualClusteringInfoSplits, tree1, tree2,
+                                        reportMatching)
+  NormalizeInfo(unnormalized, tree1, tree2, ClusteringInfo, 
+                how = normalize, Combine = pmin)
 }
 
 #' Matching Split Distance
@@ -260,89 +266,22 @@ MutualClusteringInfo <- function (tree1, tree2, reportMatching = FALSE) {
 #' 
 #' @author Martin R. Smith
 #' @export
-MatchingSplitDistance <- function (tree1, tree2,
+MatchingSplitDistance <- function (tree1, tree2, normalize = FALSE,
                              reportMatching = FALSE) {
-  CalculateTreeDistance(MatchingSplitDistanceSplits, tree1, tree2, reportMatching)
-}
-
-#' Wrapper for tree distance calculations
-#' 
-#' Calls tree distance functions from trees or lists of trees
-#' 
-#' @inheritParams MutualArborealInfo
-#' @param Func Tree distance function.
-#' @param \dots Additional arguments to `Func`.
-#' 
-#' @author Martin R. Smith
-#' @keywords internal
-#' @export
-CalculateTreeDistance <- function (Func, tree1, tree2, reportMatching, ...) {
-  if (class(tree1) == 'phylo') {
-    if (class(tree2) == 'phylo') {
-      if (length(setdiff(tree1$tip.label, tree2$tip.label)) > 0) {
-        stop("Tree tips must bear identical labels")
-      }
-      
-      Func(Tree2Splits(tree1), Tree2Splits(tree2), reportMatching, ...)
-    } else {
-      splits1 <- Tree2Splits(tree1)
-      vapply(tree2, 
-             function (tr2) Func(splits1, Tree2Splits(tr2), ...),
-             double(1))
-    }
-  } else {
-    if (class(tree2) == 'phylo') {
-      splits1 <- Tree2Splits(tree2)
-      vapply(tree1, 
-             function (tr2) Func(splits1, Tree2Splits(tr2), ...),
-             double(1))
-    } else {
-      splits1 <- lapply(tree1, Tree2Splits)
-      splits2 <- lapply(tree2, Tree2Splits)
-      matrix(mapply(Func, rep(splits1, each=length(splits2)), splits2),
-             length(splits2), length(splits1),
-             dimnames = list(names(tree2), names(tree1)), ...)
-    }
-  }
-}
-
-#' Information content of partitions within a tree
-#' 
-#' Sums the phylogenetic information content for all partitions within a 
-#' phylogenetic tree.  This value will be greater than the total information 
-#' content of the tree where a tree contains multiple partitions, as 
-#' these partitions will contain mutual information
-#' 
-#' @param tree A tree of class `phylo`, a list of trees, or a `multiPhylo` object.
-#' 
-#' @author Martin R. Smith
-#' @keywords internal
-#' @export
-PartitionInfo <- function(tree) {
-  if (class(tree) == 'phylo') {
-    PartitionInfoSplits(Tree2Splits(tree))
-  } else {
-    splits <- lapply(tree, Tree2Splits)
-    vapply(splits, PartitionInfoSplits, double(1L))
-  }
-}
-
-#' @describeIn PartitionInfo Takes splits instead of trees
-#' @export
-PartitionInfoSplits <- function(splits) {
-  nTerminals <- nrow(splits)
-  inSplit <- colSums(splits)
+  unnormalized <- CalculateTreeDistance(MatchingSplitDistanceSplits, tree1, tree2, 
+                        reportMatching)
   
-  sum(vapply(inSplit, LnRooted.int, 0) + 
-      + vapply(nTerminals - inSplit,  LnRooted.int, 0)
-      - LnUnrooted.int(nTerminals)
-  ) / -log(2)
+  # Return:
+  NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
+                InfoInTree = function (X) stop("Please specify a function to generate a normalizing constant"),
+                Combine = max)
 }
 
 #' @describeIn MutualArborealInfo Takes splits instead of trees
 #' @template splits12params
 #' @export
-MutualArborealInfoSplits <- function (splits1, splits2, reportMatching = FALSE) {
+MutualArborealInfoSplits <- function (splits1, splits2, normalize = TRUE,
+                                      reportMatching = FALSE) {
   
   dimSplits1 <- dim(splits1)
   dimSplits2 <- dim(splits2)
@@ -352,7 +291,9 @@ MutualArborealInfoSplits <- function (splits1, splits2, reportMatching = FALSE) 
   }
   lnUnrootedN <- LnUnrooted.int(nTerminals)
   
-  if (dimSplits1[2] < dimSplits2[2]) {
+  swapSplits <- (dimSplits1[2] > dimSplits2[2])
+  if (swapSplits) {
+    # solve_LDAP expects splits1 to be no larger than splits2
     tmp <- splits1
     splits1 <- splits2
     splits2 <- tmp
@@ -360,20 +301,23 @@ MutualArborealInfoSplits <- function (splits1, splits2, reportMatching = FALSE) 
     tmp <- dimSplits1
     dimSplits1 <- dimSplits2
     dimSplits2 <- tmp
+    
+    remove(tmp)
   }
   
-  taxonNames <- rownames(splits1) 
+  taxonNames1 <- rownames(splits1)
+  taxonNames2 <- rownames(splits2)
   
-  if (!is.null(taxonNames)) {
-    splits2 <- unname(splits2[rownames(splits1), , drop=FALSE])
-    splits1 <- unname(splits1) # split1[split2] faster without names
+  if (!is.null(taxonNames2)) {
+    splits2 <- unname(splits2[taxonNames1, , drop=FALSE])
+    splits1 <- unname(splits1) # split2[split1] faster without names
   }
   
   nSplits1 <- dimSplits1[2]
   nSplits2 <- dimSplits2[2]
+  if (nSplits1 == 0) return (0)
   inSplit1 <- colSums(splits1)
   inSplit2 <- colSums(splits2)
-  notInSplit1 <- nTerminals - inSplit1 # TODO delete, and remove where used below?
   notInSplit2 <- nTerminals - inSplit2
   
   OneOverlap <- function(A1, A2) {
@@ -404,46 +348,27 @@ MutualArborealInfoSplits <- function (splits1, splits2, reportMatching = FALSE) 
       OneOverlap(inSplit1[i], notInSplit2[j])
       
     } else {
-      #in1 <- inSplit1[i]
-      #out1 <- notInSplit1[i]
-      #in2 <- inSplit2[j]
-      #out2 <- notInSplit2[j]
-      #splitTwoMoreEven <- min(in1, out1) < min(in2, out2)
-      #contradictions <- c(min(sum(oneAndTwo), sum(notOneNotTwo)), 
-      #                    min(sum(notOneAndTwo), sum(oneNotTwo)))
-      #contradictionToFix <- which.min(contradictions)
-      #
-      #infoGainedBySwap <- if (contradictionToFix == 1L) {
-      #  OneOverlap(in1, out2)
-      #} else {
-      #  OneOverlap(in1, in2)
-      #}
-      #
-      #contradictionSize <- contradictions[contradictionToFix]
-      #infoLostBySwap <- if (splitTwoMoreEven) {
-      #  lchoose(in1, contradictionSize) + lchoose(out1, contradictionSize)
-      #} else {
-      #  lchoose(in2, contradictionSize) + lchoose(out2, contradictionSize)
-      #}
-      #c(SwapGain = infoGainedBySwap, SwapLoss = infoLostBySwap,
-      #  SwapNet = infoGainedBySwap - infoLostBySwap)
-      #
-      #
-      #contradictions <- c(sum(oneAndTwo), sum(notOneNotTwo), 
-      #                    sum(notOneAndTwo), sum(oneNotTwo))
       lnUnrootedN
     }
-  }, rep(seq_len(nSplits1), each=nSplits2), seq_len(nSplits2)
-  ) - lnUnrootedN) / -log(2), nSplits2, nSplits1)
+  }, seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
+  ) - lnUnrootedN) / -log(2), nSplits1, nSplits2)
   
-  if (nSplits2 == 1) {
+  if (nSplits1 == 1) {
     max(pairScores)
   } else {
     optimalMatching <- solve_LSAP(pairScores, TRUE)
-    
+
     # Return:
     ret <- sum(pairScores[matrix(c(seq_along(optimalMatching), optimalMatching), ncol=2L)])
     if (reportMatching) {
+      if (!is.null(taxonNames2)) {
+        attr(ret, 'matchedSplits') <- 
+        if (swapSplits) {
+          ReportMatching(splits2, splits1[, optimalMatching], taxonNames1)
+        } else {
+          ReportMatching(splits1, splits2[, optimalMatching], taxonNames1)
+        }
+      }
       attr(ret, 'matching') <- optimalMatching
       attr(ret, 'pairScores') <- pairScores
       ret
@@ -456,7 +381,8 @@ MutualArborealInfoSplits <- function (splits1, splits2, reportMatching = FALSE) 
 
 #' @describeIn MutualArborealInfo Calculate variation of arboreal information from splits
 #' @export
-VariationOfArborealInfoSplits <- function (splits1, splits2, reportMatching = FALSE) {
+VariationOfArborealInfoSplits <- function (splits1, splits2, normalize = TRUE,
+                                           reportMatching = FALSE) {
   
   dimSplits1 <- dim(splits1)
   dimSplits2 <- dim(splits2)
@@ -466,7 +392,9 @@ VariationOfArborealInfoSplits <- function (splits1, splits2, reportMatching = FA
   }
   lnUnrootedN <- LnUnrooted.int(nTerminals)
   
-  if (dimSplits1[2] < dimSplits2[2]) {
+  swapSplits <- (dimSplits1[2] > dimSplits2[2])
+  if (swapSplits) {
+    # solve_LDAP expects splits1 to be no larger than splits2
     tmp <- splits1
     splits1 <- splits2
     splits2 <- tmp
@@ -474,13 +402,16 @@ VariationOfArborealInfoSplits <- function (splits1, splits2, reportMatching = FA
     tmp <- dimSplits1
     dimSplits1 <- dimSplits2
     dimSplits2 <- tmp
+    
+    remove(tmp)
   }
   
-  taxonNames <- rownames(splits1) 
+  taxonNames1 <- rownames(splits1)
+  taxonNames2 <- rownames(splits2)
   
-  if (!is.null(taxonNames)) {
-    splits2 <- unname(splits2[rownames(splits1), , drop=FALSE])
-    splits1 <- unname(splits1) # split1[split2] faster without names
+  if (!is.null(taxonNames2)) {
+    splits2 <- unname(splits2[taxonNames1, , drop=FALSE])
+    splits1 <- unname(splits1) # split2[split1] faster without names
   }
   
   nSplits1 <- dimSplits1[2]
@@ -525,12 +456,12 @@ VariationOfArborealInfoSplits <- function (splits1, splits2, reportMatching = FA
         lnUnrootedN
       }
     logTrees1[i] + logTrees2[j] - logMutualTrees - logMutualTrees
-  }, rep(seq_len(nSplits1), each=nSplits2), seq_len(nSplits2)
-  )) / -log(2), nSplits2, nSplits1)
+  }, seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
+  )) / -log(2), nSplits1, nSplits2)
   
   
   
-  if (nSplits2 == 1) {
+  if (nSplits1 == 1) {
     min(pairScores)
   } else {
     optimalMatching <- solve_LSAP(pairScores, FALSE)
@@ -538,6 +469,14 @@ VariationOfArborealInfoSplits <- function (splits1, splits2, reportMatching = FA
     # Return:
     ret <- sum(pairScores[matrix(c(seq_along(optimalMatching), optimalMatching), ncol=2L)])
     if (reportMatching) {
+      if (!is.null(taxonNames2)) {
+        attr(ret, 'matchedSplits') <- 
+          if (swapSplits) {
+            ReportMatching(splits2, splits1[, optimalMatching], taxonNames1)
+          } else {
+            ReportMatching(splits1, splits2[, optimalMatching], taxonNames1)
+          }
+      }
       attr(ret, 'matching') <- optimalMatching
       attr(ret, 'pairScores') <- pairScores
       ret
@@ -550,7 +489,8 @@ VariationOfArborealInfoSplits <- function (splits1, splits2, reportMatching = FA
 #' @describeIn NyeTreeSimilarity Takes splits instead of trees
 #' @inheritParams MutualArborealInfoSplits
 #' @export
-NyeSplitSimilarity <- function (splits1, splits2, reportMatching = FALSE) {
+NyeSplitSimilarity <- function (splits1, splits2, normalize = TRUE,
+                                reportMatching = FALSE) {
   
   dimSplits1 <- dim(splits1)
   dimSplits2 <- dim(splits2)
@@ -578,6 +518,7 @@ NyeSplitSimilarity <- function (splits1, splits2, reportMatching = FALSE) {
   
   nSplits1 <- dimSplits1[2]
   nSplits2 <- dimSplits2[2]
+  if (nSplits2 == 0) return (0)
   
   Ars <- function (pir, pjs) {
     sum(pir[pjs]) / sum(pir | pjs)
@@ -626,7 +567,9 @@ MutualPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE)
     stop("Split rows must bear identical labels")
   }
   
-  if (dimSplits1[2] < dimSplits2[2]) {
+  swapSplits <- (dimSplits1[2] > dimSplits2[2])
+  if (swapSplits) {
+    # solve_LDAP expects splits1 to be no larger than splits2
     tmp <- splits1
     splits1 <- splits2
     splits2 <- tmp
@@ -634,18 +577,21 @@ MutualPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE)
     tmp <- dimSplits1
     dimSplits1 <- dimSplits2
     dimSplits2 <- tmp
+    
+    remove(tmp)
   }
   
-  taxonNames <- rownames(splits1) 
+  taxonNames1 <- rownames(splits1)
+  taxonNames2 <- rownames(splits2)
   
-  if (!is.null(taxonNames)) {
-    splits2 <- unname(splits2[rownames(splits1), , drop=FALSE])
-    splits1 <- unname(splits1) # split1[split2] faster without names
+  if (!is.null(taxonNames2)) {
+    splits2 <- unname(splits2[taxonNames1, , drop=FALSE])
+    splits1 <- unname(splits1) # split2[split1] faster without names
   }
   
   nSplits1 <- dimSplits1[2]
   nSplits2 <- dimSplits2[2]
-  if (nSplits2 == 0) return (0)
+  if (nSplits1 == 0) return (0)
   
   AgreementInfoNats <- function (splitI, agree) {
     inAgreement <- sum(agree)
@@ -662,10 +608,10 @@ MutualPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE)
     max(AgreementInfoNats(splitI0, agree1),
         AgreementInfoNats(splitI0, !agree1))
     
-  }, rep(seq_len(nSplits1), each=nSplits2), seq_len(nSplits2)
-  )), nSplits2, nSplits1) / log(2)
+  }, seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
+  )), nSplits1, nSplits2) / log(2)
   
-  if (nSplits2 == 1) {
+  if (nSplits1 == 1) {
     min(pairScores)
   } else {
     optimalMatching <- solve_LSAP(pairScores, TRUE)
@@ -685,7 +631,9 @@ MutualPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE)
 #' @describeIn MutualPartitionInfo Takes splits instead of trees
 #' @inheritParams MutualArborealInfoSplits
 #' @export
-MutualClusteringInfoSplits <- function (splits1, splits2, reportMatching = FALSE) {
+MutualClusteringInfoSplits <- function (splits1, splits2, normalize = TRUE,
+                                        reportMatching = FALSE) {
+  
   
   dimSplits1 <- dim(splits1)
   dimSplits2 <- dim(splits2)
@@ -694,7 +642,9 @@ MutualClusteringInfoSplits <- function (splits1, splits2, reportMatching = FALSE
     stop("Split rows must bear identical labels")
   }
   
-  if (dimSplits1[2] < dimSplits2[2]) {
+  swapSplits <- (dimSplits1[2] > dimSplits2[2])
+  if (swapSplits) {
+    # solve_LDAP expects splits1 to be no larger than splits2
     tmp <- splits1
     splits1 <- splits2
     splits2 <- tmp
@@ -702,26 +652,29 @@ MutualClusteringInfoSplits <- function (splits1, splits2, reportMatching = FALSE
     tmp <- dimSplits1
     dimSplits1 <- dimSplits2
     dimSplits2 <- tmp
+    
+    remove(tmp)
   }
   
-  taxonNames <- rownames(splits1) 
+  taxonNames1 <- rownames(splits1)
+  taxonNames2 <- rownames(splits2)
   
-  if (!is.null(taxonNames)) {
-    splits2 <- unname(splits2[rownames(splits1), , drop=FALSE])
-    splits1 <- unname(splits1) # split1[split2] faster without names
+  if (!is.null(taxonNames2)) {
+    splits2 <- unname(splits2[taxonNames1, , drop=FALSE])
+    splits1 <- unname(splits1) # split2[split1] faster without names
   }
   
   nSplits1 <- dimSplits1[2]
   nSplits2 <- dimSplits2[2]
-  if (nSplits2 == 0) return (0)
+  if (nSplits1 == 0) return (0)
   
   
   pairScores <- matrix((mapply(function(i, j) {
     MeilaMutualInformation(splits1[, i], splits2[, j])
-  }, rep(seq_len(nSplits1), each=nSplits2), seq_len(nSplits2)
-  )), nSplits2, nSplits1) / log(2)
+  }, seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
+  )), nSplits1, nSplits2) / log(2)
   
-  if (nSplits2 == 1) {
+  if (nSplits1 == 1) {
     min(pairScores)
   } else {
     optimalMatching <- solve_LSAP(pairScores, TRUE)
@@ -742,7 +695,8 @@ MutualClusteringInfoSplits <- function (splits1, splits2, reportMatching = FALSE
 #' @inheritParams MutualArborealInfoSplits
 #' @importFrom clue solve_LSAP
 #' @export
-MatchingSplitDistanceSplits <- function (splits1, splits2, reportMatching = FALSE) {
+MatchingSplitDistanceSplits <- function (splits1, splits2, normalize = TRUE, 
+                                         reportMatching = FALSE) {
   
   dimSplits1 <- dim(splits1)
   dimSplits2 <- dim(splits2)
@@ -751,7 +705,9 @@ MatchingSplitDistanceSplits <- function (splits1, splits2, reportMatching = FALS
     stop("Split rows must bear identical labels")
   }
   
-  if (dimSplits1[2] < dimSplits2[2]) {
+  swapSplits <- (dimSplits1[2] > dimSplits2[2])
+  if (swapSplits) {
+    # solve_LDAP expects splits1 to be no larger than splits2
     tmp <- splits1
     splits1 <- splits2
     splits2 <- tmp
@@ -759,17 +715,21 @@ MatchingSplitDistanceSplits <- function (splits1, splits2, reportMatching = FALS
     tmp <- dimSplits1
     dimSplits1 <- dimSplits2
     dimSplits2 <- tmp
+    
+    remove(tmp)
   }
   
-  taxonNames <- rownames(splits1) 
+  taxonNames1 <- rownames(splits1)
+  taxonNames2 <- rownames(splits2)
   
-  if (!is.null(taxonNames)) {
-    splits2 <- unname(splits2[rownames(splits1), , drop=FALSE])
-    splits1 <- unname(splits1) # split1[split2] faster without names
+  if (!is.null(taxonNames2)) {
+    splits2 <- unname(splits2[taxonNames1, , drop=FALSE])
+    splits1 <- unname(splits1) # split2[split1] faster without names
   }
   
   nSplits1 <- dimSplits1[2]
   nSplits2 <- dimSplits2[2]
+  if (nSplits1 == 0) return (0)
   
   SymmetricDifference <- function (A, B) {
     (A & !B) | (!A & B)
@@ -788,10 +748,10 @@ MatchingSplitDistanceSplits <- function (splits1, splits2, reportMatching = FALS
       sum(SymmetricDifference(A1, B2), SymmetricDifference(B1, A2))
     ) / 2L
       
-  }, rep(seq_len(nSplits1), each=nSplits2), seq_len(nSplits2)
-  )), nSplits2, nSplits1)
+  },  seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
+  )), nSplits1, nSplits2)
   
-  if (nSplits2 == 1) {
+  if (nSplits1 == 1) {
     min(pairScores)
   } else {
     optimalMatching <- solve_LSAP(pairScores, FALSE)
@@ -846,7 +806,8 @@ SplitsCompatible <- function (split1, split2) {
 #' @importFrom colorspace qualitative_hcl
 #' @importFrom graphics par
 #' @export
-VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE, Plot = plot.phylo, ...) {
+VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE, 
+                              Plot = plot.phylo, ...) {
   
   splits1 <- Tree2Splits(tree1)
   edge1 <- tree1$edge
