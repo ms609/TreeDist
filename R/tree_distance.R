@@ -547,6 +547,14 @@ NyeSplitSimilarity <- function (splits1, splits2, normalize = TRUE,
     # Return:
     ret <- sum(pairScores[matrix(c(seq_along(optimalMatching), optimalMatching), ncol=2L)])
     if (reportMatching) {
+      if (!is.null(taxonNames2)) {
+        attr(ret, 'matchedSplits') <- 
+          if (swapSplits) {
+            ReportMatching(splits2, splits1[, optimalMatching], taxonNames1)
+          } else {
+            ReportMatching(splits1, splits2[, optimalMatching], taxonNames1)
+          }
+      }
       attr(ret, 'matching') <- optimalMatching
       attr(ret, 'pairScores') <- pairScores
       ret
@@ -620,6 +628,14 @@ MutualPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE)
     # Return:
     ret <- sum(pairScores[matrix(c(seq_along(optimalMatching), optimalMatching), ncol=2L)])
     if (reportMatching) {
+      if (!is.null(taxonNames2)) {
+        attr(ret, 'matchedSplits') <- 
+          if (swapSplits) {
+            ReportMatching(splits2, splits1[, optimalMatching], taxonNames1)
+          } else {
+            ReportMatching(splits1, splits2[, optimalMatching], taxonNames1)
+          }
+      }
       attr(ret, 'matching') <- optimalMatching
       attr(ret, 'pairScores') <- pairScores
       ret
@@ -683,6 +699,14 @@ MutualClusteringInfoSplits <- function (splits1, splits2, normalize = TRUE,
     # Return:
     ret <- sum(pairScores[matrix(c(seq_along(optimalMatching), optimalMatching), ncol=2L)])
     if (reportMatching) {
+      if (!is.null(taxonNames2)) {
+        attr(ret, 'matchedSplits') <- 
+          if (swapSplits) {
+            ReportMatching(splits2, splits1[, optimalMatching], taxonNames1)
+          } else {
+            ReportMatching(splits1, splits2[, optimalMatching], taxonNames1)
+          }
+      }
       attr(ret, 'matching') <- optimalMatching
       attr(ret, 'pairScores') <- pairScores
       ret
@@ -760,6 +784,14 @@ MatchingSplitDistanceSplits <- function (splits1, splits2, normalize = TRUE,
     # Return:
     ret <- sum(pairScores[matrix(c(seq_along(optimalMatching), optimalMatching), ncol=2L)])
     if (reportMatching) {
+      if (!is.null(taxonNames2)) {
+        attr(ret, 'matchedSplits') <- 
+          if (swapSplits) {
+            ReportMatching(splits2, splits1[, optimalMatching], taxonNames1)
+          } else {
+            ReportMatching(splits1, splits2[, optimalMatching], taxonNames1)
+          }
+      }
       attr(ret, 'matching') <- optimalMatching
       attr(ret, 'pairScores') <- pairScores
       ret
