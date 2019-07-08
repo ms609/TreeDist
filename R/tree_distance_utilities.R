@@ -16,7 +16,8 @@ CalculateTreeDistance <- function (Func, tree1, tree2, reportMatching, ...) {
         stop("Tree tips must bear identical labels")
       }
       
-      Func(Tree2Splits(tree1), Tree2Splits(tree2), reportMatching, ...)
+      Func(Tree2Splits(tree1), Tree2Splits(tree2), 
+           reportMatching = reportMatching, ...)
     } else {
       splits1 <- Tree2Splits(tree1)
       vapply(tree2, 
@@ -82,10 +83,10 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
 
 ReportMatching <- function (clades1, clades2, taxonNames) {
   clades1 <- apply(clades1, 2, function (x) paste0(
-    paste(taxonNames[x], collapse=' '), ':', 
+    paste(taxonNames[x], collapse=' '), ' : ', 
     paste(taxonNames[!x], collapse=' ')))
   clades2 <- apply(clades2, 2, function (x) paste0(
-    paste(taxonNames[x], collapse=' '), ':', 
+    paste(taxonNames[x], collapse=' '), ' : ', 
     paste(taxonNames[!x], collapse=' ')))
   
   # Return:

@@ -110,7 +110,8 @@ MutualArborealInfo <- function (tree1, tree2, normalize = FALSE,
 #' @export
 VariationOfArborealInfo <- function (tree1, tree2, normalize = FALSE,
                                      reportMatching = FALSE) {
-  mai <- MutualArborealInfo(tree1, tree2, normalize = FALSE, reportMatching)
+  mai <- MutualArborealInfo(tree1, tree2, normalize = FALSE,
+                            reportMatching = reportMatching)
   maxi <- outer(PartitionInfo(tree1), PartitionInfo(tree2), '+')
   ret <- maxi - mai - mai
   ret <- NormalizeInfo(ret, tree1, tree2, infoInBoth = maxi,
