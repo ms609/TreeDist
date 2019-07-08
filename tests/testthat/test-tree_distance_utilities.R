@@ -11,3 +11,21 @@ test_that('Tree normalization works', {
                NormalizeInfo(1:20, c(1, 1, 10, 10, 10), c(1, 1, 10, 10), 
                              InfoInTree = I, Combine = pmax))
 })
+
+test_that('Matches are reported', {
+  Test <- function (Func) {
+    at <- attributes(Func(treeSym8, treeBal8, reportMatching = TRUE))
+    expect_equal(3L, length(at))
+    expect_equal(c(1L, 5L, 3L, 2L, 4L), as.integer(at$matching))
+    expect_equal('a b : e f g h c d => a b : e f g h c d', at$matchedSplits[5])
+  }
+  Test(MutualArborealInfo)
+  Test(VariationOfArborealInfo)
+  Test(MutualPartitionInfo)
+  Test(VariationOfPartitionInfo)
+  Test(MutualClusteringInfo)
+  Test(VariationOfClusteringInfo)
+  Test(MutualArborealInfo)
+  Test(NyeTreeSimilarity)
+  Test(MatchingSplitDistance)
+})
