@@ -135,11 +135,11 @@ test_that("twelve-tip trees are randomly scored", {
   suppressWarnings(RNGversion("3.5.0")) # Until we can require R3.6.0
   set.seed(0)
   
-  nTrees <- 12000
+  nTrees <- 24000 # 12000 seems to throw false +ve too often
   stringency <- 0.005
   nTip <- 12
   morphyObj <- MorphyWith('000000011111;')
-  expectedBounds <- qbinom(c(stringency, 1-stringency), nTrees, 
+  expectedBounds <- qbinom(c(stringency, 1 - stringency), nTrees, 
                            NUnrooted(7) * (2 * 7 - 3) *
                            NUnrooted(5) * (2 * 5 - 3) / NUnrooted(nTip))
   
@@ -147,7 +147,7 @@ test_that("twelve-tip trees are randomly scored", {
   # table(scores)
   
   expect_true(max(scores) == 5)
-  nScoring1 <- sum(scores==1)
+  nScoring1 <- sum(scores == 1)
   expect_true(expectedBounds[1] < nScoring1)
   expect_true(expectedBounds[2] > nScoring1)  
 })
