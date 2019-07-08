@@ -244,8 +244,8 @@ MutualPartitionInfo <- function (tree1, tree2, reportMatching = FALSE) {
 #' 
 #' @author Martin R. Smith
 #' @export
-MutualClusteringInfo <- function (tree1, tree2, reportMatching = FALSE, ...) {
-  CalculateTreeDistance(MutualClusteringInfoSplits, tree1, tree2, reportMatching, ...)
+MutualClusteringInfo <- function (tree1, tree2, reportMatching = FALSE) {
+  CalculateTreeDistance(MutualClusteringInfoSplits, tree1, tree2, reportMatching)
 }
 
 #' Matching Split Distance
