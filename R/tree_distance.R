@@ -268,7 +268,7 @@ MutualClusteringInfo <- function (tree1, tree2, normalize = FALSE,
 #' @author Martin R. Smith
 #' @export
 MatchingSplitDistance <- function (tree1, tree2, normalize = FALSE,
-                             reportMatching = FALSE) {
+                                   reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(MatchingSplitDistanceSplits, tree1, tree2, 
                         reportMatching)
   

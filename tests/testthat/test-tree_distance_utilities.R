@@ -12,7 +12,12 @@ test_that('Tree normalization works', {
                              InfoInTree = I, Combine = pmax))
 })
 
+
 test_that('Matches are reported', {
+  # Trees copied from test-tree_distance.R
+  treeSym8 <- ape::read.tree(text='((e, (f, (g, h))), (((a, b), c), d));')
+  treeBal8 <- ape::read.tree(text='(((e, f), (g, h)), ((a, b), (c, d)));')
+  
   Test <- function (Func) {
     at <- attributes(Func(treeSym8, treeBal8, reportMatching = TRUE))
     expect_equal(3L, length(at))
@@ -27,5 +32,10 @@ test_that('Matches are reported', {
   Test(VariationOfClusteringInfo)
   Test(MutualArborealInfo)
   Test(NyeTreeSimilarity)
-  Test(MatchingSplitDistance)
+
+  # Matching Split Distance matches differently:  
+  at <- attributes(MatchingSplitDistance(treeSym8, treeBal8, reportMatching = TRUE))
+  expect_equal(3L, length(at))
+  expect_equal(c(1:3, 5:4), as.integer(at$matching))
+  expect_equal('a b : e f g h c d => a b : e f g h c d', at$matchedSplits[5])
 })
