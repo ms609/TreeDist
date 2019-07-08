@@ -221,42 +221,42 @@ MeilaMutualInformation <- function (split1, split2) {
   n * mutualInformation
 }
 
-#' Probability of matching this well
-#' 
-#' Probability that two random splits of the sizes provided will be at least
-#' as similar as the two specified.
-#'
-#' @template split12Params
-#' 
-#' @return The proportion of permissable informative splits 
-#' splitting the terminals into bipartitions of the sizes given,
-#'  that match as well as `split1` and `split2` do.
-#'  
-AnySizeSplitMatchProbability <- function (split1, split2) {
-  
-  observedEntropy <- SplitEntropy(split1, split2)
-  
-  possibleEntropies <- AllEntropies(length(split1))
-  
-  nArrangements <- iMax - minA1B2 + 1L
-
-  arrangements <- vapply(minA1B2:iMax,
-                         function (i) c(A1 - i, i, i + A2 - A1, B2 - i),
-                         double(4))
-  
-  H <- function(p) -sum(p[p > 0] * log(p[p > 0]))
-  jointEntropies <- apply(arrangements / n, 2, H)
-  # mutualInformation <- H(c(A1,n - A1) / n) + H(c(A2, B2) / n) - jointEntropies
-  
-  # Meila 2007; less is best
-  variationOfInformation <- jointEntropies+ jointEntropies - 
-    (H(c(A1,n - A1) / n) + H(c(A2, B2) / n))
-  
-  choices <- apply(arrangements, 2, NPartitionPairs)
-  
-  # Return:
-  sum(choices[ranking <= ranking[partitions[1, 2] + 1L - minA1B2]]) / choose(n, A1)
-}
+# # #' Probability of matching this well
+# # #' 
+# # #' Probability that two random splits of the sizes provided will be at least
+# # #' as similar as the two specified.
+# # #'
+# # #' @template split12Params
+# # #' 
+# # #' @return The proportion of permissable informative splits 
+# # #' splitting the terminals into bipartitions of the sizes given,
+# # #'  that match as well as `split1` and `split2` do.
+# # #'  
+# # AnySizeSplitMatchProbability <- function (split1, split2) {
+# #   
+# #   observedEntropy <- SplitEntropy(split1, split2)
+# #   
+# #   possibleEntropies <- AllEntropies(length(split1))
+# #   
+# #   nArrangements <- iMax - minA1B2 + 1L
+# # 
+# #   arrangements <- vapply(minA1B2:iMax,
+# #                          function (i) c(A1 - i, i, i + A2 - A1, B2 - i),
+# #                          double(4))
+# #   
+# #   H <- function(p) -sum(p[p > 0] * log(p[p > 0]))
+# #   jointEntropies <- apply(arrangements / n, 2, H)
+# #   # mutualInformation <- H(c(A1,n - A1) / n) + H(c(A2, B2) / n) - jointEntropies
+# #   
+# #   # Meila 2007; less is best
+# #   variationOfInformation <- jointEntropies+ jointEntropies - 
+# #     (H(c(A1,n - A1) / n) + H(c(A2, B2) / n))
+# #   
+# #   choices <- apply(arrangements, 2, NPartitionPairs)
+# #   
+# #   # Return:
+# #   sum(choices[ranking <= ranking[partitions[1, 2] + 1L - minA1B2]]) / choose(n, A1)
+# # }
 
 
 #' Probability of matching this well
