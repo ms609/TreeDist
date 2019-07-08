@@ -206,7 +206,7 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+3) {
 NyeTreeSimilarity <- function (tree1, tree2, normalize = FALSE,
                              reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(NyeSplitSimilarity, tree1, tree2, 
-                                        normalize, reportMatching)
+                                        reportMatching)
   
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
                 InfoInTree = function (tr) tr$Nnode - 2L, Combine = max)
@@ -499,8 +499,11 @@ NyeSplitSimilarity <- function (splits1, splits2, normalize = TRUE,
   if (dimSplits2[1] != nTerminals) {
     stop("Split rows must bear identical labels")
   }
+  lnUnrootedN <- LnUnrooted.int(nTerminals)
   
-  if (dimSplits1[2] < dimSplits2[2]) {
+  swapSplits <- (dimSplits1[2] > dimSplits2[2])
+  if (swapSplits) {
+    # solve_LDAP expects splits1 to be no larger than splits2
     tmp <- splits1
     splits1 <- splits2
     splits2 <- tmp
@@ -508,18 +511,21 @@ NyeSplitSimilarity <- function (splits1, splits2, normalize = TRUE,
     tmp <- dimSplits1
     dimSplits1 <- dimSplits2
     dimSplits2 <- tmp
+    
+    remove(tmp)
   }
   
-  taxonNames <- rownames(splits1) 
+  taxonNames1 <- rownames(splits1)
+  taxonNames2 <- rownames(splits2)
   
-  if (!is.null(taxonNames)) {
-    splits2 <- unname(splits2[rownames(splits1), , drop=FALSE])
-    splits1 <- unname(splits1) # split1[split2] faster without names
+  if (!is.null(taxonNames2)) {
+    splits2 <- unname(splits2[taxonNames1, , drop=FALSE])
+    splits1 <- unname(splits1) # split2[split1] faster without names
   }
   
   nSplits1 <- dimSplits1[2]
   nSplits2 <- dimSplits2[2]
-  if (nSplits2 == 0) return (0)
+  if (nSplits1 == 0) return (0)
   
   Ars <- function (pir, pjs) {
     sum(pir[pjs]) / sum(pir | pjs)
@@ -536,10 +542,10 @@ NyeSplitSimilarity <- function (splits1, splits2, normalize = TRUE,
       min(Ars(splitI0, splitJ1), Ars(splitI1, splitJ0))
     )
     
-  }, rep(seq_len(nSplits1), each=nSplits2), seq_len(nSplits2)
-  )), nSplits2, nSplits1)
+  }, seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
+  )), nSplits1, nSplits2)
   
-  if (nSplits2 == 1) {
+  if (nSplits1 == 1) {
     min(pairScores)
   } else {
     optimalMatching <- solve_LSAP(pairScores, TRUE)
