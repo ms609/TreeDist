@@ -17,13 +17,20 @@ test_that('Matches are reported', {
   # Trees copied from test-tree_distance.R
   treeSym8 <- ape::read.tree(text='((e, (f, (g, h))), (((a, b), c), d));')
   treeBal8 <- ape::read.tree(text='(((e, f), (g, h)), ((a, b), (c, d)));')
+  treeTwoSplits <- ape::read.tree(text="(((a, b), c, d), (e, f, g, h));")
   
   Test <- function (Func) {
     at <- attributes(Func(treeSym8, treeBal8, reportMatching = TRUE))
     expect_equal(3L, length(at))
     expect_equal(c(1L, 5L, 3L, 2L, 4L), as.integer(at$matching))
     expect_equal('a b : e f g h c d => a b : e f g h c d', at$matchedSplits[5])
+    
+    at <- attributes(Func(treeSym8, treeTwoSplits, reportMatching = TRUE))
+    expect_equal(3L, length(at))
+    expect_equal(c(1L, 5L), as.integer(at$matching))
+    expect_equal('a b : c d e f g h => c d e f g h : a b', at$matchedSplits[2])
   }
+  
   Test(MutualArborealInfo)
   Test(VariationOfArborealInfo)
   Test(MutualPartitionInfo)

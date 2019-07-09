@@ -26,7 +26,8 @@ or lists of such trees to undergo pairwise comparison.}
 \item{normalize}{If a numeric value is provided, this will be used as a
 maximum value against which to rescale results.
 If \code{TRUE}, results will be rescaled against a maximum value calculated from
-the specified tree sizes and topology, as specified in 'details' below.
+the specified tree sizes and topology, as specified in the 'Normalization'
+section below.
 If \code{FALSE}, results will not be rescaled.}
 
 \item{reportMatching}{Logical specifying whether to return the clade
@@ -43,7 +44,8 @@ If \code{reportMatching = FALSE}, the functions return a numeric
 vector specifying the requested similarities or differences.
 
 If \code{reportMatching = TRUE}, the functions additionally return details
-of which clades are matched in the optimal matching.
+of which clades are matched in the optimal matching, which can be viewed
+using \code{\link{VisualizeMatching}}.
 }
 \description{
 Functions reporting the distances or similarities between pairs of trees,
@@ -76,15 +78,7 @@ The returned tree similarity measures state the amount of information,
 in bits, that the partitions in two trees hold in common
 when they are optimally matched, following Smith (forthcoming).
 The complementary tree distance measures state how much information is
-different in the partitions of two trees, under an optimal matching.Normalization
-
-If \code{normalize = TRUE}, then results will be rescaled from zero to a nominal
-maximum value, calculated thus:
-\itemize{
-\item \code{MutualArborealInfo}: The information content of the most informative tree.
-To scale against the information content of the least informative tree, use
-\code{normalize = pmax}.
-}
+different in the partitions of two trees, under an optimal matching.
 }
 \section{Functions}{
 \itemize{
@@ -94,6 +88,20 @@ To scale against the information content of the least informative tree, use
 
 \item \code{VariationOfArborealInfoSplits}: Calculate variation of arboreal information from splits
 }}
+
+\section{Normalization}{
+
+
+If \code{normalize = TRUE}, then results will be rescaled from zero to a nominal
+maximum value, calculated thus:
+\itemize{
+\item \code{MutualArborealInfo}: The information content of the least informative tree.
+To scale against the information content of the most informative tree, use
+\code{normalize = pmax}.
+\item \code{VariationOfArborealInfo}: The sum of the information content of the two
+trees.
+}
+}
 
 \examples{
 {
@@ -112,9 +120,10 @@ To scale against the information content of the least informative tree, use
   
   # How similar are two trees?
   MutualArborealInfo(tree1, tree2) # Amount of arboreal information in common
+  VisualizeMatching(MutualArborealInfo, tree1, tree2) # Which clades are matched?
   VariationOfArborealInfo(tree1, tree2) # Distance measure
   VariationOfArborealInfo(tree2, tree1) # The metric is symmetric
-  
+  #'   
   # Are they more similar than two trees of this shape would be by chance?
   ExpectedVariation(tree1, tree2, sample=12)['VariationOfArborealInfo', 'Estimate']
   

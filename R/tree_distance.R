@@ -30,14 +30,17 @@
 #' The complementary tree distance measures state how much information is 
 #' different in the partitions of two trees, under an optimal matching.
 #' 
-#' ## Normalization
+#' @section Normalization:
 #' 
 #' If `normalize = TRUE`, then results will be rescaled from zero to a nominal
 #' maximum value, calculated thus:
 #' 
-#' * `MutualArborealInfo`: The information content of the most informative tree.
-#' To scale against the information content of the least informative tree, use
+#' * `MutualArborealInfo`: The information content of the least informative tree.
+#' To scale against the information content of the most informative tree, use
 #' `normalize = pmax`.
+#' 
+#' * `VariationOfArborealInfo`: The sum of the information content of the two
+#' trees.
 #' 
 #' 
 #' @param tree1,tree2 Trees of class `phylo`, with tips labelled identically,
@@ -46,7 +49,8 @@
 #' @param normalize If a numeric value is provided, this will be used as a 
 #' maximum value against which to rescale results.
 #' If `TRUE`, results will be rescaled against a maximum value calculated from
-#' the specified tree sizes and topology, as specified in 'details' below.
+#' the specified tree sizes and topology, as specified in the 'Normalization' 
+#' section below.
 #' If `FALSE`, results will not be rescaled.
 #' 
 #' @param reportMatching Logical specifying whether to return the clade
@@ -56,7 +60,8 @@
 #' vector specifying the requested similarities or differences.
 #' 
 #' If `reportMatching = TRUE`, the functions additionally return details
-#' of which clades are matched in the optimal matching.
+#' of which clades are matched in the optimal matching, which can be viewed
+#' using [`VisualizeMatching`].
 #'  
 #' @examples {
 #'   tree1 <- ape::read.tree(text='((((a, b), c), d), (e, (f, (g, h))));')
@@ -74,9 +79,10 @@
 #'   
 #'   # How similar are two trees?
 #'   MutualArborealInfo(tree1, tree2) # Amount of arboreal information in common
+#'   VisualizeMatching(MutualArborealInfo, tree1, tree2) # Which clades are matched?
 #'   VariationOfArborealInfo(tree1, tree2) # Distance measure
 #'   VariationOfArborealInfo(tree2, tree1) # The metric is symmetric
-#'   
+#'   #'   
 #'   # Are they more similar than two trees of this shape would be by chance?
 #'   ExpectedVariation(tree1, tree2, sample=12)['VariationOfArborealInfo', 'Estimate']
 #'   
@@ -198,6 +204,11 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+3) {
 #' 
 #' @inheritParams MutualArborealInfo
 #' 
+#' @section Normalization:
+#' 
+#' If `normalize = TRUE`, then results will be rescaled from zero to a maximum
+#' value calculated by #TODO detail
+#' 
 #' @references \insertRef{Nye2006}{TreeSearch}
 #' @family Tree distance
 #' 
@@ -217,6 +228,12 @@ NyeTreeSimilarity <- function (tree1, tree2, normalize = FALSE,
 #' #TODO document!
 #' 
 #' @inheritParams MutualArborealInfo
+#' 
+#' @section Normalization:
+#' 
+#' If `normalize = TRUE`, then results will be rescaled from zero to a maximum
+#' value calculated by #TODO detail
+#' 
 #' 
 #' @references \insertRef{SmithDist}{TreeSearch}
 #' @family Tree distance
@@ -240,6 +257,12 @@ MutualPartitionInfo <- function (tree1, tree2, normalize = FALSE,
 #' 
 #' @inheritParams MutualArborealInfo
 #' 
+#' @section Normalization:
+#' 
+#' If `normalize = TRUE`, then results will be rescaled from zero to a maximum
+#' value calculated by #TODO detail
+#' 
+#' 
 #' @references \insertRef{Meila2007}{TreeSearch}
 #' @references \insertRef{SmithDist}{TreeSearch}
 #' @references \insertRef{Vinh2010}{TreeSearch}
@@ -261,6 +284,11 @@ MutualClusteringInfo <- function (tree1, tree2, normalize = FALSE,
 #' trees of Bogdanowicz and Giaro (2012).
 #' 
 #' @inheritParams MutualArborealInfo
+#' @section Normalization:
+#' 
+#' If `normalize = TRUE`, then results will be rescaled from zero to a maximum
+#' value calculated by #TODO detail
+#' 
 #' 
 #' @references \insertRef{Bogdanowicz2012}{TreeSearch}
 #' @family Tree distance
@@ -302,8 +330,6 @@ MutualArborealInfoSplits <- function (splits1, splits2, normalize = TRUE,
     tmp <- dimSplits1
     dimSplits1 <- dimSplits2
     dimSplits2 <- tmp
-    
-    remove(tmp)
   }
   
   taxonNames1 <- rownames(splits1)
@@ -365,7 +391,7 @@ MutualArborealInfoSplits <- function (splits1, splits2, normalize = TRUE,
       if (!is.null(taxonNames2)) {
         attr(ret, 'matchedSplits') <- 
         if (swapSplits) {
-          ReportMatching(splits2, splits1[, optimalMatching], taxonNames1)
+          ReportMatching(splits2[, optimalMatching], splits1, taxonNames1)
         } else {
           ReportMatching(splits1, splits2[, optimalMatching], taxonNames1)
         }
@@ -473,7 +499,7 @@ VariationOfArborealInfoSplits <- function (splits1, splits2, normalize = TRUE,
       if (!is.null(taxonNames2)) {
         attr(ret, 'matchedSplits') <- 
           if (swapSplits) {
-            ReportMatching(splits2, splits1[, optimalMatching], taxonNames1)
+            ReportMatching(splits2[, optimalMatching], splits1, taxonNames1)
           } else {
             ReportMatching(splits1, splits2[, optimalMatching], taxonNames1)
           }
@@ -556,7 +582,7 @@ NyeSplitSimilarity <- function (splits1, splits2, normalize = TRUE,
       if (!is.null(taxonNames2)) {
         attr(ret, 'matchedSplits') <- 
           if (swapSplits) {
-            ReportMatching(splits2, splits1[, optimalMatching], taxonNames1)
+            ReportMatching(splits2[, optimalMatching], splits1, taxonNames1)
           } else {
             ReportMatching(splits1, splits2[, optimalMatching], taxonNames1)
           }
@@ -637,7 +663,7 @@ MutualPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE)
       if (!is.null(taxonNames2)) {
         attr(ret, 'matchedSplits') <- 
           if (swapSplits) {
-            ReportMatching(splits2, splits1[, optimalMatching], taxonNames1)
+            ReportMatching(splits2[, optimalMatching], splits1, taxonNames1)
           } else {
             ReportMatching(splits1, splits2[, optimalMatching], taxonNames1)
           }
@@ -708,7 +734,7 @@ MutualClusteringInfoSplits <- function (splits1, splits2, normalize = TRUE,
       if (!is.null(taxonNames2)) {
         attr(ret, 'matchedSplits') <- 
           if (swapSplits) {
-            ReportMatching(splits2, splits1[, optimalMatching], taxonNames1)
+            ReportMatching(splits2[, optimalMatching], splits1, taxonNames1)
           } else {
             ReportMatching(splits1, splits2[, optimalMatching], taxonNames1)
           }
@@ -793,7 +819,7 @@ MatchingSplitDistanceSplits <- function (splits1, splits2, normalize = TRUE,
       if (!is.null(taxonNames2)) {
         attr(ret, 'matchedSplits') <- 
           if (swapSplits) {
-            ReportMatching(splits2, splits1[, optimalMatching], taxonNames1)
+            ReportMatching(splits2[, optimalMatching], splits1, taxonNames1)
           } else {
             ReportMatching(splits1, splits2[, optimalMatching], taxonNames1)
           }
@@ -826,61 +852,4 @@ SplitsCompatible <- function (split1, split2) {
     all(!split1[split2]) ||
     all(!split1[!split2])
   )
-}
-
-#' Visualise a matching
-#' 
-#' Depicts the bipartitions that are matched between two trees using a 
-#' specified Generalized Robinson Foulds tree distance measure.
-#' 
-#' @param Func Function used to construct tree similarity.
-#' @param tree1,tree2 Trees of class `phylo`, with tips labelled identically.
-#' @param setPar Logical specifying whether graphical parameters should be 
-#' set to display trees side by side.
-#' @param Plot Function to use to plot trees.
-#' @param \dots Additional parameters to send to `Plot`.
-#' 
-#' @author Martin R. Smith
-#' @importFrom ape nodelabels edgelabels plot.phylo
-#' @importFrom colorspace qualitative_hcl
-#' @importFrom graphics par
-#' @export
-VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE, 
-                              Plot = plot.phylo, ...) {
-  
-  splits1 <- Tree2Splits(tree1)
-  edge1 <- tree1$edge
-  child1 <- edge1[, 2]
-  partitionEdges1 <- vapply(colnames(splits1), 
-                            function (node) which(child1 == node), integer(1))
-  
-  splits2 <- Tree2Splits(tree2)
-  edge2 <- tree2$edge
-  child2 <- edge2[, 2]
-  partitionEdges2 <- vapply(colnames(splits2), 
-                            function (node) which(child2 == node), integer(1))
-  
-  matching <- Func(tree1, tree2, reportMatching = TRUE)
-  pairings <- attr(matching, 'matching')
-  scores <- attr(matching, 'pairScores')
-  pairScores <- signif(mapply(function (i, j) scores[i, j], seq_along(pairings), pairings), 3)
-  
-  nSplits <- length(pairings)
-  palette <- qualitative_hcl(nSplits, c=42, l=88)
-  adjNo <- c(0.5, -0.2)
-  adjVal <- c(0.5, 1.1)
-  
-  if (setPar) origPar <- par(mfrow=c(2, 1), mar=rep(0.5, 4))
-  
-  Plot(tree1)#, ...)
-  edgelabels(seq_along(pairings), partitionEdges1[pairings], bg=palette, adj=adjNo)
-  #edgelabels(seq_along(pairings), partitionEdges1, cex=0.8, font=2, frame='n', adj=adjVal)
-  edgelabels(pairScores, partitionEdges1[pairings], frame='n', adj=adjVal, cex=0.8)
-  
-  Plot(tree2)#, ...)
-  edgelabels(seq_along(pairings), partitionEdges2, bg=palette, adj=adjNo)
-  #edgelabels(seq_along(pairings), partitionEdges2, cex=0.8, font=2, frame='n', adj=adjVal)
-  edgelabels(pairScores, partitionEdges2, frame='n', adj=adjVal, cex=0.8)
-  
-  if (setPar) par(origPar)
 }
