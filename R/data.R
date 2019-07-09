@@ -145,3 +145,16 @@
 #' @family Double factorial
 #' @keywords datasets
 "logDoubleFactorials"
+
+#' Distances between random pairs of trees
+#' 
+#' A three-dimensional array listing the normalized distances between random 
+#' pairs of #' trees drawn from the uniform distribution using
+#' `ape::rtree(nTip, br=NULL)`.
+#' 
+#' Rows are named according to the mode of tree comparison.
+#' Columns list the mean and standard deviation of tree distances.
+#' The third dimension lists the number of tips in the trees compared.
+#' 
+#' @keywords datasets
+"randomTreeDistances"
