@@ -215,10 +215,11 @@ MeilaMutualInformation <- function (split1, split2) {
   p2 <- probabilities[1] + probabilities[2]
   
   jointEntropies <- Entropy(probabilities)
+  mutualInformation <- Entropy(c(p1, 1 - p1)) + Entropy(c(p2, 1 - p2)) -
+    jointEntropies
   
-  mutualInformation <- Entropy(c(p1, 1 - p1)) + Entropy(c(p2, 1 - p2)) - jointEntropies
   # Return:
-  n * mutualInformation
+  if (abs(mutualInformation) < 1e-15) 0 else n * mutualInformation
 }
 
 # # #' Probability of matching this well
