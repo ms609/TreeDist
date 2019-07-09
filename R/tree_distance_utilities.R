@@ -84,7 +84,8 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
 #' List matched clades as text
 #' @param clades1,clades2 Logical matrices with columns specifying membership
 #' of each corresponding matched clade 
-#' @paral Character listing names of taxa corresponding to each row in `clades#`
+#' @param taxonNames Character vector listing names of taxa corresponding to
+#'  each row in `clades#`
 #' @seealso VisualizeMatching
 #' @keywords internal
 #' @export
