@@ -294,6 +294,7 @@ MutualClusteringInfo <- function (tree1, tree2, normalize = FALSE,
 #' @family Tree distance
 #' 
 #' @author Martin R. Smith
+#' @importFrom TreeSearch LnUnrooted.int
 #' @export
 MatchingSplitDistance <- function (tree1, tree2, normalize = FALSE,
                                    reportMatching = FALSE) {
@@ -407,6 +408,7 @@ MutualArborealInfoSplits <- function (splits1, splits2, normalize = TRUE,
 
 
 #' @describeIn MutualArborealInfo Calculate variation of arboreal information from splits
+#' @importFrom TreeSearch LnUnrooted.int
 #' @export
 VariationOfArborealInfoSplits <- function (splits1, splits2, normalize = TRUE,
                                            reportMatching = FALSE) {
@@ -598,6 +600,7 @@ NyeSplitSimilarity <- function (splits1, splits2, normalize = TRUE,
 
 #' @describeIn MutualPartitionInfo Takes splits instead of trees
 #' @inheritParams MutualArborealInfoSplits
+#' @importFrom TreeSearch LnUnrooted.int
 #' @export
 MutualPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE) {
   

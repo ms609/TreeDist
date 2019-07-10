@@ -20,6 +20,7 @@ PartitionInfo <- function(tree) {
 }
 
 #' @describeIn PartitionInfo Takes splits instead of trees
+#' @importFrom TreeSearch LnRooted.int LnUnrooted.int
 #' @export
 PartitionInfoSplits <- function(splits) {
   nTerminals <- nrow(splits)

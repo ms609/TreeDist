@@ -3,7 +3,7 @@
 \docType{data}
 \name{randomTreeDistances}
 \alias{randomTreeDistances}
-\title{Distances between random pairs of trees}
+\title{Mean distances between random pairs of trees}
 \format{An object of class \code{array} of dimension 5 x 2 x 18.}
 \usage{
 randomTreeDistances
