@@ -1,0 +1,32 @@
+---
+title: "Measuring tree distance"
+author: "Martin R. Smith"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+csl: ../inst/apa-old-doi-prefix.csl
+vignette: >
+  %\VignetteIndexEntry{Measuring tree similarity}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{R Tree-distance-averages, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1.4/3, fig.width=6, out.width='90%', fig.align='center'}
+AddLine <- function (dat, col) {
+  nLeaves <- colnames(dat)
+  points(nLeaves, dat['mean', ], pch=3, col=col)
+  lines(nLeaves, dat['mean', ] + dat['sd', ], lty=3, col=col)
+  lines(nLeaves, dat['mean', ] - dat['sd', ], lty=3, col=col)
+}
+
+dists <- TreeSearch::randomTreeDistances
+plot(nLeaves, dists['vai', 'mean', ], pch='.', ylim=c(0.3, 1), col='white')
+AddLine(dists['vai', , ], col=cbPalette8[1])
+AddLine(dists['vpi', , ], col=cbPalette8[2])
+AddLine(dists['vci', , ], col=cbPalette8[3])
+AddLine(dists['qd', , ], col=cbPalette8[4])
+AddLine(dists['nts', , ], col=cbPalette8[5])
+
+legend('bottomright', bty='n', pch=3, legend=dimnames(dists)[[1]], col=cbPalette8[1:5])
+````

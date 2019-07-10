@@ -683,7 +683,6 @@ MutualPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE)
 MutualClusteringInfoSplits <- function (splits1, splits2, normalize = TRUE,
                                         reportMatching = FALSE) {
   
-  
   dimSplits1 <- dim(splits1)
   dimSplits2 <- dim(splits2)
   nTerminals <- dimSplits1[1]

@@ -23,6 +23,28 @@ LogTreesMatchingSplit <- function (A, B) {
   LnRooted.int(A) + LnRooted.int(B)
 }
 
+#' @export
+CharacterInformation <- function (tokens) {
+  tokenCounts <- table(tokens)
+  # Our character splits our taxa into groups with the same token
+  # ?s and -s are best ignored
+  splits <- tokenCounts[!(names(tokenCounts) %in% c('?', '-'))]
+  
+  # Information content = -log2(probability)
+  # Probability of a tree being consistent with our character is
+  # n trees consistent with character / n trees with that many tips
+  # NUnrootedMult(splits) / NUnrooted(splits)
+  # As we are working with large numbers we can use logarithms
+  lnP <- LnUnrootedMult(splits) - LnUnrooted(sum(splits))
+  log2P <- lnP / log(2)
+  information <- -log2P
+  
+  # Return: 
+  information
+}
+
+
+
 #' Entropy in bits
 #' 
 #' Reports the entropy of a vector of probabilities, in bits.
