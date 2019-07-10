@@ -1,3 +1,28 @@
+#' Number of trees matching a bipartition split
+#' 
+#' Calculates the number of unrooted bifurcated trees that are consistent with
+#' a bipartition split that divides taxa into groups of size `A` and `B`.
+#' 
+#' @param A,B Number of taxa in each partition.
+#' 
+#' @author Martin R. Smith
+#' 
+#' @family split information functions
+#' @export
+TreesMatchingSplit <- function (A, B) {
+  if (A == 0) NUnrooted(B) else
+    if (B == 0) NUnrooted(A) else
+      NRooted(A) * NRooted(B)
+}
+
+#' @describeIn TreesMatchingSplit Logarithm of the number of trees matching a split.
+#' @export
+LogTreesMatchingSplit <- function (A, B) {
+  if (A == 0) LnUnrooted.int(B) else
+    if (B == 0) LnUnrooted.int(A) else
+      LnRooted.int(A) + LnRooted.int(B)
+}
+
 #' Mutual information of two splits
 #' 
 #' Reports the mutual phylogenetic information, or variation of phylogenetic
@@ -599,6 +624,7 @@ LogTreesConsistentWithTwoSplits <- function (n, A1, A2=A1) {
 #'
 #' @author Martin R. Smith
 #' @family split information functions
+#' @importFrom TreeSearch LogDoubleFactorial
 #' @export
 UnrootedTreesMatchingSplit <- function (splits) {
   splits <- splits[splits > 0L]

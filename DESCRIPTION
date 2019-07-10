@@ -5,7 +5,7 @@ Date: 2019-07-10
 Authors@R: c(person("Martin R.", 'Smith',
                   email="martin.smith@durham.ac.uk", 
                   role=c("aut", "cre", "cph"), 
-                  comment=c(ORCID = "0000-0001-5660-1727")),
+                  comment=c(ORCID = "0000-0001-5660-1727"))
             )
 License: GPL (>= 3)
 Description: Implements various measures of tree similarity, including XYZ #TODO.
@@ -21,8 +21,10 @@ Imports:
     TreeSearch
 Suggests:
     knitr,
+    Quartet,
     rmarkdown,
-    testthat
+    testthat,
+    Ternary
 RdMacros: Rdpack
 LazyData: true
 ByteCompile: true

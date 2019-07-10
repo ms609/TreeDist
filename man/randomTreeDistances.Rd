@@ -4,18 +4,18 @@
 \name{randomTreeDistances}
 \alias{randomTreeDistances}
 \title{Distances between random pairs of trees}
-\format{An object of class \code{array} of dimension 5 x 2 x 15.}
+\format{An object of class \code{array} of dimension 5 x 2 x 18.}
 \usage{
 randomTreeDistances
 }
 \description{
-A three-dimensional array listing the normalized distances between random
-pairs of #' trees drawn from the uniform distribution using
+A three-dimensional array listing the normalized distances between 100 random
+pairs of trees drawn from the uniform distribution using
 \code{ape::rtree(nTip, br=NULL)}.
 }
 \details{
-Rows are named according to the mode of tree comparison.
-Columns list the mean and standard deviation of tree distances.
+Rows are named with an abbreviation of the tree comparison metric.
+Columns list the mean and standard deviation of calculated tree distances.
 The third dimension lists the number of tips in the trees compared.
 }
 \keyword{datasets}

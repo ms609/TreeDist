@@ -20,7 +20,7 @@ AddLine <- function (dat, col) {
   lines(nLeaves, dat['mean', ] - dat['sd', ], lty=3, col=col)
 }
 
-dists <- TreeSearch::randomTreeDistances
+dists <- TreeDist::randomTreeDistances
 plot(nLeaves, dists['vai', 'mean', ], pch='.', ylim=c(0.3, 1), col='white')
 AddLine(dists['vai', , ], col=cbPalette8[1])
 AddLine(dists['vpi', , ], col=cbPalette8[2])

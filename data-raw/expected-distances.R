@@ -1,4 +1,4 @@
-library(TreeSearch)
+library(TreeDist)
 cbPalette8 <- Ternary::cbPalette8
 nLeaves <- c(seq(5, 50, by=5), seq(60, 100, by=10), seq(150, 200, by=25))
 
@@ -27,24 +27,5 @@ RandomDistances <- function (nLeaves, repls) {
   ret
 }
 
-AddLine <- function (dat, col) {
-  nLeaves <- colnames(dat)
-  points(nLeaves, dat['mean', ], pch=3, col=col)
-  lines(nLeaves, dat['mean', ] + dat['sd', ], lty=3, col=col)
-  lines(nLeaves, dat['mean', ] - dat['sd', ], lty=3, col=col)
-}
-
-
-dists <- RandomDistances(nLeaves, repls=100L)
-
-plot(nLeaves, dists['vai', 'mean', ], pch='.', ylim=c(0.3, 1), col='white')
-AddLine(dists['vai', , ], col=cbPalette8[1])
-AddLine(dists['vpi', , ], col=cbPalette8[2])
-AddLine(dists['vci', , ], col=cbPalette8[3])
-AddLine(dists['qd', , ], col=cbPalette8[4])
-AddLine(dists['nts', , ], col=cbPalette8[5])
-
-legend('bottomright', bty='n', pch=3, legend=dimnames(dists)[[1]], col=cbPalette8[1:5])
-
-randomTreeDistances <- dists
+randomTreeDistances <- RandomDistances(nLeaves, repls=100L)
 usethis::use_data(randomTreeDistances, overwrite=TRUE)

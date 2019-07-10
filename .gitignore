@@ -11,8 +11,6 @@ src/*.dll
 *.Rhistory
 *.log
 /* *.Rd */
-inst/ape
-inst/doc
 revdep/
 vignettes/*.html
 vignettes/*.pdf
