@@ -40,6 +40,24 @@ CalculateTreeDistance <- function (Func, tree1, tree2, reportMatching, ...) {
   }
 }
 
+#' Entropy in bits
+#' 
+#' Reports the entropy of a vector of probabilities, in bits.
+#' Probabilities should sum to one.  Probabilities equalling zero will be 
+#' ignored.
+#' 
+#' @param p Numeric vector specifying probabilities of outcomes.
+#' 
+#' @examples
+#' Entropy(rep(0.5, 2)) # = 1
+#' Entropy(c(1/4, 1/4, 0, 1/4, 1/4)) # = 2
+#' 
+#' @return Entropy of the specified probabilities, in bits
+#' @author Martin R. Smith
+#' @export
+Entropy <- function (p) -sum(p[p > 0] * log2(p[p > 0]))
+
+
 #' Normalize information against total present in both starting trees
 #' @param unnormalized Numeric value to be normalized.
 #' @param tree1,tree2 Trees from which `unnormalized` was calculated

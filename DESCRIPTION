@@ -1,51 +1,31 @@
-Package: TreeSearch
-Title: Phylogenetic Tree Search Using Custom Optimality Criteria
-Version: 0.3.2.9005
-Date: 2019-07-06
+Package: TreeDist
+Title: Distances between Phylogenetic Trees
+Version: 0.0.0.9000
+Date: 2019-07-10
 Authors@R: c(person("Martin R.", 'Smith',
                   email="martin.smith@durham.ac.uk", 
                   role=c("aut", "cre", "cph"), 
                   comment=c(ORCID = "0000-0001-5660-1727")),
-               person(given = "Emmanuel", family="Paradis", role = c("cph"),
-                  comment = c(ORCID = "0000-0003-3092-2199")),
-               person(given = "Klaus", family="Schliep", role = c("cph"),
-                  comment = c(ORCID = "0000-0003-2941-0161")),
-               person(given = "Martin", family="Brazeau", role = c("cph"), 
-                  comment = c(ORCID = "0000-0002-0650-1282"))
             )
 License: GPL (>= 3)
-Copyright: Incorporates C/C++ code from:
-   ape by Emmanuel Paradis;
-   phangorn by Klaus Scheip <doi:10.1093/bioinformatics/btq706>;
-   Morphy Phylogenetic Library by Martin Brazeau <https://github.com/mbrazeau/MorphyLib> (GPL3)
-Description: Searches for phylogenetic trees that are optimal using a user-defined criterion. 
-  Implements Profile Parsimony (Faith and Trueman, 2001) <doi:10.1080/10635150118627>, and
-  Successive Approximations (Farris, 1969) <doi:10.2307/2412182>.
-  Handles inapplicable data using the algorithm of Brazeau, Guillerme and Smith
-  (2019) <doi:10.1093/sysbio/syy083>.
-URL: https://github.com/ms609/TreeSearch
-BugReports: https://github.com/ms609/TreeSearch/issues
+Description: Implements various measures of tree similarity, including XYZ #TODO.
+URL: https://github.com/ms609/TreeDist
+BugReports: https://github.com/ms609/TreeDist/issues
 Depends: R (>= 3.4.0)
 Imports: 
     ape (>= 5.0),
     clue,
-    colorspace,
-    memoise,
     phangorn (>= 2.2.1),
-    R.cache,
     Rdpack,
-    stats
+    stats,
+    TreeSearch
 Suggests:
     knitr,
-    Rcpp,
     rmarkdown,
-    shiny,
-    testthat,
-    xlsx
+    testthat
 RdMacros: Rdpack
 LazyData: true
 ByteCompile: true
-LinkingTo: Rcpp
 Encoding: UTF-8
 Language: en-GB
 VignetteBuilder: knitr
