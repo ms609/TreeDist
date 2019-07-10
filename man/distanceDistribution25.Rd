@@ -14,8 +14,10 @@ pairs of 25-tip trees drawn from the uniform distribution using
 \code{ape::rtree(nTip, br=NULL)}.
 }
 \details{
-Rows are named with an abbreviation of the tree comparison metric.TODO list these and state how normalized.
-
+Rows are named with an abbreviation of the tree comparison metric.
+\itemize{
+\item #TODO list these and state how normalized.
 Columns list the calculated tree distances.
+}
 }
 \keyword{datasets}

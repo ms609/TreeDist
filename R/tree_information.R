@@ -50,7 +50,7 @@ PartitionInfoSplits <- function(splits) {
 #' 
 #' @return Information content, in bits.
 #' 
-#' @references \insertRef{Meila2007}{TreeSearch}
+#' @references \insertRef{Meila2007}{TreeDist}
 #' @author Martin R. Smith
 #' @keywords internal
 #' @export

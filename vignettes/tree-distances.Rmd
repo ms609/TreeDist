@@ -69,3 +69,47 @@ PlotHist(dists['spr', ], 0:max(dists['spr', ]),  'SPR', border=cbPalette8[8])
 PlotHist(dists['rf', ],  manyBreaks * 44,  'Robinson-Foulds', border=cbPalette8[8])
 
 ```
+
+# Distances between all 7-tip trees 
+
+```{r 7-tip-treess, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=3/2, fig.width=6, out.width='90%', fig.align='center'}
+par(mfrow=c(3, 2), mar=rep(0.8, 4))
+pal <- viridisLite::viridis(32)
+
+PlotMDS <- function(distances, title='') {
+  space <- MASS::isoMDS(distances, k=2, trace=FALSE)
+  pts <- space$points
+  plot(pts, pch=19, col=paste0(treeCols[as.character(shapes)], '88'), 
+       xlim = range(pts[, 1]) + c(-1, 1),
+       ylim=range(pts[, 2]) + c(-1, 1))
+  z <- MASS::kde2d(pts[, 1], pts[, 2])
+  contour(z, add=TRUE, col='#00000088')
+  legend('bottom', legend=paste0('stress = ', signif(space$stress, 3)), bty='n')
+  legend('top', legend=title, bty='n', text.font=2)
+}
+TableImage <- function (distances) {
+  x <- rep(seq_len(945), each=945L)
+  y <- rep(seq_len(945), 945L)
+  plot(-100, -100, pch='.', col='white', ylim=c(0, 965), xlim=c(965, 0),
+     axes=FALSE, xlab='', ylab='')
+  shapeSizes <- table(shapes)
+  shapeSum <- cumsum(shapeSizes)
+  shapeStarts <-  shapeSum - shapeSizes
+  rect(shapeStarts, 955, shapeSum, 965, col=Ternary::cbPalette8[2:7], border=NA)
+  rect(955, shapeStarts, 965, shapeSum, col=Ternary::cbPalette8[2:7], border=NA)
+
+  rect(x - 1L, y - 1L, xs, ys, col=pal[cut(distances, length(pal), labels=FALSE)], border=NA)
+}
+
+shapes <- treeShapes[order(treeShapes)]
+treeCols <- Ternary::cbPalette8[2:7]
+names(treeCols) <- unique(shapes)
+
+hist(vaiDist, breaks=0:32, col=pal)
+hist(vaiDist, breaks=0:32, col=pal)
+TableImage(vaiDist)
+TableImage(vaiDist)
+PlotMDS(vaiDist, 'V of Arb Info')
+PlotMDS(vaiDist, 'V of Arb Info')
+
+```

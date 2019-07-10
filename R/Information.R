@@ -1,3 +1,6 @@
+# Require logDoubleFactorials from TreeSearch for LogDoubleFactorial.int:
+data(logDoubleFactorials, package='TreeSearch')
+
 #' Number of trees matching a bipartition split
 #' 
 #' Calculates the number of unrooted bifurcated trees that are consistent with
@@ -68,7 +71,7 @@ LogTreesMatchingSplit <- function (A, B) {
 #'   SplitMutualInformation(n=8, A1=3, A2=3)
 #'   SplitInformation(3, 5)
 #'   
-#' @references \insertRef{Meila2007}{TreeSearch}
+#' @references \insertRef{Meila2007}{TreeDist}
 #' 
 #' @author Martin R. Smith
 #' @family split information functions
@@ -139,8 +142,8 @@ MultiSplitInformation <- function (partitionSizes) {
 #' @return Variation of information, measured in bits.
 #' 
 #' @references {
-#'   \insertRef{Meila2007}{TreeSearch}
-#'   \insertRef{Vinh2010}{TreeSearch}
+#'   \insertRef{Meila2007}{TreeDist}
+#'   \insertRef{Vinh2010}{TreeDist}
 #' }
 #' 
 #' @examples 
@@ -340,8 +343,8 @@ SplitMatchProbability <- function (split1, split2) {
 #' SplitPairingInformationIndex(5)
 #' 
 #' @references 
-#' * \insertRef{Meila2007}{TreeSearch}
-#' * \insertRef{SmithDist}{TreeSearch}
+#' * \insertRef{Meila2007}{TreeDist}
+#' * \insertRef{SmithDist}{TreeDist}
 #' 
 #' @author Martin R. Smith
 #' @importFrom memoise memoise
@@ -444,7 +447,7 @@ LnSplitMatchProbability <- function(split1, split2) {
 #' @template split12Params
 #' 
 #' @references 
-#' \insertRef{Meila2007}{TreeSearch}
+#' \insertRef{Meila2007}{TreeDist}
 #' 
 #' @return A numeric vector listing, in bits,
 #'  * `h1` The entropy of split 1

@@ -94,7 +94,7 @@
 #' }
 #' 
 #' @references {
-#'  * \insertRef{SmithDist}{TreeSearch}
+#'  * \insertRef{SmithDist}{TreeDist}
 #' }
 #' 
 #' @author Martin R. Smith
@@ -209,7 +209,7 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+3) {
 #' If `normalize = TRUE`, then results will be rescaled from zero to a maximum
 #' value calculated by #TODO detail
 #' 
-#' @references \insertRef{Nye2006}{TreeSearch}
+#' @references \insertRef{Nye2006}{TreeDist}
 #' @family Tree distance
 #' 
 #' @author Martin R. Smith
@@ -218,9 +218,16 @@ NyeTreeSimilarity <- function (tree1, tree2, normalize = FALSE,
                              reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(NyeSplitSimilarity, tree1, tree2, 
                                         reportMatching)
+  NyeInfoCounter <- function (tr) {
+    if (class(tr) == 'phylo') {
+      tr$Nnode - 2L
+    } else {
+      vapply(tr, function (thisTree) thisTree$Nnode - 2L, 1L)
+    }
+  }
   
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                InfoInTree = function (tr) tr$Nnode - 2L, Combine = max)
+                InfoInTree = NyeInfoCounter, Combine = pmax)
 }
 
 #' Mutual Partition Information
@@ -235,7 +242,7 @@ NyeTreeSimilarity <- function (tree1, tree2, normalize = FALSE,
 #' value calculated by #TODO detail
 #' 
 #' 
-#' @references \insertRef{SmithDist}{TreeSearch}
+#' @references \insertRef{SmithDist}{TreeDist}
 #' @family Tree distance
 #' 
 #' @author Martin R. Smith
@@ -263,9 +270,9 @@ MutualPartitionInfo <- function (tree1, tree2, normalize = FALSE,
 #' value calculated by #TODO detail
 #' 
 #' 
-#' @references \insertRef{Meila2007}{TreeSearch}
-#' @references \insertRef{SmithDist}{TreeSearch}
-#' @references \insertRef{Vinh2010}{TreeSearch}
+#' @references \insertRef{Meila2007}{TreeDist}
+#' @references \insertRef{SmithDist}{TreeDist}
+#' @references \insertRef{Vinh2010}{TreeDist}
 #' @family Tree distance
 #' 
 #' @author Martin R. Smith
@@ -290,7 +297,7 @@ MutualClusteringInfo <- function (tree1, tree2, normalize = FALSE,
 #' value calculated by #TODO detail
 #' 
 #' 
-#' @references \insertRef{Bogdanowicz2012}{TreeSearch}
+#' @references \insertRef{Bogdanowicz2012}{TreeDist}
 #' @family Tree distance
 #' 
 #' @author Martin R. Smith
