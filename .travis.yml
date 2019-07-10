@@ -11,7 +11,8 @@ r_check_args: --as-cran --no-manual # Workaround error compiling PDF manual
 git:
   depth: 1
 
-#r_github_packages:
+r_github_packages:
+ - ms609/TreeSearch
 # - r-lib/pkgload
 # - r-lib/devtools
 
