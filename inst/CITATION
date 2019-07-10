@@ -4,17 +4,16 @@
      vers <- paste("R package version", meta$Version)
      
      citEntry(entry = "Article",
-              title = "An algorithm for morphological phylogenetic analysis with inapplicable data",
-              author = personList(as.person("Martin D. Brazeau"), as.person("Thomas Guillerme"), as.person("Martin R. Smith")),
-              journal = "Systematic Biology",
-              year = year,
+              title = "Untitled",
+              author = personList(as.person("Martin R. Smith")),
+              journal = "Unsubmitted",
+              year = "20XX",
      
               textVersion =
-              paste0("Brazeau, Guillerme & Smith (", year, "). ",
-                     "An algorithm for morphological phylogenetic analysis with",
-                     " inapplicable data.", 
-                     " Systematic Biology.",
-                     " doi: 10.1093/sysbio/syy083"))
+              paste0("Smith, M.R. (20XX).",
+                     " Untitled", 
+                     " Journal name.",
+                     " doi: 10.XXXX/XXXXX"))
                      
               textVersion =
               paste0("#TBC"))

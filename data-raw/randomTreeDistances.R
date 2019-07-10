@@ -1,6 +1,11 @@
+library(TreeSearch)
 library(TreeDist)
+
+logDoubleFactorials <- TreeSearch::logDoubleFactorials
 cbPalette8 <- Ternary::cbPalette8
-nLeaves <- c(seq(5, 50, by=5), seq(60, 100, by=10), seq(150, 200, by=25))
+suppressWarnings(RNGversion("3.5.0")) # Stopgap until we can require R 3.6.0
+set.seed(0)
+nLeaves <- c(seq(5, 50, by=5), seq(60, 90, by=10), seq(100, 200, by=20))
 
 RandomDistances <- function (nLeaves, repls) {
   RandomTree <- function(nTip) ape::rtree(nTip, br=NULL)
@@ -16,16 +21,20 @@ RandomDistances <- function (nLeaves, repls) {
                             VariationOfPartitionInfo(tr1, tr2, normalize=TRUE),
                             VariationOfClusteringInfo(tr1, tr2, normalize=TRUE),
                             Quartet::QuartetDivergence(Quartet::QuartetStatus(tr1, tr2), similarity = FALSE),
-                            1 - NyeTreeSimilarity(tr1, tr2, normalize=TRUE)
+                            1 - NyeTreeSimilarity(tr1, tr2, normalize=TRUE),
+                            MatchingSplitDistance(tr1, tr2, normalize=FALSE),
+                            phangorn::treedist(tr1, tr2) / c(n + n - 6L, 1), # No norm for path
+                            phangorn::SPR.dist(tr1, tr2) / (n / 2) # crude normalization!
                             )
                         },
-                        double(5))
+                        double(9))
     cbind(rowMeans(distances), apply(distances, 1, sd))
-    }, matrix(0, ncol=2, nrow=5, dimnames=list(c('vai', 'vpi', 'vci', 'qd', 'nts'), c('mean', 'sd')))
+    }, matrix(0, ncol=2, nrow=9, dimnames=list(c('vai', 'vpi', 'vci', 'qd', 'nts', 
+                                                 'msd', 'rf', 'path', 'spr'), c('mean', 'sd')))
   )
   dimnames(ret)[[3]] <- nLeaves
   ret
 }
 
-randomTreeDistances <- RandomDistances(nLeaves, repls=100L)
+randomTreeDistances <- RandomDistances(nLeaves, repls=1000L)
 usethis::use_data(randomTreeDistances, overwrite=TRUE)
