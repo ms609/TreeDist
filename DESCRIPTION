@@ -23,6 +23,7 @@ Imports:
     stats,
     TreeSearch
 Suggests:
+    bookdown,
     knitr,
     MASS,
     Quartet,
