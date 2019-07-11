@@ -31,7 +31,7 @@ AddLine <- function (dat, col, pch=3) {
   lines(nLeaves, dat['mean', ] - dat['sd', ], lty=3, col=col)
 }
 
-data('randomTreeDistances', package='TreeDist')
+data('randomTreeDistances', package='TreeDistData')
 dists <- randomTreeDistances
 hi2lo <- c('vai', 'vci', 'nts', 'qd', 'vpi', 'msd', 'path', 'spr', 'rf')
 
@@ -64,7 +64,7 @@ legend('bottomright', bty='n', pch=c(3, 3, 6, 3, 3, 4,4,4,6),
 ## Distribution of tree distances
 
 ```{r load-data-dists, include=FALSE}
-data('distanceDistribution25', package='TreeDist')
+data('distanceDistribution25', package='TreeDistData')
 d25 <- distanceDistribution25
 ```
 
@@ -96,9 +96,11 @@ PlotHist(d25['rf', ],  manyBreaks * 44,  'Robinson-Foulds', border=cbPalette8[8]
 
 # Distances between all 7-tip trees 
 
+Inspired by @Kendall2016...
+
 ```{r 7-tip-funcs, include=FALSE} 
 Palette <- function (n) colorspace::sequential_hcl(n, palette='BluYl')
-data('sevenTipDistances', package='TreeDist')
+data('sevenTipDistances', package='TreeDistData')
 td7 <- sevenTipDistances
 treeShapes <- td7$shapes
 shapes <- treeShapes[order(treeShapes)]

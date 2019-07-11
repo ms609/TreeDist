@@ -1,6 +1,5 @@
 # Require logDoubleFactorials from TreeSearch for LogDoubleFactorial.int:
-#data(logDoubleFactorials, package='TreeSearch')
-logDoubleFactorials <- TreeSearch::logDoubleFactorials
+#logDoubleFactorials <- TreeSearch::logDoubleFactorials
 
 
 #' Mutual information of two splits

@@ -28,7 +28,8 @@ Suggests:
     Quartet,
     rmarkdown,
     testthat,
-    Ternary
+    Ternary,
+    TreeDistData
 RdMacros: Rdpack
 LazyData: true
 ByteCompile: true
