@@ -107,7 +107,8 @@ names(treeCols) <- unique(shapes)
 
 
 Hist <- function (distances, title='', breaks=32L) {
-  hist(distances, breaks=breaks, col=Palette(breaks), main=title)
+  h <- hist(distances, breaks=breaks)
+  plot(h, col=Palette(length(h$breaks)), main=title)
 }
 
 PlotMDS <- function(distances, title='') {
