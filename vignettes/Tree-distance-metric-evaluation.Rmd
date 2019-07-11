@@ -19,13 +19,12 @@ vignette: >
 Tree distance metrics are introduced in an [earlier vignette](tree-distance-metrics.html).
 
 ```{R initialize, warning=FALSE, include=FALSE, meassage=FALSE}
-#unloadNamespace('Quartet')
 #unloadNamespace('TreeSearch')
 #devtools::load_all('c:/research/r/TreeSearch')
-library('TreeSearch')
+library('TreeDist')
 library('Quartet')
 cbPalette8 <- Ternary::cbPalette8
-data('sq_trees')
+data('sq_trees', package='Quartet')
 
 pectinate_tree  <- sq_trees$caterpillar
 pectinate_move1 <- ape::read.tree(text='(((((2, 3), 4), 5), 6), (7, (8, (9, (10, (11, 1))))));')
@@ -38,14 +37,14 @@ ColPlot <- function (tr, title=NULL, bold=NULL, ...) {
   if (!is.null(bold)) font[tr$tip.label %in% bold] <- 4
   plot(tr, tip.col=Ternary::cbPalette15[-c(4, 7)][as.integer(tr$tip.label)], 
        main=title, cex.main=0.8, font=font,
-       y.lim=c(-8.4, 11), ...) ## Change value 1 [minimum] when adding to legend
+       y.lim=c(-9.4, 11), ...) ## Change value 1 [minimum] when adding to legend
 }
 
 RFPlot <- function (tr, title=NULL, highlight=NULL, ref=sq_trees[[1]], 
                     edge.lengths=NULL, ...) {
   tree_dist <- phangorn::treedist(tr, ref)
   tree_pair <- lapply(list(tr, ref), ape::root, outgroup='1', resolve.root=FALSE)
-  pair_info <- signif(TreeSearch::PartitionInfo(tr) + TreeSearch::PartitionInfo(ref), 4)
+  pair_info <- signif(PartitionInfo(tr) + PartitionInfo(ref), 4)
   class(tree_pair) <- 'multiPhylo'
   #topo_dist <- as.matrix(ape::dist.topo(tree_pair, method='PH85'))[2]
   
@@ -64,20 +63,22 @@ RFPlot <- function (tr, title=NULL, highlight=NULL, ref=sq_trees[[1]],
   text(text_x, y <- y - 1, "Path:", cex=0.8, pos=2)
   text(text_x, y <- y - 1, "SPR:", cex=0.8, pos=2)
   text(text_x, y <- y - 1, "Robinson-Foulds:", cex=0.8, pos=2)
+  text(text_x, y <- y - 1, "Kendall-Colijn:", cex=0.8, pos=2)
+  
   #text(text_x, y <- y - 1, "VPI%:", cex=0.8, pos=2)
   
   text_x <- text_x - 0.4
   y <- 0.5
   text(text_x, y <- y - 1, cex=0.8, pos=4,
-       round(TreeSearch::VariationOfArborealInfo(tr, ref, normalize = TRUE), 4))
+       round(VariationOfArborealInfo(tr, ref, normalize = TRUE), 4))
   text(text_x, y <- y - 1, cex=0.8, pos=4,
-       round(TreeSearch::VariationOfPartitionInfo(tr, ref, normalize = TRUE), 4))
+       round(VariationOfPartitionInfo(tr, ref, normalize = TRUE), 4))
   text(text_x, y <- y - 1, cex=0.8, pos=4,
-       round(TreeSearch::VariationOfClusteringInfo(tr, ref, normalize = TRUE), 4))
+       round(VariationOfClusteringInfo(tr, ref, normalize = TRUE), 4))
   
   text(text_x, y <- y - 1, cex=0.8, pos=4,
-       round(1 - TreeSearch::NyeTreeSimilarity(tr, ref, normalize = TRUE), 4))
-  text(text_x, y <- y - 1, paste0(signif(TreeSearch::MatchingSplitDistance(tr, ref), 4),
+       round(1 - NyeTreeSimilarity(tr, ref, normalize = TRUE), 4))
+  text(text_x, y <- y - 1, paste0(signif(MatchingSplitDistance(tr, ref), 4),
                                   ' / 32'), cex=0.8, pos=4)
   
   text(text_x, y <- y - 1, paste0(QuartetStatus(list(tr, ref))[2, 'd'],
@@ -86,24 +87,26 @@ RFPlot <- function (tr, title=NULL, highlight=NULL, ref=sq_trees[[1]],
   text(text_x, y <- y - 1, paste0(phangorn::sprdist(tr, ref)[1]), cex=0.8, pos=4)
   text(text_x, y <- y - 1, paste0(tree_dist['symmetric.difference'], 
                                   ' / ', (11L - 3L) * 2L), cex=0.8, pos=4)
-  #text(text_x, y <- y - 1, paste0(100 * signif(TreeSearch::VariationOfPartitionInfo(tr, ref) / pair_info, 4), '%'), cex=0.8, pos=4)
+  text(text_x, y <- y - 1, paste0(signif(treespace::treeDist(tr, ref), 4), 
+                                  ' / ', (11L - 3L) * 2L), cex=0.8, pos=4)
+  #text(text_x, y <- y - 1, paste0(100 * signif(VariationOfPartitionInfo(tr, ref) / pair_info, 4), '%'), cex=0.8, pos=4)
 }
 ```
 <!--```
   text(text_x, y <- y - 1, paste0(
-    signif(TreeSearch::VariationOfArborealInfo(tr, ref), 4), ' / ', pair_info
+    signif(VariationOfArborealInfo(tr, ref), 4), ' / ', pair_info
     ), cex=0.8, pos=4)
-  text(text_x, y <- y - 1, paste0(signif(TreeSearch::VariationOfPartitionInfo(tr, ref), 4),
+  text(text_x, y <- y - 1, paste0(signif(VariationOfPartitionInfo(tr, ref), 4),
                                   ' / ', pair_info), cex=0.8, pos=4)
-  text(text_x, y <- y - 1, paste0(signif(TreeSearch::VariationOfClusteringInfo(tr, ref), 4),
+  text(text_x, y <- y - 1, paste0(signif(VariationOfClusteringInfo(tr, ref), 4),
                                   ' / ',
-                                  signif(TreeSearch::ClusteringInfo(tr) +
-                                           TreeSearch::ClusteringInfo(ref), 4)),
+                                  signif(ClusteringInfo(tr) +
+                                           ClusteringInfo(ref), 4)),
        cex=0.8, pos=4)
   
-  text(text_x, y <- y - 1, paste0(8-signif(TreeSearch::NyeTreeSimilarity(tr, ref), 4),
+  text(text_x, y <- y - 1, paste0(8-signif(NyeTreeSimilarity(tr, ref), 4),
                                   ' / 8'), cex=0.8, pos=4)
-  text(text_x, y <- y - 1, paste0(signif(TreeSearch::MatchingSplitDistance(tr, ref), 4),
+  text(text_x, y <- y - 1, paste0(signif(MatchingSplitDistance(tr, ref), 4),
                                   ' / 32'), cex=0.8, pos=4)
   
   text(text_x, y <- y - 1, paste0(QuartetStatus(list(tr, ref))[2, 'd'],
@@ -112,7 +115,7 @@ RFPlot <- function (tr, title=NULL, highlight=NULL, ref=sq_trees[[1]],
   text(text_x, y <- y - 1, paste0(phangorn::sprdist(tr, ref)[1]), cex=0.8, pos=4)
   text(text_x, y <- y - 1, paste0(tree_dist['symmetric.difference'], 
                                   ' / ', (11L - 3L) * 2L), cex=0.8, pos=4)
-  #text(text_x, y <- y - 1, paste0(100 * signif(TreeSearch::VariationOfPartitionInfo(tr, ref) / pair_info, 4), '%'), cex=0.8, pos=4)
+  #text(text_x, y <- y - 1, paste0(100 * signif(VariationOfPartitionInfo(tr, ref) / pair_info, 4), '%'), cex=0.8, pos=4)
 }
 ```-->
 
@@ -393,7 +396,7 @@ PlotMDS(VariationOfArborealInfo(moveOne, moveOne), 'V. Arb. Info')
 PlotMDS(VariationOfPartitionInfo(moveOne, moveOne), 'V. Part. Info')
 PlotMDS(VariationOfClusteringInfo(moveOne, moveOne), 'V. Clust. Info')
 PlotMDS(8L - NyeTreeSimilarity(moveOne, moveOne), 'Nye')
-PlotMDS(TreeSearch::MatchingSplitDistance(moveOne, moveOne), 'Mat. Spl. Dist')
+PlotMDS(MatchingSplitDistance(moveOne, moveOne), 'Mat. Spl. Dist')
 tempFileName <- tempfile()
 write.tree(structure(moveOne, class='multiPhylo'), file=tempFileName)
 qds <- AllPairsQuartetDistance(tempFileName)
@@ -442,17 +445,17 @@ random_quartets <- QuartetStatus(random_trees, cf=pectinate_tree)[, 'd'] / choos
 random_distances <- vapply(random_trees, phangorn::treedist,
                            tree2=pectinate_tree, double(2))
 random_paths <- random_distances['path.difference', ]
-random_arb_info <- TreeSearch::VariationOfArborealInfo(random_trees, pectinate_tree, normalize=TRUE)
-pect_arb_info <- TreeSearch::VariationOfArborealInfo(pectinate_move1, pectinate_tree, normalize=TRUE)
-random_par_info <- TreeSearch::VariationOfPartitionInfo(random_trees, pectinate_tree, normalize=TRUE)
-pect_par_info <- TreeSearch::VariationOfPartitionInfo(pectinate_move1, pectinate_tree, normalize=TRUE)
-pect_arb_info <- TreeSearch::VariationOfArborealInfo(pectinate_move1, pectinate_tree, normalize=TRUE)
-random_clu_info <- TreeSearch::VariationOfClusteringInfo(random_trees, pectinate_tree, normalize=TRUE)
-pect_clu_info <- TreeSearch::VariationOfClusteringInfo(pectinate_move1, pectinate_tree, normalize=TRUE)
-random_ms_info <- TreeSearch::MatchingSplitDistance(random_trees, pectinate_tree)
-pect_ms_info <- TreeSearch::MatchingSplitDistance(pectinate_move1, pectinate_tree)
-random_nye_info <- 8L - TreeSearch::NyeTreeSimilarity(random_trees, pectinate_tree)
-pect_nye_info <- 8L - TreeSearch::NyeTreeSimilarity(pectinate_move1, pectinate_tree)
+random_arb_info <- VariationOfArborealInfo(random_trees, pectinate_tree, normalize=TRUE)
+pect_arb_info <- VariationOfArborealInfo(pectinate_move1, pectinate_tree, normalize=TRUE)
+random_par_info <- VariationOfPartitionInfo(random_trees, pectinate_tree, normalize=TRUE)
+pect_par_info <- VariationOfPartitionInfo(pectinate_move1, pectinate_tree, normalize=TRUE)
+pect_arb_info <- VariationOfArborealInfo(pectinate_move1, pectinate_tree, normalize=TRUE)
+random_clu_info <- VariationOfClusteringInfo(random_trees, pectinate_tree, normalize=TRUE)
+pect_clu_info <- VariationOfClusteringInfo(pectinate_move1, pectinate_tree, normalize=TRUE)
+random_ms_info <- MatchingSplitDistance(random_trees, pectinate_tree)
+pect_ms_info <- MatchingSplitDistance(pectinate_move1, pectinate_tree)
+random_nye_info <- 8L - NyeTreeSimilarity(random_trees, pectinate_tree)
+pect_nye_info <- 8L - NyeTreeSimilarity(pectinate_move1, pectinate_tree)
 
 random_spr <- vapply(random_trees, phangorn::sprdist, tree2=pectinate_tree, double(4))
 RandomPercent <- function (distances, comparison) {
