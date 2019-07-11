@@ -9,7 +9,7 @@
 distanceDistribution25
 }
 \description{
-A two-dimensional matrix listing the normalized distances between 10000 random
+A two-dimensional matrix listing the normalized distances between random
 pairs of 25-tip trees drawn from the uniform distribution using
 \code{ape::rtree(nTip, br=NULL)}.
 }
@@ -17,7 +17,8 @@ pairs of 25-tip trees drawn from the uniform distribution using
 Rows are named with an abbreviation of the tree comparison metric.
 \itemize{
 \item #TODO list these and state how normalized.
-Columns list the calculated tree distances.
 }
+
+Each column lists the calculated distances between each pair of trees.
 }
 \keyword{datasets}

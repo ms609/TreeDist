@@ -34,7 +34,7 @@ measure of the information content of the tree as a whole.
 }}
 
 \references{
-\insertRef{Meila2007}{TreeSearch}
+\insertRef{Meila2007}{TreeDist}
 }
 \author{
 Martin R. Smith

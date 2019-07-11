@@ -45,8 +45,8 @@ SplitPairingInformationIndex(5)
 }
 \references{
 \itemize{
-\item \insertRef{Meila2007}{TreeSearch}
-\item \insertRef{SmithDist}{TreeSearch}
+\item \insertRef{Meila2007}{TreeDist}
+\item \insertRef{SmithDist}{TreeDist}
 }
 }
 \author{

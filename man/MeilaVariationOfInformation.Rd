@@ -60,8 +60,8 @@ This is the value that the function returns.
 }
 \references{
 {
-\insertRef{Meila2007}{TreeSearch}
-\insertRef{Vinh2010}{TreeSearch}
+\insertRef{Meila2007}{TreeDist}
+\insertRef{Vinh2010}{TreeDist}
 }
 }
 \author{

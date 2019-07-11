@@ -57,7 +57,7 @@ value calculated by #TODO detail
 }
 
 \references{
-\insertRef{Bogdanowicz2012}{TreeSearch}
+\insertRef{Bogdanowicz2012}{TreeDist}
 }
 \seealso{
 Other Tree distance: \code{\link{MutualArborealInfo}},

@@ -76,7 +76,7 @@ value calculated by #TODO detail
 }
 
 \references{
-\insertRef{SmithDist}{TreeSearch}
+\insertRef{SmithDist}{TreeDist}
 }
 \seealso{
 Other Tree distance: \code{\link{MatchingSplitDistance}},

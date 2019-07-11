@@ -60,7 +60,7 @@ value calculated by #TODO detail
 }
 
 \references{
-\insertRef{Nye2006}{TreeSearch}
+\insertRef{Nye2006}{TreeDist}
 }
 \seealso{
 Other Tree distance: \code{\link{MatchingSplitDistance}},

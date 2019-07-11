@@ -45,11 +45,11 @@ value calculated by #TODO detail
 }
 
 \references{
-\insertRef{Meila2007}{TreeSearch}
+\insertRef{Meila2007}{TreeDist}
 
-\insertRef{SmithDist}{TreeSearch}
+\insertRef{SmithDist}{TreeDist}
 
-\insertRef{Vinh2010}{TreeSearch}
+\insertRef{Vinh2010}{TreeDist}
 }
 \seealso{
 Other Tree distance: \code{\link{MatchingSplitDistance}},

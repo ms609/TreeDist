@@ -4,7 +4,7 @@
 \name{randomTreeDistances}
 \alias{randomTreeDistances}
 \title{Mean distances between random pairs of trees}
-\format{An object of class \code{array} of dimension 5 x 2 x 18.}
+\format{An object of class \code{array} of dimension 9 x 2 x 20.}
 \usage{
 randomTreeDistances
 }

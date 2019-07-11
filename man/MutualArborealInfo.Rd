@@ -138,7 +138,7 @@ trees.
 \references{
 {
 \itemize{
-\item \insertRef{SmithDist}{TreeSearch}
+\item \insertRef{SmithDist}{TreeDist}
 }
 }
 }

@@ -74,7 +74,7 @@ Thus, all taxa in the smaller of \emph{A1} and \emph{A2} also occur in the large
   
 }
 \references{
-\insertRef{Meila2007}{TreeSearch}
+\insertRef{Meila2007}{TreeDist}
 }
 \seealso{
 Other split information functions: \code{\link{JointInformation}},
