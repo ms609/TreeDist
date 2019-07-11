@@ -65,10 +65,10 @@ legend('bottomright', bty='n', pch=c(3, 3, 6, 3, 3, 4,4,4,6),
 
 ```{r load-data-dists, include=FALSE}
 data('distanceDistribution25', package='TreeDist')
-dists <- distanceDistribution25
+d25 <- distanceDistribution25
 ```
 
-The histograms below depict the distribution of tree distances for `r dim(dists)[2]`
+The histograms below depict the distribution of tree distances for `r dim(d25)[2]`
 pairs of trees drawn at random from the uniform distribution.
 
 ```{R Tree-distance-distributions, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, out.width='90%', fig.align='center'}
@@ -80,37 +80,45 @@ PlotHist <- function (distances, breaks, title, ...) {
   legend('topleft', bty='n', c('', '', title), cex=0.8)
 }
 
-PlotHist(dists['vai', ], manyBreaks, 'Var. Arb Info', border=cbPalette8[1])
+PlotHist(d25['vai', ], manyBreaks, 'Var. Arb Info', border=cbPalette8[1])
 mtext('Distance between pectinate tree (above) and random bifurcating trees', outer=TRUE, cex=0.8)
 
-PlotHist(dists['vci', ], manyBreaks, 'Var. Clustering Info', border=cbPalette8[2])
-PlotHist(dists['nts', ], manyBreaks, 'Nye et al.', border=cbPalette8[3])
-PlotHist(dists['qd', ],  manyBreaks,  'Quartet dissimilarity', border=cbPalette8[4])
-PlotHist(dists['vpi', ], manyBreaks, 'Var. Partition Info', border=cbPalette8[5])
-PlotHist(dists['msd', ],  manyBreaks * max(dists['msd', ]),  'Matching Splits', border=cbPalette8[6])
-PlotHist(dists['path', ],  manyBreaks * max(dists['path', ]),  'Path', border=cbPalette8[7])
-PlotHist(dists['spr', ], 0:max(dists['spr', ]),  'SPR', border=cbPalette8[8])
-PlotHist(dists['rf', ],  manyBreaks * 44,  'Robinson-Foulds', border=cbPalette8[8])
+PlotHist(d25['vci', ], manyBreaks, 'Var. Clustering Info', border=cbPalette8[2])
+PlotHist(d25['nts', ], manyBreaks, 'Nye et al.', border=cbPalette8[3])
+PlotHist(d25['qd', ],  manyBreaks,  'Quartet dissimilarity', border=cbPalette8[4])
+PlotHist(d25['vpi', ], manyBreaks, 'Var. Partition Info', border=cbPalette8[5])
+PlotHist(d25['msd', ],  manyBreaks * max(dists['msd', ]),  'Matching Splits', border=cbPalette8[6])
+PlotHist(d25['path', ],  manyBreaks * max(dists['path', ]),  'Path', border=cbPalette8[7])
+PlotHist(d25['spr', ], 0:max(dists['spr', ]),  'SPR', border=cbPalette8[8])
+PlotHist(d25['rf', ],  manyBreaks * 44,  'Robinson-Foulds', border=cbPalette8[8])
 
 ```
 
 # Distances between all 7-tip trees 
 
-```{r 7-tip-treess, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=3/2, fig.width=6, out.width='90%', fig.align='center'}
-par(mfrow=c(3, 2), mar=rep(0.8, 4))
-pal <- viridisLite::viridis(32)
+```{r 7-tip-funcs, include=FALSE} 
+Palette <- function (n) viridisLite::viridis(n)
+td7 <- sevenTipDistances
+treeShapes <- td7$shapes
+shapes <- treeShapes[order(treeShapes)]
+treeCols <- Ternary::cbPalette8[2:7]
+names(treeCols) <- unique(shapes)
+
+
+Hist <- function (distances, title='', breaks=32L) {
+  hist(distances, breaks=breaks, col=Palette(breaks), main=title)
+}
 
 PlotMDS <- function(distances, title='') {
   space <- MASS::isoMDS(distances, k=2, trace=FALSE)
   pts <- space$points
-  plot(pts, pch=19, col=paste0(treeCols[as.character(shapes)], '88'), 
-       xlim = range(pts[, 1]) + c(-1, 1),
-       ylim=range(pts[, 2]) + c(-1, 1))
+  plot(pts, pch=19, col=paste0(treeCols[as.character(shapes)], '88'))
   z <- MASS::kde2d(pts[, 1], pts[, 2])
   contour(z, add=TRUE, col='#00000088')
   legend('bottom', legend=paste0('stress = ', signif(space$stress, 3)), bty='n')
   legend('top', legend=title, bty='n', text.font=2)
 }
+
 TableImage <- function (distances) {
   x <- rep(seq_len(945), each=945L)
   y <- rep(seq_len(945), 945L)
@@ -122,18 +130,51 @@ TableImage <- function (distances) {
   rect(shapeStarts, 955, shapeSum, 965, col=Ternary::cbPalette8[2:7], border=NA)
   rect(955, shapeStarts, 965, shapeSum, col=Ternary::cbPalette8[2:7], border=NA)
 
-  rect(x - 1L, y - 1L, xs, ys, col=pal[cut(distances, length(pal), labels=FALSE)], border=NA)
+  rect(x - 1L, y - 1L, x, y, col=Palette(100)[cut(distances, 100, labels=FALSE)], border=NA)
 }
+```
 
-shapes <- treeShapes[order(treeShapes)]
-treeCols <- Ternary::cbPalette8[2:7]
-names(treeCols) <- unique(shapes)
+```{r 7-tip-trees-1, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, out.width='90%', fig.align='center'}
+par(mfrow=c(3, 3), mar=rep(0.8, 4))
 
-hist(vaiDist, breaks=0:32, col=pal)
-hist(vaiDist, breaks=0:32, col=pal)
-TableImage(vaiDist)
-TableImage(vaiDist)
-PlotMDS(vaiDist, 'V of Arb Info')
-PlotMDS(vaiDist, 'V of Arb Info')
+Hist(td7$vai, title='V of Arb Info')
+Hist(td7$vci, title='V of Clust Info')
+Hist(td7$nts, title='Nye et al.')
+TableImage(td7$vai)
+TableImage(td7$vci)
+TableImage(td7$nts)
+PlotMDS(td7$vai, 'V of Arb Info')
+PlotMDS(td7$vci, 'V of Clus Info')
+PlotMDS(td7$nts, 'Nye et al.')
+
+```
+
+```{r 7-tip-trees-2, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, out.width='90%', fig.align='center'}
+par(mfrow=c(3, 3), mar=rep(0.8, 4))
+
+Hist(td7$qd, title='Quartet')
+Hist(td7$vpi, title='V. of Part. Info')
+Hist(td7$msd, title='Matching Split', breaks=10)
+TableImage(td7$qd)
+TableImage(td7$vpi)
+TableImage(td7$msd)
+PlotMDS(td7$qd)
+PlotMDS(td7$vpi)
+PlotMDS(td7$msd)
+
+```
+
+```{r 7-tip-trees-3, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, out.width='90%', fig.align='center'}
+par(mfrow=c(3, 3), mar=rep(0.8, 4))
+
+Hist(td7$path, title='Path')
+Hist(td7$spr, breaks=3, title='SPR')
+Hist(td7$rf, breaks=8, title='Robinson-Foulds')
+TableImage(td7$path)
+TableImage(td7$spr)
+TableImage(td7$rf)
+PlotMDS(td7$path)
+PlotMDS(td7$spr)
+PlotMDS(td7$rf)
 
 ```
