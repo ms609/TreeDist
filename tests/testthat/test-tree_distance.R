@@ -17,14 +17,14 @@ methodsToTest <- list(
   VariationOfClusteringInfo,
   MutualArborealInfo,
   NyeTreeSimilarity,
-  MatchingSplitDistance
+  MatchingSplitDistance,
+  KendallColijn
 )
 
 # Labels in different order to confound Tree2Splits
 treeSym8 <- ape::read.tree(text='((e, (f, (g, h))), (((a, b), c), d));')
 treeBal8 <- ape::read.tree(text='(((e, f), (g, h)), ((a, b), (c, d)));')
 treeOpp8 <- ape::read.tree(text='(((a, f), (c, h)), ((g, b), (e, d)));')
-treeBadLabel8 <- ape::read.tree(text='((a, b, c, D), (e, f, g, h));')
 
 treeCat8 <- ape::read.tree(text='((((h, g), f), e), (d, (c, (b, a))));')
 treeTac8 <- ape::read.tree(text='((((e, c), g), a), (h, (b, (d, f))));')
@@ -36,8 +36,15 @@ treeAbcd.Efgh <- ape::read.tree(text='((a, b, c, d), (e, f, g, h));')
 treeTwoSplits <- ape::read.tree(text="(((a, b), c, d), (e, f, g, h));")
 
 test_that('Bad labels cause error', {
+  treeBadLabel8 <- ape::read.tree(text='((a, b, c, D), (e, f, g, h));')
   lapply(methodsToTest, function(Func) 
     expect_error(Func(treeSym8, treeBadLabel8)))
+})
+
+test_that('Size mismatch causes error', {
+  treeSym7 <- ape::read.tree(text='((e, (f, g)), (((a, b), c), d));')
+  lapply(methodsToTest, function(Func) 
+    expect_error(Func(treeSym8, treeSym7)))
 })
 
 test_that('Metrics handle polytomies', {
@@ -160,4 +167,31 @@ test_that('NyeTreeSimilarity is correctly calculated', {
   expect_equal(1, NyeTreeSimilarity(treeSym8, treeSym8, normalize = TRUE))
   expect_equal(0.5 / 5L, NyeTreeSimilarity(treeSym8, treeAbcd.Efgh, normalize = TRUE))
   expect_true(NyeTreeSimilarity(treeSym8, treeBal8) > NyeTreeSimilarity(treeSym8, treeOpp8))
+})
+
+test_that('Kendall-Colijn distance is correctly calculated', {
+  
+  
+  treeCat8 <- ape::read.tree(text='((((h, g), f), e), (d, (c, (b, a))));')
+  treeTac8 <- ape::read.tree(text='((((e, c), g), a), (h, (b, (d, f))));')
+  
+  treeAb.Cdefgh <- ape::read.tree(text='((a, b), (c, d, e, f, g, h));')
+  treeAbc.Defgh <- ape::read.tree(text='((a, b, c), (d, e, f, g, h));')
+  treeAcd.Befgh <- ape::read.tree(text='((a, c, d), (b, e, f, g, h));')
+  treeAbcd.Efgh <- ape::read.tree(text='((a, b, c, d), (e, f, g, h));')
+  treeTwoSplits <- ape::read.tree(text="(((a, b), c, d), (e, f, g, h));")
+  # Expected values calculated using treespace::treeDist(treeSym8, treeBal8)
+  expect_equal(2.828427, KendallColijn(treeSym8, treeBal8), tolerance=1e-06)
+  expect_equal(2.828427, KendallColijn(treeCat8, treeBal8), tolerance=1e-06)
+  expect_equal(7.211103, KendallColijn(treeSym8, treeOpp8), tolerance=1e-06)
+  expect_equal(0L, KendallColijn(treeSym8, treeCat8), tolerance=1e-06)
+  expect_equal(8L, KendallColijn(treeSym8, treeTac8), tolerance=1e-06)
+  expect_equal(8L, KendallColijn(treeCat8, treeTac8), tolerance=1e-06)
+
+  expect_equal(5.291503, KendallColijn(treeSym8, treeAb.Cdefgh), tolerance=1e-06)
+  expect_equal(4.358899, KendallColijn(treeSym8, treeAbc.Defgh), tolerance=1e-06)
+  expect_equal(5L, KendallColijn(treeSym8, treeAcd.Befgh), tolerance=1e-06)
+  expect_equal(3.464102, KendallColijn(treeSym8, treeAbcd.Efgh), tolerance=1e-06)
+  expect_equal(3L, KendallColijn(treeSym8, treeTwoSplits), tolerance=1e-06)
+  expect_equal(2.828427, KendallColijn(treeAbc.Defgh, treeTwoSplits), tolerance=1e-06)
 })
