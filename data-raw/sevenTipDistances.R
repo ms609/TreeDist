@@ -12,8 +12,7 @@ treeShapes <- vapply(trees, TreeShape7, 1L)
 trees <- trees[order(treeShapes)]
 
 elementStatus <- Quartet::ManyToManyQuartetAgreement(trees)
-qd <- 1 - (rowSums(elementStatus[, , c('d', "d", "r1", "r2"), drop = FALSE], dims=2) / 
-       rowSums(elementStatus, dims=2))
+qd <- elementStatus[, , 'd'] / 35L
 
 treeDists <- vapply(trees, function (tr1) vapply(trees, function (tr2) {
   c(phangorn::treedist(tr1, tr2)[c('symmetric.difference', 'path.difference')],
