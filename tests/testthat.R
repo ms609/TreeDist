@@ -1,4 +1,4 @@
 library(testthat)
-library(TreeSearch)
+library(TreeDist)
 
-test_check("TreeSearch")
+test_check("TreeDist")

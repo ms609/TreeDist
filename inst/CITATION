@@ -13,8 +13,8 @@
               paste0("Smith, M.R. (20XX).",
                      " Untitled", 
                      " Journal name.",
-                     " doi: 10.XXXX/XXXXX"))
+                     " doi: 10.XXXX/XXXXX")
                      
               textVersion =
-              paste0("#TBC"))
+              paste0("TBC"))
               

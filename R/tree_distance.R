@@ -415,7 +415,7 @@ MutualArborealInfoSplits <- function (splits1, splits2, normalize = TRUE,
 
 
 #' @describeIn MutualArborealInfo Calculate variation of arboreal information from splits
-#' @importFrom TreeSearch LnUnrooted.int
+#' @importFrom TreeSearch LnUnrooted.int LnRooted.int
 #' @export
 VariationOfArborealInfoSplits <- function (splits1, splits2, normalize = TRUE,
                                            reportMatching = FALSE) {
@@ -457,8 +457,8 @@ VariationOfArborealInfoSplits <- function (splits1, splits2, normalize = TRUE,
   notInSplit1 <- nTerminals - inSplit1
   notInSplit2 <- nTerminals - inSplit2
   
-  logTrees1 <- LnRooted(inSplit1) + LnRooted(notInSplit1)
-  logTrees2 <- LnRooted(inSplit2) + LnRooted(notInSplit2)
+  logTrees1 <- LnRooted.int(inSplit1) + LnRooted.int(notInSplit1)
+  logTrees2 <- LnRooted.int(inSplit2) + LnRooted.int(notInSplit2)
   
   OneOverlap <- function(A1, A2) {
     if (A1 == A2) {

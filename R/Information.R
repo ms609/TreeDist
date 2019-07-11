@@ -62,6 +62,7 @@ SplitMutualInformation <- function(n, A1, A2 = A1) {
 }
 
 #' @describeIn SplitMutualInformation Variation of information between two splits.
+#' @importFrom TreeSearch SplitInformation
 #' @export
 SplitVariationOfInformation <- function (n, A1, A2 = A1) {
   # TODO calculate more efficiently from first principles
@@ -469,6 +470,7 @@ SplitEntropy <- function (split1, split2=split1) {
 #' 
 #' @author Martin R. Smith
 #' @family split information functions
+#' @importFrom TreeSearch NUnrooted
 #' @export
 JointInformation <- function(A1A2, A1B2, B1A2, B1B2) {
   # Y1 = A1:B1
@@ -494,6 +496,7 @@ JointInformation <- function(A1A2, A1B2, B1A2, B1B2) {
 
 #' @describeIn SplitMutualInformation Number of trees consistent with two splits.
 #' @family split information functions
+#' @importFrom TreeSearch TreesMatchingSplit NRooted
 #' @export
 TreesConsistentWithTwoSplits <- function (n, A1, A2=A1) {
   
@@ -539,7 +542,7 @@ TreesConsistentWithTwoSplits <- function (n, A1, A2=A1) {
 }
 
 #' @describeIn SplitMutualInformation Natural logarithm of `TreesConsistentWithTwoSplits`.
-#' @importFrom TreeSearch LogTreesMatchingSplit
+#' @importFrom TreeSearch LogTreesMatchingSplit LnRooted.int
 #' @export
 LogTreesConsistentWithTwoSplits <- function (n, A1, A2=A1) {
   smallSplit <- min(A1, A2)
@@ -549,5 +552,7 @@ LogTreesConsistentWithTwoSplits <- function (n, A1, A2=A1) {
   if (bigSplit == n) return (LogTreesMatchingSplit(smallSplit, n - smallSplit))
   
   # Return:
-  LnRooted(bigSplit - smallSplit + 1L) + LnRooted(smallSplit) + LnRooted(n - bigSplit)
+  LnRooted.int(bigSplit - smallSplit + 1L) + 
+    LnRooted.int(smallSplit) + 
+    LnRooted.int(n - bigSplit)
 }
