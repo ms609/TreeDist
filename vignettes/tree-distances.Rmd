@@ -87,9 +87,9 @@ PlotHist(d25['vci', ], manyBreaks, 'Var. Clustering Info', border=cbPalette8[2])
 PlotHist(d25['nts', ], manyBreaks, 'Nye et al.', border=cbPalette8[3])
 PlotHist(d25['qd', ],  manyBreaks,  'Quartet dissimilarity', border=cbPalette8[4])
 PlotHist(d25['vpi', ], manyBreaks, 'Var. Partition Info', border=cbPalette8[5])
-PlotHist(d25['msd', ],  manyBreaks * max(dists['msd', ]),  'Matching Splits', border=cbPalette8[6])
-PlotHist(d25['path', ],  manyBreaks * max(dists['path', ]),  'Path', border=cbPalette8[7])
-PlotHist(d25['spr', ], 0:max(dists['spr', ]),  'SPR', border=cbPalette8[8])
+PlotHist(d25['msd', ], manyBreaks * max(d25['msd', ]),  'Matching Splits', border=cbPalette8[6])
+PlotHist(d25['path', ],  manyBreaks * max(d25['path', ]),  'Path', border=cbPalette8[7])
+PlotHist(d25['spr', ], 0:max(d25['spr', ]),  'SPR', border=cbPalette8[8])
 PlotHist(d25['rf', ],  manyBreaks * 44,  'Robinson-Foulds', border=cbPalette8[8])
 
 ```
@@ -98,6 +98,7 @@ PlotHist(d25['rf', ],  manyBreaks * 44,  'Robinson-Foulds', border=cbPalette8[8]
 
 ```{r 7-tip-funcs, include=FALSE} 
 Palette <- function (n) viridisLite::viridis(n)
+data('sevenTipDistances', package='TreeDist')
 td7 <- sevenTipDistances
 treeShapes <- td7$shapes
 shapes <- treeShapes[order(treeShapes)]

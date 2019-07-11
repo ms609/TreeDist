@@ -15,6 +15,7 @@ revdep/
 vignettes/*.html
 vignettes/*.pdf
 vignettes/*_files
+vignettes/*_cache
 *.Rproj*
 .Rproj.user
 *.site
