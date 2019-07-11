@@ -37,4 +37,4 @@ RandomDistances <- function (nLeaves, repls) {
 }
 
 randomTreeDistances <- RandomDistances(nLeaves, repls=1000L)
-usethis::use_data(randomTreeDistances, overwrite=TRUE)
+usethis::use_data(randomTreeDistances, compress='gzip', overwrite=TRUE)

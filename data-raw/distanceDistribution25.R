@@ -30,4 +30,4 @@ RandomDistances <- function (nLeaves, repls) {
 }
 
 distanceDistribution25 <- RandomDistances(25, 10000)
-usethis::use_data(distanceDistribution25, overwrite=TRUE)
+usethis::use_data(distanceDistribution25, compress='xz', overwrite=TRUE)

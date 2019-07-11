@@ -37,4 +37,4 @@ sevenTipDistances <- list(
  shapes = treeShapes[order(treeShapes)]
 )
 
-usethis::use_data(sevenTipDistances, overwrite=TRUE)
+usethis::use_data(sevenTipDistances, compress='gzip', overwrite=TRUE)
