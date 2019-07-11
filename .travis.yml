@@ -17,9 +17,11 @@ r_github_packages:
 # - r-lib/pkgload
 # - r-lib/devtools
 
+r_packages:
+ - bookdown
+ 
 r_binary_packages:
  - ape
- - bookdown
  - covr
  - devtools
  - phangorn

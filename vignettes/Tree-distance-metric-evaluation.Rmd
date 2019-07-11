@@ -61,9 +61,9 @@ RFPlot <- function (tr, title=NULL, highlight=NULL, ref=sq_trees[[1]],
   text(text_x, y <- y - 1, "Matching Splits:", cex=0.8, pos=2)
   text(text_x, y <- y - 1, 'Quartet:', cex=0.8, pos=2)
   text(text_x, y <- y - 1, "Path:", cex=0.8, pos=2)
+  text(text_x, y <- y - 1, "Kendall-Colijn:", cex=0.8, pos=2)
   text(text_x, y <- y - 1, "SPR:", cex=0.8, pos=2)
   text(text_x, y <- y - 1, "Robinson-Foulds:", cex=0.8, pos=2)
-  text(text_x, y <- y - 1, "Kendall-Colijn:", cex=0.8, pos=2)
   
   #text(text_x, y <- y - 1, "VPI%:", cex=0.8, pos=2)
   
@@ -84,10 +84,9 @@ RFPlot <- function (tr, title=NULL, highlight=NULL, ref=sq_trees[[1]],
   text(text_x, y <- y - 1, paste0(QuartetStatus(list(tr, ref))[2, 'd'],
                             ' / ', choose(11,4)), cex=0.8, pos=4)
   text(text_x, y <- y - 1, paste0(signif(tree_dist['path.difference'], 4)), cex=0.8, pos=4)
+  text(text_x, y <- y - 1, signif(KendallColijn(tr, ref), 4), cex=0.8, pos=4)
   text(text_x, y <- y - 1, paste0(phangorn::sprdist(tr, ref)[1]), cex=0.8, pos=4)
   text(text_x, y <- y - 1, paste0(tree_dist['symmetric.difference'], 
-                                  ' / ', (11L - 3L) * 2L), cex=0.8, pos=4)
-  text(text_x, y <- y - 1, paste0(signif(treespace::treeDist(tr, ref), 4), 
                                   ' / ', (11L - 3L) * 2L), cex=0.8, pos=4)
   #text(text_x, y <- y - 1, paste0(100 * signif(VariationOfPartitionInfo(tr, ref) / pair_info, 4), '%'), cex=0.8, pos=4)
 }
@@ -397,10 +396,9 @@ PlotMDS(VariationOfPartitionInfo(moveOne, moveOne), 'V. Part. Info')
 PlotMDS(VariationOfClusteringInfo(moveOne, moveOne), 'V. Clust. Info')
 PlotMDS(8L - NyeTreeSimilarity(moveOne, moveOne), 'Nye')
 PlotMDS(MatchingSplitDistance(moveOne, moveOne), 'Mat. Spl. Dist')
-tempFileName <- tempfile()
-write.tree(structure(moveOne, class='multiPhylo'), file=tempFileName)
-qds <- AllPairsQuartetDistance(tempFileName)
-xx <- file.remove(tempFileName)
+tempTqFile <- Quartet::TQFile(moveOne)
+qds <- AllPairsQuartetDistance(tempTqFile)
+xx <- file.remove(tempTqFile)
 rownames(qds) <- colnames(qds) <- names(moveOne)
 PlotMDS(qds, 'Quartet Dist.')
 
