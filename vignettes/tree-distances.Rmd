@@ -16,9 +16,9 @@ vignette: >
 This figure shows how the normalized tree distance varies with the number of 
 tips in the trees being compared.
 
-Metrics marked with &#9660; are normalized based on the maximum possible value;
-information-based metrics, marked `+`, are normalized against the total 
-information content of each pair of trees; metrics marked `×` do not have a 
+Metrics marked with &#9661; are normalized based on the maximum possible value;
+information-based metrics, marked +, are normalized against the total 
+information content of each pair of trees; metrics marked &times; do not have a 
 readily calculated maximum value and are thus crudely normalized against a 
 simple function of the number of tips.
 
@@ -138,47 +138,48 @@ TableImage <- function (distances) {
 }
 ```
 
-```{r 7-tip-trees-1, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, out.width='90%', fig.align='center'}
+```{r 7-tip-trees-histograms, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, out.width='90%', fig.align='center'}
 par(mfrow=c(3, 3), mar=rep(0.8, 4))
 
 Hist(td7$vai, title='V of Arb Info')
 Hist(td7$vci, title='V of Clust Info')
 Hist(td7$nts, title='Nye et al.')
-TableImage(td7$vai)
-TableImage(td7$vci)
-TableImage(td7$nts)
-PlotMDS(td7$vai, 'V of Arb Info')
-PlotMDS(td7$vci, 'V of Clus Info')
-PlotMDS(td7$nts, 'Nye et al.')
+Hist(td7$qd, title='Quartet')
+Hist(td7$vpi, title='V. of Part. Info')
+Hist(td7$msd, title='Matching Split', breaks=10)
+Hist(td7$path, title='Path')
+Hist(td7$spr, title='SPR', breaks=3)
+Hist(td7$rf, title='Robinson-Foulds', breaks=8)
+
 
 ```
 
 ```{r 7-tip-trees-2, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, out.width='90%', fig.align='center'}
 par(mfrow=c(3, 3), mar=rep(0.8, 4))
 
-Hist(td7$qd, title='Quartet')
-Hist(td7$vpi, title='V. of Part. Info')
-Hist(td7$msd, title='Matching Split', breaks=10)
+TableImage(td7$vai)
+TableImage(td7$vci)
+TableImage(td7$nts)
 TableImage(td7$qd)
 TableImage(td7$vpi)
 TableImage(td7$msd)
-PlotMDS(td7$qd)
-PlotMDS(td7$vpi)
-PlotMDS(td7$msd)
-
+TableImage(td7$path)
+TableImage(td7$spr)
+TableImage(td7$rf)
 ```
 
 ```{r 7-tip-trees-3, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, out.width='90%', fig.align='center'}
 par(mfrow=c(3, 3), mar=rep(0.8, 4))
 
-Hist(td7$path, title='Path')
-Hist(td7$spr, breaks=3, title='SPR')
-Hist(td7$rf, breaks=8, title='Robinson-Foulds')
-TableImage(td7$path)
-TableImage(td7$spr)
-TableImage(td7$rf)
+PlotMDS(td7$vai, 'V of Arb Info')
+PlotMDS(td7$vci, 'V of Clus Info')
+PlotMDS(td7$nts, 'Nye et al.')
+PlotMDS(td7$qd)
+PlotMDS(td7$vpi)
+PlotMDS(td7$msd)
 PlotMDS(td7$path)
 PlotMDS(td7$spr)
 PlotMDS(td7$rf)
-
 ```
+
+## References
