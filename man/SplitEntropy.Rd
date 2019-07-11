@@ -31,10 +31,7 @@ treating splits as subdivisions of \emph{n} terminals into two clusters.
 }
 \seealso{
 Other split information functions: \code{\link{JointInformation}},
-  \code{\link{SplitInformation}},
-  \code{\link{SplitMutualInformation}},
-  \code{\link{TreesMatchingSplit}},
-  \code{\link{UnrootedTreesMatchingSplit}}
+  \code{\link{SplitMutualInformation}}
 }
 \author{
 Martin R. Smith

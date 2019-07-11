@@ -116,7 +116,7 @@ test_that('MutualPartitionInfo is correctly calculated', {
                MutualPartitionInfo(treeAbc.Defgh, treeAb.Cdefgh))
   expect_equal(MutualPartitionInfo(treeAbcd.Efgh, treeAb.Cdefgh),
                MutualPartitionInfo(treeAb.Cdefgh, treeAbcd.Efgh))
-  expect_equal(-(LogTreesMatchingSplit(2, 5) - LnUnrooted.int(7)) / log(2), 
+  expect_equal(-(TreeSearch::LogTreesMatchingSplit(2, 5) - LnUnrooted.int(7)) / log(2), 
                MutualPartitionInfo(treeAb.Cdefgh, treeAbc.Defgh))
   expect_true(MutualPartitionInfo(treeSym8, treeBal8) > MutualPartitionInfo(treeSym8, treeOpp8))
   expect_equal(0, VariationOfPartitionInfo(treeSym8, treeSym8))

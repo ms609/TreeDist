@@ -607,7 +607,7 @@ NyeSplitSimilarity <- function (splits1, splits2, normalize = TRUE,
 
 #' @describeIn MutualPartitionInfo Takes splits instead of trees
 #' @inheritParams MutualArborealInfoSplits
-#' @importFrom TreeSearch LnUnrooted.int
+#' @importFrom TreeSearch LnUnrooted.int LogTreesMatchingSplit
 #' @export
 MutualPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE) {
   

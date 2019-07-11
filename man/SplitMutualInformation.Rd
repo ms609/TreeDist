@@ -78,16 +78,10 @@ Thus, all taxa in the smaller of \emph{A1} and \emph{A2} also occur in the large
 }
 \seealso{
 Other split information functions: \code{\link{JointInformation}},
-  \code{\link{SplitEntropy}},
-  \code{\link{SplitInformation}},
-  \code{\link{TreesMatchingSplit}},
-  \code{\link{UnrootedTreesMatchingSplit}}
+  \code{\link{SplitEntropy}}
 
 Other split information functions: \code{\link{JointInformation}},
-  \code{\link{SplitEntropy}},
-  \code{\link{SplitInformation}},
-  \code{\link{TreesMatchingSplit}},
-  \code{\link{UnrootedTreesMatchingSplit}}
+  \code{\link{SplitEntropy}}
 }
 \author{
 Martin R. Smith

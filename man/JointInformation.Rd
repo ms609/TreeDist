@@ -51,10 +51,7 @@ JointInformation(3, 1, 0, 4)
 }
 \seealso{
 Other split information functions: \code{\link{SplitEntropy}},
-  \code{\link{SplitInformation}},
-  \code{\link{SplitMutualInformation}},
-  \code{\link{TreesMatchingSplit}},
-  \code{\link{UnrootedTreesMatchingSplit}}
+  \code{\link{SplitMutualInformation}}
 }
 \author{
 Martin R. Smith

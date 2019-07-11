@@ -1,30 +1,7 @@
 # Require logDoubleFactorials from TreeSearch for LogDoubleFactorial.int:
-data(logDoubleFactorials, package='TreeSearch')
+#data(logDoubleFactorials, package='TreeSearch')
+logDoubleFactorials <- TreeSearch::logDoubleFactorials
 
-#' Number of trees matching a bipartition split
-#' 
-#' Calculates the number of unrooted bifurcated trees that are consistent with
-#' a bipartition split that divides taxa into groups of size `A` and `B`.
-#' 
-#' @param A,B Number of taxa in each partition.
-#' 
-#' @author Martin R. Smith
-#' 
-#' @family split information functions
-#' @export
-TreesMatchingSplit <- function (A, B) {
-  if (A == 0) NUnrooted(B) else
-    if (B == 0) NUnrooted(A) else
-      NRooted(A) * NRooted(B)
-}
-
-#' @describeIn TreesMatchingSplit Logarithm of the number of trees matching a split.
-#' @export
-LogTreesMatchingSplit <- function (A, B) {
-  if (A == 0) LnUnrooted.int(B) else
-    if (B == 0) LnUnrooted.int(A) else
-      LnRooted.int(A) + LnRooted.int(B)
-}
 
 #' Mutual information of two splits
 #' 
@@ -75,6 +52,7 @@ LogTreesMatchingSplit <- function (A, B) {
 #' 
 #' @author Martin R. Smith
 #' @family split information functions
+#' @importFrom TreeSearch LogTreesMatchingSplit LnUnrooted logDoubleFactorials
 #' @export
 SplitMutualInformation <- function(n, A1, A2 = A1) {
   (LogTreesMatchingSplit(A1, n - A1) 
@@ -91,40 +69,6 @@ SplitVariationOfInformation <- function (n, A1, A2 = A1) {
   SplitInformation (A1, n - A1) - mutual +
     SplitInformation(A2, n - A2) - mutual
 }
-
-#' Information content of a split
-#' 
-#' `SplitInformation` calculates the information content of a split, based on 
-#' the entropy of the subset of trees consistent with the split; a split that
-#' is consistent with a smaller number of trees will have a higher information
-#' content.
-#'
-#' @inheritParams TreesMatchingSplit
-#'
-#' @return Information content of the split, in bits.
-#' 
-#' @examples 
-#'   # Eight tips can be split evenly:
-#'   SplitInformation (4, 4)
-#'   
-#'   # or unevenly, which is less informative:
-#'   SplitInformation (2, 6)
-#' 
-#' @author Martin R. Smith
-#' @family split information functions
-#' @export
-SplitInformation <- function (A, B) {
-  -(LogTreesMatchingSplit(A, B) - LnUnrooted.int(A + B)) / log(2)
-}
-
-#' @describeIn SplitInformation Information content of a multi-partition split.
-#' @param partitionSizes Integer vector specifying the number of taxa in each 
-#' partition of a multi-partition split.
-#' @export
-MultiSplitInformation <- function (partitionSizes) {
-  -(LnUnrootedMult(partitionSizes) - LnUnrooted.int(sum(partitionSizes))) / log(2)
-}
-
 
 #' Use Variation of Information to compare partitions as clusterings
 #' 
@@ -595,6 +539,7 @@ TreesConsistentWithTwoSplits <- function (n, A1, A2=A1) {
 }
 
 #' @describeIn SplitMutualInformation Natural logarithm of `TreesConsistentWithTwoSplits`.
+#' @importFrom TreeSearch LogTreesMatchingSplit
 #' @export
 LogTreesConsistentWithTwoSplits <- function (n, A1, A2=A1) {
   smallSplit <- min(A1, A2)
@@ -605,36 +550,4 @@ LogTreesConsistentWithTwoSplits <- function (n, A1, A2=A1) {
   
   # Return:
   LnRooted(bigSplit - smallSplit + 1L) + LnRooted(smallSplit) + LnRooted(n - bigSplit)
-}
-
-#' Number of trees consistent with split
-#' 
-#' Calculates the number of unrooted bifurcating trees consistent with the 
-#' specified multi-partition split, using the formula of Carter _et al_. (1990).
-#' 
-#' @template splitsParam
-#' 
-#' @return `UnrootedTreesMatchingSplit` returns an integer specifying the
-#'  number of unrooted bifurcating trees consistent with the specified split.
-#' 
-#'
-#' @examples 
-#'  UnrootedTreesMatchingSplit(c(3, 5))
-#'  UnrootedTreesMatchingSplit(c(3, 2, 1, 2))
-#' 
-#' @references 
-#' \insertRef{Carter1990}{TreeSearch}, Theorem 2.
-#'
-#' @author Martin R. Smith
-#' @family split information functions
-#' @importFrom TreeSearch LogDoubleFactorial
-#' @export
-UnrootedTreesMatchingSplit <- function (splits) {
-  splits <- splits[splits > 0L]
-  totalTips <- sum(splits)
-  tipsMinusLengthSplits <- totalTips - length(splits)
-  # use exp and log as it's just as fast, but less likely to overflow to Inf
-  exp(sum(LogDoubleFactorial(totalTips + totalTips - 5L),
-          LogDoubleFactorial(splits + splits - 3L)) -
-        LogDoubleFactorial(tipsMinusLengthSplits + tipsMinusLengthSplits - 1L))
 }
