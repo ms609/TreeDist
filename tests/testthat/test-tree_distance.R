@@ -171,16 +171,7 @@ test_that('NyeTreeSimilarity is correctly calculated', {
 
 test_that('Kendall-Colijn distance is correctly calculated', {
   
-  
-  treeCat8 <- ape::read.tree(text='((((h, g), f), e), (d, (c, (b, a))));')
-  treeTac8 <- ape::read.tree(text='((((e, c), g), a), (h, (b, (d, f))));')
-  
-  treeAb.Cdefgh <- ape::read.tree(text='((a, b), (c, d, e, f, g, h));')
-  treeAbc.Defgh <- ape::read.tree(text='((a, b, c), (d, e, f, g, h));')
-  treeAcd.Befgh <- ape::read.tree(text='((a, c, d), (b, e, f, g, h));')
-  treeAbcd.Efgh <- ape::read.tree(text='((a, b, c, d), (e, f, g, h));')
-  treeTwoSplits <- ape::read.tree(text="(((a, b), c, d), (e, f, g, h));")
-  # Expected values calculated using treespace::treeDist(treeSym8, treeBal8)
+    # Expected values calculated using treespace::treeDist(treeSym8, treeBal8)
   expect_equal(2.828427, KendallColijn(treeSym8, treeBal8), tolerance=1e-06)
   expect_equal(2.828427, KendallColijn(treeCat8, treeBal8), tolerance=1e-06)
   expect_equal(7.211103, KendallColijn(treeSym8, treeOpp8), tolerance=1e-06)
