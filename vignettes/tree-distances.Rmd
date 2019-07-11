@@ -11,12 +11,22 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+## Expected tree distance of random tree pair
+
+This figure shows how the normalized tree distance varies with the number of 
+tips in the trees being compared.
+
+Metrics marked with &#9660; are normalized based on the maximum possible value;
+information-based metrics, marked `+`, are normalized against the total 
+information content of each pair of trees; metrics marked `×` do not have a 
+readily calculated maximum value and are thus crudely normalized against a 
+simple function of the number of tips.
 
 ```{R Tree-distance-averages, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, out.width='90%', fig.align='center'}
 cbPalette8 <- Ternary::cbPalette8
-AddLine <- function (dat, col) {
+AddLine <- function (dat, col, pch=3) {
   nLeaves <- colnames(dat)
-  points(nLeaves, dat['mean', ], pch=3, col=col)
+  points(nLeaves, dat['mean', ], pch=pch, col=col)
   lines(nLeaves, dat['mean', ] + dat['sd', ], lty=3, col=col)
   lines(nLeaves, dat['mean', ] - dat['sd', ], lty=3, col=col)
 }
@@ -28,21 +38,38 @@ hi2lo <- c('vai', 'vci', 'nts', 'qd', 'vpi', 'msd', 'path', 'spr', 'rf')
 plot(as.integer(dimnames(dists)[[3]]), dists['vai', 'mean', ],
      pch='.', ylim=c(0.25, 1), col='white',
      xlab = "Number of tips", ylab = "Normalized tree distance")
-for (i in 1:5) AddLine(dists[hi2lo[i], , ], col=cbPalette8[i])
+for (i in 1:5) AddLine(dists[hi2lo[i], , ], 
+                       pch=c(3, 3, 6, 3, 3)[i],
+                       col=cbPalette8[i])
+
+nLeaves <- as.integer(dimnames(dists)[[3]])
 # Crude normalization against diameter
-AddLine(dists['msd', , ] / rep((nLeaves * nLeaves * 3 / 8), each=2), col=cbPalette8[6])
-AddLine(dists['path', , ] / rep((nLeaves * 8), each=2), col=cbPalette8[7])
-AddLine(dists['spr', , ], col=cbPalette8[8])
-AddLine(dists['rf', , ], col=cbPalette8[8])
+AddLine(dists['msd', , ] / rep((nLeaves * nLeaves * 3 / 8), each=2), 
+        pch=4, col=cbPalette8[6])
+AddLine(dists['path', , ] / rep((nLeaves * 8), each=2),
+        pch=4, col=cbPalette8[7])
+AddLine(dists['spr', , ], col=cbPalette8[8], pch=4)
+AddLine(dists['rf', , ], col=cbPalette8[8], pch=6)
 
 
-legend('bottomright', bty='n', pch=3, 
+legend('bottomright', bty='n', pch=c(3, 3, 6, 3, 3, 4,4,4,6), 
        legend=c('Var. Arb Info', 'Var. Clustering Info', 'Nye et al.',
-                'Quartet dissimilarity', 'Var. Partition Info',
+                'Quartet', 'Var. Partition Info',
                 'Matching Splits', 'Path', 'SPR',
                 'Robinson-Foulds'), 
        col=cbPalette8[c(1:5, 6, 7, 8, 8)])
 ```
+
+
+## Distribution of tree distances
+
+```{r load-data-dists, include=FALSE}
+data('distanceDistribution25', package='TreeDist')
+dists <- distanceDistribution25
+```
+
+The histograms below depict the distribution of tree distances for `r dim(dists)[2]`
+pairs of trees drawn at random from the uniform distribution.
 
 ```{R Tree-distance-distributions, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, out.width='90%', fig.align='center'}
 par(mfrow=c(3, 3), mar=rep(1.9, 4), cex=0.8, oma=c(0, 0, 2, 0))
@@ -52,9 +79,6 @@ PlotHist <- function (distances, breaks, title, ...) {
   hist(distances, xlab=NULL, main=NULL, breaks=breaks, cex=0.8, ...)
   legend('topleft', bty='n', c('', '', title), cex=0.8)
 }
-
-data('distanceDistribution25', package='TreeDist')
-dists <- distanceDistribution25
 
 PlotHist(dists['vai', ], manyBreaks, 'Var. Arb Info', border=cbPalette8[1])
 mtext('Distance between pectinate tree (above) and random bifurcating trees', outer=TRUE, cex=0.8)
