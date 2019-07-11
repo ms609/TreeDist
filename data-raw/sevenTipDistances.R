@@ -1,7 +1,6 @@
 library('TreeDist')
 trees <- phangorn::allTrees(7, rooted=FALSE, tip.label=letters[1:7])
 trees <- lapply(trees, ape::root, 'a', resolve.root=TRUE)
-trees <- trees[1:4]
 TreeShape7 <- function (tree) {
   edge <- tree$edge
   parent <- edge[, 1]
@@ -11,9 +10,6 @@ TreeShape7 <- function (tree) {
 }
 treeShapes <- vapply(trees, TreeShape7, 1L)
 trees <- trees[order(treeShapes)]
-
-# First check that VAI is working!
-vai <- VariationOfArborealInfo(trees, trees, normalize=TRUE)
 
 elementStatus <- Quartet::ManyToManyQuartetAgreement(trees)
 qd <- 1 - (rowSums(elementStatus[, , c('d', "d", "r1", "r2"), drop = FALSE], dims=2) / 
@@ -25,7 +21,7 @@ treeDists <- vapply(trees, function (tr1) vapply(trees, function (tr2) {
 }, double(3)), matrix(0, nrow=3, ncol=length(trees)))
 
 sevenTipDistances <- list(
- vai = vai,
+ vai = VariationOfArborealInfo(trees, trees, normalize=TRUE),
  vpi = VariationOfPartitionInfo(trees, trees, normalize=TRUE),
  vci = VariationOfClusteringInfo(trees, trees, normalize=TRUE),
  qd = qd,
@@ -37,4 +33,4 @@ sevenTipDistances <- list(
  shapes = treeShapes[order(treeShapes)]
 )
 
-usethis::use_data(sevenTipDistances, compress='gzip', overwrite=TRUE)
+usethis::use_data(sevenTipDistances, compress='xz', overwrite=TRUE)
