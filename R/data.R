@@ -31,7 +31,7 @@
 #' (equivalent to rooted 6-tip trees).  Following Kendall and Colijn (2016).
 #' 
 #' @references 
-#' \insertRef{@Kendall2016}{TreeDist}
+#' \insertRef{Kendall2016}{TreeDist}
 #' 
 #' @keywords datasets
 "sevenTipDistances"
