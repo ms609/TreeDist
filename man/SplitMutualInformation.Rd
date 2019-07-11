@@ -70,7 +70,7 @@ Thus, all taxa in the smaller of \emph{A1} and \emph{A2} also occur in the large
   # If splits are identical, then their mutual information is the same
   # as the information of either split:
   SplitMutualInformation(n=8, A1=3, A2=3)
-  SplitInformation(3, 5)
+  TreeSearch::SplitInformation(3, 5)
   
 }
 \references{

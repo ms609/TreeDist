@@ -1,20 +1,17 @@
-     citHeader(paste0("When using the package, we would appreciate it if you would acknowledge your use of TreeDist in the article text, and #TODO. For example, 'Tree distances were calculated using the R package TreeDist v0.3.2.  You might also wish to cite the
-     individual software packages using their Zenodo dois."))
-     
-     vers <- paste("R package version", meta$Version)
-     
-     citEntry(entry = "Article",
-              title = "Untitled",
-              author = personList(as.person("Martin R. Smith")),
-              journal = "Unsubmitted",
-              year = "20XX",
-     
-              textVersion =
-              paste0("Smith, M.R. (20XX).",
-                     " Untitled", 
-                     " Journal name.",
-                     " doi: 10.XXXX/XXXXX")
-                     
-              textVersion =
-              paste0("TBC"))
-              
+citHeader(paste0("When using the package, we would appreciate it if you would acknowledge your use of TreeDist in the article text, and #TODO. For example, 'Tree distances were calculated using the R package TreeDist v0.3.2.  You might also wish to cite the
+individual software packages using their Zenodo dois."))
+
+vers <- paste("R package version", meta$Version)
+
+citEntry(entry = "Article",
+      title = "Untitled",
+      author = personList(as.person("Martin R. Smith")),
+      journal = "Unsubmitted",
+      year = "20XX",
+
+      textVersion =
+      paste0("Smith, M.R. (20XX).",
+             " Untitled", 
+             " Journal name.",
+             " doi: 10.XXXX/XXXXX"))
+

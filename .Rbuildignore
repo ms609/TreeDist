@@ -19,3 +19,4 @@ vignettes/.RData
 \.yml$
 ^\.Rdata$
 ^\.?R+prof.*$
+^vignettes/.*_cache$
