@@ -1,62 +1,38 @@
-[![Build Status](https://travis-ci.org/ms609/TreeSearch.svg?branch=master)](https://travis-ci.org/ms609/TreeSearch)
-[![codecov](https://codecov.io/gh/ms609/TreeSearch/branch/master/graph/badge.svg)](https://codecov.io/gh/ms609/TreeSearch)
-[![CRAN Status Badge](http://www.r-pkg.org/badges/version/TreeSearch)](https://cran.r-project.org/package=TreeSearch)
-[![CRAN Downloads](http://cranlogs.r-pkg.org/badges/TreeSearch)](https://cran.r-project.org/package=TreeSearch)
+[![Build Status](https://travis-ci.org/ms609/TreeDist.svg?branch=master)](https://travis-ci.org/ms609/TreeDist)
+[![codecov](https://codecov.io/gh/ms609/TreeDist/branch/master/graph/badge.svg)](https://codecov.io/gh/ms609/TreeDist)
+[![CRAN Status Badge](http://www.r-pkg.org/badges/version/TreeDist)](https://cran.r-project.org/package=TreeDist)
+[![CRAN Downloads](http://cranlogs.r-pkg.org/badges/TreeDist)](https://cran.r-project.org/package=TreeDist)
 [![DOI](https://zenodo.org/badge/98171642.svg)](https://zenodo.org/badge/latestdoi/98171642)<!--[![Project Status: Inactive – The project has reached a stable, usable state but is no longer being actively developed; support/maintenance will be provided as time allows.](http://www.repostatus.org/badges/latest/inactive.svg)](http://www.repostatus.org/#inactive)
 -->
-[![Project Status: Active – – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
+[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
 
-# TreeSearch
-This package exists to allow parsimony-style tree searches in R.
+# TreeDist
+This package exists to implement a suite of tree distance metrics.
 
-It extends the basic functionality available in phangorn, with a view to making tree search faster and more efficient, 
-and allowing user-defined optimality criteria to be employed.
+It adds to functions that already exist in `ape`, `phangorn` and `Quartet`. #TODO: More details to follow.
 
-Implied weighting and heuristic searches such as the Parsimony Ratchet are implemented (function: `Ratchet`).
 # Installation
 
+(#TODO submit to CRAN!)
 Install and load the library from CRAN as follows:
 ```
-install.packages('TreeSearch')
-library('TreeSearch')
+install.packages('TreeDist')
+library('TreeDist')
 ```
 
 If you're feeling brave, you can install the development version thus:
 ```r
 if(!require(devtools)) install.packages("devtools")
-devtools::install_github('ms609/TreeSearch')
+devtools::install_github('ms609/TreeDist')
 ```
-
-
-# Optimality criteria
-
-TreeSearch allows the implementation of various optimality criteria, including
-- The Profile Parsimony approach introduced by Faith and Trueman (2001).
-- Successive Approximations weighting (Farris 1969).
-- Fitch parsimony with inapplicable data (Brazeau, Guillerme and Smith, 2019).
-
-It is also possible to specify bespoke optimality criteria.
 
 
 # Documentation
 
-- [Package functions](https://CRAN.R-project.org/package=TreeSearch/TreeSearch.pdf) reference manual
-- [Getting started](https://CRAN.R-project.org/package=TreeSearch/vignettes/getting-started.html)
-- [Loading phylogenetic data into R](https://CRAN.R-project.org/package=TreeSearch/vignettes/load-data.html)
-- [Parsimony search with inapplicable data](https://CRAN.R-project.org/package=TreeSearch/vignettes/inapplicable.html)
-
-- [Calculating concavity profiles](https://CRAN.R-project.org/package=TreeSearch/vignettes/profile-scores.html) for Profile Parsimony
-- [Tree search with profile parsimony](https://CRAN.R-project.org/package=TreeSearch/vignettes/profile.html)
-
+(#TODO will become live on submission to CRAN)
+- [Package functions](https://CRAN.R-project.org/package=TreeDist/TreeDist.pdf) reference manual
+- [Tree distances](https://CRAN.R-project.org/package=TreeDist/vignettes/tree-distances.html)
 
 # References
 
-Brazeau, M. D., Guillerme, T. and Smith, M. R. in press. 
-  An algorithm for morphological phylogenetic analysis with inapplicable data. 
-  Systematic Biology. doi:[10.1093/sysbio/syy083](https://dx.doi.org/10.1093/sysbio/syy083).
-
-D. P. Faith, J. W. H. Trueman, Towards an inclusive philosophy for phylogenetic inference.
-  Syst. Biol. 50, 331–350 (2001).   doi:[10.1080/10635150118627](https://dx.doi.org/10.1080/10635150118627)
-
-Farris, J. S. (1969). A successive approximations approach to character weighting. 
-  Systematic Biology, 18(4), 374–385.  doi:[10.2307/2412182](https://dx.doi.org/10.2307/2412182)
+ - #TODO to follow.
