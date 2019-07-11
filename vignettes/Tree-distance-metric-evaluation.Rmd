@@ -506,7 +506,7 @@ How correlated are the measures?
 
 ```{R metric-correlation, echo=FALSE, fig.width=7, fig.height=7, out.width='95%', fig.align='center'}
 par(mfrow=c(8, 7), mar=rep(0.2, 4))
-colScale <- viridisLite::viridis(1000)
+colScale <- colorspace::sequential_hcl(1000, palette='viridis')
 CorrPlot <- function (a, b) {
   plot(a~b, pch='.', col='#00000088')
   reg <- lm(a~b)
