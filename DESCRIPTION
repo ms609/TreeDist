@@ -16,6 +16,8 @@ Depends:
 Imports: 
     ape (>= 5.0),
     clue,
+    colorspace,
+    memoise,
     phangorn (>= 2.2.1),
     Rdpack,
     stats,

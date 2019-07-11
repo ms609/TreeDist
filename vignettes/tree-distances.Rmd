@@ -97,7 +97,7 @@ PlotHist(d25['rf', ],  manyBreaks * 44,  'Robinson-Foulds', border=cbPalette8[8]
 # Distances between all 7-tip trees 
 
 ```{r 7-tip-funcs, include=FALSE} 
-Palette <- function (n) viridisLite::viridis(n)
+Palette <- function (n) colorspace::sequential_hcl(n, palette='BluYl')
 data('sevenTipDistances', package='TreeDist')
 td7 <- sevenTipDistances
 treeShapes <- td7$shapes
