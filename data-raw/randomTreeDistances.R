@@ -1,11 +1,6 @@
-library(TreeSearch)
 library(TreeDist)
-
-logDoubleFactorials <- TreeSearch::logDoubleFactorials
-cbPalette8 <- Ternary::cbPalette8
 suppressWarnings(RNGversion("3.5.0")) # Stopgap until we can require R 3.6.0
 set.seed(0)
-nLeaves <- c(seq(5, 50, by=5), seq(60, 90, by=10), seq(100, 200, by=20))
 
 RandomDistances <- function (nLeaves, repls) {
   RandomTree <- function(nTip) ape::rtree(nTip, br=NULL)
@@ -36,5 +31,6 @@ RandomDistances <- function (nLeaves, repls) {
   ret
 }
 
-randomTreeDistances <- RandomDistances(nLeaves, repls=1000L)
-usethis::use_data(randomTreeDistances, compress='gzip', overwrite=TRUE)
+nLeaves <- c(seq(5, 50, by=5), seq(60, 90, by=10), seq(100, 200, by=20))
+randomTreeDistances <- RandomDistances(nLeaves, repls=3L)
+#usethis::use_data(randomTreeDistances, compress='gzip', overwrite=TRUE)

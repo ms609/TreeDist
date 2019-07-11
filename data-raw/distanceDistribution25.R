@@ -1,8 +1,4 @@
-library(TreeSearch)
 library(TreeDist)
-
-logDoubleFactorials <- TreeSearch::logDoubleFactorials
-cbPalette8 <- Ternary::cbPalette8
 suppressWarnings(RNGversion("3.5.0")) # Stopgap until we can require R 3.6.0
 set.seed(0)
 
