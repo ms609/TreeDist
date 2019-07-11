@@ -42,9 +42,7 @@
 #' * `VariationOfArborealInfo`: The sum of the information content of the two
 #' trees.
 #' 
-#' 
-#' @param tree1,tree2 Trees of class `phylo`, with tips labelled identically,
-#' or lists of such trees to undergo pairwise comparison.
+#' @template tree12Params
 #' 
 #' @param normalize If a numeric value is provided, this will be used as a 
 #' maximum value against which to rescale results.

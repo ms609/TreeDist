@@ -16,6 +16,8 @@
 #' of tips from the tips themselves, i.e. the length of the path from one 
 #' tip to another.
 #' 
+#' @template tree12Params
+#' 
 #' @seealso [treespace::treeDist](https://cran.r-project.org/web/packages/treespace/vignettes/introduction.html),
 #' a more sophisticated, if more cumbersome, implementation that supports 
 #' lambda > 0, i.e. use of edge lengths in tree comparison.
@@ -52,6 +54,7 @@ KendallColijn <- function (tree1, tree2) {
 }
 
 #' @describeIn KendallColijn Creates vectors that characterise a rooted tree
+#' @param tree A tree of class \code{\link[ape:read.tree]{phylo}}.
 #' @importFrom TreeSearch AllAncestors Preorder
 KCVector <- function (tree) {
   tree <- Preorder(tree)
