@@ -1,5 +1,21 @@
 #' Kendall-Colijn distance between unrooted topologies
 #' 
+#' The Kendall-Colijn distance is related to the path difference. 
+#' 
+#' It works by measuring, for each pair of tips, the distance from the most recent
+#' common ancestor of those tips and the root node.  For a given tree, this 
+#' produces a vector of values recording the distance-from-the-root of each
+#' most recent common ancestor of each pair of tips.
+#' 
+#' Two trees are compared by taking the Euclidian distance between the
+#' respective vectors.  This is calculated by taking the square root of the sum 
+#' of the squares of the differences between the vectors.
+#' 
+#' This metric emphasizes the position of the root; the path difference 
+#' instead measures the distance of the last common ancestor of each pair
+#' of tips from the tips themselves, i.e. the length of the path from one 
+#' tip to another.
+#' 
 #' @seealso [treespace::treeDist](https://cran.r-project.org/web/packages/treespace/vignettes/introduction.html),
 #' a more sophisticated, if more cumbersome, implementation that supports 
 #' lambda > 0, i.e. use of edge lengths in tree comparison.
@@ -29,13 +45,16 @@ KCVector <- function (tree) {
   tipAncs <- seq_len(nTip)
   tipOrder <- order(tree$tip.label)
   
-  tip2 <- matrix(tipOrder, nrow=nTip, ncol=nTip)
+  tipI <- rep(tipOrder, nTip - seq_len(nTip))
+  tipJ <- matrix(tipOrder, nrow=nTip, ncol=nTip)
+  tipJ <- tipJ[lower.tri(tipJ)]
+  
   ancestors <- AllAncestors(parent, child)
   
   mrca <- mapply(function(anc1, anc2) max(intersect(anc1, anc2)), 
-                 ancestors[rep(tipOrder, nTip - seq_len(nTip))],
-                 ancestors[tip2[lower.tri(tip2)]])
+                 ancestors[tipI], ancestors[tipJ])
   
   rootDist <- vapply(ancestors, length, integer(1))
   rootDist[mrca]
 }
+
