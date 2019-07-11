@@ -1,0 +1,765 @@
+---
+title: "Evaluating tree distance metrics"
+author: "Martin R. Smith"
+date: "`r Sys.Date()`"
+output: 
+  bookdown::pdf_document2:
+    includes:
+      in_header: ../inst/preamble.tex
+  rmarkdown::html_document:
+bibliography: ../inst/REFERENCES.bib
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
+
+vignette: >
+  %\VignetteIndexEntry{Tree distance metric evaluation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Tree distance metrics are introduced in an [earlier vignette](tree-distance-metrics.html).
+
+```{R initialize, warning=FALSE, include=FALSE, meassage=FALSE}
+#unloadNamespace('Quartet')
+#unloadNamespace('TreeSearch')
+#devtools::load_all('c:/research/r/TreeSearch')
+library('TreeSearch')
+library('Quartet')
+cbPalette8 <- Ternary::cbPalette8
+data('sq_trees')
+
+pectinate_tree  <- sq_trees$caterpillar
+pectinate_move1 <- ape::read.tree(text='(((((2, 3), 4), 5), 6), (7, (8, (9, (10, (11, 1))))));')
+
+standardMargin <- c(0.4, 0.4, 0.8, 0.4)
+
+ColPlot <- function (tr, title=NULL, bold=NULL, ...) {
+  if (is.null(tr$edge.length)) tr$edge.length <- rep(1, dim(tr$edge)[1])
+  font <- rep(1, length(tr$tip.label))
+  if (!is.null(bold)) font[tr$tip.label %in% bold] <- 4
+  plot(tr, tip.col=Ternary::cbPalette15[-c(4, 7)][as.integer(tr$tip.label)], 
+       main=title, cex.main=0.8, font=font,
+       y.lim=c(-8.4, 11), ...) ## Change value 1 [minimum] when adding to legend
+}
+
+RFPlot <- function (tr, title=NULL, highlight=NULL, ref=sq_trees[[1]], 
+                    edge.lengths=NULL, ...) {
+  tree_dist <- phangorn::treedist(tr, ref)
+  tree_pair <- lapply(list(tr, ref), ape::root, outgroup='1', resolve.root=FALSE)
+  pair_info <- signif(TreeSearch::PartitionInfo(tr) + TreeSearch::PartitionInfo(ref), 4)
+  class(tree_pair) <- 'multiPhylo'
+  #topo_dist <- as.matrix(ape::dist.topo(tree_pair, method='PH85'))[2]
+  
+  if (!is.null(edge.lengths)) tr$edge.length <- edge.lengths
+  ColPlot(tr, title, highlight, cex=0.8, ...)
+  text_x <- par('usr')[2] * 0.6
+  
+  y <- 0.5
+  text(text_x, y <- y - 1, "V. Arboreal Info.:", cex=0.8, pos=2)
+  text(text_x, y <- y - 1, "V. Partition Info.:", cex=0.8, pos=2)
+  #text(text_x, y <- y - 1, "VoParInf+:", cex=0.8, pos=2)
+  text(text_x, y <- y - 1, "V. Cluster Info.:", cex=0.8, pos=2)
+  text(text_x, y <- y - 1, "Nye et al.:", cex=0.8, pos=2)
+  text(text_x, y <- y - 1, "Matching Splits:", cex=0.8, pos=2)
+  text(text_x, y <- y - 1, 'Quartet:', cex=0.8, pos=2)
+  text(text_x, y <- y - 1, "Path:", cex=0.8, pos=2)
+  text(text_x, y <- y - 1, "SPR:", cex=0.8, pos=2)
+  text(text_x, y <- y - 1, "Robinson-Foulds:", cex=0.8, pos=2)
+  #text(text_x, y <- y - 1, "VPI%:", cex=0.8, pos=2)
+  
+  text_x <- text_x - 0.4
+  y <- 0.5
+  text(text_x, y <- y - 1, cex=0.8, pos=4,
+       round(TreeSearch::VariationOfArborealInfo(tr, ref, normalize = TRUE), 4))
+  text(text_x, y <- y - 1, cex=0.8, pos=4,
+       round(TreeSearch::VariationOfPartitionInfo(tr, ref, normalize = TRUE), 4))
+  text(text_x, y <- y - 1, cex=0.8, pos=4,
+       round(TreeSearch::VariationOfClusteringInfo(tr, ref, normalize = TRUE), 4))
+  
+  text(text_x, y <- y - 1, cex=0.8, pos=4,
+       round(1 - TreeSearch::NyeTreeSimilarity(tr, ref, normalize = TRUE), 4))
+  text(text_x, y <- y - 1, paste0(signif(TreeSearch::MatchingSplitDistance(tr, ref), 4),
+                                  ' / 32'), cex=0.8, pos=4)
+  
+  text(text_x, y <- y - 1, paste0(QuartetStatus(list(tr, ref))[2, 'd'],
+                            ' / ', choose(11,4)), cex=0.8, pos=4)
+  text(text_x, y <- y - 1, paste0(signif(tree_dist['path.difference'], 4)), cex=0.8, pos=4)
+  text(text_x, y <- y - 1, paste0(phangorn::sprdist(tr, ref)[1]), cex=0.8, pos=4)
+  text(text_x, y <- y - 1, paste0(tree_dist['symmetric.difference'], 
+                                  ' / ', (11L - 3L) * 2L), cex=0.8, pos=4)
+  #text(text_x, y <- y - 1, paste0(100 * signif(TreeSearch::VariationOfPartitionInfo(tr, ref) / pair_info, 4), '%'), cex=0.8, pos=4)
+}
+```
+<!--```
+  text(text_x, y <- y - 1, paste0(
+    signif(TreeSearch::VariationOfArborealInfo(tr, ref), 4), ' / ', pair_info
+    ), cex=0.8, pos=4)
+  text(text_x, y <- y - 1, paste0(signif(TreeSearch::VariationOfPartitionInfo(tr, ref), 4),
+                                  ' / ', pair_info), cex=0.8, pos=4)
+  text(text_x, y <- y - 1, paste0(signif(TreeSearch::VariationOfClusteringInfo(tr, ref), 4),
+                                  ' / ',
+                                  signif(TreeSearch::ClusteringInfo(tr) +
+                                           TreeSearch::ClusteringInfo(ref), 4)),
+       cex=0.8, pos=4)
+  
+  text(text_x, y <- y - 1, paste0(8-signif(TreeSearch::NyeTreeSimilarity(tr, ref), 4),
+                                  ' / 8'), cex=0.8, pos=4)
+  text(text_x, y <- y - 1, paste0(signif(TreeSearch::MatchingSplitDistance(tr, ref), 4),
+                                  ' / 32'), cex=0.8, pos=4)
+  
+  text(text_x, y <- y - 1, paste0(QuartetStatus(list(tr, ref))[2, 'd'],
+                            ' / ', choose(11,4)), cex=0.8, pos=4)
+  text(text_x, y <- y - 1, paste0(signif(tree_dist['path.difference'], 4)), cex=0.8, pos=4)
+  text(text_x, y <- y - 1, paste0(phangorn::sprdist(tr, ref)[1]), cex=0.8, pos=4)
+  text(text_x, y <- y - 1, paste0(tree_dist['symmetric.difference'], 
+                                  ' / ', (11L - 3L) * 2L), cex=0.8, pos=4)
+  #text(text_x, y <- y - 1, paste0(100 * signif(TreeSearch::VariationOfPartitionInfo(tr, ref) / pair_info, 4), '%'), cex=0.8, pos=4)
+}
+```-->
+
+# Desired behaviour of tree distance metrics
+
+The most fundamental desideratum for a tree distance metric is that it assigns
+higher distance scores (or lower similarity scores) to trees that are more 
+different.  A consideration of problematic cases shows that some metrics
+do not consistently meet this fundamental criterion.
+
+Note that the value of the Nye _et al._ similarity metric has been converted to
+a measure of distance by subtracting its value from the maximum possible (eight).
+
+## Length of move
+
+If trees differ only in the location of a single taxon (see taxon 1 in the trees below),
+then the distance between two trees should correspond to the distance that this taxon has been moved.
+
+```{R Moving-a-single-taxon, fig.asp=2/5, out.width='100%', fig.width=6, echo=FALSE, message=FALSE, cache=TRUE}
+par(mfrow=c(1, 4), mar=standardMargin)
+RFPlot(sq_trees[[1]],      'Reference tree', 1)
+RFPlot(sq_trees$move_one_near, 'Short move', 1)
+RFPlot(sq_trees$move_one_mid, 'Medium move', 1)
+RFPlot(sq_trees$move_one_far,   'Long move', 1)
+```
+
+The subtree pruning and regrafting (SPR) distance does not distinguish
+between these trees, as they differ only in the placement of a single tip. 
+
+The Matching Splits metric lacks the resolution to distinguish a move of 
+two nodes from one of three.
+
+The Robinson-Foulds, path difference and quartet metrics, 
+in contrast, recognize trees in which this tip has been 
+moved further as more distant from the starting tree.
+
+`r pass <- 'Pass'; FAIL <- '<span style="color:red">**FAIL**</span>'`
+
+| **Measure** | MArInf | MPaInf | ClustInf | Nye _et al._ | MS | Quartet | Path | SPR | RF |
+| ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | 
+| **Outcome** | `r pass` | `r pass` | `r pass` | `r pass` | `r FAIL` | `r pass` | `r pass` | `r FAIL` | `r pass` |
+
+
+## Number of tips moved
+
+Intuitively, moving a pair of tips on a tree should lead to higher tree distances
+than moving a single tip.  In the case of a short move, the Quartet, SPR and RF distances
+do not differ whether one or two tips are moved.  
+
+```{R Cherry-short-move, echo=FALSE, message=FALSE, cache=TRUE, fig.width=6.4, fig.height=4, out.width='75%', fig.align='center'}
+par(mfrow=c(1, 3), mar=standardMargin, cex=1)
+
+RFPlot(ape::read.tree(text='(((1, 2), 3), ((6, (5, 4)), ((10, 11), (7, (8, 9)))));'), 'Reference tree', edge.lengths=c(rep(1, 16), 2, 1,1,1))
+ape::edgelabels('*', 12, frame='none')
+RFPlot(ape::read.tree(text='(((1, 2), 3), ((6, (5, 4)), (7, ((10, 11), (8, 9)))));'), 'Move one tip (7) one node', 7, edge.lengths = c(rep(1, 11), 0.5, 3.5, 0.5, rep(1, 3), 2, 1, 1))
+ape::nodelabels('*', 18, frame='none')
+RFPlot(ape::read.tree(text='(((1, 2), 3), ((6, (5, 4)), ((8, 9), ((10, 11), 7))));'), 'Move two tips (8 & 9) one node', 8:9, edge.lengths=c(rep(1, 11), 0.5, 2.5, 1, 1, 0.5, 1,1,1,3))
+ape::nodelabels('*', 18, frame='none')
+# TODO I AM HERE!
+# V arboreal info and mut arboreal info seem to prefer moving two nodes... but 
+# this depends how they are normalized.  EXPLORE.
+
+```
+
+Arguably this is an ambiguous case, as the moves are equivalent to moving (10, 11) by one node; perhaps the quartet metric can be forgiven for allocating both moves an equivalent score.  
+
+| **Measure** | MArInf | MPaInf | ClustInf | Nye _et al._ | MS | Quartet | Path | SPR | RF |
+| ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | 
+| **Single-node move** | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | (?) | `r pass` | `r FAIL` | `r FAIL` |
+
+
+<!--
+```{R Cherry-short-move-2, echo=FALSE, message=FALSE, cache=TRUE, fig.width=6.4, fig.height=4, out.width='75%', fig.align='center'}
+par(mfrow=c(1, 3), mar=standardMargin, cex=1)
+
+RFPlot(ape::read.tree(text='(((1, 2), 3), ((6, (5, 4)), ((10, 11), (7, (8, 9)))));'), 'Reference tree', edge.lengths=c(rep(1, 5), 2, rep(1, 14)))
+ape::edgelabels('*', 6, frame='none')
+#RFPlot(sq_trees$move_one_near, 'Short move 1', 1)
+#RFPlot(sq_trees$move_two_near, 'Short move 2', 10:11)
+RFPlot(ape::read.tree(text='(((1, 2), 3), (7, ((6, (5, 4)), ((10, 11), (8, 9)))));'), 'Move one tip (7) two nodes', 7, edge.lengths = c(rep(1, 6), 3.5, rep(1, 10), 2, 1, 1))
+ape::nodelabels('*', 15, frame='none')
+RFPlot(ape::read.tree(text='(((1, 2), 3), ((8, 9), ((6, (5, 4)), ((10, 11), 7))));'), 'Move two tips (8 & 9) two nodes', 8:9, edge.lengths=c(rep(1, 6), 2.5, rep(1, 12), 2))
+ape::nodelabels('*', 15, frame='none')
+
+```
+
+
+| **Measure** | MArInf | MPaInf | ClustInf | Nye _et al._ | MS | Quartet | Path | SPR | RF |
+| ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | 
+| **Two node move** | `r pass` | `r pass` | `r pass` | `r FAIL` | `r pass` | `r pass` | `r FAIL` | `r FAIL` |
+-->
+
+
+In the following situation, 
+the Nye _et al_. metric assigns a higher distance 
+to a move that relocates relocate a single tip than one that moves two tips to
+the same location, and the matching splits metric fails to differentiate between
+the two:
+
+```{R Move-a-cherry-two, echo=FALSE, fig.align='center', fig.height=4, fig.width=6.4, message=FALSE, cache=TRUE, out.width='66%'}
+par(mfrow=c(1, 3), mar=standardMargin, cex=1)
+
+RFPlot(ape::read.tree(text='(((1, 2), 3), ((6, (5, 4)), ((10, 11), (7, (8, 9)))));'), 'Reference tree', edge.lengths=c(rep(1, 7), 2, rep(1, 4), 2, rep(1, 7)))
+ape::edgelabels('*', 13, frame='none')
+RFPlot(ape::read.tree(text='(((1, 2), 3), ((5, 4), ((6, (10, 11)), (7, (8, 9)))));'), 'Move one tip (6) two nodes', 6, edge.lengths=c(rep(1, 6), 2, rep(1, 19-6)))
+ape::nodelabels('*', 18, frame='none')
+RFPlot(ape::read.tree(text='(((1, 2), 3), (6, (((5, 4), (10, 11)), (7, (8, 9)))));'), 'Move two tips (4 & 5) two nodes', 4:5, edge.lengths=c(rep(1, 6), 3, rep(1, 19-6)))
+ape::nodelabels('*', 17, frame='none')
+
+```
+
+| **Measure** | MArInf | MPaInf | ClustInf | Nye _et al._ | MS | Quartet | Path | SPR | RF |
+| ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | 
+| **Two node move** | `r pass` | `r pass` | `r pass` | `r FAIL` | `r FAIL` | `r pass` | `r pass` | `r FAIL` | `r FAIL` |
+<!--
+```{R  Move-a-cherry-two-b, echo=FALSE, message=FALSE, cache=TRUE, fig.width=6, fig.height=4, out.width='66%', fig.align='center', include=FALSE, eval=FALSE}
+# Equivalent metric results to last block; don't include
+par(mfrow=c(1, 3), mar=standardMargin, cex=1)
+
+RFPlot(ape::read.tree(text='(((1, 2), 3), ((6, (5, 4)), ((10, 11), (7, (8, 9)))));'), 'Reference tree', edge.lengths=c(rep(1, 7), 2, rep(1, 7), 2, rep(1, 4)))
+ape::edgelabels('*', 16, frame='none')
+
+RFPlot(ape::read.tree(text='(((1, 2), 3), ((5, 4), ((10, 11), (6, (7, (8, 9))))));'), 'Move one tip (6) two nodes', 6, edge.lengths=c(rep(1, 6), 2, rep(1, 19-6)))
+ape::nodelabels('*', 19, frame='none')
+RFPlot(ape::read.tree(text='(((1, 2), 3), (6, ((10, 11), ((5, 4), (7, (8, 9))))));'), 'Move two tips (4 & 5) two nodes', 4:5, edge.lengths=c(rep(1, 6), 3, rep(1, 19-6)))
+ape::nodelabels('*', 18, frame='none')
+
+```
+
+```{R Moving-a-cherry-far, eval=FALSE, fig.align='center', fig.height=4, fig.width=6, message=FALSE, cache=TRUE, exec=FALSE, include=FALSE, out.width='66%'}
+# Equivalent to short move; no need to include
+par(mfrow=c(1, 3), mar=standardMargin, cex=1)
+
+RFPlot(ape::read.tree(text='(((1, 2), 3), ((6, (5, 4)), ((10, 11), (7, (8, 9)))));'), 'Reference tree', edge.lengths=c(rep(1, 7), 2, rep(1, 7), 2, rep(1, 4)))
+ape::edgelabels('*', 16, frame='none')
+
+RFPlot(ape::read.tree(text='((((1, 2), 7), 3), ((6, (5, 4)), ((10, 11), (8, 9))));'), 'Middling move 1a', 7)
+ape::nodelabels()#'*', 18, frame='none')
+RFPlot(ape::read.tree(text='((((1, 2), (8, 9)), 3), ((6, (5, 4)), ((10, 11), 7)));'), 'Middling move 2a', 8:9)
+ape::nodelabels()#'*', 18, frame='none')
+```
+-->
+
+
+
+## Number of moves made
+
+Moving one taxon a specified distance ought to result in a smaller difference than moving two taxa the same distance. As a simple example, exchanging a pair of taxa represents a larger change than moving one taxon adjacent to the other.
+
+
+```{R Move-vs-exchange, echo=FALSE, fig.align='center', fig.height=4, fig.width=6.4, message=FALSE, cache=TRUE, out.width='66%'}
+par(mfrow=c(1, 3), mar=standardMargin, cex=1)
+
+RFPlot(pectinate_tree, 'Pectinate tree', ref=pectinate_tree)
+RFPlot(pectinate_move1, 'Move one tip', 1, ref=pectinate_tree, edge.lengths = c(rep(1, 4), 2, rep(1, 12), .5, .5, 1.5))
+RFPlot(sq_trees$top_and_tail, 'Exchange two tips', c(1, 11), ref=pectinate_tree)
+```
+
+| **Measure** | MArInf | MPaInf | ClustInf | Nye _et al._ | MS | Quartet | Path | SPR | RF |
+| ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | 
+| **Exchange two tips** | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r FAIL` |
+
+
+As a more nuanced example, I propose that a rearrangement that requires the 
+translocation of more than half the tips in a tree ought to result in
+a higher distance score than any rearrangement in which a single tip is moved:
+
+```{r simple-vs-complex, echo=FALSE, fig.align='center', fig.height=4, fig.width=6.4, message=FALSE, cache=TRUE, out.width='66%'}
+par(mfrow=c(1, 3), mar=standardMargin, cex=1)
+
+RFPlot(pectinate_tree, 'Pectinate tree', ref=pectinate_tree)
+
+RFPlot(pectinate_move1, 'Move one tip', 1, ref=pectinate_tree, edge.lengths = c(rep(1, 4), 2, rep(1, 12), .5, .5, 1.5))
+
+RFPlot(ape::read.tree(text='(1, ((2, (4, 5)), (3, ((8, 9), ((7, 11), (6, 10))))));'), 'Move six tips: 4,5,6,8,9,11', c(4,5,6,8,9,11), ref=pectinate_tree)
+#RFPlot(ape::read.tree(text='(1, ((3, (4, 5)), (2, ((8, 9), ((7, 11), (6, 10))))));'), 'Move 6: 2,4,5,6,7,8', ref=pectinate_tree)
+```
+
+In this example, the path metric fails this test.
+
+| **Measure** | MArInf | MPaInf | ClustInf | Nye _et al._ | MS | Quartet | Path | SPR | RF |
+| ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | 
+| **Complexity** | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r FAIL` | `r pass` | `r FAIL` |
+
+
+## Saturation
+
+A distance metric should distinguish slightly-perturbed trees from
+random trees and those that are more different from the starting tree than 
+expected by chance.
+
+The Robinson-Foulds metric can reach its maximum value when a single taxon is
+relocated from the most basal to the most derived point of a pectinate tree, 
+representing a maximal value despite retaining relationship information about 
+all other taxa.  It thus lacks the capacity to distinguish a random tree from
+one that is selected to maximise the distance from the comparison tree.
+
+```{R Pectinate-to-break-RF, echo=FALSE, fig.align='center', fig.height=6.4, fig.width=6.4, message=FALSE, cache=TRUE, out.width='66%'}
+par(mfrow=c(2, 2), mar=standardMargin, cex=1)
+
+RFPlot(pectinate_tree, 'Pectinate reference tree', ref=pectinate_tree)
+RFPlot(pectinate_move1, 'Move one taxon', 1, ref=pectinate_tree, edge.lengths = c(rep(1, 4), 2, rep(1, 12), .5, .5, 1.5))
+#ape::edgelabels()
+RFPlot(sq_trees$random_tree, 'Random tree', ref=pectinate_tree)
+RFPlot(sq_trees$anti_pectinate, 'Positively contradictory tree', ref=pectinate_tree)
+```
+
+
+| **Measure** | MArInf | MPaInf | ClustInf | Nye _et al._ | MS | Quartet | Path | SPR | RF |
+| ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | 
+| **Saturation** | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | (?) | `r FAIL` |
+
+
+## Islands
+
+The distances reported by a tree distance metric imply a tree space. It is 
+desirable that this space is somewhat even.  In particular, metrics in which 
+trees form isolated islands, all an equal distance from one another but a great
+distance from their nearest neighbours, are undesirable [@Bogdanowich2012].
+
+```{R Tree-distances, echo=FALSE, fig.align='center', fig.height=8, fig.width=6.4, message=FALSE, cache=TRUE, out.width='66%'}
+par(mfrow=c(3, 5), mar=standardMargin, cex=1)
+NwkTree <- function(text) ape::read.tree(text=text)
+
+moveOne <- list(
+  "1 by 2"      = NwkTree("(((1,2),3),(((4,5),6),((7,(8,9)),(10,11))));"),
+  "1 by 2+3"    = NwkTree("((1, (2,3)),(((4,5),6),((7,(8,9)),(10,11))));"),
+  '1 by 3'      = NwkTree("((2,(1,3)),(((4,5),6),((7,(8,9)),(10,11))));"),
+  '1 by 4+5+6'  = NwkTree("((2,3),((1, ((4,5),6)),((7,(8,9)),(10,11))));"),
+  '1 by 7-11'   = NwkTree("((2,3),(((4,5),6),(1, ((7,(8,9)),(10,11)))));"),
+  '1 by 6'      = NwkTree("((2,3),(((4,5),(1, 6)),((7,(8,9)),(10,11))));"),
+  '1 by 4+5'    = NwkTree("((2,3),(((1, (4,5)),6),((7,(8,9)),(10,11))));"),
+  '1 by 10+11'  = NwkTree("((2,3),(((4,5),6),((7,(8,9)),(1, (10,11)))));"),
+  '1 by 7-9'    = NwkTree("((2,3),(((4,5),6),((1, (7,(8,9))),(10,11))));"),
+  '1 by 4'      = NwkTree("((2,3),((((1, 4),5),6),((7,(8,9)),(10,11))));"),
+  '1 by 10'     = NwkTree("((2,3),(((4,5),6),((7,(8,9)),((1, 10),11))));"),
+  '1 by 7'      = NwkTree("((2,3),(((4,5),6),(((1, 7),(8,9)),(10,11))));"),
+  '1 by 8+9'    = NwkTree("((2,3),(((4,5),6),((7,(1, (8,9))),(10,11))));"),
+  '1 by 8'      = NwkTree("((2,3),(((4,5),6),((7,((1, 8),9)),(10,11))));")
+)
+
+
+xx <- lapply(seq_along(moveOne), function (i) RFPlot(moveOne[[i]], names(moveOne)[i]))
+```
+
+```{R tree-spaces, echo=FALSE,  fig.align='center', fig.height=8, fig.width=6.4, message=FALSE, cache=TRUE, out.width='66%'}
+par(mfrow=c(3, 3L), mar=standardMargin, cex=0.8)
+
+moveCols <-c(
+"1 by 2"      = hsv(0.7, 0.5, 0.8),
+"1 by 2+3"    = hsv(0.7, 0.3, 0.8),
+'1 by 3'      = hsv(0.7, 0.7, 0.8),
+'1 by 4+5+6'  = hsv(0.1, 0.2, 0.8),
+'1 by 7-11'   = hsv(0.0, 0.0, 0.7),
+'1 by 6'      = hsv(0.1, 0.4, 0.8),
+'1 by 4+5'    = hsv(0.1, 0.6, 0.8),
+'1 by 10+11'  = hsv(0.9, 0.4, 0.8),
+'1 by 7-9'    = hsv(0.4, 0.2, 0.8),
+'1 by 4'      = hsv(0.1, 0.8, 0.8),
+'1 by 10'     = hsv(0.9, 0.8, 0.8),
+'1 by 7'      = hsv(0.4, 0.4, 0.8),
+'1 by 8+9'    = hsv(0.4, 0.6, 0.8),
+'1 by 8'      = hsv(0.4, 0.8, 0.8))
+
+
+PlotMDS <- function(distances, title='') {
+  space <- MASS::isoMDS(distances, k=2, trace=FALSE)
+  pts <- space$points
+  plot(pts, pch='.', col='white',
+       xlim = range(pts[, 1]) + c(-1, 1),
+       ylim=range(pts[, 2]) + c(-1, 1))
+  text(pts, rownames(pts), col=moveCols[rownames(pts)])
+  legend('bottom', legend=paste0('stress = ', signif(space$stress, 3)), bty='n')
+  legend('top', legend=title, bty='n', text.font=2)
+}
+
+PlotMDS(VariationOfArborealInfo(moveOne, moveOne), 'V. Arb. Info')
+PlotMDS(VariationOfPartitionInfo(moveOne, moveOne), 'V. Part. Info')
+PlotMDS(VariationOfClusteringInfo(moveOne, moveOne), 'V. Clust. Info')
+PlotMDS(8L - NyeTreeSimilarity(moveOne, moveOne), 'Nye')
+PlotMDS(TreeSearch::MatchingSplitDistance(moveOne, moveOne), 'Mat. Spl. Dist')
+tempFileName <- tempfile()
+write.tree(structure(moveOne, class='multiPhylo'), file=tempFileName)
+qds <- AllPairsQuartetDistance(tempFileName)
+xx <- file.remove(tempFileName)
+rownames(qds) <- colnames(qds) <- names(moveOne)
+PlotMDS(qds, 'Quartet Dist.')
+
+treeDists <- vapply(moveOne, function (tr1)
+  vapply(moveOne, phangorn::treedist, double(2), tr1),
+  matrix(0, nrow=2, ncol=length(moveOne)))
+PlotMDS(treeDists['path.difference', , ], 'Path diff.')
+sprDists <- vapply(moveOne, function (tr1)
+  vapply(moveOne, phangorn::sprdist, double(4), tr1)['spr', ],
+  double(length(moveOne)))
+PlotMDS(sprDists, 'SPR')
+PlotMDS(treeDists['symmetric.difference', , ], 'RF')
+
+
+#RFPlot(NwkTree("((2,3),(((4,5),6),((7,(8,9)),(10,11))));"), '1 by +')
+#RFPlot(NwkTree("(((1,2),3),(((4,5),6),(((7, 11),(8,9)),10)));"), '11 by 7')
+#plot.new()
+#RFPlot(NwkTree("(((1,2),3),(((4,5),6),((7,(8,(9, 11))),10)));"), '11 by 9')
+#RFPlot(NwkTree("(((1,2),3),(((4,5),(6, 11)),((7,(8,9)),10)));"), '11 by 6')
+#RFPlot(NwkTree("(((1,2),(3, 11)),(((4,5),6),((7,(8,9)),10)));"), '11 by 3')
+#RFPlot(NwkTree("(((1,2),3),(((4,(5, 11)),6),((7,(8,9)),10)));"), '11 by 5')
+#RFPlot(NwkTree("(((1,(2, 11)),3),(((4,5),6),((7,(8,9)),10)));"), '11 by 2')
+
+```
+
+
+Bogdanowicz & Giaro [-@Bogdanovicz2012] report that islands exist in the quartet and path differences.  A similar proof [#TODO] can be constructed for the [XYZ] distance.
+
+| **Measure** | MArInf | MPaInf | ClustInf | Nye _et al._ | MS | Quartet | Path | SPR | RF |
+| ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | 
+| **Islands** | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r FAIL` | `r FAIL` | `r pass` | `r pass` |
+
+
+```{R generate-random-trees, include=FALSE}
+suppressWarnings(RNGversion("3.5.0")) # Stopgap until we can require R 3.6.0
+set.seed(0)
+n_random <- if (Sys.getenv('TRAVIS') == "") 250 else 10 # TODO: Increase to 2500 for production
+n_random_tips <- 11
+random_trees <- lapply(seq_len(n_random), function (x) 
+  ape::rtree(n_random_tips, br=NULL, tip.label=seq_len(n_random_tips)))
+random_quartets <- QuartetStatus(random_trees, cf=pectinate_tree)[, 'd'] / choose(n_random_tips, 4)
+random_distances <- vapply(random_trees, phangorn::treedist,
+                           tree2=pectinate_tree, double(2))
+random_paths <- random_distances['path.difference', ]
+random_arb_info <- TreeSearch::VariationOfArborealInfo(random_trees, pectinate_tree, normalize=TRUE)
+pect_arb_info <- TreeSearch::VariationOfArborealInfo(pectinate_move1, pectinate_tree, normalize=TRUE)
+random_par_info <- TreeSearch::VariationOfPartitionInfo(random_trees, pectinate_tree, normalize=TRUE)
+pect_par_info <- TreeSearch::VariationOfPartitionInfo(pectinate_move1, pectinate_tree, normalize=TRUE)
+pect_arb_info <- TreeSearch::VariationOfArborealInfo(pectinate_move1, pectinate_tree, normalize=TRUE)
+random_clu_info <- TreeSearch::VariationOfClusteringInfo(random_trees, pectinate_tree, normalize=TRUE)
+pect_clu_info <- TreeSearch::VariationOfClusteringInfo(pectinate_move1, pectinate_tree, normalize=TRUE)
+random_ms_info <- TreeSearch::MatchingSplitDistance(random_trees, pectinate_tree)
+pect_ms_info <- TreeSearch::MatchingSplitDistance(pectinate_move1, pectinate_tree)
+random_nye_info <- 8L - TreeSearch::NyeTreeSimilarity(random_trees, pectinate_tree)
+pect_nye_info <- 8L - TreeSearch::NyeTreeSimilarity(pectinate_move1, pectinate_tree)
+
+random_spr <- vapply(random_trees, phangorn::sprdist, tree2=pectinate_tree, double(4))
+RandomPercent <- function (distances, comparison) {
+  round(sum(distances < comparison) * 100 / n_random, 1)
+}
+```
+
+A notable proportion (`r RandomPercent(random_distances['symmetric.difference', ], 16)`%) of random trees receive a lower RF distance than trees that differ in the position of 
+a single tip.  The proportion remains non-trivial for the path difference (`r RandomPercent(random_distances['path.difference', ], 17.7)`%), but is below 1% 
+for all other metrics.
+
+```{R Random-trees, echo=FALSE, cache=TRUE, warn=FALSE, message=FALSE, fig.height=6, fig.width=5.6, out.width='80%', fig.align='center'}
+par(mfrow=c(3, 3), mar=rep(1.9, 4), cex=0.8, oma=c(0, 0, 2, 0))
+manyBreaks <- seq(0, 1, length.out=40)
+
+PlotHist <- function (distances, breaks, pectDist, title) {
+  hist(distances, xlab=NULL, main=NULL, breaks=breaks, cex=0.8)
+  legend('topleft', bty='n', c('', '', title), cex=0.8)
+  abline(v=pectDist, col=cbPalette8[3], lwd=2)
+}
+
+PlotHist(random_arb_info, max(random_arb_info, pect_arb_info) * manyBreaks, pect_arb_info, 'Var. Arb Info')
+mtext('Distance between pectinate tree (above) and random bifurcating trees', outer=TRUE, cex=0.8)
+
+PlotHist(random_par_info, max(random_par_info, pect_par_info) * manyBreaks, pect_par_info, 'Var. Partition Info')
+PlotHist(random_clu_info, max(random_clu_info, pect_clu_info) * manyBreaks, pect_clu_info, 'Var. Clustering Info')
+#PlotHist(random_parsum_info, max(random_parsum_info, pect_parsum_info) * manyBreaks, #pect_parsum_info, 'Var. ParSUM Info')
+
+PlotHist(random_nye_info, max(random_nye_info, pect_nye_info) * manyBreaks, pect_nye_info, 'Nye et al.')
+
+PlotHist(random_ms_info, max(random_ms_info, pect_ms_info) * manyBreaks, pect_ms_info, 'Matching splits')
+
+PlotHist(random_quartets, manyBreaks, 120 / 330, 'Quartet dissimilarity')
+
+
+PlotHist(random_paths, breaks=manyBreaks * max(random_paths), 17.7, "Path distance")
+
+PlotHist(random_spr[1, ], max(random_spr[1, ]) * manyBreaks, 1, 'SPR distance')
+
+PlotHist(random_distances['symmetric.difference', ] / 16, manyBreaks, 1, '\nRobinson-Foulds')
+
+#plot.new()
+legend('topleft', bty='n', col=cbPalette8[3], lwd=2, 'One tip moved\n maximum distance', cex=0.8, text.font=3)
+
+```
+
+## Correlation
+
+How correlated are the measures?
+
+```{R metric-correlation, echo=FALSE, fig.width=7, fig.height=7, out.width='95%', fig.align='center'}
+par(mfrow=c(8, 7), mar=rep(0.2, 4))
+colScale <- viridisLite::viridis(1000)
+CorrPlot <- function (a, b) {
+  plot(a~b, pch='.', col='#00000088')
+  reg <- lm(a~b)
+  r2 <- summary(reg)$adj.r.squared
+  regCol <- colScale[max(ceiling((r2 - 0.5) * 2000), 1L)]
+  abline(reg, col=regCol)
+  legend('bottomright', legend=paste0("R² = ", signif(r2, 3)),
+         text.col = regCol, bty='n')
+}
+plot.new(); text(0.5, 0.5, 'Var. Arb. Info')
+CorrPlot(random_arb_info, random_par_info)
+CorrPlot(random_arb_info, random_clu_info)
+CorrPlot(random_arb_info, random_nye_info)
+CorrPlot(random_arb_info, random_ms_info)
+CorrPlot(random_arb_info, random_quartets)
+CorrPlot(random_arb_info, random_paths)
+
+CorrPlot(random_par_info, random_arb_info)
+plot.new(); text(0.5, 0.5, 'Var. Par. Info')
+CorrPlot(random_par_info, random_clu_info)
+CorrPlot(random_par_info, random_nye_info)
+CorrPlot(random_par_info, random_ms_info)
+CorrPlot(random_par_info, random_quartets)
+CorrPlot(random_par_info, random_paths)
+
+CorrPlot(random_clu_info, random_arb_info)
+CorrPlot(random_clu_info, random_par_info)
+plot.new(); text(0.5, 0.5, 'Var. Clust. Info')
+CorrPlot(random_clu_info, random_nye_info)
+CorrPlot(random_clu_info, random_ms_info)
+CorrPlot(random_clu_info, random_quartets)
+CorrPlot(random_clu_info, random_paths)
+
+CorrPlot(random_nye_info, random_arb_info)
+CorrPlot(random_nye_info, random_par_info)
+CorrPlot(random_nye_info, random_clu_info)
+plot.new(); text(0.5, 0.5, 'Nye et al.')
+CorrPlot(random_nye_info, random_ms_info)
+CorrPlot(random_nye_info, random_quartets)
+CorrPlot(random_nye_info, random_paths)
+
+CorrPlot(random_ms_info, random_arb_info)
+CorrPlot(random_ms_info, random_par_info)
+CorrPlot(random_ms_info, random_clu_info)
+CorrPlot(random_ms_info, random_nye_info)
+plot.new(); text(0.5, 0.5, 'Matching Splits')
+CorrPlot(random_ms_info, random_quartets)
+CorrPlot(random_ms_info, random_paths)
+
+CorrPlot(random_quartets, random_arb_info)
+CorrPlot(random_quartets, random_par_info)
+CorrPlot(random_quartets, random_clu_info)
+CorrPlot(random_quartets, random_nye_info)
+CorrPlot(random_quartets, random_ms_info)
+plot.new(); text(0.5, 0.5, 'Quartet distance')
+CorrPlot(random_quartets, random_paths)
+
+CorrPlot(random_paths, random_arb_info)
+CorrPlot(random_paths, random_par_info)
+CorrPlot(random_paths, random_clu_info)
+CorrPlot(random_paths, random_nye_info)
+CorrPlot(random_paths, random_ms_info)
+CorrPlot(random_paths, random_quartets)
+plot.new(); text(0.5, 0.5, 'Path distance')
+
+CorrPlot(random_spr[1, ], random_arb_info)
+CorrPlot(random_spr[1, ], random_par_info)
+CorrPlot(random_spr[1, ], random_clu_info)
+CorrPlot(random_spr[1, ], random_nye_info)
+CorrPlot(random_spr[1, ], random_ms_info)
+CorrPlot(random_spr[1, ], random_paths)
+CorrPlot(random_spr[1, ], random_quartets)
+mtext('SPR distance', 4L, line=-1, cex=0.7)
+
+```
+
+
+## Non-bifurcating trees
+
+Whereas the path distance and SPR metrics are only defined on bifurcating trees,
+symmetric difference approaches can be applied to trees that contain polytomies -- i.e. 
+not every node is resolved as bifurcating.
+
+
+| **Measure** | MArInf | MPaInf | ClustInf | Nye _et al._ | MS | Quartet | Path | SPR | RF |
+| ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | 
+| **Polytomies** | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r FAIL` | `r FAIL` | `r pass` |
+
+
+<!--
+## Interpretation
+
+An advantage of the quartet symmetric distance is that the normalized metric of a random
+tree is $\frac{2}{3}$ [@Day1986; @Steel1993].  As such, trees that are more different
+than expected by chance can be readily recognized, as their distance metric
+will be greater than $\frac{`r choose(11, 4) * 2 / 3`}{`r choose(11, 4)`}$.
+The 'maximum distance' tree depicted below was identified using the R package
+`TreeSearch` [@TreeSearch], using the quartet difference from the reference tree 
+as an optimality criterion.
+
+```{R Increasing-distances, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1.4/3, fig.width=6, out.width='90%', fig.align='center'}
+par(mfrow=c(1, 3), mar=standardMargin)
+ColPlot(sq_trees[[1]], 'Reference tree')
+RFPlot(sq_trees$random_tree,   'Random tree'     )
+RFPlot(sq_trees$opposite_tree, 'Maximum quartet distance')
+```
+-->
+## Unit equivalence
+
+A further shortcoming of the RF metric is that not all partitions represent an equivalent amount of information.  A partition distance of 1 could mean that two trees differ in an less informative partition, or a more informative partition.  All quartets,
+in contrast, are equally informative.
+
+Consider a balanced and an unbalanced eight-taxon tree:
+
+```{r two-trees, echo=FALSE, fig.height = 3, fig.width=6}
+par(mfrow=c(1, 2), mar=standardMargin, cex=0.9)
+plot(balancedTree <- ape::read.tree(text="(((a, b), (c, d)), ((e, f), (g, h)));"),
+     edge.color = cbPalette8[3])
+ape::edgelabels(1:5, c(1, 2, 5, 9, 12))
+legend('topleft', 'Balanced tree', bty='n')
+
+plot(caterpillarTree <- ape::read.tree(text="(a, (b, (c, (d, (e, (f, (g, h)))))));"),
+     edge.color = cbPalette8[2])
+ape::edgelabels(1:5, c(4, 6, 8, 10, 12))
+legend('topleft', 'Asymmetric tree', bty='n')
+```
+
+Each tree divides the eight taxa into five bipartition splits.  
+The information content (Shannon entropy) of a split can be calculated based on 
+what proportion of eight-tip trees contain the split in question. 
+This is a function of the evenness of the split:
+
+```{r ic-of-splits, display='asis', echo=FALSE, warnings=FALSE}
+splitSmall <- 2:4
+splitLarge <- 8L - splitSmall
+
+rootedTrees <- c(
+  '1' = 1,
+  '2' = 1 * 1,
+  '3' = 3 * 1,
+  '4' = 5 * 3 * 1,
+  '5' = 7 * 5 * 3 * 1,
+  '6' = 9 * 7 * 5 * 3 * 1
+)
+
+matchingTrees <- rootedTrees[splitSmall] * rootedTrees[splitLarge]
+names(matchingTrees) <- paste0("Partition size: ", splitSmall, ':', splitLarge)
+
+matchingP <- matchingTrees / (11 * 9 * 7 * 5 * 3 * 1 * 1)
+
+ic <- -log(matchingP) / log(2)
+
+knitr::kable(cbind(
+      'Matching trees' = matchingTrees,
+      'p(Match in random tree)' = signif(matchingP, 3),
+      'Information content / bits' = ic))
+```
+
+In the first tree, split 1 is even, dividing four taxa from four others (`4:4`); splits 2--5 are maximally uneven (`2:6`).  The total information content of these five splits is `r signif(sum(ic[c(4, 2, 2, 2, 2) - 1]), 4)`, whereas that of the five splits in 
+the second tree, of sizes `2:6`, `3:5`, `4:4`, `3:5` and `2:6`, is
+`r signif(sum(ic[c(2, 3, 4, 3, 2) - 1]), 4)`. Put another way, a random tree will
+on average share more partitions with the balanced tree (whose partitions are 
+predominantly uneven and thus likely to be matched) than the asymmetric tree 
+(which contains more even partitions that are less likely to occur in a random tree).
+
+Of the 10&nbsp;395 eight-tip trees, many more bear at least one partition in 
+common with a balanced tree than with an asymmetric tree, whereas the distribution of quartets is identical:
+
+```{r all-8-tip-trees, echo=FALSE, cache=TRUE}
+#calculate <- FALSE
+#if (calculate) {
+#  all8 <- phytools::allFurcTrees(8, letters[1:8], FALSE)
+#  allBif8 <- all8[vapply(all8, function(x) x$Nnode, 1L) == 6]
+#  inBalanced <- SplitStatus(allBif8, balancedTree)[, 's']
+#  inCaterpillar <- SplitStatus(allBif8, caterpillarTree)[, 's']
+#  qInBalanced <- QuartetStatus(allBif8, balancedTree)[, 's']
+#  qInCaterpillar <- QuartetStatus(allBif8, balancedTree)[, 's']
+#} else {
+  inBalanced <- rep(0:5, c(7088, 2708, 512, 76, 10, 1))
+  inCaterpillar <- rep(0:5, c(8162, 1808, 350, 64, 10, 1))
+  qInBalanced <- qInCaterpillar <- rep(c(10:42, 44:46, 49, 50, 53, 54, 57, 62, 70),
+    c(32, 256, 512, 384, 512, 320, 512, 448, 512, 512, 688, 160, 512, 448, 256, 464, 416, 448, 576, 256, 192, 320, 160, 288, 128, 192, 132, 80, 32, 32, 224, 64, 8, 64, 112, 16, 64, 16, 4, 18, 16, 8, 1))
+#}
+
+par(mfrow=c(1, 2))
+plot.new()
+plot.window(main='8-tip trees with N common splits', cex.main=1,
+            xlim=c(0, 6), ylim=c(0, 2708),
+            xlab='Splits in common', ylab='Number of trees')
+sch <- hist(inCaterpillar + 0.5, breaks = 0:12 / 2 - 0.0001, plot=FALSE)
+sbh <- hist(inBalanced, breaks = 0:12 / 2 - 0.0001, plot=FALSE)
+plot(sch, col=paste0(cbPalette8[2], '44'), add=TRUE)
+plot(sbh, col=paste0(cbPalette8[3], '44'), add=TRUE)
+text(0.0, 100, paste0('Balanced: ', sum(inBalanced == 0)), pos=4, srt=90, cex=0.7)
+text(0.5, 100, paste0('Asymmetric: ', sum(inCaterpillar == 0)), pos=4, srt=90, cex=0.7)
+
+legend('topright', pch=22,
+       pt.cex = 2, col='black',
+       pt.bg = paste0(cbPalette8[2:3], '44'), bty='n',
+       c('Asymmetric', 'Balanced'))
+axis(1, at=0:5 + 0.5, labels=0:5)
+axis(2)
+
+qch <- hist(qInCaterpillar, breaks = 0:36 * 2 - 0.0001, plot=FALSE)
+qbh <- hist(qInBalanced,    breaks = 0:36 * 2 - 0.0001, plot=FALSE)
+
+plot(qch, col=paste0(cbPalette8[2], '44'), main='8-tip trees with N common quartets',
+     xlab='Quartets in common', ylab='Number of trees', axes=FALSE, cex.main=1)
+plot(qbh, col=paste0(cbPalette8[3], '44'), add=TRUE)
+axis(1, at=0:36 * 2, labels=(0:36) * 2)
+axis(2)
+
+```
+
+This differing information content is reflected in the ranges taken by
+explicitly information-theoretic measures of tree similarity.
+
+## Conclusion
+
+Quartet dissimilarity is the only available metric of tree distance that fulfils 
+all of the following desiderata:
+
+ - Allocates trees higher distances if a clade moves greater distances
+ - Allocates trees higher distances if a the clade that is moved is larger
+ - Distinguishes contradicted from unresolved information in trees that 
+   are not fully bifurcating (resolved)
+ - Identifies pairs of trees that are more random than expected by chance
+ - Does not reach its maximum value after relatively trivial rearrangements
+ 
+# Improvements to partition metrics
+
+The primary issue with the Robinson-Foulds distance is its conservative 
+pairing of clades: a grouping is either identical in both trees, or is 
+treated as different.  
+This makes no account for the possibility that one tree contains a grouping that
+is similar (though not quite identical) to a grouping in another.
+
+In order to incorporate some measure of similar-but-not-quite-identical clades,
+it is necessary to construct an optimal matching that pairs each clade in each
+tree with either a suitable clade in the other, or with no clade at all.
+
+Various approaches to this problem have been proposed; these typically search
+for a matching that minimises the total dissimilarity summed for all pairings.
+Approaches differ in how they penalize differences between paired groups.
+Bogdanowicz and Giaro [-@Bogdanowicz2012;-@Bogdanowicz2013;-@Bogdanowicz2017]
+calculate the size
+of the largest bipartition that is consistent with both input groups; 
+Nye _et al_. [-@Nye2006] normalize this number using the Jaccard index;
+Böcker _et al_. [-@Bocker2013] raise this value to an arbitrary exponent, and
+add a constraint that prohibits pairings that comprise contradictory groups.
+
+These approaches represent a refinement of the Robinson-Foulds metric,
+circumventing many of the issues raised above.  They are, however, more 
+computationally expensive, and lack an objective measure of clade similarity.
+R implementations of these measures are available in `TreeSearch`.
+
+# References
