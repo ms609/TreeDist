@@ -11,6 +11,27 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+
+```{R init}
+abbrevs <- c(
+  vai = 'Var. Arb Info',
+  vci = 'Var. Clustering Info', 
+  nts = 'Nye et al.',
+  qd  = 'Quartet',
+  vpi = 'Var. Partition Info',
+  msd = 'Matching Splits',
+  path = 'Path',
+  spr = 'SPR',
+  rf  = 'Robinson-Foulds'
+)
+cbPalette8 <- Ternary::cbPalette8
+
+methodCol <- cbPalette8[c(1:5, 6, 7, 8, 8)]
+methodPch <- c(3, 3, 6, 3, 3, 4, 4, 4, 6)
+names(methodCol) <- names(methodPch) <- names(abbrevs)
+methodLCH <- colorspace::coords(as(colorspace::hex2RGB(methodCol), 'polarLUV'))
+```
+
 ## Expected tree distance of random tree pair
 
 This figure shows how the normalized tree distance varies with the number of 
@@ -23,41 +44,39 @@ readily calculated maximum value and are thus crudely normalized against a
 simple function of the number of tips.
 
 ```{R Tree-distance-averages, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, out.width='90%', fig.align='center'}
-cbPalette8 <- Ternary::cbPalette8
-AddLine <- function (dat, col, pch=3) {
+
+data('randomTreeDistances', package='TreeDistData')
+
+AddLine <- function (method, Normalize = I) {
+  dat <- Normalize(randomTreeDistances[method, , ])
+  col <- methodCol[method]
+  pch <- methodPch[method]
   nLeaves <- colnames(dat)
   points(nLeaves, dat['mean', ], pch=pch, col=col)
   lines(nLeaves, dat['mean', ] + dat['sd', ], lty=3, col=col)
   lines(nLeaves, dat['mean', ] - dat['sd', ], lty=3, col=col)
 }
 
-data('randomTreeDistances', package='TreeDistData')
-dists <- randomTreeDistances
+
 hi2lo <- c('vai', 'vci', 'nts', 'qd', 'vpi', 'msd', 'path', 'spr', 'rf')
 
-plot(as.integer(dimnames(dists)[[3]]), dists['vai', 'mean', ],
-     pch='.', ylim=c(0.25, 1), col='white',
+plot(as.integer(dimnames(randomTreeDistances)[[3]]), 
+     randomTreeDistances['vai', 'mean', ],
+     ylim=c(0.25, 1), type='n',
      xlab = "Number of tips", ylab = "Normalized tree distance")
-for (i in 1:5) AddLine(dists[hi2lo[i], , ], 
-                       pch=c(3, 3, 6, 3, 3)[i],
-                       col=cbPalette8[i])
+for (i in 1:5) AddLine(hi2lo[i])
 
-nLeaves <- as.integer(dimnames(dists)[[3]])
+nLeaves <- as.integer(dimnames(randomTreeDistances)[[3]])
 # Crude normalization against diameter
-AddLine(dists['msd', , ] / rep((nLeaves * nLeaves * 3 / 8), each=2), 
-        pch=4, col=cbPalette8[6])
-AddLine(dists['path', , ] / rep((nLeaves * 8), each=2),
-        pch=4, col=cbPalette8[7])
-AddLine(dists['spr', , ], col=cbPalette8[8], pch=4)
-AddLine(dists['rf', , ], col=cbPalette8[8], pch=6)
+AddLine('msd', function (x) x / rep((nLeaves * nLeaves * 3 / 8), each=2))
+AddLine('path', function (x) x / rep((nLeaves * 8), each=2))
+AddLine('spr')
+AddLine('rf')
 
 
-legend('bottomright', bty='n', pch=c(3, 3, 6, 3, 3, 4,4,4,6), 
-       legend=c('Var. Arb Info', 'Var. Clustering Info', 'Nye et al.',
-                'Quartet', 'Var. Partition Info',
-                'Matching Splits', 'Path', 'SPR',
-                'Robinson-Foulds'), 
-       col=cbPalette8[c(1:5, 6, 7, 8, 8)])
+legend('bottomright', bty='n', pch=methodPch, 
+       legend=abbrevs, 
+       col=methodCol)
 ```
 
 
@@ -65,7 +84,7 @@ legend('bottomright', bty='n', pch=c(3, 3, 6, 3, 3, 4,4,4,6),
 
 ```{r load-data-dists, include=FALSE}
 data('distanceDistribution25', package='TreeDistData')
-d25 <- distanceDistribution25
+distanceDistribution25['rf', ] <- distanceDistribution25['rf', ] / 2L
 ```
 
 The histograms below depict the distribution of tree distances for `r dim(d25)[2]`
@@ -75,22 +94,23 @@ pairs of trees drawn at random from the uniform distribution.
 par(mfrow=c(3, 3), mar=rep(1.9, 4), cex=0.8, oma=c(0, 0, 2, 0))
 manyBreaks <- seq(0, 1, length.out=40)
 
-PlotHist <- function (distances, breaks, title, ...) {
-  hist(distances, xlab=NULL, main=NULL, breaks=breaks, cex=0.8, ...)
-  legend('topleft', bty='n', c('', '', title), cex=0.8)
+PlotHist <- function (method, breaks) {
+  hist(distanceDistribution25[method, ], xlab=NULL, main=NULL, breaks=breaks, 
+       cex=0.8, border = methodCol[method])
+  legend('topleft', bty='n', c('', '', abbrevs[method]), cex=0.8)
 }
 
-PlotHist(d25['vai', ], manyBreaks, 'Var. Arb Info', border=cbPalette8[1])
+PlotHist('vai', manyBreaks)
 mtext('Distance between pectinate tree (above) and random bifurcating trees', outer=TRUE, cex=0.8)
 
-PlotHist(d25['vci', ], manyBreaks, 'Var. Clustering Info', border=cbPalette8[2])
-PlotHist(d25['nts', ], manyBreaks, 'Nye et al.', border=cbPalette8[3])
-PlotHist(d25['qd', ],  manyBreaks,  'Quartet dissimilarity', border=cbPalette8[4])
-PlotHist(d25['vpi', ], manyBreaks, 'Var. Partition Info', border=cbPalette8[5])
-PlotHist(d25['msd', ], manyBreaks * max(d25['msd', ]),  'Matching Splits', border=cbPalette8[6])
-PlotHist(d25['path', ],  manyBreaks * max(d25['path', ]),  'Path', border=cbPalette8[7])
-PlotHist(d25['spr', ], 0:max(d25['spr', ]),  'SPR', border=cbPalette8[8])
-PlotHist(d25['rf', ],  manyBreaks * 44,  'Robinson-Foulds', border=cbPalette8[8])
+PlotHist('vci', manyBreaks)
+PlotHist('nts', manyBreaks)
+PlotHist('qd',  manyBreaks)
+PlotHist('vpi', manyBreaks)
+PlotHist('msd', 40L)
+PlotHist('path', 40L)
+PlotHist('spr', 0:max(distanceDistribution25['spr', ]))
+PlotHist('rf',  0:22)
 
 ```
 
@@ -100,86 +120,112 @@ Inspired by @Kendall2016...
 
 ```{r 7-tip-funcs, include=FALSE} 
 Palette <- function (n) colorspace::sequential_hcl(n, palette='BluYl')
+MethodPalette <- function (method, n) colorspace::sequential_hcl(n,
+                             h = methodLCH[method, 'H'], 
+                             c = methodLCH[method, 'C'],
+                             l = c(max(40, methodLCH[method, 'L']) - 30, 95),
+                             power = 0.9)
+
 data('sevenTipDistances', package='TreeDistData')
 td7 <- sevenTipDistances
+td7$rf <- td7$rf / 2L
 treeShapes <- td7$shapes
 shapes <- treeShapes[order(treeShapes)]
 treeCols <- Ternary::cbPalette8[2:7]
 names(treeCols) <- unique(shapes)
 
 
-Hist <- function (distances, title='', breaks=32L) {
-  h <- hist(distances, breaks=breaks, plot=FALSE)
-  plot(h, col=Palette(length(h$breaks)), main=title)
+Hist <- function (method, breaks=32L) {
+  h <- hist(td7[[method]], breaks=breaks, plot=FALSE)
+  plot(h, col=MethodPalette(method, length(h$breaks)), main=abbrevs[method])
 }
 
-PlotMDS <- function(distances, title='') {
-  space <- MASS::isoMDS(distances, k=2, trace=FALSE)
+PlotMDS <- function(method) {
+  space <- MASS::isoMDS(td7[[distances]], k=2, trace=FALSE)
   pts <- space$points
   plot(pts, pch=19, col=paste0(treeCols[as.character(shapes)], '88'))
   z <- MASS::kde2d(pts[, 1], pts[, 2])
   contour(z, add=TRUE, col='#00000088')
   legend('bottom', legend=paste0('stress = ', signif(space$stress, 3)), bty='n')
-  legend('top', legend=title, bty='n', text.font=2)
+  legend('top', legend=abbrevs[method], bty='n', text.font=2)
 }
 
-TableImage <- function (distances) {
+TableImage <- function (method) {
   x <- rep(seq_len(945), each=945L)
   y <- rep(seq_len(945), 945L)
-  plot(-100, -100, pch='.', col='white', ylim=c(0, 965), xlim=c(965, 0),
-     axes=FALSE, xlab='', ylab='')
+  plot(-100, -100, type='n', ylim=c(0, 965), xlim=c(965, 0), 
+       axes=FALSE, xlab='', ylab='')
   shapeSizes <- table(shapes)
   shapeSum <- cumsum(shapeSizes)
   shapeStarts <-  shapeSum - shapeSizes
-  rect(shapeStarts, 955, shapeSum, 965, col=Ternary::cbPalette8[2:7], border=NA)
-  rect(955, shapeStarts, 965, shapeSum, col=Ternary::cbPalette8[2:7], border=NA)
+  rect(shapeStarts, 950, shapeSum, 975, col=Ternary::cbPalette8[2:7], border=NA)
+  rect(950, shapeStarts, 975, shapeSum, col=Ternary::cbPalette8[2:7], border=NA)
 
-  rect(x - 1L, y - 1L, x, y, col=Palette(100)[cut(distances, 100, labels=FALSE)], border=NA)
+  rect(x - 1L, y - 1L, x, y, border=NA,
+       col=MethodPalette(method, 100)[cut(td7[[method]], 100, labels=FALSE)])
 }
 ```
 
 ```{r 7-tip-trees-histograms, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, out.width='90%', fig.align='center'}
-par(mfrow=c(3, 3), mar=rep(0.8, 4))
+par(mfrow=c(3, 3), mar=c(2.4, 0.8, 2.4, 0.8))
 
-Hist(td7$vai, title='V of Arb Info')
-Hist(td7$vci, title='V of Clust Info')
-Hist(td7$nts, title='Nye et al.')
-Hist(td7$qd, title='Quartet')
-Hist(td7$vpi, title='V. of Part. Info')
-Hist(td7$msd, title='Matching Split', breaks=10)
-Hist(td7$path, title='Path')
-Hist(td7$spr, title='SPR', breaks=3)
-Hist(td7$rf, title='Robinson-Foulds', breaks=8)
+Hist('vai')
+Hist('vci')
+Hist('nts')
+Hist('qd')
+Hist('vpi')
+Hist('msd', breaks=10)
+Hist('path')
+Hist('spr', breaks=3)
+Hist('rf', breaks=4)
+```
 
+The coloured bars at the edges of the matrix plots correspond to the shape of 
+the trees being compared, as depicted here.
+```{r 7-tip-tree-shapes, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/6, fig.width=6, out.width='90%', fig.align='center'}
+par(mfrow=c(1, 6), mar=c(0, 1, 0, 1) * 0.2)
 
+treeShapes <- c('(a, (b, (c, (d, (e, (f, g))))));',
+                '(a, (b, (c, ((d, e), (f, g)))));',
+                '(a, (b, ((c, d), (e, (f, g)))));',
+                '(a, ((b, c), (d, (e, (f, g)))));',
+                '(a, ((b, c), ((d, e), (f, g))));',
+                '(a, ((b, (c, d)), (e, (f, g))));')
+lapply(seq_along(treeShapes), function (i) {
+  tree <- ape::read.tree(text = treeShapes[i])
+  tree$edge.length <- rep(1, 12)
+  plot(tree,
+       edge.col=Ternary::cbPalette8[8L - i], 
+       edge.width = 2L,
+       show.tip.label = FALSE)
+}) -> XX
 ```
 
 ```{r 7-tip-trees-2, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, out.width='90%', fig.align='center'}
 par(mfrow=c(3, 3), mar=rep(0.8, 4))
-
-TableImage(td7$vai)
-TableImage(td7$vci)
-TableImage(td7$nts)
-TableImage(td7$qd)
-TableImage(td7$vpi)
-TableImage(td7$msd)
-TableImage(td7$path)
-TableImage(td7$spr)
-TableImage(td7$rf)
+TableImage('vai')
+TableImage('vci')
+TableImage('nts')
+TableImage('qd')
+TableImage('vpi')
+TableImage('msd')
+TableImage('path')
+TableImage('spr')
+TableImage('rf')
 ```
 
 ```{r 7-tip-trees-3, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, out.width='90%', fig.align='center'}
 par(mfrow=c(3, 3), mar=rep(0.8, 4))
 
-PlotMDS(td7$vai, 'V of Arb Info')
-PlotMDS(td7$vci, 'V of Clus Info')
-PlotMDS(td7$nts, 'Nye et al.')
-PlotMDS(td7$qd)
-PlotMDS(td7$vpi)
-PlotMDS(td7$msd)
-PlotMDS(td7$path)
-PlotMDS(td7$spr)
-PlotMDS(td7$rf)
+PlotMDS('vai')
+PlotMDS('vci')
+PlotMDS('nts')
+PlotMDS('qd')
+PlotMDS('vpi')
+PlotMDS('msd')
+PlotMDS('path')
+PlotMDS('spr')
+PlotMDS('rf')
 ```
 
 ## References
