@@ -14,19 +14,29 @@ vignette: >
 
 ```{R init}
 abbrevs <- c(
+  rf  = 'Robinson-Foulds',
   vai = 'Var. Arb Info',
+  spr = 'SPR',
   vci = 'Var. Clustering Info', 
   nts = 'Nye et al.',
   qd  = 'Quartet',
   vpi = 'Var. Partition Info',
-  msd = 'Matching Splits',
   path = 'Path',
-  spr = 'SPR',
-  rf  = 'Robinson-Foulds'
+  msd = 'Matching Splits'
 )
 cbPalette8 <- Ternary::cbPalette8
 
-methodCol <- cbPalette8[c(1:5, 6, 7, 8, 8)]
+methodCol <- c(
+'#e41a1c',
+'#377eb8',
+'#4daf4a',
+'#984ea3',
+'#ff7f00',
+'#ffff33',
+'#a65628',
+'#f781bf',
+'#999999') # http://colorbrewer2.org/#type=qualitative&scheme=Set1&n=9
+#TreeSearch::brewer[[9]] #cbPalette8[c(1:5, 6, 7, 8, 8)]
 methodPch <- c(3, 3, 6, 3, 3, 4, 4, 4, 6)
 names(methodCol) <- names(methodPch) <- names(abbrevs)
 methodLCH <- colorspace::coords(as(colorspace::hex2RGB(methodCol), 'polarLUV'))
@@ -87,7 +97,8 @@ data('distanceDistribution25', package='TreeDistData')
 distanceDistribution25['rf', ] <- distanceDistribution25['rf', ] / 2L
 ```
 
-The histograms below depict the distribution of tree distances for `r dim(d25)[2]`
+The histograms below depict the distribution of tree distances for
+`r dim(distanceDistribution25)[2]`
 pairs of trees drawn at random from the uniform distribution.
 
 ```{R Tree-distance-distributions, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, out.width='90%', fig.align='center'}
@@ -141,7 +152,7 @@ Hist <- function (method, breaks=32L) {
 }
 
 PlotMDS <- function(method) {
-  space <- MASS::isoMDS(td7[[distances]], k=2, trace=FALSE)
+  space <- MASS::isoMDS(td7[[method]], k=2, trace=FALSE)
   pts <- space$points
   plot(pts, pch=19, col=paste0(treeCols[as.character(shapes)], '88'))
   z <- MASS::kde2d(pts[, 1], pts[, 2])
