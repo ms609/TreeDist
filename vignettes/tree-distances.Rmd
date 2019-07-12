@@ -162,7 +162,7 @@ lapply(seq_along(toCorrelate), function(i)
     }
 })) -> XX
 lapply(toCorrelate, CorrPlot, 'spr') -> XX
-mtext('SPR distance', 4L, line=-1, cex=0.7, col=methodCol['rf'])
+mtext('SPR distance', 4L, line=-1, cex=0.7, col=methodCol['spr'])
 
 ```
 
@@ -293,14 +293,13 @@ TableImage <- function (method) {
 }
 ```
 
-```{r 7-tip-trees-histograms, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, out.width='90%', fig.align='center'}
-par(mfrow=c(3, 3), mar=c(2.4, 0.8, 2.4, 0.8))
+```{r 7-tip-trees-histograms, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/2, fig.width=6, out.width='90%', fig.align='center'}
+par(mfrow=c(2, 4), mar=c(2.4, 0.8, 2.4, 0.8))
 
 Hist('vai')
 Hist('vci')
 Hist('nts')
 Hist('qd')
-Hist('vpi')
 Hist('msd', breaks=10)
 Hist('path')
 Hist('spr', breaks=3)
@@ -309,7 +308,7 @@ Hist('rf', breaks=4)
 
 The coloured bars at the edges of the matrix plots correspond to the shape of 
 the trees being compared, as depicted here.
-```{r 7-tip-tree-shapes, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/6, fig.width=6, out.width='90%', fig.align='center'}
+```{r 7-tip-tree-shapes, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/6, fig.width=7, out.width='90%', fig.align='center'}
 par(mfrow=c(1, 6), mar=c(0, 1, 0, 1) * 0.2)
 
 treeShapes <- c('(a, (b, (c, (d, (e, (f, g))))));',
@@ -328,27 +327,25 @@ lapply(seq_along(treeShapes), function (i) {
 }) -> XX
 ```
 
-```{r 7-tip-trees-2, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, out.width='90%', fig.align='center'}
-par(mfrow=c(3, 3), mar=rep(0.8, 4))
+```{r 7-tip-trees-2, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/2, fig.width=7, out.width='90%', fig.align='center'}
+par(mfrow=c(2, 4), mar=rep(0.8, 4))
 TableImage('vai')
 TableImage('vci')
 TableImage('nts')
 TableImage('qd')
-TableImage('vpi')
 TableImage('msd')
 TableImage('path')
 TableImage('spr')
 TableImage('rf')
 ```
 
-```{r 7-tip-trees-3, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, out.width='90%', fig.align='center'}
+```{r 7-tip-trees-3, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/2, fig.width=7, out.width='90%', fig.align='center'}
 par(mfrow=c(3, 3), mar=rep(0.8, 4))
 
 PlotMDS('vai')
 PlotMDS('vci')
 PlotMDS('nts')
 PlotMDS('qd')
-PlotMDS('vpi')
 PlotMDS('msd')
 PlotMDS('path')
 PlotMDS('spr')
