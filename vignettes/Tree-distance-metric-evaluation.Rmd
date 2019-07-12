@@ -333,7 +333,7 @@ RFPlot(sq_trees$anti_pectinate, 'Positively contradictory tree', ref=pectinate_t
 The distances reported by a tree distance metric imply a tree space. It is 
 desirable that this space is somewhat even.  In particular, metrics in which 
 trees form isolated islands, all an equal distance from one another but a great
-distance from their nearest neighbours, are undesirable [@Bogdanowich2012].
+distance from their nearest neighbours, are undesirable [@Bogdanowicz2012].
 
 ```{R Tree-distances, echo=FALSE, fig.align='center', fig.height=8, fig.width=6.4, message=FALSE, cache=TRUE, out.width='66%'}
 par(mfrow=c(3, 5), mar=standardMargin, cex=1)
@@ -425,7 +425,7 @@ PlotMDS(treeDists['symmetric.difference', , ], 'RF')
 ```
 
 
-Bogdanowicz & Giaro [-@Bogdanovicz2012] report that islands exist in the quartet and path differences.  A similar proof [#TODO] can be constructed for the [XYZ] distance.
+Bogdanowicz & Giaro [-@Bogdanowicz2012] report that islands exist in the quartet and path differences.  A similar proof [#TODO] can be constructed for the [XYZ] distance.
 
 | **Measure** | MArInf | MPaInf | ClustInf | Nye _et al._ | MS | Quartet | Path | SPR | RF |
 | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | 

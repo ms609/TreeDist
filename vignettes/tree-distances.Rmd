@@ -50,8 +50,8 @@ tips in the trees being compared.
 Metrics marked with &#9661; are normalized based on the maximum possible value;
 information-based metrics, marked +, are normalized against the total 
 information content of each pair of trees; metrics marked &times; do not have a 
-readily calculated maximum value and are thus crudely normalized against a 
-simple function of the number of tips.
+readily calculated maximum value and are thus normalized against the maximum 
+observed distance for each number of tips.
 
 ```{R Tree-distance-averages, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, out.width='90%', fig.align='center'}
 
@@ -78,8 +78,8 @@ for (i in 1:5) AddLine(hi2lo[i])
 
 nLeaves <- as.integer(dimnames(randomTreeDistances)[[3]])
 # Crude normalization against diameter
-AddLine('msd', function (x) x / rep((nLeaves * nLeaves * 3 / 8), each=2))
-AddLine('path', function (x) x / rep((nLeaves * 8), each=2))
+AddLine('msd', function (x) x / rep(max(randomTreeDistances['msd', , 'max']), each=4))
+AddLine('path', function (x) x / rep((nLeaves * 8), each=4))
 AddLine('spr')
 AddLine('rf')
 
