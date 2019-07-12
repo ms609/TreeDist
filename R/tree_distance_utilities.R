@@ -167,12 +167,12 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   
   if (setPar) origPar <- par(mfrow=c(2, 1), mar=rep(0.5, 4))
   
-  Plot(tree1)#, ...)
+  Plot(tree1, ...)
   edgelabels(seq_along(pairings), partitionEdges1[pairings], bg=palette, adj=adjNo)
   #edgelabels(seq_along(pairings), partitionEdges1, cex=0.8, font=2, frame='n', adj=adjVal)
   edgelabels(pairScores, partitionEdges1[pairings], frame='n', adj=adjVal, cex=0.8)
   
-  Plot(tree2)#, ...)
+  Plot(tree2, ...)
   edgelabels(seq_along(pairings), partitionEdges2, bg=palette, adj=adjNo)
   #edgelabels(seq_along(pairings), partitionEdges2, cex=0.8, font=2, frame='n', adj=adjVal)
   edgelabels(pairScores, partitionEdges2, frame='n', adj=adjVal, cex=0.8)
