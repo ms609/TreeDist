@@ -439,7 +439,7 @@ n_random <- if (Sys.getenv('TRAVIS') == "") 250 else 10 # TODO: Increase to 2500
 n_random_tips <- 11
 random_trees <- lapply(seq_len(n_random), function (x) 
   ape::rtree(n_random_tips, br=NULL, tip.label=seq_len(n_random_tips)))
-random_quartets <- QuartetStatus(random_trees, cf=pectinate_tree)[, 'd'] / choose(n_random_tips, 4)
+random_quartets <- Quartet::QuartetStatus(random_trees, cf=pectinate_tree)[, 'd'] / choose(n_random_tips, 4)
 random_distances <- vapply(random_trees, phangorn::treedist,
                            tree2=pectinate_tree, double(2))
 random_paths <- random_distances['path.difference', ]
@@ -499,90 +499,6 @@ PlotHist(random_distances['symmetric.difference', ] / 16, manyBreaks, 1, '\nRobi
 legend('topleft', bty='n', col=cbPalette8[3], lwd=2, 'One tip moved\n maximum distance', cex=0.8, text.font=3)
 
 ```
-
-## Correlation
-
-How correlated are the measures?
-
-```{R metric-correlation, echo=FALSE, fig.width=7, fig.height=7, out.width='95%', fig.align='center'}
-par(mfrow=c(8, 7), mar=rep(0.2, 4))
-colScale <- colorspace::sequential_hcl(1000, palette='viridis')
-CorrPlot <- function (a, b) {
-  plot(a~b, pch='.', col='#00000088')
-  reg <- lm(a~b)
-  r2 <- summary(reg)$adj.r.squared
-  regCol <- colScale[max(ceiling((r2 - 0.5) * 2000), 1L)]
-  abline(reg, col=regCol)
-  legend('bottomright', legend=paste0("R² = ", signif(r2, 3)),
-         text.col = regCol, bty='n')
-}
-plot.new(); text(0.5, 0.5, 'Var. Arb. Info')
-CorrPlot(random_arb_info, random_par_info)
-CorrPlot(random_arb_info, random_clu_info)
-CorrPlot(random_arb_info, random_nye_info)
-CorrPlot(random_arb_info, random_ms_info)
-CorrPlot(random_arb_info, random_quartets)
-CorrPlot(random_arb_info, random_paths)
-
-CorrPlot(random_par_info, random_arb_info)
-plot.new(); text(0.5, 0.5, 'Var. Par. Info')
-CorrPlot(random_par_info, random_clu_info)
-CorrPlot(random_par_info, random_nye_info)
-CorrPlot(random_par_info, random_ms_info)
-CorrPlot(random_par_info, random_quartets)
-CorrPlot(random_par_info, random_paths)
-
-CorrPlot(random_clu_info, random_arb_info)
-CorrPlot(random_clu_info, random_par_info)
-plot.new(); text(0.5, 0.5, 'Var. Clust. Info')
-CorrPlot(random_clu_info, random_nye_info)
-CorrPlot(random_clu_info, random_ms_info)
-CorrPlot(random_clu_info, random_quartets)
-CorrPlot(random_clu_info, random_paths)
-
-CorrPlot(random_nye_info, random_arb_info)
-CorrPlot(random_nye_info, random_par_info)
-CorrPlot(random_nye_info, random_clu_info)
-plot.new(); text(0.5, 0.5, 'Nye et al.')
-CorrPlot(random_nye_info, random_ms_info)
-CorrPlot(random_nye_info, random_quartets)
-CorrPlot(random_nye_info, random_paths)
-
-CorrPlot(random_ms_info, random_arb_info)
-CorrPlot(random_ms_info, random_par_info)
-CorrPlot(random_ms_info, random_clu_info)
-CorrPlot(random_ms_info, random_nye_info)
-plot.new(); text(0.5, 0.5, 'Matching Splits')
-CorrPlot(random_ms_info, random_quartets)
-CorrPlot(random_ms_info, random_paths)
-
-CorrPlot(random_quartets, random_arb_info)
-CorrPlot(random_quartets, random_par_info)
-CorrPlot(random_quartets, random_clu_info)
-CorrPlot(random_quartets, random_nye_info)
-CorrPlot(random_quartets, random_ms_info)
-plot.new(); text(0.5, 0.5, 'Quartet distance')
-CorrPlot(random_quartets, random_paths)
-
-CorrPlot(random_paths, random_arb_info)
-CorrPlot(random_paths, random_par_info)
-CorrPlot(random_paths, random_clu_info)
-CorrPlot(random_paths, random_nye_info)
-CorrPlot(random_paths, random_ms_info)
-CorrPlot(random_paths, random_quartets)
-plot.new(); text(0.5, 0.5, 'Path distance')
-
-CorrPlot(random_spr[1, ], random_arb_info)
-CorrPlot(random_spr[1, ], random_par_info)
-CorrPlot(random_spr[1, ], random_clu_info)
-CorrPlot(random_spr[1, ], random_nye_info)
-CorrPlot(random_spr[1, ], random_ms_info)
-CorrPlot(random_spr[1, ], random_paths)
-CorrPlot(random_spr[1, ], random_quartets)
-mtext('SPR distance', 4L, line=-1, cex=0.7)
-
-```
-
 
 ## Non-bifurcating trees
 

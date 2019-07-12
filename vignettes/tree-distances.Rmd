@@ -17,11 +17,11 @@ abbrevs <- c(
   rf  = 'Robinson-Foulds',
   vai = 'Var. Arb Info',
   spr = 'SPR',
+  path = 'Path',
   vci = 'Var. Clustering Info', 
   nts = 'Nye et al.',
   qd  = 'Quartet',
   vpi = 'Var. Partition Info',
-  path = 'Path',
   msd = 'Matching Splits'
 )
 cbPalette8 <- Ternary::cbPalette8
@@ -57,34 +57,25 @@ observed distance for each number of tips.
 
 data('randomTreeDistances', package='TreeDistData')
 
-AddLine <- function (method, Normalize = I) {
-  dat <- Normalize(randomTreeDistances[method, , ])
+AddLine <- function (method, normalize = FALSE) {
+  dat <- randomTreeDistances[method, , ]
+  if (normalize) dat <- dat / rep(randomTreeDistances[method, 'max', ], each=4)
   col <- methodCol[method]
   pch <- methodPch[method]
   nLeaves <- colnames(dat)
-  points(nLeaves, dat['mean', ], pch=pch, col=col)
+  #points(nLeaves, dat['mean', ], pch=pch, col=col)
+  lines(nLeaves, dat['mean', ], pch=1, col=col)
   lines(nLeaves, dat['mean', ] + dat['sd', ], lty=3, col=col)
   lines(nLeaves, dat['mean', ] - dat['sd', ], lty=3, col=col)
 }
 
-
-hi2lo <- c('vai', 'vci', 'nts', 'qd', 'vpi', 'msd', 'path', 'spr', 'rf')
-
 plot(as.integer(dimnames(randomTreeDistances)[[3]]), 
      randomTreeDistances['vai', 'mean', ],
-     ylim=c(0.25, 1), type='n',
+     ylim=c(0.4, 1), type='n',
      xlab = "Number of tips", ylab = "Normalized tree distance")
-for (i in 1:5) AddLine(hi2lo[i])
+for (method in names(abbrevs)) AddLine(method, method %in% c('msd', 'path'))
 
-nLeaves <- as.integer(dimnames(randomTreeDistances)[[3]])
-# Crude normalization against diameter
-AddLine('msd', function (x) x / rep(max(randomTreeDistances['msd', , 'max']), each=4))
-AddLine('path', function (x) x / rep((nLeaves * 8), each=4))
-AddLine('spr')
-AddLine('rf')
-
-
-legend('bottomright', bty='n', pch=methodPch, 
+legend('bottomright', bty='n', pch=methodPch, lty=1,
        legend=abbrevs, 
        col=methodCol)
 ```
@@ -112,7 +103,7 @@ PlotHist <- function (method, breaks) {
 }
 
 PlotHist('vai', manyBreaks)
-mtext('Distance between pectinate tree (above) and random bifurcating trees', outer=TRUE, cex=0.8)
+mtext('Distance between random pairs of 25-tip bifurcating trees', outer=TRUE, cex=0.8)
 
 PlotHist('vci', manyBreaks)
 PlotHist('nts', manyBreaks)
@@ -124,6 +115,53 @@ PlotHist('spr', 0:max(distanceDistribution25['spr', ]))
 PlotHist('rf',  0:22)
 
 ```
+
+## Correlation
+
+How correlated are the measures?
+
+```{R metric-correlation, echo=FALSE, fig.width=7, fig.height=7, out.width='95%', fig.align='center'}
+par(mfrow=c(8L, 7L), mar=rep(0.2, 4))
+colScale <- colorspace::sequential_hcl(1000, palette='viridis')
+CorrPlot <- function (methodA, methodB) {
+  a <- distanceDistribution25[methodA, ]
+  b <- distanceDistribution25[methodB, ]
+  plot(a~b, pch='.', col='#00000088', axes=FALSE, ylab='', xlab='')
+  reg <- lm(a~b)
+  #r2 <- summary(reg)$adj.r.squared
+  #regCol <- colScale[max(ceiling((r2 - 0.5) * 2000), 1L)]
+  abline(reg)
+  #legend('bottomright', legend=paste0("R² = ", signif(r2, 3)),
+  #       text.col = regCol, bty='n')
+}
+PlotR2 <- function (methodA, methodB) {
+  a <- distanceDistribution25[methodA, ]
+  b <- distanceDistribution25[methodB, ]
+  plot.new()
+  reg <- lm(a~b)
+  r2 <- summary(reg)$adj.r.squared
+  regCol <- colScale[max(ceiling((r2 - 0.5) * 2000), 1L)]
+  text(0.5, 0.5, signif(round(r2, 4), 3), col = regCol, cex=2.6)
+}
+toCorrelate <- c('vai', 'vpi', 'vci', 'nts', 'msd', 'qd', 'path')
+lapply(seq_along(toCorrelate), function(i)
+  lapply(seq_along(toCorrelate), function(j) {
+    if (i == j) {
+      plot.new()
+      text(0.5, 0.5, abbrevs[i], col=methodCol[i])
+      box(which='plot', col=methodCol[i], lwd=3)
+    } else if (i < j) {
+      PlotR2(toCorrelate[i], toCorrelate[j])
+    } else {
+      CorrPlot(toCorrelate[i], toCorrelate[j])
+    }
+})) -> XX
+lapply(toCorrelate, CorrPlot, 'spr') -> XX
+mtext('SPR distance', 4L, line=-1, cex=0.7, col=methodCol['spr'])
+
+```
+
+
 
 # Distances between all 7-tip trees 
 
