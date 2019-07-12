@@ -25,17 +25,17 @@ abbrevs <- c(
   msd = 'Matching Splits'
 )
 cbPalette8 <- Ternary::cbPalette8
-
 methodCol <- c(
-'#e41a1c',
-'#377eb8',
-'#4daf4a',
-'#984ea3',
-'#ff7f00',
-'#ffff33',
-'#a65628',
-'#f781bf',
-'#999999') # http://colorbrewer2.org/#type=qualitative&scheme=Set1&n=9
+'#4e78a8',
+'#f28e2c',
+'#e15659',
+'#75b7b2',
+'#58a14e',
+'#edc949',
+'#af7aa1',
+'#fd9da7',
+'#9d745f',
+'#bab0ac')[1:9] # https://www.tableau.com/about/blog/2016/7/colors-upgrade-tableau-10-56782
 #TreeSearch::brewer[[9]] #cbPalette8[c(1:5, 6, 7, 8, 8)]
 methodPch <- c(3, 3, 6, 3, 3, 4, 4, 4, 6)
 names(methodCol) <- names(methodPch) <- names(abbrevs)
@@ -154,11 +154,12 @@ Hist <- function (method, breaks=32L) {
 PlotMDS <- function(method) {
   space <- MASS::isoMDS(td7[[method]], k=2, trace=FALSE)
   pts <- space$points
-  plot(pts, pch=19, col=paste0(treeCols[as.character(shapes)], '88'))
+  plot(pts, pch=19, col=paste0(treeCols[as.character(shapes)], '88'),
+       xlab='', ylab='')
   z <- MASS::kde2d(pts[, 1], pts[, 2])
   contour(z, add=TRUE, col='#00000088')
-  legend('bottom', legend=paste0('stress = ', signif(space$stress, 3)), bty='n')
-  legend('top', legend=abbrevs[method], bty='n', text.font=2)
+  legend('bottomleft', legend=paste0('stress = ', signif(space$stress, 3)), bty='n')
+  legend('topleft', legend=abbrevs[method], bty='n', text.font=2)
 }
 
 TableImage <- function (method) {
