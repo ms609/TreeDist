@@ -126,8 +126,8 @@ colScale <- colorspace::sequential_hcl(1000, palette='viridis')
 CorrPlot <- function (methodA, methodB) {
   a <- distanceDistribution25[methodA, ]
   b <- distanceDistribution25[methodB, ]
-  plot(a~b, pch='.', col='#00000088', axes=FALSE, ylab='', xlab='')
-  reg <- lm(a~b)
+  plot(b~a, pch='.', col='#00000088', axes=FALSE, ylab='', xlab='')
+  reg <- lm(b~a)
   #r2 <- summary(reg)$adj.r.squared
   #regCol <- colScale[max(ceiling((r2 - 0.5) * 2000), 1L)]
   abline(reg)
@@ -143,13 +143,14 @@ PlotR2 <- function (methodA, methodB) {
   regCol <- colScale[max(ceiling((r2 - 0.5) * 2000), 1L)]
   text(0.5, 0.5, signif(round(r2, 4), 3), col = regCol, cex=2.6)
 }
-toCorrelate <- c('vai', 'vpi', 'vci', 'nts', 'msd', 'qd', 'path')
+toCorrelate <- c('vci', 'vai', 'nts', 'vpi', 'qd', 'msd', 'path')
 lapply(seq_along(toCorrelate), function(i)
   lapply(seq_along(toCorrelate), function(j) {
     if (i == j) {
       plot.new()
-      text(0.5, 0.5, abbrevs[i], col=methodCol[i])
-      box(which='plot', col=methodCol[i], lwd=3)
+      method <- toCorrelate[i]
+      text(0.5, 0.5, abbrevs[method], col=methodCol[method])
+      box(which='plot', col=methodCol[method], lwd=3)
     } else if (i < j) {
       PlotR2(toCorrelate[i], toCorrelate[j])
     } else {
@@ -161,9 +162,81 @@ mtext('SPR distance', 4L, line=-1, cex=0.7, col=methodCol['spr'])
 
 ```
 
+## Most different pairs
+
+```{r metric-differences, echo=FALSE, fig.width=7, fig.height=7, out.width='95%', fig.align='center'}
+data("randomTreePairs25")
+
+MatchTipLabels <- function (tr1, tr2) {
+  tipOrder <- tr1$tip.label
+  tipOrder2 <- match(tr2$tip.label, tr1$tip.label)
+  tr2Tips <- tr2$edge[, 2] < 26L
+  tr2$edge[tr2Tips, 2] <- tipOrder2
+  tr2$tip.label <- tr1$tip.label
+  tr2
+}
+
+LetterTips <- function(tr) {tr$tip.label <- LETTERS[1:25]; tr}
 
 
-# Distances between all 7-tip trees 
+MostDifferent <- function (methodA, methodB)  {
+  a <- distanceDistribution25[methodA, ]
+  b <- distanceDistribution25[methodB, ]
+  plot(b~a, pch='.', col='#00000088', 
+       ylab=abbrevs[methodB], xlab=abbrevs[methodA])
+  
+  reg <- lm(b~a)
+  residualAB <- residuals(lm(b~a)) / a
+  residualBA <- residuals(lm(a~b)) / b
+  mostDiff <- head(order(sqrt(residualAB^2 + residualBA^2), decreasing = TRUE))
+  abline(reg)
+  text(a[mostDiff], b[mostDiff], mostDiff, pch=1, col='red')
+  tipCols <- colorspace::qualitative_hcl(25)
+}
+
+MostDifferent('vci', 'vpi')
+```
+
+
+As an example of why the Mutual Parition Information is not effective, see 
+pairing 1, which matches `JK:` with a macro clade that contains `JK` and the 
+kitchen sink.
+
+```{R view-metric-differences, echo=FALSE, fig.width=6, fig.height=7, out.width='95%', fig.align='center'}
+
+par(mfrow=c(2, 2), mar = rep(1, 4))
+
+vizMethods <- c(
+  vai = MutualArborealInfo,
+  vpi = MutualPartitionInfo,
+  vci = MutualClusteringInfo,
+  nye = NyeTreeSimilarity
+)
+
+ShowPairMatching <- function (methodA, methodB, pair) {
+  if (mode(pair) == 'numeric') {
+    oPair <- randomTreePairs25[[pair]]
+  } else {
+    oPair <- pair
+  }
+    
+  tr1 <- oPair[[1]]
+  tr2 <- MatchTipLabels(tr1, oPair[[2]])
+  VisualizeMatching(vizMethods[[methodA]], LetterTips(tr1), LetterTips(tr2),
+                    tip.color=tipCols, setPar=FALSE)
+  legend('topleft', legend=abbrevs[methodA], bty='n')
+  VisualizeMatching(vizMethods[[methodB]], LetterTips(tr1), LetterTips(tr2),
+                    tip.color=tipCols, setPar=FALSE)
+  legend('topleft', legend=abbrevs[methodB], bty='n')
+}
+ape::write.tree(randomTreePairs25[[808]][[2]])
+
+ShowPairMatching('vci', 'vpi', list(ape::read.tree(text="(((t4,(((t20,t18),t3),t7)),t13),(t22,((t5,(t11,(t24,t17))),(((((((t9,t2),t23),(t12,(t14,t8))),t16),t1),(((t10,t19),t25),t6)),(t15,t21)))));"),
+                 ape::read.tree(text="(((t16,t25),(((t10,((t3,(t12,t9)),t21)),t8),t6)),(t24,((t14,((t17,t18),(t22,(((t15,t7),(t19,t4)),((t23,t11),t20))))),(t5,((t13,t2),t1)))));")))
+
+```
+
+## Distances between all 7-tip trees 
 
 Inspired by @Kendall2016...
 
