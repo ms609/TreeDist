@@ -169,7 +169,7 @@ mtext('SPR distance', 4L, line=-1, cex=0.7, col=methodCol['spr'])
 ## Most different pairs
 
 ```{r metric-differences, echo=FALSE, fig.width=7, fig.height=7, out.width='95%', fig.align='center'}
-data("randomTreePairs25")
+data("randomTreePairs25", package='TreeDistData')
 
 MatchTipLabels <- function (tr1, tr2) {
   tipOrder <- tr1$tip.label
