@@ -219,7 +219,7 @@ td7 <- sevenTipDistances
 td7$rf <- td7$rf / 2L
 treeShapes <- td7$shapes
 shapes <- treeShapes[order(treeShapes)]
-treeCols <- Ternary::cbPalette8[2:7]
+treeCols <- Ternary::cbPalette8[c(1:5, 8)]
 names(treeCols) <- unique(shapes)
 
 
@@ -252,7 +252,7 @@ TableImage <- function (method) {
 
   rect(x - 1L, y - 1L, x, y, border=NA,
        col=MethodPalette(method, 100)[cut(td7[[method]], 100, labels=FALSE)])
-  legend('topright', legend=abbrevs[method], bty='n')
+  legend('topright', legend=paste0(abbrevs[method], '  '), bty='n')
 }
 ```
 
@@ -294,11 +294,12 @@ treeShapes <- c('(a, (b, (c, (d, (e, (f, g))))));',
                 '(a, ((b, c), (d, (e, (f, g)))));',
                 '(a, ((b, c), ((d, e), (f, g))));',
                 '(a, ((b, (c, d)), (e, (f, g))));')
+
 lapply(seq_along(treeShapes), function (i) {
   tree <- ape::read.tree(text = treeShapes[i])
   tree$edge.length <- rep(1, 12)
   plot(tree,
-       edge.col=Ternary::cbPalette8[8L - i], 
+       edge.col=rev(treeCols)[i], 
        edge.width = 2L,
        show.tip.label = FALSE)
 }) -> XX
