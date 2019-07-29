@@ -85,9 +85,9 @@
 #'   ExpectedVariation(tree1, tree2, sample=12)['VariationOfArborealInfo', 'Estimate']
 #'   
 #'   # Every partition in tree1 is contradicted by every partition in tree3
-#'   # Non-arboreal matches contain partitioning, but not arboreal, information
+#'   # Non-arboreal matches contain cluster, but not arboreal, information
 #'   MutualArborealInfo(tree1, tree3) # = 0
-#'   MutualPartitionInfo(tree1, tree3) # > 0
+#'   MutualClusterInfo(tree1, tree3) # > 0
 #'   
 #' }
 #' 
@@ -127,10 +127,11 @@ VariationOfArborealInfo <- function (tree1, tree2, normalize = FALSE,
   ret
 }
 
-#' @describeIn MutualPartitionInfo Variation of partition information between two trees
-#' @export
+## @describeIn MutualPartitionInfo Variation of partition information between two trees
+## @export
 VariationOfPartitionInfo <- function (tree1, tree2, normalize = FALSE,
                                       reportMatching = FALSE) {
+  .Deprecated(msg="Not intended for production")
   mpi <- MutualPartitionInfo(tree1, tree2, normalize = FALSE, reportMatching)
   
   treesIndependentInfo <- outer(PartitionInfo(tree1), PartitionInfo(tree2), '+')
@@ -162,7 +163,7 @@ VariationOfClusteringInfo <- function (tree1, tree2, normalize = FALSE,
   ret
 }
 
-#' @describeIn MutualPartitionInfo Estimate expected Variation of Information
+#' @describeIn MutualArborealInfo #TODO rewrite: Estimate expected Variation of Information
 #' and Mutual Information for a pair of trees of a given topology.
 #' @param samples Integer specifying how many samplings to obtain; 
 #' accuracy of estimate increases with `sqrt(samples)`.
@@ -175,6 +176,7 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+3) {
   splits2 <- Tree2Splits(tree2)
   tipLabels <- rownames(splits2)
   
+  # TODO MutualPartitionInfo is deprecated
   mutualEstimates <- vapply(seq_len(samples), function (x) {
     rownames(splits2) <- sample(tipLabels)
     c(MutualPartitionInfoSplits(splits1, splits2),
@@ -230,7 +232,7 @@ NyeTreeSimilarity <- function (tree1, tree2, normalize = FALSE,
 
 #' Mutual Partition Information
 #' 
-#' #TODO document!
+#' #TODO DELETE (or document)
 #' 
 #' @inheritParams MutualArborealInfo
 #' 
@@ -247,6 +249,7 @@ NyeTreeSimilarity <- function (tree1, tree2, normalize = FALSE,
 #' @export
 MutualPartitionInfo <- function (tree1, tree2, normalize = FALSE, 
                                  reportMatching = FALSE) {
+  .Deprecated(msg="Not intended for production")
   unnormalized <- CalculateTreeDistance(MutualPartitionInfoSplits, tree1, tree2,
                                         reportMatching)
   
@@ -608,7 +611,7 @@ NyeSplitSimilarity <- function (splits1, splits2, normalize = TRUE,
 #' @importFrom TreeSearch LnUnrooted.int LogTreesMatchingSplit
 #' @export
 MutualPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE) {
-  
+  .Deprecated(msg="Not intended for production")
   dimSplits1 <- dim(splits1)
   dimSplits2 <- dim(splits2)
   nTerminals <- dimSplits1[1]
@@ -685,7 +688,7 @@ MutualPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE)
   }
 }
 
-#' @describeIn MutualPartitionInfo Takes splits instead of trees
+#' @describeIn MutualClusteringInfo Takes splits instead of trees
 #' @inheritParams MutualArborealInfoSplits
 #' @export
 MutualClusteringInfoSplits <- function (splits1, splits2, normalize = TRUE,

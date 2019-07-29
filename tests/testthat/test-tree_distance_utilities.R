@@ -33,8 +33,10 @@ test_that('Matches are reported', {
   
   Test(MutualArborealInfo)
   Test(VariationOfArborealInfo)
-  Test(MutualPartitionInfo)
-  Test(VariationOfPartitionInfo)
+  # TODO DELETE tests of deprecated function - once confident that function
+  # should be removed!
+  #Test(MutualPartitionInfo)
+  #Test(VariationOfPartitionInfo)
   Test(MutualClusteringInfo)
   Test(VariationOfClusteringInfo)
   Test(MutualArborealInfo)

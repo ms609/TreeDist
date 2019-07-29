@@ -11,8 +11,9 @@ test_that("Split combatibility is correctly established", {
 methodsToTest <- list(
   MutualArborealInfo,
   VariationOfArborealInfo,
-  MutualPartitionInfo,
-  VariationOfPartitionInfo,
+  # TODO DELETE tests of .Deprecated(msg="Not intended for production")
+  #MutualPartitionInfo,
+  #VariationOfPartitionInfo,
   MutualClusteringInfo,
   VariationOfClusteringInfo,
   MutualArborealInfo,
@@ -49,7 +50,7 @@ test_that('Size mismatch causes error', {
 
 test_that('Metrics handle polytomies', {
   polytomy8 <- ape::read.tree(text='(a, b, c, d, e, f, g, h);')
-  lapply(list(MutualArborealInfo, MutualPartitionInfo, MutualClusteringInfo,
+  lapply(list(MutualArborealInfo, MutualClusteringInfo,
               MatchingSplitDistance, NyeTreeSimilarity),
          function (Func) expect_equal(0, Func(treeSym8, polytomy8)))
 })
@@ -105,30 +106,32 @@ test_that('Mutual Arboreal Info is correctly calculated', {
                MutualArborealInfo(list(treeSym8, treeBal8), treeSym8))
 })
 
-test_that('MutualPartitionInfo is correctly calculated', {
-  BinaryToSplit <- function (binary) matrix(as.logical(binary))
-  expect_equal(MutualPartitionInfoSplits(
-    BinaryToSplit(c(1, 1, 0, 0, 0, 0, 0, 0)),
-    BinaryToSplit(c(0, 0, 1, 1, 0, 0, 0, 0))
-    ), MutualPartitionInfoSplits(
-    BinaryToSplit(c(0, 0, 0, 0, 0, 0, 1, 1)),
-    BinaryToSplit(c(0, 0, 1, 1, 0, 0, 0, 0))
-    ))
-  
-  MutualPartitionInfoSplits(BinaryToSplit(c(1, 1, 1, 1, 0, 0, 0, 0)),
-                         BinaryToSplit(c(1, 0, 1, 0, 1, 0, 1, 0)))
-  expect_equal(MutualArborealInfo(treeSym8, treeSym8),
-               MutualPartitionInfo(treeSym8, treeSym8), tolerance=1e-05)
-  expect_equal(MutualPartitionInfo(treeAb.Cdefgh, treeAbc.Defgh),
-               MutualPartitionInfo(treeAbc.Defgh, treeAb.Cdefgh))
-  expect_equal(MutualPartitionInfo(treeAbcd.Efgh, treeAb.Cdefgh),
-               MutualPartitionInfo(treeAb.Cdefgh, treeAbcd.Efgh))
-  expect_equal(-(TreeSearch::LogTreesMatchingSplit(2, 5) - LnUnrooted.int(7)) / log(2), 
-               MutualPartitionInfo(treeAb.Cdefgh, treeAbc.Defgh))
-  expect_true(MutualPartitionInfo(treeSym8, treeBal8) > MutualPartitionInfo(treeSym8, treeOpp8))
-  expect_equal(0, VariationOfPartitionInfo(treeSym8, treeSym8))
-  
-})
+
+# #TODO DELETE test of .Deprecated function, when function is deleted
+#test_that('MutualPartitionInfo is correctly calculated', {
+#  BinaryToSplit <- function (binary) matrix(as.logical(binary))
+#  expect_equal(MutualPartitionInfoSplits(
+#    BinaryToSplit(c(1, 1, 0, 0, 0, 0, 0, 0)),
+#    BinaryToSplit(c(0, 0, 1, 1, 0, 0, 0, 0))
+#    ), MutualPartitionInfoSplits(
+#    BinaryToSplit(c(0, 0, 0, 0, 0, 0, 1, 1)),
+#    BinaryToSplit(c(0, 0, 1, 1, 0, 0, 0, 0))
+#    ))
+#  
+#  MutualPartitionInfoSplits(BinaryToSplit(c(1, 1, 1, 1, 0, 0, 0, 0)),
+#                         BinaryToSplit(c(1, 0, 1, 0, 1, 0, 1, 0)))
+#  expect_equal(MutualArborealInfo(treeSym8, treeSym8),
+#               MutualPartitionInfo(treeSym8, treeSym8), tolerance=1e-05)
+#  expect_equal(MutualPartitionInfo(treeAb.Cdefgh, treeAbc.Defgh),
+#               MutualPartitionInfo(treeAbc.Defgh, treeAb.Cdefgh))
+#  expect_equal(MutualPartitionInfo(treeAbcd.Efgh, treeAb.Cdefgh),
+#               MutualPartitionInfo(treeAb.Cdefgh, treeAbcd.Efgh))
+#  expect_equal(-(TreeSearch::LogTreesMatchingSplit(2, 5) - LnUnrooted.int(7)) / log(2), 
+#               MutualPartitionInfo(treeAb.Cdefgh, treeAbc.Defgh))
+#  expect_true(MutualPartitionInfo(treeSym8, treeBal8) > MutualPartitionInfo(treeSym8, treeOpp8))
+#  expect_equal(0, VariationOfPartitionInfo(treeSym8, treeSym8))
+#  
+#})
 
 test_that('Clustering information is correctly calculated', {
   expect_equal(ClusteringInfo(treeSym8), MutualClusteringInfo(treeSym8, treeSym8),
