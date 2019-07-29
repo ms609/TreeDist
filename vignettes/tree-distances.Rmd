@@ -170,6 +170,7 @@ mtext('SPR distance', 4L, line=-1, cex=0.7, col=methodCol['spr'])
 
 ```{r metric-differences, echo=FALSE, fig.width=7, fig.height=7, out.width='95%', fig.align='center'}
 data("randomTreePairs25", package='TreeDistData')
+tipCols <- colorspace::qualitative_hcl(25)
 
 MatchTipLabels <- function (tr1, tr2) {
   tipOrder <- tr1$tip.label
@@ -194,7 +195,6 @@ MostDifferent <- function (methodA, methodB)  {
   mostDiff <- head(order(sqrt(residualAB^2 + residualBA^2), decreasing = TRUE))
   abline(reg)
   text(a[mostDiff], b[mostDiff], mostDiff, pch=1, col='red')
-  tipCols <- colorspace::qualitative_hcl(25)
 }
 
 MostDifferent('vci', 'vai')
