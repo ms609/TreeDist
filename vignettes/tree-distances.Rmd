@@ -206,12 +206,11 @@ pairing 1, which matches `JK:` with a macro clade that contains `JK` and the
 kitchen sink.
 
 ```{R view-metric-differences, echo=FALSE, fig.width=6, fig.height=7, out.width='95%', fig.align='center'}
-
 par(mfrow=c(2, 2), mar = rep(1, 4))
 
 vizMethods <- c(
   vai = MutualArborealInfo,
-  vpi = MutualPartitionInfo,
+  #vpi = MutualPartitionInfo,
   vci = MutualClusteringInfo,
   nye = NyeTreeSimilarity
 )
@@ -339,7 +338,7 @@ TableImage('rf')
 ```
 
 ```{r 7-tip-trees-3, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/2, fig.width=7, out.width='90%', fig.align='center'}
-par(mfrow=c(3, 3), mar=rep(0.8, 4))
+par(mfrow=c(2, 4), mar=rep(0.8, 4))
 
 PlotMDS('vai')
 PlotMDS('vci')
