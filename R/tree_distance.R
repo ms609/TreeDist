@@ -146,8 +146,8 @@ VariationOfPartitionInfo <- function (tree1, tree2, normalize = FALSE,
   ret
 }
 
-#' @describeIn MutualClusteringInfo Variation of clustering information between two trees
-#' @export
+## @describeIn MutualClusteringInfo Variation of clustering information between two trees
+## @export
 VariationOfClusteringInfo <- function (tree1, tree2, normalize = FALSE,
                                        reportMatching = FALSE) {
   mci <- MutualClusteringInfo(tree1, tree2, normalize = FALSE, reportMatching)
@@ -194,23 +194,23 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+3) {
   
 }
 
-#' Mutual Partition Information
-#' 
-#' #TODO DELETE (or document)
-#' 
-#' @inheritParams MutualArborealInfo
-#' 
-#' @section Normalization:
-#' 
-#' If `normalize = TRUE`, then results will be rescaled from zero to a maximum
-#' value calculated by #TODO detail
-#' 
-#' 
-#' @references \insertRef{SmithDist}{TreeDist}
-#' @family Tree distance
-#' 
-#' @author Martin R. Smith
-#' @export
+## Mutual Partition Information
+## 
+## #TODO DELETE (or document)
+## 
+## @inheritParams MutualArborealInfo
+## 
+## @section Normalization:
+## 
+## If `normalize = TRUE`, then results will be rescaled from zero to a maximum
+## value calculated by #TODO detail
+## 
+## 
+## @references \insertRef{SmithDist}{TreeDist}
+## @family Tree distance
+## 
+## @author Martin R. Smith
+## @export
 MutualPartitionInfo <- function (tree1, tree2, normalize = FALSE, 
                                  reportMatching = FALSE) {
   .Deprecated(msg="Not intended for production")

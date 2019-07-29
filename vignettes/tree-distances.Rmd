@@ -182,7 +182,6 @@ MatchTipLabels <- function (tr1, tr2) {
 
 LetterTips <- function(tr) {tr$tip.label <- LETTERS[1:25]; tr}
 
-
 MostDifferent <- function (methodA, methodB)  {
   a <- distanceDistribution25[methodA, ]
   b <- distanceDistribution25[methodB, ]
@@ -198,7 +197,7 @@ MostDifferent <- function (methodA, methodB)  {
   tipCols <- colorspace::qualitative_hcl(25)
 }
 
-MostDifferent('vci', 'vpi')
+MostDifferent('vci', 'vai')
 ```
 
 
@@ -235,7 +234,7 @@ ShowPairMatching <- function (methodA, methodB, pair) {
 }
 ape::write.tree(randomTreePairs25[[808]][[2]])
 
-ShowPairMatching('vci', 'vpi', list(ape::read.tree(text="(((t4,(((t20,t18),t3),t7)),t13),(t22,((t5,(t11,(t24,t17))),(((((((t9,t2),t23),(t12,(t14,t8))),t16),t1),(((t10,t19),t25),t6)),(t15,t21)))));"),
+ShowPairMatching('vci', 'vai', list(ape::read.tree(text="(((t4,(((t20,t18),t3),t7)),t13),(t22,((t5,(t11,(t24,t17))),(((((((t9,t2),t23),(t12,(t14,t8))),t16),t1),(((t10,t19),t25),t6)),(t15,t21)))));"),
                  ape::read.tree(text="(((t16,t25),(((t10,((t3,(t12,t9)),t21)),t8),t6)),(t24,((t14,((t17,t18),(t22,(((t15,t7),(t19,t4)),((t23,t11),t20))))),(t5,((t13,t2),t1)))));")))
 
 ```

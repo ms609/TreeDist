@@ -478,9 +478,7 @@ PlotHist <- function (distances, breaks, pectDist, title) {
 PlotHist(random_arb_info, max(random_arb_info, pect_arb_info) * manyBreaks, pect_arb_info, 'Var. Arb Info')
 mtext('Distance between pectinate tree (above) and random bifurcating trees', outer=TRUE, cex=0.8)
 
-PlotHist(random_par_info, max(random_par_info, pect_par_info) * manyBreaks, pect_par_info, 'Var. Partition Info')
 PlotHist(random_clu_info, max(random_clu_info, pect_clu_info) * manyBreaks, pect_clu_info, 'Var. Clustering Info')
-#PlotHist(random_parsum_info, max(random_parsum_info, pect_parsum_info) * manyBreaks, #pect_parsum_info, 'Var. ParSUM Info')
 
 PlotHist(random_nye_info, max(random_nye_info, pect_nye_info) * manyBreaks, pect_nye_info, 'Nye et al.')
 
