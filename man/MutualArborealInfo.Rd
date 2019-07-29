@@ -3,6 +3,7 @@
 \name{MutualArborealInfo}
 \alias{MutualArborealInfo}
 \alias{VariationOfArborealInfo}
+\alias{ExpectedVariation}
 \alias{MutualArborealInfoSplits}
 \alias{VariationOfArborealInfoSplits}
 \title{Information-based generalized Robinson-Foulds distance between two trees}
@@ -12,6 +13,8 @@ MutualArborealInfo(tree1, tree2, normalize = FALSE,
 
 VariationOfArborealInfo(tree1, tree2, normalize = FALSE,
   reportMatching = FALSE)
+
+ExpectedVariation(tree1, tree2, samples = 1000)
 
 MutualArborealInfoSplits(splits1, splits2, normalize = TRUE,
   reportMatching = FALSE)
@@ -32,6 +35,9 @@ If \code{FALSE}, results will not be rescaled.}
 
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}
+
+\item{samples}{Integer specifying how many samplings to obtain;
+accuracy of estimate increases with \code{sqrt(samples)}.}
 
 \item{splits1, splits2}{Logical matrices where each row corresponds to a terminal,
 either listed in the same order or bearing identical names (in any sequence),
@@ -84,6 +90,9 @@ different in the partitions of two trees, under an optimal matching.
 \itemize{
 \item \code{VariationOfArborealInfo}: Variation of phylogenetic information between two trees
 
+\item \code{ExpectedVariation}: #TODO rewrite: Estimate expected Variation of Information
+and Mutual Information for a pair of trees of a given topology.
+
 \item \code{MutualArborealInfoSplits}: Takes splits instead of trees
 
 \item \code{VariationOfArborealInfoSplits}: Calculate variation of arboreal information from splits
@@ -128,9 +137,9 @@ trees.
   ExpectedVariation(tree1, tree2, sample=12)['VariationOfArborealInfo', 'Estimate']
   
   # Every partition in tree1 is contradicted by every partition in tree3
-  # Non-arboreal matches contain partitioning, but not arboreal, information
+  # Non-arboreal matches contain cluster, but not arboreal, information
   MutualArborealInfo(tree1, tree3) # = 0
-  MutualPartitionInfo(tree1, tree3) # > 0
+  MutualClusterInfo(tree1, tree3) # > 0
   
 }
 
@@ -144,9 +153,9 @@ trees.
 }
 \seealso{
 Other Tree distance: \code{\link{MatchingSplitDistance}},
+  \code{\link{MutualPartitionInfo}},
   \code{\link{NyeTreeSimilarity}},
-  \code{\link{VariationOfClusteringInfo}},
-  \code{\link{VariationOfPartitionInfo}}
+  \code{\link{VariationOfClusteringInfo}}
 }
 \author{
 Martin R. Smith

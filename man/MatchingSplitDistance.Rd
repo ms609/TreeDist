@@ -61,9 +61,9 @@ value calculated by #TODO detail
 }
 \seealso{
 Other Tree distance: \code{\link{MutualArborealInfo}},
+  \code{\link{MutualPartitionInfo}},
   \code{\link{NyeTreeSimilarity}},
-  \code{\link{VariationOfClusteringInfo}},
-  \code{\link{VariationOfPartitionInfo}}
+  \code{\link{VariationOfClusteringInfo}}
 }
 \author{
 Martin R. Smith

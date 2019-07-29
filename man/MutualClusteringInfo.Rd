@@ -3,12 +3,16 @@
 \name{VariationOfClusteringInfo}
 \alias{VariationOfClusteringInfo}
 \alias{MutualClusteringInfo}
+\alias{MutualClusteringInfoSplits}
 \title{Mutual Clustering Information}
 \usage{
 VariationOfClusteringInfo(tree1, tree2, normalize = FALSE,
   reportMatching = FALSE)
 
 MutualClusteringInfo(tree1, tree2, normalize = FALSE,
+  reportMatching = FALSE)
+
+MutualClusteringInfoSplits(splits1, splits2, normalize = TRUE,
   reportMatching = FALSE)
 }
 \arguments{
@@ -27,6 +31,18 @@ If \code{FALSE}, results will not be rescaled.}
 
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}
+
+\item{splits1}{Logical matrices where each row corresponds to a terminal,
+either listed in the same order or bearing identical names (in any sequence),
+and each column corresponds to a bipartition split, such that
+each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
+(\code{FALSE}) of the respective bipartition split.}
+
+\item{splits2}{Logical matrices where each row corresponds to a terminal,
+either listed in the same order or bearing identical names (in any sequence),
+and each column corresponds to a bipartition split, such that
+each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
+(\code{FALSE}) of the respective bipartition split.}
 }
 \description{
 This approach sees the information content of a pair of partitions as their
@@ -35,6 +51,8 @@ mutual clustering information (Meila 2007, Vinh2010).
 \section{Functions}{
 \itemize{
 \item \code{VariationOfClusteringInfo}: Variation of clustering information between two trees
+
+\item \code{MutualClusteringInfoSplits}: Takes splits instead of trees
 }}
 
 \section{Normalization}{
@@ -54,8 +72,8 @@ value calculated by #TODO detail
 \seealso{
 Other Tree distance: \code{\link{MatchingSplitDistance}},
   \code{\link{MutualArborealInfo}},
-  \code{\link{NyeTreeSimilarity}},
-  \code{\link{VariationOfPartitionInfo}}
+  \code{\link{MutualPartitionInfo}},
+  \code{\link{NyeTreeSimilarity}}
 }
 \author{
 Martin R. Smith
