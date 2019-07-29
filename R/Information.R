@@ -1,7 +1,3 @@
-# Require logDoubleFactorials from TreeSearch for LogDoubleFactorial.int:
-#logDoubleFactorials <- TreeSearch::logDoubleFactorials
-
-
 #' Mutual information of two splits
 #' 
 #' Reports the mutual phylogenetic information, or variation of phylogenetic
@@ -51,7 +47,7 @@
 #' 
 #' @author Martin R. Smith
 #' @family split information functions
-#' @importFrom TreeSearch LogTreesMatchingSplit LnUnrooted logDoubleFactorials
+#' @importFrom TreeSearch LogTreesMatchingSplit LnUnrooted
 #' @export
 SplitMutualInformation <- function(n, A1, A2 = A1) {
   (LogTreesMatchingSplit(A1, n - A1) 
