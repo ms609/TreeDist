@@ -12,8 +12,8 @@ vignette: >
 ---
 
 
-```{R init}
-methods <- c('rf', 'vai', 'spr', 'path', 'vci', 'nts', 'qd', 'msd')
+```{R init, echo=FALSE, message=FALSE, cache=TRUE}
+methods <- c('rf', 'vai', 'spr', 'msd', 'vci', 'path', 'nts', 'qd')
 abbrevs <- c(
   rf  = 'Robinson-Foulds',
   vai = 'Var. Arb Info',
@@ -37,7 +37,6 @@ methodCol <- c(
 '#fd9da7',
 '#9d745f',
 '#bab0ac')[1:9] # https://www.tableau.com/about/blog/2016/7/colors-upgrade-tableau-10-56782
-#TreeSearch::brewer[[9]] #cbPalette8[c(1:5, 6, 7, 8, 8)]
 methodPch <- c(3, 3, 6, 3, 3, 4, 4, 4, 6)
 names(methodCol) <- names(methodPch) <- names(abbrevs)
 methodCol <- methodCol[methods]
@@ -85,6 +84,8 @@ legend('bottomright', bty='n', pch=methodPch, lty=1,
        col=methodCol)
 ```
 
+Note that the erratic shape of the path and Matching Splits distances likely 
+reflects the difficulty of calculating a normalizing constant for an n-tip tree.
 
 ## Distribution of tree distances
 
@@ -94,7 +95,7 @@ distanceDistribution25['rf', ] <- distanceDistribution25['rf', ] / 2L
 ```
 
 The histograms below depict the distribution of tree distances for
-`r dim(distanceDistribution25)[2]`
+`r format(dim(distanceDistribution25)[2], big.mark='&nbsp;')`
 pairs of trees drawn at random from the uniform distribution.
 
 ```{R Tree-distance-distributions, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/2, fig.width=7, out.width='90%', fig.align='center'}
@@ -201,43 +202,6 @@ MostDifferent('vci', 'vai')
 ```
 
 
-As an example of why the Mutual Parition Information is not effective, see 
-pairing 1, which matches `JK:` with a macro clade that contains `JK` and the 
-kitchen sink.
-
-```{R view-metric-differences, echo=FALSE, fig.width=6, fig.height=7, out.width='95%', fig.align='center'}
-par(mfrow=c(2, 2), mar = rep(1, 4))
-
-vizMethods <- c(
-  vai = MutualArborealInfo,
-  #vpi = MutualPartitionInfo,
-  vci = MutualClusteringInfo,
-  nye = NyeTreeSimilarity
-)
-
-ShowPairMatching <- function (methodA, methodB, pair) {
-  if (mode(pair) == 'numeric') {
-    oPair <- randomTreePairs25[[pair]]
-  } else {
-    oPair <- pair
-  }
-    
-  tr1 <- oPair[[1]]
-  tr2 <- MatchTipLabels(tr1, oPair[[2]])
-  VisualizeMatching(vizMethods[[methodA]], LetterTips(tr1), LetterTips(tr2),
-                    tip.color=tipCols, setPar=FALSE)
-  legend('topleft', legend=abbrevs[methodA], bty='n')
-  VisualizeMatching(vizMethods[[methodB]], LetterTips(tr1), LetterTips(tr2),
-                    tip.color=tipCols, setPar=FALSE)
-  legend('topleft', legend=abbrevs[methodB], bty='n')
-}
-ape::write.tree(randomTreePairs25[[808]][[2]])
-
-ShowPairMatching('vci', 'vai', list(ape::read.tree(text="(((t4,(((t20,t18),t3),t7)),t13),(t22,((t5,(t11,(t24,t17))),(((((((t9,t2),t23),(t12,(t14,t8))),t16),t1),(((t10,t19),t25),t6)),(t15,t21)))));"),
-                 ape::read.tree(text="(((t16,t25),(((t10,((t3,(t12,t9)),t21)),t8),t6)),(t24,((t14,((t17,t18),(t22,(((t15,t7),(t19,t4)),((t23,t11),t20))))),(t5,((t13,t2),t1)))));")))
-
-```
-
 ## Distances between all 7-tip trees 
 
 Inspired by @Kendall2016...
@@ -271,7 +235,7 @@ PlotMDS <- function(method) {
        xlab='', ylab='')
   z <- MASS::kde2d(pts[, 1], pts[, 2])
   contour(z, add=TRUE, col='#00000088')
-  legend('bottomleft', legend=paste0('stress = ', signif(space$stress, 3)), bty='n')
+  legend('bottomright', legend=paste0('stress = ', signif(space$stress, 3)), bty='n')
   legend('topleft', legend=abbrevs[method], bty='n', text.font=2)
 }
 
@@ -288,6 +252,7 @@ TableImage <- function (method) {
 
   rect(x - 1L, y - 1L, x, y, border=NA,
        col=MethodPalette(method, 100)[cut(td7[[method]], 100, labels=FALSE)])
+  legend('topright', legend=abbrevs[method], bty='n')
 }
 ```
 
@@ -305,7 +270,21 @@ Hist('rf', breaks=4)
 ```
 
 The coloured bars at the edges of the matrix plots correspond to the shape of 
-the trees being compared, as depicted here.
+the trees being compared, as depicted below.
+
+
+```{r 7-tip-trees-2, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/2, fig.width=7, out.width='90%', fig.align='center'}
+par(mfrow=c(2, 4), mar=rep(0.8, 4))
+TableImage('vai')
+TableImage('vci')
+TableImage('nts')
+TableImage('qd')
+TableImage('msd')
+TableImage('path')
+TableImage('spr')
+TableImage('rf')
+```
+
 ```{r 7-tip-tree-shapes, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/6, fig.width=7, out.width='90%', fig.align='center'}
 par(mfrow=c(1, 6), mar=c(0, 1, 0, 1) * 0.2)
 
@@ -325,18 +304,6 @@ lapply(seq_along(treeShapes), function (i) {
 }) -> XX
 ```
 
-```{r 7-tip-trees-2, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/2, fig.width=7, out.width='90%', fig.align='center'}
-par(mfrow=c(2, 4), mar=rep(0.8, 4))
-TableImage('vai')
-TableImage('vci')
-TableImage('nts')
-TableImage('qd')
-TableImage('msd')
-TableImage('path')
-TableImage('spr')
-TableImage('rf')
-```
-
 ```{r 7-tip-trees-3, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/2, fig.width=7, out.width='90%', fig.align='center'}
 par(mfrow=c(2, 4), mar=rep(0.8, 4))
 
@@ -349,5 +316,8 @@ PlotMDS('path')
 PlotMDS('spr')
 PlotMDS('rf')
 ```
+
+Trees are prominently non-uniformly distributed in SPR and RF tree space; moreover,
+trees are grouped by shape
 
 ## References

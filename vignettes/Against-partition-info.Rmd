@@ -1,0 +1,50 @@
+---
+title: "Against the Mutual Partition Information"
+author: "Martin R. Smith"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+csl: ../inst/apa-old-doi-prefix.csl
+vignette: >
+  %\VignetteIndexEntry{#TODO delete in release}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+As an example of why the Mutual Parition Information is not effective, see 
+pairing 1, which matches `JK:` with a macro clade that contains `JK` and the 
+kitchen sink.
+
+```{R view-metric-differences, echo=FALSE, fig.width=6, fig.height=7, out.width='95%', fig.align='center'}
+library('TreeDist')
+par(mfrow=c(2, 2), mar = rep(1, 4))
+
+vizMethods <- c(
+  vai = MutualArborealInfo,
+  vpi = MutualPartitionInfo,
+  vci = MutualClusteringInfo,
+  nye = NyeTreeSimilarity
+)
+
+ShowPairMatching <- function (methodA, methodB, pair) {
+  if (mode(pair) == 'numeric') {
+    oPair <- randomTreePairs25[[pair]]
+  } else {
+    oPair <- pair
+  }
+    
+  tr1 <- oPair[[1]]
+  tr2 <- MatchTipLabels(tr1, oPair[[2]])
+  VisualizeMatching(vizMethods[[methodA]], LetterTips(tr1), LetterTips(tr2),
+                    tip.color=tipCols, setPar=FALSE)
+  legend('topleft', legend=abbrevs[methodA], bty='n')
+  VisualizeMatching(vizMethods[[methodB]], LetterTips(tr1), LetterTips(tr2),
+                    tip.color=tipCols, setPar=FALSE)
+  legend('topleft', legend=abbrevs[methodB], bty='n')
+}
+ape::write.tree(randomTreePairs25[[808]][[2]])
+
+ShowPairMatching('vci', 'vpi', list(ape::read.tree(text="(((t4,(((t20,t18),t3),t7)),t13),(t22,((t5,(t11,(t24,t17))),(((((((t9,t2),t23),(t12,(t14,t8))),t16),t1),(((t10,t19),t25),t6)),(t15,t21)))));"),
+                 ape::read.tree(text="(((t16,t25),(((t10,((t3,(t12,t9)),t21)),t8),t6)),(t24,((t14,((t17,t18),(t22,(((t15,t7),(t19,t4)),((t23,t11),t20))))),(t5,((t13,t2),t1)))));")))
+
+```
