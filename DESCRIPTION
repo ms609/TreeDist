@@ -24,6 +24,7 @@ Imports:
     TreeSearch
 Suggests:
     bookdown,
+    cluster,
     knitr,
     MASS,
     Quartet,

@@ -14,6 +14,7 @@ vignette: >
 
 ```{R init, echo=FALSE, message=FALSE, cache=TRUE}
 methods <- c('rf', 'vai', 'spr', 'msd', 'vci', 'path', 'nts', 'qd')
+plotSequence <- c('vai', 'vci', 'nts', 'qd', 'msd', 'path', 'spr', 'rf')
 abbrevs <- c(
   rf  = 'Robinson-Foulds',
   vai = 'Var. Arb Info',
@@ -254,6 +255,19 @@ TableImage <- function (method) {
        col=MethodPalette(method, 100)[cut(td7[[method]], 100, labels=FALSE)])
   legend('topright', legend=paste0(abbrevs[method], '  '), bty='n')
 }
+
+ClusterBars <- function(method) {
+  ret <- double(length(treeCols))
+  names(ret) <- names(treeCols)
+  
+  clusters <- cluster::pam(td7[[method]], 8L, diss=TRUE, cluster.only=TRUE)
+  
+  clusterShapes <- vapply(seq_len(max(clusters)), function (i) 
+    table(shapes[clusters==i])[names(treeCols)],
+    ret)
+  
+  barplot(clusterShapes, col=treeCols, main=abbrevs[method])
+}
 ```
 
 ```{r 7-tip-trees-histograms, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/2, fig.width=6, out.width='90%', fig.align='center'}
@@ -272,31 +286,23 @@ Hist('rf', breaks=4)
 The coloured bars at the edges of the matrix plots correspond to the shape of 
 the trees being compared, as depicted below.
 
-
 ```{r 7-tip-trees-2, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/2, fig.width=7, out.width='90%', fig.align='center'}
 par(mfrow=c(2, 4), mar=rep(0.8, 4))
-TableImage('vai')
-TableImage('vci')
-TableImage('nts')
-TableImage('qd')
-TableImage('msd')
-TableImage('path')
-TableImage('spr')
-TableImage('rf')
+XX <- lapply(plotSequence, TableImage)
 ```
 
 ```{r 7-tip-tree-shapes, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/6, fig.width=7, out.width='90%', fig.align='center'}
 par(mfrow=c(1, 6), mar=c(0, 1, 0, 1) * 0.2)
 
-treeShapes <- c('(a, (b, (c, (d, (e, (f, g))))));',
+topologies <- c('(a, (b, (c, (d, (e, (f, g))))));',
                 '(a, (b, (c, ((d, e), (f, g)))));',
                 '(a, (b, ((c, d), (e, (f, g)))));',
                 '(a, ((b, c), (d, (e, (f, g)))));',
                 '(a, ((b, c), ((d, e), (f, g))));',
                 '(a, ((b, (c, d)), (e, (f, g))));')
 
-lapply(seq_along(treeShapes), function (i) {
-  tree <- ape::read.tree(text = treeShapes[i])
+lapply(seq_along(topologies), function (i) {
+  tree <- ape::read.tree(text = topologies[i])
   tree$edge.length <- rep(1, 12)
   plot(tree,
        edge.col=rev(treeCols)[i], 
@@ -305,20 +311,30 @@ lapply(seq_along(treeShapes), function (i) {
 }) -> XX
 ```
 
-```{r 7-tip-trees-3, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/2, fig.width=7, out.width='90%', fig.align='center'}
-par(mfrow=c(2, 4), mar=rep(0.8, 4))
+The figures below visualize the tree spaces implied by each distance metric 
+by (i) projecting the tree space into two dimensions using Kruskal's Non-Metric Multidimensional Scaling [@Cox1994]; (ii) partitioning the data into eight clusters
+"around medoids" [@Reynolds2006].  Heterogeneity is evident when points are 
+concentrically distributed, and when clusters are equal in size.
 
-PlotMDS('vai')
-PlotMDS('vci')
-PlotMDS('nts')
-PlotMDS('qd')
-PlotMDS('msd')
-PlotMDS('path')
-PlotMDS('spr')
-PlotMDS('rf')
+```{r 7-tip-trees-3, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=7, out.width='90%', fig.align='center'}
+par(mfrow=c(4, 4), mar=rep(0.8, 4))
+
+lapply(plotSequence[1:4], PlotMDS) -> XX
+lapply(plotSequence[1:4], ClusterBars) -> XX
+lapply(plotSequence[5:8], PlotMDS) -> XX
+lapply(plotSequence[5:8], ClusterBars) -> XX
 ```
 
-Trees are prominently non-uniformly distributed in SPR and RF tree space; moreover,
-trees are grouped by shape
+The information-based distance measures imply a heterogeneous tree space that
+is largely independent of tree topology.  The Nye _et al_. and quartet metrics
+are largely heterogeneous, but certain tree shapes are slightly more prone to
+cluster together.  
+
+The remaining metrics produce non-uniform tree spaces, with local aggregations;
+these form particularly obvious islands in the SPR and RF distances.  Moreover,
+the Matching Splits, SPR and RF distances exhibit clusters that disproportionately
+contain or omit particular tree topologies, showing that the metrics reflect
+tree topology more strongly than relationship information.
+
 
 ## References
