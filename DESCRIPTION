@@ -8,7 +8,12 @@ Authors@R: c(person("Martin R.", 'Smith',
                   comment=c(ORCID = "0000-0001-5660-1727"))
             )
 License: GPL (>= 3)
-Description: Implements various measures of tree similarity, including XYZ #TODO.
+Description: Implements various measures of tree similarity, including 
+  Information-based generalized Robinson-Foulds distances
+  (Mutual Arboreal Information, Mutual Clustering Information; Smith, in prep); 
+  the metric of Nye et al. (2006) <doi:10.1093/bioinformatics/bti720>;
+  the Matching Split Distance (Bogdanowicz & Giaro 2012) <doi:10.1109/TCBB.2011.48>;
+  and the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>.
 URL: https://github.com/ms609/TreeDist
 BugReports: https://github.com/ms609/TreeDist/issues
 Depends: 
