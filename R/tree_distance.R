@@ -97,7 +97,7 @@
 #' 
 #' @author Martin R. Smith
 #' 
-#' @family Tree distance
+#' @family tree distances
 #' @importFrom clue solve_LSAP
 #' @export
 MutualArborealInfo <- function (tree1, tree2, normalize = FALSE,
@@ -207,7 +207,7 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+3) {
 ## 
 ## 
 ## @references \insertRef{SmithDist}{TreeDist}
-## @family Tree distance
+## @family tree distances
 ## 
 ## @author Martin R. Smith
 ## @export
@@ -238,7 +238,7 @@ MutualPartitionInfo <- function (tree1, tree2, normalize = FALSE,
 #' @references \insertRef{Meila2007}{TreeDist}
 #' @references \insertRef{SmithDist}{TreeDist}
 #' @references \insertRef{Vinh2010}{TreeDist}
-#' @family Tree distance
+#' @family tree distances
 #' 
 #' @author Martin R. Smith
 #' @export
@@ -263,7 +263,7 @@ MutualClusteringInfo <- function (tree1, tree2, normalize = FALSE,
 #' 
 #' 
 #' @references \insertRef{Bogdanowicz2012}{TreeDist}
-#' @family Tree distance
+#' @family tree distances
 #' 
 #' @author Martin R. Smith
 #' @importFrom TreeSearch LnUnrooted.int
@@ -487,10 +487,10 @@ VariationOfArborealInfoSplits <- function (splits1, splits2, normalize = TRUE,
   }
 }
 
-#' @describeIn MutualPartitionInfo Takes splits instead of trees
-#' @inheritParams MutualArborealInfoSplits
-#' @importFrom TreeSearch LnUnrooted.int LogTreesMatchingSplit
-#' @export
+## @describeIn MutualPartitionInfo Takes splits instead of trees
+## @inheritParams MutualArborealInfoSplits
+## @importFrom TreeSearch LnUnrooted.int LogTreesMatchingSplit
+## @export
 MutualPartitionInfoSplits <- function (splits1, splits2, reportMatching = FALSE) {
   .Deprecated(msg="Not intended for production")
   dimSplits1 <- dim(splits1)

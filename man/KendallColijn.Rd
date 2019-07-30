@@ -45,7 +45,13 @@ tip to another.
 \href{https://cran.r-project.org/web/packages/treespace/vignettes/introduction.html}{treespace::treeDist},
 a more sophisticated, if more cumbersome, implementation that supports
 lambda > 0, i.e. use of edge lengths in tree comparison.
+
+Other tree distances: \code{\link{MatchingSplitDistance}},
+  \code{\link{MutualArborealInfo}},
+  \code{\link{MutualClusteringInfo}},
+  \code{\link{NyeTreeSimilarity}}
 }
 \author{
 Martin R. Smith
 }
+\concept{tree distances}

@@ -152,12 +152,12 @@ trees.
 }
 }
 \seealso{
-Other Tree distance: \code{\link{MatchingSplitDistance}},
-  \code{\link{MutualPartitionInfo}},
-  \code{\link{NyeTreeSimilarity}},
-  \code{\link{VariationOfClusteringInfo}}
+Other tree distances: \code{\link{KendallColijn}},
+  \code{\link{MatchingSplitDistance}},
+  \code{\link{MutualClusteringInfo}},
+  \code{\link{NyeTreeSimilarity}}
 }
 \author{
 Martin R. Smith
 }
-\concept{Tree distance}
+\concept{tree distances}

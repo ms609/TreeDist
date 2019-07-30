@@ -14,7 +14,7 @@
 #' value calculated by #TODO detail
 #' 
 #' @references \insertRef{Nye2006}{TreeDist}
-#' @family Tree distance
+#' @family tree distances
 #' 
 #' @author Martin R. Smith
 #' @export

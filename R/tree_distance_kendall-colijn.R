@@ -22,6 +22,7 @@
 #' a more sophisticated, if more cumbersome, implementation that supports 
 #' lambda > 0, i.e. use of edge lengths in tree comparison.
 #' 
+#' @family tree distances
 #' @author Martin R. Smith
 #' @references \insertRef{Kendall2016}{TreeDist}
 #' @export

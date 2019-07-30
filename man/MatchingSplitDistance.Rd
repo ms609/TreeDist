@@ -60,12 +60,12 @@ value calculated by #TODO detail
 \insertRef{Bogdanowicz2012}{TreeDist}
 }
 \seealso{
-Other Tree distance: \code{\link{MutualArborealInfo}},
-  \code{\link{MutualPartitionInfo}},
-  \code{\link{NyeTreeSimilarity}},
-  \code{\link{VariationOfClusteringInfo}}
+Other tree distances: \code{\link{KendallColijn}},
+  \code{\link{MutualArborealInfo}},
+  \code{\link{MutualClusteringInfo}},
+  \code{\link{NyeTreeSimilarity}}
 }
 \author{
 Martin R. Smith
 }
-\concept{Tree distance}
+\concept{tree distances}
