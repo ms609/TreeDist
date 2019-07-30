@@ -1,7 +1,7 @@
 Package: TreeDist
 Title: Distances between Phylogenetic Trees
 Version: 0.0.0.9000
-Date: 2019-07-10
+Date: 2019-07-30
 Authors@R: c(person("Martin R.", 'Smith',
                   email="martin.smith@durham.ac.uk", 
                   role=c("aut", "cre", "cph"), 

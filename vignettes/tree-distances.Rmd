@@ -11,7 +11,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-
 ```{R init, echo=FALSE, message=FALSE, cache=TRUE}
 methods <- c('rf', 'vai', 'spr', 'msd', 'vci', 'path', 'nts', 'qd')
 plotSequence <- c('vai', 'vci', 'nts', 'qd', 'msd', 'path', 'spr', 'rf')
@@ -38,8 +37,14 @@ methodCol <- c(
 '#fd9da7',
 '#9d745f',
 '#bab0ac')[1:9] # https://www.tableau.com/about/blog/2016/7/colors-upgrade-tableau-10-56782
-methodPch <- c(3, 3, 6, 3, 3, 4, 4, 4, 6)
-names(methodCol) <- names(methodPch) <- names(abbrevs)
+totalInfoContent <- 3L
+maxPossible <- 6L
+maxObserved <- 4L
+methodPch <- c(vci = totalInfoContent, vai = totalInfoContent, 
+               rf = maxPossible, nts = maxPossible, qd = maxPossible,
+               path = maxObserved, 
+               msd = maxObserved)
+names(methodCol) <- names(abbrevs)
 methodCol <- methodCol[methods]
 methodPch <- methodPch[methods]
 methodLCH <- colorspace::coords(as(colorspace::hex2RGB(methodCol), 'polarLUV'))
@@ -48,21 +53,46 @@ methodLCH <- colorspace::coords(as(colorspace::hex2RGB(methodCol), 'polarLUV'))
 ## Expected tree distance of random tree pair
 
 This figure shows how the normalized tree distance varies with the number of 
-tips in the trees being compared.
+tips in the trees being compared.  1&nbsp;000 random pairs of _n_-tip trees were
+generated for 4 &le; _n_ &le; 200, and the distances between them calcuated. 
+Dotted envelopes denote ±1 standard deviation from the mean.
 
-Metrics marked with &#9661; are normalized based on the maximum possible value;
-information-based metrics, marked +, are normalized against the total 
-information content of each pair of trees; metrics marked &times; do not have a 
-readily calculated maximum value and are thus normalized against the maximum 
-observed distance for each number of tips.
+Information-based metrics, marked +, are normalized against the total 
+information content of each pair of trees.
+
+The Robinson-Fould, Nye _et al_. and Quartet Metrics (&#9661;) are normalized 
+based on the maximum possible value.
+
+The SPR distance is normalized against an upper bound of its maximum possible value,
+given by _n_ - 3 [@Allen2001].
+
+The Path and Matching Split metrics (&times;) do not have a readily calculated
+maximum value and are thus crudely normalized against an approximate maximum, 
+calculated by curve-fitting the maximum observed distance for each number of tips.
 
 ```{R Tree-distance-averages, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, out.width='90%', fig.align='center'}
 
 data('randomTreeDistances', package='TreeDistData')
 
+pathMax <- randomTreeDistances['path', 'max', ]
+msdMax <- randomTreeDistances['msd', 'max', ]
+sprMax <- randomTreeDistances['spr', 'max', ]
+nTip <- as.integer(names(pathMax))
+
+pathNorm <- nls(pathMax ~ a * (nTip ^2) + b * (nTip ^3) + nTip ^ c,
+               start = list(a = -0.034, b = 4e-5, c = 1.44))
+# loess(pathMax ~ nTip) is Unsuitable for small _n_
+msdNorm <- nls(msdMax ~ a * nTip + c * nTip ^ (b),
+              start = list(a = -14, b=1.16, c = 11.3))
+
+normalizeAgainst <- rbind(
+  path = predict(pathNorm),
+  msd = predict(msdNorm)
+)
+
 AddLine <- function (method, normalize = FALSE) {
   dat <- randomTreeDistances[method, , ]
-  if (normalize) dat <- dat / rep(randomTreeDistances[method, 'max', ], each=4)
+  if (normalize) dat <- dat / rep(normalizeAgainst[method, ], each=4)
   col <- methodCol[method]
   pch <- methodPch[method]
   nLeaves <- colnames(dat)
@@ -78,15 +108,14 @@ plot(as.integer(dimnames(randomTreeDistances)[[3]]),
      xlab = "Number of tips", ylab = "Normalized tree distance")
 for (method in methods) AddLine(method, method %in% c('msd', 'path'))
 
-AddLine('path', FALSE)
-
 legend('bottomright', bty='n', pch=methodPch, lty=1,
        legend=abbrevs, 
        col=methodCol)
 ```
 
-Note that the erratic shape of the path and Matching Splits distances likely 
-reflects the difficulty of calculating a normalizing constant for an n-tip tree.
+Note that the path and Matching Splits distances exhibit a prominently larger 
+standard deviation than other metrics, suggesting that they are less consistent in the
+score that they assign to a random pair of trees.
 
 ## Distribution of tree distances
 
@@ -97,34 +126,38 @@ distanceDistribution25['rf', ] <- distanceDistribution25['rf', ] / 2L
 
 The histograms below depict the distribution of tree distances for
 `r format(dim(distanceDistribution25)[2], big.mark='&nbsp;')`
-pairs of trees drawn at random from the uniform distribution.
+pairs of 25-tip trees drawn at random from the uniform distribution.
 
 ```{R Tree-distance-distributions, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/2, fig.width=7, out.width='90%', fig.align='center'}
 par(mfrow=c(2, 4), mar=rep(1.9, 4), cex=0.8, oma=c(0, 0, 2, 0))
 manyBreaks <- seq(0, 1, length.out=40)
 
-PlotHist <- function (method, breaks) {
+PlotHist <- function (method, breaks = 40L) {
   hist(distanceDistribution25[method, ], xlab=NULL, main=NULL, breaks=breaks, 
        cex=0.8, border = methodCol[method])
   legend('topleft', bty='n', c('', '', abbrevs[method]), cex=0.8)
 }
 
-PlotHist('vai', manyBreaks)
+PlotHist('vai')
 mtext('Distance between random pairs of 25-tip bifurcating trees', outer=TRUE, cex=0.8)
 
-PlotHist('vci', manyBreaks)
-PlotHist('nts', manyBreaks)
-PlotHist('qd',  manyBreaks)
-PlotHist('msd', 40L)
-PlotHist('path', 40L)
-PlotHist('spr', 0:max(distanceDistribution25['spr', ]))
-PlotHist('rf',  0:22)
+PlotHist('vci')
+PlotHist('nts')
+PlotHist('qd')
+PlotHist('msd')
+PlotHist('path')
+PlotHist('spr', min(distanceDistribution25['spr', ]):max(distanceDistribution25['spr', ]))
+PlotHist('rf',  min(distanceDistribution25['rf', ]):22)
 
 ```
 
 ## Correlation
 
-How correlated are the measures?
+The information-based metrics are highly correlated with one another, and exhibit 
+strong correlation with the Nye _et al_. and Quartet metrics.  The 
+Matching Splits and Path metrics are poorly correlated with all metrics except 
+each other.  The Robinson-Foulds metric shows minimal correlation with any other 
+metric, notwithstanding a weak correlation with the Nye _et al_. measure.
 
 ```{R metric-correlation, echo=FALSE, fig.width=7, fig.height=7, out.width='95%', fig.align='center'}
 par(mfrow=c(8L, 7L), mar=rep(0.2, 4))
@@ -168,44 +201,17 @@ mtext('SPR distance', 4L, line=-1, cex=0.7, col=methodCol['spr'])
 
 ```
 
-## Most different pairs
-
-```{r metric-differences, echo=FALSE, fig.width=7, fig.height=7, out.width='95%', fig.align='center'}
-data("randomTreePairs25", package='TreeDistData')
-tipCols <- colorspace::qualitative_hcl(25)
-
-MatchTipLabels <- function (tr1, tr2) {
-  tipOrder <- tr1$tip.label
-  tipOrder2 <- match(tr2$tip.label, tr1$tip.label)
-  tr2Tips <- tr2$edge[, 2] < 26L
-  tr2$edge[tr2Tips, 2] <- tipOrder2
-  tr2$tip.label <- tr1$tip.label
-  tr2
-}
-
-LetterTips <- function(tr) {tr$tip.label <- LETTERS[1:25]; tr}
-
-MostDifferent <- function (methodA, methodB)  {
-  a <- distanceDistribution25[methodA, ]
-  b <- distanceDistribution25[methodB, ]
-  plot(b~a, pch='.', col='#00000088', 
-       ylab=abbrevs[methodB], xlab=abbrevs[methodA])
-  
-  reg <- lm(b~a)
-  residualAB <- residuals(lm(b~a)) / a
-  residualBA <- residuals(lm(a~b)) / b
-  mostDiff <- head(order(sqrt(residualAB^2 + residualBA^2), decreasing = TRUE))
-  abline(reg)
-  text(a[mostDiff], b[mostDiff], mostDiff, pch=1, col='red')
-}
-
-MostDifferent('vci', 'vai')
-```
-
-
 ## Distances between all 7-tip trees 
 
-Inspired by @Kendall2016...
+Tree distances correspond to a non-Euclidian space comprising all possible trees.
+The nature of this space is difficult to visualize, but it is desirablte that
+such a space is uniform and does not exhibit islands.  
+
+@Kendall2016 evaluate tree metrics by examining the properties of the complete
+tree space for all `r NRooted(6)` rooted six-tip trees.  A rooted tree is equivalent to 
+an unrooted tree with an additional tip added at the position of the root; as
+I am considering metrics on unrooted trees, I replicate and expand the analysis 
+of @Kendall2016 on all `r NUnrooted(7)` unrooted seven-tip trees.
 
 ```{r 7-tip-funcs, include=FALSE} 
 Palette <- function (n) colorspace::sequential_hcl(n, palette='BluYl')
@@ -270,6 +276,10 @@ ClusterBars <- function(method) {
 }
 ```
 
+The first aspect to consider are the differences between each pair of 
+trees.  Note that the Nye _et al_. and Quartet metrics are pectinate, in contrast
+to the smooth curves of other measures.
+
 ```{r 7-tip-trees-histograms, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/2, fig.width=6, out.width='90%', fig.align='center'}
 par(mfrow=c(2, 4), mar=c(2.4, 0.8, 2.4, 0.8))
 
@@ -283,8 +293,11 @@ Hist('spr', breaks=3)
 Hist('rf', breaks=4)
 ```
 
-The coloured bars at the edges of the matrix plots correspond to the shape of 
-the trees being compared, as depicted below.
+The matrix plots below depict, by colour intensity, the distance between each 
+pair of trees.  Rows and columns correspond to each of the `r NUnrooted(7)` 
+unrooted 7-tip trees, sorted according to their topology; the coloured 
+bars in the margins correspond to the six distinct unlabelled tree topologies
+on seven tips, as depicted below.
 
 ```{r 7-tip-trees-2, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/2, fig.width=7, out.width='90%', fig.align='center'}
 par(mfrow=c(2, 4), mar=rep(0.8, 4))
@@ -311,7 +324,7 @@ lapply(seq_along(topologies), function (i) {
 }) -> XX
 ```
 
-The figures below visualize the tree spaces implied by each distance metric 
+The following figures visualize the tree spaces implied by each distance metric 
 by (i) projecting the tree space into two dimensions using Kruskal's Non-Metric Multidimensional Scaling [@Cox1994]; (ii) partitioning the data into eight clusters
 "around medoids" [@Reynolds2006].  Heterogeneity is evident when points are 
 concentrically distributed, and when clusters are equal in size.

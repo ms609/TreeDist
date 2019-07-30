@@ -11,9 +11,48 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+
+## Most different pairs
+
+```{r metric-differences, echo=FALSE, fig.align='center', fig.height=7, fig.width=7, out.width='95%'}
+data("randomTreePairs25", package='TreeDistData')
+tipCols <- colorspace::qualitative_hcl(25)
+
+MatchTipLabels <- function (tr1, tr2) {
+  tipOrder <- tr1$tip.label
+  tipOrder2 <- match(tr2$tip.label, tr1$tip.label)
+  tr2Tips <- tr2$edge[, 2] < 26L
+  tr2$edge[tr2Tips, 2] <- tipOrder2
+  tr2$tip.label <- tr1$tip.label
+  tr2
+}
+
+LetterTips <- function(tr) {tr$tip.label <- LETTERS[1:25]; tr}
+
+MostDifferent <- function (methodA, methodB)  {
+  a <- distanceDistribution25[methodA, ]
+  b <- distanceDistribution25[methodB, ]
+  plot(b~a, pch='.', col='#00000088', 
+       ylab=abbrevs[methodB], xlab=abbrevs[methodA])
+  
+  reg <- lm(b~a)
+  residualAB <- residuals(lm(b~a)) / a
+  residualBA <- residuals(lm(a~b)) / b
+  mostDiff <- head(order(sqrt(residualAB^2 + residualBA^2), decreasing = TRUE))
+  abline(reg)
+  text(a[mostDiff], b[mostDiff], mostDiff, pch=1, col='red')
+}
+
+MostDifferent('vci', 'qd')
+```
+
+
+## Ineffective MPI
+
 As an example of why the Mutual Parition Information is not effective, see 
 pairing 1, which matches `JK:` with a macro clade that contains `JK` and the 
 kitchen sink.
+
 
 ```{R view-metric-differences, echo=FALSE, fig.width=6, fig.height=7, out.width='95%', fig.align='center'}
 library('TreeDist')
