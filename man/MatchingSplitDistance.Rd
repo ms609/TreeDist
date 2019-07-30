@@ -62,8 +62,7 @@ value calculated by #TODO detail
 \seealso{
 Other tree distances: \code{\link{KendallColijn}},
   \code{\link{MutualArborealInfo}},
-  \code{\link{NyeTreeSimilarity}},
-  \code{\link{VariationOfClusteringInfo}}
+  \code{\link{NyeTreeSimilarity}}
 }
 \author{
 Martin R. Smith

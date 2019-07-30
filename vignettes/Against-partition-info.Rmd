@@ -72,7 +72,7 @@ par(mfrow=c(2, 2), mar = rep(1, 4))
 
 vizMethods <- c(
   vai = MutualArborealInfo,
-  vpi = MutualPartitionInfo,
+  vpi = TreeDist:::MutualPartitionInfo,
   vci = MutualClusteringInfo,
   nye = NyeTreeSimilarity
 )
