@@ -163,8 +163,9 @@ VariationOfClusteringInfo <- function (tree1, tree2, normalize = FALSE,
   ret
 }
 
-#' @describeIn MutualArborealInfo #TODO rewrite: Estimate expected Variation of Information
-#' and Mutual Information for a pair of trees of a given topology.
+#' @describeIn MutualArborealInfo Estimate expected Variation of 
+#' Arboreal Information and Mutual Arboreal Information for a pair of trees of
+#' a given topology.
 #' @param samples Integer specifying how many samplings to obtain; 
 #' accuracy of estimate increases with `sqrt(samples)`.
 #' @importFrom stats sd
@@ -176,22 +177,18 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+3) {
   splits2 <- Tree2Splits(tree2)
   tipLabels <- rownames(splits2)
   
-  # TODO MutualPartitionInfo is deprecated
   mutualEstimates <- vapply(seq_len(samples), function (x) {
     rownames(splits2) <- sample(tipLabels)
-    c(MutualPartitionInfoSplits(splits1, splits2),
-      MutualArborealInfoSplits(splits1, splits2))
-  }, c(MutualPartitionInfo = 0, MutualArborealInfo = 0))
+    MutualArborealInfoSplits(splits1, splits2)
+  }, double(1L))
   
-  mut <- cbind(Estimate = rowMeans(mutualEstimates),
-               sd = apply(mutualEstimates, 1, sd), n = samples)
+  mut <- c(Estimate = mean(mutualEstimates), sd = sd(mutualEstimates), n = samples)
   # Return:
-  ret <- rbind(mut,
-        VariationOfPartitionInfo = c(info1 + info2 - mut[1, 1] - mut[1, 1], mut[1, 2] * 2, samples),
-        VariationOfArborealInfo =  c(info1 + info2 - mut[2, 1] - mut[2, 1], mut[2, 2] * 2, samples)
+  ret <- rbind(MutualArborealInfo = mut,
+        VariationOfArborealInfo =  c(info1 + info2 - mut[1] - mut[1],
+                                     mut[2] * 2, samples)
         )
   cbind(Estimate = ret[, 1], 'Std. Err.' = ret[, 'sd'] / sqrt(ret[, 'n']), ret[, 2:3])
-  
 }
 
 ## Mutual Partition Information

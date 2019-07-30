@@ -90,8 +90,9 @@ different in the partitions of two trees, under an optimal matching.
 \itemize{
 \item \code{VariationOfArborealInfo}: Variation of phylogenetic information between two trees
 
-\item \code{ExpectedVariation}: #TODO rewrite: Estimate expected Variation of Information
-and Mutual Information for a pair of trees of a given topology.
+\item \code{ExpectedVariation}: Estimate expected Variation of
+Arboreal Information and Mutual Arboreal Information for a pair of trees of
+a given topology.
 
 \item \code{MutualArborealInfoSplits}: Takes splits instead of trees
 
