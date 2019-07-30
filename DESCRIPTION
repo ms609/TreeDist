@@ -33,7 +33,7 @@ Suggests:
     Ternary,
     TreeDistData
 Remotes: 
-    ms609/TreeSearch@noTreeDist
+    ms609/TreeSearch@noTreeDist,
     ms609/TreeDistData
 RdMacros: Rdpack
 LazyData: true

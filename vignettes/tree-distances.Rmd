@@ -298,8 +298,12 @@ unrooted 7-tip trees, sorted according to their topology; the coloured
 bars in the margins correspond to the six distinct unlabelled tree topologies
 on seven tips, as depicted below.
 
-```{r 7-tip-trees-2, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/2, fig.width=7, out.width='90%', fig.align='center'}
-par(mfrow=c(2, 4), mar=rep(0.8, 4))
+Note the bands in the Path distance, also evident under Matching Splits, which
+indicate that high distance values are disproportionately likely when
+comparing two trees of certain shapes.
+
+```{r 7-tip-trees-2, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=2, fig.width=5, fig.align='center'}
+par(mfrow=c(4, 2), mar=rep(0.8, 4))
 XX <- lapply(plotSequence, TableImage)
 ```
 
