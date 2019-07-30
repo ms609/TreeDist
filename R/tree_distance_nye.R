@@ -10,8 +10,11 @@
 #' 
 #' @section Normalization:
 #' 
-#' If `normalize = TRUE`, then results will be rescaled from zero to a maximum
-#' value calculated by #TODO detail
+#' If `normalize = TRUE`, then results will be rescaled from zero to one by
+#' dividing by the maximum possible value for trees of the given topologies,
+#' which is four less than the total number of nodes in both trees. 
+#' You may wish to normalize instead against the maximum number of nodes present
+#' in a pair of trees with _n_ terminals, by specifying `normalize = <some number>`.
 #' 
 #' @references \insertRef{Nye2006}{TreeDist}
 #' @family tree distances

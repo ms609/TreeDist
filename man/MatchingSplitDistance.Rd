@@ -55,7 +55,7 @@ trees of Bogdanowicz and Giaro (2012).
 A normalization value or function must be provided in order to return a
 normalized value.  If you are aware of a generalised formula, please
 let me know by
-\href{https://github.com/ms609/TreeDist/issues}{creating a GitHub issue}
+\href{https://github.com/ms609/TreeDist/issues/new}{creating a GitHub issue}
 so that it can be implemented.
 }
 
