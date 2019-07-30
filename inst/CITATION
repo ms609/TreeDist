@@ -1,7 +1,11 @@
-citHeader(paste0("When using the package, we would appreciate it if you would acknowledge your use of TreeDist in the article text, and #TODO. For example, 'Tree distances were calculated using the R package TreeDist v0.3.2.  You might also wish to cite the
-individual software packages using their Zenodo dois."))
-
 vers <- paste("R package version", meta$Version)
+
+citHeader(paste0("When using the package, I would appreciate it if you would ",
+"acknowledge your use of TreeDist in the article text, and cite the papers ",
+"describing the metrics that you employ. For example, 'Mutual Arboreal ",
+"Information similarity metrics (Smith 20XX) were calculated using the R package",
+" TreeDist v", packageVersion('TreeDist'), " (Smith 2019)"))
+
 
 citEntry(entry = "Article",
       title = "Untitled",
@@ -13,5 +17,19 @@ citEntry(entry = "Article",
       paste0("Smith, M.R. (20XX).",
              " Untitled", 
              " Journal name.",
+             " doi: 10.XXXX/XXXXX"))
+
+citEntry(entry = "Manual",
+      title = paste0("TreeDist: Distances between Phylogenetic Trees. ",
+      "R pacakge version ", packageVersion('treeDist'))
+      author = personList(as.person("Martin R. Smith")),
+      doi = "10.XXXX/XXXXX",
+      journal = "Comprehensive R Archive Network",
+      year = "2019",
+
+      textVersion =
+      paste0("Smith, M.R. (2019).",
+             " TreeDist: Distances between Phylogenetic Trees", 
+             " Comprehensive R Archive Network.",
              " doi: 10.XXXX/XXXXX"))
 
