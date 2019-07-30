@@ -25,7 +25,6 @@ abbrevs <- c(
   vpi = 'Var. Partition Info',
   msd = 'Matching Splits'
 )[methods]
-cbPalette8 <- Ternary::cbPalette8
 methodCol <- c(
 '#4e78a8',
 '#f28e2c',
@@ -254,8 +253,8 @@ TableImage <- function (method) {
   shapeSizes <- table(shapes)
   shapeSum <- cumsum(shapeSizes)
   shapeStarts <-  shapeSum - shapeSizes
-  rect(shapeStarts, 950, shapeSum, 975, col=Ternary::cbPalette8[2:7], border=NA)
-  rect(950, shapeStarts, 975, shapeSum, col=Ternary::cbPalette8[2:7], border=NA)
+  rect(shapeStarts, 950, shapeSum, 975, col=treeCols, border=NA)
+  rect(950, shapeStarts, 975, shapeSum, col=treeCols, border=NA)
 
   rect(x - 1L, y - 1L, x, y, border=NA,
        col=MethodPalette(method, 100)[cut(td7[[method]], 100, labels=FALSE)])
