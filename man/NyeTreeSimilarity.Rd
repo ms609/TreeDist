@@ -66,7 +66,7 @@ value calculated by #TODO detail
 Other tree distances: \code{\link{KendallColijn}},
   \code{\link{MatchingSplitDistance}},
   \code{\link{MutualArborealInfo}},
-  \code{\link{MutualClusteringInfo}}
+  \code{\link{VariationOfClusteringInfo}}
 }
 \author{
 Martin R. Smith

@@ -154,8 +154,8 @@ trees.
 \seealso{
 Other tree distances: \code{\link{KendallColijn}},
   \code{\link{MatchingSplitDistance}},
-  \code{\link{MutualClusteringInfo}},
-  \code{\link{NyeTreeSimilarity}}
+  \code{\link{NyeTreeSimilarity}},
+  \code{\link{VariationOfClusteringInfo}}
 }
 \author{
 Martin R. Smith

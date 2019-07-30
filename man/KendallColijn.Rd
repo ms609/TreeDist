@@ -48,8 +48,8 @@ lambda > 0, i.e. use of edge lengths in tree comparison.
 
 Other tree distances: \code{\link{MatchingSplitDistance}},
   \code{\link{MutualArborealInfo}},
-  \code{\link{MutualClusteringInfo}},
-  \code{\link{NyeTreeSimilarity}}
+  \code{\link{NyeTreeSimilarity}},
+  \code{\link{VariationOfClusteringInfo}}
 }
 \author{
 Martin R. Smith

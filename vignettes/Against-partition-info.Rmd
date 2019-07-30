@@ -16,6 +16,7 @@ vignette: >
 
 ```{r metric-differences, echo=FALSE, fig.align='center', fig.height=7, fig.width=7, out.width='95%'}
 data("randomTreePairs25", package='TreeDistData')
+data("distanceDistribution25", package='TreeDistData')
 tipCols <- colorspace::qualitative_hcl(25)
 
 MatchTipLabels <- function (tr1, tr2) {

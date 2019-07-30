@@ -146,8 +146,8 @@ VariationOfPartitionInfo <- function (tree1, tree2, normalize = FALSE,
   ret
 }
 
-## @describeIn MutualClusteringInfo Variation of clustering information between two trees
-## @export
+#' @describeIn MutualClusteringInfo Variation of clustering information between two trees
+#' @export
 VariationOfClusteringInfo <- function (tree1, tree2, normalize = FALSE,
                                        reportMatching = FALSE) {
   mci <- MutualClusteringInfo(tree1, tree2, normalize = FALSE, reportMatching)
