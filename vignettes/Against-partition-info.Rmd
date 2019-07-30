@@ -1,5 +1,5 @@
 ---
-title: "Against the Mutual Partition Information"
+title: "Against the Mutual Partition Information metric"
 author: "Martin R. Smith"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -15,9 +15,21 @@ vignette: >
 ## Most different pairs
 
 ```{r metric-differences, echo=FALSE, fig.align='center', fig.height=7, fig.width=7, out.width='95%'}
+library('TreeDist')
 data("randomTreePairs25", package='TreeDistData')
 data("distanceDistribution25", package='TreeDistData')
 tipCols <- colorspace::qualitative_hcl(25)
+abbrevs <- c(
+  rf  = 'Robinson-Foulds',
+  vai = 'Var. Arb Info',
+  spr = 'SPR',
+  path = 'Path',
+  vci = 'Var. Clustering Info', 
+  nts = 'Nye et al.',
+  qd  = 'Quartet',
+  vpi = 'Var. Partition Info',
+  msd = 'Matching Splits'
+)
 
 MatchTipLabels <- function (tr1, tr2) {
   tipOrder <- tr1$tip.label
@@ -56,7 +68,6 @@ kitchen sink.
 
 
 ```{R view-metric-differences, echo=FALSE, fig.width=6, fig.height=7, out.width='95%', fig.align='center'}
-library('TreeDist')
 par(mfrow=c(2, 2), mar = rep(1, 4))
 
 vizMethods <- c(
