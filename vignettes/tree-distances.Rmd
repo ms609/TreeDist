@@ -207,10 +207,10 @@ The nature of this space is difficult to visualize, but it is desirablte that
 such a space is uniform and does not exhibit islands.  
 
 @Kendall2016 evaluate tree metrics by examining the properties of the complete
-tree space for all `r NRooted(6)` rooted six-tip trees.  A rooted tree is equivalent to 
+tree space for all `r TreeSearch::NRooted(6)` rooted six-tip trees.  A rooted tree is equivalent to 
 an unrooted tree with an additional tip added at the position of the root; as
 I am considering metrics on unrooted trees, I replicate and expand the analysis 
-of @Kendall2016 on all `r NUnrooted(7)` unrooted seven-tip trees.
+of @Kendall2016 on all `r TreeSearch::NUnrooted(7)` unrooted seven-tip trees.
 
 ```{r 7-tip-funcs, include=FALSE} 
 Palette <- function (n) colorspace::sequential_hcl(n, palette='BluYl')
@@ -293,7 +293,7 @@ Hist('rf', breaks=4)
 ```
 
 The matrix plots below depict, by colour intensity, the distance between each 
-pair of trees.  Rows and columns correspond to each of the `r NUnrooted(7)` 
+pair of trees.  Rows and columns correspond to each of the `r TreeSearch::NUnrooted(7)` 
 unrooted 7-tip trees, sorted according to their topology; the coloured 
 bars in the margins correspond to the six distinct unlabelled tree topologies
 on seven tips, as depicted below.
