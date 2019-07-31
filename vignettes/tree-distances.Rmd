@@ -16,11 +16,11 @@ methods <- c('rf', 'vai', 'spr', 'msd', 'vci', 'path', 'nts', 'qd')
 plotSequence <- c('vai', 'vci', 'nts', 'qd', 'msd', 'path', 'spr', 'rf')
 abbrevs <- c(
   rf  = 'Robinson-Foulds',
-  vai = 'Var. Arb Info',
+  vai = 'Var. Phylogenetic Info',
   spr = 'SPR',
   path = 'Path',
   vci = 'Var. Clustering Info', 
-  nts = 'Nye et al.',
+  nts = expression(paste(plain('Nye '), italic('et al.'))),
   qd  = 'Quartet',
   vpi = 'Var. Partition Info',
   msd = 'Matching Splits'
@@ -59,7 +59,7 @@ Dotted envelopes denote ±1 standard deviation from the mean.
 Information-based metrics, marked +, are normalized against the total 
 information content of each pair of trees.
 
-The Robinson-Fould, Nye _et al_. and Quartet Metrics (&#9661;) are normalized 
+The Robinson-Fould, Nye _et al._ and Quartet Metrics (&#9661;) are normalized 
 based on the maximum possible value.
 
 The SPR distance is normalized against an upper bound of its maximum possible value,
@@ -153,10 +153,10 @@ PlotHist('rf',  min(distanceDistribution25['rf', ]):22)
 ## Correlation
 
 The information-based metrics are highly correlated with one another, and exhibit 
-strong correlation with the Nye _et al_. and Quartet metrics.  The 
+strong correlation with the Nye _et al._ and Quartet metrics.  The 
 Matching Splits and Path metrics are poorly correlated with all metrics except 
 each other.  The Robinson-Foulds metric shows minimal correlation with any other 
-metric, notwithstanding a weak correlation with the Nye _et al_. measure.
+metric, notwithstanding a weak correlation with the Nye _et al._ measure.
 
 ```{R metric-correlation, echo=FALSE, fig.width=7, fig.height=7, out.width='95%', fig.align='center'}
 par(mfrow=c(8L, 7L), mar=rep(0.2, 4))
@@ -276,7 +276,7 @@ ClusterBars <- function(method) {
 ```
 
 The first aspect to consider are the differences between each pair of 
-trees.  Note that the Nye _et al_. and Quartet metrics are pectinate, in contrast
+trees.  Note that the Nye _et al._ and Quartet metrics are pectinate, in contrast
 to the smooth curves of other measures.
 
 ```{r 7-tip-trees-histograms, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/2, fig.width=6, out.width='90%', fig.align='center'}
@@ -342,7 +342,7 @@ lapply(plotSequence[5:8], ClusterBars) -> XX
 ```
 
 The information-based distance measures imply a heterogeneous tree space that
-is largely independent of tree topology.  The Nye _et al_. and quartet metrics
+is largely independent of tree topology.  The Nye _et al._ and quartet metrics
 are largely heterogeneous, but certain tree shapes are slightly more prone to
 cluster together.  
 

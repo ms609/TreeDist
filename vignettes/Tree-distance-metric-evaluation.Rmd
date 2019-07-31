@@ -57,7 +57,7 @@ RFPlot <- function (tr, title=NULL, highlight=NULL, ref=sq_trees[[1]],
   #text(text_x, y <- y - 1, "V. Partition Info.:", cex=0.8, pos=2)
   #text(text_x, y <- y - 1, "VoParInf+:", cex=0.8, pos=2)
   text(text_x, y <- y - 1, "V. Cluster Info.:", cex=0.8, pos=2)
-  text(text_x, y <- y - 1, "Nye et al.:", cex=0.8, pos=2)
+  text(text_x, y <- y - 1, expression(paste(plain("Nye "), italic("et al."), plain(":"))), cex=0.8, pos=2)
   text(text_x, y <- y - 1, "Matching Splits:", cex=0.8, pos=2)
   text(text_x, y <- y - 1, 'Quartet:', cex=0.8, pos=2)
   text(text_x, y <- y - 1, "Path:", cex=0.8, pos=2)
