@@ -33,7 +33,7 @@ An information theoretic alternative is to consider the _information content_
 of the most informative congruent bipartition, which will be the most 
 informative of (A~1~ ∩ A~2~, B~1~ ∩ B~2~) and (A~1~ ∩ B~2~, B~1~ ∩ A~2~).
 
-This is implemented in the TreeDist function `MatchingSplitInfo`.
+This is implemented in the TreeDist function `MutualMatchingSplitInfo`.
 
 ## Most different pairs
 
@@ -44,13 +44,13 @@ data("distanceDistribution25", package='TreeDistData')
 tipCols <- colorspace::qualitative_hcl(25)
 abbrevs <- c(
   rf  = 'Robinson-Foulds',
-  vai = 'Var. Arb Info',
+  vpi = 'Var. Phylo. Info',
   spr = 'SPR',
   path = 'Path',
   vci = 'Var. Clustering Info', 
   nts = 'Nye et al.',
   qd  = 'Quartet',
-  msi = 'Mat. Split Info',
+  vmsi = 'V. Mat. Split Info',
   msd = 'Mat. Split Dist'
 )
 
@@ -85,17 +85,16 @@ MostDifferent('vai', 'vmsi')
 
 ## Ineffective MPI
 
-As an example of why the Mutual Parition Information is not effective, see 
+As an example of why the Mutual Matching Split Information is not effective, see 
 pairing 1, which matches `JK:` with a macro clade that contains `JK` and the 
 kitchen sink.
-
 
 ```{R view-metric-differences, echo=FALSE, fig.width=6, fig.height=7, out.width='95%', fig.align='center'}
 par(mfrow=c(2, 2), mar = rep(1, 4))
 
 vizMethods <- c(
   vai = MutualPhylogeneticInfo,
-  msi = MutualMatchingSplitInfo,
+  vmsi = MutualMatchingSplitInfo,
   vci = MutualClusteringInfo,
   nye = NyeTreeSimilarity
 )
@@ -118,7 +117,7 @@ ShowPairMatching <- function (methodA, methodB, pair) {
 }
 ape::write.tree(randomTreePairs25[[808]][[2]])
 
-ShowPairMatching('vci', 'nmsi', list(ape::read.tree(text="(((t4,(((t20,t18),t3),t7)),t13),(t22,((t5,(t11,(t24,t17))),(((((((t9,t2),t23),(t12,(t14,t8))),t16),t1),(((t10,t19),t25),t6)),(t15,t21)))));"),
+ShowPairMatching('vci', 'vmsi', list(ape::read.tree(text="(((t4,(((t20,t18),t3),t7)),t13),(t22,((t5,(t11,(t24,t17))),(((((((t9,t2),t23),(t12,(t14,t8))),t16),t1),(((t10,t19),t25),t6)),(t15,t21)))));"),
                  ape::read.tree(text="(((t16,t25),(((t10,((t3,(t12,t9)),t21)),t8),t6)),(t24,((t14,((t17,t18),(t22,(((t15,t7),(t19,t4)),((t23,t11),t20))))),(t5,((t13,t2),t1)))));")))
 
 ```
