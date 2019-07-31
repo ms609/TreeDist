@@ -167,24 +167,6 @@ VariationOfClusteringInfo <- function (tree1, tree2, normalize = FALSE,
   ret
 }
 
-#' @describeIn MutualPhylogeneticInfo Variation of matching split information between two trees.
-#' @export
-VariationOfMatchingSplitInfo <- function (tree1, tree2, normalize = FALSE,
-                                      reportMatching = FALSE) {
-  mmsi <- MutualMatchingSplitInfo(tree1, tree2, normalize = FALSE, reportMatching)
-  
-  treesIndependentInfo <- outer(PartitionInfo(tree1), PartitionInfo(tree2), '+')
-  ret <- treesIndependentInfo - mmsi - mmsi
-  ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
-                       infoInBoth = treesIndependentInfo,
-                       InfoInTree = PartitionInfo, Combine = '+')
-  
-  ret[ret < 1e-13] <- 0 # In case of floating point inaccuracy
-  attributes(ret) <- attributes(mmsi)
-  # Return:
-  ret
-}
-
 #' @describeIn MutualPhylogeneticInfo Estimate expected Variation of 
 #' Phylogenetic Information and Mutual Phylogenetic Information for a pair of trees of
 #' a given topology.
@@ -211,18 +193,6 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+3) {
                                      mut[2] * 2, samples)
         )
   cbind(Estimate = ret[, 1], 'Std. Err.' = ret[, 'sd'] / sqrt(ret[, 'n']), ret[, 2:3])
-}
-
-#' @describeIn MutualPhylogeneticInfo Mutual Matching Split information of two trees.
-#' @export
-MutualMatchingSplitInfo <- function (tree1, tree2, normalize = FALSE, 
-                                 reportMatching = FALSE) {
-  unnormalized <- CalculateTreeDistance(MutualMatchingSplitInfoSplits, tree1, tree2,
-                                        reportMatching)
-  
-  # Return:
-  NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                InfoInTree = PartitionInfo, Combine = pmin)
 }
 
 #' @describeIn MutualPhylogeneticInfo Mutual Clustering Information of two trees.
