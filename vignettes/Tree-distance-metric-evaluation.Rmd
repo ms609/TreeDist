@@ -16,7 +16,44 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Tree distance metrics are introduced in an [earlier vignette](tree-distance-metrics.html).
+
+```{R init-methods, echo=FALSE, message=FALSE, cache=TRUE}
+methods <- c('rf', 'vai', 'spr', 'msd', 'vci', 'path', 'nts', 'qd')
+plotSequence <- c('vai', 'vci', 'nts', 'qd', 'msd', 'path', 'spr', 'rf')
+abbrevs <- c(
+  rf  = 'Robinson-Foulds',
+  vai = 'Var. Phylogenetic Info',
+  spr = 'SPR',
+  path = 'Path',
+  vci = 'Var. Clustering Info', 
+  nts = expression(paste(plain('Nye '), italic('et al.'))),
+  qd  = 'Quartet',
+  vpi = 'Var. Partition Info',
+  msd = 'Matching Splits'
+)[methods]
+methodCol <- c(
+'#4e78a8',
+'#f28e2c',
+'#e15659',
+'#75b7b2',
+'#58a14e',
+'#edc949',
+'#af7aa1',
+'#fd9da7',
+'#9d745f',
+'#bab0ac')[1:9] # https://www.tableau.com/about/blog/2016/7/colors-upgrade-tableau-10-56782
+totalInfoContent <- 3L
+maxPossible <- 6L
+maxObserved <- 4L
+methodPch <- c(vci = totalInfoContent, vai = totalInfoContent, 
+               rf = maxPossible, nts = maxPossible, qd = maxPossible,
+               path = maxObserved, 
+               msd = maxObserved)
+names(methodCol) <- names(abbrevs)
+methodCol <- methodCol[methods]
+methodPch <- methodPch[methods]
+methodLCH <- colorspace::coords(as(colorspace::hex2RGB(methodCol), 'polarLUV'))
+```
 
 ```{R initialize, warning=FALSE, include=FALSE, meassage=FALSE}
 #unloadNamespace('TreeSearch')
@@ -121,7 +158,7 @@ RFPlot <- function (tr, title=NULL, highlight=NULL, ref=sq_trees[[1]],
 }
 ```-->
 
-# Desired behaviour of tree distance metrics
+# Measuring the effectiveness of tree distance metrics
 
 The most fundamental desideratum for a tree distance metric is that it assigns
 higher distance scores (or lower similarity scores) to trees that are more 
@@ -281,7 +318,6 @@ RFPlot(pectinate_move1, 'Move one tip', 1, ref=pectinate_tree, edge.lengths = c(
 RFPlot(sq_trees$top_and_tail, 'Exchange two tips', c(1, 11), ref=pectinate_tree)
 ```
 
-
 ```{r echo=FALSE, results="asis"}
 PrintTable(c(rep(T, 8), FALSE), 'Exchange two tips')
 ```
@@ -336,6 +372,7 @@ RFPlot(sq_trees$anti_pectinate, 'Positively contradictory tree', ref=pectinate_t
 PrintTable(c(mai=T,mpi=T,clu=T,nye=T,msd=T,qd=T,path=T,spr=NA,rf=F), 'Saturation')
 ```
 
+<!--
 ## Islands
 
 The distances reported by a tree distance metric imply a tree space. It is 
@@ -438,7 +475,163 @@ Bogdanowicz & Giaro [-@Bogdanowicz2012] report that islands exist in the quartet
 ```{r echo=FALSE, results="asis"}
 PrintTable(c(mai=T,mpi=T,clu=T,nye=T,msd=T,qd=F,path=F,spr=T,rf=T), 'Islands')
 ```
+-->
 
+## Heterogeneity of tree space
+
+Tree distances correspond to a non-Euclidian space comprising all possible trees.
+The nature of this space is difficult to visualize, but it is desirable that
+such a space is uniform and does not exhibit islands [@Bogdanowicz2012].
+
+@Kendall2016 evaluate tree metrics by examining the properties of the complete
+tree space for all `r TreeSearch::NRooted(6)` rooted six-tip trees.  A rooted tree is equivalent to 
+an unrooted tree with an additional tip added at the position of the root; as
+I am considering metrics on unrooted trees, I replicate and expand the analysis 
+of @Kendall2016 on all `r TreeSearch::NUnrooted(7)` unrooted seven-tip trees.
+
+```{r 7-tip-funcs, include=FALSE} 
+Palette <- function (n) colorspace::sequential_hcl(n, palette='BluYl')
+MethodPalette <- function (method, n) colorspace::sequential_hcl(n,
+                             h = methodLCH[method, 'H'], 
+                             c = methodLCH[method, 'C'],
+                             l = c(max(40, methodLCH[method, 'L']) - 30, 95),
+                             power = 0.9)
+
+data('sevenTipDistances', package='TreeDistData')
+td7 <- sevenTipDistances
+td7$rf <- td7$rf / 2L
+treeShapes <- td7$shapes
+shapes <- treeShapes[order(treeShapes)]
+treeCols <- Ternary::cbPalette8[c(1:5, 8)]
+names(treeCols) <- unique(shapes)
+
+
+Hist <- function (method, breaks=32L) {
+  h <- hist(td7[[method]], breaks=breaks, plot=FALSE)
+  plot(h, col=MethodPalette(method, length(h$breaks)), main=abbrevs[method])
+}
+
+PlotMDS <- function(method) {
+  space <- MASS::isoMDS(td7[[method]], k=2, trace=FALSE)
+  pts <- space$points
+  plot(pts, pch=19, col=paste0(treeCols[as.character(shapes)], '88'),
+       xlab='', ylab='')
+  z <- MASS::kde2d(pts[, 1], pts[, 2])
+  contour(z, add=TRUE, col='#00000088')
+  legend('bottomright', legend=paste0('stress = ', signif(space$stress, 3)), bty='n')
+  legend('topleft', legend=abbrevs[method], bty='n', text.font=2)
+}
+
+TableImage <- function (method) {
+  x <- rep(seq_len(945), each=945L)
+  y <- rep(seq_len(945), 945L)
+  plot(-100, -100, type='n', ylim=c(0, 965), xlim=c(965, 0), 
+       axes=FALSE, xlab='', ylab='')
+  shapeSizes <- table(shapes)
+  shapeSum <- cumsum(shapeSizes)
+  shapeStarts <-  shapeSum - shapeSizes
+  rect(shapeStarts, 950, shapeSum, 975, col=treeCols, border=NA)
+  rect(950, shapeStarts, 975, shapeSum, col=treeCols, border=NA)
+
+  rect(x - 1L, y - 1L, x, y, border=NA,
+       col=MethodPalette(method, 100)[cut(td7[[method]], 100, labels=FALSE)])
+  legend('topright', legend=paste0(abbrevs[method], '  '), bty='n')
+}
+
+ClusterBars <- function(method) {
+  ret <- double(length(treeCols))
+  names(ret) <- names(treeCols)
+  
+  clusters <- cluster::pam(td7[[method]], 8L, diss=TRUE, cluster.only=TRUE)
+  
+  clusterShapes <- vapply(seq_len(max(clusters)), function (i) 
+    table(shapes[clusters==i])[names(treeCols)],
+    ret)
+  
+  barplot(clusterShapes, col=treeCols, main=abbrevs[method])
+}
+```
+
+The first aspect to consider are the differences between each pair of 
+trees.  Note that the Nye _et al._ and Quartet metrics are pectinate, in contrast
+to the smooth curves of other measures.
+
+```{r 7-tip-trees-histograms, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/2, fig.width=6, out.width='90%', fig.align='center'}
+par(mfrow=c(2, 4), mar=c(2.4, 0.8, 2.4, 0.8))
+
+Hist('vai')
+Hist('vci')
+Hist('nts')
+Hist('qd')
+Hist('msd', breaks=10)
+Hist('path')
+Hist('spr', breaks=3)
+Hist('rf', breaks=4)
+```
+
+The matrix plots below depict, by colour intensity (see histograms above for key), the distance between each 
+pair of trees.  Rows and columns correspond to each of the `r TreeSearch::NUnrooted(7)` 
+unrooted 7-tip trees, sorted according to their topology; the coloured 
+bars in the margins correspond to the six distinct unlabelled tree topologies
+on seven tips, as depicted below.
+
+Note the bands in the Path distance, also evident under Matching Splits, which
+indicate that high distance values are disproportionately likely when
+comparing two trees of certain shapes.
+
+```{r 7-tip-trees-2, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=2, fig.width=5, fig.align='center'}
+par(mfrow=c(4, 2), mar=rep(0.8, 4))
+XX <- lapply(plotSequence, TableImage)
+```
+
+```{r 7-tip-tree-shapes, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/6, fig.width=7, out.width='90%', fig.align='center'}
+par(mfrow=c(1, 6), mar=c(0, 1, 0, 1) * 0.2)
+
+topologies <- c('(a, (b, (c, (d, (e, (f, g))))));',
+                '(a, (b, (c, ((d, e), (f, g)))));',
+                '(a, (b, ((c, d), (e, (f, g)))));',
+                '(a, ((b, c), (d, (e, (f, g)))));',
+                '(a, ((b, c), ((d, e), (f, g))));',
+                '(a, ((b, (c, d)), (e, (f, g))));')
+
+lapply(seq_along(topologies), function (i) {
+  tree <- ape::read.tree(text = topologies[i])
+  tree$edge.length <- rep(1, 12)
+  plot(tree,
+       edge.col=rev(treeCols)[i], 
+       edge.width = 2L,
+       show.tip.label = FALSE)
+}) -> XX
+```
+
+The following figures visualize the tree spaces implied by each distance metric 
+by (i) projecting the tree space into two dimensions using Kruskal's Non-Metric Multidimensional Scaling [@Cox1994]; (ii) partitioning the data into eight clusters
+"around medoids" [@Reynolds2006].  Heterogeneity is evident when points are 
+concentrically distributed, and when clusters are equal in size.
+
+```{r 7-tip-trees-3, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=7, out.width='90%', fig.align='center'}
+par(mfrow=c(4, 4), mar=rep(0.8, 4))
+
+lapply(plotSequence[1:4], PlotMDS) -> XX
+lapply(plotSequence[1:4], ClusterBars) -> XX
+lapply(plotSequence[5:8], PlotMDS) -> XX
+lapply(plotSequence[5:8], ClusterBars) -> XX
+```
+
+The information-based distance measures imply a heterogeneous tree space that
+is largely independent of tree topology.  The Nye _et al._ and quartet metrics
+are largely heterogeneous, but certain tree shapes are slightly more prone to
+cluster together.  
+
+The remaining metrics produce non-uniform tree spaces, with local aggregations;
+these form particularly obvious islands in the SPR and RF distances.  Moreover,
+the Matching Splits, SPR and RF distances exhibit clusters that disproportionately
+contain or omit particular tree topologies, showing that the metrics reflect
+tree topology more strongly than relationship information.
+
+
+# TODO
+## Something to do with random trees #TODO
 ```{R generate-random-trees, include=FALSE}
 suppressWarnings(RNGversion("3.5.0")) # Stopgap until we can require R 3.6.0
 set.seed(0)
@@ -505,36 +698,8 @@ legend('topleft', bty='n', col=cbPalette8[3], lwd=2, 'One tip moved\n maximum di
 
 ```
 
-## Non-bifurcating trees
+# Interpretability
 
-Whereas the path distance and SPR metrics are only defined on bifurcating trees,
-symmetric difference approaches can be applied to trees that contain polytomies -- i.e. 
-not every node is resolved as bifurcating.
-
-```{r echo=FALSE, results="asis"}
-PrintTable(c(mai=T,mpi=T,clu=T,nye=T,msd=T,qd=T,path=F,spr=F,rf=T), 'Polytomies')
-```
-
-
-
-<!--
-## Interpretation
-
-An advantage of the quartet symmetric distance is that the normalized metric of a random
-tree is $\frac{2}{3}$ [@Day1986; @Steel1993].  As such, trees that are more different
-than expected by chance can be readily recognized, as their distance metric
-will be greater than $\frac{`r choose(11, 4) * 2 / 3`}{`r choose(11, 4)`}$.
-The 'maximum distance' tree depicted below was identified using the R package
-`TreeSearch` [@TreeSearch], using the quartet difference from the reference tree 
-as an optimality criterion.
-
-```{R Increasing-distances, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1.4/3, fig.width=6, out.width='90%', fig.align='center'}
-par(mfrow=c(1, 3), mar=standardMargin)
-ColPlot(sq_trees[[1]], 'Reference tree')
-RFPlot(sq_trees$random_tree,   'Random tree'     )
-RFPlot(sq_trees$opposite_tree, 'Maximum quartet distance')
-```
--->
 ## Unit equivalence
 
 A further shortcoming of the RF metric is that not all partitions represent an equivalent amount of information.  A partition distance of 1 could mean that two trees differ in an less informative partition, or a more informative partition.  All quartets,
@@ -644,5 +809,36 @@ axis(2)
 
 This differing information content is reflected in the ranges taken by
 explicitly information-theoretic measures of tree similarity.
+
+# Versatility: Non-bifurcating trees
+
+Whereas the path distance and SPR metrics are only defined on bifurcating trees,
+symmetric difference approaches can be applied to trees that contain polytomies -- i.e. 
+not every node is resolved as bifurcating.
+
+```{r echo=FALSE, results="asis"}
+PrintTable(c(mai=T,mpi=T,clu=T,nye=T,msd=T,qd=T,path=F,spr=F,rf=T), 'Polytomies')
+```
+
+
+
+<!--
+## Interpretation
+
+An advantage of the quartet symmetric distance is that the normalized metric of a random
+tree is $\frac{2}{3}$ [@Day1986; @Steel1993].  As such, trees that are more different
+than expected by chance can be readily recognized, as their distance metric
+will be greater than $\frac{`r choose(11, 4) * 2 / 3`}{`r choose(11, 4)`}$.
+The 'maximum distance' tree depicted below was identified using the R package
+`TreeSearch` [@TreeSearch], using the quartet difference from the reference tree 
+as an optimality criterion.
+
+```{R Increasing-distances, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1.4/3, fig.width=6, out.width='90%', fig.align='center'}
+par(mfrow=c(1, 3), mar=standardMargin)
+ColPlot(sq_trees[[1]], 'Reference tree')
+RFPlot(sq_trees$random_tree,   'Random tree'     )
+RFPlot(sq_trees$opposite_tree, 'Maximum quartet distance')
+```
+-->
 
 # References
