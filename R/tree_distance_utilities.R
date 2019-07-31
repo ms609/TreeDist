@@ -2,7 +2,7 @@
 #' 
 #' Calls tree distance functions from trees or lists of trees
 #' 
-#' @inheritParams MutualArborealInfo
+#' @inheritParams MutualPhylogeneticInfo
 #' @param Func Tree distance function.
 #' @param \dots Additional arguments to `Func`.
 #' 

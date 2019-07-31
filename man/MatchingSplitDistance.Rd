@@ -46,7 +46,7 @@ trees of Bogdanowicz and Giaro (2012).
 }
 \section{Functions}{
 \itemize{
-\item \code{MatchingSplitDistanceSplits}: Takes splits instead of trees
+\item \code{MatchingSplitDistanceSplits}: Calculate Matching Split Distance from splits instead of trees.
 }}
 
 \section{Normalization}{
@@ -64,7 +64,7 @@ so that it can be implemented.
 }
 \seealso{
 Other tree distances: \code{\link{KendallColijn}},
-  \code{\link{MutualArborealInfo}},
+  \code{\link{MutualPhylogeneticInfo}},
   \code{\link{NyeTreeSimilarity}}
 }
 \author{

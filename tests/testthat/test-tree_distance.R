@@ -9,14 +9,12 @@ test_that("Split combatibility is correctly established", {
 })
 
 methodsToTest <- list(
-  MutualArborealInfo,
-  VariationOfArborealInfo,
-  # TODO DELETE tests of .Deprecated(msg="Not intended for production")
-  #MutualPartitionInfo,
-  #VariationOfPartitionInfo,
+  MutualPhylogeneticInfo,
+  VariationOfPhylogeneticInfo,
+  MutualMatchingSplitInfo,
+  VariationOfMatchingSplitInfo,
   MutualClusteringInfo,
   VariationOfClusteringInfo,
-  MutualArborealInfo,
   NyeTreeSimilarity,
   MatchingSplitDistance,
   KendallColijn
@@ -50,7 +48,7 @@ test_that('Size mismatch causes error', {
 
 test_that('Metrics handle polytomies', {
   polytomy8 <- ape::read.tree(text='(a, b, c, d, e, f, g, h);')
-  lapply(list(MutualArborealInfo, MutualClusteringInfo,
+  lapply(list(MutualPhylogeneticInfo, MutualClusteringInfo,
               MatchingSplitDistance, NyeTreeSimilarity),
          function (Func) expect_equal(0, Func(treeSym8, polytomy8)))
 })
@@ -68,70 +66,69 @@ test_that('Output dimensions are correct', {
   lapply(methodsToTest, Test)
 })
 
-test_that('Mutual Arboreal Info is correctly calculated', {
+test_that('Mutual Phylogenetic Info is correctly calculated', {
   expect_equal(22.53747, tolerance=1e-05,
-               MutualArborealInfo(treeSym8, treeSym8, normalize = FALSE))
+               MutualPhylogeneticInfo(treeSym8, treeSym8, normalize = FALSE))
   expect_equal(1, tolerance = 1e-05,
-               MutualArborealInfo(treeSym8, treeSym8, normalize = TRUE))
-  expect_equal(13.75284, MutualArborealInfo(treeSym8, treeBal8), tolerance=1e-05)
-  expect_equal(VariationOfArborealInfo(treeSym8, treeAcd.Befgh),
-               VariationOfArborealInfo(treeAcd.Befgh, treeSym8), tolerance=1e-05)
-  expect_equal(0, VariationOfArborealInfo(treeSym8, treeSym8, normalize = TRUE))
+               MutualPhylogeneticInfo(treeSym8, treeSym8, normalize = TRUE))
+  expect_equal(13.75284, MutualPhylogeneticInfo(treeSym8, treeBal8), tolerance=1e-05)
+  expect_equal(VariationOfPhylogeneticInfo(treeSym8, treeAcd.Befgh),
+               VariationOfPhylogeneticInfo(treeAcd.Befgh, treeSym8), tolerance=1e-05)
+  expect_equal(0, VariationOfPhylogeneticInfo(treeSym8, treeSym8, normalize = TRUE))
   infoSymBal <- PartitionInfo(treeSym8) + PartitionInfo(treeBal8)
   expect_equal(infoSymBal - 13.75284 - 13.75284, tolerance = 1e-05,
-    VariationOfArborealInfo(treeSym8, treeBal8, normalize = TRUE) * infoSymBal)
-  expect_equal(22.53747 + MutualArborealInfo(treeAcd.Befgh, treeAcd.Befgh) - 
-                 (2 * MutualArborealInfo(treeSym8, treeAcd.Befgh)), 
-               VariationOfArborealInfo(treeSym8, treeAcd.Befgh), tolerance=1e-05)
-  expect_equal(-log2(945/10395), MutualArborealInfo(treeSym8, treeAb.Cdefgh))
-  expect_equal(22.53747 + MutualArborealInfo(treeBal8, treeBal8) - 13.75284 - 13.75284, 
-               VariationOfArborealInfo(treeSym8, treeBal8), tolerance=1e-05)
-  expect_equal(-log2(945/10395), MutualArborealInfo(treeSym8, treeAb.Cdefgh))
-  expect_equal(-log2(315/10395), MutualArborealInfo(treeSym8, treeAbc.Defgh))
-  expect_equal(0, VariationOfArborealInfo(treeSym8, treeSym8))
+    VariationOfPhylogeneticInfo(treeSym8, treeBal8, normalize = TRUE) * infoSymBal)
+  expect_equal(22.53747 + MutualPhylogeneticInfo(treeAcd.Befgh, treeAcd.Befgh) - 
+                 (2 * MutualPhylogeneticInfo(treeSym8, treeAcd.Befgh)), 
+               VariationOfPhylogeneticInfo(treeSym8, treeAcd.Befgh), tolerance=1e-05)
+  expect_equal(-log2(945/10395), MutualPhylogeneticInfo(treeSym8, treeAb.Cdefgh))
+  expect_equal(22.53747 + MutualPhylogeneticInfo(treeBal8, treeBal8) - 13.75284 - 13.75284, 
+               VariationOfPhylogeneticInfo(treeSym8, treeBal8), tolerance=1e-05)
+  expect_equal(-log2(945/10395), MutualPhylogeneticInfo(treeSym8, treeAb.Cdefgh))
+  expect_equal(-log2(315/10395), MutualPhylogeneticInfo(treeSym8, treeAbc.Defgh))
+  expect_equal(0, VariationOfPhylogeneticInfo(treeSym8, treeSym8))
   expect_equal(PartitionInfo(treeSym8) - PartitionInfo(treeAcd.Befgh),
-               VariationOfArborealInfo(treeSym8, treeAbc.Defgh))
+               VariationOfPhylogeneticInfo(treeSym8, treeAbc.Defgh))
   
   
   # Test symmetry of small vs large splits
-  expect_equal(MutualArborealInfo(treeSym8, treeAbc.Defgh),
-               MutualArborealInfo(treeAbc.Defgh, treeSym8))
-  expect_equal(-log2(225/10395), MutualArborealInfo(treeSym8, treeAbcd.Efgh))
+  expect_equal(MutualPhylogeneticInfo(treeSym8, treeAbc.Defgh),
+               MutualPhylogeneticInfo(treeAbc.Defgh, treeSym8))
+  expect_equal(-log2(225/10395), MutualPhylogeneticInfo(treeSym8, treeAbcd.Efgh))
   expect_equal(-log2(225/10395) - log2(945/10395),
-               MutualArborealInfo(treeSym8, treeTwoSplits))
+               MutualPhylogeneticInfo(treeSym8, treeTwoSplits))
   expect_equal(SplitMutualInformation(8, 4, 3),
-               MutualArborealInfo(treeTwoSplits, treeAbc.Defgh))
+               MutualPhylogeneticInfo(treeTwoSplits, treeAbc.Defgh))
   
-  expect_equal(MutualArborealInfo(treeSym8, list(treeSym8, treeBal8)), 
-               MutualArborealInfo(list(treeSym8, treeBal8), treeSym8))
+  expect_equal(MutualPhylogeneticInfo(treeSym8, list(treeSym8, treeBal8)), 
+               MutualPhylogeneticInfo(list(treeSym8, treeBal8), treeSym8))
 })
 
 
-# #TODO DELETE test of .Deprecated function, when function is deleted
-#test_that('MutualPartitionInfo is correctly calculated', {
-#  BinaryToSplit <- function (binary) matrix(as.logical(binary))
-#  expect_equal(MutualPartitionInfoSplits(
-#    BinaryToSplit(c(1, 1, 0, 0, 0, 0, 0, 0)),
-#    BinaryToSplit(c(0, 0, 1, 1, 0, 0, 0, 0))
-#    ), MutualPartitionInfoSplits(
-#    BinaryToSplit(c(0, 0, 0, 0, 0, 0, 1, 1)),
-#    BinaryToSplit(c(0, 0, 1, 1, 0, 0, 0, 0))
-#    ))
-#  
-#  MutualPartitionInfoSplits(BinaryToSplit(c(1, 1, 1, 1, 0, 0, 0, 0)),
-#                         BinaryToSplit(c(1, 0, 1, 0, 1, 0, 1, 0)))
-#  expect_equal(MutualArborealInfo(treeSym8, treeSym8),
-#               MutualPartitionInfo(treeSym8, treeSym8), tolerance=1e-05)
-#  expect_equal(MutualPartitionInfo(treeAb.Cdefgh, treeAbc.Defgh),
-#               MutualPartitionInfo(treeAbc.Defgh, treeAb.Cdefgh))
-#  expect_equal(MutualPartitionInfo(treeAbcd.Efgh, treeAb.Cdefgh),
-#               MutualPartitionInfo(treeAb.Cdefgh, treeAbcd.Efgh))
-#  expect_equal(-(TreeSearch::LogTreesMatchingSplit(2, 5) - LnUnrooted.int(7)) / log(2), 
-#               MutualPartitionInfo(treeAb.Cdefgh, treeAbc.Defgh))
-#  expect_true(MutualPartitionInfo(treeSym8, treeBal8) > MutualPartitionInfo(treeSym8, treeOpp8))
-#  expect_equal(0, VariationOfPartitionInfo(treeSym8, treeSym8))
-#  
-#})
+test_that('MutualMatchingSplitInfo is correctly calculated', {
+  BinaryToSplit <- function (binary) matrix(as.logical(binary))
+  expect_equal(MutualMatchingSplitInfoSplits(
+    BinaryToSplit(c(1, 1, 0, 0, 0, 0, 0, 0)),
+    BinaryToSplit(c(0, 0, 1, 1, 0, 0, 0, 0))
+    ), MutualMatchingSplitInfoSplits(
+    BinaryToSplit(c(0, 0, 0, 0, 0, 0, 1, 1)),
+    BinaryToSplit(c(0, 0, 1, 1, 0, 0, 0, 0))
+    ))
+  
+  MutualMatchingSplitInfoSplits(BinaryToSplit(c(1, 1, 1, 1, 0, 0, 0, 0)),
+                         BinaryToSplit(c(1, 0, 1, 0, 1, 0, 1, 0)))
+  expect_equal(MutualPhylogeneticInfo(treeSym8, treeSym8),
+               MutualMatchingSplitInfo(treeSym8, treeSym8), tolerance=1e-05)
+  expect_equal(MutualMatchingSplitInfo(treeAb.Cdefgh, treeAbc.Defgh),
+               MutualMatchingSplitInfo(treeAbc.Defgh, treeAb.Cdefgh))
+  expect_equal(MutualMatchingSplitInfo(treeAbcd.Efgh, treeAb.Cdefgh),
+               MutualMatchingSplitInfo(treeAb.Cdefgh, treeAbcd.Efgh))
+  expect_equal(-(TreeSearch::LogTreesMatchingSplit(2, 5) - LnUnrooted.int(7)) / log(2), 
+               MutualMatchingSplitInfo(treeAb.Cdefgh, treeAbc.Defgh))
+  expect_true(MutualMatchingSplitInfo(treeSym8, treeBal8) > MutualMatchingSplitInfo(treeSym8, treeOpp8))
+  expect_equal(0, VariationOfMatchingSplitInfo(treeSym8, treeSym8))
+  
+})
 
 test_that('Clustering information is correctly calculated', {
   expect_equal(ClusteringInfo(treeSym8), MutualClusteringInfo(treeSym8, treeSym8),

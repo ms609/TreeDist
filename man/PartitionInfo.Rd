@@ -20,7 +20,7 @@ these partitions will contain mutual information
 }
 \section{Functions}{
 \itemize{
-\item \code{PartitionInfoSplits}: Takes splits instead of trees
+\item \code{PartitionInfoSplits}: Calculate partition information from splits instead of trees.
 }}
 
 \author{

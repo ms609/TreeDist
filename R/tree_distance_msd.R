@@ -3,7 +3,7 @@
 #' Implements the Matching Split Distance for unrooted binary phylogenetic 
 #' trees of Bogdanowicz and Giaro (2012).
 #' 
-#' @inheritParams MutualArborealInfo
+#' @inheritParams MutualPhylogeneticInfo
 #' 
 #' @section Normalization:
 #' 
@@ -30,8 +30,8 @@ MatchingSplitDistance <- function (tree1, tree2, normalize = FALSE,
                 Combine = max)
 }
 
-#' @describeIn MatchingSplitDistance Takes splits instead of trees
-#' @inheritParams MutualArborealInfoSplits
+#' @describeIn MatchingSplitDistance Calculate Matching Split Distance from splits instead of trees.
+#' @inheritParams MutualPhylogeneticInfoSplits
 #' @importFrom clue solve_LSAP
 #' @export
 MatchingSplitDistanceSplits <- function (splits1, splits2, normalize = TRUE, 

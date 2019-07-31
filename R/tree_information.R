@@ -19,7 +19,7 @@ PartitionInfo <- function(tree) {
   }
 }
 
-#' @describeIn PartitionInfo Takes splits instead of trees
+#' @describeIn PartitionInfo Calculate partition information from splits instead of trees.
 #' @importFrom TreeSearch LnRooted.int LnUnrooted.int
 #' @export
 PartitionInfoSplits <- function(splits) {
@@ -63,7 +63,7 @@ ClusteringInfo <- function(tree) {
   }
 }
 
-#' @describeIn ClusteringInfo Takes splits instead of trees
+#' @describeIn ClusteringInfo Calculate clustering information from splits instead of trees.
 #' @export
 ClusteringInfoSplits <- function (splits) {
   nTip <- nrow(splits)

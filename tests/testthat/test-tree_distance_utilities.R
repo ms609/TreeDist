@@ -31,15 +31,13 @@ test_that('Matches are reported', {
     expect_equal('a b : c d e f g h => c d e f g h : a b', at$matchedSplits[2])
   }
   
-  Test(MutualArborealInfo)
-  Test(VariationOfArborealInfo)
-  # TODO DELETE tests of deprecated function - once confident that function
-  # should be removed!
-  #Test(MutualPartitionInfo)
-  #Test(VariationOfPartitionInfo)
+  Test(MutualPhylogeneticInfo)
+  Test(VariationOfPhylogeneticInfo)
+  Test(MutualMatchingSplitInfo)
+  Test(VariationOfMatchingSplitInfo)
   Test(MutualClusteringInfo)
   Test(VariationOfClusteringInfo)
-  Test(MutualArborealInfo)
+  Test(MutualPhylogeneticInfo)
   Test(NyeTreeSimilarity)
 
   # Matching Split Distance matches differently:  

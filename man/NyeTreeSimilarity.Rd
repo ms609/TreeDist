@@ -49,14 +49,17 @@ normalized against the Jaccard index.
 }
 \section{Functions}{
 \itemize{
-\item \code{NyeSplitSimilarity}: Takes splits instead of trees
+\item \code{NyeSplitSimilarity}: Calculate tree similarity from splits instead of trees.
 }}
 
 \section{Normalization}{
 
 
-If \code{normalize = TRUE}, then results will be rescaled from zero to a maximum
-value calculated by #TODO detail
+If \code{normalize = TRUE}, then results will be rescaled from zero to one by
+dividing by the maximum possible value for trees of the given topologies,
+which is four less than the total number of nodes in both trees.
+You may wish to normalize instead against the maximum number of nodes present
+in a pair of trees with \emph{n} terminals, by specifying \code{normalize = <some number>}.
 }
 
 \references{
@@ -65,7 +68,7 @@ value calculated by #TODO detail
 \seealso{
 Other tree distances: \code{\link{KendallColijn}},
   \code{\link{MatchingSplitDistance}},
-  \code{\link{MutualArborealInfo}}
+  \code{\link{MutualPhylogeneticInfo}}
 }
 \author{
 Martin R. Smith

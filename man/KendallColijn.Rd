@@ -47,7 +47,7 @@ a more sophisticated, if more cumbersome, implementation that supports
 lambda > 0, i.e. use of edge lengths in tree comparison.
 
 Other tree distances: \code{\link{MatchingSplitDistance}},
-  \code{\link{MutualArborealInfo}},
+  \code{\link{MutualPhylogeneticInfo}},
   \code{\link{NyeTreeSimilarity}}
 }
 \author{

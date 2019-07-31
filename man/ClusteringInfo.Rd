@@ -30,7 +30,7 @@ measure of the information content of the tree as a whole.
 }
 \section{Functions}{
 \itemize{
-\item \code{ClusteringInfoSplits}: Takes splits instead of trees
+\item \code{ClusteringInfoSplits}: Calculate clustering information from splits instead of trees.
 }}
 
 \references{

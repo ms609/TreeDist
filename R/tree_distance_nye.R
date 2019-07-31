@@ -6,7 +6,7 @@
 #' the size of the largest bipartition that is consistent with both of them,
 #' normalized against the Jaccard index.
 #' 
-#' @inheritParams MutualArborealInfo
+#' @inheritParams MutualPhylogeneticInfo
 #' 
 #' @section Normalization:
 #' 
@@ -37,8 +37,8 @@ NyeTreeSimilarity <- function (tree1, tree2, normalize = FALSE,
                 InfoInTree = NyeInfoCounter, Combine = pmax)
 }
 
-#' @describeIn NyeTreeSimilarity Takes splits instead of trees
-#' @inheritParams MutualArborealInfoSplits
+#' @describeIn NyeTreeSimilarity Calculate tree similarity from splits instead of trees.
+#' @inheritParams MutualPhylogeneticInfoSplits
 #' @export
 NyeSplitSimilarity <- function (splits1, splits2, normalize = TRUE,
                                 reportMatching = FALSE) {

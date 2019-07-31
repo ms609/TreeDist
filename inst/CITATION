@@ -2,7 +2,7 @@ vers <- paste("R package version", meta$Version)
 
 citHeader(paste0("When using the package, I would appreciate it if you would ",
 "acknowledge your use of TreeDist in the article text, and cite the papers ",
-"describing the metrics that you employ. For example, 'Mutual Arboreal ",
+"describing the metrics that you employ. For example, 'Mutual Phylogenetic ",
 "Information similarity metrics (Smith 20XX) were calculated using the R package",
 " TreeDist v", packageVersion('TreeDist'), " (Smith 2019)"))
 

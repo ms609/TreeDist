@@ -53,7 +53,7 @@ RFPlot <- function (tr, title=NULL, highlight=NULL, ref=sq_trees[[1]],
   text_x <- par('usr')[2] * 0.6
   
   y <- 0.5
-  text(text_x, y <- y - 1, "V. Arboreal Info.:", cex=0.8, pos=2)
+  text(text_x, y <- y - 1, "V. Phylo. Info.:", cex=0.8, pos=2)
   #text(text_x, y <- y - 1, "V. Partition Info.:", cex=0.8, pos=2)
   #text(text_x, y <- y - 1, "VoParInf+:", cex=0.8, pos=2)
   text(text_x, y <- y - 1, "V. Cluster Info.:", cex=0.8, pos=2)
@@ -70,9 +70,9 @@ RFPlot <- function (tr, title=NULL, highlight=NULL, ref=sq_trees[[1]],
   text_x <- text_x - 0.4
   y <- 0.5
   text(text_x, y <- y - 1, cex=0.8, pos=4,
-       round(VariationOfArborealInfo(tr, ref, normalize = TRUE), 4))
+       round(VariationOfPhylogeneticInfo(tr, ref, normalize = TRUE), 4))
 #  text(text_x, y <- y - 1, cex=0.8, pos=4,
-#       round(VariationOfPartitionInfo(tr, ref, normalize = TRUE), 4))
+#       round(VariationOfMatchingSplitInfo(tr, ref, normalize = TRUE), 4))
   text(text_x, y <- y - 1, cex=0.8, pos=4,
        round(VariationOfClusteringInfo(tr, ref, normalize = TRUE), 4))
   
@@ -88,14 +88,14 @@ RFPlot <- function (tr, title=NULL, highlight=NULL, ref=sq_trees[[1]],
   text(text_x, y <- y - 1, paste0(phangorn::sprdist(tr, ref)[1]), cex=0.8, pos=4)
   text(text_x, y <- y - 1, paste0(tree_dist['symmetric.difference'], 
                                   ' / ', (11L - 3L) * 2L), cex=0.8, pos=4)
-  #text(text_x, y <- y - 1, paste0(100 * signif(VariationOfPartitionInfo(tr, ref) / pair_info, 4), '%'), cex=0.8, pos=4)
+  #text(text_x, y <- y - 1, paste0(100 * signif(VariationOfMatchingSplitInfo(tr, ref) / pair_info, 4), '%'), cex=0.8, pos=4)
 }
 ```
 <!--```
   text(text_x, y <- y - 1, paste0(
-    signif(VariationOfArborealInfo(tr, ref), 4), ' / ', pair_info
+    signif(VariationOfPhylogeneticInfo(tr, ref), 4), ' / ', pair_info
     ), cex=0.8, pos=4)
-  #text(text_x, y <- y - 1, paste0(signif(VariationOfPartitionInfo(tr, ref), 4),
+  #text(text_x, y <- y - 1, paste0(signif(VariationOfMatchingSplitInfo(tr, ref), 4),
                                   ' / ', pair_info), cex=0.8, pos=4)
   text(text_x, y <- y - 1, paste0(signif(VariationOfClusteringInfo(tr, ref), 4),
                                   ' / ',
@@ -114,7 +114,7 @@ RFPlot <- function (tr, title=NULL, highlight=NULL, ref=sq_trees[[1]],
   text(text_x, y <- y - 1, paste0(phangorn::sprdist(tr, ref)[1]), cex=0.8, pos=4)
   text(text_x, y <- y - 1, paste0(tree_dist['symmetric.difference'], 
                                   ' / ', (11L - 3L) * 2L), cex=0.8, pos=4)
-  #text(text_x, y <- y - 1, paste0(100 * signif(VariationOfPartitionInfo(tr, ref) / pair_info, 4), '%'), cex=0.8, pos=4)
+  #text(text_x, y <- y - 1, paste0(100 * signif(VariationOfMatchingSplitInfo(tr, ref) / pair_info, 4), '%'), cex=0.8, pos=4)
 }
 ```-->
 
@@ -174,7 +174,7 @@ ape::nodelabels('*', 18, frame='none')
 RFPlot(ape::read.tree(text='(((1, 2), 3), ((6, (5, 4)), ((8, 9), ((10, 11), 7))));'), 'Move two tips (8 & 9) one node', 8:9, edge.lengths=c(rep(1, 11), 0.5, 2.5, 1, 1, 0.5, 1,1,1,3))
 ape::nodelabels('*', 18, frame='none')
 # TODO I AM HERE!
-# V arboreal info and mut arboreal info seem to prefer moving two nodes... but 
+# V phylo info and mut phylo info seem to prefer moving two nodes... but 
 # this depends how they are normalized.  EXPLORE.
 
 ```
@@ -391,8 +391,8 @@ PlotMDS <- function(distances, title='') {
   legend('top', legend=title, bty='n', text.font=2)
 }
 
-PlotMDS(VariationOfArborealInfo(moveOne, moveOne), 'V. Arb. Info')
-#PlotMDS(VariationOfPartitionInfo(moveOne, moveOne), 'V. Part. Info')
+PlotMDS(VariationOfPhylogeneticInfo(moveOne, moveOne), 'V. Arb. Info')
+#PlotMDS(VariationOfMatchingSplitInfo(moveOne, moveOne), 'V. Part. Info')
 PlotMDS(VariationOfClusteringInfo(moveOne, moveOne), 'V. Clust. Info')
 PlotMDS(8L - NyeTreeSimilarity(moveOne, moveOne), 'Nye')
 PlotMDS(MatchingSplitDistance(moveOne, moveOne), 'Mat. Spl. Dist')
@@ -443,11 +443,11 @@ random_quartets <- Quartet::QuartetStatus(random_trees, cf=pectinate_tree)[, 'd'
 random_distances <- vapply(random_trees, phangorn::treedist,
                            tree2=pectinate_tree, double(2))
 random_paths <- random_distances['path.difference', ]
-random_arb_info <- VariationOfArborealInfo(random_trees, pectinate_tree, normalize=TRUE)
-pect_arb_info <- VariationOfArborealInfo(pectinate_move1, pectinate_tree, normalize=TRUE)
-#random_par_info <- VariationOfPartitionInfo(random_trees, pectinate_tree, normalize=TRUE)
-#pect_par_info <- VariationOfPartitionInfo(pectinate_move1, pectinate_tree, normalize=TRUE)
-pect_arb_info <- VariationOfArborealInfo(pectinate_move1, pectinate_tree, normalize=TRUE)
+random_arb_info <- VariationOfPhylogeneticInfo(random_trees, pectinate_tree, normalize=TRUE)
+pect_arb_info <- VariationOfPhylogeneticInfo(pectinate_move1, pectinate_tree, normalize=TRUE)
+#random_par_info <- VariationOfMatchingSplitInfo(random_trees, pectinate_tree, normalize=TRUE)
+#pect_par_info <- VariationOfMatchingSplitInfo(pectinate_move1, pectinate_tree, normalize=TRUE)
+pect_arb_info <- VariationOfPhylogeneticInfo(pectinate_move1, pectinate_tree, normalize=TRUE)
 random_clu_info <- VariationOfClusteringInfo(random_trees, pectinate_tree, normalize=TRUE)
 pect_clu_info <- VariationOfClusteringInfo(pectinate_move1, pectinate_tree, normalize=TRUE)
 random_ms_info <- MatchingSplitDistance(random_trees, pectinate_tree)
