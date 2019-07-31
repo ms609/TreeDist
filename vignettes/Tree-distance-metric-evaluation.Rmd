@@ -37,7 +37,7 @@ ColPlot <- function (tr, title=NULL, bold=NULL, ...) {
   if (!is.null(bold)) font[tr$tip.label %in% bold] <- 4
   plot(tr, tip.col=Ternary::cbPalette15[-c(4, 7)][as.integer(tr$tip.label)], 
        main=title, cex.main=0.8, font=font,
-       y.lim=c(-9.4, 11), ...) ## Change value 1 [minimum] when adding to legend
+       y.lim=c(-8.4, 11), ...) ## Change value 1 [minimum] when adding to legend
 }
 
 RFPlot <- function (tr, title=NULL, highlight=NULL, ref=sq_trees[[1]], 
@@ -54,6 +54,7 @@ RFPlot <- function (tr, title=NULL, highlight=NULL, ref=sq_trees[[1]],
   
   y <- 0.5
   text(text_x, y <- y - 1, "V. Phylo. Info.:", cex=0.8, pos=2)
+  #text(text_x, y <- y - 1, "V. Phylo. Info. Un:", cex=0.8, pos=2)
   #text(text_x, y <- y - 1, "V. Partition Info.:", cex=0.8, pos=2)
   #text(text_x, y <- y - 1, "VoParInf+:", cex=0.8, pos=2)
   text(text_x, y <- y - 1, "V. Cluster Info.:", cex=0.8, pos=2)
@@ -61,7 +62,7 @@ RFPlot <- function (tr, title=NULL, highlight=NULL, ref=sq_trees[[1]],
   text(text_x, y <- y - 1, "Matching Splits:", cex=0.8, pos=2)
   text(text_x, y <- y - 1, 'Quartet:', cex=0.8, pos=2)
   text(text_x, y <- y - 1, "Path:", cex=0.8, pos=2)
-  text(text_x, y <- y - 1, "Kendall-Colijn:", cex=0.8, pos=2)
+#  text(text_x, y <- y - 1, "Kendall-Colijn:", cex=0.8, pos=2)
   text(text_x, y <- y - 1, "SPR:", cex=0.8, pos=2)
   text(text_x, y <- y - 1, "Robinson-Foulds:", cex=0.8, pos=2)
   
@@ -71,6 +72,8 @@ RFPlot <- function (tr, title=NULL, highlight=NULL, ref=sq_trees[[1]],
   y <- 0.5
   text(text_x, y <- y - 1, cex=0.8, pos=4,
        round(VariationOfPhylogeneticInfo(tr, ref, normalize = TRUE), 4))
+#  text(text_x, y <- y - 1, cex=0.8, pos=4,
+#       round(VariationOfPhylogeneticInfo(tr, ref, normalize = FALSE), 4))
 #  text(text_x, y <- y - 1, cex=0.8, pos=4,
 #       round(VariationOfMatchingSplitInfo(tr, ref, normalize = TRUE), 4))
   text(text_x, y <- y - 1, cex=0.8, pos=4,
@@ -84,7 +87,7 @@ RFPlot <- function (tr, title=NULL, highlight=NULL, ref=sq_trees[[1]],
   text(text_x, y <- y - 1, paste0(QuartetStatus(list(tr, ref))[2, 'd'],
                             ' / ', choose(11,4)), cex=0.8, pos=4)
   text(text_x, y <- y - 1, paste0(signif(tree_dist['path.difference'], 4)), cex=0.8, pos=4)
-  text(text_x, y <- y - 1, signif(KendallColijn(tr, ref), 4), cex=0.8, pos=4)
+#  text(text_x, y <- y - 1, signif(KendallColijn(tr, ref), 4), cex=0.8, pos=4)
   text(text_x, y <- y - 1, paste0(phangorn::sprdist(tr, ref)[1]), cex=0.8, pos=4)
   text(text_x, y <- y - 1, paste0(tree_dist['symmetric.difference'], 
                                   ' / ', (11L - 3L) * 2L), cex=0.8, pos=4)
@@ -151,18 +154,26 @@ The Robinson-Foulds, path difference and quartet metrics,
 in contrast, recognize trees in which this tip has been 
 moved further as more distant from the starting tree.
 
-`r pass <- 'Pass'; FAIL <- '<span style="color:red">**FAIL**</span>'`
+```{r echo=FALSE, results="asis"}
+pass<-'Pass';FAIL<-'**FAIL**';#TODO<-DELETE
+PrintTable <- function(passes, title='Outcome') 
+  cat(paste0("| **Measure** | Phylo. Inf. | MS Inf. | Clust. Inf. | Nye _et al._ | MS Dist | Quartet | Path | SPR | RF |\n",
+         "| ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | \n",
+         "| **", title, "** | ",
+      paste0(ifelse(is.na(passes), '(?)', ifelse(passes, 'Pass', '<span style="color:red">**FAIL**</span>')), collapse=' |')))
 
-| **Measure** | MArInf | MPaInf | ClustInf | Nye _et al._ | MS | Quartet | Path | SPR | RF |
-| ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | 
-| **Outcome** | `r pass` | `r pass` | `r pass` | `r pass` | `r FAIL` | `r pass` | `r pass` | `r FAIL` | `r pass` |
-
+PrintTable(c(T,T,T,T,F,T,T,F,T), 'Length of move')
+```
 
 ## Number of tips moved
 
 Intuitively, moving a pair of tips on a tree should lead to higher tree distances
-than moving a single tip.  In the case of a short move, the Quartet, SPR and RF distances
-do not differ whether one or two tips are moved.  
+than moving a single tip. <!--
+
+## This case is ambiguous, as the moves are equivalent to moving (10, 11) by one node; perhaps the quartet metric can be forgiven for allocating both moves an equivalent score.  Note that the VPI is counterintuitive in this case.
+## 
+## In the case of a short move, the Quartet, SPR and RF distances
+## do not differ whether one or two tips are moved.  
 
 ```{R Cherry-short-move, echo=FALSE, message=FALSE, cache=TRUE, fig.width=6.4, fig.height=4, out.width='75%', fig.align='center'}
 par(mfrow=c(1, 3), mar=standardMargin, cex=1)
@@ -179,14 +190,12 @@ ape::nodelabels('*', 18, frame='none')
 
 ```
 
-Arguably this is an ambiguous case, as the moves are equivalent to moving (10, 11) by one node; perhaps the quartet metric can be forgiven for allocating both moves an equivalent score.  
-
-| **Measure** | MArInf | MPaInf | ClustInf | Nye _et al._ | MS | Quartet | Path | SPR | RF |
-| ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | 
-| **Single-node move** | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | (?) | `r pass` | `r FAIL` | `r FAIL` |
 
 
-<!--
+```{r echo=FALSE, results="asis"}
+PrintTable(c(T,T,T,T,T,NA,T,F,F), "Single-node move")
+```
+--><!--
 ```{R Cherry-short-move-2, echo=FALSE, message=FALSE, cache=TRUE, fig.width=6.4, fig.height=4, out.width='75%', fig.align='center'}
 par(mfrow=c(1, 3), mar=standardMargin, cex=1)
 
@@ -208,8 +217,7 @@ ape::nodelabels('*', 15, frame='none')
 -->
 
 
-In the following situation, 
-the Nye _et al_. metric assigns a higher distance 
+In the following situation, the Nye _et al_. metric assigns a higher distance 
 to a move that relocates relocate a single tip than one that moves two tips to
 the same location, and the matching splits metric fails to differentiate between
 the two:
@@ -226,9 +234,10 @@ ape::nodelabels('*', 17, frame='none')
 
 ```
 
-| **Measure** | MArInf | MPaInf | ClustInf | Nye _et al._ | MS | Quartet | Path | SPR | RF |
-| ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | 
-| **Two node move** | `r pass` | `r pass` | `r pass` | `r FAIL` | `r FAIL` | `r pass` | `r pass` | `r FAIL` | `r FAIL` |
+```{r echo=FALSE, results="asis"}
+PrintTable(c(T,T,T,nye=F,msd=F,qd=T,path=T,spr=F,rf=F), 'Two-node move')
+```
+
 <!--
 ```{R  Move-a-cherry-two-b, echo=FALSE, message=FALSE, cache=TRUE, fig.width=6, fig.height=4, out.width='66%', fig.align='center', include=FALSE, eval=FALSE}
 # Equivalent metric results to last block; don't include
@@ -259,7 +268,6 @@ ape::nodelabels()#'*', 18, frame='none')
 -->
 
 
-
 ## Number of moves made
 
 Moving one taxon a specified distance ought to result in a smaller difference than moving two taxa the same distance. As a simple example, exchanging a pair of taxa represents a larger change than moving one taxon adjacent to the other.
@@ -273,10 +281,12 @@ RFPlot(pectinate_move1, 'Move one tip', 1, ref=pectinate_tree, edge.lengths = c(
 RFPlot(sq_trees$top_and_tail, 'Exchange two tips', c(1, 11), ref=pectinate_tree)
 ```
 
-| **Measure** | MArInf | MPaInf | ClustInf | Nye _et al._ | MS | Quartet | Path | SPR | RF |
-| ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | 
-| **Exchange two tips** | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r FAIL` |
 
+```{r echo=FALSE, results="asis"}
+PrintTable(c(rep(T, 8), FALSE), 'Exchange two tips')
+```
+
+## Complexity of moves
 
 As a more nuanced example, I propose that a rearrangement that requires the 
 translocation of more than half the tips in a tree ought to result in
@@ -295,10 +305,10 @@ RFPlot(ape::read.tree(text='(1, ((2, (4, 5)), (3, ((8, 9), ((7, 11), (6, 10)))))
 
 In this example, the path metric fails this test.
 
-| **Measure** | MArInf | MPaInf | ClustInf | Nye _et al._ | MS | Quartet | Path | SPR | RF |
-| ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | 
-| **Complexity** | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r FAIL` | `r pass` | `r FAIL` |
 
+```{r echo=FALSE, results="asis"}
+PrintTable(c(mai=T,mpi=T,clu=T,nye=T,msd=T,qd=T,path=F,spr=T,rf=F), 'Complexity')
+```
 
 ## Saturation
 
@@ -322,11 +332,9 @@ RFPlot(sq_trees$random_tree, 'Random tree', ref=pectinate_tree)
 RFPlot(sq_trees$anti_pectinate, 'Positively contradictory tree', ref=pectinate_tree)
 ```
 
-
-| **Measure** | MArInf | MPaInf | ClustInf | Nye _et al._ | MS | Quartet | Path | SPR | RF |
-| ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | 
-| **Saturation** | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | (?) | `r FAIL` |
-
+```{r echo=FALSE, results="asis"}
+PrintTable(c(mai=T,mpi=T,clu=T,nye=T,msd=T,qd=T,path=T,spr=NA,rf=F), 'Saturation')
+```
 
 ## Islands
 
@@ -427,10 +435,9 @@ PlotMDS(treeDists['symmetric.difference', , ], 'RF')
 
 Bogdanowicz & Giaro [-@Bogdanowicz2012] report that islands exist in the quartet and path differences.  A similar proof [#TODO] can be constructed for the [XYZ] distance.
 
-| **Measure** | MArInf | MPaInf | ClustInf | Nye _et al._ | MS | Quartet | Path | SPR | RF |
-| ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | 
-| **Islands** | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r FAIL` | `r FAIL` | `r pass` | `r pass` |
-
+```{r echo=FALSE, results="asis"}
+PrintTable(c(mai=T,mpi=T,clu=T,nye=T,msd=T,qd=F,path=F,spr=T,rf=T), 'Islands')
+```
 
 ```{R generate-random-trees, include=FALSE}
 suppressWarnings(RNGversion("3.5.0")) # Stopgap until we can require R 3.6.0
@@ -504,10 +511,10 @@ Whereas the path distance and SPR metrics are only defined on bifurcating trees,
 symmetric difference approaches can be applied to trees that contain polytomies -- i.e. 
 not every node is resolved as bifurcating.
 
+```{r echo=FALSE, results="asis"}
+PrintTable(c(mai=T,mpi=T,clu=T,nye=T,msd=T,qd=T,path=F,spr=F,rf=T), 'Polytomies')
+```
 
-| **Measure** | MArInf | MPaInf | ClustInf | Nye _et al._ | MS | Quartet | Path | SPR | RF |
-| ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | 
-| **Polytomies** | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r pass` | `r FAIL` | `r FAIL` | `r pass` |
 
 
 <!--
