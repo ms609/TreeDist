@@ -638,43 +638,4 @@ axis(2)
 This differing information content is reflected in the ranges taken by
 explicitly information-theoretic measures of tree similarity.
 
-## Conclusion
-
-Quartet dissimilarity is the only available metric of tree distance that fulfils 
-all of the following desiderata:
-
- - Allocates trees higher distances if a clade moves greater distances
- - Allocates trees higher distances if a the clade that is moved is larger
- - Distinguishes contradicted from unresolved information in trees that 
-   are not fully bifurcating (resolved)
- - Identifies pairs of trees that are more random than expected by chance
- - Does not reach its maximum value after relatively trivial rearrangements
- 
-# Improvements to partition metrics
-
-The primary issue with the Robinson-Foulds distance is its conservative 
-pairing of clades: a grouping is either identical in both trees, or is 
-treated as different.  
-This makes no account for the possibility that one tree contains a grouping that
-is similar (though not quite identical) to a grouping in another.
-
-In order to incorporate some measure of similar-but-not-quite-identical clades,
-it is necessary to construct an optimal matching that pairs each clade in each
-tree with either a suitable clade in the other, or with no clade at all.
-
-Various approaches to this problem have been proposed; these typically search
-for a matching that minimises the total dissimilarity summed for all pairings.
-Approaches differ in how they penalize differences between paired groups.
-Bogdanowicz and Giaro [-@Bogdanowicz2012;-@Bogdanowicz2013;-@Bogdanowicz2017]
-calculate the size
-of the largest bipartition that is consistent with both input groups; 
-Nye _et al_. [-@Nye2006] normalize this number using the Jaccard index;
-Böcker _et al_. [-@Bocker2013] raise this value to an arbitrary exponent, and
-add a constraint that prohibits pairings that comprise contradictory groups.
-
-These approaches represent a refinement of the Robinson-Foulds metric,
-circumventing many of the issues raised above.  They are, however, more 
-computationally expensive, and lack an objective measure of clade similarity.
-R implementations of these measures are available in `TreeSearch`.
-
 # References
