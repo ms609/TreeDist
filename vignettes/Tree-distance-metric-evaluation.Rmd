@@ -192,7 +192,6 @@ in contrast, recognize trees in which this tip has been
 moved further as more distant from the starting tree.
 
 ```{r echo=FALSE, results="asis"}
-pass<-'Pass';FAIL<-'**FAIL**';#TODO<-DELETE
 PrintTable <- function(passes, title='Outcome') 
   cat(paste0("| **Measure** | Phylo. Inf. | MS Inf. | Clust. Inf. | Nye _et al._ | MS Dist | Quartet | Path | SPR | RF |\n",
          "| ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | \n",
@@ -246,11 +245,6 @@ RFPlot(ape::read.tree(text='(((1, 2), 3), ((8, 9), ((6, (5, 4)), ((10, 11), 7)))
 ape::nodelabels('*', 15, frame='none')
 
 ```
-
-
-| **Measure** | MArInf | MPaInf | ClustInf | Nye _et al._ | MS | Quartet | Path | SPR | RF |
-| ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | ------- | 
-| **Two node move** | `r pass` | `r pass` | `r pass` | `r FAIL` | `r pass` | `r pass` | `r FAIL` | `r FAIL` |
 -->
 
 
@@ -268,7 +262,6 @@ RFPlot(ape::read.tree(text='(((1, 2), 3), ((5, 4), ((6, (10, 11)), (7, (8, 9))))
 ape::nodelabels('*', 18, frame='none')
 RFPlot(ape::read.tree(text='(((1, 2), 3), (6, (((5, 4), (10, 11)), (7, (8, 9)))));'), 'Move two tips (4 & 5) two nodes', 4:5, edge.lengths=c(rep(1, 6), 3, rep(1, 19-6)))
 ape::nodelabels('*', 17, frame='none')
-
 ```
 
 ```{r echo=FALSE, results="asis"}
@@ -496,6 +489,7 @@ MethodPalette <- function (method, n) colorspace::sequential_hcl(n,
                              c = methodLCH[method, 'C'],
                              l = c(max(40, methodLCH[method, 'L']) - 30, 95),
                              power = 0.9)
+MethodPaletteRgb <- function (method, n) col2rgb(MethodPalette(method, n))/256
 
 data('sevenTipDistances', package='TreeDistData')
 td7 <- sevenTipDistances
@@ -522,19 +516,31 @@ PlotMDS <- function(method) {
   legend('topleft', legend=abbrevs[method], bty='n', text.font=2)
 }
 
+# Prepare shape key for TableImage: Raster:
+shapeKey <- array(col2rgb(treeCols[as.character(shapes)]), dim=c(3L, 1L, 945L)) / 256
+hShapeKey <- aperm(treeKey, c(2L, 3L, 1L)) 
+vShapeKey <- aperm(treeKey, c(3L, 2L, 1L))
+# Vector alternative:
+shapeSizes <- table(shapes)
+shapeSum <- cumsum(shapeSizes)
+shapeStarts <-  shapeSum - shapeSizes
+  
 TableImage <- function (method) {
   x <- rep(seq_len(945), each=945L)
   y <- rep(seq_len(945), 945L)
   plot(-100, -100, type='n', ylim=c(0, 965), xlim=c(965, 0), 
        axes=FALSE, xlab='', ylab='')
-  shapeSizes <- table(shapes)
-  shapeSum <- cumsum(shapeSizes)
-  shapeStarts <-  shapeSum - shapeSizes
-  rect(shapeStarts, 950, shapeSum, 975, col=treeCols, border=NA)
-  rect(950, shapeStarts, 975, shapeSum, col=treeCols, border=NA)
 
-  rect(x - 1L, y - 1L, x, y, border=NA,
-       col=MethodPalette(method, 100)[cut(td7[[method]], 100, labels=FALSE)])
+  rasterImage(hTreeKey, 0, 950, 945, 975)
+  rasterImage(vTreeKey, 950, 945, 975, 0)
+  # Vectorised alternative:
+  #rect(shapeStarts, 950, shapeSum, 975, col=treeCols, border=NA)
+  #rect(950, shapeStarts, 975, shapeSum, col=treeCols, border=NA)
+
+  img <- array(MethodPaletteRgb(method, 100)[, cut(td7[[method]], 100, labels=FALSE)], 
+                     dim = c(3L, 945L, 945L))
+  img <- aperm(img, c(2L, 3L, 1L))
+  rasterImage(img, 0, 945, 945, 0)
   legend('topright', legend=paste0(abbrevs[method], '  '), bty='n')
 }
 
