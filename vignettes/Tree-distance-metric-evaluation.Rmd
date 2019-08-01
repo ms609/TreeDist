@@ -594,11 +594,18 @@ lapply(seq_along(topologies), function (i) {
 ```
 
 The following figures visualize the tree spaces implied by each distance metric 
-by (i) projecting the tree space into two dimensions using Kruskal's Non-Metric Multidimensional Scaling [@Cox1994]; (ii) partitioning the data into eight clusters
-"around medoids" [@Reynolds2006].  Heterogeneity is evident when points are 
+by
+(i) partitioning the data into eight clusters
+"around medoids" [@Reynolds2006];
+(ii) projecting the tree space into two dimensions using classical multidimensional
+scaling [@Gower1966];
+(iii) projecting the tree space into two dimensions using Kruskal's Non-Metric Multidimensional Scaling [@Cox1994], which retains rank order of distances 
+but not the distances themselves.
+
+Heterogeneity is evident when points are 
 concentrically distributed, and when clusters are equal in size.
 
-```{r 7-tip-trees-3, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=3/4, fig.width=8.4, out.width='100%', fig.align='center'}
+```{r 7-tip-trees-3, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=5/4, fig.width=8.4, out.width='100%', fig.align='center'}
 PlotMDS <- function(method, metric=TRUE) {
   if (metric) {
     pts <- cmdscale(td7[[method]], k=2)
