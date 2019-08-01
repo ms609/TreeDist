@@ -518,8 +518,8 @@ PlotMDS <- function(method) {
 
 # Prepare shape key for TableImage: Raster:
 shapeKey <- array(col2rgb(treeCols[as.character(shapes)]), dim=c(3L, 1L, 945L)) / 256
-hShapeKey <- aperm(treeKey, c(2L, 3L, 1L)) 
-vShapeKey <- aperm(treeKey, c(3L, 2L, 1L))
+hShapeKey <- aperm(shapeKey, c(2L, 3L, 1L)) 
+vShapeKey <- aperm(shapeKey, c(3L, 2L, 1L))
 # Vector alternative:
 shapeSizes <- table(shapes)
 shapeSum <- cumsum(shapeSizes)
@@ -541,6 +541,8 @@ TableImage <- function (method) {
                      dim = c(3L, 945L, 945L))
   img <- aperm(img, c(2L, 3L, 1L))
   rasterImage(img, 0, 945, 945, 0)
+  # To save image to file:
+  #png::writePNG(img, paste0('tableImage-', method, '.png'))
   legend('topright', legend=paste0(abbrevs[method], '  '), bty='n')
 }
 
