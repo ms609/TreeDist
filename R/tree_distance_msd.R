@@ -72,8 +72,6 @@ MatchingSplitDistanceSplits <- function (splits1, splits2, normalize = TRUE,
   
   SymmetricDifference <- function (A, B) {
     (A & !B) | (!A & B)
-    #TODO: Assert: These will always be the same size
-    #Therefore: Improve efficiency by only calculating one, and not dividing by 2
   }
   
   pairScores <- matrix((mapply(function(i, j) {
@@ -82,11 +80,14 @@ MatchingSplitDistanceSplits <- function (splits1, splits2, normalize = TRUE,
     B1 <- !A1
     B2 <- !A2
     
-    min(
-      sum(SymmetricDifference(A1, A2), SymmetricDifference(B1, B2)),
-      sum(SymmetricDifference(A1, B2), SymmetricDifference(B1, A2))
-    ) / 2L
+    # Long-winded way:
+    # min(
+    #   sum(SymmetricDifference(A1, A2), SymmetricDifference(B1, B2)),
+    #   sum(SymmetricDifference(A1, B2), SymmetricDifference(B1, A2))
+    # ) / 2L
+    # But SD(A1, A2) == SD(B1, B2) and SD(A1, B2) == SD(B1, A2), so:
     
+    min(sum(SymmetricDifference(A1, A2)), sum(SymmetricDifference(A1, B2)))
   },  seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
   )), nSplits1, nSplits2)
   
