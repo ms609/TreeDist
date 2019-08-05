@@ -12,17 +12,18 @@ vignette: >
 ---
 
 ```{R init, echo=FALSE, message=FALSE, cache=TRUE}
-methods <- c('rf', 'vai', 'spr', 'msd', 'vci', 'path', 'nts', 'qd')
-plotSequence <- c('vai', 'vci', 'nts', 'qd', 'msd', 'path', 'spr', 'rf')
+methods <- c('rf', 'vpi', 'spr', 'msd', 'vci', 'path', 'nts', 'qd')
+plotSequence <- c('vpi', 'vci', 'nts', 'qd', 'msd', 'path', 'spr', 'rf')
 abbrevs <- c(
   rf  = 'Robinson-Foulds',
-  vai = 'Var. Phylogenetic Info',
+  vpi = 'Var. Phylogenetic Info',
   spr = 'SPR',
+  sprLB = 'SPR, normalized against lower bound for diameter',
   path = 'Path',
   vci = 'Var. Clustering Info', 
   nts = expression(paste(plain('Nye '), italic('et al.'))),
   qd  = 'Quartet',
-  vpi = 'Var. Partition Info',
+  vmsi = 'Var. Matching Split Info',
   msd = 'Matching Splits'
 )[methods]
 methodCol <- c(
@@ -39,7 +40,7 @@ methodCol <- c(
 totalInfoContent <- 3L
 maxPossible <- 6L
 maxObserved <- 4L
-methodPch <- c(vci = totalInfoContent, vai = totalInfoContent, 
+methodPch <- c(vci = totalInfoContent, vpi = totalInfoContent, 
                rf = maxPossible, nts = maxPossible, qd = maxPossible,
                path = maxObserved, 
                msd = maxObserved)
@@ -102,7 +103,7 @@ AddLine <- function (method, normalize = FALSE) {
 }
 
 plot(as.integer(dimnames(randomTreeDistances)[[3]]), 
-     randomTreeDistances['vai', 'mean', ],
+     randomTreeDistances['vpi', 'mean', ],
      ylim=c(0.4, 1), type='n',
      xlab = "Number of tips", ylab = "Normalized tree distance")
 for (method in methods) AddLine(method, method %in% c('msd', 'path'))
@@ -117,6 +118,8 @@ standard deviation than other metrics, suggesting that they are less consistent 
 score that they assign to a random pair of trees.
 
 ## Distribution of tree distances
+
+- # TODO compare with 7-tip trees - note difference in skew for path metric!
 
 ```{r load-data-dists, include=FALSE}
 data('distanceDistribution25', package='TreeDistData')
@@ -137,7 +140,7 @@ PlotHist <- function (method, breaks = 40L) {
   legend('topleft', bty='n', c('', '', abbrevs[method]), cex=0.8)
 }
 
-PlotHist('vai')
+PlotHist('vpi')
 mtext('Distance between random pairs of 25-tip bifurcating trees', outer=TRUE, cex=0.8)
 
 PlotHist('vci')
@@ -181,7 +184,7 @@ PlotR2 <- function (methodA, methodB) {
   regCol <- colScale[max(ceiling((r2 - 0.5) * 2000), 1L)]
   text(0.5, 0.5, signif(round(r2, 4), 3), col = regCol, cex=2.6)
 }
-toCorrelate <- c('vci', 'vai', 'nts', 'qd', 'msd', 'path', 'rf')
+toCorrelate <- c('vci', 'vpi', 'nts', 'qd', 'msd', 'path', 'rf')
 lapply(seq_along(toCorrelate), function(i)
   lapply(seq_along(toCorrelate), function(j) {
     if (i == j) {

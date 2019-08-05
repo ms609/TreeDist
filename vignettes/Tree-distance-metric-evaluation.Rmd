@@ -18,17 +18,18 @@ vignette: >
 
 
 ```{R init-methods, echo=FALSE, message=FALSE, cache=TRUE}
-methods <- c('rf', 'vai', 'spr', 'msd', 'vci', 'path', 'nts', 'qd')
-plotSequence <- c('vai', 'vci', 'nts', 'qd', 'msd', 'path', 'spr', 'rf')
+methods <- c('rf', 'vpi', 'spr', 'msd', 'vci', 'path', 'nts', 'qd')
+plotSequence <- c('vpi', 'vci', 'nts', 'qd', 'msd', 'path', 'spr', 'rf')
 abbrevs <- c(
   rf  = 'Robinson-Foulds',
-  vai = 'Var. Phylogenetic Info',
+  vpi = 'Var. Phylogenetic Info',
   spr = 'SPR',
+  sprLB = 'SPR, normalized against lower bound for diameter',
   path = 'Path',
   vci = 'Var. Clustering Info', 
   nts = expression(paste(plain('Nye '), italic('et al.'))),
   qd  = 'Quartet',
-  vpi = 'Var. Partition Info',
+  vmsi = 'Var. Matching Split Info',
   msd = 'Matching Splits'
 )[methods]
 methodCol <- c(
@@ -45,7 +46,7 @@ methodCol <- c(
 totalInfoContent <- 3L
 maxPossible <- 6L
 maxObserved <- 4L
-methodPch <- c(vci = totalInfoContent, vai = totalInfoContent, 
+methodPch <- c(vci = totalInfoContent, vpi = totalInfoContent, 
                rf = maxPossible, nts = maxPossible, qd = maxPossible,
                path = maxObserved, 
                msd = maxObserved)
@@ -546,7 +547,7 @@ comparing two trees of certain shapes.
 
 ```{r 7-tip-trees-2, echo=FALSE, message=FALSE, cache=TRUE,  fig.asp=3/4, fig.width=8.2, fig.align='center'}
 histBreaks <- list(
-  vai = 16L,
+  vpi = 16L,
   vci = 16L,
   nts = 16L,
   qd = 16L,
@@ -605,7 +606,7 @@ but not the distances themselves.
 Heterogeneity is evident when points are 
 concentrically distributed, and when clusters are equal in size.
 
-```{r 7-tip-trees-3, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=5/4, fig.width=8.4, out.width='100%', fig.align='center'}
+```{r 7-tip-trees-3, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=5.5/4, fig.width=8.4, out.width='100%', fig.align='center'}
 PlotMDS <- function(method, metric=TRUE) {
   if (metric) {
     pts <- cmdscale(td7[[method]], k=2)
@@ -639,13 +640,13 @@ ClusterBars <- function(method) {
 }
 
 layout(matrix(seq_len(8*3), ncol=4, byrow=TRUE)[c(1, 3, 5, 2, 4, 6), ],
-       heights = c(1, 2, 2, 1, 2, 2)*2, widths = rep(2, 4)*2)
+       heights = c(1.5, 2, 2, 1.5, 2, 2)*2, widths = rep(2, 4)*2)
 par(oma=c(0, 0, 0, 0))
 
-par(mar=c(0, 0.8, 4, 0.8))
+par(mar=c(0, 0.8, 2, 0.8))
 lapply(plotSequence, ClusterBars) -> XX
 
-par(mar=c(0.8, 0.8, 0.8, 0.8))
+par(mar=rep(0.2, 4L))
 lapply(plotSequence, PlotMDS) -> XX
 lapply(plotSequence, PlotMDS, metric=FALSE) -> XX
 ```

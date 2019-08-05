@@ -1,7 +1,7 @@
 Package: TreeDist
 Title: Distances between Phylogenetic Trees
-Version: 0.0.0.9001
-Date: 2019-07-31
+Version: 0.0.0.9002
+Date: 2019-08-05
 Authors@R: c(person("Martin R.", 'Smith',
                   email="martin.smith@durham.ac.uk", 
                   role=c("aut", "cre", "cph"), 
@@ -39,7 +39,7 @@ Suggests:
     TreeDistData
 Remotes: 
     ms609/TreeSearch@noTreeDist,
-    ms609/TreeDistData
+    ms609/TreeDistData (> 0.0.0.9001)
 RdMacros: Rdpack
 LazyData: true
 ByteCompile: true
