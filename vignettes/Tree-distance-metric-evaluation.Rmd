@@ -607,6 +607,26 @@ Heterogeneity is evident when points are
 concentrically distributed, and when clusters are equal in size.
 
 ```{r 7-tip-trees-3, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=5.5/4, fig.width=8.4, out.width='100%', fig.align='center'}
+maxDist <- c(
+  vpi = 1,
+  vci = 1,
+  qd = 1,
+  nts = 1,
+  msd = 10,
+  rf = 8,
+  path = max(td7[['path']]),
+  spr = 3
+)
+
+SpectralClustering <- function (dat, nClusters) {
+  # More efficient version of anocva::spectralClustering
+  n <- ncol(dat)
+  L <- diag(rowSums(dat)) - dat
+  eigenVectors <- eigen(L, symmetric = TRUE)$vectors
+  cluster::pam(x = eigenVectors[, n - seq_len(nClusters) + 1L],
+               k = nClusters, cluster.only=TRUE)
+}
+
 PlotMDS <- function(method, metric=TRUE) {
   if (metric) {
     pts <- cmdscale(td7[[method]], k=2)
@@ -626,15 +646,21 @@ PlotMDS <- function(method, metric=TRUE) {
   #legend('topleft', legend=abbrevs[method], bty='n', text.font=2)
 }
 
-ClusterBars <- function(method) {
+ClusterBars <- function(method, clusterMethod = 'pam', nClusters = 8L) {
   ret <- double(length(treeCols))
   names(ret) <- names(treeCols)
   
-  clusters <- cluster::pam(td7[[method]], 8L, diss=TRUE, cluster.only=TRUE)
+  clusters <- 
+  if (clusterMethod == 'pam') {
+    cluster::pam(td7[[method]], nClusters, diss=TRUE, cluster.only=TRUE)
+  } else if(clusterMethod == 'spectral') {
+    SpectralClustering(maxDist[method] - td7[[method]], nClusters)
+  }
   
   clusterShapes <- vapply(seq_len(max(clusters)), function (i) 
     table(shapes[clusters==i])[names(treeCols)],
     ret)
+  clusterShapes[is.na(clusterShapes)] <- 0L
   
   barplot(clusterShapes, col=treeCols, main=abbrevs[method], axes=FALSE)
 }
@@ -644,7 +670,7 @@ layout(matrix(seq_len(8*3), ncol=4, byrow=TRUE)[c(1, 3, 5, 2, 4, 6), ],
 par(oma=c(0, 0, 0, 0))
 
 par(mar=c(0, 0.8, 2, 0.8))
-lapply(plotSequence, ClusterBars) -> XX
+lapply(plotSequence, ClusterBars, clusterMethod='spectral', nClusters = 8L) -> XX
 
 par(mar=rep(0.2, 4L))
 lapply(plotSequence, PlotMDS) -> XX
