@@ -12,6 +12,7 @@ vignette: >
 ---
 
 ```{R init, echo=FALSE, message=FALSE, cache=TRUE}
+# Remember to propogate changes here to T-d-m-e.Rmd
 methods <- c('rf', 'spr', 'vpi', 'vci', 'msd', 'nts', 'path', 'qd')
 plotSequence <- c('vpi', 'vci', 'nts', 'qd', 'msd', 'path', 'spr', 'rf')
 abbrevs <- c(
@@ -63,8 +64,7 @@ information content of each pair of trees.
 The Robinson-Fould, Nye _et al._ and Quartet Metrics (&#9661;) are normalized 
 based on the maximum possible value.
 
-The SPR distance is normalized against an upper bound of its maximum possible value,
-given by _n_ - 3 [@Allen2001].
+The SPR distance is normalized against a lower bound of its maximum possible value [@Allen2001].
 
 The Path and Matching Split metrics (&times;) do not have a readily calculated
 maximum value and are thus crudely normalized against an approximate maximum, 
