@@ -12,13 +12,12 @@ vignette: >
 ---
 
 ```{R init, echo=FALSE, message=FALSE, cache=TRUE}
-methods <- c('rf', 'vpi', 'sprLB', 'vci', 'msd', 'path', 'nts', 'qd')
+methods <- c('rf', 'spr', 'vpi', 'vci', 'msd', 'nts', 'path', 'qd')
 plotSequence <- c('vpi', 'vci', 'nts', 'qd', 'msd', 'path', 'spr', 'rf')
 abbrevs <- c(
   rf  = 'Robinson-Foulds',
-  vpi = 'Var. Phylogenetic Info',
-  spr = 'SPR, normalized against upper bound for diameter',
-  sprLB = 'SPR',
+  vpi = 'Var. Phylogen. Info',
+  spr = 'SPR',
   path = 'Path',
   vci = 'Var. Clustering Info', 
   nts = expression(paste(plain('Nye '), italic('et al.'))),
@@ -37,6 +36,7 @@ methodCol <- c(
 '#fd9da7',
 '#9d745f',
 '#bab0ac')[1:9] # https://www.tableau.com/about/blog/2016/7/colors-upgrade-tableau-10-56782
+
 totalInfoContent <- 3L
 maxPossible <- 6L
 maxObserved <- 4L
@@ -91,7 +91,7 @@ normalizeAgainst <- rbind(
 )
 
 AddLine <- function (method, normalize = FALSE) {
-  dat <- randomTreeDistances[method, , ]
+  dat <- if (method == 'spr') randomTreeDistances['sprLB', , ] else randomTreeDistances[method, , ]
   if (normalize) dat <- dat / rep(normalizeAgainst[method, ], each=4)
   col <- methodCol[method]
   pch <- methodPch[method]
