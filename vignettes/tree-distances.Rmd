@@ -12,13 +12,13 @@ vignette: >
 ---
 
 ```{R init, echo=FALSE, message=FALSE, cache=TRUE}
-methods <- c('rf', 'vpi', 'spr', 'msd', 'vci', 'path', 'nts', 'qd')
+methods <- c('rf', 'vpi', 'sprLB', 'vci', 'msd', 'path', 'nts', 'qd')
 plotSequence <- c('vpi', 'vci', 'nts', 'qd', 'msd', 'path', 'spr', 'rf')
 abbrevs <- c(
   rf  = 'Robinson-Foulds',
   vpi = 'Var. Phylogenetic Info',
-  spr = 'SPR',
-  sprLB = 'SPR, normalized against lower bound for diameter',
+  spr = 'SPR, normalized against upper bound for diameter',
+  sprLB = 'SPR',
   path = 'Path',
   vci = 'Var. Clustering Info', 
   nts = expression(paste(plain('Nye '), italic('et al.'))),
@@ -76,14 +76,14 @@ data('randomTreeDistances', package='TreeDistData')
 
 pathMax <- randomTreeDistances['path', 'max', ]
 msdMax <- randomTreeDistances['msd', 'max', ]
-sprMax <- randomTreeDistances['spr', 'max', ]
+
 nTip <- as.integer(names(pathMax))
 
 pathNorm <- nls(pathMax ~ a * (nTip ^2) + b * (nTip ^3) + nTip ^ c,
                start = list(a = -0.034, b = 4e-5, c = 1.44))
 # loess(pathMax ~ nTip) is Unsuitable for small _n_
 msdNorm <- nls(msdMax ~ a * nTip + c * nTip ^ (b),
-              start = list(a = -14, b=1.16, c = 11.3))
+              start = list(a = -29.185, b=1.093, c = 25.390))
 
 normalizeAgainst <- rbind(
   path = predict(pathNorm),
@@ -100,6 +100,8 @@ AddLine <- function (method, normalize = FALSE) {
   lines(nLeaves, dat['mean', ], pch=1, col=col)
   lines(nLeaves, dat['mean', ] + dat['sd', ], lty=3, col=col)
   lines(nLeaves, dat['mean', ] - dat['sd', ], lty=3, col=col)
+  pointsAt <- 1:3 * 50L
+  points(pointsAt, dat['mean', as.character(pointsAt)], col=col, pch=pch)
 }
 
 plot(as.integer(dimnames(randomTreeDistances)[[3]]), 
