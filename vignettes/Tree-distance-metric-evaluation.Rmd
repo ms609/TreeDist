@@ -335,7 +335,7 @@ A notable proportion (`r RandomPercent(pectinateDistances11['rf', ], 16)`%) of r
 a single tip.  The proportion remains non-trivial for the path difference (`r RandomPercent(pectinateDistances11['path', ], 17.7)`%), but is below 1% 
 for all other metrics.
 
-```{R Random-trees, echo=FALSE, cache=TRUE, warn=FALSE, message=FALSE, fig.asp=1.2, fig.width=5.6, out.width='80%', fig.align='center'}
+```{R Random-trees, echo=FALSE, cache=TRUE, warn=FALSE, message=FALSE, fig.asp=1.2, fig.width=4, out.width='50%', fig.align='center'}
 par(mfrow=c(2, 8), mar=c(1.9, 0.2, 0.2, 0.2))
 layout(matrix(c(1:8, rep(9, 8)), ncol=2), widths=c(0.8, 0.2))
 
