@@ -39,7 +39,7 @@ Suggests:
     TreeDistData
 Remotes: 
     ms609/TreeSearch@noTreeDist,
-    ms609/TreeDistData (>= 0.0.0.9004)
+    ms609/TreeDistData (>= 0.0.0.9005)
 RdMacros: Rdpack
 LazyData: true
 ByteCompile: true
