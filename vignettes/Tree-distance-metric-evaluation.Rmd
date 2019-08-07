@@ -904,10 +904,10 @@ PrintLastSet()
 It can also be useful to compare a tree distance to the distance expected for
 a pair of random trees. 
 
-The figure below shows how the normalized tree distance varies with the number of 
+The figure below shows how the median normalized tree distance varies with the number of 
 tips in the trees being compared.  1&nbsp;000 random pairs of _n_-tip trees were
 generated for $4 \leq n \leq 200$`r ''#4 &le; _n_ &le; 200`, and the distances between them calcuated. 
-Dotted envelopes denote ±1 standard deviation from the mean.
+Dashed and dotted envelopes respectively denote the 25-75% and 5-95% quantile ranges.
 
 Information-based metrics, marked +, are normalized against the total 
 information content of each pair of trees.
@@ -944,16 +944,18 @@ normalizeAgainst <- rbind(
 
 AddLine <- function (method, normalize = FALSE) {
   dat <- if (method == 'spr') randomTreeDistances['sprLB', , ] else randomTreeDistances[method, , ]
-  if (normalize) dat <- dat / rep(normalizeAgainst[method, ], each=4)
+  if (normalize) dat <- dat / rep(normalizeAgainst[method, ], each=dim(dat)[1L])
   col <- methodCol[method]
   pch <- methodPch[method]
   nLeaves <- colnames(dat)
   #points(nLeaves, dat['mean', ], pch=pch, col=col)
-  lines(nLeaves, dat['mean', ], pch=1, col=col)
-  lines(nLeaves, dat['mean', ] + dat['sd', ], lty=2, col=col)
-  lines(nLeaves, dat['mean', ] - dat['sd', ], lty=2, col=col)
+  lines(nLeaves, dat['50%', ], pch=1, col=col)
+  lines(nLeaves, dat['25%', ], lty=2, col=col)
+  lines(nLeaves, dat['75%', ], lty=2, col=col)
+  lines(nLeaves, dat['95%', ], lty=3, col=col)
+  lines(nLeaves, dat['5%', ], lty=3, col=col)
   pointsAt <- 1:3 * 50L
-  points(pointsAt, dat['mean', as.character(pointsAt)], col=col, pch=pch)
+  points(pointsAt, dat['50%', as.character(pointsAt)], col=col, pch=pch)
 }
 
 plot(as.integer(dimnames(randomTreeDistances)[[3]]), 
@@ -965,6 +967,9 @@ for (method in methods) AddLine(method, method %in% c('msd', 'path'))
 legend('bottomright', bty='n', pch=methodPch, lty=1,
        legend=abbrevs, 
        col=methodCol)
+
+legend('bottomleft', lty=1:3, bty='n', inset=c(0.07, 0), 
+       legend=c('Median', 'Interquartile range', '5%\u221295% range'))
 ```
 
 Note that the path and Matching Splits distances exhibit a prominently larger 
