@@ -26,10 +26,10 @@ plotSequence <- c('vpi', 'vci', 'nts', 'qd', 'msd', 'path', 'spr', 'rf')
 legendSequence <- c('vpi', 'vci', 'nts', 'msd', 'qd', 'path', 'spr', 'rf')
 abbrevs <- c(
   rf  = 'Robinson-Foulds',
-  vpi = 'Var. Phylogen. Info',
+  vpi = 'Var. Phylog. Info',
   spr = 'SPR',
   path = 'Path',
-  vci = 'Var. Clustering Info', 
+  vci = 'Var. Clust. Info', 
   nts = expression(paste(plain('Nye '), italic('et al.'))),
   qd  = 'Quartet',
   vmsi = 'Var. Matching Split Info',
@@ -88,13 +88,14 @@ distanceSuffix <- c(
 
 standardMargin <- c(0.4, 0.4, 0.8, 0.4)
 
-ColPlot <- function (tr, title=NULL, bold=NULL, ...) {
+ColPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = TRUE, ...) {
   if (is.null(tr$edge.length)) tr$edge.length <- rep(1, dim(tr$edge)[1])
   font <- rep(1, length(tr$tip.label))
   if (!is.null(bold)) font[tr$tip.label %in% bold] <- 4
+  yLim <- if (leaveRoom) c(-0.4 - length(legendSequence), 11) else c(-0.4, 11)
   plot(tr, tip.col=Ternary::cbPalette15[-c(4, 7)][as.integer(tr$tip.label)], 
        main=title, cex.main=0.8, font=font,
-       y.lim=c(-0.4 - length(legendSequence), 11), ...)
+       y.lim=yLim, ...)
 }
 
 RFPlot <- function (tr, title=NULL, highlight=NULL, ref=sq_trees[[1]], 
@@ -201,7 +202,7 @@ SetRow <- function (x, name) {
 
 PrintLastSet <- function () PrintTable(attr(tRow, 'rowI'))
 
-tRow <- matrix(nrow=10, ncol=9, dimnames=list(1:10, c('mai','mpi','clu','nye','msd','qd','path','spr','rf')))
+tRow <- matrix(nrow=10, ncol=9, dimnames=list(1:10, c('mpi','mmsi','clu','nye','msd','qd','path','spr','rf')))
 attr(tRow, 'rowI') <- 0
 
 tRow <- SetRow(c(T,T,T,T,F,T,T,F,T), 'Length of move')
@@ -311,7 +312,7 @@ ape::nodelabels()#'*', 18, frame='none')
 
 Moving one taxon a specified distance ought to result in a smaller difference than moving two taxa the same distance. As a simple example, exchanging a pair of taxa represents a larger change than moving one taxon adjacent to the other.
 
-```{R Move-vs-exchange, echo=FALSE, fig.align='center', fig.height=4, fig.width=6.4, message=FALSE, cache=TRUE, out.width='66%'}
+```{R Move-vs-exchange, eval=FALSE, fig.align='center', fig.height=4, fig.width=6.4, message=FALSE, cache=TRUE, include=FALSE, out.width='75%'}
 par(mfrow=c(1, 3), mar=standardMargin, cex=1)
 
 RFPlot(pectinate_tree, 'Pectinate tree', ref=pectinate_tree)
@@ -319,26 +320,25 @@ RFPlot(pectinate_move1, 'Move one tip', 1, ref=pectinate_tree, edge.lengths = c(
 RFPlot(sq_trees$top_and_tail, 'Exchange two tips', c(1, 11), ref=pectinate_tree)
 ```
 
-Following on from this, exchanging two tips ought to result in a smaller distance
-than the distance expected for a pair of random trees:
+Following on from this, moving one tip or exchanging two tips ought to result in
+a smaller distance than the distance expected for a pair of random trees.
 
-## Random trees and their distances
-```{R generate-random-trees, include=FALSE}
+```{R Random-trees-vs-simple-moves, echo=FALSE, cache=TRUE, warn=FALSE, message=FALSE, fig.asp=1, fig.width=5, out.width='50%', fig.align='center'}
+par(mfrow=c(2, 8), mar=c(1, 0.2, 1, 1))
+layout(matrix(c(1, 1, 2, 2, 2, 3, 3, 3, 3 + (1:8)), ncol=2), widths=c(0.33, 0.67))
+
+
+ColPlot(pectinate_tree, '', leaveRoom = FALSE, cex=1)
+legend('bottomleft', legend="Pectinate reference tree", bty='n')
+pm1l <- pectinate_move1
+pm1l$edge.lengths <- c(rep(1, 4L), 2, rep(1, 12), .5, .5, 1.5)
+ColPlot(pm1l, '', bold=1L, leaveRoom = FALSE, cex=1)
+legend('bottomleft', legend="Move one tip (1)", pch=25, bty='n', pt.cex=1.5)
+
+ColPlot(sq_trees$top_and_tail, '', bold=c(1, 11), leaveRoom = FALSE, cex=1)
+legend('bottomleft', legend="Exchange two tips (1, 11)", pch=24, bty='n', pt.cex=1.5)
+
 data(pectinateDistances11, package='TreeDistData')
-
-RandomPercent <- function (distances, comparison) {
-  round(sum(distances < comparison) * 100 / dim(pectinateDistances11)[2], 1)
-}
-```
-
-A notable proportion (`r RandomPercent(pectinateDistances11['rf', ], 16)`%) of random trees receive a lower RF distance than trees that differ in the position of 
-a single tip.  The proportion remains non-trivial for the path difference (`r RandomPercent(pectinateDistances11['path', ], 17.7)`%), but is below 1% 
-for all other metrics.
-
-```{R Random-trees, echo=FALSE, cache=TRUE, warn=FALSE, message=FALSE, fig.asp=1.2, fig.width=4, out.width='50%', fig.align='center'}
-par(mfrow=c(2, 8), mar=c(1.9, 0.2, 0.2, 0.2))
-layout(matrix(c(1:8, rep(9, 8)), ncol=2), widths=c(0.8, 0.2))
-
 pd11 <- pectinateDistances11
 pd11['qd', ] <- pd11['qd', ] * 330L
 
@@ -361,13 +361,23 @@ BoxPlot <- function (method) {
   axis(1, col=methodCol[method])
 }
 
+par(mar=c(1.9, 0.2, 0.2, 0.2))
 XX <- lapply(legendSequence, BoxPlot)
-plot.new()
-legend('center', legend=c("Move one tip", "Exchange two"), bty='n',
-       pch=c(25, 24), col='black', bg = '#777777')
+#plot.new()
+#legend('center', legend=c("Move one tip", "Exchange two"), bty='n',
+#       pch=c(25, 24), col='black', bg = '#777777')
 
 
 ```
+
+```{R generate-random-trees, include=FALSE}
+RandomPercent <- function (distances, comparison) {
+  round(sum(distances < comparison) * 100 / dim(pectinateDistances11)[2], 1)
+}
+```
+A notable proportion (`r RandomPercent(pectinateDistances11['rf', ], 16)`%) of random trees receive a lower RF distance than trees that differ in the position of 
+a single tip.  The proportion remains non-trivial for the path difference (`r RandomPercent(pectinateDistances11['path', ], 17.7)`%), but is below 1% 
+for all other metrics.
 
 Exchanging two tips generates the maximum possible value under arboreal measures,
 i.e. the Variation of Phylogenetic Information and Robinson-Foulds distances.
@@ -378,7 +388,7 @@ The path distance when two tips are exchanged is also higher than expected for
 a pair of random trees.
 
 ```{r echo=FALSE, results="asis"}
-tRow <- SetRow(c(mai=F,mpi=T,clu=T,nye=T,msd=T,qd=T,path=F,spr=T,rf=F), 'Exchange two tips')
+tRow <- SetRow(c(mpi=F,mmsi=T,clu=T,nye=T,msd=T,qd=T,path=F,spr=T,rf=F), 'Number of moves')
 PrintLastSet()
 ```
 
@@ -395,14 +405,17 @@ RFPlot(pectinate_tree, 'Pectinate tree', ref=pectinate_tree)
 
 RFPlot(pectinate_move1, 'Move one tip', 1, ref=pectinate_tree, edge.lengths = c(rep(1, 4), 2, rep(1, 12), .5, .5, 1.5))
 
-RFPlot(ape::read.tree(text='(1, ((2, (4, 5)), (3, ((8, 9), ((7, 11), (6, 10))))));'), 'Move six tips: 4,5,6,8,9,11', c(4,5,6,8,9,11), ref=pectinate_tree)
+moveSix <- ape::read.tree(text='(1, ((2, (4, 5)), (3, ((8, 9), ((7, 11), (6, 10))))));')
+RFPlot(moveSix, 'Move six tips: 4,5,6,8,9,11', c(4,5,6,8,9,11),
+       ref=pectinate_tree)
+
 #RFPlot(ape::read.tree(text='(1, ((3, (4, 5)), (2, ((8, 9), ((7, 11), (6, 10))))));'), 'Move 6: 2,4,5,6,7,8', ref=pectinate_tree)
 ```
 
 In this example, the path metric fails this test.
 
 ```{r echo=FALSE, results="asis"}
-tRow <- SetRow(c(mai=T,mpi=T,clu=T,nye=T,msd=T,qd=T,path=F,spr=T,rf=F), 'Complexity')
+tRow <- SetRow(c(mpi=T,mmsi=T,clu=T,nye=T,msd=T,qd=T,path=F,spr=T,rf=F), 'Complexity')
 PrintLastSet()
 ```
 
@@ -429,7 +442,7 @@ RFPlot(sq_trees$anti_pectinate, 'Positively contradictory tree', ref=pectinate_t
 ```
 
 ```{r echo=FALSE, results="asis"}
-tRow <- SetRow(c(mai=T,mpi=T,clu=T,nye=T,msd=T,qd=T,path=T,spr=NA,rf=F), 'Saturation')
+tRow <- SetRow(c(mpi=T,mmsi=T,clu=T,nye=T,msd=T,qd=T,path=T,spr=NA,rf=F), 'Saturation')
 PrintLastSet()
 ```
 
@@ -534,7 +547,7 @@ PlotMDS(treeDists['symmetric.difference', , ], 'RF')
 Bogdanowicz & Giaro [-@Bogdanowicz2012] report that islands exist in the quartet and path differences.  A similar proof [#TODO] can be constructed for the [XYZ] distance.
 
 ```{r echo=FALSE, results="asis"}
-tRow <- SetRow(c(mai=T,mpi=T,clu=T,nye=T,msd=T,qd=F,path=F,spr=T,rf=T), 'Islands')
+tRow <- SetRow(c(mpi=T,mmsi=T,clu=T,nye=T,msd=T,qd=F,path=F,spr=T,rf=T), 'Islands')
 PrintLastSet()
 ```
 -->
@@ -874,10 +887,15 @@ This differing information content is reflected in the ranges taken by
 explicitly information-theoretic measures of tree similarity.  
 This behaviour occurs because the information theoretic measures (including
 the quartet divergence) have units of bits, rather than arbitrary units.
+This said, although the range of the information-based equivalent to the 
+matching splits distance matches that of the mutual phylogenetic information,
+it is not clear that the calculated information content of non-arboreal
+matches is a natural value.
 
 
 ```{r echo=FALSE, results="asis"}
-tRow <- SetRow(c(mai=T,mpi=T,clu=T,nye=F,msd=F,qd=T,path=F,spr=F,rf=F), 'Meaningful units')
+tRow <- SetRow(c(mpi=T,mmsi=F,clu=T,nye=F,msd=F,qd=T,path=F,spr=F,rf=F),
+               'Meaningful units')
 PrintLastSet()
 ```
 
@@ -895,7 +913,7 @@ Information-based metrics, marked +, are normalized against the total
 information content of each pair of trees.
 
 The Robinson-Fould, Nye _et al._ and Quartet Metrics 
-(downward triangle`r ''#&#9661;`) are normalized based on the maximum possible value.
+($\triangledown$) are normalized based on the maximum possible value.
 
 The SPR distance is normalized against a lower bound of its maximum possible 
 value [@Allen2001].
@@ -932,8 +950,8 @@ AddLine <- function (method, normalize = FALSE) {
   nLeaves <- colnames(dat)
   #points(nLeaves, dat['mean', ], pch=pch, col=col)
   lines(nLeaves, dat['mean', ], pch=1, col=col)
-  lines(nLeaves, dat['mean', ] + dat['sd', ], lty=3, col=col)
-  lines(nLeaves, dat['mean', ] - dat['sd', ], lty=3, col=col)
+  lines(nLeaves, dat['mean', ] + dat['sd', ], lty=2, col=col)
+  lines(nLeaves, dat['mean', ] - dat['sd', ], lty=2, col=col)
   pointsAt <- 1:3 * 50L
   points(pointsAt, dat['mean', as.character(pointsAt)], col=col, pch=pch)
 }
@@ -956,7 +974,7 @@ difficulty in calculating the range of these metrics, this makes their
 absolute value difficult to interpret.
 
 ```{r echo=FALSE, results="asis"}
-tRow <- SetRow(c(mai=T,mpi=T,clu=T,nye=T,msd=F,qd=T,path=F,spr=NA,rf=T), 'Value has context')
+tRow <- SetRow(c(mpi=T,mmsi=T,clu=T,nye=T,msd=F,qd=T,path=F,spr=NA,rf=T), 'Value has context')
 PrintLastSet()
 ```
 
@@ -968,7 +986,7 @@ symmetric difference approaches can be applied to trees that contain polytomies 
 not every node is resolved as bifurcating.
 
 ```{r echo=FALSE, results="asis"}
-tRow <- SetRow(c(mai=T,mpi=T,clu=T,nye=T,msd=T,qd=T,path=F,spr=F,rf=T), 'Polytomies')
+tRow <- SetRow(c(mpi=T,mmsi=T,clu=T,nye=T,msd=T,qd=T,path=F,spr=F,rf=T), 'Polytomies')
 PrintLastSet()
 ```
 
