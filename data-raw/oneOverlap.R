@@ -15,7 +15,7 @@ OneOverlap <- function(A1, A2, nTerminals) {
   }
 }
 
-oneOverlap <- lapply(seq_len(500), function (n) 
+oneOverlap <- lapply(seq_len(100), function (n) 
   matrix(mapply(OneOverlap, rep(seq_len(n), n), rep(seq_len(n), each=n),
                 nTerminals = n), ncol=n))
 
