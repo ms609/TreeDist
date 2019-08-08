@@ -677,8 +677,9 @@ lapply(seq_along(topologies), function (i) {
 
 The following figures visualize the tree spaces implied by each distance metric 
 by
-(i) partitioning the data into eight clusters using spectral clustering
-[@Von_luxburg2007];
+(i) partitioning the data into eight clusters using <!--spectral clustering
+[@Von_luxburg2007]--> heirarchical clustering with average linkage,
+as recommended for phylogenetic trees [@Lin2012;@Stockham2002];
 (ii) projecting the tree space into two dimensions using classical multidimensional
 scaling [@Gower1966];
 (iii) projecting the tree space into two dimensions using Kruskal's Non-Metric Multidimensional Scaling [@Kruskal1964], which retains rank order of distances 
@@ -708,18 +709,22 @@ SpectralClustering <- function (dat, nClusters) {
                k = nClusters, cluster.only=TRUE)
 }
 
-PlotMDS <- function(method, metric=TRUE) {
+PlotMDS <- function(method, metric=TRUE, showClusters=FALSE) {
   if (metric) {
     pts <- cmdscale(td7[[method]], k=2)
   } else {
     space <- MASS::isoMDS(td7[[method]], k=2, trace=FALSE)
     pts <- space$points
   }
-  plot(pts, pch=19, xlab='', ylab='', axes=FALSE, type='n')
-  lapply(names(sort(table(shapes), decreasing=TRUE)),
-         function (shape) points(pts[shapes == shape, ],
-                                 pch=19, 
-                                 col=paste0(treeCols[shape], '88')))
+  if (showClusters) {
+    plot(pts, pch=19, xlab='', ylab='', axes=FALSE, col=clusters[, method])
+  } else {
+    plot(pts, pch=19, xlab='', ylab='', axes=FALSE, type='n')
+    lapply(names(sort(table(shapes), decreasing=TRUE)),
+           function (shape) points(pts[shapes == shape, ],
+                                   pch=19, 
+                                   col=paste0(treeCols[shape], '88')))
+  }
        
   z <- MASS::kde2d(pts[, 1], pts[, 2])
   contour(z, add=TRUE, col='#00000088')
@@ -738,10 +743,16 @@ PlotMDS <- function(method, metric=TRUE) {
   #legend('topleft', legend=abbrevs[method], bty='n', text.font=2)
 }
 
-clusters <- vapply(methods, function (method) SpectralClustering(maxDist[method] - td7[[method]], nClusters = 8L), integer(945L))
+HClusters <- function (dat, method) {
+  clusters <- hclust(as.dist(dat), method)
+  cutree(clusters, k = 8L)
+}
+clusters <- vapply(td7[methods], HClusters, method='average', integer(945L))
+# Alternative using Spectal clustering:
+#clusters <- vapply(methods, function (method) SpectralClustering(maxDist[method] - td7[[method]], nClusters = 8L), integer(945L))
 # Alternative using PAM:
 # clusters <- vapply(td7, cluster::pam, k=nClusters, diss=TRUE, cluster.only=TRUE, FUN.VALUE = integer(945L))
- 
+
 ClusterBars <- function(method) {
   ret <- double(length(treeCols))
   names(ret) <- names(treeCols)
@@ -853,7 +864,7 @@ common with a balanced tree than with an asymmetric tree, whereas the distributi
     c(32, 256, 512, 384, 512, 320, 512, 448, 512, 512, 688, 160, 512, 448, 256, 464, 416, 448, 576, 256, 192, 320, 160, 288, 128, 192, 132, 80, 32, 32, 224, 64, 8, 64, 112, 16, 64, 16, 4, 18, 16, 8, 1))
 #}
 
-par(mfrow=c(1, 2))
+par(mfrow=c(1, 2), cex=0.8)
 plot.new()
 plot.window(main='8-tip trees with N common splits', cex.main=1,
             xlim=c(0, 6), ylim=c(0, 2708),
@@ -922,8 +933,8 @@ The Path and Matching Split metrics (&times;) do not have a readily calculated
 maximum value and are thus crudely normalized against an approximate maximum, 
 calculated by curve-fitting the maximum observed distance for each number of tips.
 
-```{R Tree-distance-averages, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, out.width='90%', fig.align='center'}
-
+```{R Tree-distance-averages, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, fig.align='center'}
+par(cex=0.8)
 data('randomTreeDistances', package='TreeDistData')
 
 pathMax <- randomTreeDistances['path', 'max', ]
