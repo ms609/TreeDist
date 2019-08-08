@@ -251,18 +251,24 @@ MutualPhylogeneticInfoSplits <- function (splits1, splits2, normalize = TRUE,
   inSplit2 <- colSums(splits2)
   notInSplit2 <- nTerminals - inSplit2
   
-  OneOverlap <- function(A1, A2) {
-    if (A1 == A2) {
-      # Return:
-      LnRooted.int(A1) + LnRooted.int(nTerminals - A2)
-    } else {
-      if (A1 < A2) {
-        tmp <- A2
-        A2 <- A1
-        A1 <- tmp
+  if (nTerminals <= length(oneOverlap)) {
+    # Use cache for speed, if available
+    oo <- oneOverlap[[nTerminals]]
+    OneOverlap <- function (A1, A2) oo[A1, A2]
+  } else {
+    OneOverlap <- function(A1, A2) {
+      if (A1 == A2) {
+        # Return:
+        LnRooted.int(A1) + LnRooted.int(nTerminals - A2)
+      } else {
+        if (A1 < A2) {
+          # Return:
+          LnRooted.int(A2) + LnRooted.int(nTerminals - A1) - LnRooted.int(A2 - A1 + 1L) 
+        } else {
+          # Return:
+          LnRooted.int(A1) + LnRooted.int(nTerminals - A2) - LnRooted.int(A1 - A2 + 1L) 
+        }
       }
-      # Return:
-      LnRooted.int(A1) + LnRooted.int(nTerminals - A2) - LnRooted.int(A1 - A2 + 1L) 
     }
   }
   
@@ -270,12 +276,12 @@ MutualPhylogeneticInfoSplits <- function (splits1, splits2, normalize = TRUE,
     split1 <- splits1[, i]
     split2 <- splits2[, j]
     
-    if (all(oneAndTwo <- split1[split2]) ||
-        all(notOneNotTwo <- !split1[!split2])) {
+    if (all(split1[split2]) || # oneAndTwo
+        all(!split1[!split2])) { # notOneNotTwo
       OneOverlap(inSplit1[i], inSplit2[j])
       
-    } else if (all(notOneAndTwo <- !split1[split2]) ||
-               all(oneNotTwo <- split1[!split2])) {
+    } else if (all(!split1[split2]) || # notOneAndTwo
+               all(split1[!split2])) { #oneNotTwo
       OneOverlap(inSplit1[i], notInSplit2[j])
       
     } else {
@@ -356,18 +362,24 @@ VariationOfPhylogeneticInfoSplits <- function (splits1, splits2, normalize = TRU
   logTrees1 <- LnRooted.int(inSplit1) + LnRooted.int(notInSplit1)
   logTrees2 <- LnRooted.int(inSplit2) + LnRooted.int(notInSplit2)
   
-  OneOverlap <- function(A1, A2) {
-    if (A1 == A2) {
-      # Return:
-      LnRooted.int(A1) + LnRooted.int(nTerminals - A2)
-    } else {
-      if (A1 < A2) {
-        tmp <- A2
-        A2 <- A1
-        A1 <- tmp
+  if (nTerminals <= length(oneOverlap)) {
+    # Use cache for speed, if available
+    oo <- oneOverlap[[nTerminals]]
+    OneOverlap <- function (A1, A2) oo[A1, A2]
+  } else {
+    OneOverlap <- function(A1, A2) {
+      if (A1 == A2) {
+        # Return:
+        LnRooted.int(A1) + LnRooted.int(nTerminals - A2)
+      } else {
+        if (A1 < A2) {
+          # Return:
+          LnRooted.int(A2) + LnRooted.int(nTerminals - A1) - LnRooted.int(A2 - A1 + 1L) 
+        } else {
+          # Return:
+          LnRooted.int(A1) + LnRooted.int(nTerminals - A2) - LnRooted.int(A1 - A2 + 1L) 
+        }
       }
-      # Return:
-      LnRooted.int(A1) + LnRooted.int(nTerminals - A2) - LnRooted.int(A1 - A2 + 1L) 
     }
   }
   
