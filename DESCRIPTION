@@ -36,10 +36,10 @@ Suggests:
     rmarkdown,
     testthat,
     Ternary,
-    TreeDistData
+    TreeDistData (>= 0.0.0.9005)
 Remotes: 
     ms609/TreeSearch@noTreeDist,
-    ms609/TreeDistData (>= 0.0.0.9005)
+    ms609/TreeDistData
 RdMacros: Rdpack
 LazyData: true
 ByteCompile: true

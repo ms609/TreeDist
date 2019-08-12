@@ -75,15 +75,13 @@ devtools::install_github('ms609/TreeDist')
 Other tree distance functions are implemented in:
 
 * [ape](http://ape-package.ird.fr/):
-    - [cophenetic.phylo]: Cophenetic distance
-    - [dist.topo]: Path (topological) distance, Robinson-Foulds distance.
+    - `cophenetic.phylo`: Cophenetic distance
+    - `dist.topo`: Path (topological) distance, Robinson-Foulds distance.
 * [phangorn](https://cran.r-project.org/package=phangorn)
-    - [treedist]: SPR, Robinson-Foulds and path distances.
+    - `treedist`: SPR, Robinson-Foulds and path distances.
 * [Quartet](http://ms609.github.io/Quartet/): Quartet and Triplet distances, 
   using the tqDist algorithm.
 * [distory] (unmaintained): Geodistic distance
-
-It adds to functions that already exist in `ape`, `phangorn` and `Quartet`. #TODO: More details to follow.
 
 # References
 

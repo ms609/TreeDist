@@ -4,12 +4,16 @@
 \name{oneOverlap}
 \alias{oneOverlap}
 \title{One Overlap}
-\format{An object of class \code{list} of length 500.}
+\format{An object of class \code{list} of length 100.}
 \usage{
 oneOverlap
 }
 \description{
 Information content of a single overlap
-Internal cache, called from within \code{MutualPhylogeneticInfoSplits}.
+Internal cache of all values for up to 100 terminals, called from within \code{MutualPhylogeneticInfoSplits}.
+}
+\details{
+The benefits of cacheing decrease an nTerminals increases (as a match is less likely)
+and the cost rises (in terms of storage space).
 }
 \keyword{datasets}
