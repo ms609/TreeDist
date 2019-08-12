@@ -70,7 +70,7 @@ Distance <- list(
   vci = function (tr, ref) round(VariationOfClusteringInfo(tr, ref, normalize = TRUE), 4L),
   nts = function (tr, ref) round(1 - NyeTreeSimilarity(tr, ref, normalize = TRUE), 4L),
   msd = function (tr, ref) signif(MatchingSplitDistance(tr, ref), 4),
-  qd = function (tr, ref) QuartetStatus(list(tr, ref))[2, 'd'],
+  qd = function (tr, ref) Quartet::QuartetStatus(list(tr, ref))[2, 'd'],
   path = function (tr, ref) signif(phangorn::treedist(tr, ref)['path.difference'], 4L),
   rf = function (tr, ref) phangorn::treedist(tr, ref)['symmetric.difference'],
   spr = function (tr, ref) phangorn::sprdist(tr, ref)[1])
@@ -133,7 +133,7 @@ RFPlot <- function (tr, title=NULL, highlight=NULL, ref=sq_trees[[1]],
   text(text_x, y <- y - 1, paste0(signif(MatchingSplitDistance(tr, ref), 4),
                                   ' / 32'), cex=0.8, pos=4)
   
-  text(text_x, y <- y - 1, paste0(QuartetStatus(list(tr, ref))[2, 'd'],
+  text(text_x, y <- y - 1, paste0(Quartet::QuartetStatus(list(tr, ref))[2, 'd'],
                             ' / ', choose(11,4)), cex=0.8, pos=4)
   text(text_x, y <- y - 1, paste0(signif(tree_dist['path.difference'], 4)), cex=0.8, pos=4)
   text(text_x, y <- y - 1, paste0(phangorn::sprdist(tr, ref)[1]), cex=0.8, pos=4)
@@ -852,8 +852,8 @@ common with a balanced tree than with an asymmetric tree, whereas the distributi
 #  allBif8 <- all8[vapply(all8, function(x) x$Nnode, 1L) == 6]
 #  inBalanced <- SplitStatus(allBif8, balancedTree)[, 's']
 #  inCaterpillar <- SplitStatus(allBif8, caterpillarTree)[, 's']
-#  qInBalanced <- QuartetStatus(allBif8, balancedTree)[, 's']
-#  qInCaterpillar <- QuartetStatus(allBif8, balancedTree)[, 's']
+#  qInBalanced <- Quartet::QuartetStatus(allBif8, balancedTree)[, 's']
+#  qInCaterpillar <- Quartet::QuartetStatus(allBif8, balancedTree)[, 's']
 #} else {
   inBalanced <- rep(0:5, c(7088, 2708, 512, 76, 10, 1))
   inCaterpillar <- rep(0:5, c(8162, 1808, 350, 64, 10, 1))
