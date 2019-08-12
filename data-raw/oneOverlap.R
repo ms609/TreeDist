@@ -20,4 +20,4 @@ oneOverlap <- lapply(seq_len(100), function (n)
                 nTerminals = n), ncol=n))
 
 
-usethis::use_data(oneOverlap, compress='xz', overwrite=TRUE)
+usethis::use_data(oneOverlap, compress='xz', overwrite=TRUE, internal=TRUE)
