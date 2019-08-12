@@ -85,4 +85,11 @@ Other tree distance functions are implemented in:
 
 # References
 
- - #TODO to follow.
+- Bogdanowicz, D. and Giaro, K. (2012) [Matching split distance for unrooted binary phylogenetic trees](https://dx.doi.org/10.1109/TCBB.2011.48). IEEE/ACM Transactions on Computational Biology and Bioinformatics, 9, 150–160. 
+
+- Kendall, M. and Colijn, C. (2016) [Mapping phylogenetic trees to reveal
+distinct patterns of evolution](https://dx.doi.org/10.1093/molbev/msw124). Mol Biol Evol, 33, 2735–2743.
+
+- Nye, T.M.W. et al. (2006) [A novel algorithm and web-based tool for comparing two alternative phylogenetic trees](https://dx.doi.org/10.1093/bioinformatics/bti720). Bioinformatics, 22, 117–119.
+
+- Smith, M.R. (forthcoming) [Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees].
