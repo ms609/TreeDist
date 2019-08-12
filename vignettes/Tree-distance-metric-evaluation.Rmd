@@ -15,10 +15,6 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-```{r, include=FALSE}
-options(tinytex.verbose = TRUE)
-```
-
 ```{R init-methods, echo=FALSE, message=FALSE, cache=TRUE}
 # Copied in from tree-distances.Rmd; make changes there.
 methods <- c('rf', 'spr', 'vpi', 'vci', 'msd', 'nts', 'path', 'qd')
@@ -325,7 +321,7 @@ a smaller distance than the distance expected for a pair of random trees.
 
 ```{R Random-trees-vs-simple-moves, echo=FALSE, cache=TRUE, warn=FALSE, message=FALSE, fig.asp=1, fig.width=5, out.width='50%', fig.align='center'}
 par(mfrow=c(2, 8), mar=c(1, 0.2, 1, 1))
-layout(matrix(c(1, 1, 2, 2, 2, 3, 3, 3, 3 + (1:8)), ncol=2), widths=c(0.33, 0.67))
+layout(matrix(c(rep(1:3, each=8), 3 + rep(1:8, each=3)), ncol=2), widths=c(0.33, 0.67))
 
 
 ColPlot(pectinate_tree, '', leaveRoom = FALSE, cex=1)
@@ -596,8 +592,8 @@ TableImage <- function (method) {
   plot(-100, -100, type='n', ylim=c(0, 965), xlim=c(965, 0), 
        axes=FALSE, xlab='', ylab='')
 
-  rasterImage(hShapeKey, 0, 950, 950, 975)
-  rasterImage(vShapeKey, 950, 950, 975, 0)
+  rasterImage(hShapeKey, 0, 955, 945, 975)
+  rasterImage(vShapeKey, 955, 945, 975, 0)
   # Vectorised alternative:
   #rect(shapeStarts, 950, shapeSum, 975, col=treeCols, border=NA)
   #rect(950, shapeStarts, 975, shapeSum, col=treeCols, border=NA)
@@ -641,7 +637,8 @@ Hist <- function (method, breaks=histBreaks[[method]]) {
   unnormalize <- if (method == 'qd') 35L else if (method == 'nts') 8L else 1L
   h <- hist(td7[[method]] * unnormalize - 1e-3,
             breaks=breaks, plot=FALSE)
-  plot(h, col=MethodPalette(method, length(h$breaks)), main=abbrevs[method], axes=FALSE)
+  plot(h, col=MethodPalette(method, length(h$breaks) - 1L),
+       main=abbrevs[method], axes=FALSE)
   legend('topleft', legend=length(unique(as.double(td7[[method]]))), bty='n')
   axis(1L)
 }
