@@ -915,7 +915,7 @@ a pair of random trees.
 The figure below shows how the median normalized tree distance varies with the number of 
 tips in the trees being compared.  1&nbsp;000 random pairs of _n_-tip trees were
 generated for $4 \leq n \leq 200$`r ''#4 &le; _n_ &le; 200`, and the distances between them calcuated. 
-Dashed and dotted envelopes respectively denote the 25-75% and 5-95% quantile ranges.
+Dashed and dotted envelopes respectively denote the 25--75% and 5--95% quantile ranges.
 
 Information-based metrics, marked +, are normalized against the total 
 information content of each pair of trees.
@@ -977,7 +977,7 @@ legend('bottomright', bty='n', pch=methodPch, lty=1,
        col=methodCol)
 
 legend('bottomleft', lty=1:3, bty='n', inset=c(0.07, 0), 
-       legend=c('Median', 'Interquartile range', '5%\u221295% range'))
+       legend=c('Median', 'Interquartile range', '5%\u201395% range'))
 ```
 
 Note that the path and Matching Splits distances exhibit a prominently larger 
