@@ -215,7 +215,7 @@ than moving a single tip. <!--
 ## In the case of a short move, the Quartet, SPR and RF distances
 ## do not differ whether one or two tips are moved.  
 
-```{R Cherry-short-move, echo=FALSE, message=FALSE, cache=TRUE, fig.width=6.4, fig.height=4, out.width='75%', fig.align='center'}
+```{R Cherry-short-move, include=FALSE, echo=FALSE, message=FALSE, cache=TRUE, fig.width=6.4, fig.height=4, out.width='75%', fig.align='center'}
 par(mfrow=c(1, 3), mar=standardMargin, cex=1)
 
 RFPlot(ape::read.tree(text='(((1, 2), 3), ((6, (5, 4)), ((10, 11), (7, (8, 9)))));'), 'Reference tree', edge.lengths=c(rep(1, 16), 2, 1,1,1))
@@ -232,12 +232,12 @@ ape::nodelabels('*', 18, frame='none')
 
 
 
-```{r echo=FALSE, results="asis", eval=FALSE}
+```{r echo=FALSE, include=FALSE, results="asis", eval=FALSE}
 tRow <- SetRow(c(T,T,T,T,T,NA,T,F,F), "Single-node move")
 PrintLastSet()
 ```
 --><!--
-```{R Cherry-short-move-2, echo=FALSE, message=FALSE, cache=TRUE, fig.width=6.4, fig.height=4, out.width='75%', fig.align='center'}
+```{R Cherry-short-move-2, include=FALSE, echo=FALSE, message=FALSE, cache=TRUE, fig.width=6.4, fig.height=4, out.width='75%', fig.align='center'}
 par(mfrow=c(1, 3), mar=standardMargin, cex=1)
 
 RFPlot(ape::read.tree(text='(((1, 2), 3), ((6, (5, 4)), ((10, 11), (7, (8, 9)))));'), 'Reference tree', edge.lengths=c(rep(1, 5), 2, rep(1, 14)))
@@ -275,7 +275,7 @@ PrintLastSet()
 ```
 
 <!--
-```{R  Move-a-cherry-two-b, echo=FALSE, message=FALSE, cache=TRUE, fig.width=6, fig.height=4, out.width='66%', fig.align='center', include=FALSE, eval=FALSE}
+```{R  Move-a-cherry-two-b, include=FALSE, echo=FALSE, message=FALSE, cache=TRUE, fig.width=6, fig.height=4, out.width='66%', fig.align='center', include=FALSE, eval=FALSE}
 # Equivalent metric results to last block; don't include
 par(mfrow=c(1, 3), mar=standardMargin, cex=1)
 
@@ -450,7 +450,7 @@ desirable that this space is somewhat even.  In particular, metrics in which
 trees form isolated islands, all an equal distance from one another but a great
 distance from their nearest neighbours, are undesirable [@Bogdanowicz2012].
 
-```{R Tree-distances, echo=FALSE, fig.align='center', fig.height=8, fig.width=6.4, message=FALSE, cache=TRUE, out.width='66%'}
+```{R Tree-distances, echo=FALSE, include=FALSE, fig.align='center', fig.height=8, fig.width=6.4, message=FALSE, cache=TRUE, out.width='66%'}
 par(mfrow=c(3, 5), mar=standardMargin, cex=1)
 NwkTree <- function(text) ape::read.tree(text=text)
 
@@ -475,7 +475,7 @@ moveOne <- list(
 xx <- lapply(seq_along(moveOne), function (i) RFPlot(moveOne[[i]], names(moveOne)[i]))
 ```
 
-```{R tree-spaces, echo=FALSE,  fig.align='center', fig.height=8, fig.width=6.4, message=FALSE, cache=TRUE, out.width='66%'}
+```{R tree-spaces, echo=FALSE, eval=FALSE, include=FALSE, fig.align='center', fig.height=8, fig.width=6.4, message=FALSE, cache=TRUE, out.width='66%'}
 par(mfrow=c(3, 3L), mar=standardMargin, cex=0.8)
 
 moveCols <-c(
@@ -542,7 +542,7 @@ PlotMDS(treeDists['symmetric.difference', , ], 'RF')
 
 Bogdanowicz & Giaro [-@Bogdanowicz2012] report that islands exist in the quartet and path differences.  A similar proof [#TODO] can be constructed for the [XYZ] distance.
 
-```{r echo=FALSE, results="asis"}
+```{r eval=FALSE, include=FALSE, results="asis"}
 tRow <- SetRow(c(mpi=T,mmsi=T,clu=T,nye=T,msd=T,qd=F,path=F,spr=T,rf=T), 'Islands')
 PrintLastSet()
 ```
