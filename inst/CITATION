@@ -21,7 +21,7 @@ citEntry(entry = "Article",
 
 citEntry(entry = "Manual",
       title = paste0("TreeDist: Distances between Phylogenetic Trees. ",
-      "R package version ", packageVersion('treeDist')),
+      "R package version ", packageVersion('TreeDist')),
       author = personList(as.person("Martin R. Smith")),
       doi = "10.XXXX/XXXXX",
       journal = "Comprehensive R Archive Network",
