@@ -1,4 +1,4 @@
-[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)<!--[![Project Status: Inactive – The project has reached a stable, usable state but is no longer being actively developed; support/maintenance will be provided as time allows.](http://www.repostatus.org/badges/latest/inactive.svg)](http://www.repostatus.org/#inactive)-->
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)<!--[![Project Status: Inactive – The project has reached a stable, usable state but is no longer being actively developed; support/maintenance will be provided as time allows.](http://www.repostatus.org/badges/latest/inactive.svg)](http://www.repostatus.org/#inactive)-->
 [![Build Status](https://travis-ci.com/ms609/TreeDist.svg?branch=master)](https://travis-ci.com/ms609/TreeDist)
 [![codecov](https://codecov.io/gh/ms609/TreeDist/branch/master/graph/badge.svg)](https://codecov.io/gh/ms609/TreeDist)
 [![CRAN Status Badge](http://www.r-pkg.org/badges/version/TreeDist)](https://cran.r-project.org/package=TreeDist)
@@ -51,17 +51,17 @@ proposed by Kendal and Colijn (2016) (function `KendallColijn`).
 
 # Installation
 
-
-Install and load the library from CRAN as follows:
-```
+<!--
 #TODO: submit to CRAN!
+Install and load the library from CRAN as follows:
+```r
 install.packages('TreeDist')
 library('TreeDist')
 ```
 
-If you're feeling brave, you can install the development version thus:
+If you're feeling brave, y-->You can install the development version of the package with:
 ```r
-if(!require(devtools)) install.packages("devtools")
+if (!require(devtools)) install.packages("devtools")
 devtools::install_github('ms609/TreeDist')
 ```
 # Documentation
@@ -81,7 +81,7 @@ Other tree distance functions are implemented in:
     - `treedist`: SPR, Robinson-Foulds and path distances.
 * [Quartet](http://ms609.github.io/Quartet/): Quartet and Triplet distances, 
   using the tqDist algorithm.
-* [distory] (unmaintained): Geodistic distance
+* [distory](https://cran.r-project.org/package=distory) (unmaintained): Geodistic distance
 
 # References
 

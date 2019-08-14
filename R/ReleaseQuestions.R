@@ -3,6 +3,8 @@ release_questions <- function() {
     "Is the code free of #TODOs?",
     "Have you updated REFERENCES.bib with a citation to the published study?",
     "Have you updated inst/CITATION with a citation to the published study?",
+    "Have you implemented a 'triangle plot' for tree comparisons?",
+    "Have you set 'TreeDist' to a default function?",
     "Have you updated the version number in inst/CITATION, NEWS and DESCRIPTION?"
   )
 }

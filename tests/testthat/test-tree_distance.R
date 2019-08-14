@@ -104,6 +104,16 @@ test_that('Mutual Phylogenetic Info is correctly calculated', {
                MutualPhylogeneticInfo(list(treeSym8, treeBal8), treeSym8))
 })
 
+test_that("Mutual Phylogenetic Information is correctly estimated", {
+  exp <- ExpectedVariation(treeSym8, treeAbc.Defgh, samples=100)
+  tol <- exp[, 'Std. Err.'] * 2
+  # Expected values calculated with 10k samples
+  expect_equal(exp['MutualPhylogeneticInfo', 'Estimate'], 1.17, tolerance=tol[1])
+  expect_equal(exp['MutualMatchingSplitInfo', 'Estimate'], 0.42, tolerance=tol[2])
+  expect_equal(exp['VariationOfPhylogeneticInfo', 'Estimate'], 25.24, tolerance=tol[3])
+  expect_equal(exp['VariationOfMatchingSplitInfo', 'Estimate'], 26.73, tolerance=tol[4])
+  expect_equal(exp[, 'sd'], exp[, 'Std. Err.'] * sqrt(exp[, 'n']))
+})
 
 test_that('MutualMatchingSplitInfo is correctly calculated', {
   BinaryToSplit <- function (binary) matrix(as.logical(binary))
