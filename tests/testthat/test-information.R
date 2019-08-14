@@ -99,7 +99,7 @@ test_that("SplitMatchProbability returns expected probabilities", {
     expect_equivalent(score, SplitMatchProbability(!split1, split2))
     expect_equivalent(score, SplitMatchProbability(!split2, split1))
     
-    expect_equivalent(log(SplitMatchProbability(split1, splits2)), 
+    expect_equivalent(log(SplitMatchProbability(split1, split2)), 
                           LnSplitMatchProbability(split1, split2))
     
     score
@@ -134,6 +134,8 @@ test_that("SplitMatchProbability returns expected probabilities", {
   expect_equal(2L, MatchingSplitDistanceSplits(cbind(splitAB), cbind(splitABCD)))
   expect_equal(3L, MatchingSplitDistanceSplits(cbind(splitAB), cbind(splitABCDE)))
   expect_equal(4L, MatchingSplitDistanceSplits(cbind(splitABC), cbind(splitAEF)))
+  expect_equal(MatchingSplitDistanceSplits(cbind(splitABC), cbind(splitAEF)),
+               MatchingSplitDistanceSplits(cbind(splitAEF), cbind(splitABC)))
   
 })
 
