@@ -9,6 +9,7 @@ cran-comments.md
 man-roxygen
 data-raw
 revdep
+.covrignore
 vignettes/.RData
 /^\.git/
 ^.*\.o$

@@ -2,12 +2,9 @@
 % Please edit documentation in R/Information.R
 \name{AllSplitPairings}
 \alias{AllSplitPairings}
-\alias{SplitPairingInformationIndex}
 \title{All split pairings}
 \usage{
 AllSplitPairings(n)
-
-SplitPairingInformationIndex(n)
 }
 \arguments{
 \item{n}{Integer specifying the number of terminal taxa.}
@@ -18,11 +15,6 @@ split pairings producing
 the variation of information given (in bits) in the name.  Splits
 AB:CD and CD:AB are treated as distinct, so division of all values by four
 is justified in cases where unique pairings only are required.
-
-\code{SplitPairingInformationIndex} returns a table listing the possible values
-of the variation of information for splits with \code{n} terminals, and the
-clustering information (\emph{sensu} Smith forthcoming) associated with a pairing
-that has the given variation of information.
 }
 \description{
 Calculates the variation of (clustering) information (Meila 2007)
@@ -33,14 +25,8 @@ and tabulates the number of pairings with each similarity.
 Trivial splits -- those that divide one or zero taxa from the rest --
 are not considered.
 }
-\section{Functions}{
-\itemize{
-\item \code{SplitPairingInformationIndex}: Lookup table listing split pairing information
-}}
-
 \examples{
 AllSplitPairings(5)
-SplitPairingInformationIndex(5)
 
 }
 \references{
