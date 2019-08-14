@@ -49,6 +49,8 @@ test_that("SplitMatchProbability returns expected probabilities", {
   splitBC <- c(FALSE, TRUE, TRUE, rep(FALSE, 6))
   splitCD <- c(FALSE, FALSE, TRUE, TRUE, rep(FALSE, 5))
   
+  expect_error(SplitMatchProbability(TRUE, splitAB))
+  
   # Possible matches to ABCD:....
   expect_true(SplitMatchProbability(splitABC, splitABCD) < 
                 SplitMatchProbability(splitAB, splitABCD))
@@ -96,6 +98,9 @@ test_that("SplitMatchProbability returns expected probabilities", {
     
     expect_equivalent(score, SplitMatchProbability(!split1, split2))
     expect_equivalent(score, SplitMatchProbability(!split2, split1))
+    
+    expect_equivalent(log(SplitMatchProbability(split1, splits2)), 
+                          LnSplitMatchProbability(split1, split2))
     
     score
   }
@@ -189,4 +194,24 @@ test_that("TreesConsistentWithTwoSplits works", {
   Test(10, 5, 2, 1575)
   Test(9, 5, 3, 135)
   Test(8, 7, 3, 315)
+})
+
+test_that("MeilaMutualInformation", {
+  expect_error(MeilaMutualInformation(c(T,T,T), c(T,T,T,T)))
+  expect_equal(0, MeilaMutualInformation(c(T,T,T,F,F), c(F,F,F,F,F)))
+})
+
+test_that("MeilaVariationOfInformation", {
+  expect_equal(6L, MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,T,T,T,T,T)))
+  expect_equal(0, MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,T,T,F,F,F)))
+  expect_equal(11.01955, MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,F,T,F,T,F)))
+  expect_equal(7.219281, MeilaVariationOfInformation(c(F,T,T,T,T,T), c(T,T,T,T,T,F)))
+})
+
+test_that("SplitEntropy", {
+  expect_equal(SplitEntropy(c(rep(TRUE, 5), rep(FALSE, 6)), c(rep(TRUE, 5), rep(FALSE, 6))),
+               SplitEntropy(c(rep(TRUE, 5), rep(FALSE, 6))))
+  expect_equal(c(h1=0.994, h2=0.994, jointH=1.348, i=0.6394, vI = 0.709),
+               SplitEntropy(c(rep(TRUE, 5), rep(FALSE, 6)), c(rep(TRUE, 6), rep(FALSE, 5))),
+               tolerance = 0.001)
 })

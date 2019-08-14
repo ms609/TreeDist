@@ -99,6 +99,9 @@ test_that('Mutual Phylogenetic Info is correctly calculated', {
                MutualPhylogeneticInfo(treeSym8, treeTwoSplits))
   expect_equal(SplitMutualInformation(8, 4, 3),
                MutualPhylogeneticInfo(treeTwoSplits, treeAbc.Defgh))
+  expect_equal(SplitInformation(4, 4) + SplitInformation (3, 5) - 
+               (2 * SplitMutualInformation(8, 4, 3)),
+               SplitVariationOfInformation(8, 4, 3), tolerance=1e-07)
   
   expect_equal(MutualPhylogeneticInfo(treeSym8, list(treeSym8, treeBal8)), 
                MutualPhylogeneticInfo(list(treeSym8, treeBal8), treeSym8))

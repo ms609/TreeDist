@@ -322,14 +322,6 @@ AllSplitPairings <- memoise(function (n) {
   tapply(unevenPairs['nTotal', ], unevenPairs['VoI', ], sum)
 })
 
-#' @describeIn AllSplitPairings Lookup table listing split pairing information
-#' @export
-SplitPairingInformationIndex <- memoise(function (n) {
-  info <- AllSplitPairings(n)
-  names(info) <- round(as.double(names(info)), 6L)
-  log2(sum(info)) - log2(cumsum(info))
-})
-
 #' Distributions of taxa consistent with a partition pair.
 #' 
 #' Number of terminal arrangements matching a specified configuration of 
