@@ -96,7 +96,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
              frame='n', adj=adjVal, cex=0.8)
   
   Plot(tree2, ...)
-  edgelabels(text=order(pairings), edge=partitionEdges2, bg=palette, adj=adjNo)
+  edgelabels(text=order(pairings), edge=partitionEdges2, bg=palette[order(pairings)], adj=adjNo)
   edgelabels(text=pairScores[order(pairings)], edge=partitionEdges2, 
              frame='n', adj=adjVal, cex=0.8)
   
