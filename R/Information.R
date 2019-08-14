@@ -273,14 +273,8 @@ SplitMatchProbability <- function (split1, split2) {
 #' AB:CD and CD:AB are treated as distinct, so division of all values by four 
 #' is justified in cases where unique pairings only are required.
 #' 
-#' `SplitPairingInformationIndex` returns a table listing the possible values
-#' of the variation of information for splits with `n` terminals, and the
-#' clustering information (_sensu_ Smith forthcoming) associated with a pairing 
-#' that has the given variation of information.
-#' 
 #' @examples
 #' AllSplitPairings(5)
-#' SplitPairingInformationIndex(5)
 #' 
 #' @references 
 #' * \insertRef{Meila2007}{TreeDist}
