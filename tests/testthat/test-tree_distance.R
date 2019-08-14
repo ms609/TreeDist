@@ -175,8 +175,8 @@ test_that('Matching Split Distance is correctly calculated', {
 
 test_that('NyeTreeSimilarity is correctly calculated', {
   expect_equal(5L, NyeTreeSimilarity(treeSym8, treeSym8))
+  expect_equal(c(3.8, 5), NyeTreeSimilarity(treeSym8, list(treeBal8, treeSym8)))
   expect_equal(2, 3 * NyeTreeSimilarity(treeAb.Cdefgh, treeAbc.Defgh))
-  expect_equal(3.8, NyeTreeSimilarity(treeSym8, treeBal8))
   expect_equal(1, NyeTreeSimilarity(treeSym8, treeSym8, normalize = TRUE))
   expect_equal(0.5 / 5L, NyeTreeSimilarity(treeSym8, treeAbcd.Efgh, normalize = TRUE))
   expect_true(NyeTreeSimilarity(treeSym8, treeBal8) > NyeTreeSimilarity(treeSym8, treeOpp8))
@@ -188,6 +188,9 @@ test_that('Kendall-Colijn distance is correctly calculated', {
   expect_equal(2.828427, KendallColijn(treeSym8, treeBal8), tolerance=1e-06)
   expect_equal(2.828427, KendallColijn(treeCat8, treeBal8), tolerance=1e-06)
   expect_equal(7.211103, KendallColijn(treeSym8, treeOpp8), tolerance=1e-06)
+  expect_equal(matrix(c(0L, 8L), nrow=2, ncol=2, byrow=TRUE), 
+               KendallColijn(list(treeSym8, treeCat8), list(treeCat8, treeTac8)), tolerance=1e-06)
+  expect_equal(8L, KendallColijn(treeCat8, treeTac8), tolerance=1e-06)
   expect_equal(0L, KendallColijn(treeSym8, treeCat8), tolerance=1e-06)
   expect_equal(8L, KendallColijn(treeSym8, treeTac8), tolerance=1e-06)
   expect_equal(8L, KendallColijn(treeCat8, treeTac8), tolerance=1e-06)
