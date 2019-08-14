@@ -7,7 +7,6 @@
 \alias{ExpectedVariation}
 \alias{MutualClusteringInfo}
 \alias{MutualPhylogeneticInfoSplits}
-\alias{VariationOfPhylogeneticInfoSplits}
 \alias{MutualMatchingSplitInfoSplits}
 \alias{MutualClusteringInfoSplits}
 \alias{MutualMatchingSplitInfo}
@@ -29,9 +28,6 @@ MutualClusteringInfo(tree1, tree2, normalize = FALSE,
   reportMatching = FALSE)
 
 MutualPhylogeneticInfoSplits(splits1, splits2, normalize = TRUE,
-  reportMatching = FALSE)
-
-VariationOfPhylogeneticInfoSplits(splits1, splits2, normalize = TRUE,
   reportMatching = FALSE)
 
 MutualMatchingSplitInfoSplits(splits1, splits2, reportMatching = FALSE)
@@ -105,8 +101,6 @@ a given topology.
 \item \code{MutualClusteringInfo}: Mutual Clustering Information of two trees.
 
 \item \code{MutualPhylogeneticInfoSplits}: Calculate mutual phylogenetic information from splits instead of trees.
-
-\item \code{VariationOfPhylogeneticInfoSplits}: Calculate variation of phylogenetic information from splits instead of trees.
 
 \item \code{MutualMatchingSplitInfoSplits}: Calculate variation of matching split information from splits instead of trees.
 
