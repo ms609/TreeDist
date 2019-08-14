@@ -136,7 +136,8 @@ test_that("SplitMatchProbability returns expected probabilities", {
   expect_equal(4L, MatchingSplitDistanceSplits(cbind(splitABC), cbind(splitAEF)))
   expect_equal(MatchingSplitDistanceSplits(cbind(splitABC), cbind(splitAEF)),
                MatchingSplitDistanceSplits(cbind(splitAEF), cbind(splitABC)))
-  
+  expect_error(MatchingSplitDistanceSplits(cbind(splitAB), cbind(splitAB)[-9, ]))
+  expect_error(NyeSplitSimilarity(cbind(splitAB), cbind(splitAB)[-9, ]))
 })
 
 test_that("AllSplitPairings counted correctly", {
