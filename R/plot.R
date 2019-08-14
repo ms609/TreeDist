@@ -37,7 +37,8 @@ TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = TRUE,
   yLim <- if (leaveRoom) c(-0.4 - 8 # = -0.4 - length(legendSequence)
                            , 11) else c(-0.4, 11)
   tr$tip.label <- LETTERS[as.integer(tipNumbers)]
-  plot.phylo(tr, tip.col=tipCols[as.integer(tipNumbers)], main=title, cex.main=0.8, 
-       font=font, edge.width=tr$edge.width, edge.color=edge.color, y.lim=yLim, 
-       ...)
+  plot.phylo(tr, tip.color=tipCols[as.integer(tipNumbers)], 
+             main=title, cex.main=0.8, font=font, 
+             edge.width=tr$edge.width, edge.color=edge.color, 
+             y.lim=yLim, ...)
 }
