@@ -30,9 +30,8 @@
 #' 
 #' An information-theoretic take on the [`MatchingSplitDistance`] offers a 
 #' relaxed interpretation of this measurement, which attributes some information
-#' to similar yet contradictory splits.  This metric exhibits undesirable
-#' properties, but is implemented in `MutualMatchingSplitInfo` and 
-#' `VariationOfMatchingSplitInfo`.
+#' to similar yet contradictory splits.  This metric is implemented in
+#' `MutualMatchingSplitInfo` and `VariationOfMatchingSplitInfo`.
 #' 
 #' Alternatively, each partition can be viewed as a statement that the taxa
 #' are subdivided into the two groups specified.  On this view, the 

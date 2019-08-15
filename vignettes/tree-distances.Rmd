@@ -13,18 +13,18 @@ vignette: >
 
 ```{R init, echo=FALSE, message=FALSE, cache=TRUE}
 # Remember to propogate changes here to T-d-m-e.Rmd
-methods <- c('rf', 'spr', 'vpi', 'vci', 'msd', 'nts', 'path', 'qd')
+methods <- c('rf', 'spr', 'vpi', 'vci', 'msd', 'nts', 'path', 'qd', 'vmsi')
 plotSequence <- c('vpi', 'vci', 'nts', 'qd', 'msd', 'path', 'spr', 'rf')
 abbrevs <- c(
   rf  = 'Robinson-Foulds',
   vpi = 'Var. Phylogen. Info',
   spr = 'SPR',
   path = 'Path',
-  vci = 'Var. Clustering Info', 
+  vci = 'Var. Clust. Info', 
   nts = expression(paste(plain('Nye '), italic('et al.'))),
   qd  = 'Quartet',
-  vmsi = 'Var. Matching Split Info',
-  msd = 'Matching Splits'
+  vmsi = 'V. Match. Split Inf.',
+  msd = 'Match. Split Dist.'
 )[methods]
 methodCol <- c(
 '#4e78a8',
@@ -132,8 +132,8 @@ The histograms below depict the distribution of tree distances for
 `r format(dim(distanceDistribution25)[2], big.mark='&nbsp;')`
 pairs of 25-tip trees drawn at random from the uniform distribution.
 
-```{R Tree-distance-distributions, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1/2, fig.width=7, out.width='90%', fig.align='center'}
-par(mfrow=c(2, 4), mar=rep(1.9, 4), cex=0.8, oma=c(0, 0, 2, 0))
+```{R Tree-distance-distributions, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=7, out.width='90%', fig.align='center'}
+par(mfrow=c(3, 3), mar=rep(1.9, 4), cex=0.8, oma=c(0, 0, 2, 0))
 manyBreaks <- seq(0, 1, length.out=40)
 
 PlotHist <- function (method, breaks = 40L) {
@@ -146,6 +146,7 @@ PlotHist('vpi')
 mtext('Distance between random pairs of 25-tip bifurcating trees', outer=TRUE, cex=0.8)
 
 PlotHist('vci')
+PlotHist('vmsi')
 PlotHist('nts')
 PlotHist('qd')
 PlotHist('msd')
@@ -164,7 +165,8 @@ each other.  The Robinson-Foulds metric shows minimal correlation with any other
 metric, notwithstanding a weak correlation with the Nye _et al._ measure.
 
 ```{R metric-correlation, echo=FALSE, fig.width=7, fig.height=7, out.width='95%', fig.align='center'}
-par(mfrow=c(8L, 7L), mar=rep(0.2, 4))
+toCorrelate <- c('vci', 'vpi', 'vmsi', 'nts', 'qd', 'msd', 'path', 'rf')
+par(mfrow=length(toCorrelate) + c(1L, 0L), mar=rep(0.2, 4))
 colScale <- colorspace::sequential_hcl(1000, palette='viridis')
 CorrPlot <- function (methodA, methodB) {
   a <- distanceDistribution25[methodA, ]
@@ -186,7 +188,6 @@ PlotR2 <- function (methodA, methodB) {
   regCol <- colScale[max(ceiling((r2 - 0.5) * 2000), 1L)]
   text(0.5, 0.5, signif(round(r2, 4), 3), col = regCol, cex=2.6)
 }
-toCorrelate <- c('vci', 'vpi', 'nts', 'qd', 'msd', 'path', 'rf')
 lapply(seq_along(toCorrelate), function(i)
   lapply(seq_along(toCorrelate), function(j) {
     if (i == j) {
