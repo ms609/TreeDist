@@ -127,9 +127,8 @@ Variation of Phylogenetic Information distance metric
 
 An information-theoretic take on the \code{\link{MatchingSplitDistance}} offers a
 relaxed interpretation of this measurement, which attributes some information
-to similar yet contradictory splits.  This metric exhibits undesirable
-properties, but is implemented in \code{MutualMatchingSplitInfo} and
-\code{VariationOfMatchingSplitInfo}.
+to similar yet contradictory splits.  This metric is implemented in
+\code{MutualMatchingSplitInfo} and \code{VariationOfMatchingSplitInfo}.
 
 Alternatively, each partition can be viewed as a statement that the taxa
 are subdivided into the two groups specified.  On this view, the

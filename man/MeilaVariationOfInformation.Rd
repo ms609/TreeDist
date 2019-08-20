@@ -39,22 +39,22 @@ This is the value that the function returns.
 
 \examples{
   # Maximum variation = information content of each split separately
-  T <- TRUE
-  F <- FALSE
-  MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,T,T,T,T,T))
+  A <- TRUE
+  B <- FALSE
+  MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,A,A,A,A,A))
   Entropy(c(3, 3) / 6) + Entropy(c(0, 6) / 6)
   
   # Minimum variation = 0
-  MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,T,T,F,F,F))
+  MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,A,A,B,B,B))
   
   # Not always possible for two evenly-sized splits to reach maximum
   # variation of information
   Entropy(c(3, 3) / 6) * 2  # = 2
-  MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,F,T,F,T,F)) # < 2
+  MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,B,A,B,A,B)) # < 2
   
   # Phylogenetically uninformative groupings contain partitioning information
   Entropy(c(1, 5) / 6)
-  MeilaVariationOfInformation(c(F,T,T,T,T,T), c(T,T,T,T,T,F))
+  MeilaVariationOfInformation(c(B,A,A,A,A,A), c(A,A,A,A,A,B))
 
 
 }
