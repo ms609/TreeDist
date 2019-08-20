@@ -101,7 +101,8 @@ NyeSplitSimilarity <- function (splits1, splits2, normalize = TRUE,
     optimalMatching <- solve_LSAP(pairScores, TRUE)
     
     # Return:
-    ret <- sum(pairScores[matrix(c(seq_along(optimalMatching), optimalMatching), ncol=2L)])
+    ret <- sum(pairScores[
+      matrix(c(seq_along(optimalMatching), optimalMatching), ncol=2L)])
     if (reportMatching) {
       if (!is.null(taxonNames2)) {
         attr(ret, 'matchedSplits') <- 

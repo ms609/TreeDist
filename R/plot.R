@@ -27,8 +27,8 @@ TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = TRUE,
     edge.color[prune] <- "#D55E00" # Ternary::cbPalette8[7]
     edge.color[graft] <- "#009E73" # Ternary::cbPalette8[4]
   }
-  tipCols <- c("#000000", "#004949", "#009292", "#FFB6DB", "#490092", "#B66DFF", 
-               "#6DB6FF", "#B6DBFF", "#920000", "#924900", "#DB6D00", "#24FF24", 
+  tipCols <- c("#000000", "#004949", "#009292", "#FFB6DB", "#490092", "#B66DFF",
+               "#6DB6FF", "#B6DBFF", "#920000", "#924900", "#DB6D00", "#24FF24",
                "#FFFF6D") # Ternary::cbPalette15[-c(4, 7)]
 
   tipNumbers <- tr$tip.label
@@ -91,12 +91,14 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   if (setPar) origPar <- par(mfrow=c(2, 1), mar=rep(0.5, 4))
   
   Plot(tree1, ...)
-  edgelabels(text=seq_along(pairings), edge=partitionEdges1, bg=palette, adj=adjNo)
+  edgelabels(text=seq_along(pairings), edge=partitionEdges1, 
+             bg=palette, adj=adjNo)
   edgelabels(text=pairScores, edge=partitionEdges1, 
              frame='n', adj=adjVal, cex=0.8)
   
   Plot(tree2, ...)
-  edgelabels(text=order(pairings), edge=partitionEdges2, bg=palette[order(pairings)], adj=adjNo)
+  edgelabels(text=order(pairings), edge=partitionEdges2, 
+             bg=palette[order(pairings)], adj=adjNo)
   edgelabels(text=pairScores[order(pairings)], edge=partitionEdges2, 
              frame='n', adj=adjVal, cex=0.8)
   

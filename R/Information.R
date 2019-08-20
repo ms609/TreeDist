@@ -88,22 +88,22 @@ SplitVariationOfInformation <- function (n, A1, A2 = A1) {
 #' 
 #' @examples 
 #'   # Maximum variation = information content of each split separately
-#'   T <- TRUE
-#'   F <- FALSE
-#'   MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,T,T,T,T,T))
+#'   A <- TRUE
+#'   B <- FALSE
+#'   MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,A,A,A,A,A))
 #'   Entropy(c(3, 3) / 6) + Entropy(c(0, 6) / 6)
 #'   
 #'   # Minimum variation = 0
-#'   MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,T,T,F,F,F))
+#'   MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,A,A,B,B,B))
 #'   
 #'   # Not always possible for two evenly-sized splits to reach maximum
 #'   # variation of information
 #'   Entropy(c(3, 3) / 6) * 2  # = 2
-#'   MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,F,T,F,T,F)) # < 2
+#'   MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,B,A,B,A,B)) # < 2
 #'   
 #'   # Phylogenetically uninformative groupings contain partitioning information
 #'   Entropy(c(1, 5) / 6)
-#'   MeilaVariationOfInformation(c(F,T,T,T,T,T), c(T,T,T,T,T,F))
+#'   MeilaVariationOfInformation(c(B,A,A,A,A,A), c(A,A,A,A,A,B))
 #' 
 #' 
 #' @template split12Params
@@ -211,7 +211,8 @@ SplitMatchProbability <- function (split1, split2) {
                          sum(split1 & !split2),
                          sum(!split1 & split2),
                          sum(!split1 & !split2)
-                         ), 2, 2) #, dimnames=list(c('A1', 'B1'), c('A2', 'B2')))
+                         ), 2, 2) 
+  #, dimnames=list(c('A1', 'B1'), c('A2', 'B2')))
   
   split1Size <- rowSums(partitions)
   split2Size <- colSums(partitions)
@@ -238,10 +239,12 @@ SplitMatchProbability <- function (split1, split2) {
   extraTipsInPerfectMatch.A1A2.B1B2 <- sum(arrangements[c(1, 4), nArrangements])
   extraTipsInPerfectMatch.A1B2.B1A2 <- sum(arrangements[c(2, 3), 1L])
   
-  ranking <- if (extraTipsInPerfectMatch.A1A2.B1B2 > extraTipsInPerfectMatch.A1B2.B1A2) {
+  ranking <- if (extraTipsInPerfectMatch.A1A2.B1B2 > 
+                 extraTipsInPerfectMatch.A1B2.B1A2) {
     c(seq.int(1L, nArrangements, 2L),
       rev(seq.int(2L, nArrangements, 2L)))
-  } else if (extraTipsInPerfectMatch.A1A2.B1B2 < extraTipsInPerfectMatch.A1B2.B1A2) {
+  } else if (extraTipsInPerfectMatch.A1A2.B1B2 < 
+             extraTipsInPerfectMatch.A1B2.B1A2) {
     c(seq.int(2L, nArrangements, 2L),
       rev(seq.int(1L, nArrangements, 2L)))
   } else {
@@ -252,7 +255,8 @@ SplitMatchProbability <- function (split1, split2) {
   choices <- apply(arrangements, 2, NPartitionPairs)
   
   # Return:
-  sum(choices[ranking <= ranking[partitions[1, 2] + 1L - minA1B2]]) / choose(n, A1)
+  sum(choices[ranking <= ranking[partitions[1, 2] + 1L - minA1B2]]) /
+    choose(n, A1)
 }
 
 
