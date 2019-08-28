@@ -28,6 +28,7 @@ r_binary_packages:
  - Rdpack
  - roxygen2
  - testthat
+ - vdiffr
 
 before_script:
   - R -e "devtools::document()"

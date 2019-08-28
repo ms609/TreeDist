@@ -35,7 +35,8 @@ Suggests:
     rmarkdown,
     testthat,
     Ternary,
-    TreeDistData (>= 0.0.0.9005)
+    TreeDistData (>= 0.0.0.9005),
+    vdiffr
 Remotes: 
     ms609/TreeSearch,
     ms609/TreeDistData
