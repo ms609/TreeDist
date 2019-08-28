@@ -91,7 +91,7 @@ MostDifferent <- function (methodA, methodB)  {
   mostDiff
 }
 
-MostDifferent('vpi', 'vmsi')
+MostDifferent('vci', 'vmsi')
 ```
 
 ```{R view-metric-differences, echo=FALSE, fig.width=6, fig.height=7, out.width='95%', fig.align='center'}
@@ -116,11 +116,14 @@ ShowPairMatching <- function (methodA, methodB, pair) {
   legend('topleft', legend=abbrevs[methodB], bty='n')
 }
 
-ShowPairMatching('vpi', 'vmsi', 2033)
+ShowPairMatching('vci', 'vmsi', 2033)
 
 ```
 
 
+VPI is most different from VMSI when there exists a large clade that is similar,
+but not identical, to a clade in the reference tree.  That's because VPI ignores
+the match, but VMSI scores it (and sub-near-matches) highly.
 
 ```{r metric-differences, echo=FALSE, message=FALSE, fig.align='center', fig.height=7, fig.width=7, out.width='95%'}
 library('TreeDist')
@@ -154,7 +157,7 @@ MostDifferent <- function (methodA, methodB)  {
   text(a[mostDiff], b[mostDiff], mostDiff, pch=1, col='red')
 }
 
-MostDifferent('vpi', 'vmsi')
+MostDifferent('vci', 'vmsi')
 ```
 
 ## Ineffective MPI
@@ -181,7 +184,7 @@ ShowPairMatching <- function (methodA, methodB, pair) {
   legend('topleft', legend=abbrevs[methodB], bty='n')
 }
 
-ShowPairMatching('vpi', 'vmsi', 1706)
+ShowPairMatching('vci', 'vmsi', 1706)
 ```
 
 ```{r exdplore-1706, echo=FALSE}
