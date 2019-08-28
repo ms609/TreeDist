@@ -1,4 +1,4 @@
-#' Information-based generalized Robinson-Foulds distances between two trees.
+#' Information-based generalized Robinson-Foulds distances
 #'
 #' Tree similarity and distance measures that measure the amount of 
 #' phylogenetic or clustering information that two trees hold in common.

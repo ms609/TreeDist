@@ -1,10 +1,14 @@
 #' One Overlap
 #' 
-#' Information content of a single overlap
-#' Internal cache of all values for up to 100 terminals, called from within `MutualPhylogeneticInfoSplits`.
+#' Information content of a single overlap.
 #' 
-#' The benefits of cacheing decrease an nTerminals increases (as a match is less likely)
-#' and the cost rises (in terms of storage space).
+#' Internal cache of all values for up to 100 terminals, called from within 
+#' `MutualPhylogeneticInfoSplits`.
 #' 
+#' The benefits of caching decrease as `nTerminals` increases, 
+#' as a match is less likely; moreover, the cost, in terms of storage
+#' space, rises.
+#' 
+#' @noRd
 #' @keywords datasets
 "oneOverlap"

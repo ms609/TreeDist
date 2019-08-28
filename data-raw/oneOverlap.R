@@ -1,5 +1,6 @@
 library(TreeSearch)
 
+#' @noRd
 OneOverlap <- function(A1, A2, nTerminals) {
   if (A1 == A2) {
     # Return:

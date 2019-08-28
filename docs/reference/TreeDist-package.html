@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • TreeDist</title>
+<title>TreeDist: Distances between Phylogenetic Trees — TreeDist-package • TreeDist</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -30,7 +30,15 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="TreeDist: Distances between Phylogenetic Trees — TreeDist-package" />
+
+<meta property="og:description" content="Implements various measures of tree similarity, including 
+  Information-based generalized Robinson-Foulds distances
+  (Mutual Phylogenetic Information, Mutual Clustering Information; Smith, in prep); 
+  the metric of Nye et al. (2006) &amp;lt;doi:10.1093/bioinformatics/bti720&amp;gt;;
+  the Matching Split Distance (Bogdanowicz &amp;amp; Giaro 2012) &amp;lt;doi:10.1109/TCBB.2011.48&amp;gt;;
+  and the Kendall-Colijn (2016) distance &amp;lt;doi:10.1093/molbev/msw124&amp;gt;." />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -47,7 +55,7 @@
   </head>
 
   <body>
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -112,87 +120,44 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>TreeDist: Distances between Phylogenetic Trees</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/TreeDist-package.R'><code>R/TreeDist-package.R</code></a></small>
+    <div class="hidden name"><code>TreeDist-package.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    
+    <p>Implements various measures of tree similarity, including 
+  Information-based generalized Robinson-Foulds distances
+  (Mutual Phylogenetic Information, Mutual Clustering Information; Smith, in prep); 
+  the metric of Nye et al. (2006) &lt;doi:10.1093/bioinformatics/bti720&gt;;
+  the Matching Split Distance (Bogdanowicz &amp; Giaro 2012) &lt;doi:10.1109/TCBB.2011.48&gt;;
+  and the Kendall-Colijn (2016) distance &lt;doi:10.1093/molbev/msw124&gt;.</p>
+    
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+        
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-tree-distance-measures" class="hasAnchor"><a href="#section-tree-distance-measures" class="anchor"></a>Tree distance measures</h2>
-          <p class="section-desc"><p>Functions for calculating distances between pairs of trees</p></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="MutualPhylogeneticInfo.html">MutualPhylogeneticInfo()</a></code> <code><a href="MutualPhylogeneticInfo.html">VariationOfPhylogeneticInfo()</a></code> <code><a href="MutualPhylogeneticInfo.html">VariationOfClusteringInfo()</a></code> <code><a href="MutualPhylogeneticInfo.html">ExpectedVariation()</a></code> <code><a href="MutualPhylogeneticInfo.html">MutualClusteringInfo()</a></code> <code><a href="MutualPhylogeneticInfo.html">MutualPhylogeneticInfoSplits()</a></code> <code><a href="MutualPhylogeneticInfo.html">MutualMatchingSplitInfoSplits()</a></code> <code><a href="MutualPhylogeneticInfo.html">MutualClusteringInfoSplits()</a></code> <code><a href="MutualPhylogeneticInfo.html">MutualMatchingSplitInfo()</a></code> <code><a href="MutualPhylogeneticInfo.html">VariationOfMatchingSplitInfo()</a></code> </p>
-        </td>
-        <td><p>Information-based generalized Robinson-Foulds distances between two trees.</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="KendallColijn.html">KendallColijn()</a></code> <code><a href="KendallColijn.html">KCVector()</a></code> </p>
-        </td>
-        <td><p>Kendall-Colijn distance between unrooted topologies</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="MatchingSplitDistance.html">MatchingSplitDistance()</a></code> <code><a href="MatchingSplitDistance.html">MatchingSplitDistanceSplits()</a></code> </p>
-        </td>
-        <td><p>Matching Split Distance</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="NyeTreeSimilarity.html">NyeTreeSimilarity()</a></code> <code><a href="NyeTreeSimilarity.html">NyeSplitSimilarity()</a></code> </p>
-        </td>
-        <td><p>Nye <em>et al</em>. (2006) tree comparison</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-information" class="hasAnchor"><a href="#section-information" class="anchor"></a>Information</h2>
-          <p class="section-desc"><p>Calculations relating to information content</p></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="Entropy.html">Entropy()</a></code> </p>
-        </td>
-        <td><p>Entropy in bits</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="JointInformation.html">JointInformation()</a></code> </p>
-        </td>
-        <td><p>Joint Information of two splits</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SplitEntropy.html">SplitEntropy()</a></code> </p>
-        </td>
-        <td><p>Entropy of two splits</p></td>
-      </tr>
-    </tbody>
-    </table>
+    <div class='dont-index'><p>Useful links:</p><ul>
+<li><p><a href='https://ms609.github.io/TreeDist'>https://ms609.github.io/TreeDist</a></p></li>
+<li><p><a href='https://github.com/ms609/TreeDist'>https://github.com/ms609/TreeDist</a></p></li>
+<li><p>Report bugs at <a href='https://github.com/ms609/TreeDist/issues'>https://github.com/ms609/TreeDist/issues</a></p></li>
+</ul></div>
+    
+
   </div>
-
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-tree-distance-measures">Tree distance measures</a></li>
-      <li><a href="#section-information">Information</a></li>
-    </ul>
+      
+      <li><a href="#see-also">See also</a></li>
+          </ul>
+
+    <h2>Author</h2>
+    <p><strong>Maintainer</strong>: Martin R. Smith <a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a> (0000-0001-5660-1727) [copyright holder]</p>
   </div>
 </div>
 

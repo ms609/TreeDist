@@ -1,4 +1,4 @@
-#' Kendall-Colijn distance between unrooted topologies
+#' Kendall-Colijn distance
 #' 
 #' The Kendall-Colijn distance is related to the path difference. 
 #' 
