@@ -40,7 +40,7 @@ lead to different tree distance metrics, implemented in the functions below:
     distance.)
 
 * `NyeTreeSimilarity`
-    Nye _et al._ (2006)score matchings according to the size of the largest 
+    Nye _et al._ (2006) score matchings according to the size of the largest 
     bipartition that is consistent with both of them, normalized against 
     the Jaccard index.
    
