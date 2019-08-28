@@ -5,7 +5,6 @@ warnings_are_errors: true
 r_check_args: --as-cran --no-manual # Workaround error compiling PDF manual
 matrix:
   include:
-    - r: 3.4.0
     - r: release
       after_success:
         - Rscript -e "covr::codecov()"
@@ -16,7 +15,7 @@ matrix:
         skip_cleanup: true
     - r: devel
     - os: osx
-      r: release
+      r: 3.4.0
   allow_failures:
     r: devel # Incompatible with devtools
 
