@@ -2,7 +2,7 @@
 % Please edit documentation in R/Information.R
 \name{NPartitionPairs}
 \alias{NPartitionPairs}
-\title{Distributions of taxa consistent with a partition pair.}
+\title{Distributions of taxa consistent with a partition pair}
 \usage{
 NPartitionPairs(configuration)
 }

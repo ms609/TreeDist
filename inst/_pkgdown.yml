@@ -12,10 +12,9 @@ reference:
     desc: > 
       Functions for calculating distances between pairs of trees
     contents:
-      - has_concept("Tree distances")
+      - has_concept("tree distances")
       - starts_with("Mutual")
       - starts_with("Variation")
-      - matches('tree2')
       - KendallColijn
       - MatchingSplitDistance
       - NyeTreeSimilarity
@@ -35,8 +34,8 @@ reference:
     contents:
       - AllSplitPairings
       - SplitsCompatible
+      - MeilaVariationOfInformation
   - title: "Utility functions"
     desc: Functions to assist user comprehension
     contents:
       - VisualizeMatching
-      
