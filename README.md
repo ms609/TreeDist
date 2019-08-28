@@ -68,7 +68,7 @@ devtools::install_github('ms609/TreeDist')
 ```
 # Documentation
 
-(#TODO will become live on submission to CRAN)
+CRAN documentation files:
 - [Package functions](https://CRAN.R-project.org/package=TreeDist/TreeDist.pdf) reference manual
 - [Tree distances](https://CRAN.R-project.org/package=TreeDist/vignettes/tree-distances.html)
 
