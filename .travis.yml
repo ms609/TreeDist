@@ -29,6 +29,7 @@ r_github_packages:
 
 r_packages:
  - bookdown
+ - vdiffr
  
 r_binary_packages:
  - ape
@@ -38,7 +39,6 @@ r_binary_packages:
  - Rdpack
  - roxygen2
  - testthat
- - vdiffr
 
 before_script:
   - R -e "devtools::document()"
