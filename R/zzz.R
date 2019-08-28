@@ -2,7 +2,9 @@
 release_questions <- function() {
   c(
     "Have you cleared GitHub issues for this release milestone?",
-    "Have you checked the Vignettes for sanity?"
+    "Have you checked the Vignettes for sanity?",
+    "Have you rebuild the website with pkgdown::build_site()?",
+    "Have you refreshed the package meta with codemetar::write_codemeta()?"
   )
 }
 
