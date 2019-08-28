@@ -15,6 +15,8 @@ matrix:
         script: Rscript -e 'pkgdown::deploy_site_github()'
         skip_cleanup: true
     - r: devel
+    - os: osx
+      r: release
   allow_failures:
     r: devel # Incompatible with devtools
 
@@ -43,4 +45,7 @@ r_binary_packages:
 before_script:
   - R -e "devtools::document()"
 
-
+notifications:
+  email:
+    on_success: change
+    on_failure: change
