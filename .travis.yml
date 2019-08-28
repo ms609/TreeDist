@@ -1,18 +1,28 @@
-language: R
-r:
- - 3.4.0
-# - release
- - devel # Incompatible with devtools
+language: r
 cache: packages
 sudo: required # required if r_binary_packages; false otherwise
 warnings_are_errors: true
 r_check_args: --as-cran --no-manual # Workaround error compiling PDF manual
+matrix:
+  include:
+    - r: 3.4.0
+    - r: release
+      after_success:
+        - Rscript -e "covr::codecov()"
+      before_deploy: Rscript -e 'remotes::install_cran("pkgdown")'
+      deploy:
+        provider: script
+        script: Rscript -e 'pkgdown::deploy_site_github()'
+        skip_cleanup: true
+    - r: devel
+  allow_failures:
+    r: devel # Incompatible with devtools
 
 git:
   depth: 1
 
 r_github_packages:
- - ms609/TreeSearch@noTreeDist
+ - ms609/TreeSearch
  - ms609/TreeDistData
 # - r-lib/pkgload
 # - r-lib/devtools
@@ -33,11 +43,4 @@ r_binary_packages:
 before_script:
   - R -e "devtools::document()"
 
-after_success:
-  - Rscript -e "covr::codecov()"
 
-before_deploy: Rscript -e 'remotes::install_cran("pkgdown")'
-deploy:
-  provider: script
-  script: Rscript -e 'pkgdown::deploy_site_github()'
-  skip_cleanup: true

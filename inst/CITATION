@@ -8,14 +8,16 @@ citHeader(paste0("When using the package, I would appreciate it if you would ",
 
 
 citEntry(entry = "Article",
-      title = "Untitled",
+      title = "Information theoretic Generalized Robinson-Foulds metrics
+for comparing phylogenetic trees",
       author = personList(as.person("Martin R. Smith")),
       journal = "Unsubmitted",
       year = "20XX",
 
       textVersion =
       paste0("Smith, M.R. (20XX).",
-             " Untitled", 
+             " Information theoretic Generalized Robinson-Foulds metrics
+for comparing phylogenetic trees", 
              " Journal name.",
              " doi: 10.XXXX/XXXXX"))
 
