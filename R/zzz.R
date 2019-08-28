@@ -1,18 +1,21 @@
 ## Reminders when releasing for CRAN
 release_questions <- function() {
   c(
-    "Have you cleared GitHub issues for this release milestone?",
+    "Is the code free of #TODOs?",
     "Have you checked the Vignettes for sanity?",
     "Have you rebuild the website with pkgdown::build_site()?",
-    "Have you refreshed the package meta with codemetar::write_codemeta()?"
-  )
+    "Have you refreshed the package meta with codemetar::write_codemeta()?",
+    "Have you updated REFERENCES.bib with a citation to the published study?",
+    "Have you updated inst/CITATION with a citation to the published study?",
+    "Have you set 'TreeDist' to a default function?",
+    "Have you updated the version number in inst/CITATION, NEWS & DESCRIPTION?"
+    )
 }
 
-#rhub::check_on_windows()
-#check_with_rdevel() # redundifies check_on_debian()
-#check_on_ubuntu()
-#check_on_fedora()
-#check_on_centos() 
-#check_with_valgrind() # runs the build and check on Linux, in valgrind to find memory leaks and pointer errors.
-#check_with_sanitizers() # runs all package package tests, examples and vignettes with Address Sanitizer and Undefined Behavior Sanitizer.
-#list_my_checks() # list_package_checks
+# Additional tests:
+# 
+# check_win_devel(); check_rhub()
+# revdepcheck::revdep_check()
+# build_vignettes()
+# tools::resaveRdaFiles('data', compress='auto' - is default bzip2 the optimal?
+# tools::checkRdaFiles('data') - set optimal compression in `data-raw`
