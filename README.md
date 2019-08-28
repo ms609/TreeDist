@@ -93,3 +93,7 @@ distinct patterns of evolution](https://dx.doi.org/10.1093/molbev/msw124). Mol B
 - Nye, T.M.W. et al. (2006) [A novel algorithm and web-based tool for comparing two alternative phylogenetic trees](https://dx.doi.org/10.1093/bioinformatics/bti720). Bioinformatics, 22, 117–119.
 
 - Smith, M.R. (forthcoming) [Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees].
+
+Please note that the 'TreeDist' project is released with a
+[Contributor Code of Conduct](CODE_OF_CONDUCT.md).
+By contributing to this project, you agree to abide by its terms.

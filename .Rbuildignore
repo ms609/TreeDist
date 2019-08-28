@@ -22,3 +22,4 @@ vignettes/.RData
 ^\.?R+prof.*$
 ^vignettes/.*_cache$
 ^codemeta\.json$
+^CODE_OF_CONDUCT\.md$
