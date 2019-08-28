@@ -21,3 +21,4 @@ vignettes/.RData
 ^\.Rdata$
 ^\.?R+prof.*$
 ^vignettes/.*_cache$
+^codemeta\.json$
