@@ -8,6 +8,7 @@ README.md
 cran-comments.md
 man-roxygen
 data-raw
+docs
 revdep
 .covrignore
 vignettes/.RData
