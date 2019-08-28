@@ -1,13 +1,15 @@
+# TreeDist
+<!--#TODO: https://devguide.ropensci.org/building.html#readme -->
+
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)<!--[![Project Status: Inactive – The project has reached a stable, usable state but is no longer being actively developed; support/maintenance will be provided as time allows.](http://www.repostatus.org/badges/latest/inactive.svg)](http://www.repostatus.org/#inactive)-->
 [![Build Status](https://travis-ci.com/ms609/TreeDist.svg?branch=master)](https://travis-ci.com/ms609/TreeDist)
 [![codecov](https://codecov.io/gh/ms609/TreeDist/branch/master/graph/badge.svg)](https://codecov.io/gh/ms609/TreeDist)
 [![CRAN Status Badge](http://www.r-pkg.org/badges/version/TreeDist)](https://cran.r-project.org/package=TreeDist)
 [![CRAN Downloads](http://cranlogs.r-pkg.org/badges/TreeDist)](https://cran.r-project.org/package=TreeDist)
-[![DOI](https://zenodo.org/badge/98171642.svg)](https://zenodo.org/badge/latestdoi/98171642)
+<!--[![DOI](https://zenodo.org/badge/98171642.svg)](https://zenodo.org/badge/latestdoi/98171642)-->
 
-# TreeDist
-This package implements a suite of metrics that quantify the topological 
-distance between pairs of unweighted phylogenetic trees.  
+`TreeDist` implements a suite of metrics that quantify the topological 
+distance between pairs of unweighted phylogenetic trees.
 The metrics generally fall in the category of "generalized Robinson-Foulds
 distances": they are based on comparing partitions between trees, and thus
 reflect the relationship data within trees, with no reference to branch lengths.

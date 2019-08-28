@@ -35,7 +35,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0.9004</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9004</span>
       </span>
     </div>
 
@@ -58,9 +58,6 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/test.html">Unicode test</a>
-    </li>
-    <li>
       <a href="articles/Tree-distance-metric-evaluation.html">Evaluating tree distance metrics</a>
     </li>
     <li>
@@ -91,12 +88,12 @@
       </header><div class="row">
   <div class="contents col-md-9">
 
-
 <div id="treedist" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#treedist" class="anchor"></a>TreeDist</h1></div>
-<p>This package implements a suite of metrics that quantify the topological distance between pairs of unweighted phylogenetic trees.<br>
-The metrics generally fall in the category of “generalized Robinson-Foulds distances”: they are based on comparing partitions between trees, and thus reflect the relationship data within trees, with no reference to branch lengths.</p>
+<!--#TODO: https://devguide.ropensci.org/building.html#readme -->
+
+<p><code>TreeDist</code> implements a suite of metrics that quantify the topological distance between pairs of unweighted phylogenetic trees. The metrics generally fall in the category of “generalized Robinson-Foulds distances”: they are based on comparing partitions between trees, and thus reflect the relationship data within trees, with no reference to branch lengths.</p>
 <p>The Robinson-Foulds distance simply tallies the number of bipartition splits (loosely, clades) that occur in both trees – any clades that are not perfectly identical are assigned a score of zero, however similar or different they are. By overlooking potential similarities between almost-identical bipartitions, this conservative approach has undesirable properties.</p>
 <p>‘Generalized’ RF metrics pair each bipartition in one tree with a similar bipartition in the other. Each pair of partitions is assigned a similarity score; the sum of these scores in the optimal partition matching then describes the similarity between two trees.</p>
 <p>Different ways of calculating the the similarity between a pair of partitions lead to different tree distance metrics, implemented in the functions below:</p>
@@ -169,6 +166,7 @@ If you're feeling brave, y-->
 <li><p>Nye, T.M.W. et al. (2006) <a href="https://dx.doi.org/10.1093/bioinformatics/bti720">A novel algorithm and web-based tool for comparing two alternative phylogenetic trees</a>. Bioinformatics, 22, 117–119.</p></li>
 <li><p>Smith, M.R. (forthcoming) [Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees].</p></li>
 </ul>
+<p>Please note that the ‘TreeDist’ project is released with a <a href="CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
 
   </div>
@@ -210,7 +208,6 @@ If you're feeling brave, y-->
 <li><a href="https://codecov.io/gh/ms609/TreeDist"><img src="https://codecov.io/gh/ms609/TreeDist/branch/master/graph/badge.svg" alt="codecov"></a></li>
 <li><a href="https://cran.r-project.org/package=TreeDist"><img src="http://www.r-pkg.org/badges/version/TreeDist" alt="CRAN Status Badge"></a></li>
 <li><a href="https://cran.r-project.org/package=TreeDist"><img src="http://cranlogs.r-pkg.org/badges/TreeDist" alt="CRAN Downloads"></a></li>
-<li><a href="https://zenodo.org/badge/latestdoi/98171642"><img src="https://zenodo.org/badge/98171642.svg" alt="DOI"></a></li>
 </ul>
 </div>
 </div>
