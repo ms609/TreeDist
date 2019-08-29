@@ -320,7 +320,7 @@ AllSplitPairings <- memoise(function (n) {
   tapply(unevenPairs['nTotal', ], unevenPairs['VoI', ], sum)
 })
 
-#' Distributions of taxa consistent with a partition pair.
+#' Distributions of taxa consistent with a partition pair
 #' 
 #' Number of terminal arrangements matching a specified configuration of 
 #' two partitions.

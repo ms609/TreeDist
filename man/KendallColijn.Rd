@@ -3,7 +3,7 @@
 \name{KendallColijn}
 \alias{KendallColijn}
 \alias{KCVector}
-\title{Kendall-Colijn distance between unrooted topologies}
+\title{Kendall-Colijn distance}
 \usage{
 KendallColijn(tree1, tree2)
 

@@ -11,7 +11,7 @@
 \alias{MutualClusteringInfoSplits}
 \alias{MutualMatchingSplitInfo}
 \alias{VariationOfMatchingSplitInfo}
-\title{Information-based generalized Robinson-Foulds distances between two trees.}
+\title{Information-based generalized Robinson-Foulds distances}
 \usage{
 MutualPhylogeneticInfo(tree1, tree2, normalize = FALSE,
   reportMatching = FALSE)
