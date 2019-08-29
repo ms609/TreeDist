@@ -100,6 +100,12 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
   unnormalized / infoInBoth
 }
 
+IdentifyClades <- function (clades, taxonNames <- rownames()) {
+  apply(clades, 2, function (x) paste0(
+    paste(taxonNames[x], collapse=' '), ' : ', 
+    paste(taxonNames[!x], collapse=' ')))
+}
+
 #' List matched clades as text
 #' @param clades1,clades2 Logical matrices with columns specifying membership
 #' of each corresponding matched clade 
@@ -109,9 +115,7 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
 #' @keywords internal
 #' @export
 ReportMatching <- function (clades1, clades2, taxonNames) {
-  clades1 <- apply(clades1, 2, function (x) paste0(
-    paste(taxonNames[x], collapse=' '), ' : ', 
-    paste(taxonNames[!x], collapse=' ')))
+
   clades2 <- apply(clades2, 2, function (x) paste0(
     paste(taxonNames[x], collapse=' '), ' : ', 
     paste(taxonNames[!x], collapse=' ')))

@@ -13,8 +13,8 @@ vignette: >
 
 # Loading trees
 
-Instructions for loading phylogenetic trees into R can be found in a [separate vignette](https://ms609.github.io/TreeSearch/TODO-TO-BE-CONFIRMED).  For these examples, we'll
-enter two simple trees by hand:
+Instructions for loading phylogenetic trees into R can be found in a [separate vignette](https://ms609.github.io/TreeSearch/TODO-TO-BE-CONFIRMED). #TODO check link
+For these examples, we'll enter two simple trees by hand:
 
 ```{r set-up}
 tree1 <- ape::read.tree(text='(A, ((B, ((C, D), (E, F))), (G, ((H, I), (J, K)))));')
@@ -47,8 +47,42 @@ Now the distance functions are available, and we can calculate distances:
 ## Pairs of trees
 
 Calculating the distance between two trees is as simple as:
+
 ```{r measure-distance}
-distance <- VariationOfClusteringInfo(tree1, tree2)
+distance <- TreeDistance(tree1, tree2)
+```
+
+This convenience function returns the variation of clustering information
+between two trees, normalized against the total information content of all
+partitions.  For more on different tree distance metrics, see the
+[tree distance vignette](./tree-distances.html). #TODO check link
+
+## Visualizing the matching
+
+Metrics such as the variation of clustering information rely on matching
+each split within a tree with another split in the other tree.  We can view an
+optimal matching:
+
+```{r visualise-matching}
+VisualizeMatching(VariationOfClusteringInfo, tree1, tree2)
+```
+
+This shows the eight splits in tree 1, and the paired splits in tree two.  
+Each split is labelled with a measure of its similarity, which is its contribution 
+to the total tree distance score.
+
+We can view this information in a format accessible for further examination in R with:
+
+```{r write-vis-matching}
+VariationOfClusteringInfo(tree1, tree2, reportMatching = TRUE)
+```
+
+Here, the `pairScores` attribute lists the score of each possible matching of splits.
+
+We can identify the splits with:
+
+```{r}
+ReportMatching(tree2)
 ```
 
 ## Normalizing
