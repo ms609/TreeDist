@@ -18,7 +18,7 @@ matrix:
     - os: osx
       r: release
       before_install:
-      - sudo tlmgr install titling
+      - sudo tlmgr install doi titling hyperref
   allow_failures:
     r: devel # Incompatible with devtools
 
