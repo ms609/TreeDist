@@ -38,7 +38,10 @@
 #' information content of a pair of partitions corresponds to their
 #' mutual clustering information (Meila 2007, Vinh2010), giving rise to their
 #' Mutucal Clustering Information and Variation of Clustering Information
-#' similarity/distance metrics (`MutualClusteringInfo`, `VariationOfClusteringInfo`)
+#' similarity/distance metrics (`MutualClusteringInfo`, `VariationOfClusteringInfo`).
+#' 
+#' This latter approach is optimal in many regards, and is implemented, normalized
+#' against the total information present, in the convenience function `TreeDistance`.
 #' 
 #' 
 #' @section Normalization:
@@ -116,6 +119,12 @@
 #' @family tree distances
 #' @importFrom clue solve_LSAP
 #' @export
+TreeDistance <- function (tree1, tree2) {
+  MutualClusteringInfo(tree1, tree2, normalize = TRUE, reportMatching = FALSE)
+}
+
+#' @describeIn TreeDistance Mutual phylogenetic information between two trees.
+#' @export
 MutualPhylogeneticInfo <- function (tree1, tree2, normalize = FALSE,
                                 reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(MutualPhylogeneticInfoSplits, tree1, tree2, 
@@ -126,7 +135,7 @@ MutualPhylogeneticInfo <- function (tree1, tree2, normalize = FALSE,
                 InfoInTree = PartitionInfo, Combine = pmin)
 }
 
-#' @describeIn MutualPhylogeneticInfo Variation of phylogenetic information between two trees.
+#' @describeIn TreeDistance Variation of phylogenetic information between two trees.
 #' @export
 VariationOfPhylogeneticInfo <- function (tree1, tree2, normalize = FALSE,
                                      reportMatching = FALSE) {
@@ -146,7 +155,7 @@ VariationOfPhylogeneticInfo <- function (tree1, tree2, normalize = FALSE,
   ret
 }
 
-#' @describeIn MutualPhylogeneticInfo Variation of clustering information between two trees.
+#' @describeIn TreeDistance Variation of clustering information between two trees.
 #' @export
 VariationOfClusteringInfo <- function (tree1, tree2, normalize = FALSE,
                                        reportMatching = FALSE) {
@@ -166,7 +175,9 @@ VariationOfClusteringInfo <- function (tree1, tree2, normalize = FALSE,
   ret
 }
 
-#' @describeIn MutualPhylogeneticInfo Estimate expected Variation of 
+
+
+#' @describeIn TreeDistance Estimate expected Variation of 
 #' Phylogenetic Information and Mutual Phylogenetic Information for a pair of trees of
 #' a given topology.
 #' @param samples Integer specifying how many samplings to obtain; 
@@ -199,7 +210,7 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+3) {
   cbind(Estimate = ret[, 1], 'Std. Err.' = ret[, 'sd'] / sqrt(ret[, 'n']), ret[, 2:3])
 }
 
-#' @describeIn MutualPhylogeneticInfo Mutual Clustering Information of two trees.
+#' @describeIn TreeDistance Mutual Clustering Information of two trees.
 #' @export
 MutualClusteringInfo <- function (tree1, tree2, normalize = FALSE,
                                   reportMatching = FALSE) {
@@ -209,7 +220,7 @@ MutualClusteringInfo <- function (tree1, tree2, normalize = FALSE,
                 how = normalize, Combine = pmin)
 }
 
-#' @describeIn MutualPhylogeneticInfo Calculate mutual phylogenetic information from splits instead of trees.
+#' @describeIn TreeDistance Calculate mutual phylogenetic information from splits instead of trees.
 #' @template splits12params
 #' @export
 MutualPhylogeneticInfoSplits <- function (splits1, splits2, normalize = TRUE,
@@ -314,7 +325,7 @@ MutualPhylogeneticInfoSplits <- function (splits1, splits2, normalize = TRUE,
   }
 }
 
-#' @describeIn MutualPhylogeneticInfo Calculate variation of matching split information from splits instead of trees.
+#' @describeIn TreeDistance Calculate variation of matching split information from splits instead of trees.
 #' @inheritParams MutualPhylogeneticInfoSplits
 #' @importFrom TreeSearch LnUnrooted.int LogTreesMatchingSplit
 #' @export
@@ -395,7 +406,7 @@ MutualMatchingSplitInfoSplits <- function (splits1, splits2, reportMatching = FA
   }
 }
 
-#' @describeIn MutualPhylogeneticInfo Calculate clustering information from splits instead of trees
+#' @describeIn TreeDistance Calculate clustering information from splits instead of trees
 #' @export
 MutualClusteringInfoSplits <- function (splits1, splits2, normalize = TRUE,
                                         reportMatching = FALSE) {

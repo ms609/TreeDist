@@ -1,4 +1,4 @@
-#' @describeIn MutualPhylogeneticInfo Mutual Matching Split information of two trees.
+#' @describeIn TreeDistance Mutual Matching Split information of two trees.
 #' @export
 MutualMatchingSplitInfo <- function (tree1, tree2, normalize = FALSE, 
                                      reportMatching = FALSE) {
@@ -10,7 +10,7 @@ MutualMatchingSplitInfo <- function (tree1, tree2, normalize = FALSE,
                 InfoInTree = PartitionInfo, Combine = pmin)
 }
 
-#' @describeIn MutualPhylogeneticInfo Variation of matching split information between two trees.
+#' @describeIn TreeDistance Variation of matching split information between two trees.
 #' @export
 VariationOfMatchingSplitInfo <- function (tree1, tree2, normalize = FALSE,
                                           reportMatching = FALSE) {
