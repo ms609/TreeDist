@@ -1,0 +1,61 @@
+---
+title: "Using TreeDist to calculate tree similarity"
+author: "Martin R. Smith"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+csl: ../inst/apa-old-doi-prefix.csl
+vignette: >
+  %\VignetteIndexEntry{Using TreeDist}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Loading trees
+
+Instructions for loading phylogenetic trees into R can be found in a [separate vignette](https://ms609.github.io/TreeSearch/TODO-TO-BE-CONFIRMED).  For these examples, we'll
+enter two simple trees by hand:
+
+```{r set-up}
+tree1 <- ape::read.tree(text='(A, ((B, ((C, D), (E, F))), (G, ((H, I), (J, K)))));')
+tree2 <- ape::read.tree(text='(A, ((B, ((C, D), (E, (J, K)))), (G, ((H, I), F))));')
+```
+
+# Calculating distances
+
+We can calculate distances between pairs of trees using the `TreeDist` package.  
+First we'll install the package:
+
+```r
+install.packages('TreeDist')
+```
+
+Or we can install a development version:
+
+```r 
+devtools::install_github('ms609/TreeDist')
+```
+
+Then we'll load the package in to R's working environment:
+
+```{r laod-package}
+library('TreeDist')
+```
+
+Now the distance functions are available, and we can calculate distances:
+
+## Pairs of trees
+
+Calculating the distance between two trees is as simple as:
+```{r measure-distance}
+distance <- VariationOfClusteringInfo(tree1, tree2)
+```
+
+## Normalizing
+
+
+## Lists of trees
+- Multiphylo
+- List
+
+# References
