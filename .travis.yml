@@ -7,8 +7,6 @@ matrix:
   include:
     - r: 3.4.0
     - r: release
-      after_success:
-        - Rscript -e "covr::codecov()"
       before_deploy: Rscript -e 'remotes::install_cran("pkgdown")'
       deploy:
         provider: script
@@ -19,6 +17,8 @@ matrix:
         on: 
           branch: master
     - r: devel
+      after_success:
+        - Rscript -e "covr::codecov()"
     - os: osx
       r: release
       before_install:
