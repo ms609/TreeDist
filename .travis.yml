@@ -17,6 +17,8 @@ matrix:
     - r: devel
     - os: osx
       r: release
+      before_install:
+      - sudo tlmgr install framed
   allow_failures:
     r: devel # Incompatible with devtools
 
