@@ -42,7 +42,7 @@ Then we'll load the package in to R's working environment:
 library('TreeDist')
 ```
 
-Now the distance functions are available, and we can calculate distances:
+Now the distance functions are available, and we can calculate distances.
 
 ## Pairs of trees
 
@@ -52,16 +52,18 @@ Calculating the distance between two trees is as simple as:
 distance <- TreeDistance(tree1, tree2)
 ```
 
-This convenience function returns the variation of clustering information
-between two trees, normalized against the total information content of all
-partitions.  For more on different tree distance metrics, see the
+The convenience function `TreeDistance` returns the variation of clustering
+information between two trees, normalized against the total information content 
+of all partitions.
+For more on different tree distance metrics, see the
 [tree distance vignette](./tree-distances.html). #TODO check link
 
 ## Visualizing the matching
 
-Metrics such as the variation of clustering information rely on matching
-each split within a tree with another split in the other tree.  We can view an
-optimal matching:
+Generalized Robinson-Foulds metrics, such as the variation of clustering
+information, rely on matching each split within a tree with another split in the
+other tree.
+We can view an optimal matching:
 
 ```{r visualise-matching}
 VisualizeMatching(VariationOfClusteringInfo, tree1, tree2)
@@ -99,7 +101,17 @@ ape::nodelabels(splits, as.integer(names(splits)),
 
 
 ## Lists of trees
+
 - Multiphylo
+
 - List
+
+## Testing similarity to a known tree
+
+- The precision/accuracy distinction
+
+- The role of information
+
+- A ternary plotting approach
 
 # References

@@ -6,11 +6,12 @@ output: rmarkdown::html_vignette
 bibliography: ../inst/REFERENCES.bib
 csl: ../inst/apa-old-doi-prefix.csl
 vignette: >
-  %\VignetteIndexEntry{Measuring tree similarity}
+  %\VignetteIndexEntry{Summary of tree distance measures}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-There's nothing here!
+This file with give an overview of topological distance measures, and how
+they are implemented in R.
 
 ## References
