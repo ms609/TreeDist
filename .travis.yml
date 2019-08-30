@@ -6,18 +6,24 @@ r_check_args: --as-cran --no-manual # Workaround error compiling PDF manual
 matrix:
   include:
     - r: release
-      after_success:
-        - Rscript -e "covr::codecov()"
       before_deploy: Rscript -e 'remotes::install_cran("pkgdown")'
       deploy:
         provider: script
         script: Rscript -e 'pkgdown::deploy_site_github()'
         skip_cleanup: true
+        local_dir: "docs"
+        keep-history: true
+        on: 
+          branch: master
     - r: devel
+      after_success:
+        - Rscript -e "covr::codecov()"
     - os: osx
-      r: 3.4.0
-  allow_failures:
-    r: devel # Incompatible with devtools
+      r: release
+      before_install:
+      - sudo tlmgr install doi titling hyperref
+#  allow_failures:
+#    r: devel # Incompatible with devtools?
 
 git:
   depth: 1

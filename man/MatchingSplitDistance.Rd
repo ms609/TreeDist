@@ -64,8 +64,8 @@ so that it can be implemented.
 }
 \seealso{
 Other tree distances: \code{\link{KendallColijn}},
-  \code{\link{MutualPhylogeneticInfo}},
-  \code{\link{NyeTreeSimilarity}}
+  \code{\link{NyeTreeSimilarity}},
+  \code{\link{TreeDistance}}
 }
 \author{
 Martin R. Smith
