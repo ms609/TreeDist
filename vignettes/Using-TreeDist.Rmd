@@ -84,7 +84,7 @@ Here, the `pairScores` attribute lists the score of each possible matching of sp
 We can identify the splits with:
 
 ```{r}
-splits <- IdentifySplits(Tree2Splits(tree2))
+splits <- IdentifySplits(TreeSearch::Tree2Splits(tree2))
 splits
 ```
 
