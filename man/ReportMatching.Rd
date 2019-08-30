@@ -2,21 +2,40 @@
 % Please edit documentation in R/tree_distance_utilities.R
 \name{ReportMatching}
 \alias{ReportMatching}
-\title{List matched clades as text}
+\alias{IdentifySplits}
+\title{List clades as text}
 \usage{
-ReportMatching(clades1, clades2, taxonNames)
+ReportMatching(splits1, splits2, taxonNames)
+
+IdentifySplits(splits, taxonNames = rownames(splits))
 }
 \arguments{
-\item{clades1, clades2}{Logical matrices with columns specifying membership
-of each corresponding matched clade}
-
 \item{taxonNames}{Character vector listing names of taxa corresponding to
-each row in \code{clades#}}
+each row in \code{splits}}
+
+\item{splits, splits1, splits2}{Logical matrices with columns specifying membership
+of each corresponding matched clade}
+}
+\value{
+{
+\code{ReportMatching} returns a character vector describing each pairing in a matching.
+
+\code{IdentifySplits} returns a character vector describing each split in a splits
+object, named according to the column names in the splits object.
+}
 }
 \description{
-List matched clades as text
+List clades as text
 }
+\section{Functions}{
+\itemize{
+\item \code{IdentifySplits}: List the distribution of terminals represented by a single splits object.
+}}
+
 \seealso{
 VisualizeMatching
+}
+\author{
+Martin R. Smith
 }
 \keyword{internal}

@@ -100,26 +100,29 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
   unnormalized / infoInBoth
 }
 
-IdentifyClades <- function (clades, taxonNames <- rownames()) {
-  apply(clades, 2, function (x) paste0(
-    paste(taxonNames[x], collapse=' '), ' : ', 
-    paste(taxonNames[!x], collapse=' ')))
-}
-
-#' List matched clades as text
-#' @param clades1,clades2 Logical matrices with columns specifying membership
+#' List clades as text
+#' @param splits,splits1,splits2 Logical matrices with columns specifying membership
 #' of each corresponding matched clade 
 #' @param taxonNames Character vector listing names of taxa corresponding to
-#'  each row in `clades#`
+#'  each row in `splits`
+#' @return {
+#'   `ReportMatching` returns a character vector describing each pairing in a matching.
+#'   
+#'   `IdentifySplits` returns a character vector describing each split in a splits 
+#'   object, named according to the column names in the splits object.
+#' }
 #' @seealso VisualizeMatching
+#' @author Martin R. Smith
 #' @keywords internal
 #' @export
-ReportMatching <- function (clades1, clades2, taxonNames) {
+ReportMatching <- function (splits1, splits2, taxonNames) {
+  paste(IdentifySplits(splits1, taxonNames), '=>', IdentifySplits(splits2, taxonNames))
+}
 
-  clades2 <- apply(clades2, 2, function (x) paste0(
+#' @describeIn ReportMatching List the distribution of terminals represented by a single splits object.
+#' @export
+IdentifySplits <- function (splits, taxonNames = rownames(splits)) {
+  apply(splits, 2, function (x) paste0(
     paste(taxonNames[x], collapse=' '), ' : ', 
     paste(taxonNames[!x], collapse=' ')))
-  
-  # Return:
-  paste(clades1, '=>', clades2)
 }
