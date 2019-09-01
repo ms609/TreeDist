@@ -131,4 +131,9 @@ matching splits distance matches that of the mutual phylogenetic information,
 it is not clear that the calculated information content of non-arboreal
 matches is a natural value.
 
+## Solutions
+
+Some of the shortcomings of the Robinson-Foulds distance are addressed by
+[Generalized Robinson-Foulds distances](Generalised-RF.html).
+
 ## References
