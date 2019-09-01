@@ -33,7 +33,7 @@ test_that('VisualizeMatching works', {
   }
   expect_doppelganger('Test VM', TestVM)
   expect_doppelganger('Test VMr', TestVMr)
-  expect_doppleganger('Collapse a node', function () {
+  expect_doppelganger('Collapse a node', function () {
     par(mfrow=c(2, 2))
     tree1 <- ape::read.tree(text='((1, 2), ((6, (7, 8)), (3, 4, (5, 9))));')
     tree2 <- ape::read.tree(text='((1, 2), ((3, (4, (5, 9))), (6, (7, 8))));')
@@ -48,7 +48,7 @@ test_that('VisualizeMatching works', {
   })
   
   
-  expect_doppleganger('Collapse a node', function () {
+  expect_doppelganger('Collapse and change', function () {
     par(mfrow=c(2, 2))
     tree1 <- ape::read.tree(text='((1, 2), ((6, (7, 8)), (3, 4, (5, 9))));')
     tree2 <- ape::read.tree(text='((1, 2), ((3, (4, (5, 9))), ((6, 7), 8)));')
@@ -62,7 +62,7 @@ test_that('VisualizeMatching works', {
                       leaveRoom=FALSE)
   })
   
-  expect_doppleganger('VM Single splits', function () {
+  expect_doppelganger('VM Single splits', function () {
     par(mfrow=c(2, 2))
     tree1 <- ape::read.tree(text='((1, 2), (3, 4, 5, 6, 7, 8));')
     tree2 <- ape::read.tree(text='((1, 2, 3), (4, 5, 6, 7, 8));')
