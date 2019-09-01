@@ -83,24 +83,39 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   pairScores <- signif(mapply(function (i, j) scores[i, j],
                               seq_along(pairings), pairings), precision)
   
-  nSplits <- length(pairings)
-  palette <- qualitative_hcl(nSplits, c=42, l=88)
+  palette <- qualitative_hcl(sum(!is.na(pairings)), c=42, l=88)
   adjNo <- c(0.5, -0.2)
   adjVal <- c(0.5, 1.1)
+  faint <- '#aaaaaa'
   
   if (setPar) origPar <- par(mfrow=c(2, 1), mar=rep(0.5, 4))
   
+  LabelUnpaired <- function (partitionEdges, unpaired) {
+    if (any(unpaired)) {
+      edgelabels(text='\u2212', edge=partitionEdges[unpaired],
+                 frame='n', col=faint, adj=adjNo)
+      edgelabels(text='0', edge=partitionEdges[unpaired],
+                 frame='n', col=faint, cex=0.8, adj=adjVal)
+    }
+  }
+  
   Plot(tree1, ...)
-  edgelabels(text=seq_along(pairings), edge=partitionEdges1, 
+  paired1 <- !is.na(pairings)
+  edgelabels(text=seq_len(sum(paired1)), edge=partitionEdges1[paired1],
              bg=palette, adj=adjNo)
-  edgelabels(text=pairScores, edge=partitionEdges1, 
-             frame='n', adj=adjVal, cex=0.8)
+  edgelabels(text=pairScores, edge=partitionEdges1[paired1], 
+             frame='n', adj=adjVal, cex=0.8,
+             col=ifelse(pairScores, 'black', faint))
+  LabelUnpaired(partitionEdges1, !paired1)
   
   Plot(tree2, ...)
-  edgelabels(text=order(pairings), edge=partitionEdges2, 
+  paired2 <- seq_along(partitionEdges2) %in% pairings
+  edgelabels(text=order(pairings[!is.na(pairings)]), edge=partitionEdges2[paired2],
              bg=palette[order(pairings)], adj=adjNo)
-  edgelabels(text=pairScores[order(pairings)], edge=partitionEdges2, 
-             frame='n', adj=adjVal, cex=0.8)
+  edgelabels(text=pairScores[order(pairings)], edge=partitionEdges2[paired2], 
+             frame='n', adj=adjVal, cex=0.8,
+             col=ifelse(pairScores[order(pairings)], 'black', faint))
+  LabelUnpaired(partitionEdges2, !paired2)
   
   if (setPar) par(origPar)
 }
