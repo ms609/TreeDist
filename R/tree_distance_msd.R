@@ -91,27 +91,9 @@ MatchingSplitDistanceSplits <- function (splits1, splits2, normalize = TRUE,
   },  seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
   )), nSplits1, nSplits2)
   
-  if (nSplits1 == 1) {
-    min(pairScores)
-  } else {
-    optimalMatching <- solve_LSAP(pairScores, FALSE)
-    
-    # Return:
-    ret <- sum(pairScores[matrix(c(seq_along(optimalMatching), optimalMatching), ncol=2L)])
-    if (reportMatching) {
-      if (!is.null(taxonNames2)) {
-        attr(ret, 'matchedSplits') <- 
-          if (swapSplits) {
-            ReportMatching(splits2[, optimalMatching], splits1, taxonNames1)
-          } else {
-            ReportMatching(splits1, splits2[, optimalMatching], taxonNames1)
-          }
-      }
-      attr(ret, 'matching') <- optimalMatching
-      attr(ret, 'pairScores') <- pairScores
-      ret
-    } else {
-      ret
-    }
-  }
+  
+  # Return:
+  TreeDistanceReturn(pairScores, maximize = FALSE,
+                     reportMatching, swapSplits,
+                     taxonNames1)
 }

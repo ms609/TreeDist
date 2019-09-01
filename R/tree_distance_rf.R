@@ -84,46 +84,10 @@ RobinsonFouldsSplits <- function (splits1, splits2, normalize = TRUE,
   },  seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
   )), nSplits1, nSplits2)
   
-  if (nSplits1 == 1) {
-    matchedSplits <- 1L - min(pairScores)
-    ret <- sum(dim(pairScores), -matchedSplits, -matchedSplits)
-    if (reportMatching) {
-      attributes(ret) <- list(
-        matching = structure(1L, class='solve_LSAP'),
-        pairScores = matrix(ret),
-        matchedSplits = 1L
-      )
-    }
-    # Return:
-    ret
-  } else {
-    optimalMatching <- solve_LSAP(pairScores, FALSE)
-    
-    # Return:
-    matchedSplits <- sum(1L - pairScores[matrix(c(seq_along(optimalMatching),
-                                                  optimalMatching), ncol=2L)])
-    ret <- sum(dim(pairScores), -matchedSplits, -matchedSplits)
-    if (reportMatching) {
-      if (swapSplits) {
-        optimalMatching <- structure(match(seq_len(nSplits2), optimalMatching),
-                                     class='solve_LSAP')
-        attr(ret, 'pairScores') <- t(pairScores)
-      } else {
-        attr(ret, 'pairScores') <- pairScores
-      }
-      
-      if (!is.null(taxonNames2)) {
-        attr(ret, 'matchedSplits') <- 
-        #  if (swapSplits) {
-         #   ReportMatching(splits2[, optimalMatching], splits1, taxonNames1)
-          #} else {
-            ReportMatching(splits1, splits2[, optimalMatching], taxonNames1)
-          #}
-      }
-      attr(ret, 'matching') <- optimalMatching
-      ret
-    } else {
-      ret
-    }
-  }
+  # Return:
+  ret <- TreeDistanceReturn(pairScores, reportMatching, swapSplits,
+                     taxonNames1)
+  
+  Score = function (pairScores, matchedSplits)
+    sum(dim(pairScores), -matchedSplits, -matchedSplits)
 }

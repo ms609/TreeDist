@@ -27,7 +27,7 @@ test_that('Matches are reported', {
     
     at <- attributes(Func(treeSym8, treeTwoSplits, reportMatching = TRUE))
     expect_equal(3L, length(at))
-    expect_equal(c(1L, 5L), as.integer(at$matching))
+    expect_equal(c(1L, NA, NA, NA, 2L), as.integer(at$matching))
     expect_equal('a b : c d e f g h => c d e f g h : a b', at$matchedSplits[2])
   }
   
@@ -38,6 +38,7 @@ test_that('Matches are reported', {
   Test(MutualClusteringInfo)
   Test(VariationOfClusteringInfo)
   Test(MutualPhylogeneticInfo)
+  Test(RobinsonFoulds)
   Test(NyeTreeSimilarity)
 
   # Matching Split Distance matches differently:  

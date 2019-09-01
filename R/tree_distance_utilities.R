@@ -100,6 +100,52 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
   unnormalized / infoInBoth
 }
 
+#' Tree Distance Return
+#' 
+#' Generates the return value for Generalized Robinson-Foulds distances,
+#' with (optionally) a report of the matching.
+#' 
+#' @param pairScores,reportMatching,swapSplits,taxonNames1,taxonNames2 Corresponding
+#' parameters from within each function
+#' @param Score function taking pairScores and matchedSplits to generate a 
+#' matching score.
+#' 
+#' @keywords internal
+#' @author Martin R. Smith
+#' @export
+TreeDistanceReturn <- function (pairScores, maximize = FALSE,
+                                reportMatching, swapSplits, 
+                                taxonNames1 = NULL) {
+  if (dim(pairScores)[1] == 1) {
+    Optimal <- if (maximize) which.max else which.min
+    optimalMatching <- structure(Optimal(pairScores), class='solve_LSAP')
+  } else {
+    optimalMatching <- solve_LSAP(pairScores, maximize)
+  }
+  
+  ret <- sum(pairScores[matrix(c(seq_along(optimalMatching), optimalMatching),
+                               ncol=2L)])
+  
+  if (reportMatching) {
+    if (swapSplits) {
+      optimalMatching <- structure(match(seq_len(dim(pairScores)[2]), optimalMatching),
+                                   class='solve_LSAP')
+      attr(ret, 'pairScores') <- t(pairScores)
+    } else {
+      attr(ret, 'pairScores') <- pairScores
+    }
+    
+    if (!is.null(taxonNames1)) {
+      attr(ret, 'matchedSplits') <- 
+        ReportMatching(splits1, splits2[, optimalMatching, drop=FALSE], 
+                       taxonNames1)
+    }
+    attr(ret, 'matching') <- optimalMatching
+  }
+  # Return:
+  ret
+}
+
 #' List clades as text
 #' @param splits,splits1,splits2 Logical matrices with columns specifying membership
 #' of each corresponding matched clade 
