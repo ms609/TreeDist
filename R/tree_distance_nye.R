@@ -99,5 +99,6 @@ NyeSplitSimilarity <- function (splits1, splits2, normalize = TRUE,
   # Return:
   TreeDistanceReturn(pairScores, maximize = TRUE,
                      reportMatching, swapSplits,
+                     splits1, splits2,
                      taxonNames1)
 }

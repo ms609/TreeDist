@@ -87,5 +87,6 @@ MutualMatchingSplitInfoSplits <- function (splits1, splits2, reportMatching = FA
   
   TreeDistanceReturn(pairScores, maximize = TRUE,
                      reportMatching, swapSplits,
+                     splits1, splits2,
                      taxonNames1)
 }

@@ -86,7 +86,7 @@ RobinsonFouldsSplits <- function (splits1, splits2, normalize = TRUE,
   
   # Return:
   ret <- TreeDistanceReturn(pairScores, reportMatching, swapSplits,
-                     taxonNames1)
+                            splits1, splits2, taxonNames1)
   
   Score = function (pairScores, matchedSplits)
     sum(dim(pairScores), -matchedSplits, -matchedSplits)

@@ -115,7 +115,8 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
 #' @export
 TreeDistanceReturn <- function (pairScores, maximize = FALSE,
                                 reportMatching, swapSplits, 
-                                taxonNames1 = NULL) {
+                                splits1, splits2,
+                                taxonNames = NULL) {
   if (dim(pairScores)[1] == 1) {
     Optimal <- if (maximize) which.max else which.min
     optimalMatching <- structure(Optimal(pairScores), class='solve_LSAP')
@@ -135,10 +136,13 @@ TreeDistanceReturn <- function (pairScores, maximize = FALSE,
       attr(ret, 'pairScores') <- pairScores
     }
     
-    if (!is.null(taxonNames1)) {
+    if (!is.null(taxonNames)) {
+      matchedSplits <- !is.na(optimalMatching)
       attr(ret, 'matchedSplits') <- 
-        ReportMatching(splits1, splits2[, optimalMatching, drop=FALSE], 
-                       taxonNames1)
+        ReportMatching(splits1[matchedSplits], 
+                       splits2[, optimalMatching[matchedSplits], 
+                               drop=FALSE], 
+                       taxonNames)
     }
     attr(ret, 'matching') <- optimalMatching
   }
