@@ -62,5 +62,19 @@ test_that('VisualizeMatching works', {
                       leaveRoom=FALSE)
   })
   
+  expect_doppleganger('VM Single splits', function () {
+    par(mfrow=c(2, 2))
+    tree1 <- ape::read.tree(text='((1, 2), (3, 4, 5, 6, 7, 8));')
+    tree2 <- ape::read.tree(text='((1, 2, 3), (4, 5, 6, 7, 8));')
+    VisualizeMatching(RobinsonFoulds, tree1, tree2,
+                      setPar = FALSE, precision=3,
+                      Plot = TreeDistPlot,
+                      leaveRoom=FALSE)
+    VisualizeMatching(RobinsonFoulds, tree2, tree1,
+                      setPar = FALSE, precision=3,
+                      Plot = TreeDistPlot,
+                      leaveRoom=FALSE)
+  })
+  
   
 })

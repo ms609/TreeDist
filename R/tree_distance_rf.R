@@ -85,7 +85,16 @@ RobinsonFouldsSplits <- function (splits1, splits2, normalize = TRUE,
   )), nSplits1, nSplits2)
   
   if (nSplits1 == 1) {
-    min(pairScores)
+    ret <- min(pairScores)
+    if (reportMatching) {
+      attributes(ret) <- list(
+        matching = structure(1L, class='solve_LSAP'),
+        pairScores = matrix(ret),
+        matchedSplits = 1L
+      )
+    }
+    # Return:
+    ret
   } else {
     optimalMatching <- solve_LSAP(pairScores, FALSE)
     
