@@ -195,9 +195,9 @@ test_that('RobinsonFoulds is correctly calculated', {
   RFTest(treeBal8, treeSym8)
   expect_equal(c(4, 0), RobinsonFoulds(treeSym8, list(treeBal8, treeSym8)))
   RFTest(treeAb.Cdefgh, treeAbc.Defgh)
-  expect_equal(1, RobinsonFoulds(treeSym8, treeSym8, normalize = TRUE))
-  expect_equal(0.5 / 5L, RobinsonFoulds(treeSym8, treeAbcd.Efgh, normalize = TRUE))
-  expect_true(RobinsonFoulds(treeSym8, treeBal8) > RobinsonFoulds(treeSym8, treeOpp8))
+  expect_equal(0, RobinsonFoulds(treeSym8, treeSym8, normalize = TRUE))
+  expect_equal(4L / 6L, RobinsonFoulds(treeSym8, treeAbcd.Efgh, normalize = TRUE))
+  RFTest(treeSym8, treeOpp8)
 })
 
 test_that('Kendall-Colijn distance is correctly calculated', {
