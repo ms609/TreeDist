@@ -139,7 +139,7 @@ TreeDistanceReturn <- function (pairScores, maximize = FALSE,
     if (!is.null(taxonNames)) {
       matchedSplits <- !is.na(optimalMatching)
       attr(ret, 'matchedSplits') <- 
-        ReportMatching(splits1[matchedSplits], 
+        ReportMatching(splits1[, matchedSplits, drop=FALSE], 
                        splits2[, optimalMatching[matchedSplits], 
                                drop=FALSE], 
                        taxonNames)
