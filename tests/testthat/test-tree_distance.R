@@ -17,6 +17,7 @@ methodsToTest <- list(
   VariationOfClusteringInfo,
   NyeTreeSimilarity,
   MatchingSplitDistance,
+  RobinsonFoulds,
   KendallColijn
 )
 
@@ -181,6 +182,22 @@ test_that('NyeTreeSimilarity is correctly calculated', {
   expect_equal(1, NyeTreeSimilarity(treeSym8, treeSym8, normalize = TRUE))
   expect_equal(0.5 / 5L, NyeTreeSimilarity(treeSym8, treeAbcd.Efgh, normalize = TRUE))
   expect_true(NyeTreeSimilarity(treeSym8, treeBal8) > NyeTreeSimilarity(treeSym8, treeOpp8))
+})
+
+test_that('RobinsonFoulds is correctly calculated', {
+  RF <- function (tree1, tree2) {
+    suppressMessages(phangorn::RF.dist(tree1, tree2))
+  }
+  RFTest <- function (tree1, tree2) {
+    expect_equal(RF(tree1, tree2), RobinsonFoulds(tree1, tree2))
+  }
+  RFTest(treeSym8, treeSym8)
+  RFTest(treeBal8, treeSym8)
+  expect_equal(c(3.8, 0), RobinsonFoulds(treeSym8, list(treeBal8, treeSym8)))
+  expect_equal(2, 3 * RobinsonFoulds(treeAb.Cdefgh, treeAbc.Defgh))
+  expect_equal(1, RobinsonFoulds(treeSym8, treeSym8, normalize = TRUE))
+  expect_equal(0.5 / 5L, RobinsonFoulds(treeSym8, treeAbcd.Efgh, normalize = TRUE))
+  expect_true(RobinsonFoulds(treeSym8, treeBal8) > RobinsonFoulds(treeSym8, treeOpp8))
 })
 
 test_that('Kendall-Colijn distance is correctly calculated', {
