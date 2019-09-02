@@ -13,6 +13,10 @@ vignette: >
 
 This document will review known shortcomings of the RF metric.
 
+```{r init, echo=FALSE, warning=FALSE}
+standardMargin <- c(0.4, 0.4, 0.8, 0.4)
+cbPalette8 <- Ternary::cbPalette8
+```
 
 
 ## Unit equivalence
