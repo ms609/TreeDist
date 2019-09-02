@@ -34,10 +34,14 @@ test_that('Matches are reported', {
                               splitsB[rownames(splitsA), 2, drop=FALSE],
                               taxonNames = letters[1:8]))
   
-  Test <- function (Func) {
+  Test <- function (Func, relaxed = FALSE) {
     at <- attributes(Func(treeSym8, treeBal8, reportMatching = TRUE))
     expect_equal(3L, length(at))
-    expect_equal(c(1L, 5L, 3L, 2L, 4L), as.integer(at$matching))
+    if (relaxed) {
+      expect_equal(c(1L, 3L, 4L), as.integer(at$matching[c(1, 3, 5)]))
+    } else {
+      expect_equal(c(1L, 5L, 3L, 2L, 4L), as.integer(at$matching))
+    }
     expect_equal('a b : e f g h c d => a b : e f g h c d', at$matchedSplits[5])
     
     at <- attributes(Func(treeSym8, treeTwoSplits, reportMatching = TRUE))
@@ -53,7 +57,7 @@ test_that('Matches are reported', {
   Test(MutualClusteringInfo)
   Test(VariationOfClusteringInfo)
   Test(MutualPhylogeneticInfo)
-  Test(RobinsonFoulds)
+  Test(RobinsonFoulds, relaxed = TRUE)
   Test(NyeTreeSimilarity)
 
   # Matching Split Distance matches differently:  

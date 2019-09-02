@@ -46,7 +46,13 @@ TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = TRUE,
 #' Visualise a matching
 #' 
 #' Depicts the bipartitions that are matched between two trees using a 
-#' specified Generalized Robinson Foulds tree distance measure.
+#' specified Generalized Robinson-Foulds similarity measure.
+#' 
+#' Note that when visualizing a Robinson-Foulds distance (using 
+#' `Func = RobinsonFoulds`), matched splits are assigned a _similarity_ score
+#' of 1, which is deducted from the total number of splits to calculate the
+#' Robinson-Foulds _distance_.  Unmatched splits thus contribute one to total
+#' tree distance.
 #' 
 #' @param Func Function used to construct tree similarity.
 #' @param tree1,tree2 Trees of class `phylo`, with tips labelled identically.

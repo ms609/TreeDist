@@ -4,6 +4,9 @@
 #' for use with [`VisualizeMatching`].  To generate the RF distance efficiently,
 #' use the function \code{\link{ape}{treedist}}.
 #' 
+#' Note that if `reportMatching = TRUE`, the `pairScores` attribute returns
+#' a logical matrix specifying whether each pair of partitions is identical.
+#' 
 #' @inheritParams MutualPhylogeneticInfo
 #' 
 #' @section Normalization:
