@@ -30,11 +30,14 @@ test_that('VisualizeMatching works', {
                                           Plot = plot.phylo)
   }
   TestVMr <- function () {
+    VisualizeMatching(MutualClusteringInfo, tree1, tree2r, 
+                      setPar = TRUE, precision=3, 
+                      Plot = plot.phylo, cex=1.5)
   }
   expect_doppelganger('Test VM', TestVM)
   expect_doppelganger('Test VMr', TestVMr)
   expect_doppelganger('Collapse a node', function () {
-    par(mfrow=c(2, 2))
+    par(mfrow=c(2, 2), mar = rep(0.1, 4), cex=1.5)
     tree1 <- ape::read.tree(text='((1, 2), ((6, (7, 8)), (3, 4, (5, 9))));')
     tree2 <- ape::read.tree(text='((1, 2), ((3, (4, (5, 9))), (6, (7, 8))));')
     VisualizeMatching(RobinsonFoulds, tree1, tree2,
@@ -49,7 +52,7 @@ test_that('VisualizeMatching works', {
   
   
   expect_doppelganger('Collapse and change', function () {
-    par(mfrow=c(2, 2))
+    par(mfrow=c(2, 2), mar = rep(0.1, 4), cex=1.5)
     tree1 <- ape::read.tree(text='((1, 2), ((6, (7, 8)), (3, 4, (5, 9))));')
     tree2 <- ape::read.tree(text='((1, 2), ((3, (4, (5, 9))), ((6, 7), 8)));')
     VisualizeMatching(RobinsonFoulds, tree1, tree2,
@@ -63,7 +66,7 @@ test_that('VisualizeMatching works', {
   })
   
   expect_doppelganger('VM Single splits', function () {
-    par(mfrow=c(2, 2))
+    par(mfrow=c(2, 2), mar = rep(0.1, 4), cex=1.5)
     tree1 <- ape::read.tree(text='((1, 2), (3, 4, 5, 6, 7, 8));')
     tree2 <- ape::read.tree(text='((1, 2, 3), (4, 5, 6, 7, 8));')
     VisualizeMatching(RobinsonFoulds, tree1, tree2,
@@ -75,6 +78,4 @@ test_that('VisualizeMatching works', {
                       Plot = TreeDistPlot,
                       leaveRoom=FALSE)
   })
-  
-  
 })
