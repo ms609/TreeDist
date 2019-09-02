@@ -19,6 +19,18 @@ test_that('Matches are reported', {
   treeBal8 <- ape::read.tree(text='(((e, f), (g, h)), ((a, b), (c, d)));')
   treeTwoSplits <- ape::read.tree(text="(((a, b), c, d), (e, f, g, h));")
   
+  A <- TRUE
+  B <- FALSE
+  splitsA <- matrix(c(A, A, B, B, B, B, B, B), ncol=1)
+  splitsB <- matrix(c(A, A, A, B, B, B, B, B,
+                      B, B, A, A, A, A, A, A,
+                      A, A, A, A, A, B, A, B), ncol=3)
+  
+  splitsC <- matrix(c(A, A, A, A, A, A, B, B, !splitsB), ncol=4)
+  
+  
+  ReportMatching(splitsA, splitsB, taxonNames = letters[1:8])
+  
   Test <- function (Func) {
     at <- attributes(Func(treeSym8, treeBal8, reportMatching = TRUE))
     expect_equal(3L, length(at))
