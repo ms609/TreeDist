@@ -43,7 +43,6 @@ NyeTreeSimilarity <- function (tree1, tree2, normalize = FALSE,
 #' @export
 NyeSplitSimilarity <- function (splits1, splits2, normalize = TRUE,
                                 reportMatching = FALSE) {
-  # Return:
   GeneralizedRF(splits1, splits2, 
                 function(splits1, splits2, nSplits1, nSplits2) {
     Ars <- function (pir, pjs) {

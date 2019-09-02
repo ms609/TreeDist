@@ -41,16 +41,16 @@ RobinsonFoulds <- function (tree1, tree2, normalize = FALSE,
 RobinsonFouldsSplits <- function (splits1, splits2,
                                          reportMatching = FALSE) {
   splitsInCommon <- 
-  GeneralizedRF(splits1, splits2,
-                function(splits1, splits2, nSplits1, nSplits2) {
-    matrix((mapply(function(i, j) {
-      A1 <- splits1[, i]
-      A2 <- splits2[, j]
-      
-      all(A1 == A2) || all(A1 != A2)
-    },  seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
-    )), nSplits1, nSplits2)
-                  
-  }, maximize = TRUE, reportMatching)
+    GeneralizedRF(splits1, splits2,
+                  function(splits1, splits2, nSplits1, nSplits2) {
+      matrix((mapply(function(i, j) {
+        A1 <- splits1[, i]
+        A2 <- splits2[, j]
+        
+        all(A1 == A2) || all(A1 != A2)
+      },  seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
+      )), nSplits1, nSplits2)
+                    
+    }, maximize = TRUE, reportMatching)
   dim(splits1)[2] - splitsInCommon + dim(splits2)[2] - splitsInCommon
 }
