@@ -29,6 +29,7 @@ Let's consider two trees that differ in the position of a wildcard terminal,
 and in the resolution of a clade:
 
 ```{r plot-function, echo=FALSE}
+library('TreeDist')
 Plot <- function (tree, tree2=NULL, highlight = character(0),
                   prune=if (is.null(tree2)) integer(0) else list(integer(0), integer(0))) {
   ABCDEFGHIJK <- LETTERS[1:11]
@@ -57,9 +58,16 @@ Plot(tree1, tree2, highlight = 'I', prune=list(8, integer(0)))
 ```
 
 The Robinson-Foulds distance will see only one partition in common between the two
-trees, AB:CDEFGHI, resulting in a large distance score:
+trees, AB:CDEFGHI:
 
 ```{r}
 VisualizeMatching(RobinsonFoulds, tree1, tree2)
+```
+
+This results in a distance score of nine, out of a maximum possible (for
+trees exhibiting this resolutioN) of eleven;
+the Robinson-Foulds distance is the number of partitions present in one tree 
+but not the other.
+
 
 # References
