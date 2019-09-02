@@ -80,7 +80,7 @@ predominantly uneven and thus likely to be matched) than the asymmetric tree
 Of the 10&nbsp;395 eight-tip trees, many more bear at least one partition in 
 common with a balanced tree than with an asymmetric tree, whereas the distribution of quartets is identical:
 
-```{r all-8-tip-trees, echo=FALSE, cache=TRUE}
+```{r all-8-tip-trees, echo=FALSE, cache=TRUE, fig.width=6, fig.align='center'}
 #calculate <- FALSE
 #if (calculate) {
 #  all8 <- phytools::allFurcTrees(8, letters[1:8], FALSE)
