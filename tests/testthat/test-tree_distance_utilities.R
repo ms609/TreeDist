@@ -28,11 +28,11 @@ test_that('Matches are reported', {
                           B, B, A, A, A, A, A, A,
                           A, A, A, A, A, B, A, B)), ncol=4,
                     dimnames = list(letters[8:1], NULL))
-      
-  splitsC <- !splitsB[, 2:4]
   
-  
-  ReportMatching(splitsA, splitsB, taxonNames = letters[1:8])
+  expect_equal("a b : c d e f g h => c d e f g h : a b",
+               ReportMatching(splitsA, 
+                              splitsB[rownames(splitsA), 2, drop=FALSE],
+                              taxonNames = letters[1:8]))
   
   Test <- function (Func) {
     at <- attributes(Func(treeSym8, treeBal8, reportMatching = TRUE))
@@ -43,7 +43,7 @@ test_that('Matches are reported', {
     at <- attributes(Func(treeSym8, treeTwoSplits, reportMatching = TRUE))
     expect_equal(3L, length(at))
     expect_equal(c(1L, NA, NA, NA, 2L), as.integer(at$matching))
-    expect_equal('a b : c d e f g h => c d e f g h : a b', at$matchedSplits[2])
+    expect_equal('a b : e f g h c d => e f g h c d : a b', at$matchedSplits[2])
   }
   
   Test(MutualPhylogeneticInfo)
