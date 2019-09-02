@@ -46,24 +46,12 @@ NyeSplitSimilarity <- function (splits1, splits2, normalize = TRUE,
   
   dimSplits1 <- dim(splits1)
   dimSplits2 <- dim(splits2)
+  nSplits1 <- dimSplits1[2]
+  nSplits2 <- dimSplits2[2]
+  if (nSplits1 == 0 || nSplits2 == 0) return (0L)
   nTerminals <- dimSplits1[1]
   if (dimSplits2[1] != nTerminals) {
     stop("Split rows must bear identical labels")
-  }
-  lnUnrootedN <- LnUnrooted.int(nTerminals)
-  
-  swapSplits <- (dimSplits1[2] > dimSplits2[2])
-  if (swapSplits) {
-    # solve_LDAP expects splits1 to be no larger than splits2
-    tmp <- splits1
-    splits1 <- splits2
-    splits2 <- tmp
-    
-    tmp <- dimSplits1
-    dimSplits1 <- dimSplits2
-    dimSplits2 <- tmp
-    
-    remove(tmp)
   }
   
   taxonNames1 <- rownames(splits1)
@@ -73,10 +61,6 @@ NyeSplitSimilarity <- function (splits1, splits2, normalize = TRUE,
     splits2 <- unname(splits2[taxonNames1, , drop=FALSE])
     splits1 <- unname(splits1) # split2[split1] faster without names
   }
-  
-  nSplits1 <- dimSplits1[2]
-  nSplits2 <- dimSplits2[2]
-  if (nSplits1 == 0) return (0)
   
   Ars <- function (pir, pjs) {
     sum(pir[pjs]) / sum(pir | pjs)
@@ -97,8 +81,6 @@ NyeSplitSimilarity <- function (splits1, splits2, normalize = TRUE,
   )), nSplits1, nSplits2)
   
   # Return:
-  TreeDistanceReturn(pairScores, maximize = TRUE,
-                     reportMatching, swapSplits,
-                     splits1, splits2,
-                     taxonNames1)
+  TreeDistanceReturn(pairScores, maximize = TRUE, reportMatching, 
+                     splits1, splits2, taxonNames1)
 }

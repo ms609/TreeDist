@@ -114,37 +114,48 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
 #' @author Martin R. Smith
 #' @export
 TreeDistanceReturn <- function (pairScores, maximize = FALSE,
-                                reportMatching, swapSplits, 
+                                reportMatching,  
                                 splits1, splits2,
                                 taxonNames = NULL) {
-  if (dim(pairScores)[1] == 1) {
-    Optimal <- if (maximize) which.max else which.min
-    optimalMatching <- structure(Optimal(pairScores), class='solve_LSAP')
-  } else {
-    optimalMatching <- solve_LSAP(pairScores, maximize)
-  }
+  dimScores <- dim(pairScores)
   
-  ret <- sum(pairScores[matrix(c(seq_along(optimalMatching), optimalMatching),
-                               ncol=2L)])
+  if (dimScores[1] > dimScores[2]) {
+    if (dimScores[2] == 1) {
+      Optimal <- if (maximize) which.max else which.min
+      solution <- Optimal(pairScores)
+    } else {
+      solution <- solve_LSAP(t(pairScores), maximize)
+    }
+    optimalMatching <- structure(match(seq_len(dimScores[1]), solution),
+                                 class='solve_LSAP')
+  } else {
+    if (dimScores[1] == 1) {
+      Optimal <- if (maximize) which.max else which.min
+      optimalMatching <- structure(Optimal(pairScores), class='solve_LSAP')
+    } else {
+      optimalMatching <- solve_LSAP(pairScores, maximize)
+    }
+  }
+
+
+  matched <- !is.na(optimalMatching)
+  matched1 <- which(matched)
+  matched2 <- optimalMatching[matched]
+  
+  ret <- sum(pairScores[matrix(c(matched1, matched2), ncol=2L)])
   
   if (reportMatching) {
-    if (swapSplits) {
-      optimalMatching <- structure(match(seq_len(dim(pairScores)[2]), optimalMatching),
-                                   class='solve_LSAP')
-      attr(ret, 'pairScores') <- t(pairScores)
-    } else {
-      attr(ret, 'pairScores') <- pairScores
-    }
+    attributes(ret) <- list(
+      pairScores = pairScores,
+      matching = optimalMatching
+    )
     
     if (!is.null(taxonNames)) {
-      matchedSplits <- !is.na(optimalMatching)
       attr(ret, 'matchedSplits') <- 
-        ReportMatching(splits1[, matchedSplits, drop=FALSE], 
-                       splits2[, optimalMatching[matchedSplits], 
-                               drop=FALSE], 
+        ReportMatching(splits1[, matched1, drop = FALSE], 
+                       splits2[, matched2, drop = FALSE],
                        taxonNames)
     }
-    attr(ret, 'matching') <- optimalMatching
   }
   # Return:
   ret

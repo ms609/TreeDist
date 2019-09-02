@@ -21,12 +21,15 @@ test_that('Matches are reported', {
   
   A <- TRUE
   B <- FALSE
-  splitsA <- matrix(c(A, A, B, B, B, B, B, B), ncol=1)
-  splitsB <- matrix(c(A, A, A, B, B, B, B, B,
-                      B, B, A, A, A, A, A, A,
-                      A, A, A, A, A, B, A, B), ncol=3)
-  
-  splitsC <- matrix(c(A, A, A, A, A, A, B, B, !splitsB), ncol=4)
+  splitsA <- matrix(c(A, A, B, B, B, B, B, B), ncol=1, 
+                    dimnames = list(letters[1:8], NULL))
+  splitsB <- matrix(rev(c(A, A, A, A, A, A, B, B, 
+                          A, A, A, B, B, B, B, B,
+                          B, B, A, A, A, A, A, A,
+                          A, A, A, A, A, B, A, B)), ncol=4,
+                    dimnames = list(letters[8:1], NULL))
+      
+  splitsC <- !splitsB[, 2:4]
   
   
   ReportMatching(splitsA, splitsB, taxonNames = letters[1:8])
