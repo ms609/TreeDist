@@ -43,44 +43,26 @@ NyeTreeSimilarity <- function (tree1, tree2, normalize = FALSE,
 #' @export
 NyeSplitSimilarity <- function (splits1, splits2, normalize = TRUE,
                                 reportMatching = FALSE) {
-  
-  dimSplits1 <- dim(splits1)
-  dimSplits2 <- dim(splits2)
-  nSplits1 <- dimSplits1[2]
-  nSplits2 <- dimSplits2[2]
-  if (nSplits1 == 0 || nSplits2 == 0) return (0L)
-  nTerminals <- dimSplits1[1]
-  if (dimSplits2[1] != nTerminals) {
-    stop("Split rows must bear identical labels")
-  }
-  
-  taxonNames1 <- rownames(splits1)
-  taxonNames2 <- rownames(splits2)
-  
-  if (!is.null(taxonNames2)) {
-    splits2 <- unname(splits2[taxonNames1, , drop=FALSE])
-    splits1 <- unname(splits1) # split2[split1] faster without names
-  }
-  
-  Ars <- function (pir, pjs) {
-    sum(pir[pjs]) / sum(pir | pjs)
-  }
-  
-  pairScores <- matrix((mapply(function(i, j) {
-    splitI0 <- splits1[, i]
-    splitJ0 <- splits2[, j]
-    splitI1 <- !splitI0
-    splitJ1 <- !splitJ0
-    
-    max(
-      min(Ars(splitI0, splitJ0), Ars(splitI1, splitJ1)),
-      min(Ars(splitI0, splitJ1), Ars(splitI1, splitJ0))
-    )
-    
-  }, seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
-  )), nSplits1, nSplits2)
-  
   # Return:
-  TreeDistanceReturn(pairScores, maximize = TRUE, reportMatching, 
-                     splits1, splits2, taxonNames1)
+  GeneralizedRF(splits1, splits2, 
+                function(splits1, splits2, nSplits1, nSplits2) {
+    Ars <- function (pir, pjs) {
+      sum(pir[pjs]) / sum(pir | pjs)
+    }
+    
+    # Return:
+    matrix((mapply(function(i, j) {
+      splitI0 <- splits1[, i]
+      splitJ0 <- splits2[, j]
+      splitI1 <- !splitI0
+      splitJ1 <- !splitJ0
+      
+      max(
+        min(Ars(splitI0, splitJ0), Ars(splitI1, splitJ1)),
+        min(Ars(splitI0, splitJ1), Ars(splitI1, splitJ0))
+      )
+      
+    }, seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
+    )), nSplits1, nSplits2)
+  }, maximize = TRUE, reportMatching)
 }

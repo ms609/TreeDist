@@ -100,67 +100,6 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
   unnormalized / infoInBoth
 }
 
-#' Tree Distance Return
-#' 
-#' Generates the return value for Generalized Robinson-Foulds distances,
-#' with (optionally) a report of the matching.
-#' 
-#' @param pairScores,reportMatching,swapSplits,taxonNames1,taxonNames2 Corresponding
-#' parameters from within each function
-#' @param Score function taking pairScores and matchedSplits to generate a 
-#' matching score.
-#' 
-#' @keywords internal
-#' @author Martin R. Smith
-#' @export
-TreeDistanceReturn <- function (pairScores, maximize = FALSE,
-                                reportMatching,  
-                                splits1, splits2,
-                                taxonNames = NULL) {
-  dimScores <- dim(pairScores)
-  
-  if (dimScores[1] > dimScores[2]) {
-    if (dimScores[2] == 1) {
-      Optimal <- if (maximize) which.max else which.min
-      solution <- Optimal(pairScores)
-    } else {
-      solution <- solve_LSAP(t(pairScores), maximize)
-    }
-    optimalMatching <- structure(match(seq_len(dimScores[1]), solution),
-                                 class='solve_LSAP')
-  } else {
-    if (dimScores[1] == 1) {
-      Optimal <- if (maximize) which.max else which.min
-      optimalMatching <- structure(Optimal(pairScores), class='solve_LSAP')
-    } else {
-      optimalMatching <- solve_LSAP(pairScores, maximize)
-    }
-  }
-
-
-  matched <- !is.na(optimalMatching)
-  matched1 <- which(matched)
-  matched2 <- optimalMatching[matched]
-  
-  ret <- sum(pairScores[matrix(c(matched1, matched2), ncol=2L)])
-  
-  if (reportMatching) {
-    attributes(ret) <- list(
-      pairScores = pairScores,
-      matching = optimalMatching
-    )
-    
-    if (!is.null(taxonNames)) {
-      attr(ret, 'matchedSplits') <- 
-        ReportMatching(splits1[, matched1, drop = FALSE], 
-                       splits2[, matched2, drop = FALSE],
-                       taxonNames)
-    }
-  }
-  # Return:
-  ret
-}
-
 #' List clades as text
 #' @param splits,splits1,splits2 Logical matrices with columns specifying membership
 #' of each corresponding matched clade 
