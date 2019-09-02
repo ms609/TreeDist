@@ -33,7 +33,8 @@ VariationOfMatchingSplitInfo <- function (tree1, tree2, normalize = FALSE,
 #' @inheritParams MutualPhylogeneticInfoSplits
 #' @importFrom TreeSearch LnUnrooted.int LogTreesMatchingSplit
 #' @export
-MutualMatchingSplitInfoSplits <- function (splits1, splits2, reportMatching = FALSE) {
+MutualMatchingSplitInfoSplits <- function (splits1, splits2, 
+                                           reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, 
                 function(splits1, splits2, nSplits1, nSplits2) {
     AgreementInfoNats <- function (splitI, agree) {

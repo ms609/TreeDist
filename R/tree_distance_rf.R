@@ -38,8 +38,7 @@ RobinsonFoulds <- function (tree1, tree2, normalize = FALSE,
 #' @inheritParams MutualPhylogeneticInfoSplits
 #' @importFrom clue solve_LSAP
 #' @export
-RobinsonFouldsSplits <- function (splits1, splits2,
-                                         reportMatching = FALSE) {
+RobinsonFouldsSplits <- function (splits1, splits2, reportMatching = FALSE) {
   splitsInCommon <- 
     GeneralizedRF(splits1, splits2,
                   function(splits1, splits2, nSplits1, nSplits2) {

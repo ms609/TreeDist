@@ -41,8 +41,7 @@ NyeTreeSimilarity <- function (tree1, tree2, normalize = FALSE,
 #' instead of trees.
 #' @inheritParams MutualPhylogeneticInfoSplits
 #' @export
-NyeSplitSimilarity <- function (splits1, splits2, normalize = TRUE,
-                                reportMatching = FALSE) {
+NyeSplitSimilarity <- function (splits1, splits2, reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, 
                 function(splits1, splits2, nSplits1, nSplits2) {
     Ars <- function (pir, pjs) {

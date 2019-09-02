@@ -201,13 +201,18 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+3) {
   mut <- cbind(Estimate = rowMeans(mutualEstimates),
                sd = apply(mutualEstimates, 1, sd), n = samples)
   
-  ret <- rbind(mut,
-               VariationOfPhylogeneticInfo = c(info1 + info2 - mut[1, 1] - mut[1, 1], mut[1, 2] * 2, samples),
-               VariationOfMatchingSplitInfo =  c(info1 + info2 - mut[2, 1] - mut[2, 1], mut[2, 2] * 2, samples)
-               )
+  ret <- rbind(
+    mut,
+    VariationOfPhylogeneticInfo = c(info1 + info2 - mut[1, 1] - mut[1, 1],
+                                    mut[1, 2] * 2, samples),
+    VariationOfMatchingSplitInfo = c(info1 + info2 - mut[2, 1] - mut[2, 1],
+                                     mut[2, 2] * 2, samples)
+  )
   
   # Return:
-  cbind(Estimate = ret[, 1], 'Std. Err.' = ret[, 'sd'] / sqrt(ret[, 'n']), ret[, 2:3])
+  cbind(Estimate = ret[, 1],
+        'Std. Err.' = ret[, 'sd'] / sqrt(ret[, 'n']), 
+        ret[, 2:3])
 }
 
 #' @describeIn TreeDistance Mutual Clustering Information of two trees.
@@ -223,7 +228,8 @@ MutualClusteringInfo <- function (tree1, tree2, normalize = FALSE,
 #' @describeIn TreeDistance Calculate mutual phylogenetic information from splits instead of trees.
 #' @template splits12params
 #' @export
-MutualPhylogeneticInfoSplits <- function (splits1, splits2, reportMatching = FALSE) {
+MutualPhylogeneticInfoSplits <- function (splits1, splits2, 
+                                          reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, 
                 function(splits1, splits2, nSplits1, nSplits2) {
     nTerminals <- dim(splits1)[1]
@@ -244,10 +250,12 @@ MutualPhylogeneticInfoSplits <- function (splits1, splits2, reportMatching = FAL
         } else {
           if (A1 < A2) {
             # Return:
-            LnRooted.int(A2) + LnRooted.int(nTerminals - A1) - LnRooted.int(A2 - A1 + 1L) 
+            LnRooted.int(A2) + LnRooted.int(nTerminals - A1) -
+              LnRooted.int(A2 - A1 + 1L) 
           } else {
             # Return:
-            LnRooted.int(A1) + LnRooted.int(nTerminals - A2) - LnRooted.int(A1 - A2 + 1L) 
+            LnRooted.int(A1) + LnRooted.int(nTerminals - A2) -
+              LnRooted.int(A1 - A2 + 1L) 
           }
         }
       }
