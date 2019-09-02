@@ -24,7 +24,14 @@ when reporting matching scores.}
 }
 \description{
 Depicts the bipartitions that are matched between two trees using a
-specified Generalized Robinson Foulds tree distance measure.
+specified Generalized Robinson-Foulds similarity measure.
+}
+\details{
+Note that when visualizing a Robinson-Foulds distance (using
+\code{Func = RobinsonFoulds}), matched splits are assigned a \emph{similarity} score
+of 1, which is deducted from the total number of splits to calculate the
+Robinson-Foulds \emph{distance}.  Unmatched splits thus contribute one to total
+tree distance.
 }
 \author{
 Martin R. Smith
