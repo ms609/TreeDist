@@ -106,7 +106,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
     }
   }
   
-  Plot(tree1)#, ...)
+  Plot(tree1, ...)
   paired1 <- !is.na(pairings)
   pairedPairScores <- pairScores[paired1]
   pairLabels <- seq_len(sum(paired1))
@@ -117,7 +117,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
              col=ifelse(pairedPairScores, 'black', faint))
   LabelUnpaired(partitionEdges1, !paired1)
   
-  Plot(tree2)#, ...)
+  Plot(tree2, ...)
   paired2 <- seq_along(partitionEdges2) %in% pairings
   pairNames2 <- pairings[paired1]
   edgelabels(text=pairLabels, edge=partitionEdges2[pairNames2],
