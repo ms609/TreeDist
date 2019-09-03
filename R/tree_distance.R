@@ -201,13 +201,18 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+3) {
   mut <- cbind(Estimate = rowMeans(mutualEstimates),
                sd = apply(mutualEstimates, 1, sd), n = samples)
   
-  ret <- rbind(mut,
-               VariationOfPhylogeneticInfo = c(info1 + info2 - mut[1, 1] - mut[1, 1], mut[1, 2] * 2, samples),
-               VariationOfMatchingSplitInfo =  c(info1 + info2 - mut[2, 1] - mut[2, 1], mut[2, 2] * 2, samples)
-               )
+  ret <- rbind(
+    mut,
+    VariationOfPhylogeneticInfo = c(info1 + info2 - mut[1, 1] - mut[1, 1],
+                                    mut[1, 2] * 2, samples),
+    VariationOfMatchingSplitInfo = c(info1 + info2 - mut[2, 1] - mut[2, 1],
+                                     mut[2, 2] * 2, samples)
+  )
   
   # Return:
-  cbind(Estimate = ret[, 1], 'Std. Err.' = ret[, 'sd'] / sqrt(ret[, 'n']), ret[, 2:3])
+  cbind(Estimate = ret[, 1],
+        'Std. Err.' = ret[, 'sd'] / sqrt(ret[, 'n']), 
+        ret[, 2:3])
 }
 
 #' @describeIn TreeDistance Mutual Clustering Information of two trees.
@@ -223,213 +228,97 @@ MutualClusteringInfo <- function (tree1, tree2, normalize = FALSE,
 #' @describeIn TreeDistance Calculate mutual phylogenetic information from splits instead of trees.
 #' @template splits12params
 #' @export
-MutualPhylogeneticInfoSplits <- function (splits1, splits2, normalize = TRUE,
-                                      reportMatching = FALSE) {
-  
-  dimSplits1 <- dim(splits1)
-  dimSplits2 <- dim(splits2)
-  nTerminals <- dimSplits1[1]
-  if (dimSplits2[1] != nTerminals) {
-    stop("Split rows must bear identical labels")
-  }
-  lnUnrootedN <- LnUnrooted.int(nTerminals)
-  
-  swapSplits <- (dimSplits1[2] > dimSplits2[2])
-  if (swapSplits) {
-    # solve_LDAP expects splits1 to be no larger than splits2
-    tmp <- splits1
-    splits1 <- splits2
-    splits2 <- tmp
+MutualPhylogeneticInfoSplits <- function (splits1, splits2, 
+                                          reportMatching = FALSE) {
+  GeneralizedRF(splits1, splits2, 
+                function(splits1, splits2, nSplits1, nSplits2) {
+    nTerminals <- dim(splits1)[1]
+    lnUnrootedN <- LnUnrooted.int(nTerminals)
+    inSplit1 <- colSums(splits1)
+    inSplit2 <- colSums(splits2)
+    notInSplit2 <- nTerminals - inSplit2
     
-    tmp <- dimSplits1
-    dimSplits1 <- dimSplits2
-    dimSplits2 <- tmp
-  }
-  
-  taxonNames1 <- rownames(splits1)
-  taxonNames2 <- rownames(splits2)
-  
-  if (!is.null(taxonNames2)) {
-    splits2 <- unname(splits2[taxonNames1, , drop=FALSE])
-    splits1 <- unname(splits1) # split2[split1] faster without names
-  }
-  
-  nSplits1 <- dimSplits1[2]
-  nSplits2 <- dimSplits2[2]
-  if (nSplits1 == 0) return (0)
-  inSplit1 <- colSums(splits1)
-  inSplit2 <- colSums(splits2)
-  notInSplit2 <- nTerminals - inSplit2
-  
-  if (nTerminals <= length(oneOverlap)) {
-    # Use cache for speed, if available
-    oo <- oneOverlap[[nTerminals]]
-    OneOverlap <- function (A1, A2) oo[A1, A2]
-  } else {
-    OneOverlap <- function(A1, A2) {
-      if (A1 == A2) {
-        # Return:
-        LnRooted.int(A1) + LnRooted.int(nTerminals - A2)
-      } else {
-        if (A1 < A2) {
-          # Return:
-          LnRooted.int(A2) + LnRooted.int(nTerminals - A1) - LnRooted.int(A2 - A1 + 1L) 
-        } else {
-          # Return:
-          LnRooted.int(A1) + LnRooted.int(nTerminals - A2) - LnRooted.int(A1 - A2 + 1L) 
-        }
-      }
-    }
-  }
-  
-  pairScores <- matrix((mapply(function(i, j) {
-    split1 <- splits1[, i]
-    split2 <- splits2[, j]
-    
-    if (all(split1[split2]) || # oneAndTwo
-        all(!split1[!split2])) { # notOneNotTwo
-      OneOverlap(inSplit1[i], inSplit2[j])
-      
-    } else if (all(!split1[split2]) || # notOneAndTwo
-               all(split1[!split2])) { #oneNotTwo
-      OneOverlap(inSplit1[i], notInSplit2[j])
-      
+    if (nTerminals <= length(oneOverlap)) {
+      # Use cache for speed, if available
+      oo <- oneOverlap[[nTerminals]]
+      OneOverlap <- function (A1, A2) oo[A1, A2]
     } else {
-      lnUnrootedN
-    }
-  }, seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
-  ) - lnUnrootedN) / -log(2), nSplits1, nSplits2)
-  
-  if (nSplits1 == 1) {
-    max(pairScores)
-  } else {
-    optimalMatching <- solve_LSAP(pairScores, TRUE)
-
-    # Return:
-    ret <- sum(pairScores[matrix(c(seq_along(optimalMatching), optimalMatching), ncol=2L)])
-    if (reportMatching) {
-      if (!is.null(taxonNames2)) {
-        attr(ret, 'matchedSplits') <- 
-        if (swapSplits) {
-          ReportMatching(splits2[, optimalMatching], splits1, taxonNames1)
+      OneOverlap <- function(A1, A2) {
+        if (A1 == A2) {
+          # Return:
+          LnRooted.int(A1) + LnRooted.int(nTerminals - A2)
         } else {
-          ReportMatching(splits1, splits2[, optimalMatching], taxonNames1)
-        }
-      }
-      attr(ret, 'matching') <- optimalMatching
-      attr(ret, 'pairScores') <- pairScores
-      ret
-    } else {
-      ret
-    }
-  }
-}
-
-#' @describeIn TreeDistance Calculate variation of matching split information from splits instead of trees.
-#' @inheritParams MutualPhylogeneticInfoSplits
-#' @importFrom TreeSearch LnUnrooted.int LogTreesMatchingSplit
-#' @export
-MutualMatchingSplitInfoSplits <- function (splits1, splits2, reportMatching = FALSE) {
-  dimSplits1 <- dim(splits1)
-  dimSplits2 <- dim(splits2)
-  nTerminals <- dimSplits1[1]
-  if (dimSplits2[1] != nTerminals) {
-    stop("Split rows must bear identical labels")
-  }
-  
-  swapSplits <- (dimSplits1[2] > dimSplits2[2])
-  if (swapSplits) {
-    # solve_LDAP expects splits1 to be no larger than splits2
-    tmp <- splits1
-    splits1 <- splits2
-    splits2 <- tmp
-    
-    tmp <- dimSplits1
-    dimSplits1 <- dimSplits2
-    dimSplits2 <- tmp
-    
-    remove(tmp)
-  }
-  
-  taxonNames1 <- rownames(splits1)
-  taxonNames2 <- rownames(splits2)
-  
-  if (!is.null(taxonNames2)) {
-    splits2 <- unname(splits2[taxonNames1, , drop=FALSE])
-    splits1 <- unname(splits1) # split2[split1] faster without names
-  }
-  
-  nSplits1 <- dimSplits1[2]
-  nSplits2 <- dimSplits2[2]
-  if (nSplits1 == 0) return (0)
-  
-  AgreementInfoNats <- function (splitI, agree) {
-    inAgreement <- sum(agree)
-    n0 <- sum(splitI[agree])
-    LnUnrooted.int(inAgreement) - LogTreesMatchingSplit(n0, inAgreement - n0)
-  }
-  
-  pairScores <- matrix((mapply(function(i, j) {
-    splitI0 <- splits1[, i]
-    splitJ0 <- splits2[, j]
-    
-    agree1 <- splitI0 == splitJ0
-    
-    max(AgreementInfoNats(splitI0, agree1),
-        AgreementInfoNats(splitI0, !agree1))
-    
-  }, seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
-  )), nSplits1, nSplits2) / log(2)
-  
-  if (nSplits1 == 1) {
-    min(pairScores)
-  } else {
-    optimalMatching <- solve_LSAP(pairScores, TRUE)
-    
-    # Return:
-    ret <- sum(pairScores[matrix(c(seq_along(optimalMatching), optimalMatching), ncol=2L)])
-    if (reportMatching) {
-      if (!is.null(taxonNames2)) {
-        attr(ret, 'matchedSplits') <- 
-          if (swapSplits) {
-            ReportMatching(splits2[, optimalMatching], splits1, taxonNames1)
+          if (A1 < A2) {
+            # Return:
+            LnRooted.int(A2) + LnRooted.int(nTerminals - A1) -
+              LnRooted.int(A2 - A1 + 1L) 
           } else {
-            ReportMatching(splits1, splits2[, optimalMatching], taxonNames1)
+            # Return:
+            LnRooted.int(A1) + LnRooted.int(nTerminals - A2) -
+              LnRooted.int(A1 - A2 + 1L) 
           }
+        }
       }
-      attr(ret, 'matching') <- optimalMatching
-      attr(ret, 'pairScores') <- pairScores
-      ret
-    } else {
-      ret
     }
-  }
+    
+    # Return:
+    matrix((mapply(function(i, j) {
+      split1 <- splits1[, i]
+      split2 <- splits2[, j]
+      
+      if (all(split1[split2]) || # oneAndTwo
+          all(!split1[!split2])) { # notOneNotTwo
+        OneOverlap(inSplit1[i], inSplit2[j])
+        
+      } else if (all(!split1[split2]) || # notOneAndTwo
+                 all(split1[!split2])) { #oneNotTwo
+        OneOverlap(inSplit1[i], notInSplit2[j])
+        
+      } else {
+        lnUnrootedN
+      }
+    }, seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
+    ) - lnUnrootedN) / -log(2), nSplits1, nSplits2)
+  }, maximize = TRUE, reportMatching)
 }
 
 #' @describeIn TreeDistance Calculate clustering information from splits instead of trees
 #' @export
-MutualClusteringInfoSplits <- function (splits1, splits2, normalize = TRUE,
+MutualClusteringInfoSplits <- function (splits1, splits2, 
                                         reportMatching = FALSE) {
-  
+  GeneralizedRF(splits1, splits2, 
+                function(splits1, splits2, nSplits1, nSplits2) {
+    matrix((mapply(function(i, j) {
+      MeilaMutualInformation(splits1[, i], splits2[, j])
+    }, seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
+    )), nSplits1, nSplits2) / log(2)
+  }, maximize = TRUE, reportMatching)
+}
+
+#' Generalized Robinson-Foulds distance
+#' 
+#' Calculate Generalized Robinson-Foulds distance from splits.
+#' 
+#' @inheritParams MutualPhylogeneticInfoSplits
+#' @param PairScorer function taking four arguments, `splits1`, `splits2`,
+#' `nSplits1`, `nSplits2`, which should return the score of each pair of splits
+#' in a two-dimensional matrix.
+#' 
+#' @return The results of `TreeDistanceReturn` under the parameters provided
+#' 
+#' @keywords internal
+#' @author Martin R. Smith
+#' @export
+GeneralizedRF <- function (splits1, splits2, PairScorer, 
+                           maximize, reportMatching) {
   dimSplits1 <- dim(splits1)
   dimSplits2 <- dim(splits2)
+  nSplits1 <- dimSplits1[2]
+  nSplits2 <- dimSplits2[2]
+  if (nSplits1 == 0 || nSplits2 == 0) return (0L)
   nTerminals <- dimSplits1[1]
   if (dimSplits2[1] != nTerminals) {
     stop("Split rows must bear identical labels")
-  }
-  
-  swapSplits <- (dimSplits1[2] > dimSplits2[2])
-  if (swapSplits) {
-    # solve_LDAP expects splits1 to be no larger than splits2
-    tmp <- splits1
-    splits1 <- splits2
-    splits2 <- tmp
-    
-    tmp <- dimSplits1
-    dimSplits1 <- dimSplits2
-    dimSplits2 <- tmp
-    
-    remove(tmp)
   }
   
   taxonNames1 <- rownames(splits1)
@@ -440,39 +329,11 @@ MutualClusteringInfoSplits <- function (splits1, splits2, normalize = TRUE,
     splits1 <- unname(splits1) # split2[split1] faster without names
   }
   
-  nSplits1 <- dimSplits1[2]
-  nSplits2 <- dimSplits2[2]
-  if (nSplits1 == 0) return (0)
+  pairScores <- PairScorer(splits1, splits2, nSplits1, nSplits2)
   
-  
-  pairScores <- matrix((mapply(function(i, j) {
-    MeilaMutualInformation(splits1[, i], splits2[, j])
-  }, seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
-  )), nSplits1, nSplits2) / log(2)
-  
-  if (nSplits1 == 1) {
-    min(pairScores)
-  } else {
-    optimalMatching <- solve_LSAP(pairScores, TRUE)
-    
-    # Return:
-    ret <- sum(pairScores[matrix(c(seq_along(optimalMatching), optimalMatching), ncol=2L)])
-    if (reportMatching) {
-      if (!is.null(taxonNames2)) {
-        attr(ret, 'matchedSplits') <- 
-          if (swapSplits) {
-            ReportMatching(splits2[, optimalMatching], splits1, taxonNames1)
-          } else {
-            ReportMatching(splits1, splits2[, optimalMatching], taxonNames1)
-          }
-      }
-      attr(ret, 'matching') <- optimalMatching
-      attr(ret, 'pairScores') <- pairScores
-      ret
-    } else {
-      ret
-    }
-  }
+  # Return:
+  TreeDistanceReturn(pairScores, maximize, reportMatching, 
+                     splits1, splits2, taxonNames1)
 }
 
 #' Are splits compatible?
@@ -494,4 +355,69 @@ SplitsCompatible <- function (split1, split2) {
     all(!split1[split2]) ||
     all(!split1[!split2])
   )
+}
+
+#' Tree Distance Return
+#' 
+#' Generates the return value for Generalized Robinson-Foulds distances,
+#' with (optionally) a report of the matching.
+#' 
+#' @param pairScores Two-dimensional array listing the score of each possible
+#' pairing of `splits1` (rows) with `splits2` (columns).
+#' @param reportMatching Logical specifying whether to report details
+#' of an optimal matching.
+#' @template splits12params
+#' @param taxonNames Character vector listing the names corresponding to each
+#' row of `splits1` and `splits2`.
+#' Corresponding parameters from within each function
+#' 
+#' @keywords internal
+#' @author Martin R. Smith
+#' @export
+TreeDistanceReturn <- function (pairScores, maximize = FALSE,
+                                reportMatching,  
+                                splits1, splits2,
+                                taxonNames = NULL) {
+  dimScores <- dim(pairScores)
+  
+  if (dimScores[1] > dimScores[2]) {
+    if (dimScores[2] == 1) {
+      Optimal <- if (maximize) which.max else which.min
+      solution <- Optimal(pairScores)
+    } else {
+      solution <- solve_LSAP(t(pairScores), maximize)
+    }
+    optimalMatching <- structure(match(seq_len(dimScores[1]), solution),
+                                 class='solve_LSAP')
+  } else {
+    if (dimScores[1] == 1) {
+      Optimal <- if (maximize) which.max else which.min
+      optimalMatching <- structure(Optimal(pairScores), class='solve_LSAP')
+    } else {
+      optimalMatching <- solve_LSAP(pairScores, maximize)
+    }
+  }
+  
+  
+  matched <- !is.na(optimalMatching)
+  matched1 <- which(matched)
+  matched2 <- optimalMatching[matched]
+  
+  ret <- sum(pairScores[matrix(c(matched1, matched2), ncol=2L)])
+  
+  if (reportMatching) {
+    attributes(ret) <- list(
+      pairScores = pairScores,
+      matching = optimalMatching
+    )
+    
+    if (!is.null(taxonNames)) {
+      attr(ret, 'matchedSplits') <- 
+        ReportMatching(splits1[, matched1, drop = FALSE], 
+                       splits2[, matched2, drop = FALSE],
+                       taxonNames)
+    }
+  }
+  # Return:
+  ret
 }

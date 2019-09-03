@@ -13,6 +13,10 @@ vignette: >
 
 This document will review known shortcomings of the RF metric.
 
+```{r init, echo=FALSE, warning=FALSE}
+standardMargin <- c(0.4, 0.4, 0.8, 0.4)
+cbPalette8 <- Ternary::cbPalette8
+```
 
 
 ## Unit equivalence
@@ -76,7 +80,7 @@ predominantly uneven and thus likely to be matched) than the asymmetric tree
 Of the 10&nbsp;395 eight-tip trees, many more bear at least one partition in 
 common with a balanced tree than with an asymmetric tree, whereas the distribution of quartets is identical:
 
-```{r all-8-tip-trees, echo=FALSE, cache=TRUE}
+```{r all-8-tip-trees, echo=FALSE, cache=TRUE, fig.width=6, fig.align='center'}
 #calculate <- FALSE
 #if (calculate) {
 #  all8 <- phytools::allFurcTrees(8, letters[1:8], FALSE)
@@ -130,5 +134,10 @@ This said, although the range of the information-based equivalent to the
 matching splits distance matches that of the mutual phylogenetic information,
 it is not clear that the calculated information content of non-arboreal
 matches is a natural value.
+
+## Solutions
+
+Some of the shortcomings of the Robinson-Foulds distance are addressed by
+[Generalized Robinson-Foulds distances](Generalised-RF.html).
 
 ## References
