@@ -21,6 +21,8 @@ bug, create an associated issue and illustrate the bug with a minimal
 *  Look at the Travis and CodeCovr build status before and after making changes.
 *  We follow [Google's R style guide](https://google.github.io/styleguide/Rguide.html)
 *  We use camelCase for variable names, and TitleCase for function names.
+*  We use the Oxford ending of 'ize' (not 'ise'), and UK spelling (e.g. 'colour') 
+   where it is not possible to avoid the distinction (e.g. by shortening to 'col')
 *  We use [roxygen2](https://cran.r-project.org/package=roxygen2).  
 *  We use [testthat](https://cran.r-project.org/package=testthat). Contributions
 with test cases included are easier to accept.  
