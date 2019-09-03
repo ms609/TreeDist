@@ -106,23 +106,25 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
     }
   }
   
-  Plot(tree1, ...)
+  Plot(tree1)#, ...)
   paired1 <- !is.na(pairings)
-  edgelabels(text=seq_len(sum(paired1)), edge=partitionEdges1[paired1],
+  pairedPairScores <- pairScores[paired1]
+  pairLabels <- seq_len(sum(paired1))
+  edgelabels(text=pairLabels, edge=partitionEdges1[paired1],
              bg=palette, adj=adjNo)
-  edgelabels(text=pairScores, edge=partitionEdges1[paired1], 
+  edgelabels(text=pairedPairScores, edge=partitionEdges1[paired1], 
              frame='n', adj=adjVal, cex=0.8,
-             col=ifelse(pairScores, 'black', faint))
+             col=ifelse(pairedPairScores, 'black', faint))
   LabelUnpaired(partitionEdges1, !paired1)
   
-  Plot(tree2, ...)
+  Plot(tree2)#, ...)
   paired2 <- seq_along(partitionEdges2) %in% pairings
-  pairNames2 <- order(pairings[!is.na(pairings)])
-  edgelabels(text=pairNames2, edge=partitionEdges2[paired2],
-             bg=palette[pairNames2], adj=adjNo)
-  edgelabels(text=pairScores[pairNames2], edge=partitionEdges2[paired2], 
+  pairNames2 <- pairings[paired1]
+  edgelabels(text=pairLabels, edge=partitionEdges2[pairNames2],
+             bg=palette, adj=adjNo)
+  edgelabels(text=pairedPairScores, edge=partitionEdges2[pairNames2], 
              frame='n', adj=adjVal, cex=0.8,
-             col=ifelse(pairScores[pairNames2], 'black', faint))
+             col=ifelse(pairedPairScores, 'black', faint))
   LabelUnpaired(partitionEdges2, !paired2)
   
   if (setPar) par(origPar)
