@@ -117,11 +117,12 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   
   Plot(tree2, ...)
   paired2 <- seq_along(partitionEdges2) %in% pairings
-  edgelabels(text=order(pairings[!is.na(pairings)]), edge=partitionEdges2[paired2],
-             bg=palette[order(pairings)], adj=adjNo)
-  edgelabels(text=pairScores[order(pairings)], edge=partitionEdges2[paired2], 
+  pairNames2 <- order(pairings[!is.na(pairings)])
+  edgelabels(text=pairNames2, edge=partitionEdges2[paired2],
+             bg=palette[pairNames2], adj=adjNo)
+  edgelabels(text=pairScores[pairNames2], edge=partitionEdges2[paired2], 
              frame='n', adj=adjVal, cex=0.8,
-             col=ifelse(pairScores[order(pairings)], 'black', faint))
+             col=ifelse(pairScores[pairNames2], 'black', faint))
   LabelUnpaired(partitionEdges2, !paired2)
   
   if (setPar) par(origPar)
