@@ -35,7 +35,7 @@
 
 <meta property="og:title" content="Visualise a matching — VisualizeMatching" />
 <meta property="og:description" content="Depicts the bipartitions that are matched between two trees using a
-specified Generalized Robinson Foulds tree distance measure." />
+specified Generalized Robinson-Foulds similarity measure." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -90,7 +90,16 @@ specified Generalized Robinson Foulds tree distance measure." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/Generalized-RF.html">Generalized Robinson-Foulds distances</a>
+    </li>
+    <li>
+      <a href="../articles/Robinson-Foulds.html">Robinson-Foulds metric</a>
+    </li>
+    <li>
       <a href="../articles/Tree-distance-metric-evaluation.html">Evaluating tree distance metrics</a>
+    </li>
+    <li>
+      <a href="../articles/Using-TreeDist.html">Using TreeDist to calculate tree similarity</a>
     </li>
     <li>
       <a href="../articles/tree-distances.html">Measuring tree distance</a>
@@ -127,7 +136,7 @@ specified Generalized Robinson Foulds tree distance measure." />
 
     <div class="ref-description">
     <p>Depicts the bipartitions that are matched between two trees using a
-specified Generalized Robinson Foulds tree distance measure.</p>
+specified Generalized Robinson-Foulds similarity measure.</p>
     </div>
 
     <pre class="usage"><span class='fu'>VisualizeMatching</span>(<span class='no'>Func</span>, <span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>setPar</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>precision</span> <span class='kw'>=</span> <span class='fl'>3</span>,
@@ -164,12 +173,20 @@ when reporting matching scores.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Note that when visualizing a Robinson-Foulds distance (using
+<code>Func = RobinsonFoulds</code>), matched splits are assigned a <em>similarity</em> score
+of 1, which is deducted from the total number of splits to calculate the
+Robinson-Foulds <em>distance</em>.  Unmatched splits thus contribute one to total
+tree distance.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#details">Details</a></li>
     </ul>
 
     <h2>Author</h2>

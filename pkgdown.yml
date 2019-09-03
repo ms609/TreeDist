@@ -2,7 +2,10 @@ pandoc: '2.2'
 pkgdown: 1.3.0
 pkgdown_sha: ~
 articles:
+  Generalized-RF: Generalized-RF.html
+  Robinson-Foulds: Robinson-Foulds.html
   Tree-distance-metric-evaluation: Tree-distance-metric-evaluation.html
+  Using-TreeDist: Using-TreeDist.html
   tree-distances: tree-distances.html
 urls:
   reference: https://ms609.github.io/TreeDist/reference

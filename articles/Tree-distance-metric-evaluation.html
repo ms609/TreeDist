@@ -53,7 +53,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/Generalized-RF.html">Generalized Robinson-Foulds distances</a>
+    </li>
+    <li>
+      <a href="../articles/Robinson-Foulds.html">Robinson-Foulds metric</a>
+    </li>
+    <li>
       <a href="../articles/Tree-distance-metric-evaluation.html">Evaluating tree distance metrics</a>
+    </li>
+    <li>
+      <a href="../articles/Using-TreeDist.html">Using TreeDist to calculate tree similarity</a>
     </li>
     <li>
       <a href="../articles/tree-distances.html">Measuring tree distance</a>
@@ -86,7 +95,7 @@
       <h1>Evaluating tree distance metrics</h1>
                         <h4 class="author">Martin R. Smith</h4>
             
-            <h4 class="date">2019-08-29</h4>
+            <h4 class="date">2019-09-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/Tree-distance-metric-evaluation.Rmd"><code>vignettes/Tree-distance-metric-evaluation.Rmd</code></a></small>
       <div class="hidden name"><code>Tree-distance-metric-evaluation.Rmd</code></div>
@@ -98,48 +107,6 @@
 <div id="interpretability" class="section level1">
 <h1 class="hasAnchor">
 <a href="#interpretability" class="anchor"></a>Interpretability</h1>
-<div id="unit-equivalence" class="section level2">
-<h2 class="hasAnchor">
-<a href="#unit-equivalence" class="anchor"></a>Unit equivalence</h2>
-<p>A further shortcoming of the RF metric is that not all partitions represent an equivalent amount of information. A partition distance of 1 could mean that two trees differ in an less informative partition, or a more informative partition. All quartets, in contrast, are equally informative.</p>
-<p>Consider a balanced and an unbalanced eight-taxon tree:</p>
-<p><img src="Tree-distance-metric-evaluation_files/figure-html/two-trees-1.png" width="576"></p>
-<p>Each tree divides the eight taxa into five bipartition splits.<br>
-The information content (Shannon entropy) of a split can be calculated based on what proportion of eight-tip trees contain the split in question. This is a function of the evenness of the split:</p>
-<table class="table">
-<thead><tr class="header">
-<th></th>
-<th align="right">Matching trees</th>
-<th align="right">p(Match in random tree)</th>
-<th align="right">Information content / bits</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>Partition size: 2:6</td>
-<td align="right">945</td>
-<td align="right">0.0909</td>
-<td align="right">3.459432</td>
-</tr>
-<tr class="even">
-<td>Partition size: 3:5</td>
-<td align="right">315</td>
-<td align="right">0.0303</td>
-<td align="right">5.044394</td>
-</tr>
-<tr class="odd">
-<td>Partition size: 4:4</td>
-<td align="right">225</td>
-<td align="right">0.0216</td>
-<td align="right">5.529821</td>
-</tr>
-</tbody>
-</table>
-<p>In the first tree, split 1 is even, dividing four taxa from four others (<code>4:4</code>); splits 2–5 are maximally uneven (<code>2:6</code>). The total information content of these five splits is 19.37, whereas that of the five splits in the second tree, of sizes <code>2:6</code>, <code>3:5</code>, <code>4:4</code>, <code>3:5</code> and <code>2:6</code>, is 22.54. Put another way, a random tree will on average share more partitions with the balanced tree (whose partitions are predominantly uneven and thus likely to be matched) than the asymmetric tree (which contains more even partitions that are less likely to occur in a random tree).</p>
-<p>Of the 10 395 eight-tip trees, many more bear at least one partition in common with a balanced tree than with an asymmetric tree, whereas the distribution of quartets is identical:</p>
-<p><img src="Tree-distance-metric-evaluation_files/figure-html/all-8-tip-trees-1.png" width="700"></p>
-<p>This differing information content is reflected in the ranges taken by explicitly information-theoretic measures of tree similarity.<br>
-This behaviour occurs because the information theoretic measures (including the quartet divergence) have units of bits, rather than arbitrary units. This said, although the range of the information-based equivalent to the matching splits distance matches that of the mutual phylogenetic information, it is not clear that the calculated information content of non-arboreal matches is a natural value.</p>
-</div>
 <div id="expected-values-for-random-trees" class="section level2">
 <h2 class="hasAnchor">
 <a href="#expected-values-for-random-trees" class="anchor"></a>Expected values for random trees</h2>
@@ -169,8 +136,7 @@ This behaviour occurs because the information theoretic measures (including the 
       <ul class="nav nav-pills nav-stacked">
 <li>
 <a href="#interpretability">Interpretability</a><ul class="nav nav-pills nav-stacked">
-<li><a href="#unit-equivalence">Unit equivalence</a></li>
-      <li><a href="#expected-values-for-random-trees">Expected values for random trees</a></li>
+<li><a href="#expected-values-for-random-trees">Expected values for random trees</a></li>
       </ul>
 </li>
       <li><a href="#references">References</a></li>

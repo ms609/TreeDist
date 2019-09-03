@@ -16,6 +16,9 @@
     <loc>https://ms609.github.io/TreeDist/reference/Entropy.html</loc>
   </url>
   <url>
+    <loc>https://ms609.github.io/TreeDist/reference/GeneralizedRF.html</loc>
+  </url>
+  <url>
     <loc>https://ms609.github.io/TreeDist/reference/JointInformation.html</loc>
   </url>
   <url>
@@ -26,9 +29,6 @@
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/MeilaVariationOfInformation.html</loc>
-  </url>
-  <url>
-    <loc>https://ms609.github.io/TreeDist/reference/MutualPhylogeneticInfo.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/NPartitionPairs.html</loc>
@@ -44,6 +44,9 @@
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/ReportMatching.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/reference/RobinsonFoulds.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/SplitEntropy.html</loc>
@@ -64,10 +67,25 @@
     <loc>https://ms609.github.io/TreeDist/reference/TreeDistPlot.html</loc>
   </url>
   <url>
+    <loc>https://ms609.github.io/TreeDist/reference/TreeDistance.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/reference/TreeDistanceReturn.html</loc>
+  </url>
+  <url>
     <loc>https://ms609.github.io/TreeDist/reference/VisualizeMatching.html</loc>
   </url>
   <url>
+    <loc>https://ms609.github.io/TreeDist/articles/Generalized-RF.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html</loc>
+  </url>
+  <url>
     <loc>https://ms609.github.io/TreeDist/articles/Tree-distance-metric-evaluation.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/articles/Using-TreeDist.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/articles/tree-distances.html</loc>

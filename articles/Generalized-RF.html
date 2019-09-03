@@ -5,11 +5,11 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Measuring tree distance • TreeDist</title>
+<title>Generalized Robinson-Foulds distances • TreeDist</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Measuring tree distance">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Generalized Robinson-Foulds distances">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -92,22 +92,39 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Measuring tree distance</h1>
+      <h1>Generalized Robinson-Foulds distances</h1>
                         <h4 class="author">Martin R. Smith</h4>
             
             <h4 class="date">2019-09-03</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/tree-distances.Rmd"><code>vignettes/tree-distances.Rmd</code></a></small>
-      <div class="hidden name"><code>tree-distances.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/Generalized-RF.Rmd"><code>vignettes/Generalized-RF.Rmd</code></a></small>
+      <div class="hidden name"><code>Generalized-RF.Rmd</code></div>
 
     </div>
 
     
     
-<p>This file with give an overview of topological distance measures, and how they are implemented in R.</p>
-<div id="references" class="section level2">
-<h2 class="hasAnchor">
-<a href="#references" class="anchor"></a>References</h2>
+<p>Some of the shortcomings of the <a href="Robinson-Foulds.html">Robinson-Foulds distance</a> are addressed by Generalized Robsinson-Foulds distances, a set of metrics which aim to acknowledge semblances between similar-but-not-quite-identical pairs of partitions.</p>
+<p>Generalized RF distances work by pairing each partition in one tree with a similar partition in the other (or leaving it unpaired). Each pairing is scored according to the similarity of the paired partitions. The decision of which partition to pair with which is called a <em>matching</em>, and a matching is scored by summing the individual similarity scores of each pair. The tree distance is given by the score of the optimal matching.</p>
+<div id="constructing-a-matching" class="section level1">
+<h1 class="hasAnchor">
+<a href="#constructing-a-matching" class="anchor"></a>Constructing a matching</h1>
+<p>Let’s consider two trees that differ in the position of a wildcard terminal, and in the resolution of a clade:</p>
+<pre><code>## Registered S3 method overwritten by 'R.oo':
+##   method        from       
+##   throw.default R.methodsS3</code></pre>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">tree1 &lt;-<span class="st"> </span>ape<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/ape/topics/read.tree">read.tree</a></span>(<span class="dt">text=</span><span class="st">'((A, B), (((C, (D, E)), (F, (G, (H, I))))));'</span>)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">tree2 &lt;-<span class="st"> </span>ape<span class="op">::</span><span class="kw"><a href="https://www.rdocumentation.org/packages/ape/topics/read.tree">read.tree</a></span>(<span class="dt">text=</span><span class="st">'((A, B), (((C, D, (E, I)), (F, (G, H)))));'</span>)</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw">Plot</span>(tree1, tree2, <span class="dt">highlight =</span> <span class="st">'I'</span>, <span class="dt">prune=</span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/list">list</a></span>(<span class="dv">8</span>, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/integer">integer</a></span>(<span class="dv">0</span>)))</a></code></pre></div>
+<p><img src="Generalized-RF_files/figure-html/unnamed-chunk-1-1.png" width="700"></p>
+<p>The Robinson-Foulds distance will see only one partition in common between the two trees, AB:CDEFGHI:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(RobinsonFoulds, tree1, tree2)</a></code></pre></div>
+<p><img src="Generalized-RF_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
+<p>This results in a distance score of nine, out of a maximum possible (for trees exhibiting this resolutioN) of eleven; the Robinson-Foulds distance is the number of partitions present in one tree but not the other.</p>
+</div>
+<div id="references" class="section level1">
+<h1 class="hasAnchor">
+<a href="#references" class="anchor"></a>References</h1>
 </div>
   </div>
 
@@ -117,7 +134,8 @@
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#references">References</a></li>
+<li><a href="#constructing-a-matching">Constructing a matching</a></li>
+      <li><a href="#references">References</a></li>
       </ul>
 </div>
       </div>
