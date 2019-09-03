@@ -32,7 +32,6 @@ MatchingSplitDistance <- function (tree1, tree2, normalize = FALSE,
 
 #' @describeIn MatchingSplitDistance Calculate Matching Split Distance from splits instead of trees.
 #' @inheritParams MutualPhylogeneticInfoSplits
-#' @importFrom clue solve_LSAP
 #' @export
 MatchingSplitDistanceSplits <- function (splits1, splits2, normalize = TRUE, 
                                          reportMatching = FALSE) {

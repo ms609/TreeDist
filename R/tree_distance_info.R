@@ -117,7 +117,6 @@
 #' @author Martin R. Smith
 #' 
 #' @family tree distances
-#' @importFrom clue solve_LSAP
 #' @export
 TreeDistance <- function (tree1, tree2) {
   MutualClusteringInfo(tree1, tree2, normalize = TRUE, reportMatching = FALSE)

@@ -76,6 +76,7 @@ SplitsCompatible <- function (split1, split2) {
 #' 
 #' @keywords internal
 #' @author Martin R. Smith
+#' @importFrom clue solve_LSAP
 #' @export
 TreeDistanceReturn <- function (pairScores, maximize = FALSE,
                                 reportMatching,  
