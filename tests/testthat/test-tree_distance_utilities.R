@@ -19,16 +19,35 @@ test_that('Matches are reported', {
   treeBal8 <- ape::read.tree(text='(((e, f), (g, h)), ((a, b), (c, d)));')
   treeTwoSplits <- ape::read.tree(text="(((a, b), c, d), (e, f, g, h));")
   
-  Test <- function (Func) {
+  A <- TRUE
+  B <- FALSE
+  splitsA <- matrix(c(A, A, B, B, B, B, B, B), ncol=1, 
+                    dimnames = list(letters[1:8], NULL))
+  splitsB <- matrix(rev(c(A, A, A, A, A, A, B, B, 
+                          A, A, A, B, B, B, B, B,
+                          B, B, A, A, A, A, A, A,
+                          A, A, A, A, A, B, A, B)), ncol=4,
+                    dimnames = list(letters[8:1], NULL))
+  
+  expect_equal("a b : c d e f g h => c d e f g h : a b",
+               ReportMatching(splitsA, 
+                              splitsB[rownames(splitsA), 2, drop=FALSE],
+                              taxonNames = letters[1:8]))
+  
+  Test <- function (Func, relaxed = FALSE) {
     at <- attributes(Func(treeSym8, treeBal8, reportMatching = TRUE))
     expect_equal(3L, length(at))
-    expect_equal(c(1L, 5L, 3L, 2L, 4L), as.integer(at$matching))
+    if (relaxed) {
+      expect_equal(c(1L, 3L, 4L), as.integer(at$matching[c(1, 3, 5)]))
+    } else {
+      expect_equal(c(1L, 5L, 3L, 2L, 4L), as.integer(at$matching))
+    }
     expect_equal('a b : e f g h c d => a b : e f g h c d', at$matchedSplits[5])
     
     at <- attributes(Func(treeSym8, treeTwoSplits, reportMatching = TRUE))
     expect_equal(3L, length(at))
-    expect_equal(c(1L, 5L), as.integer(at$matching))
-    expect_equal('a b : c d e f g h => c d e f g h : a b', at$matchedSplits[2])
+    expect_equal(c(1L, NA, NA, NA, 2L), as.integer(at$matching))
+    expect_equal('a b : e f g h c d => e f g h c d : a b', at$matchedSplits[2])
   }
   
   Test(MutualPhylogeneticInfo)
@@ -38,6 +57,7 @@ test_that('Matches are reported', {
   Test(MutualClusteringInfo)
   Test(VariationOfClusteringInfo)
   Test(MutualPhylogeneticInfo)
+  Test(RobinsonFoulds, relaxed = TRUE)
   Test(NyeTreeSimilarity)
 
   # Matching Split Distance matches differently:  

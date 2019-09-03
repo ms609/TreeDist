@@ -1,11 +1,16 @@
 context('tree_distance.R')
 
 test_that("Split combatibility is correctly established", {
-  expect_true(SplitsCompatible(as.logical (c(0,0,1,1,0)), as.logical(c(0,0,1,1,0))))
-  expect_true(SplitsCompatible(as.logical (c(0,0,1,1,0)), !as.logical(c(0,0,1,1,0))))
-  expect_true(SplitsCompatible(as.logical (c(0,0,1,1,0)), as.logical(c(1,0,1,1,0))))
-  expect_true(SplitsCompatible(!as.logical(c(0,0,1,1,0)), as.logical(c(1,0,1,1,0))))
-  expect_false(SplitsCompatible(as.logical(c(0,0,1,1,0)), as.logical(c(1,1,0,1,0))))
+  expect_true(SplitsCompatible(as.logical (c(0,0,1,1,0)), 
+                               as.logical(c(0,0,1,1,0))))
+  expect_true(SplitsCompatible(as.logical (c(0,0,1,1,0)), 
+                               !as.logical(c(0,0,1,1,0))))
+  expect_true(SplitsCompatible(as.logical (c(0,0,1,1,0)), 
+                               as.logical(c(1,0,1,1,0))))
+  expect_true(SplitsCompatible(!as.logical(c(0,0,1,1,0)), 
+                               as.logical(c(1,0,1,1,0))))
+  expect_false(SplitsCompatible(as.logical(c(0,0,1,1,0)), 
+                                as.logical(c(1,1,0,1,0))))
 })
 
 methodsToTest <- list(
@@ -17,6 +22,7 @@ methodsToTest <- list(
   VariationOfClusteringInfo,
   NyeTreeSimilarity,
   MatchingSplitDistance,
+  RobinsonFoulds,
   KendallColijn
 )
 
@@ -61,7 +67,8 @@ test_that('Output dimensions are correct', {
              Func(treeSym8, treeAbcd.Efgh), Func(treeBal8, treeAbcd.Efgh)),
            2L, 3L, dimnames=list(c('sym', 'bal'), c('sym', 'abc', 'abcd')))
     expect_equal(answer, Func(list(sym=treeSym8, bal=treeBal8), 
-                              list(sym=treeSym8, abc=treeAbc.Defgh, abcd=treeAbcd.Efgh)))
+                              list(sym=treeSym8, abc=treeAbc.Defgh,
+                                   abcd=treeAbcd.Efgh)))
   }
   lapply(methodsToTest, Test)
 })
@@ -107,17 +114,6 @@ test_that('Mutual Phylogenetic Info is correctly calculated', {
                MutualPhylogeneticInfo(list(treeSym8, treeBal8), treeSym8))
 })
 
-test_that("Mutual Phylogenetic Information is correctly estimated", {
-  exp <- ExpectedVariation(treeSym8, treeAbc.Defgh, samples=100)
-  tol <- exp[, 'Std. Err.'] * 2
-  # Expected values calculated with 10k samples
-  expect_equal(exp['MutualPhylogeneticInfo', 'Estimate'], 1.17, tolerance=tol[1])
-  expect_equal(exp['MutualMatchingSplitInfo', 'Estimate'], 0.42, tolerance=tol[2])
-  expect_equal(exp['VariationOfPhylogeneticInfo', 'Estimate'], 25.24, tolerance=tol[3])
-  expect_equal(exp['VariationOfMatchingSplitInfo', 'Estimate'], 26.73, tolerance=tol[4])
-  expect_equal(exp[, 'sd'], exp[, 'Std. Err.'] * sqrt(exp[, 'n']))
-})
-
 test_that('MutualMatchingSplitInfo is correctly calculated', {
   BinaryToSplit <- function (binary) matrix(as.logical(binary))
   expect_equal(MutualMatchingSplitInfoSplits(
@@ -136,12 +132,27 @@ test_that('MutualMatchingSplitInfo is correctly calculated', {
                MutualMatchingSplitInfo(treeAbc.Defgh, treeAb.Cdefgh))
   expect_equal(MutualMatchingSplitInfo(treeAbcd.Efgh, treeAb.Cdefgh),
                MutualMatchingSplitInfo(treeAb.Cdefgh, treeAbcd.Efgh))
-  expect_equal(-(TreeSearch::LogTreesMatchingSplit(2, 5) - LnUnrooted.int(7)) / log(2), 
+  expect_equal(-(TreeSearch::LogTreesMatchingSplit(2, 5) - LnUnrooted.int(7)) / 
+                 log(2), 
                MutualMatchingSplitInfo(treeAb.Cdefgh, treeAbc.Defgh))
   expect_true(MutualMatchingSplitInfo(treeSym8, treeBal8) > 
                 MutualMatchingSplitInfo(treeSym8, treeOpp8))
   expect_equal(0, VariationOfMatchingSplitInfo(treeSym8, treeSym8))
-  
+})
+
+test_that("Mutual Phylogenetic Information is correctly estimated", {
+  exp <- ExpectedVariation(treeSym8, treeAbc.Defgh, samples=100)
+  tol <- exp[, 'Std. Err.'] * 2
+  # Expected values calculated with 10k samples
+  expect_equal(exp['MutualPhylogeneticInfo', 'Estimate'], 
+               1.166, tolerance=tol[1])
+  expect_equal(exp['MutualMatchingSplitInfo', 'Estimate'], 
+               3.096, tolerance=tol[2])
+  expect_equal(exp['VariationOfPhylogeneticInfo', 'Estimate'], 
+               25.250, tolerance=tol[3])
+  expect_equal(exp['VariationOfMatchingSplitInfo', 'Estimate'], 
+               21.388, tolerance=tol[4])
+  expect_equal(exp[, 'sd'], exp[, 'Std. Err.'] * sqrt(exp[, 'n']))
 })
 
 test_that('Clustering information is correctly calculated', {
@@ -179,8 +190,27 @@ test_that('NyeTreeSimilarity is correctly calculated', {
   expect_equal(c(3.8, 5), NyeTreeSimilarity(treeSym8, list(treeBal8, treeSym8)))
   expect_equal(2, 3 * NyeTreeSimilarity(treeAb.Cdefgh, treeAbc.Defgh))
   expect_equal(1, NyeTreeSimilarity(treeSym8, treeSym8, normalize = TRUE))
-  expect_equal(0.5 / 5L, NyeTreeSimilarity(treeSym8, treeAbcd.Efgh, normalize = TRUE))
+  #TODO: Validate expected value
+  expect_equal(1L, NyeTreeSimilarity(treeSym8, treeAbcd.Efgh, normalize = FALSE))
+  expect_equal(1L / 5L, NyeTreeSimilarity(treeSym8, treeAbcd.Efgh, normalize = TRUE))
   expect_true(NyeTreeSimilarity(treeSym8, treeBal8) > NyeTreeSimilarity(treeSym8, treeOpp8))
+})
+
+test_that('RobinsonFoulds is correctly calculated', {
+  RF <- function (tree1, tree2) {
+    suppressMessages(phangorn::RF.dist(tree1, tree2))
+  }
+  RFTest <- function (tree1, tree2) {
+    expect_equal(RF(tree1, tree2), RobinsonFoulds(tree1, tree2))
+  }
+  RFTest(treeSym8, treeSym8)
+  RFTest(treeBal8, treeSym8)
+  expect_equal(c(4, 0), RobinsonFoulds(treeSym8, list(treeBal8, treeSym8)))
+  RFTest(treeAb.Cdefgh, treeAbc.Defgh)
+  expect_equal(0, RobinsonFoulds(treeSym8, treeSym8, normalize = TRUE))
+  expect_equal(4L / 6L, 
+               RobinsonFoulds(treeSym8, treeAbcd.Efgh, normalize = TRUE))
+  RFTest(treeSym8, treeOpp8)
 })
 
 test_that('Kendall-Colijn distance is correctly calculated', {
