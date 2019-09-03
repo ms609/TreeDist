@@ -21,6 +21,7 @@ TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = TRUE,
   if (is.null(tr$edge.length)) tr$edge.length <- rep(1, dim(tr$edge)[1])
   if (is.null(tr$edge.width)) tr$edge.width <- rep(1, dim(tr$edge)[1])
   edge.color <- rep('black', dim(tr$edge)[1])
+  nTip <- length(tr$tip.label)
 
   if (length(prune) > 0 || length(graft) > 0) {
     tr$edge.width[c(prune, graft)] <- 3L
@@ -35,7 +36,7 @@ TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = TRUE,
   font <- rep(1L, length(tipNumbers))
   if (!is.null(bold)) font[tipNumbers %in% bold] <- 4L
   yLim <- if (leaveRoom) c(-0.4 - 8 # = -0.4 - length(legendSequence)
-                           , 11) else c(-0.4, 11)
+                           , nTip) else c(-0.4, nTip)
   tr$tip.label <- LETTERS[as.integer(tipNumbers)]
   plot.phylo(tr, tip.color=tipCols[as.integer(tipNumbers)], 
              main=title, cex.main=0.8, font=font, 
