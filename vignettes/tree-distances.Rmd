@@ -14,4 +14,13 @@ vignette: >
 This file with give an overview of topological distance measures, and how
 they are implemented in R.
 
-## References
+# Robinson-Foulds distance
+
+# Generalized Robinson-Foulds distances
+
+# Quartet distance
+
+# Path distance
+
+
+# References
