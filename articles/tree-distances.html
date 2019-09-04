@@ -106,10 +106,86 @@
 
     
     
-<p>This file with give an overview of topological distance measures, and how they are implemented in R.</p>
-<div id="references" class="section level2">
-<h2 class="hasAnchor">
-<a href="#references" class="anchor"></a>References</h2>
+<p>This file with give an overview of topological distance measures, and examples of how they can be calculated in R.</p>
+<p>Examples are conducted using a pair of trees that differ in the position of one taxon, and the resolution of one clade:</p>
+<pre><code>## Registered S3 method overwritten by 'R.oo':
+##   method        from       
+##   throw.default R.methodsS3</code></pre>
+<p><img src="tree-distances_files/figure-html/the-trees-1.png" width="576" style="display: block; margin: auto;"></p>
+<div id="robinson-foulds-distance" class="section level1">
+<h1 class="hasAnchor">
+<a href="#robinson-foulds-distance" class="anchor"></a>Robinson-Foulds distance</h1>
+<p>The Robinson-Foulds distance <span class="citation">(Robinson &amp; Foulds, 1981)</span>, also termed the partitionwise symmetric difference, is a simple but problematic partitionwise measure.</p>
+<p>Implementations include:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">phangorn<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/phangorn/man/treedist.html">treedist</a></span>(tree1, tree2)[<span class="st">'symmetric.difference'</span>]</a></code></pre></div>
+<pre><code>## Trees are not binary!</code></pre>
+<pre><code>## symmetric.difference 
+##                    9</code></pre>
+<p><code>treedist</code> can only consider one pair of trees at a time, and calculates other distances at the same time, so is less suitable than:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">phangorn<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/phangorn/man/treedist.html">RF.dist</a></span>(tree1, tree2, <span class="dt">normalize =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<pre><code>## Trees are not binary!</code></pre>
+<pre><code>## [1] 9</code></pre>
+<p>With <code>RF.dist</code>, <code>tree1</code> and <code>tree2</code> can be multiPhylo objects containing multiple trees, in which case each tree in <code>tree1</code> will be compared with each tree in <code>tree2</code>.</p>
+<p>It is possible to suppress the seemingly unnecessary warning message, and to normalize the output against the total number of partitions present:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/message.html">suppressMessages</a></span>(phangorn<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/phangorn/man/treedist.html">RF.dist</a></span>(tree1, tree2, <span class="dt">normalize =</span> <span class="ot">TRUE</span>))</a></code></pre></div>
+<pre><code>## [1] 0.8181818</code></pre>
+<p>The <code>TreeDist</code> package contains an inefficient implementation that allows matched partitions to be easily visualized:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">TreeDist<span class="op">::</span><span class="kw"><a href="https://ms609.github.io/TreeDist/reference/RobinsonFouldsInfo.html">RobinsonFoulds</a></span>(tree1, tree2)</a></code></pre></div>
+<pre><code>## [1] 9</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(RobinsonFoulds, tree1, tree2, <span class="dt">matchZeros =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<p><img src="tree-distances_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<p><code>TreeDist</code> also contains a function for the information-adjusted Robinson-Foulds distance:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw"><a href="../reference/RobinsonFouldsInfo.html">RobinsonFouldsInfo</a></span>(tree1, tree2, <span class="dt">similarity =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<pre><code>## [1] 44.3723</code></pre>
+<p>More details, and a discussion of the problems with the Robinson-Foulds metric, are provided in a <a href="Robinson-Foulds.html">separate article</a>. <!-- #TODO check link--></p>
+</div>
+<div id="generalized-robinson-foulds-distances" class="section level1">
+<h1 class="hasAnchor">
+<a href="#generalized-robinson-foulds-distances" class="anchor"></a>Generalized Robinson-Foulds distances</h1>
+<p>This package contains functions for various Generalized Robinson-Foulds distances, and allows user-specified pair similarity functions. See the <a href="Generalized-RF.html">separate article</a><!-- #TODO check link--> for details.</p>
+</div>
+<div id="quartet-distance" class="section level1">
+<h1 class="hasAnchor">
+<a href="#quartet-distance" class="anchor"></a>Quartet distance</h1>
+<p>The quartet distance <span class="citation">(<span class="citeproc-not-found" data-reference-id="Estabrook1985"><strong>???</strong></span>)</span> can be calculated using the <code>Quartet</code> package, which uses the <code>tqDist</code> algorithm. The most suitable distance metric is typically the Quartet Divergence <span class="citation">(Smith, 2019)</span>:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">status &lt;-<span class="st"> </span>Quartet<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/Quartet/man/QuartetStatus.html">QuartetStatus</a></span>(tree1, tree2)</a>
+<a class="sourceLine" id="cb15-2" data-line-number="2">Quartet<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/Quartet/man/SimilarityMetrics.html">QuartetDivergence</a></span>(status, <span class="dt">similarity =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<pre><code>##         d 
+## 0.3968254</code></pre>
+<p>For more details, see the <a href="https://ms609.github.io/Quartet">Quartet documentation</a></p>
+</div>
+<div id="path-distance" class="section level1">
+<h1 class="hasAnchor">
+<a href="#path-distance" class="anchor"></a>Path distance</h1>
+<p>As with the Robinson-Foulds distance, this is calculated by</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">phangorn<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/phangorn/man/treedist.html">treedist</a></span>(tree1, tree2)[<span class="st">'path.difference'</span>]</a></code></pre></div>
+<pre><code>## Trees are not binary!</code></pre>
+<pre><code>## path.difference 
+##         9.69536</code></pre>
+<p>or more efficiently by:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">phangorn<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/phangorn/man/treedist.html">path.dist</a></span>(tree1, tree2)</a></code></pre></div>
+<pre><code>## [1] 9.69536</code></pre>
+</div>
+<div id="spr-distance" class="section level1">
+<h1 class="hasAnchor">
+<a href="#spr-distance" class="anchor"></a>SPR distance</h1>
+<p>The SPR distance is undefined on trees that contain polytomies.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">oneSprAway &lt;-<span class="st"> </span>TreeSearch<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/TreeSearch/man/SPR.html">SPR</a></span>(tree1)</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2">phangorn<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/phangorn/man/treedist.html">sprdist</a></span>(tree1, oneSprAway)</a></code></pre></div>
+<p><code>sprdist</code> compares two trees. <code>SPR.dist</code> can compute the pairwise distances between each tree in a <code>multiPhylo</code> object:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">phangorn<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/phangorn/man/treedist.html">SPR.dist</a></span>(tree1, oneSprAway)</a></code></pre></div>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1 class="hasAnchor">
+<a href="#references" class="anchor"></a>References</h1>
+<div id="refs" class="references">
+<div id="ref-Robinson1981">
+<p>Robinson, D. F., &amp; Foulds, L. R. (1981). Comparison of phylogenetic trees. <em>Mathematical Biosciences</em>, <em>53</em>(1-2), 131–147. doi:<a href="https://doi.org/10.1016/0025-5564(81)90043-2">10.1016/0025-5564(81)90043-2</a></p>
+</div>
+<div id="ref-SmithDist">
+<p>Smith, M. R. (2019). Information theoretic generalized robinson-foulds metrics for comparing phylogenetic trees. <em>Forthcoming</em>.</p>
+</div>
+</div>
 </div>
   </div>
 
@@ -119,7 +195,12 @@
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#references">References</a></li>
+<li><a href="#robinson-foulds-distance">Robinson-Foulds distance</a></li>
+      <li><a href="#generalized-robinson-foulds-distances">Generalized Robinson-Foulds distances</a></li>
+      <li><a href="#quartet-distance">Quartet distance</a></li>
+      <li><a href="#path-distance">Path distance</a></li>
+      <li><a href="#spr-distance">SPR distance</a></li>
+      <li><a href="#references">References</a></li>
       </ul>
 </div>
       </div>

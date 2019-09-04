@@ -106,21 +106,18 @@
 
     
     
-<p>This document will review known shortcomings of the RF metric.</p>
 <div id="the-robinson-foulds-distance" class="section level1">
 <h1 class="hasAnchor">
 <a href="#the-robinson-foulds-distance" class="anchor"></a>The Robinson-Foulds distance</h1>
-<p>The Robinson-Foulds distance is a symmetric distance measure that counts the number of <em>partitions</em> that occur in one tree, but not the other.</p>
-<p>It is importand to remember that counting partitions is not the same as counting clades, edges or nodes. If a tree is drawn as rooted (even without a root edge), then the number of partitions is one less than the number of edges and two less than the number of nodes. For example, the trees below have one partition, two edges and three nodes in common.</p>
-<p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-1-1.png" width="576"></p>
-<p>The simplicity of counting partitions is appealing, but limiting: it assumes that all partitions are equivalent, when they are not. A partition distance of 1 could mean that two trees differ in an less informative partition, or a more informative partition. In the example above, the probability that a tree with two unresolved clades of four taxa will be compatible with the reference tree on the left is one in 35.</p>
-<p>In contrast, a tree with a clade of two taxa and one of six has a one in seven chance of matching the reference tree: the similarity observed is five times more likely to have arisen by chance. In other words, failure to match an even partition is less noteworthy than failure to match an even one, even though both are treated equivalently.</p>
+<p>The Robinson-Foulds distance <span class="citation">(Robinson &amp; Foulds, 1981)</span> is a symmetric distance measure that counts the number of partitions that occur in one tree, but not the other.</p>
+<p>It is importand to remember that counting partitions is not the same as counting clades, edges or nodes. If a tree is drawn as rooted (even without a root edge), then the number of partitions is one less than the number of edges or clades, and two less than the number of nodes. For example, the trees below have one partition, two edges and three nodes in common.</p>
+<p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-1-1.png" width="576" style="display: block; margin: auto;"></p>
+<p>The simplicity of counting partitions is appealing, but limiting: it assumes that all partitions are equivalent, when they are not.</p>
+<p>In the example above, the probability that a tree with two unresolved clades of four taxa will be compatible with the reference tree on the left is one in 35. In contrast, a tree that separates two taxa from six has a one in seven chance of matching the reference tree: the similarity observed is five times more likely to have arisen by chance. In other words, failure to match an even partition is less noteworthy than failure to match an uneven one.</p>
 <p>As a consequence, trees whose partitions are less even will, on average, have higher Robinson-Foulds distances with comparison trees.</p>
 <p>Consider a balanced and an unbalanced eight-taxon tree:</p>
 <p><img src="Robinson-Foulds_files/figure-html/two-trees-1.png" width="576" style="display: block; margin: auto;"></p>
-<p>Each tree divides the eight taxa into five bipartition splits.<br>
-The information content (Shannon entropy) of a split is a function of the probability that the split will match a random tree, i.e. the proportion of eight-tip tree topologies that contain the split in question. (Information content, in bits, is defined as <span class="math inline">\(-log _2_(probability)\)</span>)</p>
-<p>This, in turn, is a function of the evenness of the split:</p>
+<p>Each tree divides the eight taxa into five bipartition splits. The information content (Shannon entropy) of a split is a function of the probability that the split will match a random tree, i.e. the proportion of eight-tip tree topologies that contain the split in question. (Information content, in bits, is defined as <span class="math inline">\(-log _2_(probability)\)</span>.) This, in turn, is a function of the evenness of the split:</p>
 <table class="table">
 <thead><tr class="header">
 <th></th>
@@ -157,58 +154,131 @@ The information content (Shannon entropy) of a split is a function of the probab
 <div id="information-weighted-robinson-foulds-distance" class="section level1">
 <h1 class="hasAnchor">
 <a href="#information-weighted-robinson-foulds-distance" class="anchor"></a>Information-weighted Robinson-Foulds distance</h1>
-<p>This differing information content can be accommodated by weighting each partition according to the amount of phylogenetic information it contains. The two tree pairs below both have a Robinson-Foulds distance of two, but the first pair differ with regard to an uneven partition (<code>ABCDEF:GH</code>), so obtain a total difference of 3.46:</p>
+<p>This differing information content can be accommodated by weighting each partition according to the amount of phylogenetic information it contains. The two tree pairs below both have a Robinson-Foulds distance of two, but the first pair differ with regard to an uneven partition (<code>ABCDEF:GH</code>), so obtain a total difference of 22.54 - (3.46 + 5.04 + 5.53 + 5.04) = 3.46:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">tree1 &lt;-<span class="st"> </span>ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="dt">text=</span><span class="st">'(1, (2, (3, (4, (5, (6, (7, 8)))))));'</span>)</a>
 <a class="sourceLine" id="cb1-2" data-line-number="2">tree2 &lt;-<span class="st"> </span>ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="dt">text=</span><span class="st">'(1, (2, (3, (4, (5, (7, (6, 8)))))));'</span>)</a>
 <a class="sourceLine" id="cb1-3" data-line-number="3">tree3 &lt;-<span class="st"> </span>ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="dt">text=</span><span class="st">'(1, (2, (3, (5, (4, (6, (7, 8)))))));'</span>)</a>
 <a class="sourceLine" id="cb1-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw">TwoTreePlot</span>()</a>
-<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(RobinsonFouldsInfo, tree1, tree2,</a>
-<a class="sourceLine" id="cb1-7" data-line-number="7">                  <span class="dt">setPar =</span> <span class="ot">FALSE</span>, <span class="dt">Plot =</span> TreeDistPlot, <span class="dt">leaveRoom=</span><span class="ot">FALSE</span>,</a>
-<a class="sourceLine" id="cb1-8" data-line-number="8">                  <span class="dt">prune =</span> <span class="dv">12</span>)</a></code></pre></div>
-<p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(RobinsonFouldsInfo, tree1, tree2, </a>
+<a class="sourceLine" id="cb1-6" data-line-number="6">                  <span class="dt">Plot =</span> TreeDistPlot, <span class="dt">leaveRoom=</span><span class="ot">FALSE</span>, <span class="dt">prune =</span> <span class="dv">12</span>)</a></code></pre></div>
+<p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-2-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>whereas the second pair differ in the resolution of a more even partition (<code>ABCD:EFGH</code>) and thus receive a distance score of 5.53:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">TwoTreePlot</span>()</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(RobinsonFouldsInfo, tree1, tree3,</a>
-<a class="sourceLine" id="cb2-3" data-line-number="3">                  <span class="dt">setPar =</span> <span class="ot">FALSE</span>, <span class="dt">Plot =</span> TreeDistPlot, <span class="dt">leaveRoom=</span><span class="ot">FALSE</span>,</a>
-<a class="sourceLine" id="cb2-4" data-line-number="4">                  <span class="dt">prune =</span> <span class="dv">8</span>)</a></code></pre></div>
-<p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(RobinsonFouldsInfo, tree1, tree3, </a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">                  <span class="dt">Plot =</span> TreeDistPlot, <span class="dt">leaveRoom=</span><span class="ot">FALSE</span>, <span class="dt">prune =</span> <span class="dv">8</span>)</a></code></pre></div>
+<p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-3-1.png" width="576" style="display: block; margin: auto;"></p>
 </div>
 <div id="generalized-robinson-foulds-distances" class="section level1">
 <h1 class="hasAnchor">
 <a href="#generalized-robinson-foulds-distances" class="anchor"></a>Generalized Robinson-Foulds distances</h1>
-<p>The Robinson-Foulds distance also suffers from easy saturation: the maximum distance can be obtained by moving a single taxon on a tree.</p>
+<p>The Robinson-Foulds distance is readily saturated: the maximum distance can be obtained by moving a single taxon on a tree.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">tree1 &lt;-<span class="st"> </span>ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="dt">text=</span><span class="st">'(1, (2, (3, (4, (5, (6, (7, 8)))))));'</span>)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">tree2 &lt;-<span class="st"> </span>ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="dt">text=</span><span class="st">'(8, (1, (2, (3, (4, (5, (6, 7)))))));'</span>)</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="kw">TwoTreePlot</span>()</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(RobinsonFoulds, tree1, tree2,</a>
+<a class="sourceLine" id="cb3-6" data-line-number="6">                  <span class="dt">setPar =</span> <span class="ot">FALSE</span>, <span class="dt">Plot =</span> TreeDistPlot, <span class="dt">leaveRoom=</span><span class="ot">FALSE</span>)</a></code></pre></div>
+<p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-4-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>Generalized Robsinson-Foulds distances seek to address this issue. This category of metrics aim to acknowledge semblances between similar-but-not-quite-identical pairs of partitions, which would contribute zero to tree similarity under the standard Robinson-Foulds.</p>
 <p>Generalized RF distances work by pairing each partition in one tree with a similar partition in the other (or leaving it unpaired). Each pairing is scored according to the similarity of the paired partitions. The decision of which partition to pair with which is called a <em>matching</em>, and a matching is scored by summing the individual similarity scores of each pair. The tree distance is given by the score of the optimal matching.</p>
 <div id="constructing-a-matching" class="section level2">
 <h2 class="hasAnchor">
 <a href="#constructing-a-matching" class="anchor"></a>Constructing a matching</h2>
 <p>Let’s consider two trees that differ in the position of a wildcard terminal, and in the resolution of a clade:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">tree1 &lt;-<span class="st"> </span>ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="dt">text=</span><span class="st">'((A, B), ((C, (D, E)), (F, (G, (H, I)))));'</span>)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">tree2 &lt;-<span class="st"> </span><span class="kw">read.tree</span>(<span class="dt">text=</span><span class="st">'((A, B), ((C, D, (E, I)), (F, (G, H))));'</span>)</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="kw">Plot</span>(tree1, tree2, <span class="dt">highlight =</span> <span class="st">'I'</span>, <span class="dt">prune=</span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dv">8</span>, <span class="kw"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>(<span class="dv">0</span>)))</a></code></pre></div>
-<p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
-<p>The Robinson-Foulds distance will see only one partition in common between the two trees, AB:CDEFGHI:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(RobinsonFoulds, tree1, tree2)</a></code></pre></div>
-<p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">tree1 &lt;-<span class="st"> </span>ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="dt">text=</span><span class="st">'((A, B), ((C, (D, E)), (F, (G, (H, I)))));'</span>)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">tree2 &lt;-<span class="st"> </span><span class="kw">read.tree</span>(<span class="dt">text=</span><span class="st">'((A, B), ((C, D, (E, I)), (F, (G, H))));'</span>)</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="kw">Plot</span>(tree1, tree2, <span class="dt">highlight =</span> <span class="st">'I'</span>, <span class="dt">prune=</span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="dv">8</span>, <span class="kw"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>(<span class="dv">0</span>)))</a></code></pre></div>
+<p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-5-1.png" width="576" style="display: block; margin: auto;"></p>
+<p>To emphasize, when the single taxon <em>I</em> is removed, the trees differ only in the resolution of a single node:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">TwoTreePlot</span>()</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(RobinsonFoulds, <span class="kw">drop.tip</span>(tree1, <span class="st">'I'</span>), <span class="kw">drop.tip</span>(tree2, <span class="st">'I'</span>))</a></code></pre></div>
+<p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-6-1.png" width="576" style="display: block; margin: auto;"></p>
+<p>However, the Robinson-Foulds distance will see only one partition, <code>AB:CDEFGHI</code>, in common between the two trees:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">TwoTreePlot</span>()</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(RobinsonFoulds, tree1, tree2)</a></code></pre></div>
+<p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-7-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>This results in a distance score of nine, out of a maximum possible (for trees exhibiting this resolution) of eleven; the Robinson-Foulds distance is the number of partitions present in one tree but not the other.</p>
-<p>This feels unsatisfactory: if it wasn’t for that single taxon <em>I</em>, the trees differ only in the resolution of a single node:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(RobinsonFouldsInfo, <span class="kw">drop.tip</span>(tree1, <span class="st">'I'</span>), <span class="kw">drop.tip</span>(tree2, <span class="st">'I'</span>))</a></code></pre></div>
-<p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
-<p>The solution is to assign non-zero similarity scores to partitions that are similar, but not identical: here, each pair of partitions is scored according to its mutual phylogenetic information.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(MutualPhylogeneticInfo, tree1, tree2)</a></code></pre></div>
-<p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
-<p>Here, the partitions HI:ABCDEFG and EI:ABCDFGH have no information in common; they may as well not have been paired, and they contribute nothing to the tree similarity score. The partition AB:CDEFGHI occurs in both trees, and, as it happens, makes the largest contribution to the tree similarity score for this particular pair of trees.</p>
+<p>The solution is to assign non-zero similarity scores to partitions that are similar, but not identical.</p>
+<p>We discussed above weighting each matching pair of partitions according to the amount of phylogenetic information represented by the partition. A non-matching pair of partitions can be scored according to the mutual phylogenetic information, which is a function of the proportion of trees that are consistent with both partitions. (A full explanation is provided in the discussion of <a href="Generalised-RF.html">Generalized Robinson-Foulds distances</a>.<!-- #TODO test link -->)</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">TwoTreePlot</span>()</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(MutualPhylogeneticInfo, tree1, tree2)</a></code></pre></div>
+<p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-8-1.png" width="576" style="display: block; margin: auto;"></p>
+<p>Here, the partition <code>AB:CDEFGHI</code> occurs in both trees, and, as it happens, makes the largest contribution to the tree similarity score (3.70) for this particular pair of trees. This is the same contribution it would have made to the information-weighted Robinson-Foulds similarity.</p>
+<p>The partition <code>ABCDEF:GHI</code> in the left-hand tree is paired with the partition <code>ABCDEFI:GH</code> in the right-hand tree. Had <code>ABCDEF:GHI</code> been available in the right-hand tree, then this perfect match would have been assigned a similarity of <code>SplitInformation(3, 6)</code> = 5.57. The partial match is instead allocated a lower score of 2.12. Non-arboreal matches – pairs of clades that cannot exist on a single tree, such as <code>ABCDEFG:HI</code> - <code>ABCDFGH:EI</code> – have zero mutual phylogenetic information.</p>
+<p>The matching depicted above is optimal, but is one of many. The optimal matching is calculated by considering the similarity score of each possible pairing, and using the Munkres (Hungarian) algorithm to find the optimal set of pairings.</p>
+<p>We can view the partitions in each tree, named according to the number of their associated node:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">DisplaySplits &lt;-<span class="st"> </span><span class="cf">function</span> (tree) </a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">  <span class="kw"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="kw"><a href="../reference/ReportMatching.html">IdentifySplits</a></span>(TreeSearch<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/TreeSearch/man/Tree2Splits.html">Tree2Splits</a></span>(tree))))</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="kw">DisplaySplits</span>(tree1)</a></code></pre></div>
+<pre><code>## [[1]]
+## [1] "C D E F G H I : A B"
+## 
+## [[2]]
+## [1] "C D E : A B F G H I"
+## 
+## [[3]]
+## [1] "D E : A B C F G H I"
+## 
+## [[4]]
+## [1] "F G H I : A B C D E"
+## 
+## [[5]]
+## [1] "G H I : A B C D E F"
+## 
+## [[6]]
+## [1] "H I : A B C D E F G"</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">DisplaySplits</span>(tree2)</a></code></pre></div>
+<pre><code>## [[1]]
+## [1] "C D E I F G H : A B"
+## 
+## [[2]]
+## [1] "C D E I : A B F G H"
+## 
+## [[3]]
+## [1] "E I : A B C D F G H"
+## 
+## [[4]]
+## [1] "F G H : A B C D E I"
+## 
+## [[5]]
+## [1] "G H : A B C D E I F"</code></pre>
+<p>We can then see the similarity scores for each pair of splits, along with the optimal matching:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/attributes.html">attributes</a></span>(<span class="kw"><a href="../reference/TreeDistance.html">MutualPhylogeneticInfo</a></span>(tree1, tree2, <span class="dt">reportMatching =</span> <span class="ot">TRUE</span>))</a></code></pre></div>
+<pre><code>## $pairScores
+##           [,1]      [,2]      [,3]      [,4]      [,5]
+## [1,] 3.7004397 0.8930848 0.2410081 0.5305147 0.2410081
+## [2,] 0.5305147 3.2529807 0.0000000 1.1825914 0.5305147
+## [3,] 0.2410081 1.3785116 0.0000000 0.5305147 0.2410081
+## [4,] 0.8930848 0.0000000 0.0000000 3.2529807 1.3785116
+## [5,] 0.5305147 0.0000000 0.0000000 0.0000000 2.1154772
+## [6,] 0.2410081 0.0000000 0.0000000 0.0000000 0.0000000
+## 
+## $matching
+## Optimal assignment:
+## 1 =&gt; 1, 2 =&gt; 2, 3 =&gt; NA, 4 =&gt; 4, 5 =&gt; 5, 6 =&gt; 3
+## 
+## $matchedSplits
+## [1] "C D E F G H I : A B =&gt; C D E F G H I : A B"
+## [2] "C D E : A B F G H I =&gt; C D E I : A B F G H"
+## [3] "F G H I : A B C D E =&gt; F G H : A B C D E I"
+## [4] "G H I : A B C D E F =&gt; G H : A B C D E F I"
+## [5] "H I : A B C D E F G .. E I : A B C D F G H"</code></pre>
+<p><code>..</code> denotes that the fifth matching contributes zero to similarity score; an alternative matching, still optimal, would leave these partitions unpaired.</p>
 </div>
 <div id="alternative-approaches" class="section level2">
 <h2 class="hasAnchor">
 <a href="#alternative-approaches" class="anchor"></a>Alternative approaches</h2>
-<p>Alternatives measures of partition similarity are implemented in other <a href="Generalised-RF.html">Generalized Robinson-Foulds distances</a>.</p>
+<p>Alternatives measures of partition similarity are implemented in other <a href="Generalised-RF.html">Generalized Robinson-Foulds distances</a>. <!-- #TODO test link --></p>
 </div>
 </div>
-<div id="references" class="section level1">
+<div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h1>
+<div id="refs" class="references">
+<div id="ref-Robinson1981">
+<p>Robinson, D. F., &amp; Foulds, L. R. (1981). Comparison of phylogenetic trees. <em>Mathematical Biosciences</em>, <em>53</em>(1-2), 131–147. doi:<a href="https://doi.org/10.1016/0025-5564(81)90043-2">10.1016/0025-5564(81)90043-2</a></p>
+</div>
+</div>
 </div>
   </div>
 
