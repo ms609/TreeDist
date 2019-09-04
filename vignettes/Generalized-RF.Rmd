@@ -11,21 +11,111 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r init, message=FALSE, warning=FALSE}
+library('ape')
+library('TreeDist')
+tree1 <- read.tree(text='((A, B), ((C, (D, E)), (F, (G, (H, I)))));')
+tree2 <- read.tree(text='((A, B), ((C, D, (E, I)), (F, (G, H))));')
+```
+
 This vignette will describe the similarity measures employed by the 
 generalized Robinson-Foulds distances implemented in this package.
 
 # Mutual phylogenetic information
 
+```{r, fig.width=6 , fig.align='center'}
+VisualizeMatching(MutualPhylogeneticInfo, tree1, tree2, 
+                  Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
+```
+
+Pairs are scored according to their mutual phylogenetic information.
+
+The phylogenetic information content of a partition is defined as
+the negative logarithm of the proportion of all bifurcating _n_-tip trees that
+contain that partition.  Thus a more even bipartition, which is consistent with
+a smaller proportion of trees, contains more phylogenetic information.
+
+The mutual phylogenetic information of two partitions is the information that
+they contain in common; that is, the sum of the information content of the two 
+splits, minus the joint information (which is the negative logarithm of the 
+proportion of trees that contain both partitions).
+
+Consider the splits `ABCDEF:GHI` and `ABCDEFI:GH`.  
+
+```{r}
+library('TreeSearch')
+treesMatchingSplit <- c(
+  ABCDEF.GHI = TreesMatchingSplit(6, 3),
+  ABCDEFI.GH = TreesMatchingSplit(7, 2)
+)
+treesMatchingSplit
+
+proportionMatchingSplit <- treesMatchingSplit / NUnrooted(9)
+proportionMatchingSplit
+
+splitInformation <- -log2(proportionMatchingSplit)
+splitInformation
+
+treesMatchingBoth <- TreesConsistentWithTwoSplits(9, 6, 7)
+jointInformation <- -log2(treesMatchingBoth / NUnrooted(9))
+
+mutualInformation <- sum(splitInformation) - jointInformation
+mutualInformation
+
+# Or more concisely:
+SplitMutualInformation(n = 9, 6, 7)
+```
+
+
+<!--#TODO: 1 != 1; need to normalize.-->
+
 ## The problem with arboreal matchings
+
+The Mutual Phylogenetic Information is an arboreal similarity score: that is to
+say, it assigns zero similarity to partitions that cannot both occur on a 
+single tree.  This leads to problematic behaviour in certain cases: for example,
+when the position of two distant taxa is swapped, similarities within a tree can
+be obscured.  The two trees below are identical but for the position of _A_ and
+_J_, yet receive zero similarity under arboreal metrics.
+
+```{r, fig.width=6 , fig.align='center'}
+VisualizeMatching(MutualPhylogeneticInfo, matchZeros = FALSE, 
+  AtoJ <- ape::read.tree(text='(((((A, B), C), D), E), (F, (G, (H, (I, J)))));'),
+  AotJ <- ape::read.tree(text='(((((J, B), C), D), E), (F, (G, (H, (I, A)))));'),
+                  Plot=TreeDistPlot, leaveRoom = FALSE, prune=c(5, 18))
+```
 
 # Mutual clustering information
 
-# Nye et al.
+Clustering information provides a non-arboreal information-based
+tree distance metric.
 
-##- 2013 Jaccard ^ n alternative (arboreal?)
+```{r, fig.width=6 , fig.align='center'}
+VisualizeMatching(MutualClusteringInfo, tree1, tree2, 
+                  Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
+```
+
+As desired, this assigns a non-zero similarity to the case that received zero
+similarity under an arboreal matching:
+
+```{r}
+MutualClusteringInfo(AtoJ, AotJ)
+```
+
+```{r, fig.width=6 , fig.align='center'}
+VisualizeMatching(MutualClusteringInfo, AtoJ, AotJ, matchZeros = FALSE, 
+                  Plot=TreeDistPlot, leaveRoom = FALSE, prune=c(5, 18))
+```
+
+But 0 != 0...
+Need to normalize.
+
+# Nye _et al._
+
+## 2013 Jaccard ^ n alternative (arboreal?)
 
 # Matching Split Distance
 
-##- Information theoretic alternative
+## Information theoretic alternative
 
 # References
