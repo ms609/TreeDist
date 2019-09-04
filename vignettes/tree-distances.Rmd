@@ -17,7 +17,7 @@ of how they can be calculated in R.
 Examples are conducted using a pair of trees that differ in the position of one
 taxon, and the resolution of one clade:
 
-```{r the-trees, echo=FALSE, warning=FALSE, fig.width=6, fig.align='center'}
+```{r the-trees, echo=FALSE, warning=FALSE, message=FALSE, fig.width=6, fig.align='center'}
 library('TreeDist')
 tree1 <- ape::read.tree(text='((1, 2), ((3, (4, 5)), (6, (7, (8, 9)))));')
 tree2 <- ape::read.tree(text='((1, 2), ((3, 4, (5, 9)), (6, (7, 8))));')
