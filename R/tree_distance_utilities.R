@@ -115,8 +115,9 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
 #' @author Martin R. Smith
 #' @keywords internal
 #' @export
-ReportMatching <- function (splits1, splits2, taxonNames) {
-  paste(IdentifySplits(splits1, taxonNames), '=>', IdentifySplits(splits2, taxonNames))
+ReportMatching <- function (splits1, splits2, taxonNames, realMatch = TRUE) {
+  paste(IdentifySplits(splits1, taxonNames), ifelse(realMatch, '=>', '..'), 
+        IdentifySplits(splits2, taxonNames))
 }
 
 #' @describeIn ReportMatching List the distribution of terminals represented by a single splits object.

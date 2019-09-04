@@ -65,7 +65,7 @@ TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = TRUE,
 #' @param precision Integer specifying number of significant figures to display
 #' when reporting matching scores.
 #' @param Plot Function to use to plot trees.
-#' @param matchOptional Logical specifying whether to pair partitions with zero
+#' @param matchZeros Logical specifying whether to pair partitions with zero
 #' similarity (`TRUE`), or leave them unpaired (`FALSE`).
 #' @param \dots Additional parameters to send to `Plot`.
 #' 
@@ -77,7 +77,7 @@ TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = TRUE,
 #' @export
 VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE, 
                               precision=3, Plot = plot.phylo,
-                              matchOptional = FALSE,
+                              matchZeros = TRUE,
                               ...) {
   
   splits1 <- Tree2Splits(tree1)
@@ -114,7 +114,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   }
   
   Plot(tree1, ...)
-  paired1 <- if (matchOptional) {
+  paired1 <- if (matchZeros) {
     !is.na(pairings)
   } else {
     !is.na(pairings) & pairScores > 0

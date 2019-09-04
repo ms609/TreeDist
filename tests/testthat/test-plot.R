@@ -12,9 +12,8 @@ test_that('TreeDistPlot works', {
   }
   Test2 <- function () {
     TreeDist::TreeDistPlot(tr, title='Crop tightly', 
-                                              bold=c(2, 4, 6),
-                                              leaveRoom = FALSE,
-                                              prune=11, graft=10)
+                           bold=c(2, 4, 6), prune=11, graft=10,
+                           leaveRoom = FALSE)
   }
   expect_doppelganger("Test with space", Test1)
   expect_doppelganger("Test without space", Test2)
@@ -26,12 +25,13 @@ test_that('VisualizeMatching works', {
   tree2r <-  ape::read.tree(text='(11, (2, (3, (4, (5, (6, (7, (8, 9, 10, 1))))))));')
   TestVM <- function () {
     VisualizeMatching(MutualClusteringInfo, tree1, tree2, 
-                                          setPar = TRUE, precision=3, 
-                                          Plot = plot.phylo)
+                      setPar = TRUE, precision=3, matchZeros = FALSE,
+                      Plot = plot.phylo)
   }
   TestVMr <- function () {
-    VisualizeMatching(MutualClusteringInfo, tree1, tree2r, 
-                      setPar = TRUE, precision=3, 
+    VisualizeMatching(MutualClusteringInfo, tree1, tree2r,
+                      setPar = TRUE, precision=3,
+                      matchZeros = FALSE,
                       Plot = plot.phylo, cex=1.5)
   }
   expect_doppelganger('Test VM', TestVM)
@@ -45,10 +45,12 @@ test_that('VisualizeMatching works', {
     VisualizeMatching(MutualClusteringInfo, tree1, tree2,
                       setPar = FALSE, precision=3,
                       Plot = TreeDistPlot,
+                      matchZeros = FALSE,
                       leaveRoom=FALSE)
     VisualizeMatching(MutualClusteringInfo, tree2, tree1,
                       setPar = FALSE, precision=3,
                       Plot = TreeDistPlot,
+                      matchZeros = FALSE,
                       leaveRoom=FALSE)
   })
   
@@ -59,10 +61,12 @@ test_that('VisualizeMatching works', {
     VisualizeMatching(RobinsonFoulds, tree1, tree2,
                       setPar = FALSE, precision=3,
                       Plot = TreeDistPlot,
+                      matchZeros = FALSE,
                       leaveRoom=FALSE)
     VisualizeMatching(RobinsonFoulds, tree2, tree1,
                       setPar = FALSE, precision=3,
                       Plot = TreeDistPlot,
+                      matchZeros = FALSE,
                       leaveRoom=FALSE)
   })
   
@@ -74,11 +78,12 @@ test_that('VisualizeMatching works', {
     VisualizeMatching(RobinsonFoulds, tree1, tree2,
                       setPar = FALSE, precision=3,
                       Plot = TreeDistPlot,
-                      matchOptional = TRUE,
+                      matchZeros = TRUE,
                       leaveRoom=FALSE)
     VisualizeMatching(RobinsonFoulds, tree2, tree1,
                       setPar = FALSE, precision=3,
                       Plot = TreeDistPlot,
+                      matchZeros = FALSE,
                       leaveRoom=FALSE)
   })
   
@@ -89,11 +94,12 @@ test_that('VisualizeMatching works', {
     VisualizeMatching(RobinsonFoulds, tree1, tree2,
                       setPar = FALSE, precision=3,
                       Plot = TreeDistPlot,
-                      matchOptional = TRUE,
+                      matchZeros = TRUE,
                       leaveRoom=FALSE)
     VisualizeMatching(RobinsonFoulds, tree2, tree1,
                       setPar = FALSE, precision=3,
                       Plot = TreeDistPlot,
+                      matchZeros = FALSE,
                       leaveRoom=FALSE)
   })
 })

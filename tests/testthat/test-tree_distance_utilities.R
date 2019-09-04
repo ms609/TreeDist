@@ -58,12 +58,20 @@ test_that('Matches are reported', {
   Test(VariationOfClusteringInfo)
   Test(MutualPhylogeneticInfo)
   Test(RobinsonFoulds, relaxed = TRUE)
+  Test(RobinsonFouldsInfo, relaxed = TRUE)
   Test(NyeTreeSimilarity)
 
-  # Matching Split Distance matches differently:  
+    # Matching Split Distance matches differently:  
   at <- attributes(MatchingSplitDistance(treeSym8, treeBal8, 
                                          reportMatching = TRUE))
   expect_equal(3L, length(at))
   expect_equal(c(1:3, 5:4), as.integer(at$matching))
   expect_equal('a b : e f g h c d => a b : e f g h c d', at$matchedSplits[5])
+  
+  # Zero match:
+  expect_equal('c d : a b .. b d : a c', 
+               attr(MutualPhylogeneticInfo( 
+                 ape::read.tree(text="((a, b), (c, d));"),
+                 ape::read.tree(text="((a, c), (b, d));"), 
+                 reportMatching = TRUE), 'matchedSplits'))
 })

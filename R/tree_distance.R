@@ -121,7 +121,10 @@ TreeDistanceReturn <- function (pairScores, maximize = FALSE,
       attr(ret, 'matchedSplits') <- 
         ReportMatching(splits1[, matched1, drop = FALSE], 
                        splits2[, matched2, drop = FALSE],
-                       taxonNames)
+                       taxonNames,
+                       realMatch = if (maximize) {
+                         pairScores[matrix(c(matched1, matched2), ncol=2L)] > 0
+                       } else TRUE)
     }
   }
   # Return:
