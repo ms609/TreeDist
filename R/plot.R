@@ -98,12 +98,11 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   pairScores <- signif(mapply(function (i, j) scores[i, j],
                               seq_along(pairings), pairings), precision)
   
-  palette <- qualitative_hcl(sum(!is.na(pairings)), c=42, l=88)
   adjNo <- c(0.5, -0.2)
   adjVal <- c(0.5, 1.1)
   faint <- '#aaaaaa'
   
-  if (setPar) origPar <- par(mfrow=c(2, 1), mar=rep(0.5, 4))
+  if (setPar) origPar <- par(mfrow=c(1, 2), mar=rep(0.5, 4))
   
   LabelUnpaired <- function (partitionEdges, unpaired) {
     if (any(unpaired)) {
@@ -120,6 +119,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   } else {
     !is.na(pairings) & pairScores > 0
   }
+  palette <- qualitative_hcl(sum(paired1), c=42, l=88)
   pairedPairScores <- pairScores[paired1]
   pairLabels <- seq_len(sum(paired1))
   if (any(pairLabels)) {
