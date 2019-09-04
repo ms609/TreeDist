@@ -1,18 +1,22 @@
 #' (Information-adjusted) Robinson-Foulds distance
 #' 
-#' Calculates the Robinson-Foulds distance, optionally annotating matched 
-#' partitions and weighting partitions according to their phylogenetic 
-#' information content.
+#' Calculates the Robinson-Foulds distance, or the equivalent similarity 
+#' measure, optionally annotating matched partitions and weighting partitions
+#' according to their phylogenetic information content.
 #' 
 #' `RobinsonFoulds` is an inefficient implementation of the Robinson-Foulds 
-#' distance, included
-#' for use with [`VisualizeMatching`].  To generate the RF distance efficiently,
+#' distance, included for use with [`VisualizeMatching`]. 
+#' To generate the RF distance efficiently,
 #' use the function \code{\link{ape}{treedist}}.
 #' 
 #' Note that if `reportMatching = TRUE`, the `pairScores` attribute returns
 #' a logical matrix specifying whether each pair of partitions is identical.
 #' 
-#' `RobinsonFouldsInfo` reports tree similarity or distance
+#' `RobinsonFouldsInfo` calculates the tree similarity or distance by summing 
+#' the phylogenetic information content of all partitions that are (or are not)
+#' identical in both trees.  Consequently, partitions that are more likely
+#' to be identical by chance alone make a smaller contribution to overall
+#' tree distance, because their similarity is less remarkable.
 #' 
 #' @inheritParams MutualPhylogeneticInfo
 #' @param similarity Logical specifying whether to report the result as a tree
