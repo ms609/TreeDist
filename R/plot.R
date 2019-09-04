@@ -25,6 +25,11 @@ TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = TRUE,
   if (is.null(tr$edge.width)) tr$edge.width <- rep(1, dim(tr$edge)[1])
   if (length(edge.color) == 1) edge.color <- rep(edge.color, dim(tr$edge)[1])
   nTip <- length(tr$tip.label)
+  if (all(tr$tip.label %in% LETTERS)) {
+    tr$tip.label <- match(tr$tip.label, LETTERS)
+  } else if (all(tr$tip.label %in% letters)) {
+    tr$tip.label <- match(tr$tip.label, letters)
+  }
 
   if (length(prune) > 0 || length(graft) > 0) {
     tr$edge.width[c(prune, graft)] <- 3L
