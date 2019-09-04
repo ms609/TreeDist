@@ -5,7 +5,7 @@
 \title{Plot a simple tree}
 \usage{
 TreeDistPlot(tr, title = NULL, bold = NULL, leaveRoom = TRUE,
-  prune = integer(0), graft = integer(0), ...)
+  prune = integer(0), graft = integer(0), edge.color = "black", ...)
 }
 \arguments{
 \item{tr}{A tree of class \code{phylo}, with tips labelled as integers}
@@ -19,6 +19,9 @@ tree distances beneath the plotted tree}
 
 \item{prune, graft}{Integer vectors specifying which edges to highlight as
 pruned and grafted.}
+
+\item{edge.color}{Additional parameter to \code{plot.phylo}; will be overridden
+by \code{prune} and \code{graft} as requested.}
 
 \item{\dots}{Additional parameters to \code{plot.phylo}}
 }

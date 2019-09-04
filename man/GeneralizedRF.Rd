@@ -4,7 +4,7 @@
 \alias{GeneralizedRF}
 \title{Generalized Robinson-Foulds distance}
 \usage{
-GeneralizedRF(splits1, splits2, PairScorer, maximize, reportMatching)
+GeneralizedRF(splits1, splits2, PairScorer, maximize, reportMatching, ...)
 }
 \arguments{
 \item{splits1}{Logical matrices where each row corresponds to a terminal,
@@ -21,10 +21,13 @@ each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
 
 \item{PairScorer}{function taking four arguments, \code{splits1}, \code{splits2},
 \code{nSplits1}, \code{nSplits2}, which should return the score of each pair of splits
-in a two-dimensional matrix.}
+in a two-dimensional matrix.  Additional parameters may be specified via
+\dots.}
 
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}
+
+\item{\dots}{Additional parameters to \code{PairScorer}}
 }
 \value{
 The results of \code{TreeDistanceReturn} under the parameters provided

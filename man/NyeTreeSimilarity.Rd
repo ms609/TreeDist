@@ -68,7 +68,8 @@ in a pair of trees with \emph{n} terminals, by specifying \code{normalize = <som
 \seealso{
 Other tree distances: \code{\link{KendallColijn}},
   \code{\link{MatchingSplitDistance}},
-  \code{\link{RobinsonFoulds}}, \code{\link{TreeDistance}}
+  \code{\link{RobinsonFouldsInfo}},
+  \code{\link{TreeDistance}}
 }
 \author{
 Martin R. Smith

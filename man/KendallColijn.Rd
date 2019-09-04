@@ -48,7 +48,8 @@ lambda > 0, i.e. use of edge lengths in tree comparison.
 
 Other tree distances: \code{\link{MatchingSplitDistance}},
   \code{\link{NyeTreeSimilarity}},
-  \code{\link{RobinsonFoulds}}, \code{\link{TreeDistance}}
+  \code{\link{RobinsonFouldsInfo}},
+  \code{\link{TreeDistance}}
 }
 \author{
 Martin R. Smith
