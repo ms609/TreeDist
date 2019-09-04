@@ -65,15 +65,20 @@ TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = TRUE,
 #' @param precision Integer specifying number of significant figures to display
 #' when reporting matching scores.
 #' @param Plot Function to use to plot trees.
+#' @param matchOptional Logical specifying whether to pair partitions with zero
+#' similarity (`TRUE`), or leave them unpaired (`FALSE`).
 #' @param \dots Additional parameters to send to `Plot`.
 #' 
 #' @author Martin R. Smith
 #' @importFrom ape nodelabels edgelabels plot.phylo
 #' @importFrom colorspace qualitative_hcl
 #' @importFrom graphics par
+#' @importFrom TreeSearch Tree2Splits
 #' @export
 VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE, 
-                              precision=3, Plot = plot.phylo, ...) {
+                              precision=3, Plot = plot.phylo,
+                              matchOptional = FALSE,
+                              ...) {
   
   splits1 <- Tree2Splits(tree1)
   edge1 <- tree1$edge
@@ -110,24 +115,32 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   }
   
   Plot(tree1, ...)
-  paired1 <- !is.na(pairings)
+  paired1 <- if (matchOptional) {
+    !is.na(pairings)
+  } else {
+    !is.na(pairings) & pairScores > 0
+  }
   pairedPairScores <- pairScores[paired1]
   pairLabels <- seq_len(sum(paired1))
-  edgelabels(text=pairLabels, edge=partitionEdges1[paired1],
-             bg=palette, adj=adjNo)
-  edgelabels(text=pairedPairScores, edge=partitionEdges1[paired1], 
-             frame='n', adj=adjVal, cex=0.8,
-             col=ifelse(pairedPairScores, 'black', faint))
+  if (any(pairLabels)) {
+    edgelabels(text=pairLabels, edge=partitionEdges1[paired1],
+               bg=palette, adj=adjNo)
+    edgelabels(text=pairedPairScores, edge=partitionEdges1[paired1], 
+               frame='n', adj=adjVal, cex=0.8,
+               col=ifelse(pairedPairScores, 'black', faint))
+  }
   LabelUnpaired(partitionEdges1, !paired1)
   
   Plot(tree2, ...)
-  paired2 <- seq_along(partitionEdges2) %in% pairings
+  paired2 <- seq_along(partitionEdges2) %in% pairings[paired1]
   pairNames2 <- pairings[paired1]
-  edgelabels(text=pairLabels, edge=partitionEdges2[pairNames2],
-             bg=palette, adj=adjNo)
-  edgelabels(text=pairedPairScores, edge=partitionEdges2[pairNames2], 
-             frame='n', adj=adjVal, cex=0.8,
-             col=ifelse(pairedPairScores, 'black', faint))
+  if (any(pairLabels)) {
+    edgelabels(text=pairLabels, edge=partitionEdges2[pairNames2],
+               bg=palette, adj=adjNo)
+    edgelabels(text=pairedPairScores, edge=partitionEdges2[pairNames2], 
+               frame='n', adj=adjVal, cex=0.8,
+               col=ifelse(pairedPairScores, 'black', faint))
+  }
   LabelUnpaired(partitionEdges2, !paired2)
   
   if (setPar) par(origPar)

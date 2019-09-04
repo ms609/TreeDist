@@ -5,7 +5,7 @@
 \title{Visualise a matching}
 \usage{
 VisualizeMatching(Func, tree1, tree2, setPar = TRUE, precision = 3,
-  Plot = plot.phylo, ...)
+  Plot = plot.phylo, matchOptional = FALSE, ...)
 }
 \arguments{
 \item{Func}{Function used to construct tree similarity.}
@@ -19,6 +19,9 @@ set to display trees side by side.}
 when reporting matching scores.}
 
 \item{Plot}{Function to use to plot trees.}
+
+\item{matchOptional}{Logical specifying whether to pair partitions with zero
+similarity (\code{TRUE}), or leave them unpaired (\code{FALSE}).}
 
 \item{\dots}{Additional parameters to send to \code{Plot}.}
 }

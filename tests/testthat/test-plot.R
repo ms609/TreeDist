@@ -74,6 +74,7 @@ test_that('VisualizeMatching works', {
     VisualizeMatching(RobinsonFoulds, tree1, tree2,
                       setPar = FALSE, precision=3,
                       Plot = TreeDistPlot,
+                      matchOptional = TRUE,
                       leaveRoom=FALSE)
     VisualizeMatching(RobinsonFoulds, tree2, tree1,
                       setPar = FALSE, precision=3,
@@ -88,6 +89,7 @@ test_that('VisualizeMatching works', {
     VisualizeMatching(RobinsonFoulds, tree1, tree2,
                       setPar = FALSE, precision=3,
                       Plot = TreeDistPlot,
+                      matchOptional = TRUE,
                       leaveRoom=FALSE)
     VisualizeMatching(RobinsonFoulds, tree2, tree1,
                       setPar = FALSE, precision=3,
