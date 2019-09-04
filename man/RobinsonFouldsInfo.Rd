@@ -2,14 +2,20 @@
 % Please edit documentation in R/tree_distance_rf.R
 \name{RobinsonFouldsInfo}
 \alias{RobinsonFouldsInfo}
+\alias{RobinsonFouldsInfoSplits}
 \alias{RobinsonFoulds}
+\alias{RobinsonFouldsSplits}
 \title{(Information-adjusted) Robinson-Foulds distance}
 \usage{
 RobinsonFouldsInfo(tree1, tree2, similarity = FALSE, normalize = FALSE,
   reportMatching = FALSE)
 
+RobinsonFouldsInfoSplits(splits1, splits2, reportMatching = FALSE)
+
 RobinsonFoulds(tree1, tree2, similarity = FALSE, normalize = FALSE,
   reportMatching = FALSE)
+
+RobinsonFouldsSplits(splits1, splits2, reportMatching = FALSE)
 }
 \arguments{
 \item{tree1}{Trees of class \code{phylo}, with tips labelled identically,
@@ -30,6 +36,18 @@ If \code{FALSE}, results will not be rescaled.}
 
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}
+
+\item{splits1}{Logical matrices where each row corresponds to a terminal,
+either listed in the same order or bearing identical names (in any sequence),
+and each column corresponds to a bipartition split, such that
+each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
+(\code{FALSE}) of the respective bipartition split.}
+
+\item{splits2}{Logical matrices where each row corresponds to a terminal,
+either listed in the same order or bearing identical names (in any sequence),
+and each column corresponds to a bipartition split, such that
+each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
+(\code{FALSE}) of the respective bipartition split.}
 }
 \description{
 Calculates the Robinson-Foulds distance, or the equivalent similarity
@@ -53,9 +71,16 @@ tree distance, because their similarity is less remarkable.
 }
 \section{Functions}{
 \itemize{
-\item \code{RobinsonFoulds}: An inefficient implementation of the Robinson-Foulds distance, included
-for use with \code{\link{VisualizeMatching}}.  To generate the RF distance efficiently,
-use the function \code{\link{ape}{treedist}}.
+\item \code{RobinsonFouldsInfoSplits}: Calculate information-adjusted Robinson-Foulds
+distance from splits instead of trees.
+
+\item \code{RobinsonFoulds}: An inefficient implementation of the
+Robinson-Foulds distance, included for use with \code{\link{VisualizeMatching}}.
+To generate the RF distance efficiently, use the function
+\code{\link{ape}{treedist}}.
+
+\item \code{RobinsonFouldsSplits}: Calculate Robinson-Foulds distance from splits
+instead of trees.
 }}
 
 \section{Normalization}{
