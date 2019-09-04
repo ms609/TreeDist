@@ -21,6 +21,16 @@ matrix:
         - Rscript -e "covr::codecov()"
     - os: osx
       r: release
+      r_packages:
+        - ape
+        - bookdown
+        - covr
+        - devtools
+        - phangorn
+        - Rdpack
+        - roxygen2
+        - testthat
+        - vdiffr
       before_install:
       - sudo tlmgr install doi titling hyperref
 #  allow_failures:
