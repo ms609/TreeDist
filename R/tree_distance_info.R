@@ -243,14 +243,16 @@ MutualPhylogeneticInfoSplits <- function (splits1, splits2,
                     OneOverlap <- function (A1, A2) oo[A1, A2]
                   } else {
                     OneOverlap <- function(A1, A2) {
+                      # Number of trees consistent with both splits
                       if (A1 == A2) {
-                        # Return:
-                        LnRooted.int(A1) + LnRooted.int(nTerminals - A2)
+                        # Both splits are identical.
+                        # Return number of trees consistent with split1:
+                        LnRooted.int(A1) + LnRooted.int(nTerminals - A1)
                       } else {
                         if (A1 < A2) {
                           # Return:
                           LnRooted.int(A2) + LnRooted.int(nTerminals - A1) -
-                            LnRooted.int(A2 - A1 + 1L) 
+                            LnRooted.int(A2 - A1 + 1L)
                         } else {
                           # Return:
                           LnRooted.int(A1) + LnRooted.int(nTerminals - A2) -
@@ -274,6 +276,7 @@ MutualPhylogeneticInfoSplits <- function (splits1, splits2,
                       OneOverlap(inSplit1[i], notInSplit2[j])
                       
                     } else {
+                      # Splits incompatible
                       lnUnrootedN
                     }
                   }, seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
