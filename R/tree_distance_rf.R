@@ -49,7 +49,7 @@ RobinsonFouldsInfo <- function (tree1, tree2, similarity = FALSE,
                 InfoInTree = PartitionInfo, Combine = '+')
 }
 
-#' @describeIn RobinsonFoulds Calculate information-adjusted Robinson-Foulds
+#' @describeIn RobinsonFouldsInfo Calculate information-adjusted Robinson-Foulds
 #' distance from splits instead of trees.
 #' @inheritParams MutualPhylogeneticInfoSplits
 #' @importFrom TreeSearch LogTreesMatchingSplit LnUnrooted.int
@@ -77,10 +77,10 @@ RobinsonFouldsInfoSplits <- function (splits1, splits2, reportMatching = FALSE) 
   }, maximize = TRUE, reportMatching)
 }
 
-#' @describeIn RobinsonFouldsInfo
-#' An inefficient implementation of the Robinson-Foulds distance, included
-#' for use with [`VisualizeMatching`].  To generate the RF distance efficiently,
-#' use the function \code{\link{ape}{treedist}}.
+#' @describeIn RobinsonFouldsInfo An inefficient implementation of the 
+#' Robinson-Foulds distance, included for use with [`VisualizeMatching`].
+#' To generate the RF distance efficiently, use the function 
+#' \code{\link{ape}{treedist}}.
 #' @export
 RobinsonFoulds <- function (tree1, tree2, similarity = FALSE, normalize = FALSE,
                                 reportMatching = FALSE) {
@@ -104,7 +104,7 @@ RobinsonFoulds <- function (tree1, tree2, similarity = FALSE, normalize = FALSE,
                 InfoInTree = NumberOfSplits, Combine = `+`)
 }
 
-#' @describeIn RobinsonFoulds Calculate Robinson-Foulds distance from splits
+#' @describeIn RobinsonFouldsInfo Calculate Robinson-Foulds distance from splits
 #' instead of trees.
 #' @inheritParams MutualPhylogeneticInfoSplits
 #' @export
