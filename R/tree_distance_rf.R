@@ -91,6 +91,10 @@ RobinsonFoulds <- function (tree1, tree2, similarity = FALSE, normalize = FALSE,
     }
   }
   
+  if (!similarity) unnormalized <- 
+    outer(NumberOfSplits(tree1), NumberOfSplits(tree2), '+')[, , drop = TRUE] -
+    unnormalized
+  
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
                 InfoInTree = NumberOfSplits, Combine = `+`)
@@ -101,17 +105,15 @@ RobinsonFoulds <- function (tree1, tree2, similarity = FALSE, normalize = FALSE,
 #' @inheritParams MutualPhylogeneticInfoSplits
 #' @export
 RobinsonFouldsSplits <- function (splits1, splits2, reportMatching = FALSE) {
-  splitsInCommon <- 
-    GeneralizedRF(splits1, splits2,
-                  function(splits1, splits2, nSplits1, nSplits2) {
-                    matrix((mapply(function(i, j) {
-                      A1 <- splits1[, i]
-                      A2 <- splits2[, j]
-                      
-                      all(A1 == A2) || all(A1 != A2)
-                    },  seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
-                    )), nSplits1, nSplits2)
+  GeneralizedRF(splits1, splits2,
+                function(splits1, splits2, nSplits1, nSplits2) {
+                  matrix((mapply(function(i, j) {
+                    A1 <- splits1[, i]
+                    A2 <- splits2[, j]
                     
-                  }, maximize = TRUE, reportMatching)
-  dim(splits1)[2] - splitsInCommon + dim(splits2)[2] - splitsInCommon
+                    all(A1 == A2) || all(A1 != A2)
+                  },  seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
+                  )), nSplits1, nSplits2)
+                  
+                }, maximize = TRUE, reportMatching) * 2L
 }
