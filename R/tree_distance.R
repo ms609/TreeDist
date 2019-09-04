@@ -5,7 +5,9 @@
 #' @inheritParams MutualPhylogeneticInfoSplits
 #' @param PairScorer function taking four arguments, `splits1`, `splits2`,
 #' `nSplits1`, `nSplits2`, which should return the score of each pair of splits
-#' in a two-dimensional matrix.
+#' in a two-dimensional matrix.  Additional parameters may be specified via 
+#' \dots.
+#' @param \dots Additional parameters to `PairScorer`
 #' 
 #' @return The results of `TreeDistanceReturn` under the parameters provided
 #' 
@@ -13,7 +15,7 @@
 #' @author Martin R. Smith
 #' @export
 GeneralizedRF <- function (splits1, splits2, PairScorer, 
-                           maximize, reportMatching) {
+                           maximize, reportMatching, ...) {
   dimSplits1 <- dim(splits1)
   dimSplits2 <- dim(splits2)
   nSplits1 <- dimSplits1[2]
@@ -32,7 +34,7 @@ GeneralizedRF <- function (splits1, splits2, PairScorer,
     splits1 <- unname(splits1) # split2[split1] faster without names
   }
   
-  pairScores <- PairScorer(splits1, splits2, nSplits1, nSplits2)
+  pairScores <- PairScorer(splits1, splits2, nSplits1, nSplits2, ...)
   
   # Return:
   TreeDistanceReturn(pairScores, maximize, reportMatching, 
