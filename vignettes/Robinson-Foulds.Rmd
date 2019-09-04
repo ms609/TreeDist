@@ -249,7 +249,7 @@ and in the resolution of a clade:
 ```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
 tree1 <- ape::read.tree(text='((A, B), ((C, (D, E)), (F, (G, (H, I)))));')
 tree2 <- read.tree(text='((A, B), ((C, D, (E, I)), (F, (G, H))));')
-TwoTreePlot()
+
 Plot(tree1, tree2, highlight = 'I', prune=list(8, integer(0)))
 ```
 

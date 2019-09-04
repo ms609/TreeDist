@@ -11,16 +11,123 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-This file with give an overview of topological distance measures, and how
-they are implemented in R.
+This file with give an overview of topological distance measures, and examples
+of how they can be calculated in R.
+
+Examples are conducted using a pair of trees that differ in the position of one
+taxon, and the resolution of one clade:
+
+```{r the-trees, echo=FALSE, warning=FALSE, fig.width=6, fig.align='center'}
+library('TreeDist')
+tree1 <- ape::read.tree(text='((1, 2), ((3, (4, 5)), (6, (7, (8, 9)))));')
+tree2 <- ape::read.tree(text='((1, 2), ((3, 4, (5, 9)), (6, (7, 8))));')
+
+par(mfrow=c(1, 2), mar=rep(0.4, 4))
+TreeDistPlot(tree1, leaveRoom = FALSE, prune=7, graft=16)
+ape::edgelabels(1:6, edge=c(1, 5, 7, 10, 12, 14))
+TreeDistPlot(tree2, leaveRoom = FALSE, graft=10)
+ape::edgelabels(1:5, edge = c(1, 5, 8, 11, 13))
+```
 
 # Robinson-Foulds distance
 
+The Robinson-Foulds distance [@Robinson1981], also termed the partitionwise 
+symmetric difference, is a simple but problematic partitionwise measure.
+
+Implementations include:
+
+```{r}
+phangorn::treedist(tree1, tree2)['symmetric.difference']
+```
+
+`treedist` can only consider one pair of trees at a time, and calculates
+other distances at the same time, so is less suitable than:
+
+```{r}
+phangorn::RF.dist(tree1, tree2, normalize = FALSE)
+```
+
+With `RF.dist`, `tree1` and `tree2` can be multiPhylo objects containing 
+multiple trees, in which case each tree in `tree1` will be compared with
+each tree in `tree2`.
+
+It is possible to suppress the seemingly unnecessary
+warning message, and to normalize the output against the total number of 
+partitions present:
+
+```{r}
+suppressMessages(phangorn::RF.dist(tree1, tree2, normalize = TRUE))
+```
+
+The `TreeDist` package contains an inefficient implementation that allows
+matched partitions to be easily visualized:
+
+```{r}
+TreeDist::RobinsonFoulds(tree1, tree2)
+```
+
+```{r}
+VisualizeMatching(RobinsonFoulds, tree1, tree2, matchZeros = FALSE)
+```
+
+`TreeDist` also contains a function for the information-adjusted 
+Robinson-Foulds distance:
+
+```{r}
+RobinsonFouldsInfo(tree1, tree2, similarity = FALSE)
+```
+
+More details, and a discussion of the problems with the Robinson-Foulds metric,
+are provided in a [separate article](Robinson-Foulds.html). <!-- #TODO check link-->
+
 # Generalized Robinson-Foulds distances
+
+This package contains functions for various Generalized Robinson-Foulds 
+distances, and allows user-specified pair similarity functions.  See the
+[separate article](Generalized-RF.html)<!-- #TODO check link--> for details.
 
 # Quartet distance
 
+The quartet distance [@Estabrook1985] can be calculated using the `Quartet` 
+package, which uses the `tqDist` algorithm.
+The most suitable distance metric is typically the Quartet Divergence
+[@SmithDist]:
+
+```{r}
+status <- Quartet::QuartetStatus(tree1, tree2)
+Quartet::QuartetDivergence(status, similarity = FALSE)
+```
+
+For more details, see the [Quartet documentation](https://ms609.github.io/Quartet)
+
 # Path distance
 
+As with the Robinson-Foulds distance, this is calculated by 
+
+```{r}
+phangorn::treedist(tree1, tree2)['path.difference']
+```
+
+or more efficiently by:
+
+```{r}
+phangorn::path.dist(tree1, tree2)
+```
+
+# SPR distance
+
+The SPR distance is undefined on trees that contain polytomies.
+
+```r
+oneSprAway <- TreeSearch::SPR(tree1)
+phangorn::sprdist(tree1, oneSprAway)
+```
+
+`sprdist` compares two trees. `SPR.dist` can compute the pairwise distances
+between each tree in a `multiPhylo` object:
+
+```r
+phangorn::SPR.dist(tree1, oneSprAway)
+```
 
 # References
