@@ -11,60 +11,82 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-This document will review known shortcomings of the RF metric.
-
 ```{r init, echo=FALSE, warning=FALSE, message=FALSE}
 library('ape')
 library('TreeDist')
 standardMargin <- c(0.4, 0.4, 0.8, 0.4)
 cbPalette8 <- Ternary::cbPalette8
 TwoTreePlot <- function () par(mfrow=c(1, 2), mar=standardMargin, cex=0.9)
+
+Plot <- function (tree, tree2=NULL, highlight = character(0),
+                  prune=if (is.null(tree2)) integer(0) else list(integer(0), integer(0))) {
+  ABCDEFGHIJK <- LETTERS[1:11]
+  if (is.null(tree2)) {
+    if(!all(tree$tip.label %in% 1:11)) {
+      tree$tip.label <- match(tree$tip.label, ABCDEFGHIJK)
+    }
+    
+    highlightTip <- match(highlight, ABCDEFGHIJK)
+    TreeDistPlot(tree, leaveRoom=FALSE, 
+                 bold = highlightTip,
+                 prune = prune,
+                 graft = which(tree$edge[, 2] == match(highlightTip, tree$tip.label)))
+  } else {
+    par(mfrow=c(1, 2), mar=rep(0.4, 4))
+    Plot(tree, highlight = highlight, prune = prune[[1]])
+    Plot(tree2, highlight = highlight, prune = prune[[2]])
+  }
+}
 ```
 
 # The Robinson-Foulds distance
 
-The Robinson-Foulds distance is a symmetric distance measure that counts the 
-number of *partitions* that occur in one tree, but not the other.
+The Robinson-Foulds distance [@Robinson1981] is a symmetric distance measure 
+that counts the 
+number of partitions that occur in one tree, but not the other.
 
 It is importand to remember that counting partitions is not the same as counting
-clades, edges or nodes.  If a tree is drawn as rooted (even without a root edge),
-then the number of partitions is one less than the number of edges and two less
-than the number of nodes. For example, the trees below have one partition, 
-two edges and three nodes in common.
+clades, edges or nodes.  If a tree is drawn as rooted (even without a root 
+edge),
+then the number of partitions is one less than the number of edges or clades,
+and two less than the number of nodes.
+For example, the trees below have one partition, two edges and three nodes in 
+common.
 
-```{R, echo=FALSE, fig.width = 6, fig.align = 'centre'}
+```{R, echo=FALSE, fig.width = 6, fig.align = 'center'}
 TwoTreePlot()
+palette <- colorspace::qualitative_hcl(5, c=42, l=88)
 TreeDistPlot(balancedTree <- 
                read.tree(text="(((1, 2), (3, 4)), ((5, 6), (7, 8)));"),
              leaveRoom = FALSE)
-edgelabels(1:6, edge = c(1, 2, 5, 8, 9, 12), 
-           adj = c(-0.5, 0.5), bg = cbPalette8[8])
-nodelabels(1:7, bg = cbPalette8[3], adj=c(1, 0.5))
-nodelabels(1:6, node = 10:15, bg = cbPalette8[2], adj=c(-1, 0.5))
-edgelabels(1:5, c(1, 2, 5, 9, 12), adj = c(1.5, 0.5), bg = cbPalette8[5])
-legend('bottomleft', col=cbPalette8[c(5, 8, 3, 2)], pch=15, bty='n',
-       c('Partitions (5)', 'Internal edges (6)', 'Nodes (7)', 'Clades (6)'))
+edgelabels(1:5, c(1, 2, 5, 9, 12), adj = c(1.5, 0.5), bg = palette[1]) # Partitions
+edgelabels(1:6, edge = c(1, 2, 5, 8, 9, 12), bg = palette[2],
+           adj = c(-0.5, 0.5)) # Internal edges
+nodelabels(1:7, bg = palette[3], adj=c(1, 0.5)) # Nodes
+nodelabels(1:6, node = 10:15, bg = palette[4], adj=c(-1, 0.5)) # Clades
+legend('bottomleft', col=palette[1:2], pch=15, bty='n',
+       c('Partitions (5)', 'Internal edges (6)'))
+legend('bottomright', col=palette[3:4], pch=15, bty='n',
+       c('Nodes (7)', 'Clades (6)'))
 
 TreeDistPlot(read.tree(text="((1, 2, 3, 4), (5, 6, 7, 8));"), leaveRoom = FALSE)
-edgelabels(1:2, edge = c(1, 6), adj = c(-0.5, 0.5), bg = cbPalette8[8])
-nodelabels(1:2, node=10:11, bg = cbPalette8[2], adj = c(-1, 0.5))
-nodelabels(1:3, bg = cbPalette8[3], adj = c(1, 0.5))
-edgelabels(1, 1, adj = c(1.5, 0.5), bg = cbPalette8[5])
+edgelabels(1, 1, adj = c(1.5, 0.5), bg = palette[1])
+edgelabels(1:2, edge = c(1, 6), adj = c(-0.5, 0.5), bg = palette[2])
+nodelabels(1:3, bg = palette[3], adj = c(1, 0.5))
+nodelabels(1:2, node=10:11, bg = palette[4], adj = c(-1, 0.5))
 
 ```
 
 The simplicity of counting partitions is appealing, but limiting: it assumes 
 that all partitions are equivalent, when they are not.
-A partition distance of 1 could mean that two trees differ in an less
-informative partition, or a more informative partition.  In the example above, 
+
+In the example above, 
 the probability that a tree with two unresolved clades of four taxa will be 
 compatible with the reference tree on the left is one in `r choose(8, 4) / 2`. 
-
-In contrast, a tree with a clade of two taxa and one of six has a one in seven 
+In contrast, a tree that separates two taxa from six has a one in seven 
 chance of matching the reference tree: the similarity observed is five times
 more likely to have arisen by chance.  In other words, failure to match an
-even partition is less noteworthy than failure to match an even one, even though
-both are treated equivalently.
+even partition is less noteworthy than failure to match an uneven one.
 
 As a consequence, trees whose partitions are less even will, on average, have
 higher Robinson-Foulds distances with comparison trees.
@@ -74,7 +96,7 @@ Consider a balanced and an unbalanced eight-taxon tree:
 ```{r two-trees, echo=FALSE, fig.height = 3, fig.width=6, fig.align = 'center'}
 TwoTreePlot()
 TreeDistPlot(balancedTree, edge.color = cbPalette8[3], leaveRoom = FALSE)
-ape::edgelabels(1:5, c(1, 2, 5, 9, 12), bg = cbPalette8[5], adj=c(0.5, -0.25))
+ape::edgelabels(1:5, c(1, 2, 5, 9, 12), bg = palette[1], adj=c(0.5, -0.25))
 ape::edgelabels(c('4:4', rep('2:6', 4)), c(1, 2, 5, 9, 12),
                 adj=c(0.5, 1.25), frame = 'n')
 ape::edgelabels(c(5.53, rep(3.46, 4)), c(1, 2, 5, 9, 12),
@@ -84,7 +106,7 @@ legend('topleft', 'Balanced tree', bty='n', inset=c(-0.05, -0.03))
 TreeDistPlot(caterpillarTree <- 
                ape::read.tree(text="(1, (2, (3, (4, (5, (6, (7, 8)))))));"),
      edge.color = cbPalette8[2], leaveRoom = FALSE)
-ape::edgelabels(1:5, bg = cbPalette8[5], c(4, 6, 8, 10, 12), adj=c(0.5, -0.25))
+ape::edgelabels(1:5, bg = palette[1], c(4, 6, 8, 10, 12), adj=c(0.5, -0.25))
 ape::edgelabels(c('2:6', '3:5', '4:4', '3:5', '2:6'), edge = c(4, 6, 8, 10, 12),
                 frame = 'n', adj=c(0.5, 1.25))
 ape::edgelabels(c(3.46, 5.04, 5.53, 5.04, 3.46), edge = c(4, 6, 8, 10, 12),
@@ -92,12 +114,11 @@ ape::edgelabels(c(3.46, 5.04, 5.53, 5.04, 3.46), edge = c(4, 6, 8, 10, 12),
 legend('topleft', 'Asymmetric tree', bty='n', inset=c(-0.05, -0.03))
 ```
 
-Each tree divides the eight taxa into five bipartition splits.  
+Each tree divides the eight taxa into five bipartition splits.
 The information content (Shannon entropy) of a split is a function of the
 probability that the split will match a random tree, i.e. the proportion of
 eight-tip tree topologies that contain the split in question.
-(Information content, in bits, is defined as $-log _2_(probability)$)
-
+(Information content, in bits, is defined as $-log _2_(probability)$.)
 This, in turn, is a function of the evenness of the split:
 
 ```{r ic-of-splits, display='asis', echo=FALSE, warnings=FALSE}
@@ -148,14 +169,14 @@ if (calculate) {
 }
 
 par(cex=0.8)
-sch <- hist(inCaterpillar + 0.5, breaks = 0:12 / 2 - 0.0001,
+sch <- hist(inCaterpillar + 0.7, breaks = 0:18 / 3 - (1/6),
             main='8-tip trees with N common partitions', cex.main=1,
             xlim=c(0, 6), axes=FALSE,
             xlab='Partitions in common', ylab='Number of trees')
-sbh <- hist(inBalanced, breaks = 0:12 / 2 - 0.0001, plot=FALSE)
+sbh <- hist(inBalanced + 0.4, breaks = 0:18 / 3 - (1/6), plot=FALSE)
 plot(sch, col=paste0(cbPalette8[2], '44'), add=TRUE)
 plot(sbh, col=paste0(cbPalette8[3], '44'), add=TRUE)
-text(0.0, 100, paste0('Balanced: ', sum(inBalanced == 0)), pos=4, srt=90, cex=0.7)
+text(1/6, 100, paste0('Balanced: ', sum(inBalanced == 0)), pos=4, srt=90, cex=0.7)
 text(0.5, 100, paste0('Asymmetric: ', sum(inCaterpillar == 0)), pos=4, srt=90, cex=0.7)
 
 
@@ -176,33 +197,38 @@ partition according to the amount of phylogenetic information it contains.
 The two tree pairs below both have a Robinson-Foulds distance of two,
 but the first pair differ with regard to 
 an uneven partition (`ABCDEF:GH`), so obtain a total difference
-of 3.46:
+of 22.54 - (3.46 + 5.04 + 5.53 + 5.04) = 3.46:
 
-```{r}
+```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
 tree1 <- ape::read.tree(text='(1, (2, (3, (4, (5, (6, (7, 8)))))));')
 tree2 <- ape::read.tree(text='(1, (2, (3, (4, (5, (7, (6, 8)))))));')
 tree3 <- ape::read.tree(text='(1, (2, (3, (5, (4, (6, (7, 8)))))));')
 
-TwoTreePlot()
-VisualizeMatching(RobinsonFouldsInfo, tree1, tree2,
-                  setPar = FALSE, Plot = TreeDistPlot, leaveRoom=FALSE,
-                  prune = 12)
+VisualizeMatching(RobinsonFouldsInfo, tree1, tree2, 
+                  Plot = TreeDistPlot, leaveRoom=FALSE, prune = 12)
 ```
 
 whereas the second pair differ in the resolution of a more even partition
 (`ABCD:EFGH`) and thus receive a distance score of 5.53:
 
-```{r}
-TwoTreePlot()
-VisualizeMatching(RobinsonFouldsInfo, tree1, tree3,
-                  setPar = FALSE, Plot = TreeDistPlot, leaveRoom=FALSE,
-                  prune = 8)
+```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
+VisualizeMatching(RobinsonFouldsInfo, tree1, tree3, 
+                  Plot = TreeDistPlot, leaveRoom=FALSE, prune = 8)
 ```
 
 # Generalized Robinson-Foulds distances
 
-The Robinson-Foulds distance also suffers from easy saturation: the maximum
+The Robinson-Foulds distance is readily saturated: the maximum
 distance can be obtained by moving a single taxon on a tree.
+
+```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
+tree1 <- ape::read.tree(text='(1, (2, (3, (4, (5, (6, (7, 8)))))));')
+tree2 <- ape::read.tree(text='(8, (1, (2, (3, (4, (5, (6, 7)))))));')
+
+TwoTreePlot()
+VisualizeMatching(RobinsonFoulds, tree1, tree2,
+                  setPar = FALSE, Plot = TreeDistPlot, leaveRoom=FALSE)
+```
 
 Generalized Robsinson-Foulds distances seek to address this issue. 
 This category of metrics aim to acknowledge semblances between similar-but-not-quite-identical pairs of partitions, which would contribute 
@@ -220,40 +246,26 @@ The tree distance is given by the score of the optimal matching.
 Let's consider two trees that differ in the position of a wildcard terminal,
 and in the resolution of a clade:
 
-```{r plot-function, echo=FALSE}
-library('ape')
-library('TreeDist')
-Plot <- function (tree, tree2=NULL, highlight = character(0),
-                  prune=if (is.null(tree2)) integer(0) else list(integer(0), integer(0))) {
-  ABCDEFGHIJK <- LETTERS[1:11]
-  if (is.null(tree2)) {
-    if(!all(tree$tip.label %in% 1:11)) {
-      tree$tip.label <- match(tree$tip.label, ABCDEFGHIJK)
-    }
-    
-    highlightTip <- match(highlight, ABCDEFGHIJK)
-    TreeDistPlot(tree, leaveRoom=FALSE, 
-                 bold = highlightTip,
-                 prune = prune,
-                 graft = which(tree$edge[, 2] == match(highlightTip, tree$tip.label)))
-  } else {
-    par(mfrow=c(1, 2), mar=rep(0.4, 4))
-    Plot(tree, highlight = highlight, prune = prune[[1]])
-    Plot(tree2, highlight = highlight, prune = prune[[2]])
-  }
-}
-```
-
-```{r}
+```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
 tree1 <- ape::read.tree(text='((A, B), ((C, (D, E)), (F, (G, (H, I)))));')
 tree2 <- read.tree(text='((A, B), ((C, D, (E, I)), (F, (G, H))));')
+TwoTreePlot()
 Plot(tree1, tree2, highlight = 'I', prune=list(8, integer(0)))
 ```
 
-The Robinson-Foulds distance will see only one partition in common between the two
-trees, AB:CDEFGHI:
+To emphasize, when the single taxon _I_ is removed, the trees 
+differ only in the resolution of a single node:
 
-```{r}
+```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
+TwoTreePlot()
+VisualizeMatching(RobinsonFoulds, drop.tip(tree1, 'I'), drop.tip(tree2, 'I'))
+```
+
+However, the Robinson-Foulds distance will see only one partition, `AB:CDEFGHI`,
+in common between the two trees:
+
+```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
+TwoTreePlot()
 VisualizeMatching(RobinsonFoulds, tree1, tree2)
 ```
 
@@ -262,31 +274,65 @@ trees exhibiting this resolution) of eleven;
 the Robinson-Foulds distance is the number of partitions present in one tree 
 but not the other.
 
-This feels unsatisfactory: if it wasn't for that single taxon _I_, the trees 
-differ only in the resolution of a single node:
-
-```{r}
-VisualizeMatching(RobinsonFouldsInfo, drop.tip(tree1, 'I'), drop.tip(tree2, 'I'))
-```
-
 The solution is to assign non-zero similarity scores to partitions that are
-similar, but not identical: here, each pair of partitions is scored according
-to its mutual phylogenetic information.
+similar, but not identical.
 
-```{r}
+We discussed above weighting each matching pair of partitions according to the
+amount of phylogenetic information represented by the partition.
+A non-matching pair of partitions can be scored according to the 
+mutual phylogenetic information, which is a function of the proportion of trees
+that are consistent with both partitions.  (A full explanation is provided
+in the discussion of [Generalized Robinson-Foulds distances](Generalised-RF.html).<!-- #TODO test link -->)
+
+```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
+TwoTreePlot()
 VisualizeMatching(MutualPhylogeneticInfo, tree1, tree2)
 ```
 
-Here, the partitions HI:ABCDEFG and EI:ABCDFGH have no information
-in common; they may as well not have been paired, and they contribute nothing
-to the tree similarity score.  The partition AB:CDEFGHI occurs in both trees,
+Here, the partition `AB:CDEFGHI` occurs in both trees,
 and, as it happens, makes the largest contribution to the tree similarity 
-score for this particular pair of trees. 
+score (3.70) for this particular pair of trees.
+This is the same contribution it would
+have made to the information-weighted Robinson-Foulds similarity.
 
+The partition `ABCDEF:GHI` in the left-hand tree is paired with the partition
+`ABCDEFI:GH` in the right-hand tree.  Had `ABCDEF:GHI` been available in the 
+right-hand tree, then this perfect match would have been assigned a similarity 
+of `SplitInformation(3, 6)` = 5.57.  The partial match is instead allocated
+a lower score of 2.12.  Non-arboreal matches -- pairs of clades that cannot
+exist on a single tree, such as `ABCDEFG:HI` - `ABCDFGH:EI` -- have zero
+mutual phylogenetic information.
+
+The matching depicted above is optimal, but is one of many.  The optimal 
+matching is calculated by considering the similarity score of each possible 
+pairing, and using the Munkres (Hungarian) algorithm to find the optimal set 
+of pairings.
+
+We can view the partitions in each tree, named according to the number of their
+associated node:
+
+```{r}
+DisplaySplits <- function (tree) 
+  as.list(as.character(IdentifySplits(Tree2Splits(tree))))
+DisplaySplits(tree1)
+```
+```{r}
+DisplaySplits(tree2)
+```
+
+We can then see the similarity scores for each pair of splits, along with the 
+optimal matching:
+
+```{r}
+attributes(MutualPhylogeneticInfo(tree1, tree2, reportMatching = TRUE))
+```
+
+`..` denotes that the fifth matching contributes zero to similarity score; an 
+alternative matching, still optimal, would leave these partitions unpaired.
 
 ## Alternative approaches
 
 Alternatives measures of partition similarity are implemented in other 
-[Generalized Robinson-Foulds distances](Generalised-RF.html).
+[Generalized Robinson-Foulds distances](Generalised-RF.html). <!-- #TODO test link -->
 
 # References
