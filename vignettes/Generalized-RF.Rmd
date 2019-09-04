@@ -14,4 +14,18 @@ vignette: >
 This vignette will describe the similarity measures employed by the 
 generalized Robinson-Foulds distances implemented in this package.
 
+# Mutual phylogenetic information
+
+## The problem with arboreal matchings
+
+# Mutual clustering information
+
+# Nye et al.
+
+##- 2013 Jaccard ^ n alternative (arboreal?)
+
+# Matching Split Distance
+
+##- Information theoretic alternative
+
 # References
