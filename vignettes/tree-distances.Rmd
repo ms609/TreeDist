@@ -130,4 +130,6 @@ between each tree in a `multiPhylo` object:
 phangorn::SPR.dist(tree1, oneSprAway)
 ```
 
+Note, however, that these functions only approximate the SPR distance.
+
 # References
