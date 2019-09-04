@@ -106,28 +106,89 @@
 
     
     
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">'ape'</span>)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">'TreeDist'</span>)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">tree1 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="dt">text=</span><span class="st">'((A, B), ((C, (D, E)), (F, (G, (H, I)))));'</span>)</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">tree2 &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="dt">text=</span><span class="st">'((A, B), ((C, D, (E, I)), (F, (G, H))));'</span>)</a></code></pre></div>
 <p>This vignette will describe the similarity measures employed by the generalized Robinson-Foulds distances implemented in this package.</p>
 <div id="mutual-phylogenetic-information" class="section level1">
 <h1 class="hasAnchor">
 <a href="#mutual-phylogenetic-information" class="anchor"></a>Mutual phylogenetic information</h1>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(MutualPhylogeneticInfo, tree1, tree2, </a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">                  <span class="dt">Plot=</span>TreeDistPlot, <span class="dt">leaveRoom=</span><span class="ot">FALSE</span>, <span class="dt">matchZeros =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<p><img src="Generalized-RF_files/figure-html/unnamed-chunk-1-1.png" width="576" style="display: block; margin: auto;"></p>
+<p>Pairs are scored according to their mutual phylogenetic information.</p>
+<p>The phylogenetic information content of a partition is defined as the negative logarithm of the proportion of all bifurcating <em>n</em>-tip trees that contain that partition. Thus a more even bipartition, which is consistent with a smaller proportion of trees, contains more phylogenetic information.</p>
+<p>The mutual phylogenetic information of two partitions is the information that they contain in common; that is, the sum of the information content of the two splits, minus the joint information (which is the negative logarithm of the proportion of trees that contain both partitions).</p>
+<p>Consider the splits <code>ABCDEF:GHI</code> and <code>ABCDEFI:GH</code>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">'TreeSearch'</span>)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">treesMatchingSplit &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">  <span class="dt">ABCDEF.GHI =</span> <span class="kw"><a href="https://rdrr.io/pkg/TreeSearch/man/TreesMatchingSplit.html">TreesMatchingSplit</a></span>(<span class="dv">6</span>, <span class="dv">3</span>),</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">  <span class="dt">ABCDEFI.GH =</span> <span class="kw"><a href="https://rdrr.io/pkg/TreeSearch/man/TreesMatchingSplit.html">TreesMatchingSplit</a></span>(<span class="dv">7</span>, <span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5">)</a>
+<a class="sourceLine" id="cb3-6" data-line-number="6">treesMatchingSplit</a></code></pre></div>
+<pre><code>## ABCDEF.GHI ABCDEFI.GH 
+##       2835      10395</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">proportionMatchingSplit &lt;-<span class="st"> </span>treesMatchingSplit <span class="op">/</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/TreeSearch/man/NRooted.html">NUnrooted</a></span>(<span class="dv">9</span>)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">proportionMatchingSplit</a></code></pre></div>
+<pre><code>## ABCDEF.GHI ABCDEFI.GH 
+## 0.02097902 0.07692308</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">splitInformation &lt;-<span class="st"> </span><span class="op">-</span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">log2</a></span>(proportionMatchingSplit)</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">splitInformation</a></code></pre></div>
+<pre><code>## ABCDEF.GHI ABCDEFI.GH 
+##   5.574909   3.700440</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">treesMatchingBoth &lt;-<span class="st"> </span><span class="kw"><a href="../reference/SplitMutualInformation.html">TreesConsistentWithTwoSplits</a></span>(<span class="dv">9</span>, <span class="dv">6</span>, <span class="dv">7</span>)</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">jointInformation &lt;-<span class="st"> </span><span class="op">-</span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">log2</a></span>(treesMatchingBoth <span class="op">/</span><span class="st"> </span><span class="kw"><a href="https://rdrr.io/pkg/TreeSearch/man/NRooted.html">NUnrooted</a></span>(<span class="dv">9</span>))</a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb9-4" data-line-number="4">mutualInformation &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(splitInformation) <span class="op">-</span><span class="st"> </span>jointInformation</a>
+<a class="sourceLine" id="cb9-5" data-line-number="5">mutualInformation</a></code></pre></div>
+<pre><code>## [1] 2.115477</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="co"># Or more concisely:</span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="kw"><a href="../reference/SplitMutualInformation.html">SplitMutualInformation</a></span>(<span class="dt">n =</span> <span class="dv">9</span>, <span class="dv">6</span>, <span class="dv">7</span>)</a></code></pre></div>
+<pre><code>## [1] 2.115477</code></pre>
+<!--#TODO: 1 != 1; need to normalize.-->
 <div id="the-problem-with-arboreal-matchings" class="section level2">
 <h2 class="hasAnchor">
 <a href="#the-problem-with-arboreal-matchings" class="anchor"></a>The problem with arboreal matchings</h2>
+<p>The Mutual Phylogenetic Information is an arboreal similarity score: that is to say, it assigns zero similarity to partitions that cannot both occur on a single tree. This leads to problematic behaviour in certain cases: for example, when the position of two distant taxa is swapped, similarities within a tree can be obscured. The two trees below are identical but for the position of <em>A</em> and <em>J</em>, yet receive zero similarity under arboreal metrics.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(MutualPhylogeneticInfo, <span class="dt">matchZeros =</span> <span class="ot">FALSE</span>, </a>
+<a class="sourceLine" id="cb13-2" data-line-number="2">  AtoJ &lt;-<span class="st"> </span>ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="dt">text=</span><span class="st">'(((((A, B), C), D), E), (F, (G, (H, (I, J)))));'</span>),</a>
+<a class="sourceLine" id="cb13-3" data-line-number="3">  AotJ &lt;-<span class="st"> </span>ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="dt">text=</span><span class="st">'(((((J, B), C), D), E), (F, (G, (H, (I, A)))));'</span>),</a>
+<a class="sourceLine" id="cb13-4" data-line-number="4">                  <span class="dt">Plot=</span>TreeDistPlot, <span class="dt">leaveRoom =</span> <span class="ot">FALSE</span>, <span class="dt">prune=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">5</span>, <span class="dv">18</span>))</a></code></pre></div>
+<p><img src="Generalized-RF_files/figure-html/unnamed-chunk-3-1.png" width="576" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div id="mutual-clustering-information" class="section level1">
 <h1 class="hasAnchor">
 <a href="#mutual-clustering-information" class="anchor"></a>Mutual clustering information</h1>
+<p>Clustering information provides a non-arboreal information-based tree distance metric.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(MutualClusteringInfo, tree1, tree2, </a>
+<a class="sourceLine" id="cb14-2" data-line-number="2">                  <span class="dt">Plot=</span>TreeDistPlot, <span class="dt">leaveRoom=</span><span class="ot">FALSE</span>, <span class="dt">matchZeros =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<p><img src="Generalized-RF_files/figure-html/unnamed-chunk-4-1.png" width="576" style="display: block; margin: auto;"></p>
+<p>As desired, this assigns a non-zero similarity to the case that received zero similarity under an arboreal matching:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw"><a href="../reference/TreeDistance.html">MutualClusteringInfo</a></span>(AtoJ, AotJ)</a></code></pre></div>
+<pre><code>## [1] 19.45242</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(MutualClusteringInfo, AtoJ, AotJ, <span class="dt">matchZeros =</span> <span class="ot">FALSE</span>, </a>
+<a class="sourceLine" id="cb17-2" data-line-number="2">                  <span class="dt">Plot=</span>TreeDistPlot, <span class="dt">leaveRoom =</span> <span class="ot">FALSE</span>, <span class="dt">prune=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">5</span>, <span class="dv">18</span>))</a></code></pre></div>
+<p><img src="Generalized-RF_files/figure-html/unnamed-chunk-6-1.png" width="576" style="display: block; margin: auto;"></p>
+<p>But 0 != 0… Need to normalize.</p>
 </div>
 <div id="nye-et-al-" class="section level1">
 <h1 class="hasAnchor">
-<a href="#nye-et-al-" class="anchor"></a>Nye et al.</h1>
-<p>##- 2013 Jaccard ^ n alternative (arboreal?)</p>
+<a href="#nye-et-al-" class="anchor"></a>Nye <em>et al.</em>
+</h1>
+<div id="jaccard-n-alternative-arboreal" class="section level2">
+<h2 class="hasAnchor">
+<a href="#jaccard-n-alternative-arboreal" class="anchor"></a>2013 Jaccard ^ n alternative (arboreal?)</h2>
+</div>
 </div>
 <div id="matching-split-distance" class="section level1">
 <h1 class="hasAnchor">
 <a href="#matching-split-distance" class="anchor"></a>Matching Split Distance</h1>
-<p>##- Information theoretic alternative</p>
+<div id="information-theoretic-alternative" class="section level2">
+<h2 class="hasAnchor">
+<a href="#information-theoretic-alternative" class="anchor"></a>Information theoretic alternative</h2>
+</div>
 </div>
 <div id="references" class="section level1">
 <h1 class="hasAnchor">
@@ -147,8 +208,16 @@
       </ul>
 </li>
       <li><a href="#mutual-clustering-information">Mutual clustering information</a></li>
-      <li><a href="#nye-et-al-">Nye et al.</a></li>
-      <li><a href="#matching-split-distance">Matching Split Distance</a></li>
+      <li>
+<a href="#nye-et-al-">Nye <em>et al.</em></a><ul class="nav nav-pills nav-stacked">
+<li><a href="#jaccard-n-alternative-arboreal">2013 Jaccard ^ n alternative (arboreal?)</a></li>
+      </ul>
+</li>
+      <li>
+<a href="#matching-split-distance">Matching Split Distance</a><ul class="nav nav-pills nav-stacked">
+<li><a href="#information-theoretic-alternative">Information theoretic alternative</a></li>
+      </ul>
+</li>
       <li><a href="#references">References</a></li>
       </ul>
 </div>
