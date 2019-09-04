@@ -11,63 +11,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Some of the shortcomings of the [Robinson-Foulds distance](Robinson-Foulds.html)
-are addressed by Generalized Robsinson-Foulds distances, a set of metrics which
-aim to acknowledge semblances between similar-but-not-quite-identical
-pairs of partitions.
-
-Generalized RF distances work by pairing each partition in one tree with a 
-similar partition in the other (or leaving it unpaired).  Each pairing is
-scored according to the similarity of the paired partitions.  The decision
-of which partition to pair with which is called a _matching_, and a matching
-is scored by summing the individual similarity scores of each pair.
-The tree distance is given by the score of the optimal matching.
-
-# Constructing a matching
-
-Let's consider two trees that differ in the position of a wildcard terminal,
-and in the resolution of a clade:
-
-```{r plot-function, echo=FALSE}
-library('TreeDist')
-Plot <- function (tree, tree2=NULL, highlight = character(0),
-                  prune=if (is.null(tree2)) integer(0) else list(integer(0), integer(0))) {
-  ABCDEFGHIJK <- LETTERS[1:11]
-  if (is.null(tree2)) {
-    if(!all(tree$tip.label %in% 1:11)) {
-      tree$tip.label <- match(tree$tip.label, ABCDEFGHIJK)
-    }
-    
-    highlightTip <- match(highlight, ABCDEFGHIJK)
-    TreeDistPlot(tree, leaveRoom=FALSE, 
-                 bold = highlightTip,
-                 prune = prune,
-                 graft = which(tree$edge[, 2] == match(highlightTip, tree$tip.label)))
-  } else {
-    par(mfrow=c(1, 2), mar=rep(0.4, 4))
-    Plot(tree, highlight = highlight, prune = prune[[1]])
-    Plot(tree2, highlight = highlight, prune = prune[[2]])
-  }
-}
-```
-
-```{r}
-tree1 <- ape::read.tree(text='((A, B), (((C, (D, E)), (F, (G, (H, I))))));')
-tree2 <- ape::read.tree(text='((A, B), (((C, D, (E, I)), (F, (G, H)))));')
-Plot(tree1, tree2, highlight = 'I', prune=list(8, integer(0)))
-```
-
-The Robinson-Foulds distance will see only one partition in common between the two
-trees, AB:CDEFGHI:
-
-```{r}
-VisualizeMatching(RobinsonFoulds, tree1, tree2)
-```
-
-This results in a distance score of nine, out of a maximum possible (for
-trees exhibiting this resolutioN) of eleven;
-the Robinson-Foulds distance is the number of partitions present in one tree 
-but not the other.
-
+This vignette will describe the similarity measures employed by the 
+generalized Robinson-Foulds distances implemented in this package.
 
 # References
