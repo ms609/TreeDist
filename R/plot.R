@@ -7,6 +7,8 @@
 #' @param bold Integer specifying which tips to print in bold
 #' @param leaveRoom Logical specifying whether to leave space to print
 #' tree distances beneath the plotted tree
+#' @param edge.color Additional parameter to `plot.phylo`; will be overridden
+#' by `prune` and `graft` as requested.
 #' @param prune,graft Integer vectors specifying which edges to highlight as
 #' pruned and grafted.
 #' @param \dots Additional parameters to `plot.phylo`
@@ -16,11 +18,12 @@
 #' @keywords internal
 #' @export
 TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = TRUE,
-                     prune=integer(0), graft=integer(0), ...) {
+                     prune=integer(0), graft=integer(0), edge.color = 'black',
+                     ...) {
   
   if (is.null(tr$edge.length)) tr$edge.length <- rep(1, dim(tr$edge)[1])
   if (is.null(tr$edge.width)) tr$edge.width <- rep(1, dim(tr$edge)[1])
-  edge.color <- rep('black', dim(tr$edge)[1])
+  if (length(edge.color) == 1) edge.color <- rep(edge.color, dim(tr$edge)[1])
   nTip <- length(tr$tip.label)
 
   if (length(prune) > 0 || length(graft) > 0) {
