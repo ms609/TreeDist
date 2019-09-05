@@ -23,12 +23,16 @@ generalized Robinson-Foulds distances implemented in this package.
 
 # Mutual phylogenetic information
 
+Under the mutual phylognetic information tree distance measure [@SmithDist], 
+pairs of partitions are assigned a similarity score that corresponds to their
+mutual phylogenetic information content.
+
 ```{r, fig.width=6 , fig.align='center'}
+MutualPhylogeneticInfo(tree1, tree2)
 VisualizeMatching(MutualPhylogeneticInfo, tree1, tree2, 
                   Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
 ```
 
-Pairs are scored according to their mutual phylogenetic information.
 
 The phylogenetic information content of a partition is defined as
 the negative logarithm of the proportion of all bifurcating _n_-tip trees that
@@ -87,7 +91,7 @@ VisualizeMatching(MutualPhylogeneticInfo, matchZeros = FALSE,
 
 # Mutual clustering information
 
-Clustering information provides a non-arboreal information-based
+Clustering information [@SmithDist] provides a non-arboreal information-based
 tree distance metric.
 As desired, this assigns a non-zero similarity to the case that received zero
 similarity under an arboreal matching:
@@ -225,6 +229,32 @@ to calculate.
 
 ## Information theoretic alternative
 
+An information-theoretic take on the Matching Split Distance [@SmithDist] 
+is provided by the function
 
+```{r}
+VariationOfMatchingSplitInfo(tree1, tree2)
+VisualizeMatching(VariationOfMatchingSplitInfo, tree1, tree2,
+                  Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
+```
+
+This approach scores each pair of bipartitions according to the information 
+content of the most information-rich bipartition that is consistent with both
+partitions in the pair. 
+
+The most information-rich bipartition consistent with 
+
+`ABCDEF  : GHIJ`
+`ABCDE IJ:FGH  `
+
+is `ABCDE : GH`, which contains 
+```{r}
+SplitInformation(5, 2)
+```
+bits of information; this quantity represents the _similarity_ score for this
+particular pairing.
+
+This measure can therefore be normalized against the phylogenetic information
+content of the two input trees.
 
 # References
