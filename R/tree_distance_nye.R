@@ -131,13 +131,13 @@ JaccardRobinsonFoulds <- function (tree1, tree2, k = 1L, arboreal = TRUE,
                                    normalize = FALSE, reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(JaccardSplitSimilarity, tree1, tree2, 
                                         k = k, arboreal = arboreal, 
-                                        reportMatching = reportMatching)
+                                        reportMatching = reportMatching) * 2L
   if (!similarity) unnormalized <- 
       outer(NPartitions(tree1), NPartitions(tree2), '+')[, , drop=TRUE] -
       unnormalized
 
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                InfoInTree = NPartitions, Combine = pmax)
+                InfoInTree = NPartitions, Combine = '+')
 }
 
 #' @describeIn JaccardRobinsonFoulds Calculate tree similarity from splits 
