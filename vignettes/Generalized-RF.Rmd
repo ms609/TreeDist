@@ -89,12 +89,6 @@ VisualizeMatching(MutualPhylogeneticInfo, matchZeros = FALSE,
 
 Clustering information provides a non-arboreal information-based
 tree distance metric.
-
-```{r, fig.width=6 , fig.align='center'}
-VisualizeMatching(MutualClusteringInfo, tree1, tree2, 
-                  Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
-```
-
 As desired, this assigns a non-zero similarity to the case that received zero
 similarity under an arboreal matching:
 
@@ -107,12 +101,77 @@ VisualizeMatching(MutualClusteringInfo, AtoJ, AotJ, matchZeros = FALSE,
                   Plot=TreeDistPlot, leaveRoom = FALSE, prune=c(5, 18))
 ```
 
-But 0 != 0...
-Need to normalize.
+Here, each partition is viewed as clustering the terminals into two groups.
+Consider a pair of partitions, Y~1~ and Y~2~. 
+If the partitions are identical, then if an observer knows which group a
+terminal is in Y~1~, then this gives all the information they need to know
+which group it is in in Y~2~.  As the partitions become more different, the
+disposition of Y~1~ gives less information about the configuration of Y~2~;
+the probability that a guess based on Y~1~ will be correct decreases, and 
+the mutual information decreases accordingly.
+
+The mutual clustering information has the notable property that no pair
+of splits will be allocated zero similarity.  As such, even a dissimilar 
+matching (such as `HI:ABCDEFG` => `EI:ABCDFGH` below) 
+is preferred to leaving a partition unpaired.
+
+```{r}
+VisualizeMatching(MutualClusteringInfo, tree1, tree2, 
+                  Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
+```
 
 # Nye _et al._
 
-## 2013 Jaccard ^ n alternative (arboreal?)
+```{r}
+NyeTreeSimilarity(tree1, tree2, normalize=FALSE)
+```
+The Nye _et al_. [-@Nye2006] tree similarity metric scores pairs by
+considering the elements held in common between subsets of each partition.
+
+Consider a pair of partitions `ABCDEF:GHIJ` and `ABCDEIJ:FGH`.
+These can be aligned thus:
+
+`ABCDEF  : GHIJ`
+`ABCDE IJ:FGH  `
+
+The first pair of subsets, `ABCDEF` and `ABCDEIJ`, have five elements in common 
+(`ABCDE`), and together encompass eight elements (`ABCDEFIJ`).  Their 
+_subset score_ is thus 5/8.
+
+The second pair of subsets, `GHIJ` and `FGH`, have two elements (`GH`) in common,
+of the five total (`FGHIJ`), and hence receive a subset score of 2/5.
+
+This split alignment then receives an _alignment score_ corresponding to the 
+lower of the two subset scores, 2/5.
+
+We must now consider the other alignment of this pair of partitions,
+
+
+`ABCDEF  :     GHIJ`
+`     FGH:ABCDE  IJ`
+
+This yields subset scores of 1/8 and 2/9, and thus has an alignment score of 1/8.
+This alignment gives a lower score than the other, so is disregarded.  The 
+pair of partitions is allocated a similarity score corresponding to the 
+better alignment: 2/5.
+
+As such, partitions that match exactly will receive a similarty score of 1,
+in a manner analagous to the Robinson-Foulds distance.  (This is despite the
+fact that some partitions are more likely to match than others.)
+And it is not possible for a pair of partitions to receive a zero similarity 
+score.
+
+```{r}
+VisualizeMatching(NyeTreeSimilarity, tree1, tree2, 
+                  Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
+```
+
+B&ouml;cker _et al_. [-@Bocker2013] propose expressly prohibiting contradictory
+pairings, i.e. pairs of partitions that could never occur in the same tree.
+
+They also suggest raising the partition similarity score defined above to an 
+arbitrary exponent; as the exponent grows towards infinity, the metric
+converges to the Robinson-Foulds metric.
 
 # Matching Split Distance
 
