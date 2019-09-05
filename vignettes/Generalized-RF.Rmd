@@ -186,22 +186,21 @@ similarity score defined above to an arbitrary exponent.  The similarity score
 is also doubled.  By this means, the metric can be made to converge to the
 Robinson-Foulds metric as the exponent grows towards infinity.
 
-```{r, fig.width=6 , fig.align='center'}
-x <- seq(1, 16, by=0.1)
+```{r, fig.width=6 , fig.align='center', echo=FALSE}
+x <- seq(1, 20, by=0.1)
 plot(0, xlim=range(x), ylim=c(3, 10),
      xlab = 'k', ylab = 'Jaccard-Robinson-Foulds distance', pch = 3, type='n')
-lines(x, vapply(x, JaccardRobinsonFoulds, tree1=tree1, tree2=tree2, arboreal=FALSE, 0),
-      col=cbPalette8[5])
-lines(x, vapply(x, JaccardRobinsonFoulds, tree1=tree1, tree2=tree2, 0),
+abline(h = rf, lty = 'dashed', col=cbPalette8[6])
+abline(h = nts, lty = 'dotted', col=cbPalette8[8])
+lines(x = x, y = vapply(x, JaccardRobinsonFoulds, tree1=tree1, tree2=tree2, 
+                        arboreal=FALSE, 0), col=cbPalette8[5])
+lines(x = x, y = vapply(x, JaccardRobinsonFoulds, tree1=tree1, tree2=tree2, 0),
       col=cbPalette8[4])
 rf <- RobinsonFoulds(tree1, tree2)
 nts <- NyeTreeSimilarity(tree1, tree2, similarity = FALSE)
-abline(h = rf, lty = 'dashed', col=cbPalette8[6])
-abline(h = nts, lty = 'dotted', col=cbPalette8[8])
 legend('right', c('Robinson-Foulds', 'Arboreal', 'Non-arboreal', 'Nye et al.'),
        lty = c('dashed', 'solid', 'solid', 'dotted'), 
        col = cbPalette8[c(6, 4, 5, 8)], bty = 'n')
-
 ```
 
 # Matching Split Distance
