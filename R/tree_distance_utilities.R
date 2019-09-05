@@ -34,9 +34,9 @@ CalculateTreeDistance <- function (Func, tree1, tree2, reportMatching, ...) {
     } else {
       splits1 <- lapply(tree1, Tree2Splits)
       splits2 <- lapply(tree2, Tree2Splits)
-      matrix(mapply(Func, rep(splits2, each=length(splits1)), splits1), 
+      matrix(mapply(Func, rep(splits2, each=length(splits1)), splits1, ...), 
              length(splits1), length(splits2),
-             dimnames = list(names(tree1), names(tree2)), ...)
+             dimnames = list(names(tree1), names(tree2)))
     }
   }
 }
