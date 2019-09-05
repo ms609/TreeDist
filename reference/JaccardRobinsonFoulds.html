@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Matching Split Distance — MatchingSplitDistance • TreeDist</title>
+<title>Jaccard-Robinson-Foulds metric — JaccardRobinsonFoulds • TreeDist</title>
 
 
 <!-- jquery -->
@@ -35,9 +35,8 @@
 
 
 
-<meta property="og:title" content="Matching Split Distance — MatchingSplitDistance" />
-<meta property="og:description" content="Implements the Matching Split Distance for unrooted binary phylogenetic
-trees of Bogdanowicz and Giaro (2012)." />
+<meta property="og:title" content="Jaccard-Robinson-Foulds metric — JaccardRobinsonFoulds" />
+<meta property="og:description" content="Implements the Jaccard-Robinson-Foulds metric of Böcker et al. (2013)." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -133,20 +132,19 @@ trees of Bogdanowicz and Giaro (2012)." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Matching Split Distance</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance_msd.R'><code>R/tree_distance_msd.R</code></a></small>
-    <div class="hidden name"><code>MatchingSplitDistance.Rd</code></div>
+    <h1>Jaccard-Robinson-Foulds metric</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance_nye.R'><code>R/tree_distance_nye.R</code></a></small>
+    <div class="hidden name"><code>JaccardRobinsonFoulds.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Implements the Matching Split Distance for unrooted binary phylogenetic
-trees of Bogdanowicz and Giaro (2012).</p>
+    <p>Implements the Jaccard-Robinson-Foulds metric of Böcker <em>et al</em>. (2013).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>MatchingSplitDistance</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+    <pre class="usage"><span class='fu'>JaccardRobinsonFoulds</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>1L</span>, <span class='kw'>arboreal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>similarity</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>MatchingSplitDistanceSplits</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+<span class='fu'>JaccardSplitSimilarity</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>1L</span>, <span class='kw'>arboreal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -161,6 +159,24 @@ or lists of such trees to undergo pairwise comparison.</p></td>
       <th>tree2</th>
       <td><p>Trees of class <code>phylo</code>, with tips labelled identically,
 or lists of such trees to undergo pairwise comparison.</p></td>
+    </tr>
+    <tr>
+      <th>k</th>
+      <td><p>An arbitrary exponent to which to raise the Jaccard index.
+Integer values greater than one are anticipated by Böcker <em>et al</em>.
+The Nye <em>et al</em>. metric uses <code>k = 1</code>.
+As k → ∞, the metric converges to the Robinson-Foulds metric.</p></td>
+    </tr>
+    <tr>
+      <th>arboreal</th>
+      <td><p>Logical specifying whether to enforce arboreal matches, by
+assigning zero similarity to contradictory pairs of partitions on an
+<em>ad hoc</em> basis.</p></td>
+    </tr>
+    <tr>
+      <th>similarity</th>
+      <td><p>Logical specifying whether to report the result as a tree
+similarity, rather than a difference.</p></td>
     </tr>
     <tr>
       <th>normalize</th>
@@ -194,46 +210,86 @@ each terminal is identified as a member of the ingroup (<code>TRUE</code>) or ou
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>In short, this finds the optimal matching that pairs each branch from
+one tree with a branch in the second, where matchings are scored according to
+the size of the largest bipartition that is consistent with both of them,
+normalized against the Jaccard index, and raised to an arbitrary exponent.</p>
+<p>By default, arboreal matchings are enforced.</p>
+<p>Note that the settings <code>k = 1, arboreal = FALSE</code> give the similarity metric
+of Nye <em>et al</em>. (2006); a slightly faster implementation of this metric is
+available as <code>[NyeTreeSimilarity]</code>.</p>
+<p>The examples section details how to visualize matchings with non-default
+parameter values.</p>
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     
 <ul>
-<li><p><code>MatchingSplitDistanceSplits</code>: Calculate Matching Split Distance from splits instead of trees.</p></li>
+<li><p><code>JaccardSplitSimilarity</code>: Calculate tree similarity from splits
+instead of trees.</p></li>
 </ul>
     <h2 class="hasAnchor" id="normalization"><a class="anchor" href="#normalization"></a>Normalization</h2>
 
     
 
 
-<p>A normalization value or function must be provided in order to return a
-normalized value.  If you are aware of a generalised formula, please
-let me know by
-<a href='https://github.com/ms609/TreeDist/issues/new'>creating a GitHub issue</a>
-so that it can be implemented.</p>
+<p>If <code>normalize = TRUE</code>, then results will be rescaled from zero to one by
+dividing by the maximum possible value for trees of the given topologies,
+which is equal to the number of partitions in both trees.
+You may wish to normalize instead against the maximum number of partitions
+present in a pair of trees with <em>n</em> terminals, by specifying
+<code>normalize = n - 3</code>.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Bogdanowicz D, Giaro K (2012).
-&#8220;Matching split distance for unrooted binary phylogenetic trees.&#8221;
-<em>IEEE/ACM Transactions on Computational Biology and Bioinformatics</em>, <b>9</b>(1), 150--160.
-doi: <a href='https://doi.org/10.1109/TCBB.2011.48'>10.1109/TCBB.2011.48</a>
-.</p>
+    
+<ul>
+<li><p>Nye TMW, Liò P, Gilks WR (2006).
+&#8220;A novel algorithm and web-based tool for comparing two alternative phylogenetic trees.&#8221;
+<em>Bioinformatics</em>, <b>22</b>(1), 117--119.
+doi: <a href='https://doi.org/10.1093/bioinformatics/bti720'>10.1093/bioinformatics/bti720</a>
+.</p></li>
+<li><p>Böcker S, Canzar S, Klau GW (2013).
+&#8220;The generalized Robinson-Foulds metric.&#8221;
+In Darling A, Stoye J (eds.), <em>Algorithms in Bioinformatics. WABI 2013. Lecture Notes in Computer Science, vol 8126</em>, 156--169.
+Springer, Berlin, Heidelberg.</p></li>
+</ul>
+
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other tree distances: <code><a href='JaccardRobinsonFoulds.html'>JaccardRobinsonFoulds</a></code>,
-  <code><a href='KendallColijn.html'>KendallColijn</a></code>,
+    <div class='dont-index'><p>Other tree distances: <code><a href='KendallColijn.html'>KendallColijn</a></code>,
+  <code><a href='MatchingSplitDistance.html'>MatchingSplitDistance</a></code>,
   <code><a href='NyeTreeSimilarity.html'>NyeTreeSimilarity</a></code>,
   <code><a href='RobinsonFouldsInfo.html'>RobinsonFouldsInfo</a></code>,
   <code><a href='TreeDistance.html'>TreeDistance</a></code></p></div>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>{
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>2</span>)
+<span class='no'>tree1</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ape</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span>(<span class='fl'>10</span>)
+<span class='no'>tree2</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ape</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span>(<span class='fl'>10</span>)
+<span class='fu'>JaccardRobinsonFoulds</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>arboreal</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'>JaccardRobinsonFoulds</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>arboreal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+
+<span class='no'>JRF2</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span> (<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='no'>...</span>)
+  <span class='fu'>JaccardRobinsonFoulds</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>arboreal</span><span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)
+
+<span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span>(<span class='no'>JRF2</span>, <span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>matchZeros</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+
+}</div><div class='output co'>#&gt; <span class='warning'>Warning: conversion failure on '−' in 'mbcsToSbcs': dot substituted for &lt;e2&gt;</span></div><div class='output co'>#&gt; <span class='warning'>Warning: conversion failure on '−' in 'mbcsToSbcs': dot substituted for &lt;88&gt;</span></div><div class='output co'>#&gt; <span class='warning'>Warning: conversion failure on '−' in 'mbcsToSbcs': dot substituted for &lt;92&gt;</span></div><div class='output co'>#&gt; <span class='warning'>Warning: conversion failure on '−' in 'mbcsToSbcs': dot substituted for &lt;e2&gt;</span></div><div class='output co'>#&gt; <span class='warning'>Warning: conversion failure on '−' in 'mbcsToSbcs': dot substituted for &lt;88&gt;</span></div><div class='output co'>#&gt; <span class='warning'>Warning: conversion failure on '−' in 'mbcsToSbcs': dot substituted for &lt;92&gt;</span></div><div class='img'><img src='JaccardRobinsonFoulds-1.png' alt='' width='700' height='433' /></div><div class='input'>
+
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#details">Details</a></li>
       <li><a href="#functions">Functions</a></li>
       <li><a href="#normalization">Normalization</a></li>
       <li><a href="#references">References</a></li>
       <li><a href="#see-also">See also</a></li>
+      <li><a href="#examples">Examples</a></li>
     </ul>
 
     <h2>Author</h2>

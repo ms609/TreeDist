@@ -40,7 +40,9 @@
 In short, this finds the optimal matching that pairs each branch from
 one tree with a branch in the second, where matchings are scored according to
 the size of the largest bipartition that is consistent with both of them,
-normalized against the Jaccard index." />
+normalized against the Jaccard index.  This is equivalent to (but
+slightly faster than) JaccardRobinsonFoulds
+(tree1, tree2, k = 1, arboreal = FALSE)." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -146,10 +148,12 @@ normalized against the Jaccard index." />
 In short, this finds the optimal matching that pairs each branch from
 one tree with a branch in the second, where matchings are scored according to
 the size of the largest bipartition that is consistent with both of them,
-normalized against the Jaccard index.</p>
+normalized against the Jaccard index.  This is equivalent to (but
+slightly faster than) <code><a href='JaccardRobinsonFoulds.html'>JaccardRobinsonFoulds</a>
+(tree1, tree2, k = 1, arboreal = FALSE)</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>NyeTreeSimilarity</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+    <pre class="usage"><span class='fu'>NyeTreeSimilarity</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>similarity</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
 <span class='fu'>NyeSplitSimilarity</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>, <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
@@ -166,6 +170,11 @@ or lists of such trees to undergo pairwise comparison.</p></td>
       <th>tree2</th>
       <td><p>Trees of class <code>phylo</code>, with tips labelled identically,
 or lists of such trees to undergo pairwise comparison.</p></td>
+    </tr>
+    <tr>
+      <th>similarity</th>
+      <td><p>Logical specifying whether to report the result as a tree
+similarity, rather than a difference.</p></td>
     </tr>
     <tr>
       <th>normalize</th>
@@ -199,6 +208,12 @@ each terminal is identified as a member of the ingroup (<code>TRUE</code>) or ou
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The measure is defined as a similarity score.  If <code>similarity = FALSE</code>, the
+similarity score will be converted into a distance by doubling it and
+subtracting it from the number of partitions present in both trees.
+This ensures consistency with <code>JaccardRobinsonFoulds</code>.</p>
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     
@@ -211,11 +226,16 @@ instead of trees.</p></li>
     
 
 
-<p>If <code>normalize = TRUE</code>, then results will be rescaled from zero to one by
-dividing by the maximum possible value for trees of the given topologies,
-which is four less than the total number of nodes in both trees.
-You may wish to normalize instead against the maximum number of nodes present
-in a pair of trees with <em>n</em> terminals, by specifying <code>normalize = &lt;some number&gt;</code>.</p>
+<p>If <code>normalize = TRUE</code> and <code>similarity = TRUE</code>, then results will be rescaled
+from zero to one by dividing by the maximum value possible for any pair
+of trees with  <em>n</em> terminals, $n - 3$.
+You may wish to normalize instead against the number of partitions present
+in the smaller tree, which represents the maximum value possible for a pair
+of trees with the specified topologies (<code>normalize = pmin.int</code>), or the
+number of partitions in the most resolved tree (<code>normalize = pmax.int</code>).</p>
+<p>If <code>normalize = TRUE</code> and <code>similarity = FALSE</code>, then results will be rescaled
+from zero to one by dividing by the total number of partitions in the pair
+of trees being considered.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Nye TMW, Liò P, Gilks WR (2006).
@@ -225,7 +245,8 @@ doi: <a href='https://doi.org/10.1093/bioinformatics/bti720'>10.1093/bioinformat
 .</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other tree distances: <code><a href='KendallColijn.html'>KendallColijn</a></code>,
+    <div class='dont-index'><p>Other tree distances: <code><a href='JaccardRobinsonFoulds.html'>JaccardRobinsonFoulds</a></code>,
+  <code><a href='KendallColijn.html'>KendallColijn</a></code>,
   <code><a href='MatchingSplitDistance.html'>MatchingSplitDistance</a></code>,
   <code><a href='RobinsonFouldsInfo.html'>RobinsonFouldsInfo</a></code>,
   <code><a href='TreeDistance.html'>TreeDistance</a></code></p></div>
@@ -235,6 +256,7 @@ doi: <a href='https://doi.org/10.1093/bioinformatics/bti720'>10.1093/bioinformat
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#details">Details</a></li>
       <li><a href="#functions">Functions</a></li>
       <li><a href="#normalization">Normalization</a></li>
       <li><a href="#references">References</a></li>
