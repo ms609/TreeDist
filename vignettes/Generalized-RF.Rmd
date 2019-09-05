@@ -20,8 +20,12 @@ AtoJ <-  read.tree(text='(((((A, B), C), D), E), (F, (G, (H, (I, J)))));')
 AotJ <-  read.tree(text='(((((J, B), C), D), E), (F, (G, (H, (I, A)))));')
 ```
 
-This vignette will describe the similarity measures employed by the 
+This document outlines the similarity measures employed by the 
 generalized Robinson-Foulds distances implemented in this package.
+
+Before you read it, you may wish to refresh your memory of the 
+[Robinson-Foulds distance](Robinson-Foulds.html), or how to
+[use the TreeDist package](Using-TreeDist.html).
 
 # Mutual phylogenetic information
 
@@ -215,7 +219,8 @@ they term the Matching Split Distance.
 
 ```{r, fig.width=6 , fig.align='center'}
 MatchingSplitDistance(tree1, tree2)
-VisualizeMatching(MatchingSplitDistance, tree1, tree2)
+VisualizeMatching(MatchingSplitDistance, tree1, tree2,
+                  Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
 ```
 
 Note that the visualization shows the difference, rather than the similarity,
