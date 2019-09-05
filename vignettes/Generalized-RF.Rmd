@@ -168,13 +168,63 @@ VisualizeMatching(NyeTreeSimilarity, tree1, tree2,
 
 B&ouml;cker _et al_. [-@Bocker2013] propose expressly prohibiting contradictory
 pairings, i.e. pairs of partitions that could never occur in the same tree.
+Such an 'arboreal' matching would preclude the pairing of `ABCFGHI:DE` with
+`ABCDFGH:EI`:
 
-They also suggest raising the partition similarity score defined above to an 
+```{r}
+JaccardRobinsonFoulds(tree1, tree2, similarity = TRUE)
+
+VisualizeMatching(JaccardRobinsonFoulds, tree1, tree2,
+                  Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
+```
+
+B&ouml;cker _et al_. [-@Bocker2013] also suggest raising the partition 
+similarity score defined above to an 
 arbitrary exponent; as the exponent grows towards infinity, the metric
 converges to the Robinson-Foulds metric.
 
+```{r}
+JaccardRobinsonFoulds(tree1, tree2, k = 2)
+JaccardRobinsonFoulds(tree1, tree2, k = 5)
+JaccardRobinsonFoulds(tree1, tree2, k = Inf)
+RobinsonFoulds(tree1, tree2)
+```
+
 # Matching Split Distance
 
+Bogdanowicz & Giaro [@-Bogdanowicz2012] propose an alternative distance, which
+they term the Matching Split Distance.
+
+```{r}
+MatchingSplitDistance(tree1, tree2)
+VisualizeMatching(MatchingSplitDistance, tree1, tree2)
+```
+
+Note that the visualization shows the difference, rather than the similarity,
+between splits.
+
+Similar to the Nye _et al_. similarity metric, this method compares the subsets
+implied by a pair of partitions.  Here, the relevanat quantity is the number
+of elements that must be moved from one subset to another in order to make
+the two partitions identical.  With the pair of partitions
+
+`ABCDEF  : GHIJ`
+`ABCDE IJ:FGH  `
+
+three elements (_F_, _I_ and _J_) must be moved before the partitions are 
+identical; as such, the pair of partitions are assigned a difference score 
+(not a similarity score) of three.
+
+```{r}
+MatchingSplitDistance(read.tree(text='((a, b, c, d, e, f), (g, h, i, j));'),
+                      read.tree(text='((a, b, c, d, e, i, j), (g, h, f));'))
+```
+
+This distance is difficult to normalize, as its maximum value is difficult
+to calculate.
+
 ## Information theoretic alternative
+
+
 
 # References
