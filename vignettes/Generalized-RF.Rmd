@@ -11,11 +11,13 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r init, message=FALSE, warning=FALSE}
+```{r init, message=FALSE, warning=FALSE, echo = FALSE}
 library('ape')
 library('TreeDist')
 tree1 <- read.tree(text='((A, B), ((C, (D, E)), (F, (G, (H, I)))));')
 tree2 <- read.tree(text='((A, B), ((C, D, (E, I)), (F, (G, H))));')
+AtoJ <-  read.tree(text='(((((A, B), C), D), E), (F, (G, (H, (I, J)))));')
+AotJ <-  read.tree(text='(((((J, B), C), D), E), (F, (G, (H, (I, A)))));')
 ```
 
 This vignette will describe the similarity measures employed by the 
@@ -28,9 +30,9 @@ pairs of partitions are assigned a similarity score that corresponds to their
 mutual phylogenetic information content.
 
 ```{r, fig.width=6 , fig.align='center'}
-MutualPhylogeneticInfo(tree1, tree2)
 VisualizeMatching(MutualPhylogeneticInfo, tree1, tree2, 
                   Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
+MutualPhylogeneticInfo(tree1, tree2)
 ```
 
 
@@ -75,17 +77,17 @@ SplitMutualInformation(n = 9, 6, 7)
 
 ## The problem with arboreal matchings
 
-The Mutual Phylogenetic Information is an arboreal similarity score: that is to
+The mutual phylogenetic information is an arboreal similarity score: that is to
 say, it assigns zero similarity to partitions that cannot both occur on a 
-single tree.  This leads to problematic behaviour in certain cases: for example,
+single tree.  
+This leads to problematic behaviour in certain cases: for example,
 when the position of two distant taxa is swapped, similarities within a tree can
-be obscured.  The two trees below are identical but for the position of _A_ and
+be obscured.  
+The two trees below are identical but for the position of _A_ and
 _J_, yet receive zero similarity under arboreal metrics.
 
 ```{r, fig.width=6 , fig.align='center'}
-VisualizeMatching(MutualPhylogeneticInfo, matchZeros = FALSE, 
-  AtoJ <- ape::read.tree(text='(((((A, B), C), D), E), (F, (G, (H, (I, J)))));'),
-  AotJ <- ape::read.tree(text='(((((J, B), C), D), E), (F, (G, (H, (I, A)))));'),
+VisualizeMatching(MutualPhylogeneticInfo, matchZeros = FALSE, AtoJ, AotJ,
                   Plot=TreeDistPlot, leaveRoom = FALSE, prune=c(5, 18))
 ```
 
@@ -96,13 +98,10 @@ tree distance metric.
 As desired, this assigns a non-zero similarity to the case that received zero
 similarity under an arboreal matching:
 
-```{r}
-MutualClusteringInfo(AtoJ, AotJ)
-```
-
 ```{r, fig.width=6 , fig.align='center'}
 VisualizeMatching(MutualClusteringInfo, AtoJ, AotJ, matchZeros = FALSE, 
                   Plot=TreeDistPlot, leaveRoom = FALSE, prune=c(5, 18))
+MutualClusteringInfo(AtoJ, AotJ)
 ```
 
 Here, each partition is viewed as clustering the terminals into two groups.
@@ -119,16 +118,13 @@ of splits will be allocated zero similarity.  As such, even a dissimilar
 matching (such as `HI:ABCDEFG` => `EI:ABCDFGH` below) 
 is preferred to leaving a partition unpaired.
 
-```{r}
+```{r, fig.width=6 , fig.align='center'}
 VisualizeMatching(MutualClusteringInfo, tree1, tree2, 
                   Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
 ```
 
-# Nye _et al._
+# Nye _et al._ tree similarity metric
 
-```{r}
-NyeTreeSimilarity(tree1, tree2, normalize=FALSE)
-```
 The Nye _et al_. [-@Nye2006] tree similarity metric scores pairs by
 considering the elements held in common between subsets of each partition.
 
@@ -165,17 +161,20 @@ fact that some partitions are more likely to match than others.)
 And it is not possible for a pair of partitions to receive a zero similarity 
 score.
 
-```{r}
+```{r, fig.width=6 , fig.align='center'}
 VisualizeMatching(NyeTreeSimilarity, tree1, tree2, 
                   Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
+NyeTreeSimilarity(tree1, tree2, normalize=FALSE)
 ```
+
+## Jaccard-Robinson-Foulds metric
 
 B&ouml;cker _et al_. [-@Bocker2013] propose expressly prohibiting contradictory
 pairings, i.e. pairs of partitions that could never occur in the same tree.
 Such an 'arboreal' matching would preclude the pairing of `ABCFGHI:DE` with
 `ABCDFGH:EI`:
 
-```{r}
+```{r, fig.width=6 , fig.align='center'}
 JaccardRobinsonFoulds(tree1, tree2, similarity = TRUE)
 
 VisualizeMatching(JaccardRobinsonFoulds, tree1, tree2,
@@ -183,15 +182,26 @@ VisualizeMatching(JaccardRobinsonFoulds, tree1, tree2,
 ```
 
 B&ouml;cker _et al_. [-@Bocker2013] also suggest raising the partition 
-similarity score defined above to an 
-arbitrary exponent; as the exponent grows towards infinity, the metric
-converges to the Robinson-Foulds metric.
+similarity score defined above to an arbitrary exponent.  The similarity score
+is also doubled.  By this means, the metric can be made to converge to the
+Robinson-Foulds metric as the exponent grows towards infinity.
 
-```{r}
-JaccardRobinsonFoulds(tree1, tree2, k = 2)
-JaccardRobinsonFoulds(tree1, tree2, k = 5)
-JaccardRobinsonFoulds(tree1, tree2, k = Inf)
-RobinsonFoulds(tree1, tree2)
+```{r, fig.width=6 , fig.align='center'}
+x <- seq(1, 16, by=0.1)
+plot(0, xlim=range(x), ylim=c(3, 10),
+     xlab = 'k', ylab = 'Jaccard-Robinson-Foulds distance', pch = 3, type='n')
+lines(x, vapply(x, JaccardRobinsonFoulds, tree1=tree1, tree2=tree2, arboreal=FALSE, 0),
+      col=cbPalette8[5])
+lines(x, vapply(x, JaccardRobinsonFoulds, tree1=tree1, tree2=tree2, 0),
+      col=cbPalette8[4])
+rf <- RobinsonFoulds(tree1, tree2)
+nts <- NyeTreeSimilarity(tree1, tree2, similarity = FALSE)
+abline(h = rf, lty = 'dashed', col=cbPalette8[6])
+abline(h = nts, lty = 'dotted', col=cbPalette8[8])
+legend('right', c('Robinson-Foulds', 'Arboreal', 'Non-arboreal', 'Nye et al.'),
+       lty = c('dashed', 'solid', 'solid', 'dotted'), 
+       col = cbPalette8[c(6, 4, 5, 8)], bty = 'n')
+
 ```
 
 # Matching Split Distance
@@ -199,7 +209,7 @@ RobinsonFoulds(tree1, tree2)
 Bogdanowicz & Giaro [@-Bogdanowicz2012] propose an alternative distance, which
 they term the Matching Split Distance.
 
-```{r}
+```{r, fig.width=6 , fig.align='center'}
 MatchingSplitDistance(tree1, tree2)
 VisualizeMatching(MatchingSplitDistance, tree1, tree2)
 ```
@@ -219,7 +229,7 @@ three elements (_F_, _I_ and _J_) must be moved before the partitions are
 identical; as such, the pair of partitions are assigned a difference score 
 (not a similarity score) of three.
 
-```{r}
+```{r, fig.width=6 , fig.align='center'}
 MatchingSplitDistance(read.tree(text='((a, b, c, d, e, f), (g, h, i, j));'),
                       read.tree(text='((a, b, c, d, e, i, j), (g, h, f));'))
 ```
@@ -232,7 +242,7 @@ to calculate.
 An information-theoretic take on the Matching Split Distance [@SmithDist] 
 is provided by the function
 
-```{r}
+```{r, fig.width=6 , fig.align='center'}
 VariationOfMatchingSplitInfo(tree1, tree2)
 VisualizeMatching(VariationOfMatchingSplitInfo, tree1, tree2,
                   Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
