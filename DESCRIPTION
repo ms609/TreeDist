@@ -25,7 +25,7 @@ Imports:
     phangorn (>= 2.2.1),
     Rdpack,
     stats,
-    TreeSearch
+    TreeSearch (>= 0.3.2.9008)
 Suggests:
     bookdown,
     cluster,

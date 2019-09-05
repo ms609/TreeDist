@@ -201,24 +201,31 @@ test_that('NyeTreeSimilarity is correctly calculated', {
 
 test_that('Jaccard RF is correctly calculated', {
   expect_equal(JaccardRobinsonFoulds(treeSym8, list(treeBal8, treeSym8),
-                                     k = 1L, arboreal = FALSE),
+                                     similarity = TRUE, k = 1L, arboreal = FALSE),
                NyeTreeSimilarity(treeSym8, list(treeBal8, treeSym8)))
-  expect_equal(5L, JaccardRobinsonFoulds(treeSym8, treeSym8, k = 2))
+  expect_equal(5L, JaccardRobinsonFoulds(treeSym8, treeSym8,
+                                         k = 2, similarity = TRUE))
   expect_equal(c(3.32, 5), 
                JaccardRobinsonFoulds(treeSym8, list(treeBal8, treeSym8),
-                                     k = 2))
-  expect_equal(2, 3 * JaccardRobinsonFoulds(treeAb.Cdefgh, treeAbc.Defgh))
-  expect_equal(1, JaccardRobinsonFoulds(treeSym8, treeSym8, normalize = TRUE))
+                                     similarity = TRUE, k = 2))
+  expect_equal(2, 3 * JaccardRobinsonFoulds(treeAb.Cdefgh, treeAbc.Defgh,
+                                            similarity = TRUE))
+  expect_equal(1, JaccardRobinsonFoulds(treeSym8, treeSym8, 
+                                        similarity = TRUE, normalize = TRUE))
+  expect_equal(0, JaccardRobinsonFoulds(treeSym8, treeSym8, 
+                                        similarity = FALSE, normalize = TRUE))
   #TODO: Validate expected value
-  expect_equal(1L, JaccardRobinsonFoulds(treeSym8, treeAbcd.Efgh, 
-                                         normalize = FALSE, k = 2))
-  expect_equal(1L / 5L, JaccardRobinsonFoulds(treeSym8, treeAbcd.Efgh, 
-                                              normalize = TRUE, k = 2))
-  expect_true(JaccardRobinsonFoulds(treeSym8, treeBal8, k = 2) > 
+  expect_equal(1L, 
+               JaccardRobinsonFoulds(treeSym8, treeAbcd.Efgh, similarity = TRUE,
+                                     normalize = FALSE, k = 2))
+  expect_equal(1L / 5L, 
+               JaccardRobinsonFoulds(treeSym8, treeAbcd.Efgh, similarity = TRUE,
+                                     normalize = TRUE, k = 2))
+  expect_true(JaccardRobinsonFoulds(treeSym8, treeBal8, k = 2) < 
                 JaccardRobinsonFoulds(treeSym8, treeOpp8, k = 2))
-  expect_true(JaccardRobinsonFoulds(treeSym8, treeBal8, k = 3L) >
+  expect_true(JaccardRobinsonFoulds(treeSym8, treeBal8, k = 3L) <
                 JaccardRobinsonFoulds(treeSym8, treeBal8, k = 4L))
-  expect_true(JaccardRobinsonFoulds(treeCat8, treeTac8, arboreal = FALSE) >
+  expect_true(JaccardRobinsonFoulds(treeCat8, treeTac8, arboreal = FALSE) <
               JaccardRobinsonFoulds(treeCat8, treeTac8, arboreal = TRUE))
 })
 

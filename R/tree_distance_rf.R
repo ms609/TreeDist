@@ -20,7 +20,7 @@
 #' 
 #' @inheritParams MutualPhylogeneticInfo
 #' @param similarity Logical specifying whether to report the result as a tree
-#' similarity, rather than a difference
+#' similarity, rather than a difference.
 #' 
 #' @section Normalization:
 #' 

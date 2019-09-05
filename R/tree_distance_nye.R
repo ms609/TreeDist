@@ -8,7 +8,7 @@
 #' slightly faster than) \code{\link{JaccardRobinsonFoulds}
 #' (tree1, tree2, k = 1, arboreal = FALSE)}.
 #' 
-#' @inheritParams MutualPhylogeneticInfo
+#' @inheritParams RobinsonFoulds
 #' 
 #' @section Normalization:
 #' 
@@ -23,21 +23,17 @@
 #' @family tree distances
 #' 
 #' @author Martin R. Smith
+#' @importFrom TreeSearch NPartitions
 #' @export
-NyeTreeSimilarity <- function (tree1, tree2, normalize = FALSE,
-                               reportMatching = FALSE) {
+NyeTreeSimilarity <- function (tree1, tree2, similarity = TRUE,
+                               normalize = FALSE, reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(NyeSplitSimilarity, tree1, tree2, 
                                         reportMatching)
-  NyeInfoCounter <- function (tr) {
-    if (class(tr) == 'phylo') {
-      tr$Nnode - 2L
-    } else {
-      vapply(tr, function (thisTree) thisTree$Nnode - 2L, 1L)
-    }
-  }
-  
+  if (!similarity) unnormalized <- 
+      outer(NPartitions(tree1), NPartitions(tree2), '+')[, , drop=TRUE] -
+      unnormalized
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                InfoInTree = NyeInfoCounter, Combine = pmax)
+                InfoInTree = NPartitions, Combine = pmax)
 }
 
 #' @describeIn NyeTreeSimilarity Calculate tree similarity from splits 
@@ -86,7 +82,7 @@ NyeSplitSimilarity <- function (splits1, splits2, reportMatching = FALSE) {
 #' The examples section details how to visualize matchings with non-default
 #' parameter values. 
 #' 
-#' @inheritParams MutualPhylogeneticInfo
+#' @inheritParams RobinsonFoulds
 #' @param k An arbitrary exponent to which to raise the Jaccard index.
 #' Integer values greater than one are anticipated by B&ouml;cker _et al_.
 #' The Nye _et al_. metric uses `k = 1`.
@@ -128,23 +124,20 @@ NyeSplitSimilarity <- function (splits1, splits2, reportMatching = FALSE) {
 #' @family tree distances
 #' 
 #' @author Martin R. Smith
+#' @importFrom TreeSearch NPartitions
 #' @export
 JaccardRobinsonFoulds <- function (tree1, tree2, k = 1L, arboreal = TRUE,
+                                   similarity = FALSE,
                                    normalize = FALSE, reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(JaccardSplitSimilarity, tree1, tree2, 
                                         k = k, arboreal = arboreal, 
                                         reportMatching = reportMatching)
-  NyeInfoCounter <- function (tr) {
-    # Copied from NyeTreeSimilarity
-    if (class(tr) == 'phylo') {
-      tr$Nnode - 2L
-    } else {
-      vapply(tr, function (thisTree) thisTree$Nnode - 2L, 1L)
-    }
-  }
-  
+  if (!similarity) unnormalized <- 
+      outer(NPartitions(tree1), NPartitions(tree2), '+')[, , drop=TRUE] -
+      unnormalized
+
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                InfoInTree = NyeInfoCounter, Combine = pmax)
+                InfoInTree = NPartitions, Combine = pmax)
 }
 
 #' @describeIn JaccardRobinsonFoulds Calculate tree similarity from splits 
