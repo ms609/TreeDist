@@ -81,7 +81,7 @@ TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = TRUE,
 #' @importFrom TreeSearch Tree2Splits
 #' @export
 VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE, 
-                              precision=3, Plot = plot.phylo,
+                              precision = 3L, Plot = plot.phylo,
                               matchZeros = TRUE,
                               ...) {
   
