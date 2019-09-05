@@ -105,15 +105,24 @@
 <!--#TODO: https://devguide.ropensci.org/building.html#readme -->
 
 <p><code>TreeDist</code> implements a suite of metrics that quantify the topological distance between pairs of unweighted phylogenetic trees. The metrics generally fall in the category of “generalized Robinson-Foulds distances”: they are based on comparing partitions between trees, and thus reflect the relationship data within trees, with no reference to branch lengths.</p>
-<p>The Robinson-Foulds distance simply tallies the number of bipartition splits (loosely, clades) that occur in both trees – any clades that are not perfectly identical are assigned a score of zero, however similar or different they are. By overlooking potential similarities between almost-identical bipartitions, this conservative approach has undesirable properties.</p>
-<p>‘Generalized’ RF metrics pair each bipartition in one tree with a similar bipartition in the other. Each pair of partitions is assigned a similarity score; the sum of these scores in the optimal partition matching then describes the similarity between two trees.</p>
+<p>The <a href="https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html">Robinson-Foulds distance</a> simply tallies the number of bipartition splits (loosely, clades) that occur in both trees – any clades that are not perfectly identical are assigned a score of zero, however similar or different they are. By overlooking potential similarities between almost-identical bipartitions, this conservative approach has undesirable properties.</p>
+<p><a href="https://ms609.github.io/TreeDist/articles/Generalized-RF.html">‘Generalized’ RF metrics</a> pair each bipartition in one tree with a similar bipartition in the other. Each pair of partitions is assigned a similarity score; the sum of these scores in the optimal partition matching then describes the similarity between two trees.</p>
 <p>Different ways of calculating the the similarity between a pair of partitions lead to different tree distance metrics, implemented in the functions below:</p>
 <ul>
-<li><p><code>MutualClusteringInfo</code>, <code>MutualPhylogeneticInfo</code> Smith (forthcoming) scores matchings based on the amount of information that one partition contains about the other. The Mutual Phylogenetic Information imposes arboreal matching: i.e. a pair of splits that cannot both exist on a single tree are assigned zero similarity. The Mutual Clustering Information metric is more forgiving, and exhibits more desirable behaviour; it is the recommended metric for tree comparison. (Its complement, <code>VariationOfClusteringInfo</code>, returns a tree distance.)</p></li>
-<li><p><code>NyeTreeSimilarity</code> Nye <em>et al.</em> (2006) score matchings according to the size of the largest bipartition that is consistent with both of them, normalized against the Jaccard index.</p></li>
-<li><p><code>MatchingSplitDistance</code> Bogdanowicz and Giaro (2012), and independently Lin <em>et al.</em> (2012), count the number of ‘mismatched’ terminals in a pair of bipartitions.</p></li>
+<li>
+<p><a href="https://ms609.github.io/TreeDist/reference/TreeDistance.html"><code>MutualClusteringInfo</code></a>, <a href="https://ms609.github.io/TreeDist/reference/TreeDistance.html"><code>MutualPhylogeneticInfo</code></a></p>
+<p>Smith (forthcoming) scores matchings based on the amount of information that one partition contains about the other. The Mutual Phylogenetic Information imposes arboreal matching: i.e. a pair of splits that cannot both exist on a single tree are assigned zero similarity. The Mutual Clustering Information metric is more forgiving, and exhibits more desirable behaviour; it is the recommended metric for tree comparison. (Its complement, <a href="https://ms609.github.io/TreeDist/reference/TreeDistance.html"><code>VariationOfClusteringInfo</code></a>, returns a tree distance.)</p>
+</li>
+<li>
+<p><a href="https://ms609.github.io/TreeDist/reference/NyeTreeSimilarity.html"><code>NyeTreeSimilarity</code></a></p>
+<p>Nye <em>et al.</em> (2006) score matchings according to the size of the largest bipartition that is consistent with both of them, normalized against the Jaccard index. This approach is extended by Böcker <em>et al</em>. (2013) with the Jaccard-Robinson-Foulds metric (function <a href="https://ms609.github.io/TreeDist/reference/JaccardRobinsonFoulds.html"><code>JaccardRobinsonFoulds</code></a>).</p>
+</li>
+<li>
+<p><a href="https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html"><code>MatchingSplitDistance</code></a></p>
+<p>Bogdanowicz and Giaro (2012), and independently Lin <em>et al.</em> (2012), count the number of ‘mismatched’ terminals in a pair of bipartitions.</p>
+</li>
 </ul>
-<p>The package also implements the variation of the path distance proposed by Kendal and Colijn (2016) (function <code>KendallColijn</code>).</p>
+<p>The package also implements the variation of the path distance proposed by Kendal and Colijn (2016) (function <a href="https://ms609.github.io/TreeDist/reference/KendallColijn.html"><code>KendallColijn</code></a>).</p>
 </div>
 <div id="installation" class="section level1">
 <h1 class="hasAnchor">
@@ -134,11 +143,10 @@ If you're feeling brave, y-->
 <div id="documentation" class="section level1">
 <h1 class="hasAnchor">
 <a href="#documentation" class="anchor"></a>Documentation</h1>
-<p>CRAN documentation files:</p>
 <ul>
-<li>
-<a href="https://CRAN.R-project.org/package=TreeDist/TreeDist.pdf">Package functions</a> reference manual</li>
-<li><a href="https://CRAN.R-project.org/package=TreeDist/vignettes/tree-distances.html">Tree distances</a></li>
+<li><p><a href="https://ms609.github.io/TreeDist/articles/Using-TreeDist.html">Using TreeDist</a></p></li>
+<li><p><a href="https://ms609.github.io/TreeDist/reference/index.html">Package functions</a></p></li>
+<li><p><a href="https://ms609.github.io/TreeDist/articles/">All vignettes</a></p></li>
 </ul>
 </div>
 <div id="see-also" class="section level1">
@@ -172,10 +180,11 @@ If you're feeling brave, y-->
 <h1 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h1>
 <ul>
+<li><p>Böcker, S. <em>et al.</em> (2013) <a href="https://dx.doi.org/10.1007/978-3-642-40453-5_13">The Generalized Robinson-Foulds Metric</a>. Algorithms in Bioinformatics. WABI 2013. Lecture Notes in Computer Science, 8126, 156–69.</p></li>
 <li><p>Bogdanowicz, D. and Giaro, K. (2012) <a href="https://dx.doi.org/10.1109/TCBB.2011.48">Matching split distance for unrooted binary phylogenetic trees</a>. IEEE/ACM Transactions on Computational Biology and Bioinformatics, 9, 150–160.</p></li>
 <li><p>Kendall, M. and Colijn, C. (2016) <a href="https://dx.doi.org/10.1093/molbev/msw124">Mapping phylogenetic trees to reveal distinct patterns of evolution</a>. Mol Biol Evol, 33, 2735–2743.</p></li>
-<li><p>Nye, T.M.W. et al. (2006) <a href="https://dx.doi.org/10.1093/bioinformatics/bti720">A novel algorithm and web-based tool for comparing two alternative phylogenetic trees</a>. Bioinformatics, 22, 117–119.</p></li>
-<li><p>Smith, M.R. (forthcoming) [Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees].</p></li>
+<li><p>Nye, T.M.W. <em>et al.</em> (2006) <a href="https://dx.doi.org/10.1093/bioinformatics/bti720">A novel algorithm and web-based tool for comparing two alternative phylogenetic trees</a>. Bioinformatics, 22, 117–119.</p></li>
+<li><p>Smith, M.R. (in review) [Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees].</p></li>
 </ul>
 <p>Please note that the ‘TreeDist’ project is released with a <a href="CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
@@ -222,7 +231,7 @@ If you're feeling brave, y-->
 <h2>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="http://www.repostatus.org/#active"><img src="http://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active – The project has reached a stable, usable state and is being actively developed."></a></li>
-<li><a href="https://travis-ci.com/ms609/TreeDist"><img src="https://travis-ci.com/ms609/TreeDist.svg?branch=master" alt="Travis build status"></a></li>
+<li><a href="https://travis-ci.org/ms609/TreeDist"><img src="https://travis-ci.org/ms609/TreeDist.svg?branch=master" alt="Travis build status"></a></li>
 <li><a href="https://codecov.io/gh/ms609/TreeDist"><img src="https://codecov.io/gh/ms609/TreeDist/branch/master/graph/badge.svg" alt="codecov"></a></li>
 <li><a href="https://cran.r-project.org/package=TreeDist"><img src="http://www.r-pkg.org/badges/version/TreeDist" alt="CRAN Status Badge"></a></li>
 <li><a href="https://cran.r-project.org/package=TreeDist"><img src="http://cranlogs.r-pkg.org/badges/TreeDist" alt="CRAN Downloads"></a></li>

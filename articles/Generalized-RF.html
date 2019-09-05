@@ -106,7 +106,8 @@
 
     
     
-<p>This vignette will describe the similarity measures employed by the generalized Robinson-Foulds distances implemented in this package.</p>
+<p>This document outlines the similarity measures employed by the generalized Robinson-Foulds distances implemented in this package.</p>
+<p>Before you read it, you may wish to refresh your memory of the <a href="Robinson-Foulds.html">Robinson-Foulds distance</a>, or how to <a href="Using-TreeDist.html">use the TreeDist package</a>.</p>
 <div id="mutual-phylogenetic-information" class="section level1">
 <h1 class="hasAnchor">
 <a href="#mutual-phylogenetic-information" class="anchor"></a>Mutual phylogenetic information</h1>
@@ -208,7 +209,8 @@ The two trees below are identical but for the position of <em>A</em> and <em>J</
 <p>Bogdanowicz &amp; Giaro <span class="citation">(2012)</span> propose an alternative distance, which they term the Matching Split Distance.</p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw"><a href="../reference/MatchingSplitDistance.html">MatchingSplitDistance</a></span>(tree1, tree2)</a></code></pre></div>
 <pre><code>## [1] 5</code></pre>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(MatchingSplitDistance, tree1, tree2)</a></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(MatchingSplitDistance, tree1, tree2,</a>
+<a class="sourceLine" id="cb27-2" data-line-number="2">                  <span class="dt">Plot=</span>TreeDistPlot, <span class="dt">leaveRoom=</span><span class="ot">FALSE</span>, <span class="dt">matchZeros =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 <p><img src="Generalized-RF_files/figure-html/unnamed-chunk-9-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>Note that the visualization shows the difference, rather than the similarity, between splits.</p>
 <p>Similar to the Nye <em>et al</em>. similarity metric, this method compares the subsets implied by a pair of partitions. Here, the relevanat quantity is the number of elements that must be moved from one subset to another in order to make the two partitions identical. With the pair of partitions</p>
