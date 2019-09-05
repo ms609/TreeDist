@@ -49,7 +49,7 @@ lead to different tree distance metrics, implemented in the functions below:
     with the Jaccard-Robinson-Foulds metric (function 
     [`JaccardRobinsonFoulds`](https://ms609.github.io/TreeDist/reference/JaccardRobinsonFoulds.html)).
    
-* [`MatchingSplitDistance`](https://ms609.github.io/TreeDist/reference/TreeDistance.html)
+* [`MatchingSplitDistance`](https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html)
     
     Bogdanowicz and Giaro (2012), and independently Lin _et al._ (2012), count 
     the number of 'mismatched' terminals in a pair of bipartitions.
@@ -74,9 +74,11 @@ devtools::install_github('ms609/TreeDist')
 ```
 # Documentation
 
-CRAN documentation files:
-- [Package functions](https://CRAN.R-project.org/package=TreeDist/TreeDist.pdf) reference manual
-- [Tree distances](https://CRAN.R-project.org/package=TreeDist/vignettes/tree-distances.html)
+- [Using TreeDist](https://ms609.github.io/TreeDist/articles/Using-TreeDist.html)
+
+- [Package functions](https://ms609.github.io/TreeDist/reference/index.html)
+
+- [All vignettes](https://ms609.github.io/TreeDist/articles/)
 
 # See also
 
