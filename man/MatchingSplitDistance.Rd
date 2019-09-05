@@ -63,7 +63,8 @@ so that it can be implemented.
 \insertRef{Bogdanowicz2012}{TreeDist}
 }
 \seealso{
-Other tree distances: \code{\link{KendallColijn}},
+Other tree distances: \code{\link{JaccardRobinsonFoulds}},
+  \code{\link{KendallColijn}},
   \code{\link{NyeTreeSimilarity}},
   \code{\link{RobinsonFouldsInfo}},
   \code{\link{TreeDistance}}

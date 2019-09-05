@@ -203,7 +203,8 @@ To scale against the information content of the most informative tree, use
 }
 }
 \seealso{
-Other tree distances: \code{\link{KendallColijn}},
+Other tree distances: \code{\link{JaccardRobinsonFoulds}},
+  \code{\link{KendallColijn}},
   \code{\link{MatchingSplitDistance}},
   \code{\link{NyeTreeSimilarity}},
   \code{\link{RobinsonFouldsInfo}}

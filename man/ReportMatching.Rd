@@ -5,7 +5,7 @@
 \alias{IdentifySplits}
 \title{List clades as text}
 \usage{
-ReportMatching(splits1, splits2, taxonNames)
+ReportMatching(splits1, splits2, taxonNames, realMatch = TRUE)
 
 IdentifySplits(splits, taxonNames = rownames(splits))
 }
