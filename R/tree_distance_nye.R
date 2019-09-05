@@ -8,16 +8,26 @@
 #' slightly faster than) \code{\link{JaccardRobinsonFoulds}
 #' (tree1, tree2, k = 1, arboreal = FALSE)}.
 #' 
+#' The measure is defined as a similarity score.  If `similarity = FALSE`, the
+#' similarity score will be converted into a distance by doubling it and
+#' subtracting it from the number of partitions present in both trees.
+#' This ensures consistency with `JaccardRobinsonFoulds`.
+#' 
 #' @inheritParams RobinsonFoulds
 #' 
 #' @section Normalization:
 #' 
-#' If `normalize = TRUE`, then results will be rescaled from zero to one by
-#' dividing by the maximum possible value for trees of the given topologies,
-#' which is four less than the total number of nodes in both trees. 
-#' You may wish to normalize instead against the maximum number of nodes present
-#' in a pair of trees with _n_ terminals, by specifying 
-#' `normalize = <some number>`.
+#' If `normalize = TRUE` and `similarity = TRUE`, then results will be rescaled
+#'  from zero to one by dividing by the maximum value possible for any pair 
+#'  of trees with  _n_ terminals, $n - 3$.
+#' You may wish to normalize instead against the number of partitions present
+#' in the smaller tree, which represents the maximum value possible for a pair
+#' of trees with the specified topologies (`normalize = pmin.int`), or the
+#' number of partitions in the most resolved tree (`normalize = pmax.int`). 
+#' 
+#' If `normalize = TRUE` and `similarity = FALSE`, then results will be rescaled
+#' from zero to one by dividing by the total number of partitions in the pair
+#' of trees being considered.
 #' 
 #' @references \insertRef{Nye2006}{TreeDist}
 #' @family tree distances
@@ -27,13 +37,21 @@
 #' @export
 NyeTreeSimilarity <- function (tree1, tree2, similarity = TRUE,
                                normalize = FALSE, reportMatching = FALSE) {
+  
   unnormalized <- CalculateTreeDistance(NyeSplitSimilarity, tree1, tree2, 
                                         reportMatching)
-  if (!similarity) unnormalized <- 
-      outer(NPartitions(tree1), NPartitions(tree2), '+')[, , drop=TRUE] -
-      unnormalized
-  NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                InfoInTree = NPartitions, Combine = pmax)
+  if (similarity) {
+    MaxPartitions <- function (tree) length(tree$tip.label) - 3L
+    # Return:
+    NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
+                  InfoInTree = MaxPartitions, Combine = pmax.int)
+  } else {
+    unnormalized <- outer(NPartitions(tree1), NPartitions(tree2), 
+                          '+')[, , drop=TRUE] - (2 * unnormalized)
+    # Return:
+    NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
+                  InfoInTree = NPartitions, Combine = '+')
+  }
 }
 
 #' @describeIn NyeTreeSimilarity Calculate tree similarity from splits 
@@ -41,6 +59,7 @@ NyeTreeSimilarity <- function (tree1, tree2, similarity = TRUE,
 #' @inheritParams MutualPhylogeneticInfoSplits
 #' @export
 NyeSplitSimilarity <- function (splits1, splits2, reportMatching = FALSE) {
+  
   GeneralizedRF(splits1, splits2, 
                 function(splits1, splits2, nSplits1, nSplits2) {
     Ars <- function (pir, pjs) {
@@ -95,10 +114,10 @@ NyeSplitSimilarity <- function (splits1, splits2, reportMatching = FALSE) {
 #' 
 #' If `normalize = TRUE`, then results will be rescaled from zero to one by
 #' dividing by the maximum possible value for trees of the given topologies,
-#' which is four less than the total number of nodes in both trees. 
-#' You may wish to normalize instead against the maximum number of nodes present
-#' in a pair of trees with _n_ terminals, by specifying 
-#' `normalize = <some number>`.
+#' which is equal to the number of partitions in both trees. 
+#' You may wish to normalize instead against the maximum number of partitions
+#' present in a pair of trees with _n_ terminals, by specifying 
+#' `normalize = n - 3`.
 #' 
 #' @references 
 #' 
