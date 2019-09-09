@@ -25,7 +25,7 @@ or lists of such trees to undergo pairwise comparison.}
 or lists of such trees to undergo pairwise comparison.}
 
 \item{similarity}{Logical specifying whether to report the result as a tree
-similarity, rather than a difference}
+similarity, rather than a difference.}
 
 \item{normalize}{If a numeric value is provided, this will be used as a
 maximum value against which to rescale results.

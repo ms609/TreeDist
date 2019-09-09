@@ -5,7 +5,7 @@
 \alias{NyeSplitSimilarity}
 \title{Nye \emph{et al}. (2006) tree comparison}
 \usage{
-NyeTreeSimilarity(tree1, tree2, normalize = FALSE,
+NyeTreeSimilarity(tree1, tree2, similarity = TRUE, normalize = FALSE,
   reportMatching = FALSE)
 
 NyeSplitSimilarity(splits1, splits2, reportMatching = FALSE)
@@ -16,6 +16,9 @@ or lists of such trees to undergo pairwise comparison.}
 
 \item{tree2}{Trees of class \code{phylo}, with tips labelled identically,
 or lists of such trees to undergo pairwise comparison.}
+
+\item{similarity}{Logical specifying whether to report the result as a tree
+similarity, rather than a difference.}
 
 \item{normalize}{If a numeric value is provided, this will be used as a
 maximum value against which to rescale results.
@@ -48,6 +51,12 @@ normalized against the Jaccard index.  This is equivalent to (but
 slightly faster than) \code{\link{JaccardRobinsonFoulds}
 (tree1, tree2, k = 1, arboreal = FALSE)}.
 }
+\details{
+The measure is defined as a similarity score.  If \code{similarity = FALSE}, the
+similarity score will be converted into a distance by doubling it and
+subtracting it from the number of partitions present in both trees.
+This ensures consistency with \code{JaccardRobinsonFoulds}.
+}
 \section{Functions}{
 \itemize{
 \item \code{NyeSplitSimilarity}: Calculate tree similarity from splits
@@ -57,12 +66,17 @@ instead of trees.
 \section{Normalization}{
 
 
-If \code{normalize = TRUE}, then results will be rescaled from zero to one by
-dividing by the maximum possible value for trees of the given topologies,
-which is four less than the total number of nodes in both trees.
-You may wish to normalize instead against the maximum number of nodes present
-in a pair of trees with \emph{n} terminals, by specifying
-\code{normalize = <some number>}.
+If \code{normalize = TRUE} and \code{similarity = TRUE}, then results will be rescaled
+from zero to one by dividing by the maximum value possible for any pair
+of trees with  \emph{n} terminals, $n - 3$.
+You may wish to normalize instead against the number of partitions present
+in the smaller tree, which represents the maximum value possible for a pair
+of trees with the specified topologies (\code{normalize = pmin.int}), or the
+number of partitions in the most resolved tree (\code{normalize = pmax.int}).
+
+If \code{normalize = TRUE} and \code{similarity = FALSE}, then results will be rescaled
+from zero to one by dividing by the total number of partitions in the pair
+of trees being considered.
 }
 
 \references{

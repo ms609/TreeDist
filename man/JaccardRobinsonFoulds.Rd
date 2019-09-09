@@ -6,7 +6,7 @@
 \title{Jaccard-Robinson-Foulds metric}
 \usage{
 JaccardRobinsonFoulds(tree1, tree2, k = 1L, arboreal = TRUE,
-  normalize = FALSE, reportMatching = FALSE)
+  similarity = FALSE, normalize = FALSE, reportMatching = FALSE)
 
 JaccardSplitSimilarity(splits1, splits2, k = 1L, arboreal = TRUE,
   reportMatching = FALSE)
@@ -26,6 +26,9 @@ As k → ∞, the metric converges to the Robinson-Foulds metric.}
 \item{arboreal}{Logical specifying whether to enforce arboreal matches, by
 assigning zero similarity to contradictory pairs of partitions on an
 \emph{ad hoc} basis.}
+
+\item{similarity}{Logical specifying whether to report the result as a tree
+similarity, rather than a difference.}
 
 \item{normalize}{If a numeric value is provided, this will be used as a
 maximum value against which to rescale results.
@@ -62,7 +65,10 @@ By default, arboreal matchings are enforced.
 
 Note that the settings \code{k = 1, arboreal = FALSE} give the similarity metric
 of Nye \emph{et al}. (2006); a slightly faster implementation of this metric is
-available as \code{[NyeTreeSimilarity]}.`
+available as \code{[NyeTreeSimilarity]}.
+
+The examples section details how to visualize matchings with non-default
+parameter values.
 }
 \section{Functions}{
 \itemize{
@@ -75,12 +81,29 @@ instead of trees.
 
 If \code{normalize = TRUE}, then results will be rescaled from zero to one by
 dividing by the maximum possible value for trees of the given topologies,
-which is four less than the total number of nodes in both trees.
-You may wish to normalize instead against the maximum number of nodes present
-in a pair of trees with \emph{n} terminals, by specifying
-\code{normalize = <some number>}.
+which is equal to the number of partitions in both trees.
+You may wish to normalize instead against the maximum number of partitions
+present in a pair of trees with \emph{n} terminals, by specifying
+\code{normalize = n - 3}.
 }
 
+\examples{
+{
+set.seed(2)
+tree1 <- ape::rtree(10)
+tree2 <- ape::rtree(10)
+JaccardRobinsonFoulds(tree1, tree2, k = 2, arboreal = FALSE)
+JaccardRobinsonFoulds(tree1, tree2, k = 2, arboreal = TRUE)
+
+JRF2 <- function (tree1, tree2, ...) 
+  JaccardRobinsonFoulds(tree1, tree2, k = 2, arboreal= TRUE, ...)
+  
+VisualizeMatching(JRF2, tree1, tree2, matchZeros = FALSE)
+
+}
+
+
+}
 \references{
 \itemize{
 \item \insertRef{Nye2006}{TreeDist}
