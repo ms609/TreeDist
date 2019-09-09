@@ -63,14 +63,22 @@ test_that('Metrics handle polytomies', {
 
 test_that('Output dimensions are correct', {
   Test <- function (Func) {
-    answer <- 
+    list1 <- list(sym=treeSym8, bal=treeBal8)
+    list2 <- list(sym=treeSym8, abc=treeAbc.Defgh, abcd=treeAbcd.Efgh)
+    dimNames <- list(c('sym', 'bal'), c('sym', 'abc', 'abcd'))
+    allPhylo <- 
     matrix(c(Func(treeSym8, treeSym8),      Func(treeBal8, treeSym8),
              Func(treeSym8, treeAbc.Defgh), Func(treeBal8, treeAbc.Defgh),
              Func(treeSym8, treeAbcd.Efgh), Func(treeBal8, treeAbcd.Efgh)),
-           2L, 3L, dimnames=list(c('sym', 'bal'), c('sym', 'abc', 'abcd')))
-    expect_equal(answer, Func(list(sym=treeSym8, bal=treeBal8), 
-                              list(sym=treeSym8, abc=treeAbc.Defgh,
-                                   abcd=treeAbcd.Efgh)))
+           2L, 3L, dimnames=dimNames)
+    phylo1 <- matrix(c(Func(treeSym8,list2), Func(treeBal8, list2)),
+                     byrow=TRUE, 2L, 3L, dimnames=dimNames)
+    phylo2 <- matrix(c(Func(list1, treeSym8), Func(list1, treeAbc.Defgh),
+                       Func(list1, treeAbcd.Efgh)), 2L, 3L, dimnames=dimNames)
+    noPhylo <- Func(list1, list2)
+    expect_equal(allPhylo, phylo1)
+    expect_equal(allPhylo, phylo2)
+    expect_equal(allPhylo, noPhylo)
   }
   lapply(methodsToTest, Test)
 })
