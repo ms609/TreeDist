@@ -33,6 +33,12 @@
 <script src="../pkgdown.js"></script>
 
 
+<!-- docsearch -->
+<script src="../docsearch.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous" />
+<link href="../docsearch.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+
 
 
 <meta property="og:title" content="Jaccard-Robinson-Foulds metric — JaccardRobinsonFoulds" />
@@ -120,6 +126,12 @@
   </a>
 </li>
       </ul>
+      
+      <form class="navbar-form navbar-right hidden-xs hidden-sm" role="search">
+        <div class="form-group">
+          <input type="search" class="form-control" name="search-input" id="search-input" placeholder="Search..." aria-label="Search for..." autocomplete="off">
+        </div>
+      </form>
       
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -276,7 +288,7 @@ Springer, Berlin, Heidelberg.</p></li>
 
 <span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span>(<span class='no'>JRF2</span>, <span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>matchZeros</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-}</div><div class='output co'>#&gt; <span class='warning'>Warning: conversion failure on '−' in 'mbcsToSbcs': dot substituted for &lt;e2&gt;</span></div><div class='output co'>#&gt; <span class='warning'>Warning: conversion failure on '−' in 'mbcsToSbcs': dot substituted for &lt;88&gt;</span></div><div class='output co'>#&gt; <span class='warning'>Warning: conversion failure on '−' in 'mbcsToSbcs': dot substituted for &lt;92&gt;</span></div><div class='output co'>#&gt; <span class='warning'>Warning: conversion failure on '−' in 'mbcsToSbcs': dot substituted for &lt;e2&gt;</span></div><div class='output co'>#&gt; <span class='warning'>Warning: conversion failure on '−' in 'mbcsToSbcs': dot substituted for &lt;88&gt;</span></div><div class='output co'>#&gt; <span class='warning'>Warning: conversion failure on '−' in 'mbcsToSbcs': dot substituted for &lt;92&gt;</span></div><div class='img'><img src='JaccardRobinsonFoulds-1.png' alt='' width='700' height='433' /></div><div class='input'>
+}</div><div class='output co'>#&gt; <span class='warning'>Warning: conversion failure on '−' in 'mbcsToSbcs': dot substituted for &lt;e2&gt;</span></div><div class='output co'>#&gt; <span class='warning'>Warning: conversion failure on '−' in 'mbcsToSbcs': dot substituted for &lt;88&gt;</span></div><div class='output co'>#&gt; <span class='warning'>Warning: conversion failure on '−' in 'mbcsToSbcs': dot substituted for &lt;92&gt;</span></div><div class='output co'>#&gt; <span class='warning'>Warning: number of items to replace is not a multiple of replacement length</span></div><div class='output co'>#&gt; <span class='warning'>Warning: number of items to replace is not a multiple of replacement length</span></div><div class='output co'>#&gt; <span class='warning'>Warning: conversion failure on '−' in 'mbcsToSbcs': dot substituted for &lt;e2&gt;</span></div><div class='output co'>#&gt; <span class='warning'>Warning: conversion failure on '−' in 'mbcsToSbcs': dot substituted for &lt;88&gt;</span></div><div class='output co'>#&gt; <span class='warning'>Warning: conversion failure on '−' in 'mbcsToSbcs': dot substituted for &lt;92&gt;</span></div><div class='img'><img src='JaccardRobinsonFoulds-1.png' alt='' width='700' height='433' /></div><div class='input'>
 
 </div></pre>
   </div>
@@ -311,6 +323,23 @@ Springer, Berlin, Heidelberg.</p></li>
    </div>
 
   
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.js" integrity="sha256-GKvGqXDznoRYHCwKXGnuchvKSwmx9SRMrZOTh2g4Sb0=" crossorigin="anonymous"></script>
+<script>
+  docsearch({
+    
+    
+    apiKey: '8bf44d312479af73720c5ca5fcc12eba',
+    indexName: 'treedist',
+    inputSelector: 'input#search-input.form-control',
+    transformData: function(hits) {
+      return hits.map(function (hit) {
+        hit.url = updateHitURL(hit);
+        return hit;
+      });
+    }
+  });
+</script>
+
 
 
   </body>

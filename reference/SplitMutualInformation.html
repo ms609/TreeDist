@@ -33,6 +33,12 @@
 <script src="../pkgdown.js"></script>
 
 
+<!-- docsearch -->
+<script src="../docsearch.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous" />
+<link href="../docsearch.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+
 
 
 <meta property="og:title" content="Mutual information of two splits — SplitMutualInformation" />
@@ -121,6 +127,12 @@ information, of two splits." />
   </a>
 </li>
       </ul>
+      
+      <form class="navbar-form navbar-right hidden-xs hidden-sm" role="search">
+        <div class="form-group">
+          <input type="search" class="form-control" name="search-input" id="search-input" placeholder="Search..." aria-label="Search for..." autocomplete="off">
+        </div>
+      </form>
       
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
@@ -215,7 +227,7 @@ doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11
   <span class='fu'>TreesConsistentWithTwoSplits</span>(<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>8</span>, <span class='kw'>A1</span><span class='kw'>=</span><span class='fl'>4</span>, <span class='kw'>A2</span><span class='kw'>=</span><span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 45</div><div class='input'>  <span class='fu'>SplitMutualInformation</span>(<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>8</span>, <span class='kw'>A1</span><span class='kw'>=</span><span class='fl'>4</span>, <span class='kw'>A2</span><span class='kw'>=</span><span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 2.722466</div><div class='input'>  <span class='fu'>SplitVariationOfInformation</span>(<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>8</span>, <span class='kw'>A1</span><span class='kw'>=</span><span class='fl'>4</span>, <span class='kw'>A2</span><span class='kw'>=</span><span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 5.129283</div><div class='input'>
   <span class='co'># If splits are identical, then their mutual information is the same</span>
   <span class='co'># as the information of either split:</span>
-  <span class='fu'>SplitMutualInformation</span>(<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>8</span>, <span class='kw'>A1</span><span class='kw'>=</span><span class='fl'>3</span>, <span class='kw'>A2</span><span class='kw'>=</span><span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 5.044394</div><div class='input'>  <span class='kw pkg'>TreeSearch</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/TreeSearch/man/SplitInformation.html'>SplitInformation</a></span>(<span class='fl'>3</span>, <span class='fl'>5</span>)</div><div class='output co'>#&gt; [1] 5.044394</div><div class='input'>  
+  <span class='fu'>SplitMutualInformation</span>(<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>8</span>, <span class='kw'>A1</span><span class='kw'>=</span><span class='fl'>3</span>, <span class='kw'>A2</span><span class='kw'>=</span><span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 5.044394</div><div class='input'>  <span class='kw pkg'>TreeSearch</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeSearch/reference/SplitInformation.html'>SplitInformation</a></span>(<span class='fl'>3</span>, <span class='fl'>5</span>)</div><div class='output co'>#&gt; [1] 5.044394</div><div class='input'>  
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -249,6 +261,23 @@ doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11
    </div>
 
   
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.js" integrity="sha256-GKvGqXDznoRYHCwKXGnuchvKSwmx9SRMrZOTh2g4Sb0=" crossorigin="anonymous"></script>
+<script>
+  docsearch({
+    
+    
+    apiKey: '8bf44d312479af73720c5ca5fcc12eba',
+    indexName: 'treedist',
+    inputSelector: 'input#search-input.form-control',
+    transformData: function(hits) {
+      return hits.map(function (hit) {
+        hit.url = updateHitURL(hit);
+        return hit;
+      });
+    }
+  });
+</script>
+
 
 
   </body>
