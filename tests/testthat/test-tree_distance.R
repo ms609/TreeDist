@@ -122,6 +122,13 @@ test_that('Mutual Phylogenetic Info is correctly calculated', {
   
   expect_equal(MutualPhylogeneticInfo(treeSym8, list(treeSym8, treeBal8)), 
                MutualPhylogeneticInfo(list(treeSym8, treeBal8), treeSym8))
+  
+  # Test tree too large to cache
+  set.seed(101)
+  t1 <- ape::rtree(101)
+  t2 <- ape::rtree(101, rooted = FALSE)
+  expect_equal(MutualPhylogeneticInfo(t1, t2),
+               MutualPhylogeneticInfo(t2, t1))
 })
 
 test_that('MutualMatchingSplitInfo is correctly calculated', {
