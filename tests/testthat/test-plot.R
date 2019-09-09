@@ -17,6 +17,11 @@ test_that('TreeDistPlot works', {
   }
   expect_doppelganger("Test with space", Test1)
   expect_doppelganger("Test without space", Test2)
+  tr$tip.label <- letters[1:11]
+  expect_doppelganger("Test-lc-letters", Test2)
+  tr$tip.label <- LETTERS[1:11]
+  expect_doppelganger("Test-UC-LETTERS", Test2)
+  
 })
 
 test_that('VisualizeMatching works', {
@@ -30,8 +35,7 @@ test_that('VisualizeMatching works', {
   }
   TestVMr <- function () {
     VisualizeMatching(MutualClusteringInfo, tree1, tree2r,
-                      setPar = TRUE, precision=3,
-                      matchZeros = FALSE,
+                      setPar = TRUE, precision=3, matchZeros = TRUE, 
                       Plot = plot.phylo, cex=1.5)
   }
   expect_doppelganger('Test VM', TestVM)
@@ -61,7 +65,7 @@ test_that('VisualizeMatching works', {
     VisualizeMatching(RobinsonFoulds, tree1, tree2,
                       setPar = FALSE, precision=3,
                       Plot = TreeDistPlot,
-                      matchZeros = FALSE,
+                      matchZeros = TRUE,
                       leaveRoom=FALSE)
     VisualizeMatching(RobinsonFoulds, tree2, tree1,
                       setPar = FALSE, precision=3,
