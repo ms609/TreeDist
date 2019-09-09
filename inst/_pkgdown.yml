@@ -39,3 +39,9 @@ reference:
     desc: Functions to assist user comprehension
     contents:
       - VisualizeMatching
+
+template:
+  params:
+    docsearch:
+      api_key: 8bf44d312479af73720c5ca5fcc12eba
+      index_name: treedist
