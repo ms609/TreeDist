@@ -52,6 +52,15 @@ test_that('Size mismatch causes error', {
   treeSym7 <- ape::read.tree(text='((e, (f, g)), (((a, b), c), d));')
   lapply(methodsToTest, function(Func) 
     expect_error(Func(treeSym8, treeSym7)))
+  
+  expect_equal(8L, GeneralizedRF(Tree2Splits(treeSym8), Tree2Splits(treeSym8),
+                             function (splits1, splits2, nSplits1, nSplits2, ...) 
+                               matrix(1, 8, 8)
+                             , FALSE, FALSE)) # No error
+  expect_error(GeneralizedRF(Tree2Splits(treeSym8), Tree2Splits(treeSym7),
+                             function (splits1, splits2, nSplits1, nSplits2, ...) 
+                               matrix(1, 8, 8)
+                             , FALSE, FALSE)) # No error
 })
 
 test_that('Metrics handle polytomies', {
