@@ -158,9 +158,9 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
       }
     }
     edgeColPalette <- sequential_hcl(n = 256L, palette = 'Viridis')
-    normalizedScores <- Normalize(pairScores)
-    
-    EdgyPlot <- function (tree, splits, edge, partitionEdges, ...) {
+     
+    EdgyPlot <- function (tree, splits, edge, partitionEdges, 
+                          normalizedScores, ...) {
       ore <- OtherRootEdge(colnames(splits), edge)
       if (all(!is.na(ore))) {
         ns <- c(normalizedScores, normalizedScores[ore['score']])
@@ -178,7 +178,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
       Plot(tree, edge.width = edge.width, edge.color = edge.color, ...)
     }
     
-    EdgyPlot(tree1, splits1, edge1, partitionEdges1, ...)
+    EdgyPlot(tree1, splits1, edge1, partitionEdges1, Normalize(pairScores), ...)
   }
   paired1 <- if (matchZeros) {
     !is.na(pairings)
@@ -204,8 +204,8 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   if (plainEdges) {
     Plot(tree2, edge.width = edge.width, edge.color = edge.color, ...)
   } else {
-    normalizedScores <- Normalize(pairScores, na.rm = TRUE)
-    EdgyPlot(tree2, splits2, edge2, partitionEdges2[pairNames2], ...)
+    EdgyPlot(tree2, splits2, edge2, partitionEdges2[pairNames2], 
+             Normalize(pairScores, na.rm = TRUE), ...)
   }
   if (any(pairLabels)) {
     edgelabels(text=pairLabels, edge=partitionEdges2[pairNames2],
