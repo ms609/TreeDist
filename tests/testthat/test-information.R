@@ -79,6 +79,7 @@ test_that("SplitMatchProbability returns expected probabilities", {
   expect_true(SplitMatchProbability(splitABCE, splitABCD) < 
                 SplitMatchProbability(splitABEF, splitABCD))
   
+  
   # Two splits of AB:...
   expect_true(SplitMatchProbability(splitAB, splitAB) < 
               SplitMatchProbability(splitCD, splitAB))
@@ -109,6 +110,7 @@ test_that("SplitMatchProbability returns expected probabilities", {
   Test(1, splitAB, splitBC)
   Test(1, splitBC, splitCD)
   Test(1, rev(splitAB), splitAI)
+  Test(1L, splitABCD[-9], splitABEF[-9]) # Test even splits
   
   Test(1/36, splitAB, splitAB)
   Test(1/36, splitBC, splitBC)
