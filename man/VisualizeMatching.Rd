@@ -5,7 +5,8 @@
 \title{Visualise a matching}
 \usage{
 VisualizeMatching(Func, tree1, tree2, setPar = TRUE, precision = 3L,
-  Plot = plot.phylo, matchZeros = TRUE, ...)
+  Plot = plot.phylo, matchZeros = TRUE, plainEdges = FALSE,
+  edge.width = NULL, edge.color = NULL, ...)
 }
 \arguments{
 \item{Func}{Function used to construct tree similarity.}
@@ -23,7 +24,11 @@ when reporting matching scores.}
 \item{matchZeros}{Logical specifying whether to pair partitions with zero
 similarity (\code{TRUE}), or leave them unpaired (\code{FALSE}).}
 
-\item{\dots}{Additional parameters to send to \code{Plot}.}
+\item{plainEdges}{Logical specifying whether to plot edges with a uniform
+width and colour (\code{TRUE}), or whether to draw edge widths according to the
+similarity of the associated splits (\code{FALSE}).}
+
+\item{edge.width, edge.color, \dots}{Additional parameters to send to \code{Plot}.}
 }
 \description{
 Depicts the bipartitions that are matched between two trees using a

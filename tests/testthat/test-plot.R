@@ -25,9 +25,9 @@ test_that('TreeDistPlot works', {
 })
 
 test_that('VisualizeMatching works', {
-  tree1 <-  ape::read.tree(text='(1, (2, (3, (4, (5, (6, (7, (8, (9, (10, 11))))))))));')
-  tree2 <-  ape::read.tree(text='(11, (2, (3, (4, (5, (6, (7, (8, (9, (10, 1))))))))));')
-  tree2r <-  ape::read.tree(text='(11, (2, (3, (4, (5, (6, (7, (8, 9, 10, 1))))))));')
+  tree1 <- ape::read.tree(text='(1, (2, (3, (4, (5, (6, (7, (8, (9, (10, 11))))))))));')
+  tree2 <- ape::read.tree(text='(11, (2, (3, (4, (5, (6, (7, (8, (9, (10, 1))))))))));')
+  tree2r <- ape::read.tree(text='(11, (2, (3, (4, (5, (6, (7, (8, 9, 10, 1))))))));')
   TestVM <- function () {
     VisualizeMatching(MutualClusteringInfo, tree1, tree2, 
                       setPar = TRUE, precision=3, matchZeros = FALSE,
@@ -66,12 +66,12 @@ test_that('VisualizeMatching works', {
                       setPar = FALSE, precision=3,
                       Plot = TreeDistPlot,
                       matchZeros = TRUE,
-                      leaveRoom=FALSE)
+                      leaveRoom = FALSE)
     VisualizeMatching(RobinsonFoulds, tree2, tree1,
                       setPar = FALSE, precision=3,
                       Plot = TreeDistPlot,
                       matchZeros = FALSE,
-                      leaveRoom=FALSE)
+                      leaveRoom = FALSE)
   })
   
   
