@@ -1,0 +1,33 @@
+---
+title: "Contextualizing tree distances"
+author: "Martin R. Smith"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+csl: ../inst/apa-old-doi-prefix.csl
+vignette: >
+  %\VignetteIndexEntry{Contextualizing tree distances}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Once you understand [how to use TreeDist](Using-TreeDist.html) to calculate
+tree distances, and [what distances measure](tree-distances.html), the next
+step is to provide some context for the calculated distances.
+
+## Normalizing
+
+The maximum value of most tree distance metrics scales with the number of 
+terminals in the trees being compared.  Often, the resolution of the trees
+impacts the range of possible values too.
+
+
+
+
+## Testing similarity to a known tree
+
+- The precision/accuracy distinction
+
+- The role of information
+
+- A ternary plotting approach

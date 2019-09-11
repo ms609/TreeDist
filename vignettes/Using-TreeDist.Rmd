@@ -13,7 +13,7 @@ vignette: >
 
 # Loading trees
 
-Instructions for loading phylogenetic trees into R can be found in a [separate vignette](https://ms609.github.io/TreeSearch/TODO-TO-BE-CONFIRMED). #TODO check link
+Instructions for loading phylogenetic trees into R can be found in a [separate vignette](https://ms609.github.io/TreeSearch/articles/load-trees.html).
 For these examples, we'll enter two simple trees by hand:
 
 ```{r set-up}
@@ -24,13 +24,16 @@ tree2 <- ape::read.tree(text='(A, ((B, ((C, D), (E, (J, K)))), (G, ((H, I), F)))
 # Calculating distances
 
 We can calculate distances between pairs of trees using the `TreeDist` package.  
-First we'll install the package:
+First we'll install the package. 
+
+We can either install the stable version from the CRAN repository:
 
 ```r
 install.packages('TreeDist')
 ```
 
-Or we can install a development version:
+or the development version, from GitHub -- which will contain the latest
+features but may not be as extensively tested:
 
 ```r 
 devtools::install_github('ms609/TreeDist')
@@ -38,11 +41,12 @@ devtools::install_github('ms609/TreeDist')
 
 Then we'll load the package in to R's working environment:
 
-```{r laod-package}
+```{r load-package, message=FALSE}
 library('TreeDist')
 ```
 
-Now the distance functions are available, and we can calculate distances.
+Now the package's functions are available within R.
+Let's proceed to calculate some tree distances.
 
 ## Pairs of trees
 
@@ -56,16 +60,32 @@ The convenience function `TreeDistance` returns the variation of clustering
 information between two trees, normalized against the total information content 
 of all partitions.
 For more on different tree distance metrics, see the
-[tree distance vignette](./tree-distances.html). #TODO check link
+[tree distance vignette](tree-distances.html).
 
-## Visualizing the matching
+## Multiple comparisons
+
+If you have more than two trees to compare, you can send a list of trees to the 
+distance comparison function, whether of class `list` or `multiPhylo`.
+The function will then calculate the distance between each tree in the first
+list and each tree in the second.
+
+```{r multi-trees}
+oneTree <- ape::rtree(11)
+twoTrees <- structure(list(ape::rtree(11), ape::rtree(11)), class='multiPhylo')
+threeTrees <- list(ape::rtree(11), ape::rtree(11), ape::rtree(11))
+
+TreeDistance(oneTree, twoTrees)
+TreeDistance(twoTrees, threeTrees)
+```
+
+## Visualizing a matching
 
 Generalized Robinson-Foulds metrics, such as the variation of clustering
 information, rely on matching each split within a tree with another split in the
 other tree.
 We can view an optimal matching:
 
-```{r visualise-matching}
+```{r visualise-matching, fig.align='center', fig.width=8, out.width='90%'}
 VisualizeMatching(VariationOfClusteringInfo, tree1, tree2)
 ```
 
@@ -75,7 +95,7 @@ to the total tree distance score.
 
 We can view this information in a format accessible for further examination in R with:
 
-```{r write-vis-matching}
+```{r write-vis-matching, fig.align='center', fig.width=8, out.width='90%'}
 VariationOfClusteringInfo(tree1, tree2, reportMatching = TRUE)
 ```
 
@@ -90,28 +110,18 @@ splits
 
 The names of the splits correspond to the number of the nodes in the original tree:
 
-```{r}
+```{r named-splits, fig.align='center', fig.width=7, fig.height = 5, out.width='80%'}
+par(mar = rep(0, 4))
 plot(tree2)
 ape::nodelabels()
 ape::nodelabels(splits, as.integer(names(splits)), 
                 adj=c(1.1, -0.2), cex=0.8, frame='none')
 ```
 
-## Normalizing
+## What next?
 
+You may wish to:
 
-## Lists of trees
+- [Provide context](using-distances.html) for tree distances
 
-- Multiphylo
-
-- List
-
-## Testing similarity to a known tree
-
-- The precision/accuracy distinction
-
-- The role of information
-
-- A ternary plotting approach
-
-# References
+- Understand [how different metrics work](tree-distances.html)
