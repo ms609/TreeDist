@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Evaluating tree distance metrics • TreeDist</title>
+<title>Contextualizing tree distances • TreeDist</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><!-- docsearch --><script src="../docsearch.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous">
 <link href="../docsearch.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Evaluating tree distance metrics">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Contextualizing tree distances">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -105,39 +105,32 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Evaluating tree distance metrics</h1>
+      <h1>Contextualizing tree distances</h1>
                         <h4 class="author">Martin R. Smith</h4>
             
             <h4 class="date">2019-09-11</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/Tree-distance-metric-evaluation.Rmd"><code>vignettes/Tree-distance-metric-evaluation.Rmd</code></a></small>
-      <div class="hidden name"><code>Tree-distance-metric-evaluation.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/using-distances.Rmd"><code>vignettes/using-distances.Rmd</code></a></small>
+      <div class="hidden name"><code>using-distances.Rmd</code></div>
 
     </div>
 
     
     
-<div id="interpretability" class="section level1">
-<h1 class="hasAnchor">
-<a href="#interpretability" class="anchor"></a>Interpretability</h1>
-<div id="expected-values-for-random-trees" class="section level2">
+<p>Once you understand <a href="Using-TreeDist.html">how to use TreeDist</a> to calculate tree distances, and <a href="tree-distances.html">what distances measure</a>, the next step is to provide some context for the calculated distances.</p>
+<div id="normalizing" class="section level2">
 <h2 class="hasAnchor">
-<a href="#expected-values-for-random-trees" class="anchor"></a>Expected values for random trees</h2>
-<p>Context for tree distances can be provided by comparison with the distance expected for a pair of random trees.</p>
-<p>The figure below shows how the median normalized tree distance varies with the number of terminals in the trees being compared. 1 000 random pairs of <em>n</em>-terminal trees were generated for <span class="math inline">\(4 \leq n \leq 200\)</span>, and the distances between them calcuated. Shaded envelopes denote the interdecile and interquartile ranges. The raw data are available in the data object <code>randomTreeDistances</code> in the R package <a href="https://github.com/ms609/TreeDistData"><code>TreeDistData</code></a>.</p>
-<p>Information-based metrics are normalized against the total information content of each pair of trees. The Robinson-Foulds, Nye <em>et al.</em> and Quartet metrics are normalized based on the maximum possible value. The SPR distance is normalized against <em>n</em> / 2; this value lies between the definitive bounds of the maximum diameter of the SPR distance <span class="citation">(Allen &amp; Steel, 2001)</span>, and was not exceeded by any of the random tree pairs. The path and Matching Split Distance metrics do not have a readily calculated maximum value and are thus crudely ‘normalized’ against an approximate maximum, estimated by curve-fitting the maximum observed distance for each number of terminals.</p>
-<p><img src="Tree-distance-metric-evaluation_files/figure-html/Tree-distance-averages-1.png" width="576" style="display: block; margin: auto;"></p>
-<p>Note that the path and Matching Splits distances exhibit a prominently larger variability than other metrics, suggesting that they are less consistent in the score that they assign to a random pair of trees. In combination with the difficulty in calculating the range of these metrics, this makes their absolute value difficult to interpret.</p>
+<a href="#normalizing" class="anchor"></a>Normalizing</h2>
+<p>The maximum value of most tree distance metrics scales with the number of terminals in the trees being compared. Often, the resolution of the trees impacts the range of possible values too.</p>
 </div>
-</div>
-<div id="references" class="section level1 unnumbered">
-<h1 class="hasAnchor">
-<a href="#references" class="anchor"></a>References</h1>
-<div id="refs" class="references">
-<div id="ref-Allen2001">
-<p>Allen, B. L., &amp; Steel, M. A. (2001). Subtree transfer operations and their induced metrics on evolutionary trees. <em>Annals of Combinatorics</em>, <em>5</em>(1), 1–15. doi: <a href="https://doi.org/10.1007/s00026-001-8006-8">10.1007/s00026-001-8006-8</a></p>
-</div>
-</div>
+<div id="testing-similarity-to-a-known-tree" class="section level2">
+<h2 class="hasAnchor">
+<a href="#testing-similarity-to-a-known-tree" class="anchor"></a>Testing similarity to a known tree</h2>
+<ul>
+<li><p>The precision/accuracy distinction</p></li>
+<li><p>The role of information</p></li>
+<li><p>A ternary plotting approach</p></li>
+</ul>
 </div>
   </div>
 
@@ -147,12 +140,8 @@
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li>
-<a href="#interpretability">Interpretability</a><ul class="nav nav-pills nav-stacked">
-<li><a href="#expected-values-for-random-trees">Expected values for random trees</a></li>
-      </ul>
-</li>
-      <li><a href="#references">References</a></li>
+<li><a href="#normalizing">Normalizing</a></li>
+      <li><a href="#testing-similarity-to-a-known-tree">Testing similarity to a known tree</a></li>
       </ul>
 </div>
       </div>
