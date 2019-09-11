@@ -85,9 +85,12 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
   }
   
   if (mode(how) == 'logical') {
-    if (how == FALSE) return (unnormalized)
-    if (is.null(infoInBoth)) 
-      infoInBoth <- CombineInfo(InfoInTree(tree1, ...), InfoInTree(tree2, ...))
+    if (how == FALSE) {
+      return (unnormalized)
+    } else {
+      if (is.null(infoInBoth)) 
+        infoInBoth <- CombineInfo(InfoInTree(tree1, ...), InfoInTree(tree2, ...))
+    }
   } else if (mode(how) == 'function') {
     if (is.null(infoInBoth)) 
       infoInBoth <- CombineInfo(InfoInTree(tree1, ...), InfoInTree(tree2, ...),
