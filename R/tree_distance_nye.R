@@ -14,6 +14,12 @@
 #' This ensures consistency with `JaccardRobinsonFoulds`.
 #' 
 #' @inheritParams RobinsonFoulds
+#' @param normalizeMax When calculating similarity, normalize against the 
+#' maximum number of partitions that could have been present (`TRUE`),
+#'  or the number of partitions that were actually observed (`FALSE`)?  
+#' Defaults to the number of partitions in the better-resolved tree; set
+#'  `normalize = pmin.int` to use the number of partitions in the less resolved
+#'  tree.
 #' 
 #' @section Normalization:
 #' 
@@ -36,7 +42,8 @@
 #' @importFrom TreeSearch NPartitions
 #' @export
 NyeTreeSimilarity <- function (tree1, tree2, similarity = TRUE,
-                               normalize = FALSE, reportMatching = FALSE) {
+                               normalize = FALSE, normalizeMax = TRUE,
+                               reportMatching = FALSE) {
   
   unnormalized <- CalculateTreeDistance(NyeSplitSimilarity, tree1, tree2, 
                                         reportMatching)
@@ -44,7 +51,8 @@ NyeTreeSimilarity <- function (tree1, tree2, similarity = TRUE,
     MaxPartitions <- function (tree) length(tree$tip.label) - 3L
     # Return:
     NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                  InfoInTree = MaxPartitions, Combine = pmax.int)
+                  InfoInTree = if (normalizeMax) MaxPartitions else NPartitions,
+                  Combine = pmax.int)
   } else {
     unnormalized <- outer(NPartitions(tree1), NPartitions(tree2), 
                           '+')[, , drop=TRUE] - (2 * unnormalized)
