@@ -80,12 +80,12 @@ test_that('VisualizeMatching works', {
     tree1 <- ape::read.tree(text='((1, 2), ((6, (7, 8)), (3, 4, (5, 9))));')
     tree2 <- ape::read.tree(text='((1, 2), ((3, (4, (5, 9))), ((6, 7), 8)));')
     VisualizeMatching(RobinsonFoulds, tree1, tree2,
-                      setPar = FALSE, precision=3,
+                      setPar = FALSE, precision = 3L,
                       Plot = TreeDistPlot,
                       matchZeros = TRUE,
-                      leaveRoom=FALSE)
+                      leaveRoom = FALSE)
     VisualizeMatching(RobinsonFoulds, tree2, tree1,
-                      setPar = FALSE, precision=3,
+                      setPar = FALSE, precision = 3L,
                       Plot = TreeDistPlot,
                       matchZeros = FALSE,
                       leaveRoom=FALSE)

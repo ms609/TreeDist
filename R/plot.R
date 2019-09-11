@@ -133,6 +133,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
     Plot(tree1, edge.width = edge.width, edge.color = edge.color, ...)
   } else {
     Normalize <- function (scores, na.rm = FALSE) {
+      if (length(scores) == 0) return(scores)
       if (na.rm) {
         scores <- scores[!is.na(scores)]
       } else {
@@ -162,7 +163,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
     EdgyPlot <- function (tree, splits, edge, partitionEdges, 
                           normalizedScores, ...) {
       ore <- OtherRootEdge(colnames(splits), edge)
-      if (all(!is.na(ore))) {
+      if (all(!is.na(ore)) && length(normalizedScores)) {
         ns <- c(normalizedScores, normalizedScores[ore['score']])
         pe <- c(partitionEdges, ore[2])
       } else {
@@ -204,8 +205,8 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   if (plainEdges) {
     Plot(tree2, edge.width = edge.width, edge.color = edge.color, ...)
   } else {
-    EdgyPlot(tree2, splits2, edge2, partitionEdges2[pairNames2], 
-             Normalize(pairScores, na.rm = TRUE), ...)
+    EdgyPlot(tree2, splits2, edge2, partitionEdges2[pairNames2],
+             Normalize(pairedPairScores, na.rm = TRUE), ...)
   }
   if (any(pairLabels)) {
     edgelabels(text=pairLabels, edge=partitionEdges2[pairNames2],
