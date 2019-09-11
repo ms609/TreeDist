@@ -23,9 +23,9 @@ tree2 <- ape::read.tree(text='(A, ((B, ((C, D), (E, (J, K)))), (G, ((H, I), F)))
 
 ## Calculating distances
 
-We can calculate distances between pairs of trees using the `TreeDist` package.  
-First we'll install the package. 
+We can calculate distances between pairs of trees using the `TreeDist` package.
 
+First we'll install the package.
 We can either install the stable version from the CRAN repository:
 
 ```r
@@ -57,15 +57,15 @@ distance <- TreeDistance(tree1, tree2)
 ```
 
 The convenience function `TreeDistance` returns the variation of clustering
-information between two trees, normalized against the total information content 
-of all partitions.
+information between two trees, [normalized](using-distances.html)
+against the total information content of all partitions.  
 For more on different tree distance metrics, see the
 [tree distance vignette](tree-distances.html).
 
 ### Multiple comparisons
 
-If you have more than two trees to compare, you can send a list of trees to the 
-distance comparison function, whether of class `list` or `multiPhylo`.
+If you have more than two trees to compare, you can send a list of trees 
+(class: `list` or `multiPhylo`) to the distance comparison function.
 The function will then calculate the distance between each tree in the first
 list and each tree in the second.
 
@@ -80,9 +80,9 @@ TreeDistance(twoTrees, threeTrees)
 
 ## Visualizing a matching
 
-Generalized Robinson-Foulds metrics, such as the variation of clustering
-information, rely on matching each split within a tree with another split in the
-other tree.
+[Generalized Robinson-Foulds metrics](Generalized-RF.html),
+such as the variation of clustering information,
+rely on matching each split within a tree with another split in the other tree.  
 We can view an optimal matching:
 
 ```{r visualise-matching, fig.align='center', fig.width=8, out.width='90%'}
