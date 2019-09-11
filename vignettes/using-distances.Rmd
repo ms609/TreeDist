@@ -110,11 +110,131 @@ NyeTreeSimilarity(tree1, tree2, normalize = NPartitions(tree1))
 
 ## Testing similarity to a known tree
 
-- The precision/accuracy distinction
+This score tells us how similar the two trees are.  Similarity has two 
+components: precision and accuracy.  A tree can be 80% similar to a target tree
+because it contains 80% of the partitions in the target tree, and no 
+incorrect partitions -- or because it is perfectly bifurcating, but 
+10% of the partitions present are resolved incorrectly and are thus positively
+misleading.
 
-- The role of information
+In such a comparison, of course, it is more sensible to talk about partition
+information than just the number of partitions: an even partition may
+contain more information than two very uneven partitions, so the absence of 
+two information-poor partitions may be preferable to the absence of one 
+information-rich partition.  As such, it is most instructive to think of the
+proportion of information that has been correctly resolved: the desideratum
+is that we find a tree that is as informative as possible about the true tree.
 
-- A ternary plotting approach
+Ternary diagrams allow us to visualise the quality of a reconstructed tree
+with reference to a known 'true' tree:
+
+```{r, fig.width=6, fig.align='center', out.width='80%'}
+testTrees <- list(
+  trueTree = ape::read.tree(text='(a, (b, (c, (d, (e, (f, (g, h)))))));'),
+  lackRes = ape::read.tree(text='(a, (b, c, (d, e, (f, g, h))));'),
+  smallErr = ape::read.tree(text='(a, (c, (b, (d, (f, (e, (g, h)))))));'),
+  bigErr = ape::read.tree(text='(a, (c, (((b, d), (f, h)), (e, g))));')
+)
+VisualizeMatching(MutualClusteringInfo, testTrees$trueTree, testTrees$lackRes)
+points(4, 7.5, pch=2, cex=3, col=cbPalette8[2])
+VisualizeMatching(MutualClusteringInfo, testTrees$trueTree, testTrees$smallErr)
+points(4, 7.5, pch=3, cex=3, col=cbPalette8[3])
+VisualizeMatching(MutualClusteringInfo, testTrees$trueTree, testTrees$bigErr)
+points(4, 7.5, pch=4, cex=3, col=cbPalette8[4])
+```
+
+Better trees plot vertically towards the 'shared information' vertex. 
+Resolution of trees increases towards the right; trees that are more
+resolved may be no better than less-resolved trees if the addition of 
+resolution introduces error.
+
+```{r, fig.width=4, fig.align='center', fig.asp=1, out.width='50%'}
+library('Ternary')
+par(mar=rep(0.1, 4))
+TernaryPlot(atip=NULL, btip=NULL, ctip=NULL,
+            alab='Missing information', blab='Misinformation', clab='Shared information',
+            lab.cex=0.8,
+            lab.offset=0.18, # higher value as longer tick labels
+            point='left', clockwise=FALSE,
+            #col=backgroundCol,
+            grid.lty='solid', grid.col='#aaaaaa',
+            grid.minor.lines = 0,
+            axis.labels = seq(0, 1, length.out=11L),
+            axis.col="#999999",
+            axis.labels.col = "black",
+            ticks.length = 0.025)
+
+HorizontalGrid()
+correct <- MutualClusteringInfo(testTrees$trueTree, testTrees)
+resolved <- ClusteringInfo(testTrees)
+unresolved <- resolved['trueTree'] - resolved
+incorrect <- resolved - correct
+TernaryPoints(cbind(unresolved, incorrect, correct), 
+              pch=1:4, cex=2, col=cbPalette8[1:4])
+```
+
+
+### Example
+
+Here's a noddy real-world example applying this to a simulation-style study.
+
+First, let's generate a starting tree, which will represent our reference
+topology:
+
+```{r}
+set.seed(0)
+library('TreeSearch')
+trueTree <- ape::rtree(20)
+```
+
+Then, let's generate 100 degraded trees by making a SPR move:
+
+```{r}
+oneAway <- structure(lapply(seq_len(100), function (x) SPR(trueTree)), 
+                     class='multiPhylo')
+```
+
+And let's generate 100 more trees that are even more degraded:
+
+```{r}
+twoAway <- structure(lapply(oneAway, SPR), class='multiPhylo')
+```
+
+Now let's calculate their tree similarity scores:
+
+```{r}
+correct1 <- MutualClusteringInfo(trueTree, oneAway)
+resolved1 <- ClusteringInfo(oneAway)
+unresolved1 <- ClusteringInfo(trueTree) - resolved1
+incorrect1 <- resolved1 - correct1
+
+correct2 <- MutualClusteringInfo(trueTree, twoAway)
+resolved2 <- ClusteringInfo(twoAway)
+unresolved2 <- ClusteringInfo(trueTree) - resolved2
+incorrect2 <- resolved2 - correct2
+```
+
+```{r, fig.width=4, fig.align='center', fig.asp=1, out.width='50%'}
+library('Ternary')
+par(mar=rep(0.1, 4))
+TernaryPlot(atip=NULL, btip=NULL, ctip=NULL,
+            alab='Missing information', blab='Misinformation', clab='Shared information',
+            lab.cex=0.8,
+            lab.offset=0.18, # higher value as longer tick labels
+            point='left', clockwise=FALSE,
+            #col=backgroundCol,
+            grid.lty='solid', grid.col='#aaaaaa',
+            grid.minor.lines = 0,
+            axis.labels = seq(0, 1, length.out=11L),
+            axis.col="#999999",
+            axis.labels.col = "black",
+            ticks.length = 0.025)
+
+HorizontalGrid()
+
+TernaryPoints(cbind(unresolved1, incorrect1, correct1), pch='.', col='red')
+TernaryPoints(cbind(unresolved2, incorrect2, correct2), pch='.', col='green')
+```
 
 ## What next?
 
