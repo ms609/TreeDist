@@ -17,7 +17,7 @@
 #' @importFrom ape plot.phylo
 #' @keywords internal
 #' @export
-TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = TRUE,
+TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = FALSE,
                      prune=integer(0), graft=integer(0), edge.color = 'black',
                      edge.width = NULL,
                      ...) {
