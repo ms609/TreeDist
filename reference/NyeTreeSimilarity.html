@@ -172,7 +172,7 @@ slightly faster than) <code><a href='JaccardRobinsonFoulds.html'>JaccardRobinson
     </div>
 
     <pre class="usage"><span class='fu'>NyeTreeSimilarity</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>similarity</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+  <span class='kw'>normalizeMax</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
 <span class='fu'>NyeSplitSimilarity</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>, <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
 
@@ -202,6 +202,15 @@ If <code>TRUE</code>, results will be rescaled against a maximum value calculate
 the specified tree sizes and topology, as specified in the 'Normalization'
 section below.
 If <code>FALSE</code>, results will not be rescaled.</p></td>
+    </tr>
+    <tr>
+      <th>normalizeMax</th>
+      <td><p>When calculating similarity, normalize against the
+maximum number of partitions that could have been present (<code>TRUE</code>),
+or the number of partitions that were actually observed (<code>FALSE</code>)?
+Defaults to the number of partitions in the better-resolved tree; set
+<code>normalize = pmin.int</code> to use the number of partitions in the less resolved
+tree.</p></td>
     </tr>
     <tr>
       <th>reportMatching</th>

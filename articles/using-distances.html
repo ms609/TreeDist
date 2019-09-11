@@ -109,7 +109,7 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1>Contextualizing tree distances</h1>
-                        <h4 class="author">Martin R. Smith</h4>
+                        <h4 class="author"><a href="https://community.dur.ac.uk/martin.smith/">Martin R. Smith</a></h4>
             
             <h4 class="date">2019-09-11</h4>
       
@@ -120,11 +120,54 @@
 
     
     
-<p>Once you understand <a href="Using-TreeDist.html">how to use TreeDist</a> to calculate tree distances, and <a href="tree-distances.html">what distances measure</a>, the next step is to provide some context for the calculated distances.</p>
+<p>Once you understand <a href="Using-TreeDist.html">how to use <em>TreeDist</em></a> to calculate tree distances, and <a href="tree-distances.html">what distances measure</a>, the next step is to provide some context for the calculated distances.</p>
 <div id="normalizing" class="section level2">
 <h2 class="hasAnchor">
 <a href="#normalizing" class="anchor"></a>Normalizing</h2>
-<p>The maximum value of most tree distance metrics scales with the number of terminals in the trees being compared. Often, the resolution of the trees impacts the range of possible values too.</p>
+<p>The maximum value of most tree distance metrics scales with the number of terminals in the trees being compared. Typically, the resolution of the trees being compared also impacts the range of possible values. As such, it can be difficult to interpret the tree distance value without suitable context.</p>
+<p>Normalizing a distance metric is one way to render its meaning more obvious. The appropriate normalizing constant may consider some thought, as it will depend on the purpose to which a tree distance metric is being put.</p>
+<p>The default normalization behaviour of each functions in <em>TreeDist</em> is listed in the accompanying manual pages, visible under the <a href="reference/index.html">function reference</a> or by typing <code>?FunctionName</code> in the R terminal. This default behaviour is triggered by setting <code>normalize = TRUE</code>.</p>
+<div id="nye-tree-similarity" class="section level3">
+<h3 class="hasAnchor">
+<a href="#nye-tree-similarity" class="anchor"></a>Nye tree similarity</h3>
+<p>Let’s work through a simple example using the Nye <em>et al</em>. similarity metric to compare two imperfectly-resolved trees.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">'TreeDist'</span>)</a></code></pre></div>
+<pre><code>## Registered S3 method overwritten by 'R.oo':
+##   method        from       
+##   throw.default R.methodsS3</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">tree1 &lt;-<span class="st"> </span>ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="dt">text=</span><span class="st">'(A, ((B, ((C, D), (E, F))), (G, (H, (I, J, K)))));'</span>)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">tree2 &lt;-<span class="st"> </span>ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="dt">text=</span><span class="st">'(A, (B, (C, D, E, (J, K)), (G, ((H, I), F))));'</span>)</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(NyeTreeSimilarity, tree1, tree2,</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">                  <span class="dt">Plot=</span>TreeDistPlot, <span class="dt">matchZeros =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<p><img src="using-distances_files/figure-html/unnamed-chunk-1-1.png" width="90%" style="display: block; margin: auto;"></p>
+<p>This is a nice metric to start with, because the maximum similarity between each pair of partitions is defined as one. (Astute readers might worry that the minimum similarity is greater than zero – that’s a harder problem to overcome.)</p>
+<p>As such, the maximum similarity possible between two 11-tip trees is <a href="https://ms609.github.io/TreeSearch/reference/NPartitions.html"><code>NPartitions</code></a><code>(11)</code> = 8.</p>
+<p>Normalizing against this value tells us how similar the two trees are, compared to two identical <em>fully bifurcating</em> eleven-tip trees; this is the default normalization method for <a href="reference/NyeTreeSimilarity.html"><code>NyeTreeSimilarity</code></a>.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="../reference/NyeTreeSimilarity.html">NyeTreeSimilarity</a></span>(tree1, tree2, <span class="dt">normalize =</span> <span class="ot">FALSE</span>) <span class="op">/</span><span class="st"> </span><span class="dv">8</span></a></code></pre></div>
+<pre><code>## [1] 0.3065476</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="../reference/NyeTreeSimilarity.html">NyeTreeSimilarity</a></span>(tree1, tree2, <span class="dt">normalize =</span> <span class="dv">8</span>)</a></code></pre></div>
+<pre><code>## [1] 0.3065476</code></pre>
+<p>We might also be interested in comparing the tree similarity to the maximum score possible for two trees of the specified resolution. This value is given by the number of partitions in the least resolved of the two trees:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="../reference/NyeTreeSimilarity.html">NyeTreeSimilarity</a></span>(tree1, tree2, </a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">                  <span class="dt">normalize =</span> <span class="kw"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span>(<span class="kw">NPartitions</span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(tree1, tree2))))</a></code></pre></div>
+<pre><code>## [1] 0.4904762</code></pre>
+<p>More concisely, we can provide a normalizing function:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw"><a href="../reference/NyeTreeSimilarity.html">NyeTreeSimilarity</a></span>(tree1, tree2, <span class="dt">normalize =</span> min, <span class="dt">normalizeMax =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<pre><code>## [1] 0.4904762</code></pre>
+<p>If we are comparing lists of trees, this best value will depend on the number of partitions in each pair of trees. We can use the function <code>pmin</code> to select the less resoved of each pair of trees:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw"><a href="../reference/NyeTreeSimilarity.html">NyeTreeSimilarity</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(tree1, tree2), <span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(tree1, tree2), </a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">                  <span class="dt">normalize =</span> pmin, <span class="dt">normalizeMax =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<pre><code>##           [,1]      [,2]
+## [1,] 1.0000000 0.4904762
+## [2,] 0.4904762 1.0000000</code></pre>
+<p>Finally, if <code>tree1</code> is a ‘target’ tree – perhaps one that has been used to simulate data from, or which is independently known to be true or virtuous – we may wish to normalize against the best possible match to that tree.</p>
+<p>In that case, the best possible score is</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">TreeSearch<span class="op">::</span><span class="kw"><a href="https://ms609.github.io/TreeSearch/reference/NPartitions.html">NPartitions</a></span>(tree1)</a></code></pre></div>
+<pre><code>## [1] 7</code></pre>
+<p>and our normalized score will be</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw"><a href="../reference/NyeTreeSimilarity.html">NyeTreeSimilarity</a></span>(tree1, tree2, <span class="dt">normalize =</span> <span class="kw">NPartitions</span>(tree1))</a></code></pre></div>
+<pre><code>## [1] 0.3503401</code></pre>
+</div>
 </div>
 <div id="testing-similarity-to-a-known-tree" class="section level2">
 <h2 class="hasAnchor">
@@ -134,6 +177,18 @@
 <li><p>The role of information</p></li>
 <li><p>A ternary plotting approach</p></li>
 </ul>
+</div>
+<div id="what-next" class="section level2">
+<h2 class="hasAnchor">
+<a href="#what-next" class="anchor"></a>What next?</h2>
+<ul>
+<li><p>More details of the <a href="http://ms609.github.io/Ternary/">Ternary package</a></p></li>
+<li><p>A summary of the <a href="tree-distances.html">distances implemented</a> in TreeDist</p></li>
+</ul>
+</div>
+<div id="references" class="section level2">
+<h2 class="hasAnchor">
+<a href="#references" class="anchor"></a>References</h2>
 </div>
   </div>
 
@@ -145,6 +200,8 @@
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#normalizing">Normalizing</a></li>
       <li><a href="#testing-similarity-to-a-known-tree">Testing similarity to a known tree</a></li>
+      <li><a href="#what-next">What next?</a></li>
+      <li><a href="#references">References</a></li>
       </ul>
 </div>
       </div>
