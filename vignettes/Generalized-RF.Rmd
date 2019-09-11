@@ -25,9 +25,11 @@ generalized Robinson-Foulds distances implemented in this package.
 
 Before you read it, you may wish to refresh your memory of the 
 [Robinson-Foulds distance](Robinson-Foulds.html), or how to
-[use the TreeDist package](Using-TreeDist.html).
+[use the TreeDist package](Using-TreeDist.html).  To understand the
+information-based metrics, it is useful to be familiar with 
+[concepts of information](information.html).
 
-# Mutual phylogenetic information
+## Mutual phylogenetic information
 
 Under the mutual phylognetic information tree distance measure [@SmithDist], 
 pairs of partitions are assigned a similarity score that corresponds to their
@@ -38,7 +40,6 @@ VisualizeMatching(MutualPhylogeneticInfo, tree1, tree2,
                   Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
 MutualPhylogeneticInfo(tree1, tree2)
 ```
-
 
 The phylogenetic information content of a partition is defined as
 the negative logarithm of the proportion of all bifurcating _n_-tip trees that
@@ -79,7 +80,7 @@ SplitMutualInformation(n = 9, 6, 7)
 
 <!--#TODO: 1 != 1; need to normalize.-->
 
-## The problem with arboreal matchings
+### The problem with arboreal matchings
 
 The mutual phylogenetic information is an arboreal similarity score: that is to
 say, it assigns zero similarity to partitions that cannot both occur on a 
@@ -95,7 +96,7 @@ VisualizeMatching(MutualPhylogeneticInfo, matchZeros = FALSE, AtoJ, AotJ,
                   Plot=TreeDistPlot, leaveRoom = FALSE, prune=c(5, 18))
 ```
 
-# Mutual clustering information
+## Mutual clustering information
 
 Clustering information [@SmithDist] provides a non-arboreal information-based
 tree distance metric.
@@ -127,7 +128,7 @@ VisualizeMatching(MutualClusteringInfo, tree1, tree2,
                   Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
 ```
 
-# Nye _et al._ tree similarity metric
+## Nye _et al._ tree similarity metric
 
 The Nye _et al_. [-@Nye2006] tree similarity metric scores pairs by
 considering the elements held in common between subsets of each partition.
@@ -171,7 +172,7 @@ VisualizeMatching(NyeTreeSimilarity, tree1, tree2,
 NyeTreeSimilarity(tree1, tree2, normalize=FALSE)
 ```
 
-## Jaccard-Robinson-Foulds metric
+### Jaccard-Robinson-Foulds metric
 
 B&ouml;cker _et al_. [-@Bocker2013] propose expressly prohibiting contradictory
 pairings, i.e. pairs of partitions that could never occur in the same tree.
@@ -212,7 +213,7 @@ legend('right', c('Robinson-Foulds', 'Arboreal', 'Non-arboreal', 'Nye et al.'),
        col = cbPalette8[c(6, 4, 5, 8)], bty = 'n')
 ```
 
-# Matching Split Distance
+## Matching Split Distance
 
 Bogdanowicz & Giaro [-@Bogdanowicz2012] propose an alternative distance, which
 they term the Matching Split Distance.
@@ -246,7 +247,7 @@ MatchingSplitDistance(read.tree(text='((a, b, c, d, e, f), (g, h, i, j));'),
 This distance is difficult to normalize, as its maximum value is difficult
 to calculate.
 
-## Information theoretic alternative
+### Information theoretic alternative
 
 An information-theoretic take on the Matching Split Distance [@SmithDist] 
 is provided by the function
@@ -276,4 +277,4 @@ particular pairing.
 This measure can therefore be normalized against the phylogenetic information
 content of the two input trees.
 
-# References
+## References
