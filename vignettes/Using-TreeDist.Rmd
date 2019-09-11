@@ -11,7 +11,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-# Loading trees
+## Loading trees
 
 Instructions for loading phylogenetic trees into R can be found in a [separate vignette](https://ms609.github.io/TreeSearch/articles/load-trees.html).
 For these examples, we'll enter two simple trees by hand:
@@ -21,7 +21,7 @@ tree1 <- ape::read.tree(text='(A, ((B, ((C, D), (E, F))), (G, ((H, I), (J, K))))
 tree2 <- ape::read.tree(text='(A, ((B, ((C, D), (E, (J, K)))), (G, ((H, I), F))));')
 ```
 
-# Calculating distances
+## Calculating distances
 
 We can calculate distances between pairs of trees using the `TreeDist` package.  
 First we'll install the package. 
@@ -48,7 +48,7 @@ library('TreeDist')
 Now the package's functions are available within R.
 Let's proceed to calculate some tree distances.
 
-## Pairs of trees
+### Pairs of trees
 
 Calculating the distance between two trees is as simple as:
 
@@ -62,7 +62,7 @@ of all partitions.
 For more on different tree distance metrics, see the
 [tree distance vignette](tree-distances.html).
 
-## Multiple comparisons
+### Multiple comparisons
 
 If you have more than two trees to compare, you can send a list of trees to the 
 distance comparison function, whether of class `list` or `multiPhylo`.
