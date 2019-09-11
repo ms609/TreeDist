@@ -68,6 +68,9 @@
       <a href="../articles/Using-TreeDist.html">Using TreeDist to calculate tree similarity</a>
     </li>
     <li>
+      <a href="../articles/information.html">Information theory</a>
+    </li>
+    <li>
       <a href="../articles/tree-distances.html">Measuring tree distance</a>
     </li>
     <li>
@@ -117,16 +120,16 @@
 
     
     
-<div id="loading-trees" class="section level1">
-<h1 class="hasAnchor">
-<a href="#loading-trees" class="anchor"></a>Loading trees</h1>
+<div id="loading-trees" class="section level2">
+<h2 class="hasAnchor">
+<a href="#loading-trees" class="anchor"></a>Loading trees</h2>
 <p>Instructions for loading phylogenetic trees into R can be found in a <a href="https://ms609.github.io/TreeSearch/articles/load-trees.html">separate vignette</a>. For these examples, we’ll enter two simple trees by hand:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">tree1 &lt;-<span class="st"> </span>ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="dt">text=</span><span class="st">'(A, ((B, ((C, D), (E, F))), (G, ((H, I), (J, K)))));'</span>)</a>
 <a class="sourceLine" id="cb1-2" data-line-number="2">tree2 &lt;-<span class="st"> </span>ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="dt">text=</span><span class="st">'(A, ((B, ((C, D), (E, (J, K)))), (G, ((H, I), F))));'</span>)</a></code></pre></div>
 </div>
-<div id="calculating-distances" class="section level1">
-<h1 class="hasAnchor">
-<a href="#calculating-distances" class="anchor"></a>Calculating distances</h1>
+<div id="calculating-distances" class="section level2">
+<h2 class="hasAnchor">
+<a href="#calculating-distances" class="anchor"></a>Calculating distances</h2>
 <p>We can calculate distances between pairs of trees using the <code>TreeDist</code> package.<br>
 First we’ll install the package.</p>
 <p>We can either install the stable version from the CRAN repository:</p>
@@ -136,27 +139,28 @@ First we’ll install the package.</p>
 <p>Then we’ll load the package in to R’s working environment:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">'TreeDist'</span>)</a></code></pre></div>
 <p>Now the package’s functions are available within R. Let’s proceed to calculate some tree distances.</p>
-<div id="pairs-of-trees" class="section level2">
-<h2 class="hasAnchor">
-<a href="#pairs-of-trees" class="anchor"></a>Pairs of trees</h2>
+<div id="pairs-of-trees" class="section level3">
+<h3 class="hasAnchor">
+<a href="#pairs-of-trees" class="anchor"></a>Pairs of trees</h3>
 <p>Calculating the distance between two trees is as simple as:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">distance &lt;-<span class="st"> </span><span class="kw"><a href="../reference/TreeDistance.html">TreeDistance</a></span>(tree1, tree2)</a></code></pre></div>
 <p>The convenience function <code>TreeDistance</code> returns the variation of clustering information between two trees, normalized against the total information content of all partitions. For more on different tree distance metrics, see the <a href="tree-distances.html">tree distance vignette</a>.</p>
 </div>
-<div id="multiple-comparisons" class="section level2">
-<h2 class="hasAnchor">
-<a href="#multiple-comparisons" class="anchor"></a>Multiple comparisons</h2>
+<div id="multiple-comparisons" class="section level3">
+<h3 class="hasAnchor">
+<a href="#multiple-comparisons" class="anchor"></a>Multiple comparisons</h3>
 <p>If you have more than two trees to compare, you can send a list of trees to the distance comparison function, whether of class <code>list</code> or <code>multiPhylo</code>. The function will then calculate the distance between each tree in the first list and each tree in the second.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">oneTree &lt;-<span class="st"> </span>ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span>(<span class="dv">11</span>)</a>
 <a class="sourceLine" id="cb6-2" data-line-number="2">twoTrees &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/structure.html">structure</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span>(<span class="dv">11</span>), ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span>(<span class="dv">11</span>)), <span class="dt">class=</span><span class="st">'multiPhylo'</span>)</a>
 <a class="sourceLine" id="cb6-3" data-line-number="3">threeTrees &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span>(<span class="dv">11</span>), ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span>(<span class="dv">11</span>), ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span>(<span class="dv">11</span>))</a>
 <a class="sourceLine" id="cb6-4" data-line-number="4"></a>
 <a class="sourceLine" id="cb6-5" data-line-number="5"><span class="kw"><a href="../reference/TreeDistance.html">TreeDistance</a></span>(oneTree, twoTrees)</a></code></pre></div>
-<pre><code>## [1] 0.2851489 0.1667954</code></pre>
+<pre><code>## [1] 0.2687408 0.1578996</code></pre>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="../reference/TreeDistance.html">TreeDistance</a></span>(twoTrees, threeTrees)</a></code></pre></div>
 <pre><code>##           [,1]      [,2]      [,3]
-## [1,] 0.1671425 0.1384421 0.2500079
-## [2,] 0.1855192 0.3051775 0.3145118</code></pre>
+## [1,] 0.3405757 0.1669389 0.4207358
+## [2,] 0.2383579 0.3325198 0.1577544</code></pre>
+</div>
 </div>
 <div id="visualizing-a-matching" class="section level2">
 <h2 class="hasAnchor">
@@ -229,7 +233,6 @@ Each split is labelled with a measure of its similarity, which is its contributi
 <li><p>Understand <a href="tree-distances.html">how different metrics work</a></p></li>
 </ul>
 </div>
-</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -239,14 +242,9 @@ Each split is labelled with a measure of its similarity, which is its contributi
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#loading-trees">Loading trees</a></li>
-      <li>
-<a href="#calculating-distances">Calculating distances</a><ul class="nav nav-pills nav-stacked">
-<li><a href="#pairs-of-trees">Pairs of trees</a></li>
-      <li><a href="#multiple-comparisons">Multiple comparisons</a></li>
+      <li><a href="#calculating-distances">Calculating distances</a></li>
       <li><a href="#visualizing-a-matching">Visualizing a matching</a></li>
       <li><a href="#what-next">What next?</a></li>
-      </ul>
-</li>
       </ul>
 </div>
       </div>
