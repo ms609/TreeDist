@@ -37,7 +37,7 @@ mutual phylogenetic information content.
 
 ```{r, fig.width=6 , fig.align='center'}
 VisualizeMatching(MutualPhylogeneticInfo, tree1, tree2, 
-                  Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
+                  Plot=TreeDistPlot, matchZeros = FALSE)
 MutualPhylogeneticInfo(tree1, tree2)
 ```
 
