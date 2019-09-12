@@ -135,12 +135,12 @@ testTrees <- list(
   smallErr = ape::read.tree(text='(a, (c, (b, (d, (f, (e, (g, h)))))));'),
   bigErr = ape::read.tree(text='(a, (c, (((b, d), (f, h)), (e, g))));')
 )
-VisualizeMatching(MutualClusteringInfo, testTrees$trueTree, testTrees$lackRes)
-points(4, 7.5, pch=2, cex=3, col=cbPalette8[2])
-VisualizeMatching(MutualClusteringInfo, testTrees$trueTree, testTrees$smallErr)
-points(4, 7.5, pch=3, cex=3, col=cbPalette8[3])
-VisualizeMatching(MutualClusteringInfo, testTrees$trueTree, testTrees$bigErr)
-points(4, 7.5, pch=4, cex=3, col=cbPalette8[4])
+VisualizeMatching(NyeTreeSimilarity, testTrees$trueTree, testTrees$lackRes)
+points(4, 7.5, pch=2, cex=3, col=Ternary::cbPalette8[2])
+VisualizeMatching(NyeTreeSimilarity, testTrees$trueTree, testTrees$smallErr)
+points(4, 7.5, pch=3, cex=3, col=Ternary::cbPalette8[3])
+VisualizeMatching(NyeTreeSimilarity, testTrees$trueTree, testTrees$bigErr)
+points(4, 7.5, pch=4, cex=3, col=Ternary::cbPalette8[4])
 ```
 
 Better trees plot vertically towards the 'shared information' vertex. 
@@ -152,7 +152,7 @@ resolution introduces error.
 library('Ternary')
 par(mar=rep(0.1, 4))
 TernaryPlot(atip=NULL, btip=NULL, ctip=NULL,
-            alab='Missing information', blab='Misinformation', clab='Shared information',
+            alab='Absent information', blab='Shared information', clab='Misinformation',
             lab.cex=0.8,
             lab.offset=0.18, # higher value as longer tick labels
             point='left', clockwise=FALSE,
@@ -169,8 +169,8 @@ correct <- MutualClusteringInfo(testTrees$trueTree, testTrees)
 resolved <- ClusteringInfo(testTrees)
 unresolved <- resolved['trueTree'] - resolved
 incorrect <- resolved - correct
-TernaryPoints(cbind(unresolved, incorrect, correct), 
-              pch=1:4, cex=2, col=cbPalette8[1:4])
+TernaryPoints(cbind(unresolved, correct, incorrect), 
+              pch=1:4, cex=2, col=Ternary::cbPalette8[1:4])
 ```
 
 
@@ -183,58 +183,113 @@ topology:
 
 ```{r}
 set.seed(0)
-library('TreeSearch')
 trueTree <- ape::rtree(20)
 ```
 
-Then, let's generate 100 degraded trees by making a SPR move:
+Then, let's generate 200 degraded trees.
+We'll move away from the true tree by making a TBR move, then reduce 
+resolution by taking the consensus of this tree, and three trees in its 
+immediate neighbourhood, one NNI move away.
 
 ```{r}
-oneAway <- structure(lapply(seq_len(100), function (x) SPR(trueTree)), 
-                     class='multiPhylo')
+oneAway <- structure(lapply(seq_len(200), function (x) {
+  tbrTree <- TBR(trueTree)
+  ape::consensus(list(tbrTree, NNI(tbrTree), NNI(tbrTree), NNI(tbrTree)))
+}), class='multiPhylo')
 ```
 
-And let's generate 100 more trees that are even more degraded:
+And let's generate 200 more trees that are even more degraded.
+This time we'll move three TBR moves away from the true tree, and reduce 
+resoluton by taking a consensus with three trees that are two NNI moves away.
 
 ```{r}
-twoAway <- structure(lapply(oneAway, SPR), class='multiPhylo')
+threeAway <- structure(lapply(seq_len(200), function (x) {
+  tbrTree <- TBR(TBR(TBR(trueTree)))
+  ape::consensus(list(tbrTree, NNI(NNI(tbrTree)),
+                      NNI(NNI(tbrTree)), NNI(NNI(tbrTree))))
+}), class='multiPhylo')
 ```
 
-Now let's calculate their tree similarity scores:
+Now let's calculate their tree similarity scores.
+We need to calculate the amount of information each tree has in common with
+the true tree:
 
 ```{r}
 correct1 <- MutualClusteringInfo(trueTree, oneAway)
-resolved1 <- ClusteringInfo(oneAway)
-unresolved1 <- ClusteringInfo(trueTree) - resolved1
-incorrect1 <- resolved1 - correct1
-
-correct2 <- MutualClusteringInfo(trueTree, twoAway)
-resolved2 <- ClusteringInfo(twoAway)
-unresolved2 <- ClusteringInfo(trueTree) - resolved2
-incorrect2 <- resolved2 - correct2
+correct3 <- MutualClusteringInfo(trueTree, threeAway)
 ```
 
-```{r, fig.width=4, fig.align='center', fig.asp=1, out.width='50%'}
+The amount of information in each degraded tree:
+```{r}
+infoInTree1 <- ClusteringInfo(oneAway)
+infoInTree3 <- ClusteringInfo(threeAway)
+```
+
+The amount of information that could have been resolved, but was not:
+```{r}
+unresolved1 <- ClusteringInfo(trueTree) - infoInTree1
+unresolved3 <- ClusteringInfo(trueTree) - infoInTree3
+```
+
+And the amount of information incorrectly resolved:
+```{r}
+incorrect1 <- infoInTree1 - correct1
+incorrect3 <- infoInTree3 - correct3
+```
+
+Now we can plot this information on a ternary diagram.
+We'll define some colours first: orange for the one-away trees, and blue
+for the three-aways:
+
+```{r, collapse=TRUE}
+col1 <- hcl(200, alpha = 0.9)
+col3 <- hcl(40, alpha = 0.9)
+spec1 <- matrix(col2rgb(col1, alpha = TRUE), nrow = 4, ncol = 181)
+spec3 <- matrix(col2rgb(col3, alpha = TRUE), nrow = 4, ncol = 181)
+spec1[4, ] <- spec3[4, ] <- 0:180
+ColToHex <- function (x) rgb(x[1], x[2], x[3], x[4], maxColorValue = 255)
+spec1 <- apply(spec1, 2, ColToHex)
+spec3 <- apply(spec3, 2, ColToHex)
+```
+
+```{r, fig.width=7, fig.align='center', fig.asp=5/7, out.width='70%'}
 library('Ternary')
-par(mar=rep(0.1, 4))
-TernaryPlot(atip=NULL, btip=NULL, ctip=NULL,
-            alab='Missing information', blab='Misinformation', clab='Shared information',
-            lab.cex=0.8,
-            lab.offset=0.18, # higher value as longer tick labels
+layout(matrix(c(1, 2), ncol=2), widths=c(5, 2))
+par(mar=rep(0, 4))
+TernaryPlot(alab='Information absent in degraded tree', 
+            blab='\n\nCorrect information in degraded tree', 
+            clab='Misinformation in degraded tree',
             point='left', clockwise=FALSE,
-            #col=backgroundCol,
-            grid.lty='solid', grid.col='#aaaaaa',
             grid.minor.lines = 0,
-            axis.labels = seq(0, 1, length.out=11L),
-            axis.col="#999999",
-            axis.labels.col = "black",
-            ticks.length = 0.025)
+            axis.labels = seq(0, 1, length.out=11L))
 
 HorizontalGrid()
 
-TernaryPoints(cbind(unresolved1, incorrect1, correct1), pch='.', col='red')
-TernaryPoints(cbind(unresolved2, incorrect2, correct2), pch='.', col='green')
+coords1 <- cbind(unresolved1, correct1, incorrect1)
+coords3 <- cbind(unresolved3, correct3, incorrect3)
+
+ColourTernary(TernaryDensity(coords1, resolution = 20), spectrum = spec1)
+ColourTernary(TernaryDensity(coords3, resolution = 20), spectrum = spec3)
+
+TernaryDensityContour(coords3, col = col3, nlevels = 4)
+TernaryDensityContour(coords1, col = col1, nlevels = 4)
+
+HorizontalHistogram <- function (dat, col, add = FALSE) {
+  breaks <- seq(0, 1, length.out = 41)
+  histy <- hist(dat, breaks = breaks, plot = FALSE)
+  barplot(histy$density, space = 0, horiz = TRUE,
+          axes = FALSE, names.arg = '', 
+          col = col, border = NA, add = add)
+}
+
+par(mar = c(1.6, 0, 1.9, 0)) # align plot limits with ternary plot
+HorizontalHistogram(correct1 / infoInTree1, col1)
+HorizontalHistogram(correct3 / infoInTree3, col = col3, add = TRUE)
+mtext('\u2192 Normalized tree quality \u2192', 2)
 ```
+
+In the ternary plot, the vertical direction corresponds to the normalized tree
+quality, as depicted in the accompanying histogram.
 
 ## What next?
 
