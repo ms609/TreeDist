@@ -40,6 +40,52 @@ reference:
     contents:
       - VisualizeMatching
 
+navbar:
+  structure:
+    left:
+    - home
+    - get-started
+    - intro
+    - reference
+    - articles
+    - tutorials
+    - news
+    right: github
+  components:
+    home:
+      icon: fa-home fa-lg
+      href: index.html
+    get-started:
+      text: Get started
+      href: articles/Using-TreeDist.html
+    reference:
+      text: Reference
+      href: reference/index.html
+    articles:
+      text: Articles
+      menu:
+      - text: Using TreeDist to calculate tree similarity
+        href: articles/Using-TreeDist.html
+      - text: Contextualizing tree distances
+        href: articles/using-distances.html
+      - text: Tree distance measures
+        href: articles/tree-distances.html
+      - text: Robinson-Foulds metric
+        href: articles/Robinson-Foulds.html
+      - text: Generalized Robinson-Foulds distances
+        href: articles/Generalized-RF.html
+      - text: Concepts of information
+        href: articles/information.html
+      - text: Evaluating tree distance metrics
+        href: articles/Tree-distance-metric-evaluation.html
+      
+    news:
+      text: Changelog
+      href: news/index.html
+    github:
+      icon: fab-github fab-lg
+      href: https://github.com/ms609/TreeDist
+
 template:
   params:
     docsearch:
