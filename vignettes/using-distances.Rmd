@@ -33,7 +33,7 @@ in the accompanying manual pages, visible under the
 [function reference](reference/index.html) or by typing `?FunctionName` in the
 R terminal. This default behaviour is triggered by setting `normalize = TRUE`.
 
-### Nye tree similarity
+### Nye _et al._ tree similarity
 
 Let's work through a simple example using the Nye _et al_. similarity metric
 to compare two imperfectly-resolved trees.
@@ -107,6 +107,71 @@ and our normalized score will be
 NyeTreeSimilarity(tree1, tree2, normalize = NPartitions(tree1))
 ```
 
+### Normalizing to random similarity
+
+With the Nye _et al_. tree similarity metric, it is easy to calculate the 
+maximum possible distnace.  The diameter of other metrics is more difficult
+to calculate.  
+As an example, the variation of clustering information distance metric 
+ranges in principle from zero, to the total amount of clustering information
+present in a pair of trees.  But with even a modest number of tips, no pairs
+of trees exist in which every partition in one tree is perfectly contradicted
+by every other partition in the other; as such, any pair of trees will 
+necessarily have some degree of similarity.  
+In such a context, it can be relevant to normalize tree similarity against the
+_expected_ distance between a pair of random trees, rather than a maximum value.
+On this measure, distances greater than one denote trees that are more different
+than expected by chance, whereas a distance of zero denotes identity.
+
+With the quartet divergence, the expected tree distance is readily calculated:
+any given quartet has a one in three chance of matching by chance.
+
+```{r}
+library('Quartet')
+expectedQD <- 2 / 3
+normalizedQD <- QuartetDivergence(QuartetStatus(tree1, tree2), 
+                                  similarity = FALSE) / expectedQD
+```
+
+The expected distance is more difficult to calcluate for other metrics, but 
+can be approximated by sampling random pairs of trees.  Measured distances
+between 10 000 pairs of random bifurcating trees with up to 200 tips are 
+available in the data package _TreeDistData_.  We can view (normalized) 
+distances for a selection of methods:
+
+```{r, collapse=TRUE}
+data('randomTreeDistances', package='TreeDistData')
+
+methods <- c('vpi', 'vci', 'nts', 'qd')
+methodCol <- c(vpi = '#e15659', vci = '#58a14e', nts = '#edc949', qd = '#af7aa1')
+
+par(cex = 0.7, mar=c(5, 5, 0.01, 0.01))
+nLeaves <- as.integer(dimnames(randomTreeDistances)[[3]])
+plot(nLeaves, type='n', randomTreeDistances['vpi', 'mean', ], ylim=c(0.4, 1), 
+     xlab = "Number of tips", ylab = "Normalized distance between random trees")
+
+for (method in methods) {
+  dat <- randomTreeDistances[method, , ]
+  lines(nLeaves, dat['50%', ], pch=1, col=methodCol[method])
+  polygon(c(nLeaves, rev(nLeaves)), c(dat['25%', ], rev(dat['75%', ])),
+          border=NA, col = paste0(methodCol[method], '55'),)
+  
+}
+text(202, randomTreeDistances[methods, '50%', '200'] + 0.02, 
+     c('Variation of phylogenetic information', 
+       'Variation of clustering information',
+       expression(paste(plain('Nye '), italic('et al.'))),
+       'Quartet divergence'
+       ), col= methodCol[methods], pos=2)
+
+```
+
+or use these calculated values to normalize our tree distance:
+
+```{r}
+expectedVCI <- randomTreeDistances['vci', 'mean', '9']
+VariationOfClusteringInfo(tree1, tree2, normalize = TRUE) / expectedVCI
+```
 
 ## Testing similarity to a known tree
 
