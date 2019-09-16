@@ -83,7 +83,7 @@ navbar:
       text: Changelog
       href: news/index.html
     github:
-      icon: fab-github fab-lg
+      icon: fa-github fa-lg
       href: https://github.com/ms609/TreeDist
 
 template:
