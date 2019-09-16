@@ -1,5 +1,5 @@
 ---
-title: "Using TreeDist to calculate tree similarity"
+title: "Calculate tree similarity with _TreeDist_"
 author: "Martin R. Smith"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -10,6 +10,11 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+This document should contain all you need to get started measuring tree 
+distances with _TreeDist_.  If you get stuck, please 
+[let me know](https://github.com/ms609/TreeDist/issues/new?title=Suggestion:+)
+so I can improve this documentation.
 
 ## Loading trees
 
