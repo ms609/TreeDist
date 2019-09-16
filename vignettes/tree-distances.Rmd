@@ -78,7 +78,7 @@ RobinsonFouldsInfo(tree1, tree2, similarity = FALSE)
 ```
 
 More details, and a discussion of the problems with the Robinson-Foulds metric,
-are provided in a [separate article](Robinson-Foulds.html). <!-- #TODO check link-->
+are provided in a [separate article](Robinson-Foulds.html).<!-- #TODO check link-->
 
 # Generalized Robinson-Foulds distances
 
