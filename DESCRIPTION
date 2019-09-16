@@ -34,7 +34,7 @@ Suggests:
     Quartet,
     rmarkdown,
     testthat,
-    Ternary,
+    Ternary (>= 1.1.2),
     TreeDistData (>= 0.0.0.9005),
     vdiffr
 Remotes: 
