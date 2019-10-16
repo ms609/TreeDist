@@ -48,7 +48,14 @@ NyeTreeSimilarity <- function (tree1, tree2, similarity = TRUE,
   unnormalized <- CalculateTreeDistance(NyeSplitSimilarity, tree1, tree2, 
                                         reportMatching)
   if (similarity) {
-    MaxPartitions <- function (tree) length(tree$tip.label) - 3L
+    MaxPartitions <- function (tree) {
+      if (class(tree) == 'phylo') {
+        length(tree$tip.label) - 3L
+      } else {
+        vapply(tree, MaxPartitions, integer(1L))
+      }
+    }
+    
     # Return:
     NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
                   InfoInTree = if (normalizeMax) MaxPartitions else NPartitions,
@@ -56,6 +63,7 @@ NyeTreeSimilarity <- function (tree1, tree2, similarity = TRUE,
   } else {
     unnormalized <- outer(NPartitions(tree1), NPartitions(tree2), 
                           '+')[, , drop=TRUE] - (2 * unnormalized)
+    
     # Return:
     NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
                   InfoInTree = NPartitions, Combine = '+')

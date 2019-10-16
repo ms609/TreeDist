@@ -28,10 +28,17 @@ methodsToTest <- list(
   KendallColijn
 )
 
+NormalizationTest <- function (FUNC, ...) {
+  expect_equal(c(1L, 1L, 1L), diag(FUNC(treesSBO8, treesSBO8, 
+                                        normalize = TRUE, ...)))
+}
+
 # Labels in different order to confound Tree2Splits
 treeSym8 <- ape::read.tree(text='((e, (f, (g, h))), (((a, b), c), d));')
 treeBal8 <- ape::read.tree(text='(((e, f), (g, h)), ((a, b), (c, d)));')
 treeOpp8 <- ape::read.tree(text='(((a, f), (c, h)), ((g, b), (e, d)));')
+treesSBO8 <- structure(list(treeSym8, treeBal8, treeOpp8), 
+                            class = 'multiPhylo')
 
 treeCat8 <- ape::read.tree(text='((((h, g), f), e), (d, (c, (b, a))));')
 treeTac8 <- ape::read.tree(text='((((e, c), g), a), (h, (b, (d, f))));')
@@ -167,6 +174,7 @@ test_that('MutualMatchingSplitInfo is correctly calculated', {
   expect_true(MutualMatchingSplitInfo(treeSym8, treeBal8) > 
                 MutualMatchingSplitInfo(treeSym8, treeOpp8))
   expect_equal(0, VariationOfMatchingSplitInfo(treeSym8, treeSym8))
+  NormalizationTest(MutualMatchingSplitInfo)
 })
 
 test_that("Mutual Phylogenetic Information is correctly estimated", {
@@ -198,6 +206,7 @@ test_that('Clustering information is correctly calculated', {
   expect_equal(MutualClusteringInfo(treeAb.Cdefgh, treeAbc.Defgh),
                MutualClusteringInfo(treeAbc.Defgh, treeAb.Cdefgh),
                tolerance=1e-05)
+  NormalizationTest(MutualClusteringInfo)
 })
 
 test_that('Matching Split Distance is correctly calculated', {
@@ -217,8 +226,9 @@ test_that('Matching Split Distance is correctly calculated', {
 })
 
 test_that('NyeTreeSimilarity is correctly calculated', {
+  listBalSym <- list(treeBal8, treeSym8)
   expect_equal(5L, NyeTreeSimilarity(treeSym8, treeSym8))
-  expect_equal(c(3.8, 5), NyeTreeSimilarity(treeSym8, list(treeBal8, treeSym8)))
+  expect_equal(c(3.8, 5), NyeTreeSimilarity(treeSym8, listBalSym))
   expect_equal(2 / 3, NyeTreeSimilarity(treeAb.Cdefgh, treeAbc.Defgh))
   expect_equal(2 * (1 / 3), NyeTreeSimilarity(treeAb.Cdefgh, treeAbc.Defgh,
                                         similarity = FALSE))
@@ -230,6 +240,7 @@ test_that('NyeTreeSimilarity is correctly calculated', {
                                           normalize = TRUE))
   expect_true(NyeTreeSimilarity(treeSym8, treeBal8) > 
                 NyeTreeSimilarity(treeSym8, treeOpp8))
+  NormalizationTest(NyeTreeSimilarity)
 })
 
 
@@ -285,6 +296,7 @@ test_that('RobinsonFoulds is correctly calculated', {
   expect_equal(4L / 6L, 
                RobinsonFoulds(treeSym8, treeAbcd.Efgh, normalize = TRUE))
   RFTest(treeSym8, treeOpp8)
+  NormalizationTest(RobinsonFoulds, similarity = TRUE)
 })
 
 
