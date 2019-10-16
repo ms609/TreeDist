@@ -24,7 +24,6 @@ matrix:
       r_packages:
         - ape
         - bookdown
-        - covr
         - devtools
         - phangorn
         - Rdpack

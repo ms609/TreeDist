@@ -40,6 +40,42 @@ CalculateTreeDistance <- function (Func, tree1, tree2, reportMatching, ...) {
     }
   }
 }
+CalculateTreeDistance2 <- function (Func, tree1, tree2, reportMatching, ...) {
+  if (class(tree1) == 'phylo') {
+    if (class(tree2) == 'phylo') {
+      if (length(setdiff(tree1$tip.label, tree2$tip.label)) > 0) {
+        stop("Tree tips must bear identical labels")
+      }
+      
+      Func(Tree2Splits(tree1), Tree2Splits(tree2), 
+           reportMatching = reportMatching, ...)
+    } else {
+      splits1 <- Tree2Splits(tree1)
+      vapply(tree2, 
+             function (tr2) Func(splits1, Tree2Splits(tr2), ...),
+             double(1))
+    }
+  } else {
+    if (class(tree2) == 'phylo') {
+      splits1 <- Tree2Splits(tree2)
+      vapply(tree1, 
+             function (tr2) Func(splits1, Tree2Splits(tr2), ...),
+             double(1))
+    } else {
+      splits1 <- lapply(tree1, Tree2Splits)
+      splits2 <- lapply(tree2, Tree2Splits)
+      ret <- matrix(0L, length(splits1), length(splits2), 
+                    dimnames = list(names(tree1), names(tree2)))
+      for (i in seq_along(splits1)) {
+        for (j in seq_along(splits2)) {
+          ret[i, j] <- Func(splits1[[i]], splits2[[j]], ...)
+        }
+      }
+      
+      ret
+    }
+  }
+}
 
 #' Entropy in bits
 #' 
