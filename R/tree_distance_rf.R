@@ -60,20 +60,23 @@ RobinsonFouldsInfoSplits <- function (splits1, splits2, reportMatching = FALSE) 
     nTip <- dim(splits1)[1]
     lnUnrooted <- LnUnrooted.int(nTip)
     
-    # Return:
-    -(matrix((mapply(function(i, j) {
+    ret <- matrix(0, nSplits1, nSplits2)
+    for (i in seq_len(nSplits1)) {
       A1 <- splits1[, i]
-      A2 <- splits2[, j]
+      for (j in seq_len(nSplits2)) {
+        A2 <- splits2[, j]
       
-      if (all(A1 == A2) || all(A1 != A2)) {
-        nInSplit <- sum(A1)
-        LogTreesMatchingSplit(nInSplit, nTip - nInSplit)
-      } else {
-        lnUnrooted
+        if (all(A1 == A2) || all(A1 != A2)) {
+          nInSplit <- sum(A1)
+          ret[i, j] <- LogTreesMatchingSplit(nInSplit, nTip - nInSplit)
+        } else {
+          ret[i, j] <- lnUnrooted
+        }
       }
-    },  seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
-    )), nSplits1, nSplits2) - lnUnrooted) / log(2)
-                  
+    }
+    
+    # Return:
+    -(ret - lnUnrooted) / log(2)
   }, maximize = TRUE, reportMatching)
 }
 
@@ -111,13 +114,16 @@ RobinsonFoulds <- function (tree1, tree2, similarity = FALSE, normalize = FALSE,
 RobinsonFouldsSplits <- function (splits1, splits2, reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2,
                 function(splits1, splits2, nSplits1, nSplits2) {
-                  matrix((mapply(function(i, j) {
+                  ret <- matrix(0L, nSplits1, nSplits2)
+                  for (i in seq_len(nSplits1)) {
                     A1 <- splits1[, i]
-                    A2 <- splits2[, j]
-                    
-                    all(A1 == A2) || all(A1 != A2)
-                  },  seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
-                  )), nSplits1, nSplits2)
+                    for (j in seq_len(nSplits2)) {
+                      A2 <- splits2[, j]
+                      ret[i, j] <- all(A1 == A2) || all(A1 != A2)
+                    }
+                  }
                   
+                  # Return:
+                  ret
                 }, maximize = TRUE, reportMatching) * 2L
 }
