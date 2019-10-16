@@ -40,22 +40,26 @@ MatchingSplitDistanceSplits <- function (splits1, splits2, normalize = TRUE,
     SymmetricDifference <- function (A, B) {
       (A & !B) | (!A & B)
     }
-    
-    matrix((mapply(function(i, j) {
+    ret <- matrix(0L, nSplits1, nSplits2)
+    for (i in seq_len(nSplits1)) {
       A1 <- splits1[, i]
-      A2 <- splits2[, j]
       B1 <- !A1
-      B2 <- !A2
-      
-      # Long-winded way:
-      # min(
-      #   sum(SymmetricDifference(A1, A2), SymmetricDifference(B1, B2)),
-      #   sum(SymmetricDifference(A1, B2), SymmetricDifference(B1, A2))
-      # ) / 2L
-      # But SD(A1, A2) == SD(B1, B2) and SD(A1, B2) == SD(B1, A2), so:
-      
-      min(sum(SymmetricDifference(A1, A2)), sum(SymmetricDifference(A1, B2)))
-    },  seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
-    )), nSplits1, nSplits2)
+      for (j in seq_len(nSplits2)) {
+        A2 <- splits2[, j]
+        B2 <- !A2
+        
+        # Long-winded way:
+        # min(
+        #   sum(SymmetricDifference(A1, A2), SymmetricDifference(B1, B2)),
+        #   sum(SymmetricDifference(A1, B2), SymmetricDifference(B1, A2))
+        # ) / 2L
+        # But SD(A1, A2) == SD(B1, B2) and SD(A1, B2) == SD(B1, A2), so:
+        
+        ret[i, j] <- min(sum(SymmetricDifference(A1, A2)), sum(SymmetricDifference(A1, B2)))
+      }
+    }
+    
+    # Return:
+    ret
   }, maximize = FALSE, reportMatching)
 }
