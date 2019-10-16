@@ -246,7 +246,8 @@ test_that('NyeTreeSimilarity is correctly calculated', {
 
 test_that('Jaccard RF extremes tend to equivalent functions', {
   expect_equal(JaccardRobinsonFoulds(treeSym8, list(treeBal8, treeSym8),
-                                     similarity = TRUE, k = 1L, arboreal = FALSE),
+                                     similarity = TRUE, k = 1L,
+                                     arboreal = FALSE),
                NyeTreeSimilarity(treeSym8, list(treeBal8, treeSym8)) * 2L)
   
   expect_equal(JaccardRobinsonFoulds(treeSym8, list(treeBal8, treeSym8),

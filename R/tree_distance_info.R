@@ -262,25 +262,29 @@ MutualPhylogeneticInfoSplits <- function (splits1, splits2,
                     }
                   }
                   
-                  # Return:
-                  matrix((mapply(function(i, j) {
+                  ret <- matrix(0, nSplits1, nSplits2)
+                  for (i in seq_len(nSplits1)) {
                     split1 <- splits1[, i]
-                    split2 <- splits2[, j]
-                    
-                    if (all(split1[split2]) || # oneAndTwo
-                        all(!split1[!split2])) { # notOneNotTwo
-                      OneOverlap(inSplit1[i], inSplit2[j])
+                    for (j in seq_len(nSplits2)) {
+                      split2 <- splits2[, j]
                       
-                    } else if (all(!split1[split2]) || # notOneAndTwo
-                               all(split1[!split2])) { #oneNotTwo
-                      OneOverlap(inSplit1[i], notInSplit2[j])
-                      
-                    } else {
-                      # Splits incompatible
-                      lnUnrootedN
+                      ret[i, j] <- if (all(split1[split2]) || # oneAndTwo
+                          all(!split1[!split2])) { # notOneNotTwo
+                        OneOverlap(inSplit1[i], inSplit2[j])
+                        
+                      } else if (all(!split1[split2]) || # notOneAndTwo
+                                 all(split1[!split2])) { #oneNotTwo
+                        OneOverlap(inSplit1[i], notInSplit2[j])
+
+                      } else {
+                        # Splits incompatible
+                        lnUnrootedN
+                      }
                     }
-                  }, seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
-                  ) - lnUnrootedN) / -log(2), nSplits1, nSplits2)
+                  }
+                  
+                  # Return:
+                  (ret - lnUnrootedN) / -log(2)
                 }, maximize = TRUE, reportMatching)
 }
 
@@ -290,9 +294,14 @@ MutualClusteringInfoSplits <- function (splits1, splits2,
                                         reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, 
                 function(splits1, splits2, nSplits1, nSplits2) {
-                  matrix((mapply(function(i, j) {
-                    MeilaMutualInformation(splits1[, i], splits2[, j])
-                  }, seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
-                  )), nSplits1, nSplits2) / log(2)
+                  ret <- matrix(0, nSplits1, nSplits2)
+                  for (i in seq_len(nSplits1)) {
+                    splitI <- splits1[, i]
+                    for (j in seq_len(nSplits2)) {
+                      ret[i, j] <- MeilaMutualInformation(splitI, splits2[, j])
+                    }
+                  }
+                  # Return:
+                  ret / log(2)
                 }, maximize = TRUE, reportMatching)
 }

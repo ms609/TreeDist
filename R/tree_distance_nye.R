@@ -82,20 +82,23 @@ NyeSplitSimilarity <- function (splits1, splits2, reportMatching = FALSE) {
       sum(pir[pjs]) / sum(pir | pjs)
     }
     
-    # Return:
-    matrix((mapply(function(i, j) {
+    ret <- matrix(0, nSplits1, nSplits2)
+    for (i in seq_len(nSplits1)) {
       splitI0 <- splits1[, i]
-      splitJ0 <- splits2[, j]
       splitI1 <- !splitI0
-      splitJ1 <- !splitJ0
+      for (j in seq_len(nSplits2)) {
+        splitJ0 <- splits2[, j]
+        splitJ1 <- !splitJ0
       
-      max(
-        min(Ars(splitI0, splitJ0), Ars(splitI1, splitJ1)),
-        min(Ars(splitI0, splitJ1), Ars(splitI1, splitJ0))
-      )
-      
-    }, seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
-    )), nSplits1, nSplits2)
+        ret[i, j] <- max(
+          min(Ars(splitI0, splitJ0), Ars(splitI1, splitJ1)),
+          min(Ars(splitI0, splitJ1), Ars(splitI1, splitJ0))
+        )
+      }
+    }
+    
+    # Return:
+    ret
   }, maximize = TRUE, reportMatching)
 }
 
@@ -182,32 +185,35 @@ JaccardRobinsonFoulds <- function (tree1, tree2, k = 1L, arboreal = TRUE,
 JaccardSplitSimilarity <- function (splits1, splits2,
                                     k = 1L, arboreal = TRUE,
                                     reportMatching = FALSE) {
-  GeneralizedRF(splits1, splits2, 
+  GeneralizedRF(splits1, splits2,
                 function(splits1, splits2, nSplits1, nSplits2) {
     Ars <- function (pir, pjs) {
       sum(pir[pjs]) / sum(pir | pjs)
     }
+    ret <- matrix(0, nSplits1, nSplits2)
+    for (i in seq_len(nSplits1)) {
+      splitI0 <- splits1[, i]
+      splitI1 <- !splitI0
+      for (j in seq_len(nSplits2)) {
+        splitJ0 <- splits2[, j]
+        splitJ1 <- !splitJ0
+        
+        if (arboreal && !(
+          all(splitI0[splitJ0]) ||
+          all(splitI0[splitJ1]) ||
+          all(splitI1[splitJ0]) ||
+          all(splitI1[splitJ1]))) {
+          # leave as 0
+        } else {
+          ret[i, j] <- max(
+            min(Ars(splitI0, splitJ0), Ars(splitI1, splitJ1)),
+            min(Ars(splitI0, splitJ1), Ars(splitI1, splitJ0))
+          ) ^ k
+        }
+      }
+    }
     
     # Return:
-    matrix((mapply(function(i, j) {
-      splitI0 <- splits1[, i]
-      splitJ0 <- splits2[, j]
-      splitI1 <- !splitI0
-      splitJ1 <- !splitJ0
-      
-      if (arboreal && !(
-        all(splitI0[splitJ0]) ||
-        all(splitI0[splitJ1]) ||
-        all(splitI1[splitJ0]) ||
-        all(splitI1[splitJ1]))) {
-        0
-      } else {
-        max(
-          min(Ars(splitI0, splitJ0), Ars(splitI1, splitJ1)),
-          min(Ars(splitI0, splitJ1), Ars(splitI1, splitJ0))
-        ) ^ k
-      }
-    }, seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
-    )), nSplits1, nSplits2)
+    ret
   }, maximize = TRUE, reportMatching)
 }

@@ -43,17 +43,19 @@ MutualMatchingSplitInfoSplits <- function (splits1, splits2,
       LnUnrooted.int(inAgreement) - LogTreesMatchingSplit(n0, inAgreement - n0)
     }
     
-    pairScores <- matrix((mapply(function(i, j) {
+    pairScores <- matrix(0, nSplits1, nSplits2)
+    for (i in seq_len(nSplits1)) {
       splitI0 <- splits1[, i]
-      splitJ0 <- splits2[, j]
+      for (j in seq_len(nSplits2)) {
+        splitJ0 <- splits2[, j]
+        agree1 <- splitI0 == splitJ0
       
-      agree1 <- splitI0 == splitJ0
+        pairScores[i, j] <- max(AgreementInfoNats(splitI0, agree1),
+                                AgreementInfoNats(splitI0, !agree1))
       
-      max(AgreementInfoNats(splitI0, agree1),
-          AgreementInfoNats(splitI0, !agree1))
-      
-    }, seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
-    )), nSplits1, nSplits2) / log(2)
-  
-}, maximize = TRUE, reportMatching)
+      }
+    }
+    # Return:
+    pairScores / log(2)
+  }, maximize = TRUE, reportMatching)
 }
