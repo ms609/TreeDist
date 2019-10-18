@@ -183,7 +183,7 @@ VariationOfClusteringInfo <- function (tree1, tree2, normalize = FALSE,
 #' @param samples Integer specifying how many samplings to obtain; 
 #' accuracy of estimate increases with `sqrt(samples)`.
 #' @importFrom stats sd
-#' @importFrom TreeSearch Tree2Splits
+#' @importFrom TreeTrunk Tree2Splits
 #' @export
 ExpectedVariation <- function (tree1, tree2, samples = 1e+3) {
   info1 <- PartitionInfo(tree1)
@@ -327,7 +327,7 @@ MutualPhylogeneticInfoSplits <- function (splits1, splits2, normalize = TRUE,
 
 #' @describeIn TreeDistance Calculate variation of matching split information from splits instead of trees.
 #' @inheritParams MutualPhylogeneticInfoSplits
-#' @importFrom TreeSearch LnUnrooted.int LogTreesMatchingSplit
+#' @importFrom TreeTrunk LnUnrooted.int LogTreesMatchingSplit
 #' @export
 MutualMatchingSplitInfoSplits <- function (splits1, splits2, reportMatching = FALSE) {
   dimSplits1 <- dim(splits1)

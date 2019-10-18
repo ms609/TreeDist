@@ -56,7 +56,7 @@ KendallColijn <- function (tree1, tree2) {
 
 #' @describeIn KendallColijn Creates vectors that characterise a rooted tree
 #' @param tree A tree of class \code{\link[ape:read.tree]{phylo}}.
-#' @importFrom TreeSearch AllAncestors Preorder
+#' @importFrom TreeTrunk AllAncestors Preorder
 KCVector <- function (tree) {
   tree <- Preorder(tree)
   edge <- tree$edge
