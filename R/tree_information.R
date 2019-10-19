@@ -20,7 +20,7 @@ PartitionInfo <- function(tree) {
 }
 
 #' @describeIn PartitionInfo Calculate partition information from splits instead of trees.
-#' @importFrom TreeSearch LnRooted.int LnUnrooted.int
+#' @importFrom TreeTools LnRooted.int LnUnrooted.int
 #' @export
 PartitionInfoSplits <- function(splits) {
   nTerminals <- nrow(splits)

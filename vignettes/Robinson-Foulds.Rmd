@@ -312,7 +312,7 @@ associated node:
 
 ```{r}
 DisplaySplits <- function (tree) 
-  as.list(as.character(IdentifySplits(TreeSearch::Tree2Splits(tree))))
+  as.list(as.character(IdentifySplits(TreeTools::Tree2Splits(tree))))
 DisplaySplits(tree1)
 ```
 ```{r}
@@ -334,4 +334,9 @@ alternative matching, still optimal, would leave these partitions unpaired.
 Alternatives measures of partition similarity are implemented in other 
 [Generalized Robinson-Foulds distances](Generalised-RF.html). <!-- #TODO test link -->
 
-# References
+## Solutions
+
+Some of the shortcomings of the Robinson-Foulds distance are addressed by
+[Generalized Robinson-Foulds distances](Generalised-RF.html).
+
+## References

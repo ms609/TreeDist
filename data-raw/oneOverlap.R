@@ -1,4 +1,4 @@
-library(TreeSearch)
+library('TreeTools')
 
 #' @noRd
 OneOverlap <- function(A1, A2, nTerminals) {
