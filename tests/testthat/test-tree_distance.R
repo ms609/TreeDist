@@ -60,8 +60,8 @@ test_that('Size mismatch causes error', {
   lapply(methodsToTest, function(Func) 
     expect_error(Func(treeSym8, treeSym7)))
   
-  splits7 <- TreeTrunk::Tree2Splits(treeSym7)
-  splits8 <- TreeTrunk::Tree2Splits(treeSym8)
+  splits7 <- TreeTools::Tree2Splits(treeSym7)
+  splits8 <- TreeTools::Tree2Splits(treeSym8)
   expect_equal(7L, GeneralizedRF(splits7, splits7,
                                  function (splits1, splits2, nSplits1, nSplits2,
                                            ...) matrix(1, 7, 7), FALSE, FALSE))
@@ -168,7 +168,7 @@ test_that('MutualMatchingSplitInfo is correctly calculated', {
                MutualMatchingSplitInfo(treeAbc.Defgh, treeAb.Cdefgh))
   expect_equal(MutualMatchingSplitInfo(treeAbcd.Efgh, treeAb.Cdefgh),
                MutualMatchingSplitInfo(treeAb.Cdefgh, treeAbcd.Efgh))
-  expect_equal(-(TreeTrunk::LogTreesMatchingSplit(2, 5) - LnUnrooted.int(7)) / 
+  expect_equal(-(TreeTools::LogTreesMatchingSplit(2, 5) - LnUnrooted.int(7)) / 
                  log(2), 
                MutualMatchingSplitInfo(treeAb.Cdefgh, treeAbc.Defgh))
   expect_true(MutualMatchingSplitInfo(treeSym8, treeBal8) > 

@@ -18,7 +18,7 @@ so I can improve this documentation.
 
 ## Loading trees
 
-Instructions for loading phylogenetic trees into R can be found in a [separate vignette](https://ms609.github.io/TreeTrunk/articles/load-trees.html).
+Instructions for loading phylogenetic trees into R can be found in a [separate vignette](https://ms609.github.io/TreeTools/articles/load-trees.html).
 For these examples, we'll enter two simple trees by hand:
 
 ```{r set-up}
@@ -109,7 +109,7 @@ Here, the `pairScores` attribute lists the score of each possible matching of sp
 We can identify the splits with:
 
 ```{r}
-splits <- IdentifySplits(TreeTrunk::Tree2Splits(tree2))
+splits <- IdentifySplits(TreeTools::Tree2Splits(tree2))
 splits
 ```
 

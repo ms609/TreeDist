@@ -52,8 +52,8 @@ each pair of partitions is defined as one.
 that's a harder problem to overcome.)
 
 As such, the maximum similarity possible between two 11-tip trees is 
-[`NPartitions`](https://ms609.github.io/TreeTrunk/reference/NPartitions.html)`(11)`
-= `r suppressMessages(library('TreeTrunk')); NPartitions(11)`.  
+[`NPartitions`](https://ms609.github.io/TreeTools/reference/NPartitions.html)`(11)`
+= `r suppressMessages(library('TreeTools')); NPartitions(11)`.  
 
 Normalizing against this value tells us how similar the two trees are, compared
 to two identical _fully bifurcating_ eleven-tip trees; this is the default
@@ -98,7 +98,7 @@ we may wish to normalize against the best possible match to that tree.
 In that case, the best possible score is 
 
 ```{r}
-TreeTrunk::NPartitions(tree1)
+TreeTools::NPartitions(tree1)
 ```
 
 and our normalized score will be 

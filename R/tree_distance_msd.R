@@ -17,7 +17,7 @@
 #' @family tree distances
 #' 
 #' @author Martin R. Smith
-#' @importFrom TreeTrunk LnUnrooted.int
+#' @importFrom TreeTools LnUnrooted.int
 #' @export
 MatchingSplitDistance <- function (tree1, tree2, normalize = FALSE,
                                    reportMatching = FALSE) {

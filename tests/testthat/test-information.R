@@ -1,5 +1,5 @@
 context("Information.R")
-library('TreeTrunk')
+library('TreeTools')
 
 test_that("Entropy is calculated correctly", {
   expect_equal(1, Entropy(rep(0.5, 2)))

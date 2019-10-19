@@ -8,7 +8,7 @@
 #' 
 #' @author Martin R. Smith
 #' @keywords internal
-#' @importFrom TreeTrunk Tree2Splits
+#' @importFrom TreeTools Tree2Splits
 #' @export
 CalculateTreeDistance <- function (Func, tree1, tree2, reportMatching, ...) {
   if (class(tree1) == 'phylo') {

@@ -41,13 +41,13 @@
 #'   # If splits are identical, then their mutual information is the same
 #'   # as the information of either split:
 #'   SplitMutualInformation(n=8, A1=3, A2=3)
-#'   TreeTrunk::SplitInformation(3, 5)
+#'   TreeTools::SplitInformation(3, 5)
 #'   
 #' @references \insertRef{Meila2007}{TreeDist}
 #' 
 #' @author Martin R. Smith
 #' @family split information functions
-#' @importFrom TreeTrunk LogTreesMatchingSplit LnUnrooted
+#' @importFrom TreeTools LogTreesMatchingSplit LnUnrooted
 #' @export
 SplitMutualInformation <- function(n, A1, A2 = A1) {
   (LogTreesMatchingSplit(A1, n - A1) 
@@ -57,7 +57,7 @@ SplitMutualInformation <- function(n, A1, A2 = A1) {
 }
 
 #' @describeIn SplitMutualInformation Variation of information between two splits.
-#' @importFrom TreeTrunk SplitInformation
+#' @importFrom TreeTools SplitInformation
 #' @export
 SplitVariationOfInformation <- function (n, A1, A2 = A1) {
   # TODO calculate more efficiently from first principles
@@ -455,7 +455,7 @@ SplitEntropy <- function (split1, split2=split1) {
 #' 
 #' @author Martin R. Smith
 #' @family split information functions
-#' @importFrom TreeTrunk NUnrooted
+#' @importFrom TreeTools NUnrooted
 #' @export
 JointInformation <- function(A1A2, A1B2, B1A2, B1B2) {
   # Y1 = A1:B1
@@ -481,7 +481,7 @@ JointInformation <- function(A1A2, A1B2, B1A2, B1B2) {
 
 #' @describeIn SplitMutualInformation Number of trees consistent with two splits.
 #' @family split information functions
-#' @importFrom TreeTrunk TreesMatchingSplit NRooted
+#' @importFrom TreeTools TreesMatchingSplit NRooted
 #' @export
 TreesConsistentWithTwoSplits <- function (n, A1, A2=A1) {
   
@@ -527,7 +527,7 @@ TreesConsistentWithTwoSplits <- function (n, A1, A2=A1) {
 }
 
 #' @describeIn SplitMutualInformation Natural logarithm of `TreesConsistentWithTwoSplits`.
-#' @importFrom TreeTrunk LogTreesMatchingSplit LnRooted.int
+#' @importFrom TreeTools LogTreesMatchingSplit LnRooted.int
 #' @export
 LogTreesConsistentWithTwoSplits <- function (n, A1, A2=A1) {
   smallSplit <- min(A1, A2)
