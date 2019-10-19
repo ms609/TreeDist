@@ -114,7 +114,7 @@
       <h1>Generalized Robinson-Foulds distances</h1>
                         <h4 class="author">Martin R. Smith</h4>
             
-            <h4 class="date">2019-10-16</h4>
+            <h4 class="date">2019-10-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/Generalized-RF.Rmd"><code>vignettes/Generalized-RF.Rmd</code></a></small>
       <div class="hidden name"><code>Generalized-RF.Rmd</code></div>
@@ -137,15 +137,15 @@
 <p>The phylogenetic information content of a partition is defined as the negative logarithm of the proportion of all bifurcating <em>n</em>-tip trees that contain that partition. Thus a more even bipartition, which is consistent with a smaller proportion of trees, contains more phylogenetic information.</p>
 <p>The mutual phylogenetic information of two partitions is the information that they contain in common; that is, the sum of the information content of the two splits, minus the joint information (which is the negative logarithm of the proportion of trees that contain both partitions).</p>
 <p>Consider the splits <code>ABCDEF:GHI</code> and <code>ABCDEFI:GH</code>.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">'TreeSearch'</span>)</a>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">'TreeTools'</span>)</a>
 <a class="sourceLine" id="cb4-2" data-line-number="2">treesMatchingSplit &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(</a>
-<a class="sourceLine" id="cb4-3" data-line-number="3">  <span class="dt">ABCDEF.GHI =</span> <span class="kw"><a href="https://ms609.github.io/TreeSearch/reference/TreesMatchingSplit.html">TreesMatchingSplit</a></span>(<span class="dv">6</span>, <span class="dv">3</span>),</a>
-<a class="sourceLine" id="cb4-4" data-line-number="4">  <span class="dt">ABCDEFI.GH =</span> <span class="kw"><a href="https://ms609.github.io/TreeSearch/reference/TreesMatchingSplit.html">TreesMatchingSplit</a></span>(<span class="dv">7</span>, <span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">  <span class="dt">ABCDEF.GHI =</span> <span class="kw"><a href="https://ms609.github.io/TreeTools/reference/TreesMatchingSplit.html">TreesMatchingSplit</a></span>(<span class="dv">6</span>, <span class="dv">3</span>),</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">  <span class="dt">ABCDEFI.GH =</span> <span class="kw"><a href="https://ms609.github.io/TreeTools/reference/TreesMatchingSplit.html">TreesMatchingSplit</a></span>(<span class="dv">7</span>, <span class="dv">2</span>)</a>
 <a class="sourceLine" id="cb4-5" data-line-number="5">)</a>
 <a class="sourceLine" id="cb4-6" data-line-number="6">treesMatchingSplit</a></code></pre></div>
 <pre><code>## ABCDEF.GHI ABCDEFI.GH 
 ##       2835      10395</code></pre>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">proportionMatchingSplit &lt;-<span class="st"> </span>treesMatchingSplit <span class="op">/</span><span class="st"> </span><span class="kw"><a href="https://ms609.github.io/TreeSearch/reference/NRooted.html">NUnrooted</a></span>(<span class="dv">9</span>)</a>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">proportionMatchingSplit &lt;-<span class="st"> </span>treesMatchingSplit <span class="op">/</span><span class="st"> </span><span class="kw"><a href="https://ms609.github.io/TreeTools/reference/NRooted.html">NUnrooted</a></span>(<span class="dv">9</span>)</a>
 <a class="sourceLine" id="cb6-2" data-line-number="2">proportionMatchingSplit</a></code></pre></div>
 <pre><code>## ABCDEF.GHI ABCDEFI.GH 
 ## 0.02097902 0.07692308</code></pre>
@@ -154,7 +154,7 @@
 <pre><code>## ABCDEF.GHI ABCDEFI.GH 
 ##   5.574909   3.700440</code></pre>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">treesMatchingBoth &lt;-<span class="st"> </span><span class="kw"><a href="../reference/SplitMutualInformation.html">TreesConsistentWithTwoSplits</a></span>(<span class="dv">9</span>, <span class="dv">6</span>, <span class="dv">7</span>)</a>
-<a class="sourceLine" id="cb10-2" data-line-number="2">jointInformation &lt;-<span class="st"> </span><span class="op">-</span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">log2</a></span>(treesMatchingBoth <span class="op">/</span><span class="st"> </span><span class="kw"><a href="https://ms609.github.io/TreeSearch/reference/NRooted.html">NUnrooted</a></span>(<span class="dv">9</span>))</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">jointInformation &lt;-<span class="st"> </span><span class="op">-</span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">log2</a></span>(treesMatchingBoth <span class="op">/</span><span class="st"> </span><span class="kw"><a href="https://ms609.github.io/TreeTools/reference/NRooted.html">NUnrooted</a></span>(<span class="dv">9</span>))</a>
 <a class="sourceLine" id="cb10-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb10-4" data-line-number="4">mutualInformation &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(splitInformation) <span class="op">-</span><span class="st"> </span>jointInformation</a>
 <a class="sourceLine" id="cb10-5" data-line-number="5">mutualInformation</a></code></pre></div>
@@ -250,7 +250,7 @@ The two trees below are identical but for the position of <em>A</em> and <em>J</
 <p>The most information-rich bipartition consistent with</p>
 <p><code>ABCDEF  : GHIJ</code> <code>ABCDE IJ:FGH</code></p>
 <p>is <code>ABCDE : GH</code>, which contains</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="kw"><a href="https://ms609.github.io/TreeSearch/reference/SplitInformation.html">SplitInformation</a></span>(<span class="dv">5</span>, <span class="dv">2</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="kw"><a href="https://ms609.github.io/TreeTools/reference/SplitInformation.html">SplitInformation</a></span>(<span class="dv">5</span>, <span class="dv">2</span>)</a></code></pre></div>
 <pre><code>## [1] 3.169925</code></pre>
 <p>bits of information; this quantity represents the <em>similarity</em> score for this particular pairing.</p>
 <p>This measure can therefore be normalized against the phylogenetic information content of the two input trees.</p>
