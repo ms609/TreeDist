@@ -39,7 +39,7 @@
 #' @family tree distances
 #' 
 #' @author Martin R. Smith
-#' @importFrom TreeSearch NPartitions
+#' @importFrom TreeTools NPartitions
 #' @export
 NyeTreeSimilarity <- function (tree1, tree2, similarity = TRUE,
                                normalize = FALSE, normalizeMax = TRUE,
@@ -124,7 +124,7 @@ NyeSplitSimilarity <- function (splits1, splits2, reportMatching = FALSE) {
 #' @param k An arbitrary exponent to which to raise the Jaccard index.
 #' Integer values greater than one are anticipated by B&ouml;cker _et al_.
 #' The Nye _et al_. metric uses `k = 1`.
-#' As k → &infin;, the metric converges to the Robinson-Foulds metric.
+#' As k &rarr; &infin;, the metric converges to the Robinson-Foulds metric.
 #' @param arboreal Logical specifying whether to enforce arboreal matches, by
 #' assigning zero similarity to contradictory pairs of partitions on an 
 #' _ad hoc_ basis.
@@ -162,7 +162,7 @@ NyeSplitSimilarity <- function (splits1, splits2, reportMatching = FALSE) {
 #' @family tree distances
 #' 
 #' @author Martin R. Smith
-#' @importFrom TreeSearch NPartitions
+#' @importFrom TreeTools NPartitions
 #' @export
 JaccardRobinsonFoulds <- function (tree1, tree2, k = 1L, arboreal = TRUE,
                                    similarity = FALSE,

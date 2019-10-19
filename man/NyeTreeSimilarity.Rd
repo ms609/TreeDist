@@ -6,7 +6,7 @@
 \title{Nye \emph{et al}. (2006) tree comparison}
 \usage{
 NyeTreeSimilarity(tree1, tree2, similarity = TRUE, normalize = FALSE,
-  reportMatching = FALSE)
+  normalizeMax = TRUE, reportMatching = FALSE)
 
 NyeSplitSimilarity(splits1, splits2, reportMatching = FALSE)
 }
@@ -26,6 +26,13 @@ If \code{TRUE}, results will be rescaled against a maximum value calculated from
 the specified tree sizes and topology, as specified in the 'Normalization'
 section below.
 If \code{FALSE}, results will not be rescaled.}
+
+\item{normalizeMax}{When calculating similarity, normalize against the
+maximum number of partitions that could have been present (\code{TRUE}),
+or the number of partitions that were actually observed (\code{FALSE})?
+Defaults to the number of partitions in the better-resolved tree; set
+\code{normalize = pmin.int} to use the number of partitions in the less resolved
+tree.}
 
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}

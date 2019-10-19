@@ -25,7 +25,7 @@ Imports:
     phangorn (>= 2.2.1),
     Rdpack,
     stats,
-    TreeSearch (>= 0.3.2.9008)
+    TreeTools
 Suggests:
     bookdown,
     cluster,
@@ -36,9 +36,10 @@ Suggests:
     testthat,
     Ternary (>= 1.1.2),
     TreeDistData (>= 0.0.0.9005),
+    TreeSearch,
     vdiffr
 Remotes: 
-    ms609/TreeSearch,
+    ms609/TreeTools,
     ms609/TreeDistData
 RdMacros: Rdpack
 LazyData: true

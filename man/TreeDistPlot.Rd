@@ -4,7 +4,7 @@
 \alias{TreeDistPlot}
 \title{Plot a simple tree}
 \usage{
-TreeDistPlot(tr, title = NULL, bold = NULL, leaveRoom = TRUE,
+TreeDistPlot(tr, title = NULL, bold = NULL, leaveRoom = FALSE,
   prune = integer(0), graft = integer(0), edge.color = "black",
   edge.width = NULL, ...)
 }
