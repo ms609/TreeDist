@@ -32,86 +32,34 @@ MatchingSplitDistance <- function (tree1, tree2, normalize = FALSE,
 
 #' @describeIn MatchingSplitDistance Calculate Matching Split Distance from splits instead of trees.
 #' @inheritParams MutualPhylogeneticInfoSplits
-#' @importFrom clue solve_LSAP
 #' @export
 MatchingSplitDistanceSplits <- function (splits1, splits2, normalize = TRUE, 
                                          reportMatching = FALSE) {
-  
-  dimSplits1 <- dim(splits1)
-  dimSplits2 <- dim(splits2)
-  nTerminals <- dimSplits1[1]
-  if (dimSplits2[1] != nTerminals) {
-    stop("Split rows must bear identical labels")
-  }
-  
-  swapSplits <- (dimSplits1[2] > dimSplits2[2])
-  if (swapSplits) {
-    # solve_LDAP expects splits1 to be no larger than splits2
-    tmp <- splits1
-    splits1 <- splits2
-    splits2 <- tmp
-    
-    tmp <- dimSplits1
-    dimSplits1 <- dimSplits2
-    dimSplits2 <- tmp
-    
-    remove(tmp)
-  }
-  
-  taxonNames1 <- rownames(splits1)
-  taxonNames2 <- rownames(splits2)
-  
-  if (!is.null(taxonNames2)) {
-    splits2 <- unname(splits2[taxonNames1, , drop=FALSE])
-    splits1 <- unname(splits1) # split2[split1] faster without names
-  }
-  
-  nSplits1 <- dimSplits1[2]
-  nSplits2 <- dimSplits2[2]
-  if (nSplits1 == 0) return (0)
-  
-  SymmetricDifference <- function (A, B) {
-    (A & !B) | (!A & B)
-  }
-  
-  pairScores <- matrix((mapply(function(i, j) {
-    A1 <- splits1[, i]
-    A2 <- splits2[, j]
-    B1 <- !A1
-    B2 <- !A2
-    
-    # Long-winded way:
-    # min(
-    #   sum(SymmetricDifference(A1, A2), SymmetricDifference(B1, B2)),
-    #   sum(SymmetricDifference(A1, B2), SymmetricDifference(B1, A2))
-    # ) / 2L
-    # But SD(A1, A2) == SD(B1, B2) and SD(A1, B2) == SD(B1, A2), so:
-    
-    min(sum(SymmetricDifference(A1, A2)), sum(SymmetricDifference(A1, B2)))
-  },  seq_len(nSplits1), rep(seq_len(nSplits2), each=nSplits1)
-  )), nSplits1, nSplits2)
-  
-  if (nSplits1 == 1) {
-    min(pairScores)
-  } else {
-    optimalMatching <- solve_LSAP(pairScores, FALSE)
+  GeneralizedRF(splits1, splits2, 
+                function(splits1, splits2, nSplits1, nSplits2) {
+    SymmetricDifference <- function (A, B) {
+      (A & !B) | (!A & B)
+    }
+    ret <- matrix(0L, nSplits1, nSplits2)
+    for (i in seq_len(nSplits1)) {
+      A1 <- splits1[, i]
+      B1 <- !A1
+      for (j in seq_len(nSplits2)) {
+        A2 <- splits2[, j]
+        B2 <- !A2
+        
+        # Long-winded way:
+        # min(
+        #   sum(SymmetricDifference(A1, A2), SymmetricDifference(B1, B2)),
+        #   sum(SymmetricDifference(A1, B2), SymmetricDifference(B1, A2))
+        # ) / 2L
+        # But SD(A1, A2) == SD(B1, B2) and SD(A1, B2) == SD(B1, A2), so:
+        
+        ret[i, j] <- min(sum(SymmetricDifference(A1, A2)), sum(SymmetricDifference(A1, B2)))
+      }
+    }
     
     # Return:
-    ret <- sum(pairScores[matrix(c(seq_along(optimalMatching), optimalMatching), ncol=2L)])
-    if (reportMatching) {
-      if (!is.null(taxonNames2)) {
-        attr(ret, 'matchedSplits') <- 
-          if (swapSplits) {
-            ReportMatching(splits2[, optimalMatching], splits1, taxonNames1)
-          } else {
-            ReportMatching(splits1, splits2[, optimalMatching], taxonNames1)
-          }
-      }
-      attr(ret, 'matching') <- optimalMatching
-      attr(ret, 'pairScores') <- pairScores
-      ret
-    } else {
-      ret
-    }
-  }
+    ret
+  }, maximize = FALSE, reportMatching)
 }

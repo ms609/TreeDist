@@ -21,22 +21,22 @@ CalculateTreeDistance <- function (Func, tree1, tree2, reportMatching, ...) {
            reportMatching = reportMatching, ...)
     } else {
       splits1 <- Tree2Splits(tree1)
-      vapply(tree2, 
+      vapply(tree2,
              function (tr2) Func(splits1, Tree2Splits(tr2), ...),
              double(1))
     }
   } else {
     if (class(tree2) == 'phylo') {
       splits1 <- Tree2Splits(tree2)
-      vapply(tree1, 
+      vapply(tree1,
              function (tr2) Func(splits1, Tree2Splits(tr2), ...),
              double(1))
     } else {
       splits1 <- lapply(tree1, Tree2Splits)
       splits2 <- lapply(tree2, Tree2Splits)
-      matrix(mapply(Func, rep(splits2, each=length(splits1)), splits1), 
+      matrix(mapply(Func, rep(splits2, each=length(splits1)), splits1, ...), 
              length(splits1), length(splits2),
-             dimnames = list(names(tree1), names(tree2)), ...)
+             dimnames = list(names(tree1), names(tree2)))
     }
   }
 }
@@ -85,9 +85,12 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
   }
   
   if (mode(how) == 'logical') {
-    if (how == FALSE) return (unnormalized)
-    if (is.null(infoInBoth)) 
-      infoInBoth <- CombineInfo(InfoInTree(tree1, ...), InfoInTree(tree2, ...))
+    if (how == FALSE) {
+      return (unnormalized)
+    } else {
+      if (is.null(infoInBoth)) 
+        infoInBoth <- CombineInfo(InfoInTree(tree1, ...), InfoInTree(tree2, ...))
+    }
   } else if (mode(how) == 'function') {
     if (is.null(infoInBoth)) 
       infoInBoth <- CombineInfo(InfoInTree(tree1, ...), InfoInTree(tree2, ...),
@@ -115,8 +118,9 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
 #' @author Martin R. Smith
 #' @keywords internal
 #' @export
-ReportMatching <- function (splits1, splits2, taxonNames) {
-  paste(IdentifySplits(splits1, taxonNames), '=>', IdentifySplits(splits2, taxonNames))
+ReportMatching <- function (splits1, splits2, taxonNames, realMatch = TRUE) {
+  paste(IdentifySplits(splits1, taxonNames), ifelse(realMatch, '=>', '..'), 
+        IdentifySplits(splits2, taxonNames))
 }
 
 #' @describeIn ReportMatching List the distribution of terminals represented by a single splits object.

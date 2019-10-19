@@ -1,0 +1,218 @@
+---
+title: "Information theory"
+author: "Martin R. Smith"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+csl: ../inst/apa-old-doi-prefix.csl
+vignette: >
+  %\VignetteIndexEntry{Concepts of information}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+To understand the [information-based metrics](Generalized-RF.html) implemented
+in [_TreeDist_](Using-TreeDist.html), it is useful to recall some basic concepts
+of information theory.  The examples below ape @Mackay2003.
+
+## Bits
+
+Information is usually measured in _bits_.  One bit is the amount of information
+revealed by tossing a fair coin: to record the outcome of a coin toss, I must
+record either a `H` or a `T`, and with each of the two symbols equally likely,
+there is no way to compress the results of multiple tosses.
+
+The amount of information required to encode a particular statement is a 
+function of the likelihood of the outcome.  
+
+If all outcomes are equally likely, then the information content (entropy) of
+an outcome is $-log_2(p)$.  Thus, because the probability of a 
+"heads" outcome in our fair coin toss is $1/2$, its information content is
+$-\log_2(\frac{1}{2})$ = 1 bit.  If I roll a fair die, then there is a $1/6$ chance of 
+rolling a two, and the information content of this roll is 
+$-\log_2(\frac{1}{6})$ = 2.58 bits.
+If I pick one six-terminal tree at random from the 105 unrooted
+6-terminal topologies, then the information content of this outcome is
+$-\log_2(\frac{1}{105})$ = 6.71 bits.
+
+
+## Entropies and information
+
+Consider a case in which Jane rolls a dice, and offers to truthfully answer
+two questions:
+
+A: "Is the roll even?".
+
+- Two equally-possible outcomes: yes or no
+- Information content (entropy): $H(A) = -\log_2(\frac{1}{2})$ = 1 bit.
+
+B: "Is the roll greater than 3?"
+
+- Two equally-possible outcomes: yes or no
+- Information content (entropy): $H(B) = -\log_2(\frac{1}{2})$ = 1 bit.
+
+
+The joint entropy of A and B is the entropy of the association 
+matrix that considers each possible outcome:
+
+ &nbsp;        | A: odd                   | A: even
+-------------- | ------------------------ | -----
+**B: &le; 3**  | $p = \frac{2}{6}$ (1, 3) | $p = \frac{1}{6}$ (2) |
+**B: > 3**     | $p = \frac{1}{6}$ (5)    | $p = \frac{2}{6}$ (4, 6) |
+
+
+Entropy is calculated by $\sum{p \log_2(p)}$. 
+So the joint entropy is:
+
+$\begin{aligned}
+H(A, B) = \frac{2}{3}\log_2\frac{2}{3} + \frac{1}{3}\log_2\frac{1}{3} + \frac{1}{3}\log_2\frac{1}{3} + \frac{2}{3}\log_2\frac{2}{3} = 1.84 \textrm{ bits}
+\end{aligned}$
+ 
+
+Note that this less than the 2.58 bits we require to determine the  exact value
+of the roll: knowlege of _A_ and _B_ is not guaranteed to be sufficient to
+unambiguously identify the outcome.
+
+
+The mutual information between _A_ and _B_ describes how much knowledge of _A_ 
+reduces our uncertainty in _B_.  
+So if we learn that _A_ is 'even', we become a little more confident
+that _B_ is 'greater than three'. 
+
+The mutual information $I(A;B)$ corresponds to the sum of the individual entropies,
+minus the joint entropy:
+
+\begin{aligned}
+I(A;B) = H(A) + H(B) - H(A, B)
+\end{aligned}
+
+
+
+The variation of information is the information that _A_ and _B_ do _not_ have
+in common:
+
+\begin{aligned}
+VoI(A, B) = H(A, B) - I(A;B)
+\end{aligned}
+
+
+```{r mackay-8-1, echo=FALSE, fig.width=4, out.width='50%', fig.height=3, fig.align='center'}
+suppressMessages(library('TreeDist'))
+H <- function(inBracket) {
+  expression(paste(italic('H'), plain('('), italic(inBracket), plain(')')))
+}
+par(mar=c(3, 0.1, 0, 0))
+joint <- Entropy(c(1, 2, 1, 2) / 6)
+plot(0, type='n', xlim=c(0, joint), ylim=c(5, 0), axes=FALSE)
+axis(1, at=c(0, 0.5, 1, 1.5, round(joint, 2)))
+mtext('Information / bits', 1, 2)
+rect(joint - 1, 3.1, 1, 3.9, col = Ternary::cbPalette8[3])
+rect(0, 0.1, joint - 1, 0.9, col = Ternary::cbPalette8[5], border = NA)
+rect(1, 1.1, joint, 1.9, col = Ternary::cbPalette8[5], border = NA)
+rect(joint - 1, 1.1, 1, 1.9, col = Ternary::cbPalette8[3], border=NA)
+rect(joint - 1, 0.1, 1, 0.9, col = Ternary::cbPalette8[3], border=NA)
+text(1, 3.5, pos=4,
+     expression(paste(italic(I), plain('('), italic('A;B'), plain(')'))))
+
+
+
+rect(0, 2.1, joint, 2.9)
+text(joint / 2, 2.5, 
+     expression(paste(italic('H'), plain('('), italic('A, B'), plain(')'))))
+
+rect(0, 0.1, 1, 0.9)
+text(0.5, 0.5, 
+     expression(paste(italic('H'), plain('('), italic(A), plain(')'))))
+
+
+rect(joint - 1, 1.1, joint - 0, 1.9)
+text(joint - 0.5, 1.5, 
+     expression(paste(italic('H'), plain('('), italic(B), plain(')'))))
+
+
+rect(0, 4.1, joint - 1, 4.9, col = Ternary::cbPalette8[5])
+rect(1, 4.1, joint, 4.9,     col = Ternary::cbPalette8[5])
+text(joint / 2, 4.5, 
+     expression(paste(italic('VoI'), plain('('), italic('A, B'), plain(')'))))
+
+
+```
+
+## Phylogenetic information
+
+When it comes to comparing partitions [@SmithDist], we can imagine Jane 
+selecting one 'true tree' from the universe of bifurcating _n_-tip trees, then
+telling us two partitions that occur in that tree.  
+
+Let's consider the two splits `BC:ADE` and `DE:ABC` in the universe of 5-tip
+trees.
+
+```{r, fig.width=7, out.width='90%', fig.height=7*3/5, echo=FALSE}
+par(mfrow=c(3, 5), mar=rep(0.4, 4))
+ShowNode <- function (match, label, col) {
+  if (any(match))
+    ape::nodelabels(label, bg = col, height=1.3,
+                    node = as.integer(colnames(splits)[match]))
+}
+trees <- phangorn::allTrees(5L, rooted = FALSE, tip.label=1:5)
+trees <- lapply(trees, ape::root, '1', resolve.root = TRUE)
+A <- c(FALSE, TRUE)[c(1, 2, 2, 1, 1)]
+B <- c(FALSE, TRUE)[c(1, 1, 1, 2, 2)]
+for (tree in trees) {
+  splits <- TreeSearch::Tree2Splits(tree)
+  matchA <- apply(splits, 2, function (s) all(s == A) || all(s == !A))
+  matchB <- apply(splits, 2, function (s) all(s == B) || all(s == !B))
+  TreeDistPlot(tree, leaveRoom = FALSE)
+  ShowNode(matchA, ' BC:ADE ', col = Ternary::cbPalette15[3])
+  ShowNode(matchB, ' DE:ABC ', col = Ternary::cbPalette15[5])
+}
+```
+
+The phylogenetic information content [_sensu_ @Steel2006] of each partition 
+corresponds to the logarithm of the proportion of bifurcating _n_-tip trees that
+include that partition.
+
+- _H_(`BC:ADE`) = $-\log_2(\frac{3}{15})$
+- _H_(`DE:ABC`) = $-\log_2(\frac{3}{15})$
+
+The mutual phylogenetic information corresponds to the logarithm of the
+proportion of trees that include both.
+
+- _I_(`BC:ADE`; `DE:ABC`) = $-\log_2(\frac{1}{15})$
+
+The variation of information is the logarithm of the proportion of trees that
+contain one partition, but not the other.
+
+- _VoI_(`BC:ADE`; `DE:ABC`) = $-\log_2(\frac{5}{15})$
+
+
+
+
+<!--
+
+Conditional entropy of A given B = 'yes':
+
+- B = 'yes', so the roll was 4, 5 or 6.
+- $p(\textrm{even}) = \frac{2}{3}$; $p(\textrm{odd}) = \frac{1}{3}$; 
+- Conditional entropy = 
+  $\frac{2}{3}\log_2\frac{2}{3} + \frac{1}{3}\log_2\frac{1}{3}$ = 0.92 bits
+  
+Conditional entropy of A given B = 'no':
+
+- B = 'no', so the roll was 1, 2 or 3
+- $p(\textrm{even}) = \frac{1}{3}$; $p(\textrm{odd}) = \frac{2}{3}$; 
+- Conditional entropy = 
+  $\frac{1}{3}\log_2\frac{1}{3} + \frac{2}{3}\log_2\frac{2}{3}$ = 0.92 bits
+  
+Conditional entropy of A given B:
+
+- This is the average conditional entropy for each possible value of B:
+  here, 0.92 bits.
+
+Joint information of A and B: "Rolled even number greater than three"
+
+- Two possible outcomes: 4 or 6.
+- Joint information content: $-\log_2(2/6)$ = 1.58 bits.
+-->
+
+## References
