@@ -257,6 +257,7 @@ resolution by taking the consensus of this tree, and three trees in its
 immediate neighbourhood, one NNI move away.
 
 ```{r}
+library('TreeSearch') # for TBR, NNI
 oneAway <- structure(lapply(seq_len(200), function (x) {
   tbrTree <- TBR(trueTree)
   ape::consensus(list(tbrTree, NNI(tbrTree), NNI(tbrTree), NNI(tbrTree)))
