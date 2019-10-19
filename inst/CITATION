@@ -11,7 +11,7 @@ citEntry(entry = "Article",
       title = "Information theoretic Generalized Robinson-Foulds metrics
 for comparing phylogenetic trees",
       author = personList(as.person("Martin R. Smith")),
-      journal = "Unsubmitted",
+      journal = "In revision",
       year = "20XX",
 
       textVersion =
