@@ -52,7 +52,7 @@ RobinsonFouldsInfo <- function (tree1, tree2, similarity = FALSE,
 #' @describeIn RobinsonFouldsInfo Calculate information-adjusted Robinson-Foulds
 #' distance from splits instead of trees.
 #' @inheritParams MutualPhylogeneticInfoSplits
-#' @importFrom TreeSearch LogTreesMatchingSplit LnUnrooted.int
+#' @importFrom TreeTrunk LogTreesMatchingSplit LnUnrooted.int
 #' @export
 RobinsonFouldsInfoSplits <- function (splits1, splits2, reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2,

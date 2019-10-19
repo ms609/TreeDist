@@ -88,7 +88,7 @@ TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = FALSE,
 #' @importFrom ape nodelabels edgelabels plot.phylo
 #' @importFrom colorspace qualitative_hcl sequential_hcl
 #' @importFrom graphics par
-#' @importFrom TreeSearch Tree2Splits
+#' @importFrom TreeTrunk Tree2Splits
 #' @export
 VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
                               precision = 3L, Plot = plot.phylo,

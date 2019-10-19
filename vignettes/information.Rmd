@@ -159,7 +159,7 @@ trees <- lapply(trees, ape::root, '1', resolve.root = TRUE)
 A <- c(FALSE, TRUE)[c(1, 2, 2, 1, 1)]
 B <- c(FALSE, TRUE)[c(1, 1, 1, 2, 2)]
 for (tree in trees) {
-  splits <- TreeSearch::Tree2Splits(tree)
+  splits <- TreeTrunk::Tree2Splits(tree)
   matchA <- apply(splits, 2, function (s) all(s == A) || all(s == !A))
   matchB <- apply(splits, 2, function (s) all(s == B) || all(s == !B))
   TreeDistPlot(tree, leaveRoom = FALSE)

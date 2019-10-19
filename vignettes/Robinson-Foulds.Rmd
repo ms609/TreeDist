@@ -312,7 +312,7 @@ associated node:
 
 ```{r}
 DisplaySplits <- function (tree) 
-  as.list(as.character(IdentifySplits(TreeSearch::Tree2Splits(tree))))
+  as.list(as.character(IdentifySplits(TreeTrunk::Tree2Splits(tree))))
 DisplaySplits(tree1)
 ```
 ```{r}

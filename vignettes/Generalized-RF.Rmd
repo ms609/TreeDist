@@ -54,7 +54,7 @@ proportion of trees that contain both partitions).
 Consider the splits `ABCDEF:GHI` and `ABCDEFI:GH`.  
 
 ```{r}
-library('TreeSearch')
+library('TreeTrunk')
 treesMatchingSplit <- c(
   ABCDEF.GHI = TreesMatchingSplit(6, 3),
   ABCDEFI.GH = TreesMatchingSplit(7, 2)

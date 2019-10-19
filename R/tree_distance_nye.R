@@ -39,7 +39,7 @@
 #' @family tree distances
 #' 
 #' @author Martin R. Smith
-#' @importFrom TreeSearch NPartitions
+#' @importFrom TreeTrunk NPartitions
 #' @export
 NyeTreeSimilarity <- function (tree1, tree2, similarity = TRUE,
                                normalize = FALSE, normalizeMax = TRUE,
@@ -162,7 +162,7 @@ NyeSplitSimilarity <- function (splits1, splits2, reportMatching = FALSE) {
 #' @family tree distances
 #' 
 #' @author Martin R. Smith
-#' @importFrom TreeSearch NPartitions
+#' @importFrom TreeTrunk NPartitions
 #' @export
 JaccardRobinsonFoulds <- function (tree1, tree2, k = 1L, arboreal = TRUE,
                                    similarity = FALSE,

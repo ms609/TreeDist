@@ -237,15 +237,15 @@
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "TreeSearch",
-      "name": "TreeSearch",
+      "identifier": "TreeTrunk",
+      "name": "TreeTrunk",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://github.com/ms609/TreeSearch"
+      "sameAs": "https://github.com/ms609/TreeTrunk"
     }
   ],
   "releaseNotes": "https://github.com/ms609/TreeDist/blob/master/NEWS.md",
