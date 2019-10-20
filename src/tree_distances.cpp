@@ -24,6 +24,7 @@ int count_bits_32 (uint32_t x) {
 }
 
 int32_t symmetric_difference (uint32_t a, uint32_t b) {
+  return (a ^ b);
   Rcout << "SD: " << ((a & ~b) | (~a & b)) << " = " << count_bits_32((a & ~b) | (~a & b)) << "\n";
   return (a & ~b) | (~a & b);
 }
@@ -32,11 +33,11 @@ int32_t symmetric_difference (uint32_t a, uint32_t b) {
 template <class T> const T& min (const T& a, const T& b) {
   return (a < b) ? a : b;
 }
-
+/*
 class SplitList {
-  static int n_tips, n_splits, n_bins;
-  uint32_t state[3200][100]; /* Maximum tips supported: 3200 */
+  uint32_t state[3200][100]; /* Maximum tips supported: 3200 *//*
 public:
+  static int n_tips, n_splits, n_bins;
   SplitList(LogicalMatrix);
   int n() {return n_splits;}
 };
@@ -52,9 +53,9 @@ SplitList::SplitList(LogicalMatrix x) {
   n_bins = (n_tips - 1) / 32 + 1;
   int current_block;
   
-  for (unsigned int i = 0; i < n_splits; i++) {
+  for (int i = 0; i < n_splits; i++) {
     current_block = -1;
-    for (unsigned int j = 0; j < n_tips; j++) {
+    for (int j = 0; j < n_tips; j++) {
       if (j % 32 == 0) ++current_block;
       state[i][current_block] <<= 1;
       if (x(j, i)) state[i][current_block]++;
@@ -69,18 +70,19 @@ double county (LogicalMatrix x, LogicalMatrix y) {
   }
   SplitList splits_x = SplitList(x);
   SplitList splits_y = SplitList(y);
-  int score[splits_x.n()][splits_y.n()];
-  int this_score;
+  // int score[3200][3200];
+  //int this_score;
   
   for (int xi = 0; xi < splits_x.n(); xi++) {
     for (int yi = 0; yi < splits_y.n(); yi++) {
-      
+      /*
       min(
         count_bits_32(symmetric_difference(x_int, y_int)),
         count_bits_32(symmetric_difference(x_int, ~y_int)));
+       *//*
     }
   }
   
-  return (double) 
-}
+  return (double) -1;
+}*/
 
