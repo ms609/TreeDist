@@ -42,10 +42,8 @@ MatchingSplitDistanceSplits <- function (splits1, splits2, normalize = TRUE,
     halfTips <- nTips / 2
     for (i in seq_len(nSplits1)) {
       A1 <- splits1[, i]
-      B1 <- !A1
       for (j in seq_len(nSplits2)) {
         A2 <- splits2[, j]
-        B2 <- !A2
         
         # Long-winded way:
         # min(
