@@ -25,14 +25,12 @@ int count_bits_32 (uint32_t x) {
 
 class SplitList {
 public:
-  static int n_tips, n_splits, n_bins;
+  int n_tips, n_splits, n_bins;
   uint32_t state[3200][100]; /* Maximum tips supported: 3200 */
   SplitList(LogicalMatrix);
   int n() {return n_splits;}
   int bins() {return n_bins;}
 };
-
-int SplitList::n_tips, SplitList::n_bins, SplitList::n_splits;
 
 SplitList::SplitList(LogicalMatrix x) {
   n_tips = x.rows();
