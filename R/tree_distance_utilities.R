@@ -17,7 +17,7 @@ CalculateTreeDistance <- function (Func, tree1, tree2, reportMatching, ...) {
         stop("Tree tips must bear identical labels")
       }
       
-      Func(Tree2Splits(tree1), Tree2Splits(tree2), 
+      Func(Tree2Splits(tree1), Tree2Splits(tree2),
            reportMatching = reportMatching, ...)
     } else {
       splits1 <- Tree2Splits(tree1)
