@@ -38,10 +38,10 @@ SplitList::SplitList(LogicalMatrix x) {
   n_tips = x.rows();
   n_splits = x.cols();
   
-  if (n_tips < 1) throw std::range_error("No tips present.");
-  if (n_splits < 1) throw std::range_error("No splits present.");
+  if (n_tips < 1) throw std::invalid_argument("No tips present.");
+  if (n_splits < 1) throw std::invalid_argument("No splits present.");
   if (n_tips > 3200) {
-    throw std::range_error("No more than 3200 tips can be supported. Please contact the maintainer if you need to use more!");
+    throw std::length_error("No more than 3200 tips can be supported. Please contact the maintainer if you need to use more!");
   }
   
   n_bins = (n_tips - 1) / 32 + 1;
