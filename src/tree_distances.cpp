@@ -75,7 +75,7 @@ IntegerMatrix matching_split_distance (LogicalMatrix x, LogicalMatrix y) {
       for (int bin = 0; bin < splits_x.bins(); bin++) {
         score(xi, yi) += count_bits_32(splits_x.state[xi][bin] ^ splits_y.state[yi][bin]);
       }
-      if (score(xi, yi) < half_tips) score(xi, yi) = n_tips - score(xi, yi);
+      if (score(xi, yi) > half_tips) score(xi, yi) = n_tips - score(xi, yi);
     }
   }
   
