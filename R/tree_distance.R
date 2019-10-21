@@ -52,6 +52,12 @@ CGRF <- function (splits1, splits2, PairScorer,
   if (dimSplits2[1] != nTerminals) {
     stop("Split rows must bear identical labels")
   }
+  taxonNames1 <- rownames(splits1)
+  taxonNames2 <- rownames(splits2)
+  
+  if (!is.null(taxonNames2)) {
+    splits2 <- splits2[taxonNames1, , drop=FALSE]
+  }
   
   solution <- PairScorer(splits1, splits2,  ...)
   ret <- solution$score
@@ -72,12 +78,11 @@ CGRF <- function (splits1, splits2, PairScorer,
       }, double(nSplits1))
     attr(ret, 'pairScores') <- pairScores
     
-    taxonNames <- rownames(splits1)
-    if (!is.null(taxonNames)) {
+    if (!is.null(taxonNames1)) {
       attr(ret, 'matchedSplits') <- 
         ReportMatching(splits1[, !is.na(matching), drop = FALSE], 
                        splits2[, matching[!is.na(matching)], drop = FALSE],
-                       taxonNames,
+                       taxonNames1,
                        realMatch = if (maximize) {
                          pairScores[matrix(c(matched1, matched2), ncol=2L)] > 0
                        } else TRUE)
