@@ -60,7 +60,7 @@ SplitList::SplitList(LogicalMatrix x) {
 }
 
 // [[Rcpp::export]]
-IntegerMatrix matching_split_distance (LogicalMatrix x, LogicalMatrix y) {
+IntegerMatrix cpp_matching_split_distance (LogicalMatrix x, LogicalMatrix y) {
   if (x.rows() != y.rows()) {
     throw std::range_error("Input matrices must contain same number of rows.");
   }

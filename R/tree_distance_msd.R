@@ -37,30 +37,6 @@ MatchingSplitDistanceSplits <- function (splits1, splits2, normalize = TRUE,
                                          reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, 
                 function(splits1, splits2, nSplits1, nSplits2) {
-    matching_split_distance(splits1, splits2)
-  }, maximize = FALSE, reportMatching)
-}
-
-#' @describeIn MatchingSplitDistance R implementation.
-#' @inheritParams MutualPhylogeneticInfoSplits
-#' @export
-MatchingSplitDistanceSplitsR <- function (splits1, splits2, normalize = TRUE, 
-                                         reportMatching = FALSE) {
-  GeneralizedRF(splits1, splits2, 
-                function(splits1, splits2, nSplits1, nSplits2) {
-    ret <- matrix(0L, nSplits1, nSplits2)
-    nTips <- dim(splits1)[1]
-    halfTips <- nTips / 2
-    for (i in seq_len(nSplits1)) {
-      A1 <- splits1[, i]
-      for (j in seq_len(nSplits2)) {
-        A2 <- splits2[, j]
-        symDiff <- sum(xor(A1, A2))
-        ret[i, j] <- if (symDiff > halfTips) nTips - symDiff else symDiff
-      }
-    }
-    
-    # Return:
-    ret
+    cpp_matching_split_distance(splits1, splits2)
   }, maximize = FALSE, reportMatching)
 }
