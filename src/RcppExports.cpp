@@ -6,7 +6,7 @@
 using namespace Rcpp;
 
 // cpp_matching_split_distance
-IntegerMatrix cpp_matching_split_distance(LogicalMatrix x, LogicalMatrix y);
+NumericVector cpp_matching_split_distance(LogicalMatrix x, LogicalMatrix y);
 RcppExport SEXP _TreeDist_cpp_matching_split_distance(SEXP xSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

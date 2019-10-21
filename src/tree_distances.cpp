@@ -1,6 +1,7 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 #include <stdint.h>
+#include "lap.h"
 
 const uint32_t right16bits = 65535;
 const uint32_t powers_of_two[16] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512,
@@ -30,6 +31,7 @@ public:
   SplitList(LogicalMatrix);
   int n() {return n_splits;}
   int bins() {return n_bins;}
+  int tips() {return n_tips;}
 };
 
 SplitList::SplitList(LogicalMatrix x) {
@@ -60,25 +62,45 @@ SplitList::SplitList(LogicalMatrix x) {
 }
 
 // [[Rcpp::export]]
-IntegerMatrix cpp_matching_split_distance (LogicalMatrix x, LogicalMatrix y) {
+NumericVector cpp_matching_split_distance (LogicalMatrix x, LogicalMatrix y) {
   if (x.rows() != y.rows()) {
     throw std::range_error("Input matrices must contain same number of rows.");
   }
   SplitList a(x);
   SplitList b(y);
-  IntegerMatrix score(a.n_splits, b.n_splits);
+  const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits;
+  cost score[max_splits][max_splits];
   const int n_tips = a.n_tips, half_tips = n_tips / 2;
+  
+  /*Rcout << "Working over " << a.n() << " (" << a.n_splits << ", " << x.cols() 
+        << ") and " << b.n() << " (" << b.n_splits << ", " << y.cols() 
+        << ") splits.\n\n";*/
   
   for (int ai = 0; ai < a.n_splits; ai++) {
     for (int bi = 0; bi < b.n_splits; bi++) {
-      score(ai, bi) = 0;
+      score[ai][bi] = 0;
       for (int bin = 0; bin < a.bins(); bin++) {
-        score(ai, bi) += count_bits_32(a.state[ai][bin] ^ 
+        score[ai][bi] += count_bits_32(a.state[ai][bin] ^ 
                                        b.state[bi][bin]);
+        /*Rcout << "- x = " << ai << ", y = " << bi << ", bin " << bin << ": "
+              << a.state[ai][bin] << " ^ " << b.state[bi][bin] << " = " 
+              << score(ai, bi) << " (" << n_tips << " tips).\n";*/
       }
-      if (score(ai, bi) > half_tips) score(ai, bi) = n_tips - score(ai, bi);
+      if (score[ai][bi] > half_tips) score[ai][bi] = n_tips - score[ai][bi];
+    }
+    for (int bi = b.n_splits; bi < max_splits; bi++) {
+      score[ai][bi] = BIG;
+    }
+  }
+  for (int ai = a.n_splits; ai < max_splits; ai++) {
+    for (int bi = 0; bi < max_splits; bi++) {
+      score[ai][bi] = BIG;
     }
   }
   
-  return (score);
+  lap_col *rowsol;
+  lap_row *colsol;
+  cost *u, *v;
+  return lap(max_splits, score, rowsol, colsol, u, v);
 }
+
