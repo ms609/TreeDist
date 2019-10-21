@@ -1,4 +1,19 @@
 context('tree_distance.R')
+# Labels in different order to confound Tree2Splits
+treeSym8 <- ape::read.tree(text='((e, (f, (g, h))), (((a, b), c), d));')
+treeBal8 <- ape::read.tree(text='(((e, f), (g, h)), ((a, b), (c, d)));')
+treeOpp8 <- ape::read.tree(text='(((a, f), (c, h)), ((g, b), (e, d)));')
+treesSBO8 <- structure(list(treeSym8, treeBal8, treeOpp8), 
+                            class = 'multiPhylo')
+
+treeCat8 <- ape::read.tree(text='((((h, g), f), e), (d, (c, (b, a))));')
+treeTac8 <- ape::read.tree(text='((((e, c), g), a), (h, (b, (d, f))));')
+
+treeAb.Cdefgh <- ape::read.tree(text='((a, b), (c, d, e, f, g, h));')
+treeAbc.Defgh <- ape::read.tree(text='((a, b, c), (d, e, f, g, h));')
+treeAcd.Befgh <- ape::read.tree(text='((a, c, d), (b, e, f, g, h));')
+treeAbcd.Efgh <- ape::read.tree(text='((a, b, c, d), (e, f, g, h));')
+treeTwoSplits <- ape::read.tree(text="(((a, b), c, d), (e, f, g, h));")
 
 test_that("Split combatibility is correctly established", {
   expect_true(SplitsCompatible(as.logical (c(0,0,1,1,0)), 
@@ -32,22 +47,6 @@ NormalizationTest <- function (FUNC, ...) {
   expect_equal(c(1L, 1L, 1L), diag(FUNC(treesSBO8, treesSBO8, 
                                         normalize = TRUE, ...)))
 }
-
-# Labels in different order to confound Tree2Splits
-treeSym8 <- ape::read.tree(text='((e, (f, (g, h))), (((a, b), c), d));')
-treeBal8 <- ape::read.tree(text='(((e, f), (g, h)), ((a, b), (c, d)));')
-treeOpp8 <- ape::read.tree(text='(((a, f), (c, h)), ((g, b), (e, d)));')
-treesSBO8 <- structure(list(treeSym8, treeBal8, treeOpp8), 
-                            class = 'multiPhylo')
-
-treeCat8 <- ape::read.tree(text='((((h, g), f), e), (d, (c, (b, a))));')
-treeTac8 <- ape::read.tree(text='((((e, c), g), a), (h, (b, (d, f))));')
-
-treeAb.Cdefgh <- ape::read.tree(text='((a, b), (c, d, e, f, g, h));')
-treeAbc.Defgh <- ape::read.tree(text='((a, b, c), (d, e, f, g, h));')
-treeAcd.Befgh <- ape::read.tree(text='((a, c, d), (b, e, f, g, h));')
-treeAbcd.Efgh <- ape::read.tree(text='((a, b, c, d), (e, f, g, h));')
-treeTwoSplits <- ape::read.tree(text="(((a, b), c, d), (e, f, g, h));")
 
 test_that('Bad labels cause error', {
   treeBadLabel8 <- ape::read.tree(text='((a, b, c, D), (e, f, g, h));')
