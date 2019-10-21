@@ -40,6 +40,57 @@ GeneralizedRF <- function (splits1, splits2, PairScorer,
   TreeDistanceReturn(pairScores, maximize, reportMatching, 
                      splits1, splits2, taxonNames1)
 }
+#' @describeIn GeneralizedRF C implementation #TODO describe
+CGRF <- function (splits1, splits2, PairScorer, 
+                           maximize, reportMatching, ...) {
+  dimSplits1 <- dim(splits1)
+  dimSplits2 <- dim(splits2)
+  nSplits1 <- dimSplits1[2]
+  nSplits2 <- dimSplits2[2]
+  if (nSplits1 == 0 || nSplits2 == 0) return (0L)
+  nTerminals <- dimSplits1[1]
+  if (dimSplits2[1] != nTerminals) {
+    stop("Split rows must bear identical labels")
+  }
+  taxonNames1 <- rownames(splits1)
+  taxonNames2 <- rownames(splits2)
+  
+  if (!is.null(taxonNames2)) {
+    splits2 <- splits2[taxonNames1, , drop=FALSE]
+  }
+  
+  solution <- PairScorer(splits1, splits2,  ...)
+  ret <- solution$score
+  
+  if (reportMatching) {
+    matching <- solution$matching + 1L
+    matching[matching > nSplits2] <- NA
+    if (nSplits1 < nSplits2) {
+      matching <- matching[seq_len(ncol(splits1))]
+    }
+    attr(ret, 'matching') <- matching
+    
+    # We're not worried about performance any more
+    pairScores <- vapply(seq_len(nSplits2), function (i) {
+      vapply(seq_len(nSplits1), function (j) {
+        PairScorer(splits1[, j, drop = FALSE], splits2[, i, drop = FALSE], ...)$score
+      }, double(1))
+      }, double(nSplits1))
+    attr(ret, 'pairScores') <- pairScores
+    
+    if (!is.null(taxonNames1)) {
+      attr(ret, 'matchedSplits') <- 
+        ReportMatching(splits1[, !is.na(matching), drop = FALSE], 
+                       splits2[, matching[!is.na(matching)], drop = FALSE],
+                       taxonNames1,
+                       realMatch = if (maximize) {
+                         pairScores[matrix(c(matched1, matched2), ncol=2L)] > 0
+                       } else TRUE)
+    }
+  }
+  # Return:
+  ret
+}
 
 #' Are splits compatible?
 #' 
