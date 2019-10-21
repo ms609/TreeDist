@@ -59,6 +59,9 @@ CGRF <- function (splits1, splits2, PairScorer,
   if (reportMatching) {
     matching <- solution$matching + 1L
     matching[matching > nSplits2] <- NA
+    if (nSplits1 < nSplits2) {
+      matching <- matching[seq_len(ncol(splits1))]
+    }
     attr(ret, 'matching') <- matching
     
     # We're not worried about performance any more
