@@ -128,7 +128,7 @@ cost lap(int dim,
           for (j = 1; j < dim; j++)
           {
             h = assigncost[i][j] - v[j];
-            if (h < usubmin)
+            if (h < usubmin) {
               if (h >= umin)
               {
                 usubmin = h;
@@ -141,6 +141,7 @@ cost lap(int dim,
                 j2 = j1;
                 j1 = j;
               }
+            }
           }
           
           i0 = colsol[j1];
@@ -149,7 +150,7 @@ cost lap(int dim,
             //         reduced cost in the row to the subminimum.
             v[j1] = v[j1] - (usubmin - umin);
           else                   // minimum and subminimum equal.
-            if(i0 > -1)  // minimum column j1 is assigned.
+            if (i0 > -1)  // minimum column j1 is assigned.
             {
               //           swap columns j1 and j2, as j2 may be unassigned.
               j1 = j2;
@@ -160,7 +161,7 @@ cost lap(int dim,
             rowsol[i] = j1;
             colsol[j1] = i;
             
-            if(i0 > -1)  // minimum column j1 assigned earlier.
+            if (i0 > -1) { // minimum column j1 assigned earlier.
               if (umin < usubmin)
                 //           put in current k, and go back to that k.
                 //           continue augmenting path i - j1 with i0.
@@ -169,6 +170,7 @@ cost lap(int dim,
                 //           no further augmenting reduction possible.
                 //           store i0 in list of free rows for next phase.
                 free[numfree++] = i0;
+            }
         }
       }
       while (loopcnt < 2);       // repeat once.
@@ -244,6 +246,7 @@ cost lap(int dim,
               {
                 pred[j] = i;
                 if (v2 == min)   // new column found at same minimum value
+                {
                   if (colsol[j] < 0)
                   {
                     // if unassigned, shortest augmenting path is complete.
@@ -257,7 +260,8 @@ cost lap(int dim,
                     collist[k] = collist[up];
                     collist[up++] = j;
                   }
-                  d[j] = v2;
+                }
+                d[j] = v2; // <MS: Unintended>
               }
             }
           }
@@ -293,7 +297,6 @@ cost lap(int dim,
         lapcost = lapcost + assigncost[i][j];
       }
       
-      scanf("%d", &wait);
       // free reserved memory.
       delete[] pred;
       delete[] free;
