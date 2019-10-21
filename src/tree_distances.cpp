@@ -48,7 +48,10 @@ SplitList::SplitList(LogicalMatrix x) {
   for (int i = 0; i < n_splits; i++) {
     current_block = -1;
     for (int j = 0; j < n_tips; j++) {
-      if (j % 32 == 0) ++current_block;
+      if (j % 32 == 0) {
+        ++current_block;
+        state[i][current_block] = 0;
+      }
       state[i][current_block] <<= 1;
       if (x(j, i)) state[i][current_block]++;
     }
