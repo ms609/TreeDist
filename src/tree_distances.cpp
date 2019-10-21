@@ -33,15 +33,18 @@ public:
 };
 
 SplitList::SplitList(LogicalMatrix x) {
+  int current_block;
+  
   n_tips = x.rows();
   n_splits = x.cols();
+  
   if (n_tips < 1) throw std::range_error("No tips present.");
   if (n_splits < 1) throw std::range_error("No splits present.");
   if (n_tips > 3200) {
     throw std::range_error("No more than 3200 tips can be supported. Please contact the maintainer if you need to use more!");
   }
+  
   n_bins = (n_tips - 1) / 32 + 1;
-  int current_block;
   
   for (int i = 0; i < n_splits; i++) {
     current_block = -1;
@@ -61,19 +64,19 @@ IntegerMatrix matching_split_distance (LogicalMatrix x, LogicalMatrix y) {
   if (x.rows() != y.rows()) {
     throw std::range_error("Input matrices must contain same number of rows.");
   }
-  SplitList splits_x (x);
-  SplitList splits_y (y);
-  IntegerMatrix score(splits_x.n_splits, splits_y.n_splits);
-  static int n_tips = splits_x.n_tips,
-    half_tips = n_tips / 2;
+  SplitList a(x);
+  SplitList b(y);
+  IntegerMatrix score(a.n_splits, b.n_splits);
+  const int n_tips = a.n_tips, half_tips = n_tips / 2;
   
-  for (int xi = 0; xi < x.cols(); xi++) {
-    for (int yi = 0; yi < y.cols(); yi++) {
-      score(xi, yi) = 0;
-      for (int bin = 0; bin < splits_x.bins(); bin++) {
-        score(xi, yi) += count_bits_32(splits_x.state[xi][bin] ^ splits_y.state[yi][bin]);
+  for (int ai = 0; ai < a.n_splits; ai++) {
+    for (int bi = 0; bi < b.n_splits; bi++) {
+      score(ai, bi) = 0;
+      for (int bin = 0; bin < a.bins(); bin++) {
+        score(ai, bi) += count_bits_32(a.state[ai][bin] ^ 
+                                       b.state[bi][bin]);
       }
-      if (score(xi, yi) > half_tips) score(xi, yi) = n_tips - score(xi, yi);
+      if (score(ai, bi) > half_tips) score(ai, bi) = n_tips - score(ai, bi);
     }
   }
   
