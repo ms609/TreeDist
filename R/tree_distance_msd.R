@@ -36,5 +36,6 @@ MatchingSplitDistance <- function (tree1, tree2, normalize = FALSE,
 #' @export
 MatchingSplitDistanceSplits <- function (splits1, splits2, normalize = TRUE, 
                                          reportMatching = FALSE) {
-  CGRF(splits1, splits2, cpp_matching_split_distance)
+  CGRF(splits1, splits2, cpp_matching_split_distance, maximize = FALSE,
+       reportMatching = reportMatching)
 }
