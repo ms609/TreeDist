@@ -23,22 +23,13 @@ int count_bits_32 (uint32_t x) {
   return bitcounts[x & right16bits] + bitcounts[x >> 16];
 }
 
-int32_t symmetric_difference (uint32_t a, uint32_t b) {
-  Rcout << "SD: " << ((a & ~b) | (~a & b)) << " = " << count_bits_32((a & ~b) | (~a & b)) << "\n";
-  return (a & ~b) | (~a & b);
-}
-
-
-template <class T> const T& min (const T& a, const T& b) {
-  return (a < b) ? a : b;
-}
-
 class SplitList {
+public:
   static int n_tips, n_splits, n_bins;
   uint32_t state[3200][100]; /* Maximum tips supported: 3200 */
-public:
   SplitList(LogicalMatrix);
   int n() {return n_splits;}
+  int bins() {return n_bins;}
 };
 
 SplitList::SplitList(LogicalMatrix x) {
@@ -52,9 +43,9 @@ SplitList::SplitList(LogicalMatrix x) {
   n_bins = (n_tips - 1) / 32 + 1;
   int current_block;
   
-  for (unsigned int i = 0; i < n_splits; i++) {
+  for (int i = 0; i < n_splits; i++) {
     current_block = -1;
-    for (unsigned int j = 0; j < n_tips; j++) {
+    for (int j = 0; j < n_tips; j++) {
       if (j % 32 == 0) ++current_block;
       state[i][current_block] <<= 1;
       if (x(j, i)) state[i][current_block]++;
@@ -63,24 +54,25 @@ SplitList::SplitList(LogicalMatrix x) {
 }
 
 // [[Rcpp::export]]
-double county (LogicalMatrix x, LogicalMatrix y) {
+IntegerMatrix matching_split_distance (LogicalMatrix x, LogicalMatrix y) {
   if (x.rows() != y.rows()) {
     throw std::range_error("Input matrices must contain same number of rows.");
   }
   SplitList splits_x = SplitList(x);
   SplitList splits_y = SplitList(y);
-  int score[splits_x.n()][splits_y.n()];
-  int this_score;
+  IntegerMatrix score(splits_x.n_splits, splits_y.n_splits);
+  static int n_tips = splits_x.n_tips,
+    half_tips = n_tips / 2;
   
-  for (int xi = 0; xi < splits_x.n(); xi++) {
-    for (int yi = 0; yi < splits_y.n(); yi++) {
-      
-      min(
-        count_bits_32(symmetric_difference(x_int, y_int)),
-        count_bits_32(symmetric_difference(x_int, ~y_int)));
+  for (int xi = 0; xi < x.cols(); xi++) {
+    for (int yi = 0; yi < y.cols(); yi++) {
+      score(xi, yi) = 0;
+      for (int bin = 0; bin < splits_x.bins(); bin++) {
+        score(xi, yi) += count_bits_32(splits_x.state[xi][bin] ^ splits_y.state[yi][bin]);
+      }
+      if (score(xi, yi) < half_tips) score(xi, yi) = n_tips - score(xi, yi);
     }
   }
   
-  return (double) 
+  return (score);
 }
-

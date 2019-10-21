@@ -5,21 +5,21 @@
 
 using namespace Rcpp;
 
-// county
-double county(LogicalVector x, LogicalVector y);
-RcppExport SEXP _TreeDist_county(SEXP xSEXP, SEXP ySEXP) {
+// matching_split_distance
+IntegerMatrix matching_split_distance(LogicalMatrix x, LogicalMatrix y);
+RcppExport SEXP _TreeDist_matching_split_distance(SEXP xSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< LogicalVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< LogicalVector >::type y(ySEXP);
-    rcpp_result_gen = Rcpp::wrap(county(x, y));
+    Rcpp::traits::input_parameter< LogicalMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< LogicalMatrix >::type y(ySEXP);
+    rcpp_result_gen = Rcpp::wrap(matching_split_distance(x, y));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_TreeDist_county", (DL_FUNC) &_TreeDist_county, 2},
+    {"_TreeDist_matching_split_distance", (DL_FUNC) &_TreeDist_matching_split_distance, 2},
     {NULL, NULL, 0}
 };
 
