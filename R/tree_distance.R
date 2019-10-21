@@ -53,19 +53,35 @@ CGRF <- function (splits1, splits2, PairScorer,
     stop("Split rows must bear identical labels")
   }
   
-  taxonNames1 <- rownames(splits1)
-  taxonNames2 <- rownames(splits2)
+  solution <- PairScorer(splits1, splits2,  ...)
+  ret <- solution$score
   
-  if (!is.null(taxonNames2)) {
-    splits2 <- unname(splits2[taxonNames1, , drop=FALSE])
-    splits1 <- unname(splits1) # split2[split1] faster without names
+  if (reportMatching) {
+    matching <- solution$matching + 1L
+    matching[matching > nSplits2] <- NA
+    attr(ret, 'matching') <- matching
+    
+    # We're not worried about performance any more
+    pairScores <- vapply(seq_len(nSplits2), function (i) {
+      vapply(seq_len(nSplits1), function (j) {
+        PairScorer(splits1[, j, drop = FALSE], splits2[, i, drop = FALSE], ...)$score
+      }, double(1))
+      }, double(nSplits1))
+    attr(ret, 'pairScores') <- pairScores
+    
+    taxonNames <- rownames(splits1)
+    if (!is.null(taxonNames)) {
+      attr(ret, 'matchedSplits') <- 
+        ReportMatching(splits1[, !is.na(matching), drop = FALSE], 
+                       splits2[, matching[!is.na(matching)], drop = FALSE],
+                       taxonNames,
+                       realMatch = if (maximize) {
+                         pairScores[matrix(c(matched1, matched2), ncol=2L)] > 0
+                       } else TRUE)
+    }
   }
-  
-  PairScorer(splits1, splits2,  ...)
-  
   # Return:
-  # TreeDistanceReturn(pairScores, maximize, reportMatching, 
-  #                    splits1, splits2, taxonNames1)
+  ret
 }
 
 #' Are splits compatible?
