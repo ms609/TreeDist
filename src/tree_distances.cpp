@@ -43,7 +43,7 @@ SplitList::SplitList(LogicalMatrix x) {
   if (n_tips < 1) throw std::invalid_argument("No tips present.");
   if (n_splits < 1) throw std::invalid_argument("No splits present.");
   if (n_tips > 3200) {
-    throw std::length_error("No more than 3200 tips can be supported. Please contact the maintainer if you need to use more!");
+    throw std::length_error("No more than 3200 tips can be supported. Please contact the TreeDist maintainer if you need to use more!");
   }
   
   n_bins = (n_tips - 1) / 32 + 1;
@@ -64,7 +64,7 @@ SplitList::SplitList(LogicalMatrix x) {
 // [[Rcpp::export]]
 int cpp_matching_split_distance (LogicalMatrix x, LogicalMatrix y) {
   if (x.rows() != y.rows()) {
-    throw std::range_error("Input matrices must contain same number of rows.");
+    throw std::invalid_argument("Input matrices must contain same number of rows.");
   }
   SplitList a(x);
   SplitList b(y);
