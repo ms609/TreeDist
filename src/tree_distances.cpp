@@ -32,6 +32,8 @@ public:
   int bins() {return n_bins;}
 };
 
+int SplitList::n_tips, SplitList::n_bins, SplitList::n_splits;
+
 SplitList::SplitList(LogicalMatrix x) {
   n_tips = x.rows();
   n_splits = x.cols();
@@ -58,8 +60,8 @@ IntegerMatrix matching_split_distance (LogicalMatrix x, LogicalMatrix y) {
   if (x.rows() != y.rows()) {
     throw std::range_error("Input matrices must contain same number of rows.");
   }
-  SplitList splits_x = SplitList(x);
-  SplitList splits_y = SplitList(y);
+  SplitList splits_x (x);
+  SplitList splits_y (y);
   IntegerMatrix score(splits_x.n_splits, splits_y.n_splits);
   static int n_tips = splits_x.n_tips,
     half_tips = n_tips / 2;
