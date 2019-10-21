@@ -59,7 +59,7 @@ r_binary_packages:
  - testthat
 
 before_script:
-  - R -e "devtools::document()"
+  - R -e "devtools::load_all();devtools::document()"
 
 notifications:
   email:
