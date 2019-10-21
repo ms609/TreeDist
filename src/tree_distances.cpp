@@ -62,16 +62,15 @@ SplitList::SplitList(LogicalMatrix x) {
 }
 
 // [[Rcpp::export]]
-int cpp_matching_split_distance (LogicalMatrix x, LogicalMatrix y) {
+List cpp_matching_split_distance (LogicalMatrix x, LogicalMatrix y) {
   if (x.rows() != y.rows()) {
     throw std::invalid_argument("Input matrices must contain same number of rows.");
   }
   SplitList a(x);
   SplitList b(y);
   const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits;
-  const int split_diff = max_splits - (
-    (a.n_splits > b.n_splits) ? b.n_splits : a.n_splits);
-  //int score[max_splits][max_splits];
+  const int split_diff = max_splits -
+    ((a.n_splits > b.n_splits) ? b.n_splits : a.n_splits);
   int** score = new int*[max_splits];
   for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
   const int n_tips = a.n_tips, half_tips = n_tips / 2;
@@ -105,6 +104,18 @@ int cpp_matching_split_distance (LogicalMatrix x, LogicalMatrix y) {
   lap_col *rowsol = new lap_col[max_splits];
   lap_row *colsol = new lap_row[max_splits];
   cost *u = new cost[max_splits], *v = new cost[max_splits];
-  return lap(max_splits, score, rowsol, colsol, u, v) - (BIG * split_diff);
+  
+  NumericVector final_score = NumericVector::create(
+    lap(max_splits, score, rowsol, colsol, u, v) - (BIG * split_diff)),
+    final_matching (max_splits);
+  
+  for (int i = 0; i < max_splits; i++) {
+    final_matching[i] = rowsol[i];
+  }
+  
+  List ret = List::create(Named("score") = final_score,
+                          _["matching"] = final_matching);
+  
+  return (ret);
 }
 
