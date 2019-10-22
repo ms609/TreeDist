@@ -17,23 +17,23 @@ CalculateTreeDistance <- function (Func, tree1, tree2, reportMatching, ...) {
         stop("Tree tips must bear identical labels")
       }
       
-      Func(Tree2Splits(tree1), Tree2Splits(tree2),
+      Func(as.Splits(tree1), as.Splits(tree2),
            reportMatching = reportMatching, ...)
     } else {
-      splits1 <- Tree2Splits(tree1)
+      splits1 <- as.Splits(tree1)
       vapply(tree2,
-             function (tr2) Func(splits1, Tree2Splits(tr2), ...),
+             function (tr2) Func(splits1, as.Splits(tr2), ...),
              double(1))
     }
   } else {
     if (class(tree2) == 'phylo') {
-      splits1 <- Tree2Splits(tree2)
+      splits1 <- as.Splits(tree2)
       vapply(tree1,
-             function (tr2) Func(splits1, Tree2Splits(tr2), ...),
+             function (tr2) Func(splits1, as.Splits(tr2), ...),
              double(1))
     } else {
-      splits1 <- lapply(tree1, Tree2Splits)
-      splits2 <- lapply(tree2, Tree2Splits)
+      splits1 <- lapply(tree1, as.Splits)
+      splits2 <- lapply(tree2, as.Splits)
       matrix(mapply(Func, rep(splits2, each=length(splits1)), splits1, ...), 
              length(splits1), length(splits2),
              dimnames = list(names(tree1), names(tree2)))
@@ -105,28 +105,15 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
 
 #' List clades as text
 #' @param splits,splits1,splits2 Logical matrices with columns specifying membership
-#' of each corresponding matched clade 
-#' @param taxonNames Character vector listing names of taxa corresponding to
-#'  each row in `splits`
-#' @return {
-#'   `ReportMatching` returns a character vector describing each pairing in a matching.
+#' of each corresponding matched clade.
+#' @return `ReportMatching` returns a character vector describing each pairing 
+#' in a matching.
 #'   
-#'   `IdentifySplits` returns a character vector describing each split in a splits 
-#'   object, named according to the column names in the splits object.
-#' }
 #' @seealso VisualizeMatching
 #' @author Martin R. Smith
 #' @keywords internal
 #' @export
-ReportMatching <- function (splits1, splits2, taxonNames, realMatch = TRUE) {
-  paste(IdentifySplits(splits1, taxonNames), ifelse(realMatch, '=>', '..'), 
-        IdentifySplits(splits2, taxonNames))
-}
-
-#' @describeIn ReportMatching List the distribution of terminals represented by a single splits object.
-#' @export
-IdentifySplits <- function (splits, taxonNames = rownames(splits)) {
-  apply(splits, 2, function (x) paste0(
-    paste(taxonNames[x], collapse=' '), ' : ', 
-    paste(taxonNames[!x], collapse=' ')))
+ReportMatching <- function (splits1, splits2, realMatch = TRUE) {
+  paste(as.character(splits1), ifelse(realMatch, '=>', '..'), 
+        as.character(splits2))
 }

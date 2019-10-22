@@ -8,7 +8,7 @@
 \description{
 Implements various measures of tree similarity, including 
   Information-based generalized Robinson-Foulds distances
-  (Mutual Phylogenetic Information, Mutual Clustering Information; Smith, in prep); 
+  (Mutual Phylogenetic Information, Mutual Clustering Information; Smith, in revision); 
   the metric of Nye et al. (2006) <doi:10.1093/bioinformatics/bti720>;
   the Matching Split Distance (Bogdanowicz & Giaro 2012) <doi:10.1109/TCBB.2011.48>;
   and the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>.
@@ -23,7 +23,14 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Martin R. Smith \email{martin.smith@durham.ac.uk} (0000-0001-5660-1727) [copyright holder]
+\strong{Maintainer}: Martin R. Smith \email{martin.smith@durham.ac.uk} (0000-0001-5660-1727) [copyright holder, programmer]
+
+Other contributors:
+\itemize{
+  \item Roy Jonker \email{roy_jonker@magiclogic.com} [programmer]
+  \item Harold Cooper \email{hbc@mit.edu} [contributor]
+  \item Yong Yang \email{yongyanglink@gmail.com} [contributor]
+}
 
 }
 \keyword{internal}
