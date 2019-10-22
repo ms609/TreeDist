@@ -1,5 +1,5 @@
 context('tree_distance.R')
-# Labels in different order to confound Tree2Splits
+# Labels in different order to confound as.Splits
 treeSym8 <- ape::read.tree(text='((e, (f, (g, h))), (((a, b), c), d));')
 treeBal8 <- ape::read.tree(text='(((e, f), (g, h)), ((a, b), (c, d)));')
 treeOpp8 <- ape::read.tree(text='(((a, f), (c, h)), ((g, b), (e, d)));')
@@ -59,16 +59,14 @@ test_that('Size mismatch causes error', {
   lapply(methodsToTest, function(Func) 
     expect_error(Func(treeSym8, treeSym7)))
   
-  splits7 <- TreeTools::Tree2Splits(treeSym7)
-  splits8 <- TreeTools::Tree2Splits(treeSym8)
-  expect_equal(7L, GeneralizedRF(splits7, splits7,
+  expect_equal(7L, GeneralizedRF(treeSym7, treeSym7,
                                  function (splits1, splits2, nSplits1, nSplits2,
                                            ...) matrix(1, 7, 7), FALSE, FALSE))
-  expect_error(GeneralizedRF(splits8, splits7,
+  expect_error(GeneralizedRF(treeSym8, treeSym7,
                              function (splits1, splits2, nSplits1, nSplits2, ...) 
                                matrix(1, 8, 8), FALSE, FALSE))
   
-  expect_error(MeilaVariationOfInformation(splits7, splits8))
+  expect_error(MeilaVariationOfInformation(treeSym7, treeSym8))
   
 })
 

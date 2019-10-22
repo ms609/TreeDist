@@ -8,32 +8,40 @@
 #' 
 #' @author Martin R. Smith
 #' @keywords internal
-#' @importFrom TreeTools Tree2Splits
+#' @importFrom TreeTools as.Splits
 #' @export
 CalculateTreeDistance <- function (Func, tree1, tree2, reportMatching, ...) {
   if (class(tree1) == 'phylo') {
+    labels1 <- tree1$tip.label
     if (class(tree2) == 'phylo') {
-      if (length(setdiff(tree1$tip.label, tree2$tip.label)) > 0) {
+      if (length(setdiff(labels1, tree2$tip.label)) > 0) {
         stop("Tree tips must bear identical labels")
       }
       
-      Func(as.Splits(tree1), as.Splits(tree2),
+      Func(as.Splits(tree1, asSplits = FALSE),
+           as.Splits(tree2, tipLabels = labels1, asSplits = FALSE),
            reportMatching = reportMatching, ...)
     } else {
-      splits1 <- as.Splits(tree1)
+      splits1 <- as.Splits(tree1, tipLabels = labels1, asSplits = FALSE)
       vapply(tree2,
-             function (tr2) Func(splits1, as.Splits(tr2), ...),
+             function (tr2) Func(splits1, 
+                                 as.Splits(tr2, tipLabels = labels1, 
+                                           asSplits = FALSE), ...),
              double(1))
     }
   } else {
     if (class(tree2) == 'phylo') {
-      splits1 <- as.Splits(tree2)
+      splits1 <- as.Splits(tree2, asSplits = FALSE)
+      labels1 <- tree2$tip.label
       vapply(tree1,
-             function (tr2) Func(splits1, as.Splits(tr2), ...),
+             function (tr2) Func(splits1,
+                                 as.Splits(tr2, tipLabels = labels1,
+                                           asSplits = FALSE), ...),
              double(1))
     } else {
-      splits1 <- lapply(tree1, as.Splits)
-      splits2 <- lapply(tree2, as.Splits)
+      splits1 <- as.Splits(tree1, asSplits = FALSE)
+      splits2 <- as.Splits(tree2, tipLabels = tree1[[1]]$tip.label,
+                           asSplits = FALSE)
       matrix(mapply(Func, rep(splits2, each=length(splits1)), splits1, ...), 
              length(splits1), length(splits2),
              dimnames = list(names(tree1), names(tree2)))

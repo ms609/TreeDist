@@ -12,10 +12,9 @@
 #' @export
 PartitionInfo <- function(tree) {
   if (class(tree) == 'phylo') {
-    PartitionInfoSplits(Tree2Splits(tree))
+    PartitionInfoSplits(as.Splits(tree))
   } else {
-    splits <- lapply(tree, Tree2Splits)
-    vapply(splits, PartitionInfoSplits, double(1L))
+    vapply(as.Splits(tree), PartitionInfoSplits, double(1L))
   }
 }
 
@@ -53,13 +52,13 @@ PartitionInfoSplits <- function(splits) {
 #' @references \insertRef{Meila2007}{TreeDist}
 #' @author Martin R. Smith
 #' @keywords internal
+#' @importFrom TreeTools as.Splits
 #' @export
 ClusteringInfo <- function(tree) {
   if (class(tree) == 'phylo') {
-    ClusteringInfoSplits(Tree2Splits(tree))
+    ClusteringInfoSplits(as.Splits(tree))
   } else {
-    splits <- lapply(tree, Tree2Splits)
-    vapply(splits, ClusteringInfoSplits, double(1L))
+    vapply(as.Splits(tree), ClusteringInfoSplits, double(1L))
   }
 }
 
