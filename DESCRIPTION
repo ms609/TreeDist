@@ -7,7 +7,7 @@ Authors@R: c(person("Martin R.", 'Smith',
                   comment=c(ORCID = "0000-0001-5660-1727")),
              person("Roy", "Jonker", email="roy_jonker@magiclogic.com",
                   role = "prg"),
-             person("Harold", "Cooper", email="hbc@mit.edu", role = "ctb")),
+             person("Harold", "Cooper", email="hbc@mit.edu", role = "ctb"),
              person("Yong", "Yang", email="yongyanglink@gmail.com", role="ctb")
             )
 License: GPL (>= 3)
