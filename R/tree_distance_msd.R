@@ -34,8 +34,8 @@ MatchingSplitDistance <- function (tree1, tree2, normalize = FALSE,
 #' @inheritParams MutualPhylogeneticInfoSplits
 #' @useDynLib TreeDist, .registration = TRUE
 #' @export
-MatchingSplitDistanceSplits <- function (splits1, splits2, normalize = TRUE, 
+MatchingSplitDistanceSplits <- function (splits1, splits2, nTip, normalize = TRUE, 
                                          reportMatching = FALSE) {
-  CGRF(splits1, splits2, cpp_matching_split_distance, maximize = FALSE,
+  CGRF(splits1, splits2, nTip, cpp_matching_split_distance, maximize = FALSE,
        reportMatching = reportMatching)
 }

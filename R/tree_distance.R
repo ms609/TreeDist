@@ -40,25 +40,19 @@ GeneralizedRF <- function (splits1, splits2, PairScorer,
   TreeDistanceReturn(pairScores, maximize, reportMatching, 
                      splits1, splits2, leafNames1)
 }
+
 #' @describeIn GeneralizedRF C implementation #TODO describe
+#' Note that no checks will be made to confirm that splits1 and splits2 contain
+#' the same tips in the same order.  This is the responsibility of the calling
+#' function.
 #' @references \insertRef{Jonker1987}{TreeDist}
-CGRF <- function (splits1, splits2, PairScorer, 
+CGRF <- function (splits1, splits2, nTip, PairScorer, 
                            maximize, reportMatching, ...) {
   nSplits1 <- length(splits1)
   nSplits2 <- length(splits2)
   if (nSplits1 == 0 || nSplits2 == 0) return (0L)
-  nLeaves <- Ntip(splits1)
-  if (Ntip(splits2) != nLeaves) {
-    stop("Splits must bear identical labels")
-  }
-  leafNames1 <- attr(splits1, 'tip.label')
   
-  if (leafNames1 != attr(splits2, 'tip.label')) {
-    warning("Tip labels must be identically ordered")
-    splits2 <- as.Splits(splits2, tipNames = leafNames1)
-  }
-  
-  solution <- PairScorer(splits1, splits2,  ...)
+  solution <- PairScorer(splits1, splits2, nTip, ...)
   ret <- solution$score
   
   if (reportMatching) {

@@ -26,45 +26,33 @@ int count_bits_32 (uint32_t x) {
 
 class SplitList {
 public:
-  int n_tips, n_splits, n_bins;
+  int n_splits, n_bins;
   uint32_t state[3200][100]; /* Maximum tips supported: 3200 */
-  SplitList(LogicalMatrix);
-  int n() {return n_splits;}
-  int bins() {return n_bins;}
-  int tips() {return n_tips;}
+  SplitList(NumericMatrix);
 };
 
-SplitList::SplitList(LogicalMatrix x) {
-  int current_block;
+SplitList::SplitList(NumericMatrix x) {
+  n_splits = x.rows();
+  n_bins = x.cols();
   
-  n_tips = x.rows();
-  n_splits = x.cols();
-  
-  if (n_tips < 1) throw std::invalid_argument("No tips present.");
+  if (n_bins < 1) throw std::invalid_argument("No tips present.");
   if (n_splits < 1) throw std::invalid_argument("No splits present.");
-  if (n_tips > 3200) {
+  if (n_bins > 100) {
     throw std::length_error("No more than 3200 tips can be supported. Please contact the TreeDist maintainer if you need to use more!");
   }
   
-  n_bins = (n_tips - 1) / 32 + 1;
-  
   for (int i = 0; i < n_splits; i++) {
-    current_block = -1;
-    for (int j = 0; j < n_tips; j++) {
-      if (j % 32 == 0) {
-        ++current_block;
-        state[i][current_block] = 0;
-      }
-      state[i][current_block] <<= 1;
-      if (x(j, i)) state[i][current_block]++;
+    for (int j = 0; j < n_bins; j++) {
+      state[i][j] = (uint32_t) x(i, j);
     }
   }
 }
 
 // [[Rcpp::export]]
-List cpp_matching_split_distance (LogicalMatrix x, LogicalMatrix y) {
-  if (x.rows() != y.rows()) {
-    throw std::invalid_argument("Input matrices must contain same number of rows.");
+List cpp_matching_split_distance (NumericMatrix x, NumericMatrix y, 
+                                  NumericVector nTip) {
+  if (x.cols() != y.cols()) {
+    throw std::invalid_argument("Input splits must address same number of tips.");
   }
   SplitList a(x);
   SplitList b(y);
@@ -73,16 +61,16 @@ List cpp_matching_split_distance (LogicalMatrix x, LogicalMatrix y) {
     ((a.n_splits > b.n_splits) ? b.n_splits : a.n_splits);
   int** score = new int*[max_splits];
   for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
-  const int n_tips = a.n_tips, half_tips = n_tips / 2;
+  const int n_tips = nTip[0], half_tips = n_tips / 2;
   
-  /*Rcout << "Working over " << a.n() << " (" << a.n_splits << ", " << x.cols() 
-        << ") and " << b.n() << " (" << b.n_splits << ", " << y.cols() 
+  /*Rcout << "Working over " << a.n_splits << " (" << a.n_splits << ", " << x.rows() 
+        << ") and " << b.n_splits << " (" << b.n_splits << ", " << y.rows() 
         << ") splits.\n\n";*/
   
   for (int ai = 0; ai < a.n_splits; ai++) {
     for (int bi = 0; bi < b.n_splits; bi++) {
       score[ai][bi] = 0;
-      for (int bin = 0; bin < a.bins(); bin++) {
+      for (int bin = 0; bin < a.n_bins; bin++) {
         score[ai][bi] += count_bits_32(a.state[ai][bin] ^ 
                                        b.state[bi][bin]);
         /*Rcout << "- x = " << ai << ", y = " << bi << ", bin " << bin << ": "

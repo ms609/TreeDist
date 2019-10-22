@@ -6,20 +6,21 @@
 using namespace Rcpp;
 
 // cpp_matching_split_distance
-List cpp_matching_split_distance(LogicalMatrix x, LogicalMatrix y);
-RcppExport SEXP _TreeDist_cpp_matching_split_distance(SEXP xSEXP, SEXP ySEXP) {
+List cpp_matching_split_distance(NumericMatrix x, NumericMatrix y, NumericVector nTip);
+RcppExport SEXP _TreeDist_cpp_matching_split_distance(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< LogicalMatrix >::type x(xSEXP);
-    Rcpp::traits::input_parameter< LogicalMatrix >::type y(ySEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_matching_split_distance(x, y));
+    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type y(ySEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type nTip(nTipSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_matching_split_distance(x, y, nTip));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_TreeDist_cpp_matching_split_distance", (DL_FUNC) &_TreeDist_cpp_matching_split_distance, 2},
+    {"_TreeDist_cpp_matching_split_distance", (DL_FUNC) &_TreeDist_cpp_matching_split_distance, 3},
     {NULL, NULL, 0}
 };
 

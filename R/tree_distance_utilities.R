@@ -13,6 +13,7 @@
 CalculateTreeDistance <- function (Func, tree1, tree2, reportMatching, ...) {
   if (class(tree1) == 'phylo') {
     labels1 <- tree1$tip.label
+    nTip <- length(labels1)
     if (class(tree2) == 'phylo') {
       if (length(setdiff(labels1, tree2$tip.label)) > 0) {
         stop("Tree tips must bear identical labels")
@@ -20,13 +21,14 @@ CalculateTreeDistance <- function (Func, tree1, tree2, reportMatching, ...) {
       
       Func(as.Splits(tree1, asSplits = FALSE),
            as.Splits(tree2, tipLabels = labels1, asSplits = FALSE),
-           reportMatching = reportMatching, ...)
+           nTip = nTip, reportMatching = reportMatching, ...)
     } else {
       splits1 <- as.Splits(tree1, tipLabels = labels1, asSplits = FALSE)
       vapply(tree2,
              function (tr2) Func(splits1, 
                                  as.Splits(tr2, tipLabels = labels1, 
-                                           asSplits = FALSE), ...),
+                                           asSplits = FALSE),
+                                 nTip = nTip, ...),
              double(1))
     }
   } else {
@@ -36,13 +38,15 @@ CalculateTreeDistance <- function (Func, tree1, tree2, reportMatching, ...) {
       vapply(tree1,
              function (tr2) Func(splits1,
                                  as.Splits(tr2, tipLabels = labels1,
-                                           asSplits = FALSE), ...),
+                                           asSplits = FALSE),
+                                 nTip = nTip, ...),
              double(1))
     } else {
       splits1 <- as.Splits(tree1, asSplits = FALSE)
       splits2 <- as.Splits(tree2, tipLabels = tree1[[1]]$tip.label,
                            asSplits = FALSE)
-      matrix(mapply(Func, rep(splits2, each=length(splits1)), splits1, ...), 
+      matrix(mapply(Func, rep(splits2, each=length(splits1)), splits1,
+                    nTip = nTip, ...), 
              length(splits1), length(splits2),
              dimnames = list(names(tree1), names(tree2)))
     }
