@@ -41,6 +41,7 @@ GeneralizedRF <- function (splits1, splits2, PairScorer,
                      splits1, splits2, taxonNames1)
 }
 #' @describeIn GeneralizedRF C implementation #TODO describe
+#' @references \insertRef{Jonker1987}{TreeDist}
 CGRF <- function (splits1, splits2, PairScorer, 
                            maximize, reportMatching, ...) {
   dimSplits1 <- dim(splits1)
