@@ -162,37 +162,9 @@ JaccardRobinsonFoulds <- function (tree1, tree2, k = 1L, arboreal = TRUE,
 #' @inheritParams MutualPhylogeneticInfoSplits
 #' @export
 JaccardSplitSimilarity <- function (splits1, splits2,
+                                    nTip = attr(splits1, 'nTip'),
                                     k = 1L, arboreal = TRUE,
                                     reportMatching = FALSE) {
-  GeneralizedRF(splits1, splits2,
-                function(splits1, splits2, nSplits1, nSplits2) {
-    Ars <- function (pir, pjs) {
-      sum(pir[pjs]) / sum(pir | pjs)
-    }
-    ret <- matrix(0, nSplits1, nSplits2)
-    for (i in seq_len(nSplits1)) {
-      splitI0 <- splits1[, i]
-      splitI1 <- !splitI0
-      for (j in seq_len(nSplits2)) {
-        splitJ0 <- splits2[, j]
-        splitJ1 <- !splitJ0
-        
-        if (arboreal && !(
-          all(splitI0[splitJ0]) ||
-          all(splitI0[splitJ1]) ||
-          all(splitI1[splitJ0]) ||
-          all(splitI1[splitJ1]))) {
-          # leave as 0
-        } else {
-          ret[i, j] <- max(
-            min(Ars(splitI0, splitJ0), Ars(splitI1, splitJ1)),
-            min(Ars(splitI0, splitJ1), Ars(splitI1, splitJ0))
-          ) ^ k
-        }
-      }
-    }
-    
-    # Return:
-    ret
-  }, maximize = TRUE, reportMatching)
+  CGRF(splits1, splits2, nTip, cpp_jaccard_distance, k = k, arboreal = arboreal,
+       maximize = FALSE, reportMatching = reportMatching)
 }
