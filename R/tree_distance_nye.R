@@ -74,32 +74,11 @@ NyeTreeSimilarity <- function (tree1, tree2, similarity = TRUE,
 #' instead of trees.
 #' @inheritParams MutualPhylogeneticInfoSplits
 #' @export
-NyeSplitSimilarity <- function (splits1, splits2, reportMatching = FALSE) {
-  
-  GeneralizedRF(splits1, splits2, 
-                function(splits1, splits2, nSplits1, nSplits2) {
-    Ars <- function (pir, pjs) {
-      sum(pir[pjs]) / sum(pir | pjs)
-    }
-    
-    ret <- matrix(0, nSplits1, nSplits2)
-    for (i in seq_len(nSplits1)) {
-      splitI0 <- splits1[, i]
-      splitI1 <- !splitI0
-      for (j in seq_len(nSplits2)) {
-        splitJ0 <- splits2[, j]
-        splitJ1 <- !splitJ0
-      
-        ret[i, j] <- max(
-          min(Ars(splitI0, splitJ0), Ars(splitI1, splitJ1)),
-          min(Ars(splitI0, splitJ1), Ars(splitI1, splitJ0))
-        )
-      }
-    }
-    
-    # Return:
-    ret
-  }, maximize = TRUE, reportMatching)
+NyeSplitSimilarity <- function (splits1, splits2, 
+                                nTip = attr(splits1, 'nTip'),
+                                reportMatching = FALSE) {
+  CGRF(splits1, splits2, nTip, cpp_nye_distance, maximize = FALSE,
+       reportMatching = reportMatching)
 }
 
 #' Jaccard-Robinson-Foulds metric
