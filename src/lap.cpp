@@ -15,18 +15,20 @@
  R. Jonker and A. Volgenant, University of Amsterdam.
  
  *
- CHANGED 2016-05-13 by Yong Yang(yongyanglink@gmail.com) in column reduction part according to
- matlab version of LAPJV algorithm(Copyright (c) 2010, Yi Cao All rights reserved)--
+ CHANGED 2016-05-13 by Yong Yang(yongyanglink@gmail.com) in column reduction 
+ part according to matlab version of LAPJV algorithm (Copyright (c) 2010, Yi Cao
+ All rights reserved)--
  https://www.mathworks.com/matlabcentral/fileexchange/26836-lapjv-jonker-volgenant-algorithm-for-linear-assignment-problem-v3-0:
  *
  *************************************************************************/
 #include "gnrl.h"
 #include "lap.h"
-#include<stdio.h>
+#include <stdio.h>
 #include <iostream>
 using namespace std;
 
-/*This function is the jv shortest augmenting path algorithm to solve the assignment problem*/
+/* This function is the jv shortest augmenting path algorithm to solve the 
+   assignment problem */
 cost lap(int dim,
          cost **assigncost,
          lap_col *rowsol,
@@ -47,9 +49,10 @@ cost lap(int dim,
 {
   boolean unassignedfound;
   lap_row  i, imin, numfree = 0, prvnumfree, f, i0, k, freerow, *pred, *free;
-  lap_col  j, j1, j2, endofpath, last, low, up, *collist, *matches;
+  lap_col  j, j1, j2 = 0, endofpath, last = 0, low, up, *collist, *matches;
   cost min, h, umin, usubmin, v2, *d;
-  
+  /* Initializing j2 and last is unnecessary, but avoids compiler warnings*/
+
   free = new lap_row[dim];       // list of unassigned rows.
   collist = new lap_col[dim];    // list of columns to be scanned in various ways.
   matches = new lap_col[dim];    // counts how many times a row could be assigned.
@@ -61,7 +64,7 @@ cost lap(int dim,
     matches[i] = 0;
   
   // COLUMN REDUCTION
-  for (j = dim;j--;) // reverse order gives better results.
+  for (j = dim; j--;) // reverse order gives better results.
   {
     // find minimum cost over rows.
     min = assigncost[0][j];
