@@ -51,7 +51,7 @@ cost lap(int dim,
   lap_row  i, imin, numfree = 0, prvnumfree, f, i0, k, freerow, *pred, *free;
   lap_col  j, j1, j2 = 0, endofpath, last = 0, low, up, *collist, *matches;
   cost min, h, umin, usubmin, v2, *d;
-  /* Initializing j2 and last is unnecessary, but avoids compiler warnings*/
+  /* Initializing j2 and last is unnecessary, but avoids compiler warnings */
 
   free = new lap_row[dim];       // list of unassigned rows.
   collist = new lap_col[dim];    // list of columns to be scanned in various ways.
@@ -82,14 +82,16 @@ cost lap(int dim,
         rowsol[imin] = j;
         colsol[j] = imin;
       }
-      else if(v[j]<v[rowsol[imin]]){
+      else if(v[j]<v[rowsol[imin]]) {
         int j1 = rowsol[imin];
         rowsol[imin] = j;
         colsol[j] = imin;
         colsol[j1] = -1;
       }
       else
+      {
         colsol[j] = -1;        // row already assigned, column not assigned.
+      }
   }
   
   // REDUCTION TRANSFER
