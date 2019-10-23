@@ -226,9 +226,10 @@ test_that('NyeTreeSimilarity is correctly calculated', {
   listBalSym <- list(treeBal8, treeSym8)
   expect_equal(5L, NyeTreeSimilarity(treeSym8, treeSym8))
   expect_equal(c(3.8, 5), NyeTreeSimilarity(treeSym8, listBalSym))
-  expect_equal(2 / 3, NyeTreeSimilarity(treeAb.Cdefgh, treeAbc.Defgh))
+  expect_equal(2 / 3, NyeTreeSimilarity(treeAb.Cdefgh, treeAbc.Defgh), 
+               tolerance = 1e-6)
   expect_equal(2 * (1 / 3), NyeTreeSimilarity(treeAb.Cdefgh, treeAbc.Defgh,
-                                        similarity = FALSE))
+                                        similarity = FALSE), tolerance = 1e-6)
   expect_equal(1, NyeTreeSimilarity(treeSym8, treeSym8, normalize = TRUE))
   #TODO: Validate expected value
   expect_equal(1L, NyeTreeSimilarity(treeSym8, treeAbcd.Efgh, 
