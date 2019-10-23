@@ -146,10 +146,13 @@ cost lap(int dim,
           
           i0 = colsol[j1];
           if (umin < usubmin)
+          {
             //         change the reduction of the minimum column to increase the minimum
             //         reduced cost in the row to the subminimum.
             v[j1] = v[j1] - (usubmin - umin);
+          }
           else                   // minimum and subminimum equal.
+          {
             if (i0 > -1)  // minimum column j1 is assigned.
             {
               //           swap columns j1 and j2, as j2 may be unassigned.
@@ -171,6 +174,7 @@ cost lap(int dim,
                 //           store i0 in list of free rows for next phase.
                 free[numfree++] = i0;
             }
+          }
         }
       }
       while (loopcnt < 2);       // repeat once.
