@@ -5,7 +5,7 @@ cpp_matching_split_distance <- function(x, y, nTip) {
     .Call(`_TreeDist_cpp_matching_split_distance`, x, y, nTip)
 }
 
-cpp_nye_distance <- function(x, y, nTip) {
-    .Call(`_TreeDist_cpp_nye_distance`, x, y, nTip)
+cpp_jaccard_distance <- function(x, y, nTip, k, arboreal) {
+    .Call(`_TreeDist_cpp_jaccard_distance`, x, y, nTip, k, arboreal)
 }
 

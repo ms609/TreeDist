@@ -77,8 +77,8 @@ NyeTreeSimilarity <- function (tree1, tree2, similarity = TRUE,
 NyeSplitSimilarity <- function (splits1, splits2, 
                                 nTip = attr(splits1, 'nTip'),
                                 reportMatching = FALSE) {
-  CGRF(splits1, splits2, nTip, cpp_nye_distance, maximize = FALSE,
-       reportMatching = reportMatching)
+  CGRF(splits1, splits2, nTip, cpp_jaccard_distance, k = 1L, arboreal = FALSE,
+       maximize = FALSE, reportMatching = reportMatching)
 }
 
 #' Jaccard-Robinson-Foulds metric

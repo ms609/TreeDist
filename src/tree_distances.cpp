@@ -1,6 +1,7 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 #include <stdint.h>
+#include <math.h> /* for pow() */
 #include "SplitList.h"
 #include "lap.h"
 
@@ -82,19 +83,22 @@ List cpp_matching_split_distance (NumericMatrix x, NumericMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_nye_distance (NumericMatrix x, NumericMatrix y,
-                       NumericVector nTip) {
+List cpp_jaccard_distance (NumericMatrix x, NumericMatrix y,
+                       NumericVector nTip, NumericVector k,
+                       LogicalVector arboreal) {
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   SplitList a(x);
   SplitList b(y);
   const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits;
+  const double exponent = k[0];
   
   int a_and_b, a_and_B, A_and_b, A_and_B,
       a_or_b,  a_or_B,  A_or_b,  A_or_B;
   double ars_ab, ars_aB, ars_Ab, ars_AB,
          min_ars_both, min_ars_either;
+  bool enforce_arboreal = arboreal[0];
   
   int** score = new int*[max_splits];
   for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
@@ -117,18 +121,43 @@ List cpp_nye_distance (NumericMatrix x, NumericMatrix y,
       a_or_B  = n_tips - A_and_b;
       A_or_b  = n_tips - a_and_B;
       
-      ars_ab = (double) a_and_b / (double) a_or_b;
-      ars_Ab = (double) A_and_b / (double) A_or_b;
-      ars_aB = (double) a_and_B / (double) a_or_B;
-      ars_AB = (double) A_and_B / (double) A_or_B;
-      
-      min_ars_both = (ars_ab < ars_AB) ? ars_ab : ars_AB;
-      min_ars_either = (ars_aB < ars_Ab) ? ars_aB : ars_Ab;
-      
-      /* LAP will look to minimize an integer. max(ars) is between 0 and 1. */
-      score[ai][bi] = (int) (BIGL - (BIGL * 
-                             ((min_ars_both > min_ars_either) ? 
-                              min_ars_both : min_ars_either)));
+      if (enforce_arboreal && !(
+          a_and_b == n_tips ||
+          a_and_B == n_tips ||
+          A_and_b == n_tips ||
+          A_and_B == n_tips)) {
+        
+        score[ai][bi] = BIG; /* Prohibit non-arboreal matching */
+        
+      } else {
+        
+        ars_ab = (double) a_and_b / (double) a_or_b;
+        ars_Ab = (double) A_and_b / (double) A_or_b;
+        ars_aB = (double) a_and_B / (double) a_or_B;
+        ars_AB = (double) A_and_B / (double) A_or_B;
+        
+        min_ars_both = (ars_ab < ars_AB) ? ars_ab : ars_AB;
+        min_ars_either = (ars_aB < ars_Ab) ? ars_aB : ars_Ab;
+        
+        /* LAP will look to minimize an integer. max(ars) is between 0 and 1. */
+        if (exponent == 1) {
+          /* Nye et al. similarity metric */
+          score[ai][bi] = (int) BIGL - (BIGL * 
+                                ((min_ars_both > min_ars_either) ? 
+                                min_ars_both : min_ars_either));
+        } else {
+          /*Rcout << "Score: " << ((min_ars_both > min_ars_either) ? 
+                                   min_ars_both : min_ars_either)
+                << " ^ " << exponent << " = " << pow((min_ars_both > min_ars_either) ? 
+                                   min_ars_both : min_ars_either, exponent) 
+                << ", BIG - BIG*score = " <<( (int) BIGL - (BIGL * 
+                                   pow((min_ars_both > min_ars_either) ? 
+                                   min_ars_both : min_ars_either, exponent))) << ".\n";*/
+          score[ai][bi] = (int) BIGL - (BIGL * 
+            pow((min_ars_both > min_ars_either) ? 
+                min_ars_both : min_ars_either, exponent));
+        }
+      }
     }
     for (int bi = b.n_splits; bi < max_splits; bi++) {
       score[ai][bi] = BIG;
