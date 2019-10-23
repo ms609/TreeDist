@@ -15,6 +15,7 @@
    * If the maximum n_tips is increased from 3200, BIG may need to shrink
    * to avoid an overflow.  */
   #define BIG 1000000
+  #define BIGL (double) BIG
 
 /*************** TYPES      *******************/
 

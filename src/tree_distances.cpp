@@ -96,14 +96,9 @@ List cpp_nye_distance (NumericMatrix x, NumericMatrix y,
   double ars_ab, ars_aB, ars_Ab, ars_AB,
          min_ars_both, min_ars_either;
   
-  
   int** score = new int*[max_splits];
   for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
   const int n_tips = nTip[0];
-  
-  Rcout << "Working over " << a.n_splits << " (" << a.n_splits << ", " << x.rows() 
-          << ") and " << b.n_splits << " (" << b.n_splits << ", " << y.rows() 
-          << ") splits.\n\n";
   
   for (int ai = 0; ai < a.n_splits; ai++) {
     for (int bi = 0; bi < b.n_splits; bi++) {
@@ -116,15 +111,6 @@ List cpp_nye_distance (NumericMatrix x, NumericMatrix y,
         a_and_B += count_bits_32( a.state[ai][bin] & ~b.state[bi][bin]);
         A_and_b += count_bits_32(~a.state[ai][bin] &  b.state[bi][bin]);
         a_or_b  += count_bits_32( a.state[ai][bin] |  b.state[bi][bin]);
-        
-        Rcout << "\n- x = " << ai << ", y = " << bi << ", bin " << bin << ": A = "
-              << a.state[ai][bin] << ", B = " << b.state[bi][bin] << ".\nA & B = "
-              << count_bits_32( a.state[ai][bin] &  b.state[bi][bin]) 
-              << "; A & ~B = " << count_bits_32( a.state[ai][bin] & ~b.state[bi][bin])
-              << " (" << a_and_B << ") "
-              << "; ~A & B = " << count_bits_32(~a.state[ai][bin] &  b.state[bi][bin])
-              << "; A | B = " << count_bits_32( a.state[ai][bin] |  b.state[bi][bin])
-              <<  " (" << n_tips << " tips).\n";
       }
       A_and_B = n_tips - a_or_b;
       A_or_B  = n_tips - a_and_b;
@@ -140,14 +126,9 @@ List cpp_nye_distance (NumericMatrix x, NumericMatrix y,
       min_ars_either = (ars_aB < ars_Ab) ? ars_aB : ars_Ab;
       
       /* LAP will look to minimize an integer. max(ars) is between 0 and 1. */
-      score[ai][bi] = BIG - (BIG * ((min_ars_both > min_ars_either) ? 
-                                     min_ars_both : min_ars_either));
-      Rcout /*<< "  ab = " << ars_ab << "; AB = " <<  ars_AB
-            << "\n  Ab = " << ars_Ab << " aB = " << ars_aB
-            << "\n  Min Ars both = " << min_ars_both 
-            << " Min Ars Either = " << min_ars_either */
-            << " Score: " << score[ai][bi] << "\n";
-      
+      score[ai][bi] = (int) (BIGL - (BIGL * 
+                             ((min_ars_both > min_ars_either) ? 
+                              min_ars_both : min_ars_either)));
     }
     for (int bi = b.n_splits; bi < max_splits; bi++) {
       score[ai][bi] = BIG;
@@ -163,14 +144,9 @@ List cpp_nye_distance (NumericMatrix x, NumericMatrix y,
   lap_row *colsol = new lap_row[max_splits];
   cost *u = new cost[max_splits], *v = new cost[max_splits];
   
-  Rcout << "\n * LAP solution = " 
-        << lap(max_splits, score, rowsol, colsol, u, v) << "\n";
-  Rcout << "(" << (BIG * max_splits) << " - " 
-        << lap(max_splits, score, rowsol, colsol, u, v) << ") / " 
-        << BIG << "\n";
   NumericVector final_score = NumericVector::create(
     (double)((BIG * max_splits) - lap(max_splits, score, rowsol, colsol, u, v))
-    / (double) BIG),
+    / BIGL),
     final_matching (max_splits);
   
   for (int i = 0; i < max_splits; i++) {
