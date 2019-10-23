@@ -90,8 +90,6 @@ List cpp_nye_distance (NumericMatrix x, NumericMatrix y,
   SplitList a(x);
   SplitList b(y);
   const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits;
-  const int split_diff = max_splits -
-    ((a.n_splits > b.n_splits) ? b.n_splits : a.n_splits);
   
   int a_and_b, a_and_B, A_and_b, A_and_B,
       a_or_b,  a_or_B,  A_or_b,  A_or_B;
