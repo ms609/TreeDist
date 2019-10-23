@@ -111,19 +111,9 @@ RobinsonFoulds <- function (tree1, tree2, similarity = FALSE, normalize = FALSE,
 #' instead of trees.
 #' @inheritParams MutualPhylogeneticInfoSplits
 #' @export
-RobinsonFouldsSplits <- function (splits1, splits2, reportMatching = FALSE) {
-  GeneralizedRF(splits1, splits2,
-                function(splits1, splits2, nSplits1, nSplits2) {
-                  ret <- matrix(0L, nSplits1, nSplits2)
-                  for (i in seq_len(nSplits1)) {
-                    A1 <- splits1[, i]
-                    for (j in seq_len(nSplits2)) {
-                      A2 <- splits2[, j]
-                      ret[i, j] <- all(A1 == A2) || all(A1 != A2)
-                    }
-                  }
-                  
-                  # Return:
-                  ret
-                }, maximize = TRUE, reportMatching) * 2L
+RobinsonFouldsSplits <- function (splits1, splits2,
+                                  nTip = attr(splits1, 'nTip'),
+                                  reportMatching = FALSE) {
+  CGRF(splits1, splits2, nTip, cpp_robinson_foulds_distance,
+       maximize = FALSE, reportMatching = reportMatching)
 }

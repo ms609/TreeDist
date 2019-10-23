@@ -24,6 +24,60 @@ int count_bits_32 (uint32_t x) {
 
 
 // [[Rcpp::export]]
+List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y, 
+                                  NumericVector nTip) {
+  if (x.cols() != y.cols()) {
+    throw std::invalid_argument("Input splits must address same number of tips.");
+  }
+  SplitList a(x);
+  SplitList b(y);
+  const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits;
+  int score = 0;
+  int matching[max_splits];
+  for (int i = 0; i < max_splits; i++) matching[i] = -1; /* NA */
+  const int n_tips = nTip[0], 
+                         //remainder_tips = (n_tips % 32) ? (n_tips % 32) : 32,
+                         unset_tips = (n_tips % 32) ? 32 - n_tips % 32 : 32;
+  //const uint32_t unset_mask = ~0 << remainder_tips;
+  const uint32_t unset_mask = ~0U >> unset_tips;
+  /*Rcout << "ntip: " << n_tips << ", remainder = " << remainder_tips 
+          << ", unset = " << unset_tips << ", mask = " << unset_mask << "\n";*/
+  
+  for (int ai = 0; ai < a.n_splits; ai++) {
+    for (int bi = 0; bi < b.n_splits; bi++) {
+      bool all_match = true, all_mismatch = true;
+      for (int bin = 0; bin < a.n_bins && (all_match || all_mismatch); bin++) {
+        if (a.state[ai][bin] != b.state[bi][bin]) all_match = false;
+        if (bin == a.n_bins - 1) { /* Last bin */
+          /*Rcout << ai << ", " << bi << ", bin " << bin << ". A: "
+                << a.state[ai][bin] << ", B: " << b.state[bi][bin] << ", ^B: "
+                << (b.state[bi][bin] ^ unset_mask) << ", mask = " << unset_mask << "\n";*/
+          if (a.state[ai][bin] != (b.state[bi][bin] ^ unset_mask)) all_mismatch = false;
+        } else {
+          if (a.state[ai][bin] != ~b.state[bi][bin]) all_mismatch = false;
+        }
+      }
+      if (all_match || all_mismatch) {
+        ++score;
+        matching[ai] = bi;
+      }
+    }
+  }
+  score = a.n_splits + b.n_splits - score - score;
+  
+  NumericVector final_score = NumericVector::create(score),
+                final_matching (max_splits);
+  for (int i = 0; i < max_splits; i++) {
+    final_matching[i] = (matching[i] < 0 ? NA_REAL : matching[i]);
+  }
+  
+  List ret = List::create(Named("score") = final_score,
+                          _["matching"] = final_matching);
+  
+  return (ret);
+}
+
+// [[Rcpp::export]]
 List cpp_matching_split_distance (NumericMatrix x, NumericMatrix y, 
                                   NumericVector nTip) {
   if (x.cols() != y.cols()) {

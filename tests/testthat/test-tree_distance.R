@@ -287,6 +287,7 @@ test_that('RobinsonFoulds is correctly calculated', {
   RFTest <- function (tree1, tree2) {
     expect_equal(RF(tree1, tree2), RobinsonFoulds(tree1, tree2))
   }
+  
   RFTest(treeSym8, treeSym8)
   RFTest(treeBal8, treeSym8)
   expect_equal(c(4, 0), RobinsonFoulds(treeSym8, list(treeBal8, treeSym8)))
@@ -295,6 +296,18 @@ test_that('RobinsonFoulds is correctly calculated', {
   expect_equal(4L / 6L, 
                RobinsonFoulds(treeSym8, treeAbcd.Efgh, normalize = TRUE))
   RFTest(treeSym8, treeOpp8)
+  
+  RFNtipTest <- function (nTip) {
+    backTips <- paste0('t', rev(seq_len(nTip)))
+    RFTest(PectinateTree(backTips), BalancedTree(nTip))
+  }
+  RFNtipTest(10)
+  RFNtipTest(32)
+  RFNtipTest(50)
+  RFNtipTest(64)
+  RFNtipTest(128)
+  RFNtipTest(1028)
+  
   NormalizationTest(RobinsonFoulds, similarity = TRUE)
 })
 
