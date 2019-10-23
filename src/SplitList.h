@@ -6,8 +6,6 @@ const uint32_t right16bits = 65535;
 const uint32_t powers_of_two[16] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512,
                                     1024, 2048, 4096, 8192, 16384, 32768};
 
-uint32_t bitcounts[65536]; // the bytes representing bit count of each number 0-65535
-
 int count_bits_32 (uint32_t);
 
 class SplitList {

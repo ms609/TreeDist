@@ -4,6 +4,24 @@ using namespace Rcpp;
 #include "SplitList.h"
 #include "lap.h"
 
+uint32_t bitcounts[65536]; // the bytes representing bit count of each number 0-65535
+__attribute__((constructor))
+  void initialize_bitcounts()
+  {
+    for (int32_t i = 0; i < 65536; i++) {
+      int32_t n_bits = 0;
+      for (int j = 0; j < 16; j++) {
+        if ((i & powers_of_two[j])) ++n_bits;
+      }
+      bitcounts[i] = n_bits;
+    }
+  }
+
+int count_bits_32 (uint32_t x) {
+  return bitcounts[x & right16bits] + bitcounts[x >> 16];
+}
+
+
 // [[Rcpp::export]]
 List cpp_matching_split_distance (NumericMatrix x, NumericMatrix y, 
                                   NumericVector nTip) {
