@@ -16,6 +16,8 @@
 #' @export
 GeneralizedRF <- function (splits1, splits2, PairScorer, 
                            maximize, reportMatching, ...) {
+  splits1 <- t(as.logical(splits1)) # Convert to old-style logical matrix
+  splits2 <- t(as.logical(splits2)) # Convert to old-style logical matrix
   dimSplits1 <- dim(splits1)
   dimSplits2 <- dim(splits2)
   nSplits1 <- dimSplits1[2]

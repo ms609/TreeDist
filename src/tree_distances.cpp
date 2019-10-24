@@ -471,3 +471,131 @@ List cpp_mutual_clustering (NumericMatrix x, NumericMatrix y,
   
   return (ret);
 }
+
+double one_overlap (int a, int b, int n) {
+  if (a == b) return lg2_rooted(a) + lg2_rooted(n - a);
+  if (a < b) return lg2_rooted(b) + lg2_rooted(n - a) - lg2_rooted(b - a + 1);
+  return lg2_rooted(a) + lg2_rooted(n - b) - lg2_rooted(a - b + 1);
+}
+
+double one_overlap_notb (int a, int n_minus_b, int n) {
+  const int b = n - n_minus_b;
+  if (a == b) return lg2_rooted(a) + lg2_rooted(n - a);
+  if (a < b) return lg2_rooted(b) + lg2_rooted(n - a) - lg2_rooted(b - a + 1);
+  return lg2_rooted(a) + lg2_rooted(n_minus_b) - lg2_rooted(a - b + 1);
+}
+
+double mpi (uint32_t* a_state, uint32_t* b_state, int n_tips, 
+            int in_a, int in_b, double lg2_unrooted_n, int n_bins) {
+  bool compatible = true;
+  
+  
+  for (int bin = 0; bin < n_bins; bin++) {
+    if ((~a_state[bin] & b_state[bin])) {
+      compatible = false;
+      break;
+    }
+  }
+  if (compatible) return lg2_unrooted_n - one_overlap(in_a, in_b, n_tips);
+    
+  compatible = true;
+  for (int bin = 0; bin < n_bins; bin++) {
+    if ((a_state[bin] & ~b_state[bin])) {
+      compatible = false;
+      break;
+    }
+  }
+  if (compatible) return lg2_unrooted_n - one_overlap(in_a, in_b, n_tips);
+  
+  
+  compatible = true;
+  for (int bin = 0; bin < n_bins; bin++) {
+    if (a_state[bin] & b_state[bin]) {
+      compatible = false;
+      break;
+    }
+  }
+  if (compatible) return lg2_unrooted_n - one_overlap_notb(in_a, in_b, n_tips);
+  
+  compatible = true;
+  for (int bin = 0; bin < n_bins; bin++) {
+    if ((~a_state[bin] & ~b_state[bin])) {
+      compatible = false;
+      break;
+    }
+  }
+  if (compatible) return lg2_unrooted_n - one_overlap_notb(in_a, in_b, n_tips);
+  
+  return 0;
+}
+
+// [[Rcpp::export]]
+List cpp_mutual_phylo (NumericMatrix x, NumericMatrix y,
+                              NumericVector nTip) {
+  if (x.cols() != y.cols()) {
+    throw std::invalid_argument("Input splits must address same number of tips.");
+  }
+  SplitList a(x), b(y);
+  const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
+    last_bin = a.n_bins - 1,
+    n_tips = nTip[0],
+    unset_tips = (n_tips % 32) ? 32 - n_tips % 32 : 32;
+  const uint32_t unset_mask = ~0U >> unset_tips;
+  const double lg2_unrooted_n = lg2_unrooted(n_tips),
+    max_score = lg2_unrooted_n - one_overlap((n_tips + 1) / 2, n_tips / 2, n_tips);
+  int in_a[a.n_splits], in_b[b.n_splits];
+  uint32_t b_compl[b.n_splits][b.n_bins];
+  
+  for (int i = 0; i < a.n_splits; i++) {
+    in_a[i] = 0;
+    for (int bin = 0; bin < a.n_bins; bin++) {
+      in_a[i] += count_bits_32(a.state[i][bin]);
+    }
+  }
+  for (int i = 0; i < b.n_splits; i++) {
+    in_b[i] = 0;
+    for (int bin = 0; bin < last_bin; bin++) {
+      in_b[i] += count_bits_32(b.state[i][bin]);
+      b_compl[i][bin] = ~b.state[i][bin];
+    }
+    in_b[i] += count_bits_32(b.state[i][last_bin]);
+    b_compl[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
+  }
+  
+  int** score = new int*[max_splits];
+  for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
+  
+  for (int ai = 0; ai < a.n_splits; ai++) {
+    for (int bi = 0; bi < b.n_splits; bi++) {
+      score[ai][bi] = BIG * (1 - 
+        (mpi(a.state[ai], b.state[bi], n_tips, in_a[ai], in_b[bi],
+            lg2_unrooted_n, a.n_bins) / max_score));
+    }
+    for (int bi = b.n_splits; bi < max_splits; bi++) {
+      score[ai][bi] = BIG;
+    }
+  }
+  for (int ai = a.n_splits; ai < max_splits; ai++) {
+    for (int bi = 0; bi < max_splits; bi++) {
+      score[ai][bi] = BIG;
+    }
+  }
+  
+  lap_col *rowsol = new lap_col[max_splits];
+  lap_row *colsol = new lap_row[max_splits];
+  cost *u = new cost[max_splits], *v = new cost[max_splits];
+  
+  NumericVector final_score = NumericVector::create(
+    (double)((BIG * max_splits) - lap(max_splits, score, rowsol, colsol, u, v))
+    * max_score / BIGL),
+    final_matching (max_splits);
+  
+  for (int i = 0; i < max_splits; i++) {
+    final_matching[i] = rowsol[i] + 1;
+  }
+  
+  List ret = List::create(Named("score") = final_score,
+                          _["matching"] = final_matching);
+  
+  return (ret);
+}
