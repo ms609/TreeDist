@@ -161,7 +161,7 @@ test_that('MutualMatchingSplitInfo is correctly calculated', {
   expect_equal(log2(3), cpp_mmsi_distance(
     as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
     as.Splits(as.logical(c(0, 0, 1, 1, 0, 0, 0, 0))),
-    8L)$score)
+    8L)$score, tolerance = 1e-6)
   
   
   MutualMatchingSplitInfoSplits(BinaryToSplit(c(1, 1, 1, 1, 0, 0, 0, 0)),
