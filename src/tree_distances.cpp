@@ -519,7 +519,7 @@ double mpi (uint32_t* a_state, uint32_t* b_state, int n_tips,
   
   compatible = true;
   for (int bin = 0; bin < n_bins; bin++) {
-    if ((~a_state[bin] & ~b_state[bin])) {
+    if (~(a_state[bin] | b_state[bin])) {
       compatible = false;
       break;
     }
