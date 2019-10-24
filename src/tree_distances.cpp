@@ -152,8 +152,19 @@ List cpp_jaccard_distance (NumericMatrix x, NumericMatrix y,
   }
   SplitList a(x), b(y);
   const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-            n_tips = nTip[0];
+            last_bin = a.n_bins - 1,
+            n_tips = nTip[0],
+            unset_tips = (n_tips % 32) ? 32 - n_tips % 32 : 32;
+  const uint32_t unset_mask = ~0U >> unset_tips;;
   const double exponent = k[0];
+  
+  uint32_t b_compl[b.n_splits][b.n_bins];
+  for (int i = 0; i < b.n_splits; i++) {
+    for (int bin = 0; bin < last_bin; bin++) {
+      b_compl[i][bin] = ~b.state[i][bin];
+    }
+    b_compl[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
+  }
   
   int a_and_b, a_and_B, A_and_b, A_and_B,
       a_or_b,  a_or_B,  A_or_b,  A_or_B;
@@ -168,18 +179,17 @@ List cpp_jaccard_distance (NumericMatrix x, NumericMatrix y,
     for (int bi = 0; bi < b.n_splits; bi++) {
       a_and_b = 0;
       a_and_B = 0;
-      A_and_b = 0;
-      a_or_b = 0; /* na_and_nb = n - a_or_b */
+      a_or_B = 0;
       for (int bin = 0; bin < a.n_bins; bin++) {
-        a_and_b += count_bits_32( a.state[ai][bin] &  b.state[bi][bin]);
-        a_and_B += count_bits_32( a.state[ai][bin] & ~b.state[bi][bin]);
-        A_and_b += count_bits_32(~a.state[ai][bin] &  b.state[bi][bin]);
-        a_or_b  += count_bits_32( a.state[ai][bin] |  b.state[bi][bin]);
+        a_and_b += count_bits_32(a.state[ai][bin] & b.state[bi][bin]);
+        a_and_B += count_bits_32(a.state[ai][bin] & b_compl[bi][bin]);
+        a_or_B  += count_bits_32(a.state[ai][bin] | b_compl[bi][bin]);
       }
-      A_and_B = n_tips - a_or_b;
       A_or_B  = n_tips - a_and_b;
-      a_or_B  = n_tips - A_and_b;
+      A_and_b = n_tips - a_or_B;
       A_or_b  = n_tips - a_and_B;
+      a_or_b  = a_and_b + a_and_B + A_and_b;
+      A_and_B = n_tips - a_or_b;
       
       if (enforce_arboreal && !(
           a_and_b == n_tips ||
