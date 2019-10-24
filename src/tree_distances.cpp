@@ -21,13 +21,13 @@ int count_bits_32 (uint32_t x) {
   return bitcounts[x & right16bits] + bitcounts[x >> 16];
 }
 
-double log_double_factorial[3200]; /* Only offer support for up to 3200 tips */
+double lg2_double_factorial[3200]; /* Only offer support for up to 3200 tips */
 __attribute__((constructor))
   void initialize_ldf() {
-    log_double_factorial[0] = 0;
-    log_double_factorial[1] = 0;
+    lg2_double_factorial[0] = 0;
+    lg2_double_factorial[1] = 0;
     for (int i = 2; i < 3200; i++) {
-      log_double_factorial[i] = log_double_factorial[i - 2] + log2(i);
+      lg2_double_factorial[i] = lg2_double_factorial[i - 2] + log2(i);
     }
   }
 
@@ -266,20 +266,20 @@ List cpp_jaccard_distance (NumericMatrix x, NumericMatrix y,
   return (ret);
 }
 
-double ln_unrooted (int n) {
+double lg2_unrooted (int n) {
   if (n < 3) return (0);
-  return(log_double_factorial[n + n - 5]);
+  return(lg2_double_factorial[n + n - 5]);
 }
 
-double ln_rooted (int n) {
+double lg2_rooted (int n) {
   if (n < 2) return (0);
-  return(log_double_factorial[n + n - 3]);
+  return(lg2_double_factorial[n + n - 3]);
 }
 
-double ln_trees_matching_split (int a, int b) {
-  if (a == 0) return (ln_unrooted(b));
-  if (b == 0) return (ln_unrooted(a));
-  return(ln_rooted(a) + ln_rooted(b));
+double lg2_trees_matching_split (int a, int b) {
+  if (a == 0) return (lg2_unrooted(b));
+  if (b == 0) return (lg2_unrooted(a));
+  return(lg2_rooted(a) + lg2_rooted(b));
 }
 
 // [[Rcpp::export]]
@@ -291,13 +291,13 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
   SplitList a(x), b(y);
   const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     n_tips = nTip[0];
-  const double max_score = ln_unrooted(n_tips) - 
-    ln_trees_matching_split((n_tips + 1) / 2, n_tips / 2);
+  const double max_score = lg2_unrooted(n_tips) - 
+    lg2_trees_matching_split((n_tips + 1) / 2, n_tips / 2);
   
   /*Rcout << " Maximum pair score on " << n_tips << " tips: " << max_score
-        << ": ln_unrooted(n) = " << ln_unrooted(n_tips) << " - ltms("
+        << ": lg2_unrooted(n) = " << lg2_unrooted(n_tips) << " - ltms("
         << ((n_tips + 1) / 2) << ", " << (n_tips / 2) << ") = "
-        << ln_trees_matching_split((n_tips + 1) / 2, n_tips / 2) << "\n\n";*/
+        << lg2_trees_matching_split((n_tips + 1) / 2, n_tips / 2) << "\n\n";*/
   
   int** score = new int*[max_splits];
   for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
@@ -322,11 +322,11 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
             << ", diff = " << n_different << "; n(a&b) = " << n_a_and_b 
             << ", aOnly = " << n_a_only << "\n";*/
       
-      score1 = ln_unrooted(n_same) - 
-        ln_trees_matching_split(n_a_and_b, n_same - n_a_and_b);
+      score1 = lg2_unrooted(n_same) - 
+        lg2_trees_matching_split(n_a_and_b, n_same - n_a_and_b);
       
-      score2 = ln_unrooted(n_different) - 
-        ln_trees_matching_split(n_a_only, n_different - n_a_only);
+      score2 = lg2_unrooted(n_different) - 
+        lg2_trees_matching_split(n_a_only, n_different - n_a_only);
       
       score[ai][bi] = BIG * 
         (1 - ((score1 > score2) ? score1 : score2) / max_score);
@@ -364,24 +364,24 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
   return (ret);
 }
 
-double p_ln_p_frac (double p) {
+double p_lg2_p_frac (double p) {
   return -p * log2(p);
 }
 
-double p_ln_p (double p) {
+double p_lg2_p (double p) {
   if (p == 0) return 0;
   if (p == 1) return 0;
-  return p_ln_p_frac(p);
+  return p_lg2_p_frac(p);
 }
 
 double entropy2 (double p) {
   if (p == 0) return 0;
   if (p == 1) return 0;
-  return p_ln_p_frac(p) + p_ln_p_frac(1 - p);
+  return p_lg2_p_frac(p) + p_lg2_p_frac(1 - p);
 }
 
 double entropy4 (double p1, double p2, double p3, double p4) {
-  return p_ln_p(p1) +  p_ln_p(p2) +  p_ln_p(p3) +  p_ln_p(p4);
+  return p_lg2_p(p1) +  p_lg2_p(p2) +  p_lg2_p(p3) +  p_lg2_p(p4);
 }
 
 // [[Rcpp::export]]
@@ -407,9 +407,9 @@ List cpp_mutual_clustering (NumericMatrix x, NumericMatrix y,
   
   
   /*Rcout << " Maximum pair score on " << n_tips << " tips: " << max_score
-        << ": ln_unrooted(n) = " << ln_unrooted(n_tips) << " - ltms("
+        << ": lg2_unrooted(n) = " << lg2_unrooted(n_tips) << " - ltms("
         << ((n_tips + 1) / 2) << ", " << (n_tips / 2) << ") = "
-        << ln_trees_matching_split((n_tips + 1) / 2, n_tips / 2) << "\n\n";*/
+        << lg2_trees_matching_split((n_tips + 1) / 2, n_tips / 2) << "\n\n";*/
   
   int** score = new int*[max_splits];
   for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
