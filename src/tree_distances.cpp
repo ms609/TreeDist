@@ -491,13 +491,23 @@ double mpi (uint32_t* a_state, uint32_t* b_state, int n_tips,
   
   
   for (int bin = 0; bin < n_bins; bin++) {
+    if (a_state[bin] & b_state[bin]) {
+      compatible = false;
+      break;
+    }
+  }
+  if (compatible) return lg2_unrooted_n - one_overlap_notb(in_a, in_b, n_tips);
+  
+  compatible = true;
+  for (int bin = 0; bin < n_bins; bin++) {
     if ((~a_state[bin] & b_state[bin])) {
       compatible = false;
       break;
     }
   }
   if (compatible) return lg2_unrooted_n - one_overlap(in_a, in_b, n_tips);
-    
+  
+  
   compatible = true;
   for (int bin = 0; bin < n_bins; bin++) {
     if ((a_state[bin] & ~b_state[bin])) {
@@ -506,16 +516,6 @@ double mpi (uint32_t* a_state, uint32_t* b_state, int n_tips,
     }
   }
   if (compatible) return lg2_unrooted_n - one_overlap(in_a, in_b, n_tips);
-  
-  
-  compatible = true;
-  for (int bin = 0; bin < n_bins; bin++) {
-    if (a_state[bin] & b_state[bin]) {
-      compatible = false;
-      break;
-    }
-  }
-  if (compatible) return lg2_unrooted_n - one_overlap_notb(in_a, in_b, n_tips);
   
   compatible = true;
   for (int bin = 0; bin < n_bins; bin++) {
