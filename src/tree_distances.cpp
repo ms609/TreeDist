@@ -29,18 +29,15 @@ List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y,
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
-  SplitList a(x);
-  SplitList b(y);
-  const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits;
-  
-  int score = 0;
-  int matching[max_splits];
-  for (int i = 0; i < max_splits; i++) matching[i] = -1; /* NA */
-  const int n_tips = nTip[0], 
-                         //remainder_tips = (n_tips % 32) ? (n_tips % 32) : 32,
-                         unset_tips = (n_tips % 32) ? 32 - n_tips % 32 : 32;
-  //const uint32_t unset_mask = ~0 << remainder_tips;
+  SplitList a(x), b(y);
+  const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
+            n_tips = nTip[0], 
+            unset_tips = (n_tips % 32) ? 32 - n_tips % 32 : 32;
   const uint32_t unset_mask = ~0U >> unset_tips;
+  
+  int score = 0, matching[max_splits];
+  for (int i = 0; i < max_splits; i++) matching[i] = -1; /* NA */
+  
   uint32_t b_complement[b.n_splits][b.n_bins];
   for (int i = 0; i < b.n_splits; i++) {
     for (int bin = 0; bin < b.n_bins; bin++) {
@@ -51,9 +48,6 @@ List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y,
       }
     }
   }
-  
-  /*Rcout << "ntip: " << n_tips << ", remainder = " << remainder_tips 
-          << ", unset = " << unset_tips << ", mask = " << unset_mask << "\n";*/
   
   for (int ai = 0; ai < a.n_splits; ai++) {
     for (int bi = 0; bi < b.n_splits; bi++) {
