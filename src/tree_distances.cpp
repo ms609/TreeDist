@@ -35,8 +35,10 @@ List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y,
             unset_tips = (n_tips % 32) ? 32 - n_tips % 32 : 32;
   const uint32_t unset_mask = ~0U >> unset_tips;
   
-  int score = 0, matching[max_splits];
-  for (int i = 0; i < max_splits; i++) matching[i] = -1; /* NA */
+  int score = 0;
+  NumericVector matching (max_splits);
+  matching.fill(NA_REAL);
+  /*for (int i = 0; i < max_splits; i++) matching[i] = NA_REAL;*/
   
   uint32_t b_complement[b.n_splits][b.n_bins];
   for (int i = 0; i < b.n_splits; i++) {
@@ -75,14 +77,10 @@ List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y,
   }
   score = a.n_splits + b.n_splits - score - score;
   
-  NumericVector final_score = NumericVector::create(score),
-                final_matching (max_splits);
-  for (int i = 0; i < max_splits; i++) {
-    final_matching[i] = (matching[i] < 0 ? NA_REAL : matching[i]);
-  }
+  NumericVector final_score = NumericVector::create(score);
   
   List ret = List::create(Named("score") = final_score,
-                          _["matching"] = final_matching);
+                          _["matching"] = matching);
   
   return (ret);
 }
