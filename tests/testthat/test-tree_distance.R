@@ -149,13 +149,20 @@ test_that('Mutual Phylogenetic Info is correctly calculated', {
 
 test_that('MutualMatchingSplitInfo is correctly calculated', {
   BinaryToSplit <- function (binary) matrix(as.logical(binary))
-  expect_equal(MutualMatchingSplitInfoSplits(
-    BinaryToSplit(c(1, 1, 0, 0, 0, 0, 0, 0)),
-    BinaryToSplit(c(0, 0, 1, 1, 0, 0, 0, 0))
-    ), MutualMatchingSplitInfoSplits(
-    BinaryToSplit(c(0, 0, 0, 0, 0, 0, 1, 1)),
-    BinaryToSplit(c(0, 0, 1, 1, 0, 0, 0, 0))
-    ))
+  expect_equal(log2(3),
+               MutualMatchingSplitInfoSplits(
+                 BinaryToSplit(c(1, 1, 0, 0, 0, 0, 0, 0)),
+                 BinaryToSplit(c(0, 0, 1, 1, 0, 0, 0, 0)))
+               )
+  expect_equal(log2(3),
+               MutualMatchingSplitInfoSplits(
+                 BinaryToSplit(c(0, 0, 0, 0, 0, 0, 1, 1)),
+                 BinaryToSplit(c(0, 0, 1, 1, 0, 0, 0, 0))))
+  expect_equal(log2(3), cpp_mmsi_distance(
+    as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
+    as.Splits(as.logical(c(0, 0, 1, 1, 0, 0, 0, 0))),
+    8L)$score)
+  
   
   MutualMatchingSplitInfoSplits(BinaryToSplit(c(1, 1, 1, 1, 0, 0, 0, 0)),
                          BinaryToSplit(c(1, 0, 1, 0, 1, 0, 1, 0)))

@@ -297,8 +297,9 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
   int** score = new int*[max_splits];
   for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
   
-  uint32_t different[a.n_bins], same_in_both[a.n_bins];
-  int n_different, n_same, n_a_only, n_a_and_b, score1, score2;
+  uint32_t different[a.n_bins];
+  int n_different, n_same, n_a_only, n_a_and_b;
+  double score1, score2;
   for (int ai = 0; ai < a.n_splits; ai++) {
     for (int bi = 0; bi < b.n_splits; bi++) {
       n_different = 0;
@@ -307,9 +308,9 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
       for (int bin = 0; bin < a.n_bins; bin++) {
         different[bin] = a.state[ai][bin] ^ b.state[bi][bin];
         n_different += count_bits_32(different[bin]);
-        n_a_only += a.state[ai][bin] & different[bin];
-        same_in_both[bin] = ~different[bin];
-        n_a_and_b += a.state[ai][bin] & same_in_both[bin];
+        n_a_only += count_bits_32(a.state[ai][bin] & different[bin]);
+        n_a_and_b += count_bits_32(a.state[ai][bin] & ~different[bin]);
+        /*n_a_and_b += n_different - count_bits_32(a.state[ai][bin]); */
       }
       n_same = n_tips - n_different;
       score1 = ln_unrooted(n_same) - 
@@ -319,7 +320,7 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
         ln_trees_matching_split(n_a_only, n_different - n_a_only);
       
       score[ai][bi] = BIG * 
-        (1 - ((score1 > score2) ? score1 : score2 / max_score));
+        (1 - ((score1 > score2) ? score1 : score2) / max_score);
     }
     for (int bi = b.n_splits; bi < max_splits; bi++) {
       score[ai][bi] = BIG;
@@ -337,7 +338,7 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
   
   NumericVector final_score = NumericVector::create(
     (double)((BIG * max_splits) - lap(max_splits, score, rowsol, colsol, u, v))
-    / BIGL),
+    * max_score / BIGL),
     final_matching (max_splits);
   
   for (int i = 0; i < max_splits; i++) {
