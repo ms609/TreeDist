@@ -73,11 +73,11 @@ CGRF <- function (splits1, splits2, nTip, PairScorer,
       }, double(nSplits1))
     attr(ret, 'pairScores') <- pairScores
     
-    if (!is.null(leafNames1)) {
+    if (!is.null(attr(splits1, 'tip.label'))) {
       attr(ret, 'matchedSplits') <- 
         ReportMatching(splits1[, !is.na(matching), drop = FALSE], 
                        splits2[, matching[!is.na(matching)], drop = FALSE],
-                       leafNames1,
+                       attr(splits1, 'tip.label'),
                        realMatch = if (maximize) {
                          pairScores[matrix(c(matched1, matched2), ncol=2L)] > 0
                        } else TRUE)
