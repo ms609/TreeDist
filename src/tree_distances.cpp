@@ -162,7 +162,7 @@ List cpp_jaccard_distance (NumericMatrix x, NumericMatrix y,
   const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     last_bin = a.n_bins - 1,
     n_tips = nTip[0],
-                 unset_tips = (n_tips % 32) ? 32 - n_tips % 32 : 32;
+    unset_tips = (n_tips % 32) ? 32 - n_tips % 32 : 32;
   const uint32_t unset_mask = ~0U >> unset_tips;
   const double exponent = k[0];
   
@@ -175,9 +175,9 @@ List cpp_jaccard_distance (NumericMatrix x, NumericMatrix y,
   }
   
   int a_and_b, a_and_B, A_and_b, A_and_B,
-  a_or_b,  a_or_B,  A_or_b,  A_or_B;
+    a_or_b,  a_or_B,  A_or_b,  A_or_B;
   double ars_ab, ars_aB, ars_Ab, ars_AB,
-  min_ars_both, min_ars_either;
+    min_ars_both, min_ars_either;
   bool enforce_arboreal = arboreal[0];
   
   int** score = new int*[max_splits];
@@ -294,6 +294,11 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
   const double max_score = ln_unrooted(n_tips) - 
     ln_trees_matching_split((n_tips + 1) / 2, n_tips / 2);
   
+  /*Rcout << " Maximum pair score on " << n_tips << " tips: " << max_score
+        << ": ln_unrooted(n) = " << ln_unrooted(n_tips) << " - ltms("
+        << ((n_tips + 1) / 2) << ", " << (n_tips / 2) << ") = "
+        << ln_trees_matching_split((n_tips + 1) / 2, n_tips / 2) << "\n\n";*/
+  
   int** score = new int*[max_splits];
   for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
   
@@ -313,6 +318,10 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
         /*n_a_and_b += n_different - count_bits_32(a.state[ai][bin]); */
       }
       n_same = n_tips - n_different;
+      /*Rcout << "  a: " << ai << ", b: " << bi << "; same = " << n_same
+            << ", diff = " << n_different << "; n(a&b) = " << n_a_and_b 
+            << ", aOnly = " << n_a_only << "\n";*/
+      
       score1 = ln_unrooted(n_same) - 
         ln_trees_matching_split(n_a_and_b, n_same - n_a_and_b);
       
@@ -321,6 +330,10 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
       
       score[ai][bi] = BIG * 
         (1 - ((score1 > score2) ? score1 : score2) / max_score);
+      
+      /*Rcout << "    Score: 1=" << score1 << ", 2=" << score2 << ", max = "
+            << ((score1 > score2) ? score1 : score2) << " = " 
+            << (((score1 > score2) ? score1 : score2) / max_score) << "\n\n";*/
     }
     for (int bi = b.n_splits; bi < max_splits; bi++) {
       score[ai][bi] = BIG;
@@ -339,6 +352,114 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
   NumericVector final_score = NumericVector::create(
     (double)((BIG * max_splits) - lap(max_splits, score, rowsol, colsol, u, v))
     * max_score / BIGL),
+    final_matching (max_splits);
+  
+  for (int i = 0; i < max_splits; i++) {
+    final_matching[i] = rowsol[i] + 1;
+  }
+  
+  List ret = List::create(Named("score") = final_score,
+                          _["matching"] = final_matching);
+  
+  return (ret);
+}
+
+double p_ln_p_frac (double p) {
+  return -p * log2(p);
+}
+
+double p_ln_p (double p) {
+  if (p == 0) return 0;
+  if (p == 1) return 0;
+  return p_ln_p_frac(p);
+}
+
+double entropy2 (double p) {
+  if (p == 0) return 0;
+  if (p == 1) return 0;
+  return p_ln_p_frac(p) + p_ln_p_frac(1 - p);
+}
+
+double entropy4 (double p1, double p2, double p3, double p4) {
+  return p_ln_p(p1) +  p_ln_p(p2) +  p_ln_p(p3) +  p_ln_p(p4);
+}
+
+// [[Rcpp::export]]
+List cpp_mutual_clustering (NumericMatrix x, NumericMatrix y,
+                           NumericVector nTip) {
+  if (x.cols() != y.cols()) {
+    throw std::invalid_argument("Input splits must address same number of tips.");
+  }
+  SplitList a(x), b(y);
+  const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
+    last_bin = a.n_bins - 1,
+    n_tips = nTip[0],
+    unset_tips = (n_tips % 32) ? 32 - n_tips % 32 : 32;
+  const uint32_t unset_mask = ~0U >> unset_tips;
+  
+  uint32_t b_compl[b.n_splits][b.n_bins];
+  for (int i = 0; i < b.n_splits; i++) {
+    for (int bin = 0; bin < last_bin; bin++) {
+      b_compl[i][bin] = ~b.state[i][bin];
+    }
+    b_compl[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
+  }
+  
+  
+  /*Rcout << " Maximum pair score on " << n_tips << " tips: " << max_score
+        << ": ln_unrooted(n) = " << ln_unrooted(n_tips) << " - ltms("
+        << ((n_tips + 1) / 2) << ", " << (n_tips / 2) << ") = "
+        << ln_trees_matching_split((n_tips + 1) / 2, n_tips / 2) << "\n\n";*/
+  
+  int** score = new int*[max_splits];
+  for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
+  
+  double a_and_b, a_and_B, A_and_b, A_and_B, 
+    p1, p2;
+  for (int ai = 0; ai < a.n_splits; ai++) {
+    for (int bi = 0; bi < b.n_splits; bi++) {
+      a_and_b = 0;
+      a_and_B = 0;
+      A_and_b = n_tips;
+      for (int bin = 0; bin < a.n_bins; bin++) {
+        a_and_b += count_bits_32(a.state[ai][bin] & b.state[bi][bin]);
+        a_and_B += count_bits_32(a.state[ai][bin] & b_compl[bi][bin]);
+        A_and_b -= count_bits_32(a.state[ai][bin] | b_compl[bi][bin]);
+      }
+      
+      /* Convert to probabilities */
+      a_and_b /= (double) n_tips;
+      a_and_B /= (double) n_tips;
+      A_and_b /= (double) n_tips;
+      A_and_B = 1 - (a_and_b + a_and_B + A_and_b);
+      
+      p1 = a_and_b + A_and_b;
+      p2 = a_and_b + a_and_B;
+      
+      score[ai][bi] = BIG * (entropy2(p1) + entropy2(p2) + 
+        entropy4(a_and_b, a_and_B, A_and_b, A_and_B)) / 4;
+      
+      /*Rcout << "    Score: 1=" << score1 << ", 2=" << score2 << ", max = "
+            << ((score1 > score2) ? score1 : score2) << " = " 
+            << (((score1 > score2) ? score1 : score2) / max_score) << "\n\n";*/
+    }
+    for (int bi = b.n_splits; bi < max_splits; bi++) {
+      score[ai][bi] = BIG;
+    }
+  }
+  for (int ai = a.n_splits; ai < max_splits; ai++) {
+    for (int bi = 0; bi < max_splits; bi++) {
+      score[ai][bi] = BIG;
+    }
+  }
+  
+  lap_col *rowsol = new lap_col[max_splits];
+  lap_row *colsol = new lap_row[max_splits];
+  cost *u = new cost[max_splits], *v = new cost[max_splits];
+  
+  NumericVector final_score = NumericVector::create(
+    (double)((BIG * max_splits) - lap(max_splits, score, rowsol, colsol, u, v))
+    * n_tips * 4 / BIGL),
     final_matching (max_splits);
   
   for (int i = 0; i < max_splits; i++) {

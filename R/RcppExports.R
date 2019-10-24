@@ -17,3 +17,7 @@ cpp_mmsi_distance <- function(x, y, nTip) {
     .Call(`_TreeDist_cpp_mmsi_distance`, x, y, nTip)
 }
 
+cpp_mutual_clustering <- function(x, y, nTip) {
+    .Call(`_TreeDist_cpp_mutual_clustering`, x, y, nTip)
+}
+
