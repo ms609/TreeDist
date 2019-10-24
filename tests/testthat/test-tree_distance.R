@@ -199,6 +199,41 @@ test_that("Mutual Phylogenetic Information is correctly estimated", {
 })
 
 test_that('Clustering information is correctly calculated', {
+  expect_equal(8 * (Entropy(c(4, 4) / 8) * 2 - Entropy(c(0, 0, 4, 4) / 8)),
+               cpp_mutual_clustering(
+                 as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
+                 as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
+                 8L)$score, 
+               tolerance = 1e-5)
+  
+  expect_equal(8 * (Entropy(c(3, 5) / 8) * 2 - Entropy(c(0, 0, 3, 5) / 8)),
+               cpp_mutual_clustering(
+                 as.Splits(as.logical(c(1, 1, 1, 0, 0, 0, 0, 0))),
+                 as.Splits(as.logical(c(1, 1, 1, 0, 0, 0, 0, 0))),
+                 8L)$score, 
+               tolerance = 1e-5)
+  
+  expect_equal(8 * (Entropy(c(2, 6) / 8) * 2 - Entropy(c(0, 2, 2, 4) / 8)),
+               cpp_mutual_clustering(
+    as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
+    as.Splits(as.logical(c(0, 0, 1, 1, 0, 0, 0, 0))),
+    8L)$score, tolerance = 1e-5)
+  
+  expect_equal(9 * (Entropy(c(5, 4) / 9) + Entropy(c(3, 6) / 9) -
+                 Entropy(c(3, 2, 0, 4) / 9)),
+               cpp_mutual_clustering(
+                 as.Splits(as.logical(c(1, 1, 1, 1, 1, 0, 0, 0, 0))),
+                 as.Splits(as.logical(c(0, 0, 1, 1, 1, 0, 0, 0, 0))),
+                 9L)$score,
+               tolerance = 1e-5)
+  
+  expect_equal(8 * (Entropy(c(4, 4) / 8) * 2 - Entropy(c(2, 2, 2, 2) / 8)),
+               cpp_mutual_clustering(
+                 as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
+                 as.Splits(as.logical(c(1, 0, 1, 0, 1, 0, 1, 0))),
+                 8L)$score,
+               tolerance = 1e-5)
+  
   expect_equal(ClusteringInfo(treeSym8), 
                MutualClusteringInfo(treeSym8, treeSym8), tolerance=1e-05)
   expect_equal(TreeDistance(treeSym8, treeBal8),

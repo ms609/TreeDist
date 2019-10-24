@@ -436,8 +436,8 @@ List cpp_mutual_clustering (NumericMatrix x, NumericMatrix y,
       p1 = a_and_b + A_and_b;
       p2 = a_and_b + a_and_B;
       
-      score[ai][bi] = BIG * (entropy2(p1) + entropy2(p2) + 
-        entropy4(a_and_b, a_and_B, A_and_b, A_and_B)) / 4;
+      score[ai][bi] = BIG * (1 - ((entropy2(p1) + entropy2(p2) - 
+        entropy4(a_and_b, a_and_B, A_and_b, A_and_B))));
       
       /*Rcout << "    Score: 1=" << score1 << ", 2=" << score2 << ", max = "
             << ((score1 > score2) ? score1 : score2) << " = " 
@@ -459,7 +459,7 @@ List cpp_mutual_clustering (NumericMatrix x, NumericMatrix y,
   
   NumericVector final_score = NumericVector::create(
     (double)((BIG * max_splits) - lap(max_splits, score, rowsol, colsol, u, v))
-    * n_tips * 4 / BIGL),
+    * n_tips / BIGL),
     final_matching (max_splits);
   
   for (int i = 0; i < max_splits; i++) {
