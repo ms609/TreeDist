@@ -21,13 +21,22 @@ int count_bits_32 (uint32_t x) {
   return bitcounts[x & right16bits] + bitcounts[x >> 16];
 }
 
-double lg2_double_factorial[3200]; /* Only offer support for up to 3200 tips */
+double lg2_double_factorial[6398]; /* Only offer support for up to 3200 tips */
+double lg2_rooted[3201];
+double lg2_unrooted[3201];
 __attribute__((constructor))
   void initialize_ldf() {
-    lg2_double_factorial[0] = 0;
-    lg2_double_factorial[1] = 0;
-    for (int i = 2; i < 3200; i++) {
+    for (int i = 0; i < 3; i++) {
+      lg2_double_factorial[i] = 0;
+      lg2_rooted[i] = 0;
+      lg2_unrooted[i] = 0;
+    }
+    for (int i = 2; i < 6398; i++) {
       lg2_double_factorial[i] = lg2_double_factorial[i - 2] + log2(i);
+    }
+    for (int i = 3; i < 3201; i++) {
+      lg2_unrooted[i] = lg2_double_factorial[i + i - 5];
+      lg2_rooted[i] = lg2_double_factorial[i + i - 3];
     }
   }
 
@@ -266,20 +275,10 @@ List cpp_jaccard_distance (NumericMatrix x, NumericMatrix y,
   return (ret);
 }
 
-double lg2_unrooted (int n) {
-  if (n < 3) return (0);
-  return(lg2_double_factorial[n + n - 5]);
-}
-
-double lg2_rooted (int n) {
-  if (n < 2) return (0);
-  return(lg2_double_factorial[n + n - 3]);
-}
-
 double lg2_trees_matching_split (int a, int b) {
-  if (a == 0) return (lg2_unrooted(b));
-  if (b == 0) return (lg2_unrooted(a));
-  return(lg2_rooted(a) + lg2_rooted(b));
+  if (a == 0) return (lg2_unrooted[b]);
+  if (b == 0) return (lg2_unrooted[a]);
+  return(lg2_rooted[a] + lg2_rooted[b]);
 }
 
 // [[Rcpp::export]]
@@ -291,11 +290,11 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
   SplitList a(x), b(y);
   const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     n_tips = nTip[0];
-  const double max_score = lg2_unrooted(n_tips) - 
+  const double max_score = lg2_unrooted[n_tips] - 
     lg2_trees_matching_split((n_tips + 1) / 2, n_tips / 2);
   
   /*Rcout << " Maximum pair score on " << n_tips << " tips: " << max_score
-        << ": lg2_unrooted(n) = " << lg2_unrooted(n_tips) << " - ltms("
+        << ": lg2_unrooted[n] = " << lg2_unrooted[n_tips] << " - ltms("
         << ((n_tips + 1) / 2) << ", " << (n_tips / 2) << ") = "
         << lg2_trees_matching_split((n_tips + 1) / 2, n_tips / 2) << "\n\n";*/
   
@@ -322,10 +321,10 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
             << ", diff = " << n_different << "; n(a&b) = " << n_a_and_b 
             << ", aOnly = " << n_a_only << "\n";*/
       
-      score1 = lg2_unrooted(n_same) - 
+      score1 = lg2_unrooted[n_same] - 
         lg2_trees_matching_split(n_a_and_b, n_same - n_a_and_b);
       
-      score2 = lg2_unrooted(n_different) - 
+      score2 = lg2_unrooted[n_different] - 
         lg2_trees_matching_split(n_a_only, n_different - n_a_only);
       
       score[ai][bi] = BIG * 
@@ -407,7 +406,7 @@ List cpp_mutual_clustering (NumericMatrix x, NumericMatrix y,
   
   
   /*Rcout << " Maximum pair score on " << n_tips << " tips: " << max_score
-        << ": lg2_unrooted(n) = " << lg2_unrooted(n_tips) << " - ltms("
+        << ": lg2_unrooted[n] = " << lg2_unrooted[n_tips] << " - ltms("
         << ((n_tips + 1) / 2) << ", " << (n_tips / 2) << ") = "
         << lg2_trees_matching_split((n_tips + 1) / 2, n_tips / 2) << "\n\n";*/
   
@@ -438,10 +437,6 @@ List cpp_mutual_clustering (NumericMatrix x, NumericMatrix y,
       
       score[ai][bi] = BIG * (1 - ((entropy2(p1) + entropy2(p2) - 
         entropy4(a_and_b, a_and_B, A_and_b, A_and_B))));
-      
-      /*Rcout << "    Score: 1=" << score1 << ", 2=" << score2 << ", max = "
-            << ((score1 > score2) ? score1 : score2) << " = " 
-            << (((score1 > score2) ? score1 : score2) / max_score) << "\n\n";*/
     }
     for (int bi = b.n_splits; bi < max_splits; bi++) {
       score[ai][bi] = BIG;
@@ -473,58 +468,53 @@ List cpp_mutual_clustering (NumericMatrix x, NumericMatrix y,
 }
 
 double one_overlap (int a, int b, int n) {
-  if (a == b) return lg2_rooted(a) + lg2_rooted(n - a);
-  if (a < b) return lg2_rooted(b) + lg2_rooted(n - a) - lg2_rooted(b - a + 1);
-  return lg2_rooted(a) + lg2_rooted(n - b) - lg2_rooted(a - b + 1);
+  if (a == b) return lg2_rooted[a] + lg2_rooted[n - a];
+  if (a < b) return lg2_rooted[b] + lg2_rooted[n - a] - lg2_rooted[b - a + 1];
+  return lg2_rooted[a] + lg2_rooted[n - b] - lg2_rooted[a - b + 1];
 }
 
 double one_overlap_notb (int a, int n_minus_b, int n) {
   const int b = n - n_minus_b;
-  if (a == b) return lg2_rooted(a) + lg2_rooted(n - a);
-  if (a < b) return lg2_rooted(b) + lg2_rooted(n - a) - lg2_rooted(b - a + 1);
-  return lg2_rooted(a) + lg2_rooted(n_minus_b) - lg2_rooted(a - b + 1);
+  if (a == b) return lg2_rooted[b] + lg2_rooted[n_minus_b];
+  if (a < b) return lg2_rooted[b] + lg2_rooted[n - a] - lg2_rooted[b - a + 1];
+  return lg2_rooted[a] + lg2_rooted[n_minus_b] - lg2_rooted[a - b + 1];
 }
 
 double mpi (uint32_t* a_state, uint32_t* b_state, int n_tips, 
             int in_a, int in_b, double lg2_unrooted_n, int n_bins) {
-  bool compatible = true;
-  
+  bool flag = true;
   
   for (int bin = 0; bin < n_bins; bin++) {
     if (a_state[bin] & b_state[bin]) {
-      compatible = false;
+      flag = false;
       break;
     }
   }
-  if (compatible) return lg2_unrooted_n - one_overlap_notb(in_a, in_b, n_tips);
+  if (flag) return lg2_unrooted_n - one_overlap_notb(in_a, in_b, n_tips);
   
-  compatible = true;
   for (int bin = 0; bin < n_bins; bin++) {
     if ((~a_state[bin] & b_state[bin])) {
-      compatible = false;
+      flag = true;
       break;
     }
   }
-  if (compatible) return lg2_unrooted_n - one_overlap(in_a, in_b, n_tips);
-  
-  
-  compatible = true;
+  if (!flag) return lg2_unrooted_n - one_overlap(in_a, in_b, n_tips);
+    
   for (int bin = 0; bin < n_bins; bin++) {
     if ((a_state[bin] & ~b_state[bin])) {
-      compatible = false;
+      flag = false;
       break;
     }
   }
-  if (compatible) return lg2_unrooted_n - one_overlap(in_a, in_b, n_tips);
+  if (flag) return lg2_unrooted_n - one_overlap(in_a, in_b, n_tips);
   
-  compatible = true;
   for (int bin = 0; bin < n_bins; bin++) {
     if (~(a_state[bin] | b_state[bin])) {
-      compatible = false;
+      flag = true;
       break;
     }
   }
-  if (compatible) return lg2_unrooted_n - one_overlap_notb(in_a, in_b, n_tips);
+  if (!flag) return lg2_unrooted_n - one_overlap_notb(in_a, in_b, n_tips);
   
   return 0;
 }
@@ -538,7 +528,7 @@ List cpp_mutual_phylo (NumericMatrix x, NumericMatrix y,
   SplitList a(x), b(y);
   const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     n_tips = nTip[0];
-  const double lg2_unrooted_n = lg2_unrooted(n_tips),
+  const double lg2_unrooted_n = lg2_unrooted[n_tips],
     max_score = lg2_unrooted_n - one_overlap((n_tips + 1) / 2, n_tips / 2, n_tips);
   int in_a[a.n_splits], in_b[b.n_splits];
   
