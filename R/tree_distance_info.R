@@ -229,63 +229,8 @@ MutualClusteringInfo <- function (tree1, tree2, normalize = FALSE,
 #' @export
 MutualPhylogeneticInfoSplits <- function (splits1, splits2, 
                                           reportMatching = FALSE) {
-  GeneralizedRF(splits1, splits2, 
-                function(splits1, splits2, nSplits1, nSplits2) {
-                  nTerminals <- dim(splits1)[1]
-                  lnUnrootedN <- LnUnrooted.int(nTerminals)
-                  inSplit1 <- colSums(splits1)
-                  inSplit2 <- colSums(splits2)
-                  notInSplit2 <- nTerminals - inSplit2
-                  
-                  if (nTerminals <= length(oneOverlap)) {
-                    # Use cache for speed, if available
-                    oo <- oneOverlap[[nTerminals]]
-                    OneOverlap <- function (A1, A2) oo[A1, A2]
-                  } else {
-                    OneOverlap <- function(A1, A2) {
-                      # Number of trees consistent with both splits
-                      if (A1 == A2) {
-                        # Both splits are identical.
-                        # Return number of trees consistent with split1:
-                        LnRooted.int(A1) + LnRooted.int(nTerminals - A1)
-                      } else {
-                        if (A1 < A2) {
-                          # Return:
-                          LnRooted.int(A2) + LnRooted.int(nTerminals - A1) -
-                            LnRooted.int(A2 - A1 + 1L)
-                        } else {
-                          # Return:
-                          LnRooted.int(A1) + LnRooted.int(nTerminals - A2) -
-                            LnRooted.int(A1 - A2 + 1L) 
-                        }
-                      }
-                    }
-                  }
-                  
-                  ret <- matrix(0, nSplits1, nSplits2)
-                  for (i in seq_len(nSplits1)) {
-                    split1 <- splits1[, i]
-                    for (j in seq_len(nSplits2)) {
-                      split2 <- splits2[, j]
-                      
-                      ret[i, j] <- if (all(split1[split2]) || # oneAndTwo
-                          all(!split1[!split2])) { # notOneNotTwo
-                        OneOverlap(inSplit1[i], inSplit2[j])
-                        
-                      } else if (all(!split1[split2]) || # notOneAndTwo
-                                 all(split1[!split2])) { #oneNotTwo
-                        OneOverlap(inSplit1[i], notInSplit2[j])
-
-                      } else {
-                        # Splits incompatible
-                        lnUnrootedN
-                      }
-                    }
-                  }
-                  
-                  # Return:
-                  (ret - lnUnrootedN) / -log(2)
-                }, maximize = TRUE, reportMatching)
+  CGRF(splits1, splits2, nTip, cpp_mutual_phylo,
+       maximize = TRUE, reportMatching = reportMatching)
 }
 
 #' @describeIn TreeDistance Calculate clustering information from splits instead of trees
