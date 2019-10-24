@@ -544,7 +544,6 @@ List cpp_mutual_phylo (NumericMatrix x, NumericMatrix y,
   const double lg2_unrooted_n = lg2_unrooted(n_tips),
     max_score = lg2_unrooted_n - one_overlap((n_tips + 1) / 2, n_tips / 2, n_tips);
   int in_a[a.n_splits], in_b[b.n_splits];
-  uint32_t b_compl[b.n_splits][b.n_bins];
   
   for (int i = 0; i < a.n_splits; i++) {
     in_a[i] = 0;
@@ -554,12 +553,9 @@ List cpp_mutual_phylo (NumericMatrix x, NumericMatrix y,
   }
   for (int i = 0; i < b.n_splits; i++) {
     in_b[i] = 0;
-    for (int bin = 0; bin < last_bin; bin++) {
+    for (int bin = 0; bin < b.n_bins; bin++) {
       in_b[i] += count_bits_32(b.state[i][bin]);
-      b_compl[i][bin] = ~b.state[i][bin];
     }
-    in_b[i] += count_bits_32(b.state[i][last_bin]);
-    b_compl[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
   int** score = new int*[max_splits];
