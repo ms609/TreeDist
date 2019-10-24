@@ -31,6 +31,7 @@ List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y,
   }
   SplitList a(x), b(y);
   const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
+            last_bin = a.n_bins - 1,
             n_tips = nTip[0],
             unset_tips = (n_tips % 32) ? 32 - n_tips % 32 : 32;
   const uint32_t unset_mask = ~0U >> unset_tips;
@@ -41,13 +42,10 @@ List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y,
   
   uint32_t b_complement[b.n_splits][b.n_bins];
   for (int i = 0; i < b.n_splits; i++) {
-    for (int bin = 0; bin < b.n_bins; bin++) {
-      if (bin == b.n_bins - 1) { /* Last bin */
-        b_complement[i][bin] = b.state[i][bin] ^ unset_mask;
-      } else {
+    for (int bin = 0; bin < last_bin; bin++) {
         b_complement[i][bin] = ~b.state[i][bin];
-      }
     }
+    b_complement[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
   for (int ai = 0; ai < a.n_splits; ai++) {
