@@ -276,9 +276,9 @@ List cpp_jaccard_distance (NumericMatrix x, NumericMatrix y,
 }
 
 double lg2_trees_matching_split (int a, int b) {
-  if (a == 0) return (lg2_unrooted[b]);
-  if (b == 0) return (lg2_unrooted[a]);
-  return(lg2_rooted[a] + lg2_rooted[b]);
+  if (a == 0) return lg2_unrooted[b];
+  if (b == 0) return lg2_unrooted[a];
+  return lg2_rooted[a] + lg2_rooted[b];
 }
 
 // [[Rcpp::export]]
