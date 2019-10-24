@@ -291,17 +291,8 @@ MutualPhylogeneticInfoSplits <- function (splits1, splits2,
 #' @describeIn TreeDistance Calculate clustering information from splits instead of trees
 #' @export
 MutualClusteringInfoSplits <- function (splits1, splits2, 
+                                        nTip = attr(splits1, 'nTip'),
                                         reportMatching = FALSE) {
-  GeneralizedRF(splits1, splits2, 
-                function(splits1, splits2, nSplits1, nSplits2) {
-                  ret <- matrix(0, nSplits1, nSplits2)
-                  for (i in seq_len(nSplits1)) {
-                    splitI <- splits1[, i]
-                    for (j in seq_len(nSplits2)) {
-                      ret[i, j] <- MeilaMutualInformation(splitI, splits2[, j])
-                    }
-                  }
-                  # Return:
-                  ret / log(2)
-                }, maximize = TRUE, reportMatching)
+  CGRF(splits1, splits2, nTip, cpp_mutual_clustering,
+       maximize = TRUE, reportMatching = reportMatching)
 }
