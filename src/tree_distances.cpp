@@ -31,14 +31,13 @@ List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y,
   }
   SplitList a(x), b(y);
   const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-            n_tips = nTip[0], 
+            n_tips = nTip[0],
             unset_tips = (n_tips % 32) ? 32 - n_tips % 32 : 32;
   const uint32_t unset_mask = ~0U >> unset_tips;
   
   int score = 0;
   NumericVector matching (max_splits);
-  matching.fill(NA_REAL);
-  /*for (int i = 0; i < max_splits; i++) matching[i] = NA_REAL;*/
+  for (int i = 0; i < max_splits; i++) matching[i] = NA_REAL;
   
   uint32_t b_complement[b.n_splits][b.n_bins];
   for (int i = 0; i < b.n_splits; i++) {
@@ -91,14 +90,15 @@ List cpp_matching_split_distance (NumericMatrix x, NumericMatrix y,
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
-  SplitList a(x);
-  SplitList b(y);
-  const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits;
-  const int split_diff = max_splits -
-    ((a.n_splits > b.n_splits) ? b.n_splits : a.n_splits);
+  SplitList a(x), b(y);
+  const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
+            split_diff = max_splits - 
+                         ((a.n_splits > b.n_splits) ? b.n_splits : a.n_splits),
+            n_tips = nTip[0],
+            half_tips = n_tips / 2;
+  
   int** score = new int*[max_splits];
   for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
-  const int n_tips = nTip[0], half_tips = n_tips / 2;
   
   /*Rcout << "Working over " << a.n_splits << " (" << a.n_splits << ", " << x.rows() 
         << ") and " << b.n_splits << " (" << b.n_splits << ", " << y.rows() 
@@ -128,7 +128,8 @@ List cpp_matching_split_distance (NumericMatrix x, NumericMatrix y,
   
   lap_col *rowsol = new lap_col[max_splits];
   lap_row *colsol = new lap_row[max_splits];
-  cost *u = new cost[max_splits], *v = new cost[max_splits];
+  cost *u = new cost[max_splits], 
+       *v = new cost[max_splits];
   
   NumericVector final_score = NumericVector::create(
     lap(max_splits, score, rowsol, colsol, u, v) - (BIG * split_diff)),
@@ -151,9 +152,9 @@ List cpp_jaccard_distance (NumericMatrix x, NumericMatrix y,
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
-  SplitList a(x);
-  SplitList b(y);
-  const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits;
+  SplitList a(x), b(y);
+  const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
+            n_tips = nTip[0];
   const double exponent = k[0];
   
   int a_and_b, a_and_B, A_and_b, A_and_B,
@@ -164,7 +165,6 @@ List cpp_jaccard_distance (NumericMatrix x, NumericMatrix y,
   
   int** score = new int*[max_splits];
   for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
-  const int n_tips = nTip[0];
   
   for (int ai = 0; ai < a.n_splits; ai++) {
     for (int bi = 0; bi < b.n_splits; bi++) {
