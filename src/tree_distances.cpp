@@ -537,10 +537,7 @@ List cpp_mutual_phylo (NumericMatrix x, NumericMatrix y,
   }
   SplitList a(x), b(y);
   const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-    last_bin = a.n_bins - 1,
-    n_tips = nTip[0],
-    unset_tips = (n_tips % 32) ? 32 - n_tips % 32 : 32;
-  const uint32_t unset_mask = ~0U >> unset_tips;
+    n_tips = nTip[0];
   const double lg2_unrooted_n = lg2_unrooted(n_tips),
     max_score = lg2_unrooted_n - one_overlap((n_tips + 1) / 2, n_tips / 2, n_tips);
   int in_a[a.n_splits], in_b[b.n_splits];
