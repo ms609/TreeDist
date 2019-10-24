@@ -13,3 +13,7 @@ cpp_jaccard_distance <- function(x, y, nTip, k, arboreal) {
     .Call(`_TreeDist_cpp_jaccard_distance`, x, y, nTip, k, arboreal)
 }
 
+cpp_mmsi_distance <- function(x, y, nTip) {
+    .Call(`_TreeDist_cpp_mmsi_distance`, x, y, nTip)
+}
+
