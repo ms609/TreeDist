@@ -112,7 +112,7 @@ RobinsonFoulds <- function (tree1, tree2, similarity = FALSE, normalize = FALSE,
 #' @inheritParams MutualPhylogeneticInfoSplits
 #' @export
 RobinsonFouldsSplits <- function (splits1, splits2,
-                                  nTip = attr(splits1, 'nTip'),
+                                  nTip = Ntip(splits1),
                                   reportMatching = FALSE) {
   CGRF(splits1, splits2, nTip, cpp_robinson_foulds_distance,
        maximize = FALSE, reportMatching = reportMatching)

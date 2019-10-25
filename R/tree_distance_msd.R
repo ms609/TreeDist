@@ -35,7 +35,7 @@ MatchingSplitDistance <- function (tree1, tree2, normalize = FALSE,
 #' @useDynLib TreeDist, .registration = TRUE
 #' @export
 MatchingSplitDistanceSplits <- function (splits1, splits2, 
-                                         nTip = attr(splits1, 'nTip'),
+                                         nTip = Ntip(splits1),
                                          normalize = TRUE, 
                                          reportMatching = FALSE) {
   CGRF(splits1, splits2, nTip, cpp_matching_split_distance, maximize = FALSE,

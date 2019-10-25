@@ -47,6 +47,7 @@ GeneralizedRF <- function (splits1, splits2, PairScorer,
 #' Note that no checks will be made to confirm that splits1 and splits2 contain
 #' the same tips in the same order.  This is the responsibility of the calling
 #' function.
+#' @param nTip Integer specifying the number of tips in each split.
 #' @references \insertRef{Jonker1987}{TreeDist}
 CGRF <- function (splits1, splits2, nTip, PairScorer, 
                            maximize, reportMatching, ...) {

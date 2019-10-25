@@ -75,7 +75,7 @@ NyeTreeSimilarity <- function (tree1, tree2, similarity = TRUE,
 #' @inheritParams MutualPhylogeneticInfoSplits
 #' @export
 NyeSplitSimilarity <- function (splits1, splits2, 
-                                nTip = attr(splits1, 'nTip'),
+                                nTip = Ntip(splits1),
                                 reportMatching = FALSE) {
   CGRF(splits1, splits2, nTip, cpp_jaccard_distance, k = 1L, arboreal = FALSE,
        maximize = FALSE, reportMatching = reportMatching)
@@ -162,7 +162,7 @@ JaccardRobinsonFoulds <- function (tree1, tree2, k = 1L, arboreal = TRUE,
 #' @inheritParams MutualPhylogeneticInfoSplits
 #' @export
 JaccardSplitSimilarity <- function (splits1, splits2,
-                                    nTip = attr(splits1, 'nTip'),
+                                    nTip = Ntip(splits1),
                                     k = 1L, arboreal = TRUE,
                                     reportMatching = FALSE) {
   CGRF(splits1, splits2, nTip, cpp_jaccard_distance, k = k, arboreal = arboreal,
