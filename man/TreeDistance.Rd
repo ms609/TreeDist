@@ -30,9 +30,11 @@ ExpectedVariation(tree1, tree2, samples = 1000)
 MutualClusteringInfo(tree1, tree2, normalize = FALSE,
   reportMatching = FALSE)
 
-MutualPhylogeneticInfoSplits(splits1, splits2, reportMatching = FALSE)
+MutualPhylogeneticInfoSplits(splits1, splits2, nTip = Ntip(splits1),
+  reportMatching = FALSE)
 
-MutualClusteringInfoSplits(splits1, splits2, reportMatching = FALSE)
+MutualClusteringInfoSplits(splits1, splits2, nTip = Ntip(splits1),
+  reportMatching = FALSE)
 
 MutualMatchingSplitInfo(tree1, tree2, normalize = FALSE,
   reportMatching = FALSE)
@@ -40,7 +42,8 @@ MutualMatchingSplitInfo(tree1, tree2, normalize = FALSE,
 VariationOfMatchingSplitInfo(tree1, tree2, normalize = FALSE,
   reportMatching = FALSE)
 
-MutualMatchingSplitInfoSplits(splits1, splits2, reportMatching = FALSE)
+MutualMatchingSplitInfoSplits(splits1, splits2, nTip = Ntip(splits1),
+  reportMatching = FALSE)
 }
 \arguments{
 \item{tree1, tree2}{Trees of class \code{phylo}, with tips labelled identically,
@@ -64,6 +67,8 @@ either listed in the same order or bearing identical names (in any sequence),
 and each column corresponds to a bipartition split, such that
 each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
 (\code{FALSE}) of the respective bipartition split.}
+
+\item{nTip}{Integer specifying the number of tips in each split.}
 }
 \value{
 If \code{reportMatching = FALSE}, the functions return a numeric

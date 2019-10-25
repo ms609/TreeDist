@@ -8,7 +8,8 @@
 NyeTreeSimilarity(tree1, tree2, similarity = TRUE, normalize = FALSE,
   normalizeMax = TRUE, reportMatching = FALSE)
 
-NyeSplitSimilarity(splits1, splits2, reportMatching = FALSE)
+NyeSplitSimilarity(splits1, splits2, nTip = Ntip(splits1),
+  reportMatching = FALSE)
 }
 \arguments{
 \item{tree1}{Trees of class \code{phylo}, with tips labelled identically,
@@ -48,6 +49,8 @@ either listed in the same order or bearing identical names (in any sequence),
 and each column corresponds to a bipartition split, such that
 each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
 (\code{FALSE}) of the respective bipartition split.}
+
+\item{nTip}{Integer specifying the number of tips in each split.}
 }
 \description{
 Implements the tree comparison metric of Nye \emph{et al}. (2006).

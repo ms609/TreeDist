@@ -8,8 +8,8 @@
 JaccardRobinsonFoulds(tree1, tree2, k = 1L, arboreal = TRUE,
   similarity = FALSE, normalize = FALSE, reportMatching = FALSE)
 
-JaccardSplitSimilarity(splits1, splits2, k = 1L, arboreal = TRUE,
-  reportMatching = FALSE)
+JaccardSplitSimilarity(splits1, splits2, nTip = Ntip(splits1), k = 1L,
+  arboreal = TRUE, reportMatching = FALSE)
 }
 \arguments{
 \item{tree1}{Trees of class \code{phylo}, with tips labelled identically,
@@ -51,6 +51,8 @@ either listed in the same order or bearing identical names (in any sequence),
 and each column corresponds to a bipartition split, such that
 each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
 (\code{FALSE}) of the respective bipartition split.}
+
+\item{nTip}{Integer specifying the number of tips in each split.}
 }
 \description{
 Implements the Jaccard-Robinson-Foulds metric of Böcker \emph{et al}. (2013).
