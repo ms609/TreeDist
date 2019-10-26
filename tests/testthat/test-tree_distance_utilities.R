@@ -1,4 +1,6 @@
+library('TreeTools')
 context('tree_distance_utilities.R')
+
 test_that('Tree normalization works', {
   expect_equal(0.5, NormalizeInfo(5, 3, 5, how=TRUE, 
                                   InfoInTree=function(x, y) x + y, y = 1L))
@@ -28,7 +30,7 @@ test_that('Matches are reported', {
                           A, A, A, A, A, B, A, B), nrow=4, byrow=TRUE),
                        tipLabels = letters[1:8])
   
-  expect_equal("a b : c d e f g h => c d e f g h : a b",
+  expect_equal("a b | c d e f g h => a b c | d e f g h",
                ReportMatching(splitsA, splitsB[[2]]))
   
   Test <- function (Func, relaxed = FALSE) {
