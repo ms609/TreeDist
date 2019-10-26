@@ -1,3 +1,7 @@
+.onUnload <- function (libpath) {
+  library.dynam.unload("TreeDist", libpath)
+}
+
 ## Reminders when releasing for CRAN
 release_questions <- function() {
   c(
