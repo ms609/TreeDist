@@ -1,6 +1,6 @@
 library('vdiffr')
-library('TreeTools')
 # use manage_cases() to manage
+library('TreeTools')
 context("plot.R")
 
 test_that('TreeDistPlot works', {
@@ -36,12 +36,13 @@ test_that('VisualizeMatching works', {
                       setPar = TRUE, precision=3, matchZeros = FALSE,
                       Plot = plot.phylo)
   }
+  expect_doppelganger('Test VM', TestVM)
+  
   TestVMr <- function () {
     VisualizeMatching(MutualClusteringInfo, tree1, tree2r,
                       setPar = TRUE, precision=3, matchZeros = TRUE, 
                       Plot = plot.phylo, cex=1.5)
   }
-  expect_doppelganger('Test VM', TestVM)
   skip_on_travis() # Skips all following tests in this block
   expect_doppelganger('Test VMr', TestVMr) # Unclear why this test fails on Travis. 
   
