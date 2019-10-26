@@ -8,8 +8,8 @@
 JaccardRobinsonFoulds(tree1, tree2, k = 1L, arboreal = TRUE,
   similarity = FALSE, normalize = FALSE, reportMatching = FALSE)
 
-JaccardSplitSimilarity(splits1, splits2, nTip = Ntip(splits1), k = 1L,
-  arboreal = TRUE, reportMatching = FALSE)
+JaccardSplitSimilarity(splits1, splits2, nTip = attr(splits1, "nTip"),
+  k = 1L, arboreal = TRUE, reportMatching = FALSE)
 }
 \arguments{
 \item{tree1}{Trees of class \code{phylo}, with tips labelled identically,

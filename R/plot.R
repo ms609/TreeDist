@@ -96,16 +96,16 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
                               edge.width = NULL, edge.color = NULL,
                               ...) {
   
-  splits1 <- Tree2Splits(tree1)
+  splits1 <- as.logical(as.Splits(tree1))
   edge1 <- tree1$edge
   child1 <- edge1[, 2]
-  partitionEdges1 <- vapply(colnames(splits1), 
+  partitionEdges1 <- vapply(nTip(splits2) + 1L + seq_len(splits2), 
                             function (node) which(child1 == node), integer(1))
   
-  splits2 <- Tree2Splits(tree2)
+  splits2 <- as.logical(as.Splits(tree2))
   edge2 <- tree2$edge
   child2 <- edge2[, 2]
-  partitionEdges2 <- vapply(colnames(splits2), 
+  partitionEdges2 <- vapply(nTip(splits2) + 1L + seq_len(splits2), 
                             function (node) which(child2 == node), integer(1))
   
   matching <- Func(tree1, tree2, reportMatching = TRUE)

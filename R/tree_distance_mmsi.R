@@ -34,7 +34,7 @@ VariationOfMatchingSplitInfo <- function (tree1, tree2, normalize = FALSE,
 #' @importFrom TreeTools LnUnrooted.int LogTreesMatchingSplit
 #' @export
 MutualMatchingSplitInfoSplits <- function (splits1, splits2,
-                                           nTip = Ntip(splits1),
+                                           nTip = attr(splits1, 'nTip'),
                                            reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, 
                 function(splits1, splits2, nSplits1, nSplits2) {

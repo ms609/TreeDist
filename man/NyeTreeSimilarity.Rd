@@ -8,7 +8,7 @@
 NyeTreeSimilarity(tree1, tree2, similarity = TRUE, normalize = FALSE,
   normalizeMax = TRUE, reportMatching = FALSE)
 
-NyeSplitSimilarity(splits1, splits2, nTip = Ntip(splits1),
+NyeSplitSimilarity(splits1, splits2, nTip = attr(splits1, "nTip"),
   reportMatching = FALSE)
 }
 \arguments{

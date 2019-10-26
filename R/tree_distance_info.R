@@ -229,7 +229,7 @@ MutualClusteringInfo <- function (tree1, tree2, normalize = FALSE,
 #' @param nTip Integer specifying the number of tips in each split.
 #' @export
 MutualPhylogeneticInfoSplits <- function (splits1, splits2,
-                                          nTip = Ntip(splits1),
+                                          nTip = attr(splits1, 'nTip'),
                                           reportMatching = FALSE) {
   CGRF(splits1, splits2, nTip, cpp_mutual_phylo,
        maximize = TRUE, reportMatching = reportMatching)
@@ -238,7 +238,7 @@ MutualPhylogeneticInfoSplits <- function (splits1, splits2,
 #' @describeIn TreeDistance Calculate clustering information from splits instead of trees
 #' @export
 MutualClusteringInfoSplits <- function (splits1, splits2,
-                                        nTip = Ntip(splits1),
+                                        nTip = attr(splits1, 'nTip'),
                                         reportMatching = FALSE) {
   CGRF(splits1, splits2, nTip, cpp_mutual_clustering,
        maximize = TRUE, reportMatching = reportMatching)

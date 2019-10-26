@@ -30,11 +30,11 @@ ExpectedVariation(tree1, tree2, samples = 1000)
 MutualClusteringInfo(tree1, tree2, normalize = FALSE,
   reportMatching = FALSE)
 
-MutualPhylogeneticInfoSplits(splits1, splits2, nTip = Ntip(splits1),
-  reportMatching = FALSE)
+MutualPhylogeneticInfoSplits(splits1, splits2, nTip = attr(splits1,
+  "nTip"), reportMatching = FALSE)
 
-MutualClusteringInfoSplits(splits1, splits2, nTip = Ntip(splits1),
-  reportMatching = FALSE)
+MutualClusteringInfoSplits(splits1, splits2, nTip = attr(splits1,
+  "nTip"), reportMatching = FALSE)
 
 MutualMatchingSplitInfo(tree1, tree2, normalize = FALSE,
   reportMatching = FALSE)
@@ -42,8 +42,8 @@ MutualMatchingSplitInfo(tree1, tree2, normalize = FALSE,
 VariationOfMatchingSplitInfo(tree1, tree2, normalize = FALSE,
   reportMatching = FALSE)
 
-MutualMatchingSplitInfoSplits(splits1, splits2, nTip = Ntip(splits1),
-  reportMatching = FALSE)
+MutualMatchingSplitInfoSplits(splits1, splits2, nTip = attr(splits1,
+  "nTip"), reportMatching = FALSE)
 }
 \arguments{
 \item{tree1, tree2}{Trees of class \code{phylo}, with tips labelled identically,

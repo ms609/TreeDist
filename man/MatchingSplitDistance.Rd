@@ -8,8 +8,8 @@
 MatchingSplitDistance(tree1, tree2, normalize = FALSE,
   reportMatching = FALSE)
 
-MatchingSplitDistanceSplits(splits1, splits2, nTip = Ntip(splits1),
-  normalize = TRUE, reportMatching = FALSE)
+MatchingSplitDistanceSplits(splits1, splits2, nTip = attr(splits1,
+  "nTip"), normalize = TRUE, reportMatching = FALSE)
 }
 \arguments{
 \item{tree1}{Trees of class \code{phylo}, with tips labelled identically,
