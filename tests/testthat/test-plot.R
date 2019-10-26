@@ -1,9 +1,10 @@
 library('vdiffr')
+library('TreeTools')
 # use manage_cases() to manage
 context("plot.R")
 
 test_that('TreeDistPlot works', {
-  tr <- ape::read.tree(text='(1, (2, (3, (4, (5, (6, (7, (8, (9, (10, 11))))))))));')
+  tr <- PectinateTree(1:11)
   Test1 <- function () {
     TreeDist::TreeDistPlot(tr, title='Test', 
                          bold=c(2, 4, 6),
@@ -25,9 +26,11 @@ test_that('TreeDistPlot works', {
 })
 
 test_that('VisualizeMatching works', {
-  tree1 <- ape::read.tree(text='(1, (2, (3, (4, (5, (6, (7, (8, (9, (10, 11))))))))));')
-  tree2 <- ape::read.tree(text='(11, (2, (3, (4, (5, (6, (7, (8, (9, (10, 1))))))))));')
-  tree2r <- ape::read.tree(text='(11, (2, (3, (4, (5, (6, (7, (8, 9, 10, 1))))))));')
+  tree1 <- PectinateTree(1:11)
+  tree2 <- tree1
+  tree2$tip.label[c(11, 1)] <- tree1$tip.label[c(1, 11)]
+  tree2r <- CollapseNode(tree2, 20:21)
+  
   TestVM <- function () {
     VisualizeMatching(MutualClusteringInfo, tree1, tree2, 
                       setPar = TRUE, precision=3, matchZeros = FALSE,

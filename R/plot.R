@@ -88,7 +88,7 @@ TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = FALSE,
 #' @importFrom ape nodelabels edgelabels plot.phylo
 #' @importFrom colorspace qualitative_hcl sequential_hcl
 #' @importFrom graphics par
-#' @importFrom TreeTools as.Splits
+#' @importFrom TreeTools as.Splits Ntip.Splits
 #' @export
 VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
                               precision = 3L, Plot = plot.phylo,
@@ -99,13 +99,13 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   splits1 <- as.logical(as.Splits(tree1))
   edge1 <- tree1$edge
   child1 <- edge1[, 2]
-  partitionEdges1 <- vapply(nTip(splits2) + 1L + seq_len(splits2), 
+  partitionEdges1 <- vapply(Ntip(splits2) + 1L + seq_len(splits2), 
                             function (node) which(child1 == node), integer(1))
   
   splits2 <- as.logical(as.Splits(tree2))
   edge2 <- tree2$edge
   child2 <- edge2[, 2]
-  partitionEdges2 <- vapply(nTip(splits2) + 1L + seq_len(splits2), 
+  partitionEdges2 <- vapply(Ntip(splits2) + 1L + seq_len(splits2), 
                             function (node) which(child2 == node), integer(1))
   
   matching <- Func(tree1, tree2, reportMatching = TRUE)
