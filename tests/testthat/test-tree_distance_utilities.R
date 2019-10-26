@@ -34,14 +34,16 @@ test_that('Matches are reported', {
                ReportMatching(splitsA, splitsB[[2]]))
   
   Test <- function (Func, relaxed = FALSE) {
-    at <- attributes(Func(treeSym8, treeBal8, reportMatching = TRUE))
+    
+    at <- attributes(Func(PectinateTree(letters[1:8]),
+                          BalancedTree(letters[8:1]), reportMatching = TRUE))
     expect_equal(3L, length(at))
     if (relaxed) {
-      expect_equal(c(1L, 3L, 4L), as.integer(at$matching[c(1, 3, 5)]))
+      expect_equal(c(5L, 3L, 1L), as.integer(at$matching[c(1, 3, 5)]))
     } else {
-      expect_equal(c(1L, 5L, 3L, 2L, 4L), as.integer(at$matching))
+      expect_equal(c(5L, 2L, 3L, 4L, 1L), as.integer(at$matching))
     }
-    expect_equal('a b | e f g h c d => a b |: e f g h c d', at$matchedSplits[5])
+    expect_equal('g h | a b c d e f => g h | a b c d e f', at$matchedSplits[5])
     
     at <- attributes(Func(treeSym8, treeTwoSplits, reportMatching = TRUE))
     expect_equal(3L, length(at))
