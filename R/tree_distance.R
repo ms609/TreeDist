@@ -51,8 +51,8 @@ GeneralizedRF <- function (splits1, splits2, PairScorer,
 #' @references \insertRef{Jonker1987}{TreeDist}
 CGRF <- function (splits1, splits2, nTip, PairScorer, 
                            maximize, reportMatching, ...) {
-  nSplits1 <- length(splits1)
-  nSplits2 <- length(splits2)
+  nSplits1 <- dim(splits1)[1]
+  nSplits2 <- dim(splits2)[1]
   if (nSplits1 == 0 || nSplits2 == 0) return (0L)
   
   solution <- PairScorer(splits1, splits2, nTip, ...)
