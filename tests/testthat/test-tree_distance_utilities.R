@@ -33,6 +33,17 @@ test_that('Matches are reported', {
   expect_equal("a b | c d e f g h => a b c | d e f g h",
                ReportMatching(splitsA, splitsB[[2]]))
   
+  expect_equal(c(5, 2, 3, 1, 4), attr(CGRF(as.Splits(treeSym8),
+                                           as.Splits(treeBal8), 8L, 
+                                           cpp_mutual_phylo,
+                                           maximize = TRUE, 
+                                           reportMatching = TRUE), 'matching'))
+    
+  expect_equal(c(5, 2, 3, 1, 4), attr(
+    MutualPhylogeneticInfoSplits(as.Splits(treeSym8), as.Splits(treeBal8),
+                               reportMatching = TRUE),
+    'matching'))
+  
   Test <- function (Func, relaxed = FALSE) {
     
     at <- attributes(Func(PectinateTree(letters[1:8]),
@@ -47,8 +58,8 @@ test_that('Matches are reported', {
     
     at <- attributes(Func(treeSym8, treeTwoSplits, reportMatching = TRUE))
     expect_equal(3L, length(at))
-    expect_equal(c(1L, NA, NA, NA, 2L), as.integer(at$matching))
-    expect_equal('a b | e f g h c d => e f g h c d | a b', at$matchedSplits[2])
+    expect_equal(c(NA, NA, 2L, NA, 1L), as.integer(at$matching))
+    expect_equal('a b | e f g h c d => a b | e f g h c d', at$matchedSplits[2])
   }
   
   Test(MutualPhylogeneticInfo)
