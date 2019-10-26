@@ -59,7 +59,7 @@ CGRF <- function (splits1, splits2, nTip, PairScorer,
   ret <- solution$score
   
   if (reportMatching) {
-    matching <- solution$matching + 1L
+    matching <- solution$matching
     matching[matching > nSplits2] <- NA
     if (nSplits1 < nSplits2) {
       matching <- matching[seq_len(ncol(splits1))]
@@ -69,16 +69,19 @@ CGRF <- function (splits1, splits2, nTip, PairScorer,
     # We're not worried about performance any more
     pairScores <- vapply(seq_len(nSplits2), function (i) {
       vapply(seq_len(nSplits1), function (j) {
-        PairScorer(splits1[j, , drop = FALSE], splits2[i, , drop = FALSE], ...)$score
+        PairScorer(splits1[j, , drop = FALSE], splits2[i, , drop = FALSE],
+                   nTip = nTip, ...)$score
       }, double(1))
       }, double(nSplits1))
     attr(ret, 'pairScores') <- pairScores
     
     if (!is.null(attr(splits1, 'tip.label'))) {
+      matched1 <- !is.na(matching)
+      matched2 <- matching[matched1]
+      matched1 <- which(matched1)
       attr(ret, 'matchedSplits') <- 
-        ReportMatching(splits1[, !is.na(matching), drop = FALSE], 
-                       splits2[, matching[!is.na(matching)], drop = FALSE],
-                       attr(splits1, 'tip.label'),
+        ReportMatching(splits1[[matched1]],
+                       splits2[[matched2]],
                        realMatch = if (maximize) {
                          pairScores[matrix(c(matched1, matched2), ncol=2L)] > 0
                        } else TRUE)
@@ -166,9 +169,7 @@ TreeDistanceReturn <- function (pairScores, maximize = FALSE,
     
     if (!is.null(leafNames)) {
       attr(ret, 'matchedSplits') <- 
-        ReportMatching(splits1[, matched1, drop = FALSE], 
-                       splits2[, matched2, drop = FALSE],
-                       leafNames,
+        ReportMatching(splits1[[matched1]], splits2[[matched2]],
                        realMatch = if (maximize) {
                          pairScores[matrix(c(matched1, matched2), ncol=2L)] > 0
                        } else TRUE)
