@@ -84,7 +84,7 @@ List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y,
       }
       if (all_match || all_mismatch) {
         ++score;
-        matching[ai] = bi;
+        matching[ai] = bi + 1;
         break; /* Only one match possible per split */
       }
     }
