@@ -5,6 +5,10 @@ cpp_robinson_foulds_distance <- function(x, y, nTip) {
     .Call(`_TreeDist_cpp_robinson_foulds_distance`, x, y, nTip)
 }
 
+cpp_robinson_foulds_info <- function(x, y, nTip) {
+    .Call(`_TreeDist_cpp_robinson_foulds_info`, x, y, nTip)
+}
+
 cpp_matching_split_distance <- function(x, y, nTip) {
     .Call(`_TreeDist_cpp_matching_split_distance`, x, y, nTip)
 }

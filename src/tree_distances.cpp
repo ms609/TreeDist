@@ -40,6 +40,12 @@ __attribute__((constructor))
     }
   }
 
+double lg2_trees_matching_split (int a, int b) {
+  if (a == 0) return lg2_unrooted[b];
+  if (b == 0) return lg2_unrooted[a];
+  return lg2_rooted[a] + lg2_rooted[b];
+}
+
 // [[Rcpp::export]]
 List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y, 
                                   NumericVector nTip) {
@@ -94,6 +100,68 @@ List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y,
   NumericVector final_score = NumericVector::create(score);
   
   List ret = List::create(Named("score") = final_score,
+                          _["matching"] = matching);
+  
+  return (ret);
+}
+
+// [[Rcpp::export]]
+List cpp_robinson_foulds_info (NumericMatrix x, NumericMatrix y, 
+                                  NumericVector nTip) {
+  if (x.cols() != y.cols()) {
+    throw std::invalid_argument("Input splits must address same number of tips.");
+  }
+  SplitList a(x), b(y);
+  const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
+            last_bin = a.n_bins - 1,
+            n_tips = nTip[0],
+            unset_tips = (n_tips % 32) ? 32 - n_tips % 32 : 32;
+  const uint32_t unset_mask = ~0U >> unset_tips;
+  const double lg2_unrooted_n = lg2_unrooted[n_tips];
+  
+  NumericVector matching (max_splits), score (1);
+  for (int i = 0; i < max_splits; i++) matching[i] = NA_REAL;
+  
+  uint32_t b_complement[b.n_splits][b.n_bins];
+  for (int i = 0; i < b.n_splits; i++) {
+    for (int bin = 0; bin < last_bin; bin++) {
+        b_complement[i][bin] = ~b.state[i][bin];
+    }
+    b_complement[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
+  }
+  
+  for (int ai = 0; ai < a.n_splits; ai++) {
+    for (int bi = 0; bi < b.n_splits; bi++) {
+      bool all_match = true, all_mismatch = true;
+      for (int bin = 0; bin < a.n_bins; bin++) {
+        if ((a.state[ai][bin] != b.state[bi][bin])) {
+          all_match = false;
+          break;
+        }
+      }
+      if (!all_match) {
+        for (int bin = 0; bin < a.n_bins; bin++) {
+          if ((a.state[ai][bin] != b_complement[bi][bin])) {
+            all_mismatch = false;
+            break;
+          }
+        }
+      }
+      if (all_match || all_mismatch) {
+        int leaves_in_split = 0;
+        for (int bin = 0; bin < a.n_bins; bin++) {
+          leaves_in_split += count_bits_32(a.state[ai][bin]);
+        }
+        score += lg2_unrooted_n - 
+          lg2_trees_matching_split(leaves_in_split, 
+                                   n_tips - leaves_in_split);
+        matching[ai] = bi + 1;
+        break; /* Only one match possible per split */
+      }
+    }
+  }
+  
+  List ret = List::create(Named("score") = score,
                           _["matching"] = matching);
   
   return (ret);
@@ -273,12 +341,6 @@ List cpp_jaccard_distance (NumericMatrix x, NumericMatrix y,
                           _["matching"] = final_matching);
   
   return (ret);
-}
-
-double lg2_trees_matching_split (int a, int b) {
-  if (a == 0) return lg2_unrooted[b];
-  if (b == 0) return lg2_unrooted[a];
-  return lg2_rooted[a] + lg2_rooted[b];
 }
 
 // [[Rcpp::export]]
