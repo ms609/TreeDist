@@ -118,8 +118,9 @@ List cpp_robinson_foulds_info (NumericMatrix x, NumericMatrix y,
             unset_tips = (n_tips % 32) ? 32 - n_tips % 32 : 32;
   const uint32_t unset_mask = ~0U >> unset_tips;
   const double lg2_unrooted_n = lg2_unrooted[n_tips];
+  double score = 0;
   
-  NumericVector matching (max_splits), score (1);
+  NumericVector matching (max_splits);
   for (int i = 0; i < max_splits; i++) matching[i] = NA_REAL;
   
   uint32_t b_complement[b.n_splits][b.n_bins];
@@ -161,7 +162,8 @@ List cpp_robinson_foulds_info (NumericMatrix x, NumericMatrix y,
     }
   }
   
-  List ret = List::create(Named("score") = score,
+  NumericVector final_score = NumericVector::create(score);
+  List ret = List::create(Named("score") = final_score,
                           _["matching"] = matching);
   
   return (ret);

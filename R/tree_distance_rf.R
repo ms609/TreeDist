@@ -54,30 +54,12 @@ RobinsonFouldsInfo <- function (tree1, tree2, similarity = FALSE,
 #' @inheritParams MutualPhylogeneticInfoSplits
 #' @importFrom TreeTools LogTreesMatchingSplit LnUnrooted.int
 #' @export
-RobinsonFouldsInfoSplits <- function (splits1, splits2, reportMatching = FALSE) {
-  GeneralizedRF(splits1, splits2,
-                function(splits1, splits2, nSplits1, nSplits2) {
-    nTip <- dim(splits1)[1]
-    lnUnrooted <- LnUnrooted.int(nTip)
-    
-    ret <- matrix(0, nSplits1, nSplits2)
-    for (i in seq_len(nSplits1)) {
-      A1 <- splits1[, i]
-      for (j in seq_len(nSplits2)) {
-        A2 <- splits2[, j]
-      
-        if (all(A1 == A2) || all(A1 != A2)) {
-          nInSplit <- sum(A1)
-          ret[i, j] <- LogTreesMatchingSplit(nInSplit, nTip - nInSplit)
-        } else {
-          ret[i, j] <- lnUnrooted
-        }
-      }
-    }
-    
-    # Return:
-    -(ret - lnUnrooted) / log(2)
-  }, maximize = TRUE, reportMatching)
+RobinsonFouldsInfoSplits <- function (splits1, splits2, 
+                                      nTip = attr(splits1, 'nTip'),
+                                      reportMatching = FALSE) {
+  
+  CGRF(splits1, splits2, nTip, cpp_robinson_foulds_info,
+       maximize = FALSE, reportMatching = reportMatching)
 }
 
 #' @describeIn RobinsonFouldsInfo An inefficient implementation of the 
