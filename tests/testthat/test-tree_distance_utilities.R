@@ -21,18 +21,15 @@ test_that('Matches are reported', {
   
   A <- TRUE
   B <- FALSE
-  splitsA <- matrix(c(A, A, B, B, B, B, B, B), ncol=1, 
-                    dimnames = list(letters[1:8], NULL))
-  splitsB <- matrix(rev(c(A, A, A, A, A, A, B, B, 
+  splitsA <- as.Splits(c(A, A, B, B, B, B, B, B), tipLabels = letters[1:8])
+  splitsB <- as.Splits(matrix(c(A, A, A, A, A, A, B, B, 
                           A, A, A, B, B, B, B, B,
                           B, B, A, A, A, A, A, A,
-                          A, A, A, A, A, B, A, B)), ncol=4,
-                    dimnames = list(letters[8:1], NULL))
+                          A, A, A, A, A, B, A, B), nrow=4, byrow=TRUE),
+                       tipLabels = letters[1:8])
   
   expect_equal("a b : c d e f g h => c d e f g h : a b",
-               ReportMatching(splitsA, 
-                              splitsB[rownames(splitsA), 2, drop=FALSE],
-                              taxonNames = letters[1:8]))
+               ReportMatching(splitsA, splitsB[[2]]))
   
   Test <- function (Func, relaxed = FALSE) {
     at <- attributes(Func(treeSym8, treeBal8, reportMatching = TRUE))
