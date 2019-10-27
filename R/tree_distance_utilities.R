@@ -35,6 +35,7 @@ CalculateTreeDistance <- function (Func, tree1, tree2, reportMatching, ...) {
     if (class(tree2) == 'phylo') {
       splits1 <- as.Splits(tree2, asSplits = FALSE)
       labels1 <- tree2$tip.label
+      nTip <- length(labels1)
       vapply(tree1,
              function (tr2) Func(splits1,
                                  as.Splits(tr2, tipLabels = labels1,
@@ -42,8 +43,10 @@ CalculateTreeDistance <- function (Func, tree1, tree2, reportMatching, ...) {
                                  nTip = nTip, ...),
              double(1))
     } else {
+      labels1 <- tree1[[1]]$tip.label
+      nTip <- length(labels1)
       splits1 <- as.Splits(tree1, asSplits = FALSE)
-      splits2 <- as.Splits(tree2, tipLabels = tree1[[1]]$tip.label,
+      splits2 <- as.Splits(tree2, tipLabels = labels1,
                            asSplits = FALSE)
       matrix(mapply(Func, rep(splits2, each=length(splits1)), splits1,
                     nTip = nTip, ...), 
