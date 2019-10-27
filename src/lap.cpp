@@ -23,6 +23,7 @@
  *************************************************************************/
 #include "gnrl.h"
 #include "lap.h"
+#include "tree_distances.h"
 #include <stdio.h>
 #include <iostream>
 using namespace std;

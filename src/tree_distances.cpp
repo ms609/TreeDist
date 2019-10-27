@@ -2,6 +2,7 @@
 using namespace Rcpp;
 #include <stdint.h>
 #include <math.h> /* for pow(), log() */
+#include "tree_distances.h"
 #include "SplitList.h"
 #include "lap.h"
 
@@ -17,24 +18,24 @@ __attribute__((constructor))
     }
   }
 
-int count_bits_32 (uint32_t x) {
+int count_bits_32 (splitbit  x) {
   return bitcounts[x & right16bits] + bitcounts[x >> 16];
 }
 
-double lg2_double_factorial[6398]; /* Only offer support for up to 3200 tips */
-double lg2_rooted[3201];
-double lg2_unrooted[3201];
+double lg2_double_factorial[MAX_TIPS + MAX_TIPS - 2];
+double lg2_rooted[MAX_TIPS + 1];
+double lg2_unrooted[MAX_TIPS + 1];
 __attribute__((constructor))
   void initialize_ldf() {
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i != 3; i++) {
       lg2_double_factorial[i] = 0;
       lg2_rooted[i] = 0;
       lg2_unrooted[i] = 0;
     }
-    for (int i = 2; i < 6398; i++) {
+    for (int i = 2; i != MAX_TIPS + MAX_TIPS - 2; i++) {
       lg2_double_factorial[i] = lg2_double_factorial[i - 2] + log2(i);
     }
-    for (int i = 3; i < 3201; i++) {
+    for (int i = 3; i != MAX_TIPS + 1; i++) {
       lg2_unrooted[i] = lg2_double_factorial[i + i - 5];
       lg2_rooted[i] = lg2_double_factorial[i + i - 3];
     }
@@ -56,10 +57,10 @@ List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y,
   const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
             last_bin = a.n_bins - 1,
             n_tips = nTip[0],
-            unset_tips = (n_tips % 32) ? 32 - n_tips % 32 : 32;
+            unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : BIN_SIZE;
   const uint32_t unset_mask = ~0U >> unset_tips;
   
-  int score = 0;
+  score_t score = 0;
   NumericVector matching (max_splits);
   for (int i = 0; i < max_splits; i++) matching[i] = NA_REAL;
   
@@ -115,7 +116,7 @@ List cpp_robinson_foulds_info (NumericMatrix x, NumericMatrix y,
   const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
             last_bin = a.n_bins - 1,
             n_tips = nTip[0],
-            unset_tips = (n_tips % 32) ? 32 - n_tips % 32 : 32;
+            unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : BIN_SIZE;
   const uint32_t unset_mask = ~0U >> unset_tips;
   const double lg2_unrooted_n = lg2_unrooted[n_tips];
   double score = 0;
@@ -182,7 +183,7 @@ List cpp_matching_split_distance (NumericMatrix x, NumericMatrix y,
             n_tips = nTip[0],
             half_tips = n_tips / 2;
   
-  int** score = new int*[max_splits];
+  score_t** score = new score_t*[max_splits];
   for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
   
   /*Rcout << "Working over " << a.n_splits << " (" << a.n_splits << ", " << x.rows() 
@@ -241,7 +242,7 @@ List cpp_jaccard_distance (NumericMatrix x, NumericMatrix y,
   const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     last_bin = a.n_bins - 1,
     n_tips = nTip[0],
-    unset_tips = (n_tips % 32) ? 32 - n_tips % 32 : 32;
+    unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : BIN_SIZE;
   const uint32_t unset_mask = ~0U >> unset_tips;
   const double exponent = k[0];
   
@@ -259,7 +260,7 @@ List cpp_jaccard_distance (NumericMatrix x, NumericMatrix y,
     min_ars_both, min_ars_either;
   bool enforce_arboreal = arboreal[0];
   
-  int** score = new int*[max_splits];
+  score_t** score = new score_t*[max_splits];
   for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
   
   for (int ai = 0; ai < a.n_splits; ai++) {
@@ -362,7 +363,7 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
         << ((n_tips + 1) / 2) << ", " << (n_tips / 2) << ") = "
         << lg2_trees_matching_split((n_tips + 1) / 2, n_tips / 2) << "\n\n";*/
   
-  int** score = new int*[max_splits];
+  score_t** score = new score_t*[max_splits];
   for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
   
   uint32_t different[a.n_bins];
@@ -457,7 +458,7 @@ List cpp_mutual_clustering (NumericMatrix x, NumericMatrix y,
   const int max_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     last_bin = a.n_bins - 1,
     n_tips = nTip[0],
-    unset_tips = (n_tips % 32) ? 32 - n_tips % 32 : 32;
+    unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : BIN_SIZE;
   const uint32_t unset_mask = ~0U >> unset_tips;
   
   uint32_t b_compl[b.n_splits][b.n_bins];
@@ -474,7 +475,7 @@ List cpp_mutual_clustering (NumericMatrix x, NumericMatrix y,
         << ((n_tips + 1) / 2) << ", " << (n_tips / 2) << ") = "
         << lg2_trees_matching_split((n_tips + 1) / 2, n_tips / 2) << "\n\n";*/
   
-  int** score = new int*[max_splits];
+  score_t** score = new score_t*[max_splits];
   for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
   
   double a_and_b, a_and_B, A_and_b, A_and_B, 
@@ -609,7 +610,7 @@ List cpp_mutual_phylo (NumericMatrix x, NumericMatrix y,
     }
   }
   
-  int** score = new int*[max_splits];
+  score_t** score = new score_t*[max_splits];
   for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
   
   for (int ai = 0; ai < a.n_splits; ai++) {
