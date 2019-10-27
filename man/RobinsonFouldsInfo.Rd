@@ -10,7 +10,8 @@
 RobinsonFouldsInfo(tree1, tree2, similarity = FALSE, normalize = FALSE,
   reportMatching = FALSE)
 
-RobinsonFouldsInfoSplits(splits1, splits2, reportMatching = FALSE)
+RobinsonFouldsInfoSplits(splits1, splits2, nTip = attr(splits1, "nTip"),
+  reportMatching = FALSE)
 
 RobinsonFoulds(tree1, tree2, similarity = FALSE, normalize = FALSE,
   reportMatching = FALSE)

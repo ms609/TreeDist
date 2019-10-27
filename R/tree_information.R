@@ -10,24 +10,25 @@
 #' @author Martin R. Smith
 #' @keywords internal
 #' @export
-PartitionInfo <- function(tree) {
-  if (class(tree) == 'phylo') {
-    PartitionInfoSplits(as.Splits(tree))
-  } else {
-    vapply(as.Splits(tree), PartitionInfoSplits, double(1L))
-  }
+PartitionInfo <- function (x) UseMethod('PartitionInfo')
+
+#' @export
+PartitionInfo.phylo <- function (x) PartitionInfo.Splits(as.Splits(x))
+  
+#' @export
+PartitionInfo.list <- PartitionInfo.multiPhylo <- function (x) {
+  vapply(as.Splits(x), PartitionInfo, double(1L))
 }
 
-#' @describeIn PartitionInfo Calculate partition information from splits instead of trees.
-#' @importFrom TreeTools LnRooted.int LnUnrooted.int
+#' @importFrom TreeTools LnRooted.int LnUnrooted.int TipsInSplits
 #' @export
-PartitionInfoSplits <- function(splits) {
-  nTerminals <- nrow(splits)
-  inSplit <- colSums(splits)
+PartitionInfo.Splits <- function(x) {
+  nTip <- attr(x, 'nTip')
+  inSplit <- TipsInSplits(x)
   
   sum(vapply(inSplit, LnRooted.int, 0) + 
-        + vapply(nTerminals - inSplit,  LnRooted.int, 0)
-      - LnUnrooted.int(nTerminals)
+        + vapply(nTip - inSplit,  LnRooted.int, 0)
+      - LnUnrooted.int(nTip)
   ) / -log(2)
 }
 
