@@ -1,3 +1,5 @@
+#include "tree_distances.h" /* for score_t */
+
 /************************************************************************
 *
 *  lap.h
@@ -16,7 +18,7 @@
 
   typedef int lap_row;
   typedef int lap_col;
-  typedef int cost;
+  typedef score_t cost;
 
 /*************** FUNCTIONS  *******************/
 
