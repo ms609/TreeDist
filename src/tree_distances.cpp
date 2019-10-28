@@ -60,7 +60,7 @@ List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y,
             unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : BIN_SIZE;
   const uint32_t unset_mask = ~0U >> unset_tips;
   
-  score_t score = 0;
+  cost score = 0;
   NumericVector matching (max_splits);
   for (int i = 0; i < max_splits; i++) matching[i] = NA_REAL;
   
@@ -183,7 +183,7 @@ List cpp_matching_split_distance (NumericMatrix x, NumericMatrix y,
             n_tips = nTip[0],
             half_tips = n_tips / 2;
   
-  score_t** score = new score_t*[max_splits];
+  cost** score = new cost*[max_splits];
   for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
   
   /*Rcout << "Working over " << a.n_splits << " (" << a.n_splits << ", " << x.rows() 
@@ -260,7 +260,7 @@ List cpp_jaccard_distance (NumericMatrix x, NumericMatrix y,
     min_ars_both, min_ars_either;
   bool enforce_arboreal = arboreal[0];
   
-  score_t** score = new score_t*[max_splits];
+  cost** score = new cost*[max_splits];
   for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
   
   for (int ai = 0; ai < a.n_splits; ai++) {
@@ -363,7 +363,7 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
         << ((n_tips + 1) / 2) << ", " << (n_tips / 2) << ") = "
         << lg2_trees_matching_split((n_tips + 1) / 2, n_tips / 2) << "\n\n";*/
   
-  score_t** score = new score_t*[max_splits];
+  cost** score = new cost*[max_splits];
   for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
   
   uint32_t different[a.n_bins];
@@ -475,7 +475,7 @@ List cpp_mutual_clustering (NumericMatrix x, NumericMatrix y,
         << ((n_tips + 1) / 2) << ", " << (n_tips / 2) << ") = "
         << lg2_trees_matching_split((n_tips + 1) / 2, n_tips / 2) << "\n\n";*/
   
-  score_t** score = new score_t*[max_splits];
+  cost** score = new cost*[max_splits];
   for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
   
   double a_and_b, a_and_B, A_and_b, A_and_B, 
@@ -610,7 +610,7 @@ List cpp_mutual_phylo (NumericMatrix x, NumericMatrix y,
     }
   }
   
-  score_t** score = new score_t*[max_splits];
+  cost** score = new cost*[max_splits];
   for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
   
   for (int ai = 0; ai < a.n_splits; ai++) {

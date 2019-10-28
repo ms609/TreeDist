@@ -1,9 +1,9 @@
 #include <stdint.h>
+#include "lap.h" /* for cost */
 
 /*************** TYPES      *******************/
 
 typedef uint32_t splitbit;
-typedef int score_t;
 
 /*************** CONSTANTS  *******************/
 
