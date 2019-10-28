@@ -51,10 +51,12 @@ test_that('Matches are reported', {
     expect_equal(3L, length(at))
     if (relaxed) {
       expect_equal(c(5L, 3L, 1L), as.integer(at$matching[c(1, 3, 5)]))
+      ghSplit <- at$matchedSplits[3]
     } else {
       expect_equal(c(5L, 2L, 3L, 4L, 1L), as.integer(at$matching))
+      ghSplit <- at$matchedSplits[5]
     }
-    expect_equal('g h | a b c d e f => g h | a b c d e f', at$matchedSplits[3])
+    expect_equal('g h | a b c d e f => g h | a b c d e f', ghSplit)
     
     at <- attributes(Func(treeSym8, treeTwoSplits, reportMatching = TRUE))
     expect_equal(3L, length(at))
