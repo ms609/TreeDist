@@ -101,14 +101,12 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   child1 <- edge1[, 2]
   partitionEdges1 <- vapply(attr(splits1, 'nTip') + 1L + seq_along(splits1),
                             function (node) which(child1 == node), integer(1))
-  splits1 <- as.logical(splits1)
   
   splits2 <- as.Splits(tree2)
   edge2 <- tree2$edge
   child2 <- edge2[, 2]
   partitionEdges2 <- vapply(attr(splits2, 'nTip') + 1L + seq_along(splits2),
                             function (node) which(child2 == node), integer(1))
-  splits2 <- as.logical(splits2)
   
   matching <- Func(tree1, tree2, reportMatching = TRUE)
   pairings <- attr(matching, 'matching')
@@ -164,10 +162,12 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
      
     EdgyPlot <- function (tree, splits, edge, partitionEdges, 
                           normalizedScores, ...) {
-      ore <- OtherRootEdge(colnames(splits), edge)
-      if (all(!is.na(ore)) && length(normalizedScores)) {
-        ns <- c(normalizedScores, normalizedScores[ore['score']])
-        pe <- c(partitionEdges, ore[2])
+      
+      ore <- names(splits)[1]
+      ore <- as.integer(substr(ore, 2L, nchar(ore)))
+      if (length(normalizedScores)) {
+        ns <- c(normalizedScores, normalizedScores[1])
+        pe <- c(partitionEdges, ore)
       } else {
         ns <- normalizedScores
         pe <- partitionEdges
