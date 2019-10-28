@@ -193,15 +193,19 @@ test_that('Mutual Phylogenetic Info is correctly calculated', {
                MutualPhylogeneticInfo(treeAbc.Defgh, treeSym8))
   expect_equal(-log2(225/10395), MutualPhylogeneticInfo(treeSym8, treeAbcd.Efgh))
   expect_equal(-log2(225/10395) - log2(945/10395),
-               MutualPhylogeneticInfo(treeSym8, treeTwoSplits))
+               MutualPhylogeneticInfo(treeSym8, treeTwoSplits),
+               tolerance = 1e-6)
   expect_equal(SplitMutualInformation(8, 4, 3),
-               MutualPhylogeneticInfo(treeTwoSplits, treeAbc.Defgh))
+               MutualPhylogeneticInfo(treeTwoSplits, treeAbc.Defgh),
+               tolerance = 1e-6)
   expect_equal(SplitInformation(4, 4) + SplitInformation (3, 5) - 
                (2 * SplitMutualInformation(8, 4, 3)),
-               SplitVariationOfInformation(8, 4, 3), tolerance=1e-07)
+               SplitVariationOfInformation(8, 4, 3),
+               tolerance=1e-07)
   
   expect_equal(MutualPhylogeneticInfo(treeSym8, list(treeSym8, treeBal8)), 
-               MutualPhylogeneticInfo(list(treeSym8, treeBal8), treeSym8))
+               MutualPhylogeneticInfo(list(treeSym8, treeBal8), treeSym8),
+               tolerance = 1e-6)
   
   # Test tree too large to cache
   set.seed(101)
