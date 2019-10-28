@@ -12,7 +12,7 @@ typedef uint32_t splitbit;
 #define MAX_TIPS BIN_SIZE * MAX_BINS
 #define MAX_PARTITIONS MAX_TIPS - 3
 
-#define BIG (score_t) (2 ^ sizeof(score_t)) / MAX_PARTITIONS /* Use max_tips for power of 2? */
+#define BIG (cost) (pow(2, sizeof(cost))) / MAX_PARTITIONS /* Use max_tips for power of 2? */
 #define BIGL (double) BIG
 
 /*************** FUNCTIONS  *******************/
