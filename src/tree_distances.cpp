@@ -232,9 +232,9 @@ List cpp_matching_split_distance (NumericMatrix x, NumericMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_jaccard_distance (NumericMatrix x, NumericMatrix y,
-                           NumericVector nTip, NumericVector k,
-                           LogicalVector arboreal) {
+List cpp_jaccard_similarity (NumericMatrix x, NumericMatrix y,
+                             NumericVector nTip, NumericVector k,
+                             LogicalVector arboreal) {
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
