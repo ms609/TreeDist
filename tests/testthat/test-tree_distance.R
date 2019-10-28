@@ -56,18 +56,19 @@ test_that('Bad labels cause error', {
 
 test_that('Size mismatch causes error', {
   treeSym7 <- ape::read.tree(text='((e, (f, g)), (((a, b), c), d));')
+  splits7 <- as.Splits(treeSym7)
+  splits8 <- as.Splits(treeSym8)
   lapply(methodsToTest, function(Func) 
-    expect_error(Func(treeSym8, treeSym7)))
+    expect_error(Func(splits8, splits7)))
   
-  expect_equal(7L, GeneralizedRF(treeSym7, treeSym7,
+  expect_equal(7L, GeneralizedRF(splits7, splits7,
                                  function (splits1, splits2, nSplits1, nSplits2,
                                            ...) matrix(1, 7, 7), FALSE, FALSE))
-  expect_error(GeneralizedRF(treeSym8, treeSym7,
+  expect_error(GeneralizedRF(as.Splits(splits8), as.Splits(splits7),
                              function (splits1, splits2, nSplits1, nSplits2, ...) 
                                matrix(1, 8, 8), FALSE, FALSE))
   
-  expect_error(MeilaVariationOfInformation(treeSym7, treeSym8))
-  
+  expect_error(MeilaVariationOfInformation(splits7, splits8))
 })
 
 test_that('Metrics handle polytomies', {
