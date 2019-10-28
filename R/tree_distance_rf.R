@@ -80,7 +80,7 @@ RobinsonFoulds <- function (tree1, tree2, similarity = FALSE, normalize = FALSE,
     }
   }
   
-  if (!similarity) unnormalized <- 
+  if (similarity) unnormalized <- 
     outer(NumberOfSplits(tree1), NumberOfSplits(tree2), '+')[, , drop = TRUE] -
     unnormalized
   
