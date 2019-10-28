@@ -169,15 +169,23 @@ test_that('Mutual Phylogenetic Info is correctly calculated', {
     VariationOfPhylogeneticInfo(treeSym8, treeBal8, normalize = TRUE) * infoSymBal)
   expect_equal(22.53747 + MutualPhylogeneticInfo(treeAcd.Befgh, treeAcd.Befgh) - 
                  (2 * MutualPhylogeneticInfo(treeSym8, treeAcd.Befgh)), 
-               VariationOfPhylogeneticInfo(treeSym8, treeAcd.Befgh), tolerance=1e-05)
-  expect_equal(-log2(945/10395), MutualPhylogeneticInfo(treeSym8, treeAb.Cdefgh))
+               VariationOfPhylogeneticInfo(treeSym8, treeAcd.Befgh), 
+               tolerance=1e-06)
+  expect_equal(-log2(945/10395), 
+               MutualPhylogeneticInfo(treeSym8, treeAb.Cdefgh),
+               tolerance = 1e-06)
   expect_equal(22.53747 + MutualPhylogeneticInfo(treeBal8, treeBal8) - 13.75284 - 13.75284, 
                VariationOfPhylogeneticInfo(treeSym8, treeBal8), tolerance=1e-05)
-  expect_equal(-log2(945/10395), MutualPhylogeneticInfo(treeSym8, treeAb.Cdefgh))
-  expect_equal(-log2(315/10395), MutualPhylogeneticInfo(treeSym8, treeAbc.Defgh))
+  expect_equal(-log2(945/10395),
+               MutualPhylogeneticInfo(treeSym8, treeAb.Cdefgh),
+               tolerance = 1e-06)
+  expect_equal(-log2(315/10395),
+               MutualPhylogeneticInfo(treeSym8, treeAbc.Defgh),
+               tolerance = 1e-06)
   expect_equal(0, VariationOfPhylogeneticInfo(treeSym8, treeSym8))
   expect_equal(PartitionInfo(treeSym8) - PartitionInfo(treeAcd.Befgh),
-               VariationOfPhylogeneticInfo(treeSym8, treeAbc.Defgh))
+               VariationOfPhylogeneticInfo(treeSym8, treeAbc.Defgh),
+               tolerance = 1e-06)
   
   
   # Test symmetry of small vs large splits
