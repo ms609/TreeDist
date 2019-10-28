@@ -51,15 +51,15 @@ test_that('VisualizeMatching works', {
     tree1 <- ape::read.tree(text='((1, 2), ((3, (4, 5)), (6, (7, (8, 9)))));')
     tree2 <- ape::read.tree(text='((1, 2), ((3, 4, (5, 9)), (6, (7, 8))));')
     VisualizeMatching(MutualClusteringInfo, tree1, tree2,
-                      setPar = FALSE, precision=3,
+                      setPar = FALSE, precision = 3L,
                       Plot = TreeDistPlot,
                       matchZeros = FALSE,
-                      leaveRoom=FALSE)
+                      leaveRoom = FALSE)
     VisualizeMatching(MutualClusteringInfo, tree2, tree1,
-                      setPar = FALSE, precision=3,
+                      setPar = FALSE, precision = 3,
                       Plot = TreeDistPlot,
                       matchZeros = FALSE,
-                      leaveRoom=FALSE)
+                      leaveRoom = FALSE)
   })
   
   expect_doppelganger('Collapse a node', function () {
