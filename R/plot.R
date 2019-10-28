@@ -155,7 +155,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
       splitEdges <- vapply(splitNodes, match, table = child, 0)
       got <- edge[rootEdges, 2L] %in% splitNodes
       if (any(got)) {
-        c(score = which(splitNodes == edge[rootEdges[got], 2L]),
+        c(score = as.integer(which(splitNodes == edge[rootEdges[got], 2L])),
           edge = rootEdges[!got])
       } else {
         c(score = NA, edge = NA)
