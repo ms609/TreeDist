@@ -2,12 +2,12 @@
 % Please edit documentation in R/tree_information.R
 \name{ClusteringInfo}
 \alias{ClusteringInfo}
-\alias{ClusteringInfoSplits}
+\alias{ClusteringInfo.Splits}
 \title{Clustering information content of all partitions within a tree}
 \usage{
-ClusteringInfo(tree)
+ClusteringInfo(x)
 
-ClusteringInfoSplits(splits)
+\method{ClusteringInfo}{Splits}(x)
 }
 \arguments{
 \item{tree}{A tree of class \code{phylo}, a list of trees, or a \code{multiPhylo} object.}
@@ -28,9 +28,9 @@ i.e. bits/tip (see Vinh \emph{et al.} 2010).
 This function multiplies the entropy by the number of tips to produce a
 measure of the information content of the tree as a whole.
 }
-\section{Functions}{
+\section{Methods (by class)}{
 \itemize{
-\item \code{ClusteringInfoSplits}: Calculate clustering information from splits instead of trees.
+\item \code{Splits}: Calculate clustering information from splits instead of trees.
 }}
 
 \references{

@@ -55,19 +55,20 @@ PartitionInfo.Splits <- function(x) {
 #' @keywords internal
 #' @importFrom TreeTools as.Splits
 #' @export
-ClusteringInfo <- function(tree) {
-  if (class(tree) == 'phylo') {
-    ClusteringInfoSplits(as.Splits(tree))
-  } else {
-    vapply(as.Splits(tree), ClusteringInfoSplits, double(1L))
-  }
-}
+ClusteringInfo <- function (x) UseMethod("ClusteringInfo")
+
+#' @export
+ClusteringInfo.phylo <- function (x) ClusteringInfo.Splits(as.Splits(x))
+
+#' @export
+ClusteringInfo.list <- ClusteringInfo.multiPhylo <- function (x)
+    vapply(as.Splits(x), ClusteringInfo.Splits, double(1L))
 
 #' @describeIn ClusteringInfo Calculate clustering information from splits instead of trees.
 #' @export
-ClusteringInfoSplits <- function (splits) {
-  nTip <- nrow(splits)
-  inSplit <- colSums(splits)
+ClusteringInfo.Splits <- function (x) {
+  nTip <- attr(x, 'nTip')
+  inSplit <- TipsInSplits(x)
   splitP <- rbind(inSplit, nTip - inSplit) / nTip
   
   # Entropy measures the bits required to transmit the cluster label of each tip.
