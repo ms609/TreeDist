@@ -311,6 +311,14 @@ test_that('Matching Split Distance is correctly calculated', {
   expect_equal(1L, MatchingSplitDistance(treeAb.Cdefgh, treeAbc.Defgh))
   expect_equal(2L, MatchingSplitDistance(treeAb.Cdefgh, treeAbcd.Efgh))
   
+  
+  expect_equal(2L, MatchingSplitDistanceSplits(splitAB, splitAI))
+  expect_equal(2L, MatchingSplitDistanceSplits(splitAB, splitABCD))
+  expect_equal(3L, MatchingSplitDistanceSplits(splitAB, splitABCDE))
+  expect_equal(4L, MatchingSplitDistanceSplits(splitABC, splitAEF))
+  expect_equal(MatchingSplitDistanceSplits(splitABC, splitAEF),
+               MatchingSplitDistanceSplits(splitAEF, splitABC))
+  
   # Invariant to tree description order
   sq_pectinate <- ape::read.tree(text='((((((1, 2), 3), 4), 5), 6), (7, (8, (9, (10, 11)))));')
   shuffle1 <- ape::read.tree(text='(((((1, 5), 2), 6), (3, 4)), ((8, (7, 9)), (10, 11)));')
