@@ -387,7 +387,8 @@ test_that('Jaccard RF is correctly calculated', {
                JaccardRobinsonFoulds(treeSym8, list(treeBal8, treeSym8),
                                      similarity = TRUE, k = 2))
   expect_equal(2 * 2, 3 * JaccardRobinsonFoulds(treeAb.Cdefgh, treeAbc.Defgh,
-                                            similarity = TRUE))
+                                            similarity = TRUE),
+               tolerance = 1e-6)
   expect_equal(1, JaccardRobinsonFoulds(treeSym8, treeSym8,
                                         similarity = TRUE, normalize = TRUE))
   expect_equal(0, JaccardRobinsonFoulds(treeSym8, treeSym8,
