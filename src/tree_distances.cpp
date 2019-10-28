@@ -254,7 +254,8 @@ List cpp_jaccard_distance (NumericMatrix x, NumericMatrix y,
     b_compl[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
-  int a_and_b, a_and_B, A_and_b, A_and_B,
+  int a_tips,
+    a_and_b, a_and_B, A_and_b, A_and_B,
     a_or_b,  a_or_B,  A_or_b,  A_or_B;
   double ars_ab, ars_aB, ars_Ab, ars_AB,
     min_ars_both, min_ars_either;
@@ -264,6 +265,11 @@ List cpp_jaccard_distance (NumericMatrix x, NumericMatrix y,
   for (int i = 0; i < max_splits; i++) score[i] = new int[max_splits];
   
   for (int ai = 0; ai < a.n_splits; ai++) {
+    a_tips = 0;
+    for (int bin = 0; bin < a.n_bins; bin++) {
+      a_tips += count_bits_32(a.state[ai][bin]);
+    }
+    
     for (int bi = 0; bi < b.n_splits; bi++) {
       a_and_b = 0;
       a_and_B = 0;
@@ -280,10 +286,10 @@ List cpp_jaccard_distance (NumericMatrix x, NumericMatrix y,
       A_and_B = n_tips - a_or_b;
       
       if (enforce_arboreal && !(
-          a_and_b == n_tips ||
-            a_and_B == n_tips ||
-            A_and_b == n_tips ||
-            A_and_B == n_tips)) {
+          a_and_b == a_tips ||
+          a_and_B == a_tips ||
+          A_and_b == n_tips - a_tips ||
+          A_and_B == n_tips - a_tips)) {
         
         score[ai][bi] = BIG; /* Prohibit non-arboreal matching */
         
