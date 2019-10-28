@@ -187,12 +187,17 @@ VariationOfClusteringInfo <- function (tree1, tree2, normalize = FALSE,
 ExpectedVariation <- function (tree1, tree2, samples = 1e+3) {
   info1 <- PartitionInfo(tree1)
   info2 <- PartitionInfo(tree2)
-  splits1 <- Tree2Splits(tree1)
-  splits2 <- Tree2Splits(tree2)
-  tipLabels <- rownames(splits2)
+  splits1 <- as.Splits(tree1)
+  splits2 <- as.Splits(tree2)
+  nTip <- attr(splits2, 'nTip')
+  tipLabels <- attr(splits2, 'tip.label')
+  
+  logical2 <- t(matrix(unlist(apply(splits2, 1, .DecodeBinary, nTip = nTip)), 
+                     ncol = length(splits2), nrow = nTip))
   
   mutualEstimates <- vapply(seq_len(samples), function (x) {
-    rownames(splits2) <- sample(tipLabels)
+    splits2 <- as.Splits(logical2[, sample.int(nTip, nTip)])
+    
     c(MutualPhylogeneticInfoSplits(splits1, splits2),
       MutualMatchingSplitInfoSplits(splits1, splits2))
   }, c(MutualPhylogeneticInfo = 0, MutualMatchingSplitInfo = 0))
