@@ -64,7 +64,6 @@ ClusteringInfo.phylo <- function (x) ClusteringInfo.Splits(as.Splits(x))
 ClusteringInfo.list <- ClusteringInfo.multiPhylo <- function (x)
     vapply(as.Splits(x), ClusteringInfo.Splits, double(1L))
 
-#' @describeIn ClusteringInfo Calculate clustering information from splits instead of trees.
 #' @export
 ClusteringInfo.Splits <- function (x) {
   nTip <- attr(x, 'nTip')
@@ -76,5 +75,5 @@ ClusteringInfo.Splits <- function (x) {
   # See Vinh (2010: p. 2840) 
   # 
   # Return:
-  sum(apply(splitP, 2, Entropy)) / log(2) * nTip
+  sum(apply(splitP, 2, Entropy)) * nTip
 }
