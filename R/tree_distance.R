@@ -67,12 +67,14 @@ CGRF <- function (splits1, splits2, nTip, PairScorer,
     attr(ret, 'matching') <- matching
     
     # We're not worried about performance any more
-    pairScores <- vapply(seq_len(nSplits2), function (i) {
-      vapply(seq_len(nSplits1), function (j) {
-        PairScorer(splits1[j, , drop = FALSE], splits2[i, , drop = FALSE],
-                   nTip = nTip, ...)$score
-      }, double(1))
-      }, double(nSplits1))
+    pairScores <- matrix(0, nSplits1, nSplits2)
+    for (i in seq_len(nSplits1)) {
+      for (j in seq_len(nSplits2)) {
+        pairScores[i, j] <- PairScorer(splits1[i, , drop = FALSE], 
+                                       splits2[j, , drop = FALSE],
+                                       nTip = nTip, ...)$score
+      }
+    }
     attr(ret, 'pairScores') <- pairScores
     
     if (!is.null(attr(splits1, 'tip.label'))) {
