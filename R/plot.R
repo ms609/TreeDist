@@ -99,13 +99,14 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   splits1 <- as.Splits(tree1)
   edge1 <- tree1$edge
   child1 <- edge1[, 2]
-  partitionEdges1 <- vapply(attr(splits1, 'nTip') + 1L + seq_along(splits1),
+  nTip <- attr(splits1, 'nTip')
+  partitionEdges1 <- vapply(nTip + 2L + seq_along(splits1),
                             function (node) which(child1 == node), integer(1))
   
   splits2 <- as.Splits(tree2)
   edge2 <- tree2$edge
   child2 <- edge2[, 2]
-  partitionEdges2 <- vapply(attr(splits2, 'nTip') + 1L + seq_along(splits2),
+  partitionEdges2 <- vapply(nTip + 2L + seq_along(splits2),
                             function (node) which(child2 == node), integer(1))
   
   matching <- Func(tree1, tree2, reportMatching = TRUE)
@@ -146,14 +147,16 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
       scores / max(scores)
     }
     
-    OtherRootEdge <- function (splitNames, edge) {
+    OtherRootEdge <- function (splitNodes, edge) {
       parent <- edge[, 1]
+      child <- edge[, 2]
       rootEdges <- which(parent == min(parent))
-      got <- edge[rootEdges, 2L] %in% splitNames
+      rootChildren <- child[rootEdges]
+      splitEdges <- vapply(splitNodes, match, table = child, 0)
+      got <- edge[rootEdges, 2L] %in% splitNodes
       if (any(got)) {
-        
-      c(score = which(splitNames == edge[rootEdges[got], 2L]),
-        edge = rootEdges[!got])
+        c(score = which(splitNodes == edge[rootEdges[got], 2L]),
+          edge = rootEdges[!got])
       } else {
         c(score = NA, edge = NA)
       }
@@ -162,18 +165,18 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
      
     EdgyPlot <- function (tree, splits, edge, partitionEdges, 
                           normalizedScores, ...) {
-      
-      ore <- names(splits)[1]
-      ore <- as.integer(substr(ore, 2L, nchar(ore)))
-      if (length(normalizedScores)) {
-        ns <- c(normalizedScores, normalizedScores[1])
-        pe <- c(partitionEdges, ore)
+      splitNodes <- vapply(names(splits), function (x)
+        as.integer(substr(x, 2L, nchar(x))), 0L)
+      ore <- OtherRootEdge(splitNodes, edge)
+      if (length(normalizedScores) && !is.na(ore[1])) {
+        ns <- c(normalizedScores, normalizedScores[ore['score']])
+        pe <- c(partitionEdges, ore[2])
       } else {
         ns <- normalizedScores
         pe <- partitionEdges
       }
       
-      edge.width <- rep(1, length(edge))
+      edge.width <- rep(1, nrow(edge))
       edge.width[pe] <-  1 + (10 * ns)
       edge.color <- rep('black', length(edge))
       edge.color[pe] <- edgeColPalette[1 + ceiling(255 * ns)]
