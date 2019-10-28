@@ -311,6 +311,12 @@ test_that('Matching Split Distance is correctly calculated', {
   expect_equal(1L, MatchingSplitDistance(treeAb.Cdefgh, treeAbc.Defgh))
   expect_equal(2L, MatchingSplitDistance(treeAb.Cdefgh, treeAbcd.Efgh))
   
+  splitAB <- as.Splits(c(rep(TRUE, 2), rep(FALSE, 7)))
+  splitABC <- as.Splits(c(rep(TRUE, 3), rep(FALSE, 6)))
+  splitAEF <- as.Splits(c(TRUE, rep(FALSE, 3), TRUE, TRUE, rep(FALSE, 3)))
+  splitABCD <- as.Splits(c(rep(TRUE, 4), rep(FALSE, 5)))
+  splitABCDE <- as.Splits(c(rep(TRUE, 5), rep(FALSE, 4)))
+  splitAI <- as.Splits(c(TRUE, rep(FALSE, 7), TRUE))
   
   expect_equal(2L, MatchingSplitDistanceSplits(splitAB, splitAI))
   expect_equal(2L, MatchingSplitDistanceSplits(splitAB, splitABCD))
