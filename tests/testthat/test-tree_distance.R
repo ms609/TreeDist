@@ -44,8 +44,9 @@ methodsToTest <- list(
 )
 
 NormalizationTest <- function (FUNC, ...) {
-  expect_equal(c(1L, 1L, 1L), diag(FUNC(treesSBO8, treesSBO8, 
-                                        normalize = TRUE, ...)))
+  expect_equal(c(1L, 1L, 1L), 
+               diag(FUNC(treesSBO8, treesSBO8, normalize = TRUE, ...)),
+               tolerance = 1e-6)
 }
 
 test_that('Bad labels cause error', {
@@ -245,7 +246,8 @@ test_that('MutualMatchingSplitInfo is correctly calculated', {
                MutualMatchingSplitInfo(treeAb.Cdefgh, treeAbcd.Efgh))
   expect_equal(-(TreeTools::LogTreesMatchingSplit(2, 5) - LnUnrooted.int(7)) / 
                  log(2), 
-               MutualMatchingSplitInfo(treeAb.Cdefgh, treeAbc.Defgh))
+               MutualMatchingSplitInfo(treeAb.Cdefgh, treeAbc.Defgh),
+               tolerance = 1e-6)
   expect_true(MutualMatchingSplitInfo(treeSym8, treeBal8) > 
                 MutualMatchingSplitInfo(treeSym8, treeOpp8))
   expect_equal(0, VariationOfMatchingSplitInfo(treeSym8, treeSym8))
