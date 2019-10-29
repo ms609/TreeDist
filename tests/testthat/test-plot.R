@@ -47,7 +47,7 @@ test_that('VisualizeMatching works', {
   expect_doppelganger('Test VMr', TestVMr) # Unclear why this test fails on Travis. 
   
   expect_doppelganger('RF example', function () {
-    par(mfrow=c(2, 2), mar = rep(0.1, 4), cex=1.5)
+    par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.5)
     tree1 <- ape::read.tree(text='((1, 2), ((3, (4, 5)), (6, (7, (8, 9)))));')
     tree2 <- ape::read.tree(text='((1, 2), ((3, 4, (5, 9)), (6, (7, 8))));')
     VisualizeMatching(MutualClusteringInfo, tree1, tree2,
@@ -63,16 +63,16 @@ test_that('VisualizeMatching works', {
   })
   
   expect_doppelganger('Collapse a node', function () {
-    par(mfrow=c(2, 2), mar = rep(0.1, 4), cex=1.5)
+    par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.5)
     tree1 <- ape::read.tree(text='((1, 2), ((6, (7, 8)), (3, 4, (5, 9))));')
     tree2 <- ape::read.tree(text='((1, 2), ((3, (4, (5, 9))), (6, (7, 8))));')
     VisualizeMatching(RobinsonFoulds, tree1, tree2,
-                      setPar = FALSE, precision=3,
+                      setPar = FALSE, precision = 3,
                       Plot = TreeDistPlot,
                       matchZeros = TRUE,
                       leaveRoom = FALSE)
     VisualizeMatching(RobinsonFoulds, tree2, tree1,
-                      setPar = FALSE, precision=3,
+                      setPar = FALSE, precision = 3,
                       Plot = TreeDistPlot,
                       matchZeros = FALSE,
                       leaveRoom = FALSE)
