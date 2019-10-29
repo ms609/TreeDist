@@ -77,7 +77,7 @@ RobinsonFoulds <- function (tree1, tree2, similarity = FALSE, normalize = FALSE,
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                InfoInTree = NumberOfSplits, Combine = `+`)
+                InfoInTree = NSplits, Combine = `+`)
 }
 
 #' @describeIn RobinsonFouldsInfo Robinson Foulds distance, expressed as a
@@ -94,7 +94,7 @@ RobinsonFouldsSimilarity <- function (tree1, tree2, similarity = FALSE,
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                InfoInTree = NumberOfSplits, Combine = `+`)
+                InfoInTree = NSplits, Combine = `+`)
 }
 
 #' @describeIn RobinsonFouldsInfo Calculate Robinson-Foulds distance from splits
