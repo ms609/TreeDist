@@ -66,22 +66,15 @@ RobinsonFouldsInfoSplits <- function (splits1, splits2,
 #' Robinson-Foulds distance, included for use with [`VisualizeMatching`].
 #' To generate the RF distance efficiently, use the function 
 #' \code{\link{ape}{treedist}}.
+#' @importFrom TreeTools NSplits
 #' @export
 RobinsonFoulds <- function (tree1, tree2, similarity = FALSE, normalize = FALSE,
                                 reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(RobinsonFouldsSplits, tree1, tree2, 
                                         reportMatching)
   
-  NumberOfSplits <- function (tr) {
-    if (class(tr) == 'phylo') {
-      tr$Nnode - 2L
-    } else {
-      vapply(tr, function (thisTree) thisTree$Nnode - 2L, 1L)
-    }
-  }
-  
   if (similarity) unnormalized <- 
-    outer(NumberOfSplits(tree1), NumberOfSplits(tree2), '+')[, , drop = TRUE] -
+    outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE] -
     unnormalized
   
   # Return:
