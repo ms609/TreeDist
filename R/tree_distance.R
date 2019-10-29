@@ -62,7 +62,7 @@ CGRF <- function (splits1, splits2, nTip, PairScorer,
     matching <- solution$matching
     matching[matching > nSplits2] <- NA
     if (nSplits1 < nSplits2) {
-      matching <- matching[seq_len(ncol(splits1))]
+      matching <- matching[seq_len(nSplits1)]
     }
     attr(ret, 'matching') <- matching
     

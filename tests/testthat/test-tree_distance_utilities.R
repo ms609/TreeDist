@@ -44,10 +44,11 @@ test_that('Matches are reported', {
                                reportMatching = TRUE),
     'matching'))
   
-  Test <- function (Func, relaxed = FALSE) {
+  Test <- function (Func, relaxed = FALSE, ...) {
     
     at <- attributes(Func(PectinateTree(letters[1:8]),
-                          BalancedTree(letters[8:1]), reportMatching = TRUE))
+                          BalancedTree(letters[8:1]), reportMatching = TRUE,
+                          ...))
     expect_equal(3L, length(at))
     if (relaxed) {
       expect_equal(c(5L, 3L, 1L), as.integer(at$matching[c(1, 3, 5)]))
@@ -58,7 +59,8 @@ test_that('Matches are reported', {
     }
     expect_equal('g h | a b c d e f => g h | a b c d e f', ghSplit)
     
-    at <- attributes(Func(treeSym8, treeTwoSplits, reportMatching = TRUE))
+    at <- attributes(Func(treeSym8, treeTwoSplits, reportMatching = TRUE,
+                          ...))
     expect_equal(3L, length(at))
     expect_equal(c(NA, NA, 2L, NA, 1L), as.integer(at$matching))
     expect_equal('a b | e f g h c d => a b | e f g h c d', at$matchedSplits[2])
@@ -71,9 +73,12 @@ test_that('Matches are reported', {
   Test(MutualClusteringInfo)
   Test(VariationOfClusteringInfo)
   Test(MutualPhylogeneticInfo)
+  Test(NyeTreeSimilarity)
+  Test(MatchingSplitDistance)
+  Test(JaccardRobinsonFoulds, k = 2, arboreal = FALSE)
+  Test(JaccardRobinsonFoulds, k = 2, arboreal = TRUE)
   Test(RobinsonFoulds, relaxed = TRUE)
   Test(RobinsonFouldsInfo, relaxed = TRUE)
-  Test(NyeTreeSimilarity)
 
     # Matching Split Distance matches differently:  
   at <- attributes(MatchingSplitDistance(treeSym8, treeBal8, 
@@ -88,4 +93,37 @@ test_that('Matches are reported', {
                  ape::read.tree(text="((a, b), (c, d));"),
                  ape::read.tree(text="((a, c), (b, d));"), 
                  reportMatching = TRUE), 'matchedSplits'))
+})
+
+test_that('Matchings are calculated in both directions', {
+  tree1 <- ape::read.tree(text='((1, 2), ((3, 4, (5, 9)), (6, (7, 8))));')
+  tree2 <- ape::read.tree(text='((1, 2), ((3, (4, 5)), (6, (7, (8, 9)))));')
+  splits1 <- as.Splits(tree1)
+  splits2 <- as.Splits(tree2)
+  nMatches <- min(length(splits1), length(splits2))
+  
+  Test <- function (Func, ...) {
+    matching12 <- Func(tree1, tree2, reportMatching = TRUE, ...)
+    expect_equal(nMatches, length(attr(matching12, 'matchedSplits')))
+    
+    matching21 <- Func(tree2, tree1, reportMatching = TRUE, ...)
+    expect_equal(nMatches, length(attr(matching21, 'matchedSplits')))
+  }
+  
+  Test(MutualPhylogeneticInfo)
+  Test(VariationOfPhylogeneticInfo)
+  Test(MutualMatchingSplitInfo)
+  Test(VariationOfMatchingSplitInfo)
+  Test(MutualClusteringInfo)
+  Test(VariationOfClusteringInfo)
+  Test(MutualPhylogeneticInfo)
+  Test(NyeTreeSimilarity)
+  Test(JaccardRobinsonFoulds, k = 2, arboreal = FALSE)
+  Test(JaccardRobinsonFoulds, k = 2, arboreal = TRUE)
+  Test(MatchingSplitDistance)
+  
+  nMatches <- 1L
+  Test(RobinsonFoulds)
+  Test(RobinsonFouldsInfo)
+  
 })
