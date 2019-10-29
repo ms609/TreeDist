@@ -60,6 +60,7 @@ double lg2_trees_matching_split (int a, int b) {
   return lg2_rooted[a] + lg2_rooted[b];
 }
 
+
 // [[Rcpp::export]]
 List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y, 
                                    NumericVector nTip) {
@@ -80,24 +81,24 @@ List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y,
   for (int i = 0; i < most_splits; i++) matching[i] = NA_REAL;
   
   splitbit b_complement[b.n_splits][b.n_bins];
-  for (int i = 0; i < b.n_splits; i++) {
+  for (int i = 0; i != b.n_splits; i++) {
     for (int bin = 0; bin < last_bin; bin++) {
       b_complement[i][bin] = ~b.state[i][bin];
     }
     b_complement[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
-  for (int ai = 0; ai < a.n_splits; ai++) {
-    for (int bi = 0; bi < b.n_splits; bi++) {
+  for (int ai = 0; ai != a.n_splits; ai++) {
+    for (int bi = 0; bi != b.n_splits; bi++) {
       bool all_match = true, all_mismatch = true;
-      for (int bin = 0; bin < a.n_bins; bin++) {
+      for (int bin = 0; bin != a.n_bins; bin++) {
         if ((a.state[ai][bin] != b.state[bi][bin])) {
           all_match = false;
           break;
         }
       }
       if (!all_match) {
-        for (int bin = 0; bin < a.n_bins; bin++) {
+        for (int bin = 0; bin != a.n_bins; bin++) {
           if ((a.state[ai][bin] != b_complement[bi][bin])) {
             all_mismatch = false;
             break;
@@ -140,24 +141,24 @@ List cpp_robinson_foulds_info (NumericMatrix x, NumericMatrix y,
   for (int i = 0; i < most_splits; i++) matching[i] = NA_REAL;
   
   splitbit b_complement[b.n_splits][b.n_bins]; /* Dynamic allocation 20% faster for 105 tips */
-  for (int i = 0; i < b.n_splits; i++) {
+  for (int i = 0; i != b.n_splits; i++) {
     for (int bin = 0; bin < last_bin; bin++) {
       b_complement[i][bin] = ~b.state[i][bin];
     }
     b_complement[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
-  for (int ai = 0; ai < a.n_splits; ai++) {
-    for (int bi = 0; bi < b.n_splits; bi++) {
+  for (int ai = 0; ai != a.n_splits; ai++) {
+    for (int bi = 0; bi != b.n_splits; bi++) {
       bool all_match = true, all_mismatch = true;
-      for (int bin = 0; bin < a.n_bins; bin++) {
+      for (int bin = 0; bin != a.n_bins; bin++) {
         if ((a.state[ai][bin] != b.state[bi][bin])) {
           all_match = false;
           break;
         }
       }
       if (!all_match) {
-        for (int bin = 0; bin < a.n_bins; bin++) {
+        for (int bin = 0; bin != a.n_bins; bin++) {
           if ((a.state[ai][bin] != b_complement[bi][bin])) {
             all_mismatch = false;
             break;
@@ -166,7 +167,7 @@ List cpp_robinson_foulds_info (NumericMatrix x, NumericMatrix y,
       }
       if (all_match || all_mismatch) {
         int leaves_in_split = 0;
-        for (int bin = 0; bin < a.n_bins; bin++) {
+        for (int bin = 0; bin != a.n_bins; bin++) {
           leaves_in_split += count_bits(a.state[ai][bin]);
         }
         score += lg2_unrooted_n - 
@@ -205,10 +206,10 @@ List cpp_matching_split_distance (NumericMatrix x, NumericMatrix y,
           << ") and " << b.n_splits << " (" << b.n_splits << ", " << y.rows() 
           << ") splits.\n\n";*/
   
-  for (int ai = 0; ai < a.n_splits; ai++) {
-    for (int bi = 0; bi < b.n_splits; bi++) {
+  for (int ai = 0; ai != a.n_splits; ai++) {
+    for (int bi = 0; bi != b.n_splits; bi++) {
       score[ai][bi] = 0;
-      for (int bin = 0; bin < a.n_bins; bin++) {
+      for (int bin = 0; bin != a.n_bins; bin++) {
         score[ai][bi] += count_bits(a.state[ai][bin] ^ 
           b.state[bi][bin]);
         /*Rcout << "- x = " << ai << ", y = " << bi << ", bin " << bin << ": "
@@ -262,7 +263,7 @@ List cpp_jaccard_similarity (NumericMatrix x, NumericMatrix y,
   const double exponent = k[0];
   
   splitbit b_compl[b.n_splits][b.n_bins];
-  for (int i = 0; i < b.n_splits; i++) {
+  for (int i = 0; i != b.n_splits; i++) {
     for (int bin = 0; bin < last_bin; bin++) {
       b_compl[i][bin] = ~b.state[i][bin];
     }
@@ -279,17 +280,17 @@ List cpp_jaccard_similarity (NumericMatrix x, NumericMatrix y,
   cost** score = new cost*[most_splits];
   for (int i = 0; i < most_splits; i++) score[i] = new int[most_splits];
   
-  for (int ai = 0; ai < a.n_splits; ai++) {
+  for (int ai = 0; ai != a.n_splits; ai++) {
     a_tips = 0;
-    for (int bin = 0; bin < a.n_bins; bin++) {
+    for (int bin = 0; bin != a.n_bins; bin++) {
       a_tips += count_bits(a.state[ai][bin]);
     }
     
-    for (int bi = 0; bi < b.n_splits; bi++) {
+    for (int bi = 0; bi != b.n_splits; bi++) {
       a_and_b = 0;
       a_and_B = 0;
       a_or_B = 0;
-      for (int bin = 0; bin < a.n_bins; bin++) {
+      for (int bin = 0; bin != a.n_bins; bin++) {
         a_and_b += count_bits(a.state[ai][bin] & b.state[bi][bin]);
         a_and_B += count_bits(a.state[ai][bin] & b_compl[bi][bin]);
         a_or_B  += count_bits(a.state[ai][bin] | b_compl[bi][bin]);
@@ -391,12 +392,13 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
   splitbit different[a.n_bins];
   int n_different, n_same, n_a_only, n_a_and_b;
   double score1, score2;
-  for (int ai = 0; ai < a.n_splits; ai++) {
-    for (int bi = 0; bi < b.n_splits; bi++) {
+  
+  for (int ai = 0; ai != a.n_splits; ai++) {
+    for (int bi = 0; bi != b.n_splits; bi++) {
       n_different = 0;
       n_a_only = 0;
       n_a_and_b = 0;
-      for (int bin = 0; bin < a.n_bins; bin++) {
+      for (int bin = 0; bin != a.n_bins; bin++) {
         different[bin] = a.state[ai][bin] ^ b.state[bi][bin];
         n_different += count_bits(different[bin]);
         n_a_only += count_bits(a.state[ai][bin] & different[bin]);
@@ -484,7 +486,7 @@ List cpp_mutual_clustering (NumericMatrix x, NumericMatrix y,
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   
   splitbit b_compl[b.n_splits][b.n_bins];
-  for (int i = 0; i < b.n_splits; i++) {
+  for (int i = 0; i != b.n_splits; i++) {
     for (int bin = 0; bin < last_bin; bin++) {
       b_compl[i][bin] = ~b.state[i][bin];
     }
@@ -502,12 +504,12 @@ List cpp_mutual_clustering (NumericMatrix x, NumericMatrix y,
   
   double a_and_b, a_and_B, A_and_b, A_and_B, 
   p1, p2;
-  for (int ai = 0; ai < a.n_splits; ai++) {
-    for (int bi = 0; bi < b.n_splits; bi++) {
+  for (int ai = 0; ai != a.n_splits; ai++) {
+    for (int bi = 0; bi != b.n_splits; bi++) {
       a_and_b = 0;
       a_and_B = 0;
       A_and_b = n_tips;
-      for (int bin = 0; bin < a.n_bins; bin++) {
+      for (int bin = 0; bin != a.n_bins; bin++) {
         a_and_b += count_bits(a.state[ai][bin] & b.state[bi][bin]);
         a_and_B += count_bits(a.state[ai][bin] & b_compl[bi][bin]);
         A_and_b -= count_bits(a.state[ai][bin] | b_compl[bi][bin]);
@@ -619,15 +621,15 @@ List cpp_mutual_phylo (NumericMatrix x, NumericMatrix y,
                                             max_score = lg2_unrooted_n - one_overlap((n_tips + 1) / 2, n_tips / 2, n_tips);
   int in_a[a.n_splits], in_b[b.n_splits];
   
-  for (int i = 0; i < a.n_splits; i++) {
+  for (int i = 0; i != a.n_splits; i++) {
     in_a[i] = 0;
-    for (int bin = 0; bin < a.n_bins; bin++) {
+    for (int bin = 0; bin != a.n_bins; bin++) {
       in_a[i] += count_bits(a.state[i][bin]);
     }
   }
-  for (int i = 0; i < b.n_splits; i++) {
+  for (int i = 0; i != b.n_splits; i++) {
     in_b[i] = 0;
-    for (int bin = 0; bin < b.n_bins; bin++) {
+    for (int bin = 0; bin != b.n_bins; bin++) {
       in_b[i] += count_bits(b.state[i][bin]);
     }
   }
@@ -635,8 +637,8 @@ List cpp_mutual_phylo (NumericMatrix x, NumericMatrix y,
   cost** score = new cost*[most_splits];
   for (int i = 0; i < most_splits; i++) score[i] = new int[most_splits];
   
-  for (int ai = 0; ai < a.n_splits; ai++) {
-    for (int bi = 0; bi < b.n_splits; bi++) {
+  for (int ai = 0; ai != a.n_splits; ai++) {
+    for (int bi = 0; bi != b.n_splits; bi++) {
       score[ai][bi] = BIG * (1 - 
         (mpi(a.state[ai], b.state[bi], n_tips, in_a[ai], in_b[bi],
              lg2_unrooted_n, a.n_bins) / max_score));
