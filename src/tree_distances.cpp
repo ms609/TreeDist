@@ -314,7 +314,8 @@ List cpp_jaccard_similarity (NumericMatrix x, NumericMatrix y,
            min_ars_both : min_ars_either)
            << " ^ " << exponent << " = " << pow((min_ars_both > min_ars_either) ? 
            min_ars_both : min_ars_either, exponent) 
-           << ", BIG - BIG*score = " <<( (int) BIGL - (BIGL * 
+           << "\n BIGL = " << BIGL
+           << ", BIG - BIG*score = " << ( (int) BIGL - (BIGL * 
            pow((min_ars_both > min_ars_either) ? 
            min_ars_both : min_ars_either, exponent))) << ".\n";*/
           score[ai][bi] = (int) BIGL - (BIGL * 
