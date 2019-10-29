@@ -28,6 +28,13 @@ int count_bits (splitbit x) {
          + bitcounts[(x >> 48)];
 }
 
+/* Useful for debugging */
+void print64 (uint64_t x) {
+  for (int i = 63; i > -1; i--) {
+    Rcout << ((1 & x >> i) ? '1' : '.');
+  }
+}
+
 double lg2_double_factorial[MAX_TIPS + MAX_TIPS - 2];
 double lg2_rooted[MAX_TIPS + 1];
 double lg2_unrooted[MAX_TIPS + 1];
