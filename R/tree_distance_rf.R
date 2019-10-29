@@ -62,10 +62,8 @@ RobinsonFouldsInfoSplits <- function (splits1, splits2,
        maximize = FALSE, reportMatching = reportMatching)
 }
 
-#' @describeIn RobinsonFouldsInfo An inefficient implementation of the 
-#' Robinson-Foulds distance, included for use with [`VisualizeMatching`].
-#' To generate the RF distance efficiently, use the function 
-#' \code{\link{ape}{treedist}}.
+#' @describeIn RobinsonFouldsInfo Robinson-Foulds distance, with option to
+#' report matched splits.
 #' @importFrom TreeTools NSplits
 #' @export
 RobinsonFoulds <- function (tree1, tree2, similarity = FALSE, normalize = FALSE,
@@ -75,6 +73,23 @@ RobinsonFoulds <- function (tree1, tree2, similarity = FALSE, normalize = FALSE,
   
   if (similarity) unnormalized <- 
     outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE] -
+    unnormalized
+  
+  # Return:
+  NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
+                InfoInTree = NumberOfSplits, Combine = `+`)
+}
+
+#' @describeIn RobinsonFouldsInfo Robinson Foulds distance, expressed as a
+#' similarity (i.e. number of splits that occur in both trees).
+#' @importFrom TreeTools NSplits
+RobinsonFouldsSimilarity <- function (tree1, tree2, similarity = FALSE,
+                                      normalize = FALSE, 
+                                      reportMatching = FALSE) {
+  unnormalized <- CalculateTreeDistance(RobinsonFouldsSplits, tree1, tree2, 
+                                        reportMatching)
+
+  unnormalized <- outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE] -
     unnormalized
   
   # Return:
