@@ -80,21 +80,21 @@ RobinsonFoulds <- function (tree1, tree2, similarity = FALSE, normalize = FALSE,
                 InfoInTree = NSplits, Combine = `+`)
 }
 
-#' @describeIn RobinsonFouldsInfo Robinson Foulds distance, expressed as a
-#' similarity (i.e. number of splits that occur in both trees).
+#' @describeIn RobinsonFouldsInfo Matched splits, intended for use with 
+#' [`VisualizeMatching`].
 #' @importFrom TreeTools NSplits
-RobinsonFouldsSimilarity <- function (tree1, tree2, similarity = FALSE,
-                                      normalize = FALSE, 
-                                      reportMatching = FALSE) {
-  unnormalized <- CalculateTreeDistance(RobinsonFouldsSplits, tree1, tree2, 
-                                        reportMatching)
+RobinsonFouldsMatching <- function (tree1, tree2, similarity = FALSE,
+                                    normalize = FALSE, ...) {
+  ret <- CalculateTreeDistance(RobinsonFouldsSplits, tree1, tree2, 
+                                        reportMatching = TRUE)
 
-  unnormalized <- outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE] -
-    unnormalized
+  ret <- outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE] -
+    ret
+  
+  attr(ret, 'pairScores') <- !attr(ret, 'pairScores')
   
   # Return:
-  NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                InfoInTree = NSplits, Combine = `+`)
+  ret
 }
 
 #' @describeIn RobinsonFouldsInfo Calculate Robinson-Foulds distance from splits
