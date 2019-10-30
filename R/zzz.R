@@ -13,7 +13,7 @@ release_questions <- function() {
     "Have you updated REFERENCES.bib with a citation to the published study?",
     "Have you updated inst/CITATION with a citation to the published study?",
     "Have you set 'TreeDist' to a default function?",
-    "Have you updated the version number in inst/CITATION, NEWS & DESCRIPTION?"
+    "Have you updated the version number in inst/CITATION, .zenodo.json, NEWS & DESCRIPTION?"
     )
 }
 
