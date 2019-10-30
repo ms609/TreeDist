@@ -33,11 +33,12 @@ test_that('Matches are reported', {
   expect_equal("a b | c d e f g h => a b c | d e f g h",
                ReportMatching(splitsA, splitsB[[2]]))
   
-  expect_equal(c(5, 2, 3, 1, 4), attr(CGRF(as.Splits(treeSym8),
-                                           as.Splits(treeBal8), 8L, 
-                                           cpp_mutual_phylo,
-                                           maximize = TRUE, 
-                                           reportMatching = TRUE), 'matching'))
+  expect_equal(c(5, 2, 3, 1, 4), attr(GeneralizedRF(as.Splits(treeSym8),
+                                                    as.Splits(treeBal8), 8L, 
+                                                    cpp_mutual_phylo,
+                                                    maximize = TRUE, 
+                                                    reportMatching = TRUE),
+                                      'matching'))
     
   expect_equal(c(5, 2, 3, 1, 4), attr(
     MutualPhylogeneticInfoSplits(as.Splits(treeSym8), as.Splits(treeBal8),
