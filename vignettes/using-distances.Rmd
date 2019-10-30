@@ -341,7 +341,7 @@ TernaryDensityContour(coords3, col = col3, nlevels = 4)
 TernaryDensityContour(coords1, col = col1, nlevels = 4)
 
 HorizontalHistogram <- function (dat, col, add = FALSE) {
-  breaks <- seq(0, 1, length.out = 41)
+  breaks <- seq(0, 1 + 1e-6, length.out = 41)
   histy <- hist(dat, breaks = breaks, plot = FALSE)
   barplot(histy$density, space = 0, horiz = TRUE,
           axes = FALSE, names.arg = '', 
