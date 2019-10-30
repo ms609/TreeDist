@@ -35,6 +35,7 @@ Imports:
 Suggests:
     bookdown,
     cluster,
+    kdensity,
     knitr,
     MASS,
     Quartet,
