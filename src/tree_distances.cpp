@@ -112,7 +112,7 @@ List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y,
       }
     }
   }
-  score = a.n_splits + b.n_splits - score - score;
+  score = (cost) a.n_splits + (cost) b.n_splits - score - score;
   
   NumericVector final_score = NumericVector::create(score);
   
