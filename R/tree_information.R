@@ -57,13 +57,20 @@ PartitionInfo.Splits <- function(x) {
 #' @export
 ClusteringInfo <- function (x) UseMethod("ClusteringInfo")
 
+#' @describeIn ClusteringInfo Implementation for `phylo` objects.
 #' @export
 ClusteringInfo.phylo <- function (x) ClusteringInfo.Splits(as.Splits(x))
 
+#' @describeIn ClusteringInfo Implementation for lists.
 #' @export
-ClusteringInfo.list <- ClusteringInfo.multiPhylo <- function (x)
+ClusteringInfo.list <- function (x)
     vapply(as.Splits(x), ClusteringInfo.Splits, double(1L))
 
+#' @describeIn ClusteringInfo Implementation for `multiPhylo` objects.
+#' @export
+ClusteringInfo.multiPhylo <- ClusteringInfo.list
+
+#' @describeIn ClusteringInfo Implementation for `Splits` objects.
 #' @export
 ClusteringInfo.Splits <- function (x) {
   nTip <- attr(x, 'nTip')

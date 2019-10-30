@@ -2,10 +2,19 @@
 % Please edit documentation in R/tree_information.R
 \name{ClusteringInfo}
 \alias{ClusteringInfo}
+\alias{ClusteringInfo.phylo}
+\alias{ClusteringInfo.list}
+\alias{ClusteringInfo.multiPhylo}
 \alias{ClusteringInfo.Splits}
 \title{Clustering information content of all partitions within a tree}
 \usage{
 ClusteringInfo(x)
+
+\method{ClusteringInfo}{phylo}(x)
+
+\method{ClusteringInfo}{list}(x)
+
+\method{ClusteringInfo}{multiPhylo}(x)
 
 \method{ClusteringInfo}{Splits}(x)
 }
@@ -30,7 +39,13 @@ measure of the information content of the tree as a whole.
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{Splits}: Calculate clustering information from splits instead of trees.
+\item \code{phylo}: Implementation for \code{phylo} objects.
+
+\item \code{list}: Implementation for lists.
+
+\item \code{multiPhylo}: Implementation for \code{multiPhylo} objects.
+
+\item \code{Splits}: Implementation for \code{Splits} objects.
 }}
 
 \references{

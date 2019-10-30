@@ -4,6 +4,7 @@
 \alias{RobinsonFouldsInfo}
 \alias{RobinsonFouldsInfoSplits}
 \alias{RobinsonFoulds}
+\alias{RobinsonFouldsMatching}
 \alias{RobinsonFouldsSplits}
 \title{(Information-adjusted) Robinson-Foulds distance}
 \usage{
@@ -15,6 +16,9 @@ RobinsonFouldsInfoSplits(splits1, splits2, nTip = attr(splits1, "nTip"),
 
 RobinsonFoulds(tree1, tree2, similarity = FALSE, normalize = FALSE,
   reportMatching = FALSE)
+
+RobinsonFouldsMatching(tree1, tree2, similarity = FALSE,
+  normalize = FALSE, ...)
 
 RobinsonFouldsSplits(splits1, splits2, nTip = attr(splits1, "nTip"),
   reportMatching = FALSE)
@@ -78,10 +82,11 @@ tree distance, because their similarity is less remarkable.
 \item \code{RobinsonFouldsInfoSplits}: Calculate information-adjusted Robinson-Foulds
 distance from splits instead of trees.
 
-\item \code{RobinsonFoulds}: An inefficient implementation of the
-Robinson-Foulds distance, included for use with \code{\link{VisualizeMatching}}.
-To generate the RF distance efficiently, use the function
-\code{\link{ape}{treedist}}.
+\item \code{RobinsonFoulds}: Robinson-Foulds distance, with option to
+report matched splits.
+
+\item \code{RobinsonFouldsMatching}: Matched splits, intended for use with
+\code{\link{VisualizeMatching}}.
 
 \item \code{RobinsonFouldsSplits}: Calculate Robinson-Foulds distance from splits
 instead of trees.
