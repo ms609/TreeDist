@@ -29,6 +29,7 @@ matrix:
         - ape
         - bookdown
         - devtools
+        - kdensity
         - phangorn
         - Rdpack
         - roxygen2
@@ -51,13 +52,13 @@ r_github_packages:
 
 r_packages:
  - bookdown
+ - kdensity
  - vdiffr
  
 r_binary_packages:
  - ape
  - covr
  - devtools
- - kdensity
  - phangorn
  - Rdpack
  - roxygen2
