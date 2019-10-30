@@ -25,3 +25,4 @@ vignettes/.RData
 ^codemeta\.json$
 ^CODE_OF_CONDUCT\.md$
 ^\.travis\.yml$
+^\.zenodo\.json$
