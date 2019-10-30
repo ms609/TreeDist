@@ -70,7 +70,7 @@ score possible for two trees of the specified resolution.  This value is given
 by the number of partitions in the least resolved of the two trees:
 
 ```{r}
-NyeTreeSimilarity(tree1, tree2, 
+NyeTreeSimilarity(tree1, tree2,
                   normalize = min(TreeTools::NSplits(list(tree1, tree2))))
 ```
 
@@ -341,8 +341,8 @@ TernaryDensityContour(coords3, col = col3, nlevels = 4)
 TernaryDensityContour(coords1, col = col1, nlevels = 4)
 
 HorizontalHistogram <- function (dat, col, add = FALSE) {
-  breaks <- seq(0, 1 + 1e-6, length.out = 41)
-  histy <- hist(dat, breaks = breaks, plot = FALSE)
+  breaks <- seq(0, 1, length.out = 41)
+  histy <- hist(round(dat, 7), breaks = breaks, plot = FALSE)
   barplot(histy$density, space = 0, horiz = TRUE,
           axes = FALSE, names.arg = '', 
           col = col, border = NA, add = add)
