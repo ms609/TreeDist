@@ -31,7 +31,8 @@ KendallColijn <- function (tree1, tree2) {
   EuclidianDistance <- function (x) sqrt(sum(x * x))
   if (class(tree1) == 'phylo') {
     if (class(tree2) == 'phylo') {
-      if (length(setdiff(tree1$tip.label, tree2$tip.label)) > 0) {
+      if (length(tree1$tip.label) != length(tree2$tip.label) || 
+          length(setdiff(tree1$tip.label, tree2$tip.label)) > 0) {
         stop("Tree tips must bear identical labels")
       }
       EuclidianDistance(KCVector(tree1) - KCVector(tree2))
