@@ -112,19 +112,19 @@ test_that('Mutual Phylogenetic Info is correctly calculated', {
                  as.Splits(as.logical(c(0, 0, 1, 1, 0, 0, 0, 0))),
                  8L)$score,
                tolerance = 1e-7)
-  expect_equal(1.13750,
+  expect_equal(1.137504,
                cpp_mutual_phylo(
                  as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
                  8L)$score,
-               tolerance = 1e-7)
+               tolerance = 1e-6)
   
   expect_equal(3.45943,
                cpp_mutual_phylo(
                  as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
                  8L)$score,
-               tolerance = 1e-7)
+               tolerance = 1e-6)
   
   expect_equal(8 * (Entropy(c(3, 5) / 8) * 2 - Entropy(c(0, 0, 3, 5) / 8)),
                cpp_mutual_clustering(
