@@ -56,6 +56,8 @@ each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
 (\code{FALSE}) of the respective bipartition split.}
 
 \item{nTip}{Integer specifying the number of tips in each split.}
+
+\item{\dots}{Not used.}
 }
 \description{
 Calculates the Robinson-Foulds distance, or the equivalent similarity
