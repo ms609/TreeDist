@@ -110,4 +110,14 @@ test_that('VisualizeMatching works', {
                       matchZeros = FALSE,
                       leaveRoom=FALSE)
   })
+  
+  expect_doppelganger('VM matchZeros FALSE', function () {
+    JRF2 <- function (tree1, tree2, ...) 
+      JaccardRobinsonFoulds(tree1, tree2, k = 2, arboreal= TRUE, ...)
+    
+    set.seed(2)
+    tree1 <- ape::rtree(10)
+    tree2 <- ape::rtree(10)
+    VisualizeMatching(JRF2, tree1, tree2, matchZeros = FALSE)
+  })
 })

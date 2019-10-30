@@ -210,7 +210,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   if (plainEdges) {
     Plot(tree2, edge.width = edge.width, edge.color = edge.color, ...)
   } else {
-    EdgyPlot(tree2, splits2, edge2, partitionEdges2[pairNames2],
+    EdgyPlot(tree2, splits2[[pairNames2]], edge2, partitionEdges2[pairNames2],
              Normalize(pairedPairScores, na.rm = TRUE), ...)
   }
   if (any(pairLabels)) {
