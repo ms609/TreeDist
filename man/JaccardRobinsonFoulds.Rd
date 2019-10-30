@@ -5,7 +5,7 @@
 \alias{JaccardSplitSimilarity}
 \title{Jaccard-Robinson-Foulds metric}
 \usage{
-JaccardRobinsonFoulds(tree1, tree2, k = 1L, arboreal = TRUE,
+JaccardRobinsonFoulds(tree1, tree2 = tree1, k = 1L, arboreal = TRUE,
   similarity = FALSE, normalize = FALSE, reportMatching = FALSE)
 
 JaccardSplitSimilarity(splits1, splits2, nTip = attr(splits1, "nTip"),

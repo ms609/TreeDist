@@ -5,8 +5,8 @@
 \alias{NyeSplitSimilarity}
 \title{Nye \emph{et al}. (2006) tree comparison}
 \usage{
-NyeTreeSimilarity(tree1, tree2, similarity = TRUE, normalize = FALSE,
-  normalizeMax = TRUE, reportMatching = FALSE)
+NyeTreeSimilarity(tree1, tree2 = tree1, similarity = TRUE,
+  normalize = FALSE, normalizeMax = TRUE, reportMatching = FALSE)
 
 NyeSplitSimilarity(splits1, splits2, nTip = attr(splits1, "nTip"),
   reportMatching = FALSE)

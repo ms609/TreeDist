@@ -118,16 +118,16 @@
 #' 
 #' @family tree distances
 #' @export
-TreeDistance <- function (tree1, tree2) {
+TreeDistance <- function (tree1, tree2 = tree1) {
   MutualClusteringInfo(tree1, tree2, normalize = TRUE, reportMatching = FALSE)
 }
 
 #' @describeIn TreeDistance Mutual phylogenetic information between two trees.
 #' @export
-MutualPhylogeneticInfo <- function (tree1, tree2, normalize = FALSE,
+MutualPhylogeneticInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
                                     reportMatching = FALSE) {
-  unnormalized <- CalculateTreeDistance(MutualPhylogeneticInfoSplits, tree1, tree2, 
-                                        reportMatching=reportMatching)
+  unnormalized <- CalculateTreeDistance(MutualPhylogeneticInfoSplits, tree1,
+                                        tree2, reportMatching=reportMatching)
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
@@ -136,7 +136,8 @@ MutualPhylogeneticInfo <- function (tree1, tree2, normalize = FALSE,
 
 #' @describeIn TreeDistance Variation of phylogenetic information between two trees.
 #' @export
-VariationOfPhylogeneticInfo <- function (tree1, tree2, normalize = FALSE,
+VariationOfPhylogeneticInfo <- function (tree1, tree2 = tree1, 
+                                         normalize = FALSE,
                                          reportMatching = FALSE) {
   mai <- MutualPhylogeneticInfo(tree1, tree2, normalize = FALSE,
                                 reportMatching = reportMatching)
@@ -156,7 +157,7 @@ VariationOfPhylogeneticInfo <- function (tree1, tree2, normalize = FALSE,
 
 #' @describeIn TreeDistance Variation of clustering information between two trees.
 #' @export
-VariationOfClusteringInfo <- function (tree1, tree2, normalize = FALSE,
+VariationOfClusteringInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
                                        reportMatching = FALSE) {
   mci <- MutualClusteringInfo(tree1, tree2, normalize = FALSE, 
                               reportMatching = reportMatching)

@@ -5,7 +5,7 @@
 \alias{MatchingSplitDistanceSplits}
 \title{Matching Split Distance}
 \usage{
-MatchingSplitDistance(tree1, tree2, normalize = FALSE,
+MatchingSplitDistance(tree1, tree2 = tree1, normalize = FALSE,
   reportMatching = FALSE)
 
 MatchingSplitDistanceSplits(splits1, splits2, nTip = attr(splits1,

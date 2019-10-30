@@ -14,15 +14,15 @@
 \alias{MutualMatchingSplitInfoSplits}
 \title{Information-based generalized Robinson-Foulds distances}
 \usage{
-TreeDistance(tree1, tree2)
+TreeDistance(tree1, tree2 = tree1)
 
-MutualPhylogeneticInfo(tree1, tree2, normalize = FALSE,
+MutualPhylogeneticInfo(tree1, tree2 = tree1, normalize = FALSE,
   reportMatching = FALSE)
 
-VariationOfPhylogeneticInfo(tree1, tree2, normalize = FALSE,
+VariationOfPhylogeneticInfo(tree1, tree2 = tree1, normalize = FALSE,
   reportMatching = FALSE)
 
-VariationOfClusteringInfo(tree1, tree2, normalize = FALSE,
+VariationOfClusteringInfo(tree1, tree2 = tree1, normalize = FALSE,
   reportMatching = FALSE)
 
 ExpectedVariation(tree1, tree2, samples = 1000)
@@ -36,10 +36,10 @@ MutualPhylogeneticInfoSplits(splits1, splits2, nTip = attr(splits1,
 MutualClusteringInfoSplits(splits1, splits2, nTip = attr(splits1,
   "nTip"), reportMatching = FALSE)
 
-MutualMatchingSplitInfo(tree1, tree2, normalize = FALSE,
+MutualMatchingSplitInfo(tree1, tree2 = tree1, normalize = FALSE,
   reportMatching = FALSE)
 
-VariationOfMatchingSplitInfo(tree1, tree2, normalize = FALSE,
+VariationOfMatchingSplitInfo(tree1, tree2 = tree1, normalize = FALSE,
   reportMatching = FALSE)
 
 MutualMatchingSplitInfoSplits(splits1, splits2, nTip = attr(splits1,
@@ -114,9 +114,11 @@ a given topology.
 
 \item \code{MutualMatchingSplitInfo}: Mutual Matching Split information of two trees.
 
-\item \code{VariationOfMatchingSplitInfo}: Variation of matching split information between two trees.
+\item \code{VariationOfMatchingSplitInfo}: Variation of matching split information between two
+trees.
 
-\item \code{MutualMatchingSplitInfoSplits}: Calculate variation of matching split information from splits instead of trees.
+\item \code{MutualMatchingSplitInfoSplits}: Calculate variation of matching split information
+from splits instead of trees.
 }}
 
 \section{Concepts of information}{

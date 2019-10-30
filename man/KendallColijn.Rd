@@ -5,7 +5,7 @@
 \alias{KCVector}
 \title{Kendall-Colijn distance}
 \usage{
-KendallColijn(tree1, tree2)
+KendallColijn(tree1, tree2 = tree1)
 
 KCVector(tree)
 }

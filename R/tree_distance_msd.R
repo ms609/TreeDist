@@ -19,7 +19,7 @@
 #' @author Martin R. Smith
 #' @importFrom TreeTools LnUnrooted.int
 #' @export
-MatchingSplitDistance <- function (tree1, tree2, normalize = FALSE,
+MatchingSplitDistance <- function (tree1, tree2 = tree1, normalize = FALSE,
                                    reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(MatchingSplitDistanceSplits, tree1, tree2, 
                                         reportMatching)

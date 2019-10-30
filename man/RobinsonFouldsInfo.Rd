@@ -8,16 +8,16 @@
 \alias{RobinsonFouldsSplits}
 \title{(Information-adjusted) Robinson-Foulds distance}
 \usage{
-RobinsonFouldsInfo(tree1, tree2, similarity = FALSE, normalize = FALSE,
-  reportMatching = FALSE)
+RobinsonFouldsInfo(tree1, tree2 = tree1, similarity = FALSE,
+  normalize = FALSE, reportMatching = FALSE)
 
 RobinsonFouldsInfoSplits(splits1, splits2, nTip = attr(splits1, "nTip"),
   reportMatching = FALSE)
 
-RobinsonFoulds(tree1, tree2, similarity = FALSE, normalize = FALSE,
-  reportMatching = FALSE)
+RobinsonFoulds(tree1, tree2 = tree1, similarity = FALSE,
+  normalize = FALSE, reportMatching = FALSE)
 
-RobinsonFouldsMatching(tree1, tree2, similarity = FALSE,
+RobinsonFouldsMatching(tree1, tree2 = tree1, similarity = FALSE,
   normalize = FALSE, ...)
 
 RobinsonFouldsSplits(splits1, splits2, nTip = attr(splits1, "nTip"),

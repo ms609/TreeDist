@@ -41,7 +41,7 @@
 #' @author Martin R. Smith
 #' @importFrom TreeTools NPartitions
 #' @export
-NyeTreeSimilarity <- function (tree1, tree2, similarity = TRUE,
+NyeTreeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
                                normalize = FALSE, normalizeMax = TRUE,
                                reportMatching = FALSE) {
   
@@ -144,8 +144,8 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' @author Martin R. Smith
 #' @importFrom TreeTools NPartitions
 #' @export
-JaccardRobinsonFoulds <- function (tree1, tree2, k = 1L, arboreal = TRUE,
-                                   similarity = FALSE,
+JaccardRobinsonFoulds <- function (tree1, tree2 = tree1, k = 1L, 
+                                   arboreal = TRUE, similarity = FALSE,
                                    normalize = FALSE, reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(JaccardSplitSimilarity, tree1, tree2, 
                                         k = k, arboreal = arboreal, 
