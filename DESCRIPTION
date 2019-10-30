@@ -43,6 +43,8 @@ Suggests:
     Rcpp,
     testthat,
     Ternary (>= 1.1.2),
+    TreeDistData (>= 0.0.0.9005),
+    TreeSearch,
     vdiffr
 Remotes: 
     ms609/TreeTools,
