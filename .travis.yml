@@ -6,6 +6,10 @@ r_check_args: --as-cran --no-manual # Workaround error compiling PDF manual
 matrix:
   include:
     - r: 3.4.0
+      env:
+        global: 
+          - R_CHECK_ARGS="--no-build-vignettes --timings"
+          - _R_CHECK_TIMINGS_="0"
     - r: release
       before_deploy: Rscript -e 'remotes::install_cran("pkgdown")'
       deploy:
@@ -33,8 +37,8 @@ matrix:
       before_install:
       - brew install cairo
       - sudo tlmgr install doi titling hyperref
-#  allow_failures:
-#    r: devel # Incompatible with devtools?
+  allow_failures:
+    r: 3.4.0 # TreeSearch requires > 3.5.0
 
 git:
   depth: 1
