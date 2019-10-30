@@ -58,8 +58,8 @@ RobinsonFouldsInfoSplits <- function (splits1, splits2,
                                       nTip = attr(splits1, 'nTip'),
                                       reportMatching = FALSE) {
   
-  CGRF(splits1, splits2, nTip, cpp_robinson_foulds_info,
-       maximize = FALSE, reportMatching = reportMatching)
+  GeneralizedRF(splits1, splits2, nTip, cpp_robinson_foulds_info,
+                maximize = FALSE, reportMatching = reportMatching)
 }
 
 #' @describeIn RobinsonFouldsInfo Robinson-Foulds distance, with option to
@@ -104,6 +104,6 @@ RobinsonFouldsMatching <- function (tree1, tree2, similarity = FALSE,
 RobinsonFouldsSplits <- function (splits1, splits2,
                                   nTip = attr(splits1, 'nTip'),
                                   reportMatching = FALSE) {
-  CGRF(splits1, splits2, nTip, cpp_robinson_foulds_distance,
-       maximize = FALSE, reportMatching = reportMatching)
+  GeneralizedRF(splits1, splits2, nTip, cpp_robinson_foulds_distance,
+                maximize = FALSE, reportMatching = reportMatching)
 }

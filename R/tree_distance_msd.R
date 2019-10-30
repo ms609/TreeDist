@@ -38,6 +38,6 @@ MatchingSplitDistanceSplits <- function (splits1, splits2,
                                          nTip = attr(splits1, 'nTip'),
                                          normalize = TRUE, 
                                          reportMatching = FALSE) {
-  CGRF(splits1, splits2, nTip, cpp_matching_split_distance, maximize = FALSE,
-       reportMatching = reportMatching)
+  GeneralizedRF(splits1, splits2, nTip, cpp_matching_split_distance,
+                maximize = FALSE, reportMatching = reportMatching)
 }

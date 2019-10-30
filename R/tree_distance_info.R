@@ -236,8 +236,8 @@ MutualClusteringInfo <- function (tree1, tree2, normalize = FALSE,
 MutualPhylogeneticInfoSplits <- function (splits1, splits2,
                                           nTip = attr(splits1, 'nTip'),
                                           reportMatching = FALSE) {
-  CGRF(splits1, splits2, nTip, cpp_mutual_phylo,
-       maximize = TRUE, reportMatching = reportMatching)
+  GeneralizedRF(splits1, splits2, nTip, cpp_mutual_phylo,
+                maximize = TRUE, reportMatching = reportMatching)
 }
 
 #' @describeIn TreeDistance Calculate clustering information from splits instead of trees
@@ -245,6 +245,6 @@ MutualPhylogeneticInfoSplits <- function (splits1, splits2,
 MutualClusteringInfoSplits <- function (splits1, splits2,
                                         nTip = attr(splits1, 'nTip'),
                                         reportMatching = FALSE) {
-  CGRF(splits1, splits2, nTip, cpp_mutual_clustering,
-       maximize = TRUE, reportMatching = reportMatching)
+  GeneralizedRF(splits1, splits2, nTip, cpp_mutual_clustering,
+                maximize = TRUE, reportMatching = reportMatching)
 }

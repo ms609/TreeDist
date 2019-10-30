@@ -1,55 +1,35 @@
 #' Generalized Robinson-Foulds distance
 #' 
-#' Calculate Generalized Robinson-Foulds distance from splits.
+#' An internal function to calculate Generalized Robinson-Foulds distance from
+#' splits.
+#'
+#' Note that no checks will be made to confirm that splits1 and splits2 contain
+#' the same tips in the same order.  This is the responsibility of the calling
+#' function.
 #' 
 #' @inheritParams MutualPhylogeneticInfoSplits
+#' @param nTip Integer specifying the number of tips in each split.
 #' @param PairScorer function taking four arguments, `splits1`, `splits2`,
 #' `nSplits1`, `nSplits2`, which should return the score of each pair of splits
 #' in a two-dimensional matrix.  Additional parameters may be specified via 
 #' \dots.
 #' @param \dots Additional parameters to `PairScorer`
 #' 
-#' @return The results of `TreeDistanceReturn` under the parameters provided
+#' @return A numeric value specifying the score of the tree pairs under the 
+#' specified pair scorer. If `reportMatching = TRUE`, attribute also list:
+#' 
+#' - `matching`: which split in `splits2` is optimally matched to each split in 
+#' `split1` (`NA` if not matched);
+#'
+#' - `pairScores`: Calculated scores for each possible matching of each split.
+#' 
+#' - `matchedSplits`: Textual representation of each match
 #' 
 #' @keywords internal
 #' @author Martin R. Smith
 #' @export
-GeneralizedRF <- function (splits1, splits2, PairScorer, 
-                           maximize, reportMatching, ...) {
-  splits1 <- t(as.logical(splits1)) # Convert to old-style logical matrix
-  splits2 <- t(as.logical(splits2)) # Convert to old-style logical matrix
-  dimSplits1 <- dim(splits1)
-  dimSplits2 <- dim(splits2)
-  nSplits1 <- dimSplits1[2]
-  nSplits2 <- dimSplits2[2]
-  if (nSplits1 == 0 || nSplits2 == 0) return (0L)
-  nLeaves <- dimSplits1[1]
-  if (dimSplits2[1] != nLeaves) {
-    stop("Split rows must bear identical labels")
-  }
-  
-  leafNames1 <- rownames(splits1)
-  leafNames2 <- rownames(splits2)
-  
-  if (!is.null(leafNames2)) {
-    splits2 <- unname(splits2[leafNames1, , drop=FALSE])
-    splits1 <- unname(splits1) # split2[split1] faster without names
-  }
-  
-  pairScores <- PairScorer(splits1, splits2, nSplits1, nSplits2, ...)
-  
-  # Return:
-  TreeDistanceReturn(pairScores, maximize, reportMatching, 
-                     splits1, splits2, leafNames1)
-}
-
-#' @describeIn GeneralizedRF C implementation #TODO describe
-#' Note that no checks will be made to confirm that splits1 and splits2 contain
-#' the same tips in the same order.  This is the responsibility of the calling
-#' function.
-#' @param nTip Integer specifying the number of tips in each split.
 #' @references \insertRef{Jonker1987}{TreeDist}
-CGRF <- function (splits1, splits2, nTip, PairScorer, 
+GeneralizedRF <- function (splits1, splits2, nTip, PairScorer, 
                            maximize, reportMatching, ...) {
   nSplits1 <- dim(splits1)[1]
   nSplits2 <- dim(splits2)[1]

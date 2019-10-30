@@ -77,8 +77,9 @@ NyeTreeSimilarity <- function (tree1, tree2, similarity = TRUE,
 NyeSplitSimilarity <- function (splits1, splits2, 
                                 nTip = attr(splits1, 'nTip'),
                                 reportMatching = FALSE) {
-  CGRF(splits1, splits2, nTip, cpp_jaccard_similarity, k = 1L, arboreal = FALSE,
-       maximize = FALSE, reportMatching = reportMatching)
+  GeneralizedRF(splits1, splits2, nTip, cpp_jaccard_similarity, k = 1L,
+                arboreal = FALSE, maximize = FALSE,
+                reportMatching = reportMatching)
 }
 
 #' Jaccard-Robinson-Foulds metric
@@ -165,6 +166,7 @@ JaccardSplitSimilarity <- function (splits1, splits2,
                                     nTip = attr(splits1, 'nTip'),
                                     k = 1L, arboreal = TRUE,
                                     reportMatching = FALSE) {
-  CGRF(splits1, splits2, nTip, cpp_jaccard_similarity, k = k, arboreal = arboreal,
-       maximize = FALSE, reportMatching = reportMatching)
+  GeneralizedRF(splits1, splits2, nTip, cpp_jaccard_similarity, k = k,
+                arboreal = arboreal, maximize = FALSE,
+                reportMatching = reportMatching)
 }
