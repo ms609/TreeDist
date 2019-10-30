@@ -90,7 +90,9 @@ List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y,
   
   for (int ai = 0; ai != a.n_splits; ai++) {
     for (int bi = 0; bi != b.n_splits; bi++) {
+    
       bool all_match = true, all_mismatch = true;
+    
       for (int bin = 0; bin != a.n_bins; bin++) {
         if ((a.state[ai][bin] != b.state[bi][bin])) {
           all_match = false;
