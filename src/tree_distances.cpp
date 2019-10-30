@@ -322,7 +322,7 @@ List cpp_jaccard_similarity (NumericMatrix x, NumericMatrix y,
         /* LAP will look to minimize an integer. max(ars) is between 0 and 1. */
         if (exponent == 1) {
           /* Nye et al. similarity metric */
-          score[ai][bi] = (int) BIGL - (BIGL * 
+          score[ai][bi] = (cost) BIGL - (BIGL * 
           ((min_ars_both > min_ars_either) ? 
           min_ars_both : min_ars_either));
         } else {
@@ -334,7 +334,7 @@ List cpp_jaccard_similarity (NumericMatrix x, NumericMatrix y,
            << ", BIG - BIG*score = " << ( (int) BIGL - (BIGL * 
            pow((min_ars_both > min_ars_either) ? 
            min_ars_both : min_ars_either, exponent))) << ".\n";*/
-          score[ai][bi] = (int) BIGL - (BIGL * 
+          score[ai][bi] = (cost) BIGL - (BIGL * 
             pow((min_ars_both > min_ars_either) ? 
             min_ars_both : min_ars_either, exponent));
         }
