@@ -4,7 +4,8 @@
 \alias{GeneralizedRF}
 \title{Generalized Robinson-Foulds distance}
 \usage{
-GeneralizedRF(splits1, splits2, PairScorer, maximize, reportMatching, ...)
+GeneralizedRF(splits1, splits2, nTip, PairScorer, maximize, reportMatching,
+  ...)
 }
 \arguments{
 \item{splits1}{Logical matrices where each row corresponds to a terminal,
@@ -19,6 +20,8 @@ and each column corresponds to a bipartition split, such that
 each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
 (\code{FALSE}) of the respective bipartition split.}
 
+\item{nTip}{Integer specifying the number of tips in each split.}
+
 \item{PairScorer}{function taking four arguments, \code{splits1}, \code{splits2},
 \code{nSplits1}, \code{nSplits2}, which should return the score of each pair of splits
 in a two-dimensional matrix.  Additional parameters may be specified via
@@ -30,10 +33,26 @@ matchings as an attribute of the score.}
 \item{\dots}{Additional parameters to \code{PairScorer}}
 }
 \value{
-The results of \code{TreeDistanceReturn} under the parameters provided
+A numeric value specifying the score of the tree pairs under the
+specified pair scorer. If \code{reportMatching = TRUE}, attribute also list:
+\itemize{
+\item \code{matching}: which split in \code{splits2} is optimally matched to each split in
+\code{split1} (\code{NA} if not matched);
+\item \code{pairScores}: Calculated scores for each possible matching of each split.
+\item \code{matchedSplits}: Textual representation of each match
+}
 }
 \description{
-Calculate Generalized Robinson-Foulds distance from splits.
+An internal function to calculate Generalized Robinson-Foulds distance from
+splits.
+}
+\details{
+Note that no checks will be made to confirm that splits1 and splits2 contain
+the same tips in the same order.  This is the responsibility of the calling
+function.
+}
+\references{
+\insertRef{Jonker1987}{TreeDist}
 }
 \author{
 Martin R. Smith
