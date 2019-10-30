@@ -71,7 +71,7 @@ by the number of partitions in the least resolved of the two trees:
 
 ```{r}
 NyeTreeSimilarity(tree1, tree2, 
-                  normalize = min(NPartitions(list(tree1, tree2))))
+                  normalize = min(NSplits(list(tree1, tree2))))
 ```
 
 More concisely, we can provide a normalizing function:
