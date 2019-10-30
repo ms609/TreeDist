@@ -340,18 +340,26 @@ ColourTernary(TernaryDensity(coords3, resolution = 20), spectrum = spec3)
 TernaryDensityContour(coords3, col = col3, nlevels = 4)
 TernaryDensityContour(coords1, col = col1, nlevels = 4)
 
-HorizontalHistogram <- function (dat, col, add = FALSE) {
-  breaks <- seq(0, 1, length.out = 41)
-  histy <- hist(round(dat, 7), breaks = breaks, plot = FALSE)
-  barplot(histy$density, space = 0, horiz = TRUE,
-          axes = FALSE, names.arg = '', 
-          col = col, border = NA, add = add)
+library('kdensity')
+HorizontalKDE <- function (dat, col, add = FALSE) {
+  lty <- 1
+  lwd <- 2
+  kde <- kdensity(dat)
+  kdeRange <- kdensity:::get_range(kde)
+  if (add) {
+    lines(kde(kdeRange), kdeRange, col = col, lty = lty, lwd = lwd)
+  } else {
+    plot(kde(kdeRange), kdeRange, col = col, lty = lty, lwd = lwd, ylim = c(0, 1),
+         main = '', axes = FALSE, type = 'l')
+  }
+  # abline(h=0:10 / 10) # Useful for confirming alignment
 }
 
-par(mar = c(1.6, 0, 1.9, 0)) # align plot limits with ternary plot
-HorizontalHistogram(correct1 / infoInTree1, col1)
-HorizontalHistogram(correct3 / infoInTree3, col = col3, add = TRUE)
+par(mar = c(1.8, 0, 1.8, 0)) # align plot limits with ternary plot
+HorizontalKDE(correct1 / infoInTree1, col1, add = FALSE)
+HorizontalKDE(correct3 / infoInTree3, col3, add = TRUE)
 mtext('\u2192 Normalized tree quality \u2192', 2)
+
 ```
 
 In the ternary plot, the vertical direction corresponds to the normalized tree
