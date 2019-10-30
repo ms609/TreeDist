@@ -200,7 +200,7 @@ List cpp_matching_split_distance (NumericMatrix x, NumericMatrix y,
                    half_tips = n_tips / 2;
   
   cost** score = new cost*[most_splits];
-  for (int i = 0; i < most_splits; i++) score[i] = new int[most_splits];
+  for (int i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
   
   /*Rcout << "Working over " << a.n_splits << " (" << a.n_splits << ", " << x.rows() 
           << ") and " << b.n_splits << " (" << b.n_splits << ", " << y.rows() 
@@ -278,7 +278,7 @@ List cpp_jaccard_similarity (NumericMatrix x, NumericMatrix y,
   bool enforce_arboreal = arboreal[0];
   
   cost** score = new cost*[most_splits];
-  for (int i = 0; i < most_splits; i++) score[i] = new int[most_splits];
+  for (int i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
   
   for (int ai = 0; ai != a.n_splits; ai++) {
     a_tips = 0;
@@ -387,7 +387,7 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
           << lg2_trees_matching_split((n_tips + 1) / 2, n_tips / 2) << "\n\n";*/
   
   cost** score = new cost*[most_splits];
-  for (int i = 0; i < most_splits; i++) score[i] = new int[most_splits];
+  for (int i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
   
   splitbit different[a.n_bins];
   int n_different, n_same, n_a_only, n_a_and_b;
@@ -500,7 +500,7 @@ List cpp_mutual_clustering (NumericMatrix x, NumericMatrix y,
           << lg2_trees_matching_split((n_tips + 1) / 2, n_tips / 2) << "\n\n";*/
   
   cost** score = new cost*[most_splits];
-  for (int i = 0; i < most_splits; i++) score[i] = new int[most_splits];
+  for (int i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
   
   double a_and_b, a_and_B, A_and_b, A_and_B, 
   p1, p2;
@@ -635,7 +635,7 @@ List cpp_mutual_phylo (NumericMatrix x, NumericMatrix y,
   }
   
   cost** score = new cost*[most_splits];
-  for (int i = 0; i < most_splits; i++) score[i] = new int[most_splits];
+  for (int i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
   
   for (int ai = 0; ai != a.n_splits; ai++) {
     for (int bi = 0; bi != b.n_splits; bi++) {

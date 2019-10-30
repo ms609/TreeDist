@@ -46,7 +46,7 @@ methodsToTest <- list(
 NormalizationTest <- function (FUNC, ...) {
   expect_equal(c(1L, 1L, 1L), 
                diag(FUNC(treesSBO8, treesSBO8, normalize = TRUE, ...)),
-               tolerance = 1e-6)
+               tolerance = 1e-7)
 }
 
 test_that('Bad labels cause error', {
@@ -104,40 +104,40 @@ test_that('Mutual Phylogenetic Info is correctly calculated', {
                  as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
                  8L)$score,
-               tolerance = 1e-5)
+               tolerance = 1e-7)
   
   expect_equal(0.2895066,
                cpp_mutual_phylo(
                  as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(0, 0, 1, 1, 0, 0, 0, 0))),
                  8L)$score,
-               tolerance = 1e-5)
+               tolerance = 1e-7)
   expect_equal(1.13750,
                cpp_mutual_phylo(
                  as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
                  8L)$score,
-               tolerance = 1e-5)
+               tolerance = 1e-7)
   
   expect_equal(3.45943,
                cpp_mutual_phylo(
                  as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
                  8L)$score,
-               tolerance = 1e-5)
+               tolerance = 1e-7)
   
   expect_equal(8 * (Entropy(c(3, 5) / 8) * 2 - Entropy(c(0, 0, 3, 5) / 8)),
                cpp_mutual_clustering(
                  as.Splits(as.logical(c(1, 1, 1, 0, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(1, 1, 1, 0, 0, 0, 0, 0))),
                  8L)$score, 
-               tolerance = 1e-5)
+               tolerance = 1e-7)
   
   expect_equal(8 * (Entropy(c(2, 6) / 8) * 2 - Entropy(c(0, 2, 2, 4) / 8)),
                cpp_mutual_clustering(
                  as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(0, 0, 1, 1, 0, 0, 0, 0))),
-                 8L)$score, tolerance = 1e-5)
+                 8L)$score, tolerance = 1e-7)
   
   expect_equal(9 * (Entropy(c(5, 4) / 9) + Entropy(c(3, 6) / 9) -
                       Entropy(c(3, 2, 0, 4) / 9)),
@@ -145,14 +145,14 @@ test_that('Mutual Phylogenetic Info is correctly calculated', {
                  as.Splits(as.logical(c(1, 1, 1, 1, 1, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(0, 0, 1, 1, 1, 0, 0, 0, 0))),
                  9L)$score,
-               tolerance = 1e-5)
+               tolerance = 1e-7)
   
   expect_equal(8 * (Entropy(c(4, 4) / 8) * 2 - Entropy(c(2, 2, 2, 2) / 8)),
                cpp_mutual_clustering(
                  as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(1, 0, 1, 0, 1, 0, 1, 0))),
                  8L)$score,
-               tolerance = 1e-5)
+               tolerance = 1e-7)
   
   expect_equal(22.53747, tolerance=1e-05,
                MutualPhylogeneticInfo(treeSym8, treeSym8, normalize = FALSE))
@@ -192,10 +192,10 @@ test_that('Mutual Phylogenetic Info is correctly calculated', {
   expect_equal(-log2(225/10395), MutualPhylogeneticInfo(treeSym8, treeAbcd.Efgh))
   expect_equal(-log2(225/10395) - log2(945/10395),
                MutualPhylogeneticInfo(treeSym8, treeTwoSplits),
-               tolerance = 1e-6)
+               tolerance = 1e-7)
   expect_equal(SplitMutualInformation(8, 4, 3),
                MutualPhylogeneticInfo(treeTwoSplits, treeAbc.Defgh),
-               tolerance = 1e-5)
+               tolerance = 1e-7)
   expect_equal(SplitInformation(4, 4) + SplitInformation (3, 5) - 
                (2 * SplitMutualInformation(8, 4, 3)),
                SplitVariationOfInformation(8, 4, 3),
@@ -203,7 +203,7 @@ test_that('Mutual Phylogenetic Info is correctly calculated', {
   
   expect_equal(MutualPhylogeneticInfo(treeSym8, list(treeSym8, treeBal8)), 
                MutualPhylogeneticInfo(list(treeSym8, treeBal8), treeSym8),
-               tolerance = 1e-6)
+               tolerance = 1e-7)
   
   # Test tree too large to cache
   set.seed(101)
@@ -219,20 +219,20 @@ test_that('MutualMatchingSplitInfo is correctly calculated', {
                MutualMatchingSplitInfoSplits(
                  as.Splits(c(rep(TRUE, 2), rep(FALSE, 6))),
                  as.Splits(c(FALSE, FALSE, rep(TRUE, 2), rep(FALSE, 4)))),
-               tolerance = 1e-6)
+               tolerance = 1e-7)
   expect_equal(log2(3),
                MutualMatchingSplitInfoSplits(
                  as.Splits(c(rep(FALSE, 6), rep(TRUE, 2))),
                  as.Splits(c(FALSE, FALSE, rep(TRUE, 2), rep(FALSE, 4)))),
-               tolerance = 1e-6)
+               tolerance = 1e-7)
   expect_equal(log2(3), cpp_mmsi_distance(
     as.Splits(c(rep(TRUE, 2), rep(FALSE, 6))),
     as.Splits(c(FALSE, FALSE, rep(TRUE, 2), rep(FALSE, 4))),
-    8L)$score, tolerance = 1e-6)
+    8L)$score, tolerance = 1e-7)
   expect_equal(log2(3), cpp_mmsi_distance(
     as.Splits(rep(c(FALSE, TRUE), each = 4L)),
     as.Splits(rep(c(FALSE, TRUE), 4L)),
-    8L)$score, tolerance = 1e-6)
+    8L)$score, tolerance = 1e-7)
   
   
   expect_equal(MutualPhylogeneticInfo(treeSym8, treeSym8),
@@ -244,7 +244,7 @@ test_that('MutualMatchingSplitInfo is correctly calculated', {
   expect_equal(-(TreeTools::LogTreesMatchingSplit(2, 5) - LnUnrooted.int(7)) / 
                  log(2), 
                MutualMatchingSplitInfo(treeAb.Cdefgh, treeAbc.Defgh),
-               tolerance = 1e-6)
+               tolerance = 1e-7)
   expect_true(MutualMatchingSplitInfo(treeSym8, treeBal8) > 
                 MutualMatchingSplitInfo(treeSym8, treeOpp8))
   expect_equal(0, VariationOfMatchingSplitInfo(treeSym8, treeSym8))
@@ -272,20 +272,20 @@ test_that('Clustering information is correctly calculated', {
                  as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
                  8L)$score, 
-               tolerance = 1e-5)
+               tolerance = 1e-7)
   
   expect_equal(8 * (Entropy(c(3, 5) / 8) * 2 - Entropy(c(0, 0, 3, 5) / 8)),
                cpp_mutual_clustering(
                  as.Splits(as.logical(c(1, 1, 1, 0, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(1, 1, 1, 0, 0, 0, 0, 0))),
                  8L)$score, 
-               tolerance = 1e-5)
+               tolerance = 1e-7)
   
   expect_equal(8 * (Entropy(c(2, 6) / 8) * 2 - Entropy(c(0, 2, 2, 4) / 8)),
                cpp_mutual_clustering(
     as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
     as.Splits(as.logical(c(0, 0, 1, 1, 0, 0, 0, 0))),
-    8L)$score, tolerance = 1e-5)
+    8L)$score, tolerance = 1e-7)
   
   expect_equal(9 * (Entropy(c(5, 4) / 9) + Entropy(c(3, 6) / 9) -
                  Entropy(c(3, 2, 0, 4) / 9)),
@@ -293,14 +293,14 @@ test_that('Clustering information is correctly calculated', {
                  as.Splits(as.logical(c(1, 1, 1, 1, 1, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(0, 0, 1, 1, 1, 0, 0, 0, 0))),
                  9L)$score,
-               tolerance = 1e-5)
+               tolerance = 1e-7)
   
   expect_equal(8 * (Entropy(c(4, 4) / 8) * 2 - Entropy(c(2, 2, 2, 2) / 8)),
                cpp_mutual_clustering(
                  as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(1, 0, 1, 0, 1, 0, 1, 0))),
                  8L)$score,
-               tolerance = 1e-5)
+               tolerance = 1e-7)
   
   expect_equal(ClusteringInfo(treeSym8),
                MutualClusteringInfo(treeSym8, treeSym8),
@@ -308,7 +308,7 @@ test_that('Clustering information is correctly calculated', {
   expect_equal(TreeDistance(treeSym8, treeBal8),
                MutualClusteringInfo(treeSym8, treeBal8, normalize = TRUE))
   expect_equal(1, MutualClusteringInfo(treeSym8, treeSym8, normalize = TRUE),
-               tolerance = 1e-6)
+               tolerance = 1e-7)
   expect_true(MutualClusteringInfo(treeSym8, treeBal8, normalize = pmin) >
                 MutualClusteringInfo(treeSym8, treeBal8, normalize = pmax))
   expect_equal(ClusteringInfo(treeSym8) + ClusteringInfo(treeBal8) -
@@ -355,9 +355,9 @@ test_that('NyeTreeSimilarity is correctly calculated', {
   expect_equal(5L, NyeTreeSimilarity(treeSym8, treeSym8))
   expect_equal(c(3.8, 5), NyeTreeSimilarity(treeSym8, listBalSym))
   expect_equal(2 / 3, NyeTreeSimilarity(treeAb.Cdefgh, treeAbc.Defgh), 
-               tolerance = 1e-6)
+               tolerance = 1e-7)
   expect_equal(2 * (1 / 3), NyeTreeSimilarity(treeAb.Cdefgh, treeAbc.Defgh,
-                                        similarity = FALSE), tolerance = 1e-6)
+                                        similarity = FALSE), tolerance = 1e-7)
   expect_equal(1, NyeTreeSimilarity(treeSym8, treeSym8, normalize = TRUE))
   #TODO: Validate expected value
   expect_equal(1L, NyeTreeSimilarity(treeSym8, treeAbcd.Efgh, 
@@ -389,7 +389,7 @@ test_that('Jaccard RF is correctly calculated', {
                                      similarity = TRUE, k = 2))
   expect_equal(2 * 2, 3 * JaccardRobinsonFoulds(treeAb.Cdefgh, treeAbc.Defgh,
                                             similarity = TRUE),
-               tolerance = 1e-6)
+               tolerance = 1e-7)
   expect_equal(1, JaccardRobinsonFoulds(treeSym8, treeSym8,
                                         similarity = TRUE, normalize = TRUE))
   expect_equal(0, JaccardRobinsonFoulds(treeSym8, treeSym8,
