@@ -57,6 +57,7 @@ r_binary_packages:
  - ape
  - covr
  - devtools
+ - knitr
  - phangorn
  - Rdpack
  - roxygen2
