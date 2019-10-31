@@ -44,6 +44,8 @@ git:
 # - r-lib/devtools
 
 r_packages:
+ - tinytex # for bookdown
+ - rmarkdown # for bookdown
  - bookdown
  - kdensity
  - vdiffr
