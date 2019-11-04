@@ -26,22 +26,25 @@
 #' @author Martin R. Smith
 #' @references \insertRef{Kendall2016}{TreeDist}
 #' @export
-KendallColijn <- function (tree1, tree2) {
+KendallColijn <- function (tree1, tree2 = tree1) {
   FunValue <- function (nTip) double(nTip * (nTip - 1L) / 2L)
   EuclidianDistance <- function (x) sqrt(sum(x * x))
   if (class(tree1) == 'phylo') {
     if (class(tree2) == 'phylo') {
-      if (length(setdiff(tree1$tip.label, tree2$tip.label)) > 0) {
+      if (length(tree1$tip.label) != length(tree2$tip.label) || 
+          length(setdiff(tree1$tip.label, tree2$tip.label)) > 0) {
         stop("Tree tips must bear identical labels")
       }
       EuclidianDistance(KCVector(tree1) - KCVector(tree2))
     } else {
-      apply(KCVector(tree1) - vapply(tree2, KCVector, FunValue(length(tree1$tip.label))),
+      apply(KCVector(tree1) - vapply(tree2, KCVector,
+                                     FunValue(length(tree1$tip.label))),
             2L, EuclidianDistance)
     }
   } else {
     if (class(tree2) == 'phylo') {
-      apply(KCVector(tree2) - vapply(tree1, KCVector, FunValue(length(tree2$tip.label))),
+      apply(KCVector(tree2) - vapply(tree1, KCVector,
+                                     FunValue(length(tree2$tip.label))),
             2L, EuclidianDistance)
     } else {
       nTip <- length(tree1[[1]]$tip.label)

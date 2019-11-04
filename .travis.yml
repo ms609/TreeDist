@@ -1,13 +1,40 @@
 language: r
 cache: packages
-sudo: required # required if r_binary_packages; false otherwise
 warnings_are_errors: true
+sudo: required # required if r_binary_packages or tlmgr install; false otherwise
 r_check_args: --as-cran --no-manual # Workaround error compiling PDF manual
 matrix:
   include:
-    - r: 3.4.0
+    - r: 3.5.0
+      sudo: false
+      r_packages:
+        - ape
+        - devtools
+        - kdensity
+        - pkgload
+        - phangorn
+        - Rdpack
+        - rmarkdown
+        - roxygen2
+        - testthat
+        - tinytex
+        - bookdown
+        - vdiffr
     - r: release
       before_deploy: Rscript -e 'remotes::install_cran("pkgdown")'
+      r_binary_packages:
+       - ape
+       - covr
+       - devtools
+       - knitr
+       - phangorn
+       - Rdpack
+       - roxygen2
+       - testthat
+      r_packages:
+       - bookdown
+       - kdensity
+       - vdiffr
       deploy:
         provider: script
         script: Rscript -e 'pkgdown::deploy_site_github()'
@@ -17,6 +44,19 @@ matrix:
         on: 
           branch: master
     - r: devel
+      r_binary_packages:
+       - ape
+       - covr
+       - devtools
+       - knitr
+       - phangorn
+       - Rdpack
+       - roxygen2
+       - testthat
+      r_packages:
+       - bookdown
+       - kdensity
+       - vdiffr
       after_success:
         - Rscript -e "covr::codecov()"
     - os: osx
@@ -25,6 +65,7 @@ matrix:
         - ape
         - bookdown
         - devtools
+        - kdensity
         - phangorn
         - Rdpack
         - roxygen2
@@ -33,33 +74,22 @@ matrix:
       before_install:
       - brew install cairo
       - sudo tlmgr install doi titling hyperref
-#  allow_failures:
-#    r: devel # Incompatible with devtools?
+  allow_failures:
+    r: 3.5.0 # TreeSearch requires > 3.5.0
 
 git:
   depth: 1
 
+ 
 r_github_packages:
  - ms609/TreeTools
  - ms609/TreeDistData
 # - r-lib/pkgload
-# - r-lib/devtools
+# - r-lib/devtools    
 
-r_packages:
- - bookdown
- - vdiffr
- 
-r_binary_packages:
- - ape
- - covr
- - devtools
- - phangorn
- - Rdpack
- - roxygen2
- - testthat
 
 before_script:
-  - R -e "devtools::load_all();devtools::document()"
+  - R -e "pkgload::load_all(); devtools::document()"
 
 notifications:
   email:

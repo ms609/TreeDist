@@ -4,18 +4,24 @@
 \alias{RobinsonFouldsInfo}
 \alias{RobinsonFouldsInfoSplits}
 \alias{RobinsonFoulds}
+\alias{RobinsonFouldsMatching}
 \alias{RobinsonFouldsSplits}
 \title{(Information-adjusted) Robinson-Foulds distance}
 \usage{
-RobinsonFouldsInfo(tree1, tree2, similarity = FALSE, normalize = FALSE,
+RobinsonFouldsInfo(tree1, tree2 = tree1, similarity = FALSE,
+  normalize = FALSE, reportMatching = FALSE)
+
+RobinsonFouldsInfoSplits(splits1, splits2, nTip = attr(splits1, "nTip"),
   reportMatching = FALSE)
 
-RobinsonFouldsInfoSplits(splits1, splits2, reportMatching = FALSE)
+RobinsonFoulds(tree1, tree2 = tree1, similarity = FALSE,
+  normalize = FALSE, reportMatching = FALSE)
 
-RobinsonFoulds(tree1, tree2, similarity = FALSE, normalize = FALSE,
+RobinsonFouldsMatching(tree1, tree2 = tree1, similarity = FALSE,
+  normalize = FALSE, ...)
+
+RobinsonFouldsSplits(splits1, splits2, nTip = attr(splits1, "nTip"),
   reportMatching = FALSE)
-
-RobinsonFouldsSplits(splits1, splits2, reportMatching = FALSE)
 }
 \arguments{
 \item{tree1}{Trees of class \code{phylo}, with tips labelled identically,
@@ -48,6 +54,10 @@ either listed in the same order or bearing identical names (in any sequence),
 and each column corresponds to a bipartition split, such that
 each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
 (\code{FALSE}) of the respective bipartition split.}
+
+\item{nTip}{Integer specifying the number of tips in each split.}
+
+\item{\dots}{Not used.}
 }
 \description{
 Calculates the Robinson-Foulds distance, or the equivalent similarity
@@ -74,10 +84,11 @@ tree distance, because their similarity is less remarkable.
 \item \code{RobinsonFouldsInfoSplits}: Calculate information-adjusted Robinson-Foulds
 distance from splits instead of trees.
 
-\item \code{RobinsonFoulds}: An inefficient implementation of the
-Robinson-Foulds distance, included for use with \code{\link{VisualizeMatching}}.
-To generate the RF distance efficiently, use the function
-\code{\link{ape}{treedist}}.
+\item \code{RobinsonFoulds}: Robinson-Foulds distance, with option to
+report matched splits.
+
+\item \code{RobinsonFouldsMatching}: Matched splits, intended for use with
+\code{\link{VisualizeMatching}}.
 
 \item \code{RobinsonFouldsSplits}: Calculate Robinson-Foulds distance from splits
 instead of trees.

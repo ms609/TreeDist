@@ -10,25 +10,25 @@
 #' @author Martin R. Smith
 #' @keywords internal
 #' @export
-PartitionInfo <- function(tree) {
-  if (class(tree) == 'phylo') {
-    PartitionInfoSplits(Tree2Splits(tree))
-  } else {
-    splits <- lapply(tree, Tree2Splits)
-    vapply(splits, PartitionInfoSplits, double(1L))
-  }
+PartitionInfo <- function (x) UseMethod('PartitionInfo')
+
+#' @export
+PartitionInfo.phylo <- function (x) PartitionInfo.Splits(as.Splits(x))
+  
+#' @export
+PartitionInfo.list <- PartitionInfo.multiPhylo <- function (x) {
+  vapply(as.Splits(x), PartitionInfo, double(1L))
 }
 
-#' @describeIn PartitionInfo Calculate partition information from splits instead of trees.
-#' @importFrom TreeTools LnRooted.int LnUnrooted.int
+#' @importFrom TreeTools LnRooted.int LnUnrooted.int TipsInSplits
 #' @export
-PartitionInfoSplits <- function(splits) {
-  nTerminals <- nrow(splits)
-  inSplit <- colSums(splits)
+PartitionInfo.Splits <- function(x) {
+  nTip <- attr(x, 'nTip')
+  inSplit <- TipsInSplits(x)
   
   sum(vapply(inSplit, LnRooted.int, 0) + 
-        + vapply(nTerminals - inSplit,  LnRooted.int, 0)
-      - LnUnrooted.int(nTerminals)
+        + vapply(nTip - inSplit,  LnRooted.int, 0)
+      - LnUnrooted.int(nTip)
   ) / -log(2)
 }
 
@@ -53,21 +53,28 @@ PartitionInfoSplits <- function(splits) {
 #' @references \insertRef{Meila2007}{TreeDist}
 #' @author Martin R. Smith
 #' @keywords internal
+#' @importFrom TreeTools as.Splits
 #' @export
-ClusteringInfo <- function(tree) {
-  if (class(tree) == 'phylo') {
-    ClusteringInfoSplits(Tree2Splits(tree))
-  } else {
-    splits <- lapply(tree, Tree2Splits)
-    vapply(splits, ClusteringInfoSplits, double(1L))
-  }
-}
+ClusteringInfo <- function (x) UseMethod("ClusteringInfo")
 
-#' @describeIn ClusteringInfo Calculate clustering information from splits instead of trees.
+#' @describeIn ClusteringInfo Implementation for `phylo` objects.
 #' @export
-ClusteringInfoSplits <- function (splits) {
-  nTip <- nrow(splits)
-  inSplit <- colSums(splits)
+ClusteringInfo.phylo <- function (x) ClusteringInfo.Splits(as.Splits(x))
+
+#' @describeIn ClusteringInfo Implementation for lists.
+#' @export
+ClusteringInfo.list <- function (x)
+    vapply(as.Splits(x), ClusteringInfo.Splits, double(1L))
+
+#' @describeIn ClusteringInfo Implementation for `multiPhylo` objects.
+#' @export
+ClusteringInfo.multiPhylo <- ClusteringInfo.list
+
+#' @describeIn ClusteringInfo Implementation for `Splits` objects.
+#' @export
+ClusteringInfo.Splits <- function (x) {
+  nTip <- attr(x, 'nTip')
+  inSplit <- TipsInSplits(x)
   splitP <- rbind(inSplit, nTip - inSplit) / nTip
   
   # Entropy measures the bits required to transmit the cluster label of each tip.
@@ -75,5 +82,5 @@ ClusteringInfoSplits <- function (splits) {
   # See Vinh (2010: p. 2840) 
   # 
   # Return:
-  sum(apply(splitP, 2, Entropy)) / log(2) * nTip
+  sum(apply(splitP, 2, Entropy)) * nTip
 }

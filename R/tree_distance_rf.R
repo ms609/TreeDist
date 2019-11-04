@@ -35,7 +35,7 @@
 #' 
 #' @author Martin R. Smith
 #' @export
-RobinsonFouldsInfo <- function (tree1, tree2, similarity = FALSE,
+RobinsonFouldsInfo <- function (tree1, tree2 = tree1, similarity = FALSE,
                                 normalize = FALSE, reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(RobinsonFouldsInfoSplits, tree1, tree2, 
                                         reportMatching) * 2
@@ -54,76 +54,57 @@ RobinsonFouldsInfo <- function (tree1, tree2, similarity = FALSE,
 #' @inheritParams MutualPhylogeneticInfoSplits
 #' @importFrom TreeTools LogTreesMatchingSplit LnUnrooted.int
 #' @export
-RobinsonFouldsInfoSplits <- function (splits1, splits2, reportMatching = FALSE) {
-  GeneralizedRF(splits1, splits2,
-                function(splits1, splits2, nSplits1, nSplits2) {
-    nTip <- dim(splits1)[1]
-    lnUnrooted <- LnUnrooted.int(nTip)
-    
-    ret <- matrix(0, nSplits1, nSplits2)
-    for (i in seq_len(nSplits1)) {
-      A1 <- splits1[, i]
-      for (j in seq_len(nSplits2)) {
-        A2 <- splits2[, j]
-      
-        if (all(A1 == A2) || all(A1 != A2)) {
-          nInSplit <- sum(A1)
-          ret[i, j] <- LogTreesMatchingSplit(nInSplit, nTip - nInSplit)
-        } else {
-          ret[i, j] <- lnUnrooted
-        }
-      }
-    }
-    
-    # Return:
-    -(ret - lnUnrooted) / log(2)
-  }, maximize = TRUE, reportMatching)
+RobinsonFouldsInfoSplits <- function (splits1, splits2, 
+                                      nTip = attr(splits1, 'nTip'),
+                                      reportMatching = FALSE) {
+  
+  GeneralizedRF(splits1, splits2, nTip, cpp_robinson_foulds_info,
+                maximize = FALSE, reportMatching = reportMatching)
 }
 
-#' @describeIn RobinsonFouldsInfo An inefficient implementation of the 
-#' Robinson-Foulds distance, included for use with [`VisualizeMatching`].
-#' To generate the RF distance efficiently, use the function 
-#' \code{\link{ape}{treedist}}.
+#' @describeIn RobinsonFouldsInfo Robinson-Foulds distance, with option to
+#' report matched splits.
+#' @importFrom TreeTools NSplits
 #' @export
-RobinsonFoulds <- function (tree1, tree2, similarity = FALSE, normalize = FALSE,
+RobinsonFoulds <- function (tree1, tree2 = tree1, similarity = FALSE, normalize = FALSE,
                                 reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(RobinsonFouldsSplits, tree1, tree2, 
                                         reportMatching)
   
-  NumberOfSplits <- function (tr) {
-    if (class(tr) == 'phylo') {
-      tr$Nnode - 2L
-    } else {
-      vapply(tr, function (thisTree) thisTree$Nnode - 2L, 1L)
-    }
-  }
-  
-  if (!similarity) unnormalized <- 
-    outer(NumberOfSplits(tree1), NumberOfSplits(tree2), '+')[, , drop = TRUE] -
+  if (similarity) unnormalized <- 
+    outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE] -
     unnormalized
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                InfoInTree = NumberOfSplits, Combine = `+`)
+                InfoInTree = NSplits, Combine = `+`)
+}
+
+#' @describeIn RobinsonFouldsInfo Matched splits, intended for use with 
+#' [`VisualizeMatching`].
+#' @param \dots Not used.
+#' @importFrom TreeTools NSplits
+RobinsonFouldsMatching <- function (tree1, tree2 = tree1, similarity = FALSE,
+                                    normalize = FALSE, ...) {
+  ret <- CalculateTreeDistance(RobinsonFouldsSplits, tree1, tree2, 
+                                        reportMatching = TRUE)
+
+  ret <- outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE] -
+    ret
+  
+  attr(ret, 'pairScores') <- !attr(ret, 'pairScores')
+  
+  # Return:
+  ret
 }
 
 #' @describeIn RobinsonFouldsInfo Calculate Robinson-Foulds distance from splits
 #' instead of trees.
 #' @inheritParams MutualPhylogeneticInfoSplits
 #' @export
-RobinsonFouldsSplits <- function (splits1, splits2, reportMatching = FALSE) {
-  GeneralizedRF(splits1, splits2,
-                function(splits1, splits2, nSplits1, nSplits2) {
-                  ret <- matrix(0L, nSplits1, nSplits2)
-                  for (i in seq_len(nSplits1)) {
-                    A1 <- splits1[, i]
-                    for (j in seq_len(nSplits2)) {
-                      A2 <- splits2[, j]
-                      ret[i, j] <- all(A1 == A2) || all(A1 != A2)
-                    }
-                  }
-                  
-                  # Return:
-                  ret
-                }, maximize = TRUE, reportMatching) * 2L
+RobinsonFouldsSplits <- function (splits1, splits2,
+                                  nTip = attr(splits1, 'nTip'),
+                                  reportMatching = FALSE) {
+  GeneralizedRF(splits1, splits2, nTip, cpp_robinson_foulds_distance,
+                maximize = FALSE, reportMatching = reportMatching)
 }

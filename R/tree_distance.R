@@ -1,88 +1,69 @@
 #' Generalized Robinson-Foulds distance
 #' 
-#' Calculate Generalized Robinson-Foulds distance from splits.
+#' An internal function to calculate Generalized Robinson-Foulds distance from
+#' splits.
+#'
+#' Note that no checks will be made to confirm that splits1 and splits2 contain
+#' the same tips in the same order.  This is the responsibility of the calling
+#' function.
 #' 
 #' @inheritParams MutualPhylogeneticInfoSplits
+#' @param nTip Integer specifying the number of tips in each split.
 #' @param PairScorer function taking four arguments, `splits1`, `splits2`,
 #' `nSplits1`, `nSplits2`, which should return the score of each pair of splits
 #' in a two-dimensional matrix.  Additional parameters may be specified via 
 #' \dots.
 #' @param \dots Additional parameters to `PairScorer`
 #' 
-#' @return The results of `TreeDistanceReturn` under the parameters provided
+#' @return A numeric value specifying the score of the tree pairs under the 
+#' specified pair scorer. If `reportMatching = TRUE`, attribute also list:
+#' 
+#' - `matching`: which split in `splits2` is optimally matched to each split in 
+#' `split1` (`NA` if not matched);
+#'
+#' - `pairScores`: Calculated scores for each possible matching of each split.
+#' 
+#' - `matchedSplits`: Textual representation of each match
 #' 
 #' @keywords internal
 #' @author Martin R. Smith
 #' @export
-GeneralizedRF <- function (splits1, splits2, PairScorer, 
+#' @references \insertRef{Jonker1987}{TreeDist}
+GeneralizedRF <- function (splits1, splits2, nTip, PairScorer, 
                            maximize, reportMatching, ...) {
-  dimSplits1 <- dim(splits1)
-  dimSplits2 <- dim(splits2)
-  nSplits1 <- dimSplits1[2]
-  nSplits2 <- dimSplits2[2]
+  nSplits1 <- dim(splits1)[1]
+  nSplits2 <- dim(splits2)[1]
   if (nSplits1 == 0 || nSplits2 == 0) return (0L)
-  nTerminals <- dimSplits1[1]
-  if (dimSplits2[1] != nTerminals) {
-    stop("Split rows must bear identical labels")
-  }
   
-  taxonNames1 <- rownames(splits1)
-  taxonNames2 <- rownames(splits2)
-  
-  if (!is.null(taxonNames2)) {
-    splits2 <- unname(splits2[taxonNames1, , drop=FALSE])
-    splits1 <- unname(splits1) # split2[split1] faster without names
-  }
-  
-  pairScores <- PairScorer(splits1, splits2, nSplits1, nSplits2, ...)
-  
-  # Return:
-  TreeDistanceReturn(pairScores, maximize, reportMatching, 
-                     splits1, splits2, taxonNames1)
-}
-#' @describeIn GeneralizedRF C implementation #TODO describe
-CGRF <- function (splits1, splits2, PairScorer, 
-                           maximize, reportMatching, ...) {
-  dimSplits1 <- dim(splits1)
-  dimSplits2 <- dim(splits2)
-  nSplits1 <- dimSplits1[2]
-  nSplits2 <- dimSplits2[2]
-  if (nSplits1 == 0 || nSplits2 == 0) return (0L)
-  nTerminals <- dimSplits1[1]
-  if (dimSplits2[1] != nTerminals) {
-    stop("Split rows must bear identical labels")
-  }
-  taxonNames1 <- rownames(splits1)
-  taxonNames2 <- rownames(splits2)
-  
-  if (!is.null(taxonNames2)) {
-    splits2 <- splits2[taxonNames1, , drop=FALSE]
-  }
-  
-  solution <- PairScorer(splits1, splits2,  ...)
+  solution <- PairScorer(splits1, splits2, nTip, ...)
   ret <- solution$score
   
   if (reportMatching) {
-    matching <- solution$matching + 1L
+    matching <- solution$matching
     matching[matching > nSplits2] <- NA
     if (nSplits1 < nSplits2) {
-      matching <- matching[seq_len(ncol(splits1))]
+      matching <- matching[seq_len(nSplits1)]
     }
     attr(ret, 'matching') <- matching
     
     # We're not worried about performance any more
-    pairScores <- vapply(seq_len(nSplits2), function (i) {
-      vapply(seq_len(nSplits1), function (j) {
-        PairScorer(splits1[, j, drop = FALSE], splits2[, i, drop = FALSE], ...)$score
-      }, double(1))
-      }, double(nSplits1))
+    pairScores <- matrix(0, nSplits1, nSplits2)
+    for (i in seq_len(nSplits1)) {
+      for (j in seq_len(nSplits2)) {
+        pairScores[i, j] <- PairScorer(splits1[i, , drop = FALSE], 
+                                       splits2[j, , drop = FALSE],
+                                       nTip = nTip, ...)$score
+      }
+    }
     attr(ret, 'pairScores') <- pairScores
     
-    if (!is.null(taxonNames1)) {
+    if (!is.null(attr(splits1, 'tip.label'))) {
+      matched1 <- !is.na(matching)
+      matched2 <- matching[matched1]
+      matched1 <- which(matched1)
       attr(ret, 'matchedSplits') <- 
-        ReportMatching(splits1[, !is.na(matching), drop = FALSE], 
-                       splits2[, matching[!is.na(matching)], drop = FALSE],
-                       taxonNames1,
+        ReportMatching(splits1[[matched1]],
+                       splits2[[matched2]],
                        realMatch = if (maximize) {
                          pairScores[matrix(c(matched1, matched2), ncol=2L)] > 0
                        } else TRUE)
@@ -123,7 +104,7 @@ SplitsCompatible <- function (split1, split2) {
 #' @param reportMatching Logical specifying whether to report details
 #' of an optimal matching.
 #' @template splits12params
-#' @param taxonNames Character vector listing the names corresponding to each
+#' @param leafNames Character vector listing the names corresponding to each
 #' row of `splits1` and `splits2`.
 #' Corresponding parameters from within each function
 #' 
@@ -134,7 +115,7 @@ SplitsCompatible <- function (split1, split2) {
 TreeDistanceReturn <- function (pairScores, maximize = FALSE,
                                 reportMatching,  
                                 splits1, splits2,
-                                taxonNames = NULL) {
+                                leafNames = NULL) {
   dimScores <- dim(pairScores)
   
   if (dimScores[1] > dimScores[2]) {
@@ -168,11 +149,9 @@ TreeDistanceReturn <- function (pairScores, maximize = FALSE,
       matching = optimalMatching
     )
     
-    if (!is.null(taxonNames)) {
+    if (!is.null(leafNames)) {
       attr(ret, 'matchedSplits') <- 
-        ReportMatching(splits1[, matched1, drop = FALSE], 
-                       splits2[, matched2, drop = FALSE],
-                       taxonNames,
+        ReportMatching(splits1[[matched1]], splits2[[matched2]],
                        realMatch = if (maximize) {
                          pairScores[matrix(c(matched1, matched2), ncol=2L)] > 0
                        } else TRUE)

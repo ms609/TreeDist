@@ -14,15 +14,15 @@
 \alias{MutualMatchingSplitInfoSplits}
 \title{Information-based generalized Robinson-Foulds distances}
 \usage{
-TreeDistance(tree1, tree2)
+TreeDistance(tree1, tree2 = tree1)
 
-MutualPhylogeneticInfo(tree1, tree2, normalize = FALSE,
+MutualPhylogeneticInfo(tree1, tree2 = tree1, normalize = FALSE,
   reportMatching = FALSE)
 
-VariationOfPhylogeneticInfo(tree1, tree2, normalize = FALSE,
+VariationOfPhylogeneticInfo(tree1, tree2 = tree1, normalize = FALSE,
   reportMatching = FALSE)
 
-VariationOfClusteringInfo(tree1, tree2, normalize = FALSE,
+VariationOfClusteringInfo(tree1, tree2 = tree1, normalize = FALSE,
   reportMatching = FALSE)
 
 ExpectedVariation(tree1, tree2, samples = 1000)
@@ -30,17 +30,20 @@ ExpectedVariation(tree1, tree2, samples = 1000)
 MutualClusteringInfo(tree1, tree2, normalize = FALSE,
   reportMatching = FALSE)
 
-MutualPhylogeneticInfoSplits(splits1, splits2, reportMatching = FALSE)
+MutualPhylogeneticInfoSplits(splits1, splits2, nTip = attr(splits1,
+  "nTip"), reportMatching = FALSE)
 
-MutualClusteringInfoSplits(splits1, splits2, reportMatching = FALSE)
+MutualClusteringInfoSplits(splits1, splits2, nTip = attr(splits1,
+  "nTip"), reportMatching = FALSE)
 
-MutualMatchingSplitInfo(tree1, tree2, normalize = FALSE,
+MutualMatchingSplitInfo(tree1, tree2 = tree1, normalize = FALSE,
   reportMatching = FALSE)
 
-VariationOfMatchingSplitInfo(tree1, tree2, normalize = FALSE,
+VariationOfMatchingSplitInfo(tree1, tree2 = tree1, normalize = FALSE,
   reportMatching = FALSE)
 
-MutualMatchingSplitInfoSplits(splits1, splits2, reportMatching = FALSE)
+MutualMatchingSplitInfoSplits(splits1, splits2, nTip = attr(splits1,
+  "nTip"), reportMatching = FALSE)
 }
 \arguments{
 \item{tree1, tree2}{Trees of class \code{phylo}, with tips labelled identically,
@@ -64,6 +67,8 @@ either listed in the same order or bearing identical names (in any sequence),
 and each column corresponds to a bipartition split, such that
 each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
 (\code{FALSE}) of the respective bipartition split.}
+
+\item{nTip}{Integer specifying the number of tips in each split.}
 }
 \value{
 If \code{reportMatching = FALSE}, the functions return a numeric
@@ -109,9 +114,11 @@ a given topology.
 
 \item \code{MutualMatchingSplitInfo}: Mutual Matching Split information of two trees.
 
-\item \code{VariationOfMatchingSplitInfo}: Variation of matching split information between two trees.
+\item \code{VariationOfMatchingSplitInfo}: Variation of matching split information between two
+trees.
 
-\item \code{MutualMatchingSplitInfoSplits}: Calculate variation of matching split information from splits instead of trees.
+\item \code{MutualMatchingSplitInfoSplits}: Calculate variation of matching split information
+from splits instead of trees.
 }}
 
 \section{Concepts of information}{

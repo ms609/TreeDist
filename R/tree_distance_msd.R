@@ -19,7 +19,7 @@
 #' @author Martin R. Smith
 #' @importFrom TreeTools LnUnrooted.int
 #' @export
-MatchingSplitDistance <- function (tree1, tree2, normalize = FALSE,
+MatchingSplitDistance <- function (tree1, tree2 = tree1, normalize = FALSE,
                                    reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(MatchingSplitDistanceSplits, tree1, tree2, 
                                         reportMatching)
@@ -34,8 +34,10 @@ MatchingSplitDistance <- function (tree1, tree2, normalize = FALSE,
 #' @inheritParams MutualPhylogeneticInfoSplits
 #' @useDynLib TreeDist, .registration = TRUE
 #' @export
-MatchingSplitDistanceSplits <- function (splits1, splits2, normalize = TRUE, 
+MatchingSplitDistanceSplits <- function (splits1, splits2, 
+                                         nTip = attr(splits1, 'nTip'),
+                                         normalize = TRUE, 
                                          reportMatching = FALSE) {
-  CGRF(splits1, splits2, cpp_matching_split_distance, maximize = FALSE,
-       reportMatching = reportMatching)
+  GeneralizedRF(splits1, splits2, nTip, cpp_matching_split_distance,
+                maximize = FALSE, reportMatching = reportMatching)
 }

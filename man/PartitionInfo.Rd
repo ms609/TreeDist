@@ -2,12 +2,9 @@
 % Please edit documentation in R/tree_information.R
 \name{PartitionInfo}
 \alias{PartitionInfo}
-\alias{PartitionInfoSplits}
 \title{Information content of partitions within a tree}
 \usage{
-PartitionInfo(tree)
-
-PartitionInfoSplits(splits)
+PartitionInfo(x)
 }
 \arguments{
 \item{tree}{A tree of class \code{phylo}, a list of trees, or a \code{multiPhylo} object.}
@@ -18,11 +15,6 @@ phylogenetic tree.  This value will be greater than the total information
 content of the tree where a tree contains multiple partitions, as
 these partitions will contain mutual information
 }
-\section{Functions}{
-\itemize{
-\item \code{PartitionInfoSplits}: Calculate partition information from splits instead of trees.
-}}
-
 \author{
 Martin R. Smith
 }

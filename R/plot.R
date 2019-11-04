@@ -88,7 +88,7 @@ TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = FALSE,
 #' @importFrom ape nodelabels edgelabels plot.phylo
 #' @importFrom colorspace qualitative_hcl sequential_hcl
 #' @importFrom graphics par
-#' @importFrom TreeTools Tree2Splits
+#' @importFrom TreeTools as.Splits
 #' @export
 VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
                               precision = 3L, Plot = plot.phylo,
@@ -96,16 +96,17 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
                               edge.width = NULL, edge.color = NULL,
                               ...) {
   
-  splits1 <- Tree2Splits(tree1)
+  splits1 <- as.Splits(tree1)
   edge1 <- tree1$edge
   child1 <- edge1[, 2]
-  partitionEdges1 <- vapply(colnames(splits1), 
+  nTip <- attr(splits1, 'nTip')
+  partitionEdges1 <- vapply(nTip + 2L + seq_along(splits1),
                             function (node) which(child1 == node), integer(1))
   
-  splits2 <- Tree2Splits(tree2)
+  splits2 <- as.Splits(tree2)
   edge2 <- tree2$edge
   child2 <- edge2[, 2]
-  partitionEdges2 <- vapply(colnames(splits2), 
+  partitionEdges2 <- vapply(nTip + 2L + seq_along(splits2),
                             function (node) which(child2 == node), integer(1))
   
   matching <- Func(tree1, tree2, reportMatching = TRUE)
@@ -146,14 +147,16 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
       scores / max(scores)
     }
     
-    OtherRootEdge <- function (splitNames, edge) {
+    OtherRootEdge <- function (splitNodes, edge) {
       parent <- edge[, 1]
+      child <- edge[, 2]
       rootEdges <- which(parent == min(parent))
-      got <- edge[rootEdges, 2L] %in% splitNames
+      rootChildren <- child[rootEdges]
+      splitEdges <- vapply(splitNodes, match, table = child, 0)
+      got <- edge[rootEdges, 2L] %in% splitNodes
       if (any(got)) {
-        
-      c(score = which(splitNames == edge[rootEdges[got], 2L]),
-        edge = rootEdges[!got])
+        c(score = as.integer(which(splitNodes == edge[rootEdges[got], 2L])),
+          edge = rootEdges[!got])
       } else {
         c(score = NA, edge = NA)
       }
@@ -162,8 +165,10 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
      
     EdgyPlot <- function (tree, splits, edge, partitionEdges, 
                           normalizedScores, ...) {
-      ore <- OtherRootEdge(colnames(splits), edge)
-      if (all(!is.na(ore)) && length(normalizedScores)) {
+      splitNodes <- vapply(names(splits), function (x)
+        as.integer(substr(x, 2L, nchar(x))), 0L)
+      ore <- OtherRootEdge(splitNodes, edge)
+      if (length(normalizedScores) && !is.na(ore[1])) {
         ns <- c(normalizedScores, normalizedScores[ore['score']])
         pe <- c(partitionEdges, ore[2])
       } else {
@@ -171,7 +176,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
         pe <- partitionEdges
       }
       
-      edge.width <- rep(1, length(edge))
+      edge.width <- rep(1, nrow(edge))
       edge.width[pe] <-  1 + (10 * ns)
       edge.color <- rep('black', length(edge))
       edge.color[pe] <- edgeColPalette[1 + ceiling(255 * ns)]
@@ -205,7 +210,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   if (plainEdges) {
     Plot(tree2, edge.width = edge.width, edge.color = edge.color, ...)
   } else {
-    EdgyPlot(tree2, splits2, edge2, partitionEdges2[pairNames2],
+    EdgyPlot(tree2, splits2[[pairNames2]], edge2, partitionEdges2[pairNames2],
              Normalize(pairedPairScores, na.rm = TRUE), ...)
   }
   if (any(pairLabels)) {

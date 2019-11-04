@@ -148,20 +148,22 @@ Let's consider the two splits `BC:ADE` and `DE:ABC` in the universe of 5-tip
 trees.
 
 ```{r, fig.width=7, out.width='90%', fig.height=7*3/5, echo=FALSE}
+library('TreeTools') # For Splits
 par(mfrow=c(3, 5), mar=rep(0.4, 4))
 ShowNode <- function (match, label, col) {
-  if (any(match))
+  if (any(!is.na(match)))
     ape::nodelabels(label, bg = col, height=1.3,
-                    node = as.integer(colnames(splits)[match]))
+                    node = 7L + match) # works because trees in Preorder
 }
 trees <- phangorn::allTrees(5L, rooted = FALSE, tip.label=1:5)
 trees <- lapply(trees, ape::root, '1', resolve.root = TRUE)
-A <- c(FALSE, TRUE)[c(1, 2, 2, 1, 1)]
-B <- c(FALSE, TRUE)[c(1, 1, 1, 2, 2)]
+trees <- lapply(trees, Preorder)
+A <- as.Splits(c(FALSE, TRUE)[c(1, 2, 2, 1, 1)], tipLabels=trees)
+B <- as.Splits(c(FALSE, TRUE)[c(1, 1, 1, 2, 2)], tipLabels=trees)
 for (tree in trees) {
-  splits <- TreeTools::Tree2Splits(tree)
-  matchA <- apply(splits, 2, function (s) all(s == A) || all(s == !A))
-  matchB <- apply(splits, 2, function (s) all(s == B) || all(s == !B))
+  splits <- as.Splits(tree)
+  matchA <- match.Splits(A, splits)
+  matchB <- match.Splits(B, splits)
   TreeDistPlot(tree, leaveRoom = FALSE)
   ShowNode(matchA, ' BC:ADE ', col = Ternary::cbPalette15[3])
   ShowNode(matchB, ' DE:ABC ', col = Ternary::cbPalette15[5])

@@ -8,33 +8,48 @@
 #' 
 #' @author Martin R. Smith
 #' @keywords internal
-#' @importFrom TreeTools Tree2Splits
+#' @importFrom TreeTools as.Splits
 #' @export
 CalculateTreeDistance <- function (Func, tree1, tree2, reportMatching, ...) {
   if (class(tree1) == 'phylo') {
+    labels1 <- tree1$tip.label
+    nTip <- length(labels1)
     if (class(tree2) == 'phylo') {
-      if (length(setdiff(tree1$tip.label, tree2$tip.label)) > 0) {
+      if (length(setdiff(labels1, tree2$tip.label)) > 0) {
         stop("Tree tips must bear identical labels")
       }
       
-      Func(Tree2Splits(tree1), Tree2Splits(tree2),
-           reportMatching = reportMatching, ...)
+      Func(as.Splits(tree1, asSplits = reportMatching),
+           as.Splits(tree2, tipLabels = labels1, asSplits = reportMatching),
+           nTip = nTip, reportMatching = reportMatching, ...)
     } else {
-      splits1 <- Tree2Splits(tree1)
+      splits1 <- as.Splits(tree1, tipLabels = labels1, asSplits = FALSE)
       vapply(tree2,
-             function (tr2) Func(splits1, Tree2Splits(tr2), ...),
+             function (tr2) Func(splits1, 
+                                 as.Splits(tr2, tipLabels = labels1, 
+                                           asSplits = FALSE),
+                                 nTip = nTip, ...),
              double(1))
     }
   } else {
     if (class(tree2) == 'phylo') {
-      splits1 <- Tree2Splits(tree2)
+      splits1 <- as.Splits(tree2, asSplits = FALSE)
+      labels1 <- tree2$tip.label
+      nTip <- length(labels1)
       vapply(tree1,
-             function (tr2) Func(splits1, Tree2Splits(tr2), ...),
+             function (tr2) Func(splits1,
+                                 as.Splits(tr2, tipLabels = labels1,
+                                           asSplits = FALSE),
+                                 nTip = nTip, ...),
              double(1))
     } else {
-      splits1 <- lapply(tree1, Tree2Splits)
-      splits2 <- lapply(tree2, Tree2Splits)
-      matrix(mapply(Func, rep(splits2, each=length(splits1)), splits1, ...), 
+      labels1 <- tree1[[1]]$tip.label
+      nTip <- length(labels1)
+      splits1 <- as.Splits(tree1, asSplits = FALSE)
+      splits2 <- as.Splits(tree2, tipLabels = labels1,
+                           asSplits = FALSE)
+      matrix(mapply(Func, rep(splits2, each=length(splits1)), splits1,
+                    nTip = nTip, ...), 
              length(splits1), length(splits2),
              dimnames = list(names(tree1), names(tree2)))
     }
@@ -105,28 +120,15 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
 
 #' List clades as text
 #' @param splits,splits1,splits2 Logical matrices with columns specifying membership
-#' of each corresponding matched clade 
-#' @param taxonNames Character vector listing names of taxa corresponding to
-#'  each row in `splits`
-#' @return {
-#'   `ReportMatching` returns a character vector describing each pairing in a matching.
+#' of each corresponding matched clade.
+#' @return `ReportMatching` returns a character vector describing each pairing 
+#' in a matching.
 #'   
-#'   `IdentifySplits` returns a character vector describing each split in a splits 
-#'   object, named according to the column names in the splits object.
-#' }
 #' @seealso VisualizeMatching
 #' @author Martin R. Smith
 #' @keywords internal
 #' @export
-ReportMatching <- function (splits1, splits2, taxonNames, realMatch = TRUE) {
-  paste(IdentifySplits(splits1, taxonNames), ifelse(realMatch, '=>', '..'), 
-        IdentifySplits(splits2, taxonNames))
-}
-
-#' @describeIn ReportMatching List the distribution of terminals represented by a single splits object.
-#' @export
-IdentifySplits <- function (splits, taxonNames = rownames(splits)) {
-  apply(splits, 2, function (x) paste0(
-    paste(taxonNames[x], collapse=' '), ' : ', 
-    paste(taxonNames[!x], collapse=' ')))
+ReportMatching <- function (splits1, splits2, realMatch = TRUE) {
+  paste(as.character(splits1), ifelse(realMatch, '=>', '..'), 
+        as.character(splits2))
 }

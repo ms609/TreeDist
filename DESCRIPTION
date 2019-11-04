@@ -3,16 +3,22 @@ Title: Distances between Phylogenetic Trees
 Version: 0.0.0.9000
 Authors@R: c(person("Martin R.", 'Smith',
                   email="martin.smith@durham.ac.uk", 
-                  role=c("aut", "cre", "cph"), 
-                  comment=c(ORCID = "0000-0001-5660-1727"))
+                  role=c("aut", "cre", "cph", "prg"), 
+                  comment=c(ORCID = "0000-0001-5660-1727")),
+             person("Roy", "Jonker", email="roy_jonker@magiclogic.com",
+                  role = "prg"),
+             person("Harold", "Cooper", email="hbc@mit.edu", role = "ctb"),
+             person("Yong", "Yang", email="yongyanglink@gmail.com", role="ctb")
             )
 License: GPL (>= 3)
 Description: Implements various measures of tree similarity, including 
   Information-based generalized Robinson-Foulds distances
-  (Mutual Phylogenetic Information, Mutual Clustering Information; Smith, in prep); 
+  (Mutual Phylogenetic Information, Mutual Clustering Information; Smith, in revision); 
   the metric of Nye et al. (2006) <doi:10.1093/bioinformatics/bti720>;
   the Matching Split Distance (Bogdanowicz & Giaro 2012) <doi:10.1109/TCBB.2011.48>;
   and the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>.
+Copyright: Incorporates Jonker-Volgenant Linear Assignment Problem 
+  implementation by Roy Jonker, modified by Harold Cooper and Yong Yang.
 URL: https://ms609.github.io/TreeDist, https://github.com/ms609/TreeDist
 BugReports: https://github.com/ms609/TreeDist/issues
 Depends: 
@@ -29,6 +35,7 @@ Imports:
 Suggests:
     bookdown,
     cluster,
+    kdensity,
     knitr,
     MASS,
     Quartet,

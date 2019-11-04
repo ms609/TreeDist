@@ -118,16 +118,16 @@
 #' 
 #' @family tree distances
 #' @export
-TreeDistance <- function (tree1, tree2) {
+TreeDistance <- function (tree1, tree2 = tree1) {
   MutualClusteringInfo(tree1, tree2, normalize = TRUE, reportMatching = FALSE)
 }
 
 #' @describeIn TreeDistance Mutual phylogenetic information between two trees.
 #' @export
-MutualPhylogeneticInfo <- function (tree1, tree2, normalize = FALSE,
+MutualPhylogeneticInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
                                     reportMatching = FALSE) {
-  unnormalized <- CalculateTreeDistance(MutualPhylogeneticInfoSplits, tree1, tree2, 
-                                        reportMatching=reportMatching)
+  unnormalized <- CalculateTreeDistance(MutualPhylogeneticInfoSplits, tree1,
+                                        tree2, reportMatching=reportMatching)
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
@@ -136,7 +136,8 @@ MutualPhylogeneticInfo <- function (tree1, tree2, normalize = FALSE,
 
 #' @describeIn TreeDistance Variation of phylogenetic information between two trees.
 #' @export
-VariationOfPhylogeneticInfo <- function (tree1, tree2, normalize = FALSE,
+VariationOfPhylogeneticInfo <- function (tree1, tree2 = tree1, 
+                                         normalize = FALSE,
                                          reportMatching = FALSE) {
   mai <- MutualPhylogeneticInfo(tree1, tree2, normalize = FALSE,
                                 reportMatching = reportMatching)
@@ -156,7 +157,7 @@ VariationOfPhylogeneticInfo <- function (tree1, tree2, normalize = FALSE,
 
 #' @describeIn TreeDistance Variation of clustering information between two trees.
 #' @export
-VariationOfClusteringInfo <- function (tree1, tree2, normalize = FALSE,
+VariationOfClusteringInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
                                        reportMatching = FALSE) {
   mci <- MutualClusteringInfo(tree1, tree2, normalize = FALSE, 
                               reportMatching = reportMatching)
@@ -182,17 +183,22 @@ VariationOfClusteringInfo <- function (tree1, tree2, normalize = FALSE,
 #' @param samples Integer specifying how many samplings to obtain; 
 #' accuracy of estimate increases with `sqrt(samples)`.
 #' @importFrom stats sd
-#' @importFrom TreeTools Tree2Splits
+#' @importFrom TreeTools as.Splits .DecodeBinary
 #' @export
 ExpectedVariation <- function (tree1, tree2, samples = 1e+3) {
   info1 <- PartitionInfo(tree1)
   info2 <- PartitionInfo(tree2)
-  splits1 <- Tree2Splits(tree1)
-  splits2 <- Tree2Splits(tree2)
-  tipLabels <- rownames(splits2)
+  splits1 <- as.Splits(tree1)
+  splits2 <- as.Splits(tree2)
+  nTip <- attr(splits2, 'nTip')
+  tipLabels <- attr(splits2, 'tip.label')
+  
+  logical2 <- t(matrix(unlist(apply(splits2, 1, .DecodeBinary, nTip = nTip)), 
+                     ncol = length(splits2), nrow = nTip))
   
   mutualEstimates <- vapply(seq_len(samples), function (x) {
-    rownames(splits2) <- sample(tipLabels)
+    splits2 <- as.Splits(logical2[, sample.int(nTip, nTip)])
+    
     c(MutualPhylogeneticInfoSplits(splits1, splits2),
       MutualMatchingSplitInfoSplits(splits1, splits2))
   }, c(MutualPhylogeneticInfo = 0, MutualMatchingSplitInfo = 0))
@@ -226,82 +232,20 @@ MutualClusteringInfo <- function (tree1, tree2, normalize = FALSE,
 
 #' @describeIn TreeDistance Calculate mutual phylogenetic information from splits instead of trees.
 #' @template splits12params
+#' @param nTip Integer specifying the number of tips in each split.
 #' @export
-MutualPhylogeneticInfoSplits <- function (splits1, splits2, 
+MutualPhylogeneticInfoSplits <- function (splits1, splits2,
+                                          nTip = attr(splits1, 'nTip'),
                                           reportMatching = FALSE) {
-  GeneralizedRF(splits1, splits2, 
-                function(splits1, splits2, nSplits1, nSplits2) {
-                  nTerminals <- dim(splits1)[1]
-                  lnUnrootedN <- LnUnrooted.int(nTerminals)
-                  inSplit1 <- colSums(splits1)
-                  inSplit2 <- colSums(splits2)
-                  notInSplit2 <- nTerminals - inSplit2
-                  
-                  if (nTerminals <= length(oneOverlap)) {
-                    # Use cache for speed, if available
-                    oo <- oneOverlap[[nTerminals]]
-                    OneOverlap <- function (A1, A2) oo[A1, A2]
-                  } else {
-                    OneOverlap <- function(A1, A2) {
-                      # Number of trees consistent with both splits
-                      if (A1 == A2) {
-                        # Both splits are identical.
-                        # Return number of trees consistent with split1:
-                        LnRooted.int(A1) + LnRooted.int(nTerminals - A1)
-                      } else {
-                        if (A1 < A2) {
-                          # Return:
-                          LnRooted.int(A2) + LnRooted.int(nTerminals - A1) -
-                            LnRooted.int(A2 - A1 + 1L)
-                        } else {
-                          # Return:
-                          LnRooted.int(A1) + LnRooted.int(nTerminals - A2) -
-                            LnRooted.int(A1 - A2 + 1L) 
-                        }
-                      }
-                    }
-                  }
-                  
-                  ret <- matrix(0, nSplits1, nSplits2)
-                  for (i in seq_len(nSplits1)) {
-                    split1 <- splits1[, i]
-                    for (j in seq_len(nSplits2)) {
-                      split2 <- splits2[, j]
-                      
-                      ret[i, j] <- if (all(split1[split2]) || # oneAndTwo
-                          all(!split1[!split2])) { # notOneNotTwo
-                        OneOverlap(inSplit1[i], inSplit2[j])
-                        
-                      } else if (all(!split1[split2]) || # notOneAndTwo
-                                 all(split1[!split2])) { #oneNotTwo
-                        OneOverlap(inSplit1[i], notInSplit2[j])
-
-                      } else {
-                        # Splits incompatible
-                        lnUnrootedN
-                      }
-                    }
-                  }
-                  
-                  # Return:
-                  (ret - lnUnrootedN) / -log(2)
-                }, maximize = TRUE, reportMatching)
+  GeneralizedRF(splits1, splits2, nTip, cpp_mutual_phylo,
+                maximize = TRUE, reportMatching = reportMatching)
 }
 
 #' @describeIn TreeDistance Calculate clustering information from splits instead of trees
 #' @export
-MutualClusteringInfoSplits <- function (splits1, splits2, 
+MutualClusteringInfoSplits <- function (splits1, splits2,
+                                        nTip = attr(splits1, 'nTip'),
                                         reportMatching = FALSE) {
-  GeneralizedRF(splits1, splits2, 
-                function(splits1, splits2, nSplits1, nSplits2) {
-                  ret <- matrix(0, nSplits1, nSplits2)
-                  for (i in seq_len(nSplits1)) {
-                    splitI <- splits1[, i]
-                    for (j in seq_len(nSplits2)) {
-                      ret[i, j] <- MeilaMutualInformation(splitI, splits2[, j])
-                    }
-                  }
-                  # Return:
-                  ret / log(2)
-                }, maximize = TRUE, reportMatching)
+  GeneralizedRF(splits1, splits2, nTip, cpp_mutual_clustering,
+                maximize = TRUE, reportMatching = reportMatching)
 }

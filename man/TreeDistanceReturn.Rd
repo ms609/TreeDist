@@ -5,7 +5,7 @@
 \title{Tree Distance Return}
 \usage{
 TreeDistanceReturn(pairScores, maximize = FALSE, reportMatching, splits1,
-  splits2, taxonNames = NULL)
+  splits2, leafNames = NULL)
 }
 \arguments{
 \item{pairScores}{Two-dimensional array listing the score of each possible
@@ -20,7 +20,7 @@ and each column corresponds to a bipartition split, such that
 each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
 (\code{FALSE}) of the respective bipartition split.}
 
-\item{taxonNames}{Character vector listing the names corresponding to each
+\item{leafNames}{Character vector listing the names corresponding to each
 row of \code{splits1} and \code{splits2}.
 Corresponding parameters from within each function}
 }

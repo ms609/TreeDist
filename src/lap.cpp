@@ -15,18 +15,21 @@
  R. Jonker and A. Volgenant, University of Amsterdam.
  
  *
- CHANGED 2016-05-13 by Yong Yang(yongyanglink@gmail.com) in column reduction part according to
- matlab version of LAPJV algorithm(Copyright (c) 2010, Yi Cao All rights reserved)--
+ CHANGED 2016-05-13 by Yong Yang(yongyanglink@gmail.com) in column reduction 
+ part according to matlab version of LAPJV algorithm (Copyright (c) 2010, Yi Cao
+ All rights reserved)--
  https://www.mathworks.com/matlabcentral/fileexchange/26836-lapjv-jonker-volgenant-algorithm-for-linear-assignment-problem-v3-0:
  *
  *************************************************************************/
 #include "gnrl.h"
 #include "lap.h"
-#include<stdio.h>
+#include "tree_distances.h"
+#include <stdio.h>
 #include <iostream>
 using namespace std;
 
-/*This function is the jv shortest augmenting path algorithm to solve the assignment problem*/
+/* This function is the jv shortest augmenting path algorithm to solve the 
+   assignment problem */
 cost lap(int dim,
          cost **assigncost,
          lap_col *rowsol,
@@ -47,7 +50,8 @@ cost lap(int dim,
 {
   boolean unassignedfound;
   lap_row  i, imin, numfree = 0, prvnumfree, f, i0, k, freerow, *pred, *free;
-  lap_col  j, j1, j2, endofpath, last, low, up, *collist, *matches;
+  lap_col  j, j1, j2 = 0, endofpath, last = 0, low, up, *collist, *matches;
+  /* Initializing j2 and last is unnecessary, but avoids compiler warnings */
   cost min, h, umin, usubmin, v2, *d;
   
   free = new lap_row[dim];       // list of unassigned rows.
@@ -61,7 +65,7 @@ cost lap(int dim,
     matches[i] = 0;
   
   // COLUMN REDUCTION
-  for (j = dim;j--;) // reverse order gives better results.
+  for (j = dim; j--; ) // reverse order gives better results.
   {
     // find minimum cost over rows.
     min = assigncost[0][j];
@@ -79,14 +83,16 @@ cost lap(int dim,
         rowsol[imin] = j;
         colsol[j] = imin;
       }
-      else if(v[j]<v[rowsol[imin]]){
+      else if(v[j] < v[rowsol[imin]]) {
         int j1 = rowsol[imin];
         rowsol[imin] = j;
         colsol[j] = imin;
         colsol[j1] = -1;
       }
       else
+      {
         colsol[j] = -1;        // row already assigned, column not assigned.
+      }
   }
   
   // REDUCTION TRANSFER
@@ -145,32 +151,37 @@ cost lap(int dim,
           }
           
           i0 = colsol[j1];
-          if (umin < usubmin)
+          if (umin < usubmin) {
             //         change the reduction of the minimum column to increase the minimum
             //         reduced cost in the row to the subminimum.
             v[j1] = v[j1] - (usubmin - umin);
-          else                   // minimum and subminimum equal.
+          }
+          else {                   // minimum and subminimum equal.
             if (i0 > -1)  // minimum column j1 is assigned.
             {
               //           swap columns j1 and j2, as j2 may be unassigned.
               j1 = j2;
               i0 = colsol[j2];
             }
+          }
             
-            //       (re-)assign i to j1, possibly de-assigning an i0.
-            rowsol[i] = j1;
-            colsol[j1] = i;
-            
-            if (i0 > -1) { // minimum column j1 assigned earlier.
-              if (umin < usubmin)
-                //           put in current k, and go back to that k.
-                //           continue augmenting path i - j1 with i0.
-                free[--k] = i0;
-              else
-                //           no further augmenting reduction possible.
-                //           store i0 in list of free rows for next phase.
-                free[numfree++] = i0;
+          //       (re-)assign i to j1, possibly de-assigning an i0.
+          rowsol[i] = j1;
+          colsol[j1] = i;
+          
+          if (i0 > -1) { // minimum column j1 assigned earlier.
+            if (umin < usubmin) {
+              //           put in current k, and go back to that k.
+              //           continue augmenting path i - j1 with i0.
+              free[--k] = i0;
             }
+            else
+            {
+              //           no further augmenting reduction possible.
+              //           store i0 in list of free rows for next phase.
+              free[numfree++] = i0;
+            }
+          }
         }
       }
       while (loopcnt < 2);       // repeat once.

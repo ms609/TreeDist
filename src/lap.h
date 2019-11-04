@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 /************************************************************************
 *
 *  lap.h
@@ -10,19 +12,19 @@
 
 /*************** CONSTANTS  *******************/
 
-  #define BIG 100000
+  /* BIG is now defined in tree_distances.h */
 
 /*************** TYPES      *******************/
 
   typedef int lap_row;
   typedef int lap_col;
-  typedef int cost;
+  typedef int64_t cost;
 
 /*************** FUNCTIONS  *******************/
 
-extern int lap(int dim, int **assigncost,
-               int *rowsol, int *colsol, int *u, int *v);
+extern cost lap(int dim, cost **assigncost,
+               lap_col *rowsol, lap_row *colsol, cost *u, cost *v);
 
-extern void checklap(int dim, int **assigncost,
-                     int *rowsol, int *colsol, int *u, int *v);
+extern void checklap(int dim, cost **assigncost,
+                     lap_col *rowsol, lap_row *colsol, cost *u, cost *v);
 
