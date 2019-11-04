@@ -10,7 +10,7 @@ typedef uint64_t splitbit;
 #define BIN_SIZE 64
 #define MAX_BINS 32
 #define MAX_TIPS BIN_SIZE * MAX_BINS
-#define MAX_PARTITIONS MAX_TIPS /* Quicker if a power of two? */
+#define MAX_SPLITS MAX_TIPS /* -3, but quicker if a power of two? */
 #define ALL_ONES (splitbit) ~((splitbit) 0U)
 
 #define BIG cost ((cost) 100000000 * (cost) 10000000) /* TODO Calculate */

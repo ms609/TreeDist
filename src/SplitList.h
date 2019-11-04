@@ -5,6 +5,6 @@ using namespace Rcpp;
 class SplitList {
 public:
   int n_splits, n_bins;
-  splitbit state[MAX_PARTITIONS][MAX_BINS];
+  splitbit state[MAX_SPLITS][MAX_BINS];
   SplitList(NumericMatrix);
 };
