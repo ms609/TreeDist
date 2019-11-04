@@ -1,15 +1,16 @@
 language: r
 cache: packages
-sudo: required # required if r_binary_packages; false otherwise
 warnings_are_errors: true
 r_check_args: --as-cran --no-manual # Workaround error compiling PDF manual
 matrix:
   include:
     - r: 3.5.0
+      sudo: false
       r_packages:
         - ape
         - devtools
         - kdensity
+        - pkgload
         - phangorn
         - Rdpack
         - rmarkdown
@@ -20,6 +21,20 @@ matrix:
         - vdiffr
     - r: release
       before_deploy: Rscript -e 'remotes::install_cran("pkgdown")'
+      sudo: required # required if r_binary_packages; false otherwise
+      r_binary_packages:
+       - ape
+       - covr
+       - devtools
+       - knitr
+       - phangorn
+       - Rdpack
+       - roxygen2
+       - testthat
+      r_packages:
+       - bookdown
+       - kdensity
+       - vdiffr
       deploy:
         provider: script
         script: Rscript -e 'pkgdown::deploy_site_github()'
@@ -29,10 +44,25 @@ matrix:
         on: 
           branch: master
     - r: devel
+      sudo: required # required if r_binary_packages; false otherwise
+      r_binary_packages:
+       - ape
+       - covr
+       - devtools
+       - knitr
+       - phangorn
+       - Rdpack
+       - roxygen2
+       - testthat
+      r_packages:
+       - bookdown
+       - kdensity
+       - vdiffr
       after_success:
         - Rscript -e "covr::codecov()"
     - os: osx
       r: release
+      sudo: false
       r_packages:
         - ape
         - bookdown
@@ -52,26 +82,13 @@ matrix:
 git:
   depth: 1
 
-r_packages:
- - bookdown
- - kdensity
- - vdiffr
  
 r_github_packages:
  - ms609/TreeTools
  - ms609/TreeDistData
 # - r-lib/pkgload
 # - r-lib/devtools    
-      
-r_binary_packages:
- - ape
- - covr
- - devtools
- - knitr
- - phangorn
- - Rdpack
- - roxygen2
- - testthat
+
 
 before_script:
   - R -e "pkgload::load_all(); devtools::document()"
