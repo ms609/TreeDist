@@ -89,7 +89,7 @@ List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y,
   for (int ai = 0; ai != a.n_splits; ai++) {
     for (int bi = 0; bi != b.n_splits; bi++) {
     
-      bool all_match = true, all_mismatch = true;
+      bool all_match = true, all_complement = true;
     
       for (int bin = 0; bin != a.n_bins; bin++) {
         if ((a.state[ai][bin] != b.state[bi][bin])) {
@@ -100,12 +100,12 @@ List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y,
       if (!all_match) {
         for (int bin = 0; bin != a.n_bins; bin++) {
           if ((a.state[ai][bin] != b_complement[bi][bin])) {
-            all_mismatch = false;
+            all_complement = false;
             break;
           }
         }
       }
-      if (all_match || all_mismatch) {
+      if (all_match || all_complement) {
         ++score;
         matching[ai] = bi + 1;
         break; /* Only one match possible per split */
@@ -150,7 +150,7 @@ List cpp_robinson_foulds_info (NumericMatrix x, NumericMatrix y,
   
   for (int ai = 0; ai != a.n_splits; ai++) {
     for (int bi = 0; bi != b.n_splits; bi++) {
-      bool all_match = true, all_mismatch = true;
+      bool all_match = true, all_complement = true;
       for (int bin = 0; bin != a.n_bins; bin++) {
         if ((a.state[ai][bin] != b.state[bi][bin])) {
           all_match = false;
@@ -160,12 +160,12 @@ List cpp_robinson_foulds_info (NumericMatrix x, NumericMatrix y,
       if (!all_match) {
         for (int bin = 0; bin != a.n_bins; bin++) {
           if ((a.state[ai][bin] != b_complement[bi][bin])) {
-            all_mismatch = false;
+            all_complement = false;
             break;
           }
         }
       }
-      if (all_match || all_mismatch) {
+      if (all_match || all_complement) {
         int leaves_in_split = 0;
         for (int bin = 0; bin != a.n_bins; bin++) {
           leaves_in_split += count_bits(a.state[ai][bin]);
