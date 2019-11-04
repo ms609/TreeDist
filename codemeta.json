@@ -1,20 +1,23 @@
 {
-  "@context": ["https://doi.org/10.5063/schema/codemeta-2.0", "http://schema.org"],
+  "@context": [
+    "https://doi.org/10.5063/schema/codemeta-2.0",
+    "http://schema.org"
+  ],
   "@type": "SoftwareSourceCode",
   "identifier": "TreeDist",
-  "description": "Implements various measures of tree similarity, including \n  Information-based generalized Robinson-Foulds distances\n  (Mutual Phylogenetic Information, Mutual Clustering Information; Smith, in prep); \n  the metric of Nye et al. (2006) <doi:10.1093/bioinformatics/bti720>;\n  the Matching Split Distance (Bogdanowicz & Giaro 2012) <doi:10.1109/TCBB.2011.48>;\n  and the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>.",
+  "description": "Implements various measures of tree similarity, including \n  Information-based generalized Robinson-Foulds distances\n  (Mutual Phylogenetic Information, Mutual Clustering Information; Smith, in revision); \n  the metric of Nye et al. (2006) <doi:10.1093/bioinformatics/bti720>;\n  the Matching Split Distance (Bogdanowicz & Giaro 2012) <doi:10.1109/TCBB.2011.48>;\n  and the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>.",
   "name": "TreeDist: Distances between Phylogenetic Trees",
   "codeRepository": "https://github.com/ms609/TreeDist",
   "issueTracker": "https://github.com/ms609/TreeDist/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.0.9004",
+  "version": "0.0.0.9000",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
-    "version": "3.6.0",
+    "version": "3.6.1",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 3.6.0 (2019-04-26)",
+  "runtimePlatform": "R version 3.6.1 (2019-07-05)",
   "author": [
     {
       "@type": "Person",
@@ -24,7 +27,20 @@
       "@id": "https://orcid.org/0000-0001-5660-1727"
     }
   ],
-  "contributor": {},
+  "contributor": [
+    {
+      "@type": "Person",
+      "givenName": "Harold",
+      "familyName": "Cooper",
+      "email": "hbc@mit.edu"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Yong",
+      "familyName": "Yang",
+      "email": "yongyanglink@gmail.com"
+    }
+  ],
   "copyrightHolder": [
     {
       "@type": "Person",
@@ -68,6 +84,18 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=cluster"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "kdensity",
+      "name": "kdensity",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=kdensity"
     },
     {
       "@type": "SoftwareApplication",
@@ -119,6 +147,18 @@
     },
     {
       "@type": "SoftwareApplication",
+      "identifier": "Rcpp",
+      "name": "Rcpp",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=Rcpp"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "testthat",
       "name": "testthat",
       "provider": {
@@ -133,6 +173,7 @@
       "@type": "SoftwareApplication",
       "identifier": "Ternary",
       "name": "Ternary",
+      "version": ">= 1.1.2",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
@@ -147,6 +188,30 @@
       "name": "TreeDistData",
       "version": ">= 0.0.0.9005",
       "sameAs": "https://github.com/ms609/TreeDistData"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "TreeSearch",
+      "name": "TreeSearch",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=TreeSearch"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "vdiffr",
+      "name": "vdiffr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=vdiffr"
     }
   ],
   "softwareRequirements": [
@@ -239,18 +304,15 @@
       "@type": "SoftwareApplication",
       "identifier": "TreeTools",
       "name": "TreeTools",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
       "sameAs": "https://github.com/ms609/TreeTools"
     }
   ],
   "releaseNotes": "https://github.com/ms609/TreeDist/blob/master/NEWS.md",
   "readme": "https://github.com/ms609/TreeDist/blob/master/README.md",
-  "contIntegration": ["https://travis-ci.com/ms609/TreeDist", "https://codecov.io/gh/ms609/TreeDist"],
+  "contIntegration": [
+    "https://travis-ci.com/ms609/TreeDist",
+    "https://codecov.io/gh/ms609/TreeDist"
+  ],
   "developmentStatus": "http://www.repostatus.org/#active",
   "citation": [
     {
@@ -263,7 +325,7 @@
           "familyName": "Smith"
         }
       ],
-      "name": "Untitled",
+      "name": "Information theoretic Generalized Robinson-Foulds metrics\nfor comparing phylogenetic trees",
       "isPartOf": {
         "@type": "PublicationIssue",
         "datePublished": "20XX",
@@ -283,7 +345,7 @@
           "familyName": "Smith"
         }
       ],
-      "name": "TreeDist: Distances between Phylogenetic Trees. R package version 0.0.0.9004",
+      "name": "TreeDist: Distances between Phylogenetic Trees. R package version 0.0.0.9000",
       "identifier": "10.XXXX/XXXXX",
       "@id": "https://doi.org/10.XXXX/XXXXX",
       "sameAs": "https://doi.org/10.XXXX/XXXXX",
@@ -296,5 +358,7 @@
         }
       }
     }
-  ]
+  ],
+  "relatedLink": "https://ms609.github.io/TreeDist",
+  "keywords": ["r", "r-package", "rstats", "phylogenetic-trees", "tree-distances", "trees"]
 }
