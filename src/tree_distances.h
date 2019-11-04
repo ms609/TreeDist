@@ -10,12 +10,12 @@ typedef uint64_t splitbit;
 
 #define BIN_SIZE 64
 #define MAX_BINS 32
-#define MAX_TIPS BIN_SIZE * MAX_BINS
+#define MAX_TIPS (BIN_SIZE * MAX_BINS)
 #define MAX_SPLITS MAX_TIPS /* -3, but quicker if a power of two? */
 
 #define ALL_ONES std::numeric_limits<splitbit>::max()
 
-#define BIG cost ((cost) 100000000 * (cost) 10000000) /* TODO Calculate */
+#define BIG std::numeric_limits<cost>::max() / MAX_SPLITS
 #define BIGL (double) BIG
 
 const splitbit right16bits = 65535U;
