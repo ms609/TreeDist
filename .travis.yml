@@ -8,13 +8,15 @@ matrix:
     - r: 3.5.0
       r_packages:
         - ape
-        - bookdown
         - devtools
         - kdensity
         - phangorn
         - Rdpack
+        - rmarkdown
         - roxygen2
         - testthat
+        - tinytex
+        - bookdown
         - vdiffr
     - r: release
       before_deploy: Rscript -e 'remotes::install_cran("pkgdown")'
