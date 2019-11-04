@@ -435,8 +435,10 @@ test_that('RobinsonFoulds is correctly calculated', {
   RFNtipTest(32)
   RFNtipTest(50)
   RFNtipTest(64)
+  RFNtipTest(67)
   RFNtipTest(128)
-  RFNtipTest(1028)
+  RFNtipTest(1024)
+  RFNtipTest(1027)
   
   NormalizationTest(RobinsonFoulds, similarity = TRUE)
 })

@@ -73,7 +73,7 @@ List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y,
     n_tips = nTip[0],
     unset_tips = (n_tips % BIN_SIZE)
       ? BIN_SIZE - (n_tips % BIN_SIZE)
-      : BIN_SIZE;
+      : 0;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   
   cost score = 0;
