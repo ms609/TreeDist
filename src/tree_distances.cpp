@@ -482,7 +482,7 @@ List cpp_mutual_clustering (NumericMatrix x, NumericMatrix y,
   const int most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     last_bin = a.n_bins - 1,
     n_tips = nTip[0],
-                 unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : BIN_SIZE;
+    unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   
   splitbit b_compl[b.n_splits][b.n_bins];
