@@ -84,6 +84,7 @@ RobinsonFoulds <- function (tree1, tree2 = tree1, similarity = FALSE, normalize 
 #' [`VisualizeMatching`].
 #' @param \dots Not used.
 #' @importFrom TreeTools NSplits
+#' @export
 RobinsonFouldsMatching <- function (tree1, tree2 = tree1, similarity = FALSE,
                                     normalize = FALSE, ...) {
   ret <- CalculateTreeDistance(RobinsonFouldsSplits, tree1, tree2, 
