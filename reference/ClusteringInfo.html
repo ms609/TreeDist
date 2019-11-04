@@ -168,9 +168,19 @@ content of the tree where a tree contains multiple partitions, as
 these partitions will contain mutual information.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ClusteringInfo</span>(<span class='no'>tree</span>)
+    <pre class="usage"><span class='fu'>ClusteringInfo</span>(<span class='no'>x</span>)
 
-<span class='fu'>ClusteringInfoSplits</span>(<span class='no'>splits</span>)</pre>
+<span class='co'># S3 method for phylo</span>
+<span class='fu'>ClusteringInfo</span>(<span class='no'>x</span>)
+
+<span class='co'># S3 method for list</span>
+<span class='fu'>ClusteringInfo</span>(<span class='no'>x</span>)
+
+<span class='co'># S3 method for multiPhylo</span>
+<span class='fu'>ClusteringInfo</span>(<span class='no'>x</span>)
+
+<span class='co'># S3 method for Splits</span>
+<span class='fu'>ClusteringInfo</span>(<span class='no'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -191,11 +201,14 @@ denotes the bits necessary to denote the cluster to which each tip belongs,
 i.e. bits/tip (see Vinh <em>et al.</em> 2010).
 This function multiplies the entropy by the number of tips to produce a
 measure of the information content of the tree as a whole.</p>
-    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
+    <h2 class="hasAnchor" id="methods-by-class-"><a class="anchor" href="#methods-by-class-"></a>Methods (by class)</h2>
 
     
 <ul>
-<li><p><code>ClusteringInfoSplits</code>: Calculate clustering information from splits instead of trees.</p></li>
+<li><p><code>phylo</code>: Implementation for <code>phylo</code> objects.</p></li>
+<li><p><code>list</code>: Implementation for lists.</p></li>
+<li><p><code>multiPhylo</code>: Implementation for <code>multiPhylo</code> objects.</p></li>
+<li><p><code>Splits</code>: Implementation for <code>Splits</code> objects.</p></li>
 </ul>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -212,7 +225,7 @@ doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
       <li><a href="#details">Details</a></li>
-      <li><a href="#functions">Functions</a></li>
+      <li><a href="#methods-by-class-">Methods (by class)</a></li>
       <li><a href="#references">References</a></li>
     </ul>
 

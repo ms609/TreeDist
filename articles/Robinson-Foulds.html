@@ -114,7 +114,7 @@
       <h1>Robinson-Foulds metric</h1>
                         <h4 class="author">Martin R. Smith</h4>
             
-            <h4 class="date">2019-10-21</h4>
+            <h4 class="date">2019-11-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/Robinson-Foulds.Rmd"><code>vignettes/Robinson-Foulds.Rmd</code></a></small>
       <div class="hidden name"><code>Robinson-Foulds.Rmd</code></div>
@@ -224,43 +224,46 @@
 <p>The matching depicted above is optimal, but is one of many. The optimal matching is calculated by considering the similarity score of each possible pairing, and using the Munkres (Hungarian) algorithm to find the optimal set of pairings.</p>
 <p>We can view the partitions in each tree, named according to the number of their associated node:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">DisplaySplits &lt;-<span class="st"> </span><span class="cf">function</span> (tree) </a>
-<a class="sourceLine" id="cb8-2" data-line-number="2">  <span class="kw"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(<span class="kw"><a href="../reference/ReportMatching.html">IdentifySplits</a></span>(TreeTools<span class="op">::</span><span class="kw"><a href="https://ms609.github.io/TreeTools/reference/Tree2Splits.html">Tree2Splits</a></span>(tree))))</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">  <span class="kw"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(TreeTools<span class="op">::</span><span class="kw"><a href="https://ms609.github.io/TreeTools/reference/as.Splits.html">as.Splits</a></span>(tree)))</a>
 <a class="sourceLine" id="cb8-3" data-line-number="3"><span class="kw">DisplaySplits</span>(tree1)</a></code></pre></div>
-<pre><code>## [[1]]
-## [1] "C D E F G H I : A B"
+<pre><code>## $n12
+## [1] "C D E F G H I | A B"
 ## 
-## [[2]]
-## [1] "C D E : A B F G H I"
+## $n13
+## [1] "C D E | A B F G H I"
 ## 
-## [[3]]
-## [1] "D E : A B C F G H I"
+## $n14
+## [1] "D E | A B C F G H I"
 ## 
-## [[4]]
-## [1] "F G H I : A B C D E"
+## $n15
+## [1] "F G H I | A B C D E"
 ## 
-## [[5]]
-## [1] "G H I : A B C D E F"
+## $n16
+## [1] "G H I | A B C D E F"
 ## 
-## [[6]]
-## [1] "H I : A B C D E F G"</code></pre>
+## $n17
+## [1] "H I | A B C D E F G"</code></pre>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">DisplaySplits</span>(tree2)</a></code></pre></div>
-<pre><code>## [[1]]
-## [1] "C D E I F G H : A B"
+<pre><code>## $n12
+## [1] "C D E I F G H | A B"
 ## 
-## [[2]]
-## [1] "C D E I : A B F G H"
+## $n13
+## [1] "C D E I | A B F G H"
 ## 
-## [[3]]
-## [1] "E I : A B C D F G H"
+## $n14
+## [1] "E I | A B C D F G H"
 ## 
-## [[4]]
-## [1] "F G H : A B C D E I"
+## $n15
+## [1] "F G H | A B C D E I"
 ## 
-## [[5]]
-## [1] "G H : A B C D E I F"</code></pre>
+## $n16
+## [1] "G H | A B C D E I F"</code></pre>
 <p>We can then see the similarity scores for each pair of splits, along with the optimal matching:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/attributes.html">attributes</a></span>(<span class="kw"><a href="../reference/TreeDistance.html">MutualPhylogeneticInfo</a></span>(tree1, tree2, <span class="dt">reportMatching =</span> <span class="ot">TRUE</span>))</a></code></pre></div>
-<pre><code>## $pairScores
+<pre><code>## $matching
+## [1]  1  2 NA  4  5  3
+## 
+## $pairScores
 ##           [,1]      [,2]      [,3]      [,4]      [,5]
 ## [1,] 3.7004397 0.8930848 0.2410081 0.5305147 0.2410081
 ## [2,] 0.5305147 3.2529807 0.0000000 1.1825914 0.5305147
@@ -269,16 +272,12 @@
 ## [5,] 0.5305147 0.0000000 0.0000000 0.0000000 2.1154772
 ## [6,] 0.2410081 0.0000000 0.0000000 0.0000000 0.0000000
 ## 
-## $matching
-## Optimal assignment:
-## 1 =&gt; 1, 2 =&gt; 2, 3 =&gt; NA, 4 =&gt; 4, 5 =&gt; 5, 6 =&gt; 3
-## 
 ## $matchedSplits
-## [1] "C D E F G H I : A B =&gt; C D E F G H I : A B"
-## [2] "C D E : A B F G H I =&gt; C D E I : A B F G H"
-## [3] "F G H I : A B C D E =&gt; F G H : A B C D E I"
-## [4] "G H I : A B C D E F =&gt; G H : A B C D E F I"
-## [5] "H I : A B C D E F G .. E I : A B C D F G H"</code></pre>
+## [1] "C D E F G H I | A B =&gt; C D E F G H I | A B"
+## [2] "C D E | A B F G H I =&gt; C D E I | A B F G H"
+## [3] "F G H I | A B C D E =&gt; F G H | A B C D E I"
+## [4] "G H I | A B C D E F =&gt; G H | A B C D E F I"
+## [5] "H I | A B C D E F G .. E I | A B C D F G H"</code></pre>
 <p><code>..</code> denotes that the fifth matching contributes zero to similarity score; an alternative matching, still optimal, would leave these partitions unpaired.</p>
 </div>
 <div id="alternative-approaches" class="section level2">

@@ -42,7 +42,8 @@
 
 
 <meta property="og:title" content="Generalized Robinson-Foulds distance — GeneralizedRF" />
-<meta property="og:description" content="Calculate Generalized Robinson-Foulds distance from splits." />
+<meta property="og:description" content="An internal function to calculate Generalized Robinson-Foulds distance from
+splits." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -159,12 +160,12 @@
     </div>
 
     <div class="ref-description">
-    <p>Calculate Generalized Robinson-Foulds distance from splits.</p>
+    <p>An internal function to calculate Generalized Robinson-Foulds distance from
+splits.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>GeneralizedRF</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>, <span class='no'>PairScorer</span>, <span class='no'>maximize</span>, <span class='no'>reportMatching</span>, <span class='no'>...</span>)
-
-<span class='fu'>CGRF</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>, <span class='no'>PairScorer</span>, <span class='no'>maximize</span>, <span class='no'>reportMatching</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>GeneralizedRF</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>, <span class='no'>nTip</span>, <span class='no'>PairScorer</span>, <span class='no'>maximize</span>, <span class='no'>reportMatching</span>,
+  <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -186,6 +187,10 @@ each terminal is identified as a member of the ingroup (<code>TRUE</code>) or ou
 (<code>FALSE</code>) of the respective bipartition split.</p></td>
     </tr>
     <tr>
+      <th>nTip</th>
+      <td><p>Integer specifying the number of tips in each split.</p></td>
+    </tr>
+    <tr>
       <th>PairScorer</th>
       <td><p>function taking four arguments, <code>splits1</code>, <code>splits2</code>,
 <code>nSplits1</code>, <code>nSplits2</code>, which should return the score of each pair of splits
@@ -205,13 +210,26 @@ matchings as an attribute of the score.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>The results of <code>TreeDistanceReturn</code> under the parameters provided</p>
-    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
-
-    
-<ul>
-<li><p><code>CGRF</code>: C implementation #TODO describe</p></li>
+    <p>A numeric value specifying the score of the tree pairs under the
+specified pair scorer. If <code>reportMatching = TRUE</code>, attribute also list:</p><ul>
+<li><p><code>matching</code>: which split in <code>splits2</code> is optimally matched to each split in
+<code>split1</code> (<code>NA</code> if not matched);</p></li>
+<li><p><code>pairScores</code>: Calculated scores for each possible matching of each split.</p></li>
+<li><p><code>matchedSplits</code>: Textual representation of each match</p></li>
 </ul>
+
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Note that no checks will be made to confirm that splits1 and splits2 contain
+the same tips in the same order.  This is the responsibility of the calling
+function.</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Jonker R, Volgenant A (1987).
+&#8220;A shortest augmenting path algorithm for dense and sparse linear assignment problems.&#8221;
+<em>Computing</em>, <b>38</b>, 325--340.
+doi: <a href='https://doi.org/10.1007/BF02278710'>10.1007/BF02278710</a>
+.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -219,7 +237,8 @@ matchings as an attribute of the score.</p></td>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
-      <li><a href="#functions">Functions</a></li>
+      <li><a href="#details">Details</a></li>
+      <li><a href="#references">References</a></li>
     </ul>
 
     <h2>Author</h2>

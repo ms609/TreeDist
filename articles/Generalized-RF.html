@@ -114,7 +114,7 @@
       <h1>Generalized Robinson-Foulds distances</h1>
                         <h4 class="author">Martin R. Smith</h4>
             
-            <h4 class="date">2019-10-21</h4>
+            <h4 class="date">2019-11-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/Generalized-RF.Rmd"><code>vignettes/Generalized-RF.Rmd</code></a></small>
       <div class="hidden name"><code>Generalized-RF.Rmd</code></div>
@@ -182,7 +182,7 @@ The two trees below are identical but for the position of <em>A</em> and <em>J</
 <a class="sourceLine" id="cb15-2" data-line-number="2">                  <span class="dt">Plot=</span>TreeDistPlot, <span class="dt">leaveRoom =</span> <span class="ot">FALSE</span>, <span class="dt">prune=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">5</span>, <span class="dv">18</span>))</a></code></pre></div>
 <p><img src="Generalized-RF_files/figure-html/unnamed-chunk-4-1.png" width="576" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw"><a href="../reference/TreeDistance.html">MutualClusteringInfo</a></span>(AtoJ, AotJ)</a></code></pre></div>
-<pre><code>## [1] 19.45242</code></pre>
+<pre><code>## [1] 13.48339</code></pre>
 <p>Here, each partition is viewed as clustering the terminals into two groups. Consider a pair of partitions, Y<sub>1</sub> and Y<sub>2</sub>. If the partitions are identical, then if an observer knows which group a terminal is in Y<sub>1</sub>, then this gives all the information they need to know which group it is in in Y<sub>2</sub>. As the partitions become more different, the disposition of Y<sub>1</sub> gives less information about the configuration of Y<sub>2</sub>; the probability that a guess based on Y<sub>1</sub> will be correct decreases, and the mutual information decreases accordingly.</p>
 <p>The mutual clustering information has the notable property that no pair of splits will be allocated zero similarity. As such, even a dissimilar matching (such as <code>HI:ABCDEFG</code> =&gt; <code>EI:ABCDFGH</code> below) is preferred to leaving a partition unpaired.</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(MutualClusteringInfo, tree1, tree2, </a>

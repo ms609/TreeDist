@@ -162,35 +162,22 @@
     <p>List clades as text</p>
     </div>
 
-    <pre class="usage"><span class='fu'>ReportMatching</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>, <span class='no'>taxonNames</span>, <span class='kw'>realMatch</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-
-<span class='fu'>IdentifySplits</span>(<span class='no'>splits</span>, <span class='kw'>taxonNames</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span>(<span class='no'>splits</span>))</pre>
+    <pre class="usage"><span class='fu'>ReportMatching</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>, <span class='kw'>realMatch</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>taxonNames</th>
-      <td><p>Character vector listing names of taxa corresponding to
-each row in <code>splits</code></p></td>
-    </tr>
-    <tr>
       <th>splits, splits1, splits2</th>
       <td><p>Logical matrices with columns specifying membership
-of each corresponding matched clade</p></td>
+of each corresponding matched clade.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>ReportMatching</code> returns a character vector describing each pairing in a matching.<code>IdentifySplits</code> returns a character vector describing each split in a splits
-object, named according to the column names in the splits object.</p>
-    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
-
-    
-<ul>
-<li><p><code>IdentifySplits</code>: List the distribution of terminals represented by a single splits object.</p></li>
-</ul>
+    <p><code>ReportMatching</code> returns a character vector describing each pairing
+in a matching.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>VisualizeMatching</p></div>
@@ -201,7 +188,6 @@ object, named according to the column names in the splits object.</p>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
-      <li><a href="#functions">Functions</a></li>
       <li><a href="#see-also">See also</a></li>
     </ul>
 

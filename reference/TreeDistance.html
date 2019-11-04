@@ -164,15 +164,15 @@ phylogenetic or clustering information that two trees hold in common." />
 phylogenetic or clustering information that two trees hold in common.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>TreeDistance</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>)
+    <pre class="usage"><span class='fu'>TreeDistance</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>)
 
-<span class='fu'>MutualPhylogeneticInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+<span class='fu'>MutualPhylogeneticInfo</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>VariationOfPhylogeneticInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+<span class='fu'>VariationOfPhylogeneticInfo</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>VariationOfClusteringInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+<span class='fu'>VariationOfClusteringInfo</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
 <span class='fu'>ExpectedVariation</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>samples</span> <span class='kw'>=</span> <span class='fl'>1000</span>)
@@ -180,17 +180,20 @@ phylogenetic or clustering information that two trees hold in common.</p>
 <span class='fu'>MutualClusteringInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>MutualPhylogeneticInfoSplits</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>, <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'>MutualPhylogeneticInfoSplits</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>, <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='no'>splits1</span>,
+  <span class='st'>"nTip"</span>), <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>MutualClusteringInfoSplits</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>, <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'>MutualClusteringInfoSplits</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>, <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='no'>splits1</span>,
+  <span class='st'>"nTip"</span>), <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>MutualMatchingSplitInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+<span class='fu'>MutualMatchingSplitInfo</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>VariationOfMatchingSplitInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+<span class='fu'>VariationOfMatchingSplitInfo</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>MutualMatchingSplitInfoSplits</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>, <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+<span class='fu'>MutualMatchingSplitInfoSplits</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>, <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='no'>splits1</span>,
+  <span class='st'>"nTip"</span>), <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -227,6 +230,10 @@ and each column corresponds to a bipartition split, such that
 each terminal is identified as a member of the ingroup (<code>TRUE</code>) or outgroup
 (<code>FALSE</code>) of the respective bipartition split.</p></td>
     </tr>
+    <tr>
+      <th>nTip</th>
+      <td><p>Integer specifying the number of tips in each split.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -261,8 +268,10 @@ a given topology.</p></li>
 <li><p><code>MutualPhylogeneticInfoSplits</code>: Calculate mutual phylogenetic information from splits instead of trees.</p></li>
 <li><p><code>MutualClusteringInfoSplits</code>: Calculate clustering information from splits instead of trees</p></li>
 <li><p><code>MutualMatchingSplitInfo</code>: Mutual Matching Split information of two trees.</p></li>
-<li><p><code>VariationOfMatchingSplitInfo</code>: Variation of matching split information between two trees.</p></li>
-<li><p><code>MutualMatchingSplitInfoSplits</code>: Calculate variation of matching split information from splits instead of trees.</p></li>
+<li><p><code>VariationOfMatchingSplitInfo</code>: Variation of matching split information between two
+trees.</p></li>
+<li><p><code>MutualMatchingSplitInfoSplits</code>: Calculate variation of matching split information
+from splits instead of trees.</p></li>
 </ul>
     <h2 class="hasAnchor" id="concepts-of-information"><a class="anchor" href="#concepts-of-information"></a>Concepts of information</h2>
 
@@ -360,7 +369,7 @@ doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</
   <span class='fu'>MutualPhylogeneticInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree3</span>) <span class='co'># = 0</span>
   <span class='fu'>MutualClusteringInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree3</span>) <span class='co'># &gt; 0</span>
 
-}</div><div class='img'><img src='TreeDistance-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; [1] 7.547955</div><div class='input'>
+}</div><div class='img'><img src='TreeDistance-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; [1] 5.231844</div><div class='input'>
 
 </div></pre>
   </div>

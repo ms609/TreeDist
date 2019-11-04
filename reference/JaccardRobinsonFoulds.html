@@ -162,11 +162,11 @@
     <p>Implements the Jaccard-Robinson-Foulds metric of Böcker <em>et al</em>. (2013).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>JaccardRobinsonFoulds</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>1L</span>, <span class='kw'>arboreal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+    <pre class="usage"><span class='fu'>JaccardRobinsonFoulds</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>1L</span>, <span class='kw'>arboreal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>similarity</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>JaccardSplitSimilarity</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>1L</span>, <span class='kw'>arboreal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+<span class='fu'>JaccardSplitSimilarity</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>, <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='no'>splits1</span>, <span class='st'>"nTip"</span>),
+  <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>1L</span>, <span class='kw'>arboreal</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -228,6 +228,10 @@ either listed in the same order or bearing identical names (in any sequence),
 and each column corresponds to a bipartition split, such that
 each terminal is identified as a member of the ingroup (<code>TRUE</code>) or outgroup
 (<code>FALSE</code>) of the respective bipartition split.</p></td>
+    </tr>
+    <tr>
+      <th>nTip</th>
+      <td><p>Integer specifying the number of tips in each split.</p></td>
     </tr>
     </table>
 
