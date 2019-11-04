@@ -252,7 +252,7 @@ test_that('MutualMatchingSplitInfo is correctly calculated', {
 })
 
 test_that("Mutual Phylogenetic Information is correctly estimated", {
-  exp <- ExpectedVariation(treeSym8, treeAbc.Defgh, samples=100L)
+  exp <- ExpectedVariation(treeSym8, treeAbc.Defgh, samples = 100L)
   tol <- exp[, 'Std. Err.'] * 2
   # Expected values calculated with 10k samples
   expect_equal(exp['MutualPhylogeneticInfo', 'Estimate'], 
