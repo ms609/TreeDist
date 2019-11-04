@@ -78,7 +78,7 @@ List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y,
   
   cost score = 0;
   NumericVector matching (most_splits);
-  for (int i = 0; i < most_splits; i++) matching[i] = NA_REAL;
+  for (int i = 0; i != most_splits; i++) matching[i] = NA_REAL;
   
   splitbit b_complement[b.n_splits][b.n_bins];
   for (int i = 0; i != b.n_splits; i++) {
