@@ -6,6 +6,16 @@ r_check_args: --as-cran --no-manual # Workaround error compiling PDF manual
 matrix:
   include:
     - r: 3.5.0
+      r_packages:
+        - ape
+        - bookdown
+        - devtools
+        - kdensity
+        - phangorn
+        - Rdpack
+        - roxygen2
+        - testthat
+        - vdiffr
     - r: release
       before_deploy: Rscript -e 'remotes::install_cran("pkgdown")'
       deploy:
@@ -35,17 +45,12 @@ matrix:
       - brew install cairo
       - sudo tlmgr install doi titling hyperref
   allow_failures:
-    r: 3.4.0 # TreeSearch requires > 3.5.0
+    r: 3.5.0 # TreeSearch requires > 3.5.0
 
 git:
   depth: 1
 
-# - r-lib/pkgload
-# - r-lib/devtools
-
 r_packages:
- - tinytex # for bookdown
- - rmarkdown # for bookdown
  - bookdown
  - kdensity
  - vdiffr
@@ -53,7 +58,8 @@ r_packages:
 r_github_packages:
  - ms609/TreeTools
  - ms609/TreeDistData
-    
+# - r-lib/pkgload
+# - r-lib/devtools    
       
 r_binary_packages:
  - ape
