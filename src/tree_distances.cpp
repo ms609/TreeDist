@@ -73,14 +73,14 @@ List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y,
     n_tips = nTip[0],
     unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
-  
   cost score = 0;
+  
   NumericVector matching (most_splits);
   for (int i = 0; i != most_splits; i++) matching[i] = NA_REAL;
   
   splitbit b_complement[MAX_SPLITS][MAX_BINS];
   for (int i = 0; i != b.n_splits; i++) {
-    for (int bin = 0; bin < last_bin; bin++) {
+    for (int bin = 0; bin != last_bin; bin++) {
       b_complement[i][bin] = ~b.state[i][bin];
     }
     b_complement[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
@@ -138,12 +138,12 @@ List cpp_robinson_foulds_info (NumericMatrix x, NumericMatrix y,
   double score = 0;
   
   NumericVector matching (most_splits);
-  for (int i = 0; i < most_splits; i++) matching[i] = NA_REAL;
+  for (int i = 0; i != most_splits; i++) matching[i] = NA_REAL;
   
   /* Dynamic allocation 20% faster for 105 tips, but VLA not permitted in C11 */
   splitbit b_complement[MAX_SPLITS][MAX_BINS]; 
   for (int i = 0; i != b.n_splits; i++) {
-    for (int bin = 0; bin < last_bin; bin++) {
+    for (int bin = 0; bin != last_bin; bin++) {
       b_complement[i][bin] = ~b.state[i][bin];
     }
     b_complement[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
@@ -151,7 +151,9 @@ List cpp_robinson_foulds_info (NumericMatrix x, NumericMatrix y,
   
   for (int ai = 0; ai != a.n_splits; ai++) {
     for (int bi = 0; bi != b.n_splits; bi++) {
+      
       bool all_match = true, all_complement = true;
+      
       for (int bin = 0; bin != a.n_bins; bin++) {
         if ((a.state[ai][bin] != b.state[bi][bin])) {
           all_match = false;
