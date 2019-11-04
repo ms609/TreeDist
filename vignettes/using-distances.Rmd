@@ -52,8 +52,8 @@ each pair of partitions is defined as one.
 that's a harder problem to overcome.)
 
 As such, the maximum similarity possible between two 11-tip trees is 
-[`NPartitions`](https://ms609.github.io/TreeTools/reference/NPartitions.html)`(11)`
-= `r suppressMessages(library('TreeTools')); NPartitions(11)`.  
+[`NSplits`](https://ms609.github.io/TreeTools/reference/NSplits.html)`(11)`
+= `r suppressMessages(library('TreeTools')); NSplits(11)`.  
 
 Normalizing against this value tells us how similar the two trees are, compared
 to two identical _fully bifurcating_ eleven-tip trees; this is the default
@@ -98,13 +98,13 @@ we may wish to normalize against the best possible match to that tree.
 In that case, the best possible score is 
 
 ```{r}
-TreeTools::NPartitions(tree1)
+TreeTools::NSplits(tree1)
 ```
 
 and our normalized score will be 
 
 ```{r}
-NyeTreeSimilarity(tree1, tree2, normalize = NPartitions(tree1))
+NyeTreeSimilarity(tree1, tree2, normalize = NSplits(tree1))
 ```
 
 ### Normalizing to random similarity
