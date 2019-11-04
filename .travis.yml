@@ -1,6 +1,7 @@
 language: r
 cache: packages
 warnings_are_errors: true
+sudo: required # required if r_binary_packages or tlmgr install; false otherwise
 r_check_args: --as-cran --no-manual # Workaround error compiling PDF manual
 matrix:
   include:
@@ -21,7 +22,6 @@ matrix:
         - vdiffr
     - r: release
       before_deploy: Rscript -e 'remotes::install_cran("pkgdown")'
-      sudo: required # required if r_binary_packages; false otherwise
       r_binary_packages:
        - ape
        - covr
@@ -44,7 +44,6 @@ matrix:
         on: 
           branch: master
     - r: devel
-      sudo: required # required if r_binary_packages; false otherwise
       r_binary_packages:
        - ape
        - covr
@@ -62,7 +61,6 @@ matrix:
         - Rscript -e "covr::codecov()"
     - os: osx
       r: release
-      sudo: false
       r_packages:
         - ape
         - bookdown
