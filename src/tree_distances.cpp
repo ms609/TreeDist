@@ -618,13 +618,14 @@ List cpp_mutual_phylo (NumericMatrix x, NumericMatrix y,
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   SplitList a(x), b(y);
+  
   const int most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     n_tips = nTip[0];
   const double lg2_unrooted_n = lg2_unrooted[n_tips],
                max_score = lg2_unrooted_n - 
                  one_overlap((n_tips + 1) / 2, n_tips / 2, n_tips);
-  int in_a[MAX_SPLITS], in_b[MAX_SPLITS];
   
+  int in_a[MAX_SPLITS], in_b[MAX_SPLITS];
   for (int i = 0; i != a.n_splits; i++) {
     in_a[i] = 0;
     for (int bin = 0; bin != a.n_bins; bin++) {
@@ -662,7 +663,7 @@ List cpp_mutual_phylo (NumericMatrix x, NumericMatrix y,
   cost *u = new cost[most_splits], *v = new cost[most_splits];
   
   NumericVector final_score = NumericVector::create(
-    (double)((BIG * most_splits) - lap(most_splits, score, rowsol, colsol, u, v))
+    (double) ((BIG * most_splits) - lap(most_splits, score, rowsol, colsol, u, v))
     * max_score / BIGL),
     final_matching (most_splits);
   
