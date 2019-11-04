@@ -78,7 +78,7 @@ List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y,
   NumericVector matching (most_splits);
   for (int i = 0; i != most_splits; i++) matching[i] = NA_REAL;
   
-  splitbit b_complement[b.n_splits][b.n_bins];
+  splitbit b_complement[MAX_SPLITS][MAX_BINS];
   for (int i = 0; i != b.n_splits; i++) {
     for (int bin = 0; bin < last_bin; bin++) {
       b_complement[i][bin] = ~b.state[i][bin];
@@ -140,7 +140,8 @@ List cpp_robinson_foulds_info (NumericMatrix x, NumericMatrix y,
   NumericVector matching (most_splits);
   for (int i = 0; i < most_splits; i++) matching[i] = NA_REAL;
   
-  splitbit b_complement[b.n_splits][b.n_bins]; /* Dynamic allocation 20% faster for 105 tips */
+  /* Dynamic allocation 20% faster for 105 tips, but VLA not permitted in C11 */
+  splitbit b_complement[MAX_SPLITS][MAX_BINS]; 
   for (int i = 0; i != b.n_splits; i++) {
     for (int bin = 0; bin < last_bin; bin++) {
       b_complement[i][bin] = ~b.state[i][bin];
@@ -262,7 +263,7 @@ List cpp_jaccard_similarity (NumericMatrix x, NumericMatrix y,
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   const double exponent = k[0];
   
-  splitbit b_compl[b.n_splits][b.n_bins];
+  splitbit b_compl[MAX_SPLITS][MAX_BINS];
   for (int i = 0; i != b.n_splits; i++) {
     for (int bin = 0; bin < last_bin; bin++) {
       b_compl[i][bin] = ~b.state[i][bin];
@@ -389,7 +390,7 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
   cost** score = new cost*[most_splits];
   for (int i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
   
-  splitbit different[a.n_bins];
+  splitbit different[MAX_BINS];
   int n_different, n_same, n_a_only, n_a_and_b;
   double score1, score2;
   
@@ -485,7 +486,7 @@ List cpp_mutual_clustering (NumericMatrix x, NumericMatrix y,
     unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   
-  splitbit b_compl[b.n_splits][b.n_bins];
+  splitbit b_compl[MAX_SPLITS][MAX_BINS];
   for (int i = 0; i != b.n_splits; i++) {
     for (int bin = 0; bin < last_bin; bin++) {
       b_compl[i][bin] = ~b.state[i][bin];
@@ -618,8 +619,9 @@ List cpp_mutual_phylo (NumericMatrix x, NumericMatrix y,
   const int most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     n_tips = nTip[0];
   const double lg2_unrooted_n = lg2_unrooted[n_tips],
-  int in_a[a.n_splits], in_b[b.n_splits];
-               max_score = lg2_unrooted_n - one_overlap((n_tips + 1) / 2, n_tips / 2, n_tips);
+               max_score = lg2_unrooted_n - 
+                 one_overlap((n_tips + 1) / 2, n_tips / 2, n_tips);
+  int in_a[MAX_SPLITS], in_b[MAX_SPLITS];
   
   for (int i = 0; i != a.n_splits; i++) {
     in_a[i] = 0;
