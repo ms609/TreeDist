@@ -4,7 +4,6 @@ using namespace Rcpp;
 #include <math.h> /* for pow(), log() */
 #include "tree_distances.h"
 #include "SplitList.h"
-#include "lap.h"
 
 uint32_t bitcounts[65536]; // the bytes representing bit count of each number 0-65535
 __attribute__((constructor))
