@@ -28,13 +28,6 @@ int count_bits (splitbit x) {
          + bitcounts[(x >> 48)];
 }
 
-/* Useful for debugging */
-void print64 (uint64_t x) {
-  for (int i = 63; i > -1; i--) {
-    Rcout << ((1 & x >> i) ? '1' : '.');
-  }
-}
-
 double lg2_double_factorial[MAX_TIPS + MAX_TIPS - 2];
 double lg2_rooted[MAX_TIPS + 1];
 double lg2_unrooted[MAX_TIPS + 1];
@@ -205,19 +198,12 @@ List cpp_matching_split_distance (NumericMatrix x, NumericMatrix y,
   cost** score = new cost*[most_splits];
   for (int i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
   
-  /*Rcout << "Working over " << a.n_splits << " (" << a.n_splits << ", " << x.rows() 
-          << ") and " << b.n_splits << " (" << b.n_splits << ", " << y.rows() 
-          << ") splits.\n\n";*/
-  
   for (int ai = 0; ai != a.n_splits; ai++) {
     for (int bi = 0; bi != b.n_splits; bi++) {
       score[ai][bi] = 0;
       for (int bin = 0; bin != a.n_bins; bin++) {
         score[ai][bi] += count_bits(a.state[ai][bin] ^ 
           b.state[bi][bin]);
-        /*Rcout << "- x = " << ai << ", y = " << bi << ", bin " << bin << ": "
-                << a.state[ai][bin] << " ^ " << b.state[bi][bin] << " = " 
-                << score[ai][bi] << " (" << n_tips << " tips).\n";*/
       }
       if (score[ai][bi] > half_tips) score[ai][bi] = n_tips - score[ai][bi];
     }
@@ -329,14 +315,6 @@ List cpp_jaccard_similarity (NumericMatrix x, NumericMatrix y,
           ((min_ars_both > min_ars_either) ? 
           min_ars_both : min_ars_either));
         } else {
-          /*Rcout << "Score: " << ((min_ars_both > min_ars_either) ? 
-           min_ars_both : min_ars_either)
-           << " ^ " << exponent << " = " << pow((min_ars_both > min_ars_either) ? 
-           min_ars_both : min_ars_either, exponent) 
-           << "\n BIGL = " << BIGL
-           << ", BIG - BIG*score = " << ( (int) BIGL - (BIGL * 
-           pow((min_ars_both > min_ars_either) ? 
-           min_ars_both : min_ars_either, exponent))) << ".\n";*/
           score[ai][bi] = (cost) BIGL - (BIGL * 
             pow((min_ars_both > min_ars_either) ? 
             min_ars_both : min_ars_either, exponent));
@@ -384,11 +362,6 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
   const double max_score = lg2_unrooted[n_tips] - 
     lg2_trees_matching_split((n_tips + 1) / 2, n_tips / 2);
   
-  /*Rcout << " Maximum pair score on " << n_tips << " tips: " << max_score
-          << ": lg2_unrooted[n] = " << lg2_unrooted[n_tips] << " - ltms("
-          << ((n_tips + 1) / 2) << ", " << (n_tips / 2) << ") = "
-          << lg2_trees_matching_split((n_tips + 1) / 2, n_tips / 2) << "\n\n";*/
-  
   cost** score = new cost*[most_splits];
   for (int i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
   
@@ -406,12 +379,8 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
         n_different += count_bits(different[bin]);
         n_a_only += count_bits(a.state[ai][bin] & different[bin]);
         n_a_and_b += count_bits(a.state[ai][bin] & ~different[bin]);
-        /*n_a_and_b += n_different - count_bits(a.state[ai][bin]); */
       }
       n_same = n_tips - n_different;
-      /*Rcout << "  a: " << ai << ", b: " << bi << "; same = " << n_same
-              << ", diff = " << n_different << "; n(a&b) = " << n_a_and_b 
-              << ", aOnly = " << n_a_only << "\n";*/
       
       score1 = lg2_unrooted[n_same] - 
       lg2_trees_matching_split(n_a_and_b, n_same - n_a_and_b);
@@ -421,10 +390,6 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
       
       score[ai][bi] = BIG * 
         (1 - ((score1 > score2) ? score1 : score2) / max_score);
-      
-      /*Rcout << "    Score: 1=" << score1 << ", 2=" << score2 << ", max = "
-              << ((score1 > score2) ? score1 : score2) << " = " 
-              << (((score1 > score2) ? score1 : score2) / max_score) << "\n\n";*/
     }
     for (int bi = b.n_splits; bi < most_splits; bi++) {
       score[ai][bi] = BIG;
@@ -495,12 +460,6 @@ List cpp_mutual_clustering (NumericMatrix x, NumericMatrix y,
     }
     b_compl[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
-  
-  
-  /*Rcout << " Maximum pair score on " << n_tips << " tips: " << max_score
-          << ": lg2_unrooted[n] = " << lg2_unrooted[n_tips] << " - ltms("
-          << ((n_tips + 1) / 2) << ", " << (n_tips / 2) << ") = "
-          << lg2_trees_matching_split((n_tips + 1) / 2, n_tips / 2) << "\n\n";*/
   
   cost** score = new cost*[most_splits];
   for (int i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
