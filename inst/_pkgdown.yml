@@ -24,9 +24,7 @@ reference:
       - Entropy
       - JointInformation
       - SplitEntropy
-      - SplitMatchProbability
       - SplitMutualInformation
-      - NPartitionPairs
   - title: "Split clustering information"
     desc: >
       Functions relevant to calculating the variation of information, 
