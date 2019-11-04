@@ -29,6 +29,6 @@ extern int count_bits (splitbit x);
 
 extern double lg2_trees_matching_split(int a, int b);
 
-extern cost lap(int dim, cost assigncost[][MAX_SPLITS],
+extern cost lap(int dim, cost **assigncost,
                 lap_col *rowsol, lap_row *colsol,
                 cost *u, cost *v);

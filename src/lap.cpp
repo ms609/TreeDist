@@ -52,11 +52,11 @@ cost lap(int dim,
   /* Initializing j2 and last is unnecessary, but avoids compiler warnings */
   cost min, h, umin, usubmin, v2, *d;
   
-  free = new lap_row[dim];       // list of unassigned rows.
-  collist = new lap_col[dim];    // list of columns to be scanned in various ways.
-  matches = new lap_col[dim];    // counts how many times a row could be assigned.
-  d = new cost[dim];             // 'cost-distance' in augmenting path calculation.
-  pred = new lap_row[dim];       // row-predecessor of column in augmenting/alternating path.
+  free = new lap_row[MAX_SPLITS];       // list of unassigned rows.
+  collist = new lap_col[MAX_SPLITS];    // list of columns to be scanned in various ways.
+  matches = new lap_col[MAX_SPLITS];    // counts how many times a row could be assigned.
+  d = new cost[MAX_SPLITS];             // 'cost-distance' in augmenting path calculation.
+  pred = new lap_row[MAX_SPLITS];       // row-predecessor of column in augmenting/alternating path.
   
   // init how many times a row will be assigned in the column reduction.
   for (i = 0; i < dim; i++)
