@@ -21,8 +21,6 @@
  https://www.mathworks.com/matlabcentral/fileexchange/26836-lapjv-jonker-volgenant-algorithm-for-linear-assignment-problem-v3-0:
  *
  *************************************************************************/
-#include "gnrl.h"
-#include "lap.h"
 #include "tree_distances.h"
 #include <stdio.h>
 #include <iostream>
@@ -48,7 +46,7 @@ cost lap(int dim,
   // v          - dual variables, column reduction numbers
   
 {
-  boolean unassignedfound;
+  bool unassignedfound;
   lap_row  i, imin, numfree = 0, prvnumfree, f, i0, k, freerow, *pred, *free;
   lap_col  j, j1, j2 = 0, endofpath, last = 0, low, up, *collist, *matches;
   /* Initializing j2 and last is unnecessary, but avoids compiler warnings */
@@ -204,7 +202,7 @@ cost lap(int dim,
         up = 0;  // columns in low..up-1 are to be scanned for current minimum, now none.
         // columns in up..dim-1 are to be considered later to find new minimum,
         // at this stage the list simply contains all columns
-        unassignedfound = FALSE;
+        unassignedfound = false;
         do
         {
           if (up == low)         // no more columns to be scanned for current minimum.
@@ -236,14 +234,15 @@ cost lap(int dim,
               if (colsol[collist[k]] < 0)
               {
                 endofpath = collist[k];
-                unassignedfound = TRUE;
+                unassignedfound = true;
                 break;
               }
           }
           
           if (!unassignedfound)
           {
-            // update 'distances' between freerow and all unscanned columns, via next scanned column.
+            // update 'distances' between freerow and all unscanned columns,
+            // via next scanned column.
             j1 = collist[low];
             low++;
             i = colsol[j1];
@@ -262,7 +261,7 @@ cost lap(int dim,
                   {
                     // if unassigned, shortest augmenting path is complete.
                     endofpath = j;
-                    unassignedfound = TRUE;
+                    unassignedfound = true;
                     break;
                   }
                   // else add to list to be scanned right away.

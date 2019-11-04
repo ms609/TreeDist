@@ -1,10 +1,12 @@
 #include <stdint.h>
 #include <limits>
-#include "lap.h" /* for cost */
 
 /*************** TYPES      *******************/
 
 typedef uint64_t splitbit;
+typedef int64_t cost;
+typedef int lap_row;
+typedef int lap_col;
 
 /*************** CONSTANTS  *******************/
 
@@ -21,9 +23,12 @@ const double BIGL = double (BIG);
 const splitbit right16bits = 65535U;
 const uint32_t powers_of_two[16] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512,
                                     1024, 2048, 4096, 8192, 16384, 32768};
+extern int count_bits (splitbit x);
 
 /*************** FUNCTIONS  *******************/
 
 extern double lg2_trees_matching_split(int a, int b);
 
-extern int count_bits (splitbit x);
+extern cost lap(int dim, cost assigncost[][MAX_SPLITS],
+                lap_col *rowsol, lap_row *colsol,
+                cost *u, cost *v);
