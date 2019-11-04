@@ -13,7 +13,7 @@ typedef uint64_t splitbit;
 #define MAX_PARTITIONS MAX_TIPS /* Quicker if a power of two? */
 #define ALL_ONES ~((splitbit) 0U)
 
-#define BIG (cost) 1000000000000000 /* TODO Calculate */
+#define BIG (cost) 1000000000000000ULL /* TODO Calculate */
 #define BIGL (double) BIG
 
 const splitbit right16bits = 65535U;
