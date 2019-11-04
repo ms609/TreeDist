@@ -346,9 +346,9 @@
         }
       ],
       "name": "TreeDist: Distances between Phylogenetic Trees. R package version 0.0.0.9000",
-      "identifier": "10.XXXX/XXXXX",
-      "@id": "https://doi.org/10.XXXX/XXXXX",
-      "sameAs": "https://doi.org/10.XXXX/XXXXX",
+      "identifier": "10.5281/zenodo.3528124",
+      "@id": "https://doi.org/10.5281/zenodo.3528124",
+      "sameAs": "https://doi.org/10.5281/zenodo.3528124",
       "isPartOf": {
         "@type": "PublicationIssue",
         "datePublished": "2019",
@@ -360,5 +360,12 @@
     }
   ],
   "relatedLink": "https://ms609.github.io/TreeDist",
-  "keywords": ["r", "r-package", "rstats", "phylogenetic-trees", "tree-distances", "trees"]
+  "keywords": [
+    "r",
+    "r-package",
+    "rstats",
+    "phylogenetic-trees",
+    "tree-distances",
+    "trees"
+  ]
 }
