@@ -27,8 +27,26 @@ extern int count_bits (splitbit x);
 
 /*************** FUNCTIONS  *******************/
 
+
+extern uint32_t bitcounts[65536];
+extern int count_bits (splitbit x);
+
+extern double lg2_double_factorial[MAX_TIPS + MAX_TIPS - 2];
+extern double lg2_rooted[MAX_TIPS + 1];
+extern double lg2_unrooted[MAX_TIPS + 1];
 extern double lg2_trees_matching_split(int a, int b);
 
 extern cost lap(int dim, cost **assigncost,
                 lap_col *rowsol, lap_row *colsol,
                 cost *u, cost *v);
+
+
+extern double p_lg2_p_frac (double p);
+extern double p_lg2_p (double p);
+extern double entropy2 (double p);
+extern double entropy4 (double p1, double p2, double p3, double p4);
+
+extern double one_overlap (int a, int b, int n);
+extern double one_overlap_notb (int a, int n_minus_b, int n);
+extern double mpi (splitbit* a_state, splitbit* b_state, int n_tips, 
+                   int in_a, int in_b, double lg2_unrooted_n, int n_bins);
