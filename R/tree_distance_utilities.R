@@ -42,6 +42,12 @@ CalculateTreeDistance <- function (Func, tree1, tree2, reportMatching, ...) {
                                            asSplits = FALSE),
                                  nTip = nTip, ...),
              double(1))
+    } else if (class(tree1) == 'Splits' ||
+          class(tree1[[1]]) == 'Splits') {
+        stop("tree1 is of class Splits; try applying Func directly")
+    } else if (class(tree2) == 'Splits' ||
+        class(tree2[[1]]) == 'Splits') {
+      stop("tree2 is of class Splits; try applying Func directly")
     } else {
       labels1 <- tree1[[1]]$tip.label
       nTip <- length(labels1)

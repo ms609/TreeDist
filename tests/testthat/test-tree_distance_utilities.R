@@ -15,6 +15,12 @@ test_that('Tree normalization works', {
 })
 
 
+test_that('CalculateTreeDistance handles splits appropriately', {
+  splits1 <- as.Splits(ape::rtree(10))
+  # TODO Handle splits instead of throwing error
+  expect_error(CalculateTreeDistance(RobinsonFouldsSplits, splits1, splits1))
+})
+
 test_that('Matches are reported', {
   # Trees copied from test-tree_distance.R
   treeSym8 <- ape::read.tree(text='((e, (f, (g, h))), (((a, b), c), d));')
