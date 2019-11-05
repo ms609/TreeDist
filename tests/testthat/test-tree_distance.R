@@ -45,7 +45,7 @@ methodsToTest <- list(
 
 NormalizationTest <- function (FUNC, ...) {
   expect_equal(c(1L, 1L, 1L), 
-               diag(FUNC(treesSBO8, treesSBO8, normalize = TRUE, ...)),
+               diag(FUNC(treesSBO8, normalize = TRUE, ...)),
                tolerance = 1e-7)
 }
 
