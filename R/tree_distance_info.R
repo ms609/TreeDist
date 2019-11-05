@@ -219,7 +219,7 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+4) {
 
 #' @describeIn TreeDistance Mutual Clustering Information of two trees.
 #' @export
-MutualClusteringInfo <- function (tree1, tree2, normalize = FALSE,
+MutualClusteringInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
                                   reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(MutualClusteringInfoSplits, tree1, tree2,
                                         reportMatching)
