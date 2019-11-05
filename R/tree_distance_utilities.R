@@ -28,18 +28,18 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
   if (single1) {
     if (single2) {
       .TreeDistanceOneOne(Func, tree1, tree2, tipLabels = labels1, nTip,
-                          reportMatching = reportMatching)
+                          reportMatching = reportMatching, ...)
     } else {
       .TreeDistanceOneMany(Func, oneSplit = tree1, manySplits = tree2,
-                           tipLabels = labels1, nTip = nTip)
+                           tipLabels = labels1, nTip = nTip, ...)
     }
   } else {
     if (single2) {
       .TreeDistanceOneMany(Func, oneSplit = tree2, manySplits = tree1,
-                           tipLabels = labels2)
+                           tipLabels = labels2, ...)
     } else {
       .TreeDistanceManyMany(Func, tree1, tree2,
-                            tipLabels = labels1)
+                            tipLabels = labels1, ...)
     }
   }
 }
@@ -73,7 +73,8 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
                                   splits[t(is)[lower.tri(is)]],
                                   splits[is[lower.tri(is)]],
                                   nTip = nTip,
-                                  reportMatching = FALSE)
+                                  reportMatching = FALSE,
+                                  ...)
     ret[lower.tri(ret)] <- t(ret)[lower.tri(ret)]
     diag(ret) <- vapply(splits[seq_len(nSplits)], function (split) {
       Func(split, split, nTip = nTip, reportMatching = FALSE, ...)
