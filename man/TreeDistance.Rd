@@ -25,7 +25,7 @@ VariationOfPhylogeneticInfo(tree1, tree2 = tree1, normalize = FALSE,
 VariationOfClusteringInfo(tree1, tree2 = tree1, normalize = FALSE,
   reportMatching = FALSE)
 
-ExpectedVariation(tree1, tree2, samples = 1000)
+ExpectedVariation(tree1, tree2, samples = 10000)
 
 MutualClusteringInfo(tree1, tree2, normalize = FALSE,
   reportMatching = FALSE)

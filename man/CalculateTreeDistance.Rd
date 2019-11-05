@@ -4,7 +4,7 @@
 \alias{CalculateTreeDistance}
 \title{Wrapper for tree distance calculations}
 \usage{
-CalculateTreeDistance(Func, tree1, tree2, reportMatching, ...)
+CalculateTreeDistance(Func, tree1, tree2, reportMatching = FALSE, ...)
 }
 \arguments{
 \item{Func}{Tree distance function.}
