@@ -21,8 +21,6 @@
  https://www.mathworks.com/matlabcentral/fileexchange/26836-lapjv-jonker-volgenant-algorithm-for-linear-assignment-problem-v3-0:
  *
  *************************************************************************/
-#include "gnrl.h"
-#include "lap.h"
 #include "tree_distances.h"
 #include <stdio.h>
 #include <iostream>
@@ -48,17 +46,17 @@ cost lap(int dim,
   // v          - dual variables, column reduction numbers
   
 {
-  boolean unassignedfound;
+  bool unassignedfound;
   lap_row  i, imin, numfree = 0, prvnumfree, f, i0, k, freerow, *pred, *free;
   lap_col  j, j1, j2 = 0, endofpath, last = 0, low, up, *collist, *matches;
   /* Initializing j2 and last is unnecessary, but avoids compiler warnings */
   cost min, h, umin, usubmin, v2, *d;
   
-  free = new lap_row[dim];       // list of unassigned rows.
-  collist = new lap_col[dim];    // list of columns to be scanned in various ways.
-  matches = new lap_col[dim];    // counts how many times a row could be assigned.
-  d = new cost[dim];             // 'cost-distance' in augmenting path calculation.
-  pred = new lap_row[dim];       // row-predecessor of column in augmenting/alternating path.
+  free = new lap_row[MAX_SPLITS];       // list of unassigned rows.
+  collist = new lap_col[MAX_SPLITS];    // list of columns to be scanned in various ways.
+  matches = new lap_col[MAX_SPLITS];    // counts how many times a row could be assigned.
+  d = new cost[MAX_SPLITS];             // 'cost-distance' in augmenting path calculation.
+  pred = new lap_row[MAX_SPLITS];       // row-predecessor of column in augmenting/alternating path.
   
   // init how many times a row will be assigned in the column reduction.
   for (i = 0; i < dim; i++)
@@ -204,7 +202,7 @@ cost lap(int dim,
         up = 0;  // columns in low..up-1 are to be scanned for current minimum, now none.
         // columns in up..dim-1 are to be considered later to find new minimum,
         // at this stage the list simply contains all columns
-        unassignedfound = FALSE;
+        unassignedfound = false;
         do
         {
           if (up == low)         // no more columns to be scanned for current minimum.
@@ -236,14 +234,15 @@ cost lap(int dim,
               if (colsol[collist[k]] < 0)
               {
                 endofpath = collist[k];
-                unassignedfound = TRUE;
+                unassignedfound = true;
                 break;
               }
           }
           
           if (!unassignedfound)
           {
-            // update 'distances' between freerow and all unscanned columns, via next scanned column.
+            // update 'distances' between freerow and all unscanned columns,
+            // via next scanned column.
             j1 = collist[low];
             low++;
             i = colsol[j1];
@@ -262,7 +261,7 @@ cost lap(int dim,
                   {
                     // if unassigned, shortest augmenting path is complete.
                     endofpath = j;
-                    unassignedfound = TRUE;
+                    unassignedfound = true;
                     break;
                   }
                   // else add to list to be scanned right away.
