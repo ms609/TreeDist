@@ -16,9 +16,41 @@ test_that('Tree normalization works', {
 
 
 test_that('CalculateTreeDistance handles splits appropriately', {
-  splits1 <- as.Splits(ape::rtree(10))
-  # TODO Handle splits instead of throwing error
-  expect_error(CalculateTreeDistance(RobinsonFouldsSplits, splits1, splits1))
+  tree10 <- ape::rtree(10)
+  tree10.1 <- ape::rtree(10)
+  splits10 <- as.Splits(tree10)
+  splits10.1 <- as.Splits(tree10.1)
+  trees10.3 <- lapply(rep(10, 3), ape::rtree, br = NULL)
+  trees10.4 <- lapply(rep(10, 4), ape::rtree, br = NULL)
+  splits10.3 <- as.Splits(trees10.3)
+  splits10.4 <- as.Splits(trees10.4)
+  
+  expect_equal(0, CalculateTreeDistance(RobinsonFouldsSplits, splits10, splits10))
+  expect_equal(seq_len(7),
+               attr(CalculateTreeDistance(RobinsonFouldsSplits, 
+                                          splits10, splits10, TRUE), 'matching')
+               )
+  expect_equal(CalculateTreeDistance(RobinsonFouldsSplits, splits10, splits10.1),
+               CalculateTreeDistance(RobinsonFouldsSplits, splits10.1, splits10))
+  expect_equal(CalculateTreeDistance(RobinsonFouldsSplits, splits10, splits10.3),
+               CalculateTreeDistance(RobinsonFouldsSplits, splits10.3, splits10))
+  
+  expect_equivalent(
+    CalculateTreeDistance(RobinsonFouldsSplits, splits10.3, splits10.3),
+    CalculateTreeDistance(RobinsonFouldsSplits, splits10.3, trees10.3))
+  
+  expect_equivalent(
+    CalculateTreeDistance(RobinsonFouldsSplits, trees10.3, splits10.3),
+    CalculateTreeDistance(RobinsonFouldsSplits, trees10.3, trees10.3))
+  
+  expect_equivalent(
+    CalculateTreeDistance(RobinsonFouldsSplits, trees10.3, trees10.3)[, c(1, 3, 2)],
+    CalculateTreeDistance(RobinsonFouldsSplits, trees10.3, trees10.3[c(1, 3, 2)]),
+  )
+  
+  expect_equivalent(
+    CalculateTreeDistance(RobinsonFouldsSplits, splits10.4, splits10.3),
+    t(CalculateTreeDistance(RobinsonFouldsSplits, splits10.3, splits10.4)))
 })
 
 test_that('Matches are reported', {
