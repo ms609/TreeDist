@@ -39,7 +39,7 @@
 #' @family tree distances
 #' 
 #' @author Martin R. Smith
-#' @importFrom TreeTools NPartitions
+#' @importFrom TreeTools NPartitions TipLabels
 #' @export
 NyeTreeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
                                normalize = FALSE, normalizeMax = TRUE,
@@ -49,10 +49,12 @@ NyeTreeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
                                         reportMatching)
   if (similarity) {
     MaxPartitions <- function (tree) {
-      if (class(tree) == 'phylo') {
-        length(tree$tip.label) - 3L
-      } else {
+      if (class(tree) == 'phylo' || class(tree) == 'Splits') {
+        length(TipLabels(tree)) - 3L
+      } else if (mode(tree) == 'list') {
         vapply(tree, MaxPartitions, integer(1L))
+      } else {
+        stop ("Unrecognized tree format")
       }
     }
     
