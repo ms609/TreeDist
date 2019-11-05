@@ -352,13 +352,15 @@ test_that('Matching Split Distance is correctly calculated', {
 
 test_that('NyeTreeSimilarity is correctly calculated', {
   listBalSym <- list(treeBal8, treeSym8)
-  expect_equal(5L, NyeTreeSimilarity(treeSym8, treeSym8))
+  
+  expect_equal(5L, NyeTreeSimilarity(as.Splits(treeSym8), treeSym8))
+  expect_equal(1, NyeTreeSimilarity(treeSym8, treeSym8, normalize = TRUE))
+  
   expect_equal(c(3.8, 5), NyeTreeSimilarity(treeSym8, listBalSym))
   expect_equal(2 / 3, NyeTreeSimilarity(treeAb.Cdefgh, treeAbc.Defgh), 
                tolerance = 1e-7)
   expect_equal(2 * (1 / 3), NyeTreeSimilarity(treeAb.Cdefgh, treeAbc.Defgh,
                                         similarity = FALSE), tolerance = 1e-7)
-  expect_equal(1, NyeTreeSimilarity(treeSym8, treeSym8, normalize = TRUE))
   #TODO: Validate expected value
   expect_equal(1L, NyeTreeSimilarity(treeSym8, treeAbcd.Efgh, 
                                      normalize = FALSE))
@@ -366,6 +368,7 @@ test_that('NyeTreeSimilarity is correctly calculated', {
                                           normalize = TRUE))
   expect_true(NyeTreeSimilarity(treeSym8, treeBal8) > 
                 NyeTreeSimilarity(treeSym8, treeOpp8))
+  
   NormalizationTest(NyeTreeSimilarity)
 })
 
