@@ -104,7 +104,7 @@ TreeTools::NSplits(tree1)
 and our normalized score will be 
 
 ```{r}
-NyeTreeSimilarity(tree1, tree2, normalize = NSplits(tree1))
+NyeTreeSimilarity(tree1, tree2, normalize = TreeTools::NSplits(tree1))
 ```
 
 ### Normalizing to random similarity
@@ -129,7 +129,7 @@ any given quartet has a one in three chance of matching by chance.
 ```{r}
 library('Quartet')
 expectedQD <- 2 / 3
-normalizedQD <- QuartetDivergence(QuartetStatus(tree1, tree2), 
+normalizedQD <- QuartetDivergence(QuartetStatus(tree1, tree2),
                                   similarity = FALSE) / expectedQD
 ```
 
