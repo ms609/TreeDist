@@ -77,10 +77,10 @@ test_that('Metrics handle polytomies', {
 })
 
 test_that('Output dimensions are correct', {
+  list1 <- list(sym=treeSym8, bal=treeBal8)
+  list2 <- list(sym=treeSym8, abc=treeAbc.Defgh, abcd=treeAbcd.Efgh)
+  dimNames <- list(c('sym', 'bal'), c('sym', 'abc', 'abcd'))
   Test <- function (Func) {
-    list1 <- list(sym=treeSym8, bal=treeBal8)
-    list2 <- list(sym=treeSym8, abc=treeAbc.Defgh, abcd=treeAbcd.Efgh)
-    dimNames <- list(c('sym', 'bal'), c('sym', 'abc', 'abcd'))
     allPhylo <- 
     matrix(c(Func(treeSym8, treeSym8),      Func(treeBal8, treeSym8),
              Func(treeSym8, treeAbc.Defgh), Func(treeBal8, treeAbc.Defgh),
