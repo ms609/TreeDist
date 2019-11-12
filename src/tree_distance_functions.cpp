@@ -119,6 +119,7 @@ double mpi (const splitbit* a_state, const splitbit* b_state,
   
   for (int bin = 0; bin < *n_bins; bin++) {
     splitbit test = ~(a_state[bin] | b_state[bin]);
+    if (bin == *n_bins - 1) test &= ~(ALL_ONES << (*n_tips % BIN_SIZE));
     if (test) {
       flag = true;
       break;
