@@ -458,10 +458,10 @@ List cpp_mutual_phylo (NumericMatrix x, NumericMatrix y,
   SplitList a(x), b(y);
   
   const int most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-    n_tips = nTip[0];
+    n_tips = nTip[0], big_half_tips = (n_tips + 1) / 2, half_tips = n_tips / 2;
   const double lg2_unrooted_n = lg2_unrooted[n_tips],
                max_score = lg2_unrooted_n - 
-                 one_overlap((n_tips + 1) / 2, n_tips / 2, n_tips);
+                 one_overlap(&big_half_tips, &half_tips, &n_tips);
   
   int in_a[MAX_SPLITS], in_b[MAX_SPLITS];
   for (int i = 0; i != a.n_splits; i++) {
@@ -480,11 +480,12 @@ List cpp_mutual_phylo (NumericMatrix x, NumericMatrix y,
   cost** score = new cost*[most_splits];
   for (int i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
   
+  const int a_bins = a.n_bins;
   for (int ai = 0; ai != a.n_splits; ai++) {
     for (int bi = 0; bi != b.n_splits; bi++) {
       score[ai][bi] = BIG * (1 - 
-        (mpi(a.state[ai], b.state[bi], n_tips, in_a[ai], in_b[bi],
-             lg2_unrooted_n, a.n_bins) / max_score));
+        (mpi(a.state[ai], b.state[bi], &n_tips, &in_a[ai], &in_b[bi],
+             &lg2_unrooted_n, &a_bins) / max_score));
     }
     for (int bi = b.n_splits; bi < most_splits; bi++) {
       score[ai][bi] = BIG;
