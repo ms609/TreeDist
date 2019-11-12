@@ -75,57 +75,57 @@ double entropy4 (double p1, double p2, double p3, double p4) {
 }
 
 
-double one_overlap (const int *a, const int *b, const int *n) {
-  if (*a == *b) return lg2_rooted[*a] + lg2_rooted[*n - *a];
-  if (*a < *b) return lg2_rooted[*b] + lg2_rooted[*n -*a] - lg2_rooted[*b - *a + 1];
-  return lg2_rooted[*a] + lg2_rooted[*n - *b] - lg2_rooted[*a - *b + 1];
+double one_overlap (const int a, const int b, const int n) {
+  if (a == b) return lg2_rooted[a] + lg2_rooted[n - a];
+  if (a < b) return lg2_rooted[b] + lg2_rooted[n -a] - lg2_rooted[b - a + 1];
+  return lg2_rooted[a] + lg2_rooted[n - b] - lg2_rooted[a - b + 1];
 }
 
-double one_overlap_notb (const int *a, const int *n_minus_b, const int *n) {
-  const int b = *n - *n_minus_b;
-  if (*a == b) return lg2_rooted[b] + lg2_rooted[*n_minus_b];
-  if (*a < b) return lg2_rooted[b] + lg2_rooted[*n - *a] - lg2_rooted[b -* a + 1];
-  return lg2_rooted[*a] + lg2_rooted[*n_minus_b] - lg2_rooted[*a - b + 1];
+double one_overlap_notb (const int a, const int n_minus_b, const int n) {
+  const int b = n - n_minus_b;
+  if (a == b) return lg2_rooted[b] + lg2_rooted[n_minus_b];
+  if (a < b) return lg2_rooted[b] + lg2_rooted[n - a] - lg2_rooted[b - a + 1];
+  return lg2_rooted[a] + lg2_rooted[n_minus_b] - lg2_rooted[a - b + 1];
 }
 
 double mpi (const splitbit* a_state, const splitbit* b_state,
-            const int *n_tips, const int *in_a, const int *in_b,
-            const double *lg2_unrooted_n, const int *n_bins) {
+            const int n_tips, const int in_a, const int in_b,
+            const double lg2_unrooted_n, const int n_bins) {
   bool flag = true;
   
-    for (int bin = 0; bin < *n_bins; bin++) {
+    for (int bin = 0; bin < n_bins; bin++) {
     if (a_state[bin] & b_state[bin]) {
       flag = false;
       break;
     }
   }
-  if (flag) return *lg2_unrooted_n - one_overlap_notb(in_a, in_b, n_tips);
+  if (flag) return lg2_unrooted_n - one_overlap_notb(in_a, in_b, n_tips);
   
-  for (int bin = 0; bin < *n_bins; bin++) {
+  for (int bin = 0; bin < n_bins; bin++) {
     if ((~a_state[bin] & b_state[bin])) {
       flag = true;
       break;
     }
   }
-  if (!flag) return *lg2_unrooted_n - one_overlap(in_a, in_b, n_tips);
+  if (!flag) return lg2_unrooted_n - one_overlap(in_a, in_b, n_tips);
   
-  for (int bin = 0; bin < *n_bins; bin++) {
+  for (int bin = 0; bin < n_bins; bin++) {
     if ((a_state[bin] & ~b_state[bin])) {
       flag = false;
       break;
     }
   }
-  if (flag) return *lg2_unrooted_n - one_overlap(in_a, in_b, n_tips);
+  if (flag) return lg2_unrooted_n - one_overlap(in_a, in_b, n_tips);
   
-  for (int bin = 0; bin < *n_bins; bin++) {
+  for (int bin = 0; bin < n_bins; bin++) {
     splitbit test = ~(a_state[bin] | b_state[bin]);
-    if (bin == *n_bins - 1) test &= ~(ALL_ONES << (*n_tips % BIN_SIZE));
+    if (bin == n_bins - 1) test &= ~(ALL_ONES << (n_tips % BIN_SIZE));
     if (test) {
       flag = true;
       break;
     }
   }
-  if (!flag) return *lg2_unrooted_n - one_overlap_notb(in_a, in_b, n_tips);
+  if (!flag) return lg2_unrooted_n - one_overlap_notb(in_a, in_b, n_tips);
   
   return 0;
 }
