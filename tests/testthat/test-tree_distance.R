@@ -77,10 +77,10 @@ test_that('Metrics handle polytomies', {
 })
 
 test_that('Output dimensions are correct', {
+  list1 <- list(sym=treeSym8, bal=treeBal8)
+  list2 <- list(sym=treeSym8, abc=treeAbc.Defgh, abcd=treeAbcd.Efgh)
+  dimNames <- list(c('sym', 'bal'), c('sym', 'abc', 'abcd'))
   Test <- function (Func) {
-    list1 <- list(sym=treeSym8, bal=treeBal8)
-    list2 <- list(sym=treeSym8, abc=treeAbc.Defgh, abcd=treeAbcd.Efgh)
-    dimNames <- list(c('sym', 'bal'), c('sym', 'abc', 'abcd'))
     allPhylo <- 
     matrix(c(Func(treeSym8, treeSym8),      Func(treeBal8, treeSym8),
              Func(treeSym8, treeAbc.Defgh), Func(treeBal8, treeAbc.Defgh),
@@ -255,11 +255,11 @@ test_that("Mutual Phylogenetic Information is correctly estimated", {
   exp <- ExpectedVariation(treeSym8, treeAbc.Defgh, samples = 1000L)
   tol <- exp[, 'Std. Err.'] * 2
   # Expected values calculated with 100k samples
-  expect_equal(1.115084, exp['MutualPhylogeneticInfo', 'Estimate'], 
+  expect_equal(1.175422, exp['MutualPhylogeneticInfo', 'Estimate'], 
                tolerance=tol[1])
   expect_equal(3.099776, exp['MutualMatchingSplitInfo', 'Estimate'], 
                tolerance=tol[2])
-  expect_equal(25.351699, exp['VariationOfPhylogeneticInfo', 'Estimate'], 
+  expect_equal(25.231023, exp['VariationOfPhylogeneticInfo', 'Estimate'], 
                tolerance=tol[3])
   expect_equal(21.382314, exp['VariationOfMatchingSplitInfo', 'Estimate'], 
                tolerance=tol[4])

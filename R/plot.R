@@ -103,7 +103,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   partitionEdges1 <- vapply(nTip + 2L + seq_along(splits1),
                             function (node) which(child1 == node), integer(1))
   
-  splits2 <- as.Splits(tree2)
+  splits2 <- as.Splits(tree2, tree1)
   edge2 <- tree2$edge
   child2 <- edge2[, 2]
   partitionEdges2 <- vapply(nTip + 2L + seq_along(splits2),
