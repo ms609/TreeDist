@@ -16,12 +16,18 @@ test_that('Tree normalization works', {
 
 
 test_that('CalculateTreeDistance handles splits appropriately', {
+  set.seed(101)
   tree10 <- ape::rtree(10)
   tree10.1 <- ape::rtree(10)
   splits10 <- as.Splits(tree10)
   splits10.1 <- as.Splits(tree10.1)
-  trees10.3 <- lapply(rep(10, 3), ape::rtree, br = NULL)
-  trees10.4 <- lapply(rep(10, 4), ape::rtree, br = NULL)
+  trees10.3 <- list(BalancedTree(tree10),
+                    PectinateTree(tree10),
+                    ape::rtree(10, br = NULL))
+  trees10.4 <- list(PectinateTree(tree10),
+                    BalancedTree(tree10),
+                    ape::rtree(10, br = NULL),
+                    ape::rtree(10, br = NULL))
   splits10.3 <- as.Splits(trees10.3)
   splits10.4 <- as.Splits(trees10.4)
   
@@ -47,6 +53,13 @@ test_that('CalculateTreeDistance handles splits appropriately', {
     CalculateTreeDistance(RobinsonFouldsSplits, trees10.3, trees10.3)[, c(1, 3, 2)],
     CalculateTreeDistance(RobinsonFouldsSplits, trees10.3, trees10.3[c(1, 3, 2)]),
   )
+  
+  mat <- matrix(NA, 3, 4)
+  for (i in 1:3) for (j in 1:4) {
+    mat[i, j] <- CalculateTreeDistance(RobinsonFouldsSplits, splits10.3[[i]], splits10.4[[j]])
+  }
+  
+  expect_equivalent(mat, CalculateTreeDistance(RobinsonFouldsSplits, splits10.3, splits10.4))
   
   expect_equivalent(
     CalculateTreeDistance(RobinsonFouldsSplits, splits10.4, splits10.3),
@@ -114,7 +127,7 @@ test_that('Matches are reported', {
     }
     ghSplit <- at$matchedSplits[
       match.Splits(as.Splits(c(rep(FALSE, 6), TRUE, TRUE), letters[1:8]),
-                   splits1)]
+                   splits1[[which(!is.na(matchedSplits))]])]
     expect_equal('g h | a b c d e f => g h | a b c d e f', ghSplit)
     
     at <- attributes(Func(treeSym8, treeTwoSplits, reportMatching = TRUE, ...))
