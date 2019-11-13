@@ -48,13 +48,12 @@ test_that("Removing contradictions improves scores", {
   # 198=100:98, or we can delete taxa 99-102 to produce 196=96:96.
   
   Test <- function (nTaxa, nContra) {
-    l2choose <- function (a, b) lchoose(a, b) / log(2)
     nInSplit <- nTaxa / 2L
     split1 <- split2 <- c(rep(TRUE, nInSplit), rep(FALSE, nInSplit))
     flips <- nInSplit + ((1-nContra):nContra)
     nonFlips <- c(seq_len(nContra), nTaxa + 1 - seq_len(nContra))
     split2[flips] <- !split2[flips]
-    
+ 
     expect_true(
       MutualPhylogeneticInfoSplits(as.Splits(split1[-flips]), as.Splits(split2[-flips]))
       >

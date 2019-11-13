@@ -16,12 +16,18 @@ test_that('Tree normalization works', {
 
 
 test_that('CalculateTreeDistance handles splits appropriately', {
+  set.seed(101)
   tree10 <- ape::rtree(10)
   tree10.1 <- ape::rtree(10)
   splits10 <- as.Splits(tree10)
   splits10.1 <- as.Splits(tree10.1)
-  trees10.3 <- lapply(rep(10, 3), ape::rtree, br = NULL)
-  trees10.4 <- lapply(rep(10, 4), ape::rtree, br = NULL)
+  trees10.3 <- list(BalancedTree(tree10),
+                    PectinateTree(tree10),
+                    ape::rtree(10, br = NULL))
+  trees10.4 <- list(PectinateTree(tree10),
+                    BalancedTree(tree10),
+                    ape::rtree(10, br = NULL),
+                    ape::rtree(10, br = NULL))
   splits10.3 <- as.Splits(trees10.3)
   splits10.4 <- as.Splits(trees10.4)
   
@@ -48,6 +54,13 @@ test_that('CalculateTreeDistance handles splits appropriately', {
     CalculateTreeDistance(RobinsonFouldsSplits, trees10.3, trees10.3[c(1, 3, 2)]),
   )
   
+  mat <- matrix(NA, 3, 4)
+  for (i in 1:3) for (j in 1:4) {
+    mat[i, j] <- CalculateTreeDistance(RobinsonFouldsSplits, splits10.3[[i]], splits10.4[[j]])
+  }
+  
+  expect_equivalent(mat, CalculateTreeDistance(RobinsonFouldsSplits, splits10.3, splits10.4))
+  
   expect_equivalent(
     CalculateTreeDistance(RobinsonFouldsSplits, splits10.4, splits10.3),
     t(CalculateTreeDistance(RobinsonFouldsSplits, splits10.3, splits10.4)))
@@ -71,37 +84,56 @@ test_that('Matches are reported', {
   expect_equal("a b | c d e f g h => a b c | d e f g h",
                ReportMatching(splitsA, splitsB[[2]]))
   
-  expect_equal(c(5, 2, 3, 1, 4), attr(GeneralizedRF(as.Splits(treeSym8),
+  splits1 <- as.Splits(treeSym8)
+  splits2 <- as.Splits(treeBal8)
+  
+  matchedSplits <- match.Splits(splits1, splits2)
+  cs <- CompatibleSplits(splits1, splits2)
+  cs[, matchedSplits] <- FALSE
+  unmatched <- is.na(matchedSplits)
+  matchedSplits[unmatched] <- apply(cs[unmatched, ], 1, which)
+  expect_equal(matchedSplits, attr(GeneralizedRF(as.Splits(treeSym8),
                                                     as.Splits(treeBal8), 8L, 
                                                     cpp_mutual_phylo,
                                                     maximize = TRUE, 
                                                     reportMatching = TRUE),
                                       'matching'))
     
-  expect_equal(c(5, 2, 3, 1, 4), attr(
+  expect_equal(matchedSplits, attr(
     MutualPhylogeneticInfoSplits(as.Splits(treeSym8), as.Splits(treeBal8),
                                reportMatching = TRUE),
     'matching'))
   
   Test <- function (Func, relaxed = FALSE, ...) {
-    
-    at <- attributes(Func(PectinateTree(letters[1:8]),
-                          BalancedTree(letters[8:1]), reportMatching = TRUE,
-                          ...))
+    tree1 <- PectinateTree(letters[1:8])
+    tree2 <- BalancedTree(letters[8:1])
+    at <- attributes(Func(tree1, tree2, reportMatching = TRUE, ...))
     expect_equal(3L, length(at))
+    
+    splits1 <- as.Splits(tree1)
+    splits2 <- as.Splits(tree2, tree1)
+    
+    matchedSplits <- match.Splits(splits1, splits2)
     if (relaxed) {
-      expect_equal(c(5L, 3L, 1L), as.integer(at$matching[c(1, 3, 5)]))
-      ghSplit <- at$matchedSplits[3]
+      expect_equal(matchedSplits[!is.na(matchedSplits)],
+                   as.integer(at$matching[c(1, 3, 5)]))
     } else {
-      expect_equal(c(5L, 2L, 3L, 4L, 1L), as.integer(at$matching))
-      ghSplit <- at$matchedSplits[5]
+      cs <- CompatibleSplits(splits1, splits2)
+      cs[, matchedSplits] <- FALSE
+      unmatched <- is.na(matchedSplits)
+      matchedSplits[unmatched] <- apply(cs[unmatched, ], 1, which)
+      
+      expect_equal(matchedSplits, as.integer(at$matching))
     }
+    ghSplit <- at$matchedSplits[
+      match.Splits(as.Splits(c(rep(FALSE, 6), TRUE, TRUE), letters[1:8]),
+                   splits1[[which(!is.na(matchedSplits))]])]
     expect_equal('g h | a b c d e f => g h | a b c d e f', ghSplit)
     
-    at <- attributes(Func(treeSym8, treeTwoSplits, reportMatching = TRUE,
-                          ...))
+    at <- attributes(Func(treeSym8, treeTwoSplits, reportMatching = TRUE, ...))
     expect_equal(3L, length(at))
-    expect_equal(c(NA, NA, 2L, NA, 1L), as.integer(at$matching))
+    expect_equal(match.Splits(as.Splits(treeSym8), as.Splits(treeTwoSplits, treeSym8)),
+                 as.integer(at$matching))
     expect_equal('a b | e f g h c d => a b | e f g h c d', at$matchedSplits[2])
   }
   
@@ -127,11 +159,12 @@ test_that('Matches are reported', {
   expect_equal('a b | e f g h c d => a b | e f g h c d', at$matchedSplits[5])
   
   # Zero match:
-  expect_equal('c d | a b .. b d | a c', 
+  expect_equal('a b | c d .. a c | b d', 
                attr(MutualPhylogeneticInfo( 
-                 ape::read.tree(text="((a, b), (c, d));"),
-                 ape::read.tree(text="((a, c), (b, d));"), 
-                 reportMatching = TRUE), 'matchedSplits'))
+                      ape::read.tree(text="((a, b), (c, d));"),
+                      ape::read.tree(text="((a, c), (b, d));"), 
+                      reportMatching = TRUE),
+                    'matchedSplits'))
 })
 
 test_that('Matchings are calculated in both directions', {
