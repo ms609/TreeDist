@@ -100,13 +100,13 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   edge1 <- tree1$edge
   child1 <- edge1[, 2]
   nTip <- attr(splits1, 'nTip')
-  partitionEdges1 <- vapply(nTip + 2L + seq_along(splits1),
+  partitionEdges1 <- vapply(as.integer(rownames(splits1)),
                             function (node) which(child1 == node), integer(1))
   
-  splits2 <- as.Splits(tree2, tree1)
+  splits2 <- as.Splits(tree2, tipLabels = tree1)
   edge2 <- tree2$edge
   child2 <- edge2[, 2]
-  partitionEdges2 <- vapply(nTip + 2L + seq_along(splits2),
+  partitionEdges2 <- vapply(as.integer(rownames(splits2)),
                             function (node) which(child2 == node), integer(1))
   
   matching <- Func(tree1, tree2, reportMatching = TRUE)
@@ -153,9 +153,9 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
       rootEdges <- which(parent == min(parent))
       rootChildren <- child[rootEdges]
       splitEdges <- vapply(splitNodes, match, table = child, 0)
-      got <- edge[rootEdges, 2L] %in% splitNodes
+      got <- rootChildren %in% splitNodes
       if (any(got)) {
-        c(score = as.integer(which(splitNodes == edge[rootEdges[got], 2L])),
+        c(score = as.integer(which(splitNodes == rootChildren[rootEdges[got]])),
           edge = rootEdges[!got])
       } else {
         c(score = NA, edge = NA)
@@ -163,7 +163,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
     }
     edgeColPalette <- sequential_hcl(n = 256L, palette = 'Viridis')
      
-    EdgyPlot <- function (tree, splits, edge, partitionEdges, 
+    EdgyPlot <- function (tree, splits, edge, partitionEdges,
                           normalizedScores, ...) {
       splitNodes <- as.integer(names(splits))
       ore <- OtherRootEdge(splitNodes, edge)
