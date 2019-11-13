@@ -27,7 +27,7 @@ VariationOfClusteringInfo(tree1, tree2 = tree1, normalize = FALSE,
 
 ExpectedVariation(tree1, tree2, samples = 10000)
 
-MutualClusteringInfo(tree1, tree2, normalize = FALSE,
+MutualClusteringInfo(tree1, tree2 = tree1, normalize = FALSE,
   reportMatching = FALSE)
 
 MutualPhylogeneticInfoSplits(splits1, splits2, nTip = attr(splits1,
