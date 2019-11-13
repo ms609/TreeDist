@@ -53,24 +53,13 @@ test_that("Removing contradictions improves scores", {
     flips <- nInSplit + ((1-nContra):nContra)
     nonFlips <- c(seq_len(nContra), nTaxa + 1 - seq_len(nContra))
     split2[flips] <- !split2[flips]
-    
-    print(as.Splits(split1[-flips]), T)
-    print(as.Splits(split2[-flips]), T)
-    cat(MutualPhylogeneticInfoSplits(as.Splits(split1[-flips]), as.Splits(split2[-flips])))
-    print(as.Splits(split1[-nonFlips]), T)
-    print(as.Splits(split2[-nonFlips]), T)
-    cat(MutualPhylogeneticInfoSplits(as.Splits(split1[-nonFlips]), as.Splits(split2[-nonFlips])))
-    
+ 
     expect_true(
       MutualPhylogeneticInfoSplits(as.Splits(split1[-flips]), as.Splits(split2[-flips]))
       >
       MutualPhylogeneticInfoSplits(as.Splits(split1[-nonFlips]), as.Splits(split2[-nonFlips]))
     )
   }
-  
-  Test(10, 2)
-  Test(10, 1)
-  Test(10, 10)
   
   Test(200, 2)
   Test(200, 1)

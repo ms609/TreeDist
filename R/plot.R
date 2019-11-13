@@ -165,8 +165,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
      
     EdgyPlot <- function (tree, splits, edge, partitionEdges, 
                           normalizedScores, ...) {
-      splitNodes <- vapply(names(splits), function (x)
-        as.integer(substr(x, 2L, nchar(x))), 0L)
+      splitNodes <- as.integer(names(splits))
       ore <- OtherRootEdge(splitNodes, edge)
       if (length(normalizedScores) && !is.na(ore[1])) {
         ns <- c(normalizedScores, normalizedScores[ore['score']])

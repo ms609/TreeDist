@@ -6,7 +6,7 @@ using namespace Rcpp;
 #include "SplitList.h"
 
 // [[Rcpp::export]]
-List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y, 
+List cpp_robinson_foulds_distance (RawMatrix x, RawMatrix y, 
                                    NumericVector nTip) {
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
@@ -67,7 +67,7 @@ List cpp_robinson_foulds_distance (NumericMatrix x, NumericMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_robinson_foulds_info (NumericMatrix x, NumericMatrix y, 
+List cpp_robinson_foulds_info (RawMatrix x, RawMatrix y, 
                                NumericVector nTip) {
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
@@ -134,7 +134,7 @@ List cpp_robinson_foulds_info (NumericMatrix x, NumericMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_matching_split_distance (NumericMatrix x, NumericMatrix y, 
+List cpp_matching_split_distance (RawMatrix x, RawMatrix y, 
                                   NumericVector nTip) {
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
@@ -188,7 +188,7 @@ List cpp_matching_split_distance (NumericMatrix x, NumericMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_jaccard_similarity (NumericMatrix x, NumericMatrix y,
+List cpp_jaccard_similarity (RawMatrix x, RawMatrix y,
                              NumericVector nTip, NumericVector k,
                              LogicalVector arboreal) {
   if (x.cols() != y.cols()) {
@@ -302,7 +302,7 @@ List cpp_jaccard_similarity (NumericMatrix x, NumericMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
+List cpp_mmsi_distance (RawMatrix x, RawMatrix y,
                         NumericVector nTip) {
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
@@ -372,7 +372,7 @@ List cpp_mmsi_distance (NumericMatrix x, NumericMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_mutual_clustering (NumericMatrix x, NumericMatrix y,
+List cpp_mutual_clustering (RawMatrix x, RawMatrix y,
                             NumericVector nTip) {
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
@@ -450,7 +450,7 @@ List cpp_mutual_clustering (NumericMatrix x, NumericMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_mutual_phylo (NumericMatrix x, NumericMatrix y,
+List cpp_mutual_phylo (RawMatrix x, RawMatrix y,
                        NumericVector nTip) {
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
