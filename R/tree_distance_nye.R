@@ -80,7 +80,7 @@ NyeSplitSimilarity <- function (splits1, splits2,
                                 nTip = attr(splits1, 'nTip'),
                                 reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, nTip, cpp_jaccard_similarity, k = 1L,
-                arboreal = FALSE, maximize = FALSE,
+                arboreal = FALSE, maximize = TRUE,
                 reportMatching = reportMatching)
 }
 
