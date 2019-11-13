@@ -177,7 +177,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
       
       edge.width <- rep(1, nrow(edge))
       edge.width[pe] <-  1 + (10 * ns)
-      edge.color <- rep('black', length(edge))
+      edge.color <- rep('black', nrow(edge))
       edge.color[pe] <- edgeColPalette[1 + ceiling(255 * ns)]
       
       Plot(tree, edge.width = edge.width, edge.color = edge.color, ...)
