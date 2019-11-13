@@ -84,24 +84,35 @@ test_that('Matches are reported', {
     'matching'))
   
   Test <- function (Func, relaxed = FALSE, ...) {
-    
-    at <- attributes(Func(PectinateTree(letters[1:8]),
-                          BalancedTree(letters[8:1]), reportMatching = TRUE,
-                          ...))
+    tree1 <- PectinateTree(letters[1:8])
+    tree2 <- BalancedTree(letters[8:1])
+    at <- attributes(Func(tree1, tree2, reportMatching = TRUE, ...))
     expect_equal(3L, length(at))
+    
+    splits1 <- as.Splits(tree1)
+    splits2 <- as.Splits(tree2, tree1)
+    
+    matchedSplits <- match.Splits(splits1, splits2)
     if (relaxed) {
-      expect_equal(c(5L, 3L, 1L), as.integer(at$matching[c(1, 3, 5)]))
-      ghSplit <- at$matchedSplits[3]
+      expect_equal(matchedSplits[!is.na(matchedSplits)],
+                   as.integer(at$matching[c(1, 3, 5)]))
     } else {
-      expect_equal(c(5L, 2L, 3L, 4L, 1L), as.integer(at$matching))
-      ghSplit <- at$matchedSplits[5]
+      cs <- CompatibleSplits(splits1, splits2)
+      cs[, matchedSplits] <- FALSE
+      unmatched <- is.na(matchedSplits)
+      matchedSplits[unmatched] <- apply(cs[unmatched, ], 1, which)
+      
+      expect_equal(matchedSplits, as.integer(at$matching))
     }
+    ghSplit <- at$matchedSplits[
+      match.Splits(as.Splits(c(rep(FALSE, 6), TRUE, TRUE), letters[1:8]),
+                   splits1)]
     expect_equal('g h | a b c d e f => g h | a b c d e f', ghSplit)
     
-    at <- attributes(Func(treeSym8, treeTwoSplits, reportMatching = TRUE,
-                          ...))
+    at <- attributes(Func(treeSym8, treeTwoSplits, reportMatching = TRUE, ...))
     expect_equal(3L, length(at))
-    expect_equal(c(NA, NA, 2L, NA, 1L), as.integer(at$matching))
+    expect_equal(match.Splits(as.Splits(treeSym8), as.Splits(treeTwoSplits, treeSym8)),
+                 as.integer(at$matching))
     expect_equal('a b | e f g h c d => a b | e f g h c d', at$matchedSplits[2])
   }
   
@@ -127,11 +138,12 @@ test_that('Matches are reported', {
   expect_equal('a b | e f g h c d => a b | e f g h c d', at$matchedSplits[5])
   
   # Zero match:
-  expect_equal('c d | a b .. b d | a c', 
+  expect_equal('a b | c d .. a c | b d', 
                attr(MutualPhylogeneticInfo( 
-                 ape::read.tree(text="((a, b), (c, d));"),
-                 ape::read.tree(text="((a, c), (b, d));"), 
-                 reportMatching = TRUE), 'matchedSplits'))
+                      ape::read.tree(text="((a, b), (c, d));"),
+                      ape::read.tree(text="((a, c), (b, d));"), 
+                      reportMatching = TRUE),
+                    'matchedSplits'))
 })
 
 test_that('Matchings are calculated in both directions', {
