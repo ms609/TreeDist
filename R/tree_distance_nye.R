@@ -169,6 +169,6 @@ JaccardSplitSimilarity <- function (splits1, splits2,
                                     k = 1L, arboreal = TRUE,
                                     reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, nTip, cpp_jaccard_similarity, k = k,
-                arboreal = arboreal, maximize = FALSE,
+                arboreal = arboreal, maximize = TRUE,
                 reportMatching = reportMatching)
 }
