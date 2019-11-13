@@ -166,20 +166,43 @@ measure, optionally annotating matched partitions and weighting partitions
 according to their phylogenetic information content.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>RobinsonFouldsInfo</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>, <span class='kw'>similarity</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+    <pre class="usage"><span class='fu'>RobinsonFouldsInfo</span>(
+  <span class='no'>tree1</span>,
+  <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>,
+  <span class='kw'>similarity</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)
 
-<span class='fu'>RobinsonFouldsInfoSplits</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>, <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='no'>splits1</span>, <span class='st'>"nTip"</span>),
-  <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'>RobinsonFouldsInfoSplits</span>(
+  <span class='no'>splits1</span>,
+  <span class='no'>splits2</span>,
+  <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='no'>splits1</span>, <span class='st'>"nTip"</span>),
+  <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)
 
-<span class='fu'>RobinsonFoulds</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>, <span class='kw'>similarity</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'>RobinsonFoulds</span>(
+  <span class='no'>tree1</span>,
+  <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>,
+  <span class='kw'>similarity</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)
 
-<span class='fu'>RobinsonFouldsMatching</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>, <span class='kw'>similarity</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+<span class='fu'>RobinsonFouldsMatching</span>(
+  <span class='no'>tree1</span>,
+  <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>,
+  <span class='kw'>similarity</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='no'>...</span>
+)
 
-<span class='fu'>RobinsonFouldsSplits</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>, <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='no'>splits1</span>, <span class='st'>"nTip"</span>),
-  <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+<span class='fu'>RobinsonFouldsSplits</span>(
+  <span class='no'>splits1</span>,
+  <span class='no'>splits2</span>,
+  <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='no'>splits1</span>, <span class='st'>"nTip"</span>),
+  <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -285,11 +308,12 @@ ISSN 00255564, doi: <a href='https://doi.org/10.1016/0025-5564(81)90043-2'>10.10
 .</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other tree distances: <code><a href='JaccardRobinsonFoulds.html'>JaccardRobinsonFoulds</a></code>,
-  <code><a href='KendallColijn.html'>KendallColijn</a></code>,
-  <code><a href='MatchingSplitDistance.html'>MatchingSplitDistance</a></code>,
-  <code><a href='NyeTreeSimilarity.html'>NyeTreeSimilarity</a></code>,
-  <code><a href='TreeDistance.html'>TreeDistance</a></code></p></div>
+    <div class='dont-index'><p>Other tree distances: 
+<code><a href='JaccardRobinsonFoulds.html'>JaccardRobinsonFoulds</a>()</code>,
+<code><a href='KendallColijn.html'>KendallColijn</a>()</code>,
+<code><a href='MatchingSplitDistance.html'>MatchingSplitDistance</a>()</code>,
+<code><a href='NyeTreeSimilarity.html'>NyeTreeSimilarity</a>()</code>,
+<code><a href='TreeDistance.html'>TreeDistance</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

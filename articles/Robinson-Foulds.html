@@ -114,7 +114,7 @@
       <h1>Robinson-Foulds metric</h1>
                         <h4 class="author">Martin R. Smith</h4>
             
-            <h4 class="date">2019-11-12</h4>
+            <h4 class="date">2019-11-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/Robinson-Foulds.Rmd"><code>vignettes/Robinson-Foulds.Rmd</code></a></small>
       <div class="hidden name"><code>Robinson-Foulds.Rmd</code></div>
@@ -226,37 +226,37 @@
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">DisplaySplits &lt;-<span class="st"> </span><span class="cf">function</span> (tree) </a>
 <a class="sourceLine" id="cb8-2" data-line-number="2">  <span class="kw"><a href="https://rdrr.io/r/base/list.html">as.list</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(TreeTools<span class="op">::</span><span class="kw"><a href="https://ms609.github.io/TreeTools/reference/as.Splits.html">as.Splits</a></span>(tree)))</a>
 <a class="sourceLine" id="cb8-3" data-line-number="3"><span class="kw">DisplaySplits</span>(tree1)</a></code></pre></div>
-<pre><code>## $n12
-## [1] "C D E F G H I | A B"
+<pre><code>## $`11`
+## [1] "A B | C D E F G H I"
 ## 
-## $n13
+## $`13`
 ## [1] "C D E | A B F G H I"
 ## 
-## $n14
+## $`14`
 ## [1] "D E | A B C F G H I"
 ## 
-## $n15
+## $`15`
 ## [1] "F G H I | A B C D E"
 ## 
-## $n16
+## $`16`
 ## [1] "G H I | A B C D E F"
 ## 
-## $n17
+## $`17`
 ## [1] "H I | A B C D E F G"</code></pre>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">DisplaySplits</span>(tree2)</a></code></pre></div>
-<pre><code>## $n12
-## [1] "C D E I F G H | A B"
+<pre><code>## $`11`
+## [1] "A B | C D E I F G H"
 ## 
-## $n13
+## $`13`
 ## [1] "C D E I | A B F G H"
 ## 
-## $n14
+## $`14`
 ## [1] "E I | A B C D F G H"
 ## 
-## $n15
+## $`15`
 ## [1] "F G H | A B C D E I"
 ## 
-## $n16
+## $`16`
 ## [1] "G H | A B C D E I F"</code></pre>
 <p>We can then see the similarity scores for each pair of splits, along with the optimal matching:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/attributes.html">attributes</a></span>(<span class="kw"><a href="../reference/TreeDistance.html">MutualPhylogeneticInfo</a></span>(tree1, tree2, <span class="dt">reportMatching =</span> <span class="ot">TRUE</span>))</a></code></pre></div>
@@ -273,7 +273,7 @@
 ## [6,] 0.2410081 0.0000000 0.0000000 0.0000000 0.0000000
 ## 
 ## $matchedSplits
-## [1] "C D E F G H I | A B =&gt; C D E F G H I | A B"
+## [1] "A B | C D E F G H I =&gt; A B | C D E F G H I"
 ## [2] "C D E | A B F G H I =&gt; C D E I | A B F G H"
 ## [3] "F G H I | A B C D E =&gt; F G H | A B C D E I"
 ## [4] "G H I | A B C D E F =&gt; G H | A B C D E F I"

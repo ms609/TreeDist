@@ -114,7 +114,7 @@
       <h1>Contextualizing tree distances</h1>
                         <h4 class="author"><a href="https://community.dur.ac.uk/martin.smith/">Martin R. Smith</a></h4>
             
-            <h4 class="date">2019-11-12</h4>
+            <h4 class="date">2019-11-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/using-distances.Rmd"><code>vignettes/using-distances.Rmd</code></a></small>
       <div class="hidden name"><code>using-distances.Rmd</code></div>
@@ -276,28 +276,26 @@ In such a context, it can be relevant to normalize tree similarity against the <
 ## Attaching package: 'TreeSearch'</code></pre>
 <pre><code>## The following objects are masked from 'package:TreeTools':
 ## 
-##     AddTip, AllAncestors, AllDescendantEdges, AncestorEdge,
-##     ApeTime, C_node_depth, CharacterInformation, CladeSizes,
-##     Cladewise, CollapseEdge, CollapseNode, ConsensusWithout,
-##     DescendantEdges, DoubleFactorial, doubleFactorials,
-##     EdgeAncestry, EnforceOutgroup, ExtractTaxa, ForestSplits,
-##     IC1Spr, ListToMatrix, LnRooted, LnRooted.int, LnUnrooted,
-##     LnUnrooted.int, LnUnrootedMult, LnUnrootedSplits,
-##     LogDoubleFactorial, LogDoubleFactorial.int,
+##     AddTip, AllAncestors, AllDescendantEdges, AncestorEdge, ApeTime,
+##     C_node_depth, CharacterInformation, CladeSizes, Cladewise,
+##     CollapseEdge, CollapseNode, ConsensusWithout, DescendantEdges,
+##     DoubleFactorial, doubleFactorials, EdgeAncestry, EnforceOutgroup,
+##     ExtractTaxa, ForestSplits, IC1Spr, ListToMatrix, LnRooted,
+##     LnRooted.int, LnUnrooted, LnUnrooted.int, LnUnrootedMult,
+##     LnUnrootedSplits, LogDoubleFactorial, LogDoubleFactorial.int,
 ##     logDoubleFactorials, LogTreesMatchingSplit, MarkMissing,
-##     MatrixToList, MatrixToPhyDat, MRCA, MultiSplitInformation,
-##     N1Spr, NewickTree, NeworderPhylo, NeworderPruningwise,
-##     NexusTokens, NJTree, NonDuplicateRoot, NPartitions, NRooted,
-##     NSplits, NUnrooted, NUnrootedMult, NUnrootedSplits, PhyDat,
-##     PhyDatToMatrix, PhyToString, Postorder, PostorderEdges,
-##     Preorder, Pruningwise, RandomTree, ReadAsPhyDat,
-##     ReadCharacters, ReadTntAsPhyDat, ReadTntCharacters,
-##     ReadTntTree, Renumber, RenumberEdges, RenumberTips,
-##     RenumberTree, RightmostCharacter, RootTree, SampleOne,
-##     SingleTaxonTree, SortTree, SplitFrequency, SplitInformation,
-##     SplitNumber, StringToPhyDat, Subtree, SupportColor,
-##     SupportColour, TNTText2Tree, TreeIsRooted, TreesMatchingSplit,
-##     TreeSplits, UnrootedTreesMatchingSplit</code></pre>
+##     MatrixToList, MatrixToPhyDat, MRCA, MultiSplitInformation, N1Spr,
+##     NewickTree, NeworderPhylo, NeworderPruningwise, NexusTokens,
+##     NJTree, NonDuplicateRoot, NPartitions, NRooted, NSplits, NUnrooted,
+##     NUnrootedMult, NUnrootedSplits, PhyDat, PhyDatToMatrix,
+##     PhyToString, Postorder, PostorderEdges, Preorder, Pruningwise,
+##     RandomTree, ReadAsPhyDat, ReadCharacters, ReadTntAsPhyDat,
+##     ReadTntCharacters, ReadTntTree, Renumber, RenumberEdges,
+##     RenumberTips, RenumberTree, RightmostCharacter, RootTree,
+##     SampleOne, SingleTaxonTree, SortTree, SplitFrequency,
+##     SplitInformation, SplitNumber, StringToPhyDat, Subtree,
+##     SupportColor, SupportColour, TNTText2Tree, TreeIsRooted,
+##     TreesMatchingSplit, TreeSplits, UnrootedTreesMatchingSplit</code></pre>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1">oneAway &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/structure.html">structure</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/seq.html">seq_len</a></span>(<span class="dv">200</span>), <span class="cf">function</span> (x) {</a>
 <a class="sourceLine" id="cb32-2" data-line-number="2">  tbrTree &lt;-<span class="st"> </span><span class="kw"><a href="https://ms609.github.io/TreeSearch/reference/TBR.html">TBR</a></span>(trueTree)</a>
 <a class="sourceLine" id="cb32-3" data-line-number="3">  ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/consensus.html">consensus</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(tbrTree, <span class="kw"><a href="https://ms609.github.io/TreeSearch/reference/NNI.html">NNI</a></span>(tbrTree), <span class="kw"><a href="https://ms609.github.io/TreeSearch/reference/NNI.html">NNI</a></span>(tbrTree), <span class="kw"><a href="https://ms609.github.io/TreeSearch/reference/NNI.html">NNI</a></span>(tbrTree)))</a>

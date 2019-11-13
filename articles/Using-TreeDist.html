@@ -115,7 +115,7 @@
 </h1>
                         <h4 class="author">Martin R. Smith</h4>
             
-            <h4 class="date">2019-11-12</h4>
+            <h4 class="date">2019-11-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/Using-TreeDist.Rmd"><code>vignettes/Using-TreeDist.Rmd</code></a></small>
       <div class="hidden name"><code>Using-TreeDist.Rmd</code></div>
@@ -160,11 +160,11 @@ For more on different tree distance metrics, see the <a href="tree-distances.htm
 <a class="sourceLine" id="cb6-3" data-line-number="3">threeTrees &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/list.html">list</a></span>(ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span>(<span class="dv">11</span>), ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span>(<span class="dv">11</span>), ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span>(<span class="dv">11</span>))</a>
 <a class="sourceLine" id="cb6-4" data-line-number="4"></a>
 <a class="sourceLine" id="cb6-5" data-line-number="5"><span class="kw"><a href="../reference/TreeDistance.html">TreeDistance</a></span>(oneTree, twoTrees)</a></code></pre></div>
-<pre><code>## [1] 0.3106151 0.1817371</code></pre>
+<pre><code>## [1] 0.3051245 0.1866991</code></pre>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="../reference/TreeDistance.html">TreeDistance</a></span>(twoTrees, threeTrees)</a></code></pre></div>
 <pre><code>##           [,1]      [,2]      [,3]
-## [1,] 0.2142524 0.2829006 0.1573924
-## [2,] 0.1870487 0.2184542 0.1789132</code></pre>
+## [1,] 0.2658698 0.1725792 0.1570702
+## [2,] 0.1942194 0.2103822 0.2186915</code></pre>
 </div>
 </div>
 <div id="visualizing-a-matching" class="section level2">
@@ -182,24 +182,24 @@ Each split is labelled with a measure of its similarity, which is its contributi
 ## attr(,"matching")
 ## [1] 1 2 3 4 6 7 8 5
 ## attr(,"pairScores")
-##            [,1]       [,2]      [,3]       [,4]      [,5]      [,6]
-## [1,] 1.81491685 0.56980435 2.6696698 0.17944482 2.0146478 0.7926229
-## [2,] 0.79262288 1.64737585 3.5244228 0.01190383 1.4825788 0.2605539
-## [3,] 2.01464779 2.66966982 7.5244228 1.03419780 0.6465822 1.4825788
-## [4,] 0.01464779 0.01464779 0.6465822 0.42101974 0.6465822 0.1376008
-## [5,] 0.56980435 0.07957935 2.0146478 0.54397280 2.6696698 1.6473758
-## [6,] 0.03773537 0.03773537 1.4825788 1.15715085 3.5244228 0.3604194
-## [7,] 2.66966982 2.01464779 0.6465822 1.03419780 0.6465822 3.5244228
-## [8,] 2.01464779 2.66966982 0.6465822 4.76953529 7.5244228 1.4825788
-##            [,7]      [,8]
-## [1,] 0.17944482 2.0146478
-## [2,] 0.01190383 1.4825788
-## [3,] 1.03419780 0.6465822
-## [4,] 0.42101974 0.6465822
-## [5,] 0.54397280 2.6696698
-## [6,] 1.15715085 3.5244228
-## [7,] 4.76953529 7.5244228
-## [8,] 1.03419780 0.6465822
+##            [,1]       [,2]      [,3]       [,4]      [,5]      [,6]       [,7]
+## [1,] 1.81491685 0.56980435 2.6696698 0.17944482 2.0146478 0.7926229 0.17944482
+## [2,] 0.79262288 1.64737585 3.5244228 0.01190383 1.4825788 0.2605539 0.01190383
+## [3,] 2.01464779 2.66966982 7.5244228 1.03419780 0.6465822 1.4825788 1.03419780
+## [4,] 0.01464779 0.01464779 0.6465822 0.42101974 0.6465822 0.1376008 0.42101974
+## [5,] 0.56980435 0.07957935 2.0146478 0.54397280 2.6696698 1.6473758 0.54397280
+## [6,] 0.03773537 0.03773537 1.4825788 1.15715085 3.5244228 0.3604194 1.15715085
+## [7,] 2.66966982 2.01464779 0.6465822 1.03419780 0.6465822 3.5244228 4.76953529
+## [8,] 2.01464779 2.66966982 0.6465822 4.76953529 7.5244228 1.4825788 1.03419780
+##           [,8]
+## [1,] 2.0146478
+## [2,] 1.4825788
+## [3,] 0.6465822
+## [4,] 0.6465822
+## [5,] 2.6696698
+## [6,] 3.5244228
+## [7,] 7.5244228
+## [8,] 0.6465822
 ## attr(,"matchedSplits")
 ## [1] "B C D E F | A G H I J K =&gt; B C D E J K | A F G H I"
 ## [2] "C D E F | A B G H I J K =&gt; C D E J K | A B F G H I"
@@ -213,13 +213,11 @@ Each split is labelled with a measure of its similarity, which is its contributi
 <p>We can identify the splits with:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">splits &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/character.html">as.character</a></span>(TreeTools<span class="op">::</span><span class="kw"><a href="https://ms609.github.io/TreeTools/reference/as.Splits.html">as.Splits</a></span>(tree2))</a>
 <a class="sourceLine" id="cb13-2" data-line-number="2">splits</a></code></pre></div>
-<pre><code>##                       n14                       n15 
-## "B C D E J K | A G H I F" "C D E J K | A B G H I F" 
-##                       n16                       n17 
-## "C D | A B E J K G H I F" "E J K | A B C D G H I F" 
-##                       n18                       n19 
-## "J K | A B C D E G H I F" "G H I F | A B C D E J K" 
-##                       n20                       n21 
+<pre><code>##                        14                        15                        16 
+## "B C D E J K | A G H I F" "C D E J K | A B G H I F" "C D | A B E J K G H I F" 
+##                        17                        18                        19 
+## "E J K | A B C D G H I F" "J K | A B C D E G H I F" "G H I F | A B C D E J K" 
+##                        20                        21 
 ## "H I F | A B C D E J K G" "H I | A B C D E J K G F"</code></pre>
 <p>The names of the splits correspond to the number of the nodes in the original tree:</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">mar =</span> <span class="kw"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="dv">0</span>, <span class="dv">4</span>))</a>
@@ -227,8 +225,6 @@ Each split is labelled with a measure of its similarity, which is its contributi
 <a class="sourceLine" id="cb15-3" data-line-number="3">ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/nodelabels.html">nodelabels</a></span>()</a>
 <a class="sourceLine" id="cb15-4" data-line-number="4">ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/nodelabels.html">nodelabels</a></span>(splits, <span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/names.html">names</a></span>(splits)), </a>
 <a class="sourceLine" id="cb15-5" data-line-number="5">                <span class="dt">adj=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1.1</span>, <span class="fl">-0.2</span>), <span class="dt">cex=</span><span class="fl">0.8</span>, <span class="dt">frame=</span><span class="st">'none'</span>)</a></code></pre></div>
-<pre><code>## Warning in ape::nodelabels(splits, as.integer(names(splits)), adj =
-## c(1.1, : NAs introduced by coercion</code></pre>
 <p><img src="Using-TreeDist_files/figure-html/named-splits-1.png" width="80%" style="display: block; margin: auto;"></p>
 </div>
 <div id="what-next" class="section level2">
