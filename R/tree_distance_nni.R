@@ -1,10 +1,12 @@
 # An approximation of the NNI distance based on Li et al. 1996
 
+# Ultimately this should be moved to raw-data.
 SortingNumber <- function (n) {
   logCeiling <- ceiling(log2(n))
   n * logCeiling - (2L ^ logCeiling) + 1
 }
 
+# Ultimately this should be moved to raw-data.
 DegenerateDistance <- function (nTip) {
   # Calculate the shortest length of the longest path in a tree.
   # To make this path as short as possible, divide tips into three 
@@ -29,11 +31,11 @@ DegenerateDistance <- function (nTip) {
 }
 
 MaxNNI <- function (nEdge) {
-  if (nEdge < 12) {
+  if (nEdge < 12L) {
     # Exact value of diameter for small trees, calculated by Li et al. 1996.
-    c(0, 0, 0, 1, 3, 5, 7, 10, 12, 15, 18)[nEdge]
+    c(0L, 0L, 0L, 1L, 3L, 5L, 7L, 10L, 12L, 15L, 18L)[nEdge]
   } else {
-      
+    
     nTip <- nEdge + 2L
     # Unclear from Li et al. 1996 whether the DegenerateDistance must be applied
     # twice.  Conservatively assumed so: once to get to degenerate tree, and once
