@@ -1,0 +1,45 @@
+# An approximation of the NNI distance based on Li et al. 1996
+
+SortingNumber <- function (n) {
+  logCeiling <- ceiling(log2(n))
+  n * logCeiling - (2L ^ logCeiling) + 1
+}
+
+DegenerateDistance <- function (nTip) {
+  # Calculate the shortest length of the longest path in a tree.
+  # To make this path as short as possible, divide tips into three 
+  # balanced trees, joined by a single node that will form part of every 
+  # longest path.  One of these subtrees will be filled with >= n/3 nodes
+  nodesInFull <- pmax(0, ceiling(log2(nTip / 3)))
+  # We want to put a power of two tips in this subtree, such that every node is 
+  # equally close to its root
+  tipsInFull <- 2 ^ nodesInFull
+  # Now the remaining tips must be spread sub-evenly between the remaining 
+  # edges from this node.  Picture halving the tips; removing tips from one side
+  # until it is a power of two will reduce the number of nodes by one, whilst 
+  # at worst (if this brings the other side over a power of two) increasing the 
+  # other side by one.
+  tipsLeft <- nTip - tipsInFull
+  minBackboneNodes <- pmax(0, nodesInFull + ceiling(log2(tipsLeft / 2)) + 1L)
+  # The worst-case scenario requires a move for every node not on the backbone:
+  nNode <- pmax(0, nTip - 2L)
+  
+  # Return:
+  nNode - minBackboneNodes
+}
+
+MaxNNI <- function (nEdge) {
+  if (nEdge < 12) {
+    # Exact value of diameter for small trees, calculated by Li et al. 1996.
+    c(0, 0, 0, 1, 3, 5, 7, 10, 12, 15, 18)[nEdge]
+  } else {
+      
+    nTip <- nEdge + 2L
+    # Unclear from Li et al. 1996 whether the DegenerateDistance must be applied
+    # twice.  Conservatively assumed so: once to get to degenerate tree, and once
+    # to get back to balanced tree.
+    SortingNumber(nEdge + 3L) + (2L * DegenerateDistance(nTip))
+  }
+}
+
+MinNNI <- function (n) n
