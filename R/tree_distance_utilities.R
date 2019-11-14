@@ -69,13 +69,13 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
     notLastSplit <- nSplits - 1L
     ret <- matrix(0, nSplits, nSplits)
     is <- matrix(seq_len(nSplits), nSplits, nSplits)
-    ret[upper.tri(ret)] <- mapply(Func,
+    ret[lower.tri(ret)] <- mapply(Func,
                                   splits[t(is)[lower.tri(is)]],
                                   splits[is[lower.tri(is)]],
                                   nTip = nTip,
                                   reportMatching = FALSE,
                                   ...)
-    ret[lower.tri(ret)] <- t(ret)[lower.tri(ret)]
+    ret[upper.tri(ret)] <- t(ret)[upper.tri(ret)]
     diag(ret) <- vapply(splits[seq_len(nSplits)], function (split) {
       Func(split, split, nTip = nTip, reportMatching = FALSE, ...)
     }, double(1))

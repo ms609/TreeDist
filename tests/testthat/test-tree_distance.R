@@ -69,6 +69,20 @@ test_that('Size mismatch causes error', {
   expect_error(MeilaVariationOfInformation(splits7, splits8))
 })
 
+test_that('Multiple comparisons are correctly ordered', {
+  nTrees <- 6L
+  nTip <- 16L
+  
+  set.seed(0)
+  trees <- lapply(rep(nTip, nTrees), ape::rtree, br=NULL)
+  trees[[1]] <- TreeTools::BalancedTree(nTip)
+  trees[[nTrees - 1L]] <- TreeTools::PectinateTree(nTip)
+  class(trees) <- 'multiPhylo'
+  
+  expect_equivalent(as.matrix(phangorn::RF.dist(trees)), 
+                    RobinsonFoulds(trees))
+})
+
 test_that('Metrics handle polytomies', {
   polytomy8 <- ape::read.tree(text='(a, b, c, d, e, f, g, h);')
   lapply(list(MutualPhylogeneticInfo, MutualClusteringInfo,
