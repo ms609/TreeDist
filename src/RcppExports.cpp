@@ -5,6 +5,32 @@
 
 using namespace Rcpp;
 
+// cpp_edge_to_splits
+RawMatrix cpp_edge_to_splits(NumericMatrix edge, IntegerVector nTip);
+RcppExport SEXP _TreeDist_cpp_edge_to_splits(SEXP edgeSEXP, SEXP nTipSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type edge(edgeSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type nTip(nTipSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_edge_to_splits(edge, nTip));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpp_nni_distance
+List cpp_nni_distance(IntegerMatrix edge, RawMatrix x, RawMatrix y, NumericVector nTip);
+RcppExport SEXP _TreeDist_cpp_nni_distance(SEXP edgeSEXP, SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerMatrix >::type edge(edgeSEXP);
+    Rcpp::traits::input_parameter< RawMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< RawMatrix >::type y(ySEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type nTip(nTipSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_nni_distance(edge, x, y, nTip));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_robinson_foulds_distance
 List cpp_robinson_foulds_distance(RawMatrix x, RawMatrix y, NumericVector nTip);
 RcppExport SEXP _TreeDist_cpp_robinson_foulds_distance(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
@@ -100,6 +126,8 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_TreeDist_cpp_edge_to_splits", (DL_FUNC) &_TreeDist_cpp_edge_to_splits, 2},
+    {"_TreeDist_cpp_nni_distance", (DL_FUNC) &_TreeDist_cpp_nni_distance, 4},
     {"_TreeDist_cpp_robinson_foulds_distance", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_distance, 3},
     {"_TreeDist_cpp_robinson_foulds_info", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_info, 3},
     {"_TreeDist_cpp_matching_split_distance", (DL_FUNC) &_TreeDist_cpp_matching_split_distance, 3},

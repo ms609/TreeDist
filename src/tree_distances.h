@@ -1,5 +1,9 @@
-#include <stdint.h>
 #include <limits>
+#include <stdint.h>
+#include <Rcpp.h>
+
+using namespace Rcpp;
+
 
 /*************** TYPES      *******************/
 
@@ -48,3 +52,6 @@ extern double lg2_trees_matching_split(int a, int b),
   mpi (const splitbit* a_state, const splitbit* b_state, const int n_tips, 
        const int in_a, const int in_b, 
        const double lg2_unrooted_n, const int n_bins);
+
+extern List cpp_robinson_foulds_distance (RawMatrix x, RawMatrix y, 
+                                          IntegerVector nTip);

@@ -45,3 +45,24 @@ MaxNNI <- function (nEdge) {
 }
 
 MinNNI <- function (n) n
+
+#' NNI distance
+#' 
+#' @examples
+#'   library('TreeTools')
+#'   tree1 <- BalancedTree(7)
+#'   tree2 <- PectinateTree(7)
+#'   
+#'   NNIDist(tree1, tree2)
+#' 
+#' @template MRS
+#' @importFrom ape Nnode.phylo
+#' @importFrom TreeTools PostorderEdges NTip
+#' @export
+NNIDist <- function (tree1, tree2) {
+  edge <- tree1$edge
+  edge1 <- PostorderEdges(edge[, 1], edge[, 2], dim(edge)[1], Nnode.phylo(tree1))
+  edge <- tree2$edge
+  edge2 <- PostorderEdges(edge[, 1], edge[, 2], dim(edge)[1], Nnode.phylo(tree2))
+  cpp_nni_distance(edge1, edge2, NTip(tree1))
+}

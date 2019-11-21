@@ -1,13 +1,13 @@
-#include <Rcpp.h>
-using namespace Rcpp;
-#include <stdint.h>
 #include <math.h> /* for pow(), log() */
+#include <Rcpp.h>
 #include "tree_distances.h"
 #include "SplitList.h"
 
+using namespace Rcpp;
+
 // [[Rcpp::export]]
 List cpp_robinson_foulds_distance (RawMatrix x, RawMatrix y, 
-                                   NumericVector nTip) {
+                                   IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
@@ -19,7 +19,7 @@ List cpp_robinson_foulds_distance (RawMatrix x, RawMatrix y,
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   cost score = 0;
   
-  NumericVector matching (most_splits);
+  IntegerVector matching (most_splits);
   for (int i = 0; i != most_splits; i++) matching[i] = NA_REAL;
   
   splitbit b_complement[MAX_SPLITS][MAX_BINS];
@@ -58,7 +58,7 @@ List cpp_robinson_foulds_distance (RawMatrix x, RawMatrix y,
   }
   score = cost (a.n_splits + b.n_splits) - score - score;
   
-  NumericVector final_score = NumericVector::create(score);
+  IntegerVector final_score = IntegerVector::create(score);
   
   List ret = List::create(Named("score") = final_score,
                           _["matching"] = matching);
@@ -68,7 +68,7 @@ List cpp_robinson_foulds_distance (RawMatrix x, RawMatrix y,
 
 // [[Rcpp::export]]
 List cpp_robinson_foulds_info (RawMatrix x, RawMatrix y, 
-                               NumericVector nTip) {
+                               IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
@@ -81,7 +81,7 @@ List cpp_robinson_foulds_info (RawMatrix x, RawMatrix y,
   const double lg2_unrooted_n = lg2_unrooted[n_tips];
   double score = 0;
   
-  NumericVector matching (most_splits);
+  IntegerVector matching (most_splits);
   for (int i = 0; i != most_splits; i++) matching[i] = NA_REAL;
   
   /* Dynamic allocation 20% faster for 105 tips, but VLA not permitted in C11 */
@@ -135,7 +135,7 @@ List cpp_robinson_foulds_info (RawMatrix x, RawMatrix y,
 
 // [[Rcpp::export]]
 List cpp_matching_split_distance (RawMatrix x, RawMatrix y, 
-                                  NumericVector nTip) {
+                                  IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
@@ -189,7 +189,7 @@ List cpp_matching_split_distance (RawMatrix x, RawMatrix y,
 
 // [[Rcpp::export]]
 List cpp_jaccard_similarity (RawMatrix x, RawMatrix y,
-                             NumericVector nTip, NumericVector k,
+                             IntegerVector nTip, NumericVector k,
                              LogicalVector arboreal) {
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
@@ -303,7 +303,7 @@ List cpp_jaccard_similarity (RawMatrix x, RawMatrix y,
 
 // [[Rcpp::export]]
 List cpp_mmsi_distance (RawMatrix x, RawMatrix y,
-                        NumericVector nTip) {
+                        IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
@@ -373,7 +373,7 @@ List cpp_mmsi_distance (RawMatrix x, RawMatrix y,
 
 // [[Rcpp::export]]
 List cpp_mutual_clustering (RawMatrix x, RawMatrix y,
-                            NumericVector nTip) {
+                            IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
@@ -451,7 +451,7 @@ List cpp_mutual_clustering (RawMatrix x, RawMatrix y,
 
 // [[Rcpp::export]]
 List cpp_mutual_phylo (RawMatrix x, RawMatrix y,
-                       NumericVector nTip) {
+                       IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
