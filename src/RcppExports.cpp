@@ -6,79 +6,78 @@
 using namespace Rcpp;
 
 // cpp_edge_to_splits
-RawMatrix cpp_edge_to_splits(NumericMatrix edge, IntegerVector nTip);
+RawMatrix cpp_edge_to_splits(IntegerMatrix edge, IntegerVector nTip);
 RcppExport SEXP _TreeDist_cpp_edge_to_splits(SEXP edgeSEXP, SEXP nTipSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type edge(edgeSEXP);
+    Rcpp::traits::input_parameter< IntegerMatrix >::type edge(edgeSEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type nTip(nTipSEXP);
     rcpp_result_gen = Rcpp::wrap(cpp_edge_to_splits(edge, nTip));
     return rcpp_result_gen;
 END_RCPP
 }
 // cpp_nni_distance
-List cpp_nni_distance(IntegerMatrix edge, RawMatrix x, RawMatrix y, NumericVector nTip);
-RcppExport SEXP _TreeDist_cpp_nni_distance(SEXP edgeSEXP, SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
+List cpp_nni_distance(IntegerMatrix edge1, IntegerMatrix edge2, IntegerVector nTip);
+RcppExport SEXP _TreeDist_cpp_nni_distance(SEXP edge1SEXP, SEXP edge2SEXP, SEXP nTipSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< IntegerMatrix >::type edge(edgeSEXP);
-    Rcpp::traits::input_parameter< RawMatrix >::type x(xSEXP);
-    Rcpp::traits::input_parameter< RawMatrix >::type y(ySEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type nTip(nTipSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_nni_distance(edge, x, y, nTip));
+    Rcpp::traits::input_parameter< IntegerMatrix >::type edge1(edge1SEXP);
+    Rcpp::traits::input_parameter< IntegerMatrix >::type edge2(edge2SEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type nTip(nTipSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_nni_distance(edge1, edge2, nTip));
     return rcpp_result_gen;
 END_RCPP
 }
 // cpp_robinson_foulds_distance
-List cpp_robinson_foulds_distance(RawMatrix x, RawMatrix y, NumericVector nTip);
+List cpp_robinson_foulds_distance(RawMatrix x, RawMatrix y, IntegerVector nTip);
 RcppExport SEXP _TreeDist_cpp_robinson_foulds_distance(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< RawMatrix >::type x(xSEXP);
     Rcpp::traits::input_parameter< RawMatrix >::type y(ySEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type nTip(nTipSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type nTip(nTipSEXP);
     rcpp_result_gen = Rcpp::wrap(cpp_robinson_foulds_distance(x, y, nTip));
     return rcpp_result_gen;
 END_RCPP
 }
 // cpp_robinson_foulds_info
-List cpp_robinson_foulds_info(RawMatrix x, RawMatrix y, NumericVector nTip);
+List cpp_robinson_foulds_info(RawMatrix x, RawMatrix y, IntegerVector nTip);
 RcppExport SEXP _TreeDist_cpp_robinson_foulds_info(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< RawMatrix >::type x(xSEXP);
     Rcpp::traits::input_parameter< RawMatrix >::type y(ySEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type nTip(nTipSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type nTip(nTipSEXP);
     rcpp_result_gen = Rcpp::wrap(cpp_robinson_foulds_info(x, y, nTip));
     return rcpp_result_gen;
 END_RCPP
 }
 // cpp_matching_split_distance
-List cpp_matching_split_distance(RawMatrix x, RawMatrix y, NumericVector nTip);
+List cpp_matching_split_distance(RawMatrix x, RawMatrix y, IntegerVector nTip);
 RcppExport SEXP _TreeDist_cpp_matching_split_distance(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< RawMatrix >::type x(xSEXP);
     Rcpp::traits::input_parameter< RawMatrix >::type y(ySEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type nTip(nTipSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type nTip(nTipSEXP);
     rcpp_result_gen = Rcpp::wrap(cpp_matching_split_distance(x, y, nTip));
     return rcpp_result_gen;
 END_RCPP
 }
 // cpp_jaccard_similarity
-List cpp_jaccard_similarity(RawMatrix x, RawMatrix y, NumericVector nTip, NumericVector k, LogicalVector arboreal);
+List cpp_jaccard_similarity(RawMatrix x, RawMatrix y, IntegerVector nTip, NumericVector k, LogicalVector arboreal);
 RcppExport SEXP _TreeDist_cpp_jaccard_similarity(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP, SEXP kSEXP, SEXP arborealSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< RawMatrix >::type x(xSEXP);
     Rcpp::traits::input_parameter< RawMatrix >::type y(ySEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type nTip(nTipSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type nTip(nTipSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type k(kSEXP);
     Rcpp::traits::input_parameter< LogicalVector >::type arboreal(arborealSEXP);
     rcpp_result_gen = Rcpp::wrap(cpp_jaccard_similarity(x, y, nTip, k, arboreal));
@@ -86,40 +85,40 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_mmsi_distance
-List cpp_mmsi_distance(RawMatrix x, RawMatrix y, NumericVector nTip);
+List cpp_mmsi_distance(RawMatrix x, RawMatrix y, IntegerVector nTip);
 RcppExport SEXP _TreeDist_cpp_mmsi_distance(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< RawMatrix >::type x(xSEXP);
     Rcpp::traits::input_parameter< RawMatrix >::type y(ySEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type nTip(nTipSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type nTip(nTipSEXP);
     rcpp_result_gen = Rcpp::wrap(cpp_mmsi_distance(x, y, nTip));
     return rcpp_result_gen;
 END_RCPP
 }
 // cpp_mutual_clustering
-List cpp_mutual_clustering(RawMatrix x, RawMatrix y, NumericVector nTip);
+List cpp_mutual_clustering(RawMatrix x, RawMatrix y, IntegerVector nTip);
 RcppExport SEXP _TreeDist_cpp_mutual_clustering(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< RawMatrix >::type x(xSEXP);
     Rcpp::traits::input_parameter< RawMatrix >::type y(ySEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type nTip(nTipSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type nTip(nTipSEXP);
     rcpp_result_gen = Rcpp::wrap(cpp_mutual_clustering(x, y, nTip));
     return rcpp_result_gen;
 END_RCPP
 }
 // cpp_mutual_phylo
-List cpp_mutual_phylo(RawMatrix x, RawMatrix y, NumericVector nTip);
+List cpp_mutual_phylo(RawMatrix x, RawMatrix y, IntegerVector nTip);
 RcppExport SEXP _TreeDist_cpp_mutual_phylo(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< RawMatrix >::type x(xSEXP);
     Rcpp::traits::input_parameter< RawMatrix >::type y(ySEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type nTip(nTipSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type nTip(nTipSEXP);
     rcpp_result_gen = Rcpp::wrap(cpp_mutual_phylo(x, y, nTip));
     return rcpp_result_gen;
 END_RCPP
@@ -127,7 +126,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_cpp_edge_to_splits", (DL_FUNC) &_TreeDist_cpp_edge_to_splits, 2},
-    {"_TreeDist_cpp_nni_distance", (DL_FUNC) &_TreeDist_cpp_nni_distance, 4},
+    {"_TreeDist_cpp_nni_distance", (DL_FUNC) &_TreeDist_cpp_nni_distance, 3},
     {"_TreeDist_cpp_robinson_foulds_distance", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_distance, 3},
     {"_TreeDist_cpp_robinson_foulds_info", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_info, 3},
     {"_TreeDist_cpp_matching_split_distance", (DL_FUNC) &_TreeDist_cpp_matching_split_distance, 3},

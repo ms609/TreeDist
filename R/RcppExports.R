@@ -5,8 +5,8 @@ cpp_edge_to_splits <- function(edge, nTip) {
     .Call(`_TreeDist_cpp_edge_to_splits`, edge, nTip)
 }
 
-cpp_nni_distance <- function(edge, x, y, nTip) {
-    .Call(`_TreeDist_cpp_nni_distance`, edge, x, y, nTip)
+cpp_nni_distance <- function(edge1, edge2, nTip) {
+    .Call(`_TreeDist_cpp_nni_distance`, edge1, edge2, nTip)
 }
 
 cpp_robinson_foulds_distance <- function(x, y, nTip) {
