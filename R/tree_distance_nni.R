@@ -36,7 +36,7 @@ MaxNNI <- function (nEdge) {
     c(0L, 0L, 0L, 1L, 3L, 5L, 7L, 10L, 12L, 15L, 18L)[nEdge]
   } else {
     
-    nTip <- nEdge + 2L
+    nTip <- nEdge + 2L # not 3L??
     # Unclear from Li et al. 1996 whether the DegenerateDistance must be applied
     # twice.  Conservatively assumed so: once to get to degenerate tree, and once
     # to get back to balanced tree.
@@ -61,8 +61,12 @@ MinNNI <- function (n) n
 #' @export
 NNIDist <- function (tree1, tree2) {
   edge <- tree1$edge
-  edge1 <- PostorderEdges(edge[, 1], edge[, 2], dim(edge)[1], Nnode.phylo(tree1))
+  edge1 <- do.call(cbind, 
+                   PostorderEdges(edge[, 1], edge[, 2], dim(edge)[1], 
+                                  Nnode.phylo(tree1)))
   edge <- tree2$edge
-  edge2 <- PostorderEdges(edge[, 1], edge[, 2], dim(edge)[1], Nnode.phylo(tree2))
+  edge2 <- do.call(cbind, 
+                   PostorderEdges(edge[, 1], edge[, 2], dim(edge)[1], 
+                                  Nnode.phylo(tree2)))
   cpp_nni_distance(edge1, edge2, NTip(tree1))
 }

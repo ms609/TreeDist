@@ -42,18 +42,25 @@ unsigned int degenerate_distance (unsigned int n_tip) {
   return (n_node - min_backbone_nodes);
 }
 
+// Score subtree, add to score, and reset subtree size
 void update_score (unsigned int *subtree_edges, int *tight_bound, 
                    int *loose_bound) {
-  // Score subtree, add to score, and reset subtree size
-  if (*tight_bound != NA_INTEGER && *subtree_edges <= N_EXACT) {
-    *tight_bound += exact_diameter[*subtree_edges];
-  } else {
-    *tight_bound = NA_INTEGER;
+  if (*subtree_edges) {
+    Rcout << "   Tight was " << *tight_bound << "; loose " << *loose_bound << "\n";
+    const unsigned int subtree_tips = *subtree_edges + 3;
+    if (*tight_bound != NA_INTEGER && subtree_tips <= N_EXACT) {
+      Rcout << "     Tight += " << exact_diameter[subtree_tips] << "\n";
+      *tight_bound += exact_diameter[subtree_tips];
+    } else {
+      *tight_bound = NA_INTEGER;
+    }
+    Rcout << "     Loose += sorting No[" << subtree_tips << "], " << sorting_number(subtree_tips) 
+          << "\n           +  2xO(" << subtree_tips << ") = 2x" << degenerate_distance(subtree_tips) << "\n";
+    *loose_bound += sorting_number(subtree_tips) +
+      (2 * degenerate_distance(subtree_tips));
+    
+    *subtree_edges = 0;
   }
-  *loose_bound += sorting_number(*subtree_edges + 3) +
-    (2 * degenerate_distance(*subtree_edges + 2));
-  
-  *subtree_edges = 0;
 }
 
 // [[Rcpp::export]]
@@ -63,8 +70,7 @@ List cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
                max_nodes = n_tip + n_tip - 1,
                node_0 = n_tip + 1,
                subtree_size = 0U;
-  int lower_bound = 0, tight_score_bound_1 = 0, loose_score_bound_1 = 0,
-      tight_score_bound_2 = 0, loose_score_bound_2 = 0;
+  int lower_bound = 0, tight_score_bound = 0, loose_score_bound = 0;
   if (n_tip > NNI_MAX_TIPS) {
     throw std::length_error("Cannot calculate NNI distance for trees with so many tips.");
   }
@@ -77,55 +83,43 @@ List cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
   List matches = cpp_robinson_foulds_distance(splits1, splits2, nTip);
   
   IntegerVector match = matches[1];
-  bool matched1[NNI_MAX_TIPS] {0}, matched2[NNI_MAX_TIPS] {0};
+  bool matched1[NNI_MAX_TIPS] = {0}, matched2[NNI_MAX_TIPS] = {0};
   for (unsigned int i = 0U; i != max_nodes - node_0; i++) {
     matched2[i] = false;
   }
+  /* Rcout << "Matched " << match.size() << " edges.\n"; */
   for (int i = 0; i != match.size(); i++) {
     if (match[i] == NA_INTEGER) {
       matched1[atoi(names1[i]) - node_0] = false;
       /* TODO counting here and not for matched2 assumes that trees are binary
        * (or resolution of tree1 > res(tree2)) */
       lower_bound++;
-      Rcout << "Unmatched: " << names1[i] << "\n";
     } else {
-      Rcout << "Matched: " << names1[i] << " - " << names2[match[i]] << "\n";
       matched1[atoi(names1[i]) - node_0] = true;
-      matched2[atoi(names2[match[i]]) - node_0] = true;
+      matched2[atoi(names2[match[i] - 1]) - node_0] = true;
     }
   }
   
   for (unsigned int i = 0U; i != (unsigned int) edge1.nrow(); i++) {
     unsigned int child_i = edge1(i, 1);
     // If edge is unmatched, add one to subtree size.
-    if (child_i > n_tip && !matched1[child_i - node_0]) {
-      subtree_size++;
-    } else {
-      Rcout << " Adding score for subtree [1] of size " << subtree_size << "\n";
-      update_score(&subtree_size, &tight_score_bound_1, &loose_score_bound_1);
+    if (child_i > n_tip) {
+      if (!matched1[(child_i - 1) - node_0]) {
+        subtree_size++;
+        Rcout << "Child " << child_i << "grows subtree to " << subtree_size << "\n";
+      } else {
+        if (subtree_size) Rcout << " Adding score for subtree [1] of size " << subtree_size << "\n";
+        update_score(&subtree_size, &tight_score_bound, &loose_score_bound);
+      }
     }
   }
-  update_score(&subtree_size, &tight_score_bound_1, &loose_score_bound_1);
-  Rcout << "Score bounds from 1: " << tight_score_bound_1 << ", " 
-        << loose_score_bound_1 << ".\n";
+  update_score(&subtree_size, &tight_score_bound, &loose_score_bound);
+  Rcout << "Score bounds: " << tight_score_bound << ", " 
+        << loose_score_bound << ".\n";
   
-  
-  for (unsigned int i = 0U; i != (unsigned int) edge2.nrow(); i++) {
-    int child_i = edge2(i, 1);
-    // If edge is unmatched, add one to subtree size.
-    if (child_i > n_tip && !matched2[child_i - node_0]) {
-      subtree_size++;
-    } else {
-      Rcout << " Adding score for subtree [2] of size " << subtree_size << "\n";
-      update_score(&subtree_size, &tight_score_bound_2, &loose_score_bound_2);
-    }
-  }
-  update_score(&subtree_size, &tight_score_bound_2, &loose_score_bound_2);
-  Rcout << "Score bounds from 2: " << tight_score_bound_2 << ", " 
-        << loose_score_bound_2 << ".\n";
-  
+
   List ret = List::create(Named("lower") = lower_bound, 
-                                _["tight_upper"] = tight_score_bound_1,
-                                _["loose_upper"] = loose_score_bound_1);
+                                _["tight_upper"] = tight_score_bound,
+                                _["loose_upper"] = loose_score_bound);
   return (ret);
 }
