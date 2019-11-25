@@ -14,8 +14,8 @@ RawMatrix cpp_edge_to_splits(IntegerMatrix edge, IntegerVector nTip) {
   const int n_edge = edge.rows(),
     n_node = n_edge + 1,
     n_tip = nTip[0],
-                n_return = n_edge - n_tip - 1,
-                n_bin = ((n_tip - 1) / BIN_SIZE) + 1;
+            n_return = n_edge - n_tip - 1,
+            n_bin = ((n_tip - 1) / BIN_SIZE) + 1;
   
   if (n_edge == n_tip) { /* No internal nodes resolved */
     return RawMatrix (0, n_bin);
