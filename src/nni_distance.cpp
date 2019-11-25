@@ -68,8 +68,7 @@ List cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
                        IntegerVector nTip) {
   unsigned int n_tip = nTip[0],
                max_nodes = n_tip + n_tip - 1,
-               node_0 = n_tip + 1,
-               subtree_size = 0U;
+               node_0 = n_tip + 1;
   int lower_bound = 0, tight_score_bound = 0, loose_score_bound = 0;
   if (n_tip > NNI_MAX_TIPS) {
     throw std::length_error("Cannot calculate NNI distance for trees with so many tips.");
@@ -83,12 +82,8 @@ List cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
   List matches = cpp_robinson_foulds_distance(splits1, splits2, nTip);
   
   IntegerVector match = matches[1];
-  bool matched1[NNI_MAX_TIPS] = {0}, matched2[NNI_MAX_TIPS] = {0};
+  bool matched1[NNI_MAX_TIPS] = {0};
   unsigned int unmatched_below[NNI_MAX_TIPS] = {0};
-  for (unsigned int i = 0U; i != max_nodes - node_0; i++) {
-    matched2[i] = false;
-  }
-  /* Rcout << "Matched " << match.size() << " edges.\n"; */
   for (int i = 0; i != match.size(); i++) {
     unsigned int node_i = atoi(names1[i]) - node_0;
     if (match[i] == NA_INTEGER) {
@@ -97,18 +92,10 @@ List cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
       lower_bound++;
     } else {
       matched1[node_i] = true;
-      matched2[atoi(names2[match[i] - 1]) - node_0] = true;
     }
   }
   
   
-  // This isn't right.
-  // We need to set up an array for each node, which will contain its subtended
-  // subtree.  
-  // Then go through: for each edge, if the parent node is unmatched,
-  // sum the descendent subtree sizes and add one (for the edge below).
-  // Otherwise, update the score for the descendants, and set the node's score
-  // to zero.
   for (unsigned int i = 0U; i != (unsigned int) edge1.nrow(); i++) {
     unsigned int parent_i = edge1(i, 0) - 1, child_i = edge1(i, 1) - 1;
     // If edge is unmatched, add one to subtree size.
