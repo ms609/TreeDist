@@ -84,36 +84,43 @@ List cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
   
   IntegerVector match = matches[1];
   bool matched1[NNI_MAX_TIPS] = {0}, matched2[NNI_MAX_TIPS] = {0};
+  unsigned int unmatched_below[NNI_MAX_TIPS] = {0};
   for (unsigned int i = 0U; i != max_nodes - node_0; i++) {
     matched2[i] = false;
   }
   /* Rcout << "Matched " << match.size() << " edges.\n"; */
   for (int i = 0; i != match.size(); i++) {
+    unsigned int node_i = atoi(names1[i]) - node_0;
     if (match[i] == NA_INTEGER) {
-      matched1[atoi(names1[i]) - node_0] = false;
-      /* TODO counting here and not for matched2 assumes that trees are binary
-       * (or resolution of tree1 > res(tree2)) */
+      matched1[node_i] = false;
+      unmatched_below[node_i] = 1;
       lower_bound++;
     } else {
-      matched1[atoi(names1[i]) - node_0] = true;
+      matched1[node_i] = true;
       matched2[atoi(names2[match[i] - 1]) - node_0] = true;
     }
   }
   
+  
+  // This isn't right.
+  // We need to set up an array for each node, which will contain its subtended
+  // subtree.  
+  // Then go through: for each edge, if the parent node is unmatched,
+  // sum the descendent subtree sizes and add one (for the edge below).
+  // Otherwise, update the score for the descendants, and set the node's score
+  // to zero.
   for (unsigned int i = 0U; i != (unsigned int) edge1.nrow(); i++) {
-    unsigned int child_i = edge1(i, 1);
+    unsigned int parent_i = edge1(i, 0) - 1, child_i = edge1(i, 1) - 1;
     // If edge is unmatched, add one to subtree size.
-    if (child_i > n_tip) {
-      if (!matched1[(child_i - 1) - node_0]) {
-        subtree_size++;
-        Rcout << "Child " << child_i << "grows subtree to " << subtree_size << "\n";
+    if (child_i >= n_tip) {
+      if (!matched1[child_i - node_0]) {
+        unmatched_below[parent_i - node_0] += unmatched_below[child_i - node_0];
       } else {
-        if (subtree_size) Rcout << " Adding score for subtree [1] of size " << subtree_size << "\n";
-        update_score(&subtree_size, &tight_score_bound, &loose_score_bound);
+        update_score(&unmatched_below[child_i - node_0],
+                     &tight_score_bound, &loose_score_bound);
       }
     }
   }
-  update_score(&subtree_size, &tight_score_bound, &loose_score_bound);
   Rcout << "Score bounds: " << tight_score_bound << ", " 
         << loose_score_bound << ".\n";
   
