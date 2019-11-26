@@ -27,31 +27,31 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
   
   if (single1) {
     if (single2) {
-      .TreeDistanceOneOne(Func, tree1, tree2, tipLabels = labels1, nTip,
+      .SplitDistanceOneOne(Func, tree1, tree2, tipLabels = labels1, nTip,
                           reportMatching = reportMatching, ...)
     } else {
-      .TreeDistanceOneMany(Func, oneSplit = tree1, manySplits = tree2,
+      .SplitDistanceOneMany(Func, oneSplit = tree1, manySplits = tree2,
                            tipLabels = labels1, nTip = nTip, ...)
     }
   } else {
     if (single2) {
-      .TreeDistanceOneMany(Func, oneSplit = tree2, manySplits = tree1,
+      .SplitDistanceOneMany(Func, oneSplit = tree2, manySplits = tree1,
                            tipLabels = labels2, ...)
     } else {
-      .TreeDistanceManyMany(Func, tree1, tree2,
+      .SplitDistanceManyMany(Func, tree1, tree2,
                             tipLabels = labels1, ...)
     }
   }
 }
 
-.TreeDistanceOneOne <- function (Func, split1, split2, tipLabels, 
+.SplitDistanceOneOne <- function (Func, split1, split2, tipLabels, 
                                  nTip = length(tipLabels), reportMatching, ...) {
   Func(as.Splits(split1, asSplits = reportMatching),
        as.Splits(split2, tipLabels = tipLabels, asSplits = reportMatching),
        nTip = nTip, reportMatching = reportMatching, ...)
 }
 
-.TreeDistanceOneMany <- function (Func, oneSplit, manySplits, 
+.SplitDistanceOneMany <- function (Func, oneSplit, manySplits, 
                                   tipLabels, nTip = length(tipLabels), ...) {
   s1 <- as.Splits(oneSplit, tipLabels = tipLabels, asSplits = FALSE)
   vapply(manySplits,
@@ -61,7 +61,7 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
          double(1))
 }
 
-.TreeDistanceManyMany <- function (Func, splits1, splits2, 
+.SplitDistanceManyMany <- function (Func, splits1, splits2, 
                                    tipLabels, nTip = length(tipLabels), ...) {
   if (identical(splits1, splits2)) {
     splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
