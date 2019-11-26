@@ -29,18 +29,27 @@ test_that("Simple NNI approximations", {
   expect_equal(oneUnmatched, NNIDist(tree1, tree2))
   
   # Two separate regions of difference one
-  tree2 <- RenumberTips(Postorder(ape::read.tree(text="((((a, b), c), d), (e, (f, (g, h))));")), tree1$tip.label)
+  tree2 <- ape::read.tree(text="((((a, b), c), d), (e, (f, (g, h))));")
   expect_equal(lapply(oneUnmatched, `*`, 2), NNIDist(tree1, tree2))
   
   # One region of three unmatched edges
-  tree2 <- RenumberTips(Postorder(ape::read.tree(text="(((a, e), (c, d)), ((b, f), (g, h)));")), tree1$tip.label)
-  expect_equal(list(lower = 3L, tight_upper = 5L, loose_upper = 13L), NNIDist(tree1, tree2))
+  tree2 <- ape::read.tree(text="(((a, e), (c, d)), ((b, f), (g, h)));")
+  expect_equal(list(lower = 3L, tight_upper = 5L, loose_upper = 13L), 
+               NNIDist(tree1, tree2))
   
   # One region of four unmatched edges
-  tree2 <- RenumberTips(Postorder(ape::read.tree(text="(((a, e), (f, d)), ((b, c), (g, h)));")), tree1$tip.label)
-  expect_equal(list(lower = 4L, tight_upper = 7L, loose_upper = 18L), NNIDist(tree1, tree2))
+  tree2 <- ape::read.tree(text="(((a, e), (f, d)), ((b, c), (g, h)));")
+  expect_equal(list(lower = 4L, tight_upper = 7L, loose_upper = 18L), 
+               NNIDist(tree1, tree2))
   
   # One region of five unmatched edges
-  tree2 <- RenumberTips(Postorder(ape::read.tree(text="(((a, e), (f, d)), ((b, g), (c, h)));")), tree1$tip.label)
-  expect_equal(list(lower = 5L, tight_upper = 10L, loose_upper = 17L + 4L), NNIDist(tree1, tree2))
+  tree2 <- ape::read.tree(text="(((a, e), (f, d)), ((b, g), (c, h)));")
+  expect_equal(list(lower = 5L, tight_upper = 10L, loose_upper = 17L + 4L), 
+               NNIDist(tree1, tree2))
+  
+  
+  # Too different for tight upper bound
+  set.seed(10000)
+  expect_true(is.na(NNIDist(ape::rtree(100, br=NULL), ape::rtree(100, br=NULL))[[2]]))
+  
 })
