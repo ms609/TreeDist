@@ -14,6 +14,7 @@ test_that("Simple NNI approximations", {
 
   allMatched <- list(lower = 0L, tight_upper = 0L, loose_upper = 0L)
   oneUnmatched <- list(lower = 1L, tight_upper = 1L, loose_upper = 7L)
+  fiveUnmatched <- list(lower = 5L, tight_upper = 10L, loose_upper = 17L + 4L)
   expect_equal(oneUnmatched, cpp_nni_distance(edge1, edge2, NTip(tree1)))
   
   expect_equal(oneUnmatched, NNIDist(tree1, tree2))
@@ -44,13 +45,12 @@ test_that("Simple NNI approximations", {
   
   # One region of five unmatched edges
   tree2 <- ape::read.tree(text="(((a, e), (f, d)), ((b, g), (c, h)));")
-  expect_equal(list(lower = 5L, tight_upper = 10L, loose_upper = 17L + 4L), 
-               NNIDist(tree1, tree2))
+  expect_equal(fiveUnmatched, NNIDist(tree1, tree2))
   
   # Trees with different tips at root
   tree1 <- PectinateTree(1:8)
-  tree2 <- ape::read.tree(text = '(3, ((5, 6), (7, (1, ((2, (4, 8)))))));')
-  NNIDist(tree1, tree2)
+  tree2 <- ape::read.tree(text = '(3, ((5, 6), (7, (1, (2, (4, 8))))));')
+  expect_equal(fiveUnmatched, NNIDist(tree1, tree2))
   
   # Too different for tight upper bound
   set.seed(10000)
