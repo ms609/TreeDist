@@ -4,13 +4,43 @@
 \alias{NNIDist}
 \title{Approximate the NNI distance}
 \usage{
-NNIDist(tree1, tree2)
+NNIDist(tree1, tree2 = tree1)
 }
 \arguments{
 \item{tree1, tree2}{Individual trees of class \code{phylo}}
 }
+\value{
+\code{NNIDist} returns, for each pair of trees, a list containing three
+entries.
+\itemize{
+\item \code{lower} is a lower bound on the NNI distance, and corresponds
+to the RF distance between the trees.
+\item \code{tight_upper} is an upper bound on the distance, based on calculated
+maximum diameters for trees with <12 tips.  \emph{NA} is returned if trees are
+too different to employ this approach.
+\item \code{loose_upper} is a looser upper bound on the distance, using \emph{n} log \emph{n} +
+O(\emph{n}).
+}
+}
 \description{
-An approximation of the NNI distance based on Li et al. 1996.
+An approximation of the NNI distance based on Li et al. (1996).
+}
+\details{
+In brief, this approximation algorithm works by identifying edges in one
+tree that do not match edges in the second.  Each of these edges must
+undergo at least one NNI operation in order to reconcile the trees.
+Edges that match in both trees need never undergo an NNI operation, and
+divide each tree into smaller regions.  By 'cutting' matched edges into two,
+a tree can be divided into a number of regions that solely comprise unmatched
+edges.
+These regions can be viewed as separate trees that need to be reconciled.
+One way to reconcile these trees is to conduct a series of NNI operations
+that reduce a tree to a pectinate (caterpillar) tree, then to conduct an
+analogue of the mergesort algorithm.  This takes at most \emph{n} log \emph{n} + O(\emph{n})
+NNI operations, and provides a loose upper bound on the NNI score.
+The maximum number of moves for a tree with \emph{n} tips can be calculated
+exactly for small trees; this provides a tighter upper bound, but is
+unavailable for \emph{n} > 12.
 }
 \examples{
   library('TreeTools')
