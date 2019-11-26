@@ -67,8 +67,8 @@ void update_score (unsigned int *subtree_edges, int *tight_bound,
 List cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
                        IntegerVector nTip) {
   unsigned int n_tip = nTip[0],
-               max_nodes = n_tip + n_tip - 1,
-               node_0 = n_tip + 1;
+               node_0 = n_tip,
+               node_0_r = n_tip + 1;
   int lower_bound = 0, tight_score_bound = 0, loose_score_bound = 0;
   if (n_tip > NNI_MAX_TIPS) {
     throw std::length_error("Cannot calculate NNI distance for trees with so many tips.");
@@ -84,8 +84,9 @@ List cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
   IntegerVector match = matches[1];
   bool matched1[NNI_MAX_TIPS] = {0};
   unsigned int unmatched_below[NNI_MAX_TIPS] = {0};
+
   for (int i = 0; i != match.size(); i++) {
-    unsigned int node_i = atoi(names1[i]) - node_0;
+    unsigned int node_i = atoi(names1[i]) - node_0_r;
     if (match[i] == NA_INTEGER) {
       matched1[node_i] = false;
       unmatched_below[node_i] = 1;
@@ -94,7 +95,6 @@ List cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
       matched1[node_i] = true;
     }
   }
-  
   
   for (unsigned int i = 0U; i != (unsigned int) edge1.nrow(); i++) {
     unsigned int parent_i = edge1(i, 0) - 1, child_i = edge1(i, 1) - 1;
@@ -108,9 +108,6 @@ List cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
       }
     }
   }
-  Rcout << "Score bounds: " << tight_score_bound << ", " 
-        << loose_score_bound << ".\n";
-  
 
   List ret = List::create(Named("lower") = lower_bound, 
                                 _["tight_upper"] = tight_score_bound,
