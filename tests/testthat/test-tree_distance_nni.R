@@ -47,6 +47,10 @@ test_that("Simple NNI approximations", {
   expect_equal(list(lower = 5L, tight_upper = 10L, loose_upper = 17L + 4L), 
                NNIDist(tree1, tree2))
   
+  # Trees with different tips at root
+  tree1 <- PectinateTree(1:8)
+  tree2 <- ape::read.tree(text = '(3, ((5, 6), (7, (1, ((2, (4, 8)))))));')
+  NNIDist(tree1, tree2)
   
   # Too different for tight upper bound
   set.seed(10000)
