@@ -52,6 +52,6 @@ measure of the information content of the tree as a whole.
 \insertRef{Meila2007}{TreeDist}
 }
 \author{
-Martin R. Smith
+Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
 \keyword{internal}

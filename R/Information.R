@@ -45,7 +45,7 @@
 #'   
 #' @references \insertRef{Meila2007}{TreeDist}
 #' 
-#' @author Martin R. Smith
+#' @template MRS
 #' @family split information functions
 #' @importFrom TreeTools LogTreesMatchingSplit LnUnrooted
 #' @export
@@ -107,7 +107,7 @@ SplitVariationOfInformation <- function (n, A1, A2 = A1) {
 #' 
 #' 
 #' @template split12Params
-#' @author Martin R. Smith
+#' @template MRS
 #' @export
 MeilaVariationOfInformation <- function (split1, split2) {
   if (length(split1) != length(split2)) stop("Split lengths differ")
@@ -209,7 +209,7 @@ MeilaMutualInformation <- function (split1, split2) {
 #' * \insertRef{Meila2007}{TreeDist}
 #' * \insertRef{SmithDist}{TreeDist}
 #' 
-#' @author Martin R. Smith
+#' @template MRS
 #' @importFrom memoise memoise
 #' @export
 AllSplitPairings <- memoise(function (n) {
@@ -263,7 +263,7 @@ AllSplitPairings <- memoise(function (n) {
 #'  * `i` The mutual information of the splits
 #'  * `vI` The variation of information of the splits (see Meila 2007)
 #' 
-#' @author Martin R. Smith
+#' @template MRS
 #' @family split information functions
 #' @export
 SplitEntropy <- function (split1, split2=split1) {
@@ -330,7 +330,7 @@ SplitEntropy <- function (split1, split2=split1) {
 #' @examples 
 #' JointInformation(3, 1, 0, 4)
 #' 
-#' @author Martin R. Smith
+#' @template MRS
 #' @family split information functions
 #' @importFrom TreeTools NUnrooted
 #' @export

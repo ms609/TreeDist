@@ -20,5 +20,5 @@ Splits are compatible if they are concave; i.e. they can both be true
 simultaneously.
 }
 \author{
-Martin R. Smith
+Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }

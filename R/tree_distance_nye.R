@@ -38,7 +38,7 @@
 #' @references \insertRef{Nye2006}{TreeDist}
 #' @family tree distances
 #' 
-#' @author Martin R. Smith
+#' @template MRS
 #' @importFrom TreeTools NPartitions TipLabels
 #' @export
 NyeTreeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
@@ -143,7 +143,7 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' 
 #' @family tree distances
 #' 
-#' @author Martin R. Smith
+#' @template MRS
 #' @importFrom TreeTools NPartitions
 #' @export
 JaccardRobinsonFoulds <- function (tree1, tree2 = tree1, k = 1L, 

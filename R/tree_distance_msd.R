@@ -16,7 +16,7 @@
 #' @references \insertRef{Bogdanowicz2012}{TreeDist}
 #' @family tree distances
 #' 
-#' @author Martin R. Smith
+#' @template MRS
 #' @importFrom TreeTools LnUnrooted.int
 #' @export
 MatchingSplitDistance <- function (tree1, tree2 = tree1, normalize = FALSE,

@@ -6,7 +6,7 @@
 #' @param Func Tree distance function.
 #' @param \dots Additional arguments to `Func`.
 #' 
-#' @author Martin R. Smith
+#' @template MRS
 #' @keywords internal
 #' @importFrom TreeTools as.Splits TipLabels
 #' @export
@@ -105,7 +105,7 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
 #' Entropy(c(1/4, 1/4, 0, 1/4, 1/4)) # = 2
 #' 
 #' @return Entropy of the specified probabilities, in bits
-#' @author Martin R. Smith
+#' @template MRS
 #' @export
 Entropy <- function (p) -sum(p[p > 0] * log2(p[p > 0]))
 
@@ -129,23 +129,23 @@ Entropy <- function (p) -sum(p[p > 0] * log2(p[p > 0]))
 #'   dist <- CompareAll(trees, NNIDist, FUN.VALUE = vector('list', 3))
 #'   as.matrix(dist)
 #'   
-#' @author Martin R. Smith
+#' @template MRS
 #' @family pairwise tree distances
 #' @importFrom stats dist
 #' @export
-CompareAll <- function (trees, Func, FUN.VALUE = Func(trees[[1]], trees[[1]]),
+CompareAll <- function (x, Func, FUN.VALUE = Func(x[[1]], x[[1]]),
                         ...) {
-  nTree <- length(trees)
+  nTree <- length(x)
   countUp <- seq_len(nTree - 1)
-  i <- trees[rep(countUp, rev(countUp))]
-  j <- trees[unlist(sapply(countUp, function (n) n + seq_len(nTree - n)))]
+  i <- x[rep(countUp, rev(countUp))]
+  j <- x[unlist(sapply(countUp, function (n) n + seq_len(nTree - n)))]
   
   ret <- vapply(seq_along(i), function (k) Func(i[[k]], j[[k]], ...), FUN.VALUE)
   
   .WrapReturn <- function (dists) {
     structure(dists,
               Size = nTree,
-              Labels = names(trees),
+              Labels = names(x),
               Diag = FALSE,
               Upper = TRUE,
               class = 'dist')
@@ -172,7 +172,7 @@ CompareAll <- function (trees, Func, FUN.VALUE = Func(trees[[1]], trees[[1]]),
 #' returns a normalizing constant against which to divide `unnormalized`.
 #' @param \dots Additional parameters to `InfoInTree`` or `how`.
 #' @keywords internal
-#' @author Martin R. Smith
+#' @template MRS
 #' @export
 NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree, 
                            infoInBoth = NULL,
@@ -212,7 +212,7 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
 #' in a matching.
 #'   
 #' @seealso VisualizeMatching
-#' @author Martin R. Smith
+#' @template MRS
 #' @keywords internal
 #' @export
 ReportMatching <- function (splits1, splits2, realMatch = TRUE) {

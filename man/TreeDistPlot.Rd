@@ -30,6 +30,6 @@ by \code{prune} and \code{graft} as requested.}
 Convenience plotting function used in vignettes and documentation.
 }
 \author{
-Martin R. Smith
+Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
 \keyword{internal}

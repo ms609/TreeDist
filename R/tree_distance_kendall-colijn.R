@@ -23,7 +23,7 @@
 #' lambda > 0, i.e. use of edge lengths in tree comparison.
 #' 
 #' @family tree distances
-#' @author Martin R. Smith
+#' @template MRS
 #' @references \insertRef{Kendall2016}{TreeDist}
 #' @export
 KendallColijn <- function (tree1, tree2 = tree1) {

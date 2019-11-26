@@ -33,7 +33,7 @@
 #' @references \insertRef{Robinson1981}{TreeDist}
 #' @family tree distances
 #' 
-#' @author Martin R. Smith
+#' @template MRS
 #' @export
 RobinsonFouldsInfo <- function (tree1, tree2 = tree1, similarity = FALSE,
                                 normalize = FALSE, reportMatching = FALSE) {

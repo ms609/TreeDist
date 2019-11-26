@@ -114,7 +114,7 @@
 #'  * \insertRef{Vinh2010}{TreeDist}
 #' }
 #' 
-#' @author Martin R. Smith
+#' @template MRS
 #' 
 #' @family tree distances
 #' @export

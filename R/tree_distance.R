@@ -26,7 +26,7 @@
 #' - `matchedSplits`: Textual representation of each match
 #' 
 #' @keywords internal
-#' @author Martin R. Smith
+#' @template MRS
 #' @export
 #' @references \insertRef{Jonker1987}{TreeDist}
 GeneralizedRF <- function (splits1, splits2, nTip, PairScorer, 
@@ -82,7 +82,7 @@ GeneralizedRF <- function (splits1, splits2, nTip, PairScorer,
 #' @return `SplitsCompatible` returns a logical specifying whether the splits
 #' provided are compatible with one another.
 #' 
-#' @author Martin R. Smith
+#' @template MRS
 #' @export
 SplitsCompatible <- function (split1, split2) {
   # Return:

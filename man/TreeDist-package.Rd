@@ -6,12 +6,14 @@
 \alias{TreeDist-package}
 \title{TreeDist: Distances between Phylogenetic Trees}
 \description{
-Implements various measures of tree similarity, including 
+Implements measures of tree similarity, including 
   Information-based generalized Robinson-Foulds distances
   (Mutual Phylogenetic Information, Mutual Clustering Information; Smith, in revision); 
   the metric of Nye et al. (2006) <doi:10.1093/bioinformatics/bti720>;
   the Matching Split Distance (Bogdanowicz & Giaro 2012) <doi:10.1109/TCBB.2011.48>;
-  and the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>.
+  the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>, and the
+  Nearest Neighbour Interchange (NNI) distance, approximated per Li et al. 1996
+  <doi:10.1007/3-540-61332-3_168>.
 }
 \seealso{
 Useful links:
