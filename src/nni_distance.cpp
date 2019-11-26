@@ -116,10 +116,10 @@ List cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
   // Root edges:
   const unsigned int root_node = edge1(n_edge - 2, 0) - node_0_r,
     root_child_1 = edge1(n_edge - 2, 1) - 1,
-    root_child_2 = edge1(n_edge - 1, 1) - 1;
+    root_child_2 = edge1(n_edge - 1, 1) - 1,
+    unmatched_2 = (root_child_2 < n_tip ? 0 :
+                     unmatched_below[root_child_2 - node_0]);
   if (root_child_1 >= n_tip) {
-    const unsigned int unmatched_2 = 
-      (root_child_2 < n_tip ? 0 : unmatched_below[root_child_2 - node_0]);
     if (!matched1[root_child_1 - node_0]) {
 /*      Rcout << " Root edge unmatched\n";*/
       update_score(unmatched_below[root_node]
@@ -132,6 +132,9 @@ List cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
       update_score(unmatched_2,
                    &tight_score_bound, &loose_score_bound);
     }
+  } else {
+    update_score(unmatched_2,
+                 &tight_score_bound, &loose_score_bound);
   }
 
   List ret = List::create(Named("lower") = lower_bound, 
