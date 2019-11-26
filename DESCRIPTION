@@ -11,12 +11,14 @@ Authors@R: c(person("Martin R.", 'Smith',
              person("Yong", "Yang", email="yongyanglink@gmail.com", role="ctb")
             )
 License: GPL (>= 3)
-Description: Implements various measures of tree similarity, including 
+Description: Implements measures of tree similarity, including 
   Information-based generalized Robinson-Foulds distances
   (Mutual Phylogenetic Information, Mutual Clustering Information; Smith, in revision); 
   the metric of Nye et al. (2006) <doi:10.1093/bioinformatics/bti720>;
   the Matching Split Distance (Bogdanowicz & Giaro 2012) <doi:10.1109/TCBB.2011.48>;
-  and the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>.
+  the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>, and the
+  Nearest Neighbour Interchange (NNI) distance, approximated per Li et al. 1996
+  <doi:10.1007/3-540-61332-3_168>.
 Copyright: Incorporates Jonker-Volgenant Linear Assignment Problem 
   implementation by Roy Jonker, modified by Harold Cooper and Yong Yang.
 URL: https://ms609.github.io/TreeDist, https://github.com/ms609/TreeDist
