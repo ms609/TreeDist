@@ -78,7 +78,7 @@ test_that("NNI with lists of trees", {
   expect_equal(NNIDist(tree1, list1), NNIDist(list1, tree1))
   
   # CompareAll
-  expect_equal(CompareAll(NNIDist, list1), NNIDist(list1))
+  expect_equal(CompareAll(list1, NNIDist), NNIDist(list1))
   
   expect_equivalent(
     lapply(NNIDist(list1), function (x) unname(as.matrix(x)[1:4, 4:1])),
