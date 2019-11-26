@@ -69,6 +69,10 @@ List cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
                node_0_r = n_tip + 1,
                n_edge = edge1.nrow();
   int lower_bound = 0, tight_score_bound = 0, loose_score_bound = 0;
+  if (n_tip < 4) {
+    return(List::create(Named("lower") = 0, _["tight_upper"] = 0,
+                            _["loose_upper"] = 0));
+  }
   if (n_tip > NNI_MAX_TIPS) {
     throw std::length_error("Cannot calculate NNI distance for trees with so many tips.");
   }
