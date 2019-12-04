@@ -49,7 +49,7 @@ NyeTreeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
                                         reportMatching)
   if (similarity) {
     MaxPartitions <- function (tree) {
-      if (class(tree) == 'phylo' || class(tree) == 'Splits') {
+      if (inherits(tree, c('phylo', 'Splits'))) {
         length(TipLabels(tree)) - 3L
       } else if (mode(tree) == 'list') {
         vapply(tree, MaxPartitions, integer(1L))
