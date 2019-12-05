@@ -10,8 +10,8 @@ const unsigned int NNI_MAX_TIPS = 5000; /* To avoid variable length arrays */
 
 /* Exact value of diameter for trees with 0..N_EXACT edges, 
  * calculated by Li et al. 1996. */
-const unsigned int N_EXACT = 11;
-const unsigned int exact_diameter[] = {0, 0, 0, 0, 1, 3, 5, 7, 10, 12, 15, 18};
+const unsigned int N_EXACT = 12;
+const unsigned int exact_diameter[] = {0, 0, 0, 0, 1, 3, 5, 7, 10, 12, 15, 18, 21};
 
 unsigned int sorting_number (unsigned int n_tip) {
   int log_ceiling = ceil(log2(n_tip));

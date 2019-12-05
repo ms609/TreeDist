@@ -9,6 +9,7 @@
 #' divide each tree into smaller regions.  By 'cutting' matched edges into two,
 #' a tree can be divided into a number of regions that solely comprise unmatched
 #' edges.
+#' 
 #' These regions can be viewed as separate trees that need to be reconciled.
 #' One way to reconcile these trees is to conduct a series of NNI operations
 #' that reduce a tree to a pectinate (caterpillar) tree, then to conduct an 
@@ -18,10 +19,17 @@
 #' exactly for small trees; this provides a tighter upper bound, but is 
 #' unavailable for _n_ > 12.
 #' 
+#' \tabular{rccccccccccccc}{
+#'   Tips:     \tab 1 \tab 2 \tab 3 \tab 4 \tab 5 \tab 6 \tab 7 \tab 8 \tab 9
+#'    \tab 10 \tab 11 \tab 12 \tab 13 \cr
+#'   Diameter: \tab 0 \tab 0 \tab 0 \tab 1 \tab 3 \tab 5 \tab 7 \tab 10 \tab 12
+#'    \tab 15 \tab 18 \tab 21 \tab ? \cr
+#'  }
+#' 
 #' @param tree1,tree2 Individual trees of class `phylo`
 #' 
 #' @return `NNIDist` returns, for each pair of trees, a list containing three
-#' entries.  
+#' entries:
 #' 
 #' - `lower` is a lower bound on the NNI distance, and corresponds
 #' to the RF distance between the trees. 
@@ -33,15 +41,16 @@
 #' - `loose_upper` is a looser upper bound on the distance, using _n_ log _n_ +
 #' O(_n_).
 #' 
+#' 
+#' @references 
+#'   \insertRef{Li1996}{TreeDist}
+#' 
 #' @examples
 #'   library('TreeTools')
 #'   tree1 <- BalancedTree(7)
 #'   tree2 <- PectinateTree(7)
 #'   
 #'   NNIDist(tree1, tree2)
-#' 
-#' @references 
-#'   \insertRef{Li1996}{TreeDist}
 #'   
 #' @template MRS
 #' @export
