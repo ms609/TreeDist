@@ -26,7 +26,7 @@
 #'    \tab 15 \tab 18 \tab 21 \tab ? \cr
 #'  }
 #' 
-#' @param tree1,tree2 Individual trees of class `phylo`
+#' @template tree12Params
 #' 
 #' @return `NNIDist` returns, for each pair of trees, a list containing three
 #' entries:

@@ -5,6 +5,10 @@ cpp_edge_to_splits <- function(edge, nTip) {
     .Call(`_TreeDist_cpp_edge_to_splits`, edge, nTip)
 }
 
+cpp_mast <- function(edge1, edge2, nTip) {
+    .Call(`_TreeDist_cpp_mast`, edge1, edge2, nTip)
+}
+
 cpp_nni_distance <- function(edge1, edge2, nTip) {
     .Call(`_TreeDist_cpp_nni_distance`, edge1, edge2, nTip)
 }

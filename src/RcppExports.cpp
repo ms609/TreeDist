@@ -17,6 +17,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpp_mast
+int cpp_mast(IntegerMatrix edge1, IntegerMatrix edge2, IntegerVector nTip);
+RcppExport SEXP _TreeDist_cpp_mast(SEXP edge1SEXP, SEXP edge2SEXP, SEXP nTipSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerMatrix >::type edge1(edge1SEXP);
+    Rcpp::traits::input_parameter< IntegerMatrix >::type edge2(edge2SEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type nTip(nTipSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_mast(edge1, edge2, nTip));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_nni_distance
 List cpp_nni_distance(IntegerMatrix edge1, IntegerMatrix edge2, IntegerVector nTip);
 RcppExport SEXP _TreeDist_cpp_nni_distance(SEXP edge1SEXP, SEXP edge2SEXP, SEXP nTipSEXP) {
@@ -126,6 +139,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_cpp_edge_to_splits", (DL_FUNC) &_TreeDist_cpp_edge_to_splits, 2},
+    {"_TreeDist_cpp_mast", (DL_FUNC) &_TreeDist_cpp_mast, 3},
     {"_TreeDist_cpp_nni_distance", (DL_FUNC) &_TreeDist_cpp_nni_distance, 3},
     {"_TreeDist_cpp_robinson_foulds_distance", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_distance, 3},
     {"_TreeDist_cpp_robinson_foulds_info", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_info, 3},

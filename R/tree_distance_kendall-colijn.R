@@ -16,7 +16,7 @@
 #' of tips from the tips themselves, i.e. the length of the path from one 
 #' tip to another.
 #' 
-#' @template tree12Params
+#' @template tree12listparams
 #' 
 #' @seealso [treespace::treeDist](https://cran.r-project.org/web/packages/treespace/vignettes/introduction.html),
 #' a more sophisticated, if more cumbersome, implementation that supports 

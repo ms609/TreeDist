@@ -7,7 +7,7 @@
 NNIDist(tree1, tree2 = tree1)
 }
 \arguments{
-\item{tree1, tree2}{Individual trees of class \code{phylo}}
+\item{tree1, tree2}{Single trees of class \code{phylo} to undergo comparison.}
 }
 \value{
 \code{NNIDist} returns, for each pair of trees, a list containing three
