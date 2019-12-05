@@ -37,6 +37,53 @@ int cpp_mast (IntegerMatrix edge1, IntegerMatrix edge2, IntegerVector nTip) {
     const unsigned int parent1 = edge1(i, 0), child1 = edge1(i, 1),
       parent2 = edge2(i, 0), child2 = edge2(i, 1);
     if (t1_has_child[parent1]) {
+      t1_right[parent1] = child1;
+    } else {
+      t1_left[parent1] = child1;
+      t1_has_child[parent1] = true;
+    }
+    if (t2_has_child[parent2]) {
+      t2_right[parent2] = child2; 
+    } else {
+      t2_left[parent2] = child2;
+      t2_has_child[parent2] = true;
+    }
+    
+    if (child1 <= n_tip) {
+      t1_descendantsof[parent1][child1] = true;
+    } else {
+      for (int tip = 1; tip <= n_tip; tip++) {
+        t1_descendantsof[parent1][tip] = t1_descendantsof[t1_left[parent1]][tip] | 
+          t1_descendantsof[t1_right[parent1]][tip];
+      }
+    }
+    if (child2 <= n_tip) {
+      t2_descendantsof[parent2][child2] = true;
+    } else {
+      for (int tip = 1; tip <= n_tip; tip++) {
+        t2_descendantsof[parent2][tip] = t1_descendantsof[t2_left[parent2]][tip] | 
+          t2_descendantsof[t2_right[parent2]][tip];
+      }
+    }
+  }
+  unsigned int M[MAX_MAST_NODE][MAX_MAST_NODE] = {};
+  for (unsigned int i = 0; i <= n_edge; i++) {
+    unsigned int node1 = edge1(i, 1);
+    for (unsigned int j = 0; j <= n_edge; j++) {
+      unsigned int node2 = edge2(j, 1);
+      M[node1][node2] = 0;
+      if (node1 <= n_tip) {
+        if (node2 <= n_tip) {
+          if (node1 == node2) {
+            M[node1][node2] = 1;
+          }
+        } else {
+          if (t2_descendantsof[node2][node1]) {
+            M[node1][node2] = 1;
+          }
+        }
+      } else {
+        if (node2 <= n_tip) {
           if (t1_descendantsof[node1][node2]) {
             M[node1][node2] = 1;
           }
