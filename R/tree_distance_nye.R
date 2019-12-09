@@ -148,6 +148,7 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' 
 #' }
 #' 
+#' @template distReturn
 #' 
 #' @family tree distances
 #' 

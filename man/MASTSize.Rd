@@ -4,21 +4,26 @@
 \alias{MASTSize}
 \title{Size of maximum agreement subtree}
 \usage{
-MASTSize(tree1, tree2, tree = FALSE, rooted = TRUE)
+MASTSize(tree1, tree2, rooted = TRUE)
 }
 \arguments{
 \item{tree1, tree2}{Single trees of class \code{phylo} to undergo comparison.}
 
-\item{tree}{Logical specifying whether to return the maximum agreement
-subtree; if \code{FALSE}, only its size will be returned.}
-
 \item{rooted}{Logical specifying whether to treat the trees as rooted.}
 }
 \value{
-An integer specifying the size of the maximum agreement subtree.
+\code{MASTSize} returns an integer specifying the number of tips in the
+maximum agreement subtree.
 }
 \description{
-Calculate the maximum agreement subtree between two phylogenetic trees.
+Calculate the maximum agreement subtree between two phylogenetic trees, i.e.
+the largest tree that can be obtained from either \code{tree1} or \code{tree2} solely
+by deleting tips.
+}
+\examples{
+library('TreeTools')
+MASTSize(PectinateTree(8), BalancedTree(8))
+
 }
 \references{
 \insertref{Valiente2009}{TreeDist}

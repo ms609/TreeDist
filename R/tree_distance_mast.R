@@ -1,13 +1,14 @@
 #' Size of maximum agreement subtree
 #' 
-#' Calculate the maximum agreement subtree between two phylogenetic trees.
+#' Calculate the maximum agreement subtree between two phylogenetic trees, i.e.
+#' the largest tree that can be obtained from either `tree1` or `tree2` solely
+#' by deleting tips.
 #' 
 #' @template tree12params
-#' @param tree Logical specifying whether to return the maximum agreement 
-#' subtree; if `FALSE`, only its size will be returned.
 #' @param rooted Logical specifying whether to treat the trees as rooted.
 #' 
-#' @return An integer specifying the size of the maximum agreement subtree.
+#' @return `MASTSize` returns an integer specifying the number of tips in the
+#' maximum agreement subtree.
 #' 
 #' @examples
 #' library('TreeTools')
@@ -23,13 +24,14 @@
 #' @family tree distances
 #' @importFrom ape root
 #' @export
-MASTSize <- function (tree1, tree2, tree = FALSE, rooted = TRUE) {
+MASTSize <- function (tree1, tree2, rooted = TRUE) {
   label1 <- tree1$tip.label
   label2 <- tree2$tip.label
   
   tree1 <- Postorder(Preorder(drop.tip(tree1, setdiff(label1, label2))))
   label1 <- tree1$tip.label
-  tree2 <- Postorder(Preorder(RenumberTips(drop.tip(tree2, setdiff(label2, label1)), label1)))
+  tree2 <- Postorder(Preorder(RenumberTips(
+    drop.tip(tree2, setdiff(label2, label1)), label1)))
   
   nTip <- length(label1)
   
@@ -39,9 +41,8 @@ MASTSize <- function (tree1, tree2, tree = FALSE, rooted = TRUE) {
                     resolve.root = TRUE)
     }
     max(vapply(seq_len(nTip - 3L) + nTip + 2L, function (node) {
-      MASTSize(tree1, root(tree2, node=node, resolve.root = TRUE),
-           tree = FALSE, rooted = TRUE)
-    }, 0L))
+      MASTSize(tree1, root(tree2, node = node, resolve.root = TRUE), 
+               rooted = TRUE)}, 0L))
   } else {
     if (!is.rooted(tree1) || !is.rooted(tree2)) {
       stop("Both trees must be rooted if rooted = TRUE")

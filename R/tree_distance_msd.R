@@ -5,6 +5,8 @@
 #' 
 #' @inheritParams MutualPhylogeneticInfo
 #' 
+#' @template distReturn
+#' 
 #' @section Normalization:
 #' 
 #' A normalization value or function must be provided in order to return a

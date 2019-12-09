@@ -22,6 +22,8 @@
 #' @param similarity Logical specifying whether to report the result as a tree
 #' similarity, rather than a difference.
 #' 
+#' @template distReturn
+#' 
 #' @section Normalization:
 #' 
 #' - `RobinsonFoulds` is normalized against the total number of partitions that
