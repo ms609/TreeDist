@@ -26,7 +26,7 @@ MASTSize(PectinateTree(8), BalancedTree(8))
 
 }
 \references{
-\insertref{Valiente2009}{TreeDist}
+\insertRef{Valiente2009}{TreeDist}
 }
 \seealso{
 \code{\link[phangorn:mast]{phangorn::mast}}, a slower, all-R implementation that also returns

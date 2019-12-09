@@ -18,7 +18,7 @@
 #' the tips contained within the subtree.
 #' 
 #' @references 
-#' \insertref{Valiente2009}{TreeDist}
+#' \insertRef{Valiente2009}{TreeDist}
 #' 
 #' @template MRS
 #' @family tree distances
