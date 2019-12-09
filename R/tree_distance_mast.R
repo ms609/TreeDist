@@ -7,15 +7,23 @@
 #' subtree; if `FALSE`, only its size will be returned.
 #' @param rooted Logical specifying whether to treat the trees as rooted.
 #' 
-#' @seealso [`phangorn::mast`], a slower, all-R implementation.
+#' @return An integer specifying the size of the maximum agreement subtree.
+#' 
+#' @examples
+#' library('TreeTools')
+#' MASTSize(PectinateTree(8), BalancedTree(8))
+#' 
+#' @seealso [`phangorn::mast`], a slower, all-R implementation that also returns
+#' the tips contained within the subtree.
 #' 
 #' @references 
 #' \insertref{Valiente2009}{TreeDist}
 #' 
 #' @template MRS
+#' @family tree distances
 #' @importFrom ape root
 #' @export
-MAST <- function (tree1, tree2, tree = FALSE, rooted = TRUE) {
+MASTSize <- function (tree1, tree2, tree = FALSE, rooted = TRUE) {
   label1 <- tree1$tip.label
   label2 <- tree2$tip.label
   
@@ -31,7 +39,7 @@ MAST <- function (tree1, tree2, tree = FALSE, rooted = TRUE) {
                     resolve.root = TRUE)
     }
     max(vapply(seq_len(nTip - 3L) + nTip + 2L, function (node) {
-      MAST(tree1, root(tree2, node=node, resolve.root = TRUE),
+      MASTSize(tree1, root(tree2, node=node, resolve.root = TRUE),
            tree = FALSE, rooted = TRUE)
     }, 0L))
   } else {

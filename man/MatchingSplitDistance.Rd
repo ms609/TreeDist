@@ -66,7 +66,7 @@ so that it can be implemented.
 }
 \seealso{
 Other tree distances: \code{\link{JaccardRobinsonFoulds}},
-  \code{\link{KendallColijn}},
+  \code{\link{KendallColijn}}, \code{\link{MASTSize}},
   \code{\link{NyeTreeSimilarity}},
   \code{\link{RobinsonFouldsInfo}},
   \code{\link{TreeDistance}}

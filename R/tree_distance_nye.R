@@ -35,6 +35,12 @@
 #' from zero to one by dividing by the total number of partitions in the pair
 #' of trees being considered.
 #' 
+#' 
+#' @examples 
+#' library('TreeTools')
+#' NyeTreeSimilarity(BalancedTree(8), PectinateTree(8))
+#' NyeTreeSimilarity(lapply(0:5, as.phylo, nTip = 8), PectinateTree(8))
+#' 
 #' @references \insertRef{Nye2006}{TreeDist}
 #' @family tree distances
 #' 

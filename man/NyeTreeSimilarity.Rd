@@ -89,12 +89,17 @@ from zero to one by dividing by the total number of partitions in the pair
 of trees being considered.
 }
 
+\examples{
+library('TreeTools')
+NyeTreeSimilarity(BalancedTree(8), PectinateTree(8))
+
+}
 \references{
 \insertRef{Nye2006}{TreeDist}
 }
 \seealso{
 Other tree distances: \code{\link{JaccardRobinsonFoulds}},
-  \code{\link{KendallColijn}},
+  \code{\link{KendallColijn}}, \code{\link{MASTSize}},
   \code{\link{MatchingSplitDistance}},
   \code{\link{RobinsonFouldsInfo}},
   \code{\link{TreeDistance}}
