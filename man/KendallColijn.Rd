@@ -15,6 +15,10 @@ or lists of such trees to undergo pairwise comparison.}
 
 \item{tree}{A tree of class \code{\link[ape:read.tree]{phylo}}.}
 }
+\value{
+An array of numerics providing the distances between each pair of
+trees in \code{tree1} and \code{tree2}.
+}
 \description{
 The Kendall-Colijn distance is related to the path difference.
 }

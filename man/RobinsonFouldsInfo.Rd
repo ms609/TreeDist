@@ -59,6 +59,10 @@ each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
 
 \item{\dots}{Not used.}
 }
+\value{
+An array of numerics providing the distances between each pair of
+trees in \code{tree1} and \code{tree2}.
+}
 \description{
 Calculates the Robinson-Foulds distance, or the equivalent similarity
 measure, optionally annotating matched partitions and weighting partitions
