@@ -38,6 +38,6 @@ MAST <- function (tree1, tree2, tree = FALSE, rooted = TRUE) {
     if (!is.rooted(tree1) || !is.rooted(tree2)) {
       stop("Both trees must be rooted if rooted = TRUE")
     }
-    cpp_mast(tree1$edge, tree2$edge, nTip)
+    cpp_mast(tree1$edge - 1L, tree2$edge - 1L, nTip)
   }
 }
