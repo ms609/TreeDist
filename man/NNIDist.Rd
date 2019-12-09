@@ -23,7 +23,8 @@ O(\emph{n}).
 }
 }
 \description{
-An approximation of the NNI distance based on Li et al. (1996).
+An approximation of the Nearest Neighbour Interchange distance, based on
+Li et al. (1996).
 }
 \details{
 In brief, this approximation algorithm works by identifying edges in one

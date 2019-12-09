@@ -1,6 +1,7 @@
 #' Approximate the NNI distance
 #' 
-#' An approximation of the NNI distance based on Li et al. (1996).
+#' An approximation of the Nearest Neighbour Interchange distance, based on
+#' Li et al. (1996).
 #' 
 #' In brief, this approximation algorithm works by identifying edges in one
 #' tree that do not match edges in the second.  Each of these edges must
@@ -73,5 +74,3 @@ NNIDist <- function (tree1, tree2 = tree1) {
   
   cpp_nni_distance(edge1, edge2, nTip)
 }
-
-
