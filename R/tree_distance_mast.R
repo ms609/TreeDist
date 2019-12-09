@@ -30,7 +30,7 @@ MAST <- function (tree1, tree2, tree = FALSE, rooted = TRUE) {
       tree1 <- root(tree1, outgroup = tree1$edge[nTip * 2 - 2],
                     resolve.root = TRUE)
     }
-    max(vapply(seq_len(nTip - 2L) + nTip, function (node) {
+    max(vapply(seq_len(nTip - 3L) + nTip + 2L, function (node) {
       MAST(tree1, root(tree2, node=node, resolve.root = TRUE),
            tree = FALSE, rooted = TRUE)
     }, 0L))

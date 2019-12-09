@@ -65,7 +65,6 @@ void fill_M (const unsigned int node1, const unsigned int node2,
 // 0..(nTip - 1).
 // [[Rcpp::export]]
 int cpp_mast (IntegerMatrix edge1, IntegerMatrix edge2, IntegerVector nTip) {
-  Rcout << "\n";
   const unsigned int n_tip = nTip[0], n_edge = edge1.nrow();
   unsigned int 
     t1_left[MAX_MAST_NODE] = {}, t1_right[MAX_MAST_NODE] = {},
