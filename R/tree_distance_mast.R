@@ -22,7 +22,7 @@
 #' 
 #' @template MRS
 #' @family tree distances
-#' @importFrom ape root
+#' @importFrom ape drop.tip root
 #' @export
 MASTSize <- function (tree1, tree2, rooted = TRUE) {
   label1 <- tree1$tip.label
