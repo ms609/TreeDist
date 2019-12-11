@@ -56,6 +56,12 @@ library('TreeTools')
 
 NNIDist(BalancedTree(7), PectinateTree(7))
 
+NNIDist(BalancedTree(7), as.phylo(0:3, 7))
+NNIDist(as.phylo(0:3, 7), PectinateTree(7))
+
+NNIDist(list(BalancedTree(7), PectinateTree(7)),
+        as.phylo(0:3, 7))
+
 CompareAll(as.phylo(0:5, 8), NNIDist)
   
 }

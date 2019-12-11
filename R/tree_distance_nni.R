@@ -50,18 +50,18 @@
 #' library('TreeTools')
 #' 
 #' NNIDist(BalancedTree(7), PectinateTree(7))
+#' 
+#' NNIDist(BalancedTree(7), as.phylo(0:3, 7))
+#' NNIDist(as.phylo(0:3, 7), PectinateTree(7))
+#'
+#' NNIDist(list(BalancedTree(7), PectinateTree(7)),
+#'         as.phylo(0:3, 7))
 #'
 #' CompareAll(as.phylo(0:5, 8), NNIDist)
 #'   
 #' @template MRS
 #' @export
 NNIDist <- function (tree1, tree2 = tree1) {
-  if (!inherits(tree1, 'phylo')) {
-    stop("tree1 must be of class `phylo`")
-  }
-  if (!inherits(tree2, 'phylo')) {
-    stop("tree2 must be of class `phylo`")
-  }
   .TreeDistance(.NNIDistSingle, tree1, tree2)
 }
 
