@@ -12,14 +12,12 @@
 #' @export
 CalculateTreeDistance <- function (Func, tree1, tree2,
                                    reportMatching = FALSE, ...) {
-  class1 <- class(tree1)
-  single1 <- (class1 == 'phylo' || class1 == 'Splits')
-  labels1 <- TipLabels(tree1)
+  single1 <- inherits(tree1, c('phylo', 'Splits'))
+  labels1 <- TipLabels(tree1, single = TRUE)
   nTip <- length(labels1)
     
-  class2 <- class(tree2)
-  single2 <- (class2 == 'phylo' || class2 == 'Splits')
-  labels2 <- TipLabels(tree2)
+  single2 <- inherits(tree2, c('phylo', 'Splits'))
+  labels2 <- TipLabels(tree2, single = TRUE)
   
   if (length(setdiff(labels1, labels2)) > 0) {
     stop("Tree tips must bear identical labels")
@@ -101,14 +99,12 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
 #' @seealso [`CalculateTreeDistance`]
 #' @export
 .TreeDistance <- function (Func, tree1, tree2, checks = TRUE, ...) {
-  class1 <- class(tree1)
-  single1 <- (class1 == 'phylo')
-  labels1 <- TipLabels(tree1)
+  single1 <- inherits(tree1, 'phylo')
+  labels1 <- TipLabels(tree1, single = TRUE)
   nTip <- length(labels1)
   
-  class2 <- class(tree2)
-  single2 <- (class2 == 'phylo')
-  labels2 <- TipLabels(tree2)
+  single2 <- inherits(tree2, 'phylo')
+  labels2 <- TipLabels(tree2, single = TRUE)
   
   if (checks) {
     if (length(setdiff(labels1, labels2)) > 0) {
