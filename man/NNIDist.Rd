@@ -52,11 +52,11 @@ Diameter: \tab 0 \tab 0 \tab 0 \tab 1 \tab 3 \tab 5 \tab 7 \tab 10 \tab 12
 }
 }
 \examples{
-  library('TreeTools')
-  tree1 <- BalancedTree(7)
-  tree2 <- PectinateTree(7)
-  
-  NNIDist(tree1, tree2)
+library('TreeTools')
+
+NNIDist(BalancedTree(7), PectinateTree(7))
+
+CompareAll(as.phylo(0:5, 8), NNIDist)
   
 }
 \references{

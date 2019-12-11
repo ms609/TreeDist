@@ -23,6 +23,7 @@ by deleting tips.
 \examples{
 library('TreeTools')
 MASTSize(PectinateTree(8), BalancedTree(8))
+CompareAll(as.phylo(0:5, 8), MASTSize)
 
 }
 \references{

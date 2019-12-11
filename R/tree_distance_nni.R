@@ -47,12 +47,11 @@
 #'   \insertRef{Li1996}{TreeDist}
 #' 
 #' @examples
-#'   library('TreeTools')
-#'   tree1 <- BalancedTree(7)
-#'   tree2 <- PectinateTree(7)
-#'   
-#'   NNIDist(tree1, tree2)
-#'   
+#' library('TreeTools')
+#' 
+#' NNIDist(BalancedTree(7), PectinateTree(7))
+#'
+#' CompareAll(as.phylo(0:5, 8), NNIDist)
 #'   
 #' @template MRS
 #' @export

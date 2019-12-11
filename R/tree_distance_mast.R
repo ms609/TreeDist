@@ -13,6 +13,7 @@
 #' @examples
 #' library('TreeTools')
 #' MASTSize(PectinateTree(8), BalancedTree(8))
+#' CompareAll(as.phylo(0:5, 8), MASTSize)
 #' 
 #' @seealso [`phangorn::mast`], a slower, all-R implementation that also returns
 #' the tips contained within the subtree.
