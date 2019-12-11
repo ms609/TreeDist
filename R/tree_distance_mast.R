@@ -36,7 +36,7 @@ MASTSize <- function (tree1, tree2, rooted = TRUE) {
 }
 
 #' @importFrom ape drop.tip root
-#' @importFrom TreeTools Postorder RenumberTips
+#' @importFrom TreeTools PostorderEdges RenumberTips
 .MASTSizeSingle <- function (tree1, tree2, rooted = TRUE,
                              tipLabels = tree1$tip.label,
                              ...) {
