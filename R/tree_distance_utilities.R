@@ -158,16 +158,13 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
     CompareAll(trees1, Func, nTip = nTip, tipLabels = tipLabels,
                FUN.VALUE = FUN.VALUE, ...)
   } else {
-    result <- mapply(Func, rep(trees2, each=length(trees1)), trees1,
-                     tipLabels = tipLabels, nTip = nTip, ...)
-    .WrapResult <- function (x) {
-      matrix(x, length(trees1), length(trees2),
-             dimnames = list(names(trees1), names(trees2)))
-    }
-    if (length(FUN.VALUE) == 1) {
-      .WrapResult(result)
+    value <- vapply(seq_along(trees1), function(x) FUN.VALUE, FUN.VALUE)
+    ret <- vapply(trees2, .TreeDistanceOneMany, Func = Func, manyTrees = trees1,
+           tipLabels = tipLabels, nTip = nTip, FUN.VALUE = value)#, ...)
+    if (length(dim(ret)) == 3) {
+      aperm(ret, c(2, 3, 1))
     } else {
-      apply(result, 1, .WrapResult)
+      ret
     }
   }
 }
