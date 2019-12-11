@@ -53,24 +53,26 @@
 #'   
 #'   NNIDist(tree1, tree2)
 #'   
+#'   
 #' @template MRS
 #' @export
 NNIDist <- function (tree1, tree2 = tree1) {
+  if (!inherits(tree1, 'phylo')) {
+    stop("tree1 must be of class `phylo`")
+  }
+  if (!inherits(tree2, 'phylo')) {
+    stop("tree2 must be of class `phylo`")
+  }
   .TreeDistance(.NNIDistSingle, tree1, tree2)
 }
 
-#' @importFrom TreeTools PostorderEdges
-.EdgesInPostorder <- function (edge, nNode) {
-  do.call(cbind, PostorderEdges(edge[, 1], edge[, 2], dim(edge)[1], nNode))
-}
-
-#' @importFrom TreeTools RenumberTips
+#' @importFrom TreeTools PostorderEdges RenumberTips
 #' @importFrom ape Nnode.phylo
 .NNIDistSingle <- function (tree1, tree2, nTip, ...) {
   tree2 <- RenumberTips(tree2, tree1$tip.label)
   
-  edge1 <- .EdgesInPostorder(tree1$edge, Nnode.phylo(tree1))
-  edge2 <- .EdgesInPostorder(tree2$edge, Nnode.phylo(tree2))
+  edge1 <- PostorderEdges(tree1$edge)
+  edge2 <- PostorderEdges(tree2$edge)
   
   cpp_nni_distance(edge1, edge2, nTip)
 }

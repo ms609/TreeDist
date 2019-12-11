@@ -23,15 +23,16 @@
 #' @template MRS
 #' @family tree distances
 #' @importFrom ape drop.tip root
+#' @importFrom TreeTools Postorder RenumberTips
 #' @export
 MASTSize <- function (tree1, tree2, rooted = TRUE) {
   label1 <- tree1$tip.label
   label2 <- tree2$tip.label
   
-  tree1 <- Postorder(Preorder(drop.tip(tree1, setdiff(label1, label2))))
+  tree1 <- Postorder(drop.tip(tree1, setdiff(label1, label2)))
   label1 <- tree1$tip.label
-  tree2 <- Postorder(Preorder(RenumberTips(
-    drop.tip(tree2, setdiff(label2, label1)), label1)))
+  tree2 <- Postorder(RenumberTips(drop.tip(tree2, 
+                                           setdiff(label2, label1)), label1))
   
   nTip <- length(label1)
   
