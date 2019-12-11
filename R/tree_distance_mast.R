@@ -13,6 +13,13 @@
 #' @examples
 #' library('TreeTools')
 #' MASTSize(PectinateTree(8), BalancedTree(8))
+#' 
+#' MASTSize(BalancedTree(7), as.phylo(0:3, 7))
+#' MASTSize(as.phylo(0:3, 7), PectinateTree(7))
+#'
+#' MASTSize(list(BalancedTree(7), PectinateTree(7)),
+#'          as.phylo(0:3, 7))
+#' 
 #' CompareAll(as.phylo(0:5, 8), MASTSize)
 #' 
 #' @seealso [`phangorn::mast`], a slower, all-R implementation that also returns
@@ -23,17 +30,22 @@
 #' 
 #' @template MRS
 #' @family tree distances
-#' @importFrom ape drop.tip root
-#' @importFrom TreeTools Postorder RenumberTips
 #' @export
 MASTSize <- function (tree1, tree2, rooted = TRUE) {
-  label1 <- tree1$tip.label
+  .TreeDistance(.MASTSizeSingle, tree1, tree2, rooted = rooted, checks = FALSE)
+}
+
+#' @importFrom ape drop.tip root
+#' @importFrom TreeTools Postorder RenumberTips
+.MASTSizeSingle <- function (tree1, tree2, rooted = TRUE,
+                             tipLabels = tree1$tip.label,
+                             ...) {
+  label1 <- tipLabels
   label2 <- tree2$tip.label
   
-  tree1 <- Postorder(drop.tip(tree1, setdiff(label1, label2)))
+  tree1 <- drop.tip(tree1, setdiff(label1, label2))
   label1 <- tree1$tip.label
-  tree2 <- Postorder(RenumberTips(drop.tip(tree2, 
-                                           setdiff(label2, label1)), label1))
+  tree2 <- RenumberTips(drop.tip(tree2, setdiff(label2, label1)), label1)
   
   nTip <- length(label1)
   
@@ -49,6 +61,7 @@ MASTSize <- function (tree1, tree2, rooted = TRUE) {
     if (!is.rooted(tree1) || !is.rooted(tree2)) {
       stop("Both trees must be rooted if rooted = TRUE")
     }
-    cpp_mast(tree1$edge - 1L, tree2$edge - 1L, nTip)
+    cpp_mast(PostorderEdges(tree1$edge) - 1L, PostorderEdges(tree2$edge) - 1L,
+             nTip)
   }
 }
