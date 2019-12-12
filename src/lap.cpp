@@ -170,9 +170,7 @@ cost lap(int dim,
               //           put in current k, and go back to that k.
               //           continue augmenting path i - j1 with i0.
               free[--k] = i0;
-            }
-            else
-            {
+            } else {
               //           no further augmenting reduction possible.
               //           store i0 in list of free rows for next phase.
               free[numfree++] = i0;
