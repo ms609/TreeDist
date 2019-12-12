@@ -174,12 +174,15 @@ List cpp_matching_split_distance (RawMatrix x, RawMatrix y,
                     *v = new cost[most_splits];
   
   NumericVector final_score = NumericVector::create(
-    lap(most_splits, score, rowsol, colsol, u, v) - (BIG * split_diff)),
-    final_matching (most_splits);
+    lap(most_splits, score, rowsol, colsol, u, v) - (BIG * split_diff));
+  for (int i = 0; i < most_splits; i++) delete[] score[i];
+  delete[] u; delete[] v; delete[] colsol; delete[] score;
+  NumericVector final_matching (most_splits);
   
   for (int i = 0; i < most_splits; i++) {
     final_matching[i] = rowsol[i] + 1;
   }
+  delete[] rowsol;
   
   List ret = List::create(Named("score") = final_score,
                           _["matching"] = final_matching);
@@ -288,12 +291,15 @@ List cpp_jaccard_similarity (RawMatrix x, RawMatrix y,
   
   NumericVector final_score = NumericVector::create(
     (double)((BIG * most_splits) - lap(most_splits, score, rowsol, colsol, u, v))
-    / BIGL),
-    final_matching (most_splits);
+    / BIGL);
+  for (int i = 0; i < most_splits; i++) delete[] score[i];
+  delete[] u; delete[] v; delete[] colsol; delete[] score;
+  NumericVector final_matching (most_splits);
   
   for (int i = 0; i < most_splits; i++) {
     final_matching[i] = rowsol[i] + 1;
   }
+  delete[] rowsol;
   
   List ret = List::create(Named("score") = final_score,
                           _["matching"] = final_matching);
@@ -358,12 +364,15 @@ List cpp_mmsi_distance (RawMatrix x, RawMatrix y,
   
   NumericVector final_score = NumericVector::create(
     (double)((BIG * most_splits) - lap(most_splits, score, rowsol, colsol, u, v))
-    * max_score / BIGL),
-    final_matching (most_splits);
+    * max_score / BIGL);
+  for (int i = 0; i < most_splits; i++) delete[] score[i];
+  delete[] u; delete[] v; delete[] colsol; delete[] score;
+  NumericVector final_matching (most_splits);
   
   for (int i = 0; i < most_splits; i++) {
     final_matching[i] = rowsol[i] + 1;
   }
+  delete[] rowsol;
   
   List ret = List::create(Named("score") = final_score,
                           _["matching"] = final_matching);
@@ -436,10 +445,12 @@ List cpp_mutual_clustering (RawMatrix x, RawMatrix y,
   
   NumericVector final_score = NumericVector::create(
     (double)((BIG * most_splits) - lap(most_splits, score, rowsol, colsol, u, v))
-    * n_tips / BIGL),
-    final_matching (most_splits);
+    * n_tips / BIGL);
+  for (int i = 0; i < most_splits; i++) delete[] score[i];
+  delete[] colsol; delete[] u; delete[] v; delete[] score;
   
-  for (int i = 0; i < most_splits; i++) {
+  NumericVector final_matching (most_splits);
+  for (int i = 0; i != most_splits; i++) {
     final_matching[i] = rowsol[i] + 1;
   }
   
@@ -502,12 +513,18 @@ List cpp_mutual_phylo (RawMatrix x, RawMatrix y,
   
   NumericVector final_score = NumericVector::create(
     (double) ((BIG * most_splits) - lap(most_splits, score, rowsol, colsol, u, v))
-    * max_score / BIGL),
-    final_matching (most_splits);
+    * max_score / BIGL);
+  delete[] u; delete[] v; delete[] colsol;
+  NumericVector final_matching (most_splits);
+  
+  
+  for (int i = 0; i < most_splits; i++) delete[] score[i];
+  delete[] score;
   
   for (int i = 0; i < most_splits; i++) {
     final_matching[i] = rowsol[i] + 1;
   }
+  delete[] rowsol;
   
   List ret = List::create(Named("score") = final_score,
                           _["matching"] = final_matching);
