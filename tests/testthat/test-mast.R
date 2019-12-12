@@ -11,4 +11,13 @@ test_that('MAST works', {
   
   expect_equal(MASTSize(BalancedTree(7), as.phylo(0:3, 7)),
                MASTSize(as.phylo(0:3, 7), BalancedTree(7)))
+  
+  expect_equal(MASTSize(list(BalancedTree(7), PectinateTree(7)), as.phylo(0:3, 7))[1, ],
+               MASTSize(as.phylo(0:3, 7), BalancedTree(7)))
+  
+  expect_equal(MASTInfo(BalancedTree(7), as.phylo(0:3, 7)),
+               MASTInfo(as.phylo(0:3, 7), BalancedTree(7)))
+  
+  expect_equal(MASTInfo(list(BalancedTree(7), PectinateTree(7)), as.phylo(0:3, 7))[1, ],
+               MASTInfo(as.phylo(0:3, 7), BalancedTree(7)))
 })

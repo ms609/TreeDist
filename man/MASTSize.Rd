@@ -2,9 +2,12 @@
 % Please edit documentation in R/tree_distance_mast.R
 \name{MASTSize}
 \alias{MASTSize}
+\alias{MASTInfo}
 \title{Size of maximum agreement subtree}
 \usage{
 MASTSize(tree1, tree2, rooted = TRUE)
+
+MASTInfo(tree1, tree2, rooted = TRUE)
 }
 \arguments{
 \item{tree1, tree2}{Single trees of class \code{phylo} to undergo comparison.}
@@ -14,23 +17,38 @@ MASTSize(tree1, tree2, rooted = TRUE)
 \value{
 \code{MASTSize} returns an integer specifying the number of tips in the
 maximum agreement subtree.
+
+\code{MASTInfo} returns a vector or matrix listing the phylogenetic
+information content, in bits, of the maximum agreement subtree.
 }
 \description{
 Calculate the maximum agreement subtree between two phylogenetic trees, i.e.
 the largest tree that can be obtained from either \code{tree1} or \code{tree2} solely
 by deleting tips.
 }
+\section{Functions}{
+\itemize{
+\item \code{MASTInfo}: Information content of maximum agreement subtree.
+}}
+
 \examples{
 library('TreeTools')
 MASTSize(PectinateTree(8), BalancedTree(8))
+MASTInfo(PectinateTree(8), BalancedTree(8))
 
 MASTSize(BalancedTree(7), as.phylo(0:3, 7))
 MASTSize(as.phylo(0:3, 7), PectinateTree(7))
 
-MASTSize(list(BalancedTree(7), PectinateTree(7)),
+MASTInfo(BalancedTree(7), as.phylo(0:3, 7))
+MASTInfo(as.phylo(0:3, 7), PectinateTree(7))
+
+MASTSize(list(Bal = BalancedTree(7), Pec = PectinateTree(7)),
+         as.phylo(0:3, 7))
+MASTInfo(list(Bal = BalancedTree(7), Pec = PectinateTree(7)),
          as.phylo(0:3, 7))
 
 CompareAll(as.phylo(0:5, 8), MASTSize)
+CompareAll(as.phylo(0:5, 8), MASTInfo)
 
 }
 \references{

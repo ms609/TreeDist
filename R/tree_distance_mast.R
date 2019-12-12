@@ -13,14 +13,21 @@
 #' @examples
 #' library('TreeTools')
 #' MASTSize(PectinateTree(8), BalancedTree(8))
+#' MASTInfo(PectinateTree(8), BalancedTree(8))
 #' 
 #' MASTSize(BalancedTree(7), as.phylo(0:3, 7))
 #' MASTSize(as.phylo(0:3, 7), PectinateTree(7))
+#' 
+#' MASTInfo(BalancedTree(7), as.phylo(0:3, 7))
+#' MASTInfo(as.phylo(0:3, 7), PectinateTree(7))
 #'
-#' MASTSize(list(BalancedTree(7), PectinateTree(7)),
+#' MASTSize(list(Bal = BalancedTree(7), Pec = PectinateTree(7)),
+#'          as.phylo(0:3, 7))
+#' MASTInfo(list(Bal = BalancedTree(7), Pec = PectinateTree(7)),
 #'          as.phylo(0:3, 7))
 #' 
 #' CompareAll(as.phylo(0:5, 8), MASTSize)
+#' CompareAll(as.phylo(0:5, 8), MASTInfo)
 #' 
 #' @seealso [`phangorn::mast`], a slower, all-R implementation that also returns
 #' the tips contained within the subtree.
@@ -64,4 +71,19 @@ MASTSize <- function (tree1, tree2, rooted = TRUE) {
     cpp_mast(PostorderEdges(tree1$edge) - 1L, PostorderEdges(tree2$edge) - 1L,
              nTip)
   }
+}
+
+#' @describeIn MASTSize Information content of maximum agreement subtree.
+#' @return `MASTInfo` returns a vector or matrix listing the phylogenetic
+#' information content, in bits, of the maximum agreement subtree.
+#' @importFrom TreeTools NRooted NUnrooted
+#' @export
+MASTInfo <- function (tree1, tree2, rooted = TRUE) {
+  size <- MASTSize(tree1, tree2, rooted = rooted)
+  ln <- if (rooted) LnRooted(size) else LnUnrooted(size)
+  ret <- ln / log(2)
+  if (!is.null(dim(size))) dim(ret) <- dim(size)
+  if (!is.null(dimnames(size))) dimnames(ret) <- dimnames(size)
+  # Return:
+  ret
 }
