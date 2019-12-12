@@ -22,8 +22,6 @@
  *
  *************************************************************************/
 #include "tree_distances.h"
-#include <stdio.h>
-#include <iostream>
 using namespace std;
 
 /* This function is the jv shortest augmenting path algorithm to solve the 
