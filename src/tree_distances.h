@@ -21,8 +21,10 @@ const int BIN_SIZE = 64,
 
 const splitbit ALL_ONES = std::numeric_limits<splitbit>::max();
 
-const cost BIG = std::numeric_limits<cost>::max() / MAX_SPLITS;
 const double BIGL = double (BIG);
+/* For a reason I've not estabilshed, dividing by BIG 2 is necessary to avoid 
+ * an infinite loop in lap. */
+const cost BIG = (std::numeric_limits<cost>::max() / MAX_SPLITS) / 2;
 
 const splitbit right16bits = 65535U;
 const uint32_t powers_of_two[16] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512,

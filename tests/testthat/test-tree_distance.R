@@ -1,4 +1,5 @@
 context('tree_distance.R')
+
 # Labels in different order to confound as.Splits
 treeSym8 <- ape::read.tree(text='((e, (f, (g, h))), (((a, b), c), d));')
 treeBal8 <- ape::read.tree(text='(((e, f), (g, h)), ((a, b), (c, d)));')
@@ -339,6 +340,7 @@ test_that('Clustering information is correctly calculated', {
   expect_equal(MutualClusteringInfo(treeAb.Cdefgh, treeAbc.Defgh),
                MutualClusteringInfo(treeAbc.Defgh, treeAb.Cdefgh),
                tolerance=1e-05)
+  
   NormalizationTest(MutualClusteringInfo)
 })
 
@@ -544,4 +546,21 @@ test_that('Multiple comparisons are correctly ordered', {
   NNILoose <- function (x, y) NNIDist(x, y)$loose_upper
   expect_equivalent(CompareAll(trees, NNILoose),
                     CompareAll(trees, NNIDist)$loose_upper)
+})
+
+test_that("Avoid infinite loop in LAP", {
+  library('TreeTools')
+  tree1 <- PectinateTree(11L)
+  tree2 <- as.phylo(18253832, 11L)
+  labels1 <- TipLabels(tree1, single = TRUE)
+  nTip <- length(labels1)
+  
+  sp1 <- as.Splits(tree1)#, asSplits = FALSE)
+  sp2 <- as.Splits(tree2)#, tipLabels = labels1, asSplits = FALSE)
+  #1 => 6, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 1, 7 => 8, 8 => 7
+  cpp_mutual_clustering(sp1, sp2, nTip)
+  expect_equal(134.7911, # What the function tells me is the right answer
+               VariationOfClusteringInfo(TreeTools::PectinateTree(11L),
+                                         ape::as.phylo(18253832, 11L)),
+               tolerance = 0.01) 
 })
