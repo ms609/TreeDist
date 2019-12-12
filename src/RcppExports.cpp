@@ -17,6 +17,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// lapjv
+List lapjv(NumericMatrix x, NumericVector maxX);
+RcppExport SEXP _TreeDist_lapjv(SEXP xSEXP, SEXP maxXSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type maxX(maxXSEXP);
+    rcpp_result_gen = Rcpp::wrap(lapjv(x, maxX));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_mast
 int cpp_mast(IntegerMatrix edge1, IntegerMatrix edge2, IntegerVector nTip);
 RcppExport SEXP _TreeDist_cpp_mast(SEXP edge1SEXP, SEXP edge2SEXP, SEXP nTipSEXP) {
@@ -139,6 +151,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_cpp_edge_to_splits", (DL_FUNC) &_TreeDist_cpp_edge_to_splits, 2},
+    {"_TreeDist_lapjv", (DL_FUNC) &_TreeDist_lapjv, 2},
     {"_TreeDist_cpp_mast", (DL_FUNC) &_TreeDist_cpp_mast, 3},
     {"_TreeDist_cpp_nni_distance", (DL_FUNC) &_TreeDist_cpp_nni_distance, 3},
     {"_TreeDist_cpp_robinson_foulds_distance", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_distance, 3},

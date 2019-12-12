@@ -25,6 +25,50 @@
 #include "tree_distances.h"
 using namespace std;
 
+
+// [[Rcpp::export]] 
+List lapjv (NumericMatrix x, NumericVector maxX) {
+  const unsigned int n_row = x.nrow(), n_col = x.ncol(), 
+    max_dim = (n_row > n_col) ? n_row : n_col;
+  const double x_max = maxX[0];
+  
+  lap_col *rowsol = new lap_col[max_dim];
+  lap_row *colsol = new lap_row[max_dim];
+  cost *u = new cost[max_dim], *v = new cost[max_dim];
+  
+  cost** input = new cost*[max_dim];
+  for (unsigned int i = 0; i < max_dim; i++) input[i] = new cost[max_dim];
+  for (unsigned int r = n_row; r--;) {
+    for (unsigned int c = n_col; c--;) {
+      input[r][c] = x(r, c) * (BIGGISH / x_max);
+    }
+    for (unsigned int c = n_col; c < max_dim; c++) {
+      input[r][c] = BIGGISH;
+    }
+  }
+  for (unsigned int r = n_row; r < max_dim; r++) {
+    for (unsigned int c = 0; c < max_dim; c++) {
+      input[r][c] = BIGGISH;
+    }
+  }
+   
+  cost score = lap(max_dim, input, rowsol, colsol, u, v);
+  NumericVector matching (max_dim);
+  for (unsigned int i = 0; i < max_dim; i++) {
+    matching[i] = rowsol[i] + 1;
+  }
+  
+  delete [] u;
+  delete [] v;
+  delete [] rowsol;
+  delete [] colsol;
+  for (unsigned int i = 0; i < max_dim; i++) delete input[i];
+  delete [] input;
+  
+  return List::create(Named("score") = score * (x_max / BIGGISH),
+                      _["matching"] = matching);
+}
+
 /* This function is the jv shortest augmenting path algorithm to solve the 
    assignment problem */
 cost lap(int dim,
