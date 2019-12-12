@@ -453,6 +453,7 @@ List cpp_mutual_clustering (RawMatrix x, RawMatrix y,
   for (int i = 0; i != most_splits; i++) {
     final_matching[i] = rowsol[i] + 1;
   }
+  delete[] rowsol;
   
   List ret = List::create(Named("score") = final_score,
                           _["matching"] = final_matching);
