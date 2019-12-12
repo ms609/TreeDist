@@ -552,7 +552,7 @@ test_that("Avoid infinite loop in LAP", {
   library('TreeTools')
   tree1 <- PectinateTree(11L)
   tree2 <- as.phylo(18253832, 11L)
-  owch <- 260
+  owch <- 1927
   set.seed(0)
   randomTreeId <- unique(floor(runif(owch * 2) * NUnrooted(11)))[seq_len(owch)][owch]
   
@@ -562,4 +562,11 @@ test_that("Avoid infinite loop in LAP", {
                tolerance = 0.01) 
   expect_lt(0, VariationOfClusteringInfo(TreeTools::PectinateTree(11L),
                                          ape::as.phylo(12848772, 11L)))
+  
+  expect_lt(0, VariationOfClusteringInfo(TreeTools::PectinateTree(11L),
+                                         Cladewise(Postorder(Preorder(ape::as.phylo( 9850364, 11L))))
+                                         ))
+  
+  expect_lt(0, VariationOfClusteringInfo(TreeTools::PectinateTree(11L),
+                                         ape::as.phylo(9850364, 11L)))
 })
