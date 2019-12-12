@@ -7,7 +7,7 @@
 \usage{
 MASTSize(tree1, tree2 = tree1, rooted = TRUE)
 
-MASTInfo(tree1, tree2, rooted = TRUE)
+MASTInfo(tree1, tree2 = tree1, rooted = TRUE)
 }
 \arguments{
 \item{tree1, tree2}{Single trees of class \code{phylo} to undergo comparison.}

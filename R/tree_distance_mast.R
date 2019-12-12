@@ -78,7 +78,7 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
 #' information content, in bits, of the maximum agreement subtree.
 #' @importFrom TreeTools NRooted NUnrooted
 #' @export
-MASTInfo <- function (tree1, tree2, rooted = TRUE) {
+MASTInfo <- function (tree1, tree2 = tree1, rooted = TRUE) {
   size <- MASTSize(tree1, tree2, rooted = rooted)
   ln <- if (rooted) LnRooted(size) else LnUnrooted(size)
   ret <- ln / log(2)
