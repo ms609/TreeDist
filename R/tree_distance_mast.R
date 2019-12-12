@@ -38,7 +38,7 @@
 #' @template MRS
 #' @family tree distances
 #' @export
-MASTSize <- function (tree1, tree2, rooted = TRUE) {
+MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
   .TreeDistance(.MASTSizeSingle, tree1, tree2, rooted = rooted, checks = FALSE)
 }
 

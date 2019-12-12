@@ -5,7 +5,7 @@
 \alias{MASTInfo}
 \title{Size of maximum agreement subtree}
 \usage{
-MASTSize(tree1, tree2, rooted = TRUE)
+MASTSize(tree1, tree2 = tree1, rooted = TRUE)
 
 MASTInfo(tree1, tree2, rooted = TRUE)
 }
