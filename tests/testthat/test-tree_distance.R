@@ -552,15 +552,14 @@ test_that("Avoid infinite loop in LAP", {
   library('TreeTools')
   tree1 <- PectinateTree(11L)
   tree2 <- as.phylo(18253832, 11L)
-  labels1 <- TipLabels(tree1, single = TRUE)
-  nTip <- length(labels1)
+  owch <- 260
+  set.seed(0)
+  randomTreeId <- unique(floor(runif(owch * 2) * NUnrooted(11)))[seq_len(owch)][owch]
   
-  sp1 <- as.Splits(tree1)#, asSplits = FALSE)
-  sp2 <- as.Splits(tree2)#, tipLabels = labels1, asSplits = FALSE)
-  #1 => 6, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 1, 7 => 8, 8 => 7
-  cpp_mutual_clustering(sp1, sp2, nTip)
   expect_equal(134.7911, # What the function tells me is the right answer
                VariationOfClusteringInfo(TreeTools::PectinateTree(11L),
                                          ape::as.phylo(18253832, 11L)),
                tolerance = 0.01) 
+  expect_lt(0, VariationOfClusteringInfo(TreeTools::PectinateTree(11L),
+                                         ape::as.phylo(12848772, 11L)))
 })
