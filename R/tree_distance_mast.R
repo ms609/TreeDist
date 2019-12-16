@@ -61,6 +61,10 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
       tree1 <- root(tree1, outgroup = tree1$edge[nTip * 2 - 2],
                     resolve.root = TRUE)
     }
+    if (!TreeIsRooted(tree2)) {
+      tree2 <- root(tree2, outgroup = tree2$edge[nTip * 2 - 2],
+                    resolve.root = TRUE)
+    }
     max(vapply(seq_len(nTip - 3L) + nTip + 2L, function (node) {
       MASTSize(tree1, root(tree2, node = node, resolve.root = TRUE), 
                rooted = TRUE)}, 0L))
