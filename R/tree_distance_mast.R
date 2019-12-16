@@ -43,7 +43,7 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
 }
 
 #' @importFrom ape drop.tip root
-#' @importFrom TreeTools PostorderEdges RenumberTips
+#' @importFrom TreeTools PostorderEdges RenumberTips TreeIsRooted
 .MASTSizeSingle <- function (tree1, tree2, rooted = TRUE,
                              tipLabels = tree1$tip.label,
                              ...) {
@@ -57,7 +57,7 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
   nTip <- length(label1)
   
   if (!rooted) {
-    if (!is.rooted(tree1)) {
+    if (!TreeIsRooted(tree1)) {
       tree1 <- root(tree1, outgroup = tree1$edge[nTip * 2 - 2],
                     resolve.root = TRUE)
     }
@@ -65,7 +65,7 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
       MASTSize(tree1, root(tree2, node = node, resolve.root = TRUE), 
                rooted = TRUE)}, 0L))
   } else {
-    if (!is.rooted(tree1) || !is.rooted(tree2)) {
+    if (!TreeIsRooted(tree1) || !TreeIsRooted(tree2)) {
       stop("Both trees must be rooted if rooted = TRUE")
     }
     cpp_mast(PostorderEdges(tree1$edge) - 1L, PostorderEdges(tree2$edge) - 1L,
@@ -76,11 +76,11 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
 #' @describeIn MASTSize Information content of maximum agreement subtree.
 #' @return `MASTInfo` returns a vector or matrix listing the phylogenetic
 #' information content, in bits, of the maximum agreement subtree.
-#' @importFrom TreeTools NRooted NUnrooted
+#' @importFrom TreeTools LnRooted.int LnUnrooted.int
 #' @export
 MASTInfo <- function (tree1, tree2 = tree1, rooted = TRUE) {
   size <- MASTSize(tree1, tree2, rooted = rooted)
-  ln <- if (rooted) LnRooted(size) else LnUnrooted(size)
+  ln <- if (rooted) LnRooted.int(size) else LnUnrooted.int(size)
   ret <- ln / log(2)
   if (!is.null(attributes(size))) attributes(ret) <- attributes(size)
   # Return:
