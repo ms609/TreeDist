@@ -82,8 +82,7 @@ MASTInfo <- function (tree1, tree2 = tree1, rooted = TRUE) {
   size <- MASTSize(tree1, tree2, rooted = rooted)
   ln <- if (rooted) LnRooted(size) else LnUnrooted(size)
   ret <- ln / log(2)
-  if (!is.null(dim(size))) dim(ret) <- dim(size)
-  if (!is.null(dimnames(size))) dimnames(ret) <- dimnames(size)
+  if (!is.null(attributes(size))) attributes(ret) <- attributes(size)
   # Return:
   ret
 }
