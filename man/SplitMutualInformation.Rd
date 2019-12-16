@@ -4,7 +4,7 @@
 \alias{SplitMutualInformation}
 \alias{SplitVariationOfInformation}
 \alias{TreesConsistentWithTwoSplits}
-\alias{LogTreesConsistentWithTwoSplits}
+\alias{LnTreesConsistentWithTwoSplits}
 \title{Mutual information of two splits}
 \usage{
 SplitMutualInformation(n, A1, A2 = A1)
@@ -13,7 +13,7 @@ SplitVariationOfInformation(n, A1, A2 = A1)
 
 TreesConsistentWithTwoSplits(n, A1, A2 = A1)
 
-LogTreesConsistentWithTwoSplits(n, A1, A2 = A1)
+LnTreesConsistentWithTwoSplits(n, A1, A2 = A1)
 }
 \arguments{
 \item{n}{Integer specifying the number of terminals.}
@@ -53,7 +53,7 @@ Thus, all taxa in the smaller of \emph{A1} and \emph{A2} also occur in the large
 
 \item \code{TreesConsistentWithTwoSplits}: Number of trees consistent with two splits.
 
-\item \code{LogTreesConsistentWithTwoSplits}: Natural logarithm of \code{TreesConsistentWithTwoSplits}.
+\item \code{LnTreesConsistentWithTwoSplits}: Natural logarithm of \code{TreesConsistentWithTwoSplits}.
 }}
 
 \examples{

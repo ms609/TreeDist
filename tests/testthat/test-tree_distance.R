@@ -264,7 +264,7 @@ test_that('MutualMatchingSplitInfo is correctly calculated', {
                MutualMatchingSplitInfo(treeAbc.Defgh, treeAb.Cdefgh))
   expect_equal(MutualMatchingSplitInfo(treeAbcd.Efgh, treeAb.Cdefgh),
                MutualMatchingSplitInfo(treeAb.Cdefgh, treeAbcd.Efgh))
-  expect_equal(-(TreeTools::LogTreesMatchingSplit(2, 5) - LnUnrooted.int(7)) / 
+  expect_equal(-(TreeTools::LnTreesMatchingSplit(2, 5) - LnUnrooted.int(7)) / 
                  log(2), 
                MutualMatchingSplitInfo(treeAb.Cdefgh, treeAbc.Defgh),
                tolerance = 1e-7)

@@ -47,12 +47,12 @@
 #' 
 #' @template MRS
 #' @family split information functions
-#' @importFrom TreeTools LogTreesMatchingSplit LnUnrooted
+#' @importFrom TreeTools LnTreesMatchingSplit LnUnrooted
 #' @export
 SplitMutualInformation <- function(n, A1, A2 = A1) {
-  (LogTreesMatchingSplit(A1, n - A1) 
-   + LogTreesMatchingSplit(A2, n - A2)
-   - LogTreesConsistentWithTwoSplits(n, A1, A2)
+  (LnTreesMatchingSplit(A1, n - A1) 
+   + LnTreesMatchingSplit(A2, n - A2)
+   - LnTreesConsistentWithTwoSplits(n, A1, A2)
    - LnUnrooted(n)) / -log(2)
 }
 
@@ -404,14 +404,14 @@ TreesConsistentWithTwoSplits <- function (n, A1, A2=A1) {
 }
 
 #' @describeIn SplitMutualInformation Natural logarithm of `TreesConsistentWithTwoSplits`.
-#' @importFrom TreeTools LogTreesMatchingSplit LnRooted.int
+#' @importFrom TreeTools LnTreesMatchingSplit LnRooted.int
 #' @export
-LogTreesConsistentWithTwoSplits <- function (n, A1, A2=A1) {
+LnTreesConsistentWithTwoSplits <- function (n, A1, A2=A1) {
   smallSplit <- min(A1, A2)
   bigSplit <- max(A1, A2)
   
-  if (smallSplit == 0) return (LogTreesMatchingSplit(bigSplit, n - bigSplit))
-  if (bigSplit == n) return (LogTreesMatchingSplit(smallSplit, n - smallSplit))
+  if (smallSplit == 0) return (LnTreesMatchingSplit(bigSplit, n - bigSplit))
+  if (bigSplit == n) return (LnTreesMatchingSplit(smallSplit, n - smallSplit))
   
   # Return:
   LnRooted.int(bigSplit - smallSplit + 1L) + 
