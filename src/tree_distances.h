@@ -22,7 +22,7 @@ const int BIN_SIZE = 64,
 const splitbit ALL_ONES = std::numeric_limits<splitbit>::max();
 
 const double BIGL = double (BIG);
-/* For a reason I've not estabilshed, dividing by BIG 2 is necessary to avoid 
+/* For a reason I've not estabilshed, shrinking BIG is necessary to avoid 
  * an infinite loop in lap. */
 const cost BIG = (std::numeric_limits<cost>::max() / MAX_SPLITS) / 64;
 
