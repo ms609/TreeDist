@@ -66,7 +66,7 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
                     resolve.root = TRUE)
     }
     max(vapply(seq_len(nTip - 3L) + nTip + 2L, function (node) {
-      MASTSize(tree1, root(tree2, node = node, resolve.root = TRUE), 
+      .MASTSizeSingle(tree1, root(tree2, node = node, resolve.root = TRUE), 
                rooted = TRUE)}, 0L))
   } else {
     if (!TreeIsRooted(tree1) || !TreeIsRooted(tree2)) {
