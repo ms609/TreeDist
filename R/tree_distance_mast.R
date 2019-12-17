@@ -42,8 +42,8 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
   .TreeDistance(.MASTSizeSingle, tree1, tree2, rooted = rooted, checks = FALSE)
 }
 
-#' @importFrom ape drop.tip root
-#' @importFrom TreeTools PostorderEdges RenumberTips TreeIsRooted
+#' @importFrom ape drop.tip
+#' @importFrom TreeTools PostorderEdges RenumberTips TreeIsRooted RootOnNode
 .MASTSizeSingle <- function (tree1, tree2, rooted = TRUE,
                              tipLabels = tree1$tip.label,
                              ...) {
@@ -58,23 +58,22 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
   
   if (!rooted) {
     if (!TreeIsRooted(tree1)) {
-      tree1 <- root(tree1, outgroup = tree1$edge[nTip * 2 - 2],
-                    resolve.root = TRUE)
+      tree1 <- RootOnNode(tree1, node = tree1$edge[nTip * 2 - 2], TRUE)
     }
-    if (!TreeIsRooted(tree2)) {
-      tree2 <- root(tree2, outgroup = tree2$edge[nTip * 2 - 2],
-                    resolve.root = TRUE)
-    }
-    max(vapply(seq_len(nTip - 3L) + nTip + 2L, function (node) {
-      .MASTSizeSingle(tree1, root(tree2, node = node, resolve.root = TRUE), 
-               rooted = TRUE)}, 0L))
+    max(vapply(seq_len(nTip - 3L) + nTip + 2L, function (node)
+      .MASTSizeEdges(tree1$edge,
+                     RootOnNode(tree2, node = node, TRUE)$edge,
+                     nTip = nTip), 0L))
   } else {
     if (!TreeIsRooted(tree1) || !TreeIsRooted(tree2)) {
       stop("Both trees must be rooted if rooted = TRUE")
     }
-    cpp_mast(PostorderEdges(tree1$edge) - 1L, PostorderEdges(tree2$edge) - 1L,
-             nTip)
+    .MASTSizeEdges(tree1$edge, tree2$edge, nTip)
   }
+}
+
+.MASTSizeEdges <- function (edge1, edge2, nTip) {
+  cpp_mast(PostorderEdges(edge1) - 1L, PostorderEdges(edge2) - 1L, nTip)
 }
 
 #' @describeIn MASTSize Information content of maximum agreement subtree.

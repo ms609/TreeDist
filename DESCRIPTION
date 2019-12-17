@@ -33,7 +33,7 @@ Imports:
     phangorn (>= 2.2.1),
     Rdpack,
     stats,
-    TreeTools
+    TreeTools (>= 0.1.3)
 Suggests:
     bookdown,
     cluster,
