@@ -40,15 +40,15 @@ List lapjv (NumericMatrix x, NumericVector maxX) {
   for (unsigned int i = 0; i < max_dim; i++) input[i] = new cost[max_dim];
   for (unsigned int r = n_row; r--;) {
     for (unsigned int c = n_col; c--;) {
-      input[r][c] = x(r, c) * (BIGGISH / x_max);
+      input[r][c] = x(r, c) * (MAX_SCORE / x_max);
     }
     for (unsigned int c = n_col; c < max_dim; c++) {
-      input[r][c] = BIGGISH;
+      input[r][c] = MAX_SCORE;
     }
   }
   for (unsigned int r = n_row; r < max_dim; r++) {
     for (unsigned int c = 0; c < max_dim; c++) {
-      input[r][c] = BIGGISH;
+      input[r][c] = MAX_SCORE;
     }
   }
    
@@ -65,7 +65,7 @@ List lapjv (NumericMatrix x, NumericVector maxX) {
   for (unsigned int i = 0; i < max_dim; i++) delete input[i];
   delete [] input;
   
-  return List::create(Named("score") = score * (x_max / BIGGISH),
+  return List::create(Named("score") = score * (x_max / MAX_SCORE),
                       _["matching"] = matching);
 }
 
