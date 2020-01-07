@@ -29,7 +29,8 @@ using namespace std;
 // [[Rcpp::export]] 
 List lapjv (NumericMatrix x, NumericVector maxX) {
   const unsigned int n_row = x.nrow(), n_col = x.ncol(), 
-    max_dim = (n_row > n_col) ? n_row : n_col;
+    max_dim = (n_row > n_col) ? n_row : n_col,
+    max_score = BIG / max_dim;
   const double x_max = maxX[0];
   
   lap_col *rowsol = new lap_col[max_dim];
@@ -41,15 +42,15 @@ List lapjv (NumericMatrix x, NumericVector maxX) {
   
   for (unsigned int r = n_row; r--;) {
     for (unsigned int c = n_col; c--;) {
-      input[r][c] = cost(MAX_SCORE * (x(r, c) / x_max));
+      input[r][c] = cost(max_score * (x(r, c) / x_max));
     }
     for (unsigned int c = n_col; c < max_dim; c++) {
-      input[r][c] = MAX_SCORE;
+      input[r][c] = max_score;
     }
   }
   for (unsigned int r = n_row; r < max_dim; r++) {
     for (unsigned int c = 0; c < max_dim; c++) {
-      input[r][c] = MAX_SCORE;
+      input[r][c] = max_score;
     }
   }
    
@@ -66,7 +67,7 @@ List lapjv (NumericMatrix x, NumericVector maxX) {
   for (unsigned int i = 0; i < max_dim; i++) delete input[i];
   delete [] input;
   
-  return List::create(Named("score") = double(score) / MAX_SCOREL * x_max,
+  return List::create(Named("score") = double(score) / max_score * x_max,
                       _["matching"] = matching);
 }
 

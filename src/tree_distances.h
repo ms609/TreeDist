@@ -24,8 +24,6 @@ const splitbit ALL_ONES = (std::numeric_limits<splitbit>::max)();
 /* For a reason I've not estabilshed, shrinking BIG is necessary to avoid 
  * an infinite loop in lap. */
 const cost BIG = ((std::numeric_limits<cost>::max)() / MAX_SPLITS);
-const cost MAX_SCORE = (std::numeric_limits<long>::max)();
-const double MAX_SCOREL = double (MAX_SCORE);
 
 const splitbit right16bits = 65535U;
 const uint32_t powers_of_two[16] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512,
