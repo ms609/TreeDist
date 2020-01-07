@@ -1,6 +1,5 @@
 #include <Rcpp.h>
 using namespace Rcpp;
-#include <cstdint>
 #include <cmath> /* for log2() */
 #include "tree_distances.h"
 #include "SplitList.h"
@@ -39,7 +38,7 @@ __attribute__((constructor))
       lg2_unrooted[i] = 0;
     }
     for (int i = 2; i != MAX_TIPS + MAX_TIPS - 2; i++) {
-      lg2_double_factorial[i] = lg2_double_factorial[i - 2] + std::log2(i);
+      lg2_double_factorial[i] = lg2_double_factorial[i - 2] + log2(i);
     }
     for (int i = 3; i != MAX_TIPS + 1; i++) {
       lg2_unrooted[i] = lg2_double_factorial[i + i - 5];
@@ -55,7 +54,7 @@ double lg2_trees_matching_split (int a, int b) {
 
 
 double p_lg2_p_frac (double p) {
-  return -p * std::log2(p);
+  return -p * log2(p);
 }
 
 double p_lg2_p (double p) {

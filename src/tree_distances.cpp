@@ -1,4 +1,4 @@
-#include <math.h> /* for pow(), log() */
+#include <cmath>
 #include <Rcpp.h>
 #include "tree_distances.h"
 #include "SplitList.h"

@@ -14,7 +14,7 @@ const unsigned int N_EXACT = 12;
 const unsigned int exact_diameter[] = {0, 0, 0, 0, 1, 3, 5, 7, 10, 12, 15, 18, 21};
 
 unsigned int sorting_number (unsigned int n_tip) {
-  int log_ceiling = std::ceil(std::log2(n_tip));
+  int log_ceiling = std::ceil(log2(n_tip));
   return (n_tip * log_ceiling - std::pow(2, log_ceiling) + 1);
 }
 
@@ -23,8 +23,8 @@ unsigned int degenerate_distance (unsigned int n_tip) {
    * To make this path as short as possible, divide tips into three 
    * balanced trees, joined by a single node that will form part of every 
    * longest path.  One of these subtrees will be filled with >= n/3 nodes */
-  unsigned int nodes_in_full = (std::ceil(std::log2(n_tip / 3)) > 0) ? 
-  std::ceil(std::log2(n_tip / 3)) : 0U;
+  unsigned int nodes_in_full = (std::ceil(log2(n_tip / 3)) > 0) ? 
+  std::ceil(log2(n_tip / 3)) : 0U;
   /* We want to put a power of two tips in this subtree, such that every node is 
    * equally close to its root */
   unsigned int tips_in_full = std::pow(2, nodes_in_full);
@@ -35,8 +35,8 @@ unsigned int degenerate_distance (unsigned int n_tip) {
    * other side by one. */
   unsigned int tips_left = n_tip - tips_in_full;
   unsigned int min_backbone_nodes = 
-    (nodes_in_full + std::ceil(std::log2(tips_left / 2)) + 1 > 0) ?
-     nodes_in_full + std::ceil(std::log2(tips_left / 2)) + 1 : 0U;
+    (nodes_in_full + std::ceil(log2(tips_left / 2)) + 1 > 0) ?
+     nodes_in_full + std::ceil(log2(tips_left / 2)) + 1 : 0U;
   /* The worst-case scenario requires a move for every node not on the backbone: */
   unsigned int n_node = (n_tip > 2) ? n_tip - 2 : 0U;
   return (n_node - min_backbone_nodes);
