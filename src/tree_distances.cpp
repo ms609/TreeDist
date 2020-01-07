@@ -367,7 +367,7 @@ List cpp_mmsi_distance (RawMatrix x, RawMatrix y,
   
   NumericVector final_score = NumericVector::create(
     (double)((max_score * most_splits) - lap(most_splits, score, rowsol, colsol, u, v))
-    * max_score / max_score);
+    * max_possible / max_score);
   for (int i = 0; i < most_splits; i++) delete[] score[i];
   delete[] u; delete[] v; delete[] colsol; delete[] score;
   NumericVector final_matching (most_splits);
