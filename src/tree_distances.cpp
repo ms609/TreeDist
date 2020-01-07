@@ -144,8 +144,8 @@ List cpp_matching_split_distance (RawMatrix x, RawMatrix y,
     split_diff = most_splits - 
       ((a.n_splits > b.n_splits) ? b.n_splits : a.n_splits),
     n_tips = nTip[0],
-    half_tips = n_tips / 2,
-    max_score = BIG / most_splits;
+    half_tips = n_tips / 2;
+  const cost max_score = BIG / most_splits;
   
   cost** score = new cost*[most_splits];
   for (int i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
@@ -202,8 +202,8 @@ List cpp_jaccard_similarity (RawMatrix x, RawMatrix y,
   const int most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     last_bin = a.n_bins - 1,
     n_tips = nTip[0],
-    unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0,
-    max_score = BIG / most_splits;
+    unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
+  const cost max_score = BIG / most_splits;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   const double exponent = k[0], max_scoreL = max_score;
   
@@ -317,8 +317,8 @@ List cpp_mmsi_distance (RawMatrix x, RawMatrix y,
   }
   SplitList a(x), b(y);
   const int most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-    n_tips = nTip[0],
-    max_score = BIG / most_splits;
+    n_tips = nTip[0];
+  const cost max_score = BIG / most_splits;
   const double max_possible = lg2_unrooted[n_tips] - 
     lg2_trees_matching_split((n_tips + 1) / 2, n_tips / 2);
   
@@ -393,8 +393,8 @@ List cpp_mutual_clustering (RawMatrix x, RawMatrix y,
   const int most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     last_bin = a.n_bins - 1,
     n_tips = nTip[0],
-    unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0,
-    max_score = BIG / most_splits;
+    unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
+  const cost max_score = BIG / most_splits;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   
   splitbit b_compl[MAX_SPLITS][MAX_BINS];
@@ -474,8 +474,8 @@ List cpp_mutual_phylo (RawMatrix x, RawMatrix y,
   SplitList a(x), b(y);
   
   const int most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-    n_tips = nTip[0],
-    max_score = BIG / most_splits;
+    n_tips = nTip[0];
+  const cost max_score = BIG / most_splits;
   const double lg2_unrooted_n = lg2_unrooted[n_tips],
                max_possible = lg2_unrooted_n - 
                  one_overlap((n_tips + 1) / 2, n_tips / 2, n_tips);
