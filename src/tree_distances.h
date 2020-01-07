@@ -19,12 +19,12 @@ const int BIN_SIZE = 64,
   MAX_TIPS = BIN_SIZE * MAX_BINS,
   MAX_SPLITS = MAX_TIPS; /* -3, but quicker if a power of two? */
 
-const splitbit ALL_ONES = std::numeric_limits<splitbit>::max();
+const splitbit ALL_ONES = (std::numeric_limits<splitbit>::max)();
 
 /* For a reason I've not estabilshed, shrinking BIG is necessary to avoid 
  * an infinite loop in lap. */
-const cost BIG = (std::numeric_limits<cost>::max() / MAX_SPLITS) / 64;
 const double BIGL = double (BIG);
+const cost BIG = ((std::numeric_limits<cost>::max)() / MAX_SPLITS) / 64;
 
 const splitbit right16bits = 65535U;
 const uint32_t powers_of_two[16] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512,
