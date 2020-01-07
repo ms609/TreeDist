@@ -272,6 +272,7 @@ List cpp_jaccard_similarity (RawMatrix x, RawMatrix y,
           score[ai][bi] = (cost) MAX_SCOREL - (MAX_SCOREL * 
             pow((min_ars_both > min_ars_either) ? 
             min_ars_both : min_ars_either, exponent));
+            std::pow((min_ars_both > min_ars_either) ? 
         }
       }
     }
