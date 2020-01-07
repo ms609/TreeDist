@@ -70,7 +70,7 @@ double entropy2 (double p) {
 }
 
 double entropy4 (double p1, double p2, double p3, double p4) {
-  return p_lg2_p(p1) +  p_lg2_p(p2) +  p_lg2_p(p3) +  p_lg2_p(p4);
+  return p_lg2_p(p1) + p_lg2_p(p2) + p_lg2_p(p3) + p_lg2_p(p4);
 }
 
 
