@@ -38,9 +38,10 @@ List lapjv (NumericMatrix x, NumericVector maxX) {
   
   cost** input = new cost*[max_dim];
   for (unsigned int i = 0; i < max_dim; i++) input[i] = new cost[max_dim];
+  
   for (unsigned int r = n_row; r--;) {
     for (unsigned int c = n_col; c--;) {
-      input[r][c] = x(r, c) * (MAX_SCORE / x_max);
+      input[r][c] = cost(MAX_SCORE * (x(r, c) / x_max));
     }
     for (unsigned int c = n_col; c < max_dim; c++) {
       input[r][c] = MAX_SCORE;
