@@ -1,6 +1,6 @@
+#include <cstdint>
 #include <Rcpp.h>
 using namespace Rcpp;
-#include <stdint.h>
 
 const int R_BIN_SIZE = 8;
 

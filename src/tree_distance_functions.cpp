@@ -1,7 +1,7 @@
 #include <Rcpp.h>
 using namespace Rcpp;
-#include <stdint.h>
-#include <math.h> /* for pow(), log() */
+#include <cstdint>
+#include <cmath> /* for log2() */
 #include "tree_distances.h"
 #include "SplitList.h"
 

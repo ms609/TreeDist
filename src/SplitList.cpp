@@ -1,7 +1,7 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 #include "tree_distances.h"
-#include <stdint.h>
+#include <cstdint>
 #include "SplitList.h"
 
 SplitList::SplitList(RawMatrix x) {
