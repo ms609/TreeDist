@@ -71,6 +71,10 @@ List lapjv (NumericMatrix x, NumericVector maxX) {
                       _["matching"] = matching);
 }
 
+bool nontrivially_less_than(cost a, cost b) {
+  return a + ((a > ROUND_PRECISION) ? 2 : 0) < b;
+}
+
 /* This function is the jv shortest augmenting path algorithm to solve the 
    assignment problem */
 cost lap(int dim,
@@ -189,7 +193,7 @@ cost lap(int dim,
       }
       
       i0 = colsol[j1];
-      if (umin < usubmin) {
+      if (nontrivially_less_than(umin, usubmin)) {
         //         change the reduction of the minimum column to increase the minimum
         //         reduced cost in the row to the subminimum.
         v[j1] = v[j1] - (usubmin - umin);
@@ -206,7 +210,7 @@ cost lap(int dim,
       colsol[j1] = i;
       
       if (i0 > -1) { // minimum column j1 assigned earlier.
-        if (umin < usubmin) {
+        if (nontrivially_less_than(umin, usubmin)) {
           //           put in current k, and go back to that k.
           //           continue augmenting path i - j1 with i0.
           free[--k] = i0;
