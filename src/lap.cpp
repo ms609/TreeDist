@@ -170,7 +170,6 @@ cost lap(int dim,
     k = 0;
     previous_num_free = num_free;
     num_free = 0;             // start list of rows still free after augmenting row reduction.
-    Rcpp::checkUserInterrupt();
     while (k < previous_num_free) {
       i = free[k];
       k++;
@@ -216,6 +215,7 @@ cost lap(int dim,
           //           put in current k, and go back to that k.
           //           continue augmenting path i - j1 with i0.
           free[--k] = i0;
+          Rcpp::checkUserInterrupt();
         } else {
           //           no further augmenting reduction possible.
           //           store i0 in list of free rows for next phase.
