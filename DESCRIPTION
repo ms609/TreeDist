@@ -48,7 +48,6 @@ Suggests:
     TreeSearch,
     vdiffr
 RdMacros: Rdpack
-SystemRequirements: C++11
 LazyData: true
 ByteCompile: true
 Encoding: UTF-8
