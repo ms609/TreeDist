@@ -17,6 +17,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// wow
+List wow();
+RcppExport SEXP _TreeDist_wow() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(wow());
+    return rcpp_result_gen;
+END_RCPP
+}
 // lapjv
 List lapjv(NumericMatrix x, NumericVector maxX);
 RcppExport SEXP _TreeDist_lapjv(SEXP xSEXP, SEXP maxXSEXP) {
@@ -151,6 +161,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_cpp_edge_to_splits", (DL_FUNC) &_TreeDist_cpp_edge_to_splits, 2},
+    {"_TreeDist_wow", (DL_FUNC) &_TreeDist_wow, 0},
     {"_TreeDist_lapjv", (DL_FUNC) &_TreeDist_lapjv, 2},
     {"_TreeDist_cpp_mast", (DL_FUNC) &_TreeDist_cpp_mast, 3},
     {"_TreeDist_cpp_nni_distance", (DL_FUNC) &_TreeDist_cpp_nni_distance, 3},

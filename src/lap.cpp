@@ -74,7 +74,7 @@ List lapjv (NumericMatrix x, NumericVector maxX) {
 /* This function is the jv shortest augmenting path algorithm to solve the 
    assignment problem */
 cost lap(int dim,
-         cost **assigncost,
+         cost **input_cost,
          lap_col *rowsol,
          lap_row *colsol,
          cost *u,
@@ -82,7 +82,7 @@ cost lap(int dim,
   
   // input:
   // dim        - problem size
-  // assigncost - cost matrix
+  // input_cost - cost matrix
   
   // output:
   // rowsol     - column assigned to row in solution
@@ -92,16 +92,17 @@ cost lap(int dim,
   
 {
   bool unassignedfound;
-  lap_row  i, imin, numfree = 0, prvnumfree, f, i0, k, freerow, *pred, *free;
-  lap_col  j, j1, j2 = 0, endofpath, last = 0, low, up, *collist, *matches;
+  lap_row  i, imin, num_free = 0, previous_num_free, f, i0, k, free_row,
+           *predecessor, *free;
+  lap_col  j, j1, j2 = 0, endofpath, last = 0, low, up, *col_list, *matches;
   /* Initializing j2 and last is unnecessary, but avoids compiler warnings */
   cost min, h, umin, usubmin, v2, *d;
   
   free = new lap_row[dim];       // list of unassigned rows.
-  collist = new lap_col[dim];    // list of columns to be scanned in various ways.
+  col_list = new lap_col[dim];    // list of columns to be scanned in various ways.
   matches = new lap_col[dim];    // counts how many times a row could be assigned.
   d = new cost[dim];             // 'cost-distance' in augmenting path calculation.
-  pred = new lap_row[dim];       // row-predecessor of column in augmenting/alternating path.
+  predecessor = new lap_row[dim];       // row-predecessor of column in augmenting/alternating path.
   
   // init how many times a row will be assigned in the column reduction.
   for (i = 0; i < dim; i++) {
@@ -111,11 +112,11 @@ cost lap(int dim,
   // COLUMN REDUCTION
   for (j = dim; j--; ) { // reverse order gives better results.
     // find minimum cost over rows.
-    min = assigncost[0][j];
+    min = input_cost[0][j];
     imin = 0;
     for (i = 1; i < dim; i++) {
-      if (assigncost[i][j] < min) {
-        min = assigncost[i][j];
+      if (input_cost[i][j] < min) {
+        min = input_cost[i][j];
         imin = i;
       }
     }
@@ -137,15 +138,15 @@ cost lap(int dim,
   // REDUCTION TRANSFER
   for (i = 0; i < dim; i++) {
     if (matches[i] == 0) {     // fill list of unassigned 'free' rows.
-      free[numfree++] = i;
+      free[num_free++] = i;
     } else {
       if (matches[i] == 1) { // transfer reduction from rows that are assigned once.
         j1 = rowsol[i];
         min = BIG;
         for (j = 0; j < dim; j++) {
           if (j != j1) {
-            if (assigncost[i][j] - v[j] < min) {
-              min = assigncost[i][j] - v[j];
+            if (input_cost[i][j] - v[j] < min) {
+              min = input_cost[i][j] - v[j];
             }
           }
         }
@@ -162,18 +163,18 @@ cost lap(int dim,
     //     scan all free rows.
     //     in some cases, a free row may be replaced with another one to be scanned next.
     k = 0;
-    prvnumfree = numfree;
-    numfree = 0;             // start list of rows still free after augmenting row reduction.
-    while (k < prvnumfree) {
+    previous_num_free = num_free;
+    num_free = 0;             // start list of rows still free after augmenting row reduction.
+    while (k < previous_num_free) {
       i = free[k];
       k++;
       
       //       find minimum and second minimum reduced cost over columns.
-      umin = assigncost[i][0] - v[0];
+      umin = input_cost[i][0] - v[0];
       j1 = 0;
       usubmin = BIG;
       for (j = 1; j < dim; j++) {
-        h = assigncost[i][j] - v[j];
+        h = input_cost[i][j] - v[j];
         if (h < usubmin) {
           if (h >= umin) {
             usubmin = h;
@@ -212,22 +213,22 @@ cost lap(int dim,
         } else {
           //           no further augmenting reduction possible.
           //           store i0 in list of free rows for next phase.
-          free[numfree++] = i0;
+          free[num_free++] = i0;
         }
       }
     }
   } while (loopcnt < 2);       // repeat once.
   
   // AUGMENT SOLUTION for each free row.
-  for (f = 0; f < numfree; f++) {
-    freerow = free[f];       // start row of augmenting path.
+  for (f = 0; f < num_free; f++) {
+    free_row = free[f];       // start row of augmenting path.
     
     // Dijkstra shortest path algorithm.
     // runs until unassigned column added to shortest path tree.
     for(j = dim; j--;) {
-      d[j] = assigncost[freerow][j] - v[j];
-      pred[j] = freerow;
-      collist[j] = j;        // init column list.
+      d[j] = input_cost[free_row][j] - v[j];
+      predecessor[j] = free_row;
+      col_list[j] = j;        // init column list.
     }
     
     low = 0; // columns in 0..low-1 are ready, now none.
@@ -241,9 +242,9 @@ cost lap(int dim,
         
         // scan columns for up..dim-1 to find all indices for which new minimum occurs.
         // store these indices between low..up-1 (increasing up).
-        min = d[collist[up++]];
+        min = d[col_list[up++]];
         for (k = up; k < dim; k++) {
-          j = collist[k];
+          j = col_list[k];
           h = d[j];
           if (h <= min) {
             if (h < min) {   // new minimum.
@@ -251,15 +252,15 @@ cost lap(int dim,
               min = h;
             }
             // new index with same minimum, put on undex up, and extend list.
-            collist[k] = collist[up];
-            collist[up++] = j;
+            col_list[k] = col_list[up];
+            col_list[up++] = j;
           }
         }
         // check if any of the minimum columns happens to be unassigned.
         // if so, we have an augmenting path right away.
         for (k = low; k < up; k++) {
-          if (colsol[collist[k]] < 0) {
-            endofpath = collist[k];
+          if (colsol[col_list[k]] < 0) {
+            endofpath = col_list[k];
             unassignedfound = true;
             break;
           }
@@ -267,18 +268,18 @@ cost lap(int dim,
       }
       
       if (!unassignedfound) {
-        // update 'distances' between freerow and all unscanned columns,
+        // update 'distances' between free_row and all unscanned columns,
         // via next scanned column.
-        j1 = collist[low];
+        j1 = col_list[low];
         low++;
         i = colsol[j1];
-        h = assigncost[i][j1] - v[j1] - min;
+        h = input_cost[i][j1] - v[j1] - min;
         
         for (k = up; k < dim; k++) {
-          j = collist[k];
-          v2 = assigncost[i][j] - v[j] - h;
+          j = col_list[k];
+          v2 = input_cost[i][j] - v[j] - h;
           if (v2 < d[j]) {
-            pred[j] = i;
+            predecessor[j] = i;
             if (v2 == min) { // new column found at same minimum value
               if (colsol[j] < 0) {
                 // if unassigned, shortest augmenting path is complete.
@@ -287,8 +288,8 @@ cost lap(int dim,
                 break;
               } else {
               // else add to list to be scanned right away.
-                collist[k] = collist[up];
-                collist[up++] = j;
+                col_list[k] = col_list[up];
+                col_list[up++] = j;
               }
             }
             d[j] = v2; // <MS: Unintended>
@@ -299,32 +300,32 @@ cost lap(int dim,
     
     // update column prices.
     for(k = last + 1; k--;) {
-      j1 = collist[k];
+      j1 = col_list[k];
       v[j1] = v[j1] + d[j1] - min;
     }
     
     // reset row and column assignments along the alternating path.
     do {
-      i = pred[endofpath];
+      i = predecessor[endofpath];
       colsol[endofpath] = i;
       j1 = endofpath;
       endofpath = rowsol[i];
       rowsol[i] = j1;
-    } while (i != freerow);
+    } while (i != free_row);
   }
   
   // calculate optimal cost.
   cost lapcost = 0;
   for(i = dim; i--;) {
     j = rowsol[i];
-    u[i] = assigncost[i][j] - v[j];
-    lapcost = lapcost + assigncost[i][j];
+    u[i] = input_cost[i][j] - v[j];
+    lapcost = lapcost + input_cost[i][j];
   }
   
   // free reserved memory.
-  delete[] pred;
+  delete[] predecessor;
   delete[] free;
-  delete[] collist;
+  delete[] col_list;
   delete[] matches;
   delete[] d;
   return lapcost;

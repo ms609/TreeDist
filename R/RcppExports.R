@@ -5,6 +5,10 @@ cpp_edge_to_splits <- function(edge, nTip) {
     .Call(`_TreeDist_cpp_edge_to_splits`, edge, nTip)
 }
 
+wow <- function() {
+    .Call(`_TreeDist_wow`)
+}
+
 lapjv <- function(x, maxX) {
     .Call(`_TreeDist_lapjv`, x, maxX)
 }

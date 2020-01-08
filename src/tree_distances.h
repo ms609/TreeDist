@@ -29,6 +29,8 @@ const splitbit right16bits = 65535U;
 const uint32_t powers_of_two[16] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512,
                                     1024, 2048, 4096, 8192, 16384, 32768};
 
+const cost ROUND_PRECISION = 2048*2048;
+
 /***** Constants requiring initialization *****/
 
 extern uint32_t bitcounts[65536];
