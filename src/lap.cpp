@@ -170,6 +170,7 @@ cost lap(int dim,
     k = 0;
     previous_num_free = num_free;
     num_free = 0;             // start list of rows still free after augmenting row reduction.
+    Rcpp::checkUserInterrupt();
     while (k < previous_num_free) {
       i = free[k];
       k++;
