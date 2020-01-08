@@ -98,9 +98,10 @@ cost lap(int dim,
   bool unassignedfound;
   lap_row  i, imin, num_free = 0, previous_num_free, f, i0, k, free_row,
            *predecessor, *free;
-  lap_col  j, j1, j2 = 0, endofpath, last = 0, low, up, *col_list, *matches;
-  /* Initializing j2 and last is unnecessary, but avoids compiler warnings */
-  cost min, h, umin, usubmin, v2, *d;
+  lap_col  j, j1, j2 = 0, endofpath = 0, last = 0, low, up, *col_list, *matches;
+  /* Initializing min, endofpath, j2 and last is unnecessary, 
+   * but avoids compiler warnings */
+  cost min = 0, h, umin, usubmin, v2, *d;
   
   free = new lap_row[dim];       // list of unassigned rows.
   col_list = new lap_col[dim];    // list of columns to be scanned in various ways.
