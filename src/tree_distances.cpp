@@ -408,8 +408,8 @@ List cpp_mutual_clustering (RawMatrix x, RawMatrix y,
   cost** score = new cost*[most_splits];
   for (int i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
   
-  double a_and_b, a_and_B, A_and_b, A_and_B, 
-  p1, p2;
+  unsigned int a_and_b, a_and_B, A_and_b, A_and_B,
+               na, nA, nb, nB;
   for (int ai = 0; ai != a.n_splits; ai++) {
     for (int bi = 0; bi != b.n_splits; bi++) {
       a_and_b = 0;
@@ -420,18 +420,19 @@ List cpp_mutual_clustering (RawMatrix x, RawMatrix y,
         a_and_B += count_bits(a.state[ai][bin] & b_compl[bi][bin]);
         A_and_b -= count_bits(a.state[ai][bin] | b_compl[bi][bin]);
       }
+      A_and_B = n_tips - (a_and_b + a_and_B + A_and_b);
       
-      /* Convert to probabilities */
-      a_and_b /= (double) n_tips;
-      a_and_B /= (double) n_tips;
-      A_and_b /= (double) n_tips;
-      A_and_B = 1 - (a_and_b + a_and_B + A_and_b);
+      na = a_and_b + a_and_B;
+      nA = A_and_b + A_and_B;
+      nb = a_and_b + A_and_b;
+      nB = a_and_B + A_and_B;
       
-      p1 = a_and_b + A_and_b;
-      p2 = a_and_b + a_and_B;
-      
-      score[ai][bi] = max_score * (1 - ((entropy2(p1) + entropy2(p2) - 
-        entropy4(a_and_b, a_and_B, A_and_b, A_and_B))));
+      score[ai][bi] = (cost)(max_score * (1L - ((
+        ic_element(a_and_b, na, nb, n_tips) +
+        ic_element(a_and_B, na, nB, n_tips) +
+        ic_element(A_and_b, nA, nb, n_tips) +
+        ic_element(A_and_B, nA, nB, n_tips) 
+      ) / n_tips)));
     }
     for (int bi = b.n_splits; bi < most_splits; bi++) {
       score[ai][bi] = max_score;
