@@ -81,16 +81,14 @@ IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
   
   RawMatrix splits1 = cpp_edge_to_splits(edge1, nTip);
   RawMatrix splits2 = cpp_edge_to_splits(edge2, nTip);
-  CharacterVector names1 = rownames(splits1),
-                  names2 = rownames(splits2);
-
-  List matches = cpp_robinson_foulds_distance(splits1, splits2, nTip);
+  CharacterVector names1 = rownames(splits1);
   
-  IntegerVector match = matches[1];
+  std::vector<int> match = cpp_robinson_foulds_distance(splits1, splits2, nTip)[1];
+  
   bool matched1[NNI_MAX_TIPS] = {0};
   unsigned int unmatched_below[NNI_MAX_TIPS] = {0};
 
-  for (int i = 0; i != match.size(); i++) {
+  for (int i = 0; i != int(match.size()); i++) {
     unsigned int node_i = atoi(names1[i]) - node_0_r;
     if (match[i] == NA_INTEGER) {
       matched1[node_i] = false;
