@@ -128,7 +128,7 @@
 <div id="mutual-phylogenetic-information" class="section level2">
 <h2 class="hasAnchor">
 <a href="#mutual-phylogenetic-information" class="anchor"></a>Mutual phylogenetic information</h2>
-<p>Under the mutual phylognetic information tree distance measure <span class="citation">(Smith, 2019)</span>, pairs of partitions are assigned a similarity score that corresponds to their mutual phylogenetic information content.</p>
+<p>Under the mutual phylogenetic information tree distance measure <span class="citation">(Smith, 2019)</span>, pairs of partitions are assigned a similarity score that corresponds to their mutual phylogenetic information content.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(MutualPhylogeneticInfo, tree1, tree2, </a>
 <a class="sourceLine" id="cb1-2" data-line-number="2">                  <span class="dt">Plot=</span>TreeDistPlot, <span class="dt">matchZeros =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 <p><img src="Generalized-RF_files/figure-html/unnamed-chunk-1-1.png" width="576" style="display: block; margin: auto;"></p>
@@ -201,7 +201,7 @@ The two trees below are identical but for the position of <em>A</em> and <em>J</
 <p>We must now consider the other alignment of this pair of partitions,</p>
 <p><code>ABCDEF  :     GHIJ</code> <code>FGH:ABCDE  IJ</code></p>
 <p>This yields subset scores of 1/8 and 2/9, and thus has an alignment score of 1/8. This alignment gives a lower score than the other, so is disregarded. The pair of partitions is allocated a similarity score corresponding to the better alignment: 2/5.</p>
-<p>As such, partitions that match exactly will receive a similarty score of 1, in a manner analagous to the Robinson-Foulds distance. (This is despite the fact that some partitions are more likely to match than others.) And it is not possible for a pair of partitions to receive a zero similarity score.</p>
+<p>As such, partitions that match exactly will receive a similarity score of 1, in a manner analogous to the Robinson-Foulds distance. (This is despite the fact that some partitions are more likely to match than others.) And it is not possible for a pair of partitions to receive a zero similarity score.</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(NyeTreeSimilarity, tree1, tree2, </a>
 <a class="sourceLine" id="cb19-2" data-line-number="2">                  <span class="dt">Plot=</span>TreeDistPlot, <span class="dt">leaveRoom=</span><span class="ot">FALSE</span>, <span class="dt">matchZeros =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 <p><img src="Generalized-RF_files/figure-html/unnamed-chunk-6-1.png" width="576" style="display: block; margin: auto;"></p>
@@ -230,7 +230,7 @@ The two trees below are identical but for the position of <em>A</em> and <em>J</
 <a class="sourceLine" id="cb27-2" data-line-number="2">                  <span class="dt">Plot=</span>TreeDistPlot, <span class="dt">leaveRoom=</span><span class="ot">FALSE</span>, <span class="dt">matchZeros =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 <p><img src="Generalized-RF_files/figure-html/unnamed-chunk-9-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>Note that the visualization shows the difference, rather than the similarity, between splits.</p>
-<p>Similar to the Nye <em>et al</em>. similarity metric, this method compares the subsets implied by a pair of partitions. Here, the relevanat quantity is the number of elements that must be moved from one subset to another in order to make the two partitions identical. With the pair of partitions</p>
+<p>Similar to the Nye <em>et al</em>. similarity metric, this method compares the subsets implied by a pair of partitions. Here, the relevant quantity is the number of elements that must be moved from one subset to another in order to make the two partitions identical. With the pair of partitions</p>
 <p><code>ABCDEF  : GHIJ</code> <code>ABCDE IJ:FGH</code></p>
 <p>three elements (<em>F</em>, <em>I</em> and <em>J</em>) must be moved before the partitions are identical; as such, the pair of partitions are assigned a difference score (not a similarity score) of three.</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw"><a href="../reference/MatchingSplitDistance.html">MatchingSplitDistance</a></span>(<span class="kw">read.tree</span>(<span class="dt">text=</span><span class="st">'((a, b, c, d, e, f), (g, h, i, j));'</span>),</a>

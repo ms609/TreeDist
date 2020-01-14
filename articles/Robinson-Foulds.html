@@ -127,7 +127,7 @@
 <h1 class="hasAnchor">
 <a href="#the-robinson-foulds-distance" class="anchor"></a>The Robinson-Foulds distance</h1>
 <p>The Robinson-Foulds distance <span class="citation">(Robinson &amp; Foulds, 1981)</span> is a symmetric distance measure that counts the number of partitions that occur in one tree, but not the other.</p>
-<p>It is importand to remember that counting partitions is not the same as counting clades, edges or nodes. If a tree is drawn as rooted (even without a root edge), then the number of partitions is one less than the number of edges or clades, and two less than the number of nodes. For example, the trees below have one partition, two edges and three nodes in common.</p>
+<p>It is important to remember that counting partitions is not the same as counting clades, edges or nodes. If a tree is drawn as rooted (even without a root edge), then the number of partitions is one less than the number of edges or clades, and two less than the number of nodes. For example, the trees below have one partition, two edges and three nodes in common.</p>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-1-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>The simplicity of counting partitions is appealing, but limiting: it assumes that all partitions are equivalent, when they are not.</p>
 <p>In the example above, the probability that a tree with two unresolved clades of four taxa will be compatible with the reference tree on the left is one in 35. In contrast, a tree that separates two taxa from six has a one in seven chance of matching the reference tree: the similarity observed is five times more likely to have arisen by chance. In other words, failure to match an even partition is less noteworthy than failure to match an uneven one.</p>
@@ -194,7 +194,7 @@
 <a class="sourceLine" id="cb3-4" data-line-number="4"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(RobinsonFoulds, tree1, tree2, </a>
 <a class="sourceLine" id="cb3-5" data-line-number="5">                  <span class="dt">Plot =</span> TreeDistPlot, <span class="dt">leaveRoom=</span><span class="ot">FALSE</span>)</a></code></pre></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-4-1.png" width="576" style="display: block; margin: auto;"></p>
-<p>Generalized Robsinson-Foulds distances seek to address this issue. This category of metrics aim to acknowledge semblances between similar-but-not-quite-identical pairs of partitions, which would contribute zero to tree similarity under the standard Robinson-Foulds.</p>
+<p>Generalized Robinson-Foulds distances seek to address this issue. This category of metrics aim to acknowledge semblances between similar-but-not-quite-identical pairs of partitions, which would contribute zero to tree similarity under the standard Robinson-Foulds.</p>
 <p>Generalized RF distances work by pairing each partition in one tree with a similar partition in the other (or leaving it unpaired). Each pairing is scored according to the similarity of the paired partitions. The decision of which partition to pair with which is called a <em>matching</em>, and a matching is scored by summing the individual similarity scores of each pair. The tree distance is given by the score of the optimal matching.</p>
 <div id="constructing-a-matching" class="section level2">
 <h2 class="hasAnchor">
