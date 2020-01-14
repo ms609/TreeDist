@@ -46,16 +46,13 @@ unsigned int degenerate_distance (unsigned int n_tip) {
 void update_score (const unsigned int subtree_edges, int *tight_bound, 
                    int *loose_bound) {
   if (subtree_edges) {
-/*    Rcout << "   Region of " << subtree_edges << " unmatched edges.\n";*/
     const unsigned int subtree_tips = subtree_edges + 3;
     if (*tight_bound != NA_INTEGER && subtree_tips <= N_EXACT) {
-/*      Rcout << "     Tight (" << *tight_bound << ") += " << exact_diameter[subtree_tips] << "\n";*/
       *tight_bound += exact_diameter[subtree_tips];
     } else {
       *tight_bound = NA_INTEGER;
     }
-    /*Rcout << "     Loose (" << *loose_bound << ") += sorting No[" << subtree_tips << "], " << sorting_number(subtree_tips) 
-            << "\n              +  2xO(" << subtree_tips << ") = 2x" << degenerate_distance(subtree_tips) << "\n";*/
+
     *loose_bound += sorting_number(subtree_tips) +
       (2 * degenerate_distance(subtree_tips));
   }
@@ -104,10 +101,8 @@ IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
     // If edge is unmatched, add one to subtree size.
     if (child_i >= n_tip) {
       if (!matched1[child_i - node_0]) {
-/*        Rcout << " Unmatched: " << (parent_i+1) << "-" << (child_i+1)<<"\n";*/
         unmatched_below[parent_i - node_0] += unmatched_below[child_i - node_0];
       } else {
-/*        Rcout << " Matched: " << (parent_i+1) << "-" << (child_i+1) <<"\n";*/
         update_score(unmatched_below[child_i - node_0],
                      &tight_score_bound, &loose_score_bound);
       }
