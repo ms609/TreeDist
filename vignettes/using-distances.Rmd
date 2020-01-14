@@ -82,7 +82,7 @@ NyeTreeSimilarity(tree1, tree2, normalize = min, normalizeMax = FALSE)
 
 If we are comparing lists of trees, this best value will depend on the number
 of partitions in each pair of trees.  We can use the function `pmin` to 
-select the less resoved of each pair of trees:
+select the less resolved of each pair of trees:
 
 
 ```{r}
@@ -110,7 +110,7 @@ NyeTreeSimilarity(tree1, tree2, normalize = TreeTools::NSplits(tree1))
 ### Normalizing to random similarity
 
 With the Nye _et al_. tree similarity metric, it is easy to calculate the 
-maximum possible distnace.  The diameter of other metrics is more difficult
+maximum possible distance.  The diameter of other metrics is more difficult
 to calculate.  
 As an example, the variation of clustering information distance metric 
 ranges in principle from zero, to the total amount of clustering information
@@ -133,10 +133,10 @@ normalizedQD <- QuartetDivergence(QuartetStatus(tree1, tree2),
                                   similarity = FALSE) / expectedQD
 ```
 
-The expected distance is more difficult to calcluate for other metrics, but 
+The expected distance is more difficult to calculate for other metrics, but 
 can be approximated by sampling random pairs of trees.  Measured distances
 between 10 000 pairs of random bifurcating trees with up to 200 tips are 
-available in the data package _TreeDistData_.  We can view (normalized) 
+available in the data package `TreeDistData`.  We can view (normalized) 
 distances for a selection of methods:
 
 ```{r, collapse=TRUE, eval = FALSE}
@@ -266,7 +266,7 @@ oneAway <- structure(lapply(seq_len(200), function (x) {
 
 And let's generate 200 more trees that are even more degraded.
 This time we'll move three TBR moves away from the true tree, and reduce 
-resoluton by taking a consensus with three trees that are two NNI moves away.
+resolution by taking a consensus with three trees that are two NNI moves away.
 
 ```{r}
 threeAway <- structure(lapply(seq_len(200), function (x) {

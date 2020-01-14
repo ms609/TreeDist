@@ -20,7 +20,7 @@
 #' 
 #' @template distReturn
 #' 
-#' @seealso [treespace::treeDist](https://cran.r-project.org/web/packages/treespace/vignettes/introduction.html),
+#' @seealso [`treespace::treeDist`](https://cran.r-project.org/web/packages/treespace/vignettes/introduction.html),
 #' a more sophisticated, if more cumbersome, implementation that supports 
 #' lambda > 0, i.e. use of edge lengths in tree comparison.
 #' 

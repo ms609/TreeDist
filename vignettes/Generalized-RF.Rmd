@@ -31,7 +31,7 @@ information-based metrics, it is useful to be familiar with
 
 ## Mutual phylogenetic information
 
-Under the mutual phylognetic information tree distance measure [@SmithDist], 
+Under the mutual phylogenetic information tree distance measure [@SmithDist], 
 pairs of partitions are assigned a similarity score that corresponds to their
 mutual phylogenetic information content.
 
@@ -160,8 +160,8 @@ This alignment gives a lower score than the other, so is disregarded.  The
 pair of partitions is allocated a similarity score corresponding to the 
 better alignment: 2/5.
 
-As such, partitions that match exactly will receive a similarty score of 1,
-in a manner analagous to the Robinson-Foulds distance.  (This is despite the
+As such, partitions that match exactly will receive a similarity score of 1,
+in a manner analogous to the Robinson-Foulds distance.  (This is despite the
 fact that some partitions are more likely to match than others.)
 And it is not possible for a pair of partitions to receive a zero similarity 
 score.
@@ -228,7 +228,7 @@ Note that the visualization shows the difference, rather than the similarity,
 between splits.
 
 Similar to the Nye _et al_. similarity metric, this method compares the subsets
-implied by a pair of partitions.  Here, the relevanat quantity is the number
+implied by a pair of partitions.  Here, the relevant quantity is the number
 of elements that must be moved from one subset to another in order to make
 the two partitions identical.  With the pair of partitions
 

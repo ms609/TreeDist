@@ -14,7 +14,7 @@ NormalizeInfo(unnormalized, tree1, tree2, InfoInTree, infoInBoth = NULL,
 
 \item{InfoInTree}{Function to calculate the information content of each tree}
 
-\item{infoInBoth}{Numeric speecifying information content of both trees
+\item{infoInBoth}{Numeric specifying information content of both trees
 independently (optional)}
 
 \item{how}{Method for normalization}

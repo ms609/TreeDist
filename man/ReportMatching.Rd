@@ -18,7 +18,7 @@ in a matching.
 List clades as text
 }
 \seealso{
-VisualizeMatching
+\code{\link{VisualizeMatching}}
 }
 \author{
 Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})

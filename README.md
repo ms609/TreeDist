@@ -102,7 +102,7 @@ Other tree distance functions are implemented in:
   using the tqDist algorithm.
 * [TBRDist](http://ms609.github.io/TBRDist/): TBR and SPR distances on 
   unrooted trees, using the `uspr` C library.
-* [distory](https://cran.r-project.org/package=distory) (unmaintained): Geodistic distance
+* [distory](https://cran.r-project.org/package=distory) (unmaintained): Geodesic distance
 
 # References
 

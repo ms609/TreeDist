@@ -70,7 +70,7 @@ H(A, B) = \frac{2}{3}\log_2\frac{2}{3} + \frac{1}{3}\log_2\frac{1}{3} + \frac{1}
  
 
 Note that this less than the 2.58 bits we require to determine the  exact value
-of the roll: knowlege of _A_ and _B_ is not guaranteed to be sufficient to
+of the roll: knowledge of _A_ and _B_ is not guaranteed to be sufficient to
 unambiguously identify the outcome.
 
 

@@ -37,7 +37,7 @@
 #' are subdivided into the two groups specified.  On this view, the 
 #' information content of a pair of partitions corresponds to their
 #' mutual clustering information (Meila 2007, Vinh2010), giving rise to their
-#' Mutucal Clustering Information and Variation of Clustering Information
+#' Mutual Clustering Information and Variation of Clustering Information
 #' similarity/distance metrics (`MutualClusteringInfo`, `VariationOfClusteringInfo`).
 #' 
 #' This latter approach is optimal in many regards, and is implemented, normalized

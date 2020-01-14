@@ -268,7 +268,7 @@ CompareAll <- function (x, Func, FUN.VALUE = Func(x[[1]], x[[1]]),
 #' @param unnormalized Numeric value to be normalized.
 #' @param tree1,tree2 Trees from which `unnormalized` was calculated
 #' @param InfoInTree Function to calculate the information content of each tree
-#' @param infoInBoth Numeric speecifying information content of both trees
+#' @param infoInBoth Numeric specifying information content of both trees
 #' independently (optional)
 #' @param how Method for normalization
 #' @param Func Function that takes as inputs `tree1Info` and `tree2Info`, and
@@ -314,7 +314,7 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
 #' @return `ReportMatching` returns a character vector describing each pairing 
 #' in a matching.
 #'   
-#' @seealso VisualizeMatching
+#' @seealso [`VisualizeMatching`]
 #' @template MRS
 #' @keywords internal
 #' @export

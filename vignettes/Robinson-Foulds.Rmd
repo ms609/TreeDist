@@ -45,7 +45,7 @@ The Robinson-Foulds distance [@Robinson1981] is a symmetric distance measure
 that counts the 
 number of partitions that occur in one tree, but not the other.
 
-It is importand to remember that counting partitions is not the same as counting
+It is important to remember that counting partitions is not the same as counting
 clades, edges or nodes.  If a tree is drawn as rooted (even without a root 
 edge),
 then the number of partitions is one less than the number of edges or clades,
@@ -229,7 +229,7 @@ VisualizeMatching(RobinsonFoulds, tree1, tree2,
                   Plot = TreeDistPlot, leaveRoom=FALSE)
 ```
 
-Generalized Robsinson-Foulds distances seek to address this issue. 
+Generalized Robinson-Foulds distances seek to address this issue. 
 This category of metrics aim to acknowledge semblances between similar-but-not-quite-identical pairs of partitions, which would contribute 
 zero to tree similarity under the standard Robinson-Foulds.
 

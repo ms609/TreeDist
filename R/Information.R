@@ -69,7 +69,7 @@ SplitVariationOfInformation <- function (n, A1, A2 = A1) {
 #' Use Variation of Information to compare partitions as clusterings
 #' 
 #' Compare a pair of splits solely as clusterings of taxa, disregarding their
-#' phlogenetic information, using the variation of clustering information 
+#' phylogenetic information, using the variation of clustering information 
 #' proposed by Meila (2007).
 #' 
 #' This is equivalent to the mutual clustering information (Vinh 2010).
