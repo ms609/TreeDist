@@ -4,7 +4,7 @@
 #' the largest tree that can be obtained from either `tree1` or `tree2` solely
 #' by deleting tips.
 #' 
-#' @template tree12params
+#' @template tree12Params
 #' @param rooted Logical specifying whether to treat the trees as rooted.
 #' 
 #' @return `MASTSize` returns an integer specifying the number of tips in the

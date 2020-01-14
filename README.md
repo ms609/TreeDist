@@ -54,7 +54,17 @@ lead to different tree distance metrics, implemented in the functions below:
     the number of 'mismatched' terminals in a pair of bipartitions.
 
 The package also implements the variation of the path distance 
-proposed by Kendal and Colijn (2016) (function [`KendallColijn`](https://ms609.github.io/TreeDist/reference/KendallColijn.html)).
+proposed by Kendal and Colijn (2016) (function [`KendallColijn`](https://ms609.github.io/TreeDist/reference/KendallColijn.html)),
+approximations of the Nearest-Neighbour Interchange (NNI) distance (function
+[`NNIDist`](https://ms609.github.io/TreeDist/reference/NNIDist.html); following
+Li _et al._ (1996)), and
+calculates the size (function
+[`MASTSize`](https://ms609.github.io/TreeDist/reference/MASTSize.html)) and 
+information content (function
+[`MASTInfo`](https://ms609.github.io/TreeDist/reference/MASTSize.html)) of the 
+Maximum Agreement Subtree.
+
+For an implementation of the Tree Bisection and Reconnection (TBR) distance, see [`TBRDist`](https://ms609.github.io/TBRDist/index.html).
 
 # Installation
 
@@ -90,6 +100,8 @@ Other tree distance functions are implemented in:
     - `treedist`: SPR, Robinson-Foulds and path distances.
 * [Quartet](http://ms609.github.io/Quartet/): Quartet and Triplet distances, 
   using the tqDist algorithm.
+* [TBRDist](http://ms609.github.io/TBRDist/): TBR and SPR distances on 
+  unrooted trees, using the `uspr` C library.
 * [distory](https://cran.r-project.org/package=distory) (unmaintained): Geodistic distance
 
 # References
@@ -102,6 +114,11 @@ binary phylogenetic trees](https://dx.doi.org/10.1109/TCBB.2011.48). IEEE/ACM Tr
 
 - Kendall, M. and Colijn, C. (2016) [Mapping phylogenetic trees to reveal
 distinct patterns of evolution](https://dx.doi.org/10.1093/molbev/msw124). Mol Biol Evol, 33, 2735–2743.
+
+- Li, M., Tromp, J. and Zhang, L.-X. (1996) [Some notes on the nearest neighbour
+interchange distance](https://dx.doi.org/10.1007/3-540-61332-3_168). Computing
+and Combinatorics, Goos, G., Hartmanis, J., Leeuwen, J., Cai, J.-Y., and 
+Wong, C. K., eds. Springer, Berlin. 343--351.
 
 - Nye, T.M.W. _et al._ (2006) [A novel algorithm and web-based tool for
 comparing two alternative phylogenetic trees](https://dx.doi.org/10.1093/bioinformatics/bti720). Bioinformatics, 22, 117–119.
