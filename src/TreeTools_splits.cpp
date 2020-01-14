@@ -55,6 +55,10 @@ RawMatrix cpp_edge_to_splits(IntegerMatrix edge, IntegerVector nTip) {
       }
     }
   }
+  for (int i = 0; i != n_node; i++) {
+    delete[] splits[i];
+  }
+  delete[] splits;
   
   rownames(ret) = names;
   return(ret);
