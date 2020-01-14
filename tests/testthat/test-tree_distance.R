@@ -1,4 +1,5 @@
 context('tree_distance.R')
+
 # Labels in different order to confound as.Splits
 treeSym8 <- ape::read.tree(text='((e, (f, (g, h))), (((a, b), c), d));')
 treeBal8 <- ape::read.tree(text='(((e, f), (g, h)), ((a, b), (c, d)));')
@@ -15,7 +16,7 @@ treeAcd.Befgh <- ape::read.tree(text='((a, c, d), (b, e, f, g, h));')
 treeAbcd.Efgh <- ape::read.tree(text='((a, b, c, d), (e, f, g, h));')
 treeTwoSplits <- ape::read.tree(text="(((a, b), c, d), (e, f, g, h));")
 
-test_that("Split combatibility is correctly established", {
+test_that("Split compatibility is correctly established", {
   expect_true(SplitsCompatible(as.logical (c(0,0,1,1,0)), 
                                as.logical(c(0,0,1,1,0))))
   expect_true(SplitsCompatible(as.logical (c(0,0,1,1,0)), 
@@ -69,20 +70,6 @@ test_that('Size mismatch causes error', {
   expect_error(MeilaVariationOfInformation(splits7, splits8))
 })
 
-test_that('Multiple comparisons are correctly ordered', {
-  nTrees <- 6L
-  nTip <- 16L
-  
-  set.seed(0)
-  trees <- lapply(rep(nTip, nTrees), ape::rtree, br=NULL)
-  trees[[1]] <- TreeTools::BalancedTree(nTip)
-  trees[[nTrees - 1L]] <- TreeTools::PectinateTree(nTip)
-  class(trees) <- 'multiPhylo'
-  
-  expect_equivalent(as.matrix(phangorn::RF.dist(trees)), 
-                    RobinsonFoulds(trees))
-})
-
 test_that('Metrics handle polytomies', {
   polytomy8 <- ape::read.tree(text='(a, b, c, d, e, f, g, h);')
   lapply(list(MutualPhylogeneticInfo, MutualClusteringInfo,
@@ -94,6 +81,7 @@ test_that('Output dimensions are correct', {
   list1 <- list(sym=treeSym8, bal=treeBal8)
   list2 <- list(sym=treeSym8, abc=treeAbc.Defgh, abcd=treeAbcd.Efgh)
   dimNames <- list(c('sym', 'bal'), c('sym', 'abc', 'abcd'))
+  
   Test <- function (Func) {
     allPhylo <- 
     matrix(c(Func(treeSym8, treeSym8),      Func(treeBal8, treeSym8),
@@ -109,7 +97,28 @@ test_that('Output dimensions are correct', {
     expect_equal(allPhylo, phylo2)
     expect_equal(allPhylo, noPhylo)
   }
+  
   lapply(methodsToTest, Test)
+})
+
+test_that('Robinson Foulds Distance is correctly calculated', {
+  RFTest <- function (t1, t2) {
+    expect_equal(suppressMessages(phangorn::RF.dist(t1, t2)),
+                 RobinsonFoulds(t1, t2))
+  }
+  RFTest(treeSym8, treeSym8)
+  RFTest(treeAb.Cdefgh, treeAbc.Defgh)
+  RFTest(treeAb.Cdefgh, treeAbcd.Efgh)
+  
+  # Invariant to tree description order
+  sq_pectinate <- ape::read.tree(text='((((((1, 2), 3), 4), 5), 6), (7, (8, (9, (10, 11)))));')
+  shuffle1 <- ape::read.tree(text='(((((1, 5), 2), 6), (3, 4)), ((8, (7, 9)), (10, 11)));')
+  shuffle2 <- ape::read.tree(text='(((8, (7, 9)), (10, 11)), ((((1, 5), 2), 6), (3, 4)));')
+  RFTest(shuffle1, sq_pectinate)
+  RFTest(sq_pectinate, shuffle1)
+  RFTest(shuffle1, shuffle2)
+  RFTest(shuffle1, sq_pectinate)
+  RFTest(shuffle2, sq_pectinate)
 })
 
 test_that('Mutual Phylogenetic Info is correctly calculated', {
@@ -255,7 +264,7 @@ test_that('MutualMatchingSplitInfo is correctly calculated', {
                MutualMatchingSplitInfo(treeAbc.Defgh, treeAb.Cdefgh))
   expect_equal(MutualMatchingSplitInfo(treeAbcd.Efgh, treeAb.Cdefgh),
                MutualMatchingSplitInfo(treeAb.Cdefgh, treeAbcd.Efgh))
-  expect_equal(-(TreeTools::LogTreesMatchingSplit(2, 5) - LnUnrooted.int(7)) / 
+  expect_equal(-(TreeTools::LnTreesMatchingSplit(2, 5) - LnUnrooted.int(7)) / 
                  log(2), 
                MutualMatchingSplitInfo(treeAb.Cdefgh, treeAbc.Defgh),
                tolerance = 1e-7)
@@ -331,6 +340,7 @@ test_that('Clustering information is correctly calculated', {
   expect_equal(MutualClusteringInfo(treeAb.Cdefgh, treeAbc.Defgh),
                MutualClusteringInfo(treeAbc.Defgh, treeAb.Cdefgh),
                tolerance=1e-05)
+  
   NormalizationTest(MutualClusteringInfo)
 })
 
@@ -513,4 +523,50 @@ test_that('Kendall-Colijn distance is correctly calculated', {
   expect_equal(3.464102, KendallColijn(treeSym8, treeAbcd.Efgh), tolerance=1e-06)
   expect_equal(3L, KendallColijn(treeSym8, treeTwoSplits), tolerance=1e-06)
   expect_equal(2.828427, KendallColijn(treeAbc.Defgh, treeTwoSplits), tolerance=1e-06)
+})
+
+
+test_that('Multiple comparisons are correctly ordered', {
+  nTrees <- 6L
+  nTip <- 16L
+  
+  set.seed(0)
+  trees <- lapply(rep(nTip, nTrees), ape::rtree, br=NULL)
+  trees[[1]] <- TreeTools::BalancedTree(nTip)
+  trees[[nTrees - 1L]] <- TreeTools::PectinateTree(nTip)
+  class(trees) <- 'multiPhylo'
+  
+  expect_equivalent(as.matrix(phangorn::RF.dist(trees)),
+                    RobinsonFoulds(trees))
+  
+  # Test CompareAll
+  expect_equivalent(as.matrix(phangorn::RF.dist(trees)),
+                    as.matrix(CompareAll(trees, phangorn::RF.dist, 0L)))
+  
+  NNILoose <- function (x, y) NNIDist(x, y)['loose_upper']
+  expect_equivalent(CompareAll(trees, NNILoose),
+                    CompareAll(trees, NNIDist)$loose_upper)
+})
+
+test_that("Avoid infinite loop in LAP", {
+  library('TreeTools')
+  tree1 <- PectinateTree(11L)
+  tree2 <- as.phylo(18253832, 11L)
+  owch <- 1927
+  set.seed(0)
+  randomTreeId <- unique(floor(runif(owch * 2) * NUnrooted(11)))[seq_len(owch)][owch]
+  
+  expect_equal(134.7911, # What the function tells me is the right answer
+               VariationOfClusteringInfo(TreeTools::PectinateTree(11L),
+                                         ape::as.phylo(18253832, 11L)),
+               tolerance = 0.01) 
+  expect_lt(0, VariationOfClusteringInfo(TreeTools::PectinateTree(11L),
+                                         ape::as.phylo(12848772, 11L)))
+  
+  expect_lt(0, VariationOfClusteringInfo(TreeTools::PectinateTree(11L),
+                                         Cladewise(Postorder(Preorder(ape::as.phylo( 9850364, 11L))))
+                                         ))
+  
+  expect_lt(0, VariationOfClusteringInfo(TreeTools::PectinateTree(11L),
+                                         ape::as.phylo(9850364, 11L)))
 })

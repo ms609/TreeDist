@@ -4,3 +4,4 @@
  - Implement tree distance measures in C++ to improve speed.
  - Fixed bugs in `VisualizeMatching`.
  - Add `TreeDistPlot` function.
+ - Add `MASTSize`, `MASTInfo` and `NNIDist` functions.

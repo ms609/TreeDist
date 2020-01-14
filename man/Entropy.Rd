@@ -23,5 +23,5 @@ Entropy(c(1/4, 1/4, 0, 1/4, 1/4)) # = 2
 
 }
 \author{
-Martin R. Smith
+Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }

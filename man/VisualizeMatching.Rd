@@ -42,5 +42,5 @@ Robinson-Foulds \emph{distance}.  Unmatched splits thus contribute one to total
 tree distance.
 }
 \author{
-Martin R. Smith
+Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }

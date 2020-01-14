@@ -35,11 +35,19 @@
 #' from zero to one by dividing by the total number of partitions in the pair
 #' of trees being considered.
 #' 
+#' @examples 
+#' library('TreeTools')
+#' NyeTreeSimilarity(BalancedTree(8), PectinateTree(8))
+#' NyeTreeSimilarity(lapply(0:5, as.phylo, nTip = 8), PectinateTree(8))
+#' NyeTreeSimilarity(lapply(0:5, as.phylo, nTip = 8), similarity = FALSE)
+#' 
+#' @template distReturn
+#' 
 #' @references \insertRef{Nye2006}{TreeDist}
 #' @family tree distances
 #' 
-#' @author Martin R. Smith
-#' @importFrom TreeTools NPartitions TipLabels
+#' @template MRS
+#' @importFrom TreeTools NSplits TipLabels
 #' @export
 NyeTreeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
                                normalize = FALSE, normalizeMax = TRUE,
@@ -48,11 +56,11 @@ NyeTreeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
   unnormalized <- CalculateTreeDistance(NyeSplitSimilarity, tree1, tree2, 
                                         reportMatching)
   if (similarity) {
-    MaxPartitions <- function (tree) {
-      if (class(tree) == 'phylo' || class(tree) == 'Splits') {
+    MaxSplits <- function (tree) {
+      if (inherits(tree, c('phylo', 'Splits'))) {
         length(TipLabels(tree)) - 3L
       } else if (mode(tree) == 'list') {
-        vapply(tree, MaxPartitions, integer(1L))
+        vapply(tree, MaxSplits, integer(1L))
       } else {
         stop ("Unrecognized tree format")
       }
@@ -60,15 +68,15 @@ NyeTreeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
     
     # Return:
     NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                  InfoInTree = if (normalizeMax) MaxPartitions else NPartitions,
+                  InfoInTree = if (normalizeMax) MaxSplits else NSplits,
                   Combine = pmax.int)
   } else {
-    unnormalized <- outer(NPartitions(tree1), NPartitions(tree2), 
-                          '+')[, , drop=TRUE] - (2 * unnormalized)
+    unnormalized <- outer(NSplits(tree1), NSplits(tree2), '+')[, , drop=TRUE] -
+                    (2 * unnormalized)
     
     # Return:
     NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                  InfoInTree = NPartitions, Combine = '+')
+                  InfoInTree = NSplits, Combine = '+')
   }
 }
 
@@ -140,11 +148,12 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' 
 #' }
 #' 
+#' @template distReturn
 #' 
 #' @family tree distances
 #' 
-#' @author Martin R. Smith
-#' @importFrom TreeTools NPartitions
+#' @template MRS
+#' @importFrom TreeTools NSplits
 #' @export
 JaccardRobinsonFoulds <- function (tree1, tree2 = tree1, k = 1L, 
                                    arboreal = TRUE, similarity = FALSE,
@@ -153,11 +162,10 @@ JaccardRobinsonFoulds <- function (tree1, tree2 = tree1, k = 1L,
                                         k = k, arboreal = arboreal, 
                                         reportMatching = reportMatching) * 2L
   if (!similarity) unnormalized <- 
-      outer(NPartitions(tree1), NPartitions(tree2), '+')[, , drop=TRUE] -
-      unnormalized
+      outer(NSplits(tree1), NSplits(tree2), '+')[, , drop=TRUE] - unnormalized
 
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                InfoInTree = NPartitions, Combine = '+')
+                InfoInTree = NSplits, Combine = '+')
 }
 
 #' @describeIn JaccardRobinsonFoulds Calculate tree similarity from splits 

@@ -139,7 +139,7 @@ between 10 000 pairs of random bifurcating trees with up to 200 tips are
 available in the data package _TreeDistData_.  We can view (normalized) 
 distances for a selection of methods:
 
-```{r, collapse=TRUE}
+```{r, collapse=TRUE, eval = FALSE}
 data('randomTreeDistances', package='TreeDistData')
 
 methods <- c('vpi', 'vci', 'nts', 'qd')
@@ -168,7 +168,7 @@ text(202, randomTreeDistances[methods, '50%', '200'] + 0.02,
 
 or use these calculated values to normalize our tree distance:
 
-```{r}
+```{r, eval = FALSE}
 expectedVCI <- randomTreeDistances['vci', 'mean', '9']
 VariationOfClusteringInfo(tree1, tree2, normalize = TRUE) / expectedVCI
 ```

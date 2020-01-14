@@ -22,6 +22,8 @@
 #' @param similarity Logical specifying whether to report the result as a tree
 #' similarity, rather than a difference.
 #' 
+#' @template distReturn
+#' 
 #' @section Normalization:
 #' 
 #' - `RobinsonFoulds` is normalized against the total number of partitions that
@@ -33,7 +35,7 @@
 #' @references \insertRef{Robinson1981}{TreeDist}
 #' @family tree distances
 #' 
-#' @author Martin R. Smith
+#' @template MRS
 #' @export
 RobinsonFouldsInfo <- function (tree1, tree2 = tree1, similarity = FALSE,
                                 normalize = FALSE, reportMatching = FALSE) {
@@ -52,7 +54,6 @@ RobinsonFouldsInfo <- function (tree1, tree2 = tree1, similarity = FALSE,
 #' @describeIn RobinsonFouldsInfo Calculate information-adjusted Robinson-Foulds
 #' distance from splits instead of trees.
 #' @inheritParams MutualPhylogeneticInfoSplits
-#' @importFrom TreeTools LogTreesMatchingSplit LnUnrooted.int
 #' @export
 RobinsonFouldsInfoSplits <- function (splits1, splits2, 
                                       nTip = attr(splits1, 'nTip'),

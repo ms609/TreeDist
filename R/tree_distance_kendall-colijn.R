@@ -16,21 +16,23 @@
 #' of tips from the tips themselves, i.e. the length of the path from one 
 #' tip to another.
 #' 
-#' @template tree12Params
+#' @template tree12listparams
+#' 
+#' @template distReturn
 #' 
 #' @seealso [treespace::treeDist](https://cran.r-project.org/web/packages/treespace/vignettes/introduction.html),
 #' a more sophisticated, if more cumbersome, implementation that supports 
 #' lambda > 0, i.e. use of edge lengths in tree comparison.
 #' 
 #' @family tree distances
-#' @author Martin R. Smith
+#' @template MRS
 #' @references \insertRef{Kendall2016}{TreeDist}
 #' @export
 KendallColijn <- function (tree1, tree2 = tree1) {
   FunValue <- function (nTip) double(nTip * (nTip - 1L) / 2L)
   EuclidianDistance <- function (x) sqrt(sum(x * x))
-  if (class(tree1) == 'phylo') {
-    if (class(tree2) == 'phylo') {
+  if (inherits(tree1, 'phylo')) {
+    if (inherits(tree2, 'phylo')) {
       if (length(tree1$tip.label) != length(tree2$tip.label) || 
           length(setdiff(tree1$tip.label, tree2$tip.label)) > 0) {
         stop("Tree tips must bear identical labels")
@@ -42,7 +44,7 @@ KendallColijn <- function (tree1, tree2 = tree1) {
             2L, EuclidianDistance)
     }
   } else {
-    if (class(tree2) == 'phylo') {
+    if (inherits(tree2, 'phylo')) {
       apply(KCVector(tree2) - vapply(tree1, KCVector,
                                      FunValue(length(tree2$tip.label))),
             2L, EuclidianDistance)

@@ -52,6 +52,10 @@ each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
 
 \item{nTip}{Integer specifying the number of tips in each split.}
 }
+\value{
+An array of numerics providing the distances between each pair of
+trees in \code{tree1} and \code{tree2}.
+}
 \description{
 Implements the tree comparison metric of Nye \emph{et al}. (2006).
 In short, this finds the optimal matching that pairs each branch from
@@ -89,17 +93,24 @@ from zero to one by dividing by the total number of partitions in the pair
 of trees being considered.
 }
 
+\examples{
+library('TreeTools')
+NyeTreeSimilarity(BalancedTree(8), PectinateTree(8))
+NyeTreeSimilarity(lapply(0:5, as.phylo, nTip = 8), PectinateTree(8))
+NyeTreeSimilarity(lapply(0:5, as.phylo, nTip = 8), similarity = FALSE)
+
+}
 \references{
 \insertRef{Nye2006}{TreeDist}
 }
 \seealso{
 Other tree distances: \code{\link{JaccardRobinsonFoulds}},
-  \code{\link{KendallColijn}},
+  \code{\link{KendallColijn}}, \code{\link{MASTSize}},
   \code{\link{MatchingSplitDistance}},
   \code{\link{RobinsonFouldsInfo}},
   \code{\link{TreeDistance}}
 }
 \author{
-Martin R. Smith
+Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
 \concept{tree distances}

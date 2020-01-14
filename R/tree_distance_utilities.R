@@ -6,20 +6,18 @@
 #' @param Func Tree distance function.
 #' @param \dots Additional arguments to `Func`.
 #' 
-#' @author Martin R. Smith
+#' @template MRS
 #' @keywords internal
 #' @importFrom TreeTools as.Splits TipLabels
 #' @export
 CalculateTreeDistance <- function (Func, tree1, tree2,
                                    reportMatching = FALSE, ...) {
-  class1 <- class(tree1)
-  single1 <- (class1 == 'phylo' || class1 == 'Splits')
-  labels1 <- TipLabels(tree1)
+  single1 <- inherits(tree1, c('phylo', 'Splits'))
+  labels1 <- TipLabels(tree1, single = TRUE)
   nTip <- length(labels1)
     
-  class2 <- class(tree2)
-  single2 <- (class2 == 'phylo' || class2 == 'Splits')
-  labels2 <- TipLabels(tree2)
+  single2 <- inherits(tree2, c('phylo', 'Splits'))
+  labels2 <- TipLabels(tree2, single = TRUE)
   
   if (length(setdiff(labels1, labels2)) > 0) {
     stop("Tree tips must bear identical labels")
@@ -27,31 +25,31 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
   
   if (single1) {
     if (single2) {
-      .TreeDistanceOneOne(Func, tree1, tree2, tipLabels = labels1, nTip,
+      .SplitDistanceOneOne(Func, tree1, tree2, tipLabels = labels1, nTip,
                           reportMatching = reportMatching, ...)
     } else {
-      .TreeDistanceOneMany(Func, oneSplit = tree1, manySplits = tree2,
+      .SplitDistanceOneMany(Func, oneSplit = tree1, manySplits = tree2,
                            tipLabels = labels1, nTip = nTip, ...)
     }
   } else {
     if (single2) {
-      .TreeDistanceOneMany(Func, oneSplit = tree2, manySplits = tree1,
+      .SplitDistanceOneMany(Func, oneSplit = tree2, manySplits = tree1,
                            tipLabels = labels2, ...)
     } else {
-      .TreeDistanceManyMany(Func, tree1, tree2,
+      .SplitDistanceManyMany(Func, tree1, tree2,
                             tipLabels = labels1, ...)
     }
   }
 }
 
-.TreeDistanceOneOne <- function (Func, split1, split2, tipLabels, 
+.SplitDistanceOneOne <- function (Func, split1, split2, tipLabels, 
                                  nTip = length(tipLabels), reportMatching, ...) {
   Func(as.Splits(split1, asSplits = reportMatching),
        as.Splits(split2, tipLabels = tipLabels, asSplits = reportMatching),
        nTip = nTip, reportMatching = reportMatching, ...)
 }
 
-.TreeDistanceOneMany <- function (Func, oneSplit, manySplits, 
+.SplitDistanceOneMany <- function (Func, oneSplit, manySplits, 
                                   tipLabels, nTip = length(tipLabels), ...) {
   s1 <- as.Splits(oneSplit, tipLabels = tipLabels, asSplits = FALSE)
   vapply(manySplits,
@@ -61,7 +59,7 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
          double(1))
 }
 
-.TreeDistanceManyMany <- function (Func, splits1, splits2, 
+.SplitDistanceManyMany <- function (Func, splits1, splits2, 
                                    tipLabels, nTip = length(tipLabels), ...) {
   if (identical(splits1, splits2)) {
     splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
@@ -92,6 +90,99 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
   }
 }
 
+#' Calculate distance between trees, or lists of trees
+#' @template MRS
+#' @importFrom TreeTools TipLabels
+#' @param checks Logical specifying whether to perform basic sanity checks to
+#' avoid crashes in C++.
+#' @keywords internal
+#' @seealso [`CalculateTreeDistance`]
+#' @export
+.TreeDistance <- function (Func, tree1, tree2, checks = TRUE, ...) {
+  single1 <- inherits(tree1, 'phylo')
+  labels1 <- TipLabels(tree1, single = TRUE)
+  nTip <- length(labels1)
+  
+  single2 <- inherits(tree2, 'phylo')
+  labels2 <- TipLabels(tree2, single = TRUE)
+  
+  if (checks) {
+    if (length(setdiff(labels1, labels2)) > 0) {
+      stop("Tree tips must bear identical labels")
+    }
+    
+    if (!single1) {
+      .CheckLabelsSame(lapply(tree1, TipLabels))
+    }
+    
+    if (!single2) {
+      .CheckLabelsSame(lapply(tree2, TipLabels))
+    }
+  }
+  
+  if (single1) {
+    if (single2) {
+      Func(tree1, tree2, nTip = nTip, tipLabels = labels1, ...)
+    } else {
+      .TreeDistanceOneMany(Func, oneTree = tree1, manyTrees = tree2,
+                           tipLabels = labels1, nTip = nTip, ...)
+    }
+  } else {
+    if (single2) {
+      .TreeDistanceOneMany(Func, oneTree = tree2, nTip = nTip, 
+                           tipLabels = labels2, manyTrees = tree1, ...)
+    } else {
+      .TreeDistanceManyMany(Func, tree1, tree2, nTip = nTip,
+                            tipLabels = labels1, ...)
+    }
+  }
+}
+
+.TreeDistanceOneMany <- function (Func, oneTree, manyTrees, tipLabels, 
+                                  nTip = length(tipLabels), 
+                                  FUN.VALUE = Func(manyTrees[[1]], oneTree,
+                                                   nTip = nTip, 
+                                                   tipLabels = tipLabels, ...),
+                                  ...) {
+  vapply(manyTrees, Func, oneTree, tipLabels = tipLabels,
+                            nTip = nTip, ..., FUN.VALUE = FUN.VALUE)
+}
+
+.TreeDistanceManyMany <- function (Func, trees1, trees2, tipLabels, 
+                                   nTip = length(tipLabels),
+                                   FUN.VALUE = Func(trees1[[1]], trees2[[1]],
+                                                    nTip = nTip, 
+                                                    tipLabels = tipLabels, ...),
+                                   ...) {
+  if (identical(trees1, trees2)) {
+    CompareAll(trees1, Func, nTip = nTip, tipLabels = tipLabels,
+               FUN.VALUE = FUN.VALUE, ...)
+  } else {
+    value <- vapply(seq_along(trees1), function(x) FUN.VALUE, FUN.VALUE)
+    ret <- vapply(trees2, .TreeDistanceOneMany, Func = Func, manyTrees = trees1,
+           tipLabels = tipLabels, nTip = nTip, FUN.VALUE = value)#, ...)
+    if (length(dim(ret)) == 3) {
+      aperm(ret, c(2, 3, 1))
+    } else {
+      ret
+    }
+  }
+}
+
+.CheckLabelsSame <- function (labelList) {
+  nTip <- unique(vapply(labelList, length, 0L))
+  if (length(nTip) != 1) {
+    stop("All trees must contain the same number of tips")
+  }
+  tipLabel <- unique(lapply(labelList, sort))
+  if (length(tipLabel) != 1L) {
+    stop("All trees must bear identical labels. Found:\n >  ", 
+         paste0(lapply(tipLabel, paste, collapse = ' '), 
+               ' (', lapply(tipLabel, class), ')',
+                collapse = '\n >  '))
+  }
+}
+
 #' Entropy in bits
 #' 
 #' Reports the entropy of a vector of probabilities, in bits.
@@ -105,10 +196,73 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
 #' Entropy(c(1/4, 1/4, 0, 1/4, 1/4)) # = 2
 #' 
 #' @return Entropy of the specified probabilities, in bits
-#' @author Martin R. Smith
+#' @template MRS
 #' @export
 Entropy <- function (p) -sum(p[p > 0] * log2(p[p > 0]))
 
+#' Distances between each pair of trees
+#' 
+#' Calculates the distance between each tree in a list, and each other tree
+#' in the same list.
+#' 
+#' (Can in fact be used more generally: `Func` can be any symmetric function.)
+#'
+#' @param x List of trees, in the format expected by `Func`.
+#' @param Func distance function returning distance between two trees,
+#' e.g. [path.dist][phangorn::treedist].
+#' @param FUN.VALUE Format of output of `Func()`, passed to [`vapply`]. 
+#' If left unspecified, generated by running `Func(x[[1]], x[[1]])`.
+#' @param \dots Additional parameters to pass to `Func`.
+#' @return Distance matrix of class `dist` detailing distance between each pair 
+#' of trees.
+#' Identical trees are assumed to have zero distance.
+#' 
+#' @examples
+#'   library(TreeTools)
+#'   
+#'   # Generate a list of trees to compare
+#'   trees <- list(BalancedTree(1:8), PectinateTree(1:8), PectinateTree(c(4:1, 5:8)))
+#'   
+#'   # Compare each tree with each other tree
+#'   CompareAll(trees, NNIDist)
+#'   
+#'   # Optionally, improve speed slightly by pre-specifying FUN.VALUE:
+#'   dist <- CompareAll(trees, NNIDist, FUN.VALUE = vector('list', 3))
+#'   
+#'   # View distances as a matrix
+#'   as.matrix(dist)
+#'   
+#' @template MRS
+#' @family pairwise tree distances
+#' @importFrom stats dist
+#' @export
+CompareAll <- function (x, Func, FUN.VALUE = Func(x[[1]], x[[1]]),
+                        ...) {
+  nTree <- length(x)
+  countUp <- seq_len(nTree - 1)
+  i <- x[rep(countUp, rev(countUp))]
+  j <- x[unlist(sapply(countUp, function (n) n + seq_len(nTree - n)))]
+  
+  ret <- vapply(seq_along(i), function (k) Func(i[[k]], j[[k]], ...), FUN.VALUE)
+  
+  .WrapReturn <- function (dists) {
+    structure(dists,
+              Size = nTree,
+              Labels = names(x),
+              Diag = FALSE,
+              Upper = TRUE,
+              class = 'dist')
+  }
+  
+  # Return:
+  if (length(FUN.VALUE) == 1) {
+    .WrapReturn(ret)
+  } else {
+    structure(lapply(seq_len(dim(ret)[1]), 
+                     function (i) .WrapReturn(unlist(ret[i, ]))),
+              names = rownames(ret))
+  }
+}
 
 #' Normalize information against total present in both starting trees
 #' @param unnormalized Numeric value to be normalized.
@@ -121,7 +275,7 @@ Entropy <- function (p) -sum(p[p > 0] * log2(p[p > 0]))
 #' returns a normalizing constant against which to divide `unnormalized`.
 #' @param \dots Additional parameters to `InfoInTree`` or `how`.
 #' @keywords internal
-#' @author Martin R. Smith
+#' @template MRS
 #' @export
 NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree, 
                            infoInBoth = NULL,
@@ -161,7 +315,7 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
 #' in a matching.
 #'   
 #' @seealso VisualizeMatching
-#' @author Martin R. Smith
+#' @template MRS
 #' @keywords internal
 #' @export
 ReportMatching <- function (splits1, splits2, realMatch = TRUE) {

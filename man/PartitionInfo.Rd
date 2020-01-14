@@ -16,6 +16,6 @@ content of the tree where a tree contains multiple partitions, as
 these partitions will contain mutual information
 }
 \author{
-Martin R. Smith
+Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
 \keyword{internal}

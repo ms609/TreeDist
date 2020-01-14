@@ -13,7 +13,7 @@
 #' pruned and grafted.
 #' @param edge.width,\dots Additional parameters to `plot.phylo`
 #'
-#' @author Martin R. Smith
+#' @template MRS
 #' @importFrom ape plot.phylo
 #' @keywords internal
 #' @export
@@ -84,7 +84,7 @@ TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = FALSE,
 #' similarity of the associated splits (`FALSE`).
 #' @param edge.width,edge.color,\dots Additional parameters to send to `Plot`.
 #' 
-#' @author Martin R. Smith
+#' @template MRS
 #' @importFrom ape nodelabels edgelabels plot.phylo
 #' @importFrom colorspace qualitative_hcl sequential_hcl
 #' @importFrom graphics par
@@ -155,7 +155,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
       splitEdges <- vapply(splitNodes, match, table = child, 0)
       got <- rootChildren %in% splitNodes
       if (any(got)) {
-        c(score = as.integer(which(splitNodes == rootChildren[rootEdges[got]])),
+        c(score = as.integer(which(splitNodes == rootChildren[got])),
           edge = rootEdges[!got])
       } else {
         c(score = NA, edge = NA)

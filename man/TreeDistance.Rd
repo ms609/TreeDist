@@ -211,12 +211,12 @@ To scale against the information content of the most informative tree, use
 }
 \seealso{
 Other tree distances: \code{\link{JaccardRobinsonFoulds}},
-  \code{\link{KendallColijn}},
+  \code{\link{KendallColijn}}, \code{\link{MASTSize}},
   \code{\link{MatchingSplitDistance}},
   \code{\link{NyeTreeSimilarity}},
   \code{\link{RobinsonFouldsInfo}}
 }
 \author{
-Martin R. Smith
+Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
 \concept{tree distances}

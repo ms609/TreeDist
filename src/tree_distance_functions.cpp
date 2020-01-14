@@ -1,7 +1,6 @@
 #include <Rcpp.h>
 using namespace Rcpp;
-#include <stdint.h>
-#include <math.h> /* for pow(), log() */
+#include <cmath> /* for log2() */
 #include "tree_distances.h"
 #include "SplitList.h"
 
@@ -53,25 +52,12 @@ double lg2_trees_matching_split (int a, int b) {
   return lg2_rooted[a] + lg2_rooted[b];
 }
 
-
-double p_lg2_p_frac (double p) {
-  return -p * log2(p);
-}
-
-double p_lg2_p (double p) {
-  if (p == 0) return 0;
-  if (p == 1) return 0;
-  return p_lg2_p_frac(p);
-}
-
-double entropy2 (double p) {
-  if (p == 0) return 0;
-  if (p == 1) return 0;
-  return p_lg2_p_frac(p) + p_lg2_p_frac(1 - p);
-}
-
-double entropy4 (double p1, double p2, double p3, double p4) {
-  return p_lg2_p(p1) +  p_lg2_p(p2) +  p_lg2_p(p3) +  p_lg2_p(p4);
+/* See equation 16 in Meila 2007. I denote k' as K */
+double ic_element (const double nkK, const unsigned int nk,
+                   const unsigned int nK, const double n) {
+  if (nkK && nk && nK) {
+    return nkK * log2(nkK * n / double(nk * nK));
+  } else return 0;
 }
 
 

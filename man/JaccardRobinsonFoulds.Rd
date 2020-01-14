@@ -54,6 +54,10 @@ each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
 
 \item{nTip}{Integer specifying the number of tips in each split.}
 }
+\value{
+An array of numerics providing the distances between each pair of
+trees in \code{tree1} and \code{tree2}.
+}
 \description{
 Implements the Jaccard-Robinson-Foulds metric of Böcker \emph{et al}. (2013).
 }
@@ -104,7 +108,6 @@ VisualizeMatching(JRF2, tree1, tree2, matchZeros = FALSE)
 
 }
 
-
 }
 \references{
 \itemize{
@@ -114,12 +117,13 @@ VisualizeMatching(JRF2, tree1, tree2, matchZeros = FALSE)
 }
 \seealso{
 Other tree distances: \code{\link{KendallColijn}},
+  \code{\link{MASTSize}},
   \code{\link{MatchingSplitDistance}},
   \code{\link{NyeTreeSimilarity}},
   \code{\link{RobinsonFouldsInfo}},
   \code{\link{TreeDistance}}
 }
 \author{
-Martin R. Smith
+Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
 \concept{tree distances}

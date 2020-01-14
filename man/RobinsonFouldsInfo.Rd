@@ -59,6 +59,10 @@ each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
 
 \item{\dots}{Not used.}
 }
+\value{
+An array of numerics providing the distances between each pair of
+trees in \code{tree1} and \code{tree2}.
+}
 \description{
 Calculates the Robinson-Foulds distance, or the equivalent similarity
 measure, optionally annotating matched partitions and weighting partitions
@@ -109,12 +113,12 @@ information of all splits in both trees, treated independently.
 }
 \seealso{
 Other tree distances: \code{\link{JaccardRobinsonFoulds}},
-  \code{\link{KendallColijn}},
+  \code{\link{KendallColijn}}, \code{\link{MASTSize}},
   \code{\link{MatchingSplitDistance}},
   \code{\link{NyeTreeSimilarity}},
   \code{\link{TreeDistance}}
 }
 \author{
-Martin R. Smith
+Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
 \concept{tree distances}

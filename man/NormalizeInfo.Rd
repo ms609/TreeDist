@@ -28,6 +28,6 @@ returns a normalizing constant against which to divide \code{unnormalized}.}
 Normalize information against total present in both starting trees
 }
 \author{
-Martin R. Smith
+Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
 \keyword{internal}

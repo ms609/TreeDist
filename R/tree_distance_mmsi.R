@@ -35,7 +35,6 @@ VariationOfMatchingSplitInfo <- function (tree1, tree2 = tree1,
 #' @describeIn TreeDistance Calculate variation of matching split information
 #'   from splits instead of trees.
 #' @inheritParams MutualPhylogeneticInfoSplits
-#' @importFrom TreeTools LnUnrooted.int LogTreesMatchingSplit
 #' @export
 MutualMatchingSplitInfoSplits <- function (splits1, splits2,
                                            nTip = attr(splits1, 'nTip'),

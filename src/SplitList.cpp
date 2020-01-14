@@ -14,8 +14,6 @@ SplitList::SplitList(RawMatrix x) {
   if (n_splits < 1) throw std::invalid_argument("No splits present.");
   if (n_bins > MAX_BINS) {
     throw std::length_error("This many tips cannot be supported. Please contact the TreeDist maintainer if you need to use more!");
-    /*throw std::length_error(printf("No more than %i tips can be supported. Please contact the TreeDist maintainer if you need to use more!",
-                                   MAX_TIPS));*/
   }
   
   for (int split = 0; split != n_splits; split++) {
@@ -40,6 +38,35 @@ SplitList::SplitList(RawMatrix x) {
             << (R_BIN_SIZE * input_bin) << " to state [" << i << "][" << j 
             << "], was " << state[i][j] << "\n";*/
       state[split][bin] += ((splitbit (x(split, (bin * input_bins_per_bin) + input_bin)))
+                        << (R_BIN_SIZE * input_bin));
+    }
+  }
+}
+
+SplitList::SplitList(std::vector<int> x, const int n_input_bins) {
+  n_splits = x.size() / n_input_bins;
+  const int input_bins_per_bin = BIN_SIZE / R_BIN_SIZE;
+  n_bins = (n_input_bins + R_BIN_SIZE - 1) / input_bins_per_bin;
+  
+  if (n_bins < 1) throw std::invalid_argument("No tips present.");
+  if (n_splits < 1) throw std::invalid_argument("No splits present.");
+  if (n_bins > MAX_BINS) {
+    throw std::length_error("This many tips cannot be supported. Please contact the TreeDist maintainer if you need to use more!");
+  }
+  
+  for (int split = 0; split != n_splits; split++) {
+    for (int bin = 0; bin != n_bins - 1; bin++) {
+      state[split][bin] = (splitbit) x[split + (n_splits * bin * input_bins_per_bin)];
+      for (int input_bin = 1; input_bin != input_bins_per_bin; input_bin++) {
+        state[split][bin] += ((splitbit (x[(split + (n_splits * (bin * input_bins_per_bin)) + input_bin)]))
+                                << (R_BIN_SIZE * input_bin));
+      }
+    }
+    int bin = n_bins - 1;
+    const int raggedy_bins = R_BIN_SIZE - ((R_BIN_SIZE - (n_input_bins % R_BIN_SIZE)) % R_BIN_SIZE);
+    state[split][bin] = x[split + (n_splits * bin * input_bins_per_bin)];
+    for (int input_bin = 1; input_bin != raggedy_bins; input_bin++) {
+      state[split][bin] += ((splitbit (x[split + (n_splits * ((bin * input_bins_per_bin)) + input_bin)]))
                         << (R_BIN_SIZE * input_bin));
     }
   }

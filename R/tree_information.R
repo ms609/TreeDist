@@ -7,7 +7,7 @@
 #' 
 #' @param tree A tree of class `phylo`, a list of trees, or a `multiPhylo` object.
 #' 
-#' @author Martin R. Smith
+#' @template MRS
 #' @keywords internal
 #' @export
 PartitionInfo <- function (x) UseMethod('PartitionInfo')
@@ -51,7 +51,7 @@ PartitionInfo.Splits <- function(x) {
 #' @return Information content, in bits.
 #' 
 #' @references \insertRef{Meila2007}{TreeDist}
-#' @author Martin R. Smith
+#' @template MRS
 #' @keywords internal
 #' @importFrom TreeTools as.Splits
 #' @export

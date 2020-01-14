@@ -15,6 +15,10 @@ or lists of such trees to undergo pairwise comparison.}
 
 \item{tree}{A tree of class \code{\link[ape:read.tree]{phylo}}.}
 }
+\value{
+An array of numerics providing the distances between each pair of
+trees in \code{tree1} and \code{tree2}.
+}
 \description{
 The Kendall-Colijn distance is related to the path difference.
 }
@@ -47,12 +51,13 @@ a more sophisticated, if more cumbersome, implementation that supports
 lambda > 0, i.e. use of edge lengths in tree comparison.
 
 Other tree distances: \code{\link{JaccardRobinsonFoulds}},
+  \code{\link{MASTSize}},
   \code{\link{MatchingSplitDistance}},
   \code{\link{NyeTreeSimilarity}},
   \code{\link{RobinsonFouldsInfo}},
   \code{\link{TreeDistance}}
 }
 \author{
-Martin R. Smith
+Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
 \concept{tree distances}

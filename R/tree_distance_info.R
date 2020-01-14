@@ -58,7 +58,7 @@
 #' `VariationOfMatchingSplitInfo`: The sum of the
 #' (phylogenetic or clustering) information content of the two trees.
 #' 
-#' @template tree12Params
+#' @template tree12listparams
 #' 
 #' @param normalize If a numeric value is provided, this will be used as a 
 #' maximum value against which to rescale results.
@@ -114,7 +114,7 @@
 #'  * \insertRef{Vinh2010}{TreeDist}
 #' }
 #' 
-#' @author Martin R. Smith
+#' @template MRS
 #' 
 #' @family tree distances
 #' @export
