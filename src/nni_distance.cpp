@@ -75,7 +75,8 @@ IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
                                  _["loose_upper"] = 0));
   }
   if (n_tip > NNI_MAX_TIPS) {
-    throw std::length_error("Cannot calculate NNI distance for trees with so many tips.");
+    throw std::length_error("Cannot calculate NNI distance for trees with "
+                              "so many tips.");
   }
   
   RawMatrix splits1 = cpp_edge_to_splits(edge1, nTip);

@@ -19,7 +19,7 @@ List cpp_robinson_foulds_distance (RawMatrix x, RawMatrix y,
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   cost score = 0;
   
-  IntegerVector matching (most_splits);
+  std::vector<int> matching (most_splits);
   for (int i = 0; i != most_splits; i++) matching[i] = NA_REAL;
   
   splitbit b_complement[MAX_SPLITS][MAX_BINS];
@@ -58,12 +58,63 @@ List cpp_robinson_foulds_distance (RawMatrix x, RawMatrix y,
   }
   score = cost (a.n_splits + b.n_splits) - score - score;
   
-  IntegerVector final_score = IntegerVector::create(score);
-  
-  List ret = List::create(Named("score") = final_score,
-                          _["matching"] = matching);
+  List ret = List::create(Named("score") = Rcpp::wrap(score),
+                          _["matching"] = Rcpp::wrap(matching));
   
   return (ret);
+}
+
+std::vector<int> cpp_robinson_foulds_matching (
+    std::vector<int> x, std::vector<int> y, 
+    const int n_cols,
+    const int n_tips) {
+  
+  SplitList a(x, n_cols), b(y, n_cols);
+  const int most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
+    last_bin = a.n_bins - 1,
+    unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
+  const splitbit unset_mask = ALL_ONES >> unset_tips;
+  cost score = 0;
+  
+  std::vector<int> matching (most_splits);
+  for (int i = 0; i != most_splits; i++) matching[i] = NA_REAL;
+  
+  splitbit b_complement[MAX_SPLITS][MAX_BINS];
+  for (int i = 0; i != b.n_splits; i++) {
+    for (int bin = 0; bin != last_bin; bin++) {
+      b_complement[i][bin] = ~b.state[i][bin];
+    }
+    b_complement[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
+  }
+  
+  for (int ai = 0; ai != a.n_splits; ai++) {
+    for (int bi = 0; bi != b.n_splits; bi++) {
+    
+      bool all_match = true, all_complement = true;
+    
+      for (int bin = 0; bin != a.n_bins; bin++) {
+        if ((a.state[ai][bin] != b.state[bi][bin])) {
+          all_match = false;
+          break;
+        }
+      }
+      if (!all_match) {
+        for (int bin = 0; bin != a.n_bins; bin++) {
+          if ((a.state[ai][bin] != b_complement[bi][bin])) {
+            all_complement = false;
+            break;
+          }
+        }
+      }
+      if (all_match || all_complement) {
+        ++score;
+        matching[ai] = bi + 1;
+        break; /* Only one match possible per split */
+      }
+    }
+  }
+  
+  return (matching);
 }
 
 // [[Rcpp::export]]
