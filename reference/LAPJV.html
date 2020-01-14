@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Entropy in bits — Entropy • TreeDist</title>
+<title>Solve linear assignment problem using LAPJV — LAPJV • TreeDist</title>
 
 
 <!-- jquery -->
@@ -41,10 +41,9 @@
 
 
 
-<meta property="og:title" content="Entropy in bits — Entropy" />
-<meta property="og:description" content="Reports the entropy of a vector of probabilities, in bits.
-Probabilities should sum to one.  Probabilities equalling zero will be
-ignored." />
+<meta property="og:title" content="Solve linear assignment problem using LAPJV — LAPJV" />
+<meta property="og:description" content="Solve the Linear Assignment Problem with the algorithm of
+Jonker &amp;amp; Volgenant (1987)." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -155,46 +154,59 @@ ignored." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Entropy in bits</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance_utilities.R'><code>R/tree_distance_utilities.R</code></a></small>
-    <div class="hidden name"><code>Entropy.Rd</code></div>
+    <h1>Solve linear assignment problem using LAPJV</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/lap.R'><code>R/lap.R</code></a></small>
+    <div class="hidden name"><code>LAPJV.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Reports the entropy of a vector of probabilities, in bits.
-Probabilities should sum to one.  Probabilities equalling zero will be
-ignored.</p>
+    <p>Solve the Linear Assignment Problem with the algorithm of
+Jonker &amp; Volgenant (1987).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>Entropy</span>(<span class='no'>p</span>)</pre>
+    <pre class="usage"><span class='fu'>LAPJV</span>(<span class='no'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>p</th>
-      <td><p>Numeric vector specifying probabilities of outcomes.</p></td>
+      <th>x</th>
+      <td><p>Matrix to solve.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Entropy of the specified probabilities, in bits</p>
+    <p>A list with two entries: <code>score</code>, the score of the optimal matching;
+and <code>matching</code>, the columns matched to each row of the matrix in turn.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>Entropy</span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0.5</span>, <span class='fl'>2</span>)) <span class='co'># = 1</span></div><div class='output co'>#&gt; [1] 1</div><div class='input'><span class='fu'>Entropy</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>/<span class='fl'>4</span>, <span class='fl'>1</span>/<span class='fl'>4</span>, <span class='fl'>0</span>, <span class='fl'>1</span>/<span class='fl'>4</span>, <span class='fl'>1</span>/<span class='fl'>4</span>)) <span class='co'># = 2</span></div><div class='output co'>#&gt; [1] 2</div><div class='input'>
-</div></pre>
+    <p>The Linear Assignment Problem seeks to match each row of a matrix with a
+column, such that the cost of the matching is minimized.</p>
+<p>The JV approach improves on the Hungarian algorithm, which is implemented
+in <code><a href='https://rdrr.io/pkg/clue/man/solve_LSAP.html'>clue::solve_LSAP</a></code>.</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>"A Shortest Augmenting Path Algorithm for Dense and Sparse Linear
+Assignment Problems," Computing 38, 325-340, 1987</p>
+<p>R. Jonker and A. Volgenant, University of Amsterdam.</p>
+
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
-      <li><a href="#examples">Examples</a></li>
+      <li><a href="#details">Details</a></li>
+      <li><a href="#references">References</a></li>
     </ul>
 
     <h2>Author</h2>
-    <p>Martin R. Smith (<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
+    <p>C++ code by Roy Jonker @ MagicLogic Optimization Inc.
+e-mail: roy_jonker@magiclogic.com</p>
+<p>Changed 2016-05-13 by Yong Yang(yongyanglink@gmail.com) in column reduction
+part according to matlab version of LAPJV algorithm (Yi Cao)
+https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/LAPJV/lap.cpp</p>
   </div>
 </div>
 

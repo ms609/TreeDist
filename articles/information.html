@@ -114,7 +114,7 @@
       <h1>Information theory</h1>
                         <h4 class="author">Martin R. Smith</h4>
             
-            <h4 class="date">2019-11-14</h4>
+            <h4 class="date">2020-01-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/information.Rmd"><code>vignettes/information.Rmd</code></a></small>
       <div class="hidden name"><code>information.Rmd</code></div>
@@ -189,6 +189,7 @@ VoI(A, B) = H(A, B) - I(A;B)
 <a href="#phylogenetic-information" class="anchor"></a>Phylogenetic information</h2>
 <p>When it comes to comparing partitions <span class="citation">(Smith, 2019)</span>, we can imagine Jane selecting one ‘true tree’ from the universe of bifurcating <em>n</em>-tip trees, then telling us two partitions that occur in that tree.</p>
 <p>Let’s consider the two splits <code>BC:ADE</code> and <code>DE:ABC</code> in the universe of 5-tip trees.</p>
+<pre><code>## Loading required package: ape</code></pre>
 <p><img src="information_files/figure-html/unnamed-chunk-1-1.png" width="90%"></p>
 <p>The phylogenetic information content <span class="citation">(<em>sensu</em> Steel &amp; Penny, 2006)</span> of each partition corresponds to the logarithm of the proportion of bifurcating <em>n</em>-tip trees that include that partition.</p>
 <ul>

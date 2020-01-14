@@ -13,6 +13,9 @@
     <loc>https://ms609.github.io/TreeDist/reference/ClusteringInfo.html</loc>
   </url>
   <url>
+    <loc>https://ms609.github.io/TreeDist/reference/CompareAll.html</loc>
+  </url>
+  <url>
     <loc>https://ms609.github.io/TreeDist/reference/Entropy.html</loc>
   </url>
   <url>
@@ -28,10 +31,19 @@
     <loc>https://ms609.github.io/TreeDist/reference/KendallColijn.html</loc>
   </url>
   <url>
+    <loc>https://ms609.github.io/TreeDist/reference/LAPJV.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/reference/MASTSize.html</loc>
+  </url>
+  <url>
     <loc>https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/MeilaVariationOfInformation.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/reference/NNIDist.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/NormalizeInfo.html</loc>
@@ -70,13 +82,13 @@
     <loc>https://ms609.github.io/TreeDist/reference/VisualizeMatching.html</loc>
   </url>
   <url>
+    <loc>https://ms609.github.io/TreeDist/reference/dot-TreeDistance.html</loc>
+  </url>
+  <url>
     <loc>https://ms609.github.io/TreeDist/articles/Generalized-RF.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html</loc>
-  </url>
-  <url>
-    <loc>https://ms609.github.io/TreeDist/articles/Tree-distance-metric-evaluation.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/articles/Using-TreeDist.html</loc>

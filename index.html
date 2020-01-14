@@ -13,12 +13,14 @@
 <script src="pkgdown.js"></script><!-- docsearch --><script src="docsearch.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous">
 <link href="docsearch.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Distances between Phylogenetic Trees">
-<meta property="og:description" content="Implements various measures of tree similarity, including 
+<meta property="og:description" content="Implements measures of tree similarity, including 
   Information-based generalized Robinson-Foulds distances
   (Mutual Phylogenetic Information, Mutual Clustering Information; Smith, in revision); 
   the metric of Nye et al. (2006) &lt;doi:10.1093/bioinformatics/bti720&gt;;
   the Matching Split Distance (Bogdanowicz &amp; Giaro 2012) &lt;doi:10.1109/TCBB.2011.48&gt;;
-  and the Kendall-Colijn (2016) distance &lt;doi:10.1093/molbev/msw124&gt;.">
+  the Kendall-Colijn (2016) distance &lt;doi:10.1093/molbev/msw124&gt;, and the
+  Nearest Neighbour Interchange (NNI) distance, approximated per Li et al. 1996
+  &lt;doi:10.1007/3-540-61332-3_168&gt;.">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -138,7 +140,8 @@
 <p>Bogdanowicz and Giaro (2012), and independently Lin <em>et al.</em> (2012), count the number of ‘mismatched’ terminals in a pair of bipartitions.</p>
 </li>
 </ul>
-<p>The package also implements the variation of the path distance proposed by Kendal and Colijn (2016) (function <a href="https://ms609.github.io/TreeDist/reference/KendallColijn.html"><code>KendallColijn</code></a>).</p>
+<p>The package also implements the variation of the path distance proposed by Kendal and Colijn (2016) (function <a href="https://ms609.github.io/TreeDist/reference/KendallColijn.html"><code>KendallColijn</code></a>), approximations of the Nearest-Neighbour Interchange (NNI) distance (function <a href="https://ms609.github.io/TreeDist/reference/NNIDist.html"><code>NNIDist</code></a>; following Li <em>et al.</em> (1996)), and calculates the size (function <a href="https://ms609.github.io/TreeDist/reference/MASTSize.html"><code>MASTSize</code></a>) and information content (function <a href="https://ms609.github.io/TreeDist/reference/MASTSize.html"><code>MASTInfo</code></a>) of the Maximum Agreement Subtree.</p>
+<p>For an implementation of the Tree Bisection and Reconnection (TBR) distance, see <a href="https://ms609.github.io/TBRDist/index.html"><code>TBRDist</code></a>.</p>
 </div>
 <div id="installation" class="section level1">
 <h1 class="hasAnchor">
@@ -189,6 +192,8 @@ If you're feeling brave, y-->
 <li>
 <a href="http://ms609.github.io/Quartet/">Quartet</a>: Quartet and Triplet distances, using the tqDist algorithm.</li>
 <li>
+<a href="http://ms609.github.io/TBRDist/">TBRDist</a>: TBR and SPR distances on unrooted trees, using the <code>uspr</code> C library.</li>
+<li>
 <a href="https://cran.r-project.org/package=distory">distory</a> (unmaintained): Geodistic distance</li>
 </ul>
 </div>
@@ -199,6 +204,7 @@ If you're feeling brave, y-->
 <li><p>Böcker, S. <em>et al.</em> (2013) <a href="https://dx.doi.org/10.1007/978-3-642-40453-5_13">The Generalized Robinson-Foulds Metric</a>. Algorithms in Bioinformatics. WABI 2013. Lecture Notes in Computer Science, 8126, 156–69.</p></li>
 <li><p>Bogdanowicz, D. and Giaro, K. (2012) <a href="https://dx.doi.org/10.1109/TCBB.2011.48">Matching split distance for unrooted binary phylogenetic trees</a>. IEEE/ACM Transactions on Computational Biology and Bioinformatics, 9, 150–160.</p></li>
 <li><p>Kendall, M. and Colijn, C. (2016) <a href="https://dx.doi.org/10.1093/molbev/msw124">Mapping phylogenetic trees to reveal distinct patterns of evolution</a>. Mol Biol Evol, 33, 2735–2743.</p></li>
+<li><p>Li, M., Tromp, J. and Zhang, L.-X. (1996) <a href="https://dx.doi.org/10.1007/3-540-61332-3_168">Some notes on the nearest neighbour interchange distance</a>. Computing and Combinatorics, Goos, G., Hartmanis, J., Leeuwen, J., Cai, J.-Y., and Wong, C. K., eds. Springer, Berlin. 343–351.</p></li>
 <li><p>Nye, T.M.W. <em>et al.</em> (2006) <a href="https://dx.doi.org/10.1093/bioinformatics/bti720">A novel algorithm and web-based tool for comparing two alternative phylogenetic trees</a>. Bioinformatics, 22, 117–119.</p></li>
 <li><p>Smith, M.R. (in review) [Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees].</p></li>
 </ul>
