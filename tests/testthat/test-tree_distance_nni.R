@@ -1,6 +1,6 @@
 context("tree_distance_nni.R")
 library('TreeTools')
-library('ape')
+
 test_that("Simple NNI approximations", {
   nTip <- 6L
   tree1 <- BalancedTree(nTip)
@@ -49,7 +49,7 @@ test_that("Simple NNI approximations", {
   
   # Too different for tight upper bound
   set.seed(10000)
-  expect_true(is.na(NNIDist(ape::rtree(100, br=NULL), ape::rtree(100, br=NULL))[[2]]))
+  expect_true(is.na(NNIDist(rtree(100, br=NULL), rtree(100, br=NULL))[[2]]))
   
 })
 
