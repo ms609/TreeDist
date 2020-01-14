@@ -39,10 +39,10 @@ in the same list.
   CompareAll(trees, NNIDist)
   
   # Optionally, improve speed slightly by pre-specifying FUN.VALUE:
-  dist <- CompareAll(trees, NNIDist, FUN.VALUE = vector('list', 3))
+  dist <- CompareAll(trees, NNIDist, FUN.VALUE = integer(3))
   
   # View distances as a matrix
-  as.matrix(dist)
+  as.matrix(dist$lower)
   
 }
 \author{
