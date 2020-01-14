@@ -20,7 +20,7 @@ List cpp_robinson_foulds_distance (RawMatrix x, RawMatrix y,
   cost score = 0;
   
   std::vector<int> matching (most_splits);
-  for (int i = 0; i != most_splits; i++) matching[i] = NA_REAL;
+  for (int i = 0; i != most_splits; i++) matching[i] = NA_INTEGER;
   
   splitbit b_complement[MAX_SPLITS][MAX_BINS];
   for (int i = 0; i != b.n_splits; i++) {
@@ -77,7 +77,7 @@ std::vector<int> cpp_robinson_foulds_matching (
   cost score = 0;
   
   std::vector<int> matching (most_splits);
-  for (int i = 0; i != most_splits; i++) matching[i] = NA_REAL;
+  for (int i = 0; i != most_splits; i++) matching[i] = NA_INTEGER;
   
   splitbit b_complement[MAX_SPLITS][MAX_BINS];
   for (int i = 0; i != b.n_splits; i++) {
