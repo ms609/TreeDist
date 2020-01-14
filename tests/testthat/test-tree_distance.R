@@ -543,7 +543,7 @@ test_that('Multiple comparisons are correctly ordered', {
   expect_equivalent(as.matrix(phangorn::RF.dist(trees)),
                     as.matrix(CompareAll(trees, phangorn::RF.dist, 0L)))
   
-  NNILoose <- function (x, y) NNIDist(x, y)$loose_upper
+  NNILoose <- function (x, y) NNIDist(x, y)['loose_upper']
   expect_equivalent(CompareAll(trees, NNILoose),
                     CompareAll(trees, NNIDist)$loose_upper)
 })

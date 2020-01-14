@@ -29,8 +29,8 @@
 #' 
 #' @template tree12Params
 #' 
-#' @return `NNIDist` returns, for each pair of trees, a list containing three
-#' entries:
+#' @return `NNIDist` returns, for each pair of trees, a named vector
+#'  containing three integers:
 #' 
 #' - `lower` is a lower bound on the NNI distance, and corresponds
 #' to the RF distance between the trees. 

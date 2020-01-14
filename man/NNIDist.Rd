@@ -10,8 +10,8 @@ NNIDist(tree1, tree2 = tree1)
 \item{tree1, tree2}{Single trees of class \code{phylo} to undergo comparison.}
 }
 \value{
-\code{NNIDist} returns, for each pair of trees, a list containing three
-entries:
+\code{NNIDist} returns, for each pair of trees, a named vector
+containing three integers:
 \itemize{
 \item \code{lower} is a lower bound on the NNI distance, and corresponds
 to the RF distance between the trees.

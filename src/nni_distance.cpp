@@ -62,7 +62,7 @@ void update_score (const unsigned int subtree_edges, int *tight_bound,
 }
 
 // [[Rcpp::export]]
-List cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
+IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
                        IntegerVector nTip) {
   unsigned int n_tip = nTip[0],
                node_0 = n_tip,
@@ -70,8 +70,9 @@ List cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
                n_edge = edge1.nrow();
   int lower_bound = 0, tight_score_bound = 0, loose_score_bound = 0;
   if (n_tip < 4) {
-    return(List::create(Named("lower") = 0, _["tight_upper"] = 0,
-                            _["loose_upper"] = 0));
+    return(IntegerVector::create(Named("lower") = 0,
+                                 _["tight_upper"] = 0,
+                                 _["loose_upper"] = 0));
   }
   if (n_tip > NNI_MAX_TIPS) {
     throw std::length_error("Cannot calculate NNI distance for trees with so many tips.");
@@ -137,8 +138,8 @@ List cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
                  &tight_score_bound, &loose_score_bound);
   }
 
-  List ret = List::create(Named("lower") = lower_bound, 
-                                _["tight_upper"] = tight_score_bound,
-                                _["loose_upper"] = loose_score_bound);
-  return (ret);
+  return IntegerVector::create(Named("lower") = lower_bound, 
+                               _["tight_upper"] = tight_score_bound,
+                               _["loose_upper"] = loose_score_bound);
+  
 }

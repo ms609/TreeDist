@@ -43,7 +43,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_nni_distance
-List cpp_nni_distance(IntegerMatrix edge1, IntegerMatrix edge2, IntegerVector nTip);
+IntegerVector cpp_nni_distance(IntegerMatrix edge1, IntegerMatrix edge2, IntegerVector nTip);
 RcppExport SEXP _TreeDist_cpp_nni_distance(SEXP edge1SEXP, SEXP edge2SEXP, SEXP nTipSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
