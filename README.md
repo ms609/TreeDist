@@ -64,7 +64,7 @@ information content (function
 [`MASTInfo`](https://ms609.github.io/TreeDist/reference/MASTSize.html)) of the 
 Maximum Agreement Subtree.
 
-For an implementation of the TBR distance, see [`TBRDist`](https://ms609.github.io/TBRDist/reference/TBRDist.html).
+For an implementation of the Tree Bisection and Reconnection (TBR) distance, see [`TBRDist`](https://ms609.github.io/TBRDist/index.html).
 
 # Installation
 
