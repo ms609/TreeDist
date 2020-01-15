@@ -1,4 +1,4 @@
-#' Size of maximum agreement subtree
+#' Size of Maximum Agreement Subtree
 #' 
 #' Calculate the maximum agreement subtree between two phylogenetic trees, i.e.
 #' the largest tree that can be obtained from either `tree1` or `tree2` solely
