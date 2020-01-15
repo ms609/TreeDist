@@ -11,7 +11,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Once you understand [how to use _TreeDist_](Using-TreeDist.html) to calculate
+Once you understand [how to use TreeDist](Using-TreeDist.html) to calculate
 tree distances, and [what distances measure](tree-distances.html), the next
 step is to provide some context for the calculated distances.
 
@@ -28,9 +28,9 @@ Normalizing a distance metric is one way to render its meaning more obvious.
 The appropriate normalizing constant may consider some thought, as it will 
 depend on the purpose to which a tree distance metric is being put.
 
-The default normalization behaviour of each functions in _TreeDist_ is listed
+The default normalization behaviour of each functions in TreeDist is listed
 in the accompanying manual pages, visible under the 
-[function reference](reference/index.html) or by typing `?FunctionName` in the
+[function reference](../reference/index.html) or by typing `?FunctionName` in the
 R terminal. This default behaviour is triggered by setting `normalize = TRUE`.
 
 ### Nye _et al._ tree similarity
@@ -47,7 +47,7 @@ VisualizeMatching(NyeTreeSimilarity, tree1, tree2,
 ```
 
 This is a nice metric to start with, because the maximum similarity between 
-each pair of partitions is defined as one. 
+each pair of splits is defined as one. 
 (Astute readers might worry that the minimum similarity is greater than zero --
 that's a harder problem to overcome.)
 
@@ -67,7 +67,7 @@ NyeTreeSimilarity(tree1, tree2, normalize = 8)
 
 We might also be interested in comparing the tree similarity to the maximum
 score possible for two trees of the specified resolution.  This value is given
-by the number of partitions in the least resolved of the two trees:
+by the number of splits in the least resolved of the two trees:
 
 ```{r}
 NyeTreeSimilarity(tree1, tree2,
@@ -81,7 +81,7 @@ NyeTreeSimilarity(tree1, tree2, normalize = min, normalizeMax = FALSE)
 ```
 
 If we are comparing lists of trees, this best value will depend on the number
-of partitions in each pair of trees.  We can use the function `pmin` to 
+of splits in each pair of trees.  We can use the function `pmin` to 
 select the less resolved of each pair of trees:
 
 
@@ -115,8 +115,8 @@ to calculate.
 As an example, the variation of clustering information distance metric 
 ranges in principle from zero, to the total amount of clustering information
 present in a pair of trees.  But with even a modest number of tips, no pairs
-of trees exist in which every partition in one tree is perfectly contradicted
-by every other partition in the other; as such, any pair of trees will 
+of trees exist in which every split in one tree is perfectly contradicted
+by every other split in the other; as such, any pair of trees will 
 necessarily have some degree of similarity.  
 In such a context, it can be relevant to normalize tree similarity against the
 _expected_ distance between a pair of random trees, rather than a maximum value.
@@ -136,7 +136,8 @@ normalizedQD <- QuartetDivergence(QuartetStatus(tree1, tree2),
 The expected distance is more difficult to calculate for other metrics, but 
 can be approximated by sampling random pairs of trees.  Measured distances
 between 10 000 pairs of random bifurcating trees with up to 200 tips are 
-available in the data package `TreeDistData`.  We can view (normalized) 
+available in the data package 
+[`TreeDistData`](https://github.com/ms609/TreeDistData).  We can view (normalized) 
 distances for a selection of methods:
 
 ```{r, collapse=TRUE, eval = FALSE}
@@ -177,16 +178,16 @@ VariationOfClusteringInfo(tree1, tree2, normalize = TRUE) / expectedVCI
 
 This score tells us how similar the two trees are.  Similarity has two 
 components: precision and accuracy.  A tree can be 80% similar to a target tree
-because it contains 80% of the partitions in the target tree, and no 
-incorrect partitions -- or because it is perfectly bifurcating, but 
-10% of the partitions present are resolved incorrectly and are thus positively
+because it contains 80% of the splits in the target tree, and no 
+incorrect splits -- or because it is perfectly bifurcating, but 
+10% of the splits present are resolved incorrectly and are thus positively
 misleading.
 
-In such a comparison, of course, it is more sensible to talk about partition
-information than just the number of partitions: an even partition may
-contain more information than two very uneven partitions, so the absence of 
-two information-poor partitions may be preferable to the absence of one 
-information-rich partition.  As such, it is most instructive to think of the
+In such a comparison, of course, it is more sensible to talk about split
+_information_ than just the number of splits: an even split may
+contain more information than two very uneven split, so the absence of 
+two information-poor splits may be preferable to the absence of one 
+information-rich split.  As such, it is most instructive to think of the
 proportion of information that has been correctly resolved: the desideratum
 is that we find a tree that is as informative as possible about the true tree.
 
@@ -256,7 +257,7 @@ We'll move away from the true tree by making a TBR move, then reduce
 resolution by taking the consensus of this tree, and three trees in its 
 immediate neighbourhood, one NNI move away.
 
-```{r}
+```{r, message=FALSE}
 library('TreeSearch') # for TBR, NNI
 oneAway <- structure(lapply(seq_len(200), function (x) {
   tbrTree <- TBR(trueTree)
@@ -304,7 +305,10 @@ incorrect3 <- infoInTree3 - correct3
 ```
 
 Now we can plot this information on a ternary diagram.
-We'll define some colours first: orange for the one-away trees, and blue
+We'll define some colours first: 
+<span style='background-color:#F5CCB599'>&nbsp;orange&nbsp;</span> 
+for the one-away trees, and 
+<span style='background-color:#9CE0E699'>&nbsp;blue&nbsp;</span> 
 for the three-aways:
 
 ```{r, collapse=TRUE}
@@ -370,5 +374,3 @@ quality, as depicted in the accompanying histogram.
 - More details of the [Ternary package](http://ms609.github.io/Ternary/)
 
 - A summary of the [distances implemented](tree-distances.html) in TreeDist
-
-## References
