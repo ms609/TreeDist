@@ -1,5 +1,5 @@
 ---
-title: "Calculate tree similarity with _TreeDist_"
+title: "Calculate tree similarity with TreeDist"
 author: "Martin R. Smith"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -12,7 +12,7 @@ vignette: >
 ---
 
 This document should contain all you need to get started measuring tree 
-distances with _TreeDist_.  If you get stuck, please 
+distances with TreeDist.  If you get stuck, please 
 [let me know](https://github.com/ms609/TreeDist/issues/new?title=Suggestion:+)
 so I can improve this documentation.
 
@@ -76,8 +76,9 @@ list and each tree in the second.
 
 ```{r multi-trees}
 oneTree <- ape::rtree(11)
-twoTrees <- structure(list(ape::rtree(11), ape::rtree(11)), class='multiPhylo')
-threeTrees <- list(ape::rtree(11), ape::rtree(11), ape::rtree(11))
+twoTrees <- structure(list(one = ape::rtree(11), two = ape::rtree(11)),
+                      class='multiPhylo')
+threeTrees <- list(a = ape::rtree(11), b = ape::rtree(11), c = ape::rtree(11))
 
 TreeDistance(oneTree, twoTrees)
 TreeDistance(twoTrees, threeTrees)
@@ -96,7 +97,7 @@ VisualizeMatching(VariationOfClusteringInfo, tree1, tree2)
 
 This shows the eight splits in tree 1, and the paired splits in tree two.  
 Each split is labelled with a measure of its similarity, which is its contribution 
-to the total tree distance score.
+to the total tree similarity score.
 
 We can view this information in a format accessible for further examination in R with:
 
