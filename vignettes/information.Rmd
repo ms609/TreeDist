@@ -88,11 +88,11 @@ I(A;B) = H(A) + H(B) - H(A, B)
 
 
 
-The variation of information is the information that _A_ and _B_ do _not_ have
-in common:
+The variation of information, also termed the entropy distance [@Mackay2003, 140],
+is the information that _A_ and _B_ do _not_ have in common:
 
 \begin{aligned}
-VoI(A, B) = H(A, B) - I(A;B)
+VoI(A, B) = H(A, B) - I(A;B) = 2H(A,B) - H(A) - H(B)
 \end{aligned}
 
 
