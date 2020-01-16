@@ -11,7 +11,7 @@
 #' 
 #' The returned tree similarity measures state the amount of information, 
 #' in bits, that the partitions in two trees hold in common 
-#' when they are optimally matched, following Smith (forthcoming).  
+#' when they are optimally matched, following Smith (forthcoming).
 #' The complementary tree distance measures state how much information is 
 #' different in the partitions of two trees, under an optimal matching.
 #' 
@@ -77,35 +77,34 @@
 #' of which clades are matched in the optimal matching, which can be viewed
 #' using [`VisualizeMatching`].
 #'  
-#' @examples {
-#'   tree1 <- ape::read.tree(text='((((a, b), c), d), (e, (f, (g, h))));')
-#'   tree2 <- ape::read.tree(text='(((a, b), (c, d)), ((e, f), (g, h)));')
-#'   tree3 <- ape::read.tree(text='((((h, b), c), d), (e, (f, (g, a))));')
-#'   
-#'   # Best possible score is obtained by matching a tree with itself
-#'   VariationOfPhylogeneticInfo(tree1, tree1) # 0, by definition
-#'   MutualPhylogeneticInfo(tree1, tree1)
-#'   PartitionInfo(tree1) # Maximum mutual phylogenetic information
-#'   
-#'   # Best possible score is a function of tree shape; the partitions within
-#'   # balanced trees are more independent and thus contain less information
-#'   PartitionInfo(tree2)
-#'   
-#'   # How similar are two trees?
-#'   MutualPhylogeneticInfo(tree1, tree2) # Amount of phylogenetic information in common
-#'   VisualizeMatching(MutualPhylogeneticInfo, tree1, tree2) # Which clades are matched?
-#'   VariationOfPhylogeneticInfo(tree1, tree2) # Distance measure
-#'   VariationOfPhylogeneticInfo(tree2, tree1) # The metric is symmetric
-#'   #'   
-#'   # Are they more similar than two trees of this shape would be by chance?
-#'   ExpectedVariation(tree1, tree2, sample=12)['VariationOfPhylogeneticInfo', 'Estimate']
-#'   
-#'   # Every partition in tree1 is contradicted by every partition in tree3
-#'   # Non-arboreal matches contain clustering, but not phylogenetic, information
-#'   MutualPhylogeneticInfo(tree1, tree3) # = 0
-#'   MutualClusteringInfo(tree1, tree3) # > 0
-#'   
-#' }
+#' @examples 
+#' tree1 <- ape::read.tree(text='((((a, b), c), d), (e, (f, (g, h))));')
+#' tree2 <- ape::read.tree(text='(((a, b), (c, d)), ((e, f), (g, h)));')
+#' tree3 <- ape::read.tree(text='((((h, b), c), d), (e, (f, (g, a))));')
+#' 
+#' # Best possible score is obtained by matching a tree with itself
+#' VariationOfPhylogeneticInfo(tree1, tree1) # 0, by definition
+#' MutualPhylogeneticInfo(tree1, tree1)
+#' PartitionInfo(tree1) # Maximum mutual phylogenetic information
+#' 
+#' # Best possible score is a function of tree shape; the partitions within
+#' # balanced trees are more independent and thus contain less information
+#' PartitionInfo(tree2)
+#' 
+#' # How similar are two trees?
+#' MutualPhylogeneticInfo(tree1, tree2) # Amount of phylogenetic information in common
+#' VisualizeMatching(MutualPhylogeneticInfo, tree1, tree2) # Which clades are matched?
+#' VariationOfPhylogeneticInfo(tree1, tree2) # Distance measure
+#' VariationOfPhylogeneticInfo(tree2, tree1) # The metric is symmetric
+#' #'   
+#' # Are they more similar than two trees of this shape would be by chance?
+#' ExpectedVariation(tree1, tree2, sample=12)['VariationOfPhylogeneticInfo', 'Estimate']
+#' 
+#' # Every partition in tree1 is contradicted by every partition in tree3
+#' # Non-arboreal matches contain clustering, but not phylogenetic, information
+#' MutualPhylogeneticInfo(tree1, tree3) # = 0
+#' MutualClusteringInfo(tree1, tree3) # > 0
+#' 
 #' 
 #' 
 #' @references {
