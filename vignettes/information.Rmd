@@ -151,32 +151,36 @@ equally probable.
 The probability of drawing any particular tree $x$ from $X$ is
 $P(x) = \frac{1}{105}$.
 The Shannon information content of this outcome is $h(x) = -\log_2{P(x)}$.
-Because all outcomes are equiprobable, the entropy of the ensemble _X_ $H(X) = \sum\nolimits_{x\in X}P(x)\log_2{\frac{1}{P(x)}} = \log_2{|X|}$.
+Because all outcomes are equiprobable, the entropy of the ensemble _X_ $H(X) =
+\sum\nolimits_{x\in X}P(x)\log_2{\frac{1}{P(x)}} = \log_2{|X|}$.
 
-The split $S_1 =$ `AB|CDEF` is found in fifteen 6-leaf trees; this ensemble,
-$X_1$, has an entropy of $\log_2{15} = 3.91\textrm{ bits}$.  For convenience,
-let us denote this entropy as $H(S_1) = 3.91\textrm{ bits}$.
+The split $S_1 =$ `AB|CDEF` is found in fifteen 6-leaf trees; these trees form
+a reduced ensemble with an entropy of $H(X|S_1) = \log_2{15} = 
+3.91\textrm{ bits}$.
+Likewise, the split $S_2 = $ `ABC|DEF` occurs in nine 6-leaf trees, so 
+$H(X|S_2) = \log_2{9} = 3.17\textrm{ bits}$.
+
+Three 6-leaf trees contain both $S_1$ and $S_2$; $H(X|S_1,S_2) = \log_2(3) = 
+1.58\textrm{ bits}$
 
 ```{r, fig.width=7, out.width='90%', fig.height=7*3/5, echo=FALSE, message=FALSE}
 library('TreeTools') # For Splits
-par(mfrow=c(3, 5), mar=rep(0.4, 4))
+par(mfrow=c(3, 5), mar=rep(0.4, 4), cex=0.9)
 ShowNode <- function (match, label, col) {
   if (any(!is.na(match)))
     ape::nodelabels(label, bg = col, height=1.3,
-                    node = 7L + match) # works because trees in Preorder
+                    node = as.integer(names(splits)[match]))
 }
-trees <- phangorn::allTrees(5L, rooted = FALSE, tip.label=1:5)
-trees <- lapply(trees, ape::root, '1', resolve.root = TRUE)
-trees <- lapply(trees, Preorder)
-A <- as.Splits(c(FALSE, TRUE)[c(1, 2, 2, 1, 1)], tipLabels=trees)
-B <- as.Splits(c(FALSE, TRUE)[c(1, 1, 1, 2, 2)], tipLabels=trees)
+trees <- TreeTools:::as.phylo.numeric(0:14, tipLabels = 2:6)
+trees <- structure(lapply(trees, AddTip, 1, 1), class='multiPhylo')
+A <- as.Splits(c(FALSE, TRUE)[c(1, 1, 1, 2, 2, 2)], tipLabels=1:6)
+B <- as.Splits(c(FALSE, TRUE)[c(1, 1, 1, 1, 2, 2)], tipLabels=1:6)
 for (tree in trees) {
-  splits <- as.Splits(tree)
+  splits <- as.Splits(tree, tipLabels = 1:6)
   matchA <- match.Splits(A, splits)
   matchB <- match.Splits(B, splits)
   TreeDistPlot(tree, leaveRoom = FALSE)
-  ShowNode(matchA, ' BC|ADE ', col = Ternary::cbPalette15[3])
-  ShowNode(matchB, ' DE|ABC ', col = Ternary::cbPalette15[5])
+  ShowNode(matchA, ' ABC | DEF ', col = Ternary::cbPalette15[5])
 }
 ```
 
