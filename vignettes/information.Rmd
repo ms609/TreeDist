@@ -143,14 +143,19 @@ text(joint / 2, 4.5,
 When it comes to comparing splits [@SmithDist], we can imagine drawing at
 random one binary _n_-leaf tree.
 
-In the case _n_ = 5, taking all fifteen binary 5-leaf trees to be equally 
-probable, the probability of drawing any particular tree is 
-$P(x) = \frac{1}{15}$.  The Shannon information content of tree _x_ is 
-$h(x) = -\log_2{P(x)}$, and the entropy of the ensemble _X_ of all possible
-trees is $H(X) = \sum\nolimits_{x\in n\textrm{-leaf trees}}P(x)\log_2{\frac{1}{P(x)}} = -\log_2{P(x)}$
+Phylogenetic information is related to the probability of drawing a given tree
+at random from a forest of permissable trees.
 
-Let's consider the two splits `BC|ADE` and `DE|ABC` in the universe of 5-leaf
-trees.
+Let $X$ denote the 105 binary trees with six leaves, which are taken to be 
+equally probable. 
+The probability of drawing any particular tree $x$ from $X$ is
+$P(x) = \frac{1}{105}$.
+The Shannon information content of this outcome is $h(x) = -\log_2{P(x)}$.
+Because all outcomes are equiprobable, the entropy of the ensemble _X_ $H(X) = \sum\nolimits_{x\in X}P(x)\log_2{\frac{1}{P(x)}} = \log_2{|X|}$.
+
+The split $S_1 =$ `AB|CDEF` is found in fifteen 6-leaf trees; this ensemble,
+$X_1$, has an entropy of $\log_2{15} = 3.91\textrm{ bits}$.  For convenience,
+let us denote this entropy as $H(S_1) = 3.91\textrm{ bits}$.
 
 ```{r, fig.width=7, out.width='90%', fig.height=7*3/5, echo=FALSE, message=FALSE}
 library('TreeTools') # For Splits
