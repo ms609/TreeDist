@@ -24,10 +24,9 @@ This document outlines the similarity measures employed by the
 generalized Robinson-Foulds distances implemented in this package.
 
 Before you read it, you may wish to refresh your memory of the 
-[Robinson-Foulds distance](Robinson-Foulds.html), or how to
-[use the TreeDist package](Using-TreeDist.html).  To understand the
-information-based metrics, it is useful to be familiar with 
-[concepts of information](information.html).
+[Robinson-Foulds distance](Robinson-Foulds.html), how to
+[use the TreeDist package](Using-TreeDist.html), and relevant 
+[principles of information theory](information.html).
 
 ## Mutual phylogenetic information
 
