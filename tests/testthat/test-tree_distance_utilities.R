@@ -94,7 +94,7 @@ test_that('Matches are reported', {
   matchedSplits[unmatched] <- apply(cs[unmatched, ], 1, which)
   expect_equal(matchedSplits, attr(GeneralizedRF(as.Splits(treeSym8),
                                                     as.Splits(treeBal8), 8L, 
-                                                    cpp_mutual_phylo,
+                                                    cpp_shared_phylo,
                                                     maximize = TRUE, 
                                                     reportMatching = TRUE),
                                       'matching'))

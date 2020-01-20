@@ -1,14 +1,13 @@
-#' Mutual information of two splits
+#' Shared information content of two splits
 #' 
-#' Reports the mutual phylogenetic information, or variation of phylogenetic
-#' information, of two splits.
+#' Reports the phylogenetic information shared, or not shared, between two
+#' splits. See the 
+#' [accompanying vignette](https://ms609.github.io/TreeDist/articles/information.html)
+#' for definitions.
 #' 
-#' The mutual phylogenetic information corresponds to the entropy of the subset
-#' of trees consistent with both splits; two splits that are consistent with a 
-#' smaller number of trees will have a higher mutual information content.
 #' 
-#' Split 1 divides `n` terminals into two partitions, _A1_ and _B1_.
-#' Split 2 divides the same terminals into the partitions _A2_ and _B2_.
+#' Split S~1~ divides _n_ terminals into two partitions, _A1_ and _B1_.
+#' Split S~2~ divides the same terminals into the partitions _A2_ and _B2_.
 #' 
 #' Partitions must be named such that _A1_ fully overlaps with _A2_: 
 #' that is to say, all taxa in _A1_ are also in _A2_, or _vice versa_.
@@ -21,26 +20,26 @@
 #' `TreesConsistentWithTwoSplits` returns the number of unrooted bifurcating
 #' trees consistent with two splits.
 #' 
-#' `SplitMutualInformation` returns the information that two splits 
+#' `SplitSharedInformation` returns the phylogenetic information that two splits
 #' have in common, in bits.
 #' 
-#' `SplitVariationOfInformation` returns the variation of information (Meila 2007)
-#'  between the two splits, a measure of their difference, in bits.
+#' `SplitUnsharedInformation` returns the amount of phylogenetic information
+#' distinct to one of the two splits, in bits.
 #' 
 #' @examples 
 #'   # Eight tips, labelled A to H.
-#'   # Split 1: ABCD:EFGH
-#'   # Split 2: ABC:DEFGH
+#'   # Split 1: ABCD|EFGH
+#'   # Split 2: ABC|DEFGH
 #'   # Let A1 = ABCD (four taxa), and A2 = ABC (three taxa).
 #'   # A1 and A2 overlap (both contain ABC).
 #'   
 #'   TreesConsistentWithTwoSplits(n=8, A1=4, A2=3)
-#'   SplitMutualInformation(n=8, A1=4, A2=3)
-#'   SplitVariationOfInformation(n=8, A1=4, A2=3)
+#'   SplitSharedInformation(n=8, A1=4, A2=3)
+#'   SplitUnsharedInformation(n=8, A1=4, A2=3)
 #'
 #'   # If splits are identical, then their mutual information is the same
 #'   # as the information of either split:
-#'   SplitMutualInformation(n=8, A1=3, A2=3)
+#'   SplitSharedInformation(n=8, A1=3, A2=3)
 #'   TreeTools::SplitInformation(3, 5)
 #'   
 #' @references \insertRef{Meila2007}{TreeDist}
@@ -49,19 +48,19 @@
 #' @family split information functions
 #' @importFrom TreeTools LnTreesMatchingSplit LnUnrooted
 #' @export
-SplitMutualInformation <- function(n, A1, A2 = A1) {
+SplitSharedInformation <- function(n, A1, A2 = A1) {
   (LnTreesMatchingSplit(A1, n - A1) 
    + LnTreesMatchingSplit(A2, n - A2)
    - LnTreesConsistentWithTwoSplits(n, A1, A2)
    - LnUnrooted(n)) / -log(2)
 }
 
-#' @describeIn SplitMutualInformation Variation of information between two splits.
+#' @describeIn SplitSharedInformation Variation of information between two splits.
 #' @importFrom TreeTools SplitInformation
 #' @export
-SplitVariationOfInformation <- function (n, A1, A2 = A1) {
+SplitUnsharedInformation <- function (n, A1, A2 = A1) {
   # TODO calculate more efficiently from first principles
-  mutual <- SplitMutualInformation(n, A1, A2)
+  mutual <- SplitSharedInformation(n, A1, A2)
   SplitInformation (A1, n - A1) - mutual +
     SplitInformation(A2, n - A2) - mutual
 }
@@ -247,6 +246,7 @@ AllSplitPairings <- memoise(function (n) {
 
 #' Entropy of two splits
 #' 
+#' #TODO REWRITE
 #' Reports various values pertaining to the phylogenetic information content 
 #' of two splits,
 #' treating splits as subdivisions of _n_ terminals into two clusters.
@@ -282,21 +282,22 @@ SplitEntropy <- function (split1, split2=split1) {
   h1 <- Entropy(c(A1, B1) / n)
   h2 <- Entropy(c(A2, B2) / n)
   jointH <- Entropy(overlaps[overlaps > 0L] / n)
-  mutualInformation <- h1 + h2 - jointH
-  variationOfInformation <- jointH - mutualInformation
+  sharedInformation <- h1 + h2 - jointH
+  variationOfInformation <- jointH - sharedInformation
   
   # Return:
-  c(h1 = h1, h2 = h2, jointH = jointH, i = mutualInformation,
+  c(h1 = h1, h2 = h2, jointH = jointH, i = sharedInformation,
     vI = variationOfInformation)
 }
 
 #' Joint Information of two splits
 #' 
+#' #TODO REWRITE
 #' Calculates the joint phylogenetic information content of two splits: 
 #' that is, the information content of the two splits considered separately,
 #' minus their mutual information (which would otherwise be counted twice).
 #'
-#' Because some information is common to both splits (`SplitMutualInformation`),
+#' Because some information is common to both splits (`SplitSharedInformation`),
 #' the joint information of two splits will be less than the sum of the
 #' information of the splits taken separately -- unless the splits are
 #' contradictory.
@@ -344,7 +345,7 @@ JointInformation <- function(A1A2, A1B2, B1A2, B1B2) {
   A2 <- A1A2 + B1A2
   B2 <- A1B2 + B1B2
   
-  mutualInformation <- if(A1B2 == 0 || B1A2 == 0) {
+  sharedInformation <- if(A1B2 == 0 || B1A2 == 0) {
     -log2(TreesConsistentWithTwoSplits(n, A1, A2) / NUnrooted(n))
   } else if(A1A2 == 0 || B1B2 == 0) {
     -log2(TreesConsistentWithTwoSplits(n, A1, B2) / NUnrooted(n))
@@ -353,10 +354,10 @@ JointInformation <- function(A1A2, A1B2, B1A2, B1B2) {
   }
   
   # Return:
-  SplitInformation(A1, B1) + SplitInformation(A2, B2) - mutualInformation
+  SplitInformation(A1, B1) + SplitInformation(A2, B2) - sharedInformation
 }
 
-#' @describeIn SplitMutualInformation Number of trees consistent with two splits.
+#' @describeIn SplitSharedInformation Number of trees consistent with two splits.
 #' @family split information functions
 #' @importFrom TreeTools TreesMatchingSplit NRooted
 #' @export
@@ -403,7 +404,7 @@ TreesConsistentWithTwoSplits <- function (n, A1, A2=A1) {
     NRooted(n - bigSplit)
 }
 
-#' @describeIn SplitMutualInformation Natural logarithm of `TreesConsistentWithTwoSplits`.
+#' @describeIn SplitSharedInformation Natural logarithm of `TreesConsistentWithTwoSplits`.
 #' @importFrom TreeTools LnTreesMatchingSplit LnRooted.int
 #' @export
 LnTreesConsistentWithTwoSplits <- function (n, A1, A2=A1) {

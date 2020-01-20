@@ -96,19 +96,18 @@ different in the partitions of two trees, under an optimal matching.
 }
 \section{Functions}{
 \itemize{
-\item \code{SharedPhylogeneticInfo}: Mutual phylogenetic information between two trees.
+\item \code{SharedPhylogeneticInfo}: Shared phylogenetic information between two trees.
 
 \item \code{VariationOfPhylogeneticInfo}: Variation of phylogenetic information between two trees.
 
 \item \code{VariationOfClusteringInfo}: Variation of clustering information between two trees.
 
-\item \code{ExpectedVariation}: Estimate expected Variation of
-Phylogenetic Information and Mutual Phylogenetic Information for a pair of trees of
-a given topology.
+\item \code{ExpectedVariation}: Estimate expected Shared and Unshared
+Phylogenetic Information for a pair of trees of a given topology.
 
 \item \code{MutualClusteringInfo}: Mutual Clustering Information of two trees.
 
-\item \code{SharedPhylogeneticInfoSplits}: Calculate mutual phylogenetic information from splits instead of trees.
+\item \code{SharedPhylogeneticInfoSplits}: Calculate shared phylogenetic information from splits instead of trees.
 
 \item \code{MutualClusteringInfoSplits}: Calculate clustering information from splits instead of trees
 
@@ -130,7 +129,7 @@ corresponds to the concept of phylogenetic information, which views the
 information content of a pair of partitions as relating to the proportion of
 phylogenetic trees that are consistent with both partitions.
 
-This proportion gives rise to the Mutual Phylogenetic Information similarity
+This proportion gives rise to the Shared Phylogenetic Information similarity
 measure (\code{SharedPhylogeneticInfo}), and the complementary
 Variation of Phylogenetic Information distance metric
 (\code{VariationOfPhylogeneticInfo}).
@@ -175,7 +174,7 @@ tree3 <- ape::read.tree(text='((((h, b), c), d), (e, (f, (g, a))));')
 # Best possible score is obtained by matching a tree with itself
 VariationOfPhylogeneticInfo(tree1, tree1) # 0, by definition
 SharedPhylogeneticInfo(tree1, tree1)
-PartitionInfo(tree1) # Maximum mutual phylogenetic information
+PartitionInfo(tree1) # Maximum shared phylogenetic information
 
 # Best possible score is a function of tree shape; the partitions within
 # balanced trees are more independent and thus contain less information

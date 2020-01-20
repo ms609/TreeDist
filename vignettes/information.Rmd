@@ -74,7 +74,7 @@ sharedInformation <- sum(splitInformation) - combinedInformation
 sharedInformation
 
 # Or more concisely:
-SplitMutualInformation(n = 6, 2, 3)
+SplitSharedInformation(n = 6, 2, 3)
 ```
 
 

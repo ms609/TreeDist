@@ -279,7 +279,7 @@ similar, but not identical.
 We discussed above weighting each matching pair of splits according to the
 amount of phylogenetic information represented by the split.
 A non-matching pair of splits can be scored according to the 
-mutual phylogenetic information, which is a function of the proportion of trees
+shared phylogenetic information, which is a function of the proportion of trees
 that are consistent with both splits.  (A full explanation is provided
 in the discussion of [Generalized Robinson-Foulds distances](Generalised-RF.html).<!-- #TODO test link -->)
 

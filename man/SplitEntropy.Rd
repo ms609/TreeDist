@@ -22,6 +22,7 @@ A numeric vector listing, in bits,
 }
 }
 \description{
+#TODO REWRITE
 Reports various values pertaining to the phylogenetic information content
 of two splits,
 treating splits as subdivisions of \emph{n} terminals into two clusters.
@@ -31,7 +32,7 @@ treating splits as subdivisions of \emph{n} terminals into two clusters.
 }
 \seealso{
 Other split information functions: \code{\link{JointInformation}},
-  \code{\link{SplitMutualInformation}}
+  \code{\link{SplitSharedInformation}}
 }
 \author{
 Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})

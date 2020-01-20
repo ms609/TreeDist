@@ -14,12 +14,13 @@ JointInformation(A1A2, A1B2, B1A2, B1B2)
 of two splits, measured in bits.
 }
 \description{
+#TODO REWRITE
 Calculates the joint phylogenetic information content of two splits:
 that is, the information content of the two splits considered separately,
 minus their mutual information (which would otherwise be counted twice).
 }
 \details{
-Because some information is common to both splits (\code{SplitMutualInformation}),
+Because some information is common to both splits (\code{SplitSharedInformation}),
 the joint information of two splits will be less than the sum of the
 information of the splits taken separately -- unless the splits are
 contradictory.
@@ -51,7 +52,7 @@ JointInformation(3, 1, 0, 4)
 }
 \seealso{
 Other split information functions: \code{\link{SplitEntropy}},
-  \code{\link{SplitMutualInformation}}
+  \code{\link{SplitSharedInformation}}
 }
 \author{
 Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})

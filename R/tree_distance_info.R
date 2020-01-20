@@ -121,7 +121,7 @@ TreeDistance <- function (tree1, tree2 = tree1) {
   MutualClusteringInfo(tree1, tree2, normalize = TRUE, reportMatching = FALSE)
 }
 
-#' @describeIn TreeDistance Mutual phylogenetic information between two trees.
+#' @describeIn TreeDistance Shared phylogenetic information between two trees.
 #' @export
 SharedPhylogeneticInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
                                     reportMatching = FALSE) {
@@ -176,9 +176,8 @@ VariationOfClusteringInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
 
 
 
-#' @describeIn TreeDistance Estimate expected Variation of 
-#' Phylogenetic Information and Mutual Phylogenetic Information for a pair of trees of
-#' a given topology.
+#' @describeIn TreeDistance Estimate expected Shared and Unshared
+#' Phylogenetic Information for a pair of trees of a given topology.
 #' @param samples Integer specifying how many samplings to obtain; 
 #' accuracy of estimate increases with `sqrt(samples)`.
 #' @importFrom stats sd

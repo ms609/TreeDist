@@ -216,11 +216,11 @@ test_that('Shared Phylogenetic Info is correctly calculated', {
   expect_equal(-log2(225/10395) - log2(945/10395),
                SharedPhylogeneticInfo(treeSym8, treeTwoSplits),
                tolerance = 1e-7)
-  expect_equal(SplitMutualInformation(8, 4, 3),
+  expect_equal(SplitSharedInformation(8, 4, 3),
                SharedPhylogeneticInfo(treeTwoSplits, treeAbc.Defgh),
                tolerance = 1e-7)
   expect_equal(SplitInformation(4, 4) + SplitInformation (3, 5) - 
-               (2 * SplitMutualInformation(8, 4, 3)),
+               (2 * SplitSharedInformation(8, 4, 3)),
                SplitVariationOfInformation(8, 4, 3),
                tolerance=1e-07)
   
