@@ -234,7 +234,7 @@ TreeTools::SplitInformation(5, 2)
 bits of phylogenetic information; this quantity represents the similarity (not
 difference) score for this particular pairing.
 
-This measure can therefore be normalized against the phylogenetic information
-content of the two input trees.
+This measure can therefore be normalized against the sum of the phylogenetic
+information content of all splits in each of the two input trees.
 
 ## References
