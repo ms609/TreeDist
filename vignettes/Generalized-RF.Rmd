@@ -59,10 +59,11 @@ VisualizeMatching(MutualPhylogeneticInfo, matchZeros = FALSE, AtoJ, AotJ,
 
 ## Mutual clustering information
 
-Clustering information [@SmithDist] provides a non-arboreal information-based
-tree distance metric.
-As desired, this assigns a non-zero similarity to the case that received zero
-similarity under an arboreal matching:
+Scoring each pair of splits according to their mutual clustering information
+[@SmithDist]  (see [separate vignette](information.html)) results in a
+non-arboreal information-based tree distance metric that, as desired, assigns a
+non-zero similarity to the case that received zero similarity under an
+arboreal matching:
 
 ```{r, fig.width=6 , fig.align='center'}
 VisualizeMatching(MutualClusteringInfo, AtoJ, AotJ, matchZeros = FALSE, 
@@ -70,18 +71,8 @@ VisualizeMatching(MutualClusteringInfo, AtoJ, AotJ, matchZeros = FALSE,
 MutualClusteringInfo(AtoJ, AotJ)
 ```
 
-Here, each partition is viewed as clustering the terminals into two groups.
-Consider a pair of partitions, Y~1~ and Y~2~. 
-If the partitions are identical, then if an observer knows which group a
-terminal is in Y~1~, then this gives all the information they need to know
-which group it is in in Y~2~.  As the partitions become more different, the
-disposition of Y~1~ gives less information about the configuration of Y~2~;
-the probability that a guess based on Y~1~ will be correct decreases, and 
-the mutual information decreases accordingly.
-
-The mutual clustering information has the notable property that no pair
-of splits will be allocated zero similarity.  As such, even a dissimilar 
-matching (such as `HI:ABCDEFG` => `EI:ABCDFGH` below) 
+Because no pair of non-trivial splits has zero mutual clustering information,
+even a dissimilar matching (such as `HI|ABCDEFG` => `EI|ABCDFGH` below) 
 is preferred to leaving a partition unpaired.
 
 ```{r, fig.width=6 , fig.align='center'}
@@ -94,11 +85,11 @@ VisualizeMatching(MutualClusteringInfo, tree1, tree2,
 The Nye _et al_. [-@Nye2006] tree similarity metric scores pairs by
 considering the elements held in common between subsets of each partition.
 
-Consider a pair of partitions `ABCDEF:GHIJ` and `ABCDEIJ:FGH`.
+Consider a pair of partitions `ABCDEF|GHIJ` and `ABCDEIJ|FGH`.
 These can be aligned thus:
 
-`ABCDEF  : GHIJ`
-`ABCDE IJ:FGH  `
+`ABCDEF  | GHIJ`
+`ABCDE IJ|FGH  `
 
 The first pair of subsets, `ABCDEF` and `ABCDEIJ`, have five elements in common 
 (`ABCDE`), and together encompass eight elements (`ABCDEFIJ`).  Their 
@@ -113,8 +104,8 @@ lower of the two subset scores, 2/5.
 We must now consider the other alignment of this pair of partitions,
 
 
-`ABCDEF  :     GHIJ`
-`     FGH:ABCDE  IJ`
+`ABCDEF  |     GHIJ`
+`     FGH|ABCDE  IJ`
 
 This yields subset scores of 1/8 and 2/9, and thus has an alignment score of 1/8.
 This alignment gives a lower score than the other, so is disregarded.  The 
@@ -137,8 +128,8 @@ NyeTreeSimilarity(tree1, tree2, normalize=FALSE)
 
 B&ouml;cker _et al_. [-@Bocker2013] propose expressly prohibiting contradictory
 pairings, i.e. pairs of partitions that could never occur in the same tree.
-Such an 'arboreal' matching would preclude the pairing of `ABCFGHI:DE` with
-`ABCDFGH:EI`:
+Such an 'arboreal' matching would preclude the pairing of `ABCFGHI|DE` with
+`ABCDFGH|EI`:
 
 ```{r, fig.width=6 , fig.align='center'}
 JaccardRobinsonFoulds(tree1, tree2, similarity = TRUE)
@@ -193,8 +184,8 @@ implied by a pair of partitions.  Here, the relevant quantity is the number
 of elements that must be moved from one subset to another in order to make
 the two partitions identical.  With the pair of partitions
 
-`ABCDEF  : GHIJ`
-`ABCDE IJ:FGH  `
+`ABCDEF  | GHIJ`
+`ABCDE IJ|FGH  `
 
 three elements (_F_, _I_ and _J_) must be moved before the partitions are 
 identical; as such, the pair of partitions are assigned a difference score 
@@ -221,19 +212,19 @@ VisualizeMatching(VariationOfMatchingSplitInfo, tree1, tree2,
 
 This approach scores each pair of bipartitions according to the information 
 content of the most information-rich bipartition that is consistent with both
-partitions in the pair. 
+partitions in the pair.
 
 The most information-rich bipartition consistent with 
 
-`ABCDEF  : GHIJ`
-`ABCDE IJ:FGH  `
+`ABCDEF  | GHIJ`
+`ABCDE IJ|FGH  `
 
-is `ABCDE : GH`, which contains 
+is `ABCDE | GH`, which contains 
 ```{r}
-SplitInformation(5, 2)
+TreeTools::SplitInformation(5, 2)
 ```
-bits of information; this quantity represents the _similarity_ score for this
-particular pairing.
+bits of phylogenetic information; this quantity represents the similarity (not
+difference) score for this particular pairing.
 
 This measure can therefore be normalized against the phylogenetic information
 content of the two input trees.

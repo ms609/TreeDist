@@ -215,4 +215,8 @@ P(B_1,B_2)\log_2{P(B_1,B_2)}$
 These values can then be substituted into the definitions of mutual information
 and entropy distance given above.
 
+As $S_1$ and _$S_2$ become more different, the disposition of $S_1$ gives less
+information about the configuration of $S_2$, and the mutual information 
+decreases accordingly.
+
 ## References
