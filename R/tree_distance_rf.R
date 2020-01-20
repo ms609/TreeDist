@@ -18,7 +18,7 @@
 #' to be identical by chance alone make a smaller contribution to overall
 #' tree distance, because their similarity is less remarkable.
 #' 
-#' @inheritParams MutualPhylogeneticInfo
+#' @inheritParams SharedPhylogeneticInfo
 #' @param similarity Logical specifying whether to report the result as a tree
 #' similarity, rather than a difference.
 #' 
@@ -53,7 +53,7 @@ RobinsonFouldsInfo <- function (tree1, tree2 = tree1, similarity = FALSE,
 
 #' @describeIn RobinsonFouldsInfo Calculate information-adjusted Robinson-Foulds
 #' distance from splits instead of trees.
-#' @inheritParams MutualPhylogeneticInfoSplits
+#' @inheritParams SharedPhylogeneticInfoSplits
 #' @export
 RobinsonFouldsInfoSplits <- function (splits1, splits2, 
                                       nTip = attr(splits1, 'nTip'),
@@ -102,7 +102,7 @@ RobinsonFouldsMatching <- function (tree1, tree2 = tree1, similarity = FALSE,
 
 #' @describeIn RobinsonFouldsInfo Calculate Robinson-Foulds distance from splits
 #' instead of trees.
-#' @inheritParams MutualPhylogeneticInfoSplits
+#' @inheritParams SharedPhylogeneticInfoSplits
 #' @export
 RobinsonFouldsSplits <- function (splits1, splits2,
                                   nTip = attr(splits1, 'nTip'),

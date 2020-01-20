@@ -2,12 +2,12 @@
 % Please edit documentation in R/tree_distance_info.R, R/tree_distance_mmsi.R
 \name{TreeDistance}
 \alias{TreeDistance}
-\alias{MutualPhylogeneticInfo}
+\alias{SharedPhylogeneticInfo}
 \alias{VariationOfPhylogeneticInfo}
 \alias{VariationOfClusteringInfo}
 \alias{ExpectedVariation}
 \alias{MutualClusteringInfo}
-\alias{MutualPhylogeneticInfoSplits}
+\alias{SharedPhylogeneticInfoSplits}
 \alias{MutualClusteringInfoSplits}
 \alias{MutualMatchingSplitInfo}
 \alias{VariationOfMatchingSplitInfo}
@@ -16,7 +16,7 @@
 \usage{
 TreeDistance(tree1, tree2 = tree1)
 
-MutualPhylogeneticInfo(tree1, tree2 = tree1, normalize = FALSE,
+SharedPhylogeneticInfo(tree1, tree2 = tree1, normalize = FALSE,
   reportMatching = FALSE)
 
 VariationOfPhylogeneticInfo(tree1, tree2 = tree1, normalize = FALSE,
@@ -30,7 +30,7 @@ ExpectedVariation(tree1, tree2, samples = 10000)
 MutualClusteringInfo(tree1, tree2 = tree1, normalize = FALSE,
   reportMatching = FALSE)
 
-MutualPhylogeneticInfoSplits(splits1, splits2, nTip = attr(splits1,
+SharedPhylogeneticInfoSplits(splits1, splits2, nTip = attr(splits1,
   "nTip"), reportMatching = FALSE)
 
 MutualClusteringInfoSplits(splits1, splits2, nTip = attr(splits1,
@@ -96,7 +96,7 @@ different in the partitions of two trees, under an optimal matching.
 }
 \section{Functions}{
 \itemize{
-\item \code{MutualPhylogeneticInfo}: Mutual phylogenetic information between two trees.
+\item \code{SharedPhylogeneticInfo}: Mutual phylogenetic information between two trees.
 
 \item \code{VariationOfPhylogeneticInfo}: Variation of phylogenetic information between two trees.
 
@@ -108,7 +108,7 @@ a given topology.
 
 \item \code{MutualClusteringInfo}: Mutual Clustering Information of two trees.
 
-\item \code{MutualPhylogeneticInfoSplits}: Calculate mutual phylogenetic information from splits instead of trees.
+\item \code{SharedPhylogeneticInfoSplits}: Calculate mutual phylogenetic information from splits instead of trees.
 
 \item \code{MutualClusteringInfoSplits}: Calculate clustering information from splits instead of trees
 
@@ -131,7 +131,7 @@ information content of a pair of partitions as relating to the proportion of
 phylogenetic trees that are consistent with both partitions.
 
 This proportion gives rise to the Mutual Phylogenetic Information similarity
-measure (\code{MutualPhylogeneticInfo}), and the complementary
+measure (\code{SharedPhylogeneticInfo}), and the complementary
 Variation of Phylogenetic Information distance metric
 (\code{VariationOfPhylogeneticInfo}).
 
@@ -157,7 +157,7 @@ against the total information present, in the convenience function \code{TreeDis
 If \code{normalize = TRUE}, then results will be rescaled from zero to a nominal
 maximum value, calculated thus:
 \itemize{
-\item \code{MutualPhylogeneticInfo}, \code{MutualClusteringInfo}, \code{MutualMatchingSplitInfo}:
+\item \code{SharedPhylogeneticInfo}, \code{MutualClusteringInfo}, \code{MutualMatchingSplitInfo}:
 The information content of the least informative tree.
 To scale against the information content of the most informative tree, use
 \code{normalize = pmax}.
@@ -168,35 +168,33 @@ To scale against the information content of the most informative tree, use
 }
 
 \examples{
-{
-  tree1 <- ape::read.tree(text='((((a, b), c), d), (e, (f, (g, h))));')
-  tree2 <- ape::read.tree(text='(((a, b), (c, d)), ((e, f), (g, h)));')
-  tree3 <- ape::read.tree(text='((((h, b), c), d), (e, (f, (g, a))));')
-  
-  # Best possible score is obtained by matching a tree with itself
-  VariationOfPhylogeneticInfo(tree1, tree1) # 0, by definition
-  MutualPhylogeneticInfo(tree1, tree1)
-  PartitionInfo(tree1) # Maximum mutual phylogenetic information
-  
-  # Best possible score is a function of tree shape; the partitions within
-  # balanced trees are more independent and thus contain less information
-  PartitionInfo(tree2)
-  
-  # How similar are two trees?
-  MutualPhylogeneticInfo(tree1, tree2) # Amount of phylogenetic information in common
-  VisualizeMatching(MutualPhylogeneticInfo, tree1, tree2) # Which clades are matched?
-  VariationOfPhylogeneticInfo(tree1, tree2) # Distance measure
-  VariationOfPhylogeneticInfo(tree2, tree1) # The metric is symmetric
-  #'   
-  # Are they more similar than two trees of this shape would be by chance?
-  ExpectedVariation(tree1, tree2, sample=12)['VariationOfPhylogeneticInfo', 'Estimate']
-  
-  # Every partition in tree1 is contradicted by every partition in tree3
-  # Non-arboreal matches contain clustering, but not phylogenetic, information
-  MutualPhylogeneticInfo(tree1, tree3) # = 0
-  MutualClusteringInfo(tree1, tree3) # > 0
-  
-}
+tree1 <- ape::read.tree(text='((((a, b), c), d), (e, (f, (g, h))));')
+tree2 <- ape::read.tree(text='(((a, b), (c, d)), ((e, f), (g, h)));')
+tree3 <- ape::read.tree(text='((((h, b), c), d), (e, (f, (g, a))));')
+
+# Best possible score is obtained by matching a tree with itself
+VariationOfPhylogeneticInfo(tree1, tree1) # 0, by definition
+SharedPhylogeneticInfo(tree1, tree1)
+PartitionInfo(tree1) # Maximum mutual phylogenetic information
+
+# Best possible score is a function of tree shape; the partitions within
+# balanced trees are more independent and thus contain less information
+PartitionInfo(tree2)
+
+# How similar are two trees?
+SharedPhylogeneticInfo(tree1, tree2) # Amount of phylogenetic information in common
+VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2) # Which clades are matched?
+VariationOfPhylogeneticInfo(tree1, tree2) # Distance measure
+VariationOfPhylogeneticInfo(tree2, tree1) # The metric is symmetric
+#'   
+# Are they more similar than two trees of this shape would be by chance?
+ExpectedVariation(tree1, tree2, sample=12)['VariationOfPhylogeneticInfo', 'Estimate']
+
+# Every partition in tree1 is contradicted by every partition in tree3
+# Non-arboreal matches contain clustering, but not phylogenetic, information
+SharedPhylogeneticInfo(tree1, tree3) # = 0
+MutualClusteringInfo(tree1, tree3) # > 0
+
 
 
 }

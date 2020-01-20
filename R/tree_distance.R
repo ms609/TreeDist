@@ -7,7 +7,7 @@
 #' the same tips in the same order.  This is the responsibility of the calling
 #' function.
 #' 
-#' @inheritParams MutualPhylogeneticInfoSplits
+#' @inheritParams SharedPhylogeneticInfoSplits
 #' @param nTip Integer specifying the number of tips in each split.
 #' @param PairScorer function taking four arguments, `splits1`, `splits2`,
 #' `nSplits1`, `nSplits2`, which should return the score of each pair of splits

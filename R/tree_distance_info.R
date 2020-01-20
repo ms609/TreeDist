@@ -24,7 +24,7 @@
 #' phylogenetic trees that are consistent with both partitions.
 #' 
 #' This proportion gives rise to the Mutual Phylogenetic Information similarity 
-#' measure (`MutualPhylogeneticInfo`), and the complementary 
+#' measure (`SharedPhylogeneticInfo`), and the complementary 
 #' Variation of Phylogenetic Information distance metric
 #' (`VariationOfPhylogeneticInfo`).
 #' 
@@ -49,7 +49,7 @@
 #' If `normalize = TRUE`, then results will be rescaled from zero to a nominal
 #' maximum value, calculated thus:
 #' 
-#' * `MutualPhylogeneticInfo`, `MutualClusteringInfo`, `MutualMatchingSplitInfo`:
+#' * `SharedPhylogeneticInfo`, `MutualClusteringInfo`, `MutualMatchingSplitInfo`:
 #'  The information content of the least informative tree.
 #'  To scale against the information content of the most informative tree, use
 #' `normalize = pmax`.
@@ -84,7 +84,7 @@
 #' 
 #' # Best possible score is obtained by matching a tree with itself
 #' VariationOfPhylogeneticInfo(tree1, tree1) # 0, by definition
-#' MutualPhylogeneticInfo(tree1, tree1)
+#' SharedPhylogeneticInfo(tree1, tree1)
 #' PartitionInfo(tree1) # Maximum mutual phylogenetic information
 #' 
 #' # Best possible score is a function of tree shape; the partitions within
@@ -92,8 +92,8 @@
 #' PartitionInfo(tree2)
 #' 
 #' # How similar are two trees?
-#' MutualPhylogeneticInfo(tree1, tree2) # Amount of phylogenetic information in common
-#' VisualizeMatching(MutualPhylogeneticInfo, tree1, tree2) # Which clades are matched?
+#' SharedPhylogeneticInfo(tree1, tree2) # Amount of phylogenetic information in common
+#' VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2) # Which clades are matched?
 #' VariationOfPhylogeneticInfo(tree1, tree2) # Distance measure
 #' VariationOfPhylogeneticInfo(tree2, tree1) # The metric is symmetric
 #' #'   
@@ -102,7 +102,7 @@
 #' 
 #' # Every partition in tree1 is contradicted by every partition in tree3
 #' # Non-arboreal matches contain clustering, but not phylogenetic, information
-#' MutualPhylogeneticInfo(tree1, tree3) # = 0
+#' SharedPhylogeneticInfo(tree1, tree3) # = 0
 #' MutualClusteringInfo(tree1, tree3) # > 0
 #' 
 #' 
@@ -123,9 +123,9 @@ TreeDistance <- function (tree1, tree2 = tree1) {
 
 #' @describeIn TreeDistance Mutual phylogenetic information between two trees.
 #' @export
-MutualPhylogeneticInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
+SharedPhylogeneticInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
                                     reportMatching = FALSE) {
-  unnormalized <- CalculateTreeDistance(MutualPhylogeneticInfoSplits, tree1,
+  unnormalized <- CalculateTreeDistance(SharedPhylogeneticInfoSplits, tree1,
                                         tree2, reportMatching=reportMatching)
   
   # Return:
@@ -138,17 +138,17 @@ MutualPhylogeneticInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
 VariationOfPhylogeneticInfo <- function (tree1, tree2 = tree1, 
                                          normalize = FALSE,
                                          reportMatching = FALSE) {
-  mai <- MutualPhylogeneticInfo(tree1, tree2, normalize = FALSE,
+  spi <- SharedPhylogeneticInfo(tree1, tree2, normalize = FALSE,
                                 reportMatching = reportMatching)
   treesIndependentInfo <- outer(PartitionInfo(tree1), PartitionInfo(tree2), '+')
   
-  ret <- treesIndependentInfo - mai - mai
+  ret <- treesIndependentInfo - spi - spi
   ret <- NormalizeInfo(ret, tree1, tree2, how=normalize, 
                        infoInBoth = treesIndependentInfo,
                        InfoInTree = PartitionInfo, Combine = '+')
   
   ret[ret < 1e-13] <- 0 # In case of floating point inaccuracy
-  attributes(ret) <- attributes(mai)
+  attributes(ret) <- attributes(spi)
   
   # Return:
   ret
@@ -195,9 +195,9 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+4) {
   mutualEstimates <- vapply(seq_len(samples), function (x) {
     resampled2 <- as.Splits(splits2, sample(tipLabels))
     
-    c(MutualPhylogeneticInfoSplits(splits1, resampled2),
+    c(SharedPhylogeneticInfoSplits(splits1, resampled2),
       MutualMatchingSplitInfoSplits(splits1, resampled2))
-  }, c(MutualPhylogeneticInfo = 0, MutualMatchingSplitInfo = 0))
+  }, c(SharedPhylogeneticInfo = 0, MutualMatchingSplitInfo = 0))
   
   mut <- cbind(Estimate = rowMeans(mutualEstimates),
                sd = apply(mutualEstimates, 1, sd), n = samples)
@@ -230,7 +230,7 @@ MutualClusteringInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
 #' @template splits12params
 #' @param nTip Integer specifying the number of tips in each split.
 #' @export
-MutualPhylogeneticInfoSplits <- function (splits1, splits2,
+SharedPhylogeneticInfoSplits <- function (splits1, splits2,
                                           nTip = attr(splits1, 'nTip'),
                                           reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, nTip, cpp_mutual_phylo,

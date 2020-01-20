@@ -55,9 +55,9 @@ test_that("Removing contradictions improves scores", {
     split2[flips] <- !split2[flips]
  
     expect_true(
-      MutualPhylogeneticInfoSplits(as.Splits(split1[-flips]), as.Splits(split2[-flips]))
+      SharedPhylogeneticInfoSplits(as.Splits(split1[-flips]), as.Splits(split2[-flips]))
       >
-      MutualPhylogeneticInfoSplits(as.Splits(split1[-nonFlips]), as.Splits(split2[-nonFlips]))
+      SharedPhylogeneticInfoSplits(as.Splits(split1[-nonFlips]), as.Splits(split2[-nonFlips]))
     )
   }
   

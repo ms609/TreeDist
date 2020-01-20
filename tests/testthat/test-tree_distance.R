@@ -30,7 +30,7 @@ test_that("Split compatibility is correctly established", {
 })
 
 methodsToTest <- list(
-  MutualPhylogeneticInfo,
+  SharedPhylogeneticInfo,
   VariationOfPhylogeneticInfo,
   MutualMatchingSplitInfo,
   VariationOfMatchingSplitInfo,
@@ -72,7 +72,7 @@ test_that('Size mismatch causes error', {
 
 test_that('Metrics handle polytomies', {
   polytomy8 <- ape::read.tree(text='(a, b, c, d, e, f, g, h);')
-  lapply(list(MutualPhylogeneticInfo, MutualClusteringInfo,
+  lapply(list(SharedPhylogeneticInfo, MutualClusteringInfo,
               MatchingSplitDistance, NyeTreeSimilarity),
          function (Func) expect_equal(0, Func(treeSym8, polytomy8)))
 })
@@ -178,30 +178,30 @@ test_that('Mutual Phylogenetic Info is correctly calculated', {
                tolerance = 1e-7)
   
   expect_equal(22.53747, tolerance=1e-05,
-               MutualPhylogeneticInfo(treeSym8, treeSym8, normalize = FALSE))
+               SharedPhylogeneticInfo(treeSym8, treeSym8, normalize = FALSE))
   expect_equal(1, tolerance = 1e-05,
-               MutualPhylogeneticInfo(treeSym8, treeSym8, normalize = TRUE))
-  expect_equal(13.75284, MutualPhylogeneticInfo(treeSym8, treeBal8), tolerance=1e-05)
+               SharedPhylogeneticInfo(treeSym8, treeSym8, normalize = TRUE))
+  expect_equal(13.75284, SharedPhylogeneticInfo(treeSym8, treeBal8), tolerance=1e-05)
   expect_equal(VariationOfPhylogeneticInfo(treeSym8, treeAcd.Befgh),
                VariationOfPhylogeneticInfo(treeAcd.Befgh, treeSym8), tolerance=1e-05)
   expect_equal(0, VariationOfPhylogeneticInfo(treeSym8, treeSym8, normalize = TRUE))
   infoSymBal <- PartitionInfo(treeSym8) + PartitionInfo(treeBal8)
   expect_equal(infoSymBal - 13.75284 - 13.75284, tolerance = 1e-05,
     VariationOfPhylogeneticInfo(treeSym8, treeBal8, normalize = TRUE) * infoSymBal)
-  expect_equal(22.53747 + MutualPhylogeneticInfo(treeAcd.Befgh, treeAcd.Befgh) - 
-                 (2 * MutualPhylogeneticInfo(treeSym8, treeAcd.Befgh)), 
+  expect_equal(22.53747 + SharedPhylogeneticInfo(treeAcd.Befgh, treeAcd.Befgh) - 
+                 (2 * SharedPhylogeneticInfo(treeSym8, treeAcd.Befgh)), 
                VariationOfPhylogeneticInfo(treeSym8, treeAcd.Befgh), 
                tolerance=1e-06)
   expect_equal(-log2(945/10395), 
-               MutualPhylogeneticInfo(treeSym8, treeAb.Cdefgh),
+               SharedPhylogeneticInfo(treeSym8, treeAb.Cdefgh),
                tolerance = 1e-06)
-  expect_equal(22.53747 + MutualPhylogeneticInfo(treeBal8, treeBal8) - 13.75284 - 13.75284, 
+  expect_equal(22.53747 + SharedPhylogeneticInfo(treeBal8, treeBal8) - 13.75284 - 13.75284, 
                VariationOfPhylogeneticInfo(treeSym8, treeBal8), tolerance=1e-05)
   expect_equal(-log2(945/10395),
-               MutualPhylogeneticInfo(treeSym8, treeAb.Cdefgh),
+               SharedPhylogeneticInfo(treeSym8, treeAb.Cdefgh),
                tolerance = 1e-06)
   expect_equal(-log2(315/10395),
-               MutualPhylogeneticInfo(treeSym8, treeAbc.Defgh),
+               SharedPhylogeneticInfo(treeSym8, treeAbc.Defgh),
                tolerance = 1e-06)
   expect_equal(0, VariationOfPhylogeneticInfo(treeSym8, treeSym8))
   expect_equal(PartitionInfo(treeSym8) - PartitionInfo(treeAcd.Befgh),
@@ -210,30 +210,30 @@ test_that('Mutual Phylogenetic Info is correctly calculated', {
   
   
   # Test symmetry of small vs large splits
-  expect_equal(MutualPhylogeneticInfo(treeSym8, treeAbc.Defgh),
-               MutualPhylogeneticInfo(treeAbc.Defgh, treeSym8))
-  expect_equal(-log2(225/10395), MutualPhylogeneticInfo(treeSym8, treeAbcd.Efgh))
+  expect_equal(MutualPhylogeneticInSharedPhylogeneticInfofo(treeSym8, treeAbc.Defgh),
+               SharedPhylogeneticInfo(treeAbc.Defgh, treeSym8))
+  expect_equal(-log2(225/10395), SharedPhylogeneticInfo(treeSym8, treeAbcd.Efgh))
   expect_equal(-log2(225/10395) - log2(945/10395),
-               MutualPhylogeneticInfo(treeSym8, treeTwoSplits),
+               SharedPhylogeneticInfo(treeSym8, treeTwoSplits),
                tolerance = 1e-7)
   expect_equal(SplitMutualInformation(8, 4, 3),
-               MutualPhylogeneticInfo(treeTwoSplits, treeAbc.Defgh),
+               SharedPhylogeneticInfo(treeTwoSplits, treeAbc.Defgh),
                tolerance = 1e-7)
   expect_equal(SplitInformation(4, 4) + SplitInformation (3, 5) - 
                (2 * SplitMutualInformation(8, 4, 3)),
                SplitVariationOfInformation(8, 4, 3),
                tolerance=1e-07)
   
-  expect_equal(MutualPhylogeneticInfo(treeSym8, list(treeSym8, treeBal8)), 
-               MutualPhylogeneticInfo(list(treeSym8, treeBal8), treeSym8),
+  expect_equal(SharedPhylogeneticInfo(treeSym8, list(treeSym8, treeBal8)), 
+               SharedPhylogeneticInfo(list(treeSym8, treeBal8), treeSym8),
                tolerance = 1e-7)
   
   # Test tree too large to cache
   set.seed(101)
   t1 <- ape::rtree(101)
   t2 <- ape::rtree(101, rooted = FALSE)
-  expect_equal(MutualPhylogeneticInfo(t1, t2),
-               MutualPhylogeneticInfo(t2, t1))
+  expect_equal(SharedPhylogeneticInfo(t1, t2),
+               SharedPhylogeneticInfo(t2, t1))
 })
 
 test_that('MutualMatchingSplitInfo is correctly calculated', {
@@ -258,7 +258,7 @@ test_that('MutualMatchingSplitInfo is correctly calculated', {
     8L)$score, tolerance = 1e-7)
   
   
-  expect_equal(MutualPhylogeneticInfo(treeSym8, treeSym8),
+  expect_equal(SharedPhylogeneticInfo(treeSym8, treeSym8),
                MutualMatchingSplitInfo(treeSym8, treeSym8), tolerance=1e-05)
   expect_equal(MutualMatchingSplitInfo(treeAb.Cdefgh, treeAbc.Defgh),
                MutualMatchingSplitInfo(treeAbc.Defgh, treeAb.Cdefgh))
@@ -278,7 +278,7 @@ test_that("Mutual Phylogenetic Information is correctly estimated", {
   exp <- ExpectedVariation(treeSym8, treeAbc.Defgh, samples = 1000L)
   tol <- exp[, 'Std. Err.'] * 2
   # Expected values calculated with 100k samples
-  expect_equal(1.175422, exp['MutualPhylogeneticInfo', 'Estimate'], 
+  expect_equal(1.175422, exp['SharedPhylogeneticInfo', 'Estimate'], 
                tolerance=tol[1])
   expect_equal(3.099776, exp['MutualMatchingSplitInfo', 'Estimate'], 
                tolerance=tol[2])

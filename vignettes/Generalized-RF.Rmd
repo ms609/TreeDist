@@ -36,9 +36,9 @@ of phylogenetic information [_sensu_ @Steel2006] that they share in common
 (see [separate vignette](information.html)).
 
 ```{r, fig.width=6 , fig.align='center'}
-VisualizeMatching(MutualPhylogeneticInfo, tree1, tree2, 
+VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2, 
                   Plot=TreeDistPlot, matchZeros = FALSE)
-MutualPhylogeneticInfo(tree1, tree2)
+SharedPhylogeneticInfo(tree1, tree2)
 ```
 
 ### The problem with arboreal matchings
@@ -53,7 +53,7 @@ The two trees below are identical but for the position of _A_ and
 _J_, yet receive zero similarity under arboreal metrics.
 
 ```{r, fig.width=6 , fig.align='center'}
-VisualizeMatching(MutualPhylogeneticInfo, matchZeros = FALSE, AtoJ, AotJ,
+VisualizeMatching(SharedPhylogeneticInfo, matchZeros = FALSE, AtoJ, AotJ,
                   Plot=TreeDistPlot, leaveRoom = FALSE, prune=c(5, 18))
 ```
 

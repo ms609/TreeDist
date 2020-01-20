@@ -100,7 +100,7 @@ test_that('Matches are reported', {
                                       'matching'))
     
   expect_equal(matchedSplits, attr(
-    MutualPhylogeneticInfoSplits(as.Splits(treeSym8), as.Splits(treeBal8),
+    SharedPhylogeneticInfoSplits(as.Splits(treeSym8), as.Splits(treeBal8),
                                reportMatching = TRUE),
     'matching'))
   
@@ -137,13 +137,13 @@ test_that('Matches are reported', {
     expect_equal('a b | e f g h c d => a b | e f g h c d', at$matchedSplits[2])
   }
   
-  Test(MutualPhylogeneticInfo)
+  Test(SharedPhylogeneticInfo)
   Test(VariationOfPhylogeneticInfo)
   Test(MutualMatchingSplitInfo)
   Test(VariationOfMatchingSplitInfo)
   Test(MutualClusteringInfo)
   Test(VariationOfClusteringInfo)
-  Test(MutualPhylogeneticInfo)
+  
   Test(NyeTreeSimilarity)
   Test(MatchingSplitDistance)
   Test(JaccardRobinsonFoulds, k = 2, arboreal = FALSE)
@@ -160,7 +160,7 @@ test_that('Matches are reported', {
   
   # Zero match:
   expect_equal('a b | c d .. a c | b d', 
-               attr(MutualPhylogeneticInfo( 
+               attr(SharedPhylogeneticInfo( 
                       ape::read.tree(text="((a, b), (c, d));"),
                       ape::read.tree(text="((a, c), (b, d));"), 
                       reportMatching = TRUE),
@@ -182,13 +182,13 @@ test_that('Matchings are calculated in both directions', {
     expect_equal(nMatches, length(attr(matching21, 'matchedSplits')))
   }
   
-  Test(MutualPhylogeneticInfo)
+  Test(SharedPhylogeneticInfo)
   Test(VariationOfPhylogeneticInfo)
   Test(MutualMatchingSplitInfo)
   Test(VariationOfMatchingSplitInfo)
   Test(MutualClusteringInfo)
   Test(VariationOfClusteringInfo)
-  Test(MutualPhylogeneticInfo)
+  
   Test(NyeTreeSimilarity)
   Test(JaccardRobinsonFoulds, k = 2, arboreal = FALSE)
   Test(JaccardRobinsonFoulds, k = 2, arboreal = TRUE)

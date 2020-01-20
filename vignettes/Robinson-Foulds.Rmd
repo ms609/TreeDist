@@ -323,7 +323,7 @@ We can then see the similarity scores for each pair of splits, along with the
 optimal matching:
 
 ```{r}
-attributes(MutualPhylogeneticInfo(tree1, tree2, reportMatching = TRUE))
+attributes(SharedPhylogeneticInfo(tree1, tree2, reportMatching = TRUE))
 ```
 
 `..` denotes that the fifth matching contributes zero to similarity score; an 
