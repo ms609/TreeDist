@@ -2,7 +2,7 @@
 % Please edit documentation in R/tree_information.R
 \name{PartitionInfo}
 \alias{PartitionInfo}
-\title{Information content of partitions within a tree}
+\title{Information content of splits within a tree}
 \usage{
 PartitionInfo(x)
 }
@@ -10,10 +10,10 @@ PartitionInfo(x)
 \item{tree}{A tree of class \code{phylo}, a list of trees, or a \code{multiPhylo} object.}
 }
 \description{
-Sums the phylogenetic information content for all partitions within a
+Sums the phylogenetic information content for all splits within a
 phylogenetic tree.  This value will be greater than the total information
-content of the tree where a tree contains multiple partitions, as
-these partitions will contain mutual information
+content of the tree where a tree contains multiple splits, as
+these splits will contain mutual information.
 }
 \author{
 Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})

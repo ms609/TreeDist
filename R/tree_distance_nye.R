@@ -82,7 +82,7 @@ NyeTreeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
 
 #' @describeIn NyeTreeSimilarity Calculate tree similarity from splits 
 #' instead of trees.
-#' @inheritParams MutualPhylogeneticInfoSplits
+#' @inheritParams SharedPhylogeneticInfoSplits
 #' @export
 NyeSplitSimilarity <- function (splits1, splits2, 
                                 nTip = attr(splits1, 'nTip'),
@@ -170,7 +170,7 @@ JaccardRobinsonFoulds <- function (tree1, tree2 = tree1, k = 1L,
 
 #' @describeIn JaccardRobinsonFoulds Calculate tree similarity from splits 
 #' instead of trees.
-#' @inheritParams MutualPhylogeneticInfoSplits
+#' @inheritParams SharedPhylogeneticInfoSplits
 #' @export
 JaccardSplitSimilarity <- function (splits1, splits2,
                                     nTip = attr(splits1, 'nTip'),

@@ -37,7 +37,7 @@
 #'   SplitSharedInformation(n=8, A1=4, A2=3)
 #'   SplitUnsharedInformation(n=8, A1=4, A2=3)
 #'
-#'   # If splits are identical, then their mutual information is the same
+#'   # If splits are identical, then their shared information is the same
 #'   # as the information of either split:
 #'   SplitSharedInformation(n=8, A1=3, A2=3)
 #'   TreeTools::SplitInformation(3, 5)

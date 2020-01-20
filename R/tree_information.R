@@ -1,9 +1,9 @@
-#' Information content of partitions within a tree
+#' Information content of splits within a tree
 #' 
-#' Sums the phylogenetic information content for all partitions within a 
+#' Sums the phylogenetic information content for all splits within a 
 #' phylogenetic tree.  This value will be greater than the total information 
-#' content of the tree where a tree contains multiple partitions, as 
-#' these partitions will contain mutual information
+#' content of the tree where a tree contains multiple splits, as 
+#' these splits will contain mutual information.
 #' 
 #' @param tree A tree of class `phylo`, a list of trees, or a `multiPhylo` object.
 #' 
@@ -33,12 +33,13 @@ PartitionInfo.Splits <- function(x) {
 }
 
 
-#' Clustering information content of all partitions within a tree
+#' Clustering information content of all splits within a tree
 #' 
-#' Sums the clustering information content (Meila 2007) across each partition within a 
-#' phylogenetic tree.  This value will be greater than the total information 
-#' content of the tree where a tree contains multiple partitions, as 
-#' these partitions will contain mutual information.
+#' Sums the clustering information content (Meila 2007) across each split 
+#' within a phylogenetic tree.
+#' This value will be greater than the total information 
+#' content of the tree where a tree contains multiple splits, as 
+#' these splits will contain mutual information.
 #' 
 #' Note that Meila (2007) and Vinh _et al_. (2010) deal with entropy, which 
 #' denotes the bits necessary to denote the cluster to which each tip belongs,

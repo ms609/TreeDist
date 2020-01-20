@@ -3,7 +3,7 @@
 \name{TreeDistance}
 \alias{TreeDistance}
 \alias{SharedPhylogeneticInfo}
-\alias{VariationOfPhylogeneticInfo}
+\alias{UnsharedPhylogeneticInfo}
 \alias{VariationOfClusteringInfo}
 \alias{ExpectedVariation}
 \alias{MutualClusteringInfo}
@@ -19,7 +19,7 @@ TreeDistance(tree1, tree2 = tree1)
 SharedPhylogeneticInfo(tree1, tree2 = tree1, normalize = FALSE,
   reportMatching = FALSE)
 
-VariationOfPhylogeneticInfo(tree1, tree2 = tree1, normalize = FALSE,
+UnsharedPhylogeneticInfo(tree1, tree2 = tree1, normalize = FALSE,
   reportMatching = FALSE)
 
 VariationOfClusteringInfo(tree1, tree2 = tree1, normalize = FALSE,
@@ -98,7 +98,7 @@ different in the partitions of two trees, under an optimal matching.
 \itemize{
 \item \code{SharedPhylogeneticInfo}: Shared phylogenetic information between two trees.
 
-\item \code{VariationOfPhylogeneticInfo}: Variation of phylogenetic information between two trees.
+\item \code{UnsharedPhylogeneticInfo}: Variation of phylogenetic information between two trees.
 
 \item \code{VariationOfClusteringInfo}: Variation of clustering information between two trees.
 
@@ -132,7 +132,7 @@ phylogenetic trees that are consistent with both partitions.
 This proportion gives rise to the Shared Phylogenetic Information similarity
 measure (\code{SharedPhylogeneticInfo}), and the complementary
 Variation of Phylogenetic Information distance metric
-(\code{VariationOfPhylogeneticInfo}).
+(\code{UnsharedPhylogeneticInfo}).
 
 An information-theoretic take on the \code{\link{MatchingSplitDistance}} offers a
 relaxed interpretation of this measurement, which attributes some information
@@ -160,7 +160,7 @@ maximum value, calculated thus:
 The information content of the least informative tree.
 To scale against the information content of the most informative tree, use
 \code{normalize = pmax}.
-\item \code{VariationOfPhylogeneticInfo}, \code{VariationOfClusteringInfo},
+\item \code{UnsharedPhylogeneticInfo}, \code{VariationOfClusteringInfo},
 \code{VariationOfMatchingSplitInfo}: The sum of the
 (phylogenetic or clustering) information content of the two trees.
 }
@@ -172,7 +172,7 @@ tree2 <- ape::read.tree(text='(((a, b), (c, d)), ((e, f), (g, h)));')
 tree3 <- ape::read.tree(text='((((h, b), c), d), (e, (f, (g, a))));')
 
 # Best possible score is obtained by matching a tree with itself
-VariationOfPhylogeneticInfo(tree1, tree1) # 0, by definition
+UnsharedPhylogeneticInfo(tree1, tree1) # 0, by definition
 SharedPhylogeneticInfo(tree1, tree1)
 PartitionInfo(tree1) # Maximum shared phylogenetic information
 
@@ -183,11 +183,11 @@ PartitionInfo(tree2)
 # How similar are two trees?
 SharedPhylogeneticInfo(tree1, tree2) # Amount of phylogenetic information in common
 VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2) # Which clades are matched?
-VariationOfPhylogeneticInfo(tree1, tree2) # Distance measure
-VariationOfPhylogeneticInfo(tree2, tree1) # The metric is symmetric
+UnsharedPhylogeneticInfo(tree1, tree2) # Distance measure
+UnsharedPhylogeneticInfo(tree2, tree1) # The metric is symmetric
 #'   
 # Are they more similar than two trees of this shape would be by chance?
-ExpectedVariation(tree1, tree2, sample=12)['VariationOfPhylogeneticInfo', 'Estimate']
+ExpectedVariation(tree1, tree2, sample=12)['UnsharedPhylogeneticInfo', 'Estimate']
 
 # Every partition in tree1 is contradicted by every partition in tree3
 # Non-arboreal matches contain clustering, but not phylogenetic, information
