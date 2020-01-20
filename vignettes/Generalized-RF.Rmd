@@ -88,8 +88,10 @@ considering the elements held in common between subsets of each partition.
 Consider a pair of partitions `ABCDEF|GHIJ` and `ABCDEIJ|FGH`.
 These can be aligned thus:
 
-`ABCDEF  | GHIJ`
-`ABCDE IJ|FGH  `
+```
+ABCDEF  | GHIJ
+ABCDE IJ|FGH
+```
 
 The first pair of subsets, `ABCDEF` and `ABCDEIJ`, have five elements in common 
 (`ABCDE`), and together encompass eight elements (`ABCDEFIJ`).  Their 
@@ -104,8 +106,10 @@ lower of the two subset scores, 2/5.
 We must now consider the other alignment of this pair of partitions,
 
 
-`ABCDEF  |     GHIJ`
-`     FGH|ABCDE  IJ`
+```
+ABCDEF  |     GHIJ
+     FGH|ABCDE  IJ
+```
 
 This yields subset scores of 1/8 and 2/9, and thus has an alignment score of 1/8.
 This alignment gives a lower score than the other, so is disregarded.  The 
@@ -115,7 +119,7 @@ better alignment: 2/5.
 As such, partitions that match exactly will receive a similarity score of 1,
 in a manner analogous to the Robinson-Foulds distance.  (This is despite the
 fact that some partitions are more likely to match than others.)
-And it is not possible for a pair of partitions to receive a zero similarity 
+It is not possible for a pair of partitions to receive a zero similarity 
 score.
 
 ```{r, fig.width=6 , fig.align='center'}
@@ -146,19 +150,21 @@ Robinson-Foulds metric as the exponent grows towards infinity.
 ```{r, fig.width=6, fig.height = 4,fig.align='center', echo=FALSE}
 par(mar=c(4, 4, 0, 0))
 x <- seq(1, 20, by=0.1)
-cbPalette8 <- Ternary::cbPalette8
-plot(0, xlim=range(x), ylim=c(3.5, 9.5),
-     xlab = 'k', ylab = 'Jaccard-Robinson-Foulds distance', pch = 3, type='n')
+cbPalette8 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", 
+"#D55E00", "#CC79A7") # dput(Ternary::cbPalette8)
+plot(0, xlim = range(x), ylim = c(3.5, 9.5),
+     xlab = expression(italic('k')), ylab = 'Jaccard-Robinson-Foulds distance',
+     pch = 3, type='n')
 
 abline(h = RobinsonFoulds(tree1, tree2),
-       lty = 'dashed', col=cbPalette8[6])
+       lty = 'dashed', col = cbPalette8[6])
 abline(h = NyeTreeSimilarity(tree1, tree2, similarity = FALSE),
-       lty = 'dotted', col=cbPalette8[8])
+       lty = 'dotted', col = cbPalette8[8])
 
-lines(x = x, y = vapply(x, JaccardRobinsonFoulds, tree1=tree1, tree2=tree2, 
-                        arboreal=FALSE, 0), col=cbPalette8[5])
-lines(x = x, y = vapply(x, JaccardRobinsonFoulds, tree1=tree1, tree2=tree2, 0),
-      col=cbPalette8[4])
+lines(x = x, y = vapply(x, JaccardRobinsonFoulds, tree1 = tree1, tree2 = tree2,
+                        arboreal = FALSE, 0), col = cbPalette8[5])
+lines(x = x, y = vapply(x, JaccardRobinsonFoulds, tree1 = tree1, tree2 = tree2,
+                        0), col = cbPalette8[4])
 
 legend('right', c('Robinson-Foulds', 'Arboreal', 'Non-arboreal', 'Nye et al.'),
        lty = c('dashed', 'solid', 'solid', 'dotted'), 
@@ -184,8 +190,10 @@ implied by a pair of partitions.  Here, the relevant quantity is the number
 of elements that must be moved from one subset to another in order to make
 the two partitions identical.  With the pair of partitions
 
-`ABCDEF  | GHIJ`
-`ABCDE IJ|FGH  `
+```
+ABCDEF  | GHIJ
+ABCDE IJ|FGH
+```
 
 three elements (_F_, _I_ and _J_) must be moved before the partitions are 
 identical; as such, the pair of partitions are assigned a difference score 
