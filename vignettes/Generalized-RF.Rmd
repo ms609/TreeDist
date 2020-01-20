@@ -28,56 +28,18 @@ Before you read it, you may wish to refresh your memory of the
 [use the TreeDist package](Using-TreeDist.html), and relevant 
 [principles of information theory](information.html).
 
-## Mutual phylogenetic information
+## Shared phylogenetic information
 
-Under the mutual phylogenetic information tree distance measure [@SmithDist], 
-pairs of partitions are assigned a similarity score that corresponds to their
-mutual phylogenetic information content.
+Under the shared phylogenetic information tree distance measure [@SmithDist], 
+pairs of splits are assigned a similarity score that corresponds to the amount
+of phylogenetic information [_sensu_ @Steel2006] that they share in common
+(see [separate vignette](information.html)).
 
 ```{r, fig.width=6 , fig.align='center'}
 VisualizeMatching(MutualPhylogeneticInfo, tree1, tree2, 
                   Plot=TreeDistPlot, matchZeros = FALSE)
 MutualPhylogeneticInfo(tree1, tree2)
 ```
-
-The phylogenetic information content of a partition is defined as
-the negative logarithm of the proportion of all bifurcating _n_-tip trees that
-contain that partition.  Thus a more even bipartition, which is consistent with
-a smaller proportion of trees, contains more phylogenetic information.
-
-The mutual phylogenetic information of two partitions is the information that
-they contain in common; that is, the sum of the information content of the two 
-splits, minus the joint information (which is the negative logarithm of the 
-proportion of trees that contain both partitions).
-
-Consider the splits `ABCDEF:GHI` and `ABCDEFI:GH`.  
-
-```{r}
-library('TreeTools')
-treesMatchingSplit <- c(
-  ABCDEF.GHI = TreesMatchingSplit(6, 3),
-  ABCDEFI.GH = TreesMatchingSplit(7, 2)
-)
-treesMatchingSplit
-
-proportionMatchingSplit <- treesMatchingSplit / NUnrooted(9)
-proportionMatchingSplit
-
-splitInformation <- -log2(proportionMatchingSplit)
-splitInformation
-
-treesMatchingBoth <- TreesConsistentWithTwoSplits(9, 6, 7)
-jointInformation <- -log2(treesMatchingBoth / NUnrooted(9))
-
-mutualInformation <- sum(splitInformation) - jointInformation
-mutualInformation
-
-# Or more concisely:
-SplitMutualInformation(n = 9, 6, 7)
-```
-
-
-<!--#TODO: 1 != 1; need to normalize.-->
 
 ### The problem with arboreal matchings
 
