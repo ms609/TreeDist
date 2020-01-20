@@ -135,16 +135,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// cpp_mutual_phylo
-List cpp_mutual_phylo(RawMatrix x, RawMatrix y, IntegerVector nTip);
-RcppExport SEXP _TreeDist_cpp_mutual_phylo(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
+// cpp_shared_phylo
+List cpp_shared_phylo(RawMatrix x, RawMatrix y, IntegerVector nTip);
+RcppExport SEXP _TreeDist_cpp_shared_phylo(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< RawMatrix >::type x(xSEXP);
     Rcpp::traits::input_parameter< RawMatrix >::type y(ySEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type nTip(nTipSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_mutual_phylo(x, y, nTip));
+    rcpp_result_gen = Rcpp::wrap(cpp_shared_phylo(x, y, nTip));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -160,7 +160,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_cpp_jaccard_similarity", (DL_FUNC) &_TreeDist_cpp_jaccard_similarity, 5},
     {"_TreeDist_cpp_mmsi_distance", (DL_FUNC) &_TreeDist_cpp_mmsi_distance, 3},
     {"_TreeDist_cpp_mutual_clustering", (DL_FUNC) &_TreeDist_cpp_mutual_clustering, 3},
-    {"_TreeDist_cpp_mutual_phylo", (DL_FUNC) &_TreeDist_cpp_mutual_phylo, 3},
+    {"_TreeDist_cpp_shared_phylo", (DL_FUNC) &_TreeDist_cpp_shared_phylo, 3},
     {NULL, NULL, 0}
 };
 

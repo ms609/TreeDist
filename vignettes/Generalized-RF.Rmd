@@ -43,7 +43,7 @@ SharedPhylogeneticInfo(tree1, tree2)
 
 ### The problem with arboreal matchings
 
-The mutual phylogenetic information is an arboreal similarity score: that is to
+Shared phylogenetic information is an arboreal similarity score: that is to
 say, it assigns zero similarity to partitions that cannot both occur on a 
 single tree.  
 This leads to problematic behaviour in certain cases: for example,

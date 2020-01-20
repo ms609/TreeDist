@@ -23,7 +23,7 @@
 #' information content of a pair of partitions as relating to the proportion of
 #' phylogenetic trees that are consistent with both partitions.
 #' 
-#' This proportion gives rise to the Mutual Phylogenetic Information similarity 
+#' This proportion gives rise to the Shared Phylogenetic Information similarity 
 #' measure (`SharedPhylogeneticInfo`), and the complementary 
 #' Variation of Phylogenetic Information distance metric
 #' (`VariationOfPhylogeneticInfo`).
@@ -85,7 +85,7 @@
 #' # Best possible score is obtained by matching a tree with itself
 #' VariationOfPhylogeneticInfo(tree1, tree1) # 0, by definition
 #' SharedPhylogeneticInfo(tree1, tree1)
-#' PartitionInfo(tree1) # Maximum mutual phylogenetic information
+#' PartitionInfo(tree1) # Maximum shared phylogenetic information
 #' 
 #' # Best possible score is a function of tree shape; the partitions within
 #' # balanced trees are more independent and thus contain less information
@@ -226,14 +226,14 @@ MutualClusteringInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
                 how = normalize, Combine = pmin)
 }
 
-#' @describeIn TreeDistance Calculate mutual phylogenetic information from splits instead of trees.
+#' @describeIn TreeDistance Calculate shared phylogenetic information from splits instead of trees.
 #' @template splits12params
 #' @param nTip Integer specifying the number of tips in each split.
 #' @export
 SharedPhylogeneticInfoSplits <- function (splits1, splits2,
                                           nTip = attr(splits1, 'nTip'),
                                           reportMatching = FALSE) {
-  GeneralizedRF(splits1, splits2, nTip, cpp_mutual_phylo,
+  GeneralizedRF(splits1, splits2, nTip, cpp_shared_phylo,
                 maximize = TRUE, reportMatching = reportMatching)
 }
 

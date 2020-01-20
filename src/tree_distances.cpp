@@ -518,7 +518,7 @@ List cpp_mutual_clustering (RawMatrix x, RawMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_mutual_phylo (RawMatrix x, RawMatrix y,
+List cpp_shared_phylo (RawMatrix x, RawMatrix y,
                        IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");

@@ -121,29 +121,29 @@ test_that('Robinson Foulds Distance is correctly calculated', {
   RFTest(shuffle2, sq_pectinate)
 })
 
-test_that('Mutual Phylogenetic Info is correctly calculated', {
+test_that('Shared Phylogenetic Info is correctly calculated', {
   expect_equal(5.529821,
-               cpp_mutual_phylo(
+               cpp_shared_phylo(
                  as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
                  8L)$score,
                tolerance = 1e-7)
   
   expect_equal(0.2895066,
-               cpp_mutual_phylo(
+               cpp_shared_phylo(
                  as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(0, 0, 1, 1, 0, 0, 0, 0))),
                  8L)$score,
                tolerance = 1e-7)
   expect_equal(1.137504,
-               cpp_mutual_phylo(
+               cpp_shared_phylo(
                  as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
                  8L)$score,
                tolerance = 1e-6)
   
   expect_equal(3.45943,
-               cpp_mutual_phylo(
+               cpp_shared_phylo(
                  as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
                  8L)$score,
@@ -274,7 +274,7 @@ test_that('MutualMatchingSplitInfo is correctly calculated', {
   NormalizationTest(MutualMatchingSplitInfo)
 })
 
-test_that("Mutual Phylogenetic Information is correctly estimated", {
+test_that("Shared Phylogenetic Information is correctly estimated", {
   exp <- ExpectedVariation(treeSym8, treeAbc.Defgh, samples = 1000L)
   tol <- exp[, 'Std. Err.'] * 2
   # Expected values calculated with 100k samples
