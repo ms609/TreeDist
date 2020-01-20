@@ -138,8 +138,7 @@ if (require('TreeDistData')) {
                  start = list(a = -0.034, b = 4e-5, c = 1.44))
   # loess(pathMax ~ nTip) is Unsuitable for small _n_
   msdNorm <- nls(msdMax ~ (a * nTip) + (c * nTip ^ b) + d,
-                start = list(a = -29.185, b=1.094, c = 24.85, d = 6))
-  # msdNorm is a worse AIC/BIC with the d term, but visually better at small n
+                 start = list(a = -0.0006, b=-0.9394, c = 10.0733, d = 0.2877))
   
   normalizeAgainst <- rbind(
     path = predict(pathNorm),
