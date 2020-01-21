@@ -6,8 +6,8 @@
 #' for definitions.
 #' 
 #' 
-#' Split S~1~ divides _n_ leaves into two splits, _A1_ and _B1_.
-#' Split S~2~ divides the same leaves into the splits _A2_ and _B2_.
+#' Split _S1_ divides _n_ leaves into two splits, _A1_ and _B1_.
+#' Split _S2_ divides the same leaves into the splits _A2_ and _B2_.
 #' 
 #' Splits must be named such that _A1_ fully overlaps with _A2_: 
 #' that is to say, all taxa in _A1_ are also in _A2_, or _vice versa_.
@@ -209,27 +209,29 @@ AllSplitPairings <- memoise(function (n) {
 
 #' Entropy of two splits
 #' 
-#' #TODO REWRITE
-#' Reports various values pertaining to the phylogenetic information content 
-#' of two splits,
-#' treating splits as subdivisions of _n_ leaves into two clusters.
+#' Reports the entropy, joint entropy, entropy distance and information content
+#' of two splits, treating each split as a division of _n_ leaves into two
+#' groups.  Further details are available in a 
+#' [vignette](https://ms609.github.io/TreeDist/articles/information.html),
+#' MacKay (2003) and Meila (2007)
 #' 
 #' @template split12Params
 #' 
-#' @references 
-#' \insertRef{Meila2007}{TreeDist}
-#' 
 #' @return A numeric vector listing, in bits,
-#'  * `h1` The entropy of split 1
-#'  * `h1` The entropy of split 2
-#'  * `jointH` The joint entropy of both splits
-#'  * `i` The mutual information of the splits
-#'  * `vI` The variation of information of the splits (see Meila 2007)
+#'  * `H1` The entropy of split 1
+#'  * `H2` The entropy of split 2
+#'  * `H12` The joint entropy of both splits
+#'  * `I` The mutual information of the splits
+#'  * `Hd` The entropy distance (variation of information) of the splits
+#' 
+#' @references 
+#' \insertRef{Mackay2003}{TreeDist}
+#' \insertRef{Meila2007}{TreeDist}
 #' 
 #' @template MRS
 #' @family split information functions
 #' @export
-SplitEntropy <- function (split1, split2=split1) {
+SplitEntropy <- function (split1, split2 = split1) {
   A1A2 <- sum(split1 & split2)
   A1B2 <- sum(split1 & !split2)
   B1A2 <- sum(!split1 & split2)
@@ -246,11 +248,11 @@ SplitEntropy <- function (split1, split2=split1) {
   h2 <- Entropy(c(A2, B2) / n)
   jointH <- Entropy(overlaps[overlaps > 0L] / n)
   sharedInformation <- h1 + h2 - jointH
-  variationOfInformation <- jointH - sharedInformation
+  entropyDistance <- jointH - sharedInformation
   
   # Return:
-  c(h1 = h1, h2 = h2, jointH = jointH, i = sharedInformation,
-    vI = variationOfInformation)
+  c(H1 = h1, H2 = h2, H12 = jointH, I = sharedInformation,
+    Hd = entropyDistance)
 }
 
 #' Joint Information of two splits
@@ -266,7 +268,7 @@ SplitEntropy <- function (split1, split2=split1) {
 #' contradictory.
 #' 
 #' Split S1 is defined as dividing taxa into the two sets A1 and B1,
-#' and S2=A2:B2.
+#' and S2 = A2|B2.
 #' 
 #' Consider splits that divide eight leaves, labelled A to H.
 #' 
@@ -299,12 +301,12 @@ SplitEntropy <- function (split1, split2=split1) {
 #' @importFrom TreeTools NUnrooted
 #' @export
 JointInformation <- function(A1A2, A1B2, B1A2, B1B2) {
-  # Y1 = A1:B1
+  # S1 = A1|B1
   A1 <- A1A2 + A1B2
   B1 <- B1A2 + B1B2
   n  <- A1 + B1
   
-  # Y2 = A2:B2
+  # S2 = A2|B2
   A2 <- A1A2 + B1A2
   B2 <- A1B2 + B1B2
   
@@ -320,11 +322,11 @@ JointInformation <- function(A1A2, A1B2, B1A2, B1B2) {
   SplitInformation(A1, B1) + SplitInformation(A2, B2) - sharedInformation
 }
 
-#' @describeIn SplitSharedInformation Number of trees consistent with two splits.
-#' @family split information functions
+#' @describeIn SplitSharedInformation Number of trees consistent with two 
+#' splits.
 #' @importFrom TreeTools TreesMatchingSplit NRooted
 #' @export
-TreesConsistentWithTwoSplits <- function (n, A1, A2=A1) {
+TreesConsistentWithTwoSplits <- function (n, A1, A2 = A1) {
   
   smallSplit <- min(A1, A2)
   bigSplit <- max(A1, A2)
@@ -367,10 +369,11 @@ TreesConsistentWithTwoSplits <- function (n, A1, A2=A1) {
     NRooted(n - bigSplit)
 }
 
-#' @describeIn SplitSharedInformation Natural logarithm of `TreesConsistentWithTwoSplits`.
+#' @describeIn SplitSharedInformation Natural logarithm of 
+#' `TreesConsistentWithTwoSplits`.
 #' @importFrom TreeTools LnTreesMatchingSplit LnRooted.int
 #' @export
-LnTreesConsistentWithTwoSplits <- function (n, A1, A2=A1) {
+LnTreesConsistentWithTwoSplits <- function (n, A1, A2 = A1) {
   smallSplit <- min(A1, A2)
   bigSplit <- max(A1, A2)
   

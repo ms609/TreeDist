@@ -105,7 +105,7 @@ test_that("MeilaVariationOfInformation", {
 test_that("SplitEntropy", {
   expect_equal(SplitEntropy(c(rep(TRUE, 5), rep(FALSE, 6)), c(rep(TRUE, 5), rep(FALSE, 6))),
                SplitEntropy(c(rep(TRUE, 5), rep(FALSE, 6))))
-  expect_equal(c(h1=0.994, h2=0.994, jointH=1.348, i=0.6394, vI = 0.709),
+  expect_equal(c(H1 = 0.994, H2 = 0.994, H12 = 1.348, I = 0.6394, Hd = 0.709),
                SplitEntropy(c(rep(TRUE, 5), rep(FALSE, 6)), c(rep(TRUE, 6), rep(FALSE, 5))),
                tolerance = 0.001)
 })
