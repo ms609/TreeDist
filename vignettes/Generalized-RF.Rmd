@@ -44,7 +44,7 @@ SharedPhylogeneticInfo(tree1, tree2)
 ### The problem with arboreal matchings
 
 Shared phylogenetic information is an arboreal similarity score: that is to
-say, it assigns zero similarity to partitions that cannot both occur on a 
+say, it assigns zero similarity to splits that cannot both occur on a 
 single tree.  
 This leads to problematic behaviour in certain cases: for example,
 when the position of two distant taxa is swapped, similarities within a tree can
@@ -73,7 +73,7 @@ MutualClusteringInfo(AtoJ, AotJ)
 
 Because no pair of non-trivial splits has zero mutual clustering information,
 even a dissimilar matching (such as `HI|ABCDEFG` => `EI|ABCDFGH` below) 
-is preferred to leaving a partition unpaired.
+is preferred to leaving a split unpaired.
 
 ```{r, fig.width=6 , fig.align='center'}
 VisualizeMatching(MutualClusteringInfo, tree1, tree2, 
@@ -83,9 +83,9 @@ VisualizeMatching(MutualClusteringInfo, tree1, tree2,
 ## Nye _et al._ tree similarity metric
 
 The Nye _et al_. [-@Nye2006] tree similarity metric scores pairs by
-considering the elements held in common between subsets of each partition.
+considering the elements held in common between subsets of each split.
 
-Consider a pair of partitions `ABCDEF|GHIJ` and `ABCDEIJ|FGH`.
+Consider a pair of splits `ABCDEF|GHIJ` and `ABCDEIJ|FGH`.
 These can be aligned thus:
 
 ```
@@ -103,7 +103,7 @@ of the five total (`FGHIJ`), and hence receive a subset score of 2/5.
 This split alignment then receives an _alignment score_ corresponding to the 
 lower of the two subset scores, 2/5.
 
-We must now consider the other alignment of this pair of partitions,
+We must now consider the other alignment of this pair of splits,
 
 
 ```
@@ -113,13 +113,13 @@ ABCDEF  |     GHIJ
 
 This yields subset scores of 1/8 and 2/9, and thus has an alignment score of 1/8.
 This alignment gives a lower score than the other, so is disregarded.  The 
-pair of partitions is allocated a similarity score corresponding to the 
+pair of splits is allocated a similarity score corresponding to the 
 better alignment: 2/5.
 
-As such, partitions that match exactly will receive a similarity score of 1,
+As such, splits that match exactly will receive a similarity score of 1,
 in a manner analogous to the Robinson-Foulds distance.  (This is despite the
-fact that some partitions are more likely to match than others.)
-It is not possible for a pair of partitions to receive a zero similarity 
+fact that some splits are more likely to match than others.)
+It is not possible for a pair of splits to receive a zero similarity 
 score.
 
 ```{r, fig.width=6 , fig.align='center'}
@@ -131,7 +131,7 @@ NyeTreeSimilarity(tree1, tree2, normalize=FALSE)
 ### Jaccard-Robinson-Foulds metric
 
 B&ouml;cker _et al_. [-@Bocker2013] propose expressly prohibiting contradictory
-pairings, i.e. pairs of partitions that could never occur in the same tree.
+pairings, i.e. pairs of splits that could never occur in the same tree.
 Such an 'arboreal' matching would preclude the pairing of `ABCFGHI|DE` with
 `ABCDFGH|EI`:
 
@@ -142,7 +142,7 @@ VisualizeMatching(JaccardRobinsonFoulds, tree1, tree2,
                   Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
 ```
 
-B&ouml;cker _et al_. [-@Bocker2013] also suggest raising the partition 
+B&ouml;cker _et al_. [-@Bocker2013] also suggest raising the split 
 similarity score defined above to an arbitrary exponent.  The similarity score
 is also doubled.  By this means, the metric can be made to converge to the
 Robinson-Foulds metric as the exponent grows towards infinity.
@@ -186,17 +186,17 @@ Note that the visualization shows the difference, rather than the similarity,
 between splits.
 
 Similar to the Nye _et al_. similarity metric, this method compares the subsets
-implied by a pair of partitions.  Here, the relevant quantity is the number
+implied by a pair of splits.  Here, the relevant quantity is the number
 of elements that must be moved from one subset to another in order to make
-the two partitions identical.  With the pair of partitions
+the two splits identical.  With the pair of splits
 
 ```
 ABCDEF  | GHIJ
 ABCDE IJ|FGH
 ```
 
-three elements (_F_, _I_ and _J_) must be moved before the partitions are 
-identical; as such, the pair of partitions are assigned a difference score 
+three elements (_F_, _I_ and _J_) must be moved before the splits are 
+identical; as such, the pair of splits are assigned a difference score 
 (not a similarity score) of three.
 
 ```{r, fig.width=6 , fig.align='center'}
@@ -218,11 +218,11 @@ VisualizeMatching(VariationOfMatchingSplitInfo, tree1, tree2,
                   Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
 ```
 
-This approach scores each pair of bipartitions according to the information 
-content of the most information-rich bipartition that is consistent with both
-partitions in the pair.
+This approach scores each pair of splits according to the information 
+content of the most information-rich split that is consistent with both
+splits in the pair.
 
-The most information-rich bipartition consistent with 
+The most information-rich split consistent with 
 
 `ABCDEF  | GHIJ`
 `ABCDE IJ|FGH  `
