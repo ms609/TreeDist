@@ -55,7 +55,7 @@
 #'  To scale against the information content of the most informative tree, use
 #' `normalize = pmax`.
 #' 
-#' * `DifferentPhylogeneticInfo`, `VariationOfClusteringInfo`,
+#' * `DifferentPhylogeneticInfo`, `ClusteringInfoDistance`,
 #' `MatchingSplitInfoDistance`: The sum of the
 #' (phylogenetic or clustering) information content of the two trees.
 #' 
@@ -157,7 +157,7 @@ DifferentPhylogeneticInfo <- function (tree1, tree2 = tree1,
 
 #' @describeIn TreeDistance Variation of clustering information between two trees.
 #' @export
-VariationOfClusteringInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
+ClusteringInfoDistance <- function (tree1, tree2 = tree1, normalize = FALSE,
                                        reportMatching = FALSE) {
   mci <- MutualClusteringInfo(tree1, tree2, normalize = FALSE, 
                               reportMatching = reportMatching)
