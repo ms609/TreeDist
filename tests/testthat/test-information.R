@@ -6,32 +6,6 @@ test_that("Entropy is calculated correctly", {
   expect_equal(2, Entropy(c(1/4, 1/4, 0, 1/4, 0, 1/4)))
 })
 
-test_that("Joint information calculated correctly", {
-  # Identical splits: ABCDE:FGH, ABCDE:FGH
-  expect_equal(-log2(315/10395), JointInformation(5, 0, 0, 3))
-  expect_equal(-log2(315/10395), JointInformation(3, 0, 0, 5))
-  expect_equal(-log2(315/10395), JointInformation(0, 5, 3, 0))
-  expect_equal(-log2(315/10395), JointInformation(0, 3, 5, 0))
-  
-  # Agreeable splits: ABCDE:FGHI, ABC:DEFGHI
-  expected_3204 <- SplitInformation(5, 4) + SplitInformation(3, 6) --log2(135/135135)
-  expect_equal(expected_3204, JointInformation(3, 2, 0, 4))
-  expect_equal(expected_3204, JointInformation(2, 3, 4, 0))
-  expect_equal(expected_3204, JointInformation(0, 4, 3, 2))
-  expect_equal(expected_3204, JointInformation(4, 0, 2, 3))
-  
-  # Perfect contradiction: AB:CDEFG, AC:BDEFG
-  expect_equal(SplitInformation(2, 5) * 2, JointInformation(1, 1, 1, 4))
-  
-  # Compatible splits: AB:CDEFGH, CD:ABEFGH
-  expected_0224 <- SplitInformation(2, 6) - SplitInformation(2, 5)
-  expect_equal(expected_0224, JointInformation(0, 2, 2, 4))
-  expect_equal(expected_0224, JointInformation(2, 0, 4, 2))
-  expect_equal(expected_0224, JointInformation(2, 4, 0, 2))
-  expect_equal(expected_0224, JointInformation(4, 2, 2, 0))
-  
-})
-
 test_that("AllSplitPairings counted correctly", {
   expect_error(AllSplitPairings(3))
   for (n in 4:10) {

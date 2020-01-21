@@ -14,25 +14,26 @@ identifying each leaf as a member of the ingroup (\code{TRUE}) or outgroup
 \value{
 A numeric vector listing, in bits,
 \itemize{
-\item \code{h1} The entropy of split 1
-\item \code{h1} The entropy of split 2
-\item \code{jointH} The joint entropy of both splits
-\item \code{i} The mutual information of the splits
-\item \code{vI} The variation of information of the splits (see Meila 2007)
+\item \code{H1} The entropy of split 1
+\item \code{H2} The entropy of split 2
+\item \code{H12} The joint entropy of both splits
+\item \code{I} The mutual information of the splits
+\item \code{Hd} The entropy distance (variation of information) of the splits
 }
 }
 \description{
-#TODO REWRITE
-Reports various values pertaining to the phylogenetic information content
-of two splits,
-treating splits as subdivisions of \emph{n} leaves into two clusters.
+Reports the entropy, joint entropy, entropy distance and information content
+of two splits, treating each split as a division of \emph{n} leaves into two
+groups.  Further details are available in a
+\href{https://ms609.github.io/TreeDist/articles/information.html}{vignette},
+MacKay (2003) and Meila (2007)
 }
 \references{
+\insertRef{Mackay2003}{TreeDist}
 \insertRef{Meila2007}{TreeDist}
 }
 \seealso{
-Other split information functions: \code{\link{JointInformation}},
-  \code{\link{SplitSharedInformation}}
+Other split information functions: \code{\link{SplitSharedInformation}}
 }
 \author{
 Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})

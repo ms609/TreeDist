@@ -38,8 +38,8 @@ splits. See the
 for definitions.
 }
 \details{
-Split S~1~ divides \emph{n} leaves into two splits, \emph{A1} and \emph{B1}.
-Split S~2~ divides the same leaves into the splits \emph{A2} and \emph{B2}.
+Split \emph{S1} divides \emph{n} leaves into two splits, \emph{A1} and \emph{B1}.
+Split \emph{S2} divides the same leaves into the splits \emph{A2} and \emph{B2}.
 
 Splits must be named such that \emph{A1} fully overlaps with \emph{A2}:
 that is to say, all taxa in \emph{A1} are also in \emph{A2}, or \emph{vice versa}.
@@ -49,9 +49,11 @@ Thus, all taxa in the smaller of \emph{A1} and \emph{A2} also occur in the large
 \itemize{
 \item \code{SplitDifferentInformation}: Variation of information between two splits.
 
-\item \code{TreesConsistentWithTwoSplits}: Number of trees consistent with two splits.
+\item \code{TreesConsistentWithTwoSplits}: Number of trees consistent with two
+splits.
 
-\item \code{LnTreesConsistentWithTwoSplits}: Natural logarithm of \code{TreesConsistentWithTwoSplits}.
+\item \code{LnTreesConsistentWithTwoSplits}: Natural logarithm of
+\code{TreesConsistentWithTwoSplits}.
 }}
 
 \examples{
@@ -75,11 +77,7 @@ Thus, all taxa in the smaller of \emph{A1} and \emph{A2} also occur in the large
 \insertRef{Meila2007}{TreeDist}
 }
 \seealso{
-Other split information functions: \code{\link{JointInformation}},
-  \code{\link{SplitEntropy}}
-
-Other split information functions: \code{\link{JointInformation}},
-  \code{\link{SplitEntropy}}
+Other split information functions: \code{\link{SplitEntropy}}
 }
 \author{
 Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
