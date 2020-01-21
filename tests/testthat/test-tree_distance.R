@@ -221,7 +221,7 @@ test_that('Shared Phylogenetic Info is correctly calculated', {
                tolerance = 1e-7)
   expect_equal(SplitInformation(4, 4) + SplitInformation (3, 5) - 
                (2 * SplitSharedInformation(8, 4, 3)),
-               SplitVariationOfInformation(8, 4, 3),
+               SplitDifferentInformation(8, 4, 3),
                tolerance=1e-07)
   
   expect_equal(SharedPhylogeneticInfo(treeSym8, list(treeSym8, treeBal8)), 

@@ -197,7 +197,7 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+4) {
     
     c(SharedPhylogeneticInfoSplits(splits1, resampled2),
       MatchingSplitInfoSplits(splits1, resampled2))
-  }, c(SharedPhylogeneticInfo = 0, MutualMatchingSplitInfo = 0))
+  }, c(SharedPhylogeneticInfo = 0, MatchingSplitInfo = 0))
   
   mut <- cbind(Estimate = rowMeans(mutualEstimates),
                sd = apply(mutualEstimates, 1, sd), n = samples)
