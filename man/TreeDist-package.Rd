@@ -96,6 +96,7 @@ Other tree distance functions are implemented in:
 \item \href{http://ape-package.ird.fr/}{ape}:
 \itemize{
 \item \code{cophenetic.phylo}: Cophenetic distance
+\item \code{dist.topo}: Path (topological) distance, Robinson-Foulds distance.
 }
 \item \href{https://cran.r-project.org/package=phangorn}{phangorn}
 \itemize{

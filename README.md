@@ -99,7 +99,7 @@ Other tree distance functions are implemented in:
     - `dist.topo`: Path (topological) distance, Robinson-Foulds distance.
 * [phangorn](https://cran.r-project.org/package=phangorn)
     - `treedist`: SPR, Robinson-Foulds and path distances.
-* [Quartet](http://ms609.github.io/Quartet/): Quartet and Triplet distances, 
+* [Quartet](http://ms609.github.io/Quartet/): Triplet and Quartet distances, 
   using the tqDist algorithm.
 * [TBRDist](http://ms609.github.io/TBRDist/): TBR and SPR distances on 
   unrooted trees, using the `uspr` C library.
