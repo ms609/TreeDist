@@ -60,7 +60,7 @@ with the Jaccard-Robinson-Foulds metric (function
 }
 \itemize{
 \item Bogdanowicz and Giaro (2012), and independently Lin \emph{et al.} (2012), count
-the number of 'mismatched' terminals in a pair of splits. An
+the number of 'mismatched' leaves in a pair of splits. An
 information-based equivalent (Smith, forthcoming) is provided in the function
 \href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{MatchingSplitInfoDistance}.
 }

@@ -2,12 +2,12 @@
 #' 
 #' Calculate the maximum agreement subtree between two phylogenetic trees, i.e.
 #' the largest tree that can be obtained from either `tree1` or `tree2` solely
-#' by deleting tips.
+#' by deleting leaves.
 #' 
 #' @template tree12Params
 #' @param rooted Logical specifying whether to treat the trees as rooted.
 #' 
-#' @return `MASTSize` returns an integer specifying the number of tips in the
+#' @return `MASTSize` returns an integer specifying the number of leaves in the
 #' maximum agreement subtree.
 #' 
 #' @examples
@@ -30,7 +30,7 @@
 #' CompareAll(as.phylo(0:5, 8), MASTInfo)
 #' 
 #' @seealso [`phangorn::mast`], a slower, all-R implementation that also returns
-#' the tips contained within the subtree.
+#' the leaves contained within the subtree.
 #' 
 #' @references 
 #' \insertRef{Valiente2009}{TreeDist}

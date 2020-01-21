@@ -70,10 +70,10 @@ test_that("MeilaMutualInformation", {
 })
 
 test_that("MeilaVariationOfInformation", {
-  expect_equal(6L, MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,T,T,T,T,T)))
-  expect_equal(0, MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,T,T,F,F,F)))
-  expect_equal(11.01955, MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,F,T,F,T,F)))
-  expect_equal(7.219281, MeilaVariationOfInformation(c(F,T,T,T,T,T), c(T,T,T,T,T,F)))
+  expect_equal(1L, MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,T,T,T,T,T)))
+  expect_equal(0L, MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,T,T,F,F,F)))
+  expect_equal(11.01955 / 6, MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,F,T,F,T,F)))
+  expect_equal(7.219281 / 6, MeilaVariationOfInformation(c(F,T,T,T,T,T), c(T,T,T,T,T,F)))
 })
 
 test_that("SplitEntropy", {

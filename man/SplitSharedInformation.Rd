@@ -57,7 +57,7 @@ splits.
 }}
 
 \examples{
-  # Eight tips, labelled A to H.
+  # Eight leaves, labelled A to H.
   # Split 1: ABCD|EFGH
   # Split 2: ABC|DEFGH
   # Let A1 = ABCD (four taxa), and A2 = ABC (three taxa).

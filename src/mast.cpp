@@ -61,7 +61,7 @@ void fill_M (const unsigned int node1, const unsigned int node2,
 
 
 // edge1 and edge2 should be edge matrices taken from trees of class `phylo`,
-// with one subtracted from all entries so that tips are numbered from 
+// with one subtracted from all entries so that leaves are numbered from 
 // 0..(nTip - 1).
 // [[Rcpp::export]]
 int cpp_mast (IntegerMatrix edge1, IntegerMatrix edge2, IntegerVector nTip) {

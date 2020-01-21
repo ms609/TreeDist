@@ -48,7 +48,7 @@ MatchingSplitInfoSplits(splits1, splits2, nTip = attr(splits1, "nTip"),
   reportMatching = FALSE)
 }
 \arguments{
-\item{tree1, tree2}{Trees of class \code{phylo}, with tips labelled identically,
+\item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.}
 
 \item{normalize}{If a numeric value is provided, this will be used as a
@@ -70,7 +70,7 @@ and each column corresponds to a split, such that each leaf is identified as
 a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
 split.}
 
-\item{nTip}{Integer specifying the number of tips in each split.}
+\item{nTip}{Integer specifying the number of leaves in each split.}
 }
 \value{
 If \code{reportMatching = FALSE}, the functions return a numeric

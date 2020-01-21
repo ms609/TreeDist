@@ -9,10 +9,10 @@ CalculateTreeDistance(Func, tree1, tree2, reportMatching = FALSE, ...)
 \arguments{
 \item{Func}{Tree distance function.}
 
-\item{tree1}{Trees of class \code{phylo}, with tips labelled identically,
+\item{tree1}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.}
 
-\item{tree2}{Trees of class \code{phylo}, with tips labelled identically,
+\item{tree2}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.}
 
 \item{reportMatching}{Logical specifying whether to return the clade

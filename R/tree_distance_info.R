@@ -239,7 +239,7 @@ MutualClusteringInformation <- MutualClusteringInfo
 
 #' @describeIn TreeDistance Calculate shared phylogenetic information from splits instead of trees.
 #' @template splits12params
-#' @param nTip Integer specifying the number of tips in each split.
+#' @template nTipParam
 #' @export
 SharedPhylogeneticInfoSplits <- function (splits1, splits2,
                                           nTip = attr(splits1, 'nTip'),

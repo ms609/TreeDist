@@ -2,10 +2,10 @@
 #' 
 #' The Kendall-Colijn distance is related to the path difference. 
 #' 
-#' It works by measuring, for each pair of tips, the distance from the most recent
-#' common ancestor of those tips and the root node.  For a given tree, this 
+#' It works by measuring, for each pair of leaves, the distance from the most recent
+#' common ancestor of those leaves and the root node.  For a given tree, this 
 #' produces a vector of values recording the distance-from-the-root of each
-#' most recent common ancestor of each pair of tips.
+#' most recent common ancestor of each pair of leaves.
 #' 
 #' Two trees are compared by taking the Euclidian distance between the
 #' respective vectors.  This is calculated by taking the square root of the sum 
@@ -13,7 +13,7 @@
 #' 
 #' This metric emphasizes the position of the root; the path difference 
 #' instead measures the distance of the last common ancestor of each pair
-#' of tips from the tips themselves, i.e. the length of the path from one 
+#' of leaves from the leaves themselves, i.e. the length of the path from one 
 #' tip to another.
 #' 
 #' @template tree12listparams
@@ -35,7 +35,7 @@ KendallColijn <- function (tree1, tree2 = tree1) {
     if (inherits(tree2, 'phylo')) {
       if (length(tree1$tip.label) != length(tree2$tip.label) || 
           length(setdiff(tree1$tip.label, tree2$tip.label)) > 0) {
-        stop("Tree tips must bear identical labels")
+        stop("Leaves must bear identical labels.")
       }
       EuclidianDistance(KCVector(tree1) - KCVector(tree2))
     } else {

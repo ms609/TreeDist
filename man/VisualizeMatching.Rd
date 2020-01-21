@@ -11,7 +11,7 @@ VisualizeMatching(Func, tree1, tree2, setPar = TRUE, precision = 3L,
 \arguments{
 \item{Func}{Function used to construct tree similarity.}
 
-\item{tree1, tree2}{Trees of class \code{phylo}, with tips labelled identically.}
+\item{tree1, tree2}{Trees of class \code{phylo}, with identical leaf labels.}
 
 \item{setPar}{Logical specifying whether graphical parameters should be
 set to display trees side by side.}

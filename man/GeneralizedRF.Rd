@@ -20,7 +20,7 @@ and each column corresponds to a split, such that each leaf is identified as
 a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
 split.}
 
-\item{nTip}{Integer specifying the number of tips in each split.}
+\item{nTip}{Integer specifying the number of leaves in each split.}
 
 \item{PairScorer}{function taking four arguments, \code{splits1}, \code{splits2},
 \code{nSplits1}, \code{nSplits2}, which should return the score of each pair of splits
@@ -48,7 +48,7 @@ splits.
 }
 \details{
 Note that no checks will be made to confirm that splits1 and splits2 contain
-the same tips in the same order.  This is the responsibility of the calling
+the same leaves in the same order.  This is the responsibility of the calling
 function.
 }
 \references{

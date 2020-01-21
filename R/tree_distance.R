@@ -4,11 +4,11 @@
 #' splits.
 #'
 #' Note that no checks will be made to confirm that splits1 and splits2 contain
-#' the same tips in the same order.  This is the responsibility of the calling
+#' the same leaves in the same order.  This is the responsibility of the calling
 #' function.
 #' 
 #' @inheritParams SharedPhylogeneticInfoSplits
-#' @param nTip Integer specifying the number of tips in each split.
+#' @template nTipParam
 #' @param PairScorer function taking four arguments, `splits1`, `splits2`,
 #' `nSplits1`, `nSplits2`, which should return the score of each pair of splits
 #' in a two-dimensional matrix.  Additional parameters may be specified via 

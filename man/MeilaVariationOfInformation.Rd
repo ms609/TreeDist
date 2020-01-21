@@ -26,11 +26,7 @@ proposed by Meila (2007).
 }
 \details{
 This is equivalent to the mutual clustering information (Vinh \emph{et al.} 2010).
-
-Whereas Meila and Vinh \emph{et al}. are concerned with the entropy, i.e. the
-number of bits required to encode each tip, we are interested in the
-total information content, i.e. the entropy multiplied by the number of tips.
-This is the value that the function returns.
+For the total information content, multiply the VoI by the number of leaves.
 }
 \section{Functions}{
 \itemize{

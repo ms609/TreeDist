@@ -114,7 +114,7 @@ maximum possible distance.  The diameter of other metrics is more difficult
 to calculate.  
 As an example, the variation of clustering information distance metric 
 ranges in principle from zero, to the total amount of clustering information
-present in a pair of trees.  But with even a modest number of tips, no pairs
+present in a pair of trees.  But with even a modest number of leaves, no pairs
 of trees exist in which every split in one tree is perfectly contradicted
 by every other split in the other; as such, any pair of trees will 
 necessarily have some degree of similarity.  
@@ -135,7 +135,7 @@ normalizedQD <- QuartetDivergence(QuartetStatus(tree1, tree2),
 
 The expected distance is more difficult to calculate for other metrics, but 
 can be approximated by sampling random pairs of trees.  Measured distances
-between 10 000 pairs of random bifurcating trees with up to 200 tips are 
+between 10 000 pairs of random bifurcating trees with up to 200 leaves are 
 available in the data package 
 [`TreeDistData`](https://github.com/ms609/TreeDistData).  We can view (normalized) 
 distances for a selection of methods:
@@ -149,7 +149,7 @@ methodCol <- c(vpi = '#e15659', vci = '#58a14e', nts = '#edc949', qd = '#af7aa1'
 par(cex = 0.7, mar=c(5, 5, 0.01, 0.01))
 nLeaves <- as.integer(dimnames(randomTreeDistances)[[3]])
 plot(nLeaves, type='n', randomTreeDistances['vpi', 'mean', ], ylim=c(0.4, 1), 
-     xlab = "Number of tips", ylab = "Normalized distance between random trees")
+     xlab = "Number of leaves", ylab = "Normalized distance between random trees")
 
 for (method in methods) {
   dat <- randomTreeDistances[method, , ]

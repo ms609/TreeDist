@@ -428,8 +428,8 @@ test_that('RobinsonFoulds is correctly calculated', {
   RFTest(treeSym8, treeOpp8)
   
   RFNtipTest <- function (nTip) {
-    backTips <- paste0('t', rev(seq_len(nTip)))
-    RFTest(TreeTools::PectinateTree(backTips), 
+    backLeaves <- paste0('t', rev(seq_len(nTip)))
+    RFTest(TreeTools::PectinateTree(backLeaves), 
            TreeTools::BalancedTree(nTip))
   }
   RFNtipTest(10)

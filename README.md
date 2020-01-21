@@ -52,7 +52,7 @@ lead to different tree distance metrics, implemented in the functions below:
 * [`MatchingSplitDistance`](https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html)
     
     Bogdanowicz and Giaro (2012), and independently Lin _et al._ (2012), count 
-    the number of 'mismatched' terminals in a pair of splits.  An 
+    the number of 'mismatched' leaves in a pair of splits.  An 
     information-based equivalent (Smith, forthcoming) is provided in the function
     [`MatchingSplitInfoDistance`](https://ms609.github.io/TreeDist/reference/TreeDistance.html).
 

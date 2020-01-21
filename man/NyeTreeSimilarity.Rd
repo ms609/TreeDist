@@ -12,10 +12,10 @@ NyeSplitSimilarity(splits1, splits2, nTip = attr(splits1, "nTip"),
   reportMatching = FALSE)
 }
 \arguments{
-\item{tree1}{Trees of class \code{phylo}, with tips labelled identically,
+\item{tree1}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.}
 
-\item{tree2}{Trees of class \code{phylo}, with tips labelled identically,
+\item{tree2}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.}
 
 \item{similarity}{Logical specifying whether to report the result as a tree
@@ -50,7 +50,7 @@ and each column corresponds to a split, such that each leaf is identified as
 a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
 split.}
 
-\item{nTip}{Integer specifying the number of tips in each split.}
+\item{nTip}{Integer specifying the number of leaves in each split.}
 }
 \value{
 An array of numerics providing the distances between each pair of

@@ -42,7 +42,7 @@ test_that("Simple NNI approximations", {
   tree2 <- ape::read.tree(text="(((a, e), (f, d)), ((b, g), (c, h)));")
   expect_equal(fiveUnmatched, NNIDist(tree1, tree2))
   
-  # Trees with different tips at root
+  # Trees with different leaves at root
   tree1 <- PectinateTree(1:8)
   tree2 <- ape::read.tree(text = '(3, ((5, 6), (7, (1, (2, (4, 8))))));')
   expect_equal(fiveUnmatched, NNIDist(tree1, tree2))

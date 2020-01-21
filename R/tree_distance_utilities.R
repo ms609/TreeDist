@@ -20,7 +20,7 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
   labels2 <- TipLabels(tree2, single = TRUE)
   
   if (length(setdiff(labels1, labels2)) > 0) {
-    stop("Tree tips must bear identical labels")
+    stop("Leaves must bear identical labels.")
   }
   
   if (single1) {
@@ -108,7 +108,7 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
   
   if (checks) {
     if (length(setdiff(labels1, labels2)) > 0) {
-      stop("Tree tips must bear identical labels")
+      stop("Leaves must bear identical labels.")
     }
     
     if (!single1) {
@@ -172,7 +172,7 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
 .CheckLabelsSame <- function (labelList) {
   nTip <- unique(vapply(labelList, length, 0L))
   if (length(nTip) != 1) {
-    stop("All trees must contain the same number of tips")
+    stop("All trees must contain the same number of leaves.")
   }
   tipLabel <- unique(lapply(labelList, sort))
   if (length(tipLabel) != 1L) {

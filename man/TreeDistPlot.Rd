@@ -9,14 +9,14 @@ TreeDistPlot(tr, title = NULL, bold = NULL, leaveRoom = FALSE,
   edge.width = NULL, ...)
 }
 \arguments{
-\item{tr}{A tree of class \code{phylo}, with tips labelled as integers}
+\item{tr}{A tree of class \code{phylo}, with leaves labelled as integers.}
 
-\item{title}{\code{main} title for the plot}
+\item{title}{\code{main} title for the plot.}
 
-\item{bold}{Integer specifying which tips to print in bold}
+\item{bold}{Integer specifying which leaves to print in bold.}
 
 \item{leaveRoom}{Logical specifying whether to leave space to print
-tree distances beneath the plotted tree}
+tree distances beneath the plotted tree.}
 
 \item{prune, graft}{Integer vectors specifying which edges to highlight as
 pruned and grafted.}
@@ -24,7 +24,7 @@ pruned and grafted.}
 \item{edge.color}{Additional parameter to \code{plot.phylo}; will be overridden
 by \code{prune} and \code{graft} as requested.}
 
-\item{edge.width, \dots}{Additional parameters to \code{plot.phylo}}
+\item{edge.width, \dots}{Additional parameters to \code{plot.phylo}.}
 }
 \description{
 Convenience plotting function used in vignettes and documentation.

@@ -27,7 +27,7 @@
 #' distinct to one of the two splits, in bits.
 #' 
 #' @examples 
-#'   # Eight tips, labelled A to H.
+#'   # Eight leaves, labelled A to H.
 #'   # Split 1: ABCD|EFGH
 #'   # Split 2: ABC|DEFGH
 #'   # Let A1 = ABCD (four taxa), and A2 = ABC (three taxa).
@@ -72,11 +72,7 @@ SplitDifferentInformation <- function (n, A1, A2 = A1) {
 #' proposed by Meila (2007).
 #' 
 #' This is equivalent to the mutual clustering information (Vinh _et al._ 2010).
-#' 
-#' Whereas Meila and Vinh _et al_. are concerned with the entropy, i.e. the 
-#' number of bits required to encode each tip, we are interested in the 
-#' total information content, i.e. the entropy multiplied by the number of tips.
-#' This is the value that the function returns.
+#' For the total information content, multiply the VoI by the number of leaves.
 #' 
 #' @return Variation of information, measured in bits.
 #' 
@@ -120,12 +116,11 @@ MeilaVariationOfInformation <- function (split1, split2) {
   
   jointEntropies <- Entropy(probabilities)
   
-  variationOfInformation <- jointEntropies + jointEntropies - 
-    Entropy(c(p1, 1 - p1)) -
-    Entropy(c(p2, 1 - p2))
   # Return:
-  n * variationOfInformation
+  jointEntropies + jointEntropies - Entropy(c(p1, 1 - p1)) - 
+    Entropy(c(p2, 1 - p2))
 }
+
 #' @describeIn MeilaVariationOfInformation Mutual clustering information of two splits
 #' @return Mutual information, measured in bits.
 #' @export
@@ -144,7 +139,7 @@ MeilaMutualInformation <- function (split1, split2) {
     jointEntropies
   
   # Return:
-  if (abs(mutualInformation) < 1e-15) 0 else n * mutualInformation
+  if (abs(mutualInformation) < 1e-15) 0 else mutualInformation
 }
 
 #' All split pairings

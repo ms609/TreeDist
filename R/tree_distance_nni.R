@@ -16,12 +16,12 @@
 #' that reduce a tree to a pectinate (caterpillar) tree, then to conduct an 
 #' analogue of the mergesort algorithm.  This takes at most _n_ log _n_ + O(_n_)
 #' NNI operations, and provides a loose upper bound on the NNI score. 
-#' The maximum number of moves for a tree with _n_ tips can be calculated 
+#' The maximum number of moves for an _n_-leaf tree can be calculated 
 #' exactly for small trees; this provides a tighter upper bound, but is 
 #' unavailable for _n_ > 12.
 #' 
 #' \tabular{rccccccccccccc}{
-#'   Tips:     \tab 1 \tab 2 \tab 3 \tab 4 \tab 5 \tab 6 \tab 7 \tab 8 \tab 9
+#'   Leaves:   \tab 1 \tab 2 \tab 3 \tab 4 \tab 5 \tab 6 \tab 7 \tab 8 \tab 9
 #'    \tab 10 \tab 11 \tab 12 \tab 13 \cr
 #'   Diameter: \tab 0 \tab 0 \tab 0 \tab 1 \tab 3 \tab 5 \tab 7 \tab 10 \tab 12
 #'    \tab 15 \tab 18 \tab 21 \tab ? \cr
@@ -36,7 +36,7 @@
 #' to the RF distance between the trees. 
 #' 
 #' - `tight_upper` is an upper bound on the distance, based on calculated
-#' maximum diameters for trees with <12 tips.  _NA_ is returned if trees are
+#' maximum diameters for trees with < 13 leaves.  _NA_ is returned if trees are
 #' too different to employ this approach.
 #' 
 #' - `loose_upper` is a looser upper bound on the distance, using _n_ log _n_ +

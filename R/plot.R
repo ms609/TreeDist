@@ -2,16 +2,16 @@
 #'
 #' Convenience plotting function used in vignettes and documentation.
 #'
-#' @param tr A tree of class `phylo`, with tips labelled as integers
-#' @param title `main` title for the plot
-#' @param bold Integer specifying which tips to print in bold
+#' @param tr A tree of class `phylo`, with leaves labelled as integers.
+#' @param title `main` title for the plot.
+#' @param bold Integer specifying which leaves to print in bold.
 #' @param leaveRoom Logical specifying whether to leave space to print
-#' tree distances beneath the plotted tree
+#' tree distances beneath the plotted tree.
 #' @param edge.color Additional parameter to `plot.phylo`; will be overridden
 #' by `prune` and `graft` as requested.
 #' @param prune,graft Integer vectors specifying which edges to highlight as
 #' pruned and grafted.
-#' @param edge.width,\dots Additional parameters to `plot.phylo`
+#' @param edge.width,\dots Additional parameters to `plot.phylo`.
 #'
 #' @template MRS
 #' @importFrom ape plot.phylo
@@ -71,7 +71,7 @@ TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = FALSE,
 #' tree distance.
 #' 
 #' @param Func Function used to construct tree similarity.
-#' @param tree1,tree2 Trees of class `phylo`, with tips labelled identically.
+#' @param tree1,tree2 Trees of class `phylo`, with identical leaf labels.
 #' @param setPar Logical specifying whether graphical parameters should be 
 #' set to display trees side by side.
 #' @param precision Integer specifying number of significant figures to display
