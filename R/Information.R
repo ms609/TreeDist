@@ -55,7 +55,7 @@ SplitSharedInformation <- function(n, A1, A2 = A1) {
    - LnUnrooted(n)) / -log(2)
 }
 
-#' @describeIn SplitSharedInformation Variation of information between two splits.
+#' @describeIn SplitSharedInformation Different information between two splits.
 #' @importFrom TreeTools SplitInformation
 #' @export
 SplitDifferentInformation <- function (n, A1, A2 = A1) {
