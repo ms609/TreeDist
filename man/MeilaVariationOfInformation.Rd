@@ -3,16 +3,16 @@
 \name{MeilaVariationOfInformation}
 \alias{MeilaVariationOfInformation}
 \alias{MeilaMutualInformation}
-\title{Use Variation of Information to compare partitions as clusterings}
+\title{Use Variation of Information to compare splits as clusterings}
 \usage{
 MeilaVariationOfInformation(split1, split2)
 
 MeilaMutualInformation(split1, split2)
 }
 \arguments{
-\item{split1, split2}{Logical vectors listing terminals in same order, such that
-each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
-(\code{FALSE}) of the respective bipartition split.}
+\item{split1, split2}{Logical vectors listing leavess in a consistent order,
+identifying each leaf as a member of the ingroup (\code{TRUE}) or outgroup
+(\code{FALSE}) of the split in question.}
 }
 \value{
 Variation of information, measured in bits.
@@ -25,12 +25,8 @@ phylogenetic information, using the variation of clustering information
 proposed by Meila (2007).
 }
 \details{
-This is equivalent to the mutual clustering information (Vinh 2010).
-
-Whereas Meila and Vinh \emph{et al}. are concerned with the entropy, i.e. the
-number of bits required to encode each tip, we are interested in the
-total information content, i.e. the entropy multiplied by the number of tips.
-This is the value that the function returns.
+This is equivalent to the mutual clustering information (Vinh \emph{et al.} 2010).
+For the total information content, multiply the VoI by the number of leaves.
 }
 \section{Functions}{
 \itemize{
@@ -52,7 +48,7 @@ This is the value that the function returns.
   Entropy(c(3, 3) / 6) * 2  # = 2
   MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,B,A,B,A,B)) # < 2
   
-  # Phylogenetically uninformative groupings contain partitioning information
+  # Phylogenetically uninformative groupings contain spliting information
   Entropy(c(1, 5) / 6)
   MeilaVariationOfInformation(c(B,A,A,A,A,A), c(A,A,A,A,A,B))
 

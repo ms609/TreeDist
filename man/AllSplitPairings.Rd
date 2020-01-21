@@ -7,7 +7,7 @@
 AllSplitPairings(n)
 }
 \arguments{
-\item{n}{Integer specifying the number of terminal taxa.}
+\item{n}{Integer specifying the number of leaves.}
 }
 \value{
 \code{AllSplitPairings} returns a named vector, specifying the number of

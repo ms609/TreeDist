@@ -3,7 +3,7 @@
 \name{MASTSize}
 \alias{MASTSize}
 \alias{MASTInfo}
-\title{Size of maximum agreement subtree}
+\title{Size of Maximum Agreement Subtree}
 \usage{
 MASTSize(tree1, tree2 = tree1, rooted = TRUE)
 
@@ -15,7 +15,7 @@ MASTInfo(tree1, tree2 = tree1, rooted = TRUE)
 \item{rooted}{Logical specifying whether to treat the trees as rooted.}
 }
 \value{
-\code{MASTSize} returns an integer specifying the number of tips in the
+\code{MASTSize} returns an integer specifying the number of leaves in the
 maximum agreement subtree.
 
 \code{MASTInfo} returns a vector or matrix listing the phylogenetic
@@ -24,7 +24,7 @@ information content, in bits, of the maximum agreement subtree.
 \description{
 Calculate the maximum agreement subtree between two phylogenetic trees, i.e.
 the largest tree that can be obtained from either \code{tree1} or \code{tree2} solely
-by deleting tips.
+by deleting leaves.
 }
 \section{Functions}{
 \itemize{
@@ -56,7 +56,7 @@ CompareAll(as.phylo(0:5, 8), MASTInfo)
 }
 \seealso{
 \code{\link[phangorn:mast]{phangorn::mast}}, a slower, all-R implementation that also returns
-the tips contained within the subtree.
+the leaves contained within the subtree.
 
 Other tree distances: \code{\link{JaccardRobinsonFoulds}},
   \code{\link{KendallColijn}},

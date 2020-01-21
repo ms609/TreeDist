@@ -12,10 +12,10 @@ MatchingSplitDistanceSplits(splits1, splits2, nTip = attr(splits1,
   "nTip"), normalize = TRUE, reportMatching = FALSE)
 }
 \arguments{
-\item{tree1}{Trees of class \code{phylo}, with tips labelled identically,
+\item{tree1}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.}
 
-\item{tree2}{Trees of class \code{phylo}, with tips labelled identically,
+\item{tree2}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.}
 
 \item{normalize}{If a numeric value is provided, this will be used as a
@@ -28,19 +28,19 @@ If \code{FALSE}, results will not be rescaled.}
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}
 
-\item{splits1}{Logical matrices where each row corresponds to a terminal,
+\item{splits1}{Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
-and each column corresponds to a bipartition split, such that
-each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
-(\code{FALSE}) of the respective bipartition split.}
+and each column corresponds to a split, such that each leaf is identified as
+a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
+split.}
 
-\item{splits2}{Logical matrices where each row corresponds to a terminal,
+\item{splits2}{Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
-and each column corresponds to a bipartition split, such that
-each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
-(\code{FALSE}) of the respective bipartition split.}
+and each column corresponds to a split, such that each leaf is identified as
+a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
+split.}
 
-\item{nTip}{Integer specifying the number of tips in each split.}
+\item{nTip}{Integer specifying the number of leaves in each split.}
 }
 \value{
 An array of numerics providing the distances between each pair of

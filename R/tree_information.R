@@ -1,28 +1,35 @@
-#' Information content of partitions within a tree
+#' Information content of splits within a tree
 #' 
-#' Sums the phylogenetic information content for all partitions within a 
+#' Sums the phylogenetic information content for all splits within a 
 #' phylogenetic tree.  This value will be greater than the total information 
-#' content of the tree where a tree contains multiple partitions, as 
-#' these partitions will contain mutual information
+#' content of the tree where a tree contains multiple splits, as 
+#' these splits will contain mutual information.
 #' 
-#' @param tree A tree of class `phylo`, a list of trees, or a `multiPhylo` object.
+#' @param x A tree of class `phylo`, a list of trees, or a `multiPhylo` object.
 #' 
+#' @family tree information functions
+#' @seealso 
+#' * [`TreeTools::SplitInformation`]: Phylogenetic information content of a
+#' single split.
 #' @template MRS
 #' @keywords internal
 #' @export
-PartitionInfo <- function (x) UseMethod('PartitionInfo')
+SplitwiseInfo <- function (x) UseMethod('SplitwiseInfo')
 
 #' @export
-PartitionInfo.phylo <- function (x) PartitionInfo.Splits(as.Splits(x))
+SplitwiseInfo.phylo <- function (x) SplitwiseInfo.Splits(as.Splits(x))
   
 #' @export
-PartitionInfo.list <- PartitionInfo.multiPhylo <- function (x) {
-  vapply(as.Splits(x), PartitionInfo, double(1L))
+SplitwiseInfo.multiPhylo <- function (x) {
+  vapply(as.Splits(x), SplitwiseInfo, double(1L))
 }
+
+#' @export
+SplitwiseInfo.list <- SplitwiseInfo.multiPhylo
 
 #' @importFrom TreeTools LnRooted.int LnUnrooted.int TipsInSplits
 #' @export
-PartitionInfo.Splits <- function(x) {
+SplitwiseInfo.Splits <- function(x) {
   nTip <- attr(x, 'nTip')
   inSplit <- TipsInSplits(x)
   
@@ -32,55 +39,98 @@ PartitionInfo.Splits <- function(x) {
   ) / -log(2)
 }
 
-
-#' Clustering information content of all partitions within a tree
+#' Clustering entropy of all splits within a tree
 #' 
-#' Sums the clustering information content (Meila 2007) across each partition within a 
-#' phylogenetic tree.  This value will be greater than the total information 
-#' content of the tree where a tree contains multiple partitions, as 
-#' these partitions will contain mutual information.
+#' Sums the entropy (`ClusteringEntropy`) or information content
+#' (`ClusteringInfo`) across each split within a phylogenetic tree, treating
+#' each split as dividing the leaves of the tree into two clusters (_sensu_
+#' Meila 2007; Vinh _et al._ 2010).
 #' 
-#' Note that Meila (2007) and Vinh _et al_. (2010) deal with entropy, which 
-#' denotes the bits necessary to denote the cluster to which each tip belongs,
-#' i.e. bits/tip (see Vinh _et al._ 2010).
-#' This function multiplies the entropy by the number of tips to produce a
-#' measure of the information content of the tree as a whole.
+#' As entropy measures the bits required to transmit the cluster label of each 
+#' leaf (Vinh _et al._ 2010: p. 2840), the information content of a split is its
+#' entropy multiplied by the number of leaves. 
 #' 
-#' @param tree A tree of class `phylo`, a list of trees, or a `multiPhylo` object.
+#' @param x A tree of class `phylo`, a list of trees, or a `multiPhylo` object.
 #' 
 #' @return Information content, in bits.
 #' 
-#' @references \insertRef{Meila2007}{TreeDist}
+#' @examples 
+#' 
+#' tree1 <- TreeTools::BalancedTree(8)
+#' tree2 <- TreeTools::PectinateTree(8)
+#' 
+#' ClusteringInfo(tree1)
+#' ClusteringEntropy(tree1)
+#' ClusteringInfo(list(one = tree1, two = tree2))
+#' 
+#' ClusteringInfo(tree1) + ClusteringInfo(tree2)
+#' ClusteringEntropy(tree1) + ClusteringEntropy(tree2)
+#' ClusteringInfoDistance(tree1, tree2)
+#' MutualClusteringInfo(tree1, tree2)
+#' 
+#' @references
+#' 
+#' - \insertRef{Meila2007}{TreeDist}
+#' 
+#' - \insertRef{Vinh2010}{TreeDist}
+#' 
+#' 
+#' @family tree information functions
+#' @seealso
+#' * [`SplitEntropy`]
 #' @template MRS
-#' @keywords internal
 #' @importFrom TreeTools as.Splits
+#' @export
+ClusteringEntropy <- function (x) UseMethod("ClusteringEntropy")
+
+#' @rdname ClusteringEntropy
 #' @export
 ClusteringInfo <- function (x) UseMethod("ClusteringInfo")
 
-#' @describeIn ClusteringInfo Implementation for `phylo` objects.
+#' @rdname ClusteringEntropy
+#' @export
+ClusteringEntropy.phylo <- function (x) ClusteringEntropy.Splits(as.Splits(x))
+
+#' @rdname ClusteringEntropy
+#' @export
+ClusteringEntropy.list <- function (x)
+    vapply(as.Splits(x), ClusteringEntropy.Splits, double(1L))
+
+#' @rdname ClusteringEntropy
+#' @export
+ClusteringEntropy.multiPhylo <- ClusteringEntropy.list
+
+#' @rdname ClusteringEntropy
+#' @export
+ClusteringEntropy.Splits <- function (x) {
+  nLeaves <- attr(x, 'nTip')
+  inSplit <- TipsInSplits(x)
+  splitP <- rbind(inSplit, nLeaves - inSplit, deparse.level = 0L) / nLeaves
+  
+  # Return:
+  sum(apply(splitP, 2, Entropy))
+}
+
+#' @rdname ClusteringEntropy
 #' @export
 ClusteringInfo.phylo <- function (x) ClusteringInfo.Splits(as.Splits(x))
 
-#' @describeIn ClusteringInfo Implementation for lists.
+#' @rdname ClusteringEntropy
 #' @export
 ClusteringInfo.list <- function (x)
     vapply(as.Splits(x), ClusteringInfo.Splits, double(1L))
 
-#' @describeIn ClusteringInfo Implementation for `multiPhylo` objects.
+#' @rdname ClusteringEntropy
 #' @export
 ClusteringInfo.multiPhylo <- ClusteringInfo.list
 
-#' @describeIn ClusteringInfo Implementation for `Splits` objects.
+#' @rdname ClusteringEntropy
 #' @export
 ClusteringInfo.Splits <- function (x) {
-  nTip <- attr(x, 'nTip')
+  nLeaves <- attr(x, 'nTip')
   inSplit <- TipsInSplits(x)
-  splitP <- rbind(inSplit, nTip - inSplit) / nTip
+  splitP <- rbind(inSplit, nLeaves - inSplit, deparse.level = 0L) / nLeaves
   
-  # Entropy measures the bits required to transmit the cluster label of each tip.
-  # The total information content is thus entropy * nTip.
-  # See Vinh (2010: p. 2840) 
-  # 
   # Return:
-  sum(apply(splitP, 2, Entropy)) * nTip
+  sum(apply(splitP, 2, Entropy)) * nLeaves
 }

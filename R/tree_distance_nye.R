@@ -3,36 +3,36 @@
 #' Implements the tree comparison metric of Nye _et al_. (2006).
 #' In short, this finds the optimal matching that pairs each branch from
 #' one tree with a branch in the second, where matchings are scored according to
-#' the size of the largest bipartition that is consistent with both of them,
+#' the size of the largest split that is consistent with both of them,
 #' normalized against the Jaccard index.  This is equivalent to (but 
 #' slightly faster than) \code{\link{JaccardRobinsonFoulds}
 #' (tree1, tree2, k = 1, arboreal = FALSE)}.
 #' 
 #' The measure is defined as a similarity score.  If `similarity = FALSE`, the
 #' similarity score will be converted into a distance by doubling it and
-#' subtracting it from the number of partitions present in both trees.
+#' subtracting it from the number of splits present in both trees.
 #' This ensures consistency with `JaccardRobinsonFoulds`.
 #' 
 #' @inheritParams RobinsonFoulds
 #' @param normalizeMax When calculating similarity, normalize against the 
-#' maximum number of partitions that could have been present (`TRUE`),
-#'  or the number of partitions that were actually observed (`FALSE`)?  
-#' Defaults to the number of partitions in the better-resolved tree; set
-#'  `normalize = pmin.int` to use the number of partitions in the less resolved
+#' maximum number of splits that could have been present (`TRUE`),
+#'  or the number of splits that were actually observed (`FALSE`)?  
+#' Defaults to the number of splits in the better-resolved tree; set
+#'  `normalize = pmin.int` to use the number of splits in the less resolved
 #'  tree.
 #' 
 #' @section Normalization:
 #' 
 #' If `normalize = TRUE` and `similarity = TRUE`, then results will be rescaled
 #'  from zero to one by dividing by the maximum value possible for any pair 
-#'  of trees with  _n_ terminals, $n - 3$.
-#' You may wish to normalize instead against the number of partitions present
+#'  of trees with  _n_ leaves, $n - 3$.
+#' You may wish to normalize instead against the number of splits present
 #' in the smaller tree, which represents the maximum value possible for a pair
 #' of trees with the specified topologies (`normalize = pmin.int`), or the
-#' number of partitions in the most resolved tree (`normalize = pmax.int`). 
+#' number of splits in the most resolved tree (`normalize = pmax.int`). 
 #' 
 #' If `normalize = TRUE` and `similarity = FALSE`, then results will be rescaled
-#' from zero to one by dividing by the total number of partitions in the pair
+#' from zero to one by dividing by the total number of splits in the pair
 #' of trees being considered.
 #' 
 #' @examples 
@@ -82,7 +82,7 @@ NyeTreeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
 
 #' @describeIn NyeTreeSimilarity Calculate tree similarity from splits 
 #' instead of trees.
-#' @inheritParams MutualPhylogeneticInfoSplits
+#' @inheritParams SharedPhylogeneticInfoSplits
 #' @export
 NyeSplitSimilarity <- function (splits1, splits2, 
                                 nTip = attr(splits1, 'nTip'),
@@ -98,7 +98,7 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' 
 #' In short, this finds the optimal matching that pairs each branch from
 #' one tree with a branch in the second, where matchings are scored according to
-#' the size of the largest bipartition that is consistent with both of them,
+#' the size of the largest split that is consistent with both of them,
 #' normalized against the Jaccard index, and raised to an arbitrary exponent.
 #' 
 #' By default, arboreal matchings are enforced. 
@@ -116,16 +116,16 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' The Nye _et al_. metric uses `k = 1`.
 #' As k &rarr; &infin;, the metric converges to the Robinson-Foulds metric.
 #' @param arboreal Logical specifying whether to enforce arboreal matches, by
-#' assigning zero similarity to contradictory pairs of partitions on an 
+#' assigning zero similarity to contradictory pairs of splits on an 
 #' _ad hoc_ basis.
 #' 
 #' @section Normalization:
 #' 
 #' If `normalize = TRUE`, then results will be rescaled from zero to one by
 #' dividing by the maximum possible value for trees of the given topologies,
-#' which is equal to the number of partitions in both trees. 
-#' You may wish to normalize instead against the maximum number of partitions
-#' present in a pair of trees with _n_ terminals, by specifying 
+#' which is equal to the number of splits in both trees. 
+#' You may wish to normalize instead against the maximum number of splits
+#' present in a pair of trees with _n_ leaves, by specifying 
 #' `normalize = n - 3`.
 #' 
 #' @references 
@@ -170,7 +170,7 @@ JaccardRobinsonFoulds <- function (tree1, tree2 = tree1, k = 1L,
 
 #' @describeIn JaccardRobinsonFoulds Calculate tree similarity from splits 
 #' instead of trees.
-#' @inheritParams MutualPhylogeneticInfoSplits
+#' @inheritParams SharedPhylogeneticInfoSplits
 #' @export
 JaccardSplitSimilarity <- function (splits1, splits2,
                                     nTip = attr(splits1, 'nTip'),

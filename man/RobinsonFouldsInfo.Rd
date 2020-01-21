@@ -24,10 +24,10 @@ RobinsonFouldsSplits(splits1, splits2, nTip = attr(splits1, "nTip"),
   reportMatching = FALSE)
 }
 \arguments{
-\item{tree1}{Trees of class \code{phylo}, with tips labelled identically,
+\item{tree1}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.}
 
-\item{tree2}{Trees of class \code{phylo}, with tips labelled identically,
+\item{tree2}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.}
 
 \item{similarity}{Logical specifying whether to report the result as a tree
@@ -43,19 +43,19 @@ If \code{FALSE}, results will not be rescaled.}
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}
 
-\item{splits1}{Logical matrices where each row corresponds to a terminal,
+\item{splits1}{Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
-and each column corresponds to a bipartition split, such that
-each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
-(\code{FALSE}) of the respective bipartition split.}
+and each column corresponds to a split, such that each leaf is identified as
+a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
+split.}
 
-\item{splits2}{Logical matrices where each row corresponds to a terminal,
+\item{splits2}{Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
-and each column corresponds to a bipartition split, such that
-each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
-(\code{FALSE}) of the respective bipartition split.}
+and each column corresponds to a split, such that each leaf is identified as
+a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
+split.}
 
-\item{nTip}{Integer specifying the number of tips in each split.}
+\item{nTip}{Integer specifying the number of leaves in each split.}
 
 \item{\dots}{Not used.}
 }
@@ -65,7 +65,7 @@ trees in \code{tree1} and \code{tree2}.
 }
 \description{
 Calculates the Robinson-Foulds distance, or the equivalent similarity
-measure, optionally annotating matched partitions and weighting partitions
+measure, optionally annotating matched splits and weighting splits
 according to their phylogenetic information content.
 }
 \details{
@@ -75,11 +75,11 @@ To generate the RF distance efficiently,
 use the function \code{\link{ape}{treedist}}.
 
 Note that if \code{reportMatching = TRUE}, the \code{pairScores} attribute returns
-a logical matrix specifying whether each pair of partitions is identical.
+a logical matrix specifying whether each pair of splits is identical.
 
 \code{RobinsonFouldsInfo} calculates the tree similarity or distance by summing
-the phylogenetic information content of all partitions that are (or are not)
-identical in both trees.  Consequently, partitions that are more likely
+the phylogenetic information content of all splits that are (or are not)
+identical in both trees.  Consequently, splits that are more likely
 to be identical by chance alone make a smaller contribution to overall
 tree distance, because their similarity is less remarkable.
 }
@@ -101,7 +101,7 @@ instead of trees.
 \section{Normalization}{
 
 \itemize{
-\item \code{RobinsonFoulds} is normalized against the total number of partitions that
+\item \code{RobinsonFoulds} is normalized against the total number of splits that
 are present.
 \item \code{RobinsonFouldsInfo} is normalized against the sum of the phylogenetic
 information of all splits in both trees, treated independently.

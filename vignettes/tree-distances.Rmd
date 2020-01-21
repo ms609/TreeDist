@@ -53,14 +53,14 @@ each tree in `tree2`.
 
 It is possible to suppress the seemingly unnecessary
 warning message, and to normalize the output against the total number of 
-partitions present:
+splits present:
 
 ```{r}
 suppressMessages(phangorn::RF.dist(tree1, tree2, normalize = TRUE))
 ```
 
 The `TreeDist` package contains an inefficient implementation that allows
-matched partitions to be easily visualized:
+matched splits to be easily visualized:
 
 ```{r}
 TreeDist::RobinsonFoulds(tree1, tree2)

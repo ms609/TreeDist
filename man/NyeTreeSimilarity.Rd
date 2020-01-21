@@ -12,10 +12,10 @@ NyeSplitSimilarity(splits1, splits2, nTip = attr(splits1, "nTip"),
   reportMatching = FALSE)
 }
 \arguments{
-\item{tree1}{Trees of class \code{phylo}, with tips labelled identically,
+\item{tree1}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.}
 
-\item{tree2}{Trees of class \code{phylo}, with tips labelled identically,
+\item{tree2}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.}
 
 \item{similarity}{Logical specifying whether to report the result as a tree
@@ -29,28 +29,28 @@ section below.
 If \code{FALSE}, results will not be rescaled.}
 
 \item{normalizeMax}{When calculating similarity, normalize against the
-maximum number of partitions that could have been present (\code{TRUE}),
-or the number of partitions that were actually observed (\code{FALSE})?
-Defaults to the number of partitions in the better-resolved tree; set
-\code{normalize = pmin.int} to use the number of partitions in the less resolved
+maximum number of splits that could have been present (\code{TRUE}),
+or the number of splits that were actually observed (\code{FALSE})?
+Defaults to the number of splits in the better-resolved tree; set
+\code{normalize = pmin.int} to use the number of splits in the less resolved
 tree.}
 
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}
 
-\item{splits1}{Logical matrices where each row corresponds to a terminal,
+\item{splits1}{Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
-and each column corresponds to a bipartition split, such that
-each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
-(\code{FALSE}) of the respective bipartition split.}
+and each column corresponds to a split, such that each leaf is identified as
+a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
+split.}
 
-\item{splits2}{Logical matrices where each row corresponds to a terminal,
+\item{splits2}{Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
-and each column corresponds to a bipartition split, such that
-each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
-(\code{FALSE}) of the respective bipartition split.}
+and each column corresponds to a split, such that each leaf is identified as
+a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
+split.}
 
-\item{nTip}{Integer specifying the number of tips in each split.}
+\item{nTip}{Integer specifying the number of leaves in each split.}
 }
 \value{
 An array of numerics providing the distances between each pair of
@@ -60,7 +60,7 @@ trees in \code{tree1} and \code{tree2}.
 Implements the tree comparison metric of Nye \emph{et al}. (2006).
 In short, this finds the optimal matching that pairs each branch from
 one tree with a branch in the second, where matchings are scored according to
-the size of the largest bipartition that is consistent with both of them,
+the size of the largest split that is consistent with both of them,
 normalized against the Jaccard index.  This is equivalent to (but
 slightly faster than) \code{\link{JaccardRobinsonFoulds}
 (tree1, tree2, k = 1, arboreal = FALSE)}.
@@ -68,7 +68,7 @@ slightly faster than) \code{\link{JaccardRobinsonFoulds}
 \details{
 The measure is defined as a similarity score.  If \code{similarity = FALSE}, the
 similarity score will be converted into a distance by doubling it and
-subtracting it from the number of partitions present in both trees.
+subtracting it from the number of splits present in both trees.
 This ensures consistency with \code{JaccardRobinsonFoulds}.
 }
 \section{Functions}{
@@ -82,14 +82,14 @@ instead of trees.
 
 If \code{normalize = TRUE} and \code{similarity = TRUE}, then results will be rescaled
 from zero to one by dividing by the maximum value possible for any pair
-of trees with  \emph{n} terminals, $n - 3$.
-You may wish to normalize instead against the number of partitions present
+of trees with  \emph{n} leaves, $n - 3$.
+You may wish to normalize instead against the number of splits present
 in the smaller tree, which represents the maximum value possible for a pair
 of trees with the specified topologies (\code{normalize = pmin.int}), or the
-number of partitions in the most resolved tree (\code{normalize = pmax.int}).
+number of splits in the most resolved tree (\code{normalize = pmax.int}).
 
 If \code{normalize = TRUE} and \code{similarity = FALSE}, then results will be rescaled
-from zero to one by dividing by the total number of partitions in the pair
+from zero to one by dividing by the total number of splits in the pair
 of trees being considered.
 }
 

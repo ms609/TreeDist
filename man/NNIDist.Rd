@@ -16,7 +16,7 @@ containing three integers:
 \item \code{lower} is a lower bound on the NNI distance, and corresponds
 to the RF distance between the trees.
 \item \code{tight_upper} is an upper bound on the distance, based on calculated
-maximum diameters for trees with <12 tips.  \emph{NA} is returned if trees are
+maximum diameters for trees with < 13 leaves.  \emph{NA} is returned if trees are
 too different to employ this approach.
 \item \code{loose_upper} is a looser upper bound on the distance, using \emph{n} log \emph{n} +
 O(\emph{n}).
@@ -40,12 +40,12 @@ One way to reconcile these trees is to conduct a series of NNI operations
 that reduce a tree to a pectinate (caterpillar) tree, then to conduct an
 analogue of the mergesort algorithm.  This takes at most \emph{n} log \emph{n} + O(\emph{n})
 NNI operations, and provides a loose upper bound on the NNI score.
-The maximum number of moves for a tree with \emph{n} tips can be calculated
+The maximum number of moves for an \emph{n}-leaf tree can be calculated
 exactly for small trees; this provides a tighter upper bound, but is
 unavailable for \emph{n} > 12.
 
 \tabular{rccccccccccccc}{
-Tips:     \tab 1 \tab 2 \tab 3 \tab 4 \tab 5 \tab 6 \tab 7 \tab 8 \tab 9
+Leaves:   \tab 1 \tab 2 \tab 3 \tab 4 \tab 5 \tab 6 \tab 7 \tab 8 \tab 9
 \tab 10 \tab 11 \tab 12 \tab 13 \cr
 Diameter: \tab 0 \tab 0 \tab 0 \tab 1 \tab 3 \tab 5 \tab 7 \tab 10 \tab 12
 \tab 15 \tab 18 \tab 21 \tab ? \cr

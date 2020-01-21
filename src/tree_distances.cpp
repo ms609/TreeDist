@@ -482,7 +482,7 @@ List cpp_mutual_clustering (RawMatrix x, RawMatrix y,
         ic_element(a_and_b, na, nb, n_tips) +
         ic_element(a_and_B, na, nB, n_tips) +
         ic_element(A_and_b, nA, nb, n_tips) +
-        ic_element(A_and_B, nA, nB, n_tips) 
+        ic_element(A_and_B, nA, nB, n_tips)
       ) / n_tips)));
     }
     for (int bi = b.n_splits; bi < most_splits; bi++) {
@@ -501,7 +501,7 @@ List cpp_mutual_clustering (RawMatrix x, RawMatrix y,
   
   NumericVector final_score = NumericVector::create(
     double((max_score * most_splits) -
-      lap(most_splits, score, rowsol, colsol, u, v)) * n_tips / max_score);
+      lap(most_splits, score, rowsol, colsol, u, v)) / max_score);
   for (int i = 0; i < most_splits; i++) delete[] score[i];
   delete[] colsol; delete[] u; delete[] v; delete[] score;
   
@@ -518,7 +518,7 @@ List cpp_mutual_clustering (RawMatrix x, RawMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_mutual_phylo (RawMatrix x, RawMatrix y,
+List cpp_shared_phylo (RawMatrix x, RawMatrix y,
                        IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");

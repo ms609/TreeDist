@@ -2,16 +2,16 @@
 #'
 #' Convenience plotting function used in vignettes and documentation.
 #'
-#' @param tr A tree of class `phylo`, with tips labelled as integers
-#' @param title `main` title for the plot
-#' @param bold Integer specifying which tips to print in bold
+#' @param tr A tree of class `phylo`, with leaves labelled as integers.
+#' @param title `main` title for the plot.
+#' @param bold Integer specifying which leaves to print in bold.
 #' @param leaveRoom Logical specifying whether to leave space to print
-#' tree distances beneath the plotted tree
+#' tree distances beneath the plotted tree.
 #' @param edge.color Additional parameter to `plot.phylo`; will be overridden
 #' by `prune` and `graft` as requested.
 #' @param prune,graft Integer vectors specifying which edges to highlight as
 #' pruned and grafted.
-#' @param edge.width,\dots Additional parameters to `plot.phylo`
+#' @param edge.width,\dots Additional parameters to `plot.phylo`.
 #'
 #' @template MRS
 #' @importFrom ape plot.phylo
@@ -61,7 +61,7 @@ TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = FALSE,
 
 #' Visualise a matching
 #' 
-#' Depicts the bipartitions that are matched between two trees using a 
+#' Depicts the splits that are matched between two trees using a 
 #' specified Generalized Robinson-Foulds similarity measure.
 #' 
 #' Note that when visualizing a Robinson-Foulds distance (using 
@@ -71,13 +71,13 @@ TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = FALSE,
 #' tree distance.
 #' 
 #' @param Func Function used to construct tree similarity.
-#' @param tree1,tree2 Trees of class `phylo`, with tips labelled identically.
+#' @param tree1,tree2 Trees of class `phylo`, with identical leaf labels.
 #' @param setPar Logical specifying whether graphical parameters should be 
 #' set to display trees side by side.
 #' @param precision Integer specifying number of significant figures to display
 #' when reporting matching scores.
 #' @param Plot Function to use to plot trees.
-#' @param matchZeros Logical specifying whether to pair partitions with zero
+#' @param matchZeros Logical specifying whether to pair splits with zero
 #' similarity (`TRUE`), or leave them unpaired (`FALSE`).
 #' @param plainEdges Logical specifying whether to plot edges with a uniform
 #' width and colour (`TRUE`), or whether to draw edge widths according to the
@@ -100,14 +100,14 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   edge1 <- tree1$edge
   child1 <- edge1[, 2]
   nTip <- attr(splits1, 'nTip')
-  partitionEdges1 <- vapply(as.integer(rownames(splits1)),
-                            function (node) which(child1 == node), integer(1))
+  splitEdges1 <- vapply(as.integer(rownames(splits1)),
+                        function (node) which(child1 == node), integer(1))
   
   splits2 <- as.Splits(tree2, tipLabels = tree1)
   edge2 <- tree2$edge
   child2 <- edge2[, 2]
-  partitionEdges2 <- vapply(as.integer(rownames(splits2)),
-                            function (node) which(child2 == node), integer(1))
+  splitEdges2 <- vapply(as.integer(rownames(splits2)),
+                        function (node) which(child2 == node), integer(1))
   
   matching <- Func(tree1, tree2, reportMatching = TRUE)
   pairings <- attr(matching, 'matching')
@@ -121,11 +121,11 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   
   if (setPar) origPar <- par(mfrow=c(1, 2), mar=rep(0.5, 4))
   
-  LabelUnpaired <- function (partitionEdges, unpaired) {
+  LabelUnpaired <- function (splitEdges, unpaired) {
     if (any(unpaired)) {
-      edgelabels(text='\u2212', edge=partitionEdges[unpaired],
+      edgelabels(text='\u2212', edge=splitEdges[unpaired],
                  frame='n', col=faint, adj=adjNo)
-      edgelabels(text='0', edge=partitionEdges[unpaired],
+      edgelabels(text='0', edge=splitEdges[unpaired],
                  frame='n', col=faint, cex=0.8, adj=adjVal)
     }
   }
@@ -163,63 +163,63 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
     }
     edgeColPalette <- sequential_hcl(n = 256L, palette = 'Viridis')
      
-    EdgyPlot <- function (tree, splits, edge, partitionEdges,
+    EdgyPlot <- function (tree, splits, edge, splitEdges,
                           normalizedScores, ...) {
       splitNodes <- as.integer(names(splits))
       ore <- OtherRootEdge(splitNodes, edge)
       if (length(normalizedScores) && !is.na(ore[1])) {
         ns <- c(normalizedScores, normalizedScores[ore['score']])
-        pe <- c(partitionEdges, ore[2])
+        se <- c(splitEdges, ore[2])
       } else {
         ns <- normalizedScores
-        pe <- partitionEdges
+        se <- splitEdges
       }
       
       edge.width <- rep(1, nrow(edge))
-      edge.width[pe] <-  1 + (10 * ns)
+      edge.width[se] <-  1 + (10 * ns)
       edge.color <- rep('black', nrow(edge))
-      edge.color[pe] <- edgeColPalette[1 + ceiling(255 * ns)]
+      edge.color[se] <- edgeColPalette[1 + ceiling(255 * ns)]
       
       Plot(tree, edge.width = edge.width, edge.color = edge.color, ...)
     }
     
-    EdgyPlot(tree1, splits1, edge1, partitionEdges1, Normalize(pairScores), ...)
+    EdgyPlot(tree1, splits1, edge1, splitEdges1, Normalize(pairScores), ...)
   }
   paired1 <- if (matchZeros) {
     !is.na(pairings)
   } else {
     !is.na(pairings) & pairScores > 0
   }
-  palette <- qualitative_hcl(sum(paired1), c=42, l=88)
+  palette <- qualitative_hcl(sum(paired1), c = 42, l = 88)
   pairedPairScores <- pairScores[paired1]
   pairLabels <- seq_len(sum(paired1))
   if (any(pairLabels)) {
-    edgelabels(text=pairLabels, edge=partitionEdges1[paired1],
-               bg=palette, adj=adjNo)
-    edgelabels(text=pairedPairScores, edge=partitionEdges1[paired1], 
-               frame='n', adj=adjVal, cex=0.8,
-               col=ifelse(pairedPairScores, 'black', faint))
+    edgelabels(text = pairLabels, edge = splitEdges1[paired1],
+               bg = palette, adj = adjNo)
+    edgelabels(text = pairedPairScores, edge = splitEdges1[paired1], 
+               frame = 'n', adj = adjVal, cex = 0.8,
+               col = ifelse(pairedPairScores, 'black', faint))
   }
-  LabelUnpaired(partitionEdges1, !paired1)
+  LabelUnpaired(splitEdges1, !paired1)
   
   
-  paired2 <- seq_along(partitionEdges2) %in% pairings[paired1]
+  paired2 <- seq_along(splitEdges2) %in% pairings[paired1]
   pairNames2 <- pairings[paired1]
   
   if (plainEdges) {
     Plot(tree2, edge.width = edge.width, edge.color = edge.color, ...)
   } else {
-    EdgyPlot(tree2, splits2[[pairNames2]], edge2, partitionEdges2[pairNames2],
+    EdgyPlot(tree2, splits2[[pairNames2]], edge2, splitEdges2[pairNames2],
              Normalize(pairedPairScores, na.rm = TRUE), ...)
   }
   if (any(pairLabels)) {
-    edgelabels(text=pairLabels, edge=partitionEdges2[pairNames2],
-               bg=palette, adj=adjNo)
-    edgelabels(text=pairedPairScores, edge=partitionEdges2[pairNames2], 
-               frame='n', adj=adjVal, cex=0.8,
-               col=ifelse(pairedPairScores, 'black', faint))
+    edgelabels(text = pairLabels, edge = splitEdges2[pairNames2],
+               bg = palette, adj=adjNo)
+    edgelabels(text = pairedPairScores, edge = splitEdges2[pairNames2], 
+               frame = 'n', adj = adjVal, cex = 0.8,
+               col = ifelse(pairedPairScores, 'black', faint))
   }
-  LabelUnpaired(partitionEdges2, !paired2)
+  LabelUnpaired(splitEdges2, !paired2)
   
   if (setPar) par(origPar)
 }

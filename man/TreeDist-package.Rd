@@ -4,25 +4,113 @@
 \name{TreeDist-package}
 \alias{TreeDist}
 \alias{TreeDist-package}
-\title{TreeDist: Distances between Phylogenetic Trees}
+\title{TreeDist:  Distances between Phylogenetic Trees}
 \description{
-Implements measures of tree similarity, including 
-  Information-based generalized Robinson-Foulds distances
-  (Mutual Phylogenetic Information, Mutual Clustering Information; Smith, in revision); 
-  the metric of Nye et al. (2006) <doi:10.1093/bioinformatics/bti720>;
-  the Matching Split Distance (Bogdanowicz & Giaro 2012) <doi:10.1109/TCBB.2011.48>;
-  the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>, and the
-  Nearest Neighbour Interchange (NNI) distance, approximated per Li et al. 1996
-  <doi:10.1007/3-540-61332-3_168>.
+\code{TreeDist} implements a suite of metrics that quantify the topological
+distance between pairs of unweighted phylogenetic trees.
+The metrics generally fall in the category of "generalized Robinson-Foulds
+distances": they are based on comparing partitions between trees, and thus
+reflect the relationship data within trees, with no reference to branch
+lengths.
+Detailed documentationand usage instructions are
+\href{https://ms609.github.org/TreeDist}{available online} or in the vignettes.
 }
-\seealso{
-Useful links:
+\details{
+The \href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html}{Robinson-Foulds distance}
+simply tallies the number of splits (loosely, clades) that occur in both trees --
+any splits that are not perfectly identical are assigned a score of zero, however similar
+or different they are.
+By overlooking potential similarities between almost-identical splits,
+this conservative approach has undesirable properties.
+
+\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html}{'Generalized' RF metrics}
+pair each split in one tree with a similar split in the other.
+Each pair of splits is assigned a similarity
+score; the sum of these scores in the optimal partition matching
+then describes the similarity between two trees.
+
+Different ways of calculating the the similarity between a pair of partitions
+lead to different tree distance metrics, implemented in the functions below:
 \itemize{
-  \item \url{https://ms609.github.io/TreeDist}
-  \item \url{https://github.com/ms609/TreeDist}
-  \item Report bugs at \url{https://github.com/ms609/TreeDist/issues}
+\item \href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{MutualClusteringInfo}, \href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{SharedPhylogeneticInfo}
+}
+\itemize{
+\item Smith (forthcoming) scores matchings based on the amount of information
+that one partition contains about the other.  The Mutual Phylogenetic
+Information imposes arboreal matching: i.e. a pair of splits that cannot
+both exist on a single tree are assigned zero similarity.  The Mutual
+Clustering Information metric is more forgiving, and exhibits more
+desirable behaviour; it is the recommended metric for tree comparison.
+(The corresponding
+\href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{ClusteringInfoDistance}
+returns a tree distance.)
+}
+\itemize{
+\item \href{https://ms609.github.io/TreeDist/reference/NyeTreeSimilarity.html}{NyeTreeSimilarity}
+}
+\itemize{
+\item Nye \emph{et al.} (2006) score matchings according to the size of the largest
+split that is consistent with both of them, normalized against
+the Jaccard index.  This approach is extended by Böcker \emph{et al}. (2013)
+with the Jaccard-Robinson-Foulds metric (function
+\href{https://ms609.github.io/TreeDist/reference/JaccardRobinsonFoulds.html}{JaccardRobinsonFoulds}).
+}
+\itemize{
+\item \href{https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html}{MatchingSplitDistance}
+}
+\itemize{
+\item Bogdanowicz and Giaro (2012), and independently Lin \emph{et al.} (2012), count
+the number of 'mismatched' leaves in a pair of splits. An
+information-based equivalent (Smith, forthcoming) is provided in the function
+\href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{MatchingSplitInfoDistance}.
 }
 
+The package also implements the variation of the path distance
+proposed by Kendal and Colijn (2016) (function
+\href{https://ms609.github.io/TreeDist/reference/KendallColijn.html}{KendallColijn}),
+approximations of the Nearest-Neighbour Interchange (NNI) distance (function
+\href{https://ms609.github.io/TreeDist/reference/NNIDist.html}{NNIDist}; following
+Li \emph{et al.} (1996)), and calculates the size (function
+\href{https://ms609.github.io/TreeDist/reference/MASTSize.html}{MASTSize}) and
+information content (function
+\href{https://ms609.github.io/TreeDist/reference/MASTSize.html}{MASTInfo}) of the
+Maximum Agreement Subtree.
+
+For an implementation of the Tree Bisection and Reconnection (TBR) distance,
+see \href{https://ms609.github.io/TBRDist/index.html}{TBRDist}.
+}
+\references{
+\itemize{
+\item \insertRef{Bocker2013}{TreeDist}
+\item \insertRef{Bogdanowicz2012}{TreeDist}
+\item \insertRef{Kendall2016}{TreeDist}
+\item \insertRef{Li1996}{TreeDist}
+\item \insertRef{Nye2006}{TreeDist}
+\item \insertRef{SmithDist}{TreeDist}
+}
+}
+\seealso{
+Further documentation is available in the
+\href{https://ms609.github.io/TreeDist/articles/}{package vignettes}, visible from
+R using \code{vignette(package='TreeDist')}.
+
+Other tree distance functions are implemented in:
+\itemize{
+\item \href{http://ape-package.ird.fr/}{ape}:
+\itemize{
+\item \code{cophenetic.phylo}: Cophenetic distance
+\item \code{dist.topo}: Path (topological) distance, Robinson-Foulds distance.
+}
+\item \href{https://cran.r-project.org/package=phangorn}{phangorn}
+\itemize{
+\item \code{treedist}: SPR, Robinson-Foulds and path distances.
+}
+\item \href{http://ms609.github.io/Quartet/}{Quartet}: Triplet and Quartet distances,
+using the tqDist algorithm.
+\item \href{http://ms609.github.io/TBRDist/}{TBRDist}: TBR and SPR distances on
+unrooted trees, using the \code{uspr} C library.
+\item \href{https://cran.r-project.org/package=distory}{distory} (unmaintained): Geodesic distance
+}
 }
 \author{
 \strong{Maintainer}: Martin R. Smith \email{martin.smith@durham.ac.uk} (0000-0001-5660-1727) [copyright holder, programmer]

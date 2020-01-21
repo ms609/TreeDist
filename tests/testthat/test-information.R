@@ -6,32 +6,6 @@ test_that("Entropy is calculated correctly", {
   expect_equal(2, Entropy(c(1/4, 1/4, 0, 1/4, 0, 1/4)))
 })
 
-test_that("Joint information calculated correctly", {
-  # Identical splits: ABCDE:FGH, ABCDE:FGH
-  expect_equal(-log2(315/10395), JointInformation(5, 0, 0, 3))
-  expect_equal(-log2(315/10395), JointInformation(3, 0, 0, 5))
-  expect_equal(-log2(315/10395), JointInformation(0, 5, 3, 0))
-  expect_equal(-log2(315/10395), JointInformation(0, 3, 5, 0))
-  
-  # Agreeable splits: ABCDE:FGHI, ABC:DEFGHI
-  expected_3204 <- SplitInformation(5, 4) + SplitInformation(3, 6) --log2(135/135135)
-  expect_equal(expected_3204, JointInformation(3, 2, 0, 4))
-  expect_equal(expected_3204, JointInformation(2, 3, 4, 0))
-  expect_equal(expected_3204, JointInformation(0, 4, 3, 2))
-  expect_equal(expected_3204, JointInformation(4, 0, 2, 3))
-  
-  # Perfect contradiction: AB:CDEFG, AC:BDEFG
-  expect_equal(SplitInformation(2, 5) * 2, JointInformation(1, 1, 1, 4))
-  
-  # Compatible splits: AB:CDEFGH, CD:ABEFGH
-  expected_0224 <- SplitInformation(2, 6) - SplitInformation(2, 5)
-  expect_equal(expected_0224, JointInformation(0, 2, 2, 4))
-  expect_equal(expected_0224, JointInformation(2, 0, 4, 2))
-  expect_equal(expected_0224, JointInformation(2, 4, 0, 2))
-  expect_equal(expected_0224, JointInformation(4, 2, 2, 0))
-  
-})
-
 test_that("AllSplitPairings counted correctly", {
   expect_error(AllSplitPairings(3))
   for (n in 4:10) {
@@ -55,9 +29,9 @@ test_that("Removing contradictions improves scores", {
     split2[flips] <- !split2[flips]
  
     expect_true(
-      MutualPhylogeneticInfoSplits(as.Splits(split1[-flips]), as.Splits(split2[-flips]))
+      SharedPhylogeneticInfoSplits(as.Splits(split1[-flips]), as.Splits(split2[-flips]))
       >
-      MutualPhylogeneticInfoSplits(as.Splits(split1[-nonFlips]), as.Splits(split2[-nonFlips]))
+      SharedPhylogeneticInfoSplits(as.Splits(split1[-nonFlips]), as.Splits(split2[-nonFlips]))
     )
   }
   
@@ -96,16 +70,16 @@ test_that("MeilaMutualInformation", {
 })
 
 test_that("MeilaVariationOfInformation", {
-  expect_equal(6L, MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,T,T,T,T,T)))
-  expect_equal(0, MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,T,T,F,F,F)))
-  expect_equal(11.01955, MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,F,T,F,T,F)))
-  expect_equal(7.219281, MeilaVariationOfInformation(c(F,T,T,T,T,T), c(T,T,T,T,T,F)))
+  expect_equal(1L, MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,T,T,T,T,T)))
+  expect_equal(0L, MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,T,T,F,F,F)))
+  expect_equal(11.01955 / 6, MeilaVariationOfInformation(c(T,T,T,F,F,F), c(T,F,T,F,T,F)))
+  expect_equal(7.219281 / 6, MeilaVariationOfInformation(c(F,T,T,T,T,T), c(T,T,T,T,T,F)))
 })
 
 test_that("SplitEntropy", {
   expect_equal(SplitEntropy(c(rep(TRUE, 5), rep(FALSE, 6)), c(rep(TRUE, 5), rep(FALSE, 6))),
                SplitEntropy(c(rep(TRUE, 5), rep(FALSE, 6))))
-  expect_equal(c(h1=0.994, h2=0.994, jointH=1.348, i=0.6394, vI = 0.709),
+  expect_equal(c(H1 = 0.994, H2 = 0.994, H12 = 1.348, I = 0.6394, Hd = 0.709),
                SplitEntropy(c(rep(TRUE, 5), rep(FALSE, 6)), c(rep(TRUE, 6), rep(FALSE, 5))),
                tolerance = 0.001)
 })
