@@ -10,19 +10,22 @@
 #' @template MRS
 #' @keywords internal
 #' @export
-PartitionInfo <- function (x) UseMethod('PartitionInfo')
+SplitInfo <- function (x) UseMethod('SplitInfo')
 
 #' @export
-PartitionInfo.phylo <- function (x) PartitionInfo.Splits(as.Splits(x))
+SplitInfo.phylo <- function (x) SplitInfo.Splits(as.Splits(x))
   
 #' @export
-PartitionInfo.list <- PartitionInfo.multiPhylo <- function (x) {
-  vapply(as.Splits(x), PartitionInfo, double(1L))
+SplitInfo.multiPhylo <- function (x) {
+  vapply(as.Splits(x), SplitInfo, double(1L))
 }
+
+#' @export
+SplitInfo.list <- SplitInfo.multiPhylo
 
 #' @importFrom TreeTools LnRooted.int LnUnrooted.int TipsInSplits
 #' @export
-PartitionInfo.Splits <- function(x) {
+SplitInfo.Splits <- function(x) {
   nTip <- attr(x, 'nTip')
   inSplit <- TipsInSplits(x)
   

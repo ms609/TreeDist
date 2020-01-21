@@ -24,7 +24,7 @@ The Nye \emph{et al}. metric uses \code{k = 1}.
 As k → ∞, the metric converges to the Robinson-Foulds metric.}
 
 \item{arboreal}{Logical specifying whether to enforce arboreal matches, by
-assigning zero similarity to contradictory pairs of partitions on an
+assigning zero similarity to contradictory pairs of splits on an
 \emph{ad hoc} basis.}
 
 \item{similarity}{Logical specifying whether to report the result as a tree
@@ -40,17 +40,17 @@ If \code{FALSE}, results will not be rescaled.}
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}
 
-\item{splits1}{Logical matrices where each row corresponds to a terminal,
+\item{splits1}{Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
-and each column corresponds to a bipartition split, such that
-each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
-(\code{FALSE}) of the respective bipartition split.}
+and each column corresponds to a split, such that each leaf is identified as
+a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
+split.}
 
-\item{splits2}{Logical matrices where each row corresponds to a terminal,
+\item{splits2}{Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
-and each column corresponds to a bipartition split, such that
-each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
-(\code{FALSE}) of the respective bipartition split.}
+and each column corresponds to a split, such that each leaf is identified as
+a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
+split.}
 
 \item{nTip}{Integer specifying the number of tips in each split.}
 }
@@ -64,7 +64,7 @@ Implements the Jaccard-Robinson-Foulds metric of Böcker \emph{et al}. (2013).
 \details{
 In short, this finds the optimal matching that pairs each branch from
 one tree with a branch in the second, where matchings are scored according to
-the size of the largest bipartition that is consistent with both of them,
+the size of the largest split that is consistent with both of them,
 normalized against the Jaccard index, and raised to an arbitrary exponent.
 
 By default, arboreal matchings are enforced.
@@ -87,8 +87,8 @@ instead of trees.
 
 If \code{normalize = TRUE}, then results will be rescaled from zero to one by
 dividing by the maximum possible value for trees of the given topologies,
-which is equal to the number of partitions in both trees.
-You may wish to normalize instead against the maximum number of partitions
+which is equal to the number of splits in both trees.
+You may wish to normalize instead against the maximum number of splits
 present in a pair of trees with \emph{n} terminals, by specifying
 \code{normalize = n - 3}.
 }

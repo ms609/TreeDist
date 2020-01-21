@@ -21,7 +21,7 @@ when reporting matching scores.}
 
 \item{Plot}{Function to use to plot trees.}
 
-\item{matchZeros}{Logical specifying whether to pair partitions with zero
+\item{matchZeros}{Logical specifying whether to pair splits with zero
 similarity (\code{TRUE}), or leave them unpaired (\code{FALSE}).}
 
 \item{plainEdges}{Logical specifying whether to plot edges with a uniform
@@ -31,7 +31,7 @@ similarity of the associated splits (\code{FALSE}).}
 \item{edge.width, edge.color, \dots}{Additional parameters to send to \code{Plot}.}
 }
 \description{
-Depicts the bipartitions that are matched between two trees using a
+Depicts the splits that are matched between two trees using a
 specified Generalized Robinson-Foulds similarity measure.
 }
 \details{

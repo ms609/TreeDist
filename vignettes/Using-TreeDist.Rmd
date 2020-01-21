@@ -63,7 +63,7 @@ distance <- TreeDistance(tree1, tree2)
 
 The convenience function `TreeDistance` returns the variation of clustering
 information between two trees, [normalized](using-distances.html)
-against the total information content of all partitions.  
+against the total information content of all splits.  
 For more on different tree distance metrics, see the
 [tree distance vignette](tree-distances.html).
 

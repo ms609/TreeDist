@@ -7,9 +7,9 @@
 SplitsCompatible(split1, split2)
 }
 \arguments{
-\item{split1, split2}{Logical vectors listing terminals in same order, such that
-each terminal is identified as a member of the ingroup (\code{TRUE}) or outgroup
-(\code{FALSE}) of the respective bipartition split.}
+\item{split1, split2}{Logical vectors listing leavess in a consistent order,
+identifying each leaf as a member of the ingroup (\code{TRUE}) or outgroup
+(\code{FALSE}) of the split in question.}
 }
 \value{
 \code{SplitsCompatible} returns a logical specifying whether the splits

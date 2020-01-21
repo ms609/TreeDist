@@ -7,7 +7,7 @@ MatchingSplitInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                InfoInTree = PartitionInfo, Combine = pmin)
+                InfoInTree = SplitInfo, Combine = pmin)
 }
 
 #' @describeIn TreeDistance Variation of matching split information between two
@@ -19,11 +19,11 @@ MatchingSplitInfoDistance <- function (tree1, tree2 = tree1,
   msi <- MatchingSplitInfo(tree1, tree2, normalize = FALSE, 
                                   reportMatching)
   
-  treesIndependentInfo <- outer(PartitionInfo(tree1), PartitionInfo(tree2), '+')
+  treesIndependentInfo <- outer(SplitInfo(tree1), SplitInfo(tree2), '+')
   ret <- treesIndependentInfo - msi - msi
   ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
                        infoInBoth = treesIndependentInfo,
-                       InfoInTree = PartitionInfo, Combine = '+')
+                       InfoInTree = SplitInfo, Combine = '+')
   
   ret[ret < 1e-13] <- 0 # In case of floating point inaccuracy
   attributes(ret) <- attributes(msi)

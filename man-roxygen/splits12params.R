@@ -1,5 +1,5 @@
-#' @param splits1,splits2 Logical matrices where each row corresponds to a terminal,
+#' @param splits1,splits2 Logical matrices where each row corresponds to a leaf,
 #' either listed in the same order or bearing identical names (in any sequence),
-#' and each column corresponds to a bipartition split, such that
-#' each terminal is identified as a member of the ingroup (`TRUE`) or outgroup 
-#' (`FALSE`) of the respective bipartition split.
+#' and each column corresponds to a split, such that each leaf is identified as
+#' a member of the ingroup (`TRUE`) or outgroup (`FALSE`) of the respective
+#' split.

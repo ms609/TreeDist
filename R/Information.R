@@ -6,10 +6,10 @@
 #' for definitions.
 #' 
 #' 
-#' Split S~1~ divides _n_ terminals into two partitions, _A1_ and _B1_.
-#' Split S~2~ divides the same terminals into the partitions _A2_ and _B2_.
+#' Split S~1~ divides _n_ terminals into two splits, _A1_ and _B1_.
+#' Split S~2~ divides the same terminals into the splits _A2_ and _B2_.
 #' 
-#' Partitions must be named such that _A1_ fully overlaps with _A2_: 
+#' Splits must be named such that _A1_ fully overlaps with _A2_: 
 #' that is to say, all taxa in _A1_ are also in _A2_, or _vice versa_.
 #' Thus, all taxa in the smaller of _A1_ and _A2_ also occur in the larger.
 #' 
@@ -65,7 +65,7 @@ SplitDifferentInformation <- function (n, A1, A2 = A1) {
     SplitInformation(A2, n - A2) - mutual
 }
 
-#' Use Variation of Information to compare partitions as clusterings
+#' Use Variation of Information to compare splits as clusterings
 #' 
 #' Compare a pair of splits solely as clusterings of taxa, disregarding their
 #' phylogenetic information, using the variation of clustering information 
@@ -100,7 +100,7 @@ SplitDifferentInformation <- function (n, A1, A2 = A1) {
 #'   Entropy(c(3, 3) / 6) * 2  # = 2
 #'   MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,B,A,B,A,B)) # < 2
 #'   
-#'   # Phylogenetically uninformative groupings contain partitioning information
+#'   # Phylogenetically uninformative groupings contain spliting information
 #'   Entropy(c(1, 5) / 6)
 #'   MeilaVariationOfInformation(c(B,A,A,A,A,A), c(A,A,A,A,A,B))
 #' 
@@ -146,43 +146,6 @@ MeilaMutualInformation <- function (split1, split2) {
   # Return:
   if (abs(mutualInformation) < 1e-15) 0 else n * mutualInformation
 }
-
-# # #' Probability of matching this well
-# # #' 
-# # #' Probability that two random splits of the sizes provided will be at least
-# # #' as similar as the two specified.
-# # #'
-# # #' @template split12Params
-# # #' 
-# # #' @return The proportion of permissable informative splits 
-# # #' splitting the terminals into bipartitions of the sizes given,
-# # #'  that match as well as `split1` and `split2` do.
-# # #'  
-# # AnySizeSplitMatchProbability <- function (split1, split2) {
-# #   
-# #   observedEntropy <- SplitEntropy(split1, split2)
-# #   
-# #   possibleEntropies <- AllEntropies(length(split1))
-# #   
-# #   nArrangements <- iMax - minA1B2 + 1L
-# # 
-# #   arrangements <- vapply(minA1B2:iMax,
-# #                          function (i) c(A1 - i, i, i + A2 - A1, B2 - i),
-# #                          double(4))
-# #   
-# #   H <- function(p) -sum(p[p > 0] * log(p[p > 0]))
-# #   jointEntropies <- apply(arrangements / n, 2, H)
-# #   # mutualInformation <- H(c(A1,n - A1) / n) + H(c(A2, B2) / n) - jointEntropies
-# #   
-# #   # Meila 2007; less is best
-# #   variationOfInformation <- jointEntropies+ jointEntropies - 
-# #     (H(c(A1,n - A1) / n) + H(c(A2, B2) / n))
-# #   
-# #   choices <- apply(arrangements, 2, NPartitionPairs)
-# #   
-# #   # Return:
-# #   sum(choices[ranking <= ranking[partitions[1, 2] + 1L - minA1B2]]) / choose(n, A1)
-# # }
 
 #' All split pairings
 #' 
@@ -305,11 +268,11 @@ SplitEntropy <- function (split1, split2=split1) {
 #' Split Y1 is defined as dividing taxa into the two sets A1 and B1,
 #' and Y2=A2:B2.
 #' 
-#' Consider partitions that divide eight terminals, labelled A to H.
+#' Consider splits that divide eight terminals, labelled A to H.
 #' 
 #' \tabular{rcll}{
-#'   Bipartition 1:\tab ABCD:EFGH\tab A1 = ABCD\tab B1 = EFGH \cr
-#'   Bipartition 2:\tab ABC:DEFGH\tab A2 = ABC\tab B2 = DEFGH
+#'   Split 1:\tab ABCD|EFGH\tab A1 = ABCD\tab B1 = EFGH \cr
+#'   Split 2:\tab ABC|DEFGH\tab A2 = ABC\tab B2 = DEFGH
 #' }
 #' 
 #' This can be represented by an association matrix:

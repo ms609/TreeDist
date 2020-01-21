@@ -28,11 +28,11 @@ contradictory.
 Split Y1 is defined as dividing taxa into the two sets A1 and B1,
 and Y2=A2:B2.
 
-Consider partitions that divide eight terminals, labelled A to H.
+Consider splits that divide eight terminals, labelled A to H.
 
 \tabular{rcll}{
-Bipartition 1:\tab ABCD:EFGH\tab A1 = ABCD\tab B1 = EFGH \cr
-Bipartition 2:\tab ABC:DEFGH\tab A2 = ABC\tab B2 = DEFGH
+Split 1:\tab ABCD|EFGH\tab A1 = ABCD\tab B1 = EFGH \cr
+Split 2:\tab ABC|DEFGH\tab A2 = ABC\tab B2 = DEFGH
 }
 
 This can be represented by an association matrix:
