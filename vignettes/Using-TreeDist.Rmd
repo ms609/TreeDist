@@ -95,7 +95,7 @@ We can view an optimal matching:
 VisualizeMatching(ClusteringInfoDistance, tree1, tree2)
 ```
 
-This shows the eight splits in tree 1, and the paired splits in tree two.  
+This shows the six splits in tree 1, and the paired splits in tree two.  
 Each split is labelled with a measure of its similarity, which is its contribution 
 to the total tree similarity score.
 

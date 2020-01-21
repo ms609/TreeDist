@@ -17,21 +17,20 @@ step is to provide some context for the calculated distances.
 
 ## Normalizing
 
-The maximum value of most tree distance metrics scales with the number of 
-leaves in the trees being compared.
-Typically, the resolution of the trees being compared also impacts the range 
-of possible values.
+The maximum value of most tree distance metrics scales with the size of the
+trees being compared.
+Typically, the resolution of the trees also impacts the range of possible
+values.
 As such, it can be difficult to interpret the tree distance value without 
 suitable context. 
 
 Normalizing a distance metric is one way to render its meaning more obvious.
-The appropriate normalizing constant may consider some thought, as it will 
-depend on the purpose to which a tree distance metric is being put.
+Selecting an appropriate normalizing constant may require careful consideration
+of the purpose to which a tree distance metric is being put.
 
-The default normalization behaviour of each functions in TreeDist is listed
-in the accompanying manual pages, visible under the 
-[function reference](../reference/index.html) or by typing `?FunctionName` in the
-R terminal. This default behaviour is triggered by setting `normalize = TRUE`.
+The default normalization behaviour of each function when `normalize = TRUE` is
+listed in the [function reference](../reference/index.html), or can be viewed
+by typing `?FunctionName` in the R terminal.
 
 ### Nye _et al._ tree similarity
 
@@ -52,11 +51,11 @@ each pair of splits is defined as one.
 that's a harder problem to overcome.)
 
 As such, the maximum similarity possible between two 11-leaf trees is 
-[`NSplits`](https://ms609.github.io/TreeTools/reference/NSplits.html)`(11)`
+[`NSplits(11)`](https://ms609.github.io/TreeTools/reference/NSplits.html)
 = `r suppressMessages(library('TreeTools')); NSplits(11)`.  
 
 Normalizing against this value tells us how similar the two trees are, compared
-to two identical _fully bifurcating_ eleven-leaf trees; this is the default
+to two identical eleven-leaf binary trees; this is the default
 normalization method for
 [`NyeTreeSimilarity`](reference/NyeTreeSimilarity.html).
 
@@ -109,24 +108,23 @@ NyeTreeSimilarity(tree1, tree2, normalize = TreeTools::NSplits(tree1))
 
 ### Normalizing to random similarity
 
-With the Nye _et al_. tree similarity metric, it is easy to calculate the 
-maximum possible distance.  The diameter of other metrics is more difficult
-to calculate.  
-As an example, the variation of clustering information distance metric 
-ranges in principle from zero, to the total amount of clustering information
-present in a pair of trees.  But with even a modest number of leaves, no pairs
-of trees exist in which every split in one tree is perfectly contradicted
-by every other split in the other; as such, any pair of trees will 
-necessarily have some degree of similarity.  
+The diameter (maximum possible distance) of the Nye _et al_. tree similarity 
+metric is easy to calculate, but this is not the case for all metrics.
+For example, the clustering information distance metric ranges in principle from
+zero, to the total clustering entropy present in a pair of trees. 
+But with even a modest number of leaves, no pairs of trees exist in which every
+split in one tree is perfectly contradicted by every other split in the other;
+as such, any pair of trees will necessarily have some degree of similarity.  
 In such a context, it can be relevant to normalize tree similarity against the
-_expected_ distance between a pair of random trees, rather than a maximum value.
+_expected_ distance between a pair of random trees, rather than a maximum value
+[see @Vinh2010].
 On this measure, distances greater than one denote trees that are more different
 than expected by chance, whereas a distance of zero denotes identity.
 
 With the quartet divergence, the expected tree distance is readily calculated:
 any given quartet has a one in three chance of matching by chance.
 
-```{r}
+```{r, message=FALSE}
 library('Quartet')
 expectedQD <- 2 / 3
 normalizedQD <- QuartetDivergence(QuartetStatus(tree1, tree2),
@@ -141,6 +139,7 @@ available in the data package
 distances for a selection of methods:
 
 ```{r, collapse=TRUE, eval = FALSE}
+#TODO UPDATE
 data('randomTreeDistances', package='TreeDistData')
 
 methods <- c('vpi', 'vci', 'nts', 'qd')
