@@ -95,7 +95,7 @@
 #' 
 #' - \insertRef{Kendall2016}{TreeDist}
 #' 
-#' - \insertRef{Li1996}
+#' - \insertRef{Li1996}{TreeDist}
 #' 
 #' - \insertRef{Nye2006}{TreeDist}
 #' 
