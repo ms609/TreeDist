@@ -32,8 +32,8 @@ test_that("Split compatibility is correctly established", {
 methodsToTest <- list(
   SharedPhylogeneticInfo,
   DifferentPhylogeneticInfo,
-  MutualMatchingSplitInfo,
-  VariationOfMatchingSplitInfo,
+  MatchingSplitInfo,
+  MatchingSplitInfoDistance,
   MutualClusteringInfo,
   VariationOfClusteringInfo,
   NyeTreeSimilarity,
@@ -236,15 +236,15 @@ test_that('Shared Phylogenetic Info is correctly calculated', {
                SharedPhylogeneticInfo(t2, t1))
 })
 
-test_that('MutualMatchingSplitInfo is correctly calculated', {
+test_that('MatchingSplitInfo is correctly calculated', {
   BinaryToSplit <- function (binary) matrix(as.logical(binary))
   expect_equal(log2(3),
-               MutualMatchingSplitInfoSplits(
+               MatchingSplitInfoSplits(
                  as.Splits(c(rep(TRUE, 2), rep(FALSE, 6))),
                  as.Splits(c(FALSE, FALSE, rep(TRUE, 2), rep(FALSE, 4)))),
                tolerance = 1e-7)
   expect_equal(log2(3),
-               MutualMatchingSplitInfoSplits(
+               MatchingSplitInfoSplits(
                  as.Splits(c(rep(FALSE, 6), rep(TRUE, 2))),
                  as.Splits(c(FALSE, FALSE, rep(TRUE, 2), rep(FALSE, 4)))),
                tolerance = 1e-7)
@@ -259,19 +259,19 @@ test_that('MutualMatchingSplitInfo is correctly calculated', {
   
   
   expect_equal(SharedPhylogeneticInfo(treeSym8, treeSym8),
-               MutualMatchingSplitInfo(treeSym8, treeSym8), tolerance=1e-05)
-  expect_equal(MutualMatchingSplitInfo(treeAb.Cdefgh, treeAbc.Defgh),
-               MutualMatchingSplitInfo(treeAbc.Defgh, treeAb.Cdefgh))
-  expect_equal(MutualMatchingSplitInfo(treeAbcd.Efgh, treeAb.Cdefgh),
-               MutualMatchingSplitInfo(treeAb.Cdefgh, treeAbcd.Efgh))
+               MatchingSplitInfo(treeSym8, treeSym8), tolerance=1e-05)
+  expect_equal(MatchingSplitInfo(treeAb.Cdefgh, treeAbc.Defgh),
+               MatchingSplitInfo(treeAbc.Defgh, treeAb.Cdefgh))
+  expect_equal(MatchingSplitInfo(treeAbcd.Efgh, treeAb.Cdefgh),
+               MatchingSplitInfo(treeAb.Cdefgh, treeAbcd.Efgh))
   expect_equal(-(TreeTools::LnTreesMatchingSplit(2, 5) - LnUnrooted.int(7)) / 
                  log(2), 
-               MutualMatchingSplitInfo(treeAb.Cdefgh, treeAbc.Defgh),
+               MatchingSplitInfo(treeAb.Cdefgh, treeAbc.Defgh),
                tolerance = 1e-7)
-  expect_true(MutualMatchingSplitInfo(treeSym8, treeBal8) > 
-                MutualMatchingSplitInfo(treeSym8, treeOpp8))
-  expect_equal(0, VariationOfMatchingSplitInfo(treeSym8, treeSym8))
-  NormalizationTest(MutualMatchingSplitInfo)
+  expect_true(MatchingSplitInfo(treeSym8, treeBal8) > 
+                MatchingSplitInfo(treeSym8, treeOpp8))
+  expect_equal(0, MatchingSplitInfoDistance(treeSym8, treeSym8))
+  NormalizationTest(MatchingSplitInfo)
 })
 
 test_that("Shared Phylogenetic Information is correctly estimated", {
@@ -280,11 +280,11 @@ test_that("Shared Phylogenetic Information is correctly estimated", {
   # Expected values calculated with 100k samples
   expect_equal(1.175422, exp['SharedPhylogeneticInfo', 'Estimate'], 
                tolerance=tol[1])
-  expect_equal(3.099776, exp['MutualMatchingSplitInfo', 'Estimate'], 
+  expect_equal(3.099776, exp['MatchingSplitInfo', 'Estimate'], 
                tolerance=tol[2])
   expect_equal(25.231023, exp['DifferentPhylogeneticInfo', 'Estimate'], 
                tolerance=tol[3])
-  expect_equal(21.382314, exp['VariationOfMatchingSplitInfo', 'Estimate'], 
+  expect_equal(21.382314, exp['MatchingSplitInfoDistance', 'Estimate'], 
                tolerance=tol[4])
   expect_equal(exp[, 'sd'], exp[, 'Std. Err.'] * sqrt(exp[, 'n']))
 })

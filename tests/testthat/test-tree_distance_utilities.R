@@ -139,8 +139,8 @@ test_that('Matches are reported', {
   
   Test(SharedPhylogeneticInfo)
   Test(DifferentPhylogeneticInfo)
-  Test(MutualMatchingSplitInfo)
-  Test(VariationOfMatchingSplitInfo)
+  Test(MatchingSplitInfo)
+  Test(MatchingSplitInfoDistance)
   Test(MutualClusteringInfo)
   Test(VariationOfClusteringInfo)
   
@@ -184,8 +184,8 @@ test_that('Matchings are calculated in both directions', {
   
   Test(SharedPhylogeneticInfo)
   Test(DifferentPhylogeneticInfo)
-  Test(MutualMatchingSplitInfo)
-  Test(VariationOfMatchingSplitInfo)
+  Test(MatchingSplitInfo)
+  Test(MatchingSplitInfoDistance)
   Test(MutualClusteringInfo)
   Test(VariationOfClusteringInfo)
   

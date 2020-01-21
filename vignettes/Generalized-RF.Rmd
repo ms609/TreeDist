@@ -238,8 +238,8 @@ bits of phylogenetic information, which provides a similarity score for this
 pairing.
 
 ```{r, fig.width=6 , fig.align='center'}
-VariationOfMatchingSplitInfo(tree1, tree2)
-VisualizeMatching(VariationOfMatchingSplitInfo, tree1, tree2,
+MatchingSplitInfoDistance(tree1, tree2)
+VisualizeMatching(MatchingSplitInfoDistance, tree1, tree2,
                   Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
 ```
 
