@@ -117,7 +117,7 @@ legend('topleft', 'Asymmetric tree', bty='n', inset=c(-0.05, -0.03))
 Each tree divides the eight taxa into five splits.
 The information content (Shannon entropy) of a split is a function of the
 probability that the split will match a random tree, i.e. the proportion of
-eight-tip tree topologies that contain the split in question.
+eight-leaf tree topologies that contain the split in question.
 (Information content, in bits, is defined as $-log _2_(probability)$.)
 This, in turn, is a function of the evenness of the split:
 
@@ -154,7 +154,7 @@ on average share more splits with the balanced tree (whose splits are
 predominantly uneven and thus likely to be matched) than the asymmetric tree 
 (which contains more even splits that are less likely to occur in a random tree).
 
-Of the 10&nbsp;395 eight-tip trees, many more bear at least one split in 
+Of the 10&nbsp;395 eight-leaf trees, many more bear at least one split in 
 common with a balanced tree than with an asymmetric tree:
 
 ```{r all-8-tip-trees, echo=FALSE, cache=TRUE, fig.width=4, fig.height=4, fig.align='center'}
@@ -170,7 +170,7 @@ if (calculate) {
 
 par(cex=0.8)
 sch <- hist(inCaterpillar + 0.7, breaks = 0:18 / 3 - (1/6),
-            main='8-tip trees with N common splits', cex.main=1,
+            main='8-leaf trees with N common splits', cex.main=1,
             xlim=c(0, 6), axes=FALSE,
             xlab='Splits in common', ylab='Number of trees')
 sbh <- hist(inBalanced + 0.4, breaks = 0:18 / 3 - (1/6), plot=FALSE)

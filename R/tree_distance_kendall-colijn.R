@@ -14,7 +14,7 @@
 #' This metric emphasizes the position of the root; the path difference 
 #' instead measures the distance of the last common ancestor of each pair
 #' of leaves from the leaves themselves, i.e. the length of the path from one 
-#' tip to another.
+#' leaf to another.
 #' 
 #' @template tree12listparams
 #' 

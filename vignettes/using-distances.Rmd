@@ -51,12 +51,12 @@ each pair of splits is defined as one.
 (Astute readers might worry that the minimum similarity is greater than zero --
 that's a harder problem to overcome.)
 
-As such, the maximum similarity possible between two 11-tip trees is 
+As such, the maximum similarity possible between two 11-leaf trees is 
 [`NSplits`](https://ms609.github.io/TreeTools/reference/NSplits.html)`(11)`
 = `r suppressMessages(library('TreeTools')); NSplits(11)`.  
 
 Normalizing against this value tells us how similar the two trees are, compared
-to two identical _fully bifurcating_ eleven-tip trees; this is the default
+to two identical _fully bifurcating_ eleven-leaf trees; this is the default
 normalization method for
 [`NyeTreeSimilarity`](reference/NyeTreeSimilarity.html).
 
