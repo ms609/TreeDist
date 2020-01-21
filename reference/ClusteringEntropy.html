@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • TreeDist</title>
+<title>Clustering entropy of all splits within a tree — ClusteringEntropy • TreeDist</title>
 
 
 <!-- jquery -->
@@ -41,7 +41,12 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Clustering entropy of all splits within a tree — ClusteringEntropy" />
+<meta property="og:description" content="Sums the entropy (ClusteringEntropy) or information content
+(ClusteringInfo) across each split within a phylogenetic tree, treating
+each split as dividing the leaves of the tree into two clusters (sensu
+Meila 2007; Vinh et al. 2010)." />
+<meta name="twitter:card" content="summary" />
 
 
 
@@ -60,7 +65,7 @@
   </head>
 
   <body>
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -149,141 +154,114 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Clustering entropy of all splits within a tree</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_information.R'><code>R/tree_information.R</code></a></small>
+    <div class="hidden name"><code>ClusteringEntropy.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>Sums the entropy (<code>ClusteringEntropy</code>) or information content
+(<code>ClusteringInfo</code>) across each split within a phylogenetic tree, treating
+each split as dividing the leaves of the tree into two clusters (<em>sensu</em>
+Meila 2007; Vinh <em>et al.</em> 2010).</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>ClusteringEntropy</span>(<span class='no'>x</span>)
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-tree-distance-measures" class="hasAnchor"><a href="#section-tree-distance-measures" class="anchor"></a>Tree distance measures</h2>
-          <p class="section-desc"><p>Functions for calculating distances between pairs of trees</p></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="JaccardRobinsonFoulds.html">JaccardRobinsonFoulds()</a></code> <code><a href="JaccardRobinsonFoulds.html">JaccardSplitSimilarity()</a></code> </p>
-        </td>
-        <td><p>Jaccard-Robinson-Foulds metric</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="KendallColijn.html">KendallColijn()</a></code> <code><a href="KendallColijn.html">KCVector()</a></code> </p>
-        </td>
-        <td><p>Kendall-Colijn distance</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="MASTSize.html">MASTSize()</a></code> <code><a href="MASTSize.html">MASTInfo()</a></code> </p>
-        </td>
-        <td><p>Size of Maximum Agreement Subtree</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="MatchingSplitDistance.html">MatchingSplitDistance()</a></code> <code><a href="MatchingSplitDistance.html">MatchingSplitDistanceSplits()</a></code> </p>
-        </td>
-        <td><p>Matching Split Distance</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="NyeTreeSimilarity.html">NyeTreeSimilarity()</a></code> <code><a href="NyeTreeSimilarity.html">NyeSplitSimilarity()</a></code> </p>
-        </td>
-        <td><p>Nye <em>et al</em>. (2006) tree comparison</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="RobinsonFouldsInfo.html">RobinsonFouldsInfo()</a></code> <code><a href="RobinsonFouldsInfo.html">RobinsonFouldsInfoSplits()</a></code> <code><a href="RobinsonFouldsInfo.html">RobinsonFoulds()</a></code> <code><a href="RobinsonFouldsInfo.html">RobinsonFouldsMatching()</a></code> <code><a href="RobinsonFouldsInfo.html">RobinsonFouldsSplits()</a></code> </p>
-        </td>
-        <td><p>(Information-adjusted) Robinson-Foulds distance</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="TreeDistance.html">TreeDistance()</a></code> <code><a href="TreeDistance.html">SharedPhylogeneticInfo()</a></code> <code><a href="TreeDistance.html">DifferentPhylogeneticInfo()</a></code> <code><a href="TreeDistance.html">ClusteringInfoDistance()</a></code> <code><a href="TreeDistance.html">ExpectedVariation()</a></code> <code><a href="TreeDistance.html">MutualClusteringInfo()</a></code> <code><a href="TreeDistance.html">SharedPhylogeneticInfoSplits()</a></code> <code><a href="TreeDistance.html">MutualClusteringInfoSplits()</a></code> <code><a href="TreeDistance.html">MatchingSplitInfo()</a></code> <code><a href="TreeDistance.html">MatchingSplitInfoDistance()</a></code> <code><a href="TreeDistance.html">MatchingSplitInfoSplits()</a></code> </p>
-        </td>
-        <td><p>Information-based generalized Robinson-Foulds distances</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-information" class="hasAnchor"><a href="#section-information" class="anchor"></a>Information</h2>
-          <p class="section-desc"><p>Calculations relating to information content</p></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="Entropy.html">Entropy()</a></code> </p>
-        </td>
-        <td><p>Entropy in bits</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SplitEntropy.html">SplitEntropy()</a></code> </p>
-        </td>
-        <td><p>Entropy of two splits</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-split-clustering-information" class="hasAnchor"><a href="#section-split-clustering-information" class="anchor"></a>Split clustering information</h2>
-          <p class="section-desc"><p>Functions relevant to calculating the variation of information, sensu Meila 2007.</p></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="AllSplitPairings.html">AllSplitPairings()</a></code> </p>
-        </td>
-        <td><p>All split pairings</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="SplitsCompatible.html">SplitsCompatible()</a></code> </p>
-        </td>
-        <td><p>Are splits compatible?</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="MeilaVariationOfInformation.html">MeilaVariationOfInformation()</a></code> <code><a href="MeilaVariationOfInformation.html">MeilaMutualInformation()</a></code> </p>
-        </td>
-        <td><p>Use Variation of Information to compare splits as clusterings</p></td>
-      </tr>
-    </tbody><tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-utility-functions" class="hasAnchor"><a href="#section-utility-functions" class="anchor"></a>Utility functions</h2>
-          <p class="section-desc"><p>Functions to assist user comprehension</p></p>
-        </th>
-      </tr>
-      <tr>
-        
-        <td>
-          <p><code><a href="VisualizeMatching.html">VisualizeMatching()</a></code> </p>
-        </td>
-        <td><p>Visualise a matching</p></td>
-      </tr>
-    </tbody>
+<span class='fu'>ClusteringInfo</span>(<span class='no'>x</span>)
+
+<span class='co'># S3 method for phylo</span>
+<span class='fu'>ClusteringEntropy</span>(<span class='no'>x</span>)
+
+<span class='co'># S3 method for list</span>
+<span class='fu'>ClusteringEntropy</span>(<span class='no'>x</span>)
+
+<span class='co'># S3 method for multiPhylo</span>
+<span class='fu'>ClusteringEntropy</span>(<span class='no'>x</span>)
+
+<span class='co'># S3 method for Splits</span>
+<span class='fu'>ClusteringEntropy</span>(<span class='no'>x</span>)
+
+<span class='co'># S3 method for phylo</span>
+<span class='fu'>ClusteringInfo</span>(<span class='no'>x</span>)
+
+<span class='co'># S3 method for list</span>
+<span class='fu'>ClusteringInfo</span>(<span class='no'>x</span>)
+
+<span class='co'># S3 method for multiPhylo</span>
+<span class='fu'>ClusteringInfo</span>(<span class='no'>x</span>)
+
+<span class='co'># S3 method for Splits</span>
+<span class='fu'>ClusteringInfo</span>(<span class='no'>x</span>)</pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>x</th>
+      <td><p>A tree of class <code>phylo</code>, a list of trees, or a <code>multiPhylo</code> object.</p></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>Information content, in bits.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>As entropy measures the bits required to transmit the cluster label of each
+leaf (Vinh <em>et al.</em> 2010: p. 2840), the information content of a split is its
+entropy multiplied by the number of leaves.</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    
+<ul>
+<li><p>Meilă M (2007).
+&#8220;Comparing clusterings---an information based distance.&#8221;
+<em>Journal of Multivariate Analysis</em>, <b>98</b>(5), 873--895.
+doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11.013</a>
+.</p></li>
+<li><p>Vinh NX, Epps J, Bailey J (2010).
+&#8220;Information theoretic measures for clusterings comparison: variants, properties, normalization and correction for chance.&#8221;
+<em>Journal of Machine Learning Research</em>, <b>11</b>, 2837--2854.
+doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</a>
+.</p></li>
+</ul>
+
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'>
+<ul>
+<li><p><code><a href='SplitEntropy.html'>SplitEntropy</a></code></p></li>
+</ul>
+
+<p>Other tree information functions: 
+<code><a href='SplitwiseInfo.html'>SplitwiseInfo</a>()</code></p></div>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>
+<span class='no'>tree1</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/BalancedTree.html'>BalancedTree</a></span>(<span class='fl'>8</span>)
+<span class='no'>tree2</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/PectinateTree.html'>PectinateTree</a></span>(<span class='fl'>8</span>)
+
+<span class='fu'>ClusteringInfo</span>(<span class='no'>tree1</span>)</div><div class='output co'>#&gt; [1] 33.9609</div><div class='input'><span class='fu'>ClusteringEntropy</span>(<span class='no'>tree1</span>)</div><div class='output co'>#&gt; [1] 4.245112</div><div class='input'><span class='fu'>ClusteringInfo</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>one</span> <span class='kw'>=</span> <span class='no'>tree1</span>, <span class='kw'>two</span> <span class='kw'>=</span> <span class='no'>tree2</span>))</div><div class='output co'>#&gt;      one      two 
+#&gt; 33.96090 36.25139 </div><div class='input'>
+<span class='fu'>ClusteringInfo</span>(<span class='no'>tree1</span>) + <span class='fu'>ClusteringInfo</span>(<span class='no'>tree2</span>)</div><div class='output co'>#&gt; [1] 70.21229</div><div class='input'><span class='fu'>ClusteringEntropy</span>(<span class='no'>tree1</span>) + <span class='fu'>ClusteringEntropy</span>(<span class='no'>tree2</span>)</div><div class='output co'>#&gt; [1] 8.776537</div><div class='input'><span class='fu'><a href='TreeDistance.html'>ClusteringInfoDistance</a></span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>)</div><div class='output co'>#&gt; [1] 2.713688</div><div class='input'><span class='fu'><a href='TreeDistance.html'>MutualClusteringInfo</a></span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>)</div><div class='output co'>#&gt; [1] 3.031424</div><div class='input'>
+</div></pre>
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-tree-distance-measures">Tree distance measures</a></li>
-      <li><a href="#section-information">Information</a></li>
-      <li><a href="#section-split-clustering-information">Split clustering information</a></li>
-      <li><a href="#section-utility-functions">Utility functions</a></li>
+      <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#value">Value</a></li>
+      <li><a href="#details">Details</a></li>
+      <li><a href="#references">References</a></li>
+      <li><a href="#see-also">See also</a></li>
+      <li><a href="#examples">Examples</a></li>
     </ul>
+
+    <h2>Author</h2>
+    <p>Martin R. Smith (<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
   </div>
 </div>
 

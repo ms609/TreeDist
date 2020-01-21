@@ -179,23 +179,23 @@ splits.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>splits1</th>
-      <td><p>Logical matrices where each row corresponds to a terminal,
+      <td><p>Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
-and each column corresponds to a bipartition split, such that
-each terminal is identified as a member of the ingroup (<code>TRUE</code>) or outgroup
-(<code>FALSE</code>) of the respective bipartition split.</p></td>
+and each column corresponds to a split, such that each leaf is identified as
+a member of the ingroup (<code>TRUE</code>) or outgroup (<code>FALSE</code>) of the respective
+split.</p></td>
     </tr>
     <tr>
       <th>splits2</th>
-      <td><p>Logical matrices where each row corresponds to a terminal,
+      <td><p>Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
-and each column corresponds to a bipartition split, such that
-each terminal is identified as a member of the ingroup (<code>TRUE</code>) or outgroup
-(<code>FALSE</code>) of the respective bipartition split.</p></td>
+and each column corresponds to a split, such that each leaf is identified as
+a member of the ingroup (<code>TRUE</code>) or outgroup (<code>FALSE</code>) of the respective
+split.</p></td>
     </tr>
     <tr>
       <th>nTip</th>
-      <td><p>Integer specifying the number of tips in each split.</p></td>
+      <td><p>Integer specifying the number of leaves in each split.</p></td>
     </tr>
     <tr>
       <th>PairScorer</th>
@@ -228,7 +228,7 @@ specified pair scorer. If <code>reportMatching = TRUE</code>, attribute also lis
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Note that no checks will be made to confirm that splits1 and splits2 contain
-the same tips in the same order.  This is the responsibility of the calling
+the same leaves in the same order.  This is the responsibility of the calling
 function.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 

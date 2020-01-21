@@ -43,7 +43,7 @@
 
 <meta property="og:title" content="(Information-adjusted) Robinson-Foulds distance — RobinsonFouldsInfo" />
 <meta property="og:description" content="Calculates the Robinson-Foulds distance, or the equivalent similarity
-measure, optionally annotating matched partitions and weighting partitions
+measure, optionally annotating matched splits and weighting splits
 according to their phylogenetic information content." />
 <meta name="twitter:card" content="summary" />
 
@@ -162,7 +162,7 @@ according to their phylogenetic information content." />
 
     <div class="ref-description">
     <p>Calculates the Robinson-Foulds distance, or the equivalent similarity
-measure, optionally annotating matched partitions and weighting partitions
+measure, optionally annotating matched splits and weighting splits
 according to their phylogenetic information content.</p>
     </div>
 
@@ -209,12 +209,12 @@ according to their phylogenetic information content.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>tree1</th>
-      <td><p>Trees of class <code>phylo</code>, with tips labelled identically,
+      <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.</p></td>
     </tr>
     <tr>
       <th>tree2</th>
-      <td><p>Trees of class <code>phylo</code>, with tips labelled identically,
+      <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.</p></td>
     </tr>
     <tr>
@@ -238,23 +238,23 @@ matchings as an attribute of the score.</p></td>
     </tr>
     <tr>
       <th>splits1</th>
-      <td><p>Logical matrices where each row corresponds to a terminal,
+      <td><p>Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
-and each column corresponds to a bipartition split, such that
-each terminal is identified as a member of the ingroup (<code>TRUE</code>) or outgroup
-(<code>FALSE</code>) of the respective bipartition split.</p></td>
+and each column corresponds to a split, such that each leaf is identified as
+a member of the ingroup (<code>TRUE</code>) or outgroup (<code>FALSE</code>) of the respective
+split.</p></td>
     </tr>
     <tr>
       <th>splits2</th>
-      <td><p>Logical matrices where each row corresponds to a terminal,
+      <td><p>Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
-and each column corresponds to a bipartition split, such that
-each terminal is identified as a member of the ingroup (<code>TRUE</code>) or outgroup
-(<code>FALSE</code>) of the respective bipartition split.</p></td>
+and each column corresponds to a split, such that each leaf is identified as
+a member of the ingroup (<code>TRUE</code>) or outgroup (<code>FALSE</code>) of the respective
+split.</p></td>
     </tr>
     <tr>
       <th>nTip</th>
-      <td><p>Integer specifying the number of tips in each split.</p></td>
+      <td><p>Integer specifying the number of leaves in each split.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -273,10 +273,10 @@ distance, included for use with <code><a href='VisualizeMatching.html'>Visualize
 To generate the RF distance efficiently,
 use the function <code>ape{treedist}</code>.</p>
 <p>Note that if <code>reportMatching = TRUE</code>, the <code>pairScores</code> attribute returns
-a logical matrix specifying whether each pair of partitions is identical.</p>
+a logical matrix specifying whether each pair of splits is identical.</p>
 <p><code>RobinsonFouldsInfo</code> calculates the tree similarity or distance by summing
-the phylogenetic information content of all partitions that are (or are not)
-identical in both trees.  Consequently, partitions that are more likely
+the phylogenetic information content of all splits that are (or are not)
+identical in both trees.  Consequently, splits that are more likely
 to be identical by chance alone make a smaller contribution to overall
 tree distance, because their similarity is less remarkable.</p>
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
@@ -297,7 +297,7 @@ instead of trees.</p></li>
     
 
 <ul>
-<li><p><code>RobinsonFoulds</code> is normalized against the total number of partitions that
+<li><p><code>RobinsonFoulds</code> is normalized against the total number of splits that
 are present.</p></li>
 <li><p><code>RobinsonFouldsInfo</code> is normalized against the sum of the phylogenetic
 information of all splits in both trees, treated independently.</p></li>

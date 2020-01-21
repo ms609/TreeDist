@@ -4,6 +4,7 @@ pkgdown_sha: ~
 articles:
   Generalized-RF: Generalized-RF.html
   Robinson-Foulds: Robinson-Foulds.html
+  Tree-distance-metric-evaluation: Tree-distance-metric-evaluation.html
   Using-TreeDist: Using-TreeDist.html
   information: information.html
   tree-distances: tree-distances.html

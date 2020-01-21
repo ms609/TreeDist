@@ -171,7 +171,7 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>tree1, tree2</th>
-      <td><p>Trees of class <code>phylo</code>, with tips labelled identically,
+      <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.</p></td>
     </tr>
     <tr>
@@ -186,17 +186,17 @@ or lists of such trees to undergo pairwise comparison.</p></td>
 trees in <code>tree1</code> and <code>tree2</code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>It works by measuring, for each pair of tips, the distance from the most recent
-common ancestor of those tips and the root node.  For a given tree, this
+    <p>It works by measuring, for each pair of leaves, the distance from the most recent
+common ancestor of those leaves and the root node.  For a given tree, this
 produces a vector of values recording the distance-from-the-root of each
-most recent common ancestor of each pair of tips.</p>
+most recent common ancestor of each pair of leaves.</p>
 <p>Two trees are compared by taking the Euclidian distance between the
 respective vectors.  This is calculated by taking the square root of the sum
 of the squares of the differences between the vectors.</p>
 <p>This metric emphasizes the position of the root; the path difference
 instead measures the distance of the last common ancestor of each pair
-of tips from the tips themselves, i.e. the length of the path from one
-tip to another.</p>
+of leaves from the leaves themselves, i.e. the length of the path from one
+leaf to another.</p>
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     

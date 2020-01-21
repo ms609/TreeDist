@@ -42,9 +42,11 @@
 
 
 <meta property="og:title" content="Entropy of two splits — SplitEntropy" />
-<meta property="og:description" content="Reports various values pertaining to the phylogenetic information content
-of two splits,
-treating splits as subdivisions of n terminals into two clusters." />
+<meta property="og:description" content="Reports the entropy, joint entropy, entropy distance and information content
+of two splits, treating each split as a division of n leaves into two
+groups.  Further details are available in a
+vignette,
+MacKay (2003) and Meila (2007)" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -161,9 +163,11 @@ treating splits as subdivisions of n terminals into two clusters." />
     </div>
 
     <div class="ref-description">
-    <p>Reports various values pertaining to the phylogenetic information content
-of two splits,
-treating splits as subdivisions of <em>n</em> terminals into two clusters.</p>
+    <p>Reports the entropy, joint entropy, entropy distance and information content
+of two splits, treating each split as a division of <em>n</em> leaves into two
+groups.  Further details are available in a
+<a href='https://ms609.github.io/TreeDist/articles/information.html'>vignette</a>,
+MacKay (2003) and Meila (2007)</p>
     </div>
 
     <pre class="usage"><span class='fu'>SplitEntropy</span>(<span class='no'>split1</span>, <span class='kw'>split2</span> <span class='kw'>=</span> <span class='no'>split1</span>)</pre>
@@ -173,34 +177,43 @@ treating splits as subdivisions of <em>n</em> terminals into two clusters.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>split1, split2</th>
-      <td><p>Logical vectors listing terminals in same order, such that
-each terminal is identified as a member of the ingroup (<code>TRUE</code>) or outgroup
-(<code>FALSE</code>) of the respective bipartition split.</p></td>
+      <td><p>Logical vectors listing leavess in a consistent order,
+identifying each leaf as a member of the ingroup (<code>TRUE</code>) or outgroup
+(<code>FALSE</code>) of the split in question.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A numeric vector listing, in bits,</p><ul>
-<li><p><code>h1</code> The entropy of split 1</p></li>
-<li><p><code>h1</code> The entropy of split 2</p></li>
-<li><p><code>jointH</code> The joint entropy of both splits</p></li>
-<li><p><code>i</code> The mutual information of the splits</p></li>
-<li><p><code>vI</code> The variation of information of the splits (see Meila 2007)</p></li>
+<li><p><code>H1</code> The entropy of split 1</p></li>
+<li><p><code>H2</code> The entropy of split 2</p></li>
+<li><p><code>H12</code> The joint entropy of both splits</p></li>
+<li><p><code>I</code> The mutual information of the splits</p></li>
+<li><p><code>Hd</code> The entropy distance (variation of information) of the splits</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Meilă M (2007).
+    <p>MacKay DJC (2003).
+<em>Information Theory, Inference, and Learning Algorithms</em>.
+Cambridge University Press, Cambridge.
+<a href='https://www.inference.org.uk/itprnn/book.pdf'>https://www.inference.org.uk/itprnn/book.pdf</a>.
+
+Meilă M (2007).
 &#8220;Comparing clusterings---an information based distance.&#8221;
 <em>Journal of Multivariate Analysis</em>, <b>98</b>(5), 873--895.
 doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11.013</a>
 .</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other split information functions: 
-<code><a href='JointInformation.html'>JointInformation</a>()</code>,
-<code><a href='SplitMutualInformation.html'>SplitMutualInformation</a>()</code></p></div>
+    <div class='dont-index'>
+<ul>
+<li><p><code><a href='ClusteringEntropy.html'>ClusteringEntropy</a></code></p></li>
+</ul>
+
+<p>Other split information functions: 
+<code><a href='SplitSharedInformation.html'>SplitSharedInformation</a>()</code></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Size of maximum agreement subtree — MASTSize • TreeDist</title>
+<title>Size of Maximum Agreement Subtree — MASTSize • TreeDist</title>
 
 
 <!-- jquery -->
@@ -41,10 +41,10 @@
 
 
 
-<meta property="og:title" content="Size of maximum agreement subtree — MASTSize" />
+<meta property="og:title" content="Size of Maximum Agreement Subtree — MASTSize" />
 <meta property="og:description" content="Calculate the maximum agreement subtree between two phylogenetic trees, i.e.
 the largest tree that can be obtained from either tree1 or tree2 solely
-by deleting tips." />
+by deleting leaves." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -155,7 +155,7 @@ by deleting tips." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Size of maximum agreement subtree</h1>
+    <h1>Size of Maximum Agreement Subtree</h1>
     <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance_mast.R'><code>R/tree_distance_mast.R</code></a></small>
     <div class="hidden name"><code>MASTSize.Rd</code></div>
     </div>
@@ -163,7 +163,7 @@ by deleting tips." />
     <div class="ref-description">
     <p>Calculate the maximum agreement subtree between two phylogenetic trees, i.e.
 the largest tree that can be obtained from either <code>tree1</code> or <code>tree2</code> solely
-by deleting tips.</p>
+by deleting leaves.</p>
     </div>
 
     <pre class="usage"><span class='fu'>MASTSize</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>, <span class='kw'>rooted</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
@@ -185,7 +185,7 @@ by deleting tips.</p>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>MASTSize</code> returns an integer specifying the number of tips in the
+    <p><code>MASTSize</code> returns an integer specifying the number of leaves in the
 maximum agreement subtree.</p>
 <p><code>MASTInfo</code> returns a vector or matrix listing the phylogenetic
 information content, in bits, of the maximum agreement subtree.</p>
@@ -203,7 +203,7 @@ CRC Press, Boca Raton.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/phangorn/man/mast.html'>phangorn::mast</a></code>, a slower, all-R implementation that also returns
-the tips contained within the subtree.</p>
+the leaves contained within the subtree.</p>
 <p>Other tree distances: 
 <code><a href='JaccardRobinsonFoulds.html'>JaccardRobinsonFoulds</a>()</code>,
 <code><a href='KendallColijn.html'>KendallColijn</a>()</code>,

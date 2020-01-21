@@ -45,7 +45,7 @@
 <meta property="og:description" content="Implements the tree comparison metric of Nye et al. (2006).
 In short, this finds the optimal matching that pairs each branch from
 one tree with a branch in the second, where matchings are scored according to
-the size of the largest bipartition that is consistent with both of them,
+the size of the largest split that is consistent with both of them,
 normalized against the Jaccard index.  This is equivalent to (but
 slightly faster than) JaccardRobinsonFoulds
 (tree1, tree2, k = 1, arboreal = FALSE)." />
@@ -168,7 +168,7 @@ slightly faster than) JaccardRobinsonFoulds
     <p>Implements the tree comparison metric of Nye <em>et al</em>. (2006).
 In short, this finds the optimal matching that pairs each branch from
 one tree with a branch in the second, where matchings are scored according to
-the size of the largest bipartition that is consistent with both of them,
+the size of the largest split that is consistent with both of them,
 normalized against the Jaccard index.  This is equivalent to (but
 slightly faster than) <code><a href='JaccardRobinsonFoulds.html'>JaccardRobinsonFoulds</a>
 (tree1, tree2, k = 1, arboreal = FALSE)</code>.</p>
@@ -195,12 +195,12 @@ slightly faster than) <code><a href='JaccardRobinsonFoulds.html'>JaccardRobinson
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>tree1</th>
-      <td><p>Trees of class <code>phylo</code>, with tips labelled identically,
+      <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.</p></td>
     </tr>
     <tr>
       <th>tree2</th>
-      <td><p>Trees of class <code>phylo</code>, with tips labelled identically,
+      <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.</p></td>
     </tr>
     <tr>
@@ -220,10 +220,10 @@ If <code>FALSE</code>, results will not be rescaled.</p></td>
     <tr>
       <th>normalizeMax</th>
       <td><p>When calculating similarity, normalize against the
-maximum number of partitions that could have been present (<code>TRUE</code>),
-or the number of partitions that were actually observed (<code>FALSE</code>)?
-Defaults to the number of partitions in the better-resolved tree; set
-<code>normalize = pmin.int</code> to use the number of partitions in the less resolved
+maximum number of splits that could have been present (<code>TRUE</code>),
+or the number of splits that were actually observed (<code>FALSE</code>)?
+Defaults to the number of splits in the better-resolved tree; set
+<code>normalize = pmin.int</code> to use the number of splits in the less resolved
 tree.</p></td>
     </tr>
     <tr>
@@ -233,23 +233,23 @@ matchings as an attribute of the score.</p></td>
     </tr>
     <tr>
       <th>splits1</th>
-      <td><p>Logical matrices where each row corresponds to a terminal,
+      <td><p>Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
-and each column corresponds to a bipartition split, such that
-each terminal is identified as a member of the ingroup (<code>TRUE</code>) or outgroup
-(<code>FALSE</code>) of the respective bipartition split.</p></td>
+and each column corresponds to a split, such that each leaf is identified as
+a member of the ingroup (<code>TRUE</code>) or outgroup (<code>FALSE</code>) of the respective
+split.</p></td>
     </tr>
     <tr>
       <th>splits2</th>
-      <td><p>Logical matrices where each row corresponds to a terminal,
+      <td><p>Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
-and each column corresponds to a bipartition split, such that
-each terminal is identified as a member of the ingroup (<code>TRUE</code>) or outgroup
-(<code>FALSE</code>) of the respective bipartition split.</p></td>
+and each column corresponds to a split, such that each leaf is identified as
+a member of the ingroup (<code>TRUE</code>) or outgroup (<code>FALSE</code>) of the respective
+split.</p></td>
     </tr>
     <tr>
       <th>nTip</th>
-      <td><p>Integer specifying the number of tips in each split.</p></td>
+      <td><p>Integer specifying the number of leaves in each split.</p></td>
     </tr>
     </table>
 
@@ -261,7 +261,7 @@ trees in <code>tree1</code> and <code>tree2</code>.</p>
 
     <p>The measure is defined as a similarity score.  If <code>similarity = FALSE</code>, the
 similarity score will be converted into a distance by doubling it and
-subtracting it from the number of partitions present in both trees.
+subtracting it from the number of splits present in both trees.
 This ensures consistency with <code>JaccardRobinsonFoulds</code>.</p>
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
@@ -277,13 +277,13 @@ instead of trees.</p></li>
 
 <p>If <code>normalize = TRUE</code> and <code>similarity = TRUE</code>, then results will be rescaled
 from zero to one by dividing by the maximum value possible for any pair
-of trees with  <em>n</em> terminals, $n - 3$.
-You may wish to normalize instead against the number of partitions present
+of trees with  <em>n</em> leaves, $n - 3$.
+You may wish to normalize instead against the number of splits present
 in the smaller tree, which represents the maximum value possible for a pair
 of trees with the specified topologies (<code>normalize = pmin.int</code>), or the
-number of partitions in the most resolved tree (<code>normalize = pmax.int</code>).</p>
+number of splits in the most resolved tree (<code>normalize = pmax.int</code>).</p>
 <p>If <code>normalize = TRUE</code> and <code>similarity = FALSE</code>, then results will be rescaled
-from zero to one by dividing by the total number of partitions in the pair
+from zero to one by dividing by the total number of splits in the pair
 of trees being considered.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 

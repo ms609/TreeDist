@@ -166,21 +166,21 @@ phylogenetic or clustering information that two trees hold in common.</p>
 
     <pre class="usage"><span class='fu'>TreeDistance</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>)
 
-<span class='fu'>MutualPhylogeneticInfo</span>(
+<span class='fu'>SharedPhylogeneticInfo</span>(
   <span class='no'>tree1</span>,
   <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>,
   <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )
 
-<span class='fu'>VariationOfPhylogeneticInfo</span>(
+<span class='fu'>DifferentPhylogeneticInfo</span>(
   <span class='no'>tree1</span>,
   <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>,
   <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )
 
-<span class='fu'>VariationOfClusteringInfo</span>(
+<span class='fu'>ClusteringInfoDistance</span>(
   <span class='no'>tree1</span>,
   <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>,
   <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
@@ -196,7 +196,7 @@ phylogenetic or clustering information that two trees hold in common.</p>
   <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )
 
-<span class='fu'>MutualPhylogeneticInfoSplits</span>(
+<span class='fu'>SharedPhylogeneticInfoSplits</span>(
   <span class='no'>splits1</span>,
   <span class='no'>splits2</span>,
   <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='no'>splits1</span>, <span class='st'>"nTip"</span>),
@@ -210,21 +210,21 @@ phylogenetic or clustering information that two trees hold in common.</p>
   <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )
 
-<span class='fu'>MutualMatchingSplitInfo</span>(
+<span class='fu'>MatchingSplitInfo</span>(
   <span class='no'>tree1</span>,
   <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>,
   <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )
 
-<span class='fu'>VariationOfMatchingSplitInfo</span>(
+<span class='fu'>MatchingSplitInfoDistance</span>(
   <span class='no'>tree1</span>,
   <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>,
   <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )
 
-<span class='fu'>MutualMatchingSplitInfoSplits</span>(
+<span class='fu'>MatchingSplitInfoSplits</span>(
   <span class='no'>splits1</span>,
   <span class='no'>splits2</span>,
   <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='no'>splits1</span>, <span class='st'>"nTip"</span>),
@@ -236,7 +236,7 @@ phylogenetic or clustering information that two trees hold in common.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>tree1, tree2</th>
-      <td><p>Trees of class <code>phylo</code>, with tips labelled identically,
+      <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.</p></td>
     </tr>
     <tr>
@@ -260,15 +260,15 @@ accuracy of estimate increases with <code><a href='https://rdrr.io/r/base/MathFu
     </tr>
     <tr>
       <th>splits1, splits2</th>
-      <td><p>Logical matrices where each row corresponds to a terminal,
+      <td><p>Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
-and each column corresponds to a bipartition split, such that
-each terminal is identified as a member of the ingroup (<code>TRUE</code>) or outgroup
-(<code>FALSE</code>) of the respective bipartition split.</p></td>
+and each column corresponds to a split, such that each leaf is identified as
+a member of the ingroup (<code>TRUE</code>) or outgroup (<code>FALSE</code>) of the respective
+split.</p></td>
     </tr>
     <tr>
       <th>nTip</th>
-      <td><p>Integer specifying the number of tips in each split.</p></td>
+      <td><p>Integer specifying the number of leaves in each split.</p></td>
     </tr>
     </table>
 
@@ -281,32 +281,33 @@ of which clades are matched in the optimal matching, which can be viewed
 using <code><a href='VisualizeMatching.html'>VisualizeMatching</a></code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>A tree similarity measure is generated by finding an optimal matching that
-maximises the total information in common between a partition on one tree
-and its pair on a second, considering all possible ways to pair partitions
-between trees (including leaving a partition unpaired).</p>
+    <p>Generalized Robinson-Foulds distances calculate tree similarity by finding an
+optimal matching that the similarity between a split on one tree
+and its pair on a second, considering all possible ways to pair splits
+between trees (including leaving a split unpaired).</p>
+<p>The methods implemented here use the concepts of entropy and information
+(MacKay 2003) to assign a similarity score between each pair of splits.</p>
 <p>The returned tree similarity measures state the amount of information,
-in bits, that the partitions in two trees hold in common
+in bits, that the splits in two trees hold in common
 when they are optimally matched, following Smith (forthcoming).
 The complementary tree distance measures state how much information is
-different in the partitions of two trees, under an optimal matching.</p>
+different in the splits of two trees, under an optimal matching.</p>
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     
 <ul>
-<li><p><code>MutualPhylogeneticInfo</code>: Mutual phylogenetic information between two trees.</p></li>
-<li><p><code>VariationOfPhylogeneticInfo</code>: Variation of phylogenetic information between two trees.</p></li>
-<li><p><code>VariationOfClusteringInfo</code>: Variation of clustering information between two trees.</p></li>
-<li><p><code>ExpectedVariation</code>: Estimate expected Variation of
-Phylogenetic Information and Mutual Phylogenetic Information for a pair of trees of
-a given topology.</p></li>
+<li><p><code>SharedPhylogeneticInfo</code>: Shared phylogenetic information between two trees.</p></li>
+<li><p><code>DifferentPhylogeneticInfo</code>: Variation of phylogenetic information between two trees.</p></li>
+<li><p><code>ClusteringInfoDistance</code>: Variation of clustering information between two trees.</p></li>
+<li><p><code>ExpectedVariation</code>: Estimate expected Shared and Different
+Phylogenetic Information for a pair of trees of a given topology.</p></li>
 <li><p><code>MutualClusteringInfo</code>: Mutual Clustering Information of two trees.</p></li>
-<li><p><code>MutualPhylogeneticInfoSplits</code>: Calculate mutual phylogenetic information from splits instead of trees.</p></li>
+<li><p><code>SharedPhylogeneticInfoSplits</code>: Calculate shared phylogenetic information from splits instead of trees.</p></li>
 <li><p><code>MutualClusteringInfoSplits</code>: Calculate clustering information from splits instead of trees</p></li>
-<li><p><code>MutualMatchingSplitInfo</code>: Mutual Matching Split information of two trees.</p></li>
-<li><p><code>VariationOfMatchingSplitInfo</code>: Variation of matching split information between two
+<li><p><code>MatchingSplitInfo</code>: Mutual Matching Split information of two trees.</p></li>
+<li><p><code>MatchingSplitInfoDistance</code>: Variation of matching split information between two
 trees.</p></li>
-<li><p><code>MutualMatchingSplitInfoSplits</code>: Calculate variation of matching split information
+<li><p><code>MatchingSplitInfoSplits</code>: Calculate variation of matching split information
 from splits instead of trees.</p></li>
 </ul>
     <h2 class="hasAnchor" id="concepts-of-information"><a class="anchor" href="#concepts-of-information"></a>Concepts of information</h2>
@@ -314,27 +315,25 @@ from splits instead of trees.</p></li>
     
 
 
-<p>Each partition in a tree can be viewed as a statement that the 'true'
-tree is one of those that splits the taxa as specified.  This concept
-corresponds to the concept of phylogenetic information, which views the
-information content of a pair of partitions as relating to the proportion of
-phylogenetic trees that are consistent with both partitions.</p>
-<p>This proportion gives rise to the Mutual Phylogenetic Information similarity
-measure (<code>MutualPhylogeneticInfo</code>), and the complementary
-Variation of Phylogenetic Information distance metric
-(<code>VariationOfPhylogeneticInfo</code>).</p>
-<p>An information-theoretic take on the <code><a href='MatchingSplitDistance.html'>MatchingSplitDistance</a></code> offers a
-relaxed interpretation of this measurement, which attributes some information
-to similar yet contradictory splits.  This metric is implemented in
-<code>MutualMatchingSplitInfo</code> and <code>VariationOfMatchingSplitInfo</code>.</p>
-<p>Alternatively, each partition can be viewed as a statement that the taxa
-are subdivided into the two groups specified.  On this view, the
-information content of a pair of partitions corresponds to their
-mutual clustering information (Meila 2007, Vinh2010), giving rise to their
-Mutual Clustering Information and Variation of Clustering Information
-similarity/distance metrics (<code>MutualClusteringInfo</code>, <code>VariationOfClusteringInfo</code>).</p>
-<p>This latter approach is optimal in many regards, and is implemented, normalized
+<p>The phylogenetic (Shannon) information content and entropy of a split are
+defined in
+<a href='https://ms609.github.org/TreeDist/articles/information.html'>a separate vignette</a>.</p>
+<p>Using the mutual (clustering) information (Meila 2007, Vinh <em>et al.</em> 2010) of
+two splits to quantify their similarity gives rise to the Mutual Clustering
+Information measure (<code>MutualClusteringInfo</code>); the entropy distance
+gives the Clustering Distance <code>ClusteringInfoDistance</code>).
+This approach is optimal in many regards, and is implemented, normalized
 against the total information present, in the convenience function <code>TreeDistance</code>.</p>
+<p>Using the amount of phylogenetic information common to two splits to measure
+their similarity gives rise to the Shared Phylogenetic Information similarity
+measure (<code>SharedPhylogeneticInfo</code>).  The amount of information distinct to
+each of a pair of splits provides the complementary Different Phylogenetic
+Information distance metric (<code>DifferentPhylogeneticInfo</code>).</p>
+<p>The <code>MatchingSplitInfo</code> measure defines the similarity between a pair of
+splits as the phylogenetic information content of the most informative
+split that is consistent with both input splits; <code>MatchingSplitInfoDistance</code>
+is the corresponding measure of tree difference.
+<a href='https://ms609.github.org/TreeDist/articles/Generalized-RF.html'>(More information here.)</a></p>
     <h2 class="hasAnchor" id="normalization"><a class="anchor" href="#normalization"></a>Normalization</h2>
 
     
@@ -342,18 +341,25 @@ against the total information present, in the convenience function <code>TreeDis
 
 <p>If <code>normalize = TRUE</code>, then results will be rescaled from zero to a nominal
 maximum value, calculated thus:</p><ul>
-<li><p><code>MutualPhylogeneticInfo</code>, <code>MutualClusteringInfo</code>, <code>MutualMatchingSplitInfo</code>:
-The information content of the least informative tree.
-To scale against the information content of the most informative tree, use
-<code>normalize = pmax</code>.</p></li>
-<li><p><code>VariationOfPhylogeneticInfo</code>, <code>VariationOfClusteringInfo</code>,
-<code>VariationOfMatchingSplitInfo</code>: The sum of the
-(phylogenetic or clustering) information content of the two trees.</p></li>
+<li><p><code>MutualClusteringInfo</code>, <code>ClusteringInfoDistance</code>: The sum of the entropy of
+each split in each of the two trees.  See Vinh <em>et al.</em> (2010, table 3) for
+alternative normalization variants.</p></li>
+<li><p><code>SharedPhylogeneticInfo</code>, <code>MatchingSplitInfo</code>:
+The sum of the information content of all splits in the least informative
+tree. To scale against the information content of all splits in the most
+informative tree, use <code>normalize = pmax</code>.</p></li>
+<li><p><code>DifferentPhylogeneticInfo</code>, <code>MatchingSplitInfoDistance</code>: The sum of the
+phylogenetic information content of each split in each of the two trees.</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p><ul>
+    
+<ul>
+<li><p>MacKay DJC (2003).
+<em>Information Theory, Inference, and Learning Algorithms</em>.
+Cambridge University Press, Cambridge.
+<a href='https://www.inference.org.uk/itprnn/book.pdf'>https://www.inference.org.uk/itprnn/book.pdf</a>.</p></li>
 <li><p>Meilă M (2007).
 &#8220;Comparing clusterings---an information based distance.&#8221;
 <em>Journal of Multivariate Analysis</em>, <b>98</b>(5), 873--895.
@@ -367,7 +373,8 @@ doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11
 <em>Journal of Machine Learning Research</em>, <b>11</b>, 2837--2854.
 doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</a>
 .</p></li>
-</ul></p>
+</ul>
+
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other tree distances: 
@@ -379,35 +386,22 @@ doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</
 <code><a href='RobinsonFouldsInfo.html'>RobinsonFouldsInfo</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>{
-  <span class='no'>tree1</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ape</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ape/man/read.tree.html'>read.tree</a></span>(<span class='kw'>text</span><span class='kw'>=</span><span class='st'>'((((a, b), c), d), (e, (f, (g, h))));'</span>)
-  <span class='no'>tree2</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ape</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ape/man/read.tree.html'>read.tree</a></span>(<span class='kw'>text</span><span class='kw'>=</span><span class='st'>'(((a, b), (c, d)), ((e, f), (g, h)));'</span>)
-  <span class='no'>tree3</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ape</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ape/man/read.tree.html'>read.tree</a></span>(<span class='kw'>text</span><span class='kw'>=</span><span class='st'>'((((h, b), c), d), (e, (f, (g, a))));'</span>)
+    <pre class="examples"><div class='input'><span class='no'>tree1</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ape</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ape/man/read.tree.html'>read.tree</a></span>(<span class='kw'>text</span><span class='kw'>=</span><span class='st'>'((((a, b), c), d), (e, (f, (g, h))));'</span>)
+<span class='no'>tree2</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ape</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ape/man/read.tree.html'>read.tree</a></span>(<span class='kw'>text</span><span class='kw'>=</span><span class='st'>'(((a, b), (c, d)), ((e, f), (g, h)));'</span>)
+<span class='no'>tree3</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ape</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ape/man/read.tree.html'>read.tree</a></span>(<span class='kw'>text</span><span class='kw'>=</span><span class='st'>'((((h, b), c), d), (e, (f, (g, a))));'</span>)
 
-  <span class='co'># Best possible score is obtained by matching a tree with itself</span>
-  <span class='fu'>VariationOfPhylogeneticInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree1</span>) <span class='co'># 0, by definition</span>
-  <span class='fu'>MutualPhylogeneticInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree1</span>)
-  <span class='fu'><a href='PartitionInfo.html'>PartitionInfo</a></span>(<span class='no'>tree1</span>) <span class='co'># Maximum mutual phylogenetic information</span>
-
-  <span class='co'># Best possible score is a function of tree shape; the partitions within</span>
-  <span class='co'># balanced trees are more independent and thus contain less information</span>
-  <span class='fu'><a href='PartitionInfo.html'>PartitionInfo</a></span>(<span class='no'>tree2</span>)
-
-  <span class='co'># How similar are two trees?</span>
-  <span class='fu'>MutualPhylogeneticInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>) <span class='co'># Amount of phylogenetic information in common</span>
-  <span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span>(<span class='no'>MutualPhylogeneticInfo</span>, <span class='no'>tree1</span>, <span class='no'>tree2</span>) <span class='co'># Which clades are matched?</span>
-  <span class='fu'>VariationOfPhylogeneticInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>) <span class='co'># Distance measure</span>
-  <span class='fu'>VariationOfPhylogeneticInfo</span>(<span class='no'>tree2</span>, <span class='no'>tree1</span>) <span class='co'># The metric is symmetric</span>
-  <span class='co'>#'   </span>
-  <span class='co'># Are they more similar than two trees of this shape would be by chance?</span>
-  <span class='fu'>ExpectedVariation</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>sample</span><span class='kw'>=</span><span class='fl'>12</span>)[<span class='st'>'VariationOfPhylogeneticInfo'</span>, <span class='st'>'Estimate'</span>]
-
-  <span class='co'># Every partition in tree1 is contradicted by every partition in tree3</span>
-  <span class='co'># Non-arboreal matches contain clustering, but not phylogenetic, information</span>
-  <span class='fu'>MutualPhylogeneticInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree3</span>) <span class='co'># = 0</span>
-  <span class='fu'>MutualClusteringInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree3</span>) <span class='co'># &gt; 0</span>
-
-}</div><div class='img'><img src='TreeDistance-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; [1] 5.231844</div><div class='input'>
+<span class='co'># Best possible score is obtained by matching a tree with itself</span>
+<span class='fu'>DifferentPhylogeneticInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree1</span>) <span class='co'># 0, by definition</span></div><div class='output co'>#&gt; [1] 0</div><div class='input'><span class='fu'>SharedPhylogeneticInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree1</span>)</div><div class='output co'>#&gt; [1] 22.53747</div><div class='input'><span class='fu'><a href='SplitwiseInfo.html'>SplitwiseInfo</a></span>(<span class='no'>tree1</span>) <span class='co'># Maximum shared phylogenetic information</span></div><div class='output co'>#&gt; [1] 22.53747</div><div class='input'>
+<span class='co'># Best possible score is a function of tree shape; the splits within</span>
+<span class='co'># balanced trees are more independent and thus contain less information</span>
+<span class='fu'><a href='SplitwiseInfo.html'>SplitwiseInfo</a></span>(<span class='no'>tree2</span>)</div><div class='output co'>#&gt; [1] 19.36755</div><div class='input'>
+<span class='co'># How similar are two trees?</span>
+<span class='fu'>SharedPhylogeneticInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>) <span class='co'># Amount of phylogenetic information in common</span></div><div class='output co'>#&gt; [1] 13.75284</div><div class='input'><span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span>(<span class='no'>SharedPhylogeneticInfo</span>, <span class='no'>tree1</span>, <span class='no'>tree2</span>) <span class='co'># Which clades are matched?</span></div><div class='img'><img src='TreeDistance-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>DifferentPhylogeneticInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>) <span class='co'># Distance measure</span></div><div class='output co'>#&gt; [1] 14.39934</div><div class='input'><span class='fu'>DifferentPhylogeneticInfo</span>(<span class='no'>tree2</span>, <span class='no'>tree1</span>) <span class='co'># The metric is symmetric</span></div><div class='output co'>#&gt; [1] 14.39934</div><div class='input'><span class='co'>#'   </span>
+<span class='co'># Are they more similar than two trees of this shape would be by chance?</span>
+<span class='fu'>ExpectedVariation</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>sample</span><span class='kw'>=</span><span class='fl'>12</span>)[<span class='st'>'DifferentPhylogeneticInfo'</span>, <span class='st'>'Estimate'</span>]</div><div class='output co'>#&gt; [1] 34.0218</div><div class='input'>
+<span class='co'># Every split in tree1 is contradicted by every split in tree3</span>
+<span class='co'># Non-arboreal matches contain clustering, but not phylogenetic, information</span>
+<span class='fu'>SharedPhylogeneticInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree3</span>) <span class='co'># = 0</span></div><div class='output co'>#&gt; [1] 0</div><div class='input'><span class='fu'>MutualClusteringInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree3</span>) <span class='co'># &gt; 0</span></div><div class='output co'>#&gt; [1] 0.6539805</div><div class='input'>
 
 </div></pre>
   </div>

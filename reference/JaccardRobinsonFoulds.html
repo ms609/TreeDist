@@ -186,12 +186,12 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>tree1</th>
-      <td><p>Trees of class <code>phylo</code>, with tips labelled identically,
+      <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.</p></td>
     </tr>
     <tr>
       <th>tree2</th>
-      <td><p>Trees of class <code>phylo</code>, with tips labelled identically,
+      <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.</p></td>
     </tr>
     <tr>
@@ -204,7 +204,7 @@ As k → ∞, the metric converges to the Robinson-Foulds metric.</p></td>
     <tr>
       <th>arboreal</th>
       <td><p>Logical specifying whether to enforce arboreal matches, by
-assigning zero similarity to contradictory pairs of partitions on an
+assigning zero similarity to contradictory pairs of splits on an
 <em>ad hoc</em> basis.</p></td>
     </tr>
     <tr>
@@ -228,23 +228,23 @@ matchings as an attribute of the score.</p></td>
     </tr>
     <tr>
       <th>splits1</th>
-      <td><p>Logical matrices where each row corresponds to a terminal,
+      <td><p>Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
-and each column corresponds to a bipartition split, such that
-each terminal is identified as a member of the ingroup (<code>TRUE</code>) or outgroup
-(<code>FALSE</code>) of the respective bipartition split.</p></td>
+and each column corresponds to a split, such that each leaf is identified as
+a member of the ingroup (<code>TRUE</code>) or outgroup (<code>FALSE</code>) of the respective
+split.</p></td>
     </tr>
     <tr>
       <th>splits2</th>
-      <td><p>Logical matrices where each row corresponds to a terminal,
+      <td><p>Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
-and each column corresponds to a bipartition split, such that
-each terminal is identified as a member of the ingroup (<code>TRUE</code>) or outgroup
-(<code>FALSE</code>) of the respective bipartition split.</p></td>
+and each column corresponds to a split, such that each leaf is identified as
+a member of the ingroup (<code>TRUE</code>) or outgroup (<code>FALSE</code>) of the respective
+split.</p></td>
     </tr>
     <tr>
       <th>nTip</th>
-      <td><p>Integer specifying the number of tips in each split.</p></td>
+      <td><p>Integer specifying the number of leaves in each split.</p></td>
     </tr>
     </table>
 
@@ -256,7 +256,7 @@ trees in <code>tree1</code> and <code>tree2</code>.</p>
 
     <p>In short, this finds the optimal matching that pairs each branch from
 one tree with a branch in the second, where matchings are scored according to
-the size of the largest bipartition that is consistent with both of them,
+the size of the largest split that is consistent with both of them,
 normalized against the Jaccard index, and raised to an arbitrary exponent.</p>
 <p>By default, arboreal matchings are enforced.</p>
 <p>Note that the settings <code>k = 1, arboreal = FALSE</code> give the similarity metric
@@ -278,9 +278,9 @@ instead of trees.</p></li>
 
 <p>If <code>normalize = TRUE</code>, then results will be rescaled from zero to one by
 dividing by the maximum possible value for trees of the given topologies,
-which is equal to the number of partitions in both trees.
-You may wish to normalize instead against the maximum number of partitions
-present in a pair of trees with <em>n</em> terminals, by specifying
+which is equal to the number of splits in both trees.
+You may wish to normalize instead against the maximum number of splits
+present in a pair of trees with <em>n</em> leaves, by specifying
 <code>normalize = n - 3</code>.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 

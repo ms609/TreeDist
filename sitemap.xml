@@ -10,7 +10,7 @@
     <loc>https://ms609.github.io/TreeDist/reference/CalculateTreeDistance.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/ClusteringInfo.html</loc>
+    <loc>https://ms609.github.io/TreeDist/reference/ClusteringEntropy.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/CompareAll.html</loc>
@@ -23,9 +23,6 @@
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/JaccardRobinsonFoulds.html</loc>
-  </url>
-  <url>
-    <loc>https://ms609.github.io/TreeDist/reference/JointInformation.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/KendallColijn.html</loc>
@@ -52,9 +49,6 @@
     <loc>https://ms609.github.io/TreeDist/reference/NyeTreeSimilarity.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/PartitionInfo.html</loc>
-  </url>
-  <url>
     <loc>https://ms609.github.io/TreeDist/reference/ReportMatching.html</loc>
   </url>
   <url>
@@ -64,10 +58,13 @@
     <loc>https://ms609.github.io/TreeDist/reference/SplitEntropy.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/SplitMutualInformation.html</loc>
+    <loc>https://ms609.github.io/TreeDist/reference/SplitSharedInformation.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/SplitsCompatible.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/reference/SplitwiseInfo.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/TreeDist-package.html</loc>
@@ -89,6 +86,9 @@
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/articles/Tree-distance-metric-evaluation.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/articles/Using-TreeDist.html</loc>

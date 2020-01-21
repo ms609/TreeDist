@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Information theory • TreeDist</title>
+<title>Comparing splits using information theory • TreeDist</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><!-- docsearch --><script src="../docsearch.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous">
 <link href="../docsearch.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Information theory">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Comparing splits using information theory">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -111,7 +111,7 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Information theory</h1>
+      <h1>Comparing splits using information theory</h1>
                         <h4 class="author">Martin R. Smith</h4>
             
             <h4 class="date">2020-01-21</h4>
@@ -123,121 +123,131 @@
 
     
     
-<p>To understand the <a href="Generalized-RF.html">information-based metrics</a> implemented in <a href="Using-TreeDist.html"><em>TreeDist</em></a>, it is useful to recall some basic concepts of information theory. The examples below ape <span class="citation">MacKay (2003)</span>.</p>
-<div id="bits" class="section level2">
+<p>To understand the <a href="Generalized-RF.html">information-based metrics</a> implemented in <a href="Using-TreeDist.html"><code>TreeDist</code></a>, it is useful to recall some basic concepts of information theory (see <span class="citation">MacKay (2003)</span> for an introduction).</p>
+<div id="shannon-information-content" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bits" class="anchor"></a>Bits</h2>
-<p>Information is usually measured in <em>bits</em>. One bit is the amount of information revealed by tossing a fair coin: to record the outcome of a coin toss, I must record either a <code>H</code> or a <code>T</code>, and with each of the two symbols equally likely, there is no way to compress the results of multiple tosses.</p>
-<p>The amount of information required to encode a particular statement is a function of the likelihood of the outcome.</p>
-<p>If all outcomes are equally likely, then the information content (entropy) of an outcome is <span class="math inline">\(-log_2(p)\)</span>. Thus, because the probability of a “heads” outcome in our fair coin toss is <span class="math inline">\(1/2\)</span>, its information content is <span class="math inline">\(-\log_2(\frac{1}{2})\)</span> = 1 bit. If I roll a fair die, then there is a <span class="math inline">\(1/6\)</span> chance of rolling a two, and the information content of this roll is <span class="math inline">\(-\log_2(\frac{1}{6})\)</span> = 2.58 bits. If I pick one six-terminal tree at random from the 105 unrooted 6-terminal topologies, then the information content of this outcome is <span class="math inline">\(-\log_2(\frac{1}{105})\)</span> = 6.71 bits.</p>
+<a href="#shannon-information-content" class="anchor"></a>Shannon information content</h2>
+<p>Information is usually measured in <em>bits</em>. One bit is the amount of information generated by tossing a fair coin: to record the outcome of a coin toss, I must record either a <code>H</code> or a <code>T</code>, and with each of the two symbols equally likely, there is no way to compress the results of multiple tosses.</p>
+<p>The Shannon information content of an outcome <span class="math inline">\(x\)</span> is defined to be <span class="math inline">\(h(x) = -\log_2{P(x)}\)</span>, which simplifies to <span class="math inline">\(\log_2{n}\)</span> when all <span class="math inline">\(n\)</span> outcomes are equiprobable. Thus, the information content of a fair coin toss is <span class="math inline">\(\log_2{2} = 1\textrm{ bit}\)</span>; the information content of rolling a six-sided die is <span class="math inline">\(\log_2{6} \approx 2.58\textrm{ bits}\)</span>; and the information content of selecting at random one of the 105 unrooted binary six-leaf trees is <span class="math inline">\(\log_2{105} \approx 6.71\textrm{ bits}\)</span>.</p>
+<div id="application-to-splits" class="section level3">
+<h3 class="hasAnchor">
+<a href="#application-to-splits" class="anchor"></a>Application to splits</h3>
+<p>The split <span class="math inline">\(S_1 =\)</span> <code>AB|CDEF</code> is found in 15 of the 105 six-leaf trees; as such, the probability that a randomly drawn tree contains <span class="math inline">\(S_1\)</span> is <span class="math inline">\(P(S_1) = \frac{15}{105}\)</span>, and the information content <span class="math inline">\(h(S_1) = -\log_2{\frac{15}{105}} \approx 2.81\textrm{ bits}\)</span>. <span class="citation">Steel &amp; Penny (2006)</span> dub this quantity the phylogenetic information content.</p>
+<p>Likewise, the split <span class="math inline">\(S_2 =\)</span> <code>ABC|DEF</code> occurs in nine six-leaf trees, so <span class="math inline">\(h(S_2) = -\log_2{\frac{9}{105}} \approx 3.54\textrm{ bits}\)</span>. Three six-leaf trees contain both splits, so in combination the splits deliver <span class="math inline">\(h(S_1,S_2) = -\log_2{\frac{3}{105}} \approx 5.13\textrm{ bits}\)</span> of information.</p>
+<p>Because <span class="math inline">\(h(S_1,S_2) &lt; h(S_1) + h(S_2)\)</span>, some of the information in <span class="math inline">\(S_1\)</span> is also present in <span class="math inline">\(S_2\)</span>. The information in common between <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> is <span class="math inline">\(h_{shared}(S_1, S_2) = h(S_1) + h(S_2) - h(S_1,S_2) \approx 1.22\textrm{ bits}\)</span>. The information unique to <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> is <span class="math inline">\(h_{different}(S_1,S_2) = 2h(S_1,S_2) - h(S_1) - h(S_2) \approx 3.91\textrm{ bits}\)</span>.</p>
+<p>These quantities can be calculated using functions in the <a href="https://ms609.github.io/TreeTools">TreeTools</a> package.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">'TreeTools'</span>)</a></code></pre></div>
+<pre><code>## Loading required package: ape</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">'TreeDist'</span>)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">treesMatchingSplit &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">  <span class="dt">AB.CDEF =</span> <span class="kw"><a href="https://ms609.github.io/TreeTools/reference/TreesMatchingSplit.html">TreesMatchingSplit</a></span>(<span class="dv">2</span>, <span class="dv">4</span>),</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">  <span class="dt">ABC.DEF =</span> <span class="kw"><a href="https://ms609.github.io/TreeTools/reference/TreesMatchingSplit.html">TreesMatchingSplit</a></span>(<span class="dv">3</span>, <span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5">)</a>
+<a class="sourceLine" id="cb3-6" data-line-number="6">treesMatchingSplit</a></code></pre></div>
+<pre><code>## AB.CDEF ABC.DEF 
+##      15       9</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">proportionMatchingSplit &lt;-<span class="st"> </span>treesMatchingSplit <span class="op">/</span><span class="st"> </span><span class="kw"><a href="https://ms609.github.io/TreeTools/reference/NRooted.html">NUnrooted</a></span>(<span class="dv">6</span>)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">proportionMatchingSplit</a></code></pre></div>
+<pre><code>##    AB.CDEF    ABC.DEF 
+## 0.14285714 0.08571429</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">splitInformation &lt;-<span class="st"> </span><span class="op">-</span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">log2</a></span>(proportionMatchingSplit)</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">splitInformation</a></code></pre></div>
+<pre><code>##  AB.CDEF  ABC.DEF 
+## 2.807355 3.544321</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">treesMatchingBoth &lt;-<span class="st"> </span><span class="kw"><a href="../reference/SplitSharedInformation.html">TreesConsistentWithTwoSplits</a></span>(<span class="dv">6</span>, <span class="dv">2</span>, <span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">combinedInformation &lt;-<span class="st"> </span><span class="op">-</span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">log2</a></span>(treesMatchingBoth <span class="op">/</span><span class="st"> </span><span class="kw"><a href="https://ms609.github.io/TreeTools/reference/NRooted.html">NUnrooted</a></span>(<span class="dv">6</span>))</a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb9-4" data-line-number="4">sharedInformation &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(splitInformation) <span class="op">-</span><span class="st"> </span>combinedInformation</a>
+<a class="sourceLine" id="cb9-5" data-line-number="5">sharedInformation</a></code></pre></div>
+<pre><code>## [1] 1.222392</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="co"># Or more concisely:</span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="kw"><a href="../reference/SplitSharedInformation.html">SplitSharedInformation</a></span>(<span class="dt">n =</span> <span class="dv">6</span>, <span class="dv">2</span>, <span class="dv">3</span>)</a></code></pre></div>
+<pre><code>## [1] 1.222392</code></pre>
+<!--The more similar the splits, the more information they will have in common;
+the shared information is maximised when $S_1 = S_2$, and $h_{common} = h(S_1)$.
+Likewise, more even splits contain more information than less even splits
+(i.e. _h_(`AB|CDEF`) < _h_(`ABC|DEF`)).-->
 </div>
-<div id="entropies-and-information" class="section level2">
+</div>
+<div id="entropy" class="section level2">
 <h2 class="hasAnchor">
-<a href="#entropies-and-information" class="anchor"></a>Entropies and information</h2>
-<p>Consider a case in which Jane rolls a dice, and offers to truthfully answer two questions:</p>
-<p>A: “Is the roll even?”.</p>
+<a href="#entropy" class="anchor"></a>Entropy</h2>
+<p>Entropy is the average information content of each outcome, weighted by its probability: <span class="math inline">\(\sum{-p \log_2(p)}\)</span>. Where all <em>n</em> outcomes are equiprobable, this simplifies to <span class="math inline">\(\log_2{n}\)</span>.</p>
+<p>Consider a case in which Jane rolls a dice, and makes two true statements about the outcome <span class="math inline">\(x\)</span>:</p>
+<p><span class="math inline">\(S_1\)</span>: “Is the roll even?”.</p>
 <ul>
 <li>Two equally-possible outcomes: yes or no</li>
-<li>Information content (entropy): <span class="math inline">\(H(A) = -\log_2(\frac{1}{2})\)</span> = 1 bit.</li>
+<li>Entropy: <span class="math inline">\(H(S_1) = \log_2{2} = 1\textrm{ bit}\)</span>.</li>
 </ul>
-<p>B: “Is the roll greater than 3?”</p>
+<p><span class="math inline">\(S_2\)</span>: “Is the roll greater than 3?”</p>
 <ul>
 <li>Two equally-possible outcomes: yes or no</li>
-<li>Information content (entropy): <span class="math inline">\(H(B) = -\log_2(\frac{1}{2})\)</span> = 1 bit.</li>
+<li>Entropy: <span class="math inline">\(H(S_2) = \log_2{2} = 1\textrm{ bit}\)</span>.</li>
 </ul>
-<p>The joint entropy of A and B is the entropy of the association matrix that considers each possible outcome:</p>
+<p>The joint entropy of <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> is the entropy of the association matrix that considers each possible outcome:</p>
 <table class="table">
 <thead><tr class="header">
 <th> </th>
-<th>A: odd</th>
-<th>A: even</th>
+<th>
+<span class="math inline">\(S_1: x\)</span> odd</th>
+<th>
+<span class="math inline">\(S_1: x\)</span> even</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><strong>B: ≤ 3</strong></td>
-<td>
-<span class="math inline">\(p = \frac{2}{6}\)</span> (1, 3)</td>
-<td>
-<span class="math inline">\(p = \frac{1}{6}\)</span> (2)</td>
+<td><span class="math inline">\(S_2: x \le 3\)</span></td>
+<td><span class="math inline">\(x \in {1, 3}; p = \frac{2}{6}\)</span></td>
+<td><span class="math inline">\(x = 2; p = \frac{1}{6}\)</span></td>
 </tr>
 <tr class="even">
-<td><strong>B: &gt; 3</strong></td>
-<td>
-<span class="math inline">\(p = \frac{1}{6}\)</span> (5)</td>
-<td>
-<span class="math inline">\(p = \frac{2}{6}\)</span> (4, 6)</td>
+<td><span class="math inline">\(S_2: x &gt; 3\)</span></td>
+<td><span class="math inline">\(x = 5; p = \frac{1}{6}\)</span></td>
+<td><span class="math inline">\(x \in {4, 6}; p = \frac{2}{6}\)</span></td>
 </tr>
 </tbody>
 </table>
-<p>Entropy is calculated by <span class="math inline">\(\sum{p \log_2(p)}\)</span>. So the joint entropy is:</p>
-<p><span class="math inline">\(\begin{aligned} H(A, B) = \frac{2}{3}\log_2\frac{2}{3} + \frac{1}{3}\log_2\frac{1}{3} + \frac{1}{3}\log_2\frac{1}{3} + \frac{2}{3}\log_2\frac{2}{3} = 1.84 \textrm{ bits} \end{aligned}\)</span></p>
-<p>Note that this less than the 2.58 bits we require to determine the exact value of the roll: knowledge of <em>A</em> and <em>B</em> is not guaranteed to be sufficient to unambiguously identify the outcome.</p>
-<p>The mutual information between <em>A</em> and <em>B</em> describes how much knowledge of <em>A</em> reduces our uncertainty in <em>B</em>.<br>
-So if we learn that <em>A</em> is ‘even’, we become a little more confident that <em>B</em> is ‘greater than three’.</p>
-<p>The mutual information <span class="math inline">\(I(A;B)\)</span> corresponds to the sum of the individual entropies, minus the joint entropy:</p>
-<span class="math display">\[\begin{aligned}
-I(A;B) = H(A) + H(B) - H(A, B)
-\end{aligned}\]</span>
-<p>The variation of information is the information that <em>A</em> and <em>B</em> do <em>not</em> have in common:</p>
-<span class="math display">\[\begin{aligned}
-VoI(A, B) = H(A, B) - I(A;B)
-\end{aligned}\]</span>
+<p><span class="math inline">\(\begin{aligned} H(S_1, S_2) = \frac{2}{3}\log_2{\frac{2}{3}} + \frac{1}{3}\log_2{\frac{1}{3}} + \frac{1}{3}\log_2{\frac{1}{3}} + \frac{2}{3}\log_2{\frac{2}{3}} \approx 1.84 \textrm{ bits} \end{aligned}\)</span></p>
+<p>Note that this less than the <span class="math inline">\(\log_2{6} \approx 2.58\textrm{ bits}\)</span> we require to determine the exact value of the roll: knowledge of <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> is not guaranteed to be sufficient to unambiguously identify <span class="math inline">\(x\)</span>.</p>
+<p>The mutual information between <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> describes how much knowledge of <span class="math inline">\(S_1\)</span> reduces our uncertainty in <span class="math inline">\(S_2\)</span> (or <em>vice versa</em>). So if we learn that <span class="math inline">\(S_1\)</span> is ‘even’, we become a little more confident that <span class="math inline">\(S_2\)</span> is ‘greater than three’.</p>
+<p>The mutual information <span class="math inline">\(I(S_1;S_2)\)</span> corresponds to the sum of the individual entropies, minus the joint entropy:</p>
+<p>\begin{aligned} I(S_1;S_2) = H(S_1) + H(S_2) - H(S_1, S_2) \end{aligned}</p>
+<p>The entropy distance, also termed the variation of information <span class="citation">(Meilă, 2007)</span>, is the information that <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> do <em>not</em> have in common:</p>
+<p>\begin{aligned} H_D(S_1, S_2) = H(S_1, S_2) - I(S_1;S_2) = 2H(S_1, S_2) - H(S_1) - H(S_2) \end{aligned}</p>
 <p><img src="information_files/figure-html/mackay-8-1-1.png" width="50%" style="display: block; margin: auto;"></p>
+<div id="application-to-splits-1" class="section level3">
+<h3 class="hasAnchor">
+<a href="#application-to-splits-1" class="anchor"></a>Application to splits</h3>
+<p>Let split <span class="math inline">\(S\)</span> divides <span class="math inline">\(n\)</span> leaves into two partitions <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>. The probability that a randomly chosen leaf <span class="math inline">\(x\)</span> is in partition <span class="math inline">\(k\)</span> is <span class="math inline">\(P(x \in k) = \frac{|k|}{n}\)</span>. <span class="math inline">\(S\)</span> thus corresponds to a random variable with entropy <span class="math inline">\(H(S) = -\frac{|A|}{n} \log_2{\frac{|A|}{n}} - \frac{|B|}{n}\log_2{\frac{|B|}{n}}\)</span> <span class="citation">(Meilă, 2007)</span>.</p>
+<p>The joint entropy of two splits, <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span>, corresponds to the entropy of the association matrix of probabilities that a randomly selected leaf belongs to each pair of partitions:</p>
+<table class="table">
+<colgroup>
+<col width="23%">
+<col width="44%">
+<col width="32%">
+</colgroup>
+<thead><tr class="header">
+<th> </th>
+<th><span class="math inline">\(S_1: x \in A_1\)</span></th>
+<th><span class="math inline">\(S_1: x \in B_1\)</span></th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(S_2: x \in A_2\)</span></td>
+<td><span class="math inline">\(P(A_1,A_2) = \frac{|A_1 \cap A_2|}{n}\)</span></td>
+<td><span class="math inline">\(P(B_1,A_2) = \frac{|B_1 \cap A_2|}{n}\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(S_2: x \in B_2\)</span></td>
+<td><span class="math inline">\(P(A_1,B_2) = \frac{|A_1 \cap B_2|}{n}\)</span></td>
+<td><span class="math inline">\(P(B_1,B_2) = \frac{|B_1 \cap B_2|}{n}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><span class="math inline">\(H(S_1, S_2) = P(A_1,A_2) \log_2 {P(A_1,A_2)} + P(B_1,A_2) \log_2 {P(B_1,A_2)}\)</span></p>
+<p><span class="math inline">\(+ P(A_1,B_2)\log_2{P(A_1,B_2)} + P(B_1,B_2)\log_2{P(B_1,B_2)}\)</span></p>
+<p>These values can then be substituted into the definitions of mutual information and entropy distance given above.</p>
+<p>As <span class="math inline">\(S_1\)</span> and _<span class="math inline">\(S_2\)</span> become more different, the disposition of <span class="math inline">\(S_1\)</span> gives less information about the configuration of <span class="math inline">\(S_2\)</span>, and the mutual information decreases accordingly.</p>
 </div>
-<div id="phylogenetic-information" class="section level2">
-<h2 class="hasAnchor">
-<a href="#phylogenetic-information" class="anchor"></a>Phylogenetic information</h2>
-<p>When it comes to comparing partitions <span class="citation">(Smith, 2020)</span>, we can imagine Jane selecting one ‘true tree’ from the universe of bifurcating <em>n</em>-tip trees, then telling us two partitions that occur in that tree.</p>
-<p>Let’s consider the two splits <code>BC:ADE</code> and <code>DE:ABC</code> in the universe of 5-tip trees.</p>
-<pre><code>## Loading required package: ape</code></pre>
-<p><img src="information_files/figure-html/unnamed-chunk-1-1.png" width="90%"></p>
-<p>The phylogenetic information content <span class="citation">(<em>sensu</em> Steel &amp; Penny, 2006)</span> of each partition corresponds to the logarithm of the proportion of bifurcating <em>n</em>-tip trees that include that partition.</p>
-<ul>
-<li>
-<em>H</em>(<code>BC:ADE</code>) = <span class="math inline">\(-\log_2(\frac{3}{15})\)</span>
-</li>
-<li>
-<em>H</em>(<code>DE:ABC</code>) = <span class="math inline">\(-\log_2(\frac{3}{15})\)</span>
-</li>
-</ul>
-<p>The mutual phylogenetic information corresponds to the logarithm of the proportion of trees that include both.</p>
-<ul>
-<li>
-<em>I</em>(<code>BC:ADE</code>; <code>DE:ABC</code>) = <span class="math inline">\(-\log_2(\frac{1}{15})\)</span>
-</li>
-</ul>
-<p>The variation of information is the logarithm of the proportion of trees that contain one partition, but not the other.</p>
-<ul>
-<li>
-<em>VoI</em>(<code>BC:ADE</code>; <code>DE:ABC</code>) = <span class="math inline">\(-\log_2(\frac{5}{15})\)</span>
-</li>
-</ul>
-<!--
-
-Conditional entropy of A given B = 'yes':
-
-- B = 'yes', so the roll was 4, 5 or 6.
-- $p(\textrm{even}) = \frac{2}{3}$; $p(\textrm{odd}) = \frac{1}{3}$; 
-- Conditional entropy = 
-  $\frac{2}{3}\log_2\frac{2}{3} + \frac{1}{3}\log_2\frac{1}{3}$ = 0.92 bits
-  
-Conditional entropy of A given B = 'no':
-
-- B = 'no', so the roll was 1, 2 or 3
-- $p(\textrm{even}) = \frac{1}{3}$; $p(\textrm{odd}) = \frac{2}{3}$; 
-- Conditional entropy = 
-  $\frac{1}{3}\log_2\frac{1}{3} + \frac{2}{3}\log_2\frac{2}{3}$ = 0.92 bits
-  
-Conditional entropy of A given B:
-
-- This is the average conditional entropy for each possible value of B:
-  here, 0.92 bits.
-
-Joint information of A and B: "Rolled even number greater than three"
-
-- Two possible outcomes: 4 or 6.
-- Joint information content: $-\log_2(2/6)$ = 1.58 bits.
--->
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2 class="hasAnchor">
@@ -246,8 +256,8 @@ Joint information of A and B: "Rolled even number greater than three"
 <div id="ref-Mackay2003">
 <p>MacKay, D. J. C. (2003). <em>Information theory, inference, and learning algorithms</em>. Cambridge: Cambridge University Press. Retrieved from <a href="https://www.inference.org.uk/itprnn/book.pdf" class="uri">https://www.inference.org.uk/itprnn/book.pdf</a></p>
 </div>
-<div id="ref-SmithDist">
-<p>Smith, M. R. (2020). Information theoretic generalized robinson-foulds metrics for comparing phylogenetic trees. <em>In Review</em>.</p>
+<div id="ref-Meila2007">
+<p>Meilă, M. (2007). Comparing clusterings—an information based distance. <em>Journal of Multivariate Analysis</em>, <em>98</em>(5), 873–895. doi:<a href="https://doi.org/10.1016/j.jmva.2006.11.013">10.1016/j.jmva.2006.11.013</a></p>
 </div>
 <div id="ref-Steel2006">
 <p>Steel, M. A., &amp; Penny, D. (2006). Maximum parsimony and the phylogenetic information in multistate characters. In V. A. Albert (Ed.), <em>Parsimony, phylogeny, and genomics</em> (pp. 163–178). Oxford: Oxford University Press.</p>
@@ -262,9 +272,8 @@ Joint information of A and B: "Rolled even number greater than three"
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#bits">Bits</a></li>
-      <li><a href="#entropies-and-information">Entropies and information</a></li>
-      <li><a href="#phylogenetic-information">Phylogenetic information</a></li>
+<li><a href="#shannon-information-content">Shannon information content</a></li>
+      <li><a href="#entropy">Entropy</a></li>
       <li><a href="#references">References</a></li>
       </ul>
 </div>
