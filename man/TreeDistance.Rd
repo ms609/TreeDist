@@ -4,9 +4,11 @@
 \alias{TreeDistance}
 \alias{SharedPhylogeneticInfo}
 \alias{DifferentPhylogeneticInfo}
-\alias{VariationOfClusteringInfo}
+\alias{ClusteringInfoDistance}
+\alias{ClusteringInfoDist}
 \alias{ExpectedVariation}
 \alias{MutualClusteringInfo}
+\alias{MutualClusteringInformation}
 \alias{SharedPhylogeneticInfoSplits}
 \alias{MutualClusteringInfoSplits}
 \alias{MatchingSplitInfo}
@@ -22,7 +24,7 @@ SharedPhylogeneticInfo(tree1, tree2 = tree1, normalize = FALSE,
 DifferentPhylogeneticInfo(tree1, tree2 = tree1, normalize = FALSE,
   reportMatching = FALSE)
 
-VariationOfClusteringInfo(tree1, tree2 = tree1, normalize = FALSE,
+ClusteringInfoDistance(tree1, tree2 = tree1, normalize = FALSE,
   reportMatching = FALSE)
 
 ExpectedVariation(tree1, tree2, samples = 10000)
@@ -82,13 +84,28 @@ using \code{\link{VisualizeMatching}}.
 Tree similarity and distance measures that measure the amount of
 phylogenetic or clustering information that two trees hold in common.
 }
+\details{
+Generalized Robinson-Foulds distances calculate tree similarity by finding an
+optimal matching that the similarity between a split on one tree
+and its pair on a second, considering all possible ways to pair splits
+between trees (including leaving a split unpaired).
+
+The methods implemented here use the concepts of entropy and information
+(MacKay 2003) to assign a similarity score between each pair of splits.
+
+The returned tree similarity measures state the amount of information,
+in bits, that the splits in two trees hold in common
+when they are optimally matched, following Smith (forthcoming).
+The complementary tree distance measures state how much information is
+different in the splits of two trees, under an optimal matching.
+}
 \section{Functions}{
 \itemize{
 \item \code{SharedPhylogeneticInfo}: Shared phylogenetic information between two trees.
 
 \item \code{DifferentPhylogeneticInfo}: Variation of phylogenetic information between two trees.
 
-\item \code{VariationOfClusteringInfo}: Variation of clustering information between two trees.
+\item \code{ClusteringInfoDistance}: Variation of clustering information between two trees.
 
 \item \code{ExpectedVariation}: Estimate expected Shared and Different
 Phylogenetic Information for a pair of trees of a given topology.
@@ -111,31 +128,28 @@ from splits instead of trees.
 \section{Concepts of information}{
 
 
-Each split in a tree can be viewed as a statement that the 'true'
-tree is one of those that splits the taxa as specified.  This concept
-corresponds to the concept of phylogenetic information, which views the
-information content of a pair of splits as relating to the proportion of
-phylogenetic trees that are consistent with both splits.
+The phylogenetic (Shannon) information content and entropy of a split are
+defined in
+\href{https://ms609.github.org/TreeDist/articles/information.html}{a separate vignette}.
 
-This proportion gives rise to the Shared Phylogenetic Information similarity
-measure (\code{SharedPhylogeneticInfo}), and the complementary
-Variation of Phylogenetic Information distance metric
-(\code{DifferentPhylogeneticInfo}).
-
-An information-theoretic take on the \code{\link{MatchingSplitDistance}} offers a
-relaxed interpretation of this measurement, which attributes some information
-to similar yet contradictory splits.  This metric is implemented in
-\code{MatchingSplitInfo} and \code{MatchingSplitInfoDistance}.
-
-Alternatively, each split can be viewed as a statement that the taxa
-are subdivided into the two groups specified.  On this view, the
-information content of a pair of splits corresponds to their
-mutual clustering information (Meila 2007, Vinh2010), giving rise to their
-Mutual Clustering Information and Variation of Clustering Information
-similarity/distance metrics (\code{MutualClusteringInfo}, \code{VariationOfClusteringInfo}).
-
-This latter approach is optimal in many regards, and is implemented, normalized
+Using the mutual (clustering) information (Meila 2007, Vinh \emph{et al.} 2010) of
+two splits to quantify their similarity gives rise to the Mutual Clustering
+Information measure (\code{MutualClusteringInfo}); the entropy distance
+gives the Clustering Distance \code{ClusteringInfoDistance}).
+This approach is optimal in many regards, and is implemented, normalized
 against the total information present, in the convenience function \code{TreeDistance}.
+
+Using the amount of phylogenetic information common to two splits to measure
+their similarity gives rise to the Shared Phylogenetic Information similarity
+measure (\code{SharedPhylogeneticInfo}).  The amount of information distinct to
+each of a pair of splits provides the complementary Different Phylogenetic
+Information distance metric (\code{DifferentPhylogeneticInfo}).
+
+The \code{MatchingSplitInfo} measure defines the similarity between a pair of
+splits as the phylogenetic information content of the most informative
+split that is consistent with both input splits; \code{MatchingSplitInfoDistance}
+is the corresponding measure of tree difference.
+\href{https://ms609.github.org/TreeDist/articles/Generalized-RF.html}{(More information here.)}
 }
 
 \section{Normalization}{
@@ -144,13 +158,15 @@ against the total information present, in the convenience function \code{TreeDis
 If \code{normalize = TRUE}, then results will be rescaled from zero to a nominal
 maximum value, calculated thus:
 \itemize{
-\item \code{SharedPhylogeneticInfo}, \code{MutualClusteringInfo}, \code{MatchingSplitInfo}:
-The information content of the least informative tree.
-To scale against the information content of the most informative tree, use
-\code{normalize = pmax}.
-\item \code{DifferentPhylogeneticInfo}, \code{VariationOfClusteringInfo},
-\code{MatchingSplitInfoDistance}: The sum of the
-(phylogenetic or clustering) information content of the two trees.
+\item \code{MutualClusteringInfo}, \code{ClusteringInfoDistance}: The sum of the entropy of
+each split in each of the two trees.  See Vinh \emph{et al.} (2010, table 3) for
+alternative normalization variants.
+\item \code{SharedPhylogeneticInfo}, \code{MatchingSplitInfo}:
+The sum of the information content of all splits in the least informative
+tree. To scale against the information content of all splits in the most
+informative tree, use \code{normalize = pmax}.
+\item \code{DifferentPhylogeneticInfo}, \code{MatchingSplitInfoDistance}: The sum of the
+phylogenetic information content of each split in each of the two trees.
 }
 }
 
@@ -162,11 +178,11 @@ tree3 <- ape::read.tree(text='((((h, b), c), d), (e, (f, (g, a))));')
 # Best possible score is obtained by matching a tree with itself
 DifferentPhylogeneticInfo(tree1, tree1) # 0, by definition
 SharedPhylogeneticInfo(tree1, tree1)
-SplitInfo(tree1) # Maximum shared phylogenetic information
+SplitwiseInfo(tree1) # Maximum shared phylogenetic information
 
 # Best possible score is a function of tree shape; the splits within
 # balanced trees are more independent and thus contain less information
-SplitInfo(tree2)
+SplitwiseInfo(tree2)
 
 # How similar are two trees?
 SharedPhylogeneticInfo(tree1, tree2) # Amount of phylogenetic information in common
@@ -183,16 +199,13 @@ SharedPhylogeneticInfo(tree1, tree3) # = 0
 MutualClusteringInfo(tree1, tree3) # > 0
 
 
-
 }
 \references{
-{
 \itemize{
 \item \insertRef{Mackay2003}{TreeDist}
 \item \insertRef{Meila2007}{TreeDist}
 \item \insertRef{SmithDist}{TreeDist}
 \item \insertRef{Vinh2010}{TreeDist}
-}
 }
 }
 \seealso{

@@ -25,7 +25,7 @@ phylogenetic information, using the variation of clustering information
 proposed by Meila (2007).
 }
 \details{
-This is equivalent to the mutual clustering information (Vinh 2010).
+This is equivalent to the mutual clustering information (Vinh \emph{et al.} 2010).
 
 Whereas Meila and Vinh \emph{et al}. are concerned with the entropy, i.e. the
 number of bits required to encode each tip, we are interested in the

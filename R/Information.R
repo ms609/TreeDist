@@ -71,7 +71,7 @@ SplitDifferentInformation <- function (n, A1, A2 = A1) {
 #' phylogenetic information, using the variation of clustering information 
 #' proposed by Meila (2007).
 #' 
-#' This is equivalent to the mutual clustering information (Vinh 2010).
+#' This is equivalent to the mutual clustering information (Vinh _et al._ 2010).
 #' 
 #' Whereas Meila and Vinh _et al_. are concerned with the entropy, i.e. the 
 #' number of bits required to encode each tip, we are interested in the 
@@ -230,6 +230,8 @@ AllSplitPairings <- memoise(function (n) {
 #' 
 #' @template MRS
 #' @family split information functions
+#' @seealso 
+#' * [`ClusteringEntropy`]
 #' @export
 SplitEntropy <- function (split1, split2 = split1) {
   A1A2 <- sum(split1 & split2)

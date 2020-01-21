@@ -43,12 +43,12 @@ RobinsonFouldsInfo <- function (tree1, tree2 = tree1, similarity = FALSE,
                                         reportMatching) * 2
   
   if (!similarity) unnormalized <- 
-      outer(SplitInfo(tree1), SplitInfo(tree2), '+')[, , drop=TRUE] -
+      outer(SplitwiseInfo(tree1), SplitwiseInfo(tree2), '+')[, , drop=TRUE] -
       unnormalized
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                InfoInTree = SplitInfo, Combine = '+')
+                InfoInTree = SplitwiseInfo, Combine = '+')
 }
 
 #' @describeIn RobinsonFouldsInfo Calculate information-adjusted Robinson-Foulds

@@ -52,7 +52,11 @@ double lg2_trees_matching_split (int a, int b) {
   return lg2_rooted[a] + lg2_rooted[b];
 }
 
-/* See equation 16 in Meila 2007. I denote k' as K */
+/* 
+ * See equation 16 in Meila 2007. I denote k' as K.
+ * nkK is converted to pkK in the calling function, when the sum of all
+ * elements is divided by n.
+*/
 double ic_element (const double nkK, const unsigned int nk,
                    const unsigned int nK, const double n) {
   if (nkK && nk && nK) {

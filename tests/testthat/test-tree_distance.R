@@ -149,34 +149,6 @@ test_that('Shared Phylogenetic Info is correctly calculated', {
                  8L)$score,
                tolerance = 1e-6)
   
-  expect_equal(8 * (Entropy(c(3, 5) / 8) * 2 - Entropy(c(0, 0, 3, 5) / 8)),
-               cpp_mutual_clustering(
-                 as.Splits(as.logical(c(1, 1, 1, 0, 0, 0, 0, 0))),
-                 as.Splits(as.logical(c(1, 1, 1, 0, 0, 0, 0, 0))),
-                 8L)$score, 
-               tolerance = 1e-7)
-  
-  expect_equal(8 * (Entropy(c(2, 6) / 8) * 2 - Entropy(c(0, 2, 2, 4) / 8)),
-               cpp_mutual_clustering(
-                 as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
-                 as.Splits(as.logical(c(0, 0, 1, 1, 0, 0, 0, 0))),
-                 8L)$score, tolerance = 1e-7)
-  
-  expect_equal(9 * (Entropy(c(5, 4) / 9) + Entropy(c(3, 6) / 9) -
-                      Entropy(c(3, 2, 0, 4) / 9)),
-               cpp_mutual_clustering(
-                 as.Splits(as.logical(c(1, 1, 1, 1, 1, 0, 0, 0, 0))),
-                 as.Splits(as.logical(c(0, 0, 1, 1, 1, 0, 0, 0, 0))),
-                 9L)$score,
-               tolerance = 1e-7)
-  
-  expect_equal(8 * (Entropy(c(4, 4) / 8) * 2 - Entropy(c(2, 2, 2, 2) / 8)),
-               cpp_mutual_clustering(
-                 as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
-                 as.Splits(as.logical(c(1, 0, 1, 0, 1, 0, 1, 0))),
-                 8L)$score,
-               tolerance = 1e-7)
-  
   expect_equal(22.53747, tolerance=1e-05,
                SharedPhylogeneticInfo(treeSym8, treeSym8, normalize = FALSE))
   expect_equal(1, tolerance = 1e-05,
@@ -185,7 +157,7 @@ test_that('Shared Phylogenetic Info is correctly calculated', {
   expect_equal(DifferentPhylogeneticInfo(treeSym8, treeAcd.Befgh),
                DifferentPhylogeneticInfo(treeAcd.Befgh, treeSym8), tolerance=1e-05)
   expect_equal(0, DifferentPhylogeneticInfo(treeSym8, treeSym8, normalize = TRUE))
-  infoSymBal <- SplitInfo(treeSym8) + SplitInfo(treeBal8)
+  infoSymBal <- SplitwiseInfo(treeSym8) + SplitwiseInfo(treeBal8)
   expect_equal(infoSymBal - 13.75284 - 13.75284, tolerance = 1e-05,
     DifferentPhylogeneticInfo(treeSym8, treeBal8, normalize = TRUE) * infoSymBal)
   expect_equal(22.53747 + SharedPhylogeneticInfo(treeAcd.Befgh, treeAcd.Befgh) - 
@@ -204,7 +176,7 @@ test_that('Shared Phylogenetic Info is correctly calculated', {
                SharedPhylogeneticInfo(treeSym8, treeAbc.Defgh),
                tolerance = 1e-06)
   expect_equal(0, DifferentPhylogeneticInfo(treeSym8, treeSym8))
-  expect_equal(SplitInfo(treeSym8) - SplitInfo(treeAcd.Befgh),
+  expect_equal(SplitwiseInfo(treeSym8) - SplitwiseInfo(treeAcd.Befgh),
                DifferentPhylogeneticInfo(treeSym8, treeAbc.Defgh),
                tolerance = 1e-06)
   
@@ -290,51 +262,53 @@ test_that("Shared Phylogenetic Information is correctly estimated", {
 })
 
 test_that('Clustering information is correctly calculated', {
-  expect_equal(8 * (Entropy(c(4, 4) / 8) * 2 - Entropy(c(0, 0, 4, 4) / 8)),
-               cpp_mutual_clustering(
-                 as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
-                 as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
-                 8L)$score, 
-               tolerance = 1e-7)
-  
-  expect_equal(8 * (Entropy(c(3, 5) / 8) * 2 - Entropy(c(0, 0, 3, 5) / 8)),
+  expect_equal(Entropy(c(3, 5) / 8) * 2 - Entropy(c(0, 0, 3, 5) / 8),
                cpp_mutual_clustering(
                  as.Splits(as.logical(c(1, 1, 1, 0, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(1, 1, 1, 0, 0, 0, 0, 0))),
                  8L)$score, 
                tolerance = 1e-7)
   
-  expect_equal(8 * (Entropy(c(2, 6) / 8) * 2 - Entropy(c(0, 2, 2, 4) / 8)),
+  expect_equal(Entropy(c(2, 6) / 8) * 2 - Entropy(c(0, 2, 2, 4) / 8),
                cpp_mutual_clustering(
-    as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
-    as.Splits(as.logical(c(0, 0, 1, 1, 0, 0, 0, 0))),
-    8L)$score, tolerance = 1e-7)
+                 as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
+                 as.Splits(as.logical(c(0, 0, 1, 1, 0, 0, 0, 0))),
+                 8L)$score, tolerance = 1e-7)
   
-  expect_equal(9 * (Entropy(c(5, 4) / 9) + Entropy(c(3, 6) / 9) -
-                 Entropy(c(3, 2, 0, 4) / 9)),
+  expect_equal(Entropy(c(5, 4) / 9) + Entropy(c(3, 6) / 9) -
+                      Entropy(c(3, 2, 0, 4) / 9),
                cpp_mutual_clustering(
                  as.Splits(as.logical(c(1, 1, 1, 1, 1, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(0, 0, 1, 1, 1, 0, 0, 0, 0))),
                  9L)$score,
                tolerance = 1e-7)
   
-  expect_equal(8 * (Entropy(c(4, 4) / 8) * 2 - Entropy(c(2, 2, 2, 2) / 8)),
+  expect_equal(Entropy(c(4, 4) / 8) * 2 - Entropy(c(2, 2, 2, 2) / 8),
                cpp_mutual_clustering(
                  as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(1, 0, 1, 0, 1, 0, 1, 0))),
                  8L)$score,
                tolerance = 1e-7)
   
-  expect_equal(ClusteringInfo(treeSym8),
+  expect_equal(Entropy(c(4, 4) / 8) * 2 - Entropy(c(0, 0, 4, 4) / 8),
+               cpp_mutual_clustering(
+                 as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
+                 as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
+                 8L)$score, 
+               tolerance = 1e-7)
+  
+  expect_equal(ClusteringEntropy(treeSym8),
                MutualClusteringInfo(treeSym8, treeSym8),
                tolerance=1e-05)
+  expect_equal(8 * ClusteringEntropy(treeSym8), ClusteringInfo(treeSym8))
+  
   expect_equal(TreeDistance(treeSym8, treeBal8),
                MutualClusteringInfo(treeSym8, treeBal8, normalize = TRUE))
   expect_equal(1, MutualClusteringInfo(treeSym8, treeSym8, normalize = TRUE),
                tolerance = 1e-7)
   expect_true(MutualClusteringInfo(treeSym8, treeBal8, normalize = pmin) >
                 MutualClusteringInfo(treeSym8, treeBal8, normalize = pmax))
-  expect_equal(ClusteringInfo(treeSym8) + ClusteringInfo(treeBal8) -
+  expect_equal(ClusteringEntropy(treeSym8) + ClusteringEntropy(treeBal8) -
                  (2 * MutualClusteringInfo(treeBal8, treeSym8)),
                ClusteringInfoDistance(treeSym8, treeBal8), tolerance=1e-05)
   expect_equal(MutualClusteringInfo(treeAb.Cdefgh, treeAbc.Defgh),
@@ -482,7 +456,7 @@ test_that('Robinson Foulds Info is correctly calculated', {
                                   normalize = TRUE))
   expect_equal(24.9, tolerance=0.01, 
                RobinsonFouldsInfo(treeSym8, treeBal8, similarity = TRUE))
-  expect_equal(SplitInfo(treeSym8) + SplitInfo(treeBal8) -
+  expect_equal(SplitwiseInfo(treeSym8) + SplitwiseInfo(treeBal8) -
                  RobinsonFouldsInfo(treeSym8, treeBal8, similarity = FALSE),
                RobinsonFouldsInfo(treeSym8, treeBal8, similarity = TRUE))
   expect_equal(-log2(945/10395) * 2,
@@ -556,7 +530,7 @@ test_that("Avoid infinite loop in LAP", {
   set.seed(0)
   randomTreeId <- unique(floor(runif(owch * 2) * NUnrooted(11)))[seq_len(owch)][owch]
   
-  expect_equal(134.7911, # What the function tells me is the right answer
+  expect_equal(134.7911 / 11L, # What the function tells me is the right answer
                ClusteringInfoDistance(TreeTools::PectinateTree(11L),
                                       ape::as.phylo(18253832, 11L)),
                tolerance = 0.01) 

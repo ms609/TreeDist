@@ -41,8 +41,9 @@ Information imposes arboreal matching: i.e. a pair of splits that cannot
 both exist on a single tree are assigned zero similarity.  The Mutual
 Clustering Information metric is more forgiving, and exhibits more
 desirable behaviour; it is the recommended metric for tree comparison.
-(Its complement, \href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{VariationOfClusteringInfo}, returns a tree
-distance.)
+(The corresponding
+\href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{ClusteringInfoDistance}
+returns a tree distance.)
 }
 \itemize{
 \item \href{https://ms609.github.io/TreeDist/reference/NyeTreeSimilarity.html}{NyeTreeSimilarity}
@@ -59,7 +60,9 @@ with the Jaccard-Robinson-Foulds metric (function
 }
 \itemize{
 \item Bogdanowicz and Giaro (2012), and independently Lin \emph{et al.} (2012), count
-the number of 'mismatched' terminals in a pair of splits.
+the number of 'mismatched' terminals in a pair of splits. An
+information-based equivalent (Smith, forthcoming) is provided in the function
+\href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{MatchingSplitInfoDistance}.
 }
 
 The package also implements the variation of the path distance
@@ -102,7 +105,7 @@ Other tree distance functions are implemented in:
 \itemize{
 \item \code{treedist}: SPR, Robinson-Foulds and path distances.
 }
-\item \href{http://ms609.github.io/Quartet/}{Quartet}: Quartet and Triplet distances,
+\item \href{http://ms609.github.io/Quartet/}{Quartet}: Triplet and Quartet distances,
 using the tqDist algorithm.
 \item \href{http://ms609.github.io/TBRDist/}{TBRDist}: TBR and SPR distances on
 unrooted trees, using the \code{uspr} C library.

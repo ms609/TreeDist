@@ -33,6 +33,10 @@ MacKay (2003) and Meila (2007)
 \insertRef{Meila2007}{TreeDist}
 }
 \seealso{
+\itemize{
+\item \code{\link{ClusteringEntropy}}
+}
+
 Other split information functions: \code{\link{SplitSharedInformation}}
 }
 \author{
