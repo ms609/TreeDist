@@ -59,10 +59,10 @@ SplitSharedInformation <- function(n, A1, A2 = A1) {
 #' @importFrom TreeTools SplitInformation
 #' @export
 SplitDifferentInformation <- function (n, A1, A2 = A1) {
-  # TODO calculate more efficiently from first principles
-  mutual <- SplitSharedInformation(n, A1, A2)
-  SplitInformation (A1, n - A1) - mutual +
-    SplitInformation(A2, n - A2) - mutual
+  (2 * (LnTreesConsistentWithTwoSplits(n, A1, A2)) 
+   - LnTreesMatchingSplit(A1, n - A1)
+   - LnTreesMatchingSplit(A2, n - A2)
+  )/-log(2)
 }
 
 #' Use Variation of Information to compare splits as clusterings
