@@ -31,7 +31,7 @@ test_that("Split compatibility is correctly established", {
 
 methodsToTest <- list(
   SharedPhylogeneticInfo,
-  UnsharedPhylogeneticInfo,
+  DifferentPhylogeneticInfo,
   MutualMatchingSplitInfo,
   VariationOfMatchingSplitInfo,
   MutualClusteringInfo,
@@ -182,30 +182,30 @@ test_that('Shared Phylogenetic Info is correctly calculated', {
   expect_equal(1, tolerance = 1e-05,
                SharedPhylogeneticInfo(treeSym8, treeSym8, normalize = TRUE))
   expect_equal(13.75284, SharedPhylogeneticInfo(treeSym8, treeBal8), tolerance=1e-05)
-  expect_equal(UnsharedPhylogeneticInfo(treeSym8, treeAcd.Befgh),
-               UnsharedPhylogeneticInfo(treeAcd.Befgh, treeSym8), tolerance=1e-05)
-  expect_equal(0, UnsharedPhylogeneticInfo(treeSym8, treeSym8, normalize = TRUE))
+  expect_equal(DifferentPhylogeneticInfo(treeSym8, treeAcd.Befgh),
+               DifferentPhylogeneticInfo(treeAcd.Befgh, treeSym8), tolerance=1e-05)
+  expect_equal(0, DifferentPhylogeneticInfo(treeSym8, treeSym8, normalize = TRUE))
   infoSymBal <- PartitionInfo(treeSym8) + PartitionInfo(treeBal8)
   expect_equal(infoSymBal - 13.75284 - 13.75284, tolerance = 1e-05,
-    UnsharedPhylogeneticInfo(treeSym8, treeBal8, normalize = TRUE) * infoSymBal)
+    DifferentPhylogeneticInfo(treeSym8, treeBal8, normalize = TRUE) * infoSymBal)
   expect_equal(22.53747 + SharedPhylogeneticInfo(treeAcd.Befgh, treeAcd.Befgh) - 
                  (2 * SharedPhylogeneticInfo(treeSym8, treeAcd.Befgh)), 
-               UnsharedPhylogeneticInfo(treeSym8, treeAcd.Befgh), 
+               DifferentPhylogeneticInfo(treeSym8, treeAcd.Befgh), 
                tolerance=1e-06)
   expect_equal(-log2(945/10395), 
                SharedPhylogeneticInfo(treeSym8, treeAb.Cdefgh),
                tolerance = 1e-06)
   expect_equal(22.53747 + SharedPhylogeneticInfo(treeBal8, treeBal8) - 13.75284 - 13.75284, 
-               UnsharedPhylogeneticInfo(treeSym8, treeBal8), tolerance=1e-05)
+               DifferentPhylogeneticInfo(treeSym8, treeBal8), tolerance=1e-05)
   expect_equal(-log2(945/10395),
                SharedPhylogeneticInfo(treeSym8, treeAb.Cdefgh),
                tolerance = 1e-06)
   expect_equal(-log2(315/10395),
                SharedPhylogeneticInfo(treeSym8, treeAbc.Defgh),
                tolerance = 1e-06)
-  expect_equal(0, UnsharedPhylogeneticInfo(treeSym8, treeSym8))
+  expect_equal(0, DifferentPhylogeneticInfo(treeSym8, treeSym8))
   expect_equal(PartitionInfo(treeSym8) - PartitionInfo(treeAcd.Befgh),
-               UnsharedPhylogeneticInfo(treeSym8, treeAbc.Defgh),
+               DifferentPhylogeneticInfo(treeSym8, treeAbc.Defgh),
                tolerance = 1e-06)
   
   
@@ -282,7 +282,7 @@ test_that("Shared Phylogenetic Information is correctly estimated", {
                tolerance=tol[1])
   expect_equal(3.099776, exp['MutualMatchingSplitInfo', 'Estimate'], 
                tolerance=tol[2])
-  expect_equal(25.231023, exp['UnsharedPhylogeneticInfo', 'Estimate'], 
+  expect_equal(25.231023, exp['DifferentPhylogeneticInfo', 'Estimate'], 
                tolerance=tol[3])
   expect_equal(21.382314, exp['VariationOfMatchingSplitInfo', 'Estimate'], 
                tolerance=tol[4])

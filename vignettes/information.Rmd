@@ -47,7 +47,7 @@ Because $h(S_1,S_2) < h(S_1) + h(S_2)$, some of the information in $S_1$ is
 also present in $S_2$.
 The information in common between $S_1$ and $S_2$ is $h_{shared}(S_1, S_2) =
 h(S_1) + h(S_2) - h(S_1,S_2) \approx 1.22\textrm{ bits}$.
-The information unique to $S_1$ and $S_2$ is $h_{unshared}(S_1,S_2) = 
+The information unique to $S_1$ and $S_2$ is $h_{different}(S_1,S_2) = 
 2h(S_1,S_2) - h(S_1) - h(S_2) \approx 3.91\textrm{ bits}$.
 
 These quantities can be calculated using functions in the 

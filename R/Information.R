@@ -23,7 +23,7 @@
 #' `SplitSharedInformation` returns the phylogenetic information that two splits
 #' have in common, in bits.
 #' 
-#' `SplitUnsharedInformation` returns the amount of phylogenetic information
+#' `SplitDifferentInformation` returns the amount of phylogenetic information
 #' distinct to one of the two splits, in bits.
 #' 
 #' @examples 
@@ -35,7 +35,7 @@
 #'   
 #'   TreesConsistentWithTwoSplits(n=8, A1=4, A2=3)
 #'   SplitSharedInformation(n=8, A1=4, A2=3)
-#'   SplitUnsharedInformation(n=8, A1=4, A2=3)
+#'   SplitDifferentInformation(n=8, A1=4, A2=3)
 #'
 #'   # If splits are identical, then their shared information is the same
 #'   # as the information of either split:
@@ -58,7 +58,7 @@ SplitSharedInformation <- function(n, A1, A2 = A1) {
 #' @describeIn SplitSharedInformation Variation of information between two splits.
 #' @importFrom TreeTools SplitInformation
 #' @export
-SplitUnsharedInformation <- function (n, A1, A2 = A1) {
+SplitDifferentInformation <- function (n, A1, A2 = A1) {
   # TODO calculate more efficiently from first principles
   mutual <- SplitSharedInformation(n, A1, A2)
   SplitInformation (A1, n - A1) - mutual +

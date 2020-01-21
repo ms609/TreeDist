@@ -2,14 +2,14 @@
 % Please edit documentation in R/Information.R
 \name{SplitSharedInformation}
 \alias{SplitSharedInformation}
-\alias{SplitUnsharedInformation}
+\alias{SplitDifferentInformation}
 \alias{TreesConsistentWithTwoSplits}
 \alias{LnTreesConsistentWithTwoSplits}
 \title{Shared information content of two splits}
 \usage{
 SplitSharedInformation(n, A1, A2 = A1)
 
-SplitUnsharedInformation(n, A1, A2 = A1)
+SplitDifferentInformation(n, A1, A2 = A1)
 
 TreesConsistentWithTwoSplits(n, A1, A2 = A1)
 
@@ -28,7 +28,7 @@ trees consistent with two splits.
 \code{SplitSharedInformation} returns the phylogenetic information that two splits
 have in common, in bits.
 
-\code{SplitUnsharedInformation} returns the amount of phylogenetic information
+\code{SplitDifferentInformation} returns the amount of phylogenetic information
 distinct to one of the two splits, in bits.
 }
 \description{
@@ -47,7 +47,7 @@ Thus, all taxa in the smaller of \emph{A1} and \emph{A2} also occur in the large
 }
 \section{Functions}{
 \itemize{
-\item \code{SplitUnsharedInformation}: Variation of information between two splits.
+\item \code{SplitDifferentInformation}: Variation of information between two splits.
 
 \item \code{TreesConsistentWithTwoSplits}: Number of trees consistent with two splits.
 
@@ -63,7 +63,7 @@ Thus, all taxa in the smaller of \emph{A1} and \emph{A2} also occur in the large
   
   TreesConsistentWithTwoSplits(n=8, A1=4, A2=3)
   SplitSharedInformation(n=8, A1=4, A2=3)
-  SplitUnsharedInformation(n=8, A1=4, A2=3)
+  SplitDifferentInformation(n=8, A1=4, A2=3)
 
   # If splits are identical, then their shared information is the same
   # as the information of either split:
