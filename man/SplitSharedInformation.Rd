@@ -47,7 +47,7 @@ Thus, all taxa in the smaller of \emph{A1} and \emph{A2} also occur in the large
 }
 \section{Functions}{
 \itemize{
-\item \code{SplitDifferentInformation}: Variation of information between two splits.
+\item \code{SplitDifferentInformation}: Different information between two splits.
 
 \item \code{TreesConsistentWithTwoSplits}: Number of trees consistent with two
 splits.

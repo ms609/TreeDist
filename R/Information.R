@@ -183,7 +183,7 @@ AllSplitPairings <- memoise(function (n) {
 
   unevenPairs <- matrix(
     # For i in 2:largestSmallSplit
-    # TODO: Make faster by not calculating bottom triangle
+    #TODO: Make faster by not calculating bottom triangle
     unlist(lapply(1L + seq_len(n - 3L), function (inA) {
       # For j in 2:(n - 2)
       nCa <- choose(n, inA)
