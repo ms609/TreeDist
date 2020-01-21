@@ -38,6 +38,8 @@ jobs:
       deploy:
         provider: script
         script: Rscript -e 'pkgdown::deploy_site_github()'
+        local_dir: "docs"
+        keep-history: true
         on: 
           branch: master
     - r: devel
