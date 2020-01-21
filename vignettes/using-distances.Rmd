@@ -18,7 +18,7 @@ step is to provide some context for the calculated distances.
 ## Normalizing
 
 The maximum value of most tree distance metrics scales with the number of 
-terminals in the trees being compared.
+leaves in the trees being compared.
 Typically, the resolution of the trees being compared also impacts the range 
 of possible values.
 As such, it can be difficult to interpret the tree distance value without 

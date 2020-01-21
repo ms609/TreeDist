@@ -27,8 +27,8 @@ Context for tree distances can be provided by comparison with the
 distance expected for a pair of random trees. 
 
 The figure below shows how the median normalized tree distance varies with the 
-number of terminals in the trees being compared.
-1&nbsp;000 random pairs of _n_-terminal trees were generated for
+number of leaves in the trees being compared.
+1&nbsp;000 random pairs of _n_-leaf trees were generated for
 $4 \leq n \leq 200$`r ''#4 &le; _n_ &le; 200`,
 and the distances between them calcuated.
 Shaded envelopes denote the interdecile and interquartile ranges.
@@ -46,7 +46,7 @@ and was not exceeded by any of the random tree pairs.
 The path and Matching Split Distance metrics do not have a readily calculated
 maximum value and are thus crudely 'normalized' against an approximate maximum, 
 estimated by curve-fitting the maximum observed distance for each number of
-terminals.
+leaves.
 
 ```{R Tree-distance-averages, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, fig.align='center'}
 if (require('TreeDistData')) {
@@ -175,7 +175,7 @@ if (require('TreeDistData')) {
   plot(as.integer(dimnames(randomTreeDistances)[[3]]),
        randomTreeDistances['vpi', 'mean', ],
        ylim=c(0.4, 1), type='n',
-       xlab = "Number of terminals", ylab = "Normalized tree distance")
+       xlab = "Number of leaves", ylab = "Normalized tree distance")
   for (method in methods) AddLine(method, method %in% c('msd', 'path'))
   
   

@@ -82,7 +82,7 @@ instead of trees.
 
 If \code{normalize = TRUE} and \code{similarity = TRUE}, then results will be rescaled
 from zero to one by dividing by the maximum value possible for any pair
-of trees with  \emph{n} terminals, $n - 3$.
+of trees with  \emph{n} leaves, $n - 3$.
 You may wish to normalize instead against the number of splits present
 in the smaller tree, which represents the maximum value possible for a pair
 of trees with the specified topologies (\code{normalize = pmin.int}), or the

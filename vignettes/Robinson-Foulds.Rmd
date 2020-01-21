@@ -242,7 +242,7 @@ The tree distance is given by the score of the optimal matching.
 
 ## Constructing a matching
 
-Let's consider two trees that differ in the position of a wildcard terminal,
+Let's consider two trees that differ in the position of a wildcard leaf,
 and in the resolution of a clade:
 
 ```{r, fig.height = 3, fig.width=6, fig.align = 'center'}

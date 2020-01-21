@@ -89,7 +89,7 @@ If \code{normalize = TRUE}, then results will be rescaled from zero to one by
 dividing by the maximum possible value for trees of the given topologies,
 which is equal to the number of splits in both trees.
 You may wish to normalize instead against the maximum number of splits
-present in a pair of trees with \emph{n} terminals, by specifying
+present in a pair of trees with \emph{n} leaves, by specifying
 \code{normalize = n - 3}.
 }
 

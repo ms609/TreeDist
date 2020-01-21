@@ -25,7 +25,7 @@
 #' 
 #' If `normalize = TRUE` and `similarity = TRUE`, then results will be rescaled
 #'  from zero to one by dividing by the maximum value possible for any pair 
-#'  of trees with  _n_ terminals, $n - 3$.
+#'  of trees with  _n_ leaves, $n - 3$.
 #' You may wish to normalize instead against the number of splits present
 #' in the smaller tree, which represents the maximum value possible for a pair
 #' of trees with the specified topologies (`normalize = pmin.int`), or the
@@ -125,7 +125,7 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' dividing by the maximum possible value for trees of the given topologies,
 #' which is equal to the number of splits in both trees. 
 #' You may wish to normalize instead against the maximum number of splits
-#' present in a pair of trees with _n_ terminals, by specifying 
+#' present in a pair of trees with _n_ leaves, by specifying 
 #' `normalize = n - 3`.
 #' 
 #' @references 

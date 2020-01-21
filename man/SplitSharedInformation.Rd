@@ -16,7 +16,7 @@ TreesConsistentWithTwoSplits(n, A1, A2 = A1)
 LnTreesConsistentWithTwoSplits(n, A1, A2 = A1)
 }
 \arguments{
-\item{n}{Integer specifying the number of terminals.}
+\item{n}{Integer specifying the number of leaves}
 
 \item{A1, A2}{Integers specifying the number of taxa in \emph{A1} and \emph{A2},
 once the splits have been arranged such that \emph{A1} fully overlaps with \emph{A2}.}
@@ -38,8 +38,8 @@ splits. See the
 for definitions.
 }
 \details{
-Split S~1~ divides \emph{n} terminals into two splits, \emph{A1} and \emph{B1}.
-Split S~2~ divides the same terminals into the splits \emph{A2} and \emph{B2}.
+Split S~1~ divides \emph{n} leaves into two splits, \emph{A1} and \emph{B1}.
+Split S~2~ divides the same leaves into the splits \emph{A2} and \emph{B2}.
 
 Splits must be named such that \emph{A1} fully overlaps with \emph{A2}:
 that is to say, all taxa in \emph{A1} are also in \emph{A2}, or \emph{vice versa}.

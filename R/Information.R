@@ -6,14 +6,14 @@
 #' for definitions.
 #' 
 #' 
-#' Split S~1~ divides _n_ terminals into two splits, _A1_ and _B1_.
-#' Split S~2~ divides the same terminals into the splits _A2_ and _B2_.
+#' Split S~1~ divides _n_ leaves into two splits, _A1_ and _B1_.
+#' Split S~2~ divides the same leaves into the splits _A2_ and _B2_.
 #' 
 #' Splits must be named such that _A1_ fully overlaps with _A2_: 
 #' that is to say, all taxa in _A1_ are also in _A2_, or _vice versa_.
 #' Thus, all taxa in the smaller of _A1_ and _A2_ also occur in the larger.
 #' 
-#' @param n Integer specifying the number of terminals.
+#' @param n Integer specifying the number of leaves
 #' @param A1,A2 Integers specifying the number of taxa in _A1_ and _A2_, 
 #' once the splits have been arranged such that _A1_ fully overlaps with _A2_.
 #' @return 
@@ -156,7 +156,7 @@ MeilaMutualInformation <- function (split1, split2) {
 #' Trivial splits -- those that divide one or zero taxa from the rest --
 #' are not considered.
 #' 
-#' @param n Integer specifying the number of terminal taxa.
+#' @param n Integer specifying the number of leaves.
 #' 
 #' @return `AllSplitPairings` returns a named vector, specifying the number of 
 #' split pairings producing
@@ -212,7 +212,7 @@ AllSplitPairings <- memoise(function (n) {
 #' #TODO REWRITE
 #' Reports various values pertaining to the phylogenetic information content 
 #' of two splits,
-#' treating splits as subdivisions of _n_ terminals into two clusters.
+#' treating splits as subdivisions of _n_ leaves into two clusters.
 #' 
 #' @template split12Params
 #' 
@@ -265,10 +265,10 @@ SplitEntropy <- function (split1, split2=split1) {
 #' information of the splits taken separately -- unless the splits are
 #' contradictory.
 #' 
-#' Split Y1 is defined as dividing taxa into the two sets A1 and B1,
-#' and Y2=A2:B2.
+#' Split S1 is defined as dividing taxa into the two sets A1 and B1,
+#' and S2=A2:B2.
 #' 
-#' Consider splits that divide eight terminals, labelled A to H.
+#' Consider splits that divide eight leaves, labelled A to H.
 #' 
 #' \tabular{rcll}{
 #'   Split 1:\tab ABCD|EFGH\tab A1 = ABCD\tab B1 = EFGH \cr

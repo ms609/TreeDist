@@ -25,10 +25,10 @@ the joint information of two splits will be less than the sum of the
 information of the splits taken separately -- unless the splits are
 contradictory.
 
-Split Y1 is defined as dividing taxa into the two sets A1 and B1,
-and Y2=A2:B2.
+Split S1 is defined as dividing taxa into the two sets A1 and B1,
+and S2=A2:B2.
 
-Consider splits that divide eight terminals, labelled A to H.
+Consider splits that divide eight leaves, labelled A to H.
 
 \tabular{rcll}{
 Split 1:\tab ABCD|EFGH\tab A1 = ABCD\tab B1 = EFGH \cr

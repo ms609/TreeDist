@@ -25,7 +25,7 @@ A numeric vector listing, in bits,
 #TODO REWRITE
 Reports various values pertaining to the phylogenetic information content
 of two splits,
-treating splits as subdivisions of \emph{n} terminals into two clusters.
+treating splits as subdivisions of \emph{n} leaves into two clusters.
 }
 \references{
 \insertRef{Meila2007}{TreeDist}
