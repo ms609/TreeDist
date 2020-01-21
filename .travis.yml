@@ -1,13 +1,12 @@
 language: r
+os: linux
 cache: packages
 warnings_are_errors: true
-sudo: required # required if r_binary_packages or tlmgr install; false otherwise
 r_build_args: '--compact-vignettes="gs+qpdf"'
 r_check_args: --as-cran --no-manual # Workaround error compiling PDF manual
-matrix:
+jobs:
   include:
     - r: 3.5.0
-      sudo: false
       r_packages:
         - ape
         - devtools
