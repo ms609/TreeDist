@@ -38,7 +38,7 @@ lead to different tree distance metrics, implemented in the functions below:
     both exist on a single tree are assigned zero similarity.  The Mutual 
     Clustering Information metric is more forgiving, and exhibits more 
     desirable behaviour; it is the recommended metric for tree comparison.
-    (Its complement, [`VariationOfClusteringInfo`](https://ms609.github.io/TreeDist/reference/TreeDistance.html), returns a tree 
+    (Its complement, [`ClusteringInfoDistance`](https://ms609.github.io/TreeDist/reference/TreeDistance.html), returns a tree 
     distance.)
 
 * [`NyeTreeSimilarity`](https://ms609.github.io/TreeDist/reference/NyeTreeSimilarity.html)
@@ -52,7 +52,9 @@ lead to different tree distance metrics, implemented in the functions below:
 * [`MatchingSplitDistance`](https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html)
     
     Bogdanowicz and Giaro (2012), and independently Lin _et al._ (2012), count 
-    the number of 'mismatched' terminals in a pair of splits.
+    the number of 'mismatched' terminals in a pair of splits.  An 
+    information-based equivalent (Smith, forthcoming) is provided in the function
+    [`MatchingSplitInfoDistance`](https://ms609.github.io/TreeDist/reference/TreeDistance.html).
 
 The package also implements the variation of the path distance 
 proposed by Kendal and Colijn (2016) (function [`KendallColijn`](https://ms609.github.io/TreeDist/reference/KendallColijn.html)),

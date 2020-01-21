@@ -171,7 +171,7 @@ or use these calculated values to normalize our tree distance:
 
 ```{r, eval = FALSE}
 expectedVCI <- randomTreeDistances['vci', 'mean', '9']
-VariationOfClusteringInfo(tree1, tree2, normalize = TRUE) / expectedVCI
+ClusteringInfoDistance(tree1, tree2, normalize = TRUE) / expectedVCI
 ```
 
 ## Testing similarity to a known tree

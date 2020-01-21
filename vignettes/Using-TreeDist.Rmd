@@ -92,7 +92,7 @@ rely on matching each split within a tree with another split in the other tree.
 We can view an optimal matching:
 
 ```{r visualise-matching, fig.align='center', fig.width=8, out.width='90%'}
-VisualizeMatching(VariationOfClusteringInfo, tree1, tree2)
+VisualizeMatching(ClusteringInfoDistance, tree1, tree2)
 ```
 
 This shows the eight splits in tree 1, and the paired splits in tree two.  
@@ -102,7 +102,7 @@ to the total tree similarity score.
 We can view this information in a format accessible for further examination in R with:
 
 ```{r write-vis-matching, fig.align='center', fig.width=8, out.width='90%'}
-VariationOfClusteringInfo(tree1, tree2, reportMatching = TRUE)
+ClusteringInfoDistance(tree1, tree2, reportMatching = TRUE)
 ```
 
 Here, the `pairScores` attribute lists the score of each possible matching of splits.

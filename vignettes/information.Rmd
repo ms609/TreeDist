@@ -55,6 +55,7 @@ These quantities can be calculated using functions in the
 
 ```{r}
 library('TreeTools')
+library('TreeDist')
 treesMatchingSplit <- c(
   AB.CDEF = TreesMatchingSplit(2, 4),
   ABC.DEF = TreesMatchingSplit(3, 3)

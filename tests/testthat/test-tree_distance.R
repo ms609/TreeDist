@@ -35,7 +35,7 @@ methodsToTest <- list(
   MatchingSplitInfo,
   MatchingSplitInfoDistance,
   MutualClusteringInfo,
-  VariationOfClusteringInfo,
+  ClusteringInfoDistance,
   NyeTreeSimilarity,
   JaccardRobinsonFoulds,
   MatchingSplitDistance,
@@ -335,8 +335,8 @@ test_that('Clustering information is correctly calculated', {
   expect_true(MutualClusteringInfo(treeSym8, treeBal8, normalize = pmin) >
                 MutualClusteringInfo(treeSym8, treeBal8, normalize = pmax))
   expect_equal(ClusteringInfo(treeSym8) + ClusteringInfo(treeBal8) -
-                 (2 * MutualClusteringInfo(treeBal8, treeSym8))
-               , VariationOfClusteringInfo(treeSym8, treeBal8), tolerance=1e-05)
+                 (2 * MutualClusteringInfo(treeBal8, treeSym8)),
+               ClusteringInfoDistance(treeSym8, treeBal8), tolerance=1e-05)
   expect_equal(MutualClusteringInfo(treeAb.Cdefgh, treeAbc.Defgh),
                MutualClusteringInfo(treeAbc.Defgh, treeAb.Cdefgh),
                tolerance=1e-05)
@@ -557,16 +557,16 @@ test_that("Avoid infinite loop in LAP", {
   randomTreeId <- unique(floor(runif(owch * 2) * NUnrooted(11)))[seq_len(owch)][owch]
   
   expect_equal(134.7911, # What the function tells me is the right answer
-               VariationOfClusteringInfo(TreeTools::PectinateTree(11L),
-                                         ape::as.phylo(18253832, 11L)),
+               ClusteringInfoDistance(TreeTools::PectinateTree(11L),
+                                      ape::as.phylo(18253832, 11L)),
                tolerance = 0.01) 
-  expect_lt(0, VariationOfClusteringInfo(TreeTools::PectinateTree(11L),
-                                         ape::as.phylo(12848772, 11L)))
+  expect_lt(0, ClusteringInfoDistance(TreeTools::PectinateTree(11L),
+                                      ape::as.phylo(12848772, 11L)))
   
-  expect_lt(0, VariationOfClusteringInfo(TreeTools::PectinateTree(11L),
-                                         Cladewise(Postorder(Preorder(ape::as.phylo( 9850364, 11L))))
-                                         ))
+  expect_lt(0, ClusteringInfoDistance(TreeTools::PectinateTree(11L),
+                                      Cladewise(Postorder(Preorder(ape::as.phylo( 9850364, 11L))))
+                                      ))
   
-  expect_lt(0, VariationOfClusteringInfo(TreeTools::PectinateTree(11L),
-                                         ape::as.phylo(9850364, 11L)))
+  expect_lt(0, ClusteringInfoDistance(TreeTools::PectinateTree(11L),
+                                      ape::as.phylo(9850364, 11L)))
 })
