@@ -6,7 +6,7 @@
 \alias{ClusteringInfo.list}
 \alias{ClusteringInfo.multiPhylo}
 \alias{ClusteringInfo.Splits}
-\title{Clustering information content of all partitions within a tree}
+\title{Clustering information content of all splits within a tree}
 \usage{
 ClusteringInfo(x)
 
@@ -25,10 +25,11 @@ ClusteringInfo(x)
 Information content, in bits.
 }
 \description{
-Sums the clustering information content (Meila 2007) across each partition within a
-phylogenetic tree.  This value will be greater than the total information
-content of the tree where a tree contains multiple partitions, as
-these partitions will contain mutual information.
+Sums the clustering information content (Meila 2007) across each split
+within a phylogenetic tree.
+This value will be greater than the total information
+content of the tree where a tree contains multiple splits, as
+these splits will contain mutual information.
 }
 \details{
 Note that Meila (2007) and Vinh \emph{et al}. (2010) deal with entropy, which

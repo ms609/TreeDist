@@ -13,15 +13,16 @@ The metrics generally fall in the category of "generalized Robinson-Foulds
 distances": they are based on comparing partitions between trees, and thus
 reflect the relationship data within trees, with no reference to branch lengths.
 
-The [Robinson-Foulds distance](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html) simply tallies the number of bipartition splits
-(loosely, clades) that occur in both trees -- any clades that are not perfectly 
-identical are assigned a score of zero, however similar or different they are.
-By overlooking potential similarities between almost-identical bipartitions, 
+The [Robinson-Foulds distance](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html)
+simply tallies the number of splits (loosely, clades) that occur in both trees -- 
+any splits that are not perfectly identical are assigned a score of zero, however similar 
+or different they are.
+By overlooking potential similarities between almost-identical splits, 
 this conservative approach has undesirable properties.
 
 ['Generalized' RF metrics](https://ms609.github.io/TreeDist/articles/Generalized-RF.html)
-pair each bipartition in one tree with a similar
-bipartition in the other.  Each pair of partitions is assigned a similarity 
+pair each split in one tree with a similar split in the other.
+Each pair of splits is assigned a similarity 
 score; the sum of these scores in the optimal partition matching 
 then describes the similarity between two trees. 
 
@@ -29,7 +30,7 @@ Different ways of calculating the the similarity between a pair of partitions
 lead to different tree distance metrics, implemented in the functions below:
 
 
-* [`MutualClusteringInfo`](https://ms609.github.io/TreeDist/reference/TreeDistance.html), [`MutualPhylogeneticInfo`](https://ms609.github.io/TreeDist/reference/TreeDistance.html)
+* [`MutualClusteringInfo`](https://ms609.github.io/TreeDist/reference/TreeDistance.html), [`SharedPhylogeneticInfo`](https://ms609.github.io/TreeDist/reference/TreeDistance.html)
     
     Smith (forthcoming) scores matchings based on the amount of information
     that one partition contains about the other.  The Mutual Phylogenetic
@@ -43,7 +44,7 @@ lead to different tree distance metrics, implemented in the functions below:
 * [`NyeTreeSimilarity`](https://ms609.github.io/TreeDist/reference/NyeTreeSimilarity.html)
     
     Nye _et al._ (2006) score matchings according to the size of the largest 
-    bipartition that is consistent with both of them, normalized against 
+    split that is consistent with both of them, normalized against 
     the Jaccard index.  This approach is extended by B&ouml;cker _et al_. (2013)
     with the Jaccard-Robinson-Foulds metric (function 
     [`JaccardRobinsonFoulds`](https://ms609.github.io/TreeDist/reference/JaccardRobinsonFoulds.html)).
@@ -51,7 +52,7 @@ lead to different tree distance metrics, implemented in the functions below:
 * [`MatchingSplitDistance`](https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html)
     
     Bogdanowicz and Giaro (2012), and independently Lin _et al._ (2012), count 
-    the number of 'mismatched' terminals in a pair of bipartitions.
+    the number of 'mismatched' terminals in a pair of splits.
 
 The package also implements the variation of the path distance 
 proposed by Kendal and Colijn (2016) (function [`KendallColijn`](https://ms609.github.io/TreeDist/reference/KendallColijn.html)),
