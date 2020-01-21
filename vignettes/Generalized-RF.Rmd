@@ -195,9 +195,17 @@ ABCDEF  | GHIJ
 ABCDE IJ|FGH
 ```
 
-three elements (_F_, _I_ and _J_) must be moved before the splits are 
+three leaves (_F_, _I_ and _J_) must be moved before the splits are 
 identical; as such, the pair of splits are assigned a difference score 
-(not a similarity score) of three.
+of three.  
+Formally, where $S_i$ splits $n$ leaves into bipartitions $A_i$ and $B_i$, the
+difference score is calculated by
+
+$n - m$
+
+where $m$ counts the number of leaves that already match, and is defined as
+
+$m = \max\{|A_1 \cap A_2| + |B_1 \cap B_2|, |A_1 \cap B_2| + |B_1 \cap A_2|\}$
 
 ```{r, fig.width=6 , fig.align='center'}
 MatchingSplitDistance(read.tree(text='((a, b, c, d, e, f), (g, h, i, j));'),
@@ -209,8 +217,25 @@ to calculate.
 
 ### Information theoretic alternative
 
-An information-theoretic take on the Matching Split Distance [@SmithDist] 
-is provided by the function
+In the matching split distance, $m$ represents a simple count of the number of
+shared taxa.  An alternative is to measure the phylogenetic information content
+of the largest split consistent with $S_1$ and $S_2$:
+
+$m = \max\{h(A_1 \cap A_2 | B_1 \cap B_2), h(A_1 \cap B_2 | B_1 \cap A_2)\}$
+
+The most information-rich split consistent with
+
+```
+ABCDEF  | GHIJ
+ABCDE IJ|FGH  
+```
+
+is `ABCDE | GH`, which contains 
+```{r}
+TreeTools::SplitInformation(5, 2)
+```
+bits of phylogenetic information, which provides a similarity score for this
+pairing.
 
 ```{r, fig.width=6 , fig.align='center'}
 VariationOfMatchingSplitInfo(tree1, tree2)
@@ -218,23 +243,5 @@ VisualizeMatching(VariationOfMatchingSplitInfo, tree1, tree2,
                   Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
 ```
 
-This approach scores each pair of splits according to the information 
-content of the most information-rich split that is consistent with both
-splits in the pair.
-
-The most information-rich split consistent with 
-
-`ABCDEF  | GHIJ`
-`ABCDE IJ|FGH  `
-
-is `ABCDE | GH`, which contains 
-```{r}
-TreeTools::SplitInformation(5, 2)
-```
-bits of phylogenetic information; this quantity represents the similarity (not
-difference) score for this particular pairing.
-
-This measure can therefore be normalized against the sum of the phylogenetic
-information content of all splits in each of the two input trees.
 
 ## References
