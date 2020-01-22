@@ -11,8 +11,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-This file with give an overview of topological distance measures, and examples
-of how they can be calculated in R.
+This document gives an overview of topological distance measures, and examples
+of how they can be calculated in R.  
 
 Examples are conducted using a pair of trees that differ in the position of one
 taxon, and the resolution of one clade:
@@ -29,38 +29,15 @@ TreeDistPlot(tree2, leaveRoom = FALSE, graft=10)
 ape::edgelabels(1:5, edge = c(1, 5, 8, 11, 13))
 ```
 
+(Instructions for loading phylogenetic trees into R can be found [elsewhere](https://ms609.github.io/TreeTools/articles/load-trees.html).)
+
 # Robinson-Foulds distance
 
 The Robinson-Foulds distance [@Robinson1981], also termed the partitionwise 
 symmetric difference, is a simple but problematic partitionwise measure.
 
-Implementations include:
-
-```{r}
-phangorn::treedist(tree1, tree2)['symmetric.difference']
-```
-
-`treedist` can only consider one pair of trees at a time, and calculates
-other distances at the same time, so is less suitable than:
-
-```{r}
-phangorn::RF.dist(tree1, tree2, normalize = FALSE)
-```
-
-With `RF.dist`, `tree1` and `tree2` can be multiPhylo objects containing 
-multiple trees, in which case each tree in `tree1` will be compared with
-each tree in `tree2`.
-
-It is possible to suppress the seemingly unnecessary
-warning message, and to normalize the output against the total number of 
-splits present:
-
-```{r}
-suppressMessages(phangorn::RF.dist(tree1, tree2, normalize = TRUE))
-```
-
-The `TreeDist` package contains an inefficient implementation that allows
-matched splits to be easily visualized:
+TreeDist contains an inefficient implementation that allows matched splits to be
+easily visualized:
 
 ```{r}
 TreeDist::RobinsonFoulds(tree1, tree2)
@@ -80,9 +57,25 @@ RobinsonFouldsInfo(tree1, tree2, similarity = FALSE)
 More details, and a discussion of the problems with the Robinson-Foulds metric,
 are provided in a [separate article](Robinson-Foulds.html).<!-- #TODO check link-->
 
+phangorn provides a less efficient implementation that throws an error message
+when trees are not binary:
+```{r}
+phangorn::RF.dist(tree1, tree2, normalize = FALSE)
+```
+
+To suppress the warning message, and to normalize the output against the total 
+number of splits present, use:
+
+```{r}
+suppressMessages(phangorn::RF.dist(tree1, tree2, normalize = TRUE))
+```
+
+`tree1` and `tree2` can be multiPhylo objects containing multiple trees, in
+which case each tree in `tree1` will be compared with each tree in `tree2`.
+
 # Generalized Robinson-Foulds distances
 
-This package contains functions for various Generalized Robinson-Foulds 
+TreeDist contains functions for various Generalized Robinson-Foulds 
 distances, and allows user-specified pair similarity functions.  See the
 [separate article](Generalized-RF.html)<!-- #TODO check link--> for details.
 
@@ -102,13 +95,7 @@ For more details, see the [Quartet documentation](https://ms609.github.io/Quarte
 
 # Path distance
 
-As with the Robinson-Foulds distance, this is calculated by 
-
-```{r}
-phangorn::treedist(tree1, tree2)['path.difference']
-```
-
-or more efficiently by:
+The path distance can be calculated using:
 
 ```{r}
 phangorn::path.dist(tree1, tree2)
