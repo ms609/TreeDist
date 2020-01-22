@@ -148,9 +148,13 @@ knitr::kable(cbind(
       'Phylogenetic information content' = paste(signif(ic, 3), 'bits')))
 ```
 
-In the first tree, split 1 is even, dividing four taxa from four others (`4|4`); splits 2--5 are maximally uneven (`2|6`).  The total information content of these five splits is `r signif(sum(ic[c(4, 2, 2, 2, 2) - 1]), 4)` bits, whereas that of the five splits in 
-the second tree, of sizes `2|6`, `3|5`, `4|4`, `3|5` and `2|6`, is
-`r signif(sum(ic[c(2, 3, 4, 3, 2) - 1]), 4)` bits. Put another way, a random tree will
+In the first tree, split 1 is even, dividing four taxa from four others (`4|4`);
+splits 2--5 are maximally uneven (`2|6`).  The total information content of 
+these five splits is `r signif(sum(ic[c(4, 2, 2, 2, 2) - 1]), 4)`&nbsp;bits,
+whereas that of the five splits in the second tree, of sizes 
+`2|6`, `3|5`, `4|4`, `3|5` and `2|6`, is
+`r signif(sum(ic[c(2, 3, 4, 3, 2) - 1]), 4)`&nbsp;bits.
+Put another way, a random tree will
 on average share more splits with the balanced tree (whose splits are 
 predominantly uneven and thus likely to be matched) than the asymmetric tree 
 (which contains more even splits that are less likely to occur in a random tree).
@@ -198,7 +202,7 @@ split according to the amount of phylogenetic information it contains.
 The two tree pairs below both have a Robinson-Foulds distance of two,
 but the first pair differ with regard to 
 an uneven split (`ABCDEF|GH`), so obtain a total difference
-of 22.54 - (3.46 + 5.04 + 5.53 + 5.04) = 3.46:
+of 22.54 &minus; (3.46 + 5.04 + 5.53 + 5.04) = 3.46&nbsp;bits:
 
 ```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
 tree1 <- ape::read.tree(text='(1, (2, (3, (4, (5, (6, (7, 8)))))));')
@@ -209,8 +213,9 @@ VisualizeMatching(RobinsonFouldsInfo, tree1, tree2,
                   Plot = TreeDistPlot, leaveRoom=FALSE, prune = 12)
 ```
 
-whereas the second pair differ in the resolution of a more even split
-(`ABCD|EFGH`) and thus receive a distance score of 5.53:
+whereas the second pair differ in the resolution of a more even, and thus more
+information-rich, split (`ABCD|EFGH`), and so receive a distance score of 
+5.53&nbsp;bits:
 
 ```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
 VisualizeMatching(RobinsonFouldsInfo, tree1, tree3, 
@@ -219,8 +224,9 @@ VisualizeMatching(RobinsonFouldsInfo, tree1, tree3,
 
 # Generalized Robinson-Foulds distances
 
-The Robinson-Foulds distance is readily saturated: the maximum
-distance can be obtained by moving a single taxon on a tree.
+Even when accounting for the information content of splits, the Robinson-Foulds
+distance is readily saturated: the maximum value can be obtained by moving a
+single taxon on a tree.
 
 ```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
 tree1 <- ape::read.tree(text='(1, (2, (3, (4, (5, (6, (7, 8)))))));')
@@ -232,13 +238,13 @@ VisualizeMatching(RobinsonFoulds, tree1, tree2,
 
 Generalized Robinson-Foulds distances seek to address this issue. 
 This category of metrics aim to acknowledge semblances between similar-but-not-quite-identical pairs of splits, which would contribute 
-zero to tree similarity under the standard Robinson-Foulds.
+zero to tree similarity under the standard Robinson-Foulds measure.
 
 Generalized RF distances work by pairing each split in one tree with a 
 similar split in the other (or leaving it unpaired).  Each pairing is
-scored according to the similarity of the paired splits.  The decision
-of which split to pair with which is called a _matching_, and a matching
-is scored by summing the individual similarity scores of each pair.
+scored according to the similarity of the paired splits.  A given set of split
+pairings is called a _matching_, and a matching
+is scored by summing the individual similarity scores of each pair of splits.
 The tree distance is given by the score of the optimal matching.
 
 ## Constructing a matching
