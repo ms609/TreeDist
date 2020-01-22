@@ -12,7 +12,7 @@ The metrics generally fall in the category of "generalized Robinson-Foulds
 distances": they are based on comparing partitions between trees, and thus
 reflect the relationship data within trees, with no reference to branch
 lengths.
-Detailed documentationand usage instructions are
+Detailed documentation and usage instructions are
 \href{https://ms609.github.org/TreeDist}{available online} or in the vignettes.
 }
 \details{
@@ -62,7 +62,7 @@ with the Jaccard-Robinson-Foulds metric (function
 \item Bogdanowicz and Giaro (2012), and independently Lin \emph{et al.} (2012), count
 the number of 'mismatched' leaves in a pair of splits. An
 information-based equivalent (Smith, forthcoming) is provided in the function
-\href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{MatchingSplitInfoDistance}.
+\href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{MatchingSplitDistance}.
 }
 
 The package also implements the variation of the path distance
@@ -103,7 +103,7 @@ Other tree distance functions are implemented in:
 }
 \item \href{https://cran.r-project.org/package=phangorn}{phangorn}
 \itemize{
-\item \code{treedist}: SPR, Robinson-Foulds and path distances.
+\item \code{treedist}: Path, Robinson-Foulds and approximate SPR distances.
 }
 \item \href{http://ms609.github.io/Quartet/}{Quartet}: Triplet and Quartet distances,
 using the tqDist algorithm.

@@ -10,7 +10,7 @@ MeilaVariationOfInformation(split1, split2)
 MeilaMutualInformation(split1, split2)
 }
 \arguments{
-\item{split1, split2}{Logical vectors listing leavess in a consistent order,
+\item{split1, split2}{Logical vectors listing leaves in a consistent order,
 identifying each leaf as a member of the ingroup (\code{TRUE}) or outgroup
 (\code{FALSE}) of the split in question.}
 }

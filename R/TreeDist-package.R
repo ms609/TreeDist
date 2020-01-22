@@ -6,7 +6,7 @@
 #' distances": they are based on comparing partitions between trees, and thus
 #' reflect the relationship data within trees, with no reference to branch 
 #' lengths.
-#' Detailed documentationand usage instructions are 
+#' Detailed documentation and usage instructions are 
 #' [available online](https://ms609.github.org/TreeDist) or in the vignettes.
 #' 
 #' The [Robinson-Foulds distance](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html)
@@ -51,7 +51,7 @@
 #'  + Bogdanowicz and Giaro (2012), and independently Lin _et al._ (2012), count 
 #'     the number of 'mismatched' leaves in a pair of splits. An 
 #'     information-based equivalent (Smith, forthcoming) is provided in the function
-#'     [`MatchingSplitInfoDistance`](https://ms609.github.io/TreeDist/reference/TreeDistance.html).
+#'     [`MatchingSplitDistance`](https://ms609.github.io/TreeDist/reference/TreeDistance.html).
 #'     
 #' The package also implements the variation of the path distance 
 #' proposed by Kendal and Colijn (2016) (function 
