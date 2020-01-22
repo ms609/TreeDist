@@ -249,13 +249,13 @@ topology:
 
 ```{r}
 set.seed(0)
-trueTree <- ape::rtree(20)
+trueTree <- TreeTools::RandomTree(20)
 ```
 
 Then, let's generate 200 degraded trees.
 We'll move away from the true tree by making a TBR move, then reduce 
-resolution by taking the consensus of this tree, and three trees in its 
-immediate neighbourhood, one NNI move away.
+resolution by taking the consensus of this tree and three trees from its 
+immediate neighbourhood (one NNI move away).
 
 ```{r, message=FALSE}
 library('TreeSearch') # for TBR, NNI
@@ -266,8 +266,9 @@ oneAway <- structure(lapply(seq_len(200), function (x) {
 ```
 
 And let's generate 200 more trees that are even more degraded.
-This time we'll move three TBR moves away from the true tree, and reduce 
-resolution by taking a consensus with three trees that are two NNI moves away.
+This time we'll move further (three TBR moves) from the true tree, and reduce 
+resolution by taking a consensus with three trees from its wider neighbourhood
+(each two NNI moves away).
 
 ```{r}
 threeAway <- structure(lapply(seq_len(200), function (x) {
@@ -304,12 +305,10 @@ incorrect1 <- infoInTree1 - correct1
 incorrect3 <- infoInTree3 - correct3
 ```
 
-Now we can plot this information on a ternary diagram.
-We'll define some colours first: 
-<span style='background-color:#F5CCB599'>&nbsp;orange&nbsp;</span> 
-for the one-away trees, and 
-<span style='background-color:#9CE0E699'>&nbsp;blue&nbsp;</span> 
-for the three-aways:
+In preparation for our plot, let's colour our one-away trees 
+<span style='background-color:#F5CCB599'>&nbsp;orange&nbsp;</span>, and our
+three-away trees 
+<span style='background-color:#9CE0E699'>&nbsp;blue&nbsp;</span>:
 
 ```{r, collapse=TRUE}
 col1 <- hcl(200, alpha = 0.9)
@@ -321,6 +320,8 @@ ColToHex <- function (x) rgb(x[1], x[2], x[3], x[4], maxColorValue = 255)
 spec1 <- apply(spec1, 2, ColToHex)
 spec3 <- apply(spec3, 2, ColToHex)
 ```
+
+Now we can plot this information on a ternary diagram.
 
 ```{r, fig.width=7, fig.align='center', fig.asp=5/7, out.width='70%'}
 library('Ternary')
