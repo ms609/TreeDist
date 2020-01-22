@@ -18,7 +18,7 @@
 #' to be identical by chance alone make a smaller contribution to overall
 #' tree distance, because their similarity is less remarkable.
 #' 
-#' @inheritParams SharedPhylogeneticInfo
+#' @inheritParams TreeDistance
 #' @param similarity Logical specifying whether to report the result as a tree
 #' similarity, rather than a difference.
 #' 
