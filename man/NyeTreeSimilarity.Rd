@@ -54,29 +54,27 @@ split.}
 }
 \value{
 An array of numerics providing the distances between each pair of
-trees in \code{tree1} and \code{tree2}.
+trees in \code{tree1} and \code{tree2}, or \code{splits1} and \code{splits2}.
 }
 \description{
 Implements the tree comparison metric of Nye \emph{et al}. (2006).
 In short, this finds the optimal matching that pairs each branch from
 one tree with a branch in the second, where matchings are scored according to
 the size of the largest split that is consistent with both of them,
-normalized against the Jaccard index.  This is equivalent to (but
-slightly faster than) \code{\link{JaccardRobinsonFoulds}
-(tree1, tree2, k = 1, arboreal = FALSE)}.
+normalized against the Jaccard index.
+A more detailed account is available in the
+\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#nye-et-al--tree-similarity-metric}{vignettes}.
 }
 \details{
 The measure is defined as a similarity score.  If \code{similarity = FALSE}, the
 similarity score will be converted into a distance by doubling it and
 subtracting it from the number of splits present in both trees.
 This ensures consistency with \code{JaccardRobinsonFoulds}.
-}
-\section{Functions}{
-\itemize{
-\item \code{NyeSplitSimilarity}: Calculate tree similarity from splits
-instead of trees.
-}}
 
+Note that \code{NyeTreeSimilarity(tree1, tree2)} is equivalent to, but
+slightly faster than, \code{\link{JaccardRobinsonFoulds}
+(tree1, tree2, k = 1, arboreal = FALSE)}.
+}
 \section{Normalization}{
 
 

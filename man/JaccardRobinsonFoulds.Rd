@@ -56,7 +56,7 @@ split.}
 }
 \value{
 An array of numerics providing the distances between each pair of
-trees in \code{tree1} and \code{tree2}.
+trees in \code{tree1} and \code{tree2}, or \code{splits1} and \code{splits2}.
 }
 \description{
 Implements the Jaccard-Robinson-Foulds metric of Böcker \emph{et al}. (2013).
@@ -66,22 +66,18 @@ In short, this finds the optimal matching that pairs each branch from
 one tree with a branch in the second, where matchings are scored according to
 the size of the largest split that is consistent with both of them,
 normalized against the Jaccard index, and raised to an arbitrary exponent.
+A more detailed explanation is availble in the
+\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric}{vignettes}.
 
 By default, arboreal matchings are enforced.
 
 Note that the settings \code{k = 1, arboreal = FALSE} give the similarity metric
 of Nye \emph{et al}. (2006); a slightly faster implementation of this metric is
-available as \code{[NyeTreeSimilarity]}.
+available as \code{\link{NyeTreeSimilarity}}.
 
 The examples section details how to visualize matchings with non-default
 parameter values.
 }
-\section{Functions}{
-\itemize{
-\item \code{JaccardSplitSimilarity}: Calculate tree similarity from splits
-instead of trees.
-}}
-
 \section{Normalization}{
 
 

@@ -61,7 +61,7 @@ split.}
 }
 \value{
 An array of numerics providing the distances between each pair of
-trees in \code{tree1} and \code{tree2}.
+trees in \code{tree1} and \code{tree2}, or \code{splits1} and \code{splits2}.
 }
 \description{
 Calculates the Robinson-Foulds distance, or the equivalent similarity

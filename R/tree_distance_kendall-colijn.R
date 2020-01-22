@@ -1,8 +1,10 @@
 #' Kendall-Colijn distance
 #' 
-#' The Kendall-Colijn distance is related to the path difference. 
+#' Calculate the Kendall-Colijn tree distance, a measure related to the 
+#' path difference. 
 #' 
-#' It works by measuring, for each pair of leaves, the distance from the most recent
+#' The Kendall-Colijn distance works by measuring, for each pair of leaves,
+#' the distance from the most recent
 #' common ancestor of those leaves and the root node.  For a given tree, this 
 #' produces a vector of values recording the distance-from-the-root of each
 #' most recent common ancestor of each pair of leaves.
@@ -20,8 +22,8 @@
 #' 
 #' @template distReturn
 #' 
-#' @seealso [`treespace::treeDist`](https://cran.r-project.org/web/packages/treespace/vignettes/introduction.html),
-#' a more sophisticated, if more cumbersome, implementation that supports 
+#' @seealso [`treespace::treeDist`](https://cran.r-project.org/web/packages/treespace/vignettes/introduction.html)
+#' is a more sophisticated, if more cumbersome, implementation that supports 
 #' lambda > 0, i.e. use of edge lengths in tree comparison.
 #' 
 #' @family tree distances
@@ -59,7 +61,8 @@ KendallColijn <- function (tree1, tree2 = tree1) {
   }
 }
 
-#' @describeIn KendallColijn Creates vectors that characterise a rooted tree
+#' @describeIn KendallColijn Creates a vector that characterises a rooted tree,
+#' as described in Kendall & Colijn (2016).
 #' @param tree A tree of class \code{\link[ape:read.tree]{phylo}}.
 #' @importFrom TreeTools AllAncestors Preorder
 KCVector <- function (tree) {

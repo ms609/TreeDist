@@ -4,15 +4,19 @@
 #' In short, this finds the optimal matching that pairs each branch from
 #' one tree with a branch in the second, where matchings are scored according to
 #' the size of the largest split that is consistent with both of them,
-#' normalized against the Jaccard index.  This is equivalent to (but 
-#' slightly faster than) \code{\link{JaccardRobinsonFoulds}
-#' (tree1, tree2, k = 1, arboreal = FALSE)}.
+#' normalized against the Jaccard index.
+#' A more detailed account is available in the 
+#' [vignettes](https://ms609.github.io/TreeDist/articles/Generalized-RF.html#nye-et-al--tree-similarity-metric).
 #' 
 #' The measure is defined as a similarity score.  If `similarity = FALSE`, the
 #' similarity score will be converted into a distance by doubling it and
 #' subtracting it from the number of splits present in both trees.
 #' This ensures consistency with `JaccardRobinsonFoulds`.
 #' 
+#' Note that `NyeTreeSimilarity(tree1, tree2)` is equivalent to, but 
+#' slightly faster than, \code{\link{JaccardRobinsonFoulds}
+#' (tree1, tree2, k = 1, arboreal = FALSE)}.
+#'  
 #' @inheritParams RobinsonFoulds
 #' @param normalizeMax When calculating similarity, normalize against the 
 #' maximum number of splits that could have been present (`TRUE`),
@@ -80,8 +84,7 @@ NyeTreeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
   }
 }
 
-#' @describeIn NyeTreeSimilarity Calculate tree similarity from splits 
-#' instead of trees.
+#' @rdname NyeTreeSimilarity
 #' @inheritParams SharedPhylogeneticInfoSplits
 #' @export
 NyeSplitSimilarity <- function (splits1, splits2, 
@@ -100,12 +103,14 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' one tree with a branch in the second, where matchings are scored according to
 #' the size of the largest split that is consistent with both of them,
 #' normalized against the Jaccard index, and raised to an arbitrary exponent.
+#' A more detailed explanation is availble in the 
+#' [vignettes](https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric).
 #' 
 #' By default, arboreal matchings are enforced. 
 #' 
 #' Note that the settings `k = 1, arboreal = FALSE` give the similarity metric
 #' of Nye _et al_. (2006); a slightly faster implementation of this metric is
-#' available as `[NyeTreeSimilarity]`.
+#' available as [`NyeTreeSimilarity`].
 #' 
 #' The examples section details how to visualize matchings with non-default
 #' parameter values. 
@@ -168,8 +173,7 @@ JaccardRobinsonFoulds <- function (tree1, tree2 = tree1, k = 1L,
                 InfoInTree = NSplits, Combine = '+')
 }
 
-#' @describeIn JaccardRobinsonFoulds Calculate tree similarity from splits 
-#' instead of trees.
+#' @rdname JaccardRobinsonFoulds
 #' @inheritParams SharedPhylogeneticInfoSplits
 #' @export
 JaccardSplitSimilarity <- function (splits1, splits2,

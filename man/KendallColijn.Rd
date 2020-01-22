@@ -17,13 +17,15 @@ or lists of such trees to undergo pairwise comparison.}
 }
 \value{
 An array of numerics providing the distances between each pair of
-trees in \code{tree1} and \code{tree2}.
+trees in \code{tree1} and \code{tree2}, or \code{splits1} and \code{splits2}.
 }
 \description{
-The Kendall-Colijn distance is related to the path difference.
+Calculate the Kendall-Colijn tree distance, a measure related to the
+path difference.
 }
 \details{
-It works by measuring, for each pair of leaves, the distance from the most recent
+The Kendall-Colijn distance works by measuring, for each pair of leaves,
+the distance from the most recent
 common ancestor of those leaves and the root node.  For a given tree, this
 produces a vector of values recording the distance-from-the-root of each
 most recent common ancestor of each pair of leaves.
@@ -39,15 +41,16 @@ leaf to another.
 }
 \section{Functions}{
 \itemize{
-\item \code{KCVector}: Creates vectors that characterise a rooted tree
+\item \code{KCVector}: Creates a vector that characterises a rooted tree,
+as described in Kendall & Colijn (2016).
 }}
 
 \references{
 \insertRef{Kendall2016}{TreeDist}
 }
 \seealso{
-\href{https://cran.r-project.org/web/packages/treespace/vignettes/introduction.html}{treespace::treeDist},
-a more sophisticated, if more cumbersome, implementation that supports
+\href{https://cran.r-project.org/web/packages/treespace/vignettes/introduction.html}{treespace::treeDist}
+is a more sophisticated, if more cumbersome, implementation that supports
 lambda > 0, i.e. use of edge lengths in tree comparison.
 
 Other tree distances: \code{\link{JaccardRobinsonFoulds}},
