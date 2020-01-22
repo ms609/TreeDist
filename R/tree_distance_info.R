@@ -99,7 +99,7 @@
 #' VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2) # Which clades are matched?
 #' DifferentPhylogeneticInfo(tree1, tree2) # Distance measure
 #' DifferentPhylogeneticInfo(tree2, tree1) # The metric is symmetric
-#' #'   
+#'
 #' # Are they more similar than two trees of this shape would be by chance?
 #' ExpectedVariation(tree1, tree2, sample=12)['DifferentPhylogeneticInfo', 'Estimate']
 #' 
