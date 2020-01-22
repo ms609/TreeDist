@@ -7,7 +7,6 @@ articles:
   Tree-distance-metric-evaluation: Tree-distance-metric-evaluation.html
   Using-TreeDist: Using-TreeDist.html
   information: information.html
-  tree-distances: tree-distances.html
   using-distances: using-distances.html
 urls:
   reference: https://ms609.github.io/TreeDist/reference
