@@ -65,8 +65,6 @@ navbar:
         href: articles/Using-TreeDist.html
       - text: Contextualizing tree distances
         href: articles/using-distances.html
-      - text: Tree distance measures
-        href: articles/tree-distances.html
       - text: Robinson-Foulds metric
         href: articles/Robinson-Foulds.html
       - text: Generalized Robinson-Foulds distances
