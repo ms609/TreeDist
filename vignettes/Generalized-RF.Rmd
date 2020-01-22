@@ -23,8 +23,8 @@ AotJ <-  read.tree(text='(((((J, B), C), D), E), (F, (G, (H, (I, A)))));')
 This document outlines the similarity measures employed by the 
 generalized Robinson-Foulds distances implemented in this package.
 
-Before you read it, you may wish to refresh your memory of the 
-[Robinson-Foulds distance](Robinson-Foulds.html), how to
+Generalized RF distances are introduced [elsewhere](Robinson-Foulds.html); 
+before you read further, you may also wish to revisit how to
 [use the TreeDist package](Using-TreeDist.html), and relevant 
 [principles of information theory](information.html).
 

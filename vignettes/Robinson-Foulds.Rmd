@@ -286,7 +286,7 @@ scored according to their phylogenetic information content.  Non-matching
 splits can be scored according to the amount of phylogenetic information that 
 they hold in common, which is a function of the proportion of trees
 that are consistent with both splits.  (A full explanation is provided
-in the discussion of [Generalized Robinson-Foulds distances](Generalised-RF.html).<!-- #TODO test link -->)
+in the discussion of [Generalized Robinson-Foulds distances](Generalized-RF.html).)
 
 ```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
 TwoTreePlot()
@@ -302,26 +302,25 @@ have made to the information-weighted Robinson-Foulds similarity.
 The split `ABCDEF|GHI` in the left-hand tree is paired with the split
 `ABCDEFI|GH` in the right-hand tree.  Had `ABCDEF|GHI` been available in the 
 right-hand tree, then this perfect match would have been assigned a similarity 
-of `SplitInformation(3, 6)` = 5.57.  The partial match is instead allocated
-a lower score of 2.12.  Non-arboreal matches -- pairs of clades that cannot
-exist on a single tree, such as `ABCDEFG|HI` - `ABCDFGH|EI` -- have no
-phylogenetic information in common.
+of `SplitInformation(3, 6)` = 5.57&nbsp;bits.  The partial match is instead 
+allocated a lower score of 2.12&nbsp;bits.  Non-arboreal pairings -- pairs of
+clades that cannot exist on a single tree, such as `ABCDEFG|HI` - `ABCDFGH|EI` 
+-- have no phylogenetic information in common.  (If it is permissible to 
+acknowledge similarity between non-arboreal pairings, 
+[clustering information](information.html) is an alternative way to think
+about split similarity.)
 
 The matching depicted above is optimal, but is one of many.  The optimal 
 matching is calculated by considering the similarity score of each possible 
-pairing, and using the Munkres (Hungarian) algorithm to find the optimal set 
+pairing, and solving a linear assignment problem to find the optimal set 
 of pairings.
 
 We can view the splits in each tree, named according to the number of their
 associated node:
 
 ```{r}
-DisplaySplits <- function (tree) 
-  as.list(as.character(TreeTools::as.Splits(tree)))
-DisplaySplits(tree1)
-```
-```{r}
-DisplaySplits(tree2)
+summary(TreeTools::as.Splits(tree1, LETTERS[1:9]))
+summary(TreeTools::as.Splits(tree2, LETTERS[1:9]))
 ```
 
 We can then see the similarity scores for each pair of splits, along with the 
@@ -332,16 +331,12 @@ attributes(SharedPhylogeneticInfo(tree1, tree2, reportMatching = TRUE))
 ```
 
 `..` denotes that the fifth matching contributes zero to similarity score; an 
-alternative matching, still optimal, would leave these splits unpaired.
+alternative optimal matching would leave these splits unpaired.
 
-## Alternative approaches
+## What next?
 
-Alternatives measures of split similarity are implemented in other 
-[Generalized Robinson-Foulds distances](Generalised-RF.html). <!-- #TODO test link -->
-
-## Solutions
-
-Some of the shortcomings of the Robinson-Foulds distance are addressed by
-[Generalized Robinson-Foulds distances](Generalised-RF.html).
+- Alternatives measures of split similarity, such as 
+[mutual clustering information](information.html), give rise to other
+[Generalized Robinson-Foulds distances](Generalized-RF.html).
 
 ## References
