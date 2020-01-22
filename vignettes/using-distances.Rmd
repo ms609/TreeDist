@@ -138,7 +138,7 @@ available in the data package
 [`TreeDistData`](https://github.com/ms609/TreeDistData).  We can view (normalized) 
 distances for a selection of methods:
 
-```{r, collapse=TRUE, eval = FALSE}
+```{r, collapse=TRUE}
 #TODO UPDATE
 data('randomTreeDistances', package='TreeDistData')
 
@@ -148,7 +148,8 @@ methodCol <- c(vpi = '#e15659', vci = '#58a14e', nts = '#edc949', qd = '#af7aa1'
 par(cex = 0.7, mar=c(5, 5, 0.01, 0.01))
 nLeaves <- as.integer(dimnames(randomTreeDistances)[[3]])
 plot(nLeaves, type='n', randomTreeDistances['vpi', 'mean', ], ylim=c(0.4, 1), 
-     xlab = "Number of leaves", ylab = "Normalized distance between random trees")
+     xlab = "Number of leaves", 
+     ylab = "Normalized distance between random tree pairs")
 
 for (method in methods) {
   dat <- randomTreeDistances[method, , ]
@@ -157,9 +158,10 @@ for (method in methods) {
           border=NA, col = paste0(methodCol[method], '55'),)
   
 }
+
 text(202, randomTreeDistances[methods, '50%', '200'] + 0.02, 
-     c('Variation of phylogenetic information', 
-       'Variation of clustering information',
+     c('Different phylogenetic information', 
+       'Clustering information distance',
        expression(paste(plain('Nye '), italic('et al.'))),
        'Quartet divergence'
        ), col= methodCol[methods], pos=2)
@@ -169,46 +171,45 @@ text(202, randomTreeDistances[methods, '50%', '200'] + 0.02,
 or use these calculated values to normalize our tree distance:
 
 ```{r, eval = FALSE}
-expectedVCI <- randomTreeDistances['vci', 'mean', '9']
-ClusteringInfoDistance(tree1, tree2, normalize = TRUE) / expectedVCI
+expectedCID <- randomTreeDistances['vci', 'mean', '9']
+ClusteringInfoDistance(tree1, tree2, normalize = TRUE) / expectedCID
 ```
 
 ## Testing similarity to a known tree
 
-This score tells us how similar the two trees are.  Similarity has two 
-components: precision and accuracy.  A tree can be 80% similar to a target tree
-because it contains 80% of the splits in the target tree, and no 
-incorrect splits -- or because it is perfectly bifurcating, but 
+Similarity has two components: precision and accuracy.  A tree can be 80% 
+similar to a target tree because it contains 80% of the splits in the target 
+tree, and no incorrect splits -- or because it is a binary tree in which
 10% of the splits present are resolved incorrectly and are thus positively
 misleading.
 
 In such a comparison, of course, it is more sensible to talk about split
 _information_ than just the number of splits: an even split may
-contain more information than two very uneven split, so the absence of 
+contain more information than two very uneven splits, so the absence of 
 two information-poor splits may be preferable to the absence of one 
 information-rich split.  As such, it is most instructive to think of the
-proportion of information that has been correctly resolved: the desideratum
-is that we find a tree that is as informative as possible about the true tree.
+proportion of information that has been correctly resolved: the goal is to find
+a tree that is as informative as possible about the true tree.
 
 Ternary diagrams allow us to visualise the quality of a reconstructed tree
 with reference to a known 'true' tree:
 
-```{r, fig.width=6, fig.align='center', out.width='80%'}
+```{r fig.align='center', fig.height=1.8, fig.width=6, out.width='80%'}
 testTrees <- list(
   trueTree = ape::read.tree(text='(a, (b, (c, (d, (e, (f, (g, h)))))));'),
   lackRes = ape::read.tree(text='(a, (b, c, (d, e, (f, g, h))));'),
   smallErr = ape::read.tree(text='(a, (c, (b, (d, (f, (e, (g, h)))))));'),
   bigErr = ape::read.tree(text='(a, (c, (((b, d), (f, h)), (e, g))));')
 )
-VisualizeMatching(NyeTreeSimilarity, testTrees$trueTree, testTrees$lackRes)
-points(4, 7.5, pch=2, cex=3, col=Ternary::cbPalette8[2])
-VisualizeMatching(NyeTreeSimilarity, testTrees$trueTree, testTrees$smallErr)
-points(4, 7.5, pch=3, cex=3, col=Ternary::cbPalette8[3])
-VisualizeMatching(NyeTreeSimilarity, testTrees$trueTree, testTrees$bigErr)
-points(4, 7.5, pch=4, cex=3, col=Ternary::cbPalette8[4])
+VisualizeMatching(MutualClusteringInfo, testTrees$trueTree, testTrees$lackRes)
+points(4, 7.5, pch=2, cex=3, col="#E69F00")
+VisualizeMatching(MutualClusteringInfo, testTrees$trueTree, testTrees$smallErr)
+points(4, 7.5, pch=3, cex=3, col="#56B4E9")
+VisualizeMatching(MutualClusteringInfo, testTrees$trueTree, testTrees$bigErr)
+points(4, 7.5, pch=4, cex=3, col="#009E73")
 ```
 
-Better trees plot vertically towards the 'shared information' vertex. 
+Better trees plot vertically towards the '100% shared information' vertex. 
 Resolution of trees increases towards the right; trees that are more
 resolved may be no better than less-resolved trees if the addition of 
 resolution introduces error.
@@ -231,7 +232,7 @@ TernaryPlot(atip=NULL, btip=NULL, ctip=NULL,
 
 HorizontalGrid()
 correct <- MutualClusteringInfo(testTrees$trueTree, testTrees)
-resolved <- ClusteringInfo(testTrees)
+resolved <- ClusteringEntropy(testTrees)
 unresolved <- resolved['trueTree'] - resolved
 incorrect <- resolved - correct
 TernaryPoints(cbind(unresolved, correct, incorrect), 
@@ -287,14 +288,14 @@ correct3 <- MutualClusteringInfo(trueTree, threeAway)
 
 The amount of information in each degraded tree:
 ```{r}
-infoInTree1 <- ClusteringInfo(oneAway)
-infoInTree3 <- ClusteringInfo(threeAway)
+infoInTree1 <- ClusteringEntropy(oneAway)
+infoInTree3 <- ClusteringEntropy(threeAway)
 ```
 
 The amount of information that could have been resolved, but was not:
 ```{r}
-unresolved1 <- ClusteringInfo(trueTree) - infoInTree1
-unresolved3 <- ClusteringInfo(trueTree) - infoInTree3
+unresolved1 <- ClusteringEntropy(trueTree) - infoInTree1
+unresolved3 <- ClusteringEntropy(trueTree) - infoInTree3
 ```
 
 And the amount of information incorrectly resolved:

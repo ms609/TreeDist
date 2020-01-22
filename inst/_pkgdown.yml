@@ -12,12 +12,11 @@ reference:
     desc: > 
       Functions for calculating distances between pairs of trees
     contents:
-      - has_concept("tree distances")
-      - starts_with("Mutual")
-      - starts_with("Variation")
+      - TreeDistance
+      - NyeTreeSimilarity
       - KendallColijn
       - MatchingSplitDistance
-      - NyeTreeSimilarity
+      - has_concept("tree distances")
   - title: "Information"
     desc: Calculations relating to information content
     contents:
