@@ -77,18 +77,18 @@ nodelabels(1:2, node=10:11, bg = palette[4], adj = c(-1, 0.5))
 
 ```
 
-The simplicity of counting splits is appealing, but limiting: it assumes 
-that all splits are equivalent, when they are not.
+The simplicity of counting splits is appealing, but limited by the simplifying
+assumption that all splits are equivalent.
 
 In the example above, 
 the probability that a tree with two unresolved clades of four taxa will be 
-compatible with the reference tree on the left is one in `r choose(8, 4) / 2`. 
-In contrast, a tree that separates two taxa from six has a one in seven 
+compatible with the reference tree on the left is $\frac{1}{`r choose(8, 4) / 2`}$. 
+In contrast, a tree that separates two taxa from six has a $\frac{1}{7}$ 
 chance of matching the reference tree: the similarity observed is five times
 more likely to have arisen by chance.  In other words, failure to match an
 even split is less noteworthy than failure to match an uneven one.
 
-As a consequence, trees whose splits are less even will, on average, have
+As a consequence, trees whose splits are less even will, on average, exhibit
 higher Robinson-Foulds distances with comparison trees.
 
 Consider a balanced and an unbalanced eight-taxon tree:
@@ -107,7 +107,7 @@ TreeDistPlot(caterpillarTree <-
                ape::read.tree(text="(1, (2, (3, (4, (5, (6, (7, 8)))))));"),
      edge.color = cbPalette8[2], leaveRoom = FALSE)
 ape::edgelabels(1:5, bg = palette[1], c(4, 6, 8, 10, 12), adj=c(0.5, -0.25))
-ape::edgelabels(c('2:6', '3:5', '4:4', '3:5', '2:6'), edge = c(4, 6, 8, 10, 12),
+ape::edgelabels(c('2|6', '3|5', '4|4', '3|5', '2|6'), edge = c(4, 6, 8, 10, 12),
                 frame = 'n', adj=c(0.5, 1.25))
 ape::edgelabels(c(3.46, 5.04, 5.53, 5.04, 3.46), edge = c(4, 6, 8, 10, 12),
                 frame = 'n', adj=c(0.5, 2.75))
@@ -115,10 +115,11 @@ legend('topleft', 'Asymmetric tree', bty='n', inset=c(-0.05, -0.03))
 ```
 
 Each tree divides the eight taxa into five splits.
-The information content (Shannon entropy) of a split is a function of the
-probability that the split will match a random tree, i.e. the proportion of
-eight-leaf tree topologies that contain the split in question.
-(Information content, in bits, is defined as $-log _2_(probability)$.)
+The [phylogenetic information content](information.html) of a split is a 
+function of the probability that the split will match a uniformly chosen random
+tree, i.e. the proportion of eight-leaf binary trees that contain the split in
+question.
+(Information content, in bits, is defined as $-\log_2(\textrm{probability})$.)
 This, in turn, is a function of the evenness of the split:
 
 ```{r ic-of-splits, display='asis', echo=FALSE, warnings=FALSE}
@@ -143,13 +144,13 @@ ic <- -log(matchingP) / log(2)
 
 knitr::kable(cbind(
       'Matching trees' = paste(matchingTrees, "/ 10 395"),
-      '_p_(Match in random tree)' = signif(matchingP, 3),
-      'Information content / bits' = signif(ic, 3)))
+      '_P_(Match in random tree)' = signif(matchingP, 3),
+      'Phylogenetic information content' = paste(signif(ic, 3), 'bits')))
 ```
 
-In the first tree, split 1 is even, dividing four taxa from four others (`4:4`); splits 2--5 are maximally uneven (`2:6`).  The total information content of these five splits is `r signif(sum(ic[c(4, 2, 2, 2, 2) - 1]), 4)`, whereas that of the five splits in 
-the second tree, of sizes `2:6`, `3:5`, `4:4`, `3:5` and `2:6`, is
-`r signif(sum(ic[c(2, 3, 4, 3, 2) - 1]), 4)`. Put another way, a random tree will
+In the first tree, split 1 is even, dividing four taxa from four others (`4|4`); splits 2--5 are maximally uneven (`2|6`).  The total information content of these five splits is `r signif(sum(ic[c(4, 2, 2, 2, 2) - 1]), 4)` bits, whereas that of the five splits in 
+the second tree, of sizes `2|6`, `3|5`, `4|4`, `3|5` and `2|6`, is
+`r signif(sum(ic[c(2, 3, 4, 3, 2) - 1]), 4)` bits. Put another way, a random tree will
 on average share more splits with the balanced tree (whose splits are 
 predominantly uneven and thus likely to be matched) than the asymmetric tree 
 (which contains more even splits that are less likely to occur in a random tree).
