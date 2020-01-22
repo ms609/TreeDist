@@ -150,8 +150,8 @@ Robinson-Foulds metric as the exponent grows towards infinity.
 ```{r, fig.width=6, fig.height = 4,fig.align='center', echo=FALSE}
 par(mar=c(4, 4, 0, 0))
 x <- seq(1, 20, by=0.1)
-cbPalette8 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", 
-"#D55E00", "#CC79A7") # dput(Ternary::cbPalette8)
+cbPalette8 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
+                "#0072B2", "#D55E00", "#CC79A7") # dput(Ternary::cbPalette8)
 plot(0, xlim = range(x), ylim = c(3.5, 9.5),
      xlab = expression(italic('k')), ylab = 'Jaccard-Robinson-Foulds distance',
      pch = 3, type='n')

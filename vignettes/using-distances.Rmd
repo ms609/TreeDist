@@ -215,28 +215,29 @@ resolved may be no better than less-resolved trees if the addition of
 resolution introduces error.
 
 ```{r, fig.width=4, fig.align='center', fig.asp=1, out.width='50%'}
-library('Ternary')
-par(mar=rep(0.1, 4))
-TernaryPlot(atip=NULL, btip=NULL, ctip=NULL,
-            alab='Absent information', blab='Shared information', clab='Misinformation',
-            lab.cex=0.8,
-            lab.offset=0.18, # higher value as longer tick labels
-            point='left', clockwise=FALSE,
-            #col=backgroundCol,
-            grid.lty='solid', grid.col='#aaaaaa',
-            grid.minor.lines = 0,
-            axis.labels = seq(0, 1, length.out=11L),
-            axis.col="#999999",
-            axis.labels.col = "black",
-            ticks.length = 0.025)
-
-HorizontalGrid()
-correct <- MutualClusteringInfo(testTrees$trueTree, testTrees)
-resolved <- ClusteringEntropy(testTrees)
-unresolved <- resolved['trueTree'] - resolved
-incorrect <- resolved - correct
-TernaryPoints(cbind(unresolved, correct, incorrect), 
-              pch=1:4, cex=2, col=Ternary::cbPalette8[1:4])
+if (require('Ternary')) {
+  par(mar=rep(0.1, 4))
+  TernaryPlot(atip=NULL, btip=NULL, ctip=NULL,
+              alab='Absent information', blab='Shared information', clab='Misinformation',
+              lab.cex=0.8,
+              lab.offset=0.18, # higher value as longer tick labels
+              point='left', clockwise=FALSE,
+              #col=backgroundCol,
+              grid.lty='solid', grid.col='#aaaaaa',
+              grid.minor.lines = 0,
+              axis.labels = seq(0, 1, length.out=11L),
+              axis.col="#999999",
+              axis.labels.col = "black",
+              ticks.length = 0.025)
+  
+  HorizontalGrid()
+  correct <- MutualClusteringInfo(testTrees$trueTree, testTrees)
+  resolved <- ClusteringEntropy(testTrees)
+  unresolved <- resolved['trueTree'] - resolved
+  incorrect <- resolved - correct
+  TernaryPoints(cbind(unresolved, correct, incorrect), 
+                pch=1:4, cex=2, col=Ternary::cbPalette8[1:4])
+}
 ```
 
 
@@ -324,47 +325,47 @@ spec3 <- apply(spec3, 2, ColToHex)
 Now we can plot this information on a ternary diagram.
 
 ```{r, fig.width=7, fig.align='center', fig.asp=5/7, out.width='70%'}
-library('Ternary')
-layout(matrix(c(1, 2), ncol=2), widths=c(5, 2))
-par(mar=rep(0, 4))
-TernaryPlot(alab='Information absent in degraded tree', 
-            blab='\n\nCorrect information in degraded tree', 
-            clab='Misinformation in degraded tree',
-            point='left', clockwise=FALSE,
-            grid.minor.lines = 0,
-            axis.labels = seq(0, 1, length.out=11L))
-
-HorizontalGrid()
-
-coords1 <- cbind(unresolved1, correct1, incorrect1)
-coords3 <- cbind(unresolved3, correct3, incorrect3)
-
-ColourTernary(TernaryDensity(coords1, resolution = 20), spectrum = spec1)
-ColourTernary(TernaryDensity(coords3, resolution = 20), spectrum = spec3)
-
-TernaryDensityContour(coords3, col = col3, nlevels = 4)
-TernaryDensityContour(coords1, col = col1, nlevels = 4)
-
-library('kdensity')
-HorizontalKDE <- function (dat, col, add = FALSE) {
-  lty <- 1
-  lwd <- 2
-  kde <- kdensity(dat)
-  kdeRange <- kdensity:::get_range(kde)
-  if (add) {
-    lines(kde(kdeRange), kdeRange, col = col, lty = lty, lwd = lwd)
-  } else {
-    plot(kde(kdeRange), kdeRange, col = col, lty = lty, lwd = lwd, ylim = c(0, 1),
-         main = '', axes = FALSE, type = 'l')
+if(require('Ternary')) {
+  layout(matrix(c(1, 2), ncol=2), widths=c(5, 2))
+  par(mar=rep(0, 4))
+  TernaryPlot(alab='Information absent in degraded tree', 
+              blab='\n\nCorrect information in degraded tree', 
+              clab='Misinformation in degraded tree',
+              point='left', clockwise=FALSE,
+              grid.minor.lines = 0,
+              axis.labels = seq(0, 1, length.out=11L))
+  
+  HorizontalGrid()
+  
+  coords1 <- cbind(unresolved1, correct1, incorrect1)
+  coords3 <- cbind(unresolved3, correct3, incorrect3)
+  
+  ColourTernary(TernaryDensity(coords1, resolution = 20), spectrum = spec1)
+  ColourTernary(TernaryDensity(coords3, resolution = 20), spectrum = spec3)
+  
+  TernaryDensityContour(coords3, col = col3, nlevels = 4)
+  TernaryDensityContour(coords1, col = col1, nlevels = 4)
+  
+  library('kdensity')
+  HorizontalKDE <- function (dat, col, add = FALSE) {
+    lty <- 1
+    lwd <- 2
+    kde <- kdensity(dat)
+    kdeRange <- kdensity:::get_range(kde)
+    if (add) {
+      lines(kde(kdeRange), kdeRange, col = col, lty = lty, lwd = lwd)
+    } else {
+      plot(kde(kdeRange), kdeRange, col = col, lty = lty, lwd = lwd, 
+           ylim = c(0, 1), main = '', axes = FALSE, type = 'l')
+    }
+    # abline(h=0:10 / 10) # Useful for confirming alignment
   }
-  # abline(h=0:10 / 10) # Useful for confirming alignment
+  
+  par(mar = c(1.8, 0, 1.8, 0)) # align plot limits with ternary plot
+  HorizontalKDE(correct1 / infoInTree1, col1, add = FALSE)
+  HorizontalKDE(correct3 / infoInTree3, col3, add = TRUE)
+  mtext('\u2192 Normalized tree quality \u2192', 2)
 }
-
-par(mar = c(1.8, 0, 1.8, 0)) # align plot limits with ternary plot
-HorizontalKDE(correct1 / infoInTree1, col1, add = FALSE)
-HorizontalKDE(correct3 / infoInTree3, col3, add = TRUE)
-mtext('\u2192 Normalized tree quality \u2192', 2)
-
 ```
 
 In the ternary plot, the vertical direction corresponds to the normalized tree

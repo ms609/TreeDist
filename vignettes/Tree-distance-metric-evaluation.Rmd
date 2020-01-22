@@ -18,7 +18,8 @@ vignette: >
 
 ```{r init, echo=FALSE, warning=FALSE}
 standardMargin <- c(0.4, 0.4, 0.8, 0.4)
-cbPalette8 <- Ternary::cbPalette8
+cbPalette8 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
+                "#0072B2", "#D55E00", "#CC79A7")
 ```
 
 ## Expected values for random trees
@@ -49,7 +50,7 @@ estimated by curve-fitting the maximum observed distance for each number of
 leaves.
 
 ```{R Tree-distance-averages, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, fig.align='center'}
-if (require('TreeDistData')) {
+if (require('TreeDistData') && FALSE) {  #TODO update and re-enable
   methods <- c('vpi', 'vmsi', 'vci', 'qd', 'nts', 'ja2', 'ja4', 'jna2', 'jna4',
                 'msd', 'mast', 'masti',
                 'nni_l', 'nni_t', 'nni_u', 'spr', 'tbr_l', 'tbr_u',

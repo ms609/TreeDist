@@ -81,7 +81,7 @@ navbar:
 
 template:
   params:
-    bootswatch: cerulean
+    bootswatch: minty
     docsearch:
       api_key: 8bf44d312479af73720c5ca5fcc12eba
       index_name: treedist
