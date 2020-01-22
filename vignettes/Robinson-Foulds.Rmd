@@ -249,7 +249,7 @@ The tree distance is given by the score of the optimal matching.
 
 ## Constructing a matching
 
-Let's consider two trees that differ in the position of a wildcard leaf,
+Let's consider two trees that differ in the position of one wildcard leaf,
 and in the resolution of a clade:
 
 ```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
@@ -259,34 +259,32 @@ tree2 <- read.tree(text='((A, B), ((C, D, (E, I)), (F, (G, H))));')
 Plot(tree1, tree2, highlight = 'I', prune=list(8, integer(0)))
 ```
 
-To emphasize, when the single taxon _I_ is removed, the trees 
-differ only in the resolution of a single node:
-
-```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
-TwoTreePlot()
-VisualizeMatching(RobinsonFoulds, drop.tip(tree1, 'I'), drop.tip(tree2, 'I'))
-```
-
-However, the Robinson-Foulds distance will see only one split, `AB|CDEFGHI`,
-in common between the two trees:
+These trees obtain a Robinson-Foulds distance of nine,
+out of a maximum of eleven possible for trees of this resolution.
+`AB|CDEFGHI` is the only split in common between the two trees:
 
 ```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
 TwoTreePlot()
 VisualizeMatching(RobinsonFoulds, tree1, tree2)
 ```
 
-This results in a distance score of nine, out of a maximum possible (for
-trees exhibiting this resolution) of eleven;
-the Robinson-Foulds distance is the number of splits present in one tree 
-but not the other.
+This high score does not seem to reflect the similarity between the trees:
+removing the single leaf _I_ results in two trees that differ only 
+in the resolution of a single node:
 
-The solution is to assign non-zero similarity scores to splits that are
-similar, but not identical.
+```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
+TwoTreePlot()
+VisualizeMatching(RobinsonFoulds, drop.tip(tree1, 'I'), drop.tip(tree2, 'I'))
+```
 
-We discussed above weighting each matching pair of splits according to the
-amount of phylogenetic information represented by the split.
-A non-matching pair of splits can be scored according to the 
-shared phylogenetic information, which is a function of the proportion of trees
+This hidden similarity can bb better reflected if similar, but non-identical,
+splits are assigned non-zero similarity scores.
+
+There are various ways to score the similarity between two splits. 
+One is to build on the idea introduced above, where identical splits are
+scored according to their phylogenetic information content.  Non-matching
+splits can be scored according to the amount of phylogenetic information that 
+they hold in common, which is a function of the proportion of trees
 that are consistent with both splits.  (A full explanation is provided
 in the discussion of [Generalized Robinson-Foulds distances](Generalised-RF.html).<!-- #TODO test link -->)
 
