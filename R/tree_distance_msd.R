@@ -3,7 +3,7 @@
 #' Implements the Matching Split Distance for unrooted binary phylogenetic 
 #' trees of Bogdanowicz and Giaro (2012).
 #' 
-#' @inheritParams SharedPhylogeneticInfo
+#' @inheritParams TreeDistance
 #' 
 #' @template distReturn
 #' 

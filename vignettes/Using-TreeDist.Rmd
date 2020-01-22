@@ -64,8 +64,6 @@ distance <- TreeDistance(tree1, tree2)
 The convenience function `TreeDistance` returns the variation of clustering
 information between two trees, [normalized](using-distances.html)
 against the total information content of all splits.  
-For more on different tree distance metrics, see the
-[tree distance vignette](tree-distances.html).
 
 ### Multiple comparisons
 
@@ -130,4 +128,7 @@ You may wish to:
 
 - [Provide context](using-distances.html) for tree distances
 
-- Understand [how different metrics work](tree-distances.html)
+- Review [available distance measures](https://ms609.github.io/TreeDist/index.html)
+  and the corresponding [TreeDist functions](https://ms609.github.io/TreeDist/reference/index.html#section-tree-distance-measures)
+
+- [Evaluate tree distance metrics](Tree-distance-metric-evaluation.html)

@@ -12,8 +12,8 @@ vignette: >
 ---
 
 Once you understand [how to use TreeDist](Using-TreeDist.html) to calculate
-tree distances, and [what distances measure](tree-distances.html), the next
-step is to provide some context for the calculated distances.
+tree distances, the next step is to provide some context for the calculated
+distances.
 
 ## Normalizing
 
@@ -372,6 +372,11 @@ quality, as depicted in the accompanying histogram.
 
 ## What next?
 
-- More details of the [Ternary package](http://ms609.github.io/Ternary/)
+You may wish to:
 
-- A summary of the [distances implemented](tree-distances.html) in TreeDist
+- Explore the [Ternary package](http://ms609.github.io/Ternary/)
+
+- [Evaluate tree distance metrics](Tree-distance-metric-evaluation.html)
+
+- Review [available distance measures](https://ms609.github.io/TreeDist/index.html)
+  and the corresponding [TreeDist functions](https://ms609.github.io/TreeDist/reference/index.html#section-tree-distance-measures)
