@@ -144,8 +144,7 @@
 <a href="#pairs-of-trees" class="anchor"></a>Pairs of trees</h3>
 <p>Calculating the distance between two trees is as simple as:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">distance &lt;-<span class="st"> </span><span class="kw"><a href="../reference/TreeDistance.html">TreeDistance</a></span>(tree1, tree2)</a></code></pre></div>
-<p>The convenience function <code>TreeDistance</code> returns the variation of clustering information between two trees, <a href="using-distances.html">normalized</a> against the total information content of all splits.<br>
-For more on different tree distance metrics, see the <a href="tree-distances.html">tree distance vignette</a>.</p>
+<p>The convenience function <code>TreeDistance</code> returns the variation of clustering information between two trees, <a href="using-distances.html">normalized</a> against the total information content of all splits.</p>
 </div>
 <div id="multiple-comparisons" class="section level3">
 <h3 class="hasAnchor">
@@ -158,11 +157,11 @@ For more on different tree distance metrics, see the <a href="tree-distances.htm
 <a class="sourceLine" id="cb6-5" data-line-number="5"></a>
 <a class="sourceLine" id="cb6-6" data-line-number="6"><span class="kw"><a href="../reference/TreeDistance.html">TreeDistance</a></span>(oneTree, twoTrees)</a></code></pre></div>
 <pre><code>##       one       two 
-## 0.3575975 0.3504020</code></pre>
+## 0.1751639 0.1781790</code></pre>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="../reference/TreeDistance.html">TreeDistance</a></span>(twoTrees, threeTrees)</a></code></pre></div>
 <pre><code>##             a         b         c
-## one 0.1735818 0.2455866 0.2274377
-## two 0.2415400 0.2070774 0.2510598</code></pre>
+## one 0.1592476 0.1522748 0.2239890
+## two 0.2240750 0.3420409 0.1892591</code></pre>
 </div>
 </div>
 <div id="visualizing-a-matching" class="section level2">
@@ -216,7 +215,8 @@ Each split is labelled with a measure of its similarity, which is its contributi
 <p>You may wish to:</p>
 <ul>
 <li><p><a href="using-distances.html">Provide context</a> for tree distances</p></li>
-<li><p>Understand <a href="tree-distances.html">how different metrics work</a></p></li>
+<li><p>Review <a href="https://ms609.github.io/TreeDist/index.html">available distance measures</a> and the corresponding <a href="https://ms609.github.io/TreeDist/reference/index.html#section-tree-distance-measures">TreeDist functions</a></p></li>
+<li><p><a href="Tree-distance-metric-evaluation.html">Evaluate tree distance metrics</a></p></li>
 </ul>
 </div>
   </div>
