@@ -80,7 +80,7 @@
 #'     - `cophenetic.phylo`: Cophenetic distance
 #'     - `dist.topo`: Path (topological) distance, Robinson-Foulds distance.
 #' * [phangorn](https://cran.r-project.org/package=phangorn)
-#'     - `treedist`: SPR, Robinson-Foulds and path distances.
+#'     - `treedist`: Path, Robinson-Foulds and approximate SPR distances.
 #' * [Quartet](http://ms609.github.io/Quartet/): Triplet and Quartet distances, 
 #' using the tqDist algorithm.
 #' * [TBRDist](http://ms609.github.io/TBRDist/): TBR and SPR distances on 
