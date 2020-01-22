@@ -139,10 +139,10 @@ available in the data package
 distances for a selection of methods:
 
 ```{r, collapse=TRUE}
-#TODO UPDATE
+if (require('TreeDistData')) {
 data('randomTreeDistances', package='TreeDistData')
 
-methods <- c('vpi', 'vci', 'nts', 'qd')
+methods <- c('vpi', 'vci', 'nts', 'qd') #TODO Update
 methodCol <- c(vpi = '#e15659', vci = '#58a14e', nts = '#edc949', qd = '#af7aa1')
 
 par(cex = 0.7, mar=c(5, 5, 0.01, 0.01))
@@ -165,7 +165,7 @@ text(202, randomTreeDistances[methods, '50%', '200'] + 0.02,
        expression(paste(plain('Nye '), italic('et al.'))),
        'Quartet divergence'
        ), col= methodCol[methods], pos=2)
-
+}
 ```
 
 or use these calculated values to normalize our tree distance:
