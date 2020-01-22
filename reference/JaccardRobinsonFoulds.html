@@ -12,7 +12,7 @@
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/minty/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
@@ -258,26 +258,21 @@ split.</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>An array of numerics providing the distances between each pair of
-trees in <code>tree1</code> and <code>tree2</code>.</p>
+trees in <code>tree1</code> and <code>tree2</code>, or <code>splits1</code> and <code>splits2</code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>In short, this finds the optimal matching that pairs each branch from
 one tree with a branch in the second, where matchings are scored according to
 the size of the largest split that is consistent with both of them,
-normalized against the Jaccard index, and raised to an arbitrary exponent.</p>
+normalized against the Jaccard index, and raised to an arbitrary exponent.
+A more detailed explanation is availble in the
+<a href='https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric'>vignettes</a>.</p>
 <p>By default, arboreal matchings are enforced.</p>
 <p>Note that the settings <code>k = 1, arboreal = FALSE</code> give the similarity metric
 of Nye <em>et al</em>. (2006); a slightly faster implementation of this metric is
-available as <code>[NyeTreeSimilarity]</code>.</p>
+available as <code><a href='NyeTreeSimilarity.html'>NyeTreeSimilarity</a></code>.</p>
 <p>The examples section details how to visualize matchings with non-default
 parameter values.</p>
-    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
-
-    
-<ul>
-<li><p><code>JaccardSplitSimilarity</code>: Calculate tree similarity from splits
-instead of trees.</p></li>
-</ul>
     <h2 class="hasAnchor" id="normalization"><a class="anchor" href="#normalization"></a>Normalization</h2>
 
     
@@ -337,7 +332,6 @@ Springer, Berlin, Heidelberg.</p></li>
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
       <li><a href="#details">Details</a></li>
-      <li><a href="#functions">Functions</a></li>
       <li><a href="#normalization">Normalization</a></li>
       <li><a href="#references">References</a></li>
       <li><a href="#see-also">See also</a></li>
