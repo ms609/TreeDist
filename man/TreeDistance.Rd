@@ -208,7 +208,7 @@ MutualClusteringInfo(tree1, tree3) # > 0
 Other tree distances: \code{\link{JaccardRobinsonFoulds}},
   \code{\link{KendallColijn}}, \code{\link{MASTSize}},
   \code{\link{MatchingSplitDistance}},
-  \code{\link{NyeTreeSimilarity}},
+  \code{\link{NNIDist}}, \code{\link{NyeTreeSimilarity}},
   \code{\link{RobinsonFouldsInfo}}
 }
 \author{

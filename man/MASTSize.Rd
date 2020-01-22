@@ -61,7 +61,7 @@ the leaves contained within the subtree.
 Other tree distances: \code{\link{JaccardRobinsonFoulds}},
   \code{\link{KendallColijn}},
   \code{\link{MatchingSplitDistance}},
-  \code{\link{NyeTreeSimilarity}},
+  \code{\link{NNIDist}}, \code{\link{NyeTreeSimilarity}},
   \code{\link{RobinsonFouldsInfo}},
   \code{\link{TreeDistance}}
 }

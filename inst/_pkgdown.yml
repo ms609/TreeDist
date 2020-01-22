@@ -10,7 +10,7 @@ development:
 reference:
   - title: "Tree distance measures"
     desc: > 
-      Functions for calculating distances between pairs of trees
+      Functions for calculating distances between pairs of trees.
     contents:
       - TreeDistance
       - NyeTreeSimilarity
@@ -18,23 +18,21 @@ reference:
       - MatchingSplitDistance
       - has_concept("tree distances")
   - title: "Information"
-    desc: Calculations relating to information content
-    contents:
-      - Entropy
-      - JointInformation
-      - SplitEntropy
-      - SplitMutualInformation
-  - title: "Split clustering information"
     desc: >
-      Functions relevant to calculating the variation of information, 
-      sensu Meila 2007.
+      Functions addressing the information content and entropy of splits.
     contents:
       - AllSplitPairings
-      - SplitsCompatible
+      - Entropy
       - MeilaVariationOfInformation
+      - SplitsCompatible
+      - SplitEntropy
+      - has_concept("tree information functions")
+      - SplitSharedInformation
   - title: "Utility functions"
-    desc: Functions to assist user comprehension
+    desc: Functions to facilitate interaction with the package.
     contents:
+      - CompareAll
+      - LAPJV
       - VisualizeMatching
 
 navbar:

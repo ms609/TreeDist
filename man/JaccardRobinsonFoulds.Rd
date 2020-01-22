@@ -119,7 +119,7 @@ VisualizeMatching(JRF2, tree1, tree2, matchZeros = FALSE)
 Other tree distances: \code{\link{KendallColijn}},
   \code{\link{MASTSize}},
   \code{\link{MatchingSplitDistance}},
-  \code{\link{NyeTreeSimilarity}},
+  \code{\link{NNIDist}}, \code{\link{NyeTreeSimilarity}},
   \code{\link{RobinsonFouldsInfo}},
   \code{\link{TreeDistance}}
 }

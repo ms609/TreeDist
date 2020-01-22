@@ -60,6 +60,7 @@
 #' CompareAll(as.phylo(0:5, 8), NNIDist)
 #'   
 #' @template MRS
+#' @family tree distances
 #' @export
 NNIDist <- function (tree1, tree2 = tree1) {
   .TreeDistance(.NNIDistSingle, tree1, tree2)

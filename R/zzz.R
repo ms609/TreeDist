@@ -7,7 +7,7 @@ release_questions <- function() {
   c(
     "Is the code free of #TODOs?",
     "Have you checked the Vignettes for sanity?",
-    "Have you rebuilt the website with pkgdown::build_site()?",
+    "Have you checked the pkgdown::build_reference_index()?",
     "Have you refreshed the package meta with codemetar::write_codemeta()?",
     "Have you updated REFERENCES.bib with a citation to the published study?",
     "Have you updated inst/CITATION with a citation to the published study?",

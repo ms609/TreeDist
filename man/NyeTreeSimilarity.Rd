@@ -107,7 +107,7 @@ NyeTreeSimilarity(lapply(0:5, as.phylo, nTip = 8), similarity = FALSE)
 Other tree distances: \code{\link{JaccardRobinsonFoulds}},
   \code{\link{KendallColijn}}, \code{\link{MASTSize}},
   \code{\link{MatchingSplitDistance}},
-  \code{\link{RobinsonFouldsInfo}},
+  \code{\link{NNIDist}}, \code{\link{RobinsonFouldsInfo}},
   \code{\link{TreeDistance}}
 }
 \author{

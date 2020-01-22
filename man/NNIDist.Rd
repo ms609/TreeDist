@@ -68,6 +68,15 @@ CompareAll(as.phylo(0:5, 8), NNIDist)
 \references{
 \insertRef{Li1996}{TreeDist}
 }
+\seealso{
+Other tree distances: \code{\link{JaccardRobinsonFoulds}},
+  \code{\link{KendallColijn}}, \code{\link{MASTSize}},
+  \code{\link{MatchingSplitDistance}},
+  \code{\link{NyeTreeSimilarity}},
+  \code{\link{RobinsonFouldsInfo}},
+  \code{\link{TreeDistance}}
+}
 \author{
 Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
+\concept{tree distances}

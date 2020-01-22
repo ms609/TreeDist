@@ -53,7 +53,7 @@ lambda > 0, i.e. use of edge lengths in tree comparison.
 Other tree distances: \code{\link{JaccardRobinsonFoulds}},
   \code{\link{MASTSize}},
   \code{\link{MatchingSplitDistance}},
-  \code{\link{NyeTreeSimilarity}},
+  \code{\link{NNIDist}}, \code{\link{NyeTreeSimilarity}},
   \code{\link{RobinsonFouldsInfo}},
   \code{\link{TreeDistance}}
 }
