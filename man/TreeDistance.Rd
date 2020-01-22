@@ -101,28 +101,24 @@ different in the splits of two trees, under an optimal matching.
 }
 \section{Functions}{
 \itemize{
-\item \code{SharedPhylogeneticInfo}: Shared phylogenetic information between two trees.
+\item \code{SharedPhylogeneticInfo}: Shared phylogenetic information between splits of
+two trees.
 
-\item \code{DifferentPhylogeneticInfo}: Variation of phylogenetic information between two trees.
+\item \code{DifferentPhylogeneticInfo}: Phylogenetic information difference between splits
+of two trees.
 
-\item \code{ClusteringInfoDistance}: Variation of clustering information between two trees.
+\item \code{ClusteringInfoDistance}: Variation of clustering information distance between
+splits of two trees.
 
 \item \code{ExpectedVariation}: Estimate expected Shared and Different
 Phylogenetic Information for a pair of trees of a given topology.
 
 \item \code{MutualClusteringInfo}: Mutual Clustering Information of two trees.
 
-\item \code{SharedPhylogeneticInfoSplits}: Calculate shared phylogenetic information from splits instead of trees.
-
-\item \code{MutualClusteringInfoSplits}: Calculate clustering information from splits instead of trees
-
 \item \code{MatchingSplitInfo}: Mutual Matching Split information of two trees.
 
 \item \code{MatchingSplitInfoDistance}: Variation of matching split information between two
 trees.
-
-\item \code{MatchingSplitInfoSplits}: Calculate variation of matching split information
-from splits instead of trees.
 }}
 
 \section{Concepts of information}{

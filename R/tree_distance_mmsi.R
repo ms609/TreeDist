@@ -32,9 +32,7 @@ MatchingSplitInfoDistance <- function (tree1, tree2 = tree1,
 }
 
 
-#' @describeIn TreeDistance Calculate variation of matching split information
-#'   from splits instead of trees.
-#' @inheritParams SharedPhylogeneticInfoSplits
+#' @rdname TreeDistance
 #' @export
 MatchingSplitInfoSplits <- function (splits1, splits2,
                                            nTip = attr(splits1, 'nTip'),

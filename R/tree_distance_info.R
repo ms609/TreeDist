@@ -126,7 +126,8 @@ TreeDistance <- function (tree1, tree2 = tree1) {
   MutualClusteringInfo(tree1, tree2, normalize = TRUE, reportMatching = FALSE)
 }
 
-#' @describeIn TreeDistance Shared phylogenetic information between two trees.
+#' @describeIn TreeDistance Shared phylogenetic information between splits of
+#'  two trees.
 #' @export
 SharedPhylogeneticInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
                                     reportMatching = FALSE) {
@@ -138,7 +139,8 @@ SharedPhylogeneticInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
                 InfoInTree = SplitwiseInfo, Combine = pmin)
 }
 
-#' @describeIn TreeDistance Variation of phylogenetic information between two trees.
+#' @describeIn TreeDistance Phylogenetic information difference between splits
+#' of two trees.
 #' @export
 DifferentPhylogeneticInfo <- function (tree1, tree2 = tree1, 
                                          normalize = FALSE,
@@ -159,7 +161,8 @@ DifferentPhylogeneticInfo <- function (tree1, tree2 = tree1,
   ret
 }
 
-#' @describeIn TreeDistance Variation of clustering information between two trees.
+#' @describeIn TreeDistance Variation of clustering information distance between
+#' splits of two trees.
 #' @aliases ClusteringInfoDist
 #' @export
 ClusteringInfoDistance <- function (tree1, tree2 = tree1, normalize = FALSE,
@@ -237,7 +240,7 @@ MutualClusteringInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
 #' @export
 MutualClusteringInformation <- MutualClusteringInfo
 
-#' @describeIn TreeDistance Calculate shared phylogenetic information from splits instead of trees.
+#' @rdname TreeDistance
 #' @template splits12params
 #' @template nTipParam
 #' @export
@@ -248,7 +251,7 @@ SharedPhylogeneticInfoSplits <- function (splits1, splits2,
                 maximize = TRUE, reportMatching = reportMatching)
 }
 
-#' @describeIn TreeDistance Calculate clustering information from splits instead of trees
+#' @rdname TreeDistance
 #' @export
 MutualClusteringInfoSplits <- function (splits1, splits2,
                                         nTip = attr(splits1, 'nTip'),
