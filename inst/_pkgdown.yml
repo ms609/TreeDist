@@ -83,6 +83,8 @@ navbar:
 
 template:
   params:
+    bootswatch: cerulean
     docsearch:
       api_key: 8bf44d312479af73720c5ca5fcc12eba
       index_name: treedist
+    ganalytics: UA-156666971-1
