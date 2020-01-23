@@ -132,19 +132,34 @@ if (require('TreeDistData')) {  #TODO update acronyms
   
   pathMax <- randomTreeDistances['path', 'max', ]
   msdMax <- randomTreeDistances['msd', 'max', ]
+  nniMax <- randomTreeDistances['nni_u', 'max', ]
+  tbrMax <- randomTreeDistances['tbr_u', 'max', ]
   
-  nTip <- as.integer(names(pathMax))
+  nTip <- as.integer(dimnames(randomTreeDistances)[[3]])
   
   pathNorm <- nls(pathMax ~ a * (nTip ^2) + b * (nTip ^3) + nTip ^ c,
                  start = list(a = -0.0444, b = 4.6e-5, c = 1.478))
   
-  # loess(pathMax ~ nTip) is Unsuitable for small _n_
   msdNorm <- nls(msdMax ~ (a * nTip) + (c * nTip ^ b) + d,
               start = list(a = -16.795, b=1.135, c = 14.25, d = 1.86))
   
+  nniNorm <-  nls(nniMax ~ (a * nTip) + (c * nTip ^ b) + d + e * (nTip ^2) + f * (nTip ^3),
+                  start = list(a = -16.7, b=1.1, c = 14, d = 6, e = 0.01, f = 0.01))
+  
+  #tbrNorm <-  nls(tbrMax ~ (a * nTip) + (c * nTip ^ b) + d + e * (nTip ^2) + f * (nTip ^3),
+  #                start = list(a = 1, b=1, c = 0.01, d = 1, e = 0.01, f = 0.01))
+  tbrNorm <-  lm(tbrMax ~ nTip)
+  
+  
   normalizeAgainst <- rbind(
     path = predict(pathNorm),
-    msd = predict(msdNorm)
+    msd = predict(msdNorm),
+    nni_u = predict(nniNorm),
+    nni_l = predict(nniNorm),
+    tbr_u = nTip,
+    tbr_l = nTip,
+    mast = nTip,
+    masti = LnUnrooted(nTip) / log(2)
   )
   
   AddLine <- function (method, normalize = FALSE) {
@@ -156,6 +171,16 @@ if (require('TreeDistData')) {  #TODO update acronyms
                       (as.integer(n) / 2L), double(13))
     }
     if (normalize) dat <- dat / rep(normalizeAgainst[method, ], each=dim(dat)[1L])
+    Invert <- function (dat) {
+      dat['mean', ] <- 1 - dat['mean', ]
+      dat[c("min", "1%", "5%", "10%", "25%", "50%", "75%", "90%", "95%", 
+            "99%", "max"), ] <- 1 - 
+        dat[c("max", "99%", "95%", "90%", "75%", "50%", "25%", 
+              "10%", "5%", "1%", "min"), ]
+      dat
+    }
+    if (method %in% c('mast', 'masti')) dat <- Invert(dat)
+
     col <- methodCol[method]
     pch <- methodPch[method]
   
@@ -171,16 +196,17 @@ if (require('TreeDistData')) {  #TODO update acronyms
     #points(pointsAt, dat['50%', as.character(pointsAt)], col=col, pch=pch)
   }
   
-  par(mfrow = c(2, 1))
+  par(mfrow = c(3, 1))
   par(cex = 0.7)
   par(oma = rep(0, 4))
   par(mar = c(5, 5, 0.01, 0.01))
-  PlotMethods <- function (methods) {
+  PlotMethods <- function (methods, yMin = 0.4) {
     plot(as.integer(dimnames(randomTreeDistances)[[3]]),
          randomTreeDistances['vpi', 'mean', ],
-         ylim=c(0.4, 1), type='n',
+         ylim=c(yMin, 1), type='n',
          xlab = "Number of leaves", ylab = "Normalized tree distance")
-    for (method in methods) AddLine(method, method %in% c('msd', 'path'))
+    for (method in methods) AddLine(method, 
+                                    method %in% c('msd', rownames(normalizeAgainst)))
     
     
     legend('bottomright', bty='n',
@@ -195,10 +221,10 @@ if (require('TreeDistData')) {  #TODO update acronyms
            lty=1, lwd = c(1, 4, 6), col=c(1, "#00000066", "#00000033"),
            legend=c('Median', 'Interquartile range', 'Interdecile range'))
   }
-  PlotMethods(c('vpi', 'vmsi', 'vci', 'nts', 'ja2', 'ja4', 'jna2', 'jna4',
-                'msd', 'rf'))
+  PlotMethods(c('vpi', 'vmsi', 'vci', 'nts', 'msd', 'rf'))
+  PlotMethods(c('nts', 'ja2', 'ja4', 'jna2', 'jna4', 'rf'), yMin=0.7)
   PlotMethods(c('qd', 'mast', 'masti', 'nni_l', 'nni_u', 'spr', 'tbr_l', 'tbr_u',
-                'path'))
+                'path'), yMin = 0)
 } else {
   cat("\nInstall package `TreeDistData` to render this chart.")
 }

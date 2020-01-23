@@ -112,9 +112,9 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' 
 #' By default, arboreal matchings are enforced. 
 #' 
-#' Note that the settings `k = 1, arboreal = FALSE` give the similarity metric
-#' of Nye _et al_. (2006); a slightly faster implementation of this metric is
-#' available as [`NyeTreeSimilarity`].
+#' Note that the settings `k = 1, arboreal = FALSE, similarity = TRUE`
+#' give the similarity metric of Nye _et al_. (2006); a slightly faster
+#' implementation of this metric is available as [`NyeTreeSimilarity`].
 #' 
 #' The examples section below details how to visualize matchings with 
 #' non-default parameter values. 
