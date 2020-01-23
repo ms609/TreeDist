@@ -1,7 +1,7 @@
 #' Matching Split Distance
 #' 
-#' Implements the Matching Split Distance for unrooted binary phylogenetic 
-#' trees of Bogdanowicz and Giaro (2012).
+#' Calculates the [Matching Split Distance](https://ms609.github.io/TreeDist/articles/Generalized-RF.html#matching-split-distance)
+#' (Bogdanowicz and Giaro 2012) for unrooted binary trees.
 #' 
 #' @inheritParams TreeDistance
 #' 
@@ -32,7 +32,7 @@ MatchingSplitDistance <- function (tree1, tree2 = tree1, normalize = FALSE,
                 Combine = max)
 }
 
-#' @describeIn MatchingSplitDistance Calculate Matching Split Distance from splits instead of trees.
+#' @rdname MatchingSplitDistance
 #' @inheritParams SharedPhylogeneticInfoSplits
 #' @useDynLib TreeDist, .registration = TRUE
 #' @export
