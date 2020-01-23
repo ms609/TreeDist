@@ -97,12 +97,16 @@ NyeSplitSimilarity <- function (splits1, splits2,
 
 #' Jaccard-Robinson-Foulds metric
 #' 
-#' Implements the Jaccard-Robinson-Foulds metric of B&ouml;cker _et al_. (2013).
+#' Calculate the 
+#' [Jaccard-Robinson-Foulds metric](https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric)
+#' (B&ouml;cker _et al_. 2013).
 #' 
-#' In short, this finds the optimal matching that pairs each branch from
-#' one tree with a branch in the second, where matchings are scored according to
-#' the size of the largest split that is consistent with both of them,
-#' normalized against the Jaccard index, and raised to an arbitrary exponent.
+#' In short, the Jaccard-Robinson-Foulds metric is a generalized Robinson-Foulds
+#' metric: it finds the optimal matching that pairs each split in one tree with
+#' a similar split in the second.
+#' Matchings are scored according to the size of the largest split that is 
+#' consistent with both of them, normalized against the Jaccard index, and 
+#' raised to an arbitrary exponent. 
 #' A more detailed explanation is availble in the 
 #' [vignettes](https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric).
 #' 
@@ -112,8 +116,8 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' of Nye _et al_. (2006); a slightly faster implementation of this metric is
 #' available as [`NyeTreeSimilarity`].
 #' 
-#' The examples section details how to visualize matchings with non-default
-#' parameter values. 
+#' The examples section below details how to visualize matchings with 
+#' non-default parameter values. 
 #' 
 #' @inheritParams RobinsonFoulds
 #' @param k An arbitrary exponent to which to raise the Jaccard index.
@@ -133,13 +137,15 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' present in a pair of trees with _n_ leaves, by specifying 
 #' `normalize = n - 3`.
 #' 
+#' @template distReturn
+#' 
 #' @references 
 #' 
 #' - \insertRef{Nye2006}{TreeDist}
 #' 
 #' - \insertRef{Bocker2013}{TreeDist}
 #' 
-#' @examples {
+#' @examples 
 #' set.seed(2)
 #' tree1 <- ape::rtree(10)
 #' tree2 <- ape::rtree(10)
@@ -150,10 +156,6 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #'   JaccardRobinsonFoulds(tree1, tree2, k = 2, arboreal= TRUE, ...)
 #'   
 #' VisualizeMatching(JRF2, tree1, tree2, matchZeros = FALSE)
-#' 
-#' }
-#' 
-#' @template distReturn
 #' 
 #' @family tree distances
 #' 

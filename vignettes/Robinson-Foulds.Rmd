@@ -1,5 +1,5 @@
 ---
-title: "Robinson-Foulds metric"
+title: "Extending the Robinson-Foulds metric"
 author: "Martin R. Smith"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
