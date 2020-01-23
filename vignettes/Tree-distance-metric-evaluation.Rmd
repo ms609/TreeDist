@@ -49,19 +49,19 @@ maximum value and are thus crudely 'normalized' against an approximate maximum,
 estimated by curve-fitting the maximum observed distance for each number of
 leaves.
 
-```{R Tree-distance-averages, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=1, fig.width=6, fig.align='center'}
-if (require('TreeDistData') && FALSE) {  #TODO update and re-enable
+```{R Tree-distance-averages, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=2, fig.width=6, fig.align='center'}
+if (require('TreeDistData')) {  #TODO update acronyms
   methods <- c('vpi', 'vmsi', 'vci', 'qd', 'nts', 'ja2', 'ja4', 'jna2', 'jna4',
                 'msd', 'mast', 'masti',
-                'nni_l', 'nni_t', 'nni_u', 'spr', 'tbr_l', 'tbr_u',
+                'nni_l', 'nni_u', 'spr', 'tbr_l', 'tbr_u',
                 'rf', 'path')
   plotSequence <- c('vpi', 'vmsi', 'vci', 'qd', 'nts', 'ja2', 'ja4', 'jna2', 'jna4',
                 'msd', 'mast', 'masti',
-                'nni_l', 'nni_t', 'nni_u', 'spr', 'tbr_l', 'tbr_u',
+                'nni_l', 'nni_u', 'spr', 'tbr_l', 'tbr_u',
                 'rf', 'path')
   legendSequence <- c('vpi', 'vmsi', 'vci', 'qd', 'nts', 'ja2', 'ja4', 'jna2', 'jna4',
                 'msd', 'mast', 'masti',
-                'nni_l', 'nni_t', 'nni_u', 'spr', 'tbr_l', 'tbr_u',
+                'nni_l', 'nni_u', 'spr', 'tbr_l', 'tbr_u',
                 'rf', 'path')
   abbrevs <- c(
   rf  = 'Robinson-Foulds',
@@ -136,10 +136,11 @@ if (require('TreeDistData') && FALSE) {  #TODO update and re-enable
   nTip <- as.integer(names(pathMax))
   
   pathNorm <- nls(pathMax ~ a * (nTip ^2) + b * (nTip ^3) + nTip ^ c,
-                 start = list(a = -0.034, b = 4e-5, c = 1.44))
+                 start = list(a = -0.0444, b = 4.6e-5, c = 1.478))
+  
   # loess(pathMax ~ nTip) is Unsuitable for small _n_
   msdNorm <- nls(msdMax ~ (a * nTip) + (c * nTip ^ b) + d,
-                 start = list(a = -0.0006, b=-0.9394, c = 10.0733, d = 0.2877))
+              start = list(a = -16.795, b=1.135, c = 14.25, d = 1.86))
   
   normalizeAgainst <- rbind(
     path = predict(pathNorm),
@@ -170,28 +171,34 @@ if (require('TreeDistData') && FALSE) {  #TODO update and re-enable
     #points(pointsAt, dat['50%', as.character(pointsAt)], col=col, pch=pch)
   }
   
+  par(mfrow = c(2, 1))
   par(cex = 0.7)
-  par(oma=rep(0, 4))
-  par(mar=c(5, 5, 0.01, 0.01))
-  plot(as.integer(dimnames(randomTreeDistances)[[3]]),
-       randomTreeDistances['vpi', 'mean', ],
-       ylim=c(0.4, 1), type='n',
-       xlab = "Number of leaves", ylab = "Normalized tree distance")
-  for (method in methods) AddLine(method, method %in% c('msd', 'path'))
-  
-  
-  legend('bottomright', bty='n',
-         lty=1, legend=abbrevs, col=paste0(methodCol, 44), text.col='#FFFFFFFF',
-         pch = 15, pt.cex=1.8
-  )
-  
-  legend('bottomright', bty='n',
-         lty=1, legend=abbrevs, col=methodCol,
-         )
-  
-  legend('bottomleft', bty='n', inset=c(0.09, 0),
-         lty=1, lwd = c(1, 4, 6), col=c(1, "#00000066", "#00000033"),
-         legend=c('Median', 'Interquartile range', 'Interdecile range'))
+  par(oma = rep(0, 4))
+  par(mar = c(5, 5, 0.01, 0.01))
+  PlotMethods <- function (methods) {
+    plot(as.integer(dimnames(randomTreeDistances)[[3]]),
+         randomTreeDistances['vpi', 'mean', ],
+         ylim=c(0.4, 1), type='n',
+         xlab = "Number of leaves", ylab = "Normalized tree distance")
+    for (method in methods) AddLine(method, method %in% c('msd', 'path'))
+    
+    
+    legend('bottomright', bty='n',
+           lty=1, legend=abbrevs[methods], col=paste0(methodCol[methods], 44),
+           text.col='#FFFFFFFF', pch = 15, pt.cex=1.8
+    )
+    
+    legend('bottomright', bty='n', lty=1, 
+           legend=abbrevs[methods], col=methodCol[methods])
+    
+    legend('bottomleft', bty='n', inset=c(0.09, 0),
+           lty=1, lwd = c(1, 4, 6), col=c(1, "#00000066", "#00000033"),
+           legend=c('Median', 'Interquartile range', 'Interdecile range'))
+  }
+  PlotMethods(c('vpi', 'vmsi', 'vci', 'nts', 'ja2', 'ja4', 'jna2', 'jna4',
+                'msd', 'rf'))
+  PlotMethods(c('qd', 'mast', 'masti', 'nni_l', 'nni_u', 'spr', 'tbr_l', 'tbr_u',
+                'path'))
 } else {
   cat("\nInstall package `TreeDistData` to render this chart.")
 }
