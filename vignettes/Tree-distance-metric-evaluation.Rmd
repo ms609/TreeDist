@@ -159,7 +159,7 @@ if (require('TreeDistData')) {  #TODO update acronyms
     tbr_u = nTip,
     tbr_l = nTip,
     mast = nTip,
-    masti = LnUnrooted(nTip) / log(2)
+    masti = TreeTools::LnUnrooted(nTip) / log(2)
   )
   
   AddLine <- function (method, normalize = FALSE) {
