@@ -156,8 +156,10 @@ if (require('TreeDistData')) {  #TODO update acronyms
     msd = predict(msdNorm),
     nni_u = predict(nniNorm),
     nni_l = predict(nniNorm),
+    spr = nTip / 2L,
     tbr_u = nTip,
     tbr_l = nTip,
+    rf = NSplits(nTip) * 2L,
     mast = nTip,
     masti = TreeTools::LnUnrooted(nTip) / log(2)
   )
@@ -166,10 +168,6 @@ if (require('TreeDistData')) {  #TODO update acronyms
     dat <- randomTreeDistances[method, , ]
     dat <- dat[, !is.na(dat[1, ])]
     nLeaves <- colnames(dat)
-    if (method == 'spr') {
-      dat <- vapply(nLeaves, function (n) (as.integer(n) - 3L) * dat[, n] /
-                      (as.integer(n) / 2L), double(13))
-    }
     if (normalize) dat <- dat / rep(normalizeAgainst[method, ], each=dim(dat)[1L])
     Invert <- function (dat) {
       dat['mean', ] <- 1 - dat['mean', ]
@@ -200,7 +198,8 @@ if (require('TreeDistData')) {  #TODO update acronyms
   par(cex = 0.7)
   par(oma = rep(0, 4))
   par(mar = c(5, 5, 0.01, 0.01))
-  PlotMethods <- function (methods, yMin = 0.4) {
+  PlotMethods <- function (methods, yMin = 0.4,
+                           lp = c('bottomright', 'bottomleft')) {
     plot(as.integer(dimnames(randomTreeDistances)[[3]]),
          randomTreeDistances['vpi', 'mean', ],
          ylim=c(yMin, 1), type='n',
@@ -209,22 +208,23 @@ if (require('TreeDistData')) {  #TODO update acronyms
                                     method %in% c('msd', rownames(normalizeAgainst)))
     
     
-    legend('bottomright', bty='n',
+    legend(lp[1], bty='n',
            lty=1, legend=abbrevs[methods], col=paste0(methodCol[methods], 44),
            text.col='#FFFFFFFF', pch = 15, pt.cex=1.8
     )
     
-    legend('bottomright', bty='n', lty=1, 
+    legend(lp[1], bty='n', lty=1, 
            legend=abbrevs[methods], col=methodCol[methods])
     
-    legend('bottomleft', bty='n', inset=c(0.09, 0),
+    legend(lp[2], bty='n', inset=c(0.09, 0),
            lty=1, lwd = c(1, 4, 6), col=c(1, "#00000066", "#00000033"),
            legend=c('Median', 'Interquartile range', 'Interdecile range'))
   }
-  PlotMethods(c('vpi', 'vmsi', 'vci', 'nts', 'msd', 'rf'))
+  PlotMethods(c('rf', 'vpi', 'vci', 'msd', 'nts', 'vmsi'))
   PlotMethods(c('nts', 'ja2', 'ja4', 'jna2', 'jna4', 'rf'), yMin=0.7)
-  PlotMethods(c('qd', 'mast', 'masti', 'nni_l', 'nni_u', 'spr', 'tbr_l', 'tbr_u',
-                'path'), yMin = 0)
+  PlotMethods(c('nni_u', 'tbr_u', 'spr', 'masti', 'mast',
+                'path', 'qd', 'tbr_l', 'nni_l'), yMin = 0.14, 
+                lp = c('bottomright', 'right'))
 } else {
   cat("\nInstall package `TreeDistData` to render this chart.")
 }
