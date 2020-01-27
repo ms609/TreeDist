@@ -21,22 +21,22 @@ SplitList::SplitList(RawMatrix x) {
       /*Rcout << "Split " << split << ", bin << " << bin << ".\n";*/
       state[split][bin] = (splitbit) x(split, (bin * input_bins_per_bin));
       for (int input_bin = 1; input_bin != input_bins_per_bin; input_bin++) {
-        /*Rcout << "Adding " << (splitbit (x(i, (j * 2) + input_bin))) << " << "
-              << (R_BIN_SIZE * input_bin) << " to state [" << i << "][" << j 
-              << "], was " << state[i][j] << "\n";*/
+        /*Rcout << "Adding " << (splitbit (x(split, (bin * 2) + input_bin))) << " << "
+              << (R_BIN_SIZE * input_bin) << " to state [" << split << "][" 
+              << bin << "], was " << state[split][bin] << "\n";*/
         state[split][bin] += ((splitbit (x(split, (bin * input_bins_per_bin) + input_bin)))
                                 << (R_BIN_SIZE * input_bin));
       }
     }
     int bin = n_bins - 1;
     const int raggedy_bins = R_BIN_SIZE - ((R_BIN_SIZE - (n_input_bins % R_BIN_SIZE)) % R_BIN_SIZE);
-    /* Rcout << n_input_bins << " bins in; " << raggedy_bins << " raggedy bins\n";*/
+    /*Rcout << n_input_bins << " bins in; " << raggedy_bins << " raggedy bins\n";*/
     state[split][bin] = x(split, bin * input_bins_per_bin);
     /*Rcout << " State[" << split << "][" << bin << "] = " << state[split][bin] << ".\n";*/
     for (int input_bin = 1; input_bin != raggedy_bins; input_bin++) {
-      /*Rcout << "Adding " << (splitbit (x(i, (j * 2) + input_bin))) << " << "
-            << (R_BIN_SIZE * input_bin) << " to state [" << i << "][" << j 
-            << "], was " << state[i][j] << "\n";*/
+      /*Rcout << "Adding " << (splitbit (x(split, (bin * 2) + input_bin))) << " << "
+            << (R_BIN_SIZE * input_bin) << " to state [" << split << "][" << bin 
+            << "], was " << state[split][bin] << "\n";*/
       state[split][bin] += ((splitbit (x(split, (bin * input_bins_per_bin) + input_bin)))
                         << (R_BIN_SIZE * input_bin));
     }

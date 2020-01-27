@@ -50,7 +50,7 @@ extern double lg2_trees_matching_split(int a, int b),
               const unsigned int nK, const double n),
   one_overlap (const int a, const int b, const int n),
   one_overlap_notb (const int a, const int n_minus_b, const int n),
-  mpi (const splitbit* a_state, const splitbit* b_state, const int n_tips, 
+  spi (const splitbit* a_state, const splitbit* b_state, const int n_tips, 
        const int in_a, const int in_b, 
        const double lg2_unrooted_n, const int n_bins);
 
