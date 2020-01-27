@@ -132,7 +132,7 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' 
 #' If `normalize = TRUE`, then results will be rescaled from zero to one by
 #' dividing by the maximum possible value for trees of the given topologies,
-#' which is equal to the number of splits in both trees. 
+#' which is equal to the sum of the number of splits in each tree. 
 #' You may wish to normalize instead against the maximum number of splits
 #' present in a pair of trees with _n_ leaves, by specifying 
 #' `normalize = n - 3`.

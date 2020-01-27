@@ -46,7 +46,7 @@ GeneralizedRF <- function (splits1, splits2, nTip, PairScorer,
     }
     attr(ret, 'matching') <- matching
     
-    # We're not worried about performance any more
+    # If reporting matching, we're not worried about performance
     pairScores <- matrix(0, nSplits1, nSplits2)
     for (i in seq_len(nSplits1)) {
       for (j in seq_len(nSplits2)) {

@@ -59,38 +59,41 @@ An array of numerics providing the distances between each pair of
 trees in \code{tree1} and \code{tree2}, or \code{splits1} and \code{splits2}.
 }
 \description{
-Implements the Jaccard-Robinson-Foulds metric of Böcker \emph{et al}. (2013).
+Calculate the
+\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric}{Jaccard-Robinson-Foulds metric}
+(Böcker \emph{et al}. 2013).
 }
 \details{
-In short, this finds the optimal matching that pairs each branch from
-one tree with a branch in the second, where matchings are scored according to
-the size of the largest split that is consistent with both of them,
-normalized against the Jaccard index, and raised to an arbitrary exponent.
+In short, the Jaccard-Robinson-Foulds metric is a generalized Robinson-Foulds
+metric: it finds the optimal matching that pairs each split in one tree with
+a similar split in the second.
+Matchings are scored according to the size of the largest split that is
+consistent with both of them, normalized against the Jaccard index, and
+raised to an arbitrary exponent.
 A more detailed explanation is availble in the
 \href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric}{vignettes}.
 
 By default, arboreal matchings are enforced.
 
-Note that the settings \code{k = 1, arboreal = FALSE} give the similarity metric
-of Nye \emph{et al}. (2006); a slightly faster implementation of this metric is
-available as \code{\link{NyeTreeSimilarity}}.
+Note that the settings \code{k = 1, arboreal = FALSE, similarity = TRUE}
+give the similarity metric of Nye \emph{et al}. (2006); a slightly faster
+implementation of this metric is available as \code{\link{NyeTreeSimilarity}}.
 
-The examples section details how to visualize matchings with non-default
-parameter values.
+The examples section below details how to visualize matchings with
+non-default parameter values.
 }
 \section{Normalization}{
 
 
 If \code{normalize = TRUE}, then results will be rescaled from zero to one by
 dividing by the maximum possible value for trees of the given topologies,
-which is equal to the number of splits in both trees.
+which is equal to the sum of the number of splits in each tree.
 You may wish to normalize instead against the maximum number of splits
 present in a pair of trees with \emph{n} leaves, by specifying
 \code{normalize = n - 3}.
 }
 
 \examples{
-{
 set.seed(2)
 tree1 <- ape::rtree(10)
 tree2 <- ape::rtree(10)
@@ -101,8 +104,6 @@ JRF2 <- function (tree1, tree2, ...)
   JaccardRobinsonFoulds(tree1, tree2, k = 2, arboreal= TRUE, ...)
   
 VisualizeMatching(JRF2, tree1, tree2, matchZeros = FALSE)
-
-}
 
 }
 \references{

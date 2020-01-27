@@ -47,14 +47,9 @@ An array of numerics providing the distances between each pair of
 trees in \code{tree1} and \code{tree2}, or \code{splits1} and \code{splits2}.
 }
 \description{
-Implements the Matching Split Distance for unrooted binary phylogenetic
-trees of Bogdanowicz and Giaro (2012).
+Calculates the \href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#matching-split-distance}{Matching Split Distance}
+(Bogdanowicz and Giaro 2012) for unrooted binary trees.
 }
-\section{Functions}{
-\itemize{
-\item \code{MatchingSplitDistanceSplits}: Calculate Matching Split Distance from splits instead of trees.
-}}
-
 \section{Normalization}{
 
 
