@@ -148,7 +148,7 @@ if (require('TreeDistData')) {  #TODO update acronyms
     spr = nTip / 2L,
     tbr_u = nTip,
     tbr_l = nTip,
-    rf = NSplits(nTip) * 2L,
+    rf = (nTip - 3L) * 2L,
     mast = nTip,
     masti = TreeTools::LnUnrooted(nTip) / log(2)
   )
