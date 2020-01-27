@@ -343,7 +343,8 @@ List cpp_jaccard_similarity (RawMatrix x, RawMatrix y,
   cost *u = new cost[most_splits], *v = new cost[most_splits];
   
   NumericVector final_score = NumericVector::create(
-    (double)((max_score * most_splits) - lap(most_splits, score, rowsol, colsol, u, v))
+    (double)((max_score * most_splits) 
+               - lap(most_splits, score, rowsol, colsol, u, v))
     / max_score);
   for (int i = 0; i < most_splits; i++) delete[] score[i];
   delete[] u; delete[] v; delete[] colsol; delete[] score;
