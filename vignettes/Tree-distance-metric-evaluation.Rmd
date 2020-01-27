@@ -221,7 +221,7 @@ if (require('TreeDistData')) {  #TODO update acronyms
            legend=c('Median', 'Interquartile range', 'Interdecile range'))
   }
   PlotMethods(c('rf', 'vpi', 'vci', 'msd', 'nts', 'vmsi'))
-  PlotMethods(c('nts', 'ja2', 'ja4', 'jna2', 'jna4', 'rf'), yMin=0.7)
+  PlotMethods(c('rf', 'ja4', 'jna4', 'ja2', 'jna2', 'nts'), yMin=0.7)
   PlotMethods(c('nni_u', 'tbr_u', 'spr', 'masti', 'mast',
                 'path', 'qd', 'tbr_l', 'nni_l'), yMin = 0.14, 
                 lp = c('bottomright', 'right'))
