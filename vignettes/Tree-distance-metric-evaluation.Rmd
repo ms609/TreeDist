@@ -37,17 +37,6 @@ The raw data are available in the data object
 `randomTreeDistances` in the R package
 [`TreeDistData`](https://github.com/ms609/TreeDistData).
 
-Information-based metrics are normalized against the total 
-information content of each pair of trees. 
-The Robinson-Foulds, Nye _et al._ and Quartet metrics 
-are normalized based on the maximum possible value. 
-The SPR distance is normalized against _n_ / 2; this value lies between the 
-definitive bounds of the maximum diameter of the SPR distance [@Allen2001],
-and was not exceeded by any of the random tree pairs.
-The path and Matching Split Distance metrics do not have a readily calculated
-maximum value and are thus crudely 'normalized' against an approximate maximum, 
-estimated by curve-fitting the maximum observed distance for each number of
-leaves.
 
 ```{R Tree-distance-averages, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=2, fig.width=6, fig.align='center'}
 if (require('TreeDistData')) {  #TODO update acronyms
@@ -229,6 +218,21 @@ if (require('TreeDistData')) {  #TODO update acronyms
   cat("\nInstall package `TreeDistData` to render this chart.")
 }
 ```
+
+
+Information-based metrics are normalized against the total information content 
+of each pair of trees. 
+The (Jaccard-)Robinson-Foulds, Nye _et al._, maximum agreement subtree and 
+Quartet metrics are normalized based on the maximum possible value. 
+The SPR distance is normalized against _n_ / 2; this value lies between the 
+definitive bounds of the maximum diameter of the SPR distance [@Allen2001],
+and was not exceeded by any of the random tree pairs.  The TBR distance is 
+normalized against _n_.
+The path, Matching Split Distance and NNI metrics do not have a readily
+calculated maximum value and are thus crudely 'normalized' against an
+approximate maximum, estimated by fitting a polynomial to the the maximum 
+observed distance for each number of leaves.  Candidate polynomial functions
+were evaluated based on the Akaike and Bayesian information criteria.
 
 Note that the path and Matching Splits distances exhibit a prominently larger 
 variability than other metrics, suggesting that they are less consistent in the
