@@ -123,7 +123,8 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   
   LabelUnpaired <- function (splitEdges, unpaired) {
     if (any(unpaired)) {
-      edgelabels(text='\u2212', edge=splitEdges[unpaired],
+      #edgelabels(text="\u2012", edge=splitEdges[unpaired],
+      edgelabels(text=expression('-'), edge=splitEdges[unpaired],
                  frame='n', col=faint, adj=adjNo)
       edgelabels(text='0', edge=splitEdges[unpaired],
                  frame='n', col=faint, cex=0.8, adj=adjVal)
