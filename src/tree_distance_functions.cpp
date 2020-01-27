@@ -78,12 +78,12 @@ double one_overlap_notb (const int a, const int n_minus_b, const int n) {
   return lg2_rooted[a] + lg2_rooted[n_minus_b] - lg2_rooted[a - b + 1];
 }
 
-double mpi (const splitbit* a_state, const splitbit* b_state,
+double spi (const splitbit* a_state, const splitbit* b_state,
             const int n_tips, const int in_a, const int in_b,
             const double lg2_unrooted_n, const int n_bins) {
   bool flag = true;
   
-    for (int bin = 0; bin < n_bins; bin++) {
+  for (int bin = 0; bin < n_bins; bin++) {
     if (a_state[bin] & b_state[bin]) {
       flag = false;
       break;
@@ -107,9 +107,10 @@ double mpi (const splitbit* a_state, const splitbit* b_state,
   }
   if (flag) return lg2_unrooted_n - one_overlap(in_a, in_b, n_tips);
   
+  const int loose_end_tips = n_tips % BIN_SIZE;
   for (int bin = 0; bin < n_bins; bin++) {
     splitbit test = ~(a_state[bin] | b_state[bin]);
-    if (bin == n_bins - 1) test &= ~(ALL_ONES << (n_tips % BIN_SIZE));
+    if (bin == n_bins - 1 && loose_end_tips) test &= ~(ALL_ONES << loose_end_tips);
     if (test) {
       flag = true;
       break;

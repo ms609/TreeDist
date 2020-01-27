@@ -524,7 +524,6 @@ List cpp_shared_phylo (RawMatrix x, RawMatrix y,
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   SplitList a(x), b(y);
-  
   const int most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     n_tips = nTip[0];
   const cost max_score = BIG;
@@ -552,7 +551,7 @@ List cpp_shared_phylo (RawMatrix x, RawMatrix y,
   for (int ai = 0; ai != a.n_splits; ai++) {
     for (int bi = 0; bi != b.n_splits; bi++) {
       score[ai][bi] = max_score * (1 - 
-        (mpi(a.state[ai], b.state[bi], n_tips, in_a[ai], in_b[bi],
+        (spi(a.state[ai], b.state[bi], n_tips, in_a[ai], in_b[bi],
              lg2_unrooted_n, a.n_bins) / max_possible));
     }
     for (int bi = b.n_splits; bi < most_splits; bi++) {
