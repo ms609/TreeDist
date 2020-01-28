@@ -1,8 +1,9 @@
-#' Size of Maximum Agreement Subtree
+#' Maximum Agreement Subtree size
 #' 
-#' Calculate the maximum agreement subtree between two phylogenetic trees, i.e.
-#' the largest tree that can be obtained from either `tree1` or `tree2` solely
-#' by deleting leaves.
+#' Calculate the size or phylogenetic information content (Steel & Penny 2006)
+#' of the maximum agreement subtree between two phylogenetic trees, i.e.
+#' the largest tree that can be obtained from both `tree1` and `tree2` by
+#' deleting, but not rearranging, leaves.
 #' 
 #' @template tree12Params
 #' @param rooted Logical specifying whether to treat the trees as rooted.
@@ -11,7 +12,7 @@
 #' maximum agreement subtree.
 #' 
 #' @examples
-#' library('TreeTools')
+#' library('TreeTools') # for as.phylo, BalancedTree, PectinateTree
 #' MASTSize(PectinateTree(8), BalancedTree(8))
 #' MASTInfo(PectinateTree(8), BalancedTree(8))
 #' 
@@ -26,13 +27,15 @@
 #' MASTInfo(list(Bal = BalancedTree(7), Pec = PectinateTree(7)),
 #'          as.phylo(0:3, 7))
 #' 
-#' CompareAll(as.phylo(0:5, 8), MASTSize)
-#' CompareAll(as.phylo(0:5, 8), MASTInfo)
+#' CompareAll(as.phylo(0:4, 8), MASTSize)
+#' CompareAll(as.phylo(0:4, 8), MASTInfo)
 #' 
-#' @seealso [`phangorn::mast`], a slower, all-R implementation that also returns
-#' the leaves contained within the subtree.
+#' @seealso [`phangorn::mast`], a slower implementation that also lists the
+#' leaves contained within the subtree.
 #' 
 #' @references 
+#' \insertRef{Steel2006}{TreeDist}
+#' 
 #' \insertRef{Valiente2009}{TreeDist}
 #' 
 #' @template MRS
@@ -76,7 +79,7 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
   cpp_mast(PostorderEdges(edge1) - 1L, PostorderEdges(edge2) - 1L, nTip)
 }
 
-#' @describeIn MASTSize Information content of maximum agreement subtree.
+#' @rdname MASTSize
 #' @return `MASTInfo` returns a vector or matrix listing the phylogenetic
 #' information content, in bits, of the maximum agreement subtree.
 #' @importFrom TreeTools LnRooted.int LnUnrooted.int

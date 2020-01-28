@@ -44,6 +44,8 @@
 #' @examples 
 #' library('TreeTools')
 #' NyeTreeSimilarity(BalancedTree(8), PectinateTree(8))
+#' VisualizeMatching(NyeTreeSimilarity ,BalancedTree(8), PectinateTree(8))
+
 #' NyeTreeSimilarity(lapply(0:5, as.phylo, nTip = 8), PectinateTree(8))
 #' NyeTreeSimilarity(lapply(0:5, as.phylo, nTip = 8), similarity = FALSE)
 #' 

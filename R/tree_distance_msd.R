@@ -14,6 +14,17 @@
 #' let me know by
 #' \href{https://github.com/ms609/TreeDist/issues/new}{creating a GitHub issue}
 #' so that it can be implemented.
+#' 
+#' @examples 
+#' 
+#' MatchingSplitDistance(lapply(rep(8, 5), ape::rtree), normalize = 16)
+#' 
+#' MatchingSplitDistance(TreeTools::BalancedTree(6),
+#'                       TreeTools::PectinateTree(6),
+#'                       reportMatching = TRUE)
+#' 
+#' VisualizeMatching(MatchingSplitDistance, TreeTools::BalancedTree(6),
+#'                   TreeTools::PectinateTree(6))
 #'  
 #' @references \insertRef{Bogdanowicz2012}{TreeDist}
 #' @family tree distances

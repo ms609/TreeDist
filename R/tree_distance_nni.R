@@ -1,4 +1,4 @@
-#' Approximate the NNI distance
+#' Approximate Nearest Neighbour Interchange distance
 #' 
 #' An approximation of the Nearest Neighbour Interchange distance, based on
 #' Li _et al._ (1996).
@@ -57,7 +57,7 @@
 #' NNIDist(list(BalancedTree(7), PectinateTree(7)),
 #'         as.phylo(0:3, 7))
 #'
-#' CompareAll(as.phylo(0:5, 8), NNIDist)
+#' CompareAll(as.phylo(0:4, 8), NNIDist)
 #'   
 #' @template MRS
 #' @family tree distances
