@@ -10,14 +10,14 @@ release_questions <- function() {
     "Have you checked pkgdown::build_reference_index()?",
     "Have you refreshed the package meta with codemetar::write_codemeta()?",
     "Have you updated README.md, inst/REFERENCES.bib & inst/CITATION with a citation to the published study?",
-    "Have you updated the version number in inst/CITATION, .zenodo.json, NEWS & DESCRIPTION?"
+    "Have you updated the version number in .zenodo.json, NEWS & DESCRIPTION?"
     )
 }
 
 # Additional tests:
 # 
-# check_win_devel(); check_rhub()
+# check_win_devel(); rhub::check_for_cran()
 # revdepcheck::revdep_check()
 # build_vignettes()
-# tools::resaveRdaFiles('data', compress='auto' - is default bzip2 the optimal?
-# tools::checkRdaFiles('data') - set optimal compression in `data-raw`
+# tools::resaveRdaFiles('R', compress='auto') - is default bzip2 the optimal?
+# tools::checkRdaFiles('R') - set optimal compression in `data-raw`

@@ -5,8 +5,8 @@
   ],
   "@type": "SoftwareSourceCode",
   "identifier": "TreeDist",
-  "description": "Implements various measures of tree similarity, including \n  Information-based generalized Robinson-Foulds distances\n  (Mutual Phylogenetic Information, Mutual Clustering Information; Smith, in revision); \n  the metric of Nye et al. (2006) <doi:10.1093/bioinformatics/bti720>;\n  the Matching Split Distance (Bogdanowicz & Giaro 2012) <doi:10.1109/TCBB.2011.48>;\n  and the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>.",
-  "name": "TreeDist: Distances between Phylogenetic Trees",
+  "description": "Implements measures of tree similarity, including \n  Information-based generalized Robinson-Foulds distances\n  (Shared Phylogenetic Information, Mutual Clustering Information; Smith, in revision); \n  Jaccard-Robinson-Foulds distances (Bocker et al. 2013) <doi:10.1007/978-3-642-40453-5_13>, \n  including the Nye et al. (2006) metric <doi:10.1093/bioinformatics/bti720>;\n  the Matching Split Distance (Bogdanowicz & Giaro 2012) <doi:10.1109/TCBB.2011.48>;\n  Maximum Agreement Subtree distances;\n  the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>, and the\n  Nearest Neighbour Interchange (NNI) distance, approximated per Li et al. 1996\n  <doi:10.1007/3-540-61332-3_168>.",
+  "name": "TreeDist: Distances Between Phylogenetic Trees",
   "codeRepository": "https://github.com/ms609/TreeDist",
   "issueTracker": "https://github.com/ms609/TreeDist/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
@@ -30,15 +30,14 @@
   "contributor": [
     {
       "@type": "Person",
-      "givenName": "Harold",
-      "familyName": "Cooper",
-      "email": "hbc@mit.edu"
-    },
-    {
-      "@type": "Person",
       "givenName": "Yong",
       "familyName": "Yang",
       "email": "yongyanglink@gmail.com"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Yi",
+      "familyName": "Cao"
     }
   ],
   "copyrightHolder": [
@@ -123,6 +122,19 @@
     },
     {
       "@type": "SoftwareApplication",
+      "identifier": "phangorn",
+      "name": "phangorn",
+      "version": ">= 2.2.1",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=phangorn"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "Quartet",
       "name": "Quartet",
       "provider": {
@@ -159,6 +171,18 @@
     },
     {
       "@type": "SoftwareApplication",
+      "identifier": "Rdpack",
+      "name": "Rdpack",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=Rdpack"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "testthat",
       "name": "testthat",
       "provider": {
@@ -181,13 +205,6 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=Ternary"
-    },
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "TreeDistData",
-      "name": "TreeDistData",
-      "version": ">= 0.0.0.9005",
-      "sameAs": "https://github.com/ms609/TreeDistData"
     },
     {
       "@type": "SoftwareApplication",
@@ -236,18 +253,6 @@
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "clue",
-      "name": "clue",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=clue"
-    },
-    {
-      "@type": "SoftwareApplication",
       "identifier": "colorspace",
       "name": "colorspace",
       "provider": {
@@ -272,31 +277,6 @@
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "phangorn",
-      "name": "phangorn",
-      "version": ">= 2.2.1",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=phangorn"
-    },
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "Rdpack",
-      "name": "Rdpack",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=Rdpack"
-    },
-    {
-      "@type": "SoftwareApplication",
       "identifier": "stats",
       "name": "stats"
     },
@@ -304,20 +284,24 @@
       "@type": "SoftwareApplication",
       "identifier": "TreeTools",
       "name": "TreeTools",
-      "sameAs": "https://github.com/ms609/TreeTools"
+      "version": ">= 0.1.3",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=TreeTools"
     }
   ],
-  "releaseNotes": "https://github.com/ms609/TreeDist/blob/master/NEWS.md",
+  "releaseNotes": "https://github.com/ms609/TreeDist.git/blob/master/NEWS.md",
   "readme": "https://github.com/ms609/TreeDist/blob/master/README.md",
-  "contIntegration": [
-    "https://travis-ci.com/ms609/TreeDist",
-    "https://codecov.io/gh/ms609/TreeDist"
-  ],
+  "contIntegration": ["https://travis-ci.org/ms609/TreeDist", "https://codecov.io/gh/ms609/TreeDist"],
   "developmentStatus": "http://www.repostatus.org/#active",
   "citation": [
     {
       "@type": "ScholarlyArticle",
-      "datePublished": "20XX",
+      "datePublished": "202X",
       "author": [
         {
           "@type": "Person",
@@ -328,7 +312,7 @@
       "name": "Information theoretic Generalized Robinson-Foulds metrics\nfor comparing phylogenetic trees",
       "isPartOf": {
         "@type": "PublicationIssue",
-        "datePublished": "20XX",
+        "datePublished": "202X",
         "isPartOf": {
           "@type": ["PublicationVolume", "Periodical"],
           "name": "In revision"
@@ -337,7 +321,7 @@
     },
     {
       "@type": "SoftwareSourceCode",
-      "datePublished": "2019",
+      "datePublished": "2020",
       "author": [
         {
           "@type": "Person",
@@ -345,13 +329,13 @@
           "familyName": "Smith"
         }
       ],
-      "name": "TreeDist: Distances between Phylogenetic Trees. R package version 0.0.0.9000",
+      "name": "TreeDist: Distances between Phylogenetic Trees. R package version ",
       "identifier": "10.5281/zenodo.3528124",
       "@id": "https://doi.org/10.5281/zenodo.3528124",
       "sameAs": "https://doi.org/10.5281/zenodo.3528124",
       "isPartOf": {
         "@type": "PublicationIssue",
-        "datePublished": "2019",
+        "datePublished": "2020",
         "isPartOf": {
           "@type": ["PublicationVolume", "Periodical"],
           "name": "Comprehensive R Archive Network"

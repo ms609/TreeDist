@@ -1,13 +1,14 @@
-vers <- paste("R package version", meta$Version)
+vers <- meta$Version
 
-citHeader(paste0("When using the package, I would appreciate it if you would ",
-"acknowledge your use of TreeDist in the article text, and cite the papers ",
+citHeader(paste0("When using the package, please acknowledge your use of ",
+"TreeDist in the article text, and cite the papers ",
 "describing the metrics that you employ. For example, 'Mutual Phylogenetic ",
 "Information similarity metrics (Smith 202X) were calculated using the R package",
-" TreeDist v1.0.0 (Smith 2019)"))
+" TreeDist v", vers, " (Smith 2020)."))
 
 
-citEntry(entry = "Article",
+citEntry(entry = "article",
+      key = "Smith202X",
       title = "Information theoretic Generalized Robinson-Foulds metrics
 for comparing phylogenetic trees",
       author = personList(as.person("Martin R. Smith")),
@@ -17,21 +18,23 @@ for comparing phylogenetic trees",
       textVersion =
       paste0("Smith, M.R. (202X).",
              " Information theoretic Generalized Robinson-Foulds metrics
-for comparing phylogenetic trees", 
-             " Journal name.",
+for comparing phylogenetic trees. ", 
+             " In review.",
              " doi: 10.XXXX/XXXXX"))
 
-citEntry(entry = "Manual",
+citEntry(entry = "manual",
+      key = "TreeDist",
       title = paste0("TreeDist: Distances between Phylogenetic Trees. ",
-      "R package version ", packageVersion('TreeDist')),
+      "R package version ", vers),
       author = personList(as.person("Martin R. Smith")),
       doi = "10.5281/zenodo.3528124",
       journal = "Comprehensive R Archive Network",
-      year = "2019",
+      year = "2020",
 
       textVersion =
-      paste0("Smith, M.R. (2019).",
-             " TreeDist: Distances between Phylogenetic Trees", 
+      paste0("Smith, M.R. (2020).",
+             " TreeDist: Distances between Phylogenetic Trees. ", 
+             "R package version ", vers, ".",
              " Comprehensive R Archive Network.",
-             " doi: 10.5281/zenodo.3528124"))
+             " doi:10.5281/zenodo.3528124"))
 
