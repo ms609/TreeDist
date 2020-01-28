@@ -197,7 +197,8 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
 #' Entropy(rep(0.5, 2)) # = 1
 #' Entropy(c(1/4, 1/4, 0, 1/4, 1/4)) # = 2
 #' 
-#' @return Entropy of the specified probabilities, in bits
+#' @return `Entropy()` returns the entropy of the specified probabilities, 
+#' in bits.
 #' @template MRS
 #' @export
 Entropy <- function (p) -sum(p[p > 0] * log2(p[p > 0]))

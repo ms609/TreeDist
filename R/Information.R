@@ -155,20 +155,21 @@ MeilaMutualInformation <- function (split1, split2) {
 #' Trivial splits -- those that divide one or zero taxa from the rest --
 #' are not considered.
 #' 
-#' @param n Integer specifying the number of leaves.
+#' @param n Integer specifying the number of leaves in a tree.
 #' 
 #' @return `AllSplitPairings` returns a named vector, specifying the number of 
 #' split pairings producing
 #' the variation of information given (in bits) in the name.  Splits
-#' AB:CD and CD:AB are treated as distinct, so division of all values by four 
+#' `AB|CD` and `CD|AB` are treated as distinct, so division of all values by four 
 #' is justified in cases where unique pairings only are required.
 #' 
 #' @examples
-#' AllSplitPairings(5)
+#' AllSplitPairings(6)
 #' 
 #' @references 
-#' * \insertRef{Meila2007}{TreeDist}
-#' * \insertRef{SmithDist}{TreeDist}
+#' \insertRef{Meila2007}{TreeDist}
+#' 
+#' \insertRef{SmithDist}{TreeDist}
 #' 
 #' @template MRS
 #' @importFrom memoise memoise

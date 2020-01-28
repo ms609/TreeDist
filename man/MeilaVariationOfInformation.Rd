@@ -15,9 +15,11 @@ identifying each leaf as a member of the ingroup (\code{TRUE}) or outgroup
 (\code{FALSE}) of the split in question.}
 }
 \value{
-Variation of information, measured in bits.
+\code{MeilaVariationOfInformation()} returns the variation of (clustering)
+information, measured in bits.
 
-Mutual information, measured in bits.
+\code{MeilaMutualInformation()} returns the mutual information,
+measured in bits.
 }
 \description{
 Compare a pair of splits solely as clusterings of taxa, disregarding their
@@ -28,37 +30,32 @@ proposed by Meila (2007).
 This is equivalent to the mutual clustering information (Vinh \emph{et al.} 2010).
 For the total information content, multiply the VoI by the number of leaves.
 }
-\section{Functions}{
-\itemize{
-\item \code{MeilaMutualInformation}: Mutual clustering information of two splits
-}}
-
 \examples{
-  # Maximum variation = information content of each split separately
-  A <- TRUE
-  B <- FALSE
-  MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,A,A,A,A,A))
-  Entropy(c(3, 3) / 6) + Entropy(c(0, 6) / 6)
-  
-  # Minimum variation = 0
-  MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,A,A,B,B,B))
-  
-  # Not always possible for two evenly-sized splits to reach maximum
-  # variation of information
-  Entropy(c(3, 3) / 6) * 2  # = 2
-  MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,B,A,B,A,B)) # < 2
-  
-  # Phylogenetically uninformative groupings contain spliting information
-  Entropy(c(1, 5) / 6)
-  MeilaVariationOfInformation(c(B,A,A,A,A,A), c(A,A,A,A,A,B))
+
+# Maximum variation = information content of each split separately
+A <- TRUE
+B <- FALSE
+MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,A,A,A,A,A))
+Entropy(c(3, 3) / 6) + Entropy(c(0, 6) / 6)
+
+# Minimum variation = 0
+MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,A,A,B,B,B))
+
+# Not always possible for two evenly-sized splits to reach maximum
+# variation of information
+Entropy(c(3, 3) / 6) * 2  # = 2
+MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,B,A,B,A,B)) # < 2
+
+# Phylogenetically uninformative groupings contain spliting information
+Entropy(c(1, 5) / 6)
+MeilaVariationOfInformation(c(B,A,A,A,A,A), c(A,A,A,A,A,B))
 
 
 }
 \references{
-{
 \insertRef{Meila2007}{TreeDist}
+
 \insertRef{Vinh2010}{TreeDist}
-}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
