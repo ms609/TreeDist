@@ -178,7 +178,7 @@ Jonker &amp; Volgenant (1987).</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>Matrix to solve.</p></td>
+      <td><p>Square matrix of costs.</p></td>
     </tr>
     </table>
 
@@ -194,10 +194,25 @@ column, such that the cost of the matching is minimized.</p>
 in <code><a href='https://rdrr.io/pkg/clue/man/solve_LSAP.html'>clue::solve_LSAP</a></code>.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>"A Shortest Augmenting Path Algorithm for Dense and Sparse Linear
-Assignment Problems," Computing 38, 325-340, 1987</p>
-<p>R. Jonker and A. Volgenant, University of Amsterdam.</p>
+    <p>Jonker R, Volgenant A (1987).
+&#8220;A shortest augmenting path algorithm for dense and sparse linear assignment problems.&#8221;
+<em>Computing</em>, <b>38</b>, 325--340.
+doi: <a href='https://doi.org/10.1007/BF02278710'>10.1007/BF02278710</a>
+.</p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>
+<span class='no'>problem</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>7</span>, <span class='fl'>9</span>, <span class='fl'>8</span>, <span class='fl'>9</span>,
+                    <span class='fl'>2</span>, <span class='fl'>8</span>, <span class='fl'>5</span>, <span class='fl'>7</span>,
+                    <span class='fl'>1</span>, <span class='fl'>6</span>, <span class='fl'>6</span>, <span class='fl'>9</span>,
+                    <span class='fl'>3</span>, <span class='fl'>6</span>, <span class='fl'>2</span>, <span class='fl'>2</span>), <span class='fl'>4</span>, <span class='fl'>4</span>, <span class='kw'>byrow</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+
+<span class='fu'>LAPJV</span>(<span class='no'>problem</span>)</div><div class='output co'>#&gt; $score
+#&gt; [1] 17
+#&gt; 
+#&gt; $matching
+#&gt; [1] 2 3 1 4
+#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -206,14 +221,14 @@ Assignment Problems," Computing 38, 325-340, 1987</p>
       <li><a href="#value">Value</a></li>
       <li><a href="#details">Details</a></li>
       <li><a href="#references">References</a></li>
+      <li><a href="#examples">Examples</a></li>
     </ul>
 
     <h2>Author</h2>
-    <p>C++ code by Roy Jonker @ MagicLogic Optimization Inc.
-e-mail: roy_jonker@magiclogic.com</p>
-<p>Changed 2016-05-13 by Yong Yang(yongyanglink@gmail.com) in column reduction
-part according to matlab version of LAPJV algorithm (Yi Cao)
-https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/LAPJV/lap.cpp</p>
+    <p><a href='https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/LAPJV/lap.cpp'>C++ code</a>
+by Roy Jonker, MagicLogic Optimization Inc. <a href='mailto:roy_jonker@magiclogic.com'>roy_jonker@magiclogic.com</a>,
+with contributions from Yong Yang <a href='mailto:yongyanglink@gmail.com'>yongyanglink@gmail.com</a>, after
+<a href='https://uk.mathworks.com/matlabcentral/profile/authors/69713-yi-cao'>Yi Cao</a></p>
   </div>
 </div>
 
