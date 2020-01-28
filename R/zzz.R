@@ -9,9 +9,7 @@ release_questions <- function() {
     "Have you checked the Vignettes for sanity?",
     "Have you checked pkgdown::build_reference_index()?",
     "Have you refreshed the package meta with codemetar::write_codemeta()?",
-    "Have you updated REFERENCES.bib with a citation to the published study?",
-    "Have you updated inst/CITATION with a citation to the published study?",
-    "Have you set 'TreeDist' to a default function?",
+    "Have you updated README.md, inst/REFERENCES.bib & inst/CITATION with a citation to the published study?",
     "Have you updated the version number in inst/CITATION, .zenodo.json, NEWS & DESCRIPTION?"
     )
 }

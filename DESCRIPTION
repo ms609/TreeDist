@@ -14,7 +14,7 @@ License: GPL (>= 3)
 Description: Implements measures of tree similarity, including 
   Information-based generalized Robinson-Foulds distances
   (Shared Phylogenetic Information, Mutual Clustering Information; Smith, in revision); 
-  Jaccard-Robinson-Foulds distances (Böcker et al. 2013) <doi:10.1007/978-3-642-40453-5_13>, 
+  Jaccard-Robinson-Foulds distances (Bocker et al. 2013) <doi:10.1007/978-3-642-40453-5_13>, 
   including the Nye et al. (2006) metric <doi:10.1093/bioinformatics/bti720>;
   the Matching Split Distance (Bogdanowicz & Giaro 2012) <doi:10.1109/TCBB.2011.48>;
   Maximum Agreement Subtree distances;

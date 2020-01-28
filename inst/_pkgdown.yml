@@ -25,9 +25,7 @@ reference:
       - Entropy
       - MeilaVariationOfInformation
       - SplitsCompatible
-      - SplitEntropy
-      - has_concept("tree information functions")
-      - SplitSharedInformation
+      - has_concept("information functions")
   - title: "Utility functions"
     desc: Functions to facilitate interaction with the package.
     contents:
