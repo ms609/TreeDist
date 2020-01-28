@@ -10,7 +10,8 @@ Entropy(p)
 \item{p}{Numeric vector specifying probabilities of outcomes.}
 }
 \value{
-Entropy of the specified probabilities, in bits
+\code{Entropy()} returns the entropy of the specified probabilities,
+in bits.
 }
 \description{
 Reports the entropy of a vector of probabilities, in bits.

@@ -1,7 +1,7 @@
 {
     "description": "An R package that implements a suite of metrics that quantify the topological distance between pairs of unweighted phylogenetic trees.", 
     "license": "gpl-3.0", 
-    "title": "TreeDist: Distances between Phylogenetic Trees", 
+    "title": "TreeDist: Distances Between Phylogenetic Trees", 
     "version": "v0.0.0.9000", 
     "upload_type": "software", 
     "creators": [

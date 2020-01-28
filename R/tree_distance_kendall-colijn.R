@@ -30,7 +30,7 @@
 #' KendallColijn(TreeTools::BalancedTree(8), lapply(rep(8, 3), ape::rtree))
 #' KendallColijn(lapply(rep(8, 4), ape::rtree))
 #' 
-#' @seealso [`treespace::treeDist`](https://cran.r-project.org/web/packages/treespace/vignettes/introduction.html)
+#' @seealso [`treespace::treeDist`](https://CRAN.R-project.org/package=treespace/vignettes/introduction.html)
 #' is a more sophisticated, if more cumbersome, implementation that supports 
 #' lambda > 0, i.e. use of edge lengths in tree comparison.
 #' 

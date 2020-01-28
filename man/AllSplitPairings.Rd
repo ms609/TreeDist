@@ -7,13 +7,13 @@
 AllSplitPairings(n)
 }
 \arguments{
-\item{n}{Integer specifying the number of leaves.}
+\item{n}{Integer specifying the number of leaves in a tree.}
 }
 \value{
 \code{AllSplitPairings} returns a named vector, specifying the number of
 split pairings producing
 the variation of information given (in bits) in the name.  Splits
-AB:CD and CD:AB are treated as distinct, so division of all values by four
+\code{AB|CD} and \code{CD|AB} are treated as distinct, so division of all values by four
 is justified in cases where unique pairings only are required.
 }
 \description{
@@ -26,14 +26,13 @@ Trivial splits -- those that divide one or zero taxa from the rest --
 are not considered.
 }
 \examples{
-AllSplitPairings(5)
+AllSplitPairings(6)
 
 }
 \references{
-\itemize{
-\item \insertRef{Meila2007}{TreeDist}
-\item \insertRef{SmithDist}{TreeDist}
-}
+\insertRef{Meila2007}{TreeDist}
+
+\insertRef{SmithDist}{TreeDist}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

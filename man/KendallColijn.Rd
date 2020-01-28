@@ -57,7 +57,7 @@ KendallColijn(lapply(rep(8, 4), ape::rtree))
 \insertRef{Kendall2016}{TreeDist}
 }
 \seealso{
-\href{https://cran.r-project.org/web/packages/treespace/vignettes/introduction.html}{treespace::treeDist}
+\href{https://CRAN.R-project.org/package=treespace/vignettes/introduction.html}{treespace::treeDist}
 is a more sophisticated, if more cumbersome, implementation that supports
 lambda > 0, i.e. use of edge lengths in tree comparison.
 
