@@ -13,7 +13,7 @@ distances": they are based on comparing partitions between trees, and thus
 reflect the relationship data within trees, with no reference to branch
 lengths.
 Detailed documentation and usage instructions are
-\href{https://ms609.github.org/TreeDist}{available online} or in the vignettes.
+\href{https://ms609.github.io/TreeDist}{available online} or in the vignettes.
 }
 \details{
 The \href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html}{Robinson-Foulds distance}

@@ -61,7 +61,8 @@ trees in \code{tree1} and \code{tree2}, or \code{splits1} and \code{splits2}.
 \description{
 Calculate the
 \href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric}{Jaccard-Robinson-Foulds metric}
-(Böcker \emph{et al}. 2013).
+(Böcker \emph{et al}. 2013), a
+\href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson-Foulds metric}.
 }
 \details{
 In short, the Jaccard-Robinson-Foulds metric is a generalized Robinson-Foulds
@@ -121,6 +122,6 @@ Other tree distances: \code{\link{KendallColijn}},
   \code{\link{TreeDistance}}
 }
 \author{
-Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
+\href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith} (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
 \concept{tree distances}

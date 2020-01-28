@@ -7,7 +7,7 @@
 #' reflect the relationship data within trees, with no reference to branch 
 #' lengths.
 #' Detailed documentation and usage instructions are 
-#' [available online](https://ms609.github.org/TreeDist) or in the vignettes.
+#' [available online](https://ms609.github.io/TreeDist) or in the vignettes.
 #' 
 #' The [Robinson-Foulds distance](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html)
 #' simply tallies the number of splits (loosely, clades) that occur in both trees -- 

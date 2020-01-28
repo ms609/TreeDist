@@ -85,12 +85,14 @@ Tree similarity and distance measures that measure the amount of
 phylogenetic or clustering information that two trees hold in common.
 }
 \details{
-Generalized Robinson-Foulds distances calculate tree similarity by finding an
+\href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson-Foulds distances}.
+calculate tree similarity by finding an
 optimal matching that the similarity between a split on one tree
 and its pair on a second, considering all possible ways to pair splits
 between trees (including leaving a split unpaired).
 
-The methods implemented here use the concepts of entropy and information
+The methods implemented here use the concepts of
+\href{https://ms609.github.io/TreeDist/articles/information.html}{entropy and information}
 (MacKay 2003) to assign a similarity score between each pair of splits.
 
 The returned tree similarity measures state the amount of information,
@@ -126,7 +128,7 @@ trees.
 
 The phylogenetic (Shannon) information content and entropy of a split are
 defined in
-\href{https://ms609.github.org/TreeDist/articles/information.html}{a separate vignette}.
+\href{https://ms609.github.io/TreeDist/articles/information.html}{a separate vignette}.
 
 Using the mutual (clustering) information (Meila 2007, Vinh \emph{et al.} 2010) of
 two splits to quantify their similarity gives rise to the Mutual Clustering
@@ -145,7 +147,7 @@ The \code{MatchingSplitInfo} measure defines the similarity between a pair of
 splits as the phylogenetic information content of the most informative
 split that is consistent with both input splits; \code{MatchingSplitInfoDistance}
 is the corresponding measure of tree difference.
-\href{https://ms609.github.org/TreeDist/articles/Generalized-RF.html}{(More information here.)}
+\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html}{(More information here.)}
 }
 
 \section{Normalization}{
@@ -183,6 +185,7 @@ SplitwiseInfo(tree2)
 # How similar are two trees?
 SharedPhylogeneticInfo(tree1, tree2) # Amount of phylogenetic information in common
 VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2) # Which clades are matched?
+
 DifferentPhylogeneticInfo(tree1, tree2) # Distance measure
 DifferentPhylogeneticInfo(tree2, tree1) # The metric is symmetric
 
@@ -212,6 +215,6 @@ Other tree distances: \code{\link{JaccardRobinsonFoulds}},
   \code{\link{RobinsonFouldsInfo}}
 }
 \author{
-Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
+\href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith} (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
 \concept{tree distances}

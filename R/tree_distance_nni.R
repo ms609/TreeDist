@@ -1,7 +1,7 @@
 #' Approximate the NNI distance
 #' 
 #' An approximation of the Nearest Neighbour Interchange distance, based on
-#' Li et al. (1996).
+#' Li _et al._ (1996).
 #' 
 #' In brief, this approximation algorithm works by identifying edges in one
 #' tree that do not match edges in the second.  Each of these edges must

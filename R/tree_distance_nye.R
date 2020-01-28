@@ -1,6 +1,8 @@
 #' Nye _et al_. (2006) tree comparison
 #' 
-#' Implements the tree comparison metric of Nye _et al_. (2006).
+#' Implements the 
+#' [Generalized Robinson-Foulds](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances).
+#' tree comparison metric of Nye _et al_. (2006).
 #' In short, this finds the optimal matching that pairs each branch from
 #' one tree with a branch in the second, where matchings are scored according to
 #' the size of the largest split that is consistent with both of them,
@@ -99,7 +101,8 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' 
 #' Calculate the 
 #' [Jaccard-Robinson-Foulds metric](https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric)
-#' (B&ouml;cker _et al_. 2013).
+#' (B&ouml;cker _et al_. 2013), a 
+#' [Generalized Robinson-Foulds metric](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances).
 #' 
 #' In short, the Jaccard-Robinson-Foulds metric is a generalized Robinson-Foulds
 #' metric: it finds the optimal matching that pairs each split in one tree with

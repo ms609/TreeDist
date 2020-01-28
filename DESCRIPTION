@@ -27,11 +27,8 @@ Depends:
     R (>= 3.4.0)
 Imports: 
     ape (>= 5.0),
-    clue,
     colorspace,
     memoise,
-    phangorn (>= 2.2.1),
-    Rdpack,
     stats,
     TreeTools (>= 0.1.3)
 Suggests:
@@ -40,9 +37,11 @@ Suggests:
     kdensity,
     knitr,
     MASS,
+    phangorn (>= 2.2.1),
     Quartet,
     rmarkdown,
     Rcpp,
+    Rdpack,
     testthat,
     Ternary (>= 1.1.2),
     TreeSearch,

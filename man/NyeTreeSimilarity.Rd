@@ -57,7 +57,9 @@ An array of numerics providing the distances between each pair of
 trees in \code{tree1} and \code{tree2}, or \code{splits1} and \code{splits2}.
 }
 \description{
-Implements the tree comparison metric of Nye \emph{et al}. (2006).
+Implements the
+\href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson-Foulds}.
+tree comparison metric of Nye \emph{et al}. (2006).
 In short, this finds the optimal matching that pairs each branch from
 one tree with a branch in the second, where matchings are scored according to
 the size of the largest split that is consistent with both of them,
@@ -109,6 +111,6 @@ Other tree distances: \code{\link{JaccardRobinsonFoulds}},
   \code{\link{TreeDistance}}
 }
 \author{
-Martin R. Smith (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
+\href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith} (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
 \concept{tree distances}
