@@ -32,7 +32,9 @@ similarity of the associated splits (\code{FALSE}).}
 }
 \description{
 Depicts the splits that are matched between two trees using a
-specified Generalized Robinson-Foulds similarity measure.
+specified
+\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html}{Generalized Robinson-Foulds}
+similarity measure.
 }
 \details{
 Note that when visualizing a Robinson-Foulds distance (using
@@ -40,6 +42,14 @@ Note that when visualizing a Robinson-Foulds distance (using
 of 1, which is deducted from the total number of splits to calculate the
 Robinson-Foulds \emph{distance}.  Unmatched splits thus contribute one to total
 tree distance.
+}
+\examples{
+tree1 <- TreeTools::BalancedTree(6)
+tree2 <- TreeTools::PectinateTree(6)
+
+VisualizeMatching(RobinsonFouldsMatching, tree1, tree2)
+VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2, matchZeros = FALSE)
+
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

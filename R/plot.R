@@ -62,7 +62,9 @@ TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = FALSE,
 #' Visualise a matching
 #' 
 #' Depicts the splits that are matched between two trees using a 
-#' specified Generalized Robinson-Foulds similarity measure.
+#' specified 
+#' [Generalized Robinson-Foulds](https://ms609.github.io/TreeDist/articles/Generalized-RF.html)
+#' similarity measure.
 #' 
 #' Note that when visualizing a Robinson-Foulds distance (using 
 #' `Func = RobinsonFoulds`), matched splits are assigned a _similarity_ score
@@ -89,6 +91,14 @@ TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = FALSE,
 #' @importFrom colorspace qualitative_hcl sequential_hcl
 #' @importFrom graphics par
 #' @importFrom TreeTools as.Splits
+#' 
+#' @examples 
+#' tree1 <- TreeTools::BalancedTree(6)
+#' tree2 <- TreeTools::PectinateTree(6)
+#' 
+#' VisualizeMatching(RobinsonFouldsMatching, tree1, tree2)
+#' VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2, matchZeros = FALSE)
+#' 
 #' @export
 VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
                               precision = 3L, Plot = plot.phylo,
@@ -223,4 +233,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   LabelUnpaired(splitEdges2, !paired2)
   
   if (setPar) par(origPar)
+  
+  # Return:
+  invisible()
 }

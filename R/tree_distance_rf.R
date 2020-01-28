@@ -1,18 +1,14 @@
-#' (Information-adjusted) Robinson-Foulds distance
+#' Robinson-Foulds distances, with adjustments for phylogenetic information
+#' content
 #' 
 #' Calculates the Robinson-Foulds distance, or the equivalent similarity 
 #' measure, optionally annotating matched splits and weighting splits
-#' according to their phylogenetic information content.
-#' 
-#' `RobinsonFoulds` is an inefficient implementation of the Robinson-Foulds 
-#' distance, included for use with [`VisualizeMatching`]. 
-#' To generate the RF distance efficiently,
-#' use the function \code{\link{ape}{treedist}}.
+#' according to their phylogenetic information content (Steel & Penny 2006).
 #' 
 #' Note that if `reportMatching = TRUE`, the `pairScores` attribute returns
 #' a logical matrix specifying whether each pair of splits is identical.
 #' 
-#' `RobinsonFouldsInfo` calculates the tree similarity or distance by summing 
+#' `RobinsonFouldsInfo()` calculates the tree similarity or distance by summing 
 #' the phylogenetic information content of all splits that are (or are not)
 #' identical in both trees.  Consequently, splits that are more likely
 #' to be identical by chance alone make a smaller contribution to overall
@@ -26,17 +22,39 @@
 #' 
 #' @section Normalization:
 #' 
-#' - `RobinsonFoulds` is normalized against the total number of splits that
+#' - `RobinsonFoulds()` is normalized against the total number of splits that
 #'  are present.
 #'  
-#' - `RobinsonFouldsInfo` is normalized against the sum of the phylogenetic 
+#' - `RobinsonFouldsInfo()` is normalized against the sum of the phylogenetic 
 #' information of all splits in both trees, treated independently.
 #'  
-#' @references \insertRef{Robinson1981}{TreeDist}
+#' @references 
+#' 
+#' \insertRef{Robinson1981}{TreeDist}
+#' 
+#' \insertRef{Steel2006}{TreeDist}
+#' 
+#' @examples 
+#' 
+#' library('TreeTools') # For BalancedTree, PectinateTree, as.phylo
+#' balanced7 <- BalancedTree(7)
+#' pectinate7 <- PectinateTree(7)
+#' RobinsonFoulds(balanced7, pectinate7)
+#' RobinsonFoulds(balanced7, pectinate7, normalize = TRUE)
+#' VisualizeMatching(RobinsonFouldsMatching, balanced7, pectinate7)
+#' 
+#' RobinsonFouldsInfo(balanced7, pectinate7)
+#' VisualizeMatching(RobinsonFouldsInfo, balanced7, pectinate7)
+#' 
+#' 
 #' @family tree distances
+#' @seealso [`VisualizeMatching()`], to display paired splits.
 #' 
 #' @template MRS
 #' @export
+#' @name Robinson-Foulds
+
+#' @rdname Robinson-Foulds
 RobinsonFouldsInfo <- function (tree1, tree2 = tree1, similarity = FALSE,
                                 normalize = FALSE, reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(RobinsonFouldsInfoSplits, tree1, tree2, 
@@ -51,8 +69,7 @@ RobinsonFouldsInfo <- function (tree1, tree2 = tree1, similarity = FALSE,
                 InfoInTree = SplitwiseInfo, Combine = '+')
 }
 
-#' @describeIn RobinsonFouldsInfo Calculate information-adjusted Robinson-Foulds
-#' distance from splits instead of trees.
+#' @rdname Robinson-Foulds
 #' @inheritParams SharedPhylogeneticInfoSplits
 #' @export
 RobinsonFouldsInfoSplits <- function (splits1, splits2, 
@@ -63,8 +80,7 @@ RobinsonFouldsInfoSplits <- function (splits1, splits2,
                 maximize = FALSE, reportMatching = reportMatching)
 }
 
-#' @describeIn RobinsonFouldsInfo Robinson-Foulds distance, with option to
-#' report matched splits.
+#' @rdname Robinson-Foulds
 #' @importFrom TreeTools NSplits
 #' @export
 RobinsonFoulds <- function (tree1, tree2 = tree1, similarity = FALSE, normalize = FALSE,
@@ -81,7 +97,7 @@ RobinsonFoulds <- function (tree1, tree2 = tree1, similarity = FALSE, normalize 
                 InfoInTree = NSplits, Combine = `+`)
 }
 
-#' @describeIn RobinsonFouldsInfo Matched splits, intended for use with 
+#' @describeIn Robinson-Foulds Matched splits, intended for use with 
 #' [`VisualizeMatching`].
 #' @param \dots Not used.
 #' @importFrom TreeTools NSplits
@@ -100,8 +116,7 @@ RobinsonFouldsMatching <- function (tree1, tree2 = tree1, similarity = FALSE,
   ret
 }
 
-#' @describeIn RobinsonFouldsInfo Calculate Robinson-Foulds distance from splits
-#' instead of trees.
+#' @rdname Robinson-Foulds
 #' @inheritParams SharedPhylogeneticInfoSplits
 #' @export
 RobinsonFouldsSplits <- function (splits1, splits2,

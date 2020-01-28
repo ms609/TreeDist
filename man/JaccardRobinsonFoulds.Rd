@@ -118,8 +118,7 @@ Other tree distances: \code{\link{KendallColijn}},
   \code{\link{MASTSize}},
   \code{\link{MatchingSplitDistance}},
   \code{\link{NNIDist}}, \code{\link{NyeTreeSimilarity}},
-  \code{\link{RobinsonFouldsInfo}},
-  \code{\link{TreeDistance}}
+  \code{\link{Robinson-Foulds}}, \code{\link{TreeDistance}}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

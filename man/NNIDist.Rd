@@ -2,7 +2,7 @@
 % Please edit documentation in R/tree_distance_nni.R
 \name{NNIDist}
 \alias{NNIDist}
-\title{Approximate the NNI distance}
+\title{Approximate Nearest Neighbour Interchange distance}
 \usage{
 NNIDist(tree1, tree2 = tree1)
 }
@@ -56,13 +56,13 @@ library('TreeTools')
 
 NNIDist(BalancedTree(7), PectinateTree(7))
 
-NNIDist(BalancedTree(7), as.phylo(0:3, 7))
-NNIDist(as.phylo(0:3, 7), PectinateTree(7))
+NNIDist(BalancedTree(7), as.phylo(0:2, 7))
+NNIDist(as.phylo(0:2, 7), PectinateTree(7))
 
-NNIDist(list(BalancedTree(7), PectinateTree(7)),
-        as.phylo(0:3, 7))
+NNIDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
+        as.phylo(0:2, 7))
 
-CompareAll(as.phylo(0:5, 8), NNIDist)
+CompareAll(as.phylo(30:33, 8), NNIDist)
   
 }
 \references{
@@ -73,8 +73,7 @@ Other tree distances: \code{\link{JaccardRobinsonFoulds}},
   \code{\link{KendallColijn}}, \code{\link{MASTSize}},
   \code{\link{MatchingSplitDistance}},
   \code{\link{NyeTreeSimilarity}},
-  \code{\link{RobinsonFouldsInfo}},
-  \code{\link{TreeDistance}}
+  \code{\link{Robinson-Foulds}}, \code{\link{TreeDistance}}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
