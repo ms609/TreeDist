@@ -190,42 +190,40 @@ identifying each leaf as a member of the ingroup (<code>TRUE</code>) or outgroup
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Variation of information, measured in bits.</p>
-<p>Mutual information, measured in bits.</p>
+    <p><code>MeilaVariationOfInformation()</code> returns the variation of (clustering)
+information, measured in bits.</p>
+<p><code>MeilaMutualInformation()</code> returns the mutual information,
+measured in bits.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>This is equivalent to the mutual clustering information (Vinh <em>et al.</em> 2010).
 For the total information content, multiply the VoI by the number of leaves.</p>
-    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
-
-    
-<ul>
-<li><p><code>MeilaMutualInformation</code>: Mutual clustering information of two splits</p></li>
-</ul>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Meilă M (2007).
 &#8220;Comparing clusterings---an information based distance.&#8221;
 <em>Journal of Multivariate Analysis</em>, <b>98</b>(5), 873--895.
 doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11.013</a>
-.Vinh NX, Epps J, Bailey J (2010).
+.</p>
+<p>Vinh NX, Epps J, Bailey J (2010).
 &#8220;Information theoretic measures for clusterings comparison: variants, properties, normalization and correction for chance.&#8221;
 <em>Journal of Machine Learning Research</em>, <b>11</b>, 2837--2854.
 doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</a>
 .</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>  <span class='co'># Maximum variation = information content of each split separately</span>
-  <span class='no'>A</span> <span class='kw'>&lt;-</span> <span class='fl'>TRUE</span>
-  <span class='no'>B</span> <span class='kw'>&lt;-</span> <span class='fl'>FALSE</span>
-  <span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>B</span>,<span class='no'>B</span>,<span class='no'>B</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>))</div><div class='output co'>#&gt; [1] 1</div><div class='input'>  <span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>3</span>) / <span class='fl'>6</span>) + <span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>6</span>) / <span class='fl'>6</span>)</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
-  <span class='co'># Minimum variation = 0</span>
-  <span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>B</span>,<span class='no'>B</span>,<span class='no'>B</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>B</span>,<span class='no'>B</span>,<span class='no'>B</span>))</div><div class='output co'>#&gt; [1] 0</div><div class='input'>
-  <span class='co'># Not always possible for two evenly-sized splits to reach maximum</span>
-  <span class='co'># variation of information</span>
-  <span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>3</span>) / <span class='fl'>6</span>) * <span class='fl'>2</span>  <span class='co'># = 2</span></div><div class='output co'>#&gt; [1] 2</div><div class='input'>  <span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>B</span>,<span class='no'>B</span>,<span class='no'>B</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>,<span class='no'>B</span>,<span class='no'>A</span>,<span class='no'>B</span>,<span class='no'>A</span>,<span class='no'>B</span>)) <span class='co'># &lt; 2</span></div><div class='output co'>#&gt; [1] 1.836592</div><div class='input'>
-  <span class='co'># Phylogenetically uninformative groupings contain spliting information</span>
-  <span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>5</span>) / <span class='fl'>6</span>)</div><div class='output co'>#&gt; [1] 0.6500224</div><div class='input'>  <span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>B</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>B</span>))</div><div class='output co'>#&gt; [1] 1.203213</div><div class='input'>
+    <pre class="examples"><div class='input'>
+<span class='co'># Maximum variation = information content of each split separately</span>
+<span class='no'>A</span> <span class='kw'>&lt;-</span> <span class='fl'>TRUE</span>
+<span class='no'>B</span> <span class='kw'>&lt;-</span> <span class='fl'>FALSE</span>
+<span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>B</span>,<span class='no'>B</span>,<span class='no'>B</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>))</div><div class='output co'>#&gt; [1] 1</div><div class='input'><span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>3</span>) / <span class='fl'>6</span>) + <span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>6</span>) / <span class='fl'>6</span>)</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
+<span class='co'># Minimum variation = 0</span>
+<span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>B</span>,<span class='no'>B</span>,<span class='no'>B</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>B</span>,<span class='no'>B</span>,<span class='no'>B</span>))</div><div class='output co'>#&gt; [1] 0</div><div class='input'>
+<span class='co'># Not always possible for two evenly-sized splits to reach maximum</span>
+<span class='co'># variation of information</span>
+<span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>3</span>) / <span class='fl'>6</span>) * <span class='fl'>2</span>  <span class='co'># = 2</span></div><div class='output co'>#&gt; [1] 2</div><div class='input'><span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>B</span>,<span class='no'>B</span>,<span class='no'>B</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>,<span class='no'>B</span>,<span class='no'>A</span>,<span class='no'>B</span>,<span class='no'>A</span>,<span class='no'>B</span>)) <span class='co'># &lt; 2</span></div><div class='output co'>#&gt; [1] 1.836592</div><div class='input'>
+<span class='co'># Phylogenetically uninformative groupings contain spliting information</span>
+<span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>5</span>) / <span class='fl'>6</span>)</div><div class='output co'>#&gt; [1] 0.6500224</div><div class='input'><span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>B</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>B</span>))</div><div class='output co'>#&gt; [1] 1.203213</div><div class='input'>
 
 </div></pre>
   </div>
@@ -235,7 +233,6 @@ doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
       <li><a href="#details">Details</a></li>
-      <li><a href="#functions">Functions</a></li>
       <li><a href="#references">References</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>
