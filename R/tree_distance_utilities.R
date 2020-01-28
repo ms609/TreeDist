@@ -122,18 +122,18 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
   
   if (single1) {
     if (single2) {
-      Func(tree1, tree2, nTip = nTip, tipLabels = labels1, ...)
+      Func(tree1, tree2, tipLabels = labels1, nTip = nTip, ...)
     } else {
       .TreeDistanceOneMany(Func, oneTree = tree1, manyTrees = tree2,
                            tipLabels = labels1, nTip = nTip, ...)
     }
   } else {
     if (single2) {
-      .TreeDistanceOneMany(Func, oneTree = tree2, nTip = nTip, 
-                           tipLabels = labels2, manyTrees = tree1, ...)
+      .TreeDistanceOneMany(Func, oneTree = tree2, tipLabels = labels2, 
+                           nTip = nTip, manyTrees = tree1, ...)
     } else {
-      .TreeDistanceManyMany(Func, tree1, tree2, nTip = nTip,
-                            tipLabels = labels1, ...)
+      .TreeDistanceManyMany(Func, tree1, tree2, tipLabels = labels1,
+                            nTip = nTip, ...)
     }
   }
 }
@@ -158,9 +158,11 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
     CompareAll(trees1, Func, nTip = nTip, tipLabels = tipLabels,
                FUN.VALUE = FUN.VALUE, ...)
   } else {
-    value <- vapply(seq_along(trees1), function(x) FUN.VALUE, FUN.VALUE)
+    seqAlong1 <- seq_along(trees1)
+    names(seqAlong1) <- names(trees1)
+    value <- vapply(seqAlong1, function(x) FUN.VALUE, FUN.VALUE)
     ret <- vapply(trees2, .TreeDistanceOneMany, Func = Func, manyTrees = trees1,
-           tipLabels = tipLabels, nTip = nTip, FUN.VALUE = value)#, ...)
+           tipLabels = tipLabels, nTip = nTip, FUN.VALUE = value, ...)
     if (length(dim(ret)) == 3) {
       aperm(ret, c(2, 3, 1))
     } else {

@@ -20,6 +20,11 @@ test_that("Simple NNI approximations", {
   expect_equal(allMatched, NNIDist(tree1, tree1))
   expect_equal(allMatched, NNIDist(tree1, tree2))
   
+  # Tree names
+  output <- NNIDist(list(bal = tree1, pec = tree2), 
+                    as.phylo(0:2, tipLabels = letters[1:8]))
+  expect_equal(rownames(output), c('bal', 'pec'))
+  
   # Only root edge is different
   tree2 <- Postorder(ape::read.tree(text="(((a, b), (e, f)), ((c, d), (g, h)));"))
   expect_equal(oneUnmatched, NNIDist(tree1, tree2))
