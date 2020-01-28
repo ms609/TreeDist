@@ -74,31 +74,34 @@ SplitDifferentInformation <- function (n, A1, A2 = A1) {
 #' This is equivalent to the mutual clustering information (Vinh _et al._ 2010).
 #' For the total information content, multiply the VoI by the number of leaves.
 #' 
-#' @return Variation of information, measured in bits.
+#' @return `MeilaVariationOfInformation()` returns the variation of (clustering)
+#' information, measured in bits.
 #' 
-#' @references {
-#'   \insertRef{Meila2007}{TreeDist}
-#'   \insertRef{Vinh2010}{TreeDist}
-#' }
+#' @references 
+#' 
+#' \insertRef{Meila2007}{TreeDist}
+#'   
+#' \insertRef{Vinh2010}{TreeDist}
 #' 
 #' @examples 
-#'   # Maximum variation = information content of each split separately
-#'   A <- TRUE
-#'   B <- FALSE
-#'   MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,A,A,A,A,A))
-#'   Entropy(c(3, 3) / 6) + Entropy(c(0, 6) / 6)
-#'   
-#'   # Minimum variation = 0
-#'   MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,A,A,B,B,B))
-#'   
-#'   # Not always possible for two evenly-sized splits to reach maximum
-#'   # variation of information
-#'   Entropy(c(3, 3) / 6) * 2  # = 2
-#'   MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,B,A,B,A,B)) # < 2
-#'   
-#'   # Phylogenetically uninformative groupings contain spliting information
-#'   Entropy(c(1, 5) / 6)
-#'   MeilaVariationOfInformation(c(B,A,A,A,A,A), c(A,A,A,A,A,B))
+#' 
+#' # Maximum variation = information content of each split separately
+#' A <- TRUE
+#' B <- FALSE
+#' MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,A,A,A,A,A))
+#' Entropy(c(3, 3) / 6) + Entropy(c(0, 6) / 6)
+#' 
+#' # Minimum variation = 0
+#' MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,A,A,B,B,B))
+#' 
+#' # Not always possible for two evenly-sized splits to reach maximum
+#' # variation of information
+#' Entropy(c(3, 3) / 6) * 2  # = 2
+#' MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,B,A,B,A,B)) # < 2
+#' 
+#' # Phylogenetically uninformative groupings contain spliting information
+#' Entropy(c(1, 5) / 6)
+#' MeilaVariationOfInformation(c(B,A,A,A,A,A), c(A,A,A,A,A,B))
 #' 
 #' 
 #' @template split12Params
@@ -121,8 +124,9 @@ MeilaVariationOfInformation <- function (split1, split2) {
     Entropy(c(p2, 1 - p2))
 }
 
-#' @describeIn MeilaVariationOfInformation Mutual clustering information of two splits
-#' @return Mutual information, measured in bits.
+#' @rdname MeilaVariationOfInformation
+#' @return `MeilaMutualInformation()` returns the mutual information, 
+#' measured in bits.
 #' @export
 MeilaMutualInformation <- function (split1, split2) {
   if (length(split1) != length(split2)) stop("Split lengths differ")
