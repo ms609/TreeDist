@@ -45,7 +45,7 @@
 #' @references \insertRef{Meila2007}{TreeDist}
 #' 
 #' @template MRS
-#' @family split information functions
+#' @family information functions
 #' @importFrom TreeTools LnTreesMatchingSplit LnUnrooted
 #' @export
 SplitSharedInformation <- function(n, A1, A2 = A1) {
@@ -224,9 +224,7 @@ AllSplitPairings <- memoise(function (n) {
 #' \insertRef{Meila2007}{TreeDist}
 #' 
 #' @template MRS
-#' @family split information functions
-#' @seealso 
-#' * [`ClusteringEntropy`]
+#' @family information functions
 #' @export
 SplitEntropy <- function (split1, split2 = split1) {
   A1A2 <- sum(split1 & split2)

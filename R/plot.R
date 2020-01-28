@@ -84,7 +84,7 @@ TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = FALSE,
 #' @param plainEdges Logical specifying whether to plot edges with a uniform
 #' width and colour (`TRUE`), or whether to draw edge widths according to the
 #' similarity of the associated splits (`FALSE`).
-#' @param edge.width,edge.color,\dots Additional parameters to send to `Plot`.
+#' @param edge.width,edge.color,\dots Additional parameters to send to `Plot()`.
 #' 
 #' @template MRS
 #' @importFrom ape nodelabels edgelabels plot.phylo

@@ -16,16 +16,13 @@ content of the tree where a tree contains multiple splits, as
 these splits will contain mutual information.
 }
 \seealso{
-\itemize{
-\item \code{\link[TreeTools:SplitInformation]{TreeTools::SplitInformation}}: Phylogenetic information content of a
-single split.
-}
-
-Other tree information functions: \code{\link{ClusteringEntropy}}
+Other information functions: \code{\link{ClusteringEntropy}},
+  \code{\link{SplitEntropy}},
+  \code{\link{SplitSharedInformation}}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
 (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
-\concept{tree information functions}
+\concept{information functions}
 \keyword{internal}

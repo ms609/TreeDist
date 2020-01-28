@@ -33,14 +33,12 @@ MacKay (2003) and Meila (2007)
 \insertRef{Meila2007}{TreeDist}
 }
 \seealso{
-\itemize{
-\item \code{\link{ClusteringEntropy}}
-}
-
-Other split information functions: \code{\link{SplitSharedInformation}}
+Other information functions: \code{\link{ClusteringEntropy}},
+  \code{\link{SplitSharedInformation}},
+  \code{\link{SplitwiseInfo}}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
 (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
-\concept{split information functions}
+\concept{information functions}

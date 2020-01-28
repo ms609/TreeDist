@@ -28,7 +28,7 @@ similarity (\code{TRUE}), or leave them unpaired (\code{FALSE}).}
 width and colour (\code{TRUE}), or whether to draw edge widths according to the
 similarity of the associated splits (\code{FALSE}).}
 
-\item{edge.width, edge.color, \dots}{Additional parameters to send to \code{Plot}.}
+\item{edge.width, edge.color, \dots}{Additional parameters to send to \code{Plot()}.}
 }
 \description{
 Depicts the splits that are matched between two trees using a

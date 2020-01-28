@@ -7,10 +7,7 @@
 #' 
 #' @param x A tree of class `phylo`, a list of trees, or a `multiPhylo` object.
 #' 
-#' @family tree information functions
-#' @seealso 
-#' * [`TreeTools::SplitInformation`]: Phylogenetic information content of a
-#' single split.
+#' @family information functions
 #' @template MRS
 #' @keywords internal
 #' @export
@@ -41,8 +38,8 @@ SplitwiseInfo.Splits <- function(x) {
 
 #' Clustering entropy of all splits within a tree
 #' 
-#' Sums the entropy (`ClusteringEntropy`) or information content
-#' (`ClusteringInfo`) across each split within a phylogenetic tree, treating
+#' Sums the entropy (`ClusteringEntropy()`) or information content
+#' (`ClusteringInfo()`) across each split within a phylogenetic tree, treating
 #' each split as dividing the leaves of the tree into two clusters (_sensu_
 #' Meila 2007; Vinh _et al._ 2010).
 #' 
@@ -52,7 +49,8 @@ SplitwiseInfo.Splits <- function(x) {
 #' 
 #' @param x A tree of class `phylo`, a list of trees, or a `multiPhylo` object.
 #' 
-#' @return Information content, in bits.
+#' @return The sum of the entropies or (clustering) infomation content, in bits,
+#' of each split in `x`.
 #' 
 #' @examples 
 #' 
@@ -75,9 +73,7 @@ SplitwiseInfo.Splits <- function(x) {
 #' - \insertRef{Vinh2010}{TreeDist}
 #' 
 #' 
-#' @family tree information functions
-#' @seealso
-#' * [`SplitEntropy`]
+#' @family information functions
 #' @template MRS
 #' @importFrom TreeTools as.Splits
 #' @export

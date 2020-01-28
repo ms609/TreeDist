@@ -37,11 +37,12 @@ ClusteringInfo(x)
 \item{x}{A tree of class \code{phylo}, a list of trees, or a \code{multiPhylo} object.}
 }
 \value{
-Information content, in bits.
+The sum of the entropies or (clustering) infomation content, in bits,
+of each split in \code{x}.
 }
 \description{
-Sums the entropy (\code{ClusteringEntropy}) or information content
-(\code{ClusteringInfo}) across each split within a phylogenetic tree, treating
+Sums the entropy (\code{ClusteringEntropy()}) or information content
+(\code{ClusteringInfo()}) across each split within a phylogenetic tree, treating
 each split as dividing the leaves of the tree into two clusters (\emph{sensu}
 Meila 2007; Vinh \emph{et al.} 2010).
 }
@@ -72,14 +73,12 @@ MutualClusteringInfo(tree1, tree2)
 }
 }
 \seealso{
-\itemize{
-\item \code{\link{SplitEntropy}}
-}
-
-Other tree information functions: \code{\link{SplitwiseInfo}}
+Other information functions: \code{\link{SplitEntropy}},
+  \code{\link{SplitSharedInformation}},
+  \code{\link{SplitwiseInfo}}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
 (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
-\concept{tree information functions}
+\concept{information functions}

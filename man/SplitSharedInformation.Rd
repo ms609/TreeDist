@@ -77,10 +77,11 @@ splits.
 \insertRef{Meila2007}{TreeDist}
 }
 \seealso{
-Other split information functions: \code{\link{SplitEntropy}}
+Other information functions: \code{\link{ClusteringEntropy}},
+  \code{\link{SplitEntropy}}, \code{\link{SplitwiseInfo}}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
 (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
-\concept{split information functions}
+\concept{information functions}
