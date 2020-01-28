@@ -3,7 +3,7 @@
 \name{MASTSize}
 \alias{MASTSize}
 \alias{MASTInfo}
-\title{Size of Maximum Agreement Subtree}
+\title{Maximum Agreement Subtree size}
 \usage{
 MASTSize(tree1, tree2 = tree1, rooted = TRUE)
 
@@ -22,17 +22,13 @@ maximum agreement subtree.
 information content, in bits, of the maximum agreement subtree.
 }
 \description{
-Calculate the maximum agreement subtree between two phylogenetic trees, i.e.
-the largest tree that can be obtained from either \code{tree1} or \code{tree2} solely
-by deleting leaves.
+Calculate the size or phylogenetic information content (Steel & Penny 2006)
+of the maximum agreement subtree between two phylogenetic trees, i.e.
+the largest tree that can be obtained from both \code{tree1} and \code{tree2} by
+deleting, but not rearranging, leaves.
 }
-\section{Functions}{
-\itemize{
-\item \code{MASTInfo}: Information content of maximum agreement subtree.
-}}
-
 \examples{
-library('TreeTools')
+library('TreeTools') # for as.phylo, BalancedTree, PectinateTree
 MASTSize(PectinateTree(8), BalancedTree(8))
 MASTInfo(PectinateTree(8), BalancedTree(8))
 
@@ -47,16 +43,18 @@ MASTSize(list(Bal = BalancedTree(7), Pec = PectinateTree(7)),
 MASTInfo(list(Bal = BalancedTree(7), Pec = PectinateTree(7)),
          as.phylo(0:3, 7))
 
-CompareAll(as.phylo(0:5, 8), MASTSize)
-CompareAll(as.phylo(0:5, 8), MASTInfo)
+CompareAll(as.phylo(0:4, 8), MASTSize)
+CompareAll(as.phylo(0:4, 8), MASTInfo)
 
 }
 \references{
+\insertRef{Steel2006}{TreeDist}
+
 \insertRef{Valiente2009}{TreeDist}
 }
 \seealso{
-\code{\link[phangorn:mast]{phangorn::mast}}, a slower, all-R implementation that also returns
-the leaves contained within the subtree.
+\code{\link[phangorn:mast]{phangorn::mast}}, a slower implementation that also lists the
+leaves contained within the subtree.
 
 Other tree distances: \code{\link{JaccardRobinsonFoulds}},
   \code{\link{KendallColijn}},
@@ -66,6 +64,7 @@ Other tree distances: \code{\link{JaccardRobinsonFoulds}},
   \code{\link{TreeDistance}}
 }
 \author{
-\href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith} (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
+\href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
+(\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
 \concept{tree distances}

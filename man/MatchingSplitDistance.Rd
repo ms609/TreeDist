@@ -60,6 +60,18 @@ let me know by
 so that it can be implemented.
 }
 
+\examples{
+
+MatchingSplitDistance(lapply(rep(8, 5), ape::rtree), normalize = 16)
+
+MatchingSplitDistance(TreeTools::BalancedTree(6),
+                      TreeTools::PectinateTree(6),
+                      reportMatching = TRUE)
+
+VisualizeMatching(MatchingSplitDistance, TreeTools::BalancedTree(6),
+                  TreeTools::PectinateTree(6))
+ 
+}
 \references{
 \insertRef{Bogdanowicz2012}{TreeDist}
 }
@@ -71,6 +83,7 @@ Other tree distances: \code{\link{JaccardRobinsonFoulds}},
   \code{\link{TreeDistance}}
 }
 \author{
-\href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith} (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
+\href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
+(\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
 \concept{tree distances}

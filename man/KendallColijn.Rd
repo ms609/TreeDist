@@ -45,6 +45,14 @@ leaf to another.
 as described in Kendall & Colijn (2016).
 }}
 
+\examples{
+KendallColijn(TreeTools::BalancedTree(8), TreeTools::PectinateTree(8))
+
+set.seed(0)
+KendallColijn(TreeTools::BalancedTree(8), lapply(rep(8, 3), ape::rtree))
+KendallColijn(lapply(rep(8, 4), ape::rtree))
+
+}
 \references{
 \insertRef{Kendall2016}{TreeDist}
 }
@@ -61,6 +69,7 @@ Other tree distances: \code{\link{JaccardRobinsonFoulds}},
   \code{\link{TreeDistance}}
 }
 \author{
-\href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith} (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
+\href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
+(\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
 \concept{tree distances}

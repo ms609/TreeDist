@@ -24,7 +24,7 @@ O(\emph{n}).
 }
 \description{
 An approximation of the Nearest Neighbour Interchange distance, based on
-Li et al. (1996).
+Li \emph{et al.} (1996).
 }
 \details{
 In brief, this approximation algorithm works by identifying edges in one
@@ -77,6 +77,7 @@ Other tree distances: \code{\link{JaccardRobinsonFoulds}},
   \code{\link{TreeDistance}}
 }
 \author{
-\href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith} (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
+\href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
+(\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
 \concept{tree distances}
