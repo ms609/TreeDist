@@ -208,16 +208,16 @@ AllSplitPairings <- memoise(function (n) {
 #' of two splits, treating each split as a division of _n_ leaves into two
 #' groups.  Further details are available in a 
 #' [vignette](https://ms609.github.io/TreeDist/articles/information.html),
-#' MacKay (2003) and Meila (2007)
+#' MacKay (2003) and Meila (2007).
 #' 
 #' @template split12Params
 #' 
 #' @return A numeric vector listing, in bits,
-#'  * `H1` The entropy of split 1
-#'  * `H2` The entropy of split 2
-#'  * `H12` The joint entropy of both splits
-#'  * `I` The mutual information of the splits
-#'  * `Hd` The entropy distance (variation of information) of the splits
+#'  * `H1` The entropy of split 1;
+#'  * `H2` The entropy of split 2;
+#'  * `H12` The joint entropy of both splits;
+#'  * `I` The mutual information of the splits;
+#'  * `Hd` The entropy distance (variation of information) of the splits.
 #' 
 #' @references 
 #' \insertRef{Mackay2003}{TreeDist}
