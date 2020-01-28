@@ -27,22 +27,23 @@ Calculates the distance between each tree in a list, and each other tree
 in the same list.
 }
 \details{
-(Can in fact be used more generally: \code{Func} can be any symmetric function.)
+\code{CompareAll} is not limited to tree comparisons:
+\code{Func} can be any symmetric function.
 }
 \examples{
-  library(TreeTools)
+library(TreeTools) # For BalancedTree, PectinateTree
   
-  # Generate a list of trees to compare
-  trees <- list(BalancedTree(1:8), PectinateTree(1:8), PectinateTree(c(4:1, 5:8)))
+# Generate a list of trees to compare
+trees <- list(BalancedTree(1:8), PectinateTree(1:8), PectinateTree(c(4:1, 5:8)))
   
-  # Compare each tree with each other tree
-  CompareAll(trees, NNIDist)
+# Compare each tree with each other tree
+CompareAll(trees, NNIDist)
   
-  # Optionally, improve speed slightly by pre-specifying FUN.VALUE:
-  dist <- CompareAll(trees, NNIDist, FUN.VALUE = integer(3))
+# Providing FUN.VALUE yeilds a small speed gain:
+dist <- CompareAll(trees, NNIDist, FUN.VALUE = integer(3))
   
-  # View distances as a matrix
-  as.matrix(dist$lower)
+# View distances as a matrix
+as.matrix(dist$lower)
   
 }
 \author{

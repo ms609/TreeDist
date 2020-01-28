@@ -118,8 +118,8 @@ unrooted trees, using the \code{uspr} C library.
 Other contributors:
 \itemize{
   \item Roy Jonker \email{roy_jonker@magiclogic.com} [programmer]
-  \item Harold Cooper \email{hbc@mit.edu} [contributor]
   \item Yong Yang \email{yongyanglink@gmail.com} [contributor]
+  \item Yi Cao [contributor]
 }
 
 }

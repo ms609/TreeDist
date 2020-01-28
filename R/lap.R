@@ -11,22 +11,26 @@
 #' 
 #' 
 #' @references 
-#' "A Shortest Augmenting Path Algorithm for Dense and Sparse Linear
-#'  Assignment Problems," Computing 38, 325-340, 1987
-#' 
-#' R. Jonker and A. Volgenant, University of Amsterdam.
-#' 
+#' \insertRef{Jonker1987}{TreeDist}
 #'
-#' @author C++ code by Roy Jonker @ MagicLogic Optimization Inc. 
-#' e-mail: roy_jonker@magiclogic.com
+#' @author [C++ code](https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/LAPJV/lap.cpp)
+#' by Roy Jonker, MagicLogic Optimization Inc. <roy_jonker@magiclogic.com>, 
+#' with contributions from Yong Yang <yongyanglink@gmail.com>, after 
+#' [Yi Cao](https://uk.mathworks.com/matlabcentral/profile/authors/69713-yi-cao)
 #' 
-#' Changed 2016-05-13 by Yong Yang(yongyanglink@gmail.com) in column reduction 
-#' part according to matlab version of LAPJV algorithm (Yi Cao)
-#' https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/LAPJV/lap.cpp
 #' 
-#' @param x Matrix to solve.
+#' @param x Square matrix of costs.
 #' @return A list with two entries: `score`, the score of the optimal matching;
 #' and `matching`, the columns matched to each row of the matrix in turn.
+#' 
+#' @examples 
+#' 
+#' problem <- matrix(c(7, 9, 8, 9,
+#'                     2, 8, 5, 7,
+#'                     1, 6, 6, 9,
+#'                     3, 6, 2, 2), 4, 4, byrow=TRUE)
+#'
+#' LAPJV(problem)
 #' @export
 LAPJV <- function (x) {
   lapjv(x, max(x))

@@ -15,6 +15,8 @@
  R. Jonker and A. Volgenant, University of Amsterdam.
  
  *
+ CHANGED 2020-01-01 by Martin Smith <martin.smith@durham.ac.uk> for 
+ integration with R.
  CHANGED 2016-05-13 by Yong Yang(yongyanglink@gmail.com) in column reduction 
  part according to matlab version of LAPJV algorithm 
  https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/LAPJV/lap.cpp
