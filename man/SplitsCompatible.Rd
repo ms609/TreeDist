@@ -12,12 +12,21 @@ identifying each leaf as a member of the ingroup (\code{TRUE}) or outgroup
 (\code{FALSE}) of the split in question.}
 }
 \value{
-\code{SplitsCompatible} returns a logical specifying whether the splits
+\code{SplitsCompatible()} returns a logical specifying whether the splits
 provided are compatible with one another.
 }
 \description{
 Splits are compatible if they are concave; i.e. they can both be true
 simultaneously.
+}
+\examples{
+
+A <- TRUE
+B <- FALSE
+SplitsCompatible(c(A, A, A, B, B, B),
+                 c(A, A, B, B, B, B))
+SplitsCompatible(c(A, A, A, B, B, B),
+                 c(A, A, B, B, B, A))
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

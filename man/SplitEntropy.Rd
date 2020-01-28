@@ -14,11 +14,11 @@ identifying each leaf as a member of the ingroup (\code{TRUE}) or outgroup
 \value{
 A numeric vector listing, in bits,
 \itemize{
-\item \code{H1} The entropy of split 1
-\item \code{H2} The entropy of split 2
-\item \code{H12} The joint entropy of both splits
-\item \code{I} The mutual information of the splits
-\item \code{Hd} The entropy distance (variation of information) of the splits
+\item \code{H1} The entropy of split 1;
+\item \code{H2} The entropy of split 2;
+\item \code{H12} The joint entropy of both splits;
+\item \code{I} The mutual information of the splits;
+\item \code{Hd} The entropy distance (variation of information) of the splits.
 }
 }
 \description{
@@ -26,7 +26,7 @@ Reports the entropy, joint entropy, entropy distance and information content
 of two splits, treating each split as a division of \emph{n} leaves into two
 groups.  Further details are available in a
 \href{https://ms609.github.io/TreeDist/articles/information.html}{vignette},
-MacKay (2003) and Meila (2007)
+MacKay (2003) and Meila (2007).
 }
 \references{
 \insertRef{Mackay2003}{TreeDist}

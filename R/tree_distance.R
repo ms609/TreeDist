@@ -79,10 +79,19 @@ GeneralizedRF <- function (splits1, splits2, nTip, PairScorer,
 #' simultaneously.
 #' 
 #' @template split12Params
-#' @return `SplitsCompatible` returns a logical specifying whether the splits
+#' @return `SplitsCompatible()` returns a logical specifying whether the splits
 #' provided are compatible with one another.
 #' 
 #' @template MRS
+#' 
+#' @examples 
+#' 
+#' A <- TRUE
+#' B <- FALSE
+#' SplitsCompatible(c(A, A, A, B, B, B),
+#'                  c(A, A, B, B, B, B))
+#' SplitsCompatible(c(A, A, A, B, B, B),
+#'                  c(A, A, B, B, B, A))
 #' @export
 SplitsCompatible <- function (split1, split2) {
   # Return:
