@@ -64,7 +64,8 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
     if (!TreeIsRooted(tree1)) {
       tree1 <- RootOnNode(tree1, node = tree1$edge[nTip * 2 - 2], TRUE)
     }
-    max(vapply(seq_len(nTip - 3L) + nTip + 2L, function (node)
+    tree2 <- Preorder(tree2)
+    max(vapply(tree2$edge[-1, 2], function (node)
       .MASTSizeEdges(tree1$edge,
                      RootOnNode(tree2, node = node, TRUE)$edge,
                      nTip = nTip), 0L))

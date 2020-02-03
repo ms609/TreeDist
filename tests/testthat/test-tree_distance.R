@@ -499,6 +499,43 @@ test_that('Kendall-Colijn distance is correctly calculated', {
   expect_equal(2.828427, KendallColijn(treeAbc.Defgh, treeTwoSplits), tolerance=1e-06)
 })
 
+test_that("MAST size calculated correctly on small trees", {
+  library('TreeTools')
+  #expect_equal(4L, MASTSize(as.phylo(0, 5), as.phylo(1, 5)))
+  t1 <- structure(list(edge = structure(c(6L, 6L, 7L, 7L, 8L, 8L, 9L, 
+                                          9L, 1L, 7L, 2L, 8L, 3L, 9L, 4L, 5L),
+                                        .Dim = c(8L, 2L)), Nnode = 4L, 
+                       tip.label = c("t3", "t5", "t4", "t1", "t2")),
+                  class = "phylo", order = "cladewise")
+  t2 <- structure(list(edge = structure(c(6L, 9L, 9L, 7L, 7L, 8L, 8L, 
+                                          6L, 9L, 2L, 7L, 3L, 8L, 4L, 5L, 1L), 
+                                        .Dim = c(8L, 2L)), 
+                       tip.label = c("t3", "t4", "t1", "t2", "t5"), Nnode = 4L), 
+                  class = "phylo", order = "cladewise")
+  t1 <- RenumberTips(t1, paste0('t', 1:5))
+  
+  t2 <- RenumberTips(t2, t1)
+  t2 <- Preorder(t2)
+  par(mfrow=2:1)
+  ME <- function (e, node) {
+    expect_equal(e, 
+                 .MASTSizeEdges(t1$edge,
+                                RootOnNode(t2, node = node, TRUE)$edge,
+                                nTip = 5L), 0L)
+  }
+  
+  ME(2L, 1)
+  ME(3L, 2)
+  ME(4L, 3)
+  ME(2L, 4)
+  ME(2L, 5)
+  ME(4L, 6)
+  ME(4L, 7)
+  ME(3L, 8)
+  ME(3L, 9)
+  
+  expect_equal(4L, MASTSize(t1, t2, rooted = FALSE))
+})
 
 test_that('Multiple comparisons are correctly ordered', {
   nTrees <- 6L
