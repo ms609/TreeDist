@@ -2,11 +2,7 @@
 title: "Interpreting tree distance metrics"
 author: "Martin R. Smith"
 date: "`r Sys.Date()`"
-output: 
-  bookdown::pdf_document2:
-    includes:
-      in_header: ../inst/preamble.tex
-  rmarkdown::html_document:
+output: rmarkdown::html_vignette
 bibliography: ../inst/REFERENCES.bib
 csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
 
@@ -39,86 +35,16 @@ The raw data are available in the data object
 
 
 ```{R Tree-distance-averages, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=2, fig.width=6, fig.align='center'}
-if (require('TreeDistData')) {  #TODO update acronyms
-  methods <- c('vpi', 'vmsi', 'vci', 'qd', 'nts', 'ja2', 'ja4', 'jna2', 'jna4',
-                'msd', 'mast', 'masti',
-                'nni_l', 'nni_u', 'spr', 'tbr_l', 'tbr_u',
-                'rf', 'path')
-  plotSequence <- c('vpi', 'vmsi', 'vci', 'qd', 'nts', 'ja2', 'ja4', 'jna2', 'jna4',
-                'msd', 'mast', 'masti',
-                'nni_l', 'nni_u', 'spr', 'tbr_l', 'tbr_u',
-                'rf', 'path')
-  legendSequence <- c('vpi', 'vmsi', 'vci', 'qd', 'nts', 'ja2', 'ja4', 'jna2', 'jna4',
-                'msd', 'mast', 'masti',
-                'nni_l', 'nni_u', 'spr', 'tbr_l', 'tbr_u',
-                'rf', 'path')
-  abbrevs <- c(
-  rf  = 'Robinson-Foulds',
-  rfi = 'Robinson-Foulds Info',
-
-  ja2 = 'JRF (k=2, arboreal)',
-  ja4 = 'JRF (k=4, arboreal)',
-  jna2 = 'JRF (k=2, non-arb.)',
-  jna4 = 'JRF (k=4, non-arb.)',
-
-  vpi = 'Var. Phylog. Info',
-  nni = 'NNI (approx.)',
-  nni_u = 'NNI (upr bnd)',
-  nni_t = 'NNI (ub tight)',
-  nni_l = 'NNI (lwr bnd)',
-  spr = 'SPR (approx.)',
-
-  tbr = 'TBR (approx.)',
-  tbr_l = 'TBR (lb approx.)',
-  tbr_u = 'TBR (ub approx.)',
-  mafi = 'MAF info',
-  path = 'Path',
-  mst = 'MAST',
-  mast = 'MAST size',
-  masti = 'MAST info',
-  vci = 'Var. Clust. Info',
-
-  nea = 'Nye et al.',
-  nts = expression(paste(plain('Nye '), italic('et al.'))),
-  qd  = 'Quartet',
-  vmsi = 'Var. Matching Split Info',
-  msd = 'Match. Split Dist.'
-)[methods]
-  tableau20 <- c('#4e78a8', '#A0CBE8',
-               '#f28e2c', '#FFBE7D',
-               '#59a14f', '#8CD17D',
-               '#B6992D', '#F1CE63',
-               '#499894', '#86BCB6',
-               '#E15759', '#FF9D9A',
-               '#79706E', '#BAB0AC',
-               '#D37295', '#FABFD2',
-               '#B07AA1', '#D4A6C8',
-               '#9D7660', '#D7B5A6',
-               '#000000','#000000','#000000','#000000','#000000','#000000','#000000',
-               '#000000'
-               )
-# https://www.tableau.com/about/blog/2016/7/colors-upgrade-tableau-10-56782
-# https://jrnold.github.io/ggthemes/reference/tableau_color_pal.html
-
-  methodCol <- tableau20[c((1:10 * 2 - 1L), (seq_len(length(methods) - 10L) * 2))]
+if (require('TreeDistData')) {
+  data('tdMethods', package = 'TreeDistData')
+  data('tdAbbrevs', package = 'TreeDistData')
+  methods <- tdMethods
+  abbrevs <- tdAbbrevs
   
   totalInfoContent <- 3L
-  maxPossible <- 6L
-  maxObserved <- 4L
-  methodPch <- c(vci = totalInfoContent, vpi = totalInfoContent, 
-                 rf = maxPossible, nts = maxPossible, qd = maxPossible,
-                 path = maxObserved, 
-                 msd = maxObserved)
-  names(methodCol) <- names(abbrevs)
-  methodCol <- methodCol[methods]
-  methodPch <- methodPch[methods]
-  methodLCH <- colorspace::coords(as(colorspace::hex2RGB(methodCol), 'polarLUV'))
-  
-  
-  
+  methodLCH <- colorspace::coords(as(colorspace::hex2RGB(TreeDistCol(methods)), 'polarLUV'))
   
   data('randomTreeDistances', package='TreeDistData')
-  
   pathMax <- randomTreeDistances['path', 'max', ]
   msdMax <- randomTreeDistances['msd', 'max', ]
   nniMax <- randomTreeDistances['nni_u', 'max', ]
@@ -127,10 +53,10 @@ if (require('TreeDistData')) {  #TODO update acronyms
   nTip <- as.integer(dimnames(randomTreeDistances)[[3]])
   
   pathNorm <- nls(pathMax ~ a * (nTip ^2) + b * (nTip ^3) + nTip ^ c,
-                 start = list(a = -0.0444, b = 4.6e-5, c = 1.478))
+                  start = list(a = -0.0444, b = 4.6e-5, c = 1.478))
   
   msdNorm <- nls(msdMax ~ (a * nTip) + (c * nTip ^ b) + d,
-              start = list(a = -16.795, b=1.135, c = 14.25, d = 1.86))
+                 start = list(a = -16.795, b=1.135, c = 14.25, d = 1.86))
   
   nniNorm <-  nls(nniMax ~ (a * nTip) + (c * nTip ^ b) + d + e * (nTip ^2) + f * (nTip ^3),
                   start = list(a = -16.7, b=1.1, c = 14, d = 6, e = 0.01, f = 0.01))
@@ -167,11 +93,9 @@ if (require('TreeDistData')) {  #TODO update acronyms
       dat
     }
     if (method %in% c('mast', 'masti')) dat <- Invert(dat)
-
-    col <- methodCol[method]
-    pch <- methodPch[method]
-  
-    #points(nLeaves, dat['mean', ], pch=pch, col=col)
+    
+    col <- TreeDistCol(method, '')
+    
     lines(nLeaves, dat['50%', ], pch=1, col=col)
     polygon(c(nLeaves, rev(nLeaves)), c(dat['10%', ], rev(dat['90%', ])),
             border=NA, col = paste0(col, '33'),)
@@ -180,7 +104,6 @@ if (require('TreeDistData')) {  #TODO update acronyms
     #lines(nLeaves, dat['25%', ], lty=2, col=col)
     #lines(nLeaves, dat['75%', ], lty=2, col=col)
     #pointsAt <- 1:10 * 20L
-    #points(pointsAt, dat['50%', as.character(pointsAt)], col=col, pch=pch)
   }
   
   par(mfrow = c(3, 1))
@@ -190,7 +113,7 @@ if (require('TreeDistData')) {  #TODO update acronyms
   PlotMethods <- function (methods, yMin = 0.4,
                            lp = c('bottomright', 'bottomleft')) {
     plot(as.integer(dimnames(randomTreeDistances)[[3]]),
-         randomTreeDistances['vpi', 'mean', ],
+         randomTreeDistances['dpi', 'mean', ],
          ylim=c(yMin, 1), type='n',
          xlab = "Number of leaves", ylab = "Normalized tree distance")
     for (method in methods) AddLine(method, 
@@ -198,22 +121,22 @@ if (require('TreeDistData')) {  #TODO update acronyms
     
     
     legend(lp[1], bty='n',
-           lty=1, legend=abbrevs[methods], col=paste0(methodCol[methods], 44),
+           lty=1, legend=abbrevs[methods], col=TreeDistCol(methods, 44),
            text.col='#FFFFFFFF', pch = 15, pt.cex=1.8
     )
     
     legend(lp[1], bty='n', lty=1, 
-           legend=abbrevs[methods], col=methodCol[methods])
+           legend=abbrevs[methods], col=TreeDistCol(methods))
     
     legend(lp[2], bty='n', inset=c(0.09, 0),
            lty=1, lwd = c(1, 4, 6), col=c(1, "#00000066", "#00000033"),
            legend=c('Median', 'Interquartile range', 'Interdecile range'))
   }
-  PlotMethods(c('rf', 'vpi', 'vci', 'msd', 'nts', 'vmsi'))
+  PlotMethods(c('rf', 'dpi', 'cid', 'msd', 'nts', 'msid'))
   PlotMethods(c('rf', 'ja4', 'jna4', 'ja2', 'jna2', 'nts'), yMin=0.7)
   PlotMethods(c('nni_u', 'tbr_u', 'spr', 'masti', 'mast',
                 'path', 'qd', 'tbr_l', 'nni_l'), yMin = 0.14, 
-                lp = c('bottomright', 'right'))
+              lp = c('bottomright', 'right'))
 } else {
   cat("\nInstall package `TreeDistData` to render this chart.")
 }
