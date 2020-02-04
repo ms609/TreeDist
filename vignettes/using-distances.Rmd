@@ -138,7 +138,7 @@ available in the data package
 [`TreeDistData`](https://github.com/ms609/TreeDistData).  We can view (normalized) 
 distances for a selection of methods:
 
-```{r, collapse=TRUE}
+```{r, collapse=TRUE, fig.width=7, fig.height=4, message=FALSE}
 if (require('TreeDistData')) {
 data('randomTreeDistances', package='TreeDistData')
 
