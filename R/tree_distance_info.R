@@ -153,7 +153,7 @@ DifferentPhylogeneticInfo <- function (tree1, tree2 = tree1,
   treesIndependentInfo <- outer(SplitwiseInfo(tree1), SplitwiseInfo(tree2), '+')
   
   ret <- treesIndependentInfo - spi - spi
-  ret <- NormalizeInfo(ret, tree1, tree2, how=normalize, 
+  ret <- NormalizeInfo(ret, tree1, tree2, how = normalize, 
                        infoInBoth = treesIndependentInfo,
                        InfoInTree = SplitwiseInfo, Combine = '+')
   
