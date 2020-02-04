@@ -7,10 +7,15 @@ src/*.so
 src/*.dll
 .Rdata
 .Rprofile
+*.aux
 *.gcno
+*.knit.md
+*.log
 *.out
 *.Rhistory
-*.log
+*.Rproj*
+*.site
+*.utf8.md
 /* *.Rd */
 revdep/
 vignettes/*.html
@@ -18,6 +23,4 @@ vignettes/*.pdf
 vignettes/*_files
 vignettes/*_cache
 vignettes/*.R
-*.Rproj*
 .Rproj.user
-*.site
