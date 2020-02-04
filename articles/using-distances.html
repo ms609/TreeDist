@@ -117,7 +117,7 @@
       <h1>Contextualizing tree distances</h1>
                         <h4 class="author"><a href="https://community.dur.ac.uk/martin.smith/">Martin R. Smith</a></h4>
             
-            <h4 class="date">2020-01-28</h4>
+            <h4 class="date">2020-02-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/using-distances.Rmd"><code>vignettes/using-distances.Rmd</code></a></small>
       <div class="hidden name"><code>using-distances.Rmd</code></div>
@@ -185,12 +185,12 @@ In such a context, it can be relevant to normalize tree similarity against the <
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1"><span class="cf">if</span> (<span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">'TreeDistData'</span>)) {</a>
 <a class="sourceLine" id="cb17-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">'randomTreeDistances'</span>, <span class="dt">package=</span><span class="st">'TreeDistData'</span>)</a>
 <a class="sourceLine" id="cb17-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb17-4" data-line-number="4">methods &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'vpi'</span>, <span class="st">'vci'</span>, <span class="st">'nts'</span>, <span class="st">'qd'</span>) <span class="co">#TODO Update</span></a>
-<a class="sourceLine" id="cb17-5" data-line-number="5">methodCol &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dt">vpi =</span> <span class="st">'#e15659'</span>, <span class="dt">vci =</span> <span class="st">'#58a14e'</span>, <span class="dt">nts =</span> <span class="st">'#edc949'</span>, <span class="dt">qd =</span> <span class="st">'#af7aa1'</span>)</a>
+<a class="sourceLine" id="cb17-4" data-line-number="4">methods &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'dpi'</span>, <span class="st">'cid'</span>, <span class="st">'nts'</span>, <span class="st">'qd'</span>)</a>
+<a class="sourceLine" id="cb17-5" data-line-number="5">methodCol &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dt">dpi =</span> <span class="st">'#e15659'</span>, <span class="dt">cid =</span> <span class="st">'#58a14e'</span>, <span class="dt">nts =</span> <span class="st">'#edc949'</span>, <span class="dt">qd =</span> <span class="st">'#af7aa1'</span>)</a>
 <a class="sourceLine" id="cb17-6" data-line-number="6"></a>
 <a class="sourceLine" id="cb17-7" data-line-number="7"><span class="kw"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="dt">cex =</span> <span class="fl">0.7</span>, <span class="dt">mar=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="dv">5</span>, <span class="dv">5</span>, <span class="fl">0.01</span>, <span class="fl">0.01</span>))</a>
 <a class="sourceLine" id="cb17-8" data-line-number="8">nLeaves &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/dimnames.html">dimnames</a></span>(randomTreeDistances)[[<span class="dv">3</span>]])</a>
-<a class="sourceLine" id="cb17-9" data-line-number="9"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(nLeaves, <span class="dt">type=</span><span class="st">'n'</span>, randomTreeDistances[<span class="st">'vpi'</span>, <span class="st">'mean'</span>, ], <span class="dt">ylim=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.4</span>, <span class="dv">1</span>), </a>
+<a class="sourceLine" id="cb17-9" data-line-number="9"><span class="kw"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(nLeaves, <span class="dt">type=</span><span class="st">'n'</span>, randomTreeDistances[<span class="st">'dpi'</span>, <span class="st">'mean'</span>, ], <span class="dt">ylim=</span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.4</span>, <span class="dv">1</span>), </a>
 <a class="sourceLine" id="cb17-10" data-line-number="10">     <span class="dt">xlab =</span> <span class="st">"Number of leaves"</span>, </a>
 <a class="sourceLine" id="cb17-11" data-line-number="11">     <span class="dt">ylab =</span> <span class="st">"Normalized distance between random tree pairs"</span>)</a>
 <a class="sourceLine" id="cb17-12" data-line-number="12"></a>
@@ -208,11 +208,10 @@ In such a context, it can be relevant to normalize tree similarity against the <
 <a class="sourceLine" id="cb17-24" data-line-number="24">       <span class="kw"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="kw"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="kw"><a href="https://rdrr.io/r/grDevices/plotmath.html">plain</a></span>(<span class="st">'Nye '</span>), <span class="kw"><a href="https://rdrr.io/r/grDevices/plotmath.html">italic</a></span>(<span class="st">'et al.'</span>))),</a>
 <a class="sourceLine" id="cb17-25" data-line-number="25">       <span class="st">'Quartet divergence'</span></a>
 <a class="sourceLine" id="cb17-26" data-line-number="26">       ), <span class="dt">col=</span> methodCol[methods], <span class="dt">pos=</span><span class="dv">2</span>)</a>
-<a class="sourceLine" id="cb17-27" data-line-number="27">}</a>
-<a class="sourceLine" id="cb17-28" data-line-number="28">## Loading required package: TreeDistData</a></code></pre></div>
-<p><img src="using-distances_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
+<a class="sourceLine" id="cb17-27" data-line-number="27">}</a></code></pre></div>
+<p><img src="using-distances_files/figure-html/unnamed-chunk-9-1.png" width="672"></p>
 <p>or use these calculated values to normalize our tree distance:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">expectedCID &lt;-<span class="st"> </span>randomTreeDistances[<span class="st">'vci'</span>, <span class="st">'mean'</span>, <span class="st">'9'</span>]</a>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">expectedCID &lt;-<span class="st"> </span>randomTreeDistances[<span class="st">'cid'</span>, <span class="st">'mean'</span>, <span class="st">'9'</span>]</a>
 <a class="sourceLine" id="cb18-2" data-line-number="2"><span class="kw"><a href="../reference/TreeDistance.html">ClusteringInfoDistance</a></span>(tree1, tree2, <span class="dt">normalize =</span> <span class="ot">TRUE</span>) <span class="op">/</span><span class="st"> </span>expectedCID</a></code></pre></div>
 </div>
 </div>
