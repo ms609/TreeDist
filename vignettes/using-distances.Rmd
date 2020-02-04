@@ -142,12 +142,12 @@ distances for a selection of methods:
 if (require('TreeDistData')) {
 data('randomTreeDistances', package='TreeDistData')
 
-methods <- c('vpi', 'vci', 'nts', 'qd') #TODO Update
-methodCol <- c(vpi = '#e15659', vci = '#58a14e', nts = '#edc949', qd = '#af7aa1')
+methods <- c('dpi', 'cid', 'nts', 'qd')
+methodCol <- c(dpi = '#e15659', cid = '#58a14e', nts = '#edc949', qd = '#af7aa1')
 
 par(cex = 0.7, mar=c(5, 5, 0.01, 0.01))
 nLeaves <- as.integer(dimnames(randomTreeDistances)[[3]])
-plot(nLeaves, type='n', randomTreeDistances['vpi', 'mean', ], ylim=c(0.4, 1), 
+plot(nLeaves, type='n', randomTreeDistances['dpi', 'mean', ], ylim=c(0.4, 1), 
      xlab = "Number of leaves", 
      ylab = "Normalized distance between random tree pairs")
 
@@ -171,7 +171,7 @@ text(202, randomTreeDistances[methods, '50%', '200'] + 0.02,
 or use these calculated values to normalize our tree distance:
 
 ```{r, eval = FALSE}
-expectedCID <- randomTreeDistances['vci', 'mean', '9']
+expectedCID <- randomTreeDistances['cid', 'mean', '9']
 ClusteringInfoDistance(tree1, tree2, normalize = TRUE) / expectedCID
 ```
 
