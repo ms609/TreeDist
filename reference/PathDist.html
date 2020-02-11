@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Maximum Agreement Subtree size — MASTSize • TreeDist</title>
+<title>Path distance — PathDist • TreeDist</title>
 
 
 <!-- jquery -->
@@ -41,11 +41,8 @@
 
 
 
-<meta property="og:title" content="Maximum Agreement Subtree size — MASTSize" />
-<meta property="og:description" content="Calculate the size or phylogenetic information content (Steel &amp;amp; Penny 2006)
-of the maximum agreement subtree between two phylogenetic trees, i.e.
-the largest tree that can be obtained from both tree1 and tree2 by
-deleting, but not rearranging, leaves." />
+<meta property="og:title" content="Path distance — PathDist" />
+<meta property="og:description" content="Calculate the path distance between trees." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -163,21 +160,16 @@ deleting, but not rearranging, leaves." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Maximum Agreement Subtree size</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance_mast.R'><code>R/tree_distance_mast.R</code></a></small>
-    <div class="hidden name"><code>MASTSize.Rd</code></div>
+    <h1>Path distance</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance_path.R'><code>R/tree_distance_path.R</code></a></small>
+    <div class="hidden name"><code>PathDist.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Calculate the size or phylogenetic information content (Steel &amp; Penny 2006)
-of the maximum agreement subtree between two phylogenetic trees, i.e.
-the largest tree that can be obtained from both <code>tree1</code> and <code>tree2</code> by
-deleting, but not rearranging, leaves.</p>
+    <p>Calculate the path distance between trees.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>MASTSize</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>, <span class='kw'>rooted</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
-
-<span class='fu'>MASTInfo</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>, <span class='kw'>rooted</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>PathDist</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -186,65 +178,43 @@ deleting, but not rearranging, leaves.</p>
       <th>tree1, tree2</th>
       <td><p>Single trees of class <code>phylo</code> to undergo comparison.</p></td>
     </tr>
-    <tr>
-      <th>rooted</th>
-      <td><p>Logical specifying whether to treat the trees as rooted.</p></td>
-    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>MASTSize</code> returns an integer specifying the number of leaves in the
-maximum agreement subtree.</p>
-<p><code>MASTInfo</code> returns a vector or matrix listing the phylogenetic
-information content, in bits, of the maximum agreement subtree.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+    <p><code>PathDist()</code> returns a vector or distance matrix of distances
+between trees.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Steel MA, Penny D (2006).
-&#8220;Maximum parsimony and the phylogenetic information in multistate characters.&#8221;
-In Albert VA (ed.), <em>Parsimony, Phylogeny, and Genomics</em>, 163--178.
-Oxford University Press, Oxford.</p>
-<p>Valiente G (2009).
-<em>Combinatorial Pattern Matching Algorithms in Computational Biology using Perl and R</em>,  CRC Mathematical and Computing Biology Series.
-CRC Press, Boca Raton.</p>
+    <p>This function is a wrapper for the function
+<code><a href='https://rdrr.io/pkg/phangorn/man/treedist.html'>path.dist()</a></code> in the phangorn package.
+It pre-processes trees to ensure that their internal representation does
+not cause the <code>path.dist()</code> function to crash R.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/phangorn/man/mast.html'>phangorn::mast</a></code>, a slower implementation that also lists the
-leaves contained within the subtree.</p>
-<p>Other tree distances: 
+    <div class='dont-index'><p>Other tree distances: 
 <code><a href='JaccardRobinsonFoulds.html'>JaccardRobinsonFoulds</a>()</code>,
 <code><a href='KendallColijn.html'>KendallColijn</a>()</code>,
+<code><a href='MASTSize.html'>MASTSize</a>()</code>,
 <code><a href='MatchingSplitDistance.html'>MatchingSplitDistance</a>()</code>,
 <code><a href='NNIDist.html'>NNIDist</a>()</code>,
 <code><a href='NyeTreeSimilarity.html'>NyeTreeSimilarity</a>()</code>,
-<code><a href='PathDist.html'>PathDist</a>()</code>,
 <code><a href='Robinson-Foulds.html'>Robinson-Foulds</a></code>,
 <code><a href='SPRDist.html'>SPRDist</a>()</code>,
 <code><a href='TreeDistance.html'>TreeDistance</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>'TreeTools'</span>) <span class='co'># for as.phylo, BalancedTree, PectinateTree</span>
-<span class='fu'>MASTSize</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/PectinateTree.html'>PectinateTree</a></span>(<span class='fl'>8</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/BalancedTree.html'>BalancedTree</a></span>(<span class='fl'>8</span>))</div><div class='output co'>#&gt; [1] 4</div><div class='input'><span class='fu'>MASTInfo</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/PectinateTree.html'>PectinateTree</a></span>(<span class='fl'>8</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/BalancedTree.html'>BalancedTree</a></span>(<span class='fl'>8</span>))</div><div class='output co'>#&gt; [1] 3.906891</div><div class='input'>
-<span class='fu'>MASTSize</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/BalancedTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>3</span>, <span class='fl'>7</span>))</div><div class='output co'>#&gt; [1] 4 4 4 4</div><div class='input'><span class='fu'>MASTSize</span>(<span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>3</span>, <span class='fl'>7</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/PectinateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>))</div><div class='output co'>#&gt; [1] 6 5 5 5</div><div class='input'>
-<span class='fu'>MASTInfo</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/BalancedTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>3</span>, <span class='fl'>7</span>))</div><div class='output co'>#&gt; [1] 3.906891 3.906891 3.906891 3.906891</div><div class='input'><span class='fu'>MASTInfo</span>(<span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>3</span>, <span class='fl'>7</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/PectinateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>))</div><div class='output co'>#&gt; [1] 9.884171 6.714246 6.714246 6.714246</div><div class='input'>
-<span class='fu'>MASTSize</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>Bal</span> <span class='kw'>=</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/BalancedTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='kw'>Pec</span> <span class='kw'>=</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/PectinateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>)),
-         <span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>3</span>, <span class='fl'>7</span>))</div><div class='output co'>#&gt;     [,1] [,2] [,3] [,4]
-#&gt; Bal    4    4    4    4
-#&gt; Pec    6    5    5    5</div><div class='input'><span class='fu'>MASTInfo</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>Bal</span> <span class='kw'>=</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/BalancedTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='kw'>Pec</span> <span class='kw'>=</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/PectinateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>)),
-         <span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>3</span>, <span class='fl'>7</span>))</div><div class='output co'>#&gt;         [,1]     [,2]     [,3]     [,4]
-#&gt; Bal 3.906891 3.906891 3.906891 3.906891
-#&gt; Pec 9.884171 6.714246 6.714246 6.714246</div><div class='input'>
-<span class='fu'><a href='CompareAll.html'>CompareAll</a></span>(<span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>4</span>, <span class='fl'>8</span>), <span class='no'>MASTSize</span>)</div><div class='output co'>#&gt;   1 2 3 4 5
-#&gt; 1   7 7 7 6
-#&gt; 2 7   7 6 7
-#&gt; 3 7 7   6 6
-#&gt; 4 7 6 6   7
-#&gt; 5 6 7 6 7  </div><div class='input'><span class='fu'><a href='CompareAll.html'>CompareAll</a></span>(<span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>4</span>, <span class='fl'>8</span>), <span class='no'>MASTInfo</span>)</div><div class='output co'>#&gt;           1         2         3         4         5
-#&gt; 1           13.343602 13.343602 13.343602  9.884171
-#&gt; 2 13.343602           13.343602  9.884171 13.343602
-#&gt; 3 13.343602 13.343602            9.884171  9.884171
-#&gt; 4 13.343602  9.884171  9.884171           13.343602
-#&gt; 5  9.884171 13.343602  9.884171 13.343602          </div><div class='input'>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>'TreeTools'</span>)
+
+<span class='fu'>PathDist</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/BalancedTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/PectinateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>))</div><div class='output co'>#&gt; [1] 4.690416</div><div class='input'>
+<span class='fu'>PathDist</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/BalancedTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>2</span>, <span class='fl'>7</span>))</div><div class='output co'>#&gt; [1] 7.483315 7.745967 7.874008</div><div class='input'><span class='fu'>PathDist</span>(<span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>2</span>, <span class='fl'>7</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/PectinateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>))</div><div class='output co'>#&gt; [1] 7.745967 8.246211 8.124038</div><div class='input'>
+<span class='fu'>PathDist</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>bal</span> <span class='kw'>=</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/BalancedTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='kw'>pec</span> <span class='kw'>=</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/PectinateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>)),
+        <span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>2</span>, <span class='fl'>7</span>))</div><div class='output co'>#&gt; NULL</div><div class='input'>
+<span class='fu'><a href='CompareAll.html'>CompareAll</a></span>(<span class='fu'>as.phylo</span>(<span class='fl'>30</span>:<span class='fl'>33</span>, <span class='fl'>8</span>), <span class='no'>PathDist</span>)</div><div class='output co'>#&gt;          1        2        3        4
+#&gt; 1          3.872983 3.872983 5.567764
+#&gt; 2 3.872983          3.464102 6.928203
+#&gt; 3 3.872983 3.464102          6.928203
+#&gt; 4 5.567764 6.928203 6.928203         </div><div class='input'>  
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -252,7 +222,7 @@ leaves contained within the subtree.</p>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
-      <li><a href="#references">References</a></li>
+      <li><a href="#details">Details</a></li>
       <li><a href="#see-also">See also</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>
