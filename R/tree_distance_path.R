@@ -9,8 +9,8 @@
 #' 
 #' @template tree12Params
 #' 
-#' @return `PathDist()` returns a vector or matrix of SPR distances between
-#'  trees.
+#' @return `PathDist()` returns a vector or distance matrix of distances
+#' between trees.
 #' 
 #' @examples
 #' library('TreeTools')

@@ -10,8 +10,8 @@ PathDist(tree1, tree2 = tree1)
 \item{tree1, tree2}{Single trees of class \code{phylo} to undergo comparison.}
 }
 \value{
-\code{PathDist()} returns a vector or matrix of SPR distances between
-trees.
+\code{PathDist()} returns a vector or distance matrix of distances
+between trees.
 }
 \description{
 Calculate the path distance between trees.

@@ -10,8 +10,8 @@ SPRDist(tree1, tree2 = tree1)
 \item{tree1, tree2}{Single trees of class \code{phylo} to undergo comparison.}
 }
 \value{
-\code{SPRDist()} returns a vector or matrix of SPR distances between
-trees.
+\code{SPRDist()} returns a vector or distance matrix of distances
+between trees.
 }
 \description{
 Approximate the Subtree Prune and Regraft (SPR) distance.
