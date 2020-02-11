@@ -28,6 +28,7 @@
 #' @template MRS
 #' @family tree distances
 #' @importFrom phangorn path.dist
+#' @importFrom TreeTools Postorder
 #' @export
 PathDist <- function (tree1, tree2 = NULL) {
   if (inherits(tree1, 'phylo')) {

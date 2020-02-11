@@ -4,7 +4,7 @@
 \alias{PathDist}
 \title{Path distance}
 \usage{
-PathDist(tree1, tree2 = tree1)
+PathDist(tree1, tree2 = NULL)
 }
 \arguments{
 \item{tree1, tree2}{Single trees of class \code{phylo} to undergo comparison.}

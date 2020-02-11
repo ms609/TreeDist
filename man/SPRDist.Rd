@@ -4,7 +4,7 @@
 \alias{SPRDist}
 \title{Approximate Subtree Prune and Regraft distance}
 \usage{
-SPRDist(tree1, tree2 = tree1)
+SPRDist(tree1, tree2 = NULL)
 }
 \arguments{
 \item{tree1, tree2}{Single trees of class \code{phylo} to undergo comparison.}
