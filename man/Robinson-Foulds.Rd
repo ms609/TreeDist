@@ -122,7 +122,7 @@ Other tree distances: \code{\link{JaccardRobinsonFoulds}},
   \code{\link{KendallColijn}}, \code{\link{MASTSize}},
   \code{\link{MatchingSplitDistance}},
   \code{\link{NNIDist}}, \code{\link{NyeTreeSimilarity}},
-  \code{\link{TreeDistance}}
+  \code{\link{SPRDist}}, \code{\link{TreeDistance}}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
