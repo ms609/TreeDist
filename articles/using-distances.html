@@ -117,7 +117,7 @@
       <h1>Contextualizing tree distances</h1>
                         <h4 class="author"><a href="https://community.dur.ac.uk/martin.smith/">Martin R. Smith</a></h4>
             
-            <h4 class="date">2020-02-04</h4>
+            <h4 class="date">2020-02-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/using-distances.Rmd"><code>vignettes/using-distances.Rmd</code></a></small>
       <div class="hidden name"><code>using-distances.Rmd</code></div>
@@ -144,7 +144,7 @@
 <a class="sourceLine" id="cb1-5" data-line-number="5">                  <span class="dt">Plot=</span>TreeDistPlot, <span class="dt">matchZeros =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
 <p><img src="using-distances_files/figure-html/unnamed-chunk-1-1.png" width="90%" style="display: block; margin: auto;"></p>
 <p>This is a nice metric to start with, because the maximum similarity between each pair of splits is defined as one. (Astute readers might worry that the minimum similarity is greater than zero – that’s a harder problem to overcome.)</p>
-<p>As such, the maximum similarity possible between two 11-leaf trees is <a href="https://ms609.github.io/TreeTools/reference/NSplits.html"><code><a href="https://ms609.github.io/TreeSearch/reference/NPartitions.html">NSplits(11)</a></code></a> = 8.</p>
+<p>As such, the maximum similarity possible between two 11-leaf trees is <a href="https://ms609.github.io/TreeTools/reference/NSplits.html"><code>NSplits(11)</code></a> = 8.</p>
 <p>Normalizing against this value tells us how similar the two trees are, compared to two identical eleven-leaf binary trees; this is the default normalization method for <a href="reference/NyeTreeSimilarity.html"><code>NyeTreeSimilarity</code></a>.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="../reference/NyeTreeSimilarity.html">NyeTreeSimilarity</a></span>(tree1, tree2, <span class="dt">normalize =</span> <span class="ot">FALSE</span>) <span class="op">/</span><span class="st"> </span><span class="dv">8</span></a></code></pre></div>
 <pre><code>## [1] 0.3065476</code></pre>
