@@ -108,8 +108,9 @@ NyeTreeSimilarity(lapply(0:5, as.phylo, nTip = 8), similarity = FALSE)
 Other tree distances: \code{\link{JaccardRobinsonFoulds}},
   \code{\link{KendallColijn}}, \code{\link{MASTSize}},
   \code{\link{MatchingSplitDistance}},
-  \code{\link{NNIDist}}, \code{\link{Robinson-Foulds}},
-  \code{\link{SPRDist}}, \code{\link{TreeDistance}}
+  \code{\link{NNIDist}}, \code{\link{PathDist}},
+  \code{\link{Robinson-Foulds}}, \code{\link{SPRDist}},
+  \code{\link{TreeDistance}}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

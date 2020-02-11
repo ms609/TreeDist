@@ -72,7 +72,7 @@ CompareAll(as.phylo(30:33, 8), NNIDist)
 Other tree distances: \code{\link{JaccardRobinsonFoulds}},
   \code{\link{KendallColijn}}, \code{\link{MASTSize}},
   \code{\link{MatchingSplitDistance}},
-  \code{\link{NyeTreeSimilarity}},
+  \code{\link{NyeTreeSimilarity}}, \code{\link{PathDist}},
   \code{\link{Robinson-Foulds}}, \code{\link{SPRDist}},
   \code{\link{TreeDistance}}
 }

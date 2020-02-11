@@ -27,7 +27,7 @@
 #'   
 #' @template MRS
 #' @family tree distances
-#' @importFrom phangorn SPR.dist sprdist
+#' @importFrom phangorn SPR.dist
 #' @export
 SPRDist <- function (tree1, tree2 = tree1) {
   if (inherits(tree1, 'phylo')) {
