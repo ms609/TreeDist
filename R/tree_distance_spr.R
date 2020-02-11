@@ -29,7 +29,7 @@
 #' @family tree distances
 #' @importFrom phangorn SPR.dist
 #' @export
-SPRDist <- function (tree1, tree2 = tree1) {
+SPRDist <- function (tree1, tree2 = NULL) {
   if (inherits(tree1, 'phylo')) {
     tree1 <- Postorder(tree1)
   } else {
@@ -38,7 +38,7 @@ SPRDist <- function (tree1, tree2 = tree1) {
   
   if (inherits(tree2, 'phylo')) {
     tree2 <- Postorder(tree2)
-  } else {
+  } else if (!is.null(tree2)) {
     tree2 <- structure(lapply(tree2, Postorder), class = 'multiPhylo')
   }
   SPR.dist(tree1, tree2)
