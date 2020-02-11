@@ -31,6 +31,7 @@ Imports:
     ape (>= 5.0),
     colorspace,
     memoise,
+    phangorn (>= 2.2.1),
     stats,
     TreeTools (>= 0.1.3)
 Suggests:
@@ -39,7 +40,6 @@ Suggests:
     kdensity,
     knitr,
     MASS,
-    phangorn (>= 2.2.1),
     Quartet,
     rmarkdown,
     Rcpp,
