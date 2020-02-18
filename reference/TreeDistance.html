@@ -314,8 +314,8 @@ splits of two trees.</p></li>
 <li><p><code>ExpectedVariation</code>: Estimate expected Shared and Different
 Phylogenetic Information for a pair of trees of a given topology.</p></li>
 <li><p><code>MutualClusteringInfo</code>: Mutual Clustering Information of two trees.</p></li>
-<li><p><code>MatchingSplitInfo</code>: Mutual Matching Split information of two trees.</p></li>
-<li><p><code>MatchingSplitInfoDistance</code>: Variation of matching split information between two
+<li><p><code>MatchingSplitInfo</code>: Mutual Matching Split Information of two trees.</p></li>
+<li><p><code>MatchingSplitInfoDistance</code>: Matching Split Information Distance between two
 trees.</p></li>
 </ul>
     <h2 class="hasAnchor" id="concepts-of-information"><a class="anchor" href="#concepts-of-information"></a>Concepts of information</h2>
@@ -349,10 +349,10 @@ is the corresponding measure of tree difference.
 
 <p>If <code>normalize = TRUE</code>, then results will be rescaled from zero to a nominal
 maximum value, calculated thus:</p><ul>
-<li><p><code>MutualClusteringInfo</code>, <code>ClusteringInfoDistance</code>: The sum of the entropy of
+<li><p><code>ClusteringInfoDistance</code>: The sum of the entropy of
 each split in each of the two trees.  See Vinh <em>et al.</em> (2010, table 3) for
 alternative normalization variants.</p></li>
-<li><p><code>SharedPhylogeneticInfo</code>, <code>MatchingSplitInfo</code>:
+<li><p><code>MutualClusteringInfo</code>, <code>SharedPhylogeneticInfo</code>, <code>MatchingSplitInfo</code>:
 The sum of the information content of all splits in the least informative
 tree. To scale against the information content of all splits in the most
 informative tree, use <code>normalize = pmax</code>.</p></li>
