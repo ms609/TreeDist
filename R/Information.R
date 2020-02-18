@@ -143,7 +143,7 @@ MeilaMutualInformation <- function (split1, split2) {
     jointEntropies
   
   # Return:
-  if (abs(mutualInformation) < 1e-15) 0 else mutualInformation
+  if (abs(mutualInformation) < .Machine$double.eps^0.5) 0 else mutualInformation
 }
 
 #' All split pairings
