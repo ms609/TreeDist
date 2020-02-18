@@ -51,11 +51,11 @@
 #' If `normalize = TRUE`, then results will be rescaled from zero to a nominal
 #' maximum value, calculated thus:
 #' 
-#' * `MutualClusteringInfo`, `ClusteringInfoDistance`: The sum of the entropy of
+#' * `ClusteringInfoDistance`: The sum of the entropy of
 #' each split in each of the two trees.  See Vinh _et al._ (2010, table 3) for
 #' alternative normalization variants.
 #' 
-#' * `SharedPhylogeneticInfo`, `MatchingSplitInfo`:
+#' * `MutualClusteringInfo`, `SharedPhylogeneticInfo`, `MatchingSplitInfo`:
 #'  The sum of the information content of all splits in the least informative
 #'  tree. To scale against the information content of all splits in the most
 #'  informative tree, use `normalize = pmax`.
