@@ -117,7 +117,7 @@
       <h1>Calculate tree similarity with TreeDist</h1>
                         <h4 class="author">Martin R. Smith</h4>
             
-            <h4 class="date">2020-02-11</h4>
+            <h4 class="date">2020-02-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/Using-TreeDist.Rmd"><code>vignettes/Using-TreeDist.Rmd</code></a></small>
       <div class="hidden name"><code>Using-TreeDist.Rmd</code></div>
@@ -141,7 +141,7 @@
 <p>First we’ll install the package. We can either install the stable version from the CRAN repository:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">'TreeDist'</span>)</a></code></pre></div>
 <p>or the development version, from GitHub – which will contain the latest features but may not be as extensively tested:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">'ms609/TreeDist'</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">devtools<span class="op">::</span><span class="kw"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">'ms609/TreeDist'</span>)</a></code></pre></div>
 <p>Then we’ll load the package in to R’s working environment:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">'TreeDist'</span>)</a></code></pre></div>
 <p>Now the package’s functions are available within R. Let’s proceed to calculate some tree distances.</p>
@@ -163,11 +163,11 @@
 <a class="sourceLine" id="cb6-5" data-line-number="5"></a>
 <a class="sourceLine" id="cb6-6" data-line-number="6"><span class="kw"><a href="../reference/TreeDistance.html">TreeDistance</a></span>(oneTree, twoTrees)</a></code></pre></div>
 <pre><code>##       one       two 
-## 0.2534713 0.3428508</code></pre>
+## 0.3175563 0.5437850</code></pre>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw"><a href="../reference/TreeDistance.html">TreeDistance</a></span>(twoTrees, threeTrees)</a></code></pre></div>
-<pre><code>##             a         b         c
-## one 0.2830487 0.2127104 0.1854630
-## two 0.2110340 0.3108307 0.2356312</code></pre>
+<pre><code>##             a        b         c
+## one 0.1838910 0.268059 0.2584492
+## two 0.3353839 0.217400 0.1557360</code></pre>
 </div>
 </div>
 <div id="visualizing-a-matching" class="section level2">

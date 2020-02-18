@@ -117,7 +117,7 @@
       <h1>Interpreting tree distance metrics</h1>
                         <h4 class="author">Martin R. Smith</h4>
             
-            <h4 class="date">2020-02-11</h4>
+            <h4 class="date">2020-02-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/Tree-distance-metric-evaluation.Rmd"><code>vignettes/Tree-distance-metric-evaluation.Rmd</code></a></small>
       <div class="hidden name"><code>Tree-distance-metric-evaluation.Rmd</code></div>
@@ -135,9 +135,9 @@
 <p>Information-based metrics are normalized against the total information content of each pair of trees. The (Jaccard-)Robinson-Foulds, Nye <em>et al.</em>, maximum agreement subtree and Quartet metrics are normalized based on the maximum possible value. The SPR distance is normalized against <em>n</em> / 2; this value lies between the definitive bounds of the maximum diameter of the SPR distance <span class="citation">(Allen &amp; Steel, 2001)</span>, and was not exceeded by any of the random tree pairs. The TBR distance is normalized against <em>n</em>. The path, Matching Split Distance and NNI metrics do not have a readily calculated maximum value and are thus crudely ‘normalized’ against an approximate maximum, estimated by fitting a polynomial to the the maximum observed distance for each number of leaves. Candidate polynomial functions were evaluated based on the Akaike and Bayesian information criteria.</p>
 <p>Note that the path and Matching Splits distances exhibit a prominently larger variability than other metrics, suggesting that they are less consistent in the score that they assign to a random pair of trees. In combination with the difficulty in calculating the range of these metrics, this makes their absolute value difficult to interpret.</p>
 </div>
-<div id="references" class="section level1 unnumbered">
-<h1 class="hasAnchor">
-<a href="#references" class="anchor"></a>References</h1>
+<div id="references" class="section level2 unnumbered">
+<h2 class="hasAnchor">
+<a href="#references" class="anchor"></a>References</h2>
 <div id="refs" class="references">
 <div id="ref-Allen2001">
 <p>Allen, B. L., &amp; Steel, M. A. (2001). Subtree transfer operations and their induced metrics on evolutionary trees. <em>Annals of Combinatorics</em>, <em>5</em>(1), 1–15. doi: <a href="https://doi.org/10.1007/s00026-001-8006-8">10.1007/s00026-001-8006-8</a></p>
