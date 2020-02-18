@@ -5,7 +5,6 @@ date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 bibliography: ../inst/REFERENCES.bib
 csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
-
 vignette: >
   %\VignetteIndexEntry{Tree distance metric evaluation}
   %\VignetteEngine{knitr::rmarkdown}
@@ -163,4 +162,4 @@ score that they assign to a random pair of trees.  In combination with the
 difficulty in calculating the range of these metrics, this makes their 
 absolute value difficult to interpret.
 
-# References
+## References
