@@ -1,6 +1,10 @@
 context("mast.cpp")
 library('TreeTools')
 
+test_that('Debugging MAST edge cases', {
+  expect_equal(4L, MASTSize(as.phylo(8, 5), as.phylo(13, 5), rooted = FALSE))
+})
+
 test_that('MAST works', {
   tree1 <- BalancedTree(8L)
   tree2 <- PectinateTree(8L)
