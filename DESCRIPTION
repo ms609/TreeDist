@@ -33,7 +33,7 @@ Imports:
     memoise,
     phangorn (>= 2.2.1),
     stats,
-    TreeTools (>= 0.1.3)
+    TreeTools (> 0.1.3)
 Suggests:
     bookdown,
     cluster,
@@ -48,6 +48,8 @@ Suggests:
     Ternary (>= 1.1.2),
     TreeSearch,
     vdiffr
+Remotes:
+    ms609/TreeTools
 RdMacros: Rdpack
 LazyData: true
 ByteCompile: true
