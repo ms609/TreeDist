@@ -187,6 +187,13 @@ phylogenetic or clustering information that two trees hold in common.</p>
   <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )
 
+<span class='fu'>PhylogeneticInfoDistance</span>(
+  <span class='no'>tree1</span>,
+  <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>,
+  <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)
+
 <span class='fu'>ClusteringInfoDistance</span>(
   <span class='no'>tree1</span>,
   <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>,
@@ -309,7 +316,7 @@ different in the splits of two trees, under an optimal matching.</p>
 two trees.</p></li>
 <li><p><code>DifferentPhylogeneticInfo</code>: Phylogenetic information difference between splits
 of two trees.</p></li>
-<li><p><code>ClusteringInfoDistance</code>: Variation of clustering information distance between
+<li><p><code>ClusteringInfoDistance</code>: Clustering information distance between
 splits of two trees.</p></li>
 <li><p><code>ExpectedVariation</code>: Estimate expected Shared and Different
 Phylogenetic Information for a pair of trees of a given topology.</p></li>
