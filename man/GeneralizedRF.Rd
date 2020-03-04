@@ -4,8 +4,15 @@
 \alias{GeneralizedRF}
 \title{Generalized Robinson-Foulds distance}
 \usage{
-GeneralizedRF(splits1, splits2, nTip, PairScorer, maximize, reportMatching,
-  ...)
+GeneralizedRF(
+  splits1,
+  splits2,
+  nTip,
+  PairScorer,
+  maximize,
+  reportMatching,
+  ...
+)
 }
 \arguments{
 \item{splits1}{Logical matrices where each row corresponds to a leaf,

@@ -4,8 +4,16 @@
 \alias{NormalizeInfo}
 \title{Normalize information against total present in both starting trees}
 \usage{
-NormalizeInfo(unnormalized, tree1, tree2, InfoInTree, infoInBoth = NULL,
-  how = TRUE, Combine = "+", ...)
+NormalizeInfo(
+  unnormalized,
+  tree1,
+  tree2,
+  InfoInTree,
+  infoInBoth = NULL,
+  how = TRUE,
+  Combine = "+",
+  ...
+)
 }
 \arguments{
 \item{unnormalized}{Numeric value to be normalized.}
@@ -19,7 +27,7 @@ independently (optional)}
 
 \item{how}{Method for normalization}
 
-\item{\dots}{Additional parameters to \code{InfoInTree`` or }how`.}
+\item{\dots}{Additional parameters to \verb{InfoInTree`` or }how`.}
 
 \item{Func}{Function that takes as inputs \code{tree1Info} and \code{tree2Info}, and
 returns a normalizing constant against which to divide \code{unnormalized}.}

@@ -37,12 +37,16 @@ CompareAll(as.phylo(30:33, 8), SPRDist)
   
 }
 \seealso{
-Other tree distances: \code{\link{JaccardRobinsonFoulds}},
-  \code{\link{KendallColijn}}, \code{\link{MASTSize}},
-  \code{\link{MatchingSplitDistance}},
-  \code{\link{NNIDist}}, \code{\link{NyeTreeSimilarity}},
-  \code{\link{PathDist}}, \code{\link{Robinson-Foulds}},
-  \code{\link{TreeDistance}}
+Other tree distances: 
+\code{\link{JaccardRobinsonFoulds}()},
+\code{\link{KendallColijn}()},
+\code{\link{MASTSize}()},
+\code{\link{MatchingSplitDistance}()},
+\code{\link{NNIDist}()},
+\code{\link{NyeTreeSimilarity}()},
+\code{\link{PathDist}()},
+\code{\link{Robinson-Foulds}},
+\code{\link{TreeDistance}()}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

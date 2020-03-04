@@ -5,11 +5,20 @@
 \alias{MatchingSplitDistanceSplits}
 \title{Matching Split Distance}
 \usage{
-MatchingSplitDistance(tree1, tree2 = tree1, normalize = FALSE,
-  reportMatching = FALSE)
+MatchingSplitDistance(
+  tree1,
+  tree2 = tree1,
+  normalize = FALSE,
+  reportMatching = FALSE
+)
 
-MatchingSplitDistanceSplits(splits1, splits2, nTip = attr(splits1,
-  "nTip"), normalize = TRUE, reportMatching = FALSE)
+MatchingSplitDistanceSplits(
+  splits1,
+  splits2,
+  nTip = attr(splits1, "nTip"),
+  normalize = TRUE,
+  reportMatching = FALSE
+)
 }
 \arguments{
 \item{tree1}{Trees of class \code{phylo}, with leaves labelled identically,
@@ -76,11 +85,16 @@ VisualizeMatching(MatchingSplitDistance, TreeTools::BalancedTree(6),
 \insertRef{Bogdanowicz2012}{TreeDist}
 }
 \seealso{
-Other tree distances: \code{\link{JaccardRobinsonFoulds}},
-  \code{\link{KendallColijn}}, \code{\link{MASTSize}},
-  \code{\link{NNIDist}}, \code{\link{NyeTreeSimilarity}},
-  \code{\link{PathDist}}, \code{\link{Robinson-Foulds}},
-  \code{\link{SPRDist}}, \code{\link{TreeDistance}}
+Other tree distances: 
+\code{\link{JaccardRobinsonFoulds}()},
+\code{\link{KendallColijn}()},
+\code{\link{MASTSize}()},
+\code{\link{NNIDist}()},
+\code{\link{NyeTreeSimilarity}()},
+\code{\link{PathDist}()},
+\code{\link{Robinson-Foulds}},
+\code{\link{SPRDist}()},
+\code{\link{TreeDistance}()}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

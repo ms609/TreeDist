@@ -164,7 +164,11 @@ DifferentPhylogeneticInfo <- function (tree1, tree2 = tree1,
   ret
 }
 
-#' @describeIn TreeDistance Variation of clustering information distance between
+#' @rdname TreeDistance
+#' @export
+PhylogeneticInfoDistance <- DifferentPhylogeneticInfo
+
+#' @describeIn TreeDistance Clustering information distance between
 #' splits of two trees.
 #' @aliases ClusteringInfoDist
 #' @export

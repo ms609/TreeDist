@@ -4,6 +4,7 @@
 \alias{TreeDistance}
 \alias{SharedPhylogeneticInfo}
 \alias{DifferentPhylogeneticInfo}
+\alias{PhylogeneticInfoDistance}
 \alias{ClusteringInfoDistance}
 \alias{ClusteringInfoDist}
 \alias{ExpectedVariation}
@@ -18,34 +19,77 @@
 \usage{
 TreeDistance(tree1, tree2 = tree1)
 
-SharedPhylogeneticInfo(tree1, tree2 = tree1, normalize = FALSE,
-  reportMatching = FALSE)
+SharedPhylogeneticInfo(
+  tree1,
+  tree2 = tree1,
+  normalize = FALSE,
+  reportMatching = FALSE
+)
 
-DifferentPhylogeneticInfo(tree1, tree2 = tree1, normalize = FALSE,
-  reportMatching = FALSE)
+DifferentPhylogeneticInfo(
+  tree1,
+  tree2 = tree1,
+  normalize = FALSE,
+  reportMatching = FALSE
+)
 
-ClusteringInfoDistance(tree1, tree2 = tree1, normalize = FALSE,
-  reportMatching = FALSE)
+PhylogeneticInfoDistance(
+  tree1,
+  tree2 = tree1,
+  normalize = FALSE,
+  reportMatching = FALSE
+)
+
+ClusteringInfoDistance(
+  tree1,
+  tree2 = tree1,
+  normalize = FALSE,
+  reportMatching = FALSE
+)
 
 ExpectedVariation(tree1, tree2, samples = 10000)
 
-MutualClusteringInfo(tree1, tree2 = tree1, normalize = FALSE,
-  reportMatching = FALSE)
+MutualClusteringInfo(
+  tree1,
+  tree2 = tree1,
+  normalize = FALSE,
+  reportMatching = FALSE
+)
 
-SharedPhylogeneticInfoSplits(splits1, splits2, nTip = attr(splits1,
-  "nTip"), reportMatching = FALSE)
+SharedPhylogeneticInfoSplits(
+  splits1,
+  splits2,
+  nTip = attr(splits1, "nTip"),
+  reportMatching = FALSE
+)
 
-MutualClusteringInfoSplits(splits1, splits2, nTip = attr(splits1,
-  "nTip"), reportMatching = FALSE)
+MutualClusteringInfoSplits(
+  splits1,
+  splits2,
+  nTip = attr(splits1, "nTip"),
+  reportMatching = FALSE
+)
 
-MatchingSplitInfo(tree1, tree2 = tree1, normalize = FALSE,
-  reportMatching = FALSE)
+MatchingSplitInfo(
+  tree1,
+  tree2 = tree1,
+  normalize = FALSE,
+  reportMatching = FALSE
+)
 
-MatchingSplitInfoDistance(tree1, tree2 = tree1, normalize = FALSE,
-  reportMatching = FALSE)
+MatchingSplitInfoDistance(
+  tree1,
+  tree2 = tree1,
+  normalize = FALSE,
+  reportMatching = FALSE
+)
 
-MatchingSplitInfoSplits(splits1, splits2, nTip = attr(splits1, "nTip"),
-  reportMatching = FALSE)
+MatchingSplitInfoSplits(
+  splits1,
+  splits2,
+  nTip = attr(splits1, "nTip"),
+  reportMatching = FALSE
+)
 }
 \arguments{
 \item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
@@ -109,7 +153,7 @@ two trees.
 \item \code{DifferentPhylogeneticInfo}: Phylogenetic information difference between splits
 of two trees.
 
-\item \code{ClusteringInfoDistance}: Variation of clustering information distance between
+\item \code{ClusteringInfoDistance}: Clustering information distance between
 splits of two trees.
 
 \item \code{ExpectedVariation}: Estimate expected Shared and Different
@@ -208,12 +252,16 @@ MutualClusteringInfo(tree1, tree3) # > 0
 }
 }
 \seealso{
-Other tree distances: \code{\link{JaccardRobinsonFoulds}},
-  \code{\link{KendallColijn}}, \code{\link{MASTSize}},
-  \code{\link{MatchingSplitDistance}},
-  \code{\link{NNIDist}}, \code{\link{NyeTreeSimilarity}},
-  \code{\link{PathDist}}, \code{\link{Robinson-Foulds}},
-  \code{\link{SPRDist}}
+Other tree distances: 
+\code{\link{JaccardRobinsonFoulds}()},
+\code{\link{KendallColijn}()},
+\code{\link{MASTSize}()},
+\code{\link{MatchingSplitDistance}()},
+\code{\link{NNIDist}()},
+\code{\link{NyeTreeSimilarity}()},
+\code{\link{PathDist}()},
+\code{\link{Robinson-Foulds}},
+\code{\link{SPRDist}()}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

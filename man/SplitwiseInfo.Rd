@@ -16,9 +16,10 @@ content of the tree where a tree contains multiple splits, as
 these splits will contain mutual information.
 }
 \seealso{
-Other information functions: \code{\link{ClusteringEntropy}},
-  \code{\link{SplitEntropy}},
-  \code{\link{SplitSharedInformation}}
+Other information functions: 
+\code{\link{ClusteringEntropy}()},
+\code{\link{SplitEntropy}()},
+\code{\link{SplitSharedInformation}()}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

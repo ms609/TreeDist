@@ -7,10 +7,10 @@
 [![CRAN Downloads](http://cranlogs.r-pkg.org/badges/TreeDist)](https://cran.r-project.org/package=TreeDist)
 [![DOI](https://zenodo.org/badge/196188301.svg)](https://zenodo.org/badge/latestdoi/196188301)
 
-`TreeDist` implements a suite of metrics that quantify the topological 
+'TreeDist' implements a suite of metrics that quantify the topological 
 distance between pairs of unweighted phylogenetic trees.
-The metrics generally fall in the category of "generalized Robinson-Foulds
-distances": they are based on comparing partitions between trees, and thus
+The metrics generally fall in the category of 'generalized Robinson-Foulds
+distances': they are based on comparing partitions between trees, and thus
 reflect the relationship data within trees, with no reference to branch lengths.
 
 The [Robinson-Foulds distance](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html)

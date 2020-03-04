@@ -57,16 +57,20 @@ KendallColijn(lapply(rep(8, 4), ape::rtree))
 \insertRef{Kendall2016}{TreeDist}
 }
 \seealso{
-\href{https://CRAN.R-project.org/package=treespace/vignettes/introduction.html}{treespace::treeDist}
+\href{https://CRAN.R-project.org/package=treespace/vignettes/introduction.html}{\code{treespace::treeDist}}
 is a more sophisticated, if more cumbersome, implementation that supports
 lambda > 0, i.e. use of edge lengths in tree comparison.
 
-Other tree distances: \code{\link{JaccardRobinsonFoulds}},
-  \code{\link{MASTSize}},
-  \code{\link{MatchingSplitDistance}},
-  \code{\link{NNIDist}}, \code{\link{NyeTreeSimilarity}},
-  \code{\link{PathDist}}, \code{\link{Robinson-Foulds}},
-  \code{\link{SPRDist}}, \code{\link{TreeDistance}}
+Other tree distances: 
+\code{\link{JaccardRobinsonFoulds}()},
+\code{\link{MASTSize}()},
+\code{\link{MatchingSplitDistance}()},
+\code{\link{NNIDist}()},
+\code{\link{NyeTreeSimilarity}()},
+\code{\link{PathDist}()},
+\code{\link{Robinson-Foulds}},
+\code{\link{SPRDist}()},
+\code{\link{TreeDistance}()}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

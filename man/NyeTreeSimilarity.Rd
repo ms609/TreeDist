@@ -5,11 +5,21 @@
 \alias{NyeSplitSimilarity}
 \title{Nye \emph{et al}. (2006) tree comparison}
 \usage{
-NyeTreeSimilarity(tree1, tree2 = tree1, similarity = TRUE,
-  normalize = FALSE, normalizeMax = TRUE, reportMatching = FALSE)
+NyeTreeSimilarity(
+  tree1,
+  tree2 = tree1,
+  similarity = TRUE,
+  normalize = FALSE,
+  normalizeMax = TRUE,
+  reportMatching = FALSE
+)
 
-NyeSplitSimilarity(splits1, splits2, nTip = attr(splits1, "nTip"),
-  reportMatching = FALSE)
+NyeSplitSimilarity(
+  splits1,
+  splits2,
+  nTip = attr(splits1, "nTip"),
+  reportMatching = FALSE
+)
 }
 \arguments{
 \item{tree1}{Trees of class \code{phylo}, with leaves labelled identically,
@@ -105,12 +115,16 @@ NyeTreeSimilarity(lapply(0:5, as.phylo, nTip = 8), similarity = FALSE)
 \insertRef{Nye2006}{TreeDist}
 }
 \seealso{
-Other tree distances: \code{\link{JaccardRobinsonFoulds}},
-  \code{\link{KendallColijn}}, \code{\link{MASTSize}},
-  \code{\link{MatchingSplitDistance}},
-  \code{\link{NNIDist}}, \code{\link{PathDist}},
-  \code{\link{Robinson-Foulds}}, \code{\link{SPRDist}},
-  \code{\link{TreeDistance}}
+Other tree distances: 
+\code{\link{JaccardRobinsonFoulds}()},
+\code{\link{KendallColijn}()},
+\code{\link{MASTSize}()},
+\code{\link{MatchingSplitDistance}()},
+\code{\link{NNIDist}()},
+\code{\link{PathDist}()},
+\code{\link{Robinson-Foulds}},
+\code{\link{SPRDist}()},
+\code{\link{TreeDistance}()}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

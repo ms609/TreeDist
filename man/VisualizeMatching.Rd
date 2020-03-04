@@ -4,9 +4,19 @@
 \alias{VisualizeMatching}
 \title{Visualise a matching}
 \usage{
-VisualizeMatching(Func, tree1, tree2, setPar = TRUE, precision = 3L,
-  Plot = plot.phylo, matchZeros = TRUE, plainEdges = FALSE,
-  edge.width = NULL, edge.color = NULL, ...)
+VisualizeMatching(
+  Func,
+  tree1,
+  tree2,
+  setPar = TRUE,
+  precision = 3L,
+  Plot = plot.phylo,
+  matchZeros = TRUE,
+  plainEdges = FALSE,
+  edge.width = NULL,
+  edge.color = NULL,
+  ...
+)
 }
 \arguments{
 \item{Func}{Function used to construct tree similarity.}

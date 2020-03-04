@@ -56,12 +56,16 @@ CompareAll(as.phylo(0:4, 8), MASTInfo)
 \code{\link[phangorn:mast]{phangorn::mast}}, a slower implementation that also lists the
 leaves contained within the subtree.
 
-Other tree distances: \code{\link{JaccardRobinsonFoulds}},
-  \code{\link{KendallColijn}},
-  \code{\link{MatchingSplitDistance}},
-  \code{\link{NNIDist}}, \code{\link{NyeTreeSimilarity}},
-  \code{\link{PathDist}}, \code{\link{Robinson-Foulds}},
-  \code{\link{SPRDist}}, \code{\link{TreeDistance}}
+Other tree distances: 
+\code{\link{JaccardRobinsonFoulds}()},
+\code{\link{KendallColijn}()},
+\code{\link{MatchingSplitDistance}()},
+\code{\link{NNIDist}()},
+\code{\link{NyeTreeSimilarity}()},
+\code{\link{PathDist}()},
+\code{\link{Robinson-Foulds}},
+\code{\link{SPRDist}()},
+\code{\link{TreeDistance}()}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

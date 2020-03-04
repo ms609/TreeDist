@@ -1,13 +1,13 @@
 #' TreeDist:  Distances between Phylogenetic Trees
 #' 
-#' `TreeDist` implements a suite of metrics that quantify the topological 
+#' 'TreeDist' implements a suite of metrics that quantify the topological 
 #' distance between pairs of unweighted phylogenetic trees.
-#' The metrics generally fall in the category of "generalized Robinson-Foulds
-#' distances": they are based on comparing partitions between trees, and thus
+#' The metrics generally fall in the category of 'generalized Robinson-Foulds
+#' distances': they are based on comparing partitions between trees, and thus
 #' reflect the relationship data within trees, with no reference to branch 
 #' lengths.
 #' Detailed documentation and usage instructions are 
-#' [available online](https://ms609.github.io/TreeDist) or in the vignettes.
+#' [available online](https://ms609.github.io/TreeDist/) or in the vignettes.
 #' 
 #' The [Robinson-Foulds distance](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html)
 #' simply tallies the number of splits (loosely, clades) that occur in both trees -- 

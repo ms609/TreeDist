@@ -73,9 +73,10 @@ MutualClusteringInfo(tree1, tree2)
 }
 }
 \seealso{
-Other information functions: \code{\link{SplitEntropy}},
-  \code{\link{SplitSharedInformation}},
-  \code{\link{SplitwiseInfo}}
+Other information functions: 
+\code{\link{SplitEntropy}()},
+\code{\link{SplitSharedInformation}()},
+\code{\link{SplitwiseInfo}()}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

@@ -5,11 +5,24 @@
 \alias{JaccardSplitSimilarity}
 \title{Jaccard-Robinson-Foulds metric}
 \usage{
-JaccardRobinsonFoulds(tree1, tree2 = tree1, k = 1L, arboreal = TRUE,
-  similarity = FALSE, normalize = FALSE, reportMatching = FALSE)
+JaccardRobinsonFoulds(
+  tree1,
+  tree2 = tree1,
+  k = 1L,
+  arboreal = TRUE,
+  similarity = FALSE,
+  normalize = FALSE,
+  reportMatching = FALSE
+)
 
-JaccardSplitSimilarity(splits1, splits2, nTip = attr(splits1, "nTip"),
-  k = 1L, arboreal = TRUE, reportMatching = FALSE)
+JaccardSplitSimilarity(
+  splits1,
+  splits2,
+  nTip = attr(splits1, "nTip"),
+  k = 1L,
+  arboreal = TRUE,
+  reportMatching = FALSE
+)
 }
 \arguments{
 \item{tree1}{Trees of class \code{phylo}, with leaves labelled identically,
@@ -76,7 +89,7 @@ A more detailed explanation is availble in the
 
 By default, arboreal matchings are enforced.
 
-Note that the settings \code{k = 1, arboreal = FALSE, similarity = TRUE}
+Note that the settings \verb{k = 1, arboreal = FALSE, similarity = TRUE}
 give the similarity metric of Nye \emph{et al}. (2006); a slightly faster
 implementation of this metric is available as \code{\link{NyeTreeSimilarity}}.
 
@@ -114,12 +127,16 @@ VisualizeMatching(JRF2, tree1, tree2, matchZeros = FALSE)
 }
 }
 \seealso{
-Other tree distances: \code{\link{KendallColijn}},
-  \code{\link{MASTSize}},
-  \code{\link{MatchingSplitDistance}},
-  \code{\link{NNIDist}}, \code{\link{NyeTreeSimilarity}},
-  \code{\link{PathDist}}, \code{\link{Robinson-Foulds}},
-  \code{\link{SPRDist}}, \code{\link{TreeDistance}}
+Other tree distances: 
+\code{\link{KendallColijn}()},
+\code{\link{MASTSize}()},
+\code{\link{MatchingSplitDistance}()},
+\code{\link{NNIDist}()},
+\code{\link{NyeTreeSimilarity}()},
+\code{\link{PathDist}()},
+\code{\link{Robinson-Foulds}},
+\code{\link{SPRDist}()},
+\code{\link{TreeDistance}()}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

@@ -33,9 +33,10 @@ MacKay (2003) and Meila (2007).
 \insertRef{Meila2007}{TreeDist}
 }
 \seealso{
-Other information functions: \code{\link{ClusteringEntropy}},
-  \code{\link{SplitSharedInformation}},
-  \code{\link{SplitwiseInfo}}
+Other information functions: 
+\code{\link{ClusteringEntropy}()},
+\code{\link{SplitSharedInformation}()},
+\code{\link{SplitwiseInfo}()}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

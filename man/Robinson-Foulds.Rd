@@ -10,20 +10,43 @@
 \title{Robinson-Foulds distances, with adjustments for phylogenetic information
 content}
 \usage{
-RobinsonFouldsInfo(tree1, tree2 = tree1, similarity = FALSE,
-  normalize = FALSE, reportMatching = FALSE)
+RobinsonFouldsInfo(
+  tree1,
+  tree2 = tree1,
+  similarity = FALSE,
+  normalize = FALSE,
+  reportMatching = FALSE
+)
 
-RobinsonFouldsInfoSplits(splits1, splits2, nTip = attr(splits1, "nTip"),
-  reportMatching = FALSE)
+RobinsonFouldsInfoSplits(
+  splits1,
+  splits2,
+  nTip = attr(splits1, "nTip"),
+  reportMatching = FALSE
+)
 
-RobinsonFoulds(tree1, tree2 = tree1, similarity = FALSE,
-  normalize = FALSE, reportMatching = FALSE)
+RobinsonFoulds(
+  tree1,
+  tree2 = tree1,
+  similarity = FALSE,
+  normalize = FALSE,
+  reportMatching = FALSE
+)
 
-RobinsonFouldsMatching(tree1, tree2 = tree1, similarity = FALSE,
-  normalize = FALSE, ...)
+RobinsonFouldsMatching(
+  tree1,
+  tree2 = tree1,
+  similarity = FALSE,
+  normalize = FALSE,
+  ...
+)
 
-RobinsonFouldsSplits(splits1, splits2, nTip = attr(splits1, "nTip"),
-  reportMatching = FALSE)
+RobinsonFouldsSplits(
+  splits1,
+  splits2,
+  nTip = attr(splits1, "nTip"),
+  reportMatching = FALSE
+)
 }
 \arguments{
 \item{tree1}{Trees of class \code{phylo}, with leaves labelled identically,
@@ -118,12 +141,16 @@ VisualizeMatching(RobinsonFouldsInfo, balanced7, pectinate7)
 \seealso{
 \code{\link[=VisualizeMatching]{VisualizeMatching()}}, to display paired splits.
 
-Other tree distances: \code{\link{JaccardRobinsonFoulds}},
-  \code{\link{KendallColijn}}, \code{\link{MASTSize}},
-  \code{\link{MatchingSplitDistance}},
-  \code{\link{NNIDist}}, \code{\link{NyeTreeSimilarity}},
-  \code{\link{PathDist}}, \code{\link{SPRDist}},
-  \code{\link{TreeDistance}}
+Other tree distances: 
+\code{\link{JaccardRobinsonFoulds}()},
+\code{\link{KendallColijn}()},
+\code{\link{MASTSize}()},
+\code{\link{MatchingSplitDistance}()},
+\code{\link{NNIDist}()},
+\code{\link{NyeTreeSimilarity}()},
+\code{\link{PathDist}()},
+\code{\link{SPRDist}()},
+\code{\link{TreeDistance}()}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
