@@ -22,6 +22,15 @@ test_that('MAST works', {
                MASTInfo(as.phylo(0:3, 7), BalancedTree(7)))
 })
 
+test_that("MAST supports funnily-ordered edges", {
+  tree1 <- BalancedTree(8L)
+  tree2 <- PectinateTree(8L)
+  tree1$edge <- tree1$edge[c(1:7 * 2, (7:1 * 2) - 1), ]
+  tree2$edge <- tree2$edge[c(1:7 * 2, (7:1 * 2) - 1), ]
+  expect_equal(6L, MASTSize(Postorder(tree1), Postorder(tree2), rooted = FALSE))
+  expect_equal(6L, MASTSize(tree1, tree2, rooted = FALSE))
+})
+
 test_that("MAST size calculated correctly on small trees", {
   library('TreeTools')
   #expect_equal(4L, MASTSize(as.phylo(0, 5), as.phylo(1, 5)))
