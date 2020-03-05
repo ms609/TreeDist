@@ -1,8 +1,8 @@
 ## Test environments
-* local Windows 10 install, R 3.6.1
-* Ubuntu 16.04.6 LTS, R 3.5.0, release and devel, via [Travis CI](https://travis-ci.org/ms609/Quartet)
+* Local Windows 10 installation, R 3.6.1
+* Windows 10, with `check_win_devel(quiet = TRUE)`, R devel
+* Ubuntu 16.04.6 LTS, R 3.5.0, release and devel, via [Travis CI](https://travis-ci.org/ms609/TreeDist)
 * Mac OS X 10.13.6, R release, via Travis
-* win-builder, with `check_win_devel()`, R devel
 * R-hub, with `check_for_cran()`
 
 ## R CMD check results

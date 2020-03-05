@@ -8,7 +8,6 @@ release_questions <- function() {
     "Is the code free of #TODOs?",
     "Have you checked the Vignettes for sanity?",
     "Have you checked pkgdown::build_reference_index()?",
-    "Have you refreshed the package meta with codemetar::write_codemeta()?",
     "Have you updated README.md, inst/REFERENCES.bib & inst/CITATION with a citation to the published study?",
     "Have you updated the version number in .zenodo.json, NEWS & DESCRIPTION?"
     )
@@ -16,6 +15,8 @@ release_questions <- function() {
 
 # Additional tests:
 # 
+# build_reference_index()
+# codemetar::write_codemeta()
 # check_win_devel(); rhub::check_for_cran()
 # revdepcheck::revdep_check()
 # build_vignettes()
