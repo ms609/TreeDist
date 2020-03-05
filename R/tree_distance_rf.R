@@ -8,7 +8,7 @@
 #' Note that if `reportMatching = TRUE`, the `pairScores` attribute returns
 #' a logical matrix specifying whether each pair of splits is identical.
 #' 
-#' `RobinsonFouldsInfo()` calculates the tree similarity or distance by summing 
+#' `InfoRobinsonFoulds()` calculates the tree similarity or distance by summing 
 #' the phylogenetic information content of all splits that are (or are not)
 #' identical in both trees.  Consequently, splits that are more likely
 #' to be identical by chance alone make a smaller contribution to overall
@@ -25,7 +25,7 @@
 #' - `RobinsonFoulds()` is normalized against the total number of splits that
 #'  are present.
 #'  
-#' - `RobinsonFouldsInfo()` is normalized against the sum of the phylogenetic 
+#' - `InfoRobinsonFoulds()` is normalized against the sum of the phylogenetic 
 #' information of all splits in both trees, treated independently.
 #'  
 #' @references 
@@ -43,8 +43,8 @@
 #' RobinsonFoulds(balanced7, pectinate7, normalize = TRUE)
 #' VisualizeMatching(RobinsonFouldsMatching, balanced7, pectinate7)
 #' 
-#' RobinsonFouldsInfo(balanced7, pectinate7)
-#' VisualizeMatching(RobinsonFouldsInfo, balanced7, pectinate7)
+#' InfoRobinsonFoulds(balanced7, pectinate7)
+#' VisualizeMatching(InfoRobinsonFoulds, balanced7, pectinate7)
 #' 
 #' 
 #' @family tree distances
@@ -55,9 +55,9 @@
 #' @name Robinson-Foulds
 
 #' @rdname Robinson-Foulds
-RobinsonFouldsInfo <- function (tree1, tree2 = tree1, similarity = FALSE,
+InfoRobinsonFoulds <- function (tree1, tree2 = tree1, similarity = FALSE,
                                 normalize = FALSE, reportMatching = FALSE) {
-  unnormalized <- CalculateTreeDistance(RobinsonFouldsInfoSplits, tree1, tree2, 
+  unnormalized <- CalculateTreeDistance(InfoRobinsonFouldsSplits, tree1, tree2, 
                                         reportMatching) * 2
   
   if (!similarity) unnormalized <- 
@@ -69,10 +69,14 @@ RobinsonFouldsInfo <- function (tree1, tree2 = tree1, similarity = FALSE,
                 InfoInTree = SplitwiseInfo, Combine = '+')
 }
 
+#' @export
+#' @aliases InfoRobinsonFoulds
+RobinsonFouldsInfo <- InfoRobinsonFoulds
+
 #' @rdname Robinson-Foulds
 #' @inheritParams SharedPhylogeneticInfoSplits
 #' @export
-RobinsonFouldsInfoSplits <- function (splits1, splits2, 
+InfoRobinsonFouldsSplits <- function (splits1, splits2, 
                                       nTip = attr(splits1, 'nTip'),
                                       reportMatching = FALSE) {
   

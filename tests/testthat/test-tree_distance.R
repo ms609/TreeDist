@@ -40,7 +40,7 @@ methodsToTest <- list(
   JaccardRobinsonFoulds,
   MatchingSplitDistance,
   RobinsonFoulds,
-  RobinsonFouldsInfo,
+  InfoRobinsonFoulds,
   KendallColijn
 )
 
@@ -447,33 +447,33 @@ test_that('RobinsonFoulds is correctly calculated', {
 
 test_that('Robinson Foulds Info is correctly calculated', {
   expect_equal(22.53747 * 2L, tolerance=1e-05,
-               RobinsonFouldsInfo(treeSym8, treeSym8, similarity = TRUE,
+               InfoRobinsonFoulds(treeSym8, treeSym8, similarity = TRUE,
                                   normalize = FALSE))
   expect_equal(0, tolerance = 1e-05,
-               RobinsonFouldsInfo(treeSym8, treeSym8, normalize = TRUE))
+               InfoRobinsonFoulds(treeSym8, treeSym8, normalize = TRUE))
   expect_equal(1, tolerance = 1e-05,
-               RobinsonFouldsInfo(treeSym8, treeSym8, similarity = TRUE, 
+               InfoRobinsonFoulds(treeSym8, treeSym8, similarity = TRUE, 
                                   normalize = TRUE))
   expect_equal(24.9, tolerance=0.01, 
-               RobinsonFouldsInfo(treeSym8, treeBal8, similarity = TRUE))
+               InfoRobinsonFoulds(treeSym8, treeBal8, similarity = TRUE))
   expect_equal(SplitwiseInfo(treeSym8) + SplitwiseInfo(treeBal8) -
-                 RobinsonFouldsInfo(treeSym8, treeBal8, similarity = FALSE),
-               RobinsonFouldsInfo(treeSym8, treeBal8, similarity = TRUE))
+                 InfoRobinsonFoulds(treeSym8, treeBal8, similarity = FALSE),
+               InfoRobinsonFoulds(treeSym8, treeBal8, similarity = TRUE))
   expect_equal(-log2(945/10395) * 2,
-               RobinsonFouldsInfo(treeSym8, treeAb.Cdefgh, similarity = TRUE))
+               InfoRobinsonFoulds(treeSym8, treeAb.Cdefgh, similarity = TRUE))
   expect_equal(-log2(945/10395) * 2, 
-               RobinsonFouldsInfo(treeSym8, treeAb.Cdefgh, similarity = TRUE))
+               InfoRobinsonFoulds(treeSym8, treeAb.Cdefgh, similarity = TRUE))
   expect_equal(-log2(315/10395) * 2, 
-               RobinsonFouldsInfo(treeSym8, treeAbc.Defgh, similarity = TRUE))
+               InfoRobinsonFoulds(treeSym8, treeAbc.Defgh, similarity = TRUE))
   
   # Test symmetry of small vs large splits
-  expect_equal(RobinsonFouldsInfo(treeSym8, treeAbc.Defgh),
-               RobinsonFouldsInfo(treeAbc.Defgh, treeSym8))
+  expect_equal(InfoRobinsonFoulds(treeSym8, treeAbc.Defgh),
+               InfoRobinsonFoulds(treeAbc.Defgh, treeSym8))
   expect_equal(-log2(225/10395) * 2, 
-               RobinsonFouldsInfo(treeSym8, treeAbcd.Efgh, similarity = TRUE))
+               InfoRobinsonFoulds(treeSym8, treeAbcd.Efgh, similarity = TRUE))
   expect_equal((-log2(225/10395) - log2(945/10395)) * 2,
-               RobinsonFouldsInfo(treeSym8, treeTwoSplits, similarity = TRUE))
-  expect_equal(RobinsonFouldsInfo(treeSym8, list(treeSym8, treeBal8)), 
+               InfoRobinsonFoulds(treeSym8, treeTwoSplits, similarity = TRUE))
+  expect_equal(InfoRobinsonFoulds(treeSym8, list(treeSym8, treeBal8)), 
                RobinsonFouldsInfo(list(treeSym8, treeBal8), treeSym8))
 })
 

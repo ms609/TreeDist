@@ -2,15 +2,15 @@
 % Please edit documentation in R/tree_distance_rf.R
 \name{Robinson-Foulds}
 \alias{Robinson-Foulds}
-\alias{RobinsonFouldsInfo}
-\alias{RobinsonFouldsInfoSplits}
+\alias{InfoRobinsonFoulds}
+\alias{InfoRobinsonFouldsSplits}
 \alias{RobinsonFoulds}
 \alias{RobinsonFouldsMatching}
 \alias{RobinsonFouldsSplits}
 \title{Robinson-Foulds distances, with adjustments for phylogenetic information
 content}
 \usage{
-RobinsonFouldsInfo(
+InfoRobinsonFoulds(
   tree1,
   tree2 = tree1,
   similarity = FALSE,
@@ -18,7 +18,7 @@ RobinsonFouldsInfo(
   reportMatching = FALSE
 )
 
-RobinsonFouldsInfoSplits(
+InfoRobinsonFouldsSplits(
   splits1,
   splits2,
   nTip = attr(splits1, "nTip"),
@@ -97,7 +97,7 @@ according to their phylogenetic information content (Steel & Penny 2006).
 Note that if \code{reportMatching = TRUE}, the \code{pairScores} attribute returns
 a logical matrix specifying whether each pair of splits is identical.
 
-\code{RobinsonFouldsInfo()} calculates the tree similarity or distance by summing
+\code{InfoRobinsonFoulds()} calculates the tree similarity or distance by summing
 the phylogenetic information content of all splits that are (or are not)
 identical in both trees.  Consequently, splits that are more likely
 to be identical by chance alone make a smaller contribution to overall
@@ -114,7 +114,7 @@ tree distance, because their similarity is less remarkable.
 \itemize{
 \item \code{RobinsonFoulds()} is normalized against the total number of splits that
 are present.
-\item \code{RobinsonFouldsInfo()} is normalized against the sum of the phylogenetic
+\item \code{InfoRobinsonFoulds()} is normalized against the sum of the phylogenetic
 information of all splits in both trees, treated independently.
 }
 }
@@ -128,8 +128,8 @@ RobinsonFoulds(balanced7, pectinate7)
 RobinsonFoulds(balanced7, pectinate7, normalize = TRUE)
 VisualizeMatching(RobinsonFouldsMatching, balanced7, pectinate7)
 
-RobinsonFouldsInfo(balanced7, pectinate7)
-VisualizeMatching(RobinsonFouldsInfo, balanced7, pectinate7)
+InfoRobinsonFoulds(balanced7, pectinate7)
+VisualizeMatching(InfoRobinsonFoulds, balanced7, pectinate7)
 
 
 }

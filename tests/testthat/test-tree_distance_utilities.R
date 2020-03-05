@@ -149,7 +149,7 @@ test_that('Matches are reported', {
   Test(JaccardRobinsonFoulds, k = 2, arboreal = FALSE)
   Test(JaccardRobinsonFoulds, k = 2, arboreal = TRUE)
   Test(RobinsonFoulds, relaxed = TRUE)
-  Test(RobinsonFouldsInfo, relaxed = TRUE)
+  Test(InfoRobinsonFoulds, relaxed = TRUE)
 
     # Matching Split Distance matches differently:  
   at <- attributes(MatchingSplitDistance(treeSym8, treeBal8, 
@@ -196,7 +196,7 @@ test_that('Matchings are calculated in both directions', {
   
   nMatches <- 1L
   Test(RobinsonFoulds)
-  Test(RobinsonFouldsInfo)
+  Test(InfoRobinsonFoulds)
   
 })
 
