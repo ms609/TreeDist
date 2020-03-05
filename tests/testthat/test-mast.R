@@ -1,10 +1,6 @@
 context("mast.cpp")
 library('TreeTools')
 
-test_that('Debugging MAST edge cases', {
-  expect_equal(4L, MASTSize(as.phylo(8, 5), as.phylo(13, 5), rooted = FALSE))
-})
-
 test_that('MAST works', {
   tree1 <- BalancedTree(8L)
   tree2 <- PectinateTree(8L)
@@ -52,7 +48,7 @@ test_that("MAST size calculated correctly on small trees", {
   
   t2 <- RenumberTips(t2, t1)
   t2 <- Preorder(t2)
-  par(mfrow=2:1)
+
   ME <- function (e, node) {
     expect_equal(e, 
                  .MASTSizeEdges(t1$edge,
