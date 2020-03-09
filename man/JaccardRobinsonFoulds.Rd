@@ -84,7 +84,7 @@ a similar split in the second.
 Matchings are scored according to the size of the largest split that is
 consistent with both of them, normalized against the Jaccard index, and
 raised to an arbitrary exponent.
-A more detailed explanation is availble in the
+A more detailed explanation is provided in the
 \href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric}{vignettes}.
 
 By default, arboreal matchings are enforced.

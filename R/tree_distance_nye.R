@@ -112,7 +112,7 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' Matchings are scored according to the size of the largest split that is 
 #' consistent with both of them, normalized against the Jaccard index, and 
 #' raised to an arbitrary exponent. 
-#' A more detailed explanation is availble in the 
+#' A more detailed explanation is provided in the 
 #' [vignettes](https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric).
 #' 
 #' By default, arboreal matchings are enforced. 
