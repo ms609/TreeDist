@@ -4,7 +4,7 @@ library("TreeTools")
 test_that("64-bit splits handled ok", {
   SPI <- function (nTip) SharedPhylogeneticInfo(BalancedTree(nTip), 
                                                 PectinateTree(nTip),
-                                                normalize = TRUE)
+                                                normalize = pmin)
   expect_gt(SPI(64), SPI(63))
   expect_lt(SPI(64), SPI(65))
   

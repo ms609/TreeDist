@@ -57,17 +57,17 @@
 #' 
 #' If `normalize = TRUE`, then results will be rescaled from zero to a nominal
 #' maximum value.
-#' The maximum distance is calculated by summing the information
-#' content of each split in each of the two trees undergoing comparison.
+#' The maximum distance is calculated by summing the information content or 
+#' entropy of each split in each of the two trees undergoing comparison.
 #' The maximum similarity is half this value.
 #' (See Vinh _et al._ (2010, table 3) and Smith (202X) for
 #' alternative normalization possibilities.)
 #' 
-#' To scale against the information content of all splits in the most or least
-#' informative tree, use `normalize = pmax` or `pmin` respectively.
+#' To scale against the information content or entropy of all splits in the most
+#' or least informative tree, use `normalize = pmax` or `pmin` respectively.
 #' To calculate the relative similarity against a reference tree that is known
 #' to be 'correct', use `normalize = SplitwiseInfo(trueTree)` (SPI, MSI) or
-#' `ClusteringInfo(trueTree)` (MCI).
+#' `ClusteringEntropy(trueTree)` (MCI).
 #' 
 #' @template tree12listparams
 #' 
@@ -145,7 +145,7 @@ SharedPhylogeneticInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                InfoInTree = SplitwiseInfo, Combine = pmin)
+                InfoInTree = SplitwiseInfo, Combine = .PairMean)
 }
 
 #' @describeIn TreeDistance Phylogenetic information difference between splits
@@ -182,7 +182,8 @@ ClusteringInfoDistance <- function (tree1, tree2 = tree1, normalize = FALSE,
                                        reportMatching = FALSE) {
   mci <- MutualClusteringInfo(tree1, tree2, normalize = FALSE, 
                               reportMatching = reportMatching)
-  treesIndependentInfo <- outer(ClusteringEntropy(tree1), ClusteringEntropy(tree2), '+')
+  treesIndependentInfo <- outer(ClusteringEntropy(tree1),
+                                ClusteringEntropy(tree2), '+')
   
   ret <- treesIndependentInfo - mci - mci
   ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
@@ -247,7 +248,7 @@ MutualClusteringInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
   unnormalized <- CalculateTreeDistance(MutualClusteringInfoSplits, tree1, tree2,
                                         reportMatching)
   NormalizeInfo(unnormalized, tree1, tree2, ClusteringEntropy, 
-                how = normalize, Combine = pmin)
+                how = normalize, Combine = .PairMean)
 }
 
 #' @export
@@ -272,3 +273,10 @@ MutualClusteringInfoSplits <- function (splits1, splits2,
   GeneralizedRF(splits1, splits2, nTip, cpp_mutual_clustering,
                 maximize = TRUE, reportMatching = reportMatching)
 }
+
+#' Mean of two numbers
+#' 
+#' Used for normalization and range calculation
+#' 
+#' @keywords internal
+.PairMean <- function (x, y) (x + y) / 2L

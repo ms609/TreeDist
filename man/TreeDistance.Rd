@@ -260,17 +260,17 @@ both trees (Smith 202X).
 
 If \code{normalize = TRUE}, then results will be rescaled from zero to a nominal
 maximum value.
-The maximum distance is calculated by summing the information
-content of each split in each of the two trees undergoing comparison.
+The maximum distance is calculated by summing the information content or
+entropy of each split in each of the two trees undergoing comparison.
 The maximum similarity is half this value.
 (See Vinh \emph{et al.} (2010, table 3) and Smith (202X) for
 alternative normalization possibilities.)
 
-To scale against the information content of all splits in the most or least
-informative tree, use \code{normalize = pmax} or \code{pmin} respectively.
+To scale against the information content or entropy of all splits in the most
+or least informative tree, use \code{normalize = pmax} or \code{pmin} respectively.
 To calculate the relative similarity against a reference tree that is known
 to be 'correct', use \code{normalize = SplitwiseInfo(trueTree)} (SPI, MSI) or
-\code{ClusteringInfo(trueTree)} (MCI).
+\code{ClusteringEntropy(trueTree)} (MCI).
 }
 
 }

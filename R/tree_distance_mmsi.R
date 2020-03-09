@@ -7,7 +7,7 @@ MatchingSplitInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                InfoInTree = SplitwiseInfo, Combine = pmin)
+                InfoInTree = SplitwiseInfo, Combine = .PairMean)
 }
 
 #' @describeIn TreeDistance Matching Split Information Distance between two
