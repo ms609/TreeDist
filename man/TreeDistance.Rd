@@ -175,8 +175,8 @@ SharedPhylogeneticInfo(tree1, tree3) # = 0
 MutualClusteringInfo(tree1, tree3) # > 0
 
 # Converting trees to Splits objects can speed up multiple comparisons
-splits1 <- as.Splits(tree1)
-splits2 <- as.Splits(tree2)
+splits1 <- TreeTools::as.Splits(tree1)
+splits2 <- TreeTools::as.Splits(tree2)
 
 SharedPhylogeneticInfoSplits(splits1, splits2)
 MatchingSplitInfoSplits(splits1, splits2)

@@ -3,6 +3,7 @@
 \name{Robinson-Foulds}
 \alias{Robinson-Foulds}
 \alias{InfoRobinsonFoulds}
+\alias{RobinsonFouldsInfo}
 \alias{InfoRobinsonFouldsSplits}
 \alias{RobinsonFoulds}
 \alias{RobinsonFouldsMatching}
