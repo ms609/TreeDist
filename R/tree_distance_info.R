@@ -28,20 +28,23 @@
 #' 
 #' Using the mutual (clustering) information (Meila 2007, Vinh _et al._ 2010) of
 #' two splits to quantify their similarity gives rise to the Mutual Clustering 
-#' Information measure (`MutualClusteringInfo`); the entropy distance 
-#' gives the Clustering Distance `ClusteringInfoDistance`).
-#' This approach is optimal in many regards, and is implemented, normalized
-#' against the total information present, in the convenience function `TreeDistance`.
+#' Information measure (`MutualClusteringInfo()`, 
+#' `MutualClusteringInfoSplits()`); the entropy distance 
+#' gives the Clustering Information Distance (`ClusteringInfoDistance()`).
+#' This approach is optimal in many regards, and is implemented with 
+#' normalization in the convenience function `TreeDistance()`.
 #' 
 #' Using the amount of phylogenetic information common to two splits to measure
 #' their similarity gives rise to the Shared Phylogenetic Information similarity
-#' measure (`SharedPhylogeneticInfo`).  The amount of information distinct to
+#' measure (`SharedPhylogeneticInfo()`, `SharedPhylogeneticInfoSplits()`).
+#' The amount of information distinct to
 #' each of a pair of splits provides the complementary Different Phylogenetic
-#'  Information distance metric (`DifferentPhylogeneticInfo`).
+#' Information distance metric (`DifferentPhylogeneticInfo()`).
 #' 
-#' The `MatchingSplitInfo` measure defines the similarity between a pair of 
+#' The Matching Split Information measure (`MatchingSplitInfo()`,
+#' `MatchingSplitInfoSplits()`) defines the similarity between a pair of 
 #' splits as the phylogenetic information content of the most informative 
-#' split that is consistent with both input splits; `MatchingSplitInfoDistance`
+#' split that is consistent with both input splits; `MatchingSplitInfoDistance()`
 #' is the corresponding measure of tree difference.
 #' [(More information here.)](https://ms609.github.io/TreeDist/articles/Generalized-RF.html)
 #' 
@@ -56,18 +59,18 @@
 #' ## Normalization
 #' 
 #' If `normalize = TRUE`, then results will be rescaled such that distance
-#' ranges from zero to (theoretically) one.
-#' The maximum distance is calculated by summing the information content or 
-#' entropy of each split in each of the two trees undergoing comparison.
-#' The maximum similarity is half this value.
+#' ranges from zero to (in principle) one.
+#' The maximum **distance** is the sum of the information content or entropy of
+#' each split in each tree; the maximum **similarity** is half this value.
 #' (See Vinh _et al._ (2010, table 3) and Smith (202X) for
 #' alternative normalization possibilities.)
 #' 
-#' Note that a distance value of one (= similarity of zero) will rarely be
-#' achieved, as even the most different trees are similar in some respects.
-#' It may be desired to rescale the normalized value such that the expected
-#' distance between a random pair of trees is one; see the package
-#' [`TreeDistData`](https://ms609.github.io/TreeDistData/reference/randomTreeDistances.html)
+#' Note that a distance value of one (= similarity of zero) will seldom be
+#' achieved, as even the most different trees exhibit some similarity.
+#' It may thus be helpful to rescale the normalized value such that the
+#' _expected_ distance between a random pair of trees equals one.  This can
+#' be calculated with `ExpectedVariation()`; or see 
+#' '[TreeDistData](https://ms609.github.io/TreeDistData/reference/randomTreeDistances.html)'
 #' for a compilation of expected values under different metrics for trees with
 #' up to 200 leaves.
 #' 
@@ -126,6 +129,14 @@
 #' SharedPhylogeneticInfo(tree1, tree3) # = 0
 #' MutualClusteringInfo(tree1, tree3) # > 0
 #' 
+#' # Converting trees to Splits objects can speed up multiple comparisons
+#' splits1 <- as.Splits(tree1)
+#' splits2 <- as.Splits(tree2)
+#' 
+#' SharedPhylogeneticInfoSplits(splits1, splits2)
+#' MatchingSplitInfoSplits(splits1, splits2)
+#' MutualClusteringInfoSplits(splits1, splits2)
+#' 
 #' 
 #' @references 
 #'  * \insertRef{Mackay2003}{TreeDist}
@@ -144,8 +155,7 @@ TreeDistance <- function (tree1, tree2 = tree1) {
   MutualClusteringInfo(tree1, tree2, normalize = TRUE, reportMatching = FALSE)
 }
 
-#' @describeIn TreeDistance Shared phylogenetic information between splits of
-#'  two trees.
+#' @rdname TreeDistance
 #' @export
 SharedPhylogeneticInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
                                     reportMatching = FALSE) {
@@ -157,8 +167,7 @@ SharedPhylogeneticInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
                 InfoInTree = SplitwiseInfo, Combine = .PairMean)
 }
 
-#' @describeIn TreeDistance Phylogenetic information difference between splits
-#' of two trees.
+#' @rdname TreeDistance
 #' @export
 DifferentPhylogeneticInfo <- function (tree1, tree2 = tree1, 
                                          normalize = FALSE,
@@ -183,8 +192,7 @@ DifferentPhylogeneticInfo <- function (tree1, tree2 = tree1,
 #' @export
 PhylogeneticInfoDistance <- DifferentPhylogeneticInfo
 
-#' @describeIn TreeDistance Clustering information distance between
-#' splits of two trees.
+#' @rdname TreeDistance
 #' @aliases ClusteringInfoDist
 #' @export
 ClusteringInfoDistance <- function (tree1, tree2 = tree1, normalize = FALSE,
@@ -210,8 +218,7 @@ ClusteringInfoDistance <- function (tree1, tree2 = tree1, normalize = FALSE,
 #' @export
 ClusteringInfoDist <- ClusteringInfoDistance
 
-#' @describeIn TreeDistance Estimate expected Shared and Different
-#' Phylogenetic Information for a pair of trees of a given topology.
+#' @rdname TreeDistance
 #' @param samples Integer specifying how many samplings to obtain; 
 #' accuracy of estimate increases with `sqrt(samples)`.
 #' @importFrom stats sd
@@ -229,8 +236,11 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+4) {
     resampled2 <- as.Splits(splits2, sample(tipLabels))
     
     c(SharedPhylogeneticInfoSplits(splits1, resampled2),
-      MatchingSplitInfoSplits(splits1, resampled2))
-  }, c(SharedPhylogeneticInfo = 0, MatchingSplitInfo = 0))
+      MatchingSplitInfoSplits(splits1, resampled2),
+      MutualClusteringInfoSplits(splits1, resampled2)
+      )
+  }, c(SharedPhylogeneticInfo = 0, MatchingSplitInfo = 0,
+       MutualClusteringInfo = 0))
   
   mut <- cbind(Estimate = rowMeans(mutualEstimates),
                sd = apply(mutualEstimates, 1, sd), n = samples)
@@ -240,7 +250,11 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+4) {
     DifferentPhylogeneticInfo = c(info1 + info2 - mut[1, 1] - mut[1, 1],
                                     mut[1, 2] * 2, samples),
     MatchingSplitInfoDistance = c(info1 + info2 - mut[2, 1] - mut[2, 1],
-                                     mut[2, 2] * 2, samples)
+                                     mut[2, 2] * 2, samples),
+    ClusteringInfoDistance = c(ClusteringEntropy(tree1) + 
+                                 ClusteringEntropy(tree2) - 
+                                 mut[3, 1] - mut[3, 1],
+                               mut[3, 2] * 2, samples)
   )
   
   # Return:
@@ -249,7 +263,7 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+4) {
         ret[, 2:3])
 }
 
-#' @describeIn TreeDistance Mutual Clustering Information of two trees.
+#' @rdname TreeDistance
 #' @aliases MutualClusteringInformation
 #' @export
 MutualClusteringInfo <- function (tree1, tree2 = tree1, normalize = FALSE,

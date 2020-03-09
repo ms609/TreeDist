@@ -145,28 +145,6 @@ when they are optimally matched, following Smith (forthcoming).
 The complementary tree distance measures state how much information is
 different in the splits of two trees, under an optimal matching.
 }
-\section{Functions}{
-\itemize{
-\item \code{SharedPhylogeneticInfo}: Shared phylogenetic information between splits of
-two trees.
-
-\item \code{DifferentPhylogeneticInfo}: Phylogenetic information difference between splits
-of two trees.
-
-\item \code{ClusteringInfoDistance}: Clustering information distance between
-splits of two trees.
-
-\item \code{ExpectedVariation}: Estimate expected Shared and Different
-Phylogenetic Information for a pair of trees of a given topology.
-
-\item \code{MutualClusteringInfo}: Mutual Clustering Information of two trees.
-
-\item \code{MatchingSplitInfo}: Mutual Matching Split Information of two trees.
-
-\item \code{MatchingSplitInfoDistance}: Matching Split Information Distance between two
-trees.
-}}
-
 \examples{
 tree1 <- ape::read.tree(text='((((a, b), c), d), (e, (f, (g, h))));')
 tree2 <- ape::read.tree(text='(((a, b), (c, d)), ((e, f), (g, h)));')
@@ -195,6 +173,14 @@ ExpectedVariation(tree1, tree2, sample=12)['DifferentPhylogeneticInfo', 'Estimat
 # Non-arboreal matches contain clustering, but not phylogenetic, information
 SharedPhylogeneticInfo(tree1, tree3) # = 0
 MutualClusteringInfo(tree1, tree3) # > 0
+
+# Converting trees to Splits objects can speed up multiple comparisons
+splits1 <- as.Splits(tree1)
+splits2 <- as.Splits(tree2)
+
+SharedPhylogeneticInfoSplits(splits1, splits2)
+MatchingSplitInfoSplits(splits1, splits2)
+MutualClusteringInfoSplits(splits1, splits2)
 
 
 }
@@ -231,20 +217,23 @@ defined in
 
 Using the mutual (clustering) information (Meila 2007, Vinh \emph{et al.} 2010) of
 two splits to quantify their similarity gives rise to the Mutual Clustering
-Information measure (\code{MutualClusteringInfo}); the entropy distance
-gives the Clustering Distance \code{ClusteringInfoDistance}).
-This approach is optimal in many regards, and is implemented, normalized
-against the total information present, in the convenience function \code{TreeDistance}.
+Information measure (\code{MutualClusteringInfo()},
+\code{MutualClusteringInfoSplits()}); the entropy distance
+gives the Clustering Information Distance (\code{ClusteringInfoDistance()}).
+This approach is optimal in many regards, and is implemented with
+normalization in the convenience function \code{TreeDistance()}.
 
 Using the amount of phylogenetic information common to two splits to measure
 their similarity gives rise to the Shared Phylogenetic Information similarity
-measure (\code{SharedPhylogeneticInfo}).  The amount of information distinct to
+measure (\code{SharedPhylogeneticInfo()}, \code{SharedPhylogeneticInfoSplits()}).
+The amount of information distinct to
 each of a pair of splits provides the complementary Different Phylogenetic
-Information distance metric (\code{DifferentPhylogeneticInfo}).
+Information distance metric (\code{DifferentPhylogeneticInfo()}).
 
-The \code{MatchingSplitInfo} measure defines the similarity between a pair of
+The Matching Split Information measure (\code{MatchingSplitInfo()},
+\code{MatchingSplitInfoSplits()}) defines the similarity between a pair of
 splits as the phylogenetic information content of the most informative
-split that is consistent with both input splits; \code{MatchingSplitInfoDistance}
+split that is consistent with both input splits; \code{MatchingSplitInfoDistance()}
 is the corresponding measure of tree difference.
 \href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html}{(More information here.)}
 \subsection{Conversion to distances}{
@@ -259,18 +248,18 @@ both trees (Smith 202X).
 \subsection{Normalization}{
 
 If \code{normalize = TRUE}, then results will be rescaled such that distance
-ranges from zero to (theoretically) one.
-The maximum distance is calculated by summing the information content or
-entropy of each split in each of the two trees undergoing comparison.
-The maximum similarity is half this value.
+ranges from zero to (in principle) one.
+The maximum \strong{distance} is the sum of the information content or entropy of
+each split in each tree; the maximum \strong{similarity} is half this value.
 (See Vinh \emph{et al.} (2010, table 3) and Smith (202X) for
 alternative normalization possibilities.)
 
-Note that a distance value of one (= similarity of zero) will rarely be
-achieved, as even the most different trees are similar in some respects.
-It may be desired to rescale the normalized value such that the expected
-distance between a random pair of trees is one; see the package
-\href{https://ms609.github.io/TreeDistData/reference/randomTreeDistances.html}{\code{TreeDistData}}
+Note that a distance value of one (= similarity of zero) will seldom be
+achieved, as even the most different trees exhibit some similarity.
+It may thus be helpful to rescale the normalized value such that the
+\emph{expected} distance between a random pair of trees equals one.  This can
+be calculated with \code{ExpectedVariation()}; or see
+'\href{https://ms609.github.io/TreeDistData/reference/randomTreeDistances.html}{TreeDistData}'
 for a compilation of expected values under different metrics for trees with
 up to 200 leaves.
 
