@@ -20,7 +20,7 @@
 #' The complementary tree distance measures state how much information is 
 #' different in the splits of two trees, under an optimal matching.
 #' 
-#' @section Concepts of information:
+#' # Concepts of information
 #'
 #' The phylogenetic (Shannon) information content and entropy of a split are
 #' defined in 
@@ -45,23 +45,29 @@
 #' is the corresponding measure of tree difference.
 #' [(More information here.)](https://ms609.github.io/TreeDist/articles/Generalized-RF.html)
 #' 
+#' ## Conversion to distances
 #' 
-#' @section Normalization:
+#' To convert similarity measures to distances, it is necessary to 
+#' subtract the similarity score from a maximum value.  In order to generate
+#' distance _metrics_, these functions subtract the similarity twice from the 
+#' total information content (SPI, MSI) or entropy (MCI) of all the splits in 
+#' both trees (Smith 202X).
+#' 
+#' ## Normalization
 #' 
 #' If `normalize = TRUE`, then results will be rescaled from zero to a nominal
-#' maximum value, calculated thus:
+#' maximum value.
+#' The maximum distance is calculated by summing the information
+#' content of each split in each of the two trees undergoing comparison.
+#' The maximum similarity is half this value.
+#' (See Vinh _et al._ (2010, table 3) and Smith (202X) for
+#' alternative normalization possibilities.)
 #' 
-#' * `ClusteringInfoDistance`: The sum of the entropy of
-#' each split in each of the two trees.  See Vinh _et al._ (2010, table 3) for
-#' alternative normalization variants.
-#' 
-#' * `MutualClusteringInfo`, `SharedPhylogeneticInfo`, `MatchingSplitInfo`:
-#'  The sum of the information content of all splits in the least informative
-#'  tree. To scale against the information content of all splits in the most
-#'  informative tree, use `normalize = pmax`.
-#' 
-#' * `DifferentPhylogeneticInfo`, `MatchingSplitInfoDistance`: The sum of the
-#' phylogenetic information content of each split in each of the two trees.
+#' To scale against the information content of all splits in the most or least
+#' informative tree, use `normalize = pmax` or `pmin` respectively.
+#' To calculate the relative similarity against a reference tree that is known
+#' to be 'correct', use `normalize = SplitwiseInfo(trueTree)` (SPI, MSI) or
+#' `ClusteringInfo(trueTree)` (MCI).
 #' 
 #' @template tree12listparams
 #' 
@@ -135,7 +141,7 @@ TreeDistance <- function (tree1, tree2 = tree1) {
 SharedPhylogeneticInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
                                     reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(SharedPhylogeneticInfoSplits, tree1,
-                                        tree2, reportMatching=reportMatching)
+                                        tree2, reportMatching = reportMatching)
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
@@ -157,7 +163,7 @@ DifferentPhylogeneticInfo <- function (tree1, tree2 = tree1,
                        infoInBoth = treesIndependentInfo,
                        InfoInTree = SplitwiseInfo, Combine = '+')
   
-  ret[ret < .Machine$double.eps^0.5] <- 0 # In case of floating point inaccuracy
+  ret[ret < .Machine$double.eps ^ 0.5] <- 0 # Catch floating point inaccuracy
   attributes(ret) <- attributes(spi)
   
   # Return:
