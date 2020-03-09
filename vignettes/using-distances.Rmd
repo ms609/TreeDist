@@ -140,6 +140,7 @@ distances for a selection of methods:
 
 ```{r, collapse=TRUE, fig.width=7, fig.height=4, message=FALSE}
 if (requireNamespace('TreeDistData', quietly = TRUE)) {
+attachNamespace('TreeDistData')
 data('randomTreeDistances', package='TreeDistData')
 
 methods <- c('dpi', 'cid', 'nts', 'qd')
