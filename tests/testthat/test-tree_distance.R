@@ -521,25 +521,47 @@ test_that('Multiple comparisons are correctly ordered', {
                     CompareAll(trees, NNIDist)$loose_upper)
 })
 
-test_that("Avoid infinite loop in LAP", {
+test_that('Normalization occurs as documented', {
   library('TreeTools')
-  tree1 <- PectinateTree(11L)
-  tree2 <- as.phylo(18253832, 11L)
-  owch <- 1927
-  set.seed(0)
-  randomTreeId <- unique(floor(runif(owch * 2) * NUnrooted(11)))[seq_len(owch)][owch]
+  tree1 <- BalancedTree(8)
+  tree2 <- CollapseNode(PectinateTree(8), 12:13)
   
-  expect_equal(134.7911 / 11L, # What the function tells me is the right answer
-               ClusteringInfoDistance(TreeTools::PectinateTree(11L),
-                                      ape::as.phylo(18253832, 11L)),
-               tolerance = 0.01) 
-  expect_lt(0, ClusteringInfoDistance(TreeTools::PectinateTree(11L),
-                                      ape::as.phylo(12848772, 11L)))
+  info1 <- SplitwiseInfo(tree1) # 19.367
+  info2 <- SplitwiseInfo(tree2) # 11.963
   
-  expect_lt(0, ClusteringInfoDistance(TreeTools::PectinateTree(11L),
-                                      Cladewise(Postorder(Preorder(ape::as.phylo( 9850364, 11L))))
-                                      ))
+  ent1 <- ClusteringEntropy(tree1) # 4.245
+  ent2 <- ClusteringEntropy(tree2) # 2.577
   
-  expect_lt(0, ClusteringInfoDistance(TreeTools::PectinateTree(11L),
-                                      ape::as.phylo(9850364, 11L)))
+  # Phylogenetic information
+  spi <- SharedPhylogeneticInfo(tree1, tree2, normalize = FALSE) # 9.64
+  dpi <- DifferentPhylogeneticInfo(tree1, tree2, normalize = FALSE) # 12.04
+  expect_equal(spi + spi + dpi, info1 + info2)
+  
+  expect_equal(SharedPhylogeneticInfo(tree1, tree2, normalize = TRUE),
+               (spi + spi) / (info1 + info2))
+  expect_equal(PhylogeneticInfoDistance(tree1, tree2, normalize = TRUE),
+               dpi / (info1 + info2))
+  
+  # Matching split information
+  mmsi <- MatchingSplitInfo(tree1, tree2, normalize = FALSE)
+  msid <- MatchingSplitInfoDistance(tree1, tree2, normalize = FALSE)
+  expect_equal(mmsi + mmsi + msid, info1 + info2)
+  
+  expect_equal(MatchingSplitInfo(tree1, tree2, normalize = TRUE),
+               (mmsi + mmsi) / (info1 + info2))
+  expect_equal(MatchingSplitInfoDistance(tree1, tree2, normalize = TRUE),
+               msid / (info1 + info2))
+  
+  
+  # Clustering information
+  mci <- MutualClusteringInfo(tree1, tree2, normalize = FALSE)
+  cid <- ClusteringInfoDistance(tree1, tree2, normalize = FALSE)
+  expect_equal(mci + mci + cid, ent1 + ent2)
+  
+  expect_equal(MutualClusteringInfo(tree1, tree2, normalize = TRUE),
+               (mci + mci) / (ent1 + ent2))
+  expect_equal(ClusteringInfoDistance(tree1, tree2, normalize = TRUE),
+               cid / (ent1 + ent2))
+  
+  
 })

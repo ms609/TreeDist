@@ -13,3 +13,26 @@ test_that("LAPJV doesn't crash", {
   expect_equal(LAPJV(prob2)$score / max(prob2) * max(prob1), lap1$score, 
                tolerance = 1e-06)
 })
+
+test_that("Avoid infinite loop in LAP", {
+  library('TreeTools')
+  tree1 <- PectinateTree(11L)
+  tree2 <- as.phylo(18253832, 11L)
+  owch <- 1927
+  set.seed(0)
+  randomTreeId <- unique(floor(runif(owch * 2) * NUnrooted(11)))[seq_len(owch)][owch]
+  
+  expect_equal(134.7911 / 11L, # What the function tells me is the right answer
+               ClusteringInfoDistance(TreeTools::PectinateTree(11L),
+                                      ape::as.phylo(18253832, 11L)),
+               tolerance = 0.01) 
+  expect_lt(0, ClusteringInfoDistance(TreeTools::PectinateTree(11L),
+                                      ape::as.phylo(12848772, 11L)))
+  
+  expect_lt(0, ClusteringInfoDistance(TreeTools::PectinateTree(11L),
+                                      Cladewise(Postorder(Preorder(ape::as.phylo(9850364, 11L))))
+  ))
+  
+  expect_lt(0, ClusteringInfoDistance(TreeTools::PectinateTree(11L),
+                                      ape::as.phylo(9850364, 11L)))
+})

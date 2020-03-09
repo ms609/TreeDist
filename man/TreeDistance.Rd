@@ -258,16 +258,25 @@ both trees (Smith 202X).
 
 \subsection{Normalization}{
 
-If \code{normalize = TRUE}, then results will be rescaled from zero to a nominal
-maximum value.
+If \code{normalize = TRUE}, then results will be rescaled such that distance
+ranges from zero to (theoretically) one.
 The maximum distance is calculated by summing the information content or
 entropy of each split in each of the two trees undergoing comparison.
 The maximum similarity is half this value.
 (See Vinh \emph{et al.} (2010, table 3) and Smith (202X) for
 alternative normalization possibilities.)
 
-To scale against the information content or entropy of all splits in the most
-or least informative tree, use \code{normalize = pmax} or \code{pmin} respectively.
+Note that a distance value of one (= similarity of zero) will rarely be
+achieved, as even the most different trees are similar in some respects.
+It may be desired to rescale the normalized value such that the expected
+distance between a random pair of trees is one; see the package
+\href{https://ms609.github.io/TreeDistData/reference/randomTreeDistances.html}{\code{TreeDistData}}
+for a compilation of expected values under different metrics for trees with
+up to 200 leaves.
+
+Alternatively, to scale against the information content or entropy of all
+splits in the most or least informative tree, use \code{normalize = pmax} or
+\code{pmin} respectively.
 To calculate the relative similarity against a reference tree that is known
 to be 'correct', use \code{normalize = SplitwiseInfo(trueTree)} (SPI, MSI) or
 \code{ClusteringEntropy(trueTree)} (MCI).
