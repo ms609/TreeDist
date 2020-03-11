@@ -54,6 +54,7 @@
 #' @export
 #' @name Robinson-Foulds
 
+#' @aliases RobinsonFouldsInfo
 #' @rdname Robinson-Foulds
 InfoRobinsonFoulds <- function (tree1, tree2 = tree1, similarity = FALSE,
                                 normalize = FALSE, reportMatching = FALSE) {
@@ -70,7 +71,6 @@ InfoRobinsonFoulds <- function (tree1, tree2 = tree1, similarity = FALSE,
 }
 
 #' @export
-#' @aliases InfoRobinsonFoulds
 RobinsonFouldsInfo <- InfoRobinsonFoulds
 
 #' @rdname Robinson-Foulds

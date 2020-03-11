@@ -278,7 +278,7 @@ TwoTreePlot()
 VisualizeMatching(RobinsonFoulds, drop.tip(tree1, 'I'), drop.tip(tree2, 'I'))
 ```
 
-This hidden similarity can bb better reflected if similar, but non-identical,
+This hidden similarity can be better reflected if similar, but non-identical,
 splits are assigned non-zero similarity scores.
 
 There are various ways to score the similarity between two splits. 

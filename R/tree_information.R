@@ -49,7 +49,7 @@ SplitwiseInfo.Splits <- function(x) {
 #' 
 #' @param x A tree of class `phylo`, a list of trees, or a `multiPhylo` object.
 #' 
-#' @return The sum of the entropies or (clustering) infomation content, in bits,
+#' @return The sum of the entropies or (clustering) information content, in bits,
 #' of each split in `x`.
 #' 
 #' @examples 

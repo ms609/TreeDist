@@ -37,7 +37,7 @@ ClusteringInfo(x)
 \item{x}{A tree of class \code{phylo}, a list of trees, or a \code{multiPhylo} object.}
 }
 \value{
-The sum of the entropies or (clustering) infomation content, in bits,
+The sum of the entropies or (clustering) information content, in bits,
 of each split in \code{x}.
 }
 \description{

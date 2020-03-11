@@ -34,7 +34,8 @@ The raw data are available in the data object
 
 
 ```{R Tree-distance-averages, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=2, fig.width=6, fig.align='center'}
-if (require('TreeDistData')) {
+if (requireNamespace('TreeDistData', quietly = TRUE)) {
+  library('TreeDistData')
   data('tdMethods', package = 'TreeDistData')
   data('tdAbbrevs', package = 'TreeDistData')
   methods <- tdMethods
