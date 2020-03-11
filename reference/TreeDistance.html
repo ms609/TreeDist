@@ -308,65 +308,6 @@ in bits, that the splits in two trees hold in common
 when they are optimally matched, following Smith (forthcoming).
 The complementary tree distance measures state how much information is
 different in the splits of two trees, under an optimal matching.</p>
-    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
-
-    
-<ul>
-<li><p><code>SharedPhylogeneticInfo</code>: Shared phylogenetic information between splits of
-two trees.</p></li>
-<li><p><code>DifferentPhylogeneticInfo</code>: Phylogenetic information difference between splits
-of two trees.</p></li>
-<li><p><code>ClusteringInfoDistance</code>: Clustering information distance between
-splits of two trees.</p></li>
-<li><p><code>ExpectedVariation</code>: Estimate expected Shared and Different
-Phylogenetic Information for a pair of trees of a given topology.</p></li>
-<li><p><code>MutualClusteringInfo</code>: Mutual Clustering Information of two trees.</p></li>
-<li><p><code>MatchingSplitInfo</code>: Mutual Matching Split Information of two trees.</p></li>
-<li><p><code>MatchingSplitInfoDistance</code>: Matching Split Information Distance between two
-trees.</p></li>
-</ul>
-    <h2 class="hasAnchor" id="concepts-of-information"><a class="anchor" href="#concepts-of-information"></a>Concepts of information</h2>
-
-    
-
-
-<p>The phylogenetic (Shannon) information content and entropy of a split are
-defined in
-<a href='https://ms609.github.io/TreeDist/articles/information.html'>a separate vignette</a>.</p>
-<p>Using the mutual (clustering) information (Meila 2007, Vinh <em>et al.</em> 2010) of
-two splits to quantify their similarity gives rise to the Mutual Clustering
-Information measure (<code>MutualClusteringInfo</code>); the entropy distance
-gives the Clustering Distance <code>ClusteringInfoDistance</code>).
-This approach is optimal in many regards, and is implemented, normalized
-against the total information present, in the convenience function <code>TreeDistance</code>.</p>
-<p>Using the amount of phylogenetic information common to two splits to measure
-their similarity gives rise to the Shared Phylogenetic Information similarity
-measure (<code>SharedPhylogeneticInfo</code>).  The amount of information distinct to
-each of a pair of splits provides the complementary Different Phylogenetic
-Information distance metric (<code>DifferentPhylogeneticInfo</code>).</p>
-<p>The <code>MatchingSplitInfo</code> measure defines the similarity between a pair of
-splits as the phylogenetic information content of the most informative
-split that is consistent with both input splits; <code>MatchingSplitInfoDistance</code>
-is the corresponding measure of tree difference.
-<a href='https://ms609.github.io/TreeDist/articles/Generalized-RF.html'>(More information here.)</a></p>
-    <h2 class="hasAnchor" id="normalization"><a class="anchor" href="#normalization"></a>Normalization</h2>
-
-    
-
-
-<p>If <code>normalize = TRUE</code>, then results will be rescaled from zero to a nominal
-maximum value, calculated thus:</p><ul>
-<li><p><code>ClusteringInfoDistance</code>: The sum of the entropy of
-each split in each of the two trees.  See Vinh <em>et al.</em> (2010, table 3) for
-alternative normalization variants.</p></li>
-<li><p><code>MutualClusteringInfo</code>, <code>SharedPhylogeneticInfo</code>, <code>MatchingSplitInfo</code>:
-The sum of the information content of all splits in the least informative
-tree. To scale against the information content of all splits in the most
-informative tree, use <code>normalize = pmax</code>.</p></li>
-<li><p><code>DifferentPhylogeneticInfo</code>, <code>MatchingSplitInfoDistance</code>: The sum of the
-phylogenetic information content of each split in each of the two trees.</p></li>
-</ul>
-
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     
@@ -402,6 +343,65 @@ doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</
 <code><a href='PathDist.html'>PathDist</a>()</code>,
 <code><a href='Robinson-Foulds.html'>Robinson-Foulds</a></code>,
 <code><a href='SPRDist.html'>SPRDist</a>()</code></p></div>
+    <h2 class="hasAnchor" id="concepts-of-information"><a class="anchor" href="#concepts-of-information"></a>Concepts of information</h2>
+
+    
+
+<p>The phylogenetic (Shannon) information content and entropy of a split are
+defined in
+<a href='https://ms609.github.io/TreeDist/articles/information.html'>a separate vignette</a>.</p>
+<p>Using the mutual (clustering) information (Meila 2007, Vinh <em>et al.</em> 2010) of
+two splits to quantify their similarity gives rise to the Mutual Clustering
+Information measure (<code>MutualClusteringInfo()</code>,
+<code>MutualClusteringInfoSplits()</code>); the entropy distance
+gives the Clustering Information Distance (<code>ClusteringInfoDistance()</code>).
+This approach is optimal in many regards, and is implemented with
+normalization in the convenience function <code>TreeDistance()</code>.</p>
+<p>Using the amount of phylogenetic information common to two splits to measure
+their similarity gives rise to the Shared Phylogenetic Information similarity
+measure (<code>SharedPhylogeneticInfo()</code>, <code>SharedPhylogeneticInfoSplits()</code>).
+The amount of information distinct to
+each of a pair of splits provides the complementary Different Phylogenetic
+Information distance metric (<code>DifferentPhylogeneticInfo()</code>).</p>
+<p>The Matching Split Information measure (<code>MatchingSplitInfo()</code>,
+<code>MatchingSplitInfoSplits()</code>) defines the similarity between a pair of
+splits as the phylogenetic information content of the most informative
+split that is consistent with both input splits; <code>MatchingSplitInfoDistance()</code>
+is the corresponding measure of tree difference.
+<a href='https://ms609.github.io/TreeDist/articles/Generalized-RF.html'>(More information here.)</a></p><h3>Conversion to distances</h3>
+
+
+<p>To convert similarity measures to distances, it is necessary to
+subtract the similarity score from a maximum value.  In order to generate
+distance <em>metrics</em>, these functions subtract the similarity twice from the
+total information content (SPI, MSI) or entropy (MCI) of all the splits in
+both trees (Smith 202X).</p>
+
+<h3>Normalization</h3>
+
+
+<p>If <code>normalize = TRUE</code>, then results will be rescaled such that distance
+ranges from zero to (in principle) one.
+The maximum <strong>distance</strong> is the sum of the information content or entropy of
+each split in each tree; the maximum <strong>similarity</strong> is half this value.
+(See Vinh <em>et al.</em> (2010, table 3) and Smith (202X) for
+alternative normalization possibilities.)</p>
+<p>Note that a distance value of one (= similarity of zero) will seldom be
+achieved, as even the most different trees exhibit some similarity.
+It may thus be helpful to rescale the normalized value such that the
+<em>expected</em> distance between a random pair of trees equals one.  This can
+be calculated with <code>ExpectedVariation()</code>; or see
+'<a href='https://ms609.github.io/TreeDistData/reference/randomTreeDistances.html'>TreeDistData</a>'
+for a compilation of expected values under different metrics for trees with
+up to 200 leaves.</p>
+<p>Alternatively, to scale against the information content or entropy of all
+splits in the most or least informative tree, use <code>normalize = pmax</code> or
+<code>pmin</code> respectively.
+To calculate the relative similarity against a reference tree that is known
+to be 'correct', use <code>normalize = SplitwiseInfo(trueTree)</code> (SPI, MSI) or
+<code><a href='ClusteringEntropy.html'>ClusteringEntropy(trueTree)</a></code> (MCI).</p>
+
+
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>tree1</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ape</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ape/man/read.tree.html'>read.tree</a></span>(<span class='kw'>text</span><span class='kw'>=</span><span class='st'>'((((a, b), c), d), (e, (f, (g, h))));'</span>)
@@ -421,6 +421,11 @@ doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</
 <span class='co'># Every split in tree1 is contradicted by every split in tree3</span>
 <span class='co'># Non-arboreal matches contain clustering, but not phylogenetic, information</span>
 <span class='fu'>SharedPhylogeneticInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree3</span>) <span class='co'># = 0</span></div><div class='output co'>#&gt; [1] 0</div><div class='input'><span class='fu'>MutualClusteringInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree3</span>) <span class='co'># &gt; 0</span></div><div class='output co'>#&gt; [1] 0.6539805</div><div class='input'>
+<span class='co'># Converting trees to Splits objects can speed up multiple comparisons</span>
+<span class='no'>splits1</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/as.Splits.html'>as.Splits</a></span>(<span class='no'>tree1</span>)
+<span class='no'>splits2</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/as.Splits.html'>as.Splits</a></span>(<span class='no'>tree2</span>)
+
+<span class='fu'>SharedPhylogeneticInfoSplits</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>)</div><div class='output co'>#&gt; [1] 13.75284</div><div class='input'><span class='fu'>MatchingSplitInfoSplits</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>)</div><div class='output co'>#&gt; [1] 17.09254</div><div class='input'><span class='fu'>MutualClusteringInfoSplits</span>(<span class='no'>splits1</span>, <span class='no'>splits2</span>)</div><div class='output co'>#&gt; [1] 3.031424</div><div class='input'>
 
 </div></pre>
   </div>
@@ -430,11 +435,9 @@ doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
       <li><a href="#details">Details</a></li>
-      <li><a href="#functions">Functions</a></li>
-      <li><a href="#concepts-of-information">Concepts of information</a></li>
-      <li><a href="#normalization">Normalization</a></li>
       <li><a href="#references">References</a></li>
       <li><a href="#see-also">See also</a></li>
+      <li><a href="#concepts-of-information">Concepts of information</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>
 

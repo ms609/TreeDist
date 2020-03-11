@@ -117,7 +117,7 @@
       <h1>Extending the Robinson-Foulds metric</h1>
                         <h4 class="author">Martin R. Smith</h4>
             
-            <h4 class="date">2020-03-04</h4>
+            <h4 class="date">2020-03-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/Robinson-Foulds.Rmd"><code>vignettes/Robinson-Foulds.Rmd</code></a></small>
       <div class="hidden name"><code>Robinson-Foulds.Rmd</code></div>
@@ -179,11 +179,11 @@
 <a class="sourceLine" id="cb1-2" data-line-number="2">tree2 &lt;-<span class="st"> </span>ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="dt">text=</span><span class="st">'(1, (2, (3, (4, (5, (7, (6, 8)))))));'</span>)</a>
 <a class="sourceLine" id="cb1-3" data-line-number="3">tree3 &lt;-<span class="st"> </span>ape<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="dt">text=</span><span class="st">'(1, (2, (3, (5, (4, (6, (7, 8)))))));'</span>)</a>
 <a class="sourceLine" id="cb1-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(RobinsonFouldsInfo, tree1, tree2, </a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(InfoRobinsonFoulds, tree1, tree2, </a>
 <a class="sourceLine" id="cb1-6" data-line-number="6">                  <span class="dt">Plot =</span> TreeDistPlot, <span class="dt">leaveRoom=</span><span class="ot">FALSE</span>, <span class="dt">prune =</span> <span class="dv">12</span>)</a></code></pre></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-2-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>whereas the second pair differ in the resolution of a more even, and thus more information-rich, split (<code>ABCD|EFGH</code>), and so receive a distance score of 5.53 bits:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(RobinsonFouldsInfo, tree1, tree3, </a>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(InfoRobinsonFoulds, tree1, tree3, </a>
 <a class="sourceLine" id="cb2-2" data-line-number="2">                  <span class="dt">Plot =</span> TreeDistPlot, <span class="dt">leaveRoom=</span><span class="ot">FALSE</span>, <span class="dt">prune =</span> <span class="dv">8</span>)</a></code></pre></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-3-1.png" width="576" style="display: block; margin: auto;"></p>
 </div>
@@ -216,7 +216,7 @@
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">TwoTreePlot</span>()</a>
 <a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(RobinsonFoulds, <span class="kw">drop.tip</span>(tree1, <span class="st">'I'</span>), <span class="kw">drop.tip</span>(tree2, <span class="st">'I'</span>))</a></code></pre></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-7-1.png" width="576" style="display: block; margin: auto;"></p>
-<p>This hidden similarity can bb better reflected if similar, but non-identical, splits are assigned non-zero similarity scores.</p>
+<p>This hidden similarity can be better reflected if similar, but non-identical, splits are assigned non-zero similarity scores.</p>
 <p>There are various ways to score the similarity between two splits. One is to build on the idea introduced above, where identical splits are scored according to their phylogenetic information content. Non-matching splits can be scored according to the amount of phylogenetic information that they hold in common, which is a function of the proportion of trees that are consistent with both splits. (A full explanation is provided in the discussion of <a href="Generalized-RF.html">Generalized Robinson-Foulds distances</a>.)</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">TwoTreePlot</span>()</a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="kw"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(SharedPhylogeneticInfo, tree1, tree2)</a></code></pre></div>

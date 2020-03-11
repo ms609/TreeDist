@@ -176,7 +176,7 @@ measure, optionally annotating matched splits and weighting splits
 according to their phylogenetic information content (Steel &amp; Penny 2006).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>RobinsonFouldsInfo</span>(
+    <pre class="usage"><span class='fu'>InfoRobinsonFoulds</span>(
   <span class='no'>tree1</span>,
   <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>,
   <span class='kw'>similarity</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
@@ -184,7 +184,7 @@ according to their phylogenetic information content (Steel &amp; Penny 2006).</p
   <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )
 
-<span class='fu'>RobinsonFouldsInfoSplits</span>(
+<span class='fu'>InfoRobinsonFouldsSplits</span>(
   <span class='no'>splits1</span>,
   <span class='no'>splits2</span>,
   <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='no'>splits1</span>, <span class='st'>"nTip"</span>),
@@ -280,7 +280,7 @@ trees in <code>tree1</code> and <code>tree2</code>, or <code>splits1</code> and 
 
     <p>Note that if <code>reportMatching = TRUE</code>, the <code>pairScores</code> attribute returns
 a logical matrix specifying whether each pair of splits is identical.</p>
-<p><code>RobinsonFouldsInfo()</code> calculates the tree similarity or distance by summing
+<p><code>InfoRobinsonFoulds()</code> calculates the tree similarity or distance by summing
 the phylogenetic information content of all splits that are (or are not)
 identical in both trees.  Consequently, splits that are more likely
 to be identical by chance alone make a smaller contribution to overall
@@ -299,7 +299,7 @@ tree distance, because their similarity is less remarkable.</p>
 <ul>
 <li><p><code>RobinsonFoulds()</code> is normalized against the total number of splits that
 are present.</p></li>
-<li><p><code>RobinsonFouldsInfo()</code> is normalized against the sum of the phylogenetic
+<li><p><code>InfoRobinsonFoulds()</code> is normalized against the sum of the phylogenetic
 information of all splits in both trees, treated independently.</p></li>
 </ul>
 
@@ -334,7 +334,7 @@ Oxford University Press, Oxford.</p>
 <span class='no'>balanced7</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/BalancedTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>)
 <span class='no'>pectinate7</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/PectinateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>)
 <span class='fu'>RobinsonFoulds</span>(<span class='no'>balanced7</span>, <span class='no'>pectinate7</span>)</div><div class='output co'>#&gt; [1] 4</div><div class='input'><span class='fu'>RobinsonFoulds</span>(<span class='no'>balanced7</span>, <span class='no'>pectinate7</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] 0.5</div><div class='input'><span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span>(<span class='no'>RobinsonFouldsMatching</span>, <span class='no'>balanced7</span>, <span class='no'>pectinate7</span>)</div><div class='img'><img src='Robinson-Foulds-1.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='fu'>RobinsonFouldsInfo</span>(<span class='no'>balanced7</span>, <span class='no'>pectinate7</span>)</div><div class='output co'>#&gt; [1] 13.90209</div><div class='input'><span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span>(<span class='no'>RobinsonFouldsInfo</span>, <span class='no'>balanced7</span>, <span class='no'>pectinate7</span>)</div><div class='img'><img src='Robinson-Foulds-2.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'>InfoRobinsonFoulds</span>(<span class='no'>balanced7</span>, <span class='no'>pectinate7</span>)</div><div class='output co'>#&gt; [1] 13.90209</div><div class='input'><span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span>(<span class='no'>InfoRobinsonFoulds</span>, <span class='no'>balanced7</span>, <span class='no'>pectinate7</span>)</div><div class='img'><img src='Robinson-Foulds-2.png' alt='' width='700' height='433' /></div><div class='input'>
 
 </div></pre>
   </div>
