@@ -308,46 +308,9 @@ in bits, that the splits in two trees hold in common
 when they are optimally matched, following Smith (forthcoming).
 The complementary tree distance measures state how much information is
 different in the splits of two trees, under an optimal matching.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
-    
-<ul>
-<li><p>MacKay DJC (2003).
-<em>Information Theory, Inference, and Learning Algorithms</em>.
-Cambridge University Press, Cambridge.
-<a href='https://www.inference.org.uk/itprnn/book.pdf'>https://www.inference.org.uk/itprnn/book.pdf</a>.</p></li>
-<li><p>Meilă M (2007).
-&#8220;Comparing clusterings---an information based distance.&#8221;
-<em>Journal of Multivariate Analysis</em>, <b>98</b>(5), 873--895.
-doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11.013</a>
-.</p></li>
-<li><p>Smith MR (2020).
-&#8220;Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees.&#8221;
-<em>In review</em>.</p></li>
-<li><p>Vinh NX, Epps J, Bailey J (2010).
-&#8220;Information theoretic measures for clusterings comparison: variants, properties, normalization and correction for chance.&#8221;
-<em>Journal of Machine Learning Research</em>, <b>11</b>, 2837--2854.
-doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</a>
-.</p></li>
-</ul>
-
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p>Other tree distances: 
-<code><a href='JaccardRobinsonFoulds.html'>JaccardRobinsonFoulds</a>()</code>,
-<code><a href='KendallColijn.html'>KendallColijn</a>()</code>,
-<code><a href='MASTSize.html'>MASTSize</a>()</code>,
-<code><a href='MatchingSplitDistance.html'>MatchingSplitDistance</a>()</code>,
-<code><a href='NNIDist.html'>NNIDist</a>()</code>,
-<code><a href='NyeTreeSimilarity.html'>NyeTreeSimilarity</a>()</code>,
-<code><a href='PathDist.html'>PathDist</a>()</code>,
-<code><a href='Robinson-Foulds.html'>Robinson-Foulds</a></code>,
-<code><a href='SPRDist.html'>SPRDist</a>()</code></p></div>
     <h2 class="hasAnchor" id="concepts-of-information"><a class="anchor" href="#concepts-of-information"></a>Concepts of information</h2>
 
-    
-
-<p>The phylogenetic (Shannon) information content and entropy of a split are
+    <p>The phylogenetic (Shannon) information content and entropy of a split are
 defined in
 <a href='https://ms609.github.io/TreeDist/articles/information.html'>a separate vignette</a>.</p>
 <p>Using the mutual (clustering) information (Meila 2007, Vinh <em>et al.</em> 2010) of
@@ -401,7 +364,41 @@ To calculate the relative similarity against a reference tree that is known
 to be 'correct', use <code>normalize = SplitwiseInfo(trueTree)</code> (SPI, MSI) or
 <code><a href='ClusteringEntropy.html'>ClusteringEntropy(trueTree)</a></code> (MCI).</p>
 
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
+    
+<ul>
+<li><p>MacKay DJC (2003).
+<em>Information Theory, Inference, and Learning Algorithms</em>.
+Cambridge University Press, Cambridge.
+<a href='https://www.inference.org.uk/itprnn/book.pdf'>https://www.inference.org.uk/itprnn/book.pdf</a>.</p></li>
+<li><p>Meilă M (2007).
+&#8220;Comparing clusterings---an information based distance.&#8221;
+<em>Journal of Multivariate Analysis</em>, <b>98</b>(5), 873--895.
+doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11.013</a>
+.</p></li>
+<li><p>Smith MR (2020).
+&#8220;Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees.&#8221;
+<em>In review</em>.</p></li>
+<li><p>Vinh NX, Epps J, Bailey J (2010).
+&#8220;Information theoretic measures for clusterings comparison: variants, properties, normalization and correction for chance.&#8221;
+<em>Journal of Machine Learning Research</em>, <b>11</b>, 2837--2854.
+doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</a>
+.</p></li>
+</ul>
+
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>Other tree distances: 
+<code><a href='JaccardRobinsonFoulds.html'>JaccardRobinsonFoulds</a>()</code>,
+<code><a href='KendallColijn.html'>KendallColijn</a>()</code>,
+<code><a href='MASTSize.html'>MASTSize</a>()</code>,
+<code><a href='MatchingSplitDistance.html'>MatchingSplitDistance</a>()</code>,
+<code><a href='NNIDist.html'>NNIDist</a>()</code>,
+<code><a href='NyeTreeSimilarity.html'>NyeTreeSimilarity</a>()</code>,
+<code><a href='PathDist.html'>PathDist</a>()</code>,
+<code><a href='Robinson-Foulds.html'>Robinson-Foulds</a></code>,
+<code><a href='SPRDist.html'>SPRDist</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>tree1</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ape</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ape/man/read.tree.html'>read.tree</a></span>(<span class='kw'>text</span><span class='kw'>=</span><span class='st'>'((((a, b), c), d), (e, (f, (g, h))));'</span>)
@@ -435,9 +432,9 @@ to be 'correct', use <code>normalize = SplitwiseInfo(trueTree)</code> (SPI, MSI)
       <li><a href="#arguments">Arguments</a></li>
       <li><a href="#value">Value</a></li>
       <li><a href="#details">Details</a></li>
+      <li><a href="#concepts-of-information">Concepts of information</a></li>
       <li><a href="#references">References</a></li>
       <li><a href="#see-also">See also</a></li>
-      <li><a href="#concepts-of-information">Concepts of information</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>
 
