@@ -4,7 +4,7 @@ author: "Martin R. Smith"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 bibliography: ../inst/REFERENCES.bib
-csl: ../inst/apa-old-doi-prefix.csl
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
 vignette: >
   %\VignetteIndexEntry{Using TreeDist}
   %\VignetteEngine{knitr::rmarkdown}
