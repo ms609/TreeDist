@@ -37,7 +37,7 @@ ClusteringInfo(x)
 \item{x}{A tree of class \code{phylo}, a list of trees, or a \code{multiPhylo} object.}
 }
 \value{
-The sum of the entropies or (clustering) information content, in bits,
+Returns the sum of the entropies or (clustering) information content, in bits,
 of each split in \code{x}.
 }
 \description{
@@ -47,11 +47,70 @@ each split as dividing the leaves of the tree into two clusters (\emph{sensu}
 Meila 2007; Vinh \emph{et al.} 2010).
 }
 \details{
+Clustering entropy addresses the question "how much information is contained
+in the splits within a tree". Its approach is complementary to the
+phylogenetic information content, used in \code{\link[=SplitwiseInfo]{SplitwiseInfo()}}.
+In essence, it asks, given a split that subdivides the leaves of a tree into
+two partitions, how easy it is to predict which partition a randomly drawn
+leaf belongs to.
+
+Formally, the entropy of a split \emph{S} that divides \emph{n} leaves into two
+partitions of sizes \emph{a} and \emph{b} is given by
+\emph{H(S)} = - \emph{a/n} log \emph{a/n} - \emph{b/n} log \emph{b/n}.
+
+Base 2 logarithms are conventionally used, such that entropy is measured in
+bits.
+Entroy denotes the number of bits that are necessary to encode the outcome
+of a random variable: here, the random variable is "what partition does a
+randomly selected leaf belong to".
+
+An even split has an entropy of 1 bit: there is no better way of encoding
+an outcome than using one bit to specify which of the two partitions the
+randomly selected leaf belongs to.
+
+An uneven split has a lower entropy: membership of the larger partition is
+common, and thus less surprising; it can be signified using fewer bits in an
+optimal compression system.
+
+If this sounds confusing, let's consider creating a code to transmit the
+cluster label of two randomly selected leaves.  One straightforward
+option would be to use
+\itemize{
+\item \code{00} = 'Both leaves belong to partition A'
+\item \code{11} = 'Both leaves belong to partition B'
+\item \code{01} = 'First leaf in A, second in B`
+\item \code{10} = 'First leaf in B, second in A`
+}
+
+This code uses two bits to transmit the partition labels of two leaves.
+If partitions A and B are equiprobable, this is the optimal code; our
+entropy -- the average information content required per leaf -- is 1 bit.
+
+Alternatively, we could use the (suboptimal) code
+\itemize{
+\item \code{0} = 'Both leaves belong to partition A'
+\item \code{111} = 'Both leaves belong to partition B'
+\item \code{101} = 'First leaf in A, second in B`
+\item \code{110} = 'First leaf in B, second in A`
+}
+
+If A is disproportionately larger than B, then most pairs of leaves can be
+transmitted with the single bit \code{0}. The additional bits when 1+ leaf
+belongs to B are required sufficiently rarely that the average message
+requires fewer than two bits for two leaves, so the entropy is less than
+1 bit.
+
 As entropy measures the bits required to transmit the cluster label of each
 leaf (Vinh \emph{et al.} 2010: p. 2840), the information content of a split is its
 entropy multiplied by the number of leaves.
 }
 \examples{
+
+# Clustering entropy of an even split = 1 bit
+ClusteringEntropy(as.Splits(c(rep(TRUE, 4), rep(FALSE, 4))))
+
+# Clustering entropy of an uneven split < 1 bit
+ClusteringEntropy(as.Splits(c(rep(TRUE, 2), rep(FALSE, 6))))
 
 tree1 <- TreeTools::BalancedTree(8)
 tree2 <- TreeTools::PectinateTree(8)
