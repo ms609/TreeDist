@@ -16,6 +16,10 @@ content of the tree where a tree contains multiple splits, as
 these splits will contain mutual information.
 }
 \seealso{
+An introduction to the phylogenetic information content of a split is given
+in \href{https://ms609.github.io/TreeTools/reference/SplitInformation.html}{\code{SplitInformation()}}
+and in a \href{https://ms609.github.io/TreeDist/articles/information.html}{package vignette}.
+
 Other information functions: 
 \code{\link{ClusteringEntropy}()},
 \code{\link{SplitEntropy}()},
@@ -26,4 +30,3 @@ Other information functions:
 (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
 \concept{information functions}
-\keyword{internal}

@@ -8,8 +8,14 @@
 #' @param x A tree of class `phylo`, a list of trees, or a `multiPhylo` object.
 #' 
 #' @family information functions
+#' 
+#' @seealso 
+#' 
+#' An introduction to the phylogenetic information content of a split is given
+#' in [`SplitInformation()`](https://ms609.github.io/TreeTools/reference/SplitInformation.html)
+#' and in a [package vignette](https://ms609.github.io/TreeDist/articles/information.html).
+#' 
 #' @template MRS
-#' @keywords internal
 #' @export
 SplitwiseInfo <- function (x) UseMethod('SplitwiseInfo')
 
