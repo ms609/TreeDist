@@ -101,11 +101,12 @@ SplitwiseInfo.Splits <- function(x) {
 #' 
 #' - `110` = 'First leaf in B, second in A`
 #' 
-#' If A is disproportionately larger than B, then most pairs of leaves can be 
-#' transmitted with the single bit `0`. The additional bits when 1+ leaf
-#' belongs to B are required sufficiently rarely that the average message 
+#' If A is much larger than B, then most pairs of leaves will require just
+#' a single bit (code `0`). The additional bits when 1+ leaf belongs to B
+#' may be required sufficiently rarely that the average message 
 #' requires fewer than two bits for two leaves, so the entropy is less than 
-#' 1 bit.
+#' 1 bit.  (The optimal coding strategy will depend on the exact sizes
+#' of A and B.)
 #' 
 #' 
 #' As entropy measures the bits required to transmit the cluster label of each 

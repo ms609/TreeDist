@@ -94,11 +94,12 @@ Alternatively, we could use the (suboptimal) code
 \item \code{110} = 'First leaf in B, second in A`
 }
 
-If A is disproportionately larger than B, then most pairs of leaves can be
-transmitted with the single bit \code{0}. The additional bits when 1+ leaf
-belongs to B are required sufficiently rarely that the average message
+If A is much larger than B, then most pairs of leaves will require just
+a single bit (code \code{0}). The additional bits when 1+ leaf belongs to B
+may be required sufficiently rarely that the average message
 requires fewer than two bits for two leaves, so the entropy is less than
-1 bit.
+1 bit.  (The optimal coding strategy will depend on the exact sizes
+of A and B.)
 
 As entropy measures the bits required to transmit the cluster label of each
 leaf (Vinh \emph{et al.} 2010: p. 2840), the information content of a split is its
@@ -107,10 +108,10 @@ entropy multiplied by the number of leaves.
 \examples{
 
 # Clustering entropy of an even split = 1 bit
-ClusteringEntropy(as.Splits(c(rep(TRUE, 4), rep(FALSE, 4))))
+ClusteringEntropy(TreeTools::as.Splits(c(rep(TRUE, 4), rep(FALSE, 4))))
 
 # Clustering entropy of an uneven split < 1 bit
-ClusteringEntropy(as.Splits(c(rep(TRUE, 2), rep(FALSE, 6))))
+ClusteringEntropy(TreeTools::as.Splits(c(rep(TRUE, 2), rep(FALSE, 6))))
 
 tree1 <- TreeTools::BalancedTree(8)
 tree2 <- TreeTools::PectinateTree(8)
