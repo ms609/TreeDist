@@ -1,5 +1,5 @@
 pandoc: '2.2'
-pkgdown: 1.4.1
+pkgdown: 1.5.1
 pkgdown_sha: ~
 articles:
   Generalized-RF: Generalized-RF.html
@@ -8,6 +8,7 @@ articles:
   Using-TreeDist: Using-TreeDist.html
   information: information.html
   using-distances: using-distances.html
+last_built: 2020-04-16T12:01Z
 urls:
   reference: https://ms609.github.io/TreeDist/reference
   article: https://ms609.github.io/TreeDist/articles

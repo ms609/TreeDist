@@ -6,15 +6,15 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Comparing splits using information theory • TreeDist</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><!-- docsearch --><script src="../docsearch.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<script src="../pkgdown.js"></script><!-- docsearch --><script src="../docsearch.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.3/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous">
 <link href="../docsearch.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Comparing splits using information theory">
-<meta property="og:description" content="">
-<meta name="twitter:card" content="summary">
+<meta property="og:description" content="TreeDist">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -26,7 +26,7 @@
   gtag('config', 'UA-156666971-1');
 </script>
 </head>
-<body>
+<body data-spy="scroll" data-target="#toc">
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -114,10 +114,10 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Comparing splits using information theory</h1>
+      <h1 data-toc-skip>Comparing splits using information theory</h1>
                         <h4 class="author">Martin R. Smith</h4>
             
-            <h4 class="date">2020-03-25</h4>
+            <h4 class="date">2020-04-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/information.Rmd"><code>vignettes/information.Rmd</code></a></small>
       <div class="hidden name"><code>information.Rmd</code></div>
@@ -139,31 +139,31 @@
 <p>Likewise, the split <span class="math inline">\(S_2 =\)</span> <code>ABC|DEF</code> occurs in nine six-leaf trees, so <span class="math inline">\(h(S_2) = -\log_2{\frac{9}{105}} \approx 3.54\textrm{ bits}\)</span>. Three six-leaf trees contain both splits, so in combination the splits deliver <span class="math inline">\(h(S_1,S_2) = -\log_2{\frac{3}{105}} \approx 5.13\textrm{ bits}\)</span> of information.</p>
 <p>Because <span class="math inline">\(h(S_1,S_2) &lt; h(S_1) + h(S_2)\)</span>, some of the information in <span class="math inline">\(S_1\)</span> is also present in <span class="math inline">\(S_2\)</span>. The information in common between <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> is <span class="math inline">\(h_{shared}(S_1, S_2) = h(S_1) + h(S_2) - h(S_1,S_2) \approx 1.22\textrm{ bits}\)</span>. The information unique to <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> is <span class="math inline">\(h_{different}(S_1,S_2) = 2h(S_1,S_2) - h(S_1) - h(S_2) \approx 3.91\textrm{ bits}\)</span>.</p>
 <p>These quantities can be calculated using functions in the <a href="https://ms609.github.io/TreeTools">TreeTools</a> package.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">'TreeTools'</span>)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">'TreeDist'</span>)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3">treesMatchingSplit &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/c.html">c</a></span>(</a>
-<a class="sourceLine" id="cb1-4" data-line-number="4">  <span class="dt">AB.CDEF =</span> <span class="kw"><a href="https://ms609.github.io/TreeTools/reference/TreesMatchingSplit.html">TreesMatchingSplit</a></span>(<span class="dv">2</span>, <span class="dv">4</span>),</a>
-<a class="sourceLine" id="cb1-5" data-line-number="5">  <span class="dt">ABC.DEF =</span> <span class="kw"><a href="https://ms609.github.io/TreeTools/reference/TreesMatchingSplit.html">TreesMatchingSplit</a></span>(<span class="dv">3</span>, <span class="dv">3</span>)</a>
-<a class="sourceLine" id="cb1-6" data-line-number="6">)</a>
-<a class="sourceLine" id="cb1-7" data-line-number="7">treesMatchingSplit</a></code></pre></div>
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">'TreeTools'</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">'TreeDist'</span>)
+<span class="no">treesMatchingSplit</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
+  <span class="kw">AB.CDEF</span> <span class="kw">=</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TreesMatchingSplit.html">TreesMatchingSplit</a></span>(<span class="fl">2</span>, <span class="fl">4</span>),
+  <span class="kw">ABC.DEF</span> <span class="kw">=</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TreesMatchingSplit.html">TreesMatchingSplit</a></span>(<span class="fl">3</span>, <span class="fl">3</span>)
+)
+<span class="no">treesMatchingSplit</span></pre></body></html></div>
 <pre><code>## AB.CDEF ABC.DEF 
 ##      15       9</code></pre>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">proportionMatchingSplit &lt;-<span class="st"> </span>treesMatchingSplit <span class="op">/</span><span class="st"> </span><span class="kw"><a href="https://ms609.github.io/TreeTools/reference/NRooted.html">NUnrooted</a></span>(<span class="dv">6</span>)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">proportionMatchingSplit</a></code></pre></div>
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">proportionMatchingSplit</span> <span class="kw">&lt;-</span> <span class="no">treesMatchingSplit</span> / <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/NRooted.html">NUnrooted</a></span>(<span class="fl">6</span>)
+<span class="no">proportionMatchingSplit</span></pre></body></html></div>
 <pre><code>##    AB.CDEF    ABC.DEF 
 ## 0.14285714 0.08571429</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">splitInformation &lt;-<span class="st"> </span><span class="op">-</span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">log2</a></span>(proportionMatchingSplit)</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2">splitInformation</a></code></pre></div>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">splitInformation</span> <span class="kw">&lt;-</span> -<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span>(<span class="no">proportionMatchingSplit</span>)
+<span class="no">splitInformation</span></pre></body></html></div>
 <pre><code>##  AB.CDEF  ABC.DEF 
 ## 2.807355 3.544321</code></pre>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">treesMatchingBoth &lt;-<span class="st"> </span><span class="kw"><a href="../reference/SplitSharedInformation.html">TreesConsistentWithTwoSplits</a></span>(<span class="dv">6</span>, <span class="dv">2</span>, <span class="dv">3</span>)</a>
-<a class="sourceLine" id="cb7-2" data-line-number="2">combinedInformation &lt;-<span class="st"> </span><span class="op">-</span><span class="kw"><a href="https://rdrr.io/r/base/Log.html">log2</a></span>(treesMatchingBoth <span class="op">/</span><span class="st"> </span><span class="kw"><a href="https://ms609.github.io/TreeTools/reference/NRooted.html">NUnrooted</a></span>(<span class="dv">6</span>))</a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb7-4" data-line-number="4">sharedInformation &lt;-<span class="st"> </span><span class="kw"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(splitInformation) <span class="op">-</span><span class="st"> </span>combinedInformation</a>
-<a class="sourceLine" id="cb7-5" data-line-number="5">sharedInformation</a></code></pre></div>
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">treesMatchingBoth</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/SplitSharedInformation.html">TreesConsistentWithTwoSplits</a></span>(<span class="fl">6</span>, <span class="fl">2</span>, <span class="fl">3</span>)
+<span class="no">combinedInformation</span> <span class="kw">&lt;-</span> -<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span>(<span class="no">treesMatchingBoth</span> / <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/NRooted.html">NUnrooted</a></span>(<span class="fl">6</span>))
+
+<span class="no">sharedInformation</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">splitInformation</span>) - <span class="no">combinedInformation</span>
+<span class="no">sharedInformation</span></pre></body></html></div>
 <pre><code>## [1] 1.222392</code></pre>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="co"># Or more concisely:</span></a>
-<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="kw"><a href="../reference/SplitSharedInformation.html">SplitSharedInformation</a></span>(<span class="dt">n =</span> <span class="dv">6</span>, <span class="dv">2</span>, <span class="dv">3</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="co"># Or more concisely:</span>
+<span class="fu"><a href="../reference/SplitSharedInformation.html">SplitSharedInformation</a></span>(<span class="kw">n</span> <span class="kw">=</span> <span class="fl">6</span>, <span class="fl">2</span>, <span class="fl">3</span>)</pre></body></html></div>
 <pre><code>## [1] 1.222392</code></pre>
 <!--The more similar the splits, the more information they will have in common;
 the shared information is maximised when $S_1 = S_2$, and $h_{common} = h(S_1)$.
@@ -248,7 +248,7 @@ Likewise, more even splits contain more information than less even splits
 <p><span class="math inline">\(H(S_1, S_2) = P(A_1,A_2) \log_2 {P(A_1,A_2)} + P(B_1,A_2) \log_2 {P(B_1,A_2)}\)</span></p>
 <p><span class="math inline">\(+ P(A_1,B_2)\log_2{P(A_1,B_2)} + P(B_1,B_2)\log_2{P(B_1,B_2)}\)</span></p>
 <p>These values can then be substituted into the definitions of mutual information and entropy distance given above.</p>
-<p>As <span class="math inline">\(S_1\)</span> and _<span class="math inline">\(S_2\)</span> become more different, the disposition of <span class="math inline">\(S_1\)</span> gives less information about the configuration of <span class="math inline">\(S_2\)</span>, and the mutual information decreases accordingly.</p>
+<p>As <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> become more different, the disposition of <span class="math inline">\(S_1\)</span> gives less information about the configuration of <span class="math inline">\(S_2\)</span>, and the mutual information decreases accordingly.</p>
 </div>
 </div>
 <div id="references" class="section level2 unnumbered">
@@ -268,18 +268,11 @@ Likewise, more even splits contain more information than less even splits
 </div>
   </div>
 
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-        <div id="tocnav">
-      <h2 class="hasAnchor">
-<a href="#tocnav" class="anchor"></a>Contents</h2>
-      <ul class="nav nav-pills nav-stacked">
-<li><a href="#shannon-information-content">Shannon information content</a></li>
-      <li><a href="#entropy">Entropy</a></li>
-      <li><a href="#references">References</a></li>
-      </ul>
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
 </div>
-      </div>
 
 </div>
 
@@ -290,7 +283,7 @@ Likewise, more even splits contain more information than less even splits
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>
