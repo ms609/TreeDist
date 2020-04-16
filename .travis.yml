@@ -84,7 +84,6 @@ jobs:
         - vdiffr
         - devtools
       before_install:
-      - brew install cairo
       - sudo tlmgr install doi titling hyperref
   allow_failures:
     r: 3.5.0 # TreeSearch requires > 3.5.0
