@@ -260,11 +260,12 @@ entropy -- the average information content required per leaf -- is 1 bit.</p>
 <li><p><code>110</code> = 'First leaf in B, second in A`</p></li>
 </ul>
 
-<p>If A is disproportionately larger than B, then most pairs of leaves can be
-transmitted with the single bit <code>0</code>. The additional bits when 1+ leaf
-belongs to B are required sufficiently rarely that the average message
+<p>If A is much larger than B, then most pairs of leaves will require just
+a single bit (code <code>0</code>). The additional bits when 1+ leaf belongs to B
+may be required sufficiently rarely that the average message
 requires fewer than two bits for two leaves, so the entropy is less than
-1 bit.</p>
+1 bit.  (The optimal coding strategy will depend on the exact sizes
+of A and B.)</p>
 <p>As entropy measures the bits required to transmit the cluster label of each
 leaf (Vinh <em>et al.</em> 2010: p. 2840), the information content of a split is its
 entropy multiplied by the number of leaves.</p>
