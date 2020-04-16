@@ -8,20 +8,6 @@ r_check_args: --as-cran --no-manual # Workaround error compiling PDF manual
 jobs:
   include:
     - r: 3.5.0
-      r_packages:
-        - ape
-        - bookdown
-        - kdensity
-        - pkgload
-        - phangorn
-        - Rdpack
-        - rmarkdown
-        - roxygen2
-        - testthat
-        - tinytex
-        - usethis
-        - vdiffr
-        - devtools
     - r: release
       before_deploy: Rscript -e 'remotes::install_cran("pkgdown")'
       r_binary_packages:
@@ -35,10 +21,6 @@ jobs:
        - roxygen2
        - testthat
        - usethis
-      r_packages:
-       - bookdown
-       - kdensity
-       - vdiffr
       deploy:
         provider: script
         script: Rscript -e 'pkgdown::deploy_site_github()'
@@ -49,40 +31,10 @@ jobs:
         on: 
           branch: master
     - r: devel
-      #r_binary_packages:
-      r_packages:
-       - ps # Dependency; oughtn't need listing
-       - ape
-       - covr
-       - devtools
-       - knitr
-       - phangorn
-       - pkgbuild
-       - pkgload
-       - Rdpack
-       - roxygen2
-       - testthat
-       - usethis
-      #r_packages:
-       - bookdown
-       - kdensity
-       - vdiffr
       after_success:
         - Rscript -e "covr::codecov()"
     - os: osx
       r: release
-      r_packages:
-        - ape
-        - bookdown
-        - kdensity
-        - phangorn
-        - pkgload
-        - Rdpack
-        - roxygen2
-        - testthat
-        - usethis
-        - vdiffr
-        - devtools
       before_install:
       - sudo tlmgr install doi titling hyperref
   allow_failures:
@@ -90,13 +42,6 @@ jobs:
 
 git:
   depth: 1
-
- 
-r_github_packages:
- - ms609/TreeTools
- - ms609/TreeDist
- - ms609/TreeDistData
-
 
 before_script:
   - R -e "pkgload::load_all(); devtools::document()"
