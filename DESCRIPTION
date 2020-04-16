@@ -26,30 +26,30 @@ Copyright: Incorporates Jonker-Volgenant Linear Assignment Problem
 URL: https://ms609.github.io/TreeDist, https://github.com/ms609/TreeDist
 BugReports: https://github.com/ms609/TreeDist/issues
 Depends: 
-    R (>= 3.4.0)
+  R (>= 3.4.0)
 Imports: 
-    ape (>= 5.0),
-    colorspace,
-    memoise,
-    phangorn (>= 2.2.1),
-    stats,
-    TreeTools (> 0.1.3)
+  ape (>= 5.0),
+  colorspace,
+  memoise,
+  phangorn (>= 2.2.1),
+  stats,
+  TreeTools (> 0.1.3)
 Suggests:
-    bookdown,
-    cluster,
-    kdensity,
-    knitr,
-    MASS,
-    Quartet,
-    rmarkdown,
-    Rcpp,
-    Rdpack,
-    testthat,
-    Ternary (>= 1.1.2),
-    TreeSearch,
-    vdiffr
+  bookdown,
+  cluster,
+  kdensity,
+  knitr,
+  MASS,
+  Quartet,
+  rmarkdown,
+  Rcpp,
+  Rdpack,
+  testthat,
+  Ternary (>= 1.1.2),
+  TreeSearch,
+  vdiffr
 Remotes:
-    ms609/TreeTools
+  ms609/TreeDistData
 RdMacros: Rdpack
 LazyData: true
 ByteCompile: true
