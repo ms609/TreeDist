@@ -1,5 +1,6 @@
 language: r
 os: linux
+dist: xenial
 cache: packages
 warnings_are_errors: true
 r_build_args: '--compact-vignettes="gs+qpdf"'
@@ -38,6 +39,7 @@ jobs:
       deploy:
         provider: script
         script: Rscript -e 'pkgdown::deploy_site_github()'
+        cleanup: false
         skip_cleanup: true
         local_dir: "docs"
         keep-history: true
@@ -85,8 +87,6 @@ r_github_packages:
  - ms609/TreeTools
  - ms609/TreeDist
  - ms609/TreeDistData
-# - r-lib/pkgload
-# - r-lib/devtools    
 
 
 before_script:
