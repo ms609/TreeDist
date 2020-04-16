@@ -49,18 +49,21 @@ jobs:
         on: 
           branch: master
     - r: devel
-      r_binary_packages:
+      #r_binary_packages:
+      r_packages:
+       - ps # Dependency; oughtn't need listing
+       - ape
        - covr
        - devtools
        - knitr
        - phangorn
+       - pkgbuild
        - pkgload
        - Rdpack
        - roxygen2
        - testthat
        - usethis
-      r_packages:
-       - ape
+      #r_packages:
        - bookdown
        - kdensity
        - vdiffr
