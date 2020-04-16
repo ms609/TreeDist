@@ -11,7 +11,6 @@ jobs:
       r_packages:
         - ape
         - bookdown
-        - devtools
         - kdensity
         - pkgload
         - phangorn
@@ -22,6 +21,7 @@ jobs:
         - tinytex
         - usethis
         - vdiffr
+        - devtools
     - r: release
       before_deploy: Rscript -e 'remotes::install_cran("pkgdown")'
       r_binary_packages:
@@ -50,7 +50,6 @@ jobs:
           branch: master
     - r: devel
       r_binary_packages:
-       - ape
        - covr
        - devtools
        - knitr
@@ -61,6 +60,7 @@ jobs:
        - testthat
        - usethis
       r_packages:
+       - ape
        - bookdown
        - kdensity
        - vdiffr
@@ -71,7 +71,6 @@ jobs:
       r_packages:
         - ape
         - bookdown
-        - devtools
         - kdensity
         - phangorn
         - pkgload
@@ -80,6 +79,7 @@ jobs:
         - testthat
         - usethis
         - vdiffr
+        - devtools
       before_install:
       - brew install cairo
       - sudo tlmgr install doi titling hyperref
