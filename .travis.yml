@@ -10,6 +10,7 @@ jobs:
     - r: 3.5.0
       r_packages:
         - ape
+        - bookdown
         - devtools
         - kdensity
         - pkgload
@@ -19,7 +20,7 @@ jobs:
         - roxygen2
         - testthat
         - tinytex
-        - bookdown
+        - usethis
         - vdiffr
     - r: release
       before_deploy: Rscript -e 'remotes::install_cran("pkgdown")'
@@ -29,9 +30,11 @@ jobs:
        - devtools
        - knitr
        - phangorn
+       - pkgload
        - Rdpack
        - roxygen2
        - testthat
+       - usethis
       r_packages:
        - bookdown
        - kdensity
@@ -52,9 +55,11 @@ jobs:
        - devtools
        - knitr
        - phangorn
+       - pkgload
        - Rdpack
        - roxygen2
        - testthat
+       - usethis
       r_packages:
        - bookdown
        - kdensity
@@ -69,9 +74,11 @@ jobs:
         - devtools
         - kdensity
         - phangorn
+        - pkgload
         - Rdpack
         - roxygen2
         - testthat
+        - usethis
         - vdiffr
       before_install:
       - brew install cairo
