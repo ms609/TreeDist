@@ -7,6 +7,13 @@
 #' It pre-processes trees to ensure that their internal representation does
 #' not cause the `path.dist()` function to crash R.
 #' 
+#' The path distance is also termed the cladistic difference or topological
+#' distance.
+#' 
+#' Use of the path distance is discouraged as it emphasizes 
+#' shallow relationships at the expense of deeper (and arguably more
+#' fundamental) relationships (Farris, 1973).
+#' 
 #' @template tree12Params
 #' 
 #' @return `PathDist()` returns a vector or distance matrix of distances
@@ -24,7 +31,10 @@
 #'         as.phylo(0:2, 7))
 #'
 #' CompareAll(as.phylo(30:33, 8), PathDist)
-#'   
+#'  
+#' @references 
+#' \insertRef{Farris1973}{TreeDist}
+#' 
 #' @template MRS
 #' @family tree distances
 #' @importFrom phangorn path.dist

@@ -1,7 +1,7 @@
 #' Approximate Nearest Neighbour Interchange distance
 #' 
-#' An approximation of the Nearest Neighbour Interchange distance, based on
-#' Li _et al._ (1996).
+#' An approximation of the Nearest Neighbour Interchange distance (Robinson, 
+#' 1971), based on Li _et al._ (1996).
 #' 
 #' In brief, this approximation algorithm works by identifying edges in one
 #' tree that do not match edges in the second.  Each of these edges must
@@ -44,7 +44,9 @@
 #' 
 #' 
 #' @references 
-#'   \insertRef{Li1996}{TreeDist}
+#' \insertRef{Li1996}{TreeDist}
+#'   
+#' \insertRef{Robinson1971}{TreeDist}  
 #' 
 #' @examples
 #' library('TreeTools')

@@ -23,8 +23,8 @@ O(\emph{n}).
 }
 }
 \description{
-An approximation of the Nearest Neighbour Interchange distance, based on
-Li \emph{et al.} (1996).
+An approximation of the Nearest Neighbour Interchange distance (Robinson,
+1971), based on Li \emph{et al.} (1996).
 }
 \details{
 In brief, this approximation algorithm works by identifying edges in one
@@ -67,6 +67,8 @@ CompareAll(as.phylo(30:33, 8), NNIDist)
 }
 \references{
 \insertRef{Li1996}{TreeDist}
+
+\insertRef{Robinson1971}{TreeDist}
 }
 \seealso{
 Other tree distances: 

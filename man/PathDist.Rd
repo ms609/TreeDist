@@ -21,6 +21,13 @@ This function is a wrapper for the function
 \code{\link[phangorn:treedist]{path.dist()}} in the phangorn package.
 It pre-processes trees to ensure that their internal representation does
 not cause the \code{path.dist()} function to crash R.
+
+The path distance is also termed the cladistic difference or topological
+distance.
+
+Use of the path distance is discouraged as it emphasizes
+shallow relationships at the expense of deeper (and arguably more
+fundamental) relationships (Farris, 1973).
 }
 \examples{
 library('TreeTools')
@@ -34,7 +41,10 @@ PathDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
         as.phylo(0:2, 7))
 
 CompareAll(as.phylo(30:33, 8), PathDist)
-  
+ 
+}
+\references{
+\insertRef{Farris1973}{TreeDist}
 }
 \seealso{
 Other tree distances: 
