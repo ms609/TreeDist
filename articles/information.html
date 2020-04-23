@@ -117,7 +117,7 @@
       <h1 data-toc-skip>Comparing splits using information theory</h1>
                         <h4 class="author">Martin R. Smith</h4>
             
-            <h4 class="date">2020-04-16</h4>
+            <h4 class="date">2020-04-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/information.Rmd"><code>vignettes/information.Rmd</code></a></small>
       <div class="hidden name"><code>information.Rmd</code></div>
@@ -220,6 +220,7 @@ Likewise, more even splits contain more information than less even splits
 <h3 class="hasAnchor">
 <a href="#application-to-splits-1" class="anchor"></a>Application to splits</h3>
 <p>Let split <span class="math inline">\(S\)</span> divides <span class="math inline">\(n\)</span> leaves into two partitions <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>. The probability that a randomly chosen leaf <span class="math inline">\(x\)</span> is in partition <span class="math inline">\(k\)</span> is <span class="math inline">\(P(x \in k) = \frac{|k|}{n}\)</span>. <span class="math inline">\(S\)</span> thus corresponds to a random variable with entropy <span class="math inline">\(H(S) = -\frac{|A|}{n} \log_2{\frac{|A|}{n}} - \frac{|B|}{n}\log_2{\frac{|B|}{n}}\)</span> <span class="citation">(Meilă, 2007)</span>.</p>
+<p>The entropy of a split corresponds to the average number of bits necessary to transmit the partition label for a given leaf.</p>
 <p>The joint entropy of two splits, <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span>, corresponds to the entropy of the association matrix of probabilities that a randomly selected leaf belongs to each pair of partitions:</p>
 <table class="table">
 <colgroup>

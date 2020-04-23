@@ -117,7 +117,7 @@
       <h1 data-toc-skip>Extending the Robinson-Foulds metric</h1>
                         <h4 class="author">Martin R. Smith</h4>
             
-            <h4 class="date">2020-04-16</h4>
+            <h4 class="date">2020-04-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/Robinson-Foulds.Rmd"><code>vignettes/Robinson-Foulds.Rmd</code></a></small>
       <div class="hidden name"><code>Robinson-Foulds.Rmd</code></div>
@@ -129,7 +129,7 @@
 <div id="the-robinson-foulds-distance" class="section level1">
 <h1 class="hasAnchor">
 <a href="#the-robinson-foulds-distance" class="anchor"></a>The Robinson-Foulds distance</h1>
-<p>The Robinson-Foulds distance <span class="citation">(Robinson &amp; Foulds, 1981)</span> is a symmetric distance measure that counts the number of splits that occur in one tree, but not the other.</p>
+<p>An intuitive way to calculate the similarity between two trees is to calculate the resolution of their strict consensus, which corresponds to the number of splits that occur in both trees <span class="citation">(Schuh &amp; Polhemus, 1980)</span>. The corresponding distance measure, the Robinson-Foulds distance <span class="citation">(Robinson &amp; Foulds, 1981)</span>, counts the number of splits that are unique to one of the two trees.</p>
 <p>It is important to remember that counting splits is not the same as counting clades, edges or nodes. If a tree is drawn as rooted (even without a root edge), then the number of splits is one less than the number of edges or clades, and two less than the number of nodes. For example, the trees below have one split, two edges and three nodes in common.</p>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-1-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>The simplicity of counting splits is appealing, but limited by the simplifying assumption that all splits are equivalent.</p>
@@ -283,6 +283,9 @@
 <div id="refs" class="references">
 <div id="ref-Robinson1981">
 <p>Robinson, D. F., &amp; Foulds, L. R. (1981). Comparison of phylogenetic trees. <em>Mathematical Biosciences</em>, <em>53</em>(1-2), 131–147. doi:<a href="https://doi.org/10.1016/0025-5564(81)90043-2">10.1016/0025-5564(81)90043-2</a></p>
+</div>
+<div id="ref-Schuh1980">
+<p>Schuh, R. T., &amp; Polhemus, J. T. (1980). Analysis of taxonomic congruence among morphological, ecological and biogeographic data sets for the Leptopodomorpha (Hemiptera). <em>Systematic Biology</em>, <em>29</em>(1), 1–26. doi:<a href="https://doi.org/10.1093/sysbio/29.1.1">10.1093/sysbio/29.1.1</a></p>
 </div>
 </div>
 </div>
