@@ -42,9 +42,12 @@ Plot <- function (tree, tree2=NULL, highlight = character(0),
 
 # The Robinson-Foulds distance
 
-The Robinson-Foulds distance [@Robinson1981] is a symmetric distance measure 
-that counts the 
-number of splits that occur in one tree, but not the other.
+An intuitive way to calculate the similarity between two trees is to calculate
+the resolution of their strict consensus, which corresponds to the number
+of splits that occur in both trees [@Schuh1980].
+The corresponding distance measure, the Robinson-Foulds distance
+[@Robinson1981], counts the number of splits that are unique to one of the 
+two trees.
 
 It is important to remember that counting splits is not the same as counting
 clades, edges or nodes.  If a tree is drawn as rooted (even without a root 

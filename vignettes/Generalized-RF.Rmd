@@ -33,7 +33,8 @@ before you read further, you may also wish to revisit how to
 Under the shared phylogenetic information tree distance measure [@SmithDist], 
 pairs of splits are assigned a similarity score that corresponds to the amount
 of phylogenetic information [_sensu_ @Steel2006] that they share in common
-(see [separate vignette](information.html)).
+(see [separate vignette](information.html)), a concept alluded to but not 
+developed by Nelson [-@Nelson1979].
 
 ```{r, fig.width=6 , fig.align='center'}
 VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2, 

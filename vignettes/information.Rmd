@@ -193,6 +193,10 @@ $P(x \in k) = \frac{|k|}{n}$.  $S$ thus corresponds to a random variable
 with entropy $H(S) = -\frac{|A|}{n} \log_2{\frac{|A|}{n}} - 
 \frac{|B|}{n}\log_2{\frac{|B|}{n}}$ [@Meila2007].
 
+The entropy of a split corresponds to the average number of bits
+necessary to transmit the partition label for a given leaf.
+
+
 The joint entropy of two splits, $S_1$ and $S_2$, corresponds to the entropy of
 the association matrix of probabilities that a randomly selected leaf
 belongs to each pair of partitions:
