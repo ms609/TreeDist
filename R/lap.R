@@ -35,5 +35,15 @@
 #' LAPJV(problem)
 #' @export
 LAPJV <- function (x) {
-  lapjv(x, max(x))
+  dims <- dim(x)
+  if (length(dims) == 2L && 
+      identical(dims[1], dims[2])) {
+    if (dims[1] == 0L) {
+      integer(0)
+    } else {
+      lapjv(x, max(x))
+    }
+  } else {
+    stop("x must be a square matrix")
+  }
 }

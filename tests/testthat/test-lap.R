@@ -1,5 +1,11 @@
 context('lap.R')
 
+test_that("LAPJV fails gracefully", {
+  expect_equal(integer(0L), LAPJV(matrix(NA, 0, 0)))
+  expect_error(LAPJV(1:10))
+  expect_error(LAPJV(matrix(1, 3, 4)))
+})
+
 test_that("LAPJV doesn't crash", {
   matching <- LAPJV(matrix(c(2, 1, 1, 2), 2, 2))
   expect_equal(list(score = 2L, matching = 2:1), matching)
