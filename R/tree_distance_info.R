@@ -222,7 +222,7 @@ ClusteringInfoDist <- ClusteringInfoDistance
 #' @param samples Integer specifying how many samplings to obtain; 
 #' accuracy of estimate increases with `sqrt(samples)`.
 #' @importFrom stats sd
-#' @importFrom TreeTools as.Splits .DecodeBinary
+#' @importFrom TreeTools as.Splits
 #' @export
 ExpectedVariation <- function (tree1, tree2, samples = 1e+4) {
   info1 <- SplitwiseInfo(tree1)
