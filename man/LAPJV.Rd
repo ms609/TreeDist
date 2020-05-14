@@ -23,7 +23,7 @@ The Linear Assignment Problem seeks to match each row of a matrix with a
 column, such that the cost of the matching is minimized.
 
 The JV approach improves on the Hungarian algorithm, which is implemented
-in \code{\link[clue:solve_LSAP]{clue::solve_LSAP}}.
+in \code{clue::solve_LSAP()}.
 }
 \examples{
 
