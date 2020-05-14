@@ -8,7 +8,7 @@
 #' column, such that the cost of the matching is minimized.
 #' 
 #' The JV approach improves on the Hungarian algorithm, which is implemented 
-#' in [`clue::solve_LSAP`].
+#' in `clue::solve_LSAP()`.
 #' 
 #' 
 #' @references 
