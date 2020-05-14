@@ -30,6 +30,7 @@ reference:
     desc: Functions to facilitate interaction with the package.
     contents:
       - CompareAll
+      - median.multiPhylo
       - LAPJV
       - VisualizeMatching
 
