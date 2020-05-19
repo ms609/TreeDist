@@ -8,6 +8,7 @@
   x,
   na.rm = FALSE,
   Distance = ClusteringInfoDistance,
+  index = FALSE,
   breakTies = TRUE,
   ...
 )
@@ -19,6 +20,9 @@
 
 \item{Distance}{Function to calculate distances between each pair
 of trees in \code{x}.}
+
+\item{index}{Logical: if \code{TRUE}, return the index of the median tree(s);
+if \code{FALSE}, return the tree itself.}
 
 \item{breakTies}{Logical: if \code{TRUE}, return a single tree with the minimum
 score; if \code{FALSE}, return all tied trees.}
