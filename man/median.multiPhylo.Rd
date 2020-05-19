@@ -65,7 +65,8 @@ NyeTreeDistance <- function (...) NyeTreeSimilarity(..., similarity = FALSE)
 median(tenTrees, Distance = NyeTreeDistance)
 
 # To analyse a list of trees that is not of class multiPhylo:
-median.multiPhylo(lapply(1:10, as.phylo, nTip = 8))
+treeList <- lapply(1:10, as.phylo, nTip = 8)
+median(structure(treeList, class = 'multiPhylo'))
 
 }
 \seealso{

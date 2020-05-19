@@ -21,6 +21,8 @@
 #' @param na.rm,\dots Unused; included for consistency with default function..
 #' @param Distance Function to calculate distances between each pair
 #' of trees in `x`.
+#' @param index Logical: if `TRUE`, return the index of the median tree(s);
+#' if `FALSE`, return the tree itself.
 #' @param breakTies Logical: if `TRUE`, return a single tree with the minimum
 #'  score; if `FALSE`, return all tied trees.
 #' 
@@ -47,7 +49,8 @@
 #' median(tenTrees, Distance = NyeTreeDistance)
 #' 
 #' # To analyse a list of trees that is not of class multiPhylo:
-#' median.multiPhylo(lapply(1:10, as.phylo, nTip = 8))
+#' treeList <- lapply(1:10, as.phylo, nTip = 8)
+#' median(structure(treeList, class = 'multiPhylo'))
 #' 
 #' @seealso Consensus methods:
 #'   [`ape::consensus`], 
@@ -58,14 +61,19 @@
 #' @export
 median.multiPhylo <- function (x, na.rm = FALSE, 
                                Distance = ClusteringInfoDistance,
+                               index = FALSE,
                                breakTies = TRUE, ...) {
   distances <- colSums(Distance(x))
   
   # Return:
   if (breakTies) {
-    x[[which.min(distances)]]
+    if (index) which.min(distances) else x[[which.min(distances)]]
   } else {
     chosen <- distances == min(distances)
-    if (sum(chosen) == 1L) x[[which(chosen)]] else x[chosen]
+    if (index) {
+      which(chosen) 
+    } else {
+      if (sum(chosen) == 1L) x[[which(chosen)]] else x[chosen]
+    }
   }
 }
