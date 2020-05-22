@@ -28,22 +28,15 @@ void fill_M (const int16 node1, const int16 node2,
              const int16* t2_left,
              const int16* t2_right,
              const int16 n_tip) {
-  M[node1][node2] = 0; // TODO remove this line and rewrite all subsequent assignemnts as ?1:0
   if (node1 < n_tip) { // Node 1 is a leaf
     if (node2 < n_tip) { // Node 1 and node 2 are leaves
-      if (node1 == node2) {
-        M[node1][node2] = 1;
-      }
+      M[node1][node2] = node1 == node2 ? 1 : 0;
     } else { // Node 1 is a leaf; node 2 is internal
-      if (t2_descendantsof[node2 - n_tip][node1]) {
-        M[node1][node2] = 1;
-      }
+      M[node1][node2] = t2_descendantsof[node2 - n_tip][node1] ? 1 : 0; 
     }
   } else {
     if (node2 < n_tip) { // Node 1 is internal; node 2 is a leaf
-      if (t1_descendantsof[node1 - n_tip][node2]) {
-        M[node1][node2] = 1;
-      }
+      M[node1][node2] = t1_descendantsof[node1 - n_tip][node2] ? 1 : 0;
     } else { // Node 1 & Node 2 are internal
       const int16 l1 = t1_left[node1 - n_tip],
                   r1 = t1_right[node1 - n_tip],
