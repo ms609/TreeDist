@@ -21,7 +21,7 @@ int16 max_of_six (const int16 m1,
 }
 
 void fill_M (const int16 node1, const int16 node2,
-             int_fast16_t *M,
+             int_least16_t *M,
              const bool* t1_descendantsof,
              const bool* t2_descendantsof,
              const int16* t1_left,
@@ -114,7 +114,7 @@ int cpp_mast (IntegerMatrix edge1, IntegerMatrix edge2, IntegerVector nTip) {
     }
   }
   
-  int_fast16_t *M = new int_fast16_t[n_all_nodes * n_all_nodes]();
+  int_least16_t *M = new int_least16_t[n_all_nodes * n_all_nodes]();
   for (int16 i = 0; i != n_edge; i++) {
     const int16 node1 = edge1(i, 1);
     for (int16 j = 0; j != n_edge; j++) {
