@@ -5,12 +5,12 @@ using namespace Rcpp;
 #include "SplitList.h"
 
 
-uint32_t bitcounts[65536]; // the bytes representing bit count of each number 0-65535
+uint_fast32_t bitcounts[65536]; // the bytes representing bit count of each number 0-65535
 __attribute__((constructor))
   void initialize_bitcounts() {
-    for (int32_t i = 0; i < 65536; i++) {
-      int32_t n_bits = 0;
-      for (int j = 0; j < 16; j++) {
+    for (int_fast32_t i = 0; i < 65536; i++) {
+      int_fast32_t n_bits = 0;
+      for (int_fast8_t j = 0; j != 16; j++) {
         if ((i & powers_of_two[j])) ++n_bits;
       }
       bitcounts[i] = n_bits;
