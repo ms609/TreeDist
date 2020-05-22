@@ -21,35 +21,36 @@ int16 max_of_six (const int16 m1,
 }
 
 void fill_M (const int16 node1, const int16 node2,
-             int_least16_t M[][MAST_MAX_ALLNODE],
+             int_fast16_t *M,
              const bool* t1_descendantsof,
              const bool* t2_descendantsof,
              const int16* t1_left,
              const int16* t1_right,
              const int16* t2_left,
              const int16* t2_right,
-             const int16 n_tip) {
+             const int16 n_tip,
+             const int16 M_dim) {
   if (node1 < n_tip) { // Node 1 is a leaf
     if (node2 < n_tip) { // Node 1 and node 2 are leaves
-      M[node1][node2] = node1 == node2 ? 1 : 0;
+      M[node1 * M_dim + node2] = node1 == node2 ? 1 : 0;
     } else { // Node 1 is a leaf; node 2 is internal
-      M[node1][node2] = t2_descendantsof[(node2 - n_tip) * n_tip + node1] ? 1 : 0; 
+      M[node1 * M_dim + node2] = t2_descendantsof[(node2 - n_tip) * n_tip + node1] ? 1 : 0; 
     }
   } else {
     if (node2 < n_tip) { // Node 1 is internal; node 2 is a leaf
-      M[node1][node2] = t1_descendantsof[(node1 - n_tip) * n_tip + node2] ? 1 : 0;
+      M[node1 * M_dim + node2] = t1_descendantsof[(node1 - n_tip) * n_tip + node2] ? 1 : 0;
     } else { // Node 1 & Node 2 are internal
       const int16 l1 = t1_left[node1 - n_tip],
                   r1 = t1_right[node1 - n_tip],
                   l2 = t2_left[node2 - n_tip],
                   r2 = t2_right[node2 - n_tip];
-      M[node1][node2] = max_of_six(
-        M[l1][l2] + M[r1][r2],
-        M[l1][r2] + M[r1][l2],
-        M[node1][l2],
-        M[node1][r2],
-        M[l1][node2],
-        M[r1][node2]);
+      M[node1 * M_dim + node2] = max_of_six(
+        M[l1 * M_dim + l2] + M[r1 * M_dim + r2],
+        M[l1 * M_dim + r2] + M[r1 * M_dim + l2],
+        M[node1 * M_dim + l2],
+        M[node1 * M_dim + r2],
+        M[l1 * M_dim + node2],
+        M[r1 * M_dim + node2]);
     }
   }
 }
@@ -59,7 +60,10 @@ void fill_M (const int16 node1, const int16 node2,
 // 0..(nTip - 1).
 // [[Rcpp::export]]
 int cpp_mast (IntegerMatrix edge1, IntegerMatrix edge2, IntegerVector nTip) {
-  const int16 n_tip = nTip[0], n_internal = n_tip - 1, n_edge = edge1.nrow();
+  const int16 n_tip = nTip[0],
+              n_internal = n_tip - 1,
+              n_all_nodes = n_tip + n_internal,
+              n_edge = edge1.nrow();
   if (edge2.nrow() != n_edge) {
     throw std::length_error("Both trees must contain the same number of edges.");
   }
@@ -110,22 +114,24 @@ int cpp_mast (IntegerMatrix edge1, IntegerMatrix edge2, IntegerVector nTip) {
     }
   }
   
-  int_least16_t M[MAST_MAX_ALLNODE][MAST_MAX_ALLNODE];
+  int_fast16_t *M = new int_fast16_t[n_all_nodes * n_all_nodes]();
   for (int16 i = 0; i != n_edge; i++) {
     const int16 node1 = edge1(i, 1);
     for (int16 j = 0; j != n_edge; j++) {
       fill_M(node1, edge2(j, 1), M, t1_descendantsof,
              t2_descendantsof, t1_left, t1_right,
-             t2_left, t2_right, n_tip);
+             t2_left, t2_right, n_tip, n_all_nodes);
     }
   }
   // Root node:
   fill_M(n_tip, n_tip, M, t1_descendantsof,
          t2_descendantsof, t1_left, t1_right,
-         t2_left, t2_right, n_tip);
+         t2_left, t2_right, n_tip, n_all_nodes);
   
   delete[] t1_descendantsof;
   delete[] t2_descendantsof;
+  int ret = int(M[n_tip * n_all_nodes + n_tip]);
+  delete[] M;
   
-  return int(M[n_tip][n_tip]);
+  return ret;
 }
