@@ -67,6 +67,11 @@ void fill_M (const int16 node1, const int16 node2,
 // [[Rcpp::export]]
 int cpp_mast (IntegerMatrix edge1, IntegerMatrix edge2, IntegerVector nTip) {
   const int16 n_tip = nTip[0], n_edge = edge1.nrow();
+  if (n_tip > MAX_MAST_TIP) {
+    throw std::length_error("Tree too large to analyse on stack; please "
+                              "contact maintainer for advice.");
+  }
+  
   int16 
     t1_left[MAX_MAST_NODE] = {}, t1_right[MAX_MAST_NODE] = {},
     t2_left[MAX_MAST_NODE] = {}, t2_right[MAX_MAST_NODE] = {};
