@@ -97,6 +97,8 @@
 #' 
 #' - \insertRef{Li1996}{TreeDist}
 #' 
+#' - \insertRef{Lin2012}{TreeDist}
+#' 
 #' - \insertRef{Nye2006}{TreeDist}
 #' 
 #' - \insertRef{SmithDist}{TreeDist}
