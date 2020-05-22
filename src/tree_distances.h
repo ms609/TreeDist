@@ -1,6 +1,6 @@
 #include <limits>
-#include <stdint.h>
 #include <Rcpp.h>
+#include "ints.h"
 
 using namespace Rcpp;
 
@@ -46,8 +46,8 @@ extern cost lap(int dim, cost **assigncost,
                 cost *u, cost *v);
 
 extern double lg2_trees_matching_split(int a, int b),
-  ic_element (const double nkK, const unsigned int nk,
-              const unsigned int nK, const double n),
+  ic_element (const double nkK, const int16 nk,
+              const int16 nK, const double n),
   one_overlap (const int a, const int b, const int n),
   one_overlap_notb (const int a, const int n_minus_b, const int n),
   spi (const splitbit* a_state, const splitbit* b_state, const int n_tips, 

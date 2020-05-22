@@ -459,9 +459,9 @@ List cpp_mutual_clustering (RawMatrix x, RawMatrix y,
   
   cost** score = new cost*[most_splits];
   for (int i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
-  
-  unsigned int a_and_b, a_and_B, A_and_b, A_and_B,
-               na, nA, nb, nB;
+   
+  int16 a_and_b, a_and_B, A_and_b, A_and_B,
+        na, nA, nb, nB;
   for (int ai = 0; ai != a.n_splits; ai++) {
     for (int bi = 0; bi != b.n_splits; bi++) {
       a_and_b = 0;
