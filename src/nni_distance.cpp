@@ -61,6 +61,10 @@ void update_score (const int16 subtree_edges, int *tight_bound,
 // [[Rcpp::export]]
 IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
                        IntegerVector nTip) {
+  if (nTip[0] > NNI_MAX_TIPS) {
+    throw std::length_error("Cannot calculate NNI distance for trees with "
+                              "so many tips.");
+  }
   int16 n_tip = nTip[0],
                node_0 = n_tip,
                node_0_r = n_tip + 1,
@@ -70,10 +74,6 @@ IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
     return(IntegerVector::create(Named("lower") = 0,
                                  _["tight_upper"] = 0,
                                  _["loose_upper"] = 0));
-  }
-  if (n_tip > NNI_MAX_TIPS) {
-    throw std::length_error("Cannot calculate NNI distance for trees with "
-                              "so many tips.");
   }
   
   RawMatrix splits1 = cpp_edge_to_splits(edge1, nTip);
