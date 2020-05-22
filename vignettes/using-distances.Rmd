@@ -228,7 +228,6 @@ if (require('Ternary')) {
               grid.minor.lines = 0,
               axis.labels = seq(0, 1, length.out=11L),
               axis.col="#999999",
-              axis.labels.col = "black",
               ticks.length = 0.025)
   
   HorizontalGrid()
