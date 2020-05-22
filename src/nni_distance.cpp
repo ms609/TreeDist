@@ -72,6 +72,8 @@ IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
               node_0_r = n_tip + 1,
               n_edge = edge1.nrow();
   int16 lower_bound = 0, tight_score_bound = 0, loose_score_bound = 0;
+  Rcout << "Tree with " << n_tip << " tips, " << n_edge << " edges.\n";
+  
   if (n_tip < 4) {
     return(IntegerVector::create(Named("lower") = 0,
                                  _["tight_upper"] = 0,
@@ -82,7 +84,8 @@ IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
   RawMatrix splits2 = cpp_edge_to_splits(edge2, nTip);
   const CharacterVector names1 = rownames(splits1);
   
-  std::vector<int16> match = cpp_robinson_foulds_distance(splits1, splits2, nTip)[1];
+  /* #TODO do I intend cpp_rf_matching to replace this function? */
+  rf_match match = cpp_robinson_foulds_distance(splits1, splits2, nTip)[1];
   
   bool matched1[NNI_MAX_TIPS] = {0};
   int16 unmatched_below[NNI_MAX_TIPS] = {0};
@@ -134,8 +137,8 @@ IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
                  &tight_score_bound, &loose_score_bound);
   }
 
-  return IntegerVector::create(Named("lower")   = int(lower_bound),
-                               _["tight_upper"] = int(tight_score_bound),
-                               _["loose_upper"] = int(loose_score_bound));
+  return IntegerVector::create(Named("lower")   = lower_bound,
+                               _["tight_upper"] = tight_score_bound,
+                               _["loose_upper"] = loose_score_bound);
   
 }

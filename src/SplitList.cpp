@@ -43,7 +43,7 @@ SplitList::SplitList(RawMatrix x) {
   }
 }
 
-SplitList::SplitList(std::vector<int16> x, const int16 n_input_bins) {
+SplitList::SplitList(raw_vector x, const int16 n_input_bins) {
   n_splits = x.size() / n_input_bins;
   const int16 input_bins_per_bin = BIN_SIZE / R_BIN_SIZE;
   n_bins = (n_input_bins + R_BIN_SIZE - 1) / input_bins_per_bin;

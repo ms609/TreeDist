@@ -9,5 +9,5 @@ public:
   int16 n_splits, n_bins;
   splitbit state[MAX_SPLITS][MAX_BINS];
   SplitList(RawMatrix);
-  SplitList(std::vector<int16>, const int16);
+  SplitList(raw_vector, const int16);
 };

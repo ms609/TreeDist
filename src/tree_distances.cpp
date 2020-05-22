@@ -19,7 +19,7 @@ List cpp_robinson_foulds_distance (RawMatrix x, RawMatrix y,
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   cost score = 0;
   
-  std::vector<int16> matching (most_splits);
+  rf_match matching (most_splits);
   for (int16 i = 0; i != most_splits; i++) matching[i] = NA_INTEGER;
   
   splitbit b_complement[MAX_SPLITS][MAX_BINS];
@@ -64,8 +64,8 @@ List cpp_robinson_foulds_distance (RawMatrix x, RawMatrix y,
   return (ret);
 }
 
-std::vector<int16> cpp_robinson_foulds_matching (
-    std::vector<int16> x, std::vector<int16> y, 
+rf_match cpp_robinson_foulds_matching (
+    raw_vector x, raw_vector y,
     const int16 n_cols,
     const int16 n_tips) {
   
@@ -76,7 +76,7 @@ std::vector<int16> cpp_robinson_foulds_matching (
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   cost score = 0;
   
-  std::vector<int16> matching (most_splits);
+  rf_match matching (most_splits);
   for (int16 i = 0; i != most_splits; i++) matching[i] = NA_INTEGER;
   
   splitbit b_complement[MAX_SPLITS][MAX_BINS];
@@ -125,9 +125,9 @@ List cpp_robinson_foulds_info (RawMatrix x, RawMatrix y,
   }
   SplitList a(x), b(y);
   const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-    last_bin = a.n_bins - 1,
-    n_tips = nTip[0],
-    unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
+              last_bin = a.n_bins - 1,
+              n_tips = nTip[0],
+              unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   const double lg2_unrooted_n = lg2_unrooted[n_tips];
   double score = 0;
