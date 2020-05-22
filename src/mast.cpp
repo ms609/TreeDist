@@ -3,7 +3,7 @@
 #include "ints.h"
 using namespace Rcpp;
 
-const int16 MAST_MAX_NODE = 700, /* Much larger --> overflow size of stack frame */
+const int16 MAST_MAX_NODE = 4095, /* Much larger --> overflow size of stack frame */
             MAST_MAX_TIP = MAST_MAX_NODE + 1,
             MAST_MAX_ALLNODE = MAST_MAX_NODE - 1 + MAST_MAX_NODE;
 
@@ -68,8 +68,7 @@ int cpp_mast (IntegerMatrix edge1, IntegerMatrix edge2, IntegerVector nTip) {
     throw std::length_error("Both trees must contain the same number of edges.");
   }
   if (n_tip > MAST_MAX_TIP) {
-    throw std::length_error("Tree too large to analyse on stack; please "
-                              "contact maintainer for advice.");
+    throw std::length_error("Tree too large; please contact maintainer for advice.");
   }
   
   int16

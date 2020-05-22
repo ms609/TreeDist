@@ -6,6 +6,9 @@
 #' deleting, but not rearranging, leaves, using the algorithm of Valiente
 #' (2009).
 #' 
+#' Implemented for trees with up to 4096 tips.  Contact maintainer if you
+#' need to process larger trees.
+#' 
 #' @template tree12Params
 #' @param rooted Logical specifying whether to treat the trees as rooted.
 #' 
