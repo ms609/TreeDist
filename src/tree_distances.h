@@ -9,8 +9,8 @@ using namespace Rcpp;
 
 typedef uint_fast64_t splitbit;
 typedef int_fast64_t cost;
-typedef int lap_row;
-typedef int lap_col;
+typedef int16 lap_row;
+typedef int16 lap_col;
 
 /*************** CONSTANTS  *******************/
 
