@@ -41,7 +41,7 @@ extern double lg2_double_factorial[MAX_TIPS + MAX_TIPS - 2],
 
 extern int count_bits (splitbit x);
 
-extern cost lap(int dim, cost **assigncost,
+extern cost lap(int16 dim, cost **assigncost,
                 lap_col *rowsol, lap_row *colsol,
                 cost *u, cost *v);
 

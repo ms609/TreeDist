@@ -79,7 +79,7 @@ bool nontrivially_less_than(cost a, cost b) {
 
 /* This function is the jv shortest augmenting path algorithm to solve the 
    assignment problem */
-cost lap(int dim,
+cost lap(int16 dim,
          cost **input_cost,
          lap_col *rowsol,
          lap_row *colsol,
@@ -133,7 +133,7 @@ cost lap(int dim,
       rowsol[imin] = j;
       colsol[j] = imin;
     } else if(v[j] < v[rowsol[imin]]) {
-      int j1 = rowsol[imin];
+      int16 j1 = rowsol[imin];
       rowsol[imin] = j;
       colsol[j] = imin;
       colsol[j1] = -1;
@@ -163,7 +163,7 @@ cost lap(int dim,
   }
       
   //   AUGMENTING ROW REDUCTION
-  int loopcnt = 0;           // do-loop to be done twice.
+  int16 loopcnt = 0;           // do-loop to be done twice.
   do {
     loopcnt++;
     
