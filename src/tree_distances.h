@@ -15,9 +15,9 @@ typedef int16 lap_col;
 /*************** CONSTANTS  *******************/
 
 const int16 BIN_SIZE = 64, 
-  MAX_BINS = 32,
-  MAX_TIPS = BIN_SIZE * MAX_BINS,
-  MAX_SPLITS = MAX_TIPS; /* -3, but quicker if a power of two? */
+            MAX_BINS = 32,
+            MAX_TIPS = BIN_SIZE * MAX_BINS,
+            MAX_SPLITS = MAX_TIPS; /* -3, but quicker if a power of two? */
 
 const splitbit ALL_ONES = (std::numeric_limits<splitbit>::max)();
 
@@ -26,14 +26,14 @@ const splitbit ALL_ONES = (std::numeric_limits<splitbit>::max)();
 const cost BIG = ((std::numeric_limits<cost>::max)() / MAX_SPLITS);
 
 const splitbit right16bits = 65535U;
-const uint32_t powers_of_two[16] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512,
+const uint_fast32_t powers_of_two[16] = {1, 2, 4, 8, 16, 32, 64, 128, 256, 512,
                                     1024, 2048, 4096, 8192, 16384, 32768};
 
 const cost ROUND_PRECISION = 2048*2048;
 
 /***** Constants requiring initialization *****/
 
-extern uint32_t bitcounts[65536];
+extern uint_fast32_t bitcounts[65536];
 extern double lg2_double_factorial[MAX_TIPS + MAX_TIPS - 2],
   lg2_rooted[MAX_TIPS + 1], lg2_unrooted[MAX_TIPS + 1];
 

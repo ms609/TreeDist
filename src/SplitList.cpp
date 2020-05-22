@@ -7,8 +7,8 @@ using namespace Rcpp;
 SplitList::SplitList(RawMatrix x) {
   n_splits = x.rows();
   const int16 n_input_bins = x.cols(),
-    input_bins_per_bin = BIN_SIZE / R_BIN_SIZE;
-  n_bins = (n_input_bins + R_BIN_SIZE - 1) / input_bins_per_bin;
+              input_bins_per_bin = BIN_SIZE / R_BIN_SIZE,
+              n_bins = (n_input_bins + R_BIN_SIZE - 1) / input_bins_per_bin;
   
   if (n_bins < 1) throw std::invalid_argument("No tips present.");
   if (n_splits < 1) throw std::invalid_argument("No splits present.");
