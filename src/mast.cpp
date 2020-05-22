@@ -59,7 +59,7 @@ void fill_M (const int16 node1, const int16 node2,
 // 0..(nTip - 1).
 // [[Rcpp::export]]
 int cpp_mast (IntegerMatrix edge1, IntegerMatrix edge2, IntegerVector nTip) {
-  const int16 n_tip = nTip[0], n_edge = edge1.nrow();
+  const int16 n_tip = nTip[0], n_internal = n_tip - 1, n_edge = edge1.nrow();
   if (edge2.nrow() != n_edge) {
     throw std::length_error("Both trees must contain the same number of edges.");
   }
@@ -72,8 +72,9 @@ int cpp_mast (IntegerMatrix edge1, IntegerMatrix edge2, IntegerVector nTip) {
     t1_left[MAST_MAX_NODE] = {}, t1_right[MAST_MAX_NODE] = {},
     t2_left[MAST_MAX_NODE] = {}, t2_right[MAST_MAX_NODE] = {};
   bool t1_has_child[MAST_MAX_NODE] = {}, t2_has_child[MAST_MAX_NODE] = {};
-  bool *t1_descendantsof = new bool[(n_tip - 1) * n_tip],
-       *t2_descendantsof = new bool[(n_tip - 1) * n_tip];
+  bool *t1_descendantsof = new bool[n_internal * n_tip](),
+       *t2_descendantsof = new bool[n_internal * n_tip]();
+  
   for (int16 i = 0; i != n_edge; i++) {
     const int16 
       parent1 = edge1(i, 0), child1 = edge1(i, 1), index1 = parent1 - n_tip,
