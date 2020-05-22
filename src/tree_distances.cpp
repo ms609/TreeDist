@@ -12,37 +12,37 @@ List cpp_robinson_foulds_distance (RawMatrix x, RawMatrix y,
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   SplitList a(x), b(y);
-  const int most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
+  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     last_bin = a.n_bins - 1,
     n_tips = nTip[0],
     unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   cost score = 0;
   
-  std::vector<int> matching (most_splits);
-  for (int i = 0; i != most_splits; i++) matching[i] = NA_INTEGER;
+  std::vector<int16> matching (most_splits);
+  for (int16 i = 0; i != most_splits; i++) matching[i] = NA_INTEGER;
   
   splitbit b_complement[MAX_SPLITS][MAX_BINS];
-  for (int i = 0; i != b.n_splits; i++) {
-    for (int bin = 0; bin != last_bin; bin++) {
+  for (int16 i = 0; i != b.n_splits; i++) {
+    for (int16 bin = 0; bin != last_bin; bin++) {
       b_complement[i][bin] = ~b.state[i][bin];
     }
     b_complement[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
-  for (int ai = 0; ai != a.n_splits; ai++) {
-    for (int bi = 0; bi != b.n_splits; bi++) {
+  for (int16 ai = 0; ai != a.n_splits; ai++) {
+    for (int16 bi = 0; bi != b.n_splits; bi++) {
     
       bool all_match = true, all_complement = true;
     
-      for (int bin = 0; bin != a.n_bins; bin++) {
+      for (int16 bin = 0; bin != a.n_bins; bin++) {
         if ((a.state[ai][bin] != b.state[bi][bin])) {
           all_match = false;
           break;
         }
       }
       if (!all_match) {
-        for (int bin = 0; bin != a.n_bins; bin++) {
+        for (int16 bin = 0; bin != a.n_bins; bin++) {
           if ((a.state[ai][bin] != b_complement[bi][bin])) {
             all_complement = false;
             break;
@@ -64,42 +64,42 @@ List cpp_robinson_foulds_distance (RawMatrix x, RawMatrix y,
   return (ret);
 }
 
-std::vector<int> cpp_robinson_foulds_matching (
-    std::vector<int> x, std::vector<int> y, 
-    const int n_cols,
-    const int n_tips) {
+std::vector<int16> cpp_robinson_foulds_matching (
+    std::vector<int16> x, std::vector<int16> y, 
+    const int16 n_cols,
+    const int16 n_tips) {
   
   SplitList a(x, n_cols), b(y, n_cols);
-  const int most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
+  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     last_bin = a.n_bins - 1,
     unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   cost score = 0;
   
-  std::vector<int> matching (most_splits);
-  for (int i = 0; i != most_splits; i++) matching[i] = NA_INTEGER;
+  std::vector<int16> matching (most_splits);
+  for (int16 i = 0; i != most_splits; i++) matching[i] = NA_INTEGER;
   
   splitbit b_complement[MAX_SPLITS][MAX_BINS];
-  for (int i = 0; i != b.n_splits; i++) {
-    for (int bin = 0; bin != last_bin; bin++) {
+  for (int16 i = 0; i != b.n_splits; i++) {
+    for (int16 bin = 0; bin != last_bin; bin++) {
       b_complement[i][bin] = ~b.state[i][bin];
     }
     b_complement[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
-  for (int ai = 0; ai != a.n_splits; ai++) {
-    for (int bi = 0; bi != b.n_splits; bi++) {
+  for (int16 ai = 0; ai != a.n_splits; ai++) {
+    for (int16 bi = 0; bi != b.n_splits; bi++) {
     
       bool all_match = true, all_complement = true;
     
-      for (int bin = 0; bin != a.n_bins; bin++) {
+      for (int16 bin = 0; bin != a.n_bins; bin++) {
         if ((a.state[ai][bin] != b.state[bi][bin])) {
           all_match = false;
           break;
         }
       }
       if (!all_match) {
-        for (int bin = 0; bin != a.n_bins; bin++) {
+        for (int16 bin = 0; bin != a.n_bins; bin++) {
           if ((a.state[ai][bin] != b_complement[bi][bin])) {
             all_complement = false;
             break;
@@ -124,7 +124,7 @@ List cpp_robinson_foulds_info (RawMatrix x, RawMatrix y,
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   SplitList a(x), b(y);
-  const int most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
+  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     last_bin = a.n_bins - 1,
     n_tips = nTip[0],
     unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
@@ -133,30 +133,30 @@ List cpp_robinson_foulds_info (RawMatrix x, RawMatrix y,
   double score = 0;
   
   IntegerVector matching (most_splits);
-  for (int i = 0; i != most_splits; i++) matching[i] = NA_REAL;
+  for (int16 i = 0; i != most_splits; i++) matching[i] = NA_REAL;
   
   /* Dynamic allocation 20% faster for 105 tips, but VLA not permitted in C11 */
   splitbit b_complement[MAX_SPLITS][MAX_BINS]; 
-  for (int i = 0; i != b.n_splits; i++) {
-    for (int bin = 0; bin != last_bin; bin++) {
+  for (int16 i = 0; i != b.n_splits; i++) {
+    for (int16 bin = 0; bin != last_bin; bin++) {
       b_complement[i][bin] = ~b.state[i][bin];
     }
     b_complement[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
-  for (int ai = 0; ai != a.n_splits; ai++) {
-    for (int bi = 0; bi != b.n_splits; bi++) {
+  for (int16 ai = 0; ai != a.n_splits; ai++) {
+    for (int16 bi = 0; bi != b.n_splits; bi++) {
       
       bool all_match = true, all_complement = true;
       
-      for (int bin = 0; bin != a.n_bins; bin++) {
+      for (int16 bin = 0; bin != a.n_bins; bin++) {
         if ((a.state[ai][bin] != b.state[bi][bin])) {
           all_match = false;
           break;
         }
       }
       if (!all_match) {
-        for (int bin = 0; bin != a.n_bins; bin++) {
+        for (int16 bin = 0; bin != a.n_bins; bin++) {
           if ((a.state[ai][bin] != b_complement[bi][bin])) {
             all_complement = false;
             break;
@@ -164,8 +164,8 @@ List cpp_robinson_foulds_info (RawMatrix x, RawMatrix y,
         }
       }
       if (all_match || all_complement) {
-        int leaves_in_split = 0;
-        for (int bin = 0; bin != a.n_bins; bin++) {
+        int16 leaves_in_split = 0;
+        for (int16 bin = 0; bin != a.n_bins; bin++) {
           leaves_in_split += count_bits(a.state[ai][bin]);
         }
         score += lg2_unrooted_n - 
@@ -191,7 +191,7 @@ List cpp_matching_split_distance (RawMatrix x, RawMatrix y,
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   SplitList a(x), b(y);
-  const int most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
+  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     split_diff = most_splits - 
       ((a.n_splits > b.n_splits) ? b.n_splits : a.n_splits),
     n_tips = nTip[0],
@@ -199,23 +199,23 @@ List cpp_matching_split_distance (RawMatrix x, RawMatrix y,
   const cost max_score = BIG / most_splits;
   
   cost** score = new cost*[most_splits];
-  for (int i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
+  for (int16 i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
   
-  for (int ai = 0; ai != a.n_splits; ai++) {
-    for (int bi = 0; bi != b.n_splits; bi++) {
+  for (int16 ai = 0; ai != a.n_splits; ai++) {
+    for (int16 bi = 0; bi != b.n_splits; bi++) {
       score[ai][bi] = 0;
-      for (int bin = 0; bin != a.n_bins; bin++) {
+      for (int16 bin = 0; bin != a.n_bins; bin++) {
         score[ai][bi] += count_bits(a.state[ai][bin] ^ 
           b.state[bi][bin]);
       }
       if (score[ai][bi] > half_tips) score[ai][bi] = n_tips - score[ai][bi];
     }
-    for (int bi = b.n_splits; bi < most_splits; bi++) {
+    for (int16 bi = b.n_splits; bi < most_splits; bi++) {
       score[ai][bi] = max_score;
     }
   }
-  for (int ai = a.n_splits; ai < most_splits; ai++) {
-    for (int bi = 0; bi < most_splits; bi++) {
+  for (int16 ai = a.n_splits; ai < most_splits; ai++) {
+    for (int16 bi = 0; bi < most_splits; bi++) {
       score[ai][bi] = max_score;
     }
   }
@@ -227,11 +227,11 @@ List cpp_matching_split_distance (RawMatrix x, RawMatrix y,
   
   NumericVector final_score = NumericVector::create(
     lap(most_splits, score, rowsol, colsol, u, v) - (max_score * split_diff));
-  for (int i = 0; i < most_splits; i++) delete[] score[i];
+  for (int16 i = 0; i < most_splits; i++) delete[] score[i];
   delete[] u; delete[] v; delete[] colsol; delete[] score;
   NumericVector final_matching (most_splits);
   
-  for (int i = 0; i < most_splits; i++) {
+  for (int16 i = 0; i < most_splits; i++) {
     final_matching[i] = rowsol[i] + 1;
   }
   delete[] rowsol;
@@ -250,7 +250,7 @@ List cpp_jaccard_similarity (RawMatrix x, RawMatrix y,
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   SplitList a(x), b(y);
-  const int most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
+  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     last_bin = a.n_bins - 1,
     n_tips = nTip[0],
     unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
@@ -259,14 +259,14 @@ List cpp_jaccard_similarity (RawMatrix x, RawMatrix y,
   const double exponent = k[0], max_scoreL = max_score;
   
   splitbit b_compl[MAX_SPLITS][MAX_BINS];
-  for (int i = 0; i != b.n_splits; i++) {
-    for (int bin = 0; bin < last_bin; bin++) {
+  for (int16 i = 0; i != b.n_splits; i++) {
+    for (int16 bin = 0; bin < last_bin; bin++) {
       b_compl[i][bin] = ~b.state[i][bin];
     }
     b_compl[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
-  int a_tips,
+  int16 a_tips,
   a_and_b, a_and_B, A_and_b, A_and_B,
   a_or_b,  a_or_B,  A_or_b,  A_or_B;
   double ars_ab, ars_aB, ars_Ab, ars_AB,
@@ -274,19 +274,19 @@ List cpp_jaccard_similarity (RawMatrix x, RawMatrix y,
   bool enforce_arboreal = arboreal[0];
   
   cost** score = new cost*[most_splits];
-  for (int i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
+  for (int16 i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
   
-  for (int ai = 0; ai != a.n_splits; ai++) {
+  for (int16 ai = 0; ai != a.n_splits; ai++) {
     a_tips = 0;
-    for (int bin = 0; bin != a.n_bins; bin++) {
+    for (int16 bin = 0; bin != a.n_bins; bin++) {
       a_tips += count_bits(a.state[ai][bin]);
     }
     
-    for (int bi = 0; bi != b.n_splits; bi++) {
+    for (int16 bi = 0; bi != b.n_splits; bi++) {
       a_and_b = 0;
       a_and_B = 0;
       a_or_B = 0;
-      for (int bin = 0; bin != a.n_bins; bin++) {
+      for (int16 bin = 0; bin != a.n_bins; bin++) {
         a_and_b += count_bits(a.state[ai][bin] & b.state[bi][bin]);
         a_and_B += count_bits(a.state[ai][bin] & b_compl[bi][bin]);
         a_or_B  += count_bits(a.state[ai][bin] | b_compl[bi][bin]);
@@ -328,12 +328,12 @@ List cpp_jaccard_similarity (RawMatrix x, RawMatrix y,
         }
       }
     }
-    for (int bi = b.n_splits; bi < most_splits; bi++) {
+    for (int16 bi = b.n_splits; bi < most_splits; bi++) {
       score[ai][bi] = max_score;
     }
   }
-  for (int ai = a.n_splits; ai < most_splits; ai++) {
-    for (int bi = 0; bi < most_splits; bi++) {
+  for (int16 ai = a.n_splits; ai < most_splits; ai++) {
+    for (int16 bi = 0; bi < most_splits; bi++) {
       score[ai][bi] = max_score;
     }
   }
@@ -346,11 +346,11 @@ List cpp_jaccard_similarity (RawMatrix x, RawMatrix y,
     (double)((max_score * most_splits) 
                - lap(most_splits, score, rowsol, colsol, u, v))
     / max_score);
-  for (int i = 0; i < most_splits; i++) delete[] score[i];
+  for (int16 i = 0; i < most_splits; i++) delete[] score[i];
   delete[] u; delete[] v; delete[] colsol; delete[] score;
   NumericVector final_matching (most_splits);
   
-  for (int i = 0; i < most_splits; i++) {
+  for (int16 i = 0; i < most_splits; i++) {
     final_matching[i] = rowsol[i] + 1;
   }
   delete[] rowsol;
@@ -368,25 +368,25 @@ List cpp_mmsi_distance (RawMatrix x, RawMatrix y,
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   SplitList a(x), b(y);
-  const int most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
+  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     n_tips = nTip[0];
   const cost max_score = BIG;
   const double max_possible = lg2_unrooted[n_tips] - 
     lg2_trees_matching_split((n_tips + 1) / 2, n_tips / 2);
   
   cost** score = new cost*[most_splits];
-  for (int i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
+  for (int16 i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
   
   splitbit different[MAX_BINS];
-  int n_different, n_same, n_a_only, n_a_and_b;
+  int16 n_different, n_same, n_a_only, n_a_and_b;
   double score1, score2;
   
-  for (int ai = 0; ai != a.n_splits; ai++) {
-    for (int bi = 0; bi != b.n_splits; bi++) {
+  for (int16 ai = 0; ai != a.n_splits; ai++) {
+    for (int16 bi = 0; bi != b.n_splits; bi++) {
       n_different = 0;
       n_a_only = 0;
       n_a_and_b = 0;
-      for (int bin = 0; bin != a.n_bins; bin++) {
+      for (int16 bin = 0; bin != a.n_bins; bin++) {
         different[bin] = a.state[ai][bin] ^ b.state[bi][bin];
         n_different += count_bits(different[bin]);
         n_a_only += count_bits(a.state[ai][bin] & different[bin]);
@@ -403,12 +403,12 @@ List cpp_mmsi_distance (RawMatrix x, RawMatrix y,
       score[ai][bi] = max_score * 
         (1 - ((score1 > score2) ? score1 : score2) / max_possible);
     }
-    for (int bi = b.n_splits; bi < most_splits; bi++) {
+    for (int16 bi = b.n_splits; bi < most_splits; bi++) {
       score[ai][bi] = max_score;
     }
   }
-  for (int ai = a.n_splits; ai < most_splits; ai++) {
-    for (int bi = 0; bi < most_splits; bi++) {
+  for (int16 ai = a.n_splits; ai < most_splits; ai++) {
+    for (int16 bi = 0; bi < most_splits; bi++) {
       score[ai][bi] = max_score;
     }
   }
@@ -420,11 +420,11 @@ List cpp_mmsi_distance (RawMatrix x, RawMatrix y,
   NumericVector final_score = NumericVector::create(
     double((max_score * most_splits) - lap(most_splits, score, rowsol, colsol, u, v))
     * max_possible / max_score);
-  for (int i = 0; i < most_splits; i++) delete[] score[i];
+  for (int16 i = 0; i < most_splits; i++) delete[] score[i];
   delete[] u; delete[] v; delete[] colsol; delete[] score;
   NumericVector final_matching (most_splits);
   
-  for (int i = 0; i < most_splits; i++) {
+  for (int16 i = 0; i < most_splits; i++) {
     final_matching[i] = rowsol[i] + 1;
   }
   delete[] rowsol;
@@ -442,7 +442,7 @@ List cpp_mutual_clustering (RawMatrix x, RawMatrix y,
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   SplitList a(x), b(y);
-  const int most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
+  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     last_bin = a.n_bins - 1,
     n_tips = nTip[0],
     unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
@@ -450,24 +450,24 @@ List cpp_mutual_clustering (RawMatrix x, RawMatrix y,
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   
   splitbit b_compl[MAX_SPLITS][MAX_BINS];
-  for (int i = 0; i != b.n_splits; i++) {
-    for (int bin = 0; bin < last_bin; bin++) {
+  for (int16 i = 0; i != b.n_splits; i++) {
+    for (int16 bin = 0; bin < last_bin; bin++) {
       b_compl[i][bin] = ~b.state[i][bin];
     }
     b_compl[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
   cost** score = new cost*[most_splits];
-  for (int i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
+  for (int16 i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
   
-  unsigned int a_and_b, a_and_B, A_and_b, A_and_B,
-               na, nA, nb, nB;
-  for (int ai = 0; ai != a.n_splits; ai++) {
-    for (int bi = 0; bi != b.n_splits; bi++) {
+  uint16 a_and_b, a_and_B, A_and_b, A_and_B,
+               na, nA, nb, nB; 
+  for (int16 ai = 0; ai != a.n_splits; ai++) {
+    for (int16 bi = 0; bi != b.n_splits; bi++) {
       a_and_b = 0;
       a_and_B = 0;
       A_and_b = n_tips;
-      for (int bin = 0; bin != a.n_bins; bin++) {
+      for (int16 bin = 0; bin != a.n_bins; bin++) {
         a_and_b += count_bits(a.state[ai][bin] & b.state[bi][bin]);
         a_and_B += count_bits(a.state[ai][bin] & b_compl[bi][bin]);
         A_and_b -= count_bits(a.state[ai][bin] | b_compl[bi][bin]);
@@ -486,12 +486,12 @@ List cpp_mutual_clustering (RawMatrix x, RawMatrix y,
         ic_element(A_and_B, nA, nB, n_tips)
       ) / n_tips)));
     }
-    for (int bi = b.n_splits; bi < most_splits; bi++) {
+    for (int16 bi = b.n_splits; bi < most_splits; bi++) {
       score[ai][bi] = max_score;
     }
   }
-  for (int ai = a.n_splits; ai < most_splits; ai++) {
-    for (int bi = 0; bi < most_splits; bi++) {
+  for (int16 ai = a.n_splits; ai < most_splits; ai++) {
+    for (int16 bi = 0; bi < most_splits; bi++) {
       score[ai][bi] = max_score;
     }
   }
@@ -503,11 +503,11 @@ List cpp_mutual_clustering (RawMatrix x, RawMatrix y,
   NumericVector final_score = NumericVector::create(
     double((max_score * most_splits) -
       lap(most_splits, score, rowsol, colsol, u, v)) / max_score);
-  for (int i = 0; i < most_splits; i++) delete[] score[i];
+  for (int16 i = 0; i < most_splits; i++) delete[] score[i];
   delete[] colsol; delete[] u; delete[] v; delete[] score;
   
   NumericVector final_matching (most_splits);
-  for (int i = 0; i != most_splits; i++) {
+  for (int16 i = 0; i != most_splits; i++) {
     final_matching[i] = rowsol[i] + 1;
   }
   delete[] rowsol;
@@ -525,42 +525,42 @@ List cpp_shared_phylo (RawMatrix x, RawMatrix y,
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   SplitList a(x), b(y);
-  const int most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
+  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     n_tips = nTip[0];
   const cost max_score = BIG;
   const double lg2_unrooted_n = lg2_unrooted[n_tips],
                max_possible = lg2_unrooted_n - 
                  one_overlap((n_tips + 1) / 2, n_tips / 2, n_tips);
   
-  int in_a[MAX_SPLITS], in_b[MAX_SPLITS];
-  for (int i = 0; i != a.n_splits; i++) {
+  int16 in_a[MAX_SPLITS], in_b[MAX_SPLITS];
+  for (int16 i = 0; i != a.n_splits; i++) {
     in_a[i] = 0;
-    for (int bin = 0; bin != a.n_bins; bin++) {
+    for (int16 bin = 0; bin != a.n_bins; bin++) {
       in_a[i] += count_bits(a.state[i][bin]);
     }
   }
-  for (int i = 0; i != b.n_splits; i++) {
+  for (int16 i = 0; i != b.n_splits; i++) {
     in_b[i] = 0;
-    for (int bin = 0; bin != b.n_bins; bin++) {
+    for (int16 bin = 0; bin != b.n_bins; bin++) {
       in_b[i] += count_bits(b.state[i][bin]);
     }
   }
   
   cost** score = new cost*[most_splits];
-  for (int i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
+  for (int16 i = 0; i != most_splits; i++) score[i] = new cost[most_splits];
   
-  for (int ai = 0; ai != a.n_splits; ai++) {
-    for (int bi = 0; bi != b.n_splits; bi++) {
+  for (int16 ai = 0; ai != a.n_splits; ai++) {
+    for (int16 bi = 0; bi != b.n_splits; bi++) {
       score[ai][bi] = max_score * (1 - 
         (spi(a.state[ai], b.state[bi], n_tips, in_a[ai], in_b[bi],
              lg2_unrooted_n, a.n_bins) / max_possible));
     }
-    for (int bi = b.n_splits; bi < most_splits; bi++) {
+    for (int16 bi = b.n_splits; bi != most_splits; bi++) {
       score[ai][bi] = max_score;
     }
   }
-  for (int ai = a.n_splits; ai < most_splits; ai++) {
-    for (int bi = 0; bi < most_splits; bi++) {
+  for (int16 ai = a.n_splits; ai != most_splits; ai++) {
+    for (int16 bi = 0; bi < most_splits; bi++) {
       score[ai][bi] = max_score;
     }
   }
@@ -576,10 +576,10 @@ List cpp_shared_phylo (RawMatrix x, RawMatrix y,
   NumericVector final_matching (most_splits);
   
   
-  for (int i = 0; i < most_splits; i++) delete[] score[i];
+  for (int16 i = 0; i != most_splits; i++) delete[] score[i];
   delete[] score;
   
-  for (int i = 0; i < most_splits; i++) {
+  for (int16 i = 0; i != most_splits; i++) {
     final_matching[i] = rowsol[i] + 1;
   }
   delete[] rowsol;
