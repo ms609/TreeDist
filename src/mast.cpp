@@ -109,9 +109,9 @@ int cpp_mast (IntegerMatrix edge1, IntegerMatrix edge2, IntegerVector nTip) {
     }
   }
   
-  int16 M[MAST_MAX_ALLNODE][MAST_MAX_ALLNODE];
+  int_least16_t M[MAST_MAX_ALLNODE][MAST_MAX_ALLNODE];
   for (int16 i = 0; i != n_edge; i++) {
-    int16 node1 = edge1(i, 1);
+    const int16 node1 = edge1(i, 1);
     for (int16 j = 0; j != n_edge; j++) {
       fill_M(node1, edge2(j, 1), M, t1_descendantsof,
              t2_descendantsof, t1_left, t1_right,
