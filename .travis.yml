@@ -6,8 +6,8 @@ warnings_are_errors: true
 r_build_args: '--compact-vignettes="gs+qpdf"'
 r_check_args: --as-cran --no-manual # Workaround error compiling PDF manual
 jobs:
-  include:
-    - r: 3.5.0
+  include: 
+    - r: 3.5.0 # TreeSearch requires > 3.5.0
     - r: release
       before_deploy: Rscript -e 'remotes::install_cran("pkgdown")'
       r_binary_packages:
@@ -38,7 +38,7 @@ jobs:
       before_install:
       - sudo tlmgr install doi titling hyperref
   allow_failures:
-    r: 3.5.0 # TreeSearch requires > 3.5.0
+    - r: release
 
 git:
   depth: 1
