@@ -547,7 +547,7 @@ List cpp_shared_phylo (RawMatrix x, RawMatrix y,
   }
   
   cost** score = new cost*[most_splits];
-  for (int16 i = 0; i != most_splits; i++) score[i] = new cost[most_splits];
+  for (int16 i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
   
   for (int16 ai = 0; ai != a.n_splits; ai++) {
     for (int16 bi = 0; bi != b.n_splits; bi++) {
@@ -555,11 +555,11 @@ List cpp_shared_phylo (RawMatrix x, RawMatrix y,
         (spi(a.state[ai], b.state[bi], n_tips, in_a[ai], in_b[bi],
              lg2_unrooted_n, a.n_bins) / max_possible));
     }
-    for (int16 bi = b.n_splits; bi != most_splits; bi++) {
+    for (int16 bi = b.n_splits; bi < most_splits; bi++) {
       score[ai][bi] = max_score;
     }
   }
-  for (int16 ai = a.n_splits; ai != most_splits; ai++) {
+  for (int16 ai = a.n_splits; ai < most_splits; ai++) {
     for (int16 bi = 0; bi < most_splits; bi++) {
       score[ai][bi] = max_score;
     }
@@ -576,10 +576,10 @@ List cpp_shared_phylo (RawMatrix x, RawMatrix y,
   NumericVector final_matching (most_splits);
   
   
-  for (int16 i = 0; i != most_splits; i++) delete[] score[i];
+  for (int16 i = 0; i < most_splits; i++) delete[] score[i];
   delete[] score;
   
-  for (int16 i = 0; i != most_splits; i++) {
+  for (int16 i = 0; i < most_splits; i++) {
     final_matching[i] = rowsol[i] + 1;
   }
   delete[] rowsol;
