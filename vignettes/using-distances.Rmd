@@ -236,7 +236,7 @@ if (require('Ternary')) {
   unresolved <- resolved['trueTree'] - resolved
   incorrect <- resolved - correct
   TernaryPoints(cbind(unresolved, correct, incorrect), 
-                pch=1:4, cex=2, col=Ternary::cbPalette8[1:4])
+                pch = 1:4, cex = 2, col = Ternary::cbPalette8[1:4])
 }
 ```
 
