@@ -31,7 +31,7 @@ using namespace std;
 // [[Rcpp::export]] 
 List lapjv (NumericMatrix x, NumericVector maxX) {
   const uint16 n_row = x.nrow(), n_col = x.ncol(), 
-    max_dim = (n_row > n_col) ? n_row : n_col;
+               max_dim = (n_row > n_col) ? n_row : n_col;
   const cost max_score = BIG / max_dim;
   const double x_max = maxX[0];
   
@@ -40,25 +40,25 @@ List lapjv (NumericMatrix x, NumericVector maxX) {
   cost *u = new cost[max_dim], *v = new cost[max_dim];
   
   cost** input = new cost*[max_dim];
-  for (uint16 i = 0; i < max_dim; i++) input[i] = new cost[max_dim];
+  for (int16 i = 0; i != max_dim; i++) input[i] = new cost[max_dim];
   
-  for (uint16 r = n_row; r--;) {
-    for (uint16 c = n_col; c--;) {
+  for (int16 r = n_row; r--;) {
+    for (int16 c = n_col; c--;) {
       input[r][c] = cost(max_score * (x(r, c) / x_max));
     }
-    for (uint16 c = n_col; c < max_dim; c++) {
+    for (int16 c = n_col; c != max_dim; c++) {
       input[r][c] = max_score;
     }
   }
-  for (uint16 r = n_row; r < max_dim; r++) {
-    for (uint16 c = 0; c < max_dim; c++) {
+  for (int16 r = n_row; r != max_dim; r++) {
+    for (int16 c = 0; c != max_dim; c++) {
       input[r][c] = max_score;
     }
   }
-   
+  
   cost score = lap(max_dim, input, rowsol, colsol, u, v);
   NumericVector matching (max_dim);
-  for (uint16 i = 0; i < max_dim; i++) {
+  for (int16 i = 0; i != max_dim; i++) {
     matching[i] = rowsol[i] + 1;
   }
   
@@ -66,7 +66,7 @@ List lapjv (NumericMatrix x, NumericVector maxX) {
   delete [] v;
   delete [] rowsol;
   delete [] colsol;
-  for (uint16 i = 0; i < max_dim; i++) delete input[i];
+  for (int16 i = 0; i != max_dim; i++) delete input[i];
   delete [] input;
   
   return List::create(Named("score") = double(score) / max_score * x_max,
