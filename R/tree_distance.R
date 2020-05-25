@@ -33,7 +33,6 @@ GeneralizedRF <- function (splits1, splits2, nTip, PairScorer,
                            maximize, reportMatching, ...) {
   nSplits1 <- dim(splits1)[1]
   nSplits2 <- dim(splits2)[1]
-  if (nSplits1 == 0 || nSplits2 == 0) return (0L)
   
   solution <- PairScorer(splits1, splits2, nTip, ...)
   ret <- solution$score

@@ -9,6 +9,7 @@ treesSBO8 <- structure(list(treeSym8, treeBal8, treeOpp8),
 
 treeCat8 <- ape::read.tree(text='((((h, g), f), e), (d, (c, (b, a))));')
 treeTac8 <- ape::read.tree(text='((((e, c), g), a), (h, (b, (d, f))));')
+treeStar8 <- ape::read.tree(text='(e, c, g, h, b, a, d, f);')
 
 treeAb.Cdefgh <- ape::read.tree(text='((a, b), (c, d, e, f, g, h));')
 treeAbc.Defgh <- ape::read.tree(text='((a, b, c), (d, e, f, g, h));')
@@ -107,6 +108,8 @@ test_that('Robinson Foulds Distance is correctly calculated', {
                  RobinsonFoulds(t1, t2))
   }
   RFTest(treeSym8, treeSym8)
+  RFTest(treeSym8, treeStar8)
+  RFTest(treeStar8, treeStar8)
   RFTest(treeAb.Cdefgh, treeAbc.Defgh)
   RFTest(treeAb.Cdefgh, treeAbcd.Efgh)
   
