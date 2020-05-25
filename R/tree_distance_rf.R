@@ -108,7 +108,7 @@ RobinsonFoulds <- function (tree1, tree2 = tree1, similarity = FALSE,
 #' @export
 RobinsonFouldsMatching <- function (tree1, tree2 = tree1, similarity = FALSE,
                                     normalize = FALSE, ...) {
-  ret <- CalculateTreeDistance(RobinsonFouldsSplits, tree1, tree2, 
+  ret <- CalculateTreeDistance(RobinsonFouldsSplits, tree1, tree2,
                                         reportMatching = TRUE)
 
   ret <- outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE] -
