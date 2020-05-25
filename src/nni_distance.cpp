@@ -18,7 +18,7 @@ int16 sorting_number (int16 n_tip) {
   return (n_tip * log_ceiling - std::pow(2, log_ceiling) + 1);
 }
 
-int16 degenerate_distance (int16 n_tip) {
+int16 degenerate_distance (const int16 n_tip) {
   /* Calculate the shortest length of the longest path in a tree.
    * To make this path as short as possible, divide tips into three 
    * balanced trees, joined by a single node that will form part of every 
@@ -37,7 +37,7 @@ int16 degenerate_distance (int16 n_tip) {
   const int16 min_backbone_nodes = 
     (nodes_in_full + std::ceil(log2(tips_left / 2)) + 1 > 0) ?
      nodes_in_full + std::ceil(log2(tips_left / 2)) + 1 : 0;
-  
+
   /* The worst-case scenario requires a move for every node not on the backbone: */
   const int16 n_node = (n_tip > 2) ? n_tip - 2 : 0;
   return (n_node - min_backbone_nodes);
@@ -62,7 +62,7 @@ void update_score (const int16 subtree_edges, int16 *tight_bound,
 // [[Rcpp::export]]
 IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
                        IntegerVector nTip) {
-  
+
   if (nTip[0] > NNI_MAX_TIPS) {
     throw std::length_error("Cannot calculate NNI distance for trees with "
                               "so many tips.");
@@ -72,7 +72,7 @@ IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
               node_0_r = n_tip + 1,
               n_edge = edge1.nrow();
   int16 lower_bound = 0, tight_score_bound = 0, loose_score_bound = 0;
-  
+
   if (n_tip < 4) {
     return(IntegerVector::create(Named("lower") = 0,
                                  _["tight_upper"] = 0,
@@ -89,7 +89,7 @@ IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
   bool matched1[NNI_MAX_TIPS] = {0};
   int16 unmatched_below[NNI_MAX_TIPS] = {0};
 
-  for (uint16 i = 0; i != match.size(); i++) {
+  for (int16 i = 0; i != int16(match.size()); i++) {
     int16 node_i = atoi(names1[i]) - node_0_r;
     if (match[i] == NA_INTEGER) {
       matched1[node_i] = false;

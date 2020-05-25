@@ -3,13 +3,17 @@
 #' Calculate the size or phylogenetic information content (Steel & Penny 2006)
 #' of the maximum agreement subtree between two phylogenetic trees, i.e.
 #' the largest tree that can be obtained from both `tree1` and `tree2` by
-#' deleting, but not rearranging, leaves.
+#' deleting, but not rearranging, leaves, using the algorithm of Valiente
+#' (2009).
+#' 
+#' Implemented for trees with up to 4096 tips.  Contact maintainer if you
+#' need to process larger trees.
 #' 
 #' @template tree12Params
 #' @param rooted Logical specifying whether to treat the trees as rooted.
 #' 
-#' @return `MASTSize` returns an integer specifying the number of leaves in the
-#' maximum agreement subtree.
+#' @return `MASTSize()` returns an integer specifying the number of leaves in
+#' the maximum agreement subtree.
 #' 
 #' @examples
 #' library('TreeTools') # for as.phylo, BalancedTree, PectinateTree
@@ -82,7 +86,7 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
 }
 
 #' @rdname MASTSize
-#' @return `MASTInfo` returns a vector or matrix listing the phylogenetic
+#' @return `MASTInfo()` returns a vector or matrix listing the phylogenetic
 #' information content, in bits, of the maximum agreement subtree.
 #' @importFrom TreeTools LnRooted.int LnUnrooted.int
 #' @export
