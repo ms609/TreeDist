@@ -48,10 +48,10 @@ void update_score (const int16 subtree_edges, int16 *tight_bound,
                    int16 *loose_bound) {
   if (subtree_edges) {
     const int16 subtree_tips = subtree_edges + 3;
-    if (*tight_bound != NA_INTEGER && subtree_tips <= N_EXACT) {
+    if (*tight_bound != NA_INT16 && subtree_tips <= N_EXACT) {
       *tight_bound += exact_diameter[subtree_tips];
     } else {
-      *tight_bound = NA_INTEGER;
+      *tight_bound = NA_INT16;
     }
 
     *loose_bound += sorting_number(subtree_tips) +
@@ -137,7 +137,8 @@ IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
   }
 
   return IntegerVector::create(Named("lower")   = lower_bound,
-                               _["tight_upper"] = tight_score_bound,
+                               _["tight_upper"] = tight_score_bound == NA_INT16 
+                                 ? NA_INTEGER : tight_score_bound,
                                _["loose_upper"] = loose_score_bound);
   
 }
