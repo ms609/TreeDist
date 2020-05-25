@@ -24,7 +24,7 @@ int16 degenerate_distance (const int16 n_tip) {
    * balanced trees, joined by a single node that will form part of every 
    * longest path.  One of these subtrees will be filled with >= n/3 nodes */
   const int16 nodes_in_full = (std::ceil(log2(n_tip / 3)) > 0) ? 
-  std::ceil(log2(n_tip / 3)) : 0;
+                               std::ceil(log2(n_tip / 3)) : 0;
   /* We want to put a power of two tips in this subtree, such that every node is 
    * equally close to its root */
   const int16 tips_in_full = std::pow(2, nodes_in_full);
@@ -37,20 +37,21 @@ int16 degenerate_distance (const int16 n_tip) {
   const int16 min_backbone_nodes = 
     (nodes_in_full + std::ceil(log2(tips_left / 2)) + 1 > 0) ?
      nodes_in_full + std::ceil(log2(tips_left / 2)) + 1 : 0;
+
   /* The worst-case scenario requires a move for every node not on the backbone: */
   const int16 n_node = (n_tip > 2) ? n_tip - 2 : 0;
   return (n_node - min_backbone_nodes);
 }
 
 // Score subtree, add to score, and reset subtree size
-void update_score (const int16 subtree_edges, int *tight_bound, 
-                   int *loose_bound) {
+void update_score (const int16 subtree_edges, int16 *tight_bound, 
+                   int16 *loose_bound) {
   if (subtree_edges) {
     const int16 subtree_tips = subtree_edges + 3;
-    if (*tight_bound != NA_INTEGER && subtree_tips <= N_EXACT) {
+    if (*tight_bound != NA_INT16 && subtree_tips <= N_EXACT) {
       *tight_bound += exact_diameter[subtree_tips];
     } else {
-      *tight_bound = NA_INTEGER;
+      *tight_bound = NA_INT16;
     }
 
     *loose_bound += sorting_number(subtree_tips) +
@@ -61,6 +62,7 @@ void update_score (const int16 subtree_edges, int *tight_bound,
 // [[Rcpp::export]]
 IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
                        IntegerVector nTip) {
+
   if (nTip[0] > NNI_MAX_TIPS) {
     throw std::length_error("Cannot calculate NNI distance for trees with "
                               "so many tips.");
@@ -69,7 +71,8 @@ IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
               node_0 = n_tip,
               node_0_r = n_tip + 1,
               n_edge = edge1.nrow();
-  int lower_bound = 0, tight_score_bound = 0, loose_score_bound = 0;
+  int16 lower_bound = 0, tight_score_bound = 0, loose_score_bound = 0;
+
   if (n_tip < 4) {
     return(IntegerVector::create(Named("lower") = 0,
                                  _["tight_upper"] = 0,
@@ -78,14 +81,15 @@ IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
   
   RawMatrix splits1 = cpp_edge_to_splits(edge1, nTip);
   RawMatrix splits2 = cpp_edge_to_splits(edge2, nTip);
-  CharacterVector names1 = rownames(splits1);
+  const CharacterVector names1 = rownames(splits1);
   
-  std::vector<int> match = cpp_robinson_foulds_distance(splits1, splits2, nTip)[1];
+  /* #TODO do I intend cpp_rf_matching to replace this function? */
+  rf_match match = cpp_robinson_foulds_distance(splits1, splits2, nTip)[1];
   
   bool matched1[NNI_MAX_TIPS] = {0};
   int16 unmatched_below[NNI_MAX_TIPS] = {0};
 
-  for (int i = 0; i != int(match.size()); i++) {
+  for (int16 i = 0; i != int16(match.size()); i++) {
     int16 node_i = atoi(names1[i]) - node_0_r;
     if (match[i] == NA_INTEGER) {
       matched1[node_i] = false;
@@ -96,7 +100,7 @@ IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
     }
   }
   
-  for (int16 i = 0; i != (int16) n_edge - 2; i++) {
+  for (int16 i = 0; i != n_edge - 2; i++) {
     const int16 parent_i = edge1(i, 0) - 1, child_i = edge1(i, 1) - 1;
     // If edge is unmatched, add one to subtree size.
     if (child_i >= n_tip) {
@@ -110,16 +114,16 @@ IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
   }
   // Root edges:
   const int16 root_node = edge1(n_edge - 2, 0) - node_0_r,
-    root_child_1 = edge1(n_edge - 2, 1) - 1,
-    root_child_2 = edge1(n_edge - 1, 1) - 1,
-    unmatched_2 = (root_child_2 < n_tip ? 0 :
-                     unmatched_below[root_child_2 - node_0]);
+              root_child_1 = edge1(n_edge - 2, 1) - 1,
+              root_child_2 = edge1(n_edge - 1, 1) - 1,
+              unmatched_2 = (root_child_2 < n_tip ? 0 :
+                               unmatched_below[root_child_2 - node_0]);
   if (root_child_1 >= n_tip) {
     if (!matched1[root_child_1 - node_0]) {
 /*      Rcout << " Root edge unmatched\n";*/
       update_score(unmatched_below[root_node]
                      + unmatched_below[root_child_1 - node_0] + unmatched_2,
-                     &tight_score_bound, &loose_score_bound);
+                   &tight_score_bound, &loose_score_bound);
     } else {
 /*      Rcout << " Root edge matched\n";*/
       update_score(unmatched_below[root_child_1 - node_0],
@@ -132,8 +136,9 @@ IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
                  &tight_score_bound, &loose_score_bound);
   }
 
-  return IntegerVector::create(Named("lower") = lower_bound, 
-                               _["tight_upper"] = tight_score_bound,
+  return IntegerVector::create(Named("lower")   = lower_bound,
+                               _["tight_upper"] = tight_score_bound == NA_INT16 
+                                 ? NA_INTEGER : tight_score_bound,
                                _["loose_upper"] = loose_score_bound);
   
 }

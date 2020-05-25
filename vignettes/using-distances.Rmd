@@ -228,7 +228,6 @@ if (require('Ternary')) {
               grid.minor.lines = 0,
               axis.labels = seq(0, 1, length.out=11L),
               axis.col="#999999",
-              axis.labels.col = "black",
               ticks.length = 0.025)
   
   HorizontalGrid()
@@ -237,7 +236,7 @@ if (require('Ternary')) {
   unresolved <- resolved['trueTree'] - resolved
   incorrect <- resolved - correct
   TernaryPoints(cbind(unresolved, correct, incorrect), 
-                pch=1:4, cex=2, col=Ternary::cbPalette8[1:4])
+                pch = 1:4, cex = 2, col = Ternary::cbPalette8[1:4])
 }
 ```
 

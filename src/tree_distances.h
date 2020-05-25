@@ -14,10 +14,10 @@ typedef int16 lap_col;
 
 /*************** CONSTANTS  *******************/
 
-const int BIN_SIZE = 64, 
-  MAX_BINS = 32,
-  MAX_TIPS = BIN_SIZE * MAX_BINS,
-  MAX_SPLITS = MAX_TIPS; /* -3, but quicker if a power of two? */
+const int16 BIN_SIZE = 64, 
+            MAX_BINS = 32,
+            MAX_TIPS = BIN_SIZE * MAX_BINS,
+            MAX_SPLITS = MAX_TIPS; /* -3, but quicker if a power of two? */
 
 const splitbit ALL_ONES = (std::numeric_limits<splitbit>::max)();
 
@@ -39,25 +39,25 @@ extern double lg2_double_factorial[MAX_TIPS + MAX_TIPS - 2],
 
 /*************** FUNCTIONS  *******************/
 
-extern int count_bits (splitbit x);
+extern int16 count_bits (splitbit x);
 
 extern cost lap(int16 dim, cost **assigncost,
                 lap_col *rowsol, lap_row *colsol,
                 cost *u, cost *v);
 
-extern double lg2_trees_matching_split(int a, int b),
+extern double lg2_trees_matching_split(int16 a, int16 b),
   ic_element (const double nkK, const int16 nk,
               const int16 nK, const double n),
-  one_overlap (const int a, const int b, const int n),
-  one_overlap_notb (const int a, const int n_minus_b, const int n),
-  spi (const splitbit* a_state, const splitbit* b_state, const int n_tips, 
-       const int in_a, const int in_b, 
-       const double lg2_unrooted_n, const int n_bins);
+  one_overlap (const int16 a, const int16 b, const int16 n),
+  one_overlap_notb (const int16 a, const int16 n_minus_b, const int16 n),
+  spi (const splitbit* a_state, const splitbit* b_state, const int16 n_tips, 
+       const int16 in_a, const int16 in_b, 
+       const double lg2_unrooted_n, const int16 n_bins);
 
 extern List cpp_robinson_foulds_distance (RawMatrix x, RawMatrix y, 
                                           IntegerVector nTip);
 
-extern std::vector<int> cpp_robinson_foulds_matching (std::vector<int> x,
-                                                      std::vector<int> y, 
-                                                      const int n_cols,
-                                                      const int n_tips);
+extern rf_match cpp_robinson_foulds_matching (raw_vector x,
+                                              raw_vector y, 
+                                              const int16 n_cols,
+                                              const int16 n_tips);

@@ -54,7 +54,7 @@ test_that("Simple NNI approximations", {
   
   # Too different for tight upper bound
   set.seed(10000)
-  expect_true(is.na(NNIDist(rtree(100, br=NULL), rtree(100, br=NULL))[[2]]))
+  expect_true(is.na(NNIDist(rtree(100, br = NULL), rtree(100, br = NULL))[[2]]))
   
 })
 

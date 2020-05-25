@@ -31,7 +31,7 @@ using namespace std;
 // [[Rcpp::export]] 
 List lapjv (NumericMatrix x, NumericVector maxX) {
   const uint16 n_row = x.nrow(), n_col = x.ncol(), 
-    max_dim = (n_row > n_col) ? n_row : n_col;
+               max_dim = (n_row > n_col) ? n_row : n_col;
   const cost max_score = BIG / max_dim;
   const double x_max = maxX[0];
   
@@ -55,7 +55,7 @@ List lapjv (NumericMatrix x, NumericVector maxX) {
       input[r][c] = max_score;
     }
   }
-   
+  
   cost score = lap(max_dim, input, rowsol, colsol, u, v);
   NumericVector matching (max_dim);
   for (int16 i = 0; i != max_dim; i++) {
@@ -112,7 +112,7 @@ cost lap(int16 dim,
   predecessor = new lap_row[dim];       // row-predecessor of column in augmenting/alternating path.
   
   // init how many times a row will be assigned in the column reduction.
-  for (i = 0; i < dim; i++) {
+  for (i = 0; i != dim; i++) {
     matches[i] = 0;
   }
   
@@ -121,7 +121,7 @@ cost lap(int16 dim,
     // find minimum cost over rows.
     min = input_cost[0][j];
     imin = 0;
-    for (i = 1; i < dim; i++) {
+    for (i = 1; i != dim; i++) {
       if (input_cost[i][j] < min) {
         min = input_cost[i][j];
         imin = i;
@@ -143,7 +143,7 @@ cost lap(int16 dim,
   }
   
   // REDUCTION TRANSFER
-  for (i = 0; i < dim; i++) {
+  for (i = 0; i != dim; i++) {
     if (matches[i] == 0) {     // fill list of unassigned 'free' rows.
       free[num_free++] = i;
     } else {
@@ -228,7 +228,7 @@ cost lap(int16 dim,
   } while (loopcnt < 2);       // repeat once.
   
   // AUGMENT SOLUTION for each free row.
-  for (f = 0; f < num_free; f++) {
+  for (f = 0; f != num_free; f++) {
     free_row = free[f];       // start row of augmenting path.
     
     // Dijkstra shortest path algorithm.
@@ -266,7 +266,7 @@ cost lap(int16 dim,
         }
         // check if any of the minimum columns happens to be unassigned.
         // if so, we have an augmenting path right away.
-        for (k = low; k < up; k++) {
+        for (k = low; k != up; k++) {
           if (colsol[col_list[k]] < 0) {
             endofpath = col_list[k];
             unassignedfound = true;
@@ -283,7 +283,7 @@ cost lap(int16 dim,
         i = colsol[j1];
         h = input_cost[i][j1] - v[j1] - min;
         
-        for (k = up; k < dim; k++) {
+        for (k = up; k != dim; k++) {
           j = col_list[k];
           v2 = input_cost[i][j] - v[j] - h;
           if (v2 < d[j]) {
