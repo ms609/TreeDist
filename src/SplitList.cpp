@@ -8,6 +8,7 @@ SplitList::SplitList(RawMatrix x) {
   n_splits = x.rows();
   const int n_input_bins = x.cols(),
     input_bins_per_bin = BIN_SIZE / R_BIN_SIZE;
+  
   n_bins = (n_input_bins + R_BIN_SIZE - 1) / input_bins_per_bin;
   
   if (n_bins < 1) throw std::invalid_argument("No tips present.");
