@@ -15,8 +15,8 @@ MASTInfo(tree1, tree2 = tree1, rooted = TRUE)
 \item{rooted}{Logical specifying whether to treat the trees as rooted.}
 }
 \value{
-\code{MASTSize()} returns an integer specifying the number of leaves in the
-maximum agreement subtree.
+\code{MASTSize()} returns an integer specifying the number of leaves in
+the maximum agreement subtree.
 
 \code{MASTInfo()} returns a vector or matrix listing the phylogenetic
 information content, in bits, of the maximum agreement subtree.

@@ -12,8 +12,8 @@
 #' @template tree12Params
 #' @param rooted Logical specifying whether to treat the trees as rooted.
 #' 
-#' @return `MASTSize()` returns an integer specifying the number of leaves in the
-#' maximum agreement subtree.
+#' @return `MASTSize()` returns an integer specifying the number of leaves in
+#' the maximum agreement subtree.
 #' 
 #' @examples
 #' library('TreeTools') # for as.phylo, BalancedTree, PectinateTree
