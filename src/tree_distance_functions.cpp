@@ -57,8 +57,8 @@ double lg2_trees_matching_split (int a, int b) {
  * nkK is converted to pkK in the calling function, when the sum of all
  * elements is divided by n.
 */
-double ic_element (const double nkK, const unsigned int nk,
-                   const unsigned int nK, const double n) {
+double ic_element (const double nkK, const int16 nk,
+                   const int16 nK, const double n) {
   if (nkK && nk && nK) {
     return nkK * log2(nkK * n / double(nk * nK));
   } else return 0;

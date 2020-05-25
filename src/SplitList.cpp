@@ -8,6 +8,7 @@ SplitList::SplitList(RawMatrix x) {
   n_splits = x.rows();
   const int n_input_bins = x.cols(),
     input_bins_per_bin = BIN_SIZE / R_BIN_SIZE;
+  
   n_bins = (n_input_bins + R_BIN_SIZE - 1) / input_bins_per_bin;
   
   if (n_bins < 1) throw std::invalid_argument("No tips present.");
@@ -31,7 +32,8 @@ SplitList::SplitList(RawMatrix x) {
       }
     }
     int bin = n_bins - 1;
-    const int raggedy_bins = R_BIN_SIZE - ((R_BIN_SIZE - (n_input_bins % R_BIN_SIZE)) % R_BIN_SIZE);
+    const int raggedy_bins = R_BIN_SIZE - 
+      ((R_BIN_SIZE - (n_input_bins % R_BIN_SIZE)) % R_BIN_SIZE);
     /*Rcout << n_input_bins << " bins in; " << raggedy_bins << " raggedy bins\n";*/
     state[split][bin] = x(split, bin * input_bins_per_bin);
     /*Rcout << " State[" << split << "][" << bin << "] = " << state[split][bin] << ".\n";*/

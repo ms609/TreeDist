@@ -15,17 +15,22 @@ MASTInfo(tree1, tree2 = tree1, rooted = TRUE)
 \item{rooted}{Logical specifying whether to treat the trees as rooted.}
 }
 \value{
-\code{MASTSize} returns an integer specifying the number of leaves in the
-maximum agreement subtree.
+\code{MASTSize()} returns an integer specifying the number of leaves in
+the maximum agreement subtree.
 
-\code{MASTInfo} returns a vector or matrix listing the phylogenetic
+\code{MASTInfo()} returns a vector or matrix listing the phylogenetic
 information content, in bits, of the maximum agreement subtree.
 }
 \description{
 Calculate the size or phylogenetic information content (Steel & Penny 2006)
 of the maximum agreement subtree between two phylogenetic trees, i.e.
 the largest tree that can be obtained from both \code{tree1} and \code{tree2} by
-deleting, but not rearranging, leaves.
+deleting, but not rearranging, leaves, using the algorithm of Valiente
+(2009).
+}
+\details{
+Implemented for trees with up to 4096 tips.  Contact maintainer if you
+need to process larger trees.
 }
 \examples{
 library('TreeTools') # for as.phylo, BalancedTree, PectinateTree
