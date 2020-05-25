@@ -175,7 +175,8 @@ legend('right', c('Robinson-Foulds', 'Arboreal', 'Non-arboreal', 'Nye et al.'),
 ## Matching Split Distance
 
 Bogdanowicz & Giaro [-@Bogdanowicz2012] propose an alternative distance, which
-they term the Matching Split Distance.
+they term the Matching Split Distance.  (This was independently proposed by
+Lin _et al._ [-@Lin2012].)
 
 ```{r, fig.width=6 , fig.align='center'}
 MatchingSplitDistance(tree1, tree2)

@@ -56,8 +56,9 @@ An array of numerics providing the distances between each pair of
 trees in \code{tree1} and \code{tree2}, or \code{splits1} and \code{splits2}.
 }
 \description{
-Calculates the \href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#matching-split-distance}{Matching Split Distance}
-(Bogdanowicz and Giaro 2012) for unrooted binary trees.
+Calculates the
+\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#matching-split-distance}{Matching Split Distance}
+(Bogdanowicz and Giaro 2012; Lin \emph{et al.} 2012) for unrooted binary trees.
 }
 \section{Normalization}{
 
@@ -83,6 +84,8 @@ VisualizeMatching(MatchingSplitDistance, TreeTools::BalancedTree(6),
 }
 \references{
 \insertRef{Bogdanowicz2012}{TreeDist}
+
+\insertRef{Lin2012}{TreeDist}
 }
 \seealso{
 Other tree distances: 

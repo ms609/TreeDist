@@ -6,6 +6,7 @@ Package extracted from `TreeSearch` 0.3.2.9005.
  - `MASTSize()`, `MASTInfo()`
  - `NNIDist()`
  - `SPRDist()` and `PathDist()` wrappers for phangorn functions
+ - `median.multiPhylo()`
  
 ## Improvements:
  - Implement tree distance measures in C++ to improve speed.

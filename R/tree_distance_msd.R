@@ -1,7 +1,8 @@
 #' Matching Split Distance
 #' 
-#' Calculates the [Matching Split Distance](https://ms609.github.io/TreeDist/articles/Generalized-RF.html#matching-split-distance)
-#' (Bogdanowicz and Giaro 2012) for unrooted binary trees.
+#' Calculates the 
+#' [Matching Split Distance](https://ms609.github.io/TreeDist/articles/Generalized-RF.html#matching-split-distance)
+#' (Bogdanowicz and Giaro 2012; Lin _et al._ 2012) for unrooted binary trees.
 #' 
 #' @inheritParams TreeDistance
 #' 
@@ -26,7 +27,11 @@
 #' VisualizeMatching(MatchingSplitDistance, TreeTools::BalancedTree(6),
 #'                   TreeTools::PectinateTree(6))
 #'  
-#' @references \insertRef{Bogdanowicz2012}{TreeDist}
+#' @references 
+#' \insertRef{Bogdanowicz2012}{TreeDist}
+#' 
+#' \insertRef{Lin2012}{TreeDist}
+#' 
 #' @family tree distances
 #' 
 #' @template MRS

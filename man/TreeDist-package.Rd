@@ -81,6 +81,7 @@ see \href{https://ms609.github.io/TBRDist/index.html}{\code{TBRDist}}.
 \item \insertRef{Bogdanowicz2012}{TreeDist}
 \item \insertRef{Kendall2016}{TreeDist}
 \item \insertRef{Li1996}{TreeDist}
+\item \insertRef{Lin2012}{TreeDist}
 \item \insertRef{Nye2006}{TreeDist}
 \item \insertRef{SmithDist}{TreeDist}
 }
