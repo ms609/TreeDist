@@ -125,60 +125,70 @@ test_that('Robinson Foulds Distance is correctly calculated', {
 })
 
 test_that('Shared Phylogenetic Info is correctly calculated', {
-  expect_equal(5.529821,
+  
+  expect_equal(5.529821, tolerance = 1e-7,
                cpp_shared_phylo(
                  as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
-                 8L)$score,
-               tolerance = 1e-7)
+                 8L)$score)
   
-  expect_equal(0.2895066,
+  expect_equal(0.2895066, tolerance = 1e-7,
                cpp_shared_phylo(
                  as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(0, 0, 1, 1, 0, 0, 0, 0))),
-                 8L)$score,
-               tolerance = 1e-7)
-  expect_equal(1.137504,
+                 8L)$score)
+  
+  expect_equal(1.137504, tolerance = 1e-6,
                cpp_shared_phylo(
                  as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
-                 8L)$score,
-               tolerance = 1e-6)
+                 8L)$score)
   
-  expect_equal(3.45943,
+  expect_equal(3.45943, tolerance = 1e-6,
                cpp_shared_phylo(
                  as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(1, 1, 0, 0, 0, 0, 0, 0))),
-                 8L)$score,
-               tolerance = 1e-6)
+                 8L)$score)
   
-  expect_equal(22.53747, tolerance=1e-05,
+  expect_equal(22.53747, tolerance = 1e-05,
                SharedPhylogeneticInfo(treeSym8, treeSym8, normalize = FALSE))
+  
   expect_equal(1, tolerance = 1e-05,
                SharedPhylogeneticInfo(treeSym8, treeSym8, normalize = TRUE))
+  
   expect_equal(13.75284, SharedPhylogeneticInfo(treeSym8, treeBal8), tolerance=1e-05)
+  
   expect_equal(DifferentPhylogeneticInfo(treeSym8, treeAcd.Befgh),
                DifferentPhylogeneticInfo(treeAcd.Befgh, treeSym8), tolerance=1e-05)
+  
   expect_equal(0, DifferentPhylogeneticInfo(treeSym8, treeSym8, normalize = TRUE))
+  
   infoSymBal <- SplitwiseInfo(treeSym8) + SplitwiseInfo(treeBal8)
   expect_equal(infoSymBal - 13.75284 - 13.75284, tolerance = 1e-05,
     DifferentPhylogeneticInfo(treeSym8, treeBal8, normalize = TRUE) * infoSymBal)
+  
   expect_equal(22.53747 + SharedPhylogeneticInfo(treeAcd.Befgh, treeAcd.Befgh) - 
                  (2 * SharedPhylogeneticInfo(treeSym8, treeAcd.Befgh)), 
                DifferentPhylogeneticInfo(treeSym8, treeAcd.Befgh), 
                tolerance=1e-06)
+  
   expect_equal(-log2(945/10395), 
                SharedPhylogeneticInfo(treeSym8, treeAb.Cdefgh),
                tolerance = 1e-06)
+  
   expect_equal(22.53747 + SharedPhylogeneticInfo(treeBal8, treeBal8) - 13.75284 - 13.75284, 
                DifferentPhylogeneticInfo(treeSym8, treeBal8), tolerance=1e-05)
+  
   expect_equal(-log2(945/10395),
                SharedPhylogeneticInfo(treeSym8, treeAb.Cdefgh),
                tolerance = 1e-06)
+  
   expect_equal(-log2(315/10395),
                SharedPhylogeneticInfo(treeSym8, treeAbc.Defgh),
                tolerance = 1e-06)
+  
   expect_equal(0, DifferentPhylogeneticInfo(treeSym8, treeSym8))
+  
   expect_equal(SplitwiseInfo(treeSym8) - SplitwiseInfo(treeAcd.Befgh),
                DifferentPhylogeneticInfo(treeSym8, treeAbc.Defgh),
                tolerance = 1e-06)
