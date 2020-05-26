@@ -102,7 +102,7 @@ RobinsonFoulds <- function (tree1, tree2 = tree1, similarity = FALSE,
 }
 
 #' @describeIn Robinson-Foulds Matched splits, intended for use with 
-#' [`VisualizeMatching`].
+#' [`VisualizeMatching()`].
 #' @param \dots Not used.
 #' @importFrom TreeTools NSplits
 #' @export

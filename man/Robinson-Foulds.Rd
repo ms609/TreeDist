@@ -107,7 +107,7 @@ tree distance, because their similarity is less remarkable.
 \section{Functions}{
 \itemize{
 \item \code{RobinsonFouldsMatching}: Matched splits, intended for use with
-\code{\link{VisualizeMatching}}.
+\code{\link[=VisualizeMatching]{VisualizeMatching()}}.
 }}
 
 \section{Normalization}{
