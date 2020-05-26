@@ -18,14 +18,14 @@ treeAbcd.Efgh <- ape::read.tree(text='((a, b, c, d), (e, f, g, h));')
 treeTwoSplits <- ape::read.tree(text="(((a, b), c, d), (e, f, g, h));")
 
 test_that("Split compatibility is correctly established", {
-  expect_true(SplitsCompatible(as.logical (c(0,0,1,1,0)), 
+  expect_true(SplitsCompatible(as.logical(c(0,0,1,1,0)), 
                                as.logical(c(0,0,1,1,0))))
-  expect_true(SplitsCompatible(as.logical (c(0,0,1,1,0)), 
+  expect_true(SplitsCompatible( as.logical(c(0,0,1,1,0)), 
                                !as.logical(c(0,0,1,1,0))))
-  expect_true(SplitsCompatible(as.logical (c(0,0,1,1,0)), 
+  expect_true(SplitsCompatible(as.logical(c(0,0,1,1,0)), 
                                as.logical(c(1,0,1,1,0))))
   expect_true(SplitsCompatible(!as.logical(c(0,0,1,1,0)), 
-                               as.logical(c(1,0,1,1,0))))
+                                as.logical(c(1,0,1,1,0))))
   expect_false(SplitsCompatible(as.logical(c(0,0,1,1,0)), 
                                 as.logical(c(1,1,0,1,0))))
 })
@@ -253,7 +253,11 @@ test_that('MatchingSplitInfo is correctly calculated', {
   
   
   expect_equal(SharedPhylogeneticInfo(treeSym8, treeSym8),
-               MatchingSplitInfo(treeSym8, treeSym8), tolerance=1e-05)
+               MatchingSplitInfo(treeSym8, treeSym8), tolerance = 1e-05)
+  
+  expect_equal(0, MatchingSplitInfo(treeSym8, treeStar8))
+  expect_equal(0, MatchingSplitInfo(treeStar8, treeStar8))
+  
   expect_equal(MatchingSplitInfo(treeAb.Cdefgh, treeAbc.Defgh),
                MatchingSplitInfo(treeAbc.Defgh, treeAb.Cdefgh))
   expect_equal(MatchingSplitInfo(treeAbcd.Efgh, treeAb.Cdefgh),
@@ -323,6 +327,8 @@ test_that('Clustering information is correctly calculated', {
                MutualClusteringInfo(treeSym8, treeSym8),
                tolerance=1e-05)
   expect_equal(8 * ClusteringEntropy(treeSym8), ClusteringInfo(treeSym8))
+  expect_equal(0, MutualClusteringInfo(treeSym8, treeStar8))
+  expect_equal(0, MutualClusteringInfo(treeStar8, treeStar8))
   
   expect_equal(TreeDistance(treeSym8, treeBal8),
                MutualClusteringInfo(treeSym8, treeBal8, normalize = TRUE))
@@ -342,6 +348,11 @@ test_that('Clustering information is correctly calculated', {
 
 test_that('Matching Split Distance is correctly calculated', {
   expect_equal(0L, MatchingSplitDistance(treeSym8, treeSym8))
+  expect_equal(0L, MatchingSplitDistance(treeStar8, treeSym8))
+  expect_equal(0L, MatchingSplitDistance(treeStar8, treeStar8))
+  match0 <- MatchingSplitDistance(treeStar8, treeStar8, reportMatching = TRUE)
+  expect_equivalent(rep(0L, 4), 
+                    c(match0, vapply(attributes(match0), length, 0)))
   expect_equal(1L, MatchingSplitDistance(treeAb.Cdefgh, treeAbc.Defgh))
   expect_equal(2L, MatchingSplitDistance(treeAb.Cdefgh, treeAbcd.Efgh))
   
