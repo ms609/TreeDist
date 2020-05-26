@@ -68,13 +68,13 @@ NNIDist <- function (tree1, tree2 = tree1) {
   .TreeDistance(.NNIDistSingle, tree1, tree2)
 }
 
-#' @importFrom TreeTools PostorderEdges RenumberTips
+#' @importFrom TreeTools Postorder RenumberTips
 #' @importFrom ape Nnode.phylo
 .NNIDistSingle <- function (tree1, tree2, nTip, ...) {
   tree2 <- RenumberTips(tree2, tree1$tip.label)
   
-  edge1 <- PostorderEdges(tree1$edge)
-  edge2 <- PostorderEdges(tree2$edge)
+  edge1 <- Postorder(tree1$edge)
+  edge2 <- Postorder(tree2$edge)
   
   cpp_nni_distance(edge1, edge2, nTip)
 }

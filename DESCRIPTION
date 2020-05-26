@@ -34,7 +34,7 @@ Imports:
   colorspace,
   memoise,
   phangorn (>= 2.2.1),
-  TreeTools (> 0.1.3)
+  TreeTools (> 0.1.4)
 Suggests:
   bookdown,
   cluster,

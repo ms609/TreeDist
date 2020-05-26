@@ -5,8 +5,8 @@ test_that("Simple NNI approximations", {
   nTip <- 6L
   tree1 <- BalancedTree(nTip)
   tree2 <- PectinateTree(nTip)
-  edge1 <- PostorderEdges(tree1$edge)
-  edge2 <- PostorderEdges(tree2$edge)
+  edge1 <- Postorder(tree1$edge)
+  edge2 <- Postorder(tree2$edge)
   
   allMatched <- c(lower = 0L, tight_upper = 0L, loose_upper = 0L)
   oneUnmatched <- c(lower = 1L, tight_upper = 1L, loose_upper = 7L)

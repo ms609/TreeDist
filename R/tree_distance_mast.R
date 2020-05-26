@@ -51,7 +51,7 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
 }
 
 #' @importFrom ape drop.tip
-#' @importFrom TreeTools PostorderEdges RenumberTips TreeIsRooted RootOnNode
+#' @importFrom TreeTools Postorder RenumberTips TreeIsRooted RootOnNode
 .MASTSizeSingle <- function (tree1, tree2, rooted = TRUE,
                              tipLabels = tree1$tip.label,
                              ...) {
@@ -82,7 +82,7 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
 }
 
 .MASTSizeEdges <- function (edge1, edge2, nTip) {
-  cpp_mast(PostorderEdges(edge1) - 1L, PostorderEdges(edge2) - 1L, nTip)
+  cpp_mast(Postorder(edge1) - 1L, Postorder(edge2) - 1L, nTip)
 }
 
 #' @rdname MASTSize
