@@ -156,6 +156,15 @@ test_that('Shared Phylogenetic Info is correctly calculated', {
   expect_equal(1, tolerance = 1e-05,
                SharedPhylogeneticInfo(treeSym8, treeSym8, normalize = TRUE))
   
+  expect_equal(0,
+               SharedPhylogeneticInfo(treeSym8, treeStar8, normalize = TRUE))
+
+  expect_equal(0,
+               SharedPhylogeneticInfo(treeStar8, treeStar8, normalize = FALSE))
+
+  expect_equal(NaN, # Division by zero
+               SharedPhylogeneticInfo(treeStar8, treeStar8, normalize = TRUE))
+  
   expect_equal(13.75284, SharedPhylogeneticInfo(treeSym8, treeBal8), tolerance=1e-05)
   
   expect_equal(DifferentPhylogeneticInfo(treeSym8, treeAcd.Befgh),
