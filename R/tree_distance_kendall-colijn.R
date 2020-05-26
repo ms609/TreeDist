@@ -73,6 +73,7 @@ KendallColijn <- function (tree1, tree2 = tree1) {
 #' as described in Kendall & Colijn (2016).
 #' @param tree A tree of class \code{\link[ape:read.tree]{phylo}}.
 #' @importFrom TreeTools AllAncestors Preorder
+#' @export
 KCVector <- function (tree) {
   tree <- Preorder(tree)
   edge <- tree$edge
