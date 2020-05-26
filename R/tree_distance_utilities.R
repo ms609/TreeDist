@@ -293,17 +293,20 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
     }
   }
   
-  if (mode(how) == 'logical') {
+  if (is.logical(how)) {
     if (how == FALSE) {
       return (unnormalized)
     } else {
       if (is.null(infoInBoth)) 
-        infoInBoth <- CombineInfo(InfoInTree(tree1, ...), InfoInTree(tree2, ...))
+        infoInBoth <- CombineInfo(InfoInTree(tree1, ...),
+                                  InfoInTree(tree2, ...))
     }
-  } else if (mode(how) == 'function') {
-    if (is.null(infoInBoth)) 
-      infoInBoth <- CombineInfo(InfoInTree(tree1, ...), InfoInTree(tree2, ...),
+  } else if (is.function(how)) {
+    if (is.null(infoInBoth)) {
+      infoInBoth <- CombineInfo(InfoInTree(tree1, ...),
+                                InfoInTree(tree2, ...),
                                 Combiner = how)
+    }
   } else {
     infoInBoth <- how
   }
