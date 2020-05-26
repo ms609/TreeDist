@@ -386,6 +386,11 @@ test_that('NyeTreeSimilarity is correctly calculated', {
   
   expect_equal(5L, NyeTreeSimilarity(as.Splits(treeSym8), treeSym8))
   expect_equal(1, NyeTreeSimilarity(treeSym8, treeSym8, normalize = TRUE))
+  expect_equal(0, NyeTreeSimilarity(treeSym8, treeStar8, normalize = FALSE))
+  expect_equal(0, NyeTreeSimilarity(treeSym8, treeStar8, normalize = TRUE))
+  expect_equal(0, NyeTreeSimilarity(treeStar8, treeStar8, normalize = FALSE))
+  expect_equal(NaN, NyeTreeSimilarity(treeStar8, treeStar8, normalize = TRUE, 
+                                      normalizeMax = FALSE))
   
   expect_equal(c(3.8, 5), NyeTreeSimilarity(treeSym8, listBalSym))
   expect_equal(2 / 3, NyeTreeSimilarity(treeAb.Cdefgh, treeAbc.Defgh), 
@@ -411,7 +416,7 @@ test_that('Jaccard RF extremes tend to equivalent functions', {
                NyeTreeSimilarity(treeSym8, list(treeBal8, treeSym8)) * 2L)
   
   expect_equal(JaccardRobinsonFoulds(treeSym8, list(treeBal8, treeSym8),
-                                     similarity=FALSE, k=Inf),
+                                     similarity = FALSE, k = Inf),
                RobinsonFoulds(treeSym8, list(treeBal8, treeSym8)))
 })
 
