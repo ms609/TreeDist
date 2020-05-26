@@ -611,11 +611,19 @@ test_that("Independent of root position", {
   
   trees <- lapply(list(bal8, RootTree(bal8, 't4'),
                        pec8, RootTree(pec8, 't4')), UnrootTree)
-  Test <- function (Method) {
-    dists <- Method(trees)
+  Test <- function (Method, ...) {
+    dists <- Method(trees, ...)
     expect_equal(dists[1, 1], dists[1, 2])
+    expect_equal(dists[1, 3], dists[1, 4])
+    expect_equal(dists[1, 3], dists[2, 4])
+    expect_equal(dists[2, 3], dists[2, 4])
     expect_equal(dists[3, 3], dists[3, 4])
   }
 
   lapply(methodsToTest[-length(methodsToTest)], Test)
+  
+  expect_equal(8L, MASTSize(trees[[1]], trees[[1]], rooted = FALSE))
+  expect_equal(8L, MASTSize(trees[[1]], trees[[2]], rooted = FALSE))
+  expect_equal(8L, MASTSize(trees[[3]], trees[[3]], rooted = FALSE))
+  
 })

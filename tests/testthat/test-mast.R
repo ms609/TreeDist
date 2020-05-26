@@ -53,7 +53,7 @@ test_that("MAST size calculated correctly on small trees", {
 
   ME <- function (e, node) {
     expect_equal(e, 
-                 .MASTSizeEdges(t1$edge,
+                 .MASTSizeEdges(Postorder(t1$edge),
                                 RootOnNode(t2, node = node, TRUE)$edge,
                                 nTip = 5L), 0L)
   }

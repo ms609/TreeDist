@@ -66,23 +66,25 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
   
   if (!rooted) {
     if (!TreeIsRooted(tree1)) {
-      tree1 <- RootOnNode(tree1, node = tree1$edge[nTip * 2 - 2], TRUE)
+      tree1 <- RootOnNode(tree1, node = tree1$edge[nTip + nTip - 2L], TRUE)
     }
+    postorderEdge1 <- Postorder(tree1$edge)
     tree2 <- Preorder(tree2)
-    max(vapply(tree2$edge[-1, 2], function (node)
-      .MASTSizeEdges(tree1$edge,
+    max(vapply(tree2$edge[, 2], function (node)
+      .MASTSizeEdges(postorderEdge1,
                      RootOnNode(tree2, node = node, TRUE)$edge,
                      nTip = nTip), 0L))
   } else {
     if (!TreeIsRooted(tree1) || !TreeIsRooted(tree2)) {
       stop("Both trees must be rooted if rooted = TRUE")
     }
-    .MASTSizeEdges(tree1$edge, tree2$edge, nTip)
+    .MASTSizeEdges(Postorder(tree1$edge), tree2$edge, nTip)
   }
 }
 
+#' @param edge1 MUST BE IN POSTORDER!
 .MASTSizeEdges <- function (edge1, edge2, nTip) {
-  cpp_mast(Postorder(edge1) - 1L, Postorder(edge2) - 1L, nTip)
+  cpp_mast(edge1 - 1L, Postorder(edge2) - 1L, nTip)
 }
 
 #' @rdname MASTSize
