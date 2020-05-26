@@ -62,7 +62,7 @@ InfoRobinsonFoulds <- function (tree1, tree2 = tree1, similarity = FALSE,
                                         reportMatching) * 2
   
   if (!similarity) unnormalized <- 
-      outer(SplitwiseInfo(tree1), SplitwiseInfo(tree2), '+')[, , drop=TRUE] -
+      outer(SplitwiseInfo(tree1), SplitwiseInfo(tree2), '+')[, , drop = TRUE] -
       unnormalized
   
   # Return:
