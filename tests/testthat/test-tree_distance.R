@@ -42,7 +42,7 @@ methodsToTest <- list(
   MatchingSplitDistance,
   RobinsonFoulds,
   InfoRobinsonFoulds,
-  KendallColijn
+  KendallColijn # List last: requires rooted trees.
 )
 
 NormalizationTest <- function (FUNC, ...) {
@@ -602,4 +602,20 @@ test_that('Normalization occurs as documented', {
                cid / (ent1 + ent2))
   
   
+})
+
+test_that("Independent of root position", {
+  library('TreeTools')
+  bal8 <- BalancedTree(8)
+  pec8 <- PectinateTree(8)
+  
+  trees <- lapply(list(bal8, RootTree(bal8, 't4'),
+                       pec8, RootTree(pec8, 't4')), UnrootTree)
+  Test <- function (Method) {
+    dists <- Method(trees)
+    expect_equal(dists[1, 1], dists[1, 2])
+    expect_equal(dists[3, 3], dists[3, 4])
+  }
+
+  lapply(methodsToTest[-length(methodsToTest)], Test)
 })
