@@ -326,6 +326,6 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
 #' @keywords internal
 #' @export
 ReportMatching <- function (splits1, splits2, realMatch = TRUE) {
-  paste(as.character(splits1), ifelse(realMatch, '=>', '..'), 
+  paste(as.character(splits1), ifelse(realMatch, '=>', '..'),
         as.character(splits2))
 }

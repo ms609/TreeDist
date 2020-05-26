@@ -66,7 +66,7 @@ GeneralizedRF <- function (splits1, splits2, nTip, PairScorer,
                        splits2[[matched2]],
                        realMatch = if (maximize) {
                          pairScores[matrix(c(matched1, matched2), ncol = 2L)] > 0
-                       } else TRUE)
+                       } else rep(TRUE, length(matched1)))
     }
   }
   # Return:

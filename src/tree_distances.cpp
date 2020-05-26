@@ -196,6 +196,10 @@ List cpp_matching_split_distance (RawMatrix x, RawMatrix y,
       ((a.n_splits > b.n_splits) ? b.n_splits : a.n_splits),
     n_tips = nTip[0],
     half_tips = n_tips / 2;
+  if (most_splits == 0) {
+    return List::create(Named("score") = 0);
+    
+  }
   const cost max_score = BIG / most_splits;
   
   cost** score = new cost*[most_splits];
@@ -236,10 +240,8 @@ List cpp_matching_split_distance (RawMatrix x, RawMatrix y,
   }
   delete[] rowsol;
   
-  List ret = List::create(Named("score") = final_score,
-                          _["matching"] = final_matching);
-  
-  return (ret);
+  return List::create(Named("score") = final_score,
+                      _["matching"] = final_matching);
 }
 
 // [[Rcpp::export]]
