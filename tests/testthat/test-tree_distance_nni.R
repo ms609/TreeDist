@@ -1,6 +1,13 @@
 context("tree_distance_nni.R")
 library('TreeTools')
 
+test_that("Crashes are avoided", {
+  expect_error(NNIDist(list(PectinateTree(7), PectinateTree(8))))
+  expect_error(NNIDist(list(PectinateTree(1:8), PectinateTree(8))))
+  expect_error(NNIDist(list(PectinateTree(1:8), 
+                            PectinateTree(as.character(1:8)))))
+})
+
 test_that("Simple NNI approximations", {
   nTip <- 6L
   tree1 <- BalancedTree(nTip)
@@ -56,13 +63,6 @@ test_that("Simple NNI approximations", {
   set.seed(10000)
   expect_true(is.na(NNIDist(rtree(100, br = NULL), rtree(100, br = NULL))[[2]]))
   
-})
-
-test_that("Crashes are avoided", {
-  expect_error(NNIDist(list(PectinateTree(7), PectinateTree(8))))
-  expect_error(NNIDist(list(PectinateTree(1:8), PectinateTree(8))))
-  expect_error(NNIDist(list(PectinateTree(1:8), 
-                            PectinateTree(as.character(1:8)))))
 })
 
 test_that("NNI with lists of trees", {
