@@ -56,8 +56,3 @@ extern double lg2_trees_matching_split(int16 a, int16 b),
 
 extern List cpp_robinson_foulds_distance (RawMatrix x, RawMatrix y, 
                                           IntegerVector nTip);
-
-extern rf_match cpp_robinson_foulds_matching (raw_vector x,
-                                              raw_vector y, 
-                                              const int16 n_cols,
-                                              const int16 n_tips);

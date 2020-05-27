@@ -59,19 +59,124 @@ void update_score (const int16 subtree_edges, int16 *tight_bound,
   }
 }
 
+
+// Edges must be listed in postorder
+void nni_edge_to_splits(const IntegerMatrix edge,
+                        const uint16* n_tip,
+                        const uint16* n_edge,
+                        const uint16* n_node,
+                        const uint16* n_bin,
+                        const uint16* trivial_origin,
+                        const uint16* trivial_two,
+                        splitbit* splits,
+                        uint16* names) {
+  
+  
+  splitbit** tmp_splits = new splitbit*[*n_node];
+  for (uint16 i = 0; i != *n_node; i++) {
+    tmp_splits[i] = new splitbit[*n_bin]();
+  }
+  
+  for (uint16 i = 0; i != *n_tip; i++) {
+    tmp_splits[i][uint16(i / BIN_SIZE)] = powers_of_two[i % BIN_SIZE];
+  }
+  
+  for (uint16 i = 0; i != *n_edge - 1; i++) { /* final edge is second root edge */
+    for (uint16 j = 0; j != *n_bin; j++) {
+      tmp_splits[uint16(edge(i, 0) - 1)][j] |= tmp_splits[uint16(edge(i, 1) - 1)][j];
+    }
+  }
+  
+  for (uint16 i = 0; i != *n_tip; i++) {
+    delete[] tmp_splits[i];
+  }
+  
+  uint16 n_trivial = 0;
+  for (uint16 i = *n_tip; i != *n_node; i++) {
+    if (i == *trivial_origin || i == *trivial_two) {
+      n_trivial++;
+    } else {
+      for (uint16 j = 0; j != *n_bin; j++) {
+        splits[((i - *n_tip - n_trivial) * *n_bin) + j] = tmp_splits[i][j];
+        names[i - *n_tip - n_trivial] = (i + 1);
+      }
+    }
+    delete[] tmp_splits[i];
+  }
+  
+  delete[] tmp_splits;
+}
+
+rf_match nni_rf_matching (
+    const splitbit* a, 
+    const splitbit* b,
+    const uint16* n_splits,
+    const uint16* n_bins,
+    const uint16* n_tips) {
+    
+    const int16
+      last_bin = *n_bins - 1,
+      unset_tips = (*n_tips % BIN_SIZE) ? BIN_SIZE - *n_tips % BIN_SIZE : 0;
+    const splitbit unset_mask = ALL_ONES >> unset_tips;
+    
+    rf_match matching (*n_splits);
+    for (int16 i = 0; i != *n_splits; i++) matching[i] = NA_INT16;
+    
+    splitbit b_complement[MAX_SPLITS][MAX_BINS];
+    for (int16 i = 0; i != *n_splits; i++) {
+      for (int16 bin = 0; bin != last_bin; bin++) {
+        b_complement[i][bin] = ~b[i * *n_bins + bin];
+      }
+      b_complement[i][last_bin] = b[i * *n_bins + last_bin] ^ unset_mask;
+    }
+    
+    for (int16 ai = 0; ai != *n_splits; ai++) {
+      for (int16 bi = 0; bi != *n_splits; bi++) {
+        
+        bool all_match = true, all_complement = true;
+        
+        for (int16 bin = 0; bin != *n_bins; bin++) {
+          if ((a[ai * *n_bins + bin] != b[bi * *n_bins + bin])) {
+            all_match = false;
+            break;
+          }
+        }
+        if (!all_match) {
+          for (int16 bin = 0; bin != *n_bins; bin++) {
+            if ((a[ai * *n_bins + bin] != b_complement[bi][bin])) {
+              all_complement = false;
+              break;
+            }
+          }
+        }
+        if (all_match || all_complement) {
+          matching[ai] = bi + 1;
+          break; /* Only one match possible per split */
+        }
+      }
+    }
+    
+    return (matching);
+  }
+
 // [[Rcpp::export]]
-IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
-                       IntegerVector nTip) {
+IntegerVector cpp_nni_distance (const IntegerMatrix edge1, 
+                                const IntegerMatrix edge2,
+                                const IntegerVector nTip) {
 
   if (nTip[0] > NNI_MAX_TIPS) {
     throw std::length_error("Cannot calculate NNI distance for trees with "
-                              "so many tips.");
+                            "so many tips.");
   }
-  const int16 n_tip = nTip[0],
-              node_0 = n_tip,
-              node_0_r = n_tip + 1,
-              n_edge = edge1.nrow();
+  const uint16 n_tip = nTip[0],
+               node_0 = n_tip,
+               node_0_r = n_tip + 1,
+               n_edge = edge1.nrow();
   int16 lower_bound = 0, tight_score_bound = 0, loose_score_bound = 0;
+  if (n_edge != edge2.nrow()) {
+    throw std::length_error("Both trees must have the same number of edges. "
+                            "Is one rooted and the other unrooted?");
+  }
 
   if (n_tip < 4) {
     return(IntegerVector::create(Named("lower") = 0,
@@ -79,19 +184,46 @@ IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
                                  _["loose_upper"] = 0));
   }
   
-  RawMatrix splits1 = cpp_edge_to_splits(edge1, nTip);
-  RawMatrix splits2 = cpp_edge_to_splits(edge2, nTip);
-  const CharacterVector names1 = rownames(splits1);
+  const uint16
+    NOT_TRIVIAL = UINTX_MAX,
+    
+    n_node = n_edge + 1,
+    n_bin = ((n_tip - 1) / BIN_SIZE) + 1,
+    
+    trivial_origin_1 = edge1(n_edge - 1, 0) - 1,
+    trivial_origin_2 = edge2(n_edge - 1, 0) - 1,
+    
+    trivial_two_1 = (edge1(n_edge - 1, 0) == edge1(n_edge - 3, 0) ?
+                     NOT_TRIVIAL : (edge1(n_edge - 1, 1) - 1L)),
+    trivial_two_2 = (edge2(n_edge - 1, 0) == edge2(n_edge - 3, 0) ?
+                     NOT_TRIVIAL : (edge2(n_edge - 1, 1) - 1L)),
+    
+    n_splits = n_edge - n_tip - (trivial_two_1 != NOT_TRIVIAL ? 1 : 0)
+  ;
   
-  /* #TODO do I intend cpp_rf_matching to replace this function? */
-  rf_match match = cpp_robinson_foulds_distance(splits1, splits2, nTip)[1];
+  splitbit 
+    *splits1 = new splitbit[n_splits * n_bin],
+    *splits2 = new splitbit[n_splits * n_bin];
+  uint16 *names1 = new uint16[n_splits];
+  
+  if (n_edge != n_tip && n_tip > 3) {
+    nni_edge_to_splits(edge2, &n_tip, &n_edge, &n_node, &n_bin, 
+                       &trivial_origin_2, &trivial_two_2, splits2, names1);
+    nni_edge_to_splits(edge1, &n_tip, &n_edge, &n_node, &n_bin,
+                       &trivial_origin_1, &trivial_two_1, splits1, names1);
+  } // else no internal nodes resolved
+  
+  rf_match match = nni_rf_matching(splits1, splits2, &n_splits, &n_bin, &n_tip);
+  
+  delete[] splits1;
+  delete[] splits2;
   
   bool matched1[NNI_MAX_TIPS] = {0};
   int16 unmatched_below[NNI_MAX_TIPS] = {0};
 
   for (int16 i = 0; i != int16(match.size()); i++) {
-    int16 node_i = atoi(names1[i]) - node_0_r;
-    if (match[i] == NA_INTEGER) {
+    int16 node_i = names1[i] - node_0_r;
+    if (match[i] == NA_INT16) {
       matched1[node_i] = false;
       unmatched_below[node_i] = 1;
       lower_bound++;
@@ -99,6 +231,7 @@ IntegerVector cpp_nni_distance (IntegerMatrix edge1, IntegerMatrix edge2,
       matched1[node_i] = true;
     }
   }
+  delete[] names1;
   
   for (int16 i = 0; i != n_edge - 2; i++) {
     const int16 parent_i = edge1(i, 0) - 1, child_i = edge1(i, 1) - 1;
