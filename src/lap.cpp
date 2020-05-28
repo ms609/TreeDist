@@ -30,7 +30,7 @@ using namespace std;
 
 // [[Rcpp::export]] 
 List lapjv (NumericMatrix x, NumericVector maxX) {
-  const uint16 n_row = x.nrow(), n_col = x.ncol(), 
+  const int16 n_row = x.nrow(), n_col = x.ncol(),
                max_dim = (n_row > n_col) ? n_row : n_col;
   const cost max_score = BIG / max_dim;
   const double x_max = maxX[0];

@@ -18,14 +18,26 @@ test_that("Simple NNI approximations", {
   allMatched <- c(lower = 0L, tight_upper = 0L, loose_upper = 0L)
   oneUnmatched <- c(lower = 1L, tight_upper = 1L, loose_upper = 7L)
   fiveUnmatched <- c(lower = 5L, tight_upper = 10L, loose_upper = 17L + 4L)
+  
+  Test <- function (expectation, tree) {
+    expect_equal(expectation, NNIDist(tree1, tree))
+    for (i in c(2, 3, 4, 6)) {
+      tree1i <- RootOnNode(tree1, i)
+      j <- 0
+      for (t2 in unique(lapply(1:9, RootOnNode, tree = tree))) {
+        expect_equal(expectation, NNIDist(tree1i, t2))
+      }
+    }
+  }
+  
   expect_equal(oneUnmatched, cpp_nni_distance(edge1, edge2, NTip(tree1)))
-  expect_equal(oneUnmatched, NNIDist(tree1, tree2))
+  Test(oneUnmatched, PectinateTree(nTip))
 
   # Identical trees
   tree1 <- Postorder(ape::read.tree(text="(((a, b), (c, d)), ((e, f), (g, h)));"))
   tree2 <- Postorder(ape::read.tree(text="(((a, b), (d, c)), ((h, g), (f, e)));"))
-  expect_equal(allMatched, NNIDist(tree1, tree1))
-  expect_equal(allMatched, NNIDist(tree1, tree2))
+  Test(allMatched, tree1)
+  Test(allMatched, tree2)
   
   # Tree names
   output <- NNIDist(list(bal = tree1, pec = tree2), 
@@ -33,31 +45,29 @@ test_that("Simple NNI approximations", {
   expect_equal(rownames(output), c('bal', 'pec'))
   
   # Only root edge is different
-  tree2 <- Postorder(ape::read.tree(text="(((a, b), (e, f)), ((c, d), (g, h)));"))
-  expect_equal(oneUnmatched, NNIDist(tree1, tree2))
+  Test(oneUnmatched, 
+       Postorder(ape::read.tree(text="(((a, b), (e, f)), ((c, d), (g, h)));")))
   
   # Two separate regions of difference one
-  tree2 <- ape::read.tree(text="((((a, b), c), d), (e, (f, (g, h))));")
-  expect_equal(oneUnmatched * 2, NNIDist(tree1, tree2))
+  Test(oneUnmatched * 2, 
+       ape::read.tree(text="((((a, b), c), d), (e, (f, (g, h))));"))
   
   # One region of three unmatched edges
-  tree2 <- ape::read.tree(text="(((a, e), (c, d)), ((b, f), (g, h)));")
-  expect_equal(c(lower = 3L, tight_upper = 5L, loose_upper = 13L), 
-               NNIDist(tree1, tree2))
+  Test(c(lower = 3L, tight_upper = 5L, loose_upper = 13L), 
+       ape::read.tree(text="(((a, e), (c, d)), ((b, f), (g, h)));"))
   
   # One region of four unmatched edges
-  tree2 <- ape::read.tree(text="(((a, e), (f, d)), ((b, c), (g, h)));")
-  expect_equal(c(lower = 4L, tight_upper = 7L, loose_upper = 18L), 
-               NNIDist(tree1, tree2))
+  Test(c(lower = 4L, tight_upper = 7L, loose_upper = 18L),
+       tree2 <- ape::read.tree(text="(((a, e), (f, d)), ((b, c), (g, h)));"))
   
   # One region of five unmatched edges
-  tree2 <- ape::read.tree(text="(((a, e), (f, d)), ((b, g), (c, h)));")
-  expect_equal(fiveUnmatched, NNIDist(tree1, tree2))
+  Test(fiveUnmatched, 
+       ape::read.tree(text="(((a, e), (f, d)), ((b, g), (c, h)));"))
   
   # Trees with different leaves at root
   tree1 <- PectinateTree(1:8)
-  tree2 <- ape::read.tree(text = '(3, ((5, 6), (7, (1, (2, (4, 8))))));')
-  expect_equal(fiveUnmatched, NNIDist(tree1, tree2))
+  Test(fiveUnmatched, 
+       ape::read.tree(text = '(3, ((5, 6), (7, (1, (2, (4, 8))))));'))
   
   # Too different for tight upper bound
   set.seed(10000)
