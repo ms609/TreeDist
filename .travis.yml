@@ -12,15 +12,15 @@ jobs:
       before_deploy: Rscript -e 'remotes::install_cran("pkgdown")'
       r_binary_packages:
        - ape
-       - covr
+       #- covr
        #- devtools # R4.0.0 Binaries unavailable 2020-05-28
        #- knitr # R4.0.0 Binaries unavailable 2020-05-28
        - phangorn
-       - pkgload
-       - Rdpack
-       - roxygen2
+       #- pkgload
+       #- Rdpack
+       #- roxygen2
        - testthat
-       - usethis
+       #- usethis
       deploy:
         provider: script
         script: Rscript -e 'pkgdown::deploy_site_github()'
