@@ -254,29 +254,19 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
   }
   
   // Root edges:
-  const int16 
-    root_node = root_1 - node_0_r,
-    root_child_1 = edge1(n_edge - 1, 1) - 1,
-    root_child_2 = edge1(n_edge - 2, 1) - 1,
-    root_child_3 = edge1(n_edge - 3, 1) - 1,
-    
-    unmatched_1 = (root_child_1 < n_tip ? 
-                     0 :
-                     unmatched_below[root_child_1 - node_0]),
-  
-    unmatched_2 = (root_child_2 < n_tip ? 
-                     0 :
-                     unmatched_below[root_child_2 - node_0]),
-  
-    unmatched_3 = rooted ?
-                    0 :
-                    (root_child_3 < n_tip ?
-                       0 :
-                       unmatched_below[root_child_3 - node_0])
-  ;
+  const int16 root_node = root_1 - node_0_r;
   
   if (rooted) {
+    const int16
+      root_child_1 = edge1(n_edge - 1, 1) - 1,
+      root_child_2 = edge1(n_edge - 2, 1) - 1,
+      
+      unmatched_1 = root_child_1 < n_tip ? 0 :
+                       unmatched_below[root_child_1 - node_0]
+    ;
     if (root_child_2 >= n_tip) {
+      const int16 unmatched_2 = (root_child_2 < n_tip ? 0 :
+                                   unmatched_below[root_child_2 - node_0]);
       if (!matched_1[root_child_2 - node_0]) {
         update_score(unmatched_below[root_node]
                        + unmatched_1
@@ -295,7 +285,6 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
   } else {
     update_score(unmatched_below[root_node],
                    &tight_score_bound, &loose_score_bound);
-    
   }
 
   return IntegerVector::create(Named("lower")   = lower_bound,
