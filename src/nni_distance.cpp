@@ -62,28 +62,28 @@ void update_score (const int16 subtree_edges, int16 *tight_bound,
 
 // Edges must be listed in postorder
 void nni_edge_to_splits(const IntegerMatrix edge,
-                        const uint16* n_tip,
-                        const uint16* n_edge,
-                        const uint16* n_node,
-                        const uint16* n_bin,
-                        const uint16* trivial_origin,
-                        const uint16* trivial_two,
+                        const int16* n_tip,
+                        const int16* n_edge,
+                        const int16* n_node,
+                        const int16* n_bin,
+                        const int16* trivial_origin,
+                        const int16* trivial_two,
                         splitbit* splits,
-                        uint16* names) {
+                        int16* names) {
   
   
   splitbit** tmp_splits = new splitbit*[*n_node];
-  for (uint16 i = 0; i != *n_node; i++) {
+  for (int16 i = 0; i != *n_node; i++) {
     tmp_splits[i] = new splitbit[*n_bin]();
   }
   
-  for (uint16 i = 0; i != *n_tip; i++) {
-    tmp_splits[i][uint16(i / BIN_SIZE)] = powers_of_two[i % BIN_SIZE];
+  for (int16 i = 0; i != *n_tip; i++) {
+    tmp_splits[i][int16(i / BIN_SIZE)] = powers_of_two[i % BIN_SIZE];
   }
   
-  for (uint16 i = 0; i != *n_edge - 1; i++) { /* final edge is second root edge */
-    for (uint16 j = 0; j != *n_bin; j++) {
-      tmp_splits[uint16(edge(i, 0) - 1)][j] |= tmp_splits[uint16(edge(i, 1) - 1)][j];
+  for (int16 i = 0; i != *n_edge - 1; i++) { /* final edge is second root edge */
+    for (int16 j = 0; j != *n_bin; j++) {
+      tmp_splits[int16(edge(i, 0) - 1)][j] |= tmp_splits[int16(edge(i, 1) - 1)][j];
     }
   }
   
@@ -110,9 +110,9 @@ void nni_edge_to_splits(const IntegerMatrix edge,
 rf_match nni_rf_matching (
     const splitbit* a, 
     const splitbit* b,
-    const uint16* n_splits,
-    const uint16* n_bins,
-    const uint16* n_tips) {
+    const int16* n_splits,
+    const int16* n_bins,
+    const int16* n_tips) {
     
     const int16
       last_bin = *n_bins - 1,
@@ -168,12 +168,14 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
     throw std::length_error("Cannot calculate NNI distance for trees with "
                             "so many tips.");
   }
-  const uint16 n_tip = nTip[0],
-               node_0 = n_tip,
-               node_0_r = n_tip + 1,
-               n_edge = edge1.nrow();
+  const int16 
+    n_tip = nTip[0],
+    node_0 = n_tip,
+    node_0_r = n_tip + 1,
+    n_edge = edge1.nrow()
+  ;
   int16 lower_bound = 0, tight_score_bound = 0, loose_score_bound = 0;
-  if (n_edge != edge2.nrow()) {
+  if (n_edge != int16(edge2.nrow())) {
     throw std::length_error("Both trees must have the same number of edges. "
                             "Is one rooted and the other unrooted?");
   }
@@ -184,7 +186,7 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
                                  _["loose_upper"] = 0));
   }
   
-  const uint16 
+  const int16 
     root_1 = edge1(n_edge - 1, 0),
     root_2 = edge2(n_edge - 1, 0)
   ;
@@ -192,11 +194,11 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
   bool rooted = edge1(n_edge - 3, 0) != root_1;
   
   const uint16
-    NOT_TRIVIAL = UINTX_MAX,
-    
+    NOT_TRIVIAL = UINTX_MAX;
+  
+  const int16
     n_node = n_edge + 1,
     n_bin = ((n_tip - 1) / BIN_SIZE) + 1,
-    
     
     trivial_origin_1 = root_1 - 1,
     trivial_origin_2 = root_2 - 1,
@@ -211,7 +213,7 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
   splitbit 
     *splits1 = new splitbit[n_splits * n_bin],
     *splits2 = new splitbit[n_splits * n_bin];
-  uint16 *names_1 = new uint16[n_splits];
+  int16 *names_1 = new int16[n_splits];
   
   if (n_edge != n_tip && n_tip > 3) {
     nni_edge_to_splits(edge2, &n_tip, &n_edge, &n_node, &n_bin, 
