@@ -33,17 +33,16 @@ test_that('VisualizeMatching works', {
   
   TestVM <- function () {
     VisualizeMatching(MutualClusteringInfo, tree1, tree2, 
-                      setPar = TRUE, precision=3, matchZeros = FALSE,
+                      setPar = TRUE, precision = 3, matchZeros = FALSE,
                       Plot = plot.phylo)
   }
   expect_doppelganger('Test VM', TestVM)
   
   TestVMr <- function () {
     VisualizeMatching(MutualClusteringInfo, tree1, tree2r,
-                      setPar = TRUE, precision=3, matchZeros = TRUE, 
-                      Plot = plot.phylo, cex=1.5)
+                      setPar = TRUE, precision = 3, matchZeros = TRUE, 
+                      Plot = plot.phylo, cex = 1.5)
   }
-  skip_on_travis() # Skips all following tests in this block
   expect_doppelganger('Test VMr', TestVMr) # Unclear why this test fails on Travis. 
   
   expect_doppelganger('RF example', function () {
@@ -115,9 +114,8 @@ test_that('VisualizeMatching works', {
     JRF2 <- function (tree1, tree2, ...) 
       JaccardRobinsonFoulds(tree1, tree2, k = 2, arboreal= TRUE, ...)
     
-    set.seed(2)
-    tree1 <- ape::rtree(10)
-    tree2 <- ape::rtree(10)
+    tree1 <- EnforceOutgroup(as.phylo(704564, 10), paste0('t', c(1,4,5,8,9)))
+    tree2 <- EnforceOutgroup(as.phylo(20165 , 10), paste0('t', c(1,4)))
     VisualizeMatching(JRF2, tree1, tree2, matchZeros = FALSE)
   })
 })
