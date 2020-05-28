@@ -115,9 +115,8 @@ test_that('VisualizeMatching works', {
     JRF2 <- function (tree1, tree2, ...) 
       JaccardRobinsonFoulds(tree1, tree2, k = 2, arboreal= TRUE, ...)
     
-    set.seed(2)
-    tree1 <- ape::rtree(10)
-    tree2 <- ape::rtree(10)
+    tree1 <- EnforceOutgroup(as.phylo(704564, 10), paste0('t', c(1,4,5,8,9)))
+    tree2 <- EnforceOutgroup(as.phylo(20165 , 10), paste0('t', c(1,4)))
     VisualizeMatching(JRF2, tree1, tree2, matchZeros = FALSE)
   })
 })
