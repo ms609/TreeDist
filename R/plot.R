@@ -17,10 +17,9 @@
 #' @importFrom ape plot.phylo
 #' @keywords internal
 #' @export
-TreeDistPlot <- function (tr, title=NULL, bold=NULL, leaveRoom = FALSE,
-                     prune=integer(0), graft=integer(0), edge.color = 'black',
-                     edge.width = NULL,
-                     ...) {
+TreeDistPlot <- function (tr, title = NULL, bold = NULL, leaveRoom = FALSE,
+                          prune = integer(0), graft = integer(0),
+                          edge.color = 'black', edge.width = NULL, ...) {
   
   if (is.null(tr$edge.length)) tr$edge.length <- rep(1, dim(tr$edge)[1])
   if (is.null(edge.width)) {
@@ -129,15 +128,15 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   adjVal <- c(0.5, 1.1)
   faint <- '#aaaaaa'
   
-  if (setPar) origPar <- par(mfrow=c(1, 2), mar=rep(0.5, 4))
+  if (setPar) origPar <- par(mfrow = c(1, 2), mar = rep(0.5, 4))
   
   LabelUnpaired <- function (splitEdges, unpaired) {
     if (any(unpaired)) {
       #edgelabels(text="\u2012", edge=splitEdges[unpaired],
-      edgelabels(text=expression('-'), edge=splitEdges[unpaired],
-                 frame='n', col=faint, adj=adjNo)
-      edgelabels(text='0', edge=splitEdges[unpaired],
-                 frame='n', col=faint, cex=0.8, adj=adjVal)
+      edgelabels(text = expression('-'), edge = splitEdges[unpaired],
+                 frame = 'n', col = faint, adj = adjNo)
+      edgelabels(text = '0', edge = splitEdges[unpaired],
+                 frame = 'n', col = faint, cex = 0.8, adj = adjVal)
     }
   }
   
