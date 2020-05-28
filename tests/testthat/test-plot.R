@@ -33,18 +33,17 @@ test_that('VisualizeMatching works', {
   
   TestVM <- function () {
     VisualizeMatching(MutualClusteringInfo, tree1, tree2, 
-                      setPar = TRUE, precision=3, matchZeros = FALSE,
+                      setPar = TRUE, precision = 3, matchZeros = FALSE,
                       Plot = plot.phylo)
   }
   expect_doppelganger('Test VM', TestVM)
   
   TestVMr <- function () {
     VisualizeMatching(MutualClusteringInfo, tree1, tree2r,
-                      setPar = TRUE, precision=3, matchZeros = TRUE, 
-                      Plot = plot.phylo, cex=1.5)
+                      setPar = TRUE, precision = 3, matchZeros = TRUE, 
+                      Plot = plot.phylo, cex = 1.5)
   }
-  #skip_on_travis() # Skips all following tests in this block
-  #expect_doppelganger('Test VMr', TestVMr) # Unclear why this test fails on Travis. 
+  expect_doppelganger('Test VMr', TestVMr) # Unclear why this test fails on Travis. 
   
   expect_doppelganger('RF example', function () {
     par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.5)
