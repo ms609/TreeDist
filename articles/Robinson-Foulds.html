@@ -117,7 +117,7 @@
       <h1 data-toc-skip>Extending the Robinson-Foulds metric</h1>
                         <h4 class="author">Martin R. Smith</h4>
             
-            <h4 class="date">2020-04-23</h4>
+            <h4 class="date">2020-05-28</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/Robinson-Foulds.Rmd"><code>vignettes/Robinson-Foulds.Rmd</code></a></small>
       <div class="hidden name"><code>Robinson-Foulds.Rmd</code></div>
@@ -194,8 +194,8 @@
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">tree1</span> <span class="kw">&lt;-</span> <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="kw">text</span><span class="kw">=</span><span class="st">'(1, (2, (3, (4, (5, (6, (7, 8)))))));'</span>)
 <span class="no">tree2</span> <span class="kw">&lt;-</span> <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="kw">text</span><span class="kw">=</span><span class="st">'(8, (1, (2, (3, (4, (5, (6, 7)))))));'</span>)
 
-<span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">RobinsonFoulds</span>, <span class="no">tree1</span>, <span class="no">tree2</span>,
-                  <span class="kw">Plot</span> <span class="kw">=</span> <span class="no">TreeDistPlot</span>, <span class="kw">leaveRoom</span><span class="kw">=</span><span class="fl">FALSE</span>)</pre></body></html></div>
+<span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">RobinsonFouldsMatching</span>, <span class="no">tree1</span>, <span class="no">tree2</span>,
+                  <span class="kw">Plot</span> <span class="kw">=</span> <span class="no">TreeDistPlot</span>, <span class="kw">leaveRoom</span> <span class="kw">=</span> <span class="fl">FALSE</span>)</pre></body></html></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-4-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>Generalized Robinson-Foulds distances seek to address this issue. This category of metrics aim to acknowledge semblances between similar-but-not-quite-identical pairs of splits, which would contribute zero to tree similarity under the standard Robinson-Foulds measure.</p>
 <p>Generalized RF distances work by pairing each split in one tree with a similar split in the other (or leaving it unpaired). Each pairing is scored according to the similarity of the paired splits. A given set of split pairings is called a <em>matching</em>, and a matching is scored by summing the individual similarity scores of each pair of splits. The tree distance is given by the score of the optimal matching.</p>

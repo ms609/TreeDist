@@ -117,7 +117,7 @@
       <h1 data-toc-skip>Calculate tree similarity with TreeDist</h1>
                         <h4 class="author">Martin R. Smith</h4>
             
-            <h4 class="date">2020-04-23</h4>
+            <h4 class="date">2020-05-28</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/Using-TreeDist.Rmd"><code>vignettes/Using-TreeDist.Rmd</code></a></small>
       <div class="hidden name"><code>Using-TreeDist.Rmd</code></div>
@@ -163,11 +163,11 @@
 
 <span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span>(<span class="no">oneTree</span>, <span class="no">twoTrees</span>)</pre></body></html></div>
 <pre><code>##       one       two 
-## 0.2081425 0.1721862</code></pre>
+## 0.1215283 0.1613831</code></pre>
 <div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span>(<span class="no">twoTrees</span>, <span class="no">threeTrees</span>)</pre></body></html></div>
-<pre><code>##            a         b         c
-## one 0.203070 0.1019400 0.2830313
-## two 0.399337 0.2759916 0.3006191</code></pre>
+<pre><code>##             a         b         c
+## one 0.2661708 0.2420904 0.1862205
+## two 0.2516266 0.1585806 0.2366055</code></pre>
 </div>
 </div>
 <div id="visualizing-a-matching" class="section level2">
@@ -209,7 +209,7 @@ Each split is labelled with a measure of its similarity, which is its contributi
 ## "H I | A B C D F G E" "F G E | A B C D H I" "F G | A B C D H I E"</code></pre>
 <p>The names of the splits correspond to the number of the nodes in the original tree:</p>
 <div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="kw">mar</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">0</span>, <span class="fl">4</span>))
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="no">tree2</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">tree2</span>)
 <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/nodelabels.html">nodelabels</a></span>()
 <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/nodelabels.html">nodelabels</a></span>(<span class="no">splits</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">splits</span>)),
                 <span class="kw">adj</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1.1</span>, -<span class="fl">0.2</span>), <span class="kw">cex</span><span class="kw">=</span><span class="fl">0.8</span>, <span class="kw">frame</span><span class="kw">=</span><span class="st">'none'</span>)</pre></body></html></div>

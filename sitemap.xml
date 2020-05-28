@@ -85,10 +85,16 @@
     <loc>https://ms609.github.io/TreeDist/reference/VisualizeMatching.html</loc>
   </url>
   <url>
+    <loc>https://ms609.github.io/TreeDist/reference/dot-MASTSizeEdges.html</loc>
+  </url>
+  <url>
     <loc>https://ms609.github.io/TreeDist/reference/dot-PairMean.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/dot-TreeDistance.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/reference/median.multiPhylo.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/articles/Generalized-RF.html</loc>

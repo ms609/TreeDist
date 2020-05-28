@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Approximate Subtree Prune and Regraft distance — SPRDist • TreeDist</title>
+<title>Caluclate MAST size from edge matrices. — .MASTSizeEdges • TreeDist</title>
 
 
 <!-- jquery -->
@@ -45,8 +45,8 @@
 
 
 
-<meta property="og:title" content="Approximate Subtree Prune and Regraft distance — SPRDist" />
-<meta property="og:description" content="Approximate the Subtree Prune and Regraft (SPR) distance." />
+<meta property="og:title" content="Caluclate MAST size from edge matrices. — .MASTSizeEdges" />
+<meta property="og:description" content="Internal function." />
 
 
 
@@ -163,66 +163,35 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Approximate Subtree Prune and Regraft distance</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance_spr.R'><code>R/tree_distance_spr.R</code></a></small>
-    <div class="hidden name"><code>SPRDist.Rd</code></div>
+    <h1>Caluclate MAST size from edge matrices.</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance_mast.R'><code>R/tree_distance_mast.R</code></a></small>
+    <div class="hidden name"><code>dot-MASTSizeEdges.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Approximate the Subtree Prune and Regraft (SPR) distance.</p>
+    <p>Internal function.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SPRDist</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>.MASTSizeEdges</span>(<span class='no'>edge1</span>, <span class='no'>edge2</span>, <span class='no'>nTip</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>tree1, tree2</th>
-      <td><p>Single trees of class <code>phylo</code> to undergo comparison.</p></td>
+      <th>edge1</th>
+      <td><p>Edge matrix of tree 1. MUST BE IN POSTORDER!</p></td>
+    </tr>
+    <tr>
+      <th>edge2</th>
+      <td><p>Edge matrix of tree 2.</p></td>
+    </tr>
+    <tr>
+      <th>nTip</th>
+      <td><p>Integer specifying number of tips.</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>SPRDist()</code> returns a vector or distance matrix of distances
-between trees.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>This function is a wrapper for the function
-<code><a href='https://rdrr.io/pkg/phangorn/man/treedist.html'>SPR.dist()</a></code> in the phangorn package.
-It pre-processes trees to ensure that their internal representation does
-not cause the <code>SPR.dist()</code> function to crash R.</p>
-<p>A memory leak is present in phangorn v2.5.5.  To avoid a drain on system
-resources, install the latest version of phangorn with
-<code><a href='https://devtools.r-lib.org//reference/remote-reexports.html'>devtools::install_github('KlausVigo/phangorn')</a></code>.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p>Other tree distances: 
-<code><a href='JaccardRobinsonFoulds.html'>JaccardRobinsonFoulds</a>()</code>,
-<code><a href='KendallColijn.html'>KendallColijn</a>()</code>,
-<code><a href='MASTSize.html'>MASTSize</a>()</code>,
-<code><a href='MatchingSplitDistance.html'>MatchingSplitDistance</a>()</code>,
-<code><a href='NNIDist.html'>NNIDist</a>()</code>,
-<code><a href='NyeTreeSimilarity.html'>NyeTreeSimilarity</a>()</code>,
-<code><a href='PathDist.html'>PathDist</a>()</code>,
-<code><a href='Robinson-Foulds.html'>Robinson-Foulds</a></code>,
-<code><a href='TreeDistance.html'>TreeDistance</a>()</code></p></div>
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>'TreeTools'</span>)
-
-<span class='fu'>SPRDist</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/BalancedTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/PectinateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>))</div><div class='output co'>#&gt; spr 
-#&gt;   1 </div><div class='input'>
-<span class='fu'>SPRDist</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/BalancedTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>2</span>, <span class='fl'>7</span>))</div><div class='output co'>#&gt; [1] 2 2 2</div><div class='input'><span class='fu'>SPRDist</span>(<span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>2</span>, <span class='fl'>7</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/PectinateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>))</div><div class='output co'>#&gt; [1] 1 2 2</div><div class='input'>
-<span class='fu'>SPRDist</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>bal</span> <span class='kw'>=</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/BalancedTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='kw'>pec</span> <span class='kw'>=</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/PectinateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>)),
-        <span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>2</span>, <span class='fl'>7</span>))</div><div class='output co'>#&gt; NULL</div><div class='input'>
-<span class='fu'><a href='CompareAll.html'>CompareAll</a></span>(<span class='fu'>as.phylo</span>(<span class='fl'>30</span>:<span class='fl'>33</span>, <span class='fl'>8</span>), <span class='no'>SPRDist</span>)</div><div class='output co'>#&gt;   1 2 3 4
-#&gt; 1   1 1 1
-#&gt; 2 1   1 1
-#&gt; 3 1 1   1
-#&gt; 4 1 1 1  </div><div class='input'>  
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -46,8 +46,9 @@
 
 
 <meta property="og:title" content="Matching Split Distance — MatchingSplitDistance" />
-<meta property="og:description" content="Calculates the Matching Split Distance
-(Bogdanowicz and Giaro 2012) for unrooted binary trees." />
+<meta property="og:description" content="Calculates the
+Matching Split Distance
+(Bogdanowicz and Giaro 2012; Lin et al. 2012) for unrooted binary trees." />
 
 
 
@@ -170,8 +171,9 @@
     </div>
 
     <div class="ref-description">
-    <p>Calculates the <a href='https://ms609.github.io/TreeDist/articles/Generalized-RF.html#matching-split-distance'>Matching Split Distance</a>
-(Bogdanowicz and Giaro 2012) for unrooted binary trees.</p>
+    <p>Calculates the
+<a href='https://ms609.github.io/TreeDist/articles/Generalized-RF.html#matching-split-distance'>Matching Split Distance</a>
+(Bogdanowicz and Giaro 2012; Lin <em>et al.</em> 2012) for unrooted binary trees.</p>
     </div>
 
     <pre class="usage"><span class='fu'>MatchingSplitDistance</span>(
@@ -259,6 +261,11 @@ so that it can be implemented.</p>
 <em>IEEE/ACM Transactions on Computational Biology and Bioinformatics</em>, <b>9</b>(1), 150--160.
 doi: <a href='https://doi.org/10.1109/TCBB.2011.48'>10.1109/TCBB.2011.48</a>
 .</p>
+<p>Lin Y, Rajan V, Moret BME (2012).
+&#8220;A metric for phylogenetic trees based on matching.&#8221;
+<em>IEEE/ACM Transactions on Computational Biology and Bioinformatics</em>, <b>4</b>(9), 1014--1022.
+doi: <a href='https://doi.org/10.1109/TCBB.2011.157'>10.1109/TCBB.2011.157</a>
+.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other tree distances: 
@@ -288,12 +295,12 @@ doi: <a href='https://doi.org/10.1109/TCBB.2011.48'>10.1109/TCBB.2011.48</a>
 #&gt; attr(,"pairScores")
 #&gt;      [,1] [,2] [,3]
 #&gt; [1,]    1    0    1
-#&gt; [2,]    2    1    2
-#&gt; [3,]    2    1    0
+#&gt; [2,]    0    1    2
+#&gt; [3,]    2    1    2
 #&gt; attr(,"matchedSplits")
 #&gt; [1] "t1 t2 t3 | t4 t5 t6 =&gt; t4 t5 t6 | t1 t2 t3"
-#&gt; [2] "t2 t3 | t1 t4 t5 t6 =&gt; t3 t4 t5 t6 | t1 t2"
-#&gt; [3] "t5 t6 | t1 t2 t3 t4 =&gt; t5 t6 | t1 t2 t3 t4"</div><div class='input'>
+#&gt; [2] "t1 t2 | t3 t4 t5 t6 =&gt; t3 t4 t5 t6 | t1 t2"
+#&gt; [3] "t4 t5 | t1 t2 t3 t6 =&gt; t5 t6 | t1 t2 t3 t4"</div><div class='input'>
 <span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span>(<span class='no'>MatchingSplitDistance</span>, <span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/BalancedTree.html'>BalancedTree</a></span>(<span class='fl'>6</span>),
                   <span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/PectinateTree.html'>PectinateTree</a></span>(<span class='fl'>6</span>))</div><div class='img'><img src='MatchingSplitDistance-1.png' alt='' width='700' height='433' /></div><div class='input'> 
 </div></pre>

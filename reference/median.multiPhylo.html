@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Approximate Subtree Prune and Regraft distance — SPRDist • TreeDist</title>
+<title>Median of a set of trees — median.multiPhylo • TreeDist</title>
 
 
 <!-- jquery -->
@@ -45,8 +45,9 @@
 
 
 
-<meta property="og:title" content="Approximate Subtree Prune and Regraft distance — SPRDist" />
-<meta property="og:description" content="Approximate the Subtree Prune and Regraft (SPR) distance." />
+<meta property="og:title" content="Median of a set of trees — median.multiPhylo" />
+<meta property="og:description" content="Provides a single binary tree that represents the geometric median --
+an 'average' -- of a pool of tree topologies." />
 
 
 
@@ -163,65 +164,114 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Approximate Subtree Prune and Regraft distance</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance_spr.R'><code>R/tree_distance_spr.R</code></a></small>
-    <div class="hidden name"><code>SPRDist.Rd</code></div>
+    <h1>Median of a set of trees</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/median.R'><code>R/median.R</code></a></small>
+    <div class="hidden name"><code>median.multiPhylo.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Approximate the Subtree Prune and Regraft (SPR) distance.</p>
+    <p>Provides a single binary tree that represents the geometric median --
+an 'average' -- of a pool of tree topologies.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SPRDist</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='co'># S3 method for multiPhylo</span>
+<span class='fu'><a href='https://rdrr.io/r/stats/median.html'>median</a></span>(
+  <span class='no'>x</span>,
+  <span class='kw'>na.rm</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>Distance</span> <span class='kw'>=</span> <span class='no'>ClusteringInfoDistance</span>,
+  <span class='kw'>index</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>breakTies</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='no'>...</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>tree1, tree2</th>
-      <td><p>Single trees of class <code>phylo</code> to undergo comparison.</p></td>
+      <th>x</th>
+      <td><p>Object of class <code>multiPhylo</code> containing phylogenetic trees.</p></td>
+    </tr>
+    <tr>
+      <th>na.rm, ...</th>
+      <td><p>Unused; included for consistency with default function..</p></td>
+    </tr>
+    <tr>
+      <th>Distance</th>
+      <td><p>Function to calculate distances between each pair
+of trees in <code>x</code>.</p></td>
+    </tr>
+    <tr>
+      <th>index</th>
+      <td><p>Logical: if <code>TRUE</code>, return the index of the median tree(s);
+if <code>FALSE</code>, return the tree itself.</p></td>
+    </tr>
+    <tr>
+      <th>breakTies</th>
+      <td><p>Logical: if <code>TRUE</code>, return a single tree with the minimum
+score; if <code>FALSE</code>, return all tied trees.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>SPRDist()</code> returns a vector or distance matrix of distances
-between trees.</p>
+    <p><code>median.multiPhylo()</code> returns an object of class <code>phylo</code>
+corresponding to the geometric median of a set of trees:
+that is, the tree whose average distance from all other trees in the set
+is lowest.
+If multiple trees tie in their average distance, the first will be returned,
+unless <code>breakTies = TRUE</code>, in which case an object of class <code>multiPhylo</code>
+containing all such trees will be returned.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function is a wrapper for the function
-<code><a href='https://rdrr.io/pkg/phangorn/man/treedist.html'>SPR.dist()</a></code> in the phangorn package.
-It pre-processes trees to ensure that their internal representation does
-not cause the <code>SPR.dist()</code> function to crash R.</p>
-<p>A memory leak is present in phangorn v2.5.5.  To avoid a drain on system
-resources, install the latest version of phangorn with
-<code><a href='https://devtools.r-lib.org//reference/remote-reexports.html'>devtools::install_github('KlausVigo/phangorn')</a></code>.</p>
+    <p>The geometric median is the tree that exhibits the shortest average distance
+from each other tree topology in the set.
+It represents an 'average' of a set of trees, though note that an unsampled
+tree may be closer to the geometric 'centre of gravity' of the input set --
+such a tree would not be considered.</p>
+<p>The result will depend on the metric chosen to calculate distances between
+tree topologies. In the absence of a natural metric of tree topologies,
+the default choice is <code><a href='TreeDistance.html'>ClusteringInfoDistance()</a></code> -- which discards
+branch length information.
+If specifying a different function, be sure that it returns a difference,
+rather than a similarity.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Other tree distances: 
-<code><a href='JaccardRobinsonFoulds.html'>JaccardRobinsonFoulds</a>()</code>,
-<code><a href='KendallColijn.html'>KendallColijn</a>()</code>,
-<code><a href='MASTSize.html'>MASTSize</a>()</code>,
-<code><a href='MatchingSplitDistance.html'>MatchingSplitDistance</a>()</code>,
-<code><a href='NNIDist.html'>NNIDist</a>()</code>,
-<code><a href='NyeTreeSimilarity.html'>NyeTreeSimilarity</a>()</code>,
-<code><a href='PathDist.html'>PathDist</a>()</code>,
-<code><a href='Robinson-Foulds.html'>Robinson-Foulds</a></code>,
-<code><a href='TreeDistance.html'>TreeDistance</a>()</code></p></div>
+    <div class='dont-index'><p>Consensus methods:
+<code><a href='https://rdrr.io/pkg/ape/man/consensus.html'>ape::consensus</a></code>,
+<code><a href='https://ms609.github.io/TreeTools/reference/ConsensusWithout.html'>TreeTools::ConsensusWithout</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>'TreeTools'</span>)
+<span class='no'>tenTrees</span> <span class='kw'>&lt;-</span> <span class='fu'>as.phylo</span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fl'>8</span>)
 
-<span class='fu'>SPRDist</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/BalancedTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/PectinateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>))</div><div class='output co'>#&gt; spr 
-#&gt;   1 </div><div class='input'>
-<span class='fu'>SPRDist</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/BalancedTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>2</span>, <span class='fl'>7</span>))</div><div class='output co'>#&gt; [1] 2 2 2</div><div class='input'><span class='fu'>SPRDist</span>(<span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>2</span>, <span class='fl'>7</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/PectinateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>))</div><div class='output co'>#&gt; [1] 1 2 2</div><div class='input'>
-<span class='fu'>SPRDist</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>bal</span> <span class='kw'>=</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/BalancedTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='kw'>pec</span> <span class='kw'>=</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/PectinateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>)),
-        <span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>2</span>, <span class='fl'>7</span>))</div><div class='output co'>#&gt; NULL</div><div class='input'>
-<span class='fu'><a href='CompareAll.html'>CompareAll</a></span>(<span class='fu'>as.phylo</span>(<span class='fl'>30</span>:<span class='fl'>33</span>, <span class='fl'>8</span>), <span class='no'>SPRDist</span>)</div><div class='output co'>#&gt;   1 2 3 4
-#&gt; 1   1 1 1
-#&gt; 2 1   1 1
-#&gt; 3 1 1   1
-#&gt; 4 1 1 1  </div><div class='input'>  
+<span class='co'># Default settings:</span>
+<span class='fu'><a href='https://rdrr.io/r/stats/median.html'>median</a></span>(<span class='no'>tenTrees</span>)</div><div class='output co'>#&gt; 
+#&gt; Phylogenetic tree with 8 tips and 7 internal nodes.
+#&gt; 
+#&gt; Tip labels:
+#&gt; 	t1, t2, t3, t4, t5, t6, ...
+#&gt; 
+#&gt; Rooted; no branch lengths.</div><div class='input'>
+<span class='co'># The Robinson-Foulds distance will create ties:</span>
+<span class='fu'><a href='https://rdrr.io/r/stats/median.html'>median</a></span>(<span class='no'>tenTrees</span>, <span class='kw'>Distance</span> <span class='kw'>=</span> <span class='no'>RobinsonFoulds</span>, <span class='kw'>breakTies</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; 4 phylogenetic trees</div><div class='input'>
+<span class='co'># Be sure to use a distance function, rather than a similarity:</span>
+<span class='no'>NyeTreeDistance</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span> (<span class='no'>...</span>) <span class='fu'><a href='NyeTreeSimilarity.html'>NyeTreeSimilarity</a></span>(<span class='no'>...</span>, <span class='kw'>similarity</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'><a href='https://rdrr.io/r/stats/median.html'>median</a></span>(<span class='no'>tenTrees</span>, <span class='kw'>Distance</span> <span class='kw'>=</span> <span class='no'>NyeTreeDistance</span>)</div><div class='output co'>#&gt; 
+#&gt; Phylogenetic tree with 8 tips and 7 internal nodes.
+#&gt; 
+#&gt; Tip labels:
+#&gt; 	t1, t2, t3, t4, t5, t6, ...
+#&gt; 
+#&gt; Rooted; no branch lengths.</div><div class='input'>
+<span class='co'># To analyse a list of trees that is not of class multiPhylo:</span>
+<span class='no'>treeList</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='no'>as.phylo</span>, <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fl'>8</span>)
+<span class='fu'><a href='https://rdrr.io/r/stats/median.html'>median</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/structure.html'>structure</a></span>(<span class='no'>treeList</span>, <span class='kw'>class</span> <span class='kw'>=</span> <span class='st'>'multiPhylo'</span>))</div><div class='output co'>#&gt; 
+#&gt; Phylogenetic tree with 8 tips and 7 internal nodes.
+#&gt; 
+#&gt; Tip labels:
+#&gt; 	t1, t2, t3, t4, t5, t6, ...
+#&gt; 
+#&gt; Rooted; no branch lengths.</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
