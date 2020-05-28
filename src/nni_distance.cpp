@@ -87,16 +87,16 @@ void nni_edge_to_splits(const IntegerMatrix edge,
     }
   }
   
-  for (uint16 i = 0; i != *n_tip; i++) {
+  for (int16 i = 0; i != *n_tip; i++) {
     delete[] tmp_splits[i];
   }
   
-  uint16 n_trivial = 0;
-  for (uint16 i = *n_tip; i != *n_node; i++) {
+  int16 n_trivial = 0;
+  for (int16 i = *n_tip; i != *n_node; i++) {
     if (i == *trivial_origin || i == *trivial_two) {
       n_trivial++;
     } else {
-      for (uint16 j = 0; j != *n_bin; j++) {
+      for (int16 j = 0; j != *n_bin; j++) {
         splits[((i - *n_tip - n_trivial) * *n_bin) + j] = tmp_splits[i][j];
         names[i - *n_tip - n_trivial] = (i + 1);
       }
