@@ -127,5 +127,6 @@ test_that('VisualizeMatching works', {
     attr(x, 'pairScores') <- -attr(x, 'pairScores')
     x
   }
-  expect_error(VisualizeMatching(Minus, PectinateTree(8), BalancedTree(8)))
+  expect_error(VisualizeMatching(Minus, PectinateTree(8), BalancedTree(8), 
+                                 setPar = FALSE))
 })
