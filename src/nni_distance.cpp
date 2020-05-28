@@ -163,7 +163,7 @@ rf_match nni_rf_matching (
 IntegerVector cpp_nni_distance (const IntegerMatrix edge1, 
                                 const IntegerMatrix edge2,
                                 const IntegerVector nTip) {
-
+  
   if (nTip[0] > NNI_MAX_TIPS) {
     throw std::length_error("Cannot calculate NNI distance for trees with "
                             "so many tips.");
@@ -183,6 +183,14 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
                                  _["tight_upper"] = 0,
                                  _["loose_upper"] = 0));
   }
+  Rcout << "\n\n === Let's get nniBusy ===\n\n";
+  
+  const uint16 
+    root_1 = edge1(n_edge - 1, 0),
+    root_2 = edge2(n_edge - 1, 0)
+  ;
+  
+  bool rooted = edge1(n_edge - 3, 0) != root_1;
   
   const uint16
     NOT_TRIVIAL = UINTX_MAX,
@@ -190,27 +198,28 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
     n_node = n_edge + 1,
     n_bin = ((n_tip - 1) / BIN_SIZE) + 1,
     
-    trivial_origin_1 = edge1(n_edge - 1, 0) - 1,
-    trivial_origin_2 = edge2(n_edge - 1, 0) - 1,
     
-    trivial_two_1 = (edge1(n_edge - 1, 0) == edge1(n_edge - 3, 0) ?
-                     NOT_TRIVIAL : (edge1(n_edge - 1, 1) - 1L)),
-    trivial_two_2 = (edge2(n_edge - 1, 0) == edge2(n_edge - 3, 0) ?
-                     NOT_TRIVIAL : (edge2(n_edge - 1, 1) - 1L)),
+    trivial_origin_1 = root_1 - 1,
+    trivial_origin_2 = root_2 - 1,
     
-    n_splits = n_edge - n_tip - (trivial_two_1 != NOT_TRIVIAL ? 1 : 0)
+    trivial_two_1 = (rooted ? (edge1(n_edge - 1, 1) - 1) : NOT_TRIVIAL),
+    trivial_two_2 = (rooted ? (edge2(n_edge - 1, 1) - 1) : NOT_TRIVIAL),
+    
+    n_distinct_edge = n_edge - (rooted ? 1 : 0),
+    n_splits = n_distinct_edge - n_tip
   ;
+  Rcout <<n_edge<<" edges; N Distinct edge = " << n_distinct_edge <<"\n";
   
   splitbit 
     *splits1 = new splitbit[n_splits * n_bin],
     *splits2 = new splitbit[n_splits * n_bin];
-  uint16 *names1 = new uint16[n_splits];
+  uint16 *names_1 = new uint16[n_splits];
   
   if (n_edge != n_tip && n_tip > 3) {
     nni_edge_to_splits(edge2, &n_tip, &n_edge, &n_node, &n_bin, 
-                       &trivial_origin_2, &trivial_two_2, splits2, names1);
+                       &trivial_origin_2, &trivial_two_2, splits2, names_1);
     nni_edge_to_splits(edge1, &n_tip, &n_edge, &n_node, &n_bin,
-                       &trivial_origin_1, &trivial_two_1, splits1, names1);
+                       &trivial_origin_1, &trivial_two_1, splits1, names_1);
   } // else no internal nodes resolved
   
   rf_match match = nni_rf_matching(splits1, splits2, &n_splits, &n_bin, &n_tip);
@@ -218,55 +227,106 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
   delete[] splits1;
   delete[] splits2;
   
-  bool matched1[NNI_MAX_TIPS] = {0};
+  bool matched_1[NNI_MAX_TIPS] = {0};
   int16 unmatched_below[NNI_MAX_TIPS] = {0};
 
   for (int16 i = 0; i != int16(match.size()); i++) {
-    int16 node_i = names1[i] - node_0_r;
+    int16 node_i = names_1[i] - node_0_r;
     if (match[i] == NA_INT16) {
-      matched1[node_i] = false;
+      matched_1[node_i] = false;
       unmatched_below[node_i] = 1;
+      Rcout << "unmatched_below[" << (names_1[i]) << "] = 1\n";
       lower_bound++;
     } else {
-      matched1[node_i] = true;
+      Rcout << "matched["<<names_1[i]<<"]\n";
+      matched_1[node_i] = true;
     }
   }
-  delete[] names1;
+  delete[] names_1;
   
-  for (int16 i = 0; i != n_edge - 2; i++) {
+  Rcout << "\n\n";
+  for (int16 i = 0; i != n_distinct_edge - (rooted ? 1 : 0); i++) {
     const int16 parent_i = edge1(i, 0) - 1, child_i = edge1(i, 1) - 1;
     // If edge is unmatched, add one to subtree size.
     if (child_i >= n_tip) {
-      if (!matched1[child_i - node_0]) {
+      Rcout << "Edge " <<(1+i) <<": " << (1+parent_i) << "-" <<(1+ child_i) << ".\n";
+      if (!matched_1[child_i - node_0]) {
+        Rcout << "   - Unmatched. Add " << unmatched_below[child_i - node_0] 
+              << " to unmatched_below[" << (parent_i + 1) <<"]. \n";
         unmatched_below[parent_i - node_0] += unmatched_below[child_i - node_0];
       } else {
+        Rcout << "   - Matched. Leave unmatched_below; update score.\n";
         update_score(unmatched_below[child_i - node_0],
                      &tight_score_bound, &loose_score_bound);
       }
     }
   }
+  
+  if (rooted) {
+    Rcout << "\n Tree is rooted.\n\n";
+  } else {
+    Rcout << "\n Tree is NOT rooted. root_child_3 = " << edge1(n_edge - 3, 1) 
+          << " (- 1).\n\n";
+  }
   // Root edges:
-  const int16 root_node = edge1(n_edge - 2, 0) - node_0_r,
-              root_child_1 = edge1(n_edge - 2, 1) - 1,
-              root_child_2 = edge1(n_edge - 1, 1) - 1,
-              unmatched_2 = (root_child_2 < n_tip ? 0 :
-                               unmatched_below[root_child_2 - node_0]);
-  if (root_child_1 >= n_tip) {
-    if (!matched1[root_child_1 - node_0]) {
-/*      Rcout << " Root edge unmatched\n";*/
-      update_score(unmatched_below[root_node]
-                     + unmatched_below[root_child_1 - node_0] + unmatched_2,
-                   &tight_score_bound, &loose_score_bound);
+  const int16 
+    root_node = root_1 - node_0_r,
+    root_child_1 = edge1(n_edge - 1, 1) - 1,
+    root_child_2 = edge1(n_edge - 2, 1) - 1,
+    root_child_3 = edge1(n_edge - 3, 1) - 1,
+    
+    unmatched_1 = (root_child_1 < n_tip ? 
+                     0 :
+                     unmatched_below[root_child_1 - node_0]),
+  
+    unmatched_2 = (root_child_2 < n_tip ? 
+                     0 :
+                     unmatched_below[root_child_2 - node_0]),
+  
+    unmatched_3 = rooted ?
+                    0 :
+                    (root_child_3 < n_tip ?
+                       0 :
+                       unmatched_below[root_child_3 - node_0])
+  ;
+  
+  Rcout << "Children 123 = " 
+        << (root_child_1 + 1) <<", "
+        << (root_child_2 + 1) <<", "
+        << (root_child_3 + 1) <<"\n  "
+        << "Matched? : "
+        << (matched_1[root_child_1 - node_0] ? "V" : ".")
+        << (matched_1[root_child_2 - node_0] ? "V" : ".")
+        << (matched_1[root_child_3 - node_0] ? "V" : ".")
+        << " unmatched_below: " 
+        << unmatched_1 << ", "
+        << unmatched_2 << ", "
+        << unmatched_3 << "; R: "
+        << unmatched_below[root_node] <<".\n";
+  
+  if (rooted) {
+    if (root_child_2 >= n_tip) {
+      if (!matched_1[root_child_2 - node_0]) {
+  /*      Rcout << " Root edge unmatched\n";*/
+        update_score(unmatched_below[root_node]
+                       + unmatched_1
+                       + unmatched_2,
+                     &tight_score_bound, &loose_score_bound);
+      } else {
+  /*      Rcout << " Root edge matched\n";*/
+        update_score(unmatched_1,
+                     &tight_score_bound, &loose_score_bound);
+        update_score(unmatched_2,
+                     &tight_score_bound, &loose_score_bound);
+      }
     } else {
-/*      Rcout << " Root edge matched\n";*/
-      update_score(unmatched_below[root_child_1 - node_0],
-                   &tight_score_bound, &loose_score_bound);
-      update_score(unmatched_2,
+      update_score(unmatched_1,
                    &tight_score_bound, &loose_score_bound);
     }
   } else {
-    update_score(unmatched_2,
-                 &tight_score_bound, &loose_score_bound);
+    update_score(unmatched_below[root_node],
+                   &tight_score_bound, &loose_score_bound);
+    
   }
 
   return IntegerVector::create(Named("lower")   = lower_bound,
