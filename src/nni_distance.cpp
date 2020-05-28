@@ -183,7 +183,6 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
                                  _["tight_upper"] = 0,
                                  _["loose_upper"] = 0));
   }
-  Rcout << "\n\n === Let's get nniBusy ===\n\n";
   
   const uint16 
     root_1 = edge1(n_edge - 1, 0),
@@ -208,7 +207,6 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
     n_distinct_edge = n_edge - (rooted ? 1 : 0),
     n_splits = n_distinct_edge - n_tip
   ;
-  Rcout <<n_edge<<" edges; N Distinct edge = " << n_distinct_edge <<"\n";
   
   splitbit 
     *splits1 = new splitbit[n_splits * n_bin],
@@ -235,39 +233,26 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
     if (match[i] == NA_INT16) {
       matched_1[node_i] = false;
       unmatched_below[node_i] = 1;
-      Rcout << "unmatched_below[" << (names_1[i]) << "] = 1\n";
       lower_bound++;
     } else {
-      Rcout << "matched["<<names_1[i]<<"]\n";
       matched_1[node_i] = true;
     }
   }
   delete[] names_1;
   
-  Rcout << "\n\n";
   for (int16 i = 0; i != n_distinct_edge - (rooted ? 1 : 0); i++) {
     const int16 parent_i = edge1(i, 0) - 1, child_i = edge1(i, 1) - 1;
     // If edge is unmatched, add one to subtree size.
     if (child_i >= n_tip) {
-      Rcout << "Edge " <<(1+i) <<": " << (1+parent_i) << "-" <<(1+ child_i) << ".\n";
       if (!matched_1[child_i - node_0]) {
-        Rcout << "   - Unmatched. Add " << unmatched_below[child_i - node_0] 
-              << " to unmatched_below[" << (parent_i + 1) <<"]. \n";
         unmatched_below[parent_i - node_0] += unmatched_below[child_i - node_0];
       } else {
-        Rcout << "   - Matched. Leave unmatched_below; update score.\n";
         update_score(unmatched_below[child_i - node_0],
                      &tight_score_bound, &loose_score_bound);
       }
     }
   }
   
-  if (rooted) {
-    Rcout << "\n Tree is rooted.\n\n";
-  } else {
-    Rcout << "\n Tree is NOT rooted. root_child_3 = " << edge1(n_edge - 3, 1) 
-          << " (- 1).\n\n";
-  }
   // Root edges:
   const int16 
     root_node = root_1 - node_0_r,
@@ -290,30 +275,14 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
                        unmatched_below[root_child_3 - node_0])
   ;
   
-  Rcout << "Children 123 = " 
-        << (root_child_1 + 1) <<", "
-        << (root_child_2 + 1) <<", "
-        << (root_child_3 + 1) <<"\n  "
-        << "Matched? : "
-        << (matched_1[root_child_1 - node_0] ? "V" : ".")
-        << (matched_1[root_child_2 - node_0] ? "V" : ".")
-        << (matched_1[root_child_3 - node_0] ? "V" : ".")
-        << " unmatched_below: " 
-        << unmatched_1 << ", "
-        << unmatched_2 << ", "
-        << unmatched_3 << "; R: "
-        << unmatched_below[root_node] <<".\n";
-  
   if (rooted) {
     if (root_child_2 >= n_tip) {
       if (!matched_1[root_child_2 - node_0]) {
-  /*      Rcout << " Root edge unmatched\n";*/
         update_score(unmatched_below[root_node]
                        + unmatched_1
                        + unmatched_2,
                      &tight_score_bound, &loose_score_bound);
       } else {
-  /*      Rcout << " Root edge matched\n";*/
         update_score(unmatched_1,
                      &tight_score_bound, &loose_score_bound);
         update_score(unmatched_2,
