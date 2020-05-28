@@ -209,4 +209,6 @@ test_that('.TreeDistance supports all sizes', {
   expect_equal(t(NNIDist(BalancedTree(7), as.phylo(0:3, 7))),
     NNIDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
              as.phylo(0:3, 7))[1, , ])
+  expect_error(.TreeDistance(RobinsonFoulds, PectinateTree(1:6),
+                             PectinateTree(6)))
 })
