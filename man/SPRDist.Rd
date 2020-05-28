@@ -21,6 +21,10 @@ This function is a wrapper for the function
 \code{\link[phangorn:treedist]{SPR.dist()}} in the phangorn package.
 It pre-processes trees to ensure that their internal representation does
 not cause the \code{SPR.dist()} function to crash R.
+
+A memory leak is present in phangorn v2.5.5.  To avoid a drain on system
+resources, install the latest version of phangorn with
+\code{devtools::install_github('KlausVigo/phangorn')}.
 }
 \examples{
 library('TreeTools')
