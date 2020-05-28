@@ -43,8 +43,8 @@ test_that('VisualizeMatching works', {
                       setPar = TRUE, precision=3, matchZeros = TRUE, 
                       Plot = plot.phylo, cex=1.5)
   }
-  skip_on_travis() # Skips all following tests in this block
-  expect_doppelganger('Test VMr', TestVMr) # Unclear why this test fails on Travis. 
+  #skip_on_travis() # Skips all following tests in this block
+  #expect_doppelganger('Test VMr', TestVMr) # Unclear why this test fails on Travis. 
   
   expect_doppelganger('RF example', function () {
     par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.5)
