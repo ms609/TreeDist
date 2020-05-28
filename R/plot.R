@@ -102,7 +102,7 @@ TreeDistPlot <- function (tr, title = NULL, bold = NULL, leaveRoom = FALSE,
 VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
                               precision = 3L, Plot = plot.phylo,
                               matchZeros = TRUE, plainEdges = FALSE,
-                              edge.width = NULL, edge.color = NULL,
+                              edge.width = 1, edge.color = 'black',
                               ...) {
   
   splits1 <- as.Splits(tree1)

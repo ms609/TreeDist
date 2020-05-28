@@ -94,7 +94,7 @@ test_that('VisualizeMatching works', {
                       leaveRoom=FALSE)
   })
   
-  expect_doppelganger('VM Single splits', function () {
+  expect_doppelganger('VM Single splits; plainEdges', function () {
     par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.5)
     tree1 <- ape::read.tree(text = '((1, 2), (3, 4, 5, 6, 7, 8));')
     tree2 <- ape::read.tree(text = '((1, 2, 3), (4, 5, 6, 7, 8));')
@@ -102,17 +102,19 @@ test_that('VisualizeMatching works', {
                       setPar = FALSE, precision = 3,
                       Plot = TreeDistPlot,
                       matchZeros = TRUE,
+                      plainEdges = TRUE,
                       leaveRoom = FALSE)
     VisualizeMatching(RobinsonFouldsMatching, tree2, tree1,
                       setPar = FALSE, precision = 3,
                       Plot = TreeDistPlot,
                       matchZeros = FALSE,
+                      plainEdges = TRUE,
                       leaveRoom = FALSE)
   })
   
   expect_doppelganger('VM matchZeros FALSE', function () {
     JRF2 <- function (tree1, tree2, ...) 
-      JaccardRobinsonFoulds(tree1, tree2, k = 2, arboreal= TRUE, ...)
+      JaccardRobinsonFoulds(tree1, tree2, k = 2, arboreal = TRUE, ...)
     
     tree1 <- EnforceOutgroup(as.phylo(704564, 10), paste0('t', c(1,4,5,8,9)))
     tree2 <- EnforceOutgroup(as.phylo(20165 , 10), paste0('t', c(1,4)))
