@@ -13,8 +13,8 @@ jobs:
       r_binary_packages:
        - ape
        - covr
-       - devtools
-       - knitr
+       #- devtools # R4.0.0 Binaries unavailable 2020-05-28
+       #- knitr # R4.0.0 Binaries unavailable 2020-05-28
        - phangorn
        - pkgload
        - Rdpack
@@ -37,8 +37,7 @@ jobs:
       r: release
       before_install:
       - sudo tlmgr install doi titling hyperref
-  allow_failures:
-    r: release # Binaries not available
+#  allow_failures:
 
 git:
   depth: 1
