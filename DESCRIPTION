@@ -50,7 +50,8 @@ Suggests:
   TreeSearch,
   vdiffr
 Remotes:
-  ms609/TreeDistData@v1.0.0
+  ms609/TreeTools@v1.0.0
+  ms609/TreeDistData
 RdMacros: Rdpack
 LazyData: true
 ByteCompile: true
