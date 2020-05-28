@@ -69,6 +69,17 @@ test_that('Size mismatch causes error', {
     expect_error(Func(treeSym7, treeSym8)))
   
   expect_error(MeilaVariationOfInformation(splits7, splits8))
+  
+  Test <- function (Func) {
+    expect_error(Func(splits8, as.Splits(BalancedTree(9)), 8))
+  }
+  Test(cpp_robinson_foulds_distance)
+  Test(cpp_robinson_foulds_info)
+  Test(cpp_matching_split_distance)
+  Test(cpp_jaccard_similarity)
+  Test(cpp_mmsi_distance)
+  Test(cpp_mutual_clustering)
+  Test(cpp_shared_phylo)
 })
 
 test_that('Metrics handle polytomies', {
@@ -343,6 +354,16 @@ test_that('Clustering information is correctly calculated', {
                MutualClusteringInfo(treeAbc.Defgh, treeAb.Cdefgh),
                tolerance=1e-05)
   
+  expect_equal(ClusteringEntropy(BalancedTree(64)),
+               MutualClusteringInfo(BalancedTree(64), BalancedTree(64)))
+  expect_equal(ClusteringEntropy(BalancedTree(644)),
+               MutualClusteringInfo(BalancedTree(644), BalancedTree(644)))
+  
+  expect_gt(ClusteringEntropy(BalancedTree(64)),
+            MutualClusteringInfo(BalancedTree(64), PectinateTree(64)))
+  expect_gt(ClusteringEntropy(BalancedTree(644)),
+            MutualClusteringInfo(BalancedTree(644), PectinateTree(644)))
+  
   NormalizationTest(MutualClusteringInfo)
 })
 
@@ -440,12 +461,17 @@ test_that('Jaccard RF is correctly calculated', {
   expect_equal(1L * 2L / 6L, 
                JaccardRobinsonFoulds(treeSym8, treeAbcd.Efgh, similarity = TRUE,
                                      normalize = TRUE, k = 2))
-  expect_true(JaccardRobinsonFoulds(treeSym8, treeBal8, k = 2) < 
-                JaccardRobinsonFoulds(treeSym8, treeOpp8, k = 2))
-  expect_true(JaccardRobinsonFoulds(treeSym8, treeBal8, k = 3L) <
-                JaccardRobinsonFoulds(treeSym8, treeBal8, k = 4L))
-  expect_true(JaccardRobinsonFoulds(treeCat8, treeTac8, arboreal = FALSE) <
-              JaccardRobinsonFoulds(treeCat8, treeTac8, arboreal = TRUE))
+  expect_lt(JaccardRobinsonFoulds(treeSym8, treeBal8, k = 2),
+            JaccardRobinsonFoulds(treeSym8, treeOpp8, k = 2))
+  expect_lt(JaccardRobinsonFoulds(treeSym8, treeBal8, k = 3L),
+            JaccardRobinsonFoulds(treeSym8, treeBal8, k = 4L))
+  expect_lt(JaccardRobinsonFoulds(treeCat8, treeTac8, arboreal = FALSE),
+            JaccardRobinsonFoulds(treeCat8, treeTac8, arboreal = TRUE))
+  
+  expect_equal(0, JaccardRobinsonFoulds(BalancedTree(64), BalancedTree(64)))
+  expect_lt(0, JaccardRobinsonFoulds(BalancedTree(64), PectinateTree(64)))
+  expect_equal(0, JaccardRobinsonFoulds(BalancedTree(264), BalancedTree(264)))
+  expect_lt(0, JaccardRobinsonFoulds(BalancedTree(264), PectinateTree(264)))
 })
 
 test_that('RobinsonFoulds is correctly calculated', {
@@ -484,7 +510,7 @@ test_that('RobinsonFoulds is correctly calculated', {
 
 
 test_that('Robinson Foulds Info is correctly calculated', {
-  expect_equal(22.53747 * 2L, tolerance=1e-05,
+  expect_equal(22.53747 * 2L, tolerance = 1e-05,
                InfoRobinsonFoulds(treeSym8, treeSym8, similarity = TRUE,
                                   normalize = FALSE))
   expect_equal(0, tolerance = 1e-05,
@@ -492,7 +518,7 @@ test_that('Robinson Foulds Info is correctly calculated', {
   expect_equal(1, tolerance = 1e-05,
                InfoRobinsonFoulds(treeSym8, treeSym8, similarity = TRUE, 
                                   normalize = TRUE))
-  expect_equal(24.9, tolerance=0.01, 
+  expect_equal(24.9, tolerance = 0.01, 
                InfoRobinsonFoulds(treeSym8, treeBal8, similarity = TRUE))
   expect_equal(SplitwiseInfo(treeSym8) + SplitwiseInfo(treeBal8) -
                  InfoRobinsonFoulds(treeSym8, treeBal8, similarity = FALSE),
@@ -513,6 +539,12 @@ test_that('Robinson Foulds Info is correctly calculated', {
                InfoRobinsonFoulds(treeSym8, treeTwoSplits, similarity = TRUE))
   expect_equal(InfoRobinsonFoulds(treeSym8, list(treeSym8, treeBal8)), 
                RobinsonFouldsInfo(list(treeSym8, treeBal8), treeSym8))
+  
+  # Check that large trees work
+  expect_equal(0, InfoRobinsonFoulds(BalancedTree(64), BalancedTree(64)))
+  expect_lt(0, InfoRobinsonFoulds(BalancedTree(64), PectinateTree(64)))
+  expect_equal(0, InfoRobinsonFoulds(BalancedTree(129), BalancedTree(129)))
+  expect_lt(0, InfoRobinsonFoulds(BalancedTree(129), PectinateTree(129)))
 })
 
 

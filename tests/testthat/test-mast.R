@@ -1,6 +1,10 @@
 context("mast.cpp")
 library('TreeTools')
 
+test_that("MAST fails gracefully", {
+  expect_error(MASTSize(BalancedTree(7), BalancedTree(8)))
+})
+
 test_that('MAST works', {
   tree1 <- BalancedTree(8L)
   tree2 <- PectinateTree(8L)

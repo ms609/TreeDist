@@ -1,11 +1,17 @@
 context("tree_distance_nni.R")
 library('TreeTools')
 
-test_that("Crashes are avoided", {
+test_that("NNIDist() handles exceptions", {
   expect_error(NNIDist(list(PectinateTree(7), PectinateTree(8))))
   expect_error(NNIDist(list(PectinateTree(1:8), PectinateTree(8))))
   expect_error(NNIDist(list(PectinateTree(1:8), 
                             PectinateTree(as.character(1:8)))))
+  expect_error(cpp_nni_distance( # Too many tips.
+    PectinateTree(40000)$edge, # Will fail before not being postorder is problem
+    BalancedTree(40000)$edge, 40000))
+  
+  expect_error(NNIDist(BalancedTree(5), RootOnNode(BalancedTree(5), 1)))
+  
 })
 
 test_that("Simple NNI approximations", {
@@ -29,6 +35,8 @@ test_that("Simple NNI approximations", {
       }
     }
   }
+  
+  expect_equal(allMatched, NNIDist(BalancedTree(2), PectinateTree(2)))
   
   expect_equal(oneUnmatched, cpp_nni_distance(edge1, edge2, NTip(tree1)))
   Test(oneUnmatched, PectinateTree(nTip))
