@@ -67,6 +67,8 @@ test_that("TreesConsistentWithTwoSplits works", {
 test_that("MeilaMutualInformation", {
   expect_error(MeilaMutualInformation(c(T,T,T), c(T,T,T,T)))
   expect_equal(0, MeilaMutualInformation(c(T,T,T,F,F), c(F,F,F,F,F)))
+  expect_equal(0.4199732, tolerance = 1e-6,
+               MeilaMutualInformation(c(T,T,T,F,F), c(F,T,T,F,F)))
 })
 
 test_that("MeilaVariationOfInformation", {

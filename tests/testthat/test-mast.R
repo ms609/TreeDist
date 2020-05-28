@@ -2,7 +2,10 @@ context("mast.cpp")
 library('TreeTools')
 
 test_that("MAST fails gracefully", {
-  expect_error(MASTSize(BalancedTree(7), BalancedTree(8)))
+  expect_error(cpp_mast(BalancedTree(7)$edge, BalancedTree(8)$edge, 7)) # Different sizes
+  expect_error(MASTSize(BalancedTree(8), UnrootTree(BalancedTree(8))))
+  expect_error(MASTSize(BalancedTree(10000), PectinateTree(10000))) # Too large
+  
 })
 
 test_that('MAST works', {
@@ -25,7 +28,6 @@ test_that('MAST works', {
   expect_equal(MASTInfo(list(BalancedTree(7), PectinateTree(7)), as.phylo(0:3, 7))[1, ],
                MASTInfo(as.phylo(0:3, 7), BalancedTree(7)))
   
-  expect_error(MASTSize(BalancedTree(10000), PectinateTree(10000))) # Too large
 })
 
 test_that("MAST supports funnily-ordered edges", {

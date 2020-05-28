@@ -70,7 +70,7 @@ NyeTreeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
       } else if (mode(tree) == 'list') {
         vapply(tree, MaxSplits, integer(1L))
       } else {
-        stop ("Unrecognized tree format")
+        stop ("Unrecognized tree format")                                       # nocov
       }
     }
     
