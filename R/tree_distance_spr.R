@@ -7,6 +7,10 @@
 #' It pre-processes trees to ensure that their internal representation does
 #' not cause the `SPR.dist()` function to crash R.
 #' 
+#' A memory leak is present in phangorn v2.5.5.  To avoid a drain on system
+#' resources, install the latest version of phangorn with 
+#' `devtools::install_github('KlausVigo/phangorn')`.
+#' 
 #' @template tree12Params
 #' 
 #' @return `SPRDist()` returns a vector or distance matrix of distances 

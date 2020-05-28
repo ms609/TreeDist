@@ -5,18 +5,6 @@
 
 using namespace Rcpp;
 
-// cpp_edge_to_splits
-RawMatrix cpp_edge_to_splits(IntegerMatrix edge, IntegerVector nTip);
-RcppExport SEXP _TreeDist_cpp_edge_to_splits(SEXP edgeSEXP, SEXP nTipSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< IntegerMatrix >::type edge(edgeSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type nTip(nTipSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_edge_to_splits(edge, nTip));
-    return rcpp_result_gen;
-END_RCPP
-}
 // lapjv
 List lapjv(NumericMatrix x, NumericVector maxX);
 RcppExport SEXP _TreeDist_lapjv(SEXP xSEXP, SEXP maxXSEXP) {
@@ -150,7 +138,6 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_TreeDist_cpp_edge_to_splits", (DL_FUNC) &_TreeDist_cpp_edge_to_splits, 2},
     {"_TreeDist_lapjv", (DL_FUNC) &_TreeDist_lapjv, 2},
     {"_TreeDist_cpp_mast", (DL_FUNC) &_TreeDist_cpp_mast, 3},
     {"_TreeDist_cpp_nni_distance", (DL_FUNC) &_TreeDist_cpp_nni_distance, 3},
