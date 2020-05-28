@@ -601,29 +601,37 @@ test_that('Normalization occurs as documented', {
   expect_equal(ClusteringInfoDistance(tree1, tree2, normalize = TRUE),
                cid / (ent1 + ent2))
   
-  
 })
 
 test_that("Independent of root position", {
+  
   library('TreeTools')
+  
   bal8 <- BalancedTree(8)
   pec8 <- PectinateTree(8)
   
   trees <- lapply(list(bal8, RootTree(bal8, 't4'),
                        pec8, RootTree(pec8, 't4')), UnrootTree)
-  Test <- function (Method, ...) {
+  
+  lapply(methodsToTest[-length(methodsToTest)], function (Method, ...) {
     dists <- Method(trees, ...)
     expect_equal(dists[1, 1], dists[1, 2])
     expect_equal(dists[1, 3], dists[1, 4])
     expect_equal(dists[1, 3], dists[2, 4])
     expect_equal(dists[2, 3], dists[2, 4])
     expect_equal(dists[3, 3], dists[3, 4])
-  }
+  })
 
-  lapply(methodsToTest[-length(methodsToTest)], Test)
   
-  expect_equal(8L, MASTSize(trees[[1]], trees[[1]], rooted = FALSE))
-  expect_equal(8L, MASTSize(trees[[1]], trees[[2]], rooted = FALSE))
-  expect_equal(8L, MASTSize(trees[[3]], trees[[3]], rooted = FALSE))
+  Test <- function(Method, score = 0L, ...) {
+    expect_equal(score, Method(trees[[1]], trees[[1]], ...))
+    expect_equal(score, Method(trees[[1]], trees[[2]], ...))
+    expect_equal(score, Method(trees[[3]], trees[[3]], ...))
+  }
+  
+  Test(MASTSize, 8L, rooted = FALSE)
+  # Tested further for NNIDist in test-tree_distance_nni.R
+  Test(NNIDist, c(lower = 0, tight_upper = 0, loose_upper = 0))
+  Test(SPRDist, c(spr = 0))
   
 })

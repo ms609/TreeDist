@@ -250,7 +250,7 @@ topology:
 
 ```{r}
 set.seed(0)
-trueTree <- TreeTools::RandomTree(20)
+trueTree <- TreeTools::RandomTree(20, root = TRUE)
 ```
 
 Then, let's generate 200 degraded trees.

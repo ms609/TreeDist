@@ -10,17 +10,17 @@ jobs:
     - r: 3.5.0 # TreeSearch requires > 3.5.0
     - r: release
       before_deploy: Rscript -e 'remotes::install_cran("pkgdown")'
-      r_binary_packages:
-       - ape
-       - covr
-       - devtools
-       - knitr
-       - phangorn
-       - pkgload
-       - Rdpack
-       - roxygen2
-       - testthat
-       - usethis
+      #r_binary_packages:
+       #- ape
+       #- covr
+       #- devtools # R4.0.0 Binaries unavailable 2020-05-28
+       #- knitr # R4.0.0 Binaries unavailable 2020-05-28
+       #- phangorn
+       #- pkgload
+       #- Rdpack
+       #- roxygen2
+       #- testthat
+       #- usethis
       deploy:
         provider: script
         script: Rscript -e 'pkgdown::deploy_site_github()'
@@ -37,8 +37,7 @@ jobs:
       r: release
       before_install:
       - sudo tlmgr install doi titling hyperref
-  allow_failures:
-    r: release # Binaries not available
+#  allow_failures:
 
 git:
   depth: 1
