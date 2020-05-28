@@ -103,6 +103,7 @@ test_that('VisualizeMatching works', {
                       Plot = TreeDistPlot,
                       matchZeros = TRUE,
                       plainEdges = TRUE,
+                      edge.width = NULL,
                       leaveRoom = FALSE)
     VisualizeMatching(RobinsonFouldsMatching, tree2, tree1,
                       setPar = FALSE, precision = 3,
@@ -120,4 +121,11 @@ test_that('VisualizeMatching works', {
     tree2 <- EnforceOutgroup(as.phylo(20165 , 10), paste0('t', c(1,4)))
     VisualizeMatching(JRF2, tree1, tree2, matchZeros = FALSE)
   })
+  
+  Minus <- function (...) {
+    x <- MutualClusteringInfo(...)
+    attr(x, 'pairScores') <- -attr(x, 'pairScores')
+    x
+  }
+  expect_error(VisualizeMatching(Minus, PectinateTree(8), BalancedTree(8)))
 })
