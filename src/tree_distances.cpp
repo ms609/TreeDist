@@ -58,10 +58,9 @@ List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y,
   }
   score = cost (a.n_splits + b.n_splits) - score - score;
   
-  List ret = List::create(Named("score") = Rcpp::wrap(score),
-                          _["matching"] = Rcpp::wrap(matching));
+  return List::create(Named("score") = Rcpp::wrap(score),
+                       _["matching"] = Rcpp::wrap(matching));
   
-  return (ret);
 }
 
 // [[Rcpp::export]]
@@ -125,10 +124,9 @@ List cpp_robinson_foulds_info (const RawMatrix x, const RawMatrix y,
   }
   
   NumericVector final_score = NumericVector::create(score);
-  List ret = List::create(Named("score") = final_score,
-                          _["matching"] = matching);
+  return List::create(Named("score") = final_score,
+                      _["matching"] = matching);
   
-  return (ret);
 }
 
 // [[Rcpp::export]]
@@ -316,10 +314,9 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
   }
   delete[] rowsol;
   
-  List ret = List::create(Named("score") = final_score,
-                          _["matching"] = final_matching);
+  return List::create(Named("score") = final_score,
+                      _["matching"] = final_matching);
   
-  return (ret);
 }
 
 // [[Rcpp::export]]
@@ -339,24 +336,25 @@ List cpp_mmsi_distance (const RawMatrix x, const RawMatrix y,
   for (int16 i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
   
   splitbit different[MAX_BINS];
-  int16 n_different, n_same, n_a_only, n_a_and_b;
-  double score1, score2;
   
   for (int16 ai = 0; ai != a.n_splits; ai++) {
     for (int16 bi = 0; bi != b.n_splits; bi++) {
-      n_different = 0;
-      n_a_only = 0;
-      n_a_and_b = 0;
+      double score1, score2;
+      int16 
+        n_different = 0,
+        n_a_only = 0,
+        n_a_and_b = 0
+      ;
       for (int16 bin = 0; bin != a.n_bins; bin++) {
         different[bin] = a.state[ai][bin] ^ b.state[bi][bin];
         n_different += count_bits(different[bin]);
         n_a_only += count_bits(a.state[ai][bin] & different[bin]);
         n_a_and_b += count_bits(a.state[ai][bin] & ~different[bin]);
       }
-      n_same = n_tips - n_different;
+      const int16 n_same = n_tips - n_different;
       
       score1 = lg2_unrooted[n_same] - 
-      lg2_trees_matching_split(n_a_and_b, n_same - n_a_and_b);
+        lg2_trees_matching_split(n_a_and_b, n_same - n_a_and_b);
       
       score2 = lg2_unrooted[n_different] - 
         lg2_trees_matching_split(n_a_only, n_different - n_a_only);
@@ -381,19 +379,20 @@ List cpp_mmsi_distance (const RawMatrix x, const RawMatrix y,
   NumericVector final_score = NumericVector::create(
     double((max_score * most_splits) - lap(most_splits, score, rowsol, colsol, u, v))
     * max_possible / max_score);
-  for (int16 i = 0; i < most_splits; i++) delete[] score[i];
-  delete[] u; delete[] v; delete[] colsol; delete[] score;
-  NumericVector final_matching (most_splits);
   
-  for (int16 i = 0; i < most_splits; i++) {
+  for (int16 i = 0; i != most_splits; i++) delete[] score[i];
+  delete[] u; delete[] v; delete[] colsol; delete[] score;
+  
+  NumericVector final_matching (most_splits);
+  for (int16 i = 0; i != most_splits; i++) {
     final_matching[i] = rowsol[i] + 1;
   }
+  
   delete[] rowsol;
   
-  List ret = List::create(Named("score") = final_score,
-                          _["matching"] = final_matching);
-  
-  return (ret);
+  return List::create(Named("score") = final_score,
+                      _["matching"] = final_matching);
+
 }
 
 // [[Rcpp::export]]
