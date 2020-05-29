@@ -137,12 +137,12 @@
 <p><img src="Generalized-RF_files/figure-html/unnamed-chunk-1-1.png" width="576" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="../reference/TreeDistance.html">SharedPhylogeneticInfo</a></span>(<span class="no">tree1</span>, <span class="no">tree2</span>)</pre></body></html></div>
 <pre><code>## [1] 12.32188</code></pre>
-<div id="the-problem-with-arboreal-matchings" class="section level3">
+<div id="the-problem-with-coherent-matchings" class="section level3">
 <h3 class="hasAnchor">
-<a href="#the-problem-with-arboreal-matchings" class="anchor"></a>The problem with arboreal matchings</h3>
-<p>Shared phylogenetic information is an arboreal similarity score: that is to say, it assigns zero similarity to splits that cannot both occur on a single tree.<br>
+<a href="#the-problem-with-coherent-matchings" class="anchor"></a>The problem with coherent matchings</h3>
+<p>Shared phylogenetic information prohibits the pairing of contradictory splits: that is, it assigns zero similarity to splits that cannot both occur on a single tree.<br>
 This leads to problematic behaviour in certain cases: for example, when the position of two distant taxa is swapped, similarities within a tree can be obscured.<br>
-The two trees below are identical but for the position of <em>A</em> and <em>J</em>, yet receive zero similarity under arboreal metrics.</p>
+The two trees below are identical but for the position of <em>A</em> and <em>J</em>, yet receive zero similarity under coherent metrics.</p>
 <div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">SharedPhylogeneticInfo</span>, <span class="kw">matchZeros</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="no">AtoJ</span>, <span class="no">AotJ</span>,
                   <span class="kw">Plot</span><span class="kw">=</span><span class="no">TreeDistPlot</span>, <span class="kw">leaveRoom</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">prune</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">5</span>, <span class="fl">18</span>))</pre></body></html></div>
 <p><img src="Generalized-RF_files/figure-html/unnamed-chunk-2-1.png" width="576" style="display: block; margin: auto;"></p>
@@ -151,7 +151,7 @@ The two trees below are identical but for the position of <em>A</em> and <em>J</
 <div id="mutual-clustering-information" class="section level2">
 <h2 class="hasAnchor">
 <a href="#mutual-clustering-information" class="anchor"></a>Mutual clustering information</h2>
-<p>Scoring each pair of splits according to their mutual clustering information <span class="citation">(Smith, 2020)</span> (see <a href="information.html">separate vignette</a>) results in a non-arboreal information-based tree distance metric that, as desired, assigns a non-zero similarity to the case that received zero similarity under an arboreal matching:</p>
+<p>Scoring each pair of splits according to their mutual clustering information <span class="citation">(Smith, 2020)</span> (see <a href="information.html">separate vignette</a>) results in a non-coherent information-based tree distance metric that, as desired, assigns a non-zero similarity to the case that received zero similarity under an coherent matching:</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">MutualClusteringInfo</span>, <span class="no">AtoJ</span>, <span class="no">AotJ</span>, <span class="kw">matchZeros</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
                   <span class="kw">Plot</span><span class="kw">=</span><span class="no">TreeDistPlot</span>, <span class="kw">leaveRoom</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">prune</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">5</span>, <span class="fl">18</span>))</pre></body></html></div>
 <p><img src="Generalized-RF_files/figure-html/unnamed-chunk-3-1.png" width="576" style="display: block; margin: auto;"></p>
@@ -185,7 +185,7 @@ ABCDE IJ|FGH</code></pre>
 <div id="jaccard-robinson-foulds-metric" class="section level3">
 <h3 class="hasAnchor">
 <a href="#jaccard-robinson-foulds-metric" class="anchor"></a>Jaccard-Robinson-Foulds metric</h3>
-<p>Böcker <em>et al</em>. <span class="citation">(2013)</span> propose expressly prohibiting contradictory pairings, i.e. pairs of splits that could never occur in the same tree. Such an ‘arboreal’ matching would preclude the pairing of <code>ABCFGHI|DE</code> with <code>ABCDFGH|EI</code>:</p>
+<p>Böcker <em>et al</em>. <span class="citation">(2013)</span> propose expressly prohibiting contradictory pairings, i.e. pairs of splits that could never occur in the same tree. Such a ‘coherent’ matching would preclude the pairing of <code>ABCFGHI|DE</code> with <code>ABCDFGH|EI</code>:</p>
 <div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="fu"><a href="../reference/JaccardRobinsonFoulds.html">JaccardRobinsonFoulds</a></span>(<span class="no">tree1</span>, <span class="no">tree2</span>, <span class="kw">similarity</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
 <pre><code>## [1] 6.333333</code></pre>
 <div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">JaccardRobinsonFoulds</span>, <span class="no">tree1</span>, <span class="no">tree2</span>,

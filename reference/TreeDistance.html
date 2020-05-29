@@ -419,7 +419,7 @@ doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</
 <span class='co'># Are they more similar than two trees of this shape would be by chance?</span>
 <span class='fu'>ExpectedVariation</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>sample</span><span class='kw'>=</span><span class='fl'>12</span>)[<span class='st'>'DifferentPhylogeneticInfo'</span>, <span class='st'>'Estimate'</span>]</div><div class='output co'>#&gt; [1] 33.31608</div><div class='input'>
 <span class='co'># Every split in tree1 is contradicted by every split in tree3</span>
-<span class='co'># Non-arboreal matches contain clustering, but not phylogenetic, information</span>
+<span class='co'># Non-coherent matches contain clustering, but not phylogenetic, information</span>
 <span class='fu'>SharedPhylogeneticInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree3</span>) <span class='co'># = 0</span></div><div class='output co'>#&gt; [1] 0</div><div class='input'><span class='fu'>MutualClusteringInfo</span>(<span class='no'>tree1</span>, <span class='no'>tree3</span>) <span class='co'># &gt; 0</span></div><div class='output co'>#&gt; [1] 0.6539805</div><div class='input'>
 <span class='co'># Converting trees to Splits objects can speed up multiple comparisons</span>
 <span class='no'>splits1</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/as.Splits.html'>as.Splits</a></span>(<span class='no'>tree1</span>)
