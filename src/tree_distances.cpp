@@ -150,7 +150,7 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
   const cost max_score = BIG / most_splits;
   
   cost** score = new cost*[most_splits];
-  for (int16 i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
+  for (int16 i = 0; i != most_splits; i++) score[i] = new cost[most_splits];
   
   for (int16 ai = 0; ai != a.n_splits; ai++) {
     for (int16 bi = 0; bi != b.n_splits; bi++) {
@@ -166,7 +166,7 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
     }
   }
   for (int16 ai = a.n_splits; ai < most_splits; ai++) {
-    for (int16 bi = 0; bi < most_splits; bi++) {
+    for (int16 bi = 0; bi != most_splits; bi++) {
       score[ai][bi] = max_score;
     }
   }
@@ -178,13 +178,16 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
   
   NumericVector final_score = NumericVector::create(
     lap(most_splits, score, rowsol, colsol, u, v) - (max_score * split_diff));
-  for (int16 i = 0; i < most_splits; i++) delete[] score[i];
+  
+  for (int16 i = 0; i != most_splits; i++) delete[] score[i];
   delete[] u; delete[] v; delete[] colsol; delete[] score;
+  
   NumericVector final_matching (most_splits);
   
-  for (int16 i = 0; i < most_splits; i++) {
+  for (int16 i = 0; i != most_splits; i++) {
     final_matching[i] = rowsol[i] + 1;
   }
+  
   delete[] rowsol;
   
   return List::create(Named("score") = final_score,
