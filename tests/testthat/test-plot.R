@@ -5,9 +5,10 @@ context("plot.R")
 
 test_that('TreeDistPlot works', {
   tr <- PectinateTree(1:11)
+  tr$edge.width <- rep(1:2, 10)
   Test1 <- function () {
     TreeDist::TreeDistPlot(tr, title='Test', 
-                         bold=c(2, 4, 6),
+                         bold = c(2, 4, 6),
                          leaveRoom = TRUE,
                          prune = 1, graft = 10)
   }
@@ -99,17 +100,17 @@ test_that('VisualizeMatching works', {
     tree1 <- ape::read.tree(text = '((1, 2), (3, 4, 5, 6, 7, 8));')
     tree2 <- ape::read.tree(text = '((1, 2, 3), (4, 5, 6, 7, 8));')
     VisualizeMatching(RobinsonFouldsMatching, tree1, tree2,
-                      setPar = FALSE, precision = 3,
+                      setPar = FALSE,
                       Plot = TreeDistPlot,
                       matchZeros = TRUE,
                       plainEdges = TRUE,
                       edge.width = NULL,
                       leaveRoom = FALSE)
     VisualizeMatching(RobinsonFouldsMatching, tree2, tree1,
-                      setPar = FALSE, precision = 3,
+                      setPar = FALSE,
                       Plot = TreeDistPlot,
                       matchZeros = FALSE,
-                      plainEdges = TRUE,
+                      plainEdges = FALSE,
                       leaveRoom = FALSE)
   })
   

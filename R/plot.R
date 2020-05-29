@@ -152,10 +152,10 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
       }
       if (any(scores < 0)) {
         par(origPar) # Restore original parameters before exit
-        stop ('Negative scores not supported')
+        stop('Negative scores not supported')                                   # nocov
       }
-      if (max(scores) == 0) return (scores)
-      if (min(scores) == max(scores)) return (rep(1L, length(scores)))
+      if (max(scores) == 0) return(scores)
+      if (min(scores) == max(scores)) return(rep(1L, length(scores)))
       
       scores / max(scores)
     }
