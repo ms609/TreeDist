@@ -216,32 +216,27 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
     }
     b_compl[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
-  
-  int16 
-    a_tips,
-    a_and_b, a_and_B, A_and_b, A_and_B,
-    a_or_b,  a_or_B,  A_or_b,  A_or_B
-  ;
-  double 
-    ars_ab, ars_aB, ars_Ab, ars_AB,
-    min_ars_both, min_ars_either
-  ;
+
   bool prohibit_conflict = coherent[0];
   
   cost** score = new cost*[most_splits];
   for (int16 i = 0; i != most_splits; i++) score[i] = new cost[most_splits];
   
   for (int16 ai = 0; ai != a.n_splits; ai++) {
-    a_tips = 0;
+    
+    int16 a_tips = 0;
+    
     for (int16 bin = 0; bin != a.n_bins; bin++) {
       a_tips += count_bits(a.state[ai][bin]);
     }
     
     for (int16 bi = 0; bi != b.n_splits; bi++) {
       
-      a_and_b = 0;
-      a_and_B = 0;
-      a_or_B = 0;
+      int16 
+        a_and_b = 0,
+        a_and_B = 0,
+        a_or_B = 0
+      ;
       
       for (int16 bin = 0; bin != a.n_bins; bin++) {
         a_and_b += count_bits(a.state[ai][bin] & b.state[bi][bin]);
@@ -249,11 +244,13 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
         a_or_B  += count_bits(a.state[ai][bin] | b_compl[bi][bin]);
       }
       
-      A_or_B  = n_tips - a_and_b;
-      A_and_b = n_tips - a_or_B;
-      A_or_b  = n_tips - a_and_B;
-      a_or_b  = a_and_b + a_and_B + A_and_b;
-      A_and_B = n_tips - a_or_b;
+      const int16
+        A_or_B  = n_tips - a_and_b,
+        A_and_b = n_tips - a_or_B,
+        A_or_b  = n_tips - a_and_B,
+        a_or_b  = a_and_b + a_and_B + A_and_b,
+        A_and_B = n_tips - a_or_b
+      ;
       
       if (prohibit_conflict && !(
             a_and_b == a_tips ||
@@ -262,24 +259,26 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
             A_and_B == n_tips - a_tips)
           ) {
         
-        score[ai][bi] = max_score; /* Prohibit non-arboreal matching */
+        score[ai][bi] = max_score; /* Prohibit non-coherent matching */
         
       } else {
         
-        ars_ab = (double) a_and_b / (double) a_or_b;
-        ars_Ab = (double) A_and_b / (double) A_or_b;
-        ars_aB = (double) a_and_B / (double) a_or_B;
-        ars_AB = (double) A_and_B / (double) A_or_B;
-        
-        min_ars_both = (ars_ab < ars_AB) ? ars_ab : ars_AB;
-        min_ars_either = (ars_aB < ars_Ab) ? ars_aB : ars_Ab;
+        const double 
+          ars_ab = double(a_and_b) / double(a_or_b),
+          ars_Ab = double(A_and_b) / double(A_or_b),
+          ars_aB = double(a_and_B) / double(a_or_B),
+          ars_AB = double(A_and_B) / double(A_or_B),
+          
+          min_ars_both = (ars_ab < ars_AB) ? ars_ab : ars_AB,
+          min_ars_either = (ars_aB < ars_Ab) ? ars_aB : ars_Ab
+        ;
         
         /* LAP will look to minimize an integer. max(ars) is between 0 and 1. */
         if (exponent == 1) {
           /* Nye et al. similarity metric */
           score[ai][bi] = cost(max_scoreL - (max_scoreL * 
-          ((min_ars_both > min_ars_either) ? 
-          min_ars_both : min_ars_either)));
+            ((min_ars_both > min_ars_either) ? 
+            min_ars_both : min_ars_either)));
         } else {
           score[ai][bi] = cost(max_scoreL - (max_scoreL * 
             std::pow((min_ars_both > min_ars_either) ? 
