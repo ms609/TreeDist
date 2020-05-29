@@ -412,33 +412,36 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   
   splitbit b_compl[MAX_SPLITS][MAX_BINS];
   for (int16 i = 0; i != b.n_splits; i++) {
-    for (int16 bin = 0; bin < last_bin; bin++) {
+    for (int16 bin = 0; bin != last_bin; bin++) {
       b_compl[i][bin] = ~b.state[i][bin];
     }
     b_compl[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
   cost** score = new cost*[most_splits];
-  for (int16 i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
+  for (int16 i = 0; i != most_splits; i++) score[i] = new cost[most_splits];
   
-  int16 a_and_b, a_and_B, A_and_b, A_and_B,
-               na, nA, nb, nB;
   for (int16 ai = 0; ai != a.n_splits; ai++) {
     for (int16 bi = 0; bi != b.n_splits; bi++) {
-      a_and_b = 0;
-      a_and_B = 0;
-      A_and_b = n_tips;
+      int16 
+        a_and_b = 0,
+        a_and_B = 0,
+        A_and_b = n_tips
+      ;
       for (int16 bin = 0; bin != a.n_bins; bin++) {
         a_and_b += count_bits(a.state[ai][bin] & b.state[bi][bin]);
         a_and_B += count_bits(a.state[ai][bin] & b_compl[bi][bin]);
         A_and_b -= count_bits(a.state[ai][bin] | b_compl[bi][bin]);
       }
-      A_and_B = n_tips - (a_and_b + a_and_B + A_and_b);
       
-      na = a_and_b + a_and_B;
-      nA = A_and_b + A_and_B;
-      nb = a_and_b + A_and_b;
-      nB = a_and_B + A_and_B;
+      const int16
+        A_and_B = n_tips - (a_and_b + a_and_B + A_and_b),
+          
+        na = a_and_b + a_and_B,
+        nA = A_and_b + A_and_B,
+        nb = a_and_b + A_and_b,
+        nB = a_and_B + A_and_B
+      ;
       
       score[ai][bi] = (cost)(max_score * (1L - ((
         ic_element(a_and_b, na, nb, n_tips) +
@@ -452,7 +455,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     }
   }
   for (int16 ai = a.n_splits; ai < most_splits; ai++) {
-    for (int16 bi = 0; bi < most_splits; bi++) {
+    for (int16 bi = 0; bi != most_splits; bi++) {
       score[ai][bi] = max_score;
     }
   }
@@ -464,19 +467,20 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   NumericVector final_score = NumericVector::create(
     double((max_score * most_splits) -
       lap(most_splits, score, rowsol, colsol, u, v)) / max_score);
-  for (int16 i = 0; i < most_splits; i++) delete[] score[i];
+  
+  for (int16 i = 0; i != most_splits; i++) delete[] score[i];
   delete[] colsol; delete[] u; delete[] v; delete[] score;
   
   NumericVector final_matching (most_splits);
   for (int16 i = 0; i != most_splits; i++) {
     final_matching[i] = rowsol[i] + 1;
   }
+  
   delete[] rowsol;
   
-  List ret = List::create(Named("score") = final_score,
-                          _["matching"] = final_matching);
+  return List::create(Named("score") = final_score,
+                      _["matching"] = final_matching);
   
-  return (ret);
 }
 
 // [[Rcpp::export]]
@@ -508,7 +512,7 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   }
   
   cost** score = new cost*[most_splits];
-  for (int16 i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
+  for (int16 i = 0; i != most_splits; i++) score[i] = new cost[most_splits];
   
   for (int16 ai = 0; ai != a.n_splits; ai++) {
     for (int16 bi = 0; bi != b.n_splits; bi++) {
@@ -521,7 +525,7 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
     }
   }
   for (int16 ai = a.n_splits; ai < most_splits; ai++) {
-    for (int16 bi = 0; bi < most_splits; bi++) {
+    for (int16 bi = 0; bi != most_splits; bi++) {
       score[ai][bi] = max_score;
     }
   }
@@ -533,21 +537,22 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   NumericVector final_score = NumericVector::create(
     (double) ((max_score * most_splits) - lap(most_splits, score, rowsol, colsol, u, v))
     * max_possible / max_score);
+  
   delete[] u; delete[] v; delete[] colsol;
+  
   NumericVector final_matching (most_splits);
   
-  
-  for (int16 i = 0; i < most_splits; i++) delete[] score[i];
+  for (int16 i = 0; i != most_splits; i++) delete[] score[i];
   delete[] score;
   
-  for (int16 i = 0; i < most_splits; i++) {
+  for (int16 i = 0; i != most_splits; i++) {
     final_matching[i] = rowsol[i] + 1;
   }
+  
   delete[] rowsol;
   
-  List ret = List::create(Named("score") = final_score,
-                          _["matching"] = final_matching);
-  
-  return (ret);
+  return List::create(Named("score") = final_score,
+                      _["matching"] = final_matching);
+
 }
  
