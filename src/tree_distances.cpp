@@ -292,7 +292,7 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
     }
   }
   for (int16 ai = a.n_splits; ai < most_splits; ai++) {
-    for (int16 bi = 0; bi < most_splits; bi++) {
+    for (int16 bi = 0; bi != most_splits; bi++) {
       score[ai][bi] = max_score;
     }
   }
