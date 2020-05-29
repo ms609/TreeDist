@@ -194,15 +194,17 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
 // [[Rcpp::export]]
 List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
                              const IntegerVector nTip, const NumericVector k,
-                             const LogicalVector arboreal) {
+                             const LogicalVector coherent) {
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   const SplitList a(x), b(y);
-  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
+  const int16
+    most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     last_bin = a.n_bins - 1,
     n_tips = nTip[0],
-    unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
+    unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0
+  ;
   const cost max_score = BIG;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   const double exponent = k[0], max_scoreL = max_score;
@@ -215,15 +217,19 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
     b_compl[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
-  int16 a_tips,
-  a_and_b, a_and_B, A_and_b, A_and_B,
-  a_or_b,  a_or_B,  A_or_b,  A_or_B;
-  double ars_ab, ars_aB, ars_Ab, ars_AB,
-  min_ars_both, min_ars_either;
-  bool enforce_arboreal = arboreal[0];
+  int16 
+    a_tips,
+    a_and_b, a_and_B, A_and_b, A_and_B,
+    a_or_b,  a_or_B,  A_or_b,  A_or_B
+  ;
+  double 
+    ars_ab, ars_aB, ars_Ab, ars_AB,
+    min_ars_both, min_ars_either
+  ;
+  bool prohibit_conflict = coherent[0];
   
   cost** score = new cost*[most_splits];
-  for (int16 i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
+  for (int16 i = 0; i != most_splits; i++) score[i] = new cost[most_splits];
   
   for (int16 ai = 0; ai != a.n_splits; ai++) {
     a_tips = 0;
@@ -232,25 +238,29 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
     }
     
     for (int16 bi = 0; bi != b.n_splits; bi++) {
+      
       a_and_b = 0;
       a_and_B = 0;
       a_or_B = 0;
+      
       for (int16 bin = 0; bin != a.n_bins; bin++) {
         a_and_b += count_bits(a.state[ai][bin] & b.state[bi][bin]);
         a_and_B += count_bits(a.state[ai][bin] & b_compl[bi][bin]);
         a_or_B  += count_bits(a.state[ai][bin] | b_compl[bi][bin]);
       }
+      
       A_or_B  = n_tips - a_and_b;
       A_and_b = n_tips - a_or_B;
       A_or_b  = n_tips - a_and_B;
       a_or_b  = a_and_b + a_and_B + A_and_b;
       A_and_B = n_tips - a_or_b;
       
-      if (enforce_arboreal && !(
-          a_and_b == a_tips ||
+      if (prohibit_conflict && !(
+            a_and_b == a_tips ||
             a_and_B == a_tips ||
             A_and_b == n_tips - a_tips ||
-            A_and_B == n_tips - a_tips)) {
+            A_and_B == n_tips - a_tips)
+          ) {
         
         score[ai][bi] = max_score; /* Prohibit non-arboreal matching */
         
