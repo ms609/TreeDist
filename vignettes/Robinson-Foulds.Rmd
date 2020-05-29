@@ -307,10 +307,10 @@ The split `ABCDEF|GHI` in the left-hand tree is paired with the split
 `ABCDEFI|GH` in the right-hand tree.  Had `ABCDEF|GHI` been available in the 
 right-hand tree, then this perfect match would have been assigned a similarity 
 of `SplitInformation(3, 6)` = 5.57&nbsp;bits.  The partial match is instead 
-allocated a lower score of 2.12&nbsp;bits.  Non-arboreal pairings -- pairs of
-clades that cannot exist on a single tree, such as `ABCDEFG|HI` - `ABCDFGH|EI` 
+allocated a lower score of 2.12&nbsp;bits.  Contradictory pairings -- pairs of
+splits that cannot exist on a single tree, such as `ABCDEFG|HI` - `ABCDFGH|EI` 
 -- have no phylogenetic information in common.  (If it is permissible to 
-acknowledge similarity between non-arboreal pairings, 
+acknowledge similarity between contradictory splits, 
 [clustering information](information.html) is an alternative way to think
 about split similarity.)
 

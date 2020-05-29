@@ -13,8 +13,8 @@ VisualizeMatching(
   Plot = plot.phylo,
   matchZeros = TRUE,
   plainEdges = FALSE,
-  edge.width = NULL,
-  edge.color = NULL,
+  edge.width = 1,
+  edge.color = "black",
   ...
 )
 }

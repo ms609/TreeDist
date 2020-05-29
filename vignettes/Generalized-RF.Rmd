@@ -42,16 +42,16 @@ VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2,
 SharedPhylogeneticInfo(tree1, tree2)
 ```
 
-### The problem with arboreal matchings
+### The problem with coherent matchings
 
-Shared phylogenetic information is an arboreal similarity score: that is to
-say, it assigns zero similarity to splits that cannot both occur on a 
+Shared phylogenetic information prohibits the pairing of contradictory splits: 
+that is, it assigns zero similarity to splits that cannot both occur on a 
 single tree.  
 This leads to problematic behaviour in certain cases: for example,
 when the position of two distant taxa is swapped, similarities within a tree can
 be obscured.  
 The two trees below are identical but for the position of _A_ and
-_J_, yet receive zero similarity under arboreal metrics.
+_J_, yet receive zero similarity under coherent metrics.
 
 ```{r, fig.width=6 , fig.align='center'}
 VisualizeMatching(SharedPhylogeneticInfo, matchZeros = FALSE, AtoJ, AotJ,
@@ -62,9 +62,9 @@ VisualizeMatching(SharedPhylogeneticInfo, matchZeros = FALSE, AtoJ, AotJ,
 
 Scoring each pair of splits according to their mutual clustering information
 [@SmithDist]  (see [separate vignette](information.html)) results in a
-non-arboreal information-based tree distance metric that, as desired, assigns a
+non-coherent information-based tree distance metric that, as desired, assigns a
 non-zero similarity to the case that received zero similarity under an
-arboreal matching:
+coherent matching:
 
 ```{r, fig.width=6 , fig.align='center'}
 VisualizeMatching(MutualClusteringInfo, AtoJ, AotJ, matchZeros = FALSE, 
@@ -133,7 +133,7 @@ NyeTreeSimilarity(tree1, tree2, normalize=FALSE)
 
 B&ouml;cker _et al_. [-@Bocker2013] propose expressly prohibiting contradictory
 pairings, i.e. pairs of splits that could never occur in the same tree.
-Such an 'arboreal' matching would preclude the pairing of `ABCFGHI|DE` with
+Such a 'coherent' matching would preclude the pairing of `ABCFGHI|DE` with
 `ABCDFGH|EI`:
 
 ```{r, fig.width=6 , fig.align='center'}
@@ -163,11 +163,11 @@ abline(h = NyeTreeSimilarity(tree1, tree2, similarity = FALSE),
        lty = 'dotted', col = cbPalette8[8])
 
 lines(x = x, y = vapply(x, JaccardRobinsonFoulds, tree1 = tree1, tree2 = tree2,
-                        arboreal = FALSE, 0), col = cbPalette8[5])
+                        coherent = FALSE, 0), col = cbPalette8[5])
 lines(x = x, y = vapply(x, JaccardRobinsonFoulds, tree1 = tree1, tree2 = tree2,
                         0), col = cbPalette8[4])
 
-legend('right', c('Robinson-Foulds', 'Arboreal', 'Non-arboreal', 'Nye et al.'),
+legend('right', c('Robinson-Foulds', 'Coherent', 'Non-coherent', 'Nye et al.'),
        lty = c('dashed', 'solid', 'solid', 'dotted'), 
        col = cbPalette8[c(6, 4, 5, 8)], bty = 'n')
 ```

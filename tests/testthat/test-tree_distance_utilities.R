@@ -146,8 +146,8 @@ test_that('Matches are reported', {
   
   Test(NyeTreeSimilarity)
   Test(MatchingSplitDistance)
-  Test(JaccardRobinsonFoulds, k = 2, arboreal = FALSE)
-  Test(JaccardRobinsonFoulds, k = 2, arboreal = TRUE)
+  Test(JaccardRobinsonFoulds, k = 2, coherent = FALSE)
+  Test(JaccardRobinsonFoulds, k = 2, coherent = TRUE)
   Test(RobinsonFoulds, relaxed = TRUE)
   Test(InfoRobinsonFoulds, relaxed = TRUE)
 
@@ -190,8 +190,8 @@ test_that('Matchings are calculated in both directions', {
   Test(ClusteringInfoDistance)
   
   Test(NyeTreeSimilarity)
-  Test(JaccardRobinsonFoulds, k = 2, arboreal = FALSE)
-  Test(JaccardRobinsonFoulds, k = 2, arboreal = TRUE)
+  Test(JaccardRobinsonFoulds, k = 2, coherent = FALSE)
+  Test(JaccardRobinsonFoulds, k = 2, coherent = TRUE)
   Test(MatchingSplitDistance)
   
   nMatches <- 1L

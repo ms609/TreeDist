@@ -116,7 +116,7 @@ test_that('VisualizeMatching works', {
   
   expect_doppelganger('VM matchZeros FALSE', function () {
     JRF2 <- function (tree1, tree2, ...) 
-      JaccardRobinsonFoulds(tree1, tree2, k = 2, arboreal = TRUE, ...)
+      JaccardRobinsonFoulds(tree1, tree2, k = 2, coherent = TRUE, ...)
     
     tree1 <- EnforceOutgroup(as.phylo(704564, 10), paste0('t', c(1,4,5,8,9)))
     tree2 <- EnforceOutgroup(as.phylo(20165 , 10), paste0('t', c(1,4)))

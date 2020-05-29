@@ -17,7 +17,7 @@
 #' 
 #' Note that `NyeTreeSimilarity(tree1, tree2)` is equivalent to, but 
 #' slightly faster than, \code{\link{JaccardRobinsonFoulds}
-#' (tree1, tree2, k = 1, arboreal = FALSE)}.
+#' (tree1, tree2, k = 1, coherent = FALSE)}.
 #'  
 #' @inheritParams RobinsonFoulds
 #' @param normalizeMax When calculating similarity, normalize against the 
@@ -95,7 +95,7 @@ NyeSplitSimilarity <- function (splits1, splits2,
                                 nTip = attr(splits1, 'nTip'),
                                 reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, nTip, cpp_jaccard_similarity, k = 1L,
-                arboreal = FALSE, maximize = TRUE,
+                coherent = FALSE, maximize = TRUE,
                 reportMatching = reportMatching)
 }
 
@@ -115,9 +115,9 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' A more detailed explanation is provided in the 
 #' [vignettes](https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric).
 #' 
-#' By default, arboreal matchings are enforced. 
+#' By default, coherent matchings are enforced. 
 #' 
-#' Note that the settings `k = 1, arboreal = FALSE, similarity = TRUE`
+#' Note that the settings `k = 1, coherent = FALSE, similarity = TRUE`
 #' give the similarity metric of Nye _et al_. (2006); a slightly faster
 #' implementation of this metric is available as [`NyeTreeSimilarity`].
 #' 
@@ -129,9 +129,9 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' Integer values greater than one are anticipated by B&ouml;cker _et al_.
 #' The Nye _et al_. metric uses `k = 1`.
 #' As k &rarr; &infin;, the metric converges to the Robinson-Foulds metric.
-#' @param arboreal Logical specifying whether to enforce arboreal matches, by
-#' assigning zero similarity to contradictory pairs of splits on an 
-#' _ad hoc_ basis.
+#' @param coherent Logical specifying whether to enforce coherent matches, by
+#' assigning zero similarity to contradictory split pairings s on an _ad hoc_
+#' basis.
 #' 
 #' @section Normalization:
 #' 
@@ -154,11 +154,11 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' set.seed(2)
 #' tree1 <- ape::rtree(10)
 #' tree2 <- ape::rtree(10)
-#' JaccardRobinsonFoulds(tree1, tree2, k = 2, arboreal = FALSE)
-#' JaccardRobinsonFoulds(tree1, tree2, k = 2, arboreal = TRUE)
+#' JaccardRobinsonFoulds(tree1, tree2, k = 2, coherent = FALSE)
+#' JaccardRobinsonFoulds(tree1, tree2, k = 2, coherent = TRUE)
 #' 
 #' JRF2 <- function (tree1, tree2, ...) 
-#'   JaccardRobinsonFoulds(tree1, tree2, k = 2, arboreal= TRUE, ...)
+#'   JaccardRobinsonFoulds(tree1, tree2, k = 2, coherent =  TRUE, ...)
 #'   
 #' VisualizeMatching(JRF2, tree1, tree2, matchZeros = FALSE)
 #' 
@@ -168,13 +168,13 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' @importFrom TreeTools NSplits
 #' @export
 JaccardRobinsonFoulds <- function (tree1, tree2 = tree1, k = 1L, 
-                                   arboreal = TRUE, similarity = FALSE,
+                                   coherent = TRUE, similarity = FALSE,
                                    normalize = FALSE, reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(JaccardSplitSimilarity, tree1, tree2, 
-                                        k = k, arboreal = arboreal, 
+                                        k = k, coherent = coherent, 
                                         reportMatching = reportMatching) * 2L
   if (!similarity) unnormalized <- 
-      outer(NSplits(tree1), NSplits(tree2), '+')[, , drop=TRUE] - unnormalized
+      outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE] - unnormalized
 
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
                 InfoInTree = NSplits, Combine = '+')
@@ -185,9 +185,9 @@ JaccardRobinsonFoulds <- function (tree1, tree2 = tree1, k = 1L,
 #' @export
 JaccardSplitSimilarity <- function (splits1, splits2,
                                     nTip = attr(splits1, 'nTip'),
-                                    k = 1L, arboreal = TRUE,
+                                    k = 1L, coherent = TRUE,
                                     reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, nTip, cpp_jaccard_similarity, k = k,
-                arboreal = arboreal, maximize = TRUE,
+                coherent = coherent, maximize = TRUE,
                 reportMatching = reportMatching)
 }
