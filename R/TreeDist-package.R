@@ -30,10 +30,11 @@
 #' 
 #'   + Smith (forthcoming) scores matchings based on the amount of information
 #'     that one partition contains about the other.  The Mutual Phylogenetic
-#'     Information imposes coherent matching: i.e. a pair of splits that cannot
-#'     both exist on a single tree are assigned zero similarity.  The Mutual 
-#'     Clustering Information metric is more forgiving, and exhibits more 
-#'     desirable behaviour; it is the recommended metric for tree comparison.
+#'     Information assigns zero similarity to splits that cannot both exist on a
+#'     single tree.
+#'     The Mutual Clustering Information metric is more forgiving, and thus 
+#'     exhibits more desirable behaviour; it is the recommended metric for tree
+#'     comparison.
 #'     (The corresponding
 #'     [`ClusteringInfoDistance`](https://ms609.github.io/TreeDist/reference/TreeDistance.html)
 #'     returns a tree distance.)

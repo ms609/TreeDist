@@ -195,7 +195,7 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
 // [[Rcpp::export]]
 List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
                              const IntegerVector nTip, const NumericVector k,
-                             const LogicalVector coherent) {
+                             const LogicalVector allowConflict) {
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
@@ -218,7 +218,7 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
     b_compl[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
 
-  bool prohibit_conflict = coherent[0];
+  bool allow_conflict = allowConflict[0];
   
   cost** score = new cost*[most_splits];
   for (int16 i = 0; i != most_splits; i++) score[i] = new cost[most_splits];
@@ -253,14 +253,14 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
         A_and_B = n_tips - a_or_b
       ;
       
-      if (prohibit_conflict && !(
+      if (!allow_conflict && !(
             a_and_b == a_tips ||
             a_and_B == a_tips ||
             A_and_b == n_tips - a_tips ||
             A_and_B == n_tips - a_tips)
           ) {
         
-        score[ai][bi] = max_score; /* Prohibit non-coherent matching */
+        score[ai][bi] = max_score; /* Prohibited */
         
       } else {
         

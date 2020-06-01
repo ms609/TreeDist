@@ -83,8 +83,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_jaccard_similarity
-List cpp_jaccard_similarity(const RawMatrix x, const RawMatrix y, const IntegerVector nTip, const NumericVector k, const LogicalVector coherent);
-RcppExport SEXP _TreeDist_cpp_jaccard_similarity(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP, SEXP kSEXP, SEXP coherentSEXP) {
+List cpp_jaccard_similarity(const RawMatrix x, const RawMatrix y, const IntegerVector nTip, const NumericVector k, const LogicalVector allowConflict);
+RcppExport SEXP _TreeDist_cpp_jaccard_similarity(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP, SEXP kSEXP, SEXP allowConflictSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -92,8 +92,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const RawMatrix >::type y(ySEXP);
     Rcpp::traits::input_parameter< const IntegerVector >::type nTip(nTipSEXP);
     Rcpp::traits::input_parameter< const NumericVector >::type k(kSEXP);
-    Rcpp::traits::input_parameter< const LogicalVector >::type coherent(coherentSEXP);
-    rcpp_result_gen = Rcpp::wrap(cpp_jaccard_similarity(x, y, nTip, k, coherent));
+    Rcpp::traits::input_parameter< const LogicalVector >::type allowConflict(allowConflictSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpp_jaccard_similarity(x, y, nTip, k, allowConflict));
     return rcpp_result_gen;
 END_RCPP
 }

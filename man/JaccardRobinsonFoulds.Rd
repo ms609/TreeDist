@@ -9,7 +9,7 @@ JaccardRobinsonFoulds(
   tree1,
   tree2 = tree1,
   k = 1L,
-  coherent = TRUE,
+  allowConflict = FALSE,
   similarity = FALSE,
   normalize = FALSE,
   reportMatching = FALSE
@@ -20,7 +20,7 @@ JaccardSplitSimilarity(
   splits2,
   nTip = attr(splits1, "nTip"),
   k = 1L,
-  coherent = TRUE,
+  allowConflict = FALSE,
   reportMatching = FALSE
 )
 }
@@ -36,9 +36,9 @@ Integer values greater than one are anticipated by Böcker \emph{et al}.
 The Nye \emph{et al}. metric uses \code{k = 1}.
 As k → ∞, the metric converges to the Robinson-Foulds metric.}
 
-\item{coherent}{Logical specifying whether to enforce coherent matches, by
-assigning zero similarity to contradictory split pairings s on an \emph{ad hoc}
-basis.}
+\item{allowConflict}{Logical specifying whether to allow conflicting splits
+to be paired. If \code{FALSE}, such pairings will be allocated a similarity
+score of zero.}
 
 \item{similarity}{Logical specifying whether to report the result as a tree
 similarity, rather than a difference.}
@@ -87,9 +87,9 @@ raised to an arbitrary exponent.
 A more detailed explanation is provided in the
 \href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric}{vignettes}.
 
-By default, coherent matchings are enforced.
+By default, conflicting splits will not be paired.
 
-Note that the settings \verb{k = 1, coherent = FALSE, similarity = TRUE}
+Note that the settings \verb{k = 1, allowConflict = TRUE, similarity = TRUE}
 give the similarity metric of Nye \emph{et al}. (2006); a slightly faster
 implementation of this metric is available as \code{\link{NyeTreeSimilarity}}.
 
@@ -111,11 +111,11 @@ present in a pair of trees with \emph{n} leaves, by specifying
 set.seed(2)
 tree1 <- ape::rtree(10)
 tree2 <- ape::rtree(10)
-JaccardRobinsonFoulds(tree1, tree2, k = 2, coherent = FALSE)
-JaccardRobinsonFoulds(tree1, tree2, k = 2, coherent = TRUE)
+JaccardRobinsonFoulds(tree1, tree2, k = 2, allowConflict = FALSE)
+JaccardRobinsonFoulds(tree1, tree2, k = 2, allowConflict = TRUE)
 
 JRF2 <- function (tree1, tree2, ...) 
-  JaccardRobinsonFoulds(tree1, tree2, k = 2, coherent =  TRUE, ...)
+  JaccardRobinsonFoulds(tree1, tree2, k = 2, allowConflict = FALSE, ...)
   
 VisualizeMatching(JRF2, tree1, tree2, matchZeros = FALSE)
 

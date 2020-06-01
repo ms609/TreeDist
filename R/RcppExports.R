@@ -25,8 +25,8 @@ cpp_matching_split_distance <- function(x, y, nTip) {
     .Call(`_TreeDist_cpp_matching_split_distance`, x, y, nTip)
 }
 
-cpp_jaccard_similarity <- function(x, y, nTip, k, coherent) {
-    .Call(`_TreeDist_cpp_jaccard_similarity`, x, y, nTip, k, coherent)
+cpp_jaccard_similarity <- function(x, y, nTip, k, allowConflict) {
+    .Call(`_TreeDist_cpp_jaccard_similarity`, x, y, nTip, k, allowConflict)
 }
 
 cpp_mmsi_distance <- function(x, y, nTip) {

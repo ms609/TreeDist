@@ -42,8 +42,9 @@ VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2,
 SharedPhylogeneticInfo(tree1, tree2)
 ```
 
-### The problem with coherent matchings
+### The problem with prohibiting conflicting pairings
 
+<!--TODO expand to expound arboreal matchings-->
 Shared phylogenetic information prohibits the pairing of contradictory splits: 
 that is, it assigns zero similarity to splits that cannot both occur on a 
 single tree.  
@@ -51,7 +52,7 @@ This leads to problematic behaviour in certain cases: for example,
 when the position of two distant taxa is swapped, similarities within a tree can
 be obscured.  
 The two trees below are identical but for the position of _A_ and
-_J_, yet receive zero similarity under coherent metrics.
+_J_, yet receive zero similarity if conflicting splits cannot be paired.
 
 ```{r, fig.width=6 , fig.align='center'}
 VisualizeMatching(SharedPhylogeneticInfo, matchZeros = FALSE, AtoJ, AotJ,
@@ -60,9 +61,10 @@ VisualizeMatching(SharedPhylogeneticInfo, matchZeros = FALSE, AtoJ, AotJ,
 
 ## Mutual clustering information
 
+<!--TODO REWRITE; coherent matching -> prohibit conflicting pairings -->
 Scoring each pair of splits according to their mutual clustering information
 [@SmithDist]  (see [separate vignette](information.html)) results in a
-non-coherent information-based tree distance metric that, as desired, assigns a
+ information-based tree distance metric that, as desired, assigns a
 non-zero similarity to the case that received zero similarity under an
 coherent matching:
 
@@ -131,6 +133,7 @@ NyeTreeSimilarity(tree1, tree2, normalize=FALSE)
 
 ### Jaccard-Robinson-Foulds metric
 
+<!--TODO REWRITE -- I'd misunderstood what an arboreal matching was -->
 B&ouml;cker _et al_. [-@Bocker2013] propose expressly prohibiting contradictory
 pairings, i.e. pairs of splits that could never occur in the same tree.
 Such a 'coherent' matching would preclude the pairing of `ABCFGHI|DE` with
@@ -140,7 +143,7 @@ Such a 'coherent' matching would preclude the pairing of `ABCFGHI|DE` with
 JaccardRobinsonFoulds(tree1, tree2, similarity = TRUE)
 
 VisualizeMatching(JaccardRobinsonFoulds, tree1, tree2,
-                  Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
+                  Plot = TreeDistPlot, leaveRoom = FALSE, matchZeros = FALSE)
 ```
 
 B&ouml;cker _et al_. [-@Bocker2013] also suggest raising the split 
@@ -163,11 +166,11 @@ abline(h = NyeTreeSimilarity(tree1, tree2, similarity = FALSE),
        lty = 'dotted', col = cbPalette8[8])
 
 lines(x = x, y = vapply(x, JaccardRobinsonFoulds, tree1 = tree1, tree2 = tree2,
-                        coherent = FALSE, 0), col = cbPalette8[5])
+                        allowConflict = TRUE, 0), col = cbPalette8[5])
 lines(x = x, y = vapply(x, JaccardRobinsonFoulds, tree1 = tree1, tree2 = tree2,
                         0), col = cbPalette8[4])
 
-legend('right', c('Robinson-Foulds', 'Coherent', 'Non-coherent', 'Nye et al.'),
+legend('right', c('Robinson-Foulds', 'JRF, no conflict', 'JRF, conflict ok', 'Nye et al.'),
        lty = c('dashed', 'solid', 'solid', 'dotted'), 
        col = cbPalette8[c(6, 4, 5, 8)], bty = 'n')
 ```

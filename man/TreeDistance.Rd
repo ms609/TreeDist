@@ -231,8 +231,9 @@ DifferentPhylogeneticInfo(tree2, tree1) # The metric is symmetric
 # Are they more similar than two trees of this shape would be by chance?
 ExpectedVariation(tree1, tree2, sample=12)['DifferentPhylogeneticInfo', 'Estimate']
 
-# Every split in tree1 is contradicted by every split in tree3
-# Non-arboreal matches contain clustering, but not phylogenetic, information
+# Every split in tree1 conflicts with every split in tree3
+# Pairs of conflicting splits contain clustering, but not phylogenetic, 
+# information
 SharedPhylogeneticInfo(tree1, tree3) # = 0
 MutualClusteringInfo(tree1, tree3) # > 0
 

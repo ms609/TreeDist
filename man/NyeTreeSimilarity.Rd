@@ -85,7 +85,7 @@ This ensures consistency with \code{JaccardRobinsonFoulds}.
 
 Note that \code{NyeTreeSimilarity(tree1, tree2)} is equivalent to, but
 slightly faster than, \code{\link{JaccardRobinsonFoulds}
-(tree1, tree2, k = 1, coherent = FALSE)}.
+(tree1, tree2, k = 1, allowConflict = TRUE)}.
 }
 \section{Normalization}{
 

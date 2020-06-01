@@ -433,7 +433,7 @@ test_that('NyeTreeSimilarity is correctly calculated', {
 test_that('Jaccard RF extremes tend to equivalent functions', {
   expect_equal(JaccardRobinsonFoulds(treeSym8, list(treeBal8, treeSym8),
                                      similarity = TRUE, k = 1L,
-                                     coherent = FALSE),
+                                     allowConflict = TRUE),
                NyeTreeSimilarity(treeSym8, list(treeBal8, treeSym8)) * 2L)
   
   expect_equal(JaccardRobinsonFoulds(treeSym8, list(treeBal8, treeSym8),
@@ -465,8 +465,8 @@ test_that('Jaccard RF is correctly calculated', {
             JaccardRobinsonFoulds(treeSym8, treeOpp8, k = 2))
   expect_lt(JaccardRobinsonFoulds(treeSym8, treeBal8, k = 3L),
             JaccardRobinsonFoulds(treeSym8, treeBal8, k = 4L))
-  expect_lt(JaccardRobinsonFoulds(treeCat8, treeTac8, coherent = FALSE),
-            JaccardRobinsonFoulds(treeCat8, treeTac8, coherent = TRUE))
+  expect_lt(JaccardRobinsonFoulds(treeCat8, treeTac8, allowConflict = TRUE),
+            JaccardRobinsonFoulds(treeCat8, treeTac8, allowConflict = FALSE))
   
   expect_equal(0, JaccardRobinsonFoulds(BalancedTree(64), BalancedTree(64)))
   expect_lt(0, JaccardRobinsonFoulds(BalancedTree(64), PectinateTree(64)))
