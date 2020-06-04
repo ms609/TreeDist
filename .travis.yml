@@ -7,7 +7,7 @@ r_build_args: '--compact-vignettes="gs+qpdf"'
 r_check_args: --as-cran --no-manual # Workaround error compiling PDF manual
 jobs:
   include:
-    - r: 3.5.0 # TreeSearch requires > 3.5.0
+    - r: 3.6.0 # phangorn requires > 3.6.0
     - r: release
       before_deploy: Rscript -e 'remotes::install_cran("pkgdown")'
       #r_binary_packages:
