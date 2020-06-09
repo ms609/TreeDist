@@ -87,7 +87,7 @@ test_that('Matches are reported', {
   splits1 <- as.Splits(treeSym8)
   splits2 <- as.Splits(treeBal8)
   
-  matchedSplits <- match.Splits(splits1, splits2)
+  matchedSplits <- match(splits1, splits2)
   cs <- CompatibleSplits(splits1, splits2)
   cs[, matchedSplits] <- FALSE
   unmatched <- is.na(matchedSplits)
@@ -113,7 +113,7 @@ test_that('Matches are reported', {
     splits1 <- as.Splits(tree1)
     splits2 <- as.Splits(tree2, tree1)
     
-    matchedSplits <- match.Splits(splits1, splits2)
+    matchedSplits <- match(splits1, splits2)
     if (relaxed) {
       expect_equal(matchedSplits[!is.na(matchedSplits)],
                    as.integer(at$matching[c(1, 3, 5)]))
@@ -126,13 +126,13 @@ test_that('Matches are reported', {
       expect_equal(matchedSplits, as.integer(at$matching))
     }
     ghSplit <- at$matchedSplits[
-      match.Splits(as.Splits(c(rep(FALSE, 6), TRUE, TRUE), letters[1:8]),
-                   splits1[[which(!is.na(matchedSplits))]])]
+      match(as.Splits(c(rep(FALSE, 6), TRUE, TRUE), letters[1:8]),
+            splits1[[which(!is.na(matchedSplits))]])]
     expect_equal('g h | a b c d e f => g h | a b c d e f', ghSplit)
     
     at <- attributes(Func(treeSym8, treeTwoSplits, reportMatching = TRUE, ...))
     expect_equal(3L, length(at))
-    expect_equal(match.Splits(as.Splits(treeSym8), as.Splits(treeTwoSplits, treeSym8)),
+    expect_equal(match(as.Splits(treeSym8), as.Splits(treeTwoSplits, treeSym8)),
                  as.integer(at$matching))
     expect_equal('a b | e f g h c d => a b | e f g h c d', at$matchedSplits[2])
   }

@@ -34,7 +34,7 @@ Imports:
   colorspace,
   memoise,
   phangorn (>= 2.2.1),
-  TreeTools (> 0.1.4)
+  TreeTools (>= 1.0.0)
 Suggests:
   bookdown,
   cluster,
@@ -50,7 +50,6 @@ Suggests:
   TreeSearch,
   vdiffr
 Remotes:
-  ms609/TreeTools,
   ms609/TreeDistData
 RdMacros: Rdpack
 LazyData: true
