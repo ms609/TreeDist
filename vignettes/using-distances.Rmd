@@ -57,7 +57,7 @@ As such, the maximum similarity possible between two 11-leaf trees is
 Normalizing against this value tells us how similar the two trees are, compared
 to two identical eleven-leaf binary trees; this is the default
 normalization method for
-[`NyeTreeSimilarity`](reference/NyeTreeSimilarity.html).
+[`NyeTreeSimilarity()`](../reference/NyeTreeSimilarity.html).
 
 ```{r}
 NyeTreeSimilarity(tree1, tree2, normalize = FALSE) / 8
