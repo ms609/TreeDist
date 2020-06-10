@@ -128,7 +128,8 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' @param k An arbitrary exponent to which to raise the Jaccard index.
 #' Integer values greater than one are anticipated by B&ouml;cker _et al_.
 #' The Nye _et al_. metric uses `k = 1`.
-#' As k &rarr; &infin;, the metric converges to the Robinson-Foulds metric.
+#' As k increses towards infinity, the metric converges to the Robinson-Foulds
+#' metric.
 #' @param allowConflict Logical specifying whether to allow conflicting splits
 #' to be paired. If `FALSE`, such pairings will be allocated a similarity
 #' score of zero.
