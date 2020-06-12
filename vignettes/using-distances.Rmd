@@ -124,8 +124,8 @@ than expected by chance, whereas a distance of zero denotes identity.
 With the quartet divergence, the expected tree distance is readily calculated:
 any given quartet has a one in three chance of matching by chance.
 
-```{r, message=FALSE}
-library('Quartet')
+```{r}
+library('Quartet', exclude = 'RobinsonFoulds')
 expectedQD <- 2 / 3
 normalizedQD <- QuartetDivergence(QuartetStatus(tree1, tree2),
                                   similarity = FALSE) / expectedQD
@@ -216,7 +216,7 @@ resolved may be no better than less-resolved trees if the addition of
 resolution introduces error.
 
 ```{r, fig.width=4, fig.align='center', fig.asp=1, out.width='50%'}
-if (require('Ternary')) {
+if (require('Ternary', quietly = TRUE)) {
   par(mar=rep(0.1, 4))
   TernaryPlot(atip=NULL, btip=NULL, ctip=NULL,
               alab='Absent information', blab='Shared information', clab='Misinformation',
