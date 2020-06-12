@@ -131,8 +131,8 @@
 <h2 class="hasAnchor">
 <a href="#loading-trees" class="anchor"></a>Loading trees</h2>
 <p>Instructions for loading phylogenetic trees into R can be found in a <a href="https://ms609.github.io/TreeTools/articles/load-trees.html">separate vignette</a>. For these examples, we’ll enter two simple trees by hand:</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="no">tree1</span> <span class="kw">&lt;-</span> <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="kw">text</span><span class="kw">=</span><span class="st">'(A, ((B, (C, (D, E))), ((F, G), (H, I))));'</span>)
-<span class="no">tree2</span> <span class="kw">&lt;-</span> <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="kw">text</span><span class="kw">=</span><span class="st">'(A, ((B, (C, (D, (H, I)))), ((F, G), E)));'</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="no">tree1</span> <span class="kw">&lt;-</span> <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="kw">text</span> <span class="kw">=</span> <span class="st">'(A, ((B, (C, (D, E))), ((F, G), (H, I))));'</span>)
+<span class="no">tree2</span> <span class="kw">&lt;-</span> <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="kw">text</span> <span class="kw">=</span> <span class="st">'(A, ((B, (C, (D, (H, I)))), ((F, G), E)));'</span>)</pre></body></html></div>
 </div>
 <div id="calculating-distances" class="section level2">
 <h2 class="hasAnchor">
@@ -158,16 +158,16 @@
 <p>If you have more than two trees to compare, you can send a list of trees (class: <code>list</code> or <code>multiPhylo</code>) to the distance comparison function. The function will then calculate the distance between each tree in the first list and each tree in the second.</p>
 <div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">oneTree</span> <span class="kw">&lt;-</span> <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span>(<span class="fl">11</span>)
 <span class="no">twoTrees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/structure.html">structure</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">one</span> <span class="kw">=</span> <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span>(<span class="fl">11</span>), <span class="kw">two</span> <span class="kw">=</span> <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span>(<span class="fl">11</span>)),
-                      <span class="kw">class</span><span class="kw">=</span><span class="st">'multiPhylo'</span>)
+                      <span class="kw">class</span> <span class="kw">=</span> <span class="st">'multiPhylo'</span>)
 <span class="no">threeTrees</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="kw">a</span> <span class="kw">=</span> <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span>(<span class="fl">11</span>), <span class="kw">b</span> <span class="kw">=</span> <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span>(<span class="fl">11</span>), <span class="kw">c</span> <span class="kw">=</span> <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span>(<span class="fl">11</span>))
 
 <span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span>(<span class="no">oneTree</span>, <span class="no">twoTrees</span>)</pre></body></html></div>
 <pre><code>##       one       two 
-## 0.1960493 0.2161941</code></pre>
+## 0.1587852 0.1110952</code></pre>
 <div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span>(<span class="no">twoTrees</span>, <span class="no">threeTrees</span>)</pre></body></html></div>
 <pre><code>##             a         b         c
-## one 0.2336841 0.1733751 0.2023207
-## two 0.2605062 0.3764286 0.1571036</code></pre>
+## one 0.2038830 0.2790580 0.2193814
+## two 0.2650717 0.1735861 0.1520035</code></pre>
 </div>
 </div>
 <div id="visualizing-a-matching" class="section level2">
@@ -212,7 +212,7 @@ Each split is labelled with a measure of its similarity, which is its contributi
 <span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">tree2</span>)
 <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/nodelabels.html">nodelabels</a></span>()
 <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/nodelabels.html">nodelabels</a></span>(<span class="no">splits</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">splits</span>)),
-                <span class="kw">adj</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1.1</span>, -<span class="fl">0.2</span>), <span class="kw">cex</span><span class="kw">=</span><span class="fl">0.8</span>, <span class="kw">frame</span><span class="kw">=</span><span class="st">'none'</span>)</pre></body></html></div>
+                <span class="kw">adj</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1.1</span>, -<span class="fl">0.2</span>), <span class="kw">cex</span> <span class="kw">=</span> <span class="fl">0.8</span>, <span class="kw">frame</span> <span class="kw">=</span> <span class="st">'none'</span>)</pre></body></html></div>
 <p><img src="Using-TreeDist_files/figure-html/named-splits-1.png" width="80%" style="display: block; margin: auto;"></p>
 </div>
 <div id="what-next" class="section level2">
