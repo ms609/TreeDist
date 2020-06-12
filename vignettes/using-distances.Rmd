@@ -263,7 +263,7 @@ library('TreeSearch') # for TBR, NNI
 oneAway <- structure(lapply(seq_len(200), function (x) {
   tbrTree <- TBR(trueTree)
   ape::consensus(list(tbrTree, NNI(tbrTree), NNI(tbrTree), NNI(tbrTree)))
-}), class='multiPhylo')
+}), class = 'multiPhylo')
 ```
 
 And let's generate 200 more trees that are even more degraded.
@@ -276,7 +276,7 @@ threeAway <- structure(lapply(seq_len(200), function (x) {
   tbrTree <- TBR(TBR(TBR(trueTree)))
   ape::consensus(list(tbrTree, NNI(NNI(tbrTree)),
                       NNI(NNI(tbrTree)), NNI(NNI(tbrTree))))
-}), class='multiPhylo')
+}), class = 'multiPhylo')
 ```
 
 Now let's calculate their tree similarity scores.
