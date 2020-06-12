@@ -105,14 +105,14 @@ test_that('Matches are reported', {
                                reportMatching = TRUE),
     'matching'))
   
+  tree1 <- PectinateTree(letters[1:8])
+  tree2 <- BalancedTree(letters[8:1])
+  splits1 <- as.Splits(tree1)
+  splits2 <- as.Splits(tree2, tree1)
+  
   Test <- function (Func, relaxed = FALSE, ...) {
-    tree1 <- PectinateTree(letters[1:8])
-    tree2 <- BalancedTree(letters[8:1])
     at <- attributes(Func(tree1, tree2, reportMatching = TRUE, ...))
     expect_equal(3L, length(at))
-    
-    splits1 <- as.Splits(tree1)
-    splits2 <- as.Splits(tree2, tree1)
     
     matchedSplits <- match(splits1, splits2)
     if (relaxed) {
