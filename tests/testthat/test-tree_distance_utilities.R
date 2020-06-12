@@ -1,4 +1,4 @@
-library('TreeTools')
+library('TreeTools', mask.ok = c('match', '%in%'))
 context('tree_distance_utilities.R')
 
 test_that('Tree normalization works', {
