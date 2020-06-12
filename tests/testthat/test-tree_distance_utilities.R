@@ -80,6 +80,7 @@ test_that('Matches are reported', {
                           B, B, A, A, A, A, A, A,
                           A, A, A, A, A, B, A, B), nrow=4, byrow=TRUE),
                        tipLabels = letters[1:8])
+  match <- TreeTools::match # Avoid being re-masked by 'base'
   
   expect_equal("a b | c d e f g h => a b c | d e f g h",
                ReportMatching(splitsA, splitsB[[2]]))
