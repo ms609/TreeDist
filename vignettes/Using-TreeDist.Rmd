@@ -22,8 +22,8 @@ Instructions for loading phylogenetic trees into R can be found in a [separate v
 For these examples, we'll enter two simple trees by hand:
 
 ```{r set-up}
-tree1 <- ape::read.tree(text='(A, ((B, (C, (D, E))), ((F, G), (H, I))));')
-tree2 <- ape::read.tree(text='(A, ((B, (C, (D, (H, I)))), ((F, G), E)));')
+tree1 <- ape::read.tree(text = '(A, ((B, (C, (D, E))), ((F, G), (H, I))));')
+tree2 <- ape::read.tree(text = '(A, ((B, (C, (D, (H, I)))), ((F, G), E)));')
 ```
 
 ## Calculating distances
@@ -75,7 +75,7 @@ list and each tree in the second.
 ```{r multi-trees}
 oneTree <- ape::rtree(11)
 twoTrees <- structure(list(one = ape::rtree(11), two = ape::rtree(11)),
-                      class='multiPhylo')
+                      class = 'multiPhylo')
 threeTrees <- list(a = ape::rtree(11), b = ape::rtree(11), c = ape::rtree(11))
 
 TreeDistance(oneTree, twoTrees)
@@ -119,7 +119,7 @@ par(mar = rep(0, 4))
 plot(tree2)
 ape::nodelabels()
 ape::nodelabels(splits, as.integer(names(splits)), 
-                adj=c(1.1, -0.2), cex=0.8, frame='none')
+                adj = c(1.1, -0.2), cex = 0.8, frame = 'none')
 ```
 
 ## What next?
