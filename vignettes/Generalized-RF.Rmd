@@ -38,7 +38,7 @@ developed by Nelson [-@Nelson1979].
 
 ```{r, fig.width=6 , fig.align='center'}
 VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2, 
-                  Plot=TreeDistPlot, matchZeros = FALSE)
+                  Plot = TreeDistPlot, matchZeros = FALSE)
 SharedPhylogeneticInfo(tree1, tree2)
 ```
 
@@ -56,7 +56,7 @@ _J_, yet receive zero similarity if conflicting splits cannot be paired.
 
 ```{r, fig.width=6 , fig.align='center'}
 VisualizeMatching(SharedPhylogeneticInfo, matchZeros = FALSE, AtoJ, AotJ,
-                  Plot=TreeDistPlot, leaveRoom = FALSE, prune=c(5, 18))
+                  Plot = TreeDistPlot, leaveRoom = FALSE, prune = c(5, 18))
 ```
 
 ## Mutual clustering information
@@ -70,7 +70,7 @@ coherent matching:
 
 ```{r, fig.width=6 , fig.align='center'}
 VisualizeMatching(MutualClusteringInfo, AtoJ, AotJ, matchZeros = FALSE, 
-                  Plot=TreeDistPlot, leaveRoom = FALSE, prune=c(5, 18))
+                  Plot = TreeDistPlot, leaveRoom = FALSE, prune = c(5, 18))
 MutualClusteringInfo(AtoJ, AotJ)
 ```
 
@@ -80,7 +80,7 @@ is preferred to leaving a split unpaired.
 
 ```{r, fig.width=6 , fig.align='center'}
 VisualizeMatching(MutualClusteringInfo, tree1, tree2, 
-                  Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
+                  Plot = TreeDistPlot, leaveRoom = FALSE, matchZeros = FALSE)
 ```
 
 ## Nye _et al._ tree similarity metric
@@ -127,7 +127,7 @@ score.
 
 ```{r, fig.width=6 , fig.align='center'}
 VisualizeMatching(NyeTreeSimilarity, tree1, tree2, 
-                  Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
+                  Plot = TreeDistPlot, leaveRoom = FALSE, matchZeros = FALSE)
 NyeTreeSimilarity(tree1, tree2, normalize=FALSE)
 ```
 
@@ -152,8 +152,8 @@ is also doubled.  By this means, the metric can be made to converge to the
 Robinson-Foulds metric as the exponent grows towards infinity.
 
 ```{r, fig.width=6, fig.height = 4,fig.align='center', echo=FALSE}
-par(mar=c(4, 4, 0, 0))
-x <- seq(1, 20, by=0.1)
+par(mar = c(4, 4, 0, 0))
+x <- seq(1, 20, by = 0.1)
 cbPalette8 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
                 "#0072B2", "#D55E00", "#CC79A7") # dput(Ternary::cbPalette8)
 plot(0, xlim = range(x), ylim = c(3.5, 9.5),
@@ -184,7 +184,7 @@ Lin _et al._ [-@Lin2012].)
 ```{r, fig.width=6 , fig.align='center'}
 MatchingSplitDistance(tree1, tree2)
 VisualizeMatching(MatchingSplitDistance, tree1, tree2,
-                  Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
+                  Plot = TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
 ```
 
 Note that the visualization shows the difference, rather than the similarity,
@@ -245,7 +245,7 @@ pairing.
 ```{r, fig.width=6 , fig.align='center'}
 MatchingSplitInfoDistance(tree1, tree2)
 VisualizeMatching(MatchingSplitInfoDistance, tree1, tree2,
-                  Plot=TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
+                  Plot = TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
 ```
 
 
