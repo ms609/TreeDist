@@ -78,7 +78,7 @@ test_that('Matches are reported', {
   splitsB <- as.Splits(matrix(c(A, A, A, A, A, A, B, B, 
                           A, A, A, B, B, B, B, B,
                           B, B, A, A, A, A, A, A,
-                          A, A, A, A, A, B, A, B), nrow=4, byrow=TRUE),
+                          A, A, A, A, A, B, A, B), nrow = 4, byrow = TRUE),
                        tipLabels = letters[1:8])
   match <- TreeTools::match # Avoid being re-masked by 'base'
   
