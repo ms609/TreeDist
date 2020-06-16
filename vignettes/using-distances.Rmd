@@ -42,7 +42,7 @@ library('TreeDist')
 tree1 <- ape::read.tree(text='(A, ((B, ((C, D), (E, F))), (G, (H, (I, J, K)))));')
 tree2 <- ape::read.tree(text='(A, (B, (C, D, E, (J, K)), (F, (G, H, I))));')
 VisualizeMatching(NyeTreeSimilarity, tree1, tree2,
-                  Plot=TreeDistPlot, matchZeros = FALSE)
+                  Plot = TreeDistPlot, matchZeros = FALSE)
 ```
 
 This is a nice metric to start with, because the maximum similarity between 
@@ -145,28 +145,30 @@ The expected distance is more difficult to calculate for other metrics, but
 can be approximated by sampling random pairs of trees.  Measured distances
 between 10 000 pairs of random bifurcating trees with up to 200 leaves are 
 available in the data package 
-[`TreeDistData`](https://github.com/ms609/TreeDistData/).  We can view (normalized) 
-distances for a selection of methods:
+'[TreeDistData](https://github.com/ms609/TreeDistData/)'.
+We can view (normalized) distances for a selection of methods:
 
-```{r, collapse=TRUE, fig.width=7, fig.height=4, message=FALSE}
+```{r, fig.width=7, fig.height=4, message=FALSE}
 if (requireNamespace('TreeDistData', quietly = TRUE)) {
   library('TreeDistData')
-  data('randomTreeDistances', package='TreeDistData')
+  data('randomTreeDistances', package = 'TreeDistData')
   
   methods <- c('dpi', 'cid', 'nts', 'qd')
-  methodCol <- c(dpi = '#e15659', cid = '#58a14e', nts = '#edc949', qd = '#af7aa1')
+  methodCol <- c(dpi = '#e15659', cid = '#58a14e', nts = '#edc949',
+                 qd = '#af7aa1')
   
-  par(cex = 0.7, mar=c(5, 5, 0.01, 0.01))
+  par(cex = 0.7, mar = c(5, 5, 0.01, 0.01))
   nLeaves <- as.integer(dimnames(randomTreeDistances)[[3]])
-  plot(nLeaves, type='n', randomTreeDistances['dpi', 'mean', ], ylim=c(0.4, 1), 
-       xlab = "Number of leaves", 
+  plot(nLeaves, type = 'n', randomTreeDistances['dpi', 'mean', ],
+       ylim = c(0.4, 1),
+       xlab = "Number of leaves",
        ylab = "Normalized distance between random tree pairs")
   
   for (method in methods) {
     dat <- randomTreeDistances[method, , ]
-    lines(nLeaves, dat['50%', ], pch=1, col=methodCol[method])
+    lines(nLeaves, dat['50%', ], pch = 1, col = methodCol[method])
     polygon(c(nLeaves, rev(nLeaves)), c(dat['25%', ], rev(dat['75%', ])),
-            border=NA, col = paste0(methodCol[method], '55'),)
+            border = NA, col = paste0(methodCol[method], '55'))
     
   }
   
@@ -175,7 +177,7 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
          'Clustering information distance',
          expression(paste(plain('Nye '), italic('et al.'))),
          'Quartet divergence'
-         ), col= methodCol[methods], pos=2)
+         ), col = methodCol[methods], pos = 2)
 }
 ```
 
@@ -213,11 +215,11 @@ testTrees <- list(
   bigErr = ape::read.tree(text='(a, (c, (((b, d), (f, h)), (e, g))));')
 )
 VisualizeMatching(MutualClusteringInfo, testTrees$trueTree, testTrees$lackRes)
-points(4, 7.5, pch=2, cex=3, col="#E69F00")
+points(4, 7.5, pch = 2, cex = 3, col = "#E69F00")
 VisualizeMatching(MutualClusteringInfo, testTrees$trueTree, testTrees$smallErr)
-points(4, 7.5, pch=3, cex=3, col="#56B4E9")
+points(4, 7.5, pch = 3, cex = 3, col = "#56B4E9")
 VisualizeMatching(MutualClusteringInfo, testTrees$trueTree, testTrees$bigErr)
-points(4, 7.5, pch=4, cex=3, col="#009E73")
+points(4, 7.5, pch = 4, cex = 3, col = "#009E73")
 ```
 
 Better trees plot vertically towards the '100% shared information' vertex. 
@@ -229,17 +231,12 @@ resolution introduces error.
 if (requireNamespace('Ternary', quietly = TRUE)) {
   library('Ternary')
   par(mar=rep(0.1, 4))
-  TernaryPlot(atip=NULL, btip=NULL, ctip=NULL,
-              alab='Absent information', blab='Shared information', clab='Misinformation',
-              lab.cex=0.8,
-              lab.offset=0.18, # higher value as longer tick labels
-              point='left', clockwise=FALSE,
-              #col=backgroundCol,
-              grid.lty='solid', grid.col='#aaaaaa',
-              grid.minor.lines = 0,
-              axis.labels = seq(0, 1, length.out=11L),
-              axis.col="#999999",
-              ticks.length = 0.025)
+  TernaryPlot(alab = 'Absent information', blab = 'Shared information',
+              clab = 'Misinformation',
+              lab.cex = 0.8, lab.offset = 0.18,
+              point = 'left', clockwise = FALSE,
+              grid.col = '#dedede', grid.minor.lines = 0,
+              axis.labels = 0:10 / 10, axis.col = "#aaaaaa")
   
   HorizontalGrid()
   correct <- MutualClusteringInfo(testTrees$trueTree, testTrees)
@@ -273,7 +270,10 @@ immediate neighbourhood (one NNI move away).
 library('TreeSearch') # for TBR, NNI
 oneAway <- structure(lapply(seq_len(200), function (x) {
   tbrTree <- TBR(trueTree)
-  ape::consensus(list(tbrTree, NNI(tbrTree), NNI(tbrTree), NNI(tbrTree)))
+  ape::consensus(list(tbrTree,
+                      NNI(tbrTree),
+                      NNI(tbrTree),
+                      NNI(tbrTree)))
 }), class = 'multiPhylo')
 ```
 
@@ -285,8 +285,10 @@ resolution by taking a consensus with three trees from its wider neighbourhood
 ```{r}
 threeAway <- structure(lapply(seq_len(200), function (x) {
   tbrTree <- TBR(TBR(TBR(trueTree)))
-  ape::consensus(list(tbrTree, NNI(NNI(tbrTree)),
-                      NNI(NNI(tbrTree)), NNI(NNI(tbrTree))))
+  ape::consensus(list(tbrTree, 
+                      NNI(NNI(tbrTree)),
+                      NNI(NNI(tbrTree)),
+                      NNI(NNI(tbrTree))))
 }), class = 'multiPhylo')
 ```
 
@@ -336,15 +338,14 @@ spec3 <- apply(spec3, 2, ColToHex)
 Now we can plot this information on a ternary diagram.
 
 ```{r, fig.width=7, fig.align='center', fig.asp=5/7, out.width='70%'}
-if(requireNamespace('Ternary', quietly = TRUE)) {
+if (requireNamespace('Ternary', quietly = TRUE)) {
   layout(matrix(c(1, 2), ncol=2), widths=c(5, 2))
   par(mar=rep(0, 4))
-  TernaryPlot(alab='Information absent in degraded tree', 
-              blab='\n\nCorrect information in degraded tree', 
-              clab='Misinformation in degraded tree',
-              point='left', clockwise=FALSE,
-              grid.minor.lines = 0,
-              axis.labels = seq(0, 1, length.out=11L))
+  TernaryPlot(alab = 'Information absent in degraded tree', 
+              blab = '\n\nCorrect information in degraded tree', 
+              clab = 'Misinformation in degraded tree',
+              point = 'left', clockwise = FALSE, grid.minor.lines = 0,
+              axis.labels = 0:10 / 10)
   
   HorizontalGrid()
   
@@ -357,25 +358,27 @@ if(requireNamespace('Ternary', quietly = TRUE)) {
   TernaryDensityContour(coords3, col = col3, nlevels = 4)
   TernaryDensityContour(coords1, col = col1, nlevels = 4)
   
-  library('kdensity')
-  HorizontalKDE <- function (dat, col, add = FALSE) {
-    lty <- 1
-    lwd <- 2
-    kde <- kdensity(dat)
-    kdeRange <- kdensity:::get_range(kde)
-    if (add) {
-      lines(kde(kdeRange), kdeRange, col = col, lty = lty, lwd = lwd)
-    } else {
-      plot(kde(kdeRange), kdeRange, col = col, lty = lty, lwd = lwd, 
-           ylim = c(0, 1), main = '', axes = FALSE, type = 'l')
+  if (requireNamespace('kdensity', quietly = TRUE)) {
+    library('kdensity')
+    HorizontalKDE <- function (dat, col, add = FALSE) {
+      lty <- 1
+      lwd <- 2
+      kde <- kdensity(dat)
+      kdeRange <- kdensity:::get_range(kde)
+      if (add) {
+        lines(kde(kdeRange), kdeRange, col = col, lty = lty, lwd = lwd)
+      } else {
+        plot(kde(kdeRange), kdeRange, col = col, lty = lty, lwd = lwd, 
+             ylim = c(0, 1), main = '', axes = FALSE, type = 'l')
+      }
+      # abline(h=0:10 / 10) # Useful for confirming alignment
     }
-    # abline(h=0:10 / 10) # Useful for confirming alignment
-  }
   
-  par(mar = c(1.8, 0, 1.8, 0)) # align plot limits with ternary plot
-  HorizontalKDE(correct1 / infoInTree1, col1, add = FALSE)
-  HorizontalKDE(correct3 / infoInTree3, col3, add = TRUE)
-  mtext('\u2192 Normalized tree quality \u2192', 2)
+    par(mar = c(1.8, 0, 1.8, 0)) # align plot limits with ternary plot
+    HorizontalKDE(correct1 / infoInTree1, col1, add = FALSE)
+    HorizontalKDE(correct3 / infoInTree3, col3, add = TRUE)
+    mtext('\u2192 Normalized tree quality \u2192', 2)
+  }
 }
 ```
 
