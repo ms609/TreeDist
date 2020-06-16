@@ -117,7 +117,7 @@
       <h1 data-toc-skip>Contextualizing tree distances</h1>
                         <h4 class="author"><a href="https://community.dur.ac.uk/martin.smith/">Martin R. Smith</a></h4>
             
-            <h4 class="date">2020-06-12</h4>
+            <h4 class="date">2020-06-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/using-distances.Rmd"><code>vignettes/using-distances.Rmd</code></a></small>
       <div class="hidden name"><code>using-distances.Rmd</code></div>
@@ -237,7 +237,8 @@ In such a context, it can be relevant to normalize tree similarity against the <
 <span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span>(<span class="fl">4</span>, <span class="fl">7.5</span>, <span class="kw">pch</span><span class="kw">=</span><span class="fl">4</span>, <span class="kw">cex</span><span class="kw">=</span><span class="fl">3</span>, <span class="kw">col</span><span class="kw">=</span><span class="st">"#009E73"</span>)</pre></body></html></div>
 <p><img src="using-distances_files/figure-html/unnamed-chunk-11-3.png" width="80%" style="display: block; margin: auto;"></p>
 <p>Better trees plot vertically towards the ‘100% shared information’ vertex. Resolution of trees increases towards the right; trees that are more resolved may be no better than less-resolved trees if the addition of resolution introduces error.</p>
-<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="kw">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">'Ternary'</span>, <span class="kw">quietly</span> <span class="kw">=</span> <span class="fl">TRUE</span>)) {
+<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="kw">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span>(<span class="st">'Ternary'</span>, <span class="kw">quietly</span> <span class="kw">=</span> <span class="fl">TRUE</span>)) {
+  <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">'Ternary'</span>)
   <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="kw">mar</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">0.1</span>, <span class="fl">4</span>))
   <span class="fu"><a href="https://ms609.github.io/Ternary/reference/TernaryPlot.html">TernaryPlot</a></span>(<span class="kw">atip</span><span class="kw">=</span><span class="kw">NULL</span>, <span class="kw">btip</span><span class="kw">=</span><span class="kw">NULL</span>, <span class="kw">ctip</span><span class="kw">=</span><span class="kw">NULL</span>,
               <span class="kw">alab</span><span class="kw">=</span><span class="st">'Absent information'</span>, <span class="kw">blab</span><span class="kw">=</span><span class="st">'Shared information'</span>, <span class="kw">clab</span><span class="kw">=</span><span class="st">'Misinformation'</span>,
@@ -301,7 +302,7 @@ In such a context, it can be relevant to normalize tree similarity against the <
 <span class="no">spec1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span>(<span class="no">spec1</span>, <span class="fl">2</span>, <span class="no">ColToHex</span>)
 <span class="no">spec3</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html">apply</a></span>(<span class="no">spec3</span>, <span class="fl">2</span>, <span class="no">ColToHex</span>)</pre></body></html></div>
 <p>Now we can plot this information on a ternary diagram.</p>
-<div class="sourceCode" id="cb31"><html><body><pre class="r"><span class="kw">if</span>(<span class="fu"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="st">'Ternary'</span>)) {
+<div class="sourceCode" id="cb31"><html><body><pre class="r"><span class="kw">if</span>(<span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span>(<span class="st">'Ternary'</span>, <span class="kw">quietly</span> <span class="kw">=</span> <span class="fl">TRUE</span>)) {
   <span class="fu"><a href="https://rdrr.io/r/graphics/layout.html">layout</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">2</span>), <span class="kw">ncol</span><span class="kw">=</span><span class="fl">2</span>), <span class="kw">widths</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">5</span>, <span class="fl">2</span>))
   <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="kw">mar</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">0</span>, <span class="fl">4</span>))
   <span class="fu"><a href="https://ms609.github.io/Ternary/reference/TernaryPlot.html">TernaryPlot</a></span>(<span class="kw">alab</span><span class="kw">=</span><span class="st">'Information absent in degraded tree'</span>,
