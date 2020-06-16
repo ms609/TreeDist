@@ -1,5 +1,5 @@
 ---
-title: "Calculate tree similarity with TreeDist"
+title: "Calculate tree similarity with 'TreeDist'"
 author: "Martin R. Smith"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -12,7 +12,7 @@ vignette: >
 ---
 
 This document should contain all you need to get started measuring tree 
-distances with TreeDist.  If you get stuck, please 
+distances with 'TreeDist'.  If you get stuck, please 
 [let me know](https://github.com/ms609/TreeDist/issues/new?title=Suggestion:+)
 so I can improve this documentation.
 
@@ -28,10 +28,10 @@ tree2 <- ape::read.tree(text = '(A, ((B, (C, (D, (H, I)))), ((F, G), E)));')
 
 ## Calculating distances
 
-We can calculate distances between pairs of trees using the `TreeDist` package.
+We can calculate distances between pairs of trees using the 'TreeDist' package.
 
 First we'll install the package.
-We can either install the stable version from the CRAN repository:
+We can either install the stable version (coming 2020) from the CRAN repository:
 
 ```r
 install.packages('TreeDist')
@@ -61,8 +61,8 @@ Calculating the distance between two trees is as simple as:
 distance <- TreeDistance(tree1, tree2)
 ```
 
-The convenience function `TreeDistance` returns the variation of clustering
-information between two trees, [normalized](using-distances.html)
+The convenience function `TreeDistance()` returns the variation of clustering
+information between two trees, [normalized](using-distances.html#normalizing)
 against the total information content of all splits.  
 
 ### Multiple comparisons
@@ -94,8 +94,8 @@ VisualizeMatching(ClusteringInfoDistance, tree1, tree2)
 ```
 
 This shows the six splits in tree 1, and the paired splits in tree two.  
-Each split is labelled with a measure of its similarity, which is its contribution 
-to the total tree similarity score.
+Each split is labelled with a measure of its similarity, which is its 
+contribution to the total tree similarity score.
 
 We can view this information in a format accessible for further examination in R with:
 
@@ -103,7 +103,8 @@ We can view this information in a format accessible for further examination in R
 ClusteringInfoDistance(tree1, tree2, reportMatching = TRUE)
 ```
 
-Here, the `pairScores` attribute lists the score of each possible matching of splits.
+Here, the `pairScores` attribute lists the score of each possible matching of 
+splits.
 
 We can identify the splits with:
 
@@ -112,7 +113,8 @@ splits <- as.character(TreeTools::as.Splits(tree2))
 splits
 ```
 
-The names of the splits correspond to the number of the nodes in the original tree:
+The names of the splits correspond to the number of an associated node in the
+original tree:
 
 ```{r named-splits, fig.align='center', fig.width=7, fig.height = 5, out.width='80%'}
 par(mar = rep(0, 4))
@@ -122,6 +124,10 @@ ape::nodelabels(splits, as.integer(names(splits)),
                 adj = c(1.1, -0.2), cex = 0.8, frame = 'none')
 ```
 
+Note that strictly, (informative) splits are associated with (internal) edges.
+To avoid listing the same split twice, nodes close to the root (here, 10 and 11)
+will not be associated with a split.
+
 ## What next?
 
 You may wish to:
@@ -129,6 +135,6 @@ You may wish to:
 - [Provide context](using-distances.html) for tree distances
 
 - Review [available distance measures](https://ms609.github.io/TreeDist/index.html)
-  and the corresponding [TreeDist functions](https://ms609.github.io/TreeDist/reference/index.html#section-tree-distance-measures)
+  and the corresponding [functions](https://ms609.github.io/TreeDist/reference/index.html#section-tree-distance-measures)
 
 - [Evaluate tree distance metrics](Tree-distance-metric-evaluation.html)
