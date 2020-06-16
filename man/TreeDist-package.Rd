@@ -10,71 +10,69 @@
 distance between pairs of unweighted phylogenetic trees.
 The metrics generally fall in the category of 'generalized Robinson-Foulds
 distances': they are based on comparing partitions between trees, and thus
-reflect the relationship data within trees, with no reference to branch
-lengths.
+reflect the relationship data within trees, with no reference to branch lengths.
 Detailed documentation and usage instructions are
 \href{https://ms609.github.io/TreeDist/}{available online} or in the vignettes.
 }
 \details{
 The \href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html}{Robinson-Foulds distance}
-simply tallies the number of splits (loosely, clades) that occur in both trees --
-any splits that are not perfectly identical are assigned a score of zero, however similar
-or different they are.
+simply tallies the number of non-trivial splits (sometimes inaccurately
+termed clades, nodes or edges) that occur in both trees -- any splits that are
+not perfectly identical contributes one point to the distance score of zero,
+however similar or different they are.
 By overlooking potential similarities between almost-identical splits,
 this conservative approach has undesirable properties.
 
 \href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html}{'Generalized' RF metrics}
-pair each split in one tree with a similar split in the other.
-Each pair of splits is assigned a similarity
-score; the sum of these scores in the optimal partition matching
-then describes the similarity between two trees.
+generate \emph{matchings} that pair each split in one tree with a similar split
+in the other.
+Each pair of splits is assigned a similarity score; the sum of these scores in
+the optimal matching then quantifies the similarity between two trees.
 
-Different ways of calculating the the similarity between a pair of partitions
+Different ways of calculating the the similarity between a pair of splits
 lead to different tree distance metrics, implemented in the functions below:
 \itemize{
-\item \href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{\code{MutualClusteringInfo}}, \href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{\code{SharedPhylogeneticInfo}}
+\item \href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{\code{MutualClusteringInfo()}}, \href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{\code{SharedPhylogeneticInfo()}}
 \itemize{
 \item Smith (forthcoming) scores matchings based on the amount of information
 that one partition contains about the other.  The Mutual Phylogenetic
-Information assigns zero similarity to splits that cannot both exist on a
-single tree.
-The Mutual Clustering Information metric is more forgiving, and thus
-exhibits more desirable behaviour; it is the recommended metric for tree
-comparison.
-(The corresponding
-\href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{\code{ClusteringInfoDistance}}
-returns a tree distance.)
+Information imposes arboreal matching: i.e. a pair of splits that cannot
+both exist on a single tree are assigned zero similarity.  The Mutual
+Clustering Information metric is more forgiving, and exhibits more
+desirable behaviour; it is the recommended metric for tree comparison.
+(Its complement, \href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{\code{ClusteringInfoDistance()}}, returns a tree
+distance.)
 }
-\item \href{https://ms609.github.io/TreeDist/reference/NyeTreeSimilarity.html}{\code{NyeTreeSimilarity}}
+\item \href{https://ms609.github.io/TreeDist/reference/NyeTreeSimilarity.html}{\code{NyeTreeSimilarity()}}
 \itemize{
 \item Nye \emph{et al.} (2006) score matchings according to the size of the largest
 split that is consistent with both of them, normalized against
 the Jaccard index.  This approach is extended by Böcker \emph{et al}. (2013)
 with the Jaccard-Robinson-Foulds metric (function
-\href{https://ms609.github.io/TreeDist/reference/JaccardRobinsonFoulds.html}{\code{JaccardRobinsonFoulds}}).
+\href{https://ms609.github.io/TreeDist/reference/JaccardRobinsonFoulds.html}{\code{JaccardRobinsonFoulds()}}).
 }
-\item \href{https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html}{\code{MatchingSplitDistance}}
-}
+\item \href{https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html}{\code{MatchingSplitDistance()}}
 \itemize{
-\item Bogdanowicz and Giaro (2012), and independently Lin \emph{et al.} (2012), count
-the number of 'mismatched' leaves in a pair of splits. An
-information-based equivalent (Smith, forthcoming) is provided in the function
-\href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{\code{MatchingSplitDistance}}.
+\item Bogdanowicz and Giaro (2012) and  Lin \emph{et al.} (2012) independently proposed
+counting the number of 'mismatched' leaves in a pair of splits.
+\href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{\code{MatchingSplitInfoDistance()}}
+provides an information-based equivalent (Smith, forthcoming).
+}
 }
 
 The package also implements the variation of the path distance
 proposed by Kendal and Colijn (2016) (function
-\href{https://ms609.github.io/TreeDist/reference/KendallColijn.html}{\code{KendallColijn}}),
+\href{https://ms609.github.io/TreeDist/reference/KendallColijn.html}{\code{KendallColijn()}}),
 approximations of the Nearest-Neighbour Interchange (NNI) distance (function
-\href{https://ms609.github.io/TreeDist/reference/NNIDist.html}{\code{NNIDist}}; following
-Li \emph{et al.} (1996)), and calculates the size (function
-\href{https://ms609.github.io/TreeDist/reference/MASTSize.html}{\code{MASTSize}}) and
+\href{https://ms609.github.io/TreeDist/reference/NNIDist.html}{\code{NNIDist()}};
+following Li \emph{et al.} (1996)), and calculates the size (function
+\href{https://ms609.github.io/TreeDist/reference/MASTSize.html}{\code{MASTSize()}}) and
 information content (function
-\href{https://ms609.github.io/TreeDist/reference/MASTSize.html}{\code{MASTInfo}}) of the
+\href{https://ms609.github.io/TreeDist/reference/MASTSize.html}{\code{MASTInfo()}}) of the
 Maximum Agreement Subtree.
 
-For an implementation of the Tree Bisection and Reconnection (TBR) distance,
-see \href{https://ms609.github.io/TBRDist/index.html}{\code{TBRDist}}.
+For an implementation of the Tree Bisection and Reconnection (TBR) distance, see
+the package '\href{https://ms609.github.io/TBRDist/index.html}{TBRDist}'.
 }
 \references{
 \itemize{
@@ -92,22 +90,23 @@ Further documentation is available in the
 \href{https://ms609.github.io/TreeDist/articles/}{package vignettes}, visible from
 R using \code{vignette(package='TreeDist')}.
 
-Other tree distance functions are implemented in:
+Other R packages implementing tree distance functions include:
 \itemize{
 \item \href{http://ape-package.ird.fr/}{ape}:
 \itemize{
-\item \code{cophenetic.phylo}: Cophenetic distance
-\item \code{dist.topo}: Path (topological) distance, Robinson-Foulds distance.
+\item \code{cophenetic.phylo()}: Cophenetic distance
+\item \code{dist.topo()}: Path (topological) distance, Robinson-Foulds distance.
 }
 \item \href{https://cran.r-project.org/package=phangorn}{phangorn}
 \itemize{
-\item \code{treedist}: Path, Robinson-Foulds and approximate SPR distances.
+\item \code{treedist()}: Path, Robinson-Foulds and approximate SPR distances.
 }
 \item \href{http://ms609.github.io/Quartet/}{Quartet}: Triplet and Quartet distances,
 using the tqDist algorithm.
 \item \href{http://ms609.github.io/TBRDist/}{TBRDist}: TBR and SPR distances on
-unrooted trees, using the \code{uspr} C library.
-\item \href{https://cran.r-project.org/package=distory}{distory} (unmaintained): Geodesic distance
+unrooted trees, using the 'uspr; C library.
+\item \href{https://cran.r-project.org/package=distory}{distory} (unmaintained):
+Geodesic distance
 }
 }
 \author{
