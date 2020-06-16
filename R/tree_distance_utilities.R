@@ -277,7 +277,7 @@ CompareAll <- function (x, Func, FUN.VALUE = Func(x[[1]], x[[1]]),
 #' @param how Method for normalization
 #' @param Func Function that takes as inputs `tree1Info` and `tree2Info`, and
 #' returns a normalizing constant against which to divide `unnormalized`.
-#' @param \dots Additional parameters to `InfoInTree`` or `how`.
+#' @param \dots Additional parameters to `InfoInTree()` or `how`.
 #' @keywords internal
 #' @template MRS
 #' @export

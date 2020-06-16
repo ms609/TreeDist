@@ -27,7 +27,7 @@ independently (optional)}
 
 \item{how}{Method for normalization}
 
-\item{\dots}{Additional parameters to \verb{InfoInTree`` or }how`.}
+\item{\dots}{Additional parameters to \code{InfoInTree()} or \code{how}.}
 
 \item{Func}{Function that takes as inputs \code{tree1Info} and \code{tree2Info}, and
 returns a normalizing constant against which to divide \code{unnormalized}.}

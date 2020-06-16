@@ -10,7 +10,7 @@ NyeTreeSimilarity(
   tree2 = tree1,
   similarity = TRUE,
   normalize = FALSE,
-  normalizeMax = TRUE,
+  normalizeMax = !is.logical(normalize),
   reportMatching = FALSE
 )
 
@@ -91,12 +91,15 @@ slightly faster than, \code{\link{JaccardRobinsonFoulds}
 
 
 If \code{normalize = TRUE} and \code{similarity = TRUE}, then results will be rescaled
-from zero to one by dividing by the maximum value possible for any pair
-of trees with  \emph{n} leaves, $n - 3$.
+from zero to one by dividing by the mean number of splits in the two trees
+being compared.
+
 You may wish to normalize instead against the number of splits present
 in the smaller tree, which represents the maximum value possible for a pair
-of trees with the specified topologies (\code{normalize = pmin.int}), or the
-number of splits in the most resolved tree (\code{normalize = pmax.int}).
+of trees with the specified topologies (\code{normalize = pmin.int}); the
+number of splits in the most resolved tree (\code{normalize = pmax.int});
+or the maximum value possible for any pair of trees with  \emph{n} leaves,
+\emph{n} - 3 (\code{normalize = TreeTools::NTip(tree1) - 3L}).
 
 If \code{normalize = TRUE} and \code{similarity = FALSE}, then results will be rescaled
 from zero to one by dividing by the total number of splits in the pair
@@ -107,8 +110,8 @@ of trees being considered.
 library('TreeTools')
 NyeTreeSimilarity(BalancedTree(8), PectinateTree(8))
 VisualizeMatching(NyeTreeSimilarity ,BalancedTree(8), PectinateTree(8))
-NyeTreeSimilarity(lapply(0:5, as.phylo, nTip = 8), PectinateTree(8))
-NyeTreeSimilarity(lapply(0:5, as.phylo, nTip = 8), similarity = FALSE)
+NyeTreeSimilarity(as.phylo(0:5, nTip = 8), PectinateTree(8))
+NyeTreeSimilarity(as.phylo(0:5, nTip = 8), similarity = FALSE)
 
 }
 \references{

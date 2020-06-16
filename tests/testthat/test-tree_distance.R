@@ -422,7 +422,9 @@ test_that('NyeTreeSimilarity is correctly calculated', {
   expect_equal(1L, NyeTreeSimilarity(treeSym8, treeAbcd.Efgh, 
                                      normalize = FALSE))
   expect_equal(1L / 5L, NyeTreeSimilarity(treeSym8, treeAbcd.Efgh, 
-                                          normalize = TRUE))
+                                          normalize = 5L))
+  expect_equal(1L / ((5L + 1L) / 2L),
+               NyeTreeSimilarity(treeSym8, treeAbcd.Efgh, normalize = TRUE))
   expect_true(NyeTreeSimilarity(treeSym8, treeBal8) > 
                 NyeTreeSimilarity(treeSym8, treeOpp8))
   

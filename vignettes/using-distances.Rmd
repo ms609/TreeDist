@@ -11,7 +11,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Once you understand [how to use TreeDist](Using-TreeDist.html) to calculate
+Once you understand [how to use 'TreeDist'](Using-TreeDist.html) to calculate
 tree distances, the next step is to provide some context for the calculated
 distances.
 
@@ -40,7 +40,7 @@ to compare two imperfectly-resolved trees.
 ```{r, fig.width=6, out.width='90%', fig.align='center'}
 library('TreeDist')
 tree1 <- ape::read.tree(text='(A, ((B, ((C, D), (E, F))), (G, (H, (I, J, K)))));')
-tree2 <- ape::read.tree(text='(A, (B, (C, D, E, (J, K)), (G, ((H, I), F))));')
+tree2 <- ape::read.tree(text='(A, (B, (C, D, E, (J, K)), (F, (G, H, I))));')
 VisualizeMatching(NyeTreeSimilarity, tree1, tree2,
                   Plot=TreeDistPlot, matchZeros = FALSE)
 ```
@@ -55,16 +55,16 @@ As such, the maximum similarity possible between two 11-leaf trees is
 = `r suppressMessages(library('TreeTools')); NSplits(11)`.  
 
 Normalizing against this value tells us how similar the two trees are, compared
-to two identical eleven-leaf binary trees; this is the default
-normalization method for
-[`NyeTreeSimilarity()`](../reference/NyeTreeSimilarity.html).
+to two identical eleven-leaf binary trees.
 
 ```{r}
 NyeTreeSimilarity(tree1, tree2, normalize = FALSE) / 8
 NyeTreeSimilarity(tree1, tree2, normalize = 8)
 ```
 
-We might also be interested in comparing the tree similarity to the maximum
+This approach will result in a similarity score less than one if two trees 
+are identical, but not fully resolved (i.e. binary).  
+As such, we might prefer to compare the tree similarity to the maximum
 score possible for two trees of the specified resolution.  This value is given
 by the number of splits in the least resolved of the two trees:
 
@@ -76,25 +76,35 @@ NyeTreeSimilarity(tree1, tree2,
 More concisely, we can provide a normalizing function:
 
 ```{r}
-NyeTreeSimilarity(tree1, tree2, normalize = min, normalizeMax = FALSE)
+NyeTreeSimilarity(tree1, tree2, normalize = min)
 ```
 
+This approach will produce a similarity of one if one tree is 
+a less-resolved version of another (and thus not identical).
+
 If we are comparing lists of trees, this best value will depend on the number
-of splits in each pair of trees.  We can use the function `pmin` to 
+of splits in each pair of trees.  We can use the function `pmin()` to 
 select the less resolved of each pair of trees:
 
 
 ```{r}
-NyeTreeSimilarity(list(tree1, tree2), list(tree1, tree2), 
-                  normalize = pmin, normalizeMax = FALSE)
+NyeTreeSimilarity(list(tree1, tree2), list(tree1, tree2), normalize = pmin)
 ```
 
+To avoid these limitations, we may instead opt to normalize against the 
+average number of splits in the two trees. 
+This is the default normalization method for
+[`NyeTreeSimilarity()`](../reference/NyeTreeSimilarity.html):
+
+```{r}
+NyeTreeSimilarity(tree1, tree2, normalize = TRUE)
+```
 
 Finally, if `tree1` is a 'target' tree -- perhaps one that has been used
 to simulate data from, or which is independently known to be true or virtuous --
 we may wish to normalize against the best possible match to that tree.
 
-In that case, the best possible score is 
+In that case, the best possible score is
 
 ```{r}
 TreeTools::NSplits(tree1)

@@ -30,12 +30,15 @@
 #' @section Normalization:
 #' 
 #' If `normalize = TRUE` and `similarity = TRUE`, then results will be rescaled
-#'  from zero to one by dividing by the maximum value possible for any pair 
-#'  of trees with  _n_ leaves, $n - 3$.
+#' from zero to one by dividing by the mean number of splits in the two trees
+#' being compared.
+#'  
 #' You may wish to normalize instead against the number of splits present
 #' in the smaller tree, which represents the maximum value possible for a pair
-#' of trees with the specified topologies (`normalize = pmin.int`), or the
-#' number of splits in the most resolved tree (`normalize = pmax.int`). 
+#' of trees with the specified topologies (`normalize = pmin.int`); the
+#' number of splits in the most resolved tree (`normalize = pmax.int`);
+#' or the maximum value possible for any pair of trees with  _n_ leaves, 
+#' _n_ - 3 (`normalize = TreeTools::NTip(tree1) - 3L`).
 #' 
 #' If `normalize = TRUE` and `similarity = FALSE`, then results will be rescaled
 #' from zero to one by dividing by the total number of splits in the pair
@@ -46,8 +49,8 @@
 #' NyeTreeSimilarity(BalancedTree(8), PectinateTree(8))
 #' VisualizeMatching(NyeTreeSimilarity ,BalancedTree(8), PectinateTree(8))
 
-#' NyeTreeSimilarity(lapply(0:5, as.phylo, nTip = 8), PectinateTree(8))
-#' NyeTreeSimilarity(lapply(0:5, as.phylo, nTip = 8), similarity = FALSE)
+#' NyeTreeSimilarity(as.phylo(0:5, nTip = 8), PectinateTree(8))
+#' NyeTreeSimilarity(as.phylo(0:5, nTip = 8), similarity = FALSE)
 #' 
 #' @template distReturn
 #' 
@@ -55,38 +58,40 @@
 #' @family tree distances
 #' 
 #' @template MRS
-#' @importFrom TreeTools NSplits TipLabels
+#' @importFrom TreeTools NSplits
 #' @export
 NyeTreeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
-                               normalize = FALSE, normalizeMax = TRUE,
+                               normalize = FALSE,
+                               normalizeMax = !is.logical(normalize),
                                reportMatching = FALSE) {
   
   unnormalized <- CalculateTreeDistance(NyeSplitSimilarity, tree1, tree2, 
                                         reportMatching)
   if (similarity) {
-    MaxSplits <- function (tree) {
-      if (inherits(tree, c('phylo', 'Splits'))) {
-        length(TipLabels(tree)) - 3L
-      } else if (mode(tree) == 'list') {
-        vapply(tree, MaxSplits, integer(1L))
-      } else {
-        stop ("Unrecognized tree format")                                       # nocov
-      }
-    }
-    
     # Return:
     NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                  InfoInTree = if (normalizeMax) MaxSplits else NSplits,
-                  Combine = pmax.int)
+                  InfoInTree = if (normalizeMax) .MaxSplits else NSplits,
+                  Combine = .MeanOfTwo)
   } else {
-    unnormalized <- outer(NSplits(tree1), NSplits(tree2), '+')[, , drop=TRUE] -
-                    (2 * unnormalized)
+    unnormalized <- outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE] -
+                    (unnormalized + unnormalized)
     
     # Return:
     NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
                   InfoInTree = NSplits, Combine = '+')
   }
 }
+
+.MeanOfTwo <- function (x, y) (x + y) / 2L
+
+.MaxSplits <- function (tree) UseMethod('.MaxSplits')
+
+#' @importFrom TreeTools NTip
+.MaxSplits.phylo <- function (tree) NTip(tree) - 3L
+
+.MaxSplits.Splits <- .MaxSplits.phylo
+
+.MaxSplits.list <- function (tree) vapply(tree, .MaxSplits, integer(1L))
 
 #' @rdname NyeTreeSimilarity
 #' @inheritParams SharedPhylogeneticInfoSplits
