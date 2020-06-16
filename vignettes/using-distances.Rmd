@@ -216,7 +216,8 @@ resolved may be no better than less-resolved trees if the addition of
 resolution introduces error.
 
 ```{r, fig.width=4, fig.align='center', fig.asp=1, out.width='50%'}
-if (require('Ternary', quietly = TRUE)) {
+if (requireNamespace('Ternary', quietly = TRUE)) {
+  library('Ternary')
   par(mar=rep(0.1, 4))
   TernaryPlot(atip=NULL, btip=NULL, ctip=NULL,
               alab='Absent information', blab='Shared information', clab='Misinformation',
@@ -325,7 +326,7 @@ spec3 <- apply(spec3, 2, ColToHex)
 Now we can plot this information on a ternary diagram.
 
 ```{r, fig.width=7, fig.align='center', fig.asp=5/7, out.width='70%'}
-if(require('Ternary')) {
+if(requireNamespace('Ternary', quietly = TRUE)) {
   layout(matrix(c(1, 2), ncol=2), widths=c(5, 2))
   par(mar=rep(0, 4))
   TernaryPlot(alab='Information absent in degraded tree', 
