@@ -70,7 +70,7 @@ NyeTreeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
   if (similarity) {
     # Return:
     NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                  InfoInTree = if (normalizeMax) .MaxSplits else NSplits,
+                  InfoInTree = if (normalizeMax) SplitsInBinaryTree else NSplits,
                   Combine = .MeanOfTwo)
   } else {
     unnormalized <- outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE] -
@@ -83,15 +83,6 @@ NyeTreeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
 }
 
 .MeanOfTwo <- function (x, y) (x + y) / 2L
-
-.MaxSplits <- function (tree) UseMethod('.MaxSplits')
-
-#' @importFrom TreeTools NTip
-.MaxSplits.phylo <- function (tree) NTip(tree) - 3L
-
-.MaxSplits.Splits <- .MaxSplits.phylo
-
-.MaxSplits.list <- function (tree) vapply(tree, .MaxSplits, integer(1L))
 
 #' @rdname NyeTreeSimilarity
 #' @inheritParams SharedPhylogeneticInfoSplits
