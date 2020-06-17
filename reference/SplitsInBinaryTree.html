@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Normalize information against total present in both starting trees — NormalizeInfo • TreeDist</title>
+<title>Maximum splits in an <em>n</em>-leaf tree — SplitsInBinaryTree • TreeDist</title>
 
 
 <!-- jquery -->
@@ -45,8 +45,9 @@
 
 
 
-<meta property="og:title" content="Normalize information against total present in both starting trees — NormalizeInfo" />
-<meta property="og:description" content="Normalize information against total present in both starting trees" />
+<meta property="og:title" content="Maximum splits in an <em>n</em>-leaf tree — SplitsInBinaryTree" />
+<meta property="og:description" content="SplitsInBinaryTree() is a convenience function to calculate the number of splits
+in a fully-resolved (binary) tree with n leaves." />
 
 
 
@@ -163,62 +164,55 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Normalize information against total present in both starting trees</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance_utilities.R'><code>R/tree_distance_utilities.R</code></a></small>
-    <div class="hidden name"><code>NormalizeInfo.Rd</code></div>
+    <h1>Maximum splits in an <em>n</em>-leaf tree</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/utilities.R'><code>R/utilities.R</code></a></small>
+    <div class="hidden name"><code>SplitsInBinaryTree.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Normalize information against total present in both starting trees</p>
+    <p><code>SplitsInBinaryTree()</code> is a convenience function to calculate the number of splits
+in a fully-resolved (binary) tree with <em>n</em> leaves.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>NormalizeInfo</span>(
-  <span class='no'>unnormalized</span>,
-  <span class='no'>tree1</span>,
-  <span class='no'>tree2</span>,
-  <span class='no'>InfoInTree</span>,
-  <span class='kw'>infoInBoth</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>how</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>Combine</span> <span class='kw'>=</span> <span class='st'>"+"</span>,
-  <span class='no'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>SplitsInBinaryTree</span>(<span class='no'>tree</span>)
+
+<span class='co'># S3 method for phylo</span>
+<span class='fu'>SplitsInBinaryTree</span>(<span class='no'>tree</span>)
+
+<span class='co'># S3 method for Splits</span>
+<span class='fu'>SplitsInBinaryTree</span>(<span class='no'>tree</span>)
+
+<span class='co'># S3 method for list</span>
+<span class='fu'>SplitsInBinaryTree</span>(<span class='no'>tree</span>)
+
+<span class='co'># S3 method for multiPhylo</span>
+<span class='fu'>SplitsInBinaryTree</span>(<span class='no'>tree</span>)
+
+<span class='co'># S3 method for numeric</span>
+<span class='fu'>SplitsInBinaryTree</span>(<span class='no'>tree</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>unnormalized</th>
-      <td><p>Numeric value to be normalized.</p></td>
-    </tr>
-    <tr>
-      <th>tree1, tree2</th>
-      <td><p>Trees from which <code>unnormalized</code> was calculated</p></td>
-    </tr>
-    <tr>
-      <th>InfoInTree</th>
-      <td><p>Function to calculate the information content of each tree</p></td>
-    </tr>
-    <tr>
-      <th>infoInBoth</th>
-      <td><p>Numeric specifying information content of both trees
-independently (optional)</p></td>
-    </tr>
-    <tr>
-      <th>how</th>
-      <td><p>Method for normalization</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>Additional parameters to <code>InfoInTree()</code> or <code>how</code>.</p></td>
-    </tr>
-    <tr>
-      <th>Func</th>
-      <td><p>Function that takes as inputs <code>tree1Info</code> and <code>tree2Info</code>, and
-returns a normalizing constant against which to divide <code>unnormalized</code>.</p></td>
+      <th>tree</th>
+      <td><p>An object of a supported format that represents a tree or
+set of trees, from which the number of leaves will be calculated.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
+    <p><code>SplitsInBinaryTree()</code> returns an integer vector detailing the number of
+unique non-trivial splits in a binary tree with <em>n</em> leaves.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>This function will be released in the next release of 'TreeTools'
+and will be removed from 'TreeDist'.</p>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>tree</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>8</span>)
+<span class='fu'>SplitsInBinaryTree</span>(<span class='no'>tree</span>)</div><div class='output co'>#&gt; [1] 5</div><div class='input'><span class='fu'>SplitsInBinaryTree</span>(<span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/as.Splits.html'>as.Splits</a></span>(<span class='no'>tree</span>))</div><div class='output co'>#&gt; [1] 5</div><div class='input'><span class='fu'>SplitsInBinaryTree</span>(<span class='fl'>8</span>)</div><div class='output co'>#&gt; [1] 5</div><div class='input'><span class='fu'>SplitsInBinaryTree</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>tree</span>, <span class='no'>tree</span>))</div><div class='output co'>#&gt; [1] 5 5</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
