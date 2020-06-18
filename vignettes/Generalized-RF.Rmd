@@ -17,7 +17,7 @@ library('TreeDist')
 tree1 <- read.tree(text='((A, B), ((C, (D, E)), (F, (G, (H, I)))));')
 tree2 <- read.tree(text='((A, B), ((C, D, (E, I)), (F, (G, H))));')
 AtoJ <-  read.tree(text='(((((A, B), C), D), E), (F, (G, (H, (I, J)))));')
-AotJ <-  read.tree(text='(((((J, B), C), D), E), (F, (G, (H, (I, A)))));')
+swapAJ <-  read.tree(text='(((((J, B), C), D), E), (F, (G, (H, (I, A)))));')
 ```
 
 This document outlines the similarity measures employed by the 
@@ -25,7 +25,7 @@ generalized Robinson-Foulds distances implemented in this package.
 
 Generalized RF distances are introduced [elsewhere](Robinson-Foulds.html); 
 before you read further, you may also wish to revisit how to
-[use the TreeDist package](Using-TreeDist.html), and relevant 
+[use the 'TreeDist' package](Using-TreeDist.html), and relevant 
 [principles of information theory](information.html).
 
 ## Shared phylogenetic information
@@ -33,45 +33,39 @@ before you read further, you may also wish to revisit how to
 Under the shared phylogenetic information tree distance measure [@SmithDist], 
 pairs of splits are assigned a similarity score that corresponds to the amount
 of phylogenetic information [_sensu_ @Steel2006] that they share in common
-(see [separate vignette](information.html)), a concept introduced but not 
-developed by Nelson [-@Nelson1979].
+(see [separate vignette](information.html)), a concept introduced (but not 
+developed) by Nelson [-@Nelson1979].
 
-```{r, fig.width=6 , fig.align='center'}
+```{r, fig.width=6, fig.align='center'}
 VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2, 
                   Plot = TreeDistPlot, matchZeros = FALSE)
 SharedPhylogeneticInfo(tree1, tree2)
 ```
 
-### The problem with prohibiting conflicting pairings
+### Conflicting splits can nevertheless be instructive
 
-<!--TODO expand to expound arboreal matchings-->
-Shared phylogenetic information prohibits the pairing of contradictory splits: 
-that is, it assigns zero similarity to splits that cannot both occur on a 
-single tree.  
+Shared phylogenetic information assigns zero similarity to incompatible splits,
+i.e. those that cannot both occur on a single tree.  
 This leads to problematic behaviour in certain cases: for example,
-when the position of two distant taxa is swapped, similarities within a tree can
-be obscured.  
-The two trees below are identical but for the position of _A_ and
-_J_, yet receive zero similarity if conflicting splits cannot be paired.
+swapping the position of two distant leaves (as with leaves 'A' and 'J' below)
+can disproportionately reduce similarity -- in this example, to zero.
 
 ```{r, fig.width=6 , fig.align='center'}
-VisualizeMatching(SharedPhylogeneticInfo, matchZeros = FALSE, AtoJ, AotJ,
-                  Plot = TreeDistPlot, leaveRoom = FALSE, prune = c(5, 18))
+VisualizeMatching(SharedPhylogeneticInfo, AtoJ, swapAJ,
+                  Plot = TreeDistPlot, matchZeros = FALSE, prune = c(5, 18))
 ```
 
 ## Mutual clustering information
 
-<!--TODO REWRITE; coherent matching -> prohibit conflicting pairings -->
 Scoring each pair of splits according to their mutual clustering information
 [@SmithDist]  (see [separate vignette](information.html)) results in a
- information-based tree distance metric that, as desired, assigns a
-non-zero similarity to the case that received zero similarity under an
-coherent matching:
+information-based tree distance metric that recognizes similarity in tree
+structure even when every possible pairing of splits conflicts:
 
 ```{r, fig.width=6 , fig.align='center'}
-VisualizeMatching(MutualClusteringInfo, AtoJ, AotJ, matchZeros = FALSE, 
-                  Plot = TreeDistPlot, leaveRoom = FALSE, prune = c(5, 18))
-MutualClusteringInfo(AtoJ, AotJ)
+VisualizeMatching(MutualClusteringInfo, AtoJ, swapAJ,
+                  Plot = TreeDistPlot, matchZeros = FALSE, prune = c(5, 18))
+MutualClusteringInfo(AtoJ, swapAJ)
 ```
 
 Because no pair of non-trivial splits has zero mutual clustering information,
