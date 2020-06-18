@@ -6,7 +6,7 @@ output: rmarkdown::html_vignette
 bibliography: ../inst/REFERENCES.bib
 csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
 vignette: >
-  %\VignetteIndexEntry{Tree distance metric evaluation}
+  %\VignetteIndexEntry{Interpreting tree distance metrics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
