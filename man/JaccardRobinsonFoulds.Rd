@@ -10,7 +10,7 @@ JaccardRobinsonFoulds(
   tree1,
   tree2 = tree1,
   k = 1L,
-  allowConflict = FALSE,
+  allowConflict = TRUE,
   similarity = FALSE,
   normalize = FALSE,
   reportMatching = FALSE
@@ -21,7 +21,7 @@ JaccardSplitSimilarity(
   splits2,
   nTip = attr(splits1, "nTip"),
   k = 1L,
-  allowConflict = FALSE,
+  allowConflict = TRUE,
   reportMatching = FALSE
 )
 }
@@ -89,11 +89,11 @@ raised to an arbitrary exponent.
 A more detailed explanation is provided in the
 \href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric}{vignettes}.
 
-By default, conflicting splits will not be paired.
+By default, conflicting splits may be paired.
 
 Note that the settings \verb{k = 1, allowConflict = TRUE, similarity = TRUE}
 give the similarity metric of Nye \emph{et al}. (2006); a slightly faster
-implementation of this metric is available as \code{\link{NyeTreeSimilarity}}.
+implementation of this metric is available as \code{\link[=NyeTreeSimilarity]{NyeTreeSimilarity()}}.
 
 The examples section below details how to visualize matchings with
 non-default parameter values.

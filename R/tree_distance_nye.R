@@ -111,7 +111,7 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' A more detailed explanation is provided in the 
 #' [vignettes](https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric).
 #' 
-#' By default, conflicting splits will not be paired. 
+#' By default, conflicting splits may be paired. 
 #' 
 #' Note that the settings `k = 1, allowConflict = TRUE, similarity = TRUE`
 #' give the similarity metric of Nye _et al_. (2006); a slightly faster
@@ -166,14 +166,14 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' @importFrom TreeTools NSplits
 #' @export
 JaccardRobinsonFoulds <- function (tree1, tree2 = tree1, k = 1L, 
-                                   allowConflict = FALSE, similarity = FALSE,
+                                   allowConflict = TRUE, similarity = FALSE,
                                    normalize = FALSE, reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(JaccardSplitSimilarity, tree1, tree2, 
                                         k = k, allowConflict = allowConflict, 
                                         reportMatching = reportMatching) * 2L
   if (!similarity) unnormalized <- 
       outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE] - unnormalized
-
+#TODO make normalization match Nye Et Al.
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
                 InfoInTree = NSplits, Combine = '+')
 }
@@ -183,7 +183,7 @@ JaccardRobinsonFoulds <- function (tree1, tree2 = tree1, k = 1L,
 #' @export
 JaccardSplitSimilarity <- function (splits1, splits2,
                                     nTip = attr(splits1, 'nTip'),
-                                    k = 1L, allowConflict = FALSE,
+                                    k = 1L, allowConflict = TRUE,
                                     reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, nTip, cpp_jaccard_similarity, k = k,
                 allowConflict = allowConflict, maximize = TRUE,
