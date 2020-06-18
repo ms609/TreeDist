@@ -49,7 +49,7 @@ and each column corresponds to a split, such that each leaf is identified as
 a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
 split.}
 
-\item{nTip}{Integer specifying the number of leaves in each split.}
+\item{nTip}{(Optional) Integer specifying the number of leaves in each split.}
 }
 \value{
 \code{MatchingSplitDistance()} returns an array of numerics providing the

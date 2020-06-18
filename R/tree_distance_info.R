@@ -280,7 +280,7 @@ MutualClusteringInformation <- MutualClusteringInfo
 
 #' @rdname TreeDistance
 #' @template splits12params
-#' @template nTipParam
+#' @param nTip (Optional) Integer specifying the number of leaves in each split.
 #' @export
 SharedPhylogeneticInfoSplits <- function (splits1, splits2,
                                           nTip = attr(splits1, 'nTip'),

@@ -81,7 +81,7 @@ and each column corresponds to a split, such that each leaf is identified as
 a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
 split.}
 
-\item{nTip}{Integer specifying the number of leaves in each split.}
+\item{nTip}{(Optional) Integer specifying the number of leaves in each split.}
 
 \item{\dots}{Not used.}
 }
@@ -91,7 +91,7 @@ distances between each  pair of trees in \code{tree1} and \code{tree2},
 or \code{splits1} and \code{splits2}.
 }
 \description{
-Calculates the Robinson-Foulds distance, or the equivalent similarity
+Calculate the Robinson-Foulds distance, or the equivalent similarity
 measure, with options to (i) annotate matched splits; (ii) weight splits
 according to their phylogenetic information content (Smith 202X).
 }

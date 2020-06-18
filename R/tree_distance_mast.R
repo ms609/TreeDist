@@ -89,7 +89,7 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
 #' 
 #' @param edge1 Edge matrix of tree 1. MUST BE IN POSTORDER!
 #' @param edge2 Edge matrix of tree 2.
-#' @param nTip Integer specifying number of tips.
+#' @param nTip Integer specifying the number of leaves in each split.
 #' @keywords internal
 .MASTSizeEdges <- function (edge1, edge2, nTip) {
   cpp_mast(edge1 - 1L, Postorder(edge2) - 1L, nTip)

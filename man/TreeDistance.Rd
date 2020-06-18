@@ -114,7 +114,7 @@ and each column corresponds to a split, such that each leaf is identified as
 a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
 split.}
 
-\item{nTip}{Integer specifying the number of leaves in each split.}
+\item{nTip}{(Optional) Integer specifying the number of leaves in each split.}
 }
 \value{
 If \code{reportMatching = FALSE}, the functions return a numeric
@@ -125,8 +125,9 @@ of which clades are matched in the optimal matching, which can be viewed
 using \code{\link[=VisualizeMatching]{VisualizeMatching()}}.
 }
 \description{
-Tree similarity and distance measures that measure the amount of
-phylogenetic or clustering information that two trees hold in common.
+Calculate tree similarity and distance measures based on the amount of
+phylogenetic or clustering information that two trees hold in common, as
+proposed in Smith (202X).
 }
 \details{
 \href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson-Foulds distances}
@@ -141,7 +142,7 @@ The methods implemented here use the concepts of
 
 The returned tree similarity measures state the amount of information,
 in bits, that the splits in two trees hold in common
-when they are optimally matched, following Smith (forthcoming).
+when they are optimally matched, following Smith (202X).
 The complementary tree distance measures state how much information is
 different in the splits of two trees, under an optimal matching.
 }

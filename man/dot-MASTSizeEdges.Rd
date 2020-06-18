@@ -11,7 +11,7 @@
 
 \item{edge2}{Edge matrix of tree 2.}
 
-\item{nTip}{Integer specifying number of tips.}
+\item{nTip}{Integer specifying the number of leaves in each split.}
 }
 \description{
 Internal function.

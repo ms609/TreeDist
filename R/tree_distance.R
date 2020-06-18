@@ -8,7 +8,7 @@
 #' function.
 #' 
 #' @inheritParams SharedPhylogeneticInfoSplits
-#' @template nTipParam
+#' @param nTip Integer specifying the number of leaves in each split.
 #' @param PairScorer function taking four arguments, `splits1`, `splits2`,
 #' `nSplits1`, `nSplits2`, which should return the score of each pair of splits
 #' in a two-dimensional matrix.  Additional parameters may be specified via 
