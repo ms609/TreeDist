@@ -282,7 +282,7 @@ A more detailed explanation is provided in the
 <p>By default, conflicting splits will not be paired.</p>
 <p>Note that the settings <code>k = 1, allowConflict = TRUE, similarity = TRUE</code>
 give the similarity metric of Nye <em>et al</em>. (2006); a slightly faster
-implementation of this metric is available as <code><a href='NyeTreeSimilarity.html'>NyeTreeSimilarity</a></code>.</p>
+implementation of this metric is available as <code><a href='NyeTreeSimilarity.html'>NyeTreeSimilarity()</a></code>.</p>
 <p>The examples section below details how to visualize matchings with
 non-default parameter values.</p>
     <h2 class="hasAnchor" id="normalization"><a class="anchor" href="#normalization"></a>Normalization</h2>
@@ -334,8 +334,7 @@ doi: <a href='https://doi.org/10.1007/978-3-642-40453-5_13'>10.1007/978-3-642-40
 <span class='no'>JRF2</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span> (<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='no'>...</span>)
   <span class='fu'>JaccardRobinsonFoulds</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>allowConflict</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
-<span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span>(<span class='no'>JRF2</span>, <span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>matchZeros</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='img'><img src='JaccardRobinsonFoulds-1.png' alt='' width='700' height='433' /></div><div class='input'>
-</div></pre>
+<span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span>(<span class='no'>JRF2</span>, <span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>matchZeros</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='img'><img src='JaccardRobinsonFoulds-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

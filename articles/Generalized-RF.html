@@ -156,9 +156,9 @@ This leads to problematic behaviour in certain cases: for example, swapping the 
 <p><img src="Generalized-RF_files/figure-html/unnamed-chunk-3-1.png" width="576" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="../reference/TreeDistance.html">MutualClusteringInfo</a></span>(<span class="no">AtoJ</span>, <span class="no">swapAJ</span>)</pre></body></html></div>
 <pre><code>## [1] 1.348339</code></pre>
-<p>Because no pair of non-trivial splits has zero mutual clustering information, even a dissimilar matching (such as <code>HI|ABCDEFG</code> =&gt; <code>EI|ABCDFGH</code> below) is preferred to leaving a split unpaired.</p>
+<p>Because no pair of non-trivial splits has zero mutual clustering information, even a dissimilar pairing (such as <code>HI|ABCDEFG</code> =&gt; <code>EI|ABCDFGH</code> below) is (slightly) preferable to leaving a split unpaired.</p>
 <div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">MutualClusteringInfo</span>, <span class="no">tree1</span>, <span class="no">tree2</span>,
-                  <span class="kw">Plot</span> <span class="kw">=</span> <span class="no">TreeDistPlot</span>, <span class="kw">leaveRoom</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">matchZeros</span> <span class="kw">=</span> <span class="fl">FALSE</span>)</pre></body></html></div>
+                  <span class="kw">Plot</span> <span class="kw">=</span> <span class="no">TreeDistPlot</span>, <span class="kw">matchZeros</span> <span class="kw">=</span> <span class="fl">FALSE</span>)</pre></body></html></div>
 <p><img src="Generalized-RF_files/figure-html/unnamed-chunk-4-1.png" width="576" style="display: block; margin: auto;"></p>
 </div>
 <div id="nye-et-al--tree-similarity-metric" class="section level2">
@@ -184,26 +184,29 @@ ABCDE IJ|FGH</code></pre>
 <div id="jaccard-robinson-foulds-metric" class="section level3">
 <h3 class="hasAnchor">
 <a href="#jaccard-robinson-foulds-metric" class="anchor"></a>Jaccard-Robinson-Foulds metric</h3>
-<!--TODO REWRITE -- I'd misunderstood what an arboreal matching was -->
-<p>Böcker <em>et al</em>. <span class="citation">(2013)</span> propose expressly prohibiting contradictory pairings, i.e. pairs of splits that could never occur in the same tree. Such a ‘coherent’ matching would preclude the pairing of <code>ABCFGHI|DE</code> with <code>ABCDFGH|EI</code>:</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="fu"><a href="../reference/JaccardRobinsonFoulds.html">JaccardRobinsonFoulds</a></span>(<span class="no">tree1</span>, <span class="no">tree2</span>, <span class="kw">similarity</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
-<pre><code>## [1] 6.333333</code></pre>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">JaccardRobinsonFoulds</span>, <span class="no">tree1</span>, <span class="no">tree2</span>,
-                  <span class="kw">Plot</span> <span class="kw">=</span> <span class="no">TreeDistPlot</span>, <span class="kw">leaveRoom</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">matchZeros</span> <span class="kw">=</span> <span class="fl">FALSE</span>)</pre></body></html></div>
+<p>Böcker <em>et al</em>. <span class="citation">(2013)</span> employ the same split similarity metric as Nye <em>et al.</em> <span class="citation">(2006)</span>, which they suggest ought to be raised to an arbitrary exponent. In order for the metric to converge to the Robinson-Foulds metric as the exponent grows towards infinity, the resulting score is then doubled.</p>
+<p>The figure below shows how the JRF distance between the two trees plotted above varies with the value of the exponent <em>k</em>, relative to the Nye <em>et al.</em> and Robinson-Foulds distances between the trees:</p>
 <p><img src="Generalized-RF_files/figure-html/unnamed-chunk-6-1.png" width="576" style="display: block; margin: auto;"></p>
-<p>Böcker <em>et al</em>. <span class="citation">(2013)</span> also suggest raising the split similarity score defined above to an arbitrary exponent. The similarity score is also doubled. By this means, the metric can be made to converge to the Robinson-Foulds metric as the exponent grows towards infinity.</p>
-<p><img src="Generalized-RF_files/figure-html/unnamed-chunk-7-1.png" width="576" style="display: block; margin: auto;"></p>
+<p>The theoretical and practical performance of the JRF metric, and its speed of calculation, are best at lower values of <em>k</em> <span class="citation">(Smith, 2020)</span>, raising the question of whether an exponent is necessary.</p>
+<p>Böcker <em>et al</em>. <span class="citation">(2013)</span> suggest that ‘reasonable’ matchings exhibit a property they term <em>arboreality</em>. Their definition of an arboreal matching supposes that trees are rooted, in which case each split corresponds to a clade. In an arboreal matching on a rooted tree, no pairing of splits conflicts with any other pairing of splits. Consider the case where splits ‘A’ and ‘B’ in tree 1 are paired respectively with splits ‘C’ and ‘D’ in tree 2. If ‘A’ is paired with ‘C’ and ‘B’ with ‘D’, then to avoid conflict:</p>
+<ul>
+<li><p>if A is nested within B, then C must be nested within D</p></li>
+<li><p>if B is nested within A, then D must be nested within C</p></li>
+<li><p>if A and B do not overlap, then C and D must not overlap.</p></li>
+</ul>
+<p>Equivalent statements for unrooted trees are a little harder to express.</p>
+<p>Unfortunately, constructing arboreal matchings is NP-complete, making an optimal arboreal matching slow to find. A faster alternative is to prohibit pairings of contradictory splits, though distances generated under such an approach are theoretically less coherent and practically no more effective than those calculated when contradictory splits may be paired, so the only advantage of this approach is a slight increase in calculation speed <span class="citation">(Smith, 2020)</span>.</p>
 </div>
 </div>
 <div id="matching-split-distance" class="section level2">
 <h2 class="hasAnchor">
 <a href="#matching-split-distance" class="anchor"></a>Matching Split Distance</h2>
 <p>Bogdanowicz &amp; Giaro <span class="citation">(2012)</span> propose an alternative distance, which they term the Matching Split Distance. (This was independently proposed by Lin <em>et al.</em> <span class="citation">(2012)</span>.)</p>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="fu"><a href="../reference/MatchingSplitDistance.html">MatchingSplitDistance</a></span>(<span class="no">tree1</span>, <span class="no">tree2</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="fu"><a href="../reference/MatchingSplitDistance.html">MatchingSplitDistance</a></span>(<span class="no">tree1</span>, <span class="no">tree2</span>)</pre></body></html></div>
 <pre><code>## [1] 5</code></pre>
-<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">MatchingSplitDistance</span>, <span class="no">tree1</span>, <span class="no">tree2</span>,
-                  <span class="kw">Plot</span> <span class="kw">=</span> <span class="no">TreeDistPlot</span>, <span class="kw">leaveRoom</span><span class="kw">=</span><span class="fl">FALSE</span>, <span class="kw">matchZeros</span> <span class="kw">=</span> <span class="fl">FALSE</span>)</pre></body></html></div>
-<p><img src="Generalized-RF_files/figure-html/unnamed-chunk-8-1.png" width="576" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">MatchingSplitDistance</span>, <span class="no">tree1</span>, <span class="no">tree2</span>,
+                  <span class="kw">Plot</span> <span class="kw">=</span> <span class="no">TreeDistPlot</span>, <span class="kw">matchZeros</span> <span class="kw">=</span> <span class="fl">FALSE</span>)</pre></body></html></div>
+<p><img src="Generalized-RF_files/figure-html/unnamed-chunk-7-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>Note that the visualization shows the difference, rather than the similarity, between splits.</p>
 <p>Similar to the Nye <em>et al</em>. similarity metric, this method compares the subsets implied by a pair of splits. Here, the relevant quantity is the number of elements that must be moved from one subset to another in order to make the two splits identical. With the pair of splits</p>
 <pre><code>ABCDEF  | GHIJ
@@ -213,7 +216,7 @@ Formally, where <span class="math inline">\(S_i\)</span> splits <span class="mat
 <p><span class="math inline">\(n - m\)</span></p>
 <p>where <span class="math inline">\(m\)</span> counts the number of leaves that already match, and is defined as</p>
 <p><span class="math inline">\(m = \max\{|A_1 \cap A_2| + |B_1 \cap B_2|, |A_1 \cap B_2| + |B_1 \cap A_2|\}\)</span></p>
-<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="fu"><a href="../reference/MatchingSplitDistance.html">MatchingSplitDistance</a></span>(<span class="fu">read.tree</span>(<span class="kw">text</span><span class="kw">=</span><span class="st">'((a, b, c, d, e, f), (g, h, i, j));'</span>),
+<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="fu"><a href="../reference/MatchingSplitDistance.html">MatchingSplitDistance</a></span>(<span class="fu">read.tree</span>(<span class="kw">text</span><span class="kw">=</span><span class="st">'((a, b, c, d, e, f), (g, h, i, j));'</span>),
                       <span class="fu">read.tree</span>(<span class="kw">text</span><span class="kw">=</span><span class="st">'((a, b, c, d, e, i, j), (g, h, f));'</span>))</pre></body></html></div>
 <pre><code>## [1] 3</code></pre>
 <p>This distance is difficult to normalize, as its maximum value is difficult to calculate.</p>
@@ -226,14 +229,14 @@ Formally, where <span class="math inline">\(S_i\)</span> splits <span class="mat
 <pre><code>ABCDEF  | GHIJ
 ABCDE IJ|FGH  </code></pre>
 <p>is <code>ABCDE | GH</code>, which contains</p>
-<div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="kw pkg">TreeTools</span><span class="kw ns">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/SplitInformation.html">SplitInformation</a></span>(<span class="fl">5</span>, <span class="fl">2</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="kw pkg">TreeTools</span><span class="kw ns">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/SplitInformation.html">SplitInformation</a></span>(<span class="fl">5</span>, <span class="fl">2</span>)</pre></body></html></div>
 <pre><code>## [1] 3.169925</code></pre>
 <p>bits of phylogenetic information, which provides a similarity score for this pairing.</p>
-<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="fu"><a href="../reference/TreeDistance.html">MatchingSplitInfoDistance</a></span>(<span class="no">tree1</span>, <span class="no">tree2</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="fu"><a href="../reference/TreeDistance.html">MatchingSplitInfoDistance</a></span>(<span class="no">tree1</span>, <span class="no">tree2</span>)</pre></body></html></div>
 <pre><code>## [1] 17.27586</code></pre>
-<div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">MatchingSplitInfoDistance</span>, <span class="no">tree1</span>, <span class="no">tree2</span>,
+<div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">MatchingSplitInfoDistance</span>, <span class="no">tree1</span>, <span class="no">tree2</span>,
                   <span class="kw">Plot</span> <span class="kw">=</span> <span class="no">TreeDistPlot</span>, <span class="kw">leaveRoom</span><span class="kw">=</span><span class="fl">FALSE</span>, <span class="kw">matchZeros</span> <span class="kw">=</span> <span class="fl">FALSE</span>)</pre></body></html></div>
-<p><img src="Generalized-RF_files/figure-html/unnamed-chunk-11-1.png" width="576" style="display: block; margin: auto;"></p>
+<p><img src="Generalized-RF_files/figure-html/unnamed-chunk-10-1.png" width="576" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div id="references" class="section level2 unnumbered">
