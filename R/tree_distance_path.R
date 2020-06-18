@@ -14,7 +14,7 @@
 #' shallow relationships at the expense of deeper (and arguably more
 #' fundamental) relationships (Farris, 1973).
 #' 
-#' @template tree12Params
+#' @template tree12ListParams
 #' 
 #' @return `PathDist()` returns a vector or distance matrix of distances
 #' between trees.

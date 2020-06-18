@@ -4,10 +4,17 @@
 \alias{SPRDist}
 \title{Approximate Subtree Prune and Regraft distance}
 \usage{
-SPRDist(tree1, tree2 = NULL)
+SPRDist(tree1, tree2 = NULL, symmetric = FALSE)
 }
 \arguments{
-\item{tree1, tree2}{Single trees of class \code{phylo} to undergo comparison.}
+\item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
+or lists of such trees to undergo pairwise comparison.}
+
+\item{symmetric}{Logical specifying whether to produce a better heuristic
+by calculating the minimum of \code{SPRDist(t1, t2)} and \code{SPRDist(t2, t1)},
+which are not guaranteed to be equal due to the heuristic nature of the
+approximation (see
+\href{https://github.com/KlausVigo/phangorn/issues/97}{phangorn#97}).}
 }
 \value{
 \code{SPRDist()} returns a vector or distance matrix of distances
@@ -21,10 +28,6 @@ This function is a wrapper for the function
 \code{\link[phangorn:treedist]{SPR.dist()}} in the phangorn package.
 It pre-processes trees to ensure that their internal representation does
 not cause the \code{SPR.dist()} function to crash R.
-
-A memory leak is present in phangorn v2.5.5.  To avoid a drain on system
-resources, install the latest version of phangorn with
-\code{devtools::install_github('KlausVigo/phangorn')}.
 }
 \examples{
 library('TreeTools')

@@ -7,7 +7,8 @@
 PathDist(tree1, tree2 = NULL)
 }
 \arguments{
-\item{tree1, tree2}{Single trees of class \code{phylo} to undergo comparison.}
+\item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
+or lists of such trees to undergo pairwise comparison.}
 }
 \value{
 \code{PathDist()} returns a vector or distance matrix of distances

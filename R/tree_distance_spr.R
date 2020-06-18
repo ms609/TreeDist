@@ -10,8 +10,8 @@
 #' A memory leak is present in phangorn v2.5.5.  To avoid a drain on system
 #' resources, install the latest version of phangorn with 
 #' `devtools::install_github('KlausVigo/phangorn')`.
+#' @template tree12ListParams
 #' 
-#' @template tree12Params
 #' 
 #' @return `SPRDist()` returns a vector or distance matrix of distances 
 #' between trees.

@@ -10,7 +10,8 @@ MASTSize(tree1, tree2 = tree1, rooted = TRUE)
 MASTInfo(tree1, tree2 = tree1, rooted = TRUE)
 }
 \arguments{
-\item{tree1, tree2}{Single trees of class \code{phylo} to undergo comparison.}
+\item{tree1, tree2}{Trees of class \code{phylo}, or lists of such trees to undergo
+pairwise comparison.}
 
 \item{rooted}{Logical specifying whether to treat the trees as rooted.}
 }

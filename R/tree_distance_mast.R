@@ -9,7 +9,8 @@
 #' Implemented for trees with up to 4096 tips.  Contact maintainer if you
 #' need to process larger trees.
 #' 
-#' @template tree12Params
+#' @param tree1,tree2 Trees of class `phylo`, or lists of such trees to undergo
+#' pairwise comparison.
 #' @param rooted Logical specifying whether to treat the trees as rooted.
 #' 
 #' @return `MASTSize()` returns an integer specifying the number of leaves in
