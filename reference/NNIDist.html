@@ -46,8 +46,8 @@
 
 
 <meta property="og:title" content="Approximate Nearest Neighbour Interchange distance — NNIDist" />
-<meta property="og:description" content="An approximation of the Nearest Neighbour Interchange distance (Robinson,
-1971), based on Li et al. (1996)." />
+<meta property="og:description" content="Use the approach of Li et al. (1996) to approximate the Nearest Neighbour
+Interchange distance (Robinson, 1971) between phylogenetic trees." />
 
 
 
@@ -170,8 +170,8 @@
     </div>
 
     <div class="ref-description">
-    <p>An approximation of the Nearest Neighbour Interchange distance (Robinson,
-1971), based on Li <em>et al.</em> (1996).</p>
+    <p>Use the approach of Li <em>et al.</em> (1996) to approximate the Nearest Neighbour
+Interchange distance (Robinson, 1971) between phylogenetic trees.</p>
     </div>
 
     <pre class="usage"><span class='fu'>NNIDist</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>)</pre>
@@ -187,7 +187,7 @@
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>NNIDist</code> returns, for each pair of trees, a named vector
+    <p><code>NNIDist()</code> returns, for each pair of trees, a named vector
 containing three integers:</p><ul>
 <li><p><code>lower</code> is a lower bound on the NNI distance, and corresponds
 to the RF distance between the trees.</p></li>

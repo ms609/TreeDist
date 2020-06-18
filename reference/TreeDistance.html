@@ -46,8 +46,9 @@
 
 
 <meta property="og:title" content="Information-based generalized Robinson-Foulds distances — TreeDistance" />
-<meta property="og:description" content="Tree similarity and distance measures that measure the amount of
-phylogenetic or clustering information that two trees hold in common." />
+<meta property="og:description" content="Calculate tree similarity and distance measures based on the amount of
+phylogenetic or clustering information that two trees hold in common, as
+proposed in Smith (202X)." />
 
 
 
@@ -170,8 +171,9 @@ phylogenetic or clustering information that two trees hold in common." />
     </div>
 
     <div class="ref-description">
-    <p>Tree similarity and distance measures that measure the amount of
-phylogenetic or clustering information that two trees hold in common.</p>
+    <p>Calculate tree similarity and distance measures based on the amount of
+phylogenetic or clustering information that two trees hold in common, as
+proposed in Smith (202X).</p>
     </div>
 
     <pre class="usage"><span class='fu'>TreeDistance</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>)
@@ -285,7 +287,7 @@ split.</p></td>
     </tr>
     <tr>
       <th>nTip</th>
-      <td><p>Integer specifying the number of leaves in each split.</p></td>
+      <td><p>(Optional) Integer specifying the number of leaves in each split.</p></td>
     </tr>
     </table>
 
@@ -308,7 +310,7 @@ between trees (including leaving a split unpaired).</p>
 (MacKay 2003) to assign a similarity score between each pair of splits.</p>
 <p>The returned tree similarity measures state the amount of information,
 in bits, that the splits in two trees hold in common
-when they are optimally matched, following Smith (forthcoming).
+when they are optimally matched, following Smith (202X).
 The complementary tree distance measures state how much information is
 different in the splits of two trees, under an optimal matching.</p>
     <h2 class="hasAnchor" id="concepts-of-information"><a class="anchor" href="#concepts-of-information"></a>Concepts of information</h2>
