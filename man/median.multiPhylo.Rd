@@ -65,8 +65,8 @@ median(tenTrees)
 median(tenTrees, Distance = RobinsonFoulds, breakTies = FALSE)
 
 # Be sure to use a distance function, rather than a similarity:
-NyeTreeDistance <- function (...) NyeTreeSimilarity(..., similarity = FALSE)
-median(tenTrees, Distance = NyeTreeDistance)
+NyeDistance <- function (...) NyeSimilarity(..., similarity = FALSE)
+median(tenTrees, Distance = NyeDistance)
 
 # To analyse a list of trees that is not of class multiPhylo:
 treeList <- lapply(1:10, as.phylo, nTip = 8)

@@ -41,7 +41,7 @@ lead to different tree distance metrics, implemented in the functions below:
     (Its complement, [`ClusteringInfoDistance()`](https://ms609.github.io/TreeDist/reference/TreeDistance.html), returns a tree 
     distance.)
 
-* [`NyeTreeSimilarity()`](https://ms609.github.io/TreeDist/reference/NyeTreeSimilarity.html)
+* [`NyeSimilarity()`](https://ms609.github.io/TreeDist/reference/NyeSimilarity.html)
     
     Nye _et al._ (2006) score matchings according to the size of the largest 
     split that is consistent with both of them, normalized against 

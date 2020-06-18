@@ -93,7 +93,7 @@ By default, conflicting splits may be paired.
 
 Note that the settings \verb{k = 1, allowConflict = TRUE, similarity = TRUE}
 give the similarity metric of Nye \emph{et al}. (2006); a slightly faster
-implementation of this metric is available as \code{\link[=NyeTreeSimilarity]{NyeTreeSimilarity()}}.
+implementation of this metric is available as \code{\link[=NyeSimilarity]{NyeSimilarity()}}.
 
 The examples section below details how to visualize matchings with
 non-default parameter values.
@@ -133,7 +133,7 @@ Other tree distances:
 \code{\link{MASTSize}()},
 \code{\link{MatchingSplitDistance}()},
 \code{\link{NNIDist}()},
-\code{\link{NyeTreeSimilarity}()},
+\code{\link{NyeSimilarity}()},
 \code{\link{PathDist}()},
 \code{\link{Robinson-Foulds}},
 \code{\link{SPRDist}()},

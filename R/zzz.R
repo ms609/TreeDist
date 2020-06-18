@@ -6,9 +6,8 @@
 release_questions <- function() {
   c(
     "Is the code free of #TODOs?",
-    "Have you checked the Vignettes for sanity?",
-    "Have you checked pkgdown::build_reference_index()?",
     "Have you updated README.md, inst/REFERENCES.bib & inst/CITATION with a citation to the published study?",
+    "Have you replace references to Smith (202X), Smith (forthcoming) and SmithDist?",
     "Have you updated the version number in .zenodo.json, NEWS & DESCRIPTION?"
     )
 }

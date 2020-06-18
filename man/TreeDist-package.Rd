@@ -43,7 +43,7 @@ desirable behaviour; it is the recommended metric for tree comparison.
 (Its complement, \href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{\code{ClusteringInfoDistance()}}, returns a tree
 distance.)
 }
-\item \href{https://ms609.github.io/TreeDist/reference/NyeTreeSimilarity.html}{\code{NyeTreeSimilarity()}}
+\item \href{https://ms609.github.io/TreeDist/reference/NyeSimilarity.html}{\code{NyeSimilarity()}}
 \itemize{
 \item Nye \emph{et al.} (2006) score matchings according to the size of the largest
 split that is consistent with both of them, normalized against

@@ -145,7 +145,7 @@ test_that('Matches are reported', {
   Test(MutualClusteringInfo)
   Test(ClusteringInfoDistance)
   
-  Test(NyeTreeSimilarity)
+  Test(NyeSimilarity)
   Test(MatchingSplitDistance)
   Test(JaccardRobinsonFoulds, k = 2, allowConflict = FALSE)
   Test(JaccardRobinsonFoulds, k = 2, allowConflict = TRUE)
@@ -190,7 +190,7 @@ test_that('Matchings are calculated in both directions', {
   Test(MutualClusteringInfo)
   Test(ClusteringInfoDistance)
   
-  Test(NyeTreeSimilarity)
+  Test(NyeSimilarity)
   Test(JaccardRobinsonFoulds, k = 2, allowConflict = FALSE)
   Test(JaccardRobinsonFoulds, k = 2, allowConflict = TRUE)
   Test(MatchingSplitDistance)

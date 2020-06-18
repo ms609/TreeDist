@@ -47,7 +47,7 @@ Other tree distances:
 \code{\link{MASTSize}()},
 \code{\link{MatchingSplitDistance}()},
 \code{\link{NNIDist}()},
-\code{\link{NyeTreeSimilarity}()},
+\code{\link{NyeSimilarity}()},
 \code{\link{PathDist}()},
 \code{\link{Robinson-Foulds}},
 \code{\link{TreeDistance}()}

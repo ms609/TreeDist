@@ -37,7 +37,7 @@ methodsToTest <- list(
   MatchingSplitInfoDistance,
   MutualClusteringInfo,
   ClusteringInfoDistance,
-  NyeTreeSimilarity,
+  NyeSimilarity,
   JaccardRobinsonFoulds,
   MatchingSplitDistance,
   RobinsonFoulds,
@@ -85,7 +85,7 @@ test_that('Size mismatch causes error', {
 test_that('Metrics handle polytomies', {
   polytomy8 <- ape::read.tree(text='(a, b, c, d, e, f, g, h);')
   lapply(list(SharedPhylogeneticInfo, MutualClusteringInfo,
-              MatchingSplitDistance, NyeTreeSimilarity),
+              MatchingSplitDistance, NyeSimilarity),
          function (Func) expect_equal(0, Func(treeSym8, polytomy8)))
 })
 
@@ -402,33 +402,32 @@ test_that('Matching Split Distance is correctly calculated', {
                MatchingSplitDistance(shuffle2, sq_pectinate))
 })
 
-test_that('NyeTreeSimilarity is correctly calculated', {
+test_that('NyeSimilarity is correctly calculated', {
   listBalSym <- list(treeBal8, treeSym8)
   
-  expect_equal(5L, NyeTreeSimilarity(as.Splits(treeSym8), treeSym8))
-  expect_equal(1, NyeTreeSimilarity(treeSym8, treeSym8, normalize = TRUE))
-  expect_equal(0, NyeTreeSimilarity(treeSym8, treeStar8, normalize = FALSE))
-  expect_equal(0, NyeTreeSimilarity(treeSym8, treeStar8, normalize = TRUE))
-  expect_equal(0, NyeTreeSimilarity(treeStar8, treeStar8, normalize = FALSE))
-  expect_equal(NaN, NyeTreeSimilarity(treeStar8, treeStar8, normalize = TRUE, 
+  expect_equal(5L, NyeSimilarity(as.Splits(treeSym8), treeSym8))
+  expect_equal(1, NyeSimilarity(treeSym8, treeSym8, normalize = TRUE))
+  expect_equal(0, NyeSimilarity(treeSym8, treeStar8, normalize = FALSE))
+  expect_equal(0, NyeSimilarity(treeSym8, treeStar8, normalize = TRUE))
+  expect_equal(0, NyeSimilarity(treeStar8, treeStar8, normalize = FALSE))
+  expect_equal(NaN, NyeSimilarity(treeStar8, treeStar8, normalize = TRUE, 
                                       normalizeMax = FALSE))
   
-  expect_equal(c(3.8, 5), NyeTreeSimilarity(treeSym8, listBalSym))
-  expect_equal(2 / 3, NyeTreeSimilarity(treeAb.Cdefgh, treeAbc.Defgh), 
+  expect_equal(c(3.8, 5), NyeSimilarity(treeSym8, listBalSym))
+  expect_equal(2 / 3, NyeSimilarity(treeAb.Cdefgh, treeAbc.Defgh), 
                tolerance = 1e-7)
-  expect_equal(2 * (1 / 3), NyeTreeSimilarity(treeAb.Cdefgh, treeAbc.Defgh,
+  expect_equal(2 * (1 / 3), NyeSimilarity(treeAb.Cdefgh, treeAbc.Defgh,
                                         similarity = FALSE), tolerance = 1e-7)
-  #TODO: Validate expected value
-  expect_equal(1L, NyeTreeSimilarity(treeSym8, treeAbcd.Efgh, 
+  expect_equal(1L, NyeSimilarity(treeSym8, treeAbcd.Efgh, 
                                      normalize = FALSE))
-  expect_equal(1L / 5L, NyeTreeSimilarity(treeSym8, treeAbcd.Efgh, 
+  expect_equal(1L / 5L, NyeSimilarity(treeSym8, treeAbcd.Efgh, 
                                           normalize = 5L))
   expect_equal(1L / ((5L + 1L) / 2L),
-               NyeTreeSimilarity(treeSym8, treeAbcd.Efgh, normalize = TRUE))
-  expect_true(NyeTreeSimilarity(treeSym8, treeBal8) > 
-                NyeTreeSimilarity(treeSym8, treeOpp8))
+               NyeSimilarity(treeSym8, treeAbcd.Efgh, normalize = TRUE))
+  expect_true(NyeSimilarity(treeSym8, treeBal8) > 
+                NyeSimilarity(treeSym8, treeOpp8))
   
-  NormalizationTest(NyeTreeSimilarity)
+  NormalizationTest(NyeSimilarity)
 })
 
 
@@ -436,7 +435,7 @@ test_that('Jaccard RF extremes tend to equivalent functions', {
   expect_equal(JaccardRobinsonFoulds(treeSym8, list(treeBal8, treeSym8),
                                      similarity = TRUE, k = 1L,
                                      allowConflict = TRUE),
-               NyeTreeSimilarity(treeSym8, list(treeBal8, treeSym8)) * 2L)
+               NyeSimilarity(treeSym8, list(treeBal8, treeSym8)) * 2L)
   
   expect_equal(JaccardRobinsonFoulds(treeSym8, list(treeBal8, treeSym8),
                                      similarity = FALSE, k = Inf),
@@ -456,7 +455,6 @@ test_that('Jaccard RF is correctly calculated', {
                                         similarity = TRUE, normalize = TRUE))
   expect_equal(0, JaccardRobinsonFoulds(treeSym8, treeSym8,
                                         similarity = FALSE, normalize = TRUE))
-  #TODO: Validate expected value
   expect_equal(1L * 2L, 
                JaccardRobinsonFoulds(treeSym8, treeAbcd.Efgh, similarity = TRUE,
                                      normalize = FALSE, k = 2))

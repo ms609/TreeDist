@@ -122,14 +122,14 @@ vector specifying the requested similarities or differences.
 
 If \code{reportMatching = TRUE}, the functions additionally return details
 of which clades are matched in the optimal matching, which can be viewed
-using \code{\link{VisualizeMatching}}.
+using \code{\link[=VisualizeMatching]{VisualizeMatching()}}.
 }
 \description{
 Tree similarity and distance measures that measure the amount of
 phylogenetic or clustering information that two trees hold in common.
 }
 \details{
-\href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson-Foulds distances}.
+\href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson-Foulds distances}
 calculate tree similarity by finding an
 optimal matching that the similarity between a split on one tree
 and its pair on a second, considering all possible ways to pair splits
@@ -193,16 +193,16 @@ Note that a distance value of one (= similarity of zero) will seldom be
 achieved, as even the most different trees exhibit some similarity.
 It may thus be helpful to rescale the normalized value such that the
 \emph{expected} distance between a random pair of trees equals one.  This can
-be calculated with \code{ExpectedVariation()}; or see
+be calculated with \code{ExpectedVariation()}; or see package
 '\href{https://ms609.github.io/TreeDistData/reference/randomTreeDistances.html}{TreeDistData}'
 for a compilation of expected values under different metrics for trees with
 up to 200 leaves.
 
 Alternatively, to scale against the information content or entropy of all
-splits in the most or least informative tree, use \code{normalize = pmax} or
-\code{pmin} respectively.
+splits in the most or least informative tree, use \verb{normalize = }\code{\link{pmax}} or
+\code{\link{pmin}} respectively.
 To calculate the relative similarity against a reference tree that is known
-to be 'correct', use \code{normalize = SplitwiseInfo(trueTree)} (SPI, MSI) or
+to be 'correct', use \verb{normalize = ``SplitwiseInfo(trueTree)} (SPI, MSI) or
 \code{ClusteringEntropy(trueTree)} (MCI).
 }
 }
@@ -262,7 +262,7 @@ Other tree distances:
 \code{\link{MASTSize}()},
 \code{\link{MatchingSplitDistance}()},
 \code{\link{NNIDist}()},
-\code{\link{NyeTreeSimilarity}()},
+\code{\link{NyeSimilarity}()},
 \code{\link{PathDist}()},
 \code{\link{Robinson-Foulds}},
 \code{\link{SPRDist}()}

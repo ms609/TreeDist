@@ -1,7 +1,7 @@
 #' Nye _et al_. (2006) tree comparison
 #' 
-#' Implements the 
-#' [Generalized Robinson-Foulds](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances).
+#' `NyeSimilarity()` and `NyeSplitSimilarity()` implement the 
+#' [Generalized Robinson-Foulds](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances)
 #' tree comparison metric of Nye _et al_. (2006).
 #' In short, this finds the optimal matching that pairs each branch from
 #' one tree with a branch in the second, where matchings are scored according to
@@ -15,7 +15,7 @@
 #' subtracting it from the number of splits present in both trees.
 #' This ensures consistency with `JaccardRobinsonFoulds`.
 #' 
-#' Note that `NyeTreeSimilarity(tree1, tree2)` is equivalent to, but 
+#' Note that `NyeSimilarity(tree1, tree2)` is equivalent to, but 
 #' slightly faster than, \code{\link{JaccardRobinsonFoulds}
 #' (tree1, tree2, k = 1, allowConflict = TRUE)}.
 #'  
@@ -46,11 +46,11 @@
 #' 
 #' @examples 
 #' library('TreeTools')
-#' NyeTreeSimilarity(BalancedTree(8), PectinateTree(8))
-#' VisualizeMatching(NyeTreeSimilarity ,BalancedTree(8), PectinateTree(8))
+#' NyeSimilarity(BalancedTree(8), PectinateTree(8))
+#' VisualizeMatching(NyeSimilarity ,BalancedTree(8), PectinateTree(8))
 
-#' NyeTreeSimilarity(as.phylo(0:5, nTip = 8), PectinateTree(8))
-#' NyeTreeSimilarity(as.phylo(0:5, nTip = 8), similarity = FALSE)
+#' NyeSimilarity(as.phylo(0:5, nTip = 8), PectinateTree(8))
+#' NyeSimilarity(as.phylo(0:5, nTip = 8), similarity = FALSE)
 #' 
 #' @template distReturn
 #' 
@@ -60,10 +60,10 @@
 #' @template MRS
 #' @importFrom TreeTools NSplits
 #' @export
-NyeTreeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
-                               normalize = FALSE,
-                               normalizeMax = !is.logical(normalize),
-                               reportMatching = FALSE) {
+NyeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
+                           normalize = FALSE,
+                           normalizeMax = !is.logical(normalize),
+                           reportMatching = FALSE) {
   
   unnormalized <- CalculateTreeDistance(NyeSplitSimilarity, tree1, tree2, 
                                         reportMatching)
@@ -84,7 +84,7 @@ NyeTreeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
 
 .MeanOfTwo <- function (x, y) (x + y) / 2L
 
-#' @rdname NyeTreeSimilarity
+#' @rdname NyeSimilarity
 #' @inheritParams SharedPhylogeneticInfoSplits
 #' @export
 NyeSplitSimilarity <- function (splits1, splits2, 
@@ -115,7 +115,7 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' 
 #' Note that the settings `k = 1, allowConflict = TRUE, similarity = TRUE`
 #' give the similarity metric of Nye _et al_. (2006); a slightly faster
-#' implementation of this metric is available as [`NyeTreeSimilarity()`].
+#' implementation of this metric is available as [`NyeSimilarity()`].
 #' 
 #' The examples section below details how to visualize matchings with 
 #' non-default parameter values.

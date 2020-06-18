@@ -121,9 +121,9 @@ It is not possible for a pair of splits to receive a zero similarity
 score.
 
 ```{r, fig.width=6, fig.align='center'}
-VisualizeMatching(NyeTreeSimilarity, tree1, tree2, 
+VisualizeMatching(NyeSimilarity, tree1, tree2, 
                   Plot = TreeDistPlot, matchZeros = FALSE)
-NyeTreeSimilarity(tree1, tree2, normalize = FALSE)
+NyeSimilarity(tree1, tree2, normalize = FALSE)
 ```
 
 ### Jaccard-Robinson-Foulds metric
@@ -161,7 +161,7 @@ plot(0, xlim = range(x), ylim = c(3.5, 9.5),
 
 abline(h = RobinsonFoulds(tree1, tree2),
        lty = 'dashed', col = cbPalette8[6])
-abline(h = NyeTreeSimilarity(tree1, tree2, similarity = FALSE),
+abline(h = NyeSimilarity(tree1, tree2, similarity = FALSE),
        lty = 'dotted', col = cbPalette8[8])
 
 lines(x = x, y = vapply(x, JaccardRobinsonFoulds, tree1 = tree1, tree2 = tree2,

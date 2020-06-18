@@ -41,7 +41,7 @@ to compare two imperfectly-resolved trees.
 library('TreeDist')
 tree1 <- ape::read.tree(text='(A, ((B, ((C, D), (E, F))), (G, (H, (I, J, K)))));')
 tree2 <- ape::read.tree(text='(A, (B, (C, D, E, (J, K)), (F, (G, H, I))));')
-VisualizeMatching(NyeTreeSimilarity, tree1, tree2,
+VisualizeMatching(NyeSimilarity, tree1, tree2,
                   Plot = TreeDistPlot, matchZeros = FALSE)
 ```
 
@@ -58,8 +58,8 @@ Normalizing against this value tells us how similar the two trees are, compared
 to two identical eleven-leaf binary trees.
 
 ```{r}
-NyeTreeSimilarity(tree1, tree2, normalize = FALSE) / 8
-NyeTreeSimilarity(tree1, tree2, normalize = 8)
+NyeSimilarity(tree1, tree2, normalize = FALSE) / 8
+NyeSimilarity(tree1, tree2, normalize = 8)
 ```
 
 This approach will result in a similarity score less than one if two trees 
@@ -69,14 +69,14 @@ score possible for two trees of the specified resolution.  This value is given
 by the number of splits in the least resolved of the two trees:
 
 ```{r}
-NyeTreeSimilarity(tree1, tree2,
+NyeSimilarity(tree1, tree2,
                   normalize = min(TreeTools::NSplits(list(tree1, tree2))))
 ```
 
 More concisely, we can provide a normalizing function:
 
 ```{r}
-NyeTreeSimilarity(tree1, tree2, normalize = min)
+NyeSimilarity(tree1, tree2, normalize = min)
 ```
 
 This approach will produce a similarity of one if one tree is 
@@ -88,16 +88,16 @@ select the less resolved of each pair of trees:
 
 
 ```{r}
-NyeTreeSimilarity(list(tree1, tree2), list(tree1, tree2), normalize = pmin)
+NyeSimilarity(list(tree1, tree2), list(tree1, tree2), normalize = pmin)
 ```
 
 To avoid these limitations, we may instead opt to normalize against the 
 average number of splits in the two trees. 
 This is the default normalization method for
-[`NyeTreeSimilarity()`](../reference/NyeTreeSimilarity.html):
+[`NyeSimilarity()`](../reference/NyeSimilarity.html):
 
 ```{r}
-NyeTreeSimilarity(tree1, tree2, normalize = TRUE)
+NyeSimilarity(tree1, tree2, normalize = TRUE)
 ```
 
 Finally, if `tree1` is a 'target' tree -- perhaps one that has been used
@@ -113,7 +113,7 @@ TreeTools::NSplits(tree1)
 and our normalized score will be 
 
 ```{r}
-NyeTreeSimilarity(tree1, tree2, normalize = TreeTools::NSplits(tree1))
+NyeSimilarity(tree1, tree2, normalize = TreeTools::NSplits(tree1))
 ```
 
 ### Normalizing to random similarity

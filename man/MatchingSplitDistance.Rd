@@ -93,7 +93,7 @@ Other tree distances:
 \code{\link{KendallColijn}()},
 \code{\link{MASTSize}()},
 \code{\link{NNIDist}()},
-\code{\link{NyeTreeSimilarity}()},
+\code{\link{NyeSimilarity}()},
 \code{\link{PathDist}()},
 \code{\link{Robinson-Foulds}},
 \code{\link{SPRDist}()},
