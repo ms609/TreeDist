@@ -121,8 +121,8 @@ score.
 
 ```{r, fig.width=6, fig.align='center'}
 VisualizeMatching(NyeTreeSimilarity, tree1, tree2, 
-                  Plot = TreeDistPlot, leaveRoom = FALSE, matchZeros = FALSE)
-NyeTreeSimilarity(tree1, tree2, normalize=FALSE)
+                  Plot = TreeDistPlot, matchZeros = FALSE)
+NyeTreeSimilarity(tree1, tree2, normalize = FALSE)
 ```
 
 ### Jaccard-Robinson-Foulds metric
