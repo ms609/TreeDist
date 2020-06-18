@@ -16,8 +16,9 @@ or lists of such trees to undergo pairwise comparison.}
 \item{tree}{A tree of class \code{\link[ape:read.tree]{phylo}}.}
 }
 \value{
-An array of numerics providing the distances between each pair of
-trees in \code{tree1} and \code{tree2}, or \code{splits1} and \code{splits2}.
+\code{KendallColijn()} returns an array of numerics providing the
+distances between each  pair of trees in \code{tree1} and \code{tree2},
+or \code{splits1} and \code{splits2}.
 }
 \description{
 Calculate the Kendall-Colijn tree distance, a measure related to the
@@ -51,7 +52,6 @@ KendallColijn(TreeTools::BalancedTree(8), TreeTools::PectinateTree(8))
 set.seed(0)
 KendallColijn(TreeTools::BalancedTree(8), lapply(rep(8, 3), ape::rtree))
 KendallColijn(lapply(rep(8, 4), ape::rtree))
-
 }
 \references{
 \insertRef{Kendall2016}{TreeDist}

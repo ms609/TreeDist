@@ -18,10 +18,10 @@
 #' of leaves from the leaves themselves, i.e. the length of the path from one 
 #' leaf to another.
 #' 
-#' @template tree12listparams
+#' @template tree12ListParams
 #' 
+#' @templateVar returns `KendallColijn()` returns
 #' @template distReturn
-#' 
 #' 
 #' @examples 
 #' KendallColijn(TreeTools::BalancedTree(8), TreeTools::PectinateTree(8))
@@ -29,14 +29,14 @@
 #' set.seed(0)
 #' KendallColijn(TreeTools::BalancedTree(8), lapply(rep(8, 3), ape::rtree))
 #' KendallColijn(lapply(rep(8, 4), ape::rtree))
+#' @template MRS
 #' 
 #' @seealso [`treespace::treeDist`](https://CRAN.R-project.org/package=treespace/vignettes/introduction.html)
 #' is a more sophisticated, if more cumbersome, implementation that supports 
 #' lambda > 0, i.e. use of edge lengths in tree comparison.
 #' 
-#' @family tree distances
-#' @template MRS
 #' @references \insertRef{Kendall2016}{TreeDist}
+#' @family tree distances
 #' @export
 KendallColijn <- function (tree1, tree2 = tree1) {
   FunValue <- function (nTip) double(nTip * (nTip - 1L) / 2L)

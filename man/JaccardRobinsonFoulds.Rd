@@ -70,8 +70,9 @@ split.}
 \item{nTip}{Integer specifying the number of leaves in each split.}
 }
 \value{
-An array of numerics providing the distances between each pair of
-trees in \code{tree1} and \code{tree2}, or \code{splits1} and \code{splits2}.
+\code{JaccardRobinsonFoulds()} returns an array of numerics providing the
+distances between each  pair of trees in \code{tree1} and \code{tree2},
+or \code{splits1} and \code{splits2}.
 }
 \description{
 Calculate the

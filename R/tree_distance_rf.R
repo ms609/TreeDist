@@ -19,6 +19,7 @@
 #' @param similarity Logical specifying whether to report the result as a tree
 #' similarity, rather than a difference.
 #' 
+#' @templateVar returns `RobinsonFoulds()` and `InfoRobinsonFoulds()` return
 #' @template distReturn
 #' 
 #' @section Normalization:

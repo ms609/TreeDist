@@ -81,7 +81,7 @@
 #' to be 'correct', use `normalize = ``SplitwiseInfo(trueTree)` (SPI, MSI) or
 #' `ClusteringEntropy(trueTree)` (MCI).
 #' 
-#' @template tree12listparams
+#' @template tree12ListParams
 #' 
 #' @param normalize If a numeric value is provided, this will be used as a 
 #' maximum value against which to rescale results.

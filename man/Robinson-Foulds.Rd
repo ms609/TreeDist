@@ -86,8 +86,9 @@ split.}
 \item{\dots}{Not used.}
 }
 \value{
-An array of numerics providing the distances between each pair of
-trees in \code{tree1} and \code{tree2}, or \code{splits1} and \code{splits2}.
+\code{RobinsonFoulds()} and \code{InfoRobinsonFoulds()} return an array of numerics providing the
+distances between each  pair of trees in \code{tree1} and \code{tree2},
+or \code{splits1} and \code{splits2}.
 }
 \description{
 Calculates the Robinson-Foulds distance, or the equivalent similarity

@@ -52,6 +52,7 @@
 #' NyeSimilarity(as.phylo(0:5, nTip = 8), PectinateTree(8))
 #' NyeSimilarity(as.phylo(0:5, nTip = 8), similarity = FALSE)
 #' 
+#' @templateVar returns `NyeSimilarity()` returns
 #' @template distReturn
 #' 
 #' @references \insertRef{Nye2006}{TreeDist}
@@ -139,6 +140,7 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' present in a pair of trees with _n_ leaves, by specifying 
 #' `normalize = n - 3`.
 #' 
+#' @templateVar returns `JaccardRobinsonFoulds()` returns
 #' @template distReturn
 #' 
 #' @references 
