@@ -255,8 +255,8 @@ rather than a similarity.</p>
 <span class='co'># The Robinson-Foulds distance will create ties:</span>
 <span class='fu'><a href='https://rdrr.io/r/stats/median.html'>median</a></span>(<span class='no'>tenTrees</span>, <span class='kw'>Distance</span> <span class='kw'>=</span> <span class='no'>RobinsonFoulds</span>, <span class='kw'>breakTies</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; 4 phylogenetic trees</div><div class='input'>
 <span class='co'># Be sure to use a distance function, rather than a similarity:</span>
-<span class='no'>NyeTreeDistance</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span> (<span class='no'>...</span>) <span class='fu'><a href='NyeTreeSimilarity.html'>NyeTreeSimilarity</a></span>(<span class='no'>...</span>, <span class='kw'>similarity</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-<span class='fu'><a href='https://rdrr.io/r/stats/median.html'>median</a></span>(<span class='no'>tenTrees</span>, <span class='kw'>Distance</span> <span class='kw'>=</span> <span class='no'>NyeTreeDistance</span>)</div><div class='output co'>#&gt; 
+<span class='no'>NyeDistance</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span> (<span class='no'>...</span>) <span class='fu'><a href='NyeSimilarity.html'>NyeSimilarity</a></span>(<span class='no'>...</span>, <span class='kw'>similarity</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'><a href='https://rdrr.io/r/stats/median.html'>median</a></span>(<span class='no'>tenTrees</span>, <span class='kw'>Distance</span> <span class='kw'>=</span> <span class='no'>NyeDistance</span>)</div><div class='output co'>#&gt; 
 #&gt; Phylogenetic tree with 8 tips and 7 internal nodes.
 #&gt; 
 #&gt; Tip labels:

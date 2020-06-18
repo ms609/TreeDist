@@ -172,14 +172,24 @@
     <p>Approximate the Subtree Prune and Regraft (SPR) distance.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SPRDist</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>SPRDist</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>symmetric</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>tree1, tree2</th>
-      <td><p>Single trees of class <code>phylo</code> to undergo comparison.</p></td>
+      <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
+or lists of such trees to undergo pairwise comparison.</p></td>
+    </tr>
+    <tr>
+      <th>symmetric</th>
+      <td><p>Logical specifying whether to produce a better heuristic
+by calculating the minimum of <code>SPRDist(t1, t2)</code> and <code>SPRDist(t2, t1)</code>,
+which are not guaranteed to be equal due to the heuristic nature of the
+approximation (see
+<a href='https://github.com/KlausVigo/phangorn/issues/97'>phangorn#97</a>). Set to
+<code>FALSE</code> for the faster approximation, as implemented in 'phangorn'.</p></td>
     </tr>
     </table>
 
@@ -193,9 +203,6 @@ between trees.</p>
 <code><a href='https://rdrr.io/pkg/phangorn/man/treedist.html'>SPR.dist()</a></code> in the phangorn package.
 It pre-processes trees to ensure that their internal representation does
 not cause the <code>SPR.dist()</code> function to crash R.</p>
-<p>A memory leak is present in phangorn v2.5.5.  To avoid a drain on system
-resources, install the latest version of phangorn with
-<code><a href='https://devtools.r-lib.org//reference/remote-reexports.html'>devtools::install_github('KlausVigo/phangorn')</a></code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other tree distances: 
@@ -204,7 +211,7 @@ resources, install the latest version of phangorn with
 <code><a href='MASTSize.html'>MASTSize</a>()</code>,
 <code><a href='MatchingSplitDistance.html'>MatchingSplitDistance</a>()</code>,
 <code><a href='NNIDist.html'>NNIDist</a>()</code>,
-<code><a href='NyeTreeSimilarity.html'>NyeTreeSimilarity</a>()</code>,
+<code><a href='NyeSimilarity.html'>NyeSimilarity</a>()</code>,
 <code><a href='PathDist.html'>PathDist</a>()</code>,
 <code><a href='Robinson-Foulds.html'>Robinson-Foulds</a></code>,
 <code><a href='TreeDistance.html'>TreeDistance</a>()</code></p></div>
@@ -216,7 +223,9 @@ resources, install the latest version of phangorn with
 #&gt;   1 </div><div class='input'>
 <span class='fu'>SPRDist</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>2</span>, <span class='fl'>7</span>))</div><div class='output co'>#&gt; [1] 2 2 2</div><div class='input'><span class='fu'>SPRDist</span>(<span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>2</span>, <span class='fl'>7</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>))</div><div class='output co'>#&gt; [1] 1 2 2</div><div class='input'>
 <span class='fu'>SPRDist</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>bal</span> <span class='kw'>=</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='kw'>pec</span> <span class='kw'>=</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>)),
-        <span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>2</span>, <span class='fl'>7</span>))</div><div class='output co'>#&gt; NULL</div><div class='input'>
+        <span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>2</span>, <span class='fl'>7</span>))</div><div class='output co'>#&gt;     [,1] [,2] [,3]
+#&gt; bal    2    2    2
+#&gt; pec    1    2    2</div><div class='input'>
 <span class='fu'><a href='CompareAll.html'>CompareAll</a></span>(<span class='fu'>as.phylo</span>(<span class='fl'>30</span>:<span class='fl'>33</span>, <span class='fl'>8</span>), <span class='no'>SPRDist</span>)</div><div class='output co'>#&gt;   1 2 3 4
 #&gt; 1   1 1 1
 #&gt; 2 1   1 1

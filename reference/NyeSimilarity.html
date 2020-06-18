@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Matching Split Distance — MatchingSplitDistance • TreeDist</title>
+<title>Nye <em>et al</em>. (2006) tree comparison — NyeSimilarity • TreeDist</title>
 
 
 <!-- jquery -->
@@ -45,10 +45,16 @@
 
 
 
-<meta property="og:title" content="Matching Split Distance — MatchingSplitDistance" />
-<meta property="og:description" content="Calculate the
-Matching Split Distance
-(Bogdanowicz and Giaro 2012; Lin et al. 2012) for unrooted binary trees." />
+<meta property="og:title" content="Nye <em>et al</em>. (2006) tree comparison — NyeSimilarity" />
+<meta property="og:description" content="NyeSimilarity() and NyeSplitSimilarity() implement the
+Generalized Robinson-Foulds
+tree comparison metric of Nye et al. (2006).
+In short, this finds the optimal matching that pairs each branch from
+one tree with a branch in the second, where matchings are scored according to
+the size of the largest split that is consistent with both of them,
+normalized against the Jaccard index.
+A more detailed account is available in the
+vignettes." />
 
 
 
@@ -165,29 +171,36 @@ Matching Split Distance
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Matching Split Distance</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance_msd.R'><code>R/tree_distance_msd.R</code></a></small>
-    <div class="hidden name"><code>MatchingSplitDistance.Rd</code></div>
+    <h1>Nye <em>et al</em>. (2006) tree comparison</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance_nye.R'><code>R/tree_distance_nye.R</code></a></small>
+    <div class="hidden name"><code>NyeSimilarity.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Calculate the
-<a href='https://ms609.github.io/TreeDist/articles/Generalized-RF.html#matching-split-distance'>Matching Split Distance</a>
-(Bogdanowicz and Giaro 2012; Lin <em>et al.</em> 2012) for unrooted binary trees.</p>
+    <p><code>NyeSimilarity()</code> and <code>NyeSplitSimilarity()</code> implement the
+<a href='https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances'>Generalized Robinson-Foulds</a>
+tree comparison metric of Nye <em>et al</em>. (2006).
+In short, this finds the optimal matching that pairs each branch from
+one tree with a branch in the second, where matchings are scored according to
+the size of the largest split that is consistent with both of them,
+normalized against the Jaccard index.
+A more detailed account is available in the
+<a href='https://ms609.github.io/TreeDist/articles/Generalized-RF.html#nye-et-al--tree-similarity-metric'>vignettes</a>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>MatchingSplitDistance</span>(
+    <pre class="usage"><span class='fu'>NyeSimilarity</span>(
   <span class='no'>tree1</span>,
   <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>,
+  <span class='kw'>similarity</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>normalizeMax</span> <span class='kw'>=</span> !<span class='fu'><a href='https://rdrr.io/r/base/logical.html'>is.logical</a></span>(<span class='no'>normalize</span>),
   <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )
 
-<span class='fu'>MatchingSplitDistanceSplits</span>(
+<span class='fu'>NyeSplitSimilarity</span>(
   <span class='no'>splits1</span>,
   <span class='no'>splits2</span>,
   <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='no'>splits1</span>, <span class='st'>"nTip"</span>),
-  <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
 )</pre>
 
@@ -205,6 +218,11 @@ or lists of such trees to undergo pairwise comparison.</p></td>
 or lists of such trees to undergo pairwise comparison.</p></td>
     </tr>
     <tr>
+      <th>similarity</th>
+      <td><p>Logical specifying whether to report the result as a tree
+similarity, rather than a difference.</p></td>
+    </tr>
+    <tr>
       <th>normalize</th>
       <td><p>If a numeric value is provided, this will be used as a
 maximum value against which to rescale results.
@@ -212,6 +230,15 @@ If <code>TRUE</code>, results will be rescaled against a maximum value calculate
 the specified tree sizes and topology, as specified in the 'Normalization'
 section below.
 If <code>FALSE</code>, results will not be rescaled.</p></td>
+    </tr>
+    <tr>
+      <th>normalizeMax</th>
+      <td><p>When calculating similarity, normalize against the
+maximum number of splits that could have been present (<code>TRUE</code>),
+or the number of splits that were actually observed (<code>FALSE</code>)?
+Defaults to the number of splits in the better-resolved tree; set
+<code>normalize = pmin.int</code> to use the number of splits in the less resolved
+tree.</p></td>
     </tr>
     <tr>
       <th>reportMatching</th>
@@ -242,30 +269,41 @@ split.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>MatchingSplitDistance()</code> returns an array of numerics providing the
+    <p><code>NyeSimilarity()</code> returns an array of numerics providing the
 distances between each  pair of trees in <code>tree1</code> and <code>tree2</code>,
 or <code>splits1</code> and <code>splits2</code>.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The measure is defined as a similarity score.  If <code>similarity = FALSE</code>, the
+similarity score will be converted into a distance by doubling it and
+subtracting it from the number of splits present in both trees.
+This ensures consistency with <code>JaccardRobinsonFoulds</code>.</p>
+<p>Note that <code>NyeSimilarity(tree1, tree2)</code> is equivalent to, but
+slightly faster than, <code><a href='JaccardRobinsonFoulds.html'>JaccardRobinsonFoulds</a>
+(tree1, tree2, k = 1, allowConflict = TRUE)</code>.</p>
     <h2 class="hasAnchor" id="normalization"><a class="anchor" href="#normalization"></a>Normalization</h2>
 
     
 
 
-<p>A normalization value or function must be provided in order to return a
-normalized value.  If you are aware of a generalised formula, please
-let me know by
-<a href='https://github.com/ms609/TreeDist/issues/new'>creating a GitHub issue</a>
-so that it can be implemented.</p>
+<p>If <code>normalize = TRUE</code> and <code>similarity = TRUE</code>, then results will be rescaled
+from zero to one by dividing by the mean number of splits in the two trees
+being compared.</p>
+<p>You may wish to normalize instead against the number of splits present
+in the smaller tree, which represents the maximum value possible for a pair
+of trees with the specified topologies (<code>normalize = pmin.int</code>); the
+number of splits in the most resolved tree (<code>normalize = pmax.int</code>);
+or the maximum value possible for any pair of trees with  <em>n</em> leaves,
+<em>n</em> - 3 (<code>normalize = TreeTools::NTip(tree1) - 3L</code>).</p>
+<p>If <code>normalize = TRUE</code> and <code>similarity = FALSE</code>, then results will be rescaled
+from zero to one by dividing by the total number of splits in the pair
+of trees being considered.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Bogdanowicz D, Giaro K (2012).
-&#8220;Matching split distance for unrooted binary phylogenetic trees.&#8221;
-<em>IEEE/ACM Transactions on Computational Biology and Bioinformatics</em>, <b>9</b>(1), 150--160.
-doi: <a href='https://doi.org/10.1109/TCBB.2011.48'>10.1109/TCBB.2011.48</a>
-.</p>
-<p>Lin Y, Rajan V, Moret BME (2012).
-&#8220;A metric for phylogenetic trees based on matching.&#8221;
-<em>IEEE/ACM Transactions on Computational Biology and Bioinformatics</em>, <b>4</b>(9), 1014--1022.
-doi: <a href='https://doi.org/10.1109/TCBB.2011.157'>10.1109/TCBB.2011.157</a>
+    <p>Nye TMW, Liò P, Gilks WR (2006).
+&#8220;A novel algorithm and web-based tool for comparing two alternative phylogenetic trees.&#8221;
+<em>Bioinformatics</em>, <b>22</b>(1), 117--119.
+doi: <a href='https://doi.org/10.1093/bioinformatics/bti720'>10.1093/bioinformatics/bti720</a>
 .</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
@@ -273,36 +311,23 @@ doi: <a href='https://doi.org/10.1109/TCBB.2011.157'>10.1109/TCBB.2011.157</a>
 <code><a href='JaccardRobinsonFoulds.html'>JaccardRobinsonFoulds</a>()</code>,
 <code><a href='KendallColijn.html'>KendallColijn</a>()</code>,
 <code><a href='MASTSize.html'>MASTSize</a>()</code>,
+<code><a href='MatchingSplitDistance.html'>MatchingSplitDistance</a>()</code>,
 <code><a href='NNIDist.html'>NNIDist</a>()</code>,
-<code><a href='NyeSimilarity.html'>NyeSimilarity</a>()</code>,
 <code><a href='PathDist.html'>PathDist</a>()</code>,
 <code><a href='Robinson-Foulds.html'>Robinson-Foulds</a></code>,
 <code><a href='SPRDist.html'>SPRDist</a>()</code>,
 <code><a href='TreeDistance.html'>TreeDistance</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>MatchingSplitDistance</span>(<span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>8</span>, <span class='fl'>5</span>), <span class='kw pkg'>ape</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span>), <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>16</span>)</div><div class='output co'>#&gt;        [,1]   [,2]   [,3]   [,4]   [,5]
-#&gt; [1,] 0.0000 0.5625 0.6875 0.4375 0.5000
-#&gt; [2,] 0.5625 0.0000 0.8750 0.7500 0.5625
-#&gt; [3,] 0.6875 0.8750 0.0000 0.6250 0.8125
-#&gt; [4,] 0.4375 0.7500 0.6250 0.0000 0.5625
-#&gt; [5,] 0.5000 0.5625 0.8125 0.5625 0.0000</div><div class='input'>
-<span class='fu'>MatchingSplitDistance</span>(<span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>6</span>),
-                      <span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>6</span>),
-                      <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] 2
-#&gt; attr(,"matching")
-#&gt; [1] 2 1 3
-#&gt; attr(,"pairScores")
-#&gt;      [,1] [,2] [,3]
-#&gt; [1,]    1    0    1
-#&gt; [2,]    0    1    2
-#&gt; [3,]    2    1    2
-#&gt; attr(,"matchedSplits")
-#&gt; [1] "t1 t2 t3 | t4 t5 t6 =&gt; t4 t5 t6 | t1 t2 t3"
-#&gt; [2] "t1 t2 | t3 t4 t5 t6 =&gt; t3 t4 t5 t6 | t1 t2"
-#&gt; [3] "t4 t5 | t1 t2 t3 t6 =&gt; t5 t6 | t1 t2 t3 t4"</div><div class='input'>
-<span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span>(<span class='no'>MatchingSplitDistance</span>, <span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>6</span>),
-                  <span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>6</span>))</div><div class='img'><img src='MatchingSplitDistance-1.png' alt='' width='700' height='433' /></div></pre>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>'TreeTools'</span>)
+<span class='fu'>NyeSimilarity</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>8</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>8</span>))</div><div class='output co'>#&gt; [1] 3.8</div><div class='input'><span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span>(<span class='no'>NyeSimilarity</span> ,<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>8</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>8</span>))</div><div class='img'><img src='NyeSimilarity-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>NyeSimilarity</span>(<span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>5</span>, <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fl'>8</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>8</span>))</div><div class='output co'>#&gt; [1] 3.166667 2.750000 2.750000 2.500000 2.450000 2.500000</div><div class='input'><span class='fu'>NyeSimilarity</span>(<span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>5</span>, <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fl'>8</span>), <span class='kw'>similarity</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt;          [,1]     [,2]     [,3]     [,4]     [,5] [,6]
+#&gt; [1,] 0.000000 1.333333 1.333333 2.166667 2.333333  2.0
+#&gt; [2,] 1.333333 0.000000 1.333333 2.333333 2.166667  2.0
+#&gt; [3,] 1.333333 1.333333 0.000000 2.333333 2.333333  1.5
+#&gt; [4,] 2.166667 2.333333 2.333333 0.000000 1.000000  1.5
+#&gt; [5,] 2.333333 2.166667 2.333333 1.000000 0.000000  1.5
+#&gt; [6,] 2.000000 2.000000 1.500000 1.500000 1.500000  0.0</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -194,8 +194,9 @@ or lists of such trees to undergo pairwise comparison.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An array of numerics providing the distances between each pair of
-trees in <code>tree1</code> and <code>tree2</code>, or <code>splits1</code> and <code>splits2</code>.</p>
+    <p><code>KendallColijn()</code> returns an array of numerics providing the
+distances between each  pair of trees in <code>tree1</code> and <code>tree2</code>,
+or <code>splits1</code> and <code>splits2</code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The Kendall-Colijn distance works by measuring, for each pair of leaves,
@@ -234,7 +235,7 @@ lambda &gt; 0, i.e. use of edge lengths in tree comparison.</p>
 <code><a href='MASTSize.html'>MASTSize</a>()</code>,
 <code><a href='MatchingSplitDistance.html'>MatchingSplitDistance</a>()</code>,
 <code><a href='NNIDist.html'>NNIDist</a>()</code>,
-<code><a href='NyeTreeSimilarity.html'>NyeTreeSimilarity</a>()</code>,
+<code><a href='NyeSimilarity.html'>NyeSimilarity</a>()</code>,
 <code><a href='PathDist.html'>PathDist</a>()</code>,
 <code><a href='Robinson-Foulds.html'>Robinson-Foulds</a></code>,
 <code><a href='SPRDist.html'>SPRDist</a>()</code>,
@@ -247,8 +248,7 @@ lambda &gt; 0, i.e. use of edge lengths in tree comparison.</p>
 #&gt; [1,] 0.000000 7.280110 7.874008 4.795832
 #&gt; [2,] 7.280110 0.000000 8.185353 7.071068
 #&gt; [3,] 7.874008 8.185353 0.000000 7.681146
-#&gt; [4,] 4.795832 7.071068 7.681146 0.000000</div><div class='input'>
-</div></pre>
+#&gt; [4,] 4.795832 7.071068 7.681146 0.000000</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
