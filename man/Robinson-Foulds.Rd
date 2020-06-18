@@ -91,8 +91,8 @@ trees in \code{tree1} and \code{tree2}, or \code{splits1} and \code{splits2}.
 }
 \description{
 Calculates the Robinson-Foulds distance, or the equivalent similarity
-measure, optionally annotating matched splits and weighting splits
-according to their phylogenetic information content (Steel & Penny 2006).
+measure, with options to (i) annotate matched splits; (ii) weight splits
+according to their phylogenetic information content (Smith 202X).
 }
 \details{
 Note that if \code{reportMatching = TRUE}, the \code{pairScores} attribute returns
@@ -138,6 +138,8 @@ VisualizeMatching(InfoRobinsonFoulds, balanced7, pectinate7)
 \insertRef{Robinson1981}{TreeDist}
 
 \insertRef{Steel2006}{TreeDist}
+
+\insertRef{SmithDist}{TreeDist}
 }
 \seealso{
 \code{\link[=VisualizeMatching]{VisualizeMatching()}}, to display paired splits.
