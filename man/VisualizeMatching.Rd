@@ -41,17 +41,16 @@ similarity of the associated splits (\code{FALSE}).}
 \item{edge.width, edge.color, \dots}{Additional parameters to send to \code{Plot()}.}
 }
 \description{
-Depicts the splits that are matched between two trees using a
-specified
+Depict the splits that are matched between two trees using a specified
 \href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html}{Generalized Robinson-Foulds}
 similarity measure.
 }
 \details{
 Note that when visualizing a Robinson-Foulds distance (using
-\code{Func = RobinsonFoulds}), matched splits are assigned a \emph{similarity} score
-of 1, which is deducted from the total number of splits to calculate the
-Robinson-Foulds \emph{distance}.  Unmatched splits thus contribute one to total
-tree distance.
+\code{Func = RobinsonFouldsMatching}), matched splits are assigned a \emph{similarity}
+score of 1, which is deducted from the total number of splits to calculate
+the Robinson-Foulds \emph{distance}.  Unmatched splits thus contribute one to
+total tree distance.
 }
 \examples{
 tree1 <- TreeTools::BalancedTree(6)
