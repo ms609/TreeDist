@@ -34,11 +34,13 @@ test_that("SPR.dist called safely", {
                         tip.label = c("t1", "t2", "t3", "t4", "t5", "t6")),
                    class = "phylo")
   trs12 <- structure(list(tr1, tr2), class = 'multiPhylo')
-  trs123 <- structure(list(tr1, tr2, tr3), class = 'multiPhylo')
-  expect_equal(SPRDist(tr1, tr3, T), SPRDist(tr3, tr1, T))
-  expect_equal(2L, length(SPRDist(trs12, tr3, T)))
-  expect_equal(SPRDist(trs12, tr3, T), SPRDist(tr3, trs12, T))
-  expect_equal(SPRDist(rev(trs123), trs123, T), SPRDist(trs123, rev(trs123), T))
-  expect_equal(SPRDist(trs12, T))
-  
+  trs123 <- structure(list('one' = tr1, 'two' = tr2, 'thr' = tr3),
+                      class = 'multiPhylo')
+  SprpS <- function (...) SPRDist(..., symmetric = TRUE)
+  expect_equal(SprpS(tr1, tr3), SprpS(tr3, tr1))
+  expect_equal(2L, length(SprpS(trs12, tr3)))
+  expect_equal(SprpS(trs12, tr3), SprpS(tr3, trs12))
+  expect_equal(SprpS(trs12, trs123), t(SprpS(trs123, trs12)))
+  expect_equal(SprpS(rev(trs123), trs123), t(SprpS(trs123, rev(trs123))))
+  expect_equivalent(1 - diag(1, 3), as.matrix(SprpS(trs123)))
 })
