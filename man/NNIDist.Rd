@@ -10,7 +10,7 @@ NNIDist(tree1, tree2 = tree1)
 \item{tree1, tree2}{Single trees of class \code{phylo} to undergo comparison.}
 }
 \value{
-\code{NNIDist} returns, for each pair of trees, a named vector
+\code{NNIDist()} returns, for each pair of trees, a named vector
 containing three integers:
 \itemize{
 \item \code{lower} is a lower bound on the NNI distance, and corresponds
@@ -23,8 +23,8 @@ O(\emph{n}).
 }
 }
 \description{
-An approximation of the Nearest Neighbour Interchange distance (Robinson,
-1971), based on Li \emph{et al.} (1996).
+Use the approach of Li \emph{et al.} (1996) to approximate the Nearest Neighbour
+Interchange distance (Robinson, 1971) between phylogenetic trees.
 }
 \details{
 In brief, this approximation algorithm works by identifying edges in one
