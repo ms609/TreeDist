@@ -117,7 +117,7 @@
       <h1 data-toc-skip>Extending the Robinson-Foulds metric</h1>
                         <h4 class="author">Martin R. Smith</h4>
             
-            <h4 class="date">2020-06-17</h4>
+            <h4 class="date">2020-06-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/Robinson-Foulds.Rmd"><code>vignettes/Robinson-Foulds.Rmd</code></a></small>
       <div class="hidden name"><code>Robinson-Foulds.Rmd</code></div>
@@ -132,10 +132,9 @@
 <p>An intuitive way to calculate the similarity between two trees is to calculate the resolution of their strict consensus, which corresponds to the number of splits that occur in both trees <span class="citation">(Schuh &amp; Polhemus, 1980)</span>. The corresponding distance measure, the Robinson-Foulds distance <span class="citation">(Robinson &amp; Foulds, 1981)</span>, counts the number of splits that are unique to one of the two trees.</p>
 <p>It is important to remember that counting splits is not the same as counting clades, edges or nodes. If a tree is drawn as rooted (even without a root edge), then the number of splits is one less than the number of edges or clades, and two less than the number of nodes. For example, the trees below have one split, two edges and three nodes in common.</p>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-1-1.png" width="576" style="display: block; margin: auto;"></p>
-<p>The simplicity of counting splits is appealing, but limited by the simplifying assumption that all splits are equivalent.</p>
-<p>In the example above, the probability that a tree with two unresolved clades of four taxa will be compatible with the reference tree on the left is <span class="math inline">\(\frac{1}{35}\)</span>. In contrast, a tree that separates two taxa from six has a <span class="math inline">\(\frac{1}{7}\)</span> chance of matching the reference tree: the similarity observed is five times more likely to have arisen by chance. In other words, failure to match an even split is less noteworthy than failure to match an uneven one.</p>
-<p>As a consequence, trees whose splits are less even will, on average, exhibit higher Robinson-Foulds distances with comparison trees.</p>
-<p>Consider a balanced and an unbalanced eight-taxon tree:</p>
+<p>The simplicity of counting splits is appealing, but limited by the underlying assumption that all splits are equivalent.</p>
+<p>As an example, a split that separates eight leaves into two sets of four (as in the right-hand tree above) has a <span class="math inline">\(\frac{1}{35}\)</span> chance of being compatible with the reference tree. In contrast, a split that separates two leaves from the other six has a <span class="math inline">\(\frac{1}{7}\)</span> chance of matching the reference tree: the similarity observed is five times more likely to have arisen by chance. In other words, failure to match an even split is less noteworthy than failure to match an uneven one.</p>
+<p>As a consequence, trees whose splits are less even will, on average, exhibit higher Robinson-Foulds distances with comparison trees. Compare a balanced and an unbalanced eight-taxon tree:</p>
 <p><img src="Robinson-Foulds_files/figure-html/two-trees-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>Each tree divides the eight taxa into five splits. The <a href="information.html">phylogenetic information content</a> of a split is a function of the probability that the split will match a uniformly chosen random tree, i.e. the proportion of eight-leaf binary trees that contain the split in question. (Information content, in bits, is defined as <span class="math inline">\(-\log_2(\textrm{probability})\)</span>.) This, in turn, is a function of the evenness of the split:</p>
 <table class="table">
@@ -167,8 +166,8 @@
 </tr>
 </tbody>
 </table>
-<p>In the first tree, split 1 is even, dividing four taxa from four others (<code>4|4</code>); splits 2–5 are maximally uneven (<code>2|6</code>). The total information content of these five splits is 19.37 bits, whereas that of the five splits in the second tree, of sizes <code>2|6</code>, <code>3|5</code>, <code>4|4</code>, <code>3|5</code> and <code>2|6</code>, is 22.54 bits. Put another way, a random tree will on average share more splits with the balanced tree (whose splits are predominantly uneven and thus likely to be matched) than the asymmetric tree (which contains more even splits that are less likely to occur in a random tree).</p>
-<p>Of the 10 395 eight-leaf trees, many more bear at least one split in common with a balanced tree than with an asymmetric tree:</p>
+<p>In the first tree, split 1 is even, dividing four taxa from four others (<code>4|4</code>); splits 2–5 are maximally uneven (<code>2|6</code>). If each split is treated as independent, then the total information content of the five splits is 19.37 bits, whereas that of the five splits in the second tree, of sizes <code>2|6</code>, <code>3|5</code>, <code>4|4</code>, <code>3|5</code> and <code>2|6</code>, is 22.54 bits. Put another way, a random tree will on average share more splits with the balanced tree (whose splits are predominantly uneven and thus likely to be matched) than the asymmetric tree (which contains more even splits that are less likely to occur in a random tree).</p>
+<p>Indeed, of the 10 395 eight-leaf trees, many more bear at least one split in common with a balanced tree than with an asymmetric tree:</p>
 <p><img src="Robinson-Foulds_files/figure-html/all-8-tip-trees-1.png" width="384" style="display: block; margin: auto;"></p>
 </div>
 <div id="information-weighted-robinson-foulds-distance" class="section level1">
@@ -180,11 +179,11 @@
 <span class="no">tree3</span> <span class="kw">&lt;-</span> <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="kw">text</span><span class="kw">=</span><span class="st">'(1, (2, (3, (5, (4, (6, (7, 8)))))));'</span>)
 
 <span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">InfoRobinsonFoulds</span>, <span class="no">tree1</span>, <span class="no">tree2</span>,
-                  <span class="kw">Plot</span> <span class="kw">=</span> <span class="no">TreeDistPlot</span>, <span class="kw">leaveRoom</span><span class="kw">=</span><span class="fl">FALSE</span>, <span class="kw">prune</span> <span class="kw">=</span> <span class="fl">12</span>)</pre></body></html></div>
+                  <span class="kw">Plot</span> <span class="kw">=</span> <span class="no">TreeDistPlot</span>, <span class="kw">prune</span> <span class="kw">=</span> <span class="fl">12</span>)</pre></body></html></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-2-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>whereas the second pair differ in the resolution of a more even, and thus more information-rich, split (<code>ABCD|EFGH</code>), and so receive a distance score of 5.53 bits:</p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">InfoRobinsonFoulds</span>, <span class="no">tree1</span>, <span class="no">tree3</span>,
-                  <span class="kw">Plot</span> <span class="kw">=</span> <span class="no">TreeDistPlot</span>, <span class="kw">leaveRoom</span><span class="kw">=</span><span class="fl">FALSE</span>, <span class="kw">prune</span> <span class="kw">=</span> <span class="fl">8</span>)</pre></body></html></div>
+                  <span class="kw">Plot</span> <span class="kw">=</span> <span class="no">TreeDistPlot</span>, <span class="kw">prune</span> <span class="kw">=</span> <span class="fl">8</span>)</pre></body></html></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-3-1.png" width="576" style="display: block; margin: auto;"></p>
 </div>
 <div id="generalized-robinson-foulds-distances" class="section level1">
@@ -194,8 +193,7 @@
 <div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">tree1</span> <span class="kw">&lt;-</span> <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="kw">text</span><span class="kw">=</span><span class="st">'(1, (2, (3, (4, (5, (6, (7, 8)))))));'</span>)
 <span class="no">tree2</span> <span class="kw">&lt;-</span> <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="kw">text</span><span class="kw">=</span><span class="st">'(8, (1, (2, (3, (4, (5, (6, 7)))))));'</span>)
 
-<span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">RobinsonFouldsMatching</span>, <span class="no">tree1</span>, <span class="no">tree2</span>,
-                  <span class="kw">Plot</span> <span class="kw">=</span> <span class="no">TreeDistPlot</span>, <span class="kw">leaveRoom</span> <span class="kw">=</span> <span class="fl">FALSE</span>)</pre></body></html></div>
+<span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">RobinsonFouldsMatching</span>, <span class="no">tree1</span>, <span class="no">tree2</span>, <span class="kw">Plot</span> <span class="kw">=</span> <span class="no">TreeDistPlot</span>)</pre></body></html></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-4-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>Generalized Robinson-Foulds distances seek to address this issue. This category of metrics aim to acknowledge semblances between similar-but-not-quite-identical pairs of splits, which would contribute zero to tree similarity under the standard Robinson-Foulds measure.</p>
 <p>Generalized RF distances work by pairing each split in one tree with a similar split in the other (or leaving it unpaired). Each pairing is scored according to the similarity of the paired splits. A given set of split pairings is called a <em>matching</em>, and a matching is scored by summing the individual similarity scores of each pair of splits. The tree distance is given by the score of the optimal matching.</p>
