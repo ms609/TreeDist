@@ -24,13 +24,14 @@ distance expected for a pair of random trees.
 
 The figure below shows how the median normalized tree distance varies with the 
 number of leaves in the trees being compared.
-1&nbsp;000 random pairs of _n_-leaf trees were generated for
+1&nbsp;000 random pairs of $n$-leaf trees were generated for
 $4 \leq n \leq 200$`r ''#4 &le; _n_ &le; 200`,
 and the distances between them calculated.
 Shaded envelopes denote the interdecile and interquartile ranges.
 The raw data are available in the data object 
-`randomTreeDistances` in the R package
-[`TreeDistData`](https://ms609.github.io/TreeDistData).
+[`randomTreeDistances`](https://ms609.github.io/TreeDistData/reference/randomTreeDistances.html)
+in the R package
+'[TreeDistData](https://ms609.github.io/TreeDistData)'.
 
 
 ```{R Tree-distance-averages, echo=FALSE, message=FALSE, cache=TRUE, fig.asp=2, fig.width=6, fig.align='center'}
@@ -44,7 +45,7 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
   totalInfoContent <- 3L
   methodLCH <- colorspace::coords(as(colorspace::hex2RGB(TreeDistCol(methods)), 'polarLUV'))
   
-  data('randomTreeDistances', package='TreeDistData')
+  data('randomTreeDistances', package = 'TreeDistData')
   pathMax <- randomTreeDistances['path', 'max', ]
   msdMax <- randomTreeDistances['msd', 'max', ]
   nniMax <- randomTreeDistances['nni_u', 'max', ]
@@ -56,13 +57,13 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
                   start = list(a = -0.0444, b = 4.6e-5, c = 1.478))
   
   msdNorm <- nls(msdMax ~ (a * nTip) + (c * nTip ^ b) + d,
-                 start = list(a = -16.795, b=1.135, c = 14.25, d = 1.86))
+                 start = list(a = -16.795, b = 1.135, c = 14.25, d = 1.86))
   
   nniNorm <-  nls(nniMax ~ (a * nTip) + (c * nTip ^ b) + d + e * (nTip ^2) + f * (nTip ^3),
-                  start = list(a = -16.7, b=1.1, c = 14, d = 6, e = 0.01, f = 0.01))
+                  start = list(a = -16.7, b = 1.1, c = 14, d = 6, e = 0.01, f = 0.01))
   
   #tbrNorm <-  nls(tbrMax ~ (a * nTip) + (c * nTip ^ b) + d + e * (nTip ^2) + f * (nTip ^3),
-  #                start = list(a = 1, b=1, c = 0.01, d = 1, e = 0.01, f = 0.01))
+  #                start = list(a = 1, b = 1, c = 0.01, d = 1, e = 0.01, f = 0.01))
   tbrNorm <-  lm(tbrMax ~ nTip)
   
   
@@ -83,7 +84,7 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
     dat <- randomTreeDistances[method, , ]
     dat <- dat[, !is.na(dat[1, ])]
     nLeaves <- colnames(dat)
-    if (normalize) dat <- dat / rep(normalizeAgainst[method, ], each=dim(dat)[1L])
+    if (normalize) dat <- dat / rep(normalizeAgainst[method, ], each = dim(dat)[1L])
     Invert <- function (dat) {
       dat['mean', ] <- 1 - dat['mean', ]
       dat[c("min", "1%", "5%", "10%", "25%", "50%", "75%", "90%", "95%", 
@@ -96,13 +97,13 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
     
     col <- TreeDistCol(method, '')
     
-    lines(nLeaves, dat['50%', ], pch=1, col=col)
+    lines(nLeaves, dat['50%', ], pch = 1, col = col)
     polygon(c(nLeaves, rev(nLeaves)), c(dat['10%', ], rev(dat['90%', ])),
-            border=NA, col = paste0(col, '33'),)
+            border = NA, col = paste0(col, '33'),)
     polygon(c(nLeaves, rev(nLeaves)), c(dat['25%', ], rev(dat['75%', ])),
-            border=NA, col = paste0(col, '33'),)
-    #lines(nLeaves, dat['25%', ], lty=2, col=col)
-    #lines(nLeaves, dat['75%', ], lty=2, col=col)
+            border = NA, col = paste0(col, '33'),)
+    #lines(nLeaves, dat['25%', ], lty = 2, col = col)
+    #lines(nLeaves, dat['75%', ], lty = 2, col = col)
     #pointsAt <- 1:10 * 20L
   }
   
@@ -114,26 +115,26 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
                            lp = c('bottomright', 'bottomleft')) {
     plot(as.integer(dimnames(randomTreeDistances)[[3]]),
          randomTreeDistances['dpi', 'mean', ],
-         ylim=c(yMin, 1), type='n',
+         ylim = c(yMin, 1), type = 'n',
          xlab = "Number of leaves", ylab = "Normalized tree distance")
     for (method in methods) AddLine(method, 
                                     method %in% c('msd', rownames(normalizeAgainst)))
     
     
-    legend(lp[1], bty='n',
-           lty=1, legend=abbrevs[methods], col=TreeDistCol(methods, 44),
-           text.col='#FFFFFFFF', pch = 15, pt.cex=1.8
+    legend(lp[1], bty = 'n',
+           lty = 1, legend = abbrevs[methods], col = TreeDistCol(methods, 44),
+           text.col = '#FFFFFFFF', pch = 15, pt.cex = 1.8
     )
     
-    legend(lp[1], bty='n', lty=1, 
-           legend=abbrevs[methods], col=TreeDistCol(methods))
+    legend(lp[1], bty = 'n', lty = 1, 
+           legend = abbrevs[methods], col = TreeDistCol(methods))
     
-    legend(lp[2], bty='n', inset=c(0.09, 0),
-           lty=1, lwd = c(1, 4, 6), col=c(1, "#00000066", "#00000033"),
-           legend=c('Median', 'Interquartile range', 'Interdecile range'))
+    legend(lp[2], bty = 'n', inset = c(0.09, 0),
+           lty = 1, lwd = c(1, 4, 6), col = c(1, "#00000066", "#00000033"),
+           legend = c('Median', 'Interquartile range', 'Interdecile range'))
   }
   PlotMethods(c('rf', 'dpi', 'cid', 'msd', 'nts', 'msid'))
-  PlotMethods(c('rf', 'ja4', 'jna4', 'ja2', 'jna2', 'nts'), yMin=0.7)
+  PlotMethods(c('rf', 'ja4', 'jna4', 'ja2', 'jna2', 'nts'), yMin = 0.7)
   PlotMethods(c('nni_u', 'tbr_u', 'spr', 'masti', 'mast',
                 'path', 'qd', 'tbr_l', 'nni_l'), yMin = 0.14, 
               lp = c('bottomright', 'right'))
