@@ -115,7 +115,7 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' 
 #' Note that the settings `k = 1, allowConflict = TRUE, similarity = TRUE`
 #' give the similarity metric of Nye _et al_. (2006); a slightly faster
-#' implementation of this metric is available as [`NyeTreeSimilarity`].
+#' implementation of this metric is available as [`NyeTreeSimilarity()`].
 #' 
 #' The examples section below details how to visualize matchings with 
 #' non-default parameter values.
@@ -158,10 +158,11 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #'   JaccardRobinsonFoulds(tree1, tree2, k = 2, allowConflict = FALSE, ...)
 #'   
 #' VisualizeMatching(JRF2, tree1, tree2, matchZeros = FALSE)
+#' @template MRS
 #' 
 #' @family tree distances
 #' 
-#' @template MRS
+#' @encoding UTF-8
 #' @importFrom TreeTools NSplits
 #' @export
 JaccardRobinsonFoulds <- function (tree1, tree2 = tree1, k = 1L, 
