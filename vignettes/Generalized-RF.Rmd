@@ -129,9 +129,21 @@ NyeTreeSimilarity(tree1, tree2, normalize=FALSE)
 
 B&ouml;cker _et al_. [-@Bocker2013] employ the same split similarity metric
 as Nye _et al._ [-@Nye2006], which they suggest ought to be raised to an
-arbitrary exponent.
+arbitrary exponent in order to downweight the contribution of paired splits that
+are not identical.
 In order for the metric to converge to the Robinson-Foulds metric as the
 exponent grows towards infinity, the resulting score is then doubled.
+
+```{r, fig.width=6, fig.align='center'}
+JaccardRobinsonFoulds(tree1, tree2, k = 1)
+VisualizeMatching(JaccardRobinsonFoulds, tree1, tree2,
+                  Plot = TreeDistPlot, matchZeros = FALSE)
+
+JRF2 <- function (...) JaccardRobinsonFoulds(k = 2, ...)
+JRF2(tree1, tree2)
+VisualizeMatching(JRF2, tree1, tree2,
+                  Plot = TreeDistPlot, matchZeros = FALSE)
+```
 
 The figure below shows how the JRF distance between the two trees plotted above
 varies with the value of the exponent _k_, relative to the Nye _et al._ and 
@@ -194,8 +206,8 @@ calculation speed [@SmithDist].
 ## Matching Split Distance
 
 Bogdanowicz & Giaro [-@Bogdanowicz2012] propose an alternative distance, which
-they term the Matching Split Distance.  (This was independently proposed by
-Lin _et al._ [-@Lin2012].)
+they term the Matching Split Distance.  (This approach was independently 
+proposed by Lin _et al._ [-@Lin2012].)
 
 ```{r, fig.width=6, fig.align='center'}
 MatchingSplitDistance(tree1, tree2)
@@ -207,18 +219,18 @@ Note that the visualization shows the difference, rather than the similarity,
 between splits.
 
 Similar to the Nye _et al_. similarity metric, this method compares the subsets
-implied by a pair of splits.  Here, the relevant quantity is the number
-of elements that must be moved from one subset to another in order to make
-the two splits identical.  With the pair of splits
+implied by a pair of splits.
+Here, the relevant quantity is the number of elements that must be moved from 
+one subset to another in order to make the two splits identical.
+With the pair of splits
 
 ```
 ABCDEF  | GHIJ
 ABCDE IJ|FGH
 ```
 
-three leaves (_F_, _I_ and _J_) must be moved before the splits are 
-identical; as such, the pair of splits are assigned a difference score 
-of three.  
+three leaves ('F', 'I' and 'J') must be moved before the splits are identical;
+as such, the pair of splits are assigned a difference score of three.  
 Formally, where $S_i$ splits $n$ leaves into bipartitions $A_i$ and $B_i$, the
 difference score is calculated by
 
@@ -233,8 +245,8 @@ MatchingSplitDistance(read.tree(text='((a, b, c, d, e, f), (g, h, i, j));'),
                       read.tree(text='((a, b, c, d, e, i, j), (g, h, f));'))
 ```
 
-This distance is difficult to normalize, as its maximum value is difficult
-to calculate.
+This distance is difficult to normalize, as it is not easy to calculate its
+maximum value.
 
 ### Information theoretic alternative
 
@@ -255,13 +267,13 @@ is `ABCDE | GH`, which contains
 ```{r}
 TreeTools::SplitInformation(5, 2)
 ```
-bits of phylogenetic information, which provides a similarity score for this
-pairing.
+bits of phylogenetic information. This value can be used as a similarity score
+for this pairing of splits.
 
 ```{r, fig.width=6, fig.align='center'}
 MatchingSplitInfoDistance(tree1, tree2)
 VisualizeMatching(MatchingSplitInfoDistance, tree1, tree2,
-                  Plot = TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
+                  Plot = TreeDistPlot, matchZeros = FALSE)
 ```
 
 
