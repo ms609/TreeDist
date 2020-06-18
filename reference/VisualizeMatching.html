@@ -46,8 +46,7 @@
 
 
 <meta property="og:title" content="Visualise a matching — VisualizeMatching" />
-<meta property="og:description" content="Depicts the splits that are matched between two trees using a
-specified
+<meta property="og:description" content="Depict the splits that are matched between two trees using a specified
 Generalized Robinson-Foulds
 similarity measure." />
 
@@ -172,8 +171,7 @@ similarity measure." />
     </div>
 
     <div class="ref-description">
-    <p>Depicts the splits that are matched between two trees using a
-specified
+    <p>Depict the splits that are matched between two trees using a specified
 <a href='https://ms609.github.io/TreeDist/articles/Generalized-RF.html'>Generalized Robinson-Foulds</a>
 similarity measure.</p>
     </div>
@@ -237,10 +235,10 @@ similarity of the associated splits (<code>FALSE</code>).</p></td>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Note that when visualizing a Robinson-Foulds distance (using
-<code>Func = RobinsonFoulds</code>), matched splits are assigned a <em>similarity</em> score
-of 1, which is deducted from the total number of splits to calculate the
-Robinson-Foulds <em>distance</em>.  Unmatched splits thus contribute one to total
-tree distance.</p>
+<code>Func = RobinsonFouldsMatching</code>), matched splits are assigned a <em>similarity</em>
+score of 1, which is deducted from the total number of splits to calculate
+the Robinson-Foulds <em>distance</em>.  Unmatched splits thus contribute one to
+total tree distance.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>tree1</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>6</span>)
