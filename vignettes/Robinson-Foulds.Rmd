@@ -81,21 +81,21 @@ nodelabels(1:2, node=10:11, bg = palette[4], adj = c(-1, 0.5))
 
 ```
 
-The simplicity of counting splits is appealing, but limited by the simplifying
+The simplicity of counting splits is appealing, but limited by the underlying
 assumption that all splits are equivalent.
 
-In the example above, 
-the probability that a tree with two unresolved clades of four taxa will be 
-compatible with the reference tree on the left is $\frac{1}{`r choose(8, 4) / 2`}$. 
-In contrast, a tree that separates two taxa from six has a $\frac{1}{7}$ 
-chance of matching the reference tree: the similarity observed is five times
-more likely to have arisen by chance.  In other words, failure to match an
-even split is less noteworthy than failure to match an uneven one.
+As an example, a split that separates eight leaves into two sets of four
+(as in the right-hand tree above) has a $\frac{1}{`r choose(8, 4) / 2`}$
+chance of being compatible with the reference tree.
+In contrast, a split that separates two leaves from the other six has a
+$\frac{1}{7}$ chance of matching the reference tree: the similarity observed 
+is five times more likely to have arisen by chance.
+In other words, failure to match an even split is less noteworthy than failure
+to match an uneven one.
 
 As a consequence, trees whose splits are less even will, on average, exhibit
 higher Robinson-Foulds distances with comparison trees.
-
-Consider a balanced and an unbalanced eight-taxon tree:
+Compare a balanced and an unbalanced eight-taxon tree:
 
 ```{r two-trees, echo=FALSE, fig.height = 3, fig.width=6, fig.align = 'center'}
 TwoTreePlot()
@@ -153,18 +153,20 @@ knitr::kable(cbind(
 ```
 
 In the first tree, split 1 is even, dividing four taxa from four others (`4|4`);
-splits 2--5 are maximally uneven (`2|6`).  The total information content of 
-these five splits is `r signif(sum(ic[c(4, 2, 2, 2, 2) - 1]), 4)`&nbsp;bits,
+splits 2--5 are maximally uneven (`2|6`).  If each split is treated as 
+independent, then the total information content of the five splits is
+`r signif(sum(ic[c(4, 2, 2, 2, 2) - 1]), 4)`&nbsp;bits,
 whereas that of the five splits in the second tree, of sizes 
 `2|6`, `3|5`, `4|4`, `3|5` and `2|6`, is
 `r signif(sum(ic[c(2, 3, 4, 3, 2) - 1]), 4)`&nbsp;bits.
 Put another way, a random tree will
 on average share more splits with the balanced tree (whose splits are 
 predominantly uneven and thus likely to be matched) than the asymmetric tree 
-(which contains more even splits that are less likely to occur in a random tree).
+(which contains more even splits that are less likely to occur in a random 
+tree).
 
-Of the 10&nbsp;395 eight-leaf trees, many more bear at least one split in 
-common with a balanced tree than with an asymmetric tree:
+Indeed, of the 10&nbsp;395 eight-leaf trees, many more bear at least one split 
+in common with a balanced tree than with an asymmetric tree:
 
 ```{r all-8-tip-trees, echo=FALSE, cache=TRUE, fig.width=4, fig.height=4, fig.align='center'}
 calculate <- FALSE
