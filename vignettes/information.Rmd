@@ -12,7 +12,7 @@ vignette: >
 ---
 
 To understand the [information-based metrics](Generalized-RF.html) implemented
-in [`TreeDist`](Using-TreeDist.html), it is useful to recall some basic concepts
+in '[TreeDist](Using-TreeDist.html)', it is useful to recall some basic concepts
 of information theory (see @Mackay2003 for an introduction).
 
 ## Shannon information
