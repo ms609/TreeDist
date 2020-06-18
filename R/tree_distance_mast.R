@@ -35,7 +35,7 @@
 #' CompareAll(as.phylo(0:4, 8), MASTSize)
 #' CompareAll(as.phylo(0:4, 8), MASTInfo)
 #' 
-#' @seealso [`phangorn::mast`], a slower implementation that also lists the
+#' @seealso [`phangorn::mast()`], a slower implementation that also lists the
 #' leaves contained within the subtree.
 #' 
 #' @references 

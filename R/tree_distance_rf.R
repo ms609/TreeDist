@@ -52,7 +52,7 @@
 #' 
 #' 
 #' @family tree distances
-#' @seealso [`VisualizeMatching()`], to display paired splits.
+#' @seealso Display paired splits: [`VisualizeMatching()`]
 #' 
 #' @template MRS
 #' @export

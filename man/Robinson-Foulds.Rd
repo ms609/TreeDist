@@ -143,7 +143,7 @@ VisualizeMatching(InfoRobinsonFoulds, balanced7, pectinate7)
 \insertRef{SmithDist}{TreeDist}
 }
 \seealso{
-\code{\link[=VisualizeMatching]{VisualizeMatching()}}, to display paired splits.
+Display paired splits: \code{\link[=VisualizeMatching]{VisualizeMatching()}}
 
 Other tree distances: 
 \code{\link{JaccardRobinsonFoulds}()},

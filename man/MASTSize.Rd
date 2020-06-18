@@ -59,7 +59,7 @@ CompareAll(as.phylo(0:4, 8), MASTInfo)
 \insertRef{Valiente2009}{TreeDist}
 }
 \seealso{
-\code{\link[phangorn:mast]{phangorn::mast}}, a slower implementation that also lists the
+\code{\link[phangorn:mast]{phangorn::mast()}}, a slower implementation that also lists the
 leaves contained within the subtree.
 
 Other tree distances: 
