@@ -50,7 +50,7 @@ This leads to problematic behaviour in certain cases: for example,
 swapping the position of two distant leaves (as with leaves 'A' and 'J' below)
 can disproportionately reduce similarity -- in this example, to zero.
 
-```{r, fig.width=6 , fig.align='center'}
+```{r, fig.width=6, fig.align='center'}
 VisualizeMatching(SharedPhylogeneticInfo, AtoJ, swapAJ,
                   Plot = TreeDistPlot, matchZeros = FALSE, prune = c(5, 18))
 ```
@@ -62,19 +62,19 @@ Scoring each pair of splits according to their mutual clustering information
 information-based tree distance metric that recognizes similarity in tree
 structure even when every possible pairing of splits conflicts:
 
-```{r, fig.width=6 , fig.align='center'}
+```{r, fig.width=6, fig.align='center'}
 VisualizeMatching(MutualClusteringInfo, AtoJ, swapAJ,
                   Plot = TreeDistPlot, matchZeros = FALSE, prune = c(5, 18))
 MutualClusteringInfo(AtoJ, swapAJ)
 ```
 
 Because no pair of non-trivial splits has zero mutual clustering information,
-even a dissimilar matching (such as `HI|ABCDEFG` => `EI|ABCDFGH` below) 
-is preferred to leaving a split unpaired.
+even a dissimilar pairing (such as `HI|ABCDEFG` => `EI|ABCDFGH` below) 
+is (slightly) preferable to leaving a split unpaired.
 
-```{r, fig.width=6 , fig.align='center'}
+```{r, fig.width=6, fig.align='center'}
 VisualizeMatching(MutualClusteringInfo, tree1, tree2, 
-                  Plot = TreeDistPlot, leaveRoom = FALSE, matchZeros = FALSE)
+                  Plot = TreeDistPlot, matchZeros = FALSE)
 ```
 
 ## Nye _et al._ tree similarity metric
@@ -119,7 +119,7 @@ fact that some splits are more likely to match than others.)
 It is not possible for a pair of splits to receive a zero similarity 
 score.
 
-```{r, fig.width=6 , fig.align='center'}
+```{r, fig.width=6, fig.align='center'}
 VisualizeMatching(NyeTreeSimilarity, tree1, tree2, 
                   Plot = TreeDistPlot, leaveRoom = FALSE, matchZeros = FALSE)
 NyeTreeSimilarity(tree1, tree2, normalize=FALSE)
@@ -127,23 +127,15 @@ NyeTreeSimilarity(tree1, tree2, normalize=FALSE)
 
 ### Jaccard-Robinson-Foulds metric
 
-<!--TODO REWRITE -- I'd misunderstood what an arboreal matching was -->
-B&ouml;cker _et al_. [-@Bocker2013] propose expressly prohibiting contradictory
-pairings, i.e. pairs of splits that could never occur in the same tree.
-Such a 'coherent' matching would preclude the pairing of `ABCFGHI|DE` with
-`ABCDFGH|EI`:
+B&ouml;cker _et al_. [-@Bocker2013] employ the same split similarity metric
+as Nye _et al._ [-@Nye2006], which they suggest ought to be raised to an
+arbitrary exponent.
+In order for the metric to converge to the Robinson-Foulds metric as the
+exponent grows towards infinity, the resulting score is then doubled.
 
-```{r, fig.width=6 , fig.align='center'}
-JaccardRobinsonFoulds(tree1, tree2, similarity = TRUE)
-
-VisualizeMatching(JaccardRobinsonFoulds, tree1, tree2,
-                  Plot = TreeDistPlot, leaveRoom = FALSE, matchZeros = FALSE)
-```
-
-B&ouml;cker _et al_. [-@Bocker2013] also suggest raising the split 
-similarity score defined above to an arbitrary exponent.  The similarity score
-is also doubled.  By this means, the metric can be made to converge to the
-Robinson-Foulds metric as the exponent grows towards infinity.
+The figure below shows how the JRF distance between the two trees plotted above
+varies with the value of the exponent _k_, relative to the Nye _et al._ and 
+Robinson-Foulds distances between the trees:
 
 ```{r, fig.width=6, fig.height = 4,fig.align='center', echo=FALSE}
 par(mar = c(4, 4, 0, 0))
@@ -152,7 +144,7 @@ cbPalette8 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
                 "#0072B2", "#D55E00", "#CC79A7") # dput(Ternary::cbPalette8)
 plot(0, xlim = range(x), ylim = c(3.5, 9.5),
      xlab = expression(italic('k')), ylab = 'Jaccard-Robinson-Foulds distance',
-     pch = 3, type='n')
+     pch = 3, type = 'n')
 
 abline(h = RobinsonFoulds(tree1, tree2),
        lty = 'dashed', col = cbPalette8[6])
@@ -169,16 +161,46 @@ legend('right', c('Robinson-Foulds', 'JRF, no conflict', 'JRF, conflict ok', 'Ny
        col = cbPalette8[c(6, 4, 5, 8)], bty = 'n')
 ```
 
+The theoretical and practical performance of the JRF metric, and its speed
+of calculation, are best at lower values of _k_ [@SmithDist], raising the
+question of whether an exponent is necessary.
+
+B&ouml;cker _et al_. [-@Bocker2013] suggest that 'reasonable' matchings 
+exhibit a property they term _arboreality_.
+Their definition of an arboreal matching supposes that trees are rooted, in 
+which case each split corresponds to a clade.
+In an arboreal matching on a rooted tree, no pairing of splits conflicts with
+any other pairing of splits.
+Consider the case where splits 'A' and 'B' in tree 1 are paired 
+respectively with splits 'C' and 'D' in tree 2.  If 'A' is paired with 'C' 
+and 'B' with 'D', then to avoid conflict:
+
+- if A is nested within B, then C must be nested within D
+
+- if B is nested within A, then D must be nested within C
+
+- if A and B do not overlap, then C and D must not overlap.
+
+Equivalent statements for unrooted trees are a little harder to express.
+
+Unfortunately, constructing arboreal matchings is NP-complete, making an optimal
+arboreal matching slow to find.
+A faster alternative is to prohibit pairings of contradictory splits, though 
+distances generated under such an approach are theoretically less coherent and 
+practically no more effective than those calculated when contradictory splits
+may be paired, so the only advantage of this approach is a slight increase in 
+calculation speed [@SmithDist].
+
 ## Matching Split Distance
 
 Bogdanowicz & Giaro [-@Bogdanowicz2012] propose an alternative distance, which
 they term the Matching Split Distance.  (This was independently proposed by
 Lin _et al._ [-@Lin2012].)
 
-```{r, fig.width=6 , fig.align='center'}
+```{r, fig.width=6, fig.align='center'}
 MatchingSplitDistance(tree1, tree2)
 VisualizeMatching(MatchingSplitDistance, tree1, tree2,
-                  Plot = TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
+                  Plot = TreeDistPlot, matchZeros = FALSE)
 ```
 
 Note that the visualization shows the difference, rather than the similarity,
@@ -206,7 +228,7 @@ where $m$ counts the number of leaves that already match, and is defined as
 
 $m = \max\{|A_1 \cap A_2| + |B_1 \cap B_2|, |A_1 \cap B_2| + |B_1 \cap A_2|\}$
 
-```{r, fig.width=6 , fig.align='center'}
+```{r, fig.width=6, fig.align='center'}
 MatchingSplitDistance(read.tree(text='((a, b, c, d, e, f), (g, h, i, j));'),
                       read.tree(text='((a, b, c, d, e, i, j), (g, h, f));'))
 ```
@@ -236,7 +258,7 @@ TreeTools::SplitInformation(5, 2)
 bits of phylogenetic information, which provides a similarity score for this
 pairing.
 
-```{r, fig.width=6 , fig.align='center'}
+```{r, fig.width=6, fig.align='center'}
 MatchingSplitInfoDistance(tree1, tree2)
 VisualizeMatching(MatchingSplitInfoDistance, tree1, tree2,
                   Plot = TreeDistPlot, leaveRoom=FALSE, matchZeros = FALSE)
