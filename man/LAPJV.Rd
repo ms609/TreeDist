@@ -24,9 +24,13 @@ column, such that the cost of the matching is minimized.
 
 The JV approach improves on the Hungarian algorithm, which is implemented
 in \code{clue::solve_LSAP()}.
+
+NB. At present, only square matrices are supported; if you need support for
+non-square matrices, drop a note at
+(\href{https://github.com/ms609/TreeDist/issues/25}{#25})
+and I'll prioritize development.
 }
 \examples{
-
 problem <- matrix(c(7, 9, 8, 9,
                     2, 8, 5, 7,
                     1, 6, 6, 9,
