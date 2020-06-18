@@ -1,7 +1,7 @@
 #' Robinson-Foulds distances, with adjustments for phylogenetic information
 #' content
 #' 
-#' Calculates the Robinson-Foulds distance, or the equivalent similarity 
+#' Calculate the Robinson-Foulds distance, or the equivalent similarity 
 #' measure, with options to (i) annotate matched splits; (ii) weight splits
 #TODO Update reference to Smith
 #' according to their phylogenetic information content (Smith 202X).

@@ -1,7 +1,8 @@
 #' Information-based generalized Robinson-Foulds distances
 #'
-#' Tree similarity and distance measures that measure the amount of 
-#' phylogenetic or clustering information that two trees hold in common.
+#' Calculate tree similarity and distance measures based on the amount of 
+#' phylogenetic or clustering information that two trees hold in common, as
+#' proposed in Smith (202X).
 #' 
 #' 
 #' [Generalized Robinson-Foulds distances](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances)
@@ -16,7 +17,7 @@
 #' 
 #' The returned tree similarity measures state the amount of information, 
 #' in bits, that the splits in two trees hold in common 
-#' when they are optimally matched, following Smith (forthcoming).
+#' when they are optimally matched, following Smith (202X).
 #' The complementary tree distance measures state how much information is 
 #' different in the splits of two trees, under an optimal matching.
 #' 
