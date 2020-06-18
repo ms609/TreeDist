@@ -6,7 +6,7 @@ test_that("SPR.dist called safely", {
   expect_equal(PhangornSPR(structure(lapply(as.phylo(0:5, 6), Postorder),
                                      class = 'multiPhylo'),
                            Postorder(BalancedTree(6))),
-               SPRDist(as.phylo(0:5, 6), BalancedTree(6)))
+               SPRDist(as.phylo(0:5, 6), BalancedTree(6), symmetric = FALSE))
   expect_equal(SPRDist(BalancedTree(6), as.phylo(0:5, 6)),
                SPRDist(as.phylo(0:5, 6), BalancedTree(6)))
   expect_equivalent(SPRDist(BalancedTree(6), PectinateTree(6)),

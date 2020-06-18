@@ -15,7 +15,6 @@
 #' [phangorn#97](https://github.com/KlausVigo/phangorn/issues/97)). Set to
 #' `FALSE` for the faster approximation, as implemented in 'phangorn'.
 #' 
-#' 
 #' @return `SPRDist()` returns a vector or distance matrix of distances 
 #' between trees.
 #' 

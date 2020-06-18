@@ -4,7 +4,7 @@
 \alias{SPRDist}
 \title{Approximate Subtree Prune and Regraft distance}
 \usage{
-SPRDist(tree1, tree2 = NULL, symmetric = FALSE)
+SPRDist(tree1, tree2 = NULL, symmetric = TRUE)
 }
 \arguments{
 \item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
@@ -14,7 +14,8 @@ or lists of such trees to undergo pairwise comparison.}
 by calculating the minimum of \code{SPRDist(t1, t2)} and \code{SPRDist(t2, t1)},
 which are not guaranteed to be equal due to the heuristic nature of the
 approximation (see
-\href{https://github.com/KlausVigo/phangorn/issues/97}{phangorn#97}).}
+\href{https://github.com/KlausVigo/phangorn/issues/97}{phangorn#97}). Set to
+\code{FALSE} for the faster approximation, as implemented in 'phangorn'.}
 }
 \value{
 \code{SPRDist()} returns a vector or distance matrix of distances
