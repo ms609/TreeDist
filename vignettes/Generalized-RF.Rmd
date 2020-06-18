@@ -33,7 +33,7 @@ before you read further, you may also wish to revisit how to
 Under the shared phylogenetic information tree distance measure [@SmithDist], 
 pairs of splits are assigned a similarity score that corresponds to the amount
 of phylogenetic information [_sensu_ @Steel2006] that they share in common
-(see [separate vignette](information.html)), a concept introduced (but not 
+(see [separate vignette](information.html)), a concept introduced (though not 
 developed) by Nelson [-@Nelson1979].
 
 ```{r, fig.width=6, fig.align='center'}
@@ -45,7 +45,7 @@ SharedPhylogeneticInfo(tree1, tree2)
 ### Conflicting splits can nevertheless be instructive
 
 Shared phylogenetic information assigns zero similarity to incompatible splits,
-i.e. those that cannot both occur on a single tree.  
+i.e. those that cannot both occur on a single tree.
 This leads to problematic behaviour in certain cases: for example,
 swapping the position of two distant leaves (as with leaves 'A' and 'J' below)
 can disproportionately reduce similarity -- in this example, to zero.
@@ -69,7 +69,7 @@ MutualClusteringInfo(AtoJ, swapAJ)
 ```
 
 Because no pair of non-trivial splits has zero mutual clustering information,
-even a dissimilar pairing (such as `HI|ABCDEFG` => `EI|ABCDFGH` below) 
+even a dissimilar pairing (such as `HI|ABCDEFG` &Rightarrow; `EI|ABCDFGH` below) 
 is (slightly) preferable to leaving a split unpaired.
 
 ```{r, fig.width=6, fig.align='center'}
@@ -92,13 +92,13 @@ ABCDE IJ|FGH
 
 The first pair of subsets, `ABCDEF` and `ABCDEIJ`, have five elements in common 
 (`ABCDE`), and together encompass eight elements (`ABCDEFIJ`).  Their 
-_subset score_ is thus 5/8.
+_subset score_ is thus $\frac{5}{8}$.
 
 The second pair of subsets, `GHIJ` and `FGH`, have two elements (`GH`) in common,
-of the five total (`FGHIJ`), and hence receive a subset score of 2/5.
+of the five total (`FGHIJ`), and hence receive a subset score of $\frac{2}{5}$.
 
 This split alignment then receives an _alignment score_ corresponding to the 
-lower of the two subset scores, 2/5.
+lower of the two subset scores, $\frac{2}{5}$.
 
 We must now consider the other alignment of this pair of splits,
 
@@ -108,10 +108,11 @@ ABCDEF  |     GHIJ
      FGH|ABCDE  IJ
 ```
 
-This yields subset scores of 1/8 and 2/9, and thus has an alignment score of 1/8.
-This alignment gives a lower score than the other, so is disregarded.  The 
-pair of splits is allocated a similarity score corresponding to the 
-better alignment: 2/5.
+This yields subset scores of $\frac{1}{8}$ and $\frac{2}{9}$, and thus has an
+alignment score of $\frac{1}{8}$.
+This alignment gives a lower score than the other, so is disregarded.
+The pair of splits is allocated a similarity score corresponding to the 
+better alignment: $\frac{2}{5}$.
 
 As such, splits that match exactly will receive a similarity score of 1,
 in a manner analogous to the Robinson-Foulds distance.  (This is despite the
@@ -127,7 +128,7 @@ NyeTreeSimilarity(tree1, tree2, normalize = FALSE)
 
 ### Jaccard-Robinson-Foulds metric
 
-B&ouml;cker _et al_. [-@Bocker2013] employ the same split similarity metric
+B&ouml;cker _et al_. [-@Bocker2013] employ the same split similarity calculation
 as Nye _et al._ [-@Nye2006], which they suggest ought to be raised to an
 arbitrary exponent in order to downweight the contribution of paired splits that
 are not identical.
@@ -175,7 +176,7 @@ legend('right', c('Robinson-Foulds', 'JRF, no conflict', 'JRF, conflict ok', 'Ny
 
 The theoretical and practical performance of the JRF metric, and its speed
 of calculation, are best at lower values of _k_ [@SmithDist], raising the
-question of whether an exponent is necessary.
+question of whether an exponent is useful.
 
 B&ouml;cker _et al_. [-@Bocker2013] suggest that 'reasonable' matchings 
 exhibit a property they term _arboreality_.
