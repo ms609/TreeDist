@@ -19,8 +19,10 @@ cbPalette8 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
                 "#0072B2", "#D55E00", "#CC79A7")
 TwoTreePlot <- function () par(mfrow=c(1, 2), mar=standardMargin, cex=0.9)
 
-Plot <- function (tree, tree2=NULL, highlight = character(0),
-                  prune=if (is.null(tree2)) integer(0) else list(integer(0), integer(0))) {
+Plot <- function (tree, tree2 = NULL, highlight = character(0),
+                  prune = if (is.null(tree2)) integer(0) 
+                          else list(integer(0), integer(0))
+                  ) {
   ABCDEFGHIJK <- LETTERS[1:11]
   if (is.null(tree2)) {
     if(!all(tree$tip.label %in% 1:11)) {
@@ -32,7 +34,7 @@ Plot <- function (tree, tree2=NULL, highlight = character(0),
                  graft = which(tree$edge[, 2] == 
                                  match(highlightTip, tree$tip.label)))
   } else {
-    par(mfrow=c(1, 2), mar=rep(0.4, 4))
+    par(mfrow = c(1, 2), mar = rep(0.4, 4))
     Plot(tree, highlight = highlight, prune = prune[[1]])
     Plot(tree2, highlight = highlight, prune = prune[[2]])
   }
@@ -258,27 +260,30 @@ and in the resolution of a clade:
 
 ```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
 tree1 <- ape::read.tree(text='((A, B), ((C, (D, E)), (F, (G, (H, I)))));')
-tree2 <- read.tree(text='((A, B), ((C, D, (E, I)), (F, (G, H))));')
+tree2 <- ape::read.tree(text='((A, B), ((C, D, (E, I)), (F, (G, H))));')
 
 Plot(tree1, tree2, highlight = 'I', prune = list(8, integer(0)))
 ```
 
-These trees obtain a Robinson-Foulds distance of nine,
-out of a maximum of eleven possible for trees of this resolution.
+These trees obtain a Robinson-Foulds distance of nine: a large distances, as
+the maximum possible for trees of this resolution is eleven.
 `AB|CDEFGHI` is the only split in common between the two trees:
 
 ```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
 TwoTreePlot()
-VisualizeMatching(RobinsonFoulds, tree1, tree2)
+VisualizeMatching(RobinsonFouldsMatching, tree1, tree2)
 ```
 
-This high score does not seem to reflect the similarity between the trees:
-removing the single leaf _I_ results in two trees that differ only 
+This distance score is higher than might be expected, given how much the trees 
+have in common;
+removing the single leaf 'I' results in two trees that differ only 
 in the resolution of a single node:
 
 ```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
 TwoTreePlot()
-VisualizeMatching(RobinsonFoulds, drop.tip(tree1, 'I'), drop.tip(tree2, 'I'))
+VisualizeMatching(RobinsonFouldsMatching,
+                  drop.tip(tree1, 'I'),
+                  drop.tip(tree2, 'I'))
 ```
 
 This hidden similarity can be better reflected if similar, but non-identical,
@@ -286,11 +291,12 @@ splits are assigned non-zero similarity scores.
 
 There are various ways to score the similarity between two splits. 
 One is to build on the idea introduced above, where identical splits are
-scored according to their phylogenetic information content.  Non-matching
-splits can be scored according to the amount of phylogenetic information that 
-they hold in common, which is a function of the proportion of trees
-that are consistent with both splits.  (A full explanation is provided
-in the discussion of [Generalized Robinson-Foulds distances](Generalized-RF.html).)
+scored according to their phylogenetic information content.
+Non-matching splits can be scored according to the amount of phylogenetic 
+information that they hold in common, which is a function of the proportion of 
+trees that are consistent with both splits.
+(A full explanation is provided in the discussion of
+[Generalized Robinson-Foulds distances](Generalized-RF.html).)
 
 ```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
 TwoTreePlot()
@@ -307,17 +313,17 @@ The split `ABCDEF|GHI` in the left-hand tree is paired with the split
 `ABCDEFI|GH` in the right-hand tree.  Had `ABCDEF|GHI` been available in the 
 right-hand tree, then this perfect match would have been assigned a similarity 
 of `SplitInformation(3, 6)` = 5.57&nbsp;bits.  The partial match is instead 
-allocated a lower score of 2.12&nbsp;bits.  Contradictory pairings -- pairs of
-splits that cannot exist on a single tree, such as `ABCDEFG|HI` - `ABCDFGH|EI` 
--- have no phylogenetic information in common.  (If it is permissible to 
-acknowledge similarity between contradictory splits, 
-[clustering information](information.html) is an alternative way to think
-about split similarity.)
+allocated a lower score of 2.12&nbsp;bits.  Pairings of incompatible splits,
+i.e. those that cannot co-exist on a tree, such as `ABCDEFG|HI` - `ABCDFGH|EI`,
+have no phylogenetic information in common.
+([clustering information](information.html) is an alternative way to think
+about split similarity that recognizes similarity even between incompatible
+splits.)
 
-The matching depicted above is optimal, but is one of many.  The optimal 
-matching is calculated by considering the similarity score of each possible 
-pairing, and solving a linear assignment problem to find the optimal set 
-of pairings.
+The matching depicted above is one of many.
+It happens to be optimal: an optimal matching can be found by considering the
+similarity score of each possible pairing, and solving a linear assignment
+problem to find the optimal set of pairings.
 
 We can view the splits in each tree, named according to the number of their
 associated node:
