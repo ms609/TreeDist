@@ -127,37 +127,34 @@
     
     
 <p>This document outlines the similarity measures employed by the generalized Robinson-Foulds distances implemented in this package.</p>
-<p>Generalized RF distances are introduced <a href="Robinson-Foulds.html">elsewhere</a>; before you read further, you may also wish to revisit how to <a href="Using-TreeDist.html">use the TreeDist package</a>, and relevant <a href="information.html">principles of information theory</a>.</p>
+<p>Generalized RF distances are introduced <a href="Robinson-Foulds.html">elsewhere</a>; before you read further, you may also wish to revisit how to <a href="Using-TreeDist.html">use the ‘TreeDist’ package</a>, and relevant <a href="information.html">principles of information theory</a>.</p>
 <div id="shared-phylogenetic-information" class="section level2">
 <h2 class="hasAnchor">
 <a href="#shared-phylogenetic-information" class="anchor"></a>Shared phylogenetic information</h2>
-<p>Under the shared phylogenetic information tree distance measure <span class="citation">(Smith, 2020)</span>, pairs of splits are assigned a similarity score that corresponds to the amount of phylogenetic information <span class="citation">(<em>sensu</em> Steel &amp; Penny, 2006)</span> that they share in common (see <a href="information.html">separate vignette</a>), a concept introduced but not developed by Nelson <span class="citation">(1979)</span>.</p>
+<p>Under the shared phylogenetic information tree distance measure <span class="citation">(Smith, 2020)</span>, pairs of splits are assigned a similarity score that corresponds to the amount of phylogenetic information <span class="citation">(<em>sensu</em> Steel &amp; Penny, 2006)</span> that they share in common (see <a href="information.html">separate vignette</a>), a concept introduced (but not developed) by Nelson <span class="citation">(1979)</span>.</p>
 <div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">SharedPhylogeneticInfo</span>, <span class="no">tree1</span>, <span class="no">tree2</span>,
                   <span class="kw">Plot</span> <span class="kw">=</span> <span class="no">TreeDistPlot</span>, <span class="kw">matchZeros</span> <span class="kw">=</span> <span class="fl">FALSE</span>)</pre></body></html></div>
 <p><img src="Generalized-RF_files/figure-html/unnamed-chunk-1-1.png" width="576" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="../reference/TreeDistance.html">SharedPhylogeneticInfo</a></span>(<span class="no">tree1</span>, <span class="no">tree2</span>)</pre></body></html></div>
 <pre><code>## [1] 12.32188</code></pre>
-<div id="the-problem-with-prohibiting-conflicting-pairings" class="section level3">
+<div id="conflicting-splits-can-nevertheless-be-instructive" class="section level3">
 <h3 class="hasAnchor">
-<a href="#the-problem-with-prohibiting-conflicting-pairings" class="anchor"></a>The problem with prohibiting conflicting pairings</h3>
-<!--TODO expand to expound arboreal matchings-->
-<p>Shared phylogenetic information prohibits the pairing of contradictory splits: that is, it assigns zero similarity to splits that cannot both occur on a single tree.<br>
-This leads to problematic behaviour in certain cases: for example, when the position of two distant taxa is swapped, similarities within a tree can be obscured.<br>
-The two trees below are identical but for the position of <em>A</em> and <em>J</em>, yet receive zero similarity if conflicting splits cannot be paired.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">SharedPhylogeneticInfo</span>, <span class="kw">matchZeros</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="no">AtoJ</span>, <span class="no">AotJ</span>,
-                  <span class="kw">Plot</span> <span class="kw">=</span> <span class="no">TreeDistPlot</span>, <span class="kw">leaveRoom</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">prune</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">5</span>, <span class="fl">18</span>))</pre></body></html></div>
+<a href="#conflicting-splits-can-nevertheless-be-instructive" class="anchor"></a>Conflicting splits can nevertheless be instructive</h3>
+<p>Shared phylogenetic information assigns zero similarity to incompatible splits, i.e. those that cannot both occur on a single tree.<br>
+This leads to problematic behaviour in certain cases: for example, swapping the position of two distant leaves (as with leaves ‘A’ and ‘J’ below) can disproportionately reduce similarity – in this example, to zero.</p>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">SharedPhylogeneticInfo</span>, <span class="no">AtoJ</span>, <span class="no">swapAJ</span>,
+                  <span class="kw">Plot</span> <span class="kw">=</span> <span class="no">TreeDistPlot</span>, <span class="kw">matchZeros</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">prune</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">5</span>, <span class="fl">18</span>))</pre></body></html></div>
 <p><img src="Generalized-RF_files/figure-html/unnamed-chunk-2-1.png" width="576" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div id="mutual-clustering-information" class="section level2">
 <h2 class="hasAnchor">
 <a href="#mutual-clustering-information" class="anchor"></a>Mutual clustering information</h2>
-<!--TODO REWRITE; coherent matching -> prohibit conflicting pairings -->
-<p>Scoring each pair of splits according to their mutual clustering information <span class="citation">(Smith, 2020)</span> (see <a href="information.html">separate vignette</a>) results in a information-based tree distance metric that, as desired, assigns a non-zero similarity to the case that received zero similarity under an coherent matching:</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">MutualClusteringInfo</span>, <span class="no">AtoJ</span>, <span class="no">AotJ</span>, <span class="kw">matchZeros</span> <span class="kw">=</span> <span class="fl">FALSE</span>,
-                  <span class="kw">Plot</span> <span class="kw">=</span> <span class="no">TreeDistPlot</span>, <span class="kw">leaveRoom</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">prune</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">5</span>, <span class="fl">18</span>))</pre></body></html></div>
+<p>Scoring each pair of splits according to their mutual clustering information <span class="citation">(Smith, 2020)</span> (see <a href="information.html">separate vignette</a>) results in a information-based tree distance metric that recognizes similarity in tree structure even when every possible pairing of splits conflicts:</p>
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">MutualClusteringInfo</span>, <span class="no">AtoJ</span>, <span class="no">swapAJ</span>,
+                  <span class="kw">Plot</span> <span class="kw">=</span> <span class="no">TreeDistPlot</span>, <span class="kw">matchZeros</span> <span class="kw">=</span> <span class="fl">FALSE</span>, <span class="kw">prune</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">5</span>, <span class="fl">18</span>))</pre></body></html></div>
 <p><img src="Generalized-RF_files/figure-html/unnamed-chunk-3-1.png" width="576" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="../reference/TreeDistance.html">MutualClusteringInfo</a></span>(<span class="no">AtoJ</span>, <span class="no">AotJ</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="../reference/TreeDistance.html">MutualClusteringInfo</a></span>(<span class="no">AtoJ</span>, <span class="no">swapAJ</span>)</pre></body></html></div>
 <pre><code>## [1] 1.348339</code></pre>
 <p>Because no pair of non-trivial splits has zero mutual clustering information, even a dissimilar matching (such as <code>HI|ABCDEFG</code> =&gt; <code>EI|ABCDFGH</code> below) is preferred to leaving a split unpaired.</p>
 <div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">MutualClusteringInfo</span>, <span class="no">tree1</span>, <span class="no">tree2</span>,
