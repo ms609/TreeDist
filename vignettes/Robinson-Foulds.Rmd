@@ -28,10 +28,9 @@ Plot <- function (tree, tree2=NULL, highlight = character(0),
     }
     
     highlightTip <- match(highlight, ABCDEFGHIJK)
-    TreeDistPlot(tree, leaveRoom=FALSE, 
-                 bold = highlightTip,
-                 prune = prune,
-                 graft = which(tree$edge[, 2] == match(highlightTip, tree$tip.label)))
+    TreeDistPlot(tree, bold = highlightTip, prune = prune,
+                 graft = which(tree$edge[, 2] == 
+                                 match(highlightTip, tree$tip.label)))
   } else {
     par(mfrow=c(1, 2), mar=rep(0.4, 4))
     Plot(tree, highlight = highlight, prune = prune[[1]])
@@ -61,8 +60,7 @@ common.
 TwoTreePlot()
 palette <- colorspace::qualitative_hcl(5, c=42, l=88)
 TreeDistPlot(balancedTree <- 
-               read.tree(text="(((1, 2), (3, 4)), ((5, 6), (7, 8)));"),
-             leaveRoom = FALSE)
+               read.tree(text="(((1, 2), (3, 4)), ((5, 6), (7, 8)));"))
 edgelabels(1:5, c(1, 2, 5, 9, 12), adj = c(1.5, 0.5), bg = palette[1]) # Splits
 edgelabels(1:6, edge = c(1, 2, 5, 8, 9, 12), bg = palette[2],
            adj = c(-0.5, 0.5)) # Internal edges
@@ -73,7 +71,7 @@ legend('bottomleft', col=palette[1:2], pch=15, bty='n',
 legend('bottomright', col=palette[3:4], pch=15, bty='n',
        c('Nodes (7)', 'Clades (6)'))
 
-TreeDistPlot(read.tree(text="((1, 2, 3, 4), (5, 6, 7, 8));"), leaveRoom = FALSE)
+TreeDistPlot(read.tree(text="((1, 2, 3, 4), (5, 6, 7, 8));"))
 edgelabels(1, 1, adj = c(1.5, 0.5), bg = palette[1])
 edgelabels(1:2, edge = c(1, 6), adj = c(-0.5, 0.5), bg = palette[2])
 nodelabels(1:3, bg = palette[3], adj = c(1, 0.5))
@@ -99,7 +97,7 @@ Compare a balanced and an unbalanced eight-taxon tree:
 
 ```{r two-trees, echo=FALSE, fig.height = 3, fig.width=6, fig.align = 'center'}
 TwoTreePlot()
-TreeDistPlot(balancedTree, edge.color = cbPalette8[3], leaveRoom = FALSE)
+TreeDistPlot(balancedTree, edge.color = cbPalette8[3])
 ape::edgelabels(1:5, c(1, 2, 5, 9, 12), bg = palette[1], adj=c(0.5, -0.25))
 ape::edgelabels(c('4:4', rep('2:6', 4)), c(1, 2, 5, 9, 12),
                 adj=c(0.5, 1.25), frame = 'n')
@@ -109,13 +107,13 @@ legend('topleft', 'Balanced tree', bty='n', inset=c(-0.05, -0.03))
 
 TreeDistPlot(caterpillarTree <- 
                ape::read.tree(text="(1, (2, (3, (4, (5, (6, (7, 8)))))));"),
-     edge.color = cbPalette8[2], leaveRoom = FALSE)
-ape::edgelabels(1:5, bg = palette[1], c(4, 6, 8, 10, 12), adj=c(0.5, -0.25))
+             edge.color = cbPalette8[2])
+ape::edgelabels(1:5, bg = palette[1], c(4, 6, 8, 10, 12), adj = c(0.5, -0.25))
 ape::edgelabels(c('2|6', '3|5', '4|4', '3|5', '2|6'), edge = c(4, 6, 8, 10, 12),
-                frame = 'n', adj=c(0.5, 1.25))
+                frame = 'n', adj = c(0.5, 1.25))
 ape::edgelabels(c(3.46, 5.04, 5.53, 5.04, 3.46), edge = c(4, 6, 8, 10, 12),
-                frame = 'n', adj=c(0.5, 2.75))
-legend('topleft', 'Asymmetric tree', bty='n', inset=c(-0.05, -0.03))
+                frame = 'n', adj = c(0.5, 2.75))
+legend('topleft', 'Asymmetric tree', bty = 'n', inset = c(-0.05, -0.03))
 ```
 
 Each tree divides the eight taxa into five splits.
@@ -171,7 +169,7 @@ in common with a balanced tree than with an asymmetric tree:
 ```{r all-8-tip-trees, echo=FALSE, cache=TRUE, fig.width=4, fig.height=4, fig.align='center'}
 calculate <- FALSE
 if (calculate) {
-  all8 <- phangorn::allTrees(8, tip.label=1:8, rooted=FALSE)
+  all8 <- phangorn::allTrees(8, tip.label = 1:8, rooted = FALSE)
   inBalanced <- RobinsonFoulds(all8, balancedTree, similarity = TRUE)
   inCaterpillar <- RobinsonFoulds(all8, caterpillarTree, similarity = TRUE)
 } else {
@@ -179,24 +177,26 @@ if (calculate) {
   inCaterpillar <- rep(0:5, c(8162, 1808, 350, 64, 10, 1))
 }
 
-par(cex=0.8)
+par(cex = 0.8)
 sch <- hist(inCaterpillar + 0.7, breaks = 0:18 / 3 - (1/6),
-            main='8-leaf trees with N common splits', cex.main=1,
-            xlim=c(0, 6), axes=FALSE,
-            xlab='Splits in common', ylab='Number of trees')
-sbh <- hist(inBalanced + 0.4, breaks = 0:18 / 3 - (1/6), plot=FALSE)
-plot(sch, col=paste0(cbPalette8[2], '44'), add=TRUE)
-plot(sbh, col=paste0(cbPalette8[3], '44'), add=TRUE)
-text(1/6, 100, paste0('Balanced: ', sum(inBalanced == 0)), pos=4, srt=90, cex=0.7)
-text(0.5, 100, paste0('Asymmetric: ', sum(inCaterpillar == 0)), pos=4, srt=90, cex=0.7)
+            main = '8-leaf trees with N common splits', cex.main = 1,
+            xlim = c(0, 6), axes = FALSE,
+            xlab = 'Splits in common', ylab = 'Number of trees')
+sbh <- hist(inBalanced + 0.4, breaks = 0:18 / 3 - (1/6), plot = FALSE)
+plot(sch, col = paste0(cbPalette8[2], '44'), add = TRUE)
+plot(sbh, col = paste0(cbPalette8[3], '44'), add = TRUE)
+text(1/6, 100, paste0('Balanced: ', sum(inBalanced == 0)), 
+     pos = 4, srt = 90, cex = 0.7)
+text(0.5, 100, paste0('Asymmetric: ', sum(inCaterpillar == 0)), 
+     pos = 4, srt = 90, cex = 0.7)
 
 
-legend('topright', pch=22,
-       pt.cex = 2, col='black',
-       pt.bg = paste0(cbPalette8[2:3], '44'), bty='n',
+legend('topright', pch = 22,
+       pt.cex = 2, col = 'black',
+       pt.bg = paste0(cbPalette8[2:3], '44'), bty = 'n',
        c('Asymmetric', 'Balanced'))
 
-axis(1, at=0:5 + 0.5, labels=0:5)
+axis(1, at = 0:5 + 0.5, labels = 0:5)
 axis(2)
 ```
 
@@ -216,7 +216,7 @@ tree2 <- ape::read.tree(text='(1, (2, (3, (4, (5, (7, (6, 8)))))));')
 tree3 <- ape::read.tree(text='(1, (2, (3, (5, (4, (6, (7, 8)))))));')
 
 VisualizeMatching(InfoRobinsonFoulds, tree1, tree2, 
-                  Plot = TreeDistPlot, leaveRoom=FALSE, prune = 12)
+                  Plot = TreeDistPlot, prune = 12)
 ```
 
 whereas the second pair differ in the resolution of a more even, and thus more
@@ -225,7 +225,7 @@ information-rich, split (`ABCD|EFGH`), and so receive a distance score of
 
 ```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
 VisualizeMatching(InfoRobinsonFoulds, tree1, tree3, 
-                  Plot = TreeDistPlot, leaveRoom=FALSE, prune = 8)
+                  Plot = TreeDistPlot, prune = 8)
 ```
 
 # Generalized Robinson-Foulds distances
@@ -238,8 +238,7 @@ single taxon on a tree.
 tree1 <- ape::read.tree(text='(1, (2, (3, (4, (5, (6, (7, 8)))))));')
 tree2 <- ape::read.tree(text='(8, (1, (2, (3, (4, (5, (6, 7)))))));')
 
-VisualizeMatching(RobinsonFouldsMatching, tree1, tree2, 
-                  Plot = TreeDistPlot, leaveRoom = FALSE)
+VisualizeMatching(RobinsonFouldsMatching, tree1, tree2, Plot = TreeDistPlot)
 ```
 
 Generalized Robinson-Foulds distances seek to address this issue. 
