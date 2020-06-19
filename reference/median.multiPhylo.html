@@ -46,8 +46,8 @@
 
 
 <meta property="og:title" content="Median of a set of trees — median.multiPhylo" />
-<meta property="og:description" content="Provides a single binary tree that represents the geometric median --
-an 'average' -- of a pool of tree topologies." />
+<meta property="og:description" content="Calculate the single binary tree that represents the geometric median --
+an 'average' -- of a forest of tree topologies." />
 
 
 
@@ -170,8 +170,8 @@ an 'average' -- of a pool of tree topologies." />
     </div>
 
     <div class="ref-description">
-    <p>Provides a single binary tree that represents the geometric median --
-an 'average' -- of a pool of tree topologies.</p>
+    <p>Calculate the single binary tree that represents the geometric median --
+an 'average' -- of a forest of tree topologies.</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for multiPhylo</span>
@@ -214,12 +214,12 @@ score; if <code>FALSE</code>, return all tied trees.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>median.multiPhylo()</code> returns an object of class <code>phylo</code>
+    <p><code><a href='https://rdrr.io/r/stats/median.html'>median()</a></code> returns an object of class <code>phylo</code>
 corresponding to the geometric median of a set of trees:
 that is, the tree whose average distance from all other trees in the set
 is lowest.
 If multiple trees tie in their average distance, the first will be returned,
-unless <code>breakTies = TRUE</code>, in which case an object of class <code>multiPhylo</code>
+unless <code>breakTies = FALSE</code>, in which case an object of class <code>multiPhylo</code>
 containing all such trees will be returned.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
@@ -237,11 +237,11 @@ rather than a similarity.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Consensus methods:
-<code><a href='https://rdrr.io/pkg/ape/man/consensus.html'>ape::consensus</a></code>,
-<code><a href='https://ms609.github.io/TreeTools/reference/ConsensusWithout.html'>TreeTools::ConsensusWithout</a></code></p></div>
+<code><a href='https://rdrr.io/pkg/ape/man/consensus.html'>ape::consensus()</a></code>,
+<code><a href='https://ms609.github.io/TreeTools/reference/ConsensusWithout.html'>TreeTools::ConsensusWithout()</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>'TreeTools'</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>'TreeTools'</span>, <span class='kw'>quietly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>warn.conflicts</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 <span class='no'>tenTrees</span> <span class='kw'>&lt;-</span> <span class='fu'>as.phylo</span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fl'>8</span>)
 
 <span class='co'># Default settings:</span>
