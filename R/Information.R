@@ -66,14 +66,15 @@ SplitDifferentInformation <- function (n, A1, A2 = A1) {
   )/-log(2)
 }
 
-#' Use variation of information to compare splits as clusterings
+#' Use variation of clustering information to compare pairs of splits
 #' 
-#' Compare a pair of splits solely as clusterings of taxa, disregarding their
-#' phylogenetic information, using the variation of clustering information 
-#' proposed by Meil&#259; (2007).
+#' Compare a pair of splits viewed as clusterings of taxa, using the variation
+#' of clustering information proposed by Meil&#259; (2007).
 #' 
 #' This is equivalent to the mutual clustering information (Vinh _et al._ 2010).
 #' For the total information content, multiply the VoI by the number of leaves.
+#' 
+#' @template split12Params
 #' 
 #' @return `MeilaVariationOfInformation()` returns the variation of (clustering)
 #' information, measured in bits.
@@ -85,7 +86,6 @@ SplitDifferentInformation <- function (n, A1, A2 = A1) {
 #' \insertRef{Vinh2010}{TreeDist}
 #' 
 #' @examples 
-#' 
 #' # Maximum variation = information content of each split separately
 #' A <- TRUE
 #' B <- FALSE
@@ -103,11 +103,9 @@ SplitDifferentInformation <- function (n, A1, A2 = A1) {
 #' # Phylogenetically uninformative groupings contain spliting information
 #' Entropy(c(1, 5) / 6)
 #' MeilaVariationOfInformation(c(B, A, A, A, A, A), c(A, A, A, A, A, B))
-#' 
+#' @template MRS
 #' 
 #' @encoding UTF-8
-#' @template split12Params
-#' @template MRS
 #' @export
 MeilaVariationOfInformation <- function (split1, split2) {
   if (length(split1) != length(split2)) stop("Split lengths differ")

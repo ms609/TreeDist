@@ -4,7 +4,7 @@
 \name{MeilaVariationOfInformation}
 \alias{MeilaVariationOfInformation}
 \alias{MeilaMutualInformation}
-\title{Use variation of information to compare splits as clusterings}
+\title{Use variation of clustering information to compare pairs of splits}
 \usage{
 MeilaVariationOfInformation(split1, split2)
 
@@ -23,16 +23,14 @@ information, measured in bits.
 measured in bits.
 }
 \description{
-Compare a pair of splits solely as clusterings of taxa, disregarding their
-phylogenetic information, using the variation of clustering information
-proposed by Meilă (2007).
+Compare a pair of splits viewed as clusterings of taxa, using the variation
+of clustering information proposed by Meilă (2007).
 }
 \details{
 This is equivalent to the mutual clustering information (Vinh \emph{et al.} 2010).
 For the total information content, multiply the VoI by the number of leaves.
 }
 \examples{
-
 # Maximum variation = information content of each split separately
 A <- TRUE
 B <- FALSE
@@ -50,8 +48,6 @@ MeilaVariationOfInformation(c(A, A, A,B ,B, B), c(A, B, A, B, A, B)) # < 2
 # Phylogenetically uninformative groupings contain spliting information
 Entropy(c(1, 5) / 6)
 MeilaVariationOfInformation(c(B, A, A, A, A, A), c(A, A, A, A, A, B))
-
-
 }
 \references{
 \insertRef{Meila2007}{TreeDist}
