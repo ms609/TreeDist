@@ -47,7 +47,7 @@ SplitwiseInfo.Splits <- function(x) {
 #' Sums the entropy (`ClusteringEntropy()`) or information content
 #' (`ClusteringInfo()`) across each split within a phylogenetic tree, treating
 #' each split as dividing the leaves of the tree into two clusters (_sensu_
-#' Meila 2007; Vinh _et al._ 2010).
+#' Meil&259; 2007; Vinh _et al._ 2010).
 #' 
 #' Clustering entropy addresses the question "how much information is contained
 #' in the splits within a tree". Its approach is complementary to the 
@@ -62,7 +62,7 @@ SplitwiseInfo.Splits <- function(x) {
 #' 
 #' Base 2 logarithms are conventionally used, such that entropy is measured in
 #' bits.  
-#' Entroy denotes the number of bits that are necessary to encode the outcome
+#' Entropy denotes the number of bits that are necessary to encode the outcome
 #' of a random variable: here, the random variable is "what partition does a
 #' randomly selected leaf belong to". 
 #' 
@@ -145,6 +145,7 @@ SplitwiseInfo.Splits <- function(x) {
 #' - \insertRef{Vinh2010}{TreeDist}
 #' 
 #' 
+#' @encoding UTF-8
 #' @family information functions
 #' @template MRS
 #' @importFrom TreeTools as.Splits

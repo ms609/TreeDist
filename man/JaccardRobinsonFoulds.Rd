@@ -35,7 +35,7 @@ or lists of such trees to undergo pairwise comparison.}
 \item{k}{An arbitrary exponent to which to raise the Jaccard index.
 Integer values greater than one are anticipated by Böcker \emph{et al}.
 The Nye \emph{et al}. metric uses \code{k = 1}.
-As k increses towards infinity, the metric converges to the Robinson-Foulds
+As k increases towards infinity, the metric converges to the Robinson-Foulds
 metric.}
 
 \item{allowConflict}{Logical specifying whether to allow conflicting splits

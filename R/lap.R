@@ -1,7 +1,6 @@
 #' Solve linear assignment problem using LAPJV
 #'
-#' USe the algorithm of Jonker & Volgenant (1987) to
-#' solve the 
+#' Use the algorithm of Jonker & Volgenant (1987) to solve the 
 #' [Linear Sum Assignment Problem](http://www.assignmentproblems.com/doc/LSAPIntroduction.pdf).
 #' 
 #' The Linear Assignment Problem seeks to match each row of a matrix with a 

@@ -71,7 +71,6 @@ splits.
   # as the information of either split:
   SplitSharedInformation(n=8, A1=3, A2=3)
   TreeTools::SplitInformation(3, 5)
-  
 }
 \references{
 \insertRef{Meila2007}{TreeDist}

@@ -41,10 +41,10 @@
 #'   # as the information of either split:
 #'   SplitSharedInformation(n=8, A1=3, A2=3)
 #'   TreeTools::SplitInformation(3, 5)
+#' @template MRS
 #'   
 #' @references \insertRef{Meila2007}{TreeDist}
 #' 
-#' @template MRS
 #' @family information functions
 #' @importFrom TreeTools LnTreesMatchingSplit LnUnrooted
 #' @export
@@ -69,7 +69,7 @@ SplitDifferentInformation <- function (n, A1, A2 = A1) {
 #' 
 #' Compare a pair of splits solely as clusterings of taxa, disregarding their
 #' phylogenetic information, using the variation of clustering information 
-#' proposed by Meila (2007).
+#' proposed by Meil&259; (2007).
 #' 
 #' This is equivalent to the mutual clustering information (Vinh _et al._ 2010).
 #' For the total information content, multiply the VoI by the number of leaves.
@@ -104,6 +104,7 @@ SplitDifferentInformation <- function (n, A1, A2 = A1) {
 #' MeilaVariationOfInformation(c(B,A,A,A,A,A), c(A,A,A,A,A,B))
 #' 
 #' 
+#' @encoding UTF-8
 #' @template split12Params
 #' @template MRS
 #' @export
@@ -148,7 +149,7 @@ MeilaMutualInformation <- function (split1, split2) {
 
 #' All split pairings
 #' 
-#' Calculates the variation of (clustering) information (Meila 2007)
+#' Calculate the variation of (clustering) information (Meil&#259; 2007)
 #' for each possible pairing of non-trivial splits,
 #' and tabulates the number of pairings with each similarity.
 #' 
@@ -171,6 +172,7 @@ MeilaMutualInformation <- function (split1, split2) {
 #' 
 #' \insertRef{SmithDist}{TreeDist}
 #' 
+#' @encoding UTF-8
 #' @template MRS
 #' @importFrom memoise memoise
 #' @export
@@ -213,7 +215,7 @@ AllSplitPairings <- memoise(function (n) {
 #' of two splits, treating each split as a division of _n_ leaves into two
 #' groups.  Further details are available in a 
 #' [vignette](https://ms609.github.io/TreeDist/articles/information.html),
-#' MacKay (2003) and Meila (2007).
+#' MacKay (2003) and Meil&259; (2007).
 #' 
 #' @template split12Params
 #' 
@@ -226,9 +228,15 @@ AllSplitPairings <- memoise(function (n) {
 #' 
 #' @references 
 #' \insertRef{Mackay2003}{TreeDist}
+#' 
 #' \insertRef{Meila2007}{TreeDist}
 #' 
+#' @examples
+#' A <- TRUE
+#' B <- FALSE
+#' SplitEntropy(c(A, A, A, B, B, B), c(A, A, B, B, B, B))
 #' @template MRS
+#' @encoding UTF-8
 #' @family information functions
 #' @export
 SplitEntropy <- function (split1, split2 = split1) {

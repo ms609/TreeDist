@@ -83,11 +83,11 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
   }
 }
 
-#' Caluclate MAST size from edge matrices.
+#' Calculate MAST size from edge matrices.
 #' 
 #' Internal function.
 #' 
-#' @param edge1 Edge matrix of tree 1. MUST BE IN POSTORDER!
+#' @param edge1 Edge matrix of tree 1. **Must be in postorder!**
 #' @param edge2 Edge matrix of tree 2.
 #' @param nTip Integer specifying the number of leaves in each split.
 #' @keywords internal

@@ -130,8 +130,8 @@ NyeSimilarity(tree1, tree2, normalize = FALSE)
 
 B&ouml;cker _et al_. [-@Bocker2013] employ the same split similarity calculation
 as Nye _et al._ (above), which they suggest ought to be raised to an
-arbitrary exponent in order to downweight the contribution of paired splits that
-are not identical.
+arbitrary exponent in order to down-weight the contribution of paired splits 
+that are not identical.
 In order for the metric to converge to the Robinson-Foulds metric as the
 exponent grows towards infinity, the resulting score is then doubled.
 

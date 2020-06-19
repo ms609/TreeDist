@@ -27,9 +27,9 @@
 #' defined in 
 #' [a separate vignette](https://ms609.github.io/TreeDist/articles/information.html).
 #' 
-#' Using the mutual (clustering) information (Meila 2007, Vinh _et al._ 2010) of
-#' two splits to quantify their similarity gives rise to the Mutual Clustering 
-#' Information measure (`MutualClusteringInfo()`, 
+#' Using the mutual (clustering) information (Meil&259; 2007, Vinh _et al._
+#' 2010) of two splits to quantify their similarity gives rise to the Mutual 
+#' Clustering Information measure (`MutualClusteringInfo()`, 
 #' `MutualClusteringInfoSplits()`); the entropy distance 
 #' gives the Clustering Information Distance (`ClusteringInfoDistance()`).
 #' This approach is optimal in many regards, and is implemented with 
@@ -138,7 +138,7 @@
 #' SharedPhylogeneticInfoSplits(splits1, splits2)
 #' MatchingSplitInfoSplits(splits1, splits2)
 #' MutualClusteringInfoSplits(splits1, splits2)
-#' 
+#' @template MRS 
 #' 
 #' @references 
 #'  * \insertRef{Mackay2003}{TreeDist}
@@ -149,8 +149,7 @@
 #'  
 #'  * \insertRef{Vinh2010}{TreeDist}
 #' 
-#' @template MRS
-#' 
+#' @encoding UTF-8
 #' @family tree distances
 #' @export
 TreeDistance <- function (tree1, tree2 = tree1) {

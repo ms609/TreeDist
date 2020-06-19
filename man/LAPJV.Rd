@@ -14,8 +14,7 @@ A list with two entries: \code{score}, the score of the optimal matching;
 and \code{matching}, the columns matched to each row of the matrix in turn.
 }
 \description{
-USe the algorithm of Jonker & Volgenant (1987) to
-solve the
+Use the algorithm of Jonker & Volgenant (1987) to solve the
 \href{http://www.assignmentproblems.com/doc/LSAPIntroduction.pdf}{Linear Sum Assignment Problem}.
 }
 \details{

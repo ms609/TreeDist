@@ -9,11 +9,13 @@ Colijn
 DEFGH
 EFGH
 Evol
+Farris
 Foulds
 Giaro
 Goos
 Hartmanis
 Inc
+JRF
 JV
 Jaccard
 JaccardRobinsonFoulds
@@ -26,6 +28,7 @@ MacKay
 MagicLogic
 MatchingSplitDistance
 MatchingSplitInfoDistance
+Meil
 Meila
 Mol
 Munkres
@@ -44,6 +47,7 @@ TBR
 TBRDist
 TCBB
 TreeDistData
+TreeSearch
 TreeTools
 Tromp
 Valiente
@@ -82,6 +86,7 @@ partitionwise
 pectinate
 phangorn
 polytomies
+postorder
 roy
 sensu
 textrm
@@ -90,5 +95,7 @@ treeDist
 treespace
 uk
 unrooted
+unsampled
+uspr
 yongyanghz
 yongyanglink
