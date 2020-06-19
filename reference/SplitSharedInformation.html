@@ -46,8 +46,9 @@
 
 
 <meta property="og:title" content="Shared information content of two splits — SplitSharedInformation" />
-<meta property="og:description" content="Reports the phylogenetic information shared, or not shared, between two
-splits. See the
+<meta property="og:description" content="Calculate the phylogenetic information shared, or not shared, between two
+splits.
+See the
 accompanying vignette
 for definitions." />
 
@@ -172,8 +173,9 @@ for definitions." />
     </div>
 
     <div class="ref-description">
-    <p>Reports the phylogenetic information shared, or not shared, between two
-splits. See the
+    <p>Calculate the phylogenetic information shared, or not shared, between two
+splits.
+See the
 <a href='https://ms609.github.io/TreeDist/articles/information.html'>accompanying vignette</a>
 for definitions.</p>
     </div>
@@ -202,11 +204,11 @@ once the splits have been arranged such that <em>A1</em> fully overlaps with <em
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>TreesConsistentWithTwoSplits</code> returns the number of unrooted bifurcating
+    <p><code>TreesConsistentWithTwoSplits()</code> returns the number of unrooted bifurcating
 trees consistent with two splits.</p>
-<p><code>SplitSharedInformation</code> returns the phylogenetic information that two splits
+<p><code>SplitSharedInformation()</code> returns the phylogenetic information that two splits
 have in common, in bits.</p>
-<p><code>SplitDifferentInformation</code> returns the amount of phylogenetic information
+<p><code>SplitDifferentInformation()</code> returns the amount of phylogenetic information
 distinct to one of the two splits, in bits.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
@@ -246,10 +248,10 @@ doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11
   <span class='co'># Let A1 = ABCD (four taxa), and A2 = ABC (three taxa).</span>
   <span class='co'># A1 and A2 overlap (both contain ABC).</span>
 
-  <span class='fu'>TreesConsistentWithTwoSplits</span>(<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>8</span>, <span class='kw'>A1</span><span class='kw'>=</span><span class='fl'>4</span>, <span class='kw'>A2</span><span class='kw'>=</span><span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 45</div><div class='input'>  <span class='fu'>SplitSharedInformation</span>(<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>8</span>, <span class='kw'>A1</span><span class='kw'>=</span><span class='fl'>4</span>, <span class='kw'>A2</span><span class='kw'>=</span><span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 2.722466</div><div class='input'>  <span class='fu'>SplitDifferentInformation</span>(<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>8</span>, <span class='kw'>A1</span><span class='kw'>=</span><span class='fl'>4</span>, <span class='kw'>A2</span><span class='kw'>=</span><span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 5.129283</div><div class='input'>
+  <span class='fu'>TreesConsistentWithTwoSplits</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>A2</span> <span class='kw'>=</span> <span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 45</div><div class='input'>  <span class='fu'>SplitSharedInformation</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>A2</span> <span class='kw'>=</span> <span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 2.722466</div><div class='input'>  <span class='fu'>SplitDifferentInformation</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>A2</span> <span class='kw'>=</span> <span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 5.129283</div><div class='input'>
   <span class='co'># If splits are identical, then their shared information is the same</span>
   <span class='co'># as the information of either split:</span>
-  <span class='fu'>SplitSharedInformation</span>(<span class='kw'>n</span><span class='kw'>=</span><span class='fl'>8</span>, <span class='kw'>A1</span><span class='kw'>=</span><span class='fl'>3</span>, <span class='kw'>A2</span><span class='kw'>=</span><span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 5.044394</div><div class='input'>  <span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/SplitInformation.html'>SplitInformation</a></span>(<span class='fl'>3</span>, <span class='fl'>5</span>)</div><div class='output co'>#&gt; [1] 5.044394</div></pre>
+  <span class='fu'>SplitSharedInformation</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>A2</span> <span class='kw'>=</span> <span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 5.044394</div><div class='input'>  <span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/SplitInformation.html'>SplitInformation</a></span>(<span class='fl'>3</span>, <span class='fl'>5</span>)</div><div class='output co'>#&gt; [1] 5.044394</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
