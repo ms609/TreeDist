@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>All split pairings — AllSplitPairings • TreeDist</title>
+<title>Variation of information for all split pairings — AllSplitPairings • TreeDist</title>
 
 
 <!-- jquery -->
@@ -45,10 +45,10 @@
 
 
 
-<meta property="og:title" content="All split pairings — AllSplitPairings" />
-<meta property="og:description" content="Calculate the variation of (clustering) information (Meilă 2007)
-for each possible pairing of non-trivial splits,
-and tabulates the number of pairings with each similarity." />
+<meta property="og:title" content="Variation of information for all split pairings — AllSplitPairings" />
+<meta property="og:description" content="Calculate the variation of clustering information (Meilă 2007)
+for each possible pairing of non-trivial splits on n leaves,
+tabulating the number of pairings with each similarity." />
 
 
 
@@ -165,15 +165,15 @@ and tabulates the number of pairings with each similarity." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>All split pairings</h1>
+    <h1>Variation of information for all split pairings</h1>
     <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/Information.R'><code>R/Information.R</code></a></small>
     <div class="hidden name"><code>AllSplitPairings.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Calculate the variation of (clustering) information (Meilă 2007)
-for each possible pairing of non-trivial splits,
-and tabulates the number of pairings with each similarity.</p>
+    <p>Calculate the variation of clustering information (Meilă 2007)
+for each possible pairing of non-trivial splits on <em>n</em> leaves,
+tabulating the number of pairings with each similarity.</p>
     </div>
 
     <pre class="usage"><span class='fu'>AllSplitPairings</span>(<span class='no'>n</span>)</pre>
@@ -189,15 +189,13 @@ and tabulates the number of pairings with each similarity.</p>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>AllSplitPairings</code> returns a named vector, specifying the number of
-split pairings producing
-the variation of information given (in bits) in the name.  Splits
-<code>AB|CD</code> and <code>CD|AB</code> are treated as distinct, so division of all values by four
-is justified in cases where unique pairings only are required.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>Trivial splits -- those that divide one or zero taxa from the rest --
-are not considered.</p>
+    <p><code>AllSplitPairings()</code> returns a named vector. The name of each
+element corresponds to a certain variation of information, in bits; the
+value of each element specifies the number of pairings of non-trivial
+splits that give rise to that variation of information.
+Split <code>AB|CD</code>  is treated as distinct from <code>CD|AB</code>.  If pairing
+<code>AB|CD</code>=<code>CD|AB</code> is considered equivalent to <code>CD|AB</code>=<code>CD|AB</code> (etc), then
+values should be divided by four.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Meilă M (2007).
@@ -213,8 +211,11 @@ doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11
     <pre class="examples"><div class='input'><span class='fu'>AllSplitPairings</span>(<span class='fl'>6</span>)</div><div class='output co'>#&gt;                0                1 1.33333333333333 1.74837083261218 
 #&gt;              100              480              360              480 
 #&gt; 1.83659166810898 1.91829583405449 
-#&gt;              360              720 </div><div class='input'>
-</div></pre>
+#&gt;              360              720 </div><div class='input'><span class='co'># Treat equivalent splits as identical by dividing by four:</span>
+<span class='fu'>AllSplitPairings</span>(<span class='fl'>6</span>) / <span class='fl'>4L</span></div><div class='output co'>#&gt;                0                1 1.33333333333333 1.74837083261218 
+#&gt;               25              120               90              120 
+#&gt; 1.83659166810898 1.91829583405449 
+#&gt;               90              180 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -252,7 +252,7 @@ rather than a similarity.</p>
 #&gt; 	t1, t2, t3, t4, t5, t6, ...
 #&gt; 
 #&gt; Rooted; no branch lengths.</div><div class='input'>
-<span class='co'># The Robinson-Foulds distance will create ties:</span>
+<span class='co'># Robinson-Foulds distances include ties:</span>
 <span class='fu'><a href='https://rdrr.io/r/stats/median.html'>median</a></span>(<span class='no'>tenTrees</span>, <span class='kw'>Distance</span> <span class='kw'>=</span> <span class='no'>RobinsonFoulds</span>, <span class='kw'>breakTies</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; 4 phylogenetic trees</div><div class='input'>
 <span class='co'># Be sure to use a distance function, rather than a similarity:</span>
 <span class='no'>NyeDistance</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span> (<span class='no'>...</span>) <span class='fu'><a href='NyeSimilarity.html'>NyeSimilarity</a></span>(<span class='no'>...</span>, <span class='kw'>similarity</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
@@ -265,14 +265,13 @@ rather than a similarity.</p>
 #&gt; Rooted; no branch lengths.</div><div class='input'>
 <span class='co'># To analyse a list of trees that is not of class multiPhylo:</span>
 <span class='no'>treeList</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='no'>as.phylo</span>, <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fl'>8</span>)
-<span class='fu'><a href='https://rdrr.io/r/stats/median.html'>median</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/structure.html'>structure</a></span>(<span class='no'>treeList</span>, <span class='kw'>class</span> <span class='kw'>=</span> <span class='st'>'multiPhylo'</span>))</div><div class='output co'>#&gt; 
+<span class='fu'><a href='https://rdrr.io/r/base/class.html'>class</a></span>(<span class='no'>treeList</span>)</div><div class='output co'>#&gt; [1] "list"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/median.html'>median</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/structure.html'>structure</a></span>(<span class='no'>treeList</span>, <span class='kw'>class</span> <span class='kw'>=</span> <span class='st'>'multiPhylo'</span>))</div><div class='output co'>#&gt; 
 #&gt; Phylogenetic tree with 8 tips and 7 internal nodes.
 #&gt; 
 #&gt; Tip labels:
 #&gt; 	t1, t2, t3, t4, t5, t6, ...
 #&gt; 
-#&gt; Rooted; no branch lengths.</div><div class='input'>
-</div></pre>
+#&gt; Rooted; no branch lengths.</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
