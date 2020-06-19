@@ -188,8 +188,8 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
 #' Entropy in bits
 #' 
 #' Calculate the entropy of a vector of probabilities, in bits.
-#' Probabilities should sum to one.  Probabilities equalling zero will be 
-#' ignored.
+#' Probabilities should sum to one.
+#' Probabilities equalling zero will be ignored.
 #' 
 #' @param \dots Numerics or numeric vector specifying probabilities of outcomes.
 #' 
@@ -197,8 +197,8 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
 #' in bits.
 #' 
 #' @examples
-#' Entropy(rep(0.5, 2)) # = 1
-#' Entropy(1/4, 1/4, 0, 1/4, 1/4) # = 2
+#' Entropy(1/2, 0, 1/2) # = 1
+#' Entropy(rep(1/4, 4)) # = 2
 #' @template MRS
 #' @export
 Entropy <- function (...) {

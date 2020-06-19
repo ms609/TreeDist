@@ -15,7 +15,7 @@ test_that('Tree normalization works', {
 })
 
 
-test_that('CalculateTreeDistance handles splits appropriately', {
+test_that('CalculateTreeDistance() handles splits appropriately', {
   set.seed(101)
   tree10 <- ape::rtree(10)
   tree10.1 <- ape::rtree(10)
@@ -201,7 +201,7 @@ test_that('Matchings are calculated in both directions', {
   
 })
 
-test_that('.TreeDistance supports all sizes', {
+test_that('.TreeDistance() supports all sizes', {
   expect_equal(rbind(
     bal = MASTSize(BalancedTree(7), as.phylo(0:3, 7)),
     pec = MASTSize(as.phylo(0:3, 7), PectinateTree(7))),
@@ -212,4 +212,9 @@ test_that('.TreeDistance supports all sizes', {
              as.phylo(0:3, 7))[1, , ])
   expect_error(.TreeDistance(RobinsonFoulds, PectinateTree(1:6),
                              PectinateTree(6)))
+})
+
+test_that("Entropy() supports dots input", {
+  expect_identical(2, Entropy(rep(1/4, 4)))
+  expect_identical(1, Entropy(0, .5, 1/2))
 })
