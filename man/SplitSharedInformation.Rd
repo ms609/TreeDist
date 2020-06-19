@@ -22,18 +22,19 @@ LnTreesConsistentWithTwoSplits(n, A1, A2 = A1)
 once the splits have been arranged such that \emph{A1} fully overlaps with \emph{A2}.}
 }
 \value{
-\code{TreesConsistentWithTwoSplits} returns the number of unrooted bifurcating
+\code{TreesConsistentWithTwoSplits()} returns the number of unrooted bifurcating
 trees consistent with two splits.
 
-\code{SplitSharedInformation} returns the phylogenetic information that two splits
+\code{SplitSharedInformation()} returns the phylogenetic information that two splits
 have in common, in bits.
 
-\code{SplitDifferentInformation} returns the amount of phylogenetic information
+\code{SplitDifferentInformation()} returns the amount of phylogenetic information
 distinct to one of the two splits, in bits.
 }
 \description{
-Reports the phylogenetic information shared, or not shared, between two
-splits. See the
+Calculate the phylogenetic information shared, or not shared, between two
+splits.
+See the
 \href{https://ms609.github.io/TreeDist/articles/information.html}{accompanying vignette}
 for definitions.
 }
@@ -63,13 +64,13 @@ splits.
   # Let A1 = ABCD (four taxa), and A2 = ABC (three taxa).
   # A1 and A2 overlap (both contain ABC).
   
-  TreesConsistentWithTwoSplits(n=8, A1=4, A2=3)
-  SplitSharedInformation(n=8, A1=4, A2=3)
-  SplitDifferentInformation(n=8, A1=4, A2=3)
+  TreesConsistentWithTwoSplits(n = 8, A1 = 4, A2 = 3)
+  SplitSharedInformation(n = 8, A1 = 4, A2 = 3)
+  SplitDifferentInformation(n = 8, A1 = 4, A2 = 3)
 
   # If splits are identical, then their shared information is the same
   # as the information of either split:
-  SplitSharedInformation(n=8, A1=3, A2=3)
+  SplitSharedInformation(n = 8, A1 = 3, A2 = 3)
   TreeTools::SplitInformation(3, 5)
 }
 \references{

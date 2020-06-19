@@ -13,7 +13,7 @@ identifying each leaf as a member of the ingroup (\code{TRUE}) or outgroup
 (\code{FALSE}) of the split in question.}
 }
 \value{
-A numeric vector listing, in bits,
+A numeric vector listing, in bits:
 \itemize{
 \item \code{H1} The entropy of split 1;
 \item \code{H2} The entropy of split 2;
@@ -23,11 +23,12 @@ A numeric vector listing, in bits,
 }
 }
 \description{
-Reports the entropy, joint entropy, entropy distance and information content
-of two splits, treating each split as a division of \emph{n} leaves into two
-groups.  Further details are available in a
+Calculate the entropy, joint entropy, entropy distance and information
+content of two splits, treating each split as a division of \emph{n} leaves into
+two groups.
+Further details are available in a
 \href{https://ms609.github.io/TreeDist/articles/information.html}{vignette},
-MacKay (2003) and Meil&259; (2007).
+MacKay (2003) and Meilă (2007).
 }
 \examples{
 A <- TRUE

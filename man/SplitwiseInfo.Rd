@@ -10,10 +10,13 @@ SplitwiseInfo(x)
 \item{x}{A tree of class \code{phylo}, a list of trees, or a \code{multiPhylo} object.}
 }
 \description{
-Sums the phylogenetic information content for all splits within a
+Sum the phylogenetic information content for all splits within a
 phylogenetic tree.  This value will be greater than the total information
 content of the tree where a tree contains multiple splits, as
 these splits will contain mutual information.
+}
+\examples{
+SplitwiseInfo(TreeTools::PectinateTree(8))
 }
 \seealso{
 An introduction to the phylogenetic information content of a split is given

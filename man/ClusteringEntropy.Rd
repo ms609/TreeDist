@@ -42,10 +42,10 @@ Returns the sum of the entropies or (clustering) information content, in bits,
 of each split in \code{x}.
 }
 \description{
-Sums the entropy (\code{ClusteringEntropy()}) or information content
+Sum the entropy (\code{ClusteringEntropy()}) or information content
 (\code{ClusteringInfo()}) across each split within a phylogenetic tree, treating
 each split as dividing the leaves of the tree into two clusters (\emph{sensu}
-Meil&259; 2007; Vinh \emph{et al.} 2010).
+Meilă 2007; Vinh \emph{et al.} 2010).
 }
 \details{
 Clustering entropy addresses the question "how much information is contained

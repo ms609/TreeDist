@@ -152,7 +152,7 @@ The phylogenetic (Shannon) information content and entropy of a split are
 defined in
 \href{https://ms609.github.io/TreeDist/articles/information.html}{a separate vignette}.
 
-Using the mutual (clustering) information (Meil&259; 2007, Vinh \emph{et al.}
+Using the mutual (clustering) information (Meilă 2007, Vinh \emph{et al.}
 2010) of two splits to quantify their similarity gives rise to the Mutual
 Clustering Information measure (\code{MutualClusteringInfo()},
 \code{MutualClusteringInfoSplits()}); the entropy distance

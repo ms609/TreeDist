@@ -27,7 +27,7 @@
 #' defined in 
 #' [a separate vignette](https://ms609.github.io/TreeDist/articles/information.html).
 #' 
-#' Using the mutual (clustering) information (Meil&259; 2007, Vinh _et al._
+#' Using the mutual (clustering) information (Meil&#259; 2007, Vinh _et al._
 #' 2010) of two splits to quantify their similarity gives rise to the Mutual 
 #' Clustering Information measure (`MutualClusteringInfo()`, 
 #' `MutualClusteringInfoSplits()`); the entropy distance 

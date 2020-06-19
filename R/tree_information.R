@@ -1,6 +1,6 @@
 #' Information content of splits within a tree
 #' 
-#' Sums the phylogenetic information content for all splits within a 
+#' Sum the phylogenetic information content for all splits within a 
 #' phylogenetic tree.  This value will be greater than the total information 
 #' content of the tree where a tree contains multiple splits, as 
 #' these splits will contain mutual information.
@@ -15,6 +15,8 @@
 #' in [`SplitInformation()`](https://ms609.github.io/TreeTools/reference/SplitInformation.html)
 #' and in a [package vignette](https://ms609.github.io/TreeDist/articles/information.html).
 #' 
+#' @examples
+#' SplitwiseInfo(TreeTools::PectinateTree(8))
 #' @template MRS
 #' @export
 SplitwiseInfo <- function (x) UseMethod('SplitwiseInfo')
@@ -44,10 +46,10 @@ SplitwiseInfo.Splits <- function(x) {
 
 #' Clustering entropy of all splits within a tree
 #' 
-#' Sums the entropy (`ClusteringEntropy()`) or information content
+#' Sum the entropy (`ClusteringEntropy()`) or information content
 #' (`ClusteringInfo()`) across each split within a phylogenetic tree, treating
 #' each split as dividing the leaves of the tree into two clusters (_sensu_
-#' Meil&259; 2007; Vinh _et al._ 2010).
+#' Meil&#259; 2007; Vinh _et al._ 2010).
 #' 
 #' Clustering entropy addresses the question "how much information is contained
 #' in the splits within a tree". Its approach is complementary to the 

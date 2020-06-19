@@ -1,7 +1,8 @@
 #' Shared information content of two splits
 #' 
-#' Reports the phylogenetic information shared, or not shared, between two
-#' splits. See the 
+#' Calculate the phylogenetic information shared, or not shared, between two
+#' splits.
+#' See the 
 #' [accompanying vignette](https://ms609.github.io/TreeDist/articles/information.html)
 #' for definitions.
 #' 
@@ -17,13 +18,13 @@
 #' @param A1,A2 Integers specifying the number of taxa in _A1_ and _A2_, 
 #' once the splits have been arranged such that _A1_ fully overlaps with _A2_.
 #' @return 
-#' `TreesConsistentWithTwoSplits` returns the number of unrooted bifurcating
+#' `TreesConsistentWithTwoSplits()` returns the number of unrooted bifurcating
 #' trees consistent with two splits.
 #' 
-#' `SplitSharedInformation` returns the phylogenetic information that two splits
+#' `SplitSharedInformation()` returns the phylogenetic information that two splits
 #' have in common, in bits.
 #' 
-#' `SplitDifferentInformation` returns the amount of phylogenetic information
+#' `SplitDifferentInformation()` returns the amount of phylogenetic information
 #' distinct to one of the two splits, in bits.
 #' 
 #' @examples 
@@ -33,13 +34,13 @@
 #'   # Let A1 = ABCD (four taxa), and A2 = ABC (three taxa).
 #'   # A1 and A2 overlap (both contain ABC).
 #'   
-#'   TreesConsistentWithTwoSplits(n=8, A1=4, A2=3)
-#'   SplitSharedInformation(n=8, A1=4, A2=3)
-#'   SplitDifferentInformation(n=8, A1=4, A2=3)
+#'   TreesConsistentWithTwoSplits(n = 8, A1 = 4, A2 = 3)
+#'   SplitSharedInformation(n = 8, A1 = 4, A2 = 3)
+#'   SplitDifferentInformation(n = 8, A1 = 4, A2 = 3)
 #'
 #'   # If splits are identical, then their shared information is the same
 #'   # as the information of either split:
-#'   SplitSharedInformation(n=8, A1=3, A2=3)
+#'   SplitSharedInformation(n = 8, A1 = 3, A2 = 3)
 #'   TreeTools::SplitInformation(3, 5)
 #' @template MRS
 #'   
@@ -69,7 +70,7 @@ SplitDifferentInformation <- function (n, A1, A2 = A1) {
 #' 
 #' Compare a pair of splits solely as clusterings of taxa, disregarding their
 #' phylogenetic information, using the variation of clustering information 
-#' proposed by Meil&259; (2007).
+#' proposed by Meil&#259; (2007).
 #' 
 #' This is equivalent to the mutual clustering information (Vinh _et al._ 2010).
 #' For the total information content, multiply the VoI by the number of leaves.
@@ -212,15 +213,16 @@ AllSplitPairings <- memoise(function (n) {
 
 #' Entropy of two splits
 #' 
-#' Reports the entropy, joint entropy, entropy distance and information content
-#' of two splits, treating each split as a division of _n_ leaves into two
-#' groups.  Further details are available in a 
+#' Calculate the entropy, joint entropy, entropy distance and information 
+#' content of two splits, treating each split as a division of _n_ leaves into
+#' two groups.
+#' Further details are available in a 
 #' [vignette](https://ms609.github.io/TreeDist/articles/information.html),
-#' MacKay (2003) and Meil&259; (2007).
+#' MacKay (2003) and Meil&#259; (2007).
 #' 
 #' @template split12Params
 #' 
-#' @return A numeric vector listing, in bits,
+#' @return A numeric vector listing, in bits:
 #'  * `H1` The entropy of split 1;
 #'  * `H2` The entropy of split 2;
 #'  * `H12` The joint entropy of both splits;
