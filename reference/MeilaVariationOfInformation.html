@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Use Variation of Information to compare splits as clusterings — MeilaVariationOfInformation • TreeDist</title>
+<title>Use variation of information to compare splits as clusterings — MeilaVariationOfInformation • TreeDist</title>
 
 
 <!-- jquery -->
@@ -45,7 +45,7 @@
 
 
 
-<meta property="og:title" content="Use Variation of Information to compare splits as clusterings — MeilaVariationOfInformation" />
+<meta property="og:title" content="Use variation of information to compare splits as clusterings — MeilaVariationOfInformation" />
 <meta property="og:description" content="Compare a pair of splits solely as clusterings of taxa, disregarding their
 phylogenetic information, using the variation of clustering information
 proposed by Meilă (2007)." />
@@ -165,7 +165,7 @@ proposed by Meilă (2007)." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Use Variation of Information to compare splits as clusterings</h1>
+    <h1>Use variation of information to compare splits as clusterings</h1>
     <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/Information.R'><code>R/Information.R</code></a></small>
     <div class="hidden name"><code>MeilaVariationOfInformation.Rd</code></div>
     </div>
@@ -219,14 +219,14 @@ doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</
 <span class='co'># Maximum variation = information content of each split separately</span>
 <span class='no'>A</span> <span class='kw'>&lt;-</span> <span class='fl'>TRUE</span>
 <span class='no'>B</span> <span class='kw'>&lt;-</span> <span class='fl'>FALSE</span>
-<span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>B</span>,<span class='no'>B</span>,<span class='no'>B</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>))</div><div class='output co'>#&gt; [1] 1</div><div class='input'><span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>3</span>) / <span class='fl'>6</span>) + <span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>6</span>) / <span class='fl'>6</span>)</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
+<span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>B</span>, <span class='no'>B</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>))</div><div class='output co'>#&gt; [1] 1</div><div class='input'><span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>3</span>) / <span class='fl'>6</span>) + <span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>6</span>) / <span class='fl'>6</span>)</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
 <span class='co'># Minimum variation = 0</span>
-<span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>B</span>,<span class='no'>B</span>,<span class='no'>B</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>B</span>,<span class='no'>B</span>,<span class='no'>B</span>))</div><div class='output co'>#&gt; [1] 0</div><div class='input'>
+<span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>B</span>, <span class='no'>B</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>B</span>, <span class='no'>B</span>))</div><div class='output co'>#&gt; [1] 0</div><div class='input'>
 <span class='co'># Not always possible for two evenly-sized splits to reach maximum</span>
 <span class='co'># variation of information</span>
-<span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>3</span>) / <span class='fl'>6</span>) * <span class='fl'>2</span>  <span class='co'># = 2</span></div><div class='output co'>#&gt; [1] 2</div><div class='input'><span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>B</span>,<span class='no'>B</span>,<span class='no'>B</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>,<span class='no'>B</span>,<span class='no'>A</span>,<span class='no'>B</span>,<span class='no'>A</span>,<span class='no'>B</span>)) <span class='co'># &lt; 2</span></div><div class='output co'>#&gt; [1] 1.836592</div><div class='input'>
+<span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>3</span>) / <span class='fl'>6</span>) * <span class='fl'>2</span>  <span class='co'># = 2</span></div><div class='output co'>#&gt; [1] 2</div><div class='input'><span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>,<span class='no'>B</span> ,<span class='no'>B</span>, <span class='no'>B</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>A</span>, <span class='no'>B</span>)) <span class='co'># &lt; 2</span></div><div class='output co'>#&gt; [1] 1.836592</div><div class='input'>
 <span class='co'># Phylogenetically uninformative groupings contain spliting information</span>
-<span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>5</span>) / <span class='fl'>6</span>)</div><div class='output co'>#&gt; [1] 0.6500224</div><div class='input'><span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>B</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>A</span>,<span class='no'>B</span>))</div><div class='output co'>#&gt; [1] 1.203213</div><div class='input'>
+<span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>5</span>) / <span class='fl'>6</span>)</div><div class='output co'>#&gt; [1] 0.6500224</div><div class='input'><span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>B</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>B</span>))</div><div class='output co'>#&gt; [1] 1.203213</div><div class='input'>
 
 </div></pre>
   </div>
