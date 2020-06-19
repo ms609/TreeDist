@@ -3,7 +3,7 @@
 \encoding{UTF-8}
 \name{AllSplitPairings}
 \alias{AllSplitPairings}
-\title{All split pairings}
+\title{Variation of information for all split pairings}
 \usage{
 AllSplitPairings(n)
 }
@@ -11,24 +11,23 @@ AllSplitPairings(n)
 \item{n}{Integer specifying the number of leaves in a tree.}
 }
 \value{
-\code{AllSplitPairings} returns a named vector, specifying the number of
-split pairings producing
-the variation of information given (in bits) in the name.  Splits
-\code{AB|CD} and \code{CD|AB} are treated as distinct, so division of all values by four
-is justified in cases where unique pairings only are required.
+\code{AllSplitPairings()} returns a named vector. The name of each
+element corresponds to a certain variation of information, in bits; the
+value of each element specifies the number of pairings of non-trivial
+splits that give rise to that variation of information.
+Split \code{AB|CD}  is treated as distinct from \code{CD|AB}.  If pairing
+\code{AB|CD}=\code{CD|AB} is considered equivalent to \code{CD|AB}=\code{CD|AB} (etc), then
+values should be divided by four.
 }
 \description{
-Calculate the variation of (clustering) information (Meilă 2007)
-for each possible pairing of non-trivial splits,
-and tabulates the number of pairings with each similarity.
-}
-\details{
-Trivial splits -- those that divide one or zero taxa from the rest --
-are not considered.
+Calculate the variation of clustering information (Meilă 2007)
+for each possible pairing of non-trivial splits on \emph{n} leaves,
+tabulating the number of pairings with each similarity.
 }
 \examples{
 AllSplitPairings(6)
-
+# Treat equivalent splits as identical by dividing by four:
+AllSplitPairings(6) / 4L
 }
 \references{
 \insertRef{Meila2007}{TreeDist}

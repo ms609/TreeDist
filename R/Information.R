@@ -147,25 +147,27 @@ MeilaMutualInformation <- function (split1, split2) {
   if (abs(mutualInformation) < .Machine$double.eps^0.5) 0 else mutualInformation
 }
 
-#' All split pairings
+#' Variation of information for all split pairings
 #' 
-#' Calculate the variation of (clustering) information (Meil&#259; 2007)
-#' for each possible pairing of non-trivial splits,
-#' and tabulates the number of pairings with each similarity.
-#' 
-#' Trivial splits -- those that divide one or zero taxa from the rest --
-#' are not considered.
+#' Calculate the variation of clustering information (Meil&#259; 2007)
+#' for each possible pairing of non-trivial splits on _n_ leaves,
+#' tabulating the number of pairings with each similarity.
 #' 
 #' @param n Integer specifying the number of leaves in a tree.
 #' 
-#' @return `AllSplitPairings` returns a named vector, specifying the number of 
-#' split pairings producing
-#' the variation of information given (in bits) in the name.  Splits
-#' `AB|CD` and `CD|AB` are treated as distinct, so division of all values by four 
-#' is justified in cases where unique pairings only are required.
+#' @return `AllSplitPairings()` returns a named vector. The name of each 
+#' element corresponds to a certain variation of information, in bits; the
+#' value of each element specifies the number of pairings of non-trivial
+#' splits that give rise to that variation of information.
+#' Split `AB|CD`  is treated as distinct from `CD|AB`.  If pairing
+#' `AB|CD`=`CD|AB` is considered equivalent to `CD|AB`=`CD|AB` (etc), then
+#' values should be divided by four.
 #' 
 #' @examples
 #' AllSplitPairings(6)
+#' # Treat equivalent splits as identical by dividing by four:
+#' AllSplitPairings(6) / 4L
+#' @template MRS
 #' 
 #' @references 
 #' \insertRef{Meila2007}{TreeDist}
@@ -173,7 +175,6 @@ MeilaMutualInformation <- function (split1, split2) {
 #' \insertRef{SmithDist}{TreeDist}
 #' 
 #' @encoding UTF-8
-#' @template MRS
 #' @importFrom memoise memoise
 #' @export
 AllSplitPairings <- memoise(function (n) {
