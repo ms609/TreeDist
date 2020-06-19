@@ -1,14 +1,14 @@
 #' Solve linear assignment problem using LAPJV
 #'
-#' Solve the 
-#' [Linear Sum Assignment Problem](http://www.assignmentproblems.com/doc/LSAPIntroduction.pdf)
-#' with the algorithm of Jonker & Volgenant (1987).
+#' USe the algorithm of Jonker & Volgenant (1987) to
+#' solve the 
+#' [Linear Sum Assignment Problem](http://www.assignmentproblems.com/doc/LSAPIntroduction.pdf).
 #' 
 #' The Linear Assignment Problem seeks to match each row of a matrix with a 
 #' column, such that the cost of the matching is minimized.
 #' 
-#' The JV approach improves on the Hungarian algorithm, which is implemented 
-#' in `clue::solve_LSAP()`.
+#' The Jonker & Volgenant approach is a faster alternative to the Hungarian
+#' algorithm (Munkres 1957), which is implemented in `clue::solve_LSAP()`.
 #' 
 #' NB. At present, only square matrices are supported; if you need support for 
 #' non-square matrices, drop a note at 
@@ -18,6 +18,8 @@
 #' @references 
 #' 
 #' \insertRef{Jonker1987}{TreeDist}
+#' 
+#' \insertRef{Munkres1957}{TreeDist}
 #'
 #' @author [C++ code](https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/LAPJV/lap.cpp)
 #' by Roy Jonker, MagicLogic Optimization Inc. <roy_jonker@magiclogic.com>, 

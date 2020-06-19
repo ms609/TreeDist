@@ -28,17 +28,17 @@ if \code{FALSE}, return the tree itself.}
 score; if \code{FALSE}, return all tied trees.}
 }
 \value{
-\code{median.multiPhylo()} returns an object of class \code{phylo}
+\code{median()} returns an object of class \code{phylo}
 corresponding to the geometric median of a set of trees:
 that is, the tree whose average distance from all other trees in the set
 is lowest.
 If multiple trees tie in their average distance, the first will be returned,
-unless \code{breakTies = TRUE}, in which case an object of class \code{multiPhylo}
+unless \code{breakTies = FALSE}, in which case an object of class \code{multiPhylo}
 containing all such trees will be returned.
 }
 \description{
-Provides a single binary tree that represents the geometric median --
-an 'average' -- of a pool of tree topologies.
+Calculate the single binary tree that represents the geometric median --
+an 'average' -- of a forest of tree topologies.
 }
 \details{
 The geometric median is the tree that exhibits the shortest average distance
@@ -55,7 +55,7 @@ If specifying a different function, be sure that it returns a difference,
 rather than a similarity.
 }
 \examples{
-library('TreeTools')
+library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
 tenTrees <- as.phylo(1:10, nTip = 8)
 
 # Default settings:
@@ -75,8 +75,8 @@ median(structure(treeList, class = 'multiPhylo'))
 }
 \seealso{
 Consensus methods:
-\code{\link[ape:consensus]{ape::consensus}},
-\code{\link[TreeTools:ConsensusWithout]{TreeTools::ConsensusWithout}}
+\code{\link[ape:consensus]{ape::consensus()}},
+\code{\link[TreeTools:ConsensusWithout]{TreeTools::ConsensusWithout()}}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

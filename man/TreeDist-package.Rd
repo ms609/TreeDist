@@ -36,8 +36,8 @@ lead to different tree distance metrics, implemented in the functions below:
 \itemize{
 \item Smith (forthcoming) scores matchings based on the amount of information
 that one partition contains about the other.  The Mutual Phylogenetic
-Information imposes arboreal matching: i.e. a pair of splits that cannot
-both exist on a single tree are assigned zero similarity.  The Mutual
+Information assigns zero similarity to split pairs that cannot
+both exist on a single tree; The Mutual
 Clustering Information metric is more forgiving, and exhibits more
 desirable behaviour; it is the recommended metric for tree comparison.
 (Its complement, \href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{\code{ClusteringInfoDistance()}}, returns a tree

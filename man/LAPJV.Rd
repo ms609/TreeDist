@@ -14,16 +14,16 @@ A list with two entries: \code{score}, the score of the optimal matching;
 and \code{matching}, the columns matched to each row of the matrix in turn.
 }
 \description{
-Solve the
-\href{http://www.assignmentproblems.com/doc/LSAPIntroduction.pdf}{Linear Sum Assignment Problem}
-with the algorithm of Jonker & Volgenant (1987).
+USe the algorithm of Jonker & Volgenant (1987) to
+solve the
+\href{http://www.assignmentproblems.com/doc/LSAPIntroduction.pdf}{Linear Sum Assignment Problem}.
 }
 \details{
 The Linear Assignment Problem seeks to match each row of a matrix with a
 column, such that the cost of the matching is minimized.
 
-The JV approach improves on the Hungarian algorithm, which is implemented
-in \code{clue::solve_LSAP()}.
+The Jonker & Volgenant approach is a faster alternative to the Hungarian
+algorithm (Munkres 1957), which is implemented in \code{clue::solve_LSAP()}.
 
 NB. At present, only square matrices are supported; if you need support for
 non-square matrices, drop a note at
@@ -40,6 +40,8 @@ LAPJV(problem)
 }
 \references{
 \insertRef{Jonker1987}{TreeDist}
+
+\insertRef{Munkres1957}{TreeDist}
 }
 \author{
 \href{https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/LAPJV/lap.cpp}{C++ code}

@@ -1,7 +1,7 @@
 #' Median of a set of trees
 #' 
-#' Provides a single binary tree that represents the geometric median -- 
-#' an 'average' -- of a pool of tree topologies.
+#' Calculate the single binary tree that represents the geometric median -- 
+#' an 'average' -- of a forest of tree topologies.
 #' 
 #' The geometric median is the tree that exhibits the shortest average distance
 #' from each other tree topology in the set.
@@ -26,16 +26,16 @@
 #' @param breakTies Logical: if `TRUE`, return a single tree with the minimum
 #'  score; if `FALSE`, return all tied trees.
 #' 
-#' @return `median.multiPhylo()` returns an object of class `phylo` 
+#' @return `median()` returns an object of class `phylo` 
 #' corresponding to the geometric median of a set of trees:
 #' that is, the tree whose average distance from all other trees in the set
 #' is lowest.  
 #' If multiple trees tie in their average distance, the first will be returned,
-#' unless `breakTies = TRUE`, in which case an object of class `multiPhylo`
+#' unless `breakTies = FALSE`, in which case an object of class `multiPhylo`
 #' containing all such trees will be returned.
 #' 
 #' @examples
-#' library('TreeTools')
+#' library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
 #' tenTrees <- as.phylo(1:10, nTip = 8)
 #' 
 #' # Default settings:
@@ -53,8 +53,8 @@
 #' median(structure(treeList, class = 'multiPhylo'))
 #' 
 #' @seealso Consensus methods:
-#'   [`ape::consensus`], 
-#'   [`TreeTools::ConsensusWithout`]
+#'   [`ape::consensus()`], 
+#'   [`TreeTools::ConsensusWithout()`]
 #'   
 #' @template MRS
 #' @importFrom stats median
