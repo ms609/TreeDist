@@ -66,7 +66,7 @@ SplitDifferentInformation <- function (n, A1, A2 = A1) {
   )/-log(2)
 }
 
-#' Use Variation of Information to compare splits as clusterings
+#' Use variation of information to compare splits as clusterings
 #' 
 #' Compare a pair of splits solely as clusterings of taxa, disregarding their
 #' phylogenetic information, using the variation of clustering information 
@@ -89,20 +89,20 @@ SplitDifferentInformation <- function (n, A1, A2 = A1) {
 #' # Maximum variation = information content of each split separately
 #' A <- TRUE
 #' B <- FALSE
-#' MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,A,A,A,A,A))
+#' MeilaVariationOfInformation(c(A, A, A, B, B, B), c(A, A, A, A, A, A))
 #' Entropy(c(3, 3) / 6) + Entropy(c(0, 6) / 6)
 #' 
 #' # Minimum variation = 0
-#' MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,A,A,B,B,B))
+#' MeilaVariationOfInformation(c(A, A, A, B, B, B), c(A, A, A, B, B, B))
 #' 
 #' # Not always possible for two evenly-sized splits to reach maximum
 #' # variation of information
 #' Entropy(c(3, 3) / 6) * 2  # = 2
-#' MeilaVariationOfInformation(c(A,A,A,B,B,B), c(A,B,A,B,A,B)) # < 2
+#' MeilaVariationOfInformation(c(A, A, A,B ,B, B), c(A, B, A, B, A, B)) # < 2
 #' 
 #' # Phylogenetically uninformative groupings contain spliting information
 #' Entropy(c(1, 5) / 6)
-#' MeilaVariationOfInformation(c(B,A,A,A,A,A), c(A,A,A,A,A,B))
+#' MeilaVariationOfInformation(c(B, A, A, A, A, A), c(A, A, A, A, A, B))
 #' 
 #' 
 #' @encoding UTF-8

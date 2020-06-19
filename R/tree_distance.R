@@ -75,23 +75,21 @@ GeneralizedRF <- function (splits1, splits2, nTip, PairScorer,
 
 #' Are splits compatible?
 #' 
-#' Splits are compatible if they are concave; i.e. they can both be true
-#' simultaneously.
+#' Determine whether splits are compatible (concave); i.e. they can both occur
+#' on a single tree.
 #' 
 #' @template split12Params
 #' @return `SplitsCompatible()` returns a logical specifying whether the splits
 #' provided are compatible with one another.
 #' 
-#' @template MRS
-#' 
 #' @examples 
-#' 
 #' A <- TRUE
 #' B <- FALSE
 #' SplitsCompatible(c(A, A, A, B, B, B),
 #'                  c(A, A, B, B, B, B))
 #' SplitsCompatible(c(A, A, A, B, B, B),
 #'                  c(A, A, B, B, B, A))
+#' @template MRS
 #' @export
 SplitsCompatible <- function (split1, split2) {
   # Return:

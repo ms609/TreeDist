@@ -16,11 +16,10 @@ identifying each leaf as a member of the ingroup (\code{TRUE}) or outgroup
 provided are compatible with one another.
 }
 \description{
-Splits are compatible if they are concave; i.e. they can both be true
-simultaneously.
+Determine whether splits are compatible (concave); i.e. they can both occur
+on a single tree.
 }
 \examples{
-
 A <- TRUE
 B <- FALSE
 SplitsCompatible(c(A, A, A, B, B, B),
