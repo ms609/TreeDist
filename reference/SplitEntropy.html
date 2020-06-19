@@ -50,7 +50,7 @@
 of two splits, treating each split as a division of n leaves into two
 groups.  Further details are available in a
 vignette,
-MacKay (2003) and Meila (2007)." />
+MacKay (2003) and Meil&amp;amp;259; (2007)." />
 
 
 
@@ -177,7 +177,7 @@ MacKay (2003) and Meila (2007)." />
 of two splits, treating each split as a division of <em>n</em> leaves into two
 groups.  Further details are available in a
 <a href='https://ms609.github.io/TreeDist/articles/information.html'>vignette</a>,
-MacKay (2003) and Meila (2007).</p>
+MacKay (2003) and Meil&amp;259; (2007).</p>
     </div>
 
     <pre class="usage"><span class='fu'>SplitEntropy</span>(<span class='no'>split1</span>, <span class='kw'>split2</span> <span class='kw'>=</span> <span class='no'>split1</span>)</pre>
@@ -208,9 +208,8 @@ identifying each leaf as a member of the ingroup (<code>TRUE</code>) or outgroup
     <p>MacKay DJC (2003).
 <em>Information Theory, Inference, and Learning Algorithms</em>.
 Cambridge University Press, Cambridge.
-<a href='https://www.inference.org.uk/itprnn/book.pdf'>https://www.inference.org.uk/itprnn/book.pdf</a>.
-
-Meilă M (2007).
+<a href='https://www.inference.org.uk/itprnn/book.pdf'>https://www.inference.org.uk/itprnn/book.pdf</a>.</p>
+<p>Meilă M (2007).
 &#8220;Comparing clusterings---an information based distance.&#8221;
 <em>Journal of Multivariate Analysis</em>, <b>98</b>(5), 873--895.
 doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11.013</a>
@@ -222,6 +221,11 @@ doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11
 <code><a href='SplitSharedInformation.html'>SplitSharedInformation</a>()</code>,
 <code><a href='SplitwiseInfo.html'>SplitwiseInfo</a>()</code></p></div>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>A</span> <span class='kw'>&lt;-</span> <span class='fl'>TRUE</span>
+<span class='no'>B</span> <span class='kw'>&lt;-</span> <span class='fl'>FALSE</span>
+<span class='fu'>SplitEntropy</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>B</span>, <span class='no'>B</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>B</span>, <span class='no'>B</span>, <span class='no'>B</span>))</div><div class='output co'>#&gt;        H1        H2       H12         I        Hd 
+#&gt; 1.0000000 0.9182958 1.4591479 0.4591479 1.0000000 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
