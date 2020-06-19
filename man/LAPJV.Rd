@@ -26,7 +26,7 @@ algorithm (Munkres 1957), which is implemented in \code{clue::solve_LSAP()}.
 
 NB. At present, only square matrices are supported; if you need support for
 non-square matrices, drop a note at
-(\href{https://github.com/ms609/TreeDist/issues/25}{#25})
+\href{https://github.com/ms609/TreeDist/issues/25}{issue #25}
 and I'll prioritize development.
 }
 \examples{

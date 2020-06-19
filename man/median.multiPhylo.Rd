@@ -61,7 +61,7 @@ tenTrees <- as.phylo(1:10, nTip = 8)
 # Default settings:
 median(tenTrees)
 
-# The Robinson-Foulds distance will create ties:
+# Robinson-Foulds distances include ties:
 median(tenTrees, Distance = RobinsonFoulds, breakTies = FALSE)
 
 # Be sure to use a distance function, rather than a similarity:
@@ -70,8 +70,8 @@ median(tenTrees, Distance = NyeDistance)
 
 # To analyse a list of trees that is not of class multiPhylo:
 treeList <- lapply(1:10, as.phylo, nTip = 8)
+class(treeList)
 median(structure(treeList, class = 'multiPhylo'))
-
 }
 \seealso{
 Consensus methods:

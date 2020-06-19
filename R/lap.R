@@ -11,7 +11,7 @@
 #' 
 #' NB. At present, only square matrices are supported; if you need support for 
 #' non-square matrices, drop a note at 
-#' ([#25](https://github.com/ms609/TreeDist/issues/25))
+#' [issue #25](https://github.com/ms609/TreeDist/issues/25)
 #' and I'll prioritize development.
 #' 
 #' @references 

@@ -222,11 +222,11 @@ Entropy <- function (p) -sum(p[p > 0] * log2(p[p > 0]))
 #' Identical trees are assumed to have zero distance.
 #' 
 #' @examples
-#' # For BalancedTree, PectinateTree:
-#' library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
-#'   
 #' # Generate a list of trees to compare
-#' trees <- list(BalancedTree(1:8), PectinateTree(1:8), PectinateTree(c(4:1, 5:8)))
+#' library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+#' trees <- list(bal1 = BalancedTree(1:8), 
+#'               pec1 = PectinateTree(1:8),
+#'               pec2 = PectinateTree(c(4:1, 5:8)))
 #'   
 #' # Compare each tree with each other tree
 #' CompareAll(trees, NNIDist)
@@ -236,7 +236,6 @@ Entropy <- function (p) -sum(p[p > 0] * log2(p[p > 0]))
 #'   
 #' # View distances as a matrix
 #' as.matrix(dist$lower)
-#'   
 #' @template MRS
 #' @family pairwise tree distances
 #' @importFrom stats dist

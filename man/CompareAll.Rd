@@ -31,11 +31,11 @@ in the same list.
 \code{Func} can be any symmetric function.
 }
 \examples{
-# For BalancedTree, PectinateTree:
-library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
-  
 # Generate a list of trees to compare
-trees <- list(BalancedTree(1:8), PectinateTree(1:8), PectinateTree(c(4:1, 5:8)))
+library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+trees <- list(bal1 = BalancedTree(1:8), 
+              pec1 = PectinateTree(1:8),
+              pec2 = PectinateTree(c(4:1, 5:8)))
   
 # Compare each tree with each other tree
 CompareAll(trees, NNIDist)
@@ -45,7 +45,6 @@ dist <- CompareAll(trees, NNIDist, FUN.VALUE = integer(3))
   
 # View distances as a matrix
 as.matrix(dist$lower)
-  
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
