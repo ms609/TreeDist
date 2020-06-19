@@ -38,7 +38,7 @@ more familiar to some users than its spelled-out version).
 so cannot be added to the Suggests field in the DESCRIPTION file.
 
 All calls to `data(package='TreeDistData')` are wrapped within 
-`if(require('TreeDistData')` to ensure that vignettes fail gracefully if
+`if(require('TreeDistData')` to ensure that vignettes fail gracefully when
 'TreeDistData' is not installed.
 
 
