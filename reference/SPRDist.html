@@ -199,10 +199,11 @@ approximation (see
 between trees.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function is a wrapper for the function
+    <p><code>SPRDist()</code> is a wrapper for the function
 <code><a href='https://rdrr.io/pkg/phangorn/man/treedist.html'>SPR.dist()</a></code> in the phangorn package.
 It pre-processes trees to ensure that their internal representation does
-not cause the <code>SPR.dist()</code> function to crash R.</p>
+not cause the <code>SPR.dist()</code> function to crash R, and allows an improved
+(but slower) symmetric heuristic.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other tree distances: 
@@ -217,7 +218,7 @@ not cause the <code>SPR.dist()</code> function to crash R.</p>
 <code><a href='TreeDistance.html'>TreeDistance</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>'TreeTools'</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>'TreeTools'</span>, <span class='kw'>quietly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>warn.conflicts</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
 <span class='fu'>SPRDist</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>))</div><div class='output co'>#&gt; spr 
 #&gt;   1 </div><div class='input'>
@@ -230,8 +231,7 @@ not cause the <code>SPR.dist()</code> function to crash R.</p>
 #&gt; 1   1 1 1
 #&gt; 2 1   1 1
 #&gt; 3 1 1   1
-#&gt; 4 1 1 1  </div><div class='input'>  
-</div></pre>
+#&gt; 4 1 1 1  </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

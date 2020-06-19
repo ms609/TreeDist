@@ -248,7 +248,7 @@ doi: <a href='https://doi.org/10.1016/0095-8956(71)90020-7'>10.1016/0095-8956(71
 <code><a href='TreeDistance.html'>TreeDistance</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>'TreeTools'</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>'TreeTools'</span>, <span class='kw'>quietly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>warn.conflicts</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
 <span class='fu'>NNIDist</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>))</div><div class='output co'>#&gt;       lower tight_upper loose_upper 
 #&gt;           2           2          14 </div><div class='input'>
@@ -298,8 +298,7 @@ doi: <a href='https://doi.org/10.1016/0095-8956(71)90020-7'>10.1016/0095-8956(71
 #&gt; 2  7     7 10
 #&gt; 3  7  7    10
 #&gt; 4 10 10 10   
-#&gt; </div><div class='input'>  
-</div></pre>
+#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

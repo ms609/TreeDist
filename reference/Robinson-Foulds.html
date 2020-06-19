@@ -336,14 +336,12 @@ Oxford University Press, Oxford.</p>
 <code><a href='TreeDistance.html'>TreeDistance</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>'TreeTools'</span>) <span class='co'># For BalancedTree, PectinateTree, as.phylo</span>
+    <pre class="examples"><div class='input'> <span class='co'># For BalancedTree, PectinateTree, as.phylo:</span>
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>'TreeTools'</span>, <span class='kw'>quietly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>warn.conflicts</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 <span class='no'>balanced7</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>)
 <span class='no'>pectinate7</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>)
 <span class='fu'>RobinsonFoulds</span>(<span class='no'>balanced7</span>, <span class='no'>pectinate7</span>)</div><div class='output co'>#&gt; [1] 4</div><div class='input'><span class='fu'>RobinsonFoulds</span>(<span class='no'>balanced7</span>, <span class='no'>pectinate7</span>, <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] 0.5</div><div class='input'><span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span>(<span class='no'>RobinsonFouldsMatching</span>, <span class='no'>balanced7</span>, <span class='no'>pectinate7</span>)</div><div class='img'><img src='Robinson-Foulds-1.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='fu'>InfoRobinsonFoulds</span>(<span class='no'>balanced7</span>, <span class='no'>pectinate7</span>)</div><div class='output co'>#&gt; [1] 13.90209</div><div class='input'><span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span>(<span class='no'>InfoRobinsonFoulds</span>, <span class='no'>balanced7</span>, <span class='no'>pectinate7</span>)</div><div class='img'><img src='Robinson-Foulds-2.png' alt='' width='700' height='433' /></div><div class='input'>
-
-</div></pre>
+<span class='fu'>InfoRobinsonFoulds</span>(<span class='no'>balanced7</span>, <span class='no'>pectinate7</span>)</div><div class='output co'>#&gt; [1] 13.90209</div><div class='input'><span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span>(<span class='no'>InfoRobinsonFoulds</span>, <span class='no'>balanced7</span>, <span class='no'>pectinate7</span>)</div><div class='img'><img src='Robinson-Foulds-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
