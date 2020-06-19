@@ -191,17 +191,20 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
 #' Probabilities should sum to one.  Probabilities equalling zero will be 
 #' ignored.
 #' 
-#' @param p Numeric vector specifying probabilities of outcomes.
-#' 
-#' @examples
-#' Entropy(rep(0.5, 2)) # = 1
-#' Entropy(c(1/4, 1/4, 0, 1/4, 1/4)) # = 2
+#' @param \dots Numerics or numeric vector specifying probabilities of outcomes.
 #' 
 #' @return `Entropy()` returns the entropy of the specified probabilities, 
 #' in bits.
+#' 
+#' @examples
+#' Entropy(rep(0.5, 2)) # = 1
+#' Entropy(1/4, 1/4, 0, 1/4, 1/4) # = 2
 #' @template MRS
 #' @export
-Entropy <- function (p) -sum(p[p > 0] * log2(p[p > 0]))
+Entropy <- function (...) {
+  p <- c(...)
+  -sum(p[p > 0] * log2(p[p > 0]))
+}
 
 #' Distances between each pair of trees
 #' 

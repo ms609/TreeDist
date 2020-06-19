@@ -4,10 +4,10 @@
 \alias{Entropy}
 \title{Entropy in bits}
 \usage{
-Entropy(p)
+Entropy(...)
 }
 \arguments{
-\item{p}{Numeric vector specifying probabilities of outcomes.}
+\item{\dots}{Numerics or numeric vector specifying probabilities of outcomes.}
 }
 \value{
 \code{Entropy()} returns the entropy of the specified probabilities,
@@ -20,8 +20,7 @@ ignored.
 }
 \examples{
 Entropy(rep(0.5, 2)) # = 1
-Entropy(c(1/4, 1/4, 0, 1/4, 1/4)) # = 2
-
+Entropy(1/4, 1/4, 0, 1/4, 1/4) # = 2
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
