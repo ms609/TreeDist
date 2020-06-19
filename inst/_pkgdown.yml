@@ -13,7 +13,7 @@ reference:
       Functions for calculating distances between pairs of trees.
     contents:
       - TreeDistance
-      - NyeTreeSimilarity
+      - NyeSimilarity
       - KendallColijn
       - MatchingSplitDistance
       - has_concept("tree distances")
