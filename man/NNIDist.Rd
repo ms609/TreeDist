@@ -52,7 +52,7 @@ Diameter: \tab 0 \tab 0 \tab 0 \tab 1 \tab 3 \tab 5 \tab 7 \tab 10 \tab 12
 }
 }
 \examples{
-library('TreeTools')
+library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
 
 NNIDist(BalancedTree(7), PectinateTree(7))
 
@@ -63,7 +63,6 @@ NNIDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
         as.phylo(0:2, 7))
 
 CompareAll(as.phylo(30:33, 8), NNIDist)
-  
 }
 \references{
 \insertRef{Li1996}{TreeDist}

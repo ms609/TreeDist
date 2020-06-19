@@ -2,10 +2,11 @@
 #' 
 #' Approximate the Subtree Prune and Regraft (SPR) distance.
 #' 
-#' This function is a wrapper for the function 
+#' `SPRDist()` is a wrapper for the function 
 #' \code{\link[phangorn:treedist]{SPR.dist()}} in the phangorn package.
 #' It pre-processes trees to ensure that their internal representation does
-#' not cause the `SPR.dist()` function to crash R.
+#' not cause the `SPR.dist()` function to crash R, and allows an improved
+#' (but slower) symmetric heuristic.
 #' 
 #' @template tree12ListParams
 #' @param symmetric Logical specifying whether to produce a better heuristic
@@ -19,7 +20,7 @@
 #' between trees.
 #' 
 #' @examples
-#' library('TreeTools')
+#' library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
 #' 
 #' SPRDist(BalancedTree(7), PectinateTree(7))
 #' 
@@ -30,8 +31,8 @@
 #'         as.phylo(0:2, 7))
 #'
 #' CompareAll(as.phylo(30:33, 8), SPRDist)
-#'   
 #' @template MRS
+#'   
 #' @family tree distances
 #' @importFrom phangorn SPR.dist
 #' @importFrom TreeTools Postorder

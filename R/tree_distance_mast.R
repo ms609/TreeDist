@@ -6,7 +6,7 @@
 #' deleting, but not rearranging, leaves, using the algorithm of Valiente
 #' (2009).
 #' 
-#' Implemented for trees with up to 4096 tips.  Contact maintainer if you
+#' Implemented for trees with up to 4096 tips.  Contact the maintainer if you
 #' need to process larger trees.
 #' 
 #' @param tree1,tree2 Trees of class `phylo`, or lists of such trees to undergo
@@ -17,7 +17,9 @@
 #' the maximum agreement subtree.
 #' 
 #' @examples
-#' library('TreeTools') # for as.phylo, BalancedTree, PectinateTree
+#'  # for as.phylo, BalancedTree, PectinateTree:
+#' library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+#'
 #' MASTSize(PectinateTree(8), BalancedTree(8))
 #' MASTInfo(PectinateTree(8), BalancedTree(8))
 #' 
@@ -34,6 +36,7 @@
 #' 
 #' CompareAll(as.phylo(0:4, 8), MASTSize)
 #' CompareAll(as.phylo(0:4, 8), MASTInfo)
+#' @template MRS
 #' 
 #' @seealso [`phangorn::mast()`], a slower implementation that also lists the
 #' leaves contained within the subtree.
@@ -43,7 +46,6 @@
 #' 
 #' \insertRef{Valiente2009}{TreeDist}
 #' 
-#' @template MRS
 #' @family tree distances
 #' @export
 MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {

@@ -49,7 +49,7 @@
 #' \insertRef{Robinson1971}{TreeDist}  
 #' 
 #' @examples
-#' library('TreeTools')
+#' library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
 #' 
 #' NNIDist(BalancedTree(7), PectinateTree(7))
 #' 
@@ -60,8 +60,8 @@
 #'         as.phylo(0:2, 7))
 #'
 #' CompareAll(as.phylo(30:33, 8), NNIDist)
-#'   
 #' @template MRS
+#'   
 #' @family tree distances
 #' @export
 NNIDist <- function (tree1, tree2 = tree1) {

@@ -30,11 +30,13 @@ deleting, but not rearranging, leaves, using the algorithm of Valiente
 (2009).
 }
 \details{
-Implemented for trees with up to 4096 tips.  Contact maintainer if you
+Implemented for trees with up to 4096 tips.  Contact the maintainer if you
 need to process larger trees.
 }
 \examples{
-library('TreeTools') # for as.phylo, BalancedTree, PectinateTree
+ # for as.phylo, BalancedTree, PectinateTree:
+library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+
 MASTSize(PectinateTree(8), BalancedTree(8))
 MASTInfo(PectinateTree(8), BalancedTree(8))
 
@@ -51,7 +53,6 @@ MASTInfo(list(Bal = BalancedTree(7), Pec = PectinateTree(7)),
 
 CompareAll(as.phylo(0:4, 8), MASTSize)
 CompareAll(as.phylo(0:4, 8), MASTInfo)
-
 }
 \references{
 \insertRef{Steel2006}{TreeDist}

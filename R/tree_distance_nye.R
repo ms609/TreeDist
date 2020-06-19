@@ -44,6 +44,9 @@
 #' from zero to one by dividing by the total number of splits in the pair
 #' of trees being considered.
 #' 
+#' @templateVar returns `NyeSimilarity()` returns
+#' @template distReturn
+#' 
 #' @examples 
 #' library('TreeTools')
 #' NyeSimilarity(BalancedTree(8), PectinateTree(8))
@@ -51,14 +54,11 @@
 
 #' NyeSimilarity(as.phylo(0:5, nTip = 8), PectinateTree(8))
 #' NyeSimilarity(as.phylo(0:5, nTip = 8), similarity = FALSE)
-#' 
-#' @templateVar returns `NyeSimilarity()` returns
-#' @template distReturn
+#' @template MRS
 #' 
 #' @references \insertRef{Nye2006}{TreeDist}
 #' @family tree distances
 #' 
-#' @template MRS
 #' @importFrom TreeTools NSplits
 #' @export
 NyeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,

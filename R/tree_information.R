@@ -120,8 +120,7 @@ SplitwiseInfo.Splits <- function(x) {
 #' @return Returns the sum of the entropies or (clustering) information content, in bits,
 #' of each split in `x`.
 #' 
-#' @examples 
-#' 
+#' @examples
 #' # Clustering entropy of an even split = 1 bit
 #' ClusteringEntropy(TreeTools::as.Splits(c(rep(TRUE, 4), rep(FALSE, 4))))
 #' 
@@ -139,6 +138,7 @@ SplitwiseInfo.Splits <- function(x) {
 #' ClusteringEntropy(tree1) + ClusteringEntropy(tree2)
 #' ClusteringInfoDistance(tree1, tree2)
 #' MutualClusteringInfo(tree1, tree2)
+#' @template MRS
 #' 
 #' @references
 #' 
@@ -149,7 +149,6 @@ SplitwiseInfo.Splits <- function(x) {
 #' 
 #' @encoding UTF-8
 #' @family information functions
-#' @template MRS
 #' @importFrom TreeTools as.Splits
 #' @export
 ClusteringEntropy <- function (x) UseMethod("ClusteringEntropy")

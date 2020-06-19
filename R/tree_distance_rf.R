@@ -38,9 +38,9 @@
 #' 
 #' \insertRef{SmithDist}{TreeDist}
 #' 
-#' @examples 
-#' 
-#' library('TreeTools') # For BalancedTree, PectinateTree, as.phylo
+#' @examples
+#'  # For BalancedTree, PectinateTree, as.phylo:
+#' library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
 #' balanced7 <- BalancedTree(7)
 #' pectinate7 <- PectinateTree(7)
 #' RobinsonFoulds(balanced7, pectinate7)
@@ -49,12 +49,12 @@
 #' 
 #' InfoRobinsonFoulds(balanced7, pectinate7)
 #' VisualizeMatching(InfoRobinsonFoulds, balanced7, pectinate7)
+#' @template MRS
 #' 
 #' 
 #' @family tree distances
 #' @seealso Display paired splits: [`VisualizeMatching()`]
 #' 
-#' @template MRS
 #' @export
 #' @name Robinson-Foulds
 

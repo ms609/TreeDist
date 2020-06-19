@@ -122,8 +122,8 @@ information of all splits in both trees, treated independently.
 }
 
 \examples{
-
-library('TreeTools') # For BalancedTree, PectinateTree, as.phylo
+ # For BalancedTree, PectinateTree, as.phylo:
+library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
 balanced7 <- BalancedTree(7)
 pectinate7 <- PectinateTree(7)
 RobinsonFoulds(balanced7, pectinate7)
@@ -132,8 +132,6 @@ VisualizeMatching(RobinsonFouldsMatching, balanced7, pectinate7)
 
 InfoRobinsonFoulds(balanced7, pectinate7)
 VisualizeMatching(InfoRobinsonFoulds, balanced7, pectinate7)
-
-
 }
 \references{
 \insertRef{Robinson1981}{TreeDist}

@@ -107,7 +107,6 @@ leaf (Vinh \emph{et al.} 2010: p. 2840), the information content of a split is i
 entropy multiplied by the number of leaves.
 }
 \examples{
-
 # Clustering entropy of an even split = 1 bit
 ClusteringEntropy(TreeTools::as.Splits(c(rep(TRUE, 4), rep(FALSE, 4))))
 
@@ -125,7 +124,6 @@ ClusteringInfo(tree1) + ClusteringInfo(tree2)
 ClusteringEntropy(tree1) + ClusteringEntropy(tree2)
 ClusteringInfoDistance(tree1, tree2)
 MutualClusteringInfo(tree1, tree2)
-
 }
 \references{
 \itemize{
