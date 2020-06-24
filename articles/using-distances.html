@@ -216,6 +216,7 @@ In such a context, it can be relevant to normalize tree similarity against the <
          <span class="st">'Quartet divergence'</span>
          ), <span class="kw">col</span> <span class="kw">=</span> <span class="no">methodCol</span>[<span class="no">methods</span>], <span class="kw">pos</span> <span class="kw">=</span> <span class="fl">2</span>)
 }</pre></body></html></div>
+<p><img src="using-distances_files/figure-html/unnamed-chunk-10-1.png" width="672"></p>
 <p>or use these calculated values to normalize our tree distance:</p>
 <div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="no">expectedCID</span> <span class="kw">&lt;-</span> <span class="no">randomTreeDistances</span>[<span class="st">'cid'</span>, <span class="st">'mean'</span>, <span class="st">'9'</span>]
 <span class="fu"><a href="../reference/TreeDistance.html">ClusteringInfoDistance</a></span>(<span class="no">tree1</span>, <span class="no">tree2</span>, <span class="kw">normalize</span> <span class="kw">=</span> <span class="fl">TRUE</span>) / <span class="no">expectedCID</span></pre></body></html></div>
