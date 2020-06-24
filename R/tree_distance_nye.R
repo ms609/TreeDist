@@ -175,7 +175,7 @@ JaccardRobinsonFoulds <- function (tree1, tree2 = tree1, k = 1L,
                                         reportMatching = reportMatching) * 2L
   if (!similarity) unnormalized <- 
       outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE] - unnormalized
-#TODO make normalization match Nye Et Al.
+
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
                 InfoInTree = NSplits, Combine = '+')
 }

@@ -402,13 +402,20 @@ test_that('Matching Split Distance is correctly calculated', {
                MatchingSplitDistance(shuffle2, sq_pectinate))
 })
 
-test_that('NyeSimilarity is correctly calculated', {
+test_that('NyeSimilarity is correctly calculated, and matches JRF', {
   listBalSym <- list(treeBal8, treeSym8)
   
+  JRF <- function (..., sim = TRUE)
+    JaccardRobinsonFoulds(..., k = 1, similarity = sim, allowConflict = TRUE)
   expect_equal(5L, NyeSimilarity(as.Splits(treeSym8), treeSym8))
+  
   expect_equal(1, NyeSimilarity(treeSym8, treeSym8, normalize = TRUE))
+  expect_equal(1, JRF(treeSym8, treeSym8, normalize = TRUE))
+  
   expect_equal(0, NyeSimilarity(treeSym8, treeStar8, normalize = FALSE))
   expect_equal(0, NyeSimilarity(treeSym8, treeStar8, normalize = TRUE))
+  expect_equal(0, JRF(treeSym8, treeStar8, normalize = TRUE))
+  
   expect_equal(0, NyeSimilarity(treeStar8, treeStar8, normalize = FALSE))
   expect_equal(NaN, NyeSimilarity(treeStar8, treeStar8, normalize = TRUE, 
                                       normalizeMax = FALSE))
@@ -416,12 +423,18 @@ test_that('NyeSimilarity is correctly calculated', {
   expect_equal(c(3.8, 5), NyeSimilarity(treeSym8, listBalSym))
   expect_equal(2 / 3, NyeSimilarity(treeAb.Cdefgh, treeAbc.Defgh), 
                tolerance = 1e-7)
-  expect_equal(2 * (1 / 3), NyeSimilarity(treeAb.Cdefgh, treeAbc.Defgh,
-                                        similarity = FALSE), tolerance = 1e-7)
-  expect_equal(1L, NyeSimilarity(treeSym8, treeAbcd.Efgh, 
-                                     normalize = FALSE))
-  expect_equal(1L / 5L, NyeSimilarity(treeSym8, treeAbcd.Efgh, 
-                                          normalize = 5L))
+  expect_equal(2 * (1 / 3), tolerance = 1e-7, 
+               NyeSimilarity(treeAb.Cdefgh, treeAbc.Defgh, similarity = FALSE))
+  
+  expect_equal(1L, NyeSimilarity(treeSym8, treeAbcd.Efgh, normalize = FALSE))
+  expect_equal(1L / 5L, NyeSimilarity(treeSym8, treeAbcd.Efgh, normalize = 5L))
+  expect_equal(0.2, JRF(treeSym8, treeAbcd.Efgh, normalize = 5L * 2L))
+  expect_equal(1/3, NyeSimilarity(treeSym8, treeAbcd.Efgh, normalize = TRUE))
+  expect_equal(1/3, JRF(treeSym8, treeAbcd.Efgh, normalize = TRUE))
+  expect_equal(2/3, NyeSimilarity(treeSym8, treeAbcd.Efgh, similarity = FALSE,
+                                  normalize = TRUE))
+  expect_equal(2/3, JRF(treeSym8, treeAbcd.Efgh, sim = FALSE, normalize = TRUE))
+  
   expect_equal(1L / ((5L + 1L) / 2L),
                NyeSimilarity(treeSym8, treeAbcd.Efgh, normalize = TRUE))
   expect_true(NyeSimilarity(treeSym8, treeBal8) > 
