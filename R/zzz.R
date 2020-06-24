@@ -7,8 +7,7 @@ release_questions <- function() {
   c(
     "Is the code free of #TODOs?",
     "Have you updated README.md, inst/REFERENCES.bib & inst/CITATION with a citation to the published study?",
-    "Have you updated references to the published study, and provided a DOI?",
-    "Have you updated the version number in .zenodo.json, NEWS & DESCRIPTION?"
+    "Have you updated references to the published study, and provided a DOI?"
     )
 }
 

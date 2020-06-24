@@ -4,8 +4,8 @@
 #' in a fully-resolved (binary) tree with _n_ leaves.
 #' 
 #TODO delete once we can require TreeTools 1.0.1
-#' This function will be released in the next release of 'TreeTools' 
-#' and will be removed from 'TreeDist'.
+#' This function will soon be removed from 'TreeDist' and included instead
+#' in 'TreeTools' v1.0.1.
 #' 
 #' @param tree An object of a supported format that represents a tree or 
 #' set of trees, from which the number of leaves will be calculated.

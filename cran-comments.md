@@ -1,7 +1,8 @@
 ## Test environments
-* Local Windows 10 installation, R 3.6.1
+* Local Windows 10 installation, R 4.0.2
 * Windows 10, with `check_win_devel(quiet = TRUE)`, R devel
-* Ubuntu 16.04.6 LTS, R 3.5.0, release and devel, via [Travis CI](https://travis-ci.org/ms609/TreeDist)
+* Ubuntu 16.04.6 LTS, R 3.6.0, release and devel, via
+ [Travis CI](https://travis-ci.org/ms609/TreeDist)
 * Mac OS X 10.13.6, R release, via Travis
 * R-hub, with `check_for_cran()`
 
@@ -34,8 +35,9 @@ more familiar to some users than its spelled-out version).
 > 'library' or 'require' call not declared from: 'TreeDistData'
 > 'data(package=)' call not declared from: 'TreeDistData'
 
-'TreeDistData', which depends on 'TreeDist', is not yet available on CRAN, 
-so cannot be added to the Suggests field in the DESCRIPTION file.
+'TreeDistData' depends on 'TreeDist', so cannot yet be submitted to CRAN or 
+added to the Suggests field in the DESCRIPTION file.  'TreeDistData' is ready
+for immediate submission once 'TreeDist' is available on CRAN.
 
 All calls to `data(package='TreeDistData')` are wrapped within 
 `if(require('TreeDistData')` to ensure that vignettes fail gracefully when
