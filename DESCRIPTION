@@ -1,4 +1,5 @@
 Package: TreeDist
+Type: Package
 Title: Distances Between Phylogenetic Trees
 Version: 1.0.0
 Authors@R: c(person("Martin R.", 'Smith',
@@ -47,15 +48,18 @@ Suggests:
   Rdpack,
   testthat,
   Ternary (>= 1.1.2),
+  TreeDistData (> 0.1.0),
   TreeSearch,
   vdiffr
 Additional_repositories: https://github.com/ms609/TreeDistData/archive/master.zip
 RdMacros: Rdpack
+LinkingTo: Rcpp
 LazyData: true
 ByteCompile: true
 Encoding: UTF-8
 Language: en-GB
-LinkingTo: Rcpp
+Classification/MSC-2020: 05C05, 92-04, 92-08
+X-schema.org-keywords: phylogenetics, tree-distance
 VignetteBuilder: knitr
 RoxygenNote: 7.1.0
 Roxygen: list(markdown = TRUE)
