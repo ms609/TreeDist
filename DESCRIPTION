@@ -51,7 +51,7 @@ Suggests:
   TreeDistData (> 0.1.0),
   TreeSearch,
   vdiffr
-Additional_repositories: https://github.com/ms609/TreeDistData/archive/master.zip
+Additional_repositories: https://ms609.github.io/packages
 RdMacros: Rdpack
 LinkingTo: Rcpp
 LazyData: true

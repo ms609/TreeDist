@@ -9,7 +9,7 @@
 ## R CMD check results
 There were no ERRORs or WARNINGs.
 
-There were two NOTEs:
+There was one NOTE:
 > Maintainer: 'Martin R. Smith <martin.smith@durham.ac.uk>'
 > 
 > New submission
@@ -31,13 +31,13 @@ This is a new submission.
 These are the content of references, except the defined acronym NNI (which is
 more familiar to some users than its spelled-out version).
 
-> * checking for unstated dependencies in vignettes ... NOTE
-> 'library' or 'require' call not declared from: 'TreeDistData'
-> 'data(package=)' call not declared from: 'TreeDistData'
+> Suggests or Enhances not in mainstream repositories:
+>   TreeDistData
+> Availability using Additional_repositories specification:
+>   TreeDistData   yes   https://ms609.github.io/packages/TreeDistData
 
-'TreeDistData' depends on 'TreeDist', so cannot yet be submitted to CRAN or 
-added to the Suggests field in the DESCRIPTION file.  'TreeDistData' is ready
-for immediate submission once 'TreeDist' is available on CRAN.
+'TreeDistData' depends on 'TreeDist', so cannot yet be submitted to CRAN --
+but is ready to submit once 'TreeDist' is available.
 
 All calls to `data(package='TreeDistData')` are wrapped within 
 `if(require('TreeDistData')` to ensure that vignettes fail gracefully when
