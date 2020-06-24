@@ -94,7 +94,7 @@ available online or in the vignettes." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -203,7 +203,7 @@ the optimal matching then quantifies the similarity between two trees.</p>
 <p>Different ways of calculating the the similarity between a pair of splits
 lead to different tree distance metrics, implemented in the functions below:</p><ul>
 <li><p><a href='https://ms609.github.io/TreeDist/reference/TreeDistance.html'><code><a href='TreeDistance.html'>MutualClusteringInfo()</a></code></a>, <a href='https://ms609.github.io/TreeDist/reference/TreeDistance.html'><code><a href='TreeDistance.html'>SharedPhylogeneticInfo()</a></code></a></p><ul>
-<li><p>Smith (forthcoming) scores matchings based on the amount of information
+<li><p>Smith (2020) scores matchings based on the amount of information
 that one partition contains about the other.  The Mutual Phylogenetic
 Information assigns zero similarity to split pairs that cannot
 both exist on a single tree; The Mutual
@@ -223,7 +223,7 @@ with the Jaccard-Robinson-Foulds metric (function
 <li><p>Bogdanowicz and Giaro (2012) and  Lin <em>et al.</em> (2012) independently proposed
 counting the number of 'mismatched' leaves in a pair of splits.
 <a href='https://ms609.github.io/TreeDist/reference/TreeDistance.html'><code><a href='TreeDistance.html'>MatchingSplitInfoDistance()</a></code></a>
-provides an information-based equivalent (Smith, forthcoming).</p></li>
+provides an information-based equivalent (Smith 2020).</p></li>
 </ul></li>
 </ul>
 
@@ -277,7 +277,7 @@ doi: <a href='https://doi.org/10.1093/bioinformatics/bti720'>10.1093/bioinformat
 .</p></li>
 <li><p>Smith MR (2020).
 &#8220;Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees.&#8221;
-<em>Under review</em>.</p></li>
+<em>Bioinformatics</em>, in production.</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>

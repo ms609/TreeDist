@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -117,7 +117,7 @@
       <h1 data-toc-skip>Extending the Robinson-Foulds metric</h1>
                         <h4 class="author">Martin R. Smith</h4>
             
-            <h4 class="date">2020-06-19</h4>
+            <h4 class="date">2020-06-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/Robinson-Foulds.Rmd"><code>vignettes/Robinson-Foulds.Rmd</code></a></small>
       <div class="hidden name"><code>Robinson-Foulds.Rmd</code></div>
@@ -139,7 +139,7 @@
 <p>Each tree divides the eight taxa into five splits. The <a href="information.html">phylogenetic information content</a> of a split is a function of the probability that the split will match a uniformly chosen random tree, i.e. the proportion of eight-leaf binary trees that contain the split in question. (Information content, in bits, is defined as <span class="math inline">\(-\log_2(\textrm{probability})\)</span>.) This, in turn, is a function of the evenness of the split:</p>
 <table class="table">
 <thead><tr class="header">
-<th></th>
+<th align="left"></th>
 <th align="left">Matching trees</th>
 <th align="left">
 <em>P</em>(Match in random tree)</th>
@@ -147,19 +147,19 @@
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td>Split size: 2:6</td>
+<td align="left">Split size: 2:6</td>
 <td align="left">945 / 10 395</td>
 <td align="left">0.0909</td>
 <td align="left">3.46 bits</td>
 </tr>
 <tr class="even">
-<td>Split size: 3:5</td>
+<td align="left">Split size: 3:5</td>
 <td align="left">315 / 10 395</td>
 <td align="left">0.0303</td>
 <td align="left">5.04 bits</td>
 </tr>
 <tr class="odd">
-<td>Split size: 4:4</td>
+<td align="left">Split size: 4:4</td>
 <td align="left">225 / 10 395</td>
 <td align="left">0.0216</td>
 <td align="left">5.53 bits</td>

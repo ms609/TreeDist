@@ -48,7 +48,7 @@
 <meta property="og:title" content="Information-based generalized Robinson-Foulds distances — TreeDistance" />
 <meta property="og:description" content="Calculate tree similarity and distance measures based on the amount of
 phylogenetic or clustering information that two trees hold in common, as
-proposed in Smith (202X)." />
+proposed in Smith (2020)." />
 
 
 
@@ -90,7 +90,7 @@ proposed in Smith (202X)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -173,7 +173,7 @@ proposed in Smith (202X)." />
     <div class="ref-description">
     <p>Calculate tree similarity and distance measures based on the amount of
 phylogenetic or clustering information that two trees hold in common, as
-proposed in Smith (202X).</p>
+proposed in Smith (2020).</p>
     </div>
 
     <pre class="usage"><span class='fu'>TreeDistance</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>)
@@ -310,7 +310,7 @@ between trees (including leaving a split unpaired).</p>
 (MacKay 2003) to assign a similarity score between each pair of splits.</p>
 <p>The returned tree similarity measures state the amount of information,
 in bits, that the splits in two trees hold in common
-when they are optimally matched, following Smith (202X).
+when they are optimally matched, following Smith (2020).
 The complementary tree distance measures state how much information is
 different in the splits of two trees, under an optimal matching.</p>
     <h2 class="hasAnchor" id="concepts-of-information"><a class="anchor" href="#concepts-of-information"></a>Concepts of information</h2>
@@ -343,7 +343,7 @@ is the corresponding measure of tree difference.
 subtract the similarity score from a maximum value.  In order to generate
 distance <em>metrics</em>, these functions subtract the similarity twice from the
 total information content (SPI, MSI) or entropy (MCI) of all the splits in
-both trees (Smith 202X).</p>
+both trees (Smith 2020).</p>
 
 <h3>Normalization</h3>
 
@@ -352,7 +352,7 @@ both trees (Smith 202X).</p>
 ranges from zero to (in principle) one.
 The maximum <strong>distance</strong> is the sum of the information content or entropy of
 each split in each tree; the maximum <strong>similarity</strong> is half this value.
-(See Vinh <em>et al.</em> (2010, table 3) and Smith (202X) for
+(See Vinh <em>et al.</em> (2010, table 3) and Smith (2020) for
 alternative normalization possibilities.)</p>
 <p>Note that a distance value of one (= similarity of zero) will seldom be
 achieved, as even the most different trees exhibit some similarity.
@@ -384,7 +384,7 @@ doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11
 .</p></li>
 <li><p>Smith MR (2020).
 &#8220;Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees.&#8221;
-<em>Under review</em>.</p></li>
+<em>Bioinformatics</em>, in production.</p></li>
 <li><p>Vinh NX, Epps J, Bailey J (2010).
 &#8220;Information theoretic measures for clusterings comparison: variants, properties, normalization and correction for chance.&#8221;
 <em>Journal of Machine Learning Research</em>, <b>11</b>, 2837--2854.

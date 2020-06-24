@@ -16,7 +16,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Distances Between Phylogenetic Trees">
 <meta property="og:description" content="Implements measures of tree similarity, including 
   Information-based generalized Robinson-Foulds distances
-  (Shared Phylogenetic Information, Mutual Clustering Information; Smith, in review); 
+  (Shared Phylogenetic Information, Mutual Clustering Information; Smith, 2020); 
   Jaccard-Robinson-Foulds distances (Bocker et al. 2013) &lt;doi:10.1007/978-3-642-40453-5_13&gt;, 
   including the Nye et al. (2006) metric &lt;doi:10.1093/bioinformatics/bti720&gt;;
   the Matching Split Distance (Bogdanowicz &amp; Giaro 2012) &lt;doi:10.1109/TCBB.2011.48&gt;;
@@ -49,7 +49,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
 
@@ -135,7 +135,7 @@
 <ul>
 <li>
 <p><a href="https://ms609.github.io/TreeDist/reference/TreeDistance.html"><code><a href="reference/TreeDistance.html">MutualClusteringInfo()</a></code></a>, <a href="https://ms609.github.io/TreeDist/reference/TreeDistance.html"><code><a href="reference/TreeDistance.html">SharedPhylogeneticInfo()</a></code></a></p>
-<p>Smith (forthcoming) scores matchings based on the amount of information that one partition contains about the other. The Mutual Phylogenetic Information assigns zero similarity to split pairs that cannot both exist on a single tree; The Mutual Clustering Information metric is more forgiving, and exhibits more desirable behaviour; it is the recommended metric for tree comparison. (Its complement, <a href="https://ms609.github.io/TreeDist/reference/TreeDistance.html"><code><a href="reference/TreeDistance.html">ClusteringInfoDistance()</a></code></a>, returns a tree distance.)</p>
+<p>Smith (2020) scores matchings based on the amount of information that one partition contains about the other. The Mutual Phylogenetic Information assigns zero similarity to split pairs that cannot both exist on a single tree; The Mutual Clustering Information metric is more forgiving, and exhibits more desirable behaviour; it is the recommended metric for tree comparison. (Its complement, <a href="https://ms609.github.io/TreeDist/reference/TreeDistance.html"><code><a href="reference/TreeDistance.html">ClusteringInfoDistance()</a></code></a>, returns a tree distance.)</p>
 </li>
 <li>
 <p><a href="https://ms609.github.io/TreeDist/reference/NyeSimilarity.html"><code><a href="reference/NyeSimilarity.html">NyeSimilarity()</a></code></a></p>
@@ -143,7 +143,7 @@
 </li>
 <li>
 <p><a href="https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html"><code><a href="reference/MatchingSplitDistance.html">MatchingSplitDistance()</a></code></a></p>
-<p>Bogdanowicz and Giaro (2012) and Lin <em>et al.</em> (2012) independently proposed counting the number of ‘mismatched’ leaves in a pair of splits. <a href="https://ms609.github.io/TreeDist/reference/TreeDistance.html"><code><a href="reference/TreeDistance.html">MatchingSplitInfoDistance()</a></code></a> provides an information-based equivalent (Smith, forthcoming).</p>
+<p>Bogdanowicz and Giaro (2012) and Lin <em>et al.</em> (2012) independently proposed counting the number of ‘mismatched’ leaves in a pair of splits. <a href="https://ms609.github.io/TreeDist/reference/TreeDistance.html"><code><a href="reference/TreeDistance.html">MatchingSplitInfoDistance()</a></code></a> provides an information-based equivalent (Smith 2020).</p>
 </li>
 </ul>
 <p>The package also implements the variation of the path distance proposed by Kendal and Colijn (2016) (function <a href="https://ms609.github.io/TreeDist/reference/KendallColijn.html"><code><a href="reference/KendallColijn.html">KendallColijn()</a></code></a>), approximations of the Nearest-Neighbour Interchange (NNI) distance (function <a href="https://ms609.github.io/TreeDist/reference/NNIDist.html"><code><a href="reference/NNIDist.html">NNIDist()</a></code></a>; following Li <em>et al.</em> (1996)), and calculates the size (function <a href="https://ms609.github.io/TreeDist/reference/MASTSize.html"><code><a href="reference/MASTSize.html">MASTSize()</a></code></a>) and information content (function <a href="https://ms609.github.io/TreeDist/reference/MASTSize.html"><code><a href="reference/MASTSize.html">MASTInfo()</a></code></a>) of the Maximum Agreement Subtree.</p>
@@ -212,7 +212,7 @@ library('TreeDist')
 <li><p>Kendall, M. and Colijn, C. (2016) <a href="https://dx.doi.org/10.1093/molbev/msw124">Mapping phylogenetic trees to reveal distinct patterns of evolution</a>. Mol Biol Evol, 33, 2735–2743.</p></li>
 <li><p>Li, M., Tromp, J. and Zhang, L.-X. (1996) <a href="https://dx.doi.org/10.1007/3-540-61332-3_168">Some notes on the nearest neighbour interchange distance</a>. Computing and Combinatorics, Goos, G., Hartmanis, J., Leeuwen, J., Cai, J.-Y., and Wong, C. K., eds. Springer, Berlin. 343–351.</p></li>
 <li><p>Nye, T.M.W. <em>et al.</em> (2006) <a href="https://dx.doi.org/10.1093/bioinformatics/bti720">A novel algorithm and web-based tool for comparing two alternative phylogenetic trees</a>. Bioinformatics, 22, 117–119.</p></li>
-<li><p>Smith, M.R. (in review) [Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees].</p></li>
+<li><p>Smith, M.R. (2020) [Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees]. Bioinformatics, in production.</p></li>
 </ul>
 <p>Please note that the ‘TreeDist’ project is released with a <a href="CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
