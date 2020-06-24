@@ -19,9 +19,9 @@ Description: Implements measures of tree similarity, including
   the Matching Split Distance (Bogdanowicz & Giaro 2012) <doi:10.1109/TCBB.2011.48>;
   Maximum Agreement Subtree distances;
   the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>, and the
-  Nearest Neighbour Interchange (NNI) distance, approximated per Li et al. 1996
-  <doi:10.1007/3-540-61332-3_168>.  Identifies the median of a set of binary
-  trees.
+  Nearest Neighbour Interchange (NNI) distance, approximated per Li et al. 
+  (1996) <doi:10.1007/3-540-61332-3_168>.
+  Calculates the median of a set of trees under any distance metric.
 Copyright: Incorporates Jonker-Volgenant Linear Assignment Problem 
   implementation by Roy Jonker, modified by Yong Yang after Yi Cao.
 URL: https://ms609.github.io/TreeDist, https://github.com/ms609/TreeDist
