@@ -49,8 +49,7 @@ Suggests:
   Ternary (>= 1.1.2),
   TreeSearch,
   vdiffr
-Remotes:
-  ms609/TreeDistData
+Additional_repositories: https://github.com/ms609/TreeDistData/archive/master.zip
 RdMacros: Rdpack
 LazyData: true
 ByteCompile: true
