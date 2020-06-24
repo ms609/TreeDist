@@ -2,7 +2,7 @@
 #'
 #' Calculate tree similarity and distance measures based on the amount of 
 #' phylogenetic or clustering information that two trees hold in common, as
-#' proposed in Smith (202X).
+#' proposed in Smith (2020).
 #' 
 #' 
 #' [Generalized Robinson-Foulds distances](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances)
@@ -17,7 +17,7 @@
 #' 
 #' The returned tree similarity measures state the amount of information, 
 #' in bits, that the splits in two trees hold in common 
-#' when they are optimally matched, following Smith (202X).
+#' when they are optimally matched, following Smith (2020).
 #' The complementary tree distance measures state how much information is 
 #' different in the splits of two trees, under an optimal matching.
 #' 
@@ -55,7 +55,7 @@
 #' subtract the similarity score from a maximum value.  In order to generate
 #' distance _metrics_, these functions subtract the similarity twice from the 
 #' total information content (SPI, MSI) or entropy (MCI) of all the splits in 
-#' both trees (Smith 202X).
+#' both trees (Smith 2020).
 #' 
 #' ## Normalization
 #' 
@@ -63,7 +63,7 @@
 #' ranges from zero to (in principle) one.
 #' The maximum **distance** is the sum of the information content or entropy of
 #' each split in each tree; the maximum **similarity** is half this value.
-#' (See Vinh _et al._ (2010, table 3) and Smith (202X) for
+#' (See Vinh _et al._ (2010, table 3) and Smith (2020) for
 #' alternative normalization possibilities.)
 #' 
 #' Note that a distance value of one (= similarity of zero) will seldom be

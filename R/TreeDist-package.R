@@ -27,7 +27,7 @@
 #'   
 #' * [`MutualClusteringInfo()`](https://ms609.github.io/TreeDist/reference/TreeDistance.html), [`SharedPhylogeneticInfo()`](https://ms609.github.io/TreeDist/reference/TreeDistance.html)
 #' 
-#'   + Smith (forthcoming) scores matchings based on the amount of information
+#'   + Smith (2020) scores matchings based on the amount of information
 #'     that one partition contains about the other.  The Mutual Phylogenetic
 #'     Information assigns zero similarity to split pairs that cannot
 #'     both exist on a single tree; The Mutual 
@@ -49,7 +49,7 @@
 #'   + Bogdanowicz and Giaro (2012) and  Lin _et al._ (2012) independently proposed
 #'     counting the number of 'mismatched' leaves in a pair of splits.
 #'     [`MatchingSplitInfoDistance()`](https://ms609.github.io/TreeDist/reference/TreeDistance.html)
-#'     provides an information-based equivalent (Smith, forthcoming).
+#'     provides an information-based equivalent (Smith 2020).
 #' 
 #' 
 #' The package also implements the variation of the path distance 

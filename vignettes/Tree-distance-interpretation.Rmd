@@ -47,7 +47,7 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
   
   data('randomTreeDistances', package = 'TreeDistData')
   pathMax <- randomTreeDistances['path', 'max', ]
-  msdMax <- randomTreeDistances['msd', 'max', ]
+  msdMax <- randomTreeDistances['ms', 'max', ]
   nniMax <- randomTreeDistances['nni_u', 'max', ]
   tbrMax <- randomTreeDistances['tbr_u', 'max', ]
   
@@ -114,7 +114,7 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
   PlotMethods <- function (methods, yMin = 0.4,
                            lp = c('bottomright', 'bottomleft')) {
     plot(as.integer(dimnames(randomTreeDistances)[[3]]),
-         randomTreeDistances['dpi', 'mean', ],
+         randomTreeDistances['pid', 'mean', ],
          ylim = c(yMin, 1), type = 'n',
          xlab = "Number of leaves", ylab = "Normalized tree distance")
     for (method in methods) AddLine(method, 
@@ -133,8 +133,8 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
            lty = 1, lwd = c(1, 4, 6), col = c(1, "#00000066", "#00000033"),
            legend = c('Median', 'Interquartile range', 'Interdecile range'))
   }
-  PlotMethods(c('rf', 'dpi', 'cid', 'msd', 'nts', 'msid'))
-  PlotMethods(c('rf', 'ja4', 'jna4', 'ja2', 'jna2', 'nts'), yMin = 0.7)
+  PlotMethods(c('rf', 'pid', 'cid', 'ms', 'nye', 'msid'))
+  PlotMethods(c('rf', 'jnc4', 'jco4', 'jnc2', 'jco2', 'nye'), yMin = 0.7)
   PlotMethods(c('nni_u', 'tbr_u', 'spr', 'masti', 'mast',
                 'path', 'qd', 'tbr_l', 'nni_l'), yMin = 0.14, 
               lp = c('bottomright', 'right'))

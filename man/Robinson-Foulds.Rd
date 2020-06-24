@@ -93,7 +93,7 @@ or \code{splits1} and \code{splits2}.
 \description{
 Calculate the Robinson-Foulds distance, or the equivalent similarity
 measure, with options to (i) annotate matched splits; (ii) weight splits
-according to their phylogenetic information content (Smith 202X).
+according to their phylogenetic information content (Smith 2020).
 }
 \details{
 Note that if \code{reportMatching = TRUE}, the \code{pairScores} attribute returns

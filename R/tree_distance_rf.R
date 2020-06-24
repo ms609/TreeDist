@@ -4,7 +4,7 @@
 #' Calculate the Robinson-Foulds distance, or the equivalent similarity 
 #' measure, with options to (i) annotate matched splits; (ii) weight splits
 #TODO Update reference to Smith
-#' according to their phylogenetic information content (Smith 202X).
+#' according to their phylogenetic information content (Smith 2020).
 #' 
 #' Note that if `reportMatching = TRUE`, the `pairScores` attribute returns
 #' a logical matrix specifying whether each pair of splits is identical.

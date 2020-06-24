@@ -128,7 +128,7 @@ using \code{\link[=VisualizeMatching]{VisualizeMatching()}}.
 \description{
 Calculate tree similarity and distance measures based on the amount of
 phylogenetic or clustering information that two trees hold in common, as
-proposed in Smith (202X).
+proposed in Smith (2020).
 }
 \details{
 \href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson-Foulds distances}
@@ -143,7 +143,7 @@ The methods implemented here use the concepts of
 
 The returned tree similarity measures state the amount of information,
 in bits, that the splits in two trees hold in common
-when they are optimally matched, following Smith (202X).
+when they are optimally matched, following Smith (2020).
 The complementary tree distance measures state how much information is
 different in the splits of two trees, under an optimal matching.
 }
@@ -179,7 +179,7 @@ To convert similarity measures to distances, it is necessary to
 subtract the similarity score from a maximum value.  In order to generate
 distance \emph{metrics}, these functions subtract the similarity twice from the
 total information content (SPI, MSI) or entropy (MCI) of all the splits in
-both trees (Smith 202X).
+both trees (Smith 2020).
 }
 
 \subsection{Normalization}{
@@ -188,7 +188,7 @@ If \code{normalize = TRUE}, then results will be rescaled such that distance
 ranges from zero to (in principle) one.
 The maximum \strong{distance} is the sum of the information content or entropy of
 each split in each tree; the maximum \strong{similarity} is half this value.
-(See Vinh \emph{et al.} (2010, table 3) and Smith (202X) for
+(See Vinh \emph{et al.} (2010, table 3) and Smith (2020) for
 alternative normalization possibilities.)
 
 Note that a distance value of one (= similarity of zero) will seldom be

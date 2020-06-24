@@ -5,19 +5,19 @@
   ],
   "@type": "SoftwareSourceCode",
   "identifier": "TreeDist",
-  "description": "Implements measures of tree similarity, including \n  Information-based generalized Robinson-Foulds distances\n  (Shared Phylogenetic Information, Mutual Clustering Information; Smith, in revision); \n  Jaccard-Robinson-Foulds distances (Bocker et al. 2013) <doi:10.1007/978-3-642-40453-5_13>, \n  including the Nye et al. (2006) metric <doi:10.1093/bioinformatics/bti720>;\n  the Matching Split Distance (Bogdanowicz & Giaro 2012) <doi:10.1109/TCBB.2011.48>;\n  Maximum Agreement Subtree distances;\n  the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>, and the\n  Nearest Neighbour Interchange (NNI) distance, approximated per Li et al. 1996\n  <doi:10.1007/3-540-61332-3_168>.  Identifies the median of a set of binary\n  trees.",
+  "description": "Implements measures of tree similarity, including \n  Information-based generalized Robinson-Foulds distances\n  (Shared Phylogenetic Information, Mutual Clustering Information; Smith, 2020); \n  Jaccard-Robinson-Foulds distances (Bocker et al. 2013) <doi:10.1007/978-3-642-40453-5_13>, \n  including the Nye et al. (2006) metric <doi:10.1093/bioinformatics/bti720>;\n  the Matching Split Distance (Bogdanowicz & Giaro 2012) <doi:10.1109/TCBB.2011.48>;\n  Maximum Agreement Subtree distances;\n  the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>, and the\n  Nearest Neighbour Interchange (NNI) distance, approximated per Li et al. 1996\n  <doi:10.1007/3-540-61332-3_168>.  Identifies the median of a set of binary\n  trees.",
   "name": "TreeDist: Distances Between Phylogenetic Trees",
   "codeRepository": "https://github.com/ms609/TreeDist",
   "issueTracker": "https://github.com/ms609/TreeDist/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "0.0.0.9000",
+  "version": "1.0.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
-    "version": "4.0.0",
+    "version": "4.0.2",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.0.0 (2020-04-24)",
+  "runtimePlatform": "R version 4.0.2 (2020-06-22)",
   "author": [
     {
       "@type": "Person",
@@ -304,7 +304,7 @@
   "citation": [
     {
       "@type": "ScholarlyArticle",
-      "datePublished": "202X",
+      "datePublished": "2020",
       "author": [
         {
           "@type": "Person",
@@ -315,10 +315,10 @@
       "name": "Information theoretic Generalized Robinson-Foulds metrics\nfor comparing phylogenetic trees",
       "isPartOf": {
         "@type": "PublicationIssue",
-        "datePublished": "202X",
+        "datePublished": "2020",
         "isPartOf": {
           "@type": ["PublicationVolume", "Periodical"],
-          "name": "In revision"
+          "name": "Bioinformatics"
         }
       }
     },

@@ -32,7 +32,7 @@ lead to different tree distance metrics, implemented in the functions below:
 
 * [`MutualClusteringInfo()`](https://ms609.github.io/TreeDist/reference/TreeDistance.html), [`SharedPhylogeneticInfo()`](https://ms609.github.io/TreeDist/reference/TreeDistance.html)
     
-    Smith (forthcoming) scores matchings based on the amount of information
+    Smith (2020) scores matchings based on the amount of information
     that one partition contains about the other.  The Mutual Phylogenetic
     Information assigns zero similarity to split pairs that cannot
     both exist on a single tree;  The Mutual Clustering Information metric is 
@@ -55,7 +55,7 @@ lead to different tree distance metrics, implemented in the functions below:
     Bogdanowicz and Giaro (2012) and  Lin _et al._ (2012) independently proposed
     counting the number of 'mismatched' leaves in a pair of splits.
     [`MatchingSplitInfoDistance()`](https://ms609.github.io/TreeDist/reference/TreeDistance.html)
-    provides an information-based equivalent (Smith, forthcoming).
+    provides an information-based equivalent (Smith 2020).
     
 
 The package also implements the variation of the path distance 
@@ -130,8 +130,8 @@ Wong, C. K., eds. Springer, Berlin. 343--351.
 - Nye, T.M.W. _et al._ (2006) [A novel algorithm and web-based tool for
 comparing two alternative phylogenetic trees](https://dx.doi.org/10.1093/bioinformatics/bti720). Bioinformatics, 22, 117–119.
 
-- Smith, M.R. (in review) [Information theoretic Generalized Robinson-Foulds
-metrics for comparing phylogenetic trees].
+- Smith, M.R. (2020) [Information theoretic Generalized Robinson-Foulds
+metrics for comparing phylogenetic trees]. Bioinformatics, in production.
 
 Please note that the 'TreeDist' project is released with a
 [Contributor Code of Conduct](CODE_OF_CONDUCT.md).

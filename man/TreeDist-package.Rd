@@ -34,7 +34,7 @@ lead to different tree distance metrics, implemented in the functions below:
 \itemize{
 \item \href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{\code{MutualClusteringInfo()}}, \href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{\code{SharedPhylogeneticInfo()}}
 \itemize{
-\item Smith (forthcoming) scores matchings based on the amount of information
+\item Smith (2020) scores matchings based on the amount of information
 that one partition contains about the other.  The Mutual Phylogenetic
 Information assigns zero similarity to split pairs that cannot
 both exist on a single tree; The Mutual
@@ -56,7 +56,7 @@ with the Jaccard-Robinson-Foulds metric (function
 \item Bogdanowicz and Giaro (2012) and  Lin \emph{et al.} (2012) independently proposed
 counting the number of 'mismatched' leaves in a pair of splits.
 \href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{\code{MatchingSplitInfoDistance()}}
-provides an information-based equivalent (Smith, forthcoming).
+provides an information-based equivalent (Smith 2020).
 }
 }
 
