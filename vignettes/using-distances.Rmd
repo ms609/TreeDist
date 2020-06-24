@@ -34,8 +34,8 @@ by typing `?FunctionName` in the R terminal.
 
 ### Nye _et al._ tree similarity
 
-Let's work through a simple example using the Nye _et al_. similarity metric
-to compare two imperfectly-resolved trees.
+Let's work through a simple example using the Nye _et al_. [-@Nye2006]
+similarity metric to compare two imperfectly-resolved trees.
 
 ```{r, fig.width=6, out.width='90%', fig.align='center'}
 library('TreeDist')
@@ -118,10 +118,11 @@ NyeSimilarity(tree1, tree2, normalize = TreeTools::NSplits(tree1))
 
 ### Normalizing to random similarity
 
-The diameter (maximum possible distance) of the Nye _et al_. tree similarity 
+The diameter (maximum possible distance) of the Nye _et al_. tree similarity
 metric is easy to calculate, but this is not the case for all metrics.
-For example, the clustering information distance metric ranges in principle from
-zero, to the total clustering entropy present in a pair of trees. 
+For example, the clustering information distance metric [@Smith2020]
+ranges in principle from zero to the total clustering entropy present in a 
+pair of trees.
 But with even a modest number of leaves, no pairs of trees exist in which every
 split in one tree is perfectly contradicted by every other split in the other;
 as such, any pair of trees will necessarily have some degree of similarity.  
@@ -143,7 +144,7 @@ normalizedQD <- QuartetDivergence(QuartetStatus(tree1, tree2),
 
 The expected distance is more difficult to calculate for other metrics, but 
 can be approximated by sampling random pairs of trees.  Measured distances
-between 10 000 pairs of random bifurcating trees with up to 200 leaves are 
+between 10&nbsp;000 pairs of random bifurcating trees with up to 200 leaves are 
 available in the data package 
 '[TreeDistData](https://github.com/ms609/TreeDistData/)'.
 We can view (normalized) distances for a selection of methods:
@@ -190,11 +191,11 @@ ClusteringInfoDistance(tree1, tree2, normalize = TRUE) / expectedCID
 
 ## Testing similarity to a known tree
 
-Similarity has two components: precision and accuracy.  A tree can be 80% 
-similar to a target tree because it contains 80% of the splits in the target 
-tree, and no incorrect splits -- or because it is a binary tree in which
-10% of the splits present are resolved incorrectly and are thus positively
-misleading.
+Similarity has two components: precision and accuracy [@Smith2019].
+A tree can be 80% similar to a target tree because it contains 80% of the splits
+in the target tree, and no incorrect splits -- or because it is a binary tree 
+in which 10% of the splits present are resolved incorrectly and are thus 
+positively misleading.
 
 In such a comparison, of course, it is more sensible to talk about split
 _information_ than just the number of splits: an even split may
@@ -395,3 +396,5 @@ You may wish to:
 
 - Review [available distance measures](https://ms609.github.io/TreeDist/index.html)
   and the corresponding [TreeDist functions](https://ms609.github.io/TreeDist/reference/index.html#section-tree-distance-measures)
+
+## References
