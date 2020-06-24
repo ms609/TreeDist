@@ -9,7 +9,7 @@
 ## R CMD check results
 There were no ERRORs or WARNINGs.
 
-There was one NOTE:
+There were two NOTEs:
 > Maintainer: 'Martin R. Smith <martin.smith@durham.ac.uk>'
 > 
 > New submission
@@ -35,6 +35,8 @@ more familiar to some users than its spelled-out version).
 >   TreeDistData
 > Availability using Additional_repositories specification:
 >   TreeDistData   yes   https://ms609.github.io/packages/TreeDistData
+[...]
+> Package suggested but not available for checking: 'TreeDistData'
 
 'TreeDistData' depends on 'TreeDist', so cannot yet be submitted to CRAN --
 but is ready to submit once 'TreeDist' is available.
