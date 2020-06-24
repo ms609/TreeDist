@@ -39,8 +39,8 @@ to compare two imperfectly-resolved trees.
 
 ```{r, fig.width=6, out.width='90%', fig.align='center'}
 library('TreeDist')
-tree1 <- ape::read.tree(text='(A, ((B, ((C, D), (E, F))), (G, (H, (I, J, K)))));')
-tree2 <- ape::read.tree(text='(A, (B, (C, D, E, (J, K)), (F, (G, H, I))));')
+tree1 <- ape::read.tree(text = '(A, ((B, ((C, D), (E, F))), (G, (H, (I, J, K)))));')
+tree2 <- ape::read.tree(text = '(A, (B, (C, D, E, (J, K)), (F, (G, H, I))));')
 VisualizeMatching(NyeSimilarity, tree1, tree2,
                   Plot = TreeDistPlot, matchZeros = FALSE)
 ```
@@ -153,13 +153,13 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
   library('TreeDistData')
   data('randomTreeDistances', package = 'TreeDistData')
   
-  methods <- c('dpi', 'cid', 'nts', 'qd')
-  methodCol <- c(dpi = '#e15659', cid = '#58a14e', nts = '#edc949',
+  methods <- c('pid', 'cid', 'nye', 'qd')
+  methodCol <- c(pid = '#e15659', cid = '#58a14e', nye = '#edc949',
                  qd = '#af7aa1')
   
   par(cex = 0.7, mar = c(5, 5, 0.01, 0.01))
   nLeaves <- as.integer(dimnames(randomTreeDistances)[[3]])
-  plot(nLeaves, type = 'n', randomTreeDistances['dpi', 'mean', ],
+  plot(nLeaves, type = 'n', randomTreeDistances['pid', 'mean', ],
        ylim = c(0.4, 1),
        xlab = "Number of leaves",
        ylab = "Normalized distance between random tree pairs")
@@ -209,10 +209,10 @@ with reference to a known 'true' tree:
 
 ```{r fig.align='center', fig.height=1.8, fig.width=6, out.width='80%'}
 testTrees <- list(
-  trueTree = ape::read.tree(text='(a, (b, (c, (d, (e, (f, (g, h)))))));'),
-  lackRes = ape::read.tree(text='(a, (b, c, (d, e, (f, g, h))));'),
-  smallErr = ape::read.tree(text='(a, (c, (b, (d, (f, (e, (g, h)))))));'),
-  bigErr = ape::read.tree(text='(a, (c, (((b, d), (f, h)), (e, g))));')
+  trueTree = ape::read.tree(text = '(a, (b, (c, (d, (e, (f, (g, h)))))));'),
+  lackRes = ape::read.tree(text = '(a, (b, c, (d, e, (f, g, h))));'),
+  smallErr = ape::read.tree(text = '(a, (c, (b, (d, (f, (e, (g, h)))))));'),
+  bigErr = ape::read.tree(text = '(a, (c, (((b, d), (f, h)), (e, g))));')
 )
 VisualizeMatching(MutualClusteringInfo, testTrees$trueTree, testTrees$lackRes)
 points(4, 7.5, pch = 2, cex = 3, col = "#E69F00")
@@ -230,7 +230,7 @@ resolution introduces error.
 ```{r, fig.width=4, fig.align='center', fig.asp=1, out.width='50%'}
 if (requireNamespace('Ternary', quietly = TRUE)) {
   library('Ternary')
-  par(mar=rep(0.1, 4))
+  par(mar = rep(0.1, 4))
   TernaryPlot(alab = 'Absent information', blab = 'Shared information',
               clab = 'Misinformation',
               lab.cex = 0.8, lab.offset = 0.18,
@@ -266,8 +266,8 @@ We'll move away from the true tree by making a TBR move, then reduce
 resolution by taking the consensus of this tree and three trees from its 
 immediate neighbourhood (one NNI move away).
 
-```{r, message=FALSE}
-library('TreeSearch') # for TBR, NNI
+```{r}
+library('TreeSearch', quietly = TRUE, warn.conflict = FALSE) # for TBR, NNI
 oneAway <- structure(lapply(seq_len(200), function (x) {
   tbrTree <- TBR(trueTree)
   ape::consensus(list(tbrTree,
@@ -339,8 +339,8 @@ Now we can plot this information on a ternary diagram.
 
 ```{r, fig.width=7, fig.align='center', fig.asp=5/7, out.width='70%'}
 if (requireNamespace('Ternary', quietly = TRUE)) {
-  layout(matrix(c(1, 2), ncol=2), widths=c(5, 2))
-  par(mar=rep(0, 4))
+  layout(matrix(c(1, 2), ncol = 2), widths = c(5, 2))
+  par(mar = rep(0, 4))
   TernaryPlot(alab = 'Information absent in degraded tree', 
               blab = '\n\nCorrect information in degraded tree', 
               clab = 'Misinformation in degraded tree',
@@ -371,7 +371,7 @@ if (requireNamespace('Ternary', quietly = TRUE)) {
         plot(kde(kdeRange), kdeRange, col = col, lty = lty, lwd = lwd, 
              ylim = c(0, 1), main = '', axes = FALSE, type = 'l')
       }
-      # abline(h=0:10 / 10) # Useful for confirming alignment
+      # abline(h = 0:10 / 10) # Useful for confirming alignment
     }
   
     par(mar = c(1.8, 0, 1.8, 0)) # align plot limits with ternary plot
