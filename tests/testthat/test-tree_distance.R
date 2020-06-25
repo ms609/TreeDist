@@ -354,6 +354,7 @@ test_that('Clustering information is correctly calculated', {
                MutualClusteringInfo(treeAbc.Defgh, treeAb.Cdefgh),
                tolerance=1e-05)
   
+  library('TreeTools')
   expect_equal(ClusteringEntropy(BalancedTree(64)),
                MutualClusteringInfo(BalancedTree(64), BalancedTree(64)))
   expect_equal(ClusteringEntropy(BalancedTree(644)),
