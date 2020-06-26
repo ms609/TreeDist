@@ -173,7 +173,7 @@
 <div id="information-corrected-robinson-foulds-distance" class="section level1">
 <h1 class="hasAnchor">
 <a href="#information-corrected-robinson-foulds-distance" class="anchor"></a>Information-corrected Robinson-Foulds distance</h1>
-<p>This differing information content can be accommodated by weighting each split according to the amount of phylogenetic information it contains. The two tree pairs below both have a Robinson-Foulds distance of two, but the first pair differ with regard to an uneven split (<code>ABCDEF|GH</code>), so obtain a total difference of 22.54 − (3.46 + 5.04 + 5.53 + 5.04) = 3.46 bits:</p>
+<p>This differing information content can be accommodated by weighting each split according to the amount of phylogenetic information it contains <span class="citation">(Smith, 2020)</span>. The two tree pairs below both have a Robinson-Foulds distance of two, but the first pair differ with regard to an uneven split (<code>ABCDEF|GH</code>), so obtain a total difference of 22.54 − (3.46 + 5.04 + 5.53 + 5.04) = 3.46 bits:</p>
 <div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="no">tree1</span> <span class="kw">&lt;-</span> <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="kw">text</span><span class="kw">=</span><span class="st">'(1, (2, (3, (4, (5, (6, (7, 8)))))));'</span>)
 <span class="no">tree2</span> <span class="kw">&lt;-</span> <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="kw">text</span><span class="kw">=</span><span class="st">'(1, (2, (3, (4, (5, (7, (6, 8)))))));'</span>)
 <span class="no">tree3</span> <span class="kw">&lt;-</span> <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(<span class="kw">text</span><span class="kw">=</span><span class="st">'(1, (2, (3, (5, (4, (6, (7, 8)))))));'</span>)
@@ -195,7 +195,7 @@
 
 <span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="no">RobinsonFouldsMatching</span>, <span class="no">tree1</span>, <span class="no">tree2</span>, <span class="kw">Plot</span> <span class="kw">=</span> <span class="no">TreeDistPlot</span>)</pre></body></html></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-4-1.png" width="576" style="display: block; margin: auto;"></p>
-<p>Generalized Robinson-Foulds distances seek to address this issue. This category of metrics aim to acknowledge semblances between similar-but-not-quite-identical pairs of splits, which would contribute zero to tree similarity under the standard Robinson-Foulds measure.</p>
+<p>Generalized Robinson-Foulds distances <span class="citation">(Böcker, Canzar, &amp; Klau, 2013; Nye, Liò, &amp; Gilks, 2006)</span> seek to address this issue. This category of metrics aim to acknowledge semblances between similar-but-not-quite-identical pairs of splits, which would contribute zero to tree similarity under the standard Robinson-Foulds measure.</p>
 <p>Generalized RF distances work by finding a <em>matching</em> that pairs splits from one tree with splits in the other. Each pairing is scored according to the similarity of the paired splits; the sum of these scores is the score of the matching. The tree distance is given by the score of the optimal matching.</p>
 <div id="constructing-a-matching" class="section level2">
 <h2 class="hasAnchor">
@@ -281,11 +281,20 @@
 <h2 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h2>
 <div id="refs" class="references">
+<div id="ref-Bocker2013">
+<p>Böcker, S., Canzar, S., &amp; Klau, G. W. (2013). The generalized Robinson-Foulds metric. In A. Darling &amp; J. Stoye (Eds.), <em>Algorithms in Bioinformatics. WABI 2013. Lecture Notes in Computer Science, vol 8126</em> (pp. 156–169). Berlin, Heidelberg: Springer. doi:<a href="https://doi.org/10.1007/978-3-642-40453-5_13">10.1007/978-3-642-40453-5_13</a></p>
+</div>
+<div id="ref-Nye2006">
+<p>Nye, T. M. W., Liò, P., &amp; Gilks, W. R. (2006). A novel algorithm and web-based tool for comparing two alternative phylogenetic trees. <em>Bioinformatics</em>, <em>22</em>(1), 117–119. doi:<a href="https://doi.org/10.1093/bioinformatics/bti720">10.1093/bioinformatics/bti720</a></p>
+</div>
 <div id="ref-Robinson1981">
 <p>Robinson, D. F., &amp; Foulds, L. R. (1981). Comparison of phylogenetic trees. <em>Mathematical Biosciences</em>, <em>53</em>(1-2), 131–147. doi:<a href="https://doi.org/10.1016/0025-5564(81)90043-2">10.1016/0025-5564(81)90043-2</a></p>
 </div>
 <div id="ref-Schuh1980">
 <p>Schuh, R. T., &amp; Polhemus, J. T. (1980). Analysis of taxonomic congruence among morphological, ecological and biogeographic data sets for the Leptopodomorpha (Hemiptera). <em>Systematic Biology</em>, <em>29</em>(1), 1–26. doi:<a href="https://doi.org/10.1093/sysbio/29.1.1">10.1093/sysbio/29.1.1</a></p>
+</div>
+<div id="ref-SmithDist">
+<p>Smith, M. R. (2020). Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees. <em>Bioinformatics</em>, in production. doi:<a href="https://doi.org/10.1093/bioinformatics/btaa614">10.1093/bioinformatics/btaa614</a></p>
 </div>
 </div>
 </div>
