@@ -69,7 +69,7 @@ navbar:
       - text: Concepts of information
         href: articles/information.html
       - text: Evaluating tree distance metrics
-        href: articles/Tree-distance-metric-evaluation.html
+        href: articles/Tree-distance-interpretation.html
       
     news:
       text: Changelog
