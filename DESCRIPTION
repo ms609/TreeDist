@@ -13,9 +13,10 @@ Authors@R: c(person("Martin R.", 'Smith',
             )
 License: GPL (>= 3)
 Description: Implements measures of tree similarity, including 
-  Information-based generalized Robinson-Foulds distances
-  (Phylogenetic Information Distance, Clustering Information Distance;
-  Smith, 2020) <10.1093/bioinformatics/btaa614>; 
+  information-based generalized Robinson-Foulds distances
+  (Phylogenetic Information Distance, Clustering Information Distance,
+  Matching Split Information Distance; Smith, 2020)
+  <doi:10.1093/bioinformatics/btaa614>; 
   Jaccard-Robinson-Foulds distances (Bocker et al. 2013)
   <doi:10.1007/978-3-642-40453-5_13>, 
   including the Nye et al. (2006) metric <doi:10.1093/bioinformatics/bti720>;
