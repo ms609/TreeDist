@@ -206,7 +206,8 @@ axis(2)
 # Information-corrected Robinson-Foulds distance
 
 This differing information content can be accommodated by weighting each
-split according to the amount of phylogenetic information it contains.
+split according to the amount of phylogenetic information it contains
+[@SmithDist].
 The two tree pairs below both have a Robinson-Foulds distance of two,
 but the first pair differ with regard to 
 an uneven split (`ABCDEF|GH`), so obtain a total difference
@@ -243,7 +244,8 @@ tree2 <- ape::read.tree(text='(8, (1, (2, (3, (4, (5, (6, 7)))))));')
 VisualizeMatching(RobinsonFouldsMatching, tree1, tree2, Plot = TreeDistPlot)
 ```
 
-Generalized Robinson-Foulds distances seek to address this issue. 
+Generalized Robinson-Foulds distances [@Nye2006;@Bocker2013] seek to address
+this issue. 
 This category of metrics aim to acknowledge semblances between similar-but-not-quite-identical pairs of splits, which would contribute 
 zero to tree similarity under the standard Robinson-Foulds measure.
 
