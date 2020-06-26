@@ -48,32 +48,32 @@ navbar:
   components:
     home:
       icon: fa-home fa-lg
-      href: /index.html
+      href: index.html
     get-started:
       text: Get started
-      href: /articles/Using-TreeDist.html
+      href: articles/Using-TreeDist.html
     reference:
       text: Reference
-      href: /reference/index.html
+      href: reference/index.html
     articles:
       text: Articles
       menu:
       - text: Using TreeDist to calculate tree similarity
-        href: /articles/Using-TreeDist.html
+        href: articles/Using-TreeDist.html
       - text: Contextualizing tree distances
-        href: /articles/using-distances.html
+        href: articles/using-distances.html
       - text: Robinson-Foulds metric
-        href: /articles/Robinson-Foulds.html
+        href: articles/Robinson-Foulds.html
       - text: Generalized Robinson-Foulds distances
-        href: /articles/Generalized-RF.html
+        href: articles/Generalized-RF.html
       - text: Concepts of information
-        href: /articles/information.html
+        href: articles/information.html
       - text: Evaluating tree distance metrics
-        href: /articles/Tree-distance-interpretation.html
+        href: articles/Tree-distance-interpretation.html
       
     news:
       text: Changelog
-      href: /news/index.html
+      href: news/index.html
     github:
       icon: fa-github fa-lg
       href: https://github.com/ms609/TreeDist
