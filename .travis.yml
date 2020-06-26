@@ -35,7 +35,10 @@ jobs:
         - Rscript -e "covr::codecov()"
     - os: osx
       r: release
-      r_github_packages: ms609/TreeDistData
+      r_github_packages:
+        - ms609/TreeDist
+        - ms609/TBRDist
+        - ms609/TreeDistData
       before_install:
       - sudo tlmgr install doi titling hyperref
 #  allow_failures:
