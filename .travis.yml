@@ -21,7 +21,6 @@ jobs:
        #- roxygen2
        #- testthat
        #- usethis
-      r_github_packages: ms609/TreeDistData
       deploy:
         provider: script
         script: Rscript -e 'pkgdown::deploy_site_github()'
