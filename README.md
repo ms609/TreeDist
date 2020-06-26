@@ -114,24 +114,32 @@ Other R packages implementing tree distance functions include:
 # References
 
 - Böcker, S. _et al._ (2013) [The Generalized Robinson-Foulds
-Metric](https://dx.doi.org/10.1007/978-3-642-40453-5_13). Algorithms in Bioinformatics. WABI 2013. Lecture Notes in Computer Science, 8126, 156–69.
+Metric](https://dx.doi.org/10.1007/978-3-642-40453-5_13).
+Algorithms in Bioinformatics. WABI 2013.
+_Lecture Notes in Computer Science_, 8126, 156–69.
 
 - Bogdanowicz, D. and Giaro, K. (2012) [Matching split distance for unrooted
-binary phylogenetic trees](https://dx.doi.org/10.1109/TCBB.2011.48). IEEE/ACM Transactions on Computational Biology and Bioinformatics, 9, 150–160. 
+binary phylogenetic trees](https://dx.doi.org/10.1109/TCBB.2011.48).
+_IEEE/ACM Transactions on Computational Biology and Bioinformatics_, 9, 150–160. 
 
 - Kendall, M. and Colijn, C. (2016) [Mapping phylogenetic trees to reveal
-distinct patterns of evolution](https://dx.doi.org/10.1093/molbev/msw124). Mol Biol Evol, 33, 2735–2743.
+distinct patterns of evolution](https://dx.doi.org/10.1093/molbev/msw124).
+_Mol Biol Evol_, 33, 2735–2743.
 
 - Li, M., Tromp, J. and Zhang, L.-X. (1996) [Some notes on the nearest neighbour
-interchange distance](https://dx.doi.org/10.1007/3-540-61332-3_168). Computing
-and Combinatorics, Goos, G., Hartmanis, J., Leeuwen, J., Cai, J.-Y., and 
-Wong, C. K., eds. Springer, Berlin. 343--351.
+interchange distance](https://dx.doi.org/10.1007/3-540-61332-3_168). 
+_Computing and Combinatorics_, Goos, G., Hartmanis, J., Leeuwen, J., Cai, J.-Y.,
+and Wong, C. K., eds. Springer, Berlin. 343--351.
 
 - Nye, T.M.W. _et al._ (2006) [A novel algorithm and web-based tool for
-comparing two alternative phylogenetic trees](https://dx.doi.org/10.1093/bioinformatics/bti720). Bioinformatics, 22, 117–119.
+comparing two alternative phylogenetic
+trees](https://dx.doi.org/10.1093/bioinformatics/bti720).
+_Bioinformatics_, 22, 117–119.
 
 - Smith, M.R. (2020) [Information theoretic Generalized Robinson-Foulds
-metrics for comparing phylogenetic trees]. Bioinformatics, in production.
+metrics for comparing phylogenetic 
+trees](https://dx.doi.org/10.1093/bioinformatics/btaa614).
+_Bioinformatics_, in production.
 
 Please note that the 'TreeDist' project is released with a
 [Contributor Code of Conduct](CODE_OF_CONDUCT.md).

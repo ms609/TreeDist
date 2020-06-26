@@ -21,7 +21,7 @@ for comparing phylogenetic trees",
 for comparing phylogenetic trees. ", 
              " Bioinformatics.",
              " In production.",
-             " doi: 10.XXXX/XXXXX"))
+             " doi: 10.1093/bioinformatics/btaa614"))
 
 citEntry(entry = "manual",
       key = "TreeDist",
