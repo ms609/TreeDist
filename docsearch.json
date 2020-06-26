@@ -2,21 +2,21 @@
   "index_name": "treedist",
   "start_urls": [
     {
-      "url": "https://ms609.github.io/TreeDist/index.html",
+      "url": "https://ms609.github.io/TreeDist//index.html",
       "selectors_key": "homepage",
       "tags": [
         "homepage"
       ]
     },
     {
-      "url": "https://ms609.github.io/TreeDist/reference",
+      "url": "https://ms609.github.io/TreeDist//reference",
       "selectors_key": "reference",
       "tags": [
         "reference"
       ]
     },
     {
-      "url": "https://ms609.github.io/TreeDist/articles",
+      "url": "https://ms609.github.io/TreeDist//articles",
       "selectors_key": "articles",
       "tags": [
         "articles"
@@ -30,7 +30,7 @@
     "/articles/index.html"
   ],
   "sitemap_urls": [
-    "https://ms609.github.io/TreeDist/sitemap.xml"
+    "https://ms609.github.io/TreeDist//sitemap.xml"
   ],
   "selectors": {
     "homepage": {

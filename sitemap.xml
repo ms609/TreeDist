@@ -1,120 +1,120 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://ms609.github.io/TreeDist/index.html</loc>
+    <loc>https://ms609.github.io/TreeDist//index.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/AllSplitPairings.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/AllSplitPairings.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/CalculateTreeDistance.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/CalculateTreeDistance.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/ClusteringEntropy.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/ClusteringEntropy.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/CompareAll.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/CompareAll.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/Entropy.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/Entropy.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/GeneralizedRF.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/GeneralizedRF.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/JaccardRobinsonFoulds.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/JaccardRobinsonFoulds.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/KendallColijn.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/KendallColijn.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/LAPJV.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/LAPJV.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/MASTSize.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/MASTSize.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/MatchingSplitDistance.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/MeilaVariationOfInformation.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/MeilaVariationOfInformation.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/NNIDist.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/NNIDist.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/NormalizeInfo.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/NormalizeInfo.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/NyeSimilarity.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/NyeSimilarity.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/PathDist.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/PathDist.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/ReportMatching.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/ReportMatching.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/Robinson-Foulds.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/Robinson-Foulds.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/SPRDist.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/SPRDist.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/SplitEntropy.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/SplitEntropy.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/SplitSharedInformation.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/SplitSharedInformation.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/SplitsCompatible.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/SplitsCompatible.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/SplitsInBinaryTree.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/SplitsInBinaryTree.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/SplitwiseInfo.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/SplitwiseInfo.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/TreeDist-package.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/TreeDist-package.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/TreeDistPlot.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/TreeDistPlot.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/TreeDistance.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/TreeDistance.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/VisualizeMatching.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/VisualizeMatching.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/dot-MASTSizeEdges.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/dot-MASTSizeEdges.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/dot-PairMean.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/dot-PairMean.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/dot-TreeDistance.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/dot-TreeDistance.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/median.multiPhylo.html</loc>
+    <loc>https://ms609.github.io/TreeDist//reference/median.multiPhylo.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/articles/Generalized-RF.html</loc>
+    <loc>https://ms609.github.io/TreeDist//articles/Generalized-RF.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html</loc>
+    <loc>https://ms609.github.io/TreeDist//articles/Robinson-Foulds.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/articles/Tree-distance-interpretation.html</loc>
+    <loc>https://ms609.github.io/TreeDist//articles/Tree-distance-interpretation.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/articles/Using-TreeDist.html</loc>
+    <loc>https://ms609.github.io/TreeDist//articles/Using-TreeDist.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/articles/information.html</loc>
+    <loc>https://ms609.github.io/TreeDist//articles/information.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/articles/using-distances.html</loc>
+    <loc>https://ms609.github.io/TreeDist//articles/using-distances.html</loc>
   </url>
 </urlset>
