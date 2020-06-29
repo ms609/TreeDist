@@ -127,7 +127,10 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   adjVal <- c(0.5, 1.1)
   faint <- '#aaaaaa'
   
-  if (setPar) origPar <- par(mfrow = c(1, 2), mar = rep(0.5, 4))
+  if (setPar) {
+    origPar <- par(mfrow = c(1, 2), mar = rep(0.5, 4))
+    on.exit(par(origPar))
+  }
   
   LabelUnpaired <- function (splitEdges, unpaired) {
     if (any(unpaired)) {
@@ -150,7 +153,6 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
         scores[is.na(scores)] <- 0
       }
       if (any(scores < 0)) {
-        par(origPar) # Restore original parameters before exit
         stop('Negative scores not supported')                                   # nocov
       }
       if (max(scores) == 0) return(scores)
@@ -232,8 +234,6 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
                col = ifelse(pairedPairScores, 'black', faint))
   }
   LabelUnpaired(splitEdges2, !paired2)
-  
-  if (setPar) par(origPar)
   
   # Return:
   invisible()
