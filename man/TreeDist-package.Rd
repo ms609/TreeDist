@@ -114,9 +114,9 @@ Geodesic distance
 
 Other contributors:
 \itemize{
-  \item Roy Jonker \email{roy_jonker@magiclogic.com} [programmer]
-  \item Yong Yang \email{yongyanglink@gmail.com} [contributor]
-  \item Yi Cao [contributor]
+  \item Roy Jonker \email{roy_jonker@magiclogic.com} [programmer, copyright holder]
+  \item Yong Yang \email{yongyanglink@gmail.com} [contributor, copyright holder]
+  \item Yi Cao [contributor, copyright holder]
 }
 
 }
