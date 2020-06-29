@@ -163,11 +163,11 @@
 
 <span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span>(<span class="no">oneTree</span>, <span class="no">twoTrees</span>)</pre></body></html></div>
 <pre><code>##       one       two 
-## 0.2356677 0.2465176</code></pre>
+## 0.2140819 0.2119571</code></pre>
 <div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span>(<span class="no">twoTrees</span>, <span class="no">threeTrees</span>)</pre></body></html></div>
 <pre><code>##             a         b         c
-## one 0.2107683 0.1379864 0.3451259
-## two 0.1896685 0.1517519 0.2396995</code></pre>
+## one 0.1214836 0.1762961 0.1970605
+## two 0.1795087 0.1595449 0.2081226</code></pre>
 </div>
 </div>
 <div id="visualizing-a-matching" class="section level2">
@@ -214,7 +214,6 @@ Each split is labelled with a measure of its similarity, which is its contributi
 <span class="kw pkg">ape</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/nodelabels.html">nodelabels</a></span>(<span class="no">splits</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">splits</span>)),
                 <span class="kw">adj</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1.1</span>, -<span class="fl">0.2</span>), <span class="kw">cex</span> <span class="kw">=</span> <span class="fl">0.8</span>, <span class="kw">frame</span> <span class="kw">=</span> <span class="st">'none'</span>)</pre></body></html></div>
 <p><img src="Using-TreeDist_files/figure-html/named-splits-1.png" width="80%" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="no">oldPar</span>)</pre></body></html></div>
 <p>Note that strictly, (informative) splits are associated with (internal) edges. To avoid listing the same split twice, nodes close to the root (here, 10 and 11) will not be associated with a split.</p>
 </div>
 <div id="what-next" class="section level2">
