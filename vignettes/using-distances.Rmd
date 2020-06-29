@@ -120,7 +120,7 @@ NyeSimilarity(tree1, tree2, normalize = TreeTools::NSplits(tree1))
 
 The diameter (maximum possible distance) of the Nye _et al_. tree similarity
 metric is easy to calculate, but this is not the case for all metrics.
-For example, the clustering information distance metric [@Smith2020]
+For example, the clustering information distance metric [@SmithDist]
 ranges in principle from zero to the total clustering entropy present in a 
 pair of trees.
 But with even a modest number of leaves, no pairs of trees exist in which every

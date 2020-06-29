@@ -59,7 +59,7 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
   msdNorm <- nls(msdMax ~ (a * nTip) + (c * nTip ^ b) + d,
                  start = list(a = -16.795, b = 1.135, c = 14.25, d = 1.86))
   
-  nniNorm <-  nls(nniMax ~ (a * nTip) + (c * nTip ^ b) + d + e * (nTip ^2) + f * (nTip ^3),
+  nniNorm <-  nls(nniMax ~ (a * nTip) + (c * nTip ^ b) + d + e * (nTip ^ 2) + f * (nTip ^ 3),
                   start = list(a = -16.7, b = 1.1, c = 14, d = 6, e = 0.01, f = 0.01))
   
   #tbrNorm <-  nls(tbrMax ~ (a * nTip) + (c * nTip ^ b) + d + e * (nTip ^2) + f * (nTip ^3),

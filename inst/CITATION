@@ -26,8 +26,8 @@ for comparing phylogenetic trees. ",
 
 citEntry(entry = "manual",
       key = "TreeDist",
-      title = paste0("TreeDist: Distances between Phylogenetic Trees. ",
-      "R package version ", vers),
+      title = paste0("TreeDist: Distances between Phylogenetic Trees.",
+      " R package version ", vers),
       author = personList(as.person("Martin R. Smith")),
       doi = "10.5281/zenodo.3528124",
       journal = "Comprehensive R Archive Network",
@@ -35,8 +35,8 @@ citEntry(entry = "manual",
 
       textVersion =
       paste0("Smith, M.R. (2020b).",
-             " TreeDist: Distances between Phylogenetic Trees. ", 
-             "R package version ", vers, ".",
+             " TreeDist: Distances between Phylogenetic Trees.", 
+             " R package version ", vers, ".",
              " Comprehensive R Archive Network.",
              " doi:10.5281/zenodo.3528124"))
 
