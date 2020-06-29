@@ -122,6 +122,8 @@ plot(tree2)
 ape::nodelabels()
 ape::nodelabels(splits, as.integer(names(splits)), 
                 adj = c(1.1, -0.2), cex = 0.8, frame = 'none')
+```
+```{r, echo=FALSE}
 par(oldPar)
 ```
 
