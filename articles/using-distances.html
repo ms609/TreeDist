@@ -117,7 +117,7 @@
       <h1 data-toc-skip>Contextualizing tree distances</h1>
                         <h4 class="author"><a href="https://community.dur.ac.uk/martin.smith/">Martin R. Smith</a></h4>
             
-            <h4 class="date">2020-06-26</h4>
+            <h4 class="date">2020-06-29</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/using-distances.Rmd"><code>vignettes/using-distances.Rmd</code></a></small>
       <div class="hidden name"><code>using-distances.Rmd</code></div>
@@ -194,7 +194,7 @@ In such a context, it can be relevant to normalize tree similarity against the <
   <span class="no">methodCol</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="kw">pid</span> <span class="kw">=</span> <span class="st">'#e15659'</span>, <span class="kw">cid</span> <span class="kw">=</span> <span class="st">'#58a14e'</span>, <span class="kw">nye</span> <span class="kw">=</span> <span class="st">'#edc949'</span>,
                  <span class="kw">qd</span> <span class="kw">=</span> <span class="st">'#af7aa1'</span>)
 
-  <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="kw">cex</span> <span class="kw">=</span> <span class="fl">0.7</span>, <span class="kw">mar</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">5</span>, <span class="fl">5</span>, <span class="fl">0.01</span>, <span class="fl">0.01</span>))
+  <span class="no">oldPar</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="kw">cex</span> <span class="kw">=</span> <span class="fl">0.7</span>, <span class="kw">mar</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">5</span>, <span class="fl">5</span>, <span class="fl">0.01</span>, <span class="fl">0.01</span>))
   <span class="no">nLeaves</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/dimnames.html">dimnames</a></span>(<span class="no">randomTreeDistances</span>)<span class="kw">[[</span><span class="fl">3</span>]])
   <span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">nLeaves</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">'n'</span>, <span class="no">randomTreeDistances</span>[<span class="st">'pid'</span>, <span class="st">'mean'</span>, ],
        <span class="kw">ylim</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.4</span>, <span class="fl">1</span>),
@@ -215,6 +215,7 @@ In such a context, it can be relevant to normalize tree similarity against the <
          <span class="fu"><a href="https://rdrr.io/r/base/expression.html">expression</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span>(<span class="fu"><a href="https://rdrr.io/r/grDevices/plotmath.html">plain</a></span>(<span class="st">'Nye '</span>), <span class="fu"><a href="https://rdrr.io/r/grDevices/plotmath.html">italic</a></span>(<span class="st">'et al.'</span>))),
          <span class="st">'Quartet divergence'</span>
          ), <span class="kw">col</span> <span class="kw">=</span> <span class="no">methodCol</span>[<span class="no">methods</span>], <span class="kw">pos</span> <span class="kw">=</span> <span class="fl">2</span>)
+  <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="no">oldPar</span>)
 }</pre></body></html></div>
 <p><img src="using-distances_files/figure-html/unnamed-chunk-10-1.png" width="672"></p>
 <p>or use these calculated values to normalize our tree distance:</p>
@@ -246,7 +247,7 @@ In such a context, it can be relevant to normalize tree similarity against the <
 <p>Better trees plot vertically towards the ‘100% shared information’ vertex. Resolution of trees increases towards the right; trees that are more resolved may be no better than less-resolved trees if the addition of resolution introduces error.</p>
 <div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="kw">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span>(<span class="st">'Ternary'</span>, <span class="kw">quietly</span> <span class="kw">=</span> <span class="fl">TRUE</span>)) {
   <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">'Ternary'</span>)
-  <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="kw">mar</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">0.1</span>, <span class="fl">4</span>))
+  <span class="no">oldPar</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="kw">mar</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">0.1</span>, <span class="fl">4</span>))
   <span class="fu"><a href="https://ms609.github.io/Ternary/reference/TernaryPlot.html">TernaryPlot</a></span>(<span class="kw">alab</span> <span class="kw">=</span> <span class="st">'Absent information'</span>, <span class="kw">blab</span> <span class="kw">=</span> <span class="st">'Shared information'</span>,
               <span class="kw">clab</span> <span class="kw">=</span> <span class="st">'Misinformation'</span>,
               <span class="kw">lab.cex</span> <span class="kw">=</span> <span class="fl">0.8</span>, <span class="kw">lab.offset</span> <span class="kw">=</span> <span class="fl">0.18</span>,
@@ -261,6 +262,7 @@ In such a context, it can be relevant to normalize tree similarity against the <
   <span class="no">incorrect</span> <span class="kw">&lt;-</span> <span class="no">resolved</span> - <span class="no">correct</span>
   <span class="fu"><a href="https://ms609.github.io/Ternary/reference/AddToTernary.html">TernaryPoints</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span>(<span class="no">unresolved</span>, <span class="no">correct</span>, <span class="no">incorrect</span>),
                 <span class="kw">pch</span> <span class="kw">=</span> <span class="fl">1</span>:<span class="fl">4</span>, <span class="kw">cex</span> <span class="kw">=</span> <span class="fl">2</span>, <span class="kw">col</span> <span class="kw">=</span> <span class="kw pkg">Ternary</span><span class="kw ns">::</span><span class="no"><a href="https://ms609.github.io/Ternary/reference/cbPalettes.html">cbPalette8</a></span>[<span class="fl">1</span>:<span class="fl">4</span>])
+  <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="no">oldPar</span>)
 }</pre></body></html></div>
 <p><img src="using-distances_files/figure-html/unnamed-chunk-13-1.png" width="50%" style="display: block; margin: auto;"></p>
 <div id="example" class="section level3">
@@ -311,7 +313,7 @@ In such a context, it can be relevant to normalize tree similarity against the <
 <p>Now we can plot this information on a ternary diagram.</p>
 <div class="sourceCode" id="cb33"><html><body><pre class="r"><span class="kw">if</span> (<span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span>(<span class="st">'Ternary'</span>, <span class="kw">quietly</span> <span class="kw">=</span> <span class="fl">TRUE</span>)) {
   <span class="fu"><a href="https://rdrr.io/r/graphics/layout.html">layout</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>, <span class="fl">2</span>), <span class="kw">ncol</span> <span class="kw">=</span> <span class="fl">2</span>), <span class="kw">widths</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">5</span>, <span class="fl">2</span>))
-  <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="kw">mar</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">0</span>, <span class="fl">4</span>))
+  <span class="no">oldPar</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="kw">mar</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span>(<span class="fl">0</span>, <span class="fl">4</span>))
   <span class="fu"><a href="https://ms609.github.io/Ternary/reference/TernaryPlot.html">TernaryPlot</a></span>(<span class="kw">alab</span> <span class="kw">=</span> <span class="st">'Information absent in degraded tree'</span>,
               <span class="kw">blab</span> <span class="kw">=</span> <span class="st">'\n\nCorrect information in degraded tree'</span>,
               <span class="kw">clab</span> <span class="kw">=</span> <span class="st">'Misinformation in degraded tree'</span>,
@@ -350,6 +352,7 @@ In such a context, it can be relevant to normalize tree similarity against the <
     <span class="fu">HorizontalKDE</span>(<span class="no">correct3</span> / <span class="no">infoInTree3</span>, <span class="no">col3</span>, <span class="kw">add</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
     <span class="fu"><a href="https://rdrr.io/r/graphics/mtext.html">mtext</a></span>(<span class="st">'\u2192 Normalized tree quality \u2192'</span>, <span class="fl">2</span>)
   }
+  <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="no">oldPar</span>)
 }</pre></body></html></div>
 <p><img src="using-distances_files/figure-html/unnamed-chunk-22-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>In the ternary plot, the vertical direction corresponds to the normalized tree quality, as depicted in the accompanying histogram.</p>
