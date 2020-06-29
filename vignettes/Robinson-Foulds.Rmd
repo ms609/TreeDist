@@ -17,7 +17,7 @@ library('TreeDist')
 standardMargin <- c(0.4, 0.4, 0.8, 0.4)
 cbPalette8 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
                 "#0072B2", "#D55E00", "#CC79A7")
-TwoTreePlot <- function () par(mfrow=c(1, 2), mar=standardMargin, cex=0.9)
+TwoTreePlot <- function () par(mfrow = c(1, 2), mar = standardMargin, cex = 0.9)
 
 Plot <- function (tree, tree2 = NULL, highlight = character(0),
                   prune = if (is.null(tree2)) integer(0) 
@@ -59,7 +59,7 @@ For example, the trees below have one split, two edges and three nodes in
 common.
 
 ```{R, echo=FALSE, fig.width = 6, fig.align = 'center'}
-TwoTreePlot()
+startPar <- TwoTreePlot()
 palette <- colorspace::qualitative_hcl(5, c=42, l=88)
 TreeDistPlot(balancedTree <- 
                read.tree(text="(((1, 2), (3, 4)), ((5, 6), (7, 8)));"))
@@ -350,5 +350,9 @@ alternative optimal matching would leave these splits unpaired.
 - Alternatives measures of split similarity, such as 
 [mutual clustering information](information.html), give rise to other
 [Generalized Robinson-Foulds distances](Generalized-RF.html).
+
+```{r echo=FALSE}
+par(startPar)
+```
 
 ## References

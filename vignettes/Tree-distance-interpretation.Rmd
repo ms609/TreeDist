@@ -107,10 +107,8 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
     #pointsAt <- 1:10 * 20L
   }
   
-  par(mfrow = c(3, 1))
-  par(cex = 0.7)
-  par(oma = rep(0, 4))
-  par(mar = c(5, 5, 0.01, 0.01))
+  oldPar <- par(mfrow = c(3, 1), cex = 0.7, oma = rep(0, 4),
+                mar = c(5, 5, 0.01, 0.01))
   PlotMethods <- function (methods, yMin = 0.4,
                            lp = c('bottomright', 'bottomleft')) {
     plot(as.integer(dimnames(randomTreeDistances)[[3]]),
@@ -138,6 +136,7 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
   PlotMethods(c('nni_u', 'tbr_u', 'spr', 'masti', 'mast',
                 'path', 'qd', 'tbr_l', 'nni_l'), yMin = 0.14, 
               lp = c('bottomright', 'right'))
+  par(oldPar)
 } else {
   cat("\nInstall package 'TreeDistData' to render this chart.")
 }

@@ -149,7 +149,7 @@ library('TreeDist')
 H <- function(inBracket) {
   expression(paste(italic('H'), plain('('), italic(inBracket), plain(')')))
 }
-par(mar = c(3.1, 0.1, 0, 0.1))
+oldPar <- par(mar = c(3.1, 0.1, 0, 0.1))
 joint <- Entropy(c(1, 2, 1, 2) / 6)
 plot(0, type = 'n', xlim = c(0, joint), ylim = c(5, 0), axes = FALSE)
 axis(1, at = c(0, 0.5, 1, 1.5, round(joint, 2)))
@@ -182,8 +182,7 @@ rect(0, 4.1, joint - 1, 4.9, col = "#F0E442")
 rect(1, 4.1, joint, 4.9,     col = "#F0E442")
 text(joint / 2, 4.5, 
      expression(paste(italic('H'['D']), plain('('), italic('A, B'), plain(')'))))
-
-
+par(oldPar)
 ```
 
 ### Application to splits

@@ -158,7 +158,7 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
   methodCol <- c(pid = '#e15659', cid = '#58a14e', nye = '#edc949',
                  qd = '#af7aa1')
   
-  par(cex = 0.7, mar = c(5, 5, 0.01, 0.01))
+  oldPar <- par(cex = 0.7, mar = c(5, 5, 0.01, 0.01))
   nLeaves <- as.integer(dimnames(randomTreeDistances)[[3]])
   plot(nLeaves, type = 'n', randomTreeDistances['pid', 'mean', ],
        ylim = c(0.4, 1),
@@ -179,6 +179,7 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
          expression(paste(plain('Nye '), italic('et al.'))),
          'Quartet divergence'
          ), col = methodCol[methods], pos = 2)
+  par(oldPar)
 }
 ```
 
@@ -231,7 +232,7 @@ resolution introduces error.
 ```{r, fig.width=4, fig.align='center', fig.asp=1, out.width='50%'}
 if (requireNamespace('Ternary', quietly = TRUE)) {
   library('Ternary')
-  par(mar = rep(0.1, 4))
+  oldPar <- par(mar = rep(0.1, 4))
   TernaryPlot(alab = 'Absent information', blab = 'Shared information',
               clab = 'Misinformation',
               lab.cex = 0.8, lab.offset = 0.18,
@@ -246,6 +247,7 @@ if (requireNamespace('Ternary', quietly = TRUE)) {
   incorrect <- resolved - correct
   TernaryPoints(cbind(unresolved, correct, incorrect), 
                 pch = 1:4, cex = 2, col = Ternary::cbPalette8[1:4])
+  par(oldPar)
 }
 ```
 
@@ -341,7 +343,7 @@ Now we can plot this information on a ternary diagram.
 ```{r, fig.width=7, fig.align='center', fig.asp=5/7, out.width='70%'}
 if (requireNamespace('Ternary', quietly = TRUE)) {
   layout(matrix(c(1, 2), ncol = 2), widths = c(5, 2))
-  par(mar = rep(0, 4))
+  oldPar <- par(mar = rep(0, 4))
   TernaryPlot(alab = 'Information absent in degraded tree', 
               blab = '\n\nCorrect information in degraded tree', 
               clab = 'Misinformation in degraded tree',
@@ -380,6 +382,7 @@ if (requireNamespace('Ternary', quietly = TRUE)) {
     HorizontalKDE(correct3 / infoInTree3, col3, add = TRUE)
     mtext('\u2192 Normalized tree quality \u2192', 2)
   }
+  par(oldPar)
 }
 ```
 
