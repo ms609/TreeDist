@@ -3,6 +3,7 @@ library('vdiffr')
 library('TreeTools')
 context("plot.R")
 
+if (packageVersion('graphics') < '4.1')
 test_that('TreeDistPlot works', {
   tr <- PectinateTree(1:11)
   tr$edge.width <- rep(1:2, 10)
@@ -24,9 +25,10 @@ test_that('TreeDistPlot works', {
   tr$tip.label <- LETTERS[1:11]
   expect_doppelganger("Test-UC-LETTERS", Test2)
   
-})
+}) else expect_false(packageVersion('graphics') < '4.1')
 
-test_that('VisualizeMatching works', {
+if (packageVersion('graphics') < '4.1')
+test_that('VisualizeMatching() works', {
   tree1 <- PectinateTree(1:11)
   tree2 <- tree1
   tree2$tip.label[c(11, 1)] <- tree1$tip.label[c(1, 11)]
