@@ -53,7 +53,7 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
   
   nTip <- as.integer(dimnames(randomTreeDistances)[[3]])
   
-  pathNorm <- nls(pathMax ~ a * (nTip ^2) + b * (nTip ^3) + nTip ^ c,
+  pathNorm <- nls(pathMax ~ a * (nTip ^ 2) + b * (nTip ^ 3) + nTip ^ c,
                   start = list(a = -0.0444, b = 4.6e-5, c = 1.478))
   
   msNorm <- nls(msMax ~ (a * nTip) + (c * nTip ^ b) + d,
