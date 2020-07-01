@@ -47,7 +47,7 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
   
   data('randomTreeDistances', package = 'TreeDistData')
   pathMax <- randomTreeDistances['path', 'max', ]
-  msdMax <- randomTreeDistances['ms', 'max', ]
+  msMax <- randomTreeDistances['ms', 'max', ]
   nniMax <- randomTreeDistances['nni_u', 'max', ]
   tbrMax <- randomTreeDistances['tbr_u', 'max', ]
   
@@ -56,7 +56,7 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
   pathNorm <- nls(pathMax ~ a * (nTip ^2) + b * (nTip ^3) + nTip ^ c,
                   start = list(a = -0.0444, b = 4.6e-5, c = 1.478))
   
-  msdNorm <- nls(msdMax ~ (a * nTip) + (c * nTip ^ b) + d,
+  msNorm <- nls(msMax ~ (a * nTip) + (c * nTip ^ b) + d,
                  start = list(a = -16.795, b = 1.135, c = 14.25, d = 1.86))
   
   nniNorm <-  nls(nniMax ~ (a * nTip) + (c * nTip ^ b) + d + e * (nTip ^ 2) + f * (nTip ^ 3),
@@ -69,9 +69,9 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
   
   normalizeAgainst <- rbind(
     path = predict(pathNorm),
-    msd = predict(msdNorm),
     nni_u = predict(nniNorm),
     nni_l = predict(nniNorm),
+    ms = predict(msNorm),
     spr = nTip / 2L,
     tbr_u = nTip,
     tbr_l = nTip,
