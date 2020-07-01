@@ -62,8 +62,6 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
   nniNorm <-  nls(nniMax ~ (a * nTip) + (c * nTip ^ b) + d + e * (nTip ^ 2) + f * (nTip ^ 3),
                   start = list(a = -16.7, b = 1.1, c = 14, d = 6, e = 0.01, f = 0.01))
   
-  #tbrNorm <-  nls(tbrMax ~ (a * nTip) + (c * nTip ^ b) + d + e * (nTip ^2) + f * (nTip ^3),
-  #                start = list(a = 1, b = 1, c = 0.01, d = 1, e = 0.01, f = 0.01))
   tbrNorm <-  lm(tbrMax ~ nTip)
   
   
