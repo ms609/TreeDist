@@ -114,7 +114,7 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
          ylim = c(yMin, 1), type = 'n',
          xlab = "Number of leaves", ylab = "Normalized tree distance")
     for (method in methods) AddLine(method, 
-                                    method %in% c('msd', rownames(normalizeAgainst)))
+                                    method %in% c('ms', rownames(normalizeAgainst)))
     
     
     legend(lp[1], bty = 'n',
