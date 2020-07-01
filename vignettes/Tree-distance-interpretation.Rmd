@@ -62,7 +62,7 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
   nniNorm <-  nls(nniMax ~ (a * nTip) + (c * nTip ^ b) + d + e * (nTip ^ 2) + f * (nTip ^ 3),
                   start = list(a = -16.7, b = 1.1, c = 14, d = 6, e = 0.01, f = 0.01))
   
-  tbrNorm <-  lm(tbrMax ~ nTip)
+  #tbrNorm <- lm(log(tbrMax) ~ log(nTip))
   
   
   normalizeAgainst <- rbind(
@@ -71,8 +71,8 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
     nni_l = predict(nniNorm),
     ms = predict(msNorm),
     spr = nTip / 2L,
-    tbr_u = nTip,
-    tbr_l = nTip,
+    tbr_u = nTip, #exp(predict(tbrNorm)),
+    tbr_l = nTip, #exp(predict(tbrNorm)),
     rf = (nTip - 3L) * 2L,
     mast = nTip,
     masti = TreeTools::LnUnrooted(nTip) / log(2)
