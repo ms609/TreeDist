@@ -12,9 +12,13 @@ const int16 NNI_MAX_TIPS = 5000; /* To avoid variable length arrays */
 const int16 N_EXACT = 12;
 const int16 exact_diameter[] = {0, 0, 0, 0, 1, 3, 5, 7, 10, 12, 15, 18, 21};
 
-int16 sorting_number (int16 n_tip) {
+int16 fack_number (const int16 n) {
+  return ((n - 2) * std::ceil(log2(n))) + n; // +1 for strict inequality
+}
+
+int16 sorting_number (const int16 n_tip) {
   const int16 log_ceiling = std::ceil(log2(n_tip));
-  return (n_tip * log_ceiling - std::pow(2, log_ceiling) + 1);
+  return n_tip * log_ceiling - std::pow(2, log_ceiling) + 1;
 }
 
 int16 degenerate_distance (const int16 n_tip) {
@@ -34,17 +38,17 @@ int16 degenerate_distance (const int16 n_tip) {
    * other side by one. */
   const int16 tips_left = n_tip - tips_in_full;
   const int16 min_backbone_nodes = 
-    (nodes_in_full + std::ceil(log2(tips_left / 2)) + 1 > 0) ?
-     nodes_in_full + std::ceil(log2(tips_left / 2)) + 1 : 0;
+    (nodes_in_full + std::ceil(log2(tips_left) - 1) + 1 > 0) ?
+     nodes_in_full + std::ceil(log2(tips_left) - 1) + 1 : 0;
 
   /* The worst-case scenario requires a move for every node not on the backbone: */
   const int16 n_node = (n_tip > 2) ? n_tip - 2 : 0;
-  return (n_node - min_backbone_nodes);
+  return n_node - min_backbone_nodes;
 }
 
 // Score subtree, add to score, and reset subtree size
 void update_score (const int16 subtree_edges, int16 *tight_bound, 
-                   int16 *loose_bound) {
+                   int16 *loose_bound, int16 *li_bound, int16 *fack_bound) {
   if (subtree_edges) {
     const int16 subtree_tips = subtree_edges + 3;
     if (*tight_bound != NA_INT16 && subtree_tips <= N_EXACT) {
@@ -53,8 +57,14 @@ void update_score (const int16 subtree_edges, int16 *tight_bound,
       *tight_bound = NA_INT16;
     }
 
-    *loose_bound += sorting_number(subtree_tips) +
-      (2 * degenerate_distance(subtree_tips));
+    const int16 
+      li =  sorting_number(subtree_tips) +
+      (2 * degenerate_distance(subtree_tips)),
+      fack = fack_number(subtree_tips - 2);
+    
+    *li_bound += li;
+    *fack_bound += fack;
+    *loose_bound += li < fack ? li : fack;
   }
 }
 
@@ -173,7 +183,12 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
     node_0_r = n_tip + 1,
     n_edge = edge1.nrow()
   ;
-  int16 lower_bound = 0, tight_score_bound = 0, loose_score_bound = 0;
+  int16 lower_bound = 0,
+    tight_score_bound = 0,
+    loose_score_bound = 0,
+    li_score_bound = 0,
+    fack_score_bound = 0
+  ;
   if (n_edge != int16(edge2.nrow())) {
     throw std::length_error("Both trees must have the same number of edges. "
                             "Is one rooted and the other unrooted?");
@@ -182,7 +197,9 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
   if (n_tip < 4) {
     return(IntegerVector::create(Named("lower") = 0,
                                  _["tight_upper"] = 0,
-                                 _["loose_upper"] = 0));
+                                 _["loose_upper"] = 0,
+                                 _["fack_upper"] = 0,
+                                 _["li_upper"] = 0));
   }
   
   const int16 
@@ -249,7 +266,8 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
         unmatched_below[parent_i - node_0] += unmatched_below[child_i - node_0];
       } else {
         update_score(unmatched_below[child_i - node_0],
-                     &tight_score_bound, &loose_score_bound);
+                     &tight_score_bound, &loose_score_bound, &li_score_bound, 
+                     &fack_score_bound);
       }
     }
   }
@@ -272,25 +290,32 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
         update_score(unmatched_below[root_node]
                        + unmatched_1
                        + unmatched_2,
-                     &tight_score_bound, &loose_score_bound);
+                     &tight_score_bound, &loose_score_bound, &li_score_bound,
+                     &fack_score_bound);
       } else {
         update_score(unmatched_1,
-                     &tight_score_bound, &loose_score_bound);
+                     &tight_score_bound, &loose_score_bound, &li_score_bound,
+                     &fack_score_bound);
         update_score(unmatched_2,
-                     &tight_score_bound, &loose_score_bound);
+                     &tight_score_bound, &loose_score_bound, &li_score_bound,
+                     &fack_score_bound);
       }
     } else {
       update_score(unmatched_1,
-                   &tight_score_bound, &loose_score_bound);
+                   &tight_score_bound, &loose_score_bound, &li_score_bound,
+                   &fack_score_bound);
     }
   } else {
     update_score(unmatched_below[root_node],
-                   &tight_score_bound, &loose_score_bound);
+                   &tight_score_bound, &loose_score_bound, &li_score_bound,
+                   &fack_score_bound);
   }
 
-  return IntegerVector::create(Named("lower")   = lower_bound,
-                               _["tight_upper"] = tight_score_bound == NA_INT16 
-                                 ? NA_INTEGER : tight_score_bound,
-                               _["loose_upper"] = loose_score_bound);
-  
+  return IntegerVector::create(
+    Named("lower")   = lower_bound,
+    _["tight_upper"] = tight_score_bound == NA_INT16 
+                     ? NA_INTEGER : tight_score_bound,
+    _["loose_upper"] = loose_score_bound,
+    _["fack_upper"] = fack_score_bound,
+    _["li_upper"] = li_score_bound);
 }

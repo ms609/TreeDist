@@ -21,9 +21,10 @@ test_that("Simple NNI approximations", {
   edge1 <- Postorder(tree1$edge)
   edge2 <- Postorder(tree2$edge)
   
-  allMatched <- c(lower = 0L, tight_upper = 0L, loose_upper = 0L)
-  oneUnmatched <- c(lower = 1L, tight_upper = 1L, loose_upper = 7L)
-  fiveUnmatched <- c(lower = 5L, tight_upper = 10L, loose_upper = 17L + 4L)
+  allMatched <- c(lower = 0L, tight_upper = 0L, fack_upper = 0L, li_upper = 0L)
+  oneUnmatched <- c(lower = 1L, tight_upper = 1L, fack_upper = 3L, li_upper = 7L)
+  fiveUnmatched <- c(lower = 5L, tight_upper = 10L, fack_upper = 19L,
+                     li_upper = 17L + 4L)
   
   Test <- function (expectation, tree) {
     expect_equal(expectation, NNIDist(tree1, tree))
@@ -105,4 +106,21 @@ test_that("NNI with lists of trees", {
     NNIDist(list1, rev(list1))
   )
 })
-  
+
+test_that("NNIDiameter() is sane", {
+  library('TreeTools')
+  exacts <- NNIDiameter(3:12)
+  expect_true(all(exacts[, 'min'] < exacts[, 'exact']))
+  expect_true(all(exacts[, 'max'] > exacts[, 'exact']))
+  expect_true(is.na(NNIDiameter(13)[, 'exact']))
+  expect_true(is.na(NNIDiameter(1)[, 'exact']))
+  expect_equal(c(exact = 10L), NNIDiameter(BalancedTree(8))[, 'exact'])
+  FackMin <- function (n) 0.25 * n * log2(n / exp(1))
+  exacts <- c(0, 0, 0, 1, 3, 5, 7, 10, 12, 15, 18, 21)
+  FackMax <- function (n) n*ceiling(log2(n)) + n - (2 * ceiling(log2(n))) + 1
+  expect_equal(cbind(min = FackMin(4:8 - 2L),
+                     exact = exacts[4:8],
+                     max = FackMax(4:8 - 2L)),
+               NNIDiameter(4:8))
+
+})
