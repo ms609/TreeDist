@@ -40,7 +40,8 @@ One way to reconcile these trees is to conduct a series of NNI operations
 that reduce a tree to a pectinate (caterpillar) tree, then to conduct an
 analogue of the mergesort algorithm.  This takes at most \emph{n} log \emph{n} + O(\emph{n})
 NNI operations, and provides a loose upper bound on the NNI score.
-The maximum number of moves for an \emph{n}-leaf tree can be calculated
+The maximum number of moves for an \emph{n}-leaf tree
+(\link{OEIS A335408}](https://oeis.org/A335408)) can be calculated
 exactly for small trees; this provides a tighter upper bound, but is
 unavailable for \emph{n} > 12.
 

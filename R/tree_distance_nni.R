@@ -16,7 +16,8 @@
 #' that reduce a tree to a pectinate (caterpillar) tree, then to conduct an 
 #' analogue of the mergesort algorithm.  This takes at most _n_ log _n_ + O(_n_)
 #' NNI operations, and provides a loose upper bound on the NNI score. 
-#' The maximum number of moves for an _n_-leaf tree can be calculated 
+#' The maximum number of moves for an _n_-leaf tree
+#' ([OEIS A335408]](https://oeis.org/A335408)) can be calculated 
 #' exactly for small trees; this provides a tighter upper bound, but is 
 #' unavailable for _n_ > 12.
 #' 
