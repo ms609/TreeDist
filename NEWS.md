@@ -1,8 +1,9 @@
 # TreeDist 1.0.0.9000
 
-- Improvements to `NNIDist()` in light of Fack _et al_. (2002).
+- Improvements to `NNIDist()` in light of Fack _et al._ (2002).
 - Add `NNIDiameter()`
-- Update vignette for compatability with 'TreeDistData' v1.1.0.
+- Update vignette for compatability with 
+  '[TreeDistData](https://ms609.github.io/TreeDistData)' v1.1.0.
 
 # TreeDist 1.0.0
 
