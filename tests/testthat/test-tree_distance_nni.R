@@ -125,17 +125,24 @@ test_that("NNI with lists of trees", {
 test_that("NNIDiameter() is sane", {
   library('TreeTools')
   exacts <- NNIDiameter(3:12)
-  expect_true(all(exacts[, 'min'] < exacts[, 'exact']))
-  expect_true(all(exacts[, 'max'] > exacts[, 'exact']))
+  expect_true(all(exacts[, 'min'] <= exacts[, 'exact']))
+  expect_true(all(exacts[, 'max'] >= exacts[, 'exact']))
   expect_true(is.na(NNIDiameter(13)[, 'exact']))
   expect_true(is.na(NNIDiameter(1)[, 'exact']))
   expect_equal(c(exact = 10L), NNIDiameter(BalancedTree(8))[, 'exact'])
-  FackMin <- function (n) 0.25 * n * log2(n / exp(1))
+  FackMin <- function (n) ceiling(0.25 * lfactorial(n) / log(2))
   exacts <- c(0, 0, 0, 1, 3, 5, 7, 10, 12, 15, 18, 21)
-  FackMax <- function (n) n*ceiling(log2(n)) + n - (2 * ceiling(log2(n))) + 1
-  expect_equal(cbind(min = FackMin(4:8 - 2L),
-                     exact = exacts[4:8],
-                     max = FackMax(4:8 - 2L)),
-               NNIDiameter(4:8))
+  liMaxes <- c(0, 1, 3, 5, 8, 13, 16, 21, 25, 31, 37, 43, 47, 53, 59, 65)
+  FackMax <- function (n) n*ceiling(log2(n)) + n - (2 * ceiling(log2(n)))
+  n <- 4:8
+  expect_equal(cbind(
+    liMin = n - 3L,
+    fackMin = FackMin(n - 2L),
+    min = pmax(n - 3L, FackMin(4:8 - 2L)),
+    exact = exacts[n],
+    liMax = liMaxes[n],
+    fackMax = FackMax(n - 2L),
+    max = pmin(liMaxes[n], FackMax(n - 2L))
+  ), NNIDiameter(n))
 
 })
