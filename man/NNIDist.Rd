@@ -41,8 +41,8 @@ that reduce a tree to a pectinate (caterpillar) tree, then to conduct an
 analogue of the mergesort algorithm.  This takes at most \emph{n} log \emph{n} + O(\emph{n})
 NNI operations, and provides a loose upper bound on the NNI score.
 The maximum number of moves for an \emph{n}-leaf tree
-(\link{OEIS A335408}](https://oeis.org/A335408)) can be calculated
-exactly for small trees; this provides a tighter upper bound, but is
+(\link{OEIS A182136}](https://oeis.org/A182136)) can be calculated exactly for
+small trees (Fack \emph{et al.} 2002); this provides a tighter upper bound, but is
 unavailable for \emph{n} > 12.
 
 \tabular{rccccccccccccc}{
@@ -66,6 +66,8 @@ NNIDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
 CompareAll(as.phylo(30:33, 8), NNIDist)
 }
 \references{
+\insertRef{Fack2002}{TreeDist}
+
 \insertRef{Li1996}{TreeDist}
 
 \insertRef{Robinson1971}{TreeDist}
