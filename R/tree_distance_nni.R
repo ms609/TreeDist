@@ -17,7 +17,7 @@
 #' analogue of the mergesort algorithm.  This takes at most _n_ log _n_ + O(_n_)
 #' NNI operations, and provides a loose upper bound on the NNI score. 
 #' The maximum number of moves for an _n_-leaf tree
-#' ([OEIS A182136]](https://oeis.org/A182136)) can be calculated exactly for
+#' ([OEIS A182136](https://oeis.org/A182136)) can be calculated exactly for
 #' small trees (Fack _et al._ 2002); this provides a tighter upper bound, but is 
 #' unavailable for _n_ > 12.  `NNIDiameter()` reports the limits on this bound.
 #' 
