@@ -39,8 +39,8 @@ int16 degenerate_distance (const int16 n_tip) {
    * other side by one. */
   const int16 tips_left = n_tip - tips_in_full;
   const int16 min_backbone_nodes = 
-    (nodes_in_full + std::ceil(log2(tips_left) - 1) + 1 > 0) ?
-     nodes_in_full + std::ceil(log2(tips_left) - 1) + 1 : 0;
+    (nodes_in_full + std::ceil(log2(tips_left / 2)) + 1 > 0) ?
+     nodes_in_full + std::ceil(log2(tips_left / 2)) + 1 : 0;
 
   /* The worst-case scenario requires a move for every node not on the backbone: */
   const int16 n_node = (n_tip > 2) ? n_tip - 2 : 0;
@@ -214,7 +214,9 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
 
   if (n_tip < 4) {
     return(IntegerVector::create(Named("lower") = 0,
+                                 _["best_lower"] = 0,
                                  _["tight_upper"] = 0,
+                                 _["best_upper"] = 0,
                                  _["loose_upper"] = 0,
                                  _["fack_upper"] = 0,
                                  _["li_upper"] = 0));
@@ -284,8 +286,8 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
       } else {
         update_score(unmatched_below[child_i - node_0], &lower_bound,
                      &best_lower_bound, &tight_score_bound,
-                     &best_upper_bound, &loose_score_bound, &li_score_bound, 
-                     &fack_score_bound);
+                     &best_upper_bound, &loose_score_bound,
+                     &li_score_bound, &fack_score_bound);
       }
     }
   }
@@ -307,26 +309,26 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
       if (!matched_1[root_child_2 - node_0]) {
         update_score(unmatched_below[root_node]
                        + unmatched_1
-                       + unmatched_2, &lower_bound,
-                     &best_lower_bound, &tight_score_bound, &best_upper_bound, 
-                     &loose_score_bound, &li_score_bound, &fack_score_bound);
+                       + unmatched_2, &lower_bound, &best_lower_bound,
+                     &tight_score_bound, &best_upper_bound, &loose_score_bound,
+                     &li_score_bound, &fack_score_bound);
       } else {
-        update_score(unmatched_1, &lower_bound,
-                     &best_lower_bound, &tight_score_bound, &best_upper_bound,
-                     &loose_score_bound, &li_score_bound, &fack_score_bound);
-        update_score(unmatched_2, &lower_bound,
-                     &best_lower_bound, &tight_score_bound, &best_upper_bound,
-                     &loose_score_bound, &li_score_bound, &fack_score_bound);
+        update_score(unmatched_1, &lower_bound, &best_lower_bound, 
+                     &tight_score_bound, &best_upper_bound, &loose_score_bound,
+                     &li_score_bound, &fack_score_bound);
+        update_score(unmatched_2, &lower_bound, &best_lower_bound, 
+                     &tight_score_bound, &best_upper_bound, &loose_score_bound,
+                     &li_score_bound, &fack_score_bound);
       }
     } else {
-      update_score(unmatched_1, &lower_bound,
-                   &best_lower_bound, &tight_score_bound, &best_upper_bound,
-                   &loose_score_bound, &li_score_bound, &fack_score_bound);
+      update_score(unmatched_1, &lower_bound, &best_lower_bound, 
+                   &tight_score_bound, &best_upper_bound, &loose_score_bound, 
+                   &li_score_bound, &fack_score_bound);
     }
   } else {
-    update_score(unmatched_below[root_node], &lower_bound,
-                 &best_lower_bound, &tight_score_bound, &best_upper_bound,
-                 &loose_score_bound, &li_score_bound, &fack_score_bound);
+    update_score(unmatched_below[root_node], &lower_bound, &best_lower_bound,
+                 &tight_score_bound, &best_upper_bound, &loose_score_bound,
+                 &li_score_bound, &fack_score_bound);
   }
 
   return IntegerVector::create(
