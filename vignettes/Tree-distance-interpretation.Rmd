@@ -43,7 +43,8 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
   abbrevs <- tdAbbrevs
   
   totalInfoContent <- 3L
-  methodLCH <- colorspace::coords(as(colorspace::hex2RGB(TreeDistCol(methods)), 'polarLUV'))
+  methodLCH <- colorspace::coords(as(colorspace::hex2RGB(TreeDistCol(methods)),
+                                     'polarLUV'))
   
   data('randomTreeDistances', package = 'TreeDistData')
   pathMax <- randomTreeDistances['path', 'max', ]
@@ -53,20 +54,18 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
   
   nTip <- as.integer(dimnames(randomTreeDistances)[[3]])
   
-  pathNorm <- nls(pathMax ~ a * (nTip ^ 2) + b * (nTip ^ 3) + nTip ^ c,
-                  start = list(a = -0.0334, b = 2.6e-5, c = 1.478))
+  pathNorm <- lm(log(pathMax) ~ log(nTip))
+  msNorm <- lm(log(msMax) ~ log(nTip))
   
-  msNorm <- nls(msMax ~ (c * nTip ^ b) + d, 
-                start = list(b = 1.314521, c = 2.365871, d = -34.24))
   
   #tbrNorm <- lm(log(tbrMax) ~ log(nTip))
   nniNorm <- TreeDist::NNIDiameter(nTip)
   
   normalizeAgainst <- rbind(
-    path = predict(pathNorm),
-    ms = predict(msNorm),
+    path = exp(predict(pathNorm)),
+    ms = exp(predict(msNorm)),
     nni_u = nniNorm[, 'max'],
-    nni_l = nniNorm[, 'min'],# nTip - 3, # Each edge once
+    nni_l = nniNorm[, 'min'],
     spr = nTip / 2L,
     tbr_u = nTip, #exp(predict(tbrNorm)),
     tbr_l = nTip, #exp(predict(tbrNorm)),
@@ -102,7 +101,7 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
     #pointsAt <- 1:10 * 20L
   }
   
-  oldPar <- par(mfrow = c(3, 1), cex = 0.7, oma = rep(0, 4),
+  oldPar <- par(mfrow = c(4, 1), cex = 0.7, oma = rep(0, 4),
                 mar = c(5, 5, 0.01, 0.01))
   PlotMethods <- function (methods, yMin = 0.4,
                            lp = c('bottomright', 'bottomleft')) {
@@ -126,11 +125,10 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
            lty = 1, lwd = c(1, 4, 6), col = c(1, "#00000066", "#00000033"),
            legend = c('Median', 'Interquartile range', 'Interdecile range'))
   }
-  PlotMethods(c('rf', 'pid', 'cid', 'ms', 'nye', 'msid'))
-  PlotMethods(c('rf', 'jnc4', 'jco4', 'jnc2', 'jco2', 'nye'), yMin = 0.7)
-  PlotMethods(c('tbr_u', 'spr', 'nni_u', 'nni_l', 'masti', 'mast',
-                'path', 'qd', 'tbr_l'), yMin = 0.14, 
-              lp = c('bottomright', 'right'))
+  PlotMethods(c('rf', 'pid', 'cid', 'nye', 'msid'))
+  PlotMethods(c('jnc4', 'jco4', 'jnc2', 'jco2', 'nye'), yMin = 0.7)
+  PlotMethods(c('ms', 'masti', 'mast', 'path', 'qd'), yMin = 0.42)
+  PlotMethods(c('tbr_u', 'spr', 'nni_u', 'nni_l', 'tbr_l'), yMin = 0.14)
   par(oldPar)
 } else {
   cat("\nInstall package 'TreeDistData' to render this chart.")
@@ -139,23 +137,21 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
 
 
 Information-based metrics are normalized against the total information content 
-of each pair of trees. 
+of each pair of trees.
 The (Jaccard-)Robinson-Foulds, Nye _et al._, maximum agreement subtree and 
 Quartet metrics are normalized based on the maximum possible value. 
 The SPR distance is normalized against $\frac{n}{2}$; this value lies between 
 the definitive bounds of the maximum diameter of the SPR distance [@Allen2001],
 and was not exceeded by any of the random tree pairs.  The TBR distance is 
-normalized against $n$; the lower bound of the NNI distance is normalized
-against the number of internal edges in an unrooted _n_-leaf tree, $n - 3$.
-The upper bound of the NNI distance is normalized by fitting a log-linear model
+normalized against $n$. The upper and lower bounds on the NNI distance are
+normalized against the upper and lower bounds of the diameter of the NNI
+distance for trees of the corresponding sizes [@Li1996;@Fack2002].
+
+The path and matching split distance metrics do not have a 
+readily calculated maximum value and are thus crudely 'normalized' against an
+approximate maximum, estimated by a log-linear model
 to the maximum observed distance for each number of leaves (using 
 `lm(log(maxDistance) ~ log(nLeaves))`).
-
-The path and Matching Split Distance metrics do not have a 
-readily calculated maximum value and are thus crudely 'normalized' against an
-approximate maximum, estimated by fitting a polynomial to the the maximum 
-observed distance for each number of leaves.  Candidate polynomial functions
-were evaluated based on the Akaike and Bayesian information criteria.
 
 Note that the path and Matching Splits distances exhibit a prominently larger 
 variability than other metrics, suggesting that they are less consistent in the
