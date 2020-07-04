@@ -56,9 +56,6 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
   
   pathNorm <- lm(log(pathMax) ~ log(nTip))
   msNorm <- lm(log(msMax) ~ log(nTip))
-  
-  
-  #tbrNorm <- lm(log(tbrMax) ~ log(nTip))
   nniNorm <- TreeDist::NNIDiameter(nTip)
   
   normalizeAgainst <- rbind(
@@ -67,8 +64,8 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
     nni_u = nniNorm[, 'max'],
     nni_l = nniNorm[, 'min'],
     spr = nTip / 2L,
-    tbr_u = nTip, #exp(predict(tbrNorm)),
-    tbr_l = nTip, #exp(predict(tbrNorm)),
+    tbr_u = nTip,
+    tbr_l = nTip,
     rf = (nTip - 3L) * 2L,
     mast = nTip,
     masti = TreeTools::LnUnrooted(nTip) / log(2)
