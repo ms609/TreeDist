@@ -234,8 +234,8 @@ Entropy <- function (...) {
 #' # Compare each tree with each other tree
 #' CompareAll(trees, NNIDist)
 #'   
-#' # Providing FUN.VALUE yeilds a small speed gain:
-#' dist <- CompareAll(trees, NNIDist, FUN.VALUE = integer(3))
+#' # Providing FUN.VALUE yields a small speed gain:
+#' dist <- CompareAll(trees, NNIDist, FUN.VALUE = integer(7))
 #'   
 #' # View distances as a matrix
 #' as.matrix(dist$lower)
