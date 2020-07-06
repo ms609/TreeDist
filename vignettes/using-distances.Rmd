@@ -161,7 +161,7 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
   oldPar <- par(cex = 0.7, mar = c(5, 5, 0.01, 0.01))
   nLeaves <- as.integer(dimnames(randomTreeDistances)[[3]])
   plot(nLeaves, type = 'n', randomTreeDistances['pid', 'mean', ],
-       ylim = c(0.4, 1),
+       ylim = c(0.54, 1),
        xlab = "Number of leaves",
        ylab = "Normalized distance between random tree pairs")
   
