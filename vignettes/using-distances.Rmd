@@ -161,7 +161,7 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
   oldPar <- par(cex = 0.7, mar = c(5, 5, 0.01, 0.01))
   nLeaves <- as.integer(dimnames(randomTreeDistances)[[3]])
   plot(nLeaves, type = 'n', randomTreeDistances['pid', 'mean', ],
-       ylim = c(0.4, 1),
+       ylim = c(0.54, 1),
        xlab = "Number of leaves",
        ylab = "Normalized distance between random tree pairs")
   
@@ -395,7 +395,7 @@ You may wish to:
 
 - Explore the [Ternary package](http://ms609.github.io/Ternary/)
 
-- [Interpret tree distance metrics](Tree-distance-interpretation.html)
+- [Interpret tree distance metrics](https://ms609.github.io/TreeDistData/articles/09-expected-similarity.html)
 
 - Review [available distance measures](https://ms609.github.io/TreeDist/index.html)
   and the corresponding [TreeDist functions](https://ms609.github.io/TreeDist/reference/index.html#section-tree-distance-measures)

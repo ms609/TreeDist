@@ -59,6 +59,7 @@ Suggests:
 Additional_repositories: https://ms609.github.io/packages
 RdMacros: Rdpack
 LinkingTo: Rcpp
+SystemRequirements: C++11
 LazyData: true
 ByteCompile: true
 Encoding: UTF-8
