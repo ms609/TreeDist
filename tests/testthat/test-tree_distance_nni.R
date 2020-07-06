@@ -1,5 +1,5 @@
 context("tree_distance_nni.R")
-library('TreeTools')
+library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
 
 test_that("NNIDist() handles exceptions", {
   expect_error(NNIDist(list(PectinateTree(7), PectinateTree(8))))
@@ -21,11 +21,28 @@ test_that("Simple NNI approximations", {
   edge1 <- Postorder(tree1$edge)
   edge2 <- Postorder(tree2$edge)
   
-  allMatched <- c(lower = 0L, tight_upper = 0L, loose_upper = 0L)
-  oneUnmatched <- c(lower = 1L, tight_upper = 1L, loose_upper = 7L)
-  fiveUnmatched <- c(lower = 5L, tight_upper = 10L, loose_upper = 17L + 4L)
+  allMatched <- c(lower = 0L, best_lower = 0L, tight_upper = 0L,
+                  best_upper = 0L, loose_upper = 0L, fack_upper = 0L,
+                  li_upper = 0L)
+  oneUnmatched <- c(lower = 1L, best_lower = 1L, tight_upper = 1L,
+                    best_upper = 1L, loose_upper = 2L, fack_upper = 2L,
+                    li_upper = 7L)
+  fiveUnmatched <- c(lower = 5L, best_lower = 10L, tight_upper = 10L,
+                     best_upper = 10L, loose_upper = 18L, fack_upper = 18L,
+                     li_upper = 17L + 4L)
   
-  Test <- function (expectation, tree) {
+  Test <- function (expect, tree) {
+    expectation <- rep(NA_integer_, 7L)
+    names(expectation) <- c('lower', 'best_lower', 'tight_upper', 'best_upper',
+                            'loose_upper', 'fack_upper', 'li_upper')
+    expectation[names(expect)] <- expect
+    if (is.na(expectation['best_lower']) && !is.na(expect['tight_upper'])) {
+      expectation[c('best_lower', 'best_upper')] <- expect['tight_upper']
+    }
+    if (is.na(expect['loose_upper'])) {
+      expectation['loose_upper'] <- min(expect[c('fack_upper', 'li_upper')])
+    }
+    
     expect_equal(expectation, NNIDist(tree1, tree))
     for (i in c(2, 3, 4, 6)) {
       tree1i <- RootOnNode(tree1, i)
@@ -42,8 +59,8 @@ test_that("Simple NNI approximations", {
   Test(oneUnmatched, PectinateTree(nTip))
 
   # Identical trees
-  tree1 <- Postorder(ape::read.tree(text="(((a, b), (c, d)), ((e, f), (g, h)));"))
-  tree2 <- Postorder(ape::read.tree(text="(((a, b), (d, c)), ((h, g), (f, e)));"))
+  tree1 <- Postorder(read.tree(text = "(((a, b), (c, d)), ((e, f), (g, h)));"))
+  tree2 <- Postorder(read.tree(text = "(((a, b), (d, c)), ((h, g), (f, e)));"))
   Test(allMatched, tree1)
   Test(allMatched, tree2)
   
@@ -58,18 +75,18 @@ test_that("Simple NNI approximations", {
   
   # Two separate regions of difference one
   Test(oneUnmatched * 2, 
-       ape::read.tree(text="((((a, b), c), d), (e, (f, (g, h))));"))
+       read.tree(text="((((a, b), c), d), (e, (f, (g, h))));"))
   
   # One region of three unmatched edges
-  Test(c(lower = 3L, tight_upper = 5L, loose_upper = 13L), 
-       ape::read.tree(text="(((a, e), (c, d)), ((b, f), (g, h)));"))
+  Test(c(lower = 3L, tight_upper = 5L, fack_upper = 8L, li_upper = 13L),
+       read.tree(text="(((a, e), (c, d)), ((b, f), (g, h)));"))
   
   # One region of four unmatched edges
-  Test(c(lower = 4L, tight_upper = 7L, loose_upper = 18L),
+  Test(c(lower = 4L, tight_upper = 7L, fack_upper = 14L, li_upper = 18L),
        tree2 <- ape::read.tree(text="(((a, e), (f, d)), ((b, c), (g, h)));"))
   
   # One region of five unmatched edges
-  Test(fiveUnmatched, 
+  Test(fiveUnmatched,
        ape::read.tree(text="(((a, e), (f, d)), ((b, g), (c, h)));"))
   
   # Trees with different leaves at root
@@ -78,8 +95,7 @@ test_that("Simple NNI approximations", {
        ape::read.tree(text = '(3, ((5, 6), (7, (1, (2, (4, 8))))));'))
   
   # Too different for tight upper bound
-  set.seed(10000)
-  expect_true(is.na(NNIDist(rtree(100, br = NULL), rtree(100, br = NULL))[[2]]))
+  expect_true(is.na(NNIDist(BalancedTree(100), PectinateTree(100))['tight_upper']))
   
 })
 
@@ -105,4 +121,33 @@ test_that("NNI with lists of trees", {
     NNIDist(list1, rev(list1))
   )
 })
+
+test_that("NNIDiameter() is sane", {
+  library('TreeTools')
   
+  exacts <- NNIDiameter(3:12)
+  expect_equal(exacts, do.call(rbind, NNIDiameter(lapply(3:12, as.integer))))
+  expect_true(all(exacts[, 'min'] <= exacts[, 'exact']))
+  expect_true(all(exacts[, 'max'] >= exacts[, 'exact']))
+  expect_true(is.na(NNIDiameter(13)[, 'exact']))
+  expect_true(is.na(NNIDiameter(1)[, 'exact']))
+  expect_equal(c(exact = 10L), NNIDiameter(BalancedTree(8))[, 'exact'])
+  
+  FackMin <- function (n) ceiling(0.25 * lfactorial(n) / log(2))
+  exacts <- c(0, 0, 0, 1, 3, 5, 7, 10, 12, 15, 18, 21)
+  liMaxes <- c(0, 1, 3, 5, 8, 13, 16, 21, 25, 31, 37, 43, 47, 53, 59, 65)
+  FackMax <- function (n) n*ceiling(log2(n)) + n - (2 * ceiling(log2(n)))
+  n <- 4:8
+  expect_equal(cbind(
+    liMin = n - 3L,
+    fackMin = FackMin(n - 2L),
+    min = pmax(n - 3L, FackMin(4:8 - 2L)),
+    exact = exacts[n],
+    liMax = liMaxes[n],
+    fackMax = FackMax(n - 2L),
+    max = pmin(liMaxes[n], FackMax(n - 2L))
+  ), NNIDiameter(n))
+
+  expect_equal(NNIDiameter(c(6, 6)), NNIDiameter(as.phylo(0:1, 6)))
+  
+})

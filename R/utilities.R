@@ -4,6 +4,7 @@
 #' in a fully-resolved (binary) tree with _n_ leaves.
 #' 
 #TODO delete once we can require TreeTools 1.0.1
+#This code is already present in TreeTools 1.0.0.9000.
 #' This function will soon be removed from 'TreeDist' and included instead
 #' in 'TreeTools' v1.0.1.
 #' 
