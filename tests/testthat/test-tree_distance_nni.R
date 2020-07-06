@@ -124,12 +124,15 @@ test_that("NNI with lists of trees", {
 
 test_that("NNIDiameter() is sane", {
   library('TreeTools')
+  
   exacts <- NNIDiameter(3:12)
+  expect_equal(exacts, do.call(rbind, NNIDiameter(lapply(3:12, as.integer))))
   expect_true(all(exacts[, 'min'] <= exacts[, 'exact']))
   expect_true(all(exacts[, 'max'] >= exacts[, 'exact']))
   expect_true(is.na(NNIDiameter(13)[, 'exact']))
   expect_true(is.na(NNIDiameter(1)[, 'exact']))
   expect_equal(c(exact = 10L), NNIDiameter(BalancedTree(8))[, 'exact'])
+  
   FackMin <- function (n) ceiling(0.25 * lfactorial(n) / log(2))
   exacts <- c(0, 0, 0, 1, 3, 5, 7, 10, 12, 15, 18, 21)
   liMaxes <- c(0, 1, 3, 5, 8, 13, 16, 21, 25, 31, 37, 43, 47, 53, 59, 65)
@@ -145,4 +148,6 @@ test_that("NNIDiameter() is sane", {
     max = pmin(liMaxes[n], FackMax(n - 2L))
   ), NNIDiameter(n))
 
+  expect_equal(NNIDiameter(c(6, 6)), NNIDiameter(as.phylo(0:1, 6)))
+  
 })
