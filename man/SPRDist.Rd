@@ -30,6 +30,10 @@ Approximate the Subtree Prune and Regraft (SPR) distance.
 It pre-processes trees to ensure that their internal representation does
 not cause the \code{SPR.dist()} function to crash R, and allows an improved
 (but slower) symmetric heuristic.
+
+A memory leak is present in phangorn v2.5.5.  To avoid a drain on system
+resources, install the latest version of phangorn with
+\code{devtools::install_github('KlausVigo/phangorn')}.
 }
 \examples{
 library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)

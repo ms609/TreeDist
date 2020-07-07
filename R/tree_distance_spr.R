@@ -8,6 +8,10 @@
 #' not cause the `SPR.dist()` function to crash R, and allows an improved
 #' (but slower) symmetric heuristic.
 #' 
+#' A memory leak is present in phangorn v2.5.5.  To avoid a drain on system
+#' resources, install the latest version of phangorn with 
+#' `devtools::install_github('KlausVigo/phangorn')`.
+#' 
 #' @template tree12ListParams
 #' @param symmetric Logical specifying whether to produce a better heuristic
 #' by calculating the minimum of `SPRDist(t1, t2)` and `SPRDist(t2, t1)`,
