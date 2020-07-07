@@ -40,7 +40,7 @@ trees <- list(bal1 = BalancedTree(1:8),
 # Compare each tree with each other tree
 CompareAll(trees, NNIDist)
   
-# Providing FUN.VALUE yields a small speed gain:
+# Providing FUN.VALUE yields a modest speed gain:
 dist <- CompareAll(trees, NNIDist, FUN.VALUE = integer(7))
   
 # View distances as a matrix
