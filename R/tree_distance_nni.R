@@ -92,25 +92,27 @@ NNIDist <- function (tree1, tree2 = tree1) {
 #' of the NNI distance metric on the specified tree(s).
 #' Columns correspond to:
 #' 
-#' - `liMin`:  _n_ &minus; 3;, a lower bound on the diameter (Li _et al._ 1996);
+#' - `liMin`:  \deqn{n - 3}{_n_ &minus; 3;}, a lower bound on the diameter
+#'   (Li _et al._ 1996);
 #'   
 #' - `fackMin`: Lower bound on diameter following Fack _et al_. (2002), i.e.
-#'   log&#8322; (_N_!) / 4;
+#'   \deqn{\log2{N!} / 4}{log&#8322; (_N_!) / 4};
 #'   
 #' - `min`: The larger of `liMin` and `fackMin`;
 #' 
 #' - `exact`: The exact value of the diameter, where _n_ &lt; 13;
 #' 
-#' - `liMax`: Upper bound on diameter following Li _et al._ (1996), i.e. _n_ 
-#'   log&#8322; _n_ + O(_n_);
+#' - `liMax`: Upper bound on diameter following Li _et al._ (1996), i.e. 
+#'   \deqn{n \log2{n} + \textrm{O}(n)}{n log&#8322; _n_ + O(_n_)};
 #'   
 #' - `fackMax`: Upper bound on diameter following Fack _et al_. (2002), i.e.
-#'   (_N_ &minus; 2) ceiling(log&#8322; _N_) + _N_;
+#'   (\deqn{N - 2}{_N_ &minus; 2}) ceiling(\deqn{\log2{n}}{log&#8322; _N_}) 
+#'   + _N_;
 #'   
 #' - `max`: The smaller of `liMax` and `fackMax`;
 #'   
 #' where _n_ is the number of leaves, and _N_ the number of internal nodes,
-#' i.e. _n_ &minus; 2.
+#' i.e. \deqn{n - 2}{_n_ &minus; 2}.
 #'   
 #' @encoding UTF-8
 #' @rdname NNIDist

@@ -20,9 +20,10 @@ Split \code{AB|CD}  is treated as distinct from \code{CD|AB}.  If pairing
 values should be divided by four.
 }
 \description{
-Calculate the variation of clustering information (Meilă 2007)
-for each possible pairing of non-trivial splits on \emph{n} leaves,
-tabulating the number of pairings with each similarity.
+Calculate the variation of clustering information
+(Meil\ifelse{html}{&#259;}{a} 2007) for each possible pairing of
+non-trivial splits on \emph{n} leaves, tabulating the number of pairings with
+each similarity.
 }
 \examples{
 AllSplitPairings(6)

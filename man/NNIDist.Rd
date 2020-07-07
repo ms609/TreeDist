@@ -33,20 +33,24 @@ O(\emph{n}).
 of the NNI distance metric on the specified tree(s).
 Columns correspond to:
 \itemize{
-\item \code{liMin}:  \emph{n} − 3;, a lower bound on the diameter (Li \emph{et al.} 1996);
+\item \code{liMin}:  \deqn{n - 3}{_n_ &minus; 3;}, a lower bound on the diameter
+(Li \emph{et al.} 1996);
 \item \code{fackMin}: Lower bound on diameter following Fack \emph{et al}. (2002), i.e.
-log₂ (\emph{N}!) / 4;
+\deqn{\log2{N!} / 4}{log&#8322; (_N_!) / 4};
 \item \code{min}: The larger of \code{liMin} and \code{fackMin};
 \item \code{exact}: The exact value of the diameter, where \emph{n} < 13;
-\item \code{liMax}: Upper bound on diameter following Li \emph{et al.} (1996), i.e. \emph{n}
-log₂ \emph{n} + O(\emph{n});
+\item \code{liMax}: Upper bound on diameter following Li \emph{et al.} (1996), i.e.
+\deqn{n \log2{n} + \textrm{O}(n)}{n log&#8322; _n_ + O(_n_)};
 \item \code{fackMax}: Upper bound on diameter following Fack \emph{et al}. (2002), i.e.
-(\emph{N} − 2) ceiling(log₂ \emph{N}) + \emph{N};
+(\deqn{N - 2}{_N_ &minus; 2}) ceiling(\deqn{\log2{n}}{log&#8322; _N_})
+\itemize{
+\item \emph{N};
+}
 \item \code{max}: The smaller of \code{liMax} and \code{fackMax};
 }
 
 where \emph{n} is the number of leaves, and \emph{N} the number of internal nodes,
-i.e. \emph{n} − 2.
+i.e. \deqn{n - 2}{_n_ &minus; 2}.
 }
 \description{
 Use the approach of Li \emph{et al.} (1996) to approximate the Nearest Neighbour

@@ -49,7 +49,7 @@ SplitwiseInfo.Splits <- function(x) {
 #' Sum the entropy (`ClusteringEntropy()`) or information content
 #' (`ClusteringInfo()`) across each split within a phylogenetic tree, treating
 #' each split as dividing the leaves of the tree into two clusters (_sensu_
-#' Meil&#259; 2007; Vinh _et al._ 2010).
+#' Meil\ifelse{html}{&#259;}{a} 2007; Vinh _et al._ 2010).
 #' 
 #' Clustering entropy addresses the question "how much information is contained
 #' in the splits within a tree". Its approach is complementary to the 
