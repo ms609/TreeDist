@@ -58,6 +58,7 @@ Suggests:
   vdiffr
 Additional_repositories: https://ms609.github.io/packages
 RdMacros: Rdpack
+VignetteBuilder: knitr
 LinkingTo: Rcpp
 SystemRequirements: C++11
 LazyData: true
@@ -66,6 +67,5 @@ Encoding: UTF-8
 Language: en-GB
 Classification/MSC-2020: 05C05, 92-04, 92-08
 X-schema.org-keywords: phylogenetics, tree-distance
-VignetteBuilder: knitr
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
