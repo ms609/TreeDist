@@ -4,7 +4,7 @@
 * Ubuntu 16.04.6 LTS, R 3.6.0, release and devel, via
   [Travis CI](https://travis-ci.org/ms609/TreeDist)
 * Mac OS X 10.13.6, R release, via Travis
-* R-hub, with `check_for_cran()`
+* R-hub, with `check_for_cran()` and `check_with_sanitizers()`
 
 ## R CMD check results
 There were no ERRORs or WARNINGs.
