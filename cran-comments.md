@@ -16,10 +16,6 @@ There were no ERRORs or WARNINGs.
 
 There were two NOTEs:
 > Maintainer: 'Martin R. Smith <martin.smith@durham.ac.uk>'
-> 
-> New submission
-
-This is a new submission.
 
 > Suggests or Enhances not in mainstream repositories:
 >   TreeDistData
