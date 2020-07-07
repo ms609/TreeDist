@@ -66,7 +66,7 @@ List lapjv (NumericMatrix x, NumericVector maxX) {
   delete [] v;
   delete [] rowsol;
   delete [] colsol;
-  for (int16 i = 0; i != max_dim; i++) delete input[i];
+  for (int16 i = 0; i != max_dim; i++) delete [] input[i];
   delete [] input;
   
   return List::create(Named("score") = double(score) / max_score * x_max,
