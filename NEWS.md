@@ -11,6 +11,7 @@
   
  - Remove vignette 'Interpreting tree distances': duplicates
    https://ms609.github.io/TreeDistData/articles/09-expected-similarity.html.
+- Remove redundant data object `oneOverlap`.
 
 # TreeDist 1.0.0
 
