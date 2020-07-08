@@ -1,6 +1,6 @@
-# TreeDist 1.1.0.9000 (development)
+# TreeDist 1.1.0.9001 (development)
 
-- Fix integer range error when calculating tree distances.
+- Fix range errors when calculating tree distances.
 
 # TreeDist 1.1.0
 

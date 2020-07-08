@@ -95,14 +95,19 @@ test_that("Simple NNI approximations", {
        ape::read.tree(text = '(3, ((5, 6), (7, (1, (2, (4, 8))))));'))
   
   # Too different for tight upper bound
-  expect_true(is.na(NNIDist(BalancedTree(100), PectinateTree(100))['tight_upper']))
+  expect_true(is.na(NNIDist(BalancedTree(100), 
+                            PectinateTree(100))['tight_upper']))
+  
+  # Large, different trees: check that 64 leaf disagreements don't cause crash
+  expect_gt(NNIDist(RandomTree(600), RandomTree(600))['li_upper'], 1)
   
 })
 
 test_that("NNI with lists of trees", {
   tree1 <- BalancedTree(1:8)
   list1 <- list(tree1, PectinateTree(as.character(1:8)),
-                PectinateTree(as.character(c(4:1, 5:8))), BalancedTree(c(1:3, 8:4)))
+                PectinateTree(as.character(c(4:1, 5:8))),
+                BalancedTree(c(1:3, 8:4)))
   
   multResult <- NNIDist(tree1, list1)
   expect_equal(NNIDist(tree1, list1[[1]]), multResult[, 1])
