@@ -89,7 +89,7 @@ Interchange distance (Robinson, 1971) between phylogenetic trees." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.0.0.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.0.9000</span>
       </span>
     </div>
 
@@ -208,20 +208,23 @@ O(<em>n</em>).</p></li>
 <p><code>NNIDiameter()</code> returns a matrix specifying (bounds on) the diameter
 of the NNI distance metric on the specified tree(s).
 Columns correspond to:</p><ul>
-<li><p><code>liMin</code>:  <em>n</em> − 3;, a lower bound on the diameter (Li <em>et al.</em> 1996);</p></li>
+<li><p><code>liMin</code>:  $$n - 3$$, a lower bound on the diameter
+(Li <em>et al.</em> 1996);</p></li>
 <li><p><code>fackMin</code>: Lower bound on diameter following Fack <em>et al</em>. (2002), i.e.
-log₂ (<em>N</em>!) / 4;</p></li>
+$$\log2{N!} / 4$$;</p></li>
 <li><p><code>min</code>: The larger of <code>liMin</code> and <code>fackMin</code>;</p></li>
 <li><p><code>exact</code>: The exact value of the diameter, where <em>n</em> &lt; 13;</p></li>
-<li><p><code>liMax</code>: Upper bound on diameter following Li <em>et al.</em> (1996), i.e. <em>n</em>
-log₂ <em>n</em> + O(<em>n</em>);</p></li>
+<li><p><code>liMax</code>: Upper bound on diameter following Li <em>et al.</em> (1996), i.e.
+$$n \log2{n} + \textrm{O}(n)$$;</p></li>
 <li><p><code>fackMax</code>: Upper bound on diameter following Fack <em>et al</em>. (2002), i.e.
-(<em>N</em> − 2) ceiling(log₂ <em>N</em>) + <em>N</em>;</p></li>
+($$N - 2$$) ceiling($$\log2{n}$$)</p><ul>
+<li><p><em>N</em>;</p></li>
+</ul></li>
 <li><p><code>max</code>: The smaller of <code>liMax</code> and <code>fackMax</code>;</p></li>
 </ul>
 
 <p>where <em>n</em> is the number of leaves, and <em>N</em> the number of internal nodes,
-i.e. <em>n</em> − 2.</p>
+i.e. $$n - 2$$.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>In brief, this approximation algorithm works by identifying edges in one

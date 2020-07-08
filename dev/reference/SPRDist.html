@@ -88,7 +88,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.0.0.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.0.9000</span>
       </span>
     </div>
 
@@ -204,6 +204,9 @@ between trees.</p>
 It pre-processes trees to ensure that their internal representation does
 not cause the <code>SPR.dist()</code> function to crash R, and allows an improved
 (but slower) symmetric heuristic.</p>
+<p>A memory leak is present in phangorn v2.5.5.  To avoid a drain on system
+resources, install the latest version of phangorn with
+<code><a href='https://devtools.r-lib.org//reference/remote-reexports.html'>devtools::install_github('KlausVigo/phangorn')</a></code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other tree distances: 
