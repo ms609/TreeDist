@@ -79,7 +79,7 @@ List cpp_robinson_foulds_info (const RawMatrix x, const RawMatrix y,
   double score = 0;
   
   IntegerVector matching (most_splits);
-  for (int16 i = 0; i != most_splits; i++) matching[i] = NA_REAL;
+  for (int16 i = 0; i != most_splits; i++) matching[i] = NA_INTEGER;
   
   /* Dynamic allocation 20% faster for 105 tips, but VLA not permitted in C11 */
   splitbit b_complement[MAX_SPLITS][MAX_BINS]; 

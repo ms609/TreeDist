@@ -1,3 +1,7 @@
+# TreeDist 1.1.0.9000 (development)
+
+- Fix integer range error when calculating tree distances.
+
 # TreeDist 1.1.0
 
 - Improvements to `NNIDist()` in light of Fack _et al._ (2002).
