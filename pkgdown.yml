@@ -4,11 +4,10 @@ pkgdown_sha: ~
 articles:
   Generalized-RF: Generalized-RF.html
   Robinson-Foulds: Robinson-Foulds.html
-  Tree-distance-interpretation: Tree-distance-interpretation.html
   Using-TreeDist: Using-TreeDist.html
   information: information.html
   using-distances: using-distances.html
-last_built: 2020-07-04T06:55Z
+last_built: 2020-07-09T13:18Z
 urls:
   reference: https://ms609.github.io/TreeDist/reference
   article: https://ms609.github.io/TreeDist/articles

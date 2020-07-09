@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -117,7 +117,7 @@
       <h1 data-toc-skip>Comparing splits using information theory</h1>
                         <h4 class="author">Martin R. Smith</h4>
             
-            <h4 class="date">2020-07-04</h4>
+            <h4 class="date">2020-07-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/information.Rmd"><code>vignettes/information.Rmd</code></a></small>
       <div class="hidden name"><code>information.Rmd</code></div>
@@ -140,34 +140,29 @@
 <p>Because <span class="math inline">\(h(S_1,S_2) &lt; h(S_1) + h(S_2)\)</span>, some of the information in <span class="math inline">\(S_1\)</span> is also present in <span class="math inline">\(S_2\)</span>. The information in common between <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> is <span class="math inline">\(h_{shared}(S_1, S_2) = h(S_1) + h(S_2) - h(S_1,S_2) \approx 1.22\textrm{ bits}\)</span>. The information unique to <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> is <span class="math inline">\(h_{different}(S_1,S_2) = 2h(S_1,S_2) - h(S_1) - h(S_2) \approx 3.91\textrm{ bits}\)</span>.</p>
 <p>These quantities can be calculated using functions in the ‘<a href="https://ms609.github.io/TreeTools">TreeTools</a>’ package.</p>
 <div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">'TreeTools'</span>, <span class="kw">quietly</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">warn.conflicts</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">'TreeDist'</span>)</pre></body></html></div>
-<pre><code>## 
-## Attaching package: 'TreeDist'</code></pre>
-<pre><code>## The following object is masked from 'package:TreeTools':
-## 
-##     SplitsInBinaryTree</code></pre>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">treesMatchingSplit</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">'TreeDist'</span>)
+<span class="no">treesMatchingSplit</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(
   <span class="kw">AB.CDEF</span> <span class="kw">=</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TreesMatchingSplit.html">TreesMatchingSplit</a></span>(<span class="fl">2</span>, <span class="fl">4</span>),
   <span class="kw">ABC.DEF</span> <span class="kw">=</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TreesMatchingSplit.html">TreesMatchingSplit</a></span>(<span class="fl">3</span>, <span class="fl">3</span>)
 )
 <span class="no">treesMatchingSplit</span></pre></body></html></div>
 <pre><code>## AB.CDEF ABC.DEF 
 ##      15       9</code></pre>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">proportionMatchingSplit</span> <span class="kw">&lt;-</span> <span class="no">treesMatchingSplit</span> / <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/NRooted.html">NUnrooted</a></span>(<span class="fl">6</span>)
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="no">proportionMatchingSplit</span> <span class="kw">&lt;-</span> <span class="no">treesMatchingSplit</span> / <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/NRooted.html">NUnrooted</a></span>(<span class="fl">6</span>)
 <span class="no">proportionMatchingSplit</span></pre></body></html></div>
 <pre><code>##    AB.CDEF    ABC.DEF 
 ## 0.14285714 0.08571429</code></pre>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="no">splitInformation</span> <span class="kw">&lt;-</span> -<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span>(<span class="no">proportionMatchingSplit</span>)
+<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">splitInformation</span> <span class="kw">&lt;-</span> -<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span>(<span class="no">proportionMatchingSplit</span>)
 <span class="no">splitInformation</span></pre></body></html></div>
 <pre><code>##  AB.CDEF  ABC.DEF 
 ## 2.807355 3.544321</code></pre>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">treesMatchingBoth</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/SplitSharedInformation.html">TreesConsistentWithTwoSplits</a></span>(<span class="fl">6</span>, <span class="fl">2</span>, <span class="fl">3</span>)
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">treesMatchingBoth</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/SplitSharedInformation.html">TreesConsistentWithTwoSplits</a></span>(<span class="fl">6</span>, <span class="fl">2</span>, <span class="fl">3</span>)
 <span class="no">combinedInformation</span> <span class="kw">&lt;-</span> -<span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span>(<span class="no">treesMatchingBoth</span> / <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/NRooted.html">NUnrooted</a></span>(<span class="fl">6</span>))
 
 <span class="no">sharedInformation</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span>(<span class="no">splitInformation</span>) - <span class="no">combinedInformation</span>
 <span class="no">sharedInformation</span></pre></body></html></div>
 <pre><code>## [1] 1.222392</code></pre>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="co"># Or more concisely:</span>
+<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="co"># Or more concisely:</span>
 <span class="fu"><a href="../reference/SplitSharedInformation.html">SplitSharedInformation</a></span>(<span class="kw">n</span> <span class="kw">=</span> <span class="fl">6</span>, <span class="fl">2</span>, <span class="fl">3</span>)</pre></body></html></div>
 <pre><code>## [1] 1.222392</code></pre>
 <!--The more similar the splits, the more information they will have in common;

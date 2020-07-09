@@ -89,7 +89,7 @@ in the same list." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -223,7 +223,19 @@ Identical trees are assumed to have zero distance.</p>
 #&gt; pec1    2         2
 #&gt; pec2    2    2     
 #&gt; 
+#&gt; $best_lower
+#&gt;      bal1 pec1 pec2
+#&gt; bal1         2    2
+#&gt; pec1    2         3
+#&gt; pec2    2    3     
+#&gt; 
 #&gt; $tight_upper
+#&gt;      bal1 pec1 pec2
+#&gt; bal1         2    2
+#&gt; pec1    2         3
+#&gt; pec2    2    3     
+#&gt; 
+#&gt; $best_upper
 #&gt;      bal1 pec1 pec2
 #&gt; bal1         2    2
 #&gt; pec1    2         3
@@ -231,12 +243,24 @@ Identical trees are assumed to have zero distance.</p>
 #&gt; 
 #&gt; $loose_upper
 #&gt;      bal1 pec1 pec2
+#&gt; bal1         4    4
+#&gt; pec1    4         5
+#&gt; pec2    4    5     
+#&gt; 
+#&gt; $fack_upper
+#&gt;      bal1 pec1 pec2
+#&gt; bal1         4    4
+#&gt; pec1    4         5
+#&gt; pec2    4    5     
+#&gt; 
+#&gt; $li_upper
+#&gt;      bal1 pec1 pec2
 #&gt; bal1        14   14
 #&gt; pec1   14        10
 #&gt; pec2   14   10     
 #&gt; </div><div class='input'>
-<span class='co'># Providing FUN.VALUE yeilds a small speed gain:</span>
-<span class='no'>dist</span> <span class='kw'>&lt;-</span> <span class='fu'>CompareAll</span>(<span class='no'>trees</span>, <span class='no'>NNIDist</span>, <span class='kw'>FUN.VALUE</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(<span class='fl'>3</span>))
+<span class='co'># Providing FUN.VALUE yields a modest speed gain:</span>
+<span class='no'>dist</span> <span class='kw'>&lt;-</span> <span class='fu'>CompareAll</span>(<span class='no'>trees</span>, <span class='no'>NNIDist</span>, <span class='kw'>FUN.VALUE</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(<span class='fl'>7</span>))
 
 <span class='co'># View distances as a matrix</span>
 <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span>(<span class='no'>dist</span>$<span class='no'>lower</span>)</div><div class='output co'>#&gt;      bal1 pec1 pec2

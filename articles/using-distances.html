@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -117,7 +117,7 @@
       <h1 data-toc-skip>Contextualizing tree distances</h1>
                         <h4 class="author"><a href="https://community.dur.ac.uk/martin.smith/">Martin R. Smith</a></h4>
             
-            <h4 class="date">2020-07-04</h4>
+            <h4 class="date">2020-07-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/using-distances.Rmd"><code>vignettes/using-distances.Rmd</code></a></small>
       <div class="hidden name"><code>using-distances.Rmd</code></div>
@@ -197,7 +197,7 @@ In such a context, it can be relevant to normalize tree similarity against the <
   <span class="no">oldPar</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="kw">cex</span> <span class="kw">=</span> <span class="fl">0.7</span>, <span class="kw">mar</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">5</span>, <span class="fl">5</span>, <span class="fl">0.01</span>, <span class="fl">0.01</span>))
   <span class="no">nLeaves</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/dimnames.html">dimnames</a></span>(<span class="no">randomTreeDistances</span>)<span class="kw">[[</span><span class="fl">3</span>]])
   <span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span>(<span class="no">nLeaves</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">'n'</span>, <span class="no">randomTreeDistances</span>[<span class="st">'pid'</span>, <span class="st">'mean'</span>, ],
-       <span class="kw">ylim</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.4</span>, <span class="fl">1</span>),
+       <span class="kw">ylim</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.54</span>, <span class="fl">1</span>),
        <span class="kw">xlab</span> <span class="kw">=</span> <span class="st">"Number of leaves"</span>,
        <span class="kw">ylab</span> <span class="kw">=</span> <span class="st">"Normalized distance between random tree pairs"</span>)
 
@@ -364,7 +364,7 @@ In such a context, it can be relevant to normalize tree similarity against the <
 <p>You may wish to:</p>
 <ul>
 <li><p>Explore the <a href="http://ms609.github.io/Ternary/">Ternary package</a></p></li>
-<li><p><a href="Tree-distance-interpretation.html">Interpret tree distance metrics</a></p></li>
+<li><p><a href="https://ms609.github.io/TreeDistData/articles/09-expected-similarity.html">Interpret tree distance metrics</a></p></li>
 <li><p>Review <a href="https://ms609.github.io/TreeDist/index.html">available distance measures</a> and the corresponding <a href="https://ms609.github.io/TreeDist/reference/index.html#section-tree-distance-measures">TreeDist functions</a></p></li>
 </ul>
 </div>
@@ -379,7 +379,7 @@ In such a context, it can be relevant to normalize tree similarity against the <
 <p>Smith, M. R. (2019). Bayesian and parsimony approaches reconstruct informative trees from simulated morphological datasets. <em>Biology Letters</em>, <em>15</em>(2), 20180632. doi:<a href="https://doi.org/10.1098/rsbl.2018.0632">10.1098/rsbl.2018.0632</a></p>
 </div>
 <div id="ref-SmithDist">
-<p>Smith, M. R. (2020). Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees. <em>Bioinformatics</em>, in production. doi:<a href="https://doi.org/10.1093/bioinformatics/btaa614">10.1093/bioinformatics/btaa614</a></p>
+<p>Smith, M. R. (2020). Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees. <em>Bioinformatics</em>, online ahead of print. doi:<a href="https://doi.org/10.1093/bioinformatics/btaa614">10.1093/bioinformatics/btaa614</a></p>
 </div>
 <div id="ref-Vinh2010">
 <p>Vinh, N. X., Epps, J., &amp; Bailey, J. (2010). Information theoretic measures for clusterings comparison: variants, properties, normalization and correction for chance. <em>Journal of Machine Learning Research</em>, <em>11</em>, 2837–2854. doi:<a href="https://doi.org/10.1145/1553374.1553511">10.1145/1553374.1553511</a></p>
