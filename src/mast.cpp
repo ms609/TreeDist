@@ -3,9 +3,8 @@
 #include "ints.h"
 using namespace Rcpp;
 
-const int16 MAST_MAX_NODE = 4095, /* Much larger --> overflow size of stack frame */
-            MAST_MAX_TIP = MAST_MAX_NODE + 1,
-            MAST_MAX_ALLNODE = MAST_MAX_NODE - 1 + MAST_MAX_NODE;
+const int16 MAST_MAX_NODE = 4095, /* Increasing --> overflow size of stack frame */
+            MAST_MAX_TIP = MAST_MAX_NODE + 1;
 
 int16 max_of_six (const int16 m1,
                   const int16 m2,
