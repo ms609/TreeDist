@@ -1,7 +1,7 @@
 Package: TreeDist
 Type: Package
 Title: Distances Between Phylogenetic Trees
-Version: 1.1.0.9001
+Version: 1.1.1
 Authors@R: c(person("Martin R.", 'Smith',
                   email="martin.smith@durham.ac.uk", 
                   role=c("aut", "cre", "cph", "prg"), 
@@ -65,7 +65,6 @@ LazyData: true
 ByteCompile: true
 Encoding: UTF-8
 Language: en-GB
-Classification/MSC-2020: 05C05, 92-04, 92-08
 X-schema.org-keywords: phylogenetics, tree-distance
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)

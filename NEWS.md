@@ -1,4 +1,4 @@
-# TreeDist 1.1.0.9001 (development)
+# TreeDist 1.1.1
 
 - Fix range errors when calculating tree distances.
 
