@@ -96,12 +96,11 @@ RobinsonFoulds <- function (tree1, tree2 = tree1, similarity = FALSE,
                                         reportMatching)
   
   if (similarity) {
+    maxValue <- outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE]
     if (identical(tree1, tree2)) {
-      maxValue <- outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE]
       unnormalized <- maxValue[lower.tri(maxValue)] - unnormalized
     } else { 
-      unnormalized <- outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE] -
-      unnormalized
+      unnormalized <- maxValue - unnormalized
     }
   }
   
@@ -120,8 +119,12 @@ RobinsonFouldsMatching <- function (tree1, tree2 = tree1, similarity = FALSE,
   ret <- CalculateTreeDistance(RobinsonFouldsSplits, tree1, tree2,
                                reportMatching = TRUE)
 
-  ret <- outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE] -
-    as.matrix(ret)
+  maxValue <- outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE]
+  if (identical(tree1, tree2)) {
+    maxValue <- maxValue[lower.tri(maxValue)]
+  }
+  
+  ret <- maxValue - ret
   
   attr(ret, 'pairScores') <- !attr(ret, 'pairScores')
   
