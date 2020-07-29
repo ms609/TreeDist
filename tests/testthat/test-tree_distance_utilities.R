@@ -214,6 +214,11 @@ test_that('.TreeDistance() supports all sizes', {
                              PectinateTree(6)))
 })
 
+test_that("Unrooteds are handled by MAST", {
+  trees <- list(unroot(BalancedTree(8)), unroot(PectinateTree(8)))
+  expect_equivalent(6L, as.integer(MASTSize(trees, rooted = FALSE)))
+})
+
 test_that("Entropy() supports dots input", {
   expect_identical(2, Entropy(rep(1/4, 4)))
   expect_identical(1, Entropy(0, .5, 1/2))
