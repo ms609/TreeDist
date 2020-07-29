@@ -2,8 +2,8 @@ library('TreeTools')
 context('tree_distance_utilities.R')
 
 test_that('Tree normalization works', {
-  expect_equal(0.5, NormalizeInfo(5, 3, 5, how=TRUE, 
-                                  InfoInTree=function(x, y) x + y, y = 1L))
+  expect_equal(0.5, NormalizeInfo(5, 3, 5, how = TRUE, 
+                                  InfoInTree = function(x, y) x + y, y = 1L))
   expect_equal(0:4 / c(1, 2, 3, 3, 3), 
                NormalizeInfo(0:4, 1:5, 3, InfoInTree = I, Combine = min))
   expect_equal(3/4, NormalizeInfo(unnormalized = 3, 1, 1, how = 4L))
@@ -43,14 +43,14 @@ test_that('CalculateTreeDistance() handles splits appropriately', {
   
   expect_equivalent(
     CalculateTreeDistance(RobinsonFouldsSplits, splits10.3, splits10.3),
-    CalculateTreeDistance(RobinsonFouldsSplits, splits10.3, trees10.3))
+    as.dist(CalculateTreeDistance(RobinsonFouldsSplits, splits10.3, trees10.3)))
   
   expect_equivalent(
     CalculateTreeDistance(RobinsonFouldsSplits, trees10.3, splits10.3),
-    CalculateTreeDistance(RobinsonFouldsSplits, trees10.3, trees10.3))
+    as.matrix(CalculateTreeDistance(RobinsonFouldsSplits, trees10.3, trees10.3)))
   
   expect_equivalent(
-    CalculateTreeDistance(RobinsonFouldsSplits, trees10.3, trees10.3)[, c(1, 3, 2)],
+    as.matrix(CalculateTreeDistance(RobinsonFouldsSplits, trees10.3, trees10.3))[, c(1, 3, 2)],
     CalculateTreeDistance(RobinsonFouldsSplits, trees10.3, trees10.3[c(1, 3, 2)]),
   )
   

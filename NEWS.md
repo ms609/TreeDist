@@ -1,3 +1,8 @@
+# TreeDist 1.1.1.9000
+
+- `TreeDistance()` and related functions now return a `dist` object when 
+  computing all distances between all pairs of trees in a list.
+
 # TreeDist 1.1.1
 
 - Fix range errors when calculating tree distances.

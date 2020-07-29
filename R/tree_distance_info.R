@@ -203,6 +203,9 @@ ClusteringInfoDistance <- function (tree1, tree2 = tree1, normalize = FALSE,
   treesIndependentInfo <- outer(ClusteringEntropy(tree1),
                                 ClusteringEntropy(tree2), '+')
   
+  if (identical(tree1, tree2)) {
+    treesIndependentInfo <- treesIndependentInfo[lower.tri(treesIndependentInfo)]
+  }
   ret <- treesIndependentInfo - mci - mci
   ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
                        infoInBoth = treesIndependentInfo,
