@@ -6,6 +6,8 @@ treeBal8 <- ape::read.tree(text='(((e, f), (g, h)), ((a, b), (c, d)));')
 treeOpp8 <- ape::read.tree(text='(((a, f), (c, h)), ((g, b), (e, d)));')
 treesSBO8 <- structure(list(treeSym8, treeBal8, treeOpp8), 
                             class = 'multiPhylo')
+treesSSBB8 <- structure(list(treeSym8, treeSym8, treeBal8, treeBal8), 
+                            class = 'multiPhylo')
 
 treeCat8 <- ape::read.tree(text='((((h, g), f), e), (d, (c, (b, a))));')
 treeTac8 <- ape::read.tree(text='((((e, c), g), a), (h, (b, (d, f))));')
@@ -46,8 +48,8 @@ methodsToTest <- list(
 )
 
 NormalizationTest <- function (FUNC, ...) {
-  expect_equal(c(1L, 1L, 1L), 
-               diag(FUNC(treesSBO8, normalize = TRUE, ...)),
+  expect_equal(c(1L, 1L), 
+               FUNC(treesSSBB8, normalize = TRUE, ...)[c(1, 6)],
                tolerance = 1e-7)
 }
 

@@ -295,7 +295,8 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
     if (length(tree1Info) == 1 || length(tree2Info) == 1) {
       mapply(Combiner, tree1Info, tree2Info)
     } else {
-      outer(tree1Info, tree2Info, Combiner)
+      ret <- outer(tree1Info, tree2Info, Combiner)
+      if (identical(tree1, tree2)) ret[lower.tri(ret)] else ret
     }
   }
   
