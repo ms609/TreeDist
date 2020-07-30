@@ -4,7 +4,7 @@
 \alias{CompareAll}
 \title{Distances between each pair of trees}
 \usage{
-CompareAll(x, Func, FUN.VALUE = Func(x[[1]], x[[1]]), ...)
+CompareAll(x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...), ...)
 }
 \arguments{
 \item{x}{List of trees, in the format expected by \code{Func()}.}
