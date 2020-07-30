@@ -1,3 +1,8 @@
+# TreeDist 1.1.1.9000
+
+- Set `TreeDistance()` to return a distance, rather than a similarity,
+  by default (as doucmented).
+
 # TreeDist 1.1.1
 
 - Fix range errors when calculating tree distances.

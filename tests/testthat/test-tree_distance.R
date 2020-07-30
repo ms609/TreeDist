@@ -342,7 +342,7 @@ test_that('Clustering information is correctly calculated', {
   expect_equal(0, MutualClusteringInfo(treeStar8, treeStar8))
   
   expect_equal(TreeDistance(treeSym8, treeBal8),
-               MutualClusteringInfo(treeSym8, treeBal8, normalize = TRUE))
+               ClusteringInfoDistance(treeSym8, treeBal8, normalize = TRUE))
   expect_equal(1, MutualClusteringInfo(treeSym8, treeSym8, normalize = TRUE),
                tolerance = 1e-7)
   expect_true(MutualClusteringInfo(treeSym8, treeBal8, normalize = pmin) >
