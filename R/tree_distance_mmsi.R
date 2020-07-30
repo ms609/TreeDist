@@ -15,7 +15,7 @@ MatchingSplitInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
 MatchingSplitInfoDistance <- function (tree1, tree2 = tree1, 
                                           normalize = FALSE,
                                           reportMatching = FALSE) {
-  msi <- MatchingSplitInfo(tree1, tree2, normalize = FALSE, 
+  msi <- MatchingSplitInfo(tree1, tree2, normalize = FALSE,
                                   reportMatching)
   
   treesIndependentInfo <- outer(SplitwiseInfo(tree1), SplitwiseInfo(tree2), '+')

@@ -91,6 +91,10 @@
 #' section below.
 #' If `FALSE`, results will not be rescaled.
 #' 
+#' @param diag Logical specifying whether to return similarites along the
+#' diagonal, i.e. of each tree with itself.  Applies only if `tree2` is
+#' a list identical to `tree1`, or `NULL`.
+#' 
 #' @param reportMatching Logical specifying whether to return the clade
 #' matchings as an attribute of the score.
 #'
@@ -159,9 +163,14 @@ TreeDistance <- function (tree1, tree2 = tree1) {
 #' @rdname TreeDistance
 #' @export
 SharedPhylogeneticInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
-                                    reportMatching = FALSE) {
+                                    reportMatching = FALSE, diag = TRUE) {
   unnormalized <- CalculateTreeDistance(SharedPhylogeneticInfoSplits, tree1,
                                         tree2, reportMatching = reportMatching)
+  
+  if (diag && inherits(unnormalized, 'dist')) {
+    unnormalized <- as.matrix(unnormalized)
+    diag(unnormalized) <- SplitwiseInfo(tree1)
+  }
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
@@ -173,7 +182,7 @@ SharedPhylogeneticInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
 DifferentPhylogeneticInfo <- function (tree1, tree2 = tree1, 
                                          normalize = FALSE,
                                          reportMatching = FALSE) {
-  spi <- SharedPhylogeneticInfo(tree1, tree2, normalize = FALSE,
+  spi <- SharedPhylogeneticInfo(tree1, tree2, normalize = FALSE, diag = FALSE,
                                 reportMatching = reportMatching)
   treesIndependentInfo <- outer(SplitwiseInfo(tree1), SplitwiseInfo(tree2), '+')
   
@@ -203,7 +212,7 @@ ClusteringInfoDistance <- function (tree1, tree2 = tree1, normalize = FALSE,
   treesIndependentInfo <- outer(ClusteringEntropy(tree1),
                                 ClusteringEntropy(tree2), '+')
   
-  if (identical(tree1, tree2)) {
+  if (!inherits(tree1, 'phylo') && identical(tree1, tree2)) {
     treesIndependentInfo <- treesIndependentInfo[lower.tri(treesIndependentInfo)]
   }
   ret <- treesIndependentInfo - mci - mci

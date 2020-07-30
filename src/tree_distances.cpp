@@ -327,7 +327,7 @@ List cpp_mmsi_distance (const RawMatrix x, const RawMatrix y,
   }
   const SplitList a(x), b(y);
   const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-    n_tips = nTip[0];
+              n_tips = nTip[0];
   const cost max_score = BIG;
   const double max_possible = lg2_unrooted[n_tips] - 
     lg2_trees_matching_split((n_tips + 1) / 2, n_tips / 2);
@@ -534,7 +534,8 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   cost *u = new cost[most_splits], *v = new cost[most_splits];
   
   NumericVector final_score = NumericVector::create(
-    (double) ((max_score * most_splits) - lap(most_splits, score, rowsol, colsol, u, v))
+    (double) ((max_score * most_splits) - 
+      lap(most_splits, score, rowsol, colsol, u, v))
     * max_possible / max_score);
   
   delete[] u; delete[] v; delete[] colsol;

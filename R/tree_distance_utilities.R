@@ -76,10 +76,6 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
                             nTip = nTip,
                             reportMatching = FALSE,
                             ...))
-    #ret[upper.tri(ret)] <- t(ret)[upper.tri(ret)]
-    #diag(ret) <- vapply(splits[seq_len(nSplits)], function (split) {
-    #  Func(split, split, nTip = nTip, reportMatching = FALSE, ...)
-    #}, double(1))
     
     # Return:
     ret
