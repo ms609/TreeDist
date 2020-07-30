@@ -157,7 +157,7 @@
 #' @family tree distances
 #' @export
 TreeDistance <- function (tree1, tree2 = tree1) {
-  MutualClusteringInfo(tree1, tree2, normalize = TRUE, reportMatching = FALSE)
+  ClusteringInfoDistance(tree1, tree2, normalize = TRUE, reportMatching = FALSE)
 }
 
 #' @rdname TreeDistance
