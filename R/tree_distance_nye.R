@@ -65,15 +65,21 @@
 NyeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
                            normalize = FALSE,
                            normalizeMax = !is.logical(normalize),
-                           reportMatching = FALSE) {
+                           reportMatching = FALSE,
+                           diag = TRUE) {
   
   unnormalized <- CalculateTreeDistance(NyeSplitSimilarity, tree1, tree2, 
                                         reportMatching)
   if (similarity) {
+    InfoInTree <- if (normalizeMax) SplitsInBinaryTree else NSplits
+    if (diag && identical(tree1, tree2) && !inherits(tree1, 'phylo')) {
+      unnormalized <- as.matrix(unnormalized)
+      diag(unnormalized) <- InfoInTree(tree1)
+    }
+    
     # Return:
     NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                  InfoInTree = if (normalizeMax) SplitsInBinaryTree else NSplits,
-                  Combine = .MeanOfTwo)
+                  InfoInTree = InfoInTree, Combine = .MeanOfTwo)
   } else {
     unnormalized <- .MaxValue(tree1, tree2, NSplits) - 
       (unnormalized + unnormalized)

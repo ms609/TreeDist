@@ -184,7 +184,7 @@ DifferentPhylogeneticInfo <- function (tree1, tree2 = tree1,
                                          reportMatching = FALSE) {
   spi <- SharedPhylogeneticInfo(tree1, tree2, normalize = FALSE, diag = FALSE,
                                 reportMatching = reportMatching)
-  treesIndependentInfo <- outer(SplitwiseInfo(tree1), SplitwiseInfo(tree2), '+')
+  treesIndependentInfo <- .MaxValue(tree1, tree2, SplitwiseInfo)
   
   ret <- treesIndependentInfo - spi - spi
   ret <- NormalizeInfo(ret, tree1, tree2, how = normalize, 
@@ -280,9 +280,13 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+4) {
 #' @aliases MutualClusteringInformation
 #' @export
 MutualClusteringInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
-                                  reportMatching = FALSE) {
+                                  reportMatching = FALSE, diag = TRUE) {
   unnormalized <- CalculateTreeDistance(MutualClusteringInfoSplits, tree1, tree2,
                                         reportMatching)
+  if (diag && identical(tree1, tree2) && !inherits(tree1, 'phylo')) {
+    unnormalized <- as.matrix(unnormalized)
+    diag(unnormalized) <- ClusteringEntropy(tree1)
+  }
   NormalizeInfo(unnormalized, tree1, tree2, ClusteringEntropy, 
                 how = normalize, Combine = .PairMean)
 }

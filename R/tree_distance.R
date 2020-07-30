@@ -73,9 +73,9 @@ GeneralizedRF <- function (splits1, splits2, nTip, PairScorer,
   ret
 }
 
-.SubtractFromMax <- function (tree1, tree2, Value) {
+.MaxValue <- function (tree1, tree2, Value) {
   maxValue <- outer(Value(tree1), Value(tree2), '+')[, , drop = TRUE]
-  if (identical(tree1, tree2)) {
+  if (!inherits(tree1, 'phylo') && identical(tree1, tree2)) {
     maxValue[lower.tri(maxValue)]
   } else {
     maxValue
