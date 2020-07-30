@@ -19,8 +19,8 @@ MatchingSplitInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
 MatchingSplitInfoDistance <- function (tree1, tree2 = tree1, 
                                           normalize = FALSE,
                                           reportMatching = FALSE) {
-  msi <- MatchingSplitInfo(tree1, tree2, normalize = FALSE,
-                           reportMatching)
+  msi <- MatchingSplitInfo(tree1, tree2, normalize = FALSE, diag = FALSE,
+                           reportMatching = reportMatching)
   
   treesIndependentInfo <- .MaxValue(tree1, tree2, SplitwiseInfo)
   ret <- treesIndependentInfo - msi - msi

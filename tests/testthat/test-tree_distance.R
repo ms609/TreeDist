@@ -244,7 +244,7 @@ test_that('Shared Phylogenetic Info is correctly calculated', {
                SharedPhylogeneticInfo(t2, t1))
 })
 
-test_that('MatchingSplitInfo is correctly calculated', {
+test_that('MatchingSplitInfo() is correctly calculated', {
   BinaryToSplit <- function (binary) matrix(as.logical(binary))
   expect_equal(log2(3),
                MatchingSplitInfoSplits(
@@ -662,8 +662,8 @@ test_that("Independent of root position", {
   trees <- lapply(list(bal8, RootTree(bal8, 't4'),
                        pec8, RootTree(pec8, 't4')), UnrootTree)
   
-  lapply(methodsToTest[-length(methodsToTest)], function (Method, ...) {
-    dists <- as.matrix(Method(trees, ...))
+  lapply(methodsToTest[-length(methodsToTest)], function (Method) {
+    dists <- as.matrix(Method(trees))
     expect_equal(dists[1, 1], dists[1, 2])
     expect_equal(dists[1, 3], dists[1, 4])
     expect_equal(dists[1, 3], dists[2, 4])
