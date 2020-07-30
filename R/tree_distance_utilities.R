@@ -292,7 +292,7 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
       mapply(Combiner, tree1Info, tree2Info)
     } else {
       ret <- outer(tree1Info, tree2Info, Combiner)
-      if (identical(tree1, tree2)) ret[lower.tri(ret)] else ret
+      if (inherits(unnormalized, 'dist')) ret[lower.tri(ret)] else ret
     }
   }
   
@@ -300,7 +300,7 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
     if (how == FALSE) {
       return (unnormalized)
     } else {
-      if (is.null(infoInBoth)) 
+      if (is.null(infoInBoth))
         infoInBoth <- CombineInfo(InfoInTree(tree1, ...),
                                   InfoInTree(tree2, ...))
     }
