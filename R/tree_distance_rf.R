@@ -68,6 +68,9 @@ InfoRobinsonFoulds <- function (tree1, tree2 = tree1, similarity = FALSE,
     unnormalized <- .MaxValue(tree1, tree2, SplitwiseInfo) - unnormalized
   }
   
+  # In case of floating point inaccuracy
+  unnormalized[unnormalized < .Machine$double.eps^0.5] <- 0
+  
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
                 InfoInTree = SplitwiseInfo, Combine = '+')
