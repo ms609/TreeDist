@@ -73,6 +73,15 @@ GeneralizedRF <- function (splits1, splits2, nTip, PairScorer,
   ret
 }
 
+.MaxValue <- function (tree1, tree2, Value) {
+  maxValue <- outer(Value(tree1), Value(tree2), '+')[, , drop = TRUE]
+  if (!inherits(tree1, 'phylo') && identical(tree1, tree2)) {
+    maxValue[lower.tri(maxValue)]
+  } else {
+    maxValue
+  }
+}
+
 #' Are splits compatible?
 #' 
 #' Determine whether splits are compatible (concave); i.e. they can both occur

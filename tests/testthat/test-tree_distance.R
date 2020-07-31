@@ -6,6 +6,8 @@ treeBal8 <- ape::read.tree(text='(((e, f), (g, h)), ((a, b), (c, d)));')
 treeOpp8 <- ape::read.tree(text='(((a, f), (c, h)), ((g, b), (e, d)));')
 treesSBO8 <- structure(list(treeSym8, treeBal8, treeOpp8), 
                             class = 'multiPhylo')
+treesSSBB8 <- structure(list(treeSym8, treeSym8, treeBal8, treeBal8), 
+                            class = 'multiPhylo')
 
 treeCat8 <- ape::read.tree(text='((((h, g), f), e), (d, (c, (b, a))));')
 treeTac8 <- ape::read.tree(text='((((e, c), g), a), (h, (b, (d, f))));')
@@ -46,8 +48,8 @@ methodsToTest <- list(
 )
 
 NormalizationTest <- function (FUNC, ...) {
-  expect_equal(c(1L, 1L, 1L), 
-               diag(FUNC(treesSBO8, normalize = TRUE, ...)),
+  expect_equal(c(1L, 1L), 
+               FUNC(treesSSBB8, normalize = TRUE, ...)[c(1, 6)],
                tolerance = 1e-7)
 }
 
@@ -89,19 +91,20 @@ test_that('Metrics handle polytomies', {
          function (Func) expect_equal(0, Func(treeSym8, polytomy8)))
 })
 
+Func <- ClusteringInfoDistance # FUNC =
 test_that('Output dimensions are correct', {
-  list1 <- list(sym=treeSym8, bal=treeBal8)
-  list2 <- list(sym=treeSym8, abc=treeAbc.Defgh, abcd=treeAbcd.Efgh)
+  list1 <- list(sym = treeSym8, bal = treeBal8)
+  list2 <- list(sym = treeSym8, abc = treeAbc.Defgh, abcd = treeAbcd.Efgh)
   dimNames <- list(c('sym', 'bal'), c('sym', 'abc', 'abcd'))
   
   Test <- function (Func) {
-    allPhylo <- 
-    matrix(c(Func(treeSym8, treeSym8),      Func(treeBal8, treeSym8),
-             Func(treeSym8, treeAbc.Defgh), Func(treeBal8, treeAbc.Defgh),
-             Func(treeSym8, treeAbcd.Efgh), Func(treeBal8, treeAbcd.Efgh)),
-           2L, 3L, dimnames=dimNames)
-    phylo1 <- matrix(c(Func(treeSym8,list2), Func(treeBal8, list2)),
-                     byrow=TRUE, 2L, 3L, dimnames=dimNames)
+    allPhylo <- matrix(
+      c(Func(treeSym8, treeSym8),      Func(treeBal8, treeSym8),
+        Func(treeSym8, treeAbc.Defgh), Func(treeBal8, treeAbc.Defgh),
+        Func(treeSym8, treeAbcd.Efgh), Func(treeBal8, treeAbcd.Efgh)),
+      2L, 3L, dimnames = dimNames)
+    phylo1 <- matrix(c(Func(treeSym8, list2), Func(treeBal8, list2)),
+                     byrow = TRUE, 2L, 3L, dimnames = dimNames)
     phylo2 <- matrix(c(Func(list1, treeSym8), Func(list1, treeAbc.Defgh),
                        Func(list1, treeAbcd.Efgh)), 2L, 3L, dimnames=dimNames)
     noPhylo <- Func(list1, list2)
@@ -245,7 +248,7 @@ test_that('Shared Phylogenetic Info is correctly calculated', {
                SharedPhylogeneticInfo(t2, t1))
 })
 
-test_that('MatchingSplitInfo is correctly calculated', {
+test_that('MatchingSplitInfo() is correctly calculated', {
   BinaryToSplit <- function (binary) matrix(as.logical(binary))
   expect_equal(log2(3),
                MatchingSplitInfoSplits(
@@ -597,7 +600,7 @@ test_that('Multiple comparisons are correctly ordered', {
   trees[[nTrees - 1L]] <- TreeTools::PectinateTree(nTip)
   class(trees) <- 'multiPhylo'
   
-  expect_equivalent(as.matrix(phangorn::RF.dist(trees)),
+  expect_equivalent(phangorn::RF.dist(trees),
                     RobinsonFoulds(trees))
   
   # Test CompareAll
@@ -663,8 +666,8 @@ test_that("Independent of root position", {
   trees <- lapply(list(bal8, RootTree(bal8, 't4'),
                        pec8, RootTree(pec8, 't4')), UnrootTree)
   
-  lapply(methodsToTest[-length(methodsToTest)], function (Method, ...) {
-    dists <- Method(trees, ...)
+  lapply(methodsToTest[-length(methodsToTest)], function (Method) {
+    dists <- as.matrix(Method(trees))
     expect_equal(dists[1, 1], dists[1, 2])
     expect_equal(dists[1, 3], dists[1, 4])
     expect_equal(dists[1, 3], dists[2, 4])

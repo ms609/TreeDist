@@ -1,11 +1,16 @@
 # TreeDist 1.1.1.9000
 
-- Set `TreeDistance()` to return a distance, rather than a similarity,
-  by default (as doucmented).
+- `TreeDistance()` and related functions now return a `dist` object when 
+  computing all distances between all pairs of trees in a list.
+
+- `TreeDistance()` now returns a distance (as documented), rather than a
+  similarity.
+
 
 # TreeDist 1.1.1
 
 - Fix range errors when calculating tree distances.
+
 
 # TreeDist 1.1.0
 
@@ -22,6 +27,7 @@
   of `UINT_FAST16_MAX`).
   
 - Fix memory-handling bug in `lapjv()`.
+
 
 # TreeDist 1.0.0
 

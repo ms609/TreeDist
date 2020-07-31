@@ -65,18 +65,24 @@
 NyeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
                            normalize = FALSE,
                            normalizeMax = !is.logical(normalize),
-                           reportMatching = FALSE) {
+                           reportMatching = FALSE,
+                           diag = TRUE) {
   
   unnormalized <- CalculateTreeDistance(NyeSplitSimilarity, tree1, tree2, 
                                         reportMatching)
   if (similarity) {
+    InfoInTree <- if (normalizeMax) SplitsInBinaryTree else NSplits
+    if (diag && identical(tree1, tree2) && !inherits(tree1, 'phylo')) {
+      unnormalized <- as.matrix(unnormalized)
+      diag(unnormalized) <- InfoInTree(tree1)
+    }
+    
     # Return:
     NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                  InfoInTree = if (normalizeMax) SplitsInBinaryTree else NSplits,
-                  Combine = .MeanOfTwo)
+                  InfoInTree = InfoInTree, Combine = .MeanOfTwo)
   } else {
-    unnormalized <- outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE] -
-                    (unnormalized + unnormalized)
+    unnormalized <- .MaxValue(tree1, tree2, NSplits) - 
+      (unnormalized + unnormalized)
     
     # Return:
     NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
@@ -174,8 +180,10 @@ JaccardRobinsonFoulds <- function (tree1, tree2 = tree1, k = 1L,
   unnormalized <- CalculateTreeDistance(JaccardSplitSimilarity, tree1, tree2, 
                                         k = k, allowConflict = allowConflict, 
                                         reportMatching = reportMatching) * 2L
-  if (!similarity) unnormalized <- 
-      outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE] - unnormalized
+  
+  if (!similarity) {
+    unnormalized <- .MaxValue(tree1, tree2, NSplits) - unnormalized
+  }
 
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
                 InfoInTree = NSplits, Combine = '+')
