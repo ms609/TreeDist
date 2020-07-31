@@ -60,23 +60,22 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
 }
 
 .SplitDistanceManyMany <- function (Func, splits1, splits2, 
-                                   tipLabels, nTip = length(tipLabels), ...) {
+                                    tipLabels, nTip = length(tipLabels), ...) {
   if (identical(splits1, splits2)) {
     splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
     nSplits <- length(splits)
     notLastSplit <- nSplits - 1L
     ret <- matrix(0, nSplits, nSplits)
     is <- matrix(seq_len(nSplits), nSplits, nSplits)
-    ret[lower.tri(ret)] <- mapply(Func,
-                                  splits[t(is)[lower.tri(is)]],
-                                  splits[is[lower.tri(is)]],
-                                  nTip = nTip,
-                                  reportMatching = FALSE,
-                                  ...)
-    ret[upper.tri(ret)] <- t(ret)[upper.tri(ret)]
-    diag(ret) <- vapply(splits[seq_len(nSplits)], function (split) {
-      Func(split, split, nTip = nTip, reportMatching = FALSE, ...)
-    }, double(1))
+    
+    ret <- structure(class = 'dist', Size = nSplits,
+                     diag = FALSE, upper = FALSE,
+                     mapply(Func,
+                            splits[t(is)[lower.tri(is)]],
+                            splits[is[lower.tri(is)]],
+                            nTip = nTip,
+                            reportMatching = FALSE,
+                            ...))
     
     # Return:
     ret
@@ -243,7 +242,7 @@ Entropy <- function (...) {
 #' @family pairwise tree distances
 #' @importFrom stats dist
 #' @export
-CompareAll <- function (x, Func, FUN.VALUE = Func(x[[1]], x[[1]]),
+CompareAll <- function (x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
                         ...) {
   nTree <- length(x)
   countUp <- seq_len(nTree - 1)
@@ -292,7 +291,8 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
     if (length(tree1Info) == 1 || length(tree2Info) == 1) {
       mapply(Combiner, tree1Info, tree2Info)
     } else {
-      outer(tree1Info, tree2Info, Combiner)
+      ret <- outer(tree1Info, tree2Info, Combiner)
+      if (inherits(unnormalized, 'dist')) ret[lower.tri(ret)] else ret
     }
   }
   
@@ -300,7 +300,7 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
     if (how == FALSE) {
       return (unnormalized)
     } else {
-      if (is.null(infoInBoth)) 
+      if (is.null(infoInBoth))
         infoInBoth <- CombineInfo(InfoInTree(tree1, ...),
                                   InfoInTree(tree2, ...))
     }

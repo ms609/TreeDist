@@ -60,11 +60,11 @@
 #'   
 #' @importFrom stats median
 #' @export
-median.multiPhylo <- function (x, na.rm = FALSE, 
+median.multiPhylo <- function (x, na.rm = FALSE,
                                Distance = ClusteringInfoDistance,
                                index = FALSE,
                                breakTies = TRUE, ...) {
-  distances <- colSums(Distance(x))
+  distances <- unname(colSums(as.matrix(Distance(x))))
   
   # Return:
   if (breakTies) {

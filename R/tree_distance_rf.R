@@ -64,9 +64,12 @@ InfoRobinsonFoulds <- function (tree1, tree2 = tree1, similarity = FALSE,
   unnormalized <- CalculateTreeDistance(InfoRobinsonFouldsSplits, tree1, tree2, 
                                         reportMatching) * 2
   
-  if (!similarity) unnormalized <- 
-      outer(SplitwiseInfo(tree1), SplitwiseInfo(tree2), '+')[, , drop = TRUE] -
-      unnormalized
+  if (!similarity) {
+    unnormalized <- .MaxValue(tree1, tree2, SplitwiseInfo) - unnormalized
+  }
+  
+  # In case of floating point inaccuracy
+  unnormalized[unnormalized < .Machine$double.eps^0.5] <- 0
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
@@ -95,9 +98,9 @@ RobinsonFoulds <- function (tree1, tree2 = tree1, similarity = FALSE,
   unnormalized <- CalculateTreeDistance(RobinsonFouldsSplits, tree1, tree2, 
                                         reportMatching)
   
-  if (similarity) unnormalized <- 
-    outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE] -
-    unnormalized
+  if (similarity) {
+    unnormalized <- .MaxValue(tree1, tree2, NSplits) - unnormalized
+  }
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
@@ -112,10 +115,9 @@ RobinsonFoulds <- function (tree1, tree2 = tree1, similarity = FALSE,
 RobinsonFouldsMatching <- function (tree1, tree2 = tree1, similarity = FALSE,
                                     normalize = FALSE, ...) {
   ret <- CalculateTreeDistance(RobinsonFouldsSplits, tree1, tree2,
-                                        reportMatching = TRUE)
+                               reportMatching = TRUE)
 
-  ret <- outer(NSplits(tree1), NSplits(tree2), '+')[, , drop = TRUE] -
-    ret
+  ret <- .MaxValue(tree1, tree2, NSplits) - ret
   
   attr(ret, 'pairScores') <- !attr(ret, 'pairScores')
   
