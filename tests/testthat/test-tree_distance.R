@@ -117,6 +117,10 @@ test_that('Robinson Foulds Distance is correctly calculated', {
   RFTest <- function (t1, t2) {
     expect_equal(suppressMessages(phangorn::RF.dist(t1, t2)),
                  RobinsonFoulds(t1, t2))
+    
+    expected <- RobinsonFoulds(t1, t2, reportMatching = TRUE, similarity = TRUE)
+    attr(expected, 'pairScores') <- attr(expected, 'pairScores') == 0L
+    expect_equal(expected, RobinsonFouldsMatching(t1, t2))
   }
   RFTest(treeSym8, treeSym8)
   RFTest(treeSym8, treeStar8)
