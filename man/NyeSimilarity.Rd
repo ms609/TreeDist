@@ -12,7 +12,8 @@ NyeSimilarity(
   similarity = TRUE,
   normalize = FALSE,
   normalizeMax = !is.logical(normalize),
-  reportMatching = FALSE
+  reportMatching = FALSE,
+  diag = TRUE
 )
 
 NyeSplitSimilarity(
@@ -48,6 +49,10 @@ tree.}
 
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}
+
+\item{diag}{Logical specifying whether to return similarites along the
+diagonal, i.e. of each tree with itself.  Applies only if \code{tree2} is
+a list identical to \code{tree1}, or \code{NULL}.}
 
 \item{splits1}{Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),

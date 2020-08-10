@@ -179,9 +179,8 @@ SharedPhylogeneticInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
 
 #' @rdname TreeDistance
 #' @export
-DifferentPhylogeneticInfo <- function (tree1, tree2 = tree1, 
-                                         normalize = FALSE,
-                                         reportMatching = FALSE) {
+DifferentPhylogeneticInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
+                                       reportMatching = FALSE) {
   spi <- SharedPhylogeneticInfo(tree1, tree2, normalize = FALSE, diag = FALSE,
                                 reportMatching = reportMatching)
   treesIndependentInfo <- .MaxValue(tree1, tree2, SplitwiseInfo)
