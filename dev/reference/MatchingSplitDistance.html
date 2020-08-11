@@ -90,7 +90,7 @@ Matching Split Distance
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.0.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.1.9000</span>
       </span>
     </div>
 
@@ -281,12 +281,11 @@ doi: <a href='https://doi.org/10.1109/TCBB.2011.157'>10.1109/TCBB.2011.157</a>
 <code><a href='TreeDistance.html'>TreeDistance</a>()</code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>MatchingSplitDistance</span>(<span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>8</span>, <span class='fl'>5</span>), <span class='kw pkg'>ape</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span>), <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>16</span>)</div><div class='output co'>#&gt;        [,1]   [,2]   [,3]   [,4]   [,5]
-#&gt; [1,] 0.0000 0.5625 0.6875 0.4375 0.5000
-#&gt; [2,] 0.5625 0.0000 0.8750 0.7500 0.5625
-#&gt; [3,] 0.6875 0.8750 0.0000 0.6250 0.8125
-#&gt; [4,] 0.4375 0.7500 0.6250 0.0000 0.5625
-#&gt; [5,] 0.5000 0.5625 0.8125 0.5625 0.0000</div><div class='input'>
+    <pre class="examples"><div class='input'><span class='fu'>MatchingSplitDistance</span>(<span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>8</span>, <span class='fl'>5</span>), <span class='kw pkg'>ape</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span>), <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>16</span>)</div><div class='output co'>#&gt;        1      2      3      4
+#&gt; 2 0.5625                     
+#&gt; 3 0.6875 0.8750              
+#&gt; 4 0.4375 0.7500 0.6250       
+#&gt; 5 0.5000 0.5625 0.8125 0.5625</div><div class='input'>
 <span class='fu'>MatchingSplitDistance</span>(<span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>6</span>),
                       <span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>6</span>),
                       <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] 2

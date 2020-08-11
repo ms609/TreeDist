@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.0.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.1.9000</span>
       </span>
     </div>
 
@@ -118,7 +118,7 @@
       <h1 data-toc-skip>Contextualizing tree distances</h1>
                         <h4 class="author"><a href="https://community.dur.ac.uk/martin.smith/">Martin R. Smith</a></h4>
             
-            <h4 class="date">2020-07-08</h4>
+            <h4 class="date">2020-08-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/using-distances.Rmd"><code>vignettes/using-distances.Rmd</code></a></small>
       <div class="hidden name"><code>using-distances.Rmd</code></div>
@@ -162,9 +162,9 @@ As such, we might prefer to compare the tree similarity to the maximum score pos
 <p>This approach will produce a similarity of one if one tree is a less-resolved version of another (and thus not identical).</p>
 <p>If we are comparing lists of trees, this best value will depend on the number of splits in each pair of trees. We can use the function <code><a href="https://rdrr.io/r/base/Extremes.html">pmin()</a></code> to select the less resolved of each pair of trees:</p>
 <div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="fu"><a href="../reference/NyeSimilarity.html">NyeSimilarity</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">tree1</span>, <span class="no">tree2</span>), <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="no">tree1</span>, <span class="no">tree2</span>), <span class="kw">normalize</span> <span class="kw">=</span> <span class="no">pmin</span>)</pre></body></html></div>
-<pre><code>##           [,1]      [,2]
-## [1,] 0.8750000 0.2744048
-## [2,] 0.2744048 0.5000000</code></pre>
+<pre><code>##           1         2
+## 1 1.0000000 0.2744048
+## 2 0.2744048 1.0000000</code></pre>
 <p>To avoid these limitations, we may instead opt to normalize against the average number of splits in the two trees. This is the default normalization method for <a href="../reference/NyeSimilarity.html"><code><a href="../reference/NyeSimilarity.html">NyeSimilarity()</a></code></a>:</p>
 <div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="fu"><a href="../reference/NyeSimilarity.html">NyeSimilarity</a></span>(<span class="no">tree1</span>, <span class="no">tree2</span>, <span class="kw">normalize</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
 <pre><code>## [1] 0.3991342</code></pre>

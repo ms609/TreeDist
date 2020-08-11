@@ -90,7 +90,7 @@ proposed in Smith (2020)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.0.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.1.9000</span>
       </span>
     </div>
 
@@ -182,7 +182,8 @@ proposed in Smith (2020).</p>
   <span class='no'>tree1</span>,
   <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>,
   <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+  <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>diag</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
 )
 
 <span class='fu'>DifferentPhylogeneticInfo</span>(
@@ -212,7 +213,8 @@ proposed in Smith (2020).</p>
   <span class='no'>tree1</span>,
   <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>,
   <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+  <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>diag</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
 )
 
 <span class='fu'>SharedPhylogeneticInfoSplits</span>(
@@ -233,7 +235,8 @@ proposed in Smith (2020).</p>
   <span class='no'>tree1</span>,
   <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>,
   <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+  <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>diag</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
 )
 
 <span class='fu'>MatchingSplitInfoDistance</span>(
@@ -271,6 +274,12 @@ If <code>FALSE</code>, results will not be rescaled.</p></td>
       <th>reportMatching</th>
       <td><p>Logical specifying whether to return the clade
 matchings as an attribute of the score.</p></td>
+    </tr>
+    <tr>
+      <th>diag</th>
+      <td><p>Logical specifying whether to return similarites along the
+diagonal, i.e. of each tree with itself.  Applies only if <code>tree2</code> is
+a list identical to <code>tree1</code>, or <code>NULL</code>.</p></td>
     </tr>
     <tr>
       <th>samples</th>
