@@ -505,7 +505,7 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
     n_tips = nTip[0]
   ;
   const cost max_score = BIG;
-  const double 
+  const double
     lg2_unrooted_n = lg2_unrooted[n_tips],
     best_overlap = one_overlap((n_tips + 1) / 2, n_tips / 2, n_tips),
     max_possible = lg2_unrooted_n - best_overlap
@@ -536,7 +536,7 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
       const double spi_over = spi_overlap(a.state[ai], b.state[bi], n_tips,
                                           in_a[ai], in_b[bi], a.n_bins);
       
-      score[ai][bi] = spi_over ? 
+      score[ai][bi] = spi_over ?
         (spi_over - best_overlap) * (max_score / max_possible) :
         max_score;
         
