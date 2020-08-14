@@ -1,7 +1,7 @@
 # TreeDist 1.1.1.9001 (development)
 
-- Improve precision of `TreeDistance()` functions to avoid multi-hour
-  runtimes in corner cases. (In progress.)
+- Improve floating-point arithmetic in `TreeDistance()` functions to avoid
+  multi-hour runtimes in corner cases.
 
 # TreeDist 1.1.1.9000
 
