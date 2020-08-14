@@ -26,18 +26,18 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
   if (single1) {
     if (single2) {
       .SplitDistanceOneOne(Func, tree1, tree2, tipLabels = labels1, nTip,
-                          reportMatching = reportMatching, ...)
+                           reportMatching = reportMatching, ...)
     } else {
       .SplitDistanceOneMany(Func, oneSplit = tree1, manySplits = tree2,
-                           tipLabels = labels1, nTip = nTip, ...)
+                            tipLabels = labels1, nTip = nTip, ...)
     }
   } else {
     if (single2) {
       .SplitDistanceOneMany(Func, oneSplit = tree2, manySplits = tree1,
-                           tipLabels = labels2, ...)
+                            tipLabels = labels2, ...)
     } else {
       .SplitDistanceManyMany(Func, tree1, tree2,
-                            tipLabels = labels1, ...)
+                             tipLabels = labels1, ...)
     }
   }
 }
