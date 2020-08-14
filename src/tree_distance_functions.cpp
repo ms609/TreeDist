@@ -81,7 +81,7 @@ double ic_element (const double nkK, const int16 nk,
 
 double one_overlap (const int16 a, const int16 b, const int16 n) {
   if (a == b) return lg2_rooted[a] + lg2_rooted[n - a];
-  if (a < b) return lg2_rooted[b] + lg2_rooted[n -a] - lg2_rooted[b - a + 1];
+  if (a < b) return lg2_rooted[b] + lg2_rooted[n - a] - lg2_rooted[b - a + 1];
   return lg2_rooted[a] + lg2_rooted[n - b] - lg2_rooted[a - b + 1];
 }
 
