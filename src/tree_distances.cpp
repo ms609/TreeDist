@@ -155,8 +155,7 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
     for (int16 bi = 0; bi != b.n_splits; bi++) {
       score[ai][bi] = 0;
       for (int16 bin = 0; bin != a.n_bins; bin++) {
-        score[ai][bi] += count_bits(a.state[ai][bin] ^ 
-          b.state[bi][bin]);
+        score[ai][bi] += count_bits(a.state[ai][bin] ^ b.state[bi][bin]);
       }
       if (score[ai][bi] > half_tips) score[ai][bi] = n_tips - score[ai][bi];
     }
@@ -172,8 +171,10 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
   
   lap_col *rowsol = new lap_col[most_splits];
   lap_row *colsol = new lap_row[most_splits];
-  cost *u = new cost[most_splits], 
-                    *v = new cost[most_splits];
+  cost 
+    *u = new cost[most_splits],
+    *v = new cost[most_splits]
+  ;
   
   NumericVector final_score = NumericVector::create(
     lap(most_splits, score, rowsol, colsol, u, v) - (max_score * split_diff));
@@ -523,9 +524,9 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
       const double spi_over = spi_overlap(a.state[ai], b.state[bi], n_tips,
                                           in_a[ai], in_b[bi], a.n_bins);
       
-      score[ai][bi] = spi_over ? (
-        (max_score / max_possible) * (spi_over - best_overlap)
-      ) : max_score;
+      score[ai][bi] = spi_over ? 
+        (spi_over - best_overlap) * (max_score / max_possible) :
+        max_score;
         
     }
     for (int16 bi = b.n_splits; bi < most_splits; bi++) {
