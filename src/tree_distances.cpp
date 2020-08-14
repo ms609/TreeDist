@@ -399,10 +399,12 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   const SplitList a(x), b(y);
-  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
+  const int16 
+    most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     last_bin = a.n_bins - 1,
     n_tips = nTip[0],
-    unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
+    unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0
+  ;
   const cost max_score = BIG;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   
@@ -424,6 +426,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
         a_and_B = 0,
         A_and_b = n_tips
       ;
+      // x divides tips into a|A; y divides tips into b|B
       for (int16 bin = 0; bin != a.n_bins; bin++) {
         a_and_b += count_bits(a.state[ai][bin] & b.state[bi][bin]);
         a_and_B += count_bits(a.state[ai][bin] & b_compl[bi][bin]);
@@ -439,14 +442,14 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
         nB = a_and_B + A_and_B
       ;
       
-      score[ai][bi] = cost(max_score - 
-        ((max_score / n_tips) * (
+      score[ai][bi] = max_score - 
+        cost((double(max_score) / n_tips) * (
           ic_element(a_and_b, na, nb, n_tips) +
           ic_element(a_and_B, na, nB, n_tips) +
           ic_element(A_and_b, nA, nb, n_tips) +
           ic_element(A_and_B, nA, nB, n_tips)
          )
-       ));
+       );
     }
     for (int16 bi = b.n_splits; bi < most_splits; bi++) {
       score[ai][bi] = max_score;

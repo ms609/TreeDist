@@ -71,10 +71,10 @@ double mmsi_score(const int16 n_same, const int16 n_a_and_b,
  * nkK is converted to pkK in the calling function, when the sum of all
  * elements is divided by n.
 */
-double ic_element (const double nkK, const int16 nk,
-                   const int16 nK, const double n) {
+double ic_element (const int16 nkK, const int16 nk,
+                   const int16 nK, const int16 n) {
   if (nkK && nk && nK) {
-    return nkK * log2(nkK * n / double(nk * nK)); // Twice as fast as summing logs
+    return nkK * log2(double(nkK * n) / double(nk * nK)); // Twice as fast as summing logs
   } else return 0;
 }
 
