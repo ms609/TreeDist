@@ -443,7 +443,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
       ;
       
       score[ai][bi] = max_score - 
-        cost((double(max_score) / n_tips) * (
+        cost((max_score / double(n_tips)) * (
           ic_element(a_and_b, na, nb, n_tips) +
           ic_element(a_and_B, na, nB, n_tips) +
           ic_element(A_and_b, nA, nb, n_tips) +
