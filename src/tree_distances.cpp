@@ -442,14 +442,23 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
         nB = a_and_B + A_and_B
       ;
       
-      score[ai][bi] = max_score - 
-        cost((max_score / double(n_tips)) * (
-          ic_element(a_and_b, na, nb, n_tips) +
-          ic_element(a_and_B, na, nB, n_tips) +
-          ic_element(A_and_b, nA, nb, n_tips) +
-          ic_element(A_and_B, nA, nB, n_tips)
-         )
-       );
+      if (a_and_b == A_and_b &&
+          a_and_b == a_and_B &&
+          a_and_b == A_and_B) {
+        score[ai][bi] = max_score; // Don't risk rounding error
+      } else {
+        score[ai][bi] = max_score - 
+          // Division by n_tips converts n(A&B) to P(A&B) for each ic_element
+          cost((max_score / double(n_tips)) * 
+            (
+              // 0 < Sum of IC_elements <= n_tips
+              ic_element(a_and_b, na, nb, n_tips) +
+              ic_element(a_and_B, na, nB, n_tips) +
+              ic_element(A_and_b, nA, nb, n_tips) +
+              ic_element(A_and_B, nA, nB, n_tips)
+             )
+         );
+      }
     }
     for (int16 bi = b.n_splits; bi < most_splits; bi++) {
       score[ai][bi] = max_score;

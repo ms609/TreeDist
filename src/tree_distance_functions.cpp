@@ -79,6 +79,7 @@ double ic_element (const int16 nkK, const int16 nk,
       denominator = nk * nK
     ;
     if (numerator == denominator) return 0; // Avoid possible rounding errors
+    if (nkK == nK && nkK == nK && nkK + nkK == n) return nkK / 2;
     // Twice as fast as summing logs
     return nkK * log2(double(numerator) / denominator);
   } else return 0;
