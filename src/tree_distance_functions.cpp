@@ -75,8 +75,8 @@ double ic_element (const int16 nkK, const int16 nk,
                    const int16 nK, const int16 n) {
   if (nkK && nk && nK) {
     // Avoid possible rounding errors
-    if (nkK == nK && nkK == nK && nkK + nkK == n) return nkK / 2;
     
+    if (nkK == nk && nkK == nK && nkK + nkK == n) return nkK;
     const int_fast32_t 
       numerator = nkK * n,
       denominator = nk * nK
