@@ -91,7 +91,7 @@ test_that('Metrics handle polytomies', {
          function (Func) expect_equal(0, Func(treeSym8, polytomy8)))
 })
 
-Func <- MutualClusteringInfo # FUNC =
+#Func <- ClusteringInfoDistance # FUNC =
 test_that('Output dimensions are correct', {
   list1 <- list(sym = treeSym8, bal = treeBal8)
   list2 <- list(sym = treeSym8, abc = treeAbc.Defgh, abcd = treeAbcd.Efgh)
