@@ -68,9 +68,8 @@ extern double
              const int16 nK, const double n),
   one_overlap(const int16 a, const int16 b, const int16 n),
   one_overlap_notb(const int16 a, const int16 n_minus_b, const int16 n),
-  spi(const splitbit* a_state, const splitbit* b_state, const int16 n_tips, 
-      const int16 in_a, const int16 in_b, 
-      const double lg2_unrooted_n, const int16 n_bins);
+  spi_overlap(const splitbit* a_state, const splitbit* b_state, const int16 n_tips, 
+      const int16 in_a, const int16 in_b, const int16 n_bins);
 
 extern List cpp_robinson_foulds_distance (RawMatrix x, RawMatrix y, 
                                           IntegerVector nTip);
