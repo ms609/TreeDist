@@ -74,13 +74,16 @@ double mmsi_score(const int16 n_same, const int16 n_a_and_b,
 double ic_element (const int16 nkK, const int16 nk,
                    const int16 nK, const int16 n) {
   if (nkK && nk && nK) {
+    // Avoid possible rounding errors
+    if (nkK == nK && nkK == nK && nkK + nkK == n) return nkK / 2;
+    
     const int_fast32_t 
       numerator = nkK * n,
       denominator = nk * nK
     ;
-    if (numerator == denominator) return 0; // Avoid possible rounding errors
-    if (nkK == nK && nkK == nK && nkK + nkK == n) return nkK / 2;
-    // Twice as fast as summing logs
+    if (numerator == denominator) return 0; 
+    
+    // Multiply-then-log is twice as fast log-then-add
     return nkK * log2(double(numerator) / denominator);
   } else return 0;
 }
