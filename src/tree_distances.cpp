@@ -114,9 +114,10 @@ List cpp_robinson_foulds_info (const RawMatrix x, const RawMatrix y,
         for (int16 bin = 0; bin != a.n_bins; bin++) {
           leaves_in_split += count_bits(a.state[ai][bin]);
         }
-        score += lg2_unrooted_n - 
-          lg2_trees_matching_split(leaves_in_split, 
-                                   n_tips - leaves_in_split);
+        
+        score += lg2_unrooted_n - lg2_rooted[leaves_in_split] -
+          lg2_rooted[n_tips - leaves_in_split];
+
         matching[ai] = bi + 1;
         break; /* Only one match possible per split */
       }
@@ -330,16 +331,15 @@ List cpp_mmsi_distance (const RawMatrix x, const RawMatrix y,
               n_tips = nTip[0];
   const cost max_score = BIG;
   const double max_possible = lg2_unrooted[n_tips] - 
-    lg2_trees_matching_split((n_tips + 1) / 2, n_tips / 2);
+    lg2_rooted[int16((n_tips + 1) / 2)] - lg2_rooted[int16(n_tips / 2)];
   
   cost** score = new cost*[most_splits];
-  for (int16 i = 0; i < most_splits; i++) score[i] = new cost[most_splits];
+  for (int16 i = 0; i != most_splits; i++) score[i] = new cost[most_splits];
   
   splitbit different[MAX_BINS];
   
   for (int16 ai = 0; ai != a.n_splits; ai++) {
     for (int16 bi = 0; bi != b.n_splits; bi++) {
-      double score1, score2;
       int16 
         n_different = 0,
         n_a_only = 0,
@@ -353,14 +353,9 @@ List cpp_mmsi_distance (const RawMatrix x, const RawMatrix y,
       }
       const int16 n_same = n_tips - n_different;
       
-      score1 = lg2_unrooted[n_same] - 
-        lg2_trees_matching_split(n_a_and_b, n_same - n_a_and_b);
-      
-      score2 = lg2_unrooted[n_different] - 
-        lg2_trees_matching_split(n_a_only, n_different - n_a_only);
-      
-      score[ai][bi] = max_score * 
-        (1 - ((score1 > score2) ? score1 : score2) / max_possible);
+      score[ai][bi] = max_score - 
+        ((max_score / max_possible) *
+          mmsi_score(n_same, n_a_and_b, n_different, n_a_only));
     }
     for (int16 bi = b.n_splits; bi < most_splits; bi++) {
       score[ai][bi] = max_score;
@@ -377,7 +372,8 @@ List cpp_mmsi_distance (const RawMatrix x, const RawMatrix y,
   cost *u = new cost[most_splits], *v = new cost[most_splits];
   
   NumericVector final_score = NumericVector::create(
-    double((max_score * most_splits) - lap(most_splits, score, rowsol, colsol, u, v))
+    double((max_score * most_splits) - 
+           lap(most_splits, score, rowsol, colsol, u, v))
     * max_possible / max_score);
   
   for (int16 i = 0; i != most_splits; i++) delete[] score[i];
@@ -442,12 +438,14 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
         nB = a_and_B + A_and_B
       ;
       
-      score[ai][bi] = (cost)(max_score * (1L - ((
-        ic_element(a_and_b, na, nb, n_tips) +
-        ic_element(a_and_B, na, nB, n_tips) +
-        ic_element(A_and_b, nA, nb, n_tips) +
-        ic_element(A_and_B, nA, nB, n_tips)
-      ) / n_tips)));
+      score[ai][bi] = cost(max_score - 
+        ((max_score / n_tips) * (
+          ic_element(a_and_b, na, nb, n_tips) +
+          ic_element(a_and_B, na, nB, n_tips) +
+          ic_element(A_and_b, nA, nb, n_tips) +
+          ic_element(A_and_B, nA, nB, n_tips)
+         )
+       ));
     }
     for (int16 bi = b.n_splits; bi < most_splits; bi++) {
       score[ai][bi] = max_score;
@@ -489,14 +487,21 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   const SplitList a(x), b(y);
-  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-              n_tips = nTip[0];
+  const int16 
+    most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
+    n_tips = nTip[0]
+  ;
   const cost max_score = BIG;
-  const double lg2_unrooted_n = lg2_unrooted[n_tips],
-               max_possible = lg2_unrooted_n - 
-                 one_overlap((n_tips + 1) / 2, n_tips / 2, n_tips);
+  const double 
+    lg2_unrooted_n = lg2_unrooted[n_tips],
+    max_possible = lg2_unrooted_n - 
+      one_overlap((n_tips + 1) / 2, n_tips / 2, n_tips)
+  ;
   
-  int16 in_a[MAX_SPLITS], in_b[MAX_SPLITS];
+  int16 
+    in_a[MAX_SPLITS], 
+    in_b[MAX_SPLITS]
+  ;
   for (int16 i = 0; i != a.n_splits; i++) {
     in_a[i] = 0;
     for (int16 bin = 0; bin != a.n_bins; bin++) {
@@ -515,9 +520,9 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   
   for (int16 ai = 0; ai != a.n_splits; ai++) {
     for (int16 bi = 0; bi != b.n_splits; bi++) {
-      score[ai][bi] = max_score * (1 - 
-        (spi(a.state[ai], b.state[bi], n_tips, in_a[ai], in_b[bi],
-             lg2_unrooted_n, a.n_bins) / max_possible));
+      score[ai][bi] = max_score - ((max_score / max_possible) * 
+        spi(a.state[ai], b.state[bi], n_tips, in_a[ai], in_b[bi],
+             lg2_unrooted_n, a.n_bins));
     }
     for (int16 bi = b.n_splits; bi < most_splits; bi++) {
       score[ai][bi] = max_score;

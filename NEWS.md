@@ -1,3 +1,8 @@
+# TreeDist 1.1.1.9001 (development)
+
+- Improve precision of `TreeDistance()` functions to avoid multi-hour
+  runtimes in corner cases. (In progress.)
+
 # TreeDist 1.1.1.9000
 
 - `TreeDistance()` and related functions now return a `dist` object when 
