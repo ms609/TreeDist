@@ -2,6 +2,8 @@
 
 - Improve floating-point arithmetic in `TreeDistance()` functions to avoid
   multi-hour runtimes in corner cases.
+  
+- Fix rounding error in NNI 'Li' upper estimate, and improve NNI performance.
 
 # TreeDist 1.1.1.9000
 
