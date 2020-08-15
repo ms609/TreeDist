@@ -50,8 +50,11 @@ const cost ROUND_PRECISION = 2048 * 2048;
 /***** Constants requiring initialization *****/
 
 extern uint_fast32_t bitcounts[65536];
-extern double lg2_double_factorial[MAX_TIPS + MAX_TIPS - 2],
-  lg2_rooted[MAX_TIPS + 1], lg2_unrooted[MAX_TIPS + 1];
+extern double 
+  lg2[int32(MAX_TIPS - 1) * (MAX_TIPS - 1) + 1],
+  lg2_double_factorial[MAX_TIPS + MAX_TIPS - 2],
+  lg2_rooted[MAX_TIPS + 1],
+  lg2_unrooted[MAX_TIPS + 1];
 
 /*************** FUNCTIONS  *******************/
 
@@ -64,13 +67,12 @@ extern cost lap(int16 dim, cost **assigncost,
 extern double 
   mmsi_score(const int16 n_same, const int16 n_a_and_b,
              const int16 n_different, const int16 n_a_only),
-  ic_element(const double nkK, const int16 nk,
-             const int16 nK, const double n),
+  ic_element(const int16 nkK, const int16 nk,
+             const int16 nK, const int16 n),
   one_overlap(const int16 a, const int16 b, const int16 n),
   one_overlap_notb(const int16 a, const int16 n_minus_b, const int16 n),
-  spi(const splitbit* a_state, const splitbit* b_state, const int16 n_tips, 
-      const int16 in_a, const int16 in_b, 
-      const double lg2_unrooted_n, const int16 n_bins);
+  spi_overlap(const splitbit* a_state, const splitbit* b_state, const int16 n_tips, 
+      const int16 in_a, const int16 in_b, const int16 n_bins);
 
 extern List cpp_robinson_foulds_distance (RawMatrix x, RawMatrix y, 
                                           IntegerVector nTip);

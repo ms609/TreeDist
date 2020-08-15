@@ -21,15 +21,27 @@ test_that("Simple NNI approximations", {
   edge1 <- Postorder(tree1$edge)
   edge2 <- Postorder(tree2$edge)
   
+  Fack <- function (n) ((n - 2) * ceiling(log2(n))) + n
+                                         
+  Sorting <- function (n) {lc <- ceiling(log2(n)); n*lc-2^lc+1}
+  DegDist <- function (n) {
+    nif <- ceiling(log2(n / 3))
+    tif <- 2 ^ nif
+    tl = n - tif
+    mbn <- nif + ceiling(log2(tl / 2)) + 1
+    n - 2 - mbn
+  }
+  Li <- function (n_edges) Sorting(n_edges + 3) + (2 * DegDist(n_edges + 3))
+  
   allMatched <- c(lower = 0L, best_lower = 0L, tight_upper = 0L,
                   best_upper = 0L, loose_upper = 0L, fack_upper = 0L,
                   li_upper = 0L)
   oneUnmatched <- c(lower = 1L, best_lower = 1L, tight_upper = 1L,
                     best_upper = 1L, loose_upper = 2L, fack_upper = 2L,
-                    li_upper = 7L)
+                    li_upper = Li(1))
   fiveUnmatched <- c(lower = 5L, best_lower = 10L, tight_upper = 10L,
                      best_upper = 10L, loose_upper = 18L, fack_upper = 18L,
-                     li_upper = 17L + 4L)
+                     li_upper = Li(5))
   
   Test <- function (expect, tree) {
     expectation <- rep(NA_integer_, 7L)
@@ -44,7 +56,7 @@ test_that("Simple NNI approximations", {
     }
     
     expect_equal(expectation, NNIDist(tree1, tree))
-    for (i in c(2, 3, 4, 6)) {
+    for (i in c(2L, 3L, 4L, 6L)) {
       tree1i <- RootOnNode(tree1, i)
       j <- 0
       for (t2 in unique(lapply(1:9, RootOnNode, tree = tree))) {
@@ -78,11 +90,11 @@ test_that("Simple NNI approximations", {
        read.tree(text="((((a, b), c), d), (e, (f, (g, h))));"))
   
   # One region of three unmatched edges
-  Test(c(lower = 3L, tight_upper = 5L, fack_upper = 8L, li_upper = 13L),
+  Test(c(lower = 3L, tight_upper = 5L, fack_upper = 8L, li_upper = Li(3)),
        read.tree(text="(((a, e), (c, d)), ((b, f), (g, h)));"))
   
   # One region of four unmatched edges
-  Test(c(lower = 4L, tight_upper = 7L, fack_upper = 14L, li_upper = 18L),
+  Test(c(lower = 4L, tight_upper = 7L, fack_upper = 14L, li_upper = Li(4)),
        tree2 <- ape::read.tree(text="(((a, e), (f, d)), ((b, c), (g, h)));"))
   
   # One region of five unmatched edges

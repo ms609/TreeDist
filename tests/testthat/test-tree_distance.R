@@ -91,7 +91,7 @@ test_that('Metrics handle polytomies', {
          function (Func) expect_equal(0, Func(treeSym8, polytomy8)))
 })
 
-Func <- ClusteringInfoDistance # FUNC =
+#Func <- ClusteringInfoDistance # FUNC =
 test_that('Output dimensions are correct', {
   list1 <- list(sym = treeSym8, bal = treeBal8)
   list2 <- list(sym = treeSym8, abc = treeAbc.Defgh, abcd = treeAbcd.Efgh)
@@ -106,7 +106,7 @@ test_that('Output dimensions are correct', {
     phylo1 <- matrix(c(Func(treeSym8, list2), Func(treeBal8, list2)),
                      byrow = TRUE, 2L, 3L, dimnames = dimNames)
     phylo2 <- matrix(c(Func(list1, treeSym8), Func(list1, treeAbc.Defgh),
-                       Func(list1, treeAbcd.Efgh)), 2L, 3L, dimnames=dimNames)
+                       Func(list1, treeAbcd.Efgh)), 2L, 3L, dimnames = dimNames)
     noPhylo <- Func(list1, list2)
     expect_equal(allPhylo, phylo1)
     expect_equal(allPhylo, phylo2)

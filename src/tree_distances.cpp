@@ -155,8 +155,7 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
     for (int16 bi = 0; bi != b.n_splits; bi++) {
       score[ai][bi] = 0;
       for (int16 bin = 0; bin != a.n_bins; bin++) {
-        score[ai][bi] += count_bits(a.state[ai][bin] ^ 
-          b.state[bi][bin]);
+        score[ai][bi] += count_bits(a.state[ai][bin] ^ b.state[bi][bin]);
       }
       if (score[ai][bi] > half_tips) score[ai][bi] = n_tips - score[ai][bi];
     }
@@ -172,8 +171,10 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
   
   lap_col *rowsol = new lap_col[most_splits];
   lap_row *colsol = new lap_row[most_splits];
-  cost *u = new cost[most_splits], 
-                    *v = new cost[most_splits];
+  cost 
+    *u = new cost[most_splits],
+    *v = new cost[most_splits]
+  ;
   
   NumericVector final_score = NumericVector::create(
     lap(most_splits, score, rowsol, colsol, u, v) - (max_score * split_diff));
@@ -398,10 +399,12 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   const SplitList a(x), b(y);
-  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
+  const int16 
+    most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     last_bin = a.n_bins - 1,
     n_tips = nTip[0],
-    unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
+    unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0
+  ;
   const cost max_score = BIG;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   
@@ -423,6 +426,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
         a_and_B = 0,
         A_and_b = n_tips
       ;
+      // x divides tips into a|A; y divides tips into b|B
       for (int16 bin = 0; bin != a.n_bins; bin++) {
         a_and_b += count_bits(a.state[ai][bin] & b.state[bi][bin]);
         a_and_B += count_bits(a.state[ai][bin] & b_compl[bi][bin]);
@@ -438,14 +442,22 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
         nB = a_and_B + A_and_B
       ;
       
-      score[ai][bi] = cost(max_score - 
-        ((max_score / n_tips) * (
-          ic_element(a_and_b, na, nb, n_tips) +
-          ic_element(a_and_B, na, nB, n_tips) +
-          ic_element(A_and_b, nA, nb, n_tips) +
-          ic_element(A_and_B, nA, nB, n_tips)
-         )
-       ));
+      if (a_and_b == A_and_b &&
+          a_and_b == a_and_B &&
+          a_and_b == A_and_B) {
+        score[ai][bi] = max_score; // Don't risk rounding error
+      } else {
+        score[ai][bi] = max_score - 
+          // Division by n_tips converts n(A&B) to P(A&B) for each ic_element
+          cost((max_score / double(n_tips)) * (
+            // 0 < Sum of IC_elements <= n_tips
+            ic_element(a_and_b, na, nb, n_tips) +
+              ic_element(a_and_B, na, nB, n_tips) +
+              ic_element(A_and_b, nA, nb, n_tips) +
+              ic_element(A_and_B, nA, nB, n_tips)
+          )
+        );
+      }
     }
     for (int16 bi = b.n_splits; bi < most_splits; bi++) {
       score[ai][bi] = max_score;
@@ -487,21 +499,23 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   const SplitList a(x), b(y);
-  const int16 
+  const int16
     most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     n_tips = nTip[0]
   ;
   const cost max_score = BIG;
-  const double 
+  const double
     lg2_unrooted_n = lg2_unrooted[n_tips],
-    max_possible = lg2_unrooted_n - 
-      one_overlap((n_tips + 1) / 2, n_tips / 2, n_tips)
+    best_overlap = one_overlap((n_tips + 1) / 2, n_tips / 2, n_tips),
+    max_possible = lg2_unrooted_n - best_overlap
   ;
   
   int16 
     in_a[MAX_SPLITS], 
     in_b[MAX_SPLITS]
   ;
+  // a and b are "clades" separating an "ingroup" [1] from an "outgroup" [0].
+  // In/out direction [i.e. 1/0 bit] is arbitrary.
   for (int16 i = 0; i != a.n_splits; i++) {
     in_a[i] = 0;
     for (int16 bin = 0; bin != a.n_bins; bin++) {
@@ -520,9 +534,13 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   
   for (int16 ai = 0; ai != a.n_splits; ai++) {
     for (int16 bi = 0; bi != b.n_splits; bi++) {
-      score[ai][bi] = max_score - ((max_score / max_possible) * 
-        spi(a.state[ai], b.state[bi], n_tips, in_a[ai], in_b[bi],
-             lg2_unrooted_n, a.n_bins));
+      const double spi_over = spi_overlap(a.state[ai], b.state[bi], n_tips,
+                                          in_a[ai], in_b[bi], a.n_bins);
+      
+      score[ai][bi] = spi_over ?
+        (spi_over - best_overlap) * (max_score / max_possible) :
+        max_score;
+        
     }
     for (int16 bi = b.n_splits; bi < most_splits; bi++) {
       score[ai][bi] = max_score;
@@ -539,9 +557,9 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   cost *u = new cost[most_splits], *v = new cost[most_splits];
   
   NumericVector final_score = NumericVector::create(
-    (double) ((max_score * most_splits) - 
+    double((max_score * most_splits) - 
       lap(most_splits, score, rowsol, colsol, u, v))
-    * max_possible / max_score);
+    * (max_possible / max_score));
   
   delete[] u; delete[] v; delete[] colsol;
   
