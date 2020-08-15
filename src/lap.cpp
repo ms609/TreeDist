@@ -74,7 +74,7 @@ List lapjv (NumericMatrix x, NumericVector maxX) {
 }
 
 bool nontrivially_less_than(cost a, cost b) {
-  return a + ((a > ROUND_PRECISION) ? 2 : 0) < b;
+  return a + ((a > ROUND_PRECISION) ? 16 : 0) < b;
 }
 
 /* This function is the jv shortest augmenting path algorithm to solve the 
