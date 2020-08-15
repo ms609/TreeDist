@@ -27,11 +27,16 @@ int16 count_bits (splitbit x) {
   + bitcounts[(x >> 48)];
 }
 
+double lg2[int32(MAX_TIPS - 1) * (MAX_TIPS - 1) + 1];
 double lg2_double_factorial[MAX_TIPS + MAX_TIPS - 2];
 double lg2_rooted[MAX_TIPS + 1];
 double lg2_unrooted[MAX_TIPS + 1];
 __attribute__((constructor))
   void initialize_ldf() {
+    lg2[0] = 0;
+    for (int32 i = 1; i != int32(MAX_TIPS - 1) * (MAX_TIPS - 1) + 1; i++) { 
+      lg2[i] = log2(i);
+    }
     for (int16 i = 0; i != 3; i++) {
       lg2_double_factorial[i] = 0;
       lg2_rooted[i] = 0;
@@ -45,6 +50,7 @@ __attribute__((constructor))
       lg2_rooted[i] = lg2_double_factorial[i + i - 3];
     }
   }
+
 
 double mmsi_pair_score (const int16 x, const int16 y) {
   // lg2_unrooted[x] - lg2_trees_matching_split(y, x - y) =
@@ -77,14 +83,14 @@ double ic_element (const int16 nkK, const int16 nk,
     // Avoid possible rounding errors
     
     if (nkK == nk && nkK == nK && nkK + nkK == n) return nkK;
-    const int_fast32_t 
+    const int32
       numerator = nkK * n,
       denominator = nk * nK
     ;
     if (numerator == denominator) return 0; 
     
     // Multiply-then-log is twice as fast log-then-add
-    return nkK * log2(double(numerator) / denominator);
+    return nkK * (lg2[numerator] - lg2[denominator]);
   } else return 0;
 }
 
@@ -134,7 +140,9 @@ double spi_overlap (const splitbit* a_state, const splitbit* b_state,
   const int16 loose_end_tips = n_tips % BIN_SIZE;
   for (int16 bin = 0; bin != n_bins; bin++) {
     splitbit test = ~(a_state[bin] | b_state[bin]);
-    if (bin == n_bins - 1 && loose_end_tips) test &= ~(ALL_ONES << loose_end_tips);
+    if (bin == n_bins - 1 && loose_end_tips) {
+      test &= ~(ALL_ONES << loose_end_tips);
+    }
     if (test) {
       flag = true;
       break;
