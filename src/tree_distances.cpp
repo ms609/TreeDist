@@ -456,7 +456,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
               ic_element(A_and_b, nA, nb, n_tips) +
               ic_element(A_and_B, nA, nB, n_tips)
           )
-         );
+        );
       }
     }
     for (int16 bi = b.n_splits; bi < most_splits; bi++) {
@@ -499,7 +499,7 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   const SplitList a(x), b(y);
-  const int16 
+  const int16
     most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     n_tips = nTip[0]
   ;
@@ -514,6 +514,8 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
     in_a[MAX_SPLITS], 
     in_b[MAX_SPLITS]
   ;
+  // a and b are "clades" separating an "ingroup" [1] from an "outgroup" [0].
+  // In/out direction [i.e. 1/0 bit] is arbitrary.
   for (int16 i = 0; i != a.n_splits; i++) {
     in_a[i] = 0;
     for (int16 bin = 0; bin != a.n_bins; bin++) {
@@ -555,9 +557,9 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   cost *u = new cost[most_splits], *v = new cost[most_splits];
   
   NumericVector final_score = NumericVector::create(
-    (double) ((max_score * most_splits) - 
+    double((max_score * most_splits) - 
       lap(most_splits, score, rowsol, colsol, u, v))
-    * max_possible / max_score);
+    * (max_possible / max_score));
   
   delete[] u; delete[] v; delete[] colsol;
   
