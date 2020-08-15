@@ -255,9 +255,9 @@ Identical trees are assumed to have zero distance.</p>
 #&gt; 
 #&gt; $li_upper
 #&gt;      bal1 pec1 pec2
-#&gt; bal1        14   14
-#&gt; pec1   14        10
-#&gt; pec2   14   10     
+#&gt; bal1        10   10
+#&gt; pec1   10         8
+#&gt; pec2   10    8     
 #&gt; </div><div class='input'>
 <span class='co'># Providing FUN.VALUE yields a modest speed gain:</span>
 <span class='no'>dist</span> <span class='kw'>&lt;-</span> <span class='fu'>CompareAll</span>(<span class='no'>trees</span>, <span class='no'>NNIDist</span>, <span class='kw'>FUN.VALUE</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(<span class='fl'>7</span>))
