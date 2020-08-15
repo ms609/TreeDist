@@ -94,17 +94,17 @@ test_that('Matches are reported', {
   cs[, matchedSplits] <- FALSE
   unmatched <- is.na(matchedSplits)
   matchedSplits[unmatched] <- apply(cs[unmatched, ], 1, which)
-  expect_equal(matchedSplits, attr(GeneralizedRF(as.Splits(treeSym8),
-                                                    as.Splits(treeBal8), 8L, 
-                                                    cpp_shared_phylo,
-                                                    maximize = TRUE, 
-                                                    reportMatching = TRUE),
-                                      'matching'))
+  expect_equal(matchedSplits,
+               attr(GeneralizedRF(as.Splits(treeSym8), as.Splits(treeBal8), 8L, 
+                                  cpp_shared_phylo, maximize = TRUE, 
+                                  reportMatching = TRUE),
+                    'matching'))
     
-  expect_equal(matchedSplits, attr(
-    SharedPhylogeneticInfoSplits(as.Splits(treeSym8), as.Splits(treeBal8),
-                               reportMatching = TRUE),
-    'matching'))
+  expect_equal(matchedSplits,
+               attr(SharedPhylogeneticInfoSplits(as.Splits(treeSym8),
+                                                 as.Splits(treeBal8),
+                                                 reportMatching = TRUE),
+                    'matching'))
   
   tree1 <- PectinateTree(letters[1:8])
   tree2 <- BalancedTree(letters[8:1])
