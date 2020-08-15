@@ -43,7 +43,7 @@ __attribute__((constructor))
       lg2_unrooted[i] = 0;
     }
     for (int16 i = 2; i != MAX_TIPS + MAX_TIPS - 2; i++) {
-      lg2_double_factorial[i] = lg2_double_factorial[i - 2] + log2(i);
+      lg2_double_factorial[i] = lg2_double_factorial[i - 2] + lg2[i];
     }
     for (int16 i = 3; i != MAX_TIPS + 1; i++) {
       lg2_unrooted[i] = lg2_double_factorial[i + i - 5];
