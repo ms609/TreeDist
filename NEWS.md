@@ -1,8 +1,10 @@
 # TreeDist 1.1.1.9001 (development)
 
-- Improve floating-point arithmetic in `TreeDistance()` functions to avoid
-  multi-hour runtimes in corner cases.
-  
+- Improve floating-point arithmetic in `TreeDistance()` functions.
+
+- Reduce precision of LAPJV so rounding errors do not result in interminable run
+  times.
+
 - Fix rounding error in NNI 'Li' upper estimate, and improve NNI performance.
 
 # TreeDist 1.1.1.9000
