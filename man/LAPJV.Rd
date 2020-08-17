@@ -24,6 +24,16 @@ column, such that the cost of the matching is minimized.
 The Jonker & Volgenant approach is a faster alternative to the Hungarian
 algorithm (Munkres 1957), which is implemented in \code{clue::solve_LSAP()}.
 
+Note: the JV algorithm expects integers. In order to apply the function
+to a non-integer \emph{n}, as in the tree distance calculations in this package,
+each \emph{n} is multiplied by the largest available integer before applying
+the JV algorithm.  If two values of \emph{n} exhibit a trivial difference --
+e.g. due to floating point errors -- then this can lead to interminable
+run times.  (If numbers of the magnitude of billions differ only in their
+last significant digit, then the JV algorithm may undergo billions of
+iterations.)  To avoid this, integers over 2^22 that differ by a value of
+8 or less are treated as equal.
+
 NB. At present, only square matrices are supported; if you need support for
 non-square matrices, drop a note at
 \href{https://github.com/ms609/TreeDist/issues/25}{issue #25}
