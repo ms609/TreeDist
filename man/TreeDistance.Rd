@@ -109,7 +109,7 @@ If \code{FALSE}, results will not be rescaled.}
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}
 
-\item{diag}{Logical specifying whether to return similarites along the
+\item{diag}{Logical specifying whether to return similarities along the
 diagonal, i.e. of each tree with itself.  Applies only if \code{tree2} is
 a list identical to \code{tree1}, or \code{NULL}.}
 
