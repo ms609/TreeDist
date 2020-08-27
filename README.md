@@ -139,7 +139,7 @@ _Bioinformatics_, 22, 117–119.
 - Smith, M.R. (2020) [Information theoretic Generalized Robinson-Foulds
 metrics for comparing phylogenetic 
 trees](https://dx.doi.org/10.1093/bioinformatics/btaa614).
-_Bioinformatics_, in production.
+_Bioinformatics_, online ahead of print.
 
 Please note that the 'TreeDist' project is released with a
 [Contributor Code of Conduct](CODE_OF_CONDUCT.md).
