@@ -91,7 +91,7 @@
 #' section below.
 #' If `FALSE`, results will not be rescaled.
 #' 
-#' @param diag Logical specifying whether to return similarites along the
+#' @param diag Logical specifying whether to return similarities along the
 #' diagonal, i.e. of each tree with itself.  Applies only if `tree2` is
 #' a list identical to `tree1`, or `NULL`.
 #' 
