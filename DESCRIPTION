@@ -30,7 +30,7 @@ Description: Implements measures of tree similarity, including
   Calculates the median of a set of trees under any distance metric.
 Copyright: Incorporates Jonker-Volgenant Linear Assignment Problem 
   implementation by Roy Jonker, modified by Yong Yang after Yi Cao.
-URL: https://ms609.github.io/TreeDist, https://github.com/ms609/TreeDist
+URL: https://ms609.github.io/TreeDist/, https://github.com/ms609/TreeDist
 BugReports: https://github.com/ms609/TreeDist/issues
 Depends: 
   R (>= 3.4.0),
