@@ -24,8 +24,7 @@ There were two NOTEs:
 [...]
 > Package suggested but not available for checking: 'TreeDistData'
 
-'TreeDistData' depends on 'TreeDist' v1.1.0, so cannot yet be submitted to CRAN
--- but is ready to submit once 'TreeDist' is available.
+'TreeDistData' is too large to be submitted on CRAN.
 
 All calls to `data(package='TreeDistData')` are wrapped within 
 `if(require('TreeDistData')` to ensure that vignettes fail gracefully when
@@ -33,4 +32,6 @@ All calls to `data(package='TreeDistData')` are wrapped within
 
 
 ## Downstream dependencies
-There are currently no downstream dependencies for this package.
+There is one downstream dependency, 'TBRDist' (which I maintain).
+
+No changes to worse were identified by a local R CMD CHECK.
