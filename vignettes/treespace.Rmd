@@ -71,15 +71,16 @@ calcTrustworthinessFromDist <- function(distReference, distLowDim, kTM) {
   calcTrustworthinessFromRank(rankReference = rankReference,
                               rankLowDim = rankLowDim, kTM = kTM)
 }
+set.seed(0)
 ```
 
 First we'll select some trees to analyse.  
-In this simple example we'll take a series of 218 trees from a list ordered by
+In this simple example we'll take a series of 200 trees from a list ordered by
 the trees' mixed-base representation.
 
 ```{r generate-trees}
 library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
-treeNumbers <- c(1:208)
+treeNumbers <- c(1:200)
 trees <- as.phylo(treeNumbers, 8)
 spectrum <- viridisLite::plasma(220)
 treeCols <- spectrum[treeNumbers]
@@ -87,19 +88,19 @@ treeCols <- spectrum[treeNumbers]
 
 Now we need to calculate the distance between each pair of trees in our list.
 The choice of distance metric is important [@SmithSpace]:
-the clustering information distance is both reliable and quick to calculate
-[@SmithDist].
+The clustering information distance is reliable and fast to calculate 
+[@SmithDist]:
 
 ```{r calculate-distances}
 library('TreeDist')
-distances <- ClusteringInfoDistance(trees)
+distances <- ClsuteringInfoDistance(trees)
 ```
 
-Other distances are available, and give results that differ in instructive ways:
+The reader is encouraged to repeat the exercise with other distances:
 
 ```r
 distances <- RobinsonFoulds(trees)
-distances <- PhylogeneticInfoDistance(trees)
+distances <- ClusteringInfoDistance(trees)
 distances <- as.dist(Quartet::QuartetDivergence(
   Quartet::ManyToManyQuartetAgreement(trees), similarity = FALSE))
 ```
@@ -276,6 +277,8 @@ for (i in 2:6) for (j in seq_len(i - 1)) {
 Our clusters, so distinct in dimension 1, overlap strongly in every other
 dimension. The fact that the minimum spanning tree moves between clusters also
 underlines the fact that they are not as well defined as they appear by eye.
+
+## TODO PID on same trees to show MST & 2D are bad.
 
 
 # References
