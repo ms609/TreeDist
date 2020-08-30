@@ -89,13 +89,24 @@ calcTrustworthinessFromDist <- function(distReference, distLowDim, kTM) {
 set.seed(0)
 ```
 
-First we'll select some trees to analyse.  
-In this simple example we'll take a series of 200 trees from a list ordered by
-the trees' mixed-base representation.
+It can be instructive to visualize the distribution of trees in a spatial
+'landscape'. This can be a helpful means to address whether discrete islands
+of trees exist, or whether analytical runs have converged.
+Such analysis is relatively simple to conduct, but contains a few 'gotchas'
+that can mislead interpretation.
+
+Here's an example that analyses a series of 200 trees from an ordered list.
+The list corresponds to a mixed-base representation of trees (see 
+[`TreeTools::as.TreeNumber`], so is expected to contain some structure as
+we jump from one 'class' of tree to another. 
+Let's see whether we can visualize and corroborate this structure.
+
+First we'll generate the trees, and load some colours with which we might
+identify them.
 
 ```{r generate-trees}
 library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
-treeNumbers <- c(1:200)
+treeNumbers <- c(1:220)
 trees <- as.phylo(treeNumbers, 8)
 spectrum <- viridisLite::plasma(220)
 treeCols <- spectrum[treeNumbers]
@@ -139,7 +150,7 @@ projection <- kruskal$points
 ```
 
 whereas `sammon()` is one of many metric MDS, using Sammon's stress function
-[@Sammon19XX]
+[@Sammon1969]
 ```
 sammon <- MASS::sammon(distances, k = 12)
 projection <- sammon$points
@@ -165,7 +176,6 @@ typically find a clustering solution that is close to optimal, if one exists.
 
 
 ```{r clustering}
-
 possibleClusters <- 2:10
 
 pamClusters <- lapply(possibleClusters, function (k) cluster::pam(distances, k = k))
@@ -196,17 +206,28 @@ legend('topright', c('PAM', 'Hierarchical'), pch = 1:2)
 ```
 
 Silhouette coefficients of < 0.25 suggest that structure is not meaningful; 
-\> 0.5 denotes good evidence of clustering, and \> 0.7 strong evidence [@ref].
+\> 0.5 denotes good evidence of clustering, and \> 0.7 strong evidence
+[@@Kaufman1990].
 The evidence for the visually apparent clustering is not as strong as it first
-appears.  Let's explore our two-cluster hierarchical clustering solution anyway:
-
+appears.  Let's explore our two-cluster hierarchical clustering solution anyway.
 
 ```{r chosen-cluster}
 #cluster <- pamClusters[[5]]$cluster
 cluster <- hClusters[[2 - 1]]
 ```
 
-One thing we may wish to do is to take the consensus of each cluster:
+
+We can visualize the clustering solution as a tree:
+
+```{r h-tree}
+class(hTree) <- 'hclust'
+par(mar = c(0, 0, 0, 0))
+plot(hTree, labels = FALSE, main = '')
+points(seq_along(trees), rep(1, length(trees)), pch = 16,
+       col = spectrum[hTree$order])
+```
+
+Another thing we may wish to do is to take the consensus of each cluster:
 
 ```{r consensus}
 par(mfrow = c(1, 2), mar = rep(0.2, 4))
@@ -216,7 +237,8 @@ plot(consensus(trees[cluster == 1]), edge.color = col1, edge.width = 2, tip.colo
 plot(consensus(trees[cluster == 2]), edge.color = col2, edge.width = 2, tip.color = col2)
 ```
 
-So it looks like our clusters differ in the position of `t3`.
+In this case, we don't learn much, though trees in one cluster are united
+by the position of `t7`.
 
 Now let's evaluate whether our plot of tree space is representative.
 First we want to know how many dimensions are necessary to adequately
@@ -234,6 +256,7 @@ txc <- vapply(1:12, function (k) {
   trust * cont
 }, 0)
 plot(txc, xlab = 'Dimension')
+abline(h = 0.9, lty = 2)
 ```
 
 We are going to need at least six dimensions to adequately represent the
@@ -250,13 +273,11 @@ Let's plot the first six dimensions of our tree space, highlighting the convex
 hulls of our clusters:
 
 ```{r plot-projection-6d}
-
 plotSeq <- matrix(0, 6, 6)
 plotSeq[upper.tri(plotSeq)] <- seq_len(6 * (6 - 1) / 2)
-plotSeq <- t(plotSeq[-6, -1])
-
-layout(plotSeq)
+layout(t(plotSeq[-6, -1]))
 par(mar = rep(0.1, 4))
+
 for (i in 2:6) for (j in seq_len(i - 1)) {
   # Set up blank plot
   plot(projection[, j], projection[, i], ann = FALSE, axes = FALSE, frame.plot = TRUE,
@@ -297,8 +318,7 @@ library('TreeDist')
 pid_distances <- PhylogeneticInfoDistance(trees)
 pid_projection <- cmdscale(pid_distances, k = 6)
 pid_cluster <- cutree(protoclust::protoclust(pid_distances), k = 2)
-```
-```{r pid-projection-2d}
+
 plot(pid_projection, ann = FALSE, axes = FALSE, frame.plot = TRUE, asp = 1,
      col = treeCols, pch = 16)
 MSTEdges(pid_distances, TRUE, pid_projection[, 1], pid_projection[, 2],
