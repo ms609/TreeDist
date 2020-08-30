@@ -74,15 +74,13 @@ the package '[TBRDist](https://ms609.github.io/TBRDist/index.html)'.
 
 # Installation
 
-<!--
-#TODO: submit to CRAN!
 Install and load the library from CRAN as follows:
 ```r
 install.packages('TreeDist')
 library('TreeDist')
 ```
 
--->You can install the development version of the package with:
+You can install the development version of the package with:
 ```r
 if (!require(devtools)) install.packages("devtools")
 devtools::install_github('ms609/TreeDist')
