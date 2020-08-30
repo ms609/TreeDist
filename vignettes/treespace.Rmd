@@ -2,7 +2,10 @@
 title: "Tree space & landscape analysis"
 author: "Martin R. Smith"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    fig_width: 6
+    fig_height: 4
 bibliography: ../inst/REFERENCES.bib
 csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
 vignette: >
@@ -158,10 +161,11 @@ projection <- sammon$points
 
 That's a good start.  A lazy investigator would plot this projection and be done:
 
-```{r plot-projection-2d}
-plot(projection, 
+```{r plot-projection-2d, fig.asp = 1, fig.width = 3, fig.align='center'}
+par(mar = rep(0, 4))
+plot(projection,
      asp = 1, # Preserve aspect ratio - do not distort distances
-     ann = FALSE, axes = FALSE, frame.plot = TRUE, # Simple border
+     ann = FALSE, axes = FALSE, # Dimensions are meaningless
      col = treeCols, pch = 16
      )
 ```
@@ -175,7 +179,7 @@ minimax linkage will
 typically find a clustering solution that is close to optimal, if one exists.
 
 
-```{r clustering}
+```{r clustering, fig.align='center'}
 possibleClusters <- 2:10
 
 pamClusters <- lapply(possibleClusters, function (k) cluster::pam(distances, k = k))
@@ -219,7 +223,7 @@ cluster <- hClusters[[2 - 1]]
 
 We can visualize the clustering solution as a tree:
 
-```{r h-tree}
+```{r h-tree, fig.align='center'}
 class(hTree) <- 'hclust'
 par(mar = c(0, 0, 0, 0))
 plot(hTree, labels = FALSE, main = '')
@@ -229,7 +233,7 @@ points(seq_along(trees), rep(1, length(trees)), pch = 16,
 
 Another thing we may wish to do is to take the consensus of each cluster:
 
-```{r consensus}
+```{r consensus, fig.align='center'}
 par(mfrow = c(1, 2), mar = rep(0.2, 4))
 col1 <- spectrum[mean(treeNumbers[cluster == 1])]
 col2 <- spectrum[mean(treeNumbers[cluster == 2])]
@@ -248,7 +252,7 @@ continuity score of \> 0.9 for a usable projection, or \> 0.95 for a good one.
 ```r
 library("dreval")
 ```
-```{r how-many-dims}
+```{r how-many-dims, fig.align='center'}
 txc <- vapply(1:12, function (k) {
   newDist <- dist(projection[, seq_len(k)])
   trust <- calcTrustworthinessFromDist(distances, newDist, 10)
@@ -272,7 +276,7 @@ mstEnds <- MSTEdges(distances)
 Let's plot the first six dimensions of our tree space, highlighting the convex
 hulls of our clusters:
 
-```{r plot-projection-6d}
+```{r plot-projection-6d, fig.asp = 1, fig.align='center'}
 plotSeq <- matrix(0, 6, 6)
 plotSeq[upper.tri(plotSeq)] <- seq_len(6 * (6 - 1) / 2)
 layout(t(plotSeq[-6, -1]))
@@ -313,13 +317,14 @@ distance recovers a different pair of clusters, highlighting the dangers
 of interpreting a two-dimensional treespace plot:
 
 
-```{r pid}
+```{r pid, fig.asp = 1, fig.width = 4, fig.align = 'center', echo = FALSE}
 library('TreeDist')
 pid_distances <- PhylogeneticInfoDistance(trees)
 pid_projection <- cmdscale(pid_distances, k = 6)
 pid_cluster <- cutree(protoclust::protoclust(pid_distances), k = 2)
 
-plot(pid_projection, ann = FALSE, axes = FALSE, frame.plot = TRUE, asp = 1,
+par(mar = rep(0, 4))
+plot(pid_projection, ann = FALSE, axes = FALSE, asp = 1,
      col = treeCols, pch = 16)
 MSTEdges(pid_distances, TRUE, pid_projection[, 1], pid_projection[, 2],
          col = "#bbbbbb", lty = 1)
