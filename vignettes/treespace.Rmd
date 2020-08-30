@@ -12,7 +12,22 @@ vignette: >
 ---
 
 ```{r secret-header, echo=FALSE}
+# From TreeTools v1.2.0.9000
+MSTEdges <- function (distances, plot = FALSE, x = NULL, y = NULL, ...) {
+  umst <- ape::mst(distances)
+  edges <- umst == 1L
+  from <- umst
+  from[edges] <- unlist(apply(edges, 1, which))
+  to <- t(from)
+  ends <- cbind(from[lower.tri(from) & edges], to[lower.tri(to) & edges])
+  if (plot) {
+    apply(ends, 1, function (edge)
+      lines(x[edge], y[edge], ...))
+  }
+  invisible(ends)
+}
 
+# from dreval
 calcContinuityFromDist <- function(distReference, distLowDim, kTM) {
   distReference <- as.matrix(distReference)
   distLowDim <- as.matrix(distLowDim)
@@ -93,7 +108,7 @@ The clustering information distance is reliable and fast to calculate
 
 ```{r calculate-distances}
 library('TreeDist')
-distances <- ClsuteringInfoDistance(trees)
+distances <- ClusteringInfoDistance(trees)
 ```
 
 The reader is encouraged to repeat the exercise with other distances:
@@ -228,14 +243,7 @@ To help establish visually what structures are more likely to be genuine,
 we might also choose to calculate a minimum spanning tree:
 
 ```{r calculate-MST}
-umst <- suppressWarnings(ape::mst(distances))
-edges <- umst == 1L
-from <- umst
-from[edges] <- unlist(apply(edges, 1, which))
-to <- t(from)
-mstEnds <- cbind(from[lower.tri(from) & edges],
-                 to[lower.tri(to) & edges])
-
+mstEnds <- MSTEdges(distances)
 ```
 
 Let's plot the first six dimensions of our tree space, highlighting the convex
@@ -278,7 +286,31 @@ Our clusters, so distinct in dimension 1, overlap strongly in every other
 dimension. The fact that the minimum spanning tree moves between clusters also
 underlines the fact that they are not as well defined as they appear by eye.
 
-## TODO PID on same trees to show MST & 2D are bad.
+Note that cluster membership, as well as the precise shape of treespace, 
+is a function of the tree distance metric.  The phylogenetic information
+distance recovers a different pair of clusters, highlighting the dangers
+of interpreting a two-dimensional treespace plot:
 
+
+```{r pid}
+library('TreeDist')
+pid_distances <- PhylogeneticInfoDistance(trees)
+pid_projection <- cmdscale(pid_distances, k = 6)
+pid_cluster <- cutree(protoclust::protoclust(pid_distances), k = 2)
+```
+```{r pid-projection-2d}
+plot(pid_projection, ann = FALSE, axes = FALSE, frame.plot = TRUE, asp = 1,
+     col = treeCols, pch = 16)
+MSTEdges(pid_distances, TRUE, pid_projection[, 1], pid_projection[, 2],
+         col = "#bbbbbb", lty = 1)
+for (clI in 1:2) {
+  inCluster <- pid_cluster == clI
+  clusterX <- pid_projection[inCluster, 1]
+  clusterY <- pid_projection[inCluster, 2]
+  hull <- chull(clusterX, clusterY)
+  polygon(clusterX[hull], clusterY[hull], lty = 1, lwd = 2,
+          border = '#54de25bb')
+}
+```
 
 # References
