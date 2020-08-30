@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/ms609/TreeDist",
   "issueTracker": "https://github.com/ms609/TreeDist/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "1.1.1.9001",
+  "version": "1.2.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -374,7 +374,8 @@
   ],
   "relatedLink": [
     "https://ms609.github.io/TreeDist",
-    "https://CRAN.R-project.org/package=TreeDist"
+    "https://CRAN.R-project.org/package=TreeDist",
+    "https://ms609.github.io/TreeDist/"
   ],
   "keywords": ["phylogenetics", "tree-distance", "r", "r-package", "rstats", "phylogenetic-trees", "tree-distances", "trees"],
   "provider": {
@@ -383,5 +384,5 @@
     "name": "Comprehensive R Archive Network (CRAN)",
     "url": "https://cran.r-project.org"
   },
-  "fileSize": "8315.989KB"
+  "fileSize": "8346.202KB"
 }

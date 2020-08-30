@@ -81,9 +81,9 @@
 #'     - `dist.topo()`: Path (topological) distance, Robinson-Foulds distance.
 #'   * [phangorn](https://cran.r-project.org/package=phangorn)
 #'     - `treedist()`: Path, Robinson-Foulds and approximate SPR distances.
-#'   * [Quartet](http://ms609.github.io/Quartet/): Triplet and Quartet distances, 
+#'   * [Quartet](https://ms609.github.io/Quartet/): Triplet and Quartet distances, 
 #'   using the tqDist algorithm.
-#'   * [TBRDist](http://ms609.github.io/TBRDist/): TBR and SPR distances on 
+#'   * [TBRDist](https://ms609.github.io/TBRDist/): TBR and SPR distances on 
 #'   unrooted trees, using the 'uspr; C library.
 #'   * [distory](https://cran.r-project.org/package=distory) (unmaintained): 
 #'     Geodesic distance

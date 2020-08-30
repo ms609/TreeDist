@@ -52,7 +52,7 @@ The information unique to $S_1$ and $S_2$ is $h_{different}(S_1,S_2) =
 2h(S_1,S_2) - h(S_1) - h(S_2) \approx 3.91\textrm{ bits}$.
 
 These quantities can be calculated using functions in the 
-'[TreeTools](https://ms609.github.io/TreeTools)' package.
+'[TreeTools](https://ms609.github.io/TreeTools/)' package.
 
 ```{r}
 library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)

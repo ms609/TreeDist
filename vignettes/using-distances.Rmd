@@ -393,7 +393,7 @@ quality, as depicted in the accompanying histogram.
 
 You may wish to:
 
-- Explore the [Ternary package](http://ms609.github.io/Ternary/)
+- Explore the [Ternary package](https://ms609.github.io/Ternary/)
 
 - [Interpret tree distance metrics](https://ms609.github.io/TreeDistData/articles/09-expected-similarity.html)
 

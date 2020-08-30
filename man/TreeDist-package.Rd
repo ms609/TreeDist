@@ -101,9 +101,9 @@ Other R packages implementing tree distance functions include:
 \itemize{
 \item \code{treedist()}: Path, Robinson-Foulds and approximate SPR distances.
 }
-\item \href{http://ms609.github.io/Quartet/}{Quartet}: Triplet and Quartet distances,
+\item \href{https://ms609.github.io/Quartet/}{Quartet}: Triplet and Quartet distances,
 using the tqDist algorithm.
-\item \href{http://ms609.github.io/TBRDist/}{TBRDist}: TBR and SPR distances on
+\item \href{https://ms609.github.io/TBRDist/}{TBRDist}: TBR and SPR distances on
 unrooted trees, using the 'uspr; C library.
 \item \href{https://cran.r-project.org/package=distory}{distory} (unmaintained):
 Geodesic distance

@@ -31,7 +31,7 @@ tree2 <- ape::read.tree(text = '(A, ((B, (C, (D, (H, I)))), ((F, G), E)));')
 We can calculate distances between pairs of trees using the 'TreeDist' package.
 
 First we'll install the package.
-We can either install the stable version (coming 2020) from the CRAN repository:
+We can either install the stable version from the CRAN repository:
 
 ```r
 install.packages('TreeDist')
