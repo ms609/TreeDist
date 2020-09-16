@@ -1,6 +1,6 @@
 # TreeDist 1.2.0.9000 (development)
 
-- Import RdMacros package 'RdPack'
+- Import RdMacros package 'RdPack'.
 
 # TreeDist 1.2.0
 
