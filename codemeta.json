@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/ms609/TreeDist",
   "issueTracker": "https://github.com/ms609/TreeDist/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "1.2.0",
+  "version": "1.2.0.9000",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -174,18 +174,6 @@
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "Rdpack",
-      "name": "Rdpack",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=Rdpack"
-    },
-    {
-      "@type": "SoftwareApplication",
       "identifier": "testthat",
       "name": "testthat",
       "provider": {
@@ -304,6 +292,18 @@
     },
     {
       "@type": "SoftwareApplication",
+      "identifier": "Rdpack",
+      "name": "Rdpack",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=Rdpack"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "TreeTools",
       "name": "TreeTools",
       "version": ">= 1.1.0",
@@ -384,5 +384,5 @@
     "name": "Comprehensive R Archive Network (CRAN)",
     "url": "https://cran.r-project.org"
   },
-  "fileSize": "8346.202KB"
+  "fileSize": "8346.313KB"
 }
