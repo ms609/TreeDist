@@ -90,7 +90,7 @@ similarity measure." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.1.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.0.9000</span>
       </span>
     </div>
 
@@ -177,17 +177,17 @@ similarity measure.</p>
     </div>
 
     <pre class="usage"><span class='fu'>VisualizeMatching</span>(
-  <span class='no'>Func</span>,
-  <span class='no'>tree1</span>,
-  <span class='no'>tree2</span>,
-  <span class='kw'>setPar</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>precision</span> <span class='kw'>=</span> <span class='fl'>3L</span>,
-  <span class='kw'>Plot</span> <span class='kw'>=</span> <span class='no'>plot.phylo</span>,
-  <span class='kw'>matchZeros</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>plainEdges</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>edge.width</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>edge.color</span> <span class='kw'>=</span> <span class='st'>"black"</span>,
-  <span class='no'>...</span>
+  <span class='kw'>Func</span>,
+  <span class='kw'>tree1</span>,
+  <span class='kw'>tree2</span>,
+  setPar = <span class='fl'>TRUE</span>,
+  precision = <span class='fl'>3L</span>,
+  Plot = <span class='kw'>plot.phylo</span>,
+  matchZeros = <span class='fl'>TRUE</span>,
+  plainEdges = <span class='fl'>FALSE</span>,
+  edge.width = <span class='fl'>1</span>,
+  edge.color = <span class='st'>"black"</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -239,12 +239,18 @@ similarity of the associated splits (<code>FALSE</code>).</p></td>
 score of 1, which is deducted from the total number of splits to calculate
 the Robinson-Foulds <em>distance</em>.  Unmatched splits thus contribute one to
 total tree distance.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p><a href='https://orcid.org/0000-0001-5660-1727'>Martin R. Smith</a>
+(<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>tree1</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>6</span>)
-<span class='no'>tree2</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>6</span>)
+    <pre class="examples"><div class='input'><span class='kw'>tree1</span> <span class='op'>&lt;-</span> <span class='kw'>TreeTools</span>::<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>6</span>)
+<span class='kw'>tree2</span> <span class='op'>&lt;-</span> <span class='kw'>TreeTools</span>::<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>6</span>)
 
-<span class='fu'>VisualizeMatching</span>(<span class='no'>RobinsonFouldsMatching</span>, <span class='no'>tree1</span>, <span class='no'>tree2</span>)</div><div class='img'><img src='VisualizeMatching-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>VisualizeMatching</span>(<span class='no'>SharedPhylogeneticInfo</span>, <span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>matchZeros</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='img'><img src='VisualizeMatching-2.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'>VisualizeMatching</span>(<span class='kw'>RobinsonFouldsMatching</span>, <span class='kw'>tree1</span>, <span class='kw'>tree2</span>)
+</div><div class='img'><img src='VisualizeMatching-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>VisualizeMatching</span>(<span class='kw'>SharedPhylogeneticInfo</span>, <span class='kw'>tree1</span>, <span class='kw'>tree2</span>, matchZeros = <span class='fl'>FALSE</span>)
+</div><div class='img'><img src='VisualizeMatching-2.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -261,7 +267,7 @@ total tree distance.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

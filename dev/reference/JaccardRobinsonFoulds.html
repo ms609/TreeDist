@@ -91,7 +91,7 @@ Generalized Robinson-Foulds metric." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.1.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.0.9000</span>
       </span>
     </div>
 
@@ -179,22 +179,22 @@ Generalized Robinson-Foulds metric." />
     </div>
 
     <pre class="usage"><span class='fu'>JaccardRobinsonFoulds</span>(
-  <span class='no'>tree1</span>,
-  <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>,
-  <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>1L</span>,
-  <span class='kw'>allowConflict</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>similarity</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+  <span class='kw'>tree1</span>,
+  tree2 = <span class='kw'>tree1</span>,
+  k = <span class='fl'>1L</span>,
+  allowConflict = <span class='fl'>TRUE</span>,
+  similarity = <span class='fl'>FALSE</span>,
+  normalize = <span class='fl'>FALSE</span>,
+  reportMatching = <span class='fl'>FALSE</span>
 )
 
 <span class='fu'>JaccardSplitSimilarity</span>(
-  <span class='no'>splits1</span>,
-  <span class='no'>splits2</span>,
-  <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='no'>splits1</span>, <span class='st'>"nTip"</span>),
-  <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>1L</span>,
-  <span class='kw'>allowConflict</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+  <span class='kw'>splits1</span>,
+  <span class='kw'>splits2</span>,
+  nTip = <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='kw'>splits1</span>, <span class='st'>"nTip"</span>),
+  k = <span class='fl'>1L</span>,
+  allowConflict = <span class='fl'>TRUE</span>,
+  reportMatching = <span class='fl'>FALSE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -326,16 +326,23 @@ doi: <a href='https://doi.org/10.1007/978-3-642-40453-5_13'>10.1007/978-3-642-40
 <code><a href='Robinson-Foulds.html'>Robinson-Foulds</a></code>,
 <code><a href='SPRDist.html'>SPRDist</a>()</code>,
 <code><a href='TreeDistance.html'>TreeDistance</a>()</code></p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p><a href='https://orcid.org/0000-0001-5660-1727'>Martin R. Smith</a>
+(<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>2</span>)
-<span class='no'>tree1</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ape</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span>(<span class='fl'>10</span>)
-<span class='no'>tree2</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>ape</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span>(<span class='fl'>10</span>)
-<span class='fu'>JaccardRobinsonFoulds</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>allowConflict</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; [1] 12.0105</div><div class='input'><span class='fu'>JaccardRobinsonFoulds</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>allowConflict</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; [1] 11.40222</div><div class='input'>
-<span class='no'>JRF2</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span> (<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='no'>...</span>)
-  <span class='fu'>JaccardRobinsonFoulds</span>(<span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>k</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>allowConflict</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
-
-<span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span>(<span class='no'>JRF2</span>, <span class='no'>tree1</span>, <span class='no'>tree2</span>, <span class='kw'>matchZeros</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='img'><img src='JaccardRobinsonFoulds-1.png' alt='' width='700' height='433' /></div></pre>
+<span class='kw'>tree1</span> <span class='op'>&lt;-</span> <span class='kw'>ape</span>::<span class='fu'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span>(<span class='fl'>10</span>)
+<span class='kw'>tree2</span> <span class='op'>&lt;-</span> <span class='kw'>ape</span>::<span class='fu'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span>(<span class='fl'>10</span>)
+<span class='fu'>JaccardRobinsonFoulds</span>(<span class='kw'>tree1</span>, <span class='kw'>tree2</span>, k = <span class='fl'>2</span>, allowConflict = <span class='fl'>FALSE</span>)
+</div><div class='output co'>#&gt; [1] 12.0105</div><div class='input'><span class='fu'>JaccardRobinsonFoulds</span>(<span class='kw'>tree1</span>, <span class='kw'>tree2</span>, k = <span class='fl'>2</span>, allowConflict = <span class='fl'>TRUE</span>)
+</div><div class='output co'>#&gt; [1] 11.40222</div><div class='input'>
+<span class='kw'>JRF2</span> <span class='op'>&lt;-</span> <span class='fu'>function</span> (<span class='kw'>tree1</span>, <span class='kw'>tree2</span>, <span class='kw'>...</span>) 
+  <span class='fu'>JaccardRobinsonFoulds</span>(<span class='kw'>tree1</span>, <span class='kw'>tree2</span>, k = <span class='fl'>2</span>, allowConflict = <span class='fl'>FALSE</span>, <span class='kw'>...</span>)
+  
+<span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span>(<span class='kw'>JRF2</span>, <span class='kw'>tree1</span>, <span class='kw'>tree2</span>, matchZeros = <span class='fl'>FALSE</span>)
+</div><div class='img'><img src='JaccardRobinsonFoulds-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -351,7 +358,7 @@ doi: <a href='https://doi.org/10.1007/978-3-642-40453-5_13'>10.1007/978-3-642-40
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

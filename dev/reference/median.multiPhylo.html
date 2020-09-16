@@ -89,7 +89,7 @@ an 'average' -- of a forest of tree topologies." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.1.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.0.9000</span>
       </span>
     </div>
 
@@ -176,12 +176,12 @@ an 'average' -- of a forest of tree topologies.</p>
 
     <pre class="usage"><span class='co'># S3 method for multiPhylo</span>
 <span class='fu'><a href='https://rdrr.io/r/stats/median.html'>median</a></span>(
-  <span class='no'>x</span>,
-  <span class='kw'>na.rm</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>Distance</span> <span class='kw'>=</span> <span class='no'>ClusteringInfoDistance</span>,
-  <span class='kw'>index</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>breakTies</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='no'>...</span>
+  <span class='kw'>x</span>,
+  na.rm = <span class='fl'>FALSE</span>,
+  Distance = <span class='kw'>ClusteringInfoDistance</span>,
+  index = <span class='fl'>FALSE</span>,
+  breakTies = <span class='fl'>TRUE</span>,
+  <span class='kw'>...</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -239,13 +239,18 @@ rather than a similarity.</p>
     <div class='dont-index'><p>Consensus methods:
 <code><a href='https://rdrr.io/pkg/ape/man/consensus.html'>ape::consensus()</a></code>,
 <code><a href='https://ms609.github.io/TreeTools/reference/ConsensusWithout.html'>TreeTools::ConsensusWithout()</a></code></p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p><a href='https://orcid.org/0000-0001-5660-1727'>Martin R. Smith</a>
+(<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>'TreeTools'</span>, <span class='kw'>quietly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>warn.conflicts</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-<span class='no'>tenTrees</span> <span class='kw'>&lt;-</span> <span class='fu'>as.phylo</span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fl'>8</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'><a href='https://ms609.github.io/TreeTools'>'TreeTools'</a></span>, quietly = <span class='fl'>TRUE</span>, warn.conflicts = <span class='fl'>FALSE</span>)
+<span class='kw'>tenTrees</span> <span class='op'>&lt;-</span> <span class='fu'>as.phylo</span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>, nTip = <span class='fl'>8</span>)
 
 <span class='co'># Default settings:</span>
-<span class='fu'><a href='https://rdrr.io/r/stats/median.html'>median</a></span>(<span class='no'>tenTrees</span>)</div><div class='output co'>#&gt; 
+<span class='fu'><a href='https://rdrr.io/r/stats/median.html'>median</a></span>(<span class='kw'>tenTrees</span>)
+</div><div class='output co'>#&gt; 
 #&gt; Phylogenetic tree with 8 tips and 7 internal nodes.
 #&gt; 
 #&gt; Tip labels:
@@ -253,10 +258,12 @@ rather than a similarity.</p>
 #&gt; 
 #&gt; Rooted; no branch lengths.</div><div class='input'>
 <span class='co'># Robinson-Foulds distances include ties:</span>
-<span class='fu'><a href='https://rdrr.io/r/stats/median.html'>median</a></span>(<span class='no'>tenTrees</span>, <span class='kw'>Distance</span> <span class='kw'>=</span> <span class='no'>RobinsonFoulds</span>, <span class='kw'>breakTies</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; 4 phylogenetic trees</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/stats/median.html'>median</a></span>(<span class='kw'>tenTrees</span>, Distance = <span class='kw'>RobinsonFoulds</span>, breakTies = <span class='fl'>FALSE</span>)
+</div><div class='output co'>#&gt; 4 phylogenetic trees</div><div class='input'>
 <span class='co'># Be sure to use a distance function, rather than a similarity:</span>
-<span class='no'>NyeDistance</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span> (<span class='no'>...</span>) <span class='fu'><a href='NyeSimilarity.html'>NyeSimilarity</a></span>(<span class='no'>...</span>, <span class='kw'>similarity</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-<span class='fu'><a href='https://rdrr.io/r/stats/median.html'>median</a></span>(<span class='no'>tenTrees</span>, <span class='kw'>Distance</span> <span class='kw'>=</span> <span class='no'>NyeDistance</span>)</div><div class='output co'>#&gt; 
+<span class='kw'>NyeDistance</span> <span class='op'>&lt;-</span> <span class='fu'>function</span> (<span class='kw'>...</span>) <span class='fu'><a href='NyeSimilarity.html'>NyeSimilarity</a></span>(<span class='kw'>...</span>, similarity = <span class='fl'>FALSE</span>)
+<span class='fu'><a href='https://rdrr.io/r/stats/median.html'>median</a></span>(<span class='kw'>tenTrees</span>, Distance = <span class='kw'>NyeDistance</span>)
+</div><div class='output co'>#&gt; 
 #&gt; Phylogenetic tree with 8 tips and 7 internal nodes.
 #&gt; 
 #&gt; Tip labels:
@@ -264,8 +271,10 @@ rather than a similarity.</p>
 #&gt; 
 #&gt; Rooted; no branch lengths.</div><div class='input'>
 <span class='co'># To analyse a list of trees that is not of class multiPhylo:</span>
-<span class='no'>treeList</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='fl'>1</span>:<span class='fl'>10</span>, <span class='no'>as.phylo</span>, <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fl'>8</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/class.html'>class</a></span>(<span class='no'>treeList</span>)</div><div class='output co'>#&gt; [1] "list"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/median.html'>median</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/structure.html'>structure</a></span>(<span class='no'>treeList</span>, <span class='kw'>class</span> <span class='kw'>=</span> <span class='st'>'multiPhylo'</span>))</div><div class='output co'>#&gt; 
+<span class='kw'>treeList</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>, <span class='kw'>as.phylo</span>, nTip = <span class='fl'>8</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/class.html'>class</a></span>(<span class='kw'>treeList</span>)
+</div><div class='output co'>#&gt; [1] "list"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/median.html'>median</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/structure.html'>structure</a></span>(<span class='kw'>treeList</span>, class = <span class='st'>'multiPhylo'</span>))
+</div><div class='output co'>#&gt; 
 #&gt; Phylogenetic tree with 8 tips and 7 internal nodes.
 #&gt; 
 #&gt; Tip labels:
@@ -287,7 +296,7 @@ rather than a similarity.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

@@ -89,7 +89,7 @@ Linear Sum Assignment Problem." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.1.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.0.9000</span>
       </span>
     </div>
 
@@ -174,7 +174,7 @@ Linear Sum Assignment Problem." />
 <a href='http://www.assignmentproblems.com/doc/LSAPIntroduction.pdf'>Linear Sum Assignment Problem</a>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>LAPJV</span>(<span class='no'>x</span>)</pre>
+    <pre class="usage"><span class='fu'>LAPJV</span>(<span class='kw'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -220,14 +220,21 @@ doi: <a href='https://doi.org/10.1007/BF02278710'>10.1007/BF02278710</a>
 <em>Journal of the Society for Industrial and Applied Mathematics</em>, <b>5</b>(1), 32--38.
 doi: <a href='https://doi.org/10.1137/0105003'>10.1137/0105003</a>
 .</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p><a href='https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/LAPJV/lap.cpp'>C++ code</a>
+by Roy Jonker, MagicLogic Optimization Inc. <a href='mailto:roy_jonker@magiclogic.com'>roy_jonker@magiclogic.com</a>,
+with contributions from Yong Yang <a href='mailto:yongyanglink@gmail.com'>yongyanglink@gmail.com</a>, after
+<a href='https://uk.mathworks.com/matlabcentral/profile/authors/69713-yi-cao'>Yi Cao</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>problem</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>7</span>, <span class='fl'>9</span>, <span class='fl'>8</span>, <span class='fl'>9</span>,
+    <pre class="examples"><div class='input'><span class='kw'>problem</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>7</span>, <span class='fl'>9</span>, <span class='fl'>8</span>, <span class='fl'>9</span>,
                     <span class='fl'>2</span>, <span class='fl'>8</span>, <span class='fl'>5</span>, <span class='fl'>7</span>,
                     <span class='fl'>1</span>, <span class='fl'>6</span>, <span class='fl'>6</span>, <span class='fl'>9</span>,
-                    <span class='fl'>3</span>, <span class='fl'>6</span>, <span class='fl'>2</span>, <span class='fl'>2</span>), <span class='fl'>4</span>, <span class='fl'>4</span>, <span class='kw'>byrow</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+                    <span class='fl'>3</span>, <span class='fl'>6</span>, <span class='fl'>2</span>, <span class='fl'>2</span>), <span class='fl'>4</span>, <span class='fl'>4</span>, byrow=<span class='fl'>TRUE</span>)
 
-<span class='fu'>LAPJV</span>(<span class='no'>problem</span>)</div><div class='output co'>#&gt; $score
+<span class='fu'>LAPJV</span>(<span class='kw'>problem</span>)
+</div><div class='output co'>#&gt; $score
 #&gt; [1] 17
 #&gt; 
 #&gt; $matching
@@ -248,7 +255,7 @@ doi: <a href='https://doi.org/10.1137/0105003'>10.1137/0105003</a>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

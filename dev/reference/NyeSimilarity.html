@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Nye <em>et al</em>. (2006) tree comparison — NyeSimilarity • TreeDist</title>
+<title>Nye et al. (2006) tree comparison — NyeSimilarity • TreeDist</title>
 
 
 <!-- jquery -->
@@ -45,7 +45,7 @@
 
 
 
-<meta property="og:title" content="Nye <em>et al</em>. (2006) tree comparison — NyeSimilarity" />
+<meta property="og:title" content="Nye et al. (2006) tree comparison — NyeSimilarity" />
 <meta property="og:description" content="NyeSimilarity() and NyeSplitSimilarity() implement the
 Generalized Robinson-Foulds
 tree comparison metric of Nye et al. (2006).
@@ -96,7 +96,7 @@ vignettes." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.1.1.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.0.9000</span>
       </span>
     </div>
 
@@ -189,20 +189,20 @@ A more detailed account is available in the
     </div>
 
     <pre class="usage"><span class='fu'>NyeSimilarity</span>(
-  <span class='no'>tree1</span>,
-  <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='no'>tree1</span>,
-  <span class='kw'>similarity</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>normalize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>normalizeMax</span> <span class='kw'>=</span> !<span class='fu'><a href='https://rdrr.io/r/base/logical.html'>is.logical</a></span>(<span class='no'>normalize</span>),
-  <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>diag</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>
+  <span class='kw'>tree1</span>,
+  tree2 = <span class='kw'>tree1</span>,
+  similarity = <span class='fl'>TRUE</span>,
+  normalize = <span class='fl'>FALSE</span>,
+  normalizeMax = <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/logical.html'>is.logical</a></span>(<span class='kw'>normalize</span>),
+  reportMatching = <span class='fl'>FALSE</span>,
+  diag = <span class='fl'>TRUE</span>
 )
 
 <span class='fu'>NyeSplitSimilarity</span>(
-  <span class='no'>splits1</span>,
-  <span class='no'>splits2</span>,
-  <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='no'>splits1</span>, <span class='st'>"nTip"</span>),
-  <span class='kw'>reportMatching</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+  <span class='kw'>splits1</span>,
+  <span class='kw'>splits2</span>,
+  nTip = <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='kw'>splits1</span>, <span class='st'>"nTip"</span>),
+  reportMatching = <span class='fl'>FALSE</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -324,10 +324,18 @@ doi: <a href='https://doi.org/10.1093/bioinformatics/bti720'>10.1093/bioinformat
 <code><a href='Robinson-Foulds.html'>Robinson-Foulds</a></code>,
 <code><a href='SPRDist.html'>SPRDist</a>()</code>,
 <code><a href='TreeDistance.html'>TreeDistance</a>()</code></p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p><a href='https://orcid.org/0000-0001-5660-1727'>Martin R. Smith</a>
+(<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>'TreeTools'</span>)
-<span class='fu'>NyeSimilarity</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>8</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>8</span>))</div><div class='output co'>#&gt; [1] 3.8</div><div class='input'><span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span>(<span class='no'>NyeSimilarity</span> ,<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>8</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>8</span>))</div><div class='img'><img src='NyeSimilarity-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>NyeSimilarity</span>(<span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>5</span>, <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fl'>8</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>8</span>))</div><div class='output co'>#&gt; [1] 3.166667 2.750000 2.750000 2.500000 2.450000 2.500000</div><div class='input'><span class='fu'>NyeSimilarity</span>(<span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>5</span>, <span class='kw'>nTip</span> <span class='kw'>=</span> <span class='fl'>8</span>), <span class='kw'>similarity</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='output co'>#&gt;          1        2        3        4        5
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'><a href='https://ms609.github.io/TreeTools'>'TreeTools'</a></span>)
+<span class='fu'>NyeSimilarity</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>8</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>8</span>))
+</div><div class='output co'>#&gt; [1] 3.8</div><div class='input'><span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span>(<span class='kw'>NyeSimilarity</span> ,<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>8</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>8</span>))
+</div><div class='img'><img src='NyeSimilarity-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>NyeSimilarity</span>(<span class='fu'>as.phylo</span>(<span class='fl'>0</span><span class='op'>:</span><span class='fl'>5</span>, nTip = <span class='fl'>8</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>8</span>))
+</div><div class='output co'>#&gt; [1] 3.166667 2.750000 2.750000 2.500000 2.450000 2.500000</div><div class='input'><span class='fu'>NyeSimilarity</span>(<span class='fu'>as.phylo</span>(<span class='fl'>0</span><span class='op'>:</span><span class='fl'>5</span>, nTip = <span class='fl'>8</span>), similarity = <span class='fl'>FALSE</span>)
+</div><div class='output co'>#&gt;          1        2        3        4        5
 #&gt; 2 1.333333                                    
 #&gt; 3 1.333333 1.333333                           
 #&gt; 4 2.166667 2.333333 2.333333                  
@@ -348,7 +356,7 @@ doi: <a href='https://doi.org/10.1093/bioinformatics/bti720'>10.1093/bioinformat
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
