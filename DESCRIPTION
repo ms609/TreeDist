@@ -32,6 +32,7 @@ Copyright: Incorporates Jonker-Volgenant Linear Assignment Problem
   implementation by Roy Jonker, modified by Yong Yang after Yi Cao.
 URL: https://ms609.github.io/TreeDist/, https://github.com/ms609/TreeDist
 BugReports: https://github.com/ms609/TreeDist/issues
+Additional_repositories: https://ms609.github.io/packages
 Depends: 
   R (>= 3.4.0),
   stats
@@ -56,10 +57,11 @@ Suggests:
   TreeDistData (> 0.1.0),
   TreeSearch,
   vdiffr
-Additional_repositories: https://ms609.github.io/packages
+LinkingTo: 
+  Rcpp,
+  TreeTools
 RdMacros: Rdpack
 VignetteBuilder: knitr
-LinkingTo: Rcpp
 SystemRequirements: C++11
 LazyData: true
 ByteCompile: true
