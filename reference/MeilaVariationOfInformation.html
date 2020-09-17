@@ -89,7 +89,7 @@ of clustering information proposed by Meil&amp;amp;#259; (2007)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
       </span>
     </div>
 
@@ -174,9 +174,9 @@ of clustering information proposed by Meil&amp;amp;#259; (2007)." />
 of clustering information proposed by Meil&amp;#259; (2007).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>MeilaVariationOfInformation</span>(<span class='no'>split1</span>, <span class='no'>split2</span>)
+    <pre class="usage"><span class='fu'>MeilaVariationOfInformation</span>(<span class='kw'>split1</span>, <span class='kw'>split2</span>)
 
-<span class='fu'>MeilaMutualInformation</span>(<span class='no'>split1</span>, <span class='no'>split2</span>)</pre>
+<span class='fu'>MeilaMutualInformation</span>(<span class='kw'>split1</span>, <span class='kw'>split2</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -211,19 +211,30 @@ doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11
 <em>Journal of Machine Learning Research</em>, <b>11</b>, 2837--2854.
 doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</a>
 .</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p><a href='https://orcid.org/0000-0001-5660-1727'>Martin R. Smith</a>
+(<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Maximum variation = information content of each split separately</span>
-<span class='no'>A</span> <span class='kw'>&lt;-</span> <span class='fl'>TRUE</span>
-<span class='no'>B</span> <span class='kw'>&lt;-</span> <span class='fl'>FALSE</span>
-<span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>B</span>, <span class='no'>B</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>))</div><div class='output co'>#&gt; [1] 1</div><div class='input'><span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>3</span>) / <span class='fl'>6</span>) + <span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>6</span>) / <span class='fl'>6</span>)</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
+<span class='kw'>A</span> <span class='op'>&lt;-</span> <span class='fl'>TRUE</span>
+<span class='kw'>B</span> <span class='op'>&lt;-</span> <span class='fl'>FALSE</span>
+<span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>A</span>, <span class='kw'>A</span>, <span class='kw'>A</span>, <span class='kw'>B</span>, <span class='kw'>B</span>, <span class='kw'>B</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>A</span>, <span class='kw'>A</span>, <span class='kw'>A</span>, <span class='kw'>A</span>, <span class='kw'>A</span>, <span class='kw'>A</span>))
+</div><div class='output co'>#&gt; [1] 1</div><div class='input'><span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>3</span>) <span class='op'>/</span> <span class='fl'>6</span>) <span class='op'>+</span> <span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0</span>, <span class='fl'>6</span>) <span class='op'>/</span> <span class='fl'>6</span>)
+</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
 <span class='co'># Minimum variation = 0</span>
-<span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>B</span>, <span class='no'>B</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>B</span>, <span class='no'>B</span>))</div><div class='output co'>#&gt; [1] 0</div><div class='input'>
+<span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>A</span>, <span class='kw'>A</span>, <span class='kw'>A</span>, <span class='kw'>B</span>, <span class='kw'>B</span>, <span class='kw'>B</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>A</span>, <span class='kw'>A</span>, <span class='kw'>A</span>, <span class='kw'>B</span>, <span class='kw'>B</span>, <span class='kw'>B</span>))
+</div><div class='output co'>#&gt; [1] 0</div><div class='input'>
 <span class='co'># Not always possible for two evenly-sized splits to reach maximum</span>
 <span class='co'># variation of information</span>
-<span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>3</span>) / <span class='fl'>6</span>) * <span class='fl'>2</span>  <span class='co'># = 2</span></div><div class='output co'>#&gt; [1] 2</div><div class='input'><span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>,<span class='no'>B</span> ,<span class='no'>B</span>, <span class='no'>B</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>A</span>, <span class='no'>B</span>, <span class='no'>A</span>, <span class='no'>B</span>)) <span class='co'># &lt; 2</span></div><div class='output co'>#&gt; [1] 1.836592</div><div class='input'>
+<span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>3</span>) <span class='op'>/</span> <span class='fl'>6</span>) <span class='op'>*</span> <span class='fl'>2</span>  <span class='co'># = 2</span>
+</div><div class='output co'>#&gt; [1] 2</div><div class='input'><span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>A</span>, <span class='kw'>A</span>, <span class='kw'>A</span>,<span class='kw'>B</span> ,<span class='kw'>B</span>, <span class='kw'>B</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>A</span>, <span class='kw'>B</span>, <span class='kw'>A</span>, <span class='kw'>B</span>, <span class='kw'>A</span>, <span class='kw'>B</span>)) <span class='co'># &lt; 2</span>
+</div><div class='output co'>#&gt; [1] 1.836592</div><div class='input'>
 <span class='co'># Phylogenetically uninformative groupings contain spliting information</span>
-<span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>5</span>) / <span class='fl'>6</span>)</div><div class='output co'>#&gt; [1] 0.6500224</div><div class='input'><span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>B</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>A</span>, <span class='no'>B</span>))</div><div class='output co'>#&gt; [1] 1.203213</div></pre>
+<span class='fu'><a href='Entropy.html'>Entropy</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>5</span>) <span class='op'>/</span> <span class='fl'>6</span>)
+</div><div class='output co'>#&gt; [1] 0.6500224</div><div class='input'><span class='fu'>MeilaVariationOfInformation</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>B</span>, <span class='kw'>A</span>, <span class='kw'>A</span>, <span class='kw'>A</span>, <span class='kw'>A</span>, <span class='kw'>A</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>A</span>, <span class='kw'>A</span>, <span class='kw'>A</span>, <span class='kw'>A</span>, <span class='kw'>A</span>, <span class='kw'>B</span>))
+</div><div class='output co'>#&gt; [1] 1.203213</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -239,7 +250,7 @@ doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

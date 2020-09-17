@@ -89,7 +89,7 @@ in the same list." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
       </span>
     </div>
 
@@ -174,7 +174,7 @@ in the same list." />
 in the same list.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>CompareAll</span>(<span class='no'>x</span>, <span class='no'>Func</span>, <span class='kw'>FUN.VALUE</span> <span class='kw'>=</span> <span class='fu'>Func</span>(<span class='no'>x</span><span class='kw'>[[</span><span class='fl'>1</span>]], <span class='no'>x</span><span class='kw'>[[</span><span class='fl'>1</span>]]), <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>CompareAll</span>(<span class='kw'>x</span>, <span class='kw'>Func</span>, FUN.VALUE = <span class='fu'>Func</span>(<span class='kw'>x</span>[[<span class='fl'>1</span>]], <span class='kw'>x</span>[[<span class='fl'>1</span>]], <span class='kw'>...</span>), <span class='kw'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -208,16 +208,21 @@ Identical trees are assumed to have zero distance.</p>
 
     <p><code>CompareAll()</code> is not limited to tree comparisons:
 <code>Func</code> can be any symmetric function.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p><a href='https://orcid.org/0000-0001-5660-1727'>Martin R. Smith</a>
+(<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Generate a list of trees to compare</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>'TreeTools'</span>, <span class='kw'>quietly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>warn.conflicts</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-<span class='no'>trees</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>bal1</span> <span class='kw'>=</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>1</span>:<span class='fl'>8</span>),
-              <span class='kw'>pec1</span> <span class='kw'>=</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>1</span>:<span class='fl'>8</span>),
-              <span class='kw'>pec2</span> <span class='kw'>=</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4</span>:<span class='fl'>1</span>, <span class='fl'>5</span>:<span class='fl'>8</span>)))
-
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'><a href='https://ms609.github.io/TreeTools'>'TreeTools'</a></span>, quietly = <span class='fl'>TRUE</span>, warn.conflicts = <span class='fl'>FALSE</span>)
+<span class='kw'>trees</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(bal1 = <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>8</span>), 
+              pec1 = <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>8</span>),
+              pec2 = <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>4</span><span class='op'>:</span><span class='fl'>1</span>, <span class='fl'>5</span><span class='op'>:</span><span class='fl'>8</span>)))
+  
 <span class='co'># Compare each tree with each other tree</span>
-<span class='fu'>CompareAll</span>(<span class='no'>trees</span>, <span class='no'>NNIDist</span>)</div><div class='output co'>#&gt; $lower
+<span class='fu'>CompareAll</span>(<span class='kw'>trees</span>, <span class='kw'>NNIDist</span>)
+</div><div class='output co'>#&gt; $lower
 #&gt;      bal1 pec1 pec2
 #&gt; bal1         2    2
 #&gt; pec1    2         2
@@ -255,15 +260,16 @@ Identical trees are assumed to have zero distance.</p>
 #&gt; 
 #&gt; $li_upper
 #&gt;      bal1 pec1 pec2
-#&gt; bal1        14   14
-#&gt; pec1   14        10
-#&gt; pec2   14   10     
-#&gt; </div><div class='input'>
+#&gt; bal1        10   10
+#&gt; pec1   10         8
+#&gt; pec2   10    8     
+#&gt; </div><div class='input'>  
 <span class='co'># Providing FUN.VALUE yields a modest speed gain:</span>
-<span class='no'>dist</span> <span class='kw'>&lt;-</span> <span class='fu'>CompareAll</span>(<span class='no'>trees</span>, <span class='no'>NNIDist</span>, <span class='kw'>FUN.VALUE</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(<span class='fl'>7</span>))
-
+<span class='kw'>dist</span> <span class='op'>&lt;-</span> <span class='fu'>CompareAll</span>(<span class='kw'>trees</span>, <span class='kw'>NNIDist</span>, FUN.VALUE = <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(<span class='fl'>7</span>))
+  
 <span class='co'># View distances as a matrix</span>
-<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span>(<span class='no'>dist</span>$<span class='no'>lower</span>)</div><div class='output co'>#&gt;      bal1 pec1 pec2
+<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span>(<span class='kw'>dist</span><span class='op'>$</span><span class='kw'>lower</span>)
+</div><div class='output co'>#&gt;      bal1 pec1 pec2
 #&gt; bal1    0    2    2
 #&gt; pec1    2    0    2
 #&gt; pec2    2    2    0</div></pre>
@@ -282,7 +288,7 @@ Identical trees are assumed to have zero distance.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

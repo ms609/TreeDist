@@ -53,7 +53,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
       </span>
     </div>
 
@@ -138,36 +138,34 @@
 <p>Different ways of calculating the the similarity between a pair of splits lead to different tree distance metrics, implemented in the functions below:</p>
 <ul>
 <li>
-<p><a href="https://ms609.github.io/TreeDist/reference/TreeDistance.html"><code><a href="reference/TreeDistance.html">MutualClusteringInfo()</a></code></a>, <a href="https://ms609.github.io/TreeDist/reference/TreeDistance.html"><code><a href="reference/TreeDistance.html">SharedPhylogeneticInfo()</a></code></a></p>
-<p>Smith (2020) scores matchings based on the amount of information that one partition contains about the other. The Mutual Phylogenetic Information assigns zero similarity to split pairs that cannot both exist on a single tree; The Mutual Clustering Information metric is more forgiving, and exhibits more desirable behaviour; it is the recommended metric for tree comparison. (Its complement, <a href="https://ms609.github.io/TreeDist/reference/TreeDistance.html"><code><a href="reference/TreeDistance.html">ClusteringInfoDistance()</a></code></a>, returns a tree distance.)</p>
+<p><a href="https://ms609.github.io/TreeDist/reference/TreeDistance.html"><code>MutualClusteringInfo()</code></a>, <a href="https://ms609.github.io/TreeDist/reference/TreeDistance.html"><code>SharedPhylogeneticInfo()</code></a></p>
+<p>Smith (2020) scores matchings based on the amount of information that one partition contains about the other. The Mutual Phylogenetic Information assigns zero similarity to split pairs that cannot both exist on a single tree; The Mutual Clustering Information metric is more forgiving, and exhibits more desirable behaviour; it is the recommended metric for tree comparison. (Its complement, <a href="https://ms609.github.io/TreeDist/reference/TreeDistance.html"><code>ClusteringInfoDistance()</code></a>, returns a tree distance.)</p>
 </li>
 <li>
-<p><a href="https://ms609.github.io/TreeDist/reference/NyeSimilarity.html"><code><a href="reference/NyeSimilarity.html">NyeSimilarity()</a></code></a></p>
-<p>Nye <em>et al.</em> (2006) score matchings according to the size of the largest split that is consistent with both of them, normalized against the Jaccard index. This approach is extended by Böcker <em>et al</em>. (2013) with the Jaccard-Robinson-Foulds metric (function <a href="https://ms609.github.io/TreeDist/reference/JaccardRobinsonFoulds.html"><code><a href="reference/JaccardRobinsonFoulds.html">JaccardRobinsonFoulds()</a></code></a>).</p>
+<p><a href="https://ms609.github.io/TreeDist/reference/NyeSimilarity.html"><code>NyeSimilarity()</code></a></p>
+<p>Nye <em>et al.</em> (2006) score matchings according to the size of the largest split that is consistent with both of them, normalized against the Jaccard index. This approach is extended by Böcker <em>et al</em>. (2013) with the Jaccard-Robinson-Foulds metric (function <a href="https://ms609.github.io/TreeDist/reference/JaccardRobinsonFoulds.html"><code>JaccardRobinsonFoulds()</code></a>).</p>
 </li>
 <li>
-<p><a href="https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html"><code><a href="reference/MatchingSplitDistance.html">MatchingSplitDistance()</a></code></a></p>
-<p>Bogdanowicz and Giaro (2012) and Lin <em>et al.</em> (2012) independently proposed counting the number of ‘mismatched’ leaves in a pair of splits. <a href="https://ms609.github.io/TreeDist/reference/TreeDistance.html"><code><a href="reference/TreeDistance.html">MatchingSplitInfoDistance()</a></code></a> provides an information-based equivalent (Smith 2020).</p>
+<p><a href="https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html"><code>MatchingSplitDistance()</code></a></p>
+<p>Bogdanowicz and Giaro (2012) and Lin <em>et al.</em> (2012) independently proposed counting the number of ‘mismatched’ leaves in a pair of splits. <a href="https://ms609.github.io/TreeDist/reference/TreeDistance.html"><code>MatchingSplitInfoDistance()</code></a> provides an information-based equivalent (Smith 2020).</p>
 </li>
 </ul>
-<p>The package also implements the variation of the path distance proposed by Kendal and Colijn (2016) (function <a href="https://ms609.github.io/TreeDist/reference/KendallColijn.html"><code><a href="reference/KendallColijn.html">KendallColijn()</a></code></a>), approximations of the Nearest-Neighbour Interchange (NNI) distance (function <a href="https://ms609.github.io/TreeDist/reference/NNIDist.html"><code><a href="reference/NNIDist.html">NNIDist()</a></code></a>; following Li <em>et al.</em> (1996)), and calculates the size (function <a href="https://ms609.github.io/TreeDist/reference/MASTSize.html"><code><a href="reference/MASTSize.html">MASTSize()</a></code></a>) and information content (function <a href="https://ms609.github.io/TreeDist/reference/MASTSize.html"><code><a href="reference/MASTSize.html">MASTInfo()</a></code></a>) of the Maximum Agreement Subtree.</p>
+<p>The package also implements the variation of the path distance proposed by Kendal and Colijn (2016) (function <a href="https://ms609.github.io/TreeDist/reference/KendallColijn.html"><code>KendallColijn()</code></a>), approximations of the Nearest-Neighbour Interchange (NNI) distance (function <a href="https://ms609.github.io/TreeDist/reference/NNIDist.html"><code>NNIDist()</code></a>; following Li <em>et al.</em> (1996)), and calculates the size (function <a href="https://ms609.github.io/TreeDist/reference/MASTSize.html"><code>MASTSize()</code></a>) and information content (function <a href="https://ms609.github.io/TreeDist/reference/MASTSize.html"><code>MASTInfo()</code></a>) of the Maximum Agreement Subtree.</p>
 <p>For an implementation of the Tree Bisection and Reconnection (TBR) distance, see the package ‘<a href="https://ms609.github.io/TBRDist/index.html">TBRDist</a>’.</p>
 </div>
 <div id="installation" class="section level1">
 <h1 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h1>
-<!--
-#TODO: submit to CRAN!
-Install and load the library from CRAN as follows:
-```r
-install.packages('TreeDist')
-library('TreeDist')
-```
-
--->
+<p>Install and load the library from CRAN as follows:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">'TreeDist'</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st"><a href="https://ms609.github.io/TreeDist">'TreeDist'</a></span>)
+</pre></div>
 <p>You can install the development version of the package with:</p>
-<div class="sourceCode" id="cb1"><pre class="r"><span class="kw">if</span> (!<span class="fu"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="no">devtools</span>)) <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"devtools"</span>)
-<span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">'ms609/TreeDist'</span>)</pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="co">if</span> (<span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/library.html">require</a></span>(<span class="kw"><a href="https://devtools.r-lib.org">devtools</a></span>)) <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"devtools"</span>)
+<span class="kw">devtools</span>::<span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">'ms609/TreeDist'</span>)
+</pre></div>
 </div>
 <div id="documentation" class="section level1">
 <h1 class="hasAnchor">
@@ -216,7 +214,7 @@ library('TreeDist')
 <li><p>Kendall, M. and Colijn, C. (2016) <a href="https://dx.doi.org/10.1093/molbev/msw124">Mapping phylogenetic trees to reveal distinct patterns of evolution</a>. <em>Mol Biol Evol</em>, 33, 2735–2743.</p></li>
 <li><p>Li, M., Tromp, J. and Zhang, L.-X. (1996) <a href="https://dx.doi.org/10.1007/3-540-61332-3_168">Some notes on the nearest neighbour interchange distance</a>. <em>Computing and Combinatorics</em>, Goos, G., Hartmanis, J., Leeuwen, J., Cai, J.-Y., and Wong, C. K., eds. Springer, Berlin. 343–351.</p></li>
 <li><p>Nye, T.M.W. <em>et al.</em> (2006) <a href="https://dx.doi.org/10.1093/bioinformatics/bti720">A novel algorithm and web-based tool for comparing two alternative phylogenetic trees</a>. <em>Bioinformatics</em>, 22, 117–119.</p></li>
-<li><p>Smith, M.R. (2020) <a href="https://dx.doi.org/10.1093/bioinformatics/btaa614">Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees</a>. <em>Bioinformatics</em>, in production.</p></li>
+<li><p>Smith, M.R. (2020) <a href="https://dx.doi.org/10.1093/bioinformatics/btaa614">Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees</a>. <em>Bioinformatics</em>, online ahead of print.</p></li>
 </ul>
 <p>Please note that the ‘TreeDist’ project is released with a <a href="CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
@@ -231,7 +229,7 @@ library('TreeDist')
 </li>
 <li>Browse source code at <br><a href="https://github.com/ms609/TreeDist/">https://​github.com/​ms609/​TreeDist/​</a>
 </li>
-<li>Report a bug at <br><a href="https://github.com/ms609/TreeDist/issues">https://​github.com/​ms609/​TreeDist/​issues</a>
+<li>Report a bug at <br><a href="https://github.com/ms609/TreeDist/issues/">https://​github.com/​ms609/​TreeDist/​issues/​</a>
 </li>
 </ul>
 </div>
@@ -283,7 +281,7 @@ library('TreeDist')
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

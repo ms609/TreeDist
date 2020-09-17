@@ -92,7 +92,7 @@ for definitions." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
       </span>
     </div>
 
@@ -180,13 +180,13 @@ See the
 for definitions.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SplitSharedInformation</span>(<span class='no'>n</span>, <span class='no'>A1</span>, <span class='kw'>A2</span> <span class='kw'>=</span> <span class='no'>A1</span>)
+    <pre class="usage"><span class='fu'>SplitSharedInformation</span>(<span class='kw'>n</span>, <span class='kw'>A1</span>, A2 = <span class='kw'>A1</span>)
 
-<span class='fu'>SplitDifferentInformation</span>(<span class='no'>n</span>, <span class='no'>A1</span>, <span class='kw'>A2</span> <span class='kw'>=</span> <span class='no'>A1</span>)
+<span class='fu'>SplitDifferentInformation</span>(<span class='kw'>n</span>, <span class='kw'>A1</span>, A2 = <span class='kw'>A1</span>)
 
-<span class='fu'>TreesConsistentWithTwoSplits</span>(<span class='no'>n</span>, <span class='no'>A1</span>, <span class='kw'>A2</span> <span class='kw'>=</span> <span class='no'>A1</span>)
+<span class='fu'>TreesConsistentWithTwoSplits</span>(<span class='kw'>n</span>, <span class='kw'>A1</span>, A2 = <span class='kw'>A1</span>)
 
-<span class='fu'>LnTreesConsistentWithTwoSplits</span>(<span class='no'>n</span>, <span class='no'>A1</span>, <span class='kw'>A2</span> <span class='kw'>=</span> <span class='no'>A1</span>)</pre>
+<span class='fu'>LnTreesConsistentWithTwoSplits</span>(<span class='kw'>n</span>, <span class='kw'>A1</span>, A2 = <span class='kw'>A1</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -240,6 +240,10 @@ doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11
 <code><a href='ClusteringEntropy.html'>ClusteringEntropy</a>()</code>,
 <code><a href='SplitEntropy.html'>SplitEntropy</a>()</code>,
 <code><a href='SplitwiseInfo.html'>SplitwiseInfo</a>()</code></p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p><a href='https://orcid.org/0000-0001-5660-1727'>Martin R. Smith</a>
+(<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>  <span class='co'># Eight leaves, labelled A to H.</span>
@@ -247,11 +251,16 @@ doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11
   <span class='co'># Split 2: ABC|DEFGH</span>
   <span class='co'># Let A1 = ABCD (four taxa), and A2 = ABC (three taxa).</span>
   <span class='co'># A1 and A2 overlap (both contain ABC).</span>
-
-  <span class='fu'>TreesConsistentWithTwoSplits</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>A2</span> <span class='kw'>=</span> <span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 45</div><div class='input'>  <span class='fu'>SplitSharedInformation</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>A2</span> <span class='kw'>=</span> <span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 2.722466</div><div class='input'>  <span class='fu'>SplitDifferentInformation</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>A2</span> <span class='kw'>=</span> <span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 5.129283</div><div class='input'>
+  
+  <span class='fu'>TreesConsistentWithTwoSplits</span>(n = <span class='fl'>8</span>, A1 = <span class='fl'>4</span>, A2 = <span class='fl'>3</span>)
+</div><div class='output co'>#&gt; [1] 45</div><div class='input'>  <span class='fu'>SplitSharedInformation</span>(n = <span class='fl'>8</span>, A1 = <span class='fl'>4</span>, A2 = <span class='fl'>3</span>)
+</div><div class='output co'>#&gt; [1] 2.722466</div><div class='input'>  <span class='fu'>SplitDifferentInformation</span>(n = <span class='fl'>8</span>, A1 = <span class='fl'>4</span>, A2 = <span class='fl'>3</span>)
+</div><div class='output co'>#&gt; [1] 5.129283</div><div class='input'>
   <span class='co'># If splits are identical, then their shared information is the same</span>
   <span class='co'># as the information of either split:</span>
-  <span class='fu'>SplitSharedInformation</span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>A1</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>A2</span> <span class='kw'>=</span> <span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] 5.044394</div><div class='input'>  <span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/SplitInformation.html'>SplitInformation</a></span>(<span class='fl'>3</span>, <span class='fl'>5</span>)</div><div class='output co'>#&gt; [1] 5.044394</div></pre>
+  <span class='fu'>SplitSharedInformation</span>(n = <span class='fl'>8</span>, A1 = <span class='fl'>3</span>, A2 = <span class='fl'>3</span>)
+</div><div class='output co'>#&gt; [1] 5.044394</div><div class='input'>  <span class='kw'>TreeTools</span>::<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/SplitInformation.html'>SplitInformation</a></span>(<span class='fl'>3</span>, <span class='fl'>5</span>)
+</div><div class='output co'>#&gt; [1] 5.044394</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -267,7 +276,7 @@ doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

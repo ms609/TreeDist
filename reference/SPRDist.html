@@ -88,7 +88,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
       </span>
     </div>
 
@@ -172,7 +172,7 @@
     <p>Approximate the Subtree Prune and Regraft (SPR) distance.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SPRDist</span>(<span class='no'>tree1</span>, <span class='kw'>tree2</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>symmetric</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>SPRDist</span>(<span class='kw'>tree1</span>, tree2 = <span class='kw'>NULL</span>, symmetric = <span class='fl'>TRUE</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -219,18 +219,27 @@ resources, install the latest version of phangorn with
 <code><a href='PathDist.html'>PathDist</a>()</code>,
 <code><a href='Robinson-Foulds.html'>Robinson-Foulds</a></code>,
 <code><a href='TreeDistance.html'>TreeDistance</a>()</code></p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p><a href='https://orcid.org/0000-0001-5660-1727'>Martin R. Smith</a>
+(<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'>'TreeTools'</span>, <span class='kw'>quietly</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>warn.conflicts</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'><a href='https://ms609.github.io/TreeTools'>'TreeTools'</a></span>, quietly = <span class='fl'>TRUE</span>, warn.conflicts = <span class='fl'>FALSE</span>)
 
-<span class='fu'>SPRDist</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>))</div><div class='output co'>#&gt; spr 
+<span class='fu'>SPRDist</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>))
+</div><div class='output co'>#&gt; spr 
 #&gt;   1 </div><div class='input'>
-<span class='fu'>SPRDist</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>2</span>, <span class='fl'>7</span>))</div><div class='output co'>#&gt; [1] 2 2 2</div><div class='input'><span class='fu'>SPRDist</span>(<span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>2</span>, <span class='fl'>7</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>))</div><div class='output co'>#&gt; [1] 1 2 2</div><div class='input'>
-<span class='fu'>SPRDist</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>bal</span> <span class='kw'>=</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='kw'>pec</span> <span class='kw'>=</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>)),
-        <span class='fu'>as.phylo</span>(<span class='fl'>0</span>:<span class='fl'>2</span>, <span class='fl'>7</span>))</div><div class='output co'>#&gt;     [,1] [,2] [,3]
+<span class='fu'>SPRDist</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='fu'>as.phylo</span>(<span class='fl'>0</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>7</span>))
+</div><div class='output co'>#&gt; [1] 2 2 2</div><div class='input'><span class='fu'>SPRDist</span>(<span class='fu'>as.phylo</span>(<span class='fl'>0</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>7</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>))
+</div><div class='output co'>#&gt; [1] 1 2 2</div><div class='input'>
+<span class='fu'>SPRDist</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(bal = <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), pec = <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>)),
+        <span class='fu'>as.phylo</span>(<span class='fl'>0</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>7</span>))
+</div><div class='output co'>#&gt;     [,1] [,2] [,3]
 #&gt; bal    2    2    2
 #&gt; pec    1    2    2</div><div class='input'>
-<span class='fu'><a href='CompareAll.html'>CompareAll</a></span>(<span class='fu'>as.phylo</span>(<span class='fl'>30</span>:<span class='fl'>33</span>, <span class='fl'>8</span>), <span class='no'>SPRDist</span>)</div><div class='output co'>#&gt;   1 2 3 4
+<span class='fu'><a href='CompareAll.html'>CompareAll</a></span>(<span class='fu'>as.phylo</span>(<span class='fl'>30</span><span class='op'>:</span><span class='fl'>33</span>, <span class='fl'>8</span>), <span class='kw'>SPRDist</span>)
+</div><div class='output co'>#&gt;   1 2 3 4
 #&gt; 1   1 1 1
 #&gt; 2 1   1 1
 #&gt; 3 1 1   1
@@ -250,7 +259,7 @@ resources, install the latest version of phangorn with
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

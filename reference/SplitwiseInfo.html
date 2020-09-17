@@ -91,7 +91,7 @@ these splits will contain mutual information." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
       </span>
     </div>
 
@@ -178,7 +178,7 @@ content of the tree where a tree contains multiple splits, as
 these splits will contain mutual information.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SplitwiseInfo</span>(<span class='no'>x</span>)</pre>
+    <pre class="usage"><span class='fu'>SplitwiseInfo</span>(<span class='kw'>x</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -192,15 +192,20 @@ these splits will contain mutual information.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>An introduction to the phylogenetic information content of a split is given
-in <a href='https://ms609.github.io/TreeTools/reference/SplitInformation.html'><code>SplitInformation()</code></a>
+in <a href='https://ms609.github.io/TreeTools/reference/SplitInformation.html'><code><a href='https://ms609.github.io/TreeTools/reference/SplitInformation.html'>SplitInformation()</a></code></a>
 and in a <a href='https://ms609.github.io/TreeDist/articles/information.html'>package vignette</a>.</p>
 <p>Other information functions: 
 <code><a href='ClusteringEntropy.html'>ClusteringEntropy</a>()</code>,
 <code><a href='SplitEntropy.html'>SplitEntropy</a>()</code>,
 <code><a href='SplitSharedInformation.html'>SplitSharedInformation</a>()</code></p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p><a href='https://orcid.org/0000-0001-5660-1727'>Martin R. Smith</a>
+(<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>SplitwiseInfo</span>(<span class='kw pkg'>TreeTools</span><span class='kw ns'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>8</span>))</div><div class='output co'>#&gt; [1] 22.53747</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>SplitwiseInfo</span>(<span class='kw'>TreeTools</span>::<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>8</span>))
+</div><div class='output co'>#&gt; [1] 22.53747</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -216,7 +221,7 @@ and in a <a href='https://ms609.github.io/TreeDist/articles/information.html'>pa
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
