@@ -20,11 +20,11 @@ class T {
       return *v <= n_leaves;
     }
     
-    int edges() {
+    static int edges() {
       return n_edge;
     }
     
-    int leaves() {
+    static int leaves() {
       return n_leaves;
     }
     
@@ -42,11 +42,11 @@ class T {
       end_of_T++;
     }
     
-    int N() {
+    static int N() {
       return n_leaves;
     }
     
-    int M() {
+    static int M() {
       return n_internal;
     }
     
