@@ -107,6 +107,10 @@
 #' @keywords internal
 "_PACKAGE"
 
+# Suppress "NOTE: Nothing imported from Rdpack":
+#' @importFrom Rdpack reprompt
+NULL
+
 # The following block is used by usethis to automatically manage
 # roxygen namespace tags. Modify with care!
 ## usethis namespace: start
