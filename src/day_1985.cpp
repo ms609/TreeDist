@@ -23,9 +23,8 @@ class ClusterTable {
     invocation = 0,
     enumeration = 0,
     v_j,
-    *Xarr,
+    *Xarr, *T, *Tptr,
     *leftmost_leaf, *visit_order, *decoder;
-  IntegerMatrix T;
   
   public:
     ClusterTable(List); // i.e. PREPARE(T)
@@ -48,9 +47,14 @@ class ClusterTable {
     };
     
     void ENTER(int v, int w) {
-      T(end_of_T, 0) = v;
-      T(end_of_T, 1) = w;
+      *(Tptr++) = v;
+      *(Tptr++) = w;
       end_of_T++;
+    }
+    
+    void READT(int *v, int *w) {
+      *v = *(Tptr++);
+      *w = *(Tptr++);
     }
     
     inline int N() {
@@ -64,14 +68,12 @@ class ClusterTable {
     inline void TRESET() {
       // This procedure prepares T for an enumeration of its entries, 
       // beginning with the first entry. 
-      invocation = 0;
+      Tptr = T;
     }
     
     inline void NVERTEX(int *v, int *w) {
       if (invocation != M() + N()) {
-        *v = T(invocation, 0);
-        *w = T(invocation, 1);
-        invocation++;
+        READT(v, w);
         v_j = *v;
       } else {
         *v = 0;
@@ -185,7 +187,7 @@ ClusterTable::ClusterTable(List phylo) {
   CharacterVector leaf_labels = phylo["tip.label"];
   n_leaves = leaf_labels.length(); // = N
   n_edge = edge.nrow();
-  IntegerMatrix T(n_edge, 2);
+  T = new int[n_edge * 2];
   end_of_T = 0;
   
   leftmost_leaf = new int[n_leaves + 1];
@@ -258,6 +260,7 @@ ClusterTable::~ClusterTable() {
   delete[] visit_order;
   delete[] decoder;
   delete[] Xarr;
+  delete[] T;
 }
 
 
