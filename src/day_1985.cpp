@@ -174,10 +174,10 @@ class ClusterTable {
 };
 
 ClusterTable::ClusterTable(List phylo) { 
-  using namespace TreeTools;
+  
   const IntegerMatrix
     edge = phylo["edge"],
-    rooted_edge = root_on_node(edge, 1); // Returned in preorder
+    rooted_edge = TreeTools::root_on_node(edge, 1); // Returned in preorder
   ;
   n_internal = phylo["Nnode"]; // = M
   CharacterVector leaf_labels = phylo["tip.label"];
@@ -280,7 +280,7 @@ int max_ (int *a, int *b) {
 
 // COMCLUSTER computes a consensus tree in O(knn).
 // COMCLUST requires O(kn).
-
+// [[Rcpp::export]]
 IntegerMatrix COMCLUST (List trees) {
   
   int *v = 0, *w = 0,

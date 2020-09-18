@@ -5,6 +5,17 @@
 
 using namespace Rcpp;
 
+// COMCLUST
+IntegerMatrix COMCLUST(List trees);
+RcppExport SEXP _TreeDist_COMCLUST(SEXP treesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type trees(treesSEXP);
+    rcpp_result_gen = Rcpp::wrap(COMCLUST(trees));
+    return rcpp_result_gen;
+END_RCPP
+}
 // lapjv
 List lapjv(NumericMatrix x, NumericVector maxX);
 RcppExport SEXP _TreeDist_lapjv(SEXP xSEXP, SEXP maxXSEXP) {
@@ -138,6 +149,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_TreeDist_COMCLUST", (DL_FUNC) &_TreeDist_COMCLUST, 1},
     {"_TreeDist_lapjv", (DL_FUNC) &_TreeDist_lapjv, 2},
     {"_TreeDist_cpp_mast", (DL_FUNC) &_TreeDist_cpp_mast, 3},
     {"_TreeDist_cpp_nni_distance", (DL_FUNC) &_TreeDist_cpp_nni_distance, 3},
