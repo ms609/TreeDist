@@ -198,6 +198,9 @@ ClusterTable::ClusterTable(List phylo) {
     leftmost_leaf[i] = i;
     weights[i] = 0;
   }
+  for (int i = n_leaves + 1; i != N() + M() + 1; i++) {
+    weights[i] = 0;
+  }
   for (int i = n_edge; i--; ) {
     const int
       parent_i = rooted_edge(i, 0),
