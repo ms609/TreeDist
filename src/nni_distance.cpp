@@ -249,7 +249,7 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
   bool rooted = edge1(n_edge - 3, 0) != root_1;
   
   const uint16
-    NOT_TRIVIAL = UINTX_MAX;
+    NOT_TRIVIAL = UINT_16_MAX;
   
   const int16
     n_node = n_edge + 1,
