@@ -173,12 +173,14 @@ class ClusterTable {
     
 };
 
+// TODO Root tree in function; for now, must be rooted externally and in Preorder.
 ClusterTable::ClusterTable(List phylo) { 
-  
+  /*
   const IntegerMatrix
     edge = phylo["edge"],
     rooted_edge = TreeTools::root_on_node(edge, 1); // Returned in preorder
-  ;
+  ;*/
+  const IntegerMatrix edge = phylo["edge"], rooted_edge = edge;
   n_internal = phylo["Nnode"]; // = M
   CharacterVector leaf_labels = phylo["tip.label"];
   n_leaves = leaf_labels.length(); // = N

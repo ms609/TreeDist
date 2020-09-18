@@ -1,10 +1,14 @@
 context("Day 1985")
 
 test_that("Day 1985 examples", {
-  library("TreeTools")
+  library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
   tr <- BalancedTree(14)
-  t1 <- ape::read.tree(text="((10, 7), (6, (8, 11)), (12, (4, (2, 1))), 14, (5, 9, 13), 3);")
-  t2 <- ape::read.tree(text = "(((2, 4, 5, 7, 9, 10, 12, 13), (1, 14)), (6, (8, 11)), 3);")
+  PrepareTree <- function (text) {
+    tmp <- ape::read.tree(text=text)
+    Preorder(RootTree(RenumberTips(tmp, as.character(seq_along(tmp$tip.label))), 1))
+  }
+  t1 <- PrepareTree("((10, 7), (6, (8, 11)), (12, (4, (2, 1))), 14, (5, 9, 13), 3);")
+  t2 <- PrepareTree("(((2, 4, 5, 7, 9, 10, 12, 13), (1, 14)), (6, (8, 11)), 3);")
   
   COMCLUST(list(t1, t2))
   expect_null(NULL)
