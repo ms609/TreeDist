@@ -1,6 +1,7 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 #include <TreeTools.h> /* for root_on_node() */
+#include <TreeTools/root_tree.h> /* for root_on_node() */
 #include <cmath> /* for log2() */
 #include <memory> /* for unique_ptr */
 #include "tree_distances.h"
@@ -30,19 +31,19 @@ class ClusterTable {
     ClusterTable(List); // i.e. PREPARE(T)
     ~ClusterTable();
     
-    bool is_leaf(const int *v) {
+    inline bool is_leaf(const int *v) {
       return *v <= n_leaves;
     }
     
-    const int edges() {
+    inline const int edges() {
       return n_edge;
     }
     
-    const int leaves() {
+    inline const int leaves() {
       return n_leaves;
     }
     
-    int TEND() {
+    inline int TEND() {
       return end_of_T;
     };
     
@@ -52,21 +53,21 @@ class ClusterTable {
       end_of_T++;
     }
     
-    const int N() {
+    inline int N() {
       return n_leaves;
     }
     
-    const int M() {
+    inline int M() {
       return n_internal;
     }
     
-    void TRESET() {
+    inline void TRESET() {
       // This procedure prepares T for an enumeration of its entries, 
       // beginning with the first entry. 
       invocation = 0;
     }
     
-    void NVERTEX(int *v, int *w) {
+    inline void NVERTEX(int *v, int *w) {
       if (invocation != M() + N()) {
         *v = T(invocation, 0);
         *w = T(invocation, 1);
@@ -78,7 +79,7 @@ class ClusterTable {
       }
     }
     
-    int LEFTLEAF() {
+    inline int LEFTLEAF() {
       // If NVERTEX has returned entry <vj, wj> in T, the leftmost leaf in the
       // subtree rooted at vj has entry <vk, wk> where k = j - wj.
       // This function procedure returns Vk as its value.
@@ -87,39 +88,39 @@ class ClusterTable {
     
     // Procedures to manipulate cluster tables, per Table 4 of Day 1985.
     
-    int ENCODE(const int* v) {
+    inline int ENCODE(const int* v) {
       // This function procedure returns as its value the internal label 
       // assigned to leaf v
       return visit_order[*v - 1];
     }
     
-    int DECODE(const int* v) {
+    inline int DECODE(const int* v) {
       return decoder[*v - 1];
     }
     
-    int X(int row, int col) {
+    inline int X(int row, int col) {
       return Xarr[row * X_COLS + col];
     }
     
-    void setX(int row, int col, int value) {
+    inline void setX(int row, int col, int value) {
       Xarr[row * X_COLS + col] = value;
     }
     
-    bool CLUSTONL(int* L, int* R) {
+    inline bool CLUSTONL(int* L, int* R) {
       return X(*L, L_COL) == *L && X(*L, R_COL) == *R;
     }
     
-    bool CLUSTONR(int* L, int* R) {
+    inline bool CLUSTONR(int* L, int* R) {
       return X(*R, L_COL) == *L && X(*R, R_COL) == *R;
     }
     
-    bool ISCLUST(int* L, int* R) {
+    inline bool ISCLUST(int* L, int* R) {
       // This function procedure returns value true if cluster <L,R> is in X;
       // otherwise it returns value false
       return CLUSTONL(L, R) || CLUSTONR(L, R);
     }  
     
-    void CLEAR() {
+    inline void CLEAR() {
       // Each cluster in X has an associated switch that is either cleared or 
       // set. 
       // This procedure clears every cluster switch in X. 
@@ -128,11 +129,11 @@ class ClusterTable {
       }
     }
     
-    void SETSWX(int* row) {
+    inline void SETSWX(int* row) {
       setX(*row, SWITCH_COL, 1);
     }
     
-    void SETSW(int* L, int* R) {
+    inline void SETSW(int* L, int* R) {
       // If <L,R> is a cluster in X, this procedure sets the cluster switch for <L,R>. 
       if (CLUSTONL(L, R)) {
         SETSWX(L);
@@ -141,7 +142,7 @@ class ClusterTable {
       }
     }
     
-    void UPDATE(){
+    inline void UPDATE(){
       // This procadure inspects every cluster switch in X.
       // If the switch for cluster <L,R> is cleared, UPDATE deletes <L,R> 
       // from X; thereafter ISCLUST(X,L,R) will return the value false. 
@@ -154,12 +155,12 @@ class ClusterTable {
       }
     }
     
-    void XRESET() {
+    inline void XRESET() {
       // This procedure prepares X for an enumeration of its clusters
       enumeration = 0;
     }
     
-    void NCLUS(int* L, int* R) {
+    inline void NCLUS(int* L, int* R) {
       // This procedure returns the next cluster <L,R> in the current 
       // enumeration of clusters in X.
       // If m clusters are in X, they are returned by the first m invocations 
