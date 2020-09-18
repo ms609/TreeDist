@@ -6,17 +6,19 @@ using namespace Rcpp;
 #include "tree_distances.h"
 #include "SplitList.h"
 
-const int INF = -1;
+const int INF = INTX_MAX;
 
-class T {
+class PostorderSequence {
   
-  int end_of_T = 0, invocation = 0;
+  int end_of_T = 0, invocation = 0, v_j, *leftmost_leaf, *visit_order, *decoder;
   static int n_edge, n_internal, n_leaves;
+  IntegerVector T;
   
   public:
-    T(IntegerMatrix);
+    PostorderSequence(List); // i.e. PREPARE(T)
+    ~PostorderSequence();
     
-    bool is_leaf(int *v) {
+    bool is_leaf(const int *v) {
       return *v <= n_leaves;
     }
     
@@ -26,10 +28,6 @@ class T {
     
     static int leaves() {
       return n_leaves;
-    }
-    
-    void PREPARE(edge) {
-      
     }
     
     int TEND() {
@@ -53,6 +51,7 @@ class T {
     void TRESET() {
       // This procedure prepares T for an enumeration of its entries, 
       // beginning with the first entry. 
+      invocation = 0;
     }
     
     void NVERTEX(int *v, int *w) {
@@ -60,6 +59,7 @@ class T {
         *v = T(invocation, 0);
         *w = T(invocation, 1);
         invocation++;
+        v_j = *v;
       } else {
         *v = 0;
         *w = 0;
@@ -70,24 +70,73 @@ class T {
       // If NVERTEX has returned entry <vj, wj> in T, the leftmost leaf in the
       // subtree rooted at vj has entry <vk, wk> where k = j - wj.
       // This function procedure returns Vk as its value.
-      return 999;
+      return leftmost_leaf[v_j];
     }
     
-}
+    int ENCODE(const int* v) {
+      // This function procedure returns as its value the internal label 
+      // assigned to leaf v
+      return visit_order[*v - 1];
+    }
+    
+    int DECODE(const int* v) {
+      return decoder[*v - 1];
+    }
+    
+};
 
-T::T(IntegerMatrix edge) {
-  end_of_T = 0;
+PostorderSequence::PostorderSequence(List phylo) { 
+  const IntegerMatrix 
+    edge = phylo["edge"],
+    preorder_edge = TreeTools::preorder_edges_and_nodes(edge(_, 0), edge(_, 1))
+  ;
+  n_internal = phylo["Nnode"]; // = M
+  CharacterVector leaf_labels = phylo["tip.label"];
+  n_leaves = leaf_labels.length(); // = N
   n_edge = edge.nrow();
   IntegerVector T(n_edge);
+  end_of_T = 0;
   
+  leftmost_leaf = new int[n_leaves + 1];
+  visit_order = new int[n_leaves];
+  decoder = new int[n_leaves];
+  int n_visited = 0;
+  
+  for (int i = 1; i != n_leaves; i++) {
+    leftmost_leaf[i] = i;
+  }
+  for (int i = n_edge; i--; ) {
+    const int child_i = preorder_edge(i, 1);
+    leftmost_leaf[preorder_edge(i, 0)] = leftmost_leaf[child_i];
+    if (this->is_leaf(&child_i)) {
+      visit_order[n_visited++] = child_i;
+      decoder[child_i - 1] = n_visited;
+    }
+  }
+  
+}
+
+PostorderSequence::~PostorderSequence() {
+  delete[] leftmost_leaf;
+  delete[] visit_order;
+  delete[] decoder;
 }
 
 class ClusterTable {
 private:
-  int enumeration = 0;
-  std::unique_ptr<IntegerMatrix> X;
+  int enumeration = 0, *Xarr;
   
 public:
+  ClusterTable(PostorderSequence);
+  ~ClusterTable();
+  
+  int X(int row, int col) {
+    return Xarr[row * 4 + col];
+  }
+  
+  void setX(int row, int col, int value) {
+    Xarr[row * 4 + col] = value;
+  }
   
   int ENCODE(int* v) {
     // This function procedure returns as its value the internal label 
@@ -121,19 +170,19 @@ public:
     enumeration = 0;
   }
   
-  void NCLUS(L, R) {
+  void NCLUS(int* L, int* R) {
     // This procedure returns the next cluster <L,R> in the current 
     // enumeration of clusters in X.
     // If m clusters are in X, they are returned by the first m invocations 
     // of NCLUS after initialization by XRESET; thereafter NCLUS returns the
     // invalid cluster <0,0>. 
-    L = X(enumeration, 0);
-    R = X(enumeration, 1);
+    *L = X(enumeration, 0);
+    *R = X(enumeration, 1);
     enumeration++;
   }
-}
+};
 
-ClusterTable::ClusterTable(T postorder_sequence) {
+ClusterTable::ClusterTable(PostorderSequence T) {
   
   //void BUILD(ClusterTable X) {
     // This procedure constructs in X descriptions of the clusters in a
@@ -141,31 +190,34 @@ ClusterTable::ClusterTable(T postorder_sequence) {
     //  BUILD assigns each leaf an internal label so that every cluster 
     //  is a set {i : L ~ i ~ R] of internal labels; thus each cluster is
     //   simply described by a pair <L,R> of internal labels, 
-  X = IntegerMatrix(postorder_sequence.edges, 4);
-  postorder_sequence.TRESET();
-  for (int i = 1; i != N(); i++) {
-    X(i, 0) = 0;
-    X(i, 1) = 0;
+  Xarr = new int[4 * T.edges()];
+  T.TRESET();
+  for (int i = 1; i != T.N(); i++) {
+    setX(i, 0, 0);
+    setX(i, 1, 0);
   }
-  int leafcode = 0, v, w, L, R, loc;
+  int leafcode = 0, *v, *w, *L, *R, loc;
   
-  postorder_sequence.NVERTEX(&v, &w);
-  while (v) {
-    if (is_leaf(&v)) {
+  T.NVERTEX(v, w);
+  while (*v) {
+    if (T.is_leaf(v)) {
       leafcode++;
-      X(v, 2) = leafcode;
-      R = leafcode;
-      postorder_sequence.NVERTEX(&v, &w);
+      setX(*v, 2, leafcode);
+      *R = leafcode;
+      T.NVERTEX(v, w);
     } else {
-      L = X(postorder_sequence.LEFTLEAF(), 2);
-      postorder_sequence.NVERTEX(&v, &w);
-      loc = w == 0 ? R : L;
-      X(loc, 0) = L;
-      X(loc, 1) = R;
+      *L = X(T.LEFTLEAF(), 2);
+      T.NVERTEX(v, w);
+      loc = *w == 0 ? *R : *L;
+      setX(loc, 0, *L);
+      setX(loc, 1, *R);
     }
   }
   
-  
+}
+
+ClusterTable::~ClusterTable() {
+  delete [] Xarr;
 }
 
 void push (int a, int b, int c, int d, int* S) {
@@ -182,13 +234,11 @@ int pop (int *a, int *b, int *c, int *d, int* S) {
   *a = *(S--);
 }
 
-int min (int *a, int *b) {
-  if (*a == INF) return *b;
+int min_ (int *a, int *b) {
   return (*a < *b ? *a : *b);
 }
 
-int max (int *a, int *b) {
-  if (*a == INF) return *a;
+int max_ (int *a, int *b) {
   return (*a > *b ? *a : *b);
 }
 
@@ -200,13 +250,13 @@ IntegerVector COMCLUST (List trees) {
     *stack_0 = new int [4 * trees.length()],
     *S = stack_0;
     
-  ClusterTable X = ClusterTable(trees(0)); // BUILD(T1, X)
+  ClusterTable X(trees(0)); // BUILD(T1, X)
   
   for (int i = 1; i != trees.length(); i++) {
     S = stack_0; // Empty the stack S
     
     X.CLEAR();
-    Ti = T(trees(i));
+    PostorderSequence Ti(trees(i));
     Ti.TRESET();
     Ti.NVERTEX(v, w);
     

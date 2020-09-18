@@ -6,4 +6,5 @@ typedef uint_fast16_t uint16;
 typedef std::vector<typeof(NA_INTEGER)> rf_match;
 
 const int16 NA_INT16 = -0x7fff;
+const int16 INTX_MAX = int16(INT_FAST16_MAX);
 const uint16 UINTX_MAX = uint16(UINT_FAST16_MAX);
