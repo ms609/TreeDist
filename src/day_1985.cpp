@@ -1,6 +1,6 @@
 #include <Rcpp.h>
 using namespace Rcpp;
-#include <TreeTools.h> /* for postorder_edges() */
+#include <TreeTools.h> /* for root_on_node() */
 #include <cmath> /* for log2() */
 #include <memory> /* for unique_ptr */
 #include "tree_distances.h"
@@ -8,25 +8,37 @@ using namespace Rcpp;
 
 const int INF = INTX_MAX;
 
-class PostorderSequence {
+class ClusterTable {
   
-  int end_of_T = 0, invocation = 0, v_j, *leftmost_leaf, *visit_order, *decoder;
-  static int n_edge, n_internal, n_leaves;
-  IntegerVector T;
+  const int
+    L_COL = 0,
+    R_COL = 1,
+    SWITCH_COL = 2,
+    X_COLS = 3
+  ;
+  int n_edge, n_internal, n_leaves;
+  int 
+    end_of_T = 0,
+    invocation = 0,
+    enumeration = 0,
+    v_j,
+    *Xarr,
+    *leftmost_leaf, *visit_order, *decoder;
+  IntegerMatrix T;
   
   public:
-    PostorderSequence(List); // i.e. PREPARE(T)
-    ~PostorderSequence();
+    ClusterTable(List); // i.e. PREPARE(T)
+    ~ClusterTable();
     
     bool is_leaf(const int *v) {
       return *v <= n_leaves;
     }
     
-    static int edges() {
+    const int edges() {
       return n_edge;
     }
     
-    static int leaves() {
+    const int leaves() {
       return n_leaves;
     }
     
@@ -40,11 +52,11 @@ class PostorderSequence {
       end_of_T++;
     }
     
-    static int N() {
+    const int N() {
       return n_leaves;
     }
     
-    static int M() {
+    const int M() {
       return n_internal;
     }
     
@@ -73,6 +85,8 @@ class PostorderSequence {
       return leftmost_leaf[v_j];
     }
     
+    // Procedures to manipulate cluster tables, per Table 4 of Day 1985.
+    
     int ENCODE(const int* v) {
       // This function procedure returns as its value the internal label 
       // assigned to leaf v
@@ -83,142 +97,163 @@ class PostorderSequence {
       return decoder[*v - 1];
     }
     
+    int X(int row, int col) {
+      return Xarr[row * X_COLS + col];
+    }
+    
+    void setX(int row, int col, int value) {
+      Xarr[row * X_COLS + col] = value;
+    }
+    
+    bool CLUSTONL(int* L, int* R) {
+      return X(*L, L_COL) == *L && X(*L, R_COL) == *R;
+    }
+    
+    bool CLUSTONR(int* L, int* R) {
+      return X(*R, L_COL) == *L && X(*R, R_COL) == *R;
+    }
+    
+    bool ISCLUST(int* L, int* R) {
+      // This function procedure returns value true if cluster <L,R> is in X;
+      // otherwise it returns value false
+      return CLUSTONL(L, R) || CLUSTONR(L, R);
+    }  
+    
+    void CLEAR() {
+      // Each cluster in X has an associated switch that is either cleared or 
+      // set. 
+      // This procedure clears every cluster switch in X. 
+      for (int i = n_edge; i--; ) {
+        Xarr[i * X_COLS + SWITCH_COL] = 0;
+      }
+    }
+    
+    void SETSWX(int* row) {
+      setX(*row, SWITCH_COL, 1);
+    }
+    
+    void SETSW(int* L, int* R) {
+      // If <L,R> is a cluster in X, this procedure sets the cluster switch for <L,R>. 
+      if (CLUSTONL(L, R)) {
+        SETSWX(L);
+      } else if (CLUSTONR(L, R)) {
+        SETSWX(R);
+      }
+    }
+    
+    void UPDATE(){
+      // This procadure inspects every cluster switch in X.
+      // If the switch for cluster <L,R> is cleared, UPDATE deletes <L,R> 
+      // from X; thereafter ISCLUST(X,L,R) will return the value false. 
+      for (int i = n_edge; i--; ) {
+        int *ptr = Xarr + (i * X_COLS);
+        if (*(ptr + SWITCH_COL)) {
+          *(ptr + L_COL) = 0;
+          *(ptr + R_COL) = 0;
+        }
+      }
+    }
+    
+    void XRESET() {
+      // This procedure prepares X for an enumeration of its clusters
+      enumeration = 0;
+    }
+    
+    void NCLUS(int* L, int* R) {
+      // This procedure returns the next cluster <L,R> in the current 
+      // enumeration of clusters in X.
+      // If m clusters are in X, they are returned by the first m invocations 
+      // of NCLUS after initialization by XRESET; thereafter NCLUS returns the
+      // invalid cluster <0,0>. 
+      *L = X(enumeration, 0);
+      *R = X(enumeration, 1);
+      enumeration++;
+    }
+    
 };
 
-PostorderSequence::PostorderSequence(List phylo) { 
-  const IntegerMatrix 
+ClusterTable::ClusterTable(List phylo) { 
+  using namespace TreeTools;
+  const IntegerMatrix
     edge = phylo["edge"],
-    preorder_edge = TreeTools::preorder_edges_and_nodes(edge(_, 0), edge(_, 1))
+    rooted_edge = root_on_node(edge, 1); // Returned in preorder
   ;
   n_internal = phylo["Nnode"]; // = M
   CharacterVector leaf_labels = phylo["tip.label"];
   n_leaves = leaf_labels.length(); // = N
   n_edge = edge.nrow();
-  IntegerVector T(n_edge);
+  IntegerMatrix T(n_edge, 2);
   end_of_T = 0;
   
   leftmost_leaf = new int[n_leaves + 1];
   visit_order = new int[n_leaves];
   decoder = new int[n_leaves];
   int n_visited = 0;
+  int* weights = new int[N() + M() + 1]; 
   
   for (int i = 1; i != n_leaves; i++) {
     leftmost_leaf[i] = i;
+    weights[i] = 0;
   }
   for (int i = n_edge; i--; ) {
-    const int child_i = preorder_edge(i, 1);
-    leftmost_leaf[preorder_edge(i, 0)] = leftmost_leaf[child_i];
+    const int
+      parent_i = rooted_edge(i, 0),
+      child_i = rooted_edge(i, 1)
+    ;
+    leftmost_leaf[parent_i] = leftmost_leaf[child_i];
     if (this->is_leaf(&child_i)) {
       visit_order[n_visited++] = child_i;
       decoder[child_i - 1] = n_visited;
+      weights[parent_i]++;
+      ENTER(child_i, 0);
+    } else {
+      weights[parent_i] += 1 + weights[child_i];
+      ENTER(child_i, weights[child_i]);
     }
   }
+  ENTER(rooted_edge(0, 0), weights[rooted_edge(0, 0)]);
+  delete[] weights;
   
-}
-
-PostorderSequence::~PostorderSequence() {
-  delete[] leftmost_leaf;
-  delete[] visit_order;
-  delete[] decoder;
-}
-
-class ClusterTable {
-private:
-  int enumeration = 0, *Xarr;
+  // BUILD Cluster table 
+  Xarr = new int[4 * edges()];
   
-public:
-  ClusterTable(PostorderSequence);
-  ~ClusterTable();
+  // This procedure constructs in X descriptions of the clusters in a
+  //  rooted tree described by the postorder sequence T with weights,
+  //  BUILD assigns each leaf an internal label so that every cluster 
+  //  is a set {i : L ~ i ~ R] of internal labels; thus each cluster is
+  //   simply described by a pair <L,R> of internal labels, 
   
-  int X(int row, int col) {
-    return Xarr[row * 4 + col];
-  }
-  
-  void setX(int row, int col, int value) {
-    Xarr[row * 4 + col] = value;
-  }
-  
-  int ENCODE(int* v) {
-    // This function procedure returns as its value the internal label 
-    // assigned to leaf v
-  }
-  
-  bool ISCLUST(int* L, int* R) {
-    // This function procedure returns value true if cluster <L,R> is in X;
-    // otherwise it returns value false
-  }  
-  
-  void CLEAR() {
-    // Each cluster in X has an associated switch that is either cleared or 
-    // set. 
-    // This procedure clears every cluster switch in X. 
-  }
-  
-  void SETSW(int* L, int* R) {
-    // If <L,R> is a cluster in X, this procedure sets the cluster switch for <L,R>. 
-  }
-  
-  void UPDATE(){
-    // This procadure inspects every cluster switch in X.
-    // If the switch for cluster <L,R> is cleared, UPDATE deletes <L,R> 
-    // from X; thereafter ISCLUST(X,L,R) will return the value false. 
-    
-  }
-  
-  void XRESET() {
-    // This procedure prepares X for an enumeration of its clusters
-    enumeration = 0;
-  }
-  
-  void NCLUS(int* L, int* R) {
-    // This procedure returns the next cluster <L,R> in the current 
-    // enumeration of clusters in X.
-    // If m clusters are in X, they are returned by the first m invocations 
-    // of NCLUS after initialization by XRESET; thereafter NCLUS returns the
-    // invalid cluster <0,0>. 
-    *L = X(enumeration, 0);
-    *R = X(enumeration, 1);
-    enumeration++;
-  }
-};
-
-ClusterTable::ClusterTable(PostorderSequence T) {
-  
-  //void BUILD(ClusterTable X) {
-    // This procedure constructs in X descriptions of the clusters in a
-    //  rooted tree described by the postorder sequence T with weights,
-    //  BUILD assigns each leaf an internal label so that every cluster 
-    //  is a set {i : L ~ i ~ R] of internal labels; thus each cluster is
-    //   simply described by a pair <L,R> of internal labels, 
-  Xarr = new int[4 * T.edges()];
-  T.TRESET();
-  for (int i = 1; i != T.N(); i++) {
+  TRESET();
+  for (int i = 1; i != N(); i++) {
     setX(i, 0, 0);
     setX(i, 1, 0);
   }
   int leafcode = 0, *v, *w, *L, *R, loc;
   
-  T.NVERTEX(v, w);
+  NVERTEX(v, w);
   while (*v) {
-    if (T.is_leaf(v)) {
+    if (is_leaf(v)) {
       leafcode++;
       setX(*v, 2, leafcode);
       *R = leafcode;
-      T.NVERTEX(v, w);
+      NVERTEX(v, w);
     } else {
-      *L = X(T.LEFTLEAF(), 2);
-      T.NVERTEX(v, w);
+      *L = X(LEFTLEAF(), 2);
+      NVERTEX(v, w);
       loc = *w == 0 ? *R : *L;
       setX(loc, 0, *L);
       setX(loc, 1, *R);
     }
   }
-  
 }
 
 ClusterTable::~ClusterTable() {
-  delete [] Xarr;
+  delete[] leftmost_leaf;
+  delete[] visit_order;
+  delete[] decoder;
+  delete[] Xarr;
 }
+
 
 void push (int a, int b, int c, int d, int* S) {
   *(S++) = a;
@@ -227,7 +262,7 @@ void push (int a, int b, int c, int d, int* S) {
   *(S++) = d;
 }
 
-int pop (int *a, int *b, int *c, int *d, int* S) {
+void pop (int *a, int *b, int *c, int *d, int* S) {
   *d = *(S--);
   *c = *(S--);
   *b = *(S--);
@@ -242,27 +277,32 @@ int max_ (int *a, int *b) {
   return (*a > *b ? *a : *b);
 }
 
-IntegerVector COMCLUST (List trees) {
+// COMCLUSTER computes a consensus tree in O(knn).
+// COMCLUST requires O(kn).
+
+IntegerMatrix COMCLUST (List trees) {
   
-  int *v, *w,
+  int *v = 0, *w = 0,
     *L, *R, *N, *W,
     *L_, *R_, *N_, *W_,
     *stack_0 = new int [4 * trees.length()],
     *S = stack_0;
-    
-  ClusterTable X(trees(0)); // BUILD(T1, X)
+  
+  List tree_0 = trees(0);
+  ClusterTable X(tree_0);
   
   for (int i = 1; i != trees.length(); i++) {
     S = stack_0; // Empty the stack S
     
     X.CLEAR();
-    PostorderSequence Ti(trees(i));
+    List tree_i = trees(i);
+    ClusterTable Ti(tree_i);
     Ti.TRESET();
     Ti.NVERTEX(v, w);
     
     do {
       if (Ti.is_leaf(v)) {
-        push(ENCODE(v), ENCODE(v), 1, 1, S);
+        push(Ti.ENCODE(v), Ti.ENCODE(v), 1, 1, S);
       } else {
         *L = INF;
         *R = 0;
@@ -270,22 +310,28 @@ IntegerVector COMCLUST (List trees) {
         *W = 1;
         do {
           pop(L_, R_, N_, W_, S);
-          *L = min(L, L_);
-          *R = max(R, R_);
+          *L = min_(L, L_);
+          *R = max_(R, R_);
           *N = *N + *N_;
           *W = *W + *W_;
           *w = *w - *W_;
         } while (*w);
         push(*L, *R, *N, *W, S);
-        if (*N = *R - *L + 1) {
-          SETSW(L, R);
+        if (*N == *R - *L + 1) { // L..R is contiguous, and must be tested
+          X.SETSW(L, R);
         }
       }
       Ti.NVERTEX(v, w);
     } while (*v);
-    UPDATE();
+    X.UPDATE();
   }
   
   delete[] stack_0;
   
+  IntegerMatrix ret(X.N(), 2);
+  for (int i = X.N(); i--; ) {
+    ret(i, 0) = X.X(i + 1, 0);
+    ret(i, 1) = X.X(i + 1, 1);
+  }
+  return ret;
 }
