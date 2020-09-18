@@ -194,7 +194,7 @@ ClusterTable::ClusterTable(List phylo) {
   int n_visited = 0;
   int* weights = new int[N() + M() + 1]; 
   
-  for (int i = 1; i != n_leaves; i++) {
+  for (int i = 1; i != n_leaves + 1; i++) {
     leftmost_leaf[i] = i;
     weights[i] = 0;
   }
