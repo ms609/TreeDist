@@ -243,8 +243,6 @@ ClusterTable::ClusterTable(List phylo) {
   }
   int leafcode = 0, v, w, L, R = UNINIT, loc;
   
-  while (*v) {
-    if (is_leaf(v)) {
   NVERTEX(&v, &w);
   while (v) {
     if (is_leaf(&v)) {
@@ -298,9 +296,9 @@ int max_ (int *a, int *b) {
 // [[Rcpp::export]]
 IntegerMatrix COMCLUST (List trees) {
   
-  int *v = 0, *w = 0,
-    *L, *R, *N, *W,
-    *L_, *R_, *N_, *W_,
+  int v = 0, w = 0,
+    L, R, N, W,
+    L_, R_, N_, W_,
     *stack_0 = new int [4 * trees.length()],
     *S = stack_0;
   
@@ -314,31 +312,31 @@ IntegerMatrix COMCLUST (List trees) {
     List tree_i = trees(i);
     ClusterTable Ti(tree_i);
     Ti.TRESET();
-    Ti.NVERTEX(v, w);
+    Ti.NVERTEX(&v, &w);
     
     do {
-      if (Ti.is_leaf(v)) {
-        push(Ti.ENCODE(v), Ti.ENCODE(v), 1, 1, S);
+      if (Ti.is_leaf(&v)) {
+        push(Ti.ENCODE(&v), Ti.ENCODE(&v), 1, 1, S);
       } else {
-        *L = INF;
-        *R = 0;
-        *N = 0;
-        *W = 1;
+        L = INF;
+        R = 0;
+        N = 0;
+        W = 1;
         do {
-          pop(L_, R_, N_, W_, S);
-          *L = min_(L, L_);
-          *R = max_(R, R_);
-          *N = *N + *N_;
-          *W = *W + *W_;
-          *w = *w - *W_;
-        } while (*w);
-        push(*L, *R, *N, *W, S);
-        if (*N == *R - *L + 1) { // L..R is contiguous, and must be tested
-          X.SETSW(L, R);
+          pop(&L_, &R_, &N_, &W_, S);
+          L = min_(&L, &L_);
+          R = max_(&R, &R_);
+          N = N + N_;
+          W = W + W_;
+          w = w - W_;
+        } while (w);
+        push(L, R, N, W, S);
+        if (N == R - L + 1) { // L..R is contiguous, and must be tested
+          X.SETSW(&L, &R);
         }
       }
-      Ti.NVERTEX(v, w);
-    } while (*v);
+      Ti.NVERTEX(&v, &w);
+    } while (v);
     X.UPDATE();
   }
   
