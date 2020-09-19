@@ -20,17 +20,20 @@ class ClusterTable {
     SWITCH_COL = 2,
     X_COLS = 3
   ;
-  int n_edge, n_internal, n_leaves;
-  int 
-    end_of_T = 0,
+  int
+    n_edge,
+    n_internal,
+    n_leaves,
+    
     enumeration = 0,
     v_j,
-    *Xarr, *T, *Tptr, Tlen,
-    *leftmost_leaf, *visit_order, *decoder;
+    Tlen,
+    Tpos = 0
+  ;
+  std::unique_ptr<int[]> leftmost_leaf, T, Xarr, visit_order, decoder;
   
   public:
     ClusterTable(List); // i.e. PREPARE(T)
-    ~ClusterTable();
     
     inline bool is_leaf(const int *v) {
       return *v <= n_leaves;
@@ -48,15 +51,16 @@ class ClusterTable {
       return end_of_T;
     };
     
-    void ENTER(int v, int w) {
-      *Tptr++ = v;
-      *Tptr++ = w;
-      end_of_T++;
+    inline void ENTER(int v, int w) {
+      if (Tpos >= Tlen) std::range_error("READT T too high");
+      if (Tpos < 0) std::range_error("READT T too low");
+      T[Tpos++] = v;
+      T[Tpos++] = w;
     }
     
-    void READT(int *v, int *w) {
-      *v = *Tptr++;
-      *w = *Tptr++;
+    inline void READT(int *v, int *w) {
+      *v = T[Tpos++];
+      *w = T[Tpos++];
     }
     
     inline int N() {
@@ -70,11 +74,12 @@ class ClusterTable {
     inline void TRESET() {
       // This procedure prepares T for an enumeration of its entries, 
       // beginning with the first entry. 
-      Tptr = T;
+      Tpos = 0;
     }
     
     inline void NVERTEX(int *v, int *w) {
-      if (Tptr != T + Tlen) {
+      if (Tpos != Tlen) {
+        if (Tpos > Tlen) throw std::range_error("Get over this programmer!");
         READT(v, w);
         v_j = *v;
       } else {
@@ -151,10 +156,10 @@ class ClusterTable {
       // If the switch for cluster <L,R> is cleared, UPDATE deletes <L,R> 
       // from X; thereafter ISCLUST(X,L,R) will return the value false. 
       for (int i = n_edge; i--; ) {
-        int *ptr = Xarr + (i * X_COLS);
-        if (*(ptr + SWITCH_COL)) {
-          *(ptr + L_COL) = 0;
-          *(ptr + R_COL) = 0;
+        int ptr = (i * X_COLS);
+        if (Xarr[ptr + SWITCH_COL]) {
+          Xarr[ptr + L_COL] = 0;
+          Xarr[ptr + R_COL] = 0;
         }
       }
     }
@@ -190,15 +195,13 @@ ClusterTable::ClusterTable(List phylo) {
   n_leaves = leaf_labels.length(); // = N
   n_edge = edge.nrow();
   Tlen = M() + N() + M() + N();
-  T = new int[Tlen];
-  Tptr = T;
-  end_of_T = 0;
+  T = std::make_unique<int[]>(Tlen);
   
-  leftmost_leaf = new int[n_leaves + 1];
-  visit_order = new int[n_leaves];
-  decoder = new int[n_leaves];
+  leftmost_leaf = std::make_unique<int[]>(n_leaves + 1);
+  visit_order = std::make_unique<int[]>(n_leaves);
+  decoder = std::make_unique<int[]>(n_leaves);
   int n_visited = 0;
-  int* weights = new int[N() + M() + 1]; 
+  std::unique_ptr<int[]> weights = std::make_unique<int[]>(N() + M() + 1);
   
   for (int i = 1; i != n_leaves + 1; i++) {
     leftmost_leaf[i] = i;
@@ -224,10 +227,9 @@ ClusterTable::ClusterTable(List phylo) {
     }
   }
   ENTER(rooted_edge(0, 0), weights[rooted_edge(0, 0)]);
-  delete[] weights;
   
   // BUILD Cluster table 
-  Xarr = new int[4 * edges()];
+  Xarr = std::make_unique<int[]>(4 * edges());
   
   // This procedure constructs in X descriptions of the clusters in a
   //  rooted tree described by the postorder sequence T with weights,
@@ -259,13 +261,6 @@ ClusterTable::ClusterTable(List phylo) {
   }
 }
 
-ClusterTable::~ClusterTable() {
-  delete[] leftmost_leaf;
-  delete[] visit_order;
-  delete[] decoder;
-  delete[] Xarr;
-  delete[] T;
-}
 
 
 void push (int a, int b, int c, int d, int** S) {

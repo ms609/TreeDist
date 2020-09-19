@@ -62,7 +62,7 @@ LinkingTo:
   TreeTools
 RdMacros: Rdpack
 VignetteBuilder: knitr
-SystemRequirements: C++11
+SystemRequirements: C++14
 LazyData: true
 ByteCompile: true
 Encoding: UTF-8
