@@ -7,7 +7,10 @@ using namespace Rcpp;
 #include "tree_distances.h"
 #include "SplitList.h"
 
-const int INF = INTX_MAX;
+const int
+  INF = INTX_MAX,
+  UNINIT = -999
+;
 
 class ClusterTable {
   
@@ -47,14 +50,14 @@ class ClusterTable {
     };
     
     void ENTER(int v, int w) {
-      *(Tptr++) = v;
-      *(Tptr++) = w;
+      *Tptr++ = v;
+      *Tptr++ = w;
       end_of_T++;
     }
     
     void READT(int *v, int *w) {
-      *v = *(Tptr++);
-      *w = *(Tptr++);
+      *v = *Tptr++;
+      *w = *Tptr++;
     }
     
     inline int N() {
@@ -187,7 +190,9 @@ ClusterTable::ClusterTable(List phylo) {
   CharacterVector leaf_labels = phylo["tip.label"];
   n_leaves = leaf_labels.length(); // = N
   n_edge = edge.nrow();
-  T = new int[n_edge * 2];
+  Tlen = M() + N() + M() + N();
+  T = new int[Tlen];
+  Tptr = T;
   end_of_T = 0;
   
   leftmost_leaf = new int[n_leaves + 1];
@@ -236,21 +241,23 @@ ClusterTable::ClusterTable(List phylo) {
     setX(i, 0, 0);
     setX(i, 1, 0);
   }
-  int leafcode = 0, *v, *w, *L, *R, loc;
+  int leafcode = 0, v, w, L, R = UNINIT, loc;
   
-  NVERTEX(v, w);
   while (*v) {
     if (is_leaf(v)) {
+  NVERTEX(&v, &w);
+  while (v) {
+    if (is_leaf(&v)) {
       leafcode++;
-      setX(*v, 2, leafcode);
-      *R = leafcode;
-      NVERTEX(v, w);
+      setX(v, 2, leafcode);
+      R = leafcode;
+      NVERTEX(&v, &w);
     } else {
-      *L = X(LEFTLEAF(), 2);
-      NVERTEX(v, w);
-      loc = *w == 0 ? *R : *L;
-      setX(loc, 0, *L);
-      setX(loc, 1, *R);
+      L = X(LEFTLEAF(), 2);
+      NVERTEX(&v, &w);
+      loc = w == 0 ? R : L;
+      setX(loc, 0, L);
+      setX(loc, 1, R);
     }
   }
 }
