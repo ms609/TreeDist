@@ -23,10 +23,9 @@ class ClusterTable {
   int n_edge, n_internal, n_leaves;
   int 
     end_of_T = 0,
-    invocation = 0,
     enumeration = 0,
     v_j,
-    *Xarr, *T, *Tptr,
+    *Xarr, *T, *Tptr, Tlen,
     *leftmost_leaf, *visit_order, *decoder;
   
   public:
@@ -75,7 +74,7 @@ class ClusterTable {
     }
     
     inline void NVERTEX(int *v, int *w) {
-      if (invocation != M() + N()) {
+      if (Tptr != T + Tlen) {
         READT(v, w);
         v_j = *v;
       } else {
@@ -269,18 +268,20 @@ ClusterTable::~ClusterTable() {
 }
 
 
-void push (int a, int b, int c, int d, int* S) {
-  *(S++) = a;
-  *(S++) = b;
-  *(S++) = c;
-  *(S++) = d;
+void push (int a, int b, int c, int d, int** S) {
+  *(*S)++ = a;
+  *(*S)++ = b;
+  *(*S)++ = c;
+  *(*S)++ = d;
+  Rcout << "Pushed: <" << a << ", " << b << ", " << c << ", " << d << ">"
+        << " to " << *S << "\n";
 }
 
-void pop (int *a, int *b, int *c, int *d, int* S) {
-  *d = *(S--);
-  *c = *(S--);
-  *b = *(S--);
-  *a = *(S--);
+void pop (int *a, int *b, int *c, int *d, int** S) {
+  *d = *--(*S);
+  *c = *--(*S);
+  *b = *--(*S);
+  *a = *--(*S);
 }
 
 int min_ (int *a, int *b) {
@@ -298,12 +299,12 @@ IntegerMatrix COMCLUST (List trees) {
   
   int v = 0, w = 0,
     L, R, N, W,
-    L_, R_, N_, W_,
-    *stack_0 = new int [4 * trees.length()],
-    *S = stack_0;
+    L_, R_, N_, W_;
   
   List tree_0 = trees(0);
   ClusterTable X(tree_0);
+  const int stack_size = 4 * (X.N() + X.M()); // TODO this is conservative; is X.N() safe?
+  int *stack_0 = new int [stack_size], *S = stack_0;
   
   for (int i = 1; i != trees.length(); i++) {
     S = stack_0; // Empty the stack S
@@ -316,21 +317,21 @@ IntegerMatrix COMCLUST (List trees) {
     
     do {
       if (Ti.is_leaf(&v)) {
-        push(Ti.ENCODE(&v), Ti.ENCODE(&v), 1, 1, S);
+        push(Ti.ENCODE(&v), Ti.ENCODE(&v), 1, 1, &S);
       } else {
         L = INF;
         R = 0;
         N = 0;
         W = 1;
         do {
-          pop(&L_, &R_, &N_, &W_, S);
+          pop(&L_, &R_, &N_, &W_, &S);
           L = min_(&L, &L_);
           R = max_(&R, &R_);
           N = N + N_;
           W = W + W_;
           w = w - W_;
         } while (w);
-        push(L, R, N, W, S);
+        push(L, R, N, W, &S);
         if (N == R - L + 1) { // L..R is contiguous, and must be tested
           X.SETSW(&L, &R);
         }
