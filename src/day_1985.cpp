@@ -263,20 +263,18 @@ ClusterTable::ClusterTable(List phylo) {
 
 
 
-void push (int a, int b, int c, int d, int** S) {
-  *(*S)++ = a;
-  *(*S)++ = b;
-  *(*S)++ = c;
-  *(*S)++ = d;
-  Rcout << "Pushed: <" << a << ", " << b << ", " << c << ", " << d << ">"
-        << " to " << *S << "\n";
+inline void push (int a, int b, int c, int d, std::unique_ptr<int[]> &S, int* Spos) {
+  S.get()[(*Spos)++] = a;
+  S.get()[(*Spos)++] = b;
+  S.get()[(*Spos)++] = c;
+  S.get()[(*Spos)++] = d;
 }
 
-void pop (int *a, int *b, int *c, int *d, int** S) {
-  *d = *--(*S);
-  *c = *--(*S);
-  *b = *--(*S);
-  *a = *--(*S);
+inline void pop (int *a, int *b, int *c, int *d, std::unique_ptr<int[]> &S, int* Spos) {
+  *d = S.get()[--(*Spos)];
+  *c = S.get()[--(*Spos)];
+  *b = S.get()[--(*Spos)];
+  *a = S.get()[--(*Spos)];
 }
 
 int min_ (int *a, int *b) {
