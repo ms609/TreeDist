@@ -310,21 +310,28 @@ IntegerMatrix COMCLUST (List trees) {
     
     do {
       if (Ti.is_leaf(&v)) {
-        push(Ti.ENCODE(&v), Ti.ENCODE(&v), 1, 1, &S);
+        // Rcout << Spos;
+        // Rcout << " < " << stack_size;
+        // check_push_safe(Spos, stack_size);
+        // S.get()[Spos++] = Ti.ENCODE(&v);
+        // S.get()[Spos++] = Ti.ENCODE(&v);
+        // S.get()[Spos++] = 1;
+        // S.get()[Spos++] = 1;
+        Rcout << "    Spos is now " << Spos << "\n";
       } else {
         L = INF;
         R = 0;
         N = 0;
         W = 1;
         do {
-          pop(&L_, &R_, &N_, &W_, &S);
+          pop(&L_, &R_, &N_, &W_, S, &Spos);
           L = min_(&L, &L_);
           R = max_(&R, &R_);
           N = N + N_;
           W = W + W_;
           w = w - W_;
         } while (w);
-        push(L, R, N, W, &S);
+        push(L, R, N, W, S, &Spos);
         if (N == R - L + 1) { // L..R is contiguous, and must be tested
           X.SETSW(&L, &R);
         }
