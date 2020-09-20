@@ -197,7 +197,7 @@ ClusterTable::ClusterTable(List phylo) {
   Tlen = M() + N() + M() + N();
   T = std::make_unique<int[]>(Tlen);
   
-  leftmost_leaf = std::make_unique<int[]>(n_leaves + 1);
+  leftmost_leaf = std::make_unique<int[]>(N() + M() + 1);
   visit_order = std::make_unique<int[]>(n_leaves);
   decoder = std::make_unique<int[]>(n_leaves);
   int n_visited = 0;
