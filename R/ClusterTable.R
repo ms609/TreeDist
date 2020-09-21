@@ -32,7 +32,7 @@ NULL
 #' @export
 as.ClusterTable <- function (x, tipLabels = NULL, ...) UseMethod('as.ClusterTable')
 
-#' @rdname as.ClusterTable
+#' @rdname ClusterTable
 #' @importFrom TreeTools NTip RenumberTips
 #' @export
 as.ClusterTable.phylo <- function (x, tipLabels = NULL, ...) {
