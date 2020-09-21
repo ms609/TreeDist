@@ -134,3 +134,15 @@ RobinsonFouldsSplits <- function (splits1, splits2,
   GeneralizedRF(splits1, splits2, nTip, cpp_robinson_foulds_distance,
                 maximize = FALSE, reportMatching = reportMatching)
 }
+
+#' @export
+DayRobinsonFoulds <- list(
+  function(trees) {
+    rf <- robinson_foulds_all_pairs(trees)
+    splits <- NSplits(trees)
+    nSplits <- outer(splits, splits, '+')
+    structure(nSplits[lower.tri(nSplits)] - rf - rf,
+              Size = length(trees),
+              class = 'dist')
+  }
+)
