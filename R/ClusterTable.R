@@ -75,4 +75,25 @@ print.ClusterTable <- function (x, ...) {
   
   cat(paste0(" ", seq_len(nTip), ": ", attr(x, 'tip.label')[ClusterTable_decode(x)]), "\n")
   
-.}
+}
+
+#' @importFrom TreeTools TipLabels
+#' @inherit TipLabels
+#' @export
+TipLabels.ClusterTable <- function (x, single = TRUE) attr(x, 'tip.label')
+
+#' @inherit NTip
+#' @importFrom TreeTools NTip
+#' @export
+NTip.ClusterTable <- function (phy) attr(phy, 'nTip')
+
+#' @inherit NSplits
+#' @importFrom TreeTools NSplits
+#' @export
+NSplits.ClusterTable <- function (x) nrow(as.matrix(x)) - 1L
+
+#' @rdname SplitsInBinaryTree
+#' @inherit SplitsInBinaryTree
+#' @importFrom TreeTools SplitsInBinaryTree
+#' @export
+SplitsInBinaryTree.ClusterTable <- function (tree) NTip(tree) - 3L
