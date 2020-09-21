@@ -1,7 +1,7 @@
 Package: TreeDist
 Type: Package
 Title: Distances Between Phylogenetic Trees
-Version: 1.2.0.9000
+Version: 1.2.1
 Authors@R: c(person("Martin R.", 'Smith',
                   email="martin.smith@durham.ac.uk", 
                   role=c("aut", "cre", "cph", "prg"), 
@@ -30,9 +30,9 @@ Description: Implements measures of tree similarity, including
   Calculates the median of a set of trees under any distance metric.
 Copyright: Incorporates Jonker-Volgenant Linear Assignment Problem 
   implementation by Roy Jonker, modified by Yong Yang after Yi Cao.
-URL: https://ms609.github.io/TreeDist/, https://github.com/ms609/TreeDist
-BugReports: https://github.com/ms609/TreeDist/issues
-Additional_repositories: https://ms609.github.io/packages
+URL: https://ms609.github.io/TreeDist/, https://github.com/ms609/TreeDist/
+BugReports: https://github.com/ms609/TreeDist/issues/
+Additional_repositories: https://ms609.github.io/packages/
 Depends: 
   R (>= 3.4.0),
   stats
