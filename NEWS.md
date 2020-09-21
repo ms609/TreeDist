@@ -1,3 +1,8 @@
+# TreeDist 1.2.1.9000 (development)
+
+- New class `ClusterTable` to allow faster distance computation with Day (1985)
+  algorithm.
+
 # TreeDist 1.2.1
 
 - Import RdMacros package 'RdPack'.

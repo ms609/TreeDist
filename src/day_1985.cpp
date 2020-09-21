@@ -280,6 +280,12 @@ ClusterTable::ClusterTable(List phylo) {
   }
 }
 
+// Modelled on https://CRAN.R-project.org/package=Rcpp/vignettes/Rcpp-modules.pdf
+// [[Rcpp::export]]
+RcppExport SEXP ClusterTable_new(List phylo) {
+  Rcpp::XPtr<ClusterTable> ptr(new ClusterTable (phylo), true);
+  return ptr;
+}
 
 
 inline void push (int a, int b, int c, int d, std::unique_ptr<int[]> &S, int* Spos) {
