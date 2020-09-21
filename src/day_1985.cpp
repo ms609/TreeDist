@@ -25,7 +25,7 @@ class ClusterTable {
     n_internal,
     n_leaves,
     
-    n_different = 0,
+    n_shared = 0,
     enumeration = 0,
     v_j,
     Tlen,
@@ -154,8 +154,10 @@ class ClusterTable {
     inline void SETSW(int* L, int* R) {
       // If <L,R> is a cluster in X, this procedure sets the cluster switch for <L,R>. 
       if (CLUSTONL(L, R)) {
+        ++n_shared;
         SETSWX(L);
       } else if (CLUSTONR(L, R)) {
+        ++n_shared;
         SETSWX(R);
       }
     }
@@ -173,8 +175,12 @@ class ClusterTable {
       }
     }
     
-    inline int DIFFERENT() {
-      return n_different;
+    inline int SHARED() {
+      return n_shared;
+    }
+    
+    inline void ADDSHARED() {
+      ++n_shared;
     }
     
     inline void XRESET() {
@@ -328,7 +334,6 @@ int COMCLUST (List trees) {
         // Rcout << Spos;
         // Rcout << " < " << stack_size;
         // check_push_safe(Spos, stack_size);
-        Rcout << "    Spos is now " << Spos << "\n";
         push(Ti.ENCODE(v), Ti.ENCODE(v), 1, 1, S, &Spos);
       } else {
         L = INF;
@@ -360,5 +365,5 @@ int COMCLUST (List trees) {
     ret(i, 1) = X.X(i + 1, 1);
   }
   return ret;
-  return X.DIFFERENT();
+  return X.SHARED() - 2; // Subtract All-tips & All-ingroup
 }
