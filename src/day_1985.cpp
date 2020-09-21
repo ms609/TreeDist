@@ -25,6 +25,7 @@ class ClusterTable {
     n_internal,
     n_leaves,
     
+    n_different = 0,
     enumeration = 0,
     v_j,
     Tlen,
@@ -52,10 +53,10 @@ class ClusterTable {
     };
     
     inline void ENTER(int v, int w) {
-      if (Tpos >= Tlen) std::range_error("READT T too high");
+      if (Tpos + 1 >= Tlen) std::range_error("READT T too high");
       if (Tpos < 0) std::range_error("READT T too low");
-      T[Tpos++] = v;
-      T[Tpos++] = w;
+      T.get()[Tpos++] = v;
+      T.get()[Tpos++] = w;
     }
     
     inline void READT(int *v, int *w) {
@@ -95,16 +96,24 @@ class ClusterTable {
       return leftmost_leaf[v_j];
     }
     
-    // Procedures to manipulate cluster tables, per Table 4 of Day 1985.
-    
-    inline int ENCODE(const int* v) {
-      // This function procedure returns as its value the internal label 
-      // assigned to leaf v
-      return visit_order[*v - 1];
+    inline void SET_LEFTMOST(int index, int val) {
+      leftmost_leaf[index] = val;
     }
     
-    inline int DECODE(const int* v) {
-      return decoder[*v - 1];
+    inline int GET_LEFTMOST(int index) {
+      return leftmost_leaf[index];
+    }
+    
+    // Procedures to manipulate cluster tables, per Table 4 of Day 1985.
+    
+    inline int ENCODE(const int v) {
+      // This function procedure returns as its value the internal label 
+      // assigned to leaf v
+      return visit_order.get()[v - 1];
+    }
+    
+    inline int DECODE(const int v) {
+      return decoder[v - 1];
     }
     
     inline int X(int row, int col) {
@@ -157,11 +166,15 @@ class ClusterTable {
       // from X; thereafter ISCLUST(X,L,R) will return the value false. 
       for (int i = n_edge; i--; ) {
         int ptr = (i * X_COLS);
-        if (Xarr[ptr + SWITCH_COL]) {
-          Xarr[ptr + L_COL] = 0;
-          Xarr[ptr + R_COL] = 0;
+        if (!(Xarr[ptr + SWITCH_COL])) {
+          Xarr[ptr + L_COL] = -Xarr[ptr + L_COL]; // 0
+          Xarr[ptr + R_COL] = -Xarr[ptr + R_COL]; // 0
         }
       }
+    }
+    
+    inline int DIFFERENT() {
+      return n_different;
     }
     
     inline void XRESET() {
@@ -204,10 +217,11 @@ ClusterTable::ClusterTable(List phylo) {
   std::unique_ptr<int[]> weights = std::make_unique<int[]>(N() + M() + 1);
   
   for (int i = 1; i != n_leaves + 1; i++) {
-    leftmost_leaf[i] = i;
+    SET_LEFTMOST(i, i);
     weights[i] = 0;
   }
   for (int i = n_leaves + 1; i != N() + M() + 1; i++) {
+    SET_LEFTMOST(i, 0);
     weights[i] = 0;
   }
   for (int i = n_edge; i--; ) {
@@ -215,8 +229,8 @@ ClusterTable::ClusterTable(List phylo) {
       parent_i = rooted_edge(i, 0),
       child_i = rooted_edge(i, 1)
     ;
-    leftmost_leaf[parent_i] = leftmost_leaf[child_i];
-    if (this->is_leaf(&child_i)) {
+    if (!GET_LEFTMOST(parent_i)) SET_LEFTMOST(parent_i, GET_LEFTMOST(child_i));
+    if (is_leaf(&child_i)) {
       visit_order[n_visited++] = child_i;
       decoder[child_i - 1] = n_visited;
       weights[parent_i]++;
@@ -239,8 +253,8 @@ ClusterTable::ClusterTable(List phylo) {
   
   TRESET();
   for (int i = 1; i != N(); i++) {
-    setX(i, 0, 0);
-    setX(i, 1, 0);
+    setX(i, L_COL, 0);
+    setX(i, R_COL, 0);
   }
   int leafcode = 0, v, w, L, R = UNINIT, loc;
   
@@ -248,15 +262,14 @@ ClusterTable::ClusterTable(List phylo) {
   while (v) {
     if (is_leaf(&v)) {
       leafcode++;
-      setX(v, 2, leafcode);
       R = leafcode;
       NVERTEX(&v, &w);
     } else {
-      L = X(LEFTLEAF(), 2);
+      L = ENCODE(LEFTLEAF());
       NVERTEX(&v, &w);
       loc = w == 0 ? R : L;
-      setX(loc, 0, L);
-      setX(loc, 1, R);
+      setX(loc, L_COL, L);
+      setX(loc, R_COL, R);
     }
   }
 }
@@ -288,19 +301,21 @@ int max_ (int *a, int *b) {
 // COMCLUSTER computes a consensus tree in O(knn).
 // COMCLUST requires O(kn).
 // [[Rcpp::export]]
-IntegerMatrix COMCLUST (List trees) {
+int COMCLUST (List trees) {
   
   int v = 0, w = 0,
     L, R, N, W,
-    L_, R_, N_, W_;
+    L_i, R_i, N_i, W_i;
+  
   
   List tree_0 = trees(0);
   ClusterTable X(tree_0);
   const int stack_size = 4 * (X.N() + X.M()); // TODO this is conservative; is X.N() safe?
-  int *stack_0 = new int [stack_size], *S = stack_0;
+  std::unique_ptr<int[]> S = std::make_unique<int[]>(stack_size);
+  int Spos = 0;
   
   for (int i = 1; i != trees.length(); i++) {
-    S = stack_0; // Empty the stack S
+    Spos = 0; // Empty the stack S
     
     X.CLEAR();
     List tree_i = trees(i);
@@ -313,23 +328,20 @@ IntegerMatrix COMCLUST (List trees) {
         // Rcout << Spos;
         // Rcout << " < " << stack_size;
         // check_push_safe(Spos, stack_size);
-        // S.get()[Spos++] = Ti.ENCODE(&v);
-        // S.get()[Spos++] = Ti.ENCODE(&v);
-        // S.get()[Spos++] = 1;
-        // S.get()[Spos++] = 1;
         Rcout << "    Spos is now " << Spos << "\n";
+        push(Ti.ENCODE(v), Ti.ENCODE(v), 1, 1, S, &Spos);
       } else {
         L = INF;
         R = 0;
         N = 0;
         W = 1;
         do {
-          pop(&L_, &R_, &N_, &W_, S, &Spos);
-          L = min_(&L, &L_);
-          R = max_(&R, &R_);
-          N = N + N_;
-          W = W + W_;
-          w = w - W_;
+          pop(&L_i, &R_i, &N_i, &W_i, S, &Spos);
+          L = min_(&L, &L_i);
+          R = max_(&R, &R_i);
+          N = N + N_i;
+          W = W + W_i;
+          w = w - W_i;
         } while (w);
         push(L, R, N, W, S, &Spos);
         if (N == R - L + 1) { // L..R is contiguous, and must be tested
@@ -341,7 +353,6 @@ IntegerMatrix COMCLUST (List trees) {
     X.UPDATE();
   }
   
-  delete[] stack_0;
   
   IntegerMatrix ret(X.N(), 2);
   for (int i = X.N(); i--; ) {
@@ -349,4 +360,5 @@ IntegerMatrix COMCLUST (List trees) {
     ret(i, 1) = X.X(i + 1, 1);
   }
   return ret;
+  return X.DIFFERENT();
 }

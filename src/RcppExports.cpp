@@ -6,7 +6,7 @@
 using namespace Rcpp;
 
 // COMCLUST
-IntegerMatrix COMCLUST(List trees);
+int COMCLUST(List trees);
 RcppExport SEXP _TreeDist_COMCLUST(SEXP treesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
