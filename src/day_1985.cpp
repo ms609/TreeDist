@@ -32,7 +32,7 @@ class ClusterTable {
     Tpos = 0,
     X_ROWS
   ;
-  std::unique_ptr<int[]> leftmost_leaf, T, Xarr, visit_order, decoder;
+  std::unique_ptr<int[]> leftmost_leaf, T, Xarr, visited_nth, internal_label;
   
   public:
     ClusterTable(List); // i.e. PREPARE(T)
@@ -95,14 +95,15 @@ class ClusterTable {
       // subtree rooted at vj has entry <vk, wk> where k = j - wj.
       // This function procedure returns Vk as its value.
       return leftmost_leaf[v_j];
+      return leftmost_leaf[v_j - 1];
     }
     
     inline void SET_LEFTMOST(int index, int val) {
-      leftmost_leaf[index] = val;
+      leftmost_leaf[index - 1] = val;
     }
     
     inline int GET_LEFTMOST(int index) {
-      return leftmost_leaf[index];
+      return leftmost_leaf[index - 1];
     }
     
     // Procedures to manipulate cluster tables, per Table 4 of Day 1985.
@@ -110,11 +111,15 @@ class ClusterTable {
     inline int ENCODE(const int v) {
       // This function procedure returns as its value the internal label 
       // assigned to leaf v
-      return visit_order.get()[v - 1];
+      return internal_label[v - 1];
+    inline int DECODE(const int internal_relabeling) {
+      // MS: input = X[v, 3], output = v
+      return visited_nth[internal_relabeling - 1];
     }
     
-    inline int DECODE(const int v) {
-      return decoder[v - 1];
+    inline void VISIT_LEAF (const int* leaf, int* n_visited) {
+      visited_nth[(*n_visited)++] = *leaf;
+      internal_label[*leaf - 1] = *n_visited;
     }
     
     IntegerVector X_decode() {
@@ -240,9 +245,9 @@ ClusterTable::ClusterTable(List phylo) {
   Tlen = M() + N() + M() + N();
   T = std::make_unique<int[]>(Tlen);
   
-  leftmost_leaf = std::make_unique<int[]>(N() + M() + 1);
-  visit_order = std::make_unique<int[]>(n_leaves);
-  decoder = std::make_unique<int[]>(n_leaves);
+  leftmost_leaf = std::make_unique<int[]>(N() + M());
+  visited_nth = std::make_unique<int[]>(n_leaves);
+  internal_label = std::make_unique<int[]>(n_leaves);
   int n_visited = 0;
   std::unique_ptr<int[]> weights = std::make_unique<int[]>(N() + M() + 1);
   
@@ -261,8 +266,7 @@ ClusterTable::ClusterTable(List phylo) {
     ;
     if (!GET_LEFTMOST(parent_i)) SET_LEFTMOST(parent_i, GET_LEFTMOST(child_i));
     if (is_leaf(&child_i)) {
-      visit_order[n_visited++] = child_i;
-      decoder[child_i - 1] = n_visited;
+      VISIT_LEAF(&child_i, &n_visited);
       weights[parent_i]++;
       ENTER(child_i, 0);
     } else {
