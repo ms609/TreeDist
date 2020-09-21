@@ -90,7 +90,7 @@ NTip.ClusterTable <- function (phy) attr(phy, 'nTip')
 #' @inherit NSplits
 #' @importFrom TreeTools NSplits
 #' @export
-NSplits.ClusterTable <- function (x) nrow(as.matrix(x)) - 1L
+NSplits.ClusterTable <- function (x) nrow(as.matrix(x)) - 3L # Root + Ingroup + All-leaves
 
 #' @rdname SplitsInBinaryTree
 #' @inherit SplitsInBinaryTree
