@@ -8,6 +8,16 @@ test_that("Day 1985 examples", {
     #Preorder(RenumberTips(RootTree(tmp, '1'), as.character(seq_along(tmp$tip.label))))
     Preorder(RenumberTips(tmp, as.character(seq_along(tmp$tip.label))))
   }
+  
+  TestRF <- function (t1, t2) {
+    expect_equal(RobinsonFoulds(t1, t2), 
+                 NSplits(t1) + NSplits(t2) - (2 * COMCLUST(list(t1, t2))))
+  }
+  
+  t1 <- PrepareTree("(1, (2, (3, (4, (5, 6)))));")
+  t2 <- PrepareTree("(1, (2, ((4, 3), (6, 5))));")
+  TestRF(t1, t2)
+  
   t1 <- PrepareTree("((10, 7), (6, (8, 11)), (12, (4, (2, 1))), 14, (5, 9, 13), 3);")
   plot(t1); edgelabels(); nodelabels()
   t2 <- PrepareTree("(((2, 4, 5, 7, 9, 10, 12, 13), (1, 14)), (6, (8, 11)), 3);")
