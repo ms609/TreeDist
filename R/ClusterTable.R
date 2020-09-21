@@ -18,13 +18,17 @@
 #' tree2 <- ape::read.tree(text = "(A, (B, (D, (C, E))));");
 #' ct1 <- as.ClusterTable(tree1)
 #' summary(ct1)
+#' as.matrix(ct1)
 #' 
 #' # Tip label order must match ct1 to allow comparison
 #' ct2 <- as.ClusterTable(tree2, tipLabels = LETTERS[1:5])
 #' 
 #' #TODO: RF (ct1, ct2)
 #' @template MRS
-#'
+#' @name ClusterTable
+NULL
+
+#' @rdname ClusterTable
 #' @export
 as.ClusterTable <- function (x, tipLabels = NULL, ...) UseMethod('as.ClusterTable')
 
@@ -32,6 +36,7 @@ as.ClusterTable <- function (x, tipLabels = NULL, ...) UseMethod('as.ClusterTabl
 #' @importFrom TreeTools NTip RenumberTips
 #' @export
 as.ClusterTable.phylo <- function (x, tipLabels = NULL, ...) {
+  x <- Preorder(x)
   if (is.null(tipLabels)) {
     tipLabels <- x$tip.label
   } else {
@@ -43,6 +48,12 @@ as.ClusterTable.phylo <- function (x, tipLabels = NULL, ...) {
             class = 'ClusterTable')
 }
 
+#' @rdname ClusterTable
+#' @export
+as.matrix.ClusterTable <- function (x, ...) {
+  ClusterTable_matrix(x)
+}
+
 #' Print `ClusterTable` object
 #'
 #' S3 method for objects of class `ClusterTable`.
@@ -52,5 +63,16 @@ as.ClusterTable.phylo <- function (x, tipLabels = NULL, ...) {
 #'
 #' @export
 print.ClusterTable <- function (x, ...) {
-  cat("ClusterTable on" , paste0(attr(x, 'nTip')), "leaves:", paste0(attr(x, 'tip.label')))
-}
+  nTip <- attr(x, 'nTip')
+  mat <- ClusterTable_matrix(x)
+  cat("ClusterTable on" , nTip, "leaves:\n")
+  cat(" ", rep(c(1:9, ' '), length.out = nTip), "\n", sep = '')
+  apply(mat, 1, function (x) {
+    if (x[1] > 0) {
+      cat(' ', rep('.', x[1] - 1), rep('*', 1 + x[2] - x[1]), rep('.', nTip - x[2]), "\n", sep = '')
+    }
+  })
+  
+  cat(paste0(" ", seq_len(nTip), ": ", attr(x, 'tip.label')[ClusterTable_decode(x)]), "\n")
+  
+.}

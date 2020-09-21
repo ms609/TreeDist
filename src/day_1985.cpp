@@ -29,7 +29,8 @@ class ClusterTable {
     enumeration = 0,
     v_j,
     Tlen,
-    Tpos = 0
+    Tpos = 0,
+    X_ROWS
   ;
   std::unique_ptr<int[]> leftmost_leaf, T, Xarr, visit_order, decoder;
   
@@ -116,12 +117,35 @@ class ClusterTable {
       return decoder[v - 1];
     }
     
+    IntegerVector X_decode() {
+      IntegerVector ret(N());
+      for (int i = n_leaves; i--; ) {
+        ret(i) = DECODE(i + 1);
+      }
+      return ret;
+    }
+    
     inline int X(int row, int col) {
-      return Xarr[row * X_COLS + col];
+      // Rcout << "   Get Xarr [" << (row * X_COLS + col) << "]: ";
+      // Rcout << Xarr[row * X_COLS + col] << ".\n";
+      if (row < 1) throw std::range_error("Trying to read before start of X");
+      if (row > X_ROWS) throw std::range_error("Trying to read past end of X");
+      return Xarr[(row - 1) * X_COLS + col];
     }
     
     inline void setX(int row, int col, int value) {
-      Xarr[row * X_COLS + col] = value;
+      if (row < 1) throw std::range_error("Trying to write before start of X");
+      if (row > X_ROWS) throw std::range_error("Trying to write past end of X");
+      Xarr[(row - 1) * X_COLS + col] = value;
+    }
+    
+    IntegerMatrix X_contents() {
+      IntegerMatrix ret(n_edge, 2);
+      for (int i = X_ROWS; i--; ) {
+        ret(i, 0) = X(i + 1, L_COL);
+        ret(i, 1) = X(i + 1, R_COL);
+      }
+      return ret;
     }
     
     inline bool CLUSTONL(int* L, int* R) {
@@ -142,7 +166,7 @@ class ClusterTable {
       // Each cluster in X has an associated switch that is either cleared or 
       // set. 
       // This procedure clears every cluster switch in X. 
-      for (int i = n_edge; i--; ) {
+      for (int i = X_ROWS; i--; ) {
         Xarr[i * X_COLS + SWITCH_COL] = 0;
       }
     }
@@ -166,7 +190,7 @@ class ClusterTable {
       // This procadure inspects every cluster switch in X.
       // If the switch for cluster <L,R> is cleared, UPDATE deletes <L,R> 
       // from X; thereafter ISCLUST(X,L,R) will return the value false. 
-      for (int i = n_edge; i--; ) {
+      for (int i = X_ROWS; i--; ) {
         int ptr = (i * X_COLS);
         if (!(Xarr[ptr + SWITCH_COL])) {
           Xarr[ptr + L_COL] = -Xarr[ptr + L_COL]; // 0
@@ -249,7 +273,8 @@ ClusterTable::ClusterTable(List phylo) {
   ENTER(rooted_edge(0, 0), weights[rooted_edge(0, 0)]);
   
   // BUILD Cluster table 
-  Xarr = std::make_unique<int[]>(4 * edges());
+  X_ROWS = n_leaves;
+  Xarr = std::make_unique<int[]>(X_COLS * X_ROWS);
   
   // This procedure constructs in X descriptions of the clusters in a
   //  rooted tree described by the postorder sequence T with weights,
@@ -282,9 +307,21 @@ ClusterTable::ClusterTable(List phylo) {
 
 // Modelled on https://CRAN.R-project.org/package=Rcpp/vignettes/Rcpp-modules.pdf
 // [[Rcpp::export]]
-RcppExport SEXP ClusterTable_new(List phylo) {
-  Rcpp::XPtr<ClusterTable> ptr(new ClusterTable (phylo), true);
+SEXP ClusterTable_new(List phylo) {
+  XPtr<ClusterTable> ptr(new ClusterTable (phylo), true);
   return ptr;
+}
+
+// [[Rcpp::export]]
+IntegerMatrix ClusterTable_matrix(SEXP xp) {
+  XPtr<ClusterTable> ptr(xp);
+  return ptr->X_contents();
+}
+
+// [[Rcpp::export]]
+IntegerVector ClusterTable_decode(SEXP xp) {
+  XPtr<ClusterTable> ptr(xp);
+  return ptr->X_decode();
 }
 
 
@@ -317,7 +354,8 @@ int COMCLUST (List trees) {
   
   int v = 0, w = 0,
     L, R, N, W,
-    L_i, R_i, N_i, W_i;
+    L_i, R_i, N_i, W_i
+  ;
   
   
   List tree_0 = trees(0);

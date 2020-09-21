@@ -6,13 +6,35 @@
 using namespace Rcpp;
 
 // ClusterTable_new
-RcppExport SEXP ClusterTable_new(List phylo);
+SEXP ClusterTable_new(List phylo);
 RcppExport SEXP _TreeDist_ClusterTable_new(SEXP phyloSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< List >::type phylo(phyloSEXP);
     rcpp_result_gen = Rcpp::wrap(ClusterTable_new(phylo));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ClusterTable_matrix
+IntegerMatrix ClusterTable_matrix(SEXP xp);
+RcppExport SEXP _TreeDist_ClusterTable_matrix(SEXP xpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xp(xpSEXP);
+    rcpp_result_gen = Rcpp::wrap(ClusterTable_matrix(xp));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ClusterTable_decode
+IntegerVector ClusterTable_decode(SEXP xp);
+RcppExport SEXP _TreeDist_ClusterTable_decode(SEXP xpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xp(xpSEXP);
+    rcpp_result_gen = Rcpp::wrap(ClusterTable_decode(xp));
     return rcpp_result_gen;
 END_RCPP
 }
