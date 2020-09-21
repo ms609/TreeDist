@@ -140,7 +140,7 @@ class ClusterTable {
     }
     
     IntegerMatrix X_contents() {
-      IntegerMatrix ret(n_edge, 2);
+      IntegerMatrix ret(X_ROWS, 2);
       for (int i = X_ROWS; i--; ) {
         ret(i, 0) = X(i + 1, L_COL);
         ret(i, 1) = X(i + 1, R_COL);
