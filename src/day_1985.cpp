@@ -90,6 +90,18 @@ class ClusterTable {
       }
     }
     
+    inline void NVERTEX_short(int *v, int *w) {
+      // Don't count all-tips or all-ingroup: vertices 0, ROOT, Ingp.
+      // Rcout << "Tpos: " << Tpos << "; Tlen = " << Tlen <<". ";
+      if (Tpos != Tlen - (2 * 3)) {
+        READT(v, w);
+        v_j = *v;
+      } else {
+        *v = 0;
+        *w = 0;
+      }
+    }
+    
     inline int LEFTLEAF() {
       // If NVERTEX has returned entry <vj, wj> in T, the leftmost leaf in the
       // subtree rooted at vj has entry <vk, wk> where k = j - wj.
@@ -382,7 +394,7 @@ int COMCLUST (List trees) {
         // Rcout << Spos;
         // Rcout << " < " << stack_size;
         // check_push_safe(Spos, stack_size);
-        push(Ti.ENCODE(v), Ti.ENCODE(v), 1, 1, S, &Spos);
+        push(X.ENCODE(v), X.ENCODE(v), 1, 1, S, &Spos);
       } else {
         L = INF;
         R = 0;
@@ -414,4 +426,63 @@ int COMCLUST (List trees) {
   }
   return ret;
   return X.SHARED() - 2; // Subtract All-tips & All-ingroup
+}
+
+// [[Rcpp::export]]
+IntegerVector robinson_foulds_all_pairs(List tables) {
+  int 
+    v = 0, w = 0,
+    L, R, N, W,
+    L_i, R_i, N_i, W_i,
+    n_shared,
+    Spos
+  ;
+  const int n_trees = tables.length();
+  if (n_trees < 2) return IntegerVector(0);
+  
+  IntegerVector shared(n_trees * (n_trees - 1) / 2);
+  IntegerVector::iterator write_pos = shared.begin();
+  
+  for (int i = 0; i != n_trees - 1; i++) {
+    Rcpp::XPtr<ClusterTable> table_i = tables(i);
+    Rcpp::XPtr<ClusterTable> Xi(table_i);
+    const int stack_size = 4 * (Xi->N() + 1); // TODO: is X.N() safe?
+    
+    for (int j = i + 1; j != n_trees; j++) {
+      Rcpp::XPtr<ClusterTable> table_j = tables(j);
+      Rcpp::XPtr<ClusterTable> Tj(table_j);
+      std::unique_ptr<int[]> S = std::make_unique<int[]>(stack_size);
+      Spos = 0; // Empty the stack S
+      n_shared = 0;
+      
+      Tj->TRESET();
+      Tj->NVERTEX_short(&v, &w);
+      
+      do {
+        if (Tj->is_leaf(&v)) {
+          check_push_safe(Spos, stack_size);
+          push(Xi->ENCODE(v), Xi->ENCODE(v), 1, 1, S, &Spos);
+        } else {
+          L = INF; R = 0; N = 0; W = 1;
+          do {
+            check_pop_safe(Spos);
+            pop(&L_i, &R_i, &N_i, &W_i, S, &Spos);
+            L = min_(&L, &L_i);
+            R = max_(&R, &R_i);
+            N = N + N_i;
+            W = W + W_i;
+            w = w - W_i;
+          } while (w);
+          check_push_safe(Spos, stack_size); // #TODO remove checks
+          push(L, R, N, W, S, &Spos);
+          if (N == R - L + 1) { // L..R is contiguous, and must be tested
+            if (Xi->ISCLUST(&L, &R)) n_shared++;
+          }
+        }
+        Tj->NVERTEX_short(&v, &w); // Doesn't count all-ingroup or all-tips
+      } while (v);
+      *write_pos++ = n_shared;
+    }
+  }
+  return shared;
 }
