@@ -42,6 +42,67 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
   }
 }
 
+#' @rdname CalculateTreeDistance
+#' @export
+DayDistance <- function (funcList, tree1, tree2, reportMatching = FALSE, ...) {
+  single1 <- inherits(tree1, c('phylo', 'Splits', 'ClusterTable'))
+  labels1 <- TipLabels(tree1, single = TRUE)
+  nTip <- length(labels1)
+    
+  single2 <- inherits(tree2, c('phylo', 'Splits', 'ClusterTable'))
+  labels2 <- TipLabels(tree2, single = TRUE)
+  
+  #TODO update checks
+  if (length(setdiff(labels1, labels2)) > 0) {
+    stop("Leaves must bear identical labels.")
+  }
+  
+  if (single1) {
+    if (single2) {
+      # Function many-many
+      funcList[[1]](list(tree1, tree2), ...)
+    } else {
+      # Function many-one
+      if (length(funcList) > 1L) {
+        funcList[[2]](tree1, tree2, ...)
+      } else {
+        val <- funcList[[1]](list(tree1[[1]], tree2), ...)
+        cbind(val, 
+              vapply(seq_along(tree1)[-1], 
+                          function (i) funcList[[1]](list(tree1[[i]], tree2), ...),
+                          val))
+      }
+    }
+  } else {
+    if (single2) {
+      if (length(funcList) > 1L) {
+        funcList[[2]](tree2, tree1, ...)
+      } else {
+        val <- funcList[[1]](list(tree1, tree2[[1]]), ...)
+        cbind(val, 
+              vapply(seq_along(tree2)[-1], 
+                          function (i) funcList[[1]](list(tree1, tree2[[i]]), ...),
+                          val))
+      }
+    } else {
+      if (identical(tree1, tree2)) {
+        funcList[[1]](tree1, ...) 
+      } else {
+        if (length(funcList) > 2L) {
+          #Function pair-by-pair
+          funcList[[3]](tree1, tree2)
+        } else {
+          val <- funcList[[1]](list(tree1[[1]], tree2[[1]]), ...)
+          cbind(val,
+                vapply(seq_along(tree1)[-1], 
+                       function (i) funcList[[1]](list(tree1[[i]], tree2[[i]]), ...),
+                       val))
+        }
+      }
+    }
+  }
+}
+
 .SplitDistanceOneOne <- function (Func, split1, split2, tipLabels, 
                                  nTip = length(tipLabels), reportMatching, ...) {
   Func(as.Splits(split1, asSplits = reportMatching),
