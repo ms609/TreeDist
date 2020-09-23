@@ -10,7 +10,7 @@
   "codeRepository": "https://github.com/ms609/TreeDist/",
   "issueTracker": "https://github.com/ms609/TreeDist/issues/",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "1.2.1",
+  "version": "1.2.1.9100",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -384,5 +384,5 @@
     "name": "Comprehensive R Archive Network (CRAN)",
     "url": "https://cran.r-project.org"
   },
-  "fileSize": "8346.417KB"
+  "fileSize": "8346.489KB"
 }
