@@ -6,7 +6,7 @@ test_that("Day 1985 examples", {
   PrepareTree <- function (text) {
     tmp <- ape::read.tree(text = text)
     #Preorder(RenumberTips(RootTree(tmp, '1'), as.character(seq_along(tmp$tip.label))))
-    Preorder(RenumberTips(tmp, as.character(seq_along(tmp$tip.label))))
+    RenumberTips(tmp, as.character(seq_along(tmp$tip.label)))
   }
   
   TestRF <- function (t1, t2) {

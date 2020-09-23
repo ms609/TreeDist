@@ -94,7 +94,7 @@ DayDistance <- function (funcList, tree1, tree2, reportMatching = FALSE, ...) {
         } else {
           val <- funcList[[1]](list(tree1[[1]], tree2[[1]]), ...)
           cbind(val,
-                vapply(seq_along(tree1)[-1], 
+                vapply(seq_along(tree1)[-1],
                        function (i) funcList[[1]](list(tree1[[i]], tree2[[i]]), ...),
                        val))
         }

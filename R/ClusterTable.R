@@ -64,6 +64,14 @@ as.matrix.ClusterTable <- function (x, ...) {
 #' @export
 print.ClusterTable <- function (x, ...) {
   nTip <- attr(x, 'nTip')
+  labels <- attr(x, 'tip.label')
+  cat("ClusterTable on" , nTip, "leaves:", labels[1], "..", labels[nTip])
+}
+
+#' @inherit summary
+#' @export
+summary.ClusterTable <- function (x, ...) {
+  nTip <- attr(x, 'nTip')
   mat <- ClusterTable_matrix(x)
   cat("ClusterTable on" , nTip, "leaves:\n")
   cat(" ", rep(c(1:9, ' '), length.out = nTip), "\n", sep = '')
