@@ -141,18 +141,20 @@ server <- function(input, output) {
     r$clust_rf = NULL
   }
   
+  ClearMST <- function () {
+    r$mst_cid = NULL
+    r$mst_pid = NULL
+    r$mst_qd = NULL
+    r$mst_path = NULL
+    r$mst_rf = NULL
+  }
+  
   ClearDistances <- function () {
     r$dist_cid = NULL
     r$dist_pid = NULL
     r$dist_qd = NULL
     r$dist_path = NULL
     r$dist_rf = NULL
-    
-    r$mst_cid = NULL
-    r$mst_pid = NULL
-    r$mst_qd = NULL
-    r$mst_path = NULL
-    r$mst_rf = NULL
     
     r$proj_pca_cid = NULL
     r$proj_pca_pid = NULL
@@ -173,6 +175,8 @@ server <- function(input, output) {
     r$proj_nls_rf = NULL
     
     ClearClusters()
+    
+    ClearMST()
   }
   
   treeFile <- reactive({
@@ -324,9 +328,9 @@ server <- function(input, output) {
                                             har = 'average linkage',
                                             k = 'K-means',
                                             spec = 'spectral'),
-                            n = switch(bestCluster,
-                                       pam = bestPam, hmm = bestH, 
-                                       har = bestHav, k = bestK, spec = bestSpec),
+                            n = 1 + switch(bestCluster,
+                                           pam = bestPam, hmm = bestH, 
+                                           har = bestHav, k = bestK, spec = bestSpec),
                             sil = switch(bestCluster,
                                          pam = pamSil, hmm = hSil,
                                          har = havSil, k = kSil, spec = specSil), 
@@ -348,9 +352,20 @@ server <- function(input, output) {
            round(cl$sil, 3))
   })
   
-  mstEnds <- responsive({
+  mstEnds <- reactive({
+    
+    mstSize <- input$mst
+    if (!is.null(r$mst_size) && mstSize != r$mst_size) ClearMST()
     mst_id <- paste0('mst_', input$distance)
-    <- MSTEdges(distances)
+    
+    if (is.null(r[[mst_id]])) {
+      dist <- as.matrix(distances())
+      nRows <- dim(dist)[1]
+      selection <- seq.int(1, nRows, length.out = mstSize / 100 * nRows)
+      r[[mst_id]] <- MSTEdges(dist[selection, selection])
+    }
+    
+    r[[mst_id]]
   })
   
   output$distPlot <- renderPlot({
@@ -361,7 +376,9 @@ server <- function(input, output) {
       col <- if (cl$sil > 0.25) {
         palettes[[min(length(palettes), cl$n)]][cl$cluster]
       } else palettes[[1]]
-      plot(projection(),
+      message(paste(cl$n, unique(cl$cluster), collapse = ' .. '))
+      proj <- projection()
+      plot(proj,
            asp = 1, # Preserve aspect ratio - do not distort distances
            ann = FALSE, axes = FALSE, # Dimensions are meaningless
            frame.plot = TRUE,
@@ -369,10 +386,10 @@ server <- function(input, output) {
            col = col
       )
       
-      apply(mstEnds(), 1, function (segment)
-        lines(projection[segment, j], projection[segment, i],
-              col = "#bbbbbb", lty = 1))
-      
+      if (input$mst > 0) {
+        apply(mstEnds(), 1, function (segment)
+          lines(proj[segment, 1], proj[segment, 2], col = "#bbbbbb", lty = 1))
+      }
       
       output$projectionStatus <- renderText(paste(switch(input$projection, 
                                                    'pca' = 'Principal components',
