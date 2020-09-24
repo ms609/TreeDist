@@ -1,0 +1,16 @@
+input[value=rf]:focus+span {
+  color: #bb3333;
+  font-weight: bold;
+}
+
+div#threeDPlot {
+  width: 100%;
+  
+}
+
+div#threeDPlot canvas {
+  border: 1px solid;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}

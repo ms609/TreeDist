@@ -32,7 +32,7 @@ palettes <- list("#91aaa7",
                  
 
 # Define UI for app that draws a histogram ----
-ui <- fluidPage(
+ui <- fluidPage(theme = 'treespace.css',
   
   # App title ----
   titlePanel("Tree space analysis"),
@@ -75,11 +75,13 @@ ui <- fluidPage(
       
       radioButtons("projection", "Projection method",
                    choices = list("Principal components (classical MDS)" = 'pca',
-                                  "Kruskal-1 nmMDS" = 'k',
-                                  "Sammon mapping mMDS" = 'nls'),
+                                  "Sammon mapping mMDS" = 'nls',
+                                  "Kruskal-1 nmMDS (slow)" = 'k'
+                                  ),
                    selected = 'pca'),
       textOutput(outputId = "projectionStatus"),
       checkboxInput('labelTrees', 'Plot tree numbers', FALSE),
+      checkboxInput('show3d', '3D plot', TRUE),
       
       sliderInput(inputId = "dims",
                   label = "Dimensions to plot:",
@@ -115,8 +117,8 @@ ui <- fluidPage(
       
       # Output: plot
       plotOutput(outputId = "distPlot", height = "800px"),
-      plotOutput(outputId = "projPlot",  width = "45%", height = "300px"),
-      plotOutput(outputId = "clustPlot", width = "45%", height = "300px"),
+      rgl::rglwidgetOutput(outputId = "threeDPlot", width = "300px", height = "300px"),
+      plotOutput(outputId = "projPlot",  width = "300px", height = "300px"),
       
     )
   ),
@@ -378,23 +380,46 @@ server <- function(input, output) {
     
     if (inherits(distances(), 'dist')) {
       cl <- clusterings()
-      col <- if (cl$sil > 0.25) {
+      treeCols <- if (cl$sil > 0.25) {
         palettes[[min(length(palettes), cl$n)]][cl$cluster]
       } else palettes[[1]]
       proj <- projection()
-      plot(proj,
-           asp = 1, # Preserve aspect ratio - do not distort distances
-           ann = FALSE, axes = FALSE, # Dimensions are meaningless
-           frame.plot = TRUE,
-           pch = 16,
-           col = col
-      )
-      if (input$labelTrees) text(proj[, 1], proj[, 2], seq_len(nrow(proj)))
       
-      if (input$mst > 0) {
-        apply(mstEnds(), 1, function (segment)
-          lines(proj[segment, 1], proj[segment, 2], col = "#bbbbbb", lty = 1))
+      nDim <- input$dims
+      plotSeq <- matrix(0, nDim, nDim)
+      plotSeq[upper.tri(plotSeq)] <- seq_len(nDim * (nDim - 1) / 2)
+      layout(t(plotSeq[-nDim, -1]))
+      par(mar = rep(0.2, 4))
+      
+      for (i in 2:nDim) for (j in seq_len(i - 1)) {
+        # Set up blank plot
+        plot(proj[, j], proj[, i], ann = FALSE, axes = FALSE, frame.plot = TRUE,
+             type = 'n', asp = 1, xlim = range(proj), ylim = range(proj))
+        
+        # Plot MST
+        if (input$mst > 0) {
+          apply(mstEnds(), 1, function (segment)
+            lines(proj[segment, 1], proj[segment, 2], col = "#bbbbbb", lty = 1))
+        }
+          
+        # Add points
+        points(proj[, j], proj[, i], pch = 16, col = treeCols)
+        
+        if (cl$sil > 0.25) {
+          # Mark clusters
+          for (clI in unique(cl$cluster)) {
+            inCluster <- cl$cluster == clI
+            clusterX <- proj[cl$cluster, j]
+            clusterY <- proj[cl$cluster, i]
+            hull <- chull(clusterX, clusterY)
+            polygon(clusterX[hull], clusterY[hull], lty = 1, lwd = 2,
+                    border = palettes[[min(length(palettes), cl$n)]][clI])
+                    #border = '#54de25bb')
+          }
+        }
+        if (input$labelTrees) text(proj[, j], proj[, i], thinnedTrees())
       }
+      
       
       output$projectionStatus <- renderText(paste(switch(input$projection, 
                                                    'pca' = 'Principal components',
@@ -403,6 +428,36 @@ server <- function(input, output) {
                                             'projection plotted.'))
     } else {
       output$projectionStatus <- renderText("No distances available.")
+    }
+  })
+  
+  output$threeDPlot <- rgl::renderRglwidget({
+    if (input$show3d) {
+      
+      if (inherits(distances(), 'dist')) {
+        cl <- clusterings()
+        col <- if (cl$sil > 0.25) {
+          palettes[[min(length(palettes), cl$n)]][cl$cluster]
+        } else palettes[[1]]
+        proj <- projection()
+        rgl::rgl.open(useNULL = TRUE)
+        rgl::rgl.bg(color = 'white')
+        rgl::plot3d(proj[, 1], proj[, 2], proj[, 3],
+             aspect = 1, # Preserve aspect ratio - do not distort distances
+             axes = FALSE, # Dimensions are meaningless
+             pch = 16,
+             xlab = '', ylab = '', zlab = '',
+             col = col
+        )
+        if (input$labelTrees) rgl::text3d(proj[, 1], proj[, 2], proj[, 3],
+                                          thinnedTrees())
+        if (input$mst > 0) {
+          apply(mstEnds(), 1, function (segment)
+            rgl::lines3d(proj[segment, 1], proj[segment, 2], proj[segment, 3],
+                    col = "#bbbbbb", lty = 1))
+        }
+        rgl::rglwidget()
+      }
     }
   })
   
