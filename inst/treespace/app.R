@@ -20,11 +20,13 @@ ui <- fluidPage(
       
       fileInput("treefile", "Trees", placeholder = "No tree file selected"),
       textOutput(outputId = "treesStatus"),
+      textOutput(outputId = "keptTrees"),
       sliderInput(inputId = "keepTrees",
                   label = "Crop ends (%):",
                   min = 0,
                   max = 100,
                   value = c(0, 100)),
+      textOutput(outputId = "thinnedTrees"),
       sliderInput(inputId = "thinTrees",
                   label = "Sample every 2^:",
                   min = 0,
@@ -34,14 +36,15 @@ ui <- fluidPage(
                   value = 1),
       actionButton("addTrees", "Add to existing"),
       actionButton("replaceTrees", "Replace existing"),
+      textOutput(outputId = "treesInMemory"),
                                         
-      checkboxGroupInput("distances", "Distance methods",
-                         choices = list("clustering information" = 'cid',
-                                        "phylogenetic information" = 'pid',
-                                        "quartet" = 'qd',
-                                        "path" = 'path',
-                                        "Robinson\u2212Foulds" = 'rf'),
-                         selected = 'cid'),
+      radioButtons("distance", "Distance method",
+                   choices = list("Clustering information" = 'cid',
+                                  "Phylogenetic information" = 'pid',
+                                  "Quartet" = 'qd',
+                                  "Path" = 'path',
+                                  "Robinson\u2212Foulds" = 'rf'),
+                   selected = 'cid'),
       textOutput(outputId = "distanceStatus"),
       
       checkboxGroupInput("clustering", "Clustering methods",
@@ -51,6 +54,7 @@ ui <- fluidPage(
                                   "K-means" = 'k',
                                   "Spectral" = "spec"),
                    selected = c('pam', 'hmm')),
+      actionButton("calcClusters", "Calculate clusterings"),
       textOutput(outputId = "clusteringStatus"),
       
       radioButtons("projection", "Projection method",
@@ -75,7 +79,7 @@ ui <- fluidPage(
     mainPanel(
       
       # Output: plot
-      plotOutput(outputId = "distPlot")
+      plotOutput(outputId = "distPlot", height = "800px")
       
     )
   ),
@@ -86,6 +90,19 @@ ui <- fluidPage(
 )
 
 server <- function(input, output) {
+  
+  #r <- reactiveValues(allTrees = structure(list(), class = 'multiPhylo'))
+  treeNumbers <- c(1:220)
+  
+  r <- reactiveValues(allTrees = as.phylo(treeNumbers, 8))
+  
+  ClearDistances <- function () {
+    r$dist_cid = NULL
+    r$dist_pid = NULL
+    r$dist_qd = NULL
+    r$dist_path = NULL
+    r$dist_rf = NULL
+  }
   
   treeFile <- reactive({
     fileInput <- input$treefile
@@ -104,16 +121,11 @@ server <- function(input, output) {
     }
     ret
   })
-  
-  allTrees <- reactive({
-    
-    #if (inherits(tmp, 'multiPhylo'))
-    if (input$addTrees) {
-      c(trees, tmp)
-    } else {
-      tmp
-    }
-    class(tmp)
+
+  output$treesStatus <- renderText({
+    if (is.character(treeFile())) return(treeFile())
+    nTrees <- length(treeFile())
+    paste(nTrees, "trees in file.")
   })
   
   keptRange <- reactive({
@@ -123,30 +135,91 @@ server <- function(input, output) {
       floor(keeps[2] * nTrees / 100))
   })
   
+  output$keptTrees <- renderText({
+    nTrees <- length(treeFile())
+    paste0("Keeping trees ", keptRange()[1]," to ", keptRange()[2], '.')
+  })
+  
+  output$thinnedTrees <- renderText({
+    if (input$thinTrees == 1) "" else {
+      paste("Sampled", length(thinnedTrees()), "trees.")
+    }
+  })
+
   thinnedTrees <- reactive({
     seq(keptRange()[1], keptRange()[2], by = 2^input$thinTrees)
   })
   
-  output$treesStatus <- renderText({
-    if (is.character(treeFile())) return(treeFile())
-    nTrees <- length(treeFile())
-    found <- paste("Found", nTrees, "trees in file.")
-    keeps <- if (keptRange()[1] == 1 && keptRange()[2] == nTrees) "" else {
-      paste0("Keeping trees ", keptRange()[1]," to ", keptRange()[2], '.')
+  observeEvent(input$addTrees, {
+    newTrees <- treeFile()[thinnedTrees()]
+    r$allTrees <- if (length(r$allTrees) == 0) newTrees else {
+      c(r$allTrees, newTrees)
     }
-    sampling <- if (input$thinTrees == 1) "" else {
-      paste("Uniformly sampling", length(thinnedTrees()), "trees.")
-    }
-    
-    paste(found, keeps, sampling)
+    ClearDistances()
   })
   
-  distances_rf <- reactive({RobinsonFoulds(trees)})
+  observeEvent(input$replaceTrees, {
+    r$allTrees <- c(treeFile()[thinnedTrees()])
+    ClearDistances()
+  })
+  
+  output$treesInMemory <- renderText({
+    paste(length(r$allTrees), "trees in memory.")
+  })
+  
+  distances <- reactive({
+    switch(input$distance,
+           'cid' = {
+             if (is.null(r$dist_cid)) r$dist_cid = ClusteringInfoDistance(r$allTrees)
+             output$distanceStatus <- renderText('CI distances calculated.')
+             r$dist_cid
+           },
+           'pid' = {
+             if (is.null(r$dist_pid)) r$dist_pid = PhylogeneticInfoDistance(r$allTrees)
+             output$distanceStatus <- renderText('Phylo. Info. distances calculated.')
+             r$dist_pid
+           },
+           'qd' = {
+             if (is.null(r$dist_qd)) r$dist_qd = as.dist(Quartet::QuartetDivergence(
+               Quartet::ManyToManyQuartetAgreement(r$allTrees), similarity = FALSE))
+             output$distanceStatus <- renderText('Quartet distances calculated.')
+             r$dist_qd
+           }, 'path' = {
+             if (is.null(r$dist_path)) r$dist_path = PathDist(r$allTrees)
+             output$distanceStatus <- renderText('Path distances calculated.')
+             r$dist_path
+           }, 'rf' = {
+             if (is.null(r$dist_rf)) r$dist_rf = RobinsonFoulds(r$allTrees)
+             output$distanceStatus <- renderText('RF distances calculated.')
+             r$dist_rf
+           }
+    )
+    
+  })
   
   
   output$distPlot <- renderPlot({
+    output$projectionStatus <- renderText('Projecting...')
     
-    
+    if (inherits(distances(), 'dist')) {
+      projection <- switch(input$projection, 
+             'pca' = cmdscale(distances(), k = 15),
+             'k' = MASS::isoMDS(distances(), k = 15)$points,
+             'nls' = MASS::sammon(distances(), k = 15)$points)
+      plot(projection,
+           asp = 1, # Preserve aspect ratio - do not distort distances
+           ann = FALSE, axes = FALSE, # Dimensions are meaningless
+           frame.plot = TRUE,
+           pch = 16
+      )
+      output$projectionStatus <- renderText(paste(switch(input$projection, 
+                                                   'pca' = 'Principal components',
+                                                   'k' = 'Kruskal-1',
+                                                   'nls' = 'Sammon'),
+                                            'projection'))
+    } else {
+      output$projectionStatus <- renderText("No distances available.")
+    }
   })
   
 }
