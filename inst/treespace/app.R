@@ -102,6 +102,24 @@ server <- function(input, output) {
     r$dist_qd = NULL
     r$dist_path = NULL
     r$dist_rf = NULL
+    
+    r$proj_pca_cid = NULL
+    r$proj_pca_pid = NULL
+    r$proj_pca_qd = NULL
+    r$proj_pca_path = NULL
+    r$proj_pca_rf = NULL
+    
+    r$proj_k_cid = NULL
+    r$proj_k_pid = NULL
+    r$proj_k_qd = NULL
+    r$proj_k_path = NULL
+    r$proj_k_rf = NULL
+    
+    r$proj_nls_cid = NULL
+    r$proj_nls_pid = NULL
+    r$proj_nls_qd = NULL
+    r$proj_nls_path = NULL
+    r$proj_nls_rf = NULL
   }
   
   treeFile <- reactive({
@@ -197,16 +215,25 @@ server <- function(input, output) {
     
   })
   
+  projection <- reactive({
+    proj_id <- paste0('proj_', input$projection, '_', input$distance)
+    if (is.null(r[[proj_id]])) {
+      proj <- switch(input$projection,
+                     'pca' = cmdscale(distances(), k = 15),
+                     'k' = MASS::isoMDS(distances(), k = 15)$points,
+                     'nls' = MASS::sammon(distances(), k = 15)$points
+                     )
+      r[[proj_id]] <- proj
+    }
+    r[[proj_id]]
+  })
+  
   
   output$distPlot <- renderPlot({
     output$projectionStatus <- renderText('Projecting...')
     
     if (inherits(distances(), 'dist')) {
-      projection <- switch(input$projection, 
-             'pca' = cmdscale(distances(), k = 15),
-             'k' = MASS::isoMDS(distances(), k = 15)$points,
-             'nls' = MASS::sammon(distances(), k = 15)$points)
-      plot(projection,
+      plot(projection(),
            asp = 1, # Preserve aspect ratio - do not distort distances
            ann = FALSE, axes = FALSE, # Dimensions are meaningless
            frame.plot = TRUE,
