@@ -49,6 +49,7 @@ Suggests:
   kdensity,
   knitr,
   MASS,
+  protoclust,
   Quartet,
   rmarkdown,
   Rcpp,
