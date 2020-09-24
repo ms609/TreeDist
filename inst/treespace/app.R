@@ -86,6 +86,12 @@ ui <- fluidPage(
                   max = 15,
                   value = 6),
       
+      sliderInput(inputId = "mst",
+                  label = "Minimum spanning tree extent:",
+                  min = 0,
+                  max = 100,
+                  value = 20),
+      
       checkboxGroupInput("clustering", "Clustering methods",
                          choices = list("Partitioning around medoids" = 'pam',
                                         "Heirarchical, minimax linkage" = 'hmm',
@@ -123,7 +129,7 @@ server <- function(input, output) {
   
   #r <- reactiveValues(allTrees = structure(list(), class = 'multiPhylo'))
   #treeNumbers <- c(1:220)
-  treeNumbers <- c(1:40, 401:440)
+  treeNumbers <- c(1:50, 401:440)
   
   r <- reactiveValues(allTrees = as.phylo(treeNumbers, 8))
   
@@ -141,6 +147,12 @@ server <- function(input, output) {
     r$dist_qd = NULL
     r$dist_path = NULL
     r$dist_rf = NULL
+    
+    r$mst_cid = NULL
+    r$mst_pid = NULL
+    r$mst_qd = NULL
+    r$mst_path = NULL
+    r$mst_rf = NULL
     
     r$proj_pca_cid = NULL
     r$proj_pca_pid = NULL
@@ -308,13 +320,16 @@ server <- function(input, output) {
         which.max(c(pamSil, hSil, harSil, kSil, specSil))]
       r[[clust_id]] <- list(method = switch(bestCluster,
                                             pam = 'partitioning around medoids',
-                                            hmm = 'heir., minimax',
-                                            har = 'heir., ave',
+                                            hmm = 'minimax linkage',
+                                            har = 'average linkage',
                                             k = 'K-means',
                                             spec = 'spectral'),
                             n = switch(bestCluster,
                                        pam = bestPam, hmm = bestH, 
                                        har = bestHav, k = bestK, spec = bestSpec),
+                            sil = switch(bestCluster,
+                                         pam = pamSil, hmm = hSil,
+                                         har = havSil, k = kSil, spec = specSil), 
                             cluster = switch(bestCluster,
                                              pam = pamCluster,
                                              hmm = hCluster,
@@ -329,24 +344,41 @@ server <- function(input, output) {
   
   output$clusteringStatus <- renderText({
     cl <- clusterings()
-    paste0(cl$n, " clusters found with ", cl$method)
+    paste0(cl$n, " clusters found with ", cl$method, '; silhouette coeff. = ', 
+           round(cl$sil, 3))
+  })
+  
+  mstEnds <- responsive({
+    mst_id <- paste0('mst_', input$distance)
+    <- MSTEdges(distances)
   })
   
   output$distPlot <- renderPlot({
     output$projectionStatus <- renderText('Projecting...')
     
     if (inherits(distances(), 'dist')) {
+      cl <- clusterings()
+      col <- if (cl$sil > 0.25) {
+        palettes[[min(length(palettes), cl$n)]][cl$cluster]
+      } else palettes[[1]]
       plot(projection(),
            asp = 1, # Preserve aspect ratio - do not distort distances
            ann = FALSE, axes = FALSE, # Dimensions are meaningless
            frame.plot = TRUE,
-           pch = 16
+           pch = 16,
+           col = col
       )
+      
+      apply(mstEnds(), 1, function (segment)
+        lines(projection[segment, j], projection[segment, i],
+              col = "#bbbbbb", lty = 1))
+      
+      
       output$projectionStatus <- renderText(paste(switch(input$projection, 
                                                    'pca' = 'Principal components',
                                                    'k' = 'Kruskal-1',
                                                    'nls' = 'Sammon'),
-                                            'projection'))
+                                            'projection plotted.'))
     } else {
       output$projectionStatus <- renderText("No distances available.")
     }
