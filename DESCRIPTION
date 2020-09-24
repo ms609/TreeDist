@@ -42,7 +42,7 @@ Imports:
   phangorn (>= 2.2.1),
   Rdpack,
   shiny,
-  TreeTools (>= 1.1.0)
+  TreeTools (>= 1.3.0)
 Suggests:
   bookdown,
   cluster,

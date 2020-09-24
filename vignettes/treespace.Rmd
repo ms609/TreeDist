@@ -15,21 +15,6 @@ vignette: >
 ---
 
 ```{r secret-header, echo=FALSE}
-# From TreeTools v1.2.0.9000
-MSTEdges <- function (distances, plot = FALSE, x = NULL, y = NULL, ...) {
-  umst <- ape::mst(distances)
-  edges <- umst == 1L
-  from <- umst
-  from[edges] <- unlist(apply(edges, 1, which))
-  to <- t(from)
-  ends <- cbind(from[lower.tri(from) & edges], to[lower.tri(to) & edges])
-  if (plot) {
-    apply(ends, 1, function (edge)
-      lines(x[edge], y[edge], ...))
-  }
-  invisible(ends)
-}
-
 # from dreval
 calcContinuityFromDist <- function(distReference, distLowDim, kTM) {
   distReference <- as.matrix(distReference)
