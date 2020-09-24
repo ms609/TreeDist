@@ -79,6 +79,7 @@ ui <- fluidPage(
                                   "Sammon mapping mMDS" = 'nls'),
                    selected = 'pca'),
       textOutput(outputId = "projectionStatus"),
+      checkboxInput('labelTrees', 'Plot tree numbers', FALSE),
       
       sliderInput(inputId = "dims",
                   label = "Dimensions to plot:",
@@ -361,10 +362,14 @@ server <- function(input, output) {
     if (is.null(r[[mst_id]])) {
       dist <- as.matrix(distances())
       nRows <- dim(dist)[1]
-      selection <- seq.int(1, nRows, length.out = mstSize / 100 * nRows)
-      r[[mst_id]] <- MSTEdges(dist[selection, selection])
+      selection <- unique(round(seq.int(1, nRows, length.out = max(2L, mstSize / 100 * nRows))))
+      edges <- MSTEdges(dist[selection, selection])
+      edges[, 1] <- selection[edges[, 1]]
+      edges[, 2] <- selection[edges[, 2]]
+      r[[mst_id]] <- edges
     }
     
+    r$mst_size <- mstSize
     r[[mst_id]]
   })
   
@@ -376,7 +381,6 @@ server <- function(input, output) {
       col <- if (cl$sil > 0.25) {
         palettes[[min(length(palettes), cl$n)]][cl$cluster]
       } else palettes[[1]]
-      message(paste(cl$n, unique(cl$cluster), collapse = ' .. '))
       proj <- projection()
       plot(proj,
            asp = 1, # Preserve aspect ratio - do not distort distances
@@ -385,6 +389,7 @@ server <- function(input, output) {
            pch = 16,
            col = col
       )
+      if (input$labelTrees) text(proj[, 1], proj[, 2], seq_len(nrow(proj)))
       
       if (input$mst > 0) {
         apply(mstEnds(), 1, function (segment)
