@@ -26,9 +26,11 @@ ui <- fluidPage(
                   max = 100,
                   value = c(0, 100)),
       sliderInput(inputId = "thinTrees",
-                  label = "Sample every:",
-                  min = 1,
-                  max = 50,
+                  label = "Sample every 2^:",
+                  min = 0,
+                  max = 12,
+                  round = FALSE,
+                  step = 0.01,
                   value = 1),
       actionButton("addTrees", "Add to existing"),
       actionButton("replaceTrees", "Replace existing"),
@@ -64,8 +66,7 @@ ui <- fluidPage(
                   label = "Dimensions to plot:",
                   min = 1,
                   max = 15,
-                  value = 6),
-      submitButton("Calculate"),
+                  value = 6)
       
     ),
     
@@ -123,20 +124,20 @@ server <- function(input, output) {
   })
   
   thinnedTrees <- reactive({
-    seq(keptRange()[1], keptRange()[2], by = input$thinTrees)
+    seq(keptRange()[1], keptRange()[2], by = 2^input$thinTrees)
   })
   
   output$treesStatus <- renderText({
     if (is.character(treeFile())) return(treeFile())
     nTrees <- length(treeFile())
     found <- paste("Found", nTrees, "trees in file.")
-    
     keeps <- if (keptRange()[1] == 1 && keptRange()[2] == nTrees) "" else {
-      paste0("Keeping trees ", keptRange[1]," to ", keptRange[2], '.')
+      paste0("Keeping trees ", keptRange()[1]," to ", keptRange()[2], '.')
     }
     sampling <- if (input$thinTrees == 1) "" else {
       paste("Uniformly sampling", length(thinnedTrees()), "trees.")
     }
+    
     paste(found, keeps, sampling)
   })
   
@@ -145,12 +146,6 @@ server <- function(input, output) {
   
   output$distPlot <- renderPlot({
     
-    x    <- faithful$waiting
-    bins <- seq(min(x), max(x), length.out = input$dims + 1)
-    
-    hist(x, breaks = bins, col = "#75AADB", border = "white",
-         xlab = "Waiting time to next eruption (in mins)",
-         main = "Histogram of waiting times")
     
   })
   
