@@ -24,6 +24,15 @@ ui <- fluidPage(
                          selected = 'cid'),
       textOutput(outputId = "distanceStatus"),
                                         
+      
+      checkboxGroupInput("clustering", "Clustering methods",
+                   choices = list("Partitioning around medoids" = 'pam',
+                                  "Heirarchical, minimax linkage" = 'hmm',
+                                  "K-means" = 'k',
+                                  "Spectral" = "spec"),
+                   selected = c('pam', 'hmm')),
+      textOutput(outputId = "projectionStatus"),
+      
       radioButtons("projection", "Projection method",
                    choices = list("Principal components (classical MDS)" = 'pca',
                                   "Kruskal-1 nmMDS" = 'k',
