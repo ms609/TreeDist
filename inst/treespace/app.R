@@ -63,17 +63,15 @@ ui <- fluidPage(theme = 'treespace.css',
       actionButton("replaceTrees", "Replace existing"),
       textOutput(outputId = "treesInMemory"),
                                         
-      radioButtons("distance", "Distance method",
+      selectInput("distance", "Distance method",
                    choices = list("Clustering information" = 'cid',
                                   "Phylogenetic information" = 'pid',
                                   "Quartet (slow)" = 'qd',
                                   "Path" = 'path',
                                   "Robinson\u2212Foulds" = 'rf'),
                    selected = 'cid'),
-      textOutput(outputId = "distanceStatus"),
       
-      
-      radioButtons("projection", "Projection method",
+      selectInput("projection", "Projection method",
                    choices = list("Principal components (classical MDS)" = 'pca',
                                   "Sammon mapping mMDS" = 'nls',
                                   "Kruskal-1 nmMDS (slow)" = 'k'
@@ -271,26 +269,21 @@ server <- function(input, output) {
     switch(input$distance,
            'cid' = {
              if (is.null(r$dist_cid)) r$dist_cid = ClusteringInfoDistance(r$allTrees)
-             output$distanceStatus <- renderText('CI distances calculated.')
              r$dist_cid
            },
            'pid' = {
              if (is.null(r$dist_pid)) r$dist_pid = PhylogeneticInfoDistance(r$allTrees)
-             output$distanceStatus <- renderText('Phylo. Info. distances calculated.')
              r$dist_pid
            },
            'qd' = {
              if (is.null(r$dist_qd)) r$dist_qd = as.dist(Quartet::QuartetDivergence(
                Quartet::ManyToManyQuartetAgreement(r$allTrees), similarity = FALSE))
-             output$distanceStatus <- renderText('Quartet distances calculated.')
              r$dist_qd
            }, 'path' = {
              if (is.null(r$dist_path)) r$dist_path = PathDist(r$allTrees)
-             output$distanceStatus <- renderText('Path distances calculated.')
              r$dist_path
            }, 'rf' = {
              if (is.null(r$dist_rf)) r$dist_rf = RobinsonFoulds(r$allTrees)
-             output$distanceStatus <- renderText('RF distances calculated.')
              r$dist_rf
            }
     )
