@@ -1,6 +1,8 @@
 # TreeDist 1.2.1.9100 (development)
 
 - Shiny app for tree space.
+- `ProjectionQuality()` calculates trustworthiness and continuity of tree 
+  space projections.
 
 # TreeDist 1.2.1
 

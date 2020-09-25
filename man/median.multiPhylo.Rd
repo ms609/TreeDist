@@ -77,8 +77,12 @@ median(structure(treeList, class = 'multiPhylo'))
 Consensus methods:
 \code{\link[ape:consensus]{ape::consensus()}},
 \code{\link[TreeTools:ConsensusWithout]{TreeTools::ConsensusWithout()}}
+
+Other tree space functions: 
+\code{\link{ProjectionQuality}()}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
 (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
+\concept{tree space functions}

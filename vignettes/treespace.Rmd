@@ -15,65 +15,6 @@ vignette: >
 ---
 
 ```{r secret-header, echo=FALSE}
-# from dreval
-calcContinuityFromDist <- function(distReference, distLowDim, kTM) {
-  distReference <- as.matrix(distReference)
-  distLowDim <- as.matrix(distLowDim)
-
-  stopifnot(ncol(distReference) == ncol(distLowDim))
-  stopifnot(nrow(distReference) == nrow(distLowDim))
-
-  rankReference <- apply(
-    as.matrix(distReference), 2, function(w) order(order(w)))
-  rankLowDim <- apply(
-    as.matrix(distLowDim), 2, function(w) order(order(w)))
-
-  calcContinuityFromRank(
-    rankReference = rankReference,
-    rankLowDim = rankLowDim, kTM = kTM
-  )
-}
-calcContinuityFromRank <- function(rankReference, rankLowDim, kTM) {
-  stopifnot(ncol(rankReference) == ncol(rankLowDim))
-  stopifnot(nrow(rankReference) == nrow(rankLowDim))
-
-  N <- ncol(rankReference)
-
-  1 - 2/(N * kTM * (2 * N - 3 * kTM - 1)) *
-    sum(vapply(seq_len(ncol(rankReference)), function(i) {
-      sum((rankLowDim[, i] - kTM) * (rankReference[, i] <= kTM) *
-            (rankLowDim[, i] > kTM))
-    }, NA_real_))
-}
-
-calcTrustworthinessFromRank <- function(rankReference, rankLowDim, kTM) {
-  stopifnot(ncol(rankReference) == ncol(rankLowDim))
-  stopifnot(nrow(rankReference) == nrow(rankLowDim))
-
-  N <- ncol(rankReference)
-
-  1 - 2/(N * kTM * (2 * N - 3 * kTM - 1)) *
-    sum(vapply(seq_len(ncol(rankLowDim)), function(i) {
-      sum((rankReference[, i] - kTM) * (rankLowDim[, i] <= kTM) *
-            (rankReference[, i] > kTM))
-    }, NA_real_))
-}
-
-calcTrustworthinessFromDist <- function(distReference, distLowDim, kTM) {
-  distReference <- as.matrix(distReference)
-  distLowDim <- as.matrix(distLowDim)
-
-  stopifnot(ncol(distReference) == ncol(distLowDim))
-  stopifnot(nrow(distReference) == nrow(distLowDim))
-
-  rankReference <- apply(as.matrix(distReference), 2,
-                         function(w) order(order(w)))
-  rankLowDim <- apply(as.matrix(distLowDim), 2,
-                      function(w) order(order(w)))
-
-  calcTrustworthinessFromRank(rankReference = rankReference,
-                              rankLowDim = rankLowDim, kTM = kTM)
-}
 set.seed(0)
 ```
 
@@ -240,9 +181,7 @@ library("dreval")
 ```{r how-many-dims, fig.align='center'}
 txc <- vapply(1:12, function (k) {
   newDist <- dist(projection[, seq_len(k)])
-  trust <- calcTrustworthinessFromDist(distances, newDist, 10)
-  cont <- calcTrustworthinessFromDist(distances, newDist, 10)
-  trust * cont
+  ProjectionQuality(distances, newDist, 10)['TxC']
 }, 0)
 plot(txc, xlab = 'Dimension')
 abline(h = 0.9, lty = 2)
