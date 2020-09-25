@@ -39,6 +39,7 @@ ProjectionQuality(distances, dist(projection), 4)
 }
 \seealso{
 Other tree space functions: 
+\code{\link{TreeSpace}()},
 \code{\link{median.multiPhylo}()}
 }
 \author{

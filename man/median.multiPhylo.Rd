@@ -79,7 +79,8 @@ Consensus methods:
 \code{\link[TreeTools:ConsensusWithout]{TreeTools::ConsensusWithout()}}
 
 Other tree space functions: 
-\code{\link{ProjectionQuality}()}
+\code{\link{ProjectionQuality}()},
+\code{\link{TreeSpace}()}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
