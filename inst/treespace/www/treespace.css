@@ -1,20 +1,47 @@
 body {
   font-family: "Gill Sans", "Gill Sans MT", "Gill Sans MS", "Verdana", "Sans-Serif";
 }
+/*
+.irs-bar, .irs-bar-edge {
+  background-color: #938e44;
+  border-top-color: #938e44;
+  border-bottom-color: #938e44;
+}
+
+.irs-single, .irs-from, .irs-to, .irs-grid-pol {
+  background: #938e44;
+}
+*/
+/*
+dark green = "#017920",
+orange = "#ffc646",
+teal = "#33f2be",
+vivid = "#daff16",
+brown = "#938e44",
+cream = "#fffbaa"
+*/ 
 
 input[value=rf]:focus+span {
   color: #bb3333;
   font-weight: bold;
 }
 
+.shiny-input-container {
+  margin-bottom: 0;
+}
+
+div#keptTrees, div#treesStatus {
+  display: inline;
+}
+
 div#threeDPlot {
   width: 100%;
-  
+  margin-bottom: -300px;
 }
 
 div#threeDPlot canvas {
   border: 1px solid;
   position: absolute;
-  top: 0px;
-  right: 0px;
+  top: 0;
+  right: 0;
 }

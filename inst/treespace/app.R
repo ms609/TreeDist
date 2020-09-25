@@ -126,7 +126,7 @@ ui <- fluidPage(theme = 'treespace.css',
     mainPanel(
       
       # Output: plot
-      plotOutput(outputId = "distPlot", height = "800px"),
+      plotOutput(outputId = "distPlot", height = "600px"),
       rgl::rglwidgetOutput(outputId = "threeDPlot", width = "300px", height = "300px"),
       plotOutput(outputId = "quality",  height = "200px"),
       
@@ -608,7 +608,7 @@ server <- function(input, output) {
   })
   
   output$quality <- renderPlot({
-    layout(matrix(c(1, 3, 2, 3), 2), widths = c(3, 1))
+    layout(matrix(c(1, 3, 2, 3), 2), widths = c(2.5, 1))
     par(mar = rep(0, 4))
     dimNow <- input$dims
     
@@ -626,23 +626,30 @@ server <- function(input, output) {
          ylim = c(-1.5, 2.5),
          ann = FALSE, axes = FALSE)
     logScore <- LogScore(txc['TxC', input$dims])
-    lines(rep(logScore, 2), c(-1, 1), lty = 2)
-    tickPos <- c(0, 0.8, 0.9, 0.95, 1.0)
+    lines(rep(logScore, 2), c(-1, 1), lty = 3)
+    tickPos <- c(0, 0.5, 0.7, 0.8, 0.9, 0.95, 1.0)
     ticks <- LogScore(tickPos)
     axis(1, at = ticks, labels = tickPos, line = -1)
     axis(1, tick = FALSE, at = ticks[-1] - ((ticks[-1] - ticks[-length(ticks)]) / 2),
-         labels = c("Projection quality:", "random", "good", "excellent"),
+         labels = c('', '~random', 'dangerous', "usable", "good", "excellent"),
          line = -2)
     axis(3, at = 0.5, tick = FALSE, line = -4,
          paste(switch(input$projection, 'pca' = 'Principal components',
                       'k' = 'Kruskal-1','nls' = 'Sammon'),
-               'projection'))
+               'projection quality:'))
     
     
-    par(mar = c(0, 1, 1.1, 0))
-    plot(txc['TxC', ], type = 'b', 
-         xlab = 'Dimension', ylab = 'Trust. \ub7 Cont.')
-    abline(h = c(0.9, 0.95), lty = 2, col = '#cccccc')
+    par(mar = c(0, 2, 1.1, 0), xpd = NA, mgp = c(2, 1, 0))
+    plot(txc['TxC', ], type = 'n', ylim = c(min(txc['TxC', ], 0.5), 1),
+         frame.plot = FALSE, axes = FALSE,
+         xlab = 'Dimension', ylab = 'Trust. \uD7 Cont.')
+    par(xpd = FALSE)
+    axis(1, 1:14)
+    axis(2)
+    for (i in tickPos[-1]) {
+      abline(h = i, lty = 3, col = badToGood[LogScore(i) * nStop])
+    }
+    points(txc['TxC', ], type = 'b')
     txcNow <- txc['TxC', dimNow]
     
     points(dimNow, txcNow, pch = 16, col = badToGood[LogScore(txcNow) * nStop], cex = 1.6)
