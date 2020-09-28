@@ -4,11 +4,6 @@ library("TreeDist")
 
 options(shiny.maxRequestSize = 100 * 1024^2)
 
-treeNumbers <- c(1:220)
-trees <- as.phylo(treeNumbers, 8)
-spectrum <- viridisLite::plasma(220)
-treeCols <- spectrum[treeNumbers]
-
 palettes <- list("#91aaa7",
                  c("#969660", "#c3dfca"),
                  c("#be83ae", "#2ea7af", "#fbcdcf"),
