@@ -40,7 +40,7 @@ ui <- fluidPage(theme = 'treespace.css',
   
     column(3, 
       tabsetPanel(
-        tabPanel('Load trees',
+        tabPanel('Input',
           textOutput(outputId = "treesInMemory"),
           fileInput("treefile", "Load trees", placeholder = "No tree file selected"),
           textOutput(outputId = "treesStatus"),
@@ -62,7 +62,7 @@ ui <- fluidPage(theme = 'treespace.css',
           actionButton("replaceTrees", "Replace existing"),
           actionButton("addTrees", "Add to existing"),
         ),
-        tabPanel('View landscape',
+        tabPanel('Analysis',
            selectInput("distance", "Distance method",
                        choices = list("Clustering information" = 'cid',
                                       "Phylogenetic information" = 'pid',
@@ -71,33 +71,13 @@ ui <- fluidPage(theme = 'treespace.css',
                                       "Robinson\u2212Foulds" = 'rf'),
                        selected = 'cid'),
           
+          textOutput(outputId = "projectionStatus"),
           selectInput("projection", "Projection method",
                        choices = list("Principal components (classical MDS)" = 'pca',
                                       "Sammon mapping mMDS" = 'nls',
                                       "Kruskal-1 nmMDS (slow)" = 'k'
                                       ),
                        selected = 'pca'),
-          textOutput(outputId = "projectionStatus"),
-          checkboxGroupInput("display", "Display settings",
-                             list(
-                               "Clusters' convex hulls" = 'hulls',
-                               'Tree numbers' = 'labelTrees',
-                               'Interactive 3D plot' = 'show3d'
-                               ),
-                             character(0)),
-          
-          sliderInput(inputId = "dims",
-                      label = "Dimensions to plot:",
-                      min = 2,
-                      max = 15,
-                      value = 5),
-          
-          sliderInput(inputId = "mst",
-                      label = "Minimum spanning tree extent:",
-                      min = 0,
-                      max = 100,
-                      post = '%',
-                      value = 20),
           
           checkboxGroupInput("clustering", "Clustering methods",
                              choices = list("Partitioning around medoids" = 'pam',
@@ -116,18 +96,55 @@ ui <- fluidPage(theme = 'treespace.css',
                       min = 2,
                       max = 20,
                       value = 8),
-          actionButton("calcClusters", "Recalculate clustering")
+          actionButton("calcClusters", "Recalculate clustering"),
+        ),
+        tabPanel('Display',
+          sliderInput(inputId = "dims",
+                      label = "Dimensions to plot:",
+                      min = 2, max = 15, value = 5),
+          plotOutput('howManyDims', width = '100%', height = '180px'),
+          
+          sliderInput(inputId = "mst",
+                      label = "Minimum spanning tree extent:",
+                      min = 0,
+                      max = 100,
+                      post = '%',
+                      value = 20),
+          checkboxGroupInput("display", "Display settings",
+                             list(
+                               "Clusters' convex hulls" = 'hulls',
+                               'Tree numbers' = 'labelTrees',
+                               'Interactive 3D plot' = 'show3d'
+                             ),
+                             character(0)),
+          sliderInput('pt.cex', 'Point size',
+                      min = 0, max = 4, value = 1, 
+                      step = 0.01),
+          sliderInput('pt.opacity', 'Point opacity',
+                      min = 0, max = 255, value = 196,
+                      step = 1),
         )
       ),
     ),
     
     column(9,
       mainPanel(
+        fluidRow(plotOutput(outputId = "pcQuality", height = "72px")),
+        fluidRow(plotOutput(outputId = "clustQuality", height = "72px")),
+        fluidRow(id = 'plotConfig',
+          tags$span("Plot size:", id = 'plotSizeSpan'),
+          sliderInput(inputId = "plotSize", label = NULL,
+                      width = '200px',
+                      min = 100, max = 2000,
+                      post = 'px', value = 600),
+          tags$span("Save as: "),
+          downloadButton('savePdf', 'PDF'),
+          downloadButton('savePng', 'PNG'),
+        ),
         fluidRow(
-          plotOutput(outputId = "distPlot", height = "600px"),
+          plotOutput(outputId = "distPlot"),
           rgl::rglwidgetOutput(outputId = "threeDPlot", width = "300px", height = "300px"),
           ),
-        fluidRow(plotOutput(outputId = "quality",  height = "200px"))
       )
   )
   
@@ -214,7 +231,6 @@ server <- function(input, output, session) {
     ret
   })
 
-  
   
   output$treesStatus <- renderText({
     if (is.character(treeFile())) return(treeFile())
@@ -561,60 +577,65 @@ server <- function(input, output, session) {
     r[[mst_id]]
   })
   
-  output$distPlot <- renderPlot({
+  treespacePlot <- function () {
+    cl <- clusterings()
+    treeCols <- if (cl$sil > 0.25) {
+      palettes[[min(length(palettes), cl$n)]][cl$cluster]
+    } else palettes[[1]]
+    proj <- projection()
     
-    if (inherits(distances(), 'dist')) {
-      cl <- clusterings()
-      treeCols <- if (cl$sil > 0.25) {
-        palettes[[min(length(palettes), cl$n)]][cl$cluster]
-      } else palettes[[1]]
-      proj <- projection()
-      
-      nDim <- input$dims
-      plotSeq <- matrix(0, nDim, nDim)
-      nPanels <- nDim * (nDim - 1L) / 2L
-      plotSeq[upper.tri(plotSeq)] <- seq_len(nPanels)
-      layout(t(plotSeq[-nDim, -1]))
-      par(mar = rep(0.2, 4))
-      withProgress(message = 'Drawing plot', {
-        for (i in 2:nDim) for (j in seq_len(i - 1)) {
-          incProgress(1 / nPanels)
-          # Set up blank plot
-          plot(proj[, j], proj[, i], ann = FALSE, axes = FALSE, frame.plot = TRUE,
-               type = 'n', asp = 1, xlim = range(proj), ylim = range(proj))
-          
-          # Plot MST
-          if (input$mst > 0) {
-            apply(mstEnds(), 1, function (segment)
-              lines(proj[segment, j], proj[segment, i], col = "#bbbbbb", lty = 1))
-          }
-            
-          # Add points
-          points(proj[, j], proj[, i], pch = 16, col = treeCols)
-          
-          if ("hulls" %in% input$display && cl$sil > 0.25) {
-            # Mark clusters
-            for (clI in seq_len(cl$n)) {
-              inCluster <- cl$cluster == clI
-              clusterX <- proj[inCluster, j]
-              clusterY <- proj[inCluster, i]
-              hull <- chull(clusterX, clusterY)
-              polygon(clusterX[hull], clusterY[hull], lty = 1, lwd = 2,
-                      border = palettes[[min(length(palettes), cl$n)]][clI])
-                      #border = '#54de25bb')
-            }
-          }
-          if ('labelTrees' %in% input$display) {
-            text(proj[, j], proj[, i], thinnedTrees())
+    nDim <- input$dims
+    plotSeq <- matrix(0, nDim, nDim)
+    nPanels <- nDim * (nDim - 1L) / 2L
+    plotSeq[upper.tri(plotSeq)] <- seq_len(nPanels)
+    layout(t(plotSeq[-nDim, -1]))
+    par(mar = rep(0.2, 4))
+    withProgress(message = 'Drawing plot', {
+      for (i in 2:nDim) for (j in seq_len(i - 1)) {
+        incProgress(1 / nPanels)
+        # Set up blank plot
+        plot(proj[, j], proj[, i], ann = FALSE, axes = FALSE, frame.plot = TRUE,
+             type = 'n', asp = 1, xlim = range(proj), ylim = range(proj))
+        
+        # Plot MST
+        if (input$mst > 0) {
+          apply(mstEnds(), 1, function (segment)
+            lines(proj[segment, j], proj[segment, i], col = "#bbbbbb", lty = 1))
+        }
+        
+        # Add points
+        points(proj[, j], proj[, i], pch = 16,
+               col = paste0(treeCols, as.hexmode(input$pt.opacity)),
+               cex = input$pt.cex)
+        
+        if ("hulls" %in% input$display && cl$sil > 0.25) {
+          # Mark clusters
+          for (clI in seq_len(cl$n)) {
+            inCluster <- cl$cluster == clI
+            clusterX <- proj[inCluster, j]
+            clusterY <- proj[inCluster, i]
+            hull <- chull(clusterX, clusterY)
+            polygon(clusterX[hull], clusterY[hull], lty = 1, lwd = 2,
+                    border = palettes[[min(length(palettes), cl$n)]][clI])
+            #border = '#54de25bb')
           }
         }
-      })
-      
+        if ('labelTrees' %in% input$display) {
+          text(proj[, j], proj[, i], thinnedTrees())
+        }
+      }
+    })
+  }
+
+  PlotSize <- function () debounce(reactive(input$plotSize), 100)
+  output$distPlot <- renderPlot({
+    if (inherits(distances(), 'dist')) {
+      treespacePlot()
       output$projectionStatus <- renderText('')
     } else {
       output$projectionStatus <- renderText("No distances available.")
     }
-  })
+  }, width = PlotSize(), height = PlotSize())
   
   output$threeDPlot <- rgl::renderRglwidget({
     if ("show3d" %in% input$display) {
@@ -633,8 +654,9 @@ server <- function(input, output, session) {
                aspect = 1, # Preserve aspect ratio - do not distort distances
                axes = FALSE, # Dimensions are meaningless
                pch = 16,
-               xlab = '', ylab = '', zlab = '',
-               col = col
+               col = paste0(treeCols, as.hexmode(input$pt.opacity)),
+               cex = input$pt.cex,
+               xlab = '', ylab = '', zlab = ''
           )
           incProgress(0.6)
           if ('labelTrees' %in% input$display) {
@@ -652,58 +674,46 @@ server <- function(input, output, session) {
   })
   
   dims <- debounce(reactive(input$dims), 400)
-  output$quality <- renderPlot({
-    layout(matrix(c(1, 3, 2, 3), 2), widths = c(2.5, 1))
-    par(mar = rep(0, 4))
-    dimNow <- dims()
-    
-    # Projection quality
-    proj <- projection()
-    LogScore <- function (x) {
-      (-(log10(1 - x + 1e-2))) / 2
-    }
+  projQual <- reactive({
     withProgress(message = "Calculating projection quality", {
-      txc <- vapply(1:15, function (k) {
+      vapply(1:15, function (k) {
         incProgress(1/15)
-        ProjectionQuality(distances(), dist(proj[, seq_len(k)]), 10)
+        ProjectionQuality(distances(), dist(projection()[, seq_len(k)]), 10)
       }, numeric(4))
-      nStop <- length(badToGood)
-      plot(seq(0, 1, length.out = nStop), rep(0, nStop),
-           pch = 15, col = badToGood,
-           ylim = c(-1.5, 2.5),
-           ann = FALSE, axes = FALSE)
     })
-    logScore <- LogScore(txc['TxC', input$dims])
+  })
+  LogScore <- function (x) {
+    (-(log10(1 - x + 1e-2))) / 2
+  }
+  
+  
+  output$pcQuality <- renderPlot({
+    par(mar = rep(0, 4))
+    nStop <- length(badToGood)
+    
+    plot(seq(0, 1, length.out = nStop), rep(0, nStop),
+         pch = 15, col = badToGood,
+         ylim = c(-1.5, 2.5),
+         ann = FALSE, axes = FALSE)
+    
+    logScore <- LogScore(projQual()['TxC', input$dims])
     lines(rep(logScore, 2), c(-1, 1), lty = 3)
+    
     tickPos <- c(0, 0.5, 0.7, 0.8, 0.9, 0.95, 1.0)
     ticks <- LogScore(tickPos)
+    
     axis(1, at = ticks, labels = tickPos, line = -1)
-    axis(1, tick = FALSE, at = ticks[-1] - ((ticks[-1] - ticks[-length(ticks)]) / 2),
-         labels = c('', '~random', 'dangerous', "usable", "good", "excellent"),
-         line = -2)
-    axis(3, at = 0.5, tick = FALSE, line = -4,
+    axis(1, line = -2, tick = FALSE,
+         at = ticks[-1] - ((ticks[-1] - ticks[-length(ticks)]) / 2),
+         labels = c('', '~random', 'dangerous', "usable", "good", "excellent"))
+    axis(3, at = 0.5, tick = FALSE, line = -3,
          paste(switch(input$projection, 'pca' = 'Principal components',
                       'k' = 'Kruskal-1','nls' = 'Sammon'),
                'projection quality:'))
-    
-    
-    par(mar = c(0, 2, 1.1, 0), xpd = NA, mgp = c(2, 1, 0))
-    plot(txc['TxC', ], type = 'n', ylim = c(min(txc['TxC', ], 0.5), 1),
-         frame.plot = FALSE, axes = FALSE,
-         xlab = 'Dimension', ylab = 'Trust. \uD7 Cont.')
-    par(xpd = FALSE)
-    axis(1, 1:14)
-    axis(2)
-    for (i in tickPos[-1]) {
-      abline(h = i, lty = 3, col = badToGood[LogScore(i) * nStop])
-    }
-    points(txc['TxC', ], type = 'b')
-    txcNow <- txc['TxC', dimNow]
-    
-    points(dimNow, txcNow, pch = 16, col = badToGood[LogScore(txcNow) * nStop], cex = 1.6)
-    
-    # Clustering statistics
-    par(mar = c(0, 0, 1.1, 0))
+  })
+  
+  output$clustQuality <- renderPlot({
+    par(mar = rep(0, 4))
     clust_id <- paste0('clust_', input$distance)
     sil <- r[[clust_id]]$sil
     if (length(sil) == 0) sil <- -0.5
@@ -712,24 +722,61 @@ server <- function(input, output, session) {
     negScale <- viridisLite::plasma(nStop)[seq(range[1] * nStop, 1,
                                                length.out = nStop * range[1])]
     posScale <- viridisLite::viridis(nStop)
+    
     plot(seq(-range[1], range[2], length.out = nStop * sum(range)),
          rep(0, nStop * sum(range)),
          pch = 15, col = c(negScale, posScale),
          ylim = c(-1.5, 2.5),
          ann = FALSE, axes = FALSE)
     lines(c(sil, sil), c(-1, 1), lty = 3)
+    
     ticks <- c(-0.5, 0, 0.25, 0.5, 0.7, 1)
     axis(1, at = ticks, line = -1)
     axis(1, tick = FALSE, at = ticks[-1] - ((ticks[-1] - ticks[-6]) / 2),
          labels = c("Clustering structure:", "lacking", "weak", "reasonable", "strong"),
          line = -2)
+    
     cl <- clusterings()
-    axis(3, tick = FALSE, line = -4, at = 0.25,
+    axis(3, tick = FALSE, line = -3, at = 0.25,
          labels = paste0(cl$n, " clusters found with ", cl$method, 
                          '; silhouette coeff. = ', round(cl$sil, 3)))
          
   })
   
+  output$howManyDims <- renderPlot({
+    par(mar = c(2.5, 2.5, 0, 0), xpd = NA, mgp = c(1.5, 0.5, 0))
+    txc <- projQual()['TxC', ]
+    plot(txc, type = 'n', ylim = c(min(txc, 0.5), 1),
+         frame.plot = FALSE, axes = FALSE,
+         xlab = 'Dimension', ylab = 'Trustw. \uD7 Contin.')
+    par(xpd = FALSE)
+    axis(1, 1:14)
+    axis(2)
+    tickPos <- c(0, 0.5, 0.7, 0.8, 0.9, 0.95, 1.0)
+    nStop <- length(badToGood)
+    for (i in tickPos[-1]) {
+      abline(h = i, lty = 3, col = badToGood[LogScore(i) * nStop])
+    }
+    points(txc, type = 'b')
+    txcNow <- txc[dims()]
+    
+    points(dims(), txcNow, pch = 16, col = badToGood[LogScore(txcNow) * nStop],
+           cex = 1.6)
+  })
+  output$savePng <- downloadHandler(
+    filename = 'TreeSpace.png',
+    content = function (file) {
+      png(file, width = input$plotSize, height = input$plotSize)
+      treespacePlot()
+      dev.off()
+  })
+  output$savePdf <- downloadHandler(
+    filename = 'TreeSpace.pdf',
+    content = function (file) {
+      pdf(file, title = paste0('Tree space projection'))
+      treespacePlot()
+      dev.off()
+  })
 }
 
 shinyApp(ui = ui, server = server)
