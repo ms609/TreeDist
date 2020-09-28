@@ -93,7 +93,7 @@ MacKay (2003) and Meil&amp;amp;#259; (2007)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9100</span>
       </span>
     </div>
 
@@ -182,7 +182,7 @@ Further details are available in a
 MacKay (2003) and Meil&amp;#259; (2007).</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SplitEntropy</span>(<span class='kw'>split1</span>, split2 = <span class='kw'>split1</span>)</pre>
+    <pre class="usage"><span class='fu'>SplitEntropy</span><span class='op'>(</span><span class='va'>split1</span>, split2 <span class='op'>=</span> <span class='va'>split1</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -228,9 +228,9 @@ doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11
 (<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>A</span> <span class='op'>&lt;-</span> <span class='fl'>TRUE</span>
-<span class='kw'>B</span> <span class='op'>&lt;-</span> <span class='fl'>FALSE</span>
-<span class='fu'>SplitEntropy</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>A</span>, <span class='kw'>A</span>, <span class='kw'>A</span>, <span class='kw'>B</span>, <span class='kw'>B</span>, <span class='kw'>B</span>), <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='kw'>A</span>, <span class='kw'>A</span>, <span class='kw'>B</span>, <span class='kw'>B</span>, <span class='kw'>B</span>, <span class='kw'>B</span>))
+    <pre class="examples"><div class='input'><span class='va'>A</span> <span class='op'>&lt;-</span> <span class='cn'>TRUE</span>
+<span class='va'>B</span> <span class='op'>&lt;-</span> <span class='cn'>FALSE</span>
+<span class='fu'>SplitEntropy</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>A</span>, <span class='va'>A</span>, <span class='va'>A</span>, <span class='va'>B</span>, <span class='va'>B</span>, <span class='va'>B</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>A</span>, <span class='va'>A</span>, <span class='va'>B</span>, <span class='va'>B</span>, <span class='va'>B</span>, <span class='va'>B</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;        H1        H2       H12         I        Hd 
 #&gt; 1.0000000 0.9182958 1.4591479 0.4591479 1.0000000 </div></pre>
   </div>

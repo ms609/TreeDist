@@ -88,7 +88,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9100</span>
       </span>
     </div>
 
@@ -172,7 +172,7 @@
     <p>Approximate the Subtree Prune and Regraft (SPR) distance.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SPRDist</span>(<span class='kw'>tree1</span>, tree2 = <span class='kw'>NULL</span>, symmetric = <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>SPRDist</span><span class='op'>(</span><span class='va'>tree1</span>, tree2 <span class='op'>=</span> <span class='cn'>NULL</span>, symmetric <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -225,20 +225,20 @@ resources, install the latest version of phangorn with
 (<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'><a href='https://ms609.github.io/TreeTools'>'TreeTools'</a></span>, quietly = <span class='fl'>TRUE</span>, warn.conflicts = <span class='fl'>FALSE</span>)
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='st'><a href='https://ms609.github.io/TreeTools/'>'TreeTools'</a></span>, quietly <span class='op'>=</span> <span class='cn'>TRUE</span>, warn.conflicts <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 
-<span class='fu'>SPRDist</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>))
+<span class='fu'>SPRDist</span><span class='op'>(</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span><span class='op'>(</span><span class='fl'>7</span><span class='op'>)</span>, <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span><span class='op'>(</span><span class='fl'>7</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; spr 
 #&gt;   1 </div><div class='input'>
-<span class='fu'>SPRDist</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='fu'>as.phylo</span>(<span class='fl'>0</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>7</span>))
-</div><div class='output co'>#&gt; [1] 2 2 2</div><div class='input'><span class='fu'>SPRDist</span>(<span class='fu'>as.phylo</span>(<span class='fl'>0</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>7</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>))
+<span class='fu'>SPRDist</span><span class='op'>(</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span><span class='op'>(</span><span class='fl'>7</span><span class='op'>)</span>, <span class='fu'>as.phylo</span><span class='op'>(</span><span class='fl'>0</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>7</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 2 2 2</div><div class='input'><span class='fu'>SPRDist</span><span class='op'>(</span><span class='fu'>as.phylo</span><span class='op'>(</span><span class='fl'>0</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>7</span><span class='op'>)</span>, <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span><span class='op'>(</span><span class='fl'>7</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 1 2 2</div><div class='input'>
-<span class='fu'>SPRDist</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(bal = <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), pec = <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>)),
-        <span class='fu'>as.phylo</span>(<span class='fl'>0</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>7</span>))
+<span class='fu'>SPRDist</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>bal <span class='op'>=</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span><span class='op'>(</span><span class='fl'>7</span><span class='op'>)</span>, pec <span class='op'>=</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span><span class='op'>(</span><span class='fl'>7</span><span class='op'>)</span><span class='op'>)</span>,
+        <span class='fu'>as.phylo</span><span class='op'>(</span><span class='fl'>0</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>7</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;     [,1] [,2] [,3]
 #&gt; bal    2    2    2
 #&gt; pec    1    2    2</div><div class='input'>
-<span class='fu'><a href='CompareAll.html'>CompareAll</a></span>(<span class='fu'>as.phylo</span>(<span class='fl'>30</span><span class='op'>:</span><span class='fl'>33</span>, <span class='fl'>8</span>), <span class='kw'>SPRDist</span>)
+<span class='fu'><a href='CompareAll.html'>CompareAll</a></span><span class='op'>(</span><span class='fu'>as.phylo</span><span class='op'>(</span><span class='fl'>30</span><span class='op'>:</span><span class='fl'>33</span>, <span class='fl'>8</span><span class='op'>)</span>, <span class='va'>SPRDist</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;   1 2 3 4
 #&gt; 1   1 1 1
 #&gt; 2 1   1 1

@@ -89,7 +89,7 @@ path difference." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9100</span>
       </span>
     </div>
 
@@ -174,9 +174,9 @@ path difference." />
 path difference.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>KendallColijn</span>(<span class='kw'>tree1</span>, tree2 = <span class='kw'>tree1</span>)
+    <pre class="usage"><span class='fu'>KendallColijn</span><span class='op'>(</span><span class='va'>tree1</span>, tree2 <span class='op'>=</span> <span class='va'>tree1</span><span class='op'>)</span>
 
-<span class='fu'>KCVector</span>(<span class='kw'>tree</span>)</pre>
+<span class='fu'>KCVector</span><span class='op'>(</span><span class='va'>tree</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -246,11 +246,11 @@ lambda &gt; 0, i.e. use of edge lengths in tree comparison.</p>
 (<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>KendallColijn</span>(<span class='kw'>TreeTools</span>::<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>8</span>), <span class='kw'>TreeTools</span>::<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>8</span>))
+    <pre class="examples"><div class='input'><span class='fu'>KendallColijn</span><span class='op'>(</span><span class='fu'>TreeTools</span><span class='fu'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span><span class='op'>(</span><span class='fl'>8</span><span class='op'>)</span>, <span class='fu'>TreeTools</span><span class='fu'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span><span class='op'>(</span><span class='fl'>8</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 11.48913</div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>0</span>)
-<span class='fu'>KendallColijn</span>(<span class='kw'>TreeTools</span>::<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>8</span>), <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>8</span>, <span class='fl'>3</span>), <span class='kw'>ape</span>::<span class='kw'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span>))
-</div><div class='output co'>#&gt; [1] 9.591663 5.567764 9.949874</div><div class='input'><span class='fu'>KendallColijn</span>(<span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>8</span>, <span class='fl'>4</span>), <span class='kw'>ape</span>::<span class='kw'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span>))
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>0</span><span class='op'>)</span>
+<span class='fu'>KendallColijn</span><span class='op'>(</span><span class='fu'>TreeTools</span><span class='fu'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span><span class='op'>(</span><span class='fl'>8</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>8</span>, <span class='fl'>3</span><span class='op'>)</span>, <span class='fu'>ape</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 9.591663 5.567764 9.949874</div><div class='input'><span class='fu'>KendallColijn</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>8</span>, <span class='fl'>4</span><span class='op'>)</span>, <span class='fu'>ape</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;          [,1]     [,2]     [,3]     [,4]
 #&gt; [1,] 0.000000 7.280110 7.874008 4.795832
 #&gt; [2,] 7.280110 0.000000 8.185353 7.071068

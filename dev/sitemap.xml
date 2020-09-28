@@ -52,6 +52,9 @@
     <loc>https://ms609.github.io/TreeDist/reference/PathDist.html</loc>
   </url>
   <url>
+    <loc>https://ms609.github.io/TreeDist/reference/ProjectionQuality.html</loc>
+  </url>
+  <url>
     <loc>https://ms609.github.io/TreeDist/reference/ReportMatching.html</loc>
   </url>
   <url>
@@ -59,6 +62,9 @@
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/SPRDist.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/reference/SpectralClustering.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/SplitEntropy.html</loc>
@@ -80,6 +86,9 @@
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/TreeDistance.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/reference/TreeSpace.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/VisualizeMatching.html</loc>
@@ -107,6 +116,9 @@
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/articles/information.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/articles/treespace.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/articles/using-distances.html</loc>

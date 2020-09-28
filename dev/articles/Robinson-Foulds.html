@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9100</span>
       </span>
     </div>
 
@@ -118,7 +118,7 @@
       <h1 data-toc-skip>Extending the Robinson-Foulds metric</h1>
                         <h4 class="author">Martin R. Smith</h4>
             
-            <h4 class="date">2020-09-17</h4>
+            <h4 class="date">2020-09-28</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/Robinson-Foulds.Rmd"><code>vignettes/Robinson-Foulds.Rmd</code></a></small>
       <div class="hidden name"><code>Robinson-Foulds.Rmd</code></div>
@@ -176,19 +176,17 @@
 <a href="#information-corrected-robinson-foulds-distance" class="anchor"></a>Information-corrected Robinson-Foulds distance</h1>
 <p>This differing information content can be accommodated by weighting each split according to the amount of phylogenetic information it contains <span class="citation">(Smith, 2020)</span>. The two tree pairs below both have a Robinson-Foulds distance of two, but the first pair differ with regard to an uneven split (<code>ABCDEF|GH</code>), so obtain a total difference of 22.54 − (3.46 + 5.04 + 5.53 + 5.04) = 3.46 bits:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="kw">tree1</span> <span class="op">&lt;-</span> <span class="kw">ape</span>::<span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(text=<span class="st">'(1, (2, (3, (4, (5, (6, (7, 8)))))));'</span>)
-<span class="kw">tree2</span> <span class="op">&lt;-</span> <span class="kw">ape</span>::<span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(text=<span class="st">'(1, (2, (3, (4, (5, (7, (6, 8)))))));'</span>)
-<span class="kw">tree3</span> <span class="op">&lt;-</span> <span class="kw">ape</span>::<span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(text=<span class="st">'(1, (2, (3, (5, (4, (6, (7, 8)))))));'</span>)
+<span class="va">tree1</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'(1, (2, (3, (4, (5, (6, (7, 8)))))));'</span><span class="op">)</span>
+<span class="va">tree2</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'(1, (2, (3, (4, (5, (7, (6, 8)))))));'</span><span class="op">)</span>
+<span class="va">tree3</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'(1, (2, (3, (5, (4, (6, (7, 8)))))));'</span><span class="op">)</span>
 
-<span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="kw">InfoRobinsonFoulds</span>, <span class="kw">tree1</span>, <span class="kw">tree2</span>, 
-                  Plot = <span class="kw">TreeDistPlot</span>, prune = <span class="fl">12</span>)
-</pre></div>
+<span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">InfoRobinsonFoulds</span>, <span class="va">tree1</span>, <span class="va">tree2</span>, 
+                  Plot <span class="op">=</span> <span class="va">TreeDistPlot</span>, prune <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></pre></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-2-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>whereas the second pair differ in the resolution of a more even, and thus more information-rich, split (<code>ABCD|EFGH</code>), and so receive a distance score of 5.53 bits:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="kw">InfoRobinsonFoulds</span>, <span class="kw">tree1</span>, <span class="kw">tree3</span>, 
-                  Plot = <span class="kw">TreeDistPlot</span>, prune = <span class="fl">8</span>)
-</pre></div>
+<span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">InfoRobinsonFoulds</span>, <span class="va">tree1</span>, <span class="va">tree3</span>, 
+                  Plot <span class="op">=</span> <span class="va">TreeDistPlot</span>, prune <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></pre></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-3-1.png" width="576" style="display: block; margin: auto;"></p>
 </div>
 <div id="generalized-robinson-foulds-distances" class="section level1">
@@ -196,11 +194,10 @@
 <a href="#generalized-robinson-foulds-distances" class="anchor"></a>Generalized Robinson-Foulds distances</h1>
 <p>Even when accounting for the information content of splits in this way, the Robinson-Foulds distance is readily saturated: the maximum value can be obtained by moving a single leaf.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="kw">tree1</span> <span class="op">&lt;-</span> <span class="kw">ape</span>::<span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(text=<span class="st">'(1, (2, (3, (4, (5, (6, (7, 8)))))));'</span>)
-<span class="kw">tree2</span> <span class="op">&lt;-</span> <span class="kw">ape</span>::<span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(text=<span class="st">'(8, (1, (2, (3, (4, (5, (6, 7)))))));'</span>)
+<span class="va">tree1</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'(1, (2, (3, (4, (5, (6, (7, 8)))))));'</span><span class="op">)</span>
+<span class="va">tree2</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'(8, (1, (2, (3, (4, (5, (6, 7)))))));'</span><span class="op">)</span>
 
-<span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="kw">RobinsonFouldsMatching</span>, <span class="kw">tree1</span>, <span class="kw">tree2</span>, Plot = <span class="kw">TreeDistPlot</span>)
-</pre></div>
+<span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">RobinsonFouldsMatching</span>, <span class="va">tree1</span>, <span class="va">tree2</span>, Plot <span class="op">=</span> <span class="va">TreeDistPlot</span><span class="op">)</span></pre></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-4-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>Generalized Robinson-Foulds distances <span class="citation">(Böcker, Canzar, &amp; Klau, 2013; Nye, Liò, &amp; Gilks, 2006)</span> seek to address this issue. This category of metrics aim to acknowledge semblances between similar-but-not-quite-identical pairs of splits, which would contribute zero to tree similarity under the standard Robinson-Foulds measure.</p>
 <p>Generalized RF distances work by finding a <em>matching</em> that pairs splits from one tree with splits in the other. Each pairing is scored according to the similarity of the paired splits; the sum of these scores is the score of the matching. The tree distance is given by the score of the optimal matching.</p>
@@ -209,40 +206,35 @@
 <a href="#constructing-a-matching" class="anchor"></a>Constructing a matching</h2>
 <p>Let’s consider two trees that differ in the position of one wildcard leaf, and in the resolution of a clade:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="kw">tree1</span> <span class="op">&lt;-</span> <span class="kw">ape</span>::<span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(text=<span class="st">'((A, B), ((C, (D, E)), (F, (G, (H, I)))));'</span>)
-<span class="kw">tree2</span> <span class="op">&lt;-</span> <span class="kw">ape</span>::<span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span>(text=<span class="st">'((A, B), ((C, D, (E, I)), (F, (G, H))));'</span>)
+<span class="va">tree1</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'((A, B), ((C, (D, E)), (F, (G, (H, I)))));'</span><span class="op">)</span>
+<span class="va">tree2</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'((A, B), ((C, D, (E, I)), (F, (G, H))));'</span><span class="op">)</span>
 
-<span class="fu">Plot</span>(<span class="kw">tree1</span>, <span class="kw">tree2</span>, highlight = <span class="st">'I'</span>, prune = <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="fl">8</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span>(<span class="fl">0</span>)))
-</pre></div>
+<span class="fu">Plot</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span>, highlight <span class="op">=</span> <span class="st">'I'</span>, prune <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></pre></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-5-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>These trees obtain a Robinson-Foulds distance of nine: a large distances, as the maximum possible for trees of this resolution is eleven. <code>AB|CDEFGHI</code> is the only split in common between the two trees:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="fu">TwoTreePlot</span>()
-<span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="kw">RobinsonFouldsMatching</span>, <span class="kw">tree1</span>, <span class="kw">tree2</span>)
-</pre></div>
+<span class="fu">TwoTreePlot</span><span class="op">(</span><span class="op">)</span>
+<span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">RobinsonFouldsMatching</span>, <span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span></pre></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-6-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>This distance score is higher than might be expected, given how much the trees have in common; removing the single leaf ‘I’ results in two trees that differ only in the resolution of a single node:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="fu">TwoTreePlot</span>()
-<span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="kw">RobinsonFouldsMatching</span>,
-                  <span class="fu">drop.tip</span>(<span class="kw">tree1</span>, <span class="st">'I'</span>),
-                  <span class="fu">drop.tip</span>(<span class="kw">tree2</span>, <span class="st">'I'</span>))
-</pre></div>
+<span class="fu">TwoTreePlot</span><span class="op">(</span><span class="op">)</span>
+<span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">RobinsonFouldsMatching</span>,
+                  <span class="fu">drop.tip</span><span class="op">(</span><span class="va">tree1</span>, <span class="st">'I'</span><span class="op">)</span>,
+                  <span class="fu">drop.tip</span><span class="op">(</span><span class="va">tree2</span>, <span class="st">'I'</span><span class="op">)</span><span class="op">)</span></pre></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-7-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>This hidden similarity can be better reflected if similar, but non-identical, splits are assigned non-zero similarity scores.</p>
 <p>There are various ways to score the similarity between two splits. One is to build on the idea introduced above, where identical splits are scored according to their phylogenetic information content. Non-matching splits can be scored according to the amount of phylogenetic information that they hold in common, which is a function of the proportion of trees that are consistent with both splits. (A full explanation is provided in the discussion of <a href="Generalized-RF.html">Generalized Robinson-Foulds distances</a>.)</p>
 <div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="fu">TwoTreePlot</span>()
-<span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span>(<span class="kw">SharedPhylogeneticInfo</span>, <span class="kw">tree1</span>, <span class="kw">tree2</span>)
-</pre></div>
+<span class="fu">TwoTreePlot</span><span class="op">(</span><span class="op">)</span>
+<span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">SharedPhylogeneticInfo</span>, <span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span></pre></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-8-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>Here, the split <code>AB|CDEFGHI</code> occurs in both trees, and, as it happens, makes the largest contribution to the tree similarity score (3.70) for this particular pair of trees. This is the same contribution it would have made to the information-corrected Robinson-Foulds similarity.</p>
 <p>The split <code>ABCDEF|GHI</code> in the left-hand tree is paired with the split <code>ABCDEFI|GH</code> in the right-hand tree. Had <code>ABCDEF|GHI</code> been available in the right-hand tree, then this perfect match would have been assigned a similarity of <code><a href="https://ms609.github.io/TreeTools/reference/SplitInformation.html">SplitInformation(3, 6)</a></code> = 5.57 bits. The partial match is instead allocated a lower score of 2.12 bits. Pairings of incompatible splits, i.e. those that cannot co-exist on a tree, such as <code>ABCDEFG|HI</code> - <code>ABCDFGH|EI</code>, have no phylogenetic information in common. (<a href="information.html">clustering information</a> is an alternative way to think about split similarity that recognizes similarity even between incompatible splits.)</p>
 <p>The matching depicted above is one of many. It happens to be optimal: an optimal matching can be found by considering the similarity score of each possible pairing, and solving a linear assignment problem to find the optimal set of pairings.</p>
 <p>We can view the splits in each tree, named according to the number of their associated node:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">TreeTools</span>::<span class="fu"><a href="https://ms609.github.io/TreeTools/reference/as.Splits.html">as.Splits</a></span>(<span class="kw">tree1</span>, <span class="kw">LETTERS</span>[<span class="fl">1</span><span class="op">:</span><span class="fl">9</span>]))
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="fu">TreeTools</span><span class="fu">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/as.Splits.html">as.Splits</a></span><span class="op">(</span><span class="va">tree1</span>, <span class="va">LETTERS</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">9</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></pre></div>
 <pre><code>## 6 bipartition splits dividing 9 tips, A .. I
 ##      123456789
 ##  11  **.......
@@ -255,8 +247,7 @@
 ##  Tip 1: A     Tip 2: B    Tip 3: C    Tip 4: D    Tip 5: E   
 ##  Tip 6: F     Tip 7: G    Tip 8: H    Tip 9: I   </code></pre>
 <div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span>(<span class="kw">TreeTools</span>::<span class="fu"><a href="https://ms609.github.io/TreeTools/reference/as.Splits.html">as.Splits</a></span>(<span class="kw">tree2</span>, <span class="kw">LETTERS</span>[<span class="fl">1</span><span class="op">:</span><span class="fl">9</span>]))
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="fu">TreeTools</span><span class="fu">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/as.Splits.html">as.Splits</a></span><span class="op">(</span><span class="va">tree2</span>, <span class="va">LETTERS</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">9</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></pre></div>
 <pre><code>## 5 bipartition splits dividing 9 tips, A .. I
 ##      123456789
 ##  11  **.......
@@ -269,8 +260,7 @@
 ##  Tip 6: F     Tip 7: G    Tip 8: H    Tip 9: I   </code></pre>
 <p>We can then see the similarity scores for each pair of splits, along with the optimal matching:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/attributes.html">attributes</a></span>(<span class="fu"><a href="../reference/TreeDistance.html">SharedPhylogeneticInfo</a></span>(<span class="kw">tree1</span>, <span class="kw">tree2</span>, reportMatching = <span class="fl">TRUE</span>))
-</pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/attributes.html">attributes</a></span><span class="op">(</span><span class="fu"><a href="../reference/TreeDistance.html">SharedPhylogeneticInfo</a></span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span>, reportMatching <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></pre></div>
 <pre><code>## $matching
 ## [1]  1  2 NA  4  5  3
 ## 

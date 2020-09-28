@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Use variation of clustering information to compare pairs of splits — MeilaVariationOfInformation • TreeDist</title>
+<title>Quality of projected distances — ProjectionQuality • TreeDist</title>
 
 
 <!-- jquery -->
@@ -45,9 +45,13 @@
 
 
 
-<meta property="og:title" content="Use variation of clustering information to compare pairs of splits — MeilaVariationOfInformation" />
-<meta property="og:description" content="Compare a pair of splits viewed as clusterings of taxa, using the variation
-of clustering information proposed by Meil&amp;amp;#259; (2007)." />
+<meta property="og:title" content="Quality of projected distances — ProjectionQuality" />
+<meta property="og:description" content="ProjectionQuality() calculates the trustworthiness and continuity
+of projected distances (Venna &amp;amp; Kaski 2001; Kaski et al. 2003).
+Trustworthiness measures, on a scale from 0--1,
+the degree to which points that are nearby in a projection are truly close
+neighbours; continuity, the extent to which points that are truly nearby
+retain their close spatial proximity in a projection." />
 
 
 <meta name="robots" content="noindex">
@@ -164,77 +168,72 @@ of clustering information proposed by Meil&amp;amp;#259; (2007)." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Use variation of clustering information to compare pairs of splits</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/Information.R'><code>R/Information.R</code></a></small>
-    <div class="hidden name"><code>MeilaVariationOfInformation.Rd</code></div>
+    <h1>Quality of projected distances</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/trustworthiness.R'><code>R/trustworthiness.R</code></a></small>
+    <div class="hidden name"><code>ProjectionQuality.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Compare a pair of splits viewed as clusterings of taxa, using the variation
-of clustering information proposed by Meil&amp;#259; (2007).</p>
+    <p><code>ProjectionQuality()</code> calculates the trustworthiness and continuity
+of projected distances (Venna &amp; Kaski 2001; Kaski <em>et al.</em> 2003).
+Trustworthiness measures, on a scale from 0--1,
+the degree to which points that are nearby in a projection are truly close
+neighbours; continuity, the extent to which points that are truly nearby
+retain their close spatial proximity in a projection.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>MeilaVariationOfInformation</span><span class='op'>(</span><span class='va'>split1</span>, <span class='va'>split2</span><span class='op'>)</span>
-
-<span class='fu'>MeilaMutualInformation</span><span class='op'>(</span><span class='va'>split1</span>, <span class='va'>split2</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>ProjectionQuality</span><span class='op'>(</span><span class='va'>original</span>, <span class='va'>projected</span>, neighbours <span class='op'>=</span> <span class='fl'>10L</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>split1, split2</th>
-      <td><p>Logical vectors listing leaves in a consistent order,
-identifying each leaf as a member of the ingroup (<code>TRUE</code>) or outgroup
-(<code>FALSE</code>) of the split in question.</p></td>
+      <th>original, projected</th>
+      <td><p>Square matrix or <code>dist</code> object containing
+original / projected pairwise distances.</p></td>
+    </tr>
+    <tr>
+      <th>neighbours</th>
+      <td><p>Number of nearest neighbours to use in calculation.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p><code>MeilaVariationOfInformation()</code> returns the variation of (clustering)
-information, measured in bits.</p>
-<p><code>MeilaMutualInformation()</code> returns the mutual information,
-measured in bits.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>This is equivalent to the mutual clustering information (Vinh <em>et al.</em> 2010).
-For the total information content, multiply the VoI by the number of leaves.</p>
+    <p><code>ProjectionQuality()</code> returns a named vector of length four,
+containing the entries: <code>Trustworthiness</code>, <code>Continuity</code>, <code>TxC</code>
+(the product of these values), and <code>sqrtTxC</code> (its square root).</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Meilă M (2007).
-&#8220;Comparing clusterings---an information based distance.&#8221;
-<em>Journal of Multivariate Analysis</em>, <b>98</b>(5), 873--895.
-doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11.013</a>
+    <p>Venna J, Kaski S (2001).
+&#8220;Neighborhood preservation in nonlinear projection methods: an experimental study.&#8221;
+In Dorffner G, Bischof H, Hornik K (eds.), <em>Artificial Neural Networks — ICANN 2001</em>,  Lecture Notes in Computer Science, 485--491.
+doi: <a href='https://doi.org/10.1007/3-540-44668-0_68'>10.1007/3-540-44668-0_68</a>
 .</p>
-<p>Vinh NX, Epps J, Bailey J (2010).
-&#8220;Information theoretic measures for clusterings comparison: variants, properties, normalization and correction for chance.&#8221;
-<em>Journal of Machine Learning Research</em>, <b>11</b>, 2837--2854.
-doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</a>
+<p>Kaski S, Nikkilä J, Oja M, Venna J, Törönen P, Castrén E (2003).
+&#8220;Trustworthiness and metrics in visualizing similarity of gene expression.&#8221;
+<em>BMC Bioinformatics</em>, <b>4</b>, 48.
+doi: <a href='https://doi.org/10.1186/1471-2105-4-48'>10.1186/1471-2105-4-48</a>
 .</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>Other tree space functions: 
+<code><a href='SpectralClustering.html'>SpectralClustering</a>()</code>,
+<code><a href='TreeSpace.html'>TreeSpace</a>()</code>,
+<code><a href='median.multiPhylo.html'>median.multiPhylo</a>()</code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
-    <p><a href='https://orcid.org/0000-0001-5660-1727'>Martin R. Smith</a>
-(<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
+    <p>Wrapper for functions from Charlotte Soneson's <span class="pkg">dreval</span>,
+https://github.com/csoneson/dreval/blob/master/R/trustworthiness.R</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Maximum variation = information content of each split separately</span>
-<span class='va'>A</span> <span class='op'>&lt;-</span> <span class='cn'>TRUE</span>
-<span class='va'>B</span> <span class='op'>&lt;-</span> <span class='cn'>FALSE</span>
-<span class='fu'>MeilaVariationOfInformation</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>A</span>, <span class='va'>A</span>, <span class='va'>A</span>, <span class='va'>B</span>, <span class='va'>B</span>, <span class='va'>B</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>A</span>, <span class='va'>A</span>, <span class='va'>A</span>, <span class='va'>A</span>, <span class='va'>A</span>, <span class='va'>A</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 1</div><div class='input'><span class='fu'><a href='Entropy.html'>Entropy</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3</span>, <span class='fl'>3</span><span class='op'>)</span> <span class='op'>/</span> <span class='fl'>6</span><span class='op'>)</span> <span class='op'>+</span> <span class='fu'><a href='Entropy.html'>Entropy</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>6</span><span class='op'>)</span> <span class='op'>/</span> <span class='fl'>6</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 1</div><div class='input'>
-<span class='co'># Minimum variation = 0</span>
-<span class='fu'>MeilaVariationOfInformation</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>A</span>, <span class='va'>A</span>, <span class='va'>A</span>, <span class='va'>B</span>, <span class='va'>B</span>, <span class='va'>B</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>A</span>, <span class='va'>A</span>, <span class='va'>A</span>, <span class='va'>B</span>, <span class='va'>B</span>, <span class='va'>B</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 0</div><div class='input'>
-<span class='co'># Not always possible for two evenly-sized splits to reach maximum</span>
-<span class='co'># variation of information</span>
-<span class='fu'><a href='Entropy.html'>Entropy</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3</span>, <span class='fl'>3</span><span class='op'>)</span> <span class='op'>/</span> <span class='fl'>6</span><span class='op'>)</span> <span class='op'>*</span> <span class='fl'>2</span>  <span class='co'># = 2</span>
-</div><div class='output co'>#&gt; [1] 2</div><div class='input'><span class='fu'>MeilaVariationOfInformation</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>A</span>, <span class='va'>A</span>, <span class='va'>A</span>,<span class='va'>B</span> ,<span class='va'>B</span>, <span class='va'>B</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>A</span>, <span class='va'>B</span>, <span class='va'>A</span>, <span class='va'>B</span>, <span class='va'>A</span>, <span class='va'>B</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># &lt; 2</span>
-</div><div class='output co'>#&gt; [1] 1.836592</div><div class='input'>
-<span class='co'># Phylogenetically uninformative groupings contain spliting information</span>
-<span class='fu'><a href='Entropy.html'>Entropy</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>5</span><span class='op'>)</span> <span class='op'>/</span> <span class='fl'>6</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 0.6500224</div><div class='input'><span class='fu'>MeilaVariationOfInformation</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>B</span>, <span class='va'>A</span>, <span class='va'>A</span>, <span class='va'>A</span>, <span class='va'>A</span>, <span class='va'>A</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>A</span>, <span class='va'>A</span>, <span class='va'>A</span>, <span class='va'>A</span>, <span class='va'>A</span>, <span class='va'>B</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 1.203213</div></pre>
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='st'><a href='https://ms609.github.io/TreeTools/'>'TreeTools'</a></span>, quietly <span class='op'>=</span> <span class='cn'>TRUE</span>, warn.conflict <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='va'>trees</span> <span class='op'>&lt;-</span> <span class='fu'>as.phylo</span><span class='op'>(</span><span class='fl'>0</span><span class='op'>:</span><span class='fl'>10</span>, nTip <span class='op'>=</span> <span class='fl'>8</span><span class='op'>)</span>
+<span class='va'>distances</span> <span class='op'>&lt;-</span> <span class='fu'><a href='TreeDistance.html'>ClusteringInfoDistance</a></span><span class='op'>(</span><span class='va'>trees</span><span class='op'>)</span>
+<span class='va'>projection</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/cmdscale.html'>cmdscale</a></span><span class='op'>(</span><span class='va'>distances</span><span class='op'>)</span>
+<span class='fu'>ProjectionQuality</span><span class='op'>(</span><span class='va'>distances</span>, <span class='fu'><a href='https://rdrr.io/r/stats/dist.html'>dist</a></span><span class='op'>(</span><span class='va'>projection</span><span class='op'>)</span>, <span class='fl'>4</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Trustworthiness      Continuity             TxC         sqrtTxC 
+#&gt;       0.8080808       0.9040404       0.7305377       0.8547150 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
