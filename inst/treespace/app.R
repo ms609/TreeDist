@@ -143,7 +143,7 @@ ui <- fluidPage(theme = 'treespace.css',
         ),
         fluidRow(
           plotOutput(outputId = "distPlot"),
-          rgl::rglwidgetOutput(outputId = "threeDPlot", width = "300px", height = "300px"),
+          rgl::rglwidgetOutput(outputId = "threeDPlot", width = "600px", height = "600px"),
           ),
       )
   )
@@ -589,7 +589,7 @@ server <- function(input, output, session) {
     } else palettes[[1]]
     proj <- projection()
     
-    nDim <- input$dims
+    nDim <- dims()
     plotSeq <- matrix(0, nDim, nDim)
     nPanels <- nDim * (nDim - 1L) / 2L
     plotSeq[upper.tri(plotSeq)] <- seq_len(nPanels)
@@ -632,18 +632,21 @@ server <- function(input, output, session) {
     })
   }
 
+  mode3D <- reactive("show3d" %in% input$display)
   PlotSize <- function () debounce(reactive(input$plotSize), 100)
   output$distPlot <- renderPlot({
-    if (inherits(distances(), 'dist')) {
-      treespacePlot()
-      output$projectionStatus <- renderText('')
-    } else {
-      output$projectionStatus <- renderText("No distances available.")
+    if (!mode3D()) {
+      if (inherits(distances(), 'dist')) {
+        treespacePlot()
+        output$projectionStatus <- renderText('')
+      } else {
+        output$projectionStatus <- renderText("No distances available.")
+      }
     }
   }, width = PlotSize(), height = PlotSize())
   
   output$threeDPlot <- rgl::renderRglwidget({
-    if ("show3d" %in% input$display) {
+    if (mode3D()) {
       
       if (inherits(distances(), 'dist')) {
         cl <- clusterings()
@@ -659,7 +662,7 @@ server <- function(input, output, session) {
                aspect = 1, # Preserve aspect ratio - do not distort distances
                axes = FALSE, # Dimensions are meaningless
                pch = 16,
-               col = treeCols,
+               col = col,
                alpha = input$pt.opacity / 255,
                cex = input$pt.cex,
                xlab = '', ylab = '', zlab = ''
@@ -679,7 +682,7 @@ server <- function(input, output, session) {
     }
   })
   
-  dims <- debounce(reactive(input$dims), 400)
+  dims <- debounce(reactive(if (mode3D()) 3L else input$dims), 400)
   projQual <- reactive({
     withProgress(message = "Estimating projection quality", {
       vapply(1:15, function (k) {
@@ -702,7 +705,7 @@ server <- function(input, output, session) {
          ylim = c(-1.5, 2.5),
          ann = FALSE, axes = FALSE)
     
-    logScore <- LogScore(projQual()['TxC', input$dims])
+    logScore <- LogScore(projQual()['TxC', dims()])
     lines(rep(logScore, 2), c(-1, 1), lty = 3)
     
     tickPos <- c(0, 0.5, 0.7, 0.8, 0.9, 0.95, 1.0)

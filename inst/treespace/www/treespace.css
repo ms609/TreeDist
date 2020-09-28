@@ -50,14 +50,9 @@ div#keptTrees, div#treesStatus {
   display: inline;
 }
 
-div#threeDPlot {
-  width: 100%;
-  margin-bottom: -300px;
-}
-
 div#threeDPlot canvas {
   border: 1px solid;
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 87px;
+  left: 0;
 }
