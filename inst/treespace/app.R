@@ -72,8 +72,9 @@ ui <- fluidPage(theme = 'treespace.css',
                        selected = 'cid'),
           
           textOutput(outputId = "projectionStatus"),
+          fluidRow(plotOutput(outputId = "pcQuality", height = "72px")),
           selectInput("projection", "Projection method",
-                       choices = list("Principal components (classical MDS)" = 'pca',
+                       choices = list("Princ. comps (classical MDS)" = 'pca',
                                       "Sammon mapping mMDS" = 'nls',
                                       "Kruskal-1 nmMDS (slow)" = 'k'
                                       ),
@@ -97,6 +98,7 @@ ui <- fluidPage(theme = 'treespace.css',
                       max = 20,
                       value = 8),
           actionButton("calcClusters", "Recalculate clustering"),
+          fluidRow(plotOutput(outputId = "clustQuality", height = "80px")),
         ),
         tabPanel('Display',
           sliderInput(inputId = "dims",
@@ -129,8 +131,6 @@ ui <- fluidPage(theme = 'treespace.css',
     
     column(9,
       mainPanel(
-        fluidRow(plotOutput(outputId = "pcQuality", height = "72px")),
-        fluidRow(plotOutput(outputId = "clustQuality", height = "72px")),
         fluidRow(id = 'plotConfig',
           tags$span("Plot size:", id = 'plotSizeSpan'),
           sliderInput(inputId = "plotSize", label = NULL,
@@ -675,7 +675,7 @@ server <- function(input, output, session) {
   
   dims <- debounce(reactive(input$dims), 400)
   projQual <- reactive({
-    withProgress(message = "Calculating projection quality", {
+    withProgress(message = "Estimating projection quality", {
       vapply(1:15, function (k) {
         incProgress(1/15)
         ProjectionQuality(distances(), dist(projection()[, seq_len(k)]), 10)
@@ -688,7 +688,7 @@ server <- function(input, output, session) {
   
   
   output$pcQuality <- renderPlot({
-    par(mar = rep(0, 4))
+    par(mar = c(2, 0, 0, 0))
     nStop <- length(badToGood)
     
     plot(seq(0, 1, length.out = nStop), rep(0, nStop),
@@ -702,18 +702,18 @@ server <- function(input, output, session) {
     tickPos <- c(0, 0.5, 0.7, 0.8, 0.9, 0.95, 1.0)
     ticks <- LogScore(tickPos)
     
-    axis(1, at = ticks, labels = tickPos, line = -1)
-    axis(1, line = -2, tick = FALSE,
+    axis(1, at = ticks, labels = NA, line = 0)
+    axis(1, tick = FALSE, at = ticks, labels = tickPos, line = 0)
+    axis(1, line = -1, tick = FALSE,
          at = ticks[-1] - ((ticks[-1] - ticks[-length(ticks)]) / 2),
-         labels = c('', '~random', 'dangerous', "usable", "good", "excellent"))
-    axis(3, at = 0.5, tick = FALSE, line = -3,
-         paste(switch(input$projection, 'pca' = 'Principal components',
-                      'k' = 'Kruskal-1','nls' = 'Sammon'),
-               'projection quality:'))
+         labels = c('', 'dire', '', "ok", "gd", "excellent"))
+    axis(3, at = 0.5, tick = FALSE, line = -2, 
+         paste0(dims(), 'D projection quality (trustw. \ud7 contin.):'))
   })
   
   output$clustQuality <- renderPlot({
-    par(mar = rep(0, 4))
+    par(mar = c(2, 0.5, 0, 0.5), xpd = NA, mgp = c(2, 1, 0))
+    cl <- clusterings()
     clust_id <- paste0('clust_', input$distance)
     sil <- r[[clust_id]]$sil
     if (length(sil) == 0) sil <- -0.5
@@ -726,26 +726,30 @@ server <- function(input, output, session) {
     plot(seq(-range[1], range[2], length.out = nStop * sum(range)),
          rep(0, nStop * sum(range)),
          pch = 15, col = c(negScale, posScale),
-         ylim = c(-1.5, 2.5),
+         ylim = c(-2, 2),
          ann = FALSE, axes = FALSE)
     lines(c(sil, sil), c(-1, 1), lty = 3)
     
     ticks <- c(-0.5, 0, 0.25, 0.5, 0.7, 1)
     axis(1, at = ticks, line = -1)
     axis(1, tick = FALSE, at = ticks[-1] - ((ticks[-1] - ticks[-6]) / 2),
-         labels = c("Clustering structure:", "lacking", "weak", "reasonable", "strong"),
+         labels = c("Structure:", "none", "weak", "ok", "strong"),
          line = -2)
     
-    cl <- clusterings()
-    axis(3, tick = FALSE, line = -3, at = 0.25,
-         labels = paste0(cl$n, " clusters found with ", cl$method, 
-                         '; silhouette coeff. = ', round(cl$sil, 3)))
+    axis(1, tick = FALSE, line = 0, at = 0.25,
+         labels = paste0("Silhouette coefficient (", round(cl$sil, 3), ")"))
+         
+    
+    axis(3, tick = FALSE, line = -2, at = 0.25,
+         labels = paste0(cl$n, " clusters found with ", cl$method))
          
   })
   
   output$howManyDims <- renderPlot({
     par(mar = c(2.5, 2.5, 0, 0), xpd = NA, mgp = c(1.5, 0.5, 0))
     txc <- projQual()['TxC', ]
+    nStop <- length(badToGood)
+    
     plot(txc, type = 'n', ylim = c(min(txc, 0.5), 1),
          frame.plot = FALSE, axes = FALSE,
          xlab = 'Dimension', ylab = 'Trustw. \uD7 Contin.')
@@ -753,7 +757,12 @@ server <- function(input, output, session) {
     axis(1, 1:14)
     axis(2)
     tickPos <- c(0, 0.5, 0.7, 0.8, 0.9, 0.95, 1.0)
-    nStop <- length(badToGood)
+    mids <- c(0.6, 0.75, 0.85, 0.925)
+    text(rep(15, 4), mids, pos = 2, cex = 0.8,
+         col = badToGood[nStop * LogScore(mids)],
+         c('Essentially random', 'Dangerous', "Usable", "Good"))
+    text(1, 0.975, pos = 4, "Excellent", cex = 0.8, 
+         col = badToGood[LogScore(0.975) * nStop])
     for (i in tickPos[-1]) {
       abline(h = i, lty = 3, col = badToGood[LogScore(i) * nStop])
     }
