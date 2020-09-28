@@ -1,5 +1,6 @@
 library("shiny")
 library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
+library("TreeDist")
 
 options(shiny.maxRequestSize = 100 * 1024^2)
 
@@ -212,7 +213,8 @@ server <- function(input, output, session) {
                     fixed = TRUE)) > 0) {
       ret <- read.nexus(tmpFile)
     } else {
-      ret <- read.tree(tmpFile)
+      ret <- ReadTntTree(tmpFile)
+      if (length(ret) == 0) ret <- read.tree(tmpFile)
     }
     
     if (!inherits(ret, c('phylo', 'multiPhylo'))) {
@@ -657,7 +659,8 @@ server <- function(input, output, session) {
                aspect = 1, # Preserve aspect ratio - do not distort distances
                axes = FALSE, # Dimensions are meaningless
                pch = 16,
-               col = paste0(treeCols, as.hexmode(input$pt.opacity)),
+               col = treeCols,
+               alpha = input$pt.opacity / 255,
                cex = input$pt.cex,
                xlab = '', ylab = '', zlab = ''
           )
