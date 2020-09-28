@@ -59,6 +59,7 @@
 #'   [`TreeTools::ConsensusWithout()`]
 #'   
 #' @importFrom stats median
+#' @family tree space functions
 #' @export
 median.multiPhylo <- function (x, na.rm = FALSE,
                                Distance = ClusteringInfoDistance,

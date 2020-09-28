@@ -1,0 +1,58 @@
+body {
+  font-family: "Gill Sans", "Gill Sans MT", "Gill Sans MS", "Verdana", "Sans-Serif";
+}
+/*
+.irs-bar, .irs-bar-edge {
+  background-color: #938e44;
+  border-top-color: #938e44;
+  border-bottom-color: #938e44;
+}
+
+.irs-single, .irs-from, .irs-to, .irs-grid-pol {
+  background: #938e44;
+}
+*/
+/*
+dark green = "#017920",
+orange = "#ffc646",
+teal = "#33f2be",
+vivid = "#daff16",
+brown = "#938e44",
+cream = "#fffbaa"
+*/ 
+
+#plotConfig {
+  margin-top: 1em;
+}
+
+#plotSizeSpan + div {
+  display: inline-block;
+  position: relative;
+  top: -24px;
+  padding-right: 1em;
+  padding-left: 1em;
+}
+
+#treefile_progress{
+  margin-bottom: 0;
+}
+
+input[value=rf]:focus+span {
+  color: #bb3333;
+  font-weight: bold;
+}
+
+.shiny-input-container {
+  margin-bottom: 0;
+}
+
+div#keptTrees, div#treesStatus {
+  display: inline;
+}
+
+div#threeDPlot canvas {
+  border: 1px solid;
+  position: absolute;
+  top: 87px;
+  left: 0;
+}
