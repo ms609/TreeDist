@@ -80,6 +80,7 @@ Consensus methods:
 
 Other tree space functions: 
 \code{\link{ProjectionQuality}()},
+\code{\link{SpectralClustering}()},
 \code{\link{TreeSpace}()}
 }
 \author{
