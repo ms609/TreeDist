@@ -21,6 +21,14 @@ brown = "#938e44",
 cream = "#fffbaa"
 */ 
 
+#treefile_progress{
+  margin-bottom: 0;
+}
+#treesStatus {
+  position: relative;
+  top: -15px;
+}
+
 input[value=rf]:focus+span {
   color: #bb3333;
   font-weight: bold;
