@@ -47,7 +47,7 @@ ui <- fluidPage(theme = 'treespace.css',
           textOutput(outputId = "keptTrees"),
           sliderInput(inputId = "keepTrees",
                       label = "Trees to analyse:",
-                      min = 0,
+                      min = 1,
                       max = 90,
                       value = c(0, 90)),
           sliderInput(inputId = "thinTrees",
@@ -107,11 +107,10 @@ ui <- fluidPage(theme = 'treespace.css',
           plotOutput('howManyDims', width = '100%', height = '180px'),
           
           sliderInput(inputId = "mst",
-                      label = "Minimum spanning tree extent:",
+                      label = "Minimum spanning tree size",
                       min = 0,
-                      max = 100,
-                      post = '%',
-                      value = 20),
+                      max = 90,
+                      value = 90),
           checkboxGroupInput("display", "Display settings",
                              list(
                                "Clusters' convex hulls" = 'hulls',
@@ -273,7 +272,7 @@ server <- function(input, output, session) {
   })
 
   thinnedTrees <- reactive({
-    seq(keptRange()[1], keptRange()[2], by = 2^input$thinTrees)
+    as.integer(seq(keptRange()[1], keptRange()[2], by = 2^input$thinTrees))
   })
   
   observeEvent(input$addTrees, {
@@ -281,11 +280,15 @@ server <- function(input, output, session) {
     r$allTrees <- if (length(r$allTrees) == 0) newTrees else {
       c(r$allTrees, newTrees)
     }
+    nTrees <- length(r$allTrees)
+    updateSliderInput(session, 'mst', value = min(100, nTrees), max = nTrees)
     ClearDistances()
   })
   
   observeEvent(input$replaceTrees, {
     r$allTrees <- c(treeFile()[thinnedTrees()])
+    nTrees <- length(r$allTrees)
+    updateSliderInput(session, 'mst', value = min(100, nTrees), max = nTrees)
     ClearDistances()
   })
   
@@ -501,7 +504,7 @@ server <- function(input, output, session) {
                       hwdSil, kSil, specSil))]
     
         r[[clust_id]] <- list(method = switch(bestCluster,
-                                              pam = 'partitioning around medoids',
+                                              pam = 'part. around medoids',
                                               hmm = 'minimax linkage',
                                               hsi = "single linkage",
                                               hco = "complete linkage",
@@ -565,7 +568,7 @@ server <- function(input, output, session) {
       dist <- as.matrix(distances())
       nRows <- dim(dist)[1]
       withProgress(message = 'Calculating MST', {
-        selection <- unique(round(seq.int(1, nRows, length.out = max(2L, mstSize / 100 * nRows))))
+        selection <- unique(round(seq.int(1, nRows, length.out = max(2L, mstSize))))
         edges <- MSTEdges(dist[selection, selection])
         edges[, 1] <- selection[edges[, 1]]
         edges[, 2] <- selection[edges[, 2]]
