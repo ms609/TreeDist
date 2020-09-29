@@ -114,6 +114,11 @@ ui <- fluidPage(theme = 'treespace.css',
                                'Interactive 3D plot' = 'show3d'
                              ),
                              character(0)),
+          selectInput('pt.col', 'Colour points by:',
+                      list('Cluster membership' = 'clust', 
+                           'Input order' = 'entry',
+                           'Sequence in file' = 'seq',
+                           'Separate data' = 'data'), 'clust'),
           sliderInput('pt.cex', 'Point size',
                       min = 0, max = 4, value = 1, 
                       step = 0.01),
@@ -151,7 +156,8 @@ server <- function(input, output, session) {
   #treeNumbers <- c(1:220)
   treeNumbers <- c(1:50, 401:440)
   
-  r <- reactiveValues(allTrees = as.phylo(treeNumbers, 8))
+  r <- reactiveValues(allTrees = as.phylo(treeNumbers, 8),
+                      entryOrder = rep(1, length(treeNumbers)))
   
   ClearClusters <- function () {
     r$clust_cid = NULL
@@ -274,8 +280,13 @@ server <- function(input, output, session) {
   
   observeEvent(input$addTrees, {
     newTrees <- treeFile()[thinnedTrees()]
-    r$allTrees <- if (length(r$allTrees) == 0) newTrees else {
-      c(r$allTrees, newTrees)
+    if (length(r$allTrees) == 0) {
+      r$entryOrder <- rep(1L, length(newTrees))
+      r$allTrees <- c(newTrees)
+    } else {
+      r$entryOrder <- c(r$entryOrder,
+                        rep(1L + max(r$entryOrder), length(newTrees)))
+      r$allTrees <- c(r$allTrees, newTrees)
     }
     nTrees <- length(r$allTrees)
     updateSliderInput(session, 'mst', value = min(100, nTrees), max = nTrees)
@@ -284,6 +295,7 @@ server <- function(input, output, session) {
   
   observeEvent(input$replaceTrees, {
     r$allTrees <- c(treeFile()[thinnedTrees()])
+    r$entryOrder <- rep(1L, length(r$allTrees))
     nTrees <- length(r$allTrees)
     updateSliderInput(session, 'mst', value = min(100, nTrees), max = nTrees)
     ClearDistances()
@@ -319,6 +331,9 @@ server <- function(input, output, session) {
     
   })
   
+  maxProjDim <- reactive({
+    min(15L, length(r$allTrees) - 1L)
+  })
   projection <- reactive({
     proj_id <- paste0('proj_', input$projection, '_', input$distance)
     if (is.null(r[[proj_id]])) {
@@ -326,9 +341,9 @@ server <- function(input, output, session) {
         message = 'Projecting distances',
         value = 0.99,
         proj <- switch(input$projection,
-                       'pca' = cmdscale(distances(), k = 15),
-                       'k' = MASS::isoMDS(distances(), k = 15)$points,
-                       'nls' = MASS::sammon(distances(), k = 15)$points
+                       'pca' = cmdscale(distances(), k = maxProjDim()),
+                       'k' = MASS::isoMDS(distances(), k = maxProjDim())$points,
+                       'nls' = MASS::sammon(distances(), k = maxProjDim())$points
                        )
       )
       r[[proj_id]] <- proj
@@ -337,13 +352,16 @@ server <- function(input, output, session) {
   })
   
   
+  maxClust <- reactive(min(input$maxClusters, length(r$allTrees)))
   clusterings <- reactive({
     maxCluster <- input$maxClusters
     if (!is.null(r$clust_max) && maxCluster != r$clust_max) ClearClusters()
     clust_id <- paste0('clust_', input$distance)
     
     if (is.null(r[[clust_id]])) {
-      possibleClusters <- 2:input$maxClusters
+      if (maxClust() < 3) return(rep(1L, length(r$allTrees)))
+      possibleClusters <- 2:maxClust()
+      
       
       hSil <- pamSil <- havSil <- kSil <- specSil <-
         hsiSil <- hcoSil <- hmdSil <- hctSil <- hwdSil <- -99
@@ -577,11 +595,27 @@ server <- function(input, output, session) {
     r[[mst_id]]
   })
   
-  treespacePlot <- function () {
+  pointCols <- reactive({
+    switch(input$pt.col,
+           'clust' = {
+             cl <- clusterings()
+             if (cl$sil > 0.25) {
+               palettes[[min(length(palettes), cl$n)]][cl$cluster]
+             } else palettes[[1]]
+           },
+           'entry' = {
+             n <- r$entryOrder
+             message(n)
+             palettes[[max(n)]][n]
+           },
+           'seq' = {
+             substr(viridisLite::plasma(length(r$allTrees)), 1, 7)
+           }
+    )
+  })
+  
+  treespacePlot <- reactive({
     cl <- clusterings()
-    treeCols <- if (cl$sil > 0.25) {
-      palettes[[min(length(palettes), cl$n)]][cl$cluster]
-    } else palettes[[1]]
     proj <- projection()
     
     nDim <- dims()
@@ -605,7 +639,7 @@ server <- function(input, output, session) {
         
         # Add points
         points(proj[, j], proj[, i], pch = 16,
-               col = paste0(treeCols, as.hexmode(input$pt.opacity)),
+               col = paste0(pointCols(), as.hexmode(input$pt.opacity)),
                cex = input$pt.cex)
         
         if ("hulls" %in% input$display && cl$sil > 0.25) {
@@ -625,7 +659,7 @@ server <- function(input, output, session) {
         }
       }
     })
-  }
+  })
 
   mode3D <- reactive("show3d" %in% input$display)
   PlotSize <- function () debounce(reactive(input$plotSize), 100)
@@ -645,9 +679,6 @@ server <- function(input, output, session) {
       
       if (inherits(distances(), 'dist')) {
         cl <- clusterings()
-        col <- if (cl$sil > 0.25) {
-          palettes[[min(length(palettes), cl$n)]][cl$cluster]
-        } else palettes[[1]]
         proj <- projection()
         withProgress(message = 'Drawing 3D plot', {
           rgl::rgl.open(useNULL = TRUE)
@@ -657,7 +688,7 @@ server <- function(input, output, session) {
                aspect = 1, # Preserve aspect ratio - do not distort distances
                axes = FALSE, # Dimensions are meaningless
                pch = 16,
-               col = col,
+               col = pointCols(),
                alpha = input$pt.opacity / 255,
                cex = input$pt.cex,
                xlab = '', ylab = '', zlab = ''
