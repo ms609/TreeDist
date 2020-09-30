@@ -86,7 +86,7 @@ Kaski2003 <- Reference(
   year = 2003, volume = 4, pages = 48, doi = "10.1186/1471-2105-4-48",
   journal = "BMC Bioinformatics")
 Maechler2019 <- Reference(
-  title = "cluster: Cluster Analysis Basics and Extensions", year = 2019,
+  title = "cluster: cluster analysis basics and extensions", year = 2019,
   author = c("Maechler, M.", "Rousseeuw, P.", "Struyf, A.", "Hubert, M.", "Hornik, K."),
   journal = "Comprehensive R Archive Network")
 Murtagh1983 <- Reference(
@@ -1037,7 +1037,9 @@ server <- function(input, output, session) {
          
     
     axis(3, tick = FALSE, line = -2, at = 0.25,
-         labels = paste0(cl$n, " clusters found with ", cl$method))
+         labels = if (cl$sil > 0.25) 
+           paste0(cl$n, " clusters found with ", cl$method) else 
+             paste0("No meaningful clusters found"))
          
   })
   
