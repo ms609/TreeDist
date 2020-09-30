@@ -31,9 +31,6 @@ badToGood <- rev(c("#1AB958", "#23B956", "#2BB954", "#31B952", "#37B850", "#3CB8
 
 # Define UI for app that draws a histogram ----
 ui <- fluidPage(theme = 'treespace.css',
-  
-  # Sidebar layout with input and output definitions ----
-  
     column(3, 
       tabsetPanel(
         tabPanel('Input',
@@ -166,7 +163,6 @@ ui <- fluidPage(theme = 'treespace.css',
           ),
       )
   )
-  
 )
 
 server <- function(input, output, session) {
@@ -251,7 +247,7 @@ server <- function(input, output, session) {
     }
     ret
   })
-
+  
   
   output$treesStatus <- renderText({
     if (is.character(treeFile())) return(treeFile())
@@ -292,7 +288,7 @@ server <- function(input, output, session) {
       }
     }
   })
-
+  
   thinnedTrees <- reactive({
     as.integer(seq(keptRange()[1], keptRange()[2], by = 2^input$thinTrees))
   })
@@ -331,27 +327,27 @@ server <- function(input, output, session) {
   
   distances <- reactive({
     withProgress(message = 'Calculating distances', value = 0.99,
-    switch(input$distance,
-           'cid' = {
-             if (is.null(r$dist_cid)) r$dist_cid = ClusteringInfoDistance(r$allTrees)
-             r$dist_cid
-           },
-           'pid' = {
-             if (is.null(r$dist_pid)) r$dist_pid = PhylogeneticInfoDistance(r$allTrees)
-             r$dist_pid
-           },
-           'qd' = {
-             if (is.null(r$dist_qd)) r$dist_qd = as.dist(Quartet::QuartetDivergence(
-               Quartet::ManyToManyQuartetAgreement(r$allTrees), similarity = FALSE))
-             r$dist_qd
-           }, 'path' = {
-             if (is.null(r$dist_path)) r$dist_path = PathDist(r$allTrees)
-             r$dist_path
-           }, 'rf' = {
-             if (is.null(r$dist_rf)) r$dist_rf = RobinsonFoulds(r$allTrees)
-             r$dist_rf
-           }
-    ))
+                 switch(input$distance,
+                        'cid' = {
+                          if (is.null(r$dist_cid)) r$dist_cid = ClusteringInfoDistance(r$allTrees)
+                          r$dist_cid
+                        },
+                        'pid' = {
+                          if (is.null(r$dist_pid)) r$dist_pid = PhylogeneticInfoDistance(r$allTrees)
+                          r$dist_pid
+                        },
+                        'qd' = {
+                          if (is.null(r$dist_qd)) r$dist_qd = as.dist(Quartet::QuartetDivergence(
+                            Quartet::ManyToManyQuartetAgreement(r$allTrees), similarity = FALSE))
+                          r$dist_qd
+                        }, 'path' = {
+                          if (is.null(r$dist_path)) r$dist_path = PathDist(r$allTrees)
+                          r$dist_path
+                        }, 'rf' = {
+                          if (is.null(r$dist_rf)) r$dist_rf = RobinsonFoulds(r$allTrees)
+                          r$dist_rf
+                        }
+                 ))
     
   })
   
@@ -411,7 +407,7 @@ server <- function(input, output, session) {
             incProgress(kInc, detail = 'PAM silhouettes')
             mean(cluster::silhouette(pamCluster)[, 3])
           }, double(1))
-        
+          
           bestPam <- which.max(pamSils)
           pamSil <- pamSils[bestPam]
           pamCluster <- pamClusters[[bestPam]]$cluster
@@ -544,9 +540,9 @@ server <- function(input, output, session) {
         
         bestCluster <- c('none', 'pam', 'hmm', 'hsi', 'hco', 'hav', 'hmd', 'hct',
                          'hwd', 'kmn', 'spec')[
-          which.max(c(0, pamSil, hSil, hsiSil, hcoSil, havSil, hmdSil, hctSil,
-                      hwdSil, kSil, specSil))]
-    
+                           which.max(c(0, pamSil, hSil, hsiSil, hcoSil, havSil, hmdSil, hctSil,
+                                       hwdSil, kSil, specSil))]
+        
         r[[clust_id]] <- list(method = switch(bestCluster,
                                               pam = 'part. around medoids',
                                               hmm = 'minimax linkage',
@@ -651,58 +647,58 @@ server <- function(input, output, session) {
   
   pointCols <- reactive({
     switch(input$pt.col,
-     'clust' = {
-       cl <- clusterings()
-       if (cl$sil > 0.25) {
-         palettes[[min(length(palettes), cl$n)]][cl$cluster]
-       } else palettes[[1]]
-     },
-     'entry' = {
-       n <- r$entryOrder
-       palettes[[max(n)]][n]
-     },
-     'seq' = {
-       substr(viridisLite::plasma(length(r$allTrees)), 1, 7)
-     },
-     'discrete' = {
-       dat <- pointData()
-       categories <- unique(dat)
-       nCol <- length(categories)
-       if (nCol <= length(palettes)) {
-         PointDataStatus("")
-         output$pt.col.scale <- renderPlot({
-           par(mar = c(1, 0, 0, 0))
-           plot(seq_len(nCol), rep(0, nCol), pch = 15, ylim = c(-1, 0),
-                col = palettes[[nCol]], ann = FALSE, axes = FALSE)
-           axis(1, at = seq_len(nCol), labels = categories,
-                tick = FALSE, line = -1)
-         })
-         palettes[[nCol]][match(dat, categories)]
-       } else {
-         PointDataStatus(nCol, " categories is too many to display;",
-                         "did you mean continuous?")
-         c(palettes[[length(palettes)]], '#000000')[
-           pmin(match(dat, categories), length(palettes[[length(palettes)]]) + 1L)]
-       }
-     },
-     'continuous' = {
-       dat <- pointData()
-       if (is.numeric(dat)) {
-         output$pt.col.scale <- renderPlot({
-           par(mar = c(1, 0, 0, 0))
-           plot(1:256, rep(0, 256), pch = 15, col = viridisLite::plasma(256), 
-                ylim = c(-1, 0), ann = FALSE, axes = FALSE)
-           axis(1, at = c(1, 256), labels = range(dat), line = -1)
-           
-         })
-         substr(viridisLite::plasma(256), 1, 7)[cut(dat, 256)]
-       } else {
-         PointDataStatus("Point data are not numeric.",
-                         'Try selecting "Custom categorical".')
-         '#000000'
-       }
-       
-     }
+           'clust' = {
+             cl <- clusterings()
+             if (cl$sil > 0.25) {
+               palettes[[min(length(palettes), cl$n)]][cl$cluster]
+             } else palettes[[1]]
+           },
+           'entry' = {
+             n <- r$entryOrder
+             palettes[[max(n)]][n]
+           },
+           'seq' = {
+             substr(viridisLite::plasma(length(r$allTrees)), 1, 7)
+           },
+           'discrete' = {
+             dat <- pointData()
+             categories <- unique(dat)
+             nCol <- length(categories)
+             if (nCol <= length(palettes)) {
+               PointDataStatus("")
+               output$pt.col.scale <- renderPlot({
+                 par(mar = c(1, 0, 0, 0))
+                 plot(seq_len(nCol), rep(0, nCol), pch = 15, ylim = c(-1, 0),
+                      col = palettes[[nCol]], ann = FALSE, axes = FALSE)
+                 axis(1, at = seq_len(nCol), labels = categories,
+                      tick = FALSE, line = -1)
+               })
+               palettes[[nCol]][match(dat, categories)]
+             } else {
+               PointDataStatus(nCol, " categories is too many to display;",
+                               "did you mean continuous?")
+               c(palettes[[length(palettes)]], '#000000')[
+                 pmin(match(dat, categories), length(palettes[[length(palettes)]]) + 1L)]
+             }
+           },
+           'continuous' = {
+             dat <- pointData()
+             if (is.numeric(dat)) {
+               output$pt.col.scale <- renderPlot({
+                 par(mar = c(1, 0, 0, 0))
+                 plot(1:256, rep(0, 256), pch = 15, col = viridisLite::plasma(256), 
+                      ylim = c(-1, 0), ann = FALSE, axes = FALSE)
+                 axis(1, at = c(1, 256), labels = range(dat), line = -1)
+                 
+               })
+               substr(viridisLite::plasma(256), 1, 7)[cut(dat, 256)]
+             } else {
+               PointDataStatus("Point data are not numeric.",
+                               'Try selecting "Custom categorical".')
+               '#000000'
+             }
+             
+           }
     )
   })
   
@@ -807,7 +803,7 @@ server <- function(input, output, session) {
           if (mstSize() > 0) {
             apply(mstEnds(), 1, function (segment)
               rgl::lines3d(proj[segment, 1], proj[segment, 2], proj[segment, 3],
-                      col = "#bbbbbb", lty = 1))
+                           col = "#bbbbbb", lty = 1))
           }
         })
         rgl::rglwidget()
@@ -886,11 +882,11 @@ server <- function(input, output, session) {
     
     axis(1, tick = FALSE, line = 0, at = 0.25,
          labels = paste0("Silhouette coefficient (", round(cl$sil, 3), ")"))
-         
+    
     
     axis(3, tick = FALSE, line = -2, at = 0.25,
          labels = paste0(cl$n, " clusters found with ", cl$method))
-         
+    
   })
   
   output$howManyDims <- renderPlot({
@@ -926,14 +922,14 @@ server <- function(input, output, session) {
       png(file, width = input$plotSize, height = input$plotSize)
       treespacePlot()
       dev.off()
-  })
+    })
   output$savePdf <- downloadHandler(
     filename = 'TreeSpace.pdf',
     content = function (file) {
       pdf(file, title = paste0('Tree space projection'))
       treespacePlot()
       dev.off()
-  })
+    })
 }
 
 shinyApp(ui = ui, server = server)
