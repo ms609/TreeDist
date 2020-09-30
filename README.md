@@ -95,10 +95,12 @@ devtools::install_github('ms609/TreeDist')
 
 # Tree space analysis
 
-Construct tree spaces using the graphical user interface:
+Construct tree spaces and readily visualize projected landscapes, avoiding
+common analytical pitfalls (Smith, forthcoming),
+using the inbuilt graphical user interface:
 
 ```r
-
+TreeDist::TreeSpace()
 ```
 
 Serious analysts should consult the
@@ -135,7 +137,7 @@ Other R packages implementing tree distance functions include:
 # References
 
 - Böcker, S. _et al._ (2013) [The Generalized Robinson-Foulds
-Metric](https://dx.doi.org/10.1007/978-3-642-40453-5_13).
+metric](https://dx.doi.org/10.1007/978-3-642-40453-5_13).
 Algorithms in Bioinformatics. WABI 2013.
 _Lecture Notes in Computer Science_, 8126, 156–69.
 
@@ -161,6 +163,10 @@ _Bioinformatics_, 22, 117–119.
 metrics for comparing phylogenetic 
 trees](https://dx.doi.org/10.1093/bioinformatics/btaa614).
 _Bioinformatics_, online ahead of print.
+
+- Smith, M.R. (forthcoming)
+The importance of methodology when analyzing landscapes of phylogenetic trees.
+
 
 Please note that the 'TreeDist' project is released with a
 [Contributor Code of Conduct](CODE_OF_CONDUCT.md).

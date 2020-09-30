@@ -5,7 +5,7 @@
   ],
   "@type": "SoftwareSourceCode",
   "identifier": "TreeDist",
-  "description": "Implements measures of tree similarity, including \n  information-based generalized Robinson-Foulds distances\n  (Phylogenetic Information Distance, Clustering Information Distance,\n  Matching Split Information Distance; Smith, 2020)\n  <doi:10.1093/bioinformatics/btaa614>; \n  Jaccard-Robinson-Foulds distances (Bocker et al. 2013)\n  <doi:10.1007/978-3-642-40453-5_13>, \n  including the Nye et al. (2006) metric <doi:10.1093/bioinformatics/bti720>;\n  the Matching Split Distance (Bogdanowicz & Giaro 2012)\n  <doi:10.1109/TCBB.2011.48>;\n  Maximum Agreement Subtree distances;\n  the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>, and the\n  Nearest Neighbour Interchange (NNI) distance, approximated per Li et al. \n  (1996) <doi:10.1007/3-540-61332-3_168>.\n  Calculates the median of a set of trees under any distance metric.",
+  "description": "Implements measures of tree similarity, including \n  information-based generalized Robinson-Foulds distances\n  (Phylogenetic Information Distance, Clustering Information Distance,\n  Matching Split Information Distance; Smith, 2020)\n  <doi:10.1093/bioinformatics/btaa614>; \n  Jaccard-Robinson-Foulds distances (Bocker et al. 2013)\n  <doi:10.1007/978-3-642-40453-5_13>, \n  including the Nye et al. (2006) metric <doi:10.1093/bioinformatics/bti720>;\n  the Matching Split Distance (Bogdanowicz & Giaro 2012)\n  <doi:10.1109/TCBB.2011.48>;\n  Maximum Agreement Subtree distances;\n  the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>, and the\n  Nearest Neighbour Interchange (NNI) distance, approximated per Li et al. \n  (1996) <doi:10.1007/3-540-61332-3_168>.\n  Includes tools for visualizing the landscape of a tree space, and for\n  calculating the median of a set of trees under any distance metric.",
   "name": "TreeDist: Distances Between Phylogenetic Trees",
   "codeRepository": "https://github.com/ms609/TreeDist/",
   "issueTracker": "https://github.com/ms609/TreeDist/issues/",
@@ -138,6 +138,18 @@
     },
     {
       "@type": "SoftwareApplication",
+      "identifier": "protoclust",
+      "name": "protoclust",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=protoclust"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "Quartet",
       "name": "Quartet",
       "provider": {
@@ -147,6 +159,18 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=Quartet"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "readxl",
+      "name": "readxl",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=readxl"
     },
     {
       "@type": "SoftwareApplication",
@@ -171,6 +195,18 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=Rcpp"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "rgl",
+      "name": "rgl",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=rgl"
     },
     {
       "@type": "SoftwareApplication",
@@ -226,6 +262,18 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=vdiffr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "viridisLite",
+      "name": "viridisLite",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=viridisLite"
     }
   ],
   "softwareRequirements": [
@@ -304,9 +352,21 @@
     },
     {
       "@type": "SoftwareApplication",
+      "identifier": "shiny",
+      "name": "shiny",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=shiny"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "TreeTools",
       "name": "TreeTools",
-      "version": ">= 1.1.0",
+      "version": ">= 1.3.0",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
@@ -384,5 +444,5 @@
     "name": "Comprehensive R Archive Network (CRAN)",
     "url": "https://cran.r-project.org"
   },
-  "fileSize": "8346.489KB"
+  "fileSize": "8419.701KB"
 }
