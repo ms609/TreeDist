@@ -48,25 +48,32 @@ Reference <- function (authors, year, title, journal,
          if (is.null(pages)) "" else paste0(pages, collapse = "&ndash;"),
          ".</p>")
 }
-Smith2020 <- Reference(
-  'Smith, M.R.', 2020,
-  'Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees',
-  'Bioinformatics', pages = 'In production', doi = "10.1093/bioinformatics/btaa614")
-Smith2021 <- Reference(
-  'Smith, M.R.', 2021,
-  'The importance of methodology when analyzing landscapes of ahylogenetic trees',
-  'Submitted MS.')
 
-SmithDist <- Reference(
-  'Smith, M.R.', 2020, 'TreeDist: Distances Between Phylogenetic Trees',
-  doi = '10.5281/zenodo.3528123', 'Comprehensive R Archive Network')
-SmithQuartet <- Reference('Smith, M.R.', 2019,
-                          'Quartet: comparison of phylogenetic trees using quartet and split measures',
-                          'Comprehensive R Archive Network', doi = "10.5281/zenodo.2536318")
+
+Bien2011 <- Reference('A', 3000, 'T', 'J')
+Gower1966 <- Reference('A', 3000, 'T', 'J')
+Kruskal1964 <- Reference('A', 3000, 'T', 'J')
+Gower1969 <- Reference('A', 3000, 'T', 'J')
+Kaski2003 <- Reference('A', 3000, 'T', 'J')
+Maechler2019 <- Reference('A', 3000, 'T', 'J')
+Murtagh1983 <- Reference('A', 3000, 'T', 'J')
+Paradis2019 <- Reference('A', 3000, 'T', 'J')
+RCoreTeam <- Reference('A', 3000, 'T', 'J')
+Sammon1969 <- Reference('A', 3000, 'T', 'J')
+Venna2001 <- Reference('A', 3000, 'T', 'J')
+Venables2002 <- Reference('A', 3000, 'T', 'J')
+
+            
+Day1985 <- Reference(
+  title = "Optimal algorithms for comparing trees with labeled leaves",
+  author = "Day, W.H.E.", year = 1985,
+  volume = 2,
+  pages = c(7, 28),
+  doi = "10.1007/BF01908061",
+  journal = "Journal of Classification")
 Estabrook1985 <- Reference(
+  c("Estabrook, G.F.", "McMorris, F.R.", "Meacham, C.A."), 1985,
   title = "Comparison of undirected phylogenetic trees based on subtrees of four evolutionary units",
-  author = c("Estabrook, G.F.", "McMorris, F.R.", "Meacham, C.A."),
-  year = 1985,
   volume = 34,
   pages = c(193, 200),
   doi = "10.2307/sysbio/34.2.193",
@@ -79,13 +86,18 @@ Farris1973 <- Reference(title = "On comparing the shapes of taxonomic trees",
                         pages = c(50, 54),
                         doi = "10.2307/2412378",
                         journal = "Systematic Zoology")
-Day1985 <- Reference(
-  title = "Optimal algorithms for comparing trees with labeled leaves",
-  author = "Day, W.H.E.", year = 1985,
-  volume = 2,
-  pages = c(7, 28),
-  doi = "10.1007/BF01908061",
-  journal = "Journal of Classification")
+Smith2020 <- Reference('Smith, M.R.', 2020,
+  'Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees',
+  'Bioinformatics', pages = 'In production', doi = "10.1093/bioinformatics/btaa614")
+Smith2021 <- Reference('Smith, M.R.', 2021,
+  'The importance of methodology when analyzing landscapes of ahylogenetic trees',
+  'Submitted MS.')
+SmithDist <- Reference('Smith, M.R.', 2020,
+  'TreeDist: Distances Between Phylogenetic Trees',
+  doi = '10.5281/zenodo.3528123', 'Comprehensive R Archive Network')
+SmithQuartet <- Reference('Smith, M.R.', 2019,
+  'Quartet: comparison of phylogenetic trees using quartet and split measures',
+  'Comprehensive R Archive Network', doi = "10.5281/zenodo.2536318")
 Ward1963 <- Reference('Ward, J.H.', 1963,
                       'Hierarchical grouping to optimize an objective function',
                       'Journal of the American Statistical Association',
@@ -1010,7 +1022,7 @@ server <- function(input, output, session) {
     tagList(
       tags$h2('References'),
       tags$h3('Tree distance'),
-      HTML(switch(input$distance, 
+      HTML(switch(input$distance,
              'cid' = paste0(Smith2020, SmithDist),
              'pid' = paste0(Smith2020, SmithDist),
              'qd' = paste0(Estabrook1985, SmithQuartet),
@@ -1025,17 +1037,17 @@ server <- function(input, output, session) {
                   )
            ),
       tags$h3('Clustering'),
-      c(pam = paste0('Partitioning around medoids:', Maechler2019),
-        hmm = paste0("Heirarchical, minimax linkage", Bien2011, Murtagh1983),
-        hsi = '',#paste0("Heirarchical, single linkage"),
-        hco = '',#paste0("Heirarchical, complete linkage"),
-        hav = '',#paste0("Heirarchical, average linkage"),
-        hmd = '',#paste0("Heirarchical, median linkage"),
-        hct = '',#paste0("Heirarchical, centroid linkage"),
-        hwd = paste0("Heirarchical, Ward d\ub2 linkage", Ward1963),
-        kmn = '',#paste0("K-means"),
+      HTML(paste(c(pam = paste0('Partitioning around medoids:', Maechler2019),
+        hmm = paste0("Heirarchical, minimax linkage:", Bien2011, Murtagh1983),
+        hsi = '',#paste0("Heirarchical, single linkage:"),
+        hco = '',#paste0("Heirarchical, complete linkage:"),
+        hav = '',#paste0("Heirarchical, average linkage:"),
+        hmd = '',#paste0("Heirarchical, median linkage:"),
+        hct = '',#paste0("Heirarchical, centroid linkage:"),
+        hwd = paste0("Heirarchical, Ward d\ub2 linkage:", Ward1963),
+        kmn = '',#paste0("K-means:"),
         spec = ''#paste0("Spectral:")
-        )[input$clustering],
+        )[input$clustering])),
       tags$h3('Tree space construction'),
       HTML(if (mstSize() > 0) paste0(Gower1969, Paradis2019) else ''),
       HTML(paste0(Venna2001, Kaski2003, RCoreTeam, Smith2021))
