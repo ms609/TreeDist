@@ -59,7 +59,7 @@ ui <- fluidPage(theme = 'treespace.css',
           actionButton("addTrees", "Add batch to existing"),
           
           tags$p("For custom point colours, upload a file with a value for ",
-                 "each tree in a separate row. "),
+                 "each tree in a separate row: "),
           fileInput('pt.data', 'Point property file',
                     accept = c('.csv', '.txt', '.xls', '.xlsx')),
           checkboxInput('pt.data.subsample', 'Subsample point properties', TRUE),
