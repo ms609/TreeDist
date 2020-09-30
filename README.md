@@ -127,7 +127,7 @@ _Mol Biol Evol_, 33, 2735–2743.
 - Li, M., Tromp, J. and Zhang, L.-X. (1996) [Some notes on the nearest neighbour
 interchange distance](https://dx.doi.org/10.1007/3-540-61332-3_168). 
 _Computing and Combinatorics_, Goos, G., Hartmanis, J., Leeuwen, J., Cai, J.-Y.,
-and Wong, C. K., eds. Springer, Berlin. 343--351.
+and Wong, C. K., eds. Springer, Berlin. 343–351.
 
 - Nye, T.M.W. _et al._ (2006) [A novel algorithm and web-based tool for
 comparing two alternative phylogenetic

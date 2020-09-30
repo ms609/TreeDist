@@ -5,7 +5,11 @@ library("TreeDist")
 options(shiny.maxRequestSize = 100 * 1024^2)
 
 palettes <- list("#91aaa7",
+<<<<<<< HEAD
+                 c("#497a8f", "#c1d0c0"),
+=======
                  c("#969660", "#c3dfca"),
+>>>>>>> master
                  c("#be83ae", "#2ea7af", "#fbcdcf"),
                  c("#72c5a9", "#b7c5ff", "#dbdabb", "#a28bac"),
                  c("#59c4c0", "#ea9a9a", "#7998a6", "#e9d7a9", "#9c9379"),
@@ -56,7 +60,19 @@ ui <- fluidPage(theme = 'treespace.css',
                       value = 1),
           textOutput(outputId = "thinnedTrees"),
           actionButton("replaceTrees", "Replace existing"),
+<<<<<<< HEAD
+          actionButton("addTrees", "Add batch to existing"),
+          
+          tags$p("For custom point colours, upload a file with a value for ",
+                 "each tree in a separate row: "),
+          fileInput('pt.data', 'Point property file',
+                    accept = c('.csv', '.txt', '.xls', '.xlsx')),
+          checkboxInput('pt.data.subsample', 'Subsample point properties', TRUE),
+          tags$p("Subsampling not supported for multiple batches."),
+          tagAppendAttributes(textOutput('pt.data.status'), class = 'message'),
+=======
           actionButton("addTrees", "Add to existing"),
+>>>>>>> master
         ),
         tabPanel('Analysis',
            selectInput("distance", "Distance method",
@@ -120,6 +136,24 @@ ui <- fluidPage(theme = 'treespace.css',
           sliderInput('pt.opacity', 'Point opacity',
                       min = 0, max = 255, value = 196,
                       step = 1),
+<<<<<<< HEAD
+          selectInput('pt.pch', 'Point symbols:',
+                      list(
+                        'Solid circle' = '16',
+                        'Open ring' = '1',
+                        'One per cluster' = 'clust',
+                        'One per batch' = 'entry'
+                      ), '16'),
+          selectInput('pt.col', 'Colour points by:',
+                      list('Cluster membership' = 'clust', 
+                           'Batch' = 'entry',
+                           'Sequence within batches' = 'seq',
+                           'Custom categorical' = 'discrete',
+                           'Custom continuous' = 'continuous'), 'clust'),
+          tagAppendAttributes(textOutput('pt.col.status'), class = 'message'),
+          plotOutput('pt.col.scale', height = "36px")
+=======
+>>>>>>> master
         )
       ),
     ),
@@ -138,7 +172,12 @@ ui <- fluidPage(theme = 'treespace.css',
         ),
         fluidRow(
           plotOutput(outputId = "distPlot"),
+<<<<<<< HEAD
+          rgl::rglwidgetOutput(outputId = "threeDPlot",
+                               width = "600px", height = "600px"),
+=======
           rgl::rglwidgetOutput(outputId = "threeDPlot", width = "600px", height = "600px"),
+>>>>>>> master
           ),
       )
   )
@@ -151,7 +190,12 @@ server <- function(input, output, session) {
   #treeNumbers <- c(1:220)
   treeNumbers <- c(1:50, 401:440)
   
+<<<<<<< HEAD
+  r <- reactiveValues(allTrees = as.phylo(treeNumbers, 8),
+                      entryOrder = rep(1, length(treeNumbers)))
+=======
   r <- reactiveValues(allTrees = as.phylo(treeNumbers, 8))
+>>>>>>> master
   
   ClearClusters <- function () {
     r$clust_cid = NULL
@@ -272,6 +316,28 @@ server <- function(input, output, session) {
     as.integer(seq(keptRange()[1], keptRange()[2], by = 2^input$thinTrees))
   })
   
+<<<<<<< HEAD
+  TreeNumberUpdate <- function () {
+    ClearDistances()
+    nTrees <- length(r$allTrees)
+    updateSliderInput(session, 'mst', value = min(100, nTrees), max = nTrees)
+    updateSliderInput(session, 'dims',
+                      max = nProjDim(),
+                      value = min(input$dims, nProjDim()))
+  }
+  
+  observeEvent(input$addTrees, {
+    newTrees <- treeFile()[thinnedTrees()]
+    if (length(r$allTrees) == 0) {
+      r$entryOrder <- rep(1L, length(newTrees))
+      r$allTrees <- c(newTrees)
+    } else {
+      r$entryOrder <- c(r$entryOrder,
+                        rep(1L + max(r$entryOrder), length(newTrees)))
+      r$allTrees <- c(r$allTrees, newTrees)
+    }
+    TreeNumberUpdate()
+=======
   observeEvent(input$addTrees, {
     newTrees <- treeFile()[thinnedTrees()]
     r$allTrees <- if (length(r$allTrees) == 0) newTrees else {
@@ -280,13 +346,19 @@ server <- function(input, output, session) {
     nTrees <- length(r$allTrees)
     updateSliderInput(session, 'mst', value = min(100, nTrees), max = nTrees)
     ClearDistances()
+>>>>>>> master
   })
   
   observeEvent(input$replaceTrees, {
     r$allTrees <- c(treeFile()[thinnedTrees()])
+<<<<<<< HEAD
+    r$entryOrder <- rep(1L, length(r$allTrees))
+    TreeNumberUpdate()
+=======
     nTrees <- length(r$allTrees)
     updateSliderInput(session, 'mst', value = min(100, nTrees), max = nTrees)
     ClearDistances()
+>>>>>>> master
   })
   
   output$treesInMemory <- renderText({
@@ -319,6 +391,17 @@ server <- function(input, output, session) {
     
   })
   
+<<<<<<< HEAD
+  maxProjDim <- reactive({
+    min(15L, length(r$allTrees) - 1L)
+  })
+  
+  nProjDim <- reactive({
+    dim(projection())[2]
+  })
+  
+=======
+>>>>>>> master
   projection <- reactive({
     proj_id <- paste0('proj_', input$projection, '_', input$distance)
     if (is.null(r[[proj_id]])) {
@@ -326,9 +409,15 @@ server <- function(input, output, session) {
         message = 'Projecting distances',
         value = 0.99,
         proj <- switch(input$projection,
+<<<<<<< HEAD
+                       'pca' = cmdscale(distances(), k = maxProjDim()),
+                       'k' = MASS::isoMDS(distances(), k = maxProjDim())$points,
+                       'nls' = MASS::sammon(distances(), k = maxProjDim())$points
+=======
                        'pca' = cmdscale(distances(), k = 15),
                        'k' = MASS::isoMDS(distances(), k = 15)$points,
                        'nls' = MASS::sammon(distances(), k = 15)$points
+>>>>>>> master
                        )
       )
       r[[proj_id]] <- proj
@@ -337,13 +426,23 @@ server <- function(input, output, session) {
   })
   
   
+<<<<<<< HEAD
+  maxClust <- reactive(min(input$maxClusters, length(r$allTrees) - 1L))
+=======
+>>>>>>> master
   clusterings <- reactive({
     maxCluster <- input$maxClusters
     if (!is.null(r$clust_max) && maxCluster != r$clust_max) ClearClusters()
     clust_id <- paste0('clust_', input$distance)
     
     if (is.null(r[[clust_id]])) {
+<<<<<<< HEAD
+      if (maxClust() < 3) return(rep(1L, length(r$allTrees)))
+      possibleClusters <- 2:maxClust()
+      
+=======
       possibleClusters <- 2:input$maxClusters
+>>>>>>> master
       
       hSil <- pamSil <- havSil <- kSil <- specSil <-
         hsiSil <- hcoSil <- hmdSil <- hctSil <- hwdSil <- -99
@@ -556,16 +655,28 @@ server <- function(input, output, session) {
   
   observeEvent(input$calcClusters, {ClearClusters()})
   
+<<<<<<< HEAD
+  mstSize <- debounce(reactive(input$mst), 100)
+  
+  mstEnds <- reactive({
+    
+    if (!is.null(r$mst_size) && mstSize() != r$mst_size) ClearMST()
+=======
   mstEnds <- reactive({
     
     mstSize <- input$mst
     if (!is.null(r$mst_size) && mstSize != r$mst_size) ClearMST()
+>>>>>>> master
     mst_id <- paste0('mst_', input$distance)
     if (is.null(r[[mst_id]])) {
       dist <- as.matrix(distances())
       nRows <- dim(dist)[1]
       withProgress(message = 'Calculating MST', {
+<<<<<<< HEAD
+        selection <- unique(round(seq.int(1, nRows, length.out = max(2L, mstSize()))))
+=======
         selection <- unique(round(seq.int(1, nRows, length.out = max(2L, mstSize))))
+>>>>>>> master
         edges <- MSTEdges(dist[selection, selection])
         edges[, 1] <- selection[edges[, 1]]
         edges[, 2] <- selection[edges[, 2]]
@@ -573,6 +684,114 @@ server <- function(input, output, session) {
       })
     }
     
+<<<<<<< HEAD
+    r$mst_size <- mstSize()
+    r[[mst_id]]
+  })
+  
+  PointDataStatus <- function (...) {
+    msg <- paste0(...)
+    output$pt.data.status <- renderText(msg)
+    output$pt.col.status <- renderText(msg)
+  }
+  
+  pointData <- reactive({
+    fp <- input$pt.data$datapath
+    PointDataStatus("")
+    extension <- if(is.null(fp)) '' else substr(fp, nchar(fp) - 3, nchar(fp))
+    ret <- switch(extension,
+                  '.csv' = read.csv(fp),
+                  '.txt' = read.table(fp),
+                  '.xls' = readxl::read_excel(fp),
+                  'xlsx' = readxl::read_excel(fp),
+                  {
+                    PointDataStatus("Unrecognized file extension.")
+                    matrix(0)
+                  }
+    )
+    
+    if (input$pt.data.subsample) ret[thinnedTrees(), 1] else ret[, 1]
+  })
+  
+  pointCols <- reactive({
+    switch(input$pt.col,
+     'clust' = {
+       cl <- clusterings()
+       if (cl$sil > 0.25) {
+         palettes[[min(length(palettes), cl$n)]][cl$cluster]
+       } else palettes[[1]]
+     },
+     'entry' = {
+       n <- r$entryOrder
+       palettes[[max(n)]][n]
+     },
+     'seq' = {
+       substr(viridisLite::plasma(length(r$allTrees)), 1, 7)
+     },
+     'discrete' = {
+       dat <- pointData()
+       categories <- unique(dat)
+       nCol <- length(categories)
+       if (nCol <= length(palettes)) {
+         PointDataStatus("")
+         output$pt.col.scale <- renderPlot({
+           par(mar = c(1, 0, 0, 0))
+           plot(seq_len(nCol), rep(0, nCol), pch = 15, ylim = c(-1, 0),
+                col = palettes[[nCol]], ann = FALSE, axes = FALSE)
+           axis(1, at = seq_len(nCol), labels = categories,
+                tick = FALSE, line = -1)
+         })
+         palettes[[nCol]][match(dat, categories)]
+       } else {
+         PointDataStatus(nCol, " categories is too many to display;",
+                         "did you mean continuous?")
+         c(palettes[[length(palettes)]], '#000000')[
+           pmin(match(dat, categories), length(palettes[[length(palettes)]]) + 1L)]
+       }
+     },
+     'continuous' = {
+       dat <- pointData()
+       if (is.numeric(dat)) {
+         output$pt.col.scale <- renderPlot({
+           par(mar = c(1, 0, 0, 0))
+           plot(1:256, rep(0, 256), pch = 15, col = viridisLite::plasma(256), 
+                ylim = c(-1, 0), ann = FALSE, axes = FALSE)
+           axis(1, at = c(1, 256), labels = range(dat), line = -1)
+           
+         })
+         substr(viridisLite::plasma(256), 1, 7)[cut(dat, 256)]
+       } else {
+         PointDataStatus("Point data are not numeric.",
+                         'Try selecting "Custom categorical".')
+         '#000000'
+       }
+       
+     }
+    )
+  })
+  
+  pchs <- reactive({
+    switch(input$pt.pch,
+           '1' = 1,
+           '16' = 16,
+           'clust' = {
+             cl <- clusterings()
+             if (cl$sil > 0.25) {
+               cl$cluster - 1
+             } else 16
+           },
+           'entry' = {
+             r$entryOrder - 1
+           }
+    )
+  })
+  
+  treespacePlot <- reactive({
+    cl <- clusterings()
+    proj <- projection()
+    
+    nDim <- min(dims(), nProjDim())
+=======
     r$mst_size <- mstSize
     r[[mst_id]]
   })
@@ -585,6 +804,7 @@ server <- function(input, output, session) {
     proj <- projection()
     
     nDim <- dims()
+>>>>>>> master
     plotSeq <- matrix(0, nDim, nDim)
     nPanels <- nDim * (nDim - 1L) / 2L
     plotSeq[upper.tri(plotSeq)] <- seq_len(nPanels)
@@ -598,14 +818,23 @@ server <- function(input, output, session) {
              type = 'n', asp = 1, xlim = range(proj), ylim = range(proj))
         
         # Plot MST
+<<<<<<< HEAD
+        if (mstSize() > 0) {
+=======
         if (input$mst > 0) {
+>>>>>>> master
           apply(mstEnds(), 1, function (segment)
             lines(proj[segment, j], proj[segment, i], col = "#bbbbbb", lty = 1))
         }
         
         # Add points
+<<<<<<< HEAD
+        points(proj[, j], proj[, i], pch = pchs(),
+               col = paste0(pointCols(), as.hexmode(input$pt.opacity)),
+=======
         points(proj[, j], proj[, i], pch = 16,
                col = paste0(treeCols, as.hexmode(input$pt.opacity)),
+>>>>>>> master
                cex = input$pt.cex)
         
         if ("hulls" %in% input$display && cl$sil > 0.25) {
@@ -625,7 +854,11 @@ server <- function(input, output, session) {
         }
       }
     })
+<<<<<<< HEAD
+  })
+=======
   }
+>>>>>>> master
 
   mode3D <- reactive("show3d" %in% input$display)
   PlotSize <- function () debounce(reactive(input$plotSize), 100)
@@ -645,9 +878,12 @@ server <- function(input, output, session) {
       
       if (inherits(distances(), 'dist')) {
         cl <- clusterings()
+<<<<<<< HEAD
+=======
         col <- if (cl$sil > 0.25) {
           palettes[[min(length(palettes), cl$n)]][cl$cluster]
         } else palettes[[1]]
+>>>>>>> master
         proj <- projection()
         withProgress(message = 'Drawing 3D plot', {
           rgl::rgl.open(useNULL = TRUE)
@@ -656,8 +892,12 @@ server <- function(input, output, session) {
           rgl::plot3d(proj[, 1], proj[, 2], proj[, 3],
                aspect = 1, # Preserve aspect ratio - do not distort distances
                axes = FALSE, # Dimensions are meaningless
+<<<<<<< HEAD
+               col = pointCols(),
+=======
                pch = 16,
                col = col,
+>>>>>>> master
                alpha = input$pt.opacity / 255,
                cex = input$pt.cex,
                xlab = '', ylab = '', zlab = ''
@@ -666,7 +906,11 @@ server <- function(input, output, session) {
           if ('labelTrees' %in% input$display) {
             rgl::text3d(proj[, 1], proj[, 2], proj[, 3], thinnedTrees())
           }
+<<<<<<< HEAD
+          if (mstSize() > 0) {
+=======
           if (input$mst > 0) {
+>>>>>>> master
             apply(mstEnds(), 1, function (segment)
               rgl::lines3d(proj[segment, 1], proj[segment, 2], proj[segment, 3],
                       col = "#bbbbbb", lty = 1))
@@ -677,15 +921,32 @@ server <- function(input, output, session) {
     }
   })
   
+<<<<<<< HEAD
+  dims <- debounce(reactive({
+    if (mode3D()) 3L else {
+      min(input$dims, maxProjDim())
+    }
+  }), 400)
+  
+  projQual <- reactive({
+    withProgress(message = "Estimating projection quality", {
+      vapply(seq_len(nProjDim()), function (k) {
+        incProgress(1 / nProjDim())
+=======
   dims <- debounce(reactive(if (mode3D()) 3L else input$dims), 400)
   projQual <- reactive({
     withProgress(message = "Estimating projection quality", {
       vapply(1:15, function (k) {
         incProgress(1/15)
+>>>>>>> master
         ProjectionQuality(distances(), dist(projection()[, seq_len(k)]), 10)
       }, numeric(4))
     })
   })
+<<<<<<< HEAD
+  
+=======
+>>>>>>> master
   LogScore <- function (x) {
     (-(log10(1 - x + 1e-2))) / 2
   }
