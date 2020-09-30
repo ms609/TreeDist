@@ -31,7 +31,7 @@ line:
 
 ```r
 install.packages('TreeDist')
-shiny::runApp(system.file('TreeSpace', package = 'TreeDist'))
+TreeDist::TreeSpace()
 ```
 
 This will allow you to conduct and evaluate basic tree space projections
