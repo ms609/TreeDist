@@ -56,3 +56,7 @@ div#threeDPlot canvas {
   top: 87px;
   left: 0;
 }
+
+.message {
+  color: #ffc646;
+}
