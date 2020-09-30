@@ -369,7 +369,7 @@ server <- function(input, output, session) {
                        'pca' = cmdscale(distances(), k = maxProjDim()),
                        'k' = MASS::isoMDS(distances(), k = maxProjDim())$points,
                        'nls' = MASS::sammon(distances(), k = maxProjDim())$points
-        )
+                       )
       )
       r[[proj_id]] <- proj
     }
