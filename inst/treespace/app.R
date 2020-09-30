@@ -31,142 +31,142 @@ badToGood <- rev(c("#1AB958", "#23B956", "#2BB954", "#31B952", "#37B850", "#3CB8
 
 # Define UI for app that draws a histogram ----
 ui <- fluidPage(theme = 'treespace.css',
-  
-  # Sidebar layout with input and output definitions ----
-  
-    column(3, 
-      tabsetPanel(
-        tabPanel('Input',
-          textOutput(outputId = "treesInMemory"),
-          fileInput("treefile", "Load trees", placeholder = "No tree file selected"),
-          textOutput(outputId = "treesStatus"),
-          textOutput(outputId = "keptTrees"),
-          sliderInput(inputId = "keepTrees",
-                      label = "Trees to analyse:",
-                      min = 1,
-                      max = 90,
-                      value = c(0, 90)),
-          sliderInput(inputId = "thinTrees",
-                      label = "Sample every:",
-                      min = 0,
-                      max = 12,
-                      round = FALSE,
-                      step = 0.01,
-                      pre = '2^',
-                      value = 1),
-          textOutput(outputId = "thinnedTrees"),
-          actionButton("replaceTrees", "Replace existing"),
-          actionButton("addTrees", "Add batch to existing"),
-          
-          tags$p("For custom point colours, upload a file with a value for ",
-                 "each tree in a separate row: "),
-          fileInput('pt.data', 'Point property file',
-                    accept = c('.csv', '.txt', '.xls', '.xlsx')),
-          checkboxInput('pt.data.subsample', 'Subsample point properties', TRUE),
-          tags$p("Subsampling not supported for multiple batches."),
-          tagAppendAttributes(textOutput('pt.data.status'), class = 'message'),
-        ),
-        tabPanel('Analysis',
-           selectInput("distance", "Distance method",
-                       choices = list("Clustering information" = 'cid',
-                                      "Phylogenetic information" = 'pid',
-                                      "Quartet (slow)" = 'qd',
-                                      "Path" = 'path',
-                                      "Robinson\u2212Foulds" = 'rf'),
-                       selected = 'cid'),
-          
-          textOutput(outputId = "projectionStatus"),
-          fluidRow(plotOutput(outputId = "pcQuality", height = "72px")),
-          selectInput("projection", "Projection method",
-                       choices = list("Princ. comps (classical MDS)" = 'pca',
-                                      "Sammon mapping mMDS" = 'nls',
-                                      "Kruskal-1 nmMDS (slow)" = 'k'
-                                      ),
-                       selected = 'pca'),
-          
-          checkboxGroupInput("clustering", "Clustering methods",
-                             choices = list("Partitioning around medoids" = 'pam',
-                                            "Heirarchical, minimax linkage" = 'hmm',
-                                            "Heirarchical, single linkage" = 'hsi',
-                                            "Heirarchical, complete linkage" = 'hco',
-                                            "Heirarchical, average linkage" = 'hav',
-                                            "Heirarchical, median linkage" = 'hmd',
-                                            "Heirarchical, centroid linkage" = 'hct',
-                                            "Heirarchical, Ward d\ub2 linkage" = 'hwd',
-                                            "K-means" = 'kmn',
-                                            "Spectral" = "spec"),
-                             selected = c('pam', 'hmm')),
-          sliderInput(inputId = "maxClusters",
-                      label = "Maximum cluster number:",
-                      min = 2,
-                      max = 20,
-                      value = 8),
-          actionButton("calcClusters", "Recalculate clustering"),
-          fluidRow(plotOutput(outputId = "clustQuality", height = "80px")),
-        ),
-        tabPanel('Display',
-          sliderInput(inputId = "dims",
-                      label = "Dimensions to plot:",
-                      min = 2, max = 15, value = 5),
-          plotOutput('howManyDims', width = '100%', height = '180px'),
-          
-          sliderInput(inputId = "mst",
-                      label = "Minimum spanning tree size",
-                      min = 0,
-                      max = 90,
-                      value = 90),
-          checkboxGroupInput("display", "Display settings",
-                             list(
-                               "Clusters' convex hulls" = 'hulls',
-                               'Tree numbers' = 'labelTrees',
-                               'Interactive 3D plot' = 'show3d'
-                             ),
-                             character(0)),
-          sliderInput('pt.cex', 'Point size',
-                      min = 0, max = 4, value = 1, 
-                      step = 0.01),
-          sliderInput('pt.opacity', 'Point opacity',
-                      min = 0, max = 255, value = 196,
-                      step = 1),
-          selectInput('pt.pch', 'Point symbols:',
-                      list(
-                        'Solid circle' = '16',
-                        'Open ring' = '1',
-                        'One per cluster' = 'clust',
-                        'One per batch' = 'entry'
-                      ), '16'),
-          selectInput('pt.col', 'Colour points by:',
-                      list('Cluster membership' = 'clust', 
-                           'Batch' = 'entry',
-                           'Sequence within batches' = 'seq',
-                           'Custom categorical' = 'discrete',
-                           'Custom continuous' = 'continuous'), 'clust'),
-          tagAppendAttributes(textOutput('pt.col.status'), class = 'message'),
-          plotOutput('pt.col.scale', height = "36px")
-        )
-      ),
-    ),
-    
-    column(9,
-      mainPanel(
-        fluidRow(id = 'plotConfig',
-          tags$span("Plot size:", id = 'plotSizeSpan'),
-          sliderInput(inputId = "plotSize", label = NULL,
-                      width = '200px',
-                      min = 100, max = 2000,
-                      post = 'px', value = 600),
-          tags$span("Save as: "),
-          downloadButton('savePdf', 'PDF'),
-          downloadButton('savePng', 'PNG'),
-        ),
-        fluidRow(
-          plotOutput(outputId = "distPlot"),
-          rgl::rglwidgetOutput(outputId = "threeDPlot",
-                               width = "600px", height = "600px"),
-          ),
-      )
-  )
-  
+                
+                # Sidebar layout with input and output definitions ----
+                
+                column(3, 
+                       tabsetPanel(
+                         tabPanel('Input',
+                                  textOutput(outputId = "treesInMemory"),
+                                  fileInput("treefile", "Load trees", placeholder = "No tree file selected"),
+                                  textOutput(outputId = "treesStatus"),
+                                  textOutput(outputId = "keptTrees"),
+                                  sliderInput(inputId = "keepTrees",
+                                              label = "Trees to analyse:",
+                                              min = 1,
+                                              max = 90,
+                                              value = c(0, 90)),
+                                  sliderInput(inputId = "thinTrees",
+                                              label = "Sample every:",
+                                              min = 0,
+                                              max = 12,
+                                              round = FALSE,
+                                              step = 0.01,
+                                              pre = '2^',
+                                              value = 1),
+                                  textOutput(outputId = "thinnedTrees"),
+                                  actionButton("replaceTrees", "Replace existing"),
+                                  actionButton("addTrees", "Add batch to existing"),
+                                  
+                                  tags$p("For custom point colours, upload a file with a value for ",
+                                         "each tree in a separate row: "),
+                                  fileInput('pt.data', 'Point property file',
+                                            accept = c('.csv', '.txt', '.xls', '.xlsx')),
+                                  checkboxInput('pt.data.subsample', 'Subsample point properties', TRUE),
+                                  tags$p("Subsampling not supported for multiple batches."),
+                                  tagAppendAttributes(textOutput('pt.data.status'), class = 'message'),
+                         ),
+                         tabPanel('Analysis',
+                                  selectInput("distance", "Distance method",
+                                              choices = list("Clustering information" = 'cid',
+                                                             "Phylogenetic information" = 'pid',
+                                                             "Quartet (slow)" = 'qd',
+                                                             "Path" = 'path',
+                                                             "Robinson\u2212Foulds" = 'rf'),
+                                              selected = 'cid'),
+                                  
+                                  textOutput(outputId = "projectionStatus"),
+                                  fluidRow(plotOutput(outputId = "pcQuality", height = "72px")),
+                                  selectInput("projection", "Projection method",
+                                              choices = list("Princ. comps (classical MDS)" = 'pca',
+                                                             "Sammon mapping mMDS" = 'nls',
+                                                             "Kruskal-1 nmMDS (slow)" = 'k'
+                                              ),
+                                              selected = 'pca'),
+                                  
+                                  checkboxGroupInput("clustering", "Clustering methods",
+                                                     choices = list("Partitioning around medoids" = 'pam',
+                                                                    "Heirarchical, minimax linkage" = 'hmm',
+                                                                    "Heirarchical, single linkage" = 'hsi',
+                                                                    "Heirarchical, complete linkage" = 'hco',
+                                                                    "Heirarchical, average linkage" = 'hav',
+                                                                    "Heirarchical, median linkage" = 'hmd',
+                                                                    "Heirarchical, centroid linkage" = 'hct',
+                                                                    "Heirarchical, Ward d\ub2 linkage" = 'hwd',
+                                                                    "K-means" = 'kmn',
+                                                                    "Spectral" = "spec"),
+                                                     selected = c('pam', 'hmm')),
+                                  sliderInput(inputId = "maxClusters",
+                                              label = "Maximum cluster number:",
+                                              min = 2,
+                                              max = 20,
+                                              value = 8),
+                                  actionButton("calcClusters", "Recalculate clustering"),
+                                  fluidRow(plotOutput(outputId = "clustQuality", height = "80px")),
+                         ),
+                         tabPanel('Display',
+                                  sliderInput(inputId = "dims",
+                                              label = "Dimensions to plot:",
+                                              min = 2, max = 15, value = 5),
+                                  plotOutput('howManyDims', width = '100%', height = '180px'),
+                                  
+                                  sliderInput(inputId = "mst",
+                                              label = "Minimum spanning tree size",
+                                              min = 0,
+                                              max = 90,
+                                              value = 90),
+                                  checkboxGroupInput("display", "Display settings",
+                                                     list(
+                                                       "Clusters' convex hulls" = 'hulls',
+                                                       'Tree numbers' = 'labelTrees',
+                                                       'Interactive 3D plot' = 'show3d'
+                                                     ),
+                                                     character(0)),
+                                  sliderInput('pt.cex', 'Point size',
+                                              min = 0, max = 4, value = 1, 
+                                              step = 0.01),
+                                  sliderInput('pt.opacity', 'Point opacity',
+                                              min = 0, max = 255, value = 196,
+                                              step = 1),
+                                  selectInput('pt.pch', 'Point symbols:',
+                                              list(
+                                                'Solid circle' = '16',
+                                                'Open ring' = '1',
+                                                'One per cluster' = 'clust',
+                                                'One per batch' = 'entry'
+                                              ), '16'),
+                                  selectInput('pt.col', 'Colour points by:',
+                                              list('Cluster membership' = 'clust', 
+                                                   'Batch' = 'entry',
+                                                   'Sequence within batches' = 'seq',
+                                                   'Custom categorical' = 'discrete',
+                                                   'Custom continuous' = 'continuous'), 'clust'),
+                                  tagAppendAttributes(textOutput('pt.col.status'), class = 'message'),
+                                  plotOutput('pt.col.scale', height = "36px")
+                         )
+                       ),
+                ),
+                
+                column(9,
+                       mainPanel(
+                         fluidRow(id = 'plotConfig',
+                                  tags$span("Plot size:", id = 'plotSizeSpan'),
+                                  sliderInput(inputId = "plotSize", label = NULL,
+                                              width = '200px',
+                                              min = 100, max = 2000,
+                                              post = 'px', value = 600),
+                                  tags$span("Save as: "),
+                                  downloadButton('savePdf', 'PDF'),
+                                  downloadButton('savePng', 'PNG'),
+                         ),
+                         fluidRow(
+                           plotOutput(outputId = "distPlot"),
+                           rgl::rglwidgetOutput(outputId = "threeDPlot",
+                                                width = "600px", height = "600px"),
+                         ),
+                       )
+                )
+                
 )
 
 server <- function(input, output, session) {
@@ -251,7 +251,7 @@ server <- function(input, output, session) {
     }
     ret
   })
-
+  
   
   output$treesStatus <- renderText({
     if (is.character(treeFile())) return(treeFile())
@@ -292,7 +292,7 @@ server <- function(input, output, session) {
       }
     }
   })
-
+  
   thinnedTrees <- reactive({
     as.integer(seq(keptRange()[1], keptRange()[2], by = 2^input$thinTrees))
   })
@@ -331,27 +331,27 @@ server <- function(input, output, session) {
   
   distances <- reactive({
     withProgress(message = 'Calculating distances', value = 0.99,
-    switch(input$distance,
-           'cid' = {
-             if (is.null(r$dist_cid)) r$dist_cid = ClusteringInfoDistance(r$allTrees)
-             r$dist_cid
-           },
-           'pid' = {
-             if (is.null(r$dist_pid)) r$dist_pid = PhylogeneticInfoDistance(r$allTrees)
-             r$dist_pid
-           },
-           'qd' = {
-             if (is.null(r$dist_qd)) r$dist_qd = as.dist(Quartet::QuartetDivergence(
-               Quartet::ManyToManyQuartetAgreement(r$allTrees), similarity = FALSE))
-             r$dist_qd
-           }, 'path' = {
-             if (is.null(r$dist_path)) r$dist_path = PathDist(r$allTrees)
-             r$dist_path
-           }, 'rf' = {
-             if (is.null(r$dist_rf)) r$dist_rf = RobinsonFoulds(r$allTrees)
-             r$dist_rf
-           }
-    ))
+                 switch(input$distance,
+                        'cid' = {
+                          if (is.null(r$dist_cid)) r$dist_cid = ClusteringInfoDistance(r$allTrees)
+                          r$dist_cid
+                        },
+                        'pid' = {
+                          if (is.null(r$dist_pid)) r$dist_pid = PhylogeneticInfoDistance(r$allTrees)
+                          r$dist_pid
+                        },
+                        'qd' = {
+                          if (is.null(r$dist_qd)) r$dist_qd = as.dist(Quartet::QuartetDivergence(
+                            Quartet::ManyToManyQuartetAgreement(r$allTrees), similarity = FALSE))
+                          r$dist_qd
+                        }, 'path' = {
+                          if (is.null(r$dist_path)) r$dist_path = PathDist(r$allTrees)
+                          r$dist_path
+                        }, 'rf' = {
+                          if (is.null(r$dist_rf)) r$dist_rf = RobinsonFoulds(r$allTrees)
+                          r$dist_rf
+                        }
+                 ))
     
   })
   
@@ -373,7 +373,7 @@ server <- function(input, output, session) {
                        'pca' = cmdscale(distances(), k = maxProjDim()),
                        'k' = MASS::isoMDS(distances(), k = maxProjDim())$points,
                        'nls' = MASS::sammon(distances(), k = maxProjDim())$points
-                       )
+        )
       )
       r[[proj_id]] <- proj
     }
@@ -411,7 +411,7 @@ server <- function(input, output, session) {
             incProgress(kInc, detail = 'PAM silhouettes')
             mean(cluster::silhouette(pamCluster)[, 3])
           }, double(1))
-        
+          
           bestPam <- which.max(pamSils)
           pamSil <- pamSils[bestPam]
           pamCluster <- pamClusters[[bestPam]]$cluster
@@ -544,9 +544,9 @@ server <- function(input, output, session) {
         
         bestCluster <- c('none', 'pam', 'hmm', 'hsi', 'hco', 'hav', 'hmd', 'hct',
                          'hwd', 'kmn', 'spec')[
-          which.max(c(0, pamSil, hSil, hsiSil, hcoSil, havSil, hmdSil, hctSil,
-                      hwdSil, kSil, specSil))]
-    
+                           which.max(c(0, pamSil, hSil, hsiSil, hcoSil, havSil, hmdSil, hctSil,
+                                       hwdSil, kSil, specSil))]
+        
         r[[clust_id]] <- list(method = switch(bestCluster,
                                               pam = 'part. around medoids',
                                               hmm = 'minimax linkage',
@@ -651,58 +651,58 @@ server <- function(input, output, session) {
   
   pointCols <- reactive({
     switch(input$pt.col,
-     'clust' = {
-       cl <- clusterings()
-       if (cl$sil > 0.25) {
-         palettes[[min(length(palettes), cl$n)]][cl$cluster]
-       } else palettes[[1]]
-     },
-     'entry' = {
-       n <- r$entryOrder
-       palettes[[max(n)]][n]
-     },
-     'seq' = {
-       substr(viridisLite::plasma(length(r$allTrees)), 1, 7)
-     },
-     'discrete' = {
-       dat <- pointData()
-       categories <- unique(dat)
-       nCol <- length(categories)
-       if (nCol <= length(palettes)) {
-         PointDataStatus("")
-         output$pt.col.scale <- renderPlot({
-           par(mar = c(1, 0, 0, 0))
-           plot(seq_len(nCol), rep(0, nCol), pch = 15, ylim = c(-1, 0),
-                col = palettes[[nCol]], ann = FALSE, axes = FALSE)
-           axis(1, at = seq_len(nCol), labels = categories,
-                tick = FALSE, line = -1)
-         })
-         palettes[[nCol]][match(dat, categories)]
-       } else {
-         PointDataStatus(nCol, " categories is too many to display;",
-                         "did you mean continuous?")
-         c(palettes[[length(palettes)]], '#000000')[
-           pmin(match(dat, categories), length(palettes[[length(palettes)]]) + 1L)]
-       }
-     },
-     'continuous' = {
-       dat <- pointData()
-       if (is.numeric(dat)) {
-         output$pt.col.scale <- renderPlot({
-           par(mar = c(1, 0, 0, 0))
-           plot(1:256, rep(0, 256), pch = 15, col = viridisLite::plasma(256), 
-                ylim = c(-1, 0), ann = FALSE, axes = FALSE)
-           axis(1, at = c(1, 256), labels = range(dat), line = -1)
-           
-         })
-         substr(viridisLite::plasma(256), 1, 7)[cut(dat, 256)]
-       } else {
-         PointDataStatus("Point data are not numeric.",
-                         'Try selecting "Custom categorical".')
-         '#000000'
-       }
-       
-     }
+           'clust' = {
+             cl <- clusterings()
+             if (cl$sil > 0.25) {
+               palettes[[min(length(palettes), cl$n)]][cl$cluster]
+             } else palettes[[1]]
+           },
+           'entry' = {
+             n <- r$entryOrder
+             palettes[[max(n)]][n]
+           },
+           'seq' = {
+             substr(viridisLite::plasma(length(r$allTrees)), 1, 7)
+           },
+           'discrete' = {
+             dat <- pointData()
+             categories <- unique(dat)
+             nCol <- length(categories)
+             if (nCol <= length(palettes)) {
+               PointDataStatus("")
+               output$pt.col.scale <- renderPlot({
+                 par(mar = c(1, 0, 0, 0))
+                 plot(seq_len(nCol), rep(0, nCol), pch = 15, ylim = c(-1, 0),
+                      col = palettes[[nCol]], ann = FALSE, axes = FALSE)
+                 axis(1, at = seq_len(nCol), labels = categories,
+                      tick = FALSE, line = -1)
+               })
+               palettes[[nCol]][match(dat, categories)]
+             } else {
+               PointDataStatus(nCol, " categories is too many to display;",
+                               "did you mean continuous?")
+               c(palettes[[length(palettes)]], '#000000')[
+                 pmin(match(dat, categories), length(palettes[[length(palettes)]]) + 1L)]
+             }
+           },
+           'continuous' = {
+             dat <- pointData()
+             if (is.numeric(dat)) {
+               output$pt.col.scale <- renderPlot({
+                 par(mar = c(1, 0, 0, 0))
+                 plot(1:256, rep(0, 256), pch = 15, col = viridisLite::plasma(256), 
+                      ylim = c(-1, 0), ann = FALSE, axes = FALSE)
+                 axis(1, at = c(1, 256), labels = range(dat), line = -1)
+                 
+               })
+               substr(viridisLite::plasma(256), 1, 7)[cut(dat, 256)]
+             } else {
+               PointDataStatus("Point data are not numeric.",
+                               'Try selecting "Custom categorical".')
+               '#000000'
+             }
+             
+           }
     )
   })
   
@@ -768,7 +768,7 @@ server <- function(input, output, session) {
       }
     })
   })
-
+  
   mode3D <- reactive("show3d" %in% input$display)
   PlotSize <- function () debounce(reactive(input$plotSize), 100)
   output$distPlot <- renderPlot({
@@ -793,12 +793,12 @@ server <- function(input, output, session) {
           incProgress(0.1)
           rgl::rgl.bg(color = 'white')
           rgl::plot3d(proj[, 1], proj[, 2], proj[, 3],
-               aspect = 1, # Preserve aspect ratio - do not distort distances
-               axes = FALSE, # Dimensions are meaningless
-               col = pointCols(),
-               alpha = input$pt.opacity / 255,
-               cex = input$pt.cex,
-               xlab = '', ylab = '', zlab = ''
+                      aspect = 1, # Preserve aspect ratio - do not distort distances
+                      axes = FALSE, # Dimensions are meaningless
+                      col = pointCols(),
+                      alpha = input$pt.opacity / 255,
+                      cex = input$pt.cex,
+                      xlab = '', ylab = '', zlab = ''
           )
           incProgress(0.6)
           if ('labelTrees' %in% input$display) {
@@ -807,7 +807,7 @@ server <- function(input, output, session) {
           if (mstSize() > 0) {
             apply(mstEnds(), 1, function (segment)
               rgl::lines3d(proj[segment, 1], proj[segment, 2], proj[segment, 3],
-                      col = "#bbbbbb", lty = 1))
+                           col = "#bbbbbb", lty = 1))
           }
         })
         rgl::rglwidget()
@@ -886,11 +886,11 @@ server <- function(input, output, session) {
     
     axis(1, tick = FALSE, line = 0, at = 0.25,
          labels = paste0("Silhouette coefficient (", round(cl$sil, 3), ")"))
-         
+    
     
     axis(3, tick = FALSE, line = -2, at = 0.25,
          labels = paste0(cl$n, " clusters found with ", cl$method))
-         
+    
   })
   
   output$howManyDims <- renderPlot({
@@ -926,14 +926,14 @@ server <- function(input, output, session) {
       png(file, width = input$plotSize, height = input$plotSize)
       treespacePlot()
       dev.off()
-  })
+    })
   output$savePdf <- downloadHandler(
     filename = 'TreeSpace.pdf',
     content = function (file) {
       pdf(file, title = paste0('Tree space projection'))
       treespacePlot()
       dev.off()
-  })
+    })
 }
 
 shinyApp(ui = ui, server = server)
