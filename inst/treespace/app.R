@@ -2,6 +2,7 @@ library("shiny")
 library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
 library("TreeDist")
 
+# Allow large files to be submitted
 options(shiny.maxRequestSize = 100 * 1024^2)
 
 palettes <- list("#91aaa7",
@@ -28,6 +29,156 @@ palettes <- list("#91aaa7",
 )
 
 badToGood <- rev(c("#1AB958", "#23B956", "#2BB954", "#31B952", "#37B850", "#3CB84E", "#41B84C", "#45B74A", "#49B749", "#4DB747", "#51B645", "#54B643", "#58B641", "#5BB53F", "#5FB53D", "#62B53C", "#65B43A", "#68B438", "#6BB336", "#6DB335", "#70B333", "#73B231", "#76B230", "#78B12E", "#7BB12C", "#7DB02B", "#80B029", "#82AF28", "#85AF26", "#87AE25", "#8AAE23", "#8CAD22", "#8EAD21", "#91AC1F", "#93AC1E", "#95AB1D", "#97AB1C", "#9AAA1B", "#9CAA1A", "#9EA919", "#A0A918", "#A2A818", "#A4A717", "#A6A716", "#A8A616", "#AAA616", "#ACA515", "#AEA415", "#B0A415", "#B2A315", "#B4A315", "#B6A216", "#B8A116", "#B9A117", "#BBA017", "#BD9F18", "#BF9F18", "#C19E19", "#C29D1A", "#C49D1B", "#C69C1C", "#C79B1D", "#C99A1E", "#CB9A1F", "#CC9920", "#CE9822", "#CF9823", "#D19724", "#D29625", "#D49626", "#D59528", "#D79429", "#D8932A", "#D9932C", "#DB922D", "#DC912E", "#DD9130", "#DF9031", "#E08F33", "#E18F34", "#E28E35", "#E38D37", "#E58C38", "#E68C3A", "#E78B3B", "#E88A3D", "#E98A3E", "#EA8940", "#EB8841", "#EC8843", "#ED8744", "#EE8746", "#EE8647", "#EF8549", "#F0854A", "#F1844C", "#F2844D", "#F2834F", "#F38350", "#F48252", "#F48253", "#F58155", "#F58157", "#F68058", "#F6805A", "#F77F5B", "#F77F5D", "#F87E5E"))
+
+Reference <- function (authors, year, title, journal = '',
+                       volume = NULL, pages = NULL, doi = NULL,
+                       publisher = NULL, editors = NULL) {
+  nAuth <- length(authors)
+  if (nAuth > 1L) {
+    authors <- paste(paste0(authors[-nAuth], collapse = ', '), "&amp;", authors[nAuth])
+  }
+  nEd <- length(editors)
+  if (nEd > 1L) {
+    editors <- paste(paste0(editors[-nEd], collapse = ', '), "&amp;", editors[nEd])
+  } else if (nEd < 1) editors <- ''
+  paste0("<p class='reference'>", authors, " (", year, "). &ldquo;", title,
+         "&rdquo;. ",
+         if (editors != '') paste0("In: ", editors, ' (eds). ') else '',
+         if (journal != "") paste0("<i>", journal, "</i>. ") else "",
+         if (is.null(volume)) "" else paste0("<b>", volume, "</b>:"),
+         if (is.null(publisher)) "" else paste0(publisher, '. '),
+         if (is.null(pages)) "" else paste0(paste0(pages, collapse = "&ndash;"), '. '),
+         if (is.null(doi)) "" else paste0(
+           "doi:<a href='https://doi.org/", doi, "' title=\"CrossRef\">",
+                  doi, "</a>. "), 
+         "</p>")
+}
+
+
+Bien2011 <- Reference(
+  c("Bien, J.", "Tibshirani, R."),
+  title = "Hierarchical clustering with prototypes via minimax linkage",
+  year = 2011,
+  volume = 106,
+  doi = "10.1198/jasa.2011.tm10183",
+  pages = c(1075, 1084),
+  journal = "Journal of the American Statistical Association")
+Gower1966 <- Reference(  title = "Some distance properties of latent root and vector methods used in multivariate analysis",
+                         author = "Gower, J.C.",
+                         year = 1966,
+                         volume = 53,
+                         pages = c(325, 338),
+                         doi = "10.2307/2333639",
+                         journal = "Biometrika")
+Gower1969 <- Reference(
+  title = "Minimum spanning trees and single linkage cluster analysis",
+  author = c("Gower, J.C.", "Ross, G.J.S."),
+  year = 1969, volume = 18, pages = c(54, 64), doi = "10.2307/2346439",
+  journal = "Journal of the Royal Statistical Society. Series C (Applied Statistics)")
+Kruskal1964 <- Reference(
+  title = "Multidimensional scaling by optimizing goodness of fit to a nonmetric hypothesis",
+  author = "Kruskal, J.B.", year = 1964, volume = 29, pages = c(1, 27),
+  doi = "10.1007/BF02289565", journal = "Psychometrika")
+Kaski2003 <- Reference(
+  title = "Trustworthiness and metrics in visualizing similarity of gene expression",
+  author = c("Kaski, S.", "Nikkil&auml;, J.", "Oja, M.", "Venna, J.",
+             "T&ouml;r&ouml;nen, P.", "Castr&eacute;n, E."),
+  year = 2003, volume = 4, pages = 48, doi = "10.1186/1471-2105-4-48",
+  journal = "BMC Bioinformatics")
+Maechler2019 <- Reference(
+  title = "cluster: cluster analysis basics and extensions", year = 2019,
+  author = c("Maechler, M.", "Rousseeuw, P.", "Struyf, A.", "Hubert, M.", "Hornik, K."),
+  journal = "Comprehensive R Archive Network")
+Murtagh1983 <- Reference(
+  title = "A survey of recent advances in hierarchical clustering algorithms",
+  author = "Murtagh, F.", year = 1983, volume = 26, pages = c(354, 359),
+  doi = "10.1093/comjnl/26.4.354", journal = "The Computer Journal")
+Paradis2019 <- Reference(
+  title = "ape 5.0: an environment for modern phylogenetics and evolutionary analyses in R",
+  author = c("Paradis, E.", "Schliep, K."), journal = "Bioinformatics",
+  year = 2019, volume = 35, pages = c(526, 528))
+RCoreTeam <- Reference(
+  author = "R Core Team", year = 2020,
+  title = "R: A language and environment for statistical computing",
+  publisher = "R Foundation for Statistical Computing, Vienna, Austria")
+Sammon1969 <- Reference(
+  title = "A nonlinear mapping for data structure analysis",
+  author = "Sammon, J.W.", year = 1969,
+  volume = "C-18", pages = c(401, 409),
+  doi = "10.1109/T-C.1969.222678", journal = "IEEE Transactions on Computers")
+Venables2002 <- Reference(
+  title = "Modern Applied Statistics with S. Fourth edition",
+  author = c("Venables, W.N.", "Ripley, B.D."),
+  publisher = "Springer, New York",
+  year = 2002)
+Venna2001 <- Reference(
+  title = "Neighborhood preservation in nonlinear projection methods: an experimental study",
+  author = c("Venna, J.", "Kaski, S."), year = 2001, pages = c(485, 491),
+  journal = "Lecture Notes in Computer Science: Artificial Neural Networks&mdash;ICANN 2001",
+  editors = c("Dorffner, G.", "Bischof, H.", "Hornik, K."),
+  publisher = "Springer, Berlin",
+  doi = "10.1007/3-540-44668-0_68")
+
+            
+Day1985 <- Reference(
+  title = "Optimal algorithms for comparing trees with labeled leaves",
+  author = "Day, W.H.E.", year = 1985,
+  volume = 2,
+  pages = c(7, 28),
+  doi = "10.1007/BF01908061",
+  journal = "Journal of Classification")
+Estabrook1985 <- Reference(
+  c("Estabrook, G.F.", "McMorris, F.R.", "Meacham, C.A."), 1985,
+  title = "Comparison of undirected phylogenetic trees based on subtrees of four evolutionary units",
+  volume = 34,
+  pages = c(193, 200),
+  doi = "10.2307/sysbio/34.2.193",
+  journal = "Systematic Zoology"
+)
+Farris1973 <- Reference(title = "On comparing the shapes of taxonomic trees",
+                        author = "Farris, J.S.",
+                        year = 1973,
+                        volume = 22,
+                        pages = c(50, 54),
+                        doi = "10.2307/2412378",
+                        journal = "Systematic Zoology")
+Sand2014 <- Reference(
+    author = c("Sand, A.", "Holt, M.K.", "Johansen, J.", "Brodal, G.S.",
+               "Mailund, T.", "Pedersen, C.N.S."),
+    doi = "10.1093/bioinformatics/btu157",
+    journal = "Bioinformatics",
+    pages = c(2079, 2080),
+    title = "tqDist: a library for computing the quartet and triplet distances between binary or general trees",
+    volume = 30,
+    year = 2014
+)
+Smith2020 <- Reference('Smith, M.R.', 2020,
+  'Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees',
+  'Bioinformatics', pages = 'In production', doi = "10.1093/bioinformatics/btaa614")
+Smith2021 <- Reference('*Smith, M.R.', 2021,
+  'The importance of methodology when analyzing landscapes of phylogenetic trees',
+  'Submitted MS')
+SmithDist <- Reference('Smith, M.R.', 2020,
+  'TreeDist: distances between phylogenetic trees',
+  doi = '10.5281/zenodo.3528123', 'Comprehensive R Archive Network')
+SmithQuartet <- Reference('Smith, M.R.', 2019,
+  'Quartet: comparison of phylogenetic trees using quartet and split measures',
+  'Comprehensive R Archive Network', doi = "10.5281/zenodo.2536318")
+Ward1963 <- Reference('Ward, J.H.', 1963,
+                      'Hierarchical grouping to optimize an objective function',
+                      'Journal of the American Statistical Association',
+                      58, c(236, 244),
+                      doi = "10.1080/01621459.1963.10500845")
+Robinson1981 <- Reference(
+title = "Comparison of phylogenetic trees",
+volume = 53,
+doi = "10.1016/0025-5564(81)90043-2",
+journal = "Mathematical Biosciences",
+author = c("Robinson, D.F.", "Foulds, L.R."),
+year = 1981,
+pages = c(131, 147)
+)
+
 
 # Define UI for app that draws a histogram ----
 ui <- fluidPage(theme = 'treespace.css',
@@ -145,23 +296,22 @@ ui <- fluidPage(theme = 'treespace.css',
     ),
     
     column(9,
-      mainPanel(
-        fluidRow(id = 'plotConfig',
-          tags$span("Plot size:", id = 'plotSizeSpan'),
-          sliderInput(inputId = "plotSize", label = NULL,
-                      width = '200px',
-                      min = 100, max = 2000,
-                      post = 'px', value = 600),
-          tags$span("Save as: "),
-          downloadButton('savePdf', 'PDF'),
-          downloadButton('savePng', 'PNG'),
-        ),
-        fluidRow(
-          plotOutput(outputId = "distPlot"),
-          rgl::rglwidgetOutput(outputId = "threeDPlot",
-                               width = "600px", height = "600px"),
-          ),
-      )
+      fluidRow(id = 'plotConfig',
+        tags$span("Plot size:", id = 'plotSizeSpan'),
+        sliderInput(inputId = "plotSize", label = NULL,
+                    width = '200px',
+                    min = 100, max = 2000,
+                    post = 'px', value = 600),
+        tags$span("Save as: "),
+        downloadButton('savePdf', 'PDF'),
+        downloadButton('savePng', 'PNG'),
+      ),
+      fluidRow(
+        plotOutput(outputId = "distPlot", height = "0px"),
+        rgl::rglwidgetOutput(outputId = "threeDPlot",
+                             width = "600px", height = "600px"),
+        htmlOutput('references'),
+      ),
   )
 )
 
@@ -496,7 +646,7 @@ server <- function(input, output, session) {
         
         if ('hct' %in% input$clustering) {
           incProgress(methInc / 2, detail = 'centroid clustering')
-          hTree <- stats::hclust(dists, method = 'centroid')
+          hTree <- stats::hclust(dists ^ 2, method = 'centroid')
           hctClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
           hctSils <- vapply(hctClusters, function (hCluster) {
             incProgress(kInc / 2, detail = 'centroid silhouettes')
@@ -779,35 +929,32 @@ server <- function(input, output, session) {
   }, width = PlotSize(), height = PlotSize())
   
   output$threeDPlot <- rgl::renderRglwidget({
-    if (mode3D()) {
-      
-      if (inherits(distances(), 'dist')) {
-        cl <- clusterings()
-        proj <- projection()
-        withProgress(message = 'Drawing 3D plot', {
-          rgl::rgl.open(useNULL = TRUE)
-          incProgress(0.1)
-          rgl::rgl.bg(color = 'white')
-          rgl::plot3d(proj[, 1], proj[, 2], proj[, 3],
-               aspect = 1, # Preserve aspect ratio - do not distort distances
-               axes = FALSE, # Dimensions are meaningless
-               col = pointCols(),
-               alpha = input$pt.opacity / 255,
-               cex = input$pt.cex,
-               xlab = '', ylab = '', zlab = ''
-          )
-          incProgress(0.6)
-          if ('labelTrees' %in% input$display) {
-            rgl::text3d(proj[, 1], proj[, 2], proj[, 3], thinnedTrees())
-          }
-          if (mstSize() > 0) {
-            apply(mstEnds(), 1, function (segment)
-              rgl::lines3d(proj[segment, 1], proj[segment, 2], proj[segment, 3],
-                           col = "#bbbbbb", lty = 1))
-          }
-        })
-        rgl::rglwidget()
-      }
+    if (mode3D() && inherits(distances(), 'dist')) {
+      cl <- clusterings()
+      proj <- projection()
+      withProgress(message = 'Drawing 3D plot', {
+        rgl::rgl.open(useNULL = TRUE)
+        incProgress(0.1)
+        rgl::rgl.bg(color = 'white')
+        rgl::plot3d(proj[, 1], proj[, 2], proj[, 3],
+             aspect = 1, # Preserve aspect ratio - do not distort distances
+             axes = FALSE, # Dimensions are meaningless
+             col = pointCols(),
+             alpha = input$pt.opacity / 255,
+             cex = input$pt.cex,
+             xlab = '', ylab = '', zlab = ''
+        )
+        incProgress(0.6)
+        if ('labelTrees' %in% input$display) {
+          rgl::text3d(proj[, 1], proj[, 2], proj[, 3], thinnedTrees())
+        }
+        if (mstSize() > 0) {
+          apply(mstEnds(), 1, function (segment)
+            rgl::lines3d(proj[segment, 1], proj[segment, 2], proj[segment, 3],
+                    col = "#bbbbbb", lty = 1))
+        }
+      })
+      rgl::rglwidget()
     }
   })
   
@@ -885,8 +1032,10 @@ server <- function(input, output, session) {
     
     
     axis(3, tick = FALSE, line = -2, at = 0.25,
-         labels = paste0(cl$n, " clusters found with ", cl$method))
-    
+         labels = if (cl$sil > 0.25) 
+           paste0(cl$n, " clusters found with ", cl$method) else 
+             paste0("No meaningful clusters found"))
+
   })
   
   output$howManyDims <- renderPlot({
@@ -929,7 +1078,48 @@ server <- function(input, output, session) {
       pdf(file, title = paste0('Tree space projection'))
       treespacePlot()
       dev.off()
-    })
+  })
+  
+  
+  output$references <- renderUI({
+    tags$div(style = paste0('position: relative; top: ', input$plotSize - 600, 'px'),
+    tagList(
+      tags$h2('References for methods used'),
+      #HTML(paste0("<h2>References", input$plotSize, "</h2>")),
+      tags$h3('Tree space construction'),
+      HTML(paste0(Smith2021,
+                  Kaski2003, Venna2001, RCoreTeam)),
+      HTML(if (mstSize() > 0) paste0(Gower1969, Paradis2019)),
+      HTML(if(input$distance == 'qd') SmithDist),
+      tags$h3('Tree distance'),
+      HTML(switch(input$distance,
+             'cid' = paste0(Smith2020, SmithDist),
+             'pid' = paste0(Smith2020, SmithDist),
+             'qd' = paste0(Estabrook1985, Sand2014, SmithQuartet),
+             'path' = paste0(Farris1973, SmithDist),
+             'rf' = paste0(Robinson1981, Day1985, SmithDist))
+      ),
+      tags$h3('Projection'),
+      HTML(switch(input$projection,
+                  'pca' = Gower1966,
+                  'k' = paste0(Kruskal1964, Venables2002),
+                  'nls' = paste0(Sammon1969, Venables2002)
+                  )
+           ),
+      tags$h3('Clustering'),
+      HTML(paste(c(pam = paste0('Partitioning around medoids:', Maechler2019),
+        hmm = paste0("Heirarchical, minimax linkage:", Bien2011, Murtagh1983),
+        hsi = '',#paste0("Heirarchical, single linkage:"),
+        hco = '',#paste0("Heirarchical, complete linkage:"),
+        hav = '',#paste0("Heirarchical, average linkage:"),
+        hmd = '',#paste0("Heirarchical, median linkage:"),
+        hct = '',#paste0("Heirarchical, centroid linkage:"),
+        hwd = paste0("Heirarchical, Ward d\ub2 linkage:", Ward1963),
+        kmn = '',#paste0("K-means:"),
+        spec = ''#paste0("Spectral:")
+        )[input$clustering]))
+    ))
+  })
 }
 
 shinyApp(ui = ui, server = server)

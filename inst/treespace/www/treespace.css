@@ -60,3 +60,17 @@ div#threeDPlot canvas {
 .message {
   color: #ffc646;
 }
+
+#references {
+  position: relative;
+}
+
+h2 {
+  font-size: 14pt;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 12pt;
+  font-weight: 700;
+}
