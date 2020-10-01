@@ -48,7 +48,8 @@ git:
   depth: 1
 
 before_install:
-  - sudo apt-get r-cran-rgl
+  - sudo apt-get install r-cran-rgl
+  - sudo apt-get install mesa-common-dev
 
 before_script:
   - R -e "pkgload::load_all(); devtools::document()"
