@@ -66,6 +66,8 @@ navbar:
       menu:
       - text: Using TreeDist to calculate tree similarity
         href: articles/Using-TreeDist.html
+      - text: Tree space analysis in TreeDist
+        href: articles/treespace.html
       - text: Contextualizing tree distances
         href: articles/using-distances.html
       - text: Robinson-Foulds metric
