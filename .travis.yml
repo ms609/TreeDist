@@ -47,6 +47,9 @@ jobs:
 git:
   depth: 1
 
+before_install:
+  - sudo apt-get libx11-dev mesa-common-dev libglu1-mesa-dev
+
 before_script:
   - R -e "pkgload::load_all(); devtools::document()"
 
