@@ -42,9 +42,8 @@ an analysis involves, and some potential pitfalls.
 
 Here's an example analysis of a series of 200 trees from an ordered list.
 The list corresponds to a mixed-base representation of trees (see 
-[`TreeTools::as.TreeNumber`](https://ms609.github.io/TreeTools/reference/TreeNumber.html),
-so is expected to contain some structure as we jump from one 'class' of tree to
-another. 
+`TreeTools::as.TreeNumber`), so is expected to contain some structure as we 
+jump from one 'class' of tree to another. 
 Let's see whether we can visualize and corroborate this structure.
 
 First we'll generate the trees, and load some colours with which we might
