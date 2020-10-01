@@ -42,8 +42,9 @@ an analysis involves, and some potential pitfalls.
 
 Here's an example analysis of a series of 200 trees from an ordered list.
 The list corresponds to a mixed-base representation of trees (see 
-[`TreeTools::as.TreeNumber`], so is expected to contain some structure as
-we jump from one 'class' of tree to another. 
+[`TreeTools::as.TreeNumber`](https://ms609.github.io/TreeTools/reference/TreeNumber.html),
+so is expected to contain some structure as we jump from one 'class' of tree to
+another. 
 Let's see whether we can visualize and corroborate this structure.
 
 First we'll generate the trees, and load some colours with which we might
@@ -58,7 +59,7 @@ treeCols <- spectrum[treeNumbers]
 ```
 
 Now we need to calculate the distance between each pair of trees in our list.
-The choice of distance metric is important [@SmithSpace]:
+The choice of distance metric is important [@SmithSpace].
 The clustering information distance is reliable and fast to calculate 
 [@SmithDist]:
 
@@ -94,20 +95,21 @@ kruskal <- MASS::isoMDS(distances, k = 12)
 projection <- kruskal$points
 ```
 
-whereas `sammon()` is one of many metric MDS, using Sammon's stress function
-[@Sammon1969]
+whereas `sammon()`, one of many metric MDS methods, uses Sammon's stress 
+function [@Sammon1969]:
 ```
 sammon <- MASS::sammon(distances, k = 12)
 projection <- sammon$points
 ```
 
-That's a good start.  A lazy investigator would plot this projection and be done:
+That's a good start.  A lazy investigator would plot the first two dimensions
+arising from this projection and be done:
 
 ```{r plot-projection-2d, fig.asp = 1, fig.width = 3, fig.align='center'}
 par(mar = rep(0, 4))
 plot(projection,
      asp = 1, # Preserve aspect ratio - do not distort distances
-     ann = FALSE, axes = FALSE, # Dimensions are meaningless
+     ann = FALSE, axes = FALSE, # Don't label axes: dimensions are meaningless
      col = treeCols, pch = 16
      )
 ```
@@ -153,12 +155,11 @@ legend('topright', c('PAM', 'Hierarchical'), pch = 1:2)
 
 Silhouette coefficients of < 0.25 suggest that structure is not meaningful; 
 \> 0.5 denotes good evidence of clustering, and \> 0.7 strong evidence
-[@@Kaufman1990].
+[@Kaufman1990].
 The evidence for the visually apparent clustering is not as strong as it first
 appears.  Let's explore our two-cluster hierarchical clustering solution anyway.
 
 ```{r chosen-cluster}
-#cluster <- pamClusters[[5]]$cluster
 cluster <- hClusters[[2 - 1]]
 ```
 
@@ -191,9 +192,6 @@ First we want to know how many dimensions are necessary to adequately
 represent the true distances between trees.  We hope for a trustworthiness ×
 continuity score of \> 0.9 for a usable projection, or \> 0.95 for a good one.
 
-```r
-library("dreval")
-```
 ```{r how-many-dims, fig.align='center'}
 txc <- vapply(1:12, function (k) {
   newDist <- dist(projection[, seq_len(k)])
@@ -203,7 +201,7 @@ plot(txc, xlab = 'Dimension')
 abline(h = 0.9, lty = 2)
 ```
 
-We are going to need at least six dimensions to adequately represent the
+We are going to need at least five dimensions to adequately represent the
 distances between trees.
 
 To help establish visually what structures are more likely to be genuine,
@@ -213,16 +211,18 @@ we might also choose to calculate a minimum spanning tree:
 mstEnds <- MSTEdges(distances)
 ```
 
-Let's plot the first six dimensions of our tree space, highlighting the convex
+Let's plot the first five dimensions of our tree space, highlighting the convex
 hulls of our clusters:
 
-```{r plot-projection-6d, fig.asp = 1, fig.align='center'}
-plotSeq <- matrix(0, 6, 6)
-plotSeq[upper.tri(plotSeq)] <- seq_len(6 * (6 - 1) / 2)
-layout(t(plotSeq[-6, -1]))
+```{r plot-projection-5d, fig.asp = 1, fig.align='center'}
+plotSeq <- matrix(0, 5, 5)
+plotSeq[upper.tri(plotSeq)] <- seq_len(5 * (5 - 1) / 2)
+plotSeq <- t(plotSeq[-5, -1])
+plotSeq[c(5, 10, 15)] <- 11:13
+layout(plotSeq)
 par(mar = rep(0.1, 4))
 
-for (i in 2:6) for (j in seq_len(i - 1)) {
+for (i in 2:5) for (j in seq_len(i - 1)) {
   # Set up blank plot
   plot(projection[, j], projection[, i], ann = FALSE, axes = FALSE, frame.plot = TRUE,
        type = 'n', asp = 1, xlim = range(projection), ylim = range(projection))
@@ -244,7 +244,13 @@ for (i in 2:6) for (j in seq_len(i - 1)) {
             border = '#54de25bb')
   }
 }
-
+# Annotate dimensions
+plot(0, 0, type = 'n', ann = FALSE, axes = FALSE)
+text(0, 0, 'Dimension 2')
+plot(0, 0, type = 'n', ann = FALSE, axes = FALSE)
+text(0, 0, 'Dimension 3')
+plot(0, 0, type = 'n', ann = FALSE, axes = FALSE)
+text(0, 0, 'Dimension 4')
 ```
 
 Our clusters, so distinct in dimension 1, overlap strongly in every other

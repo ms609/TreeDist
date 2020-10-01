@@ -1,6 +1,7 @@
 #' Graphical user interface for tree space analysis
 #' 
-#' Launches a 'Shiny' application for the exploration of tree spaces.
+#' `TreeSpace()` launches a 'Shiny' application for the visualization and
+#' evaluation of tree spaces.
 #' 
 #' # Input tab
 #' 
