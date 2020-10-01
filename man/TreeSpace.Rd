@@ -7,7 +7,8 @@
 TreeSpace()
 }
 \description{
-Launches a 'Shiny' application for the exploration of tree spaces.
+\code{TreeSpace()} launches a 'Shiny' application for the visualization and
+evaluation of tree spaces.
 }
 \section{Input tab}{
 The input tab allows for the upload of sets of phylogenetic trees from file.
