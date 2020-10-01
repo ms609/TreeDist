@@ -2,6 +2,14 @@ library("shiny")
 library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
 library("TreeDist")
 
+if (!requireNamespace('cluster', quietly = TRUE)) install.packages('cluster')
+if (!requireNamespace('protoclust', quietly = TRUE)) install.packages('protoclust')
+if (!requireNamespace('MASS', quietly = TRUE)) install.packages('MASS')
+if (!requireNamespace('Quartet', quietly = TRUE)) install.packages('Quartet')
+if (!requireNamespace('rgl', quietly = TRUE)) install.packages('rgl')
+if (!requireNamespace('readxl', quietly = TRUE)) install.packages('readxl')
+if (!requireNamespace('viridisLite', quietly = TRUE)) install.packages('viridisLite')
+
 # Allow large files to be submitted
 options(shiny.maxRequestSize = 100 * 1024^2)
 
