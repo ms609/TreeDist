@@ -35,7 +35,8 @@ TreeDist::TreeSpace()
 ```
 
 This will allow you to conduct and evaluate basic tree space projections
-from tree lists saved in most common file formats.
+from tree lists saved in most common file formats; see an 
+[outline of the basic functionality](https://ms609.github.io/TreeDist/reference/TreeSpace.html).
 To avoid misinterpreting tree space, it's worth having a broad idea of what
 an analysis involves, and some potential pitfalls.
 
