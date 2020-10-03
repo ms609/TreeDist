@@ -3,6 +3,12 @@
 #' `as.ClusterTable()` converts a phylogenetic tree to a `ClusterTable` object,
 #' which is an internal representation of its splits suitable for rapid tree
 #' distance calculation (per Day, 1985).
+#' 
+#' Each row of a cluster table relates to a clade on a tree rooted on tip 1.
+#' Tips are numbered according to the order in which they are visited in 
+#' preorder: i.e., if plotted using `plot(x)`, from the top of the page
+#' downwards.  A clade containing the tips 2 .. 5 would be denoted by the
+#' entry `2, 5`, in either row 2 or row 5 of the cluster table.
 #'
 #' @param x Object to convert into `ClusterTable`: perhaps a tree of class
 #'  \code{\link[ape:read.tree]{phylo}}.

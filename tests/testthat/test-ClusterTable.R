@@ -4,7 +4,7 @@ library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
 test_that("ClusterTable class behaves", {
   tree <- RootTree(BalancedTree(6), 1)
   ct <- as.ClusterTable(tree)
-  expect_equal(matrix(c(0, 2:5, 1, 0, rep(6, 5)), 6),
+  expect_equal(matrix(c(0, 2, rep(1, 4), 0, 3, 3:6), 6),
                as.matrix.ClusterTable(ct))
 })
 
