@@ -50,6 +50,17 @@ as.ClusterTable.phylo <- function (x, tipLabels = NULL, ...) {
 
 #' @rdname ClusterTable
 #' @export
+as.ClusterTable.list <- function (x, tipLabels = NULL, ...) {
+  lapply(x, as.ClusterTable,
+         tipLabels = if (is.null(tipLabels)) TipLabels(x) else tipLabels, ...)
+}
+
+#' @rdname ClusterTable
+#' @export
+as.ClusterTable.multiPhylo <- as.ClusterTable.list
+
+#' @rdname ClusterTable
+#' @export
 as.matrix.ClusterTable <- function (x, ...) {
   ClusterTable_matrix(x)
 }

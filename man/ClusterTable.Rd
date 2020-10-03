@@ -4,12 +4,18 @@
 \alias{ClusterTable}
 \alias{as.ClusterTable}
 \alias{as.ClusterTable.phylo}
+\alias{as.ClusterTable.list}
+\alias{as.ClusterTable.multiPhylo}
 \alias{as.matrix.ClusterTable}
 \title{Convert phylogenetic tree to \code{ClusterTable}}
 \usage{
 as.ClusterTable(x, tipLabels = NULL, ...)
 
 \method{as.ClusterTable}{phylo}(x, tipLabels = NULL, ...)
+
+\method{as.ClusterTable}{list}(x, tipLabels = NULL, ...)
+
+\method{as.ClusterTable}{multiPhylo}(x, tipLabels = NULL, ...)
 
 \method{as.matrix}{ClusterTable}(x, ...)
 }
