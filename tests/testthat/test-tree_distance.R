@@ -534,6 +534,9 @@ test_that('RobinsonFoulds() is correctly calculated', {
   RFNtipTest(1027)
   
   NormalizationTest(RobinsonFoulds, similarity = TRUE)
+  #TODO we may wish to revise this test once we implement diag = TRUE to 
+  #allow similarities to be calculated on the diagonal.
+  expect_equal(numeric(0), RobinsonFoulds(treeSym8, normalize = TRUE))
 })
 
 

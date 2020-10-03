@@ -97,7 +97,7 @@ RobinsonFoulds <- function (tree1, tree2 = NULL, similarity = FALSE,
                             normalize = FALSE, reportMatching = FALSE) {
   if (is.null(tree2)) {
     ct <- as.ClusterTable(tree1)
-    rf <- robinson_foulds_all_pairs(ct)
+    rf <- robinson_foulds_all_pairs(if(is.list(ct)) ct else list(ct))
     if (similarity) {
       unnormalized <- structure(rf + rf, Size = length(tree1), class = 'dist')
     } else {
