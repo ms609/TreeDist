@@ -1,0 +1,286 @@
+---
+title: "Tree space & landscape analysis"
+author: "Martin R. Smith"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    fig_width: 6
+    fig_height: 4
+bibliography: ../inst/REFERENCES.bib
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
+vignette: >
+  %\VignetteIndexEntry{Tree space & landscape analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r secret-header, echo=FALSE}
+set.seed(0)
+```
+
+It can be instructive to visualize the distribution of trees in a spatial
+'landscape'. This can be a helpful means to address whether discrete islands
+of trees exist, or whether analytical runs have converged.
+Such analysis is relatively simple to conduct, but contains a few 'gotchas'
+that can mislead interpretation.
+
+You can conduct treespace analysis simply using the Shiny app that comes with
+the 'TreeDist' R package.  Simply install [R](https://www.r-project.org/) or
+[RStudio](https://rstudio.com/), then copy the code below into the R command
+line:
+
+```r
+install.packages('TreeDist')
+TreeDist::TreeSpace()
+```
+
+This will allow you to conduct and evaluate basic tree space projections
+from tree lists saved in most common file formats; see an 
+[outline of the basic functionality](https://ms609.github.io/TreeDist/reference/TreeSpace.html).
+To avoid misinterpreting tree space, it's worth having a broad idea of what
+an analysis involves, and some potential pitfalls.
+
+Here's an example analysis of a series of 200 trees from an ordered list.
+The list corresponds to a mixed-base representation of trees (see 
+`TreeTools::as.TreeNumber`), so is expected to contain some structure as we 
+jump from one 'class' of tree to another. 
+Let's see whether we can visualize and corroborate this structure.
+
+First we'll generate the trees, and load some colours with which we might
+identify them.
+
+```{r generate-trees}
+library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+treeNumbers <- c(1:220)
+trees <- as.phylo(treeNumbers, 8)
+spectrum <- viridisLite::plasma(220)
+treeCols <- spectrum[treeNumbers]
+```
+
+Now we need to calculate the distance between each pair of trees in our list.
+The choice of distance metric is important [@SmithSpace].
+The clustering information distance is reliable and fast to calculate 
+[@SmithDist]:
+
+```{r calculate-distances}
+library('TreeDist')
+distances <- ClusteringInfoDistance(trees)
+```
+
+The reader is encouraged to repeat the exercise with other distances:
+
+```r
+distances <- RobinsonFoulds(trees)
+distances <- ClusteringInfoDistance(trees)
+distances <- as.dist(Quartet::QuartetDivergence(
+  Quartet::ManyToManyQuartetAgreement(trees), similarity = FALSE))
+```
+
+Then we need to reduce the dimensionality of these distances.
+We'll start out with a 12-dimensional projection; if needed, we can always 
+drop higher dimensions.  
+
+Principal components analysis is quick and performs very well:
+
+```{r projection}
+projection <- cmdscale(distances, k = 12)
+```
+
+Alternative projection methods do exist, and sometimes give slightly better 
+projections.  `isoMDS()` performs non-metric multidimensional scaling (MDS)
+with the Kruskal-1 stress function [@Kruskal1964]:
+```r
+kruskal <- MASS::isoMDS(distances, k = 12)
+projection <- kruskal$points
+```
+
+whereas `sammon()`, one of many metric MDS methods, uses Sammon's stress 
+function [@Sammon1969]:
+```
+sammon <- MASS::sammon(distances, k = 12)
+projection <- sammon$points
+```
+
+That's a good start.  A lazy investigator would plot the first two dimensions
+arising from this projection and be done:
+
+```{r plot-projection-2d, fig.asp = 1, fig.width = 3, fig.align='center'}
+par(mar = rep(0, 4))
+plot(projection,
+     asp = 1, # Preserve aspect ratio - do not distort distances
+     ann = FALSE, axes = FALSE, # Don't label axes: dimensions are meaningless
+     col = treeCols, pch = 16
+     )
+```
+
+A quick visual inspection suggests at least two clusters, with the possibility
+of further subdivision of the brighter trees.
+But visual inspection can be 
+highly misleading [@SmithSpace].  We must take a statistical approach.
+A combination of partitioning around medoids and hierarchical clustering with
+minimax linkage will
+typically find a clustering solution that is close to optimal, if one exists.
+
+
+```{r clustering, fig.align='center'}
+possibleClusters <- 2:10
+
+pamClusters <- lapply(possibleClusters, function (k) cluster::pam(distances, k = k))
+pamSils <- vapply(pamClusters, function (pamCluster) {
+  mean(cluster::silhouette(pamCluster)[, 3])
+}, double(1))
+
+bestPam <- which.max(pamSils)
+pamSil <- pamSils[bestPam]
+pamCluster <- pamClusters[[bestPam]]$cluster
+
+hTree <- protoclust::protoclust(distances)
+hClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
+hSils <- vapply(hClusters, function (hCluster) {
+  mean(cluster::silhouette(hCluster, distances)[, 3])
+}, double(1))
+
+
+bestH <- which.max(hSils)
+hSil <- hSils[bestH]
+hCluster <- hClusters[[bestH]]
+
+plot(pamSils ~ possibleClusters,
+     xlab = 'Number of clusters', ylab = 'Silhouette coefficient',
+     ylim = range(c(pamSils, hSils)))
+points(hSils ~ possibleClusters, pch = 2)
+legend('topright', c('PAM', 'Hierarchical'), pch = 1:2)
+```
+
+Silhouette coefficients of < 0.25 suggest that structure is not meaningful; 
+\> 0.5 denotes good evidence of clustering, and \> 0.7 strong evidence
+[@Kaufman1990].
+The evidence for the visually apparent clustering is not as strong as it first
+appears.  Let's explore our two-cluster hierarchical clustering solution anyway.
+
+```{r chosen-cluster}
+cluster <- hClusters[[2 - 1]]
+```
+
+
+We can visualize the clustering solution as a tree:
+
+```{r h-tree, fig.align='center'}
+class(hTree) <- 'hclust'
+par(mar = c(0, 0, 0, 0))
+plot(hTree, labels = FALSE, main = '')
+points(seq_along(trees), rep(1, length(trees)), pch = 16,
+       col = spectrum[hTree$order])
+```
+
+Another thing we may wish to do is to take the consensus of each cluster:
+
+```{r consensus, fig.align='center'}
+par(mfrow = c(1, 2), mar = rep(0.2, 4))
+col1 <- spectrum[mean(treeNumbers[cluster == 1])]
+col2 <- spectrum[mean(treeNumbers[cluster == 2])]
+plot(consensus(trees[cluster == 1]), edge.color = col1, edge.width = 2, tip.color = col1)
+plot(consensus(trees[cluster == 2]), edge.color = col2, edge.width = 2, tip.color = col2)
+```
+
+In this case, we don't learn much, though trees in one cluster are united
+by the position of `t7`.
+
+Now let's evaluate whether our plot of tree space is representative.
+First we want to know how many dimensions are necessary to adequately
+represent the true distances between trees.  We hope for a trustworthiness ×
+continuity score of \> 0.9 for a usable projection, or \> 0.95 for a good one.
+
+```{r how-many-dims, fig.align='center'}
+txc <- vapply(1:12, function (k) {
+  newDist <- dist(projection[, seq_len(k)])
+  ProjectionQuality(distances, newDist, 10)['TxC']
+}, 0)
+plot(txc, xlab = 'Dimension')
+abline(h = 0.9, lty = 2)
+```
+
+We are going to need at least five dimensions to adequately represent the
+distances between trees.
+
+To help establish visually what structures are more likely to be genuine,
+we might also choose to calculate a minimum spanning tree:
+
+```{r calculate-MST}
+mstEnds <- MSTEdges(distances)
+```
+
+Let's plot the first five dimensions of our tree space, highlighting the convex
+hulls of our clusters:
+
+```{r plot-projection-5d, fig.asp = 1, fig.align='center'}
+plotSeq <- matrix(0, 5, 5)
+plotSeq[upper.tri(plotSeq)] <- seq_len(5 * (5 - 1) / 2)
+plotSeq <- t(plotSeq[-5, -1])
+plotSeq[c(5, 10, 15)] <- 11:13
+layout(plotSeq)
+par(mar = rep(0.1, 4))
+
+for (i in 2:5) for (j in seq_len(i - 1)) {
+  # Set up blank plot
+  plot(projection[, j], projection[, i], ann = FALSE, axes = FALSE, frame.plot = TRUE,
+       type = 'n', asp = 1, xlim = range(projection), ylim = range(projection))
+  
+  # Plot MST
+  apply(mstEnds, 1, function (segment)
+    lines(projection[segment, j], projection[segment, i], col = "#bbbbbb", lty = 1))
+  
+  # Add points
+  points(projection[, j], projection[, i], pch = 16, col = treeCols)
+
+  # Mark clusters
+  for (clI in unique(cluster)) {
+    inCluster <- cluster == clI
+    clusterX <- projection[inCluster, j]
+    clusterY <- projection[inCluster, i]
+    hull <- chull(clusterX, clusterY)
+    polygon(clusterX[hull], clusterY[hull], lty = 1, lwd = 2,
+            border = '#54de25bb')
+  }
+}
+# Annotate dimensions
+plot(0, 0, type = 'n', ann = FALSE, axes = FALSE)
+text(0, 0, 'Dimension 2')
+plot(0, 0, type = 'n', ann = FALSE, axes = FALSE)
+text(0, 0, 'Dimension 3')
+plot(0, 0, type = 'n', ann = FALSE, axes = FALSE)
+text(0, 0, 'Dimension 4')
+```
+
+Our clusters, so distinct in dimension 1, overlap strongly in every other
+dimension. The fact that the minimum spanning tree moves between clusters also
+underlines the fact that they are not as well defined as they appear by eye.
+
+Note that cluster membership, as well as the precise shape of treespace, 
+is a function of the tree distance metric.  The phylogenetic information
+distance recovers a different pair of clusters, highlighting the dangers
+of interpreting a two-dimensional treespace plot:
+
+
+```{r pid, fig.asp = 1, fig.width = 4, fig.align = 'center', echo = FALSE}
+library('TreeDist')
+pid_distances <- PhylogeneticInfoDistance(trees)
+pid_projection <- cmdscale(pid_distances, k = 6)
+pid_cluster <- cutree(protoclust::protoclust(pid_distances), k = 2)
+
+par(mar = rep(0, 4))
+plot(pid_projection, ann = FALSE, axes = FALSE, asp = 1,
+     col = treeCols, pch = 16)
+MSTEdges(pid_distances, TRUE, pid_projection[, 1], pid_projection[, 2],
+         col = "#bbbbbb", lty = 1)
+for (clI in 1:2) {
+  inCluster <- pid_cluster == clI
+  clusterX <- pid_projection[inCluster, 1]
+  clusterY <- pid_projection[inCluster, 2]
+  hull <- chull(clusterX, clusterY)
+  polygon(clusterX[hull], clusterY[hull], lty = 1, lwd = 2,
+          border = '#54de25bb')
+}
+```
+
+# References

@@ -1,12 +1,19 @@
 #' TreeDist:  Distances between Phylogenetic Trees
 #' 
-#' 'TreeDist' implements a suite of metrics that quantify the topological 
-#' distance between pairs of unweighted phylogenetic trees.
-#' The metrics generally fall in the category of 'generalized Robinson-Foulds
-#' distances': they are based on comparing partitions between trees, and thus
-#' reflect the relationship data within trees, with no reference to branch lengths.
+#' 'TreeDist' is an R package that implements a suite of metrics that quantify the
+#' topological distance between pairs of unweighted phylogenetic trees.
+#' It also includes a simple 'Shiny' application to allow the visualization of
+#' distance-based tree spaces.
+#' 
+#' 'TreeDist' primarily employs metrics in the category of
+#' 'generalized Robinson–Foulds distances': they are based on comparing splits
+#' (bipartitions) between trees, and thus reflect the relationship data within 
+#' trees, with no reference to branch lengths.
 #' Detailed documentation and usage instructions are 
 #' [available online](https://ms609.github.io/TreeDist/) or in the vignettes.
+#' 
+#' 
+#' ## Generalized RF distances
 #' 
 #' The [Robinson-Foulds distance](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html)
 #' simply tallies the number of non-trivial splits (sometimes inaccurately
@@ -67,12 +74,26 @@
 #' the package '[TBRDist](https://ms609.github.io/TBRDist/index.html)'.
 #' 
 #' 
+#' # Tree space analysis
+#' 
+#' Construct tree spaces and readily visualize projected landscapes, avoiding
+#' common analytical pitfalls (Smith, forthcoming),
+#' using the inbuilt graphical user interface:
+#'   
+#'   ```r
+#' TreeDist::TreeSpace()
+#' ```
+#' 
+#' Serious analysts should consult the
+#' [vignette](https://ms609.github.io/TreeDist/articles/treespace.html)
+#' for a command-line interface.
+#' 
 #' 
 #' @seealso
 #' 
 #' Further documentation is available in the 
 #' [package vignettes](https://ms609.github.io/TreeDist/articles/), visible from
-#' R using `vignette(package='TreeDist')`.
+#' R using `vignette(package = 'TreeDist')`.
 #' 
 #' Other R packages implementing tree distance functions include:
 #'   
@@ -103,6 +124,8 @@
 #' - \insertRef{Nye2006}{TreeDist}
 #' 
 #' - \insertRef{SmithDist}{TreeDist}
+#' 
+#' - \insertRef{SmithSpace}{TreeDist}
 #' 
 #' @keywords internal
 "_PACKAGE"

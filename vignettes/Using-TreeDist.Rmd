@@ -141,3 +141,5 @@ You may wish to:
   and the corresponding [functions](https://ms609.github.io/TreeDist/reference/index.html#section-tree-distance-measures)
 
 - [Interpret tree distance metrics](https://ms609.github.io/TreeDistData/articles/09-expected-similarity.html)
+
+- Visualize [tree landscapes](treespace.html) using distance-based tree spaces

@@ -7,22 +7,29 @@
 [![CRAN Downloads](http://cranlogs.r-pkg.org/badges/TreeDist)](https://cran.r-project.org/package=TreeDist)
 [![DOI](https://zenodo.org/badge/196188301.svg)](https://zenodo.org/badge/latestdoi/196188301)
 
-'TreeDist' implements a suite of metrics that quantify the topological 
-distance between pairs of unweighted phylogenetic trees.
-The metrics generally fall in the category of 'generalized Robinson-Foulds
-distances': they are based on comparing partitions between trees, and thus
-reflect the relationship data within trees, with no reference to branch lengths.
+'TreeDist' is an R package that implements a suite of metrics that quantify the
+topological distance between pairs of unweighted phylogenetic trees.
+It also includes a simple 'Shiny' application to allow the visualization of
+distance-based tree spaces.
+
+'TreeDist' primarily employs metrics in the category of
+'generalized Robinson–Foulds distances': they are based on comparing splits
+(bipartitions) between trees, and thus reflect the relationship data within 
+trees, with no reference to branch lengths.
+
+
+## Generalized RF distances
 
 The [Robinson-Foulds distance](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html)
 simply tallies the number of non-trivial splits (sometimes inaccurately
-termed clades, nodes or edges) that occur in both trees -- any splits that are
-not perfectly identical contributes one point to the distance score of zero, 
+termed clades, nodes or edges) that occur in both trees – any splits that are
+not perfectly identical contribute one point to the distance score of zero, 
 however similar or different they are.
 By overlooking potential similarities between almost-identical splits, 
 this conservative approach has undesirable properties.
 
 ['Generalized' RF metrics](https://ms609.github.io/TreeDist/articles/Generalized-RF.html)
-generate _matchings_ that pair each split in one tree with a similar split in
+generate _matchings_ that pair splits in one tree with similar splits in
 the other.
 Each pair of splits is assigned a similarity score; the sum of these scores in
 the optimal matching then quantifies the similarity between two trees.
@@ -86,11 +93,28 @@ if (!require(devtools)) install.packages("devtools")
 devtools::install_github('ms609/TreeDist')
 ```
 
+# Tree space analysis
+
+Construct tree spaces and readily visualize projected landscapes, avoiding
+common analytical pitfalls (Smith, forthcoming),
+using the inbuilt graphical user interface:
+
+```r
+TreeDist::TreeSpace()
+```
+
+Serious analysts should consult the
+[vignette](https://ms609.github.io/TreeDist/articles/treespace.html)
+for a command-line interface.
+
+
 # Documentation
 
 - [Using 'TreeDist'](https://ms609.github.io/TreeDist/articles/Using-TreeDist.html)
 
 - [Package functions](https://ms609.github.io/TreeDist/reference/index.html)
+
+- [Tree spaces with 'TreeDist'](https://ms609.github.io/TreeDist/articles/treespace.html)
 
 - [All vignettes](https://ms609.github.io/TreeDist/articles/)
 
@@ -98,21 +122,22 @@ devtools::install_github('ms609/TreeDist')
 
 Other R packages implementing tree distance functions include:
 
-* [ape](http://ape-package.ird.fr/):
+* '[ape](http://ape-package.ird.fr/)':
     - `cophenetic.phylo()`: Cophenetic distance
     - `dist.topo()`: Path (topological) distance, Robinson-Foulds distance.
-* [phangorn](https://cran.r-project.org/package=phangorn)
+* '[phangorn](https://cran.r-project.org/package=phangorn)'
     - `treedist()`: Path, Robinson-Foulds and approximate SPR distances.
-* [Quartet](http://ms609.github.io/Quartet/): Triplet and Quartet distances, 
+* '[Quartet](http://ms609.github.io/Quartet/)': Triplet and Quartet distances, 
   using the tqDist algorithm.
-* [TBRDist](http://ms609.github.io/TBRDist/): TBR and SPR distances on 
+* '[TBRDist](http://ms609.github.io/TBRDist/)': TBR and SPR distances on 
   unrooted trees, using the 'uspr' C library.
-* [distory](https://cran.r-project.org/package=distory) (unmaintained): Geodesic distance
+* '[distory](https://cran.r-project.org/package=distory)' (unmaintained):
+  Geodesic distance
 
 # References
 
 - Böcker, S. _et al._ (2013) [The Generalized Robinson-Foulds
-Metric](https://dx.doi.org/10.1007/978-3-642-40453-5_13).
+metric](https://dx.doi.org/10.1007/978-3-642-40453-5_13).
 Algorithms in Bioinformatics. WABI 2013.
 _Lecture Notes in Computer Science_, 8126, 156–69.
 
@@ -127,7 +152,7 @@ _Mol Biol Evol_, 33, 2735–2743.
 - Li, M., Tromp, J. and Zhang, L.-X. (1996) [Some notes on the nearest neighbour
 interchange distance](https://dx.doi.org/10.1007/3-540-61332-3_168). 
 _Computing and Combinatorics_, Goos, G., Hartmanis, J., Leeuwen, J., Cai, J.-Y.,
-and Wong, C. K., eds. Springer, Berlin. 343--351.
+and Wong, C. K., eds. Springer, Berlin. 343–351.
 
 - Nye, T.M.W. _et al._ (2006) [A novel algorithm and web-based tool for
 comparing two alternative phylogenetic
@@ -138,6 +163,10 @@ _Bioinformatics_, 22, 117–119.
 metrics for comparing phylogenetic 
 trees](https://dx.doi.org/10.1093/bioinformatics/btaa614).
 _Bioinformatics_, online ahead of print.
+
+- Smith, M.R. (forthcoming)
+The importance of methodology when analyzing landscapes of phylogenetic trees.
+
 
 Please note that the 'TreeDist' project is released with a
 [Contributor Code of Conduct](CODE_OF_CONDUCT.md).

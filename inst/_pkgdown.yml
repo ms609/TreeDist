@@ -17,6 +17,12 @@ reference:
       - KendallColijn
       - MatchingSplitDistance
       - has_concept("tree distances")
+  - title: "Tree space"
+    desc: >
+      Functions used for the construction, evaluation and exploration of tree 
+      space.
+    contents:
+     - has_concept("tree space functions")
   - title: "Information"
     desc: >
       Functions addressing the information content and entropy of splits.
@@ -60,6 +66,8 @@ navbar:
       menu:
       - text: Using TreeDist to calculate tree similarity
         href: articles/Using-TreeDist.html
+      - text: Tree space analysis in TreeDist
+        href: articles/treespace.html
       - text: Contextualizing tree distances
         href: articles/using-distances.html
       - text: Robinson-Foulds metric

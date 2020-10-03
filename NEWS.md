@@ -1,7 +1,13 @@
-# TreeDist 1.2.1.9000 (development)
+# TreeDist 1.2.1.9200 (development)
 
 - New class `ClusterTable` to allow faster distance computation with Day (1985)
   algorithm.
+
+# TreeDist 1.2.1.9100 (development)
+
+- Shiny app for tree space.
+- `ProjectionQuality()` calculates trustworthiness and continuity of tree 
+  space projections.
 
 # TreeDist 1.2.1
 

@@ -6,15 +6,20 @@
 \alias{TreeDist-package}
 \title{TreeDist:  Distances between Phylogenetic Trees}
 \description{
-'TreeDist' implements a suite of metrics that quantify the topological
-distance between pairs of unweighted phylogenetic trees.
-The metrics generally fall in the category of 'generalized Robinson-Foulds
-distances': they are based on comparing partitions between trees, and thus
-reflect the relationship data within trees, with no reference to branch lengths.
-Detailed documentation and usage instructions are
-\href{https://ms609.github.io/TreeDist/}{available online} or in the vignettes.
+'TreeDist' is an R package that implements a suite of metrics that quantify the
+topological distance between pairs of unweighted phylogenetic trees.
+It also includes a simple 'Shiny' application to allow the visualization of
+distance-based tree spaces.
 }
 \details{
+'TreeDist' primarily employs metrics in the category of
+'generalized Robinson–Foulds distances': they are based on comparing splits
+(bipartitions) between trees, and thus reflect the relationship data within
+trees, with no reference to branch lengths.
+Detailed documentation and usage instructions are
+\href{https://ms609.github.io/TreeDist/}{available online} or in the vignettes.
+\subsection{Generalized RF distances}{
+
 The \href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html}{Robinson-Foulds distance}
 simply tallies the number of non-trivial splits (sometimes inaccurately
 termed clades, nodes or edges) that occur in both trees -- any splits that are
@@ -74,6 +79,18 @@ Maximum Agreement Subtree.
 For an implementation of the Tree Bisection and Reconnection (TBR) distance, see
 the package '\href{https://ms609.github.io/TBRDist/index.html}{TBRDist}'.
 }
+}
+\section{Tree space analysis}{
+Construct tree spaces and readily visualize projected landscapes, avoiding
+common analytical pitfalls (Smith, forthcoming),
+using the inbuilt graphical user interface:\if{html}{\out{<div class="r">}}\preformatted{TreeDist::TreeSpace()
+}\if{html}{\out{</div>}}
+
+Serious analysts should consult the
+\href{https://ms609.github.io/TreeDist/articles/treespace.html}{vignette}
+for a command-line interface.
+}
+
 \references{
 \itemize{
 \item \insertRef{Bocker2013}{TreeDist}
@@ -83,12 +100,13 @@ the package '\href{https://ms609.github.io/TBRDist/index.html}{TBRDist}'.
 \item \insertRef{Lin2012}{TreeDist}
 \item \insertRef{Nye2006}{TreeDist}
 \item \insertRef{SmithDist}{TreeDist}
+\item \insertRef{SmithSpace}{TreeDist}
 }
 }
 \seealso{
 Further documentation is available in the
 \href{https://ms609.github.io/TreeDist/articles/}{package vignettes}, visible from
-R using \code{vignette(package='TreeDist')}.
+R using \code{vignette(package = 'TreeDist')}.
 
 Other R packages implementing tree distance functions include:
 \itemize{
