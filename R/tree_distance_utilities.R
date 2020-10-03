@@ -361,15 +361,17 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
     if (how == FALSE) {
       return (unnormalized)
     } else {
-      if (is.null(infoInBoth))
-        infoInBoth <- CombineInfo(InfoInTree(tree1, ...),
-                                  InfoInTree(tree2, ...))
+      if (is.null(infoInBoth)) {
+        info1 <- InfoInTree(tree1, ...)
+        info2 <- if (is.null(tree2)) info1 else InfoInTree(tree2, ...)
+        infoInBoth <- CombineInfo(info1, info2)
+      }
     }
   } else if (is.function(how)) {
     if (is.null(infoInBoth)) {
-      infoInBoth <- CombineInfo(InfoInTree(tree1, ...),
-                                InfoInTree(tree2, ...),
-                                Combiner = how)
+      info1 <- InfoInTree(tree1, ...)
+      info2 <- if (is.null(tree2)) info1 else InfoInTree(tree2, ...)
+      infoInBoth <- CombineInfo(info1, info2, Combiner = how)
     }
   } else {
     infoInBoth <- how

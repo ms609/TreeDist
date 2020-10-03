@@ -502,7 +502,7 @@ test_that('Jaccard RF is correctly calculated', {
   expect_lt(0, JaccardRobinsonFoulds(BalancedTree(264), PectinateTree(264)))
 })
 
-test_that('RobinsonFoulds is correctly calculated', {
+test_that('RobinsonFoulds() is correctly calculated', {
   RF <- function (tree1, tree2) {
     suppressMessages(phangorn::RF.dist(tree1, tree2))
   }
