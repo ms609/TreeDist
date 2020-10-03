@@ -486,3 +486,71 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
   }
   return shared;
 }
+
+double ic_split(int in_split, int n_leaves) {
+  int out_split = n_leaves - in_split;
+  double lg2leaves = lg2[n_leaves];
+  return (in_split * (lg2[in_split] - lg2leaves)) +
+    (out_split * (lg2[out_split] - lg2leaves))
+    / -n_leaves;
+  // TODO Can we save the division until later?
+}
+
+// [[Rcpp::export]]
+NumericVector mutual_clustering_all_pairs(List tables) {
+  int
+    v = 0, w = 0,
+    L, R, N, W,
+    L_i, R_i, N_i, W_i,
+    Spos
+  ;
+  double mutual_info;
+  const int n_trees = tables.length();
+  if (n_trees < 2) return NumericVector(0);
+  
+  NumericVector shared(n_trees * (n_trees - 1) / 2);
+  NumericVector::iterator write_pos = shared.begin();
+  
+  for (int i = 0; i != n_trees - 1; i++) {
+    Rcpp::XPtr<ClusterTable> table_i = tables(i);
+    Rcpp::XPtr<ClusterTable> Xi(table_i);
+    const int stack_size = 4 * (Xi->N() + 1); // TODO: is X.N() safe?
+    
+    for (int j = i + 1; j != n_trees; j++) {
+      Rcpp::XPtr<ClusterTable> table_j = tables(j);
+      Rcpp::XPtr<ClusterTable> Tj(table_j);
+      std::unique_ptr<int[]> S = std::make_unique<int[]>(stack_size);
+      Spos = 0; // Empty the stack S
+      mutual_info = 0;
+      
+      Tj->TRESET();
+      Tj->NVERTEX_short(&v, &w);
+      
+      do {
+        if (Tj->is_leaf(&v)) {
+          check_push_safe(Spos, stack_size);
+          push(Xi->ENCODE(v), Xi->ENCODE(v), 1, 1, S, &Spos);
+        } else {
+          L = INF; R = 0; N = 0; W = 1;
+          do {
+            check_pop_safe(Spos);
+            pop(&L_i, &R_i, &N_i, &W_i, S, &Spos);
+            L = min_(&L, &L_i);
+            R = max_(&R, &R_i);
+            N = N + N_i;
+            W = W + W_i;
+            w = w - W_i;
+          } while (w);
+          check_push_safe(Spos, stack_size); // #TODO remove checks
+          push(L, R, N, W, S, &Spos);
+          if (N == R - L + 1) { // L..R is contiguous, and must be tested
+            if (Xi->ISCLUST(&L, &R)) mutual_info += ic_split(N, Xi->leaves());
+          }
+        }
+        Tj->NVERTEX_short(&v, &w); // Doesn't count all-ingroup or all-tips
+      } while (v);
+      *write_pos++ = mutual_info;
+    }
+  }
+  return shared;
+}
