@@ -49,6 +49,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// robinson_foulds_all_pairs
+IntegerVector robinson_foulds_all_pairs(List tables);
+RcppExport SEXP _TreeDist_robinson_foulds_all_pairs(SEXP tablesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type tables(tablesSEXP);
+    rcpp_result_gen = Rcpp::wrap(robinson_foulds_all_pairs(tables));
+    return rcpp_result_gen;
+END_RCPP
+}
 // lapjv
 List lapjv(NumericMatrix x, NumericVector maxX);
 RcppExport SEXP _TreeDist_lapjv(SEXP xSEXP, SEXP maxXSEXP) {
@@ -186,6 +197,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_ClusterTable_matrix", (DL_FUNC) &_TreeDist_ClusterTable_matrix, 1},
     {"_TreeDist_ClusterTable_decode", (DL_FUNC) &_TreeDist_ClusterTable_decode, 1},
     {"_TreeDist_COMCLUST", (DL_FUNC) &_TreeDist_COMCLUST, 1},
+    {"_TreeDist_robinson_foulds_all_pairs", (DL_FUNC) &_TreeDist_robinson_foulds_all_pairs, 1},
     {"_TreeDist_lapjv", (DL_FUNC) &_TreeDist_lapjv, 2},
     {"_TreeDist_cpp_mast", (DL_FUNC) &_TreeDist_cpp_mast, 3},
     {"_TreeDist_cpp_nni_distance", (DL_FUNC) &_TreeDist_cpp_nni_distance, 3},

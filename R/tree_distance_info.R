@@ -145,6 +145,8 @@
 #' @template MRS 
 #' 
 #' @references 
+#'  * \insertRef{Day1985}{TreeDist}
+#'  
 #'  * \insertRef{Mackay2003}{TreeDist}
 #'  
 #'  * \insertRef{Meila2007}{TreeDist}

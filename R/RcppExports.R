@@ -17,6 +17,10 @@ COMCLUST <- function(trees) {
     .Call(`_TreeDist_COMCLUST`, trees)
 }
 
+robinson_foulds_all_pairs <- function(tables) {
+    .Call(`_TreeDist_robinson_foulds_all_pairs`, tables)
+}
+
 lapjv <- function(x, maxX) {
     .Call(`_TreeDist_lapjv`, x, maxX)
 }

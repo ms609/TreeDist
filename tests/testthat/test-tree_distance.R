@@ -19,6 +19,9 @@ treeAcd.Befgh <- ape::read.tree(text='((a, c, d), (b, e, f, g, h));')
 treeAbcd.Efgh <- ape::read.tree(text='((a, b, c, d), (e, f, g, h));')
 treeTwoSplits <- ape::read.tree(text="(((a, b), c, d), (e, f, g, h));")
 
+testTrees <- c(treesSBO8, treeCat8, treeTac8, treeStar8, treeAb.Cdefgh,
+               treeAbc.Defgh, treeAbcd.Efgh, treeAcd.Befgh, treeTwoSplits)
+
 test_that("Split compatibility is correctly established", {
   expect_true(SplitsCompatible(as.logical(c(0,0,1,1,0)), 
                                as.logical(c(0,0,1,1,0))))
@@ -130,6 +133,10 @@ test_that('Robinson Foulds Distance is correctly calculated', {
   RFTest(treeStar8, treeStar8)
   RFTest(treeAb.Cdefgh, treeAbc.Defgh)
   RFTest(treeAb.Cdefgh, treeAbcd.Efgh)
+  
+  # at 2020-10, RF uses Day algorithm if tree2 = null; old algo if tree2 = tree1.
+  expect_equivalent(RobinsonFoulds(testTrees, testTrees),
+                    RobinsonFoulds(testTrees))
   
   # Invariant to tree description order
   sq_pectinate <- ape::read.tree(text='((((((1, 2), 3), 4), 5), 6), (7, (8, (9, (10, 11)))));')

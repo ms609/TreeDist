@@ -93,14 +93,28 @@ InfoRobinsonFouldsSplits <- function (splits1, splits2,
 #' @rdname Robinson-Foulds
 #' @importFrom TreeTools NSplits
 #' @export
-RobinsonFoulds <- function (tree1, tree2 = tree1, similarity = FALSE,
+RobinsonFoulds <- function (tree1, tree2 = NULL, similarity = FALSE,
                             normalize = FALSE, reportMatching = FALSE) {
-  unnormalized <- CalculateTreeDistance(RobinsonFouldsSplits, tree1, tree2, 
-                                        reportMatching)
-  
-  if (similarity) {
-    unnormalized <- .MaxValue(tree1, tree2, NSplits) - unnormalized
+  if (is.null(tree2)) {
+    ct <- as.ClusterTable(tree1)
+    rf <- robinson_foulds_all_pairs(ct)
+    if (similarity) {
+      unnormalized <- structure(rf + rf, Size = length(tree1), class = 'dist')
+    } else {
+      splits <- NSplits(tree1)
+      nSplits <- outer(splits, splits, '+')
+      unnormalized <- structure(nSplits[lower.tri(nSplits)] - rf - rf,
+                                Size = length(tree1),
+                                class = 'dist')
+    }
+  } else {
+    unnormalized <- CalculateTreeDistance(RobinsonFouldsSplits, tree1, tree2,
+                                          reportMatching)
+    if (similarity) {
+      unnormalized <- .MaxValue(tree1, tree2, NSplits) - unnormalized
+    }
   }
+  
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
@@ -134,15 +148,3 @@ RobinsonFouldsSplits <- function (splits1, splits2,
   GeneralizedRF(splits1, splits2, nTip, cpp_robinson_foulds_distance,
                 maximize = FALSE, reportMatching = reportMatching)
 }
-
-#' @export
-DayRobinsonFoulds <- list(
-  function(trees) {
-    rf <- robinson_foulds_all_pairs(trees)
-    splits <- NSplits(trees)
-    nSplits <- outer(splits, splits, '+')
-    structure(nSplits[lower.tri(nSplits)] - rf - rf,
-              Size = length(trees),
-              class = 'dist')
-  }
-)

@@ -22,10 +22,14 @@ MatchingSplitDistanceSplits(
 }
 \arguments{
 \item{tree1}{Trees of class \code{phylo}, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.}
+or lists of such trees to undergo pairwise comparison.  Where implemented,
+\code{tree2 = NULL} will compute distances between each pair of trees in the list
+\code{tree1} using a fast algorithm based on Day (1985).}
 
 \item{tree2}{Trees of class \code{phylo}, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.}
+or lists of such trees to undergo pairwise comparison.  Where implemented,
+\code{tree2 = NULL} will compute distances between each pair of trees in the list
+\code{tree1} using a fast algorithm based on Day (1985).}
 
 \item{normalize}{If a numeric value is provided, this will be used as a
 maximum value against which to rescale results.
