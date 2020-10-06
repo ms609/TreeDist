@@ -418,10 +418,12 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   
   cost** score = new cost*[most_splits];
   for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
+  cost exact_score = 0;
+  int16 exact_matches = 0;
   
   for (int16 ai = 0; ai != a.n_splits; ai++) {
     for (int16 bi = 0; bi != b.n_splits; bi++) {
-      int16 
+      int16
         a_and_b = 0,
         a_and_B = 0,
         A_and_b = n_tips
@@ -442,7 +444,33 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
         nB = a_and_B + A_and_B
       ;
       
-      if (a_and_b == A_and_b &&
+      if (!a_and_B && !A_and_b) {
+        // Rcout << "Matched splits " << ai << " & " << bi << "[1].\n";
+        score[ai][bi] = 0;
+        exact_score += max_score - 
+          // Division by n_tips converts n(A&B) to P(A&B) for each ic_element
+          cost(max_score * ((
+              // 0 < Sum of IC_elements <= n_tips
+              ic_element(a_and_b, na, nb, n_tips) +
+                ic_element(a_and_B, na, nB, n_tips) +
+                ic_element(A_and_b, nA, nb, n_tips) +
+                ic_element(A_and_B, nA, nB, n_tips)
+          ) / n_tips));
+        exact_matches++;
+      } else if (!a_and_b && !A_and_B) {
+        // Rcout << "Matched splits " << ai << " & " << bi << "[2].\n";
+        score[ai][bi] = 0;
+        exact_matches++;
+        exact_score += max_score - 
+          // Division by n_tips converts n(A&B) to P(A&B) for each ic_element
+          cost(max_score * ((
+              // 0 < Sum of IC_elements <= n_tips
+              ic_element(a_and_b, na, nb, n_tips) +
+                ic_element(a_and_B, na, nB, n_tips) +
+                ic_element(A_and_b, nA, nb, n_tips) +
+                ic_element(A_and_B, nA, nB, n_tips)
+          ) / n_tips));
+      } else if (a_and_b == A_and_b &&
           a_and_b == a_and_B &&
           a_and_b == A_and_B) {
         score[ai][bi] = max_score; // Don't risk rounding error
@@ -473,9 +501,13 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   lap_row *colsol = new lap_row[most_splits];
   cost *u = new cost[most_splits], *v = new cost[most_splits];
   
+  const double lap_score = (exact_matches == most_splits) ?
+  0L : double((max_score * (most_splits - exact_matches)) -
+  lap(most_splits, score, rowsol, colsol, u, v)) / max_score;
+  // NumericVector final_score = NumericVector::create(exact_score + lap_score);
   NumericVector final_score = NumericVector::create(
     double((max_score * most_splits) -
-      lap(most_splits, score, rowsol, colsol, u, v)) / max_score);
+    (exact_score + lap(most_splits, score, rowsol, colsol, u, v))) / max_score);
   
   for (int16 i = most_splits; i--; ) delete[] score[i];
   delete[] colsol; delete[] u; delete[] v; delete[] score;
