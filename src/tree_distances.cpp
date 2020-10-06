@@ -445,10 +445,8 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
       ;
       
       if (!a_and_B && !A_and_b) {
-        // Rcout << "Matched splits " << ai << " & " << bi << "[1].\n";
         score[ai][bi] = 0;
-        exact_score += max_score - 
-          // Division by n_tips converts n(A&B) to P(A&B) for each ic_element
+        exact_score += 
           cost(max_score * ((
               // 0 < Sum of IC_elements <= n_tips
               ic_element(a_and_b, na, nb, n_tips) +
@@ -458,11 +456,9 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
           ) / n_tips));
         exact_matches++;
       } else if (!a_and_b && !A_and_B) {
-        // Rcout << "Matched splits " << ai << " & " << bi << "[2].\n";
         score[ai][bi] = 0;
         exact_matches++;
-        exact_score += max_score - 
-          // Division by n_tips converts n(A&B) to P(A&B) for each ic_element
+        exact_score += 
           cost(max_score * ((
               // 0 < Sum of IC_elements <= n_tips
               ic_element(a_and_b, na, nb, n_tips) +
@@ -506,8 +502,8 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   lap(most_splits, score, rowsol, colsol, u, v)) / max_score;
   // NumericVector final_score = NumericVector::create(exact_score + lap_score);
   NumericVector final_score = NumericVector::create(
-    double((max_score * most_splits) -
-    (exact_score + lap(most_splits, score, rowsol, colsol, u, v))) / max_score);
+    double((max_score * (most_splits - exact_matches)) -
+    (lap(most_splits, score, rowsol, colsol, u, v) - exact_score)) / max_score);
   
   for (int16 i = most_splits; i--; ) delete[] score[i];
   delete[] colsol; delete[] u; delete[] v; delete[] score;
