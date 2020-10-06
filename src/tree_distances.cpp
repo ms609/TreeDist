@@ -447,25 +447,25 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
       if (!a_and_B && !A_and_b) {
         score[ai][bi] = 0;
         exact_score += 
-          cost(max_score * ((
+          cost(max_score * (
               // 0 < Sum of IC_elements <= n_tips
               ic_element(a_and_b, na, nb, n_tips) +
                 ic_element(a_and_B, na, nB, n_tips) +
                 ic_element(A_and_b, nA, nb, n_tips) +
                 ic_element(A_and_B, nA, nB, n_tips)
-          ) / n_tips));
+          ) / n_tips);
         exact_matches++;
       } else if (!a_and_b && !A_and_B) {
         score[ai][bi] = 0;
         exact_matches++;
         exact_score += 
-          cost(max_score * ((
+          cost(max_score * (
               // 0 < Sum of IC_elements <= n_tips
               ic_element(a_and_b, na, nb, n_tips) +
                 ic_element(a_and_B, na, nB, n_tips) +
                 ic_element(A_and_b, nA, nb, n_tips) +
                 ic_element(A_and_B, nA, nB, n_tips)
-          ) / n_tips));
+          ) / n_tips);
       } else if (a_and_b == A_and_b &&
           a_and_b == a_and_B &&
           a_and_b == A_and_B) {
