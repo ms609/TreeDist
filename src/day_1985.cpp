@@ -544,11 +544,54 @@ NumericVector mutual_clustering_all_pairs(List tables) {
           check_push_safe(Spos, stack_size); // #TODO remove checks
           push(L, R, N, W, S, &Spos);
           if (N == R - L + 1) { // L..R is contiguous, and must be tested
-            if (Xi->ISCLUST(&L, &R)) mutual_info += ic_split(N, Xi->leaves());
+            if (Xi->CLUSTONL(&L, &R)) {
+              mutual_info += ic_split(N, Xi->leaves());
+              mark_matched(&L, matched_i);
+            } else if (Xi->CLUSTONR(&L, &R)) {
+              mutual_info += ic_split(N, Xi->leaves());
+              mark_matched(&R, matched_i);
+            } else {
+              check_push_safe(unmatched_pos, unmatched_size); // #TODO remove checks
+              push(L, R, N, W, unmatched, &unmatched_pos);
+            }
+          } else {
+            check_push_safe(unmatched_pos, unmatched_size); // #TODO remove checks
+            push(L, R, N, W, unmatched, &unmatched_pos);
           }
         }
         Tj->NVERTEX_short(&v, &w); // Doesn't count all-ingroup or all-tips
       } while (v);
+      // Now match unmatched
+      
+      const int16 
+        most_splits = Tj->splits() > Xi->splits() ? Tj->splits() : Xi->splits()
+      ;
+      cost** score = new cost*[most_splits];
+      for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
+      
+      for (; unmatched_pos--; ) {
+        check_pop_safe(unmatched_pos);
+        pop(&L, &R, &N, &W, unmatched, &unmatched_pos);/*
+        for (int16 j_entry = Tj->splits(); j_entry < most_splits; j_entry++) {
+          score[unmatched_pos][j_entry] = max_score;
+        }
+      }
+      for (int16 i_entry = Xi->splits(); i_entry < most_splits; i_entry++) {
+        for (int16 j_entry = 0; j_entry != most_splits; j_entry++) {
+          score[i_entry][j_entry] = max_score;
+        }
+      }
+      
+      lap_col *rowsol = new lap_col[most_splits];
+      lap_row *colsol = new lap_row[most_splits];
+      cost *u = new cost[most_splits], *v = new cost[most_splits];
+      
+      mutual_info += double((max_score * most_splits) -
+        lap(most_splits, score, rowsol, colsol, u, v)) / max_score;
+      
+      for (int16 i = most_splits; i--; ) delete[] score[i];
+      delete[] colsol; delete[] u; delete[] v; delete[] score;
+      
       *write_pos++ = mutual_info;
     }
   }
