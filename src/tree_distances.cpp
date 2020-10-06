@@ -418,7 +418,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   
   cost** score = new cost*[most_splits];
   for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
-  cost exact_score = 0;
+  double exact_match_score = 0;
   int16 exact_matches = 0;
   
   for (int16 ai = 0; ai != a.n_splits; ai++) {
@@ -446,20 +446,16 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
       
       if (!a_and_B && !A_and_b) {
         score[ai][bi] = 0;
-        exact_score += 
-          cost(max_score * (
-              ic_element(a_and_b, na, nb, n_tips) +
-                ic_element(A_and_B, nA, nB, n_tips)
-          ) / n_tips);
         exact_matches++;
+        exact_match_score += 
+          ic_element(a_and_b, na, nb, n_tips) +
+          ic_element(A_and_B, nA, nB, n_tips);
       } else if (!a_and_b && !A_and_B) {
         score[ai][bi] = 0;
         exact_matches++;
-        exact_score += 
-          cost(max_score * (
-                ic_element(a_and_B, na, nB, n_tips) +
-                ic_element(A_and_b, nA, nb, n_tips)
-          ) / n_tips);
+        exact_match_score += 
+          ic_element(a_and_B, na, nB, n_tips) +
+          ic_element(A_and_b, nA, nb, n_tips);
       } else if (a_and_b == A_and_b &&
           a_and_b == a_and_B &&
           a_and_b == A_and_B) {
@@ -491,13 +487,14 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   lap_row *colsol = new lap_row[most_splits];
   cost *u = new cost[most_splits], *v = new cost[most_splits];
   
-  const double lap_score = (exact_matches == most_splits) ?
-  0L : double((max_score * (most_splits - exact_matches)) -
-  lap(most_splits, score, rowsol, colsol, u, v)) / max_score;
   // NumericVector final_score = NumericVector::create(exact_score + lap_score);
   NumericVector final_score = NumericVector::create(
-    double((max_score * (most_splits - exact_matches)) -
-    (lap(most_splits, score, rowsol, colsol, u, v) - exact_score)) / max_score);
+    (double(
+      (max_score * (most_splits - exact_matches)) -
+       lap(most_splits, score, rowsol, colsol, u, v)
+      ) / max_score
+    ) + (exact_match_score / n_tips)
+  );
   
   for (int16 i = most_splits; i--; ) delete[] score[i];
   delete[] colsol; delete[] u; delete[] v; delete[] score;
