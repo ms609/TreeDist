@@ -20,18 +20,18 @@ List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y,
   cost score = 0;
   
   rf_match matching (most_splits);
-  for (int16 i = 0; i != most_splits; i++) matching[i] = NA_INTEGER;
+  for (int16 i = most_splits; i--; ) matching[i] = NA_INTEGER;
   
   splitbit b_complement[MAX_SPLITS][MAX_BINS];
-  for (int16 i = 0; i != b.n_splits; i++) {
-    for (int16 bin = 0; bin != last_bin; bin++) {
+  for (int16 i = b.n_splits; i--; ) {
+    for (int16 bin = last_bin; bin--; ) {
       b_complement[i][bin] = ~b.state[i][bin];
     }
     b_complement[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
-  for (int16 ai = 0; ai != a.n_splits; ai++) {
-    for (int16 bi = 0; bi != b.n_splits; bi++) {
+  for (int16 ai = a.n_splits; ai--; ) {
+    for (int16 bi = b.n_splits; bi--; ) {
     
       bool all_match = true, all_complement = true;
     
@@ -149,7 +149,7 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
   const cost max_score = BIG / most_splits;
   
   cost** score = new cost*[most_splits];
-  for (int16 i = 0; i != most_splits; i++) score[i] = new cost[most_splits];
+  for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
   
   for (int16 ai = 0; ai != a.n_splits; ai++) {
     for (int16 bi = 0; bi != b.n_splits; bi++) {
@@ -179,12 +179,12 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
   NumericVector final_score = NumericVector::create(
     lap(most_splits, score, rowsol, colsol, u, v) - (max_score * split_diff));
   
-  for (int16 i = 0; i != most_splits; i++) delete[] score[i];
+  for (int16 i = most_splits; i--; ) delete[] score[i];
   delete[] u; delete[] v; delete[] colsol; delete[] score;
   
   NumericVector final_matching (most_splits);
   
-  for (int16 i = 0; i != most_splits; i++) {
+  for (int16 i = most_splits; i--; ) {
     final_matching[i] = rowsol[i] + 1;
   }
   
@@ -223,7 +223,7 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
   bool allow_conflict = allowConflict[0];
   
   cost** score = new cost*[most_splits];
-  for (int16 i = 0; i != most_splits; i++) score[i] = new cost[most_splits];
+  for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
   
   for (int16 ai = 0; ai != a.n_splits; ai++) {
     
@@ -307,11 +307,11 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
     (double)((max_score * most_splits) 
                - lap(most_splits, score, rowsol, colsol, u, v))
     / max_score);
-  for (int16 i = 0; i < most_splits; i++) delete[] score[i];
+  for (int16 i = most_splits; i--; ) delete[] score[i];
   delete[] u; delete[] v; delete[] colsol; delete[] score;
   NumericVector final_matching (most_splits);
   
-  for (int16 i = 0; i < most_splits; i++) {
+  for (int16 i = most_splits; i--; ) {
     final_matching[i] = rowsol[i] + 1;
   }
   delete[] rowsol;
@@ -335,7 +335,7 @@ List cpp_mmsi_distance (const RawMatrix x, const RawMatrix y,
     lg2_rooted[int16((n_tips + 1) / 2)] - lg2_rooted[int16(n_tips / 2)];
   
   cost** score = new cost*[most_splits];
-  for (int16 i = 0; i != most_splits; i++) score[i] = new cost[most_splits];
+  for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
   
   splitbit different[MAX_BINS];
   
@@ -377,11 +377,11 @@ List cpp_mmsi_distance (const RawMatrix x, const RawMatrix y,
            lap(most_splits, score, rowsol, colsol, u, v))
     * max_possible / max_score);
   
-  for (int16 i = 0; i != most_splits; i++) delete[] score[i];
+  for (int16 i = most_splits; i--; ) delete[] score[i];
   delete[] u; delete[] v; delete[] colsol; delete[] score;
   
   NumericVector final_matching (most_splits);
-  for (int16 i = 0; i != most_splits; i++) {
+  for (int16 i = most_splits; i--; ) {
     final_matching[i] = rowsol[i] + 1;
   }
   
@@ -417,7 +417,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   }
   
   cost** score = new cost*[most_splits];
-  for (int16 i = 0; i != most_splits; i++) score[i] = new cost[most_splits];
+  for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
   
   for (int16 ai = 0; ai != a.n_splits; ai++) {
     for (int16 bi = 0; bi != b.n_splits; bi++) {
@@ -477,7 +477,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     double((max_score * most_splits) -
       lap(most_splits, score, rowsol, colsol, u, v)) / max_score);
   
-  for (int16 i = 0; i != most_splits; i++) delete[] score[i];
+  for (int16 i = most_splits; i--; ) delete[] score[i];
   delete[] colsol; delete[] u; delete[] v; delete[] score;
   
   NumericVector final_matching (most_splits);
@@ -530,10 +530,10 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   }
   
   cost** score = new cost*[most_splits];
-  for (int16 i = 0; i != most_splits; i++) score[i] = new cost[most_splits];
+  for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
   
-  for (int16 ai = 0; ai != a.n_splits; ai++) {
-    for (int16 bi = 0; bi != b.n_splits; bi++) {
+  for (int16 ai = a.n_splits; ai--; ) {
+    for (int16 bi = b.n_splits; bi--; ) {
       const double spi_over = spi_overlap(a.state[ai], b.state[bi], n_tips,
                                           in_a[ai], in_b[bi], a.n_bins);
       
