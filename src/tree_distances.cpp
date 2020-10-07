@@ -56,7 +56,7 @@ List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y,
       }
     }
   }
-  score = cost (a.n_splits + b.n_splits) - score - score;
+  score = cost(a.n_splits + b.n_splits) - score - score;
   
   return List::create(Named("score") = Rcpp::wrap(score),
                        _["matching"] = Rcpp::wrap(matching));
@@ -444,18 +444,11 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
         nB = a_and_B + A_and_B
       ;
       
-      if (!a_and_B && !A_and_b) {
+      if ((!a_and_B && !A_and_b) ||
+          (!a_and_b && !A_and_B)) {
         score[ai][bi] = 0;
         exact_matches++;
-        exact_match_score += 
-          ic_element(a_and_b, na, nb, n_tips) +
-          ic_element(A_and_B, nA, nB, n_tips);
-      } else if (!a_and_b && !A_and_B) {
-        score[ai][bi] = 0;
-        exact_matches++;
-        exact_match_score += 
-          ic_element(a_and_B, na, nB, n_tips) +
-          ic_element(A_and_b, nA, nb, n_tips);
+        exact_match_score += ic_matching(na, nA, n_tips);
       } else if (a_and_b == A_and_b &&
           a_and_b == a_and_B &&
           a_and_b == A_and_B) {

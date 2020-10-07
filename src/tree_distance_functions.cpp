@@ -94,6 +94,10 @@ double ic_element (const int16 nkK, const int16 nk,
   } else return 0;
 }
 
+double ic_matching (const int16 a, const int16 b, const int16 n) {
+  return (a * (lg2[n] - lg2[a])) + 
+         (b * (lg2[n] - lg2[b]));
+}
 
 double one_overlap (const int16 a, const int16 b, const int16 n) {
   if (a == b) return lg2_rooted[a] + lg2_rooted[n - a];
