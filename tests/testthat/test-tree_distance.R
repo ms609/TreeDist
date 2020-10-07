@@ -317,7 +317,7 @@ test_that('Clustering information is correctly calculated', {
                cpp_mutual_clustering(
                  as.Splits(as.logical(c(1, 1, 1, 0, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(1, 1, 1, 0, 0, 0, 0, 0))),
-                 8L)$score, 
+                 8L)$score,
                tolerance = 1e-7)
   
   expect_equal(Entropy(c(2, 6) / 8) * 2 - Entropy(c(0, 2, 2, 4) / 8),
