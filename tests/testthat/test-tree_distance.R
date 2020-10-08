@@ -350,7 +350,7 @@ test_that('Clustering information is correctly calculated', {
   
   expect_equal(ClusteringEntropy(treeSym8),
                MutualClusteringInfo(treeSym8, treeSym8),
-               tolerance=1e-05)
+               tolerance = 1e-05)
   expect_equal(8 * ClusteringEntropy(treeSym8), ClusteringInfo(treeSym8))
   expect_equal(0, MutualClusteringInfo(treeSym8, treeStar8))
   expect_equal(0, MutualClusteringInfo(treeStar8, treeStar8))
@@ -363,10 +363,10 @@ test_that('Clustering information is correctly calculated', {
                 MutualClusteringInfo(treeSym8, treeBal8, normalize = pmax))
   expect_equal(ClusteringEntropy(treeSym8) + ClusteringEntropy(treeBal8) -
                  (2 * MutualClusteringInfo(treeBal8, treeSym8)),
-               ClusteringInfoDistance(treeSym8, treeBal8), tolerance=1e-05)
+               ClusteringInfoDistance(treeSym8, treeBal8), tolerance = 1e-05)
   expect_equal(MutualClusteringInfo(treeAb.Cdefgh, treeAbc.Defgh),
                MutualClusteringInfo(treeAbc.Defgh, treeAb.Cdefgh),
-               tolerance=1e-05)
+               tolerance = 1e-05)
   
   library('TreeTools')
   expect_equal(ClusteringEntropy(BalancedTree(64)),
