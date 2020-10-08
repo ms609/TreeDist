@@ -1,4 +1,5 @@
 library("shiny")
+library("shinyjs")
 library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
 library("TreeDist")
 
@@ -190,6 +191,7 @@ pages = c(131, 147)
 
 # Define UI for app that draws a histogram ----
 ui <- fluidPage(theme = 'treespace.css',
+    useShinyjs(),
     column(3, 
       tabsetPanel(
         tabPanel('Input',
@@ -247,13 +249,13 @@ ui <- fluidPage(theme = 'treespace.css',
           
           checkboxGroupInput("clustering", "Clustering methods",
                              choices = list("Partitioning around medoids" = 'pam',
-                                            "Heirarchical, minimax linkage" = 'hmm',
-                                            "Heirarchical, single linkage" = 'hsi',
-                                            "Heirarchical, complete linkage" = 'hco',
-                                            "Heirarchical, average linkage" = 'hav',
-                                            "Heirarchical, median linkage" = 'hmd',
-                                            "Heirarchical, centroid linkage" = 'hct',
-                                            "Heirarchical, Ward d\ub2 linkage" = 'hwd',
+                                            "Hierarchical, minimax linkage" = 'hmm',
+                                            "Hierarchical, single linkage" = 'hsi',
+                                            "Hierarchical, complete linkage" = 'hco',
+                                            "Hierarchical, average linkage" = 'hav',
+                                            "Hierarchical, median linkage" = 'hmd',
+                                            "Hierarchical, centroid linkage" = 'hct',
+                                            "Hierarchical, Ward d\ub2 linkage" = 'hwd',
                                             "K-means" = 'kmn',
                                             "Spectral" = "spec"),
                              selected = c('pam', 'hmm')),
@@ -300,10 +302,13 @@ ui <- fluidPage(theme = 'treespace.css',
                       list('Cluster membership' = 'clust', 
                            'Batch' = 'entry',
                            'Sequence within batches' = 'seq',
+                           'Distance from focal tree' = 'dist',
                            'Custom categorical' = 'discrete',
                            'Custom continuous' = 'continuous'), 'clust'),
           tagAppendAttributes(textOutput('pt.col.status'), class = 'message'),
-          plotOutput('pt.col.scale', height = "36px")
+          plotOutput('pt.col.scale', height = "36px"),
+          hidden(sliderInput('which.tree', "Focal tree index",
+                             min = 1, max = 90, value = 1, step = 1)),
         )
       ),
     ),
@@ -459,7 +464,8 @@ server <- function(input, output, session) {
   TreeNumberUpdate <- function () {
     ClearDistances()
     nTrees <- length(r$allTrees)
-    updateSliderInput(session, 'mst', value = min(100, nTrees), max = nTrees)
+    updateSliderInput(session, 'mst', value = min(500, nTrees), max = nTrees)
+    updateSliderInput(session, 'which.tree', max = nTrees)
     updateSliderInput(session, 'dims',
                       max = nProjDim(),
                       value = min(input$dims, nProjDim()))
@@ -489,28 +495,34 @@ server <- function(input, output, session) {
   })
   
   distances <- reactive({
-    withProgress(message = 'Calculating distances', value = 0.99,
-                 switch(input$distance,
-                        'cid' = {
-                          if (is.null(r$dist_cid)) r$dist_cid = ClusteringInfoDistance(r$allTrees)
-                          r$dist_cid
-                        },
-                        'pid' = {
-                          if (is.null(r$dist_pid)) r$dist_pid = PhylogeneticInfoDistance(r$allTrees)
-                          r$dist_pid
-                        },
-                        'qd' = {
-                          if (is.null(r$dist_qd)) r$dist_qd = as.dist(Quartet::QuartetDivergence(
-                            Quartet::ManyToManyQuartetAgreement(r$allTrees), similarity = FALSE))
-                          r$dist_qd
-                        }, 'path' = {
-                          if (is.null(r$dist_path)) r$dist_path = PathDist(r$allTrees)
-                          r$dist_path
-                        }, 'rf' = {
-                          if (is.null(r$dist_rf)) r$dist_rf = RobinsonFoulds(r$allTrees)
-                          r$dist_rf
-                        }
-                 ))
+    if (length(r$allTrees) > 1L) {
+      withProgress(
+        message = 'Calculating distances', value = 0.99,
+        switch(input$distance,
+               'cid' = {
+                 if (is.null(r$dist_cid)) r$dist_cid = ClusteringInfoDistance(r$allTrees)
+                 r$dist_cid
+               },
+               'pid' = {
+                 if (is.null(r$dist_pid)) r$dist_pid = PhylogeneticInfoDistance(r$allTrees)
+                 r$dist_pid
+               },
+               'qd' = {
+                 if (is.null(r$dist_qd)) r$dist_qd = as.dist(Quartet::QuartetDivergence(
+                   Quartet::ManyToManyQuartetAgreement(r$allTrees), similarity = FALSE))
+                 r$dist_qd
+               }, 'path' = {
+                 if (is.null(r$dist_path)) r$dist_path = PathDist(r$allTrees)
+                 r$dist_path
+               }, 'rf' = {
+                 if (is.null(r$dist_rf)) r$dist_rf = RobinsonFoulds(r$allTrees)
+                 r$dist_rf
+               }
+         )
+      )
+    } else {
+      matrix(0, 0, 0)
+    }
     
   })
   
@@ -523,20 +535,26 @@ server <- function(input, output, session) {
   })
   
   projection <- reactive({
-    proj_id <- paste0('proj_', input$projection, '_', input$distance)
-    if (is.null(r[[proj_id]])) {
-      withProgress(
-        message = 'Projecting distances',
-        value = 0.99,
-        proj <- switch(input$projection,
-                       'pca' = cmdscale(distances(), k = maxProjDim()),
-                       'k' = MASS::isoMDS(distances(), k = maxProjDim())$points,
-                       'nls' = MASS::sammon(distances(), k = maxProjDim())$points
-                       )
-      )
-      r[[proj_id]] <- proj
+    if (maxProjDim() > 1L) {
+      proj_id <- paste0('proj_', input$projection, '_', input$distance)
+      if (is.null(r[[proj_id]])) {
+        withProgress(
+          message = 'Projecting distances',
+          value = 0.99,
+          proj <- switch(input$projection,
+                         'pca' = cmdscale(distances(), k = maxProjDim()),
+                         'k' = MASS::isoMDS(distances(), k = maxProjDim())$points,
+                         'nls' = MASS::sammon(distances(), k = maxProjDim())$points
+                         )
+        )
+        r[[proj_id]] <- proj
+      }
+      
+      # Return:
+      r[[proj_id]]
+    } else {
+      matrix(0, 0, 0)
     }
-    r[[proj_id]]
   })
   
   
@@ -808,6 +826,22 @@ server <- function(input, output, session) {
     if (input$pt.data.subsample) ret[thinnedTrees(), 1] else ret[, 1]
   })
   
+  ContinuousPtCol <- function (dat, bigDark = FALSE) {
+    scale <- substr(viridisLite::plasma(256), 1, 7)
+    if (bigDark) scale <- rev(scale)
+    output$pt.col.scale <- renderPlot({
+      par(mar = c(1, 1, 0, 1))
+      plot(1:256, rep(0, 256), pch = 15, col = scale,
+           ylim = c(-1, 0), ann = FALSE, axes = FALSE)
+      axis(1, at = c(1, 256), labels = signif(range(dat), 4), line = -1)
+    })
+    scale[cut(dat, 256)]
+  }
+  
+  observeEvent(input$pt.col, {
+    if (input$pt.col == 'dist') show('which.tree') else hide('which.tree')
+  })
+  
   pointCols <- reactive({
     switch(input$pt.col,
            'clust' = {
@@ -822,6 +856,13 @@ server <- function(input, output, session) {
            },
            'seq' = {
              substr(viridisLite::plasma(length(r$allTrees)), 1, 7)
+           },
+           'dist' = {
+             dat <- as.matrix(distances())[input$which.tree, ]
+             message(paste0(round(dat, 2)[1:10], collapse = ', '))
+             message(cut(dat, 256)[1:10])
+             ContinuousPtCol(as.matrix(distances())[input$which.tree, ],
+                             bigDark = TRUE)
            },
            'discrete' = {
              dat <- pointData()
@@ -847,14 +888,7 @@ server <- function(input, output, session) {
            'continuous' = {
              dat <- pointData()
              if (is.numeric(dat)) {
-               output$pt.col.scale <- renderPlot({
-                 par(mar = c(1, 0, 0, 0))
-                 plot(1:256, rep(0, 256), pch = 15, col = viridisLite::plasma(256), 
-                      ylim = c(-1, 0), ann = FALSE, axes = FALSE)
-                 axis(1, at = c(1, 256), labels = range(dat), line = -1)
-                 
-               })
-               substr(viridisLite::plasma(256), 1, 7)[cut(dat, 256)]
+               ContinuousPtCol(dat)
              } else {
                PointDataStatus("Point data are not numeric.",
                                'Try selecting "Custom categorical".')
@@ -1121,13 +1155,13 @@ server <- function(input, output, session) {
            ),
       tags$h3('Clustering'),
       HTML(paste(c(pam = paste0('Partitioning around medoids:', Maechler2019),
-        hmm = paste0("Heirarchical, minimax linkage:", Bien2011, Murtagh1983),
-        hsi = '',#paste0("Heirarchical, single linkage:"),
-        hco = '',#paste0("Heirarchical, complete linkage:"),
-        hav = '',#paste0("Heirarchical, average linkage:"),
-        hmd = '',#paste0("Heirarchical, median linkage:"),
-        hct = '',#paste0("Heirarchical, centroid linkage:"),
-        hwd = paste0("Heirarchical, Ward d\ub2 linkage:", Ward1963),
+        hmm = paste0("Hierarchical, minimax linkage:", Bien2011, Murtagh1983),
+        hsi = '',#paste0("Hierarchical, single linkage:"),
+        hco = '',#paste0("Hierarchical, complete linkage:"),
+        hav = '',#paste0("Hierarchical, average linkage:"),
+        hmd = '',#paste0("Hierarchical, median linkage:"),
+        hct = '',#paste0("Hierarchical, centroid linkage:"),
+        hwd = paste0("Hierarchical, Ward d\ub2 linkage:", Ward1963),
         kmn = '',#paste0("K-means:"),
         spec = ''#paste0("Spectral:")
         )[input$clustering]))
