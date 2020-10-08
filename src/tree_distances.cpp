@@ -399,8 +399,11 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   const SplitList a(x), b(y);
+  const bool b_has_fewer_splits = (a.n_splits > b.n_splits);
   const int16
-    most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
+    most_splits = b_has_fewer_splits ? a.n_splits : b.n_splits,
+    a_extra_splits = b_has_fewer_splits ? most_splits - a.n_splits : 0,
+    b_extra_splits = b_has_fewer_splits ? 0 : most_splits - b.n_splits,
     last_bin = a.n_bins - 1,
     n_tips = nTip[0],
     unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0
@@ -483,11 +486,6 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
       _["matching"] = a_match);
   }
   
-  for (int16 ai = a.n_splits; ai < most_splits; ai++) {
-    for (int16 bi = 0; bi != most_splits; bi++) {
-      score[ai][bi] = max_score;
-    }
-  }
   
   const int16 lap_dim = most_splits - exact_matches;
   lap_col *rowsol = new lap_col[lap_dim];
@@ -495,16 +493,42 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   cost *u = new cost[lap_dim], *v = new cost[lap_dim];
   
   if (exact_matches) {
+    
+    cost** la_problem = new cost*[lap_dim];
+    for (int16 i = lap_dim; i--; ) la_problem[i] = new cost[lap_dim];
+    
+    int16 a_pos = lap_dim - b_extra_splits;
+    for (int16 ai = a.n_splits; ai--; ) {
+      if (a_match[ai]) continue;
+      a_pos--;
+      int16 b_pos = lap_dim - a_extra_splits;
+      for (int16 bi = b.n_splits; bi--; ) {
+        if (b_match[bi]) continue;
+        b_pos--;
+        la_problem[a_pos][b_pos] = score[ai][bi];
+      }
+      for (int16 bi = lap_dim - a_extra_splits; bi < lap_dim; bi++) {
+        la_problem[a_pos][bi] = max_score;
+      }
+    }
+    for (int16 ai = lap_dim - b_extra_splits; ai < lap_dim; ai++) {
+      for (int16 bi = 0; bi != lap_dim; bi++) {
+        la_problem[ai][bi] = max_score;
+      }
+    }
+    
+    for (int16 i = most_splits; i--; ) delete[] score[i];
+    delete[] score;
+    
     const double lap_score = double(
       (max_score * lap_dim) -
-        lap(most_splits, score, rowsol, colsol, u, v)
+        lap(lap_dim, la_problem, rowsol, colsol, u, v)
     ) / max_score;
     NumericVector final_score = NumericVector::create(
       lap_score + (exact_match_score / n_tips)
     );
     
-    for (int16 i = most_splits; i--; ) delete[] score[i];
-    delete[] colsol; delete[] u; delete[] v; delete[] score;
+    delete[] colsol; delete[] u; delete[] v;
     
     NumericVector final_matching (most_splits);
     for (int16 i = 0; i != most_splits; i++) {
@@ -516,19 +540,23 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     return List::create(Named("score") = final_score,
                         _["matching"] = final_matching);
   } else {
+    for (int16 ai = a.n_splits; ai < most_splits; ai++) {
+      for (int16 bi = 0; bi != most_splits; bi++) {
+        score[ai][bi] = max_score;
+      }
+    }
+    
     const double lap_score = double(
         (max_score * lap_dim) -
           lap(most_splits, score, rowsol, colsol, u, v)
     ) / max_score;
-    NumericVector final_score = NumericVector::create(
-      lap_score + (exact_match_score / n_tips)
-    );
+    NumericVector final_score = NumericVector::create(lap_score);
     
     for (int16 i = most_splits; i--; ) delete[] score[i];
     delete[] colsol; delete[] u; delete[] v; delete[] score;
     
     NumericVector final_matching (most_splits);
-    for (int16 i = 0; i != most_splits; i++) {
+    for (int16 i = most_splits; i--; ) {
       final_matching[i] = rowsol[i] + 1;
     }
     
