@@ -480,13 +480,12 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   lap_row *colsol = new lap_row[most_splits];
   cost *u = new cost[most_splits], *v = new cost[most_splits];
   
-  // NumericVector final_score = NumericVector::create(exact_score + lap_score);
-  NumericVector final_score = NumericVector::create(
-    (double(
+  const double lap_score = double(
       (max_score * (most_splits - exact_matches)) -
-       lap(most_splits, score, rowsol, colsol, u, v)
-      ) / max_score
-    ) + (exact_match_score / n_tips)
+        lap(most_splits, score, rowsol, colsol, u, v)
+  ) / max_score; //TODO set to 0 if n_lap_rows == 0.
+  NumericVector final_score = NumericVector::create(
+    lap_score + (exact_match_score / n_tips)
   );
   
   for (int16 i = most_splits; i--; ) delete[] score[i];
