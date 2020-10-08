@@ -281,6 +281,7 @@ ui <- fluidPage(theme = 'treespace.css',
           checkboxGroupInput("display", "Display settings",
                              list(
                                "Clusters' convex hulls" = 'hulls',
+                               'Cluster consensus trees' = 'cons',
                                'Tree numbers' = 'labelTrees',
                                'Interactive 3D plot' = 'show3d'
                              ),
@@ -328,6 +329,7 @@ ui <- fluidPage(theme = 'treespace.css',
         plotOutput(outputId = "distPlot", height = "0px"),
         rgl::rglwidgetOutput(outputId = "threeDPlot",
                              width = "600px", height = "600px"),
+        hidden(plotOutput('clustCons', height = "200px")),
         htmlOutput('references'),
       ),
   )
@@ -342,6 +344,9 @@ server <- function(input, output, session) {
   r <- reactiveValues(allTrees = as.phylo(treeNumbers, 8),
                       entryOrder = rep(1, length(treeNumbers)))
   
+  ##############################################################################
+  # Reset cache
+  ##############################################################################
   ClearClusters <- function () {
     r$clust_cid = NULL
     r$clust_pid = NULL
@@ -388,6 +393,9 @@ server <- function(input, output, session) {
     ClearMST()
   }
   
+  ##############################################################################
+  # Load trees
+  ##############################################################################
   treeFile <- reactive({
     fileInput <- input$treefile
     if (is.null(input)) return("No tree file selected.")
@@ -415,7 +423,6 @@ server <- function(input, output, session) {
     }
     ret
   })
-  
   
   output$treesStatus <- renderText({
     if (is.character(treeFile())) return(treeFile())
@@ -494,6 +501,9 @@ server <- function(input, output, session) {
     paste(length(r$allTrees), "trees in memory.")
   })
   
+  ##############################################################################
+  # Calculate distances
+  ##############################################################################
   distances <- reactive({
     if (length(r$allTrees) > 1L) {
       withProgress(
@@ -526,6 +536,9 @@ server <- function(input, output, session) {
     
   })
   
+  ##############################################################################
+  # Projection
+  ##############################################################################
   maxProjDim <- reactive({
     min(15L, length(r$allTrees) - 1L)
   })
@@ -533,6 +546,12 @@ server <- function(input, output, session) {
   nProjDim <- reactive({
     dim(projection())[2]
   })
+  
+  dims <- debounce(reactive({
+    if (mode3D()) 3L else {
+      min(input$dims, maxProjDim())
+    }
+  }), 400)
   
   projection <- reactive({
     if (maxProjDim() > 1L) {
@@ -557,7 +576,75 @@ server <- function(input, output, session) {
     }
   })
   
+  projQual <- reactive({
+    withProgress(message = "Estimating projection quality", {
+      vapply(seq_len(nProjDim()), function (k) {
+        incProgress(1 / nProjDim())
+        ProjectionQuality(distances(), dist(projection()[, seq_len(k)]), 10)
+      }, numeric(4))
+    })
+  })
   
+  LogScore <- function (x) {
+    (-(log10(1 - x + 1e-2))) / 2
+  }
+  
+  output$pcQuality <- renderPlot({
+    par(mar = c(2, 0, 0, 0))
+    nStop <- length(badToGood)
+    
+    plot(seq(0, 1, length.out = nStop), rep(0, nStop),
+         pch = 15, col = badToGood,
+         ylim = c(-1.5, 2.5),
+         ann = FALSE, axes = FALSE)
+    
+    logScore <- LogScore(projQual()['TxC', dims()])
+    lines(rep(logScore, 2), c(-1, 1), lty = 3)
+    
+    tickPos <- c(0, 0.5, 0.7, 0.8, 0.9, 0.95, 1.0)
+    ticks <- LogScore(tickPos)
+    
+    axis(1, at = ticks, labels = NA, line = 0)
+    axis(1, tick = FALSE, at = ticks, labels = tickPos, line = 0)
+    axis(1, line = -1, tick = FALSE,
+         at = ticks[-1] - ((ticks[-1] - ticks[-length(ticks)]) / 2),
+         labels = c('', 'dire', '', "ok", "gd", "excellent"))
+    axis(3, at = 0.5, tick = FALSE, line = -2, 
+         paste0(dims(), 'D projection quality (trustw. \ud7 contin.):'))
+  })
+  
+  
+  output$howManyDims <- renderPlot({
+    par(mar = c(2.5, 2.5, 0, 0), xpd = NA, mgp = c(1.5, 0.5, 0))
+    txc <- projQual()['TxC', ]
+    nStop <- length(badToGood)
+    
+    plot(txc, type = 'n', ylim = c(min(txc, 0.5), 1),
+         frame.plot = FALSE, axes = FALSE,
+         xlab = 'Dimension', ylab = 'Trustw. \uD7 Contin.')
+    par(xpd = FALSE)
+    axis(1, 1:14)
+    axis(2)
+    tickPos <- c(0, 0.5, 0.7, 0.8, 0.9, 0.95, 1.0)
+    mids <- c(0.6, 0.75, 0.85, 0.925)
+    text(rep(15, 4), mids, pos = 2, cex = 0.8,
+         col = badToGood[nStop * LogScore(mids)],
+         c('Essentially random', 'Dangerous', "Usable", "Good"))
+    text(1, 0.975, pos = 4, "Excellent", cex = 0.8, 
+         col = badToGood[LogScore(0.975) * nStop])
+    for (i in tickPos[-1]) {
+      abline(h = i, lty = 3, col = badToGood[LogScore(i) * nStop])
+    }
+    points(txc, type = 'b')
+    txcNow <- txc[dims()]
+    
+    points(dims(), txcNow, pch = 16, col = badToGood[LogScore(txcNow) * nStop],
+           cex = 1.6)
+  })
+  
+  ##############################################################################
+  # Clusterings
+  ##############################################################################
   maxClust <- reactive(min(input$maxClusters, length(r$allTrees) - 1L))
   clusterings <- reactive({
     maxCluster <- input$maxClusters
@@ -802,6 +889,52 @@ server <- function(input, output, session) {
     r[[mst_id]]
   })
   
+  output$clustQuality <- renderPlot({
+    par(mar = c(2, 0.5, 0, 0.5), xpd = NA, mgp = c(2, 1, 0))
+    cl <- clusterings()
+    clust_id <- paste0('clust_', input$distance)
+    sil <- r[[clust_id]]$sil
+    if (length(sil) == 0) sil <- -0.5
+    nStop <- 400
+    range <- c(0.5, 1)
+    negScale <- viridisLite::plasma(nStop)[seq(range[1] * nStop, 1,
+                                               length.out = nStop * range[1])]
+    posScale <- viridisLite::viridis(nStop)
+    
+    plot(seq(-range[1], range[2], length.out = nStop * sum(range)),
+         rep(0, nStop * sum(range)),
+         pch = 15, col = c(negScale, posScale),
+         ylim = c(-2, 2),
+         ann = FALSE, axes = FALSE)
+    lines(c(sil, sil), c(-1, 1), lty = 3)
+    
+    ticks <- c(-0.5, 0, 0.25, 0.5, 0.7, 1)
+    axis(1, at = ticks, line = -1)
+    axis(1, tick = FALSE, at = ticks[-1] - ((ticks[-1] - ticks[-6]) / 2),
+         labels = c("Structure:", "none", "weak", "ok", "strong"),
+         line = -2)
+    
+    axis(1, tick = FALSE, line = 0, at = 0.25,
+         labels = paste0("Silhouette coefficient (", round(cl$sil, 3), ")"))
+    
+    
+    axis(3, tick = FALSE, line = -2, at = 0.25,
+         labels = if (cl$sil > 0.25) 
+           paste0(cl$n, " clusters found with ", cl$method) else 
+             paste0("No meaningful clusters found"))
+    
+  })
+  
+  
+  output$clustCons <- renderPlot({
+    if ('cons' %in% input$display) {
+      plot(1, 1)
+    }
+  })
+  
+  ##############################################################################
+  # Plot settings: point style
+  ##############################################################################
   PointDataStatus <- function (...) {
     msg <- paste0(...)
     output$pt.data.status <- renderText(msg)
@@ -915,6 +1048,9 @@ server <- function(input, output, session) {
     )
   })
   
+  ##############################################################################
+  # Render plot
+  ##############################################################################
   treespacePlot <- reactive({
     cl <- clusterings()
     proj <- projection()
@@ -961,7 +1097,7 @@ server <- function(input, output, session) {
       }
     })
   })
-
+  
   mode3D <- reactive("show3d" %in% input$display)
   PlotSize <- function () debounce(reactive(input$plotSize), 100)
   output$distPlot <- renderPlot({
@@ -1005,113 +1141,6 @@ server <- function(input, output, session) {
     }
   })
   
-  dims <- debounce(reactive({
-    if (mode3D()) 3L else {
-      min(input$dims, maxProjDim())
-    }
-  }), 400)
-  
-  projQual <- reactive({
-    withProgress(message = "Estimating projection quality", {
-      vapply(seq_len(nProjDim()), function (k) {
-        incProgress(1 / nProjDim())
-        ProjectionQuality(distances(), dist(projection()[, seq_len(k)]), 10)
-      }, numeric(4))
-    })
-  })
-  
-  LogScore <- function (x) {
-    (-(log10(1 - x + 1e-2))) / 2
-  }
-  
-  
-  output$pcQuality <- renderPlot({
-    par(mar = c(2, 0, 0, 0))
-    nStop <- length(badToGood)
-    
-    plot(seq(0, 1, length.out = nStop), rep(0, nStop),
-         pch = 15, col = badToGood,
-         ylim = c(-1.5, 2.5),
-         ann = FALSE, axes = FALSE)
-    
-    logScore <- LogScore(projQual()['TxC', dims()])
-    lines(rep(logScore, 2), c(-1, 1), lty = 3)
-    
-    tickPos <- c(0, 0.5, 0.7, 0.8, 0.9, 0.95, 1.0)
-    ticks <- LogScore(tickPos)
-    
-    axis(1, at = ticks, labels = NA, line = 0)
-    axis(1, tick = FALSE, at = ticks, labels = tickPos, line = 0)
-    axis(1, line = -1, tick = FALSE,
-         at = ticks[-1] - ((ticks[-1] - ticks[-length(ticks)]) / 2),
-         labels = c('', 'dire', '', "ok", "gd", "excellent"))
-    axis(3, at = 0.5, tick = FALSE, line = -2, 
-         paste0(dims(), 'D projection quality (trustw. \ud7 contin.):'))
-  })
-  
-  output$clustQuality <- renderPlot({
-    par(mar = c(2, 0.5, 0, 0.5), xpd = NA, mgp = c(2, 1, 0))
-    cl <- clusterings()
-    clust_id <- paste0('clust_', input$distance)
-    sil <- r[[clust_id]]$sil
-    if (length(sil) == 0) sil <- -0.5
-    nStop <- 400
-    range <- c(0.5, 1)
-    negScale <- viridisLite::plasma(nStop)[seq(range[1] * nStop, 1,
-                                               length.out = nStop * range[1])]
-    posScale <- viridisLite::viridis(nStop)
-    
-    plot(seq(-range[1], range[2], length.out = nStop * sum(range)),
-         rep(0, nStop * sum(range)),
-         pch = 15, col = c(negScale, posScale),
-         ylim = c(-2, 2),
-         ann = FALSE, axes = FALSE)
-    lines(c(sil, sil), c(-1, 1), lty = 3)
-    
-    ticks <- c(-0.5, 0, 0.25, 0.5, 0.7, 1)
-    axis(1, at = ticks, line = -1)
-    axis(1, tick = FALSE, at = ticks[-1] - ((ticks[-1] - ticks[-6]) / 2),
-         labels = c("Structure:", "none", "weak", "ok", "strong"),
-         line = -2)
-    
-    axis(1, tick = FALSE, line = 0, at = 0.25,
-         labels = paste0("Silhouette coefficient (", round(cl$sil, 3), ")"))
-    
-    
-    axis(3, tick = FALSE, line = -2, at = 0.25,
-         labels = if (cl$sil > 0.25) 
-           paste0(cl$n, " clusters found with ", cl$method) else 
-             paste0("No meaningful clusters found"))
-
-  })
-  
-  output$howManyDims <- renderPlot({
-    par(mar = c(2.5, 2.5, 0, 0), xpd = NA, mgp = c(1.5, 0.5, 0))
-    txc <- projQual()['TxC', ]
-    nStop <- length(badToGood)
-    
-    plot(txc, type = 'n', ylim = c(min(txc, 0.5), 1),
-         frame.plot = FALSE, axes = FALSE,
-         xlab = 'Dimension', ylab = 'Trustw. \uD7 Contin.')
-    par(xpd = FALSE)
-    axis(1, 1:14)
-    axis(2)
-    tickPos <- c(0, 0.5, 0.7, 0.8, 0.9, 0.95, 1.0)
-    mids <- c(0.6, 0.75, 0.85, 0.925)
-    text(rep(15, 4), mids, pos = 2, cex = 0.8,
-         col = badToGood[nStop * LogScore(mids)],
-         c('Essentially random', 'Dangerous', "Usable", "Good"))
-    text(1, 0.975, pos = 4, "Excellent", cex = 0.8, 
-         col = badToGood[LogScore(0.975) * nStop])
-    for (i in tickPos[-1]) {
-      abline(h = i, lty = 3, col = badToGood[LogScore(i) * nStop])
-    }
-    points(txc, type = 'b')
-    txcNow <- txc[dims()]
-    
-    points(dims(), txcNow, pch = 16, col = badToGood[LogScore(txcNow) * nStop],
-           cex = 1.6)
-  })
   output$savePng <- downloadHandler(
     filename = 'TreeSpace.png',
     content = function (file) {
@@ -1128,6 +1157,9 @@ server <- function(input, output, session) {
   })
   
   
+  ##############################################################################
+  # References
+  ##############################################################################
   output$references <- renderUI({
     tags$div(style = paste0('position: relative; top: ', input$plotSize - 600, 'px'),
     tagList(
