@@ -507,6 +507,16 @@ server <- function(input, output, session) {
   ##############################################################################
   # Calculate distances
   ##############################################################################
+
+  chosenDistance <- function() {
+    switch(input$distance, 
+           cid = "Clustering information distance",
+           pid = "Phylogenetic information distance",
+           qd = "Quartet divergence",
+           path = "Path distance",
+           rf = "Robinson\u2212Founds distance")
+  }
+  
   distances <- reactive({
     if (length(r$allTrees) > 1L) {
       withProgress(
@@ -947,20 +957,21 @@ server <- function(input, output, session) {
   
   PlotClusterCons <- function () {
     cl <- clusterings()
+    par(mar = c(0.2, 0, 0.2, 0), xpd = NA)
+    par(cex = 0.9)
     if (cl$sil > 0.25) {
       par(mfrow = c(consRows(), ceiling(cl$n / consRows())))
-      par(mar = c(0.2, 0, 0.2, 0), xpd = NA)
-      par(cex = 0.9)
       for (i in seq_len(cl$n)) {
         col <- palettes[[min(length(palettes), cl$n)]][i]
         tr <- ape::consensus(r$allTrees[cl$cluster == i])
         tr$edge.length <- rep(1, dim(tr$edge)[1])
-        plot(tr, edge.width = 2, font = 1,
+        plot(tr, edge.width = 2, font = 1, cex = 1,
              edge.color = col, tip.color = col)
       }
     } else {
-      plot(ape::consensus(r$allTrees),
-           edge.width = 2, font = 1,
+      tr <- ape::consensus(r$allTrees)
+      tr$edge.length <- rep(1, dim(tr$edge)[1])
+      plot(tr,edge.width = 2, font = 1, cex = 1,
            edge.color = palettes[[1]],
            tip.color = palettes[[1]])
     }
@@ -1000,6 +1011,7 @@ server <- function(input, output, session) {
   })
   
   ContinuousPtCol <- function (dat, bigDark = FALSE) {
+    show('pt.col.scale')
     scale <- substr(viridisLite::plasma(256), 1, 7)
     if (bigDark) scale <- rev(scale)
     output$pt.col.scale <- renderPlot({
@@ -1019,16 +1031,18 @@ server <- function(input, output, session) {
     switch(input$pt.col,
            'clust' = {
              cl <- clusterings()
+             hide('pt.col.scale')
              if (cl$sil > 0.25) {
                palettes[[min(length(palettes), cl$n)]][cl$cluster]
              } else palettes[[1]]
            },
            'entry' = {
+             hide('pt.col.scale')
              n <- r$entryOrder
              palettes[[max(n)]][n]
            },
            'seq' = {
-             substr(viridisLite::plasma(length(r$allTrees)), 1, 7)
+             ContinuousPtCol(seq_along(r$allTrees))
            },
            'dist' = {
              dat <- as.matrix(distances())[input$which.tree, ]
@@ -1043,6 +1057,7 @@ server <- function(input, output, session) {
              nCol <- length(categories)
              if (nCol <= length(palettes)) {
                PointDataStatus("")
+               show('pt.col.scale')
                output$pt.col.scale <- renderPlot({
                  par(mar = c(1, 0, 0, 0))
                  plot(seq_len(nCol), rep(0, nCol), pch = 15, ylim = c(-1, 0),
@@ -1052,6 +1067,7 @@ server <- function(input, output, session) {
                })
                palettes[[nCol]][match(dat, categories)]
              } else {
+               hide('pt.col.scale')
                PointDataStatus(nCol, " categories is too many to display;",
                                "did you mean continuous?")
                c(palettes[[length(palettes)]], '#000000')[
@@ -1063,11 +1079,11 @@ server <- function(input, output, session) {
              if (is.numeric(dat)) {
                ContinuousPtCol(dat)
              } else {
+               hide('pt.col.scale')
                PointDataStatus("Point data are not numeric.",
                                'Try selecting "Custom categorical".')
                '#000000'
              }
-             
            }
     )
   })
@@ -1091,7 +1107,7 @@ server <- function(input, output, session) {
   ##############################################################################
   # Render plot
   ##############################################################################
-  treespacePlot <- reactive({
+  treespacePlot <- function() {
     cl <- clusterings()
     proj <- projection()
     
@@ -1136,7 +1152,7 @@ server <- function(input, output, session) {
         }
       }
     })
-  })
+  }
   
   mode3D <- reactive("show3d" %in% input$display)
   PlotSize <- function () debounce(reactive(input$plotSize), 100)
@@ -1202,9 +1218,11 @@ server <- function(input, output, session) {
     content = function (file) {
       cl <- clusterings()
       pdf(file, title = if (cl$sil > 0.25) {
-        paste0("Consensus trees for ", cl$n, " clusters found with ", cl$method)
+        paste0("Consensus trees for ", cl$n, " clusters found with ", cl$method,
+               " using ", chosenDistance())
       } else {
-        "Consensus of all trees (no meaningful clusters found)"
+        paste0("Consensus of all trees (no meaningful clusters found using ",
+               chosenDistance(), ")")
       },
       width = 8, height = consSize() / 100, pointsize = 10)
       PlotClusterCons()
