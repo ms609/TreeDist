@@ -49,7 +49,9 @@ Reference <- function (authors, year, title, journal = '',
   nEd <- length(editors)
   if (nEd > 1L) {
     editors <- paste(paste0(editors[-nEd], collapse = ', '), "&amp;", editors[nEd])
-  } else if (nEd < 1) editors <- ''
+  } else if (nEd < 1) {
+    editors <- ''
+  }
   paste0("<p class='reference'>", authors, " (", year, "). &ldquo;", title,
          "&rdquo;. ",
          if (editors != '') paste0("In: ", editors, ' (eds). ') else '',
@@ -665,215 +667,217 @@ server <- function(input, output, session) {
     clust_id <- paste0('clust_', input$distance)
     
     if (is.null(r[[clust_id]])) {
-      if (maxClust() < 3) return(rep(1L, length(r$allTrees)))
-      possibleClusters <- 2:maxClust()
-      
-      
-      hSil <- pamSil <- havSil <- kSil <- specSil <-
-        hsiSil <- hcoSil <- hmdSil <- hctSil <- hwdSil <- -99
-      dists <- distances()
-      
-      nMethodsChecked <- length(input$clustering)
-      methInc <- 1 / nMethodsChecked
-      nK <- length(possibleClusters)
-      kInc <- 1 / (nMethodsChecked * nK)
-      
-      withProgress(message = "Clustering", {
-        if ('pam' %in% input$clustering) {
-          pamClusters <- lapply(possibleClusters, function (k) {
-            incProgress(kInc, detail = 'PAM clustering')
-            cluster::pam(dists, k = k)
-          })
-          pamSils <- vapply(pamClusters, function (pamCluster) {
-            incProgress(kInc, detail = 'PAM silhouettes')
-            mean(cluster::silhouette(pamCluster)[, 3])
-          }, double(1))
+      if (maxClust() > 1) {
+        possibleClusters <- 2:maxClust()
+        
+        hSil <- pamSil <- havSil <- kSil <- specSil <-
+          hsiSil <- hcoSil <- hmdSil <- hctSil <- hwdSil <- -99
+        dists <- distances()
+        
+        nMethodsChecked <- length(input$clustering)
+        methInc <- 1 / nMethodsChecked
+        nK <- length(possibleClusters)
+        kInc <- 1 / (nMethodsChecked * nK)
+        
+        withProgress(message = "Clustering", {
+          if ('pam' %in% input$clustering) {
+            pamClusters <- lapply(possibleClusters, function (k) {
+              incProgress(kInc, detail = 'PAM clustering')
+              cluster::pam(dists, k = k)
+            })
+            pamSils <- vapply(pamClusters, function (pamCluster) {
+              incProgress(kInc, detail = 'PAM silhouettes')
+              mean(cluster::silhouette(pamCluster)[, 3])
+            }, double(1))
+            
+            bestPam <- which.max(pamSils)
+            pamSil <- pamSils[bestPam]
+            pamCluster <- pamClusters[[bestPam]]$cluster
+          }
           
-          bestPam <- which.max(pamSils)
-          pamSil <- pamSils[bestPam]
-          pamCluster <- pamClusters[[bestPam]]$cluster
-        }
-        
-        if ('hmm' %in% input$clustering) {
-          incProgress(methInc / 2, detail = 'minimax clustering')
-          hTree <- protoclust::protoclust(dists)
-          hClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
-          hSils <- vapply(hClusters, function (hCluster) {
-            incProgress(kInc / 2, detail = 'minimax silhouettes')
-            mean(cluster::silhouette(hCluster, dists)[, 3])
-          }, double(1))
-          bestH <- which.max(hSils)
-          hSil <- hSils[bestH]
-          hCluster <- hClusters[[bestH]]
-        }
-        
-        if ('hwd' %in% input$clustering) {
-          incProgress(methInc / 2, detail = 'Ward D\ub2 clustering')
-          hTree <- stats::hclust(dists, method = 'ward.D2')
-          hwdClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
-          hwdSils <- vapply(hwdClusters, function (hCluster) {
-            incProgress(kInc / 2, detail = 'Ward D\ub2 silhouettes')
-            mean(cluster::silhouette(hCluster, dists)[, 3])
-          }, double(1))
-          bestHwd <- which.max(hwdSils)
-          hwdSil <- hwdSils[bestHwd]
-          hwdCluster <- hwdClusters[[bestHwd]]
-        }
-        
-        if ('hsi' %in% input$clustering) {
-          incProgress(methInc / 2, detail = 'single clustering')
-          hTree <- stats::hclust(dists, method = 'single')
-          hsiClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
-          hsiSils <- vapply(hsiClusters, function (hCluster) {
-            incProgress(kInc / 2, detail = 'single silhouettes')
-            mean(cluster::silhouette(hCluster, dists)[, 3])
-          }, double(1))
-          bestHsi <- which.max(hsiSils)
-          hsiSil <- hsiSils[bestHsi]
-          hsiCluster <- hsiClusters[[bestHsi]]
-        }
-        
-        if ('hco' %in% input$clustering) {
-          incProgress(methInc / 2, detail = 'complete clustering')
-          hTree <- stats::hclust(dists, method = 'complete')
-          hcoClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
-          hcoSils <- vapply(hcoClusters, function (hCluster) {
-            incProgress(kInc / 2, detail = 'complete silhouettes')
-            mean(cluster::silhouette(hCluster, dists)[, 3])
-          }, double(1))
-          bestHco <- which.max(hcoSils)
-          hcoSil <- hcoSils[bestHco]
-          hcoCluster <- hcoClusters[[bestHco]]
-        }
-        
-        
-        if ('hav' %in% input$clustering) {
-          incProgress(methInc / 2, detail = 'average clustering')
-          hTree <- stats::hclust(dists, method = 'average')
-          havClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
-          havSils <- vapply(havClusters, function (hCluster) {
-            incProgress(kInc / 2, detail = 'average silhouettes')
-            mean(cluster::silhouette(hCluster, dists)[, 3])
-          }, double(1))
-          bestHav <- which.max(havSils)
-          havSil <- havSils[bestHav]
-          havCluster <- havClusters[[bestHav]]
-        }
-        
-        
-        if ('hmd' %in% input$clustering) {
-          incProgress(methInc / 2, detail = 'median clustering')
-          hTree <- stats::hclust(dists, method = 'median')
-          hmdClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
-          hmdSils <- vapply(hmdClusters, function (hCluster) {
-            incProgress(kInc / 2, detail = 'median silhouettes')
-            mean(cluster::silhouette(hCluster, dists)[, 3])
-          }, double(1))
-          bestHmd <- which.max(hmdSils)
-          hmdSil <- hmdSils[bestHmd]
-          hmdCluster <- hmdClusters[[bestHmd]]
-        }
-        
-        
-        if ('hct' %in% input$clustering) {
-          incProgress(methInc / 2, detail = 'centroid clustering')
-          hTree <- stats::hclust(dists ^ 2, method = 'centroid')
-          hctClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
-          hctSils <- vapply(hctClusters, function (hCluster) {
-            incProgress(kInc / 2, detail = 'centroid silhouettes')
-            mean(cluster::silhouette(hCluster, dists)[, 3])
-          }, double(1))
-          bestHct <- which.max(hctSils)
-          hctSil <- hctSils[bestHct]
-          hctCluster <- hctClusters[[bestHct]]
-        }
-        
-        if ('kmn' %in% input$clustering) {
-          incProgress(methInc / 2, detail = 'K-means clustering')
-          kClusters <- lapply(possibleClusters, function (k) kmeans(dists, k))
-          kSils <- vapply(kClusters, function (kCluster) {
-            incProgress(kInc / 2, detail = 'K-means silhouettes')
-            mean(cluster::silhouette(kCluster$cluster, dists)[, 3])
-          }, double(1))
+          if ('hmm' %in% input$clustering) {
+            incProgress(methInc / 2, detail = 'minimax clustering')
+            hTree <- protoclust::protoclust(dists)
+            hClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
+            hSils <- vapply(hClusters, function (hCluster) {
+              incProgress(kInc / 2, detail = 'minimax silhouettes')
+              mean(cluster::silhouette(hCluster, dists)[, 3])
+            }, double(1))
+            bestH <- which.max(hSils)
+            hSil <- hSils[bestH]
+            hCluster <- hClusters[[bestH]]
+          }
           
-          bestK <- which.max(kSils)
-          kSil <- kSils[bestK]
-          kCluster <- kClusters[[bestK]]$cluster
-        }
-        
-        if ('spec' %in% input$clustering) {
-          spectralEigens <- SpectralClustering(dists,
-                                               nn = min(ncol(as.matrix(dists)) - 1L, 10),
-                                               nEig = 3L)
-          specClusters <- lapply(possibleClusters, function (k) {
-            incProgress(kInc / 2, detail = 'spectral clustering')
-            cluster::pam(spectralEigens, k = k)
-          })
-          specSils <- vapply(specClusters, function (cluster) {
-            incProgress(kInc / 2, detail = 'spectral silhouettes')
-            mean(cluster::silhouette(cluster$cluster, dists)[, 3])
-          }, double(1))
+          if ('hwd' %in% input$clustering) {
+            incProgress(methInc / 2, detail = 'Ward D\ub2 clustering')
+            hTree <- stats::hclust(dists, method = 'ward.D2')
+            hwdClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
+            hwdSils <- vapply(hwdClusters, function (hCluster) {
+              incProgress(kInc / 2, detail = 'Ward D\ub2 silhouettes')
+              mean(cluster::silhouette(hCluster, dists)[, 3])
+            }, double(1))
+            bestHwd <- which.max(hwdSils)
+            hwdSil <- hwdSils[bestHwd]
+            hwdCluster <- hwdClusters[[bestHwd]]
+          }
           
-          bestSpec <- which.max(specSils)
-          specSil <- specSils[bestSpec]
-          specCluster <- specClusters[[bestSpec]]$cluster
-        }
-        
-        bestCluster <- c('none', 'pam', 'hmm', 'hsi', 'hco', 'hav', 'hmd', 'hct',
-                         'hwd', 'kmn', 'spec')[
-                           which.max(c(0, pamSil, hSil, hsiSil, hcoSil, havSil, hmdSil, hctSil,
-                                       hwdSil, kSil, specSil))]
-        
-        r[[clust_id]] <- list(method = switch(bestCluster,
-                                              pam = 'part. around medoids',
-                                              hmm = 'minimax linkage',
-                                              hsi = "single linkage",
-                                              hco = "complete linkage",
-                                              hav = "average linkage",
-                                              hmd = "median linkage",
-                                              hct = "centroid linkage",
-                                              hwd = 'Ward d\ub2 linkage',
-                                              kmn = 'K-means',
-                                              spec = 'spectral',
-                                              'no attempt to find any'),
-                              n = 1 + switch(bestCluster,
-                                             pam = bestPam,
-                                             hmm = bestH,
-                                             hsi = bestHsi,
-                                             hco = bestHco,
-                                             hav = bestHav,
-                                             hmd = bestHmd,
-                                             hct = bestHct,
-                                             hwd = bestHwd,
-                                             har = bestHav, kmn = bestK,
-                                             spec = bestSpec,
-                                             0),
-                              sil = switch(bestCluster,
-                                           pam = pamSil,
-                                           hmm = hSil,
-                                           hsi = hsiSil,
-                                           hco = hcoSil,
-                                           hav = havSil,
-                                           hmd = hmdSil,
-                                           hct = hctSil,
-                                           hwd = hwdSil,
-                                           kmn = kSil, spec = specSil, 
-                                           0), 
-                              cluster = switch(bestCluster,
-                                               pam = pamCluster,
-                                               hmm = hCluster,
-                                               hsi = hsiCluster,
-                                               hco = hcoCluster,
-                                               hav = havCluster,
-                                               hmd = hmdCluster,
-                                               hct = hctCluster,
-                                               hwd = hwdCluster,
-                                               kmn = kCluster,
-                                               spec = specCluster,
-                                               1)
-        )
-        r$clust_max <- maxCluster
-      })
+          if ('hsi' %in% input$clustering) {
+            incProgress(methInc / 2, detail = 'single clustering')
+            hTree <- stats::hclust(dists, method = 'single')
+            hsiClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
+            hsiSils <- vapply(hsiClusters, function (hCluster) {
+              incProgress(kInc / 2, detail = 'single silhouettes')
+              mean(cluster::silhouette(hCluster, dists)[, 3])
+            }, double(1))
+            bestHsi <- which.max(hsiSils)
+            hsiSil <- hsiSils[bestHsi]
+            hsiCluster <- hsiClusters[[bestHsi]]
+          }
+          
+          if ('hco' %in% input$clustering) {
+            incProgress(methInc / 2, detail = 'complete clustering')
+            hTree <- stats::hclust(dists, method = 'complete')
+            hcoClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
+            hcoSils <- vapply(hcoClusters, function (hCluster) {
+              incProgress(kInc / 2, detail = 'complete silhouettes')
+              mean(cluster::silhouette(hCluster, dists)[, 3])
+            }, double(1))
+            bestHco <- which.max(hcoSils)
+            hcoSil <- hcoSils[bestHco]
+            hcoCluster <- hcoClusters[[bestHco]]
+          }
+          
+          
+          if ('hav' %in% input$clustering) {
+            incProgress(methInc / 2, detail = 'average clustering')
+            hTree <- stats::hclust(dists, method = 'average')
+            havClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
+            havSils <- vapply(havClusters, function (hCluster) {
+              incProgress(kInc / 2, detail = 'average silhouettes')
+              mean(cluster::silhouette(hCluster, dists)[, 3])
+            }, double(1))
+            bestHav <- which.max(havSils)
+            havSil <- havSils[bestHav]
+            havCluster <- havClusters[[bestHav]]
+          }
+          
+          
+          if ('hmd' %in% input$clustering) {
+            incProgress(methInc / 2, detail = 'median clustering')
+            hTree <- stats::hclust(dists, method = 'median')
+            hmdClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
+            hmdSils <- vapply(hmdClusters, function (hCluster) {
+              incProgress(kInc / 2, detail = 'median silhouettes')
+              mean(cluster::silhouette(hCluster, dists)[, 3])
+            }, double(1))
+            bestHmd <- which.max(hmdSils)
+            hmdSil <- hmdSils[bestHmd]
+            hmdCluster <- hmdClusters[[bestHmd]]
+          }
+          
+          
+          if ('hct' %in% input$clustering) {
+            incProgress(methInc / 2, detail = 'centroid clustering')
+            hTree <- stats::hclust(dists ^ 2, method = 'centroid')
+            hctClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
+            hctSils <- vapply(hctClusters, function (hCluster) {
+              incProgress(kInc / 2, detail = 'centroid silhouettes')
+              mean(cluster::silhouette(hCluster, dists)[, 3])
+            }, double(1))
+            bestHct <- which.max(hctSils)
+            hctSil <- hctSils[bestHct]
+            hctCluster <- hctClusters[[bestHct]]
+          }
+          
+          if ('kmn' %in% input$clustering) {
+            incProgress(methInc / 2, detail = 'K-means clustering')
+            kClusters <- lapply(possibleClusters, function (k) kmeans(dists, k))
+            kSils <- vapply(kClusters, function (kCluster) {
+              incProgress(kInc / 2, detail = 'K-means silhouettes')
+              mean(cluster::silhouette(kCluster$cluster, dists)[, 3])
+            }, double(1))
+            
+            bestK <- which.max(kSils)
+            kSil <- kSils[bestK]
+            kCluster <- kClusters[[bestK]]$cluster
+          }
+          
+          if ('spec' %in% input$clustering) {
+            spectralEigens <- SpectralClustering(dists,
+                                                 nn = min(ncol(as.matrix(dists)) - 1L, 10),
+                                                 nEig = 3L)
+            specClusters <- lapply(possibleClusters, function (k) {
+              incProgress(kInc / 2, detail = 'spectral clustering')
+              cluster::pam(spectralEigens, k = k)
+            })
+            specSils <- vapply(specClusters, function (cluster) {
+              incProgress(kInc / 2, detail = 'spectral silhouettes')
+              mean(cluster::silhouette(cluster$cluster, dists)[, 3])
+            }, double(1))
+            
+            bestSpec <- which.max(specSils)
+            specSil <- specSils[bestSpec]
+            specCluster <- specClusters[[bestSpec]]$cluster
+          }
+          bestCluster <- c('none', 'pam', 'hmm', 'hsi', 'hco', 'hav', 'hmd', 'hct',
+                           'hwd', 'kmn', 'spec')[
+                             which.max(c(0, pamSil, hSil, hsiSil, hcoSil, havSil, hmdSil, hctSil,
+                                         hwdSil, kSil, specSil))]
+          
+        })
+      } else {
+        bestCluster <- 'none'
+      }
+      
+      r[[clust_id]] <- list(method = switch(bestCluster,
+                                            pam = 'part. around medoids',
+                                            hmm = 'minimax linkage',
+                                            hsi = "single linkage",
+                                            hco = "complete linkage",
+                                            hav = "average linkage",
+                                            hmd = "median linkage",
+                                            hct = "centroid linkage",
+                                            hwd = 'Ward d\ub2 linkage',
+                                            kmn = 'K-means',
+                                            spec = 'spectral',
+                                            'no attempt to find any'),
+                            n = 1 + switch(bestCluster,
+                                           pam = bestPam,
+                                           hmm = bestH,
+                                           hsi = bestHsi,
+                                           hco = bestHco,
+                                           hav = bestHav,
+                                           hmd = bestHmd,
+                                           hct = bestHct,
+                                           hwd = bestHwd,
+                                           har = bestHav, kmn = bestK,
+                                           spec = bestSpec,
+                                           0),
+                            sil = switch(bestCluster,
+                                         pam = pamSil,
+                                         hmm = hSil,
+                                         hsi = hsiSil,
+                                         hco = hcoSil,
+                                         hav = havSil,
+                                         hmd = hmdSil,
+                                         hct = hctSil,
+                                         hwd = hwdSil,
+                                         kmn = kSil, spec = specSil, 
+                                         0), 
+                            cluster = switch(bestCluster,
+                                             pam = pamCluster,
+                                             hmm = hCluster,
+                                             hsi = hsiCluster,
+                                             hco = hcoCluster,
+                                             hav = havCluster,
+                                             hmd = hmdCluster,
+                                             hct = hctCluster,
+                                             hwd = hwdCluster,
+                                             kmn = kCluster,
+                                             spec = specCluster,
+                                             1)
+      )
+      r$clust_max <- maxCluster
     }
     r[[clust_id]]
   })
@@ -928,11 +932,11 @@ server <- function(input, output, session) {
          line = -2)
     
     axis(1, tick = FALSE, line = 0, at = 0.25,
-         labels = paste0("Silhouette coefficient (", round(cl$sil, 3), ")"))
+         labels = paste0("Silhouette coefficient (", round(sil, 3), ")"))
     
     
     axis(3, tick = FALSE, line = -2, at = 0.25,
-         labels = if (cl$sil > 0.25) 
+         labels = if (sil > 0.25) 
            paste0(cl$n, " clusters found with ", cl$method) else 
              paste0("No meaningful clusters found"))
     
@@ -1030,8 +1034,10 @@ server <- function(input, output, session) {
   pointCols <- reactive({
     switch(input$pt.col,
            'clust' = {
-             cl <- clusterings()
              hide('pt.col.scale')
+             cl <- clusterings()
+             message("Max: ", r$clust_max)
+             message("CL names: ", names(cl), "; ", length(cl))
              if (cl$sil > 0.25) {
                palettes[[min(length(palettes), cl$n)]][cl$cluster]
              } else palettes[[1]]
