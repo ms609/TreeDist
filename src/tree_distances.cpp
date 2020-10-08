@@ -514,7 +514,6 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
       }
     }
     
-    
     const double lap_score = double(
       (max_score * lap_dim) -
         lap(lap_dim, score, rowsol, colsol, u, v)
@@ -527,8 +526,9 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     delete[] colsol; delete[] u; delete[] v; delete[] score;
     
     NumericVector final_matching (most_splits);
+    int16 lap_match = 0;
     for (int16 i = 0; i != most_splits; i++) {
-      final_matching[i] = rowsol[i] + 1;
+      final_matching[i] = a_match[i] ? a_match[i] : rowsol[lap_match++] + 1;
     }
     
     delete[] rowsol;
