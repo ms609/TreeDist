@@ -324,6 +324,7 @@ ui <- fluidPage(theme = 'treespace.css',
         tags$span("Save as: "),
         downloadButton('savePdf', 'PDF'),
         downloadButton('savePng', 'PNG'),
+        downloadButton('saveCons', 'Cluster consensus trees'),
       ),
       fluidRow(
         plotOutput(outputId = "distPlot", height = "0px"),
@@ -500,6 +501,8 @@ server <- function(input, output, session) {
   output$treesInMemory <- renderText({
     paste(length(r$allTrees), "trees in memory.")
   })
+  
+  nLeaves <- reactive(max(NTip(r$allTrees)))
   
   ##############################################################################
   # Calculate distances
@@ -925,12 +928,49 @@ server <- function(input, output, session) {
     
   })
   
+  observeEvent(input$display, {
+    if ('cons' %in% input$display) {
+      show('clustCons')
+    } else {
+      hide('clustCons')
+    }
+  }, ignoreInit = TRUE, ignoreNULL = FALSE)
+  
+  consRows <- reactive({
+    cl <- clusterings()
+    if (cl$sil > 0.25) ceiling(cl$n / 3) else 1L
+  })
+  
+  consSize <- reactive({
+    nLeaves() * 12 * consRows()
+  })
+  
+  PlotClusterCons <- function () {
+    cl <- clusterings()
+    if (cl$sil > 0.25) {
+      par(mfrow = c(consRows(), ceiling(cl$n / consRows())))
+      par(mar = c(0.2, 0, 0.2, 0), xpd = NA)
+      par(cex = 0.9)
+      for (i in seq_len(cl$n)) {
+        col <- palettes[[min(length(palettes), cl$n)]][i]
+        tr <- ape::consensus(r$allTrees[cl$cluster == i])
+        tr$edge.length <- rep(1, dim(tr$edge)[1])
+        plot(tr, edge.width = 2, font = 1,
+             edge.color = col, tip.color = col)
+      }
+    } else {
+      plot(ape::consensus(r$allTrees),
+           edge.width = 2, font = 1,
+           edge.color = palettes[[1]],
+           tip.color = palettes[[1]])
+    }
+  }
   
   output$clustCons <- renderPlot({
     if ('cons' %in% input$display) {
-      plot(1, 1)
+      PlotClusterCons()
     }
-  })
+  }, height = consSize)
   
   ##############################################################################
   # Plot settings: point style
@@ -1147,7 +1187,8 @@ server <- function(input, output, session) {
       png(file, width = input$plotSize, height = input$plotSize)
       treespacePlot()
       dev.off()
-    })
+  })
+  
   output$savePdf <- downloadHandler(
     filename = 'TreeSpace.pdf',
     content = function (file) {
@@ -1156,12 +1197,30 @@ server <- function(input, output, session) {
       dev.off()
   })
   
+  output$saveCons <- downloadHandler(
+    filename = 'ClusterConsensusTrees.pdf',
+    content = function (file) {
+      cl <- clusterings()
+      pdf(file, title = if (cl$sil > 0.25) {
+        paste0("Consensus trees for ", cl$n, " clusters found with ", cl$method)
+      } else {
+        "Consensus of all trees (no meaningful clusters found)"
+      },
+      width = 8, height = consSize() / 100, pointsize = 10)
+      PlotClusterCons()
+      dev.off()
+  })
+  
+  
   
   ##############################################################################
   # References
   ##############################################################################
   output$references <- renderUI({
-    tags$div(style = paste0('position: relative; top: ', input$plotSize - 600, 'px'),
+    tags$div(style = paste0('position: relative; top: ', 
+                            (input$plotSize - 600)
+                            + if ('cons' %in% input$display) consSize() - 200 else 0
+                            , 'px'),
     tagList(
       tags$h2('References for methods used'),
       #HTML(paste0("<h2>References", input$plotSize, "</h2>")),
