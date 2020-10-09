@@ -116,7 +116,7 @@ test_that('VisualizeMatching() works', {
                       leaveRoom = FALSE)
   })
   
-  expect_doppelganger('VM matchZeros FALSE', function () {
+  expect_doppelganger('JRF VM matchZeros FALSE', function () {
     JRF2 <- function (tree1, tree2, ...) 
       JaccardRobinsonFoulds(tree1, tree2, k = 2, allowConflict = FALSE, ...)
     
