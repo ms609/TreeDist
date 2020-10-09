@@ -426,7 +426,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   // NumericVector zero-initializes [so does make_unique]
   // match will have one added to it so numbering follows R; hence 0 = UNMATCHED
   NumericVector a_match(a.n_splits);
-  NumericVector b_match(b.n_splits);
+  std::unique_ptr<int16[]> b_match = std::make_unique<int16[]>(b.n_splits);
   
   for (int16 ai = 0; ai != a.n_splits; ai++) {
     if (a_match[ai]) continue;
@@ -445,7 +445,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
       
       const int16
         A_and_B = n_tips - (a_and_b + a_and_B + A_and_b),
-          
+        
         na = a_and_b + a_and_B,
         nA = A_and_b + A_and_B,
         nb = a_and_b + A_and_b,
@@ -464,7 +464,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
           a_and_b == A_and_B) {
         score[ai][bi] = max_score; // Don't risk rounding error
       } else {
-        score[ai][bi] = max_score - 
+        score[ai][bi] = max_score -
           // Division by n_tips converts n(A&B) to P(A&B) for each ic_element
           cost(max_score * ((
             // 0 < Sum of IC_elements <= n_tips
@@ -493,12 +493,11 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   cost *u = new cost[lap_dim], *v = new cost[lap_dim];
   
   if (exact_matches) {
-    
     int16 a_pos = 0;
-    for (int16 ai = 0; ai < a.n_splits; ai++) {
+    for (int16 ai = 0; ai != a.n_splits; ai++) {
       if (a_match[ai]) continue;
       int16 b_pos = 0;
-      for (int16 bi = 0; bi < b.n_splits; bi++) {
+      for (int16 bi = 0; bi != b.n_splits; bi++) {
         if (b_match[bi]) continue;
         score[a_pos][b_pos] = score[ai][bi];
         b_pos++;
@@ -526,7 +525,6 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     std::unique_ptr<int16[]> no_match = std::make_unique<int16[]>(b.n_splits);
     int16 match = 0;
     for (int16 bi = 0; bi != b.n_splits; bi++) {
-      //Rcout << "no_match[" << match << "] = " << (1 + bi) << "\n";
       if (!b_match[bi]) no_match[match++] = bi + 1;
     }
     
