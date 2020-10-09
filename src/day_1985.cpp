@@ -114,7 +114,10 @@ class ClusterTable {
     inline int ENCODE(const int v) {
       // This function procedure returns as its value the internal label 
       // assigned to leaf v
+      // MS note: input = v; output = X[v, 3]
       return internal_label[v - 1];
+    }
+    
     inline int DECODE(const int internal_relabeling) {
       // MS: input = X[v, 3], output = v
       return visited_nth[internal_relabeling - 1];
@@ -134,8 +137,6 @@ class ClusterTable {
     }
     
     inline int X(int row, int col) {
-      // Rcout << "   Get Xarr [" << (row * X_COLS + col) << "]: ";
-      // Rcout << Xarr[row * X_COLS + col] << ".\n";
       if (row < 1) throw std::range_error("Trying to read before start of X");
       if (row > X_ROWS) throw std::range_error("Trying to read past end of X");
       return Xarr[(row - 1) * X_COLS + col];
@@ -168,7 +169,7 @@ class ClusterTable {
       // This function procedure returns value true if cluster <L,R> is in X;
       // otherwise it returns value false
       return CLUSTONL(L, R) || CLUSTONR(L, R);
-    }  
+    }
     
     inline void CLEAR() {
       // Each cluster in X has an associated switch that is either cleared or 
@@ -233,7 +234,6 @@ class ClusterTable {
     
 };
 
-// TODO Root tree in function; for now, must be rooted externally and in Preorder.
 ClusterTable::ClusterTable(List phylo) { 
   /*
   const IntegerMatrix
