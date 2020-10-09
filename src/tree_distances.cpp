@@ -514,21 +514,26 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
       }
     }
     
-    const double lap_score = double(
-      (max_score * lap_dim) -
-        lap(lap_dim, score, rowsol, colsol, u, v)
-    ) / max_score;
-    NumericVector final_score = NumericVector::create(
-      lap_score + (exact_match_score / n_tips)
-    );
+    const double lap_score = 
+      double((max_score * lap_dim) - lap(lap_dim, score, rowsol, colsol, u, v))
+      / max_score;
+    NumericVector final_score = 
+      NumericVector::create(lap_score + (exact_match_score / n_tips));
     
     for (int16 i = most_splits; i--; ) delete[] score[i];
     delete[] colsol; delete[] u; delete[] v; delete[] score;
     
+    std::unique_ptr<int16[]> no_match = std::make_unique<int16[]>(b.n_splits);
+    int16 match = 0;
+    for (int16 bi = 0; bi != b.n_splits; bi++) {
+      //Rcout << "no_match[" << match << "] = " << (1 + bi) << "\n";
+      if (!b_match[bi]) no_match[match++] = bi + 1;
+    }
+    
     NumericVector final_matching (most_splits);
-    int16 lap_match = 0;
+    match = 0;
     for (int16 i = 0; i != most_splits; i++) {
-      final_matching[i] = a_match[i] ? a_match[i] : rowsol[lap_match++] + 1;
+      final_matching[i] = a_match[i] ? a_match[i] : no_match[rowsol[match++]];
     }
     
     delete[] rowsol;
