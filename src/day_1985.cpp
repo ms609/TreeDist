@@ -299,6 +299,7 @@ ClusterTable::ClusterTable(List phylo) {
   while (v) {
     if (is_leaf(&v)) {
       leafcode++;
+      // We prepared the encoder in an earlier step, so need no X[v, 3] <- leafcode
       R = leafcode;
       NVERTEX(&v, &w);
     } else {
@@ -329,7 +330,6 @@ IntegerVector ClusterTable_decode(SEXP xp) {
   XPtr<ClusterTable> ptr(xp);
   return ptr->X_decode();
 }
-
 
 inline void push (int a, int b, int c, int d, std::unique_ptr<int[]> &S, int* Spos) {
   S.get()[(*Spos)++] = a;
@@ -363,7 +363,6 @@ int COMCLUST (List trees) {
     L_i, R_i, N_i, W_i
   ;
   
-  
   List tree_0 = trees(0);
   ClusterTable X(tree_0);
   const int stack_size = 4 * X.N();
@@ -381,9 +380,6 @@ int COMCLUST (List trees) {
     
     do {
       if (Ti.is_leaf(&v)) {
-        // Rcout << Spos;
-        // Rcout << " < " << stack_size;
-        // check_push_safe(Spos, stack_size);
         push(X.ENCODE(v), X.ENCODE(v), 1, 1, S, &Spos);
       } else {
         L = INF;
@@ -408,13 +404,6 @@ int COMCLUST (List trees) {
     X.UPDATE();
   }
   
-  
-  IntegerMatrix ret(X.N(), 2);
-  for (int i = X.N(); i--; ) {
-    ret(i, 0) = X.X(i + 1, 0);
-    ret(i, 1) = X.X(i + 1, 1);
-  }
-  return ret;
   return X.SHARED() - 2; // Subtract All-tips & All-ingroup
 }
 
@@ -450,12 +439,10 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
       
       do {
         if (Tj->is_leaf(&v)) {
-          check_push_safe(Spos, stack_size);
           push(Xi->ENCODE(v), Xi->ENCODE(v), 1, 1, S, &Spos);
         } else {
           L = INF; R = 0; N = 0; W = 1;
           do {
-            check_pop_safe(Spos);
             pop(&L_i, &R_i, &N_i, &W_i, S, &Spos);
             L = min_(&L, &L_i);
             R = max_(&R, &R_i);
@@ -463,7 +450,6 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
             W = W + W_i;
             w = w - W_i;
           } while (w);
-          check_push_safe(Spos, stack_size); // #TODO remove checks
           push(L, R, N, W, S, &Spos);
           if (N == R - L + 1) { // L..R is contiguous, and must be tested
             if (Xi->ISCLUST(&L, &R)) n_shared++;
