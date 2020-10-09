@@ -339,8 +339,6 @@ ui <- fluidPage(theme = 'treespace.css',
 )
 
 server <- function(input, output, session) {
-  
-  #r <- reactiveValues(allTrees = structure(list(), class = 'multiPhylo'))
   #treeNumbers <- c(1:220)
   treeNumbers <- c(1:50, 401:440)
   
@@ -1036,8 +1034,6 @@ server <- function(input, output, session) {
            'clust' = {
              hide('pt.col.scale')
              cl <- clusterings()
-             message("Max: ", r$clust_max)
-             message("CL names: ", names(cl), "; ", length(cl))
              if (cl$sil > 0.25) {
                palettes[[min(length(palettes), cl$n)]][cl$cluster]
              } else palettes[[1]]
