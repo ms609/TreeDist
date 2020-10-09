@@ -10,21 +10,27 @@
 #' @keywords internal
 #' @importFrom TreeTools as.Splits TipLabels
 #' @export
-CalculateTreeDistance <- function (Func, tree1, tree2,
+CalculateTreeDistance <- function (Func, tree1, tree2 = NULL,
                                    reportMatching = FALSE, ...) {
+  
   single1 <- inherits(tree1, c('phylo', 'Splits'))
   labels1 <- TipLabels(tree1, single = TRUE)
   nTip <- length(labels1)
-    
-  single2 <- inherits(tree2, c('phylo', 'Splits'))
-  labels2 <- TipLabels(tree2, single = TRUE)
   
-  if (length(setdiff(labels1, labels2)) > 0) {
-    stop("Leaves must bear identical labels.")
+  null2 <- is.null(tree2)
+  if (!null2) {
+    single2 <- inherits(tree2, c('phylo', 'Splits'))
+    labels2 <- TipLabels(tree2, single = TRUE)
+    
+    if (length(setdiff(labels1, labels2)) > 0) {
+      stop("Leaves must bear identical labels.")
+    }
   }
   
   if (single1) {
-    if (single2) {
+    if (null2) {
+      dist(0)
+    } else if (single2) {
       .SplitDistanceOneOne(Func, tree1, tree2, tipLabels = labels1, nTip,
                            reportMatching = reportMatching, ...)
     } else {
@@ -32,7 +38,9 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
                             tipLabels = labels1, nTip = nTip, ...)
     }
   } else {
-    if (single2) {
+    if (is.null(tree2)) {
+      .SplitDistanceAllPairs(Func, tree1, tipLabels = labels1, nTip, ...)
+    } else if (single2) {
       .SplitDistanceOneMany(Func, oneSplit = tree2, manySplits = tree1,
                             tipLabels = labels2, ...)
     } else {
@@ -59,34 +67,34 @@ CalculateTreeDistance <- function (Func, tree1, tree2,
          double(1))
 }
 
+.SplitDistanceAllPairs <- function (Func, splits1, tipLabels,
+                                    nTip = length(tipLabels), ...) {
+  splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
+  nSplits <- length(splits)
+  notLastSplit <- nSplits - 1L
+  ret <- matrix(0, nSplits, nSplits)
+  is <- matrix(seq_len(nSplits), nSplits, nSplits)
+  
+  ret <- structure(class = 'dist', Size = nSplits,
+                   diag = FALSE, upper = FALSE,
+                   mapply(Func,
+                          splits[t(is)[lower.tri(is)]],
+                          splits[is[lower.tri(is)]],
+                          nTip = nTip,
+                          reportMatching = FALSE,
+                          ...))
+  # Return:
+  ret
+}
+
 .SplitDistanceManyMany <- function (Func, splits1, splits2, 
                                     tipLabels, nTip = length(tipLabels), ...) {
-  if (identical(splits1, splits2)) {
-    splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
-    nSplits <- length(splits)
-    notLastSplit <- nSplits - 1L
-    ret <- matrix(0, nSplits, nSplits)
-    is <- matrix(seq_len(nSplits), nSplits, nSplits)
-    
-    ret <- structure(class = 'dist', Size = nSplits,
-                     diag = FALSE, upper = FALSE,
-                     mapply(Func,
-                            splits[t(is)[lower.tri(is)]],
-                            splits[is[lower.tri(is)]],
-                            nTip = nTip,
-                            reportMatching = FALSE,
-                            ...))
-    
-    # Return:
-    ret
-  } else {
-    splits1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
-    splits2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = FALSE)
-    matrix(mapply(Func, rep(splits2, each=length(splits1)), splits1,
-                  nTip = nTip, ...),
-           length(splits1), length(splits2),
-           dimnames = list(names(splits1), names(splits2)))
-  }
+  splits1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
+  splits2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = FALSE)
+  matrix(mapply(Func, rep(splits2, each = length(splits1)), splits1,
+                nTip = nTip, ...),
+         length(splits1), length(splits2),
+         dimnames = list(names(splits1), names(splits2)))
 }
 
 #' Calculate distance between trees, or lists of trees
@@ -300,15 +308,17 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
     if (how == FALSE) {
       return (unnormalized)
     } else {
-      if (is.null(infoInBoth))
-        infoInBoth <- CombineInfo(InfoInTree(tree1, ...),
-                                  InfoInTree(tree2, ...))
+      if (is.null(infoInBoth)) {
+        info1 <- InfoInTree(tree1, ...)
+        info2 <- if (is.null(tree2)) info1 else InfoInTree(tree2, ...)
+        infoInBoth <- CombineInfo(info1, info2)
+      }
     }
   } else if (is.function(how)) {
     if (is.null(infoInBoth)) {
-      infoInBoth <- CombineInfo(InfoInTree(tree1, ...),
-                                InfoInTree(tree2, ...),
-                                Combiner = how)
+      info1 <- InfoInTree(tree1, ...)
+      info2 <- if (is.null(tree2)) info1 else InfoInTree(tree2, ...)
+      infoInBoth <- CombineInfo(info1, info2, Combiner = how)
     }
   } else {
     infoInBoth <- how

@@ -48,7 +48,7 @@ test_that('VisualizeMatching() works', {
   }
   expect_doppelganger('Test VMr', TestVMr) # Unclear why this test fails on Travis. 
   
-  expect_doppelganger('RF example', function () {
+  expect_doppelganger('Visualize MCI matching', function () {
     par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.5)
     tree1 <- ape::read.tree(text='((1, 2), ((3, (4, 5)), (6, (7, (8, 9)))));')
     tree2 <- ape::read.tree(text='((1, 2), ((3, 4, (5, 9)), (6, (7, 8))));')
@@ -64,7 +64,7 @@ test_that('VisualizeMatching() works', {
                       leaveRoom = FALSE)
   })
   
-  expect_doppelganger('Collapse a node', function () {
+  expect_doppelganger('RF: Collapse a node', function () {
     par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.5)
     tree1 <- ape::read.tree(text='((1, 2), ((6, (7, 8)), (3, 4, (5, 9))));')
     tree2 <- ape::read.tree(text='((1, 2), ((3, (4, (5, 9))), (6, (7, 8))));')
@@ -81,7 +81,7 @@ test_that('VisualizeMatching() works', {
   })
   
   
-  expect_doppelganger('Collapse and change', function () {
+  expect_doppelganger('RF: Collapse and change', function () {
     par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.5)
     tree1 <- ape::read.tree(text='((1, 2), ((6, (7, 8)), (3, 4, (5, 9))));')
     tree2 <- ape::read.tree(text='((1, 2), ((3, (4, (5, 9))), ((6, 7), 8)));')
@@ -94,10 +94,10 @@ test_that('VisualizeMatching() works', {
                       setPar = FALSE, precision = 3L,
                       Plot = TreeDistPlot,
                       matchZeros = FALSE,
-                      leaveRoom=FALSE)
+                      leaveRoom = FALSE)
   })
   
-  expect_doppelganger('VM Single splits; plainEdges', function () {
+  expect_doppelganger('RF VM Single splits; plainEdges', function () {
     par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.5)
     tree1 <- ape::read.tree(text = '((1, 2), (3, 4, 5, 6, 7, 8));')
     tree2 <- ape::read.tree(text = '((1, 2, 3), (4, 5, 6, 7, 8));')
@@ -116,7 +116,7 @@ test_that('VisualizeMatching() works', {
                       leaveRoom = FALSE)
   })
   
-  expect_doppelganger('VM matchZeros FALSE', function () {
+  expect_doppelganger('JRF VM matchZeros FALSE', function () {
     JRF2 <- function (tree1, tree2, ...) 
       JaccardRobinsonFoulds(tree1, tree2, k = 2, allowConflict = FALSE, ...)
     

@@ -1,11 +1,11 @@
 #' @rdname TreeDistance
 #' @export
-MatchingSplitInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
+MatchingSplitInfo <- function (tree1, tree2 = NULL, normalize = FALSE,
                                      reportMatching = FALSE, diag = TRUE) {
   unnormalized <- CalculateTreeDistance(MatchingSplitInfoSplits, tree1,
                                         tree2, reportMatching)
   
-  if (diag && identical(tree1, tree2) && !inherits(tree1, 'phylo')) {
+  if (diag && is.null(tree2)) {
     unnormalized <- as.matrix(unnormalized)
     diag(unnormalized) <- SplitwiseInfo(tree1)
   }
@@ -16,7 +16,7 @@ MatchingSplitInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
 
 #' @rdname TreeDistance
 #' @export
-MatchingSplitInfoDistance <- function (tree1, tree2 = tree1, 
+MatchingSplitInfoDistance <- function (tree1, tree2 = NULL, 
                                           normalize = FALSE,
                                           reportMatching = FALSE) {
   msi <- MatchingSplitInfo(tree1, tree2, normalize = FALSE, diag = FALSE,

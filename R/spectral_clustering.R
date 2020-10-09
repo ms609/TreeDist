@@ -4,7 +4,7 @@
 #' between data points.
 #' @param nn Integer specifying number of nearest neighbours to consider
 #' @param nEig Integer specifying number of eigenvectors to retain.
-#' @author Adapeted by MRS from script by
+#' @author Adapted by MRS from script by
 #' [Nura Kawa](https://rpubs.com/nurakawa/spectral-clustering)
 #' @examples
 #' library('TreeTools', quietly = TRUE, warn.conflict = FALSE)

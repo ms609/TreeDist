@@ -8,7 +8,7 @@ using namespace Rcpp;
 uint_fast32_t bitcounts[65536]; // the bytes representing bit count of each number 0-65535
 __attribute__((constructor))
   void initialize_bitcounts() {
-    for (int_fast32_t i = 0; i < 65536; i++) {
+    for (int_fast32_t i = 0; i != 65536; i++) {
       int_fast32_t n_bits = 0;
       for (int_fast8_t j = 0; j != 16; j++) {
         if ((i & powers_of_two[j])) ++n_bits;
@@ -94,6 +94,10 @@ double ic_element (const int16 nkK, const int16 nk,
   } else return 0;
 }
 
+double ic_matching (const int16 a, const int16 b, const int16 n) {
+  return (a * (lg2[n] - lg2[a])) + 
+         (b * (lg2[n] - lg2[b]));
+}
 
 double one_overlap (const int16 a, const int16 b, const int16 n) {
   if (a == b) return lg2_rooted[a] + lg2_rooted[n - a];

@@ -46,7 +46,7 @@
 }
 
 #' @keywords internal
-#' @source https://github.com/csoneson/dreval/blob/master/R/trustworthiness.R
+#' @source Charlotte Soneson's [dreval](https://github.com/csoneson/dreval/blob/master/R/trustworthiness.R)
 .calcTrustworthinessFromDist <- function(distReference, distLowDim, kTM) {
   distReference <- as.matrix(distReference)
   distLowDim <- as.matrix(distLowDim)

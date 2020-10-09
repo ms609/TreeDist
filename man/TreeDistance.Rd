@@ -22,7 +22,7 @@ TreeDistance(tree1, tree2 = tree1)
 
 SharedPhylogeneticInfo(
   tree1,
-  tree2 = tree1,
+  tree2 = NULL,
   normalize = FALSE,
   reportMatching = FALSE,
   diag = TRUE
@@ -30,21 +30,21 @@ SharedPhylogeneticInfo(
 
 DifferentPhylogeneticInfo(
   tree1,
-  tree2 = tree1,
+  tree2 = NULL,
   normalize = FALSE,
   reportMatching = FALSE
 )
 
 PhylogeneticInfoDistance(
   tree1,
-  tree2 = tree1,
+  tree2 = NULL,
   normalize = FALSE,
   reportMatching = FALSE
 )
 
 ClusteringInfoDistance(
   tree1,
-  tree2 = tree1,
+  tree2 = NULL,
   normalize = FALSE,
   reportMatching = FALSE
 )
@@ -53,7 +53,7 @@ ExpectedVariation(tree1, tree2, samples = 10000)
 
 MutualClusteringInfo(
   tree1,
-  tree2 = tree1,
+  tree2 = NULL,
   normalize = FALSE,
   reportMatching = FALSE,
   diag = TRUE
@@ -75,7 +75,7 @@ MutualClusteringInfoSplits(
 
 MatchingSplitInfo(
   tree1,
-  tree2 = tree1,
+  tree2 = NULL,
   normalize = FALSE,
   reportMatching = FALSE,
   diag = TRUE
@@ -83,7 +83,7 @@ MatchingSplitInfo(
 
 MatchingSplitInfoDistance(
   tree1,
-  tree2 = tree1,
+  tree2 = NULL,
   normalize = FALSE,
   reportMatching = FALSE
 )
@@ -97,7 +97,9 @@ MatchingSplitInfoSplits(
 }
 \arguments{
 \item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.}
+or lists of such trees to undergo pairwise comparison.  Where implemented,
+\code{tree2 = NULL} will compute distances between each pair of trees in the list
+\code{tree1} using a fast algorithm based on Day (1985).}
 
 \item{normalize}{If a numeric value is provided, this will be used as a
 maximum value against which to rescale results.
@@ -256,6 +258,7 @@ MutualClusteringInfoSplits(splits1, splits2)
 }
 \references{
 \itemize{
+\item \insertRef{Day1985}{TreeDist}
 \item \insertRef{Mackay2003}{TreeDist}
 \item \insertRef{Meila2007}{TreeDist}
 \item \insertRef{SmithDist}{TreeDist}

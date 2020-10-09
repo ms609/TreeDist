@@ -62,7 +62,7 @@
 #' @encoding UTF-8
 #' @importFrom TreeTools NSplits SplitsInBinaryTree
 #' @export
-NyeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
+NyeSimilarity <- function (tree1, tree2 = NULL, similarity = TRUE,
                            normalize = FALSE,
                            normalizeMax = !is.logical(normalize),
                            reportMatching = FALSE,
@@ -72,7 +72,7 @@ NyeSimilarity <- function (tree1, tree2 = tree1, similarity = TRUE,
                                         reportMatching)
   if (similarity) {
     InfoInTree <- if (normalizeMax) SplitsInBinaryTree else NSplits
-    if (diag && identical(tree1, tree2) && !inherits(tree1, 'phylo')) {
+    if (diag && is.null(tree2)) {
       unnormalized <- as.matrix(unnormalized)
       diag(unnormalized) <- InfoInTree(tree1)
     }
@@ -174,7 +174,7 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' @encoding UTF-8
 #' @importFrom TreeTools NSplits
 #' @export
-JaccardRobinsonFoulds <- function (tree1, tree2 = tree1, k = 1L, 
+JaccardRobinsonFoulds <- function (tree1, tree2 = NULL, k = 1L, 
                                    allowConflict = TRUE, similarity = FALSE,
                                    normalize = FALSE, reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(JaccardSplitSimilarity, tree1, tree2, 

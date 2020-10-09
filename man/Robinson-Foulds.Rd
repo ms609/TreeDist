@@ -13,7 +13,7 @@ content}
 \usage{
 InfoRobinsonFoulds(
   tree1,
-  tree2 = tree1,
+  tree2 = NULL,
   similarity = FALSE,
   normalize = FALSE,
   reportMatching = FALSE
@@ -28,7 +28,7 @@ InfoRobinsonFouldsSplits(
 
 RobinsonFoulds(
   tree1,
-  tree2 = tree1,
+  tree2 = NULL,
   similarity = FALSE,
   normalize = FALSE,
   reportMatching = FALSE
@@ -36,7 +36,7 @@ RobinsonFoulds(
 
 RobinsonFouldsMatching(
   tree1,
-  tree2 = tree1,
+  tree2,
   similarity = FALSE,
   normalize = FALSE,
   ...
@@ -51,10 +51,14 @@ RobinsonFouldsSplits(
 }
 \arguments{
 \item{tree1}{Trees of class \code{phylo}, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.}
+or lists of such trees to undergo pairwise comparison.  Where implemented,
+\code{tree2 = NULL} will compute distances between each pair of trees in the list
+\code{tree1} using a fast algorithm based on Day (1985).}
 
 \item{tree2}{Trees of class \code{phylo}, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.}
+or lists of such trees to undergo pairwise comparison.  Where implemented,
+\code{tree2 = NULL} will compute distances between each pair of trees in the list
+\code{tree1} using a fast algorithm based on Day (1985).}
 
 \item{similarity}{Logical specifying whether to report the result as a tree
 similarity, rather than a difference.}
@@ -104,6 +108,9 @@ the phylogenetic information content of all splits that are (or are not)
 identical in both trees.  Consequently, splits that are more likely
 to be identical by chance alone make a smaller contribution to overall
 tree distance, because their similarity is less remarkable.
+
+Rapid comparison between multiple pairs of trees employs the Day (1985)
+linear-time algorithm.
 }
 \section{Functions}{
 \itemize{
@@ -135,6 +142,8 @@ VisualizeMatching(InfoRobinsonFoulds, balanced7, pectinate7)
 }
 \references{
 \insertRef{Robinson1981}{TreeDist}
+
+\insertRef{Day1985}{TreeDist}
 
 \insertRef{Steel2006}{TreeDist}
 

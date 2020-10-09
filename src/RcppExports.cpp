@@ -5,6 +5,61 @@
 
 using namespace Rcpp;
 
+// ClusterTable_new
+SEXP ClusterTable_new(List phylo);
+RcppExport SEXP _TreeDist_ClusterTable_new(SEXP phyloSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type phylo(phyloSEXP);
+    rcpp_result_gen = Rcpp::wrap(ClusterTable_new(phylo));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ClusterTable_matrix
+IntegerMatrix ClusterTable_matrix(SEXP xp);
+RcppExport SEXP _TreeDist_ClusterTable_matrix(SEXP xpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xp(xpSEXP);
+    rcpp_result_gen = Rcpp::wrap(ClusterTable_matrix(xp));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ClusterTable_decode
+IntegerVector ClusterTable_decode(SEXP xp);
+RcppExport SEXP _TreeDist_ClusterTable_decode(SEXP xpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type xp(xpSEXP);
+    rcpp_result_gen = Rcpp::wrap(ClusterTable_decode(xp));
+    return rcpp_result_gen;
+END_RCPP
+}
+// COMCLUST
+int COMCLUST(List trees);
+RcppExport SEXP _TreeDist_COMCLUST(SEXP treesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type trees(treesSEXP);
+    rcpp_result_gen = Rcpp::wrap(COMCLUST(trees));
+    return rcpp_result_gen;
+END_RCPP
+}
+// robinson_foulds_all_pairs
+IntegerVector robinson_foulds_all_pairs(List tables);
+RcppExport SEXP _TreeDist_robinson_foulds_all_pairs(SEXP tablesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type tables(tablesSEXP);
+    rcpp_result_gen = Rcpp::wrap(robinson_foulds_all_pairs(tables));
+    return rcpp_result_gen;
+END_RCPP
+}
 // lapjv
 List lapjv(NumericMatrix x, NumericVector maxX);
 RcppExport SEXP _TreeDist_lapjv(SEXP xSEXP, SEXP maxXSEXP) {
@@ -138,6 +193,11 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_TreeDist_ClusterTable_new", (DL_FUNC) &_TreeDist_ClusterTable_new, 1},
+    {"_TreeDist_ClusterTable_matrix", (DL_FUNC) &_TreeDist_ClusterTable_matrix, 1},
+    {"_TreeDist_ClusterTable_decode", (DL_FUNC) &_TreeDist_ClusterTable_decode, 1},
+    {"_TreeDist_COMCLUST", (DL_FUNC) &_TreeDist_COMCLUST, 1},
+    {"_TreeDist_robinson_foulds_all_pairs", (DL_FUNC) &_TreeDist_robinson_foulds_all_pairs, 1},
     {"_TreeDist_lapjv", (DL_FUNC) &_TreeDist_lapjv, 2},
     {"_TreeDist_cpp_mast", (DL_FUNC) &_TreeDist_cpp_mast, 3},
     {"_TreeDist_cpp_nni_distance", (DL_FUNC) &_TreeDist_cpp_nni_distance, 3},

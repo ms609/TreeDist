@@ -30,7 +30,7 @@ Other tree space functions:
 \code{\link{median.multiPhylo}()}
 }
 \author{
-Adapeted by MRS from script by
+Adapted by MRS from script by
 \href{https://rpubs.com/nurakawa/spectral-clustering}{Nura Kawa}
 }
 \concept{tree space functions}

@@ -19,6 +19,9 @@ treeAcd.Befgh <- ape::read.tree(text='((a, c, d), (b, e, f, g, h));')
 treeAbcd.Efgh <- ape::read.tree(text='((a, b, c, d), (e, f, g, h));')
 treeTwoSplits <- ape::read.tree(text="(((a, b), c, d), (e, f, g, h));")
 
+testTrees <- c(treesSBO8, treeCat8, treeTac8, treeStar8, treeAb.Cdefgh,
+               treeAbc.Defgh, treeAbcd.Efgh, treeAcd.Befgh, treeTwoSplits)
+
 test_that("Split compatibility is correctly established", {
   expect_true(SplitsCompatible(as.logical(c(0,0,1,1,0)), 
                                as.logical(c(0,0,1,1,0))))
@@ -130,6 +133,10 @@ test_that('Robinson Foulds Distance is correctly calculated', {
   RFTest(treeStar8, treeStar8)
   RFTest(treeAb.Cdefgh, treeAbc.Defgh)
   RFTest(treeAb.Cdefgh, treeAbcd.Efgh)
+  
+  # at 2020-10, RF uses Day algorithm if tree2 = null; old algo if tree2 = tree1.
+  expect_equivalent(RobinsonFoulds(testTrees, testTrees),
+                    as.matrix(RobinsonFoulds(testTrees)))
   
   # Invariant to tree description order
   sq_pectinate <- ape::read.tree(text='((((((1, 2), 3), 4), 5), 6), (7, (8, (9, (10, 11)))));')
@@ -310,7 +317,7 @@ test_that('Clustering information is correctly calculated', {
                cpp_mutual_clustering(
                  as.Splits(as.logical(c(1, 1, 1, 0, 0, 0, 0, 0))),
                  as.Splits(as.logical(c(1, 1, 1, 0, 0, 0, 0, 0))),
-                 8L)$score, 
+                 8L)$score,
                tolerance = 1e-7)
   
   expect_equal(Entropy(c(2, 6) / 8) * 2 - Entropy(c(0, 2, 2, 4) / 8),
@@ -495,7 +502,7 @@ test_that('Jaccard RF is correctly calculated', {
   expect_lt(0, JaccardRobinsonFoulds(BalancedTree(264), PectinateTree(264)))
 })
 
-test_that('RobinsonFoulds is correctly calculated', {
+test_that('RobinsonFoulds() is correctly calculated', {
   RF <- function (tree1, tree2) {
     suppressMessages(phangorn::RF.dist(tree1, tree2))
   }
@@ -527,6 +534,9 @@ test_that('RobinsonFoulds is correctly calculated', {
   RFNtipTest(1027)
   
   NormalizationTest(RobinsonFoulds, similarity = TRUE)
+  #TODO we may wish to revise this test once we implement diag = TRUE to 
+  #allow similarities to be calculated on the diagonal.
+  expect_equal(numeric(0), RobinsonFoulds(treeSym8, normalize = TRUE))
 })
 
 
