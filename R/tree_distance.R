@@ -39,7 +39,7 @@ GeneralizedRF <- function (splits1, splits2, nTip, PairScorer,
   
   if (reportMatching) {
     matching <- solution$matching
-    matching[matching > nSplits2] <- NA
+    matching[matching > nSplits2 | matching == 0L] <- NA
     if (nSplits1 < nSplits2) {
       matching <- matching[seq_len(nSplits1)]
     }

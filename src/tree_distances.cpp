@@ -530,8 +530,8 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
       if (!b_match[bi]) no_match[match++] = bi + 1;
     }
     
-    NumericVector final_matching (most_splits);
     match = 0;
+    NumericVector final_matching (most_splits);
     for (int16 i = 0; i != most_splits; i++) {
       final_matching[i] = a_match[i] ? a_match[i] : no_match[rowsol[match++]];
     }
