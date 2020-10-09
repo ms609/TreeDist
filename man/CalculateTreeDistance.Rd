@@ -2,12 +2,9 @@
 % Please edit documentation in R/tree_distance_utilities.R
 \name{CalculateTreeDistance}
 \alias{CalculateTreeDistance}
-\alias{DayDistance}
 \title{Wrapper for tree distance calculations}
 \usage{
 CalculateTreeDistance(Func, tree1, tree2, reportMatching = FALSE, ...)
-
-DayDistance(funcList, tree1, tree2, reportMatching = FALSE, ...)
 }
 \arguments{
 \item{Func}{Tree distance function.}
