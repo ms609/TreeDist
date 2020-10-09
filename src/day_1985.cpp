@@ -235,14 +235,13 @@ class ClusterTable {
 };
 
 ClusterTable::ClusterTable(List phylo) { 
-  /*
-  const IntegerMatrix
-    edge = phylo["edge"],
-    rooted_edge = TreeTools::root_on_node(edge, 1); // Returned in preorder
-  ;*/
-  const IntegerMatrix edge = phylo["edge"], rooted_edge = edge;
-  n_internal = phylo["Nnode"]; // = M
-  CharacterVector leaf_labels = phylo["tip.label"];
+  
+  const List rooted = TreeTools::root_on_node(phylo, 1);
+  const IntegerMatrix edge = rooted["edge"];
+  
+  // BEGIN
+  n_internal = rooted["Nnode"]; // = M
+  CharacterVector leaf_labels = rooted["tip.label"];
   n_leaves = leaf_labels.length(); // = N
   n_edge = edge.nrow();
   Tlen = M() + N() + M() + N();
@@ -264,8 +263,8 @@ ClusterTable::ClusterTable(List phylo) {
   }
   for (int i = n_edge; i--; ) {
     const int
-      parent_i = rooted_edge(i, 0),
-      child_i = rooted_edge(i, 1)
+      parent_i = edge(i, 0),
+      child_i = edge(i, 1)
     ;
     if (!GET_LEFTMOST(parent_i)) SET_LEFTMOST(parent_i, GET_LEFTMOST(child_i));
     if (is_leaf(&child_i)) {
@@ -277,9 +276,9 @@ ClusterTable::ClusterTable(List phylo) {
       ENTER(child_i, weights[child_i]);
     }
   }
-  ENTER(rooted_edge(0, 0), weights[rooted_edge(0, 0)]);
+  ENTER(edge(0, 0), weights[edge(0, 0)]);
   
-  // BUILD Cluster table 
+  // BUILD Cluster table
   X_ROWS = n_leaves;
   Xarr = std::make_unique<int[]>(X_COLS * X_ROWS);
   
