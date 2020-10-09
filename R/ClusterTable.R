@@ -99,7 +99,7 @@ summary.ClusterTable <- function (object, ...) {
   })
   
   cat(paste0(" ", seq_len(nTip), ": ", 
-             attr(x, 'tip.label')[ClusterTable_decode(object)]), "\n")
+             attr(object, 'tip.label')[ClusterTable_decode(object)]), "\n")
 }
 
 #' @rdname ClusterTable-methods
