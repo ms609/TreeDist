@@ -50,8 +50,6 @@ class ClusterTable {
     }
     
     inline void ENTER(int v, int w) {
-      if (Tpos + 1 >= Tlen) std::range_error("READT T too high");
-      if (Tpos < 0) std::range_error("READT T too low");
       T.get()[Tpos++] = v;
       T.get()[Tpos++] = w;
     }
@@ -77,7 +75,6 @@ class ClusterTable {
     
     inline void NVERTEX(int *v, int *w) {
       if (Tpos != Tlen) {
-        if (Tpos > Tlen) throw std::range_error("Get over this programmer!");
         READT(v, w);
         v_j = *v;
       } else {
