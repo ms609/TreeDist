@@ -48,7 +48,7 @@ test_that('VisualizeMatching() works', {
   }
   expect_doppelganger('Test VMr', TestVMr) # Unclear why this test fails on Travis. 
   
-  expect_doppelganger('RF example', function () {
+  expect_doppelganger('Visualize MCI matching', function () {
     par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.5)
     tree1 <- ape::read.tree(text='((1, 2), ((3, (4, 5)), (6, (7, (8, 9)))));')
     tree2 <- ape::read.tree(text='((1, 2), ((3, 4, (5, 9)), (6, (7, 8))));')
