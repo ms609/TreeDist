@@ -31,6 +31,7 @@ test_that("Day 1985 examples", {
   TestRF(t1, t3)
   TestRF(t2, t3)
   TestRF(t1, tStar)
+  TestRF(tStar, tStar)
   expect_equal(c(RobinsonFoulds(t1, c(t2, t3, tStar)), RobinsonFoulds(t2, t3),
                  NSplits(c(t2, t3))),
                as.integer(RobinsonFoulds(c(t1, t2, t3, tStar))))
