@@ -2,6 +2,8 @@
 
 - New class `ClusterTable` to allow faster distance computation with Day (1985)
   algorithm.
+- Faster calculation of Robinson–Foulds distance (using algorithm of Day (1985))
+  and clustering information distance.
 
 # TreeDist 1.2.1.9100 (development)
 
