@@ -36,6 +36,13 @@ tip labels.}
 which is an internal representation of its splits suitable for rapid tree
 distance calculation (per Day, 1985).
 }
+\details{
+Each row of a cluster table relates to a clade on a tree rooted on tip 1.
+Tips are numbered according to the order in which they are visited in
+preorder: i.e., if plotted using \code{plot(x)}, from the top of the page
+downwards.  A clade containing the tips 2 .. 5 would be denoted by the
+entry \verb{2, 5}, in either row 2 or row 5 of the cluster table.
+}
 \examples{
 tree1 <- ape::read.tree(text = "(A, (B, (C, (D, E))));");
 tree2 <- ape::read.tree(text = "(A, (B, (D, (C, E))));");

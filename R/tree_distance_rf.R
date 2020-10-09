@@ -59,7 +59,7 @@
 
 #' @aliases RobinsonFouldsInfo
 #' @rdname Robinson-Foulds
-InfoRobinsonFoulds <- function (tree1, tree2 = tree1, similarity = FALSE,
+InfoRobinsonFoulds <- function (tree1, tree2 = NULL, similarity = FALSE,
                                 normalize = FALSE, reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(InfoRobinsonFouldsSplits, tree1, tree2, 
                                         reportMatching) * 2
@@ -126,7 +126,7 @@ RobinsonFoulds <- function (tree1, tree2 = NULL, similarity = FALSE,
 #' @param \dots Not used.
 #' @importFrom TreeTools NSplits
 #' @export
-RobinsonFouldsMatching <- function (tree1, tree2 = tree1, similarity = FALSE,
+RobinsonFouldsMatching <- function (tree1, tree2, similarity = FALSE,
                                     normalize = FALSE, ...) {
   ret <- CalculateTreeDistance(RobinsonFouldsSplits, tree1, tree2,
                                reportMatching = TRUE)

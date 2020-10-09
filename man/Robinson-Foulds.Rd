@@ -13,7 +13,7 @@ content}
 \usage{
 InfoRobinsonFoulds(
   tree1,
-  tree2 = tree1,
+  tree2 = NULL,
   similarity = FALSE,
   normalize = FALSE,
   reportMatching = FALSE
@@ -36,7 +36,7 @@ RobinsonFoulds(
 
 RobinsonFouldsMatching(
   tree1,
-  tree2 = tree1,
+  tree2,
   similarity = FALSE,
   normalize = FALSE,
   ...

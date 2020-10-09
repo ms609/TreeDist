@@ -7,7 +7,7 @@
 \usage{
 MatchingSplitDistance(
   tree1,
-  tree2 = tree1,
+  tree2 = NULL,
   normalize = FALSE,
   reportMatching = FALSE
 )

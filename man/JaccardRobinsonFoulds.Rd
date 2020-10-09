@@ -8,7 +8,7 @@
 \usage{
 JaccardRobinsonFoulds(
   tree1,
-  tree2 = tree1,
+  tree2 = NULL,
   k = 1L,
   allowConflict = TRUE,
   similarity = FALSE,

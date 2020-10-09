@@ -164,7 +164,7 @@ TreeDistance <- function (tree1, tree2 = tree1) {
 
 #' @rdname TreeDistance
 #' @export
-SharedPhylogeneticInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
+SharedPhylogeneticInfo <- function (tree1, tree2 = NULL, normalize = FALSE,
                                     reportMatching = FALSE, diag = TRUE) {
   unnormalized <- CalculateTreeDistance(SharedPhylogeneticInfoSplits, tree1,
                                         tree2, reportMatching = reportMatching)
@@ -181,7 +181,7 @@ SharedPhylogeneticInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
 
 #' @rdname TreeDistance
 #' @export
-DifferentPhylogeneticInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
+DifferentPhylogeneticInfo <- function (tree1, tree2 = NULL, normalize = FALSE,
                                        reportMatching = FALSE) {
   spi <- SharedPhylogeneticInfo(tree1, tree2, normalize = FALSE, diag = FALSE,
                                 reportMatching = reportMatching)
@@ -206,7 +206,7 @@ PhylogeneticInfoDistance <- DifferentPhylogeneticInfo
 #' @rdname TreeDistance
 #' @aliases ClusteringInfoDist
 #' @export
-ClusteringInfoDistance <- function (tree1, tree2 = tree1, normalize = FALSE,
+ClusteringInfoDistance <- function (tree1, tree2 = NULL, normalize = FALSE,
                                        reportMatching = FALSE) {
   mci <- MutualClusteringInfo(tree1, tree2, normalize = FALSE, diag = FALSE,
                               reportMatching = reportMatching)
@@ -276,11 +276,11 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+4) {
 #' @rdname TreeDistance
 #' @aliases MutualClusteringInformation
 #' @export
-MutualClusteringInfo <- function (tree1, tree2 = tree1, normalize = FALSE,
+MutualClusteringInfo <- function (tree1, tree2 = NULL, normalize = FALSE,
                                   reportMatching = FALSE, diag = TRUE) {
   unnormalized <- CalculateTreeDistance(MutualClusteringInfoSplits, tree1, tree2,
                                         reportMatching)
-  if (diag && identical(tree1, tree2) && !inherits(tree1, 'phylo')) {
+  if (diag && is.null(tree2)) {
     unnormalized <- as.matrix(unnormalized)
     diag(unnormalized) <- ClusteringEntropy(tree1)
   }

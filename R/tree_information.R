@@ -44,6 +44,9 @@ SplitwiseInfo.Splits <- function(x) {
   ) / -log(2)
 }
 
+#' @export
+SplitwiseInfo.NULL <- function (x) 0
+
 #' Clustering entropy of all splits within a tree
 #' 
 #' Sum the entropy (`ClusteringEntropy()`) or information content
@@ -181,6 +184,9 @@ ClusteringEntropy.Splits <- function (x) {
   sum(apply(splitP, 2, Entropy))
 }
 
+#' @export
+ClusteringEntropy.NULL <- function (x) NULL
+
 #' @rdname ClusteringEntropy
 #' @export
 ClusteringInfo.phylo <- function (x) ClusteringInfo.Splits(as.Splits(x))
@@ -204,3 +210,6 @@ ClusteringInfo.Splits <- function (x) {
   # Return:
   sum(apply(splitP, 2, Entropy)) * nLeaves
 }
+
+#' @export
+ClusteringInfo.NULL <- function (x) NULL

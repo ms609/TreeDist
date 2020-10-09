@@ -8,7 +8,7 @@
 \usage{
 NyeSimilarity(
   tree1,
-  tree2 = tree1,
+  tree2 = NULL,
   similarity = TRUE,
   normalize = FALSE,
   normalizeMax = !is.logical(normalize),

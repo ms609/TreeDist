@@ -74,11 +74,12 @@ GeneralizedRF <- function (splits1, splits2, nTip, PairScorer,
 }
 
 .MaxValue <- function (tree1, tree2, Value) {
-  maxValue <- outer(Value(tree1), Value(tree2), '+')[, , drop = TRUE]
-  if (!inherits(tree1, 'phylo') && identical(tree1, tree2)) {
+  value1 <- Value(tree1)
+  if (is.null(tree2)) {
+    maxValue <- outer(value1, value1, '+')[, , drop = TRUE]
     maxValue[lower.tri(maxValue)]
   } else {
-    maxValue
+    outer(value1, Value(tree2), '+')[, , drop = TRUE]
   }
 }
 

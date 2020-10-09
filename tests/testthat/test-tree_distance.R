@@ -136,7 +136,7 @@ test_that('Robinson Foulds Distance is correctly calculated', {
   
   # at 2020-10, RF uses Day algorithm if tree2 = null; old algo if tree2 = tree1.
   expect_equivalent(RobinsonFoulds(testTrees, testTrees),
-                    RobinsonFoulds(testTrees))
+                    as.matrix(RobinsonFoulds(testTrees)))
   
   # Invariant to tree description order
   sq_pectinate <- ape::read.tree(text='((((((1, 2), 3), 4), 5), 6), (7, (8, (9, (10, 11)))));')

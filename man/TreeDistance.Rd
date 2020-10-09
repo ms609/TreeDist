@@ -22,7 +22,7 @@ TreeDistance(tree1, tree2 = tree1)
 
 SharedPhylogeneticInfo(
   tree1,
-  tree2 = tree1,
+  tree2 = NULL,
   normalize = FALSE,
   reportMatching = FALSE,
   diag = TRUE
@@ -30,21 +30,21 @@ SharedPhylogeneticInfo(
 
 DifferentPhylogeneticInfo(
   tree1,
-  tree2 = tree1,
+  tree2 = NULL,
   normalize = FALSE,
   reportMatching = FALSE
 )
 
 PhylogeneticInfoDistance(
   tree1,
-  tree2 = tree1,
+  tree2 = NULL,
   normalize = FALSE,
   reportMatching = FALSE
 )
 
 ClusteringInfoDistance(
   tree1,
-  tree2 = tree1,
+  tree2 = NULL,
   normalize = FALSE,
   reportMatching = FALSE
 )
@@ -53,7 +53,7 @@ ExpectedVariation(tree1, tree2, samples = 10000)
 
 MutualClusteringInfo(
   tree1,
-  tree2 = tree1,
+  tree2 = NULL,
   normalize = FALSE,
   reportMatching = FALSE,
   diag = TRUE
@@ -75,7 +75,7 @@ MutualClusteringInfoSplits(
 
 MatchingSplitInfo(
   tree1,
-  tree2 = tree1,
+  tree2 = NULL,
   normalize = FALSE,
   reportMatching = FALSE,
   diag = TRUE
@@ -83,7 +83,7 @@ MatchingSplitInfo(
 
 MatchingSplitInfoDistance(
   tree1,
-  tree2 = tree1,
+  tree2 = NULL,
   normalize = FALSE,
   reportMatching = FALSE
 )
