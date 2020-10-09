@@ -372,7 +372,7 @@ int COMCLUST (List trees) {
   
   List tree_0 = trees(0);
   ClusterTable X(tree_0);
-  const int stack_size = 4 * (X.N() + X.M()); // TODO this is conservative; is X.N() safe?
+  const int stack_size = 4 * X.N();
   std::unique_ptr<int[]> S = std::make_unique<int[]>(stack_size);
   int Spos = 0;
   
@@ -442,7 +442,7 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
   for (int i = 0; i != n_trees - 1; i++) {
     Rcpp::XPtr<ClusterTable> table_i = tables(i);
     Rcpp::XPtr<ClusterTable> Xi(table_i);
-    const int stack_size = 4 * (Xi->N() + 1); // TODO: is X.N() safe?
+    const int stack_size = 4 * Xi->N();
     
     for (int j = i + 1; j != n_trees; j++) {
       Rcpp::XPtr<ClusterTable> table_j = tables(j);
