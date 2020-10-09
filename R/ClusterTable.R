@@ -19,6 +19,7 @@
 #' @return `as.ClusterTable()` returns an object of class `ClusterTable`.
 #'
 #' @references \insertRef{Day1985}{TreeDist}
+#' @seealso [S3 methods][ClusterTable-methods] for `ClusterTable` objects.
 #' @examples
 #' tree1 <- ape::read.tree(text = "(A, (B, (C, (D, E))));");
 #' tree2 <- ape::read.tree(text = "(A, (B, (D, (C, E))));");
@@ -28,8 +29,6 @@
 #' 
 #' # Tip label order must match ct1 to allow comparison
 #' ct2 <- as.ClusterTable(tree2, tipLabels = LETTERS[1:5])
-#' 
-#' #TODO: RF (ct1, ct2)
 #' @template MRS
 #' @name ClusterTable
 NULL
@@ -65,19 +64,19 @@ as.ClusterTable.list <- function (x, tipLabels = NULL, ...) {
 #' @export
 as.ClusterTable.multiPhylo <- as.ClusterTable.list
 
-#' @rdname ClusterTable
+#' @rdname ClusterTable-methods
 #' @export
 as.matrix.ClusterTable <- function (x, ...) {
   ClusterTable_matrix(x)
 }
 
-#' Print `ClusterTable` object
+#' S3 methods for `ClusterTable` objects
+#' 
+#' @param x,phy,object,tree Object of class `ClusterTable`.
+#' @param \dots Additional arguments for consistency with S3 methods.
 #'
-#' S3 method for objects of class `ClusterTable`.
-#'
-#' @param x Object of class `ClusterTable`.
-#' @param \dots Additional arguments for consistency with S3 method (unused).
-#'
+#' @template MRS
+#' @name ClusterTable-methods
 #' @export
 print.ClusterTable <- function (x, ...) {
   nTip <- attr(x, 'nTip')
@@ -85,11 +84,11 @@ print.ClusterTable <- function (x, ...) {
   cat("ClusterTable on" , nTip, "leaves:", labels[1], "..", labels[nTip])
 }
 
-#' @inherit summary
+#' @rdname ClusterTable-methods
 #' @export
-summary.ClusterTable <- function (x, ...) {
-  nTip <- attr(x, 'nTip')
-  mat <- ClusterTable_matrix(x)
+summary.ClusterTable <- function (object, ...) {
+  nTip <- attr(object, 'nTip')
+  mat <- ClusterTable_matrix(object)
   cat("ClusterTable on" , nTip, "leaves:\n")
   cat(" ", rep(c(1:9, ' '), length.out = nTip), "\n", sep = '')
   apply(mat, 1, function (x) {
@@ -102,23 +101,24 @@ summary.ClusterTable <- function (x, ...) {
   
 }
 
+#' @rdname ClusterTable-methods
+#' @param single Logical specifying that labels should be returned from the 
+#' first (and only) entry in `x`.
 #' @importFrom TreeTools TipLabels
-#' @inherit TipLabels
 #' @export
 TipLabels.ClusterTable <- function (x, single = TRUE) attr(x, 'tip.label')
 
-#' @inherit NTip
+#' @rdname ClusterTable-methods
 #' @importFrom TreeTools NTip
 #' @export
 NTip.ClusterTable <- function (phy) attr(phy, 'nTip')
 
-#' @inherit NSplits
+#' @rdname ClusterTable-methods
 #' @importFrom TreeTools NSplits
 #' @export
 NSplits.ClusterTable <- function (x) nrow(as.matrix(x)) - 3L # Root + Ingroup + All-leaves
 
-#' @rdname SplitsInBinaryTree
-#' @inherit SplitsInBinaryTree
+#' @rdname ClusterTable-methods
 #' @importFrom TreeTools SplitsInBinaryTree
 #' @export
 SplitsInBinaryTree.ClusterTable <- function (tree) NTip(tree) - 3L

@@ -6,7 +6,6 @@
 \alias{as.ClusterTable.phylo}
 \alias{as.ClusterTable.list}
 \alias{as.ClusterTable.multiPhylo}
-\alias{as.matrix.ClusterTable}
 \title{Convert phylogenetic tree to \code{ClusterTable}}
 \usage{
 as.ClusterTable(x, tipLabels = NULL, ...)
@@ -16,8 +15,6 @@ as.ClusterTable(x, tipLabels = NULL, ...)
 \method{as.ClusterTable}{list}(x, tipLabels = NULL, ...)
 
 \method{as.ClusterTable}{multiPhylo}(x, tipLabels = NULL, ...)
-
-\method{as.matrix}{ClusterTable}(x, ...)
 }
 \arguments{
 \item{x}{Object to convert into \code{ClusterTable}: perhaps a tree of class
@@ -52,11 +49,12 @@ as.matrix(ct1)
 
 # Tip label order must match ct1 to allow comparison
 ct2 <- as.ClusterTable(tree2, tipLabels = LETTERS[1:5])
-
-#TODO: RF (ct1, ct2)
 }
 \references{
 \insertRef{Day1985}{TreeDist}
+}
+\seealso{
+\link[=ClusterTable-methods]{S3 methods} for \code{ClusterTable} objects.
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
