@@ -5,10 +5,6 @@
 \alias{ClusterTable-methods}
 \alias{print.ClusterTable}
 \alias{summary.ClusterTable}
-\alias{TipLabels.ClusterTable}
-\alias{NTip.ClusterTable}
-\alias{NSplits.ClusterTable}
-\alias{SplitsInBinaryTree.ClusterTable}
 \title{S3 methods for \code{ClusterTable} objects}
 \usage{
 \method{as.matrix}{ClusterTable}(x, ...)
@@ -16,22 +12,11 @@
 \method{print}{ClusterTable}(x, ...)
 
 \method{summary}{ClusterTable}(object, ...)
-
-\method{TipLabels}{ClusterTable}(x, single = TRUE)
-
-\method{NTip}{ClusterTable}(phy)
-
-\method{NSplits}{ClusterTable}(x)
-
-\method{SplitsInBinaryTree}{ClusterTable}(tree)
 }
 \arguments{
-\item{x, phy, object, tree}{Object of class \code{ClusterTable}.}
+\item{x, object}{Object of class \code{ClusterTable}.}
 
 \item{\dots}{Additional arguments for consistency with S3 methods.}
-
-\item{single}{Logical specifying that labels should be returned from the
-first (and only) entry in \code{x}.}
 }
 \description{
 S3 methods for \code{ClusterTable} objects

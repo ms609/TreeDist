@@ -72,7 +72,7 @@ as.matrix.ClusterTable <- function (x, ...) {
 
 #' S3 methods for `ClusterTable` objects
 #' 
-#' @param x,phy,object,tree Object of class `ClusterTable`.
+#' @param x,object Object of class `ClusterTable`.
 #' @param \dots Additional arguments for consistency with S3 methods.
 #'
 #' @template MRS
@@ -101,25 +101,3 @@ summary.ClusterTable <- function (object, ...) {
   cat(paste0(" ", seq_len(nTip), ": ", 
              attr(object, 'tip.label')[ClusterTable_decode(object)]), "\n")
 }
-
-#' @rdname ClusterTable-methods
-#' @param single Logical specifying that labels should be returned from the 
-#' first (and only) entry in `x`.
-#' @importFrom TreeTools TipLabels
-#' @export
-TipLabels.ClusterTable <- function (x, single = TRUE) attr(x, 'tip.label')
-
-#' @rdname ClusterTable-methods
-#' @importFrom TreeTools NTip
-#' @export
-NTip.ClusterTable <- function (phy) attr(phy, 'nTip')
-
-#' @rdname ClusterTable-methods
-#' @importFrom TreeTools NSplits
-#' @export
-NSplits.ClusterTable <- function (x) nrow(as.matrix(x)) - 3L # Root + Ingroup + All-leaves
-
-#' @rdname ClusterTable-methods
-#' @importFrom TreeTools SplitsInBinaryTree
-#' @export
-SplitsInBinaryTree.ClusterTable <- function (tree) NTip(tree) - 3L
