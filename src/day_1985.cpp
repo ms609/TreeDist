@@ -7,20 +7,22 @@ using namespace Rcpp;
 #include "tree_distances.h"
 #include "SplitList.h"
 
-const int
+const int16
   INF = INTX_MAX,
   UNINIT = -999
 ;
 
+const int DAY_MAX_LEAVES = 16384;
+
 class ClusterTable {
   
-  const int
+  const int16
     L_COL = 0,
     R_COL = 1,
     SWITCH_COL = 2,
     X_COLS = 3
   ;
-  int
+  int16
     n_edge,
     n_internal,
     n_leaves,
@@ -32,38 +34,38 @@ class ClusterTable {
     Tpos = 0,
     X_ROWS
   ;
-  std::unique_ptr<int[]> leftmost_leaf, T, Xarr, visited_nth, internal_label;
+  std::unique_ptr<int16[]> leftmost_leaf, T, Xarr, visited_nth, internal_label;
   
   public:
     ClusterTable(List); // i.e. PREPARE(T)
     
-    inline bool is_leaf(const int *v) {
+    inline bool is_leaf(const int16 *v) {
       return *v <= n_leaves;
     }
     
-    inline const int edges() {
+    inline const int16 edges() {
       return n_edge;
     }
     
-    inline const int leaves() {
+    inline const int16 leaves() {
       return n_leaves;
     }
     
-    inline void ENTER(int v, int w) {
+    inline void ENTER(int16 v, int16 w) {
       T.get()[Tpos++] = v;
       T.get()[Tpos++] = w;
     }
     
-    inline void READT(int *v, int *w) {
+    inline void READT(int16 *v, int16 *w) {
       *v = T[Tpos++];
       *w = T[Tpos++];
     }
     
-    inline int N() {
+    inline int16 N() {
       return n_leaves;
     }
     
-    inline int M() {
+    inline int16 M() {
       return n_internal;
     }
     
@@ -73,7 +75,7 @@ class ClusterTable {
       Tpos = 0;
     }
     
-    inline void NVERTEX(int *v, int *w) {
+    inline void NVERTEX(int16 *v, int16 *w) {
       if (Tpos != Tlen) {
         READT(v, w);
         v_j = *v;
@@ -83,7 +85,7 @@ class ClusterTable {
       }
     }
     
-    inline void NVERTEX_short(int *v, int *w) {
+    inline void NVERTEX_short(int16 *v, int16 *w) {
       // Don't count all-tips or all-ingroup: vertices 0, ROOT, Ingp.
       if (Tpos != Tlen - (2 * 3)) {
         READT(v, w);
@@ -94,55 +96,55 @@ class ClusterTable {
       }
     }
     
-    inline int LEFTLEAF() {
+    inline int16 LEFTLEAF() {
       // If NVERTEX has returned entry <vj, wj> in T, the leftmost leaf in the
       // subtree rooted at vj has entry <vk, wk> where k = j - wj.
       // This function procedure returns Vk as its value.
       return leftmost_leaf[v_j - 1];
     }
     
-    inline void SET_LEFTMOST(int index, int val) {
+    inline void SET_LEFTMOST(int16 index, int16 val) {
       leftmost_leaf[index - 1] = val;
     }
     
-    inline int GET_LEFTMOST(int index) {
+    inline int16 GET_LEFTMOST(int16 index) {
       return leftmost_leaf[index - 1];
     }
     
     // Procedures to manipulate cluster tables, per Table 4 of Day 1985.
     
-    inline int ENCODE(const int v) {
+    inline int16 ENCODE(const int16 v) {
       // This function procedure returns as its value the internal label 
       // assigned to leaf v
       // MS note: input = v; output = X[v, 3]
       return internal_label[v - 1];
     }
     
-    inline int DECODE(const int internal_relabeling) {
+    inline int16 DECODE(const int16 internal_relabeling) {
       // MS: input = X[v, 3], output = v
       return visited_nth[internal_relabeling - 1];
     }
     
-    inline void VISIT_LEAF (const int* leaf, int* n_visited) {
+    inline void VISIT_LEAF (const int16* leaf, int16* n_visited) {
       visited_nth[(*n_visited)++] = *leaf;
       internal_label[*leaf - 1] = *n_visited;
     }
     
     IntegerVector X_decode() {
       IntegerVector ret(N());
-      for (int i = n_leaves; i--; ) {
+      for (int16 i = n_leaves; i--; ) {
         ret(i) = DECODE(i + 1);
       }
       return ret;
     }
     
-    inline int X(int row, int col) {
+    inline int16 X(int16 row, int16 col) {
       if (row < 1) throw std::range_error("Trying to read before start of X");
       if (row > X_ROWS) throw std::range_error("Trying to read past end of X");
       return Xarr[(row - 1) * X_COLS + col];
     }
     
-    inline void setX(int row, int col, int value) {
+    inline void setX(int16 row, int16 col, int16 value) {
       if (row < 1) throw std::range_error("Trying to write before start of X");
       if (row > X_ROWS) throw std::range_error("Trying to write past end of X");
       Xarr[(row - 1) * X_COLS + col] = value;
@@ -150,22 +152,22 @@ class ClusterTable {
     
     IntegerMatrix X_contents() {
       IntegerMatrix ret(X_ROWS, 2);
-      for (int i = X_ROWS; i--; ) {
+      for (int16 i = X_ROWS; i--; ) {
         ret(i, 0) = X(i + 1, L_COL);
         ret(i, 1) = X(i + 1, R_COL);
       }
       return ret;
     }
     
-    inline bool CLUSTONL(int* L, int* R) {
+    inline bool CLUSTONL(int16* L, int16* R) {
       return X(*L, L_COL) == *L && X(*L, R_COL) == *R;
     }
     
-    inline bool CLUSTONR(int* L, int* R) {
+    inline bool CLUSTONR(int16* L, int16* R) {
       return X(*R, L_COL) == *L && X(*R, R_COL) == *R;
     }
     
-    inline bool ISCLUST(int* L, int* R) {
+    inline bool ISCLUST(int16* L, int16* R) {
       // This function procedure returns value true if cluster <L,R> is in X;
       // otherwise it returns value false
       return CLUSTONL(L, R) || CLUSTONR(L, R);
@@ -175,16 +177,16 @@ class ClusterTable {
       // Each cluster in X has an associated switch that is either cleared or 
       // set. 
       // This procedure clears every cluster switch in X. 
-      for (int i = X_ROWS; i--; ) {
+      for (int16 i = X_ROWS; i--; ) {
         Xarr[i * X_COLS + SWITCH_COL] = 0;
       }
     }
     
-    inline void SETSWX(int* row) {
+    inline void SETSWX(int16* row) {
       setX(*row, SWITCH_COL, 1);
     }
     
-    inline void SETSW(int* L, int* R) {
+    inline void SETSW(int16* L, int16* R) {
       // If <L,R> is a cluster in X, this procedure sets the cluster switch for <L,R>. 
       if (CLUSTONL(L, R)) {
         ++n_shared;
@@ -199,8 +201,8 @@ class ClusterTable {
       // This procadure inspects every cluster switch in X.
       // If the switch for cluster <L,R> is cleared, UPDATE deletes <L,R> 
       // from X; thereafter ISCLUST(X,L,R) will return the value false. 
-      for (int i = X_ROWS; i--; ) {
-        int ptr = (i * X_COLS);
+      for (int16 i = X_ROWS; i--; ) {
+        int16 ptr = (i * X_COLS);
         if (!(Xarr[ptr + SWITCH_COL])) {
           Xarr[ptr + L_COL] = -Xarr[ptr + L_COL]; // 0
           Xarr[ptr + R_COL] = -Xarr[ptr + R_COL]; // 0
@@ -208,7 +210,7 @@ class ClusterTable {
       }
     }
     
-    inline int SHARED() {
+    inline int16 SHARED() {
       return n_shared;
     }
     
@@ -221,7 +223,7 @@ class ClusterTable {
       enumeration = 0;
     }
     
-    inline void NCLUS(int* L, int* R) {
+    inline void NCLUS(int16* L, int16* R) {
       // This procedure returns the next cluster <L,R> in the current 
       // enumeration of clusters in X.
       // If m clusters are in X, they are returned by the first m invocations 
@@ -242,27 +244,31 @@ ClusterTable::ClusterTable(List phylo) {
   // BEGIN
   n_internal = rooted["Nnode"]; // = M
   CharacterVector leaf_labels = rooted["tip.label"];
+  if (leaf_labels.length() > DAY_MAX_LEAVES) {
+    throw std::length_error("Tree has too many leaves. "
+                            "Contact the 'TreeDist' maintainer.");
+  }
   n_leaves = leaf_labels.length(); // = N
   n_edge = edge.nrow();
   Tlen = M() + N() + M() + N();
-  T = std::make_unique<int[]>(Tlen);
+  T = std::make_unique<int16[]>(Tlen);
   
-  leftmost_leaf = std::make_unique<int[]>(N() + M());
-  visited_nth = std::make_unique<int[]>(n_leaves);
-  internal_label = std::make_unique<int[]>(n_leaves);
-  int n_visited = 0;
-  std::unique_ptr<int[]> weights = std::make_unique<int[]>(N() + M() + 1);
+  leftmost_leaf = std::make_unique<int16[]>(N() + M());
+  visited_nth = std::make_unique<int16[]>(n_leaves);
+  internal_label = std::make_unique<int16[]>(n_leaves);
+  int16 n_visited = 0;
+  std::unique_ptr<int16[]> weights = std::make_unique<int16[]>(N() + M() + 1);
   
-  for (int i = 1; i != n_leaves + 1; i++) {
+  for (int16 i = 1; i != n_leaves + 1; i++) {
     SET_LEFTMOST(i, i);
     weights[i] = 0;
   }
-  for (int i = n_leaves + 1; i != N() + M() + 1; i++) {
+  for (int16 i = n_leaves + 1; i != N() + M() + 1; i++) {
     SET_LEFTMOST(i, 0);
     weights[i] = 0;
   }
-  for (int i = n_edge; i--; ) {
-    const int
+  for (int16 i = n_edge; i--; ) {
+    const int16
       parent_i = edge(i, 0),
       child_i = edge(i, 1)
     ;
@@ -280,7 +286,7 @@ ClusterTable::ClusterTable(List phylo) {
   
   // BUILD Cluster table
   X_ROWS = n_leaves;
-  Xarr = std::make_unique<int[]>(X_COLS * X_ROWS);
+  Xarr = std::make_unique<int16[]>(X_COLS * X_ROWS);
   
   // This procedure constructs in X descriptions of the clusters in a
   //  rooted tree described by the postorder sequence T with weights,
@@ -289,11 +295,11 @@ ClusterTable::ClusterTable(List phylo) {
   //   simply described by a pair <L,R> of internal labels, 
   
   TRESET();
-  for (int i = 1; i != N(); i++) {
+  for (int16 i = 1; i != N(); i++) {
     setX(i, L_COL, 0);
     setX(i, R_COL, 0);
   }
-  int leafcode = 0, v, w, L, R = UNINIT, loc;
+  int16 leafcode = 0, v, w, L, R = UNINIT, loc;
   
   NVERTEX(&v, &w);
   while (v) {
@@ -331,25 +337,25 @@ IntegerVector ClusterTable_decode(SEXP xp) {
   return ptr->X_decode();
 }
 
-inline void push (int a, int b, int c, int d, std::unique_ptr<int[]> &S, int* Spos) {
+inline void push (int16 a, int16 b, int16 c, int16 d, std::unique_ptr<int16[]> &S, int16* Spos) {
   S.get()[(*Spos)++] = a;
   S.get()[(*Spos)++] = b;
   S.get()[(*Spos)++] = c;
   S.get()[(*Spos)++] = d;
 }
 
-inline void pop (int *a, int *b, int *c, int *d, std::unique_ptr<int[]> &S, int* Spos) {
+inline void pop (int16 *a, int16 *b, int16 *c, int16 *d, std::unique_ptr<int16[]> &S, int16* Spos) {
   *d = S.get()[--(*Spos)];
   *c = S.get()[--(*Spos)];
   *b = S.get()[--(*Spos)];
   *a = S.get()[--(*Spos)];
 }
 
-int min_ (int *a, int *b) {
+int16 min_ (int16 *a, int16 *b) {
   return (*a < *b ? *a : *b);
 }
 
-int max_ (int *a, int *b) {
+int16 max_ (int16 *a, int16 *b) {
   return (*a > *b ? *a : *b);
 }
 
@@ -358,18 +364,18 @@ int max_ (int *a, int *b) {
 // [[Rcpp::export]]
 int COMCLUST (List trees) {
   
-  int v = 0, w = 0,
+  int16 v = 0, w = 0,
     L, R, N, W,
     L_i, R_i, N_i, W_i
   ;
   
   List tree_0 = trees(0);
   ClusterTable X(tree_0);
-  const int stack_size = 4 * X.N();
-  std::unique_ptr<int[]> S = std::make_unique<int[]>(stack_size);
-  int Spos = 0;
+  const int16 stack_size = 4 * X.N();
+  std::unique_ptr<int16[]> S = std::make_unique<int16[]>(stack_size);
+  int16 Spos = 0;
   
-  for (int i = 1; i != trees.length(); i++) {
+  for (int16 i = 1; i != trees.length(); i++) {
     Spos = 0; // Empty the stack S
     
     X.CLEAR();
@@ -409,28 +415,28 @@ int COMCLUST (List trees) {
 
 // [[Rcpp::export]]
 IntegerVector robinson_foulds_all_pairs(List tables) {
-  int 
+  int16 
     v = 0, w = 0,
     L, R, N, W,
     L_i, R_i, N_i, W_i,
     n_shared,
     Spos
   ;
-  const int n_trees = tables.length();
+  const int16 n_trees = tables.length();
   if (n_trees < 2) return IntegerVector(0);
   
   IntegerVector shared(n_trees * (n_trees - 1) / 2);
   IntegerVector::iterator write_pos = shared.begin();
   
-  for (int i = 0; i != n_trees - 1; i++) {
+  for (int16 i = 0; i != n_trees - 1; i++) {
     Rcpp::XPtr<ClusterTable> table_i = tables(i);
     Rcpp::XPtr<ClusterTable> Xi(table_i);
-    const int stack_size = 4 * Xi->N();
+    const int16 stack_size = 4 * Xi->N();
     
-    for (int j = i + 1; j != n_trees; j++) {
+    for (int16 j = i + 1; j != n_trees; j++) {
       Rcpp::XPtr<ClusterTable> table_j = tables(j);
       Rcpp::XPtr<ClusterTable> Tj(table_j);
-      std::unique_ptr<int[]> S = std::make_unique<int[]>(stack_size);
+      std::unique_ptr<int16[]> S = std::make_unique<int16[]>(stack_size);
       Spos = 0; // Empty the stack S
       n_shared = 0;
       

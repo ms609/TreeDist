@@ -1,5 +1,11 @@
 context("Day 1985")
 
+test_that("Day 1985 overflow", {
+  bigTree <- PectinateTree(2^14 + 1)
+  expect_error(as.ClusterTable(bigTree))
+  expect_error(RobinsonFoulds(list(bigTree, bigTree)))
+})
+
 test_that("Day 1985 examples", {
   library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
   
