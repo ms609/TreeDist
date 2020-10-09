@@ -22,7 +22,7 @@
 #' 
 #' If trees are subsampled (using the 'Sample every' slider), then the values
 #' in the tree properties file can also be subsampled accordingly.
-#' Unfortunately there is not yet support for multiple moint property files;
+#' Unfortunately there is not yet support for multiple point property files;
 #' one file will be applied to all trees, in the sequence that they were added
 #' to memory.
 #' 
@@ -35,11 +35,11 @@
 #' evolutionary signal very well; and Robinson--Foulds should probably never
 #' be used for analysis; it is included for comparison purposes.
 #' 
-#' Principle coponents projections should suffice for most purposes; 
+#' Principle components projections should suffice for most purposes; 
 #' Sammon and Kruskal projections are slower and seldom differ by much,
 #' in character or quality, but may emphasize outliers more.
 #' 
-#' Partitioning around medoids or minimax-linkage heirarchical clustering
+#' Partitioning around medoids or minimax-linkage hierarchical clustering
 #' will typically find a close-to-optimal clustering where one exists;
 #' select additional methods for a more exhaustive search.  
 #' To avoid redundant calculation, clusterings are only updated when
@@ -93,7 +93,7 @@
 #' A list of references employed when constructing the tree space is populated
 #' according to the methods used; it would be appropriate to cite and briefly 
 #' discuss these studies in any publication using figures generated using
-#' this application.  The 'TreeSpace' applicaiton itself can be cited using 
+#' this application.  The 'TreeSpace' application itself can be cited using 
 #' Smith (2020, 2021) below.
 #'  
 #' 

@@ -93,12 +93,13 @@ summary.ClusterTable <- function (object, ...) {
   cat(" ", rep(c(1:9, ' '), length.out = nTip), "\n", sep = '')
   apply(mat, 1, function (x) {
     if (x[1] > 0) {
-      cat(' ', rep('.', x[1] - 1), rep('*', 1 + x[2] - x[1]), rep('.', nTip - x[2]), "\n", sep = '')
+      cat(' ', rep('.', x[1] - 1), rep('*', 1 + x[2] - x[1]),
+          rep('.', nTip - x[2]), "\n", sep = '')
     }
   })
   
-  cat(paste0(" ", seq_len(nTip), ": ", attr(x, 'tip.label')[ClusterTable_decode(x)]), "\n")
-  
+  cat(paste0(" ", seq_len(nTip), ": ", 
+             attr(x, 'tip.label')[ClusterTable_decode(object)]), "\n")
 }
 
 #' @rdname ClusterTable-methods

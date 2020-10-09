@@ -165,7 +165,7 @@ trees](https://dx.doi.org/10.1093/bioinformatics/btaa614).
 _Bioinformatics_, online ahead of print.
 
 - Smith, M.R. (forthcoming)
-The importance of methodology when analyzing landscapes of phylogenetic trees.
+The importance of methodology when analysing landscapes of phylogenetic trees.
 
 
 Please note that the 'TreeDist' project is released with a

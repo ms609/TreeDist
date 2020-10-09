@@ -20,6 +20,7 @@ JRF
 JV
 Jaccard
 JaccardRobinsonFoulds
+Kawa
 KendallColijn
 LAPJV
 Leeuwen
@@ -34,12 +35,14 @@ Meila
 Mol
 Munkres
 MutualClusteringInfo
+Nura
 NNI
 NNIDist
 NyeTreeSimilarity
 OEIS
 ORCID
 R's
+RStudio
 Regraft
 SPR
 SharedPhylogeneticInfo
@@ -53,6 +56,7 @@ TreeSearch
 TreeTools
 Tromp
 Valiente
+Venna
 Vinh
 VoI
 Volgenant
@@ -69,11 +73,13 @@ cpp
 dist
 distory
 doi
+dreval
 durham
 equiprobable
 etc
 frac
 github
+gotchas
 ingroup
 interdecile
 jonker
