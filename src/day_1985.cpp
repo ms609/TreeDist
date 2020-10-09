@@ -49,10 +49,6 @@ class ClusterTable {
       return n_leaves;
     }
     
-    inline int TEND() {
-      return end_of_T;
-    };
-    
     inline void ENTER(int v, int w) {
       if (Tpos + 1 >= Tlen) std::range_error("READT T too high");
       if (Tpos < 0) std::range_error("READT T too low");
