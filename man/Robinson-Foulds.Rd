@@ -108,6 +108,9 @@ the phylogenetic information content of all splits that are (or are not)
 identical in both trees.  Consequently, splits that are more likely
 to be identical by chance alone make a smaller contribution to overall
 tree distance, because their similarity is less remarkable.
+
+Rapid comparison between multiple pairs of trees employs the Day (1985)
+linear-time algorithm.
 }
 \section{Functions}{
 \itemize{
@@ -139,6 +142,8 @@ VisualizeMatching(InfoRobinsonFoulds, balanced7, pectinate7)
 }
 \references{
 \insertRef{Robinson1981}{TreeDist}
+
+\insertRef{Day1985}{TreeDist}
 
 \insertRef{Steel2006}{TreeDist}
 
