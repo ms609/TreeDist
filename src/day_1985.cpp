@@ -85,7 +85,6 @@ class ClusterTable {
     
     inline void NVERTEX_short(int *v, int *w) {
       // Don't count all-tips or all-ingroup: vertices 0, ROOT, Ingp.
-      // Rcout << "Tpos: " << Tpos << "; Tlen = " << Tlen <<". ";
       if (Tpos != Tlen - (2 * 3)) {
         READT(v, w);
         v_j = *v;
@@ -99,7 +98,6 @@ class ClusterTable {
       // If NVERTEX has returned entry <vj, wj> in T, the leftmost leaf in the
       // subtree rooted at vj has entry <vk, wk> where k = j - wj.
       // This function procedure returns Vk as its value.
-      return leftmost_leaf[v_j];
       return leftmost_leaf[v_j - 1];
     }
     
