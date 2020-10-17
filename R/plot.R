@@ -84,7 +84,6 @@ TreeDistPlot <- function (tr, title = NULL, bold = NULL, leaveRoom = FALSE,
 #' similarity of the associated splits (`FALSE`).
 #' @param edge.width,edge.color,\dots Additional parameters to send to `Plot()`.
 #' 
-#' @template MRS
 #' @importFrom ape nodelabels edgelabels plot.phylo
 #' @importFrom colorspace qualitative_hcl sequential_hcl
 #' @importFrom graphics par
@@ -96,7 +95,7 @@ TreeDistPlot <- function (tr, title = NULL, bold = NULL, leaveRoom = FALSE,
 #' 
 #' VisualizeMatching(RobinsonFouldsMatching, tree1, tree2)
 #' VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2, matchZeros = FALSE)
-#' 
+#' @template MRS
 #' @export
 VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
                               precision = 3L, Plot = plot.phylo,
