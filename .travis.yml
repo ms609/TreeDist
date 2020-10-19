@@ -9,7 +9,11 @@ jobs:
   include:
     - r: 3.6.0 # phangorn requires > 3.6.0
     - r: release
-      before_deploy: Rscript -e 'remotes::install_cran("pkgdown")'
+      before_install:
+        - sudo apt-get -y install libharfbuzz-dev libfribidi-dev
+      r_packages: 
+        - freetypeharfbuzz
+        - pkgdown
       #r_binary_packages:
        #- ape
        #- covr
