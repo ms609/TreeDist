@@ -32,6 +32,8 @@ of any omissions.
   of pectinate trees in which a single leaf is transposed from one side to the
   other; like the RF distance, therefore, trees that agree on most relationship
   information can obtain a higher distance than those that do not.
+  It is sensitive to the order in which the leaves are numbered, i.e. the 
+  internal representation of the tree; and to the position of the root.
   
   
 
