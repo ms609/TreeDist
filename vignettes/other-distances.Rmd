@@ -1,0 +1,54 @@
+---
+title: "Other tree distances"
+author: "[Martin R. Smith](https://smithlabdurham.github.io/)"
+output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+csl: ../inst/apa-old-doi-prefix.csl
+vignette: >
+  %\VignetteIndexEntry{Other tree distances}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This vignette provides a very brief summary of other tree distances.
+Do please 
+[let me know](https://github.com/ms609/TreeDist/issues/new?title=Other%20tree%20distances)
+of any omissions.
+
+# Other topological distances
+
+- nni, spr, tbr
+
+- path 
+  - can incorporate edge length information
+  - to emphasize position of root: [@Kendall2016]
+
+- The **transposition distance** [@Valiente2005;@Alberich2009] is the number of
+  leaf-moves that must be conducted to make the splits in one tree match
+  the splits in a second.  It can be calculated in linear time (i.e. quickly),
+  and its properties (e.g. diameter, the largest possible distance) are readily
+  calculated.  It takes a small range of integer values, so like the RF distance
+  lacks resolution and specificity. The maximum distance is obtained in a pair
+  of pectinate trees in which a single leaf is transposed from one side to the
+  other; like the RF distance, therefore, trees that agree on most relationship
+  information can obtain a higher distance than those that do not.
+  
+  
+
+# Other tree distances
+
+Other categories of tree distance are not (yet) discussed here; these are useful
+in contexts where branch length information is important, or where tree
+topology (and the associated relationship information) is of secondary
+importance.
+
+- Leaf-to-leaf distances [e.g. @Leigh2011] ignore topology
+- Geodesic distances define a space based on branch lengths +
+topology.  The canonical 'BHV' space [@Billera2001] has been extended 
+in a number of ways.
+
+
+
+- Tropical tree space [@Speyer2004;@Lin2020]
+
+- Probabilistic / Information geometry [@Garba2018;@Garba2020]

@@ -74,6 +74,8 @@ navbar:
         href: articles/Robinson-Foulds.html
       - text: Generalized Robinson-Foulds distances
         href: articles/Generalized-RF.html
+      - text: Other tree distances
+        href: articles/other-distances.html
       - text: Concepts of information
         href: articles/information.html
       - text: Evaluating tree distance metrics
