@@ -1,7 +1,6 @@
 ---
 title: "Contextualizing tree distances"
-author: "[Martin R. Smith](https://community.dur.ac.uk/martin.smith/)"
-date: "`r Sys.Date()`"
+author: "[Martin R. Smith](https://smithlabdurham.github.io/)"
 output: rmarkdown::html_vignette
 bibliography: ../inst/REFERENCES.bib
 csl: ../inst/apa-old-doi-prefix.csl

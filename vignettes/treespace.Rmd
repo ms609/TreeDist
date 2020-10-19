@@ -1,7 +1,6 @@
 ---
 title: "Tree space & landscape analysis"
-author: "Martin R. Smith"
-date: "`r Sys.Date()`"
+author: "[Martin R. Smith](https://smithlabdurham.github.io/)"
 output: 
   rmarkdown::html_vignette:
     fig_width: 6

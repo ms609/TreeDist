@@ -1,7 +1,6 @@
 ---
 title: "Calculate tree similarity with 'TreeDist'"
-author: "Martin R. Smith"
-date: "`r Sys.Date()`"
+author: "[Martin R. Smith](https://smithlabdurham.github.io/)"
 output: rmarkdown::html_vignette
 bibliography: ../inst/REFERENCES.bib
 csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
