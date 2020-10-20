@@ -60,6 +60,7 @@
 #'   
 #' @importFrom stats median
 #' @family tree space functions
+#' @encoding UTF-8
 #' @export
 median.multiPhylo <- function (x, na.rm = FALSE,
                                Distance = ClusteringInfoDistance,

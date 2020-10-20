@@ -83,7 +83,7 @@ TreeDistance(twoTrees, threeTrees)
 
 ## Visualizing a matching
 
-[Generalized Robinson-Foulds metrics](Generalized-RF.html),
+[Generalized Robinson–Foulds metrics](Generalized-RF.html),
 such as the variation of clustering information,
 rely on matching each split within a tree with another split in the other tree.  
 We can view an optimal matching:

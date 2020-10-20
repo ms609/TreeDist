@@ -1,11 +1,11 @@
-#' Information-based generalized Robinson-Foulds distances
+#' Information-based generalized Robinson–Foulds distances
 #'
 #' Calculate tree similarity and distance measures based on the amount of 
 #' phylogenetic or clustering information that two trees hold in common, as
 #' proposed in Smith (2020).
 #' 
 #' 
-#' [Generalized Robinson-Foulds distances](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances)
+#' [Generalized Robinson–Foulds distances](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances)
 #' calculate tree similarity by finding an
 #' optimal matching that the similarity between a split on one tree
 #' and its pair on a second, considering all possible ways to pair splits 
