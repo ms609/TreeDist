@@ -1,5 +1,5 @@
-library("shiny")
-library("shinyjs")
+library("shiny", exclude = 'runExample')
+library("shinyjs", exclude = 'runExample', warn.conflicts = FALSE)
 library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
 library("TreeDist")
 
