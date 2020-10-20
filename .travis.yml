@@ -14,17 +14,7 @@ jobs:
       r_packages: 
         - freetypeharfbuzz
         - pkgdown
-      #r_binary_packages:
-       #- ape
-       #- covr
-       #- devtools # R4.0.0 Binaries unavailable 2020-05-28
-       #- knitr # R4.0.0 Binaries unavailable 2020-05-28
-       #- phangorn
-       #- pkgload
-       #- Rdpack
-       #- roxygen2
-       #- testthat
-       #- usethis
+      script: skip
       deploy:
         provider: script
         script: Rscript -e 'pkgdown::deploy_site_github()'
@@ -34,6 +24,18 @@ jobs:
         keep-history: true
         on: 
           branch: master
+    - r: release
+      r_binary_packages:
+       - ape
+       - covr
+       - devtools # R4.0.0 Binaries unavailable 2020-05-28
+       - knitr # R4.0.0 Binaries unavailable 2020-05-28
+       - phangorn
+       - pkgload
+       - Rdpack
+       - roxygen2
+       - testthat
+       - usethis
     - r: devel
       after_success:
         - Rscript -e "covr::codecov()"
