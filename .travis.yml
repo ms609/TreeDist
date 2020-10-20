@@ -10,7 +10,7 @@ jobs:
     - r: 3.6.0 # phangorn requires > 3.6.0
     - r: release
       before_install:
-        - sudo apt-get -y install libharfbuzz-dev libfribidi-dev
+        - sudo apt-get -y install libharfbuzz-dev libfribidi-dev mesa-common-dev
       r_packages: 
         - freetypeharfbuzz
         - pkgdown
