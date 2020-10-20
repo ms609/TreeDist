@@ -62,7 +62,7 @@ tenTrees <- as.phylo(1:10, nTip = 8)
 # Default settings:
 median(tenTrees)
 
-# Robinsonâ€“Foulds distances include ties:
+# Robinson-Foulds distances include ties:
 median(tenTrees, Distance = RobinsonFoulds, breakTies = FALSE)
 
 # Be sure to use a distance function, rather than a similarity:
