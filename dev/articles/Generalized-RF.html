@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Generalized Robinson-Foulds distances • TreeDist</title>
+<title>Generalized Robinson–Foulds distances • TreeDist</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
@@ -13,7 +13,7 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><!-- docsearch --><script src="../docsearch.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.3/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous">
 <link href="../docsearch.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Generalized Robinson-Foulds distances">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Generalized Robinson–Foulds distances">
 <meta property="og:description" content="TreeDist">
 <meta name="robots" content="noindex">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9100</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9200</span>
       </span>
     </div>
 
@@ -118,10 +118,9 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Generalized Robinson-Foulds distances</h1>
-                        <h4 class="author">Martin R. Smith</h4>
+      <h1 data-toc-skip>Generalized Robinson–Foulds distances</h1>
+                        <h4 class="author"><a href="https://smithlabdurham.github.io/">Martin R. Smith</a></h4>
             
-            <h4 class="date">2020-10-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/Generalized-RF.Rmd"><code>vignettes/Generalized-RF.Rmd</code></a></small>
       <div class="hidden name"><code>Generalized-RF.Rmd</code></div>
@@ -130,7 +129,7 @@
 
     
     
-<p>This document outlines the similarity measures employed by the generalized Robinson-Foulds distances implemented in this package.</p>
+<p>This document outlines the similarity measures employed by the generalized Robinson–Foulds distances implemented in this package.</p>
 <p>Generalized RF distances are introduced <a href="Robinson-Foulds.html">elsewhere</a>; before you read further, you may also wish to revisit how to <a href="Using-TreeDist.html">use the ‘TreeDist’ package</a>, and relevant <a href="information.html">principles of information theory</a>.</p>
 <div id="shared-phylogenetic-information" class="section level2">
 <h2 class="hasAnchor">
@@ -184,7 +183,7 @@ ABCDE IJ|FGH</code></pre>
 <pre><code>ABCDEF  |     GHIJ
      FGH|ABCDE  IJ</code></pre>
 <p>This yields subset scores of <span class="math inline">\(\frac{1}{8}\)</span> and <span class="math inline">\(\frac{2}{9}\)</span>, and thus has an alignment score of <span class="math inline">\(\frac{1}{8}\)</span>. This alignment gives a lower score than the other, so is disregarded. The pair of splits is allocated a similarity score corresponding to the better alignment: <span class="math inline">\(\frac{2}{5}\)</span>.</p>
-<p>As such, splits that match exactly will receive a similarity score of 1, in a manner analogous to the Robinson-Foulds distance. (This is despite the fact that some splits are more likely to match than others.) It is not possible for a pair of splits to receive a zero similarity score.</p>
+<p>As such, splits that match exactly will receive a similarity score of 1, in a manner analogous to the Robinson–Foulds distance. (This is despite the fact that some splits are more likely to match than others.) It is not possible for a pair of splits to receive a zero similarity score.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit">
 <span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">NyeSimilarity</span>, <span class="va">tree1</span>, <span class="va">tree2</span>, 
                   Plot <span class="op">=</span> <span class="va">TreeDistPlot</span>, matchZeros <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></pre></div>
@@ -192,10 +191,10 @@ ABCDE IJ|FGH</code></pre>
 <div class="sourceCode" id="cb12"><pre class="downlit">
 <span class="fu"><a href="../reference/NyeSimilarity.html">NyeSimilarity</a></span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span>, normalize <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></pre></div>
 <pre><code>## [1] 3.5</code></pre>
-<div id="jaccard-robinson-foulds-metric" class="section level3">
+<div id="jaccardrobinsonfoulds-metric" class="section level3">
 <h3 class="hasAnchor">
-<a href="#jaccard-robinson-foulds-metric" class="anchor"></a>Jaccard-Robinson-Foulds metric</h3>
-<p>Böcker <em>et al</em>. <span class="citation">(2013)</span> employ the same split similarity calculation as Nye <em>et al.</em> (above), which they suggest ought to be raised to an arbitrary exponent in order to down-weight the contribution of paired splits that are not identical. In order for the metric to converge to the Robinson-Foulds metric as the exponent grows towards infinity, the resulting score is then doubled.</p>
+<a href="#jaccardrobinsonfoulds-metric" class="anchor"></a>Jaccard–Robinson–Foulds metric</h3>
+<p>Böcker <em>et al</em>. <span class="citation">(2013)</span> employ the same split similarity calculation as Nye <em>et al.</em> (above), which they suggest ought to be raised to an arbitrary exponent in order to down-weight the contribution of paired splits that are not identical. In order for the metric to converge to the Robinson–Foulds metric as the exponent grows towards infinity, the resulting score is then doubled.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit">
 <span class="fu"><a href="../reference/JaccardRobinsonFoulds.html">JaccardRobinsonFoulds</a></span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span>, k <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></pre></div>
 <pre><code>## [1] 4</code></pre>
@@ -211,7 +210,7 @@ ABCDE IJ|FGH</code></pre>
 <span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">JRF2</span>, <span class="va">tree1</span>, <span class="va">tree2</span>,
                   Plot <span class="op">=</span> <span class="va">TreeDistPlot</span>, matchZeros <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></pre></div>
 <p><img src="Generalized-RF_files/figure-html/unnamed-chunk-6-2.png" width="576" style="display: block; margin: auto;"></p>
-<p>The figure below shows how the JRF distance between the two trees plotted above varies with the value of the exponent <em>k</em>, relative to the Nye <em>et al.</em> and Robinson-Foulds distances between the trees:</p>
+<p>The figure below shows how the JRF distance between the two trees plotted above varies with the value of the exponent <em>k</em>, relative to the Nye <em>et al.</em> and Robinson–Foulds distances between the trees:</p>
 <p><img src="Generalized-RF_files/figure-html/unnamed-chunk-7-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>The theoretical and practical performance of the JRF metric, and its speed of calculation, are best at lower values of <em>k</em> <span class="citation">(Smith, 2020)</span>, raising the question of whether an exponent is useful.</p>
 <p>Böcker <em>et al</em>. <span class="citation">(2013)</span> suggest that ‘reasonable’ matchings exhibit a property they term <em>arboreality</em>. Their definition of an arboreal matching supposes that trees are rooted, in which case each split corresponds to a clade. In an arboreal matching on a rooted tree, no pairing of splits conflicts with any other pairing of splits. Consider the case where splits ‘A’ and ‘B’ in tree 1 are paired respectively with splits ‘C’ and ‘D’ in tree 2. If ‘A’ is paired with ‘C’ and ‘B’ with ‘D’, then to avoid conflict:</p>

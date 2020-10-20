@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Robinson-Foulds distances, with adjustments for phylogenetic information
+<title>Robinson–Foulds distances, with adjustments for phylogenetic information
 content — Robinson-Foulds • TreeDist</title>
 
 
@@ -46,9 +46,9 @@ content — Robinson-Foulds • TreeDist</title>
 
 
 
-<meta property="og:title" content="Robinson-Foulds distances, with adjustments for phylogenetic information
+<meta property="og:title" content="Robinson–Foulds distances, with adjustments for phylogenetic information
 content — Robinson-Foulds" />
-<meta property="og:description" content="Calculate the Robinson-Foulds distance, or the equivalent similarity
+<meta property="og:description" content="Calculate the Robinson–Foulds distance, or the equivalent similarity
 measure, with options to (i) annotate matched splits; (ii) weight splits
 according to their phylogenetic information content (Smith 2020)." />
 
@@ -92,7 +92,7 @@ according to their phylogenetic information content (Smith 2020)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9100</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9200</span>
       </span>
     </div>
 
@@ -170,21 +170,21 @@ according to their phylogenetic information content (Smith 2020)." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Robinson-Foulds distances, with adjustments for phylogenetic information
+    <h1>Robinson–Foulds distances, with adjustments for phylogenetic information
 content</h1>
     <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance_rf.R'><code>R/tree_distance_rf.R</code></a></small>
     <div class="hidden name"><code>Robinson-Foulds.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Calculate the Robinson-Foulds distance, or the equivalent similarity
+    <p>Calculate the Robinson–Foulds distance, or the equivalent similarity
 measure, with options to (i) annotate matched splits; (ii) weight splits
 according to their phylogenetic information content (Smith 2020).</p>
     </div>
 
     <pre class="usage"><span class='fu'>InfoRobinsonFoulds</span><span class='op'>(</span>
   <span class='va'>tree1</span>,
-  tree2 <span class='op'>=</span> <span class='va'>tree1</span>,
+  tree2 <span class='op'>=</span> <span class='cn'>NULL</span>,
   similarity <span class='op'>=</span> <span class='cn'>FALSE</span>,
   normalize <span class='op'>=</span> <span class='cn'>FALSE</span>,
   reportMatching <span class='op'>=</span> <span class='cn'>FALSE</span>
@@ -199,7 +199,7 @@ according to their phylogenetic information content (Smith 2020).</p>
 
 <span class='fu'>RobinsonFoulds</span><span class='op'>(</span>
   <span class='va'>tree1</span>,
-  tree2 <span class='op'>=</span> <span class='va'>tree1</span>,
+  tree2 <span class='op'>=</span> <span class='cn'>NULL</span>,
   similarity <span class='op'>=</span> <span class='cn'>FALSE</span>,
   normalize <span class='op'>=</span> <span class='cn'>FALSE</span>,
   reportMatching <span class='op'>=</span> <span class='cn'>FALSE</span>
@@ -207,7 +207,7 @@ according to their phylogenetic information content (Smith 2020).</p>
 
 <span class='fu'>RobinsonFouldsMatching</span><span class='op'>(</span>
   <span class='va'>tree1</span>,
-  tree2 <span class='op'>=</span> <span class='va'>tree1</span>,
+  <span class='va'>tree2</span>,
   similarity <span class='op'>=</span> <span class='cn'>FALSE</span>,
   normalize <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
@@ -226,12 +226,16 @@ according to their phylogenetic information content (Smith 2020).</p>
     <tr>
       <th>tree1</th>
       <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.</p></td>
+or lists of such trees to undergo pairwise comparison.  Where implemented,
+<code>tree2 = NULL</code> will compute distances between each pair of trees in the list
+<code>tree1</code> using a fast algorithm based on Day (1985).</p></td>
     </tr>
     <tr>
       <th>tree2</th>
       <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.</p></td>
+or lists of such trees to undergo pairwise comparison.  Where implemented,
+<code>tree2 = NULL</code> will compute distances between each pair of trees in the list
+<code>tree1</code> using a fast algorithm based on Day (1985).</p></td>
     </tr>
     <tr>
       <th>similarity</th>
@@ -292,6 +296,8 @@ the phylogenetic information content of all splits that are (or are not)
 identical in both trees.  Consequently, splits that are more likely
 to be identical by chance alone make a smaller contribution to overall
 tree distance, because their similarity is less remarkable.</p>
+<p>Rapid comparison between multiple pairs of trees employs the Day (1985)
+linear-time algorithm.</p>
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     
@@ -314,16 +320,21 @@ information of all splits in both trees, treated independently.</p></li>
 
     <p>Robinson DF, Foulds LR (1981).
 &#8220;Comparison of phylogenetic trees.&#8221;
-<em>Mathematical Biosciences</em>, <b>53</b>(1-2), 131--147.
+<em>Mathematical Biosciences</em>, <b>53</b>, 131--147.
 doi: <a href='https://doi.org/10.1016/0025-5564(81)90043-2'>10.1016/0025-5564(81)90043-2</a>
+.</p>
+<p>Day WHE (1985).
+&#8220;Optimal algorithms for comparing trees with labeled leaves.&#8221;
+<em>Journal of Classification</em>, <b>2</b>, 7--28.
+doi: <a href='https://doi.org/10.1007/BF01908061'>10.1007/BF01908061</a>
 .</p>
 <p>Steel MA, Penny D (2006).
 &#8220;Maximum parsimony and the phylogenetic information in multistate characters.&#8221;
-In Albert VA (ed.), <em>Parsimony, Phylogeny, and Genomics</em>, 163--178.
-Oxford University Press, Oxford.</p>
+In <em>Parsimony, Phylogeny, and Genomics</em>, 163--178.
+Oxford University Press.</p>
 <p>Smith MR (2020).
 &#8220;Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees.&#8221;
-<em>Bioinformatics</em>, online ahead of print.
+<em>Bioinformatics</em>, online--ahead.
 doi: <a href='https://doi.org/10.1093/bioinformatics/btaa614'>10.1093/bioinformatics/btaa614</a>
 .</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>

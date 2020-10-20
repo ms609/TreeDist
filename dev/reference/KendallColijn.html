@@ -89,7 +89,7 @@ path difference." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9100</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9200</span>
       </span>
     </div>
 
@@ -187,7 +187,9 @@ path difference.</p>
     <tr>
       <th>tree1, tree2</th>
       <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.</p></td>
+or lists of such trees to undergo pairwise comparison.  Where implemented,
+<code>tree2 = NULL</code> will compute distances between each pair of trees in the list
+<code>tree1</code> using a fast algorithm based on Day (1985).</p></td>
     </tr>
     <tr>
       <th>tree</th>
@@ -225,7 +227,7 @@ as described in Kendall &amp; Colijn (2016).</p></li>
 
     <p>Kendall M, Colijn C (2016).
 &#8220;Mapping phylogenetic trees to reveal distinct patterns of evolution.&#8221;
-<em>Molecular Biology and Evolution</em>, <b>33</b>(10), 2735--2743.
+<em>Molecular Biology and Evolution</em>, <b>33</b>, 2735--2743.
 doi: <a href='https://doi.org/10.1093/molbev/msw124'>10.1093/molbev/msw124</a>
 .</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>

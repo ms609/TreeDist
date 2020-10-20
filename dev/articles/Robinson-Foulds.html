@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Extending the Robinson-Foulds metric • TreeDist</title>
+<title>Extending the Robinson–Foulds metric • TreeDist</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
@@ -13,7 +13,7 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><!-- docsearch --><script src="../docsearch.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.3/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous">
 <link href="../docsearch.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Extending the Robinson-Foulds metric">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Extending the Robinson–Foulds metric">
 <meta property="og:description" content="TreeDist">
 <meta name="robots" content="noindex">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9100</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9200</span>
       </span>
     </div>
 
@@ -118,10 +118,9 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Extending the Robinson-Foulds metric</h1>
-                        <h4 class="author">Martin R. Smith</h4>
+      <h1 data-toc-skip>Extending the Robinson–Foulds metric</h1>
+                        <h4 class="author"><a href="https://smithlabdurham.github.io/">Martin R. Smith</a></h4>
             
-            <h4 class="date">2020-10-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/Robinson-Foulds.Rmd"><code>vignettes/Robinson-Foulds.Rmd</code></a></small>
       <div class="hidden name"><code>Robinson-Foulds.Rmd</code></div>
@@ -130,15 +129,15 @@
 
     
     
-<div id="the-robinson-foulds-distance" class="section level1">
+<div id="the-robinsonfoulds-distance" class="section level1">
 <h1 class="hasAnchor">
-<a href="#the-robinson-foulds-distance" class="anchor"></a>The Robinson-Foulds distance</h1>
-<p>An intuitive way to calculate the similarity between two trees is to calculate the resolution of their strict consensus, which corresponds to the number of splits that occur in both trees <span class="citation">(Schuh &amp; Polhemus, 1980)</span>. The corresponding distance measure, the Robinson-Foulds distance <span class="citation">(Robinson &amp; Foulds, 1981)</span>, counts the number of splits that are unique to one of the two trees.</p>
+<a href="#the-robinsonfoulds-distance" class="anchor"></a>The Robinson–Foulds distance</h1>
+<p>An intuitive way to calculate the similarity between two trees is to calculate the resolution of their strict consensus, which corresponds to the number of splits that occur in both trees <span class="citation">(Schuh &amp; Polhemus, 1980)</span>. The corresponding distance measure, the Robinson–Foulds distance <span class="citation">(Robinson &amp; Foulds, 1981)</span>, counts the number of splits that are unique to one of the two trees.</p>
 <p>It is important to remember that counting splits is not the same as counting clades, edges or nodes. If a tree is drawn as rooted (even without a root edge), then the number of splits is one less than the number of edges or clades, and two less than the number of nodes. For example, the trees below have one split, two edges and three nodes in common.</p>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-1-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>The simplicity of counting splits is appealing, but limited by the underlying assumption that all splits are equivalent.</p>
 <p>As an example, a split that separates eight leaves into two sets of four (as in the right-hand tree above) has a <span class="math inline">\(\frac{1}{35}\)</span> chance of being compatible with the reference tree. In contrast, a split that separates two leaves from the other six has a <span class="math inline">\(\frac{1}{7}\)</span> chance of matching the reference tree: the similarity observed is five times more likely to have arisen by chance. In other words, failure to match an even split is less noteworthy than failure to match an uneven one.</p>
-<p>As a consequence, trees whose splits are less even will, on average, exhibit higher Robinson-Foulds distances with comparison trees. Compare a balanced and an unbalanced eight-taxon tree:</p>
+<p>As a consequence, trees whose splits are less even will, on average, exhibit higher Robinson–Foulds distances with comparison trees. Compare a balanced and an unbalanced eight-taxon tree:</p>
 <p><img src="Robinson-Foulds_files/figure-html/two-trees-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>Each tree divides the eight taxa into five splits. The <a href="information.html">phylogenetic information content</a> of a split is a function of the probability that the split will match a uniformly chosen random tree, i.e. the proportion of eight-leaf binary trees that contain the split in question. (Information content, in bits, is defined as <span class="math inline">\(-\log_2(\textrm{probability})\)</span>.) This, in turn, is a function of the evenness of the split:</p>
 <table class="table">
@@ -174,10 +173,10 @@
 <p>Indeed, of the 10 395 eight-leaf trees, many more bear at least one split in common with a balanced tree than with an asymmetric tree:</p>
 <p><img src="Robinson-Foulds_files/figure-html/all-8-tip-trees-1.png" width="384" style="display: block; margin: auto;"></p>
 </div>
-<div id="information-corrected-robinson-foulds-distance" class="section level1">
+<div id="information-corrected-robinsonfoulds-distance" class="section level1">
 <h1 class="hasAnchor">
-<a href="#information-corrected-robinson-foulds-distance" class="anchor"></a>Information-corrected Robinson-Foulds distance</h1>
-<p>This differing information content can be accommodated by weighting each split according to the amount of phylogenetic information it contains <span class="citation">(Smith, 2020)</span>. The two tree pairs below both have a Robinson-Foulds distance of two, but the first pair differ with regard to an uneven split (<code>ABCDEF|GH</code>), so obtain a total difference of 22.54 − (3.46 + 5.04 + 5.53 + 5.04) = 3.46 bits:</p>
+<a href="#information-corrected-robinsonfoulds-distance" class="anchor"></a>Information-corrected Robinson–Foulds distance</h1>
+<p>This differing information content can be accommodated by weighting each split according to the amount of phylogenetic information it contains <span class="citation">(Smith, 2020)</span>. The two tree pairs below both have a Robinson–Foulds distance of two, but the first pair differ with regard to an uneven split (<code>ABCDEF|GH</code>), so obtain a total difference of 22.54 − (3.46 + 5.04 + 5.53 + 5.04) = 3.46 bits:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
 <span class="va">tree1</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'(1, (2, (3, (4, (5, (6, (7, 8)))))));'</span><span class="op">)</span>
 <span class="va">tree2</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'(1, (2, (3, (4, (5, (7, (6, 8)))))));'</span><span class="op">)</span>
@@ -192,17 +191,17 @@
                   Plot <span class="op">=</span> <span class="va">TreeDistPlot</span>, prune <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></pre></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-3-1.png" width="576" style="display: block; margin: auto;"></p>
 </div>
-<div id="generalized-robinson-foulds-distances" class="section level1">
+<div id="generalized-robinsonfoulds-distances" class="section level1">
 <h1 class="hasAnchor">
-<a href="#generalized-robinson-foulds-distances" class="anchor"></a>Generalized Robinson-Foulds distances</h1>
-<p>Even when accounting for the information content of splits in this way, the Robinson-Foulds distance is readily saturated: the maximum value can be obtained by moving a single leaf.</p>
+<a href="#generalized-robinsonfoulds-distances" class="anchor"></a>Generalized Robinson–Foulds distances</h1>
+<p>Even when accounting for the information content of splits in this way, the Robinson–Foulds distance is readily saturated: the maximum value can be obtained by moving a single leaf.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit">
 <span class="va">tree1</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'(1, (2, (3, (4, (5, (6, (7, 8)))))));'</span><span class="op">)</span>
 <span class="va">tree2</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'(8, (1, (2, (3, (4, (5, (6, 7)))))));'</span><span class="op">)</span>
 
 <span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">RobinsonFouldsMatching</span>, <span class="va">tree1</span>, <span class="va">tree2</span>, Plot <span class="op">=</span> <span class="va">TreeDistPlot</span><span class="op">)</span></pre></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-4-1.png" width="576" style="display: block; margin: auto;"></p>
-<p>Generalized Robinson-Foulds distances <span class="citation">(Böcker, Canzar, &amp; Klau, 2013; Nye, Liò, &amp; Gilks, 2006)</span> seek to address this issue. This category of metrics aim to acknowledge semblances between similar-but-not-quite-identical pairs of splits, which would contribute zero to tree similarity under the standard Robinson-Foulds measure.</p>
+<p>Generalized Robinson–Foulds distances <span class="citation">(Böcker, Canzar, &amp; Klau, 2013; Nye, Liò, &amp; Gilks, 2006)</span> seek to address this issue. This category of metrics aim to acknowledge semblances between similar-but-not-quite-identical pairs of splits, which would contribute zero to tree similarity under the standard Robinson–Foulds measure.</p>
 <p>Generalized RF distances work by finding a <em>matching</em> that pairs splits from one tree with splits in the other. Each pairing is scored according to the similarity of the paired splits; the sum of these scores is the score of the matching. The tree distance is given by the score of the optimal matching.</p>
 <div id="constructing-a-matching" class="section level2">
 <h2 class="hasAnchor">
@@ -214,7 +213,7 @@
 
 <span class="fu">Plot</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span>, highlight <span class="op">=</span> <span class="st">'I'</span>, prune <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="fl">8</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">integer</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></pre></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-5-1.png" width="576" style="display: block; margin: auto;"></p>
-<p>These trees obtain a Robinson-Foulds distance of nine: a large distances, as the maximum possible for trees of this resolution is eleven. <code>AB|CDEFGHI</code> is the only split in common between the two trees:</p>
+<p>These trees obtain a Robinson–Foulds distance of nine: a large distances, as the maximum possible for trees of this resolution is eleven. <code>AB|CDEFGHI</code> is the only split in common between the two trees:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit">
 <span class="fu">TwoTreePlot</span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">RobinsonFouldsMatching</span>, <span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span></pre></div>
@@ -227,12 +226,12 @@
                   <span class="fu">drop.tip</span><span class="op">(</span><span class="va">tree2</span>, <span class="st">'I'</span><span class="op">)</span><span class="op">)</span></pre></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-7-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>This hidden similarity can be better reflected if similar, but non-identical, splits are assigned non-zero similarity scores.</p>
-<p>There are various ways to score the similarity between two splits. One is to build on the idea introduced above, where identical splits are scored according to their phylogenetic information content. Non-matching splits can be scored according to the amount of phylogenetic information that they hold in common, which is a function of the proportion of trees that are consistent with both splits. (A full explanation is provided in the discussion of <a href="Generalized-RF.html">Generalized Robinson-Foulds distances</a>.)</p>
+<p>There are various ways to score the similarity between two splits. One is to build on the idea introduced above, where identical splits are scored according to their phylogenetic information content. Non-matching splits can be scored according to the amount of phylogenetic information that they hold in common, which is a function of the proportion of trees that are consistent with both splits. (A full explanation is provided in the discussion of <a href="Generalized-RF.html">Generalized Robinson–Foulds distances</a>.)</p>
 <div class="sourceCode" id="cb7"><pre class="downlit">
 <span class="fu">TwoTreePlot</span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">SharedPhylogeneticInfo</span>, <span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span></pre></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-8-1.png" width="576" style="display: block; margin: auto;"></p>
-<p>Here, the split <code>AB|CDEFGHI</code> occurs in both trees, and, as it happens, makes the largest contribution to the tree similarity score (3.70) for this particular pair of trees. This is the same contribution it would have made to the information-corrected Robinson-Foulds similarity.</p>
+<p>Here, the split <code>AB|CDEFGHI</code> occurs in both trees, and, as it happens, makes the largest contribution to the tree similarity score (3.70) for this particular pair of trees. This is the same contribution it would have made to the information-corrected Robinson–Foulds similarity.</p>
 <p>The split <code>ABCDEF|GHI</code> in the left-hand tree is paired with the split <code>ABCDEFI|GH</code> in the right-hand tree. Had <code>ABCDEF|GHI</code> been available in the right-hand tree, then this perfect match would have been assigned a similarity of <code><a href="https://ms609.github.io/TreeTools/reference/SplitInformation.html">SplitInformation(3, 6)</a></code> = 5.57 bits. The partial match is instead allocated a lower score of 2.12 bits. Pairings of incompatible splits, i.e. those that cannot co-exist on a tree, such as <code>ABCDEFG|HI</code> - <code>ABCDFGH|EI</code>, have no phylogenetic information in common. (<a href="information.html">clustering information</a> is an alternative way to think about split similarity that recognizes similarity even between incompatible splits.)</p>
 <p>The matching depicted above is one of many. It happens to be optimal: an optimal matching can be found by considering the similarity score of each possible pairing, and solving a linear assignment problem to find the optimal set of pairings.</p>
 <p>We can view the splits in each tree, named according to the number of their associated node:</p>
@@ -288,7 +287,7 @@
 <h2 class="hasAnchor">
 <a href="#what-next" class="anchor"></a>What next?</h2>
 <ul>
-<li>Alternatives measures of split similarity, such as <a href="information.html">mutual clustering information</a>, give rise to other <a href="Generalized-RF.html">Generalized Robinson-Foulds distances</a>, and can be used to generate meaningful <a href="treespace.html">tree spaces</a>.</li>
+<li>Alternatives measures of split similarity, such as <a href="information.html">mutual clustering information</a>, give rise to other <a href="Generalized-RF.html">Generalized Robinson–Foulds distances</a>, and can be used to generate meaningful <a href="treespace.html">tree spaces</a>.</li>
 </ul>
 </div>
 <div id="references" class="section level2 unnumbered">

@@ -90,7 +90,7 @@ Matching Split Distance
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9100</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9200</span>
       </span>
     </div>
 
@@ -181,7 +181,7 @@ Matching Split Distance
 
     <pre class="usage"><span class='fu'>MatchingSplitDistance</span><span class='op'>(</span>
   <span class='va'>tree1</span>,
-  tree2 <span class='op'>=</span> <span class='va'>tree1</span>,
+  tree2 <span class='op'>=</span> <span class='cn'>NULL</span>,
   normalize <span class='op'>=</span> <span class='cn'>FALSE</span>,
   reportMatching <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span>
@@ -200,12 +200,16 @@ Matching Split Distance
     <tr>
       <th>tree1</th>
       <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.</p></td>
+or lists of such trees to undergo pairwise comparison.  Where implemented,
+<code>tree2 = NULL</code> will compute distances between each pair of trees in the list
+<code>tree1</code> using a fast algorithm based on Day (1985).</p></td>
     </tr>
     <tr>
       <th>tree2</th>
       <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.</p></td>
+or lists of such trees to undergo pairwise comparison.  Where implemented,
+<code>tree2 = NULL</code> will compute distances between each pair of trees in the list
+<code>tree1</code> using a fast algorithm based on Day (1985).</p></td>
     </tr>
     <tr>
       <th>normalize</th>
@@ -262,12 +266,12 @@ so that it can be implemented.</p>
 
     <p>Bogdanowicz D, Giaro K (2012).
 &#8220;Matching split distance for unrooted binary phylogenetic trees.&#8221;
-<em>IEEE/ACM Transactions on Computational Biology and Bioinformatics</em>, <b>9</b>(1), 150--160.
+<em>IEEE/ACM Transactions on Computational Biology and Bioinformatics</em>, <b>9</b>, 150--160.
 doi: <a href='https://doi.org/10.1109/TCBB.2011.48'>10.1109/TCBB.2011.48</a>
 .</p>
 <p>Lin Y, Rajan V, Moret BME (2012).
 &#8220;A metric for phylogenetic trees based on matching.&#8221;
-<em>IEEE/ACM Transactions on Computational Biology and Bioinformatics</em>, <b>4</b>(9), 1014--1022.
+<em>IEEE/ACM Transactions on Computational Biology and Bioinformatics</em>, <b>4</b>, 1014--1022.
 doi: <a href='https://doi.org/10.1109/TCBB.2011.157'>10.1109/TCBB.2011.157</a>
 .</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Calculate MAST size from edge matrices. — .MASTSizeEdges • TreeDist</title>
+<title>S3 methods for ClusterTable objects — as.matrix.ClusterTable • TreeDist</title>
 
 
 <!-- jquery -->
@@ -45,8 +45,8 @@
 
 
 
-<meta property="og:title" content="Calculate MAST size from edge matrices. — .MASTSizeEdges" />
-<meta property="og:description" content="Internal function." />
+<meta property="og:title" content="S3 methods for ClusterTable objects — as.matrix.ClusterTable" />
+<meta property="og:description" content="S3 methods for ClusterTable objects" />
 
 
 <meta name="robots" content="noindex">
@@ -166,34 +166,41 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Calculate MAST size from edge matrices.</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance_mast.R'><code>R/tree_distance_mast.R</code></a></small>
-    <div class="hidden name"><code>dot-MASTSizeEdges.Rd</code></div>
+    <h1>S3 methods for <code>ClusterTable</code> objects</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/ClusterTable.R'><code>R/ClusterTable.R</code></a></small>
+    <div class="hidden name"><code>ClusterTable-methods.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Internal function.</p>
+    <p>S3 methods for <code>ClusterTable</code> objects</p>
     </div>
 
-    <pre class="usage"><span class='fu'>.MASTSizeEdges</span><span class='op'>(</span><span class='va'>edge1</span>, <span class='va'>edge2</span>, <span class='va'>nTip</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='co'># S3 method for ClusterTable</span>
+<span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>as.matrix</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S3 method for ClusterTable</span>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S3 method for ClusterTable</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>edge1</th>
-      <td><p>Edge matrix of tree 1. <strong>Must be in postorder!</strong></p></td>
+      <th>x, object</th>
+      <td><p>Object of class <code>ClusterTable</code>.</p></td>
     </tr>
     <tr>
-      <th>edge2</th>
-      <td><p>Edge matrix of tree 2.</p></td>
-    </tr>
-    <tr>
-      <th>nTip</th>
-      <td><p>Integer specifying the number of leaves in each split.</p></td>
+      <th>...</th>
+      <td><p>Additional arguments for consistency with S3 methods.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p><a href='https://orcid.org/0000-0001-5660-1727'>Martin R. Smith</a>
+(<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

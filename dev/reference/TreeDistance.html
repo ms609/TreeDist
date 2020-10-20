@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Information-based generalized Robinson-Foulds distances — TreeDistance • TreeDist</title>
+<title>Information-based generalized Robinson–Foulds distances — TreeDistance • TreeDist</title>
 
 
 <!-- jquery -->
@@ -45,7 +45,7 @@
 
 
 
-<meta property="og:title" content="Information-based generalized Robinson-Foulds distances — TreeDistance" />
+<meta property="og:title" content="Information-based generalized Robinson–Foulds distances — TreeDistance" />
 <meta property="og:description" content="Calculate tree similarity and distance measures based on the amount of
 phylogenetic or clustering information that two trees hold in common, as
 proposed in Smith (2020)." />
@@ -90,7 +90,7 @@ proposed in Smith (2020)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9100</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9200</span>
       </span>
     </div>
 
@@ -168,7 +168,7 @@ proposed in Smith (2020)." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Information-based generalized Robinson-Foulds distances</h1>
+    <h1>Information-based generalized Robinson–Foulds distances</h1>
     <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance_info.R'><code>R/tree_distance_info.R</code></a>, <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance_mmsi.R'><code>R/tree_distance_mmsi.R</code></a></small>
     <div class="hidden name"><code>TreeDistance.Rd</code></div>
     </div>
@@ -183,7 +183,7 @@ proposed in Smith (2020).</p>
 
 <span class='fu'>SharedPhylogeneticInfo</span><span class='op'>(</span>
   <span class='va'>tree1</span>,
-  tree2 <span class='op'>=</span> <span class='va'>tree1</span>,
+  tree2 <span class='op'>=</span> <span class='cn'>NULL</span>,
   normalize <span class='op'>=</span> <span class='cn'>FALSE</span>,
   reportMatching <span class='op'>=</span> <span class='cn'>FALSE</span>,
   diag <span class='op'>=</span> <span class='cn'>TRUE</span>
@@ -191,21 +191,21 @@ proposed in Smith (2020).</p>
 
 <span class='fu'>DifferentPhylogeneticInfo</span><span class='op'>(</span>
   <span class='va'>tree1</span>,
-  tree2 <span class='op'>=</span> <span class='va'>tree1</span>,
+  tree2 <span class='op'>=</span> <span class='cn'>NULL</span>,
   normalize <span class='op'>=</span> <span class='cn'>FALSE</span>,
   reportMatching <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span>
 
 <span class='fu'>PhylogeneticInfoDistance</span><span class='op'>(</span>
   <span class='va'>tree1</span>,
-  tree2 <span class='op'>=</span> <span class='va'>tree1</span>,
+  tree2 <span class='op'>=</span> <span class='cn'>NULL</span>,
   normalize <span class='op'>=</span> <span class='cn'>FALSE</span>,
   reportMatching <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span>
 
 <span class='fu'>ClusteringInfoDistance</span><span class='op'>(</span>
   <span class='va'>tree1</span>,
-  tree2 <span class='op'>=</span> <span class='va'>tree1</span>,
+  tree2 <span class='op'>=</span> <span class='cn'>NULL</span>,
   normalize <span class='op'>=</span> <span class='cn'>FALSE</span>,
   reportMatching <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span>
@@ -214,7 +214,7 @@ proposed in Smith (2020).</p>
 
 <span class='fu'>MutualClusteringInfo</span><span class='op'>(</span>
   <span class='va'>tree1</span>,
-  tree2 <span class='op'>=</span> <span class='va'>tree1</span>,
+  tree2 <span class='op'>=</span> <span class='cn'>NULL</span>,
   normalize <span class='op'>=</span> <span class='cn'>FALSE</span>,
   reportMatching <span class='op'>=</span> <span class='cn'>FALSE</span>,
   diag <span class='op'>=</span> <span class='cn'>TRUE</span>
@@ -236,7 +236,7 @@ proposed in Smith (2020).</p>
 
 <span class='fu'>MatchingSplitInfo</span><span class='op'>(</span>
   <span class='va'>tree1</span>,
-  tree2 <span class='op'>=</span> <span class='va'>tree1</span>,
+  tree2 <span class='op'>=</span> <span class='cn'>NULL</span>,
   normalize <span class='op'>=</span> <span class='cn'>FALSE</span>,
   reportMatching <span class='op'>=</span> <span class='cn'>FALSE</span>,
   diag <span class='op'>=</span> <span class='cn'>TRUE</span>
@@ -244,7 +244,7 @@ proposed in Smith (2020).</p>
 
 <span class='fu'>MatchingSplitInfoDistance</span><span class='op'>(</span>
   <span class='va'>tree1</span>,
-  tree2 <span class='op'>=</span> <span class='va'>tree1</span>,
+  tree2 <span class='op'>=</span> <span class='cn'>NULL</span>,
   normalize <span class='op'>=</span> <span class='cn'>FALSE</span>,
   reportMatching <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span>
@@ -262,7 +262,9 @@ proposed in Smith (2020).</p>
     <tr>
       <th>tree1, tree2</th>
       <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.</p></td>
+or lists of such trees to undergo pairwise comparison.  Where implemented,
+<code>tree2 = NULL</code> will compute distances between each pair of trees in the list
+<code>tree1</code> using a fast algorithm based on Day (1985).</p></td>
     </tr>
     <tr>
       <th>normalize</th>
@@ -312,7 +314,7 @@ of which clades are matched in the optimal matching, which can be viewed
 using <code><a href='VisualizeMatching.html'>VisualizeMatching()</a></code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><a href='https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances'>Generalized Robinson-Foulds distances</a>
+    <p><a href='https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances'>Generalized Robinson–Foulds distances</a>
 calculate tree similarity by finding an
 optimal matching that the similarity between a split on one tree
 and its pair on a second, considering all possible ways to pair splits
@@ -385,18 +387,23 @@ to be 'correct', use <code>normalize = ``SplitwiseInfo(trueTree)</code> (SPI, MS
 
     
 <ul>
+<li><p>Day WHE (1985).
+&#8220;Optimal algorithms for comparing trees with labeled leaves.&#8221;
+<em>Journal of Classification</em>, <b>2</b>, 7--28.
+doi: <a href='https://doi.org/10.1007/BF01908061'>10.1007/BF01908061</a>
+.</p></li>
 <li><p>MacKay DJC (2003).
 <em>Information Theory, Inference, and Learning Algorithms</em>.
 Cambridge University Press, Cambridge.
 <a href='https://www.inference.org.uk/itprnn/book.pdf'>https://www.inference.org.uk/itprnn/book.pdf</a>.</p></li>
 <li><p>Meilă M (2007).
 &#8220;Comparing clusterings---an information based distance.&#8221;
-<em>Journal of Multivariate Analysis</em>, <b>98</b>(5), 873--895.
+<em>Journal of Multivariate Analysis</em>, <b>98</b>, 873--895.
 doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11.013</a>
 .</p></li>
 <li><p>Smith MR (2020).
 &#8220;Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees.&#8221;
-<em>Bioinformatics</em>, online ahead of print.
+<em>Bioinformatics</em>, online--ahead.
 doi: <a href='https://doi.org/10.1093/bioinformatics/btaa614'>10.1093/bioinformatics/btaa614</a>
 .</p></li>
 <li><p>Vinh NX, Epps J, Bailey J (2010).

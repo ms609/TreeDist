@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9100</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9200</span>
       </span>
     </div>
 
@@ -119,9 +119,8 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Calculate tree similarity with ‘TreeDist’</h1>
-                        <h4 class="author">Martin R. Smith</h4>
+                        <h4 class="author"><a href="https://smithlabdurham.github.io/">Martin R. Smith</a></h4>
             
-            <h4 class="date">2020-10-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/Using-TreeDist.Rmd"><code>vignettes/Using-TreeDist.Rmd</code></a></small>
       <div class="hidden name"><code>Using-TreeDist.Rmd</code></div>
@@ -173,18 +172,18 @@
 
 <span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span><span class="op">(</span><span class="va">oneTree</span>, <span class="va">twoTrees</span><span class="op">)</span></pre></div>
 <pre><code>##       one       two 
-## 0.8685668 0.7066469</code></pre>
+## 0.7284168 0.7196766</code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit">
 <span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span><span class="op">(</span><span class="va">twoTrees</span>, <span class="va">threeTrees</span><span class="op">)</span></pre></div>
 <pre><code>##             a         b         c
-## one 0.7804526 0.5485391 0.7414481
-## two 0.6039812 0.7881098 0.8390332</code></pre>
+## one 0.7913668 0.8212802 0.8091884
+## two 0.7822396 0.6991780 0.6820329</code></pre>
 </div>
 </div>
 <div id="visualizing-a-matching" class="section level2">
 <h2 class="hasAnchor">
 <a href="#visualizing-a-matching" class="anchor"></a>Visualizing a matching</h2>
-<p><a href="Generalized-RF.html">Generalized Robinson-Foulds metrics</a>, such as the variation of clustering information, rely on matching each split within a tree with another split in the other tree.<br>
+<p><a href="Generalized-RF.html">Generalized Robinson–Foulds metrics</a>, such as the variation of clustering information, rely on matching each split within a tree with another split in the other tree.<br>
 We can view an optimal matching:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit">
 <span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">ClusteringInfoDistance</span>, <span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span></pre></div>

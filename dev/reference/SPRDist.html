@@ -88,7 +88,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9100</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9200</span>
       </span>
     </div>
 
@@ -183,7 +183,9 @@
     <tr>
       <th>tree1, tree2</th>
       <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.</p></td>
+or lists of such trees to undergo pairwise comparison.  Where implemented,
+<code>tree2 = NULL</code> will compute distances between each pair of trees in the list
+<code>tree1</code> using a fast algorithm based on Day (1985).</p></td>
     </tr>
     <tr>
       <th>symmetric</th>

@@ -47,7 +47,7 @@
 
 <meta property="og:title" content="Nye et al. (2006) tree comparison — NyeSimilarity" />
 <meta property="og:description" content="NyeSimilarity() and NyeSplitSimilarity() implement the
-Generalized Robinson-Foulds
+Generalized Robinson–Foulds
 tree comparison metric of Nye et al. (2006).
 In short, this finds the optimal matching that pairs each branch from
 one tree with a branch in the second, where matchings are scored according to
@@ -96,7 +96,7 @@ vignettes." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9100</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9200</span>
       </span>
     </div>
 
@@ -181,7 +181,7 @@ vignettes." />
 
     <div class="ref-description">
     <p><code>NyeSimilarity()</code> and <code>NyeSplitSimilarity()</code> implement the
-<a href='https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances'>Generalized Robinson-Foulds</a>
+<a href='https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances'>Generalized Robinson–Foulds</a>
 tree comparison metric of Nye <em>et al</em>. (2006).
 In short, this finds the optimal matching that pairs each branch from
 one tree with a branch in the second, where matchings are scored according to
@@ -193,7 +193,7 @@ A more detailed account is available in the
 
     <pre class="usage"><span class='fu'>NyeSimilarity</span><span class='op'>(</span>
   <span class='va'>tree1</span>,
-  tree2 <span class='op'>=</span> <span class='va'>tree1</span>,
+  tree2 <span class='op'>=</span> <span class='cn'>NULL</span>,
   similarity <span class='op'>=</span> <span class='cn'>TRUE</span>,
   normalize <span class='op'>=</span> <span class='cn'>FALSE</span>,
   normalizeMax <span class='op'>=</span> <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/logical.html'>is.logical</a></span><span class='op'>(</span><span class='va'>normalize</span><span class='op'>)</span>,
@@ -214,12 +214,16 @@ A more detailed account is available in the
     <tr>
       <th>tree1</th>
       <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.</p></td>
+or lists of such trees to undergo pairwise comparison.  Where implemented,
+<code>tree2 = NULL</code> will compute distances between each pair of trees in the list
+<code>tree1</code> using a fast algorithm based on Day (1985).</p></td>
     </tr>
     <tr>
       <th>tree2</th>
       <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.</p></td>
+or lists of such trees to undergo pairwise comparison.  Where implemented,
+<code>tree2 = NULL</code> will compute distances between each pair of trees in the list
+<code>tree1</code> using a fast algorithm based on Day (1985).</p></td>
     </tr>
     <tr>
       <th>similarity</th>
@@ -312,7 +316,7 @@ of trees being considered.</p>
 
     <p>Nye TMW, Liò P, Gilks WR (2006).
 &#8220;A novel algorithm and web-based tool for comparing two alternative phylogenetic trees.&#8221;
-<em>Bioinformatics</em>, <b>22</b>(1), 117--119.
+<em>Bioinformatics</em>, <b>22</b>, 117--119.
 doi: <a href='https://doi.org/10.1093/bioinformatics/bti720'>10.1093/bioinformatics/bti720</a>
 .</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>

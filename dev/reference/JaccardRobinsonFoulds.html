@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Jaccard-Robinson-Foulds metric — JaccardRobinsonFoulds • TreeDist</title>
+<title>Jaccard–Robinson–Foulds metric — JaccardRobinsonFoulds • TreeDist</title>
 
 
 <!-- jquery -->
@@ -45,11 +45,11 @@
 
 
 
-<meta property="og:title" content="Jaccard-Robinson-Foulds metric — JaccardRobinsonFoulds" />
+<meta property="og:title" content="Jaccard–Robinson–Foulds metric — JaccardRobinsonFoulds" />
 <meta property="og:description" content="Calculate the
-Jaccard-Robinson-Foulds metric
+Jaccard–Robinson–Foulds metric
 (Böcker et al. 2013), a
-Generalized Robinson-Foulds metric." />
+Generalized Robinson–Foulds metric." />
 
 
 <meta name="robots" content="noindex">
@@ -91,7 +91,7 @@ Generalized Robinson-Foulds metric." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9100</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9200</span>
       </span>
     </div>
 
@@ -169,21 +169,21 @@ Generalized Robinson-Foulds metric." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Jaccard-Robinson-Foulds metric</h1>
+    <h1>Jaccard–Robinson–Foulds metric</h1>
     <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance_nye.R'><code>R/tree_distance_nye.R</code></a></small>
     <div class="hidden name"><code>JaccardRobinsonFoulds.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>Calculate the
-<a href='https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric'>Jaccard-Robinson-Foulds metric</a>
+<a href='https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric'>Jaccard–Robinson–Foulds metric</a>
 (Böcker <em>et al</em>. 2013), a
-<a href='https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances'>Generalized Robinson-Foulds metric</a>.</p>
+<a href='https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances'>Generalized Robinson–Foulds metric</a>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>JaccardRobinsonFoulds</span><span class='op'>(</span>
   <span class='va'>tree1</span>,
-  tree2 <span class='op'>=</span> <span class='va'>tree1</span>,
+  tree2 <span class='op'>=</span> <span class='cn'>NULL</span>,
   k <span class='op'>=</span> <span class='fl'>1L</span>,
   allowConflict <span class='op'>=</span> <span class='cn'>TRUE</span>,
   similarity <span class='op'>=</span> <span class='cn'>FALSE</span>,
@@ -206,19 +206,23 @@ Generalized Robinson-Foulds metric." />
     <tr>
       <th>tree1</th>
       <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.</p></td>
+or lists of such trees to undergo pairwise comparison.  Where implemented,
+<code>tree2 = NULL</code> will compute distances between each pair of trees in the list
+<code>tree1</code> using a fast algorithm based on Day (1985).</p></td>
     </tr>
     <tr>
       <th>tree2</th>
       <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.</p></td>
+or lists of such trees to undergo pairwise comparison.  Where implemented,
+<code>tree2 = NULL</code> will compute distances between each pair of trees in the list
+<code>tree1</code> using a fast algorithm based on Day (1985).</p></td>
     </tr>
     <tr>
       <th>k</th>
       <td><p>An arbitrary exponent to which to raise the Jaccard index.
 Integer values greater than one are anticipated by Böcker <em>et al</em>.
 The Nye <em>et al</em>. metric uses <code>k = 1</code>.
-As k increases towards infinity, the metric converges to the Robinson-Foulds
+As k increases towards infinity, the metric converges to the Robinson–Foulds
 metric.</p></td>
     </tr>
     <tr>
@@ -275,7 +279,7 @@ distances between each  pair of trees in <code>tree1</code> and <code>tree2</cod
 or <code>splits1</code> and <code>splits2</code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>In short, the Jaccard-Robinson-Foulds metric is a generalized Robinson-Foulds
+    <p>In short, the Jaccard–Robinson–Foulds metric is a generalized Robinson-Foulds
 metric: it finds the optimal matching that pairs each split in one tree with
 a similar split in the second.
 Matchings are scored according to the size of the largest split that is
@@ -306,13 +310,13 @@ present in a pair of trees with <em>n</em> leaves, by specifying
 <ul>
 <li><p>Nye TMW, Liò P, Gilks WR (2006).
 &#8220;A novel algorithm and web-based tool for comparing two alternative phylogenetic trees.&#8221;
-<em>Bioinformatics</em>, <b>22</b>(1), 117--119.
+<em>Bioinformatics</em>, <b>22</b>, 117--119.
 doi: <a href='https://doi.org/10.1093/bioinformatics/bti720'>10.1093/bioinformatics/bti720</a>
 .</p></li>
 <li><p>Böcker S, Canzar S, Klau GW (2013).
 &#8220;The generalized Robinson-Foulds metric.&#8221;
-In Darling A, Stoye J (eds.), <em>Algorithms in Bioinformatics. WABI 2013. Lecture Notes in Computer Science, vol 8126</em>, 156--169.
-Springer, Berlin, Heidelberg.
+In <em>Algorithms in Bioinformatics. WABI 2013. Lecture Notes in Computer Science, vol 8126</em>, 156--169.
+Springer.
 doi: <a href='https://doi.org/10.1007/978-3-642-40453-5_13'>10.1007/978-3-642-40453-5_13</a>
 .</p></li>
 </ul>
