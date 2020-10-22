@@ -49,8 +49,13 @@ importance.
 topology.  The canonical 'BHV' space [@Billera2001] has been extended 
 in a number of ways.
 
+- KF distance: RF, weighted by edge length
+
 
 
 - Tropical tree space [@Speyer2004;@Lin2020]
 
 - Probabilistic / Information geometry [@Garba2018;@Garba2020]
+
+- Distances between unlabelled trees (tree shapes)
+  * Polynomial distance: [@Liu2021;@Liu2020]
