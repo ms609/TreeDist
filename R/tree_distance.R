@@ -1,11 +1,11 @@
-#' Generalized Robinson-Foulds distance
+#' Generalized Robinson–Foulds distance
 #' 
-#' An internal function to calculate Generalized Robinson-Foulds distance from
+#' An internal function to calculate Generalized Robinson–Foulds distances from
 #' splits.
 #'
-#' Note that no checks will be made to confirm that splits1 and splits2 contain
-#' the same leaves in the same order.  This is the responsibility of the calling
-#' function.
+#' Note that no checks will be made to confirm that `splits1` and `splits2`
+#' contain the same leaves in the same order.
+#' This is the responsibility of the calling function.
 #' 
 #' @inheritParams SharedPhylogeneticInfoSplits
 #' @param nTip Integer specifying the number of leaves in each split.
@@ -27,6 +27,7 @@
 #' 
 #' @keywords internal
 #' @template MRS
+#' @encoding UTF-8
 #' @export
 #' @references \insertRef{Jonker1987}{TreeDist}
 GeneralizedRF <- function (splits1, splits2, nTip, PairScorer, 

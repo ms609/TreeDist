@@ -20,16 +20,21 @@ set.seed(0)
 It can be instructive to visualize the distribution of trees in a spatial
 'landscape'. This can be a helpful means to address whether discrete islands
 of trees exist, or whether analytical runs have converged.
-Such analysis is relatively simple to conduct, but contains a few 'gotchas'
-that can mislead interpretation.
+Such analysis is relatively simple to conduct, but a few common oversights
+can mislead interpretation.
+
+## Tree space analysis via user interface
 
 You can conduct treespace analysis simply using the Shiny app that comes with
 the 'TreeDist' R package.  Simply install [R](https://www.r-project.org/) or
 [RStudio](https://rstudio.com/), then copy the code below into the R command
 line:
 
+<!--#install.packages('TreeDist')-->
+
 ```r
-install.packages('TreeDist')
+install.packages('devtools')
+devtools::install_github('ms609/TreeDist')
 TreeDist::TreeSpace()
 ```
 
@@ -38,6 +43,8 @@ from tree lists saved in most common file formats; see an
 [outline of the basic functionality](https://ms609.github.io/TreeDist/reference/TreeSpace.html).
 To avoid misinterpreting tree space, it's worth having a broad idea of what
 an analysis involves, and some potential pitfalls.
+
+## Avoiding common pitfalls in tree space analysis
 
 Here's an example analysis of a series of 200 trees from an ordered list.
 The list corresponds to a mixed-base representation of trees (see 
@@ -56,10 +63,14 @@ spectrum <- viridisLite::plasma(220)
 treeCols <- spectrum[treeNumbers]
 ```
 
+### Using a suitable distance metric
+
 Now we need to calculate the distance between each pair of trees in our list.
 The choice of distance metric is important [@SmithSpace].
-The clustering information distance is reliable and fast to calculate 
-[@SmithDist]:
+The widely used Robinson–Foulds distance is, unfortunately, unsuitable for
+tree space analysis.
+The clustering information distance [@SmithDist] is a reliable alternative
+that is fast to calculate:
 
 ```{r calculate-distances}
 library('TreeDist')
@@ -70,10 +81,11 @@ The reader is encouraged to repeat the exercise with other distances:
 
 ```r
 distances <- RobinsonFoulds(trees)
-distances <- ClusteringInfoDistance(trees)
+distances <- PhylogeneticInfoDistance(trees)
 distances <- as.dist(Quartet::QuartetDivergence(
   Quartet::ManyToManyQuartetAgreement(trees), similarity = FALSE))
 ```
+### Projecting distances
 
 Then we need to reduce the dimensionality of these distances.
 We'll start out with a 12-dimensional projection; if needed, we can always 
@@ -100,7 +112,7 @@ sammon <- MASS::sammon(distances, k = 12)
 projection <- sammon$points
 ```
 
-That's a good start.  A lazy investigator would plot the first two dimensions
+That's a good start.  It is tempting to plot the first two dimensions
 arising from this projection and be done:
 
 ```{r plot-projection-2d, fig.asp = 1, fig.width = 3, fig.align='center'}
@@ -112,13 +124,15 @@ plot(projection,
      )
 ```
 
+### Identifying clusters
+
 A quick visual inspection suggests at least two clusters, with the possibility
 of further subdivision of the brighter trees.
 But visual inspection can be 
 highly misleading [@SmithSpace].  We must take a statistical approach.
 A combination of partitioning around medoids and hierarchical clustering with
-minimax linkage will
-typically find a clustering solution that is close to optimal, if one exists.
+minimax linkage will typically find a clustering solution that is close to 
+optimal, if one exists [@SmithSpace].
 
 
 ```{r clustering, fig.align='center'}
@@ -184,6 +198,8 @@ plot(consensus(trees[cluster == 2]), edge.color = col2, edge.width = 2, tip.colo
 
 In this case, we don't learn much, though trees in one cluster are united
 by the position of `t7`.
+
+### Validating a projection
 
 Now let's evaluate whether our plot of tree space is representative.
 First we want to know how many dimensions are necessary to adequately

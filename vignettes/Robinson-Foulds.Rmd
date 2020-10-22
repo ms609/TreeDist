@@ -1,11 +1,11 @@
 ---
-title: "Extending the Robinson-Foulds metric"
+title: "Extending the Robinson–Foulds metric"
 author: "[Martin R. Smith](https://smithlabdurham.github.io/)"
 output: rmarkdown::html_vignette
 bibliography: ../inst/REFERENCES.bib
 csl: ../inst/apa-old-doi-prefix.csl
 vignette: >
-  %\VignetteIndexEntry{Extending the Robinson-Foulds metric}
+  %\VignetteIndexEntry{Extending the Robinson–Foulds metric}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -40,12 +40,12 @@ Plot <- function (tree, tree2 = NULL, highlight = character(0),
 }
 ```
 
-# The Robinson-Foulds distance
+# The Robinson–Foulds distance
 
 An intuitive way to calculate the similarity between two trees is to calculate
 the resolution of their strict consensus, which corresponds to the number
 of splits that occur in both trees [@Schuh1980].
-The corresponding distance measure, the Robinson-Foulds distance
+The corresponding distance measure, the Robinson–Foulds distance
 [@Robinson1981], counts the number of splits that are unique to one of the 
 two trees.
 
@@ -93,7 +93,7 @@ In other words, failure to match an even split is less noteworthy than failure
 to match an uneven one.
 
 As a consequence, trees whose splits are less even will, on average, exhibit
-higher Robinson-Foulds distances with comparison trees.
+higher Robinson–Foulds distances with comparison trees.
 Compare a balanced and an unbalanced eight-taxon tree:
 
 ```{r two-trees, echo=FALSE, fig.height = 3, fig.width=6, fig.align = 'center'}
@@ -202,12 +202,12 @@ axis(2)
 ```
 
 
-# Information-corrected Robinson-Foulds distance
+# Information-corrected Robinson–Foulds distance
 
 This differing information content can be accommodated by weighting each
 split according to the amount of phylogenetic information it contains
 [@SmithDist].
-The two tree pairs below both have a Robinson-Foulds distance of two,
+The two tree pairs below both have a Robinson–Foulds distance of two,
 but the first pair differ with regard to 
 an uneven split (`ABCDEF|GH`), so obtain a total difference
 of 22.54 &minus; (3.46 + 5.04 + 5.53 + 5.04) = 3.46&nbsp;bits:
@@ -230,10 +230,10 @@ VisualizeMatching(InfoRobinsonFoulds, tree1, tree3,
                   Plot = TreeDistPlot, prune = 8)
 ```
 
-# Generalized Robinson-Foulds distances
+# Generalized Robinson–Foulds distances
 
 Even when accounting for the information content of splits in this way,
-the Robinson-Foulds distance is readily saturated: the maximum value can be 
+the Robinson–Foulds distance is readily saturated: the maximum value can be 
 obtained by moving a single leaf.
 
 ```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
@@ -243,10 +243,10 @@ tree2 <- ape::read.tree(text='(8, (1, (2, (3, (4, (5, (6, 7)))))));')
 VisualizeMatching(RobinsonFouldsMatching, tree1, tree2, Plot = TreeDistPlot)
 ```
 
-Generalized Robinson-Foulds distances [@Nye2006;@Bocker2013] seek to address
+Generalized Robinson–Foulds distances [@Nye2006;@Bocker2013] seek to address
 this issue. 
 This category of metrics aim to acknowledge semblances between similar-but-not-quite-identical pairs of splits, which would contribute 
-zero to tree similarity under the standard Robinson-Foulds measure.
+zero to tree similarity under the standard Robinson–Foulds measure.
 
 Generalized RF distances work by finding a _matching_ that pairs splits from
 one tree with splits in the other.
@@ -266,7 +266,7 @@ tree2 <- ape::read.tree(text='((A, B), ((C, D, (E, I)), (F, (G, H))));')
 Plot(tree1, tree2, highlight = 'I', prune = list(8, integer(0)))
 ```
 
-These trees obtain a Robinson-Foulds distance of nine: a large distances, as
+These trees obtain a Robinson–Foulds distance of nine: a large distances, as
 the maximum possible for trees of this resolution is eleven.
 `AB|CDEFGHI` is the only split in common between the two trees:
 
@@ -297,7 +297,7 @@ Non-matching splits can be scored according to the amount of phylogenetic
 information that they hold in common, which is a function of the proportion of 
 trees that are consistent with both splits.
 (A full explanation is provided in the discussion of
-[Generalized Robinson-Foulds distances](Generalized-RF.html).)
+[Generalized Robinson–Foulds distances](Generalized-RF.html).)
 
 ```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
 TwoTreePlot()
@@ -308,7 +308,7 @@ Here, the split `AB|CDEFGHI` occurs in both trees,
 and, as it happens, makes the largest contribution to the tree similarity 
 score (3.70) for this particular pair of trees.
 This is the same contribution it would
-have made to the information-corrected Robinson-Foulds similarity.
+have made to the information-corrected Robinson–Foulds similarity.
 
 The split `ABCDEF|GHI` in the left-hand tree is paired with the split
 `ABCDEFI|GH` in the right-hand tree.  Had `ABCDEF|GHI` been available in the 
@@ -348,7 +348,7 @@ alternative optimal matching would leave these splits unpaired.
 
 - Alternatives measures of split similarity, such as 
 [mutual clustering information](information.html), give rise to other
-[Generalized Robinson-Foulds distances](Generalized-RF.html), and can be used
+[Generalized Robinson–Foulds distances](Generalized-RF.html), and can be used
 to generate meaningful [tree spaces](treespace.html).
 
 ```{r echo=FALSE}

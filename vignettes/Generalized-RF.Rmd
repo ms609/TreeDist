@@ -1,11 +1,11 @@
 ---
-title: "Generalized Robinson-Foulds distances"
+title: "Generalized Robinson–Foulds distances"
 author: "[Martin R. Smith](https://smithlabdurham.github.io/)"
 output: rmarkdown::html_vignette
 bibliography: ../inst/REFERENCES.bib
 csl: ../inst/apa-old-doi-prefix.csl
 vignette: >
-  %\VignetteIndexEntry{Generalized Robinson-Foulds distances}
+  %\VignetteIndexEntry{Generalized Robinson–Foulds distances}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -20,7 +20,7 @@ swapAJ <-  read.tree(text='(((((J, B), C), D), E), (F, (G, (H, (I, A)))));')
 ```
 
 This document outlines the similarity measures employed by the 
-generalized Robinson-Foulds distances implemented in this package.
+generalized Robinson–Foulds distances implemented in this package.
 
 Generalized RF distances are introduced [elsewhere](Robinson-Foulds.html); 
 before you read further, you may also wish to revisit how to
@@ -114,7 +114,7 @@ The pair of splits is allocated a similarity score corresponding to the
 better alignment: $\frac{2}{5}$.
 
 As such, splits that match exactly will receive a similarity score of 1,
-in a manner analogous to the Robinson-Foulds distance.  (This is despite the
+in a manner analogous to the Robinson–Foulds distance.  (This is despite the
 fact that some splits are more likely to match than others.)
 It is not possible for a pair of splits to receive a zero similarity 
 score.
@@ -125,13 +125,13 @@ VisualizeMatching(NyeSimilarity, tree1, tree2,
 NyeSimilarity(tree1, tree2, normalize = FALSE)
 ```
 
-### Jaccard-Robinson-Foulds metric
+### Jaccard–Robinson–Foulds metric
 
 B&ouml;cker _et al_. [-@Bocker2013] employ the same split similarity calculation
 as Nye _et al._ (above), which they suggest ought to be raised to an
 arbitrary exponent in order to down-weight the contribution of paired splits 
 that are not identical.
-In order for the metric to converge to the Robinson-Foulds metric as the
+In order for the metric to converge to the Robinson–Foulds metric as the
 exponent grows towards infinity, the resulting score is then doubled.
 
 ```{r, fig.width=6, fig.align='center'}
@@ -147,15 +147,16 @@ VisualizeMatching(JRF2, tree1, tree2,
 
 The figure below shows how the JRF distance between the two trees plotted above
 varies with the value of the exponent _k_, relative to the Nye _et al._ and 
-Robinson-Foulds distances between the trees:
+Robinson–Foulds distances between the trees:
 
-```{r, fig.width=6, fig.height = 4,fig.align='center', echo=FALSE}
+```{r, fig.width=6, fig.height = 4,fig.align = 'center', echo = FALSE}
 oldPar <- par(mar = c(4, 4, 0, 0))
 x <- seq(1, 20, by = 0.1)
 cbPalette8 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
                 "#0072B2", "#D55E00", "#CC79A7") # dput(Ternary::cbPalette8)
 plot(0, xlim = range(x), ylim = c(3.5, 9.5),
-     xlab = expression(italic('k')), ylab = 'Jaccard-Robinson-Foulds distance',
+     xlab = expression(italic('k')),
+     ylab = 'Jaccard\u2013Robinson\u2013Foulds distance',
      pch = 3, type = 'n')
 
 abline(h = RobinsonFoulds(tree1, tree2),
@@ -168,7 +169,7 @@ lines(x = x, y = vapply(x, JaccardRobinsonFoulds, tree1 = tree1, tree2 = tree2,
 lines(x = x, y = vapply(x, JaccardRobinsonFoulds, tree1 = tree1, tree2 = tree2,
                         0), col = cbPalette8[4])
 
-legend('right', c('Robinson-Foulds', 'JRF, no conflict', 'JRF, conflict ok', 'Nye et al.'),
+legend('right', c('Robinson\u2013Foulds', 'JRF, no conflict', 'JRF, conflict ok', 'Nye et al.'),
        lty = c('dashed', 'solid', 'solid', 'dotted'), 
        col = cbPalette8[c(6, 4, 5, 8)], bty = 'n')
 par(oldPar)

@@ -9,22 +9,22 @@ jobs:
   include:
     - r: 3.6.0 # phangorn requires > 3.6.0
     - r: release
+      r_binary_packages:
+       - ape
+       - covr
+       - devtools # R4.0.0 Binaries unavailable 2020-05-28
+       - knitr # R4.0.0 Binaries unavailable 2020-05-28
+       - phangorn
+       - pkgload
+       - Rdpack
+       - roxygen2
+       - testthat
+       - usethis
       before_install:
-        - sudo apt-get -y install libharfbuzz-dev libfribidi-dev
+        - sudo apt-get -y install libharfbuzz-dev libfribidi-dev mesa-common-dev libglu1-mesa-dev
       r_packages: 
         - freetypeharfbuzz
         - pkgdown
-      #r_binary_packages:
-       #- ape
-       #- covr
-       #- devtools # R4.0.0 Binaries unavailable 2020-05-28
-       #- knitr # R4.0.0 Binaries unavailable 2020-05-28
-       #- phangorn
-       #- pkgload
-       #- Rdpack
-       #- roxygen2
-       #- testthat
-       #- usethis
       deploy:
         provider: script
         script: Rscript -e 'pkgdown::deploy_site_github()'

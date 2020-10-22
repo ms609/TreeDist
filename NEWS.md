@@ -4,6 +4,7 @@
   algorithm.
 - Faster calculation of Robinson–Foulds distance (using algorithm of Day (1985))
   and clustering information distance.
+- Improvements to vignettes.
 
 # TreeDist 1.2.1.9100 (development)
 

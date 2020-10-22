@@ -169,5 +169,5 @@ The importance of methodology when analysing landscapes of phylogenetic trees.
 
 
 Please note that the 'TreeDist' project is released with a
-[Contributor Code of Conduct](CODE_OF_CONDUCT.md).
+[Contributor Code of Conduct](https://ms609.github.io/TreeDist/CODE_OF_CONDUCT.html).
 By contributing to this project, you agree to abide by its terms.

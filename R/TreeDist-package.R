@@ -15,7 +15,7 @@
 #' 
 #' ## Generalized RF distances
 #' 
-#' The [Robinson-Foulds distance](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html)
+#' The [Robinson–Foulds distance](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html)
 #' simply tallies the number of non-trivial splits (sometimes inaccurately
 #' termed clades, nodes or edges) that occur in both trees -- any splits that are
 #' not perfectly identical contributes one point to the distance score of zero, 
@@ -48,7 +48,7 @@
 #'   + Nye _et al._ (2006) score matchings according to the size of the largest 
 #'     split that is consistent with both of them, normalized against 
 #'     the Jaccard index.  This approach is extended by B&ouml;cker _et al_. (2013)
-#'     with the Jaccard-Robinson-Foulds metric (function 
+#'     with the Jaccard–Robinson–Foulds metric (function 
 #'     [`JaccardRobinsonFoulds()`](https://ms609.github.io/TreeDist/reference/JaccardRobinsonFoulds.html)).
 #' 
 #' * [`MatchingSplitDistance()`](https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html)
@@ -99,9 +99,9 @@
 #'   
 #'   * [ape](http://ape-package.ird.fr/):
 #'     - `cophenetic.phylo()`: Cophenetic distance
-#'     - `dist.topo()`: Path (topological) distance, Robinson-Foulds distance.
+#'     - `dist.topo()`: Path (topological) distance, Robinson–Foulds distance.
 #'   * [phangorn](https://cran.r-project.org/package=phangorn)
-#'     - `treedist()`: Path, Robinson-Foulds and approximate SPR distances.
+#'     - `treedist()`: Path, Robinson–Foulds and approximate SPR distances.
 #'   * [Quartet](https://ms609.github.io/Quartet/): Triplet and Quartet distances, 
 #'   using the tqDist algorithm.
 #'   * [TBRDist](https://ms609.github.io/TBRDist/): TBR and SPR distances on 
@@ -127,6 +127,7 @@
 #' 
 #' - \insertRef{SmithSpace}{TreeDist}
 #' 
+#' @encoding UTF-8
 #' @keywords internal
 "_PACKAGE"
 

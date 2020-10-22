@@ -1,7 +1,7 @@
-#' Robinson-Foulds distances, with adjustments for phylogenetic information
+#' Robinson–Foulds distances, with adjustments for phylogenetic information
 #' content
 #' 
-#' Calculate the Robinson-Foulds distance, or the equivalent similarity 
+#' Calculate the Robinson–Foulds distance, or the equivalent similarity 
 #' measure, with options to (i) annotate matched splits; (ii) weight splits
 #' according to their phylogenetic information content (Smith 2020).
 #' 
@@ -60,6 +60,7 @@
 #' @seealso Display paired splits: [`VisualizeMatching()`]
 #' 
 #' @export
+#' @encoding UTF-8
 #' @name Robinson-Foulds
 
 #' @aliases RobinsonFouldsInfo
