@@ -62,3 +62,12 @@ in a number of ways.
 
 - Distances between unlabelled trees (tree shapes)
   * Polynomial distance: [@Liu2021;@Liu2020]
+
+
+# Hierarchy comparison
+ - Requires rooted trees [in principle -- can this be relaxed?]
+ - Hierarchical mutual information [@Perotti2015]
+ - Element-centric clustering comparison [@Gates2019]
+   - Subsidiary advantage: can identify each leaf's similarity between trees,
+     allowing identification of wildcards.
+  
