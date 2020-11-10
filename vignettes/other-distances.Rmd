@@ -38,7 +38,7 @@ of any omissions.
   It is sensitive to the order in which the leaves are numbered, i.e. the 
   internal representation of the tree; and to the position of the root.
   
-  
+- Cophenetic style distances on rooted trees [@Sokal1962]
 
 # Other tree distances
 
@@ -66,7 +66,12 @@ in a number of ways.
 
 # Hierarchy comparison
  - Requires rooted trees [in principle -- can this be relaxed?]
+ 
+ - B~k~ [@Fowlkes1983; see @Wallace1983]
+ - Comparing different 'arbitrary' methods [@Morlini2012]: [@Morlini2013]
+ 
  - Hierarchical mutual information [@Perotti2015]
+ 
  - Element-centric clustering comparison [@Gates2019]
    - Subsidiary advantage: can identify each leaf's similarity between trees,
      allowing identification of wildcards.
