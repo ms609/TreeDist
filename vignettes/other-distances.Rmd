@@ -18,6 +18,9 @@ of any omissions.
 # Other topological distances
 
 - nni, spr, tbr
+  - NNI navigation dissimilarity [@Arslan2017] is an O(_n_²) approximation of
+    the NNI distance.  Related distances in this family emphasize links to
+    cluster compatibility.
 
 - path 
   - can incorporate edge length information
