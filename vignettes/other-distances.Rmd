@@ -54,7 +54,8 @@ in a number of ways.
 
 - KF distance: RF, weighted by edge length
 
-
+- Distances between ranked trees, i.e. considering temporal sequence of
+  branching [@Kim2020]
 
 - Tropical tree space [@Speyer2004;@Lin2020]
 
