@@ -49,7 +49,7 @@ lead to different tree distance metrics, implemented in the functions below:
     [`ClusteringInfoDistance()`](https://ms609.github.io/TreeDist/reference/TreeDistance.html),
     returns a tree distance.)
     
-    [![Introduction to the Clustering Info Distance](man/figures/CID_talk.png)](https://durham.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=ca5ede19-d21a-40ce-8b9e-ac6e00d7e2c0&autoplay=false&offerviewer=true&showtitle=true&showbrand=false&start=0&interactivity=all)
+    [![Introduction to the Clustering Info Distance](man/figures/CID_talk.png)](https://durham.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=ca5ede19-d21a-40ce-8b9e-ac6e00d7e2c0)
 
 * [`NyeSimilarity()`](https://ms609.github.io/TreeDist/reference/NyeSimilarity.html)
     
