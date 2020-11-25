@@ -12,7 +12,13 @@ vignette: >
 
 To understand the [information-based metrics](Generalized-RF.html) implemented
 in '[TreeDist](Using-TreeDist.html)', it is useful to recall some basic concepts
-of information theory (see @Mackay2003 for an introduction).
+of information theory.
+
+For an introduction, see @Mackay2003 or an introductory video to the clustering
+information distance:
+
+[![Introduction to the Clustering Info Distance](vignettes/CID_talk.png)](https://durham.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=ca5ede19-d21a-40ce-8b9e-ac6e00d7e2c0)
+
 
 ## Splits
 
