@@ -104,10 +104,6 @@ Murtagh1983 <- Reference(
   title = "A survey of recent advances in hierarchical clustering algorithms",
   author = "Murtagh, F.", year = 1983, volume = 26, pages = c(354, 359),
   doi = "10.1093/comjnl/26.4.354", journal = "The Computer Journal")
-Paradis2019 <- Reference(
-  title = "ape 5.0: an environment for modern phylogenetics and evolutionary analyses in R",
-  author = c("Paradis, E.", "Schliep, K."), journal = "Bioinformatics",
-  year = 2019, volume = 35, pages = c(526, 528))
 RCoreTeam <- Reference(
   author = "R Core Team", year = 2020,
   title = "R: A language and environment for statistical computing",
@@ -1247,7 +1243,7 @@ server <- function(input, output, session) {
       tags$h3('Tree space construction'),
       HTML(paste0(Smith2021,
                   Kaski2003, Venna2001, RCoreTeam)),
-      HTML(if (mstSize() > 0) paste0(Gower1969, Paradis2019)),
+      HTML(if (mstSize() > 0) Gower1969),
       HTML(if(input$distance == 'qd') SmithDist),
       tags$h3('Tree distance'),
       HTML(switch(input$distance,
