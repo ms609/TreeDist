@@ -63,6 +63,8 @@ in a number of ways.
 
 - Distances between unlabelled trees (tree shapes)
   * Polynomial distance: [@Liu2021;@Liu2020]
+  
+- Mixture distances: @Juan2020
 
 
 # Hierarchy comparison
