@@ -79,8 +79,24 @@
 #' splits in the most or least informative tree, use `normalize = `[`pmax`] or 
 #' [`pmin`] respectively.
 #' To calculate the relative similarity against a reference tree that is known
-#' to be 'correct', use `normalize = ``SplitwiseInfo(trueTree)` (SPI, MSI) or
+#' to be 'correct', use `normalize = SplitwiseInfo(trueTree)` (SPI, MSI) or
 #' `ClusteringEntropy(trueTree)` (MCI).
+#' 
+#' # Troubleshooting
+#' 
+#' Trees being compared must have identical tips.
+#' (If you have a use case where this is a problem, do file a 
+#' [GitHub issue](https://github.com/ms609/TreeDist/issues/new?title=Non-identical+tips)
+#' or drop the maintainer an e-mail.)
+#' 
+#' To determine which tips do not occur in both trees, try:
+#' 
+#' ```r
+#' library('TreeTools')
+#' setdiff(TipLabels(tree1), TipLabels(tree2)) # In tree1 but not tree2
+#' setdiff(TipLabels(tree2), TipLabels(tree1)) # In tree2 but not tree1
+#' ```
+#' 
 #' 
 #' @template tree12ListParams
 #' 

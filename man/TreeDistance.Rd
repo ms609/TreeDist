@@ -213,9 +213,21 @@ Alternatively, to scale against the information content or entropy of all
 splits in the most or least informative tree, use \verb{normalize = }\code{\link{pmax}} or
 \code{\link{pmin}} respectively.
 To calculate the relative similarity against a reference tree that is known
-to be 'correct', use \verb{normalize = ``SplitwiseInfo(trueTree)} (SPI, MSI) or
+to be 'correct', use \code{normalize = SplitwiseInfo(trueTree)} (SPI, MSI) or
 \code{ClusteringEntropy(trueTree)} (MCI).
 }
+}
+
+\section{Troubleshooting}{
+Trees being compared must have identical tips.
+(If you have a use case where this is a problem, do file a
+\href{https://github.com/ms609/TreeDist/issues/new?title=Non-identical+tips}{GitHub issue}
+or drop the maintainer an e-mail.)
+
+To determine which tips do not occur in both trees, try:\if{html}{\out{<div class="r">}}\preformatted{library('TreeTools')
+setdiff(TipLabels(tree1), TipLabels(tree2)) # In tree1 but not tree2
+setdiff(TipLabels(tree2), TipLabels(tree1)) # In tree2 but not tree1
+}\if{html}{\out{</div>}}
 }
 
 \examples{
