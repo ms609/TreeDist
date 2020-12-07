@@ -220,7 +220,7 @@ to be 'correct', use \code{normalize = SplitwiseInfo(trueTree)} (SPI, MSI) or
 
 \section{Troubleshooting}{
 Trees being compared must have identical tips.
-(If you have a use case where this is a problem, do file a
+(If you have a use case for comparing trees with non-identical tips, do file a
 \href{https://github.com/ms609/TreeDist/issues/new?title=Non-identical+tips}{GitHub issue}
 or drop the maintainer an e-mail.)
 
