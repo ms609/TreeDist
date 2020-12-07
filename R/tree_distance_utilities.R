@@ -12,14 +12,23 @@
 #' @export
 CalculateTreeDistance <- function (Func, tree1, tree2 = NULL,
                                    reportMatching = FALSE, ...) {
+  supportedClasses <- c('phylo', 'Splits')
   
-  single1 <- inherits(tree1, c('phylo', 'Splits'))
+  single1 <- inherits(tree1, supportedClasses)
+  if (!single1 && !inherits(tree1[[1]], supportedClasses)) {
+    stop("`tree1` must be a tree, or list of trees, with class ", 
+         paste(supportedClasses, collapse = ' / '))
+  }
   labels1 <- TipLabels(tree1, single = TRUE)
   nTip <- length(labels1)
   
   null2 <- is.null(tree2)
   if (!null2) {
-    single2 <- inherits(tree2, c('phylo', 'Splits'))
+    single2 <- inherits(tree2, supportedClasses)
+    if (!single2 && !inherits(tree2[[1]], supportedClasses)) {
+      stop("`tree2` must be a tree, or list of trees, with class ", 
+           paste(supportedClasses, collapse = ' / '))
+    }
     labels2 <- TipLabels(tree2, single = TRUE)
     
     if (length(setdiff(labels1, labels2)) > 0) {

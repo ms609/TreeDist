@@ -1,3 +1,7 @@
+# TreeDist 1.2.1.9201 (development)
+
+- Improve error messages in `CalculateTreeDist()`.
+
 # TreeDist 1.2.1.9200 (development)
 
 - New class `ClusterTable` to allow faster distance computation with Day (1985)
