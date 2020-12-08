@@ -11,6 +11,7 @@
 - Improvements to vignettes.
 
 # TreeDist 1.2.1.9100 (development)
+- Use package 'vdiffr' conditionally.
 
 - Shiny app for tree space.
 - `ProjectionQuality()` calculates trustworthiness and continuity of tree 
