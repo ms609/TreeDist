@@ -5,6 +5,7 @@
 /^src\-/
 CONTRIBUTING
 README.md
+.github
 cran-comments.md
 man-roxygen
 data-raw
