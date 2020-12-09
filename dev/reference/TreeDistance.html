@@ -90,7 +90,7 @@ proposed in Smith (2020)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9200</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9201</span>
       </span>
     </div>
 
@@ -380,37 +380,47 @@ up to 200 leaves.</p>
 splits in the most or least informative tree, use <code>normalize = </code><code><a href='https://rdrr.io/r/base/Extremes.html'>pmax</a></code> or
 <code><a href='https://rdrr.io/r/base/Extremes.html'>pmin</a></code> respectively.
 To calculate the relative similarity against a reference tree that is known
-to be 'correct', use <code>normalize = ``SplitwiseInfo(trueTree)</code> (SPI, MSI) or
+to be 'correct', use <code>normalize = SplitwiseInfo(trueTree)</code> (SPI, MSI) or
 <code><a href='ClusteringEntropy.html'>ClusteringEntropy(trueTree)</a></code> (MCI).</p>
 
+    <h2 class="hasAnchor" id="troubleshooting"><a class="anchor" href="#troubleshooting"></a>Troubleshooting</h2>
+
+    <p>Trees being compared must have identical tips.
+(If you have a use case for comparing trees with non-identical tips, do file a
+<a href='https://github.com/ms609/TreeDist/issues/new?title=Non-identical+tips'>GitHub issue</a>
+or drop the maintainer an e-mail.)</p>
+<p>To determine which tips do not occur in both trees, try:<div class="r"></p><pre><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='st'><a href='https://ms609.github.io/TreeTools/'>'TreeTools'</a></span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/sets.html'>setdiff</a></span><span class='op'>(</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/TipLabels.html'>TipLabels</a></span><span class='op'>(</span><span class='va'>tree1</span><span class='op'>)</span>, <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/TipLabels.html'>TipLabels</a></span><span class='op'>(</span><span class='va'>tree2</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># In tree1 but not tree2</span>
+<span class='fu'><a href='https://rdrr.io/r/base/sets.html'>setdiff</a></span><span class='op'>(</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/TipLabels.html'>TipLabels</a></span><span class='op'>(</span><span class='va'>tree2</span><span class='op'>)</span>, <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/TipLabels.html'>TipLabels</a></span><span class='op'>(</span><span class='va'>tree1</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># In tree2 but not tree1</span>
+</pre><p></div></p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     
 <ul>
 <li><p>Day WHE (1985).
 &#8220;Optimal algorithms for comparing trees with labeled leaves.&#8221;
-<em>Journal of Classification</em>, <b>2</b>, 7--28.
+<em>Journal of Classification</em>, <b>2</b>(1), 7--28.
 doi: <a href='https://doi.org/10.1007/BF01908061'>10.1007/BF01908061</a>
-.</p></li>
+, <a href='https://doi.org/10.1007/BF01908061'>https://doi.org/10.1007/BF01908061</a>.</p></li>
 <li><p>MacKay DJC (2003).
 <em>Information Theory, Inference, and Learning Algorithms</em>.
 Cambridge University Press, Cambridge.
 <a href='https://www.inference.org.uk/itprnn/book.pdf'>https://www.inference.org.uk/itprnn/book.pdf</a>.</p></li>
 <li><p>Meilă M (2007).
 &#8220;Comparing clusterings---an information based distance.&#8221;
-<em>Journal of Multivariate Analysis</em>, <b>98</b>, 873--895.
+<em>Journal of Multivariate Analysis</em>, <b>98</b>(5), 873--895.
 doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11.013</a>
-.</p></li>
+, <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>https://doi.org/10.1016/j.jmva.2006.11.013</a>.</p></li>
 <li><p>Smith MR (2020).
 &#8220;Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees.&#8221;
 <em>Bioinformatics</em>, online--ahead.
 doi: <a href='https://doi.org/10.1093/bioinformatics/btaa614'>10.1093/bioinformatics/btaa614</a>
-.</p></li>
+, <a href='https://doi.org/10.1093/bioinformatics/btaa614'>https://doi.org/10.1093/bioinformatics/btaa614</a>.</p></li>
 <li><p>Vinh NX, Epps J, Bailey J (2010).
 &#8220;Information theoretic measures for clusterings comparison: variants, properties, normalization and correction for chance.&#8221;
 <em>Journal of Machine Learning Research</em>, <b>11</b>, 2837--2854.
 doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</a>
-.</p></li>
+, <a href='https://doi.org/10.1145/1553374.1553511'>https://doi.org/10.1145/1553374.1553511</a>.</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>

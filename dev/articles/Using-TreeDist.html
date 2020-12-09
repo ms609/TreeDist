@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9200</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9201</span>
       </span>
     </div>
 
@@ -135,50 +135,50 @@
 <h2 class="hasAnchor">
 <a href="#loading-trees" class="anchor"></a>Loading trees</h2>
 <p>Instructions for loading phylogenetic trees into R can be found in a <a href="https://ms609.github.io/TreeTools/articles/load-trees.html">separate vignette</a>. For these examples, we’ll enter two simple trees by hand:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="va">tree1</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span><span class="op">(</span>text <span class="op">=</span> <span class="st">'(A, ((B, (C, (D, E))), ((F, G), (H, I))));'</span><span class="op">)</span>
-<span class="va">tree2</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span><span class="op">(</span>text <span class="op">=</span> <span class="st">'(A, ((B, (C, (D, (H, I)))), ((F, G), E)));'</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">tree1</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span><span class="op">(</span>text <span class="op">=</span> <span class="st">'(A, ((B, (C, (D, E))), ((F, G), (H, I))));'</span><span class="op">)</span>
+<span class="va">tree2</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html">read.tree</a></span><span class="op">(</span>text <span class="op">=</span> <span class="st">'(A, ((B, (C, (D, (H, I)))), ((F, G), E)));'</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="calculating-distances" class="section level2">
 <h2 class="hasAnchor">
 <a href="#calculating-distances" class="anchor"></a>Calculating distances</h2>
 <p>We can calculate distances between pairs of trees using the ‘TreeDist’ package.</p>
 <p>First we’ll install the package. We can either install the stable version from the CRAN repository:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">'TreeDist'</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">'TreeDist'</span><span class="op">)</span></code></pre></div>
 <p>or the development version, from GitHub – which will contain the latest features but may not be as extensively tested:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">'ms609/TreeDist'</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">'ms609/TreeDist'</span><span class="op">)</span></code></pre></div>
 <p>Then we’ll load the package in to R’s working environment:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeDist/">'TreeDist'</a></span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeDist/">'TreeDist'</a></span><span class="op">)</span></code></pre></div>
 <p>Now the package’s functions are available within R. Let’s proceed to calculate some tree distances.</p>
 <div id="pairs-of-trees" class="section level3">
 <h3 class="hasAnchor">
 <a href="#pairs-of-trees" class="anchor"></a>Pairs of trees</h3>
 <p>Calculating the distance between two trees is as simple as:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="va">distance</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">distance</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span></code></pre></div>
 <p>The convenience function <code><a href="../reference/TreeDistance.html">TreeDistance()</a></code> returns the variation of clustering information between two trees, <a href="using-distances.html#normalizing">normalized</a> against the total information content of all splits.</p>
 </div>
 <div id="multiple-comparisons" class="section level3">
 <h3 class="hasAnchor">
 <a href="#multiple-comparisons" class="anchor"></a>Multiple comparisons</h3>
 <p>If you have more than two trees to compare, you can send a list of trees (class: <code>list</code> or <code>multiPhylo</code>) to the distance comparison function. The function will then calculate the distance between each tree in the first list and each tree in the second.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit">
-<span class="va">oneTree</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span><span class="op">(</span><span class="fl">11</span><span class="op">)</span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">oneTree</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span><span class="op">(</span><span class="fl">11</span><span class="op">)</span>
 <span class="va">twoTrees</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/structure.html">structure</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>one <span class="op">=</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span><span class="op">(</span><span class="fl">11</span><span class="op">)</span>, two <span class="op">=</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span><span class="op">(</span><span class="fl">11</span><span class="op">)</span><span class="op">)</span>,
                       class <span class="op">=</span> <span class="st">'multiPhylo'</span><span class="op">)</span>
 <span class="va">threeTrees</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span><span class="op">(</span><span class="fl">11</span><span class="op">)</span>, b <span class="op">=</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span><span class="op">(</span><span class="fl">11</span><span class="op">)</span>, c <span class="op">=</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/rtree.html">rtree</a></span><span class="op">(</span><span class="fl">11</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span><span class="op">(</span><span class="va">oneTree</span>, <span class="va">twoTrees</span><span class="op">)</span></pre></div>
+<span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span><span class="op">(</span><span class="va">oneTree</span>, <span class="va">twoTrees</span><span class="op">)</span></code></pre></div>
 <pre><code>##       one       two 
-## 0.8076921 0.7690506</code></pre>
-<div class="sourceCode" id="cb8"><pre class="downlit">
-<span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span><span class="op">(</span><span class="va">twoTrees</span>, <span class="va">threeTrees</span><span class="op">)</span></pre></div>
+## 0.8098894 0.8135479</code></pre>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span><span class="op">(</span><span class="va">twoTrees</span>, <span class="va">threeTrees</span><span class="op">)</span></code></pre></div>
 <pre><code>##             a         b         c
-## one 0.6479199 0.7000027 0.8338509
-## two 0.7445866 0.8004273 0.8442174</code></pre>
+## one 0.8395714 0.8272927 0.7320638
+## two 0.6820529 0.8032283 0.8460136</code></pre>
 </div>
 </div>
 <div id="visualizing-a-matching" class="section level2">
@@ -186,14 +186,14 @@
 <a href="#visualizing-a-matching" class="anchor"></a>Visualizing a matching</h2>
 <p><a href="Generalized-RF.html">Generalized Robinson–Foulds metrics</a>, such as the variation of clustering information, rely on matching each split within a tree with another split in the other tree.<br>
 We can view an optimal matching:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit">
-<span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">ClusteringInfoDistance</span>, <span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">ClusteringInfoDistance</span>, <span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span></code></pre></div>
 <p><img src="Using-TreeDist_files/figure-html/visualise-matching-1.png" width="90%" style="display: block; margin: auto;"></p>
 <p>This shows the six splits in tree 1, and the paired splits in tree two.<br>
 Each split is labelled with a measure of its similarity, which is its contribution to the total tree similarity score.</p>
 <p>We can view this information in a format accessible for further examination in R with:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit">
-<span class="fu"><a href="../reference/TreeDistance.html">ClusteringInfoDistance</a></span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span>, reportMatching <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/TreeDistance.html">ClusteringInfoDistance</a></span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span>, reportMatching <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 6.960578
 ## attr(,"matching")
 ## [1] 1 2 3 5 6 4
@@ -214,20 +214,20 @@ Each split is labelled with a measure of its similarity, which is its contributi
 ## [6] "H I | A B C D E F G =&gt; H I | A B C D E F G"</code></pre>
 <p>Here, the <code>pairScores</code> attribute lists the score of each possible matching of splits.</p>
 <p>We can identify the splits with:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit">
-<span class="va">splits</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="fu">TreeTools</span><span class="fu">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/as.Splits.html">as.Splits</a></span><span class="op">(</span><span class="va">tree2</span><span class="op">)</span><span class="op">)</span>
-<span class="va">splits</span></pre></div>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">splits</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="fu">TreeTools</span><span class="fu">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/as.Splits.html">as.Splits</a></span><span class="op">(</span><span class="va">tree2</span><span class="op">)</span><span class="op">)</span>
+<span class="va">splits</span></code></pre></div>
 <pre><code>##                    12                    13                    14 
 ## "B C D H I | A F G E" "C D H I | A B F G E" "D H I | A B C F G E" 
 ##                    15                    16                    17 
 ## "H I | A B C D F G E" "F G E | A B C D H I" "F G | A B C D H I E"</code></pre>
 <p>The names of the splits correspond to the number of an associated node in the original tree:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit">
-<span class="va">oldPar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">oldPar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">tree2</span><span class="op">)</span>
 <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/nodelabels.html">nodelabels</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/nodelabels.html">nodelabels</a></span><span class="op">(</span><span class="va">splits</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">splits</span><span class="op">)</span><span class="op">)</span>, 
-                adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1.1</span>, <span class="op">-</span><span class="fl">0.2</span><span class="op">)</span>, cex <span class="op">=</span> <span class="fl">0.8</span>, frame <span class="op">=</span> <span class="st">'none'</span><span class="op">)</span></pre></div>
+                adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1.1</span>, <span class="op">-</span><span class="fl">0.2</span><span class="op">)</span>, cex <span class="op">=</span> <span class="fl">0.8</span>, frame <span class="op">=</span> <span class="st">'none'</span><span class="op">)</span></code></pre></div>
 <p><img src="Using-TreeDist_files/figure-html/named-splits-1.png" width="80%" style="display: block; margin: auto;"></p>
 <p>Note that strictly, (informative) splits are associated with (internal) edges. To avoid listing the same split twice, nodes close to the root (here, 10 and 11) will not be associated with a split.</p>
 </div>

@@ -55,7 +55,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9200</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9201</span>
       </span>
     </div>
 
@@ -149,6 +149,7 @@
 <li>
 <p><a href="https://ms609.github.io/TreeDist/reference/TreeDistance.html"><code>MutualClusteringInfo()</code></a>, <a href="https://ms609.github.io/TreeDist/reference/TreeDistance.html"><code>SharedPhylogeneticInfo()</code></a></p>
 <p>Smith (2020) scores matchings based on the amount of information that one partition contains about the other. The Mutual Phylogenetic Information assigns zero similarity to split pairs that cannot both exist on a single tree; The Mutual Clustering Information metric is more forgiving, and exhibits more desirable behaviour; it is the recommended metric for tree comparison. (Its complement, <a href="https://ms609.github.io/TreeDist/reference/TreeDistance.html"><code>ClusteringInfoDistance()</code></a>, returns a tree distance.)</p>
+<p><a href="https://durham.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=ca5ede19-d21a-40ce-8b9e-ac6e00d7e2c0"><img src="reference/figures/CID_talk.png" alt="Introduction to the Clustering Information Distance"></a></p>
 </li>
 <li>
 <p><a href="https://ms609.github.io/TreeDist/reference/NyeSimilarity.html"><code>NyeSimilarity()</code></a></p>
@@ -167,20 +168,20 @@
 <h1 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h1>
 <p>Install and load the library from CRAN as follows:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">'TreeDist'</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeDist/">'TreeDist'</a></span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">'TreeDist'</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeDist/">'TreeDist'</a></span><span class="op">)</span></code></pre></div>
 <p>You can install the development version of the package with:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit">
-<span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/">devtools</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">'ms609/TreeDist'</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">require</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/">devtools</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">'ms609/TreeDist'</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="tree-space-analysis" class="section level1">
 <h1 class="hasAnchor">
 <a href="#tree-space-analysis" class="anchor"></a>Tree space analysis</h1>
 <p>Construct tree spaces and readily visualize projected landscapes, avoiding common analytical pitfalls (Smith, forthcoming), using the inbuilt graphical user interface:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="fu">TreeDist</span><span class="fu">::</span><span class="fu"><a href="reference/TreeSpace.html">TreeSpace</a></span><span class="op">(</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">TreeDist</span><span class="fu">::</span><span class="fu"><a href="reference/TreeSpace.html">TreeSpace</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>Serious analysts should consult the <a href="https://ms609.github.io/TreeDist/articles/treespace.html">vignette</a> for a command-line interface.</p>
 </div>
 <div id="documentation" class="section level1">

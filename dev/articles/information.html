@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9200</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9201</span>
       </span>
     </div>
 
@@ -130,7 +130,9 @@
 
     
     
-<p>To understand the <a href="Generalized-RF.html">information-based metrics</a> implemented in ‘<a href="Using-TreeDist.html">TreeDist</a>’, it is useful to recall some basic concepts of information theory (see <span class="citation">MacKay (2003)</span> for an introduction).</p>
+<p>To understand the <a href="Generalized-RF.html">information-based metrics</a> implemented in ‘<a href="Using-TreeDist.html">TreeDist</a>’, it is useful to recall some basic concepts of information theory.</p>
+<p>For an introduction, see <span class="citation">MacKay (2003)</span> or an introductory video to the clustering information distance:</p>
+<p><a href="https://durham.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=ca5ede19-d21a-40ce-8b9e-ac6e00d7e2c0"><img src="CID_talk.png" alt="Introduction to the Clustering Info Distance"></a></p>
 <div id="splits" class="section level2">
 <h2 class="hasAnchor">
 <a href="#splits" class="anchor"></a>Splits</h2>
@@ -150,36 +152,36 @@
 <p>Likewise, the split <span class="math inline">\(S_2 =\)</span> <code>ABC|DEF</code> occurs in nine of the 105 six-leaf trees, so <span class="math inline">\(h(S_2) = -\log_2{\frac{9}{105}} \approx 3.54\textrm{ bits}\)</span>. Three six-leaf trees contain both splits, so in combination the splits deliver <span class="math inline">\(h(S_1,S_2) = -\log_2{\frac{3}{105}} \approx 5.13\textrm{ bits}\)</span> of information.</p>
 <p>Because <span class="math inline">\(h(S_1,S_2) &lt; h(S_1) + h(S_2)\)</span>, some of the information in <span class="math inline">\(S_1\)</span> is also present in <span class="math inline">\(S_2\)</span>. The information in common between <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> is <span class="math inline">\(h_{shared}(S_1, S_2) = h(S_1) + h(S_2) - h(S_1,S_2) \approx 1.22\textrm{ bits}\)</span>. The information unique to <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> is <span class="math inline">\(h_{different}(S_1,S_2) = 2h(S_1,S_2) - h(S_1) - h(S_2) \approx 3.91\textrm{ bits}\)</span>.</p>
 <p>These quantities can be calculated using functions in the ‘<a href="https://ms609.github.io/TreeTools/">TreeTools</a>’ package.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit">
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeTools/">'TreeTools'</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeTools/">'TreeTools'</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeDist/">'TreeDist'</a></span><span class="op">)</span>
 <span class="va">treesMatchingSplit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
   AB.CDEF <span class="op">=</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TreesMatchingSplit.html">TreesMatchingSplit</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span>,
   ABC.DEF <span class="op">=</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TreesMatchingSplit.html">TreesMatchingSplit</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">3</span><span class="op">)</span>
 <span class="op">)</span>
-<span class="va">treesMatchingSplit</span></pre></div>
+<span class="va">treesMatchingSplit</span></code></pre></div>
 <pre><code>## AB.CDEF ABC.DEF 
 ##      15       9</code></pre>
-<div class="sourceCode" id="cb3"><pre class="downlit">
-<span class="va">proportionMatchingSplit</span> <span class="op">&lt;-</span> <span class="va">treesMatchingSplit</span> <span class="op">/</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/NRooted.html">NUnrooted</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span>
-<span class="va">proportionMatchingSplit</span></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">proportionMatchingSplit</span> <span class="op">&lt;-</span> <span class="va">treesMatchingSplit</span> <span class="op">/</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/NRooted.html">NUnrooted</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span>
+<span class="va">proportionMatchingSplit</span></code></pre></div>
 <pre><code>##    AB.CDEF    ABC.DEF 
 ## 0.14285714 0.08571429</code></pre>
-<div class="sourceCode" id="cb5"><pre class="downlit">
-<span class="va">splitInformation</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span><span class="op">(</span><span class="va">proportionMatchingSplit</span><span class="op">)</span>
-<span class="va">splitInformation</span></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">splitInformation</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span><span class="op">(</span><span class="va">proportionMatchingSplit</span><span class="op">)</span>
+<span class="va">splitInformation</span></code></pre></div>
 <pre><code>##  AB.CDEF  ABC.DEF 
 ## 2.807355 3.544321</code></pre>
-<div class="sourceCode" id="cb7"><pre class="downlit">
-<span class="va">treesMatchingBoth</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SplitSharedInformation.html">TreesConsistentWithTwoSplits</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">treesMatchingBoth</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SplitSharedInformation.html">TreesConsistentWithTwoSplits</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>
 <span class="va">combinedInformation</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log2</a></span><span class="op">(</span><span class="va">treesMatchingBoth</span> <span class="op">/</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/NRooted.html">NUnrooted</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span>
 
 <span class="va">sharedInformation</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">splitInformation</span><span class="op">)</span> <span class="op">-</span> <span class="va">combinedInformation</span>
-<span class="va">sharedInformation</span></pre></div>
+<span class="va">sharedInformation</span></code></pre></div>
 <pre><code>## [1] 1.222392</code></pre>
-<div class="sourceCode" id="cb9"><pre class="downlit">
-<span class="co"># Or more concisely:</span>
-<span class="fu"><a href="../reference/SplitSharedInformation.html">SplitSharedInformation</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">6</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Or more concisely:</span>
+<span class="fu"><a href="../reference/SplitSharedInformation.html">SplitSharedInformation</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">6</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] 1.222392</code></pre>
 <!--The more similar the splits, the more information they will have in common;
 the shared information is maximised when $S_1 = S_2$, and $h_{common} = h(S_1)$.
