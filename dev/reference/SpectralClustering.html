@@ -199,7 +199,7 @@ between data points.</p></td>
 
     <div class='dont-index'><p>Other tree space functions: 
 <code><a href='ProjectionQuality.html'>ProjectionQuality</a>()</code>,
-<code><a href='TreeSpace.html'>TreeSpace</a>()</code>,
+<code><a href='Project.html'>Project</a>()</code>,
 <code><a href='median.multiPhylo.html'>median.multiPhylo</a>()</code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
@@ -211,18 +211,18 @@ between data points.</p></td>
 <span class='va'>trees</span> <span class='op'>&lt;-</span> <span class='fu'>as.phylo</span><span class='op'>(</span><span class='fl'>0</span><span class='op'>:</span><span class='fl'>10</span>, nTip <span class='op'>=</span> <span class='fl'>8</span><span class='op'>)</span>
 <span class='va'>distances</span> <span class='op'>&lt;-</span> <span class='fu'><a href='TreeDistance.html'>ClusteringInfoDistance</a></span><span class='op'>(</span><span class='va'>trees</span><span class='op'>)</span>
 <span class='fu'>SpectralClustering</span><span class='op'>(</span><span class='va'>distances</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;              [,1]        [,2]
-#&gt;  [1,]  0.00000000  0.95346259
-#&gt;  [2,]  0.92219438 -0.09534626
-#&gt;  [3,] -0.06065623 -0.09534626
-#&gt;  [4,] -0.06065623 -0.09534626
-#&gt;  [5,] -0.06065623 -0.09534626
-#&gt;  [6,] -0.06065623 -0.09534626
-#&gt;  [7,] -0.06065623 -0.09534626
-#&gt;  [8,] -0.06065623 -0.09534626
-#&gt;  [9,] -0.24880040 -0.09534626
-#&gt; [10,] -0.24880040 -0.09534626
-#&gt; [11,] -0.06065623 -0.09534626</div></pre>
+</div><div class='output co'>#&gt;                [,1]        [,2]
+#&gt;  [1,]  0.0000000000  0.00000000
+#&gt;  [2,] -0.0047608907  0.37543119
+#&gt;  [3,] -0.0003718317 -0.01202907
+#&gt;  [4,] -0.0013748768  0.08041506
+#&gt;  [5,]  0.0010614072  0.26879446
+#&gt;  [6,] -0.0002071488  0.43342209
+#&gt;  [7,] -0.0010606135 -0.61126943
+#&gt;  [8,] -0.1557544583 -0.24444284
+#&gt;  [9,]  0.7722602757 -0.24444284
+#&gt; [10,] -0.6158658401 -0.24444284
+#&gt; [11,]  0.0060739770  0.19856423</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

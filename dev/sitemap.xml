@@ -58,6 +58,9 @@
     <loc>https://ms609.github.io/TreeDist/reference/PathDist.html</loc>
   </url>
   <url>
+    <loc>https://ms609.github.io/TreeDist/reference/Project.html</loc>
+  </url>
+  <url>
     <loc>https://ms609.github.io/TreeDist/reference/ProjectionQuality.html</loc>
   </url>
   <url>
@@ -92,9 +95,6 @@
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/TreeDistance.html</loc>
-  </url>
-  <url>
-    <loc>https://ms609.github.io/TreeDist/reference/TreeSpace.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/VisualizeMatching.html</loc>
