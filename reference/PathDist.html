@@ -88,7 +88,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -96,7 +96,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -115,6 +115,9 @@
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../articles/Using-TreeDist.html">Using TreeDist to calculate tree similarity</a>
+    </li>
+    <li>
+      <a href="../articles/treespace.html">Tree space analysis in TreeDist</a>
     </li>
     <li>
       <a href="../articles/using-distances.html">Contextualizing tree distances</a>
@@ -140,7 +143,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/ms609/TreeDist">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -172,7 +175,7 @@
     <p>Calculate the path distance between trees.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>PathDist</span>(<span class='kw'>tree1</span>, tree2 = <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>PathDist</span><span class='op'>(</span><span class='va'>tree1</span>, tree2 <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -180,7 +183,9 @@
     <tr>
       <th>tree1, tree2</th>
       <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.</p></td>
+or lists of such trees to undergo pairwise comparison.  Where implemented,
+<code>tree2 = NULL</code> will compute distances between each pair of trees in the list
+<code>tree1</code> using a fast algorithm based on Day (1985).</p></td>
     </tr>
     </table>
 
@@ -205,7 +210,7 @@ fundamental) relationships (Farris, 1973).</p>
 &#8220;On comparing the shapes of taxonomic trees.&#8221;
 <em>Systematic Zoology</em>, <b>22</b>(1), 50--54.
 doi: <a href='https://doi.org/10.2307/2412378'>10.2307/2412378</a>
-.</p>
+, <a href='https://doi.org/10.2307/2412378'>https://doi.org/10.2307/2412378</a>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other tree distances: 
@@ -224,17 +229,17 @@ doi: <a href='https://doi.org/10.2307/2412378'>10.2307/2412378</a>
 (<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='st'><a href='https://ms609.github.io/TreeTools'>'TreeTools'</a></span>)
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='st'><a href='https://ms609.github.io/TreeTools/'>'TreeTools'</a></span><span class='op'>)</span>
 
-<span class='fu'>PathDist</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>))
+<span class='fu'>PathDist</span><span class='op'>(</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span><span class='op'>(</span><span class='fl'>7</span><span class='op'>)</span>, <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span><span class='op'>(</span><span class='fl'>7</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 4.690416</div><div class='input'>
-<span class='fu'>PathDist</span>(<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), <span class='fu'>as.phylo</span>(<span class='fl'>0</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>7</span>))
-</div><div class='output co'>#&gt; [1] 7.348469 6.782330 7.348469</div><div class='input'><span class='fu'>PathDist</span>(<span class='fu'>as.phylo</span>(<span class='fl'>0</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>7</span>), <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>))
+<span class='fu'>PathDist</span><span class='op'>(</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span><span class='op'>(</span><span class='fl'>7</span><span class='op'>)</span>, <span class='fu'>as.phylo</span><span class='op'>(</span><span class='fl'>0</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>7</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 7.348469 6.782330 7.348469</div><div class='input'><span class='fu'>PathDist</span><span class='op'>(</span><span class='fu'>as.phylo</span><span class='op'>(</span><span class='fl'>0</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>7</span><span class='op'>)</span>, <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span><span class='op'>(</span><span class='fl'>7</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 7.745967 8.246211 8.124038</div><div class='input'>
-<span class='fu'>PathDist</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(bal = <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>7</span>), pec = <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>7</span>)),
-        <span class='fu'>as.phylo</span>(<span class='fl'>0</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>7</span>))
+<span class='fu'>PathDist</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>bal <span class='op'>=</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span><span class='op'>(</span><span class='fl'>7</span><span class='op'>)</span>, pec <span class='op'>=</span> <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span><span class='op'>(</span><span class='fl'>7</span><span class='op'>)</span><span class='op'>)</span>,
+        <span class='fu'>as.phylo</span><span class='op'>(</span><span class='fl'>0</span><span class='op'>:</span><span class='fl'>2</span>, <span class='fl'>7</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; NULL</div><div class='input'>
-<span class='fu'><a href='CompareAll.html'>CompareAll</a></span>(<span class='fu'>as.phylo</span>(<span class='fl'>30</span><span class='op'>:</span><span class='fl'>33</span>, <span class='fl'>8</span>), <span class='kw'>PathDist</span>)
+<span class='fu'><a href='CompareAll.html'>CompareAll</a></span><span class='op'>(</span><span class='fu'>as.phylo</span><span class='op'>(</span><span class='fl'>30</span><span class='op'>:</span><span class='fl'>33</span>, <span class='fl'>8</span><span class='op'>)</span>, <span class='va'>PathDist</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;          1        2        3        4
 #&gt; 1          3.872983 3.872983 5.567764
 #&gt; 2 3.872983          3.464102 6.928203

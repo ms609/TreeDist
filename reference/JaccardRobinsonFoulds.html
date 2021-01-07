@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Jaccard-Robinson-Foulds metric — JaccardRobinsonFoulds • TreeDist</title>
+<title>Jaccard–Robinson–Foulds metric — JaccardRobinsonFoulds • TreeDist</title>
 
 
 <!-- jquery -->
@@ -45,11 +45,11 @@
 
 
 
-<meta property="og:title" content="Jaccard-Robinson-Foulds metric — JaccardRobinsonFoulds" />
+<meta property="og:title" content="Jaccard–Robinson–Foulds metric — JaccardRobinsonFoulds" />
 <meta property="og:description" content="Calculate the
-Jaccard-Robinson-Foulds metric
+Jaccard–Robinson–Foulds metric
 (Böcker et al. 2013), a
-Generalized Robinson-Foulds metric." />
+Generalized Robinson–Foulds metric." />
 
 
 
@@ -91,7 +91,7 @@ Generalized Robinson-Foulds metric." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -99,7 +99,7 @@ Generalized Robinson-Foulds metric." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -118,6 +118,9 @@ Generalized Robinson-Foulds metric." />
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../articles/Using-TreeDist.html">Using TreeDist to calculate tree similarity</a>
+    </li>
+    <li>
+      <a href="../articles/treespace.html">Tree space analysis in TreeDist</a>
     </li>
     <li>
       <a href="../articles/using-distances.html">Contextualizing tree distances</a>
@@ -143,7 +146,7 @@ Generalized Robinson-Foulds metric." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/ms609/TreeDist">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -166,36 +169,36 @@ Generalized Robinson-Foulds metric." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Jaccard-Robinson-Foulds metric</h1>
+    <h1>Jaccard–Robinson–Foulds metric</h1>
     <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance_nye.R'><code>R/tree_distance_nye.R</code></a></small>
     <div class="hidden name"><code>JaccardRobinsonFoulds.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>Calculate the
-<a href='https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric'>Jaccard-Robinson-Foulds metric</a>
+<a href='https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric'>Jaccard–Robinson–Foulds metric</a>
 (Böcker <em>et al</em>. 2013), a
-<a href='https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances'>Generalized Robinson-Foulds metric</a>.</p>
+<a href='https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances'>Generalized Robinson–Foulds metric</a>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>JaccardRobinsonFoulds</span>(
-  <span class='kw'>tree1</span>,
-  tree2 = <span class='kw'>tree1</span>,
-  k = <span class='fl'>1L</span>,
-  allowConflict = <span class='fl'>TRUE</span>,
-  similarity = <span class='fl'>FALSE</span>,
-  normalize = <span class='fl'>FALSE</span>,
-  reportMatching = <span class='fl'>FALSE</span>
-)
+    <pre class="usage"><span class='fu'>JaccardRobinsonFoulds</span><span class='op'>(</span>
+  <span class='va'>tree1</span>,
+  tree2 <span class='op'>=</span> <span class='cn'>NULL</span>,
+  k <span class='op'>=</span> <span class='fl'>1L</span>,
+  allowConflict <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  similarity <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  normalize <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  reportMatching <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span>
 
-<span class='fu'>JaccardSplitSimilarity</span>(
-  <span class='kw'>splits1</span>,
-  <span class='kw'>splits2</span>,
-  nTip = <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='kw'>splits1</span>, <span class='st'>"nTip"</span>),
-  k = <span class='fl'>1L</span>,
-  allowConflict = <span class='fl'>TRUE</span>,
-  reportMatching = <span class='fl'>FALSE</span>
-)</pre>
+<span class='fu'>JaccardSplitSimilarity</span><span class='op'>(</span>
+  <span class='va'>splits1</span>,
+  <span class='va'>splits2</span>,
+  nTip <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span><span class='op'>(</span><span class='va'>splits1</span>, <span class='st'>"nTip"</span><span class='op'>)</span>,
+  k <span class='op'>=</span> <span class='fl'>1L</span>,
+  allowConflict <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  reportMatching <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -203,19 +206,23 @@ Generalized Robinson-Foulds metric." />
     <tr>
       <th>tree1</th>
       <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.</p></td>
+or lists of such trees to undergo pairwise comparison.  Where implemented,
+<code>tree2 = NULL</code> will compute distances between each pair of trees in the list
+<code>tree1</code> using a fast algorithm based on Day (1985).</p></td>
     </tr>
     <tr>
       <th>tree2</th>
       <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.</p></td>
+or lists of such trees to undergo pairwise comparison.  Where implemented,
+<code>tree2 = NULL</code> will compute distances between each pair of trees in the list
+<code>tree1</code> using a fast algorithm based on Day (1985).</p></td>
     </tr>
     <tr>
       <th>k</th>
       <td><p>An arbitrary exponent to which to raise the Jaccard index.
 Integer values greater than one are anticipated by Böcker <em>et al</em>.
 The Nye <em>et al</em>. metric uses <code>k = 1</code>.
-As k increases towards infinity, the metric converges to the Robinson-Foulds
+As k increases towards infinity, the metric converges to the Robinson–Foulds
 metric.</p></td>
     </tr>
     <tr>
@@ -272,7 +279,7 @@ distances between each  pair of trees in <code>tree1</code> and <code>tree2</cod
 or <code>splits1</code> and <code>splits2</code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>In short, the Jaccard-Robinson-Foulds metric is a generalized Robinson-Foulds
+    <p>In short, the Jaccard–Robinson–Foulds metric is a generalized Robinson-Foulds
 metric: it finds the optimal matching that pairs each split in one tree with
 a similar split in the second.
 Matchings are scored according to the size of the largest split that is
@@ -305,13 +312,13 @@ present in a pair of trees with <em>n</em> leaves, by specifying
 &#8220;A novel algorithm and web-based tool for comparing two alternative phylogenetic trees.&#8221;
 <em>Bioinformatics</em>, <b>22</b>(1), 117--119.
 doi: <a href='https://doi.org/10.1093/bioinformatics/bti720'>10.1093/bioinformatics/bti720</a>
-.</p></li>
+, <a href='https://doi.org/10.1093/bioinformatics/bti720'>https://doi.org/10.1093/bioinformatics/bti720</a>.</p></li>
 <li><p>Böcker S, Canzar S, Klau GW (2013).
 &#8220;The generalized Robinson-Foulds metric.&#8221;
 In Darling A, Stoye J (eds.), <em>Algorithms in Bioinformatics. WABI 2013. Lecture Notes in Computer Science, vol 8126</em>, 156--169.
 Springer, Berlin, Heidelberg.
 doi: <a href='https://doi.org/10.1007/978-3-642-40453-5_13'>10.1007/978-3-642-40453-5_13</a>
-.</p></li>
+, <a href='https://doi.org/10.1007/978-3-642-40453-5_13'>https://doi.org/10.1007/978-3-642-40453-5_13</a>.</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
@@ -332,16 +339,16 @@ doi: <a href='https://doi.org/10.1007/978-3-642-40453-5_13'>10.1007/978-3-642-40
 (<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>2</span>)
-<span class='kw'>tree1</span> <span class='op'>&lt;-</span> <span class='kw'>ape</span>::<span class='fu'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span>(<span class='fl'>10</span>)
-<span class='kw'>tree2</span> <span class='op'>&lt;-</span> <span class='kw'>ape</span>::<span class='fu'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span>(<span class='fl'>10</span>)
-<span class='fu'>JaccardRobinsonFoulds</span>(<span class='kw'>tree1</span>, <span class='kw'>tree2</span>, k = <span class='fl'>2</span>, allowConflict = <span class='fl'>FALSE</span>)
-</div><div class='output co'>#&gt; [1] 12.0105</div><div class='input'><span class='fu'>JaccardRobinsonFoulds</span>(<span class='kw'>tree1</span>, <span class='kw'>tree2</span>, k = <span class='fl'>2</span>, allowConflict = <span class='fl'>TRUE</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>2</span><span class='op'>)</span>
+<span class='va'>tree1</span> <span class='op'>&lt;-</span> <span class='fu'>ape</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span><span class='op'>(</span><span class='fl'>10</span><span class='op'>)</span>
+<span class='va'>tree2</span> <span class='op'>&lt;-</span> <span class='fu'>ape</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span><span class='op'>(</span><span class='fl'>10</span><span class='op'>)</span>
+<span class='fu'>JaccardRobinsonFoulds</span><span class='op'>(</span><span class='va'>tree1</span>, <span class='va'>tree2</span>, k <span class='op'>=</span> <span class='fl'>2</span>, allowConflict <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 12.0105</div><div class='input'><span class='fu'>JaccardRobinsonFoulds</span><span class='op'>(</span><span class='va'>tree1</span>, <span class='va'>tree2</span>, k <span class='op'>=</span> <span class='fl'>2</span>, allowConflict <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 11.40222</div><div class='input'>
-<span class='kw'>JRF2</span> <span class='op'>&lt;-</span> <span class='fu'>function</span> (<span class='kw'>tree1</span>, <span class='kw'>tree2</span>, <span class='kw'>...</span>) 
-  <span class='fu'>JaccardRobinsonFoulds</span>(<span class='kw'>tree1</span>, <span class='kw'>tree2</span>, k = <span class='fl'>2</span>, allowConflict = <span class='fl'>FALSE</span>, <span class='kw'>...</span>)
+<span class='va'>JRF2</span> <span class='op'>&lt;-</span> <span class='kw'>function</span> <span class='op'>(</span><span class='va'>tree1</span>, <span class='va'>tree2</span>, <span class='va'>...</span><span class='op'>)</span> 
+  <span class='fu'>JaccardRobinsonFoulds</span><span class='op'>(</span><span class='va'>tree1</span>, <span class='va'>tree2</span>, k <span class='op'>=</span> <span class='fl'>2</span>, allowConflict <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
   
-<span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span>(<span class='kw'>JRF2</span>, <span class='kw'>tree1</span>, <span class='kw'>tree2</span>, matchZeros = <span class='fl'>FALSE</span>)
+<span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span><span class='op'>(</span><span class='va'>JRF2</span>, <span class='va'>tree1</span>, <span class='va'>tree2</span>, matchZeros <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 </div><div class='img'><img src='JaccardRobinsonFoulds-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

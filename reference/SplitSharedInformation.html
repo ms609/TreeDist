@@ -92,7 +92,7 @@ for definitions." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -100,7 +100,7 @@ for definitions." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -119,6 +119,9 @@ for definitions." />
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../articles/Using-TreeDist.html">Using TreeDist to calculate tree similarity</a>
+    </li>
+    <li>
+      <a href="../articles/treespace.html">Tree space analysis in TreeDist</a>
     </li>
     <li>
       <a href="../articles/using-distances.html">Contextualizing tree distances</a>
@@ -144,7 +147,7 @@ for definitions." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/ms609/TreeDist">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -180,13 +183,13 @@ See the
 for definitions.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>SplitSharedInformation</span>(<span class='kw'>n</span>, <span class='kw'>A1</span>, A2 = <span class='kw'>A1</span>)
+    <pre class="usage"><span class='fu'>SplitSharedInformation</span><span class='op'>(</span><span class='va'>n</span>, <span class='va'>A1</span>, A2 <span class='op'>=</span> <span class='va'>A1</span><span class='op'>)</span>
 
-<span class='fu'>SplitDifferentInformation</span>(<span class='kw'>n</span>, <span class='kw'>A1</span>, A2 = <span class='kw'>A1</span>)
+<span class='fu'>SplitDifferentInformation</span><span class='op'>(</span><span class='va'>n</span>, <span class='va'>A1</span>, A2 <span class='op'>=</span> <span class='va'>A1</span><span class='op'>)</span>
 
-<span class='fu'>TreesConsistentWithTwoSplits</span>(<span class='kw'>n</span>, <span class='kw'>A1</span>, A2 = <span class='kw'>A1</span>)
+<span class='fu'>TreesConsistentWithTwoSplits</span><span class='op'>(</span><span class='va'>n</span>, <span class='va'>A1</span>, A2 <span class='op'>=</span> <span class='va'>A1</span><span class='op'>)</span>
 
-<span class='fu'>LnTreesConsistentWithTwoSplits</span>(<span class='kw'>n</span>, <span class='kw'>A1</span>, A2 = <span class='kw'>A1</span>)</pre>
+<span class='fu'>LnTreesConsistentWithTwoSplits</span><span class='op'>(</span><span class='va'>n</span>, <span class='va'>A1</span>, A2 <span class='op'>=</span> <span class='va'>A1</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -233,7 +236,7 @@ splits.</p></li>
 &#8220;Comparing clusterings---an information based distance.&#8221;
 <em>Journal of Multivariate Analysis</em>, <b>98</b>(5), 873--895.
 doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11.013</a>
-.</p>
+, <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>https://doi.org/10.1016/j.jmva.2006.11.013</a>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other information functions: 
@@ -252,14 +255,14 @@ doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11
   <span class='co'># Let A1 = ABCD (four taxa), and A2 = ABC (three taxa).</span>
   <span class='co'># A1 and A2 overlap (both contain ABC).</span>
   
-  <span class='fu'>TreesConsistentWithTwoSplits</span>(n = <span class='fl'>8</span>, A1 = <span class='fl'>4</span>, A2 = <span class='fl'>3</span>)
-</div><div class='output co'>#&gt; [1] 45</div><div class='input'>  <span class='fu'>SplitSharedInformation</span>(n = <span class='fl'>8</span>, A1 = <span class='fl'>4</span>, A2 = <span class='fl'>3</span>)
-</div><div class='output co'>#&gt; [1] 2.722466</div><div class='input'>  <span class='fu'>SplitDifferentInformation</span>(n = <span class='fl'>8</span>, A1 = <span class='fl'>4</span>, A2 = <span class='fl'>3</span>)
+  <span class='fu'>TreesConsistentWithTwoSplits</span><span class='op'>(</span>n <span class='op'>=</span> <span class='fl'>8</span>, A1 <span class='op'>=</span> <span class='fl'>4</span>, A2 <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 45</div><div class='input'>  <span class='fu'>SplitSharedInformation</span><span class='op'>(</span>n <span class='op'>=</span> <span class='fl'>8</span>, A1 <span class='op'>=</span> <span class='fl'>4</span>, A2 <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 2.722466</div><div class='input'>  <span class='fu'>SplitDifferentInformation</span><span class='op'>(</span>n <span class='op'>=</span> <span class='fl'>8</span>, A1 <span class='op'>=</span> <span class='fl'>4</span>, A2 <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 5.129283</div><div class='input'>
   <span class='co'># If splits are identical, then their shared information is the same</span>
   <span class='co'># as the information of either split:</span>
-  <span class='fu'>SplitSharedInformation</span>(n = <span class='fl'>8</span>, A1 = <span class='fl'>3</span>, A2 = <span class='fl'>3</span>)
-</div><div class='output co'>#&gt; [1] 5.044394</div><div class='input'>  <span class='kw'>TreeTools</span>::<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/SplitInformation.html'>SplitInformation</a></span>(<span class='fl'>3</span>, <span class='fl'>5</span>)
+  <span class='fu'>SplitSharedInformation</span><span class='op'>(</span>n <span class='op'>=</span> <span class='fl'>8</span>, A1 <span class='op'>=</span> <span class='fl'>3</span>, A2 <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 5.044394</div><div class='input'>  <span class='fu'>TreeTools</span><span class='fu'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/SplitInformation.html'>SplitInformation</a></span><span class='op'>(</span><span class='fl'>3</span>, <span class='fl'>5</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 5.044394</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

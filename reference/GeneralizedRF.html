@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Generalized Robinson-Foulds distance — GeneralizedRF • TreeDist</title>
+<title>Generalized Robinson–Foulds distance — GeneralizedRF • TreeDist</title>
 
 
 <!-- jquery -->
@@ -45,8 +45,8 @@
 
 
 
-<meta property="og:title" content="Generalized Robinson-Foulds distance — GeneralizedRF" />
-<meta property="og:description" content="An internal function to calculate Generalized Robinson-Foulds distance from
+<meta property="og:title" content="Generalized Robinson–Foulds distance — GeneralizedRF" />
+<meta property="og:description" content="An internal function to calculate Generalized Robinson–Foulds distances from
 splits." />
 
 
@@ -89,7 +89,7 @@ splits." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -97,7 +97,7 @@ splits." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -116,6 +116,9 @@ splits." />
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../articles/Using-TreeDist.html">Using TreeDist to calculate tree similarity</a>
+    </li>
+    <li>
+      <a href="../articles/treespace.html">Tree space analysis in TreeDist</a>
     </li>
     <li>
       <a href="../articles/using-distances.html">Contextualizing tree distances</a>
@@ -141,7 +144,7 @@ splits." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/ms609/TreeDist">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -164,25 +167,25 @@ splits." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Generalized Robinson-Foulds distance</h1>
+    <h1>Generalized Robinson–Foulds distance</h1>
     <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance.R'><code>R/tree_distance.R</code></a></small>
     <div class="hidden name"><code>GeneralizedRF.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>An internal function to calculate Generalized Robinson-Foulds distance from
+    <p>An internal function to calculate Generalized Robinson–Foulds distances from
 splits.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>GeneralizedRF</span>(
-  <span class='kw'>splits1</span>,
-  <span class='kw'>splits2</span>,
-  <span class='kw'>nTip</span>,
-  <span class='kw'>PairScorer</span>,
-  <span class='kw'>maximize</span>,
-  <span class='kw'>reportMatching</span>,
-  <span class='kw'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>GeneralizedRF</span><span class='op'>(</span>
+  <span class='va'>splits1</span>,
+  <span class='va'>splits2</span>,
+  <span class='va'>nTip</span>,
+  <span class='va'>PairScorer</span>,
+  <span class='va'>maximize</span>,
+  <span class='va'>reportMatching</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -237,16 +240,16 @@ specified pair scorer. If <code>reportMatching = TRUE</code>, attribute also lis
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Note that no checks will be made to confirm that splits1 and splits2 contain
-the same leaves in the same order.  This is the responsibility of the calling
-function.</p>
+    <p>Note that no checks will be made to confirm that <code>splits1</code> and <code>splits2</code>
+contain the same leaves in the same order.
+This is the responsibility of the calling function.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Jonker R, Volgenant A (1987).
 &#8220;A shortest augmenting path algorithm for dense and sparse linear assignment problems.&#8221;
 <em>Computing</em>, <b>38</b>, 325--340.
 doi: <a href='https://doi.org/10.1007/BF02278710'>10.1007/BF02278710</a>
-.</p>
+, <a href='https://doi.org/10.1007/BF02278710'>https://doi.org/10.1007/BF02278710</a>.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p><a href='https://orcid.org/0000-0001-5660-1727'>Martin R. Smith</a>

@@ -90,7 +90,7 @@ Matching Split Distance
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -98,7 +98,7 @@ Matching Split Distance
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -117,6 +117,9 @@ Matching Split Distance
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../articles/Using-TreeDist.html">Using TreeDist to calculate tree similarity</a>
+    </li>
+    <li>
+      <a href="../articles/treespace.html">Tree space analysis in TreeDist</a>
     </li>
     <li>
       <a href="../articles/using-distances.html">Contextualizing tree distances</a>
@@ -142,7 +145,7 @@ Matching Split Distance
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/ms609/TreeDist">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -176,20 +179,20 @@ Matching Split Distance
 (Bogdanowicz and Giaro 2012; Lin <em>et al.</em> 2012) for unrooted binary trees.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>MatchingSplitDistance</span>(
-  <span class='kw'>tree1</span>,
-  tree2 = <span class='kw'>tree1</span>,
-  normalize = <span class='fl'>FALSE</span>,
-  reportMatching = <span class='fl'>FALSE</span>
-)
+    <pre class="usage"><span class='fu'>MatchingSplitDistance</span><span class='op'>(</span>
+  <span class='va'>tree1</span>,
+  tree2 <span class='op'>=</span> <span class='cn'>NULL</span>,
+  normalize <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  reportMatching <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span>
 
-<span class='fu'>MatchingSplitDistanceSplits</span>(
-  <span class='kw'>splits1</span>,
-  <span class='kw'>splits2</span>,
-  nTip = <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span>(<span class='kw'>splits1</span>, <span class='st'>"nTip"</span>),
-  normalize = <span class='fl'>TRUE</span>,
-  reportMatching = <span class='fl'>FALSE</span>
-)</pre>
+<span class='fu'>MatchingSplitDistanceSplits</span><span class='op'>(</span>
+  <span class='va'>splits1</span>,
+  <span class='va'>splits2</span>,
+  nTip <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span><span class='op'>(</span><span class='va'>splits1</span>, <span class='st'>"nTip"</span><span class='op'>)</span>,
+  normalize <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  reportMatching <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -197,12 +200,16 @@ Matching Split Distance
     <tr>
       <th>tree1</th>
       <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.</p></td>
+or lists of such trees to undergo pairwise comparison.  Where implemented,
+<code>tree2 = NULL</code> will compute distances between each pair of trees in the list
+<code>tree1</code> using a fast algorithm based on Day (1985).</p></td>
     </tr>
     <tr>
       <th>tree2</th>
       <td><p>Trees of class <code>phylo</code>, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.</p></td>
+or lists of such trees to undergo pairwise comparison.  Where implemented,
+<code>tree2 = NULL</code> will compute distances between each pair of trees in the list
+<code>tree1</code> using a fast algorithm based on Day (1985).</p></td>
     </tr>
     <tr>
       <th>normalize</th>
@@ -261,12 +268,12 @@ so that it can be implemented.</p>
 &#8220;Matching split distance for unrooted binary phylogenetic trees.&#8221;
 <em>IEEE/ACM Transactions on Computational Biology and Bioinformatics</em>, <b>9</b>(1), 150--160.
 doi: <a href='https://doi.org/10.1109/TCBB.2011.48'>10.1109/TCBB.2011.48</a>
-.</p>
+, <a href='https://doi.org/10.1109/TCBB.2011.48'>https://doi.org/10.1109/TCBB.2011.48</a>.</p>
 <p>Lin Y, Rajan V, Moret BME (2012).
 &#8220;A metric for phylogenetic trees based on matching.&#8221;
 <em>IEEE/ACM Transactions on Computational Biology and Bioinformatics</em>, <b>4</b>(9), 1014--1022.
 doi: <a href='https://doi.org/10.1109/TCBB.2011.157'>10.1109/TCBB.2011.157</a>
-.</p>
+, <a href='https://doi.org/10.1109/TCBB.2011.157'>https://doi.org/10.1109/TCBB.2011.157</a>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other tree distances: 
@@ -285,15 +292,15 @@ doi: <a href='https://doi.org/10.1109/TCBB.2011.157'>10.1109/TCBB.2011.157</a>
 (<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>MatchingSplitDistance</span>(<span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>8</span>, <span class='fl'>5</span>), <span class='kw'>ape</span>::<span class='kw'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span>), normalize = <span class='fl'>16</span>)
+    <pre class="examples"><div class='input'><span class='fu'>MatchingSplitDistance</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>8</span>, <span class='fl'>5</span><span class='op'>)</span>, <span class='fu'>ape</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span><span class='op'>)</span>, normalize <span class='op'>=</span> <span class='fl'>16</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;        1      2      3      4
 #&gt; 2 0.5625                     
 #&gt; 3 0.6875 0.8750              
 #&gt; 4 0.4375 0.7500 0.6250       
 #&gt; 5 0.5000 0.5625 0.8125 0.5625</div><div class='input'>
-<span class='fu'>MatchingSplitDistance</span>(<span class='kw'>TreeTools</span>::<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>6</span>),
-                      <span class='kw'>TreeTools</span>::<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>6</span>),
-                      reportMatching = <span class='fl'>TRUE</span>)
+<span class='fu'>MatchingSplitDistance</span><span class='op'>(</span><span class='fu'>TreeTools</span><span class='fu'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span><span class='op'>(</span><span class='fl'>6</span><span class='op'>)</span>,
+                      <span class='fu'>TreeTools</span><span class='fu'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span><span class='op'>(</span><span class='fl'>6</span><span class='op'>)</span>,
+                      reportMatching <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 2
 #&gt; attr(,"matching")
 #&gt; [1] 2 1 3
@@ -306,8 +313,8 @@ doi: <a href='https://doi.org/10.1109/TCBB.2011.157'>10.1109/TCBB.2011.157</a>
 #&gt; [1] "t1 t2 t3 | t4 t5 t6 =&gt; t4 t5 t6 | t1 t2 t3"
 #&gt; [2] "t1 t2 | t3 t4 t5 t6 =&gt; t3 t4 t5 t6 | t1 t2"
 #&gt; [3] "t4 t5 | t1 t2 t3 t6 =&gt; t5 t6 | t1 t2 t3 t4"</div><div class='input'>
-<span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span>(<span class='kw'>MatchingSplitDistance</span>, <span class='kw'>TreeTools</span>::<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span>(<span class='fl'>6</span>),
-                  <span class='kw'>TreeTools</span>::<span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span>(<span class='fl'>6</span>))
+<span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span><span class='op'>(</span><span class='va'>MatchingSplitDistance</span>, <span class='fu'>TreeTools</span><span class='fu'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span><span class='op'>(</span><span class='fl'>6</span><span class='op'>)</span>,
+                  <span class='fu'>TreeTools</span><span class='fu'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span><span class='op'>(</span><span class='fl'>6</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='img'><img src='MatchingSplitDistance-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

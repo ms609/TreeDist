@@ -89,7 +89,7 @@ Linear Sum Assignment Problem." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -97,7 +97,7 @@ Linear Sum Assignment Problem." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -116,6 +116,9 @@ Linear Sum Assignment Problem." />
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../articles/Using-TreeDist.html">Using TreeDist to calculate tree similarity</a>
+    </li>
+    <li>
+      <a href="../articles/treespace.html">Tree space analysis in TreeDist</a>
     </li>
     <li>
       <a href="../articles/using-distances.html">Contextualizing tree distances</a>
@@ -141,7 +144,7 @@ Linear Sum Assignment Problem." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/ms609/TreeDist">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -174,7 +177,7 @@ Linear Sum Assignment Problem." />
 <a href='http://www.assignmentproblems.com/doc/LSAPIntroduction.pdf'>Linear Sum Assignment Problem</a>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>LAPJV</span>(<span class='kw'>x</span>)</pre>
+    <pre class="usage"><span class='fu'>LAPJV</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -214,12 +217,12 @@ and I'll prioritize development.</p>
 &#8220;A shortest augmenting path algorithm for dense and sparse linear assignment problems.&#8221;
 <em>Computing</em>, <b>38</b>, 325--340.
 doi: <a href='https://doi.org/10.1007/BF02278710'>10.1007/BF02278710</a>
-.</p>
+, <a href='https://doi.org/10.1007/BF02278710'>https://doi.org/10.1007/BF02278710</a>.</p>
 <p>Munkres J (1957).
 &#8220;Algorithms for the assignment and transportation problems.&#8221;
 <em>Journal of the Society for Industrial and Applied Mathematics</em>, <b>5</b>(1), 32--38.
 doi: <a href='https://doi.org/10.1137/0105003'>10.1137/0105003</a>
-.</p>
+, <a href='https://doi.org/10.1137/0105003'>https://doi.org/10.1137/0105003</a>.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p><a href='https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/LAPJV/lap.cpp'>C++ code</a>
@@ -228,12 +231,12 @@ with contributions from Yong Yang <a href='mailto:yongyanglink@gmail.com'>yongya
 <a href='https://uk.mathworks.com/matlabcentral/profile/authors/69713-yi-cao'>Yi Cao</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>problem</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>7</span>, <span class='fl'>9</span>, <span class='fl'>8</span>, <span class='fl'>9</span>,
+    <pre class="examples"><div class='input'><span class='va'>problem</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>7</span>, <span class='fl'>9</span>, <span class='fl'>8</span>, <span class='fl'>9</span>,
                     <span class='fl'>2</span>, <span class='fl'>8</span>, <span class='fl'>5</span>, <span class='fl'>7</span>,
                     <span class='fl'>1</span>, <span class='fl'>6</span>, <span class='fl'>6</span>, <span class='fl'>9</span>,
-                    <span class='fl'>3</span>, <span class='fl'>6</span>, <span class='fl'>2</span>, <span class='fl'>2</span>), <span class='fl'>4</span>, <span class='fl'>4</span>, byrow=<span class='fl'>TRUE</span>)
+                    <span class='fl'>3</span>, <span class='fl'>6</span>, <span class='fl'>2</span>, <span class='fl'>2</span><span class='op'>)</span>, <span class='fl'>4</span>, <span class='fl'>4</span>, byrow<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 
-<span class='fu'>LAPJV</span>(<span class='kw'>problem</span>)
+<span class='fu'>LAPJV</span><span class='op'>(</span><span class='va'>problem</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; $score
 #&gt; [1] 17
 #&gt; 

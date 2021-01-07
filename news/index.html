@@ -87,7 +87,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -95,7 +95,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -114,6 +114,9 @@
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../articles/Using-TreeDist.html">Using TreeDist to calculate tree similarity</a>
+    </li>
+    <li>
+      <a href="../articles/treespace.html">Tree space analysis in TreeDist</a>
     </li>
     <li>
       <a href="../articles/using-distances.html">Contextualizing tree distances</a>
@@ -139,7 +142,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/ms609/TreeDist">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -166,17 +169,31 @@
       <small>Source: <a href='https://github.com/ms609/TreeDist/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="treedist-1-2-1" class="section level1">
+    <div id="treedist-200" class="section level1">
+<h1 class="page-header" data-toc-text="2.0.0">
+<a href="#treedist-200" class="anchor"></a>TreeDist 2.0.0<small> Unreleased </small>
+</h1>
+<ul>
+<li><p><code><a href="../reference/Project.html">Project()</a></code> launches ‘shiny’ app for projection and analysis of tree space.</p></li>
+<li><p><code><a href="../reference/ProjectionQuality.html">ProjectionQuality()</a></code> calculates trustworthiness and continuity of tree space projections.</p></li>
+<li><p>Faster calculation of Robinson–Foulds distance (using algorithm of Day (1985)) and clustering information distance.</p></li>
+<li><p>New class <code>ClusterTable</code> to allow faster distance computation with Day (1985) algorithm.</p></li>
+<li><p>Improve error messages in <code>CalculateTreeDist()</code>.</p></li>
+<li><p>Improvements to vignettes.</p></li>
+<li><p>Use package ‘vdiffr’ conditionally.</p></li>
+</ul>
+</div>
+    <div id="treedist-121" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.1">
-<a href="#treedist-1-2-1" class="anchor"></a>TreeDist 1.2.1<small> Unreleased </small>
+<a href="#treedist-121" class="anchor"></a>TreeDist 1.2.1<small> 2020-09-17 </small>
 </h1>
 <ul>
 <li>Import RdMacros package ‘RdPack’.</li>
 </ul>
 </div>
-    <div id="treedist-1-2-0" class="section level1">
+    <div id="treedist-120" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.0">
-<a href="#treedist-1-2-0" class="anchor"></a>TreeDist 1.2.0<small> 2020-08-28 </small>
+<a href="#treedist-120" class="anchor"></a>TreeDist 1.2.0<small> 2020-08-28 </small>
 </h1>
 <ul>
 <li><p><code><a href="../reference/TreeDistance.html">TreeDistance()</a></code> and related functions now return a <code>dist</code> object when computing all distances between all pairs of trees in a list.</p></li>
@@ -186,17 +203,17 @@
 <li><p>Reduce precision of LAPJV so rounding errors do not result in interminable run times.</p></li>
 </ul>
 </div>
-    <div id="treedist-1-1-1" class="section level1">
+    <div id="treedist-111" class="section level1">
 <h1 class="page-header" data-toc-text="1.1.1">
-<a href="#treedist-1-1-1" class="anchor"></a>TreeDist 1.1.1<small> 2020-07-10 </small>
+<a href="#treedist-111" class="anchor"></a>TreeDist 1.1.1<small> 2020-07-10 </small>
 </h1>
 <ul>
 <li>Fix range errors when calculating tree distances.</li>
 </ul>
 </div>
-    <div id="treedist-1-1-0" class="section level1">
+    <div id="treedist-110" class="section level1">
 <h1 class="page-header" data-toc-text="1.1.0">
-<a href="#treedist-1-1-0" class="anchor"></a>TreeDist 1.1.0<small> Unreleased </small>
+<a href="#treedist-110" class="anchor"></a>TreeDist 1.1.0<small> Unreleased </small>
 </h1>
 <ul>
 <li><p>Improvements to <code><a href="../reference/NNIDist.html">NNIDist()</a></code> in light of Fack <em>et al.</em> (2002).</p></li>
@@ -207,9 +224,9 @@
 <li><p>Fix memory-handling bug in <code>lapjv()</code>.</p></li>
 </ul>
 </div>
-    <div id="treedist-1-0-0" class="section level1">
+    <div id="treedist-100" class="section level1">
 <h1 class="page-header" data-toc-text="1.0.0">
-<a href="#treedist-1-0-0" class="anchor"></a>TreeDist 1.0.0<small> 2020-06-30 </small>
+<a href="#treedist-100" class="anchor"></a>TreeDist 1.0.0<small> 2020-06-30 </small>
 </h1>
 <ul>
 <li>Initial release, building on some draft functions included in ‘<a href="https://ms609.github.io/TreeSearch/">TreeSearch</a>’ 0.3.2.9005.</li>

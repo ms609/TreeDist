@@ -90,7 +90,7 @@ Probabilities equalling zero will be ignored." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
       </span>
     </div>
 
@@ -98,7 +98,7 @@ Probabilities equalling zero will be ignored." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -117,6 +117,9 @@ Probabilities equalling zero will be ignored." />
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="../articles/Using-TreeDist.html">Using TreeDist to calculate tree similarity</a>
+    </li>
+    <li>
+      <a href="../articles/treespace.html">Tree space analysis in TreeDist</a>
     </li>
     <li>
       <a href="../articles/using-distances.html">Contextualizing tree distances</a>
@@ -142,7 +145,7 @@ Probabilities equalling zero will be ignored." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/ms609/TreeDist">
-    <span class="fa fa-github fa-lg"></span>
+    <span class="fas fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -176,7 +179,7 @@ Probabilities should sum to one.
 Probabilities equalling zero will be ignored.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>Entropy</span>(<span class='kw'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>Entropy</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -197,8 +200,8 @@ in bits.</p>
 (<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>Entropy</span>(<span class='fl'>1</span><span class='op'>/</span><span class='fl'>2</span>, <span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>/</span><span class='fl'>2</span>) <span class='co'># = 1</span>
-</div><div class='output co'>#&gt; [1] 1</div><div class='input'><span class='fu'>Entropy</span>(<span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span><span class='op'>/</span><span class='fl'>4</span>, <span class='fl'>4</span>)) <span class='co'># = 2</span>
+    <pre class="examples"><div class='input'><span class='fu'>Entropy</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>/</span><span class='fl'>2</span>, <span class='fl'>0</span>, <span class='fl'>1</span><span class='op'>/</span><span class='fl'>2</span><span class='op'>)</span> <span class='co'># = 1</span>
+</div><div class='output co'>#&gt; [1] 1</div><div class='input'><span class='fu'>Entropy</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>/</span><span class='fl'>4</span>, <span class='fl'>4</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># = 2</span>
 </div><div class='output co'>#&gt; [1] 2</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
