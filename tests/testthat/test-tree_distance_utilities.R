@@ -15,6 +15,11 @@ test_that('Tree normalization works', {
                              InfoInTree = I, Combine = pmax))
 })
 
+test_that("CalculateTreeDistance() errs appropriately", {
+  expect_error(CalculateTreeDistance(RobinsonFouldsSplits, 'Not a tree'))
+  expect_error(CalculateTreeDistance(RobinsonFouldsSplits, 'Not a tree', BalancedTree(8)))
+  expect_error(CalculateTreeDistance(RobinsonFouldsSplits, BalancedTree(8), 'Not a tree'))
+})
 
 test_that('CalculateTreeDistance() handles splits appropriately', {
   set.seed(101)
