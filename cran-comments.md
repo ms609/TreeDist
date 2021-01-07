@@ -16,7 +16,14 @@
 There were no ERRORs or WARNINGs.
 
 There were two NOTEs:
-> Maintainer: 'Martin R. Smith <martin.smith@durham.ac.uk>'
+> Maintainer: 'Martin R. Smith <martin.smith.durham@gmail.com>'
+> 
+> New maintainer:
+>   Martin R. Smith <martin.smith.durham@gmail.com>
+> Old maintainer(s):
+>   Martin R. Smith <martin.smith@durham.ac.uk>
+
+I have changed my e-mail address to a more reliable service provider.
 
 > Suggests or Enhances not in mainstream repositories:
 >   TreeDistData
