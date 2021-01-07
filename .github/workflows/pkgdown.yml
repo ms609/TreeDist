@@ -18,11 +18,9 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@master
 
-      - uses: r-lib/actions/setup-tinytex@v1
-
       - name: Install X11 dependencies on MacOS
         run: |
-          brew cask install xquartz cairo
+          brew cask install cairo
 
       - name: Query dependencies
         run: |
