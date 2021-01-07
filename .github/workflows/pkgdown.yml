@@ -20,6 +20,10 @@ jobs:
 
       - uses: r-lib/actions/setup-tinytex@v1
 
+      - name: Install X11 dependencies on MacOS
+        run: |
+          brew cask install xquartz
+
       - name: Query dependencies
         run: |
           install.packages('remotes')
