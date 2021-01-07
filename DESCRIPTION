@@ -3,7 +3,7 @@ Type: Package
 Title: Distances Between Phylogenetic Trees
 Version: 1.2.1.9201
 Authors@R: c(person("Martin R.", 'Smith',
-                  email="martin.smith@durham.ac.uk", 
+                  email="martin.smith.durham@gmail.com", 
                   role=c("aut", "cre", "cph", "prg"), 
                   comment=c(ORCID = "0000-0001-5660-1727")),
              person("Roy", "Jonker", email="roy_jonker@magiclogic.com",
@@ -67,8 +67,6 @@ Suggests:
 LinkingTo: 
   Rcpp,
   TreeTools
-Remotes:
-  ms609/TreeTools
 RdMacros: Rdpack
 VignetteBuilder: knitr
 SystemRequirements: C++14

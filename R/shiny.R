@@ -1,6 +1,7 @@
-#' Graphical user interface for tree space analysis
+#' Graphical user interface for projecting distances and analysing
+#' tree space
 #' 
-#' `TreeSpace()` launches a 'Shiny' application for the visualization and
+#' `Project()` launches a 'Shiny' application for the visualization and
 #' evaluation of tree spaces.
 #' 
 #' # Input tab
@@ -93,7 +94,7 @@
 #' A list of references employed when constructing the tree space is populated
 #' according to the methods used; it would be appropriate to cite and briefly 
 #' discuss these studies in any publication using figures generated using
-#' this application.  The 'TreeSpace' application itself can be cited using 
+#' this application.  The application itself can be cited using 
 #' Smith (2020, 2021) below.
 #'  
 #' 
@@ -110,7 +111,7 @@
 #' @template MRS
 #' @family tree space functions
 #' @export
-TreeSpace <- function() {
+Project <- function() {
   appDir <- system.file("treespace", package = "TreeDist")
   if (appDir == "") {
     stop("Could not find example directory. Try re-installing 'TreeDist'.", call. = FALSE)

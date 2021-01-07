@@ -6,7 +6,6 @@
 release_questions <- function() {
   c(
     "Is the code free of #TODOs?",
-    "TreeSpace vignette: Install CRAN, not GitHub",
     "Have you updated README.md, inst/REFERENCES.bib & inst/CITATION with a citation to the published studies?"
     )
 }

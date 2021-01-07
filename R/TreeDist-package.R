@@ -76,12 +76,12 @@
 #' 
 #' # Tree space analysis
 #' 
-#' Construct tree spaces and readily visualize projected landscapes, avoiding
+#' Project tree spaces and readily visualize projected landscapes, avoiding
 #' common analytical pitfalls (Smith, forthcoming),
 #' using the inbuilt graphical user interface:
 #'   
 #'   ```r
-#' TreeDist::TreeSpace()
+#' TreeDist::Project()
 #' ```
 #' 
 #' Serious analysts should consult the

@@ -1,14 +1,15 @@
 ## Test environments
-* Local Windows 10 installation, R 4.0.2
-* Windows 10, with `check_win_devel()`, R devel
-* Ubuntu 16.04.6 LTS, R 3.6.0, release and devel, via
-  [Travis CI](https://travis-ci.org/ms609/TreeDist)
-* Mac OS X 10.13.6, R release, via Travis
-* R-hub, with `check_for_cran()` and `check_with_sanitizers()`.
-
-`check_with_sanitizers()` fails due to an error in the required package 
-'phangorn', and I'm not aware of another way to verify that all ASAN issues
-are fixed (as a Windows user).
+* Microsoft Windows:
+  * Local Windows 10 installation, R 4.0.3
+  * windows-latest: Microsoft Windows Server 2019, Windows 10.0.17763, 
+    R release, via Github Actions
+  * win_devel: with `check_win_devel()`, R devel
+  
+* Linux:
+  * Ubuntu 20.04.1 LTS, R 3.6.0, release and devel, via Github Actions
+  * via R-hub, with `rhub::check_for_cran()` and `rhub::check_with_sanitizers()`.
+  
+* Mac OS X 10.15.7, R release, via Github actions
 
 
 ## R CMD check results
