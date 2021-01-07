@@ -22,7 +22,7 @@ jobs:
 
       - name: Install X11 dependencies on MacOS
         run: |
-          brew cask install xquartz
+          brew cask install xquartz cairo
 
       - name: Query dependencies
         run: |
