@@ -82,9 +82,9 @@ the package '\href{https://ms609.github.io/TBRDist/index.html}{TBRDist}'.
 }
 }
 \section{Tree space analysis}{
-Construct tree spaces and readily visualize projected landscapes, avoiding
+Project tree spaces and readily visualize projected landscapes, avoiding
 common analytical pitfalls (Smith, forthcoming),
-using the inbuilt graphical user interface:\if{html}{\out{<div class="r">}}\preformatted{TreeDist::TreeSpace()
+using the inbuilt graphical user interface:\if{html}{\out{<div class="r">}}\preformatted{TreeDist::Project()
 }\if{html}{\out{</div>}}
 
 Serious analysts should consult the
@@ -129,7 +129,7 @@ Geodesic distance
 }
 }
 \author{
-\strong{Maintainer}: Martin R. Smith \email{martin.smith@durham.ac.uk} (\href{https://orcid.org/0000-0001-5660-1727}{ORCID}) [copyright holder, programmer]
+\strong{Maintainer}: Martin R. Smith \email{martin.smith.durham@gmail.com} (\href{https://orcid.org/0000-0001-5660-1727}{ORCID}) [copyright holder, programmer]
 
 Other contributors:
 \itemize{

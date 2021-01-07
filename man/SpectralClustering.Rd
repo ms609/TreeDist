@@ -26,7 +26,7 @@ SpectralClustering(distances)
 \seealso{
 Other tree space functions: 
 \code{\link{ProjectionQuality}()},
-\code{\link{TreeSpace}()},
+\code{\link{Project}()},
 \code{\link{median.multiPhylo}()}
 }
 \author{

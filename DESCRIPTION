@@ -67,8 +67,6 @@ Suggests:
 LinkingTo: 
   Rcpp,
   TreeTools
-Remotes:
-  ms609/TreeTools
 RdMacros: Rdpack
 VignetteBuilder: knitr
 SystemRequirements: C++14
