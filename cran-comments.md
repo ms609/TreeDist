@@ -2,7 +2,7 @@
 * Microsoft Windows:
   * Local Windows 10 installation, R 4.0.3
   * windows-latest: Microsoft Windows Server 2019, Windows 10.0.17763, 
-    R release, via Github Actions
+    R release, via [Github Actions](https://github.com/ms609/TreeDist/actions)
   * win_devel: with `check_win_devel()`, R devel
   
 * Linux:
@@ -18,7 +18,6 @@ There were no ERRORs or WARNINGs.
 There were two NOTEs:
 > Maintainer: 'Martin R. Smith <martin.smith@durham.ac.uk>'
 > 
-
 > Suggests or Enhances not in mainstream repositories:
 >   TreeDistData
 > Availability using Additional_repositories specification:
