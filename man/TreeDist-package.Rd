@@ -14,14 +14,14 @@ distance-based tree spaces.
 }
 \details{
 'TreeDist' primarily employs metrics in the category of
-'generalized Robinson-Foulds distances': they are based on comparing splits
+'generalized Robinson–Foulds distances': they are based on comparing splits
 (bipartitions) between trees, and thus reflect the relationship data within
 trees, with no reference to branch lengths.
 Detailed documentation and usage instructions are
 \href{https://ms609.github.io/TreeDist/}{available online} or in the vignettes.
 \subsection{Generalized RF distances}{
 
-The \href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html}{Robinson-Foulds distance}
+The \href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html}{Robinson–Foulds distance}
 simply tallies the number of non-trivial splits (sometimes inaccurately
 termed clades, nodes or edges) that occur in both trees -- any splits that are
 not perfectly identical contributes one point to the distance score of zero,
@@ -54,7 +54,7 @@ distance.)
 \item Nye \emph{et al.} (2006) score matchings according to the size of the largest
 split that is consistent with both of them, normalized against
 the Jaccard index.  This approach is extended by Böcker \emph{et al}. (2013)
-with the Jaccard-Robinson-Foulds metric (function
+with the Jaccard–Robinson–Foulds metric (function
 \href{https://ms609.github.io/TreeDist/reference/JaccardRobinsonFoulds.html}{\code{JaccardRobinsonFoulds()}}).
 }
 \item \href{https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html}{\code{MatchingSplitDistance()}}
@@ -114,11 +114,11 @@ Other R packages implementing tree distance functions include:
 \item \href{http://ape-package.ird.fr/}{ape}:
 \itemize{
 \item \code{cophenetic.phylo()}: Cophenetic distance
-\item \code{dist.topo()}: Path (topological) distance, Robinson-Foulds distance.
+\item \code{dist.topo()}: Path (topological) distance, Robinson–Foulds distance.
 }
 \item \href{https://cran.r-project.org/package=phangorn}{phangorn}
 \itemize{
-\item \code{treedist()}: Path, Robinson-Foulds and approximate SPR distances.
+\item \code{treedist()}: Path, Robinson–Foulds and approximate SPR distances.
 }
 \item \href{https://ms609.github.io/Quartet/}{Quartet}: Triplet and Quartet distances,
 using the tqDist algorithm.

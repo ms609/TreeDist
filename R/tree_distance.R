@@ -1,6 +1,6 @@
-#' Generalized Robinson-Foulds distance
+#' Generalized Robinson–Foulds distance
 #' 
-#' An internal function to calculate Generalized Robinson-Foulds distances from
+#' An internal function to calculate Generalized Robinson–Foulds distances from
 #' splits.
 #'
 #' Note that no checks will be made to confirm that `splits1` and `splits2`

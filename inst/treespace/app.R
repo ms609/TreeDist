@@ -160,7 +160,7 @@ Sand2014 <- Reference(
     year = 2014
 )
 Smith2020 <- Reference('Smith, M.R.', 2020,
-  'Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees',
+  'Information theoretic Generalized Robinson–Foulds metrics for comparing phylogenetic trees',
   'Bioinformatics', pages = 'In production', doi = "10.1093/bioinformatics/btaa614")
 Smith2021 <- Reference('*Smith, M.R.', 2021,
   'The importance of methodology when analyzing landscapes of phylogenetic trees',
