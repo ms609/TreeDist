@@ -61,13 +61,13 @@ TreeDistPlot <- function (tr, title = NULL, bold = NULL, leaveRoom = FALSE,
 #' Visualise a matching
 #' 
 #' Depict the splits that are matched between two trees using a specified 
-#' [Generalized Robinson–Foulds](https://ms609.github.io/TreeDist/articles/Generalized-RF.html)
+#' [Generalized Robinson\ifelse{html}{&#ndash;}{--}Foulds](https://ms609.github.io/TreeDist/articles/Generalized-RF.html)
 #' similarity measure.
 #' 
-#' Note that when visualizing a Robinson–Foulds distance (using 
+#' Note that when visualizing a Robinson\ifelse{html}{&#ndash;}{--}Foulds distance (using 
 #' `Func = RobinsonFouldsMatching`), matched splits are assigned a _similarity_
 #' score of 1, which is deducted from the total number of splits to calculate 
-#' the Robinson–Foulds _distance_.  Unmatched splits thus contribute one to 
+#' the Robinson\ifelse{html}{&#ndash;}{--}Foulds _distance_.  Unmatched splits thus contribute one to 
 #' total tree distance.
 #' 
 #' @param Func Function used to construct tree similarity.

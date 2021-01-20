@@ -1,9 +1,11 @@
-#' Robinson–Foulds distances, with adjustments for phylogenetic information
+#' Robinson\ifelse{html}{&#ndash;}{--}Foulds distances, with adjustments for phylogenetic information
 #' content
 #' 
-#' Calculate the Robinson–Foulds distance, or the equivalent similarity 
-#' measure, with options to (i) annotate matched splits; (ii) weight splits
-#' according to their phylogenetic information content (Smith 2020).
+#' Calculate the Robinson\ifelse{html}{&#ndash;}{--}Foulds distance, or
+#' the equivalent similarity measure, with options to
+#' (i) annotate matched splits; 
+#' (ii) weight splits according to their phylogenetic information content 
+#' (Smith 2020).
 #' 
 #' Note that if `reportMatching = TRUE`, the `pairScores` attribute returns
 #' a logical matrix specifying whether each pair of splits is identical.

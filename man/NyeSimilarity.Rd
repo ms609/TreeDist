@@ -79,7 +79,7 @@ or \code{splits1} and \code{splits2}.
 }
 \description{
 \code{NyeSimilarity()} and \code{NyeSplitSimilarity()} implement the
-\href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson–Foulds}
+\href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson\ifelse{html}{&#ndash;}{--}Foulds}
 tree comparison metric of Nye \emph{et al}. (2006).
 In short, this finds the optimal matching that pairs each branch from
 one tree with a branch in the second, where matchings are scored according to

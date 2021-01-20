@@ -3,7 +3,7 @@
 \encoding{UTF-8}
 \name{GeneralizedRF}
 \alias{GeneralizedRF}
-\title{Generalized Robinson–Foulds distance}
+\title{Generalized Robinson\ifelse{html}{&#ndash;}{--}Foulds distance}
 \usage{
 GeneralizedRF(
   splits1,
@@ -51,7 +51,8 @@ specified pair scorer. If \code{reportMatching = TRUE}, attribute also list:
 }
 }
 \description{
-An internal function to calculate Generalized Robinson–Foulds distances from
+An internal function to calculate Generalized
+Robinson\ifelse{html}{&#ndash;}{--}Foulds distances from
 splits.
 }
 \details{
