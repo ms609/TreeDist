@@ -43,14 +43,14 @@ similarity of the associated splits (\code{FALSE}).}
 }
 \description{
 Depict the splits that are matched between two trees using a specified
-\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html}{Generalized Robinson–Foulds}
+\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html}{Generalized Robinson-Foulds}
 similarity measure.
 }
 \details{
-Note that when visualizing a Robinson–Foulds distance (using
+Note that when visualizing a Robinson-Foulds distance (using
 \code{Func = RobinsonFouldsMatching}), matched splits are assigned a \emph{similarity}
 score of 1, which is deducted from the total number of splits to calculate
-the Robinson–Foulds \emph{distance}.  Unmatched splits thus contribute one to
+the Robinson-Foulds \emph{distance}.  Unmatched splits thus contribute one to
 total tree distance.
 }
 \examples{

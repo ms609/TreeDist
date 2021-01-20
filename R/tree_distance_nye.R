@@ -1,7 +1,7 @@
 #' Nye _et al_. (2006) tree comparison
 #' 
 #' `NyeSimilarity()` and `NyeSplitSimilarity()` implement the 
-#' [Generalized Robinson–Foulds](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances)
+#' [Generalized Robinson-Foulds](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances)
 #' tree comparison metric of Nye _et al_. (2006).
 #' In short, this finds the optimal matching that pairs each branch from
 #' one tree with a branch in the second, where matchings are scored according to
@@ -103,14 +103,14 @@ NyeSplitSimilarity <- function (splits1, splits2,
                 reportMatching = reportMatching)
 }
 
-#' Jaccard–Robinson–Foulds metric
+#' Jaccard-Robinson-Foulds metric
 #' 
 #' Calculate the 
-#' [Jaccard–Robinson–Foulds metric](https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric)
+#' [Jaccard-Robinson-Foulds metric](https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric)
 #' (B&ouml;cker _et al_. 2013), a 
-#' [Generalized Robinson–Foulds metric](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances).
+#' [Generalized Robinson-Foulds metric](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances).
 #' 
-#' In short, the Jaccard–Robinson–Foulds metric is a generalized Robinson-Foulds
+#' In short, the Jaccard-Robinson-Foulds metric is a generalized Robinson-Foulds
 #' metric: it finds the optimal matching that pairs each split in one tree with
 #' a similar split in the second.
 #' Matchings are scored according to the size of the largest split that is 
@@ -132,7 +132,7 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' @param k An arbitrary exponent to which to raise the Jaccard index.
 #' Integer values greater than one are anticipated by B&ouml;cker _et al_.
 #' The Nye _et al_. metric uses `k = 1`.
-#' As k increases towards infinity, the metric converges to the Robinson–Foulds
+#' As k increases towards infinity, the metric converges to the Robinson-Foulds
 #' metric.
 #' @param allowConflict Logical specifying whether to allow conflicting splits
 #' to be paired. If `FALSE`, such pairings will be allocated a similarity
