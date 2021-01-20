@@ -28,7 +28,7 @@ There were two NOTEs:
 'TreeDistData' is too large to be submitted on CRAN.
 
 All calls to `data(package = 'TreeDistData')` are wrapped within 
-`if(require('TreeDistData')` to ensure that vignettes fail gracefully when
+`if(require('TreeDistData'))` to ensure that vignettes fail gracefully when
 'TreeDistData' is not installed.
 
 
