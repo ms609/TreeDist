@@ -18,9 +18,13 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@master
 
+      - name: Install gfortran dependencies on MacOS (for phangorn)
+        run: |
+          brew install gcc9
+
       - name: Install X11 dependencies on MacOS
         run: |
-          brew install cairo gfortran-9
+          brew install cairo
 
       - name: Query dependencies
         run: |
