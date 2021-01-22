@@ -1,3 +1,4 @@
+#include <memory> /* for unique_ptr, make_unique */
 #include <cmath>
 #include <Rcpp.h>
 #include "tree_distances.h"
