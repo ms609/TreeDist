@@ -1,13 +1,21 @@
+This release aims to fix errors identified by Prof. Ripley's post-submission
+checks.  I don't see any memory errors when using `rhub::check_with_valgrind()`
+or `rhub::check_with_sanitizers()`, though these builds fail to save 
+artefacts.
+
+
 ## Test environments
 * Microsoft Windows:
   * Local Windows 10 installation, R 4.0.3
   * windows-latest: Microsoft Windows Server 2019, Windows 10.0.17763, 
     R release, via [Github Actions](https://github.com/ms609/TreeDist/actions)
   * win_devel: with `check_win_devel()`, R devel
+  * won_oldrel: with `check_win_oldrelease()`.
   
 * Linux:
   * Ubuntu 20.04.1 LTS, R 3.6.0, release and devel, via Github Actions
-  * via R-hub, with `rhub::check_for_cran()` and `rhub::check_with_sanitizers()`.
+  * via R-hub, with `rhub::check_for_cran()`, `rhub::check_with_sanitizers()`
+    and  `rhub::check_with_valgrind()`.
   
 * Mac OS X 10.15.7, R release, via Github actions
 
