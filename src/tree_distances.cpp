@@ -529,13 +529,20 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     std::unique_ptr<int16[]> no_match = std::make_unique<int16[]>(b.n_splits);
     int16 match = 0;
     for (int16 bi = 0; bi != b.n_splits; bi++) {
-      if (!b_match[bi]) no_match[match++] = bi + 1;
+      if (!b_match[bi]) {
+        no_match[match++] = bi + 1;
+      }
     }
     
     match = 0;
     NumericVector final_matching(most_splits);
     for (int16 i = 0; i != most_splits; i++) {
-      final_matching[i] = a_match[i] ? a_match[i] : no_match[rowsol[match++]];
+      if (a_match[i]) {
+        final_matching[i] = a_match[i];
+      } else {
+        final_matching[i] = no_match[rowsol[match++]];
+      }
+      /* final_matching[i] = a_match[i] ? a_match[i] : no_match[rowsol[match++]]; */
     }
     
     delete[] rowsol;
