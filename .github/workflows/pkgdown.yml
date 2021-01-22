@@ -18,6 +18,10 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@master
 
+     - name: Find fortran
+       run: |
+         locate libgfortran.a
+
       - name: Install X11 dependencies on MacOS
         run: |
           brew install cairo
