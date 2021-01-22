@@ -110,11 +110,15 @@
 #' 
 #' @template MRS
 #' @family tree space functions
+#' 
+#' @importFrom shiny runApp
+#' @importFrom shinyjs useShinyjs
 #' @export
 Project <- function() {
   appDir <- system.file("treespace", package = "TreeDist")
   if (appDir == "") {
-    stop("Could not find example directory. Try re-installing 'TreeDist'.", call. = FALSE)
+    stop("Could not find example directory. Try re-installing 'TreeDist'.", 
+         call. = FALSE)
   }
   
   shiny::runApp(appDir, display.mode = "normal")
