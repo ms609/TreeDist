@@ -1,8 +1,9 @@
-# TreeDist 2.0.0.9000 (development)
+# TreeDist 2.0.1
+
+- Diagnose and fix memory leaks
 
 - Explicitly import shiny/shinyjs functions
-- Diagnose and fix memory leaks
-  - 9001: use Elvis operator
+
 
 # TreeDist 2.0.0
 

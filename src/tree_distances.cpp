@@ -492,7 +492,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   
   
   const int16 lap_dim = most_splits - exact_matches;
-  lap_col *rowsol = new lap_col[lap_dim];
+  lap_col *rowsol = new lap_col[lap_dim + 1]; /* TODO remove +1 */
   lap_row *colsol = new lap_row[lap_dim];
   cost *u = new cost[lap_dim], *v = new cost[lap_dim];
   
@@ -537,6 +537,8 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     match = 0;
     NumericVector final_matching(most_splits);
     for (int16 i = 0; i != most_splits; i++) {
+      if (match > lap_dim) throw std::length_error("Match miscount [>]. ");
+      if (match == lap_dim && !a_match[i]) throw std::length_error("Match miscount [==]. ");
       final_matching[i] = a_match[i] ?: no_match[rowsol[match++]];
     }
     
