@@ -18,10 +18,6 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@master
 
-      - name: Install gfortran dependencies on MacOS (for phangorn)
-        run: |
-          brew install gcc
-
       - name: Install X11 dependencies on MacOS
         run: |
           brew install cairo
@@ -42,6 +38,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          remotes::install_github("KlausVigo/phangorn")
           remotes::install_deps(dependencies = TRUE)
           install.packages("pkgdown", type = "binary")
         shell: Rscript {0}
