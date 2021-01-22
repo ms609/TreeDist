@@ -539,7 +539,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     for (int16 i = 0; i != most_splits; i++) {
       if (match > lap_dim) throw std::length_error("Match miscount [>]. ");
       if (match == lap_dim && !a_match[i]) throw std::length_error("Match miscount [==]. ");
-      final_matching[i] = a_match[i] ?: no_match[rowsol[match++]];
+      final_matching[i] = a_match[i] ? a_match[i] : no_match[rowsol[match++]];
     }
     
     delete[] rowsol;
