@@ -18,11 +18,11 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@master
 
-      - name: Locate fortran
+      - name: Locate fortran v8
         run: |
-          export LIBRARY_PATH=/usr/local/lib/gcc/8
-          # sudo find /usr -iname 'libgfortran*.a' | xargs shasum
-
+          brew remove gcc
+          brew install gcc@8
+        
       - name: Install X11 dependencies on MacOS
         run: |
           brew install cairo
