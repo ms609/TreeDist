@@ -20,7 +20,7 @@ jobs:
 
       - name: Install X11 dependencies on MacOS
         run: |
-          brew install cairo
+          brew install cairo gfortran-9
 
       - name: Query dependencies
         run: |
