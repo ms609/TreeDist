@@ -400,11 +400,11 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   const SplitList a(x), b(y);
-  const bool b_has_fewer_splits = (a.n_splits > b.n_splits);
+  const bool a_has_more_splits = (a.n_splits > b.n_splits);
   const int16
-    most_splits = b_has_fewer_splits ? a.n_splits : b.n_splits,
-    a_extra_splits = b_has_fewer_splits ? most_splits - b.n_splits : 0,
-    b_extra_splits = b_has_fewer_splits ? 0 : most_splits - a.n_splits,
+    most_splits = a_has_more_splits ? a.n_splits : b.n_splits,
+    a_extra_splits = a_has_more_splits ? most_splits - b.n_splits : 0,
+    b_extra_splits = a_has_more_splits ? 0 : most_splits - a.n_splits,
     last_bin = a.n_bins - 1,
     n_tips = nTip[0],
     unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0
