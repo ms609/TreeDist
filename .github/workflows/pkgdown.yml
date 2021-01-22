@@ -20,7 +20,7 @@ jobs:
 
       - name: Locate fortran
         run: |
-          LIBRARY_PATH=/usr/local/lib/gcc/8
+          export LIBRARY_PATH=/usr/local/lib/gcc/8
           # sudo find /usr -iname 'libgfortran*.a' | xargs shasum
 
       - name: Install X11 dependencies on MacOS
