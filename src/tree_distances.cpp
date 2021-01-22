@@ -640,10 +640,10 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   
   NumericVector final_matching (most_splits);
   
-  for (int16 i = 0; i != most_splits; i++) delete[] score[i];
+  for (int16 i = most_splits; i--; ) delete[] score[i];
   delete[] score;
   
-  for (int16 i = 0; i != most_splits; i++) {
+  for (int16 i = most_splits; i--; ) {
     final_matching[i] = rowsol[i] + 1;
   }
   
