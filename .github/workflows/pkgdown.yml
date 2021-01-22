@@ -18,14 +18,14 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@master
 
-      - name: Locate fortran v8
-        run: |
-          brew remove gcc
-          brew link gcc@8
-        
-      - name: Install X11 dependencies on MacOS
-        run: |
-          brew install cairo
+      # - name: Locate fortran v8
+      #   run: |
+      #     brew remove gcc
+      #     brew link gcc@8
+      #   
+      # - name: Install X11 dependencies on MacOS
+      #   run: |
+      #     brew install cairo
 
       - name: Query dependencies
         run: |
