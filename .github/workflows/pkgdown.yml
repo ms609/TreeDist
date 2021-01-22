@@ -20,6 +20,7 @@ jobs:
 
      - name: Find fortran
        run: |
+         sudo find /usr -iname 'libgfortran*.a' | xargs shasum
          locate libgfortran.a
 
       - name: Install X11 dependencies on MacOS
