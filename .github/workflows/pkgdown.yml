@@ -20,7 +20,7 @@ jobs:
 
       - name: Install gfortran dependencies on MacOS (for phangorn)
         run: |
-          brew install gcc9
+          brew install gcc
 
       - name: Install X11 dependencies on MacOS
         run: |
