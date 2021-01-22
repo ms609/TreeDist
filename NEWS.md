@@ -1,3 +1,7 @@
+# TreeDist 2.0.0.9000 (development)
+
+- Diagnose and fix memory leaks
+
 # TreeDist 2.0.0
 
 - `Project()` launches 'shiny' app for projection and analysis of tree space.
