@@ -37,7 +37,7 @@ jobs:
 
 
       - name: install valgrind
-        rum: sudo apt-get install valgrind
+        run: sudo apt-get install valgrind
 
       - name: Query dependencies
         run: |
