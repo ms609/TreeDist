@@ -53,7 +53,6 @@ jobs:
 
       - name: Install system dependencies
         run: |
-          eval sudo apt-get install valgrind
           while read -r cmd
           do
             eval sudo $cmd
@@ -76,5 +75,5 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@main
         with:
-          name: ${{ runner.os }}-rrelease-results
+          name: ${{ runner.os }}-rrelease-valgrind-results
           path: check
