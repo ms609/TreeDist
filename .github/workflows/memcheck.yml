@@ -16,7 +16,7 @@ jobs:
   mem-check:
     runs-on: ubuntu-20.04
 
-    name: valgrind, ${{ runner.os }}, R release
+    name: valgrind, ubuntu-20.04, R release
 
     strategy:
       fail-fast: false
