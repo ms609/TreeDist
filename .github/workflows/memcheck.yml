@@ -29,6 +29,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      
+      - name: Dir
+        run: dir
 
       - uses: r-lib/actions/setup-r@v1
         with:
