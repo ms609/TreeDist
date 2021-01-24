@@ -70,7 +70,8 @@ jobs:
         run: |
           cd ..
           R CMD build --no-manual --no-resave-data TreeDist
-          R -d "CMD check --use-valgrind --no-manual --as-cran TreeDist*.tar.gz"
+          R --use-valgrind --no-manual --as-cran CMD check TreeDist*.tar.gz
+# R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < TreeDist.Rcheck/TreeDist-Ex.R
         
       - name: Upload check results
         if: failure()
