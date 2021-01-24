@@ -68,7 +68,7 @@ jobs:
 
       - name: Valgrind
         run: |
-          R CMD check --with-valgrind --no-manual --as-cran TreeDist
+          R CMD check --use-valgrind --no-manual --as-cran TreeDist
           R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < TreeDist.Rcheck/TreeDist-Ex.R
 
       - name: Check
