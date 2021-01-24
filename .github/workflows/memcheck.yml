@@ -74,12 +74,6 @@ jobs:
           dir
           R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < TreeDist.Rcheck/TreeDist-Ex.R
           dir
-
-      - name: Check
-        env:
-          _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran", "--use-valgrind"), error_on = "warning", check_dir = "check")
-        shell: Rscript {0}
         
       - name: Upload check results
         if: failure()
