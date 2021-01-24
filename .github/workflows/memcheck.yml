@@ -35,7 +35,7 @@ jobs:
           r-version: release
 
       - name: Install valgrind
-        run: sudo apt-get install valgrind
+        run: sudo apt-get install valgrind texlive-latex-base
 
       - name: Query dependencies
         run: |
