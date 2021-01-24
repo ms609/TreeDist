@@ -29,14 +29,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      
-      - name: Dir
-        run: dir ../
 
       - uses: r-lib/actions/setup-r@v1
         with:
           r-version: release
-
 
       - name: Install valgrind
         run: sudo apt-get install valgrind
@@ -72,8 +68,14 @@ jobs:
       - name: Valgrind
         run: |
           cd ..
-          R CMD check --use-valgrind --no-manual --as-cran TreeDist
+          R CMD build --no-manual --no-resave-data TreeDist
+          dir
+          R CMD check --use-valgrind --no-manual --as-cran TreeDist_2.0.1.tar.gz
+          dir
+          R CMD check --use-valgrind --no-manual --as-cran TreeDist*.tar.gz
+          dir
           R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < TreeDist.Rcheck/TreeDist-Ex.R
+          dir
 
       - name: Check
         env:
