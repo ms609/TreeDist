@@ -70,8 +70,6 @@ jobs:
           cd ..
           R CMD build --no-manual --no-resave-data TreeDist
           dir
-          R CMD check --use-valgrind --no-manual --as-cran TreeDist_2.0.1.tar.gz
-          dir
           R CMD check --use-valgrind --no-manual --as-cran TreeDist*.tar.gz
           dir
           R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < TreeDist.Rcheck/TreeDist-Ex.R
