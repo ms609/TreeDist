@@ -24,8 +24,8 @@ release_questions <- function() {
 # build_manual() # PDF support for special characters
 #
 # devtools::check_win_devel(quiet = TRUE); rhub::check_for_cran()
-# rhub::check_with_valgrind() # runs the build and check on Linux, in valgrind 
-# to find memory leaks and pointer errors.
+# Check valgrind section of GitHub actions for memcheck errors
+# 
 # rhub::check_with_sanitizers() # runs all package package tests, examples and 
 # vignettes with Address Sanitizer and Undefined Behavior Sanitizer.
 #
