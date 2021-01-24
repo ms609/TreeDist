@@ -74,7 +74,7 @@ jobs:
           dir TreeDist
           dir TreeDist/tests
           R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < TreeDist/tests/testthat/test-day_1985.R
-          R CMD check --use-valgrind --no-manual --as-cran TreeDist*.tar.gz
+          R -d CMD check --use-valgrind --no-manual --as-cran TreeDist*.tar.gz
           dir TreeDist.Rcheck
           R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < TreeDist.Rcheck/TreeDist-Ex.R
         
