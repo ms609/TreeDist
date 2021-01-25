@@ -74,15 +74,15 @@ jobs:
 
       - name: valgrind - memcheck tests
         run: |
-          R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < tests/memcheck-tests.R
+          R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < memcheck/tests.R
       
       - name: valgrind - memcheck examples
         run: |
-          R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < tests/memcheck-examples.R
+          R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < memcheck/examples.R
       
       - name: valgrind - memcheck vignettes
         run: |
-          R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < tests/memcheck-vignettes.R
+          R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < memcheck/vignettes.R
         
       - name: Upload check results
         if: failure()
