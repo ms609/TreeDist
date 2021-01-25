@@ -67,10 +67,7 @@ jobs:
 
       - name: memtest with Valgrind
         run: |
-          cd ..
-          R CMD build --no-manual --no-resave-data TreeDist
-          R CMD INSTALL TreeDist*.tar.gz
-          R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < TreeDist/tests/memcheck.R
+          R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < tests/memcheck.R
         
       - name: Upload check results
         if: failure()
