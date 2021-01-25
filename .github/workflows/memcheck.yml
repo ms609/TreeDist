@@ -65,12 +65,12 @@ jobs:
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
         
-      - name: Install TreeTools
+      - name: Install TreeDist
         run: |
           cd ..
-          R CMD build --no-manual --no-resave-data TreeTools
+          R CMD build --no-manual --no-resave-data TreeDist
           R CMD INSTALL TreeDist*.tar.gz
-          cd TreeTools
+          cd TreeDist
 
       - name: valgrind - memcheck tests
         run: |
