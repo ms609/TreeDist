@@ -56,7 +56,7 @@ jobs:
           do
             eval sudo $cmd
           done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
-
+          
       - name: Install dependencies
         run: |
           remotes::install_github("KlausVigo/phangorn")
@@ -65,12 +65,12 @@ jobs:
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
         
-     - name: Install TreeTools
-       run: |
-         cd ..
-         R CMD build --no-manual --no-resave-data TreeTools
-         R CMD INSTALL TreeDist*.tar.gz
-         cd TreeTools
+      - name: Install TreeTools
+        run: |
+          cd ..
+          R CMD build --no-manual --no-resave-data TreeTools
+          R CMD INSTALL TreeDist*.tar.gz
+          cd TreeTools
 
       - name: valgrind - memcheck tests
         run: |
