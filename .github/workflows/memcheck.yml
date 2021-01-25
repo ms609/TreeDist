@@ -25,7 +25,6 @@ jobs:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       RSPM: https://packagemanager.rstudio.com/cran/__linux__/focal/latest
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      VALGRIND_OPTS: --memcheck:leak-check=full
 
     steps:
       - uses: actions/checkout@v2
@@ -66,12 +65,12 @@ jobs:
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
-      - name: Valgrind
+      - name: memtest with Valgrind
         run: |
           cd ..
           R CMD build --no-manual --no-resave-data TreeDist
-          R --vanilla CMD check --use-valgrind --no-manual --as-cran TreeDist*.tar.gz
-# R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < TreeDist.Rcheck/TreeDist-Ex.R
+          R CMD INSTALL TreeDist*.tar.gz
+          R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < TreeDist/tests/memcheck.R
         
       - name: Upload check results
         if: failure()
