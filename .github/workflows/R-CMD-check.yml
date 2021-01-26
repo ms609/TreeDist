@@ -64,7 +64,10 @@ jobs:
           while read -r cmd
           do
             eval sudo $cmd
-          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
+          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')#
+        if: runner.os == 'macOS'
+        run: |
+          brew install libgit2
 
       - name: Install dependencies
         run: |
