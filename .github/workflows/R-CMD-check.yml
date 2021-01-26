@@ -70,11 +70,15 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew install libgit2
+          
+      - name: Install GitHub phangorn (-macOS)
+        if: runner.os != 'macOS'
+        run: |
+          remotes::install_github("KlausVigo/phangorn")
 
       - name: Install dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
-          remotes::install_github("KlausVigo/phangorn")
           remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
