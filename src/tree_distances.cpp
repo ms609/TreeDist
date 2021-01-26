@@ -539,15 +539,22 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     NumericVector final_matching(most_splits);
     for (int16 i = 0; i != most_splits; i++) {
       if (a_match[i]) {
+        // Rcout << "a" << (1+i) << " exactly matches b" << a_match[i]<< "\n";
         final_matching[i] = a_match[i];
       } else {
         const int16 this_sol = rowsol[fuzzy_match++];
+        // Rcout << "a"<<(1+i) << " fuzzily matches rowsol[" << this_sol <<"] == "
+        //       << rowsol[this_sol] << "; ";
         if (rowsol[this_sol] >= lap_dim - a_extra_splits) {
+          // Rcout << " unmatched (NA)\n";
           final_matching[i] = 0;
         } else {
+          // Rcout << " matched with b" << lap_decode[rowsol[this_sol]] <<".\n";
           final_matching[i] = lap_decode[rowsol[this_sol]];
         }
       }
+      // Rcout << " ";
+      // if (final_matching[i] > 0) Rcout << final_matching[i]; else Rcout << "NA";
     }
     
     delete[] rowsol;
