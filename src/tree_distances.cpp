@@ -492,7 +492,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   
   
   const int16 lap_dim = most_splits - exact_matches;
-  lap_col *rowsol = new lap_col[lap_dim + 1]; /* TODO remove +1 */
+  lap_col *rowsol = new lap_col[lap_dim];
   lap_row *colsol = new lap_row[lap_dim];
   cost *u = new cost[lap_dim], *v = new cost[lap_dim];
   
@@ -526,20 +526,28 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     for (int16 i = most_splits; i--; ) delete[] score[i];
     delete[] colsol; delete[] u; delete[] v; delete[] score;
     
-    std::unique_ptr<int16[]> no_match = std::make_unique<int16[]>(b.n_splits);
-    int16 match = 0;
+    std::unique_ptr<int16[]> lap_decode = std::make_unique<int16[]>(lap_dim);
+    int16 fuzzy_match = 0;
     for (int16 bi = 0; bi != b.n_splits; bi++) {
       if (!b_match[bi]) {
-        no_match[match++] = bi + 1;
+        lap_decode[fuzzy_match++] = bi + 1;
+      } else {
       }
     }
     
-    match = 0;
+    fuzzy_match = 0;
     NumericVector final_matching(most_splits);
     for (int16 i = 0; i != most_splits; i++) {
-      if (match > lap_dim) throw std::length_error("Match miscount [>]. ");
-      if (match == lap_dim && !a_match[i]) throw std::length_error("Match miscount [==]. ");
-      final_matching[i] = a_match[i] ? a_match[i] : no_match[rowsol[match++]];
+      if (a_match[i]) {
+        final_matching[i] = a_match[i];
+      } else {
+        const int16 matched_split = rowsol[fuzzy_match++];
+        if (rowsol[matched_split] >= lap_dim - a_extra_splits) {
+          final_matching[i] = 0;
+        } else {
+          final_matching[i] = lap_decode[rowsol[matched_split]];
+        }
+      }
     }
     
     delete[] rowsol;
