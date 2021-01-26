@@ -3,8 +3,8 @@
   * Local Windows 10 installation, R 4.0.3
   * windows-latest: Microsoft Windows Server 2019, Windows 10.0.17763, 
     R release, via [Github Actions](https://github.com/ms609/TreeDist/actions)
-  * win_devel: with `check_win_devel()`, R devel
-  * win_oldrel: with `check_win_oldrelease()`.
+  * win_devel: with `devtools::check_win_devel()`, R devel
+  * win_oldrel: with `devtools::check_win_oldrelease()`.
   
 * Linux:
   * Ubuntu 20.04.1 LTS, R 3.6.0, release and devel, via Github Actions
