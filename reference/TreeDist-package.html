@@ -91,7 +91,7 @@ distance-based tree spaces." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.2</span>
       </span>
     </div>
 
@@ -186,14 +186,14 @@ distance-based tree spaces.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>'TreeDist' primarily employs metrics in the category of
-'generalized Robinson–Foulds distances': they are based on comparing splits
+'generalized Robinson&amp;#ndash;Foulds distances': they are based on comparing splits
 (bipartitions) between trees, and thus reflect the relationship data within
 trees, with no reference to branch lengths.
 Detailed documentation and usage instructions are
 <a href='https://ms609.github.io/TreeDist/'>available online</a> or in the vignettes.</p><h3 class='hasAnchor' id='arguments'><a class='anchor' href='#arguments'></a>Generalized RF distances</h3>
 
 
-<p>The <a href='https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html'>Robinson–Foulds distance</a>
+<p>The <a href='https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html'>Robinson&amp;#ndash;Foulds distance</a>
 simply tallies the number of non-trivial splits (sometimes inaccurately
 termed clades, nodes or edges) that occur in both trees -- any splits that are
 not perfectly identical contributes one point to the distance score of zero,
@@ -221,7 +221,7 @@ distance.)</p></li>
 <li><p>Nye <em>et al.</em> (2006) score matchings according to the size of the largest
 split that is consistent with both of them, normalized against
 the Jaccard index.  This approach is extended by Böcker <em>et al</em>. (2013)
-with the Jaccard–Robinson–Foulds metric (function
+with the Jaccard&amp;#ndash;Robinson&amp;#ndash;Foulds metric (function
 <a href='https://ms609.github.io/TreeDist/reference/JaccardRobinsonFoulds.html'><code><a href='JaccardRobinsonFoulds.html'>JaccardRobinsonFoulds()</a></code></a>).</p></li>
 </ul></li>
 <li><p><a href='https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html'><code><a href='MatchingSplitDistance.html'>MatchingSplitDistance()</a></code></a></p><ul>
@@ -308,10 +308,10 @@ R using <code>vignette(package = 'TreeDist')</code>.</p>
 <p>Other R packages implementing tree distance functions include:</p><ul>
 <li><p><a href='http://ape-package.ird.fr/'>ape</a>:</p><ul>
 <li><p><code>cophenetic.phylo()</code>: Cophenetic distance</p></li>
-<li><p><code>dist.topo()</code>: Path (topological) distance, Robinson–Foulds distance.</p></li>
+<li><p><code>dist.topo()</code>: Path (topological) distance, Robinson&amp;#ndash;Foulds distance.</p></li>
 </ul></li>
 <li><p><a href='https://cran.r-project.org/package=phangorn'>phangorn</a></p><ul>
-<li><p><code>treedist()</code>: Path, Robinson–Foulds and approximate SPR distances.</p></li>
+<li><p><code>treedist()</code>: Path, Robinson&amp;#ndash;Foulds and approximate SPR distances.</p></li>
 </ul></li>
 <li><p><a href='https://ms609.github.io/Quartet/'>Quartet</a>: Triplet and Quartet distances,
 using the tqDist algorithm.</p></li>
