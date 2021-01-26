@@ -541,11 +541,11 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
       if (a_match[i]) {
         final_matching[i] = a_match[i];
       } else {
-        const int16 matched_split = rowsol[fuzzy_match++];
-        if (rowsol[matched_split] >= lap_dim - a_extra_splits) {
+        const int16 this_sol = rowsol[fuzzy_match++];
+        if (rowsol[this_sol] >= lap_dim - a_extra_splits) {
           final_matching[i] = 0;
         } else {
-          final_matching[i] = lap_decode[rowsol[matched_split]];
+          final_matching[i] = lap_decode[rowsol[this_sol]];
         }
       }
     }
