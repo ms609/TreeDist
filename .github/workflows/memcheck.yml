@@ -33,6 +33,8 @@ jobs:
         with:
           r-version: release
 
+      - uses: r-lib/actions/setup-pandoc@master
+
       - name: Install valgrind
         run: sudo apt-get install valgrind texlive-latex-base
 
