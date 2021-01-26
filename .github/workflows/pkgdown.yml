@@ -30,7 +30,7 @@ jobs:
       - name: Install system dependencies
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get install libharfbuzz-dev libfribidi-dev
+          sudo apt-get install libharfbuzz-dev libfribidi-dev libglpk-dev
           while read -r cmd
           do
             eval sudo $cmd
