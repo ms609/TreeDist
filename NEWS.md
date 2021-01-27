@@ -1,4 +1,4 @@
-# TreeDist 2.0.2
+# TreeDist 2.0.3
 
 - Diagnose and fix memory leaks
 

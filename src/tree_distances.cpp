@@ -536,8 +536,8 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     }
     
     fuzzy_match = 0;
-    NumericVector final_matching(most_splits);
-    for (int16 i = 0; i != most_splits; i++) {
+    NumericVector final_matching(a.n_splits);
+    for (int16 i = 0; i != a.n_splits; i++) {
       if (a_match[i]) {
         // Rcout << "a" << (1+i) << " exactly matches b" << a_match[i]<< "\n";
         final_matching[i] = a_match[i];
