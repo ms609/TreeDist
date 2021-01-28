@@ -416,6 +416,69 @@ test_that('Clustering information is correctly calculated', {
   NormalizationTest(MutualClusteringInfo)
 })
 
+test_that("Matchings are correct", {
+  
+  # Different resolution: used to cause memory leak
+  randomBif20 <- structure(list(
+    edge = structure(c(21L, 21L, 22L, 23L, 24L, 25L, 26L, 27L, 28L, 29L, 30L,
+                       31L, 32L, 32L, 31L, 30L, 29L, 33L, 34L, 34L, 33L, 28L, 
+                       35L, 36L, 36L, 35L, 27L, 26L, 37L, 37L, 25L, 38L, 38L,
+                       39L, 39L, 24L, 23L, 22L, 1L, 22L, 23L, 24L, 25L, 26L, 
+                       27L, 28L, 29L, 30L, 31L, 32L, 2L, 14L, 7L, 10L, 33L, 34L,
+                       4L, 6L, 8L, 35L, 36L, 13L, 16L, 18L, 17L, 37L, 5L, 15L,
+                       38L, 11L, 39L, 12L, 19L, 9L, 3L, 20L),
+                     .Dim = c(38L, 2L)), Nnode = 19L,
+    tip.label = c("t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10",
+                  "t11", "t12", "t13", "t14", "t15", "t16", "t17", "t18", "t19",
+                  "t20"), br = NULL), class = "phylo")
+  threeAwayPoly <- structure(
+    list(edge = structure(c(21L, 22L, 23L, 24L, 25L, 26L, 27L, 28L, 29L, 29L, 
+                            28L, 27L, 26L, 30L, 30L, 30L, 26L, 31L, 31L, 25L, 
+                            32L, 33L, 33L, 32L, 25L, 25L, 24L, 34L, 34L, 34L,
+                            23L, 22L, 21L, 22L, 23L, 24L, 25L, 26L, 27L, 28L,
+                            29L, 2L, 8L, 14L, 10L, 30L, 13L, 16L, 18L, 31L, 4L,
+                            6L, 32L, 33L, 15L, 20L, 5L, 7L, 17L, 34L, 11L, 12L,
+                            19L, 9L, 3L, 1L), .Dim = c(33L, 2L)),
+         tip.label = c("t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9",
+                       "t10", "t11", "t12", "t13", "t14", "t15", "t16", "t17",
+                       "t18", "t19", "t20"),
+         Nnode = 14L), class = "phylo")
+  
+  expect_equal(
+    MutualClusteringInfo(threeAwayPoly, randomBif20),
+    MutualClusteringInfo(randomBif20, threeAwayPoly))
+  
+  
+  t1 <- PectinateTree(letters[1:11])
+  t2 <- ape::read.tree(text = '(a, (c, (b, (d, e, ((g, h, f), (k, (j, i)))))));')
+  s1 <- as.Splits(t1)
+  s2 <- as.Splits(t2, t1)
+  n <- NTip(s1)
+  
+  CppFn <- TreeDist:::cpp_mutual_clustering
+  Test <- function (CppFn, x1, x2) {
+    
+    r1 <- CppFn(s1, s2, n)
+    r2 <- CppFn(s2, s1, n)
+    expect_equal(r1$score, r2$score)
+    
+    m1 <- r1$matching
+    m2 <- r2$matching
+    expect_equal(dim(s1)[1], length(m1))
+    expect_equal(dim(s2)[1], length(m2))
+    expect_equal(dim(s1)[1] - dim(s2)[1], sum(m1 == 0))
+    
+    for (i in seq_along(m1)) expect_true(m1[i] %in% x1[[i]])
+    for (i in seq_along(m2)) expect_true(m2[i] %in% x2[[i]])
+  }
+  
+  Test(TreeDist:::cpp_robinson_foulds_distance,
+       list(NA, 2, NA, 3, NA, NA, 5, NA),
+       list(NA, 2, 4, NA, 7, NA))
+  Test(TreeDist:::cpp_mutual_clustering, 
+       list(4, 2, 0, 3, 6, 0, 5, 1), list(8, 2, 4, 5, 7, 1))
+})
+
 test_that('Matching Split Distance is correctly calculated', {
   expect_equal(0L, MatchingSplitDistance(treeSym8, treeSym8))
   expect_equal(0L, MatchingSplitDistance(treeStar8, treeSym8))
