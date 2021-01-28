@@ -1,7 +1,7 @@
-#' Robinson\ifelse{html}{&#ndash;}{--}Foulds distances, with adjustments for phylogenetic information
+#' Robinson\ifelse{html}{&ndash;}{--}Foulds distances, with adjustments for phylogenetic information
 #' content
 #' 
-#' Calculate the Robinson\ifelse{html}{&#ndash;}{--}Foulds distance, or
+#' Calculate the Robinson\ifelse{html}{&ndash;}{--}Foulds distance, or
 #' the equivalent similarity measure, with options to
 #' (i) annotate matched splits; 
 #' (ii) weight splits according to their phylogenetic information content 

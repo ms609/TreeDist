@@ -16,7 +16,7 @@
 \alias{MatchingSplitInfo}
 \alias{MatchingSplitInfoDistance}
 \alias{MatchingSplitInfoSplits}
-\title{Information-based generalized Robinson\ifelse{html}{&#ndash;}{--}Foulds distances}
+\title{Information-based generalized Robinson\ifelse{html}{&ndash;}{--}Foulds distances}
 \usage{
 TreeDistance(tree1, tree2 = tree1)
 
@@ -140,7 +140,7 @@ phylogenetic or clustering information that two trees hold in common, as
 proposed in Smith (2020).
 }
 \details{
-\href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson\ifelse{html}{&#ndash;}{--}Foulds distances}
+\href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson\ifelse{html}{&ndash;}{--}Foulds distances}
 calculate tree similarity by finding an
 optimal matching that the similarity between a split on one tree
 and its pair on a second, considering all possible ways to pair splits
