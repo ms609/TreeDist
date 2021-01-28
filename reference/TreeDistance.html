@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Information-based generalized Robinson&amp;#ndash;Foulds distances — TreeDistance • TreeDist</title>
+<title>Information-based generalized Robinson&amp;ndash;Foulds distances — TreeDistance • TreeDist</title>
 
 
 <!-- jquery -->
@@ -45,7 +45,7 @@
 
 
 
-<meta property="og:title" content="Information-based generalized Robinson&amp;#ndash;Foulds distances — TreeDistance" />
+<meta property="og:title" content="Information-based generalized Robinson&amp;ndash;Foulds distances — TreeDistance" />
 <meta property="og:description" content="Calculate tree similarity and distance measures based on the amount of
 phylogenetic or clustering information that two trees hold in common, as
 proposed in Smith (2020)." />
@@ -168,7 +168,7 @@ proposed in Smith (2020)." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Information-based generalized Robinson&amp;#ndash;Foulds distances</h1>
+    <h1>Information-based generalized Robinson&amp;ndash;Foulds distances</h1>
     <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance_info.R'><code>R/tree_distance_info.R</code></a>, <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance_mmsi.R'><code>R/tree_distance_mmsi.R</code></a></small>
     <div class="hidden name"><code>TreeDistance.Rd</code></div>
     </div>
@@ -309,12 +309,14 @@ split.</p></td>
 
     <p>If <code>reportMatching = FALSE</code>, the functions return a numeric
 vector specifying the requested similarities or differences.</p>
-<p>If <code>reportMatching = TRUE</code>, the functions additionally return details
-of which clades are matched in the optimal matching, which can be viewed
-using <code><a href='VisualizeMatching.html'>VisualizeMatching()</a></code>.</p>
+<p>If <code>reportMatching = TRUE</code>, the functions additionally return an integer
+vector listing the index of the split in <code>tree2</code> that is matched with
+each split in <code>tree1</code> in the optimal matching.
+Unmatched splits are denoted <code>NA</code>.
+Use <code><a href='VisualizeMatching.html'>VisualizeMatching()</a></code> to plot the optimal matching.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><a href='https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances'>Generalized Robinson&amp;#ndash;Foulds distances</a>
+    <p><a href='https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances'>Generalized Robinson&amp;ndash;Foulds distances</a>
 calculate tree similarity by finding an
 optimal matching that the similarity between a split on one tree
 and its pair on a second, considering all possible ways to pair splits
@@ -456,7 +458,8 @@ doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</
 </div><div class='output co'>#&gt; [1] 19.36755</div><div class='input'>
 <span class='co'># How similar are two trees?</span>
 <span class='fu'>SharedPhylogeneticInfo</span><span class='op'>(</span><span class='va'>tree1</span>, <span class='va'>tree2</span><span class='op'>)</span> <span class='co'># Amount of phylogenetic information in common</span>
-</div><div class='output co'>#&gt; [1] 13.75284</div><div class='input'><span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span><span class='op'>(</span><span class='va'>SharedPhylogeneticInfo</span>, <span class='va'>tree1</span>, <span class='va'>tree2</span><span class='op'>)</span> <span class='co'># Which clades are matched?</span>
+</div><div class='output co'>#&gt; [1] 13.75284</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span><span class='op'>(</span><span class='fu'>SharedPhylogeneticInfo</span><span class='op'>(</span><span class='va'>tree1</span>, <span class='va'>tree2</span>, reportMatching <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>, <span class='st'>'matching'</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 1 4 2 3 5</div><div class='input'><span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span><span class='op'>(</span><span class='va'>SharedPhylogeneticInfo</span>, <span class='va'>tree1</span>, <span class='va'>tree2</span><span class='op'>)</span> <span class='co'># Which clades are matched?</span>
 </div><div class='img'><img src='TreeDistance-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='fu'>DifferentPhylogeneticInfo</span><span class='op'>(</span><span class='va'>tree1</span>, <span class='va'>tree2</span><span class='op'>)</span> <span class='co'># Distance measure</span>
 </div><div class='output co'>#&gt; [1] 14.39934</div><div class='input'><span class='fu'>DifferentPhylogeneticInfo</span><span class='op'>(</span><span class='va'>tree2</span>, <span class='va'>tree1</span><span class='op'>)</span> <span class='co'># The metric is symmetric</span>
