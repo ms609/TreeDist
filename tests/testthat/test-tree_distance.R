@@ -302,13 +302,13 @@ test_that("Shared Phylogenetic Information is correctly estimated", {
   tol <- exp[, 'Std. Err.'] * 2
   # Expected values calculated with 100k samples
   expect_equal(1.175422, exp['SharedPhylogeneticInfo', 'Estimate'], 
-               tolerance=tol[1])
+               tolerance = tol[1])
   expect_equal(3.099776, exp['MatchingSplitInfo', 'Estimate'], 
-               tolerance=tol[2])
+               tolerance = tol[2])
   expect_equal(25.231023, exp['DifferentPhylogeneticInfo', 'Estimate'], 
-               tolerance=tol[3])
+               tolerance = tol[3])
   expect_equal(21.382314, exp['MatchingSplitInfoDistance', 'Estimate'], 
-               tolerance=tol[4])
+               tolerance = tol[4])
   expect_equal(exp[, 'sd'], exp[, 'Std. Err.'] * sqrt(exp[, 'n']))
 })
 
