@@ -458,13 +458,13 @@ test_that("Matchings are correct", {
   n <- NTip(s1)
   
   CppFn <- TreeDist:::cpp_mutual_clustering
-  Test <- function (CppFn, x1, x2) {
+  Test <- function (CppFn, x12, x21, ...) {
     
     r12 <- CppFn(s1, s2, n, ...)
     r21 <- CppFn(s2, s1, n, ...)
     r13 <- CppFn(s1, s3, n, ...)
     r31 <- CppFn(s3, s1, n, ...)
-    expect_equal(r1$score, r2$score)
+    expect_equal(r12$score, r21$score)
     expect_equal(r13$score, r31$score)
     
     m12 <- r12$matching
@@ -480,9 +480,6 @@ test_that("Matchings are correct", {
     expect_equal(dim(s3)[1], length(m31))
     expect_lte(dim(s1)[1] - dim(s3)[1], sum(is.na(m13)))
     
-    r13$matching
-    r31$matching
-    
     for (i in seq_along(m12)) expect_true(m12[i] %in% x12[[i]])
     for (i in seq_along(m21)) expect_true(m21[i] %in% x21[[i]])
     
@@ -494,6 +491,10 @@ test_that("Matchings are correct", {
   Test(TreeDist:::cpp_robinson_foulds_info,
        list(NA, 2, NA, 3, NA, NA, 5, NA),
        list(NA, 2, 4, NA, 7, NA)
+       )
+  Test(TreeDist:::cpp_matching_split_distance,
+       list(1, 2, 4, 3, NA, NA, 5, 6),
+       list(1, 2, 5, 4, 7, 6)
        )
   Test(TreeDist:::cpp_jaccard_similarity,
        list(NA, 2, 1, 3, 4, 6, 5, NA),
@@ -507,14 +508,15 @@ test_that("Matchings are correct", {
        allowConflict = FALSE)
   Test(TreeDist:::cpp_msi_distance,
        list(NA, 2, 1, 4, 3, 6, 5, NA),
-       list(3, 2, 5, 4, 7, 6)
+       list(3, 2, c(4, 5), c(4, 5), c(6, 7), c(7, 6))
        )
   Test(TreeDist:::cpp_shared_phylo,
        list(NA, 2, 4, 3, 1, 6, 5, NA),
        list(5, 2, 4, 3, 7, 6)
        )
   Test(TreeDist:::cpp_mutual_clustering, 
-       list(4, 2, 0, 3, 6, 0, 5, 1), list(8, 2, 4, 5, 7, 1))
+       list(4, 2, NA, 3, 6, NA, 5, 1),
+       list(8, 2, 4, 5, 7, 1))
 })
 
 test_that('Matching Split Distance is correctly calculated', {
