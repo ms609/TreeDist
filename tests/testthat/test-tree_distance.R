@@ -455,9 +455,21 @@ test_that("Matchings are correct", {
   s1 <- as.Splits(t1)
   s2 <- as.Splits(t2, t1)
   s3 <- as.Splits(t3, t1)
+  n1 <- dim(s1)[1]
+  n2 <- dim(s2)[1]
+  n3 <- dim(s3)[1]
   n <- NTip(s1)
   
-  CppFn <- TreeDist:::cpp_mutual_clustering
+  # Plot
+  # par(mfrow = 2:1, cex = 0.9, mar = rep(0,4))
+  # JRF2T <- function(...) JaccardRobinsonFoulds(..., k = 2)
+  # JRF2F <- function(...) JaccardRobinsonFoulds(..., k = 2, allowConflict = FALSE)
+  # VisualizeMatching(MatchingSplitDistance, t1, t2, setPar=F)
+  # LabelSplits(t2, setNames(1:6, names(s2)), adj = 2)
+  # VisualizeMatching(MatchingSplitDistance, t2, t1, setPar=F)
+  # LabelSplits(t1, setNames(1:8, names(s1)), adj = 2)
+  
+  
   Test <- function (CppFn, x12, x21, ...) {
     
     r12 <- CppFn(s1, s2, n, ...)
@@ -469,15 +481,20 @@ test_that("Matchings are correct", {
     
     m12 <- r12$matching
     m21 <- r21$matching
-    expect_equal(dim(s1)[1], length(m12))
-    expect_equal(dim(s2)[1], length(m21))
+    
+    expect_equal(n1, length(m12))
+    expect_equal(length(m12[!is.na(m12)]), length(unique(m12[!is.na(m12)])))
+    expect_equal(n2, length(m21))
+    expect_equal(length(m21[!is.na(m21)]), length(unique(m21[!is.na(m21)])))
     expect_lte(dim(s1)[1] - dim(s2)[1], sum(is.na(m12)))
     
     
     m13 <- r13$matching
     m31 <- r31$matching
-    expect_equal(dim(s1)[1], length(m13))
-    expect_equal(dim(s3)[1], length(m31))
+    expect_equal(n1, length(m13))
+    expect_equal(length(m13[!is.na(m13)]), length(unique(m13[!is.na(m13)])))
+    expect_equal(n3, length(m31))
+    expect_equal(length(m31[!is.na(m31)]), length(unique(m31[!is.na(m31)])))
     expect_lte(dim(s1)[1] - dim(s3)[1], sum(is.na(m13)))
     
     for (i in seq_along(m12)) expect_true(m12[i] %in% x12[[i]])
@@ -487,7 +504,8 @@ test_that("Matchings are correct", {
   
   Test(TreeDist:::cpp_robinson_foulds_distance,
        list(NA, 2, NA, 3, NA, NA, 5, NA),
-       list(NA, 2, 4, NA, 7, NA))
+       list(NA, 2, 4, NA, 7, NA)
+       )
   Test(TreeDist:::cpp_robinson_foulds_info,
        list(NA, 2, NA, 3, NA, NA, 5, NA),
        list(NA, 2, 4, NA, 7, NA)
@@ -516,7 +534,9 @@ test_that("Matchings are correct", {
        )
   Test(TreeDist:::cpp_mutual_clustering, 
        list(4, 2, NA, 3, 6, NA, 5, 1),
-       list(8, 2, 4, 5, 7, 1))
+       list(8, 2, 4, 5, 7, 1)
+       )
+
 })
 
 test_that('Matching Split Distance is correctly calculated', {
