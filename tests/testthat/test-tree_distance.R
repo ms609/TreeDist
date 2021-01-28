@@ -505,6 +505,10 @@ test_that("Matchings are correct", {
        list(3, 2, 4, 1, 7, 6),
        k = 2,
        allowConflict = FALSE)
+  Test(TreeDist:::cpp_mmsi_distance,
+       list(NA, 2, 1, 4, 3, 6, 5, NA),
+       list(3, 2, 5, 4, 7, 6)
+       )
   Test(TreeDist:::cpp_mutual_clustering, 
        list(4, 2, 0, 3, 6, 0, 5, 1), list(8, 2, 4, 5, 7, 1))
 })
