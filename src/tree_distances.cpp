@@ -308,7 +308,7 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
     / max_score);
   for (int16 i = most_splits; i--; ) delete[] score[i];
   delete[] u; delete[] v; delete[] colsol; delete[] score;
-  NumericVector final_matching (most_splits);
+  IntegerVector final_matching (a.n_splits);
   
   for (int16 i = most_splits; i--; ) {
     final_matching[i] = rowsol[i] + 1;
