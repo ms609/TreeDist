@@ -183,7 +183,7 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
   for (int16 i = most_splits; i--; ) delete[] score[i];
   delete[] u; delete[] v; delete[] colsol; delete[] score;
   
-  NumericVector final_matching (most_splits);
+  IntegerVector final_matching (a.n_splits);
   
   for (int16 i = most_splits; i--; ) {
     final_matching[i] = rowsol[i] + 1;
@@ -381,9 +381,9 @@ List cpp_mmsi_distance (const RawMatrix x, const RawMatrix y,
   for (int16 i = most_splits; i--; ) delete[] score[i];
   delete[] u; delete[] v; delete[] colsol; delete[] score;
   
-  NumericVector final_matching (most_splits);
   for (int16 i = most_splits; i--; ) {
     final_matching[i] = rowsol[i] + 1;
+  IntegerVector final_matching (a.n_splits);
   }
   
   delete[] rowsol;
@@ -536,7 +536,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     }
     
     fuzzy_match = 0;
-    NumericVector final_matching(a.n_splits);
+    IntegerVector final_matching(a.n_splits);
     for (int16 i = 0; i != a.n_splits; i++) {
       if (a_match[i]) {
         // Rcout << "a" << (1+i) << " exactly matches b" << a_match[i]<< "\n";
@@ -547,7 +547,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
         //       << rowsol[this_sol] << "; ";
         if (rowsol[this_sol] >= lap_dim - a_extra_splits) {
           // Rcout << " unmatched (NA)\n";
-          final_matching[i] = 0;
+          final_matching[i] = NA_INTEGER;
         } else {
           // Rcout << " matched with b" << lap_decode[rowsol[this_sol]] <<".\n";
           final_matching[i] = lap_decode[rowsol[this_sol]];
@@ -577,9 +577,9 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     for (int16 i = most_splits; i--; ) delete[] score[i];
     delete[] colsol; delete[] u; delete[] v; delete[] score;
     
-    NumericVector final_matching (most_splits);
     for (int16 i = most_splits; i--; ) {
       final_matching[i] = rowsol[i] + 1;
+    IntegerVector final_matching (a.n_splits);
     }
     
     delete[] rowsol;
@@ -660,7 +660,7 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   
   delete[] u; delete[] v; delete[] colsol;
   
-  NumericVector final_matching (most_splits);
+  IntegerVector final_matching (a.n_splits);
   
   for (int16 i = most_splits; i--; ) delete[] score[i];
   delete[] score;
