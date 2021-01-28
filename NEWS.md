@@ -1,6 +1,6 @@
 # TreeDist 2.0.3
 
-- Diagnose and fix memory leaks
+- Diagnose and fix memory leaks, including over-long reported matchings.
 
 - Explicitly import shiny/shinyjs functions
 
