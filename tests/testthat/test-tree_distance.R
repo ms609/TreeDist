@@ -475,6 +475,10 @@ test_that("Matchings are correct", {
   Test(TreeDist:::cpp_robinson_foulds_distance,
        list(NA, 2, NA, 3, NA, NA, 5, NA),
        list(NA, 2, 4, NA, 7, NA))
+  Test(TreeDist:::cpp_robinson_foulds_info,
+       list(NA, 2, NA, 3, NA, NA, 5, NA),
+       list(NA, 2, 4, NA, 7, NA)
+       )
   Test(TreeDist:::cpp_mutual_clustering, 
        list(4, 2, 0, 3, 6, 0, 5, 1), list(8, 2, 4, 5, 7, 1))
 })
