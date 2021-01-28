@@ -82,7 +82,7 @@ test_that('Size mismatch causes error', {
   Test(cpp_robinson_foulds_info)
   Test(cpp_matching_split_distance)
   Test(cpp_jaccard_similarity)
-  Test(cpp_mmsi_distance)
+  Test(cpp_msi_distance)
   Test(cpp_mutual_clustering)
   Test(cpp_shared_phylo)
 })
@@ -267,11 +267,11 @@ test_that('MatchingSplitInfo() is correctly calculated', {
                  as.Splits(c(rep(FALSE, 6), rep(TRUE, 2))),
                  as.Splits(c(FALSE, FALSE, rep(TRUE, 2), rep(FALSE, 4)))),
                tolerance = 1e-7)
-  expect_equal(log2(3), cpp_mmsi_distance(
+  expect_equal(log2(3), cpp_msi_distance(
     as.Splits(c(rep(TRUE, 2), rep(FALSE, 6))),
     as.Splits(c(FALSE, FALSE, rep(TRUE, 2), rep(FALSE, 4))),
     8L)$score, tolerance = 1e-7)
-  expect_equal(log2(3), cpp_mmsi_distance(
+  expect_equal(log2(3), cpp_msi_distance(
     as.Splits(rep(c(FALSE, TRUE), each = 4L)),
     as.Splits(rep(c(FALSE, TRUE), 4L)),
     8L)$score, tolerance = 1e-7)
@@ -505,7 +505,7 @@ test_that("Matchings are correct", {
        list(3, 2, 4, 1, 7, 6),
        k = 2,
        allowConflict = FALSE)
-  Test(TreeDist:::cpp_mmsi_distance,
+  Test(TreeDist:::cpp_msi_distance,
        list(NA, 2, 1, 4, 3, 6, 5, NA),
        list(3, 2, 5, 4, 7, 6)
        )

@@ -321,7 +321,7 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_mmsi_distance (const RawMatrix x, const RawMatrix y,
+List cpp_msi_distance (const RawMatrix x, const RawMatrix y,
                         const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
