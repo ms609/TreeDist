@@ -13,8 +13,7 @@ List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y,
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   const SplitList a(x), b(y);
-  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-              last_bin = a.n_bins - 1,
+  const int16 last_bin = a.n_bins - 1,
               n_tips = nTip[0],
               unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
@@ -71,8 +70,7 @@ List cpp_robinson_foulds_info (const RawMatrix x, const RawMatrix y,
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   const SplitList a(x), b(y);
-  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-              last_bin = a.n_bins - 1,
+  const int16 last_bin = a.n_bins - 1,
               n_tips = nTip[0],
               unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
