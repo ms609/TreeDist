@@ -130,9 +130,11 @@ split.}
 If \code{reportMatching = FALSE}, the functions return a numeric
 vector specifying the requested similarities or differences.
 
-If \code{reportMatching = TRUE}, the functions additionally return details
-of which clades are matched in the optimal matching, which can be viewed
-using \code{\link[=VisualizeMatching]{VisualizeMatching()}}.
+If \code{reportMatching = TRUE}, the functions additionally return an integer
+vector listing the index of the split in \code{tree2} that is matched with
+each split in \code{tree1} in the optimal matching.
+Unmatched splits are denoted \code{NA}.
+Use \code{\link[=VisualizeMatching]{VisualizeMatching()}} to plot the optimal matching.
 }
 \description{
 Calculate tree similarity and distance measures based on the amount of
@@ -246,6 +248,7 @@ SplitwiseInfo(tree2)
 
 # How similar are two trees?
 SharedPhylogeneticInfo(tree1, tree2) # Amount of phylogenetic information in common
+attr(SharedPhylogeneticInfo(tree1, tree2, reportMatching = TRUE), 'matching')
 VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2) # Which clades are matched?
 
 DifferentPhylogeneticInfo(tree1, tree2) # Distance measure

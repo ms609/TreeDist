@@ -117,9 +117,11 @@
 #' @return If `reportMatching = FALSE`, the functions return a numeric 
 #' vector specifying the requested similarities or differences.
 #' 
-#' If `reportMatching = TRUE`, the functions additionally return details
-#' of which clades are matched in the optimal matching, which can be viewed
-#' using [`VisualizeMatching()`].
+#' If `reportMatching = TRUE`, the functions additionally return an integer
+#' vector listing the index of the split in `tree2` that is matched with 
+#' each split in `tree1` in the optimal matching.
+#' Unmatched splits are denoted `NA`.
+#' Use [`VisualizeMatching()`] to plot the optimal matching.
 #'  
 #' @examples 
 #' tree1 <- ape::read.tree(text='((((a, b), c), d), (e, (f, (g, h))));')
@@ -137,6 +139,7 @@
 #' 
 #' # How similar are two trees?
 #' SharedPhylogeneticInfo(tree1, tree2) # Amount of phylogenetic information in common
+#' attr(SharedPhylogeneticInfo(tree1, tree2, reportMatching = TRUE), 'matching')
 #' VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2) # Which clades are matched?
 #' 
 #' DifferentPhylogeneticInfo(tree1, tree2) # Distance measure
