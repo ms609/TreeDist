@@ -27,7 +27,7 @@
 #' defined in 
 #' [a separate vignette](https://ms609.github.io/TreeDist/articles/information.html).
 #' 
-#' Using the mutual (clustering) information (Meil\ifelse{html}{&#259;}{a}
+#' Using the mutual (clustering) information (Meil\ifelse{html}{\out{&#259;}}{a}
 #' 2007, Vinh _et al._ 2010) of two splits to quantify their similarity gives 
 #' rise to the Mutual Clustering Information measure (`MutualClusteringInfo()`, 
 #' `MutualClusteringInfoSplits()`); the entropy distance 

@@ -28,7 +28,7 @@ content of two splits, treating each split as a division of \emph{n} leaves into
 two groups.
 Further details are available in a
 \href{https://ms609.github.io/TreeDist/articles/information.html}{vignette},
-MacKay (2003) and Meil\ifelse{html}{&#259;}{a} (2007).
+MacKay (2003) and Meil\ifelse{html}{\out{&#259;}}{a} (2007).
 }
 \examples{
 A <- TRUE
