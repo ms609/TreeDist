@@ -143,7 +143,6 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
     half_tips = n_tips / 2;
   if (most_splits == 0) {
     return List::create(Named("score") = 0);
-    
   }
   const cost max_score = BIG / most_splits;
   
@@ -183,8 +182,8 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
   
   IntegerVector final_matching (a.n_splits);
   
-    final_matching[i] = rowsol[i] + 1;
   for (int16 i = a.n_splits; i--; ) {
+    final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
   }
   
   delete[] rowsol;
@@ -379,9 +378,9 @@ List cpp_msi_distance (const RawMatrix x, const RawMatrix y,
   for (int16 i = most_splits; i--; ) delete[] score[i];
   delete[] u; delete[] v; delete[] colsol; delete[] score;
   
-    final_matching[i] = rowsol[i] + 1;
   IntegerVector final_matching (a.n_splits);
   for (int16 i = a.n_splits; i--; ) {
+    final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
   }
   
   delete[] rowsol;
@@ -575,9 +574,9 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     for (int16 i = most_splits; i--; ) delete[] score[i];
     delete[] colsol; delete[] u; delete[] v; delete[] score;
     
-      final_matching[i] = rowsol[i] + 1;
     IntegerVector final_matching (a.n_splits);
     for (int16 i = a.n_splits; i--; ) {
+      final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
     }
     
     delete[] rowsol;
@@ -663,8 +662,8 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   for (int16 i = most_splits; i--; ) delete[] score[i];
   delete[] score;
   
-    final_matching[i] = rowsol[i] + 1;
   for (int16 i = a.n_splits; i--; ) {
+    final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
   }
   
   delete[] rowsol;
