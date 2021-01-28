@@ -509,6 +509,10 @@ test_that("Matchings are correct", {
        list(NA, 2, 1, 4, 3, 6, 5, NA),
        list(3, 2, 5, 4, 7, 6)
        )
+  Test(TreeDist:::cpp_shared_phylo,
+       list(NA, 2, 4, 3, 1, 6, 5, NA),
+       list(5, 2, 4, 3, 7, 6)
+       )
   Test(TreeDist:::cpp_mutual_clustering, 
        list(4, 2, 0, 3, 6, 0, 5, 1), list(8, 2, 4, 5, 7, 1))
 })
