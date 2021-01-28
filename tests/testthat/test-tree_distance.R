@@ -451,17 +451,19 @@ test_that("Matchings are correct", {
   
   t1 <- PectinateTree(letters[1:11])
   t2 <- ape::read.tree(text = '(a, (c, (b, (d, e, ((g, h, f), (k, (j, i)))))));')
+  t3 <- CollapseNode(PectinateTree(c(letters[11], letters[1:10])), 16:19)
   s1 <- as.Splits(t1)
   s2 <- as.Splits(t2, t1)
+  s3 <- as.Splits(t3, t1)
   n <- NTip(s1)
   
   CppFn <- TreeDist:::cpp_mutual_clustering
   Test <- function (CppFn, x1, x2) {
     
-    r12 <- CppFn(s1, s2, n)
-    r21 <- CppFn(s2, s1, n)
-    r13 <- CppFn(s1, s3, n)
-    r31 <- CppFn(s3, s1, n)
+    r12 <- CppFn(s1, s2, n, ...)
+    r21 <- CppFn(s2, s1, n, ...)
+    r13 <- CppFn(s1, s3, n, ...)
+    r31 <- CppFn(s3, s1, n, ...)
     expect_equal(r1$score, r2$score)
     expect_equal(r13$score, r31$score)
     
@@ -493,6 +495,16 @@ test_that("Matchings are correct", {
        list(NA, 2, NA, 3, NA, NA, 5, NA),
        list(NA, 2, 4, NA, 7, NA)
        )
+  Test(TreeDist:::cpp_jaccard_similarity,
+       list(NA, 2, 1, 3, 4, 6, 5, NA),
+       list(3, 2, 4, 5, 7, 6),
+       k = 2,
+       allowConflict = TRUE)
+  Test(TreeDist:::cpp_jaccard_similarity,
+       list(NA, 2, 1, 3, NA, 6, 5, 4),
+       list(3, 2, 4, 1, 7, 6),
+       k = 2,
+       allowConflict = FALSE)
   Test(TreeDist:::cpp_mutual_clustering, 
        list(4, 2, 0, 3, 6, 0, 5, 1), list(8, 2, 4, 5, 7, 1))
 })
