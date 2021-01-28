@@ -458,18 +458,32 @@ test_that("Matchings are correct", {
   CppFn <- TreeDist:::cpp_mutual_clustering
   Test <- function (CppFn, x1, x2) {
     
-    r1 <- CppFn(s1, s2, n)
-    r2 <- CppFn(s2, s1, n)
+    r12 <- CppFn(s1, s2, n)
+    r21 <- CppFn(s2, s1, n)
+    r13 <- CppFn(s1, s3, n)
+    r31 <- CppFn(s3, s1, n)
     expect_equal(r1$score, r2$score)
+    expect_equal(r13$score, r31$score)
     
-    m1 <- r1$matching
-    m2 <- r2$matching
-    expect_equal(dim(s1)[1], length(m1))
-    expect_equal(dim(s2)[1], length(m2))
-    expect_equal(dim(s1)[1] - dim(s2)[1], sum(m1 == 0))
+    m12 <- r12$matching
+    m21 <- r21$matching
+    expect_equal(dim(s1)[1], length(m12))
+    expect_equal(dim(s2)[1], length(m21))
+    expect_lte(dim(s1)[1] - dim(s2)[1], sum(is.na(m12)))
     
-    for (i in seq_along(m1)) expect_true(m1[i] %in% x1[[i]])
-    for (i in seq_along(m2)) expect_true(m2[i] %in% x2[[i]])
+    
+    m13 <- r13$matching
+    m31 <- r31$matching
+    expect_equal(dim(s1)[1], length(m13))
+    expect_equal(dim(s3)[1], length(m31))
+    expect_lte(dim(s1)[1] - dim(s3)[1], sum(is.na(m13)))
+    
+    r13$matching
+    r31$matching
+    
+    for (i in seq_along(m12)) expect_true(m12[i] %in% x12[[i]])
+    for (i in seq_along(m21)) expect_true(m21[i] %in% x21[[i]])
+    
   }
   
   Test(TreeDist:::cpp_robinson_foulds_distance,
