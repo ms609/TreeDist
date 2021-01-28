@@ -151,7 +151,7 @@ void nni_edge_to_splits(const IntegerMatrix edge,
   delete[] tmp_splits;
 }
 
-rf_match nni_rf_matching (
+grf_match nni_rf_matching (
     const splitbit* a, 
     const splitbit* b,
     const int16* n_splits,
@@ -163,7 +163,7 @@ rf_match nni_rf_matching (
       unset_tips = (*n_tips % BIN_SIZE) ? BIN_SIZE - *n_tips % BIN_SIZE : 0;
     const splitbit unset_mask = ALL_ONES >> unset_tips;
     
-    rf_match matching (*n_splits);
+    grf_match matching (*n_splits);
     for (int16 i = 0; i != *n_splits; i++) matching[i] = NA_INT16;
     
     splitbit b_complement[MAX_SPLITS][MAX_BINS];
@@ -277,7 +277,7 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
                        &trivial_origin_1, &trivial_two_1, splits1, names_1);
   } // else no internal nodes resolved
   
-  rf_match match = nni_rf_matching(splits1, splits2, &n_splits, &n_bin, &n_tip);
+  grf_match match = nni_rf_matching(splits1, splits2, &n_splits, &n_bin, &n_tip);
   
   delete[] splits1;
   delete[] splits2;

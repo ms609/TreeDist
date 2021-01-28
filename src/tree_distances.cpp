@@ -20,7 +20,7 @@ List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y,
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   cost score = 0;
   
-  rf_match matching (a.n_splits);
+  grf_match matching (a.n_splits);
   for (int16 i = a.n_splits; i--; ) matching[i] = NA_INTEGER;
   
   splitbit b_complement[MAX_SPLITS][MAX_BINS];
