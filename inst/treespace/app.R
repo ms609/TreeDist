@@ -1244,7 +1244,7 @@ server <- function(input, output, session) {
       HTML(paste0(Smith2021,
                   Kaski2003, Venna2001, RCoreTeam)),
       HTML(if (mstSize() > 0) Gower1969),
-      HTML(if(input$distance == 'qd') SmithDist),
+      HTML(if(input$distance == 'qd') SmithQuartet),
       tags$h3('Tree distance'),
       HTML(switch(input$distance,
              'cid' = paste0(Smith2020, SmithDist),
