@@ -4,7 +4,7 @@
 \name{JaccardRobinsonFoulds}
 \alias{JaccardRobinsonFoulds}
 \alias{JaccardSplitSimilarity}
-\title{Jaccard\ifelse{html}{&ndash;}{--}Robinson\ifelse{html}{&ndash;}{--}Foulds metric}
+\title{Jaccard–Robinson–Foulds metric}
 \usage{
 JaccardRobinsonFoulds(
   tree1,
@@ -39,7 +39,7 @@ or lists of such trees to undergo pairwise comparison.  Where implemented,
 \item{k}{An arbitrary exponent to which to raise the Jaccard index.
 Integer values greater than one are anticipated by Böcker \emph{et al}.
 The Nye \emph{et al}. metric uses \code{k = 1}.
-As k increases towards infinity, the metric converges to the Robinson\ifelse{html}{&ndash;}{--}Foulds
+As k increases towards infinity, the metric converges to the Robinson–Foulds
 metric.}
 
 \item{allowConflict}{Logical specifying whether to allow conflicting splits
@@ -80,12 +80,13 @@ or \code{splits1} and \code{splits2}.
 }
 \description{
 Calculate the
-\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric}{Jaccard\ifelse{html}{&ndash;}{--}Robinson\ifelse{html}{&ndash;}{--}Foulds metric}
+\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric}{Jaccard–Robinson–Foulds metric}
 (Böcker \emph{et al}. 2013), a
-\href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson\ifelse{html}{&ndash;}{--}Foulds metric}.
+\href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson–Foulds metric}.
 }
 \details{
-In short, the Jaccard\ifelse{html}{&ndash;}{--}Robinson\ifelse{html}{&ndash;}{--}Foulds metric is a generalized Robinson-Foulds
+In short, the Jaccard–Robinson–Foulds
+metric is a generalized Robinson-Foulds
 metric: it finds the optimal matching that pairs each split in one tree with
 a similar split in the second.
 Matchings are scored according to the size of the largest split that is
