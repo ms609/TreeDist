@@ -101,7 +101,7 @@ common analytical pitfalls (Smith, forthcoming),
 using the inbuilt graphical user interface:
 
 ```r
-TreeDist::TreeSpace()
+TreeDist::Project()
 ```
 
 Serious analysts should consult the
