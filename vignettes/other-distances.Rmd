@@ -66,6 +66,8 @@ in a number of ways.
   
 - Mixture distances: @Juan2020
 
+- Taxonomic index of congruence (Ctax) which quantifies the congruence between two taxonomies,
+  - and Relative taxonomic resolving power index [@Miralles2013]
 
 # Hierarchy comparison
  - Requires rooted trees [in principle -- can this be relaxed?]
@@ -73,7 +75,7 @@ in a number of ways.
  - B~k~ [@Fowlkes1983; see @Wallace1983]
  - Comparing different 'arbitrary' methods [@Morlini2012]: [@Morlini2013]
  
- - Hierarchical mutual information [@Perotti2015]
+ - Hierarchical mutual information [@Perotti2015;@Perotti2020]
  
  - Element-centric clustering comparison [@Gates2019]
    - Subsidiary advantage: can identify each leaf's similarity between trees,
