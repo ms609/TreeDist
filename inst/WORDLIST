@@ -100,6 +100,7 @@ mergesort
 molbev
 msw
 multiPhylo
+ndash
 outgroup
 partitionwise
 pectinate
@@ -109,6 +110,7 @@ postorder
 preorder
 roy
 sensu
+shinyjs
 textrm
 th
 tqDist
@@ -118,6 +120,7 @@ uk
 unrooted
 unsampled
 uspr
+vdiffr
 yongyanghz
 yongyanglink
 zig

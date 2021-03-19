@@ -1,11 +1,11 @@
-#' Information-based generalized Robinson–Foulds distances
+#' Information-based generalized Robinson&ndash;Foulds distances
 #'
 #' Calculate tree similarity and distance measures based on the amount of 
 #' phylogenetic or clustering information that two trees hold in common, as
 #' proposed in Smith (2020).
 #' 
 #' 
-#' [Generalized Robinson–Foulds distances](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances)
+#' [Generalized Robinson&ndash;Foulds distances](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances)
 #' calculate tree similarity by finding an
 #' optimal matching that the similarity between a split on one tree
 #' and its pair on a second, considering all possible ways to pair splits 
@@ -27,7 +27,7 @@
 #' defined in 
 #' [a separate vignette](https://ms609.github.io/TreeDist/articles/information.html).
 #' 
-#' Using the mutual (clustering) information (Meil\ifelse{html}{&#259;}{a}
+#' Using the mutual (clustering) information (Meil\ifelse{html}{\out{&#259;}}{a}
 #' 2007, Vinh _et al._ 2010) of two splits to quantify their similarity gives 
 #' rise to the Mutual Clustering Information measure (`MutualClusteringInfo()`, 
 #' `MutualClusteringInfoSplits()`); the entropy distance 
@@ -79,8 +79,24 @@
 #' splits in the most or least informative tree, use `normalize = `[`pmax`] or 
 #' [`pmin`] respectively.
 #' To calculate the relative similarity against a reference tree that is known
-#' to be 'correct', use `normalize = ``SplitwiseInfo(trueTree)` (SPI, MSI) or
+#' to be 'correct', use `normalize = SplitwiseInfo(trueTree)` (SPI, MSI) or
 #' `ClusteringEntropy(trueTree)` (MCI).
+#' 
+#' # Troubleshooting
+#' 
+#' Trees being compared must have identical tips.
+#' (If you have a use case for comparing trees with non-identical tips, do file a 
+#' [GitHub issue](https://github.com/ms609/TreeDist/issues/new?title=Non-identical+tips)
+#' or drop the maintainer an e-mail.)
+#' 
+#' To determine which tips do not occur in both trees, try:
+#' 
+#' ```r
+#' library('TreeTools')
+#' setdiff(TipLabels(tree1), TipLabels(tree2)) # In tree1 but not tree2
+#' setdiff(TipLabels(tree2), TipLabels(tree1)) # In tree2 but not tree1
+#' ```
+#' 
 #' 
 #' @template tree12ListParams
 #' 
@@ -101,9 +117,11 @@
 #' @return If `reportMatching = FALSE`, the functions return a numeric 
 #' vector specifying the requested similarities or differences.
 #' 
-#' If `reportMatching = TRUE`, the functions additionally return details
-#' of which clades are matched in the optimal matching, which can be viewed
-#' using [`VisualizeMatching()`].
+#' If `reportMatching = TRUE`, the functions additionally return an integer
+#' vector listing the index of the split in `tree2` that is matched with 
+#' each split in `tree1` in the optimal matching.
+#' Unmatched splits are denoted `NA`.
+#' Use [`VisualizeMatching()`] to plot the optimal matching.
 #'  
 #' @examples 
 #' tree1 <- ape::read.tree(text='((((a, b), c), d), (e, (f, (g, h))));')
@@ -121,6 +139,7 @@
 #' 
 #' # How similar are two trees?
 #' SharedPhylogeneticInfo(tree1, tree2) # Amount of phylogenetic information in common
+#' attr(SharedPhylogeneticInfo(tree1, tree2, reportMatching = TRUE), 'matching')
 #' VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2) # Which clades are matched?
 #' 
 #' DifferentPhylogeneticInfo(tree1, tree2) # Distance measure

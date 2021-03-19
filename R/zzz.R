@@ -6,7 +6,6 @@
 release_questions <- function() {
   c(
     "Is the code free of #TODOs?",
-    "TreeSpace vignette: Install CRAN, not GitHub",
     "Have you updated README.md, inst/REFERENCES.bib & inst/CITATION with a citation to the published studies?"
     )
 }
@@ -25,8 +24,10 @@ release_questions <- function() {
 # build_manual() # PDF support for special characters
 #
 # devtools::check_win_devel(quiet = TRUE); rhub::check_for_cran()
-# rhub::check_with_valgrind() # runs the build and check on Linux, in valgrind to find memory leaks and pointer errors.
-# rhub::check_with_sanitizers() # runs all package package tests, examples and vignettes with Address Sanitizer and Undefined Behavior Sanitizer.
+# Check valgrind section of GitHub actions for memcheck errors
+# 
+# rhub::check_with_sanitizers() # runs all package package tests, examples and 
+# vignettes with Address Sanitizer and Undefined Behavior Sanitizer.
 #
 # revdepcheck::revdep_check()
 #

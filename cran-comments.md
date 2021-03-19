@@ -1,14 +1,17 @@
 ## Test environments
-* Local Windows 10 installation, R 4.0.2
-* Windows 10, with `check_win_devel()`, R devel
-* Ubuntu 16.04.6 LTS, R 3.6.0, release and devel, via
-  [Travis CI](https://travis-ci.org/ms609/TreeDist)
-* Mac OS X 10.13.6, R release, via Travis
-* R-hub, with `check_for_cran()` and `check_with_sanitizers()`.
-
-`check_with_sanitizers()` fails due to an error in the required package 
-'phangorn', and I'm not aware of another way to verify that all ASAN issues
-are fixed (as a Windows user).
+* Microsoft Windows:
+  * Local Windows 10 installation, R 4.0.3
+  * windows-latest: Microsoft Windows Server 2019, Windows 10.0.17763, 
+    R release, via [Github Actions](https://github.com/ms609/TreeDist/actions)
+  * win_devel: with `devtools::check_win_devel()`, R devel
+  * win_oldrel: with `devtools::check_win_oldrelease()`.
+  
+* Linux:
+  * Ubuntu 20.04.1 LTS, R 3.6.0, release and devel, via Github Actions
+  * via R-hub, with `rhub::check_for_cran()`, `rhub::check_with_sanitizers()`
+    and  `rhub::check_with_valgrind()`.
+  
+* Mac OS X 10.15.7, R release, via Github actions
 
 
 ## R CMD check results
@@ -16,6 +19,13 @@ There were no ERRORs or WARNINGs.
 
 There were two NOTEs:
 > Maintainer: 'Martin R. Smith <martin.smith@durham.ac.uk>'
+> 
+> Days since last update: 2
+
+This release aims to fix errors identified by Prof. Ripley's post-submission
+checks.  I now see no memory errors when using `rhub::check_with_valgrind()`
+or `rhub::check_with_sanitizers()`; these builds appear to run checks 
+successfully, though they fail to save artefacts.
 
 > Suggests or Enhances not in mainstream repositories:
 >   TreeDistData
@@ -27,7 +37,7 @@ There were two NOTEs:
 'TreeDistData' is too large to be submitted on CRAN.
 
 All calls to `data(package = 'TreeDistData')` are wrapped within 
-`if(require('TreeDistData')` to ensure that vignettes fail gracefully when
+`if(require('TreeDistData'))` to ensure that vignettes fail gracefully when
 'TreeDistData' is not installed.
 
 

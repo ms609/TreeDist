@@ -21,7 +21,7 @@ values should be divided by four.
 }
 \description{
 Calculate the variation of clustering information
-(Meil\ifelse{html}{&#259;}{a} 2007) for each possible pairing of
+(Meil\ifelse{html}{\out{&#259;}}{a} 2007) for each possible pairing of
 non-trivial splits on \emph{n} leaves, tabulating the number of pairings with
 each similarity.
 }

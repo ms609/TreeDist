@@ -1,8 +1,8 @@
 Package: TreeDist
 Type: Package
 Title: Distances Between Phylogenetic Trees
-Version: 1.2.1.9200
-Authors@R: c(person("Martin R.", 'Smith',
+Version: 2.0.3
+Authors@R: c(person("Martin R.", "Smith",
                   email="martin.smith@durham.ac.uk", 
                   role=c("aut", "cre", "cph", "prg"), 
                   comment=c(ORCID = "0000-0001-5660-1727")),
@@ -45,7 +45,7 @@ Imports:
   Rdpack,
   shiny,
   shinyjs,
-  TreeTools (>= 1.3.1.9002)
+  TreeTools (> 1.3.1)
 Suggests:
   bookdown,
   cluster,
@@ -67,8 +67,6 @@ Suggests:
 LinkingTo: 
   Rcpp,
   TreeTools
-Remotes:
-  ms609/TreeTools
 RdMacros: Rdpack
 VignetteBuilder: knitr
 SystemRequirements: C++14

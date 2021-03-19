@@ -51,7 +51,8 @@ specified pair scorer. If \code{reportMatching = TRUE}, attribute also list:
 }
 }
 \description{
-An internal function to calculate Generalized Robinson–Foulds distances from
+An internal function to calculate Generalized
+Robinson–Foulds distances from
 splits.
 }
 \details{

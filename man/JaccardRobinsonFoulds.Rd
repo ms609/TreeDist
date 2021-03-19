@@ -85,7 +85,8 @@ Calculate the
 \href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson–Foulds metric}.
 }
 \details{
-In short, the Jaccard–Robinson–Foulds metric is a generalized Robinson-Foulds
+In short, the Jaccard–Robinson–Foulds
+metric is a generalized Robinson-Foulds
 metric: it finds the optimal matching that pairs each split in one tree with
 a similar split in the second.
 Matchings are scored according to the size of the largest split that is

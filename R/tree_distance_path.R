@@ -7,8 +7,13 @@
 #' It pre-processes trees to ensure that their internal representation does
 #' not cause the `path.dist()` function to crash R.
 #' 
-#' The path distance is also termed the cladistic difference or topological
-#' distance.
+#' The path distance is calculated by tabulating the cladistic difference (=
+#' topological distance) between each pair of tips in each tree.
+#' A precursor to the path distance (Farris, 1969) took the mean squared 
+#' difference between the elements of each tree's tabulation (Farris, 1973);
+#' the method used here is that proposed by Steel & Penny (1993), which takes
+#' the square root of this sum.  Other precursor measures are described in 
+#' Williams and Clifford (1971) and Phipps (1971).
 #' 
 #' Use of the path distance is discouraged as it emphasizes 
 #' shallow relationships at the expense of deeper (and arguably more
@@ -33,7 +38,15 @@
 #' CompareAll(as.phylo(30:33, 8), PathDist)
 #'  
 #' @references 
+#' \insertRef{Farris1969}{TreeDist}
+#' 
 #' \insertRef{Farris1973}{TreeDist}
+#' 
+#' \insertRef{Phipps1971}{TreeDist}
+#' 
+#' \insertRef{Steel1993}{TreeDist}
+#' 
+#' \insertRef{Williams1971}{TreeDist}
 #' 
 #' @template MRS
 #' @family tree distances

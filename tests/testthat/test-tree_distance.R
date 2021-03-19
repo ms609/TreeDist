@@ -82,7 +82,7 @@ test_that('Size mismatch causes error', {
   Test(cpp_robinson_foulds_info)
   Test(cpp_matching_split_distance)
   Test(cpp_jaccard_similarity)
-  Test(cpp_mmsi_distance)
+  Test(cpp_msi_distance)
   Test(cpp_mutual_clustering)
   Test(cpp_shared_phylo)
 })
@@ -267,11 +267,11 @@ test_that('MatchingSplitInfo() is correctly calculated', {
                  as.Splits(c(rep(FALSE, 6), rep(TRUE, 2))),
                  as.Splits(c(FALSE, FALSE, rep(TRUE, 2), rep(FALSE, 4)))),
                tolerance = 1e-7)
-  expect_equal(log2(3), cpp_mmsi_distance(
+  expect_equal(log2(3), cpp_msi_distance(
     as.Splits(c(rep(TRUE, 2), rep(FALSE, 6))),
     as.Splits(c(FALSE, FALSE, rep(TRUE, 2), rep(FALSE, 4))),
     8L)$score, tolerance = 1e-7)
-  expect_equal(log2(3), cpp_mmsi_distance(
+  expect_equal(log2(3), cpp_msi_distance(
     as.Splits(rep(c(FALSE, TRUE), each = 4L)),
     as.Splits(rep(c(FALSE, TRUE), 4L)),
     8L)$score, tolerance = 1e-7)
@@ -302,13 +302,13 @@ test_that("Shared Phylogenetic Information is correctly estimated", {
   tol <- exp[, 'Std. Err.'] * 2
   # Expected values calculated with 100k samples
   expect_equal(1.175422, exp['SharedPhylogeneticInfo', 'Estimate'], 
-               tolerance=tol[1])
+               tolerance = tol[1])
   expect_equal(3.099776, exp['MatchingSplitInfo', 'Estimate'], 
-               tolerance=tol[2])
+               tolerance = tol[2])
   expect_equal(25.231023, exp['DifferentPhylogeneticInfo', 'Estimate'], 
-               tolerance=tol[3])
+               tolerance = tol[3])
   expect_equal(21.382314, exp['MatchingSplitInfoDistance', 'Estimate'], 
-               tolerance=tol[4])
+               tolerance = tol[4])
   expect_equal(exp[, 'sd'], exp[, 'Std. Err.'] * sqrt(exp[, 'n']))
 })
 
@@ -368,6 +368,40 @@ test_that('Clustering information is correctly calculated', {
                MutualClusteringInfo(treeAbc.Defgh, treeAb.Cdefgh),
                tolerance = 1e-05)
   
+  
+  
+  # Different resolution
+  randomBif20 <- structure(list(
+    edge = structure(c(21L, 21L, 22L, 23L, 24L, 25L, 26L, 27L, 28L, 29L, 30L,
+                       31L, 32L, 32L, 31L, 30L, 29L, 33L, 34L, 34L, 33L, 28L, 
+                       35L, 36L, 36L, 35L, 27L, 26L, 37L, 37L, 25L, 38L, 38L,
+                       39L, 39L, 24L, 23L, 22L, 1L, 22L, 23L, 24L, 25L, 26L, 
+                       27L, 28L, 29L, 30L, 31L, 32L, 2L, 14L, 7L, 10L, 33L, 34L,
+                       4L, 6L, 8L, 35L, 36L, 13L, 16L, 18L, 17L, 37L, 5L, 15L,
+                       38L, 11L, 39L, 12L, 19L, 9L, 3L, 20L),
+                     .Dim = c(38L, 2L)), Nnode = 19L,
+    tip.label = c("t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10",
+                  "t11", "t12", "t13", "t14", "t15", "t16", "t17", "t18", "t19",
+                  "t20"), br = NULL), class = "phylo")
+  threeAwayPoly <- structure(
+    list(edge = structure(c(21L, 22L, 23L, 24L, 25L, 26L, 27L, 28L, 29L, 29L, 
+                            28L, 27L, 26L, 30L, 30L, 30L, 26L, 31L, 31L, 25L, 
+                            32L, 33L, 33L, 32L, 25L, 25L, 24L, 34L, 34L, 34L,
+                            23L, 22L, 21L, 22L, 23L, 24L, 25L, 26L, 27L, 28L,
+                            29L, 2L, 8L, 14L, 10L, 30L, 13L, 16L, 18L, 31L, 4L,
+                            6L, 32L, 33L, 15L, 20L, 5L, 7L, 17L, 34L, 11L, 12L,
+                            19L, 9L, 3L, 1L), .Dim = c(33L, 2L)),
+         tip.label = c("t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9",
+                       "t10", "t11", "t12", "t13", "t14", "t15", "t16", "t17",
+                       "t18", "t19", "t20"),
+         Nnode = 14L), class = "phylo")
+  expect_equal(
+    MutualClusteringInfo(threeAwayPoly, randomBif20),
+    MutualClusteringInfo(randomBif20, threeAwayPoly))
+  match <- MutualClusteringInfo(randomBif20, threeAwayPoly, reportMatching = TRUE)
+  expect_equal(c(NA, NA,  1,  2, NA,  3,  7, 11, 10,  4,  6,  9,  8, NA,  5, 12, NA),
+               attr(match, 'matching'))
+  
   library('TreeTools')
   expect_equal(ClusteringEntropy(BalancedTree(64)),
                MutualClusteringInfo(BalancedTree(64), BalancedTree(64)))
@@ -380,6 +414,129 @@ test_that('Clustering information is correctly calculated', {
             MutualClusteringInfo(BalancedTree(644), PectinateTree(644)))
   
   NormalizationTest(MutualClusteringInfo)
+})
+
+test_that("Matchings are correct", {
+  
+  # Different resolution: used to cause memory leak
+  randomBif20 <- structure(list(
+    edge = structure(c(21L, 21L, 22L, 23L, 24L, 25L, 26L, 27L, 28L, 29L, 30L,
+                       31L, 32L, 32L, 31L, 30L, 29L, 33L, 34L, 34L, 33L, 28L, 
+                       35L, 36L, 36L, 35L, 27L, 26L, 37L, 37L, 25L, 38L, 38L,
+                       39L, 39L, 24L, 23L, 22L, 1L, 22L, 23L, 24L, 25L, 26L, 
+                       27L, 28L, 29L, 30L, 31L, 32L, 2L, 14L, 7L, 10L, 33L, 34L,
+                       4L, 6L, 8L, 35L, 36L, 13L, 16L, 18L, 17L, 37L, 5L, 15L,
+                       38L, 11L, 39L, 12L, 19L, 9L, 3L, 20L),
+                     .Dim = c(38L, 2L)), Nnode = 19L,
+    tip.label = c("t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10",
+                  "t11", "t12", "t13", "t14", "t15", "t16", "t17", "t18", "t19",
+                  "t20"), br = NULL), class = "phylo")
+  threeAwayPoly <- structure(
+    list(edge = structure(c(21L, 22L, 23L, 24L, 25L, 26L, 27L, 28L, 29L, 29L, 
+                            28L, 27L, 26L, 30L, 30L, 30L, 26L, 31L, 31L, 25L, 
+                            32L, 33L, 33L, 32L, 25L, 25L, 24L, 34L, 34L, 34L,
+                            23L, 22L, 21L, 22L, 23L, 24L, 25L, 26L, 27L, 28L,
+                            29L, 2L, 8L, 14L, 10L, 30L, 13L, 16L, 18L, 31L, 4L,
+                            6L, 32L, 33L, 15L, 20L, 5L, 7L, 17L, 34L, 11L, 12L,
+                            19L, 9L, 3L, 1L), .Dim = c(33L, 2L)),
+         tip.label = c("t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9",
+                       "t10", "t11", "t12", "t13", "t14", "t15", "t16", "t17",
+                       "t18", "t19", "t20"),
+         Nnode = 14L), class = "phylo")
+  
+  expect_equal(
+    MutualClusteringInfo(threeAwayPoly, randomBif20),
+    MutualClusteringInfo(randomBif20, threeAwayPoly))
+  
+  
+  t1 <- PectinateTree(letters[1:11])
+  t2 <- ape::read.tree(text = '(a, (c, (b, (d, e, ((g, h, f), (k, (j, i)))))));')
+  t3 <- CollapseNode(PectinateTree(c(letters[11], letters[1:10])), 16:19)
+  s1 <- as.Splits(t1)
+  s2 <- as.Splits(t2, t1)
+  s3 <- as.Splits(t3, t1)
+  n1 <- dim(s1)[1]
+  n2 <- dim(s2)[1]
+  n3 <- dim(s3)[1]
+  n <- NTip(s1)
+  
+  # Plot
+  # par(mfrow = 2:1, cex = 0.9, mar = rep(0,4))
+  # JRF2T <- function(...) JaccardRobinsonFoulds(..., k = 2)
+  # JRF2F <- function(...) JaccardRobinsonFoulds(..., k = 2, allowConflict = FALSE)
+  # VisualizeMatching(MatchingSplitDistance, t1, t2, setPar=F)
+  # LabelSplits(t2, setNames(1:6, names(s2)), adj = 2)
+  # VisualizeMatching(MatchingSplitDistance, t2, t1, setPar=F)
+  # LabelSplits(t1, setNames(1:8, names(s1)), adj = 2)
+  
+  
+  Test <- function (CppFn, x12, x21, ...) {
+    
+    r12 <- CppFn(s1, s2, n, ...)
+    r21 <- CppFn(s2, s1, n, ...)
+    r13 <- CppFn(s1, s3, n, ...)
+    r31 <- CppFn(s3, s1, n, ...)
+    expect_equal(r12$score, r21$score)
+    expect_equal(r13$score, r31$score)
+    
+    m12 <- r12$matching
+    m21 <- r21$matching
+    
+    expect_equal(n1, length(m12))
+    expect_equal(length(m12[!is.na(m12)]), length(unique(m12[!is.na(m12)])))
+    expect_equal(n2, length(m21))
+    expect_equal(length(m21[!is.na(m21)]), length(unique(m21[!is.na(m21)])))
+    expect_lte(dim(s1)[1] - dim(s2)[1], sum(is.na(m12)))
+    
+    
+    m13 <- r13$matching
+    m31 <- r31$matching
+    expect_equal(n1, length(m13))
+    expect_equal(length(m13[!is.na(m13)]), length(unique(m13[!is.na(m13)])))
+    expect_equal(n3, length(m31))
+    expect_equal(length(m31[!is.na(m31)]), length(unique(m31[!is.na(m31)])))
+    expect_lte(dim(s1)[1] - dim(s3)[1], sum(is.na(m13)))
+    
+    for (i in seq_along(m12)) expect_true(m12[i] %in% x12[[i]])
+    for (i in seq_along(m21)) expect_true(m21[i] %in% x21[[i]])
+    
+  }
+  
+  Test(TreeDist:::cpp_robinson_foulds_distance,
+       list(NA, 2, NA, 3, NA, NA, 5, NA),
+       list(NA, 2, 4, NA, 7, NA)
+       )
+  Test(TreeDist:::cpp_robinson_foulds_info,
+       list(NA, 2, NA, 3, NA, NA, 5, NA),
+       list(NA, 2, 4, NA, 7, NA)
+       )
+  Test(TreeDist:::cpp_matching_split_distance,
+       list(1, 2, 4, 3, NA, NA, 5, 6),
+       list(1, 2, 5, 4, 7, 6)
+       )
+  Test(TreeDist:::cpp_jaccard_similarity,
+       list(NA, 2, 1, 3, 4, 6, 5, NA),
+       list(3, 2, 4, 5, 7, 6),
+       k = 2,
+       allowConflict = TRUE)
+  Test(TreeDist:::cpp_jaccard_similarity,
+       list(NA, 2, 1, 3, NA, 6, 5, 4),
+       list(3, 2, 4, 1, 7, 6),
+       k = 2,
+       allowConflict = FALSE)
+  Test(TreeDist:::cpp_msi_distance,
+       list(NA, 2, 1, 4, 3, 6, 5, NA),
+       list(3, 2, c(4, 5), c(4, 5), c(6, 7), c(7, 6))
+       )
+  Test(TreeDist:::cpp_shared_phylo,
+       list(NA, 2, 4, 3, 1, 6, 5, NA),
+       list(5, 2, 4, 3, 7, 6)
+       )
+  Test(TreeDist:::cpp_mutual_clustering, 
+       list(4, 2, NA, 3, 6, NA, 5, 1),
+       list(8, 2, 4, 5, 7, 1)
+       )
+
 })
 
 test_that('Matching Split Distance is correctly calculated', {

@@ -1,7 +1,6 @@
 # TreeDist
 
 [![Project Status: Inactive – The project has reached a stable, usable state but is no longer being actively developed; support/maintenance will be provided as time allows.](http://www.repostatus.org/badges/latest/inactive.svg)](http://www.repostatus.org/#inactive)
-[![Travis build status](https://travis-ci.org/ms609/TreeDist.svg?branch=master)](https://travis-ci.org/ms609/TreeDist)
 [![codecov](https://codecov.io/gh/ms609/TreeDist/branch/master/graph/badge.svg)](https://codecov.io/gh/ms609/TreeDist)
 [![CRAN Status Badge](http://www.r-pkg.org/badges/version/TreeDist)](https://cran.r-project.org/package=TreeDist)
 [![CRAN Downloads](http://cranlogs.r-pkg.org/badges/TreeDist)](https://cran.r-project.org/package=TreeDist)
@@ -48,6 +47,8 @@ lead to different tree distance metrics, implemented in the functions below:
     (Its complement, 
     [`ClusteringInfoDistance()`](https://ms609.github.io/TreeDist/reference/TreeDistance.html),
     returns a tree distance.)
+    
+    [![Introduction to the Clustering Information Distance](man/figures/CID_talk.png)](https://durham.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=ca5ede19-d21a-40ce-8b9e-ac6e00d7e2c0)
 
 * [`NyeSimilarity()`](https://ms609.github.io/TreeDist/reference/NyeSimilarity.html)
     
@@ -100,7 +101,7 @@ common analytical pitfalls (Smith, forthcoming),
 using the inbuilt graphical user interface:
 
 ```r
-TreeDist::TreeSpace()
+TreeDist::Project()
 ```
 
 Serious analysts should consult the
@@ -162,7 +163,7 @@ _Bioinformatics_, 22, 117–119.
 - Smith, M.R. (2020) [Information theoretic Generalized Robinson-Foulds
 metrics for comparing phylogenetic 
 trees](https://dx.doi.org/10.1093/bioinformatics/btaa614).
-_Bioinformatics_, online ahead of print.
+_Bioinformatics_, 36, 5007–5013.
 
 - Smith, M.R. (forthcoming)
 The importance of methodology when analysing landscapes of phylogenetic trees.

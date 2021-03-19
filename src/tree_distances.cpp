@@ -1,3 +1,4 @@
+#include <memory> /* for unique_ptr, make_unique */
 #include <cmath>
 #include <Rcpp.h>
 #include "tree_distances.h"
@@ -12,15 +13,14 @@ List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y,
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   const SplitList a(x), b(y);
-  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-              last_bin = a.n_bins - 1,
+  const int16 last_bin = a.n_bins - 1,
               n_tips = nTip[0],
               unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   cost score = 0;
   
-  rf_match matching (most_splits);
-  for (int16 i = most_splits; i--; ) matching[i] = NA_INTEGER;
+  grf_match matching (a.n_splits);
+  for (int16 i = a.n_splits; i--; ) matching[i] = NA_INTEGER;
   
   splitbit b_complement[MAX_SPLITS][MAX_BINS];
   for (int16 i = b.n_splits; i--; ) {
@@ -70,16 +70,15 @@ List cpp_robinson_foulds_info (const RawMatrix x, const RawMatrix y,
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   const SplitList a(x), b(y);
-  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-              last_bin = a.n_bins - 1,
+  const int16 last_bin = a.n_bins - 1,
               n_tips = nTip[0],
               unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   const double lg2_unrooted_n = lg2_unrooted[n_tips];
   double score = 0;
   
-  IntegerVector matching (most_splits);
-  for (int16 i = 0; i != most_splits; i++) matching[i] = NA_INTEGER;
+  IntegerVector matching (a.n_splits);
+  for (int16 i = 0; i != a.n_splits; i++) matching[i] = NA_INTEGER;
   
   /* Dynamic allocation 20% faster for 105 tips, but VLA not permitted in C11 */
   splitbit b_complement[MAX_SPLITS][MAX_BINS]; 
@@ -144,7 +143,6 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
     half_tips = n_tips / 2;
   if (most_splits == 0) {
     return List::create(Named("score") = 0);
-    
   }
   const cost max_score = BIG / most_splits;
   
@@ -182,10 +180,10 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
   for (int16 i = most_splits; i--; ) delete[] score[i];
   delete[] u; delete[] v; delete[] colsol; delete[] score;
   
-  NumericVector final_matching (most_splits);
+  IntegerVector final_matching (a.n_splits);
   
-  for (int16 i = most_splits; i--; ) {
-    final_matching[i] = rowsol[i] + 1;
+  for (int16 i = a.n_splits; i--; ) {
+    final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
   }
   
   delete[] rowsol;
@@ -309,10 +307,10 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
     / max_score);
   for (int16 i = most_splits; i--; ) delete[] score[i];
   delete[] u; delete[] v; delete[] colsol; delete[] score;
-  NumericVector final_matching (most_splits);
+  IntegerVector final_matching (a.n_splits);
   
-  for (int16 i = most_splits; i--; ) {
-    final_matching[i] = rowsol[i] + 1;
+  for (int16 i = a.n_splits; i--; ) {
+    final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
   }
   delete[] rowsol;
   
@@ -322,7 +320,7 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_mmsi_distance (const RawMatrix x, const RawMatrix y,
+List cpp_msi_distance (const RawMatrix x, const RawMatrix y,
                         const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     throw std::invalid_argument("Input splits must address same number of tips.");
@@ -380,9 +378,9 @@ List cpp_mmsi_distance (const RawMatrix x, const RawMatrix y,
   for (int16 i = most_splits; i--; ) delete[] score[i];
   delete[] u; delete[] v; delete[] colsol; delete[] score;
   
-  NumericVector final_matching (most_splits);
-  for (int16 i = most_splits; i--; ) {
-    final_matching[i] = rowsol[i] + 1;
+  IntegerVector final_matching (a.n_splits);
+  for (int16 i = a.n_splits; i--; ) {
+    final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
   }
   
   delete[] rowsol;
@@ -399,11 +397,11 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     throw std::invalid_argument("Input splits must address same number of tips.");
   }
   const SplitList a(x), b(y);
-  const bool b_has_fewer_splits = (a.n_splits > b.n_splits);
+  const bool a_has_more_splits = (a.n_splits > b.n_splits);
   const int16
-    most_splits = b_has_fewer_splits ? a.n_splits : b.n_splits,
-    a_extra_splits = b_has_fewer_splits ? most_splits - b.n_splits : 0,
-    b_extra_splits = b_has_fewer_splits ? 0 : most_splits - a.n_splits,
+    most_splits = a_has_more_splits ? a.n_splits : b.n_splits,
+    a_extra_splits = a_has_more_splits ? most_splits - b.n_splits : 0,
+    b_extra_splits = a_has_more_splits ? 0 : most_splits - a.n_splits,
     last_bin = a.n_bins - 1,
     n_tips = nTip[0],
     unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0
@@ -481,6 +479,9 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     }
   }
   if (exact_matches == b.n_splits || exact_matches == a.n_splits) {
+    for (int16 i = most_splits; i--; ) delete[] score[i];
+    delete[] score;
+    
     return List::create(
       Named("score") = NumericVector::create(exact_match_score / n_tips),
       _["matching"] = a_match);
@@ -522,16 +523,35 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     for (int16 i = most_splits; i--; ) delete[] score[i];
     delete[] colsol; delete[] u; delete[] v; delete[] score;
     
-    std::unique_ptr<int16[]> no_match = std::make_unique<int16[]>(b.n_splits);
-    int16 match = 0;
+    std::unique_ptr<int16[]> lap_decode = std::make_unique<int16[]>(lap_dim);
+    int16 fuzzy_match = 0;
     for (int16 bi = 0; bi != b.n_splits; bi++) {
-      if (!b_match[bi]) no_match[match++] = bi + 1;
+      if (!b_match[bi]) {
+        lap_decode[fuzzy_match++] = bi + 1;
+      } else {
+      }
     }
     
-    match = 0;
-    NumericVector final_matching (most_splits);
-    for (int16 i = 0; i != most_splits; i++) {
-      final_matching[i] = a_match[i] ? a_match[i] : no_match[rowsol[match++]];
+    fuzzy_match = 0;
+    IntegerVector final_matching(a.n_splits);
+    for (int16 i = 0; i != a.n_splits; i++) {
+      if (a_match[i]) {
+        // Rcout << "a" << (1+i) << " exactly matches b" << a_match[i]<< "\n";
+        final_matching[i] = a_match[i];
+      } else {
+        const int16 this_sol = rowsol[fuzzy_match++];
+        // Rcout << "a"<<(1+i) << " fuzzily matches rowsol[" << this_sol <<"] == "
+        //       << rowsol[this_sol] << "; ";
+        if (rowsol[this_sol] >= lap_dim - a_extra_splits) {
+          // Rcout << " unmatched (NA)\n";
+          final_matching[i] = NA_INTEGER;
+        } else {
+          // Rcout << " matched with b" << lap_decode[rowsol[this_sol]] <<".\n";
+          final_matching[i] = lap_decode[rowsol[this_sol]];
+        }
+      }
+      // Rcout << " ";
+      // if (final_matching[i] > 0) Rcout << final_matching[i]; else Rcout << "NA";
     }
     
     delete[] rowsol;
@@ -554,9 +574,9 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     for (int16 i = most_splits; i--; ) delete[] score[i];
     delete[] colsol; delete[] u; delete[] v; delete[] score;
     
-    NumericVector final_matching (most_splits);
-    for (int16 i = most_splits; i--; ) {
-      final_matching[i] = rowsol[i] + 1;
+    IntegerVector final_matching (a.n_splits);
+    for (int16 i = a.n_splits; i--; ) {
+      final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
     }
     
     delete[] rowsol;
@@ -637,13 +657,13 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   
   delete[] u; delete[] v; delete[] colsol;
   
-  NumericVector final_matching (most_splits);
+  IntegerVector final_matching (a.n_splits);
   
-  for (int16 i = 0; i != most_splits; i++) delete[] score[i];
+  for (int16 i = most_splits; i--; ) delete[] score[i];
   delete[] score;
   
-  for (int16 i = 0; i != most_splits; i++) {
-    final_matching[i] = rowsol[i] + 1;
+  for (int16 i = a.n_splits; i--; ) {
+    final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
   }
   
   delete[] rowsol;

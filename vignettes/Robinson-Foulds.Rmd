@@ -1,11 +1,11 @@
 ---
-title: "Extending the Robinson–Foulds metric"
+title: "Extending the Robinson-Foulds metric"
 author: "[Martin R. Smith](https://smithlabdurham.github.io/)"
 output: rmarkdown::html_vignette
 bibliography: ../inst/REFERENCES.bib
 csl: ../inst/apa-old-doi-prefix.csl
 vignette: >
-  %\VignetteIndexEntry{Extending the Robinson–Foulds metric}
+  %\VignetteIndexEntry{Extending the Robinson-Foulds metric}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

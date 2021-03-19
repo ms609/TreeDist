@@ -45,7 +45,7 @@ of each split in \code{x}.
 Sum the entropy (\code{ClusteringEntropy()}) or information content
 (\code{ClusteringInfo()}) across each split within a phylogenetic tree, treating
 each split as dividing the leaves of the tree into two clusters (\emph{sensu}
-Meil\ifelse{html}{&#259;}{a} 2007; Vinh \emph{et al.} 2010).
+Meil\ifelse{html}{\out{&#259;}}{a} 2007; Vinh \emph{et al.} 2010).
 }
 \details{
 Clustering entropy addresses the question "how much information is contained

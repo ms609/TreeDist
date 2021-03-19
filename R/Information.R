@@ -69,7 +69,7 @@ SplitDifferentInformation <- function (n, A1, A2 = A1) {
 #' Use variation of clustering information to compare pairs of splits
 #' 
 #' Compare a pair of splits viewed as clusterings of taxa, using the variation
-#' of clustering information proposed by Meil\ifelse{html}{&#259;}{a} (2007).
+#' of clustering information proposed by Meil\ifelse{html}{\out{&#259;}}{a} (2007).
 #' 
 #' This is equivalent to the mutual clustering information (Vinh _et al._ 2010).
 #' For the total information content, multiply the VoI by the number of leaves.
@@ -149,7 +149,7 @@ MeilaMutualInformation <- function (split1, split2) {
 #' Variation of information for all split pairings
 #' 
 #' Calculate the variation of clustering information
-#' (Meil\ifelse{html}{&#259;}{a} 2007) for each possible pairing of
+#' (Meil\ifelse{html}{\out{&#259;}}{a} 2007) for each possible pairing of
 #' non-trivial splits on _n_ leaves, tabulating the number of pairings with
 #' each similarity.
 #' 
@@ -217,7 +217,7 @@ AllSplitPairings <- memoise(function (n) {
 #' two groups.
 #' Further details are available in a 
 #' [vignette](https://ms609.github.io/TreeDist/articles/information.html),
-#' MacKay (2003) and Meil\ifelse{html}{&#259;}{a} (2007).
+#' MacKay (2003) and Meil\ifelse{html}{\out{&#259;}}{a} (2007).
 #' 
 #' @template split12Params
 #' 

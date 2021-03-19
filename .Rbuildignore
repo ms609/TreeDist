@@ -1,10 +1,12 @@
 ^Meta$
 ^doc$
 ^data-raw$
+^memcheck$
 ^CRAN-RELEASE$
 /^src\-/
 CONTRIBUTING
 README.md
+.github
 cran-comments.md
 man-roxygen
 data-raw

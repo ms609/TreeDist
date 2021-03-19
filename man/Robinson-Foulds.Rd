@@ -96,9 +96,11 @@ distances between each  pair of trees in \code{tree1} and \code{tree2},
 or \code{splits1} and \code{splits2}.
 }
 \description{
-Calculate the Robinson–Foulds distance, or the equivalent similarity
-measure, with options to (i) annotate matched splits; (ii) weight splits
-according to their phylogenetic information content (Smith 2020).
+Calculate the Robinson–Foulds distance, or
+the equivalent similarity measure, with options to
+(i) annotate matched splits;
+(ii) weight splits according to their phylogenetic information content
+(Smith 2020).
 }
 \details{
 Note that if \code{reportMatching = TRUE}, the \code{pairScores} attribute returns

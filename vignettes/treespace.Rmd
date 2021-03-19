@@ -25,22 +25,19 @@ can mislead interpretation.
 
 ## Tree space analysis via user interface
 
-You can conduct treespace analysis simply using the Shiny app that comes with
+Tree space projection and analysis is made simple with the Shiny app included in
 the 'TreeDist' R package.  Simply install [R](https://www.r-project.org/) or
 [RStudio](https://rstudio.com/), then copy the code below into the R command
 line:
 
-<!--#install.packages('TreeDist')-->
-
 ```r
-install.packages('devtools')
-devtools::install_github('ms609/TreeDist')
-TreeDist::TreeSpace()
+install.packages('TreeDist')
+TreeDist::Project()
 ```
 
 This will allow you to conduct and evaluate basic tree space projections
 from tree lists saved in most common file formats; see an 
-[outline of the basic functionality](https://ms609.github.io/TreeDist/reference/TreeSpace.html).
+[outline of the basic functionality](https://ms609.github.io/TreeDist/reference/Project.html).
 To avoid misinterpreting tree space, it's worth having a broad idea of what
 an analysis involves, and some potential pitfalls.
 
@@ -48,7 +45,7 @@ an analysis involves, and some potential pitfalls.
 
 Here's an example analysis of a series of 200 trees from an ordered list.
 The list corresponds to a mixed-base representation of trees (see 
-`TreeTools::as.TreeNumber`), so is expected to contain some structure as we 
+`TreeTools::as.TreeNumber()`), so is expected to contain some structure as we 
 jump from one 'class' of tree to another. 
 Let's see whether we can visualize and corroborate this structure.
 
@@ -271,10 +268,10 @@ Our clusters, so distinct in dimension 1, overlap strongly in every other
 dimension. The fact that the minimum spanning tree moves between clusters also
 underlines the fact that they are not as well defined as they appear by eye.
 
-Note that cluster membership, as well as the precise shape of treespace, 
+Note that cluster membership, as well as the precise shape of tree space, 
 is a function of the tree distance metric.  The phylogenetic information
 distance recovers a different pair of clusters, highlighting the dangers
-of interpreting a two-dimensional treespace plot:
+of interpreting a two-dimensional tree space plot:
 
 
 ```{r pid, fig.asp = 1, fig.width = 4, fig.align = 'center', echo = FALSE}
