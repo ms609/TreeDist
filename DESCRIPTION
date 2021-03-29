@@ -49,6 +49,7 @@ Imports:
 Suggests:
   bookdown,
   cluster,
+  ggplot2,
   kdensity,
   knitr,
   MASS,
