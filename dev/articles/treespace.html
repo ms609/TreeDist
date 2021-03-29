@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9201</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.0.3.9000</span>
       </span>
     </div>
 
@@ -302,12 +302,46 @@ projection &lt;- sammon$points</code></pre>
 <p><img src="treespace_files/figure-html/pid-1.png" width="384" style="display: block; margin: auto;"></p>
 </div>
 </div>
+<div id="a-different-approach-self-organizing-maps" class="section level2">
+<h2 class="hasAnchor">
+<a href="#a-different-approach-self-organizing-maps" class="anchor"></a>A different approach: Self-organizing maps</h2>
+<p>An alternative approach to visualizing tree space is to create emergent self-organizing maps <span class="citation">(Kohonen, 1982; Thrun, Lerch, Lötsch, &amp; Ultsch, 2016; Ultsch, 2003)</span>, which map high-dimensional data into two dimensions, then add a third dimension to indicate distance between data points: nearby points occur in valleys, and are separated by ridges from more distant data points.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">umatrixInstalled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span><span class="op">(</span><span class="st">'Umatrix'</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="kw">if</span> <span class="op">(</span><span class="va">umatrixInstalled</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">map</span> <span class="op">&lt;-</span> <span class="fu">Umatrix</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Umatrix/man/esomTrain.html">esomTrain</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">distances</span><span class="op">)</span>, Key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">trees</span><span class="op">)</span>,
+                            Epochs <span class="op">=</span> <span class="fl">5</span>, <span class="co"># Increase for better results</span>
+                            Lines <span class="op">=</span> <span class="fl">42</span>,
+                            Columns <span class="op">=</span> <span class="fl">42</span>,
+                            Toroid <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+  
+  <span class="fu">Umatrix</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Umatrix/man/plotMatrix.html">plotMatrix</a></span><span class="op">(</span>Matrix <span class="op">=</span> <span class="va">map</span><span class="op">$</span><span class="va">Umatrix</span>,
+                      Toroid <span class="op">=</span> <span class="cn">FALSE</span>, FixedRatio <span class="op">=</span> <span class="cn">TRUE</span>,
+                      TransparentContours <span class="op">=</span> <span class="cn">FALSE</span>, Clean <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">map</span><span class="op">$</span><span class="va">BestMatches</span><span class="op">[</span>, <span class="fl">3</span><span class="op">]</span>,
+                                        y <span class="op">=</span> <span class="va">map</span><span class="op">$</span><span class="va">BestMatches</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span><span class="op">)</span>,
+                      shape <span class="op">=</span> <span class="fl">19</span>, color <span class="op">=</span> <span class="va">treeCols</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
+
+<span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/message.html">message</a></span><span class="op">(</span><span class="st">"Install the 'Umatrix' package to run this example"</span><span class="op">)</span>
+<span class="op">}</span></code></pre></div>
+<pre><code>## [1] "Epoch: 1 started"
+## [1] "Epoch: 2 started"
+## [1] "Epoch: 3 started"
+## [1] "Epoch: 4 started"
+## [1] "Epoch: 5 started"
+## [1] "---- Esom Training Finished ----"</code></pre>
+<p><img src="treespace_files/figure-html/umatrix-1.png" width="700" style="display: block; margin: auto;"></p>
+</div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h1>
 <div id="refs" class="references">
 <div id="ref-Kaufman1990">
 <p>Kaufman, L., &amp; Rousseeuw, P. J. (1990). Partitioning around medoids (Program PAM). In <em>Wiley Series in Probability and Statistics</em>. <em>Finding groups in data: An introduction to cluster analysis</em> (pp. 68–125). John Wiley &amp; Sons, Ltd. doi: <a href="https://doi.org/10.1002/9780470316801.ch2">10.1002/9780470316801.ch2</a></p>
+</div>
+<div id="ref-Kohonen1982">
+<p>Kohonen, T. (1982). Self-organized formation of topologically correct feature maps. <em>Biological Cybernetics</em>, <em>43</em>(1), 59–69. doi: <a href="https://doi.org/10.1007/BF00337288">10.1007/BF00337288</a></p>
 </div>
 <div id="ref-Kruskal1964">
 <p>Kruskal, J. B. (1964). Multidimensional scaling by optimizing goodness of fit to a nonmetric hypothesis. <em>Psychometrika</em>, <em>29</em>(1), 1–27. doi: <a href="https://doi.org/10.1007/BF02289565">10.1007/BF02289565</a></p>
@@ -320,6 +354,12 @@ projection &lt;- sammon$points</code></pre>
 </div>
 <div id="ref-SmithSpace">
 <p>Smith, M. R. (2021). The importance of methodology when analysing landscapes of phylogenetic trees. <em>Forthcoming</em>.</p>
+</div>
+<div id="ref-Thrun2016">
+<p>Thrun, M. C., Lerch, F., Lötsch, J., &amp; Ultsch, A. (2016). Visualization and 3D printing of multivariate data of biomarkers. <em>International Conference in Central Europe on Computer Graphics, Visualization and Computer Vision</em>. Plzen.</p>
+</div>
+<div id="ref-Ultsch2003">
+<p>Ultsch, A. (2003). Maps for the visualization of high-dimensional data spaces. <em>Proceedings Workshop on Self-Organizing Maps (Wsom 2003)</em>, 225–230. Kyushu, Japan.</p>
 </div>
 </div>
 </div>

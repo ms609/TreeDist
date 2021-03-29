@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9201</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.0.3.9000</span>
       </span>
     </div>
 
@@ -231,7 +231,7 @@ Likewise, more even splits contain more information than less even splits
 <p>The mutual information <span class="math inline">\(I(S_1;S_2)\)</span>, denoted in blue below, corresponds to the sum of the individual entropies, minus the joint entropy:</p>
 <p>\begin{aligned} I(S_1;S_2) = H(S_1) + H(S_2) - H(S_1, S_2) \end{aligned}</p>
 <p>If two statements have high mutual information, then once you have heard one statement, you already have a good idea what the outcome of the other statement will be, and thus learn little new on hearing it.</p>
-<p>The entropy distance, also termed the variation of information <span class="citation">(Meilă, 2007)</span>, corresponds to the information that <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> do <em>not</em> have in common (denoted below in yellow):</p>
+<p>The entropy distance, also termed the variation of information <span class="citation">(Meila, 2007)</span>, corresponds to the information that <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> do <em>not</em> have in common (denoted below in yellow):</p>
 <p>\begin{aligned} H_D(S_1, S_2) = H(S_1, S_2) - I(S_1;S_2) = 2H(S_1, S_2) - H(S_1) - H(S_2) \end{aligned}</p>
 <p>The higher the entropy distance, the harder it is to predict the outcome of one statement from the other; the maximum entropy distance occurs when the two statements are entirely independent.</p>
 <p><img src="information_files/figure-html/mackay-8-1-1.png" width="50%" style="display: block; margin: auto;"></p>
@@ -248,7 +248,7 @@ Put these together, and a randomly selected leaf may now bear one of three possi
 </ul>
 <p>The two splits thus have a joint entropy of <span class="math inline">\(-\frac{50}{100}\log_2{\frac{50}{100}} -\frac{10}{100}\log_2{\frac{10}{100}} -\frac{40}{100}\log_2{\frac{40}{100}} \approx 1.36\textrm{ bits} &lt; 0.97 + 1\)</span>.</p>
 <p>The joint entropy is less than the sum of the individual entropies because the two splits contain some mutual information: for instance, if a leaf bears the label ‘B’, we can be certain that it will also bear the label ‘D’. The more similar the splits are, and the more they agree in their division of leaves, the more mutual information they will exhibit.</p>
-<p>More formally, let split <span class="math inline">\(S\)</span> divides <span class="math inline">\(n\)</span> leaves into two partitions <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>. The probability that a randomly chosen leaf <span class="math inline">\(x\)</span> is in partition <span class="math inline">\(k\)</span> is <span class="math inline">\(P(x \in k) = \frac{|k|}{n}\)</span>. <span class="math inline">\(S\)</span> thus corresponds to a random variable with entropy <span class="math inline">\(H(S) = -\frac{|A|}{n} \log_2{\frac{|A|}{n}} - \frac{|B|}{n}\log_2{\frac{|B|}{n}}\)</span> <span class="citation">(Meilă, 2007)</span>. The joint entropy of two splits, <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span>, corresponds to the entropy of the association matrix of probabilities that a randomly selected leaf belongs to each pair of partitions:</p>
+<p>More formally, let split <span class="math inline">\(S\)</span> divides <span class="math inline">\(n\)</span> leaves into two partitions <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>. The probability that a randomly chosen leaf <span class="math inline">\(x\)</span> is in partition <span class="math inline">\(k\)</span> is <span class="math inline">\(P(x \in k) = \frac{|k|}{n}\)</span>. <span class="math inline">\(S\)</span> thus corresponds to a random variable with entropy <span class="math inline">\(H(S) = -\frac{|A|}{n} \log_2{\frac{|A|}{n}} - \frac{|B|}{n}\log_2{\frac{|B|}{n}}\)</span> <span class="citation">(Meila, 2007)</span>. The joint entropy of two splits, <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span>, corresponds to the entropy of the association matrix of probabilities that a randomly selected leaf belongs to each pair of partitions:</p>
 <table class="table">
 <colgroup>
 <col width="23%">
@@ -287,7 +287,7 @@ Put these together, and a randomly selected leaf may now bear one of three possi
 <p>MacKay, D. J. C. (2003). <em>Information theory, inference, and learning algorithms</em>. Cambridge: Cambridge University Press. Retrieved from <a href="https://www.inference.org.uk/itprnn/book.pdf">https://www.inference.org.uk/itprnn/book.pdf</a></p>
 </div>
 <div id="ref-Meila2007">
-<p>Meilă, M. (2007). Comparing clusterings—an information based distance. <em>Journal of Multivariate Analysis</em>, <em>98</em>(5), 873–895. doi:<a href="https://doi.org/10.1016/j.jmva.2006.11.013">10.1016/j.jmva.2006.11.013</a></p>
+<p>Meila, M. (2007). Comparing clusterings—an information based distance. <em>Journal of Multivariate Analysis</em>, <em>98</em>(5), 873–895. doi:<a href="https://doi.org/10.1016/j.jmva.2006.11.013">10.1016/j.jmva.2006.11.013</a></p>
 </div>
 <div id="ref-Shannon1948">
 <p>Shannon, C. E. (1948). A mathematical theory of communication. <em>Bell System Technical Journal</em>, <em>27</em>, 379–423, 623–656.</p>

@@ -88,7 +88,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">1.2.1.9201</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.0.3.9000</span>
       </span>
     </div>
 
@@ -199,18 +199,43 @@ between trees.</p>
 <code><a href='https://rdrr.io/pkg/phangorn/man/treedist.html'>path.dist()</a></code> in the phangorn package.
 It pre-processes trees to ensure that their internal representation does
 not cause the <code>path.dist()</code> function to crash R.</p>
-<p>The path distance is also termed the cladistic difference or topological
-distance.</p>
+<p>The path distance is calculated by tabulating the cladistic difference (=
+topological distance) between each pair of tips in each tree.
+A precursor to the path distance (Farris, 1969) took the mean squared
+difference between the elements of each tree's tabulation (Farris, 1973);
+the method used here is that proposed by Steel &amp; Penny (1993), which takes
+the square root of this sum.  Other precursor measures are described in
+Williams and Clifford (1971) and Phipps (1971).</p>
 <p>Use of the path distance is discouraged as it emphasizes
 shallow relationships at the expense of deeper (and arguably more
 fundamental) relationships (Farris, 1973).</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <p>Farris JS (1973).
+    <p>Farris JS (1969).
+&#8220;A successive approximations approach to character weighting.&#8221;
+<em>Systematic Biology</em>, <b>18</b>(4), 374--385.
+doi: <a href='https://doi.org/10.2307/2412182'>10.2307/2412182</a>
+, <a href='https://doi.org/10.2307/2412182'>https://doi.org/10.2307/2412182</a>.</p>
+<p>Farris JS (1973).
 &#8220;On comparing the shapes of taxonomic trees.&#8221;
 <em>Systematic Zoology</em>, <b>22</b>(1), 50--54.
 doi: <a href='https://doi.org/10.2307/2412378'>10.2307/2412378</a>
 , <a href='https://doi.org/10.2307/2412378'>https://doi.org/10.2307/2412378</a>.</p>
+<p>Phipps JB (1971).
+&#8220;Dendrogram topology.&#8221;
+<em>Systematic Zoology</em>, <b>20</b>(3), 306.
+doi: <a href='https://doi.org/10.2307/2412343'>10.2307/2412343</a>
+, <a href='https://doi.org/10.2307/2412343'>https://doi.org/10.2307/2412343</a>.</p>
+<p>Steel MA, Penny D (1993).
+&#8220;Distributions of tree comparison metrics---some new results.&#8221;
+<em>Systematic Biology</em>, <b>42</b>(2), 126--141.
+doi: <a href='https://doi.org/10.1093/sysbio/42.2.126'>10.1093/sysbio/42.2.126</a>
+, <a href='https://doi.org/10.1093/sysbio/42.2.126'>https://doi.org/10.1093/sysbio/42.2.126</a>.</p>
+<p>Williams WT, Clifford HT (1971).
+&#8220;On the comparison of two classifications of the same set of elements.&#8221;
+<em>Taxon</em>, <b>20</b>(4), 519--522.
+doi: <a href='https://doi.org/10.2307/1218253'>10.2307/1218253</a>
+, <a href='https://doi.org/10.2307/1218253'>https://doi.org/10.2307/1218253</a>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other tree distances: 
