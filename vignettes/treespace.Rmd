@@ -295,4 +295,34 @@ for (clI in 1:2) {
 }
 ```
 
+## A different approach: Self-organizing maps
+
+An alternative approach to visualizing tree space is to create emergent
+self-organizing maps [@Kohonen1982;@Ultsch2003;@Thrun2016],
+which map high-dimensional data into two dimensions,
+then add a third dimension to indicate distance between data points: 
+nearby points occur in valleys, and are separated by ridges from more distant
+data points.
+
+```{r umatrix, fig.asp = 1, fig.align = "center"}
+umatrixInstalled <- requireNamespace('Umatrix', quietly = TRUE)
+if (umatrixInstalled) {
+  map <- Umatrix::esomTrain(as.matrix(distances), Key = seq_along(trees),
+                            Epochs = 5, # Increase for better results
+                            Lines = 42,
+                            Columns = 42,
+                            Toroid = FALSE)
+  
+  Umatrix::plotMatrix(Matrix = map$Umatrix,
+                      Toroid = FALSE, FixedRatio = TRUE,
+                      TransparentContours = FALSE, Clean = TRUE) +
+  ggplot2::geom_point(data = data.frame(x = map$BestMatches[, 3],
+                                        y = map$BestMatches[, 2]),
+                      shape = 19, color = treeCols, size = 2)
+
+} else {
+  message("Install the 'Umatrix' package to run this example")
+}
+```
+
 # References

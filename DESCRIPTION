@@ -1,7 +1,7 @@
 Package: TreeDist
 Type: Package
 Title: Distances Between Phylogenetic Trees
-Version: 2.0.3
+Version: 2.0.3.9000
 Authors@R: c(person("Martin R.", "Smith",
                   email="martin.smith@durham.ac.uk", 
                   role=c("aut", "cre", "cph", "prg"), 
@@ -62,6 +62,7 @@ Suggests:
   Ternary (>= 1.1.2),
   TreeDistData (> 0.1.0),
   TreeSearch,
+  Umatrix,
   vdiffr,
   viridisLite
 LinkingTo: 

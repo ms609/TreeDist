@@ -1,8 +1,12 @@
+# TreeDist 2.0.3.9000 (development)
+ 
+- Add self-organizing map example to treespace vignette.
+
 # TreeDist 2.0.3
 
 - Diagnose and fix memory leaks, including over-long reported matchings.
 
-- Explicitly import shiny/shinyjs functions
+- Explicitly import shiny/shinyjs functions.
 
 
 # TreeDist 2.0.0
