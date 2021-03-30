@@ -78,6 +78,12 @@ jobs:
           remotes::install_github("KlausVigo/phangorn")
         shell: Rscript {0}
 
+      - name: Install callr (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          remotes::install_cran("callr")
+        shell: Rscript {0}
+
       - name: Install dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
@@ -87,7 +93,9 @@ jobs:
       - name: Check
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
+        run: |
+          rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"),
+            error_on = "warning", check_dir = "check")
         shell: Rscript {0}
 
       - name: Upload check results
