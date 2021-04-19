@@ -1,9 +1,9 @@
-#' Kendall-Colijn distance
+#' Kendall&ndash;Colijn distance
 #' 
-#' Calculate the Kendall-Colijn tree distance, a measure related to the 
+#' Calculate the Kendall&ndash;Colijn tree distance, a measure related to the 
 #' path difference. 
 #' 
-#' The Kendall-Colijn distance works by measuring, for each pair of leaves,
+#' The Kendall&ndash;Colijn distance works by measuring, for each pair of leaves,
 #' the distance from the most recent
 #' common ancestor of those leaves and the root node.  For a given tree, this 
 #' produces a vector of values recording the distance-from-the-root of each
@@ -37,10 +37,13 @@
 #' 
 #' @references \insertRef{Kendall2016}{TreeDist}
 #' @family tree distances
+#' @encoding UTF-8
 #' @export
 KendallColijn <- function (tree1, tree2 = tree1) {
   FunValue <- function (nTip) double(nTip * (nTip - 1L) / 2L)
+  
   EuclidianDistance <- function (x) sqrt(sum(x * x))
+  
   if (inherits(tree1, 'phylo')) {
     if (inherits(tree2, 'phylo')) {
       if (length(tree1$tip.label) != length(tree2$tip.label) || 

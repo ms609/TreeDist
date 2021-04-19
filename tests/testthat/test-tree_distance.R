@@ -737,8 +737,7 @@ test_that('Robinson Foulds Info is correctly calculated', {
 
 
 test_that('Kendall-Colijn distance is correctly calculated', {
-  
-    # Expected values calculated using treespace::treeDist(treeSym8, treeBal8)
+  # Expected values calculated using treespace::treeDist(treeSym8, treeBal8)
   expect_equal(2.828427, KendallColijn(treeSym8, treeBal8), tolerance=1e-06)
   expect_equal(2.828427, KendallColijn(treeCat8, treeBal8), tolerance=1e-06)
   expect_equal(7.211103, KendallColijn(treeSym8, treeOpp8), tolerance=1e-06)

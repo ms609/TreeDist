@@ -71,17 +71,11 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew install libgit2
-          
-      - name: Install GitHub phangorn (-macOS)
-        if: runner.os != 'macOS'
-        run: |
-          remotes::install_github("KlausVigo/phangorn")
-        shell: Rscript {0}
 
-      - name: Install callr (Windows)
+      - name: Install callr & covr (Windows)
         if: runner.os == 'Windows'
         run: |
-          remotes::install_cran("callr")
+          remotes::install_cran(c("callr", "covr"))
         shell: Rscript {0}
 
       - name: Install dependencies
@@ -106,5 +100,6 @@ jobs:
           path: check
 
       - name: Test coverage
+        if: runner.os == 'Windows'
         run: covr::codecov()
         shell: Rscript {0}
