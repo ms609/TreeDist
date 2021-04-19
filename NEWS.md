@@ -1,6 +1,7 @@
-# TreeDist 2.0.3.9000 (development)
+# TreeDist 2.0.3.9001 (development)
  
 - Add self-organizing map example to treespace vignette.
+- Allow the specification of custom vectors in the Kendall--Colijn metric.
 
 # TreeDist 2.0.3
 
