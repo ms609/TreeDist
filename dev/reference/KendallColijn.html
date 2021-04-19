@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Kendall-Colijn distance — KendallColijn • TreeDist</title>
+<title>Kendall–Colijn distance — KendallColijn • TreeDist</title>
 
 
 <!-- jquery -->
@@ -45,8 +45,8 @@
 
 
 
-<meta property="og:title" content="Kendall-Colijn distance — KendallColijn" />
-<meta property="og:description" content="Calculate the Kendall-Colijn tree distance, a measure related to the
+<meta property="og:title" content="Kendall–Colijn distance — KendallColijn" />
+<meta property="og:description" content="Calculate the Kendall–Colijn tree distance, a measure related to the
 path difference." />
 
 
@@ -89,7 +89,7 @@ path difference." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.0.3.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.0.3.9001</span>
       </span>
     </div>
 
@@ -167,19 +167,23 @@ path difference." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Kendall-Colijn distance</h1>
+    <h1>Kendall–Colijn distance</h1>
     <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/tree_distance_kendall-colijn.R'><code>R/tree_distance_kendall-colijn.R</code></a></small>
     <div class="hidden name"><code>KendallColijn.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Calculate the Kendall-Colijn tree distance, a measure related to the
+    <p>Calculate the Kendall–Colijn tree distance, a measure related to the
 path difference.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>KendallColijn</span><span class='op'>(</span><span class='va'>tree1</span>, tree2 <span class='op'>=</span> <span class='va'>tree1</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>KendallColijn</span><span class='op'>(</span><span class='va'>tree1</span>, tree2 <span class='op'>=</span> <span class='cn'>NULL</span>, Vector <span class='op'>=</span> <span class='va'>KCVector</span><span class='op'>)</span>
 
-<span class='fu'>KCVector</span><span class='op'>(</span><span class='va'>tree</span><span class='op'>)</span></pre>
+<span class='fu'>KCVector</span><span class='op'>(</span><span class='va'>tree</span><span class='op'>)</span>
+
+<span class='fu'>PathVector</span><span class='op'>(</span><span class='va'>tree</span><span class='op'>)</span>
+
+<span class='fu'>SplitVector</span><span class='op'>(</span><span class='va'>tree</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -190,6 +194,17 @@ path difference.</p>
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 <code>tree2 = NULL</code> will compute distances between each pair of trees in the list
 <code>tree1</code> using a fast algorithm based on Day (1985).</p></td>
+    </tr>
+    <tr>
+      <th>Vector</th>
+      <td><p>Function convering a tree to a numeric vector.
+<code>KCVector</code>, the default, returns the number of edges between the common
+ancestor of each pair of leaves and the root of the tree (per
+Kendall &amp; Colijn 2016).
+<code>PathVector</code> returns the number of edges between each pair of leaves (per
+Steel &amp; Penny 1993).
+<code>SplitVector</code> returns the size of the smallest split that contains each
+pair of leaves (per Smith, forthcoming).</p></td>
     </tr>
     <tr>
       <th>tree</th>
@@ -204,7 +219,7 @@ distances between each  pair of trees in <code>tree1</code> and <code>tree2</cod
 or <code>splits1</code> and <code>splits2</code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The Kendall-Colijn distance works by measuring, for each pair of leaves,
+    <p>The Kendall–Colijn distance works by measuring, for each pair of leaves,
 the distance from the most recent
 common ancestor of those leaves and the root node.  For a given tree, this
 produces a vector of values recording the distance-from-the-root of each
@@ -222,6 +237,11 @@ leaf to another.</p>
 <ul>
 <li><p><code>KCVector</code>: Creates a vector that characterises a rooted tree,
 as described in Kendall &amp; Colijn (2016).</p></li>
+<li><p><code>PathVector</code>: Creates a vector reporting the path length between
+each pair of leaves, per the path metric of Steel &amp; Penny (1993).</p></li>
+<li><p><code>SplitVector</code>: Creates a vector reporting the smallest split
+containing each pair of leaves, per the metric proposed in Smith
+(forthcoming).</p></li>
 </ul>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -230,6 +250,9 @@ as described in Kendall &amp; Colijn (2016).</p></li>
 <em>Molecular Biology and Evolution</em>, <b>33</b>(10), 2735--2743.
 doi: <a href='https://doi.org/10.1093/molbev/msw124'>10.1093/molbev/msw124</a>
 , <a href='https://doi.org/10.1093/molbev/msw124'>https://doi.org/10.1093/molbev/msw124</a>.</p>
+<p>Smith MR (2021).
+&#8220;The importance of methodology when analysing landscapes of phylogenetic trees.&#8221;
+<em>Forthcoming</em>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><a href='https://CRAN.R-project.org/package=treespace/vignettes/introduction.html'><code>treespace::treeDist</code></a>
@@ -256,11 +279,28 @@ lambda &gt; 0, i.e. use of edge lengths in tree comparison.</p>
 <span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>0</span><span class='op'>)</span>
 <span class='fu'>KendallColijn</span><span class='op'>(</span><span class='fu'>TreeTools</span><span class='fu'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span><span class='op'>(</span><span class='fl'>8</span><span class='op'>)</span>, <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>8</span>, <span class='fl'>3</span><span class='op'>)</span>, <span class='fu'>ape</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 9.591663 5.567764 9.949874</div><div class='input'><span class='fu'>KendallColijn</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>8</span>, <span class='fl'>4</span><span class='op'>)</span>, <span class='fu'>ape</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;          [,1]     [,2]     [,3]     [,4]
-#&gt; [1,] 0.000000 7.280110 7.874008 4.795832
-#&gt; [2,] 7.280110 0.000000 8.185353 7.071068
-#&gt; [3,] 7.874008 8.185353 0.000000 7.681146
-#&gt; [4,] 4.795832 7.071068 7.681146 0.000000</div></pre>
+</div><div class='output co'>#&gt;          1        2        3
+#&gt; 2 7.280110                  
+#&gt; 3 7.874008 8.185353         
+#&gt; 4 4.795832 7.071068 7.681146</div><div class='input'>
+<span class='fu'>KendallColijn</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>8</span>, <span class='fl'>4</span><span class='op'>)</span>, <span class='fu'>ape</span><span class='fu'>::</span><span class='va'><a href='https://rdrr.io/pkg/ape/man/rtree.html'>rtree</a></span><span class='op'>)</span>, Vector <span class='op'>=</span> <span class='va'>SplitVector</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;           1         2         3
+#&gt; 2 10.862780                    
+#&gt; 3 10.148892 12.124356          
+#&gt; 4  8.000000 11.489125  8.185353</div><div class='input'>
+<span class='co'># Notice that changing tree shape close to the root results in much</span>
+<span class='co'># larger differences</span>
+<span class='va'>tree1</span> <span class='op'>&lt;-</span> <span class='fu'>ape</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ape/man/read.tree.html'>read.tree</a></span><span class='op'>(</span>text <span class='op'>=</span> <span class='st'>"(a, (b, (c, (d, (e, (f, (g, h)))))));"</span><span class='op'>)</span>
+<span class='va'>tree2</span> <span class='op'>&lt;-</span> <span class='fu'>ape</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ape/man/read.tree.html'>read.tree</a></span><span class='op'>(</span>text <span class='op'>=</span> <span class='st'>"(a, ((b, c), (d, (e, (f, (g, h))))));"</span><span class='op'>)</span>
+<span class='va'>tree3</span> <span class='op'>&lt;-</span> <span class='fu'>ape</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/ape/man/read.tree.html'>read.tree</a></span><span class='op'>(</span>text <span class='op'>=</span> <span class='st'>"(a, (b, (c, (d, (e, ((f, g), h))))));"</span><span class='op'>)</span>
+<span class='va'>trees</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>tree1</span>, <span class='va'>tree2</span>, <span class='va'>tree3</span><span class='op'>)</span>
+<span class='fu'>KendallColijn</span><span class='op'>(</span><span class='va'>trees</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;          1        2
+#&gt; 2 4.000000         
+#&gt; 3 1.414214 4.242641</div><div class='input'><span class='fu'>KendallColijn</span><span class='op'>(</span><span class='va'>trees</span>, Vector <span class='op'>=</span> <span class='va'>SplitVector</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;          1        2
+#&gt; 2 2.449490         
+#&gt; 3 2.449490 3.162278</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
