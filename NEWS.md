@@ -2,6 +2,7 @@
  
 - Add self-organizing map example to treespace vignette.
 - Allow the specification of custom vectors in the Kendall--Colijn metric.
+- Faster all-to-all distance calculation.
 
 # TreeDist 2.0.3
 
