@@ -80,17 +80,13 @@ CalculateTreeDistance <- function (Func, tree1, tree2 = NULL,
                                     nTip = length(tipLabels), ...) {
   splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
   nSplits <- length(splits)
-  ret <- matrix(0, nSplits, nSplits)
-  is <- matrix(seq_len(nSplits), nSplits, nSplits)
+  is <- combn(seq_len(nSplits), 2)
   
   ret <- structure(class = 'dist', Size = nSplits,
                    diag = FALSE, upper = FALSE,
-                   mapply(Func,
-                          splits[t(is)[lower.tri(is)]],
-                          splits[is[lower.tri(is)]],
-                          nTip = nTip,
-                          reportMatching = FALSE,
-                          ...))
+                   apply(is, 2, function (i)
+                     Func(splits[[i[1]]], splits[[i[2]]],
+                          nTip = nTip, reportMatching = FALSE, ...)))
   # Return:
   ret
 }

@@ -92,13 +92,12 @@ KendallColijn <- function (tree1, tree2 = NULL, Vector = KCVector) {
       treeVec <- vapply(tree1, Vector, FunValue(length(tree1[[1]]$tip.label)))
       nTree <- length(tree1)
       ret <- matrix(0, nTree, nTree)
-      is <- matrix(seq_len(nTree), nTree, nTree)
+      is <- combn(seq_len(nTree), 2)
       
       ret <- structure(class = 'dist', Size = nTree,
                        diag = FALSE, upper = FALSE,
-                       apply(treeVec[, t(is)[lower.tri(is)]] - 
-                               treeVec[, is[lower.tri(is)]], 2,
-                             EuclidianDistance))
+                       apply(is, 2, function (i)
+                         EuclidianDistance(treeVec[, i[1]] - treeVec[, i[2]])))
       # Return:
       ret
     }
@@ -125,15 +124,12 @@ KCVector <- function (tree) {
   root <- parent[1]
   nTip <- root - 1L
   tipOrder <- order(tree$tip.label)
-  
-  tipI <- rep(tipOrder, nTip - seq_len(nTip))
-  tipJ <- matrix(tipOrder, nrow = nTip, ncol = nTip)
-  tipJ <- tipJ[lower.tri(tipJ)]
+  is <- combn(tipOrder, 2)
   
   ancestors <- AllAncestors(parent, child)
   
-  mrca <- mapply(function(anc1, anc2) max(intersect(anc1, anc2)), 
-                 ancestors[tipI], ancestors[tipJ])
+  mrca <- apply(is, 2, function(i) 
+    max(intersect(ancestors[[i[1]]], ancestors[[i[2]]])))
   
   rootDist <- vapply(ancestors, length, integer(1))
   structure(rootDist[mrca], Size = nTip, class = 'dist')
@@ -152,19 +148,18 @@ PathVector <- function (tree) {
   nTip <- root - 1L
   tipAncs <- seq_len(nTip)
   tipOrder <- order(tree$tip.label)
-  
-  tipI <- rep(tipOrder, nTip - seq_len(nTip))
-  tipJ <- matrix(tipOrder, nrow = nTip, ncol = nTip)
-  tipJ <- tipJ[lower.tri(tipJ)]
+  is <- combn(tipOrder, 2)
   
   ancestors <- AllAncestors(parent, child)
   
-  pathLength <- mapply(function(anc1, anc2) {
+  pathLength <- apply(is, 2, function(i) {
+    anc1 <- ancestors[[i[1]]]
+    anc2 <- ancestors[[i[2]]]
     mrca <- max(intersect(anc1, anc2))
     sum(anc1 >= mrca, anc2 >= mrca,
         -(mrca == root) # don't count root edge twice
         )
-  }, ancestors[tipI], ancestors[tipJ])
+  })
   
   structure(pathLength, Size = nTip, class = 'dist')
 }
@@ -180,14 +175,10 @@ SplitVector <- function (tree) {
   splits <- as.logical(as.Splits(tree, tipLabel[order(tipLabel)]))
   splits <- rbind(splits, !splits)
   inSplit <- rowSums(splits)
+  is <- combn(seq_len(nTip), 2)
   
-  tipI <- rep(seq_len(nTip), nTip - seq_len(nTip))
-  tipJ <- matrix(seq_len(nTip), nrow = nTip, ncol = nTip)
-  tipJ <- tipJ[lower.tri(tipJ)]
-  
-  smallestSplit <- mapply(function(tip1, tip2) {
-    min(inSplit[splits[, tip1] & splits[, tip2]], nTip - 1L)
-  }, tipI, tipJ)
+  smallestSplit <- apply(is, 2, function(i)
+    min(inSplit[splits[, i[1]] & splits[, i[2]]], nTip - 1L))
   
   structure(smallestSplit, Size = nTip, class = 'dist')
 }

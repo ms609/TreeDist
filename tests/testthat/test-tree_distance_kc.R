@@ -1,4 +1,5 @@
 test_that("KC vector calculations", {
+  library("TreeTools", quietly = TRUE)
   bal7 <- ape::read.tree(text = "(((t1,t2),(t3,t4)),((t5,t6),t7));")
   bal7b <- ape::read.tree(text = "(((t5,t6),t7), ((t1,t2),(t3,t4)));")
   expect_equal(PathVector(bal7), PathVector(RootTree(bal7, 1)))
