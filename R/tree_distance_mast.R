@@ -49,8 +49,9 @@
 #' @family tree distances
 #' @export
 MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
-  # Checks not necessary, as tip labels need not match.
-  .TreeDistance(.MASTSizeSingle, tree1, tree2, rooted = rooted, checks = FALSE)
+  .TreeDistance(.MASTSizeSingle, tree1, tree2, rooted = rooted,
+                # Checks not necessary, as tip labels need not match.
+                checks = FALSE)
 }
 
 #' @importFrom ape drop.tip
