@@ -40,7 +40,7 @@ ProjectionQuality(distances, dist(projection), 4)
 \seealso{
 Other tree space functions: 
 \code{\link{Project}()},
-\code{\link{SpectralClustering}()},
+\code{\link{SpectralEigens}()},
 \code{\link{median.multiPhylo}()}
 }
 \author{

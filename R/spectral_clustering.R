@@ -1,19 +1,29 @@
-#' Spectral clustering
-#' 
-#' @param D Square matrix or `dist` object containing Euclidean distances 
-#' between data points.
+#' Eigenvalues for spectral clustering
+#'
+#' Spectral clustering emphasizes nearest neighbours when forming clusters;
+#' it avoids some of the issues that arise from clustering around means / 
+#' medioids.
+#'
+#' @param D Square matrix or `dist` object containing Euclidean distances
+#'   between data points.
 #' @param nn Integer specifying number of nearest neighbours to consider
 #' @param nEig Integer specifying number of eigenvectors to retain.
-#' @author Adapted by MRS from script by
-#' [Nura Kawa](https://rpubs.com/nurakawa/spectral-clustering)
+#' @author Adapted by MRS from script by [Nura
+#'   Kawa](https://rpubs.com/nurakawa/spectral-clustering)
+#' @return `SpectralEigens()` returns spectral eigenvalues that can then be
+#'   clustered using a method of choice.
 #' @examples
 #' library('TreeTools', quietly = TRUE, warn.conflict = FALSE)
-#' trees <- as.phylo(0:10, nTip = 8)
+#' trees <- as.phylo(0:18, nTip = 8)
 #' distances <- ClusteringInfoDistance(trees)
-#' SpectralClustering(distances)
+#' eigens <- SpectralClustering(distances)
+#' # Perform clustering:
+#' clusts <- kmeans(dist(eigens), centers = 3)
+#' plot(eigens, pch = 15, col = clusts$cluster)
+#' plot(cmdscale(distances), pch = 15, col = clusts$cluster)
 #' @family tree space functions
 #' @export
-SpectralClustering <- function (D, nn = 10L, nEig = 2L) {
+SpectralEigens <- function (D, nn = 10L, nEig = 2L) {
   
   MutualKnnGraph <- function (D, nn) {
     D <- as.matrix(D)
@@ -52,4 +62,11 @@ SpectralClustering <- function (D, nn = 10L, nEig = 2L) {
   
   # Return the eigenvectors of the n_eig smallest eigenvalues:
   ei$vectors[, nrow(L) - rev(seq_len(nEig))]
+}
+
+#' @export
+#' @rdname SpectralEigens
+SpectralClustering <- function (D, nn = 10L, nEig = 2L) {
+  .Deprecated("SpectralEigens")
+  SpectralEigens(D, nn, nEig)
 }

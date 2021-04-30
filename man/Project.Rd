@@ -111,7 +111,7 @@ Full detail of tree space analysis in R is provided in the accompanying
 
 Other tree space functions: 
 \code{\link{ProjectionQuality}()},
-\code{\link{SpectralClustering}()},
+\code{\link{SpectralEigens}()},
 \code{\link{median.multiPhylo}()}
 }
 \author{

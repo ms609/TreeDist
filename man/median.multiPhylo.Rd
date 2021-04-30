@@ -82,7 +82,7 @@ Consensus methods:
 Other tree space functions: 
 \code{\link{ProjectionQuality}()},
 \code{\link{Project}()},
-\code{\link{SpectralClustering}()}
+\code{\link{SpectralEigens}()}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
