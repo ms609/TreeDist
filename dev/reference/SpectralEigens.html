@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Graphical user interface for projecting distances and analysing
-tree space — Project • TreeDist</title>
+<title>Eigenvalues for spectral clustering — SpectralEigens • TreeDist</title>
 
 
 <!-- jquery -->
@@ -46,10 +45,10 @@ tree space — Project • TreeDist</title>
 
 
 
-<meta property="og:title" content="Graphical user interface for projecting distances and analysing
-tree space — Project" />
-<meta property="og:description" content="Project() launches a 'Shiny' application for the visualization and
-evaluation of tree spaces." />
+<meta property="og:title" content="Eigenvalues for spectral clustering — SpectralEigens" />
+<meta property="og:description" content="Spectral clustering emphasizes nearest neighbours when forming clusters;
+it avoids some of the issues that arise from clustering around means /
+medioids." />
 
 
 <meta name="robots" content="noindex">
@@ -169,116 +168,65 @@ evaluation of tree spaces." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Graphical user interface for projecting distances and analysing
-tree space</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/shiny.R'><code>R/shiny.R</code></a></small>
-    <div class="hidden name"><code>Project.Rd</code></div>
+    <h1>Eigenvalues for spectral clustering</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/spectral_clustering.R'><code>R/spectral_clustering.R</code></a></small>
+    <div class="hidden name"><code>SpectralEigens.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>Project()</code> launches a 'Shiny' application for the visualization and
-evaluation of tree spaces.</p>
+    <p>Spectral clustering emphasizes nearest neighbours when forming clusters;
+it avoids some of the issues that arise from clustering around means /
+medioids.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>Project</span><span class='op'>(</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>SpectralEigens</span><span class='op'>(</span><span class='va'>D</span>, nn <span class='op'>=</span> <span class='fl'>10L</span>, nEig <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span>
 
+<span class='fu'>SpectralClustering</span><span class='op'>(</span><span class='va'>D</span>, nn <span class='op'>=</span> <span class='fl'>10L</span>, nEig <span class='op'>=</span> <span class='fl'>2L</span><span class='op'>)</span></pre>
 
-    <h2 class="hasAnchor" id="input-tab"><a class="anchor" href="#input-tab"></a>Input tab</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>D</th>
+      <td><p>Square matrix or <code>dist</code> object containing Euclidean distances
+between data points.</p></td>
+    </tr>
+    <tr>
+      <th>nn</th>
+      <td><p>Integer specifying number of nearest neighbours to consider</p></td>
+    </tr>
+    <tr>
+      <th>nEig</th>
+      <td><p>Integer specifying number of eigenvectors to retain.</p></td>
+    </tr>
+    </table>
 
-    <p>The input tab allows for the upload of sets of phylogenetic trees from file.
-Trees at the start or end of a file can be excluded, and the number of trees
-can be brought down to a manageable number by uniformly subsampling every
-_n_th tree.  Samples of c. 100 trees can be analysed in seconds;
-analysis of larger samples will take longer, particularly with slower
-methods (e.g. quartet distances; Kruskal-1 MDS; large minimum spanning trees).</p>
-<p>Different batches can be plotted with different colours / symbols.</p>
-<p>If each tree is associated with a property -- for example, the data or method
-used to generate it, or its stratigraphic congruence -- a list of properties
-for each tree, with one entry per line/row, can be uploaded along with
-the trees.  Points in tree space can then be styled according to the
-corresponding property.</p>
-<p>If trees are subsampled (using the 'Sample every' slider), then the values
-in the tree properties file can also be subsampled accordingly.
-Unfortunately there is not yet support for multiple point property files;
-one file will be applied to all trees, in the sequence that they were added
-to memory.</p>
-    <h2 class="hasAnchor" id="analysis-tab"><a class="anchor" href="#analysis-tab"></a>Analysis tab</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Select from a suite of distance methods: clustering information and
-phylogenetic information are quick and satisfactory; quartet is slow but
-gives slightly better projections; path is very fast but may not reflect
-evolutionary signal very well; and Robinson--Foulds should probably never
-be used for analysis; it is included for comparison purposes.</p>
-<p>Principle components projections should suffice for most purposes;
-Sammon and Kruskal projections are slower and seldom differ by much,
-in character or quality, but may emphasize outliers more.</p>
-<p>Partitioning around medoids or minimax-linkage hierarchical clustering
-will typically find a close-to-optimal clustering where one exists;
-select additional methods for a more exhaustive search.
-To avoid redundant calculation, clusterings are only updated when
-'recalculate clustering' is clicked, or the 'maximum cluster number' slider
-is modified; clustering solutions using more than this many clusters are
-not considered
-Clusterings with silhouette coefficients &lt; 0.25 are unlikely to represent
-genuine structure and are not reported or depicted.</p>
-    <h2 class="hasAnchor" id="display-tab"><a class="anchor" href="#display-tab"></a>Display tab</h2>
-
-    <p>Up to 15 dimensions can be depicted; the quality of a projection -- that is,
-the faithfulness of projected distances to true tree-to-tree distances --
-is quantified by the product of the Trustworthiness and Continuity metrics,
-which should exceed 0.9 (at least).</p>
-<p>An interactive 3D plot can be explored by dragging the mouse and scrolling,
-but do be careful to check that three dimensions are enough to depict your
-data accurately.</p>
-<p>The minimum spanning tree is the shortest possible line selecting the chosen
-subsample of trees; if it takes a convoluted zig-zagging route, then the
-projection is doing a poor job of reflecting true tree to tree distances.</p>
-<p>Convex hulls are the smallest polygons enclosing all points in each cluster;
-they are handy for spotting clusters, but their area does not correspond
-to a genuine quantity, so should not be interpreted.</p>
-<p>Tree numbers correspond to the sequence of trees in their original input
-file, before subsampling.</p>
-<p>Each tree is denoted by a point, whose symbol can be styled according to
-cluster membership or according to the file that contains the tree,
-with each click of 'Add to existing' on the input tab constituting a
-new batch with a new symbol.</p>
-<p>Points can be coloured according to a category -- the cluster or batch to
-which they belong, or custom data provided in the Point Property File
-on the input tab -- or continuously, either by the sequence in which they
-were added to memory, or according to custom data.</p>
-    <h2 class="hasAnchor" id="exporting-tree-spaces"><a class="anchor" href="#exporting-tree-spaces"></a>Exporting tree spaces</h2>
-
-    <p>A projection can be saved to PDF or as a PNG bitmap at the size selected.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
-    <p>A list of references employed when constructing the tree space is populated
-according to the methods used; it would be appropriate to cite and briefly
-discuss these studies in any publication using figures generated using
-this application.  The application itself can be cited using
-Smith (2020, 2021) below.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
-    <p>Smith MR (2020).
-&#8220;Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees.&#8221;
-<em>Bioinformatics</em>, <b>36</b>(20), 5007--5013.
-doi: <a href='https://doi.org/10.1093/bioinformatics/btaa614'>10.1093/bioinformatics/btaa614</a>
-, <a href='https://doi.org/10.1093/bioinformatics/btaa614'>https://doi.org/10.1093/bioinformatics/btaa614</a>.</p>
-<p>Smith MR (2021).
-&#8220;The importance of methodology when analysing landscapes of phylogenetic trees.&#8221;
-<em>Forthcoming</em>.</p>
+    <p><code>SpectralEigens()</code> returns spectral eigenvalues that can then be
+clustered using a method of choice.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>Full detail of tree space analysis in R is provided in the accompanying
-<a href='https://ms609.github.io/TreeDist/articles/treespace.html'>vignette</a>.</p>
-<p>Other tree space functions: 
+    <div class='dont-index'><p>Other tree space functions: 
 <code><a href='ProjectionQuality.html'>ProjectionQuality</a>()</code>,
-<code><a href='SpectralEigens.html'>SpectralEigens</a>()</code>,
+<code><a href='Project.html'>Project</a>()</code>,
 <code><a href='median.multiPhylo.html'>median.multiPhylo</a>()</code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
-    <p><a href='https://orcid.org/0000-0001-5660-1727'>Martin R. Smith</a>
-(<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
+    <p>Adapted by MRS from script by <a href='https://rpubs.com/nurakawa/spectral-clustering'>Nura Kawa</a></p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='st'><a href='https://ms609.github.io/TreeTools/'>'TreeTools'</a></span>, quietly <span class='op'>=</span> <span class='cn'>TRUE</span>, warn.conflict <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='va'>trees</span> <span class='op'>&lt;-</span> <span class='fu'>as.phylo</span><span class='op'>(</span><span class='fl'>0</span><span class='op'>:</span><span class='fl'>18</span>, nTip <span class='op'>=</span> <span class='fl'>8</span><span class='op'>)</span>
+<span class='va'>distances</span> <span class='op'>&lt;-</span> <span class='fu'><a href='TreeDistance.html'>ClusteringInfoDistance</a></span><span class='op'>(</span><span class='va'>trees</span><span class='op'>)</span>
+<span class='va'>eigens</span> <span class='op'>&lt;-</span> <span class='fu'>SpectralClustering</span><span class='op'>(</span><span class='va'>distances</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: 'SpectralClustering' is deprecated.</span>
+#&gt; <span class='warning'>Use 'SpectralEigens' instead.</span>
+#&gt; <span class='warning'>See help("Deprecated")</span></div><div class='input'><span class='co'># Perform clustering:</span>
+<span class='va'>clusts</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/kmeans.html'>kmeans</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/dist.html'>dist</a></span><span class='op'>(</span><span class='va'>eigens</span><span class='op'>)</span>, centers <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>eigens</span>, pch <span class='op'>=</span> <span class='fl'>15</span>, col <span class='op'>=</span> <span class='va'>clusts</span><span class='op'>$</span><span class='va'>cluster</span><span class='op'>)</span>
+</div><div class='img'><img src='SpectralEigens-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/cmdscale.html'>cmdscale</a></span><span class='op'>(</span><span class='va'>distances</span><span class='op'>)</span>, pch <span class='op'>=</span> <span class='fl'>15</span>, col <span class='op'>=</span> <span class='va'>clusts</span><span class='op'>$</span><span class='va'>cluster</span><span class='op'>)</span>
+</div><div class='img'><img src='SpectralEigens-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
