@@ -89,7 +89,7 @@ path difference." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.0.3.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.0.3.9002</span>
       </span>
     </div>
 
@@ -183,7 +183,9 @@ path difference.</p>
 
 <span class='fu'>PathVector</span><span class='op'>(</span><span class='va'>tree</span><span class='op'>)</span>
 
-<span class='fu'>SplitVector</span><span class='op'>(</span><span class='va'>tree</span><span class='op'>)</span></pre>
+<span class='fu'>SplitVector</span><span class='op'>(</span><span class='va'>tree</span><span class='op'>)</span>
+
+<span class='fu'>KCDiameter</span><span class='op'>(</span><span class='va'>tree</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -217,6 +219,11 @@ pair of leaves (per Smith, forthcoming).</p></td>
     <p><code>KendallColijn()</code> returns an array of numerics providing the
 distances between each  pair of trees in <code>tree1</code> and <code>tree2</code>,
 or <code>splits1</code> and <code>splits2</code>.</p>
+<p><code>KCDiameter()</code> returns the value of the Kendall &amp; Colijn's (2016)
+metric distance between two pectinate trees with <em>n</em> leaves ordered in
+the opposite direction, which I suggest (without any attempt at a proof) may
+be a useful proxy for the diameter (i.e. maximum value) of the K–C
+metric.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The Kendall–Colijn distance works by measuring, for each pair of leaves,
@@ -272,6 +279,8 @@ lambda &gt; 0, i.e. use of edge lengths in tree comparison.</p>
 
     <p><a href='https://orcid.org/0000-0001-5660-1727'>Martin R. Smith</a>
 (<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
+<p><a href='https://orcid.org/0000-0001-5660-1727'>Martin R. Smith</a>
+(<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>KendallColijn</span><span class='op'>(</span><span class='fu'>TreeTools</span><span class='fu'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span><span class='op'>(</span><span class='fl'>8</span><span class='op'>)</span>, <span class='fu'>TreeTools</span><span class='fu'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span><span class='op'>(</span><span class='fl'>8</span><span class='op'>)</span><span class='op'>)</span>
@@ -300,7 +309,9 @@ lambda &gt; 0, i.e. use of edge lengths in tree comparison.</p>
 #&gt; 3 1.414214 4.242641</div><div class='input'><span class='fu'>KendallColijn</span><span class='op'>(</span><span class='va'>trees</span>, Vector <span class='op'>=</span> <span class='va'>SplitVector</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;          1        2
 #&gt; 2 2.449490         
-#&gt; 3 2.449490 3.162278</div></pre>
+#&gt; 3 2.449490 3.162278</div><div class='input'><span class='fu'>KCDiameter</span><span class='op'>(</span><span class='va'>trees</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: first element used of 'length.out' argument</span></div><div class='output co'>#&gt; <span class='warning'>Warning: longer object length is not a multiple of shorter object length</span></div><div class='output co'>#&gt; [1] 15.87451</div><div class='input'><span class='fu'>KCDiameter</span><span class='op'>(</span><span class='fl'>4</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 3.162278</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
