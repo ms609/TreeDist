@@ -1,5 +1,6 @@
+library("TreeTools", quietly = TRUE)
+
 test_that("KC vector calculations", {
-  library("TreeTools", quietly = TRUE)
   bal7 <- ape::read.tree(text = "(((t1,t2),(t3,t4)),((t5,t6),t7));")
   bal7b <- ape::read.tree(text = "(((t5,t6),t7), ((t1,t2),(t3,t4)));")
   expect_equal(PathVector(bal7), PathVector(RootTree(bal7, 1)))
@@ -28,4 +29,14 @@ test_that("KC vector calculations", {
 test_that("KC distances with special vectors", {
   trees <- as.phylo(1:20, 12)
   expect_equivalent(PathDist(trees), KendallColijn(trees, Vector = PathVector))
+})
+
+test_that("KCDiameter() calculated", {
+  Test <- function (nTip) {
+    tips <- seq_len(nTip)
+    expect_equal(KendallColijn(PectinateTree(tips), PectinateTree(rev(tips))),
+                 KCDiameter(nTip))
+  }
+  Test(4)
+  Test(40)
 })

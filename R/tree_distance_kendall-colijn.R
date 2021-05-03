@@ -182,3 +182,44 @@ SplitVector <- function (tree) {
   
   structure(smallestSplit, Size = nTip, class = 'dist')
 }
+
+#' Approximate diameter of the Kendall&ndash;Collijn metric
+#'
+#' @return `KCDiameter()` returns the value of the Kendall & Colijn's (2016)
+#' metric distance between two pectinate trees with _n_ leaves ordered in
+#' the opposite direction, which I suggest (without any attempt at a proof) may
+#' be a useful proxy for the diameter (i.e. maximum value) of the K&ndash;C
+#' metric.
+#'
+#' @examples
+#' KCDiameter(trees)
+#' KCDiameter(4)
+#' @template MRS
+#' @importFrom TreeTools PectinateTree
+#' @rdname KendallColijn
+#' @export
+KCDiameter <- function (tree) UseMethod('KCDiameter')
+
+#' @importFrom TreeTools NTip
+#' @export
+KCDiameter.phylo <- function (tree) {
+  KCDiameter.numeric(NTip(tree))
+}
+
+#' @export
+KCDiameter.numeric <- function (tree) {
+  nTip <- as.integer(tree)
+  mat <- matrix(seq_len(nTip), nTip, nTip)
+  Euclid <- function (x, y) sqrt(sum((x - y) ^ 2))
+  
+  # Return:
+  Euclid(nTip - mat[lower.tri(mat)] + 1L, t(mat)[lower.tri(mat)])
+}
+
+#' @export
+KCDiameter.multiPhylo <- KCDiameter.phylo
+
+#' @export
+KCDiameter.list <- function (tree) {
+  lapply(tree, KCDiameter)
+}

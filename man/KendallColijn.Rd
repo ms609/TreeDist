@@ -6,6 +6,7 @@
 \alias{KCVector}
 \alias{PathVector}
 \alias{SplitVector}
+\alias{KCDiameter}
 \title{Kendall–Colijn distance}
 \usage{
 KendallColijn(tree1, tree2 = NULL, Vector = KCVector)
@@ -15,6 +16,8 @@ KCVector(tree)
 PathVector(tree)
 
 SplitVector(tree)
+
+KCDiameter(tree)
 }
 \arguments{
 \item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
@@ -37,6 +40,12 @@ pair of leaves (per Smith, forthcoming).}
 \code{KendallColijn()} returns an array of numerics providing the
 distances between each  pair of trees in \code{tree1} and \code{tree2},
 or \code{splits1} and \code{splits2}.
+
+\code{KCDiameter()} returns the value of the Kendall & Colijn's (2016)
+metric distance between two pectinate trees with \emph{n} leaves ordered in
+the opposite direction, which I suggest (without any attempt at a proof) may
+be a useful proxy for the diameter (i.e. maximum value) of the K–C
+metric.
 }
 \description{
 Calculate the Kendall–Colijn tree distance, a measure related to the
@@ -88,6 +97,8 @@ tree3 <- ape::read.tree(text = "(a, (b, (c, (d, (e, ((f, g), h))))));")
 trees <- c(tree1, tree2, tree3)
 KendallColijn(trees)
 KendallColijn(trees, Vector = SplitVector)
+KCDiameter(trees)
+KCDiameter(4)
 }
 \references{
 \insertRef{Kendall2016}{TreeDist}
@@ -111,6 +122,9 @@ Other tree distances:
 \code{\link{TreeDistance}()}
 }
 \author{
+\href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
+(\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
+
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
 (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }

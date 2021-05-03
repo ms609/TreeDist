@@ -1,3 +1,7 @@
+# TreeDist 2.0.3.9002 (development)
+
+- `KCDiameter()` approximates the diameter of the Kendall-Colijn metric.
+
 # TreeDist 2.0.3.9001 (development)
  
 - Add self-organizing map example to treespace vignette.
