@@ -17,13 +17,20 @@
 #' @importFrom graphics plot
 #' @importFrom grDevices colorRampPalette
 #' @export
-Plot3 <- function (x, y, z, pch = par("pch"), col = par("col"),
+Plot3 <- function (x, y = NULL, z = NULL,
+                   pch = par("pch"), col = par("col"),
                    bg = NA, cex = 1,
                    axes = TRUE,
                    frame.plot = axes,
                    plot.bg = NA, 
                    fog = 1/2, shrink = 1/2,
                    ...) {
+  if (is.null(y)) {
+    z <- x[, 3]
+    y <- x[, 2]
+    x <- x[, 1]
+  }
+  
   zResolution <- 128L
   n <- length(z)
   zOrder <- order(z)

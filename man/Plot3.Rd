@@ -6,8 +6,8 @@
 \usage{
 Plot3(
   x,
-  y,
-  z,
+  y = NULL,
+  z = NULL,
   pch = par("pch"),
   col = par("col"),
   bg = NA,
