@@ -24,6 +24,7 @@ Plot3 <- function (x, y = NULL, z = NULL,
                    frame.plot = axes,
                    plot.bg = NA, 
                    fog = 1/2, shrink = 1/2,
+                   add = FALSE,
                    ...) {
   if (is.null(y)) {
     z <- x[, 3]
@@ -39,26 +40,35 @@ Plot3 <- function (x, y = NULL, z = NULL,
   cex <- rep_len(cex, n)
   pch <- rep_len(pch, n)
   
-  zStep <- as.integer(cut(z, zResolution))
-  zScale <- scale(z)
+  #zStep <- as.integer(cut(z, zResolution))
+  zScale <- max(z) - z
   zScale <- zScale / max(zScale)
   
   fogOffset <- zResolution * fog
+  bgCol <- if (is.na(plot.bg)) 'white' else plot.bg
   .FadeCol <- function (x, fadeAmount) {
-    fadePal <- colorRampPalette(c(plot.bg, x))(zResolution + fogOffset)[-seq_len(fogOffset)]
-    fadePal[fadeAmount]
+    if (is.na(x)) {
+      x
+    } else {
+      rgb(colorRamp(c(x, bgCol), space = 'Lab')(fog * fadeAmount),
+          maxColorValue = 255)
+    }
   }
   fadedCol <- vapply(seq_along(z), function (i) {
-    .FadeCol(col[i], zStep[i])
+    .FadeCol(col[i], zScale[i])
   }, character(1))
   fadedBg <- vapply(seq_along(z), function (i) {
-    .FadeCol(bg[i], zStep[i])
+    .FadeCol(bg[i], zScale[i])
   }, character(1))
-  plot(x, y, type = 'n', axes = axes, frame.plot = frame.plot, ...)
-  rect(par("usr")[1], par("usr")[3], par("usr")[2] ,par("usr")[4],
-       col = plot.bg, border = frame.plot)
+  if (!add) {
+    plot(x, y, type = 'n', axes = axes, frame.plot = frame.plot, ...)
+    if (!is.na(plot.bg)) {
+      rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4],
+           col = plot.bg, border = frame.plot)
+    }
+  }
   points(x[zOrder], y[zOrder],
-       cex = cex[zOrder] * (1 + (zScale[zOrder] * shrink)),
+       cex = cex[zOrder] * (1 - (shrink * zScale[zOrder])),
        pch = pch[zOrder],
        col = fadedCol[zOrder],
        bg = fadedBg[zOrder],
