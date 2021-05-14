@@ -1,6 +1,7 @@
 # TreeDist 2.0.3.9002 (development)
 
 - `KCDiameter()` approximates the diameter of the Kendall-Colijn metric.
+- `Plot3()` for pseudo-3D plotting.
 
 # TreeDist 2.0.3.9001 (development)
  
