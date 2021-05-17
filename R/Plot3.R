@@ -48,9 +48,9 @@ Plot3 <- function (x, y = NULL, z = NULL,
   bgCol <- if (is.na(plot.bg)) 'white' else plot.bg
   .FadeCol <- function (x, fadeAmount) {
     if (is.na(x)) {
-      x
+      NA_character_
     } else {
-      rgb(colorRamp(c(x, bgCol), space = 'Lab')(fog * fadeAmount),
+      rgb(colorRamp(c(x, bgCol), alpha = TRUE)(fog * fadeAmount),
           maxColorValue = 255)
     }
   }
