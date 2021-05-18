@@ -16,13 +16,13 @@ original / mapped pairwise distances.}
 \item{neighbours}{Number of nearest neighbours to use in calculation.}
 }
 \value{
-\code{ProjectionQuality()} returns a named vector of length four,
+\code{MappingQuality()} returns a named vector of length four,
 containing the entries: \code{Trustworthiness}, \code{Continuity}, \code{TxC}
 (the product of these values), and \code{sqrtTxC} (its square root).
 }
 \description{
 \code{MappingQuality()} calculates the trustworthiness and continuity
-of projected distances (Venna & Kaski 2001; Kaski \emph{et al.} 2003).
+of mapped distances (Venna & Kaski 2001; Kaski \emph{et al.} 2003).
 Trustworthiness measures, on a scale from 0--1,
 the degree to which points that are nearby in a mapping are truly close
 neighbours; continuity, the extent to which points that are truly nearby

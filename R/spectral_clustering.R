@@ -16,7 +16,7 @@
 #' library('TreeTools', quietly = TRUE, warn.conflict = FALSE)
 #' trees <- as.phylo(0:18, nTip = 8)
 #' distances <- ClusteringInfoDistance(trees)
-#' eigens <- SpectralClustering(distances)
+#' eigens <- SpectralEigens(distances)
 #' # Perform clustering:
 #' clusts <- kmeans(dist(eigens), centers = 3)
 #' plot(eigens, pch = 15, col = clusts$cluster)
