@@ -40,6 +40,12 @@
     <loc>https://ms609.github.io/TreeDist/reference/MASTSize.html</loc>
   </url>
   <url>
+    <loc>https://ms609.github.io/TreeDist/reference/MapTrees.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/reference/MappingQuality.html</loc>
+  </url>
+  <url>
     <loc>https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html</loc>
   </url>
   <url>
@@ -59,12 +65,6 @@
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/Plot3.html</loc>
-  </url>
-  <url>
-    <loc>https://ms609.github.io/TreeDist/reference/Project.html</loc>
-  </url>
-  <url>
-    <loc>https://ms609.github.io/TreeDist/reference/ProjectionQuality.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/ReportMatching.html</loc>

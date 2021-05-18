@@ -190,6 +190,7 @@ obtained through point scaling, overlap and fogging.</p>
   plot.bg <span class='op'>=</span> <span class='cn'>NA</span>,
   fog <span class='op'>=</span> <span class='fl'>1</span><span class='op'>/</span><span class='fl'>2</span>,
   shrink <span class='op'>=</span> <span class='fl'>1</span><span class='op'>/</span><span class='fl'>2</span>,
+  add <span class='op'>=</span> <span class='cn'>FALSE</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -201,7 +202,7 @@ obtained through point scaling, overlap and fogging.</p>
       <td><p>Coordinates of points to plot</p></td>
     </tr>
     <tr>
-      <th>pch, col, bg, cex, axes, frame.plot, ...</th>
+      <th>bg, cex, col, pch, add, axes, frame.plot, ...</th>
       <td><p>Parameters passed to
 <a href='https://rdrr.io/r/graphics/plot.default.html'>plot.default</a>.</p></td>
     </tr>
@@ -227,8 +228,7 @@ should reflect <code>z</code> position.</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>Plot3</span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>, cex <span class='op'>=</span> <span class='fl'>7</span>, pch <span class='op'>=</span> <span class='fl'>16</span>, axes <span class='op'>=</span> <span class='cn'>FALSE</span>, asp <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in vapply(seq_along(z), function(i) {    .FadeCol(bg[i], zScale[i])}, character(1)): values must be type 'character',</span>
-#&gt; <span class='error'> but FUN(X[[1]]) result is type 'logical'</span></div></pre>
+</div><div class='img'><img src='Plot3-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

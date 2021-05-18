@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Changelog • TreeDist</title>
+<title>Quality of mapped distances — MappingQuality • TreeDist</title>
 
 
 <!-- jquery -->
@@ -45,7 +45,13 @@
 
 
 
-<meta property="og:title" content="Changelog" />
+<meta property="og:title" content="Quality of mapped distances — MappingQuality" />
+<meta property="og:description" content="MappingQuality() calculates the trustworthiness and continuity
+of projected distances (Venna &amp;amp; Kaski 2001; Kaski et al. 2003).
+Trustworthiness measures, on a scale from 0--1,
+the degree to which points that are nearby in a mapping are truly close
+neighbours; continuity, the extent to which points that are truly nearby
+retain their close spatial proximity in a mapping." />
 
 
 <meta name="robots" content="noindex">
@@ -74,7 +80,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-news">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -165,115 +171,80 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-      <h1 data-toc-skip>Changelog <small></small></h1>
-      <small>Source: <a href='https://github.com/ms609/TreeDist/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
+    <h1>Quality of mapped distances</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/trustworthiness.R'><code>R/trustworthiness.R</code></a></small>
+    <div class="hidden name"><code>MappingQuality.Rd</code></div>
     </div>
 
-    <div id="treedist-2039002-development" class="section level1">
-<h1 class="page-header" data-toc-text="2.0.3.9002">
-<a href="#treedist-2039002-development" class="anchor"></a>TreeDist 2.0.3.9002 (development)<small> Unreleased </small>
-</h1>
-<ul>
-<li>
-<code><a href="../reference/KendallColijn.html">KCDiameter()</a></code> approximates the diameter of the Kendall-Colijn metric.</li>
-<li>
-<code><a href="../reference/Plot3.html">Plot3()</a></code> for pseudo-3D plotting.</li>
-<li>
-<code><a href="../reference/MapTrees.html">Project()</a></code>/<code><a href="../reference/MappingQuality.html">ProjectionQuality()</a></code> re-named to <code><a href="../reference/MapTrees.html">MapTrees()</a></code>/<code><a href="../reference/MappingQuality.html">MappingQuality()</a></code>.</li>
-</ul>
-</div>
-    <div id="treedist-2039001-development" class="section level1">
-<h1 class="page-header" data-toc-text="2.0.3.9001">
-<a href="#treedist-2039001-development" class="anchor"></a>TreeDist 2.0.3.9001 (development)<small> Unreleased </small>
-</h1>
-<ul>
-<li>Add self-organizing map example to treespace vignette.</li>
-<li>Allow the specification of custom vectors in the Kendall–Colijn metric.</li>
-<li>Faster all-to-all distance calculation.</li>
-<li>
-<code><a href="../reference/SpectralEigens.html">SpectralClustering()</a></code> renamed to <code><a href="../reference/SpectralEigens.html">SpectralEigens()</a></code>.</li>
-</ul>
-</div>
-    <div id="treedist-203" class="section level1">
-<h1 class="page-header" data-toc-text="2.0.3">
-<a href="#treedist-203" class="anchor"></a>TreeDist 2.0.3<small> 2021-01-31 </small>
-</h1>
-<ul>
-<li><p>Diagnose and fix memory leaks, including over-long reported matchings.</p></li>
-<li><p>Explicitly import shiny/shinyjs functions.</p></li>
-</ul>
-</div>
-    <div id="treedist-200" class="section level1">
-<h1 class="page-header" data-toc-text="2.0.0">
-<a href="#treedist-200" class="anchor"></a>TreeDist 2.0.0<small> 2021-01-20 </small>
-</h1>
-<ul>
-<li><p><code><a href="../reference/MapTrees.html">Project()</a></code> launches ‘shiny’ app for projection and analysis of tree space.</p></li>
-<li><p><code><a href="../reference/MappingQuality.html">ProjectionQuality()</a></code> calculates trustworthiness and continuity of tree space mappings.</p></li>
-<li><p>Faster calculation of Robinson–Foulds distance (using algorithm of Day (1985)) and clustering information distance.</p></li>
-<li><p>New class <code>ClusterTable</code> to allow faster distance computation with Day (1985) algorithm.</p></li>
-<li><p>Improve error messages in <code>CalculateTreeDist()</code>.</p></li>
-<li><p>Improvements to vignettes.</p></li>
-<li><p>Use package ‘vdiffr’ conditionally.</p></li>
-</ul>
-</div>
-    <div id="treedist-121" class="section level1">
-<h1 class="page-header" data-toc-text="1.2.1">
-<a href="#treedist-121" class="anchor"></a>TreeDist 1.2.1<small> 2020-09-17 </small>
-</h1>
-<ul>
-<li>Import RdMacros package ‘RdPack’.</li>
-</ul>
-</div>
-    <div id="treedist-120" class="section level1">
-<h1 class="page-header" data-toc-text="1.2.0">
-<a href="#treedist-120" class="anchor"></a>TreeDist 1.2.0<small> 2020-08-28 </small>
-</h1>
-<ul>
-<li><p><code><a href="../reference/TreeDistance.html">TreeDistance()</a></code> and related functions now return a <code>dist</code> object when computing all distances between all pairs of trees in a list.</p></li>
-<li><p>Improve floating-point arithmetic in <code><a href="../reference/TreeDistance.html">TreeDistance()</a></code> functions.</p></li>
-<li><p><code><a href="../reference/TreeDistance.html">TreeDistance()</a></code> now returns a distance (as documented), rather than a similarity.</p></li>
-<li><p>Fix rounding error in NNI ‘Li’ upper estimate, and improve NNI performance.</p></li>
-<li><p>Reduce precision of LAPJV so rounding errors do not result in interminable run times.</p></li>
-</ul>
-</div>
-    <div id="treedist-111" class="section level1">
-<h1 class="page-header" data-toc-text="1.1.1">
-<a href="#treedist-111" class="anchor"></a>TreeDist 1.1.1<small> 2020-07-10 </small>
-</h1>
-<ul>
-<li>Fix range errors when calculating tree distances.</li>
-</ul>
-</div>
-    <div id="treedist-110" class="section level1">
-<h1 class="page-header" data-toc-text="1.1.0">
-<a href="#treedist-110" class="anchor"></a>TreeDist 1.1.0<small> Unreleased </small>
-</h1>
-<ul>
-<li><p>Improvements to <code><a href="../reference/NNIDist.html">NNIDist()</a></code> in light of Fack <em>et al.</em> (2002).</p></li>
-<li><p>Add <code><a href="../reference/NNIDist.html">NNIDiameter()</a></code>: approximate diameter of NNI distance.</p></li>
-<li><p>Remove vignette ‘Interpreting tree distances’: duplicates <a href="https://ms609.github.io/TreeDistData/articles/09-expected-similarity.html" class="uri">https://ms609.github.io/TreeDistData/articles/09-expected-similarity.html</a>.</p></li>
-<li><p>Remove redundant data object <code>oneOverlap</code>.</p></li>
-<li><p>Fix an issue when installing on R 3.x (require C++11 to ensure declaration of <code>UINT_FAST16_MAX</code>).</p></li>
-<li><p>Fix memory-handling bug in <code>lapjv()</code>.</p></li>
-</ul>
-</div>
-    <div id="treedist-100" class="section level1">
-<h1 class="page-header" data-toc-text="1.0.0">
-<a href="#treedist-100" class="anchor"></a>TreeDist 1.0.0<small> 2020-06-30 </small>
-</h1>
-<ul>
-<li>Initial release, building on some draft functions included in ‘<a href="https://ms609.github.io/TreeSearch/">TreeSearch</a>’ 0.3.2.9005.</li>
-</ul>
-</div>
-  </div>
+    <div class="ref-description">
+    <p><code>MappingQuality()</code> calculates the trustworthiness and continuity
+of projected distances (Venna &amp; Kaski 2001; Kaski <em>et al.</em> 2003).
+Trustworthiness measures, on a scale from 0--1,
+the degree to which points that are nearby in a mapping are truly close
+neighbours; continuity, the extent to which points that are truly nearby
+retain their close spatial proximity in a mapping.</p>
+    </div>
 
+    <pre class="usage"><span class='fu'>MappingQuality</span><span class='op'>(</span><span class='va'>original</span>, <span class='va'>mapped</span>, neighbours <span class='op'>=</span> <span class='fl'>10L</span><span class='op'>)</span>
+
+<span class='fu'>ProjectionQuality</span><span class='op'>(</span><span class='va'>original</span>, <span class='va'>mapped</span>, neighbours <span class='op'>=</span> <span class='fl'>10L</span><span class='op'>)</span></pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>original, mapped</th>
+      <td><p>Square matrix or <code>dist</code> object containing
+original / mapped pairwise distances.</p></td>
+    </tr>
+    <tr>
+      <th>neighbours</th>
+      <td><p>Number of nearest neighbours to use in calculation.</p></td>
+    </tr>
+    </table>
+
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p><code>ProjectionQuality()</code> returns a named vector of length four,
+containing the entries: <code>Trustworthiness</code>, <code>Continuity</code>, <code>TxC</code>
+(the product of these values), and <code>sqrtTxC</code> (its square root).</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Venna J, Kaski S (2001).
+&#8220;Neighborhood preservation in nonlinear projection methods: an experimental study.&#8221;
+In Dorffner G, Bischof H, Hornik K (eds.), <em>Artificial Neural Networks --- ICANN 2001</em>,  Lecture Notes in Computer Science, 485--491.
+doi: <a href='https://doi.org/10.1007/3-540-44668-0_68'>10.1007/3-540-44668-0_68</a>
+, <a href='https://doi.org/10.1007/3-540-44668-0_68'>https://doi.org/10.1007/3-540-44668-0_68</a>.</p>
+<p>Kaski S, Nikkila J, Oja M, Venna J, Toronen P, Castren E (2003).
+&#8220;Trustworthiness and metrics in visualizing similarity of gene expression.&#8221;
+<em>BMC Bioinformatics</em>, <b>4</b>, 48.
+doi: <a href='https://doi.org/10.1186/1471-2105-4-48'>10.1186/1471-2105-4-48</a>
+, <a href='https://doi.org/10.1186/1471-2105-4-48'>https://doi.org/10.1186/1471-2105-4-48</a>.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>Other tree space functions: 
+<code><a href='MapTrees.html'>MapTrees</a>()</code>,
+<code><a href='SpectralEigens.html'>SpectralEigens</a>()</code>,
+<code><a href='median.multiPhylo.html'>median.multiPhylo</a>()</code></p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Wrapper for functions from Charlotte Soneson's <span class="pkg">dreval</span>,
+https://github.com/csoneson/dreval/blob/master/R/trustworthiness.R</p>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='st'><a href='https://ms609.github.io/TreeTools/'>'TreeTools'</a></span>, quietly <span class='op'>=</span> <span class='cn'>TRUE</span>, warn.conflict <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='va'>trees</span> <span class='op'>&lt;-</span> <span class='fu'>as.phylo</span><span class='op'>(</span><span class='fl'>0</span><span class='op'>:</span><span class='fl'>10</span>, nTip <span class='op'>=</span> <span class='fl'>8</span><span class='op'>)</span>
+<span class='va'>distances</span> <span class='op'>&lt;-</span> <span class='fu'><a href='TreeDistance.html'>ClusteringInfoDistance</a></span><span class='op'>(</span><span class='va'>trees</span><span class='op'>)</span>
+<span class='va'>mapping</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/cmdscale.html'>cmdscale</a></span><span class='op'>(</span><span class='va'>distances</span><span class='op'>)</span>
+<span class='fu'>MappingQuality</span><span class='op'>(</span><span class='va'>distances</span>, <span class='fu'><a href='https://rdrr.io/r/stats/dist.html'>dist</a></span><span class='op'>(</span><span class='va'>mapping</span><span class='op'>)</span>, <span class='fl'>4</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Trustworthiness      Continuity             TxC         sqrtTxC 
+#&gt;       0.8080808       0.9040404       0.7305377       0.8547150 </div></pre>
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
     </nav>
   </div>
-
 </div>
 
 
