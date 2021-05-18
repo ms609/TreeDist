@@ -8,7 +8,7 @@
 #' @param shrink Numeric specifying degree to which size of plotted point
 #' should reflect `z` position.
 #' @param plot.bg Colour with which to fill plot area, used as fog colour.
-#' @param pch,col,bg,cex,axes,frame.plot,\dots Parameters passed to 
+#' @param bg,cex,col,pch,add,axes,frame.plot,\dots Parameters passed to 
 #' [plot.default].
 #' 
 #' @examples 

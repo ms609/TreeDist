@@ -255,9 +255,9 @@ ui <- fluidPage(theme = 'treespace.css',
                                       "Robinson\u2212Foulds" = 'rf'),
                        selected = 'cid'),
           
-          textOutput(outputId = "projectionStatus"),
+          textOutput(outputId = "mappingStatus"),
           fluidRow(plotOutput(outputId = "pcQuality", height = "72px")),
-          selectInput("projection", "Projection method",
+          selectInput("mapping", "Mapping method",
                        choices = list("Princ. comps (classical MDS)" = 'pca',
                                       "Sammon mapping mMDS" = 'nls',
                                       "Kruskal-1 nmMDS (slow)" = 'k'
@@ -578,14 +578,14 @@ server <- function(input, output, session) {
   })
   
   ##############################################################################
-  # Projection
+  # Mapping
   ##############################################################################
   maxProjDim <- reactive({
     min(15L, length(r$allTrees) - 1L)
   })
   
   nProjDim <- reactive({
-    dim(projection())[2]
+    dim(mapping())[2]
   })
   
   dims <- debounce(reactive({
@@ -594,14 +594,14 @@ server <- function(input, output, session) {
     }
   }), 400)
   
-  projection <- reactive({
+  mapping <- reactive({
     if (maxProjDim() > 1L) {
-      proj_id <- paste0('proj_', input$projection, '_', input$distance)
+      proj_id <- paste0('proj_', input$mapping, '_', input$distance)
       if (is.null(r[[proj_id]])) {
         withProgress(
-          message = 'Projecting distances',
+          message = 'Mapping distances',
           value = 0.99,
-          proj <- switch(input$projection,
+          proj <- switch(input$mapping,
                          'pca' = cmdscale(distances(), k = maxProjDim()),
                          'k' = MASS::isoMDS(distances(), k = maxProjDim())$points,
                          'nls' = MASS::sammon(distances(), k = maxProjDim())$points
@@ -618,10 +618,10 @@ server <- function(input, output, session) {
   })
   
   projQual <- reactive({
-    withProgress(message = "Estimating projection quality", {
+    withProgress(message = "Estimating mapping quality", {
       vapply(seq_len(nProjDim()), function (k) {
         incProgress(1 / nProjDim())
-        ProjectionQuality(distances(), dist(projection()[, seq_len(k)]), 10)
+        MappingQuality(distances(), dist(mapping()[, seq_len(k)]), 10)
       }, numeric(4))
     })
   })
@@ -651,7 +651,7 @@ server <- function(input, output, session) {
          at = ticks[-1] - ((ticks[-1] - ticks[-length(ticks)]) / 2),
          labels = c('', 'dire', '', "ok", "gd", "excellent"))
     axis(3, at = 0.5, tick = FALSE, line = -2, 
-         paste0(dims(), 'D projection quality (trustw. \ud7 contin.):'))
+         paste0(dims(), 'D mapping quality (trustw. \ud7 contin.):'))
   })
   
   
@@ -1139,7 +1139,7 @@ server <- function(input, output, session) {
   ##############################################################################
   treespacePlot <- function() {
     cl <- clusterings()
-    proj <- projection()
+    proj <- mapping()
     
     nDim <- min(dims(), nProjDim())
     plotSeq <- matrix(0, nDim, nDim)
@@ -1190,9 +1190,9 @@ server <- function(input, output, session) {
     if (!mode3D()) {
       if (inherits(distances(), 'dist')) {
         treespacePlot()
-        output$projectionStatus <- renderText('')
+        output$mappingStatus <- renderText('')
       } else {
-        output$projectionStatus <- renderText("No distances available.")
+        output$mappingStatus <- renderText("No distances available.")
       }
     }
   }, width = PlotSize(), height = PlotSize())
@@ -1200,7 +1200,7 @@ server <- function(input, output, session) {
   output$threeDPlot <- rgl::renderRglwidget({
     if (mode3D() && inherits(distances(), 'dist')) {
       cl <- clusterings()
-      proj <- projection()
+      proj <- mapping()
       withProgress(message = 'Drawing 3D plot', {
         rgl::rgl.open(useNULL = TRUE)
         incProgress(0.1)
@@ -1238,7 +1238,7 @@ server <- function(input, output, session) {
   output$savePdf <- downloadHandler(
     filename = 'TreeSpace.pdf',
     content = function (file) {
-      pdf(file, title = paste0('Tree space projection'))
+      pdf(file, title = paste0('Tree space mapping'))
       treespacePlot()
       dev.off()
   })
@@ -1286,8 +1286,8 @@ server <- function(input, output, session) {
              'path' = paste0(Farris1973, Steel1993, SmithDist),
              'rf' = paste0(Robinson1981, Day1985, SmithDist))
       ),
-      tags$h3('Projection'),
-      HTML(switch(input$projection,
+      tags$h3('Mapping'),
+      HTML(switch(input$mapping,
                   'pca' = Gower1966,
                   'k' = paste0(Kruskal1964, Venables2002),
                   'nls' = paste0(Sammon1969, Venables2002)

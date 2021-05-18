@@ -1,7 +1,7 @@
-#' Graphical user interface for projecting distances and analysing
+#' Graphical user interface for mapping distances and analysing
 #' tree space
 #' 
-#' `Project()` launches a 'Shiny' application for the visualization and
+#' `MapTrees()` launches a 'Shiny' application for the visualization and
 #' evaluation of tree spaces.
 #' 
 #' # Input tab
@@ -32,12 +32,12 @@
 #' 
 #' Select from a suite of distance methods: clustering information and 
 #' phylogenetic information are quick and satisfactory; quartet is slow but
-#' gives slightly better projections; path is very fast but may not reflect
+#' gives slightly better mappings; path is very fast but may not reflect
 #' evolutionary signal very well; and Robinson--Foulds should probably never
 #' be used for analysis; it is included for comparison purposes.
 #' 
-#' Principle components projections should suffice for most purposes; 
-#' Sammon and Kruskal projections are slower and seldom differ by much,
+#' Principle components mappings should suffice for most purposes; 
+#' Sammon and Kruskal mappings are slower and seldom differ by much,
 #' in character or quality, but may emphasize outliers more.
 #' 
 #' Partitioning around medoids or minimax-linkage hierarchical clustering
@@ -53,8 +53,8 @@
 #' 
 #' # Display tab
 #' 
-#' Up to 15 dimensions can be depicted; the quality of a projection -- that is, 
-#' the faithfulness of projected distances to true tree-to-tree distances --
+#' Up to 15 dimensions can be depicted; the quality of a mapping -- that is, 
+#' the faithfulness of mapped distances to true tree-to-tree distances --
 #' is quantified by the product of the Trustworthiness and Continuity metrics,
 #' which should exceed 0.9 (at least).
 #' 
@@ -64,7 +64,7 @@
 #' 
 #' The minimum spanning tree is the shortest possible line selecting the chosen
 #' subsample of trees; if it takes a convoluted zig-zagging route, then the 
-#' projection is doing a poor job of reflecting true tree to tree distances.
+#' mapping is doing a poor job of reflecting true tree to tree distances.
 #' 
 #' Convex hulls are the smallest polygons enclosing all points in each cluster;
 #' they are handy for spotting clusters, but their area does not correspond
@@ -86,7 +86,7 @@
 #' 
 #' # Exporting tree spaces
 #' 
-#' A projection can be saved to PDF or as a PNG bitmap at the size selected.
+#' A mapping can be saved to PDF or as a PNG bitmap at the size selected.
 #' 
 #' 
 #' # References
@@ -114,7 +114,7 @@
 #' @importFrom shiny runApp
 #' @importFrom shinyjs useShinyjs
 #' @export
-Project <- function() {
+MapTrees <- function() {
   appDir <- system.file("treespace", package = "TreeDist")
   if (appDir == "") {
     stop("Could not find example directory. Try re-installing 'TreeDist'.", 
@@ -122,4 +122,11 @@ Project <- function() {
   }
   
   shiny::runApp(appDir, display.mode = "normal")
+}
+
+#' @rdname MapTrees
+#' @export
+Project <- function () {
+  .Deprecated('MapTrees')
+  MapTrees()
 }

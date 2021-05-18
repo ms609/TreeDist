@@ -82,9 +82,9 @@ the package '\href{https://ms609.github.io/TBRDist/index.html}{TBRDist}'.
 }
 }
 \section{Tree space analysis}{
-Project tree spaces and readily visualize projected landscapes, avoiding
+Map tree spaces and readily visualize projected landscapes, avoiding
 common analytical pitfalls (Smith, forthcoming),
-using the inbuilt graphical user interface:\if{html}{\out{<div class="r">}}\preformatted{TreeDist::Project()
+using the inbuilt graphical user interface:\if{html}{\out{<div class="r">}}\preformatted{TreeDist::MapTrees()
 }\if{html}{\out{</div>}}
 
 Serious analysts should consult the

@@ -63,21 +63,21 @@
                               rankLowDim = rankLowDim, kTM = kTM)
 }
 
-#' Quality of projected distances
+#' Quality of mapped distances
 #' 
-#' `ProjectionQuality()` calculates the trustworthiness and continuity
-#' of projected distances (Venna & Kaski 2001; Kaski _et al._ 2003).
+#' `MappingQuality()` calculates the trustworthiness and continuity
+#' of mapped distances (Venna & Kaski 2001; Kaski _et al._ 2003).
 #' Trustworthiness measures, on a scale from 0--1,
-#' the degree to which points that are nearby in a projection are truly close
+#' the degree to which points that are nearby in a mapping are truly close
 #' neighbours; continuity, the extent to which points that are truly nearby 
-#' retain their close spatial proximity in a projection.
+#' retain their close spatial proximity in a mapping.
 #' 
 #' 
-#' @param original,projected Square matrix or `dist` object containing 
-#' original / projected pairwise distances.
+#' @param original,mapped Square matrix or `dist` object containing 
+#' original / mapped pairwise distances.
 #' @param neighbours Number of nearest neighbours to use in calculation.
 #' 
-#' @return `ProjectionQuality()` returns a named vector of length four, 
+#' @return `MappingQuality()` returns a named vector of length four, 
 #' containing the entries: `Trustworthiness`, `Continuity`, `TxC` 
 #' (the product of these values), and `sqrtTxC` (its square root).
 #' 
@@ -85,8 +85,8 @@
 #' library('TreeTools', quietly = TRUE, warn.conflict = FALSE)
 #' trees <- as.phylo(0:10, nTip = 8)
 #' distances <- ClusteringInfoDistance(trees)
-#' projection <- cmdscale(distances)
-#' ProjectionQuality(distances, dist(projection), 4)
+#' mapping <- cmdscale(distances)
+#' MappingQuality(distances, dist(mapping), 4)
 #' @author Wrapper for functions from Charlotte Soneson's \pkg{dreval},
 #' https://github.com/csoneson/dreval/blob/master/R/trustworthiness.R
 #' 
@@ -96,11 +96,15 @@
 #' \insertRef{Kaski2003}{TreeDist}
 #' @family tree space functions
 #' @export
-ProjectionQuality <- function (original, projected, neighbours = 10L) {
-  trust <- .calcTrustworthinessFromDist(original, projected, neighbours)
-  cont <- .calcContinuityFromDist(original, projected, neighbours)
+MappingQuality <- function (original, mapped, neighbours = 10L) {
+  trust <- .calcTrustworthinessFromDist(original, mapped, neighbours)
+  cont <- .calcContinuityFromDist(original, mapped, neighbours)
   c('Trustworthiness' = trust,
     'Continuity' = cont,
     'TxC' = trust * cont,
     'sqrtTxC' = sqrt(trust * cont))
 }
+
+#' @rdname MappingQuality
+#' @export
+ProjectionQuality <- MappingQuality

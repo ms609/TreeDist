@@ -17,13 +17,14 @@ Plot3(
   plot.bg = NA,
   fog = 1/2,
   shrink = 1/2,
+  add = FALSE,
   ...
 )
 }
 \arguments{
 \item{x, y, z}{Coordinates of points to plot}
 
-\item{pch, col, bg, cex, axes, frame.plot, \dots}{Parameters passed to
+\item{bg, cex, col, pch, add, axes, frame.plot, \dots}{Parameters passed to
 \link{plot.default}.}
 
 \item{plot.bg}{Colour with which to fill plot area, used as fog colour.}

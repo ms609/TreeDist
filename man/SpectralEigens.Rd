@@ -38,8 +38,8 @@ plot(cmdscale(distances), pch = 15, col = clusts$cluster)
 }
 \seealso{
 Other tree space functions: 
-\code{\link{ProjectionQuality}()},
-\code{\link{Project}()},
+\code{\link{MapTrees}()},
+\code{\link{MappingQuality}()},
 \code{\link{median.multiPhylo}()}
 }
 \author{

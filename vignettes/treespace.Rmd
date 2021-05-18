@@ -25,19 +25,19 @@ can mislead interpretation.
 
 ## Tree space analysis via user interface
 
-Tree space projection and analysis is made simple with the Shiny app included in
+Tree space mapping and analysis is made simple with the Shiny app included in
 the 'TreeDist' R package.  Simply install [R](https://www.r-project.org/) or
 [RStudio](https://rstudio.com/), then copy the code below into the R command
 line:
 
 ```r
 install.packages('TreeDist')
-TreeDist::Project()
+TreeDist::MapTrees()
 ```
 
-This will allow you to conduct and evaluate basic tree space projections
+This will allow you to conduct and evaluate basic tree space mappings
 from tree lists saved in most common file formats; see an 
-[outline of the basic functionality](https://ms609.github.io/TreeDist/reference/Project.html).
+[outline of the basic functionality](https://ms609.github.io/TreeDist/reference/MapTrees.html).
 To avoid misinterpreting tree space, it's worth having a broad idea of what
 an analysis involves, and some potential pitfalls.
 
@@ -82,39 +82,39 @@ distances <- PhylogeneticInfoDistance(trees)
 distances <- as.dist(Quartet::QuartetDivergence(
   Quartet::ManyToManyQuartetAgreement(trees), similarity = FALSE))
 ```
-### Projecting distances
+### Mapping distances
 
 Then we need to reduce the dimensionality of these distances.
-We'll start out with a 12-dimensional projection; if needed, we can always 
+We'll start out with a 12-dimensional mapping; if needed, we can always 
 drop higher dimensions.  
 
 Principal components analysis is quick and performs very well:
 
-```{r projection}
-projection <- cmdscale(distances, k = 12)
+```{r map}
+mapping <- cmdscale(distances, k = 12)
 ```
 
-Alternative projection methods do exist, and sometimes give slightly better 
-projections.  `isoMDS()` performs non-metric multidimensional scaling (MDS)
+Alternative mapping methods do exist, and sometimes give slightly better 
+mappings.  `isoMDS()` performs non-metric multidimensional scaling (MDS)
 with the Kruskal-1 stress function [@Kruskal1964]:
 ```r
 kruskal <- MASS::isoMDS(distances, k = 12)
-projection <- kruskal$points
+mapping <- kruskal$points
 ```
 
 whereas `sammon()`, one of many metric MDS methods, uses Sammon's stress 
 function [@Sammon1969]:
 ```
 sammon <- MASS::sammon(distances, k = 12)
-projection <- sammon$points
+mapping <- sammon$points
 ```
 
 That's a good start.  It is tempting to plot the first two dimensions
-arising from this projection and be done:
+arising from this mapping and be done:
 
-```{r plot-projection-2d, fig.asp = 1, fig.width = 3, fig.align='center'}
+```{r plot-mapping-2d, fig.asp = 1, fig.width = 3, fig.align='center'}
 par(mar = rep(0, 4))
-plot(projection,
+plot(mapping,
      asp = 1, # Preserve aspect ratio - do not distort distances
      ann = FALSE, axes = FALSE, # Don't label axes: dimensions are meaningless
      col = treeCols, pch = 16
@@ -196,17 +196,17 @@ plot(consensus(trees[cluster == 2]), edge.color = col2, edge.width = 2, tip.colo
 In this case, we don't learn much, though trees in one cluster are united
 by the position of `t7`.
 
-### Validating a projection
+### Validating a mapping
 
-Now let's evaluate whether our plot of tree space is representative.
+Now let's evaluate whether our map of tree space is representative.
 First we want to know how many dimensions are necessary to adequately
 represent the true distances between trees.  We hope for a trustworthiness ×
-continuity score of \> 0.9 for a usable projection, or \> 0.95 for a good one.
+continuity score of \> 0.9 for a usable mapping, or \> 0.95 for a good one.
 
 ```{r how-many-dims, fig.align='center'}
 txc <- vapply(1:12, function (k) {
-  newDist <- dist(projection[, seq_len(k)])
-  ProjectionQuality(distances, newDist, 10)['TxC']
+  newDist <- dist(mapping[, seq_len(k)])
+  MappingQuality(distances, newDist, 10)['TxC']
 }, 0)
 plot(txc, xlab = 'Dimension')
 abline(h = 0.9, lty = 2)
@@ -225,7 +225,7 @@ mstEnds <- MSTEdges(distances)
 Let's plot the first five dimensions of our tree space, highlighting the convex
 hulls of our clusters:
 
-```{r plot-projection-5d, fig.asp = 1, fig.align='center'}
+```{r plot-mapping-5d, fig.asp = 1, fig.align='center'}
 plotSeq <- matrix(0, 5, 5)
 plotSeq[upper.tri(plotSeq)] <- seq_len(5 * (5 - 1) / 2)
 plotSeq <- t(plotSeq[-5, -1])
@@ -235,21 +235,21 @@ par(mar = rep(0.1, 4))
 
 for (i in 2:5) for (j in seq_len(i - 1)) {
   # Set up blank plot
-  plot(projection[, j], projection[, i], ann = FALSE, axes = FALSE, frame.plot = TRUE,
-       type = 'n', asp = 1, xlim = range(projection), ylim = range(projection))
+  plot(mapping[, j], mapping[, i], ann = FALSE, axes = FALSE, frame.plot = TRUE,
+       type = 'n', asp = 1, xlim = range(mapping), ylim = range(mapping))
   
   # Plot MST
   apply(mstEnds, 1, function (segment)
-    lines(projection[segment, j], projection[segment, i], col = "#bbbbbb", lty = 1))
+    lines(mapping[segment, j], mapping[segment, i], col = "#bbbbbb", lty = 1))
   
   # Add points
-  points(projection[, j], projection[, i], pch = 16, col = treeCols)
+  points(mapping[, j], mapping[, i], pch = 16, col = treeCols)
 
   # Mark clusters
   for (clI in unique(cluster)) {
     inCluster <- cluster == clI
-    clusterX <- projection[inCluster, j]
-    clusterY <- projection[inCluster, i]
+    clusterX <- mapping[inCluster, j]
+    clusterY <- mapping[inCluster, i]
     hull <- chull(clusterX, clusterY)
     polygon(clusterX[hull], clusterY[hull], lty = 1, lwd = 2,
             border = '#54de25bb')
@@ -277,18 +277,18 @@ of interpreting a two-dimensional tree space plot:
 ```{r pid, fig.asp = 1, fig.width = 4, fig.align = 'center', echo = FALSE}
 library('TreeDist')
 pid_distances <- PhylogeneticInfoDistance(trees)
-pid_projection <- cmdscale(pid_distances, k = 6)
+pid_mapping <- cmdscale(pid_distances, k = 6)
 pid_cluster <- cutree(protoclust::protoclust(pid_distances), k = 2)
 
 par(mar = rep(0, 4))
-plot(pid_projection, ann = FALSE, axes = FALSE, asp = 1,
+plot(pid_mapping, ann = FALSE, axes = FALSE, asp = 1,
      col = treeCols, pch = 16)
-MSTEdges(pid_distances, TRUE, pid_projection[, 1], pid_projection[, 2],
+MSTEdges(pid_distances, TRUE, pid_mapping[, 1], pid_mapping[, 2],
          col = "#bbbbbb", lty = 1)
 for (clI in 1:2) {
   inCluster <- pid_cluster == clI
-  clusterX <- pid_projection[inCluster, 1]
-  clusterY <- pid_projection[inCluster, 2]
+  clusterX <- pid_mapping[inCluster, 1]
+  clusterY <- pid_mapping[inCluster, 2]
   hull <- chull(clusterX, clusterY)
   polygon(clusterX[hull], clusterY[hull], lty = 1, lwd = 2,
           border = '#54de25bb')

@@ -2,6 +2,7 @@
 
 - `KCDiameter()` approximates the diameter of the Kendall-Colijn metric.
 - `Plot3()` for pseudo-3D plotting.
+- `Project()`/`ProjectionQuality()` re-named to `MapTrees()`/`MappingQuality()`.
 
 # TreeDist 2.0.3.9001 (development)
  
@@ -22,7 +23,7 @@
 - `Project()` launches 'shiny' app for projection and analysis of tree space.
 
 - `ProjectionQuality()` calculates trustworthiness and continuity of tree 
-  space projections.
+  space mappings.
   
 - Faster calculation of Robinson–Foulds distance (using algorithm of Day (1985))
   and clustering information distance.
