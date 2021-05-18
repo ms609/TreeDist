@@ -14,8 +14,8 @@
 #' @examples 
 #' Plot3(1:10, 1:10, 1:10, cex = 7, pch = 16, axes = FALSE, asp = 1)
 #' @template MRS
-#' @importFrom graphics plot
-#' @importFrom grDevices colorRampPalette
+#' @importFrom graphics plot points rect
+#' @importFrom grDevices colorRamp rgb
 #' @export
 Plot3 <- function (x, y = NULL, z = NULL,
                    pch = par("pch"), col = par("col"),

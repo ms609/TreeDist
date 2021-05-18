@@ -9,6 +9,7 @@
 #' @template MRS
 #' @keywords internal
 #' @importFrom TreeTools as.Splits TipLabels
+#' @importFrom utils combn
 #' @export
 CalculateTreeDistance <- function (Func, tree1, tree2 = NULL,
                                    reportMatching = FALSE, ...) {
