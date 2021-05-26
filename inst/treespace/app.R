@@ -829,9 +829,9 @@ server <- function(input, output, session) {
           }
           
           if ('spec' %in% input$clustering) {
-            spectralEigens <- SpectralClustering(dists,
-                                                 nn = min(ncol(as.matrix(dists)) - 1L, 10),
-                                                 nEig = 3L)
+            spectralEigens <- SpectralEigens(dists,
+                                             nn = min(ncol(as.matrix(dists)) - 1L, 10),
+                                             nEig = 3L)
             specClusters <- lapply(possibleClusters, function (k) {
               incProgress(kInc / 2, detail = 'spectral clustering')
               cluster::pam(spectralEigens, k = k)
