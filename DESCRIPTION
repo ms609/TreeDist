@@ -65,7 +65,6 @@ Suggests:
   TreeSearch,
   Umatrix,
   vdiffr (>= 1.0.0)
-  viridisLite
 LinkingTo: 
   Rcpp,
   TreeTools

@@ -11,7 +11,6 @@ if (!requireNamespace('MASS', quietly = TRUE)) install.packages('MASS')
 if (!requireNamespace('Quartet', quietly = TRUE)) install.packages('Quartet')
 if (!requireNamespace('rgl', quietly = TRUE)) install.packages('rgl')
 if (!requireNamespace('readxl', quietly = TRUE)) install.packages('readxl')
-if (!requireNamespace('viridisLite', quietly = TRUE)) install.packages('viridisLite')
 
 # Allow large files to be submitted
 options(shiny.maxRequestSize = 100 * 1024^2)
@@ -940,9 +939,9 @@ server <- function(input, output, session) {
     if (length(sil) == 0) sil <- -0.5
     nStop <- 400
     range <- c(0.5, 1)
-    negScale <- viridisLite::plasma(nStop)[seq(range[1] * nStop, 1,
-                                               length.out = nStop * range[1])]
-    posScale <- viridisLite::viridis(nStop)
+    negScale <- hcl.colors(nStop, 'plasma')[seq(range[1] * nStop, 1,
+                                            length.out = nStop * range[1])]
+    posScale <- hcl.colors(nStop, 'viridis')
     
     plot(seq(-range[1], range[2], length.out = nStop * sum(range)),
          rep(0, nStop * sum(range)),
@@ -1042,7 +1041,7 @@ server <- function(input, output, session) {
   
   ContinuousPtCol <- function (dat, bigDark = FALSE) {
     show('pt.col.scale')
-    scale <- substr(viridisLite::plasma(256), 1, 7)
+    scale <- substr(hcl.colors(256, 'plasma'), 1, 7)
     if (bigDark) scale <- rev(scale)
     output$pt.col.scale <- renderPlot({
       par(mar = c(1, 1, 0, 1))
