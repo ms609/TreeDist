@@ -56,7 +56,7 @@ identify them.
 library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
 treeNumbers <- c(1:220)
 trees <- as.phylo(treeNumbers, 8)
-spectrum <- viridisLite::plasma(220)
+spectrum <- hcl.colors(220, 'plasma')
 treeCols <- spectrum[treeNumbers]
 ```
 

@@ -64,13 +64,16 @@ Suggests:
   TreeDistData (> 0.1.0),
   TreeSearch,
   Umatrix,
-  vdiffr,
+  vdiffr (>= 1.0.0)
   viridisLite
 LinkingTo: 
   Rcpp,
   TreeTools
 RdMacros: Rdpack
 VignetteBuilder: knitr
+Config/Needs/coverage: covr
+Config/Needs/metadata: codemetar
+Config/Needs/website: pkgdown
 SystemRequirements: C++14
 LazyData: true
 ByteCompile: true

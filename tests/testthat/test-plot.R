@@ -17,7 +17,8 @@ test_that('TreeDistPlot works', {
                            leaveRoom = FALSE)
   }
   skip_if_not_installed('vdiffr')
-  skip_if(packageVersion("graphics") > "4.0.99")
+  skip_if(packageVersion("graphics") < "4.1")
+  skip_if(packageVersion("vdiffr") < "1.0")
   
   vdiffr::expect_doppelganger("Test with space", Test1)
   vdiffr::expect_doppelganger("Test without space", Test2)
@@ -44,7 +45,8 @@ test_that('VisualizeMatching() works', {
                                  setPar = FALSE))
   
   skip_if_not_installed('vdiffr')
-  skip_if(packageVersion("graphics") > "4.0.99")
+  skip_if(packageVersion("graphics") < "4.1")
+  skip_if(packageVersion("vdiffr") < "1.0")
   
   TestVM <- function () {
     VisualizeMatching(MutualClusteringInfo, tree1, tree2, 
