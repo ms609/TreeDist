@@ -47,23 +47,23 @@
 #' @references \insertRef{Meila2007}{TreeDist}
 #' 
 #' @family information functions
-#' @importFrom TreeTools LnTreesMatchingSplit LnUnrooted
+#' @importFrom TreeTools Log2TreesMatchingSplit Log2Unrooted
 #' @export
 SplitSharedInformation <- function(n, A1, A2 = A1) {
-  (LnTreesMatchingSplit(A1, n - A1) 
-   + LnTreesMatchingSplit(A2, n - A2)
-   - LnTreesConsistentWithTwoSplits(n, A1, A2)
-   - LnUnrooted(n)) / -log(2)
+  Log2Unrooted(n) +
+    Log2TreesConsistentWithTwoSplits(n, A1, A2) -
+    Log2TreesMatchingSplit(A1, n - A1) -
+    Log2TreesMatchingSplit(A2, n - A2)
 }
 
 #' @describeIn SplitSharedInformation Different information between two splits.
 #' @importFrom TreeTools SplitInformation
 #' @export
 SplitDifferentInformation <- function (n, A1, A2 = A1) {
-  (2 * (LnTreesConsistentWithTwoSplits(n, A1, A2)) 
-   - LnTreesMatchingSplit(A1, n - A1)
-   - LnTreesMatchingSplit(A2, n - A2)
-  )/-log(2)
+  Log2TreesMatchingSplit(A1, n - A1) +
+    Log2TreesMatchingSplit(A2, n - A2) -
+    (2 * Log2TreesConsistentWithTwoSplits(n, A1, A2))
+  
 }
 
 #' Use variation of clustering information to compare pairs of splits
@@ -313,18 +313,41 @@ TreesConsistentWithTwoSplits <- function (n, A1, A2 = A1) {
 }
 
 #' @describeIn SplitSharedInformation Natural logarithm of 
-#' `TreesConsistentWithTwoSplits`.
+#' `TreesConsistentWithTwoSplits()`.
 #' @importFrom TreeTools LnTreesMatchingSplit LnRooted.int
 #' @export
 LnTreesConsistentWithTwoSplits <- function (n, A1, A2 = A1) {
   smallSplit <- min(A1, A2)
   bigSplit <- max(A1, A2)
   
-  if (smallSplit == 0) return (LnTreesMatchingSplit(bigSplit, n - bigSplit))
-  if (bigSplit == n) return (LnTreesMatchingSplit(smallSplit, n - smallSplit))
+  # Return:
+  if (smallSplit == 0) {
+    LnTreesMatchingSplit(bigSplit, n - bigSplit)
+  } else if (bigSplit == n) {
+    LnTreesMatchingSplit(smallSplit, n - smallSplit)
+  } else {
+    LnRooted.int(bigSplit - smallSplit + 1L) + 
+      LnRooted.int(smallSplit) + 
+      LnRooted.int(n - bigSplit)
+  }
+}
+
+#' @describeIn SplitSharedInformation Base 2 logarithm of 
+#' `TreesConsistentWithTwoSplits()`.
+#' @importFrom TreeTools Log2TreesMatchingSplit Log2Rooted.int
+#' @export
+Log2TreesConsistentWithTwoSplits <- function (n, A1, A2 = A1) {
+  smallSplit <- min(A1, A2)
+  bigSplit <- max(A1, A2)
   
   # Return:
-  LnRooted.int(bigSplit - smallSplit + 1L) + 
-    LnRooted.int(smallSplit) + 
-    LnRooted.int(n - bigSplit)
+  if (smallSplit == 0) {
+    Log2TreesMatchingSplit(bigSplit, n - bigSplit)
+  } else if (bigSplit == n) {
+    Log2TreesMatchingSplit(smallSplit, n - smallSplit)
+  } else {
+    Log2Rooted.int(bigSplit - smallSplit + 1L) + 
+      Log2Rooted.int(smallSplit) + 
+      Log2Rooted.int(n - bigSplit)
+  }
 }
