@@ -287,8 +287,7 @@ test_that('MatchingSplitInfo() is correctly calculated', {
                MatchingSplitInfo(treeAbc.Defgh, treeAb.Cdefgh))
   expect_equal(MatchingSplitInfo(treeAbcd.Efgh, treeAb.Cdefgh),
                MatchingSplitInfo(treeAb.Cdefgh, treeAbcd.Efgh))
-  expect_equal(-(TreeTools::LnTreesMatchingSplit(2, 5) - LnUnrooted.int(7)) / 
-                 log(2), 
+  expect_equal(-(TreeTools::Log2TreesMatchingSplit(2, 5) - Log2Unrooted.int(7)), 
                MatchingSplitInfo(treeAb.Cdefgh, treeAbc.Defgh),
                tolerance = 1e-7)
   expect_true(MatchingSplitInfo(treeSym8, treeBal8) > 

@@ -4,10 +4,13 @@
 \alias{SplitwiseInfo}
 \title{Information content of splits within a tree}
 \usage{
-SplitwiseInfo(x)
+SplitwiseInfo(x, p = NULL)
 }
 \arguments{
 \item{x}{A tree of class \code{phylo}, a list of trees, or a \code{multiPhylo} object.}
+
+\item{p}{A vector of probabilities corresponding t oeach split in \code{x}.
+Specify \code{TRUE} to calculate this vector using the node labels of each tree.}
 }
 \description{
 Sum the phylogenetic information content for all splits within a
@@ -17,6 +20,8 @@ these splits will contain mutual information.
 }
 \examples{
 SplitwiseInfo(TreeTools::PectinateTree(8))
+tree <- ape::read.tree(text = "(a, b, (c, (d, e, (f, g)0.8))0.9);")
+SplitwiseInfo(tree)
 }
 \seealso{
 An introduction to the phylogenetic information content of a split is given

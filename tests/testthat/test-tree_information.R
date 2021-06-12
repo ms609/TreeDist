@@ -10,3 +10,6 @@ test_that('ClusteringInfo method works', {
                ClusteringInfo(trees))
 })
   
+test_that("SplitwiseInfo() handles probabilities", {
+  
+})

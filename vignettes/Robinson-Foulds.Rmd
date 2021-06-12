@@ -143,7 +143,7 @@ names(matchingTrees) <- paste0("Split size: ", splitSmall, ':', splitLarge)
 
 matchingP <- matchingTrees / (11 * 9 * 7 * 5 * 3 * 1 * 1)
 
-ic <- -log(matchingP) / log(2)
+ic <- -log2(matchingP)
 
 knitr::kable(cbind(
       'Matching trees' = paste(matchingTrees, "/ 10 395"),
