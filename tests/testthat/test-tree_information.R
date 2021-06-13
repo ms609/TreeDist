@@ -9,7 +9,7 @@ test_that("SplitwiseInfo() handles probabilities", {
   p <- 0.6 * c(1, 0, 0) + 0.4 * c(0, 1/2, 1/2)
   expect_equal(sum(p), 1)
   expectation <- -sum(p * log2(p))
-  expect_equal(-expectation, SplitwiseInfo(tree, 100))
+  expect_equal(expectation, SplitwiseInfo(tree, 100))
   
   
   treeP <- Tree('((a, b)0.60, (c, d));')

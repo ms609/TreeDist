@@ -75,7 +75,7 @@ SplitwiseInfo.Splits <- function(x, p = NULL) {
     log2q <- log2(q[qNonZero]) + (l2StartP - l2pInconsistent)
     
     # Return:
-    sum(p * log2p, q[qNonZero] * log2q)
+    -sum(p * log2p, q[qNonZero] * log2q)
   }
 }
 
