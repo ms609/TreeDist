@@ -60,11 +60,6 @@ SplitwiseInfo.Splits <- function(x, p = NULL) {
            vapply(nTip - inSplit, Log2Rooted.int, 0)
     )
   } else {
-    
-    #p <- 0.6 * c(1, 0, 0) + 0.4 * c(0, 1/2, 1/2)
-    
-    # expect 1.37
-    
     q <- 1L - p
     qNonZero <- as.logical(1L - p)
     
