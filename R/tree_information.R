@@ -29,8 +29,11 @@ SplitwiseInfo <- function (x, p = NULL) UseMethod('SplitwiseInfo')
 #' @export
 SplitwiseInfo.phylo <- function (x, p = NULL) {
   splits <- as.Splits(x)
-  if (length(p) == 1L) {
+  if (length(p) == 1L) { # length(NULL) == 0
     np <- x$node.label[as.integer(names(splits)) - NTip(x)]
+    if (is.null(np)) {
+      np <- rep_len(p, length(splits))
+    }
     p <- as.double(np) / p
     p[is.na(p)] <- 1
     if (any(p > 1)) {
@@ -60,22 +63,30 @@ SplitwiseInfo.Splits <- function(x, p = NULL) {
            vapply(nTip - inSplit, Log2Rooted.int, 0)
     )
   } else {
+    #p <- (0.6 * c(1, 0, 0)) + (0.4 * c(0, 1/2, 1/2))
+    # expect 1.37
+    #
+    # (a, b, (c, d, e)0.6)
+    #or p <- c(0.6 * rep(1/3, 3),  # 2 ^ -2.321  # = 1.393
+    #          0.4 * rep(1/12, 12))  # 2 ^ -4.906 # = 1.962
+    # expect h = 3.355913
+    
     q <- 1L - p
     qNonZero <- as.logical(1L - p)
+    q <- q[qNonZero]
     
-    l2StartP <- -Log2Unrooted.int(nTip)
+    l2n <- Log2Unrooted.int(nTip)
     
-    l2pConsistent <- l2StartP +
-      vapply(inSplit, Log2Rooted.int, 0) +
+    l2nConsistent <- vapply(inSplit, Log2Rooted.int, 0) +
       vapply(nTip - inSplit, Log2Rooted.int, 0)
     
+    l2pConsistent <- l2nConsistent - l2n
     l2pInconsistent <- log2(-expm1(l2pConsistent[qNonZero] * log(2)))
-           
-    log2p <- log2(p) + (l2StartP - l2pConsistent)
-    log2q <- log2(q[qNonZero]) + (l2StartP - l2pInconsistent)
+    
+    l2nInconsistent <- l2pInconsistent + l2n
     
     # Return:
-    -sum(p * log2p, q[qNonZero] * log2q)
+    -sum(p * (log2(p) - l2nConsistent), q * (log2(q) - l2nInconsistent))
   }
 }
 
