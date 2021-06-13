@@ -68,12 +68,11 @@ SplitwiseInfo.Splits <- function(x, p = NULL) {
     q <- 1L - p
     qNonZero <- as.logical(1L - p)
     
-    originalH <- Log2Unrooted.int(nTip)
-    l2StartP <- -originalH
+    l2StartP <- -Log2Unrooted.int(nTip)
     
-    l2pConsistent <- -(Log2Unrooted.int(nTip) -
-      vapply(inSplit, Log2Rooted.int, 0) -
-      vapply(nTip - inSplit, Log2Rooted.int, 0))
+    l2pConsistent <- l2StartP +
+      vapply(inSplit, Log2Rooted.int, 0) +
+      vapply(nTip - inSplit, Log2Rooted.int, 0)
     
     l2pInconsistent <- log2(-expm1(l2pConsistent[qNonZero] * log(2)))
            
@@ -81,7 +80,7 @@ SplitwiseInfo.Splits <- function(x, p = NULL) {
     log2q <- log2(q[qNonZero]) + (l2StartP - l2pInconsistent)
     
     # Return:
-    -sum(-(p * log2p) - (q * log2q))
+    sum(p * log2p, q * log2q)
   }
 }
 
