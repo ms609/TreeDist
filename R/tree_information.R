@@ -29,9 +29,9 @@ SplitwiseInfo <- function (x, p = NULL) UseMethod('SplitwiseInfo')
 #' @export
 SplitwiseInfo.phylo <- function (x, p = NULL) {
   splits <- as.Splits(x)
-  if (isTRUE(p)) {
-    p <- x$node.label[as.integer(names(splits)) - NTip(x)]
-    p <- as.double(p)
+  if (length(p) == 1L) {
+    np <- x$node.label[as.integer(names(splits)) - NTip(x)]
+    p <- as.double(np) / p
     p[is.na(p)] <- 1
     if (any(p > 1)) {
       stop("Nodes must be labelled with probabilities <= 1")
@@ -60,13 +60,28 @@ SplitwiseInfo.Splits <- function(x, p = NULL) {
            vapply(nTip - inSplit, Log2Rooted.int, 0)
     )
   } else {
+    
+    #p <- 0.6 * c(1, 0, 0) + 0.4 * c(0, 1/2, 1/2)
+    
+    # expect 1.37
+    
     q <- 1L - p
     qNonZero <- as.logical(1L - p)
-    l2pConsistent <- Log2Unrooted.int(nTip) -
+    
+    originalH <- Log2Unrooted.int(nTip)
+    l2StartP <- -originalH
+    
+    l2pConsistent <- -(Log2Unrooted.int(nTip) -
       vapply(inSplit, Log2Rooted.int, 0) -
-      vapply(nTip - inSplit, Log2Rooted.int, 0)
-    sum(p * l2pConsistent,
-        -q[qNonZero] * log(-expm1(-l2pConsistent[qNonZero])))
+      vapply(nTip - inSplit, Log2Rooted.int, 0))
+    
+    l2pInconsistent <- log2(-expm1(l2pConsistent[qNonZero] * log(2)))
+           
+    log2p <- log2(p) + (l2StartP - l2pConsistent)
+    log2q <- log2(q[qNonZero]) + (l2StartP - l2pInconsistent)
+    
+    # Return:
+    -sum(-(p * log2p) - (q * log2q))
   }
 }
 
