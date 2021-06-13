@@ -18,6 +18,8 @@ test_that("SplitwiseInfo() handles probabilities", {
   expect_equal(SplitwiseInfo(Tree('(a, b, (c, (d, e)0.8)0.75);'), TRUE),
                SplitwiseInfo(Tree('(a, b, (c, d, e)0.75);'), TRUE) +
                  SplitwiseInfo(Tree('(a, b, c, (d, e)0.8);'), TRUE))
+  expect_equal(SplitwiseInfo(Tree('(a, b, (c, (d, e)0.8)0.75);'), TRUE),
+               SplitwiseInfo(Tree('(a, b, (c, (d, e)));'), c(0.75, 0.8)))
                
                
   
