@@ -63,6 +63,7 @@ SplitwiseInfo.Splits <- function(x, p = NULL) {
            vapply(nTip - inSplit, Log2Rooted.int, 0)
     )
   } else {
+    # p <- 1 *  c(1)
     #p <- (0.6 * c(1, 0, 0)) + (0.4 * c(0, 1/2, 1/2))
     # expect 1.37
     #
@@ -86,7 +87,8 @@ SplitwiseInfo.Splits <- function(x, p = NULL) {
     l2nInconsistent <- l2pInconsistent + l2n
     
     # Return:
-    -sum(p * (log2(p) - l2nConsistent), q * (log2(q) - l2nInconsistent))
+    sum(p * (l2n + log2(p) - l2nConsistent),
+              q * (l2n + log2(q) - l2nInconsistent))
   }
 }
 

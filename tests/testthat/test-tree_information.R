@@ -5,10 +5,15 @@ test_that("SplitwiseInfo() handles probabilities", {
   tree <- Tree('((a, b)60, (c, d));')
   expect_error(SplitwiseInfo(tree, TRUE))
   expect_gt(SplitwiseInfo(tree), SplitwiseInfo(tree, 100))
+  expect_equal(0, SplitwiseInfo(tree, 60 * 3),
+               tolerance = sqrt(.Machine$double.eps))
+  
+  p <- 1.0 * c(1, 0, 0) + 0.0 * c(0, 1/2, 1/2)
+  expect_equal(log2(3), SplitwiseInfo(tree))
   
   p <- 0.6 * c(1, 0, 0) + 0.4 * c(0, 1/2, 1/2)
   expect_equal(sum(p), 1)
-  expectation <- -sum(p * log2(p))
+  expectation <- log2(3) + sum(p * log2(p))
   expect_equal(expectation, SplitwiseInfo(tree, 100))
   
   
