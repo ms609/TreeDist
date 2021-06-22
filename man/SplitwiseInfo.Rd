@@ -22,6 +22,7 @@ these splits will contain mutual information.
 SplitwiseInfo(TreeTools::PectinateTree(8))
 tree <- ape::read.tree(text = "(a, b, (c, (d, e, (f, g)0.8))0.9);")
 SplitwiseInfo(tree)
+SplitwiseInfo(tree, TRUE)
 }
 \seealso{
 An introduction to the phylogenetic information content of a split is given
