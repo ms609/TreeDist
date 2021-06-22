@@ -332,6 +332,26 @@ LnTreesConsistentWithTwoSplits <- function (n, A1, A2 = A1) {
   }
 }
 
+#' @describeIn SplitSharedInformation Base two logarithm of 
+#' `TreesConsistentWithTwoSplits()`.
+#' @importFrom TreeTools Log2TreesMatchingSplit Log2Rooted.int
+#' @export
+Log2TreesConsistentWithTwoSplits <- function (n, A1, A2 = A1) {
+  smallSplit <- min(A1, A2)
+  bigSplit <- max(A1, A2)
+  
+  # Return:
+  if (smallSplit == 0) {
+    Log2TreesMatchingSplit(bigSplit, n - bigSplit)
+  } else if (bigSplit == n) {
+    Log2TreesMatchingSplit(smallSplit, n - smallSplit)
+  } else {
+    Log2Rooted.int(bigSplit - smallSplit + 1L) + 
+      Log2Rooted.int(smallSplit) + 
+      Log2Rooted.int(n - bigSplit)
+  }
+}
+
 #' @describeIn SplitSharedInformation Base 2 logarithm of 
 #' `TreesConsistentWithTwoSplits()`.
 #' @importFrom TreeTools Log2TreesMatchingSplit Log2Rooted.int

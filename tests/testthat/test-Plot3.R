@@ -1,8 +1,7 @@
 test_that("Plot3() plots", {
-  skip_if_not_installed('vdiffr')
+  skip_if_not_installed('vdiffr', minimum_version = "1.0.0")
   library('vdiffr')
   skip_if(packageVersion("graphics") < "4.1")
-  skip_if(packageVersion("vdiffr") < "1.0")
   
   expect_doppelganger("Simple plot", {
     disorder <- c(1,5,2,6,3,7,4,8,5,9,10)

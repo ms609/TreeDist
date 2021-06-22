@@ -17,6 +17,8 @@ TreesConsistentWithTwoSplits(n, A1, A2 = A1)
 LnTreesConsistentWithTwoSplits(n, A1, A2 = A1)
 
 Log2TreesConsistentWithTwoSplits(n, A1, A2 = A1)
+
+Log2TreesConsistentWithTwoSplits(n, A1, A2 = A1)
 }
 \arguments{
 \item{n}{Integer specifying the number of leaves}
@@ -57,6 +59,9 @@ Thus, all taxa in the smaller of \emph{A1} and \emph{A2} also occur in the large
 splits.
 
 \item \code{LnTreesConsistentWithTwoSplits}: Natural logarithm of
+\code{TreesConsistentWithTwoSplits()}.
+
+\item \code{Log2TreesConsistentWithTwoSplits}: Base two logarithm of
 \code{TreesConsistentWithTwoSplits()}.
 
 \item \code{Log2TreesConsistentWithTwoSplits}: Base 2 logarithm of
