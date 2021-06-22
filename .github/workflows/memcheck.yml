@@ -62,10 +62,8 @@ jobs:
           
       - name: Install dependencies
         run: |
-          remotes::install_github("KlausVigo/phangorn")
-          remotes::install_github("ms609/TreeTools") # Use latest TreeTools, whilst testing 2021-01
           remotes::install_deps(dependencies = TRUE)
-          remotes::install_cran("rcmdcheck")
+          remotes::install_cran("devtools")
         shell: Rscript {0}
         
       - name: Install TreeDist
