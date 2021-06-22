@@ -359,8 +359,9 @@ int16 max_ (int16 *a, int16 *b) {
   return (*a > *b ? *a : *b);
 }
 
-// COMCLUSTER computes a consensus tree in O(knn).
+// COMCLUSTER computes a strict consensus tree in O(knn).
 // COMCLUST requires O(kn).
+// trees is a list of objects of class phylo.
 // [[Rcpp::export]]
 int COMCLUST (List trees) {
   
