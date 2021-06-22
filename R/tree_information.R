@@ -38,10 +38,31 @@ SplitwiseInfo.Splits <- function(x) {
   nTip <- attr(x, 'nTip')
   inSplit <- TipsInSplits(x)
   
-  sum(vapply(inSplit, LnRooted.int, 0) + 
-        + vapply(nTip - inSplit,  LnRooted.int, 0)
-      - LnUnrooted.int(nTip)
-  ) / -log(2)
+  if (is.null(p)) {
+    sum(Log2Unrooted.int(nTip) -
+           vapply(inSplit, Log2Rooted.int, 0) -
+           vapply(nTip - inSplit, Log2Rooted.int, 0)
+    )
+  } else {
+    q <- 1L - p
+    qNonZero <- as.logical(1L - p)
+    q <- q[qNonZero]
+    
+    l2n <- Log2Unrooted.int(nTip)
+    
+    l2nConsistent <- vapply(inSplit, Log2Rooted.int, 0) +
+      vapply(nTip - inSplit, Log2Rooted.int, 0)
+    
+    l2pConsistent <- l2nConsistent - l2n
+    l2pInconsistent <- log2(-expm1(l2pConsistent[qNonZero] * log(2)))
+    
+    l2nInconsistent <- l2pInconsistent + l2n
+    
+    # Return:
+    sum(l2n * length(inSplit),
+        p * (log2(p) - l2nConsistent),
+        q * (log2(q) - l2nInconsistent))
+  }
 }
 
 #' @export
