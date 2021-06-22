@@ -1,3 +1,8 @@
+# TreeDist 2.0.3.9003 (development)
+
+- `SplitwiseInfo()` gains a `p` parameter to reflect the reduced information
+  content of splits with lower support values.
+
 # TreeDist 2.0.3.9002 (development)
 
 - `KCDiameter()` approximates the diameter of the Kendall-Colijn metric.

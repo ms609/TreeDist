@@ -101,12 +101,11 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
 #' @rdname MASTSize
 #' @return `MASTInfo()` returns a vector or matrix listing the phylogenetic
 #' information content, in bits, of the maximum agreement subtree.
-#' @importFrom TreeTools LnRooted.int LnUnrooted.int
+#' @importFrom TreeTools Log2Rooted.int Log2Unrooted.int
 #' @export
 MASTInfo <- function (tree1, tree2 = tree1, rooted = TRUE) {
   size <- MASTSize(tree1, tree2, rooted = rooted)
-  ln <- if (rooted) LnRooted.int(size) else LnUnrooted.int(size)
-  ret <- ln / log(2)
+  ret <- if (rooted) Log2Rooted.int(size) else Log2Unrooted.int(size)
   if (!is.null(attributes(size))) attributes(ret) <- attributes(size)
   # Return:
   ret

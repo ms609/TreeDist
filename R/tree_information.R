@@ -6,6 +6,8 @@
 #' these splits will contain mutual information.
 #' 
 #' @param x A tree of class `phylo`, a list of trees, or a `multiPhylo` object.
+#' @param p A vector of probabilities corresponding t oeach split in `x`. 
+#' Specify `TRUE` to calculate this vector using the node labels of each tree.
 #' 
 #' @family information functions
 #' 
@@ -17,35 +19,81 @@
 #' 
 #' @examples
 #' SplitwiseInfo(TreeTools::PectinateTree(8))
+#' tree <- ape::read.tree(text = "(a, b, (c, (d, e, (f, g)0.8))0.9);")
+#' SplitwiseInfo(tree)
+#' SplitwiseInfo(tree, TRUE)
 #' @template MRS
 #' @export
-SplitwiseInfo <- function (x) UseMethod('SplitwiseInfo')
+SplitwiseInfo <- function (x, p = NULL) UseMethod('SplitwiseInfo')
 
 #' @export
-SplitwiseInfo.phylo <- function (x) SplitwiseInfo.Splits(as.Splits(x))
+SplitwiseInfo.phylo <- function (x, p = NULL) {
+  splits <- as.Splits(x)
+  if (length(p) == 1L) { # length(NULL) == 0
+    np <- x$node.label[as.integer(names(splits)) - NTip(x)]
+    if (is.null(np)) {
+      np <- rep_len(p, length(splits))
+    }
+    p <- as.double(np) / p
+    p[is.na(p)] <- 1
+    if (any(p > 1)) {
+      stop("Nodes must be labelled with probabilities <= 1")
+    }
+  }
+  SplitwiseInfo.Splits(splits, p)
+}
   
 #' @export
-SplitwiseInfo.multiPhylo <- function (x) {
-  vapply(as.Splits(x), SplitwiseInfo, double(1L))
+SplitwiseInfo.multiPhylo <- function (x, p = NULL) {
+  vapply(as.Splits(x), SplitwiseInfo, double(1L), p)
 }
 
 #' @export
 SplitwiseInfo.list <- SplitwiseInfo.multiPhylo
 
-#' @importFrom TreeTools LnRooted.int LnUnrooted.int TipsInSplits
+#' @importFrom TreeTools Log2Rooted.int Log2Unrooted.int TipsInSplits
 #' @export
-SplitwiseInfo.Splits <- function(x) {
+SplitwiseInfo.Splits <- function(x, p = NULL) {
   nTip <- attr(x, 'nTip')
   inSplit <- TipsInSplits(x)
   
-  sum(vapply(inSplit, LnRooted.int, 0) + 
-        + vapply(nTip - inSplit,  LnRooted.int, 0)
-      - LnUnrooted.int(nTip)
-  ) / -log(2)
+  if (is.null(p)) {
+    sum(Log2Unrooted.int(nTip) -
+           vapply(inSplit, Log2Rooted.int, 0) -
+           vapply(nTip - inSplit, Log2Rooted.int, 0)
+    )
+  } else {
+    # p <- 1 *  c(1)
+    #p <- (0.6 * c(1, 0, 0)) + (0.4 * c(0, 1/2, 1/2))
+    # expect 1.37
+    #
+    # (a, b, (c, d, e)0.6)
+    #or p <- c(0.6 * rep(1/3, 3),  # 2 ^ -2.321  # = 1.393
+    #          0.4 * rep(1/12, 12))  # 2 ^ -4.906 # = 1.962
+    # expect h = 3.355913
+    
+    q <- 1L - p
+    qNonZero <- as.logical(1L - p)
+    q <- q[qNonZero]
+    
+    l2n <- Log2Unrooted.int(nTip)
+    
+    l2nConsistent <- vapply(inSplit, Log2Rooted.int, 0) +
+      vapply(nTip - inSplit, Log2Rooted.int, 0)
+    
+    l2pConsistent <- l2nConsistent - l2n
+    l2pInconsistent <- log2(-expm1(l2pConsistent[qNonZero] * log(2)))
+    
+    l2nInconsistent <- l2pInconsistent + l2n
+    
+    # Return:
+    sum(p * (l2n + log2(p) - l2nConsistent),
+              q * (l2n + log2(q) - l2nInconsistent))
+  }
 }
 
 #' @export
-SplitwiseInfo.NULL <- function (x) 0
+SplitwiseInfo.NULL <- function (x, p = NULL) 0
 
 #' Clustering entropy of all splits within a tree
 #' 

@@ -35,7 +35,6 @@
 #' 
 #' @family tree distances
 #' 
-#' @importFrom TreeTools LnUnrooted.int
 #' @export
 MatchingSplitDistance <- function (tree1, tree2 = NULL, normalize = FALSE,
                                    reportMatching = FALSE) {
