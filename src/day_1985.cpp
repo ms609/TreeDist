@@ -370,8 +370,7 @@ int COMCLUST (List trees) {
     L_i, R_i, N_i, W_i
   ;
   
-  List tree_0 = trees(0);
-  ClusterTable X(tree_0);
+  ClusterTable X(List(trees(0)));
   const int16 stack_size = 4 * X.N();
   std::unique_ptr<int16[]> S = std::make_unique<int16[]>(stack_size);
   int16 Spos = 0;
@@ -380,8 +379,7 @@ int COMCLUST (List trees) {
     Spos = 0; // Empty the stack S
     
     X.CLEAR();
-    List tree_i = trees(i);
-    ClusterTable Ti(tree_i);
+    ClusterTable Ti(List(trees(i)));
     Ti.TRESET();
     Ti.NVERTEX(&v, &w);
     
