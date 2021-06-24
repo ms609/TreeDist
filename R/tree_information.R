@@ -91,8 +91,8 @@ SplitwiseInfo.NULL <- function (x, p = NULL) 0
 #' 
 #' Sum the entropy (`ClusteringEntropy()`) or information content
 #' (`ClusteringInfo()`) across each split within a phylogenetic tree, treating
-#' each split as dividing the leaves of the tree into two clusters (_sensu_
-#' Meil\ifelse{html}{\out{&#259;}}{a} 2007; Vinh _et al._ 2010).
+#' each split as dividing the leaves of the tree into two clusters 
+#' \insertCite{@sensu @Meila2007; @Vinh2010}{TreeDist}.
 #' 
 #' Clustering entropy addresses the question "how much information is contained
 #' in the splits within a tree". Its approach is complementary to the 
@@ -155,8 +155,8 @@ SplitwiseInfo.NULL <- function (x, p = NULL) 0
 #' 
 #' 
 #' As entropy measures the bits required to transmit the cluster label of each 
-#' leaf (Vinh _et al._ 2010: p. 2840), the information content of a split is its
-#' entropy multiplied by the number of leaves. 
+#' leaf \insertCite{@@Vinh2010: p. 2840}{TreeDist}, the information content of 
+#' a split is its entropy multiplied by the number of leaves. 
 #' 
 #' @param x A tree of class `phylo`, a list of trees, or a `multiPhylo` object.
 #' 
@@ -184,11 +184,7 @@ SplitwiseInfo.NULL <- function (x, p = NULL) 0
 #' @template MRS
 #' 
 #' @references
-#' 
-#' - \insertRef{Meila2007}{TreeDist}
-#' 
-#' - \insertRef{Vinh2010}{TreeDist}
-#' 
+#' \insertAllCited{}
 #' 
 #' @encoding UTF-8
 #' @family information functions

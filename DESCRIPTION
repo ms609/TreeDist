@@ -42,7 +42,7 @@ Imports:
   colorspace,
   memoise,
   phangorn (>= 2.2.1),
-  Rdpack,
+  Rdpack (>= 0.7),
   shiny,
   shinyjs,
   TreeTools (> 1.3.1)

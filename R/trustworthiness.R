@@ -66,7 +66,7 @@
 #' Quality of mapped distances
 #' 
 #' `MappingQuality()` calculates the trustworthiness and continuity
-#' of mapped distances (Venna & Kaski 2001; Kaski _et al._ 2003).
+#' of mapped distances \insertCite{Venna2001,Kaski2003}{TreeDist}.
 #' Trustworthiness measures, on a scale from 0--1,
 #' the degree to which points that are nearby in a mapping are truly close
 #' neighbours; continuity, the extent to which points that are truly nearby 
@@ -91,9 +91,7 @@
 #' https://github.com/csoneson/dreval/blob/master/R/trustworthiness.R
 #' 
 #' @references
-#' \insertRef{Venna2001}{TreeDist}
-#' 
-#' \insertRef{Kaski2003}{TreeDist}
+#' \insertAllCited{}
 #' @family tree space functions
 #' @export
 MappingQuality <- function (original, mapped, neighbours = 10L) {

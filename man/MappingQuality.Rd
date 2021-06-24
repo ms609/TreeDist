@@ -22,7 +22,7 @@ containing the entries: \code{Trustworthiness}, \code{Continuity}, \code{TxC}
 }
 \description{
 \code{MappingQuality()} calculates the trustworthiness and continuity
-of mapped distances (Venna & Kaski 2001; Kaski \emph{et al.} 2003).
+of mapped distances \insertCite{Venna2001,Kaski2003}{TreeDist}.
 Trustworthiness measures, on a scale from 0--1,
 the degree to which points that are nearby in a mapping are truly close
 neighbours; continuity, the extent to which points that are truly nearby
@@ -36,9 +36,7 @@ mapping <- cmdscale(distances)
 MappingQuality(distances, dist(mapping), 4)
 }
 \references{
-\insertRef{Venna2001}{TreeDist}
-
-\insertRef{Kaski2003}{TreeDist}
+\insertAllCited{}
 }
 \seealso{
 Other tree space functions: 
