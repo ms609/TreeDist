@@ -44,8 +44,8 @@ of each split in \code{x}.
 \description{
 Sum the entropy (\code{ClusteringEntropy()}) or information content
 (\code{ClusteringInfo()}) across each split within a phylogenetic tree, treating
-each split as dividing the leaves of the tree into two clusters (\emph{sensu}
-Meil\ifelse{html}{\out{&#259;}}{a} 2007; Vinh \emph{et al.} 2010).
+each split as dividing the leaves of the tree into two clusters
+\insertCite{@sensu @Meila2007; @Vinh2010}{TreeDist}.
 }
 \details{
 Clustering entropy addresses the question "how much information is contained
@@ -103,8 +103,8 @@ requires fewer than two bits for two leaves, so the entropy is less than
 of A and B.)
 
 As entropy measures the bits required to transmit the cluster label of each
-leaf (Vinh \emph{et al.} 2010: p. 2840), the information content of a split is its
-entropy multiplied by the number of leaves.
+leaf \insertCite{@Vinh2010: p. 2840}{TreeDist}, the information content of
+a split is its entropy multiplied by the number of leaves.
 }
 \examples{
 # Clustering entropy of an even split = 1 bit
@@ -126,10 +126,7 @@ ClusteringInfoDistance(tree1, tree2)
 MutualClusteringInfo(tree1, tree2)
 }
 \references{
-\itemize{
-\item \insertRef{Meila2007}{TreeDist}
-\item \insertRef{Vinh2010}{TreeDist}
-}
+\insertAllCited{}
 }
 \seealso{
 Other information functions: 
