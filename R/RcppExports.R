@@ -17,6 +17,10 @@ COMCLUST <- function(trees) {
     .Call(`_TreeDist_COMCLUST`, trees)
 }
 
+cons_phylo_info <- function(trees) {
+    .Call(`_TreeDist_cons_phylo_info`, trees)
+}
+
 robinson_foulds_all_pairs <- function(tables) {
     .Call(`_TreeDist_robinson_foulds_all_pairs`, tables)
 }

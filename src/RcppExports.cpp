@@ -49,6 +49,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cons_phylo_info
+double cons_phylo_info(List trees);
+RcppExport SEXP _TreeDist_cons_phylo_info(SEXP treesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type trees(treesSEXP);
+    rcpp_result_gen = Rcpp::wrap(cons_phylo_info(trees));
+    return rcpp_result_gen;
+END_RCPP
+}
 // robinson_foulds_all_pairs
 IntegerVector robinson_foulds_all_pairs(List tables);
 RcppExport SEXP _TreeDist_robinson_foulds_all_pairs(SEXP tablesSEXP) {
@@ -197,6 +208,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_ClusterTable_matrix", (DL_FUNC) &_TreeDist_ClusterTable_matrix, 1},
     {"_TreeDist_ClusterTable_decode", (DL_FUNC) &_TreeDist_ClusterTable_decode, 1},
     {"_TreeDist_COMCLUST", (DL_FUNC) &_TreeDist_COMCLUST, 1},
+    {"_TreeDist_cons_phylo_info", (DL_FUNC) &_TreeDist_cons_phylo_info, 1},
     {"_TreeDist_robinson_foulds_all_pairs", (DL_FUNC) &_TreeDist_robinson_foulds_all_pairs, 1},
     {"_TreeDist_lapjv", (DL_FUNC) &_TreeDist_lapjv, 2},
     {"_TreeDist_cpp_mast", (DL_FUNC) &_TreeDist_cpp_mast, 3},
