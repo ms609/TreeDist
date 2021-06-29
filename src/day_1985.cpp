@@ -39,8 +39,8 @@ inline double l2unrooted(const int16 *n_tips) {
   return *n_tips < 3 ? 0. : ldfact[int_fast32_t(*n_tips) + *n_tips - 5];
 }
 
-inline double split_information (const int16 n_in, const int16 *n_tip,
-                                 const double p) {
+inline double split_phylo_info (const int16 n_in, const int16 *n_tip,
+                                const double p) {
   const int16 n_out = *n_tip - n_in;
   assert(p > 0);
   assert(p <= 1);
@@ -50,7 +50,7 @@ inline double split_information (const int16 n_in, const int16 *n_tip,
             l2rooted(n_out));
   } else {
     const double 
-    q = 1 - p,
+      q = 1 - p,
       l2n = l2unrooted(n_tip),
       l2n_consistent = l2rooted(n_in) + l2rooted(n_out),
       l2p_consistent = l2n_consistent - l2n,
@@ -62,8 +62,20 @@ inline double split_information (const int16 n_in, const int16 *n_tip,
            p * (log2(p) - l2n_consistent) +
            q * (log2(q) - l2n_inconsistent));
   }
-  
 }
+  
+inline double split_clust_info (const int16 n_in, const int16 *n_tip,
+                                const double p) {
+  const int16 n_out = *n_tip - n_in;
+  assert(p > 0);
+  assert(p <= 1);
+  const double
+    p_a = double(n_in) / *n_tip, 
+    p_b = double(n_out) / *n_tip
+  ;
+  return -p * ((p_a * log2(p_a)) + (p_b * log2(p_b)));
+}
+
 
 class ClusterTable {
   
@@ -474,7 +486,7 @@ int COMCLUST (List trees) {
 // COMCLUST requires O(kn).
 // trees is a list of objects of class phylo.
 // [[Rcpp::export]]
-double cons_phylo_info (List trees) {
+double consensus_info (List trees, LogicalVector phylo) {
   
   int16 v = 0, w = 0,
     L, R, N, W,
@@ -493,6 +505,8 @@ double cons_phylo_info (List trees) {
     stack_size = 4 * n_tip,
     thresh = (n_trees + 1) / 2
   ;
+  
+  const bool phylo_info = phylo[0];
   
   std::unique_ptr<int16[]>
     S = std::make_unique<int16[]>(stack_size),
@@ -576,8 +590,13 @@ double cons_phylo_info (List trees) {
     for (int16 k = n_tip; k--; ) {
       if (split_count[k] >= thresh) {
         ++splits_found;
-        info += split_information(split_size[k], &n_tip, 
-                                  split_count[k] / double(n_trees));
+        if (phylo_info) {
+          info += split_phylo_info(split_size[k], &n_tip, 
+                                   split_count[k] / double(n_trees));
+        } else {
+          info += split_clust_info(split_size[k], &n_tip, 
+                                   split_count[k] / double(n_trees));
+        }
         // If we have a perfectly resolved tree, break.
         if (splits_found == n_tip - 3) {
           return info;

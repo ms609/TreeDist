@@ -9,12 +9,11 @@ test_that("Split info calculated", {
     read.tree(text = '(a, (b, ((c, z), ((d, (e, x)), (f, g)))));'),
     read.tree(text = '(a, ((b, x), ((c, z), ((d, e), (f, g)))));')
   ))
+  split_p <- c(ab = 0.8, d..x = 0.8, fgx = 0.6, de = 0.8, cz = 0.6)
   
   trees[] <- lapply(trees, RenumberTips, c(letters[1:7], 'x', 'z'))
-  expect_equal(SplitwiseInfo(consensus(trees, p = 0.5), 
-                             p = c(ab = 0.8, d..x = 0.8, fgx = 0.6, 
-                                   de = 0.8, cz = 0.6)),
-               cons_phylo_info(trees))
+  expect_equal(SplitwiseInfo(consensus(trees, p = 0.5), p = split_p),
+               consensus_info(trees, TRUE))
   
   # Expected:
   # - tablei = 0: 
@@ -36,4 +35,9 @@ test_that("Split info calculated", {
   # 
   # - tablei = 3: Terminate.
   #
+  
+  p_in <- c(7, 5, 3, 2, 2) / 9
+  p_out <- 1 - p_in
+  expect_equal(sum(apply(rbind(p_in, p_out), 2, Entropy) * split_p),
+               consensus_info(trees, FALSE))
 })

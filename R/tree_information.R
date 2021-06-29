@@ -87,6 +87,18 @@ SplitwiseInfo.Splits <- function(x, p = NULL) {
 #' @export
 SplitwiseInfo.NULL <- function (x, p = NULL) 0
 
+#' @rdname SplitwiseInfo
+#' @return `ConsensusInfo()` returns the splitwise information content of the
+#' majority rule consensus of `trees`.
+#' @export
+ConsensusInfo <- function (trees, info = 'phylogenetic') {
+  mode <- pmatch(info, c('phylogenetic', 'clustering'))
+  if (is.na(mode)) {
+    stop("`info` must be 'phylogenetic' or 'clustering'")
+  }
+  consensus_info(trees, mode == 1L)
+}
+
 #' Clustering entropy of all splits within a tree
 #' 
 #' Sum the entropy (`ClusteringEntropy()`) or information content

@@ -2,15 +2,22 @@
 % Please edit documentation in R/tree_information.R
 \name{SplitwiseInfo}
 \alias{SplitwiseInfo}
+\alias{ConsensusInfo}
 \title{Information content of splits within a tree}
 \usage{
 SplitwiseInfo(x, p = NULL)
+
+ConsensusInfo(trees)
 }
 \arguments{
 \item{x}{A tree of class \code{phylo}, a list of trees, or a \code{multiPhylo} object.}
 
 \item{p}{A vector of probabilities corresponding t oeach split in \code{x}.
 Specify \code{TRUE} to calculate this vector using the node labels of each tree.}
+}
+\value{
+\code{ConsensusInfo()} returns the splitwise information content of the
+majority rule consensus of \code{trees}.
 }
 \description{
 Sum the phylogenetic information content for all splits within a
