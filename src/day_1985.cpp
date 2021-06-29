@@ -510,8 +510,8 @@ double cons_phylo_info (List trees) {
   // All clades in 50% consensus must occur in first 50% of trees.
   for (int16 i = 0; i != thresh; i++) {
     for (int16 j = n_tip; j--; ) {
-      split_size[i] = 0;
-      split_count[i] = 0;
+      split_size[j] = 0;
+      split_count[j] = 1; // It's in this tree!
     }
     Rcout << "Loading table " << i << " as I\n";
     
