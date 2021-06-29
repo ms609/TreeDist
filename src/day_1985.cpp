@@ -17,31 +17,26 @@ const int
   FACT_MAX = DAY_MAX_LEAVES + DAY_MAX_LEAVES + 5 + 1
 ;
 
-double ldfact[FACT_MAX];
 const double log_2 = log(2);
+double ldfact[FACT_MAX];
+__attribute__((constructor))
+  void compute_double_factorials() {
+    int_fast32_t i;
+    ldfact[0] = 0;
+    ldfact[1] = 0;
+    ldfact[2] = 1;
+    
+    for (i = 3; i != FACT_MAX; i++)
+      ldfact[i] = ldfact[i - 2] + log2(i);
+    
+  }
 
-void compute_double_factorials(void)
-{
-  int_fast32_t i;
-  ldfact[0] = 0;
-  ldfact[1] = 0;
-  ldfact[2] = 1;
-  
-  
-  for (i = 3; i != FACT_MAX; i++)
-    ldfact[i] = ldfact[i - 2] + log2(i);
-  
-  return;
-}
-
-compute_double_factorials();
-
-inline double l2rooted(int_fast32_t n_tips) {
+inline double l2rooted(const int_fast32_t n_tips) {
   return n_tips < 2L ? 0. : ldfact[n_tips + n_tips - 3];
 }
 
-inline double l2unrooted(int_fast32_t n_tips) {
-  return n_tips < 3 ? 0. : ldfact[n_tips + n_tips - 5];
+inline double l2unrooted(const int16 *n_tips) {
+  return *n_tips < 3 ? 0. : ldfact[int_fast32_t(*n_tips) + *n_tips - 5];
 }
 
 
@@ -215,6 +210,10 @@ class ClusterTable {
     
     inline void SETSWX(int16* row) {
       setX(*row, SWITCH_COL, 1);
+    }
+    
+    inline bool GETSWX(int16* row) {
+      return X(*row, SWITCH_COL);
     }
     
     inline void SETSW(int16* L, int16* R) {
@@ -449,7 +448,7 @@ inline double split_information (const int16 n_in, const int16 *n_tip,
   assert(p > 0);
   assert(p <= 1);
   if (p == 1) {
-    return (sum(l2unrooted(n_tip) -
+    return (l2unrooted(n_tip) -
             l2rooted(n_in)-
             l2rooted(n_out));
   } else {
@@ -459,7 +458,7 @@ inline double split_information (const int16 n_in, const int16 *n_tip,
       l2n_consistent = l2rooted(n_in) + l2rooted(n_out),
       l2p_consistent = l2n_consistent - l2n,
       l2p_inconsistent = log2(-expm1(l2p_consistent * log_2)),
-      l2n_inconsistent = l2pInconsistent + l2n
+      l2n_inconsistent = l2p_inconsistent + l2n
     ;
     
     return(l2n + 
@@ -535,14 +534,17 @@ double cons_phylo_info (List trees) {
             w = w - W_j;
           } while (w);
           push(L, R, N, W, S, &Spos);
-          // If split is marked, skip it.
-          if (N == R - L + 1) { // L..R is contiguous, and must be tested
-            if (tables[i].CLUSTONL(&L, &R)) {
-              tables[j].SETSWX(this_split);
-              split_count[L]++;
-            } else if (tables[i].CLUSTONR(&L, &R)) {
-              tables[j].SETSWX(this_split);
-              split_count[R]++;
+          if (tables[j].GETSWX(&v)) {
+            // Split has already been counted; next!
+          } else {
+            if (N == R - L + 1) { // L..R is contiguous, and must be tested
+              if (tables[i].CLUSTONL(&L, &R)) {
+                tables[j].SETSWX(&v);
+                split_count[L]++;
+              } else if (tables[i].CLUSTONR(&L, &R)) {
+                tables[j].SETSWX(&v);
+                split_count[R]++;
+              }
             }
           }
         }
