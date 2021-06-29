@@ -509,26 +509,34 @@ double cons_phylo_info (List trees) {
   
   // All clades in 50% consensus must occur in first 50% of trees.
   for (int16 i = 0; i != thresh; i++) {
+    bool new_splits = false;
+    for (int16 j = 1; j < n_tip - 3 + 1; j++) {
+      if (!tables[i].GETSWX(&j)) {
+        new_splits = true;
+        break;
+      }
+    }
+    if (!new_splits) {
+      continue;
+    }
+    
     for (int16 j = n_tip; j--; ) {
       split_size[j] = 0;
       split_count[j] = 1; // It's in this tree!
     }
-    Rcout << "Loading table " << i << " as I\n";
     
     for (int16 j = i + 1; j != trees.length(); j++) {
-      Rcout << "  Loading table " << j << " as J\n";  
       Spos = 0; // Empty the stack S
       
       tables[i].CLEAR();
       tables[j].TRESET();
-      tables[j].NVERTEX_short(&v, &w); // TODO NVERTEX_short?
+      tables[j].NVERTEX_short(&v, &w);
       int16 j_pos = 0;
       
       do {
         if (tables[j].is_leaf(&v)) {
           push(tables[i].ENCODE(v), tables[i].ENCODE(v), 1, 1, S, &Spos);
         } else {
-          ++j_pos;
           L = INF;
           R = 0;
           N = 0;
@@ -542,28 +550,24 @@ double cons_phylo_info (List trees) {
             w = w - W_j;
           } while (w);
           push(L, R, N, W, S, &Spos);
+          
+          ++j_pos;
           if (tables[j].GETSWX(&j_pos)) {
-            Rcout << "Split counted already.\n";
             // Split has already been counted; next!
           } else {
-            Rcout << "    Checking for match in I: ";
             if (N == R - L + 1) { // L..R is contiguous, and must be tested
-              Rcout << " Contiguous, " << L << " - " << R << ".";
               if (tables[i].CLUSTONL(&L, &R)) {
-                Rcout << " Matched L" << L;
                 tables[j].SETSWX(&j_pos);
                 assert(L > 0);
                 split_count[L - 1]++;
                 if (!split_size[L - 1]) split_size[L - 1] = R - L + 1;
               } else if (tables[i].CLUSTONR(&L, &R)) {
-                Rcout << " Matched R" << R;
                 tables[j].SETSWX(&j_pos);
                 assert(R > 0);
                 split_count[R - 1]++;
                 if (!split_size[R - 1]) split_size[R - 1] = R - L + 1;
               }
             }
-            Rcout << ".\n";
           }
         }
         tables[j].NVERTEX_short(&v, &w);
@@ -574,7 +578,7 @@ double cons_phylo_info (List trees) {
         ++splits_found;
         Rcout << "  - Found " << splits_found << "th split " << (1 + k) << " with " 
         << split_size[k] << " tips in ingroup and p = "
-              << (split_count[k] / (double) trees.length()) << ".\n";
+              << (split_count[k] / (double) n_trees) << ".\n";
         info += split_information(split_size[k], &n_tip, 
                                   split_count[k] / double(n_trees));
         // If we have a perfectly resolved tree, break.
