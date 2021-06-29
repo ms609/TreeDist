@@ -496,8 +496,8 @@ double cons_phylo_info (List trees) {
   
   std::unique_ptr<int16[]>
     S = std::make_unique<int16[]>(stack_size),
-    split_count = std::make_unique<int16[]>(n_tip + 1), // TODO check whether 0 is used, and subtract one where necessary
-    split_size = std::make_unique<int16[]>(n_tip + 1) // TODO check whether 0 is used, and subtract one where necessary
+    split_count = std::make_unique<int16[]>(n_tip),
+    split_size = std::make_unique<int16[]>(n_tip)
   ;
   
   int16
@@ -552,29 +552,31 @@ double cons_phylo_info (List trees) {
               if (tables[i].CLUSTONL(&L, &R)) {
                 Rcout << " Matched L" << L;
                 tables[j].SETSWX(&j_pos);
-                split_size[L] = R - L + 1; // TODO only calculate once.
-                split_count[L]++;
+                assert(L > 0);
+                split_count[L - 1]++;
+                if (!split_size[L - 1]) split_size[L - 1] = R - L + 1;
               } else if (tables[i].CLUSTONR(&L, &R)) {
                 Rcout << " Matched R" << R;
                 tables[j].SETSWX(&j_pos);
-                split_size[R] = R - L + 1; // TODO only calculate once.
-                split_count[R]++;
+                assert(R > 0);
+                split_count[R - 1]++;
+                if (!split_size[R - 1]) split_size[R - 1] = R - L + 1;
               }
             }
             Rcout << ".\n";
           }
         }
-        tables[j].NVERTEX_short(&v, &w); // TODO NVERTEX_short?
+        tables[j].NVERTEX_short(&v, &w);
       } while (v);
     }
-    for (int16 k = n_tip + 1; k--; ) { // match ntip+1 to split_count.length()
+    for (int16 k = n_tip; k--; ) {
       if (split_count[k] >= thresh) {
         ++splits_found;
-        Rcout << "Found " << splits_found << "th split with " 
+        Rcout << "  - Found " << splits_found << "th split " << (1 + k) << " with " 
         << split_size[k] << " tips in ingroup and p = "
               << (split_count[k] / (double) trees.length()) << ".\n";
         info += split_information(split_size[k], &n_tip, 
-                                  split_count[k] / (double) trees.length());
+                                  split_count[k] / double(n_trees));
         // If we have a perfectly resolved tree, break.
         if (splits_found == n_tip - 3) {
           Rcout << "Tree fully resolved with " << splits_found 
