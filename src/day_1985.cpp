@@ -39,6 +39,31 @@ inline double l2unrooted(const int16 *n_tips) {
   return *n_tips < 3 ? 0. : ldfact[int_fast32_t(*n_tips) + *n_tips - 5];
 }
 
+inline double split_information (const int16 n_in, const int16 *n_tip,
+                                 const double p) {
+  const int16 n_out = *n_tip - n_in;
+  assert(p > 0);
+  assert(p <= 1);
+  if (p == 1) {
+    return (l2unrooted(n_tip) -
+            l2rooted(n_in)-
+            l2rooted(n_out));
+  } else {
+    const double 
+    q = 1 - p,
+      l2n = l2unrooted(n_tip),
+      l2n_consistent = l2rooted(n_in) + l2rooted(n_out),
+      l2p_consistent = l2n_consistent - l2n,
+      l2p_inconsistent = log2(-expm1(l2p_consistent * log_2)),
+      l2n_inconsistent = l2p_inconsistent + l2n
+    ;
+    
+    return(l2n + 
+           p * (log2(p) - l2n_consistent) +
+           q * (log2(q) - l2n_inconsistent));
+  }
+  
+}
 
 class ClusterTable {
   
@@ -166,7 +191,10 @@ class ClusterTable {
     
     inline int16 X(int16 row, int16 col) {
       if (row < 1) throw std::range_error("Trying to read before start of X");
-      if (row > X_ROWS) throw std::range_error("Trying to read past end of X");
+      if (row > X_ROWS) {
+        Rcout << "Row " << row << " > number of rows, " << X_ROWS << ".\n";
+        throw std::range_error("Trying to read past end of X");
+      }
       return Xarr[(row - 1) * X_COLS + col];
     }
     
@@ -319,10 +347,10 @@ ClusterTable::ClusterTable(List phylo) {
   Xarr = std::make_unique<int16[]>(X_COLS * X_ROWS);
   
   // This procedure constructs in X descriptions of the clusters in a
-  //  rooted tree described by the postorder sequence T with weights,
-  //  BUILD assigns each leaf an internal label so that every cluster 
-  //  is a set {i : L ~ i ~ R] of internal labels; thus each cluster is
-  //   simply described by a pair <L,R> of internal labels, 
+  // rooted tree described by the postorder sequence T with weights,
+  // BUILD assigns each leaf an internal label so that every cluster
+  // is a set {i : L ~ i ~ R] of internal labels; thus each cluster is
+  // simply described by a pair <L,R> of internal labels.
   
   TRESET();
   for (int16 i = 1; i != N(); i++) {
@@ -442,32 +470,6 @@ int COMCLUST (List trees) {
   return X.SHARED() - 2; // Subtract All-tips & All-ingroup
 }
 
-inline double split_information (const int16 n_in, const int16 *n_tip,
-                          const double p) {
-  const int16 n_out = *n_tip - n_in;
-  assert(p > 0);
-  assert(p <= 1);
-  if (p == 1) {
-    return (l2unrooted(n_tip) -
-            l2rooted(n_in)-
-            l2rooted(n_out));
-  } else {
-    const double 
-      q = 1 - p,
-      l2n = l2unrooted(n_tip),
-      l2n_consistent = l2rooted(n_in) + l2rooted(n_out),
-      l2p_consistent = l2n_consistent - l2n,
-      l2p_inconsistent = log2(-expm1(l2p_consistent * log_2)),
-      l2n_inconsistent = l2p_inconsistent + l2n
-    ;
-    
-    return(l2n + 
-           p * (log2(p) - l2n_consistent) +
-           q * (log2(q) - l2n_inconsistent));
-  }
-  
-}
-
 // COMCLUSTER computes a strict consensus tree in O(knn).
 // COMCLUST requires O(kn).
 // trees is a list of objects of class phylo.
@@ -486,18 +488,19 @@ double cons_phylo_info (List trees) {
   }
   
   const int16
+    n_trees = trees.length(),
     n_tip = tables[0].N(),
     stack_size = 4 * n_tip,
-    thresh = (trees.length() + 1) / 2
-  ;
-  std::unique_ptr<int16[]>
-    S = std::make_unique<int16[]>(stack_size),
-    clust_size = std::make_unique<int16[]>(n_tip),
-    clust_n = std::make_unique<int16[]>(n_tip),
-    split_count = std::make_unique<int16[]>(n_tip)
+    thresh = (n_trees + 1) / 2
   ;
   
-  int16 
+  std::unique_ptr<int16[]>
+    S = std::make_unique<int16[]>(stack_size),
+    split_count = std::make_unique<int16[]>(n_tip + 1), // TODO check whether 0 is used, and subtract one where necessary
+    split_size = std::make_unique<int16[]>(n_tip + 1) // TODO check whether 0 is used, and subtract one where necessary
+  ;
+  
+  int16
     Spos = 0,
     splits_found = 0
   ;
@@ -507,20 +510,25 @@ double cons_phylo_info (List trees) {
   // All clades in 50% consensus must occur in first 50% of trees.
   for (int16 i = 0; i != thresh; i++) {
     for (int16 j = n_tip; j--; ) {
+      split_size[i] = 0;
       split_count[i] = 0;
     }
+    Rcout << "Loading table " << i << " as I\n";
     
     for (int16 j = i + 1; j != trees.length(); j++) {
+      Rcout << "  Loading table " << j << " as J\n";  
       Spos = 0; // Empty the stack S
       
       tables[i].CLEAR();
       tables[j].TRESET();
-      tables[j].NVERTEX(&v, &w);
+      tables[j].NVERTEX_short(&v, &w); // TODO NVERTEX_short?
+      int16 j_pos = 0;
       
       do {
         if (tables[j].is_leaf(&v)) {
           push(tables[i].ENCODE(v), tables[i].ENCODE(v), 1, 1, S, &Spos);
         } else {
+          ++j_pos;
           L = INF;
           R = 0;
           N = 0;
@@ -534,30 +542,45 @@ double cons_phylo_info (List trees) {
             w = w - W_j;
           } while (w);
           push(L, R, N, W, S, &Spos);
-          if (tables[j].GETSWX(&v)) {
+          if (tables[j].GETSWX(&j_pos)) {
+            Rcout << "Split counted already.\n";
             // Split has already been counted; next!
           } else {
+            Rcout << "    Checking for match in I: ";
             if (N == R - L + 1) { // L..R is contiguous, and must be tested
+              Rcout << " Contiguous, " << L << " - " << R << ".";
               if (tables[i].CLUSTONL(&L, &R)) {
-                tables[j].SETSWX(&v);
+                Rcout << " Matched L" << L;
+                tables[j].SETSWX(&j_pos);
+                split_size[L] = R - L + 1; // TODO only calculate once.
                 split_count[L]++;
               } else if (tables[i].CLUSTONR(&L, &R)) {
-                tables[j].SETSWX(&v);
+                Rcout << " Matched R" << R;
+                tables[j].SETSWX(&j_pos);
+                split_size[R] = R - L + 1; // TODO only calculate once.
                 split_count[R]++;
               }
             }
+            Rcout << ".\n";
           }
         }
-        tables[j].NVERTEX(&v, &w);
+        tables[j].NVERTEX_short(&v, &w); // TODO NVERTEX_short?
       } while (v);
     }
-    for (int16 k = n_tip; k--; ) {
+    for (int16 k = n_tip + 1; k--; ) { // match ntip+1 to split_count.length()
       if (split_count[k] >= thresh) {
         ++splits_found;
-        info += split_information(R - L + 1, &n_tip, 
+        Rcout << "Found " << splits_found << "th split with " 
+        << split_size[k] << " tips in ingroup and p = "
+              << (split_count[k] / (double) trees.length()) << ".\n";
+        info += split_information(split_size[k], &n_tip, 
                                   split_count[k] / (double) trees.length());
         // If we have a perfectly resolved tree, break.
-        if (splits_found == n_tip - 3) return (info);
+        if (splits_found == n_tip - 3) {
+          Rcout << "Tree fully resolved with " << splits_found 
+                << " splits found. Returning.\n";
+          return (info);
+        }
       }
     }
   }
