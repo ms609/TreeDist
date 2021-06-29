@@ -576,16 +576,11 @@ double cons_phylo_info (List trees) {
     for (int16 k = n_tip; k--; ) {
       if (split_count[k] >= thresh) {
         ++splits_found;
-        Rcout << "  - Found " << splits_found << "th split " << (1 + k) << " with " 
-        << split_size[k] << " tips in ingroup and p = "
-              << (split_count[k] / (double) n_trees) << ".\n";
         info += split_information(split_size[k], &n_tip, 
                                   split_count[k] / double(n_trees));
         // If we have a perfectly resolved tree, break.
         if (splits_found == n_tip - 3) {
-          Rcout << "Tree fully resolved with " << splits_found 
-                << " splits found. Returning.\n";
-          return (info);
+          return info;
         }
       }
     }
