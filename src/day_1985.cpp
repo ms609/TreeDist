@@ -12,7 +12,38 @@ const int16
   UNINIT = -999
 ;
 
-const int DAY_MAX_LEAVES = 16384;
+const int
+  DAY_MAX_LEAVES = 16384,
+  FACT_MAX = DAY_MAX_LEAVES + DAY_MAX_LEAVES + 5 + 1
+;
+
+double ldfact[FACT_MAX];
+const double log_2 = log(2);
+
+void compute_double_factorials(void)
+{
+  int_fast32_t i;
+  ldfact[0] = 0;
+  ldfact[1] = 0;
+  ldfact[2] = 1;
+  
+  
+  for (i = 3; i != FACT_MAX; i++)
+    ldfact[i] = ldfact[i - 2] + log2(i);
+  
+  return;
+}
+
+compute_double_factorials();
+
+inline double l2rooted(int_fast32_t n_tips) {
+  return n_tips < 2L ? 0. : ldfact[n_tips + n_tips - 3];
+}
+
+inline double l2unrooted(int_fast32_t n_tips) {
+  return n_tips < 3 ? 0. : ldfact[n_tips + n_tips - 5];
+}
+
 
 class ClusterTable {
   
@@ -410,6 +441,126 @@ int COMCLUST (List trees) {
   }
   
   return X.SHARED() - 2; // Subtract All-tips & All-ingroup
+}
+
+inline double split_information (const int16 n_in, const int16 *n_tip,
+                          const double p) {
+  const int16 n_out = *n_tip - n_in;
+  assert(p > 0);
+  assert(p <= 1);
+  if (p == 1) {
+    return (sum(l2unrooted(n_tip) -
+            l2rooted(n_in)-
+            l2rooted(n_out));
+  } else {
+    const double 
+      q = 1 - p,
+      l2n = l2unrooted(n_tip),
+      l2n_consistent = l2rooted(n_in) + l2rooted(n_out),
+      l2p_consistent = l2n_consistent - l2n,
+      l2p_inconsistent = log2(-expm1(l2p_consistent * log_2)),
+      l2n_inconsistent = l2pInconsistent + l2n
+    ;
+    
+    return(l2n + 
+           p * (log2(p) - l2n_consistent) +
+           q * (log2(q) - l2n_inconsistent));
+  }
+  
+}
+
+// COMCLUSTER computes a strict consensus tree in O(knn).
+// COMCLUST requires O(kn).
+// trees is a list of objects of class phylo.
+// [[Rcpp::export]]
+double cons_phylo_info (List trees) {
+  
+  int16 v = 0, w = 0,
+    L, R, N, W,
+    L_j, R_j, N_j, W_j
+  ;
+  
+  std::vector<ClusterTable> tables;
+  tables.reserve(trees.length());
+  for (int16 i = trees.length(); i--; ) {
+    tables.emplace_back(ClusterTable(List(trees(i))));
+  }
+  
+  const int16
+    n_tip = tables[0].N(),
+    stack_size = 4 * n_tip,
+    thresh = (trees.length() + 1) / 2
+  ;
+  std::unique_ptr<int16[]>
+    S = std::make_unique<int16[]>(stack_size),
+    clust_size = std::make_unique<int16[]>(n_tip),
+    clust_n = std::make_unique<int16[]>(n_tip),
+    split_count = std::make_unique<int16[]>(n_tip)
+  ;
+  
+  int16 
+    Spos = 0,
+    splits_found = 0
+  ;
+  
+  double info = 0;
+  
+  // All clades in 50% consensus must occur in first 50% of trees.
+  for (int16 i = 0; i != thresh; i++) {
+    for (int16 j = n_tip; j--; ) {
+      split_count[i] = 0;
+    }
+    
+    for (int16 j = i + 1; j != trees.length(); j++) {
+      Spos = 0; // Empty the stack S
+      
+      tables[i].CLEAR();
+      tables[j].TRESET();
+      tables[j].NVERTEX(&v, &w);
+      
+      do {
+        if (tables[j].is_leaf(&v)) {
+          push(tables[i].ENCODE(v), tables[i].ENCODE(v), 1, 1, S, &Spos);
+        } else {
+          L = INF;
+          R = 0;
+          N = 0;
+          W = 1;
+          do {
+            pop(&L_j, &R_j, &N_j, &W_j, S, &Spos);
+            L = min_(&L, &L_j);
+            R = max_(&R, &R_j);
+            N = N + N_j;
+            W = W + W_j;
+            w = w - W_j;
+          } while (w);
+          push(L, R, N, W, S, &Spos);
+          // If split is marked, skip it.
+          if (N == R - L + 1) { // L..R is contiguous, and must be tested
+            if (tables[i].CLUSTONL(&L, &R)) {
+              tables[j].SETSWX(this_split);
+              split_count[L]++;
+            } else if (tables[i].CLUSTONR(&L, &R)) {
+              tables[j].SETSWX(this_split);
+              split_count[R]++;
+            }
+          }
+        }
+        tables[j].NVERTEX(&v, &w);
+      } while (v);
+    }
+    for (int16 k = n_tip; k--; ) {
+      if (split_count[k] >= thresh) {
+        ++splits_found;
+        info += split_information(R - L + 1, &n_tip, 
+                                  split_count[k] / (double) trees.length());
+        // If we have a perfectly resolved tree, break.
+        if (splits_found == n_tip - 3) return (info);
+      }
+    }
+  }
+  
+  return info;
 }
 
 // [[Rcpp::export]]
