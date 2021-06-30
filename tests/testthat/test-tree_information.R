@@ -30,9 +30,7 @@ test_that("SplitwiseInfo() handles probabilities", {
   expect_equal(SplitwiseInfo(Tree('(a, b, (c, (d, e)));')),
                SplitwiseInfo(Tree('(a, b, (c, (d, e)));'), TRUE))
   expect_equal(SplitwiseInfo(Tree('(a, b, (c, (d, e)));'), TRUE),
-               SplitwiseInfo(Tree('(a, b, (c, (d, e)));'), c(1, 1)))
-               
-               
+               SplitwiseInfo(Tree('(a, b, (c, (d, e)));'), c(1, 1)))  
   
 })
 
@@ -44,3 +42,8 @@ test_that('ClusteringInfo() method works', {
                ClusteringInfo(trees))
 })
   
+test_that("ConsensusInfo() is robust", {
+  trees <- list(ape::read.tree(text = '(a, (b, (c, (d, (e, X)))));'),
+                ape::read.tree(text = '((a, X), (b, (c, (d, e))));'))
+  expect_equal(0, ConsensusInfo(trees, 'cl'))
+})

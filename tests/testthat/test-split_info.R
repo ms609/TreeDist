@@ -40,4 +40,10 @@ test_that("Split info calculated", {
   p_out <- 1 - p_in
   expect_equal(sum(apply(rbind(p_in, p_out), 2, Entropy) * split_p),
                consensus_info(trees, FALSE))
+  
+  # Even number of trees: cz, with p == 0.5, not in consensus.
+  split_p <- c(ab = 0.8, d..x = 0.8, fgx = 0.6, de = 0.8, cz = 0.6)
+  expect_equal(SplitwiseInfo(consensus(trees[-1], p = 0.5),
+                             p = c(ab = 1, d..x = 1, fgx = 3/4, de = 3/4)),
+               consensus_info(trees[-1], TRUE))
 })
