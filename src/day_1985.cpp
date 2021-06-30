@@ -504,7 +504,7 @@ double consensus_info (const List trees, const LogicalVector phylo) {
     n_trees = trees.length(),
     n_tip = tables[0].N(),
     stack_size = 4 * n_tip,
-    thresh = (n_trees + 1) / 2
+    thresh = (n_trees / 2) + 1
   ;
   
   const bool phylo_info = phylo[0];
