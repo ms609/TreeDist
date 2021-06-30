@@ -524,14 +524,14 @@ double consensus_info (const List trees, const LogicalVector phylo) {
   
   // All clades in 50% consensus must occur in first 50% of trees.
   for (int16 i = 0; i != thresh; i++) {
-    bool new_splits = false;
-    for (int16 j = 1; j < n_tip - 3 + 1; j++) {
+    bool unseen_splits = false;
+    for (int16 j = 1; j != n_tip - 3 + 1; j++) {
       if (!tables[i].GETSWX(&j)) {
-        new_splits = true;
+        unseen_splits = true;
         break;
       }
     }
-    if (!new_splits) {
+    if (!unseen_splits) {
       continue;
     }
     
