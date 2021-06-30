@@ -88,13 +88,18 @@ SplitwiseInfo.Splits <- function(x, p = NULL) {
 SplitwiseInfo.NULL <- function (x, p = NULL) 0
 
 #' @rdname SplitwiseInfo
+#' @param check.tips Logical specifying whether to renumber leaves such that
+#' leaf numbering is consistent in all trees.
 #' @return `ConsensusInfo()` returns the splitwise information content of the
 #' majority rule consensus of `trees`.
 #' @export
-ConsensusInfo <- function (trees, info = 'phylogenetic') {
+ConsensusInfo <- function (trees, info = 'phylogenetic', check.tips = TRUE) {
   mode <- pmatch(info, c('phylogenetic', 'clustering'))
   if (is.na(mode)) {
     stop("`info` must be 'phylogenetic' or 'clustering'")
+  }
+  if (check.tips) {
+    trees <- RenumberTips(trees, trees[[1]])
   }
   consensus_info(trees, mode == 1L)
 }

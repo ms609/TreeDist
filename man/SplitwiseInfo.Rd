@@ -7,7 +7,7 @@
 \usage{
 SplitwiseInfo(x, p = NULL)
 
-ConsensusInfo(trees)
+ConsensusInfo(trees, info = "phylogenetic")
 }
 \arguments{
 \item{x}{A tree of class \code{phylo}, a list of trees, or a \code{multiPhylo} object.}
