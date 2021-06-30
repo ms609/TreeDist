@@ -484,7 +484,8 @@ int COMCLUST (List trees) {
 
 // COMCLUSTER computes a strict consensus tree in O(knn).
 // COMCLUST requires O(kn).
-// trees is a list of objects of class phylo.
+// trees is a list of objects of class phylo, all with the same tip labels
+// (try RenumberTips(trees, trees[[1]]))
 // [[Rcpp::export]]
 double consensus_info (const List trees, const LogicalVector phylo) {
   
