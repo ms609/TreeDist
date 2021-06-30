@@ -486,7 +486,7 @@ int COMCLUST (List trees) {
 // COMCLUST requires O(kn).
 // trees is a list of objects of class phylo.
 // [[Rcpp::export]]
-double consensus_info (List trees, LogicalVector phylo) {
+double consensus_info (const List trees, const LogicalVector phylo) {
   
   int16 v = 0, w = 0,
     L, R, N, W,
