@@ -7,13 +7,16 @@
 \usage{
 SplitwiseInfo(x, p = NULL)
 
-ConsensusInfo(trees, info = "phylogenetic")
+ConsensusInfo(trees, info = "phylogenetic", check.tips = TRUE)
 }
 \arguments{
 \item{x}{A tree of class \code{phylo}, a list of trees, or a \code{multiPhylo} object.}
 
 \item{p}{A vector of probabilities corresponding t oeach split in \code{x}.
 Specify \code{TRUE} to calculate this vector using the node labels of each tree.}
+
+\item{check.tips}{Logical specifying whether to renumber leaves such that
+leaf numbering is consistent in all trees.}
 }
 \value{
 \code{ConsensusInfo()} returns the splitwise information content of the
