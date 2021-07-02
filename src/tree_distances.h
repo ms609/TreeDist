@@ -53,8 +53,8 @@ extern uint_fast32_t bitcounts[65536];
 extern double 
   lg2[int32(MAX_TIPS - 1) * (MAX_TIPS - 1) + 1],
   lg2_double_factorial[MAX_TIPS + MAX_TIPS - 2],
-  lg2_rooted[MAX_TIPS + 1],
-  lg2_unrooted[MAX_TIPS + 1];
+  lg2_unrooted[MAX_TIPS + 2];
+extern double *lg2_rooted;
 
 /*************** FUNCTIONS  *******************/
 

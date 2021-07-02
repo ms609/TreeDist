@@ -29,8 +29,8 @@ int16 count_bits (splitbit x) {
 
 double lg2[int32(MAX_TIPS - 1) * (MAX_TIPS - 1) + 1];
 double lg2_double_factorial[MAX_TIPS + MAX_TIPS - 2];
-double lg2_rooted[MAX_TIPS + 1];
-double lg2_unrooted[MAX_TIPS + 1];
+double lg2_unrooted[MAX_TIPS + 2];
+double *lg2_rooted = &lg2_unrooted[0] + 1;
 __attribute__((constructor))
   void initialize_ldf() {
     lg2[0] = 0;
@@ -39,15 +39,15 @@ __attribute__((constructor))
     }
     for (int16 i = 0; i != 3; i++) {
       lg2_double_factorial[i] = 0;
-      lg2_rooted[i] = 0;
       lg2_unrooted[i] = 0;
+      assert(lg2_rooted[i] = 0);
     }
     for (int16 i = 2; i != MAX_TIPS + MAX_TIPS - 2; i++) {
       lg2_double_factorial[i] = lg2_double_factorial[i - 2] + lg2[i];
     }
-    for (int16 i = 3; i != MAX_TIPS + 1; i++) {
+    for (int16 i = 3; i != MAX_TIPS + 2; i++) {
       lg2_unrooted[i] = lg2_double_factorial[i + i - 5];
-      lg2_rooted[i] = lg2_double_factorial[i + i - 3];
+      assert(lg2_rooted[i] == lg2_double_factorial[i + i - 3]);
     }
   }
 
