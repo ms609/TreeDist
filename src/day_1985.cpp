@@ -20,7 +20,8 @@ const int_fast32_t
 const double log_2 = log(2);
 double ldfact[FACT_MAX];
 double l2rooted[DAY_MAX_LEAVES];
-double l2unrooted[DAY_MAX_LEAVES];
+double *l2unrooted = &l2rooted[0] - 1;
+double l2[DAY_MAX_LEAVES];
 __attribute__((constructor))
   void compute_double_factorials() {
     ldfact[0] = 0;
@@ -28,17 +29,17 @@ __attribute__((constructor))
     l2rooted[0] = 0;
     l2rooted[1] = 0;
     l2rooted[2] = 0;
-    l2unrooted[0] = 0;
-    l2unrooted[1] = 0;
-    l2unrooted[2] = 0;
+    l2[1] = 0;
+    l2[2] = 1;
     
     for (int_fast32_t i = 2; i != FACT_MAX; i++) {
       ldfact[i] = ldfact[i - 2] + log2(i);
     }
 
     for (int_fast32_t i = 3; i != DAY_MAX_LEAVES; i++) {
+      l2[i] = log2(i);
       l2rooted[i] = ldfact[i + i - 3];
-      l2unrooted[i] = ldfact[i + i - 5];
+      assert(l2unrooted[i] == ldfact[i + i - 5]);
     }
   }
 
@@ -47,6 +48,8 @@ inline double split_phylo_info (const int16 n_in, const int16 *n_tip,
   const int16 n_out = *n_tip - n_in;
   assert(p > 0);
   assert(p <= 1);
+  assert(n_in > 1);
+  assert(n_out > 1);
   if (p == 1) {
     return (l2unrooted[*n_tip] - l2rooted[n_in] - l2rooted[n_out]);
   } else {
@@ -70,11 +73,11 @@ inline double split_clust_info (const int16 n_in, const int16 *n_tip,
   const int16 n_out = *n_tip - n_in;
   assert(p > 0);
   assert(p <= 1);
-  const double
-    p_a = double(n_in) / *n_tip, 
-    p_b = double(n_out) / *n_tip
-  ;
-  return -p * ((p_a * log2(p_a)) + (p_b * log2(p_b)));
+  assert(n_in > 1);
+  assert(n_out > 1);
+  return -p * (
+      (((n_in * l2[n_in]) + (n_out * l2[n_out])) / *n_tip) - l2[*n_tip]
+    );
 }
 
 
