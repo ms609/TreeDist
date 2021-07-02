@@ -418,11 +418,25 @@ inline void push (int16 a, int16 b, int16 c, int16 d, std::unique_ptr<int16[]> &
   S.get()[(*Spos)++] = d;
 }
 
+inline void push (int16 a, int16 b, int16 c, int16 d, IntegerVector &S, int16* Spos) {
+  S[(*Spos)++] = a;
+  S[(*Spos)++] = b;
+  S[(*Spos)++] = c;
+  S[(*Spos)++] = d;
+}
+
 inline void pop (int16 *a, int16 *b, int16 *c, int16 *d, std::unique_ptr<int16[]> &S, int16* Spos) {
   *d = S.get()[--(*Spos)];
   *c = S.get()[--(*Spos)];
   *b = S.get()[--(*Spos)];
   *a = S.get()[--(*Spos)];
+}
+
+inline void pop (int16 *a, int16 *b, int16 *c, int16 *d, IntegerVector &S, int16* Spos) {
+  *d = S[--(*Spos)];
+  *c = S[--(*Spos)];
+  *b = S[--(*Spos)];
+  *a = S[--(*Spos)];
 }
 
 int16 min_ (int16 *a, int16 *b) {
@@ -513,10 +527,10 @@ double consensus_info (const List trees, const LogicalVector phylo) {
   
   const bool phylo_info = phylo[0];
   
-  std::unique_ptr<int16[]>
-    S = std::make_unique<int16[]>(stack_size),
-    split_count = std::make_unique<int16[]>(n_tip),
-    split_size = std::make_unique<int16[]>(n_tip)
+  IntegerVector
+    S(stack_size),
+    split_count(n_tip),
+    split_size(n_tip)
   ;
   
   int16
@@ -636,7 +650,7 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
     for (int16 j = i + 1; j != n_trees; j++) {
       Rcpp::XPtr<ClusterTable> table_j = tables(j);
       Rcpp::XPtr<ClusterTable> Tj(table_j);
-      std::unique_ptr<int16[]> S = std::make_unique<int16[]>(stack_size);
+      IntegerVector S(stack_size);
       Spos = 0; // Empty the stack S
       n_shared = 0;
       
