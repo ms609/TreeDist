@@ -21,6 +21,10 @@ consensus_info <- function(trees, phylo) {
     .Call(`_TreeDist_consensus_info`, trees, phylo)
 }
 
+consensus_info_without <- function(trees, drop, phylo) {
+    .Call(`_TreeDist_consensus_info_without`, trees, drop, phylo)
+}
+
 robinson_foulds_all_pairs <- function(tables) {
     .Call(`_TreeDist_robinson_foulds_all_pairs`, tables)
 }

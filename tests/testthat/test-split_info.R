@@ -47,3 +47,22 @@ test_that("Split info calculated", {
                              p = c(ab = 1, d..x = 1, fgx = 3/4, de = 3/4)),
                consensus_info(trees[-1], TRUE))
 })
+
+test_that("No change in split information after optimization", {
+  library("TreeTools")
+  trees <- list(BalancedTree(8), PectinateTree(8),
+                CollapseNode(PectinateTree(8), 12))
+  expect_equal(14.90812, tolerance = 1e-6, consensus_info(trees, TRUE))
+  expect_equal(consensus_info(trees, TRUE), 
+               consensus_info_without(trees, integer(0), TRUE))
+  
+  expect_equal(12.76555, tolerance = 1e-6, 
+               consensus_info(lapply(trees, DropTip, 4), TRUE))
+  consensus_info_without(trees, 4L, TRUE)
+  expect_equal(9.595621, tolerance = 1e-6,
+               consensus_info(lapply(trees, DropTip, 't1'), TRUE))
+  expect_equal(8.813872, tolerance = 1e-6,
+               consensus_info(lapply(trees, DropTip, 8), TRUE))
+  expect_equal(5.61471, tolerance = 1e-6,
+               consensus_info(lapply(trees, DropTip, 7:8), TRUE))
+})

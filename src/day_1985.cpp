@@ -526,16 +526,27 @@ double consensus_info (const List trees, const LogicalVector phylo) {
   
   double info = 0;
   
+#ifdef MSDEBUG
+  Rcout << "\n\nCalling consensus_info with " << n_trees << " " << n_tip
+        << "-leaf trees.\n";
+#endif
+  
   // All clades in 50% consensus must occur in first 50% of trees.
   for (int16 i = 0; i != thresh; i++) {
     bool unseen_splits = false;
     for (int16 j = 1; j != n_tip - 3 + 1; j++) {
       if (!tables[i].GETSWX(&j)) {
         unseen_splits = true;
+#ifdef MSDEBUG
+        Rcout << "Found new split in " << i << ": " << j << ".\n";
+#endif
         break;
       }
     }
     if (!unseen_splits) {
+#ifdef MSDEBUG
+      Rcout << "No new splits in " << i << ": next tree.\n";
+#endif
       continue;
     }
     
@@ -573,6 +584,9 @@ double consensus_info (const List trees, const LogicalVector phylo) {
           ++j_pos;
           if (tables[j].GETSWX(&j_pos)) {
             // Split has already been counted; next!
+#ifdef MSDEBUG
+            Rcout << "   Split has already been counted; next!\n";
+#endif
           } else {
             if (N == R - L + 1) { // L..R is contiguous, and must be tested
               if (tables[i].CLUSTONL(&L, &R)) {
@@ -580,11 +594,25 @@ double consensus_info (const List trees, const LogicalVector phylo) {
                 assert(L > 0);
                 split_count[L - 1]++;
                 if (!split_size[L - 1]) split_size[L - 1] = R - L + 1;
+#ifdef MSDEBUG
+                Rcout << "   Found match on left: " << L << " x " 
+                      << split_count[L - 1] << "; size = " << split_size[L - 1]
+                      <<"\n";
+#endif
               } else if (tables[i].CLUSTONR(&L, &R)) {
                 tables[j].SETSWX(&j_pos);
                 assert(R > 0);
                 split_count[R - 1]++;
                 if (!split_size[R - 1]) split_size[R - 1] = R - L + 1;
+#ifdef MSDEBUG
+                Rcout << "   Found match on right: " << R << " x " 
+                      << split_count[R - 1] << "; size = " << split_size[R - 1]
+                      <<"\n";
+#endif
+              } else {
+#ifdef MSDEBUG
+                Rcout << "   No match.\n";
+#endif
               }
             }
           }
@@ -593,6 +621,177 @@ double consensus_info (const List trees, const LogicalVector phylo) {
       } while (v);
     }
     for (int16 k = n_tip; k--; ) {
+#ifdef MSDEBUG
+      Rcout << "   Split_count[" << k << "] = " << split_count[k] 
+      << "; thresh = " << thresh << ".\n";
+#endif
+      if (split_count[k] >= thresh) {
+        ++splits_found;
+        if (phylo_info) {
+          info += split_phylo_info(split_size[k], &n_tip, 
+                                   split_count[k] / double(n_trees));
+        } else {
+          info += split_clust_info(split_size[k], &n_tip, 
+                                   split_count[k] / double(n_trees));
+        }
+        // If we have a perfectly resolved tree, break.
+        if (splits_found == n_tip - 3) {
+          return info;
+        }
+      }
+    }
+  }
+  
+  return info;
+}
+
+// COMCLUSTER computes a strict consensus tree in O(knn).
+// COMCLUST requires O(kn).
+// trees is a list of objects of class phylo, all with the same tip labels
+// (try RenumberTips(trees, trees[[1]]))
+// [[Rcpp::export]]
+double consensus_info_without (const List trees, IntegerVector drop,
+                               const LogicalVector phylo) {
+  
+  int16 v = 0, w = 0,
+    L, R, N, W,
+    L_j, R_j, N_j, W_j
+  ;
+  
+  std::vector<ClusterTable> tables;
+  tables.reserve(trees.length());
+  for (int16 i = trees.length(); i--; ) {
+    tables.emplace_back(ClusterTable(List(trees(i))));
+  }
+  
+  const int16
+    n_trees = trees.length(),
+    n_tip = tables[0].N(),
+    stack_size = 4 * n_tip,
+    thresh = (n_trees / 2) + 1
+  ;
+  
+  const bool phylo_info = phylo[0];
+  
+  std::unique_ptr<int16[]>
+    S = std::make_unique<int16[]>(stack_size),
+    split_count = std::make_unique<int16[]>(n_tip),
+    split_size = std::make_unique<int16[]>(n_tip)
+  ;
+  
+  int16
+    Spos = 0,
+    splits_found = 0
+  ;
+  
+  double info = 0;
+  
+#ifdef MSDEBUG
+  Rcout << "\n\nCalling consensus_info with " << n_trees << " " << n_tip
+        << "-leaf trees, dropping " << drop.length() << " leaves.\n";
+#endif
+  
+  std::unique_ptr<bool[]> drop_tip_p1 = std::make_unique<bool[]>(n_tip);
+  bool* drop_tip = &drop_tip_p1[0] - 1;
+  for (auto &i : drop) {
+    drop_tip[i] = true;
+    Rcout << "Dropping tip " << i <<".";
+  }
+  
+  // All clades in 50% consensus must occur in first 50% of trees.
+  for (int16 i = 0; i != thresh; i++) {
+    bool unseen_splits = false;
+    for (int16 j = 1; j != n_tip - 3 + 1; j++) {
+      if (!tables[i].GETSWX(&j)) {
+        unseen_splits = true;
+#ifdef MSDEBUG
+        Rcout << "Found new split in " << i << ": " << j << ".\n";
+#endif
+        break;
+      }
+    }
+    if (!unseen_splits) {
+#ifdef MSDEBUG
+      Rcout << "No new splits in " << i << ": next tree.\n";
+#endif
+      continue;
+    }
+    
+    for (int16 j = n_tip; j--; ) {
+      split_size[j] = 0;
+      split_count[j] = 1; // It's in this tree!
+    }
+    
+    for (int16 j = i + 1; j != trees.length(); j++) {
+      Spos = 0; // Empty the stack S
+      
+      tables[i].CLEAR();
+      tables[j].TRESET();
+      tables[j].NVERTEX_short(&v, &w);
+      int16 j_pos = 0;
+      
+      do {
+        if (tables[j].is_leaf(&v)) {
+          push(tables[i].ENCODE(v), tables[i].ENCODE(v), 1, 1, S, &Spos);
+        } else {
+          L = INF;
+          R = 0;
+          N = 0;
+          W = 1;
+          do {
+            pop(&L_j, &R_j, &N_j, &W_j, S, &Spos);
+            L = min_(&L, &L_j);
+            R = max_(&R, &R_j);
+            N = N + N_j;
+            W = W + W_j;
+            w = w - W_j;
+          } while (w);
+          push(L, R, N, W, S, &Spos);
+          
+          ++j_pos;
+          if (tables[j].GETSWX(&j_pos)) {
+            // Split has already been counted; next!
+#ifdef MSDEBUG
+            Rcout << "   Split has already been counted; next!\n";
+#endif
+          } else {
+            if (N == R - L + 1) { // L..R is contiguous, and must be tested
+              if (tables[i].CLUSTONL(&L, &R)) {
+                tables[j].SETSWX(&j_pos);
+                assert(L > 0);
+                split_count[L - 1]++;
+                if (!split_size[L - 1]) split_size[L - 1] = R - L + 1;
+#ifdef MSDEBUG
+                Rcout << "   Found match on left: " << L << " x " 
+                      << split_count[L - 1] << "; size = " << split_size[L - 1]
+                      <<"\n";
+#endif
+              } else if (tables[i].CLUSTONR(&L, &R)) {
+                tables[j].SETSWX(&j_pos);
+                assert(R > 0);
+                split_count[R - 1]++;
+                if (!split_size[R - 1]) split_size[R - 1] = R - L + 1;
+#ifdef MSDEBUG
+                Rcout << "   Found match on right: " << R << " x " 
+                      << split_count[R - 1] << "; size = " << split_size[R - 1]
+                      <<"\n";
+#endif
+              } else {
+#ifdef MSDEBUG
+                Rcout << "   No match.\n";
+#endif
+              }
+            }
+          }
+        }
+        tables[j].NVERTEX_short(&v, &w);
+      } while (v);
+    }
+    for (int16 k = n_tip; k--; ) {
+#ifdef MSDEBUG
+      Rcout << "   Split_count[" << k << "] = " << split_count[k] 
+      << "; thresh = " << thresh << ".\n";
+#endif
       if (split_count[k] >= thresh) {
         ++splits_found;
         if (phylo_info) {
