@@ -101,7 +101,8 @@ class ClusterTable {
     Tpos = 0,
     X_ROWS
   ;
-  std::unique_ptr<int16[]> leftmost_leaf, T, Xarr, visited_nth, internal_label;
+  std::unique_ptr<int16[]> leftmost_leaf, T, visited_nth, internal_label;
+  IntegerMatrix Xarr;
   
   public:
     ClusterTable(List); // i.e. PREPARE(T)
@@ -278,8 +279,8 @@ class ClusterTable {
       for (int16 i = X_ROWS; i--; ) {
         int16 ptr = (i * X_COLS);
         if (!(Xarr[ptr + SWITCH_COL])) {
-          Xarr[ptr + L_COL] = -Xarr[ptr + L_COL]; // 0
-          Xarr[ptr + R_COL] = -Xarr[ptr + R_COL]; // 0
+          Xarr[ptr + L_COL] = 0;
+          Xarr[ptr + R_COL] = 0;
         }
       }
     }
@@ -360,7 +361,7 @@ ClusterTable::ClusterTable(List phylo) {
   
   // BUILD Cluster table
   X_ROWS = n_leaves;
-  Xarr = std::make_unique<int16[]>(X_COLS * X_ROWS);
+  Xarr = IntegerMatrix(X_COLS, X_ROWS);
   
   // This procedure constructs in X descriptions of the clusters in a
   // rooted tree described by the postorder sequence T with weights,
