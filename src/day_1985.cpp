@@ -526,7 +526,6 @@ double consensus_info (const List trees, const LogicalVector phylo) {
   IntegerVector
     S(stack_size),
     split_count(n_tip),
-    split_size(n_tip)
   ;
   
   int16
@@ -549,8 +548,8 @@ double consensus_info (const List trees, const LogicalVector phylo) {
       continue;
     }
     
+    IntegerVector split_size(n_tip);
     for (int16 j = n_tip; j--; ) {
-      split_size[j] = 0;
       split_count[j] = 1; // It's in this tree!
     }
     
