@@ -454,7 +454,7 @@ int COMCLUST (List trees) {
   
   ClusterTable X(List(trees(0)));
   const int16 stack_size = 4 * X.N();
-  std::unique_ptr<int16[]> S = std::make_unique<int16[]>(stack_size);
+  IntegerVector S(stack_size);
   int16 Spos = 0;
   
   for (int16 i = 1; i != trees.length(); i++) {
