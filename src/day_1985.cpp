@@ -525,7 +525,7 @@ double consensus_info (const List trees, const LogicalVector phylo) {
   
   IntegerVector
     S(stack_size),
-    split_count(n_tip),
+    split_count(n_tip)
   ;
   
   int16
