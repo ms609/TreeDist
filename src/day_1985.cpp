@@ -439,10 +439,6 @@ inline void pop (int16 *a, int16 *b, int16 *c, int16 *d, IntegerVector &S, int16
   *a = S[--(*Spos)];
 }
 
-#define MIN(a, b) (a) < (b) ? (a) : (b)
-
-#define MAX(a, b) (a) > (b) ? (a) : (b)
-
 // COMCLUSTER computes a strict consensus tree in O(knn).
 // COMCLUST requires O(kn).
 // trees is a list of objects of class phylo.
@@ -477,11 +473,11 @@ int COMCLUST (List trees) {
         W = 1;
         do {
           pop(&L_i, &R_i, &N_i, &W_i, S, &Spos);
-          L = MIN(L, L_i);
-          R = MAX(R, R_i);
-          N = N + N_i;
-          W = W + W_i;
-          w = w - W_i;
+          if (L_i < L) L = L_i;
+          if (R_i > R) R = R_i;
+          N += N_i;
+          W += W_i;
+          w -= W_i;
         } while (w);
         push(L, R, N, W, S, &Spos);
         if (N == R - L + 1) { // L..R is contiguous, and must be tested
@@ -569,11 +565,11 @@ double consensus_info (const List trees, const LogicalVector phylo) {
           W = 1;
           do {
             pop(&L_j, &R_j, &N_j, &W_j, S, &Spos);
-            L = MIN(L, L_j);
-            R = MAX(R, R_j);
-            N = N + N_j;
-            W = W + W_j;
-            w = w - W_j;
+            if (L_j < L) L = L_j;
+            if (R_j > R) R = R_j;
+            N += N_j;
+            W += W_j;
+            w -= W_j;
           } while (w);
           push(L, R, N, W, S, &Spos);
           
@@ -657,8 +653,8 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
           L = INF; R = 0; N = 0; W = 1;
           do {
             pop(&L_i, &R_i, &N_i, &W_i, S, &Spos);
-            L = MIN(L, L_i);
-            R = MAX(R, R_i);
+            if (L_i < L) L = L_i;
+            if (R_i > R) R = R_i;
             N = N + N_i;
             W = W + W_i;
             w = w - W_i;
