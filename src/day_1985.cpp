@@ -248,9 +248,7 @@ class ClusterTable {
       // Each cluster in X has an associated switch that is either cleared or 
       // set. 
       // This procedure clears every cluster switch in X. 
-      for (int16 i = X_ROWS; i--; ) {
-        Xarr[i * X_COLS + SWITCH_COL] = 0;
-      }
+      Xarr(_, SWITCH_COL) = IntegerVector(X_ROWS);
     }
     
     inline void SETSWX(int16* row) {
