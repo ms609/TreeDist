@@ -105,7 +105,8 @@ class ClusterTable {
     internal_label,
     leftmost_leaf,
     T,
-    visited_nth
+    visited_nth,
+    Xswitch
   ;
   IntegerMatrix Xarr;
   
@@ -214,7 +215,6 @@ class ClusterTable {
     inline int16 X(int16 row, int16 col) {
       assert(row > 0);
       assert(row <= X_ROWS);
-      // return Xarr[(row - 1) * X_COLS + col];
       return Xarr(col, row - 1);
     }
     
@@ -251,15 +251,15 @@ class ClusterTable {
       // Each cluster in X has an associated switch that is either cleared or 
       // set. 
       // This procedure clears every cluster switch in X. 
-      Xarr(SWITCH_COL, _) = IntegerVector(X_ROWS);
+      Xswitch.fill(0);
     }
     
     inline void SETSWX(int16* row) {
-      setX(*row, SWITCH_COL, 1);
+      Xswitch[*row - 1] = true;
     }
     
     inline bool GETSWX(int16* row) {
-      return X(*row, SWITCH_COL);
+      return Xswitch[*row - 1];
     }
     
     inline void SETSW(int16* L, int16* R) {
@@ -274,14 +274,14 @@ class ClusterTable {
     }
     
     inline void UPDATE(){
-      // This procadure inspects every cluster switch in X.
+      // This procedure inspects every cluster switch in X.
       // If the switch for cluster <L,R> is cleared, UPDATE deletes <L,R> 
       // from X; thereafter ISCLUST(X,L,R) will return the value false. 
       for (int16 i = X_ROWS; i--; ) {
         int16 ptr = (i * X_COLS);
-        if (!(Xarr[ptr + SWITCH_COL])) {
-          Xarr[ptr + L_COL] = 0;
-          Xarr[ptr + R_COL] = 0;
+        if (!(Xswitch[i])) {
+          Xarr(L_COL, i) = 0;
+          Xarr(R_COL, i) = 0;
         }
       }
     }
@@ -363,6 +363,7 @@ ClusterTable::ClusterTable(List phylo) {
   // BUILD Cluster table
   X_ROWS = n_leaves;
   Xarr = IntegerMatrix(X_COLS, X_ROWS);
+  Xswitch = LogicalVector(X_ROWS);
   
   // This procedure constructs in X descriptions of the clusters in a
   // rooted tree described by the postorder sequence T with weights,
