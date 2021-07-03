@@ -101,7 +101,12 @@ class ClusterTable {
     Tpos = 0,
     X_ROWS
   ;
-  std::unique_ptr<int16[]> leftmost_leaf, T, visited_nth, internal_label;
+  IntegerVector 
+    internal_label,
+    leftmost_leaf,
+    T,
+    visited_nth
+  ;
   IntegerMatrix Xarr;
   
   public:
@@ -120,8 +125,8 @@ class ClusterTable {
     }
     
     inline void ENTER(int16 v, int16 w) {
-      T.get()[Tpos++] = v;
-      T.get()[Tpos++] = w;
+      T[Tpos++] = v;
+      T[Tpos++] = w;
     }
     
     inline void READT(int16 *v, int16 *w) {
@@ -207,18 +212,16 @@ class ClusterTable {
     }
     
     inline int16 X(int16 row, int16 col) {
-      if (row < 1) throw std::range_error("Trying to read before start of X");
-      if (row > X_ROWS) {
-        Rcout << "Row " << row << " > number of rows, " << X_ROWS << ".\n";
-        throw std::range_error("Trying to read past end of X");
-      }
-      return Xarr[(row - 1) * X_COLS + col];
+      assert(row > 0);
+      assert(row <= X_ROWS);
+      // return Xarr[(row - 1) * X_COLS + col];
+      return Xarr(col, row - 1);
     }
     
     inline void setX(int16 row, int16 col, int16 value) {
-      if (row < 1) throw std::range_error("Trying to write before start of X");
-      if (row > X_ROWS) throw std::range_error("Trying to write past end of X");
-      Xarr[(row - 1) * X_COLS + col] = value;
+      assert(row > 0);
+      assert(row <= X_ROWS);
+      Xarr(col, row - 1) = value;
     }
     
     IntegerMatrix X_contents() {
@@ -248,7 +251,9 @@ class ClusterTable {
       // Each cluster in X has an associated switch that is either cleared or 
       // set. 
       // This procedure clears every cluster switch in X. 
-      Xarr(_, SWITCH_COL) = IntegerVector(X_ROWS);
+      for (int16 i = X_ROWS; i--; ) {
+        Xarr(SWITCH_COL, _) = IntegerVector(X_ROWS);
+      }
     }
     
     inline void SETSWX(int16* row) {
@@ -324,13 +329,13 @@ ClusterTable::ClusterTable(List phylo) {
   n_leaves = leaf_labels.length(); // = N
   n_edge = edge.nrow();
   Tlen = M() + N() + M() + N();
-  T = std::make_unique<int16[]>(Tlen);
+  T = IntegerVector(Tlen);
   
-  leftmost_leaf = std::make_unique<int16[]>(N() + M());
-  visited_nth = std::make_unique<int16[]>(n_leaves);
-  internal_label = std::make_unique<int16[]>(n_leaves);
+  leftmost_leaf = IntegerVector(N() + M());
+  visited_nth = IntegerVector(n_leaves);
+  internal_label = IntegerVector(n_leaves);
   int16 n_visited = 0;
-  std::unique_ptr<int16[]> weights = std::make_unique<int16[]>(N() + M() + 1);
+  IntegerVector weights(N() + M() + 1);
   
   for (int16 i = 1; i != n_leaves + 1; i++) {
     SET_LEFTMOST(i, i);
