@@ -549,9 +549,7 @@ double consensus_info (const List trees, const LogicalVector phylo) {
     }
     
     IntegerVector split_size(n_tip);
-    for (int16 j = n_tip; j--; ) {
-      split_count[j] = 1; // It's in this tree!
-    }
+    split_count.fill(1); // It's in this tree!
     
     for (int16 j = i + 1; j != trees.length(); j++) {
       Spos = 0; // Empty the stack S
