@@ -659,8 +659,8 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
           L = INF; R = 0; N = 0; W = 1;
           do {
             pop(&L_i, &R_i, &N_i, &W_i, S, &Spos);
-            L = MIN(&L, &L_i);
-            R = MAX(&R, &R_i);
+            L = MIN(L, L_i);
+            R = MAX(R, R_i);
             N = N + N_i;
             W = W + W_i;
             w = w - W_i;
