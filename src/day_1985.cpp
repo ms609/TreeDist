@@ -164,7 +164,7 @@ class ClusterTable {
       // Don't count all-tips or all-ingroup: vertices 0, ROOT, Ingp.
       if (Tpos != Tlen - (2 * 3)) {
         READT(v, w);
-        v_j = *v;
+        // v_j = *v; // Unneeded unless we go on to call LEFTLEAF
       } else {
         *v = 0;
         *w = 0;
