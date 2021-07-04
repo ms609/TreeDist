@@ -500,7 +500,11 @@ double consensus_info (const List trees, const LogicalVector phylo) {
     tables.emplace_back(ClusterTable(List(trees(i))));
   }
   
-  const int16 n_tip = tables[0].N();
+  const 
+    n_tip = tables[0].N(),
+    n_trees = trees.length(),
+    thresh = (n_trees / 2) + 1
+  ;
   
   const bool phylo_info = phylo[0];
   
@@ -580,11 +584,6 @@ double consensus_info (const List trees, const LogicalVector phylo) {
     }
     
     int16 splits_found = 0;
-    
-    int16 
-      n_trees = trees.length(),
-      thresh = (n_trees / 2) + 1
-    ;
     for (int16 k = n_tip; k--; ) {
       if (split_count[k] >= thresh) {
         ++splits_found;
