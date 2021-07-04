@@ -500,7 +500,7 @@ double consensus_info (const List trees, const LogicalVector phylo) {
     tables.emplace_back(ClusterTable(List(trees(i))));
   }
   
-  const 
+  const int16
     n_tip = tables[0].N(),
     n_trees = trees.length(),
     thresh = (n_trees / 2) + 1
