@@ -543,11 +543,10 @@ double consensus_info (const List trees, const LogicalVector phylo) {
         if (tables[j].is_leaf(&v)) {
           PUSH(tables[i].ENCODE(v), tables[i].ENCODE(v), 1, 1);
         } else {
-          L = INF;
-          R = 0;
-          N = 0;
-          W = 1;
-          do {
+          POP(L, R, N, W_j);
+          W = 1 + W_j;
+          w = w - W_j;
+          while (w) {
             POP(L_j, R_j, N_j, W_j);
             if (L_j < L) L = L_j;
             if (R_j > R) R = R_j;
