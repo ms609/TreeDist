@@ -108,7 +108,7 @@ class ClusterTable {
     T,
     visited_nth
   ;
-  std::bitset<DAY_MAX_LEAVES> Xswitch;
+  std::bitset<DAY_MAX_LEAVES + 1> Xswitch;
   IntegerMatrix Xarr;
   
   public:
@@ -131,11 +131,6 @@ class ClusterTable {
       T[Tpos++] = w;
     }
     
-    inline void READT(int16 *v, int16 *w) {
-      *v = T[Tpos++];
-      *w = T[Tpos++];
-    }
-    
     inline int16 N() {
       return n_leaves;
     }
@@ -148,6 +143,11 @@ class ClusterTable {
       // This procedure prepares T for an enumeration of its entries, 
       // beginning with the first entry. 
       Tpos = 0;
+    }
+    
+    inline void READT(int16 *v, int16 *w) {
+      *v = T[Tpos++];
+      *w = T[Tpos++];
     }
     
     inline void NVERTEX(int16 *v, int16 *w) {
@@ -192,7 +192,7 @@ class ClusterTable {
       // This function procedure returns as its value the internal label 
       // assigned to leaf v
       // MS note: input = v; output = X[v, 3]
-      return internal_label[v - 1];
+      return internal_label[v];
     }
     
     inline int16 DECODE(const int16 internal_relabeling) {
@@ -202,7 +202,7 @@ class ClusterTable {
     
     inline void VISIT_LEAF (const int16* leaf, int16* n_visited) {
       visited_nth[(*n_visited)++] = *leaf;
-      internal_label[*leaf - 1] = *n_visited;
+      internal_label[*leaf] = *n_visited;
     }
     
     IntegerVector X_decode() {
@@ -256,11 +256,11 @@ class ClusterTable {
     }
     
     inline void SETSWX(int16* row) {
-      Xswitch[*row - 1] = true;
+      Xswitch[*row] = true;
     }
     
     inline bool GETSWX(int16* row) {
-      return Xswitch[*row - 1];
+      return Xswitch[*row];
     }
     
     inline bool NOSWX(const std::size_t& n) {
@@ -335,7 +335,7 @@ ClusterTable::ClusterTable(List phylo) {
   
   leftmost_leaf = std::vector<int16> (N() + M());
   visited_nth = std::vector<int16> (n_leaves);
-  internal_label = std::vector<int16> (n_leaves);
+  internal_label = std::vector<int16>(n_leaves + 1); // We're not using -1.
   int16 n_visited = 0;
   std::vector<int16> weights(N() + M() + 1);
   
