@@ -456,10 +456,9 @@ int COMCLUST (List trees) {
   ClusterTable X(List(trees(0)));
   const int16 stack_size = 4 * X.N();
   IntegerVector S(stack_size);
-  int16 Spos = 0;
   
   for (int16 i = 1; i != trees.length(); i++) {
-    Spos = 0; // Empty the stack S
+    int16 Spos = 0; // Empty the stack S
     
     X.CLEAR();
     ClusterTable Ti(List(trees(i)));
@@ -527,11 +526,6 @@ double consensus_info (const List trees, const LogicalVector phylo) {
     split_count(n_tip)
   ;
   
-  int16
-    Spos = 0,
-    splits_found = 0
-  ;
-  
   double info = 0;
   
   // All clades in 50% consensus must occur in first 50% of trees.
@@ -551,7 +545,7 @@ double consensus_info (const List trees, const LogicalVector phylo) {
     split_count.fill(1); // It's in this tree!
     
     for (int16 j = i + 1; j != trees.length(); j++) {
-      Spos = 0; // Empty the stack S
+      int16 Spos = 0; // Empty the stack S
       
       tables[i].CLEAR();
       tables[j].TRESET();
@@ -598,6 +592,8 @@ double consensus_info (const List trees, const LogicalVector phylo) {
         tables[j].NVERTEX_short(&v, &w);
       } while (v);
     }
+    
+    int16 splits_found = 0;
     for (int16 k = n_tip; k--; ) {
       if (split_count[k] >= thresh) {
         ++splits_found;
