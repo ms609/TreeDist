@@ -267,6 +267,10 @@ class ClusterTable {
       return Xswitch[*row - 1];
     }
     
+    inline bool NOSWX(const std::size_t& n) {
+      return Xswitch.count() == n;
+    }
+    
     inline void SETSW(int16* L, int16* R) {
       // If <L,R> is a cluster in X, this procedure sets the cluster switch for <L,R>. 
       if (CLUSTONL(L, R)) {
@@ -514,17 +518,11 @@ double consensus_info (const List trees, const LogicalVector phylo) {
   
   double info = 0;
   
+  const std::size_t ntip_3 = n_tip - 3;
   // All clades in 50% consensus must occur in first 50% of trees.
   for (int16 i = 0; i != thresh; i++) {
-    bool unseen_splits = false;
-    for (int16 j = 1; j != n_tip - 3 + 1; j++) {
-      if (!tables[i].GETSWX(&j)) {
-        unseen_splits = true;
-        break;
-      }
-    }
-    if (!unseen_splits) {
-      continue;
+    if (tables[i].NOSWX(ntip_3)) {
+      continue; 
     }
     
     std::vector<int16> split_size(n_tip);
