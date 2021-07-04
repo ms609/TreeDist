@@ -561,12 +561,16 @@ double consensus_info (const List trees, const LogicalVector phylo) {
                 tables[j].SETSWX(&j_pos);
                 assert(L > 0);
                 split_count[L - 1]++;
-                if (!split_size[L - 1]) split_size[L - 1] = R - L + 1;
+                if (!split_size[L - 1]) {
+                  split_size[L - 1] = R - L + 1;
+                }
               } else if (tables[i].CLUSTONR(&L, &R)) {
                 tables[j].SETSWX(&j_pos);
                 assert(R > 0);
                 split_count[R - 1]++;
-                if (!split_size[R - 1]) split_size[R - 1] = R - L + 1;
+                if (!split_size[R - 1]) {
+                  split_size[R - 1] = R - L + 1;
+                }
               }
             }
           }
