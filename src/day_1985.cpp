@@ -99,6 +99,7 @@ class ClusterTable {
     enumeration = 0,
     v_j,
     Tlen,
+    Tlen_short,
     Tpos = 0,
     X_ROWS
   ;
@@ -162,7 +163,7 @@ class ClusterTable {
     
     inline void NVERTEX_short(int16 *v, int16 *w) {
       // Don't count all-tips or all-ingroup: vertices 0, ROOT, Ingp.
-      if (Tpos != Tlen - (2 * 3)) {
+      if (Tpos != Tlen_short) {
         READT(v, w);
         // v_j = *v; // Unneeded unless we go on to call LEFTLEAF
       } else {
@@ -330,20 +331,22 @@ ClusterTable::ClusterTable(List phylo) {
   }
   n_leaves = leaf_labels.length(); // = N
   n_edge = edge.nrow();
-  Tlen = 2 * (M() + N());
+  const int16 n_vertex = M() + N();
+  Tlen = 2 * n_vertex;
+  Tlen_short = Tlen - (2 * 3);
   T = std::vector<int16> (Tlen);
   
-  leftmost_leaf = std::vector<int16> (N() + M());
+  leftmost_leaf = std::vector<int16> (n_vertex);
   visited_nth = std::vector<int16> (n_leaves);
-  internal_label = std::vector<int16>(n_leaves + 1); // We're not using -1.
+  internal_label = std::vector<int16>(1 + n_leaves); // We're not using -1.
   int16 n_visited = 0;
-  std::vector<int16> weights(N() + M() + 1);
+  std::vector<int16> weights(1 + n_vertex);
   
   for (int16 i = 1; i != n_leaves + 1; ++i) {
     SET_LEFTMOST(i, i);
     weights[i] = 0;
   }
-  for (int16 i = n_leaves + 1; i != N() + M() + 1; ++i) {
+  for (int16 i = 1 + n_leaves; i != 1 + n_vertex; ++i) {
     SET_LEFTMOST(i, 0);
     weights[i] = 0;
   }
