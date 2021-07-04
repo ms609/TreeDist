@@ -483,6 +483,8 @@ int COMCLUST (List trees) {
   return X.SHARED() - 2; // Subtract All-tips & All-ingroup
 }
 
+#define IS_LEAF(a) (a) <= n_tip
+  
 // COMCLUSTER computes a strict consensus tree in O(knn).
 // COMCLUST requires O(kn).
 // trees is a list of objects of class phylo, all with the same tip labels
@@ -532,7 +534,8 @@ double consensus_info (const List trees, const LogicalVector phylo) {
       int16 j_pos = 0, Spos = 0; // Empty the stack S
       
       do {
-        if (tables[j].is_leaf(&v)) {
+        // if (tables[j].is_leaf(&v)) {
+        if (IS_LEAF(v)) {
           PUSH(tables[i].ENCODE(v), tables[i].ENCODE(v), 1, 1);
         } else {
           POP(L, R, N, W_j);
