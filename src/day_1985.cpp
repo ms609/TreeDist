@@ -632,15 +632,17 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
         if (Tj->is_leaf(&v)) {
           PUSH(Xi->ENCODE(v), Xi->ENCODE(v), 1, 1);
         } else {
-          L = INF; R = 0; N = 0; W = 1;
-          do {
+          POP(L, R, N, W_i);
+          W = 1 + W_i;
+          w = w - W_i;
+          while (w) {
             POP(L_i, R_i, N_i, W_i);
             if (L_i < L) L = L_i;
             if (R_i > R) R = R_i;
             N = N + N_i;
             W = W + W_i;
             w = w - W_i;
-          } while (w);
+          };
           PUSH(L, R, N, W);
           if (N == R - L + 1) { // L..R is contiguous, and must be tested
             if (Xi->ISCLUST(&L, &R)) ++n_shared;
