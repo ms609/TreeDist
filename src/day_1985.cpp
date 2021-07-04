@@ -14,6 +14,7 @@ const int16
 
 const int_fast32_t
   DAY_MAX_LEAVES = 16383,
+  STACK_SIZE = 4 * DAY_MAX_LEAVES,
   FACT_MAX = DAY_MAX_LEAVES + DAY_MAX_LEAVES + 5 + 1
 ;
 
@@ -326,12 +327,12 @@ ClusterTable::ClusterTable(List phylo) {
   }
   n_leaves = leaf_labels.length(); // = N
   n_edge = edge.nrow();
-  Tlen = M() + N() + M() + N();
+  Tlen = 2 * (M() + N());
   T = IntegerVector(Tlen);
   
-  leftmost_leaf = IntegerVector(N() + M());
-  visited_nth = IntegerVector(n_leaves);
-  internal_label = IntegerVector(n_leaves);
+  leftmost_leaf = std::vector<int16> (N() + M());
+  visited_nth = std::vector<int16> (n_leaves);
+  internal_label = std::vector<int16> (n_leaves);
   int16 n_visited = 0;
   IntegerVector weights(N() + M() + 1);
   
@@ -348,7 +349,9 @@ ClusterTable::ClusterTable(List phylo) {
       parent_i = edge(i, 0),
       child_i = edge(i, 1)
     ;
-    if (!GET_LEFTMOST(parent_i)) SET_LEFTMOST(parent_i, GET_LEFTMOST(child_i));
+    if (!GET_LEFTMOST(parent_i)) {
+      SET_LEFTMOST(parent_i, GET_LEFTMOST(child_i));
+    }
     if (is_leaf(&child_i)) {
       VISIT_LEAF(&child_i, &n_visited);
       ++weights[parent_i];
@@ -414,33 +417,18 @@ IntegerVector ClusterTable_decode(SEXP xp) {
   return ptr->X_decode();
 }
 
-inline void push (int16 a, int16 b, int16 c, int16 d, std::unique_ptr<int16[]> &S, int16* Spos) {
-  S.get()[(*Spos)++] = a;
-  S.get()[(*Spos)++] = b;
-  S.get()[(*Spos)++] = c;
-  S.get()[(*Spos)++] = d;
-}
+#define PUSH(a, b, c, d)                                       \
+  S[Spos++] = (a);                                             \
+  S[Spos++] = (b);                                             \
+  S[Spos++] = (c);                                             \
+  S[Spos++] = (d)
 
-inline void push (int16 a, int16 b, int16 c, int16 d, IntegerVector &S, int16* Spos) {
-  S[(*Spos)++] = a;
-  S[(*Spos)++] = b;
-  S[(*Spos)++] = c;
-  S[(*Spos)++] = d;
-}
+#define POP(a, b, c, d)                                        \
+  (d) = S[--Spos];                                             \
+  (c) = S[--Spos];                                             \
+  (b) = S[--Spos];                                             \
+  (a) = S[--Spos]
 
-inline void pop (int16 *a, int16 *b, int16 *c, int16 *d, std::unique_ptr<int16[]> &S, int16* Spos) {
-  *d = S.get()[--(*Spos)];
-  *c = S.get()[--(*Spos)];
-  *b = S.get()[--(*Spos)];
-  *a = S.get()[--(*Spos)];
-}
-
-inline void pop (int16 *a, int16 *b, int16 *c, int16 *d, IntegerVector &S, int16* Spos) {
-  *d = S[--(*Spos)];
-  *c = S[--(*Spos)];
-  *b = S[--(*Spos)];
-  *a = S[--(*Spos)];
-}
 
 // COMCLUSTER computes a strict consensus tree in O(knn).
 // COMCLUST requires O(kn).
@@ -455,7 +443,7 @@ int COMCLUST (List trees) {
   
   ClusterTable X(List(trees(0)));
   const int16 stack_size = 4 * X.N();
-  IntegerVector S(stack_size);
+  std::array<int16, DAY_MAX_LEAVES> S;
   
   for (int16 i = 1; i != trees.length(); i++) {
     int16 Spos = 0; // Empty the stack S
@@ -467,21 +455,21 @@ int COMCLUST (List trees) {
     
     do {
       if (Ti.is_leaf(&v)) {
-        push(X.ENCODE(v), X.ENCODE(v), 1, 1, S, &Spos);
+        PUSH(X.ENCODE(v), X.ENCODE(v), 1, 1);
       } else {
         L = INF;
         R = 0;
         N = 0;
         W = 1;
         do {
-          pop(&L_i, &R_i, &N_i, &W_i, S, &Spos);
+          POP(L_i, R_i, N_i, W_i);
           if (L_i < L) L = L_i;
           if (R_i > R) R = R_i;
           N += N_i;
           W += W_i;
           w -= W_i;
         } while (w);
-        push(L, R, N, W, S, &Spos);
+        PUSH(L, R, N, W);
         if (N == R - L + 1) { // L..R is contiguous, and must be tested
           X.SETSW(&L, &R);
         }
@@ -513,18 +501,16 @@ double consensus_info (const List trees, const LogicalVector phylo) {
   }
   
   const int16
-    n_trees = trees.length(),
     n_tip = tables[0].N(),
-    stack_size = 4 * n_tip,
+    n_trees = trees.length(),
     thresh = (n_trees / 2) + 1
   ;
   
   const bool phylo_info = phylo[0];
   
-  IntegerVector
-    S(stack_size),
-    split_count(n_tip)
-  ;
+  // int16* S = new int16[STACK_SIZE]; // Using new to avoid zero-initialization
+  std::array<int16, STACK_SIZE> S;
+  std::array<int16, DAY_MAX_LEAVES> split_count;
   
   double info = 0;
   
@@ -542,7 +528,9 @@ double consensus_info (const List trees, const LogicalVector phylo) {
     }
     
     IntegerVector split_size(n_tip);
-    split_count.fill(1); // It's in this tree!
+    for (int16 i = n_tip; i--; ) {
+      split_count[i] = 1; // It's in this tree!
+    }
     
     for (int16 j = i + 1; j != trees.length(); j++) {
       int16 Spos = 0; // Empty the stack S
@@ -554,21 +542,21 @@ double consensus_info (const List trees, const LogicalVector phylo) {
       
       do {
         if (tables[j].is_leaf(&v)) {
-          push(tables[i].ENCODE(v), tables[i].ENCODE(v), 1, 1, S, &Spos);
+          PUSH(tables[i].ENCODE(v), tables[i].ENCODE(v), 1, 1);
         } else {
           L = INF;
           R = 0;
           N = 0;
           W = 1;
           do {
-            pop(&L_j, &R_j, &N_j, &W_j, S, &Spos);
+            POP(L_j, R_j, N_j, W_j);
             if (L_j < L) L = L_j;
             if (R_j > R) R = R_j;
             N = N + N_j;
             W = W + W_j;
             w = w - W_j;
           } while (w);
-          push(L, R, N, W, S, &Spos);
+          PUSH(L, R, N, W);
           
           ++j_pos;
           if (tables[j].GETSWX(&j_pos)) {
@@ -620,9 +608,7 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
   int16 
     v = 0, w = 0,
     L, R, N, W,
-    L_i, R_i, N_i, W_i,
-    n_shared,
-    Spos
+    L_i, R_i, N_i, W_i
   ;
   const int16 n_trees = tables.length();
   if (n_trees < 2) return IntegerVector(0);
@@ -638,27 +624,27 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
     for (int16 j = i + 1; j != n_trees; j++) {
       Rcpp::XPtr<ClusterTable> table_j = tables(j);
       Rcpp::XPtr<ClusterTable> Tj(table_j);
-      IntegerVector S(stack_size);
-      Spos = 0; // Empty the stack S
-      n_shared = 0;
+      std::vector<int16> S(stack_size);
+      int16 Spos = 0; // Empty the stack S
+      int16 n_shared = 0;
       
       Tj->TRESET();
       Tj->NVERTEX_short(&v, &w);
       
       do {
         if (Tj->is_leaf(&v)) {
-          push(Xi->ENCODE(v), Xi->ENCODE(v), 1, 1, S, &Spos);
+          PUSH(Xi->ENCODE(v), Xi->ENCODE(v), 1, 1);
         } else {
           L = INF; R = 0; N = 0; W = 1;
           do {
-            pop(&L_i, &R_i, &N_i, &W_i, S, &Spos);
+            POP(L_i, R_i, N_i, W_i);
             if (L_i < L) L = L_i;
             if (R_i > R) R = R_i;
             N = N + N_i;
             W = W + W_i;
             w = w - W_i;
           } while (w);
-          push(L, R, N, W, S, &Spos);
+          PUSH(L, R, N, W);
           if (N == R - L + 1) { // L..R is contiguous, and must be tested
             if (Xi->ISCLUST(&L, &R)) ++n_shared;
           }
