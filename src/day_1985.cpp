@@ -526,7 +526,7 @@ double consensus_info (const List trees, const LogicalVector phylo) {
     std::vector<int16> split_size(n_tip);
     std::fill(split_count.begin(), split_count.begin() + n_tip, 1);
     
-    for (int16 j = i + 1; j != trees.length(); j++) {
+    for (int16 j = i + 1; j != n_trees; j++) {
       
       tables[i].CLEAR();
       tables[j].TRESET();
