@@ -3,6 +3,7 @@ using namespace Rcpp;
 #include <TreeTools.h> /* for root_on_node() */
 #include <TreeTools/root_tree.h> /* for root_on_node() */
 #include <cmath> /* for log2() */
+#include <bitset> /* for bitset */
 #include <memory> /* for unique_ptr, make_unique */
 #include "tree_distances.h"
 #include "SplitList.h"
@@ -101,13 +102,13 @@ class ClusterTable {
     Tpos = 0,
     X_ROWS
   ;
-  IntegerVector 
+  std::vector<int16> 
     internal_label,
     leftmost_leaf,
     T,
-    visited_nth,
-    Xswitch
+    visited_nth
   ;
+  std::bitset<DAY_MAX_LEAVES> Xswitch;
   IntegerMatrix Xarr;
   
   public:
@@ -251,7 +252,11 @@ class ClusterTable {
       // Each cluster in X has an associated switch that is either cleared or 
       // set. 
       // This procedure clears every cluster switch in X. 
-      Xswitch.fill(0);
+      // std::fill(Xswitch.begin(), Xswitch.end(), 0);
+      Xswitch.reset();
+      // for (int16 i = X_ROWS; i--; ) {
+      //   Xswitch[i] = false;
+      // }
     }
     
     inline void SETSWX(int16* row) {
@@ -326,13 +331,13 @@ ClusterTable::ClusterTable(List phylo) {
   n_leaves = leaf_labels.length(); // = N
   n_edge = edge.nrow();
   Tlen = 2 * (M() + N());
-  T = IntegerVector(Tlen);
+  T = std::vector<int16> (Tlen);
   
   leftmost_leaf = std::vector<int16> (N() + M());
   visited_nth = std::vector<int16> (n_leaves);
   internal_label = std::vector<int16> (n_leaves);
   int16 n_visited = 0;
-  IntegerVector weights(N() + M() + 1);
+  std::vector<int16> weights(N() + M() + 1);
   
   for (int16 i = 1; i != n_leaves + 1; ++i) {
     SET_LEFTMOST(i, i);
@@ -364,7 +369,7 @@ ClusterTable::ClusterTable(List phylo) {
   // BUILD Cluster table
   X_ROWS = n_leaves;
   Xarr = IntegerMatrix(X_COLS, X_ROWS);
-  Xswitch = LogicalVector(X_ROWS);
+  // Xswitch = std::bitset<DAY_MAX_LEAVES>;
   
   // This procedure constructs in X descriptions of the clusters in a
   // rooted tree described by the postorder sequence T with weights,
@@ -522,7 +527,7 @@ double consensus_info (const List trees, const LogicalVector phylo) {
       continue;
     }
     
-    IntegerVector split_size(n_tip);
+    std::vector<int16> split_size(n_tip);
     for (int16 i = n_tip; i--; ) {
       split_count[i] = 1; // Split occurs once in tree i
     }
