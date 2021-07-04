@@ -252,11 +252,7 @@ class ClusterTable {
       // Each cluster in X has an associated switch that is either cleared or 
       // set. 
       // This procedure clears every cluster switch in X. 
-      // std::fill(Xswitch.begin(), Xswitch.end(), 0);
       Xswitch.reset();
-      // for (int16 i = X_ROWS; i--; ) {
-      //   Xswitch[i] = false;
-      // }
     }
     
     inline void SETSWX(int16* row) {
