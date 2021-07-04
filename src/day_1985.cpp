@@ -87,8 +87,7 @@ class ClusterTable {
   const int16
     L_COL = 0,
     R_COL = 1,
-    SWITCH_COL = 2,
-    X_COLS = 3
+    X_COLS = 2
   ;
   int16
     n_edge,
@@ -279,7 +278,6 @@ class ClusterTable {
       // If the switch for cluster <L,R> is cleared, UPDATE deletes <L,R> 
       // from X; thereafter ISCLUST(X,L,R) will return the value false. 
       for (int16 i = X_ROWS; i--; ) {
-        int16 ptr = (i * X_COLS);
         if (!(Xswitch[i])) {
           Xarr(L_COL, i) = 0;
           Xarr(R_COL, i) = 0;
@@ -442,7 +440,6 @@ int COMCLUST (List trees) {
   ;
   
   ClusterTable X(List(trees(0)));
-  const int16 stack_size = 4 * X.N();
   std::array<int16, DAY_MAX_LEAVES> S;
   
   for (int16 i = 1; i != trees.length(); i++) {
