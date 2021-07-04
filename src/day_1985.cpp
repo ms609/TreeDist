@@ -32,14 +32,14 @@ __attribute__((constructor))
     l2[1] = 0;
     l2[2] = 1;
     
-    for (int_fast32_t i = 2; i != FACT_MAX; i++) {
+    for (int_fast32_t i = 2; i != FACT_MAX; ++i) {
       ldfact[i] = ldfact[i - 2] + log2(i);
     }
 
-    for (int_fast32_t i = 3; i != DAY_MAX_LEAVES; i++) {
+    for (int_fast32_t i = 3; i != DAY_MAX_LEAVES; ++i) {
       l2[i] = log2(i);
-      l2rooted[i] = ldfact[i + i - 3];
-      assert(l2unrooted[i] == ldfact[i + i - 5]);
+      l2rooted[i] = ldfact[(i << 1) - 3];
+      assert(l2unrooted[i] == ldfact[(i << 1) - 5]);
     }
   }
 
@@ -307,7 +307,7 @@ class ClusterTable {
       // invalid cluster <0,0>. 
       *L = X(enumeration, 0);
       *R = X(enumeration, 1);
-      enumeration++;
+      ++enumeration;
     }
     
 };
@@ -335,11 +335,11 @@ ClusterTable::ClusterTable(List phylo) {
   int16 n_visited = 0;
   IntegerVector weights(N() + M() + 1);
   
-  for (int16 i = 1; i != n_leaves + 1; i++) {
+  for (int16 i = 1; i != n_leaves + 1; ++i) {
     SET_LEFTMOST(i, i);
     weights[i] = 0;
   }
-  for (int16 i = n_leaves + 1; i != N() + M() + 1; i++) {
+  for (int16 i = n_leaves + 1; i != N() + M() + 1; ++i) {
     SET_LEFTMOST(i, 0);
     weights[i] = 0;
   }
@@ -351,7 +351,7 @@ ClusterTable::ClusterTable(List phylo) {
     if (!GET_LEFTMOST(parent_i)) SET_LEFTMOST(parent_i, GET_LEFTMOST(child_i));
     if (is_leaf(&child_i)) {
       VISIT_LEAF(&child_i, &n_visited);
-      weights[parent_i]++;
+      ++weights[parent_i];
       ENTER(child_i, 0);
     } else {
       weights[parent_i] += 1 + weights[child_i];
@@ -372,7 +372,7 @@ ClusterTable::ClusterTable(List phylo) {
   // simply described by a pair <L,R> of internal labels.
   
   TRESET();
-  for (int16 i = 1; i != N(); i++) {
+  for (int16 i = 1; i != N(); ++i) {
     setX(i, L_COL, 0);
     setX(i, R_COL, 0);
   }
@@ -381,7 +381,7 @@ ClusterTable::ClusterTable(List phylo) {
   NVERTEX(&v, &w);
   while (v) {
     if (is_leaf(&v)) {
-      leafcode++;
+      ++leafcode;
       // We prepared the encoder in an earlier step, so need no X[v, 3] <- leafcode
       R = leafcode;
       NVERTEX(&v, &w);
@@ -570,9 +570,9 @@ double consensus_info (const List trees, const LogicalVector phylo) {
             pop(&L_j, &R_j, &N_j, &W_j, S, &Spos);
             if (L_j < L) L = L_j;
             if (R_j > R) R = R_j;
-            N += N_j;
-            W += W_j;
-            w -= W_j;
+            N = N + N_j;
+            W = W + W_j;
+            w = w - W_j;
           } while (w);
           push(L, R, N, W, S, &Spos);
           
@@ -664,7 +664,7 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
           } while (w);
           push(L, R, N, W, S, &Spos);
           if (N == R - L + 1) { // L..R is contiguous, and must be tested
-            if (Xi->ISCLUST(&L, &R)) n_shared++;
+            if (Xi->ISCLUST(&L, &R)) ++n_shared;
           }
         }
         Tj->NVERTEX_short(&v, &w); // Doesn't count all-ingroup or all-tips
