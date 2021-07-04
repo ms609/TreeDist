@@ -549,7 +549,7 @@ double consensus_info (const List trees, const LogicalVector phylo) {
             N = N + N_j;
             W = W + W_j;
             w = w - W_j;
-          } while (w);
+          };
           PUSH(L, R, N, W);
           
           ++j_pos;
