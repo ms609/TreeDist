@@ -499,16 +499,16 @@ double consensus_info (const List trees, const LogicalVector phylo) {
     L, R, N, W,
     L_j, R_j, N_j, W_j
   ;
+  const int16 n_trees = trees.length();
   
   std::vector<ClusterTable> tables;
-  tables.reserve(trees.length());
-  for (int16 i = trees.length(); i--; ) {
+  tables.reserve(n_trees);
+  for (int16 i = n_trees; i--; ) {
     tables.emplace_back(ClusterTable(List(trees(i))));
   }
   
   const int16
     n_tip = tables[0].N(),
-    n_trees = trees.length(),
     thresh = (n_trees / 2) + 1
   ;
   
