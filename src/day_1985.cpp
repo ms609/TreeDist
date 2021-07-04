@@ -615,16 +615,15 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
   
   IntegerVector shared(n_trees * (n_trees - 1) / 2);
   IntegerVector::iterator write_pos = shared.begin();
+  std::array<int16, DAY_MAX_LEAVES> S;
   
   for (int16 i = 0; i != n_trees - 1; i++) {
     Rcpp::XPtr<ClusterTable> table_i = tables(i);
     Rcpp::XPtr<ClusterTable> Xi(table_i);
-    const int16 stack_size = 4 * Xi->N();
     
     for (int16 j = i + 1; j != n_trees; j++) {
       Rcpp::XPtr<ClusterTable> table_j = tables(j);
       Rcpp::XPtr<ClusterTable> Tj(table_j);
-      std::vector<int16> S(stack_size);
       int16 Spos = 0; // Empty the stack S
       int16 n_shared = 0;
       
