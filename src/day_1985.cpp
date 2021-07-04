@@ -533,7 +533,7 @@ double consensus_info (const List trees, const LogicalVector phylo) {
       
       tables[i].CLEAR();
       tables[j].TRESET();
-      tables[j].NVERTEX_short(&v, &w);
+      tables[j].READT(&v, &w);
       int16 j_pos = 0, Spos = 0; // Empty the stack S
       
       do {
