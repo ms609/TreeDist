@@ -508,7 +508,6 @@ double consensus_info (const List trees, const LogicalVector phylo) {
   
   const bool phylo_info = phylo[0];
   
-  // int16* S = new int16[STACK_SIZE]; // Using new to avoid zero-initialization
   std::array<int16, STACK_SIZE> S;
   std::array<int16, DAY_MAX_LEAVES> split_count;
   
