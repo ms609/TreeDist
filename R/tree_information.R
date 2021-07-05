@@ -26,19 +26,27 @@
 #' @export
 SplitwiseInfo <- function (x, p = NULL) UseMethod('SplitwiseInfo')
 
+
+.GetPFromLabels <- function (tree, p, splits = as.Splits(tree)) {
+  np <- tree$node.label[as.integer(names(splits)) - NTip(tree)]
+  if (is.null(np)) {
+    np <- rep_len(p, length(splits))
+  }
+  p <- as.double(np) / p
+  p[is.na(p)] <- 1
+  if (any(p > 1)) {
+    stop("Nodes must be labelled with probabilities <= 1")
+  }
+  
+  # Return:
+  p
+}
+
 #' @export
 SplitwiseInfo.phylo <- function (x, p = NULL) {
   splits <- as.Splits(x)
   if (length(p) == 1L) { # length(NULL) == 0
-    np <- x$node.label[as.integer(names(splits)) - NTip(x)]
-    if (is.null(np)) {
-      np <- rep_len(p, length(splits))
-    }
-    p <- as.double(np) / p
-    p[is.na(p)] <- 1
-    if (any(p > 1)) {
-      stop("Nodes must be labelled with probabilities <= 1")
-    }
+    p <- .GetPFromLabels(x, p, splits)
   }
   SplitwiseInfo.Splits(splits, p)
 }
@@ -198,6 +206,11 @@ ConsensusInfo <- function (trees, info = 'phylogenetic', check.tips = TRUE) {
 #' ClusteringEntropy(tree1) + ClusteringEntropy(tree2)
 #' ClusteringInfoDistance(tree1, tree2)
 #' MutualClusteringInfo(tree1, tree2)
+#' 
+#' # Clustering entropy with uncertain splits
+#' tree <- ape::read.tree(text = "(a, b, (c, (d, e, (f, g)0.8))0.9);")
+#' SplitwiseInfo(tree)
+#' SplitwiseInfo(tree, TRUE)
 #' @template MRS
 #' 
 #' @references
@@ -207,20 +220,26 @@ ConsensusInfo <- function (trees, info = 'phylogenetic', check.tips = TRUE) {
 #' @family information functions
 #' @importFrom TreeTools as.Splits
 #' @export
-ClusteringEntropy <- function (x) UseMethod("ClusteringEntropy")
+ClusteringEntropy <- function (x, p = NULL) UseMethod("ClusteringEntropy")
 
 #' @rdname ClusteringEntropy
 #' @export
-ClusteringInfo <- function (x) UseMethod("ClusteringInfo")
+ClusteringInfo <- function (x, p = NULL) UseMethod("ClusteringInfo")
 
 #' @rdname ClusteringEntropy
 #' @export
-ClusteringEntropy.phylo <- function (x) ClusteringEntropy.Splits(as.Splits(x))
+ClusteringEntropy.phylo <- function (x, p = NULL) {
+  splits <- as.Splits(x)
+  if (length(p) == 1) {
+    p <- .GetPFromLabels(x, p, splits)
+  }
+  ClusteringEntropy.Splits(splits, p = p)
+}
 
 #' @rdname ClusteringEntropy
 #' @export
-ClusteringEntropy.list <- function (x)
-    vapply(as.Splits(x), ClusteringEntropy.Splits, double(1L))
+ClusteringEntropy.list <- function (x, p = NULL)
+    vapply(as.Splits(x), ClusteringEntropy.Splits, double(1L), p = p)
 
 #' @rdname ClusteringEntropy
 #' @export
@@ -228,26 +247,35 @@ ClusteringEntropy.multiPhylo <- ClusteringEntropy.list
 
 #' @rdname ClusteringEntropy
 #' @export
-ClusteringEntropy.Splits <- function (x) {
+ClusteringEntropy.Splits <- function (x, p = NULL) {
   nLeaves <- attr(x, 'nTip')
   inSplit <- TipsInSplits(x)
   splitP <- rbind(inSplit, nLeaves - inSplit, deparse.level = 0L) / nLeaves
+  if (is.null(p)) {
+    p <- 1L
+  }
   
   # Return:
-  sum(apply(splitP, 2, Entropy))
+  sum(p * apply(splitP, 2, Entropy))
 }
 
 #' @export
-ClusteringEntropy.NULL <- function (x) NULL
+ClusteringEntropy.NULL <- function (x, p = NULL) NULL
 
 #' @rdname ClusteringEntropy
 #' @export
-ClusteringInfo.phylo <- function (x) ClusteringInfo.Splits(as.Splits(x))
+ClusteringInfo.phylo <- function (x, p = NULL) {
+  splits <- as.Splits(x)
+  if (length(p) == 1) {
+    p <- .GetPFromLabels(x, p, splits)
+  }
+  ClusteringInfo.Splits(splits, p = p)
+}
 
 #' @rdname ClusteringEntropy
 #' @export
-ClusteringInfo.list <- function (x)
-    vapply(as.Splits(x), ClusteringInfo.Splits, double(1L))
+ClusteringInfo.list <- function (x, p = NULL)
+    vapply(as.Splits(x), ClusteringInfo.Splits, double(1L), p = p)
 
 #' @rdname ClusteringEntropy
 #' @export
@@ -255,13 +283,16 @@ ClusteringInfo.multiPhylo <- ClusteringInfo.list
 
 #' @rdname ClusteringEntropy
 #' @export
-ClusteringInfo.Splits <- function (x) {
+ClusteringInfo.Splits <- function (x, p = NULL) {
   nLeaves <- attr(x, 'nTip')
   inSplit <- TipsInSplits(x)
   splitP <- rbind(inSplit, nLeaves - inSplit, deparse.level = 0L) / nLeaves
+  if (is.null(p)) {
+    p <- 1L
+  }
   
   # Return:
-  sum(apply(splitP, 2, Entropy)) * nLeaves
+  sum(p * apply(splitP, 2, Entropy)) * nLeaves
 }
 
 #' @export

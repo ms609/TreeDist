@@ -34,6 +34,23 @@ test_that("SplitwiseInfo() handles probabilities", {
   
 })
 
+test_that("SplitwiseInfo() can't be improved by dropping resolved tip", {
+  # Test arguably redundant, but a useful reminder of a closed optimization
+  # possibility
+  b8With <- as.Splits(c(T, T, T, T, F, F, F, F))
+  b8Without <- as.Splits(c(T, T, T, F, F, F, F))
+  i8With <- as.Splits(c(T, T, T, T, T, T, F, F))
+  i8Without <- as.Splits(c(T, T, T, T, T, F, F))
+  expect_lt(SplitwiseInfo(b8With, p = 0.5), SplitwiseInfo(b8Without))
+  expect_lt(SplitwiseInfo(i8With, p = 0.5), SplitwiseInfo(i8Without))
+  
+  balancedWithout <- BalancedTree(32)
+  balancedWith <- AddTip(balancedWithout, 32)
+  p <- double(30) + 1
+  p[c(58, 62, 64, 65) - 35] <- 0.5
+  expect_lt(SplitwiseInfo(balancedWith, p = p), SplitwiseInfo(balancedWithout))
+})
+
 test_that('ClusteringInfo() method works', {
   trees <- list(BalancedTree(8), PectinateTree(8))
   expect_equal(vapply(trees, ClusteringInfo, 0),

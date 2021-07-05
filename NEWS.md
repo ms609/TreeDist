@@ -1,7 +1,7 @@
 # TreeDist 2.0.3.9004 (development)
 
-- `SplitwiseInfo()` gains a `p` parameter to reflect the reduced information
-  content of splits with lower support values.
+- `SplitwiseInfo()` and `ClusteringInfo()` gain a `p` parameter to reflect the
+  reduced information content of splits with lower support values.
 - `cons_phylo_info()` quickly calculates the information content of the
   consensus of a set of trees.
 
