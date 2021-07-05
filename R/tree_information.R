@@ -28,16 +28,21 @@ SplitwiseInfo <- function (x, p = NULL) UseMethod('SplitwiseInfo')
 
 
 .GetPFromLabels <- function (tree, p, splits = as.Splits(tree)) {
-  np <- tree$node.label[as.integer(names(splits)) - NTip(tree)]
-  if (is.null(np)) {
-    np <- rep_len(p, length(splits))
+  if (length(p) == 1L) { # length(NULL) == 0
+    if (p == FALSE) {
+      NULL
+    } else {
+      np <- tree$node.label[as.integer(names(splits)) - NTip(tree)]
+      if (is.null(np)) {
+        np <- rep_len(p, length(splits))
+      }
+      p <- as.double(np) / p
+      p[is.na(p)] <- 1
+      if (any(p > 1)) {
+        stop("Nodes must be labelled with probabilities <= 1")
+      }
+    }
   }
-  p <- as.double(np) / p
-  p[is.na(p)] <- 1
-  if (any(p > 1)) {
-    stop("Nodes must be labelled with probabilities <= 1")
-  }
-  
   # Return:
   p
 }
@@ -45,10 +50,7 @@ SplitwiseInfo <- function (x, p = NULL) UseMethod('SplitwiseInfo')
 #' @export
 SplitwiseInfo.phylo <- function (x, p = NULL) {
   splits <- as.Splits(x)
-  if (length(p) == 1L) { # length(NULL) == 0
-    p <- .GetPFromLabels(x, p, splits)
-  }
-  SplitwiseInfo.Splits(splits, p)
+  SplitwiseInfo.Splits(splits, .GetPFromLabels(x, p, splits))
 }
   
 #' @export
@@ -230,10 +232,7 @@ ClusteringInfo <- function (x, p = NULL) UseMethod("ClusteringInfo")
 #' @export
 ClusteringEntropy.phylo <- function (x, p = NULL) {
   splits <- as.Splits(x)
-  if (length(p) == 1) {
-    p <- .GetPFromLabels(x, p, splits)
-  }
-  ClusteringEntropy.Splits(splits, p = p)
+  ClusteringEntropy.Splits(splits, p = .GetPFromLabels(x, p, splits))
 }
 
 #' @rdname ClusteringEntropy
@@ -266,10 +265,7 @@ ClusteringEntropy.NULL <- function (x, p = NULL) NULL
 #' @export
 ClusteringInfo.phylo <- function (x, p = NULL) {
   splits <- as.Splits(x)
-  if (length(p) == 1) {
-    p <- .GetPFromLabels(x, p, splits)
-  }
-  ClusteringInfo.Splits(splits, p = p)
+  ClusteringInfo.Splits(splits, p = .GetPFromLabels(x, p, splits))
 }
 
 #' @rdname ClusteringEntropy
