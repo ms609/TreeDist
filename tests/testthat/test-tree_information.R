@@ -9,6 +9,10 @@ test_that("SplitwiseInfo() / ClusteringInfo() handle probabilities", {
     Expect(..., ClusteringEntropy(tree, p))
   }
   Clust <- function (tree, ...) {
+    expect_equal(ClusteringInfo(tree, ..., sum = TRUE),
+                 sum(ClusteringInfo(tree, ..., sum = FALSE)))
+    expect_equal(ClusteringEntropy(tree, ..., sum = TRUE),
+                 sum(ClusteringEntropy(tree, ..., sum = FALSE)))
     expect_equal(ClusteringInfo(tree, ...) / NTip(tree),
                  ClusteringEntropy(tree, ...))
   }
