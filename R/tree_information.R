@@ -54,7 +54,7 @@ SplitwiseInfo <- function (x, p = NULL, sum = TRUE) {
 }
 
 #' @export
-SplitwiseInfo.phylo <- function (x, p = NULL) {
+SplitwiseInfo.phylo <- function (x, p = NULL, sum = TRUE) {
   splits <- as.Splits(x)
   SplitwiseInfo.Splits(splits, .GetPFromLabels(x, p, splits))
 }
