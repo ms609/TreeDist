@@ -4,13 +4,20 @@
 \alias{SplitwiseInfo}
 \title{Information content of splits within a tree}
 \usage{
-SplitwiseInfo(x, p = NULL)
+SplitwiseInfo(x, p = NULL, sum = TRUE)
 }
 \arguments{
 \item{x}{A tree of class \code{phylo}, a list of trees, or a \code{multiPhylo} object.}
 
 \item{p}{A vector of probabilities corresponding t oeach split in \code{x}.
 Specify \code{TRUE} to calculate this vector using the node labels of each tree.}
+
+\item{sum}{Logical: if \code{TRUE}, sum the information content of each split to
+provide the total splitwise information content of the tree.}
+}
+\value{
+\code{SplitwiseInfo()} returns the splitwise information content of the
+tree (or of each split in turn, if \code{sum = FALSE}), in bits.
 }
 \description{
 Sum the phylogenetic information content for all splits within a

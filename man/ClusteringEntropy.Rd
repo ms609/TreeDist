@@ -14,25 +14,25 @@
 \alias{ClusteringInfo.Splits}
 \title{Clustering entropy of all splits within a tree}
 \usage{
-ClusteringEntropy(x)
+ClusteringEntropy(x, p = NULL, sum = TRUE)
 
-ClusteringInfo(x)
+ClusteringInfo(x, p = NULL, sum = TRUE)
 
-\method{ClusteringEntropy}{phylo}(x)
+\method{ClusteringEntropy}{phylo}(x, p = NULL, sum = TRUE)
 
-\method{ClusteringEntropy}{list}(x)
+\method{ClusteringEntropy}{list}(x, p = NULL, sum = TRUE)
 
-\method{ClusteringEntropy}{multiPhylo}(x)
+\method{ClusteringEntropy}{multiPhylo}(x, p = NULL, sum = TRUE)
 
-\method{ClusteringEntropy}{Splits}(x)
+\method{ClusteringEntropy}{Splits}(x, p = NULL, sum = TRUE)
 
-\method{ClusteringInfo}{phylo}(x)
+\method{ClusteringInfo}{phylo}(x, p = NULL, sum = TRUE)
 
-\method{ClusteringInfo}{list}(x)
+\method{ClusteringInfo}{list}(x, p = NULL, sum = TRUE)
 
-\method{ClusteringInfo}{multiPhylo}(x)
+\method{ClusteringInfo}{multiPhylo}(x, p = NULL, sum = TRUE)
 
-\method{ClusteringInfo}{Splits}(x)
+\method{ClusteringInfo}{Splits}(x, p = NULL, sum = TRUE)
 }
 \arguments{
 \item{x}{A tree of class \code{phylo}, a list of trees, or a \code{multiPhylo} object.}

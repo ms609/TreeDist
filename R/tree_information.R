@@ -8,6 +8,11 @@
 #' @param x A tree of class `phylo`, a list of trees, or a `multiPhylo` object.
 #' @param p A vector of probabilities corresponding t oeach split in `x`. 
 #' Specify `TRUE` to calculate this vector using the node labels of each tree.
+#' @param sum Logical: if `TRUE`, sum the information content of each split to
+#' provide the total splitwise information content of the tree.
+#' 
+#' @return `SplitwiseInfo()` returns the splitwise information content of the
+#' tree (or of each split in turn, if `sum = FALSE`), in bits.
 #' 
 #' @family information functions
 #' 
@@ -24,28 +29,19 @@
 #' SplitwiseInfo(tree, TRUE)
 #' @template MRS
 #' @export
-SplitwiseInfo <- function (x, p = NULL) UseMethod('SplitwiseInfo')
+SplitwiseInfo <- function (x, p = NULL, sum = TRUE) {
+  UseMethod('SplitwiseInfo')
+}
 
 #' @export
-SplitwiseInfo.phylo <- function (x, p = NULL) {
+SplitwiseInfo.phylo <- function (x, p = NULL, sum = TRUE) {
   splits <- as.Splits(x)
-  if (length(p) == 1L) { # length(NULL) == 0
-    np <- x$node.label[as.integer(names(splits)) - NTip(x)]
-    if (is.null(np)) {
-      np <- rep_len(p, length(splits))
-    }
-    p <- as.double(np) / p
-    p[is.na(p)] <- 1
-    if (any(p > 1)) {
-      stop("Nodes must be labelled with probabilities <= 1")
-    }
-  }
-  SplitwiseInfo.Splits(splits, p)
+  SplitwiseInfo.Splits(splits, .GetPFromLabels(x, p, splits), sum)
 }
   
 #' @export
-SplitwiseInfo.multiPhylo <- function (x, p = NULL) {
-  vapply(as.Splits(x), SplitwiseInfo, double(1L), p)
+SplitwiseInfo.multiPhylo <- function (x, p = NULL, sum = TRUE) {
+  vapply(as.Splits(x), SplitwiseInfo, double(1L), p, sum)
 }
 
 #' @export
@@ -53,7 +49,7 @@ SplitwiseInfo.list <- SplitwiseInfo.multiPhylo
 
 #' @importFrom TreeTools Log2Rooted.int Log2Unrooted.int TipsInSplits
 #' @export
-SplitwiseInfo.Splits <- function(x, p = NULL) {
+SplitwiseInfo.Splits <- function(x, p = NULL, sum = TRUE) {
   nTip <- attr(x, 'nTip')
   inSplit <- TipsInSplits(x)
   
@@ -78,14 +74,21 @@ SplitwiseInfo.Splits <- function(x, p = NULL) {
     l2nInconsistent <- l2pInconsistent + l2n
     
     # Return:
-    sum(l2n * length(inSplit),
-        p * (log2(p) - l2nConsistent),
-        q * (log2(q) - l2nInconsistent))
+    if (sum) {
+      sum(l2n * length(inSplit),
+          p * (log2(p) - l2nConsistent),
+          q * (log2(q) - l2nInconsistent))
+    } else {
+      ret <- l2n + (p * (log2(p) - l2nConsistent)) 
+      ret[names(l2nInconsistent)] <- ret[names(l2nInconsistent)] +
+        (q * (log2(q) - l2nInconsistent))
+      ret
+    }
   }
 }
 
 #' @export
-SplitwiseInfo.NULL <- function (x, p = NULL) 0
+SplitwiseInfo.NULL <- function (x, p = NULL, sum = TRUE) 0
 
 #' Clustering entropy of all splits within a tree
 #' 
@@ -190,20 +193,27 @@ SplitwiseInfo.NULL <- function (x, p = NULL) 0
 #' @family information functions
 #' @importFrom TreeTools as.Splits
 #' @export
-ClusteringEntropy <- function (x) UseMethod("ClusteringEntropy")
+ClusteringEntropy <- function (x, p = NULL, sum = TRUE) {
+  UseMethod("ClusteringEntropy")
+}
 
 #' @rdname ClusteringEntropy
 #' @export
-ClusteringInfo <- function (x) UseMethod("ClusteringInfo")
+ClusteringInfo <- function (x, p = NULL, sum = TRUE) {
+  UseMethod("ClusteringInfo")
+}
 
 #' @rdname ClusteringEntropy
 #' @export
-ClusteringEntropy.phylo <- function (x) ClusteringEntropy.Splits(as.Splits(x))
+ClusteringEntropy.phylo <- function (x, p = NULL, sum = TRUE) {
+  splits <- as.Splits(x)
+  ClusteringEntropy.Splits(splits, p = .GetPFromLabels(x, p, splits), sum)
+}
 
 #' @rdname ClusteringEntropy
 #' @export
-ClusteringEntropy.list <- function (x)
-    vapply(as.Splits(x), ClusteringEntropy.Splits, double(1L))
+ClusteringEntropy.list <- function (x, p = NULL, sum = TRUE)
+    vapply(as.Splits(x), ClusteringEntropy.Splits, double(1L), p = p, sum)
 
 #' @rdname ClusteringEntropy
 #' @export
@@ -211,26 +221,31 @@ ClusteringEntropy.multiPhylo <- ClusteringEntropy.list
 
 #' @rdname ClusteringEntropy
 #' @export
-ClusteringEntropy.Splits <- function (x) {
+ClusteringEntropy.Splits <- function (x, p = NULL, sum = TRUE) {
+
   nLeaves <- attr(x, 'nTip')
   inSplit <- TipsInSplits(x)
   splitP <- rbind(inSplit, nLeaves - inSplit, deparse.level = 0L) / nLeaves
   
+  ret <- p * apply(splitP, 2, Entropy)
   # Return:
-  sum(apply(splitP, 2, Entropy))
+  if (sum) sum(ret) else ret
 }
 
 #' @export
-ClusteringEntropy.NULL <- function (x) NULL
+ClusteringEntropy.NULL <- function (x, p = NULL, sum = TRUE) NULL
 
 #' @rdname ClusteringEntropy
 #' @export
-ClusteringInfo.phylo <- function (x) ClusteringInfo.Splits(as.Splits(x))
+ClusteringInfo.phylo <- function (x, p = NULL, sum = TRUE) {
+  splits <- as.Splits(x)
+  ClusteringInfo.Splits(splits, p = .GetPFromLabels(x, p, splits), sum)
+}
 
 #' @rdname ClusteringEntropy
 #' @export
-ClusteringInfo.list <- function (x)
-    vapply(as.Splits(x), ClusteringInfo.Splits, double(1L))
+ClusteringInfo.list <- function (x, p = NULL, sum = TRUE)
+    vapply(as.Splits(x), ClusteringInfo.Splits, double(1L), p = p, sum)
 
 #' @rdname ClusteringEntropy
 #' @export
@@ -238,14 +253,10 @@ ClusteringInfo.multiPhylo <- ClusteringInfo.list
 
 #' @rdname ClusteringEntropy
 #' @export
-ClusteringInfo.Splits <- function (x) {
+ClusteringInfo.Splits <- function (x, p = NULL, sum = TRUE) {
   nLeaves <- attr(x, 'nTip')
-  inSplit <- TipsInSplits(x)
-  splitP <- rbind(inSplit, nLeaves - inSplit, deparse.level = 0L) / nLeaves
-  
-  # Return:
-  sum(apply(splitP, 2, Entropy)) * nLeaves
+  ClusteringEntropy.Splits(x, p, sum) * nLeaves
 }
 
 #' @export
-ClusteringInfo.NULL <- function (x) NULL
+ClusteringInfo.NULL <- function (x, p = NULL, sum = TRUE) NULL
