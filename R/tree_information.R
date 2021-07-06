@@ -56,7 +56,7 @@ SplitwiseInfo <- function (x, p = NULL, sum = TRUE) {
 #' @export
 SplitwiseInfo.phylo <- function (x, p = NULL, sum = TRUE) {
   splits <- as.Splits(x)
-  SplitwiseInfo.Splits(splits, .GetPFromLabels(x, p, splits))
+  SplitwiseInfo.Splits(splits, .GetPFromLabels(x, p, splits), sum)
 }
   
 #' @export
@@ -74,10 +74,10 @@ SplitwiseInfo.Splits <- function(x, p = NULL, sum = TRUE) {
   inSplit <- TipsInSplits(x)
   
   if (is.null(p)) {
-    sum(Log2Unrooted.int(nTip) -
-           vapply(inSplit, Log2Rooted.int, 0) -
-           vapply(nTip - inSplit, Log2Rooted.int, 0)
-    )
+    ret <- Log2Unrooted.int(nTip) -
+      vapply(inSplit, Log2Rooted.int, 0) -
+      vapply(nTip - inSplit, Log2Rooted.int, 0)
+    if (sum) sum(ret) else ret
   } else {
     q <- 1L - p
     qNonZero <- as.logical(1L - p)

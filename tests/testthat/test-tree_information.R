@@ -64,6 +64,17 @@ test_that("SplitwiseInfo() / ClusteringInfo() handle probabilities", {
                Clust(Tree('(a, b, (c, (d, e)));'), c(1, 1)))  
 })
 
+
+test_that("SplitwiseInfo() / ClusteringInfo(sum = FALSE)", {
+  splits <- as.Splits(BalancedTree(8))
+  x <- SplitwiseInfo(BalancedTree(8), sum = FALSE)
+  expect_equal(length(x), length(splits))
+  expect_equal(names(x), names(splits))
+  x <- ClusteringInfo(BalancedTree(8), sum = FALSE)
+  expect_equal(length(x), length(splits))
+  expect_equal(names(x), names(splits))
+})
+
 test_that("SplitwiseInfo() can't be improved by dropping resolved tip", {
   # Test arguably redundant, but a useful reminder of a closed optimization
   # possibility
