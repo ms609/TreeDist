@@ -1,7 +1,7 @@
 # TreeDist 2.0.3.9004 (development)
 
-- `cons_phylo_info()` quickly calculates the information content of the
-  consensus of a set of trees.
+- `ConsensusInfo()` quickly calculates the splitwise information content of the
+  consensus of a set of trees, after Smith (forthcoming).
 - `SplitwiseInfo()` and `ClusteringInfo()` gain a `p` parameter to reflect the
   reduced information content of splits with lower support values, and a `sum`
   parameter to allow return of individual split information content.
