@@ -18,6 +18,13 @@ Specify \code{TRUE} to calculate this vector using the node labels of each tree.
 \item{sum}{Logical: if \code{TRUE}, sum the information content of each split to
 provide the total splitwise information content of the tree.}
 
+\item{trees}{List of \code{phylo} objects, optionally with class \code{multiPhylo}.}
+
+\item{info}{Abbreviation of 'phylogenetic' or 'clustering', specifying
+the concept of information to employ. See \insertCite{Smith2020}{TreeDist}
+or \href{https://ms609.github.io/TreeDist/articles/information.html}{vignette}
+for details.}
+
 \item{check.tips}{Logical specifying whether to renumber leaves such that
 leaf numbering is consistent in all trees.}
 }

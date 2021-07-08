@@ -36,10 +36,16 @@ ClusteringInfo(x, p = NULL, sum = TRUE)
 }
 \arguments{
 \item{x}{A tree of class \code{phylo}, a list of trees, or a \code{multiPhylo} object.}
+
+\item{p}{A vector of probabilities corresponding t oeach split in \code{x}.
+Specify \code{TRUE} to calculate this vector using the node labels of each tree.}
+
+\item{sum}{Logical: if \code{TRUE}, sum the information content of each split to
+provide the total splitwise information content of the tree.}
 }
 \value{
-Returns the sum of the entropies or (clustering) information content, in bits,
-of each split in \code{x}.
+Returns the sum of the entropies or (clustering) information content,
+in bits, of each split in \code{x}.
 }
 \description{
 Sum the entropy (\code{ClusteringEntropy()}) or information content

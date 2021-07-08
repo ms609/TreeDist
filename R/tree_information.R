@@ -111,13 +111,31 @@ SplitwiseInfo.Splits <- function(x, p = NULL, sum = TRUE) {
 SplitwiseInfo.NULL <- function (x, p = NULL, sum = TRUE) 0
 
 #' @rdname SplitwiseInfo
+#' 
+#' @param trees List of `phylo` objects, optionally with class `multiPhylo`.
+#' @param info Abbreviation of 'phylogenetic' or 'clustering', specifying
+#' the concept of information to employ. See \insertCite{Smith2020}{TreeDist}
+#' or [vignette](https://ms609.github.io/TreeDist/articles/information.html)
+#' for details.
 #' @param check.tips Logical specifying whether to renumber leaves such that
 #' leaf numbering is consistent in all trees.
+#' 
 #' @return `ConsensusInfo()` returns the splitwise information content of the
 #' majority rule consensus of `trees`.
+#' @examples
+#' library("TreeTools")
+#' set.seed(0)
+#' trees <- list(RandomTree(8), BalancedTree(8), PectinateTree(8))
+#' cons <- consensus(trees, p = 0.5)
+#' p <- SplitFrequency(cons, trees) / length(trees)
+#' plot(cons)
+#' LabelSplits(cons, signif(SplitwiseInfo(cons, p, sum = FALSE), 4))
+#' ConsensusInfo(trees)
+#' LabelSplits(cons, signif(ClusteringEntropy(cons, p, sum = FALSE), 4))
+#' ConsensusInfo(trees, 'clustering')
 #' @export
 ConsensusInfo <- function (trees, info = 'phylogenetic', check.tips = TRUE) {
-  mode <- pmatch(info, c('phylogenetic', 'clustering'))
+  mode <- pmatch(tolower(info), c('phylogenetic', 'clustering'))
   if (is.na(mode)) {
     stop("`info` must be 'phylogenetic' or 'clustering'")
   }
@@ -198,10 +216,10 @@ ConsensusInfo <- function (trees, info = 'phylogenetic', check.tips = TRUE) {
 #' leaf \insertCite{@@Vinh2010: p. 2840}{TreeDist}, the information content of 
 #' a split is its entropy multiplied by the number of leaves. 
 #' 
-#' @param x A tree of class `phylo`, a list of trees, or a `multiPhylo` object.
+#' @inheritParams SplitwiseInfo
 #' 
-#' @return Returns the sum of the entropies or (clustering) information content, in bits,
-#' of each split in `x`.
+#' @return Returns the sum of the entropies or (clustering) information content,
+#' in bits, of each split in `x`.
 #' 
 #' @examples
 #' # Clustering entropy of an even split = 1 bit
