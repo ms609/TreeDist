@@ -1,6 +1,7 @@
 #' Pseudo-3D plotting
 #' 
-#' Plot a two-dimensional plot with the impression of a third dimension
+#' `Plot3()` is an experimental function that generates
+#' a two-dimensional plot with the impression of a third dimension
 #' obtained through point scaling, overlap and fogging.
 #' 
 #' @param x,y,z Coordinates of points to plot

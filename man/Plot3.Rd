@@ -35,7 +35,8 @@ Plot3(
 should reflect \code{z} position.}
 }
 \description{
-Plot a two-dimensional plot with the impression of a third dimension
+\code{Plot3()} is an experimental function that generates
+a two-dimensional plot with the impression of a third dimension
 obtained through point scaling, overlap and fogging.
 }
 \examples{
