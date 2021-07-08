@@ -5,7 +5,7 @@
 \alias{ConsensusInfo}
 \title{Information content of splits within a tree}
 \usage{
-SplitwiseInfo(x, p = NULL)
+SplitwiseInfo(x, p = NULL, sum = TRUE)
 
 ConsensusInfo(trees, info = "phylogenetic", check.tips = TRUE)
 }
@@ -15,10 +15,16 @@ ConsensusInfo(trees, info = "phylogenetic", check.tips = TRUE)
 \item{p}{A vector of probabilities corresponding t oeach split in \code{x}.
 Specify \code{TRUE} to calculate this vector using the node labels of each tree.}
 
+\item{sum}{Logical: if \code{TRUE}, sum the information content of each split to
+provide the total splitwise information content of the tree.}
+
 \item{check.tips}{Logical specifying whether to renumber leaves such that
 leaf numbering is consistent in all trees.}
 }
 \value{
+\code{SplitwiseInfo()} returns the splitwise information content of the
+tree (or of each split in turn, if \code{sum = FALSE}), in bits.
+
 \code{ConsensusInfo()} returns the splitwise information content of the
 majority rule consensus of \code{trees}.
 }
