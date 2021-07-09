@@ -139,6 +139,9 @@ ConsensusInfo <- function (trees, info = 'phylogenetic', check.tips = TRUE) {
   if (is.na(mode)) {
     stop("`info` must be 'phylogenetic' or 'clustering'")
   }
+  if (length(trees) == 1L) {
+    return(switch(mode, SplitwiseInfo(trees), ClusteringInfo(trees)))
+  }
   if (check.tips) {
     trees <- RenumberTips(trees, trees[[1]])
   }
