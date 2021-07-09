@@ -114,7 +114,7 @@ SplitwiseInfo.NULL <- function (x, p = NULL, sum = TRUE) 0
 #' 
 #' @param trees List of `phylo` objects, optionally with class `multiPhylo`.
 #' @param info Abbreviation of 'phylogenetic' or 'clustering', specifying
-#' the concept of information to employ. See \insertCite{Smith2020}{TreeDist}
+#' the concept of information to employ. See \insertCite{SmithDist}{TreeDist}
 #' or [vignette](https://ms609.github.io/TreeDist/articles/information.html)
 #' for details.
 #' @param check.tips Logical specifying whether to renumber leaves such that
