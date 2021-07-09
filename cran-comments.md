@@ -7,7 +7,7 @@
   * win_oldrel: with `devtools::check_win_oldrelease()`.
   
 * Linux:
-  * Ubuntu 20.04.1 LTS, R 3.6.0, release and devel, via Github Actions
+  * Ubuntu 20.04.1 LTS, R 3.6.3, release and devel, via Github Actions
   * via R-hub, with `rhub::check_for_cran()`, `rhub::check_with_sanitizers()`
     and  `rhub::check_with_valgrind()`.
   
@@ -17,9 +17,7 @@
 ## R CMD check results
 There were no ERRORs or WARNINGs.
 
-There were two NOTEs:
-> Maintainer: 'Martin R. Smith <martin.smith@durham.ac.uk>'
-
+There was one NOTE:
 
 > Suggests or Enhances not in mainstream repositories:
 >   TreeDistData
