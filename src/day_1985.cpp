@@ -475,7 +475,6 @@ double consensus_info (const List trees, const LogicalVector phylo) {
       int16 j_pos = 0, Spos = 0; // Empty the stack S
       
       do {
-        // if (tables[j].is_leaf(&v)) {
         if (IS_LEAF(v)) {
           PUSH(tables[i].ENCODE(v), tables[i].ENCODE(v), 1, 1);
         } else {
