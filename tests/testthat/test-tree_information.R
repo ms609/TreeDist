@@ -121,6 +121,7 @@ test_that('ClusteringInfo() method works', {
   p <- SplitFrequency(cons, trees) / length(trees)
   expect_equal(SplitwiseInfo(cons, p), ConsensusInfo(trees))
   expect_equal(ClusteringInfo(cons, p), ConsensusInfo(trees, 'clus'))
+  
 })
 
 
@@ -140,4 +141,7 @@ test_that("ConsensusInfo() generates correct value", {
   expect_equal(ConsensusInfo(trees[1], 'cl'), 4)
   expect_equal(ConsensusInfo(trees[c(1, 1)]), log2(3))
   expect_equal(ConsensusInfo(trees[c(1, 1)], 'cl'), 4)
+  
+  expect_equal(Entropy(c(1, 1, 1) / 3) - Entropy(c(1/2, 1/2, 9)/10),
+               ConsensusInfo(trees[c(rep(1, 9), 2)]))
 })

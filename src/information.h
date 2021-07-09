@@ -54,7 +54,7 @@ inline double split_phylo_info (const int16 n_in, const int16 *n_tip,
       l2n_inconsistent = l2p_inconsistent + l2n
     ;
     
-    return(l2n + 
+    return(l2n +
            p * (log2(p) - l2n_consistent) +
            q * (log2(q) - l2n_inconsistent));
   }
