@@ -1,3 +1,6 @@
+#ifndef _TREEDIST_SPLITLIST_H
+#define _TREEDIST_SPLITLIST_H
+
 #include <stdint.h>
 #include <Rcpp.h>
 using namespace Rcpp;
@@ -10,3 +13,5 @@ public:
   splitbit state[MAX_SPLITS][MAX_BINS];
   SplitList(RawMatrix);
 };
+
+#endif
