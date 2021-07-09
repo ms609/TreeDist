@@ -2,8 +2,9 @@
 using namespace Rcpp;
 #include <TreeTools.h> /* for root_on_node() */
 #include <TreeTools/root_tree.h> /* for root_on_node() */
-#include <cmath> /* for log2() */
+#include <array> /* for array */
 #include <bitset> /* for bitset */
+#include <cmath> /* for log2() */
 #include <memory> /* for unique_ptr, make_unique */
 #include "tree_distances.h"
 #include "SplitList.h"

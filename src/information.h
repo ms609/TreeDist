@@ -2,7 +2,6 @@
 #define _TREEDIST_INFO_H
 
 #include <cmath> /* for log2() */
-#include <bitset> /* for bitset */
 #include "ints.h" /* for int16 */
 
 const int_fast32_t
