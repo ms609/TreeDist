@@ -1,7 +1,7 @@
 Package: TreeDist
 Type: Package
-Title: Distances Between Phylogenetic Trees
-Version: 2.0.3.9004
+Title: Calculate and Map Distances Between Phylogenetic Trees
+Version: 2.1.0
 Authors@R: c(person("Martin R.", "Smith",
                   email="martin.smith@durham.ac.uk", 
                   role=c("aut", "cre", "cph", "prg"), 
@@ -27,8 +27,9 @@ Description: Implements measures of tree similarity, including
   the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>, and the
   Nearest Neighbour Interchange (NNI) distance, approximated per Li et al. 
   (1996) <doi:10.1007/3-540-61332-3_168>.
-  Includes tools for visualizing the landscape of a tree space, and for
-  calculating the median of a set of trees under any distance metric.
+  Includes tools for visualizing mappings of tree space, for
+  calculating the median of sets of trees, and for computing the information
+  content of trees and splits.
 Copyright: Incorporates Jonker-Volgenant Linear Assignment Problem 
   implementation by Roy Jonker, modified by Yong Yang after Yi Cao.
 URL: https://ms609.github.io/TreeDist/, https://github.com/ms609/TreeDist/
@@ -77,7 +78,6 @@ Config/Needs/website:
   pkgdown,
   remotes,
 SystemRequirements: C++14
-LazyData: true
 ByteCompile: true
 Encoding: UTF-8
 Language: en-GB

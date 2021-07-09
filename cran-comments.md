@@ -1,13 +1,13 @@
 ## Test environments
 * Microsoft Windows:
-  * Local Windows 10 installation, R 4.0.3
+  * Local Windows 10 installation, R 4.1.0-patched
   * windows-latest: Microsoft Windows Server 2019, Windows 10.0.17763, 
     R release, via [Github Actions](https://github.com/ms609/TreeDist/actions)
   * win_devel: with `devtools::check_win_devel()`, R devel
   * win_oldrel: with `devtools::check_win_oldrelease()`.
   
 * Linux:
-  * Ubuntu 20.04.1 LTS, R 3.6.0, release and devel, via Github Actions
+  * Ubuntu 20.04.1 LTS, R 3.6.3, release and devel, via Github Actions
   * via R-hub, with `rhub::check_for_cran()`, `rhub::check_with_sanitizers()`
     and  `rhub::check_with_valgrind()`.
   
@@ -17,15 +17,7 @@
 ## R CMD check results
 There were no ERRORs or WARNINGs.
 
-There were two NOTEs:
-> Maintainer: 'Martin R. Smith <martin.smith@durham.ac.uk>'
-> 
-> Days since last update: 2
-
-This release aims to fix errors identified by Prof. Ripley's post-submission
-checks.  I now see no memory errors when using `rhub::check_with_valgrind()`
-or `rhub::check_with_sanitizers()`; these builds appear to run checks 
-successfully, though they fail to save artefacts.
+There was one NOTE:
 
 > Suggests or Enhances not in mainstream repositories:
 >   TreeDistData
