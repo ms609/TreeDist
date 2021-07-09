@@ -3,6 +3,11 @@ library('TreeTools')
 test_that("SplitwiseInfo() / ClusteringInfo() handle probabilities", {
   Tree <- function (txt) ape::read.tree(text = txt)
   tree <- Tree('((a, b)60, (c, d));')
+  treeP <- Tree('((a, b)0.60, (c, d));')
+  treeProfile <- list(Tree('((a, b), (c, d));'),
+                      Tree('(a, b, c, d);'),
+                      Tree('((a, d), (c, b));'))[c(1, 1, 1, 2, 3)]
+  
   Test <- function (Expect, tree, p, ...) {
     Expect(..., SplitwiseInfo(tree, p))
     Expect(..., ClusteringInfo(tree, p))
@@ -36,9 +41,11 @@ test_that("SplitwiseInfo() / ClusteringInfo() handle probabilities", {
   expect_equal(0.6, Clust(tree, 100))
   
   
-  treeP <- Tree('((a, b)0.60, (c, d));')
   expect_equal(SplitwiseInfo(tree, 100), SplitwiseInfo(treeP, TRUE))
   expect_equal(Clust(tree, 100), Clust(treeP, TRUE))
+  
+  expect_equal(SplitwiseInfo(tree, 100), ConsensusInfo(treeProfile, 'p'))
+  expect_equal(ClusteringInfo(tree, 100), ConsensusInfo(treeProfile, 'c'))
   
   expect_equal(SplitwiseInfo(Tree('(a, b, (c, (d, e)0.8)0.75);'), TRUE),
                SplitwiseInfo(Tree('(a, b, (c, d, e)0.75);'), TRUE) +
@@ -101,6 +108,15 @@ test_that('ClusteringInfo() method works', {
                ClusteringInfo(structure(trees, class = 'multiPhylo')))
   expect_equal(vapply(trees, ClusteringInfo, 0),
                ClusteringInfo(trees))
+  
+  
+  # Recall: Trees are read in backwards.
+  trees <- list(RandomTree(8), BalancedTree(8), PectinateTree(8))
+  # Consensus assumes trees are rooted (!)
+  cons <- consensus(lapply(trees, RootTree, 1), p = 0.5)
+  p <- SplitFrequency(cons, trees) / length(trees)
+  expect_equal(SplitwiseInfo(cons, p), ConsensusInfo(trees))
+  expect_equal(ClusteringInfo(cons, p), ConsensusInfo(trees, 'clus'))
 })
 
 

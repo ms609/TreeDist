@@ -99,7 +99,7 @@ SplitwiseInfo.Splits <- function(x, p = NULL, sum = TRUE) {
           p * (log2(p) - l2nConsistent),
           q * (log2(q) - l2nInconsistent))
     } else {
-      ret <- l2n + (p * (log2(p) - l2nConsistent)) 
+      ret <- l2n + (p * (log2(p) - l2nConsistent))
       ret[names(l2nInconsistent)] <- ret[names(l2nInconsistent)] +
         (q * (log2(q) - l2nInconsistent))
       ret
@@ -125,13 +125,13 @@ SplitwiseInfo.NULL <- function (x, p = NULL, sum = TRUE) 0
 #' @examples
 #' library("TreeTools")
 #' set.seed(0)
-#' trees <- list(RandomTree(8), BalancedTree(8), PectinateTree(8))
+#' trees <- list(RandomTree(8), RootTree(BalancedTree(8), 1), PectinateTree(8))
 #' cons <- consensus(trees, p = 0.5)
 #' p <- SplitFrequency(cons, trees) / length(trees)
 #' plot(cons)
 #' LabelSplits(cons, signif(SplitwiseInfo(cons, p, sum = FALSE), 4))
 #' ConsensusInfo(trees)
-#' LabelSplits(cons, signif(ClusteringEntropy(cons, p, sum = FALSE), 4))
+#' LabelSplits(cons, signif(ClusteringInfo(cons, p, sum = FALSE), 4))
 #' ConsensusInfo(trees, 'clustering')
 #' @export
 ConsensusInfo <- function (trees, info = 'phylogenetic', check.tips = TRUE) {

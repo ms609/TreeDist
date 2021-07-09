@@ -46,6 +46,16 @@ SplitwiseInfo(TreeTools::PectinateTree(8))
 tree <- ape::read.tree(text = "(a, b, (c, (d, e, (f, g)0.8))0.9);")
 SplitwiseInfo(tree)
 SplitwiseInfo(tree, TRUE)
+library("TreeTools")
+set.seed(0)
+trees <- list(RandomTree(8), RootTree(BalancedTree(8), 1), PectinateTree(8))
+cons <- consensus(trees, p = 0.5)
+p <- SplitFrequency(cons, trees) / length(trees)
+plot(cons)
+LabelSplits(cons, signif(SplitwiseInfo(cons, p, sum = FALSE), 4))
+ConsensusInfo(trees)
+LabelSplits(cons, signif(ClusteringInfo(cons, p, sum = FALSE), 4))
+ConsensusInfo(trees, 'clustering')
 }
 \seealso{
 An introduction to the phylogenetic information content of a split is given
