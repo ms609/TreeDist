@@ -1,9 +1,10 @@
-#' TreeDist:  Distances between Phylogenetic Trees
+#' TreeDist: Distances between Phylogenetic Trees
 #' 
 #' 'TreeDist' is an R package that implements a suite of metrics that quantify the
 #' topological distance between pairs of unweighted phylogenetic trees.
 #' It also includes a simple 'Shiny' application to allow the visualization of
-#' distance-based tree spaces.
+#' distance-based tree spaces, and functions to calculate the information content
+#' of trees and splits.
 #' 
 #' 'TreeDist' primarily employs metrics in the category of
 #' 'generalized Robinson&ndash;Foulds distances': they are based on comparing splits
