@@ -531,13 +531,14 @@ double consensus_info (const List trees, const LogicalVector phylo) {
         }
         // If we have a perfectly resolved tree, break.
         if (splits_found == n_tip - 3) {
-          return info;
+          return phylo_info ? info : info * n_tip;
         }
       }
     }
   }
   
-  return info;
+  // Convert clustering entropy to *total* information 
+  return phylo_info ? info : info * n_tip;
 }
 
 // [[Rcpp::export]]
