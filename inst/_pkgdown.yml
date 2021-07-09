@@ -35,6 +35,9 @@ reference:
   - title: "Utility functions"
     desc: Functions to facilitate interaction with the package.
     contents:
+      - Plot3
+      - ClusterTable
+      - ClusterTable-methods
       - CompareAll
       - median.multiPhylo
       - LAPJV
