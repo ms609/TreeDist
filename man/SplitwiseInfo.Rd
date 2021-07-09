@@ -21,7 +21,7 @@ provide the total splitwise information content of the tree.}
 \item{trees}{List of \code{phylo} objects, optionally with class \code{multiPhylo}.}
 
 \item{info}{Abbreviation of 'phylogenetic' or 'clustering', specifying
-the concept of information to employ. See \insertCite{Smith2020}{TreeDist}
+the concept of information to employ. See \insertCite{SmithDist}{TreeDist}
 or \href{https://ms609.github.io/TreeDist/articles/information.html}{vignette}
 for details.}
 
