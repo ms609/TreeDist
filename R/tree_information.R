@@ -114,12 +114,10 @@ NULL
 
 
 #' @param x A tree of class `phylo`, a list of trees, or a `multiPhylo` object.
-#' @param p A vector of probabilities corresponding t oeach split in `x`. 
+#' @param p A vector of probabilities corresponding to each split in `x`. 
 #' Specify `TRUE` to calculate this vector using the node labels of each tree.
 #' @param sum Logical: if `TRUE`, sum the information content of each split to
 #' provide the total splitwise information content of the tree.
-#' 
-#' 
 #' @rdname TreeInfo
 #' @export
 SplitwiseInfo <- function (x, p = NULL, sum = TRUE) {

@@ -44,7 +44,7 @@ ConsensusInfo(trees, info = "phylogenetic", check.tips = TRUE)
 \arguments{
 \item{x}{A tree of class \code{phylo}, a list of trees, or a \code{multiPhylo} object.}
 
-\item{p}{A vector of probabilities corresponding t oeach split in \code{x}.
+\item{p}{A vector of probabilities corresponding to each split in \code{x}.
 Specify \code{TRUE} to calculate this vector using the node labels of each tree.}
 
 \item{sum}{Logical: if \code{TRUE}, sum the information content of each split to
