@@ -42,9 +42,8 @@ SplitEntropy(c(A, A, A, B, B, B), c(A, A, B, B, B, B))
 }
 \seealso{
 Other information functions: 
-\code{\link{ClusteringEntropy}()},
 \code{\link{SplitSharedInformation}()},
-\code{\link{SplitwiseInfo}()}
+\code{\link{TreeInfo}}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

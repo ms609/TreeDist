@@ -19,7 +19,7 @@
 #' leaf to another.
 #' 
 #' @template tree12ListParams
-#' @param Vector Function convering a tree to a numeric vector. 
+#' @param Vector Function converting a tree to a numeric vector. 
 #' `KCVector`, the default, returns the number of edges between the common
 #' ancestor of each pair of leaves and the root of the tree (per
 #' Kendall & Colijn 2016).

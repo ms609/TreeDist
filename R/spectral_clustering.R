@@ -2,7 +2,7 @@
 #'
 #' Spectral clustering emphasizes nearest neighbours when forming clusters;
 #' it avoids some of the issues that arise from clustering around means / 
-#' medioids.
+#' medoids.
 #'
 #' @param D Square matrix or `dist` object containing Euclidean distances
 #'   between data points.
