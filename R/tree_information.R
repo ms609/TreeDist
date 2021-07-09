@@ -129,7 +129,7 @@ SplitwiseInfo <- function (x, p = NULL, sum = TRUE) {
 .GetPFromLabels <- function (tree, p, splits = as.Splits(tree)) {
   if (length(p) == 1L) { # length(NULL) == 0
     if (p == FALSE) {
-      NULL
+      p <- NULL
     } else {
       np <- tree$node.label[as.integer(names(splits)) - NTip(tree)]
       if (is.null(np)) {
@@ -201,7 +201,7 @@ SplitwiseInfo.Splits <- function(x, p = NULL, sum = TRUE) {
 }
 
 #' @export
-SplitwiseInfo.NULL <- function (x, p = NULL, sum = TRUE) 0
+SplitwiseInfo.NULL <- function (x, p = NULL, sum = TRUE) NULL
 
 #' @examples
 #' 

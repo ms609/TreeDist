@@ -8,7 +8,7 @@ test_that("SplitwiseInfo() / ClusteringInfo() handle probabilities", {
                       Tree('(a, b, c, d);'),
                       Tree('((a, d), (c, b));'))[c(1, 1, 1, 2, 3)]
   
-  Test <- function (Expect, tree, p, ...) {
+  Test <- function (Expect, tree, p = NULL, ...) {
     Expect(..., SplitwiseInfo(tree, p))
     Expect(..., ClusteringInfo(tree, p))
     Expect(..., ClusteringEntropy(tree, p))
@@ -22,9 +22,13 @@ test_that("SplitwiseInfo() / ClusteringInfo() handle probabilities", {
                  ClusteringEntropy(tree, ...))
   }
   Test(expect_error, tree, TRUE)
+  Test(expect_null, tree = NULL)
   expect_gt(SplitwiseInfo(tree), SplitwiseInfo(tree, 100))
   expect_gt(ClusteringInfo(tree), ClusteringInfo(tree, 100))
   expect_gt(ClusteringEntropy(tree), ClusteringEntropy(tree, 100))
+  expect_equal(SplitwiseInfo(tree), SplitwiseInfo(tree, p = FALSE))
+  expect_equal(ClusteringInfo(tree), ClusteringInfo(tree, p = FALSE))
+  expect_equal(ClusteringEntropy(tree), ClusteringEntropy(tree, p = FALSE))
   
   expect_equal(0, SplitwiseInfo(tree, 60 * 3),
                tolerance = sqrt(.Machine$double.eps))
