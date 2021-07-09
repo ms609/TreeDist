@@ -1,15 +1,16 @@
 #' Pseudo-3D plotting
 #' 
-#' Plot a two-dimensional plot with the impression of a third dimension
+#' `Plot3()` is an experimental function that generates
+#' a two-dimensional plot with the impression of a third dimension
 #' obtained through point scaling, overlap and fogging.
 #' 
-#' @param x,y,z Coordinates of points to plot
+#' @param x,y,z Coordinates of points to plot.
 #' @param fog Numeric specifying amount of mist to apply to distant points.
 #' @param shrink Numeric specifying degree to which size of plotted point
 #' should reflect `z` position.
 #' @param plot.bg Colour with which to fill plot area, used as fog colour.
 #' @param bg,cex,col,pch,add,axes,frame.plot,\dots Parameters passed to 
-#' [plot.default].
+#' [plot.default()].
 #' 
 #' @examples 
 #' Plot3(1:10, 1:10, 1:10, cex = 7, pch = 16, axes = FALSE, asp = 1)

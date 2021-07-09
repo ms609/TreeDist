@@ -64,19 +64,26 @@ as.ClusterTable.list <- function (x, tipLabels = NULL, ...) {
 #' @export
 as.ClusterTable.multiPhylo <- as.ClusterTable.list
 
-#' @rdname ClusterTable-methods
+#' S3 methods for `ClusterTable` objects
+#' 
+#' S3 methods for [`ClusterTable`] objects.
+#' 
+#' @param x,object Object of class `ClusterTable`.
+#' @param \dots Additional arguments for consistency with S3 methods.
+#'
+#' @examples
+#' clustab <- as.ClusterTable(TreeTools::BalancedTree(6))
+#' as.matrix(clustab)
+#' @template MRS
+#' @name ClusterTable-methods
 #' @export
 as.matrix.ClusterTable <- function (x, ...) {
   ClusterTable_matrix(x)
 }
 
-#' S3 methods for `ClusterTable` objects
-#' 
-#' @param x,object Object of class `ClusterTable`.
-#' @param \dots Additional arguments for consistency with S3 methods.
-#'
-#' @template MRS
-#' @name ClusterTable-methods
+#' @rdname ClusterTable-methods
+#' @examples
+#' print(clustab)
 #' @export
 print.ClusterTable <- function (x, ...) {
   nTip <- attr(x, 'nTip')
@@ -85,6 +92,8 @@ print.ClusterTable <- function (x, ...) {
 }
 
 #' @rdname ClusterTable-methods
+#' @examples
+#' summary(clustab)
 #' @export
 summary.ClusterTable <- function (object, ...) {
   nTip <- attr(object, 'nTip')

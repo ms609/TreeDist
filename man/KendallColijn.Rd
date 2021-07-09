@@ -25,7 +25,7 @@ or lists of such trees to undergo pairwise comparison.  Where implemented,
 \code{tree2 = NULL} will compute distances between each pair of trees in the list
 \code{tree1} using a fast algorithm based on Day (1985).}
 
-\item{Vector}{Function convering a tree to a numeric vector.
+\item{Vector}{Function converting a tree to a numeric vector.
 \code{KCVector}, the default, returns the number of edges between the common
 ancestor of each pair of leaves and the root of the tree (per
 Kendall & Colijn 2016).

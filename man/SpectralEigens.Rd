@@ -24,7 +24,7 @@ clustered using a method of choice.
 \description{
 Spectral clustering emphasizes nearest neighbours when forming clusters;
 it avoids some of the issues that arise from clustering around means /
-medioids.
+medoids.
 }
 \examples{
 library('TreeTools', quietly = TRUE, warn.conflict = FALSE)

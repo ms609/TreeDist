@@ -66,7 +66,7 @@ The split $S_1 =$ `AB|CDEF` is found in 15 of the 105 six-leaf trees;
 as such, the probability that a randomly drawn tree contains $S_1$ is 
 $P(S_1) = \frac{15}{105}$, and the information content $h(S_1) = 
 -\log_2{\frac{15}{105}} \approx 2.81\textrm{ bits}$. @Steel2006 dub this 
-quantity the phylogenetic information content.
+quantity the **phylogenetic information content**.
 
 Likewise, the split $S_2 =$ `ABC|DEF` occurs in nine of the 105 six-leaf trees,
 so $h(S_2) = -\log_2{\frac{9}{105}} \approx 3.54\textrm{ bits}$.
@@ -253,6 +253,8 @@ two splits contain some mutual information: for instance, if a leaf bears the
 label 'B', we can be certain that it will also bear the label 'D'.
 The more similar the splits are, and the more they agree in their division of
 leaves, the more mutual information they will exhibit.
+I term this the **clustering information**, in contradistinction to the 
+concept of phylogenetic information discussed above.
 
 More formally, let split $S$ divides $n$ leaves into two partitions $A$ and $B$.
 The probability that a randomly chosen leaf $x$ is in partition $k$ is 
