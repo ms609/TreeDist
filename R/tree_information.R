@@ -82,6 +82,13 @@
 #' in terms of the probability that a uniformly selected tree will contain it
 #' \insertCite{Thorley1998}{TreeDist}.
 #' 
+#' @section Consensus information:
+#' 
+#' The information content of splits in a consensus tree is calculated by
+#' interpreting support values (i.e. the proportion of trees containing
+#' each split in the consensus) as probabilities that the true tree contains
+#' that split, following \insertCite{SmithCons;textual}{TreeDist}.
+#' 
 #' @return `SplitwiseInfo()`, `ClusteringInfo()` and `ClusteringEntropy()`
 #' return the splitwise information content of the tree -- or of each split
 #' in turn, if `sum = FALSE` -- in bits.

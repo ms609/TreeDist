@@ -26,9 +26,6 @@ release_questions <- function() {
 # devtools::check_win_devel(quiet = TRUE); rhub::check_for_cran()
 # Check valgrind section of GitHub actions for memcheck errors
 # 
-# rhub::check_with_sanitizers() # runs all package package tests, examples and 
-# vignettes with Address Sanitizer and Undefined Behavior Sanitizer.
-#
 # revdepcheck::revdep_check()
 #
 # codemetar::write_codemeta()
