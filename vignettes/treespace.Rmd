@@ -27,7 +27,7 @@ can mislead interpretation.
 
 Tree space mapping and analysis is made simple with the Shiny app included in
 the 'TreeDist' R package.  Simply install [R](https://www.r-project.org/) or
-[RStudio](https://rstudio.com/), then copy the code below into the R command
+[RStudio](https://www.rstudio.com/), then copy the code below into the R command
 line:
 
 ```r
