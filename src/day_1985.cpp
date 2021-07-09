@@ -499,7 +499,7 @@ double consensus_info (const List trees, const LogicalVector phylo) {
                 assert(L > 0);
                 ++split_count[L - 1];
                 if (!split_size[L - 1]) {
-                  split_size[L - 1] = R - L + 1;
+                  split_size[L - 1] = N;
                 }
                 assert(split_size[L - 1] > 0);
               } else if (tables[i].CLUSTONR(&L, &R)) {
@@ -507,7 +507,7 @@ double consensus_info (const List trees, const LogicalVector phylo) {
                 assert(R > 0);
                 ++split_count[R - 1];
                 if (!split_size[R - 1]) {
-                  split_size[R - 1] = R - L + 1;
+                  split_size[R - 1] = N;
                 }
                 assert(split_size[R - 1] > 0);
               }
