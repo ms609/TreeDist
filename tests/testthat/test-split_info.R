@@ -38,7 +38,8 @@ test_that("Split info calculated", {
   
   p_in <- c(7, 5, 3, 2, 2) / 9
   p_out <- 1 - p_in
-  expect_equal(sum(apply(rbind(p_in, p_out), 2, Entropy) * split_p),
+  expect_equal(sum(apply(rbind(p_in, p_out), 2, Entropy) * split_p)
+               * NTip(trees[[1]]),
                consensus_info(trees, FALSE))
   
   # Even number of trees: cz, with p == 0.5, not in consensus.
