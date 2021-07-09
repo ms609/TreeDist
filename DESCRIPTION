@@ -72,7 +72,10 @@ RdMacros: Rdpack
 VignetteBuilder: knitr
 Config/Needs/coverage: covr
 Config/Needs/metadata: codemetar
-Config/Needs/website: pkgdown
+Config/Needs/website: 
+  igraph,
+  pkgdown,
+  remotes,
 SystemRequirements: C++14
 LazyData: true
 ByteCompile: true
