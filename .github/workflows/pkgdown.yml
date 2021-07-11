@@ -54,7 +54,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          install.packages('pkgdown')
           remotes::install_deps(dependencies = c('soft', 'Config/Needs/website'))
         shell: Rscript {0}
 
