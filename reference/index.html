@@ -87,7 +87,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
       </span>
     </div>
 
@@ -95,7 +95,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -142,7 +142,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/ms609/TreeDist">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -203,9 +203,9 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="KendallColijn.html">KendallColijn()</a></code> <code><a href="KendallColijn.html">KCVector()</a></code> </p>
+          <p><code><a href="KendallColijn.html">KendallColijn()</a></code> <code><a href="KendallColijn.html">KCVector()</a></code> <code><a href="KendallColijn.html">PathVector()</a></code> <code><a href="KendallColijn.html">SplitVector()</a></code> <code><a href="KendallColijn.html">KCDiameter()</a></code> </p>
         </td>
-        <td><p>Kendall-Colijn distance</p></td>
+        <td><p>Kendall–Colijn distance</p></td>
       </tr><tr>
         
         <td>
@@ -265,22 +265,22 @@ content</p></td>
       <tr>
         
         <td>
-          <p><code><a href="Project.html">Project()</a></code> </p>
+          <p><code><a href="MapTrees.html">MapTrees()</a></code> <code><a href="MapTrees.html">Project()</a></code> </p>
         </td>
-        <td><p>Graphical user interface for projecting distances and analysing
+        <td><p>Graphical user interface for mapping distances and analysing
 tree space</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="ProjectionQuality.html">ProjectionQuality()</a></code> </p>
+          <p><code><a href="MappingQuality.html">MappingQuality()</a></code> <code><a href="MappingQuality.html">ProjectionQuality()</a></code> </p>
         </td>
-        <td><p>Quality of projected distances</p></td>
+        <td><p>Quality of mapped distances</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="SpectralClustering.html">SpectralClustering()</a></code> </p>
+          <p><code><a href="SpectralEigens.html">SpectralEigens()</a></code> <code><a href="SpectralEigens.html">SpectralClustering()</a></code> </p>
         </td>
-        <td><p>Spectral clustering</p></td>
+        <td><p>Eigenvalues for spectral clustering</p></td>
       </tr><tr>
         
         <td>
@@ -327,25 +327,19 @@ tree space</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="ClusteringEntropy.html">ClusteringEntropy()</a></code> <code><a href="ClusteringEntropy.html">ClusteringInfo()</a></code> </p>
-        </td>
-        <td><p>Clustering entropy of all splits within a tree</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="SplitEntropy.html">SplitEntropy()</a></code> </p>
         </td>
         <td><p>Entropy of two splits</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="SplitSharedInformation.html">SplitSharedInformation()</a></code> <code><a href="SplitSharedInformation.html">SplitDifferentInformation()</a></code> <code><a href="SplitSharedInformation.html">TreesConsistentWithTwoSplits()</a></code> <code><a href="SplitSharedInformation.html">LnTreesConsistentWithTwoSplits()</a></code> </p>
+          <p><code><a href="SplitSharedInformation.html">SplitSharedInformation()</a></code> <code><a href="SplitSharedInformation.html">SplitDifferentInformation()</a></code> <code><a href="SplitSharedInformation.html">TreesConsistentWithTwoSplits()</a></code> <code><a href="SplitSharedInformation.html">LnTreesConsistentWithTwoSplits()</a></code> <code><a href="SplitSharedInformation.html">Log2TreesConsistentWithTwoSplits()</a></code> <code><a href="SplitSharedInformation.html">Log2TreesConsistentWithTwoSplits()</a></code> </p>
         </td>
         <td><p>Shared information content of two splits</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="SplitwiseInfo.html">SplitwiseInfo()</a></code> </p>
+          <p><code><a href="TreeInfo.html">SplitwiseInfo()</a></code> <code><a href="TreeInfo.html">ClusteringEntropy()</a></code> <code><a href="TreeInfo.html">ClusteringInfo()</a></code> <code><a href="TreeInfo.html">ConsensusInfo()</a></code> </p>
         </td>
         <td><p>Information content of splits within a tree</p></td>
       </tr>
@@ -362,6 +356,24 @@ tree space</p></td>
       
       
       <tr>
+        
+        <td>
+          <p><code><a href="Plot3.html">Plot3()</a></code> </p>
+        </td>
+        <td><p>Pseudo-3D plotting</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ClusterTable.html">as.ClusterTable()</a></code> </p>
+        </td>
+        <td><p>Convert phylogenetic tree to <code>ClusterTable</code></p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="ClusterTable-methods.html">as.matrix(<i>&lt;ClusterTable&gt;</i>)</a></code> <code><a href="ClusterTable-methods.html">print(<i>&lt;ClusterTable&gt;</i>)</a></code> <code><a href="ClusterTable-methods.html">summary(<i>&lt;ClusterTable&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>S3 methods for <code>ClusterTable</code> objects</p></td>
+      </tr><tr>
         
         <td>
           <p><code><a href="CompareAll.html">CompareAll()</a></code> </p>

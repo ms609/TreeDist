@@ -90,7 +90,7 @@ proposed in Smith (2020)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
       </span>
     </div>
 
@@ -98,7 +98,7 @@ proposed in Smith (2020)." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -145,7 +145,7 @@ proposed in Smith (2020)." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/ms609/TreeDist">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -383,7 +383,7 @@ splits in the most or least informative tree, use <code>normalize = </code><code
 <code><a href='https://rdrr.io/r/base/Extremes.html'>pmin</a></code> respectively.
 To calculate the relative similarity against a reference tree that is known
 to be 'correct', use <code>normalize = SplitwiseInfo(trueTree)</code> (SPI, MSI) or
-<code><a href='ClusteringEntropy.html'>ClusteringEntropy(trueTree)</a></code> (MCI).</p>
+<code><a href='TreeInfo.html'>ClusteringEntropy(trueTree)</a></code> (MCI).</p>
 
     <h2 class="hasAnchor" id="troubleshooting"><a class="anchor" href="#troubleshooting"></a>Troubleshooting</h2>
 
@@ -403,7 +403,7 @@ or drop the maintainer an e-mail.)</p>
 &#8220;Optimal algorithms for comparing trees with labeled leaves.&#8221;
 <em>Journal of Classification</em>, <b>2</b>(1), 7--28.
 doi: <a href='https://doi.org/10.1007/BF01908061'>10.1007/BF01908061</a>
-, <a href='https://doi.org/10.1007/BF01908061'>https://doi.org/10.1007/BF01908061</a>.</p></li>
+.</p></li>
 <li><p>MacKay DJC (2003).
 <em>Information Theory, Inference, and Learning Algorithms</em>.
 Cambridge University Press, Cambridge.
@@ -412,17 +412,17 @@ Cambridge University Press, Cambridge.
 &#8220;Comparing clusterings---an information based distance.&#8221;
 <em>Journal of Multivariate Analysis</em>, <b>98</b>(5), 873--895.
 doi: <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>10.1016/j.jmva.2006.11.013</a>
-, <a href='https://doi.org/10.1016/j.jmva.2006.11.013'>https://doi.org/10.1016/j.jmva.2006.11.013</a>.</p></li>
+.</p></li>
 <li><p>Smith MR (2020).
 &#8220;Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees.&#8221;
 <em>Bioinformatics</em>, <b>36</b>(20), 5007--5013.
 doi: <a href='https://doi.org/10.1093/bioinformatics/btaa614'>10.1093/bioinformatics/btaa614</a>
-, <a href='https://doi.org/10.1093/bioinformatics/btaa614'>https://doi.org/10.1093/bioinformatics/btaa614</a>.</p></li>
+.</p></li>
 <li><p>Vinh NX, Epps J, Bailey J (2010).
 &#8220;Information theoretic measures for clusterings comparison: variants, properties, normalization and correction for chance.&#8221;
 <em>Journal of Machine Learning Research</em>, <b>11</b>, 2837--2854.
 doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</a>
-, <a href='https://doi.org/10.1145/1553374.1553511'>https://doi.org/10.1145/1553374.1553511</a>.</p></li>
+.</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
@@ -450,11 +450,11 @@ doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</
 <span class='co'># Best possible score is obtained by matching a tree with itself</span>
 <span class='fu'>DifferentPhylogeneticInfo</span><span class='op'>(</span><span class='va'>tree1</span>, <span class='va'>tree1</span><span class='op'>)</span> <span class='co'># 0, by definition</span>
 </div><div class='output co'>#&gt; [1] 0</div><div class='input'><span class='fu'>SharedPhylogeneticInfo</span><span class='op'>(</span><span class='va'>tree1</span>, <span class='va'>tree1</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 22.53747</div><div class='input'><span class='fu'><a href='SplitwiseInfo.html'>SplitwiseInfo</a></span><span class='op'>(</span><span class='va'>tree1</span><span class='op'>)</span> <span class='co'># Maximum shared phylogenetic information</span>
+</div><div class='output co'>#&gt; [1] 22.53747</div><div class='input'><span class='fu'><a href='TreeInfo.html'>SplitwiseInfo</a></span><span class='op'>(</span><span class='va'>tree1</span><span class='op'>)</span> <span class='co'># Maximum shared phylogenetic information</span>
 </div><div class='output co'>#&gt; [1] 22.53747</div><div class='input'>
 <span class='co'># Best possible score is a function of tree shape; the splits within</span>
 <span class='co'># balanced trees are more independent and thus contain less information</span>
-<span class='fu'><a href='SplitwiseInfo.html'>SplitwiseInfo</a></span><span class='op'>(</span><span class='va'>tree2</span><span class='op'>)</span>
+<span class='fu'><a href='TreeInfo.html'>SplitwiseInfo</a></span><span class='op'>(</span><span class='va'>tree2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 19.36755</div><div class='input'>
 <span class='co'># How similar are two trees?</span>
 <span class='fu'>SharedPhylogeneticInfo</span><span class='op'>(</span><span class='va'>tree1</span>, <span class='va'>tree2</span><span class='op'>)</span> <span class='co'># Amount of phylogenetic information in common</span>
@@ -466,7 +466,7 @@ doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</
 </div><div class='output co'>#&gt; [1] 14.39934</div><div class='input'>
 <span class='co'># Are they more similar than two trees of this shape would be by chance?</span>
 <span class='fu'>ExpectedVariation</span><span class='op'>(</span><span class='va'>tree1</span>, <span class='va'>tree2</span>, sample<span class='op'>=</span><span class='fl'>12</span><span class='op'>)</span><span class='op'>[</span><span class='st'>'DifferentPhylogeneticInfo'</span>, <span class='st'>'Estimate'</span><span class='op'>]</span>
-</div><div class='output co'>#&gt; [1] 33.31608</div><div class='input'>
+</div><div class='output co'>#&gt; [1] 34.56084</div><div class='input'>
 <span class='co'># Every split in tree1 conflicts with every split in tree3</span>
 <span class='co'># Pairs of conflicting splits contain clustering, but not phylogenetic, </span>
 <span class='co'># information</span>

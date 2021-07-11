@@ -16,9 +16,6 @@
     <loc>https://ms609.github.io/TreeDist/reference/ClusterTable.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/ClusteringEntropy.html</loc>
-  </url>
-  <url>
     <loc>https://ms609.github.io/TreeDist/reference/CompareAll.html</loc>
   </url>
   <url>
@@ -40,6 +37,12 @@
     <loc>https://ms609.github.io/TreeDist/reference/MASTSize.html</loc>
   </url>
   <url>
+    <loc>https://ms609.github.io/TreeDist/reference/MapTrees.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/reference/MappingQuality.html</loc>
+  </url>
+  <url>
     <loc>https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html</loc>
   </url>
   <url>
@@ -58,10 +61,7 @@
     <loc>https://ms609.github.io/TreeDist/reference/PathDist.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/Project.html</loc>
-  </url>
-  <url>
-    <loc>https://ms609.github.io/TreeDist/reference/ProjectionQuality.html</loc>
+    <loc>https://ms609.github.io/TreeDist/reference/Plot3.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/ReportMatching.html</loc>
@@ -73,7 +73,7 @@
     <loc>https://ms609.github.io/TreeDist/reference/SPRDist.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/SpectralClustering.html</loc>
+    <loc>https://ms609.github.io/TreeDist/reference/SpectralEigens.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/SplitEntropy.html</loc>
@@ -85,9 +85,6 @@
     <loc>https://ms609.github.io/TreeDist/reference/SplitsCompatible.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/SplitwiseInfo.html</loc>
-  </url>
-  <url>
     <loc>https://ms609.github.io/TreeDist/reference/TreeDist-package.html</loc>
   </url>
   <url>
@@ -95,6 +92,9 @@
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/TreeDistance.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/reference/TreeInfo.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/VisualizeMatching.html</loc>

@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
       </span>
     </div>
 
@@ -47,7 +47,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -94,7 +94,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/ms609/TreeDist">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -275,7 +275,7 @@ In such a context, it can be relevant to normalize tree similarity against the <
   
   <span class="fu"><a href="https://ms609.github.io/Ternary/reference/TernaryPlot.html">HorizontalGrid</a></span><span class="op">(</span><span class="op">)</span>
   <span class="va">correct</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeDistance.html">MutualClusteringInfo</a></span><span class="op">(</span><span class="va">testTrees</span><span class="op">$</span><span class="va">trueTree</span>, <span class="va">testTrees</span><span class="op">)</span>
-  <span class="va">resolved</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ClusteringEntropy.html">ClusteringEntropy</a></span><span class="op">(</span><span class="va">testTrees</span><span class="op">)</span>
+  <span class="va">resolved</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeInfo.html">ClusteringEntropy</a></span><span class="op">(</span><span class="va">testTrees</span><span class="op">)</span>
   <span class="va">unresolved</span> <span class="op">&lt;-</span> <span class="va">resolved</span><span class="op">[</span><span class="st">'trueTree'</span><span class="op">]</span> <span class="op">-</span> <span class="va">resolved</span>
   <span class="va">incorrect</span> <span class="op">&lt;-</span> <span class="va">resolved</span> <span class="op">-</span> <span class="va">correct</span>
   <span class="fu"><a href="https://ms609.github.io/Ternary/reference/AddToTernary.html">TernaryPoints</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">unresolved</span>, <span class="va">correct</span>, <span class="va">incorrect</span><span class="op">)</span>, 
@@ -316,12 +316,12 @@ In such a context, it can be relevant to normalize tree similarity against the <
 <span class="va">correct3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeDistance.html">MutualClusteringInfo</a></span><span class="op">(</span><span class="va">trueTree</span>, <span class="va">threeAway</span><span class="op">)</span></code></pre></div>
 <p>The amount of information in each degraded tree:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">infoInTree1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ClusteringEntropy.html">ClusteringEntropy</a></span><span class="op">(</span><span class="va">oneAway</span><span class="op">)</span>
-<span class="va">infoInTree3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ClusteringEntropy.html">ClusteringEntropy</a></span><span class="op">(</span><span class="va">threeAway</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">infoInTree1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeInfo.html">ClusteringEntropy</a></span><span class="op">(</span><span class="va">oneAway</span><span class="op">)</span>
+<span class="va">infoInTree3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeInfo.html">ClusteringEntropy</a></span><span class="op">(</span><span class="va">threeAway</span><span class="op">)</span></code></pre></div>
 <p>The amount of information that could have been resolved, but was not:</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">unresolved1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ClusteringEntropy.html">ClusteringEntropy</a></span><span class="op">(</span><span class="va">trueTree</span><span class="op">)</span> <span class="op">-</span> <span class="va">infoInTree1</span>
-<span class="va">unresolved3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ClusteringEntropy.html">ClusteringEntropy</a></span><span class="op">(</span><span class="va">trueTree</span><span class="op">)</span> <span class="op">-</span> <span class="va">infoInTree3</span></code></pre></div>
+<code class="sourceCode R"><span class="va">unresolved1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeInfo.html">ClusteringEntropy</a></span><span class="op">(</span><span class="va">trueTree</span><span class="op">)</span> <span class="op">-</span> <span class="va">infoInTree1</span>
+<span class="va">unresolved3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeInfo.html">ClusteringEntropy</a></span><span class="op">(</span><span class="va">trueTree</span><span class="op">)</span> <span class="op">-</span> <span class="va">infoInTree3</span></code></pre></div>
 <p>And the amount of information incorrectly resolved:</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">incorrect1</span> <span class="op">&lt;-</span> <span class="va">infoInTree1</span> <span class="op">-</span> <span class="va">correct1</span>

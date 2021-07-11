@@ -87,7 +87,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
       </span>
     </div>
 
@@ -95,7 +95,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -142,7 +142,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/ms609/TreeDist">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -169,13 +169,51 @@
       <small>Source: <a href='https://github.com/ms609/TreeDist/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="treedist-210" class="section level1">
+<h1 class="page-header" data-toc-text="2.1.0">
+<a href="#treedist-210" class="anchor"></a>TreeDist 2.1.0<small> Unreleased </small>
+</h1>
+<div id="new-features" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-features" class="anchor"></a>New features</h2>
+<ul>
+<li>
+<code><a href="../reference/TreeInfo.html">ConsensusInfo()</a></code> quickly calculates the splitwise information content of the consensus of a set of trees, after Smith (forthcoming).</li>
+<li>
+<code><a href="../reference/TreeInfo.html">SplitwiseInfo()</a></code> and <code><a href="../reference/TreeInfo.html">ClusteringInfo()</a></code> gain a <code>p</code> parameter to reflect the reduced information content of splits with lower support values, and a <code>sum</code> parameter to allow return of individual split information content.</li>
+<li>
+<code><a href="../reference/KendallColijn.html">KCDiameter()</a></code> approximates the diameter of the Kendall-Colijn metric.</li>
+<li>
+<code><a href="../reference/Plot3.html">Plot3()</a></code> (experimental) provides pseudo-3D plotting.</li>
+</ul>
+</div>
+<div id="renamed-functions" class="section level2">
+<h2 class="hasAnchor">
+<a href="#renamed-functions" class="anchor"></a>Renamed functions</h2>
+<ul>
+<li>
+<code><a href="../reference/MapTrees.html">Project()</a></code>/<code><a href="../reference/MappingQuality.html">ProjectionQuality()</a></code> re-named to <code><a href="../reference/MapTrees.html">MapTrees()</a></code>/<code><a href="../reference/MappingQuality.html">MappingQuality()</a></code>.</li>
+<li>
+<code><a href="../reference/SpectralEigens.html">SpectralClustering()</a></code> re-named to <code><a href="../reference/SpectralEigens.html">SpectralEigens()</a></code>.</li>
+</ul>
+</div>
+<div id="improvements" class="section level2">
+<h2 class="hasAnchor">
+<a href="#improvements" class="anchor"></a>Improvements</h2>
+<ul>
+<li>Add self-organizing map example to treespace vignette.</li>
+<li>Allow the specification of custom vectors in the Kendall–Colijn metric.</li>
+<li>Faster all-to-all tree distance calculation.</li>
+</ul>
+</div>
+</div>
     <div id="treedist-203" class="section level1">
 <h1 class="page-header" data-toc-text="2.0.3">
 <a href="#treedist-203" class="anchor"></a>TreeDist 2.0.3<small> 2021-01-31 </small>
 </h1>
 <ul>
 <li><p>Diagnose and fix memory leaks, including over-long reported matchings.</p></li>
-<li><p>Explicitly import shiny/shinyjs functions</p></li>
+<li><p>Explicitly import shiny/shinyjs functions.</p></li>
 </ul>
 </div>
     <div id="treedist-200" class="section level1">
@@ -183,8 +221,8 @@
 <a href="#treedist-200" class="anchor"></a>TreeDist 2.0.0<small> 2021-01-20 </small>
 </h1>
 <ul>
-<li><p><code><a href="../reference/Project.html">Project()</a></code> launches ‘shiny’ app for projection and analysis of tree space.</p></li>
-<li><p><code><a href="../reference/ProjectionQuality.html">ProjectionQuality()</a></code> calculates trustworthiness and continuity of tree space projections.</p></li>
+<li><p><code><a href="../reference/MapTrees.html">Project()</a></code> launches ‘shiny’ app for projection and analysis of tree space.</p></li>
+<li><p><code><a href="../reference/MappingQuality.html">ProjectionQuality()</a></code> calculates trustworthiness and continuity of tree space mappings.</p></li>
 <li><p>Faster calculation of Robinson–Foulds distance (using algorithm of Day (1985)) and clustering information distance.</p></li>
 <li><p>New class <code>ClusterTable</code> to allow faster distance computation with Day (1985) algorithm.</p></li>
 <li><p>Improve error messages in <code>CalculateTreeDist()</code>.</p></li>

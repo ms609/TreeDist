@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.0</span>
       </span>
     </div>
 
@@ -47,7 +47,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -94,7 +94,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/ms609/TreeDist">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -146,7 +146,7 @@
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">'TreeDist'</span><span class="op">)</span></code></pre></div>
 <p>or the development version, from GitHub – which will contain the latest features but may not be as extensively tested:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">'ms609/TreeDist'</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">'ms609/TreeDist'</span><span class="op">)</span></code></pre></div>
 <p>Then we’ll load the package in to R’s working environment:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeDist/">'TreeDist'</a></span><span class="op">)</span></code></pre></div>
@@ -171,12 +171,12 @@
 
 <span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span><span class="op">(</span><span class="va">oneTree</span>, <span class="va">twoTrees</span><span class="op">)</span></code></pre></div>
 <pre><code>##       one       two 
-## 0.6656273 0.8199592</code></pre>
+## 0.8626030 0.7474526</code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span><span class="op">(</span><span class="va">twoTrees</span>, <span class="va">threeTrees</span><span class="op">)</span></code></pre></div>
 <pre><code>##             a         b         c
-## one 0.8266361 0.8178158 0.8746969
-## two 0.7143030 0.8264234 0.7337627</code></pre>
+## one 0.7069054 0.7514307 0.6419435
+## two 0.8239251 0.7619718 0.7672021</code></pre>
 </div>
 </div>
 <div id="visualizing-a-matching" class="section level2">
