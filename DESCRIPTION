@@ -75,8 +75,7 @@ Config/Needs/coverage: covr
 Config/Needs/metadata: codemetar
 Config/Needs/website: 
   igraph,
-  pkgdown,
-  remotes,
+  pkgdown
 SystemRequirements: C++14
 ByteCompile: true
 Encoding: UTF-8
