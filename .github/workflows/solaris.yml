@@ -15,7 +15,8 @@ name: R-CMD-check-solaris
 jobs:
   solaris:
     runs-on: macos-latest
-    name: R CMD Check - Solaris
+    r: release
+    name: Solaris R CMD Check
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       _R_CHECK_FORCE_SUGGESTS_: false
@@ -63,7 +64,6 @@ jobs:
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
         with:
-          envs: 'MYTOKEN MYTOKEN2'
           prepare: pkgutil -y -i socat
           nat: |
             "8080": "80"
