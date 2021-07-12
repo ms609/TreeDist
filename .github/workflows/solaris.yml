@@ -22,9 +22,7 @@ jobs:
       R_COMPILE_AND_INSTALL_PACKAGES: 'never'
       RSPM: ${{ matrix.config.rspm }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-    config:
-      - {os: macOS-latest, r: 'release'}
-
+    
     steps:
       - uses: actions/checkout@v2
 
