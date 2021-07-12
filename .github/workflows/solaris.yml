@@ -68,11 +68,7 @@ jobs:
             "8080": "80"
             "8443": "443"
             udp:"8081": "80"
-          run: |
-            rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"),
-              error_on = "warning", check_dir = "check")
-          shell: Rscript {0}
-      
+          run: R CMD check --no-manual --as-cran
 
       - name: Upload check results
         if: failure()
