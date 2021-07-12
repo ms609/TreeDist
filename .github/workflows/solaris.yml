@@ -61,9 +61,9 @@ jobs:
         
       - name: Check in Solaris
         id: test
+        uses: vmactions/solaris-vm@v0.0.3
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        uses: vmactions/solaris-vm@v0.0.3
         with:
           envs: 'MYTOKEN MYTOKEN2'
           prepare: pkgutil -y -i socat
@@ -71,10 +71,10 @@ jobs:
             "8080": "80"
             "8443": "443"
             udp:"8081": "80"
-        run: |
-          rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"),
-            error_on = "warning", check_dir = "check")
-        shell: Rscript {0}
+          run: |
+            rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"),
+              error_on = "warning", check_dir = "check")
+          shell: Rscript {0}
       
 
       - name: Upload check results
