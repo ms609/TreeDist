@@ -9,7 +9,7 @@ const int_fast32_t
   FACT_MAX = DAY_MAX_LEAVES + DAY_MAX_LEAVES + 5 + 1
 ;
 
-const double log_2 = log(2);
+const double log_2 = log(2.0);
 double ldfact[FACT_MAX];
 double l2rooted[DAY_MAX_LEAVES];
 double *l2unrooted = &l2rooted[0] - 1;

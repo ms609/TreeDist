@@ -327,12 +327,13 @@ ClusteringInfo.NULL <- function (x, p = NULL, sum = TRUE) NULL
 #' ConsensusInfo(trees, 'clustering')
 #' @export
 ConsensusInfo <- function (trees, info = 'phylogenetic', check.tips = TRUE) {
-  mode <- pmatch(tolower(info), c('phylogenetic', 'clustering'))
+  mode <- pmatch(tolower(info),
+                 c('phylogenetic', 'clustering', 'spic', 'scic')) %% 2
   if (is.na(mode)) {
     stop("`info` must be 'phylogenetic' or 'clustering'")
   }
   if (length(trees) == 1L) {
-    return(switch(mode, SplitwiseInfo(trees), ClusteringInfo(trees)))
+    return((if (mode) SplitwiseInfo else ClusteringInfo)(trees))
   }
   if (check.tips) {
     trees <- RenumberTips(trees, trees[[1]])

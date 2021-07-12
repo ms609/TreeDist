@@ -1,4 +1,4 @@
-# TreeDist 2.1.0
+# TreeDist 2.1.1
 
 ## New features
 

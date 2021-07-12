@@ -119,8 +119,8 @@ test_that('ClusteringInfo() method works', {
   # Consensus assumes trees are rooted (!)
   cons <- consensus(lapply(trees, RootTree, 1), p = 0.5)
   p <- SplitFrequency(cons, trees) / length(trees)
-  expect_equal(SplitwiseInfo(cons, p), ConsensusInfo(trees))
-  expect_equal(ClusteringInfo(cons, p), ConsensusInfo(trees, 'clus'))
+  expect_equal(SplitwiseInfo(cons, p), ConsensusInfo(trees, 'spic'))
+  expect_equal(ClusteringInfo(cons, p), ConsensusInfo(trees, 'scic'))
   
 })
 
@@ -129,18 +129,19 @@ test_that("ConsensusInfo() is robust", {
   trees <- list(ape::read.tree(text = '(a, (b, (c, (d, (e, X)))));'),
                 ape::read.tree(text = '((a, X), (b, (c, (d, e))));'))
   expect_equal(0, ConsensusInfo(trees, 'cl'))
+  expect_error(ConsensusInfo(trees, 'ERROR'))
 })
 
 test_that("ConsensusInfo() generates correct value", {
   trees <- list(ape::read.tree(text = "((a, b), (c, d));"),
                 ape::read.tree(text = "((a, c), (b, d));"),
                 ape::read.tree(text = "((a, d), (c, b));"))
-  expect_equal(ConsensusInfo(trees), 0)
-  expect_equal(ConsensusInfo(trees, 'cl'), 0)
-  expect_equal(ConsensusInfo(trees[1]), log2(3))
-  expect_equal(ConsensusInfo(trees[1], 'cl'), 4)
-  expect_equal(ConsensusInfo(trees[c(1, 1)]), log2(3))
-  expect_equal(ConsensusInfo(trees[c(1, 1)], 'cl'), 4)
+  expect_equal(0, ConsensusInfo(trees))
+  expect_equal(0, ConsensusInfo(trees, 'cl'))
+  expect_equal(log2(3), ConsensusInfo(trees[1]))
+  expect_equal(4, ConsensusInfo(trees[1], 'cl'))
+  expect_equal(log2(3), ConsensusInfo(trees[c(1, 1)]))
+  expect_equal(4, ConsensusInfo(trees[c(1, 1)], 'cl'))
   
   expect_equal(Entropy(c(1, 1, 1) / 3) - Entropy(c(1/2, 1/2, 9)/10),
                ConsensusInfo(trees[c(rep(1, 9), 2)]))
