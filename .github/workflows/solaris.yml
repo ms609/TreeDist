@@ -15,7 +15,6 @@ name: R-CMD-check-solaris
 jobs:
   solaris:
     runs-on: macos-latest
-    r: release
     name: Solaris R CMD Check
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
