@@ -332,6 +332,10 @@ ConsensusInfo <- function (trees, info = 'phylogenetic', check.tips = TRUE) {
   if (is.na(mode)) {
     stop("`info` must be 'phylogenetic' or 'clustering'")
   }
+  if (inherits(trees, 'phylo')) {
+    # Convert to length-1 multiphylo object
+    trees <- c(trees)
+  }
   if (length(trees) == 1L) {
     return((if (mode) SplitwiseInfo else ClusteringInfo)(trees))
   }

@@ -130,6 +130,8 @@ test_that("ConsensusInfo() is robust", {
                 ape::read.tree(text = '((a, X), (b, (c, (d, e))));'))
   expect_equal(0, ConsensusInfo(trees, 'cl'))
   expect_error(ConsensusInfo(trees, 'ERROR'))
+  # multiPhylo vs phylo
+  expect_equal(ConsensusInfo(trees[1]), ConsensusInfo(trees[[1]]))
 })
 
 test_that("ConsensusInfo() generates correct value", {
