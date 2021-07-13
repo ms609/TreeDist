@@ -194,12 +194,13 @@ Another thing we may wish to do is to take the consensus of each cluster:
 par(mfrow = c(1, 2), mar = rep(0.2, 4))
 col1 <- spectrum[mean(treeNumbers[cluster == 1])]
 col2 <- spectrum[mean(treeNumbers[cluster == 2])]
-plot(consensus(trees[cluster == 1]), edge.color = col1, edge.width = 2, tip.color = col1)
-plot(consensus(trees[cluster == 2]), edge.color = col2, edge.width = 2, tip.color = col2)
+plot(consensus(trees[cluster == 1], p = 0.5),
+     edge.color = col1, edge.width = 2, tip.color = col1)
+plot(consensus(trees[cluster == 2], p = 0.5),
+     edge.color = col2, edge.width = 2, tip.color = col2)
 ```
 
-In this case, we don't learn much, though trees in one cluster are united
-by the position of `t7`.
+Here, we learn that the two clusters are distinguished by the position of `t7`.
 
 ### Validating a mapping
 
