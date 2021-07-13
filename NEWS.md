@@ -2,6 +2,8 @@
 
 - Solaris compatibility.
 
+- Modest vignette improvements.
+
 - spic/scic abbreviation recognition.
 
 
