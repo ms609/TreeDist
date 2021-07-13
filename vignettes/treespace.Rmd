@@ -15,6 +15,11 @@ vignette: >
 
 ```{r secret-header, echo=FALSE}
 set.seed(0)
+protoclust <- if (requireNamespace('protoclust', quietly = TRUE)) {
+  protoclust::protoclust
+} else {
+  hclust
+}
 ```
 
 It can be instructive to visualize the distribution of trees in a spatial
@@ -144,7 +149,7 @@ bestPam <- which.max(pamSils)
 pamSil <- pamSils[bestPam]
 pamCluster <- pamClusters[[bestPam]]$cluster
 
-hTree <- protoclust::protoclust(distances)
+hTree <- protoclust(distances)
 hClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
 hSils <- vapply(hClusters, function (hCluster) {
   mean(cluster::silhouette(hCluster, distances)[, 3])
@@ -278,7 +283,7 @@ of interpreting a two-dimensional tree space plot:
 library('TreeDist')
 pid_distances <- PhylogeneticInfoDistance(trees)
 pid_mapping <- cmdscale(pid_distances, k = 6)
-pid_cluster <- cutree(protoclust::protoclust(pid_distances), k = 2)
+pid_cluster <- cutree(protoclust(pid_distances), k = 2)
 
 par(mar = rep(0, 4))
 plot(pid_mapping, ann = FALSE, axes = FALSE, asp = 1,
