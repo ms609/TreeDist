@@ -46,7 +46,7 @@ inline double split_phylo_info (const int16 n_in, const int16 *n_tip,
     return (l2unrooted[*n_tip] - l2rooted[n_in] - l2rooted[n_out]);
   } else {
     const double 
-    q = 1 - p,
+      q = 1 - p,
       l2n = l2unrooted[*n_tip],
       l2n_consistent = l2rooted[n_in] + l2rooted[n_out],
       l2p_consistent = l2n_consistent - l2n,
