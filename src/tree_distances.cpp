@@ -280,6 +280,9 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
           score[ai][bi] = cost(max_scoreL - (max_scoreL * 
             ((min_ars_both > min_ars_either) ? 
             min_ars_both : min_ars_either)));
+        } else if (exponent == R_PosInf) {
+          score[ai][bi] = cost((min_ars_both == 1 || min_ars_either == 1) ?
+                                 0 : max_scoreL);
         } else {
           score[ai][bi] = cost(max_scoreL - (max_scoreL * 
             std::pow((min_ars_both > min_ars_either) ? 

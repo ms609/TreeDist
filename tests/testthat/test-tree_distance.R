@@ -624,6 +624,10 @@ test_that('Jaccard RF extremes tend to equivalent functions', {
   expect_equal(JaccardRobinsonFoulds(treeSym8, list(treeBal8, treeSym8),
                                      similarity = FALSE, k = Inf),
                RobinsonFoulds(treeSym8, list(treeBal8, treeSym8)))
+  
+  expect_equal(JaccardRobinsonFoulds(treeSym8, list(treeBal8, treeSym8),
+                                     similarity = FALSE, k = 999999),
+               RobinsonFoulds(treeSym8, list(treeBal8, treeSym8)))
 })
 
 test_that('Jaccard RF is correctly calculated', {
