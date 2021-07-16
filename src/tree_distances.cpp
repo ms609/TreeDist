@@ -582,32 +582,16 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
     max_possible = lg2_unrooted_n - best_overlap
   ;
   
-  int16 
-    in_a[MAX_SPLITS], 
-    in_b[MAX_SPLITS]
-  ;
   // a and b are "clades" separating an "ingroup" [1] from an "outgroup" [0].
   // In/out direction [i.e. 1/0 bit] is arbitrary.
-  for (int16 i = 0; i != a.n_splits; i++) {
-    in_a[i] = 0;
-    for (int16 bin = 0; bin != a.n_bins; bin++) {
-      in_a[i] += count_bits(a.state[i][bin]);
-    }
-  }
-  for (int16 i = 0; i != b.n_splits; i++) {
-    in_b[i] = 0;
-    for (int16 bin = 0; bin != b.n_bins; bin++) {
-      in_b[i] += count_bits(b.state[i][bin]);
-    }
-  }
-  
   cost** score = new cost*[most_splits];
   for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
   
   for (int16 ai = a.n_splits; ai--; ) {
     for (int16 bi = b.n_splits; bi--; ) {
       const double spi_over = spi_overlap(a.state[ai], b.state[bi], n_tips,
-                                          in_a[ai], in_b[bi], a.n_bins);
+                                          a.in_split[ai], b.in_split[bi],
+                                          a.n_bins);
       
       score[ai][bi] = spi_over ?
         (spi_over - best_overlap) * (max_score / max_possible) :
