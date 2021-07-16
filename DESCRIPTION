@@ -75,7 +75,7 @@ Config/Needs/coverage: covr
 Config/Needs/metadata: codemetar
 Config/Needs/website:
   pkgdown
-SystemRequirements: C++17
+SystemRequirements: C++14
 ByteCompile: true
 Encoding: UTF-8
 Language: en-GB
