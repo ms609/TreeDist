@@ -405,20 +405,10 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     most_splits = a_has_more_splits ? a.n_splits : b.n_splits,
     a_extra_splits = a_has_more_splits ? most_splits - b.n_splits : 0,
     b_extra_splits = a_has_more_splits ? 0 : most_splits - a.n_splits,
-    last_bin = a.n_bins - 1,
     n_tips = nTip[0],
     unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0
   ;
   const cost max_score = BIG;
-  const splitbit unset_mask = ALL_ONES >> unset_tips;
-  
-  splitbit b_compl[MAX_SPLITS][MAX_BINS];
-  for (int16 i = 0; i != b.n_splits; i++) {
-    for (int16 bin = 0; bin != last_bin; bin++) {
-      b_compl[i][bin] = ~b.state[i][bin];
-    }
-    b_compl[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
-  }
   
   cost** score = new cost*[most_splits];
   for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
@@ -431,26 +421,23 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   
   for (int16 ai = 0; ai != a.n_splits; ai++) {
     if (a_match[ai]) continue;
+    
     for (int16 bi = 0; bi != b.n_splits; bi++) {
-      int16
-        a_and_b = 0,
-        a_and_B = 0,
-        A_and_b = n_tips
-      ;
+      
       // x divides tips into a|A; y divides tips into b|B
+      int16 a_and_b = 0;
       for (int16 bin = 0; bin != a.n_bins; bin++) {
         a_and_b += count_bits(a.state[ai][bin] & b.state[bi][bin]);
-        a_and_B += count_bits(a.state[ai][bin] & b_compl[bi][bin]);
-        A_and_b -= count_bits(a.state[ai][bin] | b_compl[bi][bin]);
       }
       
       const int16
-        A_and_B = n_tips - (a_and_b + a_and_B + A_and_b),
-        
-        na = a_and_b + a_and_B,
-        nA = A_and_b + A_and_B,
-        nb = a_and_b + A_and_b,
-        nB = a_and_B + A_and_B
+        na = a.in_split[ai],
+        nA = n_tips - na,
+        nb = b.in_split[bi],
+        nB = n_tips - nb,
+        a_and_B = na - a_and_b,
+        A_and_b = nb - a_and_b,
+        A_and_B = nB - a_and_B
       ;
       
       if ((!a_and_B && !A_and_b) ||
