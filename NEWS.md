@@ -1,3 +1,8 @@
+# TreeDist 2.1.1.9000
+
+- Further speed improvements, using optimizations suggested by 
+  Alexis Stamatakis' Bioinformatics group.
+
 # TreeDist 2.1.1
 
 - Solaris compatibility.
