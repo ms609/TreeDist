@@ -1,6 +1,5 @@
-#include <cmath>
-#include <execution> /* for parallel execution policies */
 #include <memory> /* for unique_ptr, make_unique */
+#include <cmath>
 #include <Rcpp.h>
 #include "tree_distances.h"
 #include "SplitList.h"
@@ -215,11 +214,10 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
   
   for (int16 ai = 0; ai != a.n_splits; ai++) {
     
-    int16 a_tips = 0;
-    
-    for (int16 bin = 0; bin != a.n_bins; bin++) {
-      a_tips += count_bits(a.state[ai][bin]);
-    }
+    const int16 
+      na = a.in_split[ai],
+      nA = n_tips - na
+    ;
     
     for (int16 bi = 0; bi != b.n_splits; bi++) {
       
@@ -230,7 +228,6 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
       }
       
       const int16
-        na = a.in_split[ai],
         nb = b.in_split[bi],
         nB = n_tips - nb,
         a_and_B = na - a_and_b,
@@ -239,10 +236,10 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
       ;
       
       if (!allow_conflict && !(
-            a_and_b == a_tips ||
-            a_and_B == a_tips ||
-            A_and_b == n_tips - a_tips ||
-            A_and_B == n_tips - a_tips)
+            a_and_b == na ||
+            a_and_B == na ||
+            A_and_b == nA ||
+            A_and_B == nA)
           ) {
         
         score[ai][bi] = max_score; /* Prohibited */
@@ -410,6 +407,10 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   
   for (int16 ai = 0; ai != a.n_splits; ai++) {
     if (a_match[ai]) continue;
+    const int16
+      na = a.in_split[ai],
+      nA = n_tips - na
+    ;
     
     for (int16 bi = 0; bi != b.n_splits; bi++) {
       
@@ -420,13 +421,11 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
       }
       
       const int16
-        na = a.in_split[ai],
-        nA = n_tips - na,
         nb = b.in_split[bi],
         nB = n_tips - nb,
         a_and_B = na - a_and_b,
         A_and_b = nb - a_and_b,
-        A_and_B = nB - a_and_B
+        A_and_B = nA - A_and_b
       ;
       
       if ((!a_and_B && !A_and_b) ||
@@ -599,12 +598,12 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
         max_score;
         
     }
-    for (int16 bi = b.n_splits; bi < most_splits; bi++) {
+    for (int16 bi = b.n_splits; bi < most_splits; ++bi) {
       score[ai][bi] = max_score;
     }
   }
-  for (int16 ai = a.n_splits; ai < most_splits; ai++) {
-    for (int16 bi = 0; bi != most_splits; bi++) {
+  for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
+    for (int16 bi = 0; bi != most_splits; ++bi) {
       score[ai][bi] = max_score;
     }
   }
