@@ -1,7 +1,7 @@
 #' @rdname TreeDistance
 #' @export
 MatchingSplitInfo <- function (tree1, tree2 = NULL, normalize = FALSE,
-                                     reportMatching = FALSE, diag = TRUE) {
+                               reportMatching = FALSE, diag = TRUE) {
   unnormalized <- CalculateTreeDistance(MatchingSplitInfoSplits, tree1,
                                         tree2, reportMatching)
   
@@ -17,8 +17,8 @@ MatchingSplitInfo <- function (tree1, tree2 = NULL, normalize = FALSE,
 #' @rdname TreeDistance
 #' @export
 MatchingSplitInfoDistance <- function (tree1, tree2 = NULL, 
-                                          normalize = FALSE,
-                                          reportMatching = FALSE) {
+                                       normalize = FALSE,
+                                       reportMatching = FALSE) {
   msi <- MatchingSplitInfo(tree1, tree2, normalize = FALSE, diag = FALSE,
                            reportMatching = reportMatching)
   
@@ -38,8 +38,8 @@ MatchingSplitInfoDistance <- function (tree1, tree2 = NULL,
 #' @rdname TreeDistance
 #' @export
 MatchingSplitInfoSplits <- function (splits1, splits2,
-                                           nTip = attr(splits1, 'nTip'),
-                                           reportMatching = FALSE) {
+                                     nTip = attr(splits1, 'nTip'),
+                                     reportMatching = FALSE) {
   
   GeneralizedRF(splits1, splits2, nTip, cpp_msi_distance, maximize = TRUE,
                 reportMatching = reportMatching)
