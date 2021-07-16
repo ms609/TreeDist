@@ -1,5 +1,5 @@
 #include <cmath>
-#include <future>
+#include <future> /* for future, async */
 #include <memory> /* for unique_ptr, make_unique */
 #include <Rcpp.h>
 #include "tree_distances.h"
@@ -565,6 +565,42 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   }
 }
 
+void parallel_split(int16 begin, int16 end,
+                    const SplitList &a, const SplitList &b,
+                    cost** score, const int16 *n_tips,
+                    const double *best_overlap, 
+                    const cost *max_score,
+                    const double *unit_score,
+                    const int16 *most_splits) {
+  auto len = end - begin;
+  if (len < 320) {
+    for (int16 ai = begin; ai != end; ++ai) {
+      for (int16 bi = b.n_splits; bi--; ) {
+        const double spi_over = spi_overlap(a.state[ai], b.state[bi], *n_tips,
+                                            a.in_split[ai], b.in_split[bi],
+                                            a.n_bins);
+        score[ai][bi] = spi_over ?
+          (spi_over - *best_overlap) * *unit_score :
+          *max_score;
+        
+      }
+      for (int16 bi = b.n_splits; bi < *most_splits; ++bi) {
+        score[ai][bi] = *max_score;
+      }
+    }
+    return;
+  } 
+  
+  int16 mid = begin + len / 2;
+  auto handle = std::async(std::launch::async,
+                           parallel_split, mid, end, a, b, score, n_tips,
+                           best_overlap, max_score,
+                           unit_score, most_splits);
+  parallel_split(begin, mid, a, b, score, n_tips, best_overlap, max_score,
+                 unit_score, most_splits);
+  handle.get();
+}
+
 // [[Rcpp::export]]
 List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
                        const IntegerVector nTip) {
@@ -580,7 +616,8 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   const double
     lg2_unrooted_n = lg2_unrooted[n_tips],
     best_overlap = one_overlap((n_tips + 1) / 2, n_tips / 2, n_tips),
-    max_possible = lg2_unrooted_n - best_overlap
+    max_possible = lg2_unrooted_n - best_overlap,
+    unit_score = max_score / max_possible
   ;
   
   // a and b are "clades" separating an "ingroup" [1] from an "outgroup" [0].
@@ -588,26 +625,16 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   cost** score = new cost*[most_splits];
   for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
   
-  for (int16 ai = a.n_splits; ai--; ) {
-    for (int16 bi = b.n_splits; bi--; ) {
-      const double spi_over = spi_overlap(a.state[ai], b.state[bi], n_tips,
-                                          a.in_split[ai], b.in_split[bi],
-                                          a.n_bins);
-      
-      score[ai][bi] = spi_over ?
-        (spi_over - best_overlap) * (max_score / max_possible) :
-        max_score;
-        
-    }
-    for (int16 bi = b.n_splits; bi < most_splits; ++bi) {
-      score[ai][bi] = max_score;
-    }
-  }
+  parallel_split(0, a.n_splits, a, b, score, &n_tips,
+                 &best_overlap, &max_score, &unit_score, &most_splits);
+  
   for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
     for (int16 bi = 0; bi != most_splits; ++bi) {
       score[ai][bi] = max_score;
     }
   }
+  
+  
   
   lap_col *rowsol = new lap_col[most_splits];
   lap_row *colsol = new lap_row[most_splits];
