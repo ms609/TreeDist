@@ -89,7 +89,7 @@ Linear Sum Assignment Problem." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.0.3.9003</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.1.1.9000</span>
       </span>
     </div>
 
@@ -97,7 +97,7 @@ Linear Sum Assignment Problem." />
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -144,7 +144,7 @@ Linear Sum Assignment Problem." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/ms609/TreeDist">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -197,7 +197,7 @@ and <code>matching</code>, the columns matched to each row of the matrix in turn
     <p>The Linear Assignment Problem seeks to match each row of a matrix with a
 column, such that the cost of the matching is minimized.</p>
 <p>The Jonker &amp; Volgenant approach is a faster alternative to the Hungarian
-algorithm (Munkres 1957), which is implemented in <code>clue::solve_LSAP()</code>.</p>
+algorithm (Munkres 1957), which is implemented in <code><a href='https://rdrr.io/pkg/clue/man/solve_LSAP.html'>clue::solve_LSAP()</a></code>.</p>
 <p>Note: the JV algorithm expects integers. In order to apply the function
 to a non-integer <em>n</em>, as in the tree distance calculations in this package,
 each <em>n</em> is multiplied by the largest available integer before applying
@@ -217,12 +217,12 @@ and I'll prioritize development.</p>
 &#8220;A shortest augmenting path algorithm for dense and sparse linear assignment problems.&#8221;
 <em>Computing</em>, <b>38</b>, 325--340.
 doi: <a href='https://doi.org/10.1007/BF02278710'>10.1007/BF02278710</a>
-, <a href='https://doi.org/10.1007/BF02278710'>https://doi.org/10.1007/BF02278710</a>.</p>
+.</p>
 <p>Munkres J (1957).
 &#8220;Algorithms for the assignment and transportation problems.&#8221;
 <em>Journal of the Society for Industrial and Applied Mathematics</em>, <b>5</b>(1), 32--38.
 doi: <a href='https://doi.org/10.1137/0105003'>10.1137/0105003</a>
-, <a href='https://doi.org/10.1137/0105003'>https://doi.org/10.1137/0105003</a>.</p>
+.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p><a href='https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/LAPJV/lap.cpp'>C++ code</a>

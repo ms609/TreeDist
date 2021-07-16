@@ -87,7 +87,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.0.3.9003</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.1.1.9000</span>
       </span>
     </div>
 
@@ -95,7 +95,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -142,7 +142,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/ms609/TreeDist">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -169,30 +169,55 @@
       <small>Source: <a href='https://github.com/ms609/TreeDist/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="treedist-2039002-development" class="section level1">
-<h1 class="page-header" data-toc-text="2.0.3.9002">
-<a href="#treedist-2039002-development" class="anchor"></a>TreeDist 2.0.3.9002 (development)<small> Unreleased </small>
+    <div id="treedist-2119000" class="section level1">
+<h1 class="page-header" data-toc-text="2.1.1.9000">
+<a href="#treedist-2119000" class="anchor"></a>TreeDist 2.1.1.9000<small> Unreleased </small>
 </h1>
 <ul>
-<li>
-<code><a href="../reference/KendallColijn.html">KCDiameter()</a></code> approximates the diameter of the Kendall-Colijn metric.</li>
-<li>
-<code><a href="../reference/Plot3.html">Plot3()</a></code> for pseudo-3D plotting.</li>
-<li>
-<code><a href="../reference/MapTrees.html">Project()</a></code>/<code><a href="../reference/MappingQuality.html">ProjectionQuality()</a></code> re-named to <code><a href="../reference/MapTrees.html">MapTrees()</a></code>/<code><a href="../reference/MappingQuality.html">MappingQuality()</a></code>.</li>
+<li>Further speed improvements, using optimizations suggested by Alexis Stamatakis’ Bioinformatics group.</li>
 </ul>
 </div>
-    <div id="treedist-2039001-development" class="section level1">
-<h1 class="page-header" data-toc-text="2.0.3.9001">
-<a href="#treedist-2039001-development" class="anchor"></a>TreeDist 2.0.3.9001 (development)<small> Unreleased </small>
+    <div id="treedist-211" class="section level1">
+<h1 class="page-header" data-toc-text="2.1.1">
+<a href="#treedist-211" class="anchor"></a>TreeDist 2.1.1<small> 2021-07-13 </small>
 </h1>
 <ul>
-<li>Add self-organizing map example to treespace vignette.</li>
-<li>Allow the specification of custom vectors in the Kendall–Colijn metric.</li>
-<li>Faster all-to-all distance calculation.</li>
-<li>
-<code><a href="../reference/SpectralEigens.html">SpectralClustering()</a></code> renamed to <code><a href="../reference/SpectralEigens.html">SpectralEigens()</a></code>.</li>
+<li><p>Solaris compatibility.</p></li>
+<li><p>Modest vignette improvements.</p></li>
+<li><p>spic/scic abbreviation recognition.</p></li>
 </ul>
+</div>
+    <div id="treedist-210" class="section level1">
+<h1 class="page-header" data-toc-text="2.1.0">
+<a href="#treedist-210" class="anchor"></a>TreeDist 2.1.0<small> 2021-07-12 </small>
+</h1>
+<div id="new-features" class="section level2">
+<h2 class="hasAnchor">
+<a href="#new-features" class="anchor"></a>New features</h2>
+<ul>
+<li><p><code><a href="../reference/TreeInfo.html">ConsensusInfo()</a></code> quickly calculates the splitwise information content of the consensus of a set of trees, after Smith (forthcoming).</p></li>
+<li><p><code><a href="../reference/TreeInfo.html">SplitwiseInfo()</a></code> and <code><a href="../reference/TreeInfo.html">ClusteringInfo()</a></code> gain a <code>p</code> parameter to reflect the reduced information content of splits with lower support values, and a <code>sum</code> parameter to allow return of individual split information content.</p></li>
+<li><p><code><a href="../reference/KendallColijn.html">KCDiameter()</a></code> approximates the diameter of the Kendall-Colijn metric.</p></li>
+<li><p><code><a href="../reference/Plot3.html">Plot3()</a></code> (experimental) provides pseudo-3D plotting.</p></li>
+</ul>
+</div>
+<div id="renamed-functions" class="section level2">
+<h2 class="hasAnchor">
+<a href="#renamed-functions" class="anchor"></a>Renamed functions</h2>
+<ul>
+<li><p><code><a href="../reference/MapTrees.html">Project()</a></code>/<code><a href="../reference/MappingQuality.html">ProjectionQuality()</a></code> re-named to <code><a href="../reference/MapTrees.html">MapTrees()</a></code>/<code><a href="../reference/MappingQuality.html">MappingQuality()</a></code>.</p></li>
+<li><p><code><a href="../reference/SpectralEigens.html">SpectralClustering()</a></code> re-named to <code><a href="../reference/SpectralEigens.html">SpectralEigens()</a></code>.</p></li>
+</ul>
+</div>
+<div id="improvements" class="section level2">
+<h2 class="hasAnchor">
+<a href="#improvements" class="anchor"></a>Improvements</h2>
+<ul>
+<li><p>Add self-organizing map example to treespace vignette.</p></li>
+<li><p>Allow the specification of custom vectors in the Kendall–Colijn metric.</p></li>
+<li><p>Faster all-to-all tree distance calculation.</p></li>
+</ul>
+</div>
 </div>
     <div id="treedist-203" class="section level1">
 <h1 class="page-header" data-toc-text="2.0.3">

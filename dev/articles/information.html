@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.0.3.9003</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.1.1.9000</span>
       </span>
     </div>
 
@@ -48,7 +48,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
+    <span class="fa fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -95,7 +95,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/ms609/TreeDist">
-    <span class="fas fa-github fa-lg"></span>
+    <span class="fa fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -147,7 +147,7 @@
 <div id="application-to-splits" class="section level3">
 <h3 class="hasAnchor">
 <a href="#application-to-splits" class="anchor"></a>Application to splits</h3>
-<p>The split <span class="math inline">\(S_1 =\)</span> <code>AB|CDEF</code> is found in 15 of the 105 six-leaf trees; as such, the probability that a randomly drawn tree contains <span class="math inline">\(S_1\)</span> is <span class="math inline">\(P(S_1) = \frac{15}{105}\)</span>, and the information content <span class="math inline">\(h(S_1) = -\log_2{\frac{15}{105}} \approx 2.81\textrm{ bits}\)</span>. <span class="citation">Steel &amp; Penny (2006)</span> dub this quantity the phylogenetic information content.</p>
+<p>The split <span class="math inline">\(S_1 =\)</span> <code>AB|CDEF</code> is found in 15 of the 105 six-leaf trees; as such, the probability that a randomly drawn tree contains <span class="math inline">\(S_1\)</span> is <span class="math inline">\(P(S_1) = \frac{15}{105}\)</span>, and the information content <span class="math inline">\(h(S_1) = -\log_2{\frac{15}{105}} \approx 2.81\textrm{ bits}\)</span>. <span class="citation">Steel &amp; Penny (2006)</span> dub this quantity the <strong>phylogenetic information content</strong>.</p>
 <p>Likewise, the split <span class="math inline">\(S_2 =\)</span> <code>ABC|DEF</code> occurs in nine of the 105 six-leaf trees, so <span class="math inline">\(h(S_2) = -\log_2{\frac{9}{105}} \approx 3.54\textrm{ bits}\)</span>. Three six-leaf trees contain both splits, so in combination the splits deliver <span class="math inline">\(h(S_1,S_2) = -\log_2{\frac{3}{105}} \approx 5.13\textrm{ bits}\)</span> of information.</p>
 <p>Because <span class="math inline">\(h(S_1,S_2) &lt; h(S_1) + h(S_2)\)</span>, some of the information in <span class="math inline">\(S_1\)</span> is also present in <span class="math inline">\(S_2\)</span>. The information in common between <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> is <span class="math inline">\(h_{shared}(S_1, S_2) = h(S_1) + h(S_2) - h(S_1,S_2) \approx 1.22\textrm{ bits}\)</span>. The information unique to <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> is <span class="math inline">\(h_{different}(S_1,S_2) = 2h(S_1,S_2) - h(S_1) - h(S_2) \approx 3.91\textrm{ bits}\)</span>.</p>
 <p>These quantities can be calculated using functions in the ‘<a href="https://ms609.github.io/TreeTools/">TreeTools</a>’ package.</p>
@@ -247,7 +247,7 @@ Put these together, and a randomly selected leaf may now bear one of three possi
 <li>‘B’ and ‘D’: 40 leaves.</li>
 </ul>
 <p>The two splits thus have a joint entropy of <span class="math inline">\(-\frac{50}{100}\log_2{\frac{50}{100}} -\frac{10}{100}\log_2{\frac{10}{100}} -\frac{40}{100}\log_2{\frac{40}{100}} \approx 1.36\textrm{ bits} &lt; 0.97 + 1\)</span>.</p>
-<p>The joint entropy is less than the sum of the individual entropies because the two splits contain some mutual information: for instance, if a leaf bears the label ‘B’, we can be certain that it will also bear the label ‘D’. The more similar the splits are, and the more they agree in their division of leaves, the more mutual information they will exhibit.</p>
+<p>The joint entropy is less than the sum of the individual entropies because the two splits contain some mutual information: for instance, if a leaf bears the label ‘B’, we can be certain that it will also bear the label ‘D’. The more similar the splits are, and the more they agree in their division of leaves, the more mutual information they will exhibit. I term this the <strong>clustering information</strong>, in contradistinction to the concept of phylogenetic information discussed above.</p>
 <p>More formally, let split <span class="math inline">\(S\)</span> divides <span class="math inline">\(n\)</span> leaves into two partitions <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>. The probability that a randomly chosen leaf <span class="math inline">\(x\)</span> is in partition <span class="math inline">\(k\)</span> is <span class="math inline">\(P(x \in k) = \frac{|k|}{n}\)</span>. <span class="math inline">\(S\)</span> thus corresponds to a random variable with entropy <span class="math inline">\(H(S) = -\frac{|A|}{n} \log_2{\frac{|A|}{n}} - \frac{|B|}{n}\log_2{\frac{|B|}{n}}\)</span> <span class="citation">(Meila, 2007)</span>. The joint entropy of two splits, <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span>, corresponds to the entropy of the association matrix of probabilities that a randomly selected leaf belongs to each pair of partitions:</p>
 <table class="table">
 <colgroup>
