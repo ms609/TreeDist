@@ -393,7 +393,7 @@ inline int16 game_result(const splitbit (&a)[MAX_SPLITS][MAX_BINS], const int16 
   return 0;
 }
 
-inline void play_game(int16 *node,
+inline void play_game(const int16 *node,
                       std::unique_ptr<int16[]> &which_tree,
                       std::unique_ptr<int16[]> &which_split,
                       std::unique_ptr<bool[]> &tie,
@@ -401,14 +401,37 @@ inline void play_game(int16 *node,
                       const int16* n_bins) {
   const int16 
     child1 = *node * 2,
-    child2 = child1 + 1,
+    child2 = child1 + 1
+  ;
+  
+  int16 result;
+  if (which_split[child1] < 0) { // child 1 undefined; child 2 wins (or ties)
+    result = 1;
+  } else if (which_split[child2] < 0) { // child 2 is undefined; child 1 wins
+    result = -1;
+  } else {
     result = game_result(splits[which_tree[child1]].state, which_split[child1],
                          splits[which_tree[child2]].state, which_split[child2],
                          n_bins);
-    }
+  }
   
+  switch (result) {
+  case -1: // child 1 wins (greater, or defined)
+    tie[*node] = false;
+    which_tree[*node] = which_tree[child2];
+    which_split[*node] = which_split[child2];
+    break;
+  case 1: // child 2 wins (greater, or defined)
+    tie[*node] = false;
+    which_tree[*node] = which_tree[child1];
+    which_split[*node] = which_split[child1];
+    break;
+  case 0: //it's a tie
+    tie[*node] = true;
+    which_tree[*node] = which_tree[child1];
+    which_split[*node] = which_split[child1];
+  }
   
-          
 }
 
 // [[Rcpp::export]]
@@ -452,7 +475,7 @@ List cpp_all_pairs_mci (const List x, const IntegerVector nTip) {
   
   // Initial games
   for (int16 i = tournament_games; i--; ) {
-    play_game(&i; &which_tree; &which_split, &tie, &splits);
+    play_game(&i, which_tree, which_split, tie, splits, &n_bins);
   }
   
   
