@@ -380,6 +380,37 @@ List cpp_msi_distance (const RawMatrix x, const RawMatrix y,
 
 }
 
+inline int16 game_result(const splitbit (&a)[MAX_SPLITS][MAX_BINS], const int16 split_a,
+                         const splitbit (&b)[MAX_SPLITS][MAX_BINS], const int16 split_b,
+                         const int16* n_bins) {
+  for (int16 bin = 0; bin != *n_bins; ++bin) {
+    if (a[split_a][bin] < b[split_b][bin]) {
+      return 1;
+    } else if (a[split_a][bin] > b[split_b][bin]) {
+      return -1;
+    }
+  }
+  return 0;
+}
+
+inline void play_game(int16 *node,
+                      std::unique_ptr<int16[]> &which_tree,
+                      std::unique_ptr<int16[]> &which_split,
+                      std::unique_ptr<bool[]> &tie,
+                      std::unique_ptr<SplitList[]> &splits,
+                      const int16* n_bins) {
+  const int16 
+    child1 = *node * 2,
+    child2 = child1 + 1,
+    result = game_result(splits[which_tree[child1]].state, which_split[child1],
+                         splits[which_tree[child2]].state, which_split[child2],
+                         n_bins);
+    }
+  
+  
+          
+}
+
 // [[Rcpp::export]]
 List cpp_all_pairs_mci (const List x, const IntegerVector nTip) {
   const int16 
@@ -392,12 +423,39 @@ List cpp_all_pairs_mci (const List x, const IntegerVector nTip) {
     splits[i] = SplitList(a);
     splits[i].quicksort();
   }
+  const int16 n_bins = splits[0].n_bins;
   
   const int16 max_splits = n_tips - 3;
   auto split_library = std::make_unique<splitbit[]>(n_trees * max_splits * 
                                                     splits[0].n_bins);
   
-  const int16 tournament_size = 2 ^ n_trees
+  const int16
+    tournament_rounds = std::ceil(std::log2(double(n_trees))) + 1,
+    tournament_games = n_trees - 1,
+    tournament_nodes = n_trees + tournament_games
+  ;
+    
+  auto which_tree = std::make_unique<int16[]>(tournament_nodes);
+  auto which_split = std::make_unique<int16[]>(tournament_nodes);
+  auto tie = std::make_unique<bool[]>(tournament_games);
+  
+  
+  // Populate children of tree
+  for (int16 i = 0; i != n_trees; ++i) {
+    const int16 this_node = i + tournament_games;
+    which_tree[this_node] = i;
+    which_split[this_node] = splits[i].n_splits - 1;
+  }
+  for (int16 i = n_trees + tournament_games; i != tournament_nodes; ++i) {
+    which_split[i] = -1;
+  }
+  
+  // Initial games
+  for (int16 i = tournament_games; i--; ) {
+    play_game(&i; &which_tree; &which_split, &tie, &splits);
+  }
+  
+  
 }
 
 // [[Rcpp::export]]
