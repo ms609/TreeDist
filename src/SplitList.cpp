@@ -2,6 +2,7 @@
 using namespace Rcpp;
 #include "tree_distances.h" // Before SplitList.h, for int16
 #include <stdint.h>
+#include "timsort.hpp"
 #include "SplitList.h"
 
 SplitList::SplitList(RawMatrix x) {
@@ -48,4 +49,58 @@ SplitList::SplitList(RawMatrix x) {
       in_split[split] += count_bits(state[split][bin]);
     }
   }
+}
+
+void SplitList::swap(int16 a, int16 b) {
+  for (int16 bin = n_bins; bin--; ) {
+    const splitbit tmp = state[a][bin];
+    state[a][bin] = state[b][bin];
+    state[b][bin] = tmp;
+  }
+}
+
+bool SplitList::less_than(int16 a, int16 b) {
+  for (int16 bin = 0; bin != n_bins; ++bin) {
+    if (state[a][bin] < state[b][bin]) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool SplitList::greater_than(int16 a, int16 b) {
+  for (int16 bin = 0; bin != n_bins; ++bin) {
+    if (state[a][bin] > state[b][bin]) {
+      return true;
+    }
+  }
+  return false;
+}
+
+int16 SplitList::partition(int16 lo, int16 hi) {
+  const int16 pivot = (hi + lo) / 2;
+  for (int16 i = lo - 1, j = hi + 1; ; ) {
+    do {
+      ++i;
+    } while (less_than(i, pivot));
+    do {
+      --j;
+    } while (greater_than(j, pivot));
+    if (i >= j) {
+      return j;
+    }
+    swap(i, j);
+  }
+}
+
+void SplitList::quicksort(int16 lo, int16 hi) {
+  if (lo < hi) {
+    const int16 p = partition(lo, hi);
+    quicksort(lo, p);
+    quicksort(p + 1, hi);
+  }
+}
+  
+void SplitList::quicksort() {
+  quicksort(0, n_splits - 1);
 }

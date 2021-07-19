@@ -297,8 +297,13 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+4) {
 #' @export
 MutualClusteringInfo <- function (tree1, tree2 = NULL, normalize = FALSE,
                                   reportMatching = FALSE, diag = TRUE) {
-  unnormalized <- CalculateTreeDistance(MutualClusteringInfoSplits, tree1, tree2,
-                                        reportMatching)
+  unnormalized <- if (is.null(tree2) && is.list(tree1) &&
+                      !inherits(tree1, 'phylo')) {
+    cpp_all_pairs_msi(as.Splits(tree1, tree1[[1]]), NTip(tree1[[1]]))
+  } else {
+    CalculateTreeDistance(MutualClusteringInfoSplits, tree1, tree2,
+                          reportMatching)
+  }
   if (diag && is.null(tree2)) {
     unnormalized <- as.matrix(unnormalized)
     diag(unnormalized) <- ClusteringEntropy(tree1)

@@ -381,6 +381,26 @@ List cpp_msi_distance (const RawMatrix x, const RawMatrix y,
 }
 
 // [[Rcpp::export]]
+List cpp_all_pairs_mci (const List x, const IntegerVector nTip) {
+  const int16 
+    n_tips = nTip[0],
+    n_trees = x.length()
+  ;
+  auto splits = std::make_unique<SplitList[]>(n_trees);
+  for (int16 i = x.length(); i--; ) {
+    const RawMatrix a = x[i];
+    splits[i] = SplitList(a);
+    splits[i].quicksort();
+  }
+  
+  const int16 max_splits = n_tips - 3;
+  auto split_library = std::make_unique<splitbit[]>(n_trees * max_splits * 
+                                                    splits[0].n_bins);
+  
+  const int16 tournament_size = 2 ^ n_trees
+}
+
+// [[Rcpp::export]]
 List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
                             const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
