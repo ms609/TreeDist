@@ -35,14 +35,14 @@ List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y,
     
       bool all_match = true, all_complement = true;
     
-      for (int16 bin = 0; bin != a.n_bins; bin++) {
+      for (int16 bin = 0; bin != a.n_bins; ++bin) {
         if ((a.state[ai][bin] != b.state[bi][bin])) {
           all_match = false;
           break;
         }
       }
       if (!all_match) {
-        for (int16 bin = 0; bin != a.n_bins; bin++) {
+        for (int16 bin = 0; bin != a.n_bins; ++bin) {
           if ((a.state[ai][bin] != b_complement[bi][bin])) {
             all_complement = false;
             break;
@@ -83,25 +83,25 @@ List cpp_robinson_foulds_info (const RawMatrix x, const RawMatrix y,
   /* Dynamic allocation 20% faster for 105 tips, but VLA not permitted in C11 */
   splitbit b_complement[MAX_SPLITS][MAX_BINS]; 
   for (int16 i = 0; i != b.n_splits; i++) {
-    for (int16 bin = 0; bin != last_bin; bin++) {
+    for (int16 bin = 0; bin != last_bin; ++bin) {
       b_complement[i][bin] = ~b.state[i][bin];
     }
     b_complement[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
-  for (int16 ai = 0; ai != a.n_splits; ai++) {
-    for (int16 bi = 0; bi != b.n_splits; bi++) {
+  for (int16 ai = 0; ai != a.n_splits; ++ai) {
+    for (int16 bi = 0; bi != b.n_splits; ++bi) {
       
       bool all_match = true, all_complement = true;
       
-      for (int16 bin = 0; bin != a.n_bins; bin++) {
+      for (int16 bin = 0; bin != a.n_bins; ++bin) {
         if ((a.state[ai][bin] != b.state[bi][bin])) {
           all_match = false;
           break;
         }
       }
       if (!all_match) {
-        for (int16 bin = 0; bin != a.n_bins; bin++) {
+        for (int16 bin = 0; bin != a.n_bins; ++bin) {
           if ((a.state[ai][bin] != b_complement[bi][bin])) {
             all_complement = false;
             break;
@@ -110,7 +110,7 @@ List cpp_robinson_foulds_info (const RawMatrix x, const RawMatrix y,
       }
       if (all_match || all_complement) {
         int16 leaves_in_split = 0;
-        for (int16 bin = 0; bin != a.n_bins; bin++) {
+        for (int16 bin = 0; bin != a.n_bins; ++bin) {
           leaves_in_split += count_bits(a.state[ai][bin]);
         }
         
@@ -149,20 +149,20 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
   cost** score = new cost*[most_splits];
   for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
   
-  for (int16 ai = 0; ai != a.n_splits; ai++) {
-    for (int16 bi = 0; bi != b.n_splits; bi++) {
+  for (int16 ai = 0; ai != a.n_splits; ++ai) {
+    for (int16 bi = 0; bi != b.n_splits; ++bi) {
       score[ai][bi] = 0;
-      for (int16 bin = 0; bin != a.n_bins; bin++) {
+      for (int16 bin = 0; bin != a.n_bins; ++bin) {
         score[ai][bi] += count_bits(a.state[ai][bin] ^ b.state[bi][bin]);
       }
       if (score[ai][bi] > half_tips) score[ai][bi] = n_tips - score[ai][bi];
     }
-    for (int16 bi = b.n_splits; bi < most_splits; bi++) {
+    for (int16 bi = b.n_splits; bi < most_splits; ++bi) {
       score[ai][bi] = max_score;
     }
   }
-  for (int16 ai = a.n_splits; ai < most_splits; ai++) {
-    for (int16 bi = 0; bi != most_splits; bi++) {
+  for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
+    for (int16 bi = 0; bi != most_splits; ++bi) {
       score[ai][bi] = max_score;
     }
   }
@@ -212,18 +212,18 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
   cost** score = new cost*[most_splits];
   for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
   
-  for (int16 ai = 0; ai != a.n_splits; ai++) {
+  for (int16 ai = 0; ai != a.n_splits; ++ai) {
     
     const int16 
       na = a.in_split[ai],
       nA = n_tips - na
     ;
     
-    for (int16 bi = 0; bi != b.n_splits; bi++) {
+    for (int16 bi = 0; bi != b.n_splits; ++bi) {
       
       // x divides tips into a|A; y divides tips into b|B
       int16 a_and_b = 0;
-      for (int16 bin = 0; bin != a.n_bins; bin++) {
+      for (int16 bin = 0; bin != a.n_bins; ++bin) {
         a_and_b += count_bits(a.state[ai][bin] & b.state[bi][bin]);
       }
       
@@ -277,12 +277,12 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
         }
       }
     }
-    for (int16 bi = b.n_splits; bi < most_splits; bi++) {
+    for (int16 bi = b.n_splits; bi < most_splits; ++bi) {
       score[ai][bi] = max_score;
     }
   }
-  for (int16 ai = a.n_splits; ai < most_splits; ai++) {
-    for (int16 bi = 0; bi != most_splits; bi++) {
+  for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
+    for (int16 bi = 0; bi != most_splits; ++bi) {
       score[ai][bi] = max_score;
     }
   }
@@ -327,14 +327,14 @@ List cpp_msi_distance (const RawMatrix x, const RawMatrix y,
   
   splitbit different[MAX_BINS];
   
-  for (int16 ai = 0; ai != a.n_splits; ai++) {
-    for (int16 bi = 0; bi != b.n_splits; bi++) {
+  for (int16 ai = 0; ai != a.n_splits; ++ai) {
+    for (int16 bi = 0; bi != b.n_splits; ++bi) {
       int16 
         n_different = 0,
         n_a_only = 0,
         n_a_and_b = 0
       ;
-      for (int16 bin = 0; bin != a.n_bins; bin++) {
+      for (int16 bin = 0; bin != a.n_bins; ++bin) {
         different[bin] = a.state[ai][bin] ^ b.state[bi][bin];
         n_different += count_bits(different[bin]);
         n_a_only += count_bits(a.state[ai][bin] & different[bin]);
@@ -346,12 +346,12 @@ List cpp_msi_distance (const RawMatrix x, const RawMatrix y,
         ((max_score / max_possible) *
           mmsi_score(n_same, n_a_and_b, n_different, n_a_only));
     }
-    for (int16 bi = b.n_splits; bi < most_splits; bi++) {
+    for (int16 bi = b.n_splits; bi < most_splits; ++bi) {
       score[ai][bi] = max_score;
     }
   }
-  for (int16 ai = a.n_splits; ai < most_splits; ai++) {
-    for (int16 bi = 0; bi < most_splits; bi++) {
+  for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
+    for (int16 bi = 0; bi < most_splits; ++bi) {
       score[ai][bi] = max_score;
     }
   }
@@ -405,18 +405,18 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   NumericVector a_match(a.n_splits);
   std::unique_ptr<int16[]> b_match = std::make_unique<int16[]>(b.n_splits);
   
-  for (int16 ai = 0; ai != a.n_splits; ai++) {
+  for (int16 ai = 0; ai != a.n_splits; ++ai) {
     if (a_match[ai]) continue;
     const int16
       na = a.in_split[ai],
       nA = n_tips - na
     ;
     
-    for (int16 bi = 0; bi != b.n_splits; bi++) {
+    for (int16 bi = 0; bi != b.n_splits; ++bi) {
       
       // x divides tips into a|A; y divides tips into b|B
       int16 a_and_b = 0;
-      for (int16 bin = 0; bin != a.n_bins; bin++) {
+      for (int16 bin = 0; bin != a.n_bins; ++bin) {
         a_and_b += count_bits(a.state[ai][bin] & b.state[bi][bin]);
       }
       
@@ -452,7 +452,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
         );
       }
     }
-    for (int16 bi = b.n_splits; bi < most_splits; bi++) {
+    for (int16 bi = b.n_splits; bi < most_splits; ++bi) {
       score[ai][bi] = max_score;
     }
   }
@@ -473,21 +473,21 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   
   if (exact_matches) {
     int16 a_pos = 0;
-    for (int16 ai = 0; ai != a.n_splits; ai++) {
+    for (int16 ai = 0; ai != a.n_splits; ++ai) {
       if (a_match[ai]) continue;
       int16 b_pos = 0;
-      for (int16 bi = 0; bi != b.n_splits; bi++) {
+      for (int16 bi = 0; bi != b.n_splits; ++bi) {
         if (b_match[bi]) continue;
         score[a_pos][b_pos] = score[ai][bi];
         b_pos++;
       }
-      for (int16 bi = lap_dim - a_extra_splits; bi < lap_dim; bi++) {
+      for (int16 bi = lap_dim - a_extra_splits; bi < lap_dim; ++bi) {
         score[a_pos][bi] = max_score;
       }
       a_pos++;
     }
-    for (int16 ai = lap_dim - b_extra_splits; ai < lap_dim; ai++) {
-      for (int16 bi = 0; bi != lap_dim; bi++) {
+    for (int16 ai = lap_dim - b_extra_splits; ai < lap_dim; ++ai) {
+      for (int16 bi = 0; bi != lap_dim; ++bi) {
         score[ai][bi] = max_score;
       }
     }
@@ -503,7 +503,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     
     std::unique_ptr<int16[]> lap_decode = std::make_unique<int16[]>(lap_dim);
     int16 fuzzy_match = 0;
-    for (int16 bi = 0; bi != b.n_splits; bi++) {
+    for (int16 bi = 0; bi != b.n_splits; ++bi) {
       if (!b_match[bi]) {
         lap_decode[fuzzy_match++] = bi + 1;
       } else {
@@ -537,8 +537,8 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     return List::create(Named("score") = final_score,
                         _["matching"] = final_matching);
   } else {
-    for (int16 ai = a.n_splits; ai < most_splits; ai++) {
-      for (int16 bi = 0; bi != most_splits; bi++) {
+    for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
+      for (int16 bi = 0; bi != most_splits; ++bi) {
         score[ai][bi] = max_score;
       }
     }
