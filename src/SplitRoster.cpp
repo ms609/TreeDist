@@ -1,3 +1,5 @@
+#include "tree_distances.hpp"
+#include "SplitList.hpp"
 #include "SplitRoster.hpp"
 
 inline bool game_result(const splitbit (&a)[MAX_SPLITS][MAX_BINS], const int16 split_a,

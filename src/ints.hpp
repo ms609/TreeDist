@@ -1,5 +1,5 @@
-#ifndef _TREEDIST_INT_H
-#define _TREEDIST_INT_H
+#ifndef _TREEDIST_INT_HPP
+#define _TREEDIST_INT_HPP
 
 #include <stdint.h>
 

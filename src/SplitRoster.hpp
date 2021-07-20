@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 #include <Rcpp.h>
-#include "tree_distances.h"
-#include "SplitList.h"
+#include "tree_distances.hpp"
+#include "SplitList.hpp"
 
 using namespace Rcpp;
 

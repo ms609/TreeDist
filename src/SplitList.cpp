@@ -1,9 +1,8 @@
 #include <Rcpp.h>
 using namespace Rcpp;
-#include "tree_distances.h" // Before SplitList.h, for int16
 #include <stdint.h>
-#include "timsort.hpp"
-#include "SplitList.h"
+#include "tree_distances.hpp" // Before SplitList.h, for int16
+#include "SplitList.hpp"
 
 SplitList::SplitList(RawMatrix x) {
   n_splits = x.rows();
