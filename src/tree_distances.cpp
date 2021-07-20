@@ -380,23 +380,20 @@ List cpp_msi_distance (const RawMatrix x, const RawMatrix y,
 
 }
 
-inline int16 game_result(const splitbit (&a)[MAX_SPLITS][MAX_BINS], const int16 split_a,
+inline bool game_result(const splitbit (&a)[MAX_SPLITS][MAX_BINS], const int16 split_a,
                          const splitbit (&b)[MAX_SPLITS][MAX_BINS], const int16 split_b,
                          const int16* n_bins) {
   for (int16 bin = 0; bin != *n_bins; ++bin) {
-    if (a[split_a][bin] < b[split_b][bin]) {
-      return 1;
-    } else if (a[split_a][bin] > b[split_b][bin]) {
-      return -1;
+    if (a[split_a][bin] > b[split_b][bin]) {
+      return true;
     }
   }
-  return 0;
+  return false;
 }
 
-inline void play_game(const int16 *node,
+inline int16 play_game(const int16 *node,
                       std::unique_ptr<int16[]> &which_tree,
                       std::unique_ptr<int16[]> &which_split,
-                      std::unique_ptr<bool[]> &tie,
                       std::unique_ptr<SplitList[]> &splits,
                       const int16* n_bins) {
   const int16 
@@ -404,34 +401,22 @@ inline void play_game(const int16 *node,
     child2 = child1 + 1
   ;
   
-  int16 result;
-  if (which_split[child1] < 0) { // child 1 undefined; child 2 wins (or ties)
-    result = 1;
-  } else if (which_split[child2] < 0) { // child 2 is undefined; child 1 wins
-    result = -1;
+  bool child1_greater;
+  if (which_split[child1] < 0) {
+    child1_greater = false;
+  } else if (which_split[child2] < 0) {
+    child1_greater = true;
   } else {
-    result = game_result(splits[which_tree[child1]].state, which_split[child1],
-                         splits[which_tree[child2]].state, which_split[child2],
-                         n_bins);
+    child1_greater = game_result(
+      splits[which_tree[child1]].state, which_split[child1],
+      splits[which_tree[child2]].state, which_split[child2],
+      n_bins);
   }
   
-  switch (result) {
-  case -1: // child 1 wins (greater, or defined)
-    tie[*node] = false;
-    which_tree[*node] = which_tree[child2];
-    which_split[*node] = which_split[child2];
-    break;
-  case 1: // child 2 wins (greater, or defined)
-    tie[*node] = false;
-    which_tree[*node] = which_tree[child1];
-    which_split[*node] = which_split[child1];
-    break;
-  case 0: //it's a tie
-    tie[*node] = true;
-    which_tree[*node] = which_tree[child1];
-    which_split[*node] = which_split[child1];
-  }
-  
+  const int16 loser = child1_greater ? child2 : child1;
+  which_tree[*node] = which_tree[loser];
+  which_split[*node] = which_split[loser];
+  return child1_greater ? child1 : child2;
 }
 
 // [[Rcpp::export]]
@@ -460,7 +445,6 @@ List cpp_all_pairs_mci (const List x, const IntegerVector nTip) {
     
   auto which_tree = std::make_unique<int16[]>(tournament_nodes);
   auto which_split = std::make_unique<int16[]>(tournament_nodes);
-  auto tie = std::make_unique<bool[]>(tournament_games);
   
   
   // Populate children of tree
@@ -474,9 +458,17 @@ List cpp_all_pairs_mci (const List x, const IntegerVector nTip) {
   }
   
   // Initial games
-  for (int16 i = tournament_games; i--; ) {
-    play_game(&i, which_tree, which_split, tie, splits, &n_bins);
+  for (int16 i = tournament_games; --i; ) {
+    // TODO duplicate function as void to avoid overhead of return
+    play_game(&i, which_tree, which_split, splits, &n_bins);
   }
+  
+  int16 library_position = 0, winning_split;
+  do {
+    update_library(&library_position, 
+  } while (winning_split > -1);
+  
+  
   
   
 }
