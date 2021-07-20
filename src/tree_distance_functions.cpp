@@ -34,20 +34,21 @@ double *lg2_rooted = &lg2_unrooted[0] + 1;
 __attribute__((constructor))
   void initialize_ldf() {
     lg2[0] = 0;
-    for (int32 i = 1; i != int32(MAX_TIPS - 1) * (MAX_TIPS - 1) + 1; i++) { 
+    for (int32 i = 1; i != int32(MAX_TIPS - 1) * (MAX_TIPS - 1) + 1; ++i) { 
       lg2[i] = log2(i);
     }
-    for (int16 i = 0; i != 3; i++) {
+    for (int16 i = 0; i != 3; ++i) {
       lg2_double_factorial[i] = 0;
       lg2_unrooted[i] = 0;
-      assert(lg2_rooted[i] = 0);
     }
-    for (int16 i = 2; i != MAX_TIPS + MAX_TIPS - 2; i++) {
+    assert(lg2_rooted[0] == 0);
+    assert(lg2_rooted[1] == 0);
+    for (int16 i = 2; i != MAX_TIPS + MAX_TIPS - 2; ++i) {
       lg2_double_factorial[i] = lg2_double_factorial[i - 2] + lg2[i];
     }
-    for (int16 i = 3; i != MAX_TIPS + 2; i++) {
+    for (int16 i = 3; i != MAX_TIPS + 2; ++i) {
       lg2_unrooted[i] = lg2_double_factorial[i + i - 5];
-      assert(lg2_rooted[i] == lg2_double_factorial[i + i - 3]);
+      assert(lg2_rooted[i - 1] == lg2_double_factorial[i + i - 5]);
     }
   }
 
