@@ -5,17 +5,6 @@
 #include "SplitRoster.hpp"
 using namespace Rcpp;
 
-inline bool SplitRoster::game_result(
-    const splitbit (&a)[MAX_SPLITS][MAX_BINS], const int16 split_a,
-    const splitbit (&b)[MAX_SPLITS][MAX_BINS], const int16 split_b) {
-  for (int16 bin = 0; bin != n_bins; ++bin) {
-    if (a[split_a][bin] > b[split_b][bin]) {
-      return true;
-    }
-  }
-  return false;
-}
-
 inline bool SplitRoster::splits_equal(
     const splitbit (&a)[MAX_SPLITS][MAX_BINS], const int16 split_a,
     const splitbit (&b)[MAX_SPLITS][MAX_BINS], const int16 split_b) {
@@ -27,6 +16,16 @@ inline bool SplitRoster::splits_equal(
   return true;
 }
 
+inline bool SplitRoster::game_result(
+    const splitbit (&a)[MAX_SPLITS][MAX_BINS], const int16 split_a,
+    const splitbit (&b)[MAX_SPLITS][MAX_BINS], const int16 split_b) {
+  for (int16 bin = 0; bin != n_bins; ++bin) {
+    if (a[split_a][bin] > b[split_b][bin]) {
+      return true;
+    }
+  }
+  return false;
+}
 
 inline void SplitRoster::play_game(
     const int32 *node,
@@ -96,10 +95,7 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
   roster_split = std::make_unique<int16[]>(n_trees * max_splits);
   roster_size = std::make_unique<int16[]>(n_trees * max_splits);
   roster_hits = std::make_unique<int32[]>(n_trees * max_splits);
-  index = std::make_unique<std::unique_ptr<int16>[]>(n_trees);
-  for (int32 i = n_trees; i--; ) {
-    index[i] = std::make_unique<int16>(max_splits);
-  }
+  index = std::vector<std::array<int16, MAX_SPLITS>[]>(n_trees);
   
   // Populate roster using k-way merge with tournament tree
   const int32
@@ -107,9 +103,9 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
       tournament_nodes = n_trees + tournament_games
     ;
   
+  auto winners = std::make_unique<int32[]>(tournament_nodes);
+  auto losers = std::make_unique<int32[]>(tournament_nodes);
   auto which_split = std::make_unique<int16[]>(n_trees);
-  auto winners = std::make_unique<int16[]>(tournament_nodes);
-  auto losers = std::make_unique<int16[]>(tournament_nodes);
   
   
   // Populate children of tree
