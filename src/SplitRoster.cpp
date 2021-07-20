@@ -81,11 +81,11 @@ inline void SplitRoster::push(
 SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
   n_tips = nTip[0];
   n_trees = x.length();
-  splits = std::make_unique<SplitList[]>(n_trees);
+  splits.reserve(n_trees);
   
-  for (int32 i = n_trees; i--; ) {
+  for (int32 i = 0; i != n_trees; ++i) {
     const RawMatrix a = x[i];
-    splits[i] = SplitList(a);
+    splits.emplace_back(SplitList(a));
     splits[i].quicksort();
   }
   n_bins = splits[0].n_bins;

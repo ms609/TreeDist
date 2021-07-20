@@ -15,7 +15,7 @@ class SplitRoster {
   int16 n_bins;
   int32 roster_pos;
   
-  std::unique_ptr<SplitList[]> splits;
+  std::vector<SplitList> splits;
   std::unique_ptr<int32[]> roster_tree;
   std::unique_ptr<int16[]> roster_split;
   std::unique_ptr<int16[]> roster_size;
