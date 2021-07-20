@@ -1,6 +1,8 @@
+#include <Rcpp.h>
 #include "tree_distances.hpp"
 #include "SplitList.hpp"
 #include "SplitRoster.hpp"
+using namespace Rcpp;
 
 inline bool game_result(const splitbit (&a)[MAX_SPLITS][MAX_BINS], const int16 split_a,
                         const splitbit (&b)[MAX_SPLITS][MAX_BINS], const int16 split_b,
@@ -42,28 +44,27 @@ inline int16 play_game(const int16 *node,
 }
 
 // [[Rcpp::export]]
-SplitRoster::SplitRoster (const List x, const IntegerVector nTip) {
-  const int16 
-  n_tips = nTip[0],
-               n_trees = x.length()
-  ;
-  auto splits = std::make_unique<SplitList[]>(n_trees);
-  for (int16 i = x.length(); i--; ) {
+SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
+  n_tips = nTip[0];
+  n_trees = x.length();
+  splits = std::make_unique<SplitList[]>(n_trees);
+  
+  for (int16 i = n_trees; i--; ) {
     const RawMatrix a = x[i];
     splits[i] = SplitList(a);
     splits[i].quicksort();
   }
-  const int16 n_bins = splits[0].n_bins;
+  n_bins = splits[0].n_bins;
   
   const int16 max_splits = n_tips - 3;
-  auto split_library = std::make_unique<splitbit[]>(n_trees * max_splits * 
-                                                    splits[0].n_bins);
+  roster = std::make_unique<splitbit[]>(n_trees * max_splits * n_bins);
   
+  // Populate roster using k-way merge with tournament tree
   const int16
     tournament_rounds = std::ceil(std::log2(double(n_trees))) + 1,
-      tournament_games = n_trees - 1,
-      tournament_nodes = n_trees + tournament_games
-    ;
+    tournament_games = n_trees - 1,
+    tournament_nodes = n_trees + tournament_games
+  ;
   
   auto which_tree = std::make_unique<int16[]>(tournament_nodes);
   auto which_split = std::make_unique<int16[]>(tournament_nodes);

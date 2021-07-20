@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <Rcpp.h>
+#include "ints.hpp"
 #include "tree_distances.hpp"
 
 using namespace Rcpp;
