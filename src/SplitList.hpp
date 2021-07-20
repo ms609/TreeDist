@@ -17,8 +17,8 @@ class SplitList {
   bool greater_than(int16 a, int16 b);
 public:
   int16 n_splits, n_bins;
+  int16 in_split[MAX_SPLITS];
   splitbit state[MAX_SPLITS][MAX_BINS];
-  splitbit in_split[MAX_SPLITS];
   SplitList(RawMatrix);
   void quicksort();
   void quicksort(int16 lo, int16 hi);
