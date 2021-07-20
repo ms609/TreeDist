@@ -72,7 +72,7 @@ inline void SplitRoster::push(
     ++roster_pos;
     roster_tree[roster_pos] = tree;
     roster_split[roster_pos] = new_split;
-    roster_size[roster_pos] = splits[tree].in_split;
+    roster_size[roster_pos] = splits[tree].in_split[new_split];
     roster_hits[roster_pos] = 1;
   }
   index[tree][new_split] = roster_pos;
@@ -95,7 +95,7 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
   roster_split = std::make_unique<int16[]>(n_trees * max_splits);
   roster_size = std::make_unique<int16[]>(n_trees * max_splits);
   roster_hits = std::make_unique<int32[]>(n_trees * max_splits);
-  index = std::vector<std::array<int32, MAX_SPLITS>[]>(n_trees);
+  index.reserve(n_trees);
   
   // Populate roster using k-way merge with tournament tree
   const int32

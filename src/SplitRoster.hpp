@@ -2,6 +2,7 @@
 #define _TREEDIST_SPLITROSTER_HPP
 
 #include <vector>
+#include <tr1/array>
 #include <stdint.h>
 #include <Rcpp.h>
 #include "ints.hpp"
@@ -19,7 +20,7 @@ class SplitRoster {
   std::unique_ptr<int16[]> roster_split;
   std::unique_ptr<int16[]> roster_size;
   std::unique_ptr<int32[]> roster_hits;
-  std::vector<std::array<int32, MAX_SPLITS>[]> index;
+  std::vector<std::tr1::array<int32, MAX_SPLITS> > index;
   
   bool splits_equal(
       const splitbit (&a)[MAX_SPLITS][MAX_BINS], const int16 split_a,
