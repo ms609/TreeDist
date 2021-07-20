@@ -3,6 +3,7 @@
 #include <Rcpp.h>
 #include "tree_distances.hpp"
 #include "SplitList.hpp"
+#include "SplitRoster.hpp"
 
 using namespace Rcpp;
 
@@ -378,6 +379,12 @@ List cpp_msi_distance (const RawMatrix x, const RawMatrix y,
   return List::create(Named("score") = final_score,
                       _["matching"] = final_matching);
 
+}
+
+// [[Rcpp::export]]
+NumericVector cpp_all_pairs_mci(const List x, const IntegerVector nTip) {
+  SplitRoster roster(x, nTip);
+  
 }
 
 // [[Rcpp::export]]

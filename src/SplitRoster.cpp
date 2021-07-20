@@ -144,39 +144,182 @@ inline void SplitRoster::push(
   index[tree][new_split] = roster_pos;
 }
 
+NumericVector SplitRoster::mutual_clustering() {
+
+  const SplitList a(x), b(y);
+  const bool a_has_more_splits = (a.n_splits > b.n_splits);
+  const int16
+    most_splits = a_has_more_splits ? a.n_splits : b.n_splits,
+      a_extra_splits = a_has_more_splits ? most_splits - b.n_splits : 0,
+      b_extra_splits = a_has_more_splits ? 0 : most_splits - a.n_splits,
+      n_tips = nTip[0]
+  ;
+  const cost max_score = BIG;
   
-  // Populate children of tree
-  for (int32 i = 0; i != n_trees; ++i) {
-    which_split[i] = splits[i].n_splits - 1;
-    winners[i + tournament_games] = i;
-  }
-  for (int32 i = n_trees + tournament_games; i != tournament_nodes; ++i) {
-    which_split[i] = -1;
-    winners[i] = -1;
-  }
+  cost** score = new cost*[most_splits];
+  for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
+  double exact_match_score = 0;
+  int16 exact_matches = 0;
+  // NumericVector zero-initializes [so does make_unique]
+  // match will have one added to it so numbering follows R; hence 0 = UNMATCHED
+  NumericVector a_match(a.n_splits);
+  std::unique_ptr<int16[]> b_match = std::make_unique<int16[]>(b.n_splits);
   
-  // Initial games
-  for (int32 i = tournament_games; i--; ) {
-    play_game(&i, winners, losers, which_split);
-  }
-  
-  roster_pos = 0;
-  roster_tree[0] = winners[0];
-  roster_split[0] = which_split[winners[0]];
-  roster_hits[0] = 1;
-  
-  for (; ; ) {
-    const int32 winner = winners[0];
-    --which_split[winner];
+  for (int16 ai = 0; ai != a.n_splits; ++ai) {
+    if (a_match[ai]) continue;
+    const int16
+      na = a.in_split[ai],
+                     nA = n_tips - na
+      ;
     
-    int32 i = winner;
-    do {
-      i /= 2;
-      play_game(&i, winners, losers, which_split);
-    } while (i);
+    for (int16 bi = 0; bi != b.n_splits; ++bi) {
+      
+      // x divides tips into a|A; y divides tips into b|B
+      int16 a_and_b = 0;
+      for (int16 bin = 0; bin != a.n_bins; ++bin) {
+        a_and_b += count_bits(a.state[ai][bin] & b.state[bi][bin]);
+      }
+      
+      const int16
+        nb = b.in_split[bi],
+                       nB = n_tips - nb,
+                       a_and_B = na - a_and_b,
+                       A_and_b = nb - a_and_b,
+                       A_and_B = nA - A_and_b
+        ;
+      
+      if ((!a_and_B && !A_and_b) ||
+          (!a_and_b && !A_and_B)) {
+        exact_match_score += ic_matching(na, nA, n_tips);
+        exact_matches++;
+        a_match[ai] = bi + 1;
+        b_match[bi] = ai + 1;
+        break;
+      } else if (a_and_b == A_and_b &&
+        a_and_b == a_and_B &&
+        a_and_b == A_and_B) {
+        score[ai][bi] = max_score; // Don't risk rounding error
+      } else {
+        score[ai][bi] = max_score -
+          // Division by n_tips converts n(A&B) to P(A&B) for each ic_element
+          cost(max_score * ((
+              // 0 < Sum of IC_elements <= n_tips
+              ic_element(a_and_b, na, nb, n_tips) +
+                ic_element(a_and_B, na, nB, n_tips) +
+                ic_element(A_and_b, nA, nb, n_tips) +
+                ic_element(A_and_B, nA, nB, n_tips)
+          ) / n_tips)
+          );
+      }
+    }
+    for (int16 bi = b.n_splits; bi < most_splits; ++bi) {
+      score[ai][bi] = max_score;
+    }
+  }
+  if (exact_matches == b.n_splits || exact_matches == a.n_splits) {
+    for (int16 i = most_splits; i--; ) delete[] score[i];
+    delete[] score;
     
-    if (which_split[winners[0]] < 0) break;
+    return List::create(
+      Named("score") = NumericVector::create(exact_match_score / n_tips),
+      _["matching"] = a_match);
+  }
+  
+  
+  const int16 lap_dim = most_splits - exact_matches;
+  lap_col *rowsol = new lap_col[lap_dim];
+  lap_row *colsol = new lap_row[lap_dim];
+  cost *u = new cost[lap_dim], *v = new cost[lap_dim];
+  
+  if (exact_matches) {
+    int16 a_pos = 0;
+    for (int16 ai = 0; ai != a.n_splits; ++ai) {
+      if (a_match[ai]) continue;
+      int16 b_pos = 0;
+      for (int16 bi = 0; bi != b.n_splits; ++bi) {
+        if (b_match[bi]) continue;
+        score[a_pos][b_pos] = score[ai][bi];
+        b_pos++;
+      }
+      for (int16 bi = lap_dim - a_extra_splits; bi < lap_dim; ++bi) {
+        score[a_pos][bi] = max_score;
+      }
+      a_pos++;
+    }
+    for (int16 ai = lap_dim - b_extra_splits; ai < lap_dim; ++ai) {
+      for (int16 bi = 0; bi != lap_dim; ++bi) {
+        score[ai][bi] = max_score;
+      }
+    }
     
-    push(winners[0], which_split);
+    const double lap_score = 
+      double((max_score * lap_dim) - lap(lap_dim, score, rowsol, colsol, u, v))
+      / max_score;
+    NumericVector final_score = 
+    NumericVector::create(lap_score + (exact_match_score / n_tips));
+    
+    for (int16 i = most_splits; i--; ) delete[] score[i];
+    delete[] colsol; delete[] u; delete[] v; delete[] score;
+    
+    std::unique_ptr<int16[]> lap_decode = std::make_unique<int16[]>(lap_dim);
+    int16 fuzzy_match = 0;
+    for (int16 bi = 0; bi != b.n_splits; ++bi) {
+      if (!b_match[bi]) {
+        lap_decode[fuzzy_match++] = bi + 1;
+      } else {
+      }
+    }
+    
+    fuzzy_match = 0;
+    IntegerVector final_matching(a.n_splits);
+    for (int16 i = 0; i != a.n_splits; i++) {
+      if (a_match[i]) {
+        // Rcout << "a" << (1+i) << " exactly matches b" << a_match[i]<< "\n";
+        final_matching[i] = a_match[i];
+      } else {
+        const int16 this_sol = rowsol[fuzzy_match++];
+        // Rcout << "a"<<(1+i) << " fuzzily matches rowsol[" << this_sol <<"] == "
+        //       << rowsol[this_sol] << "; ";
+        if (rowsol[this_sol] >= lap_dim - a_extra_splits) {
+          // Rcout << " unmatched (NA)\n";
+          final_matching[i] = NA_INTEGER;
+        } else {
+          // Rcout << " matched with b" << lap_decode[rowsol[this_sol]] <<".\n";
+          final_matching[i] = lap_decode[rowsol[this_sol]];
+        }
+      }
+      // Rcout << " ";
+      // if (final_matching[i] > 0) Rcout << final_matching[i]; else Rcout << "NA";
+    }
+    
+    delete[] rowsol;
+    
+    return List::create(Named("score") = final_score,
+                        _["matching"] = final_matching);
+  } else {
+    for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
+      for (int16 bi = 0; bi != most_splits; ++bi) {
+        score[ai][bi] = max_score;
+      }
+    }
+    
+    const double lap_score = double(
+      (max_score * lap_dim) -
+        lap(most_splits, score, rowsol, colsol, u, v)
+    ) / max_score;
+    NumericVector final_score = NumericVector::create(lap_score);
+    
+    for (int16 i = most_splits; i--; ) delete[] score[i];
+    delete[] colsol; delete[] u; delete[] v; delete[] score;
+    
+    IntegerVector final_matching (a.n_splits);
+    for (int16 i = a.n_splits; i--; ) {
+      final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
+    }
+    
+    delete[] rowsol;
+    
+    return List::create(Named("score") = final_score,
+                        _["matching"] = final_matching);
   }
 }
