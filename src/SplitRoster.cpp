@@ -16,6 +16,18 @@ inline bool SplitRoster::game_result(
   return false;
 }
 
+inline bool SplitRoster::splits_equal(
+    const splitbit (&a)[MAX_SPLITS][MAX_BINS], const int16 split_a,
+    const splitbit (&b)[MAX_SPLITS][MAX_BINS], const int16 split_b) {
+  for (int16 bin = n_bins; bin--; ) {
+    if (a[split_a][bin] != b[split_b][bin]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+
 inline int32 SplitRoster::play_game(
     const int32 *node,
     std::unique_ptr<int32[]> &which_tree,
@@ -46,10 +58,21 @@ inline void SplitRoster::push(
     const int32 node,
     std::unique_ptr<int32[]> &which_tree,
     std::unique_ptr<int16[]> &which_split) {
-  
-  roster_tree[roster_pos] = which_tree[node];
-  roster_split[roster_pos] = which_split[node];
-  ++roster_pos;
+  const int32 new_tree = which_tree[node];
+  const int16 new_split = which_split[node];
+  if (splits_equal(splits[which_tree[new_tree]].state,
+                   which_split[new_split],
+                   splits[roster_tree[roster_pos]].state,
+                   roster_split[roster_pos])) {
+    ++roster_hits[roster_pos];
+  } else {
+    ++roster_pos;
+    roster_tree[roster_pos] = new_tree;
+    roster_split[roster_pos] = new_split;
+    roster_size[roster_pos] = splits[which_tree[new_tree]].in_split;
+    roster_hits[roster_pos] = 1;
+  }
+  index[new_tree][new_split] = roster_pos;
 }
 
 // [[Rcpp::export]]
@@ -68,7 +91,12 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
   const int16 max_splits = n_tips - 3;
   roster_tree = std::make_unique<int32[]>(n_trees * max_splits);
   roster_split = std::make_unique<int16[]>(n_trees * max_splits);
+  roster_size = std::make_unique<int16[]>(n_trees * max_splits);
   roster_hits = std::make_unique<int32[]>(n_trees * max_splits);
+  index = std::make_unique<std::unique_ptr<int16>[]>(n_trees);
+  for (int32 i = n_trees; i--; ) {
+    index[i] = std::make_unique<int16>(max_splits);
+  }
   
   // Populate roster using k-way merge with tournament tree
   const int32
@@ -96,13 +124,13 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
     play_game(&i, which_tree, which_split);
   }
   
-  const int16 zero = 0;
-  const int16 winner = play_game(&zero, which_tree, which_split);
+  roster_pos = 0;
+  const int16 winner = play_game(&roster_pos, which_tree, which_split);
   
   roster_tree[0] = which_tree[winner];
   roster_split[0] = which_split[winner];
   roster_hits[0] = 1;
-  roster_pos = 1;
+  
   do {
     push(&library_position, 
                    } while (winning_split > -1);

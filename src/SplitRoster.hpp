@@ -20,8 +20,11 @@ class SplitRoster {
   std::unique_ptr<SplitList[]> splits;
   std::unique_ptr<int32[]> roster_tree;
   std::unique_ptr<int16[]> roster_split;
+  std::unique_ptr<int16[]> roster_size;
   std::unique_ptr<int32[]> roster_hits;
-  int16 n_bins, roster_pos;
+  std::unique_ptr<std::unique_ptr<int16>[]> index;
+  int16 n_bins;
+  int32 roster_pos;
 public:
   int16 n_tips, n_splits;
   int32 n_trees;
