@@ -12,7 +12,7 @@ using namespace Rcpp;
 class SplitRoster {
   bool game_result(const splitbit (&a)[MAX_SPLITS][MAX_BINS], const int16 split_a,
                    const splitbit (&b)[MAX_SPLITS][MAX_BINS], const int16 split_b);
-  int32 play_game(
+  int32 game_winner(
       const int32 *node,
       std::unique_ptr<int32[]> &which_tree,
       std::unique_ptr<int16[]> &which_split);
