@@ -95,13 +95,13 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
   roster_split = std::make_unique<int16[]>(n_trees * max_splits);
   roster_size = std::make_unique<int16[]>(n_trees * max_splits);
   roster_hits = std::make_unique<int32[]>(n_trees * max_splits);
-  index = std::vector<std::array<int16, MAX_SPLITS>[]>(n_trees);
+  index = std::vector<std::array<int32, MAX_SPLITS>[]>(n_trees);
   
   // Populate roster using k-way merge with tournament tree
   const int32
     tournament_games = n_trees - 1,
-      tournament_nodes = n_trees + tournament_games
-    ;
+    tournament_nodes = n_trees + tournament_games
+  ;
   
   auto winners = std::make_unique<int32[]>(tournament_nodes);
   auto losers = std::make_unique<int32[]>(tournament_nodes);
