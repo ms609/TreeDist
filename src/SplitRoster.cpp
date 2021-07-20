@@ -48,7 +48,7 @@ inline void SplitRoster::play_game(
   } else {
     child1_greater = game_result(
       splits[tree1].state, which_split[tree1],
-      splits[tree2].state, which_split[tree2]));
+      splits[tree2].state, which_split[tree2]);
   }
   
   if (child1_greater) {
@@ -79,7 +79,6 @@ inline void SplitRoster::push(
   index[tree][new_split] = roster_pos;
 }
 
-
 SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
   n_tips = nTip[0];
   n_trees = x.length();
@@ -105,8 +104,8 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
   // Populate roster using k-way merge with tournament tree
   const int32
     tournament_games = n_trees - 1,
-    tournament_nodes = n_trees + tournament_games
-  ;
+      tournament_nodes = n_trees + tournament_games
+    ;
   
   auto which_split = std::make_unique<int16[]>(n_trees);
   auto winners = std::make_unique<int16[]>(tournament_nodes);
@@ -147,8 +146,4 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
     
     push(winners[0], which_split);
   }
-  
-  
-  
-  
 }
