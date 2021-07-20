@@ -1,6 +1,6 @@
 #include <cstdlib>
 #include <Rcpp.h>
-#include "ints.h"
+#include "ints.hpp"
 using namespace Rcpp;
 
 const int16 MAST_MAX_NODE = 4095, /* Increasing --> overflow size of stack frame */
