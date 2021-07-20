@@ -61,24 +61,22 @@ inline void SplitRoster::play_game(
 }
 
 inline void SplitRoster::push(
-    const int32 node,
-    std::unique_ptr<int32[]> &which_tree,
+    const int32 tree,
     std::unique_ptr<int16[]> &which_split) {
-  const int32 new_tree = which_tree[node];
-  const int16 new_split = which_split[node];
-  if (splits_equal(splits[which_tree[new_tree]].state,
+  const int16 new_split = which_split[tree];
+  if (splits_equal(splits[tree].state,
                    which_split[new_split],
                    splits[roster_tree[roster_pos]].state,
                    roster_split[roster_pos])) {
     ++roster_hits[roster_pos];
   } else {
     ++roster_pos;
-    roster_tree[roster_pos] = new_tree;
+    roster_tree[roster_pos] = tree;
     roster_split[roster_pos] = new_split;
-    roster_size[roster_pos] = splits[which_tree[new_tree]].in_split;
+    roster_size[roster_pos] = splits[tree].in_split;
     roster_hits[roster_pos] = 1;
   }
-  index[new_tree][new_split] = roster_pos;
+  index[tree][new_split] = roster_pos;
 }
 
 
@@ -127,7 +125,7 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
   
   // Initial games
   for (int32 i = tournament_games; i--; ) {
-    play_game(&i, which_split, winners, losers);
+    play_game(&i, winners, losers, which_split);
   }
   
   roster_pos = 0;
@@ -142,12 +140,12 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
     int32 i = winner;
     do {
       i /= 2;
-      play_game(&i, which_tree, which_split, winners, losers);
+      play_game(&i, winners, losers, which_split);
     } while (i);
     
     if (which_split[winners[0]] < 0) break;
     
-    push(winners[0], which_tree, which_split);
+    push(winners[0], which_split);
   }
   
   
