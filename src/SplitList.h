@@ -10,8 +10,8 @@ const int16 R_BIN_SIZE = 8;
 class SplitList {
 public:
   int16 n_splits, n_bins;
+  int16 in_split[MAX_SPLITS];
   splitbit state[MAX_SPLITS][MAX_BINS];
-  splitbit in_split[MAX_SPLITS];
   SplitList(RawMatrix);
 };
 
