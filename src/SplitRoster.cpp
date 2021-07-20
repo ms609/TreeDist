@@ -28,30 +28,36 @@ inline bool SplitRoster::splits_equal(
 }
 
 
-inline int32 SplitRoster::game_winner(
+inline void SplitRoster::play_game(
     const int32 *node,
-    std::unique_ptr<int32[]> &which_tree,
+    std::unique_ptr<int32[]> &winners,
+    std::unique_ptr<int32[]> &losers,
     std::unique_ptr<int16[]> &which_split) {
   const int32
     child1 = *node * 2,
-    child2 = child1 + 1
+    child2 = child1 + 1,
+    tree1 = winners[child1],
+    tree2 = winners[child2]
   ;
   
   bool child1_greater;
-  if (which_split[child1] < 0) {
+  if (tree1 < 0 || which_split[tree1] < 0) {
     child1_greater = false;
-  } else if (which_split[child2] < 0) {
+  } else if (tree2 < 0 || which_split[tree2] < 0) {
     child1_greater = true;
   } else {
     child1_greater = game_result(
-      splits[which_tree[child1]].state, which_split[child1],
-      splits[which_tree[child2]].state, which_split[child2]));
+      splits[tree1].state, which_split[tree1],
+      splits[tree2].state, which_split[tree2]));
   }
   
-  const int32 loser = child1_greater ? child2 : child1;
-  which_tree[*node] = which_tree[loser];
-  which_split[*node] = which_split[loser];
-  return child1_greater ? child1 : child2;
+  if (child1_greater) {
+    winners[*node] = tree1;
+    losers[*node] = tree2;
+  } else {
+    winners[*node] = tree2;
+    losers[*node] = tree1;
+  }
 }
 
 inline void SplitRoster::push(
@@ -75,7 +81,7 @@ inline void SplitRoster::push(
   index[new_tree][new_split] = roster_pos;
 }
 
-// [[Rcpp::export]]
+
 SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
   n_tips = nTip[0];
   n_trees = x.length();
@@ -104,44 +110,44 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
     tournament_nodes = n_trees + tournament_games
   ;
   
-  auto which_tree = std::make_unique<int16[]>(tournament_nodes);
-  auto which_split = std::make_unique<int16[]>(tournament_nodes);
-  auto winner_index = std::make_unique<int16[]>(tournament_nodes);
+  auto which_split = std::make_unique<int16[]>(n_trees);
+  auto winners = std::make_unique<int16[]>(tournament_nodes);
+  auto losers = std::make_unique<int16[]>(tournament_nodes);
   
   
   // Populate children of tree
   for (int32 i = 0; i != n_trees; ++i) {
-    const int32 this_node = i + tournament_games;
-    which_tree[this_node] = i;
-    which_split[this_node] = splits[i].n_splits - 1;
-    winner_index[this_node] = this_node;
+    which_split[i] = splits[i].n_splits - 1;
+    winners[i + tournament_games] = i;
   }
   for (int32 i = n_trees + tournament_games; i != tournament_nodes; ++i) {
     which_split[i] = -1;
+    winners[i] = -1;
   }
   
   // Initial games
   for (int32 i = tournament_games; i--; ) {
-    // TODO duplicate function as void to avoid overhead of unused return
-    winner_index[i] = game_winner(&i, which_tree, which_split);
+    play_game(&i, which_split, winners, losers);
   }
   
   roster_pos = 0;
-  roster_tree[0] = which_tree[winner_index[0]];
-  roster_split[0] = which_split[winner_index[0]];
+  roster_tree[0] = winners[0];
+  roster_split[0] = which_split[winners[0]];
   roster_hits[0] = 1;
   
   for (; ; ) {
-    const int32 winner = winner_index[0];
-    
+    const int32 winner = winners[0];
+    --which_split[winner];
     
     int32 i = winner;
     do {
       i /= 2;
-      winner_index[i] = game_winner(&i, which_tree, which_split);
+      play_game(&i, which_tree, which_split, winners, losers);
     } while (i);
     
-    push(winner_index[0], which_tree, which_split);
+    if (which_split[winners[0]] < 0) break;
+    
+    push(winners[0], which_tree, which_split);
   }
   
   
