@@ -84,8 +84,8 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
   splits.reserve(n_trees);
   
   for (int32 i = 0; i != n_trees; ++i) {
-    const RawMatrix a = x[i];
-    splits.emplace_back(SplitList(a));
+    const RawMatrix xi = x[i];
+    splits.emplace_back(xi);
     splits[i].quicksort();
   }
   n_bins = splits[0].n_bins;
