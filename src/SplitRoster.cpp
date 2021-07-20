@@ -1,13 +1,14 @@
 #include <Rcpp.h>
+#include "ints.hpp"
 #include "tree_distances.hpp"
 #include "SplitList.hpp"
 #include "SplitRoster.hpp"
 using namespace Rcpp;
 
-inline bool game_result(const splitbit (&a)[MAX_SPLITS][MAX_BINS], const int16 split_a,
-                        const splitbit (&b)[MAX_SPLITS][MAX_BINS], const int16 split_b,
-                        const int16* n_bins) {
-  for (int16 bin = 0; bin != *n_bins; ++bin) {
+inline bool SplitRoster::game_result(
+    const splitbit (&a)[MAX_SPLITS][MAX_BINS], const int16 split_a,
+    const splitbit (&b)[MAX_SPLITS][MAX_BINS], const int16 split_b) {
+  for (int16 bin = 0; bin != n_bins; ++bin) {
     if (a[split_a][bin] > b[split_b][bin]) {
       return true;
     }
@@ -15,13 +16,12 @@ inline bool game_result(const splitbit (&a)[MAX_SPLITS][MAX_BINS], const int16 s
   return false;
 }
 
-inline int16 play_game(const int16 *node,
-                       std::unique_ptr<int16[]> &which_tree,
-                       std::unique_ptr<int16[]> &which_split,
-                       std::unique_ptr<SplitList[]> &splits,
-                       const int16* n_bins) {
-  const int16 
-  child1 = *node * 2,
+inline int32 SplitRoster::play_game(
+    const int32 *node,
+    std::unique_ptr<int32[]> &which_tree,
+    std::unique_ptr<int16[]> &which_split) {
+  const int32
+    child1 = *node * 2,
     child2 = child1 + 1
   ;
   
@@ -33,14 +33,23 @@ inline int16 play_game(const int16 *node,
   } else {
     child1_greater = game_result(
       splits[which_tree[child1]].state, which_split[child1],
-                                                   splits[which_tree[child2]].state, which_split[child2],
-                                                                                                n_bins);
+      splits[which_tree[child2]].state, which_split[child2]));
   }
   
-  const int16 loser = child1_greater ? child2 : child1;
+  const int32 loser = child1_greater ? child2 : child1;
   which_tree[*node] = which_tree[loser];
   which_split[*node] = which_split[loser];
   return child1_greater ? child1 : child2;
+}
+
+inline void SplitRoster::push(
+    const int32 node,
+    std::unique_ptr<int32[]> &which_tree,
+    std::unique_ptr<int16[]> &which_split) {
+  
+  roster_tree[roster_pos] = which_tree[node];
+  roster_split[roster_pos] = which_split[node];
+  ++roster_pos;
 }
 
 // [[Rcpp::export]]
@@ -49,7 +58,7 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
   n_trees = x.length();
   splits = std::make_unique<SplitList[]>(n_trees);
   
-  for (int16 i = n_trees; i--; ) {
+  for (int32 i = n_trees; i--; ) {
     const RawMatrix a = x[i];
     splits[i] = SplitList(a);
     splits[i].quicksort();
@@ -57,11 +66,12 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
   n_bins = splits[0].n_bins;
   
   const int16 max_splits = n_tips - 3;
-  roster = std::make_unique<splitbit[]>(n_trees * max_splits * n_bins);
+  roster_tree = std::make_unique<int32[]>(n_trees * max_splits);
+  roster_split = std::make_unique<int16[]>(n_trees * max_splits);
+  roster_hits = std::make_unique<int32[]>(n_trees * max_splits);
   
   // Populate roster using k-way merge with tournament tree
-  const int16
-    tournament_rounds = std::ceil(std::log2(double(n_trees))) + 1,
+  const int32
     tournament_games = n_trees - 1,
     tournament_nodes = n_trees + tournament_games
   ;
@@ -71,24 +81,30 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
   
   
   // Populate children of tree
-  for (int16 i = 0; i != n_trees; ++i) {
-    const int16 this_node = i + tournament_games;
+  for (int32 i = 0; i != n_trees; ++i) {
+    const int32 this_node = i + tournament_games;
     which_tree[this_node] = i;
     which_split[this_node] = splits[i].n_splits - 1;
   }
-  for (int16 i = n_trees + tournament_games; i != tournament_nodes; ++i) {
+  for (int32 i = n_trees + tournament_games; i != tournament_nodes; ++i) {
     which_split[i] = -1;
   }
   
   // Initial games
-  for (int16 i = tournament_games; --i; ) {
-    // TODO duplicate function as void to avoid overhead of return
-    play_game(&i, which_tree, which_split, splits, &n_bins);
+  for (int32 i = tournament_games; --i; ) {
+    // TODO duplicate function as void to avoid overhead of unused return
+    play_game(&i, which_tree, which_split);
   }
   
-  int16 library_position = 0, winning_split;
+  const int16 zero = 0;
+  const int16 winner = play_game(&zero, which_tree, which_split);
+  
+  roster_tree[0] = which_tree[winner];
+  roster_split[0] = which_split[winner];
+  roster_hits[0] = 1;
+  roster_pos = 1;
   do {
-    update_library(&library_position, 
+    push(&library_position, 
                    } while (winning_split > -1);
   
   
