@@ -20,7 +20,7 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
   const int16 max_splits = n_tips - 3;
   roster_tree = std::make_unique<int32[]>(n_trees * max_splits);
   roster_split = std::make_unique<int16[]>(n_trees * max_splits);
-  roster_size = std::make_unique<int16[]>(n_trees * max_splits);
+  in_split = std::make_unique<int16[]>(n_trees * max_splits);
   roster_hits = std::make_unique<int32[]>(n_trees * max_splits);
   index.reserve(n_trees);
   
@@ -50,7 +50,7 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
     play_game(&i, winners, losers, which_split);
   }
   
-  roster_pos = 0;
+  roster_len = 0;
   roster_tree[0] = winners[0];
   roster_split[0] = which_split[winners[0]];
   roster_hits[0] = 1;
@@ -69,6 +69,9 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
     
     push(winners[0], which_split);
   }
+  
+  ++roster_len; // Point to first position after array
+  score.reserve(roster_len * roster_len);
 }
 
 inline bool SplitRoster::splits_equal(
@@ -131,21 +134,87 @@ inline void SplitRoster::push(
   const int16 new_split = which_split[tree];
   if (splits_equal(splits[tree].state,
                    which_split[new_split],
-                   splits[roster_tree[roster_pos]].state,
-                   roster_split[roster_pos])) {
-    ++roster_hits[roster_pos];
+                   splits[roster_tree[roster_len]].state,
+                   roster_split[roster_len])) {
+    ++roster_hits[roster_len];
   } else {
-    ++roster_pos;
-    roster_tree[roster_pos] = tree;
-    roster_split[roster_pos] = new_split;
-    roster_size[roster_pos] = splits[tree].in_split[new_split];
-    roster_hits[roster_pos] = 1;
+    ++roster_len;
+    roster_tree[roster_len] = tree;
+    roster_split[roster_len] = new_split;
+    in_split[roster_len] = splits[tree].in_split[new_split];
+    roster_hits[roster_len] = 1;
   }
-  index[tree][new_split] = roster_pos;
+  index[tree][new_split] = roster_len;
 }
 
-NumericVector SplitRoster::mutual_clustering() {
+#define SCORE(a, b) score[(a) * roster_len + (b)]
 
+#define SPLIT(i) splits[roster_tree[(i)]].state[roster_split[(i)]]
+
+void SplitRoster::mutual_clustering() {
+  const cost max_score = BIG;
+  double exact_match_score = 0;
+  int16 exact_matches = 0;
+  
+  for (int16 ai = 0; ai != roster_len - 1; ++ai) {
+    const int16
+      na = in_split[ai],
+      nA = n_tips - na
+    ;
+    
+    SCORE(ai, ai) = ic_matching(na, nA, n_tips);
+    
+    for (int16 bi = ai + 1; bi != roster_len; ++bi) {
+      
+      // x divides tips into a|A; y divides tips into b|B
+      int16 a_and_b = 0;
+      for (int16 bin = n_bins; --bin; ) {
+        a_and_b += count_bits(SPLIT(ai)[bin] & SPLIT(bi)[bin]);
+      }
+      
+      const int16
+        nb = in_split[bi],
+        nB = n_tips - nb,
+        a_and_B = na - a_and_b,
+        A_and_b = nb - a_and_b,
+        A_and_B = nA - A_and_b
+      ;
+      
+      if (a_and_b == A_and_b &&
+          a_and_b == a_and_B &&
+          a_and_b == A_and_B) {
+        SCORE(ai, bi) = max_score; // Don't risk rounding error
+      } else {
+        SCORE(ai, bi) = max_score -
+          // Division by n_tips converts n(A&B) to P(A&B) for each ic_element
+          cost(max_score * ((
+            // 0 < Sum of IC_elements <= n_tips
+            ic_element(a_and_b, na, nb, n_tips) +
+            ic_element(a_and_B, na, nB, n_tips) +
+            ic_element(A_and_b, nA, nb, n_tips) +
+            ic_element(A_and_B, nA, nB, n_tips)
+          ) / n_tips)
+        );
+      }
+    }
+  }
+}
+
+
+// [[Rcpp::export]]
+NumericVector SplitRoster::score_pairs() {
+  int32 i = 0, entry = 0;
+  for (i = 0; ; ++i) {
+    // Calculate tree's similarity to self
+    
+    
+    if (i == n_trees) break;
+    entry++;
+    for (int32 j = i + 1; j != n_trees; ++j) {
+      
+      entry++;
+    }
+  }
   const SplitList a(x), b(y);
   const bool a_has_more_splits = (a.n_splits > b.n_splits);
   const int16

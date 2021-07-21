@@ -1,8 +1,8 @@
 #ifndef _TREEDIST_SPLITROSTER_HPP
 #define _TREEDIST_SPLITROSTER_HPP
 
-#include <vector>
 #include <tr1/array>
+#include <vector>
 #include <stdint.h>
 #include <Rcpp.h>
 #include "ints.hpp"
@@ -13,12 +13,13 @@ using namespace Rcpp;
 
 class SplitRoster {
   int16 n_bins;
-  int32 roster_pos;
+  int32 roster_len;
   
   std::vector<SplitList> splits;
+  std::vector<double> score;
   std::unique_ptr<int32[]> roster_tree;
   std::unique_ptr<int16[]> roster_split;
-  std::unique_ptr<int16[]> roster_size;
+  std::unique_ptr<int16[]> in_split;
   std::unique_ptr<int32[]> roster_hits;
   std::vector<std::tr1::array<int32, MAX_SPLITS> > index;
   
@@ -42,6 +43,8 @@ public:
   int32 n_trees;
   
   SplitRoster(const List x, const IntegerVector nTip);
+  void mutual_clustering();
+  NumericVector score_pairs();
 };
 
 #endif
