@@ -160,8 +160,8 @@ void SplitRoster::mutual_clustering() {
   
   for (int16 ai = 0; ai != roster_len - 1; ++ai) {
     const int16
-      nA = in_split[ai],
-      na = out_split[ai]
+      na = in_split[ai],
+      nA = out_split[ai]
     ;
     assert(na + nA == n_tips);
     
@@ -177,8 +177,8 @@ void SplitRoster::mutual_clustering() {
       }
       
       const int16
-        nB = in_split[bi],
-        nb = out_split[bi],
+        nb = in_split[bi],
+        nB = out_split[bi],
         a_and_B = na - a_and_b,
         A_and_b = nb - a_and_b,
         A_and_B = nA - A_and_b
