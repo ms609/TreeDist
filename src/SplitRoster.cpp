@@ -62,7 +62,7 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
     
     int32 i = winner;
     do {
-      i /= 2;
+      i = (i - 1) / 2;
       play_game(&i, winners, losers, which_split);
     } while (i);
     
@@ -103,7 +103,7 @@ inline void SplitRoster::play_game(
     std::unique_ptr<int32[]> &losers,
     std::unique_ptr<int16[]> &which_split) {
   const int32
-    child1 = *node * 2,
+    child1 = *node * 2 + 1,
     child2 = child1 + 1,
     tree1 = winners[child1],
     tree2 = winners[child2]
