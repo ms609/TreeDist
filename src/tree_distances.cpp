@@ -384,7 +384,8 @@ List cpp_msi_distance (const RawMatrix x, const RawMatrix y,
 // [[Rcpp::export]]
 NumericVector cpp_all_pairs_mci(const List x, const IntegerVector nTip) {
   SplitRoster roster(x, nTip);
-  
+  roster.mutual_clustering();
+  return roster.score_pairs();
 }
 
 // [[Rcpp::export]]
