@@ -122,6 +122,9 @@ void SplitList::swap(int16 a, int16 b) {
     state[a][bin] = state[b][bin];
     state[b][bin] = tmp;
   }
+  const int16 tmp = in_split[a];
+  in_split[a] = in_split[b];
+  in_split[b] = tmp;
 }
 
 bool SplitList::less_than(int16 a, int16 b) {
