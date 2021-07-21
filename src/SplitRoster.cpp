@@ -165,7 +165,8 @@ void SplitRoster::mutual_clustering() {
     ;
     assert(na + nA == n_tips);
     
-    SCORE(ai, ai) = ic_matching(na, nA, n_tips);
+    SCORE(ai, ai) = max_score - 
+      cost(max_score * (ic_matching(na, nA, n_tips) / n_tips));
     
     for (int16 bi = ai + 1; bi != roster_len; ++bi) {
       
