@@ -236,7 +236,7 @@ NumericVector SplitRoster::score_pairs() {
       
       // TODO declare lap_score once at maximum size n_tips - 3 and retain.
       cost** lap_score = new cost*[most_splits];
-      for (int16 i = most_splits; i--; ) lap_score[i] = new cost[most_splits];
+      for (int16 li = most_splits; li--; ) lap_score[li] = new cost[most_splits];
       lap_col *rowsol = new lap_col[most_splits];
       lap_row *colsol = new lap_row[most_splits];
       cost *u = new cost[most_splits], *v = new cost[most_splits];
@@ -260,7 +260,7 @@ NumericVector SplitRoster::score_pairs() {
           lap(most_splits, lap_score, rowsol, colsol, u, v)
       ) / max_score;
       
-      for (int16 i = most_splits; i--; ) delete[] lap_score[i];
+      for (int16 li = most_splits; li--; ) delete[] lap_score[li];
       delete[] colsol; delete[] u; delete[] v; delete[] lap_score;
       delete[] rowsol;
       
