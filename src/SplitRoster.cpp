@@ -155,8 +155,6 @@ inline void SplitRoster::push(
 
 void SplitRoster::mutual_clustering() {
   const cost max_score = BIG;
-  double exact_match_score = 0;
-  int16 exact_matches = 0;
   
   for (int16 ai = 0; ai != roster_len - 1; ++ai) {
     const int16
@@ -202,8 +200,6 @@ void SplitRoster::mutual_clustering() {
   }
 }
 
-
-// [[Rcpp::export]]
 NumericVector SplitRoster::score_pairs() {
   int32 
     i = 0,
@@ -211,13 +207,14 @@ NumericVector SplitRoster::score_pairs() {
     n_scores = n_trees * (n_trees + 1) / 2;
   ;
   const cost max_score = BIG;
-  score = std::vector<double> (n_scores, 0.0);
+  //score = std::vector<double> (n_scores, 0.0);
+  NumericVector ret(n_scores);
   for (i = 0; ; ++i) {
     const int16 i_splits = splits[i].n_splits;
     // Calculate tree's similarity to self
     for (int16 sp = 0; sp != i_splits; ++sp) {
       const int32 sp_i = index[i][sp];
-      score[entry] += SCORE(sp_i, sp_i);
+      ret[entry] += SCORE(sp_i, sp_i);
     }
     
     if (i == n_trees) break;
@@ -250,7 +247,7 @@ NumericVector SplitRoster::score_pairs() {
         }
       }
       
-      score[entry] = double(
+      ret[entry] = double(
         (max_score * most_splits) -
           lap(most_splits, lap_score, rowsol, colsol, u, v)
       ) / max_score;
@@ -262,4 +259,5 @@ NumericVector SplitRoster::score_pairs() {
       entry++;
     }
   }
+  return ret;
 }
