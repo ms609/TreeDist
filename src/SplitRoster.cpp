@@ -36,7 +36,7 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
   auto which_split = std::make_unique<int16[]>(n_trees);
   
   
-  // Populate children of tree
+  // Populate leaves of tournament tree
   for (int32 i = 0; i != n_trees; ++i) {
     which_split[i] = splits[i].n_splits - 1;
     winners[i + tournament_games] = i;
@@ -54,11 +54,13 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
   roster_len = 0;
   roster_tree[0] = winners[0];
   roster_split[0] = which_split[winners[0]];
+  in_split[0] = splits[winners[0]].in_split[roster_split[0]];
+  out_split[0] = n_tips - in_split[0];
   roster_hits[0] = 1;
   
   for (; ; ) {
     const int32 winner = winners[0];
-    --which_split[winner];
+    --(which_split[winner]);
     
     int32 i = winner;
     do {
@@ -168,7 +170,7 @@ void SplitRoster::mutual_clustering() {
       
       // x divides tips into a|A; y divides tips into b|B
       int16 a_and_b = 0;
-      for (int16 bin = n_bins; --bin; ) {
+      for (int16 bin = n_bins; bin--; ) {
         a_and_b += count_bits(SPLIT(ai)[bin] & SPLIT(bi)[bin]);
       }
       

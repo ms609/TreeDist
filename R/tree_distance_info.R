@@ -299,8 +299,10 @@ MutualClusteringInfo <- function (tree1, tree2 = NULL, normalize = FALSE,
                                   reportMatching = FALSE, diag = TRUE) {
   unnormalized <- if (is.null(tree2) && is.list(tree1) &&
                       !inherits(tree1, 'phylo')) {
-    structure(cpp_all_pairs_mci(as.Splits(tree1, tree1[[1]]), NTip(tree1[[1]])),
-              Size = length(tree1), Diag = FALSE, Upper = FALSE, class = 'dist')
+    mtx <- matrix(0, length(tree1), length(tree1))
+    mtx[!upper.tri(mtx)] <- cpp_all_pairs_mci(as.Splits(tree1, tree1[[1]]), NTip(tree1[[1]]))
+    mtx[upper.tri(mtx)] <- t(mtx)[upper.tri(mtx)]
+    mtx
   } else {
     CalculateTreeDistance(MutualClusteringInfoSplits, tree1, tree2,
                           reportMatching)
