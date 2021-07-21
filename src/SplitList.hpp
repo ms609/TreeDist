@@ -20,7 +20,7 @@ public:
   int16 in_split[MAX_SPLITS];
   splitbit state[MAX_SPLITS][MAX_BINS];
   SplitList(RawMatrix x);
-  SplitList(RawMatrix x, int16 n_tip);
+  SplitList(RawMatrix x, int16 n_tips);
   void quicksort();
   void quicksort(int16 lo, int16 hi);
 };

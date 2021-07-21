@@ -56,7 +56,7 @@ SplitList::SplitList(RawMatrix x) {
   }
 }
 
-SplitList::SplitList(RawMatrix x, int16 n_tip) {
+SplitList::SplitList(RawMatrix x, int16 n_tips) {
   n_splits = x.rows();
   const int16 
     n_input_bins = x.cols(),
@@ -78,6 +78,7 @@ SplitList::SplitList(RawMatrix x, int16 n_tip) {
   // Rcout << "Last 2^bt: " << (2^last_bin_tips) << ".\n";
   const splitbit last_mask = std::pow(2, last_bin_tips) - 1;
   // Rcout << "Last mask: " << last_mask << ".\n";
+  Rcout << "\n=== SplitList::SplitList(x, n_tips) ===\n";
   
   for (int16 split = 0; split != n_splits; split++) {
     int16 last_bin = n_bins - 1;
