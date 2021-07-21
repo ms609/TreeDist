@@ -20,6 +20,7 @@ class SplitRoster {
   std::unique_ptr<int32[]> roster_tree;
   std::unique_ptr<int16[]> roster_split;
   std::unique_ptr<int16[]> in_split;
+  std::unique_ptr<int16[]> out_split;
   std::unique_ptr<int32[]> roster_hits;
   std::vector<std::tr1::array<int32, MAX_SPLITS> > index;
   
