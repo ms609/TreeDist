@@ -226,7 +226,7 @@ NumericVector SplitRoster::score_pairs() {
       ret[entry] += SCORE(sp_i, sp_i);
     }
     
-    if (i == n_trees) break;
+    if (i == n_trees - 1) break;
     entry++;
     for (int32 j = i + 1; j != n_trees; ++j) {
       const int16
