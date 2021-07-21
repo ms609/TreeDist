@@ -136,7 +136,7 @@ inline void SplitRoster::push(
     std::unique_ptr<int16[]> &which_split) {
   const int16 new_split = which_split[tree];
   if (splits_equal(splits[tree].state,
-                   which_split[new_split],
+                   new_split,
                    splits[roster_tree[roster_len]].state,
                    roster_split[roster_len])) {
     ++roster_hits[roster_len];
