@@ -243,15 +243,15 @@ NumericVector SplitRoster::score_pairs() {
       
       
       
-      for (int16 ai = i_splits; ai--; ) {
-        for (int16 bi = j_splits; bi--; ) {
-          lap_score[ai][bi] = SCORE(ai, bi);
+      for (int16 sp_i = i_splits; sp_i--; ) {
+        for (int16 sp_j = j_splits; sp_j--; ) {
+          lap_score[sp_i][sp_j] = SCORE(index[i][sp_i], index[j][sp_j]);
         }
       }
       
-      for (int16 ai = i_splits; ai < most_splits; ++ai) {
-        for (int16 bi = 0; bi != most_splits; ++bi) {
-          lap_score[ai][bi] = max_score;
+      for (int16 sp_i = i_splits; sp_i < most_splits; ++sp_i) {
+        for (int16 sp_j = 0; sp_j != most_splits; ++sp_j) {
+          lap_score[sp_i][sp_j] = max_score;
         }
       }
       
