@@ -4,6 +4,12 @@ using namespace Rcpp;
 #include "tree_distances.hpp" // Before SplitList.h, for int16
 #include "SplitList.hpp"
 
+#define INLASTBIN(n, size) ((size) - ((size) - ((n) % (size))) % (size))
+
+#define INSUBBIN(bin, offset) splitbit(x(split, ((bin) * input_bins_per_bin) + (offset)))
+
+#define INBIN(in_bin, out_bin) ((INSUBBIN((out_bin), (in_bin))) << (R_BIN_SIZE * (in_bin)))
+
 SplitList::SplitList(RawMatrix x) {
   n_splits = x.rows();
   const int16 n_input_bins = x.cols(),
