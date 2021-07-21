@@ -78,7 +78,7 @@ SplitList::SplitList(RawMatrix x, int16 n_tips) {
     int16 last_bin = n_bins - 1;
     const int16 raggedy_bins = INLASTBIN(n_input_bins, R_BIN_SIZE);
     
-    Rcout << n_input_bins << " bins in; " << raggedy_bins << " raggedy bins\n";
+    // Rcout << n_input_bins << " bins in; " << raggedy_bins << " raggedy bins\n";
     assert(raggedy_bins <= BIN_SIZE / R_BIN_SIZE);
     assert(raggedy_bins > 0);
     state[split][last_bin] = INSUBBIN(last_bin, 0);
@@ -91,9 +91,7 @@ SplitList::SplitList(RawMatrix x, int16 n_tips) {
     }
     const bool invert = state[split][last_bin] & splitbit(1);
     if (invert) {
-      const int16 last_bin_tips = INLASTBIN(n_tips, BIN_SIZE);
-      // Rcout << "Last bin tips: " << last_bin_tips << ".\n";
-      
+      // Rcout << "Last bin tips: " << INLASTBIN(n_tips, BIN_SIZE) << ".\n";
       const splitbit last_mask = std::pow(2, INLASTBIN(n_tips, BIN_SIZE)) - 1;
       // Rcout << "Last mask: " << last_mask << ".\n";
       
