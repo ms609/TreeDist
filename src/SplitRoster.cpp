@@ -151,7 +151,7 @@ inline void SplitRoster::push(
   index[tree][new_split] = roster_len;
 }
 
-#define SCORE(a, b) score[(a) * roster_len + (b)]
+#define SCORE(a, b) ((a) > (b) ? score[(b) * roster_len + (a)] : score[(a) * roster_len + (b)])
 
 #define SPLIT(i) splits[roster_tree[(i)]].state[roster_split[(i)]]
 
