@@ -216,7 +216,6 @@ NumericVector SplitRoster::score_pairs() {
     n_scores = n_trees * (n_trees + 1) / 2;
   ;
   const cost max_score = BIG;
-  //score = std::vector<double> (n_scores, 0.0);
   NumericVector ret(n_scores);
   for (i = 0; ; ++i) {
     const int16 i_splits = splits[i].n_splits;
