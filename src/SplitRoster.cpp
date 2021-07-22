@@ -242,7 +242,7 @@ NumericVector SplitRoster::score_pairs() {
     //   const int32 sp_i = index[i][sp];
     //   ret[entry] += SCORE(sp_i, sp_i);
     // }
-    entry++;
+    // entry++;
     for (int32 j = i + 1; j != n_trees; ++j) {
       const int16
         j_splits = splits[j].n_splits,
