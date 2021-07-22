@@ -227,6 +227,7 @@ void SplitRoster::mutual_clustering() {
 }
 
 NumericVector SplitRoster::score_pairs() {
+  
   int32 
     i = 0,
     entry = 0,

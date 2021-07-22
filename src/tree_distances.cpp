@@ -500,7 +500,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
       }
     }
     
-    const double lap_score = 
+    const double lap_score =
       double((max_score * lap_dim) - lap(lap_dim, score, rowsol, colsol, u, v))
       / max_score;
     NumericVector final_score = 
