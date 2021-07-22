@@ -18,6 +18,7 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
   n_bins = splits[0].n_bins;
   
   const int16 max_splits = n_tips - 3;
+  
   roster_tree = std::make_unique<int32[]>(n_trees * max_splits);
   roster_split = std::make_unique<int16[]>(n_trees * max_splits);
   in_split = std::make_unique<int16[]>(n_trees * max_splits);
@@ -118,6 +119,8 @@ inline void SplitRoster::play_game(
   } else if (tree2 < 0 || which_split[tree2] < 0) {
     child1_greater = true;
   } else {
+    assert(tree1 >= 0);
+    assert(tree2 >= 0);
     child1_greater = game_result(
       splits[tree1].state, which_split[tree1],
       splits[tree2].state, which_split[tree2]);
@@ -160,7 +163,7 @@ inline void SplitRoster::push(
 void SplitRoster::mutual_clustering() {
   const cost max_score = BIG;
   
-  for (int16 ai = 0; ai != roster_len - 1; ++ai) {
+  for (int16 ai = 0; ai != roster_len; ++ai) {
     const int16
       na = in_split[ai],
       nA = out_split[ai]
@@ -169,6 +172,8 @@ void SplitRoster::mutual_clustering() {
     
     SCORE(ai, ai) = max_score - 
       cost(max_score * (ic_matching(na, nA, n_tips) / n_tips));
+    assert(SCORE(ai, ai) >= 0);
+    assert(SCORE(ai, ai) <= max_score);
     
     for (int16 bi = ai + 1; bi != roster_len; ++bi) {
       
@@ -215,6 +220,8 @@ void SplitRoster::mutual_clustering() {
         //       << "     " << nA << " | " << A_and_b << " | " << A_and_B << " | "
         //       << " = " << n_tips << ";\n\n";
       }
+      assert(SCORE(ai, bi) >= 0);
+      assert(SCORE(ai, bi) <= max_score);
     }
   }
 }
