@@ -8,6 +8,8 @@ using namespace Rcpp;
 
 #define INSUBBIN(bin, offset) splitbit(x(split, ((bin) * input_bins_per_bin) + (offset)))
 
+#define INBIN(r_bin, bin) ((INSUBBIN((bin), (r_bin))) << (R_BIN_SIZE * (r_bin)))
+
 SplitList::SplitList(RawMatrix x) {
   n_splits = x.rows();
   const int16 n_input_bins = x.cols(),
@@ -33,8 +35,7 @@ SplitList::SplitList(RawMatrix x) {
       /*Rcout << "Adding " << (splitbit (x(split, (bin * 2) + input_bin))) << " << "
               << (R_BIN_SIZE * input_bin) << " to state [" << split << "][" << bin 
               << "], was " << state[split][bin] << "\n";*/
-      state[split][last_bin] += ((splitbit (x(split, (last_bin * input_bins_per_bin) + input_bin)))
-                                   << (R_BIN_SIZE * input_bin));
+      state[split][last_bin] += INBIN(input_bin, last_bin);
     }
     in_split[split] = count_bits(state[split][last_bin]);
     
