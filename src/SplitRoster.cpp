@@ -135,6 +135,7 @@ inline void SplitRoster::play_game(
 inline void SplitRoster::push(
     const int32 tree,
     std::unique_ptr<int16[]> &which_split) {
+  
   const int16 new_split = which_split[tree];
   if (splits_equal(splits[tree].state,
                    new_split,
@@ -176,6 +177,7 @@ void SplitRoster::mutual_clustering() {
       for (int16 bin = n_bins; bin--; ) {
         a_and_b += count_bits(SPLIT(ai)[bin] & SPLIT(bi)[bin]);
       }
+      assert(a_and_b < n_tips - 1);
       
       const int16
         nb = in_split[bi],
@@ -225,6 +227,7 @@ NumericVector SplitRoster::score_pairs() {
   ;
   const cost max_score = BIG;
   NumericVector ret(n_scores);
+  
   for (i = 0; ; ++i) {
     const int16 i_splits = splits[i].n_splits;
     // Calculate tree's similarity to self
