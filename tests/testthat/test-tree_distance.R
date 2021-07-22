@@ -401,7 +401,38 @@ test_that('Clustering information is correctly calculated', {
   expect_equal(c(NA, NA,  1,  2, NA,  3,  7, 11, 10,  4,  6,  9,  8, NA,  5, 12, NA),
                attr(match, 'matching'))
   
-  library('TreeTools')
+  # Multiple bins, calculated expectation
+  library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+  b65m <- lapply(c(1, 2, 70), AddTip, tree = BalancedTree(64))
+  self <- ClusteringEntropy(b65m)
+  diff <- ClusteringEntropy(b65m[[1]], sum = FALSE)["72"]
+  # Copied from C:
+  ic_element <- function (nkK, nk, nK, n) {
+    if (nkK && nk && nK) {
+      if (nkK == nk && nkK == nK && nkK + nkK == n) return (nkK);
+      numerator = nkK * n
+      denominator = nk * nK
+      if (numerator == denominator) return (0);
+      nkK * (log2(numerator) - log2(denominator));
+    } else 0;
+  }
+  expect_equivalent(diff,
+               (ic_element(63, 63, 63, 65) +
+                ic_element(00, 63, 02, 65) +
+                ic_element(00, 02, 63, 65) +
+                ic_element(02, 02, 02, 65)) / 65)
+  new <- (ic_element(65-3, 63, 63, 65) +
+          ic_element(1, 63, 02, 65) +
+          ic_element(1, 02, 63, 65) +
+          ic_element(1, 02, 02, 65)) / 65
+  other <- self[1] - diff[1] + new # Calc'd = 20.45412
+  expect_equivalent(other, MutualClusteringInfo(b65m[[1]], b65m[[2]]))
+  
+  expectation <- matrix(other, 3, 3)
+  diag(expectation) <- self
+  expect_equivalent(expectation, MutualClusteringInfo(b65m))
+  
+  
   expect_equal(ClusteringEntropy(BalancedTree(64)),
                MutualClusteringInfo(BalancedTree(64), BalancedTree(64)))
   expect_equal(ClusteringEntropy(BalancedTree(644)),
