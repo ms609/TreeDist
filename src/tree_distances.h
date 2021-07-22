@@ -14,18 +14,18 @@ typedef int16 lap_col;
 
 /*************** CONSTANTS  *******************/
 
-const int16 BIN_SIZE = 64, 
-            MAX_BINS = 32,
-            MAX_TIPS = BIN_SIZE * MAX_BINS,
-            MAX_SPLITS = MAX_TIPS; /* -3, but quicker if a power of two? */
+#define BIN_SIZE 64
+#define MAX_BINS 32
+#define MAX_TIPS (BIN_SIZE * MAX_BINS)
+#define MAX_SPLITS MAX_TIPS /* -3, but quicker if a power of two? */
 
-const splitbit ALL_ONES = (std::numeric_limits<splitbit>::max)();
+#define ALL_ONES splitbit((std::numeric_limits<splitbit>::max)())
 
 /* For a reason I've not estabilshed, shrinking BIG is necessary to avoid 
  * an infinite loop in lap. */
-const cost BIG = ((std::numeric_limits<cost>::max)() / MAX_SPLITS);
+#define BIG cost((std::numeric_limits<cost>::max)() / MAX_SPLITS)
 
-const splitbit right16bits = 65535U;
+#define right16bits splitbit(65535U)
 const splitbit powers_of_two[64] = {
   0x1, 0x2, 0x4, 0x8,
   0x10, 0x20, 0x40, 0x80,
@@ -45,7 +45,7 @@ const splitbit powers_of_two[64] = {
   0x1000000000000000, 0x2000000000000000, 0x4000000000000000, 0x8000000000000000
   };
 
-const cost ROUND_PRECISION = 2048 * 2048;
+#define ROUND_PRECISION cost(2048 * 2048)
 
 /***** Constants requiring initialization *****/
 
