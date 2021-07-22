@@ -230,20 +230,18 @@ NumericVector SplitRoster::score_pairs() {
   int32 
     i = 0,
     entry = 0,
-    n_scores = n_trees * (n_trees + 1) / 2;
+    n_scores = n_trees * (n_trees - 1) / 2;
   ;
   const cost max_score = BIG;
   NumericVector ret(n_scores);
   
-  for (i = 0; ; ++i) {
+  for (i = 0; i != n_trees - 1; ++i) {
     const int16 i_splits = splits[i].n_splits;
     // Calculate tree's similarity to self
-    for (int16 sp = 0; sp != i_splits; ++sp) {
-      const int32 sp_i = index[i][sp];
-      ret[entry] += SCORE(sp_i, sp_i);
-    }
-    
-    if (i == n_trees - 1) break;
+    // for (int16 sp = 0; sp != i_splits; ++sp) {
+    //   const int32 sp_i = index[i][sp];
+    //   ret[entry] += SCORE(sp_i, sp_i);
+    // }
     entry++;
     for (int32 j = i + 1; j != n_trees; ++j) {
       const int16
