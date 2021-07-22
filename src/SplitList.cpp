@@ -1,8 +1,8 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 #include <stdint.h>
-#include "tree_distances.hpp" // Before SplitList.h, for int16
-#include "SplitList.hpp"
+#include "tree_distances.h" // Before SplitList.h, for int16
+#include "SplitList.h"
 
 #define INLASTBIN(n, size) ((size) - ((size) - ((n) % (size))) % (size))
 
