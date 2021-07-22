@@ -32,7 +32,7 @@ SplitList::SplitList(RawMatrix x) {
     state[split][last_bin] = INSUBBIN(last_bin, 0);
     /*Rcout << " State[" << split << "][" << bin << "] = " << state[split][bin] << ".\n";*/
     for (int16 input_bin = 1; input_bin != raggedy_bins; input_bin++) {
-      /*Rcout << "Adding " << (splitbit (x(split, (bin * 2) + input_bin))) << " << "
+      /*Rcout << "Adding " << (splitbit (x(split, (bin * input_bins_per_bin) + input_bin))) << " << "
               << (R_BIN_SIZE * input_bin) << " to state [" << split << "][" << bin 
               << "], was " << state[split][bin] << "\n";*/
       state[split][last_bin] += INBIN(input_bin, last_bin);
@@ -43,10 +43,10 @@ SplitList::SplitList(RawMatrix x) {
       /*Rcout << "Split " << split << ", bin << " << bin << ".\n";*/
       state[split][bin] = INSUBBIN(bin, 0);
       for (int16 input_bin = 1; input_bin != input_bins_per_bin; input_bin++) {
-        /*Rcout << "Adding " << (splitbit (x(split, (bin * 2) + input_bin))) << " << "
+        /*Rcout << "Adding " << (splitbit (x(split, (bin * input_bins_per_bin) + input_bin))) << " << "
               << (R_BIN_SIZE * input_bin) << " to state [" << split << "][" 
               << bin << "], was " << state[split][bin] << "\n";*/
-        state[split][bin] += INBIN(bin, input_bin);
+        state[split][bin] += INBIN(input_bin, bin);
       }
       in_split[split] += count_bits(state[split][bin]);
     }
