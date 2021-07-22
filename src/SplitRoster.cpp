@@ -62,7 +62,7 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
     const int32 winner = winners[0];
     --(which_split[winner]);
     
-    int32 i = winner;
+    int32 i = winner + tournament_games;
     do {
       i = (i - 1) / 2;
       play_game(&i, winners, losers, which_split);
