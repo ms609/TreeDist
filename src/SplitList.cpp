@@ -11,10 +11,10 @@ SplitList::SplitList(RawMatrix x) {
 
   n_bins = (n_input_bins + R_BIN_SIZE - 1) / input_bins_per_bin;
   
-  if (n_bins < 1) throw std::invalid_argument("No tips present.");
+  if (n_bins < 1) throw std::invalid_argument("No leaves present.");
   if (n_splits < 0) throw std::invalid_argument("Negative number of splits!?");
   if (n_bins > MAX_BINS) {
-    throw std::length_error("This many tips cannot be supported. "              // # nocov
+    throw std::length_error("This many leaves cannot be supported. "            // # nocov
                             "Please contact the TreeDist maintainer if you "    // # nocov
                             "need to use more!");                               // # nocov
   }
