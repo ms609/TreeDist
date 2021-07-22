@@ -205,6 +205,13 @@ void SplitRoster::mutual_clustering() {
             ic_element(A_and_B, nA, nB, n_tips)
           ) / n_tips)
         );
+        // Rcout << "  Splits: \n     "
+        //       << SPLIT(ai)[0] <<", " << SPLIT(bi)[0]<<"\n";
+        // Rcout << "  Elements: \n"
+        //       << "    ___|_" << nb << "_|_" << nB << "_|_\n"
+        //       << "     " << na << " | " << a_and_b << " | " << a_and_B << " | \n"
+        //       << "     " << nA << " | " << A_and_b << " | " << A_and_B << " | "
+        //       << " = " << n_tips << ";\n\n";
       }
     }
   }
