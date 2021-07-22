@@ -4,6 +4,8 @@ using namespace Rcpp;
 #include <stdint.h>
 #include "SplitList.h"
 
+#define INLASTBIN(n, size) ((size) - ((size) - ((n) % (size))) % (size))
+
 SplitList::SplitList(RawMatrix x) {
   n_splits = x.rows();
   const int16 n_input_bins = x.cols(),
@@ -21,8 +23,7 @@ SplitList::SplitList(RawMatrix x) {
   
   for (int16 split = 0; split != n_splits; split++) {
     int16 last_bin = n_bins - 1;
-    const int16 raggedy_bins = R_BIN_SIZE - 
-      ((R_BIN_SIZE - (n_input_bins % R_BIN_SIZE)) % R_BIN_SIZE);
+    const int16 raggedy_bins = INLASTBIN(n_input_bins, R_BIN_SIZE);
     /*Rcout << n_input_bins << " bins in; " << raggedy_bins << " raggedy bins\n";*/
     state[split][last_bin] = x(split, last_bin * input_bins_per_bin);
     /*Rcout << " State[" << split << "][" << bin << "] = " << state[split][bin] << ".\n";*/
