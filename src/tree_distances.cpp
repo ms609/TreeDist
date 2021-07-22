@@ -505,8 +505,8 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     int16 fuzzy_match = 0;
     for (int16 bi = 0; bi != b.n_splits; bi++) {
       if (!b_match[bi]) {
+        assert(fuzzy_match < lap_dim);
         lap_decode[fuzzy_match++] = bi + 1;
-      } else {
       }
     }
     
@@ -517,6 +517,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
         // Rcout << "a" << (1+i) << " exactly matches b" << a_match[i]<< "\n";
         final_matching[i] = a_match[i];
       } else {
+        assert(fuzzy_match < lap_dim);
         const int16 this_sol = rowsol[fuzzy_match++];
         // Rcout << "a"<<(1+i) << " fuzzily matches rowsol[" << this_sol <<"] == "
         //       << rowsol[this_sol] << "; ";
