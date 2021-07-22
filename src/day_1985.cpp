@@ -6,9 +6,9 @@ using namespace Rcpp;
 #include <bitset> /* for bitset */
 #include <cmath> /* for log2() */
 #include <memory> /* for unique_ptr, make_unique */
-#include "tree_distances.hpp"
-#include "SplitList.hpp"
-#include "information.hpp"
+#include "tree_distances.h"
+#include "SplitList.h"
+#include "information.h"
 
 const int16
   INF = INTX_MAX,

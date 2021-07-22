@@ -5,9 +5,9 @@
 #include <vector>
 #include <stdint.h>
 #include <Rcpp.h>
-#include "ints.hpp"
-#include "tree_distances.hpp"
-#include "SplitList.hpp"
+#include "ints.h"
+#include "tree_distances.h"
+#include "SplitList.h"
 
 using namespace Rcpp;
 

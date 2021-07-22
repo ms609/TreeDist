@@ -1,7 +1,7 @@
 #include <cmath>
 #include <Rcpp.h>
-#include "tree_distances.hpp"
-#include "SplitList.hpp"
+#include "tree_distances.h"
+#include "SplitList.h"
 
 using namespace Rcpp;
 

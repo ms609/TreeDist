@@ -2,7 +2,7 @@
 #define _TREEDIST_INFO_HPP
 
 #include <cmath> /* for log2() */
-#include "ints.hpp" /* for int16 */
+#include "ints.h" /* for int16 */
 
 const int_fast32_t
   DAY_MAX_LEAVES = 16383,

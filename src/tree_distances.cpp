@@ -1,9 +1,9 @@
 #include <cmath>
 #include <memory> /* for unique_ptr, make_unique */
 #include <Rcpp.h>
-#include "tree_distances.hpp"
-#include "SplitList.hpp"
-#include "SplitRoster.hpp"
+#include "tree_distances.h"
+#include "SplitList.h"
+#include "SplitRoster.h"
 
 using namespace Rcpp;
 

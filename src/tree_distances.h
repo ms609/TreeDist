@@ -3,7 +3,7 @@
 
 #include <limits>
 #include <Rcpp.h>
-#include "ints.hpp"
+#include "ints.h"
 
 using namespace Rcpp;
 

@@ -1,8 +1,8 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 #include <cmath> /* for log2() */
-#include "tree_distances.hpp"
-#include "SplitList.hpp"
+#include "tree_distances.h"
+#include "SplitList.h"
 
 
 uint_fast32_t bitcounts[65536]; // the bytes representing bit count of each number 0-65535
