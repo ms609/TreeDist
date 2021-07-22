@@ -86,6 +86,7 @@ SplitList::SplitList(RawMatrix x, int16 n_tips) {
       state[split][last_bin] += INBIN(input_bin, last_bin);
       // Rcout << " by " << INBIN(input_bin, last_bin) << "\n";
     }
+    
     const bool invert = state[split][last_bin] & splitbit(1);
     if (invert) {
       const int16 last_bin_tips = INLASTBIN(n_tips, BIN_SIZE);
@@ -97,9 +98,11 @@ SplitList::SplitList(RawMatrix x, int16 n_tips) {
       
       state[split][last_bin] = ~state[split][last_bin] & last_mask;
     }
+    
     in_split[split] = count_bits(state[split][last_bin]);
     
     for (int16 bin = 0; bin != n_bins - 1; bin++) {
+      
       // Rcout << "Split " << split << ", bin << " << bin << ".\n";
       state[split][bin] = invert ? ~INSUBBIN(bin, 0) : INSUBBIN(bin, 0);
       for (int16 input_bin = 1; input_bin != input_bins_per_bin; input_bin++) {
@@ -107,15 +110,19 @@ SplitList::SplitList(RawMatrix x, int16 n_tips) {
         //       << (splitbit (x(split, (bin * input_bins_per_bin) + input_bin))) << " << "
         //       << (R_BIN_SIZE * input_bin) << " to state [" << split << "]["
         //       << bin << "], was " << state[split][bin] << "\n";
+        
         state[split][bin] += INBIN(input_bin, bin);
       }
+      
       if (invert) {
         state[split][bin] = ~state[split][bin];
       }
+      
       in_split[split] += count_bits(state[split][bin]);
     }
   }
 }
+
 void SplitList::swap(int16 a, int16 b) {
   for (int16 bin = n_bins; bin--; ) {
     const splitbit tmp = state[a][bin];
