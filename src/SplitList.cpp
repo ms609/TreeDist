@@ -6,6 +6,8 @@ using namespace Rcpp;
 
 #define INLASTBIN(n, size) ((size) - ((size) - ((n) % (size))) % (size))
 
+#define INSUBBIN(bin, offset) splitbit(x(split, ((bin) * input_bins_per_bin) + (offset)))
+
 SplitList::SplitList(RawMatrix x) {
   n_splits = x.rows();
   const int16 n_input_bins = x.cols(),
@@ -25,7 +27,7 @@ SplitList::SplitList(RawMatrix x) {
     int16 last_bin = n_bins - 1;
     const int16 raggedy_bins = INLASTBIN(n_input_bins, R_BIN_SIZE);
     /*Rcout << n_input_bins << " bins in; " << raggedy_bins << " raggedy bins\n";*/
-    state[split][last_bin] = x(split, last_bin * input_bins_per_bin);
+    state[split][last_bin] = INSUBBIN(last_bin, 0);
     /*Rcout << " State[" << split << "][" << bin << "] = " << state[split][bin] << ".\n";*/
     for (int16 input_bin = 1; input_bin != raggedy_bins; input_bin++) {
       /*Rcout << "Adding " << (splitbit (x(split, (bin * 2) + input_bin))) << " << "
@@ -38,7 +40,7 @@ SplitList::SplitList(RawMatrix x) {
     
     for (int16 bin = 0; bin != n_bins - 1; bin++) {
       /*Rcout << "Split " << split << ", bin << " << bin << ".\n";*/
-      state[split][bin] = (splitbit) x(split, (bin * input_bins_per_bin));
+      state[split][bin] = INSUBBIN(bin, 0);
       for (int16 input_bin = 1; input_bin != input_bins_per_bin; input_bin++) {
         /*Rcout << "Adding " << (splitbit (x(split, (bin * 2) + input_bin))) << " << "
               << (R_BIN_SIZE * input_bin) << " to state [" << split << "][" 
