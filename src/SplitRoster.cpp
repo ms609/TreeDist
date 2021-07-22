@@ -232,8 +232,15 @@ NumericVector SplitRoster::score_pairs() {
     entry = 0,
     n_scores = n_trees * (n_trees - 1) / 2;
   ;
-  const cost max_score = BIG;
   NumericVector ret(n_scores);
+  const cost max_score = BIG;
+  const int16 max_splits = n_tips - 3;
+  cost** lap_score = new cost*[max_splits];
+  for (int16 li = max_splits; li--; ) lap_score[li] = new cost[max_splits];
+  lap_col *rowsol = new lap_col[max_splits];
+  lap_row *colsol = new lap_row[max_splits];
+  cost *u = new cost[max_splits], *v = new cost[max_splits];
+  
   
   for (i = 0; i != n_trees - 1; ++i) {
     const int16 i_splits = splits[i].n_splits;
@@ -281,12 +288,12 @@ NumericVector SplitRoster::score_pairs() {
           lap(most_splits, lap_score, rowsol, colsol, u, v)
       ) / max_score;
       
-      for (int16 li = most_splits; li--; ) delete[] lap_score[li];
-      delete[] colsol; delete[] u; delete[] v; delete[] lap_score;
-      delete[] rowsol;
       
       entry++;
     }
   }
+  for (int16 li = max_splits; li--; ) delete[] lap_score[li];
+  delete[] colsol; delete[] u; delete[] v; delete[] lap_score;
+  delete[] rowsol;
   return ret;
 }
