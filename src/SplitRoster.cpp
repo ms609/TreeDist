@@ -270,6 +270,11 @@ NumericVector SplitRoster::score_pairs() {
           lap_score[sp_i][sp_j] = max_score;
         }
       }
+      for (int16 sp_j = j_splits; sp_j < most_splits; ++sp_j) {
+        for (int16 sp_i = 0; sp_i != most_splits; ++sp_i) {
+          lap_score[sp_i][sp_j] = max_score;
+        }
+      }
       
       ret[entry] = double(
         (max_score * most_splits) -
