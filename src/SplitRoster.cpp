@@ -57,6 +57,7 @@ SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
   in_split[0] = splits[winners[0]].in_split[roster_split[0]];
   out_split[0] = n_tips - in_split[0];
   roster_hits[0] = 1;
+  index[roster_tree[0]][roster_split[0]] = 0;
   
   for (; ; ) {
     const int32 winner = winners[0];
