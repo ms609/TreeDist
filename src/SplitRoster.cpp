@@ -1,8 +1,8 @@
 #include <Rcpp.h>
-#include "ints.hpp"
-#include "tree_distances.hpp"
-#include "SplitList.hpp"
-#include "SplitRoster.hpp"
+#include "ints.h"
+#include "tree_distances.h"
+#include "SplitList.h"
+#include "SplitRoster.h"
 using namespace Rcpp;
 
 SplitRoster::SplitRoster(const List x, const IntegerVector nTip) {
