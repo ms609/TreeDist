@@ -103,7 +103,8 @@ SplitList::SplitList(RawMatrix x, int16 n_tips) {
       // Rcout << "Split " << split << ", bin << " << bin << ".\n";
       state[split][bin] = invert ? ~INSUBBIN(bin, 0) : INSUBBIN(bin, 0);
       for (int16 input_bin = 1; input_bin != input_bins_per_bin; input_bin++) {
-        // Rcout << "Adding " << (splitbit (x(split, (bin * input_bins_per_bin) + input_bin))) << " << "
+        // Rcout << "   Adding " << INBIN(input_bin, bin) << " = " 
+        //       << (splitbit (x(split, (bin * input_bins_per_bin) + input_bin))) << " << "
         //       << (R_BIN_SIZE * input_bin) << " to state [" << split << "]["
         //       << bin << "], was " << state[split][bin] << "\n";
         state[split][bin] += INBIN(input_bin, bin);
