@@ -88,8 +88,8 @@ SplitList::SplitList(RawMatrix x, int16 n_tips) {
     }
     const bool invert = state[split][last_bin] & splitbit(1);
     if (invert) {
-      // Rcout << "Last bin tips: " << INLASTBIN(n_tips, BIN_SIZE) << ".\n";
       const int16 last_bin_tips = INLASTBIN(n_tips, BIN_SIZE);
+      // Rcout << "Last bin tips: " << last_bin_tips << ".\n";
       const splitbit last_mask = last_bin_tips == sizeof(splitbit) * 8 ?
         splitbit(0) - 1 :
         (splitbit(1) << INLASTBIN(n_tips, BIN_SIZE)) - 1;
