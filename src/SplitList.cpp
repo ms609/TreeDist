@@ -46,8 +46,7 @@ SplitList::SplitList(RawMatrix x) {
         /*Rcout << "Adding " << (splitbit (x(split, (bin * input_bins_per_bin) + input_bin))) << " << "
               << (R_BIN_SIZE * input_bin) << " to state [" << split << "][" 
               << bin << "], was " << state[split][bin] << "\n";*/
-        state[split][bin] += ((splitbit (x(split, (bin * input_bins_per_bin) + input_bin)))
-                                << (R_BIN_SIZE * input_bin));
+        state[split][bin] += INBIN(input_bin, bin);
       }
       in_split[split] += count_bits(state[split][bin]);
     }
