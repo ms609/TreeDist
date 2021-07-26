@@ -57,6 +57,10 @@ cpp_msi_distance <- function(x, y, nTip) {
     .Call(`_TreeDist_cpp_msi_distance`, x, y, nTip)
 }
 
+cpp_all_pairs_mci <- function(x, nTip) {
+    .Call(`_TreeDist_cpp_all_pairs_mci`, x, nTip)
+}
+
 cpp_mutual_clustering <- function(x, y, nTip) {
     .Call(`_TreeDist_cpp_mutual_clustering`, x, y, nTip)
 }

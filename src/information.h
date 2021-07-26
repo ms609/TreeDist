@@ -1,5 +1,5 @@
-#ifndef _TREEDIST_INFO_H
-#define _TREEDIST_INFO_H
+#ifndef _TREEDIST_INFO_HPP
+#define _TREEDIST_INFO_HPP
 
 #include <cmath> /* for log2() */
 #include "ints.h" /* for int16 */

@@ -3,6 +3,7 @@
 #include <Rcpp.h>
 #include "tree_distances.h"
 #include "SplitList.h"
+#include "SplitRoster.h"
 
 using namespace Rcpp;
 
@@ -381,6 +382,13 @@ List cpp_msi_distance (const RawMatrix x, const RawMatrix y,
 }
 
 // [[Rcpp::export]]
+NumericVector cpp_all_pairs_mci(const List x, const IntegerVector nTip) {
+  SplitRoster roster(x, nTip);
+  roster.mutual_clustering();
+  return roster.score_pairs();
+}
+
+// [[Rcpp::export]]
 List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
                             const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
@@ -492,7 +500,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
       }
     }
     
-    const double lap_score = 
+    const double lap_score =
       double((max_score * lap_dim) - lap(lap_dim, score, rowsol, colsol, u, v))
       / max_score;
     NumericVector final_score = 

@@ -1,3 +1,6 @@
+#ifndef _TREEDIST_TREE_DISTANCES_H
+#define _TREEDIST_TREE_DISTANCES_H
+
 #include <limits>
 #include <Rcpp.h>
 #include "ints.h"
@@ -77,3 +80,5 @@ extern double
 
 extern List cpp_robinson_foulds_distance (RawMatrix x, RawMatrix y, 
                                           IntegerVector nTip);
+
+#endif
