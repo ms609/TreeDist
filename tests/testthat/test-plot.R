@@ -1,5 +1,4 @@
 library('TreeTools')
-context("plot.R")
 
 if (packageVersion('graphics') < '4.1')
 test_that('TreeDistPlot works', {

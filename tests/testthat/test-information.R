@@ -1,4 +1,3 @@
-context("Information.R")
 library('TreeTools')
 
 test_that("Entropy is calculated correctly", {

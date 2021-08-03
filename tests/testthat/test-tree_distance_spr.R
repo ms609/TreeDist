@@ -1,5 +1,3 @@
-context('tree_distance_spr.R')
-
 test_that("SPR.dist called safely", {
   library("TreeTools")
   PhangornSPR <- phangorn::SPR.dist
@@ -9,8 +7,9 @@ test_that("SPR.dist called safely", {
                SPRDist(as.phylo(0:5, 6), BalancedTree(6), symmetric = FALSE))
   expect_equal(SPRDist(BalancedTree(6), as.phylo(0:5, 6)),
                SPRDist(as.phylo(0:5, 6), BalancedTree(6)))
-  expect_equivalent(SPRDist(BalancedTree(6), PectinateTree(6)),
-                    SPRDist(list(BalancedTree(6), PectinateTree(6)))[1])
+  expect_equal(SPRDist(BalancedTree(6), PectinateTree(6)),
+               SPRDist(list(BalancedTree(6), PectinateTree(6)))[1],
+               ignore_attr = TRUE)
   
   # https://github.com/KlausVigo/phangorn/issues/97
   tr1 <- structure(list(edge = structure(c(11L, 11L, 10L, 10L, 9L, 9L, 8L, 8L, 7L,
@@ -42,5 +41,6 @@ test_that("SPR.dist called safely", {
   expect_equal(SprpS(trs12, tr3), SprpS(tr3, trs12))
   expect_equal(SprpS(trs12, trs123), t(SprpS(trs123, trs12)))
   expect_equal(SprpS(rev(trs123), trs123), t(SprpS(trs123, rev(trs123))))
-  expect_equivalent(1 - diag(1, 3), as.matrix(SprpS(trs123)))
+  expect_equal(1 - diag(1, 3), as.matrix(SprpS(trs123)),
+               ignore_attr = TRUE)
 })
