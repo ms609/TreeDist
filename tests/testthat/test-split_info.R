@@ -1,5 +1,3 @@
-context("Day 1985: Split information")
-
 test_that("Split info calculated", {
   library("ape")
   trees <- rev(list( # rev() because trees are emplaced backwards

@@ -1,5 +1,3 @@
-context('tree_distance.R')
-
 # Labels in different order to confound as.Splits
 treeSym8 <- ape::read.tree(text='((e, (f, (g, h))), (((a, b), c), d));')
 treeBal8 <- ape::read.tree(text='(((e, f), (g, h)), ((a, b), (c, d)));')
@@ -135,8 +133,9 @@ test_that('Robinson Foulds Distance is correctly calculated', {
   RFTest(treeAb.Cdefgh, treeAbcd.Efgh)
   
   # at 2020-10, RF uses Day algorithm if tree2 = null; old algo if tree2 = tree1.
-  expect_equivalent(RobinsonFoulds(testTrees, testTrees),
-                    as.matrix(RobinsonFoulds(testTrees)))
+  expect_equal(RobinsonFoulds(testTrees, testTrees),
+               as.matrix(RobinsonFoulds(testTrees)),
+               ignore_attr = TRUE)
   
   # Invariant to tree description order
   sq_pectinate <- ape::read.tree(text='((((((1, 2), 3), 4), 5), 6), (7, (8, (9, (10, 11)))));')
@@ -416,21 +415,23 @@ test_that('Clustering information is correctly calculated', {
       nkK * (log2(numerator) - log2(denominator));
     } else 0;
   }
-  expect_equivalent(diff,
+  expect_equal(diff,
                (ic_element(63, 63, 63, 65) +
                 ic_element(00, 63, 02, 65) +
                 ic_element(00, 02, 63, 65) +
-                ic_element(02, 02, 02, 65)) / 65)
+                ic_element(02, 02, 02, 65)) / 65,
+               ignore_attr = TRUE)
   new <- (ic_element(65-3, 63, 63, 65) +
           ic_element(1, 63, 02, 65) +
           ic_element(1, 02, 63, 65) +
           ic_element(1, 02, 02, 65)) / 65
   other <- self[1] - diff[1] + new # Calc'd = 20.45412
-  expect_equivalent(other, MutualClusteringInfo(b65m[[1]], b65m[[2]]))
+  expect_equal(other, MutualClusteringInfo(b65m[[1]], b65m[[2]]),
+               ignore_attr = TRUE)
   
   expectation <- matrix(other, 3, 3)
   diag(expectation) <- self
-  expect_equivalent(expectation, MutualClusteringInfo(b65m))
+  expect_equal(expectation, MutualClusteringInfo(b65m), ignore_attr = TRUE)
   
   
   expect_equal(ClusteringEntropy(BalancedTree(64)),
@@ -574,8 +575,8 @@ test_that('Matching Split Distance is correctly calculated', {
   expect_equal(0L, MatchingSplitDistance(treeStar8, treeSym8))
   expect_equal(0L, MatchingSplitDistance(treeStar8, treeStar8))
   match0 <- MatchingSplitDistance(treeStar8, treeStar8, reportMatching = TRUE)
-  expect_equivalent(rep(0L, 4), 
-                    c(match0, vapply(attributes(match0), length, 0)))
+  expect_equal(rep(0L, 4), c(match0, vapply(attributes(match0), length, 0)),
+               ignore_attr = TRUE)
   expect_equal(1L, MatchingSplitDistance(treeAb.Cdefgh, treeAbc.Defgh))
   expect_equal(2L, MatchingSplitDistance(treeAb.Cdefgh, treeAbcd.Efgh))
   
@@ -800,16 +801,18 @@ test_that('Multiple comparisons are correctly ordered', {
   trees[[nTrees - 1L]] <- TreeTools::PectinateTree(nTip)
   class(trees) <- 'multiPhylo'
   
-  expect_equivalent(phangorn::RF.dist(trees),
-                    RobinsonFoulds(trees))
+  expect_equal(phangorn::RF.dist(trees), RobinsonFoulds(trees),
+               ignore_attr = TRUE)
   
   # Test CompareAll
-  expect_equivalent(as.matrix(phangorn::RF.dist(trees)),
-                    as.matrix(CompareAll(trees, phangorn::RF.dist, 0L)))
+  expect_equal(as.matrix(phangorn::RF.dist(trees)),
+               as.matrix(CompareAll(trees, phangorn::RF.dist, 0L)),
+               ignore_attr = TRUE)
   
   NNILoose <- function (x, y) NNIDist(x, y)['loose_upper']
-  expect_equivalent(CompareAll(trees, NNILoose),
-                    CompareAll(trees, NNIDist)$loose_upper)
+  expect_equal(CompareAll(trees, NNILoose),
+               CompareAll(trees, NNIDist)$loose_upper,
+               ignore_attr = TRUE)
 })
 
 test_that('Normalization occurs as documented', {

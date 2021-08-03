@@ -1,4 +1,3 @@
-context("median.R")
 library('TreeTools')
 test_that("Median is calculated", {
   tenTrees <- as.phylo(1:10, 8L)
@@ -9,10 +8,11 @@ test_that("Median is calculated", {
                median(tenTrees, Distance = RobinsonFoulds, breakTies = TRUE))
   expect_equal(c(3:5, 7), median(tenTrees, Distance = RobinsonFoulds, 
                                  index = TRUE, breakTies = FALSE))
-  expect_equivalent(as.phylo(c(3:5, 7), 8),
-                    median(tenTrees, Distance = RobinsonFoulds, index = FALSE, 
-                           breakTies = FALSE))
-  expect_equivalent(as.phylo(c(3:5, 7), 8),
-                    median(tenTrees, Distance = RobinsonFoulds, 
-                           breakTies = FALSE))
+  expect_equal(as.phylo(c(3:5, 7), 8),
+               median(tenTrees, Distance = RobinsonFoulds, index = FALSE, 
+                      breakTies = FALSE),
+               ignore_attr = TRUE)
+  expect_equal(as.phylo(c(3:5, 7), 8),
+               median(tenTrees, Distance = RobinsonFoulds, breakTies = FALSE),
+               ignore_attr = TRUE)
 })

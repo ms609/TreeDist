@@ -75,6 +75,8 @@ Config/Needs/coverage: covr
 Config/Needs/metadata: codemetar
 Config/Needs/website:
   pkgdown
+Config/testthat/parallel: false
+Config/testthat/edition: 3
 SystemRequirements: C++14
 ByteCompile: true
 Encoding: UTF-8

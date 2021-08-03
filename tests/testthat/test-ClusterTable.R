@@ -1,4 +1,3 @@
-context("ClusterTable.R")
 library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
 
 test_that("ClusterTable class behaves", {
