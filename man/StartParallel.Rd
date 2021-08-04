@@ -20,6 +20,15 @@ StopParallel()
 
 \item{cl}{An existing cluster.}
 }
+\value{
+\code{StartParallel()} and \code{SetParallel()} return the previous value of
+\code{options('TreeDist-cluster')}.
+
+\code{GetParallel()} returns the currently specified cluster.
+
+\code{StopParallel()} returns \code{TRUE} if a cluster was destroyed,
+\code{FALSE} otherwise.
+}
 \description{
 Accellerate distance calculation by employing multiple \acronym{CPU} workers.
 }

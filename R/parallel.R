@@ -38,6 +38,8 @@ StartParallel <- function (...) {
 }
 
 #' @rdname StartParallel
+#' @return `StartParallel()` and `SetParallel()` return the previous value of
+#' `options('TreeDist-cluster')`.
 #' @export
 SetParallel <- function(cl) {
   options('TreeDist-cluster' = cl)
@@ -45,6 +47,7 @@ SetParallel <- function(cl) {
 
 #' @rdname StartParallel
 #' @importFrom cli cli_alert_info
+#' @return `GetParallel()` returns the currently specified cluster.
 #' @export
 GetParallel <- function(cl) {
   ret <- getOption('TreeDist-cluster')
@@ -57,13 +60,17 @@ GetParallel <- function(cl) {
 #' @rdname StartParallel
 #' @export
 #' @importFrom parallel stopCluster
+#' @return `StopParallel()` returns `TRUE` if a cluster was destroyed,
+#' `FALSE` otherwise.
 StopParallel <- function () {
   cluster <- getOption('TreeDist-cluster')
   if (!is.null(cluster)) {
     stopCluster(cluster)
     cli_alert_success("Cluster destroyed")
     options("TreeDist-cluster" = NULL)
+    TRUE
   } else {
     cli_alert_danger("No cluster running")
+    FALSE
   }
 }

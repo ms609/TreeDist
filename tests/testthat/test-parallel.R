@@ -1,22 +1,23 @@
-library("TreeTools")
-cl <- makeCluster(2)
-SetParallel(cl)
-trees <- as.phylo(0:20, 20)
-
-test_that("TreeDist parallelizes", {
-  SetParallel(cl)
+test_that("Parallelization works", {
+  library("TreeTools")
+  trees <- as.phylo(0:20, 20)
+  
+  expect_equal(options('TreeDist-cluster'), StartParallel(2))
+  cl <- getOption('TreeDist-cluster')
+  
   parallel <- ClusteringInfoDistance(trees)
   SetParallel(NULL)
-  on.exit(SetParallel(cl))
+  expect_null(GetParallel())
   expect_equal(ClusteringInfoDistance(trees), parallel)
-})
 
-test_that("CompareAll() parallelizes", {
-  SetParallel(cl)
+  expect_equal(options('TreeDist-cluster'), SetParallel(cl))
+  expect_equal(cl, getOption('TreeDist-cluster'))
+  expect_equal(cl, GetParallel())
   parallel <- CompareAll(trees, NNIDist)
   SetParallel(NULL)
-  on.exit(SetParallel(cl))
   expect_equal(CompareAll(trees, NNIDist), parallel)
+  expect_false(StopParallel())
+  SetParallel(cl)
+  expect_true(StopParallel())
 })
 
-StopParallel()
