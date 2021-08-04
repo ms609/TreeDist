@@ -1,7 +1,11 @@
-# TreeDist 2.1.1.9000
+# TreeDist 2.1.1.9001
 
 - Further speed improvements, using optimizations suggested by 
   Alexis Stamatakis' Bioinformatics group.
+  
+- Support for parallel computation via `StartParallel()`.
+  
+- Progress bars.
 
 # TreeDist 2.1.1
 
