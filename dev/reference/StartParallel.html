@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Visualise a matching — VisualizeMatching • TreeDist</title>
+<title>Calculate distances in parallel — StartParallel • TreeDist</title>
 
 
 <!-- jquery -->
@@ -45,10 +45,8 @@
 
 
 
-<meta property="og:title" content="Visualise a matching — VisualizeMatching" />
-<meta property="og:description" content="Depict the splits that are matched between two trees using a specified
-Generalized Robinson–Foulds
-similarity measure." />
+<meta property="og:title" content="Calculate distances in parallel — StartParallel" />
+<meta property="og:description" content="Accellerate distance calculation by employing multiple CPU workers." />
 
 
 <meta name="robots" content="noindex">
@@ -168,92 +166,68 @@ similarity measure." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Visualise a matching</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/plot.R'><code>R/plot.R</code></a></small>
-    <div class="hidden name"><code>VisualizeMatching.Rd</code></div>
+    <h1>Calculate distances in parallel</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/parallel.R'><code>R/parallel.R</code></a></small>
+    <div class="hidden name"><code>StartParallel.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Depict the splits that are matched between two trees using a specified
-<a href='https://ms609.github.io/TreeDist/articles/Generalized-RF.html'>Generalized Robinson–Foulds</a>
-similarity measure.</p>
+    <p>Accellerate distance calculation by employing multiple <acronym>CPU</acronym> workers.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>VisualizeMatching</span><span class='op'>(</span>
-  <span class='va'>Func</span>,
-  <span class='va'>tree1</span>,
-  <span class='va'>tree2</span>,
-  setPar <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  precision <span class='op'>=</span> <span class='fl'>3L</span>,
-  Plot <span class='op'>=</span> <span class='va'>plot.phylo</span>,
-  matchZeros <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  plainEdges <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  edge.width <span class='op'>=</span> <span class='fl'>1</span>,
-  edge.color <span class='op'>=</span> <span class='st'>"black"</span>,
-  <span class='va'>...</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>StartParallel</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span>
+
+<span class='fu'>SetParallel</span><span class='op'>(</span><span class='va'>cl</span><span class='op'>)</span>
+
+<span class='fu'>GetParallel</span><span class='op'>(</span><span class='va'>cl</span><span class='op'>)</span>
+
+<span class='fu'>StopParallel</span><span class='op'>(</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>Func</th>
-      <td><p>Function used to construct tree similarity.</p></td>
+      <th>...</th>
+      <td><p>Parameters to pass to <code>makeCluster()</code>.</p></td>
     </tr>
     <tr>
-      <th>tree1, tree2</th>
-      <td><p>Trees of class <code>phylo</code>, with identical leaf labels.</p></td>
-    </tr>
-    <tr>
-      <th>setPar</th>
-      <td><p>Logical specifying whether graphical parameters should be
-set to display trees side by side.</p></td>
-    </tr>
-    <tr>
-      <th>precision</th>
-      <td><p>Integer specifying number of significant figures to display
-when reporting matching scores.</p></td>
-    </tr>
-    <tr>
-      <th>Plot</th>
-      <td><p>Function to use to plot trees.</p></td>
-    </tr>
-    <tr>
-      <th>matchZeros</th>
-      <td><p>Logical specifying whether to pair splits with zero
-similarity (<code>TRUE</code>), or leave them unpaired (<code>FALSE</code>).</p></td>
-    </tr>
-    <tr>
-      <th>plainEdges</th>
-      <td><p>Logical specifying whether to plot edges with a uniform
-width and colour (<code>TRUE</code>), or whether to draw edge widths according to the
-similarity of the associated splits (<code>FALSE</code>).</p></td>
-    </tr>
-    <tr>
-      <th>edge.width, edge.color, ...</th>
-      <td><p>Additional parameters to send to <code>Plot()</code>.</p></td>
+      <th>cl</th>
+      <td><p>An existing cluster.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p><code>StartParallel()</code> and <code>SetParallel()</code> return the previous value of
+<code><a href='https://rdrr.io/r/base/options.html'>options('TreeDist-cluster')</a></code>.</p>
+<p><code>GetParallel()</code> returns the currently specified cluster.</p>
+<p><code>StopParallel()</code> returns <code>TRUE</code> if a cluster was destroyed,
+<code>FALSE</code> otherwise.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Note that when visualizing a Robinson–Foulds distance (using
-<code>Func = RobinsonFouldsMatching</code>), matched splits are assigned a <em>similarity</em>
-score of 1, which is deducted from the total number of splits to calculate
-the Robinson–Foulds <em>distance</em>.  Unmatched splits thus contribute one to
-total tree distance.</p>
+    <p>"TreeDist" parallelizes the calculation of tree to tree distances via
+the <code>parCapply()</code> function, using a user-defined cluster specified in
+<code><a href='https://rdrr.io/r/base/options.html'>options('TreeDist-cluster')</a></code>.</p>
+<p><code>StartParallel()</code> calls <code><a href='https://rdrr.io/r/parallel/makeCluster.html'>parallel::makeCluster()</a></code> and tells "TreeDist" to
+use the created cluster.</p>
+<p><code>SetParallel()</code> tells "TreeDist" to use a pre-existing or user-specified
+cluster.</p>
+<p><code>StopParallel()</code> stops the current TreeDist cluster.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p><a href='https://orcid.org/0000-0001-5660-1727'>Martin R. Smith</a>
 (<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>tree1</span> <span class='op'>&lt;-</span> <span class='fu'>TreeTools</span><span class='fu'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>BalancedTree</a></span><span class='op'>(</span><span class='fl'>6</span><span class='op'>)</span>
-<span class='va'>tree2</span> <span class='op'>&lt;-</span> <span class='fu'>TreeTools</span><span class='fu'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/GenerateTree.html'>PectinateTree</a></span><span class='op'>(</span><span class='fl'>6</span><span class='op'>)</span>
-
-<span class='fu'>VisualizeMatching</span><span class='op'>(</span><span class='va'>RobinsonFouldsMatching</span>, <span class='va'>tree1</span>, <span class='va'>tree2</span><span class='op'>)</span>
-</div><div class='img'><img src='VisualizeMatching-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>VisualizeMatching</span><span class='op'>(</span><span class='va'>SharedPhylogeneticInfo</span>, <span class='va'>tree1</span>, <span class='va'>tree2</span>, matchZeros <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
-</div><div class='img'><img src='VisualizeMatching-2.png' alt='' width='700' height='433' /></div></pre>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span> <span class='co'># Only run in terminal</span>
+  <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='st'><a href='https://ms609.github.io/TreeTools/'>"TreeTools"</a></span>, quietly <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+  <span class='va'>nCores</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>ceiling</a></span><span class='op'>(</span><span class='fu'>detectCores</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>/</span> <span class='fl'>2</span><span class='op'>)</span>
+  <span class='fu'>StartParallel</span><span class='op'>(</span><span class='va'>nCores</span><span class='op'>)</span> <span class='co'># Takes a few seconds to set up processes</span>
+  <span class='fu'>GetParallel</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='TreeDistance.html'>ClusteringInfoDistance</a></span><span class='op'>(</span><span class='fu'>as.phylo</span><span class='op'>(</span><span class='fl'>0</span><span class='op'>:</span><span class='fl'>6</span>, <span class='fl'>100</span><span class='op'>)</span><span class='op'>)</span>
+  <span class='fu'>StopParallel</span><span class='op'>(</span><span class='op'>)</span> <span class='co'># Returns system resources</span>
+<span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
