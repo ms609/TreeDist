@@ -157,8 +157,8 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeDist/">'TreeDist'</a></span><span class="op">)</span>
 <span class="va">distances</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeDistance.html">ClusteringInfoDistance</a></span><span class="op">(</span><span class="va">trees</span><span class="op">)</span></code></pre></div>
-<pre><code>## Calculating distances ■■■■■■■■■■■■■■■■■■■■■■■■■         79% | ETA:  1s</code></pre>
-<pre><code>## Calculating distances ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■    98% | ETA:  0s</code></pre>
+<pre><code>## Calculating distances ■■■■■■■■■■■■■■■■■■■■■■■■          77% | ETA:  1s</code></pre>
+<pre><code>## Calculating distances ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■     94% | ETA:  0s</code></pre>
 <pre><code>## Calculating distances ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% | ETA:  0s</code></pre>
 <p>The reader is encouraged to repeat the exercise with other distances:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -304,8 +304,7 @@ mapping &lt;- sammon$points</code></pre>
 <p><img src="treespace_files/figure-html/plot-mapping-5d-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>Our clusters, so distinct in dimension 1, overlap strongly in every other dimension. The fact that the minimum spanning tree moves between clusters also underlines the fact that they are not as well defined as they appear by eye.</p>
 <p>Note that cluster membership, as well as the precise shape of tree space, is a function of the tree distance metric. The phylogenetic information distance recovers a different pair of clusters, highlighting the dangers of interpreting a two-dimensional tree space plot:</p>
-<pre><code>## Calculating distances ■■■■■■■■■■■■■■■■■■■■■■■■■■        82% | ETA:  0s</code></pre>
-<pre><code>## Calculating distances ■■■■■■■■■■■■■■■■■■■■■■■■■■■■      91% | ETA:  0s</code></pre>
+<pre><code>## Calculating distances ■■■■■■■■■■■■■■■■■■■■■■■■■■■       87% | ETA:  0s</code></pre>
 <pre><code>## Calculating distances ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■  100% | ETA:  0s</code></pre>
 <p><img src="treespace_files/figure-html/pid-1.png" width="384" style="display: block; margin: auto;"></p>
 </div>
@@ -314,7 +313,7 @@ mapping &lt;- sammon$points</code></pre>
 <h2 class="hasAnchor">
 <a href="#a-different-approach-self-organizing-maps" class="anchor"></a>A different approach: Self-organizing maps</h2>
 <p>An alternative approach to visualizing tree space is to create emergent self-organizing maps <span class="citation">(Kohonen, 1982; Thrun, Lerch, Lötsch, &amp; Ultsch, 2016; Ultsch, 2003)</span>, which map high-dimensional data into two dimensions, then add a third dimension to indicate distance between data points: nearby points occur in valleys, and are separated by ridges from more distant data points.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">umatrixInstalled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span><span class="op">(</span><span class="st">'Umatrix'</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="kw">if</span> <span class="op">(</span><span class="va">umatrixInstalled</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">map</span> <span class="op">&lt;-</span> <span class="fu">Umatrix</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Umatrix/man/esomTrain.html">esomTrain</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">distances</span><span class="op">)</span>, Key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">trees</span><span class="op">)</span>,
