@@ -1,4 +1,3 @@
-context("tree_distance_nni.R")
 library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
 
 test_that("NNIDist() handles exceptions", {
@@ -132,10 +131,11 @@ test_that("NNI with lists of trees", {
   # CompareAll
   expect_equal(CompareAll(list1, NNIDist), NNIDist(list1))
   
-  expect_equivalent(
+  expect_equal(
     vapply(NNIDist(list1), function (x) unname(as.matrix(x)[1:4, 4:1]),
            matrix(0,4,4)),
-    NNIDist(list1, rev(list1))
+    NNIDist(list1, rev(list1)),
+    ignore_attr = TRUE
   )
 })
 

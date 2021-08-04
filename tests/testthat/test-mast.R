@@ -1,4 +1,3 @@
-context("mast.cpp")
 library('TreeTools')
 
 test_that("MAST fails gracefully", {
@@ -61,7 +60,7 @@ test_that("MAST size calculated correctly on small trees", {
     expect_equal(e, 
                  .MASTSizeEdges(Postorder(t1$edge),
                                 RootOnNode(t2, node = node, TRUE)$edge,
-                                nTip = 5L), 0L)
+                                nTip = 5L))
   }
   
   ME(2L, 1)

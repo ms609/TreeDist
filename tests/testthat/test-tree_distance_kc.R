@@ -28,7 +28,8 @@ test_that("KC vector calculations", {
 
 test_that("KC distances with special vectors", {
   trees <- as.phylo(1:20, 12)
-  expect_equivalent(PathDist(trees), KendallColijn(trees, Vector = PathVector))
+  expect_equal(PathDist(trees), KendallColijn(trees, Vector = PathVector),
+               ignore_attr = TRUE)
 })
 
 test_that("KCDiameter() calculated", {

@@ -1,5 +1,3 @@
-context("Day 1985")
-
 test_that("Day 1985 overflow", {
   bigTree <- PectinateTree(2^14 + 1)
   expect_error(as.ClusterTable(bigTree))

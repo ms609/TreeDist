@@ -1,5 +1,4 @@
 library('TreeTools')
-context('tree_distance_utilities.R')
 
 test_that('Tree normalization works', {
   expect_equal(0.5, NormalizeInfo(5, 3, 5, how = TRUE, 
@@ -7,9 +6,10 @@ test_that('Tree normalization works', {
   expect_equal(0:4 / c(1, 2, 3, 3, 3), 
                NormalizeInfo(0:4, 1:5, 3, InfoInTree = I, Combine = min))
   expect_equal(3/4, NormalizeInfo(unnormalized = 3, 1, 1, how = 4L))
-  expect_equivalent(as.dist(matrix(0:24 / 10, 5, 5)),
-                    NormalizeInfo(as.dist(matrix(0:24, 5, 5)),
-                                  rep(5, 5), rep(5, 5), InfoInTree = I))
+  expect_equal(as.dist(matrix(0:24 / 10, 5, 5)),
+               NormalizeInfo(as.dist(matrix(0:24, 5, 5)),
+                             rep(5, 5), rep(5, 5), InfoInTree = I),
+               ignore_attr = TRUE)
   expect_equal(matrix(1:20 / 10, 5, 4) * c(10,10,1,1,1, 10,10,1,1,1, rep(1,10)),
                NormalizeInfo(1:20, c(1, 1, 10, 10, 10), c(1, 1, 10, 10), 
                              InfoInTree = I, Combine = pmax))
@@ -48,27 +48,28 @@ test_that('CalculateTreeDistance() handles splits appropriately', {
   expect_equal(CalculateTreeDistance(RobinsonFouldsSplits, splits10, splits10.3),
                CalculateTreeDistance(RobinsonFouldsSplits, splits10.3, splits10))
   
-  expect_equivalent(
+  expect_equal(ignore_attr = TRUE,
     CalculateTreeDistance(RobinsonFouldsSplits, splits10.3, splits10.3),
     CalculateTreeDistance(RobinsonFouldsSplits, splits10.3, trees10.3))
   
-  expect_equivalent(
+  expect_equal(ignore_attr = TRUE,
     as.matrix(CalculateTreeDistance(RobinsonFouldsSplits, trees10.3)),
     as.matrix(CalculateTreeDistance(RobinsonFouldsSplits, trees10.3, trees10.3)))
   
-  expect_equivalent(
+  expect_equal(ignore_attr = TRUE,
     as.matrix(CalculateTreeDistance(RobinsonFouldsSplits, trees10.3, trees10.3))[, c(1, 3, 2)],
-    CalculateTreeDistance(RobinsonFouldsSplits, trees10.3, trees10.3[c(1, 3, 2)]),
-  )
+    CalculateTreeDistance(RobinsonFouldsSplits, trees10.3, trees10.3[c(1, 3, 2)]))
   
   mat <- matrix(NA, 3, 4)
   for (i in 1:3) for (j in 1:4) {
     mat[i, j] <- CalculateTreeDistance(RobinsonFouldsSplits, splits10.3[[i]], splits10.4[[j]])
   }
   
-  expect_equivalent(mat, CalculateTreeDistance(RobinsonFouldsSplits, splits10.3, splits10.4))
+  expect_equal(mat,
+               CalculateTreeDistance(RobinsonFouldsSplits, splits10.3, splits10.4),
+               ignore_attr = TRUE)
   
-  expect_equivalent(
+  expect_equal(ignore_attr = TRUE,
     CalculateTreeDistance(RobinsonFouldsSplits, splits10.4, splits10.3),
     t(CalculateTreeDistance(RobinsonFouldsSplits, splits10.3, splits10.4)))
 })
@@ -223,7 +224,8 @@ test_that('.TreeDistance() supports all sizes', {
 
 test_that("Unrooteds are handled by MAST", {
   trees <- list(unroot(BalancedTree(8)), unroot(PectinateTree(8)))
-  expect_equivalent(6L, as.integer(MASTSize(trees, rooted = FALSE)))
+  expect_equal(6L, as.integer(MASTSize(trees, rooted = FALSE)),
+               ignore_attr = TRUE)
 })
 
 test_that("Entropy() supports dots input", {

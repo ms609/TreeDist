@@ -77,17 +77,36 @@ CalculateTreeDistance <- function (Func, tree1, tree2 = NULL,
          double(1))
 }
 
+#' @importFrom parallel parCapply
+#' @importFrom cli cli_progress_bar cli_progress_update
 .SplitDistanceAllPairs <- function (Func, splits1, tipLabels,
                                     nTip = length(tipLabels), ...) {
   splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
   nSplits <- length(splits)
   is <- combn(seq_len(nSplits), 2)
   
+  cluster <- getOption("TreeDist-cluster")
+  
+  if (is.null(cluster)) {
+    cli_progress_bar("Calculating distances", total = ncol(is))
+  }
+  .PairDist <- function (i) {
+    Func(splits[[i[1]]], splits[[i[2]]],
+         nTip = nTip, reportMatching = FALSE, ...)
+  }
+  .CliPairDist <- function (i) { # TODO if cli possible from parallel, merge.
+    cli_progress_update(1, .envir = parent.frame(2))
+    Func(splits[[i[1]]], splits[[i[2]]],
+         nTip = nTip, reportMatching = FALSE, ...)
+  }
+  
   ret <- structure(class = 'dist', Size = nSplits,
                    diag = FALSE, upper = FALSE,
-                   apply(is, 2, function (i)
-                     Func(splits[[i[1]]], splits[[i[2]]],
-                          nTip = nTip, reportMatching = FALSE, ...)))
+                   if (is.null(cluster)) {
+                     apply(is, 2, .CliPairDist)
+                   } else {
+                     parCapply(cluster, is, .PairDist)
+                   })
   # Return:
   ret
 }
@@ -254,6 +273,8 @@ Entropy <- function (...) {
 #' as.matrix(dist$lower)
 #' @template MRS
 #' @family pairwise tree distances
+#' @importFrom cli cli_progress_bar cli_progress_update
+#' @importFrom parallel parLapply
 #' @importFrom stats dist
 #' @export
 CompareAll <- function (x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
@@ -263,7 +284,19 @@ CompareAll <- function (x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
   i <- x[rep(countUp, rev(countUp))]
   j <- x[unlist(sapply(countUp, function (n) n + seq_len(nTree - n)))]
   
-  ret <- vapply(seq_along(i), function (k) Func(i[[k]], j[[k]], ...), FUN.VALUE)
+  cluster <- getOption("TreeDist-cluster")
+  ret <- if (is.null(cluster)) {
+    cli_progress_bar('Comparing', total = length(i))
+    vapply(seq_along(i), function (k) {
+      cli_progress_update(1, .envir = parent.frame(2))
+      Func(i[[k]], j[[k]], ...)
+      }, FUN.VALUE)
+  } else {
+    do.call('cbind', 
+            parLapply(cluster, seq_along(i), 
+                      function (k, Func) Func(i[[k]], j[[k]]),
+                      Func = Func))
+  }
   
   .WrapReturn <- function (dists) {
     structure(dists,
