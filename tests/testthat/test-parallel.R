@@ -2,6 +2,7 @@ test_that("Parallelization works", {
   library("TreeTools")
   trees <- as.phylo(0:20, 20)
   
+  suppressMessages({
   expect_equal(options('TreeDist-cluster'), StartParallel(2))
   cl <- getOption('TreeDist-cluster')
   
@@ -19,5 +20,6 @@ test_that("Parallelization works", {
   expect_false(StopParallel())
   SetParallel(cl)
   expect_true(StopParallel())
+    })
 })
 
