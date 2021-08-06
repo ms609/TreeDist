@@ -2,8 +2,8 @@ library('TreeTools')
 
 test_that("SplitwiseInfo() / ClusteringInfo() handle probabilities", {
   Tree <- function (txt) ape::read.tree(text = txt)
-  tree <- Tree('((a, b)60, (c, d));')
-  treeP <- Tree('((a, b)0.60, (c, d));')
+  tree <- Tree('((a, b)60, (c, d)60);')
+  treeP <- Tree('((a, b)0.60, (c, d)0.60);')
   treeProfile <- list(Tree('((a, b), (c, d));'),
                       Tree('(a, b, c, d);'),
                       Tree('((a, d), (c, b));'))[c(1, 1, 1, 2, 3)]
