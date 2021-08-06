@@ -168,12 +168,15 @@ test_that('Matches are reported', {
   expect_equal('a b | e f g h c d => a b | e f g h c d', at$matchedSplits[5])
   
   # Zero match:
-  expect_equal('a b | c d .. a c | b d', 
-               attr(SharedPhylogeneticInfo( 
-                      ape::read.tree(text="((a, b), (c, d));"),
-                      ape::read.tree(text="((a, c), (b, d));"), 
-                      reportMatching = TRUE),
-                    'matchedSplits'))
+  expect_true(attr(SharedPhylogeneticInfo(
+                    ape::read.tree(text="((a, b), (c, d));"),
+                    ape::read.tree(text="((a, c), (b, d));"), 
+                    reportMatching = TRUE),
+                    'matchedSplits') %in% c(
+                      'a b | c d .. a c | b d',
+                      'a b | c d .. b d | a c',
+                      'c d | a b .. a c | b d',
+                      'c d | a b .. b d | a c'))
 })
 
 test_that('Matchings are calculated in both directions', {
