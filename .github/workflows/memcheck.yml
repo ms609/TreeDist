@@ -16,11 +16,16 @@ jobs:
   mem-check:
     runs-on: ubuntu-20.04
 
-    name: valgrind, ubuntu-20.04, R release
+    name: valgrind ${{ matrix.config.test }}, ubuntu, R release
 
     strategy:
       fail-fast: false
-
+      matrix:
+        config:
+          - {test: 'tests'}
+          - {test: 'examples'}
+          - {test: 'vignettes'}
+          
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       _R_CHECK_FORCE_SUGGESTS_: false
@@ -73,21 +78,6 @@ jobs:
           R CMD INSTALL TreeDist*.tar.gz
           cd TreeDist
 
-      - name: valgrind - memcheck tests
+      - name: valgrind - memcheck ${{ matrix.config.test }}
         run: |
-          R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < memcheck/tests.R
-      
-      - name: valgrind - memcheck examples
-        run: |
-          R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < memcheck/examples.R
-      
-      - name: valgrind - memcheck vignettes
-        run: |
-          R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < memcheck/vignettes.R
-        
-      - name: Upload check results
-        if: failure()
-        uses: actions/upload-artifact@main
-        with:
-          name: ${{ runner.os }}-rrelease-valgrind-results
-          path: check
+          R -d "valgrind --tool=memcheck --leak-check=full --error-exitcode=1" --vanilla < memcheck/${{ matrix.config.test }}.R
