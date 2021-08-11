@@ -15,10 +15,6 @@ using namespace TreeTools;
 #include "SplitList.h"
 #include "information.h"
 
-const int_fast32_t
-  STACK_SIZE = 4 * DAY_MAX_LEAVES
-;
-
 // Modelled on https://CRAN.R-project.org/package=Rcpp/vignettes/Rcpp-modules.pdf
 // [[Rcpp::export]]
 SEXP ClusterTable_new(List phylo) {
@@ -38,19 +34,6 @@ IntegerVector ClusterTable_decode(SEXP xp) {
   return ptr->X_decode();
 }
 
-#define PUSH(a, b, c, d)                                       \
-  S[Spos++] = (a);                                             \
-  S[Spos++] = (b);                                             \
-  S[Spos++] = (c);                                             \
-  S[Spos++] = (d)
-
-#define POP(a, b, c, d)                                        \
-  (d) = S[--Spos];                                             \
-  (c) = S[--Spos];                                             \
-  (b) = S[--Spos];                                             \
-  (a) = S[--Spos]
-
-
 // COMCLUSTER computes a strict consensus tree in O(knn).
 // COMCLUST requires O(kn).
 // trees is a list of objects of class phylo.
@@ -63,7 +46,7 @@ int COMCLUST (List trees) {
   ;
   
   ClusterTable X(List(trees(0)));
-  std::array<int16, DAY_MAX_LEAVES> S;
+  std::array<int16, CT_MAX_LEAVES> S;
   
   for (int16 i = 1; i != trees.length(); i++) {
     int16 Spos = 0; // Empty the stack S
@@ -75,20 +58,20 @@ int COMCLUST (List trees) {
     
     do {
       if (Ti.is_leaf(&v)) {
-        PUSH(X.ENCODE(v), X.ENCODE(v), 1, 1);
+        CT_PUSH(X.ENCODE(v), X.ENCODE(v), 1, 1);
       } else {
         POP(L, R, N, W_i);
         W = 1 + W_i;
         w = w - W_i;
         while (w) {
-          POP(L_i, R_i, N_i, W_i);
+          CT_POP(L_i, R_i, N_i, W_i);
           if (L_i < L) L = L_i;
           if (R_i > R) R = R_i;
           N += N_i;
           W += W_i;
           w -= W_i;
         };
-        PUSH(L, R, N, W);
+        CT_PUSH(L, R, N, W);
         if (N == R - L + 1) { // L..R is contiguous, and must be tested
           X.SETSW(&L, &R);
         }
@@ -129,8 +112,8 @@ double consensus_info (const List trees, const LogicalVector phylo) {
   
   const bool phylo_info = phylo[0];
   
-  std::array<int16, STACK_SIZE> S;
-  std::array<int16, DAY_MAX_LEAVES> split_count;
+  std::array<int16, CT_STACK_SIZE * CT_MAX_LEAVES> S;
+  std::array<int16, CT_MAX_LEAVES> split_count;
   
   double info = 0;
   
@@ -155,9 +138,9 @@ double consensus_info (const List trees, const LogicalVector phylo) {
       
       do {
         if (IS_LEAF(v)) {
-          PUSH(tables[i].ENCODE(v), tables[i].ENCODE(v), 1, 1);
+          CT_PUSH(tables[i].ENCODE(v), tables[i].ENCODE(v), 1, 1);
         } else {
-          POP(L, R, N, W_j);
+          CT_POP(L, R, N, W_j);
           W = 1 + W_j;
           w = w - W_j;
           while (w) {
@@ -168,7 +151,7 @@ double consensus_info (const List trees, const LogicalVector phylo) {
             W = W + W_j;
             w = w - W_j;
           };
-          PUSH(L, R, N, W);
+          CT_PUSH(L, R, N, W);
           
           ++j_pos;
           if (tables[j].GETSWX(&j_pos)) {
@@ -234,7 +217,7 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
   
   IntegerVector shared(n_trees * (n_trees - 1) / 2);
   IntegerVector::iterator write_pos = shared.begin();
-  std::array<int16, DAY_MAX_LEAVES> S;
+  std::array<int16, CT_MAX_LEAVES> S;
   
   for (int16 i = 0; i != n_trees - 1; i++) {
     Rcpp::XPtr<ClusterTable> table_i = tables(i);
@@ -251,20 +234,20 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
       
       do {
         if (Tj->is_leaf(&v)) {
-          PUSH(Xi->ENCODE(v), Xi->ENCODE(v), 1, 1);
+          CT_PUSH(Xi->ENCODE(v), Xi->ENCODE(v), 1, 1);
         } else {
-          POP(L, R, N, W_i);
+          CT_POP(L, R, N, W_i);
           W = 1 + W_i;
           w = w - W_i;
           while (w) {
-            POP(L_i, R_i, N_i, W_i);
+            CT_POP(L_i, R_i, N_i, W_i);
             if (L_i < L) L = L_i;
             if (R_i > R) R = R_i;
             N = N + N_i;
             W = W + W_i;
             w = w - W_i;
           };
-          PUSH(L, R, N, W);
+          CT_PUSH(L, R, N, W);
           if (N == R - L + 1) { // L..R is contiguous, and must be tested
             if (Xi->ISCLUST(&L, &R)) ++n_shared;
           }
