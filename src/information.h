@@ -2,10 +2,11 @@
 #define _TREEDIST_INFO_H
 
 #include <cmath> /* for log2() */
+#include <TreeTools/ClusterTable.h> /* for DAY_MAX_LEAVES */
+
 #include "ints.h" /* for int16 */
 
 const int_fast32_t
-  DAY_MAX_LEAVES = 16383,
   FACT_MAX = DAY_MAX_LEAVES + DAY_MAX_LEAVES + 5 + 1
 ;
 
