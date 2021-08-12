@@ -29,7 +29,7 @@ using namespace Rcpp;
 using namespace std;
 
 
-// [[Rcpp::export]] 
+// [[Rcpp::export]]
 List lapjv (NumericMatrix x, NumericVector maxX) {
   const int16 n_row = x.nrow(), n_col = x.ncol(),
                max_dim = (n_row > n_col) ? n_row : n_col;
