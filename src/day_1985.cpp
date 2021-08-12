@@ -60,7 +60,7 @@ int COMCLUST (List trees) {
       if (Ti.is_leaf(&v)) {
         CT_PUSH(X.ENCODE(v), X.ENCODE(v), 1, 1);
       } else {
-        POP(L, R, N, W_i);
+        CT_POP(L, R, N, W_i);
         W = 1 + W_i;
         w = w - W_i;
         while (w) {
@@ -144,7 +144,7 @@ double consensus_info (const List trees, const LogicalVector phylo) {
           W = 1 + W_j;
           w = w - W_j;
           while (w) {
-            POP(L_j, R_j, N_j, W_j);
+            CT_POP(L_j, R_j, N_j, W_j);
             if (L_j < L) L = L_j;
             if (R_j > R) R = R_j;
             N = N + N_j;
