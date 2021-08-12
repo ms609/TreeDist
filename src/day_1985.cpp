@@ -1,6 +1,9 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
+#include "tree_distances.h" /* includes <TreeTools/SplitList.h> */
+#include "information.h"
+
 #include <TreeTools.h> /* for root_on_node() */
 #include <TreeTools/root_tree.h> /* for root_on_node() */
 #include <TreeTools/ClusterTable.h> /* for ClusterTable() */
@@ -11,9 +14,6 @@ using namespace TreeTools;
 #include <vector> /* for vector */
 #include <cmath> /* for log2() */
 #include <memory> /* for unique_ptr, make_unique */
-#include "tree_distances.h"
-#include "SplitList.h"
-#include "information.h"
 
 // Modelled on https://CRAN.R-project.org/package=Rcpp/vignettes/Rcpp-modules.pdf
 // [[Rcpp::export]]
@@ -60,7 +60,7 @@ int COMCLUST (List trees) {
       if (Ti.is_leaf(&v)) {
         CT_PUSH(X.ENCODE(v), X.ENCODE(v), 1, 1);
       } else {
-        POP(L, R, N, W_i);
+        CT_POP(L, R, N, W_i);
         W = 1 + W_i;
         w = w - W_i;
         while (w) {
@@ -144,7 +144,7 @@ double consensus_info (const List trees, const LogicalVector phylo) {
           W = 1 + W_j;
           w = w - W_j;
           while (w) {
-            POP(L_j, R_j, N_j, W_j);
+            CT_POP(L_j, R_j, N_j, W_j);
             if (L_j < L) L = L_j;
             if (R_j > R) R = R_j;
             N = N + N_j;
