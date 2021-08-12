@@ -5,7 +5,8 @@
 #include "tree_distances.h"
 
 using namespace Rcpp;
-using namespace TreeTools;
+using TreeTools::SplitList;
+using TreeTools::count_bits;
 
 // [[Rcpp::export]]
 List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y, 

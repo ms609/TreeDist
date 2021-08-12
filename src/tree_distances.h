@@ -5,10 +5,6 @@
 
 #include "ints.h"
 
-using namespace Rcpp;
-using namespace TreeTools;
-
-
 /*************** TYPES      *******************/
 
 typedef int_fast64_t cost;
@@ -45,8 +41,11 @@ extern double
   ic_matching(const int16 a, const int16 b, const int16 n),
   one_overlap(const int16 a, const int16 b, const int16 n),
   one_overlap_notb(const int16 a, const int16 n_minus_b, const int16 n),
-  spi_overlap(const splitbit* a_state, const splitbit* b_state, const int16 n_tips, 
-      const int16 in_a, const int16 in_b, const int16 n_bins);
+  spi_overlap(const splitbit* a_state, const splitbit* b_state,
+              const int16 n_tips, const int16 in_a, const int16 in_b,
+              const int16 n_bins);
 
-extern List cpp_robinson_foulds_distance (RawMatrix x, RawMatrix y, 
-                                          IntegerVector nTip);
+extern Rcpp::List cpp_robinson_foulds_distance(Rcpp::RawMatrix x,
+                                               Rcpp::RawMatrix y,
+                                               Rcpp::IntegerVector nTip);
+#endif
