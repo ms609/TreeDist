@@ -1,12 +1,11 @@
 #include <Rcpp.h>
-#include <TreeTools/SplitList.h>
+#include <TreeTools/SplitList.h> /* for SL_MAX_TIPS */
 
 #include <cmath> /* for log2() */
 
 #include "tree_distances.h"
 
 using namespace Rcpp;
-using namespace TreeTools;
 
 double lg2[int32(SL_MAX_TIPS - 1) * (SL_MAX_TIPS - 1) + 1];
 double lg2_double_factorial[SL_MAX_TIPS + SL_MAX_TIPS - 2];

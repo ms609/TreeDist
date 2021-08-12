@@ -6,7 +6,8 @@
 #include "tree_distances.h"
 
 using namespace Rcpp;
-using namespace TreeTools;
+using TreeTools::SplitList;
+using TreeTools::powers_of_two;
 
 const int16 NNI_MAX_TIPS = 5000; /* To avoid variable length arrays */
 

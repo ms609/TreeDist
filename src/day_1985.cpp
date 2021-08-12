@@ -7,7 +7,7 @@ using namespace Rcpp;
 #include <TreeTools.h> /* for root_on_node() */
 #include <TreeTools/root_tree.h> /* for root_on_node() */
 #include <TreeTools/ClusterTable.h> /* for ClusterTable() */
-using namespace TreeTools;
+using TreeTools::ClusterTable;
 
 #include <array> /* for array */
 #include <bitset> /* for bitset */

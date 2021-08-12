@@ -4,7 +4,7 @@
 #include <TreeTools/SplitList.h>
 #include <Rcpp.h>
 
-#include <limits>
+#include <limits> /* for numeric_limits */
 
 #include "ints.h"
 
