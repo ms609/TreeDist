@@ -1,3 +1,6 @@
+#ifndef _TREEDIST_TREE_DISTANCES_H
+#define _TREEDIST_TREE_DISTANCES_H
+
 #include <TreeTools/SplitList.h>
 #include <Rcpp.h>
 
