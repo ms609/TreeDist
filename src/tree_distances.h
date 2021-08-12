@@ -16,7 +16,7 @@ typedef int16 lap_col;
 
 #define ALL_ONES splitbit((std::numeric_limits<splitbit>::max)())
 
-/* For a reason I've not estabilshed, shrinking BIG is necessary to avoid 
+/* For a reason I've not determined, shrinking BIG is necessary to avoid 
  * an infinite loop in lap. */
 #define BIG cost((std::numeric_limits<cost>::max)() / SL_MAX_SPLITS)
 
