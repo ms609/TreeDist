@@ -73,7 +73,6 @@ LinkingTo:
   TreeTools
 RdMacros: Rdpack
 VignetteBuilder: knitr
-Config/Needs/coverage: callr, covr
 Config/Needs/metadata: codemetar
 Config/Needs/website:
   pkgdown
