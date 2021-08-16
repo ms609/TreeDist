@@ -68,10 +68,10 @@ jobs:
       - name: Install dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
-          remotes::install_cran("devtools")
           if ("${{ matrix.config.test }}" == 'tests') {
-            devtools::install_github('brio', 'r-lib', pull = 20) # brio mem leak
+            remotes::install_github('r-lib/brio#20') # brio mem leak
           }
+          remotes::install_cran("devtools")
         shell: Rscript {0}
         
       - name: Install TreeDist
