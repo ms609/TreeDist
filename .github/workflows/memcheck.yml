@@ -67,6 +67,7 @@ jobs:
           
       - name: Install dependencies
         run: |
+          remotes::install_github("ms609/TreeTools") # for v1.4.5.9007
           remotes::install_deps(dependencies = TRUE)
           if ("${{ matrix.config.test }}" == 'tests') {
             remotes::install_github('r-lib/brio#20') # brio mem leak

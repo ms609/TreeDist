@@ -47,7 +47,7 @@ Imports:
   Rdpack (>= 0.7),
   shiny,
   shinyjs,
-  TreeTools (> 1.4.5)
+  TreeTools (>= 1.4.5.9007)
 Suggests:
   bookdown,
   cluster,
@@ -73,7 +73,7 @@ LinkingTo:
   TreeTools
 RdMacros: Rdpack
 VignetteBuilder: knitr
-Config/Needs/coverage: covr
+Config/Needs/coverage: callr, covr
 Config/Needs/metadata: codemetar
 Config/Needs/website:
   pkgdown
