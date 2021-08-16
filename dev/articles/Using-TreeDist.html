@@ -172,12 +172,12 @@
 
 <span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span><span class="op">(</span><span class="va">oneTree</span>, <span class="va">twoTrees</span><span class="op">)</span></code></pre></div>
 <pre><code>##       one       two 
-## 0.7459325 0.5542762</code></pre>
+## 0.7318235 0.8436357</code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span><span class="op">(</span><span class="va">twoTrees</span>, <span class="va">threeTrees</span><span class="op">)</span></code></pre></div>
 <pre><code>##             a         b         c
-## one 0.6536392 0.8099726 0.7995640
-## two 0.8113400 0.7553005 0.8628836</code></pre>
+## one 0.8310600 0.7534578 0.6440825
+## two 0.8835741 0.8257147 0.8154644</code></pre>
 </div>
 </div>
 <div id="visualizing-a-matching" class="section level2">
@@ -214,7 +214,7 @@ Each split is labelled with a measure of its similarity, which is its contributi
 <p>Here, the <code>pairScores</code> attribute lists the score of each possible matching of splits.</p>
 <p>We can identify the splits with:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">splits</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="fu">TreeTools</span><span class="fu">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/as.Splits.html">as.Splits</a></span><span class="op">(</span><span class="va">tree2</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">splits</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="fu">TreeTools</span><span class="fu">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/Splits.html">as.Splits</a></span><span class="op">(</span><span class="va">tree2</span><span class="op">)</span><span class="op">)</span>
 <span class="va">splits</span></code></pre></div>
 <pre><code>##                    12                    13                    14 
 ## "B C D H I | A F G E" "C D H I | A B F G E" "D H I | A B C F G E" 
