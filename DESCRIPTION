@@ -75,7 +75,6 @@ RdMacros: Rdpack
 Remotes:
   ms609/TreeTools
 VignetteBuilder: knitr
-Config/Needs/coverage: covr
 Config/Needs/metadata: codemetar
 Config/Needs/website:
   pkgdown

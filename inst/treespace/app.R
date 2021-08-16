@@ -633,10 +633,10 @@ server <- function(input, output, session) {
     par(mar = c(2, 0, 0, 0))
     nStop <- length(badToGood)
     
-    plot(seq(0, 1, length.out = nStop), rep(0, nStop),
-         pch = 15, col = badToGood,
-         ylim = c(-1.5, 2.5),
+    plot(NULL, xlim = c(0, 1), ylim = c(-1.5, 2.5),
          ann = FALSE, axes = FALSE)
+    x <- seq.int(from = 0, to = 1, length.out = nStop)
+    segments(x[-nStop], numeric(nStop), x[-1], lwd = 5, col = badToGood)
     
     logScore <- LogScore(projQual()['TxC', dims()])
     lines(rep(logScore, 2), c(-1, 1), lty = 3)
