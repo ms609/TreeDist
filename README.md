@@ -133,6 +133,8 @@ Other R packages implementing tree distance functions include:
   using the tqDist algorithm.
 * '[TBRDist](http://ms609.github.io/TBRDist/)': TBR and SPR distances on 
   unrooted trees, using the 'uspr' C library.
+* '[treespace](https://github.com/thibautjombart/treespace)': Kendall-Colijn
+  distance and tree space visualizations.
 * '[distory](https://cran.r-project.org/package=distory)' (unmaintained):
   Geodesic distance
 
