@@ -2,18 +2,19 @@
 #define _TREEDIST_INFO_H
 
 #include <cmath> /* for log2() */
+#include <TreeTools/ClusterTable.h> /* for CT_MAX_LEAVES */
+
 #include "ints.h" /* for int16 */
 
 const int_fast32_t
-  DAY_MAX_LEAVES = 16383,
-  FACT_MAX = DAY_MAX_LEAVES + DAY_MAX_LEAVES + 5 + 1
+  FACT_MAX = CT_MAX_LEAVES + CT_MAX_LEAVES + 5 + 1
 ;
 
 const double log_2 = log(2.0);
 double ldfact[FACT_MAX];
-double l2rooted[DAY_MAX_LEAVES];
+double l2rooted[CT_MAX_LEAVES];
 double *l2unrooted = &l2rooted[0] - 1;
-double l2[DAY_MAX_LEAVES];
+double l2[CT_MAX_LEAVES];
 __attribute__((constructor))
   void compute_double_factorials() {
     ldfact[0] = 0;
@@ -28,7 +29,7 @@ __attribute__((constructor))
       ldfact[i] = ldfact[i - 2] + log2(double(i));
     }
     
-    for (int_fast32_t i = 3; i != DAY_MAX_LEAVES; ++i) {
+    for (int_fast32_t i = 3; i != CT_MAX_LEAVES; ++i) {
       l2[i] = log2(double(i));
       l2rooted[i] = ldfact[(i << 1) - 3];
       assert(l2unrooted[i] == ldfact[(i << 1) - 5]);
