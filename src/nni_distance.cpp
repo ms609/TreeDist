@@ -1,9 +1,13 @@
-#include <cmath>
 #include <Rcpp.h>
+#include <TreeTools/SplitList.h>
+
+#include <cmath>
+
 #include "tree_distances.h"
-#include "SplitList.h"
 
 using namespace Rcpp;
+using TreeTools::SplitList;
+using TreeTools::powers_of_two;
 
 const int16 NNI_MAX_TIPS = 5000; /* To avoid variable length arrays */
 
@@ -122,7 +126,7 @@ void nni_edge_to_splits(const IntegerMatrix edge,
   }
   
   for (int16 i = 0; i != *n_tip; i++) {
-    tmp_splits[i][int16(i / BIN_SIZE)] = powers_of_two[i % BIN_SIZE];
+    tmp_splits[i][int16(i / SL_BIN_SIZE)] = powers_of_two[i % SL_BIN_SIZE];
   }
   
   for (int16 i = 0; i != *n_edge - 1; i++) { /* final edge is second root edge */
@@ -160,13 +164,13 @@ grf_match nni_rf_matching (
     
     const int16
       last_bin = *n_bins - 1,
-      unset_tips = (*n_tips % BIN_SIZE) ? BIN_SIZE - *n_tips % BIN_SIZE : 0;
+      unset_tips = (*n_tips % SL_BIN_SIZE) ? SL_BIN_SIZE - *n_tips % SL_BIN_SIZE : 0;
     const splitbit unset_mask = ALL_ONES >> unset_tips;
     
     grf_match matching (*n_splits);
     for (int16 i = 0; i != *n_splits; i++) matching[i] = NA_INT16;
     
-    splitbit b_complement[MAX_SPLITS][MAX_BINS];
+    splitbit b_complement[SL_MAX_SPLITS][SL_MAX_BINS];
     for (int16 i = 0; i != *n_splits; i++) {
       for (int16 bin = 0; bin != last_bin; bin++) {
         b_complement[i][bin] = ~b[i * *n_bins + bin];
@@ -253,7 +257,7 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
   
   const int16
     n_node = n_edge + 1,
-    n_bin = ((n_tip - 1) / BIN_SIZE) + 1,
+    n_bin = ((n_tip - 1) / SL_BIN_SIZE) + 1,
     
     trivial_origin_1 = root_1 - 1,
     trivial_origin_2 = root_2 - 1,

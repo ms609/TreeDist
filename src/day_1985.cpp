@@ -1,19 +1,19 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
+#include "tree_distances.h" /* includes <TreeTools/SplitList.h> */
+#include "information.h"
+
 #include <TreeTools.h> /* for root_on_node() */
 #include <TreeTools/root_tree.h> /* for root_on_node() */
 #include <TreeTools/ClusterTable.h> /* for ClusterTable() */
-using namespace TreeTools;
+using TreeTools::ClusterTable;
 
 #include <array> /* for array */
 #include <bitset> /* for bitset */
 #include <vector> /* for vector */
 #include <cmath> /* for log2() */
 #include <memory> /* for unique_ptr, make_unique */
-#include "tree_distances.h"
-#include "SplitList.h"
-#include "information.h"
 
 // Modelled on https://CRAN.R-project.org/package=Rcpp/vignettes/Rcpp-modules.pdf
 // [[Rcpp::export]]

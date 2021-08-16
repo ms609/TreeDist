@@ -1,10 +1,14 @@
+#include <TreeTools/SplitList.h>
 #include <cmath>
 #include <memory> /* for unique_ptr, make_unique */
 #include <Rcpp.h>
 #include "tree_distances.h"
-#include "SplitList.h"
 
 using namespace Rcpp;
+using TreeTools::SplitList;
+using TreeTools::bitcounts;
+using TreeTools::count_bits;
+TREETOOLS_SPLITLIST_INIT;
 
 // [[Rcpp::export]]
 List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y, 
@@ -15,14 +19,14 @@ List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y,
   const SplitList a(x), b(y);
   const int16 last_bin = a.n_bins - 1,
               n_tips = nTip[0],
-              unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
+              unset_tips = (n_tips % SL_BIN_SIZE) ? SL_BIN_SIZE - n_tips % SL_BIN_SIZE : 0;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   cost score = 0;
   
   grf_match matching (a.n_splits);
   for (int16 i = a.n_splits; i--; ) matching[i] = NA_INTEGER;
   
-  splitbit b_complement[MAX_SPLITS][MAX_BINS];
+  splitbit b_complement[SL_MAX_SPLITS][SL_MAX_BINS];
   for (int16 i = b.n_splits; i--; ) {
     for (int16 bin = last_bin; bin--; ) {
       b_complement[i][bin] = ~b.state[i][bin];
@@ -72,7 +76,7 @@ List cpp_robinson_foulds_info (const RawMatrix x, const RawMatrix y,
   const SplitList a(x), b(y);
   const int16 last_bin = a.n_bins - 1,
               n_tips = nTip[0],
-              unset_tips = (n_tips % BIN_SIZE) ? BIN_SIZE - n_tips % BIN_SIZE : 0;
+              unset_tips = (n_tips % SL_BIN_SIZE) ? SL_BIN_SIZE - n_tips % SL_BIN_SIZE : 0;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   const double lg2_unrooted_n = lg2_unrooted[n_tips];
   double score = 0;
@@ -81,7 +85,7 @@ List cpp_robinson_foulds_info (const RawMatrix x, const RawMatrix y,
   for (int16 i = 0; i != a.n_splits; i++) matching[i] = NA_INTEGER;
   
   /* Dynamic allocation 20% faster for 105 tips, but VLA not permitted in C11 */
-  splitbit b_complement[MAX_SPLITS][MAX_BINS]; 
+  splitbit b_complement[SL_MAX_SPLITS][SL_MAX_BINS]; 
   for (int16 i = 0; i != b.n_splits; i++) {
     for (int16 bin = 0; bin != last_bin; ++bin) {
       b_complement[i][bin] = ~b.state[i][bin];
@@ -325,7 +329,7 @@ List cpp_msi_distance (const RawMatrix x, const RawMatrix y,
   cost** score = new cost*[most_splits];
   for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
   
-  splitbit different[MAX_BINS];
+  splitbit different[SL_MAX_BINS];
   
   for (int16 ai = 0; ai != a.n_splits; ++ai) {
     for (int16 bi = 0; bi != b.n_splits; ++bi) {

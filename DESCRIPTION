@@ -72,6 +72,8 @@ LinkingTo:
   Rcpp,
   TreeTools
 RdMacros: Rdpack
+Remotes:
+  ms609/TreeTools
 VignetteBuilder: knitr
 Config/Needs/metadata: codemetar
 Config/Needs/website:

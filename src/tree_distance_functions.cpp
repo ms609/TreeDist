@@ -1,40 +1,20 @@
 #include <Rcpp.h>
-using namespace Rcpp;
+#include <TreeTools/SplitList.h> /* for SL_MAX_TIPS */
+
 #include <cmath> /* for log2() */
+
 #include "tree_distances.h"
-#include "SplitList.h"
 
+using namespace Rcpp;
 
-uint_fast32_t bitcounts[65536]; // the bytes representing bit count of each number 0-65535
-__attribute__((constructor))
-  void initialize_bitcounts() {
-    for (int_fast32_t i = 0; i != 65536; i++) {
-      int_fast32_t n_bits = 0;
-      for (int_fast8_t j = 0; j != 16; j++) {
-        if ((i & powers_of_two[j])) ++n_bits;
-      }
-      bitcounts[i] = n_bits;
-    }
-  }
-
-int16 count_bits (splitbit x) {
-  /* For 32-bit splitbits: */
-  /* return bitcounts[x & right16bits] + bitcounts[x >> 16]; */
-  
-  /* For 64-bit splitbits: */
-  return bitcounts[x & right16bits] + bitcounts[(x >> 16) & right16bits]
-  + bitcounts[(x >> 32) & right16bits]
-  + bitcounts[(x >> 48)];
-}
-
-double lg2[int32(MAX_TIPS - 1) * (MAX_TIPS - 1) + 1];
-double lg2_double_factorial[MAX_TIPS + MAX_TIPS - 2];
-double lg2_unrooted[MAX_TIPS + 2];
+double lg2[int32(SL_MAX_TIPS - 1) * (SL_MAX_TIPS - 1) + 1];
+double lg2_double_factorial[SL_MAX_TIPS + SL_MAX_TIPS - 2];
+double lg2_unrooted[SL_MAX_TIPS + 2];
 double *lg2_rooted = &lg2_unrooted[0] + 1;
 __attribute__((constructor))
   void initialize_ldf() {
     lg2[0] = 0;
-    for (int32 i = 1; i != int32(MAX_TIPS - 1) * (MAX_TIPS - 1) + 1; ++i) { 
+    for (int32 i = 1; i != int32(SL_MAX_TIPS - 1) * (SL_MAX_TIPS - 1) + 1; ++i) { 
       lg2[i] = log2(i);
     }
     for (int16 i = 0; i != 3; ++i) {
@@ -43,10 +23,10 @@ __attribute__((constructor))
     }
     assert(lg2_rooted[0] == 0);
     assert(lg2_rooted[1] == 0);
-    for (int16 i = 2; i != MAX_TIPS + MAX_TIPS - 2; ++i) {
+    for (int16 i = 2; i != SL_MAX_TIPS + SL_MAX_TIPS - 2; ++i) {
       lg2_double_factorial[i] = lg2_double_factorial[i - 2] + lg2[i];
     }
-    for (int16 i = 3; i != MAX_TIPS + 2; ++i) {
+    for (int16 i = 3; i != SL_MAX_TIPS + 2; ++i) {
       lg2_unrooted[i] = lg2_double_factorial[i + i - 5];
       assert(lg2_rooted[i - 1] == lg2_double_factorial[i + i - 5]);
     }
@@ -142,7 +122,7 @@ double spi_overlap (const splitbit* a_state, const splitbit* b_state,
   }
   if (flag) return one_overlap(in_a, in_b, n_tips);
   
-  const int16 loose_end_tips = n_tips % BIN_SIZE;
+  const int16 loose_end_tips = n_tips % SL_BIN_SIZE;
   for (int16 bin = 0; bin != n_bins; bin++) {
     splitbit test = ~(a_state[bin] | b_state[bin]);
     if (bin == n_bins - 1 && loose_end_tips) {
