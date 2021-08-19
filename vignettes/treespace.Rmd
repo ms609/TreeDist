@@ -74,7 +74,7 @@ tree space analysis.
 The clustering information distance [@SmithDist] is a reliable alternative
 that is fast to calculate:
 
-```{r calculate-distances}
+```{r calculate-distances, message=FALSE}
 library('TreeDist')
 distances <- ClusteringInfoDistance(trees)
 ```
@@ -280,7 +280,7 @@ distance recovers a different pair of clusters, highlighting the dangers
 of interpreting a two-dimensional tree space plot:
 
 
-```{r pid, fig.asp = 1, fig.width = 4, fig.align = 'center', echo = FALSE}
+```{r pid, fig.asp = 1, fig.width = 4, fig.align = 'center', echo = FALSE, message = FALSE}
 library('TreeDist')
 pid_distances <- PhylogeneticInfoDistance(trees)
 pid_mapping <- cmdscale(pid_distances, k = 6)
