@@ -93,7 +93,7 @@ Then we need to reduce the dimensionality of these distances.
 We'll start out with a 12-dimensional mapping; if needed, we can always 
 drop higher dimensions.  
 
-Principal components analysis is quick and performs very well:
+Principal coordinates analysis is quick and performs very well:
 
 ```{r map}
 mapping <- cmdscale(distances, k = 12)
