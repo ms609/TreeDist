@@ -210,7 +210,7 @@ represent the true distances between trees.  We hope for a trustworthiness ×
 continuity score of \> 0.9 for a usable mapping, or \> 0.95 for a good one.
 
 ```{r how-many-dims, fig.align='center'}
-txc <- vapply(1:12, function (k) {
+txc <- vapply(seq_len(ncol(mapping)), function (k) {
   newDist <- dist(mapping[, seq_len(k)])
   MappingQuality(distances, newDist, 10)['TxC']
 }, 0)
@@ -232,14 +232,15 @@ Let's plot the first five dimensions of our tree space, highlighting the convex
 hulls of our clusters:
 
 ```{r plot-mapping-5d, fig.asp = 1, fig.align='center'}
-plotSeq <- matrix(0, 5, 5)
-plotSeq[upper.tri(plotSeq)] <- seq_len(5 * (5 - 1) / 2)
-plotSeq <- t(plotSeq[-5, -1])
-plotSeq[c(5, 10, 15)] <- 11:13
+nDim <- which.max(txc > 0.9)
+plotSeq <- matrix(0, nDim, nDim)
+plotSeq[upper.tri(plotSeq)] <- seq_len(nDim * (nDim - 1) / 2)
+plotSeq <- t(plotSeq[-nDim, -1])
+plotSeq[nDim * 1:3] <- (nDim * 2) + 1:3
 layout(plotSeq)
 par(mar = rep(0.1, 4))
 
-for (i in 2:5) for (j in seq_len(i - 1)) {
+for (i in 2:nDim) for (j in seq_len(i - 1)) {
   # Set up blank plot
   plot(mapping[, j], mapping[, i], ann = FALSE, axes = FALSE, frame.plot = TRUE,
        type = 'n', asp = 1, xlim = range(mapping), ylim = range(mapping))
@@ -259,6 +260,7 @@ for (i in 2:5) for (j in seq_len(i - 1)) {
     hull <- chull(clusterX, clusterY)
     polygon(clusterX[hull], clusterY[hull], lty = 1, lwd = 2,
             border = '#54de25bb')
+    text(mean(clusterX), mean(clusterY), clI, col = '#54de25bb', font = 2)
   }
 }
 # Annotate dimensions
