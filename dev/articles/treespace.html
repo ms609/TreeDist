@@ -168,7 +168,7 @@
 <h3 class="hasAnchor">
 <a href="#mapping-distances" class="anchor"></a>Mapping distances</h3>
 <p>Then we need to reduce the dimensionality of these distances. We’ll start out with a 12-dimensional mapping; if needed, we can always drop higher dimensions.</p>
-<p>Principal components analysis is quick and performs very well:</p>
+<p>Principal coordinates analysis is quick and performs very well:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">mapping</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cmdscale.html">cmdscale</a></span><span class="op">(</span><span class="va">distances</span>, k <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></code></pre></div>
 <p>Alternative mapping methods do exist, and sometimes give slightly better mappings. <code>isoMDS()</code> performs non-metric multidimensional scaling (MDS) with the Kruskal-1 stress function <span class="citation">(Kruskal, 1964)</span>:</p>
