@@ -72,12 +72,11 @@ LinkingTo:
   Rcpp,
   TreeTools
 RdMacros: Rdpack
-Remotes:
-  ms609/TreeTools
 VignetteBuilder: knitr
+Config/Needs/memcheck: devtools, rcmdcheck
 Config/Needs/metadata: codemetar
-Config/Needs/website:
-  pkgdown
+Config/Needs/revdeps: revdepcheck
+Config/Needs/website: pkgdown
 Config/testthat/parallel: false
 Config/testthat/edition: 3
 SystemRequirements: C++14
