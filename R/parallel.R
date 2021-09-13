@@ -1,7 +1,7 @@
 
 #' Calculate distances in parallel
 #' 
-#' Accellerate distance calculation by employing multiple \acronym{CPU} workers.
+#' Accelerate distance calculation by employing multiple \acronym{CPU} workers.
 #' 
 #' "TreeDist" parallelizes the calculation of tree to tree distances via
 #' the [`parCapply()`] function, using a user-defined cluster specified in

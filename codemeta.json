@@ -418,7 +418,7 @@
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://github.com/ms609/TreeTools"
+      "sameAs": "https://CRAN.R-project.org/package=TreeTools"
     }
   ],
   "releaseNotes": "https://github.com/ms609/TreeDist/blob/master/NEWS.md",
@@ -488,5 +488,5 @@
     "name": "Comprehensive R Archive Network (CRAN)",
     "url": "https://cran.r-project.org"
   },
-  "fileSize": "1783.748KB"
+  "fileSize": "1783.788KB"
 }
