@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.0</span>
       </span>
     </div>
 
@@ -171,12 +171,12 @@
 
 <span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span><span class="op">(</span><span class="va">oneTree</span>, <span class="va">twoTrees</span><span class="op">)</span></code></pre></div>
 <pre><code>##       one       two 
-## 0.8523558 0.8096598</code></pre>
+## 0.8560805 0.7706428</code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span><span class="op">(</span><span class="va">twoTrees</span>, <span class="va">threeTrees</span><span class="op">)</span></code></pre></div>
 <pre><code>##             a         b         c
-## one 0.8385691 0.8182085 0.8053570
-## two 0.8671483 0.7017809 0.7538929</code></pre>
+## one 0.7361971 0.7981658 0.7615858
+## two 0.7986567 0.7438880 0.8379797</code></pre>
 </div>
 </div>
 <div id="visualizing-a-matching" class="section level2">
@@ -213,7 +213,7 @@ Each split is labelled with a measure of its similarity, which is its contributi
 <p>Here, the <code>pairScores</code> attribute lists the score of each possible matching of splits.</p>
 <p>We can identify the splits with:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">splits</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="fu">TreeTools</span><span class="fu">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/as.Splits.html">as.Splits</a></span><span class="op">(</span><span class="va">tree2</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">splits</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="fu">TreeTools</span><span class="fu">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/Splits.html">as.Splits</a></span><span class="op">(</span><span class="va">tree2</span><span class="op">)</span><span class="op">)</span>
 <span class="va">splits</span></code></pre></div>
 <pre><code>##                    12                    13                    14 
 ## "B C D H I | A F G E" "C D H I | A B F G E" "D H I | A B C F G E" 

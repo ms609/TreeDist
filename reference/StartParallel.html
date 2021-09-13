@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Solve linear assignment problem using LAPJV — LAPJV • TreeDist</title>
+<title>Calculate distances in parallel — StartParallel • TreeDist</title>
 
 
 <!-- jquery -->
@@ -45,9 +45,8 @@
 
 
 
-<meta property="og:title" content="Solve linear assignment problem using LAPJV — LAPJV" />
-<meta property="og:description" content="Use the algorithm of Jonker &amp;amp; Volgenant (1987) to solve the
-Linear Sum Assignment Problem." />
+<meta property="og:title" content="Calculate distances in parallel — StartParallel" />
+<meta property="og:description" content="Accelerate distance calculation by employing multiple CPU workers." />
 
 
 
@@ -167,82 +166,68 @@ Linear Sum Assignment Problem." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Solve linear assignment problem using LAPJV</h1>
-    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/lap.R'><code>R/lap.R</code></a></small>
-    <div class="hidden name"><code>LAPJV.Rd</code></div>
+    <h1>Calculate distances in parallel</h1>
+    <small class="dont-index">Source: <a href='https://github.com/ms609/TreeDist/blob/master/R/parallel.R'><code>R/parallel.R</code></a></small>
+    <div class="hidden name"><code>StartParallel.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Use the algorithm of Jonker &amp; Volgenant (1987) to solve the
-<a href='http://www.assignmentproblems.com/doc/LSAPIntroduction.pdf'>Linear Sum Assignment Problem</a>.</p>
+    <p>Accelerate distance calculation by employing multiple <acronym>CPU</acronym> workers.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>LAPJV</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>StartParallel</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span>
+
+<span class='fu'>SetParallel</span><span class='op'>(</span><span class='va'>cl</span><span class='op'>)</span>
+
+<span class='fu'>GetParallel</span><span class='op'>(</span><span class='va'>cl</span><span class='op'>)</span>
+
+<span class='fu'>StopParallel</span><span class='op'>(</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>Square matrix of costs.</p></td>
+      <th>...</th>
+      <td><p>Parameters to pass to <code>makeCluster()</code>.</p></td>
+    </tr>
+    <tr>
+      <th>cl</th>
+      <td><p>An existing cluster.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list with two entries: <code>score</code>, the score of the optimal matching;
-and <code>matching</code>, the columns matched to each row of the matrix in turn.</p>
+    <p><code>StartParallel()</code> and <code>SetParallel()</code> return the previous value of
+<code><a href='https://rdrr.io/r/base/options.html'>options('TreeDist-cluster')</a></code>.</p>
+<p><code>GetParallel()</code> returns the currently specified cluster.</p>
+<p><code>StopParallel()</code> returns <code>TRUE</code> if a cluster was destroyed,
+<code>FALSE</code> otherwise.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The Linear Assignment Problem seeks to match each row of a matrix with a
-column, such that the cost of the matching is minimized.</p>
-<p>The Jonker &amp; Volgenant approach is a faster alternative to the Hungarian
-algorithm (Munkres 1957), which is implemented in <code><a href='https://rdrr.io/pkg/clue/man/solve_LSAP.html'>clue::solve_LSAP()</a></code>.</p>
-<p>Note: the JV algorithm expects integers. In order to apply the function
-to a non-integer <em>n</em>, as in the tree distance calculations in this package,
-each <em>n</em> is multiplied by the largest available integer before applying
-the JV algorithm.  If two values of <em>n</em> exhibit a trivial difference --
-e.g. due to floating point errors -- then this can lead to interminable
-run times.  (If numbers of the magnitude of billions differ only in their
-last significant digit, then the JV algorithm may undergo billions of
-iterations.)  To avoid this, integers over 2^22 that differ by a value of
-8 or less are treated as equal.</p>
-<p>NB. At present, only square matrices are supported; if you need support for
-non-square matrices, drop a note at
-<a href='https://github.com/ms609/TreeDist/issues/25'>issue #25</a>
-and I'll prioritize development.</p>
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
-    <p>Jonker R, Volgenant A (1987).
-&#8220;A shortest augmenting path algorithm for dense and sparse linear assignment problems.&#8221;
-<em>Computing</em>, <b>38</b>, 325--340.
-doi: <a href='https://doi.org/10.1007/BF02278710'>10.1007/BF02278710</a>
-.</p>
-<p>Munkres J (1957).
-&#8220;Algorithms for the assignment and transportation problems.&#8221;
-<em>Journal of the Society for Industrial and Applied Mathematics</em>, <b>5</b>(1), 32--38.
-doi: <a href='https://doi.org/10.1137/0105003'>10.1137/0105003</a>
-.</p>
+    <p>"TreeDist" parallelizes the calculation of tree to tree distances via
+the <code>parCapply()</code> function, using a user-defined cluster specified in
+<code><a href='https://rdrr.io/r/base/options.html'>options('TreeDist-cluster')</a></code>.</p>
+<p><code>StartParallel()</code> calls <code><a href='https://rdrr.io/r/parallel/makeCluster.html'>parallel::makeCluster()</a></code> and tells "TreeDist" to
+use the created cluster.</p>
+<p><code>SetParallel()</code> tells "TreeDist" to use a pre-existing or user-specified
+cluster.</p>
+<p><code>StopParallel()</code> stops the current TreeDist cluster.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
-    <p><a href='https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/LAPJV/lap.cpp'>C++ code</a>
-by Roy Jonker, MagicLogic Optimization Inc. <a href='mailto:roy_jonker@magiclogic.com'>roy_jonker@magiclogic.com</a>,
-with contributions from Yong Yang <a href='mailto:yongyanglink@gmail.com'>yongyanglink@gmail.com</a>, after
-<a href='https://uk.mathworks.com/matlabcentral/profile/authors/69713-yi-cao'>Yi Cao</a></p>
+    <p><a href='https://orcid.org/0000-0001-5660-1727'>Martin R. Smith</a>
+(<a href='mailto:martin.smith@durham.ac.uk'>martin.smith@durham.ac.uk</a>)</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>problem</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>7</span>, <span class='fl'>9</span>, <span class='fl'>8</span>, <span class='fl'>9</span>,
-                    <span class='fl'>2</span>, <span class='fl'>8</span>, <span class='fl'>5</span>, <span class='fl'>7</span>,
-                    <span class='fl'>1</span>, <span class='fl'>6</span>, <span class='fl'>6</span>, <span class='fl'>9</span>,
-                    <span class='fl'>3</span>, <span class='fl'>6</span>, <span class='fl'>2</span>, <span class='fl'>2</span><span class='op'>)</span>, <span class='fl'>4</span>, <span class='fl'>4</span>, byrow<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
-
-<span class='fu'>LAPJV</span><span class='op'>(</span><span class='va'>problem</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; $score
-#&gt; [1] 17
-#&gt; 
-#&gt; $matching
-#&gt; [1] 2 3 1 4
-#&gt; </div></pre>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span> <span class='co'># Only run in terminal</span>
+  <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='st'><a href='https://ms609.github.io/TreeTools/'>"TreeTools"</a></span>, quietly <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+  <span class='va'>nCores</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Round.html'>ceiling</a></span><span class='op'>(</span><span class='fu'>detectCores</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>/</span> <span class='fl'>2</span><span class='op'>)</span>
+  <span class='fu'>StartParallel</span><span class='op'>(</span><span class='va'>nCores</span><span class='op'>)</span> <span class='co'># Takes a few seconds to set up processes</span>
+  <span class='fu'>GetParallel</span><span class='op'>(</span><span class='op'>)</span>
+  <span class='fu'><a href='TreeDistance.html'>ClusteringInfoDistance</a></span><span class='op'>(</span><span class='fu'>as.phylo</span><span class='op'>(</span><span class='fl'>0</span><span class='op'>:</span><span class='fl'>6</span>, <span class='fl'>100</span><span class='op'>)</span><span class='op'>)</span>
+  <span class='fu'>StopParallel</span><span class='op'>(</span><span class='op'>)</span> <span class='co'># Returns system resources</span>
+<span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

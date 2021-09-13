@@ -90,7 +90,7 @@ proposed in Smith (2020)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.2.0</span>
       </span>
     </div>
 
@@ -459,7 +459,7 @@ doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</
 <span class='co'># How similar are two trees?</span>
 <span class='fu'>SharedPhylogeneticInfo</span><span class='op'>(</span><span class='va'>tree1</span>, <span class='va'>tree2</span><span class='op'>)</span> <span class='co'># Amount of phylogenetic information in common</span>
 </div><div class='output co'>#&gt; [1] 13.75284</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/attr.html'>attr</a></span><span class='op'>(</span><span class='fu'>SharedPhylogeneticInfo</span><span class='op'>(</span><span class='va'>tree1</span>, <span class='va'>tree2</span>, reportMatching <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>, <span class='st'>'matching'</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] 1 4 2 3 5</div><div class='input'><span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span><span class='op'>(</span><span class='va'>SharedPhylogeneticInfo</span>, <span class='va'>tree1</span>, <span class='va'>tree2</span><span class='op'>)</span> <span class='co'># Which clades are matched?</span>
+</div><div class='output co'>#&gt; [1] 4 1 3 2 5</div><div class='input'><span class='fu'><a href='VisualizeMatching.html'>VisualizeMatching</a></span><span class='op'>(</span><span class='va'>SharedPhylogeneticInfo</span>, <span class='va'>tree1</span>, <span class='va'>tree2</span><span class='op'>)</span> <span class='co'># Which clades are matched?</span>
 </div><div class='img'><img src='TreeDistance-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='fu'>DifferentPhylogeneticInfo</span><span class='op'>(</span><span class='va'>tree1</span>, <span class='va'>tree2</span><span class='op'>)</span> <span class='co'># Distance measure</span>
 </div><div class='output co'>#&gt; [1] 14.39934</div><div class='input'><span class='fu'>DifferentPhylogeneticInfo</span><span class='op'>(</span><span class='va'>tree2</span>, <span class='va'>tree1</span><span class='op'>)</span> <span class='co'># The metric is symmetric</span>
@@ -474,8 +474,8 @@ doi: <a href='https://doi.org/10.1145/1553374.1553511'>10.1145/1553374.1553511</
 </div><div class='output co'>#&gt; [1] 0</div><div class='input'><span class='fu'>MutualClusteringInfo</span><span class='op'>(</span><span class='va'>tree1</span>, <span class='va'>tree3</span><span class='op'>)</span> <span class='co'># &gt; 0</span>
 </div><div class='output co'>#&gt; [1] 0.6539805</div><div class='input'>
 <span class='co'># Converting trees to Splits objects can speed up multiple comparisons</span>
-<span class='va'>splits1</span> <span class='op'>&lt;-</span> <span class='fu'>TreeTools</span><span class='fu'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/as.Splits.html'>as.Splits</a></span><span class='op'>(</span><span class='va'>tree1</span><span class='op'>)</span>
-<span class='va'>splits2</span> <span class='op'>&lt;-</span> <span class='fu'>TreeTools</span><span class='fu'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/as.Splits.html'>as.Splits</a></span><span class='op'>(</span><span class='va'>tree2</span><span class='op'>)</span>
+<span class='va'>splits1</span> <span class='op'>&lt;-</span> <span class='fu'>TreeTools</span><span class='fu'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/Splits.html'>as.Splits</a></span><span class='op'>(</span><span class='va'>tree1</span><span class='op'>)</span>
+<span class='va'>splits2</span> <span class='op'>&lt;-</span> <span class='fu'>TreeTools</span><span class='fu'>::</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/Splits.html'>as.Splits</a></span><span class='op'>(</span><span class='va'>tree2</span><span class='op'>)</span>
 
 <span class='fu'>SharedPhylogeneticInfoSplits</span><span class='op'>(</span><span class='va'>splits1</span>, <span class='va'>splits2</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; [1] 13.75284</div><div class='input'><span class='fu'>MatchingSplitInfoSplits</span><span class='op'>(</span><span class='va'>splits1</span>, <span class='va'>splits2</span><span class='op'>)</span>
