@@ -30,7 +30,7 @@ StopParallel()
 \code{FALSE} otherwise.
 }
 \description{
-Accellerate distance calculation by employing multiple \acronym{CPU} workers.
+Accelerate distance calculation by employing multiple \acronym{CPU} workers.
 }
 \details{
 "TreeDist" parallelizes the calculation of tree to tree distances via

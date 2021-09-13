@@ -1,17 +1,17 @@
 ## Test environments
 * Microsoft Windows:
-  * Local Windows 10 installation, R 4.1.0-patched
+  * Local Windows 10 installation, R 4.1.1
   * windows-latest: Microsoft Windows Server 2019, Windows 10.0.17763, 
-    R release, via [Github Actions](https://github.com/ms609/TreeDist/actions)
+    R release, via [GitHub Actions](https://github.com/ms609/TreeDist/actions)
   * win_devel: with `devtools::check_win_devel()`, R devel
   * win_oldrel: with `devtools::check_win_oldrelease()`.
   
 * Linux:
-  * Ubuntu 20.04.1 LTS, R 3.6.3, release and devel, via Github Actions
-  * via R-hub, with `rhub::check_for_cran()`, `rhub::check_with_sanitizers()`
-    and  `rhub::check_with_valgrind()`.
+  * Ubuntu 20.04.1 LTS, R 3.6.3, release and devel, via GitHub Actions
+  * [valgrind mem-check]](https://github.com/ms609/TreeDist/actions/workflows/memcheck.yml)
+  * via R-hub, with `rhub::check_for_cran()`.
   
-* Mac OS X 10.15.7, R release, via Github actions
+* Mac OS X 10.15.7, R release, via GitHub actions
 
 
 ## R CMD check results
@@ -36,4 +36,5 @@ All calls to `data(package = 'TreeDistData')` are wrapped within
 ## Downstream dependencies
 There is one downstream dependency, 'TBRDist' (which I maintain).
 
-No changes to worse were identified by a local R CMD CHECK.
+No changes to worse were identified by
+["revdepcheck"](https://github.com/ms609/TreeDist/actions/workflows/revdepcheck.yml).
