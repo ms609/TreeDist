@@ -8,7 +8,8 @@ using namespace Rcpp;
 using TreeTools::SplitList;
 using TreeTools::bitcounts;
 using TreeTools::count_bits;
-TREETOOLS_SPLITLIST_INIT;
+
+TREETOOLS_SPLITLIST_INIT
 
 // [[Rcpp::export]]
 List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y, 
