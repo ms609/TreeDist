@@ -301,15 +301,48 @@ mapping &lt;- sammon$points</code></pre>
 <span class="fu"><a href="https://rdrr.io/r/graphics/text.html">text</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="st">'Dimension 4'</span><span class="op">)</span></code></pre></div>
 <p><img src="treespace_files/figure-html/plot-mapping-5d-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>Our clusters, so distinct in dimension 1, overlap strongly in every other dimension. The fact that the minimum spanning tree moves between clusters also underlines the fact that they are not as well defined as they appear by eye.</p>
-<p>Note that cluster membership, as well as the precise shape of tree space, is a function of the tree distance metric. The phylogenetic information distance recovers a different pair of clusters, highlighting the dangers of interpreting a two-dimensional tree space plot:</p>
+<p>Note that cluster membership, as well as the precise shape of tree space, is a function of the tree distance metric. The phylogenetic information distance recovers a different pair of clusters, which may not correspond to those that are most apparent from a simple visual inspection of the two-dimensional tree space plot:</p>
 <p><img src="treespace_files/figure-html/pid-1.png" width="384" style="display: block; margin: auto;"></p>
 </div>
-</div>
-<div id="a-different-approach-self-organizing-maps" class="section level2">
-<h2 class="hasAnchor">
-<a href="#a-different-approach-self-organizing-maps" class="anchor"></a>A different approach: Self-organizing maps</h2>
-<p>An alternative approach to visualizing tree space is to create emergent self-organizing maps <span class="citation">(Kohonen, 1982; Thrun, Lerch, Lötsch, &amp; Ultsch, 2016; Ultsch, 2003)</span>, which map high-dimensional data into two dimensions, then add a third dimension to indicate distance between data points: nearby points occur in valleys, and are separated by ridges from more distant data points.</p>
+<div id="comparing-cluster-hypervolumes" class="section level3">
+<h3 class="hasAnchor">
+<a href="#comparing-cluster-hypervolumes" class="anchor"></a>Comparing cluster hypervolumes</h3>
+<p>It is tempting to compare the size of clusters by calculating the area of convex hulls on a two-dimensional mapping. However, mapped areas do <a href="https://xkcd.com/2489/">not necessarily correspond</a> to true hypervolumes.</p>
+<p>Accuracy may be improved by comparing higher dimensions of projections using the “<a href="http://www.benjaminblonder.org/hypervolume_faq.html">hypervolume</a>” package, though the same considerations apply <span class="citation">(Blonder et al., 2018)</span>. Interpretation of overlap statistics is detailed in <span class="citation">Mammola (2019)</span>.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">hypervolumeInstalled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span><span class="op">(</span><span class="st">'hypervolume'</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<pre><code>## Error in dyn.load(dynlib &lt;- getDynlib(dir)) : 
+##   unable to load shared object '/Users/runner/work/_temp/Library/rgl/libs/rgl.so':
+##   dlopen(/Users/runner/work/_temp/Library/rgl/libs/rgl.so, 6): Library not loaded: /opt/X11/lib/libGLU.1.dylib
+##   Referenced from: /Users/runner/work/_temp/Library/rgl/libs/rgl.so
+##   Reason: image not found</code></pre>
+<pre><code>## Warning:     Loading rgl's DLL failed. 
+##  This build of rgl depends on XQuartz, which failed to load.
+##  See the discussion in https://stackoverflow.com/a/66127391/2554330</code></pre>
+<pre><code>## Warning: Trying without OpenGL...</code></pre>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="va">hypervolumeInstalled</span><span class="op">)</span> <span class="op">{</span>
+  <span class="fu"><a href="https://rdrr.io/r/utils/capture.output.html">capture.output</a></span><span class="op">(</span><span class="op">{</span>
+    <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st">'hypervolume'</span><span class="op">)</span>
+    <span class="va">hv1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/hypervolume/man/hypervolume_gaussian.html">hypervolume_gaussian</a></span><span class="op">(</span><span class="va">pid_mapping</span><span class="op">[</span><span class="va">pid_cluster</span> <span class="op">==</span> <span class="fl">1</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span>
+    <span class="va">hv2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/hypervolume/man/hypervolume_gaussian.html">hypervolume_gaussian</a></span><span class="op">(</span><span class="va">pid_mapping</span><span class="op">[</span><span class="va">pid_cluster</span> <span class="op">==</span> <span class="fl">2</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span>
+    <span class="va">hv_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/hypervolume/man/hypervolume_distance.html">hypervolume_distance</a></span><span class="op">(</span><span class="va">hv1</span>, <span class="va">hv2</span><span class="op">)</span>
+    <span class="va">hyperset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/hypervolume/man/hypervolume_set.html">hypervolume_set</a></span><span class="op">(</span><span class="va">hv1</span>, <span class="va">hv2</span>, check.memory <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+    <span class="va">hv_overlap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/hypervolume/man/hypervolume_overlap_statistics.html">hypervolume_overlap_statistics</a></span><span class="op">(</span><span class="va">hyperset</span><span class="op">)</span>
+  <span class="op">}</span><span class="op">)</span> <span class="op">-&gt;</span> <span class="va">XX</span>
+  <span class="va">hv_dist</span>
+  <span class="va">hv_overlap</span>
+<span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="st">"Install the 'hypervolume' package to run this example"</span><span class="op">)</span>
+<span class="op">}</span></code></pre></div>
+<pre><code>## [1] "Install the 'hypervolume' package to run this example"</code></pre>
+</div>
+</div>
+<div id="self-organizing-maps" class="section level2">
+<h2 class="hasAnchor">
+<a href="#self-organizing-maps" class="anchor"></a>Self-organizing maps</h2>
+<p>An alternative approach to visualizing tree space is to create emergent self-organizing maps <span class="citation">(Kohonen, 1982; Thrun, Lerch, Lötsch, &amp; Ultsch, 2016; Ultsch, 2003)</span>, which map high-dimensional data into two dimensions, then add a third dimension to indicate distance between data points: nearby points occur in valleys, and are separated by ridges from more distant data points.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">umatrixInstalled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html">requireNamespace</a></span><span class="op">(</span><span class="st">'Umatrix'</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="kw">if</span> <span class="op">(</span><span class="va">umatrixInstalled</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">map</span> <span class="op">&lt;-</span> <span class="fu">Umatrix</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Umatrix/man/esomTrain.html">esomTrain</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">as.matrix</a></span><span class="op">(</span><span class="va">distances</span><span class="op">)</span>, Key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">trees</span><span class="op">)</span>,
@@ -340,6 +373,9 @@ mapping &lt;- sammon$points</code></pre>
 <h1 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h1>
 <div id="refs" class="references">
+<div id="ref-Blonder2018">
+<p>Blonder, B., Morrow, C. B., Maitner, B., Harris, D. J., Lamanna, C., Violle, C., … Kerkhoff, A. J. (2018). New approaches for delineating <em>n</em>-dimensional hypervolumes. <em>Methods in Ecology and Evolution</em>, <em>9</em>(2), 305–319. doi: <a href="https://doi.org/10.1111/2041-210X.12865">10.1111/2041-210X.12865</a></p>
+</div>
 <div id="ref-Kaufman1990">
 <p>Kaufman, L., &amp; Rousseeuw, P. J. (1990). Partitioning around medoids (Program PAM). In <em>Wiley Series in Probability and Statistics</em>. <em>Finding groups in data: An introduction to cluster analysis</em> (pp. 68–125). John Wiley &amp; Sons, Ltd. doi: <a href="https://doi.org/10.1002/9780470316801.ch2">10.1002/9780470316801.ch2</a></p>
 </div>
@@ -348,6 +384,9 @@ mapping &lt;- sammon$points</code></pre>
 </div>
 <div id="ref-Kruskal1964">
 <p>Kruskal, J. B. (1964). Multidimensional scaling by optimizing goodness of fit to a nonmetric hypothesis. <em>Psychometrika</em>, <em>29</em>(1), 1–27. doi: <a href="https://doi.org/10.1007/BF02289565">10.1007/BF02289565</a></p>
+</div>
+<div id="ref-Mammola2019">
+<p>Mammola, S. (2019). Assessing similarity of <em>n</em>-dimensional hypervolumes: Which metric to use? <em>Journal of Biogeography</em>, <em>46</em>(9), 2012–2023. doi: <a href="https://doi.org/10.1111/jbi.13618">10.1111/jbi.13618</a></p>
 </div>
 <div id="ref-Sammon1969">
 <p>Sammon, J. W. (1969). A nonlinear mapping for data structure analysis. <em>IEEE Transactions on Computers</em>, <em>C-18</em>(5), 401–409. doi: <a href="https://doi.org/10.1109/T-C.1969.222678">10.1109/T-C.1969.222678</a></p>
