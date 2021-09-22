@@ -278,8 +278,9 @@ underlines the fact that they are not as well defined as they appear by eye.
 
 Note that cluster membership, as well as the precise shape of tree space, 
 is a function of the tree distance metric.  The phylogenetic information
-distance recovers a different pair of clusters, highlighting the dangers
-of interpreting a two-dimensional tree space plot:
+distance recovers a different pair of clusters, which may not correspond to
+those that are most apparent from a simple visual inspection of the
+two-dimensional tree space plot:
 
 
 ```{r pid, fig.asp = 1, fig.width = 4, fig.align = 'center', echo = FALSE, message = FALSE}
@@ -303,7 +304,39 @@ for (clI in 1:2) {
 }
 ```
 
-## A different approach: Self-organizing maps
+### Comparing cluster hypervolumes
+
+It is tempting to compare the size of clusters by calculating the area of 
+convex hulls on a two-dimensional mapping.  However, mapped areas do [not
+necessarily correspond](https://xkcd.com/2489/) to true hypervolumes.
+
+Accuracy may be improved by comparing higher dimensions of projections using
+the "[hypervolume](http://www.benjaminblonder.org/hypervolume_faq.html)"
+package, though the same considerations apply [@Blonder2018].
+Interpretation of overlap statistics is detailed in @Mammola2019.
+
+```{r hypervolume, message = FALSE}
+hypervolumeInstalled <- requireNamespace('hypervolume', quietly = TRUE)
+if (hypervolumeInstalled) {
+  capture.output({
+    library('hypervolume')
+    hv1 <- hypervolume_gaussian(pid_mapping[pid_cluster == 1, 1:3])
+    hv2 <- hypervolume_gaussian(pid_mapping[pid_cluster == 2, 1:3])
+    hv_dist <- hypervolume_distance(hv1, hv2)
+    hyperset <- hypervolume_set(hv1, hv2, check.memory = FALSE)
+    hv_overlap <- hypervolume_overlap_statistics(hyperset)
+  }) -> XX
+  hv_dist
+  hv_overlap
+} else {
+  print("Install the 'hypervolume' package to run this example")
+}
+
+```
+
+
+
+## Self-organizing maps
 
 An alternative approach to visualizing tree space is to create emergent
 self-organizing maps [@Kohonen1982;@Ultsch2003;@Thrun2016],

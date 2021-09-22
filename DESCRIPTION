@@ -52,6 +52,7 @@ Suggests:
   bookdown,
   cluster,
   ggplot2,
+  hypervolume,
   kdensity,
   knitr,
   MASS,

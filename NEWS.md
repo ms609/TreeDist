@@ -1,3 +1,8 @@
+# TreeDist 2.2.0.9000 (development)
+
+- Discussion of hypervolumes in vignettes.
+
+
 # TreeDist 2.2.0
 
 - Speed improvements, using optimizations suggested by Alexis Stamatakis'
