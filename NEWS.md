@@ -2,6 +2,8 @@
 
 - Discussion of hypervolumes in vignettes.
 
+- Support uniform manifold approximation and projection in app.
+
 
 # TreeDist 2.2.0
 

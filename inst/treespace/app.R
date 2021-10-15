@@ -11,6 +11,7 @@ if (!requireNamespace('MASS', quietly = TRUE)) install.packages('MASS')
 if (!requireNamespace('Quartet', quietly = TRUE)) install.packages('Quartet')
 if (!requireNamespace('rgl', quietly = TRUE)) install.packages('rgl')
 if (!requireNamespace('readxl', quietly = TRUE)) install.packages('readxl')
+if (!requireNamespace('uwot', quietly = TRUE)) install.packages('uwot')
 
 # Allow large files to be submitted
 options(shiny.maxRequestSize = 100 * 1024^2)
@@ -129,6 +130,11 @@ Maechler2019 <- Reference(
   title = "cluster: cluster analysis basics and extensions", year = 2019,
   author = c("Maechler, M.", "Rousseeuw, P.", "Struyf, A.", "Hubert, M.", "Hornik, K."),
   journal = "Comprehensive R Archive Network")
+McInnes2020 <- Reference(
+  title = "UMAP: uniform manifold approximation and projection for dimension reduction",
+  author = c("McInnes, L.", "Healy, J.", "Melville, J."),
+  year = 2020,
+  journal = "arXiv", pages = "1802.03426")
 Murtagh1983 <- Reference(
   title = "A survey of recent advances in hierarchical clustering algorithms",
   author = "Murtagh, F.", year = 1983, volume = 26, pages = c(354, 359),
@@ -259,9 +265,13 @@ ui <- fluidPage(theme = 'treespace.css',
           selectInput("mapping", "Mapping method",
                        choices = list("Princ. comps (classical MDS)" = 'pca',
                                       "Sammon mapping mMDS" = 'nls',
-                                      "Kruskal-1 nmMDS (slow)" = 'k'
+                                      "Kruskal-1 nmMDS (slow)" = 'k',
+                                      "t-UMAP" = 'tumap',
+                                      "UMAP" = 'umap'
                                       ),
                        selected = 'pca'),
+          hidden(sliderInput(inputId = 'nNeighb', 'Nearest neighbours',
+                             min = 2, max = 100, value = 15)),
           
           checkboxGroupInput("clustering", "Clustering methods",
                              choices = list("Partitioning around medoids" = 'pam',
@@ -497,6 +507,9 @@ server <- function(input, output, session) {
     updateSliderInput(session, 'dims',
                       max = nProjDim(),
                       value = min(input$dims, nProjDim()))
+    updateSliderInput(session, 'nNeighb',
+                      max = nTrees,
+                      value = min(input$nNeighb, nTrees, 100))
   }
   
   observeEvent(input$addTrees, {
@@ -593,36 +606,64 @@ server <- function(input, output, session) {
     }
   }), 400)
   
-  mapping <- reactive({
+  mappingUsesNeighb <- function() {
+    input$mapping %in% c('umap', 'tumap')
+  }
+  
+  observeEvent(input$mapping, {
+    if (mappingUsesNeighb()) {
+      showElement('nNeighb')
+    } else {
+      hideElement('nNeighb')
+    }
+  })
+  
+  projId <- function () {
+    paste0('proj_', input$mapping, '_', input$distance, '_',
+           if(mappingUsesNeighb()) input$nNeighb)
+  }
+  
+  mapping <- debounce(reactive({
     if (maxProjDim() > 1L) {
-      proj_id <- paste0('proj_', input$mapping, '_', input$distance)
-      if (is.null(r[[proj_id]])) {
+      if (is.null(r[[projId()]])) {
         withProgress(
           message = 'Mapping distances',
           value = 0.99,
           proj <- switch(input$mapping,
                          'pca' = cmdscale(distances(), k = maxProjDim()),
                          'k' = MASS::isoMDS(distances(), k = maxProjDim())$points,
-                         'nls' = MASS::sammon(distances(), k = maxProjDim())$points
+                         'nls' = MASS::sammon(distances(), k = maxProjDim())$points,
+                         'tumap' = uwot::tumap(distances(),
+                                               n_neighbors = input$nNeighb,
+                                               n_components = maxProjDim()),
+                         'umap' = uwot::umap(distances(),
+                                             a = 1.8956, b = 0.8006,
+                                             approx_pow = TRUE,
+                                             n_neighbors = input$nNeighb,
+                                             n_components = maxProjDim())
                          )
         )
-        r[[proj_id]] <- proj
+        r[[projId()]] <- proj
       }
       
       # Return:
-      r[[proj_id]]
+      r[[projId()]]
     } else {
       matrix(0, 0, 0)
     }
-  })
+  }), 300)
   
   projQual <- reactive({
-    withProgress(message = "Estimating mapping quality", {
-      vapply(seq_len(nProjDim()), function (k) {
-        incProgress(1 / nProjDim())
-        MappingQuality(distances(), dist(mapping()[, seq_len(k)]), 10)
-      }, numeric(4))
-    })
+    qual_id <- paste0('qual_', projId())
+    if (is.null(r[[qual_id]])) {
+      r[[qual_id]] <- withProgress(message = "Estimating mapping quality", {
+        vapply(seq_len(nProjDim()), function (k) {
+          incProgress(1 / nProjDim())
+          MappingQuality(distances(), dist(mapping()[, seq_len(k)]), 10)
+        }, numeric(4))
+      })
+    }
+    r[[qual_id]]
   })
   
   LogScore <- function (x) {
@@ -638,7 +679,7 @@ server <- function(input, output, session) {
     x <- seq.int(from = 0, to = 1, length.out = nStop)
     segments(x[-nStop], numeric(nStop), x[-1], lwd = 5, col = badToGood)
     
-    logScore <- LogScore(projQual()['TxC', dims()])
+    logScore <- LogScore(projQual()['TxC', nProjDim()])
     lines(rep(logScore, 2), c(-1, 1), lty = 3)
     
     tickPos <- c(0, 0.5, 0.7, 0.8, 0.9, 0.95, 1.0)
@@ -1289,7 +1330,8 @@ server <- function(input, output, session) {
       HTML(switch(input$mapping,
                   'pca' = Gower1966,
                   'k' = paste0(Kruskal1964, Venables2002),
-                  'nls' = paste0(Sammon1969, Venables2002)
+                  'nls' = paste0(Sammon1969, Venables2002),
+                  'umap' = McInnes2020
                   )
            ),
       tags$h3('Clustering'),
