@@ -150,7 +150,7 @@ We can view (normalized) distances for a selection of methods:
 
 ```{r, fig.width=7, fig.height=4, message=FALSE}
 if (requireNamespace('TreeDistData', quietly = TRUE)) {
-  library('TreeDistData')
+  library('TreeDistData', exclude = 'PairwiseDistances')
   data('randomTreeDistances', package = 'TreeDistData')
   
   methods <- c('pid', 'cid', 'nye', 'qd')
