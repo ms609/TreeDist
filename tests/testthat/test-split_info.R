@@ -10,8 +10,12 @@ test_that("Split info calculated", {
   split_p <- c(ab = 0.8, d..x = 0.8, fgx = 0.6, de = 0.8, cz = 0.6)
   
   trees[] <- lapply(trees, RenumberTips, c(letters[1:7], 'x', 'z'))
+  expect_equal(consensus_info(trees, TRUE, 1), 0)
   expect_equal(SplitwiseInfo(consensus(trees, p = 0.5), p = split_p),
-               consensus_info(trees, TRUE))
+               consensus_info(trees, TRUE, 0.5))
+  expect_equal(SplitwiseInfo(consensus(trees, p = 0.7),
+                             p = split_p[split_p > 0.7]),
+               consensus_info(trees, TRUE, 0.7))
   
   # Expected:
   # - tablei = 0: 
@@ -38,11 +42,14 @@ test_that("Split info calculated", {
   p_out <- 1 - p_in
   expect_equal(sum(apply(rbind(p_in, p_out), 2, Entropy) * split_p)
                * NTip(trees[[1]]),
-               consensus_info(trees, FALSE))
+               consensus_info(trees, FALSE, 0.5))
   
   # Even number of trees: cz, with p == 0.5, not in consensus.
   split_p <- c(ab = 0.8, d..x = 0.8, fgx = 0.6, de = 0.8, cz = 0.6)
   expect_equal(SplitwiseInfo(consensus(trees[-1], p = 0.5),
                              p = c(ab = 1, d..x = 1, fgx = 3/4, de = 3/4)),
-               consensus_info(trees[-1], TRUE))
+               consensus_info(trees[-1], TRUE, p = 0.5))
+  expect_equal(SplitwiseInfo(consensus(trees[-1], p = 0.8),
+                             p = c(ab = 1, d..x = 1)),
+               consensus_info(trees[-1], TRUE, p = 0.8))
 })
