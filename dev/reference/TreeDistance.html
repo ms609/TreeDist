@@ -90,7 +90,7 @@ proposed in Smith (2020)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.2.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.2.0.9001</span>
       </span>
     </div>
 
@@ -391,7 +391,7 @@ to be 'correct', use <code>normalize = SplitwiseInfo(trueTree)</code> (SPI, MSI)
 (If you have a use case for comparing trees with non-identical tips, do file a
 <a href='https://github.com/ms609/TreeDist/issues/new?title=Non-identical+tips'>GitHub issue</a>
 or drop the maintainer an e-mail.)</p>
-<p>To determine which tips do not occur in both trees, try:<div class="r"></p><pre><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='st'><a href='https://ms609.github.io/TreeTools/'>'TreeTools'</a></span><span class='op'>)</span>
+<p>To determine which tips do not occur in both trees, try:<div class="sourceCode r"></p><pre><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='st'><a href='https://ms609.github.io/TreeTools/'>'TreeTools'</a></span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/base/sets.html'>setdiff</a></span><span class='op'>(</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/TipLabels.html'>TipLabels</a></span><span class='op'>(</span><span class='va'>tree1</span><span class='op'>)</span>, <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/TipLabels.html'>TipLabels</a></span><span class='op'>(</span><span class='va'>tree2</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># In tree1 but not tree2</span>
 <span class='fu'><a href='https://rdrr.io/r/base/sets.html'>setdiff</a></span><span class='op'>(</span><span class='fu'><a href='https://ms609.github.io/TreeTools/reference/TipLabels.html'>TipLabels</a></span><span class='op'>(</span><span class='va'>tree2</span><span class='op'>)</span>, <span class='fu'><a href='https://ms609.github.io/TreeTools/reference/TipLabels.html'>TipLabels</a></span><span class='op'>(</span><span class='va'>tree1</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># In tree2 but not tree1</span>
 </pre><p></div></p>

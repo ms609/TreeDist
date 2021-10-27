@@ -95,7 +95,7 @@ counted twice." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.2.0.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.2.0.9001</span>
       </span>
     </div>
 
@@ -219,7 +219,7 @@ counted twice.</p>
 <span class='co'># S3 method for Splits</span>
 <span class='fu'>ClusteringInfo</span><span class='op'>(</span><span class='va'>x</span>, p <span class='op'>=</span> <span class='cn'>NULL</span>, sum <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 
-<span class='fu'>ConsensusInfo</span><span class='op'>(</span><span class='va'>trees</span>, info <span class='op'>=</span> <span class='st'>"phylogenetic"</span>, check.tips <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+<span class='fu'>ConsensusInfo</span><span class='op'>(</span><span class='va'>trees</span>, info <span class='op'>=</span> <span class='st'>"phylogenetic"</span>, p <span class='op'>=</span> <span class='fl'>0.5</span>, check.tips <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -230,8 +230,8 @@ counted twice.</p>
     </tr>
     <tr>
       <th>p</th>
-      <td><p>A vector of probabilities corresponding to each split in <code>x</code>.
-Specify <code>TRUE</code> to calculate this vector using the node labels of each tree.</p></td>
+      <td><p>Scalar from 0.5 to 1 specifying minimum proportion of trees that
+must contain a split for it to appear within the consensus.</p></td>
     </tr>
     <tr>
       <th>sum</th>
