@@ -1,5 +1,7 @@
 # TreeDist 2.2.0.9000 (development)
 
+- Support `ConsensusInfo(p > 0.5)`.
+
 - Discussion of hypervolumes in vignettes.
 
 - Support uniform manifold approximation and projection in app.
