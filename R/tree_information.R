@@ -310,6 +310,8 @@ ClusteringInfo.NULL <- function (x, p = NULL, sum = TRUE) NULL
 #' @param trees List of `phylo` objects, optionally with class `multiPhylo`.
 #' @param info Abbreviation of 'phylogenetic' or 'clustering', specifying
 #' the concept of information to employ.
+#' @param p Scalar from 0.5 to 1 specifying minimum proportion of trees that
+#' must contain a split for it to appear within the consensus.
 #' @param check.tips Logical specifying whether to renumber leaves such that
 #' leaf numbering is consistent in all trees.
 #' 
@@ -326,7 +328,13 @@ ClusteringInfo.NULL <- function (x, p = NULL, sum = TRUE) NULL
 #' LabelSplits(cons, signif(ClusteringInfo(cons, p, sum = FALSE), 4))
 #' ConsensusInfo(trees, 'clustering')
 #' @export
-ConsensusInfo <- function (trees, info = 'phylogenetic', check.tips = TRUE) {
+ConsensusInfo <- function (trees, info = 'phylogenetic', p = 0.5,
+                           check.tips = TRUE) {
+  safeP <- min(1, max(0.5, p))
+  if (safeP != p) {
+    warning("`p` coerced to range (0.5 <= p <= 1) in ConsensusInfo()")
+  }
+  
   mode <- pmatch(tolower(info),
                  c('phylogenetic', 'clustering', 'spic', 'scic')) %% 2
   if (is.na(mode)) {
@@ -342,5 +350,5 @@ ConsensusInfo <- function (trees, info = 'phylogenetic', check.tips = TRUE) {
   if (check.tips) {
     trees <- RenumberTips(trees, trees[[1]])
   }
-  consensus_info(trees, mode == 1L)
+  consensus_info(trees, mode == 1L, p = safeP)
 }

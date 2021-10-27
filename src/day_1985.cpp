@@ -12,7 +12,7 @@ using TreeTools::ClusterTable;
 #include <array> /* for array */
 #include <bitset> /* for bitset */
 #include <vector> /* for vector */
-#include <cmath> /* for log2() */
+#include <cmath> /* for log2(), ceil() */
 #include <memory> /* for unique_ptr, make_unique */
 
 // Modelled on https://CRAN.R-project.org/package=Rcpp/vignettes/Rcpp-modules.pdf
@@ -91,7 +91,8 @@ int COMCLUST (List trees) {
 // trees is a list of objects of class phylo, all with the same tip labels
 // (try RenumberTips(trees, trees[[1]]))
 // [[Rcpp::export]]
-double consensus_info (const List trees, const LogicalVector phylo) {
+double consensus_info (const List trees, const LogicalVector phylo,
+                       const NumericVector p) {
   
   int16 v = 0, w = 0,
     L, R, N, W,
@@ -105,9 +106,17 @@ double consensus_info (const List trees, const LogicalVector phylo) {
     tables.emplace_back(ClusterTable(List(trees(i))));
   }
   
+  if (p[0] > 1) {
+    throw std::range_error("p must be <= 1.0 in consensus_info()");
+  } else if (p[0] < 0.5) {
+    throw std::range_error("p must be >= 0.5 in consensus_info()");
+  }
   const int16
     n_tip = tables[0].N(),
-    thresh = (n_trees / 2) + 1
+    thresh = p[0] <= 0.5 ?
+      (n_trees / 2) + 1 : // Splits must occur in MORE THAN 0.5 to be in majority.
+      std::ceil(p[0] * n_trees),
+    must_occur_before = 1 + n_trees - thresh
   ;
   
   const bool phylo_info = phylo[0];
@@ -118,8 +127,8 @@ double consensus_info (const List trees, const LogicalVector phylo) {
   double info = 0;
   
   const std::size_t ntip_3 = n_tip - 3;
-  // All clades in 50% consensus must occur in first 50% of trees.
-  for (int16 i = 0; i != thresh; i++) {
+  // All clades in p consensus must occur in first (1-p) of trees.
+  for (int16 i = 0; i != must_occur_before; i++) {
     if (tables[i].NOSWX(ntip_3)) {
       continue; 
     }

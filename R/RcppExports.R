@@ -17,8 +17,8 @@ COMCLUST <- function(trees) {
     .Call(`_TreeDist_COMCLUST`, trees)
 }
 
-consensus_info <- function(trees, phylo) {
-    .Call(`_TreeDist_consensus_info`, trees, phylo)
+consensus_info <- function(trees, phylo, p) {
+    .Call(`_TreeDist_consensus_info`, trees, phylo, p)
 }
 
 robinson_foulds_all_pairs <- function(tables) {
