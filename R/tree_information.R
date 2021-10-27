@@ -350,5 +350,5 @@ ConsensusInfo <- function (trees, info = 'phylogenetic', p = 0.5,
   if (check.tips) {
     trees <- RenumberTips(trees, trees[[1]])
   }
-  consensus_info(trees, mode == 1L, p = p)
+  consensus_info(trees, mode == 1L, p = safeP)
 }

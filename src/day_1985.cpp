@@ -106,9 +106,14 @@ double consensus_info (const List trees, const LogicalVector phylo,
     tables.emplace_back(ClusterTable(List(trees(i))));
   }
   
+  if (p[0] > 1) {
+    throw std::range_error("p must be <= 1.0 in consensus_info()");
+  } else if (p[0] < 0.5) {
+    throw std::range_error("p must be >= 0.5 in consensus_info()");
+  }
   const int16
     n_tip = tables[0].N(),
-    thresh = p[0] == 0.5 ?
+    thresh = p[0] <= 0.5 ?
       (n_trees / 2) + 1 : // Splits must occur in MORE THAN 0.5 to be in majority.
       std::ceil(p[0] * n_trees),
     must_occur_before = 1 + n_trees - thresh

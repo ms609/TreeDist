@@ -12,10 +12,13 @@ test_that("Split info calculated", {
   trees[] <- lapply(trees, RenumberTips, c(letters[1:7], 'x', 'z'))
   expect_equal(consensus_info(trees, TRUE, 1), 0)
   expect_equal(SplitwiseInfo(consensus(trees, p = 0.5), p = split_p),
-               consensus_info(trees, TRUE, 0.5))
+  expect_warning(expect_equal(ConsensusInfo(trees, p = 0.4),
+                              ConsensusInfo(trees, p = 0.5)))
   expect_equal(SplitwiseInfo(consensus(trees, p = 0.7),
                              p = split_p[split_p > 0.7]),
                consensus_info(trees, TRUE, 0.7))
+  expect_error(consensus_info(trees, TRUE, 7))
+  expect_error(consensus_info(trees, TRUE, -7))
   
   # Expected:
   # - tablei = 0: 
@@ -52,4 +55,6 @@ test_that("Split info calculated", {
   expect_equal(SplitwiseInfo(consensus(trees[-1], p = 0.8),
                              p = c(ab = 1, d..x = 1)),
                consensus_info(trees[-1], TRUE, p = 0.8))
+  expect_warning(expect_equal(ConsensusInfo(trees[-1], p = 80),
+                              ConsensusInfo(trees[-1], p = 1)))
 })
