@@ -70,7 +70,7 @@ jobs:
       - name: Install system dependencies (macOS)
         if: runner.os == 'macOS'
         run: |
-          brew install libgit2
+          brew install libgit2 basictex
 
       - name: Install callr & covr (Windows)
         if: runner.os == 'Windows'
