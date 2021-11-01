@@ -7,7 +7,7 @@
 #' This value will be greater than the total information 
 #' content of the tree where a tree contains multiple splits, as 
 #' these splits are not independent and thus contain mutual information that is
-#' counted twice.
+#' counted more than once
 #' 
 #' @section Clustering information:
 #' 
