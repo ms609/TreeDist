@@ -168,8 +168,8 @@ metrics for comparing phylogenetic
 trees](https://dx.doi.org/10.1093/bioinformatics/btaa614).
 _Bioinformatics_, 36, 5007–5013.
 
-- Smith, M.R. (forthcoming)
-The importance of methodology when analysing landscapes of phylogenetic trees.
+- Smith, M.R. (2022)
+Robust analysis of phylogenetic tree space. _Systematic Biology_, in press.
 
 
 Please note that the 'TreeDist' project is released with a
