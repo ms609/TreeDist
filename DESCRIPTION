@@ -16,7 +16,7 @@ License: GPL (>= 3)
 Description: Implements measures of tree similarity, including 
   information-based generalized Robinson-Foulds distances
   (Phylogenetic Information Distance, Clustering Information Distance,
-  Matching Split Information Distance; Smith, 2020)
+  Matching Split Information Distance; Smith 2020)
   <doi:10.1093/bioinformatics/btaa614>; 
   Jaccard-Robinson-Foulds distances (Bocker et al. 2013)
   <doi:10.1007/978-3-642-40453-5_13>, 
@@ -27,7 +27,7 @@ Description: Implements measures of tree similarity, including
   the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>, and the
   Nearest Neighbour Interchange (NNI) distance, approximated per Li et al. 
   (1996) <doi:10.1007/3-540-61332-3_168>.
-  Includes tools for visualizing mappings of tree space, for
+  Includes tools for visualizing mappings of tree space (Smith 2022), for
   calculating the median of sets of trees, and for computing the information
   content of trees and splits.
 Copyright: Incorporates Jonker-Volgenant Linear Assignment Problem 
