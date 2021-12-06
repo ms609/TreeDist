@@ -41,6 +41,7 @@ reference:
       - CompareAll
       - median.multiPhylo
       - LAPJV
+      - StartParallel
       - VisualizeMatching
 
 navbar:
