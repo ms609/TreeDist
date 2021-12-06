@@ -8,7 +8,7 @@
   
 * Linux:
   * Ubuntu 20.04.1 LTS, R 4.1, release and devel, via GitHub Actions
-  * [valgrind mem-check]](https://github.com/ms609/TreeDist/actions/workflows/memcheck.yml)
+  * [valgrind mem-check](https://github.com/ms609/TreeDist/actions/workflows/memcheck.yml)
   * via R-hub, with `rhub::check_for_cran()`.
   
 * Mac OS X 10.15.7, R release, via GitHub actions
