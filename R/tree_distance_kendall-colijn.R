@@ -26,7 +26,7 @@
 #' `PathVector` returns the number of edges between each pair of leaves (per
 #' Steel & Penny 1993).
 #' `SplitVector` returns the size of the smallest split that contains each
-#' pair of leaves (per Smith, forthcoming).
+#' pair of leaves (per Smith, 2022).
 #' 
 #' @templateVar returns `KendallColijn()` returns
 #' @template distReturn

@@ -30,21 +30,21 @@ for comparing phylogenetic trees. ",
              
 citEntry(entry = "article",
       key = "Smith2022",
-      doi = "10.1093/sysbio/syXXXXX",
+      doi = "10.1093/sysbio/syab100",
       title = "Robust analysis of phylogenetic tree space",
       author = personList(as.person("Martin R. Smith")),
       journal = "Systematic Biology",
       volume = "",
       number = "",
-      pages = "in press",
+      pages = "syab100",
       year = "2022",
 
       textVersion =
       paste0("Smith, M.R. (2022).",
              " Robust analysis of phylogenetic tree space. ", 
              " Systematic Biology",
-             " in press.",
-             " doi: 10.1093/sysbio/syXXXXX"))
+             " syab100.",
+             " doi: 10.1093/sysbio/syab100"))
 
 citEntry(entry = "manual",
       key = "TreeDist",

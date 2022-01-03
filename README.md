@@ -98,7 +98,7 @@ devtools::install_github('ms609/TreeDist')
 # Tree space analysis
 
 Construct tree spaces and readily visualize projected landscapes, avoiding
-common analytical pitfalls (Smith, forthcoming),
+common analytical pitfalls (Smith, 2022),
 using the inbuilt graphical user interface:
 
 ```r
@@ -168,8 +168,9 @@ metrics for comparing phylogenetic
 trees](https://dx.doi.org/10.1093/bioinformatics/btaa614).
 _Bioinformatics_, 36, 5007–5013.
 
-- Smith, M.R. (2022)
-Robust analysis of phylogenetic tree space. _Systematic Biology_, in press.
+- Smith, M.R. (2022) [Robust analysis of phylogenetic tree
+space](https://dx.doi.org/10.1093/sysbio/syab100).
+_Systematic Biology_, syab100.
 
 
 Please note that the 'TreeDist' project is released with a

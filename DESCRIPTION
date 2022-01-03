@@ -27,9 +27,10 @@ Description: Implements measures of tree similarity, including
   the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>, and the
   Nearest Neighbour Interchange (NNI) distance, approximated per Li et al. 
   (1996) <doi:10.1007/3-540-61332-3_168>.
-  Includes tools for visualizing mappings of tree space (Smith 2022), for
-  calculating the median of sets of trees, and for computing the information
-  content of trees and splits.
+  Includes tools for visualizing mappings of tree space (Smith 2022)
+  <doi:10.1093/sysbio/syab100>,
+  for calculating the median of sets of trees,
+  and for computing the information content of trees and splits.
 Copyright: Incorporates Jonker-Volgenant Linear Assignment Problem 
   implementation by Roy Jonker, modified by Yong Yang after Yi Cao.
 URL: https://ms609.github.io/TreeDist/, https://github.com/ms609/TreeDist/
