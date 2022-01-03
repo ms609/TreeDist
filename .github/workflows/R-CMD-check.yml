@@ -47,7 +47,7 @@ jobs:
       - name: Query dependencies
         run: |
           install.packages('remotes')
-          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
+          saveRDS(remotes::dev_package_deps(dependencies = c('soft', 'Config/Needs/check', 'Config/Needs/codecov')), ".github/depends.Rds", version = 2)
           writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
         shell: Rscript {0}
 
@@ -72,17 +72,15 @@ jobs:
         run: |
           brew install libgit2 basictex
 
-      - name: Install callr & covr (Windows)
+      - name: Install covr (Windows)
         if: runner.os == 'Windows'
         run: |
-          remotes::install_cran('covr')
+          remotes::install_deps(dependencies = 'Config/Needs/codecov')
         shell: Rscript {0}
 
       - name: Install dependencies
         run: |
-          remotes::install_github("ms609/TreeTools") # for v1.4.5.9007
-          remotes::install_cran("rcmdcheck")
-          remotes::install_deps(dependencies = TRUE)
+          remotes::install_deps(dependencies = c('soft', 'Config/Needs/check'))
         shell: Rscript {0}
 
       - name: Check
