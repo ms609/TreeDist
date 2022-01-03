@@ -1,7 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://ms609.github.io/TreeDist/404.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/CODE_OF_CONDUCT.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/CONTRIBUTING.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/articles/Generalized-RF.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/articles/Using-TreeDist.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/articles/information.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/articles/treespace.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/articles/using-distances.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/authors.html</loc>
+  </url>
+  <url>
     <loc>https://ms609.github.io/TreeDist/index.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/news/index.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/AllSplitPairings.html</loc>
@@ -112,24 +148,9 @@
     <loc>https://ms609.github.io/TreeDist/reference/dot-TreeDistance.html</loc>
   </url>
   <url>
+    <loc>https://ms609.github.io/TreeDist/reference/index.html</loc>
+  </url>
+  <url>
     <loc>https://ms609.github.io/TreeDist/reference/median.multiPhylo.html</loc>
-  </url>
-  <url>
-    <loc>https://ms609.github.io/TreeDist/articles/Generalized-RF.html</loc>
-  </url>
-  <url>
-    <loc>https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html</loc>
-  </url>
-  <url>
-    <loc>https://ms609.github.io/TreeDist/articles/Using-TreeDist.html</loc>
-  </url>
-  <url>
-    <loc>https://ms609.github.io/TreeDist/articles/information.html</loc>
-  </url>
-  <url>
-    <loc>https://ms609.github.io/TreeDist/articles/treespace.html</loc>
-  </url>
-  <url>
-    <loc>https://ms609.github.io/TreeDist/articles/using-distances.html</loc>
   </url>
 </urlset>
