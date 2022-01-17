@@ -174,10 +174,12 @@ Sand2014 <- Reference(
 )
 Smith2020 <- Reference('Smith, M.R.', 2020,
   'Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees',
-  'Bioinformatics', pages = 'In production', doi = "10.1093/bioinformatics/btaa614")
-Smith2021 <- Reference('*Smith, M.R.', 2021,
-  'The importance of methodology when analyzing landscapes of phylogenetic trees',
-  'Submitted MS')
+  'Bioinformatics', 36, c(5007, 5013),
+  doi = "10.1093/bioinformatics/btaa614")
+Smith2021 <- Reference('*Smith, M.R.', 2022,
+  'Robust analysis of phylogenetic tree space',
+  'Systematic Biology', pages = "syab100",
+  doi = "10.1093/sysbio/syab100")
 SmithDist <- Reference('Smith, M.R.', 2020,
   'TreeDist: distances between phylogenetic trees',
   doi = '10.5281/zenodo.3528123', 'Comprehensive R Archive Network')
