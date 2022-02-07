@@ -1,7 +1,7 @@
 Package: TreeDist
 Type: Package
 Title: Calculate and Map Distances Between Phylogenetic Trees
-Version: 2.3.0
+Version: 2.3.0.9000
 Authors@R: c(person("Martin R.", "Smith",
                   email="martin.smith@durham.ac.uk", 
                   role=c("aut", "cre", "cph", "prg"), 
@@ -62,7 +62,7 @@ Suggests:
   Quartet,
   readxl,
   rmarkdown,
-  Rcpp,
+  Rcpp (>= 1.0.8),
   rgl,
   spelling,
   testthat (>= 3.0),
@@ -74,7 +74,7 @@ Suggests:
   vdiffr (>= 1.0.0)
 LinkingTo: 
   Rcpp,
-  TreeTools
+  TreeTools,
 RdMacros: Rdpack
 VignetteBuilder: knitr
 Config/Needs/check: rcmdcheck

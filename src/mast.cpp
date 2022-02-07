@@ -1,5 +1,5 @@
 #include <cstdlib>
-#include <Rcpp.h>
+#include <Rcpp/Lightest>
 #include "ints.h"
 using namespace Rcpp;
 

@@ -1,4 +1,4 @@
-#include <Rcpp.h>
+#include <Rcpp/Lightest>
 using namespace Rcpp;
 
 #include "tree_distances.h" /* includes <TreeTools/SplitList.h> */
