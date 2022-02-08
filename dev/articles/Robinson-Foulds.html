@@ -42,7 +42,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.2.0.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.3.0.9000</span>
       </span>
     </div>
 
@@ -84,9 +84,6 @@
     </li>
     <li>
       <a href="../articles/information.html">Concepts of information</a>
-    </li>
-    <li>
-      <a href="../articles/Tree-distance-interpretation.html">Evaluating tree distance metrics</a>
     </li>
   </ul>
 </li>
@@ -131,9 +128,9 @@
 
     
     
-<div class="section level1">
-<h1 id="the-robinsonfoulds-distance">The Robinson–Foulds distance<a class="anchor" aria-label="anchor" href="#the-robinsonfoulds-distance"></a>
-</h1>
+<div class="section level2">
+<h2 id="the-robinsonfoulds-distance">The Robinson–Foulds distance<a class="anchor" aria-label="anchor" href="#the-robinsonfoulds-distance"></a>
+</h2>
 <p>An intuitive way to calculate the similarity between two trees is to calculate the resolution of their strict consensus, which corresponds to the number of splits that occur in both trees <span class="citation">(Schuh &amp; Polhemus, 1980)</span>. The corresponding distance measure, the Robinson–Foulds distance <span class="citation">(Robinson &amp; Foulds, 1981)</span>, counts the number of splits that are unique to one of the two trees.</p>
 <p>It is important to remember that counting splits is not the same as counting clades, edges or nodes. If a tree is drawn as rooted (even without a root edge), then the number of splits is one less than the number of edges or clades, and two less than the number of nodes. For example, the trees below have one split, two edges and three nodes in common.</p>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-1-1.png" width="576" style="display: block; margin: auto;"></p>
@@ -175,9 +172,9 @@
 <p>Indeed, of the 10 395 eight-leaf trees, many more bear at least one split in common with a balanced tree than with an asymmetric tree:</p>
 <p><img src="Robinson-Foulds_files/figure-html/all-8-tip-trees-1.png" width="384" style="display: block; margin: auto;"></p>
 </div>
-<div class="section level1">
-<h1 id="information-corrected-robinsonfoulds-distance">Information-corrected Robinson–Foulds distance<a class="anchor" aria-label="anchor" href="#information-corrected-robinsonfoulds-distance"></a>
-</h1>
+<div class="section level2">
+<h2 id="information-corrected-robinsonfoulds-distance">Information-corrected Robinson–Foulds distance<a class="anchor" aria-label="anchor" href="#information-corrected-robinsonfoulds-distance"></a>
+</h2>
 <p>This differing information content can be accommodated by weighting each split according to the amount of phylogenetic information it contains <span class="citation">(Smith, 2020)</span>. The two tree pairs below both have a Robinson–Foulds distance of two, but the first pair differ with regard to an uneven split (<code>ABCDEF|GH</code>), so obtain a total difference of 22.54 − (3.46 + 5.04 + 5.53 + 5.04) = 3.46 bits:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tree1</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'(1, (2, (3, (4, (5, (6, (7, 8)))))));'</span><span class="op">)</span>
@@ -193,9 +190,9 @@
                   Plot <span class="op">=</span> <span class="va">TreeDistPlot</span>, prune <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></code></pre></div>
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-3-1.png" width="576" style="display: block; margin: auto;"></p>
 </div>
-<div class="section level1">
-<h1 id="generalized-robinsonfoulds-distances">Generalized Robinson–Foulds distances<a class="anchor" aria-label="anchor" href="#generalized-robinsonfoulds-distances"></a>
-</h1>
+<div class="section level2">
+<h2 id="generalized-robinsonfoulds-distances">Generalized Robinson–Foulds distances<a class="anchor" aria-label="anchor" href="#generalized-robinsonfoulds-distances"></a>
+</h2>
 <p>Even when accounting for the information content of splits in this way, the Robinson–Foulds distance is readily saturated: the maximum value can be obtained by moving a single leaf.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tree1</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'(1, (2, (3, (4, (5, (6, (7, 8)))))));'</span><span class="op">)</span>
@@ -205,9 +202,9 @@
 <p><img src="Robinson-Foulds_files/figure-html/unnamed-chunk-4-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>Generalized Robinson–Foulds distances <span class="citation">(Böcker, Canzar, &amp; Klau, 2013; Nye, Liò, &amp; Gilks, 2006)</span> seek to address this issue. This category of metrics aim to acknowledge semblances between similar-but-not-quite-identical pairs of splits, which would contribute zero to tree similarity under the standard Robinson–Foulds measure.</p>
 <p>Generalized RF distances work by finding a <em>matching</em> that pairs splits from one tree with splits in the other. Each pairing is scored according to the similarity of the paired splits; the sum of these scores is the score of the matching. The tree distance is given by the score of the optimal matching.</p>
-<div class="section level2">
-<h2 id="constructing-a-matching">Constructing a matching<a class="anchor" aria-label="anchor" href="#constructing-a-matching"></a>
-</h2>
+<div class="section level3">
+<h3 id="constructing-a-matching">Constructing a matching<a class="anchor" aria-label="anchor" href="#constructing-a-matching"></a>
+</h3>
 <p>Let’s consider two trees that differ in the position of one wildcard leaf, and in the resolution of a clade:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tree1</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'((A, B), ((C, (D, E)), (F, (G, (H, I)))));'</span><span class="op">)</span>
@@ -285,16 +282,16 @@
 <span class="co">## [5] "H I | A B C D E F G .. E I | A B C D F G H"</span></code></pre>
 <p><code>..</code> denotes that the fifth matching contributes zero to similarity score; an alternative optimal matching would leave these splits unpaired.</p>
 </div>
-<div class="section level2">
-<h2 id="what-next">What next?<a class="anchor" aria-label="anchor" href="#what-next"></a>
-</h2>
+<div class="section level3">
+<h3 id="what-next">What next?<a class="anchor" aria-label="anchor" href="#what-next"></a>
+</h3>
 <ul>
 <li>Alternatives measures of split similarity, such as <a href="information.html">mutual clustering information</a>, give rise to other <a href="Generalized-RF.html">Generalized Robinson–Foulds distances</a>, and can be used to generate meaningful <a href="treespace.html">tree spaces</a>.</li>
 </ul>
 </div>
-<div class="section level2 unnumbered">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
-</h2>
+<div class="section level3">
+<h3 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h3>
 <div id="refs" class="references">
 <div id="ref-Bocker2013">
 <p>Böcker, S., Canzar, S., &amp; Klau, G. W. (2013). The generalized Robinson-Foulds metric. In A. Darling &amp; J. Stoye (Eds.), <em>Algorithms in Bioinformatics. WABI 2013. Lecture Notes in Computer Science, vol 8126</em> (pp. 156–169). Berlin, Heidelberg: Springer. doi:<a href="https://doi.org/10.1007/978-3-642-40453-5_13" class="external-link">10.1007/978-3-642-40453-5_13</a></p>
@@ -333,7 +330,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>

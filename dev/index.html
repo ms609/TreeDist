@@ -28,9 +28,10 @@
   the Kendall-Colijn (2016) distance &lt;doi:10.1093/molbev/msw124&gt;, and the
   Nearest Neighbour Interchange (NNI) distance, approximated per Li et al. 
   (1996) &lt;doi:10.1007/3-540-61332-3_168&gt;.
-  Includes tools for visualizing mappings of tree space (Smith 2022), for
-  calculating the median of sets of trees, and for computing the information
-  content of trees and splits.">
+  Includes tools for visualizing mappings of tree space (Smith 2022)
+  &lt;doi:10.1093/sysbio/syab100&gt;,
+  for calculating the median of sets of trees,
+  and for computing the information content of trees and splits.">
 <meta name="robots" content="noindex">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -58,7 +59,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.2.0.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.3.0.9000</span>
       </span>
     </div>
 
@@ -100,9 +101,6 @@
     </li>
     <li>
       <a href="articles/information.html">Concepts of information</a>
-    </li>
-    <li>
-      <a href="articles/Tree-distance-interpretation.html">Evaluating tree distance metrics</a>
     </li>
   </ul>
 </li>
@@ -182,7 +180,7 @@
 <div class="section level1">
 <h1 id="tree-space-analysis">Tree space analysis<a class="anchor" aria-label="anchor" href="#tree-space-analysis"></a>
 </h1>
-<p>Construct tree spaces and readily visualize projected landscapes, avoiding common analytical pitfalls (Smith, forthcoming), using the inbuilt graphical user interface:</p>
+<p>Construct tree spaces and readily visualize projected landscapes, avoiding common analytical pitfalls (Smith, 2022), using the inbuilt graphical user interface:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">TreeDist</span><span class="fu">::</span><span class="fu"><a href="reference/MapTrees.html">MapTrees</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>Serious analysts should consult the <a href="https://ms609.github.io/TreeDist/articles/treespace.html">vignette</a> for a command-line interface.</p>
@@ -232,7 +230,7 @@
 <li><p>Li, M., Tromp, J. and Zhang, L.-X. (1996) <a href="https://dx.doi.org/10.1007/3-540-61332-3_168" class="external-link">Some notes on the nearest neighbour interchange distance</a>. <em>Computing and Combinatorics</em>, Goos, G., Hartmanis, J., Leeuwen, J., Cai, J.-Y., and Wong, C. K., eds. Springer, Berlin. 343–351.</p></li>
 <li><p>Nye, T.M.W. <em>et al.</em> (2006) <a href="https://dx.doi.org/10.1093/bioinformatics/bti720" class="external-link">A novel algorithm and web-based tool for comparing two alternative phylogenetic trees</a>. <em>Bioinformatics</em>, 22, 117–119.</p></li>
 <li><p>Smith, M.R. (2020) <a href="https://dx.doi.org/10.1093/bioinformatics/btaa614" class="external-link">Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees</a>. <em>Bioinformatics</em>, 36, 5007–5013.</p></li>
-<li><p>Smith, M.R. (2022) Robust analysis of phylogenetic tree space. <em>Systematic Biology</em>, in press.</p></li>
+<li><p>Smith, M.R. (2022) <a href="https://dx.doi.org/10.1093/sysbio/syab100" class="external-link">Robust analysis of phylogenetic tree space</a>. <em>Systematic Biology</em>, syab100.</p></li>
 </ul>
 <p>Please note that the ‘TreeDist’ project is released with a <a href="https://ms609.github.io/TreeDist/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
@@ -302,7 +300,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>

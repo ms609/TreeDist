@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.2.0.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.3.0.9000</span>
       </span>
     </div>
 
@@ -64,9 +64,6 @@
     <li>
       <a href="articles/information.html">Concepts of information</a>
     </li>
-    <li>
-      <a href="articles/Tree-distance-interpretation.html">Evaluating tree distance metrics</a>
-    </li>
   </ul></li>
 <li>
   <a href="news/index.html">Changelog</a>
@@ -99,8 +96,8 @@
 <div class="section level3">
 <h3 id="fixing-typos">Fixing typos<a class="anchor" aria-label="anchor" href="#fixing-typos"></a></h3>
 <p>Small typos or grammatical errors in documentation may be edited directly using the GitHub web interface, so long as the changes are made in the <em>source</em> file.</p>
-<ul><li>YES: you edit a roxygen comment in a <code>.R</code> file below <code>R/</code>.</li>
-<li>NO: you edit an <code>.Rd</code> file below <code>man/</code>.</li>
+<ul><li>DO: edit a roxygen comment in a <code>.R</code> file below <code>R/</code>.</li>
+<li>DON’T: edit an <code>.Rd</code> file below <code>man/</code>.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="prerequisites">Prerequisites<a class="anchor" aria-label="anchor" href="#prerequisites"></a></h3>
@@ -109,28 +106,26 @@
 <div class="section level3">
 <h3 id="pull-request-process">Pull request process<a class="anchor" aria-label="anchor" href="#pull-request-process"></a></h3>
 <ul><li>We recommend that you create a Git branch for each pull request (PR).<br></li>
-<li>Look at the Travis and CodeCovr build status before and after making changes.</li>
+<li>Look at the GitHub actions and CodeCovr build status before and after making changes.</li>
 <li>We follow <a href="https://google.github.io/styleguide/Rguide.html" class="external-link">Google’s R style guide</a>
 </li>
 <li>We use camelCase for variable names, and TitleCase for function names.</li>
 <li>We use the Oxford ending of ‘ize’ (not ‘ise’), and UK spelling (e.g. ‘colour’) where it is not possible to avoid the distinction (e.g. by shortening to ‘col’)</li>
-<li>We use <a href="https://cran.r-project.org/package=roxygen2" class="external-link">roxygen2</a>.<br></li>
+<li>We use <a href="https://cran.r-project.org/package=roxygen2" class="external-link">roxygen2</a> to build documentation.<br></li>
 <li>We use <a href="https://cran.r-project.org/package=testthat" class="external-link">testthat</a>. Contributions with test cases included are easier to accept.<br></li>
 <li>For user-facing changes, add a bullet to the top of <code>NEWS.md</code> below the current development version header describing the changes made followed by your GitHub username, and links to relevant issue(s)/PR(s).</li>
-<li>We seek to recognize all contributions, however small; contributors are invited to add their details in <code>DESCRIPTION</code> with <code>role = 'ctb'</code>.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a></h3>
 <p>Please note that the project is released with a <a href="CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project you agree to abide by its terms.</p>
 </div>
 <div class="section level3">
-<h3 id="prefer-to-email">Prefer to Email?<a class="anchor" aria-label="anchor" href="#prefer-to-email"></a></h3>
-<p>Email the person listed as maintainer in the <code>DESCRIPTION</code> file of this repo.</p>
-<p>Though note that private discussions over email don’t help others - of course email is totally warranted if it’s a sensitive problem of any kind.</p>
+<h3 id="prefer-to-e-mail">Prefer to e-mail?<a class="anchor" aria-label="anchor" href="#prefer-to-e-mail"></a></h3>
+<p>E-mail the person listed as maintainer in the <code>DESCRIPTION</code> file of this repo. Private discussions over email don’t help others - but of course email is totally warranted for any sensitive problems.</p>
 </div>
 <div class="section level3">
 <h3 id="thanks-for-contributing">Thanks for contributing!<a class="anchor" aria-label="anchor" href="#thanks-for-contributing"></a></h3>
-<p>This contributing guide is adapted from the tidyverse contributing guide available at <a href="https://raw.githubusercontent.com/r-lib/usethis/master/inst/templates/tidy-contributing.md" class="external-link uri">https://raw.githubusercontent.com/r-lib/usethis/master/inst/templates/tidy-contributing.md</a></p>
+<p>This document is adapted from the <a href="https://raw.githubusercontent.com/r-lib/usethis/master/inst/templates/tidy-contributing.md" class="external-link">tidyverse contributing guide</a>.</p>
 </div>
 </div>
 
@@ -149,7 +144,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer></div>
