@@ -1,15 +1,15 @@
-library('TreeTools')
+library("TreeTools")
 
 test_that('TreeDistPlot works', {
   tr <- PectinateTree(1:11)
   tr$edge.width <- rep(1:2, 10)
-  Test1 <- function () {
+  Test1 <- function() {
     TreeDist::TreeDistPlot(tr, title='Test', 
                          bold = c(2, 4, 6),
                          leaveRoom = TRUE,
                          prune = 1, graft = 10)
   }
-  Test2 <- function () {
+  Test2 <- function() {
     TreeDist::TreeDistPlot(tr, title='Crop tightly', 
                            bold = c(2, 4, 6), prune = 11, graft = 10,
                            leaveRoom = FALSE)
@@ -33,7 +33,7 @@ test_that('VisualizeMatching() works', {
   tree2$tip.label[c(11, 1)] <- tree1$tip.label[c(1, 11)]
   tree2r <- CollapseNode(tree2, 20:21)
   
-  Minus <- function (...) {
+  Minus <- function(...) {
     x <- MutualClusteringInfo(...)
     attr(x, 'pairScores') <- -attr(x, 'pairScores')
     x
@@ -45,21 +45,21 @@ test_that('VisualizeMatching() works', {
   skip_if(packageVersion("graphics") < "4.1")
   skip_if(packageVersion("vdiffr") < "1.0")
   
-  TestVM <- function () {
+  TestVM <- function() {
     VisualizeMatching(MutualClusteringInfo, tree1, tree2, 
                       setPar = TRUE, precision = 3, matchZeros = FALSE,
                       Plot = plot.phylo)
   }
   vdiffr::expect_doppelganger('Test VM', TestVM)
   
-  TestVMr <- function () {
+  TestVMr <- function() {
     VisualizeMatching(MutualClusteringInfo, tree1, tree2r,
                       setPar = TRUE, precision = 3, matchZeros = TRUE, 
                       Plot = plot.phylo, cex = 1.5)
   }
   vdiffr::expect_doppelganger('Test VMr', TestVMr) # Unclear why this test fails on Travis. 
   
-  vdiffr::expect_doppelganger('Visualize MCI matching', function () {
+  vdiffr::expect_doppelganger('Visualize MCI matching', function() {
     par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.5)
     tree1 <- ape::read.tree(text='((1, 2), ((3, (4, 5)), (6, (7, (8, 9)))));')
     tree2 <- ape::read.tree(text='((1, 2), ((3, 4, (5, 9)), (6, (7, 8))));')
@@ -75,7 +75,7 @@ test_that('VisualizeMatching() works', {
                       leaveRoom = FALSE)
   })
   
-  vdiffr::expect_doppelganger('RF: Collapse a node', function () {
+  vdiffr::expect_doppelganger('RF: Collapse a node', function() {
     par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.5)
     tree1 <- ape::read.tree(text='((1, 2), ((6, (7, 8)), (3, 4, (5, 9))));')
     tree2 <- ape::read.tree(text='((1, 2), ((3, (4, (5, 9))), (6, (7, 8))));')
@@ -92,7 +92,7 @@ test_that('VisualizeMatching() works', {
   })
   
   
-  vdiffr::expect_doppelganger('RF: Collapse and change', function () {
+  vdiffr::expect_doppelganger('RF: Collapse and change', function() {
     par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.5)
     tree1 <- ape::read.tree(text='((1, 2), ((6, (7, 8)), (3, 4, (5, 9))));')
     tree2 <- ape::read.tree(text='((1, 2), ((3, (4, (5, 9))), ((6, 7), 8)));')
@@ -108,7 +108,7 @@ test_that('VisualizeMatching() works', {
                       leaveRoom = FALSE)
   })
   
-  vdiffr::expect_doppelganger('RF VM Single splits; plainEdges', function () {
+  vdiffr::expect_doppelganger('RF VM Single splits; plainEdges', function() {
     par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.5)
     tree1 <- ape::read.tree(text = '((1, 2), (3, 4, 5, 6, 7, 8));')
     tree2 <- ape::read.tree(text = '((1, 2, 3), (4, 5, 6, 7, 8));')
@@ -128,7 +128,7 @@ test_that('VisualizeMatching() works', {
   })
   
   vdiffr::expect_doppelganger('JRF VM matchZeros FALSE', function() {
-    JRF2 <- function (tree1, tree2, ...) 
+    JRF2 <- function(tree1, tree2, ...) 
       JaccardRobinsonFoulds(tree1, tree2, k = 2, allowConflict = FALSE, ...)
     
     tree1 <- EnforceOutgroup(as.phylo(704564, 10), paste0('t', c(1,4,5,8,9)))

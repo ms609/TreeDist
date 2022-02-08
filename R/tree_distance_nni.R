@@ -68,13 +68,13 @@
 #'   
 #' @family tree distances
 #' @export
-NNIDist <- function (tree1, tree2 = tree1) {
+NNIDist <- function(tree1, tree2 = tree1) {
   .TreeDistance(.NNIDistSingle, tree1, tree2)
 }
 
 #' @importFrom TreeTools Postorder RenumberTips
 #' @importFrom ape Nnode.phylo
-.NNIDistSingle <- function (tree1, tree2, nTip, ...) {
+.NNIDistSingle <- function(tree1, tree2, nTip, ...) {
   tree2 <- RenumberTips(tree2, tree1$tip.label)
   
   edge1 <- Postorder(tree1$edge)
@@ -117,14 +117,14 @@ NNIDist <- function (tree1, tree2 = tree1) {
 #' @encoding UTF-8
 #' @rdname NNIDist
 #' @export
-NNIDiameter <- function (tree) UseMethod('NNIDiameter')
+NNIDiameter <- function(tree) UseMethod('NNIDiameter')
 
-.SortingNumber <- function (n_tip) {
+.SortingNumber <- function(n_tip) {
   lgN <- ceiling(log2(n_tip))
   n_tip * lgN - 2^lgN + 1
 }
 
-.DegenerateDistance <- function (n_tip) { # For working, see nni_distance.cpp
+.DegenerateDistance <- function(n_tip) { # For working, see nni_distance.cpp
   nodes_in_full <- pmax(ceiling(log2(n_tip) - log2(3)), 0L)
   tips_left <- n_tip - 2^nodes_in_full
   min_backbone_nodes <- pmax(nodes_in_full + ceiling(log2(tips_left)), 0L)
@@ -134,7 +134,7 @@ NNIDiameter <- function (tree) UseMethod('NNIDiameter')
 }
 
 #' @export
-NNIDiameter.numeric <- function (tree) {
+NNIDiameter.numeric <- function(tree) {
   n <- tree - 2L # unrooted tree with n + 2 leaves
   n[tree < 3L] <- NA
   
@@ -155,7 +155,7 @@ NNIDiameter.numeric <- function (tree) {
 
 #' @importFrom TreeTools NTip
 #' @export
-NNIDiameter.phylo <- function (tree) {
+NNIDiameter.phylo <- function(tree) {
   NNIDiameter(NTip(tree))
 }
 
@@ -163,6 +163,6 @@ NNIDiameter.phylo <- function (tree) {
 NNIDiameter.multiPhylo <- NNIDiameter.phylo
 
 #' @export
-NNIDiameter.list <- function (tree) {
+NNIDiameter.list <- function(tree) {
   lapply(tree, NNIDiameter)
 }

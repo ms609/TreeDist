@@ -140,8 +140,8 @@ optimal, if one exists [@SmithSpace].
 ```{r clustering, fig.align='center'}
 possibleClusters <- 2:10
 
-pamClusters <- lapply(possibleClusters, function (k) cluster::pam(distances, k = k))
-pamSils <- vapply(pamClusters, function (pamCluster) {
+pamClusters <- lapply(possibleClusters, function(k) cluster::pam(distances, k = k))
+pamSils <- vapply(pamClusters, function(pamCluster) {
   mean(cluster::silhouette(pamCluster)[, 3])
 }, double(1))
 
@@ -150,8 +150,8 @@ pamSil <- pamSils[bestPam]
 pamCluster <- pamClusters[[bestPam]]$cluster
 
 hTree <- protoclust(distances)
-hClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
-hSils <- vapply(hClusters, function (hCluster) {
+hClusters <- lapply(possibleClusters, function(k) cutree(hTree, k = k))
+hSils <- vapply(hClusters, function(hCluster) {
   mean(cluster::silhouette(hCluster, distances)[, 3])
 }, double(1))
 
@@ -210,7 +210,7 @@ represent the true distances between trees.  We hope for a trustworthiness ×
 continuity score of \> 0.9 for a usable mapping, or \> 0.95 for a good one.
 
 ```{r how-many-dims, fig.align='center'}
-txc <- vapply(seq_len(ncol(mapping)), function (k) {
+txc <- vapply(seq_len(ncol(mapping)), function(k) {
   newDist <- dist(mapping[, seq_len(k)])
   MappingQuality(distances, newDist, 10)['TxC']
 }, 0)

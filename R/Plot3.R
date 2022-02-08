@@ -18,7 +18,7 @@
 #' @importFrom graphics plot points rect
 #' @importFrom grDevices colorRamp rgb
 #' @export
-Plot3 <- function (x, y = NULL, z = NULL,
+Plot3 <- function(x, y = NULL, z = NULL,
                    pch = par("pch"), col = par("col"),
                    bg = NA, cex = 1,
                    axes = TRUE,
@@ -47,7 +47,7 @@ Plot3 <- function (x, y = NULL, z = NULL,
   
   fogOffset <- zResolution * fog
   bgCol <- if (is.na(plot.bg)) 'white' else plot.bg
-  .FadeCol <- function (x, fadeAmount) {
+  .FadeCol <- function(x, fadeAmount) {
     if (is.na(x)) {
       NA_character_
     } else {
@@ -55,10 +55,10 @@ Plot3 <- function (x, y = NULL, z = NULL,
           maxColorValue = 255)
     }
   }
-  fadedCol <- vapply(seq_along(z), function (i) {
+  fadedCol <- vapply(seq_along(z), function(i) {
     .FadeCol(col[i], zScale[i])
   }, character(1))
-  fadedBg <- vapply(seq_along(z), function (i) {
+  fadedBg <- vapply(seq_along(z), function(i) {
     .FadeCol(bg[i], zScale[i])
   }, character(1))
   if (!add) {

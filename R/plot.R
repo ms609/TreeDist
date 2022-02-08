@@ -17,7 +17,7 @@
 #' @importFrom ape plot.phylo
 #' @keywords internal
 #' @export
-TreeDistPlot <- function (tr, title = NULL, bold = NULL, leaveRoom = FALSE,
+TreeDistPlot <- function(tr, title = NULL, bold = NULL, leaveRoom = FALSE,
                           prune = integer(0), graft = integer(0),
                           edge.color = 'black', edge.width = NULL, ...) {
   
@@ -109,18 +109,18 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   child1 <- edge1[, 2]
   nTip <- attr(splits1, 'nTip')
   splitEdges1 <- vapply(as.integer(rownames(splits1)),
-                        function (node) which(child1 == node), integer(1))
+                        function(node) which(child1 == node), integer(1))
   
   splits2 <- as.Splits(tree2, tipLabels = tree1)
   edge2 <- tree2$edge
   child2 <- edge2[, 2]
   splitEdges2 <- vapply(as.integer(rownames(splits2)),
-                        function (node) which(child2 == node), integer(1))
+                        function(node) which(child2 == node), integer(1))
   
   matching <- Func(tree1, tree2, reportMatching = TRUE)
   pairings <- attr(matching, 'matching')
   scores <- attr(matching, 'pairScores')
-  pairScores <- signif(mapply(function (i, j) scores[i, j],
+  pairScores <- signif(mapply(function(i, j) scores[i, j],
                               seq_along(pairings), pairings), precision)
   
   adjNo <- c(0.5, -0.2)
@@ -132,7 +132,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
     on.exit(par(origPar))
   }
   
-  LabelUnpaired <- function (splitEdges, unpaired) {
+  LabelUnpaired <- function(splitEdges, unpaired) {
     if (any(unpaired)) {
       #edgelabels(text="\u2012", edge=splitEdges[unpaired],
       edgelabels(text = expression('-'), edge = splitEdges[unpaired],
@@ -145,7 +145,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   if (plainEdges) {
     Plot(tree1, edge.width = edge.width, edge.color = edge.color, ...)
   } else {
-    Normalize <- function (scores, na.rm = FALSE) {
+    Normalize <- function(scores, na.rm = FALSE) {
       if (length(scores) == 0) return(scores)
       if (na.rm) {
         scores <- scores[!is.na(scores)]
@@ -161,7 +161,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
       scores / max(scores)
     }
     
-    OtherRootEdge <- function (splitNodes, edge) {
+    OtherRootEdge <- function(splitNodes, edge) {
       parent <- edge[, 1]
       child <- edge[, 2]
       rootEdges <- which(parent == min(parent))
@@ -177,8 +177,8 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
     }
     edgeColPalette <- sequential_hcl(n = 256L, palette = 'Viridis')
      
-    EdgyPlot <- function (tree, splits, edge, splitEdges,
-                          normalizedScores, ...) {
+    EdgyPlot <- function(tree, splits, edge, splitEdges,
+                         normalizedScores, ...) {
       splitNodes <- as.integer(names(splits))
       ore <- OtherRootEdge(splitNodes, edge)
       if (length(normalizedScores) && !is.na(ore[1])) {
@@ -292,7 +292,7 @@ StrainCol <- function(distances, mapping, mstEnds = MSTEdges(distances),
   distMat <- as.matrix(distances)
   x <- mapping[, 1]
   y <- mapping[, 2]
-  logStrain <- apply(mstEnds, 1, function (ends) {
+  logStrain <- apply(mstEnds, 1, function(ends) {
     orig <- distMat[ends[1], ends[2]]
     mapped <- sqrt(sum((x[ends[1]] - y[ends[2]]) ^ 2))
     log(mapped / orig) # High when mapping extends original distances

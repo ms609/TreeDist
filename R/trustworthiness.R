@@ -94,7 +94,7 @@
 #' \insertAllCited{}
 #' @family tree space functions
 #' @export
-MappingQuality <- function (original, mapped, neighbours = 10L) {
+MappingQuality <- function(original, mapped, neighbours = 10L) {
   trust <- .calcTrustworthinessFromDist(original, mapped, neighbours)
   cont <- .calcContinuityFromDist(original, mapped, neighbours)
   c('Trustworthiness' = trust,

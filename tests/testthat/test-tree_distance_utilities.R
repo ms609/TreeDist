@@ -118,7 +118,7 @@ test_that('Matches are reported', {
   splits1 <- as.Splits(tree1)
   splits2 <- as.Splits(tree2, tree1)
   
-  Test <- function (Func, relaxed = FALSE, ...) {
+  Test <- function(Func, relaxed = FALSE, ...) {
     at <- attributes(Func(tree1, tree2, reportMatching = TRUE, ...))
     expect_equal(3L, length(at))
     
@@ -186,7 +186,7 @@ test_that('Matchings are calculated in both directions', {
   splits2 <- as.Splits(tree2)
   nMatches <- min(length(splits1), length(splits2))
   
-  Test <- function (Func, ...) {
+  Test <- function(Func, ...) {
     matching12 <- Func(tree1, tree2, reportMatching = TRUE, ...)
     expect_equal(nMatches, length(attr(matching12, 'matchedSplits')))
     

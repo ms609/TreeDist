@@ -270,7 +270,7 @@ immediate neighbourhood (one NNI move away).
 
 ```{r}
 library('TreeSearch', quietly = TRUE, warn.conflict = FALSE) # for TBR, NNI
-oneAway <- structure(lapply(seq_len(200), function (x) {
+oneAway <- structure(lapply(seq_len(200), function(x) {
   tbrTree <- TBR(trueTree)
   ape::consensus(list(tbrTree,
                       NNI(tbrTree),
@@ -285,7 +285,7 @@ resolution by taking a consensus with three trees from its wider neighbourhood
 (each two NNI moves away).
 
 ```{r}
-threeAway <- structure(lapply(seq_len(200), function (x) {
+threeAway <- structure(lapply(seq_len(200), function(x) {
   tbrTree <- TBR(TBR(TBR(trueTree)))
   ape::consensus(list(tbrTree, 
                       NNI(NNI(tbrTree)),
@@ -332,7 +332,7 @@ col3 <- hcl(40, alpha = 0.9)
 spec1 <- matrix(col2rgb(col1, alpha = TRUE), nrow = 4, ncol = 181)
 spec3 <- matrix(col2rgb(col3, alpha = TRUE), nrow = 4, ncol = 181)
 spec1[4, ] <- spec3[4, ] <- 0:180
-ColToHex <- function (x) rgb(x[1], x[2], x[3], x[4], maxColorValue = 255)
+ColToHex <- function(x) rgb(x[1], x[2], x[3], x[4], maxColorValue = 255)
 spec1 <- apply(spec1, 2, ColToHex)
 spec3 <- apply(spec3, 2, ColToHex)
 ```
@@ -362,7 +362,7 @@ if (requireNamespace('Ternary', quietly = TRUE)) {
   
   if (requireNamespace('kdensity', quietly = TRUE)) {
     library('kdensity')
-    HorizontalKDE <- function (dat, col, add = FALSE) {
+    HorizontalKDE <- function(dat, col, add = FALSE) {
       lty <- 1
       lwd <- 2
       kde <- kdensity(dat)
