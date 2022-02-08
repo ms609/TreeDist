@@ -1,4 +1,7 @@
-# TreeDist 2.3.0.9000
+# TreeDist 2.3.0.9001
+
+- Depict strain in minimum spanning trees with `StrainCol()` and helper
+  function `MSTSegments()`.
 
 - Use lighter Rcpp headers.
 

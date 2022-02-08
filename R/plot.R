@@ -238,3 +238,69 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   # Return:
   invisible()
 }
+
+#' Add minimum spanning tree to plot, colouring by stress
+#' 
+#' To identify strain in a multidimensional scaling of distances, it can be
+#' useful to plot a minimum spanning tree
+#' \insertCite{Gower1966,SmithSpace}{TreeDist}.  Colouring each edge of the
+#' tree according to its strain can identify areas where the mapping is
+#' stretched or compressed.
+#' 
+#' @param mapping Two-column matrix giving _x_ and _y_ coordinates of plotted
+#' points.
+#' @param distances Matrix or `dist` object giving original distances between
+#' each pair of points.
+#' @param palette Vector of colours with which to colour edges.
+#' @param \dots Additional arguments to [`segments()`].
+#'
+#' @examples
+#' set.seed(0)
+#' library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
+#' distances <- ClusteringInfoDist(as.phylo(5:16, 8))
+#' mapping <- cmdscale(distances, k = 2)
+#' mstEnds <- MSTEdges(distances)
+#' 
+#' # Set up blank plot
+#' plot(mapping, asp = 1, frame.plot = FALSE, ann = FALSE, axes = FALSE,
+#'      type = "n")
+#' # Add MST
+#' MSTSegments(mapping, mstEnds, 
+#'             col = StrainCol(distances, mapping, mstEnds))
+#' # Add points at end so they overprint the MST
+#' points(mapping)
+#' SpectrumLegend(legend = c("Contracted", "Extended"),
+#'                palette = rev(hcl.colors(256L, "RdYlBu")))
+#' @template MRS
+#' @references \insertAllCited{}
+#' @export
+MSTSegments <- function(mapping, mstEnds, ...) {
+  segments(mapping[mstEnds[, 1], 1], mapping[mstEnds[, 1], 2],
+           mapping[mstEnds[, 2], 1], mapping[mstEnds[, 2], 2], ...)
+}
+
+#' @rdname MSTSegments
+#' @return `StrainCol()` returns a vector in which each entry is selected from
+#' `palette`, such that contracted edges (in which the ratio of original
+#' distance to mapped distance is large) are assigned colours from later in
+#' `palette`.
+#' @importFrom grDevices hcl.colors
+#' @importFrom TreeTools MSTEdges
+#' @export
+StrainCol <- function(distances, mapping, mstEnds = MSTEdges(distances),
+                       palette = rev(hcl.colors(256L, "RdYlBu"))) {
+  distMat <- as.matrix(distances)
+  x <- mapping[, 1]
+  y <- mapping[, 2]
+  logStrain <- apply(mstEnds, 1, function (ends) {
+    orig <- distMat[ends[1], ends[2]]
+    mapped <- sqrt(sum((x[ends[1]] - y[ends[2]]) ^ 2))
+    log(mapped / orig) # High when mapping extends original distances
+  })
+  strain <- logStrain - min(logStrain)
+  nCols <- length(palette)
+  strainCol <- 1 + ((nCols - 1) * strain / max(strain))
+  
+  # Return:
+  palette[strainCol]
+}

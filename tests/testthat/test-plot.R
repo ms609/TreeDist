@@ -1,6 +1,5 @@
 library('TreeTools')
 
-if (packageVersion('graphics') < '4.1')
 test_that('TreeDistPlot works', {
   tr <- PectinateTree(1:11)
   tr$edge.width <- rep(1:2, 10)
@@ -26,9 +25,8 @@ test_that('TreeDistPlot works', {
   tr$tip.label <- LETTERS[1:11]
   vdiffr::expect_doppelganger("Test-UC-LETTERS", Test2)
   
-}) else expect_false(packageVersion('graphics') < '4.1')
+})
 
-if (packageVersion('graphics') < '4.1')
 test_that('VisualizeMatching() works', {
   tree1 <- PectinateTree(1:11)
   tree2 <- tree1
@@ -129,12 +127,34 @@ test_that('VisualizeMatching() works', {
                       leaveRoom = FALSE)
   })
   
-  vdiffr::expect_doppelganger('JRF VM matchZeros FALSE', function () {
+  vdiffr::expect_doppelganger('JRF VM matchZeros FALSE', function() {
     JRF2 <- function (tree1, tree2, ...) 
       JaccardRobinsonFoulds(tree1, tree2, k = 2, allowConflict = FALSE, ...)
     
     tree1 <- EnforceOutgroup(as.phylo(704564, 10), paste0('t', c(1,4,5,8,9)))
     tree2 <- EnforceOutgroup(as.phylo(20165 , 10), paste0('t', c(1,4)))
     VisualizeMatching(JRF2, tree1, tree2, matchZeros = FALSE)
+  })
+})
+
+test_that("MST example plots as expected", {
+  skip_if(packageVersion("graphics") < "4.1")
+  skip_if(packageVersion("vdiffr") < "1.0")
+  vdiffr::expect_doppelganger('MST example plot', function() {
+    set.seed(0)
+    distances <- ClusteringInfoDist(as.phylo(5:16, 8))
+    mapping <- cmdscale(distances, k = 2)
+    mstEnds <- MSTEdges(distances)
+    
+    # Set up blank plot
+    plot(mapping, asp = 1, frame.plot = FALSE, ann = FALSE, axes = FALSE,
+         type = "n")
+    # Add MST
+    MSTSegments(mapping, mstEnds, 
+                col = StrainCol(distances, mapping, mstEnds))
+    # Add points at end so they overprint the MST
+    points(mapping)
+    SpectrumLegend(legend = c("Contracted", "Extended"),
+                   palette = rev(hcl.colors(256L, "RdYlBu")))
   })
 })

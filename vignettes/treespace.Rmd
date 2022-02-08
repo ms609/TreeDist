@@ -246,8 +246,8 @@ for (i in 2:nDim) for (j in seq_len(i - 1)) {
        type = 'n', asp = 1, xlim = range(mapping), ylim = range(mapping))
   
   # Plot MST
-  apply(mstEnds, 1, function (segment)
-    lines(mapping[segment, j], mapping[segment, i], col = "#bbbbbb", lty = 1))
+  MSTSegments(mapping[, c(j, i)], mstEnds,
+              col = StrainCol(distances, mapping[, c(j, i)]))
   
   # Add points
   points(mapping[, j], mapping[, i], pch = 16, col = treeCols)
@@ -318,14 +318,17 @@ Interpretation of overlap statistics is detailed in @Mammola2019.
 ```{r hypervolume, message = FALSE}
 hypervolumeInstalled <- requireNamespace('hypervolume', quietly = TRUE)
 if (hypervolumeInstalled) {
-  capture.output({
-    library('hypervolume')
-    hv1 <- hypervolume_gaussian(pid_mapping[pid_cluster == 1, 1:3])
-    hv2 <- hypervolume_gaussian(pid_mapping[pid_cluster == 2, 1:3])
-    hv_dist <- hypervolume_distance(hv1, hv2)
-    hyperset <- hypervolume_set(hv1, hv2, check.memory = FALSE)
-    hv_overlap <- hypervolume_overlap_statistics(hyperset)
-  }) -> XX
+  library('hypervolume')
+  hv1 <- hypervolume_gaussian(pid_mapping[pid_cluster == 1, 1:3],
+                              verbose = FALSE)
+  hv2 <- hypervolume_gaussian(pid_mapping[pid_cluster == 2, 1:3],
+                              verbose = FALSE)
+  hv_dist <- hypervolume_distance(hv1, hv2)
+  capture.output(
+    hyperset <- hypervolume_set(hv1, hv2, verbose = FALSE,
+                              check.memory = FALSE)
+  ) -> XX_VerboseNotRespected
+  hv_overlap <- hypervolume_overlap_statistics(hyperset)
   hv_dist
   hv_overlap
 } else {
