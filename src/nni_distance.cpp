@@ -1,4 +1,4 @@
-#include <Rcpp.h>
+#include <Rcpp/Lightest>
 #include <TreeTools/SplitList.h>
 
 #include <cmath>

@@ -1,4 +1,4 @@
-#include <Rcpp.h>
+#include <Rcpp/Lightest>
 #include <TreeTools/SplitList.h> /* for SL_MAX_TIPS */
 
 #include <cmath> /* for log2() */

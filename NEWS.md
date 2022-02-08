@@ -1,3 +1,8 @@
+# TreeDist 2.3.0.9000
+
+- Use lighter Rcpp headers.
+
+
 # TreeDist 2.3.0
 
 - Support `ConsensusInfo(p > 0.5)`.

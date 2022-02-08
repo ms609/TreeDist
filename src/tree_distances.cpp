@@ -1,7 +1,7 @@
 #include <TreeTools/SplitList.h>
 #include <cmath>
 #include <memory> /* for unique_ptr, make_unique */
-#include <Rcpp.h>
+#include <Rcpp/Lightest>
 #include "tree_distances.h"
 
 using namespace Rcpp;
