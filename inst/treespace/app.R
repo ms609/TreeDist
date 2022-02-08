@@ -308,10 +308,11 @@ ui <- fluidPage(theme = 'treespace.css',
                       value = 90),
           checkboxGroupInput("display", "Display settings",
                              list(
-                               "Clusters' convex hulls" = 'hulls',
-                               'Cluster consensus trees' = 'cons',
-                               'Tree numbers' = 'labelTrees',
-                               'Interactive 3D plot' = 'show3d'
+                               "Depict MST stress" = "mstStrain",
+                               "Clusters' convex hulls" = "hulls",
+                               "Cluster consensus trees" = "cons",
+                               "Tree numbers" = "labelTrees",
+                               "Interactive 3D plot" = "show3d"
                              ),
                              character(0)),
           sliderInput('pt.cex', 'Point size',
@@ -1198,8 +1199,10 @@ server <- function(input, output, session) {
         
         # Plot MST
         if (mstSize() > 0) {
-          apply(mstEnds(), 1, function (segment)
-            lines(proj[segment, j], proj[segment, i], col = "#bbbbbb", lty = 1))
+          MSTSegments(proj[, c(j, i)], mstEnds(),
+                      col = if ("mstStrain" %in% input$display) {
+                        StrainCol(distances(), proj[, c(j, i)])
+                      } else "#bbbbbb")
         }
         
         # Add points
