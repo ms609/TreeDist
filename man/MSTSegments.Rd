@@ -18,6 +18,9 @@ StrainCol(
 \item{mapping}{Two-column matrix giving \emph{x} and \emph{y} coordinates of plotted
 points.}
 
+\item{mstEnds}{Two-column matrix identifying rows of \code{mapping} at end of
+each edge of the MST, as output by \code{\link[TreeTools:MSTEdges]{TreeTools::MSTEdges()}}.}
+
 \item{\dots}{Additional arguments to \code{\link[=segments]{segments()}}.}
 
 \item{distances}{Matrix or \code{dist} object giving original distances between
