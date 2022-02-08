@@ -25,3 +25,4 @@ vignettes/*_files
 vignettes/*_cache
 vignettes/*.R
 .Rproj.user
+*.bak
