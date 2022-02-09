@@ -30,7 +30,7 @@ each pair of points.}
 }
 \value{
 \code{StrainCol()} returns a vector in which each entry is selected from
-\code{palette}, with an attribute "logStrain" denoting the logarithm of the
+\code{palette}, with an attribute \code{logStrain} denoting the logarithm of the
 mapped over original distance, shifted such that the median value is zero.
 Palette colours are assigned centred on the median value, with entries
 early in \code{palette} assigned to edges in which the ratio of mapped

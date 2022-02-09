@@ -284,7 +284,7 @@ MSTSegments <- function(mapping, mstEnds, ...) {
 
 #' @rdname MSTSegments
 #' @return `StrainCol()` returns a vector in which each entry is selected from
-#' `palette`, with an attribute "logStrain" denoting the logarithm of the
+#' `palette`, with an attribute `logStrain` denoting the logarithm of the
 #' mapped over original distance, shifted such that the median value is zero.
 #' Palette colours are assigned centred on the median value, with entries
 #' early in `palette` assigned to edges in which the ratio of mapped
