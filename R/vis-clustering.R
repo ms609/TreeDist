@@ -80,6 +80,12 @@ ClusVis <- function(distances, clust, col = seq_len) {
 }
 
 
+#' Visualize clustering structure via Multi-dimensional scaling
+#' 
+#' @param maxIter Integer specifying maximum number of moves to propose.
+#' @param stability After proposing `stability` moves without improvement,
+#' stop.
+#' 
 #' @examples
 #' library("TreeTools", quietly = TRUE)
 #' treeNumbers <- c(0:20, 40:60, 120:140, 200:220)
@@ -106,7 +112,7 @@ ClusVis <- function(distances, clust, col = seq_len) {
 #' @importFrom TreeTools MSTEdges
 #' @export
 ClusterMDS <- function(clust, distances, proposal = cmdscale(distances),
-                       maxIter = 1e6, stability = 4e2,
+                       maxIter = 1e6, stability = 42,
                        weight = list("sil" = 1, "mst" = 1, "icd" = NULL),
                        trace = FALSE) {
   distances <- as.dist(distances)
@@ -148,6 +154,9 @@ ClusterMDS <- function(clust, distances, proposal = cmdscale(distances),
   lastAccepted <- 0L
   
   
+  range <- apply(proposal, 2, range)
+  scale <- range[2, ] - range[1, ]
+  
   cli_progress_bar("Rescaling", total = maxIter, .auto_close = FALSE)
   for (i in seq_len(maxIter)) {
     dprime <- dist(proposal)
@@ -169,9 +178,6 @@ ClusterMDS <- function(clust, distances, proposal = cmdscale(distances),
     } else {
       mstScore <- 0
     }
-    
-    range <- apply(proposal, 2, range)
-    scale <- range[2, ] - range[1, ]
     
     mappedSil <- cluster::silhouette(clust, dprime)
     dSil <- mappedSil[, "sil_width"] - silWidth

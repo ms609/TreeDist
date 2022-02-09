@@ -1,0 +1,106 @@
+---
+title: "Visualizing clusters"
+author: "[Martin R. Smith](https://smithlabdurham.github.io/)"
+output: 
+  rmarkdown::html_vignette:
+    fig_width: 6
+    fig_height: 4
+bibliography: ../inst/REFERENCES.bib
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
+vignette: >
+  %\VignetteIndexEntry{Visualizing clusters}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+One motivation for multi-dimensional scaling is to visualize clusters of objects
+in higher dimensions.  However, many MDS methods tend to emphasize the
+faithfulness of spatial relationships between individual points, which can
+cause clusters to become distorted and to lose their identity in mappings
+[@Ott2016;@Maaten2009;@SmithSpace].
+
+`ClusterMDS()` scales points into two dimensional plots that retain the
+structure of and relationships between clusters that exist in an original
+multi-dimensional space.
+
+The structure of clusterings can be described by their silhouette profile.
+<!--todo explain how silhouettes work-->
+`ClusterMDS()` produces a two-dimensional mapping of points that exhibits
+a silhouette profile as similar as possible to that of the original clusterings.
+It also attempts to arrange points in a manner that retains the relative edge
+lengths of the mapped minimum spanning tree, which is the shortest graph
+connecting all points.
+
+We can explore its behaviour with some simple datasets.
+First we will create a basic dataset with four known clusters.
+Distances between points within a cluster are set to 1; distances between
+points in different clusters are set to a pre-defined distance based on a
+two-dimensional cluster geometry.  Each distance is then modified by adding
+Gaussian noise with standard deviation 1; the sign of any resulting
+negative distances is inverted so that all distances are positive.
+
+
+```{r simple-clusters, message = FALSE}
+library("TreeDist")
+par(mfrow = 1:2)
+cl <- rep(1:4, 6:9)
+nPts <- length(cl)
+distances <- matrix(rnorm(nPts * nPts, 1), nPts, nPts)
+
+clusterCentres <- t(matrix(c(0, 0, 0, 1, -4, -2, 3, -2), nrow = 2))
+# Expected cluster geometry:
+plot(clusterCentres[, 1], clusterCentres[, 2], col = 1:4, ann = FALSE,
+     asp = 1, frame = FALSE)
+
+ccDist <- dist(clusterCentres)
+cl1 <- cl == 1
+cl2 <- cl == 2
+cl3 <- cl == 3
+cl4 <- cl == 4
+distances[cl1, cl2] <- rnorm(sum(cl1) * sum(cl2), ccDist[1])
+distances[cl1, cl3] <- rnorm(sum(cl1) * sum(cl3), ccDist[2])
+distances[cl1, cl4] <- rnorm(sum(cl1) * sum(cl4), ccDist[3])
+distances[cl2, cl3] <- rnorm(sum(cl2) * sum(cl3), ccDist[4])
+distances[cl2, cl4] <- rnorm(sum(cl2) * sum(cl4), ccDist[5])
+distances[cl3, cl4] <- rnorm(sum(cl3) * sum(cl4), ccDist[6])
+distances[cl4, cl4] <- rnorm(sum(cl4) * sum(cl4), 3)
+diag(distances) <- 0
+distances[lower.tri(distances)] <- t(distances)[lower.tri(distances)]
+distances <- abs(distances)
+
+# Silhouette profile of original clusters in multidimensional space
+plot(cluster::silhouette(cl, distances), col = 1:4, main = "Original")
+
+# Classic multidimensional scaling
+cmds <- cmdscale(distances)
+plot(cmds, asp = 1, col = cl, ann = FALSE, axes = FALSE)
+plot(cluster::silhouette(cl, dist(cmds)), col = 1:4, main = "Classic MDS")
+silmds <- ClusterMDS(cl, distances, stability = 100, trace = TRUE)
+plot(silmds, asp = 1, col = cl, ann = FALSE, frame.plot = FALSE)
+plot(cluster::silhouette(cl, dist(silmds)), col = 1:4, main = "Cluster MDS")
+```
+
+It's good to be sure that we're robust to different starting positions.
+
+```{r where-to-start, message = FALSE}
+randomStart <- matrix(runif(nPts * 2), nPts, 2)
+silmds <- ClusterMDS(cl, distances, randomStart,
+                     stability = 200, trace = TRUE)
+plot(silmds, asp = 1, col = cl, ann = FALSE, frame.plot = FALSE)
+plot(cluster::silhouette(cl, dist(silmds)), col = 1:4, main = "Cluster MDS")
+
+randomStart <- matrix(runif(nPts * 2), nPts, 2)
+silmds <- ClusterMDS(cl, distances, randomStart,
+                     stability = 200, trace = TRUE)
+plot(silmds, asp = 1, col = cl, ann = FALSE, frame.plot = FALSE)
+plot(cluster::silhouette(cl, dist(silmds)), col = 1:4, main = "Cluster MDS")
+
+randomStart <- matrix(runif(nPts * 2), nPts, 2)
+silmds <- ClusterMDS(cl, distances, randomStart,
+                     stability = 200, trace = TRUE)
+plot(silmds, asp = 1, col = cl, ann = FALSE, frame.plot = FALSE)
+plot(cluster::silhouette(cl, dist(silmds)), col = 1:4, main = "Cluster MDS")
+```
+
+
+## References
