@@ -32,7 +32,7 @@ Kendall & Colijn 2016).
 \code{PathVector} returns the number of edges between each pair of leaves (per
 Steel & Penny 1993).
 \code{SplitVector} returns the size of the smallest split that contains each
-pair of leaves (per Smith, forthcoming).}
+pair of leaves (per Smith, 2022).}
 
 \item{tree}{A tree of class \code{\link[ape:read.tree]{phylo}}.}
 }

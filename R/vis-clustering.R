@@ -90,50 +90,103 @@ ClusVis <- function(distances, clust, col = seq_len) {
 #' 
 #' par(mfrow = c(2, 3))
 #' plot(cmds, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
-#' plot(cluster::silhouette(clust, distances), col = 1:4, main = "True")
+#' plot(cluster::silhouette(clust, distances), col = 1:4, main = "Original")
 #' plot(cluster::silhouette(clust, dist(cmds)), col = 1:4, main = "Classic MDS")
 #' 
-#' silmds <- SilMatch(clust, distances, cmds)
+#' silmds <- ClusterMDS(clust, distances, cmds)
 #' plot(silmds, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
 #' plot(cluster::silhouette(clust, dist(silmds)), col = 1:4, main = "SilMDS")
 #' 
 #' 
 #' @template MRS
 #' @importFrom cli cli_progress_bar cli_progress_done cli_progress_update
+#' @importFrom TreeTools MSTEdges
 #' @export
-SilMatch <- function(clust, distances, proposal = cmdscale(distances),
-                      maxIter = 1e6, stability = 1e2) {
+ClusterMDS <- function(clust, distances, proposal = cmdscale(distances),
+                       maxIter = 1e6, stability = 1e2,
+                       weight = list("sil" = 1, "mst" = 1, "icd" = NULL)) {
+  distances <- as.dist(distances)
+  treeID <- combn(attr(distances, "Size"), 2)
+  Score <- function(orig, new) sqrt(sum((orig - new) ^ 2))
+  
+  if (!is.null(weight[["icd"]])) {
+    clustID <- matrix(clust[treeID], 2)
+    nClust <- max(clust)
+    clustPairs <- combn(nClust + 1, 2)
+    clustPairs[2, ] <- clustPairs[2, ] - 1L
+    clustPairKeys <- apply(clustPairs, 2, paste, collapse = "-")
+    clustKey <- factor(apply(clustID, 2, 
+                             function(x) paste(sort(x), collapse = "-")),
+                       clustPairKeys)
+    clustPair <- vapply(seq_along(clustPairKeys), function(pair) {
+      clustKey == clustPairKeys[pair]
+    }, logical(length(clustKey)))
+    interClustDists <- apply(clustPair, 2, function(x) mean(distances[x]))
+  }
+  
+  if (!is.null(weight[["mst"]])) {
+    mst <- MSTEdges(distances)
+    onMST <- duplicated(cbind(t(mst), treeID), MARGIN = 2)[
+      -seq_len(dim(mst)[1])]
+    mstLength <- distances[onMST]
+    mstLength <- mstLength / sum(mstLength)
+  }
   
   sil <- cluster::silhouette(clust, distances)
   silWidth <- sil[, "sil_width"]
-  bestD2 <- Inf
+  bestScore <- Inf
   mover <- 0L
   accepted <- logical(maxIter)
   la <- integer(maxIter)
-  score <- double(maxIter)
+  d2Log <- double(maxIter)
+  icdLog <- double(maxIter)
+  mstLog <- double(maxIter)
   lastAccepted <- 0L
   
   
   cli_progress_bar("Rescaling", total = maxIter, .auto_close = FALSE)
   for (i in seq_len(maxIter)) {
     dprime <- dist(proposal)
+    
+    if (!is.null(weight[["icd"]])) {
+      icd <- apply(clustPair, 2, function(x) sum(dprime[x]) / sum(x))
+      rescale <- sum(interClustDists) / sum(icd)
+      proposal <- proposal * rescale
+      icd <- icd * rescale
+      icdScore <- sqrt(sum((interClustDists - icd) ^ 2)) * weight[["icd"]]
+    } else {
+      icdScore <- 0
+    }
+    
+    if (!is.null(weight[["mst"]])) {
+      mstPrime <- dprime[onMST]
+      mstPrime <- mstPrime / sum(mstPrime)
+      mstScore <- weight[["mst"]] * Score(mstLength, mstPrime)
+    }
+    
     range <- apply(proposal, 2, range)
     scale <- range[2, ] - range[1, ]
     
     mappedSil <- cluster::silhouette(clust, dprime)
     dSil <- mappedSil[, "sil_width"] - silWidth
-    d2 <- dSil * dSil
-    d2Cum <- cumsum(d2)
+    dSil2 <- dSil * dSil
+    d2Cum <- cumsum(dSil2)
     d2Sum <- d2Cum[length(d2Cum)]
-    if (d2Sum < bestD2) {
-      cli_progress_update(set = i)
+    
+    score <- (d2Sum * weight[["sil"]]) + icdScore + mstScore
+    
+    if (score < bestScore) {
+      cli_progress_update(set = i,
+                          extra = paste0("Stability: ", lastAccepted))
       mapped <- proposal
-      bestD2 <- d2Sum
+      bestScore <- score
       accepted[i] <- TRUE
       lastAccepted <- 0L
     }
     
-    score[i] <- d2Sum
+    d2Log[i] <- d2Sum
+    icdLog[i] <- icdScore
+    mstLog[i] <- mstScore
     lastAccepted <- lastAccepted + 1L
     la[i] <- lastAccepted
     
@@ -147,8 +200,14 @@ SilMatch <- function(clust, distances, proposal = cmdscale(distances),
   }
   cli_progress_done()
   
-  plot(cumsum(accepted[seq_len(i)]), type = 'l', col = 2)
-  points(la[seq_len(i)] * sum(accepted) / stability, type = 'l', col = 3)
-  points(score[seq_len(i)] * sum(accepted) / max(score), col = 4, type = "l")
+  plot(cumsum(accepted[seq_len(i)]), type = 'n')
+  # points(la[seq_len(i)] * sum(accepted) / stability, type = 'l', col = 3)
+  points(d2Log[seq_len(i)] * sum(accepted) / max(d2Log), col = 4,
+         type = "l")
+  points(mstLog[seq_len(i)] * sum(accepted) / max(mstLog), col = 5, type = "l")
+  points(icdLog[seq_len(i)] * sum(accepted) / max(icdLog), col = 6, type = "l")
+  points(cumsum(accepted[seq_len(i)]), type = 'l', col = 2)
+  legend("top", c("Accepted", "lastAccept", "sil-d2", "mst", "icd"), col = 2:6,
+         pch = 15, bty = "n", pt.cex = 2.5)
   mapped
 }
