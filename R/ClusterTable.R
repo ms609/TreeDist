@@ -35,12 +35,12 @@ NULL
 
 #' @rdname ClusterTable
 #' @export
-as.ClusterTable <- function (x, tipLabels = NULL, ...) UseMethod('as.ClusterTable')
+as.ClusterTable <- function(x, tipLabels = NULL, ...) UseMethod('as.ClusterTable')
 
 #' @rdname ClusterTable
 #' @importFrom TreeTools NTip RenumberTips
 #' @export
-as.ClusterTable.phylo <- function (x, tipLabels = NULL, ...) {
+as.ClusterTable.phylo <- function(x, tipLabels = NULL, ...) {
   x <- Preorder(x)
   if (is.null(tipLabels)) {
     tipLabels <- x$tip.label
@@ -55,7 +55,7 @@ as.ClusterTable.phylo <- function (x, tipLabels = NULL, ...) {
 
 #' @rdname ClusterTable
 #' @export
-as.ClusterTable.list <- function (x, tipLabels = NULL, ...) {
+as.ClusterTable.list <- function(x, tipLabels = NULL, ...) {
   lapply(x, as.ClusterTable,
          tipLabels = if (is.null(tipLabels)) TipLabels(x) else tipLabels, ...)
 }
@@ -77,7 +77,7 @@ as.ClusterTable.multiPhylo <- as.ClusterTable.list
 #' @template MRS
 #' @name ClusterTable-methods
 #' @export
-as.matrix.ClusterTable <- function (x, ...) {
+as.matrix.ClusterTable <- function(x, ...) {
   ClusterTable_matrix(x)
 }
 
@@ -85,7 +85,7 @@ as.matrix.ClusterTable <- function (x, ...) {
 #' @examples
 #' print(clustab)
 #' @export
-print.ClusterTable <- function (x, ...) {
+print.ClusterTable <- function(x, ...) {
   nTip <- attr(x, 'nTip')
   labels <- attr(x, 'tip.label')
   cat("ClusterTable on" , nTip, "leaves:", labels[1], "..", labels[nTip])
@@ -95,12 +95,12 @@ print.ClusterTable <- function (x, ...) {
 #' @examples
 #' summary(clustab)
 #' @export
-summary.ClusterTable <- function (object, ...) {
+summary.ClusterTable <- function(object, ...) {
   nTip <- attr(object, 'nTip')
   mat <- ClusterTable_matrix(object)
   cat("ClusterTable on" , nTip, "leaves:\n")
   cat(" ", rep(c(1:9, ' '), length.out = nTip), "\n", sep = '')
-  apply(mat, 1, function (x) {
+  apply(mat, 1, function(x) {
     if (x[1] > 0) {
       cat(' ', rep('.', x[1] - 1), rep('*', 1 + x[2] - x[1]),
           rep('.', nTip - x[2]), "\n", sep = '')

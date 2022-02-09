@@ -17,7 +17,7 @@
 #' @importFrom ape plot.phylo
 #' @keywords internal
 #' @export
-TreeDistPlot <- function (tr, title = NULL, bold = NULL, leaveRoom = FALSE,
+TreeDistPlot <- function(tr, title = NULL, bold = NULL, leaveRoom = FALSE,
                           prune = integer(0), graft = integer(0),
                           edge.color = 'black', edge.width = NULL, ...) {
   
@@ -109,18 +109,18 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   child1 <- edge1[, 2]
   nTip <- attr(splits1, 'nTip')
   splitEdges1 <- vapply(as.integer(rownames(splits1)),
-                        function (node) which(child1 == node), integer(1))
+                        function(node) which(child1 == node), integer(1))
   
   splits2 <- as.Splits(tree2, tipLabels = tree1)
   edge2 <- tree2$edge
   child2 <- edge2[, 2]
   splitEdges2 <- vapply(as.integer(rownames(splits2)),
-                        function (node) which(child2 == node), integer(1))
+                        function(node) which(child2 == node), integer(1))
   
   matching <- Func(tree1, tree2, reportMatching = TRUE)
   pairings <- attr(matching, 'matching')
   scores <- attr(matching, 'pairScores')
-  pairScores <- signif(mapply(function (i, j) scores[i, j],
+  pairScores <- signif(mapply(function(i, j) scores[i, j],
                               seq_along(pairings), pairings), precision)
   
   adjNo <- c(0.5, -0.2)
@@ -132,7 +132,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
     on.exit(par(origPar))
   }
   
-  LabelUnpaired <- function (splitEdges, unpaired) {
+  LabelUnpaired <- function(splitEdges, unpaired) {
     if (any(unpaired)) {
       #edgelabels(text="\u2012", edge=splitEdges[unpaired],
       edgelabels(text = expression('-'), edge = splitEdges[unpaired],
@@ -145,7 +145,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   if (plainEdges) {
     Plot(tree1, edge.width = edge.width, edge.color = edge.color, ...)
   } else {
-    Normalize <- function (scores, na.rm = FALSE) {
+    Normalize <- function(scores, na.rm = FALSE) {
       if (length(scores) == 0) return(scores)
       if (na.rm) {
         scores <- scores[!is.na(scores)]
@@ -161,7 +161,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
       scores / max(scores)
     }
     
-    OtherRootEdge <- function (splitNodes, edge) {
+    OtherRootEdge <- function(splitNodes, edge) {
       parent <- edge[, 1]
       child <- edge[, 2]
       rootEdges <- which(parent == min(parent))
@@ -177,8 +177,8 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
     }
     edgeColPalette <- sequential_hcl(n = 256L, palette = 'Viridis')
      
-    EdgyPlot <- function (tree, splits, edge, splitEdges,
-                          normalizedScores, ...) {
+    EdgyPlot <- function(tree, splits, edge, splitEdges,
+                         normalizedScores, ...) {
       splitNodes <- as.integer(names(splits))
       ore <- OtherRootEdge(splitNodes, edge)
       if (length(normalizedScores) && !is.na(ore[1])) {
@@ -237,4 +237,77 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   
   # Return:
   invisible()
+}
+
+#' Add minimum spanning tree to plot, colouring by stress
+#' 
+#' To identify strain in a multidimensional scaling of distances, it can be
+#' useful to plot a minimum spanning tree
+#' \insertCite{Gower1966,SmithSpace}{TreeDist}.  Colouring each edge of the
+#' tree according to its strain can identify areas where the mapping is
+#' stretched or compressed.
+#' 
+#' @param mapping Two-column matrix giving _x_ and _y_ coordinates of plotted
+#' points.
+#' @param mstEnds Two-column matrix identifying rows of `mapping` at end of
+#' each edge of the MST, as output by [`TreeTools::MSTEdges()`].
+#' @param distances Matrix or `dist` object giving original distances between
+#' each pair of points.
+#' @param palette Vector of colours with which to colour edges.
+#' @param \dots Additional arguments to [`segments()`].
+#'
+#' @examples
+#' set.seed(0)
+#' library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
+#' distances <- ClusteringInfoDist(as.phylo(5:16, 8))
+#' mapping <- cmdscale(distances, k = 2)
+#' mstEnds <- MSTEdges(distances)
+#' 
+#' # Set up blank plot
+#' plot(mapping, asp = 1, frame.plot = FALSE, ann = FALSE, axes = FALSE,
+#'      type = "n")
+#' # Add MST
+#' MSTSegments(mapping, mstEnds, 
+#'             col = StrainCol(distances, mapping, mstEnds))
+#' # Add points at end so they overprint the MST
+#' points(mapping)
+#' SpectrumLegend(legend = c("Contracted", "Median", "Extended"),
+#'                palette = rev(hcl.colors(256L, "RdYlBu")))
+#' @template MRS
+#' @references \insertAllCited{}
+#' @importFrom graphics segments
+#' @export
+MSTSegments <- function(mapping, mstEnds, ...) {
+  segments(mapping[mstEnds[, 1], 1], mapping[mstEnds[, 1], 2],
+           mapping[mstEnds[, 2], 1], mapping[mstEnds[, 2], 2], ...)
+}
+
+#' @rdname MSTSegments
+#' @return `StrainCol()` returns a vector in which each entry is selected from
+#' `palette`, with an attribute `logStrain` denoting the logarithm of the
+#' mapped over original distance, shifted such that the median value is zero.
+#' Palette colours are assigned centred on the median value, with entries
+#' early in `palette` assigned to edges in which the ratio of mapped
+#' distance to original distance is small.
+#' @importFrom grDevices hcl.colors
+#' @importFrom TreeTools MSTEdges
+#' @export
+StrainCol <- function(distances, mapping, mstEnds = MSTEdges(distances),
+                       palette = rev(hcl.colors(256L, "RdYlBu"))) {
+  distMat <- as.matrix(distances)
+  x <- mapping[, 1]
+  y <- mapping[, 2]
+  logStrain <- apply(mstEnds, 1, function(ends) {
+    orig <- distMat[ends[1], ends[2]]
+    mapped <- sqrt(sum((x[ends[1]] - y[ends[2]]) ^ 2))
+    log(mapped / orig) # High when mapping extends original distances
+  })
+  strain <- logStrain - median(logStrain)
+  maxVal <- max(abs(strain)) + sqrt(.Machine$double.eps)
+  nCols <- length(palette)
+  bins <- cut(strain, seq(-maxVal, maxVal, length.out = nCols))
+  
+  # Return:
+  structure(palette[bins],
+            logStrain = strain)
 }

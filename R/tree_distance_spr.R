@@ -41,7 +41,7 @@
 #' @importFrom phangorn SPR.dist
 #' @importFrom TreeTools Postorder
 #' @export
-SPRDist <- function (tree1, tree2 = NULL, symmetric = TRUE) {
+SPRDist <- function(tree1, tree2 = NULL, symmetric = TRUE) {
   if (inherits(tree1, 'phylo')) {
     tree1 <- Postorder(tree1)
   } else {

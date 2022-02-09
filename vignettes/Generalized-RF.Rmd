@@ -139,7 +139,7 @@ JaccardRobinsonFoulds(tree1, tree2, k = 1)
 VisualizeMatching(JaccardRobinsonFoulds, tree1, tree2,
                   Plot = TreeDistPlot, matchZeros = FALSE)
 
-JRF2 <- function (...) JaccardRobinsonFoulds(k = 2, ...)
+JRF2 <- function(...) JaccardRobinsonFoulds(k = 2, ...)
 JRF2(tree1, tree2)
 VisualizeMatching(JRF2, tree1, tree2,
                   Plot = TreeDistPlot, matchZeros = FALSE)

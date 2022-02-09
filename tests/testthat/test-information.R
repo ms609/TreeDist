@@ -20,7 +20,7 @@ test_that("Removing contradictions improves scores", {
   # We can delete taxa 99 and 100 to produce matching splits of
   # 198=100:98, or we can delete taxa 99-102 to produce 196=96:96.
   
-  Test <- function (nTaxa, nContra) {
+  Test <- function(nTaxa, nContra) {
     nInSplit <- nTaxa / 2L
     split1 <- split2 <- c(rep(TRUE, nInSplit), rep(FALSE, nInSplit))
     flips <- nInSplit + ((1-nContra):nContra)
@@ -42,7 +42,7 @@ test_that("Removing contradictions improves scores", {
 
 test_that("TreesConsistentWithTwoSplits works", {
   
-  Test <- function (n, a, b, score) {
+  Test <- function(n, a, b, score) {
     logScore <- log(score)
     
     expect_equal(score, TreesConsistentWithTwoSplits(n, a, b))

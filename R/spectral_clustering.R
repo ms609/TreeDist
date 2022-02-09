@@ -23,9 +23,9 @@
 #' plot(cmdscale(distances), pch = 15, col = clusts$cluster)
 #' @family tree space functions
 #' @export
-SpectralEigens <- function (D, nn = 10L, nEig = 2L) {
+SpectralEigens <- function(D, nn = 10L, nEig = 2L) {
   
-  MutualKnnGraph <- function (D, nn) {
+  MutualKnnGraph <- function(D, nn) {
     D <- as.matrix(D)
     dims <- dim(D)
     
@@ -66,7 +66,7 @@ SpectralEigens <- function (D, nn = 10L, nEig = 2L) {
 
 #' @export
 #' @rdname SpectralEigens
-SpectralClustering <- function (D, nn = 10L, nEig = 2L) {
+SpectralClustering <- function(D, nn = 10L, nEig = 2L) {
   .Deprecated("SpectralEigens")
   SpectralEigens(D, nn, nEig)
 }

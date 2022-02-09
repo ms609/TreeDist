@@ -3,7 +3,7 @@ test_that("Plot3() plots", {
   library('vdiffr')
   skip_if(packageVersion("graphics") < "4.1")
   
-  expect_doppelganger("Simple plot", function () {
+  expect_doppelganger("Simple plot", function() {
     disorder <- c(1, 5, 2, 6, 3, 7, 4, 8, 5, 9, 10)
     Plot3(disorder, disorder, 6 - disorder, pch = 21, cex = 18,
           asp = 1, xlab = '', ylab = '',
@@ -14,7 +14,7 @@ test_that("Plot3() plots", {
   })
   
   
-  expect_doppelganger("Plotting order", function () {
+  expect_doppelganger("Plotting order", function() {
     pts <- cbind(1:10, 11:20, c(1, 1, 1, 1, 10, 10, 10, 5, 6, 7))
     Plot3(pts,
           pch = c(3, rep(22, 4), rep(21, 4), 4),

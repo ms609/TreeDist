@@ -7,12 +7,12 @@ test_that("Day 1985 overflow", {
 test_that("Day 1985 examples", {
   library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
   
-  PrepareTree <- function (text) {
+  PrepareTree <- function(text) {
     tmp <- ape::read.tree(text = text)
     RenumberTips(tmp, as.character(seq_along(tmp$tip.label)))
   }
   
-  TestRF <- function (t1, t2) {
+  TestRF <- function(t1, t2) {
     expect_equal(RobinsonFoulds(t1, t2), 
                  NSplits(t1) + NSplits(t2) - (2 * COMCLUST(list(t1, t2))))
   }

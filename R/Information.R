@@ -59,7 +59,7 @@ SplitSharedInformation <- function(n, A1, A2 = A1) {
 #' @describeIn SplitSharedInformation Different information between two splits.
 #' @importFrom TreeTools SplitInformation
 #' @export
-SplitDifferentInformation <- function (n, A1, A2 = A1) {
+SplitDifferentInformation <- function(n, A1, A2 = A1) {
   Log2TreesMatchingSplit(A1, n - A1) +
     Log2TreesMatchingSplit(A2, n - A2) -
     (2 * Log2TreesConsistentWithTwoSplits(n, A1, A2))
@@ -107,7 +107,7 @@ SplitDifferentInformation <- function (n, A1, A2 = A1) {
 #' 
 #' @encoding UTF-8
 #' @export
-MeilaVariationOfInformation <- function (split1, split2) {
+MeilaVariationOfInformation <- function(split1, split2) {
   if (length(split1) != length(split2)) stop("Split lengths differ")
   n <- length(split1)
   
@@ -128,7 +128,7 @@ MeilaVariationOfInformation <- function (split1, split2) {
 #' @return `MeilaMutualInformation()` returns the mutual information, 
 #' measured in bits.
 #' @export
-MeilaMutualInformation <- function (split1, split2) {
+MeilaMutualInformation <- function(split1, split2) {
   if (length(split1) != length(split2)) stop("Split lengths differ")
   n <- length(split1)
   
@@ -177,7 +177,7 @@ MeilaMutualInformation <- function (split1, split2) {
 #' @encoding UTF-8
 #' @importFrom memoise memoise
 #' @export
-AllSplitPairings <- memoise(function (n) {
+AllSplitPairings <- memoise(function(n) {
   
   if (n < 4L) stop("No informative splits with < 4 taxa")
   
@@ -187,15 +187,15 @@ AllSplitPairings <- memoise(function (n) {
   unevenPairs <- matrix(
     # For i in 2:largestSmallSplit
     #TODO: Make faster by not calculating bottom triangle
-    unlist(lapply(1L + seq_len(n - 3L), function (inA) {
+    unlist(lapply(1L + seq_len(n - 3L), function(inA) {
       # For j in 2:(n - 2)
       nCa <- choose(n, inA)
       outA <- n - inA
       hA <- Entropy(c(inA, outA) / n)
-      unlist(lapply(1L + seq_len(n - 3L), function (inB) {
+      unlist(lapply(1L + seq_len(n - 3L), function(inB) {
         outB <- n - inB
         hB <- Entropy(c(inB, outB) / n)
-        vapply(max(0, inA + inB - n):min(inA, inB), function (inAB) {
+        vapply(max(0, inA + inB - n):min(inA, inB), function(inAB) {
           association <- c(inAB, inA - inAB, inB - inAB, n + inAB - inA - inB)
           jointEntropies <- Entropy(association / n)
           
@@ -241,7 +241,7 @@ AllSplitPairings <- memoise(function (n) {
 #' @encoding UTF-8
 #' @family information functions
 #' @export
-SplitEntropy <- function (split1, split2 = split1) {
+SplitEntropy <- function(split1, split2 = split1) {
   A1A2 <- sum(split1 & split2)
   A1B2 <- sum(split1 & !split2)
   B1A2 <- sum(!split1 & split2)
@@ -269,7 +269,7 @@ SplitEntropy <- function (split1, split2 = split1) {
 #' splits.
 #' @importFrom TreeTools TreesMatchingSplit NRooted
 #' @export
-TreesConsistentWithTwoSplits <- function (n, A1, A2 = A1) {
+TreesConsistentWithTwoSplits <- function(n, A1, A2 = A1) {
   
   smallSplit <- min(A1, A2)
   bigSplit <- max(A1, A2)
@@ -316,7 +316,7 @@ TreesConsistentWithTwoSplits <- function (n, A1, A2 = A1) {
 #' `TreesConsistentWithTwoSplits()`.
 #' @importFrom TreeTools LnTreesMatchingSplit LnRooted.int
 #' @export
-LnTreesConsistentWithTwoSplits <- function (n, A1, A2 = A1) {
+LnTreesConsistentWithTwoSplits <- function(n, A1, A2 = A1) {
   smallSplit <- min(A1, A2)
   bigSplit <- max(A1, A2)
   
@@ -336,7 +336,7 @@ LnTreesConsistentWithTwoSplits <- function (n, A1, A2 = A1) {
 #' `TreesConsistentWithTwoSplits()`.
 #' @importFrom TreeTools Log2TreesMatchingSplit Log2Rooted.int
 #' @export
-Log2TreesConsistentWithTwoSplits <- function (n, A1, A2 = A1) {
+Log2TreesConsistentWithTwoSplits <- function(n, A1, A2 = A1) {
   smallSplit <- min(A1, A2)
   bigSplit <- max(A1, A2)
   
@@ -356,7 +356,7 @@ Log2TreesConsistentWithTwoSplits <- function (n, A1, A2 = A1) {
 #' `TreesConsistentWithTwoSplits()`.
 #' @importFrom TreeTools Log2TreesMatchingSplit Log2Rooted.int
 #' @export
-Log2TreesConsistentWithTwoSplits <- function (n, A1, A2 = A1) {
+Log2TreesConsistentWithTwoSplits <- function(n, A1, A2 = A1) {
   smallSplit <- min(A1, A2)
   bigSplit <- max(A1, A2)
   

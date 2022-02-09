@@ -56,7 +56,7 @@ test_that("MAST size calculated correctly on small trees", {
   t2 <- RenumberTips(t2, t1)
   t2 <- Preorder(t2)
 
-  ME <- function (e, node) {
+  ME <- function(e, node) {
     expect_equal(e, 
                  .MASTSizeEdges(Postorder(t1$edge),
                                 RootOnNode(t2, node = node, TRUE)$edge,

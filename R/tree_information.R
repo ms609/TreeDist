@@ -127,11 +127,11 @@ NULL
 #' provide the total splitwise information content of the tree.
 #' @rdname TreeInfo
 #' @export
-SplitwiseInfo <- function (x, p = NULL, sum = TRUE) {
+SplitwiseInfo <- function(x, p = NULL, sum = TRUE) {
   UseMethod('SplitwiseInfo')
 }
 
-.GetPFromLabels <- function (tree, p, splits = as.Splits(tree)) {
+.GetPFromLabels <- function(tree, p, splits = as.Splits(tree)) {
   if (length(p) == 1L) { # length(NULL) == 0
     if (p == FALSE) {
       p <- NULL
@@ -152,13 +152,13 @@ SplitwiseInfo <- function (x, p = NULL, sum = TRUE) {
 }
 
 #' @export
-SplitwiseInfo.phylo <- function (x, p = NULL, sum = TRUE) {
+SplitwiseInfo.phylo <- function(x, p = NULL, sum = TRUE) {
   splits <- as.Splits(x)
   SplitwiseInfo.Splits(splits, .GetPFromLabels(x, p, splits), sum)
 }
   
 #' @export
-SplitwiseInfo.multiPhylo <- function (x, p = NULL, sum = TRUE) {
+SplitwiseInfo.multiPhylo <- function(x, p = NULL, sum = TRUE) {
   vapply(as.Splits(x), SplitwiseInfo, double(1L), p, sum)
 }
 
@@ -206,7 +206,7 @@ SplitwiseInfo.Splits <- function(x, p = NULL, sum = TRUE) {
 }
 
 #' @export
-SplitwiseInfo.NULL <- function (x, p = NULL, sum = TRUE) NULL
+SplitwiseInfo.NULL <- function(x, p = NULL, sum = TRUE) NULL
 
 #' @examples
 #' 
@@ -235,26 +235,26 @@ SplitwiseInfo.NULL <- function (x, p = NULL, sum = TRUE) NULL
 #' @importFrom TreeTools as.Splits
 #' @rdname TreeInfo
 #' @export
-ClusteringEntropy <- function (x, p = NULL, sum = TRUE) {
+ClusteringEntropy <- function(x, p = NULL, sum = TRUE) {
   UseMethod("ClusteringEntropy")
 }
 
 #' @rdname TreeInfo
 #' @export
-ClusteringInfo <- function (x, p = NULL, sum = TRUE) {
+ClusteringInfo <- function(x, p = NULL, sum = TRUE) {
   UseMethod("ClusteringInfo")
 }
 
 #' @rdname TreeInfo
 #' @export
-ClusteringEntropy.phylo <- function (x, p = NULL, sum = TRUE) {
+ClusteringEntropy.phylo <- function(x, p = NULL, sum = TRUE) {
   splits <- as.Splits(x)
   ClusteringEntropy.Splits(splits, p = .GetPFromLabels(x, p, splits), sum)
 }
 
 #' @rdname TreeInfo
 #' @export
-ClusteringEntropy.list <- function (x, p = NULL, sum = TRUE)
+ClusteringEntropy.list <- function(x, p = NULL, sum = TRUE)
     vapply(as.Splits(x), ClusteringEntropy.Splits, double(1L), p = p, sum)
 
 #' @rdname TreeInfo
@@ -263,7 +263,7 @@ ClusteringEntropy.multiPhylo <- ClusteringEntropy.list
 
 #' @rdname TreeInfo
 #' @export
-ClusteringEntropy.Splits <- function (x, p = NULL, sum = TRUE) {
+ClusteringEntropy.Splits <- function(x, p = NULL, sum = TRUE) {
   nLeaves <- attr(x, 'nTip')
   inSplit <- TipsInSplits(x)
   splitP <- rbind(inSplit, nLeaves - inSplit, deparse.level = 0L) / nLeaves
@@ -277,18 +277,18 @@ ClusteringEntropy.Splits <- function (x, p = NULL, sum = TRUE) {
 }
 
 #' @export
-ClusteringEntropy.NULL <- function (x, p = NULL, sum = TRUE) NULL
+ClusteringEntropy.NULL <- function(x, p = NULL, sum = TRUE) NULL
 
 #' @rdname TreeInfo
 #' @export
-ClusteringInfo.phylo <- function (x, p = NULL, sum = TRUE) {
+ClusteringInfo.phylo <- function(x, p = NULL, sum = TRUE) {
   splits <- as.Splits(x)
   ClusteringInfo.Splits(splits, p = .GetPFromLabels(x, p, splits), sum)
 }
 
 #' @rdname TreeInfo
 #' @export
-ClusteringInfo.list <- function (x, p = NULL, sum = TRUE)
+ClusteringInfo.list <- function(x, p = NULL, sum = TRUE)
     vapply(as.Splits(x), ClusteringInfo.Splits, double(1L), p = p, sum)
 
 #' @rdname TreeInfo
@@ -297,13 +297,13 @@ ClusteringInfo.multiPhylo <- ClusteringInfo.list
 
 #' @rdname TreeInfo
 #' @export
-ClusteringInfo.Splits <- function (x, p = NULL, sum = TRUE) {
+ClusteringInfo.Splits <- function(x, p = NULL, sum = TRUE) {
   nLeaves <- attr(x, 'nTip')
   ClusteringEntropy.Splits(x, p, sum) * nLeaves
 }
 
 #' @export
-ClusteringInfo.NULL <- function (x, p = NULL, sum = TRUE) NULL
+ClusteringInfo.NULL <- function(x, p = NULL, sum = TRUE) NULL
 
 #' @rdname TreeInfo
 #' 
@@ -328,7 +328,7 @@ ClusteringInfo.NULL <- function (x, p = NULL, sum = TRUE) NULL
 #' LabelSplits(cons, signif(ClusteringInfo(cons, p, sum = FALSE), 4))
 #' ConsensusInfo(trees, 'clustering')
 #' @export
-ConsensusInfo <- function (trees, info = 'phylogenetic', p = 0.5,
+ConsensusInfo <- function(trees, info = 'phylogenetic', p = 0.5,
                            check.tips = TRUE) {
   safeP <- min(1, max(0.5, p))
   if (safeP != p) {

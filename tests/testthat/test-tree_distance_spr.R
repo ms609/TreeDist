@@ -35,7 +35,7 @@ test_that("SPR.dist called safely", {
   trs12 <- structure(list(tr1, tr2), class = 'multiPhylo')
   trs123 <- structure(list('one' = tr1, 'two' = tr2, 'thr' = tr3),
                       class = 'multiPhylo')
-  SprpS <- function (...) SPRDist(..., symmetric = TRUE)
+  SprpS <- function(...) SPRDist(..., symmetric = TRUE)
   expect_equal(SprpS(tr1, tr3), SprpS(tr3, tr1))
   expect_equal(2L, length(SprpS(trs12, tr3)))
   expect_equal(SprpS(trs12, tr3), SprpS(tr3, trs12))

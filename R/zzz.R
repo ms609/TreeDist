@@ -1,4 +1,4 @@
-.onUnload <- function (libpath) {
+.onUnload <- function(libpath) {
   StopParallel()
   library.dynam.unload("TreeDist", libpath)
 }

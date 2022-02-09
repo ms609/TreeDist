@@ -177,13 +177,13 @@
 #' @encoding UTF-8
 #' @family tree distances
 #' @export
-TreeDistance <- function (tree1, tree2 = tree1) {
+TreeDistance <- function(tree1, tree2 = tree1) {
   ClusteringInfoDistance(tree1, tree2, normalize = TRUE, reportMatching = FALSE)
 }
 
 #' @rdname TreeDistance
 #' @export
-SharedPhylogeneticInfo <- function (tree1, tree2 = NULL, normalize = FALSE,
+SharedPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                                     reportMatching = FALSE, diag = TRUE) {
   unnormalized <- CalculateTreeDistance(SharedPhylogeneticInfoSplits, tree1,
                                         tree2, reportMatching = reportMatching)
@@ -200,7 +200,7 @@ SharedPhylogeneticInfo <- function (tree1, tree2 = NULL, normalize = FALSE,
 
 #' @rdname TreeDistance
 #' @export
-DifferentPhylogeneticInfo <- function (tree1, tree2 = NULL, normalize = FALSE,
+DifferentPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                                        reportMatching = FALSE) {
   spi <- SharedPhylogeneticInfo(tree1, tree2, normalize = FALSE, diag = FALSE,
                                 reportMatching = reportMatching)
@@ -225,7 +225,7 @@ PhylogeneticInfoDistance <- DifferentPhylogeneticInfo
 #' @rdname TreeDistance
 #' @aliases ClusteringInfoDist
 #' @export
-ClusteringInfoDistance <- function (tree1, tree2 = NULL, normalize = FALSE,
+ClusteringInfoDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
                                        reportMatching = FALSE) {
   mci <- MutualClusteringInfo(tree1, tree2, normalize = FALSE, diag = FALSE,
                               reportMatching = reportMatching)
@@ -253,7 +253,7 @@ ClusteringInfoDist <- ClusteringInfoDistance
 #' @importFrom stats sd
 #' @importFrom TreeTools as.Splits
 #' @export
-ExpectedVariation <- function (tree1, tree2, samples = 1e+4) {
+ExpectedVariation <- function(tree1, tree2, samples = 1e+4) {
   info1 <- SplitwiseInfo(tree1)
   info2 <- SplitwiseInfo(tree2)
   splits1 <- as.Splits(tree1)
@@ -261,7 +261,7 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+4) {
   nTip <- attr(splits1, 'nTip')
   splits2 <- as.Splits(tree2, tipLabels)
   
-  mutualEstimates <- vapply(seq_len(samples), function (x) {
+  mutualEstimates <- vapply(seq_len(samples), function(x) {
     resampled2 <- as.Splits(splits2, sample(tipLabels))
     
     c(SharedPhylogeneticInfoSplits(splits1, resampled2),
@@ -295,7 +295,7 @@ ExpectedVariation <- function (tree1, tree2, samples = 1e+4) {
 #' @rdname TreeDistance
 #' @aliases MutualClusteringInformation
 #' @export
-MutualClusteringInfo <- function (tree1, tree2 = NULL, normalize = FALSE,
+MutualClusteringInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                                   reportMatching = FALSE, diag = TRUE) {
   unnormalized <- CalculateTreeDistance(MutualClusteringInfoSplits, tree1, tree2,
                                         reportMatching)
@@ -314,7 +314,7 @@ MutualClusteringInformation <- MutualClusteringInfo
 #' @template splits12params
 #' @param nTip (Optional) Integer specifying the number of leaves in each split.
 #' @export
-SharedPhylogeneticInfoSplits <- function (splits1, splits2,
+SharedPhylogeneticInfoSplits <- function(splits1, splits2,
                                           nTip = attr(splits1, 'nTip'),
                                           reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, nTip, cpp_shared_phylo,
@@ -323,7 +323,7 @@ SharedPhylogeneticInfoSplits <- function (splits1, splits2,
 
 #' @rdname TreeDistance
 #' @export
-MutualClusteringInfoSplits <- function (splits1, splits2,
+MutualClusteringInfoSplits <- function(splits1, splits2,
                                         nTip = attr(splits1, 'nTip'),
                                         reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, nTip, cpp_mutual_clustering,
@@ -335,4 +335,4 @@ MutualClusteringInfoSplits <- function (splits1, splits2,
 #' Used for normalization and range calculation
 #' 
 #' @keywords internal
-.PairMean <- function (x, y) (x + y) / 2L
+.PairMean <- function(x, y) (x + y) / 2L

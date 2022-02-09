@@ -20,17 +20,17 @@ test_that("Simple NNI approximations", {
   edge1 <- Postorder(tree1$edge)
   edge2 <- Postorder(tree2$edge)
   
-  Fack <- function (n) ((n - 2) * ceiling(log2(n))) + n
+  Fack <- function(n) ((n - 2) * ceiling(log2(n))) + n
                                          
-  Sorting <- function (n) {lc <- ceiling(log2(n)); n*lc-2^lc+1}
-  DegDist <- function (n) {
+  Sorting <- function(n) {lc <- ceiling(log2(n)); n*lc-2^lc+1}
+  DegDist <- function(n) {
     nif <- ceiling(log2(n / 3))
     tif <- 2 ^ nif
     tl = n - tif
     mbn <- nif + ceiling(log2(tl / 2)) + 1
     n - 2 - mbn
   }
-  Li <- function (n_edges) Sorting(n_edges + 3) + (2 * DegDist(n_edges + 3))
+  Li <- function(n_edges) Sorting(n_edges + 3) + (2 * DegDist(n_edges + 3))
   
   allMatched <- c(lower = 0L, best_lower = 0L, tight_upper = 0L,
                   best_upper = 0L, loose_upper = 0L, fack_upper = 0L,
@@ -42,7 +42,7 @@ test_that("Simple NNI approximations", {
                      best_upper = 10L, loose_upper = 18L, fack_upper = 18L,
                      li_upper = Li(5))
   
-  Test <- function (expect, tree) {
+  Test <- function(expect, tree) {
     expectation <- rep(NA_integer_, 7L)
     names(expectation) <- c('lower', 'best_lower', 'tight_upper', 'best_upper',
                             'loose_upper', 'fack_upper', 'li_upper')
@@ -132,7 +132,7 @@ test_that("NNI with lists of trees", {
   expect_equal(CompareAll(list1, NNIDist), NNIDist(list1))
   
   expect_equal(
-    vapply(NNIDist(list1), function (x) unname(as.matrix(x)[1:4, 4:1]),
+    vapply(NNIDist(list1), function(x) unname(as.matrix(x)[1:4, 4:1]),
            matrix(0,4,4)),
     NNIDist(list1, rev(list1)),
     ignore_attr = TRUE
@@ -150,10 +150,10 @@ test_that("NNIDiameter() is sane", {
   expect_true(is.na(NNIDiameter(1)[, 'exact']))
   expect_equal(c(exact = 10L), NNIDiameter(BalancedTree(8))[, 'exact'])
   
-  FackMin <- function (n) ceiling(0.25 * lfactorial(n) / log(2))
+  FackMin <- function(n) ceiling(0.25 * lfactorial(n) / log(2))
   exacts <- c(0, 0, 0, 1, 3, 5, 7, 10, 12, 15, 18, 21)
   liMaxes <- c(0, 1, 3, 5, 8, 13, 16, 21, 25, 31, 37, 43, 47, 53, 59, 65)
-  FackMax <- function (n) n*ceiling(log2(n)) + n - (2 * ceiling(log2(n)))
+  FackMax <- function(n) n*ceiling(log2(n)) + n - (2 * ceiling(log2(n)))
   n <- 4:8
   expect_equal(cbind(
     liMin = n - 3L,

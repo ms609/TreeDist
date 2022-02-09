@@ -31,7 +31,7 @@
 #' @importFrom parallel makeCluster
 #' @importFrom cli cli_alert_success cli_alert_danger
 #' @export
-StartParallel <- function (...) {
+StartParallel <- function(...) {
   cl <- makeCluster(...)
   cli_alert_success("Started cluster")
   options('TreeDist-cluster' = cl)
@@ -62,7 +62,7 @@ GetParallel <- function(cl) {
 #' @importFrom parallel stopCluster
 #' @return `StopParallel()` returns `TRUE` if a cluster was destroyed,
 #' `FALSE` otherwise.
-StopParallel <- function () {
+StopParallel <- function() {
   cluster <- getOption('TreeDist-cluster')
   if (!is.null(cluster)) {
     stopCluster(cluster)
