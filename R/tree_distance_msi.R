@@ -1,6 +1,6 @@
 #' @rdname TreeDistance
 #' @export
-MatchingSplitInfo <- function (tree1, tree2 = NULL, normalize = FALSE,
+MatchingSplitInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                                reportMatching = FALSE, diag = TRUE) {
   unnormalized <- CalculateTreeDistance(MatchingSplitInfoSplits, tree1,
                                         tree2, reportMatching)
@@ -16,7 +16,7 @@ MatchingSplitInfo <- function (tree1, tree2 = NULL, normalize = FALSE,
 
 #' @rdname TreeDistance
 #' @export
-MatchingSplitInfoDistance <- function (tree1, tree2 = NULL, 
+MatchingSplitInfoDistance <- function(tree1, tree2 = NULL, 
                                        normalize = FALSE,
                                        reportMatching = FALSE) {
   msi <- MatchingSplitInfo(tree1, tree2, normalize = FALSE, diag = FALSE,
@@ -37,7 +37,7 @@ MatchingSplitInfoDistance <- function (tree1, tree2 = NULL,
 
 #' @rdname TreeDistance
 #' @export
-MatchingSplitInfoSplits <- function (splits1, splits2,
+MatchingSplitInfoSplits <- function(splits1, splits2,
                                      nTip = attr(splits1, 'nTip'),
                                      reportMatching = FALSE) {
   

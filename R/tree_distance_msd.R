@@ -36,14 +36,14 @@
 #' @family tree distances
 #' 
 #' @export
-MatchingSplitDistance <- function (tree1, tree2 = NULL, normalize = FALSE,
+MatchingSplitDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
                                    reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(MatchingSplitDistanceSplits, tree1, tree2, 
                                         reportMatching)
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                InfoInTree = function (X) stop("Please specify a function to generate a normalizing constant"),
+                InfoInTree = function(X) stop("Please specify a function to generate a normalizing constant"),
                 Combine = max)
 }
 
@@ -51,7 +51,7 @@ MatchingSplitDistance <- function (tree1, tree2 = NULL, normalize = FALSE,
 #' @inheritParams SharedPhylogeneticInfoSplits
 #' @useDynLib TreeDist, .registration = TRUE
 #' @export
-MatchingSplitDistanceSplits <- function (splits1, splits2, 
+MatchingSplitDistanceSplits <- function(splits1, splits2, 
                                          nTip = attr(splits1, 'nTip'),
                                          normalize = TRUE, 
                                          reportMatching = FALSE) {

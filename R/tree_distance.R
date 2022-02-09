@@ -31,7 +31,7 @@
 #' @encoding UTF-8
 #' @export
 #' @references \insertRef{Jonker1987}{TreeDist}
-GeneralizedRF <- function (splits1, splits2, nTip, PairScorer, 
+GeneralizedRF <- function(splits1, splits2, nTip, PairScorer, 
                            maximize, reportMatching, ...) {
   nSplits1 <- dim(splits1)[1]
   nSplits2 <- dim(splits2)[1]
@@ -75,7 +75,7 @@ GeneralizedRF <- function (splits1, splits2, nTip, PairScorer,
   ret
 }
 
-.MaxValue <- function (tree1, tree2, Value) {
+.MaxValue <- function(tree1, tree2, Value) {
   value1 <- Value(tree1)
   if (is.null(tree2)) {
     maxValue <- outer(value1, value1, '+')[, , drop = TRUE]
@@ -103,7 +103,7 @@ GeneralizedRF <- function (splits1, splits2, nTip, PairScorer,
 #'                  c(A, A, B, B, B, A))
 #' @template MRS
 #' @export
-SplitsCompatible <- function (split1, split2) {
+SplitsCompatible <- function(split1, split2) {
   # Return:
   (
     all (split1[split2]) ||

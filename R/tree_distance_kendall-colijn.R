@@ -61,11 +61,11 @@
 #' @importFrom utils combn
 #' @encoding UTF-8
 #' @export
-KendallColijn <- function (tree1, tree2 = NULL, Vector = KCVector) {
+KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
   
-  FunValue <- function (nTip) double(nTip * (nTip - 1L) / 2L)
+  FunValue <- function(nTip) double(nTip * (nTip - 1L) / 2L)
   
-  EuclidianDistance <- function (x) sqrt(sum(x * x))
+  EuclidianDistance <- function(x) sqrt(sum(x * x))
   
   if (inherits(tree1, 'phylo')) {
     if (inherits(tree2, 'phylo')) {
@@ -97,7 +97,7 @@ KendallColijn <- function (tree1, tree2 = NULL, Vector = KCVector) {
       
       ret <- structure(class = 'dist', Size = nTree,
                        diag = FALSE, upper = FALSE,
-                       apply(is, 2, function (i)
+                       apply(is, 2, function(i)
                          EuclidianDistance(treeVec[, i[1]] - treeVec[, i[2]])))
       # Return:
       ret
@@ -106,7 +106,7 @@ KendallColijn <- function (tree1, tree2 = NULL, Vector = KCVector) {
       vector1 <- vapply(tree1, Vector, FunValue(length(tree1[[1]]$tip.label)))
       vector2 <- vapply(tree2, Vector, FunValue(length(tree2[[1]]$tip.label)))
       apply(vector2, 2, function(i) 
-        apply(vector1, 2, function (j) 
+        apply(vector1, 2, function(j) 
           EuclidianDistance(i - j)))
     }
   }
@@ -118,7 +118,7 @@ KendallColijn <- function (tree1, tree2 = NULL, Vector = KCVector) {
 #' @importFrom TreeTools AllAncestors Preorder
 #' @importFrom utils combn
 #' @export
-KCVector <- function (tree) {
+KCVector <- function(tree) {
   tree <- Preorder(tree)
   edge <- tree$edge
   parent <- edge[, 1L]
@@ -142,7 +142,7 @@ KCVector <- function (tree) {
 #' @importFrom TreeTools AllAncestors Preorder
 #' @importFrom utils combn
 #' @export
-PathVector <- function (tree) {
+PathVector <- function(tree) {
   tree <- Preorder(tree)
   edge <- tree$edge
   parent <- edge[, 1L]
@@ -172,7 +172,7 @@ PathVector <- function (tree) {
 #' (forthcoming).
 #' @importFrom TreeTools as.Splits
 #' @export
-SplitVector <- function (tree) {
+SplitVector <- function(tree) {
   tipLabel <- tree$tip.label
   nTip <- length(tipLabel)
   splits <- as.logical(as.Splits(tree, tipLabel[order(tipLabel)]))
@@ -201,19 +201,19 @@ SplitVector <- function (tree) {
 #' @importFrom TreeTools PectinateTree
 #' @rdname KendallColijn
 #' @export
-KCDiameter <- function (tree) UseMethod('KCDiameter')
+KCDiameter <- function(tree) UseMethod('KCDiameter')
 
 #' @importFrom TreeTools NTip
 #' @export
-KCDiameter.phylo <- function (tree) {
+KCDiameter.phylo <- function(tree) {
   KCDiameter.numeric(NTip(tree))
 }
 
 #' @export
-KCDiameter.numeric <- function (tree) {
+KCDiameter.numeric <- function(tree) {
   nTip <- as.integer(tree)
   mat <- matrix(seq_len(nTip), nTip, nTip)
-  Euclid <- function (x, y) sqrt(sum((x - y) ^ 2))
+  Euclid <- function(x, y) sqrt(sum((x - y) ^ 2))
   
   # Return:
   Euclid(nTip - mat[lower.tri(mat)] + 1L, t(mat)[lower.tri(mat)])
@@ -223,6 +223,6 @@ KCDiameter.numeric <- function (tree) {
 KCDiameter.multiPhylo <- KCDiameter.phylo
 
 #' @export
-KCDiameter.list <- function (tree) {
+KCDiameter.list <- function(tree) {
   lapply(tree, KCDiameter)
 }

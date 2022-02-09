@@ -48,7 +48,7 @@
 #' 
 #' @family tree distances
 #' @export
-MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
+MASTSize <- function(tree1, tree2 = tree1, rooted = TRUE) {
   .TreeDistance(.MASTSizeSingle, tree1, tree2, rooted = rooted,
                 # Checks not necessary, as tip labels need not match.
                 checks = FALSE)
@@ -56,7 +56,7 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
 
 #' @importFrom ape drop.tip
 #' @importFrom TreeTools Postorder RenumberTips TreeIsRooted RootOnNode
-.MASTSizeSingle <- function (tree1, tree2, rooted = TRUE,
+.MASTSizeSingle <- function(tree1, tree2, rooted = TRUE,
                              tipLabels = tree1$tip.label,
                              ...) {
   label1 <- tipLabels
@@ -74,7 +74,7 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
     }
     postorderEdge1 <- Postorder(tree1$edge)
     tree2 <- Preorder(tree2)
-    max(vapply(tree2$edge[, 2], function (node)
+    max(vapply(tree2$edge[, 2], function(node)
       .MASTSizeEdges(postorderEdge1,
                      RootOnNode(tree2, node = node, TRUE)$edge,
                      nTip = nTip), 0L))
@@ -94,7 +94,7 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
 #' @param edge2 Edge matrix of tree 2.
 #' @param nTip Integer specifying the number of leaves in each split.
 #' @keywords internal
-.MASTSizeEdges <- function (edge1, edge2, nTip) {
+.MASTSizeEdges <- function(edge1, edge2, nTip) {
   cpp_mast(edge1 - 1L, Postorder(edge2) - 1L, nTip)
 }
 
@@ -103,7 +103,7 @@ MASTSize <- function (tree1, tree2 = tree1, rooted = TRUE) {
 #' information content, in bits, of the maximum agreement subtree.
 #' @importFrom TreeTools Log2Rooted.int Log2Unrooted.int
 #' @export
-MASTInfo <- function (tree1, tree2 = tree1, rooted = TRUE) {
+MASTInfo <- function(tree1, tree2 = tree1, rooted = TRUE) {
   size <- MASTSize(tree1, tree2, rooted = rooted)
   ret <- if (rooted) Log2Rooted.int(size) else Log2Unrooted.int(size)
   if (!is.null(attributes(size))) attributes(ret) <- attributes(size)

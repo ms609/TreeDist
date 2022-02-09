@@ -53,7 +53,7 @@
 #' @importFrom phangorn path.dist
 #' @importFrom TreeTools Postorder
 #' @export
-PathDist <- function (tree1, tree2 = NULL) {
+PathDist <- function(tree1, tree2 = NULL) {
   if (inherits(tree1, 'phylo')) {
     tree1 <- Postorder(tree1)
   } else {

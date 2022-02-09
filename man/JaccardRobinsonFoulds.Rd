@@ -122,7 +122,7 @@ tree2 <- ape::rtree(10)
 JaccardRobinsonFoulds(tree1, tree2, k = 2, allowConflict = FALSE)
 JaccardRobinsonFoulds(tree1, tree2, k = 2, allowConflict = TRUE)
 
-JRF2 <- function (tree1, tree2, ...) 
+JRF2 <- function(tree1, tree2, ...) 
   JaccardRobinsonFoulds(tree1, tree2, k = 2, allowConflict = FALSE, ...)
   
 VisualizeMatching(JRF2, tree1, tree2, matchZeros = FALSE)

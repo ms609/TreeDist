@@ -62,7 +62,7 @@
 #' @encoding UTF-8
 #' @importFrom TreeTools NSplits SplitsInBinaryTree
 #' @export
-NyeSimilarity <- function (tree1, tree2 = NULL, similarity = TRUE,
+NyeSimilarity <- function(tree1, tree2 = NULL, similarity = TRUE,
                            normalize = FALSE,
                            normalizeMax = !is.logical(normalize),
                            reportMatching = FALSE,
@@ -90,12 +90,12 @@ NyeSimilarity <- function (tree1, tree2 = NULL, similarity = TRUE,
   }
 }
 
-.MeanOfTwo <- function (x, y) (x + y) / 2L
+.MeanOfTwo <- function(x, y) (x + y) / 2L
 
 #' @rdname NyeSimilarity
 #' @inheritParams SharedPhylogeneticInfoSplits
 #' @export
-NyeSplitSimilarity <- function (splits1, splits2, 
+NyeSplitSimilarity <- function(splits1, splits2, 
                                 nTip = attr(splits1, 'nTip'),
                                 reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, nTip, cpp_jaccard_similarity, k = 1L,
@@ -164,7 +164,7 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' JaccardRobinsonFoulds(tree1, tree2, k = 2, allowConflict = FALSE)
 #' JaccardRobinsonFoulds(tree1, tree2, k = 2, allowConflict = TRUE)
 #' 
-#' JRF2 <- function (tree1, tree2, ...) 
+#' JRF2 <- function(tree1, tree2, ...) 
 #'   JaccardRobinsonFoulds(tree1, tree2, k = 2, allowConflict = FALSE, ...)
 #'   
 #' VisualizeMatching(JRF2, tree1, tree2, matchZeros = FALSE)
@@ -175,7 +175,7 @@ NyeSplitSimilarity <- function (splits1, splits2,
 #' @encoding UTF-8
 #' @importFrom TreeTools NSplits
 #' @export
-JaccardRobinsonFoulds <- function (tree1, tree2 = NULL, k = 1L, 
+JaccardRobinsonFoulds <- function(tree1, tree2 = NULL, k = 1L, 
                                    allowConflict = TRUE, similarity = FALSE,
                                    normalize = FALSE, reportMatching = FALSE) {
   unnormalized <- CalculateTreeDistance(JaccardSplitSimilarity, tree1, tree2, 
@@ -193,7 +193,7 @@ JaccardRobinsonFoulds <- function (tree1, tree2 = NULL, k = 1L,
 #' @rdname JaccardRobinsonFoulds
 #' @inheritParams SharedPhylogeneticInfoSplits
 #' @export
-JaccardSplitSimilarity <- function (splits1, splits2,
+JaccardSplitSimilarity <- function(splits1, splits2,
                                     nTip = attr(splits1, 'nTip'),
                                     k = 1L, allowConflict = TRUE,
                                     reportMatching = FALSE) {

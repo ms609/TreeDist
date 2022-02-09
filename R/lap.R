@@ -47,7 +47,7 @@
 #'
 #' LAPJV(problem)
 #' @export
-LAPJV <- function (x) {
+LAPJV <- function(x) {
   dims <- dim(x)
   if (length(dims) == 2L && 
       identical(dims[1], dims[2])) {

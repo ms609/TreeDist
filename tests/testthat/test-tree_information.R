@@ -1,19 +1,19 @@
 library('TreeTools')
 
 test_that("SplitwiseInfo() / ClusteringInfo() handle probabilities", {
-  Tree <- function (txt) ape::read.tree(text = txt)
+  Tree <- function(txt) ape::read.tree(text = txt)
   tree <- Tree('((a, b)60, (c, d)60);')
   treeP <- Tree('((a, b)0.60, (c, d)0.60);')
   treeProfile <- list(Tree('((a, b), (c, d));'),
                       Tree('(a, b, c, d);'),
                       Tree('((a, d), (c, b));'))[c(1, 1, 1, 2, 3)]
   
-  Test <- function (Expect, tree, p = NULL, ...) {
+  Test <- function(Expect, tree, p = NULL, ...) {
     Expect(..., SplitwiseInfo(tree, p))
     Expect(..., ClusteringInfo(tree, p))
     Expect(..., ClusteringEntropy(tree, p))
   }
-  Clust <- function (tree, ...) {
+  Clust <- function(tree, ...) {
     expect_equal(ClusteringInfo(tree, ..., sum = TRUE),
                  sum(ClusteringInfo(tree, ..., sum = FALSE)))
     expect_equal(ClusteringEntropy(tree, ..., sum = TRUE),
@@ -78,7 +78,7 @@ test_that("SplitwiseInfo() / ClusteringInfo() handle probabilities", {
 
 test_that("SplitwiseInfo() / ClusteringInfo(sum = FALSE)", {
   splits <- as.Splits(BalancedTree(8))
-  Test <- function (x) {
+  Test <- function(x) {
     expect_equal(length(x), length(splits))
     expect_equal(names(x), names(splits))
   }

@@ -16,9 +16,9 @@ library('TreeDist')
 standardMargin <- c(0.4, 0.4, 0.8, 0.4)
 cbPalette8 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
                 "#0072B2", "#D55E00", "#CC79A7")
-TwoTreePlot <- function () par(mfrow = c(1, 2), mar = standardMargin, cex = 0.9)
+TwoTreePlot <- function() par(mfrow = c(1, 2), mar = standardMargin, cex = 0.9)
 
-Plot <- function (tree, tree2 = NULL, highlight = character(0),
+Plot <- function(tree, tree2 = NULL, highlight = character(0),
                   prune = if (is.null(tree2)) integer(0) 
                           else list(integer(0), integer(0))
                   ) {

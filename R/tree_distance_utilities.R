@@ -11,7 +11,7 @@
 #' @importFrom TreeTools as.Splits TipLabels
 #' @importFrom utils combn
 #' @export
-CalculateTreeDistance <- function (Func, tree1, tree2 = NULL,
+CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
                                    reportMatching = FALSE, ...) {
   supportedClasses <- c('phylo', 'Splits')
   
@@ -60,18 +60,18 @@ CalculateTreeDistance <- function (Func, tree1, tree2 = NULL,
   }
 }
 
-.SplitDistanceOneOne <- function (Func, split1, split2, tipLabels, 
+.SplitDistanceOneOne <- function(Func, split1, split2, tipLabels, 
                                  nTip = length(tipLabels), reportMatching, ...) {
   Func(as.Splits(split1, asSplits = reportMatching),
        as.Splits(split2, tipLabels = tipLabels, asSplits = reportMatching),
        nTip = nTip, reportMatching = reportMatching, ...)
 }
 
-.SplitDistanceOneMany <- function (Func, oneSplit, manySplits, 
+.SplitDistanceOneMany <- function(Func, oneSplit, manySplits, 
                                   tipLabels, nTip = length(tipLabels), ...) {
   s1 <- as.Splits(oneSplit, tipLabels = tipLabels, asSplits = FALSE)
   vapply(manySplits,
-         function (s2) Func(s1, as.Splits(s2, tipLabels = tipLabels,
+         function(s2) Func(s1, as.Splits(s2, tipLabels = tipLabels,
                                           asSplits = FALSE),
                             nTip = nTip, ...),
          double(1))
@@ -79,7 +79,7 @@ CalculateTreeDistance <- function (Func, tree1, tree2 = NULL,
 
 #' @importFrom parallel parCapply
 #' @importFrom cli cli_progress_bar cli_progress_update
-.SplitDistanceAllPairs <- function (Func, splits1, tipLabels,
+.SplitDistanceAllPairs <- function(Func, splits1, tipLabels,
                                     nTip = length(tipLabels), ...) {
   splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
   nSplits <- length(splits)
@@ -90,11 +90,11 @@ CalculateTreeDistance <- function (Func, tree1, tree2 = NULL,
   if (is.null(cluster)) {
     cli_progress_bar("Calculating distances", total = ncol(is))
   }
-  .PairDist <- function (i) {
+  .PairDist <- function(i) {
     Func(splits[[i[1]]], splits[[i[2]]],
          nTip = nTip, reportMatching = FALSE, ...)
   }
-  .CliPairDist <- function (i) { # TODO if cli possible from parallel, merge.
+  .CliPairDist <- function(i) { # TODO if cli possible from parallel, merge.
     cli_progress_update(1, .envir = parent.frame(2))
     Func(splits[[i[1]]], splits[[i[2]]],
          nTip = nTip, reportMatching = FALSE, ...)
@@ -111,7 +111,7 @@ CalculateTreeDistance <- function (Func, tree1, tree2 = NULL,
   ret
 }
 
-.SplitDistanceManyMany <- function (Func, splits1, splits2, 
+.SplitDistanceManyMany <- function(Func, splits1, splits2, 
                                     tipLabels, nTip = length(tipLabels), ...) {
   splits1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
   splits2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = FALSE)
@@ -129,7 +129,7 @@ CalculateTreeDistance <- function (Func, tree1, tree2 = NULL,
 #' @keywords internal
 #' @seealso [`CalculateTreeDistance`]
 #' @export
-.TreeDistance <- function (Func, tree1, tree2, checks = TRUE, ...) {
+.TreeDistance <- function(Func, tree1, tree2, checks = TRUE, ...) {
   single1 <- inherits(tree1, 'phylo')
   labels1 <- TipLabels(tree1, single = TRUE)
   nTip <- length(labels1)
@@ -169,7 +169,7 @@ CalculateTreeDistance <- function (Func, tree1, tree2 = NULL,
   }
 }
 
-.TreeDistanceOneMany <- function (Func, oneTree, manyTrees, tipLabels, 
+.TreeDistanceOneMany <- function(Func, oneTree, manyTrees, tipLabels, 
                                   nTip = length(tipLabels), 
                                   FUN.VALUE = Func(manyTrees[[1]], oneTree,
                                                    nTip = nTip, 
@@ -179,7 +179,7 @@ CalculateTreeDistance <- function (Func, tree1, tree2 = NULL,
                             nTip = nTip, ..., FUN.VALUE = FUN.VALUE)
 }
 
-.TreeDistanceManyMany <- function (Func, trees1, trees2, tipLabels, 
+.TreeDistanceManyMany <- function(Func, trees1, trees2, tipLabels, 
                                    nTip = length(tipLabels),
                                    FUN.VALUE = Func(trees1[[1]], trees2[[1]],
                                                     nTip = nTip, 
@@ -202,7 +202,7 @@ CalculateTreeDistance <- function (Func, tree1, tree2 = NULL,
   }
 }
 
-.CheckLabelsSame <- function (labelList) {
+.CheckLabelsSame <- function(labelList) {
   nTip <- unique(vapply(labelList, length, 0L))
   if (length(nTip) != 1) {
     stop("All trees must contain the same number of leaves.")
@@ -232,7 +232,7 @@ CalculateTreeDistance <- function (Func, tree1, tree2 = NULL,
 #' Entropy(rep(1/4, 4)) # = 2
 #' @template MRS
 #' @export
-Entropy <- function (...) {
+Entropy <- function(...) {
   p <- c(...)
   p <- p[p > 0]
   -sum(p * log2(p))
@@ -277,28 +277,28 @@ Entropy <- function (...) {
 #' @importFrom parallel parLapply
 #' @importFrom stats dist
 #' @export
-CompareAll <- function (x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
+CompareAll <- function(x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
                         ...) {
   nTree <- length(x)
   countUp <- seq_len(nTree - 1)
   i <- x[rep(countUp, rev(countUp))]
-  j <- x[unlist(sapply(countUp, function (n) n + seq_len(nTree - n)))]
+  j <- x[unlist(sapply(countUp, function(n) n + seq_len(nTree - n)))]
   
   cluster <- getOption("TreeDist-cluster")
   ret <- if (is.null(cluster)) {
     cli_progress_bar('Comparing', total = length(i))
-    vapply(seq_along(i), function (k) {
+    vapply(seq_along(i), function(k) {
       cli_progress_update(1, .envir = parent.frame(2))
       Func(i[[k]], j[[k]], ...)
       }, FUN.VALUE)
   } else {
     do.call('cbind', 
             parLapply(cluster, seq_along(i), 
-                      function (k, Func) Func(i[[k]], j[[k]]),
+                      function(k, Func) Func(i[[k]], j[[k]]),
                       Func = Func))
   }
   
-  .WrapReturn <- function (dists) {
+  .WrapReturn <- function(dists) {
     structure(dists,
               Size = nTree,
               Labels = names(x),
@@ -312,7 +312,7 @@ CompareAll <- function (x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
     .WrapReturn(ret)
   } else {
     structure(lapply(seq_len(dim(ret)[1]), 
-                     function (i) .WrapReturn(unlist(ret[i, ]))),
+                     function(i) .WrapReturn(unlist(ret[i, ]))),
               names = rownames(ret))
   }
 }
@@ -330,11 +330,11 @@ CompareAll <- function (x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
 #' @keywords internal
 #' @template MRS
 #' @export
-NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree, 
+NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree, 
                            infoInBoth = NULL,
                            how = TRUE, Combine = '+', ...) {
   
-  CombineInfo <- function (tree1Info, tree2Info, Combiner = Combine) {
+  CombineInfo <- function(tree1Info, tree2Info, Combiner = Combine) {
     if (length(tree1Info) == 1 || length(tree2Info) == 1) {
       mapply(Combiner, tree1Info, tree2Info)
     } else {
@@ -377,7 +377,7 @@ NormalizeInfo <- function (unnormalized, tree1, tree2, InfoInTree,
 #' @template MRS
 #' @keywords internal
 #' @export
-ReportMatching <- function (splits1, splits2, realMatch = TRUE) {
+ReportMatching <- function(splits1, splits2, realMatch = TRUE) {
   paste(as.character(splits1), ifelse(realMatch, '=>', '..'),
         as.character(splits2))
 }

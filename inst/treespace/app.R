@@ -41,7 +41,7 @@ palettes <- list("#91aaa7",
 
 badToGood <- rev(c("#1AB958", "#23B956", "#2BB954", "#31B952", "#37B850", "#3CB84E", "#41B84C", "#45B74A", "#49B749", "#4DB747", "#51B645", "#54B643", "#58B641", "#5BB53F", "#5FB53D", "#62B53C", "#65B43A", "#68B438", "#6BB336", "#6DB335", "#70B333", "#73B231", "#76B230", "#78B12E", "#7BB12C", "#7DB02B", "#80B029", "#82AF28", "#85AF26", "#87AE25", "#8AAE23", "#8CAD22", "#8EAD21", "#91AC1F", "#93AC1E", "#95AB1D", "#97AB1C", "#9AAA1B", "#9CAA1A", "#9EA919", "#A0A918", "#A2A818", "#A4A717", "#A6A716", "#A8A616", "#AAA616", "#ACA515", "#AEA415", "#B0A415", "#B2A315", "#B4A315", "#B6A216", "#B8A116", "#B9A117", "#BBA017", "#BD9F18", "#BF9F18", "#C19E19", "#C29D1A", "#C49D1B", "#C69C1C", "#C79B1D", "#C99A1E", "#CB9A1F", "#CC9920", "#CE9822", "#CF9823", "#D19724", "#D29625", "#D49626", "#D59528", "#D79429", "#D8932A", "#D9932C", "#DB922D", "#DC912E", "#DD9130", "#DF9031", "#E08F33", "#E18F34", "#E28E35", "#E38D37", "#E58C38", "#E68C3A", "#E78B3B", "#E88A3D", "#E98A3E", "#EA8940", "#EB8841", "#EC8843", "#ED8744", "#EE8746", "#EE8647", "#EF8549", "#F0854A", "#F1844C", "#F2844D", "#F2834F", "#F38350", "#F48252", "#F48253", "#F58155", "#F58157", "#F68058", "#F6805A", "#F77F5B", "#F77F5D", "#F87E5E"))
 
-Reference <- function (authors, year, title, journal = '',
+Reference <- function(authors, year, title, journal = '',
                        volume = NULL, pages = NULL, doi = NULL,
                        publisher = NULL, editors = NULL) {
   nAuth <- length(authors)
@@ -308,10 +308,11 @@ ui <- fluidPage(theme = 'treespace.css',
                       value = 90),
           checkboxGroupInput("display", "Display settings",
                              list(
-                               "Clusters' convex hulls" = 'hulls',
-                               'Cluster consensus trees' = 'cons',
-                               'Tree numbers' = 'labelTrees',
-                               'Interactive 3D plot' = 'show3d'
+                               "Depict MST stress" = "mstStrain",
+                               "Clusters' convex hulls" = "hulls",
+                               "Cluster consensus trees" = "cons",
+                               "Tree numbers" = "labelTrees",
+                               "Interactive 3D plot" = "show3d"
                              ),
                              character(0)),
           sliderInput('pt.cex', 'Point size',
@@ -373,7 +374,7 @@ server <- function(input, output, session) {
   ##############################################################################
   # Reset cache
   ##############################################################################
-  ClearClusters <- function () {
+  ClearClusters <- function() {
     r$clust_cid = NULL
     r$clust_pid = NULL
     r$clust_qd = NULL
@@ -382,7 +383,7 @@ server <- function(input, output, session) {
     r$clust_rf = NULL
   }
   
-  ClearMST <- function () {
+  ClearMST <- function() {
     r$mst_cid = NULL
     r$mst_pid = NULL
     r$mst_qd = NULL
@@ -391,7 +392,7 @@ server <- function(input, output, session) {
     r$mst_rf = NULL
   }
   
-  ClearDistances <- function () {
+  ClearDistances <- function() {
     r$dist_cid = NULL
     r$dist_pid = NULL
     r$dist_qd = NULL
@@ -500,7 +501,7 @@ server <- function(input, output, session) {
     as.integer(seq(keptRange()[1], keptRange()[2], by = 2^input$thinTrees))
   })
   
-  TreeNumberUpdate <- function () {
+  TreeNumberUpdate <- function() {
     ClearDistances()
     nTrees <- length(r$allTrees)
     updateSliderInput(session, 'mst', value = min(500, nTrees), max = nTrees)
@@ -619,7 +620,7 @@ server <- function(input, output, session) {
     }
   })
   
-  projId <- function () {
+  projId <- function() {
     paste0('proj_', input$mapping, '_', input$distance, '_',
            if(mappingUsesNeighb()) input$nNeighb)
   }
@@ -658,7 +659,7 @@ server <- function(input, output, session) {
     qual_id <- paste0('qual_', projId())
     if (is.null(r[[qual_id]])) {
       r[[qual_id]] <- withProgress(message = "Estimating mapping quality", {
-        vapply(seq_len(nProjDim()), function (k) {
+        vapply(seq_len(nProjDim()), function(k) {
           incProgress(1 / nProjDim())
           MappingQuality(distances(), dist(mapping()[, seq_len(k)]), 10)
         }, numeric(4))
@@ -667,7 +668,7 @@ server <- function(input, output, session) {
     r[[qual_id]]
   })
   
-  LogScore <- function (x) {
+  LogScore <- function(x) {
     (-(log10(1 - x + 1e-2))) / 2
   }
   
@@ -748,11 +749,11 @@ server <- function(input, output, session) {
         
         withProgress(message = "Clustering", {
           if ('pam' %in% input$clustering) {
-            pamClusters <- lapply(possibleClusters, function (k) {
+            pamClusters <- lapply(possibleClusters, function(k) {
               incProgress(kInc, detail = 'PAM clustering')
               cluster::pam(dists, k = k)
             })
-            pamSils <- vapply(pamClusters, function (pamCluster) {
+            pamSils <- vapply(pamClusters, function(pamCluster) {
               incProgress(kInc, detail = 'PAM silhouettes')
               mean(cluster::silhouette(pamCluster)[, 3])
             }, double(1))
@@ -765,8 +766,8 @@ server <- function(input, output, session) {
           if ('hmm' %in% input$clustering) {
             incProgress(methInc / 2, detail = 'minimax clustering')
             hTree <- protoclust::protoclust(dists)
-            hClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
-            hSils <- vapply(hClusters, function (hCluster) {
+            hClusters <- lapply(possibleClusters, function(k) cutree(hTree, k = k))
+            hSils <- vapply(hClusters, function(hCluster) {
               incProgress(kInc / 2, detail = 'minimax silhouettes')
               mean(cluster::silhouette(hCluster, dists)[, 3])
             }, double(1))
@@ -778,8 +779,8 @@ server <- function(input, output, session) {
           if ('hwd' %in% input$clustering) {
             incProgress(methInc / 2, detail = 'Ward D\ub2 clustering')
             hTree <- stats::hclust(dists, method = 'ward.D2')
-            hwdClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
-            hwdSils <- vapply(hwdClusters, function (hCluster) {
+            hwdClusters <- lapply(possibleClusters, function(k) cutree(hTree, k = k))
+            hwdSils <- vapply(hwdClusters, function(hCluster) {
               incProgress(kInc / 2, detail = 'Ward D\ub2 silhouettes')
               mean(cluster::silhouette(hCluster, dists)[, 3])
             }, double(1))
@@ -791,8 +792,8 @@ server <- function(input, output, session) {
           if ('hsi' %in% input$clustering) {
             incProgress(methInc / 2, detail = 'single clustering')
             hTree <- stats::hclust(dists, method = 'single')
-            hsiClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
-            hsiSils <- vapply(hsiClusters, function (hCluster) {
+            hsiClusters <- lapply(possibleClusters, function(k) cutree(hTree, k = k))
+            hsiSils <- vapply(hsiClusters, function(hCluster) {
               incProgress(kInc / 2, detail = 'single silhouettes')
               mean(cluster::silhouette(hCluster, dists)[, 3])
             }, double(1))
@@ -804,8 +805,8 @@ server <- function(input, output, session) {
           if ('hco' %in% input$clustering) {
             incProgress(methInc / 2, detail = 'complete clustering')
             hTree <- stats::hclust(dists, method = 'complete')
-            hcoClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
-            hcoSils <- vapply(hcoClusters, function (hCluster) {
+            hcoClusters <- lapply(possibleClusters, function(k) cutree(hTree, k = k))
+            hcoSils <- vapply(hcoClusters, function(hCluster) {
               incProgress(kInc / 2, detail = 'complete silhouettes')
               mean(cluster::silhouette(hCluster, dists)[, 3])
             }, double(1))
@@ -818,8 +819,8 @@ server <- function(input, output, session) {
           if ('hav' %in% input$clustering) {
             incProgress(methInc / 2, detail = 'average clustering')
             hTree <- stats::hclust(dists, method = 'average')
-            havClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
-            havSils <- vapply(havClusters, function (hCluster) {
+            havClusters <- lapply(possibleClusters, function(k) cutree(hTree, k = k))
+            havSils <- vapply(havClusters, function(hCluster) {
               incProgress(kInc / 2, detail = 'average silhouettes')
               mean(cluster::silhouette(hCluster, dists)[, 3])
             }, double(1))
@@ -832,8 +833,8 @@ server <- function(input, output, session) {
           if ('hmd' %in% input$clustering) {
             incProgress(methInc / 2, detail = 'median clustering')
             hTree <- stats::hclust(dists, method = 'median')
-            hmdClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
-            hmdSils <- vapply(hmdClusters, function (hCluster) {
+            hmdClusters <- lapply(possibleClusters, function(k) cutree(hTree, k = k))
+            hmdSils <- vapply(hmdClusters, function(hCluster) {
               incProgress(kInc / 2, detail = 'median silhouettes')
               mean(cluster::silhouette(hCluster, dists)[, 3])
             }, double(1))
@@ -846,8 +847,8 @@ server <- function(input, output, session) {
           if ('hct' %in% input$clustering) {
             incProgress(methInc / 2, detail = 'centroid clustering')
             hTree <- stats::hclust(dists ^ 2, method = 'centroid')
-            hctClusters <- lapply(possibleClusters, function (k) cutree(hTree, k = k))
-            hctSils <- vapply(hctClusters, function (hCluster) {
+            hctClusters <- lapply(possibleClusters, function(k) cutree(hTree, k = k))
+            hctSils <- vapply(hctClusters, function(hCluster) {
               incProgress(kInc / 2, detail = 'centroid silhouettes')
               mean(cluster::silhouette(hCluster, dists)[, 3])
             }, double(1))
@@ -858,8 +859,8 @@ server <- function(input, output, session) {
           
           if ('kmn' %in% input$clustering) {
             incProgress(methInc / 2, detail = 'K-means clustering')
-            kClusters <- lapply(possibleClusters, function (k) kmeans(dists, k))
-            kSils <- vapply(kClusters, function (kCluster) {
+            kClusters <- lapply(possibleClusters, function(k) kmeans(dists, k))
+            kSils <- vapply(kClusters, function(kCluster) {
               incProgress(kInc / 2, detail = 'K-means silhouettes')
               mean(cluster::silhouette(kCluster$cluster, dists)[, 3])
             }, double(1))
@@ -873,11 +874,11 @@ server <- function(input, output, session) {
             spectralEigens <- SpectralEigens(dists,
                                              nn = min(ncol(as.matrix(dists)) - 1L, 10),
                                              nEig = 3L)
-            specClusters <- lapply(possibleClusters, function (k) {
+            specClusters <- lapply(possibleClusters, function(k) {
               incProgress(kInc / 2, detail = 'spectral clustering')
               cluster::pam(spectralEigens, k = k)
             })
-            specSils <- vapply(specClusters, function (cluster) {
+            specSils <- vapply(specClusters, function(cluster) {
               incProgress(kInc / 2, detail = 'spectral silhouettes')
               mean(cluster::silhouette(cluster$cluster, dists)[, 3])
             }, double(1))
@@ -1026,7 +1027,7 @@ server <- function(input, output, session) {
     nLeaves() * 12 * consRows()
   })
   
-  PlotClusterCons <- function () {
+  PlotClusterCons <- function() {
     cl <- clusterings()
     par(mar = c(0.2, 0, 0.2, 0), xpd = NA)
     par(cex = 0.9)
@@ -1057,7 +1058,7 @@ server <- function(input, output, session) {
   ##############################################################################
   # Plot settings: point style
   ##############################################################################
-  PointDataStatus <- function (...) {
+  PointDataStatus <- function(...) {
     msg <- paste0(...)
     output$pt.data.status <- renderText(msg)
     output$pt.col.status <- renderText(msg)
@@ -1081,7 +1082,7 @@ server <- function(input, output, session) {
     if (input$pt.data.subsample) ret[thinnedTrees(), 1] else ret[, 1]
   })
   
-  ContinuousPtCol <- function (dat, bigDark = FALSE) {
+  ContinuousPtCol <- function(dat, bigDark = FALSE) {
     show('pt.col.scale')
     scale <- substr(hcl.colors(256, 'plasma'), 1, 7)
     if (bigDark) scale <- rev(scale)
@@ -1197,8 +1198,10 @@ server <- function(input, output, session) {
         
         # Plot MST
         if (mstSize() > 0) {
-          apply(mstEnds(), 1, function (segment)
-            lines(proj[segment, j], proj[segment, i], col = "#bbbbbb", lty = 1))
+          MSTSegments(proj[, c(j, i)], mstEnds(),
+                      col = if ("mstStrain" %in% input$display) {
+                        StrainCol(distances(), proj[, c(j, i)])
+                      } else "#bbbbbb")
         }
         
         # Add points
@@ -1226,7 +1229,7 @@ server <- function(input, output, session) {
   }
   
   mode3D <- reactive("show3d" %in% input$display)
-  PlotSize <- function () debounce(reactive(input$plotSize), 100)
+  PlotSize <- function() debounce(reactive(input$plotSize), 100)
   output$distPlot <- renderPlot({
     if (!mode3D()) {
       if (inherits(distances(), 'dist')) {
@@ -1259,7 +1262,7 @@ server <- function(input, output, session) {
           rgl::text3d(proj[, 1], proj[, 2], proj[, 3], thinnedTrees())
         }
         if (mstSize() > 0) {
-          apply(mstEnds(), 1, function (segment)
+          apply(mstEnds(), 1, function(segment)
             rgl::lines3d(proj[segment, 1], proj[segment, 2], proj[segment, 3],
                     col = "#bbbbbb", lty = 1))
         }
@@ -1270,7 +1273,7 @@ server <- function(input, output, session) {
   
   output$savePng <- downloadHandler(
     filename = 'TreeSpace.png',
-    content = function (file) {
+    content = function(file) {
       png(file, width = input$plotSize, height = input$plotSize)
       treespacePlot()
       dev.off()
@@ -1278,7 +1281,7 @@ server <- function(input, output, session) {
   
   output$savePdf <- downloadHandler(
     filename = 'TreeSpace.pdf',
-    content = function (file) {
+    content = function(file) {
       pdf(file, title = paste0('Tree space mapping'))
       treespacePlot()
       dev.off()
@@ -1286,7 +1289,7 @@ server <- function(input, output, session) {
   
   output$saveCons <- downloadHandler(
     filename = 'ClusterConsensusTrees.pdf',
-    content = function (file) {
+    content = function(file) {
       cl <- clusterings()
       pdf(file, title = if (cl$sil > 0.25) {
         paste0("Consensus trees for ", cl$n, " clusters found with ", cl$method,

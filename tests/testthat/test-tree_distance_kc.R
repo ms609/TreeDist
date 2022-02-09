@@ -33,7 +33,7 @@ test_that("KC distances with special vectors", {
 })
 
 test_that("KCDiameter() calculated", {
-  Test <- function (nTip) {
+  Test <- function(nTip) {
     tips <- seq_len(nTip)
     expect_equal(KendallColijn(PectinateTree(tips), PectinateTree(rev(tips))),
                  KCDiameter(nTip))

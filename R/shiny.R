@@ -126,7 +126,7 @@ MapTrees <- function() {
 
 #' @rdname MapTrees
 #' @export
-Project <- function () {
+Project <- function() {
   .Deprecated('MapTrees')
   MapTrees()
 }
