@@ -81,6 +81,7 @@ ClusVis <- function(distances, clust, col = seq_len) {
 
 
 #' @examples
+#' library("TreeTools", quietly = TRUE)
 #' treeNumbers <- c(0:20, 40:60, 120:140, 200:220)
 #' trees <- as.phylo(treeNumbers, 8)
 #' distances <- ClusteringInfoDist(trees)
@@ -95,6 +96,8 @@ ClusVis <- function(distances, clust, col = seq_len) {
 #' 
 #' silmds <- ClusterMDS(clust, distances, cmds)
 #' plot(silmds, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
+#' MSTSegments(silmds, MSTEdges(distances),
+#'             col = StrainCol(distances, silmds))
 #' plot(cluster::silhouette(clust, dist(silmds)), col = 1:4, main = "SilMDS")
 #' 
 #' 
@@ -103,8 +106,9 @@ ClusVis <- function(distances, clust, col = seq_len) {
 #' @importFrom TreeTools MSTEdges
 #' @export
 ClusterMDS <- function(clust, distances, proposal = cmdscale(distances),
-                       maxIter = 1e6, stability = 1e2,
-                       weight = list("sil" = 1, "mst" = 1, "icd" = NULL)) {
+                       maxIter = 1e6, stability = 4e2,
+                       weight = list("sil" = 1, "mst" = 1, "icd" = NULL),
+                       trace = FALSE) {
   distances <- as.dist(distances)
   treeID <- combn(attr(distances, "Size"), 2)
   Score <- function(orig, new) sqrt(sum((orig - new) ^ 2))
@@ -162,6 +166,8 @@ ClusterMDS <- function(clust, distances, proposal = cmdscale(distances),
       mstPrime <- dprime[onMST]
       mstPrime <- mstPrime / sum(mstPrime)
       mstScore <- weight[["mst"]] * Score(mstLength, mstPrime)
+    } else {
+      mstScore <- 0
     }
     
     range <- apply(proposal, 2, range)
@@ -176,8 +182,8 @@ ClusterMDS <- function(clust, distances, proposal = cmdscale(distances),
     score <- (d2Sum * weight[["sil"]]) + icdScore + mstScore
     
     if (score < bestScore) {
-      cli_progress_update(set = i,
-                          extra = paste0("Stability: ", lastAccepted))
+      cli_progress_update(set = i)#,
+                          #extra = paste0("Stability: ", lastAccepted))
       mapped <- proposal
       bestScore <- score
       accepted[i] <- TRUE
@@ -200,14 +206,18 @@ ClusterMDS <- function(clust, distances, proposal = cmdscale(distances),
   }
   cli_progress_done()
   
-  plot(cumsum(accepted[seq_len(i)]), type = 'n')
-  # points(la[seq_len(i)] * sum(accepted) / stability, type = 'l', col = 3)
-  points(d2Log[seq_len(i)] * sum(accepted) / max(d2Log), col = 4,
-         type = "l")
-  points(mstLog[seq_len(i)] * sum(accepted) / max(mstLog), col = 5, type = "l")
-  points(icdLog[seq_len(i)] * sum(accepted) / max(icdLog), col = 6, type = "l")
-  points(cumsum(accepted[seq_len(i)]), type = 'l', col = 2)
-  legend("top", c("Accepted", "lastAccept", "sil-d2", "mst", "icd"), col = 2:6,
-         pch = 15, bty = "n", pt.cex = 2.5)
+  if (trace) {
+    plot(cumsum(accepted[seq_len(i)]), type = 'n')
+    # points(la[seq_len(i)] * sum(accepted) / stability, type = 'l', col = 3)
+    points(d2Log[seq_len(i)] * sum(accepted) / max(d2Log),
+           col = 4, type = "l")
+    points(mstLog[seq_len(i)] * sum(accepted) / max(mstLog),
+           col = 5, type = "l")
+    points(icdLog[seq_len(i)] * sum(accepted) / max(icdLog),
+           col = 6, type = "l")
+    points(cumsum(accepted[seq_len(i)]), type = 'l', col = 2)
+    legend("top", c("Accepted", "lastAccept", "sil-d2", "mst", "icd"),
+           col = 2:6, pch = 15, bty = "n", pt.cex = 2.5)
+  }
   mapped
 }
