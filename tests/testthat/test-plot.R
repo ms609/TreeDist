@@ -154,7 +154,7 @@ test_that("MST example plots as expected", {
                 col = StrainCol(distances, mapping, mstEnds))
     # Add points at end so they overprint the MST
     points(mapping)
-    SpectrumLegend(legend = c("Contracted", "Extended"),
+    SpectrumLegend(legend = c("Contracted", "Median", "Extended"),
                    palette = rev(hcl.colors(256L, "RdYlBu")))
   })
 })

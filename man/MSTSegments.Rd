@@ -30,9 +30,11 @@ each pair of points.}
 }
 \value{
 \code{StrainCol()} returns a vector in which each entry is selected from
-\code{palette}, such that contracted edges (in which the ratio of original
-distance to mapped distance is large) are assigned colours from later in
-\code{palette}.
+\code{palette}, with an attribute "logStrain" denoting the logarithm of the
+mapped over original distance, shifted such that the median value is zero.
+Palette colours are assigned centred on the median value, with entries
+early in \code{palette} assigned to edges in which the ratio of mapped
+distance to original distance is small.
 }
 \description{
 To identify strain in a multidimensional scaling of distances, it can be
@@ -56,7 +58,7 @@ MSTSegments(mapping, mstEnds,
             col = StrainCol(distances, mapping, mstEnds))
 # Add points at end so they overprint the MST
 points(mapping)
-SpectrumLegend(legend = c("Contracted", "Extended"),
+SpectrumLegend(legend = c("Contracted", "Median", "Extended"),
                palette = rev(hcl.colors(256L, "RdYlBu")))
 }
 \references{

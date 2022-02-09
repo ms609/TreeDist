@@ -271,7 +271,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
 #'             col = StrainCol(distances, mapping, mstEnds))
 #' # Add points at end so they overprint the MST
 #' points(mapping)
-#' SpectrumLegend(legend = c("Contracted", "Extended"),
+#' SpectrumLegend(legend = c("Contracted", "Median", "Extended"),
 #'                palette = rev(hcl.colors(256L, "RdYlBu")))
 #' @template MRS
 #' @references \insertAllCited{}
@@ -284,9 +284,11 @@ MSTSegments <- function(mapping, mstEnds, ...) {
 
 #' @rdname MSTSegments
 #' @return `StrainCol()` returns a vector in which each entry is selected from
-#' `palette`, such that contracted edges (in which the ratio of original
-#' distance to mapped distance is large) are assigned colours from later in
-#' `palette`.
+#' `palette`, with an attribute "logStrain" denoting the logarithm of the
+#' mapped over original distance, shifted such that the median value is zero.
+#' Palette colours are assigned centred on the median value, with entries
+#' early in `palette` assigned to edges in which the ratio of mapped
+#' distance to original distance is small.
 #' @importFrom grDevices hcl.colors
 #' @importFrom TreeTools MSTEdges
 #' @export
@@ -300,10 +302,12 @@ StrainCol <- function(distances, mapping, mstEnds = MSTEdges(distances),
     mapped <- sqrt(sum((x[ends[1]] - y[ends[2]]) ^ 2))
     log(mapped / orig) # High when mapping extends original distances
   })
-  strain <- logStrain - min(logStrain)
+  strain <- logStrain - median(logStrain)
+  maxVal <- max(abs(strain)) + sqrt(.Machine$double.eps)
   nCols <- length(palette)
-  strainCol <- 1 + ((nCols - 1) * strain / max(strain))
+  bins <- cut(strain, seq(-maxVal, maxVal, length.out = nCols))
   
   # Return:
-  palette[strainCol]
+  structure(palette[bins],
+            logStrain = strain)
 }
