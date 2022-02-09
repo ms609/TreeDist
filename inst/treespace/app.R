@@ -365,7 +365,6 @@ ui <- fluidPage(theme = 'treespace.css',
 )
 
 server <- function(input, output, session) {
-  #treeNumbers <- c(1:220)
   treeNumbers <- c(1:50, 401:440)
   
   r <- reactiveValues(allTrees = as.phylo(treeNumbers, 8),

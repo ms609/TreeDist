@@ -1,3 +1,7 @@
+# branch vis-cluster
+
+- Functions to visualize cluster structure
+
 # TreeDist 2.3.0.9000
 
 - Use lighter Rcpp headers.
