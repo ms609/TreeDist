@@ -168,14 +168,9 @@ metrics for comparing phylogenetic
 trees](https://dx.doi.org/10.1093/bioinformatics/btaa614).
 _Bioinformatics_, 36, 5007–5013.
 
-<<<<<<< HEAD
 - Smith, M.R. (2022) [Robust analysis of phylogenetic tree
 space](https://dx.doi.org/10.1093/sysbio/syab100).
 _Systematic Biology_, syab100.
-=======
-- Smith, M.R. (2022)
-Robust analysis of phylogenetic tree space. _Systematic Biology_, syab100.
->>>>>>> 9ecf5169 (Smith 2022 citation)
 
 
 Please note that the 'TreeDist' project is released with a
