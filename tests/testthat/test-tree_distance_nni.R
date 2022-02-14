@@ -25,7 +25,10 @@ test_that("Simple NNI approximations", {
   
   Fack <- function(n) ((n - 2) * ceiling(log2(n))) + n
                                          
-  Sorting <- function(n) {lc <- ceiling(log2(n)); n*lc-2^lc+1}
+  Sorting <- function(n) {
+    lc <- ceiling(log2(n))
+    n * lc - 2 ^ lc + 1
+  }
   DegDist <- function(n) {
     nif <- ceiling(log2(n / 3))
     tif <- 2 ^ nif
