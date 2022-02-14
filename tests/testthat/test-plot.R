@@ -138,8 +138,9 @@ test_that('VisualizeMatching() works', {
 })
 
 test_that("MST example plots as expected", {
-  skip_if(packageVersion("graphics") < "4.1")
-  skip_if(packageVersion("vdiffr") < "1.0")
+  skip_if_not_installed("graphics", "4.1")
+  skip_if_not_installed("vdiffr", "1.0")
+  skip_if_not_installed("TreeTools", "1.6.0.9008")
   vdiffr::expect_doppelganger('MST example plot', function() {
     set.seed(0)
     distances <- ClusteringInfoDist(as.phylo(5:16, 8))
