@@ -226,7 +226,7 @@ test_that('.TreeDistance() supports all sizes', {
 })
 
 test_that("Unrooteds are handled by MAST", {
-  trees <- list(unroot(BalancedTree(8)), unroot(PectinateTree(8)))
+  trees <- list(UnrootTree(BalancedTree(8)), UnrootTree(PectinateTree(8)))
   expect_equal(6L, as.integer(MASTSize(trees, rooted = FALSE)),
                ignore_attr = TRUE)
 })
