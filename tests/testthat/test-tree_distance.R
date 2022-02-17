@@ -696,7 +696,8 @@ test_that('Jaccard RF is correctly calculated', {
 
 test_that('RobinsonFoulds() is correctly calculated', {
   RF <- function(tree1, tree2) {
-    suppressMessages(phangorn::RF.dist(tree1, tree2))
+    suppressMessages(phangorn::RF.dist(reorder(tree1, "cladewise"),
+                                       reorder(tree2, "cladewise")))
   }
   RFTest <- function(tree1, tree2) {
     expect_equal(RF(tree1, tree2), RobinsonFoulds(tree1, tree2))
