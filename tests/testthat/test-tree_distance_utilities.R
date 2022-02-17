@@ -1,4 +1,4 @@
-library('TreeTools')
+library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
 
 test_that('Tree normalization works', {
   expect_equal(0.5, NormalizeInfo(5, 3, 5, how = TRUE, 
