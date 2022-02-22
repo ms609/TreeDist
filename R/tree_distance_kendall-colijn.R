@@ -50,7 +50,8 @@
 #' KendallColijn(trees, Vector = SplitVector)
 #' @template MRS
 #' 
-#' @seealso [`treespace::treeDist`](https://CRAN.R-project.org/package=treespace/vignettes/introduction.html)
+#' @seealso [`treespace::treeDist()`](
+#' https://CRAN.R-project.org/package=treespace/vignettes/introduction.html)
 #' is a more sophisticated, if more cumbersome, implementation that supports 
 #' lambda > 0, i.e. use of edge lengths in tree comparison.
 #' 
@@ -197,7 +198,6 @@ SplitVector <- function(tree) {
 #' @examples
 #' KCDiameter(trees)
 #' KCDiameter(4)
-#' @template MRS
 #' @importFrom TreeTools PectinateTree
 #' @rdname KendallColijn
 #' @export
