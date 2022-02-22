@@ -13,4 +13,5 @@ test_that("path.dist called safely", {
   
   trees <- as.phylo(1:8, 29)
   expect_equal(unname(as.matrix(PathDist(trees))), PathDist(trees, trees))
+  expect_equal(PathDist(trees), CompareAll(trees, PathDist))
 })

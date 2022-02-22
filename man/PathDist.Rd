@@ -18,13 +18,13 @@ or lists of such trees to undergo pairwise comparison.  Where implemented,
 between trees.
 }
 \description{
-Calculate the path distance between trees.
+Calculate the path distance between rooted or unrooted trees.
 }
 \details{
-This function is a wrapper for the function
-\code{\link[phangorn:treedist]{path.dist()}} in the phangorn package.
-It pre-processes trees to ensure that their internal representation does
-not cause the \code{path.dist()} function to crash R.
+This function is an alternative to the function
+\code{\link[phangorn:treedist]{path.dist()}} in the phangorn package,
+which can crash if the internal representation of trees does not conform to
+certain (unspecified) expectations.
 
 The path distance is calculated by tabulating the cladistic difference (=
 topological distance) between each pair of tips in each tree.
@@ -34,6 +34,10 @@ the method used here is that proposed by Steel & Penny (1993), which takes
 the square root of this sum.  Other precursor measures are described in
 Williams and Clifford (1971) and Phipps (1971).
 
+If a root node is present, trees are treated as rooted.
+To avoid counting the root edge twice, use \code{UnrootTree(tree)} before
+calculating the path distance.
+
 Use of the path distance is discouraged as it emphasizes
 shallow relationships at the expense of deeper (and arguably more
 fundamental) relationships (Farris, 1973).
@@ -41,7 +45,11 @@ fundamental) relationships (Farris, 1973).
 \examples{
 library('TreeTools')
 
+# Treating the two edges to the root node as distinct
 PathDist(BalancedTree(7), PectinateTree(7))
+
+# Counting those two edges once
+PathDist(UnrootTree(BalancedTree(7)), UnrootTree(PectinateTree(7)))
 
 PathDist(BalancedTree(7), as.phylo(0:2, 7))
 PathDist(as.phylo(0:2, 7), PectinateTree(7))
@@ -49,7 +57,7 @@ PathDist(as.phylo(0:2, 7), PectinateTree(7))
 PathDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
         as.phylo(0:2, 7))
 
-CompareAll(as.phylo(30:33, 8), PathDist)
+PathDist(as.phylo(30:33, 8))
  
 }
 \references{

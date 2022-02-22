@@ -1,17 +1,19 @@
-library("TreeTools", quietly = TRUE)
+library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
 
 test_that("KC vector calculations", {
   bal7 <- ape::read.tree(text = "(((t1,t2),(t3,t4)),((t5,t6),t7));")
   bal7b <- ape::read.tree(text = "(((t5,t6),t7), ((t1,t2),(t3,t4)));")
-  expect_equal(PathVector(bal7), PathVector(RootTree(bal7, 1)))
-  expect_equal(PathVector(bal7), PathVector(bal7b))
+  expect_equal(PathVector(UnrootTree(bal7)),
+               PathVector(UnrootTree(RootTree(bal7, 1))))
+  expect_equal(PathVector(UnrootTree(bal7)),
+               PathVector(UnrootTree(RenumberTips(bal7b, bal7))))
   expect_equal(as.numeric(PathVector(bal7b)),
-               c(2, 4, 4, 5, 5, 4,
-                    4, 4, 5, 5, 4,
-                       2, 5, 5, 4,
-                          5, 5, 4,
-                             2, 3,
-                                3))
+               c(2, 4, 4, 6, 6, 4,
+                    4, 4, 6, 6, 4,
+                       2, 6, 6, 4,
+                          6, 6, 4,
+                             2, 4,
+                                4))
   
   expect_equal(SplitVector(bal7), SplitVector(RootTree(bal7, 1)))
   expect_equal(SplitVector(bal7), SplitVector(bal7b))

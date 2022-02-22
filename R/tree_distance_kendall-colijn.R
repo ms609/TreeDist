@@ -144,6 +144,11 @@ KCVector <- function(tree) {
 #' @importFrom utils combn
 #' @export
 PathVector <- function(tree) {
+  edge <- tree$edge
+  structure(path_vector(edge), Size = NTip(tree), class = 'dist')
+}
+
+.PathVectorR <- function(tree) {
   tree <- Preorder(tree)
   edge <- tree$edge
   parent <- edge[, 1L]
@@ -160,8 +165,8 @@ PathVector <- function(tree) {
     anc1 <- ancestors[[i[1]]]
     anc2 <- ancestors[[i[2]]]
     mrca <- max(intersect(anc1, anc2))
-    sum(anc1 >= mrca, anc2 >= mrca,
-        -(mrca == root) # don't count root edge twice
+    sum(anc1 >= mrca, anc2 >= mrca
+        # , -(mrca == root) # don't count root edge twice
         )
   })
   
