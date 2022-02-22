@@ -67,3 +67,6 @@ PathDist <- function(tree1, tree2 = NULL) {
   }
   path.dist(tree1, tree2)
 }
+
+.EuclideanDistance <- function(x) sqrt(sum(x * x))
+

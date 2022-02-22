@@ -65,29 +65,27 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
   
   FunValue <- function(nTip) double(nTip * (nTip - 1L) / 2L)
   
-  EuclidianDistance <- function(x) sqrt(sum(x * x))
-  
   if (inherits(tree1, 'phylo')) {
     if (inherits(tree2, 'phylo')) {
       if (length(tree1$tip.label) != length(tree2$tip.label) || 
           length(setdiff(tree1$tip.label, tree2$tip.label)) > 0) {
         stop("Leaves must bear identical labels.")
       }
-      EuclidianDistance(Vector(tree1) - Vector(tree2))
+      .EuclideanDistance(Vector(tree1) - Vector(tree2))
     } else {
       if (is.null(tree2)) {
         0
       } else {
         apply(Vector(tree1) - vapply(tree2, Vector,
                                      FunValue(length(tree1$tip.label))),
-              2L, EuclidianDistance)
+              2L, .EuclideanDistance)
       }
     }
   } else {
     if (inherits(tree2, 'phylo')) {
       apply(Vector(tree2) - vapply(tree1, Vector,
                                    FunValue(length(tree2$tip.label))),
-            2L, EuclidianDistance)
+            2L, .EuclideanDistance)
     } else if (is.null(tree2)) {
       
       treeVec <- vapply(tree1, Vector, FunValue(length(tree1[[1]]$tip.label)))
@@ -98,7 +96,7 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
       ret <- structure(class = 'dist', Size = nTree,
                        diag = FALSE, upper = FALSE,
                        apply(is, 2, function(i)
-                         EuclidianDistance(treeVec[, i[1]] - treeVec[, i[2]])))
+                         .EuclideanDistance(treeVec[, i[1]] - treeVec[, i[2]])))
       # Return:
       ret
     }
@@ -107,7 +105,7 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
       vector2 <- vapply(tree2, Vector, FunValue(length(tree2[[1]]$tip.label)))
       apply(vector2, 2, function(i) 
         apply(vector1, 2, function(j) 
-          EuclidianDistance(i - j)))
+          .EuclideanDistance(i - j)))
     }
   }
 }
