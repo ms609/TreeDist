@@ -50,23 +50,63 @@
 #' 
 #' @template MRS
 #' @family tree distances
-#' @importFrom phangorn path.dist
 #' @importFrom TreeTools Postorder
 #' @export
 PathDist <- function(tree1, tree2 = NULL) {
-  if (inherits(tree1, 'phylo')) {
-    tree1 <- Postorder(tree1)
+  if (inherits(tree1, "phylo")) {
+    if (inherits(tree2, "phylo")) {
+      .PathDist11(tree1, tree2)
+    } else {
+      .PathDist1Many(tree1, tree2)
+    }
+  } else if (is.null(tree2)) {
+    .PathDistManySelf(tree1)
+  } else if (inherits(tree2, "phylo")) {
+    .PathDist1Many(tree2, tree1)
   } else {
-    tree1 <- structure(lapply(tree1, Postorder), class = 'multiPhylo')
+    .PathDistManyMany(tree1, tree2)
   }
-  
-  if (inherits(tree2, 'phylo')) {
-    tree2 <- Postorder(tree2)
-  } else if (!is.null(tree2)) {
-    tree2 <- structure(lapply(tree2, Postorder), class = 'multiPhylo')
-  }
-  path.dist(tree1, tree2)
 }
 
 .EuclideanDistance <- function(x) sqrt(sum(x * x))
 
+.PathDist11 <- function(tree1, tree2) {
+  .EuclideanDistance(PathVector(tree1) - PathVector(RenumberTips(tree2, tree1)))
+}
+
+.PathDist1Many <- function(tree1, treeMany) {
+  v1 <- PathVector(tree1)
+  apply(v1 - vapply(RenumberTips(treeMany, tree1), PathVector, v1), 2,
+        .EuclideanDistance)
+}
+
+.PathDistManyMany <- function(trees1, trees2) {
+  nTip <- NTip(trees1[[1]])
+  v1 <- vapply(RenumberTips(trees1, trees1), PathVector,
+               integer(nTip * (nTip - 1) / 2))
+  v2 <- vapply(RenumberTips(trees2, trees1), PathVector,
+               integer(nTip * (nTip - 1) / 2))
+  apply(v2, 2, function(X) apply(X - v1, 2, .EuclideanDistance))
+}
+
+.PathDistManySelf <- function(trees) {
+  nTip <- NTip(trees[[1]])
+  v1 <- vapply(RenumberTips(trees, trees), PathVector,
+               integer(nTip * (nTip - 1) / 2))
+  
+  nTree <- length(trees)
+  nPair <- nTree * (nTree - 1) / 2
+  ret <- structure(numeric(nPair), Size = nTree, class = "dist",
+                   Diag = FALSE, Upper = TRUE)
+  ptr <- 0L
+  for (i in seq_len(nTree - 1L)) {
+    X <- v1[, i]
+    entries <- seq_len(nTree - i)
+    j <- i + entries
+    ret[ptr + entries] <- apply(X - v1[, j, drop = FALSE], 2, .EuclideanDistance)
+    ptr <- ptr + length(entries)
+  }
+  
+  # Return:
+  ret
+}

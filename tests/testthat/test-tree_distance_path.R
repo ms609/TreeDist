@@ -10,4 +10,7 @@ test_that("path.dist called safely", {
   expect_equal(PathDist(BalancedTree(6), PectinateTree(6)),
                PathDist(list(BalancedTree(6), PectinateTree(6)))[1],
                ignore_attr = TRUE)
+  
+  trees <- as.phylo(1:8, 29)
+  expect_equal(unname(as.matrix(PathDist(trees))), PathDist(trees, trees))
 })
