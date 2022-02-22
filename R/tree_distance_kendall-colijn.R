@@ -19,14 +19,17 @@
 #' leaf to another.
 #' 
 #' @template tree12ListParams
-#' @param Vector Function converting a tree to a numeric vector. 
+#' @param Vector Function converting a tree to a numeric vector.
+#' 
 #' `KCVector`, the default, returns the number of edges between the common
-#' ancestor of each pair of leaves and the root of the tree (per
-#' Kendall & Colijn 2016).
-#' `PathVector` returns the number of edges between each pair of leaves (per
-#' Steel & Penny 1993).
+#' ancestor of each pair of leaves and the root of the tree
+#' \insertCite{@per @Kendall2016}{TreeDist}.
+#' 
+#' `PathVector` returns the number of edges between each pair of leaves
+#' \insertCite{@per @Steel1993}{TreeDist}.
+#' 
 #' `SplitVector` returns the size of the smallest split that contains each
-#' pair of leaves (per Smith, 2022).
+#' pair of leaves \insertCite{@per @SmithSpace}{TreeDist}.
 #' 
 #' @templateVar returns `KendallColijn()` returns
 #' @template distReturn
@@ -54,9 +57,8 @@
 #' is a more sophisticated, if more cumbersome, implementation that supports 
 #' lambda > 0, i.e. use of edge lengths in tree comparison.
 #' 
-#' @references \insertRef{Kendall2016}{TreeDist}
+#' @references \insertAllCited{}
 #' 
-#' @references \insertRef{SmithSpace}{TreeDist}
 #' @family tree distances
 #' @importFrom utils combn
 #' @encoding UTF-8
@@ -135,8 +137,9 @@ KCVector <- function(tree) {
   structure(rootDist[mrca], Size = nTip, class = 'dist')
 }
 
-#' @describeIn KendallColijn Creates a vector reporting the path length between
-#' each pair of leaves, per the path metric of Steel & Penny (1993).
+#' @describeIn KendallColijn Creates a vector reporting the number of edges
+#' between each pair of leaves, per the path metric of
+#' \insertCite{Steel1993}{TreeDist}.
 #' @importFrom TreeTools AllAncestors Preorder
 #' @importFrom utils combn
 #' @export

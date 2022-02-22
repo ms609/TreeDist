@@ -29,12 +29,14 @@ JaccardSplitSimilarity(
 \item{tree1}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 \code{tree2 = NULL} will compute distances between each pair of trees in the list
-\code{tree1} using a fast algorithm based on Day (1985).}
+\code{tree1} using a fast algorithm based on
+\insertCite{Day1985;textual}{TreeDist}.}
 
 \item{tree2}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 \code{tree2 = NULL} will compute distances between each pair of trees in the list
-\code{tree1} using a fast algorithm based on Day (1985).}
+\code{tree1} using a fast algorithm based on
+\insertCite{Day1985;textual}{TreeDist}.}
 
 \item{k}{An arbitrary exponent to which to raise the Jaccard index.
 Integer values greater than one are anticipated by Böcker \emph{et al}.
@@ -81,7 +83,7 @@ or \code{splits1} and \code{splits2}.
 \description{
 Calculate the
 \href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric}{Jaccard–Robinson–Foulds metric}
-(Böcker \emph{et al}. 2013), a
+\insertCite{Bocker2013}{TreeDist}, a
 \href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson–Foulds metric}.
 }
 \details{
@@ -98,8 +100,9 @@ A more detailed explanation is provided in the
 By default, conflicting splits may be paired.
 
 Note that the settings \verb{k = 1, allowConflict = TRUE, similarity = TRUE}
-give the similarity metric of Nye \emph{et al}. (2006); a slightly faster
-implementation of this metric is available as \code{\link[=NyeSimilarity]{NyeSimilarity()}}.
+give the similarity metric of \insertCite{Nye2006;textual}{TreeDist};
+a slightly faster implementation of this metric is available as
+\code{\link[=NyeSimilarity]{NyeSimilarity()}}.
 
 The examples section below details how to visualize matchings with
 non-default parameter values.
@@ -128,10 +131,7 @@ JRF2 <- function(tree1, tree2, ...)
 VisualizeMatching(JRF2, tree1, tree2, matchZeros = FALSE)
 }
 \references{
-\itemize{
-\item \insertRef{Nye2006}{TreeDist}
-\item \insertRef{Bocker2013}{TreeDist}
-}
+\insertAllCited{}
 }
 \seealso{
 Other tree distances: 

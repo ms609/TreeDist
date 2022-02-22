@@ -23,16 +23,20 @@ KCDiameter(tree)
 \item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 \code{tree2 = NULL} will compute distances between each pair of trees in the list
-\code{tree1} using a fast algorithm based on Day (1985).}
+\code{tree1} using a fast algorithm based on
+\insertCite{Day1985;textual}{TreeDist}.}
 
 \item{Vector}{Function converting a tree to a numeric vector.
+
 \code{KCVector}, the default, returns the number of edges between the common
-ancestor of each pair of leaves and the root of the tree (per
-Kendall & Colijn 2016).
-\code{PathVector} returns the number of edges between each pair of leaves (per
-Steel & Penny 1993).
+ancestor of each pair of leaves and the root of the tree
+\insertCite{@per @Kendall2016}{TreeDist}.
+
+\code{PathVector} returns the number of edges between each pair of leaves
+\insertCite{@per @Steel1993}{TreeDist}.
+
 \code{SplitVector} returns the size of the smallest split that contains each
-pair of leaves (per Smith, 2022).}
+pair of leaves \insertCite{@per @SmithSpace}{TreeDist}.}
 
 \item{tree}{A tree of class \code{\link[ape:read.tree]{phylo}}.}
 }
@@ -72,8 +76,9 @@ leaf to another.
 \item \code{KCVector}: Creates a vector that characterises a rooted tree,
 as described in Kendall & Colijn (2016).
 
-\item \code{PathVector}: Creates a vector reporting the path length between
-each pair of leaves, per the path metric of Steel & Penny (1993).
+\item \code{PathVector}: Creates a vector reporting the number of edges
+between each pair of leaves, per the path metric of
+\insertCite{Steel1993}{TreeDist}.
 
 \item \code{SplitVector}: Creates a vector reporting the smallest split
 containing each pair of leaves, per the metric proposed in Smith
@@ -101,9 +106,7 @@ KCDiameter(trees)
 KCDiameter(4)
 }
 \references{
-\insertRef{Kendall2016}{TreeDist}
-
-\insertRef{SmithSpace}{TreeDist}
+\insertAllCited{}
 }
 \seealso{
 \href{https://CRAN.R-project.org/package=treespace/vignettes/introduction.html}{\code{treespace::treeDist}}
