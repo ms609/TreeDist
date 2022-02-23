@@ -8,9 +8,10 @@
 #' not cause the `SPR.dist()` function to crash R, and allows an improved
 #' (but slower) symmetric heuristic.
 #' 
-#' A memory leak is present in phangorn v2.5.5.  To avoid a drain on system
-#' resources, install the latest version of phangorn with 
-#' `devtools::install_github('KlausVigo/phangorn')`.
+#' Note that the phangorn implementation calculates a lower bound on the SPR,
+#' using the method of \insertCite{deOliveira2008;textual}{TreeDist}.
+#' Other approximations are available
+#' \insertCite{@e.g. @Goloboff2008SPR}{TreeDist}.
 #' 
 #' @template tree12ListParams
 #' @param symmetric Logical specifying whether to produce a better heuristic
@@ -22,6 +23,8 @@
 #' 
 #' @return `SPRDist()` returns a vector or distance matrix of distances 
 #' between trees.
+#' 
+#' @references \insertAllCited{}
 #' 
 #' @examples
 #' library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
