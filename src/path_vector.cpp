@@ -72,10 +72,35 @@ IntegerVector path_vector (IntegerMatrix edge) {
 }
 
 // [[Rcpp::export]]
-NumericVector pair_diff_euclidean (const IntegerMatrix dists) {
+NumericMatrix vec_diff_euclidean (const IntegerMatrix vec1,
+                                  const IntegerMatrix vec2) {
   const int 
-    n_col = dists.cols(),
-    n_row = dists.rows()
+    col1 = vec1.cols(),
+    col2 = vec2.cols(),
+    n_row = vec1.rows()
+  ;
+  assert(n_row == vec2.rows());
+  
+  NumericMatrix ret(col1, col2);
+  for (int i = col1; i--; ) {
+    for (int j = col2; j--; ) {
+      int val = 0;
+      for (int row = n_row; row--; ) {
+        const int x = vec1(row, i) - vec2(row, j);
+        val += x * x;
+      }
+      ret(i, j) = std::sqrt(val);
+    }
+  }
+  
+  return ret;
+}
+
+// [[Rcpp::export]]
+NumericVector pair_diff_euclidean (const IntegerMatrix vecs) {
+  const int 
+    n_col = vecs.cols(),
+    n_row = vecs.rows()
   ;
   
   int ptr = n_col * (n_col - 1) / 2;
@@ -88,7 +113,7 @@ NumericVector pair_diff_euclidean (const IntegerMatrix dists) {
       
       int val = 0;
       for (int row = n_row; row--; ) {
-        const int x = dists(row, i) - dists(row, j);
+        const int x = vecs(row, i) - vecs(row, j);
         val += x * x;
       }
       ret[--ptr] = std::sqrt(val);

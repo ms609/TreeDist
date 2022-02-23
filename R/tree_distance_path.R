@@ -94,7 +94,7 @@ PathDist <- function(tree1, tree2 = NULL) {
                integer(nTip * (nTip - 1) / 2))
   v2 <- vapply(RenumberTips(trees2, trees1), PathVector,
                integer(nTip * (nTip - 1) / 2))
-  apply(v2, 2, function(X) apply(X - v1, 2, .EuclideanDistance))
+  vec_diff_euclidean(v1, v2)
 }
 
 .PathDistManySelf <- function(trees) {
@@ -104,9 +104,9 @@ PathDist <- function(tree1, tree2 = NULL) {
   
   nTree <- length(trees)
   
-  ret <- structure(
-    sqrt(pair_diff_euclidean(v1)),
-    Size = nTree, Diag = FALSE, Upper = FALSE, class = "dist")
+  ret <- structure(pair_diff_euclidean(v1),
+                   Size = nTree, Diag = FALSE, Upper = FALSE,
+                   class = "dist")
   
   # Return:
   ret
