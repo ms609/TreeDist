@@ -1,14 +1,14 @@
 test_that("PathDist()", {
   library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
-  expect_equal(c(5.66, 6, 6, 6.32, 6.32, 5.74),
-               PathDist(as.phylo(0:5, 6), BalancedTree(paste0("t", 6:1))),
-               tolerance = 2)
-  expect_equal(c(5.66, 6, 6, 6.32, 6.32, 5.74),
-               PathDist(BalancedTree(6), as.phylo(0:5, 6)),
-               tolerance = 2)
+  t05 <- as.phylo(0:5, 6)
+  bal6 <- BalancedTree(paste0("t", 6:1))
+  vec6 <- PathVector(RenumberTips(bal6, t05))
+  expect_equal(PathDist(t05, bal6),
+               sqrt(colSums((vapply(t05, PathVector, vec6) - vec6) ^ 2)))
+  expect_equal(PathDist(bal6, t05), PathDist(t05, bal6))
   
-  expect_equal(PathDist(BalancedTree(6), PectinateTree(6)),
-               PathDist(list(BalancedTree(6), PectinateTree(6)))[1],
+  expect_equal(PathDist(bal6, PectinateTree(6)),
+               PathDist(list(bal6, PectinateTree(6)))[1],
                ignore_attr = TRUE)
   
   trees <- as.phylo(1:8, 29)
@@ -19,6 +19,15 @@ test_that("PathDist()", {
 
 test_that("PathDist() equivalent to path.dist()", {
   skip_if_not_installed("phangorn")
+  
+  t1 <- Postorder(as.phylo(0:5, 6))
+  t2 <- Postorder(BalancedTree(6))
+  t3 <- Postorder(PectinateTree(6))
+  expect_equal(PathDist(UnrootTree(t1), UnrootTree(t2)),
+               phangorn::path.dist(t1, t2))
+  expect_equal(PathDist(UnrootTree(t2), UnrootTree(t3)),
+               phangorn::path.dist(t3, t2))
+  
   postTrees <- Postorder(as.phylo(0:5, 182))
   expect_equal(PathDist(postTrees), phangorn::path.dist(postTrees))
   ub <- microbenchmark::microbenchmark

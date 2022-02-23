@@ -144,6 +144,9 @@ KCVector <- function(tree) {
 #' @importFrom utils combn
 #' @export
 PathVector <- function(tree) {
+  if (!inherits(tree, "phylo")) {
+    stop("`tree` must be of class `phylo`")
+  }
   edge <- tree$edge
   structure(path_vector(edge), Size = NTip(tree), class = 'dist')
 }
