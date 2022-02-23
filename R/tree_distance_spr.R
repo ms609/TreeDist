@@ -11,15 +11,11 @@
 #' Note that the phangorn implementation calculates a lower bound on the SPR,
 #' using the method of \insertCite{deOliveira2008;textual}{TreeDist}.
 #' Other approximations are available
-#' \insertCite{@e.g. @Goloboff2008SPR}{TreeDist}.
+#' \insertCite{@e.g. @Goloboff2008SPR, @Whidden2018}{TreeDist}.
 #' 
 #' @template tree12ListParams
-#' @param symmetric Logical specifying whether to produce a better heuristic
-#' by calculating the minimum of `SPRDist(t1, t2)` and `SPRDist(t2, t1)`,
-#' which are not guaranteed to be equal due to the heuristic nature of the 
-#' approximation (see 
-#' [phangorn#97](https://github.com/KlausVigo/phangorn/issues/97)). Set to
-#' `FALSE` for the faster approximation, as implemented in 'phangorn'.
+#' @param symmetric Ignored (redundant after fix of
+#' [phangorn#97](https://github.com/KlausVigo/phangorn/issues/97)).
 #' 
 #' @return `SPRDist()` returns a vector or distance matrix of distances 
 #' between trees.
@@ -40,16 +36,19 @@
 #' CompareAll(as.phylo(30:33, 8), SPRDist)
 #' @template MRS
 #'   
+#' @seealso More sophisticated calculation with [\pkg{TBRDist}](
+#' https://ms609.github.io/TBRDist/reference/TreeRearrangementDistances.html)
+#' functions `USPRDist()` and `ReplugDist()`.
 #' @family tree distances
 #' @importFrom phangorn SPR.dist
 #' @importFrom TreeTools Postorder
 #' @export
-SPRDist <- function(tree1, tree2 = NULL, symmetric = TRUE) {
+SPRDist <- function(tree1, tree2 = NULL, symmetric) {
   if (inherits(tree1, 'phylo')) {
     tree1 <- Postorder(tree1)
   } else {
     if (inherits(tree2, 'multiPhylo')) {
-      return(vapply(tree2, SPRDist, double(length(tree1)), tree1, symmetric))
+      return(vapply(tree2, SPRDist, double(length(tree1)), tree1))
     }
     tree1 <- structure(lapply(tree1, Postorder), class = 'multiPhylo')
   }
@@ -60,20 +59,5 @@ SPRDist <- function(tree1, tree2 = NULL, symmetric = TRUE) {
     tree2 <- structure(lapply(tree2, Postorder), class = 'multiPhylo')
   }
   
-  if (symmetric) {
-    if (is.null(tree2)) {
-      pmin(SPR.dist(tree1), SPR.dist(rev(tree1)))
-    } else {
-      if (inherits(tree1, 'phylo') && inherits(tree2, 'multiPhylo')) {
-        backwards <- vapply(tree2, SPR.dist, 0, tree1)
-      } else if (inherits(tree2, 'phylo') && inherits(tree1, 'multiPhylo')) {
-        backwards <- vapply(tree1, SPR.dist, 0, tree2)
-      } else {
-        backwards <- SPR.dist(tree2, tree1)
-      }
-      pmin(SPR.dist(tree1, tree2), backwards)
-    }
-  } else {
-    SPR.dist(tree1, tree2)
-  }
+  SPR.dist(tree1, tree2)
 }

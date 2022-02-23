@@ -4,7 +4,7 @@
 \alias{SPRDist}
 \title{Approximate Subtree Prune and Regraft distance}
 \usage{
-SPRDist(tree1, tree2 = NULL, symmetric = TRUE)
+SPRDist(tree1, tree2 = NULL, symmetric)
 }
 \arguments{
 \item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
@@ -13,12 +13,8 @@ or lists of such trees to undergo pairwise comparison.  Where implemented,
 \code{tree1} using a fast algorithm based on
 \insertCite{Day1985;textual}{TreeDist}.}
 
-\item{symmetric}{Logical specifying whether to produce a better heuristic
-by calculating the minimum of \code{SPRDist(t1, t2)} and \code{SPRDist(t2, t1)},
-which are not guaranteed to be equal due to the heuristic nature of the
-approximation (see
-\href{https://github.com/KlausVigo/phangorn/issues/97}{phangorn#97}). Set to
-\code{FALSE} for the faster approximation, as implemented in 'phangorn'.}
+\item{symmetric}{Ignored (redundant after fix of
+\href{https://github.com/KlausVigo/phangorn/issues/97}{phangorn#97}).}
 }
 \value{
 \code{SPRDist()} returns a vector or distance matrix of distances
@@ -34,9 +30,10 @@ It pre-processes trees to ensure that their internal representation does
 not cause the \code{SPR.dist()} function to crash R, and allows an improved
 (but slower) symmetric heuristic.
 
-A memory leak is present in phangorn v2.5.5.  To avoid a drain on system
-resources, install the latest version of phangorn with
-\code{devtools::install_github('KlausVigo/phangorn')}.
+Note that the phangorn implementation calculates a lower bound on the SPR,
+using the method of \insertCite{deOliveira2008;textual}{TreeDist}.
+Other approximations are available
+\insertCite{@e.g. @Goloboff2008SPR, @Whidden2018}{TreeDist}.
 }
 \examples{
 library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
@@ -51,7 +48,13 @@ SPRDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
 
 CompareAll(as.phylo(30:33, 8), SPRDist)
 }
+\references{
+\insertAllCited{}
+}
 \seealso{
+More sophisticated calculation with \href{https://ms609.github.io/TBRDist/reference/TreeRearrangementDistances.html}{\pkg{TBRDist}}
+functions \code{USPRDist()} and \code{ReplugDist()}.
+
 Other tree distances: 
 \code{\link{JaccardRobinsonFoulds}()},
 \code{\link{KendallColijn}()},
