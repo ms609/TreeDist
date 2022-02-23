@@ -41,6 +41,10 @@ path_vector <- function(edge) {
     .Call(`_TreeDist_path_vector`, edge)
 }
 
+pair_diff_euclidean <- function(dists) {
+    .Call(`_TreeDist_pair_diff_euclidean`, dists)
+}
+
 path_vector2 <- function(edge) {
     .Call(`_TreeDist_path_vector2`, edge)
 }

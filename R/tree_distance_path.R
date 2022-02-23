@@ -103,18 +103,14 @@ PathDist <- function(tree1, tree2 = NULL) {
                integer(nTip * (nTip - 1) / 2))
   
   nTree <- length(trees)
-  nPair <- nTree * (nTree - 1) / 2
-  ret <- structure(numeric(nPair), Size = nTree, class = "dist",
-                   Diag = FALSE, Upper = FALSE)
-  ptr <- 0L
-  for (i in seq_len(nTree - 1L)) {
-    X <- v1[, i]
-    entries <- seq_len(nTree - i)
-    j <- i + entries
-    ret[ptr + entries] <- apply(X - v1[, j, drop = FALSE], 2, .EuclideanDistance)
-    ptr <- ptr + length(entries)
-  }
+  
+  ret <- structure(
+    sqrt(pair_diff_euclidean(v1)),
+    Size = nTree, Diag = FALSE, Upper = FALSE, class = "dist")
   
   # Return:
   ret
 }
+
+
+#  ub(sqrt(pair_square_diffs(v1)), pair_square_diffs_n(v1))

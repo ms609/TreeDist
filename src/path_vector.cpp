@@ -1,10 +1,7 @@
 #include <Rcpp/Lightest>
 #include <TreeTools/renumber_tree.h> // for postorder_order
-#include <algorithm> // for copy
-#include <array> // for array
-#include <vector> // for vector
+#include <cmath> // for sqrt
 #include <memory> // for make_unique
-#include <utility> // for move
 using namespace Rcpp;
 
 #define PO_PARENT(i) edge(postorder[i] - 1, 0)
@@ -68,6 +65,33 @@ IntegerVector path_vector (IntegerMatrix edge) {
         }
       }
       ret[--ptr] = n_ancs[tip_i] + n_ancs[tip_j] - common - common;
+    }
+  }
+  
+  return ret;
+}
+
+// [[Rcpp::export]]
+NumericVector pair_diff_euclidean (const IntegerMatrix dists) {
+  const int 
+    n_col = dists.cols(),
+    n_row = dists.rows()
+  ;
+  
+  int ptr = n_col * (n_col - 1) / 2;
+  NumericVector ret(ptr);
+  for (int i = n_col - 1; i--; ) {
+    for (int j_it = n_col - i - 1; j_it--; ) {
+      const int j = i + 1 + j_it;
+      assert(ptr > 0);
+      assert(j > i);
+      
+      int val = 0;
+      for (int row = n_row; row--; ) {
+        const int x = dists(row, i) - dists(row, j);
+        val += x * x;
+      }
+      ret[--ptr] = std::sqrt(val);
     }
   }
   
@@ -151,3 +175,4 @@ IntegerVector path_vector2 (IntegerMatrix edge) {
   
   return ret;
 }
+

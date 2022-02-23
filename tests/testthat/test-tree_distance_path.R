@@ -13,7 +13,8 @@ test_that("PathDist()", {
   
   trees <- as.phylo(1:8, 29)
   expect_equal(unname(as.matrix(PathDist(trees))), PathDist(trees, trees))
-  expect_equal(PathDist(trees), CompareAll(trees, PathDist))
+  expect_equal(PathDist(trees), CompareAll(trees, PathDist),
+               ignore_attr = TRUE)
 })
 
 test_that("PathDist() equivalent to path.dist()", {
