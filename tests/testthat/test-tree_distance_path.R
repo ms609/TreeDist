@@ -1,4 +1,4 @@
-test_that("path.dist called safely", {
+test_that("PathDist()", {
   library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
   expect_equal(c(5.66, 6, 6, 6.32, 6.32, 5.74),
                PathDist(as.phylo(0:5, 6), BalancedTree(paste0("t", 6:1))),
@@ -15,3 +15,14 @@ test_that("path.dist called safely", {
   expect_equal(unname(as.matrix(PathDist(trees))), PathDist(trees, trees))
   expect_equal(PathDist(trees), CompareAll(trees, PathDist))
 })
+
+test_that("PathDist() equivalent to path.dist()", {
+  skip_if_not_installed("phangorn")
+  postTrees <- Postorder(as.phylo(0:5, 182))
+  expect_equal(PathDist(postTrees), phangorn::path.dist(postTrees))
+  ub <- microbenchmark::microbenchmark
+  ub(PathDist(postTrees), phangorn::path.dist(postTrees))
+  pv <- profvis::profvis
+  pv(ub(PathDist(postTrees), phangorn::path.dist(postTrees)))
+})
+  

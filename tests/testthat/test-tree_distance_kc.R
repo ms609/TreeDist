@@ -7,13 +7,13 @@ test_that("KC vector calculations", {
                PathVector(UnrootTree(RootTree(bal7, 1))))
   expect_equal(PathVector(UnrootTree(bal7)),
                PathVector(UnrootTree(RenumberTips(bal7b, bal7))))
-  expect_equal(as.numeric(PathVector(bal7b)),
-               c(2, 4, 4, 6, 6, 4,
-                    4, 4, 6, 6, 4,
-                       2, 6, 6, 4,
-                          6, 6, 4,
-                             2, 4,
-                                4))
+  expect_equal(as.numeric(PathVector(RenumberTips(bal7b, bal7))),
+               c(2, 4, 4, 6, 6, 5,
+                    4, 4, 6, 6, 5,
+                       2, 6, 6, 5,
+                          6, 6, 5,
+                             2, 3,
+                                3))
   
   expect_equal(SplitVector(bal7), SplitVector(RootTree(bal7, 1)))
   expect_equal(SplitVector(bal7), SplitVector(bal7b))

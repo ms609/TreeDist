@@ -105,7 +105,7 @@ PathDist <- function(tree1, tree2 = NULL) {
   nTree <- length(trees)
   nPair <- nTree * (nTree - 1) / 2
   ret <- structure(numeric(nPair), Size = nTree, class = "dist",
-                   Diag = FALSE, Upper = TRUE)
+                   Diag = FALSE, Upper = FALSE)
   ptr <- 0L
   for (i in seq_len(nTree - 1L)) {
     X <- v1[, i]

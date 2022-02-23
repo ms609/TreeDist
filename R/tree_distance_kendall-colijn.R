@@ -148,6 +148,11 @@ PathVector <- function(tree) {
   structure(path_vector(edge), Size = NTip(tree), class = 'dist')
 }
 
+PathVector2 <- function(tree) {
+  edge <- tree$edge
+  structure(path_vector2(edge), Size = NTip(tree), class = 'dist')
+}
+
 .PathVectorR <- function(tree) {
   tree <- Preorder(tree)
   edge <- tree$edge

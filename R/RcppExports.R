@@ -41,6 +41,10 @@ path_vector <- function(edge) {
     .Call(`_TreeDist_path_vector`, edge)
 }
 
+path_vector2 <- function(edge) {
+    .Call(`_TreeDist_path_vector2`, edge)
+}
+
 cpp_robinson_foulds_distance <- function(x, y, nTip) {
     .Call(`_TreeDist_cpp_robinson_foulds_distance`, x, y, nTip)
 }
