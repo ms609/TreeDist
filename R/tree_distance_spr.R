@@ -146,15 +146,19 @@ SPRDist.multiPhylo <- SPRDist.list
       splitB <- sp[[2]][[j[minMismatch]]]
       ins <- TipsInSplits(c(splitA, splitB, splitA & splitB),
                           keep.names = FALSE)
+      nTip <- attr(splitA, "nTip")
       AB <- ins[3]
       aB <- ins[2] - ins[3]
       Ab <- ins[1] - ins[3]
-      ab <- attr(splitA, "nTip") - (aB + Ab + AB)
+      ab <- nTip - (aB + Ab + AB)
       confusion <- c(AB = AB, ab = ab, aB = aB, Ab = Ab)
       if (debug) {
         summary(c(splitA, splitB, splitA & splitB))
         print(confusion)
       }
+      balance <- ins[1:2] + ins[1:2] - nTip
+      absBal <- abs(balance)
+      # balance > 0 means more in than out
       mins <- confusion == min(ifelse(confusion == 0, Inf, confusion))
       drop <- switch(sum(mins),
         switch(which(mins),
@@ -163,11 +167,64 @@ SPRDist.multiPhylo <- SPRDist.list
                as.logical(!splitA & splitB),
                as.logical(splitA & !splitB)),
         {
-          minisplit <- c(splitA & splitB,
-                         !splitA & !splitB,
-                         !splitA & splitB,
-                         splitA & !splitB)[[mins]]
-          as.logical(minisplit[[1]] | minisplit[[2]])
+          if (absBal[1] > absBal[2]) {
+            # remove from A, which is less balanced
+            if (balance[1] < 0) {
+              # remove from IN A
+              if (confusion[1] == confusion[4]) {
+                as.logical(splitA)
+              } else if (confusion[1] < confusion[4]) {
+                as.logical(splitA & splitB)
+              } else {
+                as.logical(splitA & !splitB)
+              }
+            } else {
+              # remove from OUT A
+              if (confusion[2] == confusion[3]) {
+                as.logical(!splitA)
+              } else if (confusion[2] < confusion[3]) {
+                as.logical(!splitA & !splitB)
+              } else {
+                as.logical(!splitA & splitB)
+              }
+            }
+          } else {
+            # remove from B, which is less balanced
+            if (balance[2] < 0) {
+              # remove from IN B
+              if (confusion[1] == confusion[3]) {
+                as.logical(splitB)
+              } else if (confusion[1] < confusion[3]) {
+                as.logical(splitA & splitB)
+              } else {
+                as.logical(!splitA & splitB)
+              }
+            } else {
+              # remove from OUT B
+              if (confusion[2] == confusion[4]) {
+                as.logical(!splitB)
+              } else if (confusion[2] < confusion[4]) {
+                as.logical(!splitA & !splitB)
+              } else {
+                as.logical(splitA & !splitB)
+              }
+            }
+          }
+            
+          
+          if (any(confusion == 0)) {
+            switch(which.min(confusion),
+                   as.logical(splitA & splitB),
+                   as.logical(!splitA & !splitB),
+                   as.logical(splitA & !splitB),
+                   as.logical(splitA & !splitB))
+          } else {
+            minisplit <- c(splitA & splitB,
+                           !splitA & !splitB,
+                           !splitA & splitB,
+                           splitA & !splitB)[[mins]]
+            as.logical(minisplit[[1]] | minisplit[[2]])
+          }
           # plot(simplified[[1]]); nodelabels()
           # plot(simplified[[2]]); nodelabels()
           # print(confusion)
@@ -229,11 +286,7 @@ SPRDist.multiPhylo <- SPRDist.list
       root_on_node(simplified[[2]], 1),
       check = FALSE
     )
-    if (FALSE) {
-      TipLabels(mismatches)[drop]
-      plot(simplified[[1]]); nodelabels(); tiplabels()
-      plot(simplified[[2]]); nodelabels(); tiplabels()
-    }
+
     moves <- moves + 1
   }
   
