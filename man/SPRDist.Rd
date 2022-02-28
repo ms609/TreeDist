@@ -2,9 +2,21 @@
 % Please edit documentation in R/tree_distance_spr.R
 \name{SPRDist}
 \alias{SPRDist}
+\alias{SPRDist.phylo}
+\alias{SPRDist.list}
+\alias{SPRDist.multiPhylo}
+\alias{.SPRPair}
 \title{Approximate Subtree Prune and Regraft distance}
 \usage{
 SPRDist(tree1, tree2 = NULL, symmetric)
+
+\method{SPRDist}{phylo}(tree1, tree2 = NULL, symmetric)
+
+\method{SPRDist}{list}(tree1, tree2 = NULL, symmetric)
+
+\method{SPRDist}{multiPhylo}(tree1, tree2 = NULL, symmetric)
+
+.SPRPair(tree1, tree2, justOne = T)
 }
 \arguments{
 \item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
@@ -24,14 +36,8 @@ between trees.
 Approximate the Subtree Prune and Regraft (SPR) distance.
 }
 \details{
-\code{SPRDist()} is a wrapper for the function
-\code{\link[phangorn:treedist]{SPR.dist()}} in the phangorn package.
-It pre-processes trees to ensure that their internal representation does
-not cause the \code{SPR.dist()} function to crash R, and allows an improved
-(but slower) symmetric heuristic.
-
-Note that the phangorn implementation calculates a lower bound on the SPR,
-using the method of \insertCite{deOliveira2008;textual}{TreeDist}.
+\code{SPRDist()} calculates an upper bound on the SPR distance between trees
+using the heuristic method of \insertCite{deOliveira2008;textual}{TreeDist}.
 Other approximations are available
 \insertCite{@e.g. @Goloboff2008SPR, @Whidden2018}{TreeDist}.
 }
@@ -47,6 +53,12 @@ SPRDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
         as.phylo(0:2, 7))
 
 CompareAll(as.phylo(30:33, 8), SPRDist)
+# de Oliveira Martins et al 2008, fig. 7
+tree1 <- ape::read.tree(text = "((1, 2), ((a, b), (c, d)), (3, (4, (5, (6, 7)))));")
+tree2 <- ape::read.tree(text = "((1, 2), 3, (4, (5, (((a, b), (c, d)), (6, 7)))));")
+plot(tree1)
+plot(tree2)
+.SPRPair(tree1, tree2)
 }
 \references{
 \insertAllCited{}
@@ -54,6 +66,10 @@ CompareAll(as.phylo(30:33, 8), SPRDist)
 \seealso{
 More sophisticated calculation with \href{https://ms609.github.io/TBRDist/reference/TreeRearrangementDistances.html}{\pkg{TBRDist}}
 functions \code{USPRDist()} and \code{ReplugDist()}.
+
+\pkg{phangorn} function \code{\link[phangorn:treedist]{SPR.dist()}} employs
+the same algorithm but can crash when sent trees of certain formats,
+and tends to have a longer running time.
 
 Other tree distances: 
 \code{\link{JaccardRobinsonFoulds}()},

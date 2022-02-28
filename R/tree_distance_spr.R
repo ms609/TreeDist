@@ -2,14 +2,8 @@
 #' 
 #' Approximate the Subtree Prune and Regraft (SPR) distance.
 #' 
-#' `SPRDist()` is a wrapper for the function 
-#' \code{\link[phangorn:treedist]{SPR.dist()}} in the phangorn package.
-#' It pre-processes trees to ensure that their internal representation does
-#' not cause the `SPR.dist()` function to crash R, and allows an improved
-#' (but slower) symmetric heuristic.
-#' 
-#' Note that the phangorn implementation calculates a lower bound on the SPR,
-#' using the method of \insertCite{deOliveira2008;textual}{TreeDist}.
+#' `SPRDist()` calculates an upper bound on the SPR distance between trees
+#' using the heuristic method of \insertCite{deOliveira2008;textual}{TreeDist}.
 #' Other approximations are available
 #' \insertCite{@e.g. @Goloboff2008SPR, @Whidden2018}{TreeDist}.
 #' 
@@ -39,11 +33,48 @@
 #' @seealso More sophisticated calculation with [\pkg{TBRDist}](
 #' https://ms609.github.io/TBRDist/reference/TreeRearrangementDistances.html)
 #' functions `USPRDist()` and `ReplugDist()`.
+#' 
+#' \pkg{phangorn} function \code{\link[phangorn:treedist]{SPR.dist()}} employs
+#' the same algorithm but can crash when sent trees of certain formats,
+#' and tends to have a longer running time.
+#' 
 #' @family tree distances
-#' @importFrom phangorn SPR.dist
-#' @importFrom TreeTools Postorder
+#' @importFrom TreeTools PairwiseDistances Postorder
 #' @export
-SPRDist <- function(tree1, tree2 = NULL, symmetric) {
+SPRDist <- function (tree1, tree2 = NULL, symmetric) {
+  UseMethod("SPRDist")
+}
+
+#' @rdname SPRDist
+#' @export
+SPRDist.phylo <- function (tree1, tree2 = NULL, symmetric) {
+  if (is.null(tree2)) {
+    NULL
+  } else if (inherits(tree2, "phylo")) {
+    .SPRPair(tree1, tree2)
+  } else {
+    vapply(tree2, .SPRPair, double(1), tree1)
+  }
+}
+
+#' @rdname SPRDist
+#' @export
+SPRDist.list <- function (tree1, tree2 = NULL, symmetric) {
+  if (is.null(tree2)) {
+    PairwiseDistances(tree1, .SPRPair)
+  } else if (inherits(tree2, 'phylo')) {
+    vapply(tree1, .SPRPair, double(1), tree2)
+  } else {
+    vapply(tree2, .PRDist, double(length(tree1)), tree1)
+  }
+}
+
+#' @rdname SPRDist
+#' @export
+SPRDist.multiPhylo <- SPRDist.list
+
+#' @importFrom phangorn SPR.dist
+.phangornSPRDist <- function(tree1, tree2 = NULL, symmetric) {
   if (inherits(tree1, 'phylo')) {
     tree1 <- Postorder(tree1)
   } else {
@@ -60,4 +91,77 @@ SPRDist <- function(tree1, tree2 = NULL, symmetric) {
   }
   
   SPR.dist(tree1, tree2)
+}
+
+
+
+#' @rdname SPRDist
+# Using the algorithm of \insertCite{deOliveira2008;textual}{TreeDist}
+#' @examples 
+#' # de Oliveira Martins et al 2008, fig. 7
+#' tree1 <- ape::read.tree(text = "((1, 2), ((a, b), (c, d)), (3, (4, (5, (6, 7)))));")
+#' tree2 <- ape::read.tree(text = "((1, 2), 3, (4, (5, (((a, b), (c, d)), (6, 7)))));")
+#' plot(tree1)
+#' plot(tree2)
+#' .SPRPair(tree1, tree2)
+#' @importFrom TreeTools DropTip TipsInSplits root_on_node KeepTipFast
+#' @export
+.SPRPair <- function(tree1, tree2, justOne = T) {
+  moves <- 0
+  
+  simplified <- TreeConflict(tree1, tree2)
+  
+  while (!is.null(simplified)) {
+    sp <- as.Splits(simplified)
+    nSplits <- length(sp[[1]])
+    i <- rep(seq_len(nSplits), nSplits)
+    j <- rep(seq_len(nSplits), each = nSplits)
+    mmSize <- mismatch_size(sp[[1]], sp[[2]])
+    minMismatch <- which.min(mmSize)
+    if (mmSize[minMismatch] == 0) {
+      agreement <- as.logical(sp[[1]][[i[minMismatch]]])
+      subtips1 <- agreement
+      subtips1[!subtips1][1] <- TRUE
+      subtips2 <- !agreement
+      subtips2[agreement][1] <- TRUE
+      return(moves +
+               .SPRPair(KeepTipFast(simplified[[1]], subtips1),
+                        KeepTipFast(simplified[[2]], subtips1)) +
+               .SPRPair(KeepTipFast(simplified[[1]], subtips2),
+                        KeepTipFast(simplified[[2]], subtips2))
+             )
+    }
+    disagreementSplit <- xor.Splits(sp[[1]][[i[minMismatch]]],
+                                    sp[[2]][[j[minMismatch]]])
+    drop <- if (TipsInSplits(disagreementSplit, keep.names = FALSE,
+                             smallest = FALSE) != min(mmSize)) {
+      # Divergence from de Oliveira & el, 
+      if (justOne) {
+        which.max(!as.logical(disagreementSplit))
+      } else {
+        !as.logical(disagreementSplit)
+      }
+    } else {
+      if (justOne) {
+        which.max(as.logical(disagreementSplit))
+      } else {
+        as.logical(disagreementSplit)
+      }
+    }
+    simplified <- DropTip(simplified, drop)
+    simplified <- TreeConflict(
+      root_on_node(simplified[[1]], 1),
+      root_on_node(simplified[[2]], 1),
+      check = FALSE
+    )
+    if (FALSE) {
+      TipLabels(mismatches)[drop]
+      plot(simplified[[1]]); nodelabels(); tiplabels()
+      plot(simplified[[2]]); nodelabels(); tiplabels()
+    }
+    moves <- moves + 1
+  }
+  
+  # Return:
+  moves
 }

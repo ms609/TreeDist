@@ -44,10 +44,11 @@ Imports:
   cli (>= 3.0),
   colorspace,
   memoise,
+  phangorn (>= 2.2.1),
   Rdpack (>= 0.7),
   shiny,
   shinyjs,
-  TreeTools (>= 1.6.0.9010)
+  TreeTools (>= 1.6.0.9014)
 Suggests:
   bookdown,
   cluster,
@@ -57,7 +58,6 @@ Suggests:
   knitr,
   MASS,
   parallel,
-  phangorn (>= 2.2.1),
   protoclust,
   Quartet,
   readxl,

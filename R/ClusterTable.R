@@ -35,7 +35,9 @@ NULL
 
 #' @rdname ClusterTable
 #' @export
-as.ClusterTable <- function(x, tipLabels = NULL, ...) UseMethod('as.ClusterTable')
+as.ClusterTable <- function(x, tipLabels = NULL, ...) {
+  UseMethod('as.ClusterTable')
+}
 
 #' @rdname ClusterTable
 #' @importFrom TreeTools NTip RenumberTips
