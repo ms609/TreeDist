@@ -106,10 +106,17 @@ SPRDist.multiPhylo <- SPRDist.list
 #' .SPRPair(tree1, tree2)
 #' @importFrom TreeTools DropTip TipsInSplits root_on_node KeepTipFast
 #' @export
-.SPRPair <- function(tree1, tree2, justOne = T) {
+.SPRPair <- function(tree1, tree2, debug = FALSE) {
   moves <- 0
+  if (debug) dropList <- character(0)
   
   simplified <- TreeConflict(tree1, tree2)
+  if (debug) {
+    par(mfrow = 1:2, mai = rep(0.1, 4))
+    plot(simplified[[1]]); nodelabels()
+    plot(simplified[[2]]); nodelabels()
+    
+  }
   
   while (!is.null(simplified)) {
     sp <- as.Splits(simplified)
@@ -117,6 +124,7 @@ SPRDist.multiPhylo <- SPRDist.list
     i <- rep(seq_len(nSplits), nSplits)
     j <- rep(seq_len(nSplits), each = nSplits)
     mmSize <- mismatch_size(sp[[1]], sp[[2]])
+    # which(TipsInSplits(xor.Splits(sp[[1]][[i]], sp[[2]][[j]])) - mmSize > 0)
     minMismatch <- which.min(mmSize)
     if (mmSize[minMismatch] == 0) {
       agreement <- as.logical(sp[[1]][[i[minMismatch]]])
@@ -131,22 +139,89 @@ SPRDist.multiPhylo <- SPRDist.list
                         KeepTipFast(simplified[[2]], subtips2))
              )
     }
-    disagreementSplit <- xor.Splits(sp[[1]][[i[minMismatch]]],
-                                    sp[[2]][[j[minMismatch]]])
-    drop <- if (TipsInSplits(disagreementSplit, keep.names = FALSE,
-                             smallest = FALSE) != min(mmSize)) {
-      # Divergence from de Oliveira & el, 
-      if (justOne) {
-        which.max(!as.logical(disagreementSplit))
-      } else {
-        !as.logical(disagreementSplit)
+    
+    if (TRUE) { # Experimental way
+        
+      splitA <- sp[[1]][[i[minMismatch]]]
+      splitB <- sp[[2]][[j[minMismatch]]]
+      ins <- TipsInSplits(c(splitA, splitB, splitA & splitB),
+                          keep.names = FALSE)
+      AB <- ins[3]
+      aB <- ins[2] - ins[3]
+      Ab <- ins[1] - ins[3]
+      ab <- attr(splitA, "nTip") - (aB + Ab + AB)
+      confusion <- c(AB = AB, ab = ab, aB = aB, Ab = Ab)
+      if (debug) {
+        summary(c(splitA, splitB, splitA & splitB))
+        print(confusion)
       }
+      mins <- confusion == min(ifelse(confusion == 0, Inf, confusion))
+      drop <- switch(sum(mins),
+        switch(which(mins),
+               as.logical(splitA & splitB),
+               as.logical(!splitA & !splitB),
+               as.logical(!splitA & splitB),
+               as.logical(splitA & !splitB)),
+        {
+          minisplit <- c(splitA & splitB,
+                         !splitA & !splitB,
+                         !splitA & splitB,
+                         splitA & !splitB)[[mins]]
+          as.logical(minisplit[[1]] | minisplit[[2]])
+          # plot(simplified[[1]]); nodelabels()
+          # plot(simplified[[2]]); nodelabels()
+          # print(confusion)
+          # summary(c(splitA, splitB))
+          # stop()
+        }, 
+        if (abs(Ab - aB) > abs(AB - ab)) {
+          if (aB < Ab) {
+            as.logical(!splitA & splitB)
+          } else {
+            as.logical(splitA & !splitB)
+          }
+        } else {
+          if (ab < AB) {
+            as.logical(!splitA & !splitB)
+          } else {
+            as.logical(splitA & splitB)
+          } 
+        }, 
+        if (sum(mins) == 4) {
+          1:4 == 1
+        } else {
+          print(confusion)
+          summary(c(splitA, splitB))
+          stop()
+        })
     } else {
-      if (justOne) {
-        which.max(as.logical(disagreementSplit))
+      
+      disagreementSplit <- xor.Splits(sp[[1]][[i[minMismatch]]],
+                                      sp[[2]][[j[minMismatch]]])
+      drop <- if (TipsInSplits(disagreementSplit, keep.names = FALSE,
+                               smallest = FALSE) != min(mmSize)) {
+        # Divergence from de Oliveira & el, 
+        if (justOne) {
+          which.max(!as.logical(disagreementSplit))
+        } else {
+          !as.logical(disagreementSplit)
+        }
       } else {
-        as.logical(disagreementSplit)
+        if (justOne) {
+          which.max(as.logical(disagreementSplit))
+        } else {
+          as.logical(disagreementSplit)
+        }
       }
+    }
+    stopifnot(any(drop))
+    if (sum(drop) > 1) {
+      drop <- as.logical(tabulate(which.max(drop), length(drop)))
+    }
+    if (debug) {
+      dropList <- c(dropList, TipLabels(simplified[[1]])[drop])
+      message("Dropping: ", TipLabels(simplified[[1]])[drop],
+              " (", which(drop), ")")
     }
     simplified <- DropTip(simplified, drop)
     simplified <- TreeConflict(
@@ -163,5 +238,6 @@ SPRDist.multiPhylo <- SPRDist.list
   }
   
   # Return:
-  moves
+  
+  if (debug) list(moves, dropList) else moves
 }

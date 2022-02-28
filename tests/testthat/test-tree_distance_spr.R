@@ -35,26 +35,46 @@ test_that("SPR calculated correctly", {
   expect_equal(.SPRPair(ape::read.tree(text = "((a, b), (c, d));"),
                         ape::read.tree(text = "((a, c), (b, d));")),
                1L)
+  expect_equal(.SPRPair(PectinateTree(letters[1:26]),
+                        PectinateTree(letters[c(2:26, 1)])),
+               1L)
+  expect_equal(.phangornSPRDist(PectinateTree(letters[1:26]),
+                                PectinateTree(letters[c(2:26, 1)])),
+               c(spr = 1L))
   
-  nTip <- 90
+  nTip <- 130
+  nTip <- 50
   nTrees <- 1
   nSPR <- 30
+  trueDist <- dist(seq_len(nSPR + 1) - 1)
 
   set.seed(0)
   tr <- vector("list", nSPR + 1L)
   tr[[1]] <- Postorder(RandomTree(nTip, root = TRUE))
+  expect_equal(SPRDist(tr[[1]], tr[[1]]), 0)
   for (i in seq_len(nSPR) + 1L) {
     tr[[i]] <- Postorder(TreeSearch::SPR(tr[[i - 1]]))
   }
+  phanDist <- .phangornSPRDist(tr)
+  
+  
   pv(testDist <- SPRDist(tr))
   bestDist <- as.dist(pmax(as.matrix(testDist), as.matrix(SPRDist(rev(tr)))[rev(seq_len(nSPR + 1)), rev(seq_len(nSPR + 1))]))
-  expect_equal(SPRDist(tr[[1]], tr[[1]]), 0)
   
-  trueDist <- dist(seq_len(nSPR + 1) - 1)
-  # ub(SPRDist(tr), .phangornSPRDist(tr), times = 4)
-  phanDist <- .phangornSPRDist(tr)
+  overShot <- as.matrix(testDist) > as.matrix(trueDist)
+  overs <- colSums(overShot) > 0
+  overShot[overs, overs]
+  
+  tree1 <- tr[[3]]
+  tree2 <- tr[[25]]
+  .SPRPair(tree1, tree2, debug = TRUE)
+  
+  dropped <- paste0("t", c(47, 36, 40, 23, 11))#, 5, 45, 22, 1, 39, 49, 46))
+  .SPRPair(DropTip(tree1, dropped), DropTip(tree2, dropped), debug = TRUE)
+  
+  # ub(SPRDist(tr), .phangornSPRDist(tr), times = 3)
 
-  par(mfrow = c(1, 2))  
+  par(mfrow = c(1, 2))
   hist(trueDist - phanDist, col = 2)
   hist(trueDist - bestDist, add = TRUE, col = "#88ee4488")
   
@@ -64,6 +84,8 @@ test_that("SPR calculated correctly", {
   jd <- jitter(trueDist)
   points(jd, phanDist, pch = 1)
   points(jd, bestDist, pch = 3, col = 2)
+  points(jd, trueDist - phanDist, pch = 5, col = 4)
+  points(jd, trueDist - bestDist, pch = 4, col = 5)
   arrows(jd, phanDist, jd, bestDist, col = 3)
   summary(lm(trueDist~phanDist + 0))
   summary(lm(trueDist~bestDist + 0))
