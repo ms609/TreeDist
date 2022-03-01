@@ -153,13 +153,14 @@ SPRDist.multiPhylo <- SPRDist.list
       ab <- nTip - (aB + Ab + AB)
       confusion <- c(AB = AB, ab = ab, aB = aB, Ab = Ab)
       if (debug) {
-        summary(c(splitA, splitB, splitA & splitB))
+        summary(c(splitA, splitB))
         print(confusion)
       }
       balance <- ins[1:2] + ins[1:2] - nTip
       absBal <- abs(balance)
       # balance > 0 means more in than out
-      mins <- confusion == min(ifelse(confusion == 0, Inf, confusion))
+      confusInf <- ifelse(confusion == 0, Inf, confusion)
+      mins <- confusion == min(confusInf)
       drop <- switch(sum(mins),
         switch(which(mins),
                as.logical(splitA & splitB),
@@ -173,7 +174,7 @@ SPRDist.multiPhylo <- SPRDist.list
               # remove from IN A
               if (confusion[1] == confusion[4]) {
                 as.logical(splitA)
-              } else if (confusion[1] < confusion[4]) {
+              } else if (confusInf[1] < confusInf[4]) {
                 as.logical(splitA & splitB)
               } else {
                 as.logical(splitA & !splitB)
@@ -182,7 +183,7 @@ SPRDist.multiPhylo <- SPRDist.list
               # remove from OUT A
               if (confusion[2] == confusion[3]) {
                 as.logical(!splitA)
-              } else if (confusion[2] < confusion[3]) {
+              } else if (confusInf[2] < confusInf[3]) {
                 as.logical(!splitA & !splitB)
               } else {
                 as.logical(!splitA & splitB)
@@ -194,7 +195,7 @@ SPRDist.multiPhylo <- SPRDist.list
               # remove from IN B
               if (confusion[1] == confusion[3]) {
                 as.logical(splitB)
-              } else if (confusion[1] < confusion[3]) {
+              } else if (confusInf[1] < confusInf[3]) {
                 as.logical(splitA & splitB)
               } else {
                 as.logical(!splitA & splitB)
@@ -203,33 +204,13 @@ SPRDist.multiPhylo <- SPRDist.list
               # remove from OUT B
               if (confusion[2] == confusion[4]) {
                 as.logical(!splitB)
-              } else if (confusion[2] < confusion[4]) {
+              } else if (confusInf[2] < confusInf[4]) {
                 as.logical(!splitA & !splitB)
               } else {
                 as.logical(splitA & !splitB)
               }
             }
           }
-            
-          
-          if (any(confusion == 0)) {
-            switch(which.min(confusion),
-                   as.logical(splitA & splitB),
-                   as.logical(!splitA & !splitB),
-                   as.logical(splitA & !splitB),
-                   as.logical(splitA & !splitB))
-          } else {
-            minisplit <- c(splitA & splitB,
-                           !splitA & !splitB,
-                           !splitA & splitB,
-                           splitA & !splitB)[[mins]]
-            as.logical(minisplit[[1]] | minisplit[[2]])
-          }
-          # plot(simplified[[1]]); nodelabels()
-          # plot(simplified[[2]]); nodelabels()
-          # print(confusion)
-          # summary(c(splitA, splitB))
-          # stop()
         }, 
         if (abs(Ab - aB) > abs(AB - ab)) {
           if (aB < Ab) {
