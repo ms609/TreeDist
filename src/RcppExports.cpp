@@ -173,6 +173,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// confusion
+IntegerVector confusion(const RawMatrix x, const RawMatrix y);
+RcppExport SEXP _TreeDist_confusion(SEXP xSEXP, SEXP ySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const RawMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const RawMatrix >::type y(ySEXP);
+    rcpp_result_gen = Rcpp::wrap(confusion(x, y));
+    return rcpp_result_gen;
+END_RCPP
+}
 // tree_conflict
 Rcpp::List tree_conflict(const IntegerMatrix x, const IntegerMatrix y);
 RcppExport SEXP _TreeDist_tree_conflict(SEXP xSEXP, SEXP ySEXP) {

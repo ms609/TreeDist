@@ -1,7 +1,7 @@
 #include <Rcpp/Lightest>
 #include <TreeTools/assert.h> // for ASSERT
 #include <TreeTools/types.h> // for intx
-#include <TreeTools/SplitList.h> // for SplitList
+#include <TreeTools/SplitList.h> // for SplitList, count_bits
 
 using namespace Rcpp;
 
@@ -75,3 +75,59 @@ IntegerVector mismatch_size (const RawMatrix x, const RawMatrix y) {
   }
   return ret;
 }
+
+
+// [[Rcpp::export]]
+IntegerVector confusion (const RawMatrix x, const RawMatrix y) {
+  const int16 n_split = x.rows();
+  if (n_split != y.rows()) {
+    throw std::invalid_argument("Input splits contain same number of splits.");
+  }
+  if (!x.hasAttribute("nTip")) {
+    Rcpp::stop("`x` lacks nTip attribute");
+  }
+  if (!y.hasAttribute("nTip")) {
+    Rcpp::stop("`y` lacks nTip attribute");
+  }
+  const int16 n_tip = x.attr("nTip");
+  if (n_tip != int16(y.attr("nTip"))) {
+    Rcpp::stop("`x` and `y` differ in `nTip`");
+  }
+  
+  const TreeTools::SplitList a(x), b(y);
+  const int16
+    n_bin = a.n_bins,
+    confusion_size = 4
+  ;
+  IntegerVector ret(n_split * n_split * confusion_size);
+  int *ret_ptr = ret.end();
+  for (int16 bi = n_split; bi--; ) {
+    const int16
+      nb = b.in_split[bi],
+      nB = n_tip - nb
+    ;
+    
+    for (int16 ai = n_split; ai--; ) {
+      
+      // x divides tips into a|A; y divides tips into b|B
+      int16 a_and_b = 0;
+      for (int16 bin = n_bin; bin--; ) {
+        a_and_b += TreeTools::count_bits(a.state[ai][bin] & b.state[bi][bin]);
+      }
+      
+      const int16
+        na = a.in_split[ai],
+        a_and_B = na - a_and_b,
+        A_and_b = nb - a_and_b,
+        A_and_B = nB - a_and_B
+      ;
+      *(--ret_ptr) = A_and_B;
+      *(--ret_ptr) = A_and_b;
+      *(--ret_ptr) = a_and_B;
+      *(--ret_ptr) = a_and_b;
+    }
+  }
+  ret.attr("dim") = Dimension(confusion_size, n_split, n_split);
+  return ret;
+}
+

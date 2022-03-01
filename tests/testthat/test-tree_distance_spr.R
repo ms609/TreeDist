@@ -31,6 +31,29 @@ test_that("SPR: Under the hood", {
   Test(splits, rev(splits))
 })
 
+test_that("confusion()", {
+  TestConfusion <- function (a, b) {
+    i <- rep(seq_along(a), each = length(b))
+    j <- rep(seq_along(b), length(a))
+    expect_equal(
+      confusion(a, b),
+      aperm(array(c(TipsInSplits(a[[i]] & b[[j]]),
+                    TipsInSplits(a[[i]] & !b[[j]]),
+                    TipsInSplits(!a[[i]] & b[[j]]),
+                    TipsInSplits(!a[[i]] & !b[[j]])),
+                  c(length(a), length(b), 4)), c(3, 2, 1))
+    )
+  }
+  
+  TestConfusion(as.Splits(c(T, T, T, F, F)), as.Splits(c(T, F, F, F, T)))
+  
+  set.seed(0)
+  splits <- as.Splits(t(replicate(10, sample(c(T, F), 99, replace = TRUE))))
+  TestConfusion(splits[[1]], splits[[2]])
+  TestConfusion(splits[[1:2]], splits[[2:3]])
+  TestConfusion(splits, rev(splits))
+})
+
 test_that("SPR calculated correctly", {
   expect_equal(.SPRPair(ape::read.tree(text = "((a, b), (c, d));"),
                         ape::read.tree(text = "((a, c), (b, d));")),

@@ -57,6 +57,10 @@ mismatch_size <- function(x, y) {
     .Call(`_TreeDist_mismatch_size`, x, y)
 }
 
+confusion <- function(x, y) {
+    .Call(`_TreeDist_confusion`, x, y)
+}
+
 tree_conflict <- function(x, y) {
     .Call(`_TreeDist_tree_conflict`, x, y)
 }
