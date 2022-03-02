@@ -10,7 +10,7 @@
 #' `FALSE` and you will encounter undefined behaviour if trees are not
 #' binary `phylo` objects with identical leaf labels, rooted on leaf 1.
 #' 
-#' @return `TreeConflict()` returns a list of two trees, corresponding to 
+#' @return `Reduce()` returns a list of two trees, corresponding to 
 #' `tree1` and `tree2` after any identical groupings have been collapsed,
 #' with tree edges listed in preorder; or `NULL` if the trees are equivalent.
 #' @examples 
@@ -19,7 +19,7 @@
 #' par(mai = rep(0.1, 4), mfrow = c(2, 2))
 #' plot(tree1)
 #' plot(tree2)
-#' confl <- TreeConflict(tree1, tree2)
+#' confl <- Reduce(tree1, tree2)
 #' plot(confl[[1]])
 #' plot(confl[[2]])
 #' @template MRS
