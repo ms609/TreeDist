@@ -53,16 +53,16 @@ path_vector2 <- function(edge) {
     .Call(`_TreeDist_path_vector2`, edge)
 }
 
+reduce_trees <- function(x, y) {
+    .Call(`_TreeDist_reduce_trees`, x, y)
+}
+
 mismatch_size <- function(x, y) {
     .Call(`_TreeDist_mismatch_size`, x, y)
 }
 
 confusion <- function(x, y) {
     .Call(`_TreeDist_confusion`, x, y)
-}
-
-reduce_trees <- function(x, y) {
-    .Call(`_TreeDist_reduce_trees`, x, y)
 }
 
 cpp_robinson_foulds_distance <- function(x, y, nTip) {

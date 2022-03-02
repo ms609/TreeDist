@@ -5,7 +5,12 @@
 using namespace Rcpp;
 
 #define R_TO_C 1
-#define IS_TIP(i) i <= n_tip
+#define IS_TIP(i) ((i) <= n_tip)
+#define X_AUNT(i) x_sibling[x_parents[(i)]]
+#define Y_AUNT(i) y_sibling[y_parents[(i)]]
+#define Y_NIECE1(i) y_child_1[y_sibling[(i)]]
+#define Y_NIECE2(i) y_sibling[Y_NIECE1(i)]
+#define SAME_AUNT(x_aunt, y_aunt) x_aunt && IS_TIP(x_aunt) && x_aunt == y_aunt
 
 inline void add_child(const int *parent, const int *child,
                       std::unique_ptr<intx[]> & a_child,
@@ -25,7 +30,7 @@ inline void add_child(const int *parent, const int *child,
 }
 
 #define TODO_DELETE_RMSIB_DEBUG \
-  Rcout << "sibling[" << tip << "] = sibling[parents[(tip)]] = " \
+  Rcout << "sibling[" << tip << "] <- sibling[parents[(tip)]] = " \
         << sibling[parents[(tip)]] << std::endl; \
   Rcout << "sibling[" << sibling[(tip)] << "] = " << (tip) << std::endl; \
   Rcout << "parents[" << tip << "] = " << parents[parents[(tip)]] << std::endl; \
@@ -33,11 +38,31 @@ inline void add_child(const int *parent, const int *child,
   
 // TODO might be better to re-christen as "REMOVE_TIP"
 #define REMOVE_SIBLING(tip, a_child, sibling, parents)             \
-  sibling[sibling[(tip)]] = 0;                                 \
+  sibling[sibling[(tip)]] = 0;                                     \
   sibling[(tip)] = sibling[parents[(tip)]];                        \
   sibling[sibling[(tip)]] = (tip);                                 \
   parents[(tip)] = parents[parents[(tip)]];                        \
   a_child[parents[(tip)]] = (tip)
+
+#define TODO_DELETE_RMTIP_DEBUG                                \
+Rcout << "\n\n ==== Remove tip " << tip << ". ====\n";\
+Rcout << "parents["<<sibling[(tip)]<<"] = "<<parents[parents[(tip)]]<<";    \n";\
+  Rcout << "sibling["<<sibling[parents[(tip)]]<<"] = "<<sibling[(tip)]<<";\n";\
+  Rcout << "sibling["<<sibling[(tip)]<<"] = "<<sibling[parents[(tip)]]<<"\n"; \
+  Rcout<<"a_child["<<parents[parents[(tip)]]<<"] = "<<sibling[(tip)]<<"\n";
+
+#define REMOVE_TIP(tip, a_child, sibling, parents)                 \
+  parents[sibling[(tip)]] = parents[parents[(tip)]];               \
+  sibling[sibling[parents[(tip)]]] = sibling[(tip)];               \
+  sibling[sibling[(tip)]] = sibling[parents[(tip)]];               \
+  a_child[parents[(tip)]] = sibling[(tip)];               \
+  sibling[(tip)] = 0                                           \
+  
+// Order is important: X_AUNT will change after removing tip!
+#define REDUCE_CHAIN                                               \
+  REMOVE_TIP(X_AUNT(g_aunt), y_child_1, y_sibling, y_parents);     \
+  REMOVE_TIP(X_AUNT(g_aunt), x_child_1, x_sibling, x_parents);     \
+  ++dropped
 
 #define LIFT_ROOT(tip, a_child, sibling, parents)                  \
   sibling[1] = sibling[(tip)];                                     \
@@ -77,7 +102,7 @@ inline void rebuild_tree(
 // labels, rooted on leaf 1, in some form of postorder.
 // [[Rcpp::export]]
 Rcpp::List reduce_trees(const IntegerMatrix x,
-                         const IntegerMatrix y) {
+                        const IntegerMatrix y) {
   const intx
     n_edge = x.nrow(),
     n_node = n_edge / 2,
@@ -103,17 +128,65 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
   for (intx it = n_tip; it--; ) {
     const intx i = it + R_TO_C;
     const intx sibling = x_sibling[i];
-    // Rcout << " Cherry: " << i << ", " << sibling 
-    //       << " (y = " << y_sibling[i] <<").\n";
     if (sibling && sibling <= n_tip && sibling == y_sibling[i]) {
       REMOVE_SIBLING(i, x_child_1, x_sibling, x_parents);
       REMOVE_SIBLING(i, y_child_1, y_sibling, y_parents);
       ++dropped;
-      // Rcout << "   - Dropping. " << dropped << "\n";
       ++it;
     }
   }
+  
   // Rcout << "\n dropped: " << dropped << "; ntip = " << n_tip << "\n";
+  if (dropped > n_tip - 4) {
+    // There's only one three-leaf topology
+    return Rcpp::List::create(R_NilValue, R_NilValue);
+  }
+  
+  for (intx it = n_tip; it--; ) {
+    const int i = it + R_TO_C;
+    if (!x_sibling[i]) {
+      // Rcout << "> Tip " << i << " not in tree.\n";
+      continue;
+    }
+    const int aunt = X_AUNT(i);
+    if (!aunt || !IS_TIP(aunt)) {
+      // Rcout << "> No chain at " << i << ":  aunt = " << aunt << ".\n";
+      continue;
+    }
+    const int g_aunt = X_AUNT(aunt);
+    if (!g_aunt || !IS_TIP(g_aunt)) {
+      // Rcout << "> No chain at " << i << "-" << aunt 
+      //       << ":  gt_aunt = " << g_aunt << ".\n";
+      continue;
+    }
+    // Rcout << " o Candidate chain: " << i << "." << aunt << "." 
+    //       << g_aunt << "-(";
+    if (aunt == Y_AUNT(i) &&
+        g_aunt == Y_AUNT(aunt)) {
+      // Rcout << "?- " << X_AUNT(g_aunt) << "/" << Y_AUNT(g_aunt) << "-?";
+      // Case 1: Same direction
+      while(SAME_AUNT(X_AUNT(g_aunt), Y_AUNT(g_aunt))) {
+        // Rcout << ")- " << X_AUNT(g_aunt) << " -(";
+        REDUCE_CHAIN;
+      }
+    } else if (i == Y_AUNT(aunt) &&
+               aunt == Y_AUNT(g_aunt)) {
+      // Case 2: Opposite direction
+      // Rcout << "?- " << X_AUNT(g_aunt) << " = " << Y_NIECE1(g_aunt)
+      //       << "|" << Y_NIECE2(g_aunt) 
+      //       << "|" << y_sibling[g_aunt] << " -?";
+      while(X_AUNT(g_aunt) &&
+            IS_TIP(X_AUNT(g_aunt)) && (
+                X_AUNT(g_aunt) == Y_NIECE1(g_aunt) ||
+                X_AUNT(g_aunt) == Y_NIECE2(g_aunt) ||
+                X_AUNT(g_aunt) == y_sibling[g_aunt])) {
+        // Rcout << ")- rm " << x_sibling[x_parents[g_aunt]] << " -(";
+        REDUCE_CHAIN;
+      }
+    }
+    // Rcout << ".\n";
+  }
+  
   if (dropped > n_tip - 4) {
     // There's only one three-leaf topology
     return Rcpp::List::create(R_NilValue, R_NilValue);
@@ -126,11 +199,6 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
   do {
     const intx x_sib = x_sibling[1];
     ASSERT(!(IS_TIP(x_sib))); // would've been collapsed
-    if (IS_TIP(x_sib)) {
-      // Only two leaves in tree. Not sure we can ever get here?
-      // TODO delete
-      return Rcpp::List::create(R_NilValue, R_NilValue);
-    }
     intx x_1 = x_child_1[x_sib];
     if (!(IS_TIP(x_1))) {
       x_1 = x_sibling[x_1];

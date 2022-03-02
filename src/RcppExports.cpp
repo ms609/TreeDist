@@ -161,6 +161,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// reduce_trees
+Rcpp::List reduce_trees(const IntegerMatrix x, const IntegerMatrix y);
+RcppExport SEXP _TreeDist_reduce_trees(SEXP xSEXP, SEXP ySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const IntegerMatrix >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const IntegerMatrix >::type y(ySEXP);
+    rcpp_result_gen = Rcpp::wrap(reduce_trees(x, y));
+    return rcpp_result_gen;
+END_RCPP
+}
 // mismatch_size
 IntegerVector mismatch_size(const RawMatrix x, const RawMatrix y);
 RcppExport SEXP _TreeDist_mismatch_size(SEXP xSEXP, SEXP ySEXP) {
@@ -182,18 +194,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const RawMatrix >::type x(xSEXP);
     Rcpp::traits::input_parameter< const RawMatrix >::type y(ySEXP);
     rcpp_result_gen = Rcpp::wrap(confusion(x, y));
-    return rcpp_result_gen;
-END_RCPP
-}
-// reduce_trees
-Rcpp::List reduce_trees(const IntegerMatrix x, const IntegerMatrix y);
-RcppExport SEXP _TreeDist_reduce_trees(SEXP xSEXP, SEXP ySEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const IntegerMatrix >::type x(xSEXP);
-    Rcpp::traits::input_parameter< const IntegerMatrix >::type y(ySEXP);
-    rcpp_result_gen = Rcpp::wrap(reduce_trees(x, y));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -305,9 +305,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_vec_diff_euclidean", (DL_FUNC) &_TreeDist_vec_diff_euclidean, 2},
     {"_TreeDist_pair_diff_euclidean", (DL_FUNC) &_TreeDist_pair_diff_euclidean, 1},
     {"_TreeDist_path_vector2", (DL_FUNC) &_TreeDist_path_vector2, 1},
+    {"_TreeDist_reduce_trees", (DL_FUNC) &_TreeDist_reduce_trees, 2},
     {"_TreeDist_mismatch_size", (DL_FUNC) &_TreeDist_mismatch_size, 2},
     {"_TreeDist_confusion", (DL_FUNC) &_TreeDist_confusion, 2},
-    {"_TreeDist_reduce_trees", (DL_FUNC) &_TreeDist_reduce_trees, 2},
     {"_TreeDist_cpp_robinson_foulds_distance", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_distance, 3},
     {"_TreeDist_cpp_robinson_foulds_info", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_info, 3},
     {"_TreeDist_cpp_matching_split_distance", (DL_FUNC) &_TreeDist_cpp_matching_split_distance, 3},
