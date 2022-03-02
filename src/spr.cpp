@@ -39,14 +39,15 @@ IntegerVector mismatch_size (const RawMatrix x, const RawMatrix y) {
   
   const TreeTools::SplitList a(x), b(y);
   const int16
+    half_tip = n_tip / 2,
     last_bin = a.n_bins - 1,
     unset_tips = (n_tip % SL_BIN_SIZE) ? SL_BIN_SIZE - n_tip % SL_BIN_SIZE : 0
   ;
   const splitbit all_ones = ~(splitbit(0U));
   const splitbit unset_mask = all_ones >> unset_tips;
 
-  int16 ret_ptr = n_split * n_split;
-  IntegerVector ret(ret_ptr);
+  IntegerVector ret(n_split * n_split);
+  int *ret_ptr = ret.end();
   for (int16 bi = b.n_splits; bi--; ) {
     // Rcout << "a = " << ai << ".\n";
     for (int16 ai = a.n_splits; ai--; ) {
@@ -58,7 +59,7 @@ IntegerVector mismatch_size (const RawMatrix x, const RawMatrix y) {
       //       << " = " << TreeTools::count_bits(
       // (a.state[ai][last_bin] ^ b.state[bi][last_bin]) & unset_mask
       //       ) << "\n";
-      ret[ret_ptr] = TreeTools::count_bits(
+      *ret_ptr = TreeTools::count_bits(
         (a.state[ai][last_bin] ^ b.state[bi][last_bin]) & unset_mask
         );
       for (int16 bin = last_bin; bin--; ) {
@@ -66,10 +67,13 @@ IntegerVector mismatch_size (const RawMatrix x, const RawMatrix y) {
         // Rcout << "      " << (a.state[ai][bin]);
         // Rcout << " ^ " << (b.state[bi][bin]);
         // Rcout << " = " << (a.state[ai][bin] ^ b.state[bi][bin]) << std::endl;
-        ret[ret_ptr] += TreeTools::count_bits(a.state[ai][bin] ^ b.state[bi][bin]);
+        *ret_ptr += TreeTools::count_bits(a.state[ai][bin] ^ b.state[bi][bin]);
         // Rcout << "      ret[" << ret_ptr << "] = " 
         //       << TreeTools::count_bits(a.state[ai][bin] ^ b.state[bi][bin]) 
         //       <<".\n";
+      }
+      if (*ret_ptr > half_tip) {
+        *ret_ptr = n_tip - *ret_ptr;
       }
     }
   }

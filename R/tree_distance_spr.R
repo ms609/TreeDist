@@ -5,7 +5,7 @@
 #' `SPRDist()` calculates an upper bound on the SPR distance between trees
 #' using the heuristic method of \insertCite{deOliveira2008;textual}{TreeDist}.
 #' Other approximations are available
-#' \insertCite{@e.g. @Goloboff2008SPR, @Whidden2018}{TreeDist}.
+#' \insertCite{@e.g. @Hickey2008, @Goloboff2008SPR, @Whidden2018}{TreeDist}.
 #' 
 #' @template tree12ListParams
 #' @param symmetric Ignored (redundant after fix of
@@ -65,7 +65,7 @@ SPRDist.list <- function (tree1, tree2 = NULL, symmetric) {
   } else if (inherits(tree2, 'phylo')) {
     vapply(tree1, .SPRPair, double(1), tree2)
   } else {
-    vapply(tree2, .PRDist, double(length(tree1)), tree1)
+    vapply(tree2, SPRDist, double(length(tree1)), tree1)
   }
 }
 
@@ -106,28 +106,30 @@ SPRDist.multiPhylo <- SPRDist.list
 #' .SPRPair(tree1, tree2)
 #' @importFrom TreeTools DropTip TipsInSplits root_on_node KeepTipFast
 #' @export
-.SPRPair <- function(tree1, tree2, debug = FALSE) {
+.SPRConfl <- function(tree1, tree2, debug = FALSE) {
   moves <- 0
   if (debug) dropList <- character(0)
   
   simplified <- TreeConflict(tree1, tree2)
   if (debug) {
     par(mfrow = 1:2, mai = rep(0.1, 4))
-    plot(simplified[[1]]); nodelabels()
-    plot(simplified[[2]]); nodelabels()
+    plot(simplified[[1]])
+    plot(simplified[[2]])
     
   }
   
   while (!is.null(simplified)) {
     sp <- as.Splits(simplified)
     nSplits <- length(sp[[1]])
+    nTip <- NTip(sp[[1]])
     i <- rep(seq_len(nSplits), nSplits)
     j <- rep(seq_len(nSplits), each = nSplits)
-    mmSize <- mismatch_size(sp[[1]], sp[[2]])
+    conf <- confusion(sp[[1]], sp[[2]])
+    concave <- colSums(conf == 0)
     
-    minMismatch <- which.min(mmSize)
-    if (mmSize[minMismatch] == 0) {
-      agreement <- as.logical(sp[[1]][[i[minMismatch]]])
+    matches <- concave == 2
+    if (any(matches)) {
+      agreement <- as.logical(sp[[1]][[i[which.max(matches)]]])
       subtips1 <- agreement
       subtips1[!subtips1][1] <- TRUE
       subtips2 <- !agreement
@@ -140,8 +142,21 @@ SPRDist.multiPhylo <- SPRDist.list
              )
     }
     
-    splitA <- sp[[1]][[i[minMismatch]]]
-    splitB <- sp[[2]][[j[minMismatch]]]
+    confInf <- conf
+    confInf[conf == 0] <- Inf
+    confMin <- apply(confInf, 2:3, min)
+    minConf <- min(confMin[confMin > 0])
+    if (debug && minConf > 1) {
+      message("Minimum conflict: ", minConf)
+    }
+    h <- apply(conf / nTip, 2:3, Entropy)
+    minH <- min(h[confMin == minConf])
+    maxH <- max(h[confMin == minConf])
+    
+    candidate <- which.max(h == maxH)
+    
+    splitA <- sp[[1]][[i[candidate]]]
+    splitB <- sp[[2]][[j[candidate]]]
     ins <- TipsInSplits(c(splitA, splitB, splitA & splitB),
                         keep.names = FALSE)
     nTip <- attr(splitA, "nTip")
@@ -262,7 +277,7 @@ SPRDist.multiPhylo <- SPRDist.list
 # For comparison: not as optimized as phangorn::SPR.dist
 .SPRPairDeO <- function(tree1, tree2) {
   moves <- 0
-  simplified <- TreeConflict(tree1, tree2)
+  simplified <- Reduce(tree1, tree2)
   
   while (!is.null(simplified)) {
     sp <- as.Splits(simplified)
@@ -302,10 +317,21 @@ SPRDist.multiPhylo <- SPRDist.list
       root_on_node(simplified[[2]], 1),
       check = FALSE
     )
-
+    if (debug) {
+      if (is.null(simplified[[1]])) {
+        plot.new(); plot.new()
+      } else {
+        plot(simplified[[1]])
+        plot(simplified[[2]])
+      }
+      
+    }
     moves <- moves + 1
   }
   
   # Return:
   moves
 }
+
+.SPRPair <- .SPRConfl
+.SPRPair <- .SPRPairDeO

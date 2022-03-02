@@ -1,5 +1,10 @@
 #' Collapse areas of agreement between two trees
 #' 
+#' Reduces trees according to the tree reduction rules of
+#' \insertCite{Allen2001;textual}{TreeDist}:
+#' - Collapse identical pendant subtrees;
+#' - Compress equivalent internal chains.
+#' 
 #' @template tree12Params
 #' @param check Logical specifying whether to validate input. Specify
 #' `FALSE` and you will encounter undefined behaviour if trees are not
@@ -20,7 +25,7 @@
 #' @template MRS
 #' @importFrom TreeTools NTip PostorderOrder RenumberTips RootTree
 #' @export
-TreeConflict <- function(tree1, tree2, check = TRUE) {
+Reduce <- function(tree1, tree2, check = TRUE) {
   if (check) {
     if (!inherits(tree1, 'phylo')) {
       stop("`tree1` must be a `phylo` object.")
@@ -40,8 +45,8 @@ TreeConflict <- function(tree1, tree2, check = TRUE) {
       stop("Trees must be binary")
     }
   }
-  ret <- tree_conflict(tree1$edge[PostorderOrder(tree1), ],
-                       tree2$edge[PostorderOrder(tree2), ])
+  ret <- reduce_trees(tree1$edge[PostorderOrder(tree1), ],
+                      tree2$edge[PostorderOrder(tree2), ])
   ret1 <- ret[[1]]
   if (is.null(ret1)) {
     return(NULL)

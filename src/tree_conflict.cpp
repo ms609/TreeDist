@@ -76,7 +76,7 @@ inline void rebuild_tree(
 // edge1 and edge2 are edge matrices of binary trees with identical leaf
 // labels, rooted on leaf 1, in some form of postorder.
 // [[Rcpp::export]]
-Rcpp::List tree_conflict(const IntegerMatrix x,
+Rcpp::List reduce_trees(const IntegerMatrix x,
                          const IntegerMatrix y) {
   const intx
     n_edge = x.nrow(),

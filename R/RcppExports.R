@@ -61,8 +61,8 @@ confusion <- function(x, y) {
     .Call(`_TreeDist_confusion`, x, y)
 }
 
-tree_conflict <- function(x, y) {
-    .Call(`_TreeDist_tree_conflict`, x, y)
+reduce_trees <- function(x, y) {
+    .Call(`_TreeDist_reduce_trees`, x, y)
 }
 
 cpp_robinson_foulds_distance <- function(x, y, nTip) {
