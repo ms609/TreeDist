@@ -110,7 +110,7 @@ SPRDist.multiPhylo <- SPRDist.list
   moves <- 0
   if (debug) dropList <- character(0)
   
-  simplified <- TreeConflict(tree1, tree2)
+  simplified <- Reduce(tree1, tree2)
   if (debug) {
     par(mfrow = 1:2, mai = rep(0.1, 4))
     plot(simplified[[1]])
@@ -260,7 +260,7 @@ SPRDist.multiPhylo <- SPRDist.list
               " (", which(drop), ")")
     }
     simplified <- DropTip(simplified, drop)
-    simplified <- TreeConflict(
+    simplified <- Reduce(
       root_on_node(simplified[[1]], 1),
       root_on_node(simplified[[2]], 1),
       check = FALSE
