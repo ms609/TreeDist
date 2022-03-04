@@ -74,6 +74,7 @@ Rcout << "";
   
 #define LIFT_ROOT(tip, a_child, sibling, parents)              \
   sibling[1] = sibling[(tip)];                                 \
+  sibling[(tip)] = 0;                                          \
   parents[sibling[(tip)]] = parents[1]
 
 #define ADD_EDGE(parent, child)                                    \
@@ -139,6 +140,8 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
     x_parents = std::make_unique<intx[]>(ledger_size),
     y_parents = std::make_unique<intx[]>(ledger_size)
   ;
+  // _sibling = 0 denotes that a leaf has been removed from a tree.
+  
   for (intx i = n_edge; i--; ) {
     add_child(&x(i, 0), &x(i, 1), x_child_1, x_sibling, x_parents);
     add_child(&y(i, 0), &y(i, 1), y_child_1, y_sibling, y_parents);
@@ -174,14 +177,17 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
     ASSERT(!(IS_TIP(x_sib))); // would've been collapsed
     intx x_1 = x_child_1[x_sib];
 #ifdef TD_DEBUG
-    Rcout << " ^ 1-sibling " << x_sib << ", whose children = {"
-          << x_1 << ", " << x_sibling[x_1] << "}.\n";
+    Rcout << " ^ 1-sibling " << x_sib << ", whose children = {";
 #endif
     if (!(IS_TIP(x_1))) {
 #ifdef TD_DEBUG
-      Rcout << " . Looking for tip at sister \n";
+      Rcout << x_1 << ", **" << x_sibling[x_1] << "**}.\n";
 #endif
       x_1 = x_sibling[x_1];
+    } else {
+#ifdef TD_DEBUG
+      Rcout << "**" <<  x_1 << "**, " << x_sibling[x_1] << "}.\n";
+#endif
     }
     if (IS_TIP(x_1)) {
       const intx
