@@ -275,6 +275,7 @@ SPRDist.multiPhylo <- SPRDist.list
 }
 
 # For comparison: not as optimized as phangorn::SPR.dist
+#' @importFrom TreeTools xor.Splits
 .SPRPairDeO <- function(tree1, tree2) {
   moves <- 0
   simplified <- Reduce(tree1, tree2)
@@ -308,11 +309,11 @@ SPRDist.multiPhylo <- SPRDist.list
     } else {
       as.logical(disagreementSplit)
     }
-    if (sum(drop) > 1) {
-      drop <- as.logical(tabulate(which.max(drop), length(drop)))
-    }
+    # if (sum(drop) > 1) {
+    #   drop <- as.logical(tabulate(which.max(drop), length(drop)))
+    # }
     simplified <- DropTip(simplified, drop)
-    simplified <- TreeConflict(
+    simplified <- Reduce(
       root_on_node(simplified[[1]], 1),
       root_on_node(simplified[[2]], 1),
       check = FALSE
