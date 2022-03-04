@@ -40,4 +40,11 @@ test_that("Reduce()", {
                         DropTip(long1, c("b", "oo", "t", "c", "X"))))
   expect_true(all.equal(longRed[[2]],
                         DropTip(long2, c("b", "oo", "t", "c", "X"))))
+  
+  tree1 <- ape::read.tree(
+    text = "(t3, ((t21, t17), (t4, (((((t9, t22), t25), t23), t24), t20))));")
+  tree2 <- ape::read.tree(
+    text = "(t3, ((t17, t21), (t4, (((((t9, t25), t23), t22), t24), t20))));")
+  expect_true(all.equal(Reduce(tree1, tree2)[[1]],
+                        DropTip(tree1, c("t3", "t17", "t21"))))
 })
