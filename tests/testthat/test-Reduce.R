@@ -13,10 +13,6 @@ test_that("Reduce()", {
   
   pec9b <- RenumberTips(TreeTools::PectinateTree(paste0('t', c(2:9, 1))),
                         pec9)
-  plot(RootTree(pec9b, 1)); nodelabels()
-  plot(RootTree(pec9, 1)); nodelabels()
-  pec9b$edge[PostorderOrder(pec9b), ]
-  pec9$edge[PostorderOrder(pec9), ]
   pecred <- Reduce(pec9b, pec9)
   expect_true(all.equal(pecred[[2]], PectinateTree(5)))
   expect_true(all.equal(pecred[[1]], PectinateTree(paste0('t', c(1, 5:2)))))
@@ -46,7 +42,5 @@ test_that("Reduce()", {
   tree2 <- ape::read.tree(
     text = "(t3, ((t17, t21), (t4, (((((t9, t25), t23), t22), t24), t20))));")
   expect_true(all.equal(Reduce(tree1, tree2)[[1]],
-                        DropTip(tree1, c("t3", "t17", "t21"))))
-  
-  
+                        DropTip(tree1, c("t4", "t17", "t21", "t20", "t24"))))
 })
