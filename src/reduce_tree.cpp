@@ -74,8 +74,8 @@ Rcout << "";
   
 #define LIFT_ROOT(tip, a_child, sibling, parents)              \
   sibling[1] = sibling[(tip)];                                 \
-  sibling[(tip)] = 0;                                          \
-  parents[sibling[(tip)]] = parents[1]
+  parents[sibling[1]] = parents[1];                            \
+  sibling[(tip)] = 0                            
 
 #define ADD_EDGE(parent, child)                                    \
   ret(*next_edge, 0) = parent;                                     \
