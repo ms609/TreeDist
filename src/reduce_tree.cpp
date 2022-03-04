@@ -45,23 +45,24 @@ inline void add_child(const int *parent, const int *child,
   a_child[parents[(tip)]] = (tip)
 
 #define TODO_DELETE_RMTIP_DEBUG                                \
-Rcout << "\n\n ==== Remove tip " << tip << ". ====\n";\
-Rcout << "parents["<<sibling[(tip)]<<"] = "<<parents[parents[(tip)]]<<";    \n";\
+  Rcout << "\n\n ==== Remove tip " << tip << ". ====\n";\
+  Rcout << "parents["<<sibling[(tip)]<<"] = "<<parents[parents[(tip)]]<<";    \n";\
   Rcout << "sibling["<<sibling[parents[(tip)]]<<"] = "<<sibling[(tip)]<<";\n";\
   Rcout << "sibling["<<sibling[(tip)]<<"] = "<<sibling[parents[(tip)]]<<"\n"; \
-  Rcout<<"a_child["<<parents[parents[(tip)]]<<"] = "<<sibling[(tip)]<<"\n";
-
+  Rcout<<"a_child["<<parents[sibling[(tip)]]<<"] = "<<sibling[(tip)]<<"\n";\
+  Rcout << "";
+  
 #define REMOVE_TIP(tip, a_child, sibling, parents)                 \
   parents[sibling[(tip)]] = parents[parents[(tip)]];               \
   sibling[sibling[parents[(tip)]]] = sibling[(tip)];               \
   sibling[sibling[(tip)]] = sibling[parents[(tip)]];               \
-  a_child[parents[(tip)]] = sibling[(tip)];               \
-  sibling[(tip)] = 0                                           \
+  a_child[parents[sibling[(tip)]]] = sibling[(tip)];               \
+  sibling[(tip)] = 0                                           
   
 // Order is important: X_AUNT will change after removing tip!
 #define REDUCE_CHAIN                                               \
-  REMOVE_TIP(X_AUNT(g_aunt), y_child_1, y_sibling, y_parents);     \
-  REMOVE_TIP(X_AUNT(g_aunt), x_child_1, x_sibling, x_parents);     \
+  REMOVE_TIP(gg_aunt, y_child_1, y_sibling, y_parents);     \
+  REMOVE_TIP(gg_aunt, x_child_1, x_sibling, x_parents);     \
   ++dropped
 
 #define LIFT_ROOT(tip, a_child, sibling, parents)                  \
@@ -159,29 +160,32 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
       //       << ":  gt_aunt = " << g_aunt << ".\n";
       continue;
     }
-    // Rcout << " o Candidate chain: " << i << "." << aunt << "." 
-    //       << g_aunt << "-(";
+    int gg_aunt = X_AUNT(g_aunt);
+    // Rcout << " o Candidate chain: " << i << "." << aunt << "."
+    //       << g_aunt << "-(" << gg_aunt;
     if (aunt == Y_AUNT(i) &&
         g_aunt == Y_AUNT(aunt)) {
-      // Rcout << "?- " << X_AUNT(g_aunt) << "/" << Y_AUNT(g_aunt) << "-?";
+      // Rcout << "/" << Y_AUNT(g_aunt) << "-?";
       // Case 1: Same direction
-      while(SAME_AUNT(X_AUNT(g_aunt), Y_AUNT(g_aunt))) {
-        // Rcout << ")- " << X_AUNT(g_aunt) << " -(";
+      while(SAME_AUNT(gg_aunt, Y_AUNT(g_aunt))) {
+        // Rcout << ">>" << gg_aunt << ">>";
         REDUCE_CHAIN;
+        gg_aunt = X_AUNT(g_aunt);
       }
     } else if (i == Y_AUNT(aunt) &&
                aunt == Y_AUNT(g_aunt)) {
       // Case 2: Opposite direction
-      // Rcout << "?- " << X_AUNT(g_aunt) << " = " << Y_NIECE1(g_aunt)
-      //       << "|" << Y_NIECE2(g_aunt) 
+      // Rcout << " = " << Y_NIECE1(g_aunt)
+      //       << "|" << Y_NIECE2(g_aunt)
       //       << "|" << y_sibling[g_aunt] << " -?";
-      while(X_AUNT(g_aunt) &&
-            IS_TIP(X_AUNT(g_aunt)) && (
-                X_AUNT(g_aunt) == Y_NIECE1(g_aunt) ||
-                X_AUNT(g_aunt) == Y_NIECE2(g_aunt) ||
-                X_AUNT(g_aunt) == y_sibling[g_aunt])) {
+      while(gg_aunt &&
+            IS_TIP(gg_aunt) && (
+                gg_aunt == Y_NIECE1(g_aunt) ||
+                gg_aunt == Y_NIECE2(g_aunt) ||
+                gg_aunt == y_sibling[g_aunt])) {
         // Rcout << ")- rm " << x_sibling[x_parents[g_aunt]] << " -(";
         REDUCE_CHAIN;
+        gg_aunt = X_AUNT(g_aunt);
       }
     }
     // Rcout << ".\n";

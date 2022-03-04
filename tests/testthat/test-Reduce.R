@@ -20,4 +20,24 @@ test_that("Reduce()", {
   pecred <- Reduce(pec9b, pec9)
   expect_true(all.equal(pecred[[2]], PectinateTree(5)))
   expect_true(all.equal(pecred[[1]], PectinateTree(paste0('t', c(1, 5:2)))))
+  
+  long1 <- ape::read.tree(
+    text = "(a, (b, (c, (d, (e, (f, ((g, (X, Y)), (h, (i, j)))))))));")
+  long2 <- ape::read.tree(
+    text = "(b, (c, (d, (e, (f, (g, ((h, (X, Y)), (i, (j, a)))))))));")
+  longRed <- Reduce(long1, long2)
+  expect_true(all.equal(longRed[[1]],
+                        DropTip(long1, c("b", "c", "X"))))
+  expect_true(all.equal(longRed[[2]],
+                        RootTree(DropTip(long2, c("b", "c", "X")), "a")))
+  
+  long1 <- ape::read.tree(
+    text = "(r, (oo, (t, (a, (b, (c, (d, (e, (f, ((g, (X, Y)), (h, (i, j))))))))))));")
+  long2 <- ape::read.tree(
+    text = "(r, (oo, (t, (b, (c, (d, (e, (f, (g, ((h, (X, Y)), (i, (j, a))))))))))));")
+  longRed <- Reduce(long1, long2)
+  expect_true(all.equal(longRed[[1]],
+                        DropTip(long1, c("b", "oo", "t", "c", "X"))))
+  expect_true(all.equal(longRed[[2]],
+                        DropTip(long2, c("b", "oo", "t", "c", "X"))))
 })
