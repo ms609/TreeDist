@@ -46,38 +46,39 @@ inline void add_child(const int *parent, const int *child,
   a_child[parents[(tip)]] = (tip)
 
 #define TODO_DELETE_RMTIP_DEBUG                                \
-  Rcout << "\n\n ==== Remove tip " << tip << ". ====\n";       \
-    Rcout << "parents["<<sibling[(tip)]<<"] = "<<parents[parents[(tip)]]<<";    \n";\
-    Rcout << "sibling["<<sibling[parents[(tip)]]<<"] = "<<sibling[(tip)]<<";\n";\
-    Rcout << "sibling["<<sibling[(tip)]<<"] = "<<sibling[parents[(tip)]]<<"\n"; \
-    Rcout<<"a_child["<<parents[sibling[(tip)]]<<"] = "<<sibling[(tip)]<<"\n";\
-  Rcout << "";
+Rcout << "\n\n ==== Remove tip " << tip << ". ====\n";                          \
+Rcout << "parents["<<sibling[(tip)]<<"] = "<<parents[parents[(tip)]]<<";    \n";\
+Rcout << "sibling["<<sibling[parents[(tip)]]<<"] = "<<sibling[(tip)]<<";\n";\
+Rcout << "sibling["<<sibling[(tip)]<<"] = "<<sibling[parents[(tip)]]<<"\n"; \
+Rcout<<"a_child["<<parents[sibling[(tip)]]<<"] = "<< sibling[sibling[(tip)]] <<"\n";\
+Rcout << "";
   
 #define REMOVE_TIP(tip, a_child, sibling, parents)                 \
-  if (parents[parents[(tip)]]) {                               \
-    parents[sibling[(tip)]] = parents[parents[(tip)]];         \
-    sibling[sibling[parents[(tip)]]] = sibling[(tip)];         \
-    sibling[sibling[(tip)]] = sibling[parents[(tip)]];         \
-    a_child[parents[sibling[(tip)]]] = sibling[(tip)];         \
-  } else {                                                     \
-    a_child[parents[(tip)]] = a_child[sibling[(tip)]];         \
-    parents[a_child[parents[(tip)]]] = parents[(tip)];         \
-    parents[sibling[a_child[parents[(tip)]]]] = parents[(tip)];\
-  }                                                            \
+  ASSERT(parents[parents[(tip)]])                              \
+  parents[sibling[(tip)]] = parents[parents[(tip)]];         \
+  sibling[sibling[parents[(tip)]]] = sibling[(tip)];         \
+  sibling[sibling[(tip)]] = sibling[parents[(tip)]];         \
+  a_child[parents[sibling[(tip)]]] = sibling[sibling[(tip)]];         \
   sibling[(tip)] = 0                                           
   
-// Order is important: X_AUNT will change after removing tip!
-#define REDUCE_CHAIN                                               \
-  REMOVE_TIP(gg_aunt, y_child_1, y_sibling, y_parents);     \
-  REMOVE_TIP(gg_aunt, x_child_1, x_sibling, x_parents);     \
+#define REDUCE_CHAIN                                           \
+  ASSERT(gg_aunt > 1);                                         \
+  REMOVE_TIP(gg_aunt, x_child_1, x_sibling, x_parents);        \
+  REMOVE_TIP(gg_aunt, y_child_1, y_sibling, y_parents);        \
   ++dropped
 
-#define LIFT_ROOT(tip, a_child, sibling, parents)                  \
-  sibling[1] = sibling[(tip)];                                     \
-  parents[sibling[(tip)]] = parents[(tip)]
+#define TODO_DELETE_LIFT_ROOT_DEBUG \
+  Rcout << "   ^ Lifting; sibling[1] = " << sibling[(tip)] <<" \n";\
+  Rcout << "     parents[" << sibling[(tip)] << "] = " << parents[(tip)] << "\n";\
+  Rcout << ""
+  
+#define LIFT_ROOT(tip, a_child, sibling, parents)              \
+  sibling[1] = sibling[(tip)];                                 \
+  parents[sibling[(tip)]] = parents[1]
 
 #define ADD_EDGE(parent, child)                                    \
   ret(*next_edge, 0) = parent;                                     \
+  ASSERT(*next_edge < ret.nrow());                                 \
   if (child > *n_tip) {                                            \
     ret(*next_edge, 1) = *next_node;                               \
     ++(*next_edge);                                                \
@@ -103,11 +104,18 @@ inline void rebuild_tree(
  
   const intx left = a_child[node];
 #ifdef TD_DEBUG
-  Rcout << "  r Rebuilding " << this_node << " -> " << left <<  ", -> "
-        << sibling[left] << ".\n";
+  Rcout << "  r Rebuilding " << node << " -> {" << left <<  ", "
+        << sibling[left] << "}.\n";
 #endif
+  ASSERT(left);
+  ASSERT(sibling[left]);
+  
   ADD_EDGE(this_node, left);
   ADD_EDGE(this_node, sibling[left]);
+#ifdef TD_DEBUG
+  Rcout << "  x Done with " << node << " -> {" << left <<  ", "
+        << sibling[left] << "}.\n";
+#endif
 }
 
 // edge1 and edge2 are edge matrices of binary trees with identical leaf
@@ -149,18 +157,68 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
   }
   
 #ifdef TD_DEBUG
-  Rcout << "\n dropped: " << dropped << "; ntip = " << n_tip << "\n";
+  Rcout << "\n Collapsed " << dropped << " cherries; ntip0 = " << n_tip << "\n";
 #endif
   if (dropped > n_tip - 4) {
     // There's only one three-leaf topology
     return Rcpp::List::create(R_NilValue, R_NilValue);
   }
   
-  for (intx it = n_tip; it--; ) {
-    const int i = it + R_TO_C;
+  // We rooted trees on leaf 1
+  ASSERT(x_child_1[root_node] == 1 || x_sibling[x_child_1[root_node]] == 1);
+  ASSERT(y_child_1[root_node] == 1 || y_sibling[y_child_1[root_node]] == 1);
+  
+  do {
+    const intx x_sib = x_sibling[1];
+    ASSERT(x_sib);
+    ASSERT(!(IS_TIP(x_sib))); // would've been collapsed
+    intx x_1 = x_child_1[x_sib];
+#ifdef TD_DEBUG
+    Rcout << " ^ 1-sibling " << x_sib << ", whose children = {"
+          << x_1 << ", " << x_sibling[x_1] << "}.\n";
+#endif
+    if (!(IS_TIP(x_1))) {
+#ifdef TD_DEBUG
+      Rcout << " . Looking for tip at sister \n";
+#endif
+      x_1 = x_sibling[x_1];
+    }
+    if (IS_TIP(x_1)) {
+      const intx
+        y_sib = y_sibling[1],
+        y_1 = y_child_1[y_sib]
+      ;
+#ifdef TD_DEBUG
+      Rcout << " ^ Checking for match for " << x_1 << " in Y: {" 
+            << y_1 << ", " << y_sibling[y_1] << "}\n";
+#endif
+      
+      if (x_1 == y_1 || x_1 == y_sibling[y_1]) {
+#ifdef TD_DEBUG
+        Rcout << "  ^ Lifting root by dropping " << x_1 << ".\n";
+#endif
+        LIFT_ROOT(x_1, x_child_1, x_sibling, x_parents);
+        LIFT_ROOT(x_1, y_child_1, y_sibling, y_parents);
+        ++dropped;
+      } else {
+        break;
+      }
+    } else {
+      break;
+    }
+  } while (true);
+  
+  if (dropped > n_tip - 4) {
+    // There's only one three-leaf topology
+    return Rcpp::List::create(R_NilValue, R_NilValue);
+  }
+  
+  for (intx it = n_tip - 1; it--; ) {
+    // 1 can't be at the head of a chain: it's the root.
+    const int i = it + R_TO_C + 1;
     if (!x_sibling[i]) {
 #ifdef TD_DEBUG
-      Rcout << "> Tip " << i << " not in tree.\n";
+      Rcout << "> Tip " << i << " already expunged.\n";
 #endif
       continue;
     }
@@ -186,30 +244,27 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
 #endif
     if (aunt == Y_AUNT(i) &&
         g_aunt == Y_AUNT(aunt)) {
-#ifdef TD_DEBUG
-      Rcout << "/" << Y_AUNT(g_aunt) << "-?";
-#endif
       // Case 1: Same direction
       while(SAME_AUNT(gg_aunt, Y_AUNT(g_aunt))) {
 #ifdef TD_DEBUG
-        Rcout << ">>" << gg_aunt << ">>";
+        Rcout << "(!x" << gg_aunt << ")";
 #endif
         REDUCE_CHAIN;
         gg_aunt = X_AUNT(g_aunt);
       }
     } else if (i == Y_AUNT(aunt) &&
-               aunt == Y_AUNT(g_aunt)) {
+      aunt == Y_AUNT(g_aunt)) {
       // Case 2: Opposite direction
 #ifdef TD_DEBUG
       Rcout << " = " << Y_NIECE1(g_aunt)
             << "|" << Y_NIECE2(g_aunt)
-            << "|" << y_sibling[g_aunt] << " -?";
+            << "|" << y_sibling[g_aunt];
 #endif
       while(gg_aunt &&
-            IS_TIP(gg_aunt) && (
-                gg_aunt == Y_NIECE1(g_aunt) ||
-                gg_aunt == Y_NIECE2(g_aunt) ||
-                gg_aunt == y_sibling[g_aunt])) {
+      IS_TIP(gg_aunt) && (
+          gg_aunt == Y_NIECE1(g_aunt) ||
+            gg_aunt == Y_NIECE2(g_aunt) ||
+            gg_aunt == y_sibling[g_aunt])) {
 #ifdef TD_DEBUG
         Rcout << ")- rm " << x_sibling[x_parents[g_aunt]] << " -(";
 #endif
@@ -218,52 +273,10 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
       }
     }
 #ifdef TD_DEBUG
-    Rcout << ".\n";
+    Rcout << ").\n";
 #endif
   }
   
-  if (dropped > n_tip - 4) {
-    // There's only one three-leaf topology
-    return Rcpp::List::create(R_NilValue, R_NilValue);
-  }
-  
-  // We rooted trees on leaf 1
-  ASSERT(x_child_1[root_node] == 1);
-  ASSERT(y_child_1[root_node] == 1);
-  
-  do {
-    const intx root_child_1 = x_child_1[x_parents[1]];
-    const intx root_leaf = IS_TIP(root_child_1) ?
-      root_child_1 : x_sibling[root_child_1];
-    ASSERT(IS_TIP(root_leaf)); // Root leaf is only removed by chain rule.
-    const intx x_sib = x_sibling[root_leaf];
-    
-    ASSERT(x_sib);
-    ASSERT(!(IS_TIP(x_sib))); // would've been collapsed
-    intx x_1 = x_child_1[x_sib];
-#ifdef TD_DEBUG
-    Rcout << "  s Sibling " << x_sib << ", x1= " << x_1 << "\n";
-#endif
-    if (!(IS_TIP(x_1))) {
-      x_1 = x_sibling[x_1];
-    }
-    if (IS_TIP(x_1)) {
-      const intx
-        y_sib = y_sibling[1],
-        y_1 = y_child_1[y_sib]
-      ;
-      if (x_1 == y_1 || x_1 == y_sibling[y_1]) {
-        // Rcout << " ^ Lifting root \n";
-        LIFT_ROOT(x_1, x_child_1, x_sibling, x_parents);
-        LIFT_ROOT(x_1, y_child_1, y_sibling, y_parents);
-        ++dropped;
-      } else {
-        break;
-      }
-    } else {
-      break;
-    }
-  } while (true);
   
   intx
     kept_tips = n_tip - dropped,
@@ -277,9 +290,16 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
   ;
   rebuild_tree(root_node, &next_edge, &next_node, &n_tip,
                x_child_1, x_sibling, x_parents, x_final);
+#ifdef TD_DEBUG
+  Rcout << "\n\n == Now to rebuild tree 2 ==\n";
+#endif
+  ASSERT(next_node == kept_tips + kept_tips);
+  ASSERT(next_edge == kept_edges);
   next_edge = 0;
   next_node = kept_tips + 1;
   rebuild_tree(root_node, &next_edge, &next_node, &n_tip,
                y_child_1, y_sibling, y_parents, y_final);
+  ASSERT(next_node == kept_tips + kept_tips);
+  ASSERT(next_edge == kept_edges);
   return Rcpp::List::create(x_final, y_final);
 }
