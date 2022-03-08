@@ -46,15 +46,16 @@ inline void add_child(const int *parent, const int *child,
   a_child[parents[(tip)]] = (tip)
 
 #define TODO_DELETE_RMTIP_DEBUG                                \
-Rcout << "\n\n ==== Remove tip " << tip << ". ====\n";                          \
-Rcout << "parents["<<sibling[(tip)]<<"] = "<<parents[parents[(tip)]]<<";    \n";\
-Rcout << "sibling["<<sibling[parents[(tip)]]<<"] = "<<sibling[(tip)]<<";\n";\
+Rcout << "\n\n ==== Remove tip " << tip << ". ====\n";       \
+Rcout << "parents[" << sibling[(tip)] << "] <- parents[" << parents[(tip)] \
+      << "] = " << parents[parents[(tip)]] << ";\n";         \
+Rcout << "sibling[" << sibling[parents[(tip)]] << "] = " << sibling[(tip)] << ";\n";\
 Rcout << "sibling["<<sibling[(tip)]<<"] = "<<sibling[parents[(tip)]]<<"\n"; \
-Rcout<<"a_child["<<parents[sibling[(tip)]]<<"] = "<< sibling[sibling[(tip)]] <<"\n";\
+Rcout << "a_child["<<parents[sibling[(tip)]]<<"] = "<< sibling[sibling[(tip)]] <<"\n";\
 Rcout << "";
   
-#define REMOVE_TIP(tip, a_child, sibling, parents)                 \
-  ASSERT(parents[parents[(tip)]])                              \
+#define REMOVE_TIP(tip, a_child, sibling, parents)           \
+  ASSERT(parents[parents[(tip)]])                            \
   parents[sibling[(tip)]] = parents[parents[(tip)]];         \
   sibling[sibling[parents[(tip)]]] = sibling[(tip)];         \
   sibling[sibling[(tip)]] = sibling[parents[(tip)]];         \
@@ -68,14 +69,16 @@ Rcout << "";
   ++dropped
 
 #define TODO_DELETE_LIFT_ROOT_DEBUG \
-  Rcout << "   ^ Lifting; sibling[1] = " << sibling[(tip)] <<" \n";\
-  Rcout << "     parents[" << sibling[(tip)] << "] = " << parents[(tip)] << "\n";\
+  Rcout << "   ^ Lifting; sibling[1] = " << sibling[(tip)];    \
+  Rcout << "; sibling[" << sibling[(tip)] << "] = 1 \n";       \
+  Rcout << "     parents[" << sibling[(tip)] << "] = " << parents[1] << "\n";\
   Rcout << ""
   
 #define LIFT_ROOT(tip, a_child, sibling, parents)              \
   sibling[1] = sibling[(tip)];                                 \
   sibling[sibling[(tip)]] = 1;                                 \
   parents[sibling[(tip)]] = parents[1];                        \
+  ASSERT(a_child[parents[1]] == 1);                            \
   sibling[(tip)] = 0                            
 
 #define ADD_EDGE(parent, child)                                    \
@@ -215,17 +218,25 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
     }
   } while (true);
   
+#ifdef TD_DEBUG
+  Rcout << "\n ^ Can't lift root further. \n";
+#endif
+  
   if (dropped > n_tip - 4) {
     // There's only one three-leaf topology
     return Rcpp::List::create(R_NilValue, R_NilValue);
   }
+  
+#ifdef TD_DEBUG
+  Rcout << "\n == Chain rule == \n";
+#endif
   
   for (intx it = n_tip - 1; it--; ) {
     // 1 can't be at the head of a chain: it's the root.
     const int i = it + R_TO_C + 1;
     if (!x_sibling[i]) {
 #ifdef TD_DEBUG
-      Rcout << "> Tip " << i << " already expunged.\n";
+      Rcout << " . Tip " << i << " already expunged.\n";
 #endif
       continue;
     }
@@ -254,7 +265,7 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
       // Case 1: Same direction
       while(SAME_AUNT(gg_aunt, Y_AUNT(g_aunt))) {
 #ifdef TD_DEBUG
-        Rcout << "(!x" << gg_aunt << ")";
+        Rcout << "!x" << gg_aunt;
 #endif
         REDUCE_CHAIN;
         gg_aunt = X_AUNT(g_aunt);
