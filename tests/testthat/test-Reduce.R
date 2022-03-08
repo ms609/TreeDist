@@ -44,7 +44,7 @@ test_that("Reduce()", {
   expect_true(all.equal(Reduce(tree1, tree2)[[1]],
                         DropTip(tree1, c("t4", "t17", "t21", "t20", "t24"))))
 
-  # Lift root AND reduce chain to new root base  
+  # Lift root AND reduce chain to new root base
   keptRoot1 <- ape::read.tree(text = "((a,(b,((((c,(d,(((e,(((f,((g,(h,((((((i,j),k),l),m),n),o))),p)),q),r)),s),t))),u),v),x))),root);")
   keptRoot2 <- ape::read.tree(text = "((a,(b,(((c,(d,(((e,(((f,((g,(h,(((((((x,i),j),k),l),m),n),o))),p)),q),r)),s),t))),u),v))),root);")
   tree1 <- RenumberTips(keptRoot1, c("root", letters))

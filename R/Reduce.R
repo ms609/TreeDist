@@ -51,19 +51,8 @@ Reduce <- function(tree1, tree2, check = TRUE) {
   if (is.null(ret1)) {
     return(NULL)
   }
-  ret1Child <- ret1[, 2]
-  ret1Tips <- ret1Child < 0
-  tipNums <- -ret1Child[ret1Tips]
-  ret1[ret1Tips, 2][sort.list(tipNums, method = "radix")] <- seq_along(tipNums)
-  
-  ret2 <- ret[[2]]
-  ret2Child <- ret2[, 2]
-  ret2Tips <- ret2Child < 0
-  tipNums <- -ret2Child[ret2Tips]
-  ret2[ret2Tips, 2][sort.list(tipNums, method = "radix")] <- seq_along(tipNums)
-  
-  keptTips <- seq_along(tree1[["tip.label"]]) %in% tipNums
-  newLabs <- tree1[["tip.label"]][keptTips]
+
+  newLabs <- tree1[["tip.label"]][ret[[3]]]
   .Retree <- function(edge) {
     structure(list(edge = edge,
                    Nnode = dim(edge)[1] / 2,
@@ -73,7 +62,6 @@ Reduce <- function(tree1, tree2, check = TRUE) {
   }
   
   # Return:
-  ret <- structure(list(.Retree(ret1), .Retree(ret2)), class = "multiPhylo")
-  ret
+  structure(list(.Retree(ret1), .Retree(ret[[2]])), class = "multiPhylo")
   
 }

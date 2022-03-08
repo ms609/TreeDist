@@ -81,17 +81,17 @@ Rcout << "";
   ASSERT(a_child[parents[1]] == 1);                            \
   sibling[(tip)] = 0                            
 
-#define ADD_EDGE(parent, child)                                    \
-  ret(*next_edge, 0) = parent;                                     \
-  ASSERT(*next_edge < ret.nrow());                                 \
-  if (child > *n_tip) {                                            \
-    ret(*next_edge, 1) = *next_node;                               \
-    ++(*next_edge);                                                \
-    rebuild_tree(child, next_edge, next_node, n_tip, a_child,      \
-                 sibling, senior, ret);                            \
-  } else {                                                         \
-    ret(*next_edge, 1) = -child;                                   \
-    ++(*next_edge);                                                \
+#define ADD_EDGE(parent, child)                                \
+  ret(*next_edge, 0) = parent;                                 \
+  ASSERT(*next_edge < ret.nrow());                             \
+  if (child > *n_tip) {                                        \
+    ret(*next_edge, 1) = *next_node;                           \
+    ++(*next_edge);                                            \
+    rebuild_tree(child, next_edge, next_node, n_tip, new_no,   \
+                 a_child, sibling, senior, ret);               \
+  } else {                                                     \
+    ret(*next_edge, 1) = new_no[child];                        \
+    ++(*next_edge);                                            \
   }
 
 inline void rebuild_tree(
@@ -99,6 +99,7 @@ inline void rebuild_tree(
     intx * next_edge,
     intx * next_node,
     const intx * n_tip,
+    std::unique_ptr<intx[]> & new_no,
     std::unique_ptr<intx[]> & a_child,
     std::unique_ptr<intx[]> & sibling,
     std::unique_ptr<intx[]> & senior,
@@ -296,9 +297,19 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
   }
   
   
+  auto new_no = std::make_unique<intx[]>(ledger_size);
+  const intx kept_tips = n_tip - dropped;
+  intx tips_left = kept_tips;
+  LogicalVector tip_kept(n_tip);
+  for (intx i = n_tip; i--; ) {
+    if (x_sibling[i + R_TO_C]) {
+      tip_kept[i] = true;
+      new_no[i + R_TO_C] = tips_left;
+      --tips_left;
+    }
+  }
+  const intx kept_edges = kept_tips + kept_tips - 2;
   intx
-    kept_tips = n_tip - dropped,
-    kept_edges = kept_tips + kept_tips - 2,
     next_edge = 0,
     next_node = kept_tips + 1
   ;
@@ -306,7 +317,7 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
     x_final(kept_edges, 2),
     y_final(kept_edges, 2)
   ;
-  rebuild_tree(root_node, &next_edge, &next_node, &n_tip,
+  rebuild_tree(root_node, &next_edge, &next_node, &n_tip, new_no,
                x_child_1, x_sibling, x_parents, x_final);
 #ifdef TD_DEBUG
   Rcout << "\n\n == Now to rebuild tree 2 ==\n";
@@ -315,9 +326,10 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
   ASSERT(next_edge == kept_edges);
   next_edge = 0;
   next_node = kept_tips + 1;
-  rebuild_tree(root_node, &next_edge, &next_node, &n_tip,
+  rebuild_tree(root_node, &next_edge, &next_node, &n_tip, new_no,
                y_child_1, y_sibling, y_parents, y_final);
   ASSERT(next_node == kept_tips + kept_tips);
   ASSERT(next_edge == kept_edges);
-  return Rcpp::List::create(x_final, y_final);
+  
+  return Rcpp::List::create(x_final, y_final, tip_kept);
 }
