@@ -284,12 +284,20 @@ SPRDist.multiPhylo <- SPRDist.list
     sp1 <- as.Splits(simplified[[1]])
     sp2 <- as.Splits(simplified[[2]])
     nSplits <- length(sp1)
-    i <- rep(seq_len(nSplits), nSplits)
+    .Which1 <- function (x) {
+      ret <- x %% nSplits
+      if (ret == 0L) {
+        nSplits
+      } else {
+        ret
+      }
+    }
+    .Which2 <- function (x) (x - 1) %/% nSplits + 1L
     
     mmSize <- mismatch_size(sp1, sp2)
     minMismatch <- which.min(mmSize)
     if (mmSize[minMismatch] == 0) {
-      agreement <- as.logical(sp1[[i[minMismatch]]])
+      agreement <- as.logical(sp1[[Which1(minMismatch)]])
       subtips1 <- agreement
       subtips1[!subtips1][1] <- TRUE
       subtips2 <- !agreement
@@ -304,15 +312,15 @@ SPRDist.multiPhylo <- SPRDist.list
              )
     }
     
-    disagreementSplit <- xor.Splits(sp[[1]][[i[minMismatch]]],
-                                    sp[[2]][[j[minMismatch]]])
-    keep <- if (TipsInSplits(disagreementSplit, keep.names = FALSE,
-                             smallest = FALSE) != min(mmSize)) {
-      as.logical(disagreementSplit)
-    } else {
-      !as.logical(disagreementSplit)
+    disagreementSplit <- xor.Splits(sp1[[.Which1(minMismatch)]],
+                                    sp2[[.Which2(minMismatch)]])
+    keep <- as.logical(disagreementSplit)
+    nKeep <- sum(keep)
+    if (nKeep < length(keep) / 2) {
+      keep <- !keep
+      nKeep <- length(keep) - nKeep
     }
-    simplified <- if (sum(keep) < 4) {
+    simplified <- if (nKeep < 4L) {
       NULL
     } else {
       simplified <- keep_and_reroot(simplified[[1]], simplified[[2]], keep)
@@ -326,8 +334,8 @@ SPRDist.multiPhylo <- SPRDist.list
         plot(simplified[[1]])
         plot(simplified[[2]])
       }
-      
     }
+
     moves <- moves + 1
   }
   
