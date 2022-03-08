@@ -82,16 +82,16 @@ Rcout << "";
   sibling[(tip)] = 0                            
 
 #define ADD_EDGE(parent, child)                                \
-  ret(*next_edge, 0) = parent;                                 \
+  --(*next_edge);                                              \
+  ASSERT(*next_edge >= 0);                                     \
   ASSERT(*next_edge < ret.nrow());                             \
+  ret(*next_edge, 0) = parent;                                 \
   if (child > *n_tip) {                                        \
     ret(*next_edge, 1) = *next_node;                           \
-    ++(*next_edge);                                            \
     rebuild_tree(child, next_edge, next_node, n_tip, new_no,   \
                  a_child, sibling, senior, ret);               \
   } else {                                                     \
     ret(*next_edge, 1) = new_no[child];                        \
-    ++(*next_edge);                                            \
   }
 
 inline void rebuild_tree(
@@ -310,7 +310,7 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
   }
   const intx kept_edges = kept_tips + kept_tips - 2;
   intx
-    next_edge = 0,
+    next_edge = kept_edges,
     next_node = kept_tips + 1
   ;
   IntegerMatrix
@@ -323,13 +323,13 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
   Rcout << "\n\n == Now to rebuild tree 2 ==\n";
 #endif
   ASSERT(next_node == kept_tips + kept_tips);
-  ASSERT(next_edge == kept_edges);
-  next_edge = 0;
+  ASSERT(next_edge == 0);
+  next_edge = kept_edges;
   next_node = kept_tips + 1;
   rebuild_tree(root_node, &next_edge, &next_node, &n_tip, new_no,
                y_child_1, y_sibling, y_parents, y_final);
   ASSERT(next_node == kept_tips + kept_tips);
-  ASSERT(next_edge == kept_edges);
+  ASSERT(next_edge == 0);
   
   return Rcpp::List::create(x_final, y_final, tip_kept);
 }

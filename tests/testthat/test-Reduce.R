@@ -2,7 +2,7 @@ test_that("Reduce()", {
   bal9 <- TreeTools::BalancedTree(9)
   pec9 <- TreeTools::PectinateTree(9)
   expect_null(Reduce(bal9, bal9))
-  par(mai = rep(0.1, 4), mfrow=c(2, 2))
+  par(mai = rep(0.1, 4), mfrow = c(2, 2))
   plot(RootTree(bal9, 1)); nodelabels()
   plot(RootTree(pec9, 1)); nodelabels()
   confl <- Reduce(bal9, pec9)

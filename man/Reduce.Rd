@@ -16,7 +16,7 @@ binary \code{phylo} objects with identical leaf labels, rooted on leaf 1.}
 \value{
 \code{Reduce()} returns a list of two trees, corresponding to
 \code{tree1} and \code{tree2} after any identical groupings have been collapsed,
-with tree edges listed in preorder; or \code{NULL} if the trees are equivalent.
+with tree edges listed in postorder; or \code{NULL} if the trees are equivalent.
 }
 \description{
 Reduces trees according to the tree reduction rules of

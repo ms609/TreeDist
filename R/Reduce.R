@@ -12,7 +12,7 @@
 #' 
 #' @return `Reduce()` returns a list of two trees, corresponding to 
 #' `tree1` and `tree2` after any identical groupings have been collapsed,
-#' with tree edges listed in preorder; or `NULL` if the trees are equivalent.
+#' with tree edges listed in postorder; or `NULL` if the trees are equivalent.
 #' @examples 
 #' tree1 <- TreeTools::BalancedTree(9)
 #' tree2 <- TreeTools::PectinateTree(9)
@@ -57,7 +57,7 @@ Reduce <- function(tree1, tree2, check = TRUE) {
     structure(list(edge = edge,
                    Nnode = dim(edge)[1] / 2,
                    tip.label = newLabs),
-              order = "cladewise",
+              order = "postorder",
               class = "phylo")
   }
   
