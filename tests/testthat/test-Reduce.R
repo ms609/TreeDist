@@ -43,4 +43,10 @@ test_that("Reduce()", {
     text = "(t3, ((t17, t21), (t4, (((((t9, t25), t23), t22), t24), t20))));")
   expect_true(all.equal(Reduce(tree1, tree2)[[1]],
                         DropTip(tree1, c("t4", "t17", "t21", "t20", "t24"))))
+  
+  keptRoot1 <- ape::read.tree(text = "(((t128,t57),(((((t21,(t55,(t10,((((t7,(t24,((((t6,(t16,(((t56,(((t44,((t66,(((((t19,((((((t95,t32),t41),t25),t67),t17),t4)),t122),t42),t31),t5)),t71)),t121),t65)),t3),t81))),t75),t8),t129))),t103),t99),t59)))),t130),t111),t72),t100)),t1);")
+  keptRoot2 <- ape::read.tree(text = "(((t128,t57),(((((t21,(t55,(t10,((((t7,(t24,(((t6,(t16,(((t56,(((t44,((t66,(((((t19,(((((((t129,t95),t32),t41),t25),t67),t17),t4)),t122),t42),t31),t5)),t71)),t121),t65)),t3),t81))),t75),t8))),t103),t99),t59)))),t130),t111),t72),t100)),t1);")
+  tree1 <- RenumberTips(keptRoot1, paste0("t", 1:130))
+  tree2 <- keptRoot2
+  expect_true("t1" %in% TipLabels(Reduce(tree1, tree2)))
 })
