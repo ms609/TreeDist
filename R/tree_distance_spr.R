@@ -281,14 +281,15 @@ SPRDist.multiPhylo <- SPRDist.list
   simplified <- Reduce(tree1, tree2)
   
   while (!is.null(simplified)) {
-    sp <- as.Splits(simplified)
-    nSplits <- length(sp[[1]])
+    sp1 <- as.Splits(simplified[[1]])
+    sp2 <- as.Splits(simplified[[2]])
+    nSplits <- length(sp1)
     i <- rep(seq_len(nSplits), nSplits)
-    j <- rep(seq_len(nSplits), each = nSplits)
-    mmSize <- mismatch_size(sp[[1]], sp[[2]])
+    
+    mmSize <- mismatch_size(sp1, sp2)
     minMismatch <- which.min(mmSize)
     if (mmSize[minMismatch] == 0) {
-      agreement <- as.logical(sp[[1]][[i[minMismatch]]])
+      agreement <- as.logical(sp1[[i[minMismatch]]])
       subtips1 <- agreement
       subtips1[!subtips1][1] <- TRUE
       subtips2 <- !agreement
