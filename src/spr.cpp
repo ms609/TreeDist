@@ -4,6 +4,7 @@
 #include <TreeTools/keep_tip.h> // for keep_tip
 #include <TreeTools/root_tree.h> // for root_on_node
 #include <TreeTools/SplitList.h> // for SplitList, count_bits
+#include "reduce_tree.h"
 
 using namespace Rcpp;
 
@@ -136,31 +137,32 @@ IntegerVector confusion (const RawMatrix x, const RawMatrix y) {
   return ret;
 }
 
+IntegerMatrix reverse (const IntegerMatrix x) {
+  const intx n_edge = x.nrow();
+  ASSERT(n_edge % 2 == 0); // Tree is binary
+  IntegerMatrix ret(n_edge, 2);
+  
+  for (intx i = n_edge / 2; i--; ) {
+    const intx j = n_edge - i - 1;
+    ret[i] = x[j];
+    ret[i + n_edge] = x[j + n_edge];
+    ret[j] = x[i];
+    ret[j + n_edge] = x[i + n_edge];
+  }
+  return ret;
+}
+
 // tree1 and tree2 are binary trees in postorder with identical tip.labels
 // [[Rcpp::export]]
 List keep_and_reroot(const List tree1,
                      const List tree2,
                      const LogicalVector keep) {
-  IntegerMatrix postorder1 = tree1["edge"];
-  const intx n_edge = postorder1.nrow();
-  ASSERT(n_edge % 2 == 0); // Tree is binary
-  IntegerMatrix
+  IntegerMatrix 
+    postorder1 = tree1["edge"],
     postorder2 = tree2["edge"],
-    pre1(n_edge, 2),
-    pre2(n_edge, 2)
+    pre1 = reverse(postorder1),
+    pre2 = reverse(postorder2)
   ;
-  /* TODO manually pre-order to avoid call to pre_edg&node()
-  for (intx i = n_edge / 2; i--; ) {
-    const intx j = n_edge - i - 1;
-    pre1[i] = postorder1[j];
-    Rcout << " Setting pre1[" << i << "] to in1[" << j <<"].\n";
-    pre1[j] = postorder1[i];
-    pre2[i] = postorder2[j];
-    pre2[j] = postorder2[i];
-  }*/
-  
-  pre1 = TreeTools::preorder_edges_and_nodes(postorder1(_, 0), postorder1(_, 1));
-  pre2 = TreeTools::preorder_edges_and_nodes(postorder2(_, 0), postorder2(_, 1));
   
   // Rcout << "\n \n === Keep & Reroot ===\n";
   // Rcout << " Keeping: ";
@@ -197,4 +199,21 @@ List keep_and_reroot(const List tree1,
   return List::create(
     TreeTools::root_on_node(ret1, 1),
     TreeTools::root_on_node(ret2, 1));
+}
+
+// [[Rcpp::export]]
+List keep_and_reduce(const List tree1,
+                     const List tree2,
+                     const LogicalVector keep) {
+  List rerooted = keep_and_reroot(tree1, tree2, keep);
+  if (rerooted.size() == 1) {
+    return Rcpp::List::create(R_NilValue);
+  }
+  
+  List rerooted1 = rerooted[0];
+  List rerooted2 = rerooted[1];
+  IntegerMatrix edge1 = reverse(rerooted1["edge"]);
+  IntegerMatrix edge2 = reverse(rerooted2["edge"]);
+  CharacterVector tip_label = rerooted1["tip.label"];
+  return reduce_trees(edge1, edge2, tip_label);
 }

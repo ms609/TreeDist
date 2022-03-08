@@ -1,17 +1,4 @@
-#include <Rcpp/Lightest>
-#include <TreeTools/assert.h> // for ASSERT
-#include <TreeTools/types.h> // for intx
-#include <TreeTools/renumber_tree.h> // for postorder_order
-using namespace Rcpp;
-// #define TD_DEBUG
-
-#define R_TO_C 1
-#define IS_TIP(i) ((i) <= n_tip)
-#define X_AUNT(i) x_sibling[x_parents[(i)]]
-#define Y_AUNT(i) y_sibling[y_parents[(i)]]
-#define Y_NIECE1(i) y_child_1[y_sibling[(i)]]
-#define Y_NIECE2(i) y_sibling[Y_NIECE1(i)]
-#define SAME_AUNT(x_aunt, y_aunt) x_aunt && IS_TIP(x_aunt) && x_aunt == y_aunt
+#include "reduce_tree.h"
 
 inline void add_child(const int *parent, const int *child,
                       std::unique_ptr<intx[]> & a_child,
@@ -103,7 +90,7 @@ inline void rebuild_tree(
     std::unique_ptr<intx[]> & a_child,
     std::unique_ptr<intx[]> & sibling,
     std::unique_ptr<intx[]> & senior,
-    IntegerMatrix & ret) 
+    IntegerMatrix & ret)
 {
   const intx this_node = *next_node;
   ++(*next_node);
@@ -128,7 +115,8 @@ inline void rebuild_tree(
 // labels, rooted on leaf 1, in some form of postorder.
 // [[Rcpp::export]]
 Rcpp::List reduce_trees(const IntegerMatrix x,
-                        const IntegerMatrix y) {
+                        const IntegerMatrix y,
+                        const CharacterVector original_label) {
   const intx
     n_edge = x.nrow(),
     n_node = n_edge / 2,
@@ -169,7 +157,7 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
 #endif
   if (dropped > n_tip - 4) {
     // There's only one three-leaf topology
-    return Rcpp::List::create(R_NilValue, R_NilValue);
+    return Rcpp::List::create(R_NilValue);
   }
   
   // We rooted trees on leaf 1
@@ -225,7 +213,7 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
   
   if (dropped > n_tip - 4) {
     // There's only one three-leaf topology
-    return Rcpp::List::create(R_NilValue, R_NilValue);
+    return Rcpp::List::create(R_NilValue);
   }
   
 #ifdef TD_DEBUG
@@ -300,12 +288,12 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
   auto new_no = std::make_unique<intx[]>(ledger_size);
   const intx kept_tips = n_tip - dropped;
   intx tips_left = kept_tips;
-  LogicalVector tip_kept(n_tip);
+  CharacterVector tip_label(kept_tips);
   for (intx i = n_tip; i--; ) {
     if (x_sibling[i + R_TO_C]) {
-      tip_kept[i] = true;
       new_no[i + R_TO_C] = tips_left;
       --tips_left;
+      tip_label[tips_left] = original_label[i];
     }
   }
   const intx kept_edges = kept_tips + kept_tips - 2;
@@ -331,5 +319,19 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
   ASSERT(next_node == kept_tips + kept_tips);
   ASSERT(next_edge == 0);
   
-  return Rcpp::List::create(x_final, y_final, tip_kept);
+  auto x_ret = Rcpp::List::create(Rcpp::Named("edge") = x_final,
+                                  Rcpp::_["Nnode"] = kept_edges / 2,
+                                  Rcpp::_["tip.label"] = tip_label);
+  x_ret.attr("order") = "postorder";
+  x_ret.attr("class") = "phylo";
+  
+  auto y_ret = Rcpp::List::create(Rcpp::Named("edge") = y_final,
+                                  Rcpp::_["Nnode"] = kept_edges / 2,
+                                  Rcpp::_["tip.label"] = clone(tip_label));
+  y_ret.attr("order") = "postorder";
+  y_ret.attr("class") = "phylo";
+  
+  auto ret = Rcpp::List::create(x_ret, y_ret);
+  ret.attr("class") = "multiPhylo";
+  return ret;
 }

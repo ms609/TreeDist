@@ -1,6 +1,19 @@
 library("TreeTools", quiet = TRUE, warn.conflicts = FALSE)
 if(!exists("pv")) pv <- function (x) x
 
+test_that("SPR: keep_and_reroot()", {
+  tree1 <- Postorder(BalancedTree(12))
+  tree2 <- Postorder(PectinateTree(12))
+  keep <- as.logical(tabulate(8:12, 12))
+  result <- keep_and_reroot(tree1, tree2, keep)
+  expect_equal(result[[1]], RootTree(KeepTip(tree1, keep), 1))
+  expect_equal(result[[2]], RootTree(KeepTip(tree2, keep), 1))
+  
+  reduced <- keep_and_reduce(tree1, tree2, keep)
+  expect_equal(Preorder(reduced[[1]]), Preorder(DropTip(result[[1]], "t9")))
+  expect_equal(Preorder(reduced[[2]]), Preorder(DropTip(result[[2]], "t9")))
+})
+
 test_that("SPR: Under the hood", {
   expect_error(mismatch_size(as.Splits(c(T, T, F)), as.Splits(c(T, T, T, T))),
                "differ in `nTip")
@@ -20,7 +33,8 @@ test_that("SPR: Under the hood", {
     nSplits <- length(s1)
     i <- rep(seq_len(nSplits), nSplits)
     j <- rep(seq_len(nSplits), each = nSplits)
-    expect_equal(mismatch_size(s1, s2), TipsInSplits(xor(s1[[i]], s2[[j]])))
+    expect_equal(mismatch_size(s1, s2),
+                 TipsInSplits(xor(s1[[i]], s2[[j]]), smallest = TRUE))
   }
   Test(as.Splits(c(T, T, T, F, F)), as.Splits(c(T, F, F, F, T)))
   
@@ -79,10 +93,14 @@ test_that("SPR calculated correctly", {
     tr[[i]] <- Postorder(TreeSearch::SPR(tr[[i - 1]]))
   }
   phanDist <- .phangornSPRDist(tr)
+  testDist <- SPRDist(tr)
   
+  expect_equal(as.integer(phanDist),
+               as.integer(testDist),
+               tolerance = 0.25)
   
   pv(testDist <- SPRDist(tr))
-  bestDist <- as.dist(pmax(as.matrix(testDist), as.matrix(SPRDist(rev(tr)))[rev(seq_len(nSPR + 1)), rev(seq_len(nSPR + 1))]))
+  bestDist <- as.dist(pmin(as.matrix(testDist), as.matrix(SPRDist(rev(tr)))[rev(seq_len(nSPR + 1)), rev(seq_len(nSPR + 1))]))
   
   overShot <- as.matrix(testDist) > as.matrix(trueDist)
   overs <- colSums(overShot) > 0

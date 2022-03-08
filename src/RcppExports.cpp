@@ -162,14 +162,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // reduce_trees
-Rcpp::List reduce_trees(const IntegerMatrix x, const IntegerMatrix y);
-RcppExport SEXP _TreeDist_reduce_trees(SEXP xSEXP, SEXP ySEXP) {
+Rcpp::List reduce_trees(const IntegerMatrix x, const IntegerMatrix y, const CharacterVector original_label);
+RcppExport SEXP _TreeDist_reduce_trees(SEXP xSEXP, SEXP ySEXP, SEXP original_labelSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const IntegerMatrix >::type x(xSEXP);
     Rcpp::traits::input_parameter< const IntegerMatrix >::type y(ySEXP);
-    rcpp_result_gen = Rcpp::wrap(reduce_trees(x, y));
+    Rcpp::traits::input_parameter< const CharacterVector >::type original_label(original_labelSEXP);
+    rcpp_result_gen = Rcpp::wrap(reduce_trees(x, y, original_label));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -207,6 +208,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const List >::type tree2(tree2SEXP);
     Rcpp::traits::input_parameter< const LogicalVector >::type keep(keepSEXP);
     rcpp_result_gen = Rcpp::wrap(keep_and_reroot(tree1, tree2, keep));
+    return rcpp_result_gen;
+END_RCPP
+}
+// keep_and_reduce
+List keep_and_reduce(const List tree1, const List tree2, const LogicalVector keep);
+RcppExport SEXP _TreeDist_keep_and_reduce(SEXP tree1SEXP, SEXP tree2SEXP, SEXP keepSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List >::type tree1(tree1SEXP);
+    Rcpp::traits::input_parameter< const List >::type tree2(tree2SEXP);
+    Rcpp::traits::input_parameter< const LogicalVector >::type keep(keepSEXP);
+    rcpp_result_gen = Rcpp::wrap(keep_and_reduce(tree1, tree2, keep));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -318,10 +332,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_vec_diff_euclidean", (DL_FUNC) &_TreeDist_vec_diff_euclidean, 2},
     {"_TreeDist_pair_diff_euclidean", (DL_FUNC) &_TreeDist_pair_diff_euclidean, 1},
     {"_TreeDist_path_vector2", (DL_FUNC) &_TreeDist_path_vector2, 1},
-    {"_TreeDist_reduce_trees", (DL_FUNC) &_TreeDist_reduce_trees, 2},
+    {"_TreeDist_reduce_trees", (DL_FUNC) &_TreeDist_reduce_trees, 3},
     {"_TreeDist_mismatch_size", (DL_FUNC) &_TreeDist_mismatch_size, 2},
     {"_TreeDist_confusion", (DL_FUNC) &_TreeDist_confusion, 2},
     {"_TreeDist_keep_and_reroot", (DL_FUNC) &_TreeDist_keep_and_reroot, 3},
+    {"_TreeDist_keep_and_reduce", (DL_FUNC) &_TreeDist_keep_and_reduce, 3},
     {"_TreeDist_cpp_robinson_foulds_distance", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_distance, 3},
     {"_TreeDist_cpp_robinson_foulds_info", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_info, 3},
     {"_TreeDist_cpp_matching_split_distance", (DL_FUNC) &_TreeDist_cpp_matching_split_distance, 3},

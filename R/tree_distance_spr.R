@@ -61,7 +61,8 @@ SPRDist.phylo <- function (tree1, tree2 = NULL, symmetric) {
 #' @export
 SPRDist.list <- function (tree1, tree2 = NULL, symmetric) {
   if (is.null(tree2)) {
-    PairwiseDistances(tree1, .SPRPair)
+    PairwiseDistances(RootTree(RenumberTips(tree1, tree1), 1),
+                      .SPRPair, check = FALSE)
   } else if (inherits(tree2, 'phylo')) {
     vapply(tree1, .SPRPair, double(1), tree2)
   } else {
@@ -115,7 +116,6 @@ SPRDist.multiPhylo <- SPRDist.list
     par(mfrow = 1:2, mai = rep(0.1, 4))
     plot(simplified[[1]])
     plot(simplified[[2]])
-    
   }
   
   while (!is.null(simplified)) {
@@ -274,30 +274,37 @@ SPRDist.multiPhylo <- SPRDist.list
   if (debug) list(moves, dropList) else moves
 }
 
+.Which1 <- function (x, nSplits) {
+  ret <- x %% nSplits
+  if (ret == 0L) {
+    nSplits
+  } else {
+    ret
+  }
+}
+.Which2 <- function (x, nSplits) (x - 1) %/% nSplits + 1L
+
 # For comparison: not as optimized as phangorn::SPR.dist
-#' @importFrom TreeTools xor.Splits
-.SPRPairDeO <- function(tree1, tree2) {
+#' @importFrom TreeTools edge_to_splits
+.SPRPairDeO <- function(tree1, tree2, check = TRUE, debug = FALSE) {
   moves <- 0
-  simplified <- Reduce(tree1, tree2)
+  simplified <- Reduce(tree1, tree2, check = check)
   
   while (!is.null(simplified)) {
-    sp1 <- as.Splits(simplified[[1]])
-    sp2 <- as.Splits(simplified[[2]])
+    tr1 <- simplified[[1]]
+    tr2 <- simplified[[2]]
+    edge1 <- tr1[["edge"]]
+    edge2 <- tr2[["edge"]]
+    labels <- tr1[["tip.label"]]
+    nTip <- length(labels)
+    sp1 <- edge_to_splits(edge1, PostorderOrder(edge1), labels, nTip = nTip)
+    sp2 <- edge_to_splits(edge2, PostorderOrder(edge2), labels, nTip = nTip)
     nSplits <- length(sp1)
-    .Which1 <- function (x) {
-      ret <- x %% nSplits
-      if (ret == 0L) {
-        nSplits
-      } else {
-        ret
-      }
-    }
-    .Which2 <- function (x) (x - 1) %/% nSplits + 1L
     
     mmSize <- mismatch_size(sp1, sp2)
     minMismatch <- which.min(mmSize)
     if (mmSize[minMismatch] == 0) {
-      agreement <- as.logical(sp1[[Which1(minMismatch)]])
+      agreement <- as.logical(sp1[[.Which1(minMismatch, nSplits)]])
       subtips1 <- agreement
       subtips1[!subtips1][1] <- TRUE
       subtips2 <- !agreement
@@ -311,9 +318,11 @@ SPRDist.multiPhylo <- SPRDist.list
                         debug = debug)
              )
     }
-    
-    disagreementSplit <- xor.Splits(sp1[[.Which1(minMismatch)]],
-                                    sp2[[.Which2(minMismatch)]])
+    split1 <- structure(sp1[.Which1(minMismatch, nSplits), , drop = FALSE],
+                        nTip = nTip, class = "Splits")
+    split2 <- structure(sp2[.Which2(minMismatch, nSplits), , drop = FALSE],
+                        nTip = nTip, class = "Splits")
+    disagreementSplit <- structure(xor(split1, split2), class = "Splits")
     keep <- as.logical(disagreementSplit)
     nKeep <- sum(keep)
     if (nKeep < length(keep) / 2) {
@@ -323,8 +332,11 @@ SPRDist.multiPhylo <- SPRDist.list
     simplified <- if (nKeep < 4L) {
       NULL
     } else {
-      simplified <- keep_and_reroot(simplified[[1]], simplified[[2]], keep)
-      Reduce(simplified[[1]], simplified[[2]], check = FALSE)
+      keep_and_reduce(tr1, tr2, keep)
+    }
+    
+    if (length(simplified) == 1L) {
+      simplified <- NULL
     }
     
     if (debug) {

@@ -46,22 +46,13 @@ Reduce <- function(tree1, tree2, check = TRUE) {
     }
   }
   ret <- reduce_trees(tree1$edge[PostorderOrder(tree1), ],
-                      tree2$edge[PostorderOrder(tree2), ])
-  ret1 <- ret[[1]]
-  if (is.null(ret1)) {
-    return(NULL)
-  }
-
-  newLabs <- tree1[["tip.label"]][ret[[3]]]
-  .Retree <- function(edge) {
-    structure(list(edge = edge,
-                   Nnode = dim(edge)[1] / 2,
-                   tip.label = newLabs),
-              order = "postorder",
-              class = "phylo")
-  }
+                      tree2$edge[PostorderOrder(tree2), ],
+                      tree1[["tip.label"]])
   
   # Return:
-  structure(list(.Retree(ret1), .Retree(ret[[2]])), class = "multiPhylo")
-  
+  if (is.null(ret[[1]])) {
+    NULL
+  } else {
+    ret
+  }
 }
