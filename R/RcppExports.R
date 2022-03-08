@@ -65,6 +65,10 @@ confusion <- function(x, y) {
     .Call(`_TreeDist_confusion`, x, y)
 }
 
+keep_and_reroot <- function(tree1, tree2, keep) {
+    .Call(`_TreeDist_keep_and_reroot`, tree1, tree2, keep)
+}
+
 cpp_robinson_foulds_distance <- function(x, y, nTip) {
     .Call(`_TreeDist_cpp_robinson_foulds_distance`, x, y, nTip)
 }

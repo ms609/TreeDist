@@ -1,6 +1,8 @@
 #include <Rcpp/Lightest>
 #include <TreeTools/assert.h> // for ASSERT
 #include <TreeTools/types.h> // for intx
+#include <TreeTools/keep_tip.h> // for keep_tip
+#include <TreeTools/root_tree.h> // for root_on_node
 #include <TreeTools/SplitList.h> // for SplitList, count_bits
 
 using namespace Rcpp;
@@ -80,7 +82,6 @@ IntegerVector mismatch_size (const RawMatrix x, const RawMatrix y) {
   return ret;
 }
 
-
 // [[Rcpp::export]]
 IntegerVector confusion (const RawMatrix x, const RawMatrix y) {
   const int16 n_split = x.rows();
@@ -135,3 +136,42 @@ IntegerVector confusion (const RawMatrix x, const RawMatrix y) {
   return ret;
 }
 
+// tree1 and tree2 are binary trees with identical tip.labels attributes
+// [[Rcpp::export]]
+List keep_and_reroot(const List tree1,
+                     const List tree2,
+                     const LogicalVector keep) {
+  IntegerMatrix edge1 = tree1["edge"];
+  IntegerMatrix edge2 = tree2["edge"];
+  IntegerMatrix ret_edge1 = TreeTools::keep_tip(edge1, keep);
+  IntegerMatrix ret_edge2 = TreeTools::keep_tip(edge2, keep);
+  
+  const intx n_node = ret_edge1.nrow() / 2;
+  const intx n_tip = n_node + 1;
+  CharacterVector 
+    old_label = tree1["tip.label"],
+    new_labels(n_tip)
+  ;
+  
+  intx next_tip = n_tip;
+  for (intx i = old_label.size(); i--; ) {
+    if (keep[i]) {
+      --next_tip;
+      new_labels[next_tip] = old_label[i];
+    }
+  }
+  
+  List ret1 = List::create(Named("edge") = ret_edge1,
+                           _["Nnode"] = n_node,
+                           _["tip.label"] = new_labels),
+       ret2 = List::create(Named("edge") = ret_edge2,
+                           _["Nnode"] = n_node,
+                           _["tip.label"] = new_labels);
+  ret1.attr("class") = "phylo";
+  ret1.attr("order") = "preorder";
+  ret2.attr("class") = "phylo";
+  ret2.attr("order") = "preorder";
+  return List::create(
+    TreeTools::root_on_node(ret1, 1),
+    TreeTools::root_on_node(ret2, 1));
+}
