@@ -104,7 +104,7 @@ SPRDist.multiPhylo <- SPRDist.list
 #' plot(tree1)
 #' plot(tree2)
 #' .SPRPair(tree1, tree2)
-#' @importFrom TreeTools DropTip TipsInSplits root_on_node KeepTipFast
+#' @importFrom TreeTools DropTip TipsInSplits root_on_node KeepTipPostorder
 #' @export
 .SPRConfl <- function(tree1, tree2, debug = FALSE) {
   moves <- 0
@@ -135,10 +135,10 @@ SPRDist.multiPhylo <- SPRDist.list
       subtips2 <- !agreement
       subtips2[agreement][1] <- TRUE
       return(moves +
-               .SPRPair(KeepTipFast(simplified[[1]], subtips1),
-                        KeepTipFast(simplified[[2]], subtips1)) +
-               .SPRPair(KeepTipFast(simplified[[1]], subtips2),
-                        KeepTipFast(simplified[[2]], subtips2))
+               .SPRPair(KeepTipPostorder(simplified[[1]], subtips1),
+                        KeepTipPostorder(simplified[[2]], subtips1)) +
+               .SPRPair(KeepTipPostorder(simplified[[1]], subtips2),
+                        KeepTipPostorder(simplified[[2]], subtips2))
              )
     }
     
@@ -294,30 +294,30 @@ SPRDist.multiPhylo <- SPRDist.list
       subtips2 <- !agreement
       subtips2[agreement][1] <- TRUE
       return(moves +
-               .SPRPair(KeepTipFast(simplified[[1]], subtips1),
-                        KeepTipFast(simplified[[2]], subtips1)) +
-               .SPRPair(KeepTipFast(simplified[[1]], subtips2),
-                        KeepTipFast(simplified[[2]], subtips2))
+               .SPRPair(KeepTipPostorder(simplified[[1]], subtips1),
+                        KeepTipPostorder(simplified[[2]], subtips1),
+                        debug = debug) +
+               .SPRPair(KeepTipPostorder(simplified[[1]], subtips2),
+                        KeepTipPostorder(simplified[[2]], subtips2),
+                        debug = debug)
              )
     }
     
     disagreementSplit <- xor.Splits(sp[[1]][[i[minMismatch]]],
                                     sp[[2]][[j[minMismatch]]])
-    drop <- if (TipsInSplits(disagreementSplit, keep.names = FALSE,
+    keep <- if (TipsInSplits(disagreementSplit, keep.names = FALSE,
                              smallest = FALSE) != min(mmSize)) {
-      !as.logical(disagreementSplit)
-    } else {
       as.logical(disagreementSplit)
+    } else {
+      !as.logical(disagreementSplit)
     }
-    # if (sum(drop) > 1) {
-    #   drop <- as.logical(tabulate(which.max(drop), length(drop)))
-    # }
-    simplified <- DropTip(simplified, drop)
-    simplified <- Reduce(
-      root_on_node(simplified[[1]], 1),
-      root_on_node(simplified[[2]], 1),
-      check = FALSE
-    )
+    simplified <- if (sum(keep) < 4) {
+      NULL
+    } else {
+      simplified <- keep_and_reroot(simplified[[1]], simplified[[2]], keep)
+      Reduce(simplified[[1]], simplified[[2]], check = FALSE)
+    }
+    
     if (debug) {
       if (is.null(simplified[[1]])) {
         plot.new(); plot.new()

@@ -136,22 +136,46 @@ IntegerVector confusion (const RawMatrix x, const RawMatrix y) {
   return ret;
 }
 
-// tree1 and tree2 are binary trees with identical tip.labels attributes
+// tree1 and tree2 are binary trees in postorder with identical tip.labels
 // [[Rcpp::export]]
 List keep_and_reroot(const List tree1,
                      const List tree2,
                      const LogicalVector keep) {
-  IntegerMatrix edge1 = tree1["edge"];
-  IntegerMatrix edge2 = tree2["edge"];
-  IntegerMatrix ret_edge1 = TreeTools::keep_tip(edge1, keep);
-  IntegerMatrix ret_edge2 = TreeTools::keep_tip(edge2, keep);
+  IntegerMatrix postorder1 = tree1["edge"];
+  const intx n_edge = postorder1.nrow();
+  ASSERT(n_edge % 2 == 0); // Tree is binary
+  IntegerMatrix
+    postorder2 = tree2["edge"],
+    pre1(n_edge, 2),
+    pre2(n_edge, 2)
+  ;
+  /* TODO manually pre-order to avoid call to pre_edg&node()
+  for (intx i = n_edge / 2; i--; ) {
+    const intx j = n_edge - i - 1;
+    pre1[i] = postorder1[j];
+    Rcout << " Setting pre1[" << i << "] to in1[" << j <<"].\n";
+    pre1[j] = postorder1[i];
+    pre2[i] = postorder2[j];
+    pre2[j] = postorder2[i];
+  }*/
+  
+  pre1 = TreeTools::preorder_edges_and_nodes(postorder1(_, 0), postorder1(_, 1));
+  pre2 = TreeTools::preorder_edges_and_nodes(postorder2(_, 0), postorder2(_, 1));
+  
+  // Rcout << "\n \n === Keep & Reroot ===\n";
+  // Rcout << " Keeping: ";
+  for (int i = 0; i != keep.size(); i++) Rcout << (keep[i] ? "*" : ".");
+  IntegerMatrix ret_edge1 = TreeTools::keep_tip(pre1, keep);
+  IntegerMatrix ret_edge2 = TreeTools::keep_tip(pre2, keep);
   
   const intx n_node = ret_edge1.nrow() / 2;
   const intx n_tip = n_node + 1;
-  CharacterVector 
+  CharacterVector
     old_label = tree1["tip.label"],
     new_labels(n_tip)
   ;
+  
+  // Rcout << ret_edge1.nrow() << " rows; Kept " << n_tip << " tips and " << n_node << " nodes.\n";
   
   intx next_tip = n_tip;
   for (intx i = old_label.size(); i--; ) {
