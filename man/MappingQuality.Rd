@@ -3,7 +3,7 @@
 \name{MappingQuality}
 \alias{MappingQuality}
 \alias{ProjectionQuality}
-\title{Quality of mapped distances}
+\title{Faithfulness of mapped distances}
 \usage{
 MappingQuality(original, mapped, neighbours = 10L)
 
@@ -13,7 +13,9 @@ ProjectionQuality(original, mapped, neighbours = 10L)
 \item{original, mapped}{Square matrix or \code{dist} object containing
 original / mapped pairwise distances.}
 
-\item{neighbours}{Number of nearest neighbours to use in calculation.}
+\item{neighbours}{Integer specifying number of nearest neighbours to use in
+calculation.  This should typically be small relative to the number of
+points.}
 }
 \value{
 \code{MappingQuality()} returns a named vector of length four,
@@ -45,7 +47,7 @@ Other tree space functions:
 \code{\link{median.multiPhylo}()}
 }
 \author{
-Wrapper for functions from Charlotte Soneson's \pkg{dreval},
-https://github.com/csoneson/dreval/blob/master/R/trustworthiness.R
+\href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
+(\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
 \concept{tree space functions}

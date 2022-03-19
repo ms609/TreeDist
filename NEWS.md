@@ -1,4 +1,6 @@
-# TreeDist 2.3.0.9001
+# TreeDist 2.3.0.9002
+
+- Correct calculation of trustworthiness and continuity metrics.
 
 - Depict strain in minimum spanning trees with `StrainCol()` and helper
   function `MSTSegments()`.

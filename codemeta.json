@@ -8,7 +8,7 @@
   "codeRepository": "https://github.com/ms609/TreeDist/",
   "issueTracker": "https://github.com/ms609/TreeDist/issues/",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "2.3.0",
+  "version": "2.3.0.9002",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -220,6 +220,7 @@
       "@type": "SoftwareApplication",
       "identifier": "Rcpp",
       "name": "Rcpp",
+      "version": ">= 1.0.8",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
@@ -239,6 +240,18 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=rgl"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "spelling",
+      "name": "spelling",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=spelling"
     },
     {
       "@type": "SoftwareApplication",
@@ -438,19 +451,19 @@
       "@type": "SoftwareApplication",
       "identifier": "TreeTools",
       "name": "TreeTools",
-      "version": ">= 1.5.0",
+      "version": ">= 1.6.0.9007",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://CRAN.R-project.org/package=TreeTools"
+      "sameAs": "https://github.com/ms609/TreeTools"
     },
     "SystemRequirements": "C++14"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "1074.442KB",
+  "fileSize": "1288.644KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
@@ -512,7 +525,7 @@
           "familyName": "Smith"
         }
       ],
-      "name": "TreeDist: Distances between Phylogenetic Trees. R package version 2.3.0",
+      "name": "TreeDist: Distances between Phylogenetic Trees. R package version 2.3.0.9002",
       "identifier": "10.5281/zenodo.3528124",
       "@id": "https://doi.org/10.5281/zenodo.3528124",
       "sameAs": "https://doi.org/10.5281/zenodo.3528124",
