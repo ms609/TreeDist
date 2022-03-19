@@ -86,7 +86,7 @@ jobs:
       - name: Install system dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get install texlive
+          sudo apt-get install texlive texlive-fonts-extra
           while read -r cmd
           do
             eval sudo $cmd
@@ -96,6 +96,10 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew install libgit2 basictex
+          sudo tlmgr update --self
+          sudo tlmgr update --all
+          sudo tlmgr install titling framed inconsolata
+          sudo tlmgr install collection-fontsrecommended
           eval "$(/usr/libexec/path_helper)"
 
       - name: Install covr (Windows)
