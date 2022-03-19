@@ -5,10 +5,30 @@ on:
     branches:
       - main
       - master
+    paths-ignore:
+      - "Meta**"
+      - "docs**"
+      - "**.git"
+      - "**.json"
+      - "**.md"
+      - "**.yml"
+      - "!**memcheck.yml"
+      - "**.R[dD]ata"
+      - "**.Rpro*"
   pull_request:
     branches:
       - main
       - master
+    paths-ignore:
+      - "Meta**"
+      - "docs**"
+      - "**.git"
+      - "**.json"
+      - "**.md"
+      - "**.yml"
+      - "!**memcheck.yml"
+      - "**.R[dD]ata"
+      - "**.Rpro*"
 
 name: mem-check
 
