@@ -119,13 +119,13 @@ jobs:
             ${{ env.cache-version }}-${{ runner.os }}-texlive
             
       - name: Download install-tl.zip
+        if: |
+          steps.cache-texlive.outputs.cache-hit != 'true' &&
+          runner.os == 'Windows'
         run: |
           curl -O -L http://mirror.ctan.org/systems/texlive/tlnet/install-tl.zip
           unzip -q install-tl.zip
           mv install-tl-2* install-tl-dir
-        if: |
-          steps.cache-texlive.outputs.cache-hit != 'true' &&
-          runner.os == 'Windows'
         
       - name: Run install-tl-windows.bat
         if: |
@@ -144,6 +144,7 @@ jobs:
           tlmgr install latex-bin platex uplatex tex xetex
           tlmgr install amsmath graphics tools latexmk
           ls -l D:\texlive\bin\win32
+        shell: cmd
 
       - name: Install dependencies
         run: |
