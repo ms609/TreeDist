@@ -86,6 +86,7 @@ jobs:
       - name: Install system dependencies (Linux)
         if: runner.os == 'Linux'
         run: |
+          sudo apt-get install texlive
           while read -r cmd
           do
             eval sudo $cmd
