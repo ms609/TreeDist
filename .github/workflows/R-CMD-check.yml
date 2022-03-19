@@ -132,7 +132,7 @@ jobs:
           steps.cache-texlive.outputs.cache-hit != 'true' &&
           runner.os == 'Windows'
         run: |
-          install-tl-dir\install-tl-windows.bat --profile D:\texlive\texlive.profile
+          install-tl-dir\install-tl-windows.bat
         shell: cmd
         
       - name: Run tlmgr install
