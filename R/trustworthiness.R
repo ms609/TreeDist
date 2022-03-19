@@ -1,4 +1,4 @@
-.Bercow <- function (x) order(order(x))
+.Bercow <- function (x) order(order(x, method = "radix"), method = "radix")
 
 .Triangle <- function (n) n * (n + 1) / 2
 
