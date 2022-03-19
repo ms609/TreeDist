@@ -96,11 +96,11 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew install libgit2 basictex
+          eval "$(/usr/libexec/path_helper)"
           sudo tlmgr update --self
           sudo tlmgr update --all
           sudo tlmgr install titling framed inconsolata
           sudo tlmgr install collection-fontsrecommended
-          eval "$(/usr/libexec/path_helper)"
 
       - name: Install covr (Windows)
         if: runner.os == 'Windows'
