@@ -75,7 +75,6 @@ Suggests:
 LinkingTo: 
   Rcpp,
   TreeTools,
-Remotes: ms609/TreeTools
 RdMacros: Rdpack
 VignetteBuilder: knitr
 Config/Needs/coverage: covr
