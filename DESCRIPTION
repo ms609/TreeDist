@@ -77,6 +77,7 @@ LinkingTo:
   TreeTools,
 RdMacros: Rdpack
 VignetteBuilder: knitr
+Config/Needs/check: rcmdcheck
 Config/Needs/coverage: covr
 Config/Needs/memcheck: devtools
 Config/Needs/metadata: codemetar
