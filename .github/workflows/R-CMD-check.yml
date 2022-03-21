@@ -53,35 +53,43 @@ jobs:
           - {os: ubuntu-20.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
 
     env:
+      _R_CHECK_CRAN_INCOMING_: true # Seemingly not set by --as-cran
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
-      _R_CHECK_FORCE_SUGGESTS_: false
       R_COMPILE_AND_INSTALL_PACKAGES: 'never'
+      _R_CHECK_FORCE_SUGGESTS_: false
       RSPM: ${{ matrix.config.rspm }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout git repo
+        uses: actions/checkout@v2
 
-      - uses: r-lib/actions/setup-r@v2
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
 
-      - uses: r-lib/actions/setup-pandoc@v2
-
-      - name: Query dependencies
+      - name: Install apt packages
+        if: runner.os == 'Linux'
         run: |
-          install.packages('remotes')
-          saveRDS(remotes::dev_package_deps(dependencies = c('soft', 'Config/Needs/check', 'Config/Needs/codecov')), ".github/depends.Rds", version = 2)
-          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
-        shell: Rscript {0}
+          sudo apt-get install texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev
 
-      - name: Cache R packages
-        if: runner.os != 'Windows'
-        uses: actions/cache@v2
+      - name: Set up R dependencies (Windows)
+        if: runner.os == 'Windows'
+        uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
+          needs: |
+            check
+            coverage
+            
+      - name: Set up R dependencies (Non-Windows)
+        if: runner.os != 'Windows'
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            phangorn=?ignore-before-r=4.1.0
+          needs: |
+            check
 
       - name: Install system dependencies (Linux)
         if: runner.os == 'Linux'
@@ -103,12 +111,6 @@ jobs:
           sudo tlmgr install titling framed inconsolata
           sudo tlmgr install collection-fontsrecommended
 
-      - name: Install covr (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          remotes::install_deps(dependencies = 'Config/Needs/codecov')
-        shell: Rscript {0}
-        
       - name: Cache TeX Live
         if: runner.os == 'Windows'
         id: cache-texlive
@@ -145,28 +147,14 @@ jobs:
           tlmgr install latex-bin platex uplatex tex xetex
           tlmgr install amsmath graphics tools latexmk
           ls -l D:\texlive\bin\win32
+        
+      - name: Set up pandoc
+        uses: r-lib/actions/setup-pandoc@v2
+        
+      - name: Check package
+        uses: r-lib/actions/check-r-package@v2
 
-      - name: Install dependencies
-        run: |
-          remotes::install_deps(dependencies = c('soft', 'Config/Needs/check'))
-        shell: Rscript {0}
-
-      - name: Check
-        env:
-          _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        run: |
-          rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"),
-            error_on = "warning", check_dir = "check")
-        shell: Rscript {0}
-
-      - name: Upload check results
-        if: failure()
-        uses: actions/upload-artifact@main
-        with:
-          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
-          path: check
-
-      - name: Test coverage
+      - name: Code coverage
         if: runner.os == 'Windows'
         run: covr::codecov()
         shell: Rscript {0}
