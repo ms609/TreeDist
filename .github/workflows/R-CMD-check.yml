@@ -80,6 +80,8 @@ jobs:
         if: runner.os == 'Windows'
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
+          extra-packages: |
+            ms609/TreeDistData
           needs: |
             coverage
             
@@ -88,6 +90,7 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
+            ms609/TreeDistData
             phangorn=?ignore-before-r=4.1.0
 
       - name: Set up pandoc
