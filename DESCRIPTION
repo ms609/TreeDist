@@ -67,7 +67,6 @@ Suggests:
   spelling,
   testthat (>= 3.0),
   Ternary (>= 1.1.2),
-  TreeDistData (> 0.1.0),
   TreeSearch,
   Umatrix,
   uwot,
