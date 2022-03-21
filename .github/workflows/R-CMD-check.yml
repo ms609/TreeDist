@@ -84,6 +84,7 @@ jobs:
           extra-packages: |
             TreeDistData=?ignore-before-r=99.0.0
           needs: |
+            check
             coverage
             
       - name: Set up R dependencies (Non-Windows)
@@ -93,6 +94,8 @@ jobs:
           extra-packages: |
             TreeDistData=?ignore-before-r=99.0.0
             phangorn=?ignore-before-r=4.1.0
+          needs: |
+            check
 
       - name: temporary pak bug workaround
         run: |
