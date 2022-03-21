@@ -78,9 +78,8 @@ LinkingTo:
 Remotes: ms609/TreeTools
 RdMacros: Rdpack
 VignetteBuilder: knitr
-Config/Needs/check: rcmdcheck
 Config/Needs/coverage: covr
-Config/Needs/memcheck: devtools, rcmdcheck
+Config/Needs/memcheck: devtools
 Config/Needs/metadata: codemetar
 Config/Needs/revdeps: revdepcheck
 Config/Needs/website: pkgdown
