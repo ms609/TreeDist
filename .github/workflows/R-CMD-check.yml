@@ -81,9 +81,8 @@ jobs:
         if: runner.os == 'Windows'
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          pak-version: rc
           extra-packages: |
-            ms609/TreeDistData
+            TreeDistData=?ignore-before-r=99.0.0
           needs: |
             coverage
             
