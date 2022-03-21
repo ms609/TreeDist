@@ -77,6 +77,12 @@ jobs:
           sudo apt-get install \
             texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev
 
+      - name: temporary pak bug workaround
+        run: |
+          install.packages("pak")
+          pak::pkg_install("ms609/TreeDistData")
+        shell: Rscript {0}
+
       - name: Set up R dependencies (Windows)
         if: runner.os == 'Windows'
         uses: r-lib/actions/setup-r-dependencies@v2
