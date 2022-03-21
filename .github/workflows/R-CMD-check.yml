@@ -74,14 +74,15 @@ jobs:
       - name: Install apt packages
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get install texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev
+          sudo apt-get install \
+            texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev
 
       - name: Set up R dependencies (Windows)
         if: runner.os == 'Windows'
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
-            ms609/TreeDistData
+            TreeDistData=?ignore-before-r=99.0.0
           needs: |
             coverage
             
@@ -90,7 +91,7 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
-            ms609/TreeDistData
+            TreeDistData=?ignore-before-r=99.0.0
             phangorn=?ignore-before-r=4.1.0
 
       - name: Set up pandoc
