@@ -38,7 +38,7 @@ BugReports: https://github.com/ms609/TreeDist/issues/
 Additional_repositories: https://ms609.github.io/packages/
 Depends: 
   R (>= 3.4.0),
-  stats
+  stats,
 Imports: 
   ape (>= 5.0),
   cli (>= 3.0),
@@ -48,7 +48,7 @@ Imports:
   Rdpack (>= 0.7),
   shiny,
   shinyjs,
-  TreeTools (>= 1.6.0.9007)
+  TreeTools (>= 1.7.0),
 Suggests:
   bookdown,
   cluster,
@@ -71,7 +71,7 @@ Suggests:
   TreeSearch,
   Umatrix,
   uwot,
-  vdiffr (>= 1.0.0)
+  vdiffr (>= 1.0.0),
 LinkingTo: 
   Rcpp,
   TreeTools,
