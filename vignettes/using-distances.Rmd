@@ -269,14 +269,19 @@ resolution by taking the consensus of this tree and three trees from its
 immediate neighbourhood (one NNI move away).
 
 ```{r}
-library("TreeSearch", quietly = TRUE, warn.conflict = FALSE) # for TBR, NNI
-oneAway <- structure(lapply(seq_len(200), function(x) {
-  tbrTree <- TBR(trueTree)
-  ape::consensus(list(tbrTree,
-                      NNI(tbrTree),
-                      NNI(tbrTree),
-                      NNI(tbrTree)))
-}), class = "multiPhylo")
+treeSearchInstalled <- requireNamespace("TreeSearch", quietly = TRUE)
+if (treeSearchInstalled) {
+  library("TreeSearch", quietly = TRUE, warn.conflict = FALSE) # for TBR, NNI
+  oneAway <- structure(lapply(seq_len(200), function(x) {
+    tbrTree <- TBR(trueTree)
+    ape::consensus(list(tbrTree,
+                        NNI(tbrTree),
+                        NNI(tbrTree),
+                        NNI(tbrTree)))
+  }), class = "multiPhylo")
+} else {
+  message("Install \"TreeSearch\" to run this example")
+}
 ```
 
 And let's generate 200 more trees that are even more degraded.
@@ -285,13 +290,15 @@ resolution by taking a consensus with three trees from its wider neighbourhood
 (each two NNI moves away).
 
 ```{r}
-threeAway <- structure(lapply(seq_len(200), function(x) {
-  tbrTree <- TBR(TBR(TBR(trueTree)))
-  ape::consensus(list(tbrTree, 
-                      NNI(NNI(tbrTree)),
-                      NNI(NNI(tbrTree)),
-                      NNI(NNI(tbrTree))))
-}), class = "multiPhylo")
+if (treeSearchInstalled) {
+  threeAway <- structure(lapply(seq_len(200), function(x) {
+    tbrTree <- TBR(TBR(TBR(trueTree)))
+    ape::consensus(list(tbrTree, 
+                        NNI(NNI(tbrTree)),
+                        NNI(NNI(tbrTree)),
+                        NNI(NNI(tbrTree))))
+  }), class = "multiPhylo")
+}
 ```
 
 Now let's calculate their tree similarity scores.
@@ -299,26 +306,34 @@ We need to calculate the amount of information each tree has in common with
 the true tree:
 
 ```{r}
-correct1 <- MutualClusteringInfo(trueTree, oneAway)
-correct3 <- MutualClusteringInfo(trueTree, threeAway)
+if (treeSearchInstalled) {
+  correct1 <- MutualClusteringInfo(trueTree, oneAway)
+  correct3 <- MutualClusteringInfo(trueTree, threeAway)
+}
 ```
 
 The amount of information in each degraded tree:
 ```{r}
-infoInTree1 <- ClusteringEntropy(oneAway)
-infoInTree3 <- ClusteringEntropy(threeAway)
+if (treeSearchInstalled) {
+  infoInTree1 <- ClusteringEntropy(oneAway)
+  infoInTree3 <- ClusteringEntropy(threeAway)
+}
 ```
 
 The amount of information that could have been resolved, but was not:
 ```{r}
-unresolved1 <- ClusteringEntropy(trueTree) - infoInTree1
-unresolved3 <- ClusteringEntropy(trueTree) - infoInTree3
+if (treeSearchInstalled) {
+  unresolved1 <- ClusteringEntropy(trueTree) - infoInTree1
+  unresolved3 <- ClusteringEntropy(trueTree) - infoInTree3
+}
 ```
 
 And the amount of information incorrectly resolved:
 ```{r}
-incorrect1 <- infoInTree1 - correct1
-incorrect3 <- infoInTree3 - correct3
+if (treeSearchInstalled) {
+  incorrect1 <- infoInTree1 - correct1
+  incorrect3 <- infoInTree3 - correct3
+}
 ```
 
 In preparation for our plot, let's colour our one-away trees 
@@ -340,7 +355,7 @@ spec3 <- apply(spec3, 2, ColToHex)
 Now we can plot this information on a ternary diagram.
 
 ```{r, fig.width=7, fig.align="center", fig.asp=5/7, out.width="70%"}
-if (requireNamespace("Ternary", quietly = TRUE)) {
+if (treeSearchInstalled && requireNamespace("Ternary", quietly = TRUE)) {
   layout(matrix(c(1, 2), ncol = 2), widths = c(5, 2))
   oldPar <- par(mar = rep(0, 4))
   TernaryPlot(alab = "Information absent in degraded tree", 
@@ -382,6 +397,8 @@ if (requireNamespace("Ternary", quietly = TRUE)) {
     mtext("\u2192 Normalized tree quality \u2192", 2)
   }
   par(oldPar)
+} else {
+  message("Install \"TreeSearch\" and \"Ternary\" to generate this plot")
 }
 ```
 
