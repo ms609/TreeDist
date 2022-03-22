@@ -31,8 +31,8 @@ Description: Implements measures of tree similarity, including
   <doi:10.1093/sysbio/syab100>,
   for calculating the median of sets of trees,
   and for computing the information content of trees and splits.
-Copyright: Incorporates Jonker-Volgenant Linear Assignment Problem 
-  implementation by Roy Jonker, modified by Yong Yang after Yi Cao.
+Copyright: Jonker-Volgenant Linear Assignment Problem implementation
+  by Roy Jonker modified by Yong Yang and Yi Cao.
 URL: https://ms609.github.io/TreeDist/, https://github.com/ms609/TreeDist/
 BugReports: https://github.com/ms609/TreeDist/issues/
 Additional_repositories: https://ms609.github.io/packages/
