@@ -5,7 +5,7 @@
 - Depict strain in minimum spanning trees with `StrainCol()` and helper
   function `MSTSegments()`.
 
-- Update tests for consistency with "TreeTools" v1.7
+- Update tests for consistency with "TreeTools" v1.7.
 
 - Use lighter Rcpp headers.
 
