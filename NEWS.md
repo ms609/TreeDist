@@ -1,9 +1,11 @@
-# TreeDist 2.3.0.9002
+# TreeDist 2.4.0
 
 - Correct calculation of trustworthiness and continuity metrics.
 
 - Depict strain in minimum spanning trees with `StrainCol()` and helper
   function `MSTSegments()`.
+
+- Update tests for consistency with "TreeTools" v1.7.
 
 - Use lighter Rcpp headers.
 
