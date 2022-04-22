@@ -99,7 +99,7 @@ devtools::install_github('ms609/TreeDist')
 
 Construct tree spaces and readily visualize projected landscapes, avoiding
 common analytical pitfalls (Smith, 2022),
-using the inbuilt graphical user interface:
+using the inbuilt graphical user interface (Shiny GUI):
 
 ```r
 TreeDist::MapTrees()
