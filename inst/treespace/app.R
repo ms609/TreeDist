@@ -6,7 +6,9 @@ library("TreeTools", quietly = TRUE)
 library("TreeDist")
 
 if (!requireNamespace("cluster", quietly = TRUE)) install.packages("cluster")
-if (!requireNamespace("protoclust", quietly = TRUE)) install.packages("protoclust")
+if (!requireNamespace("protoclust", quietly = TRUE)) {
+  install.packages("protoclust")
+}
 if (!requireNamespace("MASS", quietly = TRUE)) install.packages("MASS")
 if (!requireNamespace("Quartet", quietly = TRUE)) install.packages("Quartet")
 if (!requireNamespace("rgl", quietly = TRUE)) install.packages("rgl")
