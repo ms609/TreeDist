@@ -35,7 +35,9 @@ NULL
 
 #' @rdname ClusterTable
 #' @export
-as.ClusterTable <- function(x, tipLabels = NULL, ...) UseMethod('as.ClusterTable')
+as.ClusterTable <- function(x, tipLabels = NULL, ...) {
+  UseMethod("as.ClusterTable")
+}
 
 #' @rdname ClusterTable
 #' @importFrom TreeTools NTip RenumberTips
@@ -50,7 +52,7 @@ as.ClusterTable.phylo <- function(x, tipLabels = NULL, ...) {
   structure(ClusterTable_new(x),
             nTip = NTip(x),
             tip.label = tipLabels,
-            class = 'ClusterTable')
+            class = "ClusterTable")
 }
 
 #' @rdname ClusterTable
@@ -86,8 +88,8 @@ as.matrix.ClusterTable <- function(x, ...) {
 #' print(clustab)
 #' @export
 print.ClusterTable <- function(x, ...) {
-  nTip <- attr(x, 'nTip')
-  labels <- attr(x, 'tip.label')
+  nTip <- attr(x, "nTip")
+  labels <- attr(x, "tip.label")
   cat("ClusterTable on" , nTip, "leaves:", labels[1], "..", labels[nTip])
 }
 
@@ -96,17 +98,17 @@ print.ClusterTable <- function(x, ...) {
 #' summary(clustab)
 #' @export
 summary.ClusterTable <- function(object, ...) {
-  nTip <- attr(object, 'nTip')
+  nTip <- attr(object, "nTip")
   mat <- ClusterTable_matrix(object)
   cat("ClusterTable on" , nTip, "leaves:\n")
-  cat(" ", rep(c(1:9, ' '), length.out = nTip), "\n", sep = '')
+  cat(" ", rep(c(1:9, " "), length.out = nTip), "\n", sep = "")
   apply(mat, 1, function(x) {
     if (x[1] > 0) {
-      cat(' ', rep('.', x[1] - 1), rep('*', 1 + x[2] - x[1]),
-          rep('.', nTip - x[2]), "\n", sep = '')
+      cat(" ", rep(".", x[1] - 1), rep("*", 1 + x[2] - x[1]),
+          rep(".", nTip - x[2]), "\n", sep = "")
     }
   })
   
   cat(paste0(" ", seq_len(nTip), ": ", 
-             attr(object, 'tip.label')[ClusterTable_decode(object)]), "\n")
+             attr(object, "tip.label")[ClusterTable_decode(object)]), "\n")
 }
