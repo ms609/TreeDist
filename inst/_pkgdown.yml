@@ -36,8 +36,6 @@ reference:
     desc: Functions to facilitate interaction with the package.
     contents:
       - Plot3
-      - ClusterTable
-      - ClusterTable-methods
       - CompareAll
       - median.multiPhylo
       - LAPJV
@@ -94,4 +92,4 @@ template:
     docsearch:
       api_key: 8bf44d312479af73720c5ca5fcc12eba
       index_name: treedist
-    ganalytics: UA-156666971-1
+    ganalytics: 312470940

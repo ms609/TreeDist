@@ -15,25 +15,6 @@ using TreeTools::ClusterTable;
 #include <cmath> /* for log2(), ceil() */
 #include <memory> /* for unique_ptr, make_unique */
 
-// Modelled on https://CRAN.R-project.org/package=Rcpp/vignettes/Rcpp-modules.pdf
-// [[Rcpp::export]]
-SEXP ClusterTable_new(List phylo) {
-  XPtr<ClusterTable> ptr(new ClusterTable (phylo), true);
-  return ptr;
-}
-
-// [[Rcpp::export]]
-IntegerMatrix ClusterTable_matrix(SEXP xp) {
-  XPtr<ClusterTable> ptr(xp);
-  return ptr->X_contents();
-}
-
-// [[Rcpp::export]]
-IntegerVector ClusterTable_decode(SEXP xp) {
-  XPtr<ClusterTable> ptr(xp);
-  return ptr->X_decode();
-}
-
 // COMCLUSTER computes a strict consensus tree in O(knn).
 // COMCLUST requires O(kn).
 // trees is a list of objects of class phylo.
