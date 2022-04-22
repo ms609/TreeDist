@@ -105,6 +105,8 @@ using the inbuilt graphical user interface (Shiny GUI):
 TreeDist::MapTrees()
 ```
 
+![image](https://user-images.githubusercontent.com/1695515/164730749-0e4cad5e-dcd5-47c7-80ef-3464e776e0a6.png)
+
 Serious analysts should consult the
 [vignette](https://ms609.github.io/TreeDist/articles/treespace.html)
 for a command-line interface.
