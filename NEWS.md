@@ -1,3 +1,9 @@
+# TreeDist 2.4.0.9000 (development)
+
+- Informative failure when not enough memory for `consensus_info()`.
+- Replace `throw` with `stop` in C++.
+
+
 # TreeDist 2.4.0
 
 - Correct calculation of trustworthiness and continuity metrics.

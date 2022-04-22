@@ -15,7 +15,7 @@ TREETOOLS_SPLITLIST_INIT
 List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y, 
                                    const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
-    throw std::invalid_argument("Input splits must address same number of tips.");
+    Rcpp::stop("Input splits must address same number of tips.");
   }
   const SplitList a(x), b(y);
   const int16 last_bin = a.n_bins - 1,
@@ -72,7 +72,7 @@ List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y,
 List cpp_robinson_foulds_info (const RawMatrix x, const RawMatrix y, 
                                const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
-    throw std::invalid_argument("Input splits must address same number of tips.");
+    Rcpp::stop("Input splits must address same number of tips.");
   }
   const SplitList a(x), b(y);
   const int16 last_bin = a.n_bins - 1,
@@ -138,7 +138,7 @@ List cpp_robinson_foulds_info (const RawMatrix x, const RawMatrix y,
 List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y, 
                                   const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
-    throw std::invalid_argument("Input splits must address same number of tips.");
+    Rcpp::stop("Input splits must address same number of tips.");
   }
   const SplitList a(x), b(y);
   const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
@@ -202,7 +202,7 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
                              const IntegerVector nTip, const NumericVector k,
                              const LogicalVector allowConflict) {
   if (x.cols() != y.cols()) {
-    throw std::invalid_argument("Input splits must address same number of tips.");
+    Rcpp::stop("Input splits must address same number of tips.");
   }
   const SplitList a(x), b(y);
   const int16
@@ -318,7 +318,7 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
 List cpp_msi_distance (const RawMatrix x, const RawMatrix y,
                         const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
-    throw std::invalid_argument("Input splits must address same number of tips.");
+    Rcpp::stop("Input splits must address same number of tips.");
   }
   const SplitList a(x), b(y);
   const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
@@ -389,7 +389,7 @@ List cpp_msi_distance (const RawMatrix x, const RawMatrix y,
 List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
                             const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
-    throw std::invalid_argument("Input splits must address same number of tips.");
+    Rcpp::stop("Input splits must address same number of tips.");
   }
   const SplitList a(x), b(y);
   const bool a_has_more_splits = (a.n_splits > b.n_splits);
@@ -574,7 +574,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
 List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
                        const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
-    throw std::invalid_argument("Input splits must address same number of tips.");
+    Rcpp::stop("Input splits must address same number of tips.");
   }
   const SplitList a(x), b(y);
   const int16
