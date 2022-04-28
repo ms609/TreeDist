@@ -15,7 +15,7 @@ vignette: >
 
 ```{r secret-header, echo=FALSE}
 set.seed(0)
-protoclust <- if (requireNamespace('protoclust', quietly = TRUE)) {
+protoclust <- if (requireNamespace("protoclust", quietly = TRUE)) {
   protoclust::protoclust
 } else {
   hclust
@@ -23,7 +23,7 @@ protoclust <- if (requireNamespace('protoclust', quietly = TRUE)) {
 ```
 
 It can be instructive to visualize the distribution of trees in a spatial
-'landscape'. This can be a helpful means to address whether discrete islands
+"landscape". This can be a helpful means to address whether discrete islands
 of trees exist, or whether analytical runs have converged.
 Such analysis is relatively simple to conduct, but a few common oversights
 can mislead interpretation.
@@ -31,12 +31,12 @@ can mislead interpretation.
 ## Tree space analysis via user interface
 
 Tree space mapping and analysis is made simple with the Shiny app included in
-the 'TreeDist' R package.  Simply install [R](https://www.r-project.org/) or
+the "TreeDist" R package.  Simply install [R](https://www.r-project.org/) or
 [RStudio](https://www.rstudio.com/), then copy the code below into the R command
 line:
 
 ```r
-install.packages('TreeDist')
+install.packages("TreeDist")
 TreeDist::MapTrees()
 ```
 
@@ -51,17 +51,17 @@ an analysis involves, and some potential pitfalls.
 Here's an example analysis of a series of 200 trees from an ordered list.
 The list corresponds to a mixed-base representation of trees (see 
 `TreeTools::as.TreeNumber()`), so is expected to contain some structure as we 
-jump from one 'class' of tree to another. 
+jump from one "class" of tree to another. 
 Let's see whether we can visualize and corroborate this structure.
 
 First we'll generate the trees, and load some colours with which we might
 identify them.
 
 ```{r generate-trees}
-library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+library("TreeTools", quietly = TRUE)
 treeNumbers <- c(1:220)
 trees <- as.phylo(treeNumbers, 8)
-spectrum <- hcl.colors(220, 'plasma')
+spectrum <- hcl.colors(220, "plasma")
 treeCols <- spectrum[treeNumbers]
 ```
 
@@ -75,7 +75,7 @@ The clustering information distance [@SmithDist] is a reliable alternative
 that is fast to calculate:
 
 ```{r calculate-distances, message=FALSE}
-library('TreeDist')
+library("TreeDist")
 distances <- ClusteringInfoDistance(trees)
 ```
 
@@ -117,7 +117,7 @@ mapping <- sammon$points
 That's a good start.  It is tempting to plot the first two dimensions
 arising from this mapping and be done:
 
-```{r plot-mapping-2d, fig.asp = 1, fig.width = 3, fig.align='center'}
+```{r plot-mapping-2d, fig.asp = 1, fig.width = 3, fig.align="center"}
 par(mar = rep(0, 4))
 plot(mapping,
      asp = 1, # Preserve aspect ratio - do not distort distances
@@ -137,7 +137,7 @@ minimax linkage will typically find a clustering solution that is close to
 optimal, if one exists [@SmithSpace].
 
 
-```{r clustering, fig.align='center'}
+```{r clustering, fig.align="center"}
 possibleClusters <- 2:10
 
 pamClusters <- lapply(possibleClusters, function(k) cluster::pam(distances, k = k))
@@ -161,10 +161,10 @@ hSil <- hSils[bestH]
 hCluster <- hClusters[[bestH]]
 
 plot(pamSils ~ possibleClusters,
-     xlab = 'Number of clusters', ylab = 'Silhouette coefficient',
+     xlab = "Number of clusters", ylab = "Silhouette coefficient",
      ylim = range(c(pamSils, hSils)))
 points(hSils ~ possibleClusters, pch = 2)
-legend('topright', c('PAM', 'Hierarchical'), pch = 1:2)
+legend("topright", c("PAM", "Hierarchical"), pch = 1:2)
 ```
 
 Silhouette coefficients of < 0.25 suggest that structure is not meaningful; 
@@ -180,8 +180,8 @@ cluster <- hClusters[[2 - 1]]
 
 We can visualize the clustering solution as a tree:
 
-```{r h-tree, fig.align='center'}
-class(hTree) <- 'hclust'
+```{r h-tree, fig.align="center"}
+class(hTree) <- "hclust"
 par(mar = c(0, 0, 0, 0))
 plot(hTree, labels = FALSE, main = '')
 points(seq_along(trees), rep(1, length(trees)), pch = 16,
@@ -190,7 +190,7 @@ points(seq_along(trees), rep(1, length(trees)), pch = 16,
 
 Another thing we may wish to do is to take the consensus of each cluster:
 
-```{r consensus, fig.align='center'}
+```{r consensus, fig.align="center"}
 par(mfrow = c(1, 2), mar = rep(0.2, 4))
 col1 <- spectrum[mean(treeNumbers[cluster == 1])]
 col2 <- spectrum[mean(treeNumbers[cluster == 2])]
@@ -209,12 +209,12 @@ First we want to know how many dimensions are necessary to adequately
 represent the true distances between trees.  We hope for a trustworthiness ×
 continuity score of \> 0.9 for a usable mapping, or \> 0.95 for a good one.
 
-```{r how-many-dims, fig.align='center'}
+```{r how-many-dims, fig.align="center"}
 txc <- vapply(seq_len(ncol(mapping)), function(k) {
   newDist <- dist(mapping[, seq_len(k)])
-  MappingQuality(distances, newDist, 10)['TxC']
+  MappingQuality(distances, newDist, 10)["TxC"]
 }, 0)
-plot(txc, xlab = 'Dimension')
+plot(txc, xlab = "Dimension")
 abline(h = 0.9, lty = 2)
 ```
 
@@ -231,7 +231,7 @@ mstEnds <- MSTEdges(distances)
 Let's plot the first five dimensions of our tree space, highlighting the convex
 hulls of our clusters:
 
-```{r plot-mapping-5d, fig.asp = 1, fig.align='center'}
+```{r plot-mapping-5d, fig.asp = 1, fig.align="center"}
 nDim <- which.max(txc > 0.9)
 plotSeq <- matrix(0, nDim, nDim)
 plotSeq[upper.tri(plotSeq)] <- seq_len(nDim * (nDim - 1) / 2)
@@ -243,7 +243,7 @@ par(mar = rep(0.1, 4))
 for (i in 2:nDim) for (j in seq_len(i - 1)) {
   # Set up blank plot
   plot(mapping[, j], mapping[, i], ann = FALSE, axes = FALSE, frame.plot = TRUE,
-       type = 'n', asp = 1, xlim = range(mapping), ylim = range(mapping))
+       type = "n", asp = 1, xlim = range(mapping), ylim = range(mapping))
   
   # Plot MST
   MSTSegments(mapping[, c(j, i)], mstEnds,
@@ -264,12 +264,12 @@ for (i in 2:nDim) for (j in seq_len(i - 1)) {
   }
 }
 # Annotate dimensions
-plot(0, 0, type = 'n', ann = FALSE, axes = FALSE)
-text(0, 0, 'Dimension 2')
-plot(0, 0, type = 'n', ann = FALSE, axes = FALSE)
-text(0, 0, 'Dimension 3')
-plot(0, 0, type = 'n', ann = FALSE, axes = FALSE)
-text(0, 0, 'Dimension 4')
+plot(0, 0, type = "n", ann = FALSE, axes = FALSE)
+text(0, 0, "Dimension 2")
+plot(0, 0, type = "n", ann = FALSE, axes = FALSE)
+text(0, 0, "Dimension 3")
+plot(0, 0, type = "n", ann = FALSE, axes = FALSE)
+text(0, 0, "Dimension 4")
 ```
 
 Our clusters, so distinct in dimension 1, overlap strongly in every other
@@ -283,8 +283,8 @@ those that are most apparent from a simple visual inspection of the
 two-dimensional tree space plot:
 
 
-```{r pid, fig.asp = 1, fig.width = 4, fig.align = 'center', echo = FALSE, message = FALSE}
-library('TreeDist')
+```{r pid, fig.asp = 1, fig.width = 4, fig.align = "center", echo = FALSE, message = FALSE}
+library("TreeDist")
 pid_distances <- PhylogeneticInfoDistance(trees)
 pid_mapping <- cmdscale(pid_distances, k = 6)
 pid_cluster <- cutree(protoclust(pid_distances), k = 2)
@@ -316,9 +316,9 @@ package, though the same considerations apply [@Blonder2018].
 Interpretation of overlap statistics is detailed in @Mammola2019.
 
 ```{r hypervolume, message = FALSE}
-hypervolumeInstalled <- requireNamespace('hypervolume', quietly = TRUE)
+hypervolumeInstalled <- requireNamespace("hypervolume", quietly = TRUE)
 if (hypervolumeInstalled) {
-  library('hypervolume')
+  library("hypervolume")
   hv1 <- hypervolume_gaussian(pid_mapping[pid_cluster == 1, 1:3],
                               verbose = FALSE)
   hv2 <- hypervolume_gaussian(pid_mapping[pid_cluster == 2, 1:3],
@@ -349,7 +349,7 @@ nearby points occur in valleys, and are separated by ridges from more distant
 data points.
 
 ```{r umatrix, fig.asp = 1, fig.align = "center"}
-umatrixInstalled <- requireNamespace('Umatrix', quietly = TRUE)
+umatrixInstalled <- requireNamespace("Umatrix", quietly = TRUE)
 if (umatrixInstalled) {
   map <- Umatrix::esomTrain(as.matrix(distances), Key = seq_along(trees),
                             Epochs = 5, # Increase for better results
@@ -368,5 +368,18 @@ if (umatrixInstalled) {
   message("Install the 'Umatrix' package to run this example")
 }
 ```
+
+## What next?
+
+You may wish to:
+
+- [Provide context](using-distances.html) for tree distances
+
+- Review [available distance measures](https://ms609.github.io/TreeDist/index.html)
+  and the corresponding [functions](https://ms609.github.io/TreeDist/reference/index.html#section-tree-distance-measures)
+
+- [Interpret tree distance metrics](https://ms609.github.io/TreeDistData/articles/09-expected-similarity.html)
+
+- Compare the distribution of different [sets of trees](compare-treesets.html)
 
 # References
