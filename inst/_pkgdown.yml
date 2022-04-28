@@ -70,6 +70,8 @@ navbar:
         href: articles/Using-TreeDist.html
       - text: Tree space analysis in TreeDist
         href: articles/treespace.html
+      - text: Comparing different sets of trees
+        href: articles/compare-treesets.html
       - text: Contextualizing tree distances
         href: articles/using-distances.html
       - text: Robinson-Foulds metric

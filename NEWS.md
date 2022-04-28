@@ -1,5 +1,7 @@
 # TreeDist 2.4.0.9000 (development)
 
+- New [vignette](https://ms609.github.io/TreeDist/articles/compare-treesets.html)
+  on how to compare tree sets.
 - Informative failure when not enough memory for `consensus_info()`.
 - Replace `throw` with `stop` in C++.
 
