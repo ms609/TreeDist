@@ -18,10 +18,9 @@ different analyses – for instance, trees obtained from different gene sequence
 or results obtained using different models or methods 
 (e.g. Bayesian, maximum likelihood, or parsimony).
 
-This can be accomplished quickly using the `MapTrees()` GUI:
+## Shiny app
 
-
-Or you can do this in the TreeDist GUI:
+This can be accomplished quickly using the `MapTrees()` graphical user interface:
 
 - <span style="border: solid 2px #e69f00">Load trees</span> from file: Select first tree file
 
@@ -42,7 +41,9 @@ Or you can do this in the TreeDist GUI:
 ![Tree batch styles](Batch2.svg){ width=100% }
 
 
-At the command line, this can be accomplished as follows:
+## Scripting at the R command line
+
+More control over the mapping can be obtained at the command line:
 
 ```{r generate-trees}
 # Load trees
@@ -72,7 +73,7 @@ plot(mapping,
 legend("left", c("Batch 1", "Batch 2"), col = styles, pch = styles)
 ```
 
-For a more suitable analysis than the simple 2D plot above, consult the
-companion [vignette](treespace.html).
-Even then, it's always worth being cautious before interpreting mapped areas;
-see the warnings and recommendations in @SmithSpace.
+For more robust analyses than the (potentially misleading!) 2D plot above,
+consult the companion [vignette](treespace.html).
+Note also that mapped areas and their regions of overlap may not correspond
+to reality; see the warnings and recommendations in @SmithSpace.
