@@ -135,8 +135,9 @@ batch of trees.  This approach shares many of the
 [problems with the Robinson--Foulds distance](
 https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html): in particular,
 resolution can be decimated by a single "rogue" taxon whose position is poorly
-defined.  Detecting and removing rogue taxa can provide a more meaningful
-point of comparison.
+defined [@SmithRogue].
+Detecting and removing rogue taxa can provide a more meaningful point of
+comparison.
 
 ```{r rogue-detection}
 # Create tree set with a rogue taxon
