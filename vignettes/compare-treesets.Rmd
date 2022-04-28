@@ -88,6 +88,9 @@ being a familiar example.
 
 As such, it is always best to work with original distances when interpreting
 whether sets of trees occupy larger or smaller regions of tree space.
+
+### Distances from median
+
 One approach is to plot distances from a median tree:
 
 ```{r compare-dist-from-median, fig.align = "center"}
@@ -124,5 +127,50 @@ hypervolume.  Note that the increased frequency at higher distances is expected:
 the outer shell of a sphere contains more volume than a layer of equivalent
 thickness closer to the centre, and this phenomenon becomes more pronounced as
 the dimensionality of tree space increases.
+
+### Consensus resolution
+
+A complementary approach is to identify the resolution of the consensus of each
+batch of trees.  This approach shares many of the 
+[problems with the Robinson--Foulds distance](
+https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html): in particular,
+resolution can be decimated by a single "rogue" taxon whose position is poorly
+defined.  Detecting and removing rogue taxa can provide a more meaningful
+point of comparison.
+
+```{r rogue-detection}
+# Create tree set with a rogue taxon
+batch3 <- AddTipEverywhere(as.phylo(7, 7), "t8")
+
+# Set up plotting area
+par(mfrow = c(2, 2), mar = rep(0.4, 4))
+
+# Plot naive strict consensus
+plot(consensus(batch1, p = 1))
+plot(consensus(batch3, p = 1))
+
+if (requireNamespace("Rogue", quietly = TRUE)) {
+  cons1 <- ConsensusWithout(batch1, p = 1,
+                            Rogue::QuickRogue(batch1, p = 1)[-1, "taxon"])
+  cons3 <- ConsensusWithout(batch3, p = 1,
+                            Rogue::QuickRogue(batch3, p = 1)[-1, "taxon"])
+  
+  # The information content of each tree gives a measure of its resolution,
+  # accounting for omitted rogue leaves
+  SplitwiseInfo(cons1) # 8.5 bits
+  SplitwiseInfo(cons3) # 15.1 bits: higher resolution indicates that these
+  # trees are more similar, notwithstanding rogue taxa.
+  
+  # Plot the trees
+  plot(cons1)
+  plot(cons3)
+} else {
+  message("The package 'Rogue' is required to run this example.")
+}
+```
+
+Whereas a direct interpretation of this analysis is not straightforward, it can
+provide a complementary way of understanding the distribution of trees
+across tree space.
 
 ## References

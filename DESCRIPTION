@@ -64,6 +64,7 @@ Suggests:
   rmarkdown,
   Rcpp (>= 1.0.8),
   rgl,
+  Rogue,
   spelling,
   testthat (>= 3.0),
   Ternary (>= 1.1.2),
