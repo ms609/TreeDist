@@ -16,6 +16,9 @@
     <loc>https://ms609.github.io/TreeDist/articles/Using-TreeDist.html</loc>
   </url>
   <url>
+    <loc>https://ms609.github.io/TreeDist/articles/compare-treesets.html</loc>
+  </url>
+  <url>
     <loc>https://ms609.github.io/TreeDist/articles/index.html</loc>
   </url>
   <url>
@@ -43,12 +46,6 @@
     <loc>https://ms609.github.io/TreeDist/reference/CalculateTreeDistance.html</loc>
   </url>
   <url>
-    <loc>https://ms609.github.io/TreeDist/reference/ClusterTable-methods.html</loc>
-  </url>
-  <url>
-    <loc>https://ms609.github.io/TreeDist/reference/ClusterTable.html</loc>
-  </url>
-  <url>
     <loc>https://ms609.github.io/TreeDist/reference/CompareAll.html</loc>
   </url>
   <url>
@@ -68,6 +65,9 @@
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/MASTSize.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/reference/MSTSegments.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/MapTrees.html</loc>
