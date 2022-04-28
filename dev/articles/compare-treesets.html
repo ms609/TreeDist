@@ -132,8 +132,10 @@
     
     
 <p>A common application of tree space analysis is to compare the outputs of different analyses – for instance, trees obtained from different gene sequences, or results obtained using different models or methods (e.g. Bayesian, maximum likelihood, or parsimony).</p>
-<p>This can be accomplished quickly using the <code><a href="../reference/MapTrees.html">MapTrees()</a></code> GUI:</p>
-<p>Or you can do this in the TreeDist GUI:</p>
+<div class="section level2">
+<h2 id="shiny-app">Shiny app<a class="anchor" aria-label="anchor" href="#shiny-app"></a>
+</h2>
+<p>This can be accomplished quickly using the <code><a href="../reference/MapTrees.html">MapTrees()</a></code> graphical user interface:</p>
 <ul>
 <li><p><span style="border: solid 2px #e69f00">Load trees</span> from file: Select first tree file</p></li>
 <li><p>Select an appropriate sample size</p></li>
@@ -150,12 +152,16 @@
 <div class="figure">
 <img src="Batch2.svg" style="width:100.0%" alt=""><p class="caption">Tree batch styles</p>
 </div>
-<p>At the command line, this can be accomplished as follows:</p>
+</div>
+<div class="section level2">
+<h2 id="scripting-at-the-r-command-line">Scripting at the R command line<a class="anchor" aria-label="anchor" href="#scripting-at-the-r-command-line"></a>
+</h2>
+<p>More control over the mapping can be obtained at the command line:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Load trees</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeTools/" class="external-link">"TreeTools"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="va">batch1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html" class="external-link">as.phylo</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">99</span>, <span class="fl">8</span><span class="op">)</span> <span class="co"># Generate 100 similar trees </span>
-<span class="va">batch2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html" class="external-link">as.phylo</a></span><span class="op">(</span><span class="fl">200</span><span class="op">:</span><span class="fl">249</span>, <span class="fl">8</span><span class="op">)</span> <span class="co"># A separate batch of 50 trees</span>
+<span class="va">batch1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html" class="external-link">as.phylo</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">60</span>, <span class="fl">8</span><span class="op">)</span> <span class="co"># Generate 60 similar trees </span>
+<span class="va">batch2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html" class="external-link">as.phylo</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">800</span>, length.out <span class="op">=</span> <span class="fl">30</span><span class="op">)</span>, <span class="fl">8</span><span class="op">)</span> <span class="co"># A separate batch of 30 trees</span>
 <span class="va">styles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span> <span class="co"># Select plotting colours / symbols</span>
 <span class="va">treeStyle</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">styles</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">batch1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">batch2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 
@@ -175,18 +181,62 @@
      pch <span class="op">=</span> <span class="va">treeStyle</span> <span class="co"># Plotting symbol</span>
      <span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"left"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Batch 1"</span>, <span class="st">"Batch 2"</span><span class="op">)</span>, col <span class="op">=</span> <span class="va">styles</span>, pch <span class="op">=</span> <span class="va">styles</span><span class="op">)</span></code></pre></div>
-<p><img src="compare-treesets_files/figure-html/plot-mapping-1.png" width="700"></p>
-<p>For a more suitable analysis than the simple 2D plot above, consult the companion <a href="treespace.html">vignette</a>. Even then, it’s always worth being cautious before interpreting mapped areas; see the warnings and recommendations in <span class="citation">Smith (2022)</span>.</p>
+<p><img src="compare-treesets_files/figure-html/plot-mapping-1.png" width="700" style="display: block; margin: auto;"></p>
+<p>For more robust analyses than the (potentially misleading!) 2D plot above, consult the companion <a href="treespace.html">vignette</a>. Note also that mapped areas and their regions of overlap may not correspond to reality; see the warnings and recommendations in <span class="citation">Smith (2022)</span>.</p>
+</div>
+<div class="section level2">
+<h2 id="comparing-trees-dispersal-hypervolume">Comparing trees’ dispersal / hypervolume<a class="anchor" aria-label="anchor" href="#comparing-trees-dispersal-hypervolume"></a>
+</h2>
+<p>Interpreting and comparing the areas of tree space from a projection can be misleading – the expanded apparent area of Greenland under the Mercator projection being a familiar example.</p>
+<div class="figure">
+<img src="https://i0.wp.com/geoffboeing.com/wp-content/uploads/2015/08/greenland-vs-africa-mercator-projection.jpg" alt=""><p class="caption">Mapping can introduce distortion</p>
+</div>
+<p>As such, it is always best to work with original distances when interpreting whether sets of trees occupy larger or smaller regions of tree space. One approach is to plot distances from a median tree:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Calculate median trees</span>
+<span class="va">median1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html" class="external-link">median</a></span><span class="op">(</span><span class="va">batch1</span><span class="op">)</span>
+<span class="va">median2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html" class="external-link">median</a></span><span class="op">(</span><span class="va">batch2</span><span class="op">)</span>
+
+<span class="co"># Compute distance from each tree to the median of its batch</span>
+<span class="va">dist1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeDistance.html">ClusteringInfoDist</a></span><span class="op">(</span><span class="va">batch1</span>, <span class="va">median1</span><span class="op">)</span>
+<span class="va">dist2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeDistance.html">ClusteringInfoDist</a></span><span class="op">(</span><span class="va">batch2</span>, <span class="va">median2</span><span class="op">)</span>
+
+<span class="co"># Set resolution of histogram</span>
+<span class="va">nBreaks</span> <span class="op">&lt;-</span> <span class="fl">10</span>
+<span class="va">breaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">dist1</span>, <span class="va">dist2</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="va">nBreaks</span><span class="op">)</span>
+
+<span class="co"># Plot first distance set</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">dist1</span>, col <span class="op">=</span> <span class="st">"#00000022"</span>, breaks <span class="op">=</span> <span class="va">breaks</span>,
+     main <span class="op">=</span> <span class="st">"Distance from median of batch"</span>,
+     xlab <span class="op">=</span> <span class="st">"Clustering information distance"</span>,
+     ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">25</span><span class="op">)</span> <span class="co"># Omit this line to infer Y axis limit from first batch.</span>
+     <span class="op">)</span>
+
+<span class="co"># Add second distance set</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">dist2</span>, col <span class="op">=</span> <span class="st">"#ff000022"</span>, breaks <span class="op">=</span> <span class="va">breaks</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+
+<span class="co"># Add legend</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Batch 1"</span>, <span class="st">"Batch 2"</span><span class="op">)</span>,
+       fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#00000022"</span>,  <span class="st">"#ff000022"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p><img src="compare-treesets_files/figure-html/compare-dist-from-median-1.png" width="700" style="display: block; margin: auto;"></p>
+<p>In the plotted example, distances to the median tree are greater for batch 2 than batch 1, indicating a more dispersed set of trees that occupies a greater hypervolume. Note that the increased frequency at higher distances is expected: the outer shell of a sphere contains more volume than a layer of equivalent thickness closer to the centre, and this phenomenon becomes more pronounced as the dimensionality of tree space increases.</p>
+</div>
+<div class="section level2 unnumbered">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
 <div id="refs" class="references">
 <div id="ref-SmithSpace">
 <p>Smith, M. R. (2022). Robust analysis of phylogenetic tree space. <em>Systematic Biology</em>, syab100. doi: <a href="https://doi.org/10.1093/sysbio/syab100" class="external-link">10.1093/sysbio/syab100</a></p>
+</div>
 </div>
 </div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-      </div>
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
+</div>
 
 </div>
 
