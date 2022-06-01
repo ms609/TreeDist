@@ -183,7 +183,7 @@ We can visualize the clustering solution as a tree:
 ```{r h-tree, fig.align="center"}
 class(hTree) <- "hclust"
 par(mar = c(0, 0, 0, 0))
-plot(hTree, labels = FALSE, main = '')
+plot(hTree, labels = FALSE, main = "")
 points(seq_along(trees), rep(1, length(trees)), pch = 16,
        col = spectrum[hTree$order])
 ```
@@ -259,8 +259,8 @@ for (i in 2:nDim) for (j in seq_len(i - 1)) {
     clusterY <- mapping[inCluster, i]
     hull <- chull(clusterX, clusterY)
     polygon(clusterX[hull], clusterY[hull], lty = 1, lwd = 2,
-            border = '#54de25bb')
-    text(mean(clusterX), mean(clusterY), clI, col = '#54de25bb', font = 2)
+            border = "#54de25bb")
+    text(mean(clusterX), mean(clusterY), clI, col = "#54de25bb", font = 2)
   }
 }
 # Annotate dimensions
@@ -300,7 +300,7 @@ for (clI in 1:2) {
   clusterY <- pid_mapping[inCluster, 2]
   hull <- chull(clusterX, clusterY)
   polygon(clusterX[hull], clusterY[hull], lty = 1, lwd = 2,
-          border = '#54de25bb')
+          border = "#54de25bb")
 }
 ```
 
@@ -332,7 +332,7 @@ if (hypervolumeInstalled) {
   hv_dist
   hv_overlap
 } else {
-  print("Install the 'hypervolume' package to run this example")
+  print("Install the "hypervolume" package to run this example")
 }
 
 ```
@@ -365,7 +365,7 @@ if (umatrixInstalled) {
                       shape = 19, color = treeCols, size = 2)
 
 } else {
-  message("Install the 'Umatrix' package to run this example")
+  message("Install the "Umatrix" package to run this example")
 }
 ```
 
