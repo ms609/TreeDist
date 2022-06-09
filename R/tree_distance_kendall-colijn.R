@@ -3,30 +3,43 @@
 #' Calculate the Kendall&ndash;Colijn tree distance, a measure related to the 
 #' path difference. 
 #' 
-#' The Kendall&ndash;Colijn distance works by measuring, for each pair of leaves,
-#' the distance from the most recent
-#' common ancestor of those leaves and the root node.  For a given tree, this 
-#' produces a vector of values recording the distance-from-the-root of each
-#' most recent common ancestor of each pair of leaves.
+#' The Kendall&ndash;Colijn distance works by measuring, for each pair of
+#' leaves, the distance from the most recent common ancestor of those leaves
+#' and the root node.
+#' For a given tree, this produces a vector of values recording the
+#' distance-from-the-root of each most recent common ancestor of each pair of
+#' leaves.
 #' 
-#' Two trees are compared by taking the Euclidian distance between the
+#' Two trees are compared by taking the Euclidean distance between the
 #' respective vectors.  This is calculated by taking the square root of the sum 
 #' of the squares of the differences between the vectors.
 #' 
-#' This metric emphasizes the position of the root; the path difference 
-#' instead measures the distance of the last common ancestor of each pair
+#' An analogous distance can be created from any vector representation of a
+#' tree.
+#' The split size vector metric \insertRef{SmithSpace}{TreeDist} is an attempt
+#' to mimic the Kendall&nbsp;Colijn metric in situations where the position of
+#' the root should not be afforded special significance; and the path distance
+#' \insertRef{Steel1993}{TreeDist} is a familiar alternative whose underlying
+#' vector measures the distance of the last common ancestor of each pair
 #' of leaves from the leaves themselves, i.e. the length of the path from one 
 #' leaf to another.
 #' 
+#' 
+#' None of these vector-based methods performs as well as other tree distances
+#' in measuring similarities in the relationships implied by a pair of trees
+#' \insertRef{SmithDist}{TreeDist}; in particular, the Kendall&nbsp;Colijn
+#' metric is strongly influenced by tree balance, and may not be appropriate
+#' for a suite of common applications \insertRef{SmithSpace}{TreeDist}.
+#' 
 #' @template tree12ListParams
-#' @param Vector Function converting a tree to a numeric vector. 
+#' @param Vector Function that converts a tree to a numeric vector. 
 #' `KCVector`, the default, returns the number of edges between the common
 #' ancestor of each pair of leaves and the root of the tree (per
-#' Kendall & Colijn 2016).
+#' \insertRef{Kendall2016;nobrackets}{TreeDist}).
 #' `PathVector` returns the number of edges between each pair of leaves (per
-#' Steel & Penny 1993).
+#' \insertRef{Steel1993;nobrackets}{TreeDist}).
 #' `SplitVector` returns the size of the smallest split that contains each
-#' pair of leaves (per Smith, 2022).
+#' pair of leaves (per \insertRef{SmithSpace;nobrackets}{TreeDist}).
 #' 
 #' @templateVar returns `KendallColijn()` returns
 #' @template distReturn
@@ -51,13 +64,10 @@
 #' @template MRS
 #' 
 #' @seealso [`treespace::treeDist()`](
-#' https://CRAN.R-project.org/package=treespace/vignettes/introduction.html)
-#' is a more sophisticated, if more cumbersome, implementation that supports 
-#' lambda > 0, i.e. use of edge lengths in tree comparison.
-#' 
-#' @references \insertRef{Kendall2016}{TreeDist}
-#' 
-#' @references \insertRef{SmithSpace}{TreeDist}
+#' https://thibautjombart.github.io/treespace/reference/treeDist.html)
+#' supports lambda > 0, i.e. use of edge lengths in tree comparison.
+#'  
+#' @references \insertAllCited{}
 #' @family tree distances
 #' @importFrom utils combn
 #' @encoding UTF-8
@@ -114,7 +124,7 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
 }
 
 #' @describeIn KendallColijn Creates a vector that characterises a rooted tree,
-#' as described in Kendall & Colijn (2016).
+#' as described in \insertRef{Kendall2016;textual}{TreeDist}.
 #' @param tree A tree of class \code{\link[ape:read.tree]{phylo}}.
 #' @importFrom TreeTools AllAncestors Preorder
 #' @importFrom utils combn
@@ -139,7 +149,8 @@ KCVector <- function(tree) {
 }
 
 #' @describeIn KendallColijn Creates a vector reporting the path length between
-#' each pair of leaves, per the path metric of Steel & Penny (1993).
+#' each pair of leaves, per the path metric of 
+#' \insertRef{Steel1993;textual}{TreeDist}.
 #' @importFrom TreeTools AllAncestors Preorder
 #' @importFrom utils combn
 #' @export
@@ -169,8 +180,8 @@ PathVector <- function(tree) {
 }
 
 #' @describeIn KendallColijn Creates a vector reporting the smallest split
-#' containing each pair of leaves, per the metric proposed in Smith
-#' (forthcoming).
+#' containing each pair of leaves, per the metric proposed in
+#' \insertRef{SmithSpace;textual}{TreeDist}.
 #' @importFrom TreeTools as.Splits
 #' @export
 SplitVector <- function(tree) {
