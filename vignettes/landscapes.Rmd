@@ -1,0 +1,17 @@
+---
+title: "Analysing landscapes of phylogenetic trees"
+author: "[Martin R. Smith](https://smithlabdurham.github.io/)"
+output: 
+  rmarkdown::html_vignette:
+    fig_width: 6
+    fig_height: 4
+bibliography: ../inst/REFERENCES.bib
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
+vignette: >
+  %\VignetteIndexEntry{Analysing landscapes of phylogenetic trees}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r}
+```

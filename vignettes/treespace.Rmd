@@ -1,5 +1,5 @@
 ---
-title: "Tree space & landscape analysis"
+title: "Tree space analysis"
 author: "[Martin R. Smith](https://smithlabdurham.github.io/)"
 output: 
   rmarkdown::html_vignette:
@@ -8,7 +8,7 @@ output:
 bibliography: ../inst/REFERENCES.bib
 csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
 vignette: >
-  %\VignetteIndexEntry{Tree space & landscape analysis}
+  %\VignetteIndexEntry{Tree space analysis}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -399,6 +399,8 @@ if (umatrixInstalled) {
 ## What next?
 
 You may wish to:
+
+- [Analyse landscapes](landscapes.html) of phylogenetic trees
 
 - [Provide context](using-distances.html) for tree distances
 
