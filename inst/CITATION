@@ -2,9 +2,9 @@ vers <- meta$Version
 
 citHeader(paste0("When using the package, please acknowledge your use of ",
 "TreeDist in the article text, and cite the papers ",
-"describing the metrics that you employ. For example, 'Mutual Phylogenetic ",
+"describing the metrics that you employ. For example, \"Mutual Phylogenetic ",
 "Information similarity metrics (Smith 2020a) were calculated using the R package",
-" TreeDist v", vers, " (Smith 2020b). For tree space mappings, cite Smith (2022)."))
+" TreeDist v", vers, " (Smith 2020b)\".\nFor tree space mappings, cite Smith (2022)."))
 
 
 citEntry(entry = "article",
@@ -22,7 +22,7 @@ for comparing phylogenetic trees",
       textVersion =
       paste0("Smith, M.R. (2020a).",
              " Information theoretic Generalized Robinson-Foulds metrics
-for comparing phylogenetic trees. ", 
+for comparing phylogenetic trees.", 
              " Bioinformatics",
              " 36: 5007–5013.",
              " doi: 10.1093/bioinformatics/btaa614"))
@@ -41,8 +41,8 @@ citEntry(entry = "article",
 
       textVersion =
       paste0("Smith, M.R. (2022).",
-             " Robust analysis of phylogenetic tree space. ", 
-             " Systematic Biology",
+             " Robust analysis of phylogenetic tree space.", 
+             " Systematic Biology,",
              " syab100.",
              " doi: 10.1093/sysbio/syab100"))
 
