@@ -152,26 +152,44 @@ counted more than once</p>
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>A tree of class <code>phylo</code>, a list of trees, or a <code>multiPhylo</code> object.</p></dd>
+
+
 <dt>p</dt>
 <dd><p>Scalar from 0.5 to 1 specifying minimum proportion of trees that
 must contain a split for it to appear within the consensus.</p></dd>
+
+
 <dt>sum</dt>
 <dd><p>Logical: if <code>TRUE</code>, sum the information content of each split to
 provide the total splitwise information content of the tree.</p></dd>
+
+
 <dt>trees</dt>
 <dd><p>List of <code>phylo</code> objects, optionally with class <code>multiPhylo</code>.</p></dd>
+
+
 <dt>info</dt>
 <dd><p>Abbreviation of 'phylogenetic' or 'clustering', specifying
 the concept of information to employ.</p></dd>
+
+
 <dt>check.tips</dt>
 <dd><p>Logical specifying whether to renumber leaves such that
 leaf numbering is consistent in all trees.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>SplitwiseInfo()</code>, <code>ClusteringInfo()</code> and <code>ClusteringEntropy()</code>return the splitwise information content of the tree -- or of each split
-in turn, if <code>sum = FALSE</code> -- in bits.
-<code>ConsensusInfo()</code> returns the splitwise information content of the
+    
+
+<p><code>SplitwiseInfo()</code>, <code>ClusteringInfo()</code> and <code>ClusteringEntropy()</code></p>
+
+
+<p>return the splitwise information content of the tree -- or of each split
+in turn, if <code>sum = FALSE</code> -- in bits.</p>
+
+
+<p><code>ConsensusInfo()</code> returns the splitwise information content of the
 majority rule consensus of <code>trees</code>.</p>
     </div>
     <div id="clustering-information">
@@ -351,7 +369,7 @@ and in a <a href="https://ms609.github.io/TreeDist/articles/information.html">pa
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

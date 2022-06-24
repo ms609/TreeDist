@@ -158,14 +158,20 @@ the equivalent similarity measure, with options to
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 <code>tree2 = NULL</code> will compute distances between each pair of trees in the list
 <code>tree1</code> using a fast algorithm based on Day (1985).</p></dd>
+
+
 <dt>tree2</dt>
 <dd><p>Trees of class <code>phylo</code>, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 <code>tree2 = NULL</code> will compute distances between each pair of trees in the list
 <code>tree1</code> using a fast algorithm based on Day (1985).</p></dd>
+
+
 <dt>similarity</dt>
 <dd><p>Logical specifying whether to report the result as a tree
 similarity, rather than a difference.</p></dd>
+
+
 <dt>normalize</dt>
 <dd><p>If a numeric value is provided, this will be used as a
 maximum value against which to rescale results.
@@ -173,29 +179,42 @@ If <code>TRUE</code>, results will be rescaled against a maximum value calculate
 the specified tree sizes and topology, as specified in the 'Normalization'
 section below.
 If <code>FALSE</code>, results will not be rescaled.</p></dd>
+
+
 <dt>reportMatching</dt>
 <dd><p>Logical specifying whether to return the clade
 matchings as an attribute of the score.</p></dd>
+
+
 <dt>splits1</dt>
 <dd><p>Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
 and each column corresponds to a split, such that each leaf is identified as
 a member of the ingroup (<code>TRUE</code>) or outgroup (<code>FALSE</code>) of the respective
 split.</p></dd>
+
+
 <dt>splits2</dt>
 <dd><p>Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
 and each column corresponds to a split, such that each leaf is identified as
 a member of the ingroup (<code>TRUE</code>) or outgroup (<code>FALSE</code>) of the respective
 split.</p></dd>
+
+
 <dt>nTip</dt>
 <dd><p>(Optional) Integer specifying the number of leaves in each split.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Not used.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>RobinsonFoulds()</code> and <code>InfoRobinsonFoulds()</code> return an array of numerics providing the
+    
+
+<p><code>RobinsonFoulds()</code> and <code>InfoRobinsonFoulds()</code> return an array of numerics providing the
 distances between each  pair of trees in <code>tree1</code> and <code>tree2</code>,
 or <code>splits1</code> and <code>splits2</code>.</p>
     </div>
@@ -299,7 +318,7 @@ Oxford University Press, Oxford.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

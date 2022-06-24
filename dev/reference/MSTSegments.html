@@ -126,20 +126,31 @@ stretched or compressed.</p>
     <dl><dt>mapping</dt>
 <dd><p>Two-column matrix giving <em>x</em> and <em>y</em> coordinates of plotted
 points.</p></dd>
+
+
 <dt>mstEnds</dt>
 <dd><p>Two-column matrix identifying rows of <code>mapping</code> at end of
 each edge of the MST, as output by <code><a href="https://ms609.github.io/TreeTools/reference/MSTEdges.html" class="external-link">TreeTools::MSTEdges()</a></code>.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional arguments to <code><a href="https://rdrr.io/r/graphics/segments.html" class="external-link">segments()</a></code>.</p></dd>
+
+
 <dt>distances</dt>
 <dd><p>Matrix or <code>dist</code> object giving original distances between
 each pair of points.</p></dd>
+
+
 <dt>palette</dt>
 <dd><p>Vector of colours with which to colour edges.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>StrainCol()</code> returns a vector in which each entry is selected from
+    
+
+<p><code>StrainCol()</code> returns a vector in which each entry is selected from
 <code>palette</code>, with an attribute <code>logStrain</code> denoting the logarithm of the
 mapped over original distance, shifted such that the median value is zero.
 Palette colours are assigned centred on the median value, with entries
@@ -205,7 +216,7 @@ distance to original distance is small.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

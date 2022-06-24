@@ -121,6 +121,8 @@ path difference.</p>
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 <code>tree2 = NULL</code> will compute distances between each pair of trees in the list
 <code>tree1</code> using a fast algorithm based on Day (1985).</p></dd>
+
+
 <dt>Vector</dt>
 <dd><p>Function converting a tree to a numeric vector.
 <code>KCVector</code>, the default, returns the number of edges between the common
@@ -130,15 +132,22 @@ Kendall &amp; Colijn 2016).
 Steel &amp; Penny 1993).
 <code>SplitVector</code> returns the size of the smallest split that contains each
 pair of leaves (per Smith, 2022).</p></dd>
+
+
 <dt>tree</dt>
 <dd><p>A tree of class <code><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">phylo</a></code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>KendallColijn()</code> returns an array of numerics providing the
+    
+
+<p><code>KendallColijn()</code> returns an array of numerics providing the
 distances between each  pair of trees in <code>tree1</code> and <code>tree2</code>,
-or <code>splits1</code> and <code>splits2</code>.
-<code>KCDiameter()</code> returns the value of the Kendall &amp; Colijn's (2016)
+or <code>splits1</code> and <code>splits2</code>.</p>
+
+
+<p><code>KCDiameter()</code> returns the value of the Kendall &amp; Colijn's (2016)
 metric distance between two pectinate trees with <em>n</em> leaves ordered in
 the opposite direction, which I suggest (without any attempt at a proof) may
 be a useful proxy for the diameter (i.e. maximum value) of the K–C
@@ -259,7 +268,7 @@ lambda &gt; 0, i.e. use of edge lengths in tree comparison.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

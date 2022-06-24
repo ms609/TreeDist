@@ -111,6 +111,8 @@
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 <code>tree2 = NULL</code> will compute distances between each pair of trees in the list
 <code>tree1</code> using a fast algorithm based on Day (1985).</p></dd>
+
+
 <dt>symmetric</dt>
 <dd><p>Logical specifying whether to produce a better heuristic
 by calculating the minimum of <code>SPRDist(t1, t2)</code> and <code>SPRDist(t2, t1)</code>,
@@ -118,16 +120,19 @@ which are not guaranteed to be equal due to the heuristic nature of the
 approximation (see
 <a href="https://github.com/KlausVigo/phangorn/issues/97" class="external-link">phangorn#97</a>). Set to
 <code>FALSE</code> for the faster approximation, as implemented in 'phangorn'.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>SPRDist()</code> returns a vector or distance matrix of distances
+    
+
+<p><code>SPRDist()</code> returns a vector or distance matrix of distances
 between trees.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
     <p><code>SPRDist()</code> is a wrapper for the function
-<code><a href="https://rdrr.io/pkg/phangorn/man/treedist.html" class="external-link">SPR.dist()</a></code> in the phangorn package.
+<code><a href="http://klausvigo.github.io/phangorn/reference/treedist.html" class="external-link">SPR.dist()</a></code> in the phangorn package.
 It pre-processes trees to ensure that their internal representation does
 not cause the <code>SPR.dist()</code> function to crash R, and allows an improved
 (but slower) symmetric heuristic.</p>
@@ -193,7 +198,7 @@ resources, install the latest version of phangorn with
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

@@ -111,16 +111,19 @@
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 <code>tree2 = NULL</code> will compute distances between each pair of trees in the list
 <code>tree1</code> using a fast algorithm based on Day (1985).</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>PathDist()</code> returns a vector or distance matrix of distances
+    
+
+<p><code>PathDist()</code> returns a vector or distance matrix of distances
 between trees.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
     <p>This function is a wrapper for the function
-<code><a href="https://rdrr.io/pkg/phangorn/man/treedist.html" class="external-link">path.dist()</a></code> in the phangorn package.
+<code><a href="http://klausvigo.github.io/phangorn/reference/treedist.html" class="external-link">path.dist()</a></code> in the phangorn package.
 It pre-processes trees to ensure that their internal representation does
 not cause the <code>path.dist()</code> function to crash R.</p>
 <p>The path distance is calculated by tabulating the cladistic difference (=
@@ -218,7 +221,7 @@ fundamental) relationships (Farris, 1973).</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

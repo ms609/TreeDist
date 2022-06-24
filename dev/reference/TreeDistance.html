@@ -190,6 +190,8 @@ proposed in Smith (2020).</p>
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 <code>tree2 = NULL</code> will compute distances between each pair of trees in the list
 <code>tree1</code> using a fast algorithm based on Day (1985).</p></dd>
+
+
 <dt>normalize</dt>
 <dd><p>If a numeric value is provided, this will be used as a
 maximum value against which to rescale results.
@@ -197,30 +199,45 @@ If <code>TRUE</code>, results will be rescaled against a maximum value calculate
 the specified tree sizes and topology, as specified in the 'Normalization'
 section below.
 If <code>FALSE</code>, results will not be rescaled.</p></dd>
+
+
 <dt>reportMatching</dt>
 <dd><p>Logical specifying whether to return the clade
 matchings as an attribute of the score.</p></dd>
+
+
 <dt>diag</dt>
 <dd><p>Logical specifying whether to return similarities along the
 diagonal, i.e. of each tree with itself.  Applies only if <code>tree2</code> is
 a list identical to <code>tree1</code>, or <code>NULL</code>.</p></dd>
+
+
 <dt>samples</dt>
 <dd><p>Integer specifying how many samplings to obtain;
 accuracy of estimate increases with <code>sqrt(samples)</code>.</p></dd>
+
+
 <dt>splits1, splits2</dt>
 <dd><p>Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
 and each column corresponds to a split, such that each leaf is identified as
 a member of the ingroup (<code>TRUE</code>) or outgroup (<code>FALSE</code>) of the respective
 split.</p></dd>
+
+
 <dt>nTip</dt>
 <dd><p>(Optional) Integer specifying the number of leaves in each split.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>If <code>reportMatching = FALSE</code>, the functions return a numeric
-vector specifying the requested similarities or differences.
-If <code>reportMatching = TRUE</code>, the functions additionally return an integer
+    
+
+<p>If <code>reportMatching = FALSE</code>, the functions return a numeric
+vector specifying the requested similarities or differences.</p>
+
+
+<p>If <code>reportMatching = TRUE</code>, the functions additionally return an integer
 vector listing the index of the split in <code>tree2</code> that is matched with
 each split in <code>tree1</code> in the optimal matching.
 Unmatched splits are denoted <code>NA</code>.
@@ -428,7 +445,7 @@ Cambridge University Press, Cambridge.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

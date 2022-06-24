@@ -110,18 +110,27 @@ in the same list.</p>
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>List of trees, in the format expected by <code>Func()</code>.</p></dd>
+
+
 <dt>Func</dt>
 <dd><p>distance function returning distance between two trees,
-e.g. <code><a href="https://rdrr.io/pkg/phangorn/man/treedist.html" class="external-link">path.dist()</a></code>.</p></dd>
+e.g. <code><a href="http://klausvigo.github.io/phangorn/reference/treedist.html" class="external-link">path.dist()</a></code>.</p></dd>
+
+
 <dt>FUN.VALUE</dt>
 <dd><p>Format of output of <code>Func()</code>, to be passed to <code><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply()</a></code>.
 If unspecified, calculated by running <code>Func(x[[1]], x[[1]])</code>.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional parameters to pass to <code>Func()</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code>CompareAll()</code> returns a distance matrix of class <code>dist</code> detailing
+    
+
+<p><code>CompareAll()</code> returns a distance matrix of class <code>dist</code> detailing
 the distance between each pair of trees.
 Identical trees are assumed to have zero distance.</p>
     </div>
@@ -212,7 +221,7 @@ Identical trees are assumed to have zero distance.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

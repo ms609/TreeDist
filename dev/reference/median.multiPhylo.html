@@ -118,25 +118,42 @@ an 'average' -- of a forest of tree topologies.</p>
     <h2>Arguments</h2>
     <dl><dt>x</dt>
 <dd><p>Object of class <code>multiPhylo</code> containing phylogenetic trees.</p></dd>
+
+
 <dt>na.rm, ...</dt>
 <dd><p>Unused; included for consistency with default function..</p></dd>
+
+
 <dt>Distance</dt>
 <dd><p>Function to calculate distances between each pair
 of trees in <code>x</code>.</p></dd>
+
+
 <dt>index</dt>
 <dd><p>Logical: if <code>TRUE</code>, return the index of the median tree(s);
 if <code>FALSE</code>, return the tree itself.</p></dd>
+
+
 <dt>breakTies</dt>
 <dd><p>Logical: if <code>TRUE</code>, return a single tree with the minimum
 score; if <code>FALSE</code>, return all tied trees.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p><code><a href="https://rdrr.io/r/stats/median.html" class="external-link">median()</a></code> returns an object of class <code>phylo</code>corresponding to the geometric median of a set of trees:
+    
+
+<p><code><a href="https://rdrr.io/r/stats/median.html" class="external-link">median()</a></code> returns an object of class <code>phylo</code></p>
+
+
+<p>corresponding to the geometric median of a set of trees:
 that is, the tree whose average distance from all other trees in the set
 is lowest.
 If multiple trees tie in their average distance, the first will be returned,
-unless <code>breakTies = FALSE</code>, in which case an object of class <code>multiPhylo</code>containing all such trees will be returned.</p>
+unless <code>breakTies = FALSE</code>, in which case an object of class <code>multiPhylo</code></p>
+
+
+<p>containing all such trees will be returned.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -225,7 +242,7 @@ rather than a similarity.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>

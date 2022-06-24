@@ -124,28 +124,41 @@ either listed in the same order or bearing identical names (in any sequence),
 and each column corresponds to a split, such that each leaf is identified as
 a member of the ingroup (<code>TRUE</code>) or outgroup (<code>FALSE</code>) of the respective
 split.</p></dd>
+
+
 <dt>splits2</dt>
 <dd><p>Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
 and each column corresponds to a split, such that each leaf is identified as
 a member of the ingroup (<code>TRUE</code>) or outgroup (<code>FALSE</code>) of the respective
 split.</p></dd>
+
+
 <dt>nTip</dt>
 <dd><p>Integer specifying the number of leaves in each split.</p></dd>
+
+
 <dt>PairScorer</dt>
 <dd><p>function taking four arguments, <code>splits1</code>, <code>splits2</code>,
 <code>nSplits1</code>, <code>nSplits2</code>, which should return the score of each pair of splits
 in a two-dimensional matrix.  Additional parameters may be specified via
 ....</p></dd>
+
+
 <dt>reportMatching</dt>
 <dd><p>Logical specifying whether to return the clade
 matchings as an attribute of the score.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional parameters to <code>PairScorer</code></p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A numeric value specifying the score of the tree pairs under the
+    
+
+<p>A numeric value specifying the score of the tree pairs under the
 specified pair scorer. If <code>reportMatching = TRUE</code>, attribute also list:</p><ul><li><p><code>matching</code>: which split in <code>splits2</code> is optimally matched to each split in
 <code>split1</code> (<code>NA</code> if not matched);</p></li>
 <li><p><code>pairScores</code>: Calculated scores for each possible matching of each split.</p></li>
@@ -183,7 +196,7 @@ This is the responsibility of the calling function.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
       </footer></div>
