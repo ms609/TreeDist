@@ -92,8 +92,8 @@ library('TreeDist')
 You can install the development version of the package with:
 ```r
 if(!require("curl")) install.packages("curl")
-if(!require("devtools")) install.packages("devtools")
-devtools::install_github('ms609/TreeDist')
+if(!require("remotes")) install.packages("remotes")
+remotes::install_github("ms609/TreeDist")
 ```
 
 # Tree space analysis
