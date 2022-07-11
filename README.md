@@ -91,7 +91,8 @@ library('TreeDist')
 
 You can install the development version of the package with:
 ```r
-if (!require(devtools)) install.packages("devtools")
+if(!require("curl")) install.packages("curl")
+if(!require("devtools")) install.packages("devtools")
 devtools::install_github('ms609/TreeDist')
 ```
 
