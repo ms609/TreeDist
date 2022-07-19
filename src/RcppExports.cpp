@@ -94,6 +94,29 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// vec_diff_euclidean
+NumericMatrix vec_diff_euclidean(const IntegerMatrix vec1, const IntegerMatrix vec2);
+RcppExport SEXP _TreeDist_vec_diff_euclidean(SEXP vec1SEXP, SEXP vec2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const IntegerMatrix >::type vec1(vec1SEXP);
+    Rcpp::traits::input_parameter< const IntegerMatrix >::type vec2(vec2SEXP);
+    rcpp_result_gen = Rcpp::wrap(vec_diff_euclidean(vec1, vec2));
+    return rcpp_result_gen;
+END_RCPP
+}
+// pair_diff_euclidean
+NumericVector pair_diff_euclidean(const IntegerMatrix vecs);
+RcppExport SEXP _TreeDist_pair_diff_euclidean(SEXP vecsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const IntegerMatrix >::type vecs(vecsSEXP);
+    rcpp_result_gen = Rcpp::wrap(pair_diff_euclidean(vecs));
+    return rcpp_result_gen;
+END_RCPP
+}
 // path_vector2
 IntegerVector path_vector2(IntegerMatrix edge);
 RcppExport SEXP _TreeDist_path_vector2(SEXP edgeSEXP) {
@@ -207,6 +230,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_cpp_mast", (DL_FUNC) &_TreeDist_cpp_mast, 3},
     {"_TreeDist_cpp_nni_distance", (DL_FUNC) &_TreeDist_cpp_nni_distance, 3},
     {"_TreeDist_path_vector", (DL_FUNC) &_TreeDist_path_vector, 1},
+    {"_TreeDist_vec_diff_euclidean", (DL_FUNC) &_TreeDist_vec_diff_euclidean, 2},
+    {"_TreeDist_pair_diff_euclidean", (DL_FUNC) &_TreeDist_pair_diff_euclidean, 1},
     {"_TreeDist_path_vector2", (DL_FUNC) &_TreeDist_path_vector2, 1},
     {"_TreeDist_cpp_robinson_foulds_distance", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_distance, 3},
     {"_TreeDist_cpp_robinson_foulds_info", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_info, 3},

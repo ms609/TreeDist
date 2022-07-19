@@ -51,13 +51,7 @@ RobinsonFouldsSplits(
 )
 }
 \arguments{
-\item{tree1}{Trees of class \code{phylo}, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.  Where implemented,
-\code{tree2 = NULL} will compute distances between each pair of trees in the list
-\code{tree1} using a fast algorithm based on
-\insertCite{Day1985;textual}{TreeDist}.}
-
-\item{tree2}{Trees of class \code{phylo}, with leaves labelled identically,
+\item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 \code{tree2 = NULL} will compute distances between each pair of trees in the list
 \code{tree1} using a fast algorithm based on
@@ -76,13 +70,7 @@ If \code{FALSE}, results will not be rescaled.}
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}
 
-\item{splits1}{Logical matrices where each row corresponds to a leaf,
-either listed in the same order or bearing identical names (in any sequence),
-and each column corresponds to a split, such that each leaf is identified as
-a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
-split.}
-
-\item{splits2}{Logical matrices where each row corresponds to a leaf,
+\item{splits1, splits2}{Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
 and each column corresponds to a split, such that each leaf is identified as
 a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
@@ -119,10 +107,10 @@ linear-time algorithm.
 }
 \section{Functions}{
 \itemize{
-\item \code{RobinsonFouldsMatching}: Matched splits, intended for use with
+\item \code{RobinsonFouldsMatching()}: Matched splits, intended for use with
 \code{\link[=VisualizeMatching]{VisualizeMatching()}}.
-}}
 
+}}
 \section{Normalization}{
 
 \itemize{
