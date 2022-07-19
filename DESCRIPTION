@@ -1,7 +1,7 @@
 Package: TreeDist
 Type: Package
 Title: Calculate and Map Distances Between Phylogenetic Trees
-Version: 2.3.0.9002
+Version: 2.4.1.9002
 Authors@R: c(person("Martin R.", "Smith",
                   email="martin.smith@durham.ac.uk", 
                   role=c("aut", "cre", "cph", "prg"), 
@@ -31,14 +31,14 @@ Description: Implements measures of tree similarity, including
   <doi:10.1093/sysbio/syab100>,
   for calculating the median of sets of trees,
   and for computing the information content of trees and splits.
-Copyright: Incorporates Jonker-Volgenant Linear Assignment Problem 
-  implementation by Roy Jonker, modified by Yong Yang after Yi Cao.
+Copyright: Jonker-Volgenant Linear Assignment Problem implementation
+  by Roy Jonker modified by Yong Yang and Yi Cao.
 URL: https://ms609.github.io/TreeDist/, https://github.com/ms609/TreeDist/
 BugReports: https://github.com/ms609/TreeDist/issues/
 Additional_repositories: https://ms609.github.io/packages/
 Depends: 
   R (>= 3.4.0),
-  stats
+  stats,
 Imports: 
   ape (>= 5.0),
   cli (>= 3.0),
@@ -47,7 +47,7 @@ Imports:
   Rdpack (>= 0.7),
   shiny,
   shinyjs,
-  TreeTools (>= 1.6.0.9010)
+  TreeTools (>= 1.7.1.9000),
 Suggests:
   bookdown,
   cluster,
@@ -64,6 +64,7 @@ Suggests:
   rmarkdown,
   Rcpp (>= 1.0.8),
   rgl,
+  Rogue,
   spelling,
   testthat (>= 3.0),
   Ternary (>= 1.1.2),
@@ -71,16 +72,15 @@ Suggests:
   TreeSearch,
   Umatrix,
   uwot,
-  vdiffr (>= 1.0.0)
+  vdiffr (>= 1.0.0),
 LinkingTo: 
   Rcpp,
   TreeTools,
-Remotes: ms609/TreeTools
 RdMacros: Rdpack
 VignetteBuilder: knitr
 Config/Needs/check: rcmdcheck
-Config/Needs/codecov: covr
-Config/Needs/memcheck: devtools, rcmdcheck
+Config/Needs/coverage: covr
+Config/Needs/memcheck: devtools
 Config/Needs/metadata: codemetar
 Config/Needs/revdeps: revdepcheck
 Config/Needs/website: pkgdown
@@ -91,5 +91,5 @@ ByteCompile: true
 Encoding: UTF-8
 Language: en-GB
 X-schema.org-keywords: phylogenetics, tree-distance
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0.9000
 Roxygen: list(markdown = TRUE)

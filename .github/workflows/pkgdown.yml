@@ -3,6 +3,17 @@ on:
     branches:
       - main
       - master
+    paths-ignore:
+      - "Meta**"
+      - "memcheck**"
+      - "docs**"
+      - "**.git"
+      - "**.json"
+      - "**.md"
+      - "**.yml"
+      - "!**pkgdown.yml"
+      - "**.R[dD]ata"
+      - "**.Rpro*"
 
 name: pkgdown
 

@@ -218,7 +218,7 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
                                 const IntegerVector nTip) {
   
   if (nTip[0] > NNI_MAX_TIPS) {
-    throw std::length_error("Cannot calculate NNI distance for trees with "
+    Rcpp::stop("Cannot calculate NNI distance for trees with "
                             "so many tips.");
   }
   const int16 
@@ -236,7 +236,7 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
     fack_score_bound = 0
   ;
   if (n_edge != int16(edge2.nrow())) {
-    throw std::length_error("Both trees must have the same number of edges. "
+    Rcpp::stop("Both trees must have the same number of edges. "
                             "Is one rooted and the other unrooted?");
   }
 

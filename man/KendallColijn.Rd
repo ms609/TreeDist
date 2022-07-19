@@ -109,7 +109,7 @@ KCDiameter(4)
 \insertAllCited{}
 }
 \seealso{
-\href{https://CRAN.R-project.org/package=treespace/vignettes/introduction.html}{\code{treespace::treeDist}}
+\href{https://CRAN.R-project.org/package=treespace/vignettes/introduction.html}{\code{treespace::treeDist()}}
 is a more sophisticated, if more cumbersome, implementation that supports
 lambda > 0, i.e. use of edge lengths in tree comparison.
 
@@ -125,9 +125,6 @@ Other tree distances:
 \code{\link{TreeDistance}()}
 }
 \author{
-\href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
-(\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
-
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
 (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }

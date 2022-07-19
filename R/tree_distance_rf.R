@@ -99,7 +99,7 @@ InfoRobinsonFouldsSplits <- function(splits1, splits2,
 }
 
 #' @rdname Robinson-Foulds
-#' @importFrom TreeTools NSplits
+#' @importFrom TreeTools NSplits as.ClusterTable
 #' @export
 RobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
                             normalize = FALSE, reportMatching = FALSE) {

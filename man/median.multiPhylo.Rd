@@ -80,6 +80,7 @@ Consensus methods:
 \code{\link[TreeTools:ConsensusWithout]{TreeTools::ConsensusWithout()}}
 
 Other tree space functions: 
+\code{\link{MSTSegments}()},
 \code{\link{MapTrees}()},
 \code{\link{MappingQuality}()},
 \code{\link{SpectralEigens}()}

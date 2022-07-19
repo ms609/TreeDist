@@ -91,19 +91,22 @@ library('TreeDist')
 
 You can install the development version of the package with:
 ```r
-if (!require(devtools)) install.packages("devtools")
-devtools::install_github('ms609/TreeDist')
+if(!require("curl")) install.packages("curl")
+if(!require("remotes")) install.packages("remotes")
+remotes::install_github("ms609/TreeDist")
 ```
 
 # Tree space analysis
 
 Construct tree spaces and readily visualize projected landscapes, avoiding
 common analytical pitfalls (Smith, 2022),
-using the inbuilt graphical user interface:
+using the inbuilt graphical user interface (Shiny GUI):
 
 ```r
 TreeDist::MapTrees()
 ```
+
+![image](https://user-images.githubusercontent.com/1695515/164730749-0e4cad5e-dcd5-47c7-80ef-3464e776e0a6.png)
 
 Serious analysts should consult the
 [vignette](https://ms609.github.io/TreeDist/articles/treespace.html)

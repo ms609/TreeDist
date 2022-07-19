@@ -34,7 +34,8 @@ All calls to `data(package = 'TreeDistData')` are wrapped within
 
 
 ## Downstream dependencies
-There is one downstream dependency, 'TBRDist' (which I maintain).
+There are three downstream dependencies: 'Rogue', 'TBRDist', and 'TreeSearch'
+(all of which I maintain).
 
 No changes to worse were identified by
 ["revdepcheck"](https://github.com/ms609/TreeDist/actions/workflows/revdepcheck.yml).
