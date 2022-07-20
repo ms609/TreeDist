@@ -53,21 +53,21 @@ Thus, all taxa in the smaller of \emph{A1} and \emph{A2} also occur in the large
 }
 \section{Functions}{
 \itemize{
-\item \code{SplitDifferentInformation}: Different information between two splits.
+\item \code{SplitDifferentInformation()}: Different information between two splits.
 
-\item \code{TreesConsistentWithTwoSplits}: Number of trees consistent with two
+\item \code{TreesConsistentWithTwoSplits()}: Number of trees consistent with two
 splits.
 
-\item \code{LnTreesConsistentWithTwoSplits}: Natural logarithm of
+\item \code{LnTreesConsistentWithTwoSplits()}: Natural logarithm of
 \code{TreesConsistentWithTwoSplits()}.
 
-\item \code{Log2TreesConsistentWithTwoSplits}: Base two logarithm of
+\item \code{Log2TreesConsistentWithTwoSplits()}: Base two logarithm of
 \code{TreesConsistentWithTwoSplits()}.
 
-\item \code{Log2TreesConsistentWithTwoSplits}: Base 2 logarithm of
+\item \code{Log2TreesConsistentWithTwoSplits()}: Base 2 logarithm of
 \code{TreesConsistentWithTwoSplits()}.
+
 }}
-
 \examples{
   # Eight leaves, labelled A to H.
   # Split 1: ABCD|EFGH

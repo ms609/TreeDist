@@ -1,10 +1,11 @@
 #' Maximum Agreement Subtree size
 #' 
-#' Calculate the size or phylogenetic information content (Steel & Penny 2006)
+#' Calculate the size or phylogenetic information content 
+#' \insertCite{Steel2006}{TreeDist}
 #' of the maximum agreement subtree between two phylogenetic trees, i.e.
 #' the largest tree that can be obtained from both `tree1` and `tree2` by
 #' deleting, but not rearranging, leaves, using the algorithm of Valiente
-#' (2009).
+#' \insertCite{Valiente2009;textual}{TreeDist}.
 #' 
 #' Implemented for trees with up to 4096 tips.  Contact the maintainer if you
 #' need to process larger trees.
@@ -41,10 +42,7 @@
 #' @seealso [`phangorn::mast()`], a slower implementation that also lists the
 #' leaves contained within the subtree.
 #' 
-#' @references 
-#' \insertRef{Steel2006}{TreeDist}
-#' 
-#' \insertRef{Valiente2009}{TreeDist}
+#' @references \insertAllCited{}
 #' 
 #' @family tree distances
 #' @export

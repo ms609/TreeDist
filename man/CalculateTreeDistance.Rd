@@ -9,15 +9,11 @@ CalculateTreeDistance(Func, tree1, tree2 = NULL, reportMatching = FALSE, ...)
 \arguments{
 \item{Func}{Tree distance function.}
 
-\item{tree1}{Trees of class \code{phylo}, with leaves labelled identically,
+\item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 \code{tree2 = NULL} will compute distances between each pair of trees in the list
-\code{tree1} using a fast algorithm based on Day (1985).}
-
-\item{tree2}{Trees of class \code{phylo}, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.  Where implemented,
-\code{tree2 = NULL} will compute distances between each pair of trees in the list
-\code{tree1} using a fast algorithm based on Day (1985).}
+\code{tree1} using a fast algorithm based on
+\insertCite{Day1985;textual}{TreeDist}.}
 
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}

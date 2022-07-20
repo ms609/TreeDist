@@ -2,7 +2,7 @@
 #' 
 #' `NyeSimilarity()` and `NyeSplitSimilarity()` implement the 
 #' [Generalized Robinson&ndash;Foulds](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances)
-#' tree comparison metric of Nye _et al_. (2006).
+#' tree comparison metric of \insertCite{Nye2006;textual}{TreeDist}.
 #' In short, this finds the optimal matching that pairs each branch from
 #' one tree with a branch in the second, where matchings are scored according to
 #' the size of the largest split that is consistent with both of them,
@@ -56,7 +56,7 @@
 #' NyeSimilarity(as.phylo(0:5, nTip = 8), similarity = FALSE)
 #' @template MRS
 #' 
-#' @references \insertRef{Nye2006}{TreeDist}
+#' @references \insertAllCited{}
 #' @family tree distances
 #' 
 #' @encoding UTF-8
@@ -107,7 +107,7 @@ NyeSplitSimilarity <- function(splits1, splits2,
 #' 
 #' Calculate the 
 #' [Jaccard&ndash;Robinson&ndash;Foulds metric](https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric)
-#' (B&ouml;cker _et al_. 2013), a 
+#' \insertCite{Bocker2013}{TreeDist}, a 
 #' [Generalized Robinson&ndash;Foulds metric](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances).
 #' 
 #' In short, the Jaccard&ndash;Robinson&ndash;Foulds
@@ -123,8 +123,9 @@ NyeSplitSimilarity <- function(splits1, splits2,
 #' By default, conflicting splits may be paired. 
 #' 
 #' Note that the settings `k = 1, allowConflict = TRUE, similarity = TRUE`
-#' give the similarity metric of Nye _et al_. (2006); a slightly faster
-#' implementation of this metric is available as [`NyeSimilarity()`].
+#' give the similarity metric of \insertCite{Nye2006;textual}{TreeDist};
+#' a slightly faster implementation of this metric is available as
+#' [`NyeSimilarity()`].
 #' 
 #' The examples section below details how to visualize matchings with 
 #' non-default parameter values.
@@ -151,11 +152,7 @@ NyeSplitSimilarity <- function(splits1, splits2,
 #' @templateVar returns `JaccardRobinsonFoulds()` returns
 #' @template distReturn
 #' 
-#' @references 
-#' 
-#' - \insertRef{Nye2006}{TreeDist}
-#' 
-#' - \insertRef{Bocker2013}{TreeDist}
+#' @references \insertAllCited{}
 #' 
 #' @examples 
 #' set.seed(2)
