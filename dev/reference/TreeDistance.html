@@ -105,82 +105,82 @@ proposed in Smith (2020).</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">TreeDistance</span><span class="op">(</span><span class="va">tree1</span>, tree2 <span class="op">=</span> <span class="va">tree1</span><span class="op">)</span>
-
-<span class="fu">SharedPhylogeneticInfo</span><span class="op">(</span>
-  <span class="va">tree1</span>,
-  tree2 <span class="op">=</span> <span class="cn">NULL</span>,
-  normalize <span class="op">=</span> <span class="cn">FALSE</span>,
-  reportMatching <span class="op">=</span> <span class="cn">FALSE</span>,
-  diag <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span>
-
-<span class="fu">DifferentPhylogeneticInfo</span><span class="op">(</span>
-  <span class="va">tree1</span>,
-  tree2 <span class="op">=</span> <span class="cn">NULL</span>,
-  normalize <span class="op">=</span> <span class="cn">FALSE</span>,
-  reportMatching <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span>
-
-<span class="fu">PhylogeneticInfoDistance</span><span class="op">(</span>
-  <span class="va">tree1</span>,
-  tree2 <span class="op">=</span> <span class="cn">NULL</span>,
-  normalize <span class="op">=</span> <span class="cn">FALSE</span>,
-  reportMatching <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span>
-
-<span class="fu">ClusteringInfoDistance</span><span class="op">(</span>
-  <span class="va">tree1</span>,
-  tree2 <span class="op">=</span> <span class="cn">NULL</span>,
-  normalize <span class="op">=</span> <span class="cn">FALSE</span>,
-  reportMatching <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span>
-
-<span class="fu">ExpectedVariation</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span>, samples <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span>
-
-<span class="fu">MutualClusteringInfo</span><span class="op">(</span>
-  <span class="va">tree1</span>,
-  tree2 <span class="op">=</span> <span class="cn">NULL</span>,
-  normalize <span class="op">=</span> <span class="cn">FALSE</span>,
-  reportMatching <span class="op">=</span> <span class="cn">FALSE</span>,
-  diag <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span>
-
-<span class="fu">SharedPhylogeneticInfoSplits</span><span class="op">(</span>
-  <span class="va">splits1</span>,
-  <span class="va">splits2</span>,
-  nTip <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">splits1</span>, <span class="st">"nTip"</span><span class="op">)</span>,
-  reportMatching <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span>
-
-<span class="fu">MutualClusteringInfoSplits</span><span class="op">(</span>
-  <span class="va">splits1</span>,
-  <span class="va">splits2</span>,
-  nTip <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">splits1</span>, <span class="st">"nTip"</span><span class="op">)</span>,
-  reportMatching <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span>
-
-<span class="fu">MatchingSplitInfo</span><span class="op">(</span>
-  <span class="va">tree1</span>,
-  tree2 <span class="op">=</span> <span class="cn">NULL</span>,
-  normalize <span class="op">=</span> <span class="cn">FALSE</span>,
-  reportMatching <span class="op">=</span> <span class="cn">FALSE</span>,
-  diag <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span>
-
-<span class="fu">MatchingSplitInfoDistance</span><span class="op">(</span>
-  <span class="va">tree1</span>,
-  tree2 <span class="op">=</span> <span class="cn">NULL</span>,
-  normalize <span class="op">=</span> <span class="cn">FALSE</span>,
-  reportMatching <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span>
-
-<span class="fu">MatchingSplitInfoSplits</span><span class="op">(</span>
-  <span class="va">splits1</span>,
-  <span class="va">splits2</span>,
-  nTip <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">splits1</span>, <span class="st">"nTip"</span><span class="op">)</span>,
-  reportMatching <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">TreeDistance</span><span class="op">(</span><span class="va">tree1</span>, tree2 <span class="op">=</span> <span class="va">tree1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">SharedPhylogeneticInfo</span><span class="op">(</span></span>
+<span>  <span class="va">tree1</span>,</span>
+<span>  tree2 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  normalize <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  reportMatching <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  diag <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">DifferentPhylogeneticInfo</span><span class="op">(</span></span>
+<span>  <span class="va">tree1</span>,</span>
+<span>  tree2 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  normalize <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  reportMatching <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">PhylogeneticInfoDistance</span><span class="op">(</span></span>
+<span>  <span class="va">tree1</span>,</span>
+<span>  tree2 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  normalize <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  reportMatching <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ClusteringInfoDistance</span><span class="op">(</span></span>
+<span>  <span class="va">tree1</span>,</span>
+<span>  tree2 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  normalize <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  reportMatching <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ExpectedVariation</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span>, samples <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">MutualClusteringInfo</span><span class="op">(</span></span>
+<span>  <span class="va">tree1</span>,</span>
+<span>  tree2 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  normalize <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  reportMatching <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  diag <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">SharedPhylogeneticInfoSplits</span><span class="op">(</span></span>
+<span>  <span class="va">splits1</span>,</span>
+<span>  <span class="va">splits2</span>,</span>
+<span>  nTip <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">splits1</span>, <span class="st">"nTip"</span><span class="op">)</span>,</span>
+<span>  reportMatching <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">MutualClusteringInfoSplits</span><span class="op">(</span></span>
+<span>  <span class="va">splits1</span>,</span>
+<span>  <span class="va">splits2</span>,</span>
+<span>  nTip <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">splits1</span>, <span class="st">"nTip"</span><span class="op">)</span>,</span>
+<span>  reportMatching <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">MatchingSplitInfo</span><span class="op">(</span></span>
+<span>  <span class="va">tree1</span>,</span>
+<span>  tree2 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  normalize <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  reportMatching <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  diag <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">MatchingSplitInfoDistance</span><span class="op">(</span></span>
+<span>  <span class="va">tree1</span>,</span>
+<span>  tree2 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  normalize <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  reportMatching <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">MatchingSplitInfoSplits</span><span class="op">(</span></span>
+<span>  <span class="va">splits1</span>,</span>
+<span>  <span class="va">splits2</span>,</span>
+<span>  nTip <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">splits1</span>, <span class="st">"nTip"</span><span class="op">)</span>,</span>
+<span>  reportMatching <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -252,10 +252,13 @@ and its pair on a second, considering all possible ways to pair splits
 between trees (including leaving a split unpaired).</p>
 <p>The methods implemented here use the concepts of
 <a href="https://ms609.github.io/TreeDist/articles/information.html">entropy and information</a>
-(MacKay 2003) to assign a similarity score between each pair of splits.</p>
+(MacKay 2003)
+ to assign a similarity score between each
+pair of splits.</p>
 <p>The returned tree similarity measures state the amount of information,
 in bits, that the splits in two trees hold in common
-when they are optimally matched, following Smith (2020).
+when they are optimally matched, following Smith (2020)
+.
 The complementary tree distance measures state how much information is
 different in the splits of two trees, under an optimal matching.</p>
     </div>
@@ -264,11 +267,13 @@ different in the splits of two trees, under an optimal matching.</p>
     <p>The phylogenetic (Shannon) information content and entropy of a split are
 defined in
 <a href="https://ms609.github.io/TreeDist/articles/information.html">a separate vignette</a>.</p>
-<p>Using the mutual (clustering) information (Meilă
-2007, Vinh <em>et al.</em> 2010) of two splits to quantify their similarity gives
-rise to the Mutual Clustering Information measure (<code>MutualClusteringInfo()</code>,
-<code>MutualClusteringInfoSplits()</code>); the entropy distance
-gives the Clustering Information Distance (<code>ClusteringInfoDistance()</code>).
+<p>Using the mutual (clustering) information
+(Meila 2007; Vinh et al. 2010)
+ of two splits to quantify their
+similarity gives rise to the Mutual Clustering Information measure
+(<code>MutualClusteringInfo()</code>, <code>MutualClusteringInfoSplits()</code>);
+the entropy distance gives the Clustering Information Distance
+(<code>ClusteringInfoDistance()</code>).
 This approach is optimal in many regards, and is implemented with
 normalization in the convenience function <code>TreeDistance()</code>.</p>
 <p>Using the amount of phylogenetic information common to two splits to measure
@@ -290,7 +295,8 @@ is the corresponding measure of tree difference.
 subtract the similarity score from a maximum value.  In order to generate
 distance <em>metrics</em>, these functions subtract the similarity twice from the
 total information content (SPI, MSI) or entropy (MCI) of all the splits in
-both trees (Smith 2020).</p>
+both trees (Smith 2020)
+.</p>
 </div>
 
 <div class="section">
@@ -301,7 +307,9 @@ both trees (Smith 2020).</p>
 ranges from zero to (in principle) one.
 The maximum <strong>distance</strong> is the sum of the information content or entropy of
 each split in each tree; the maximum <strong>similarity</strong> is half this value.
-(See Vinh <em>et al.</em> (2010, table 3) and Smith (2020) for
+(See Vinh <em>et al.</em> (2010, table 3) and
+Smith (2020)
+ for
 alternative normalization possibilities.)</p>
 <p>Note that a distance value of one (= similarity of zero) will seldom be
 achieved, as even the most different trees exhibit some similarity.
@@ -325,39 +333,31 @@ to be 'correct', use <code>normalize = SplitwiseInfo(trueTree)</code> (SPI, MSI)
     <p>Trees being compared must have identical tips.
 (If you have a use case for comparing trees with non-identical tips, do file a
 <a href="https://github.com/ms609/TreeDist/issues/new?title=Non-identical+tips" class="external-link">GitHub issue</a>
-or drop the maintainer an e-mail.)</p>
-<p>To determine which tips do not occur in both trees, try:</p><div class="sourceCode r"><pre><code><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeTools/" class="external-link">'TreeTools'</a></span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TipLabels.html" class="external-link">TipLabels</a></span><span class="op">(</span><span class="va">tree1</span><span class="op">)</span>, <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TipLabels.html" class="external-link">TipLabels</a></span><span class="op">(</span><span class="va">tree2</span><span class="op">)</span><span class="op">)</span> <span class="co"># In tree1 but not tree2</span>
-<span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TipLabels.html" class="external-link">TipLabels</a></span><span class="op">(</span><span class="va">tree2</span><span class="op">)</span>, <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TipLabels.html" class="external-link">TipLabels</a></span><span class="op">(</span><span class="va">tree1</span><span class="op">)</span><span class="op">)</span> <span class="co"># In tree2 but not tree1</span></code></pre><p></p></div>
+or drop the package maintainer an e-mail.)</p>
+<p>To determine which tips do not occur in both trees, try:</p>
+<p></p><div class="sourceCode r"><pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeTools/" class="external-link">'TreeTools'</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TipLabels.html" class="external-link">TipLabels</a></span><span class="op">(</span><span class="va">tree1</span><span class="op">)</span>, <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TipLabels.html" class="external-link">TipLabels</a></span><span class="op">(</span><span class="va">tree2</span><span class="op">)</span><span class="op">)</span> <span class="co"># In tree1 but not tree2</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TipLabels.html" class="external-link">TipLabels</a></span><span class="op">(</span><span class="va">tree2</span><span class="op">)</span>, <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TipLabels.html" class="external-link">TipLabels</a></span><span class="op">(</span><span class="va">tree1</span><span class="op">)</span><span class="op">)</span> <span class="co"># In tree2 but not tree1</span></span></code></pre><p></p></div>
     </div>
     <div id="references">
     <h2>References</h2>
-    
-<ul><li><p>Day WHE (1985).
-“Optimal algorithms for comparing trees with labeled leaves.”
-<em>Journal of Classification</em>, <b>2</b>(1), 7--28.
-<a href="https://doi.org/10.1007/BF01908061" class="external-link">doi:10.1007/BF01908061</a>
-.</p></li>
-<li><p>MacKay DJC (2003).
+    <p>MacKay DJC (2003).
 <em>Information Theory, Inference, and Learning Algorithms</em>.
 Cambridge University Press, Cambridge.
-<a href="https://www.inference.org.uk/itprnn/book.pdf" class="external-link">https://www.inference.org.uk/itprnn/book.pdf</a>.</p></li>
-<li><p>Meila M (2007).
+<a href="https://www.inference.org.uk/itprnn/book.pdf" class="external-link">https://www.inference.org.uk/itprnn/book.pdf</a>.<br><br> Meila M (2007).
 “Comparing clusterings---an information based distance.”
 <em>Journal of Multivariate Analysis</em>, <b>98</b>(5), 873--895.
 <a href="https://doi.org/10.1016/j.jmva.2006.11.013" class="external-link">doi:10.1016/j.jmva.2006.11.013</a>
-.</p></li>
-<li><p>Smith MR (2020).
+.<br><br> Smith MR (2020).
 “Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees.”
 <em>Bioinformatics</em>, <b>36</b>(20), 5007--5013.
 <a href="https://doi.org/10.1093/bioinformatics/btaa614" class="external-link">doi:10.1093/bioinformatics/btaa614</a>
-.</p></li>
-<li><p>Vinh NX, Epps J, Bailey J (2010).
+.<br><br> Vinh NX, Epps J, Bailey J (2010).
 “Information theoretic measures for clusterings comparison: variants, properties, normalization and correction for chance.”
 <em>Journal of Machine Learning Research</em>, <b>11</b>, 2837--2854.
 <a href="https://doi.org/10.1145/1553374.1553511" class="external-link">doi:10.1145/1553374.1553511</a>
-.</p></li>
-</ul></div>
+.</p>
+    </div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>Other tree distances: 
@@ -379,57 +379,57 @@ Cambridge University Press, Cambridge.
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">tree1</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'((((a, b), c), d), (e, (f, (g, h))));'</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tree2</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'(((a, b), (c, d)), ((e, f), (g, h)));'</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tree3</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'((((h, b), c), d), (e, (f, (g, a))));'</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Best possible score is obtained by matching a tree with itself</span></span>
-<span class="r-in"><span class="fu">DifferentPhylogeneticInfo</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree1</span><span class="op">)</span> <span class="co"># 0, by definition</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">tree1</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'((((a, b), c), d), (e, (f, (g, h))));'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tree2</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'(((a, b), (c, d)), ((e, f), (g, h)));'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tree3</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'((((h, b), c), d), (e, (f, (g, a))));'</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Best possible score is obtained by matching a tree with itself</span></span></span>
+<span class="r-in"><span><span class="fu">DifferentPhylogeneticInfo</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree1</span><span class="op">)</span> <span class="co"># 0, by definition</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-in"><span class="fu">SharedPhylogeneticInfo</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree1</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">SharedPhylogeneticInfo</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 22.53747</span>
-<span class="r-in"><span class="fu"><a href="TreeInfo.html">SplitwiseInfo</a></span><span class="op">(</span><span class="va">tree1</span><span class="op">)</span> <span class="co"># Maximum shared phylogenetic information</span></span>
+<span class="r-in"><span><span class="fu"><a href="TreeInfo.html">SplitwiseInfo</a></span><span class="op">(</span><span class="va">tree1</span><span class="op">)</span> <span class="co"># Maximum shared phylogenetic information</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 22.53747</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Best possible score is a function of tree shape; the splits within</span></span>
-<span class="r-in"><span class="co"># balanced trees are more independent and thus contain less information</span></span>
-<span class="r-in"><span class="fu"><a href="TreeInfo.html">SplitwiseInfo</a></span><span class="op">(</span><span class="va">tree2</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Best possible score is a function of tree shape; the splits within</span></span></span>
+<span class="r-in"><span><span class="co"># balanced trees are more independent and thus contain less information</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="TreeInfo.html">SplitwiseInfo</a></span><span class="op">(</span><span class="va">tree2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 19.36755</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># How similar are two trees?</span></span>
-<span class="r-in"><span class="fu">SharedPhylogeneticInfo</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span> <span class="co"># Amount of phylogenetic information in common</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># How similar are two trees?</span></span></span>
+<span class="r-in"><span><span class="fu">SharedPhylogeneticInfo</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span> <span class="co"># Amount of phylogenetic information in common</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 13.75284</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="fu">SharedPhylogeneticInfo</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span>, reportMatching <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="st">'matching'</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="fu">SharedPhylogeneticInfo</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span>, reportMatching <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="st">'matching'</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 4 2 3 5</span>
-<span class="r-in"><span class="fu"><a href="VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">SharedPhylogeneticInfo</span>, <span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span> <span class="co"># Which clades are matched?</span></span>
+<span class="r-in"><span><span class="fu"><a href="VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">SharedPhylogeneticInfo</span>, <span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span> <span class="co"># Which clades are matched?</span></span></span>
 <span class="r-plt img"><img src="TreeDistance-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">DifferentPhylogeneticInfo</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span> <span class="co"># Distance measure</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">DifferentPhylogeneticInfo</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span> <span class="co"># Distance measure</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 14.39934</span>
-<span class="r-in"><span class="fu">DifferentPhylogeneticInfo</span><span class="op">(</span><span class="va">tree2</span>, <span class="va">tree1</span><span class="op">)</span> <span class="co"># The metric is symmetric</span></span>
+<span class="r-in"><span><span class="fu">DifferentPhylogeneticInfo</span><span class="op">(</span><span class="va">tree2</span>, <span class="va">tree1</span><span class="op">)</span> <span class="co"># The metric is symmetric</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 14.39934</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Are they more similar than two trees of this shape would be by chance?</span></span>
-<span class="r-in"><span class="fu">ExpectedVariation</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span>, sample<span class="op">=</span><span class="fl">12</span><span class="op">)</span><span class="op">[</span><span class="st">'DifferentPhylogeneticInfo'</span>, <span class="st">'Estimate'</span><span class="op">]</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Are they more similar than two trees of this shape would be by chance?</span></span></span>
+<span class="r-in"><span><span class="fu">ExpectedVariation</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span>, sample<span class="op">=</span><span class="fl">12</span><span class="op">)</span><span class="op">[</span><span class="st">'DifferentPhylogeneticInfo'</span>, <span class="st">'Estimate'</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 31.7014</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Every split in tree1 conflicts with every split in tree3</span></span>
-<span class="r-in"><span class="co"># Pairs of conflicting splits contain clustering, but not phylogenetic, </span></span>
-<span class="r-in"><span class="co"># information</span></span>
-<span class="r-in"><span class="fu">SharedPhylogeneticInfo</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree3</span><span class="op">)</span> <span class="co"># = 0</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Every split in tree1 conflicts with every split in tree3</span></span></span>
+<span class="r-in"><span><span class="co"># Pairs of conflicting splits contain clustering, but not phylogenetic, </span></span></span>
+<span class="r-in"><span><span class="co"># information</span></span></span>
+<span class="r-in"><span><span class="fu">SharedPhylogeneticInfo</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree3</span><span class="op">)</span> <span class="co"># = 0</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-in"><span class="fu">MutualClusteringInfo</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree3</span><span class="op">)</span> <span class="co"># &gt; 0</span></span>
+<span class="r-in"><span><span class="fu">MutualClusteringInfo</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree3</span><span class="op">)</span> <span class="co"># &gt; 0</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.6539805</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Converting trees to Splits objects can speed up multiple comparisons</span></span>
-<span class="r-in"><span class="va">splits1</span> <span class="op">&lt;-</span> <span class="fu">TreeTools</span><span class="fu">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/Splits.html" class="external-link">as.Splits</a></span><span class="op">(</span><span class="va">tree1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">splits2</span> <span class="op">&lt;-</span> <span class="fu">TreeTools</span><span class="fu">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/Splits.html" class="external-link">as.Splits</a></span><span class="op">(</span><span class="va">tree2</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">SharedPhylogeneticInfoSplits</span><span class="op">(</span><span class="va">splits1</span>, <span class="va">splits2</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Converting trees to Splits objects can speed up multiple comparisons</span></span></span>
+<span class="r-in"><span><span class="va">splits1</span> <span class="op">&lt;-</span> <span class="fu">TreeTools</span><span class="fu">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/Splits.html" class="external-link">as.Splits</a></span><span class="op">(</span><span class="va">tree1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">splits2</span> <span class="op">&lt;-</span> <span class="fu">TreeTools</span><span class="fu">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/Splits.html" class="external-link">as.Splits</a></span><span class="op">(</span><span class="va">tree2</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">SharedPhylogeneticInfoSplits</span><span class="op">(</span><span class="va">splits1</span>, <span class="va">splits2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 13.75284</span>
-<span class="r-in"><span class="fu">MatchingSplitInfoSplits</span><span class="op">(</span><span class="va">splits1</span>, <span class="va">splits2</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">MatchingSplitInfoSplits</span><span class="op">(</span><span class="va">splits1</span>, <span class="va">splits2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 17.09254</span>
-<span class="r-in"><span class="fu">MutualClusteringInfoSplits</span><span class="op">(</span><span class="va">splits1</span>, <span class="va">splits2</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">MutualClusteringInfoSplits</span><span class="op">(</span><span class="va">splits1</span>, <span class="va">splits2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3.031424</span>
 </code></pre></div>
     </div>
@@ -445,7 +445,7 @@ Cambridge University Press, Cambridge.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

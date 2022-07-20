@@ -158,29 +158,29 @@
 </h2>
 <p>More control over the mapping can be obtained at the command line:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Load trees</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeTools/" class="external-link">"TreeTools"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="va">batch1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html" class="external-link">as.phylo</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">60</span>, <span class="fl">8</span><span class="op">)</span> <span class="co"># Generate 60 similar trees </span>
-<span class="va">batch2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html" class="external-link">as.phylo</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">800</span>, length.out <span class="op">=</span> <span class="fl">30</span><span class="op">)</span>, <span class="fl">8</span><span class="op">)</span> <span class="co"># A separate batch of 30 trees</span>
-<span class="va">styles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span> <span class="co"># Select plotting colours / symbols</span>
-<span class="va">treeStyle</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">styles</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">batch1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">batch2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># Calculate distances</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeDist/">"TreeDist"</a></span><span class="op">)</span>
-<span class="va">distances</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeDistance.html">ClusteringInfoDistance</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">batch1</span>, <span class="va">batch2</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># Construct over-simple 2D PCoA mapping</span>
-<span class="va">mapping</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cmdscale.html" class="external-link">cmdscale</a></span><span class="op">(</span><span class="va">distances</span>, k <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Load trees</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeTools/" class="external-link">"TreeTools"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">batch1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html" class="external-link">as.phylo</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">60</span>, <span class="fl">8</span><span class="op">)</span> <span class="co"># Generate 60 similar trees </span></span>
+<span><span class="va">batch2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html" class="external-link">as.phylo</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">800</span>, length.out <span class="op">=</span> <span class="fl">30</span><span class="op">)</span>, <span class="fl">8</span><span class="op">)</span> <span class="co"># A separate batch of 30 trees</span></span>
+<span><span class="va">styles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span> <span class="co"># Select plotting colours / symbols</span></span>
+<span><span class="va">treeStyle</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">styles</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">batch1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">batch2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Calculate distances</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeDist/">"TreeDist"</a></span><span class="op">)</span></span>
+<span><span class="va">distances</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeDistance.html">ClusteringInfoDistance</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">batch1</span>, <span class="va">batch2</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Construct over-simple 2D PCoA mapping</span></span>
+<span><span class="va">mapping</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cmdscale.html" class="external-link">cmdscale</a></span><span class="op">(</span><span class="va">distances</span>, k <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Plot mapping</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mapping</span>,
-     asp <span class="op">=</span> <span class="fl">1</span>, <span class="co"># Preserve aspect ratio - do not distort distances</span>
-     ann <span class="op">=</span> <span class="cn">FALSE</span>, axes <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># Don't label axes: dimensions are meaningless</span>
-     col <span class="op">=</span> <span class="va">treeStyle</span>, <span class="co"># Colour</span>
-     pch <span class="op">=</span> <span class="va">treeStyle</span> <span class="co"># Plotting symbol</span>
-     <span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"left"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Batch 1"</span>, <span class="st">"Batch 2"</span><span class="op">)</span>, col <span class="op">=</span> <span class="va">styles</span>, pch <span class="op">=</span> <span class="va">styles</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Plot mapping</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mapping</span>,</span>
+<span>     asp <span class="op">=</span> <span class="fl">1</span>, <span class="co"># Preserve aspect ratio - do not distort distances</span></span>
+<span>     ann <span class="op">=</span> <span class="cn">FALSE</span>, axes <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># Don't label axes: dimensions are meaningless</span></span>
+<span>     col <span class="op">=</span> <span class="va">treeStyle</span>, <span class="co"># Colour</span></span>
+<span>     pch <span class="op">=</span> <span class="va">treeStyle</span> <span class="co"># Plotting symbol</span></span>
+<span>     <span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"left"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Batch 1"</span>, <span class="st">"Batch 2"</span><span class="op">)</span>, col <span class="op">=</span> <span class="va">styles</span>, pch <span class="op">=</span> <span class="va">styles</span><span class="op">)</span></span></code></pre></div>
 <p><img src="compare-treesets_files/figure-html/plot-mapping-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>For more robust analyses than the (potentially misleading!) 2D plot above, consult the companion <a href="treespace.html">vignette</a>. Note also that mapped areas and their regions of overlap may not correspond to reality; see the warnings and recommendations in <span class="citation">Smith (2022a)</span>.</p>
 </div>
@@ -197,31 +197,31 @@
 </h3>
 <p>One approach is to plot distances from a median tree:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Calculate median trees</span>
-<span class="va">median1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html" class="external-link">median</a></span><span class="op">(</span><span class="va">batch1</span><span class="op">)</span>
-<span class="va">median2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html" class="external-link">median</a></span><span class="op">(</span><span class="va">batch2</span><span class="op">)</span>
-
-<span class="co"># Compute distance from each tree to the median of its batch</span>
-<span class="va">dist1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeDistance.html">ClusteringInfoDist</a></span><span class="op">(</span><span class="va">batch1</span>, <span class="va">median1</span><span class="op">)</span>
-<span class="va">dist2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeDistance.html">ClusteringInfoDist</a></span><span class="op">(</span><span class="va">batch2</span>, <span class="va">median2</span><span class="op">)</span>
-
-<span class="co"># Set resolution of histogram</span>
-<span class="va">nBreaks</span> <span class="op">&lt;-</span> <span class="fl">10</span>
-<span class="va">breaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">dist1</span>, <span class="va">dist2</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="va">nBreaks</span><span class="op">)</span>
-
-<span class="co"># Plot first distance set</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">dist1</span>, col <span class="op">=</span> <span class="st">"#00000022"</span>, breaks <span class="op">=</span> <span class="va">breaks</span>,
-     main <span class="op">=</span> <span class="st">"Distance from median of batch"</span>,
-     xlab <span class="op">=</span> <span class="st">"Clustering information distance"</span>,
-     ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">25</span><span class="op">)</span> <span class="co"># Omit this line to infer Y axis limit from first batch.</span>
-     <span class="op">)</span>
-
-<span class="co"># Add second distance set</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">dist2</span>, col <span class="op">=</span> <span class="st">"#ff000022"</span>, breaks <span class="op">=</span> <span class="va">breaks</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-
-<span class="co"># Add legend</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Batch 1"</span>, <span class="st">"Batch 2"</span><span class="op">)</span>,
-       fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#00000022"</span>,  <span class="st">"#ff000022"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Calculate median trees</span></span>
+<span><span class="va">median1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html" class="external-link">median</a></span><span class="op">(</span><span class="va">batch1</span><span class="op">)</span></span>
+<span><span class="va">median2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html" class="external-link">median</a></span><span class="op">(</span><span class="va">batch2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Compute distance from each tree to the median of its batch</span></span>
+<span><span class="va">dist1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeDistance.html">ClusteringInfoDist</a></span><span class="op">(</span><span class="va">batch1</span>, <span class="va">median1</span><span class="op">)</span></span>
+<span><span class="va">dist2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeDistance.html">ClusteringInfoDist</a></span><span class="op">(</span><span class="va">batch2</span>, <span class="va">median2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Set resolution of histogram</span></span>
+<span><span class="va">nBreaks</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
+<span><span class="va">breaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">dist1</span>, <span class="va">dist2</span><span class="op">)</span>, length.out <span class="op">=</span> <span class="va">nBreaks</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot first distance set</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">dist1</span>, col <span class="op">=</span> <span class="st">"#00000022"</span>, breaks <span class="op">=</span> <span class="va">breaks</span>,</span>
+<span>     main <span class="op">=</span> <span class="st">"Distance from median of batch"</span>,</span>
+<span>     xlab <span class="op">=</span> <span class="st">"Clustering information distance"</span>,</span>
+<span>     ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">25</span><span class="op">)</span> <span class="co"># Omit this line to infer Y axis limit from first batch.</span></span>
+<span>     <span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Add second distance set</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">dist2</span>, col <span class="op">=</span> <span class="st">"#ff000022"</span>, breaks <span class="op">=</span> <span class="va">breaks</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Add legend</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Batch 1"</span>, <span class="st">"Batch 2"</span><span class="op">)</span>,</span>
+<span>       fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#00000022"</span>,  <span class="st">"#ff000022"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="compare-treesets_files/figure-html/compare-dist-from-median-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>In the plotted example, distances to the median tree are greater for batch 2 than batch 1, indicating a more dispersed set of trees that occupies a greater hypervolume. Note that the increased frequency at higher distances is expected: the outer shell of a sphere contains more volume than a layer of equivalent thickness closer to the centre, and this phenomenon becomes more pronounced as the dimensionality of tree space increases.</p>
 </div>
@@ -230,34 +230,34 @@
 </h3>
 <p>A complementary approach is to identify the resolution of the consensus of each batch of trees. This approach shares many of the <a href="https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html">problems with the Robinson–Foulds distance</a>: in particular, resolution can be decimated by a single “rogue” taxon whose position is poorly defined <span class="citation">(Smith, 2022b)</span>. Detecting and removing rogue taxa can provide a more meaningful point of comparison.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Create tree set with a rogue taxon</span>
-<span class="va">batch3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/AddTip.html" class="external-link">AddTipEverywhere</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html" class="external-link">as.phylo</a></span><span class="op">(</span><span class="fl">7</span>, <span class="fl">7</span><span class="op">)</span>, <span class="st">"t8"</span><span class="op">)</span>
-
-<span class="co"># Set up plotting area</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.4</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># Plot naive strict consensus</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/consensus.html" class="external-link">consensus</a></span><span class="op">(</span><span class="va">batch1</span>, p <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/consensus.html" class="external-link">consensus</a></span><span class="op">(</span><span class="va">batch3</span>, p <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span>
-
-<span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"Rogue"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">cons1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/ConsensusWithout.html" class="external-link">ConsensusWithout</a></span><span class="op">(</span><span class="va">batch1</span>, p <span class="op">=</span> <span class="fl">1</span>,
-                            <span class="fu">Rogue</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Rogue/man/RogueTaxa.html" class="external-link">QuickRogue</a></span><span class="op">(</span><span class="va">batch1</span>, p <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span>, <span class="st">"taxon"</span><span class="op">]</span><span class="op">)</span>
-  <span class="va">cons3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/ConsensusWithout.html" class="external-link">ConsensusWithout</a></span><span class="op">(</span><span class="va">batch3</span>, p <span class="op">=</span> <span class="fl">1</span>,
-                            <span class="fu">Rogue</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Rogue/man/RogueTaxa.html" class="external-link">QuickRogue</a></span><span class="op">(</span><span class="va">batch3</span>, p <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span>, <span class="st">"taxon"</span><span class="op">]</span><span class="op">)</span>
-  
-  <span class="co"># The information content of each tree gives a measure of its resolution,</span>
-  <span class="co"># accounting for omitted rogue leaves</span>
-  <span class="fu"><a href="../reference/TreeInfo.html">SplitwiseInfo</a></span><span class="op">(</span><span class="va">cons1</span><span class="op">)</span> <span class="co"># 8.5 bits</span>
-  <span class="fu"><a href="../reference/TreeInfo.html">SplitwiseInfo</a></span><span class="op">(</span><span class="va">cons3</span><span class="op">)</span> <span class="co"># 15.1 bits: higher resolution indicates that these</span>
-  <span class="co"># trees are more similar, notwithstanding rogue taxa.</span>
-  
-  <span class="co"># Plot the trees</span>
-  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cons1</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cons3</span><span class="op">)</span>
-<span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"The package 'Rogue' is required to run this example."</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Create tree set with a rogue taxon</span></span>
+<span><span class="va">batch3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/AddTip.html" class="external-link">AddTipEverywhere</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html" class="external-link">as.phylo</a></span><span class="op">(</span><span class="fl">7</span>, <span class="fl">7</span><span class="op">)</span>, <span class="st">"t8"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Set up plotting area</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.4</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot naive strict consensus</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/consensus.html" class="external-link">consensus</a></span><span class="op">(</span><span class="va">batch1</span>, p <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/consensus.html" class="external-link">consensus</a></span><span class="op">(</span><span class="va">batch3</span>, p <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"Rogue"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">cons1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/ConsensusWithout.html" class="external-link">ConsensusWithout</a></span><span class="op">(</span><span class="va">batch1</span>, p <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                            <span class="fu">Rogue</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Rogue/man/RogueTaxa.html" class="external-link">QuickRogue</a></span><span class="op">(</span><span class="va">batch1</span>, p <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span>, <span class="st">"taxon"</span><span class="op">]</span><span class="op">)</span></span>
+<span>  <span class="va">cons3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/ConsensusWithout.html" class="external-link">ConsensusWithout</a></span><span class="op">(</span><span class="va">batch3</span>, p <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                            <span class="fu">Rogue</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Rogue/man/RogueTaxa.html" class="external-link">QuickRogue</a></span><span class="op">(</span><span class="va">batch3</span>, p <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span>, <span class="st">"taxon"</span><span class="op">]</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># The information content of each tree gives a measure of its resolution,</span></span>
+<span>  <span class="co"># accounting for omitted rogue leaves</span></span>
+<span>  <span class="fu"><a href="../reference/TreeInfo.html">SplitwiseInfo</a></span><span class="op">(</span><span class="va">cons1</span><span class="op">)</span> <span class="co"># 8.5 bits</span></span>
+<span>  <span class="fu"><a href="../reference/TreeInfo.html">SplitwiseInfo</a></span><span class="op">(</span><span class="va">cons3</span><span class="op">)</span> <span class="co"># 15.1 bits: higher resolution indicates that these</span></span>
+<span>  <span class="co"># trees are more similar, notwithstanding rogue taxa.</span></span>
+<span>  </span>
+<span>  <span class="co"># Plot the trees</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cons1</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cons3</span><span class="op">)</span></span>
+<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"The package 'Rogue' is required to run this example."</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 <p><img src="compare-treesets_files/figure-html/rogue-detection-1.png" width="700"></p>
 <p>Whereas a direct interpretation of this analysis is not straightforward, it can provide a complementary way of understanding the distribution of trees across tree space.</p>
 </div>
@@ -293,7 +293,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

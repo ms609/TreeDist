@@ -105,19 +105,19 @@ similarity measure.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">VisualizeMatching</span><span class="op">(</span>
-  <span class="va">Func</span>,
-  <span class="va">tree1</span>,
-  <span class="va">tree2</span>,
-  setPar <span class="op">=</span> <span class="cn">TRUE</span>,
-  precision <span class="op">=</span> <span class="fl">3L</span>,
-  Plot <span class="op">=</span> <span class="va">plot.phylo</span>,
-  matchZeros <span class="op">=</span> <span class="cn">TRUE</span>,
-  plainEdges <span class="op">=</span> <span class="cn">FALSE</span>,
-  edge.width <span class="op">=</span> <span class="fl">1</span>,
-  edge.color <span class="op">=</span> <span class="st">"black"</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">VisualizeMatching</span><span class="op">(</span></span>
+<span>  <span class="va">Func</span>,</span>
+<span>  <span class="va">tree1</span>,</span>
+<span>  <span class="va">tree2</span>,</span>
+<span>  setPar <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  precision <span class="op">=</span> <span class="fl">3L</span>,</span>
+<span>  Plot <span class="op">=</span> <span class="va">plot.phylo</span>,</span>
+<span>  matchZeros <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  plainEdges <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  edge.width <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  edge.color <span class="op">=</span> <span class="st">"black"</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -175,12 +175,12 @@ total tree distance.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">tree1</span> <span class="op">&lt;-</span> <span class="fu">TreeTools</span><span class="fu">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/GenerateTree.html" class="external-link">BalancedTree</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tree2</span> <span class="op">&lt;-</span> <span class="fu">TreeTools</span><span class="fu">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/GenerateTree.html" class="external-link">PectinateTree</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">VisualizeMatching</span><span class="op">(</span><span class="va">RobinsonFouldsMatching</span>, <span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">tree1</span> <span class="op">&lt;-</span> <span class="fu">TreeTools</span><span class="fu">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/GenerateTree.html" class="external-link">BalancedTree</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tree2</span> <span class="op">&lt;-</span> <span class="fu">TreeTools</span><span class="fu">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/GenerateTree.html" class="external-link">PectinateTree</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">VisualizeMatching</span><span class="op">(</span><span class="va">RobinsonFouldsMatching</span>, <span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="VisualizeMatching-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu">VisualizeMatching</span><span class="op">(</span><span class="va">SharedPhylogeneticInfo</span>, <span class="va">tree1</span>, <span class="va">tree2</span>, matchZeros <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">VisualizeMatching</span><span class="op">(</span><span class="va">SharedPhylogeneticInfo</span>, <span class="va">tree1</span>, <span class="va">tree2</span>, matchZeros <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="VisualizeMatching-2.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
@@ -196,7 +196,7 @@ total tree distance.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
