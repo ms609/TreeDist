@@ -36,7 +36,7 @@ ancestor of each pair of leaves and the root of the tree
 \insertCite{@per @Steel1993}{TreeDist}.
 
 \code{SplitVector} returns the size of the smallest split that contains each
-pair of leaves (per \insertRef{SmithSpace;nobrackets}{TreeDist}).}
+pair of leaves (per \insertCite{SmithSpace;nobrackets}{TreeDist}).}
 
 \item{tree}{A tree of class \code{\link[ape:read.tree]{phylo}}.}
 }
@@ -69,32 +69,32 @@ of the squares of the differences between the vectors.
 
 An analogous distance can be created from any vector representation of a
 tree.
-The split size vector metric \insertRef{SmithSpace}{TreeDist} is an attempt
+The split size vector metric \insertCite{SmithSpace}{TreeDist} is an attempt
 to mimic the Kendall Colijn metric in situations where the position of
 the root should not be afforded special significance; and the path distance
-\insertRef{Steel1993}{TreeDist} is a familiar alternative whose underlying
+\insertCite{Steel1993}{TreeDist} is a familiar alternative whose underlying
 vector measures the distance of the last common ancestor of each pair
 of leaves from the leaves themselves, i.e. the length of the path from one
 leaf to another.
 
 None of these vector-based methods performs as well as other tree distances
 in measuring similarities in the relationships implied by a pair of trees
-\insertRef{SmithDist}{TreeDist}; in particular, the Kendall Colijn
+\insertCite{SmithDist}{TreeDist}; in particular, the Kendall Colijn
 metric is strongly influenced by tree balance, and may not be appropriate
-for a suite of common applications \insertRef{SmithSpace}{TreeDist}.
+for a suite of common applications \insertCite{SmithSpace}{TreeDist}.
 }
 \section{Functions}{
 \itemize{
 \item \code{KCVector()}: Creates a vector that characterises a rooted tree,
-as described in \insertRef{Kendall2016;textual}{TreeDist}.
+as described in \insertCite{Kendall2016;textual}{TreeDist}.
 
 \item \code{PathVector()}: Creates a vector reporting the number of edges
 between each pair of leaves, per the path metric of
-\insertRef{Steel1993;textual}{TreeDist}.
+\insertCite{Steel1993;textual}{TreeDist}.
 
 \item \code{SplitVector()}: Creates a vector reporting the smallest split
 containing each pair of leaves, per the metric proposed in
-\insertRef{SmithSpace;textual}{TreeDist}.
+\insertCite{SmithSpace;textual}{TreeDist}.
 
 }}
 \examples{
