@@ -24,10 +24,11 @@ measured in bits.
 }
 \description{
 Compare a pair of splits viewed as clusterings of taxa, using the variation
-of clustering information proposed by Meil\ifelse{html}{\out{&#259;}}{a} (2007).
+of clustering information proposed by \insertCite{Miela2007}{TreeDist}.
 }
 \details{
-This is equivalent to the mutual clustering information (Vinh \emph{et al.} 2010).
+This is equivalent to the mutual clustering information
+\insertCite{Vinh2010}{TreeDist}.
 For the total information content, multiply the VoI by the number of leaves.
 }
 \examples{
@@ -50,9 +51,7 @@ Entropy(c(1, 5) / 6)
 MeilaVariationOfInformation(c(B, A, A, A, A, A), c(A, A, A, A, A, B))
 }
 \references{
-\insertRef{Meila2007}{TreeDist}
-
-\insertRef{Vinh2010}{TreeDist}
+\insertAllCited{}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
