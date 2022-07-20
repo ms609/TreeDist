@@ -24,7 +24,7 @@ measured in bits.
 }
 \description{
 Compare a pair of splits viewed as clusterings of taxa, using the variation
-of clustering information proposed by \insertCite{Miela2007}{TreeDist}.
+of clustering information proposed by \insertCite{Meila2007}{TreeDist}.
 }
 \details{
 This is equivalent to the mutual clustering information

@@ -29,7 +29,7 @@
 #' [a separate vignette](https://ms609.github.io/TreeDist/articles/information.html).
 #' 
 #' Using the mutual (clustering) information
-#' \insertCite{Meila2007;Vinh2010}{TreeDist} of two splits to quantify their
+#' \insertCite{Meila2007,Vinh2010}{TreeDist} of two splits to quantify their
 #' similarity gives rise to the Mutual Clustering Information measure
 #' (`MutualClusteringInfo()`, `MutualClusteringInfoSplits()`);
 #' the entropy distance gives the Clustering Information Distance

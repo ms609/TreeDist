@@ -29,7 +29,7 @@ two groups.
 Further details are available in a
 \href{https://ms609.github.io/TreeDist/articles/information.html}{vignette},
 \insertCite{Mackay2003;textual}{TreeDist} and
-\insertCite{Meila;textual}{TreeDist}.
+\insertCite{Meila2007;textual}{TreeDist}.
 }
 \examples{
 A <- TRUE

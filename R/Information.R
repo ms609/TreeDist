@@ -69,7 +69,7 @@ SplitDifferentInformation <- function(n, A1, A2 = A1) {
 #' Use variation of clustering information to compare pairs of splits
 #' 
 #' Compare a pair of splits viewed as clusterings of taxa, using the variation
-#' of clustering information proposed by \insertCite{Miela2007}{TreeDist}.
+#' of clustering information proposed by \insertCite{Meila2007}{TreeDist}.
 #' 
 #' This is equivalent to the mutual clustering information
 #' \insertCite{Vinh2010}{TreeDist}.
@@ -212,7 +212,7 @@ AllSplitPairings <- memoise(function(n) {
 #' Further details are available in a 
 #' [vignette](https://ms609.github.io/TreeDist/articles/information.html),
 #' \insertCite{Mackay2003;textual}{TreeDist} and
-#' \insertCite{Meila;textual}{TreeDist}.
+#' \insertCite{Meila2007;textual}{TreeDist}.
 #' 
 #' @template split12Params
 #' 
