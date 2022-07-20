@@ -226,7 +226,9 @@ Trees being compared must have identical tips.
 \href{https://github.com/ms609/TreeDist/issues/new?title=Non-identical+tips}{GitHub issue}
 or drop the maintainer an e-mail.)
 
-To determine which tips do not occur in both trees, try:\if{html}{\out{<div class="sourceCode r">}}\preformatted{library('TreeTools')
+To determine which tips do not occur in both trees, try:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{library('TreeTools')
 setdiff(TipLabels(tree1), TipLabels(tree2)) # In tree1 but not tree2
 setdiff(TipLabels(tree2), TipLabels(tree1)) # In tree2 but not tree1
 }\if{html}{\out{</div>}}
