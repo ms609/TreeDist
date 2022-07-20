@@ -125,6 +125,8 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
   }
 }
 
+.EuclideanDistance <- function(x) sqrt(sum(x * x))
+
 #' @describeIn KendallColijn Creates a vector that characterises a rooted tree,
 #' as described in \insertCite{Kendall2016;textual}{TreeDist}.
 #' @param tree A tree of class \code{\link[ape:read.tree]{phylo}}.
