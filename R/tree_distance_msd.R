@@ -40,7 +40,9 @@ MatchingSplitDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                InfoInTree = function(X) stop("Please specify a function to generate a normalizing constant"),
+                InfoInTree = function(X) stop(
+                  "Please specify a function to generate a normalizing constant"
+                  ),
                 Combine = max)
 }
 

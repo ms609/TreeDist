@@ -150,11 +150,12 @@ between trees (including leaving a split unpaired).
 
 The methods implemented here use the concepts of
 \href{https://ms609.github.io/TreeDist/articles/information.html}{entropy and information}
-(MacKay 2003) to assign a similarity score between each pair of splits.
+\insertCite{Mackay2003}{TreeDist} to assign a similarity score between each
+pair of splits.
 
 The returned tree similarity measures state the amount of information,
 in bits, that the splits in two trees hold in common
-when they are optimally matched, following Smith (2020).
+when they are optimally matched, following \insertCite{SmithDist;textual}{TreeDist}.
 The complementary tree distance measures state how much information is
 different in the splits of two trees, under an optimal matching.
 }
@@ -163,11 +164,12 @@ The phylogenetic (Shannon) information content and entropy of a split are
 defined in
 \href{https://ms609.github.io/TreeDist/articles/information.html}{a separate vignette}.
 
-Using the mutual (clustering) information (Meil\ifelse{html}{\out{&#259;}}{a}
-2007, Vinh \emph{et al.} 2010) of two splits to quantify their similarity gives
-rise to the Mutual Clustering Information measure (\code{MutualClusteringInfo()},
-\code{MutualClusteringInfoSplits()}); the entropy distance
-gives the Clustering Information Distance (\code{ClusteringInfoDistance()}).
+Using the mutual (clustering) information
+\insertCite{Meila2007;Vinh2010}{TreeDist} of two splits to quantify their
+similarity gives rise to the Mutual Clustering Information measure
+(\code{MutualClusteringInfo()}, \code{MutualClusteringInfoSplits()});
+the entropy distance gives the Clustering Information Distance
+(\code{ClusteringInfoDistance()}).
 This approach is optimal in many regards, and is implemented with
 normalization in the convenience function \code{TreeDistance()}.
 
@@ -190,7 +192,7 @@ To convert similarity measures to distances, it is necessary to
 subtract the similarity score from a maximum value.  In order to generate
 distance \emph{metrics}, these functions subtract the similarity twice from the
 total information content (SPI, MSI) or entropy (MCI) of all the splits in
-both trees (Smith 2020).
+both trees \insertCite{SmithDist}{TreeDist}.
 }
 
 \subsection{Normalization}{
@@ -199,7 +201,8 @@ If \code{normalize = TRUE}, then results will be rescaled such that distance
 ranges from zero to (in principle) one.
 The maximum \strong{distance} is the sum of the information content or entropy of
 each split in each tree; the maximum \strong{similarity} is half this value.
-(See Vinh \emph{et al.} (2010, table 3) and Smith (2020) for
+(See Vinh \emph{et al.} (2010, table 3) and
+\insertCite{SmithDist;textual}{TreeDist} for
 alternative normalization possibilities.)
 
 Note that a distance value of one (= similarity of zero) will seldom be
@@ -224,7 +227,7 @@ to be 'correct', use \code{normalize = SplitwiseInfo(trueTree)} (SPI, MSI) or
 Trees being compared must have identical tips.
 (If you have a use case for comparing trees with non-identical tips, do file a
 \href{https://github.com/ms609/TreeDist/issues/new?title=Non-identical+tips}{GitHub issue}
-or drop the maintainer an e-mail.)
+or drop the package maintainer an e-mail.)
 
 To determine which tips do not occur in both trees, try:
 
@@ -274,13 +277,7 @@ MatchingSplitInfoSplits(splits1, splits2)
 MutualClusteringInfoSplits(splits1, splits2)
 }
 \references{
-\itemize{
-\item \insertRef{Day1985}{TreeDist}
-\item \insertRef{Mackay2003}{TreeDist}
-\item \insertRef{Meila2007}{TreeDist}
-\item \insertRef{SmithDist}{TreeDist}
-\item \insertRef{Vinh2010}{TreeDist}
-}
+\insertAllCited{}
 }
 \seealso{
 Other tree distances: 

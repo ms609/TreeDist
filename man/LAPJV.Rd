@@ -14,7 +14,7 @@ A list with two entries: \code{score}, the score of the optimal matching;
 and \code{matching}, the columns matched to each row of the matrix in turn.
 }
 \description{
-Use the algorithm of Jonker & Volgenant (1987) to solve the
+Use the algorithm of \insertCite{Jonker1987;textual}{TreeDist} to solve the
 \href{http://www.assignmentproblems.com/doc/LSAPIntroduction.pdf}{Linear Sum Assignment Problem}.
 }
 \details{
@@ -22,7 +22,8 @@ The Linear Assignment Problem seeks to match each row of a matrix with a
 column, such that the cost of the matching is minimized.
 
 The Jonker & Volgenant approach is a faster alternative to the Hungarian
-algorithm (Munkres 1957), which is implemented in \code{clue::solve_LSAP()}.
+algorithm \insertCite{Munkres1957}{TreeDist}, which is implemented in
+\code{clue::solve_LSAP()}.
 
 Note: the JV algorithm expects integers. In order to apply the function
 to a non-integer \emph{n}, as in the tree distance calculations in this package,
@@ -48,9 +49,7 @@ problem <- matrix(c(7, 9, 8, 9,
 LAPJV(problem)
 }
 \references{
-\insertRef{Jonker1987}{TreeDist}
-
-\insertRef{Munkres1957}{TreeDist}
+\insertAllCited{}
 }
 \author{
 \href{https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/LAPJV/lap.cpp}{C++ code}
