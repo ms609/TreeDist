@@ -157,6 +157,9 @@ KCVector <- function(tree) {
 #' @importFrom utils combn
 #' @export
 PathVector <- function(tree) {
+  if (!inherits(tree, "phylo")) {
+    stop("`tree` must be of class `phylo`")
+  }
   tree <- Preorder(tree)
   edge <- tree$edge
   parent <- edge[, 1L]
