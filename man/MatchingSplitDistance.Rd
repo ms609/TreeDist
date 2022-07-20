@@ -52,7 +52,7 @@ or \code{splits1} and \code{splits2}.
 \description{
 Calculate the
 \href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#matching-split-distance}{Matching Split Distance}
-(Bogdanowicz and Giaro 2012; Lin \emph{et al.} 2012) for unrooted binary trees.
+\insertCite{Bogdanowicz2012; Lin2012}{TreeDist} for unrooted binary trees.
 }
 \section{Normalization}{
 
@@ -75,9 +75,7 @@ VisualizeMatching(MatchingSplitDistance, TreeTools::BalancedTree(6),
                   TreeTools::PectinateTree(6))
 }
 \references{
-\insertRef{Bogdanowicz2012}{TreeDist}
-
-\insertRef{Lin2012}{TreeDist}
+\insertAllCited{}
 }
 \seealso{
 Other tree distances: 
