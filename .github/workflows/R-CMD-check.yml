@@ -77,9 +77,10 @@ jobs:
           sudo apt-get install \
             texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev
 
-      - name: temporary pak bug workaround
+      - name: temporary pak bug workaround # https://github.com/r-lib/actions/issues/534
         run: |
           install.packages("pak")
+          pak::pkg_install("ms609/TreeDist")
           pak::pkg_install("ms609/TreeDistData")
         shell: Rscript {0}
 

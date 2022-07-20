@@ -31,7 +31,7 @@ once the splits have been arranged such that \emph{A1} fully overlaps with \emph
 trees consistent with two splits.
 
 \code{SplitSharedInformation()} returns the phylogenetic information that two splits
-have in common, in bits.
+have in common \insertCite{Meila2007}{TreeDist}, in bits.
 
 \code{SplitDifferentInformation()} returns the amount of phylogenetic information
 distinct to one of the two splits, in bits.
@@ -39,8 +39,7 @@ distinct to one of the two splits, in bits.
 \description{
 Calculate the phylogenetic information shared, or not shared, between two
 splits.
-See the
-\href{https://ms609.github.io/TreeDist/articles/information.html}{accompanying vignette}
+See the \href{https://ms609.github.io/TreeDist/articles/information.html}{accompanying vignette}
 for definitions.
 }
 \details{
@@ -53,21 +52,21 @@ Thus, all taxa in the smaller of \emph{A1} and \emph{A2} also occur in the large
 }
 \section{Functions}{
 \itemize{
-\item \code{SplitDifferentInformation}: Different information between two splits.
+\item \code{SplitDifferentInformation()}: Different information between two splits.
 
-\item \code{TreesConsistentWithTwoSplits}: Number of trees consistent with two
+\item \code{TreesConsistentWithTwoSplits()}: Number of trees consistent with two
 splits.
 
-\item \code{LnTreesConsistentWithTwoSplits}: Natural logarithm of
+\item \code{LnTreesConsistentWithTwoSplits()}: Natural logarithm of
 \code{TreesConsistentWithTwoSplits()}.
 
-\item \code{Log2TreesConsistentWithTwoSplits}: Base two logarithm of
+\item \code{Log2TreesConsistentWithTwoSplits()}: Base two logarithm of
 \code{TreesConsistentWithTwoSplits()}.
 
-\item \code{Log2TreesConsistentWithTwoSplits}: Base 2 logarithm of
+\item \code{Log2TreesConsistentWithTwoSplits()}: Base 2 logarithm of
 \code{TreesConsistentWithTwoSplits()}.
+
 }}
-
 \examples{
   # Eight leaves, labelled A to H.
   # Split 1: ABCD|EFGH
@@ -85,7 +84,7 @@ splits.
   TreeTools::SplitInformation(3, 5)
 }
 \references{
-\insertRef{Meila2007}{TreeDist}
+\insertAllCited{}
 }
 \seealso{
 Other information functions: 

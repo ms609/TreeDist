@@ -1,11 +1,12 @@
 #' Robinson&ndash;Foulds distances, with adjustments for phylogenetic information
 #' content
 #' 
-#' Calculate the Robinson&ndash;Foulds distance, or
+#' Calculate the Robinson&ndash;Foulds distance
+#' \insertCite{Robinson1981}{TreeDist}, or
 #' the equivalent similarity measure, with options to
 #' (i) annotate matched splits; 
 #' (ii) weight splits according to their phylogenetic information content 
-#' (Smith 2020).
+#' \insertCite{SmithDist}{TreeDist}.
 #' 
 #' Note that if `reportMatching = TRUE`, the `pairScores` attribute returns
 #' a logical matrix specifying whether each pair of splits is identical.
@@ -16,8 +17,8 @@
 #' to be identical by chance alone make a smaller contribution to overall
 #' tree distance, because their similarity is less remarkable.
 #' 
-#' Rapid comparison between multiple pairs of trees employs the Day (1985)
-#' linear-time algorithm.
+#' Rapid comparison between multiple pairs of trees employs the Day 
+#' \insertCite{Day1985;textual}{TreeDist} linear-time algorithm.
 #' 
 #' @inheritParams TreeDistance
 #' @param similarity Logical specifying whether to report the result as a tree
@@ -34,15 +35,7 @@
 #' - `InfoRobinsonFoulds()` is normalized against the sum of the phylogenetic 
 #' information of all splits in both trees, treated independently.
 #'  
-#' @references 
-#' 
-#' \insertRef{Robinson1981}{TreeDist}
-#' 
-#' \insertRef{Day1985}{TreeDist}
-#' 
-#' \insertRef{Steel2006}{TreeDist}
-#' 
-#' \insertRef{SmithDist}{TreeDist}
+#' @references \insertAllCited{}
 #' 
 #' @examples
 #'  # For BalancedTree, PectinateTree, as.phylo:

@@ -145,6 +145,7 @@ test_that("MST example plots as expected", {
     set.seed(0)
     distances <- ClusteringInfoDist(as.phylo(5:16, 8))
     mapping <- cmdscale(distances, k = 2)
+    mapping[, 1] <- -mapping[, 1] # Legacy: Stochastic flipping of X axis
     mstEnds <- MSTEdges(distances)
     
     # Set up blank plot
@@ -156,6 +157,6 @@ test_that("MST example plots as expected", {
     # Add points at end so they overprint the MST
     points(mapping)
     SpectrumLegend(legend = c("Contracted", "Median", "Extended"),
-                   palette = rev(hcl.colors(256L, "RdYlBu")))
+                   palette = hcl.colors(256L, "RdYlBu", rev = TRUE))
   })
 })

@@ -1,8 +1,7 @@
 #' Generalized Robinson&ndash;Foulds distance
 #' 
-#' An internal function to calculate Generalized 
-#' Robinson&ndash;Foulds distances from
-#' splits.
+#' An internal function to calculate Generalized Robinson&ndash;Foulds
+#' distances from splits.
 #'
 #' Note that no checks will be made to confirm that `splits1` and `splits2`
 #' contain the same leaves in the same order.
@@ -30,7 +29,6 @@
 #' @template MRS
 #' @encoding UTF-8
 #' @export
-#' @references \insertRef{Jonker1987}{TreeDist}
 GeneralizedRF <- function(splits1, splits2, nTip, PairScorer, 
                            maximize, reportMatching, ...) {
   nSplits1 <- dim(splits1)[1]
@@ -45,7 +43,7 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
     if (nSplits1 < nSplits2) {
       matching <- matching[seq_len(nSplits1)]
     }
-    attr(ret, 'matching') <- matching
+    attr(ret, "matching") <- matching
     
     # If reporting matching, we're not worried about performance
     pairScores <- matrix(0, nSplits1, nSplits2)
@@ -56,14 +54,14 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
                                        nTip = nTip, ...)$score
       }
     }
-    attr(ret, 'pairScores') <- pairScores
+    attr(ret, "pairScores") <- pairScores
     
-    if (!is.null(attr(splits1, 'tip.label'))) {
+    if (!is.null(attr(splits1, "tip.label"))) {
       matched1 <- !is.na(matching)
       matched2 <- matching[matched1]
       matched1 <- which(matched1)
       
-      attr(ret, 'matchedSplits') <- 
+      attr(ret, "matchedSplits") <- 
         ReportMatching(splits1[[matched1]],
                        splits2[[matched2]],
                        realMatch = if (maximize) {
@@ -78,10 +76,10 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
 .MaxValue <- function(tree1, tree2, Value) {
   value1 <- Value(tree1)
   if (is.null(tree2)) {
-    maxValue <- outer(value1, value1, '+')[, , drop = TRUE]
+    maxValue <- outer(value1, value1, "+")[, , drop = TRUE]
     maxValue[lower.tri(maxValue)]
   } else {
-    outer(value1, Value(tree2), '+')[, , drop = TRUE]
+    outer(value1, Value(tree2), "+")[, , drop = TRUE]
   }
 }
 

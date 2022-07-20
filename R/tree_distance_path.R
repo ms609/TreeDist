@@ -1,6 +1,6 @@
 #' Path distance
 #' 
-#' Calculate the path distance between trees.
+#' Calculate the path distance between rooted or unrooted trees.
 #' 
 #' This function is a wrapper for the function 
 #' \code{\link[phangorn:treedist]{path.dist()}} in the phangorn package.
@@ -9,15 +9,23 @@
 #' 
 #' The path distance is calculated by tabulating the cladistic difference (=
 #' topological distance) between each pair of tips in each tree.
-#' A precursor to the path distance (Farris, 1969) took the mean squared 
+#' A precursor to the path distance \insertCite{Farris1969}{TreeDist}
+#' took the mean squared 
 #' difference between the elements of each tree's tabulation (Farris, 1973);
-#' the method used here is that proposed by Steel & Penny (1993), which takes
-#' the square root of this sum.  Other precursor measures are described in 
-#' Williams and Clifford (1971) and Phipps (1971).
+#' the method used here is that proposed by
+#' \insertCite{Steel1993;textual}{TreeDist}, which takes the square root of this
+#' sum.
+#' Other precursor measures are described in 
+#' \insertCite{Williams1971;textual}{TreeDist} and
+#' \insertCite{Phipps1971;textual}{TreeDist}.
+#' 
+#' If a root node is present, trees are treated as rooted.
+#' To avoid counting the root edge twice, use `UnrootTree(tree)` before
+#' calculating the path distance.
 #' 
 #' Use of the path distance is discouraged as it emphasizes 
 #' shallow relationships at the expense of deeper (and arguably more
-#' fundamental) relationships (Farris, 1973).
+#' fundamental) relationships \insertCite{Farris1973}{TreeDist}.
 #' 
 #' @template tree12ListParams
 #' 
@@ -25,9 +33,13 @@
 #' between trees.
 #' 
 #' @examples
-#' library('TreeTools')
+#' library("TreeTools")
 #' 
+#' # Treating the two edges to the root node as distinct
 #' PathDist(BalancedTree(7), PectinateTree(7))
+#' 
+#' # Counting those two edges once
+#' PathDist(UnrootTree(BalancedTree(7)), UnrootTree(PectinateTree(7)))
 #' 
 #' PathDist(BalancedTree(7), as.phylo(0:2, 7))
 #' PathDist(as.phylo(0:2, 7), PectinateTree(7))
@@ -37,16 +49,7 @@
 #'
 #' CompareAll(as.phylo(30:33, 8), PathDist)
 #'  
-#' @references 
-#' \insertRef{Farris1969}{TreeDist}
-#' 
-#' \insertRef{Farris1973}{TreeDist}
-#' 
-#' \insertRef{Phipps1971}{TreeDist}
-#' 
-#' \insertRef{Steel1993}{TreeDist}
-#' 
-#' \insertRef{Williams1971}{TreeDist}
+#' @references \insertAllCited{}
 #' 
 #' @template MRS
 #' @family tree distances
