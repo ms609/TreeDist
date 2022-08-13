@@ -173,7 +173,7 @@ _Bioinformatics_, 36, 5007–5013.
 
 - Smith, M.R. (2022) [Robust analysis of phylogenetic tree
 space](https://dx.doi.org/10.1093/sysbio/syab100).
-_Systematic Biology_, syab100.
+_Systematic Biology_, 71, 1255–1270.
 
 
 Please note that the 'TreeDist' project is released with a

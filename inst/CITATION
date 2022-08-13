@@ -34,16 +34,16 @@ citEntry(entry = "article",
       title = "Robust analysis of phylogenetic tree space",
       author = personList(as.person("Martin R. Smith")),
       journal = "Systematic Biology",
-      volume = "",
-      number = "",
-      pages = "syab100",
+      volume = "71",
+      number = "5",
+      pages = "1255-1270",
       year = "2022",
 
       textVersion =
       paste0("Smith, M.R. (2022).",
              " Robust analysis of phylogenetic tree space.", 
-             " Systematic Biology,",
-             " syab100.",
+             " Systematic Biology",
+             " 71: 1255–1270.",
              " doi: 10.1093/sysbio/syab100"))
 
 citEntry(entry = "manual",

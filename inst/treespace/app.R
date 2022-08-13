@@ -180,7 +180,7 @@ Smith2020 <- Reference("Smith, M.R.", 2020,
   doi = "10.1093/bioinformatics/btaa614")
 Smith2021 <- Reference("*Smith, M.R.", 2022,
   "Robust analysis of phylogenetic tree space",
-  "Systematic Biology", pages = "syab100",
+  "Systematic Biology", 71, c(1255, 1270),
   doi = "10.1093/sysbio/syab100")
 SmithDist <- Reference("Smith, M.R.", 2020,
   "TreeDist: distances between phylogenetic trees",
