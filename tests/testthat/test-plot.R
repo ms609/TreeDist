@@ -57,7 +57,7 @@ test_that("VisualizeMatching() works", {
                       setPar = TRUE, precision = 3, matchZeros = TRUE, 
                       Plot = plot.phylo, cex = 1.5)
   }
-  vdiffr::expect_doppelganger("Test VMr", TestVMr) # Unclear why this test fails on Travis. 
+  vdiffr::expect_doppelganger("Test VMr", TestVMr)
   
   vdiffr::expect_doppelganger("Visualize MCI matching", function() {
     par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.5)
@@ -145,7 +145,10 @@ test_that("MST example plots as expected", {
     set.seed(0)
     distances <- ClusteringInfoDist(as.phylo(5:16, 8))
     mapping <- cmdscale(distances, k = 2)
-    mapping[, 1] <- -mapping[, 1] # Legacy: Stochastic flipping of X axis
+    if (mapping[1, 1] < 0) {
+      # Stochastic flipping of X axis
+      mapping[, 1] <- -mapping[, 1]
+    }
     mstEnds <- MSTEdges(distances)
     
     # Set up blank plot
