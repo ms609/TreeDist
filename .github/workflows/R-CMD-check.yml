@@ -129,7 +129,7 @@ jobs:
       - name: Restore suggests-TreeDistData (non-Mac)
         if: runner.os != 'MacOS'
         run: |
-          sed -i "s/  glue,/  TreeDistData,/" 
+          sed -i "s/  glue,/  TreeDistData,/" DESCRIPTION
         
       - name: Check package
         uses: r-lib/actions/check-r-package@v2
