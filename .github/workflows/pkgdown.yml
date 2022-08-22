@@ -5,8 +5,9 @@ on:
       - master
     paths-ignore:
       - "Meta**"
-      - "memcheck**"
       - "docs**"
+      - "memcheck**"
+      - "tests**"
       - "**.git"
       - "**.json"
       - "**.md"
