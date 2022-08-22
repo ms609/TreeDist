@@ -354,17 +354,17 @@ The overall size of a cluster can be measured using the sum of variances:
 SumOfVariances(pid_mapping, pid_cluster)
 ```
 
-or the average distance from the centroid:
+or the mean distance from the centroid:
 ```{r ave-dist-centroid}
-
+MeanCentroidDistance(pid_mapping, pid_cluster)
 ```
 
-The density of points within a cluster can be measured using the average nearest-neighbour distance:
+The density of points within a cluster can be measured using the mean nearest-neighbour distance:
 ```{r ave-nnd}
 
 ```
 
-or the average minimum spanning tree edge length:
+or the mean minimum spanning tree edge length:
 ```{r ave-mst-edge}
 
 ```

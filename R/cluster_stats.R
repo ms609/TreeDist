@@ -60,6 +60,38 @@ SumOfVars <- SumOfVariances
 }
 
 
+#' @rdname cluster-statistics
+#' @return `SumOfRanges()` returns a numeric specifying the mean distance from
+#' the centroid to points in each cluster.
+#' @export
+MeanCentroidDistance <- function(mapping, cluster = 1) {
+  if (is.null(dim(mapping))) {
+    warning(paste0("`mapping` lacks dimensions. ",
+                   "Did you subset without specifying `drop = FALSE`?"))
+    mapping <- matrix(mapping, 1)
+  }
+  
+  # Return:
+  vapply(seq_along(unique(cluster)),
+         function(i) .MeanCentroidDist(mapping[cluster == i, , drop = FALSE]),
+         numeric(1))
+}
+
+#' @rdname cluster-statistics
+#' @export
+MeanCentDist <- MeanCentroidDistance
+
+#' @rdname cluster-statistics
+#' @export
+MeanCentroidDist <- MeanCentroidDistance
+
+.MeanCentroidDist <- function(x) {
+  recentred <- t(t(x) - apply(x, 2, mean))
+  
+  # Return:
+  mean(sqrt(rowSums(recentred ^ 2)))
+}
+
 .Apply <- if (packageVersion("base") < "4.1.0") {
   function(x, ...) {
     if (dim(x)) {

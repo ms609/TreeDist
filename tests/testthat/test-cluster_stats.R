@@ -23,3 +23,16 @@ test_that("SumOfVariances()", {
     SumOfVariances(points, cluster)
   )
 })
+
+test_that("MeanCentroidDistance()", {
+  expect_warning(expect_equal(MeanCentroidDistance(points[cluster == 2, ]), 0),
+                 "lacks dimensions")
+  
+  expect_equal(MeanCentroidDistance(points, cluster),
+               c(2, 0, 0.4))
+  expect_equal(
+    sapply(1:3, function(i) MeanCentDist(points[cluster == i, , drop = FALSE])),
+    MeanCentroidDist(points, cluster)
+  )
+})
+
