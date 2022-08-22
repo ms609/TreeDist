@@ -155,7 +155,7 @@
 <div class="section level4">
 <h4 id="using-a-suitable-distance-metric">Using a suitable distance metric<a class="anchor" aria-label="anchor" href="#using-a-suitable-distance-metric"></a>
 </h4>
-<p>Now we need to calculate the distance between each pair of trees in our list. The choice of distance metric is important <span class="citation">(Smith, 2022)</span>. The widely used Robinson–Foulds distance is, unfortunately, unsuitable for tree space analysis. The clustering information distance <span class="citation">(Smith, 2020)</span> is a reliable alternative that is fast to calculate:</p>
+<p>Now we need to calculate the distance between each pair of trees in our list. The choice of distance metric is important <span class="citation">(M. R. Smith, 2022)</span>. The widely used Robinson–Foulds distance is, unfortunately, unsuitable for tree space analysis. The clustering information distance <span class="citation">(Smith, 2020)</span> is a reliable alternative that is fast to calculate:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeDist/">"TreeDist"</a></span><span class="op">)</span></span>
 <span><span class="va">distances</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeDistance.html">ClusteringInfoDistance</a></span><span class="op">(</span><span class="va">trees</span><span class="op">)</span></span></code></pre></div>
@@ -193,7 +193,7 @@
 <div class="section level4">
 <h4 id="identifying-clusters">Identifying clusters<a class="anchor" aria-label="anchor" href="#identifying-clusters"></a>
 </h4>
-<p>A quick visual inspection suggests at least two clusters, with the possibility of further subdivision of the brighter trees. But visual inspection can be highly misleading <span class="citation">(Smith, 2022)</span>. We must take a statistical approach. A combination of partitioning around medoids and hierarchical clustering with minimax linkage will typically find a clustering solution that is close to optimal, if one exists <span class="citation">(Smith, 2022)</span>.</p>
+<p>A quick visual inspection suggests at least two clusters, with the possibility of further subdivision of the brighter trees. But visual inspection can be highly misleading <span class="citation">(M. R. Smith, 2022)</span>. We must take a statistical approach. A combination of partitioning around medoids and hierarchical clustering with minimax linkage will typically find a clustering solution that is close to optimal, if one exists <span class="citation">(M. R. Smith, 2022)</span>.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">possibleClusters</span> <span class="op">&lt;-</span> <span class="fl">2</span><span class="op">:</span><span class="fl">10</span></span>
 <span></span>
@@ -333,7 +333,7 @@
 <span><span class="op">}</span></span></code></pre></div>
 <pre><code><span><span class="co">##       jaccard      sorensen frac_unique_1 frac_unique_2 </span></span>
 <span><span class="co">##    0.02655966    0.05174498    0.94574038    0.95054689</span></span></code></pre>
-<p>If the objective is to quantify the spread of different clusters, other metrics may be easier to interpret than the clusters’ hypervolume.</p>
+<p>If the objective is to quantify the spread of different clusters, other metrics may be easier to interpret than the clusters’ hypervolume (e.g. <span class="citation">T. J. Smith &amp; Donoghue (2022)</span>).</p>
 <p>The divergence of outlying points can be measures using the sum of ranges:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">SumOfRanges</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
@@ -423,6 +423,9 @@
 </div>
 <div id="ref-SmithSpace">
 <p>Smith, M. R. (2022). Robust analysis of phylogenetic tree space. <em>Systematic Biology</em>, <em>71</em>(5), 1255–1270. doi: <a href="https://doi.org/10.1093/sysbio/syab100" class="external-link">10.1093/sysbio/syab100</a></p>
+</div>
+<div id="ref-Smith2022">
+<p>Smith, T. J., &amp; Donoghue, P. C. J. (2022). Evolution of fungal phenotypic disparity. <em>Nature Ecology &amp; Evolution</em>, s41559–022–01844–01846. doi: <a href="https://doi.org/10.1038/s41559-022-01844-6" class="external-link">10.1038/s41559-022-01844-6</a></p>
 </div>
 <div id="ref-Thrun2016">
 <p>Thrun, M. C., Lerch, F., Lötsch, J., &amp; Ultsch, A. (2016). Visualization and 3D printing of multivariate data of biomarkers. <em>International Conference in Central Europe on Computer Graphics, Visualization and Computer Vision</em>. Plzen.</p>
