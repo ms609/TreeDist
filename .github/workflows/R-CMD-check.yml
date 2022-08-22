@@ -70,12 +70,12 @@ jobs:
         if: runner.os == 'MacOS'
         run: |
           brew install gnu-sed
-          gsed -i "s/ *TreeDistData (> 0\.1\.0),.//" DESCRIPTION
+          gsed -i "s/ *TreeDistData.*\n//" DESCRIPTION
 
       - name: sed - temporary pak bug workaround # https://github.com/r-lib/actions/issues/534
         if: runner.os != 'MacOS'
         run: |
-          sed -i "s/ *TreeDistData.*//" DESCRIPTION
+          sed -i "s/ *TreeDistData.*\n//" DESCRIPTION
           cat DESCRIPTION
         
       - name: Set up R
@@ -89,11 +89,16 @@ jobs:
           sudo apt-get install \
             texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev
 
-      - name: temporary pak bug workaround # https://github.com/r-lib/actions/issues/534
-        run: |
-          install.packages("pak")
-          pak::pkg_install("ms609/TreeDist")
-          pak::pkg_install("ms609/TreeDistData")
+      - name: temporary pak bug workaround - install pak # https://github.com/r-lib/actions/issues/534
+        run: install.packages("pak")
+        shell: Rscript {0}
+
+      - name: temporary pak bug workaround - install TreeDist
+        run: pak::pkg_install("ms609/TreeDist")
+        shell: Rscript {0}
+
+      - name: temporary pak bug workaround - install TreeDistData
+        run: pak::pkg_install("ms609/TreeDistData")
         shell: Rscript {0}
 
       - name: Set up R dependencies (Windows)
