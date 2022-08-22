@@ -5,8 +5,13 @@ on:
       - master
     paths-ignore:
       - "Meta**"
-      - "memcheck**"
       - "docs**"
+      - "inst**"
+      - "man**"
+      - "man-roxygen**"
+      - "memcheck**"
+      - "tests**"
+      - "vignettes**"
       - "**.git"
       - "**.json"
       - "**.md"
@@ -20,8 +25,13 @@ on:
       - master
     paths-ignore:
       - "Meta**"
-      - "memcheck**"
       - "docs**"
+      - "inst**"
+      - "man**"
+      - "man-roxygen**"
+      - "memcheck**"
+      - "tests**"
+      - "vignettes**"
       - "**.git"
       - "**.json"
       - "**.md"
