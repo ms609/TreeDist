@@ -50,6 +50,7 @@ SumOfRanges <- function(mapping, cluster = 1) {
 #' @return `SumOfVariances()` returns a numeric specifying the sum of variances
 #' within each cluster across all dimensions.
 #' @examples SumOfVariances(points, cluster)
+#' @importFrom stats var
 #' @export
 SumOfVariances <- function(mapping, cluster = 1) {
   if (is.null(dim(mapping))) {
