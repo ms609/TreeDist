@@ -83,12 +83,6 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
 
-      - name: Install apt packages
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get install \
-            texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev
-
       - name: temporary pak bug workaround - install pak # https://github.com/r-lib/actions/issues/534
         run: install.packages("pak")
         shell: Rscript {0}
@@ -110,6 +104,12 @@ jobs:
           needs: |
             check
             coverage
+
+      - name: Install apt packages (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get install \
+            texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev
             
       - name: Set up R dependencies (Non-Windows)
         if: runner.os != 'Windows'
