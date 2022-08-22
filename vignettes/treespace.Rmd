@@ -349,29 +349,20 @@ The divergence of outlying points can be measures using the sum of ranges:
 SumOfRanges(pid_mapping, pid_cluster)
 ```
 
-The overall size of a cluster can be measured using the sum of variances:
-```{r sum-of-variances}
-SumOfVariances(pid_mapping, pid_cluster)
-```
-
+The overall size of a cluster can be measured using the sum of variances
 or the mean distance from the centroid:
-```{r ave-dist-centroid}
+
+```{r cluster-size}
+SumOfVariances(pid_mapping, pid_cluster)
 MeanCentroidDistance(pid_mapping, pid_cluster)
 ```
 
-The density of points within a cluster can be measured using the mean nearest-neighbour distance:
-```{r ave-nnd}
+The density of points within a cluster can be measured using the mean nearest-neighbour distance or the mean minimum spanning tree edge length:
+
+```{r cluster-density}
 MeanNN(pid_mapping, pid_cluster)
+MeanMSTEdge(pid_mapping, pid_cluster)
 ```
-
-or the mean minimum spanning tree edge length:
-```{r ave-mst-edge}
-
-```
-
-
-
-
 
 
 

@@ -14,10 +14,10 @@ test_that("SumOfRanges()", {
 })
 
 test_that("SumOfVariances()", {
-  expect_warning(expect_equal(SumOfVariances(points[cluster == 2, ]), 0),
+  expect_warning(expect_equal(SumOfVariances(points[cluster == 2, ]), NA_real_),
                  "lacks dimensions")
   expect_equal(SumOfVars(points, cluster),
-               c(var(1:4) * 4, NA, var(1:8 / 10) * 4))
+               c(var(1:4) * 4, NA_real_, var(1:8 / 10) * 4))
   expect_equal(
     sapply(1:3, function(i) SumOfVars(points[cluster == i, , drop = FALSE])),
     SumOfVariances(points, cluster)
@@ -36,7 +36,7 @@ test_that("MeanCentroidDistance()", {
 })
 
 test_that("MeanNN()", {
-  expect_warning(expect_equal(MeanNN(points[cluster == 2, ]), 0),
+  expect_warning(expect_equal(MeanNN(points[cluster == 2, ]), NA_real_),
                  "lacks dimensions")
   expect_equal(MeanNN(points, cluster), c(2, NA, 0.2))
   expect_equal(
@@ -45,3 +45,13 @@ test_that("MeanNN()", {
   )
 })
 
+test_that("MeanMSTEdge()", {
+  expect_warning(expect_equal(MeanMSTEdge(points[cluster == 2, ]), NA_real_),
+                 "lacks dimensions")
+  expect_equal(MeanMSTEdge(points, cluster),
+               c(2, NA, 0.2))
+  expect_equal(
+    sapply(1:3, function(i) MeanMSTEdge(points[cluster == i, , drop = FALSE])),
+    MeanMSTEdge(points, cluster)
+  )
+})

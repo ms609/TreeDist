@@ -9,6 +9,7 @@
 \alias{MeanCentDist}
 \alias{MeanCentroidDist}
 \alias{MeanNN}
+\alias{MeanMSTEdge}
 \title{Cluster size statistics}
 \usage{
 SumOfRanges(mapping, cluster = 1)
@@ -24,6 +25,8 @@ MeanCentDist(mapping, cluster = 1)
 MeanCentroidDist(mapping, cluster = 1)
 
 MeanNN(mapping, cluster = 1)
+
+MeanMSTEdge(mapping, cluster = 1)
 }
 \arguments{
 \item{mapping}{Matrix in which each row lists the coordinates of a point
@@ -44,9 +47,29 @@ distance from the centroid to points in each cluster.
 
 \code{MeanNN()} returns a numeric specifying the mean distance from each
 point within a cluster to its nearest neighbour.
+
+\code{MeanMSTEdge()} returns a numeric specifying the mean length of an
+edge in the minimum spanning tree of points within each cluster.
 }
 \description{
 Cluster size statistics
+}
+\examples{
+points <- rbind(matrix(1:16, 4), rep(1, 4), matrix(1:32, 8, 4) / 10)
+cluster <- rep(1:3, c(4, 1, 8))
+
+plot(
+  points[, 1:2], # Plot first two dimensions of four-dimensional space
+  col = cluster, pch = cluster, # Style by cluster membership
+  asp = 1, # Fix aspect ratio to avoid distortion
+  ann = FALSE, frame = FALSE # Simple axes
+)
+
+SumOfRanges(points, cluster)
+SumOfVariances(points, cluster)
+MeanCentroidDistance(points, cluster)
+MeanNN(points, cluster)
+MeanMSTEdge(points, cluster)
 }
 \seealso{
 Other tree space functions: 
