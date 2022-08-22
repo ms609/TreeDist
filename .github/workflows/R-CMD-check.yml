@@ -70,12 +70,12 @@ jobs:
         if: runner.os == 'MacOS'
         run: |
           brew install gnu-sed
-          gsed -i "s/ *TreeDistData.*\n//" DESCRIPTION
+          gsed -i "s/ *TreeDistData.*//" DESCRIPTION
 
       - name: sed - temporary pak bug workaround # https://github.com/r-lib/actions/issues/534
         if: runner.os != 'MacOS'
         run: |
-          sed -i "s/ *TreeDistData.*\n//" DESCRIPTION
+          sed -i "s/  TreeDistData.*/  glue,/" DESCRIPTION # glue as placeholder
           cat DESCRIPTION
         
       - name: Set up R
