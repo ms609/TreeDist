@@ -121,7 +121,7 @@ jobs:
           needs: |
             check
 
-      - name: Restore suggests-TreeDistData
+      - name: Restore suggests-TreeDistData (Mac)
         if: runner.os == 'MacOS'
         run: |
           gsed -i "s/  glue,/  TreeDistData,/" DESCRIPTION
@@ -130,6 +130,9 @@ jobs:
         if: runner.os != 'MacOS'
         run: |
           sed -i "s/  glue,/  TreeDistData,/" DESCRIPTION
+          
+      - name: Set up pandoc
+        uses: r-lib/actions/setup-pandoc@v2
         
       - name: Check package
         uses: r-lib/actions/check-r-package@v2
