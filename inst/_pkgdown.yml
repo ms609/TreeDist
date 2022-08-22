@@ -61,7 +61,7 @@ navbar:
       text: Get started
       href: articles/Using-TreeDist.html
     reference:
-      text: Reference
+      text: Function reference
       href: reference/index.html
       
     news:
