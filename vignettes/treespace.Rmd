@@ -341,7 +341,7 @@ if (hypervolumeInstalled) {
 ```
 
 If the objective is to quantify the spread of different clusters, other metrics
-may be easier to interpret than the clusters' hypervolume.
+may be easier to interpret than the clusters' hypervolume (e.g. @Smith2022).
 
 The divergence of outlying points can be measures using the sum of ranges:
 

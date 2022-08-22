@@ -7,7 +7,7 @@
 release_questions <- function() {
   c(
     "Is the code free of #TODOs?",
-    "Have you updated README.md, DESCRIPTION, inst/REFERENCES.bib & inst/CITATION with a citation to the published studies?"
+    "Have you updated inst/REFERENCES.bib with a full citation to Smith & Donoghue 2022?"
     )
 }
 
