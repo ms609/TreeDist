@@ -42,7 +42,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.4.0.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.4.1.9000</span>
       </span>
     </div>
 
@@ -308,7 +308,7 @@
 <p><img src="treespace_files/figure-html/pid-1.png" width="384" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
-<h4 id="comparing-cluster-hypervolumes">Comparing cluster hypervolumes<a class="anchor" aria-label="anchor" href="#comparing-cluster-hypervolumes"></a>
+<h4 id="comparing-cluster-size">Comparing cluster size<a class="anchor" aria-label="anchor" href="#comparing-cluster-size"></a>
 </h4>
 <p>It is tempting to compare the size of clusters by calculating the area of convex hulls on a two-dimensional mapping. However, mapped areas do <a href="https://xkcd.com/2489/" class="external-link">not necessarily correspond</a> to true hypervolumes.</p>
 <p>Accuracy may be improved by comparing higher dimensions of projections using the “<a href="http://www.benjaminblonder.org/hypervolume_faq.html" class="external-link">hypervolume</a>” package, though the same considerations apply <span class="citation">(Blonder et al., 2018)</span>. Interpretation of overlap statistics is detailed in <span class="citation">Mammola (2019)</span>.</p>
@@ -333,13 +333,32 @@
 <span><span class="op">}</span></span></code></pre></div>
 <pre><code><span><span class="co">##       jaccard      sorensen frac_unique_1 frac_unique_2 </span></span>
 <span><span class="co">##    0.02655966    0.05174498    0.94574038    0.95054689</span></span></code></pre>
+<p>If the objective is to quantify the spread of different clusters, other metrics may be easier to interpret than the clusters’ hypervolume.</p>
+<p>The divergence of outlying points can be measures using the sum of ranges:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">SumOfRanges</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 132.0758 127.3610</span></span></code></pre>
+<p>The overall size of a cluster can be measured using the sum of variances or the mean distance from the centroid:</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">SumOfVariances</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 173.0981 176.8212</span></span></code></pre>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">MeanCentroidDistance</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 12.58064 12.80727</span></span></code></pre>
+<p>The density of points within a cluster can be measured using the mean nearest-neighbour distance or the mean minimum spanning tree edge length:</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">MeanNN</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 4.676416 5.274230</span></span></code></pre>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">MeanMSTEdge</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 5.558778 5.804829</span></span></code></pre>
 </div>
 </div>
 <div class="section level3">
 <h3 id="self-organizing-maps">Self-organizing maps<a class="anchor" aria-label="anchor" href="#self-organizing-maps"></a>
 </h3>
 <p>An alternative approach to visualizing tree space is to create emergent self-organizing maps <span class="citation">(Kohonen, 1982; Thrun, Lerch, Lötsch, &amp; Ultsch, 2016; Ultsch, 2003)</span>, which map high-dimensional data into two dimensions, then add a third dimension to indicate distance between data points: nearby points occur in valleys, and are separated by ridges from more distant data points.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">umatrixInstalled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"Umatrix"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">umatrixInstalled</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">map</span> <span class="op">&lt;-</span> <span class="fu">Umatrix</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Umatrix/man/esomTrain.html" class="external-link">esomTrain</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">distances</span><span class="op">)</span>, Key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">trees</span><span class="op">)</span>,</span>
@@ -403,7 +422,7 @@
 <p>Smith, M. R. (2020). Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees. <em>Bioinformatics</em>, <em>36</em>(20), 5007–5013. doi: <a href="https://doi.org/10.1093/bioinformatics/btaa614" class="external-link">10.1093/bioinformatics/btaa614</a></p>
 </div>
 <div id="ref-SmithSpace">
-<p>Smith, M. R. (2022). Robust analysis of phylogenetic tree space. <em>Systematic Biology</em>, syab100. doi: <a href="https://doi.org/10.1093/sysbio/syab100" class="external-link">10.1093/sysbio/syab100</a></p>
+<p>Smith, M. R. (2022). Robust analysis of phylogenetic tree space. <em>Systematic Biology</em>, <em>71</em>(5), 1255–1270. doi: <a href="https://doi.org/10.1093/sysbio/syab100" class="external-link">10.1093/sysbio/syab100</a></p>
 </div>
 <div id="ref-Thrun2016">
 <p>Thrun, M. C., Lerch, F., Lötsch, J., &amp; Ultsch, A. (2016). Visualization and 3D printing of multivariate data of biomarkers. <em>International Conference in Central Europe on Computer Graphics, Visualization and Computer Vision</em>. Plzen.</p>
