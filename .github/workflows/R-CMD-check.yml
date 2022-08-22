@@ -66,9 +66,16 @@ jobs:
       - name: Checkout git repo
         uses: actions/checkout@v2
 
-      - name: sed
+      - name: gsed
+        if: runner.os == 'MacOS'
         run: |
-          sed -i 's/ *TreeDistData (> 0.1.0),.//' DESCRIPTION
+          brew install gnu-sed
+          gsed -i "s/ *TreeDistData (> 0\.1\.0),.//" DESCRIPTION
+
+      - name: sed - temporary pak bug workaround # https://github.com/r-lib/actions/issues/534
+        if: runner.os != 'MacOS'
+        run: |
+          sed -i "s/ *TreeDistData (> 0\.1\.0),.//" DESCRIPTION
         
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
