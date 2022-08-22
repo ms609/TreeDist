@@ -89,10 +89,6 @@ jobs:
           install.packages("pkgdepends")
         shell: Rscript {0}
 
-      - name: temporary pak bug workaround - install TreeDist
-        run: pak::pkg_install("ms609/TreeDist")
-        shell: Rscript {0}
-
       - name: temporary pak bug workaround - install TreeDistData
         run: pak::pkg_install("ms609/TreeDistData")
         shell: Rscript {0}
