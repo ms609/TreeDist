@@ -75,7 +75,7 @@ jobs:
       - name: sed - temporary pak bug workaround # https://github.com/r-lib/actions/issues/534
         if: runner.os != 'MacOS'
         run: |
-          sed -i "s/ *TreeDistData (> 0\.1\.0),.//" DESCRIPTION
+          sed -i "s/ *TreeDistData.*//" DESCRIPTION
           cat DESCRIPTION
         
       - name: Set up R
