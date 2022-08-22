@@ -79,7 +79,7 @@ jobs:
 
       - name: temporary pak bug workaround # https://github.com/r-lib/actions/issues/534
         run: |
-          sed -i -r "s/ *TreeDistData (> 0\.1\.0),.//" DESCRIPTION
+          sed -i "s/ *TreeDistData (> 0\.1\.0),.//" DESCRIPTION
           install.packages("pak")
           pak::pkg_install("ms609/TreeDist")
           pak::pkg_install("ms609/TreeDistData")
