@@ -85,6 +85,7 @@ jobs:
 
       - name: temporary pak bug workaround - install pak # https://github.com/r-lib/actions/issues/534
         run: install.packages("pak")
+        run: install.packages("pkgdepends")
         shell: Rscript {0}
 
       - name: temporary pak bug workaround - install TreeDist
