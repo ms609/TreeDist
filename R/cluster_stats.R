@@ -35,7 +35,7 @@ SumOfRanges <- function(mapping, cluster = 1) {
 }
 
 #' @rdname cluster-statistics
-#' @return `SumOfRanges()` returns a numeric specifying the sum of variances
+#' @return `SumOfVariances()` returns a numeric specifying the sum of variances
 #' within each cluster across all dimensions.
 #' @export
 SumOfVariances <- function(mapping, cluster = 1) {
@@ -61,8 +61,8 @@ SumOfVars <- SumOfVariances
 
 
 #' @rdname cluster-statistics
-#' @return `SumOfRanges()` returns a numeric specifying the mean distance from
-#' the centroid to points in each cluster.
+#' @return `MeanCentroidDistance()` returns a numeric specifying the mean
+#' distance from the centroid to points in each cluster.
 #' @export
 MeanCentroidDistance <- function(mapping, cluster = 1) {
   if (is.null(dim(mapping))) {
@@ -90,6 +90,37 @@ MeanCentroidDist <- MeanCentroidDistance
   
   # Return:
   mean(sqrt(rowSums(recentred ^ 2)))
+}
+
+#' @rdname cluster-statistics
+#' @return `MeanNN()` returns a numeric specifying the mean distance from each
+#' point within a cluster to its nearest neighbour.
+#' @export
+MeanNN <- function(mapping, cluster = 1) {
+  if (is.null(dim(mapping))) {
+    warning(paste0("`mapping` lacks dimensions. ",
+                   "Did you subset without specifying `drop = FALSE`?"))
+    mapping <- matrix(mapping, 1)
+  }
+  
+  # Return:
+  vapply(seq_along(unique(cluster)),
+         function(i) .MeanNN(mapping[cluster == i, , drop = FALSE]),
+         numeric(1))
+}
+
+.MeanNN <- function(x) {
+  if (dim(x)[1] > 1) {
+    distances <- as.matrix(dist(x))
+    diag(distances) <- NA
+    
+    # Return:
+    mean(apply(distances, 1, min, na.rm = TRUE))
+    
+  } else {
+    # Return:
+    NA
+  }
 }
 
 .Apply <- if (packageVersion("base") < "4.1.0") {

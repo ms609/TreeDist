@@ -5,6 +5,10 @@
 \alias{SumOfRanges}
 \alias{SumOfVariances}
 \alias{SumOfVars}
+\alias{MeanCentroidDistance}
+\alias{MeanCentDist}
+\alias{MeanCentroidDist}
+\alias{MeanNN}
 \title{Cluster size statistics}
 \usage{
 SumOfRanges(mapping, cluster = 1)
@@ -12,6 +16,14 @@ SumOfRanges(mapping, cluster = 1)
 SumOfVariances(mapping, cluster = 1)
 
 SumOfVars(mapping, cluster = 1)
+
+MeanCentroidDistance(mapping, cluster = 1)
+
+MeanCentDist(mapping, cluster = 1)
+
+MeanCentroidDist(mapping, cluster = 1)
+
+MeanNN(mapping, cluster = 1)
 }
 \arguments{
 \item{mapping}{Matrix in which each row lists the coordinates of a point
@@ -24,8 +36,14 @@ which each row in \code{mapping} belongs.}
 \code{SumOfRanges()} returns a numeric specifying the sum of ranges
 within each cluster across all dimensions.
 
-\code{SumOfRanges()} returns a numeric specifying the sum of variances
+\code{SumOfVariances()} returns a numeric specifying the sum of variances
 within each cluster across all dimensions.
+
+\code{MeanCentroidDistance()} returns a numeric specifying the mean
+distance from the centroid to points in each cluster.
+
+\code{MeanNN()} returns a numeric specifying the mean distance from each
+point within a cluster to its nearest neighbour.
 }
 \description{
 Cluster size statistics

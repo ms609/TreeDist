@@ -28,11 +28,20 @@ test_that("MeanCentroidDistance()", {
   expect_warning(expect_equal(MeanCentroidDistance(points[cluster == 2, ]), 0),
                  "lacks dimensions")
   
-  expect_equal(MeanCentroidDistance(points, cluster),
-               c(2, 0, 0.4))
+  expect_equal(MeanCentroidDistance(points, cluster), c(2, 0, 0.4))
   expect_equal(
     sapply(1:3, function(i) MeanCentDist(points[cluster == i, , drop = FALSE])),
     MeanCentroidDist(points, cluster)
+  )
+})
+
+test_that("MeanNN()", {
+  expect_warning(expect_equal(MeanNN(points[cluster == 2, ]), 0),
+                 "lacks dimensions")
+  expect_equal(MeanNN(points, cluster), c(2, NA, 0.2))
+  expect_equal(
+    sapply(1:3, function(i) MeanNN(points[cluster == i, , drop = FALSE])),
+    MeanNN(points, cluster)
   )
 })
 

@@ -361,7 +361,7 @@ MeanCentroidDistance(pid_mapping, pid_cluster)
 
 The density of points within a cluster can be measured using the mean nearest-neighbour distance:
 ```{r ave-nnd}
-
+MeanNN(pid_mapping, pid_cluster)
 ```
 
 or the mean minimum spanning tree edge length:
