@@ -69,6 +69,7 @@ Other tree space functions:
 \code{\link{MapTrees}()},
 \code{\link{MappingQuality}()},
 \code{\link{SpectralEigens}()},
+\code{\link{cluster-statistics}},
 \code{\link{median.multiPhylo}()}
 }
 \author{

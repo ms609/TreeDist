@@ -1,0 +1,25 @@
+points <- rbind(matrix(1:16, 4),
+                rep(1, 4),
+                matrix(1:32, 8, 4) / 10)
+cluster <- rep(1:3, c(4, 1, 8))
+
+test_that("SumOfRanges()", {
+  expect_warning(expect_equal(SumOfRanges(points[cluster == 2, ]), 0),
+                 "lacks dimensions")
+  expect_equal(SumOfRanges(points, cluster), c(3 * 4, 0, 0.7 * 4))
+  expect_equal(
+    sapply(1:3, function(i) SumOfRanges(points[cluster == i, , drop = FALSE])),
+    SumOfRanges(points, cluster)
+  )
+})
+
+test_that("SumOfVariances()", {
+  expect_warning(expect_equal(SumOfVariances(points[cluster == 2, ]), 0),
+                 "lacks dimensions")
+  expect_equal(SumOfVars(points, cluster),
+               c(var(1:4) * 4, NA, var(1:8 / 10) * 4))
+  expect_equal(
+    sapply(1:3, function(i) SumOfVars(points[cluster == i, , drop = FALSE])),
+    SumOfVariances(points, cluster)
+  )
+})

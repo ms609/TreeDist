@@ -1,3 +1,8 @@
+# TreeDist 2.4.1.9000 (development)
+
+- New functions to measure cluster sizes.
+
+
 # TreeDist 2.4.1
 
 - New [vignette](https://ms609.github.io/TreeDist/articles/compare-treesets.html)

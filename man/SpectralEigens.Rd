@@ -41,6 +41,7 @@ Other tree space functions:
 \code{\link{MSTSegments}()},
 \code{\link{MapTrees}()},
 \code{\link{MappingQuality}()},
+\code{\link{cluster-statistics}},
 \code{\link{median.multiPhylo}()}
 }
 \author{
