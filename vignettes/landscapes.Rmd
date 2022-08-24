@@ -70,7 +70,8 @@ SpectrumLegend(palette = rgb(colorRamp(c("orange", "blue"))(0:100 / 100) / 255),
 A more sophisticated output can be produced using contours, interpolating
 between adjacent trees. This example uses a simple inverse distance weighting
 function for interpolation; more sophisticated techniques such as
-[kriging](https://desktop.arcgis.com/en/arcmap/10.3/tools/3d-analyst-toolbox/how-kriging-works.htm) can produce even better results.
+[kriging](https://desktop.arcgis.com/en/arcmap/10.3/tools/3d-analyst-toolbox/how-kriging-works.htm) or (in continuous tree spaces) the use of geodesics
+[@Khodaei2022] can produce even better results.
 
 ```{r contoured-plot}
 # Use an inverse distance weighting to interpolate between measured points
