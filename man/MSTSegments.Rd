@@ -64,7 +64,16 @@ SpectrumLegend(legend = c("Contracted", "Median", "Extended"),
 \references{
 \insertAllCited{}
 }
+\seealso{
+Other tree space functions: 
+\code{\link{MapTrees}()},
+\code{\link{MappingQuality}()},
+\code{\link{SpectralEigens}()},
+\code{\link{cluster-statistics}},
+\code{\link{median.multiPhylo}()}
+}
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
 (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
+\concept{tree space functions}

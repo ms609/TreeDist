@@ -1,13 +1,16 @@
-library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
 
 test_that("NNIDist() handles exceptions", {
-  expect_error(NNIDist(list(PectinateTree(7), PectinateTree(8))))
-  expect_error(NNIDist(list(PectinateTree(1:8), PectinateTree(8))))
+  expect_error(NNIDist(list(PectinateTree(7), PectinateTree(8))),
+               "trees must contain the same number of leaves")
+  expect_error(NNIDist(list(PectinateTree(1:8), PectinateTree(8))),
+               "trees must bear identical labels")
   expect_error(NNIDist(list(PectinateTree(1:8), 
-                            PectinateTree(as.character(1:8)))))
-  expect_error(cpp_nni_distance( # Too many tips.
+                            PectinateTree(as.character(1:8)))),
+               "trees must bear identical labels")
+  expect_error(cpp_nni_distance(
     PectinateTree(40000)$edge, # Will fail before not being postorder is problem
-    BalancedTree(40000)$edge, 40000))
+    BalancedTree(40000)$edge, 40000), "so many tips")
   
   expect_error(NNIDist(BalancedTree(5), RootOnNode(BalancedTree(5), 1)))
   
@@ -22,7 +25,10 @@ test_that("Simple NNI approximations", {
   
   Fack <- function(n) ((n - 2) * ceiling(log2(n))) + n
                                          
-  Sorting <- function(n) {lc <- ceiling(log2(n)); n*lc-2^lc+1}
+  Sorting <- function(n) {
+    lc <- ceiling(log2(n))
+    n * lc - 2 ^ lc + 1
+  }
   DegDist <- function(n) {
     nif <- ceiling(log2(n / 3))
     tif <- 2 ^ nif

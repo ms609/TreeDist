@@ -1,6 +1,6 @@
 ## Test environments
 * Microsoft Windows:
-  * Local Windows 10 installation, R 4.1.2
+  * Windows 10, R devel, locally
   * windows-latest: Microsoft Windows Server 2019, Windows 10.0.17763, 
     R release, via [GitHub Actions](https://github.com/ms609/TreeDist/actions)
   * win_devel: with `devtools::check_win_devel()`, R devel
@@ -28,13 +28,14 @@ There was one NOTE:
 
 'TreeDistData' is too large to be submitted on CRAN.
 
-All calls to `data(package = 'TreeDistData')` are wrapped within 
+All calls to `data(package = "TreeDistData")` are wrapped within 
 `if(require('TreeDistData'))` to ensure that vignettes fail gracefully when
 'TreeDistData' is not installed.
 
 
 ## Downstream dependencies
-There is one downstream dependency, 'TBRDist' (which I maintain).
+There are three downstream dependencies: 'Rogue', 'TBRDist', and 'TreeSearch'
+(all of which I maintain).
 
 No changes to worse were identified by
 ["revdepcheck"](https://github.com/ms609/TreeDist/actions/workflows/revdepcheck.yml).

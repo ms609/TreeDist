@@ -275,6 +275,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
 #'                palette = rev(hcl.colors(256L, "RdYlBu")))
 #' @template MRS
 #' @references \insertAllCited{}
+#' @family tree space functions
 #' @importFrom graphics segments
 #' @export
 MSTSegments <- function(mapping, mstEnds, ...) {

@@ -8,13 +8,13 @@
   "codeRepository": "https://github.com/ms609/TreeDist/",
   "issueTracker": "https://github.com/ms609/TreeDist/issues/",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "2.3.0",
+  "version": "2.4.1.9001",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.1.2 (2021-11-01)",
+  "runtimePlatform": "R version 4.2.1 (2022-06-23)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -170,6 +170,18 @@
     },
     {
       "@type": "SoftwareApplication",
+      "identifier": "plotly",
+      "name": "plotly",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=plotly"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "protoclust",
       "name": "protoclust",
       "provider": {
@@ -220,6 +232,7 @@
       "@type": "SoftwareApplication",
       "identifier": "Rcpp",
       "name": "Rcpp",
+      "version": ">= 1.0.8",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
@@ -239,6 +252,30 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=rgl"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "Rogue",
+      "name": "Rogue",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=Rogue"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "spelling",
+      "name": "spelling",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=spelling"
     },
     {
       "@type": "SoftwareApplication",
@@ -438,7 +475,7 @@
       "@type": "SoftwareApplication",
       "identifier": "TreeTools",
       "name": "TreeTools",
-      "version": ">= 1.5.0",
+      "version": ">= 1.7.1.9000",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
@@ -450,7 +487,7 @@
     "SystemRequirements": "C++14"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "1074.442KB",
+  "fileSize": "1395.16KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
@@ -490,14 +527,16 @@
       ],
       "name": "Robust analysis of phylogenetic tree space",
       "identifier": "10.1093/sysbio/syab100",
-      "pagination": "syab100",
+      "pagination": "1255-1270",
       "@id": "https://doi.org/10.1093/sysbio/syab100",
       "sameAs": "https://doi.org/10.1093/sysbio/syab100",
       "isPartOf": {
         "@type": "PublicationIssue",
+        "issueNumber": "5",
         "datePublished": "2022",
         "isPartOf": {
           "@type": ["PublicationVolume", "Periodical"],
+          "volumeNumber": "71",
           "name": "Systematic Biology"
         }
       }
@@ -512,7 +551,7 @@
           "familyName": "Smith"
         }
       ],
-      "name": "TreeDist: Distances between Phylogenetic Trees. R package version 2.3.0",
+      "name": "TreeDist: Distances between Phylogenetic Trees. R package version 2.4.1.9001",
       "identifier": "10.5281/zenodo.3528124",
       "@id": "https://doi.org/10.5281/zenodo.3528124",
       "sameAs": "https://doi.org/10.5281/zenodo.3528124",

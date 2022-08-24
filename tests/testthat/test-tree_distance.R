@@ -118,8 +118,10 @@ test_that('Output dimensions are correct', {
 })
 
 test_that('Robinson Foulds Distance is correctly calculated', {
+  PhangRF2 <- function(t1, t2) phangorn::RF.dist(reorder(t1, "cladewise"),
+                                                 reorder(t2, "cladewise"))
   RFTest <- function(t1, t2) {
-    expect_equal(suppressMessages(phangorn::RF.dist(t1, t2)),
+    expect_equal(suppressMessages(PhangRF2(t1, t2)),
                  RobinsonFoulds(t1, t2))
     
     expected <- RobinsonFoulds(t1, t2, reportMatching = TRUE, similarity = TRUE)
@@ -696,7 +698,8 @@ test_that('Jaccard RF is correctly calculated', {
 
 test_that('RobinsonFoulds() is correctly calculated', {
   RF <- function(tree1, tree2) {
-    suppressMessages(phangorn::RF.dist(tree1, tree2))
+    suppressMessages(phangorn::RF.dist(reorder(tree1, "cladewise"),
+                                       reorder(tree2, "cladewise")))
   }
   RFTest <- function(tree1, tree2) {
     expect_equal(RF(tree1, tree2), RobinsonFoulds(tree1, tree2))
@@ -796,17 +799,22 @@ test_that('Multiple comparisons are correctly ordered', {
   nTip <- 16L
   
   set.seed(0)
-  trees <- lapply(rep(nTip, nTrees), ape::rtree, br=NULL)
+  trees <- lapply(rep(nTip, nTrees), ape::rtree, br = NULL)
   trees[[1]] <- TreeTools::BalancedTree(nTip)
   trees[[nTrees - 1L]] <- TreeTools::PectinateTree(nTip)
   class(trees) <- 'multiPhylo'
   
-  expect_equal(phangorn::RF.dist(trees), RobinsonFoulds(trees),
+  PhangRF <- function (trees) {
+    phangorn::RF.dist(reorder(trees, "cladewise"))
+  }
+  
+  expect_equal(PhangRF(trees), RobinsonFoulds(trees),
                ignore_attr = TRUE)
   
   # Test CompareAll
-  expect_equal(as.matrix(phangorn::RF.dist(trees)),
-               as.matrix(CompareAll(trees, phangorn::RF.dist, 0L)),
+  expect_equal(as.matrix(PhangRF(trees)),
+               as.matrix(CompareAll(reorder(trees, "cladewise"),
+                                    phangorn::RF.dist, 0L)),
                ignore_attr = TRUE)
   
   NNILoose <- function(x, y) NNIDist(x, y)['loose_upper']

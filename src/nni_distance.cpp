@@ -9,6 +9,11 @@ using namespace Rcpp;
 using TreeTools::SplitList;
 using TreeTools::powers_of_two;
 
+#define PARENT1(i) edge1(i, 0)
+#define PARENT2(i) edge2(i, 0)
+#define CHILD1(i) edge1(i, 1)
+#define CHILD2(i) edge2(i, 1)
+
 const int16 NNI_MAX_TIPS = 5000; /* To avoid variable length arrays */
 
 /* Exact value of diameter for trees with 0..N_EXACT edges, 
@@ -213,7 +218,7 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
                                 const IntegerVector nTip) {
   
   if (nTip[0] > NNI_MAX_TIPS) {
-    throw std::length_error("Cannot calculate NNI distance for trees with "
+    Rcpp::stop("Cannot calculate NNI distance for trees with "
                             "so many tips.");
   }
   const int16 
@@ -231,7 +236,7 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
     fack_score_bound = 0
   ;
   if (n_edge != int16(edge2.nrow())) {
-    throw std::length_error("Both trees must have the same number of edges. "
+    Rcpp::stop("Both trees must have the same number of edges. "
                             "Is one rooted and the other unrooted?");
   }
 
@@ -246,11 +251,11 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
   }
   
   const int16 
-    root_1 = edge1(n_edge - 1, 0),
-    root_2 = edge2(n_edge - 1, 0)
+    root_1 = PARENT1(n_edge - 1),
+    root_2 = PARENT2(n_edge - 1)
   ;
   
-  bool rooted = edge1(n_edge - 3, 0) != root_1;
+  bool rooted = PARENT1(n_edge - 3) != root_1;
   
   const uint16
     NOT_TRIVIAL = UINT_16_MAX;
@@ -262,8 +267,8 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
     trivial_origin_1 = root_1 - 1,
     trivial_origin_2 = root_2 - 1,
     
-    trivial_two_1 = (rooted ? (edge1(n_edge - 1, 1) - 1) : NOT_TRIVIAL),
-    trivial_two_2 = (rooted ? (edge2(n_edge - 1, 1) - 1) : NOT_TRIVIAL),
+    trivial_two_1 = (rooted ? (CHILD1(n_edge - 1) - 1) : NOT_TRIVIAL),
+    trivial_two_2 = (rooted ? (CHILD2(n_edge - 1) - 1) : NOT_TRIVIAL),
     
     n_distinct_edge = n_edge - (rooted ? 1 : 0),
     n_splits = n_distinct_edge - n_tip
@@ -301,7 +306,7 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
   delete[] names_1;
   
   for (int16 i = 0; i != n_distinct_edge - (rooted ? 1 : 0); i++) {
-    const int16 parent_i = edge1(i, 0) - 1, child_i = edge1(i, 1) - 1;
+    const int16 parent_i = PARENT1(i) - 1, child_i = CHILD1(i) - 1;
     // If edge is unmatched, add one to subtree size.
     if (child_i >= n_tip) {
       if (!matched_1[child_i - node_0]) {
@@ -320,8 +325,8 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
   
   if (rooted) {
     const int16
-      root_child_1 = edge1(n_edge - 1, 1) - 1,
-      root_child_2 = edge1(n_edge - 2, 1) - 1,
+      root_child_1 = CHILD1(n_edge - 1) - 1,
+      root_child_2 = CHILD1(n_edge - 2) - 1,
       
       unmatched_1 = root_child_1 < n_tip ? 0 :
                        unmatched_below[root_child_1 - node_0]

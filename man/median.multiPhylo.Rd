@@ -80,9 +80,11 @@ Consensus methods:
 \code{\link[TreeTools:ConsensusWithout]{TreeTools::ConsensusWithout()}}
 
 Other tree space functions: 
+\code{\link{MSTSegments}()},
 \code{\link{MapTrees}()},
 \code{\link{MappingQuality}()},
-\code{\link{SpectralEigens}()}
+\code{\link{SpectralEigens}()},
+\code{\link{cluster-statistics}}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

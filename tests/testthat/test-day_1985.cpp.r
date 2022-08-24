@@ -1,11 +1,13 @@
 test_that("Day 1985 overflow", {
   bigTree <- PectinateTree(2^14 + 1)
-  expect_error(as.ClusterTable(bigTree))
-  expect_error(RobinsonFoulds(list(bigTree, bigTree)))
+  expect_error(TreeTools::as.ClusterTable(bigTree),
+               "Tree has too many leaves. Contact the 'TreeTools' maintainer.")
+  expect_error(RobinsonFoulds(list(bigTree, bigTree)),
+               "Tree has too many leaves. Contact the 'TreeTools' maintainer.")
 })
 
 test_that("Day 1985 examples", {
-  library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
+  library("TreeTools", quietly = TRUE)
   
   PrepareTree <- function(text) {
     tmp <- ape::read.tree(text = text)

@@ -51,12 +51,7 @@ RobinsonFouldsSplits(
 )
 }
 \arguments{
-\item{tree1}{Trees of class \code{phylo}, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.  Where implemented,
-\code{tree2 = NULL} will compute distances between each pair of trees in the list
-\code{tree1} using a fast algorithm based on Day (1985).}
-
-\item{tree2}{Trees of class \code{phylo}, with leaves labelled identically,
+\item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 \code{tree2 = NULL} will compute distances between each pair of trees in the list
 \code{tree1} using a fast algorithm based on Day (1985).}
@@ -74,13 +69,7 @@ If \code{FALSE}, results will not be rescaled.}
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}
 
-\item{splits1}{Logical matrices where each row corresponds to a leaf,
-either listed in the same order or bearing identical names (in any sequence),
-and each column corresponds to a split, such that each leaf is identified as
-a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
-split.}
-
-\item{splits2}{Logical matrices where each row corresponds to a leaf,
+\item{splits1, splits2}{Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
 and each column corresponds to a split, such that each leaf is identified as
 a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
@@ -96,11 +85,12 @@ distances between each  pair of trees in \code{tree1} and \code{tree2},
 or \code{splits1} and \code{splits2}.
 }
 \description{
-Calculate the Robinson–Foulds distance, or
+Calculate the Robinson–Foulds distance
+\insertCite{Robinson1981}{TreeDist}, or
 the equivalent similarity measure, with options to
 (i) annotate matched splits;
 (ii) weight splits according to their phylogenetic information content
-(Smith 2020).
+\insertCite{SmithDist}{TreeDist}.
 }
 \details{
 Note that if \code{reportMatching = TRUE}, the \code{pairScores} attribute returns
@@ -112,15 +102,15 @@ identical in both trees.  Consequently, splits that are more likely
 to be identical by chance alone make a smaller contribution to overall
 tree distance, because their similarity is less remarkable.
 
-Rapid comparison between multiple pairs of trees employs the Day (1985)
-linear-time algorithm.
+Rapid comparison between multiple pairs of trees employs the Day
+\insertCite{Day1985;textual}{TreeDist} linear-time algorithm.
 }
 \section{Functions}{
 \itemize{
-\item \code{RobinsonFouldsMatching}: Matched splits, intended for use with
+\item \code{RobinsonFouldsMatching()}: Matched splits, intended for use with
 \code{\link[=VisualizeMatching]{VisualizeMatching()}}.
-}}
 
+}}
 \section{Normalization}{
 
 \itemize{
@@ -144,13 +134,7 @@ InfoRobinsonFoulds(balanced7, pectinate7)
 VisualizeMatching(InfoRobinsonFoulds, balanced7, pectinate7)
 }
 \references{
-\insertRef{Robinson1981}{TreeDist}
-
-\insertRef{Day1985}{TreeDist}
-
-\insertRef{Steel2006}{TreeDist}
-
-\insertRef{SmithDist}{TreeDist}
+\insertAllCited{}
 }
 \seealso{
 Display paired splits: \code{\link[=VisualizeMatching]{VisualizeMatching()}}

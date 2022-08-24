@@ -16,13 +16,7 @@ GeneralizedRF(
 )
 }
 \arguments{
-\item{splits1}{Logical matrices where each row corresponds to a leaf,
-either listed in the same order or bearing identical names (in any sequence),
-and each column corresponds to a split, such that each leaf is identified as
-a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
-split.}
-
-\item{splits2}{Logical matrices where each row corresponds to a leaf,
+\item{splits1, splits2}{Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
 and each column corresponds to a split, such that each leaf is identified as
 a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
@@ -51,17 +45,13 @@ specified pair scorer. If \code{reportMatching = TRUE}, attribute also list:
 }
 }
 \description{
-An internal function to calculate Generalized
-Robinson–Foulds distances from
-splits.
+An internal function to calculate Generalized Robinson–Foulds
+distances from splits.
 }
 \details{
 Note that no checks will be made to confirm that \code{splits1} and \code{splits2}
 contain the same leaves in the same order.
 This is the responsibility of the calling function.
-}
-\references{
-\insertRef{Jonker1987}{TreeDist}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

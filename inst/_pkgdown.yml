@@ -36,8 +36,6 @@ reference:
     desc: Functions to facilitate interaction with the package.
     contents:
       - Plot3
-      - ClusterTable
-      - ClusterTable-methods
       - CompareAll
       - median.multiPhylo
       - LAPJV
@@ -63,23 +61,8 @@ navbar:
       text: Get started
       href: articles/Using-TreeDist.html
     reference:
-      text: Reference
+      text: Function reference
       href: reference/index.html
-    articles:
-      text: Articles
-      menu:
-      - text: Using TreeDist to calculate tree similarity
-        href: articles/Using-TreeDist.html
-      - text: Tree space analysis in TreeDist
-        href: articles/treespace.html
-      - text: Contextualizing tree distances
-        href: articles/using-distances.html
-      - text: Robinson-Foulds metric
-        href: articles/Robinson-Foulds.html
-      - text: Generalized Robinson-Foulds distances
-        href: articles/Generalized-RF.html
-      - text: Concepts of information
-        href: articles/information.html
       
     news:
       text: Changelog
@@ -88,10 +71,29 @@ navbar:
       icon: fa-github fa-lg
       href: https://github.com/ms609/TreeDist
 
+articles:
+  - title: Getting started
+    navbar: Tree distance analysis
+    contents:
+      - Using-TreeDist
+      - using-distances
+  - title: Tree space analysis
+    navbar: Tree space analysis
+    contents:
+      - treespace
+      - landscapes
+      - compare-treesets
+  - title: Tree distance introductions
+    navbar: Tree distance introductions
+    contents:
+      - information
+      - Robinson-Foulds
+      - Generalized-RF
+
 template:
   params:
     bootswatch: cerulean
     docsearch:
       api_key: 8bf44d312479af73720c5ca5fcc12eba
       index_name: treedist
-    ganalytics: UA-156666971-1
+    ganalytics: 312470940

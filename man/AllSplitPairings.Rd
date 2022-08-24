@@ -21,9 +21,9 @@ values should be divided by four.
 }
 \description{
 Calculate the variation of clustering information
-(Meil\ifelse{html}{\out{&#259;}}{a} 2007) for each possible pairing of
-non-trivial splits on \emph{n} leaves, tabulating the number of pairings with
-each similarity.
+\insertCite{Meila2007}{TreeDist} for each possible pairing of
+non-trivial splits on \emph{n} leaves \insertCite{SmithDist}{TreeDist},
+tabulating the number of pairings with each similarity.
 }
 \examples{
 AllSplitPairings(6)
@@ -31,9 +31,7 @@ AllSplitPairings(6)
 AllSplitPairings(6) / 4L
 }
 \references{
-\insertRef{Meila2007}{TreeDist}
-
-\insertRef{SmithDist}{TreeDist}
+\insertAllCited{}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

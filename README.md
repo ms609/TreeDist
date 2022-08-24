@@ -1,6 +1,6 @@
 # TreeDist
 
-[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![Project Status: The project has reached a stable, usable state but is no longer being actively developed; support/maintenance will be provided as time allows.](http://www.repostatus.org/badges/latest/inactive.svg)](https://www.repostatus.org/#inactive)
 [![codecov](https://codecov.io/gh/ms609/TreeDist/branch/master/graph/badge.svg)](https://codecov.io/gh/ms609/TreeDist)
 [![CRAN Status Badge](http://www.r-pkg.org/badges/version/TreeDist)](https://cran.r-project.org/package=TreeDist)
 [![CRAN Downloads](http://cranlogs.r-pkg.org/badges/TreeDist)](https://cran.r-project.org/package=TreeDist)
@@ -91,19 +91,22 @@ library('TreeDist')
 
 You can install the development version of the package with:
 ```r
-if (!require(devtools)) install.packages("devtools")
-devtools::install_github('ms609/TreeDist')
+if(!require("curl")) install.packages("curl")
+if(!require("remotes")) install.packages("remotes")
+remotes::install_github("ms609/TreeDist")
 ```
 
 # Tree space analysis
 
 Construct tree spaces and readily visualize projected landscapes, avoiding
 common analytical pitfalls (Smith, 2022),
-using the inbuilt graphical user interface:
+using the inbuilt graphical user interface (Shiny GUI):
 
 ```r
 TreeDist::MapTrees()
 ```
+
+![image](https://user-images.githubusercontent.com/1695515/164730749-0e4cad5e-dcd5-47c7-80ef-3464e776e0a6.png)
 
 Serious analysts should consult the
 [vignette](https://ms609.github.io/TreeDist/articles/treespace.html)
@@ -170,7 +173,7 @@ _Bioinformatics_, 36, 5007–5013.
 
 - Smith, M.R. (2022) [Robust analysis of phylogenetic tree
 space](https://dx.doi.org/10.1093/sysbio/syab100).
-_Systematic Biology_, syab100.
+_Systematic Biology_, 71, 1255–1270.
 
 
 Please note that the 'TreeDist' project is released with a

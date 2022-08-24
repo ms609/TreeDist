@@ -3,10 +3,37 @@
 - Functions to visualize cluster structure
 
 
-# TreeDist 2.3.0.9001
+
+# TreeDist 2.4.1.9001 (development)
+
+- New functions to measure cluster sizes.
+
+- New [vignette](https://ms609.github.io/TreeDist/articles/landscapes.html)
+  on tree landscape analysis.
+
+
+# TreeDist 2.4.1
+
+- New [vignette](https://ms609.github.io/TreeDist/articles/compare-treesets.html)
+  on how to compare tree sets.
+
+- `PathVector()` now treats trees with a root node as rooted.
+
+- Fix plot layout in [treespace vignette](https://ms609.github.io/TreeDist/articles/treespace.html).
+
+- Informative failure when not enough memory for `consensus_info()`.
+
+- Replace `throw` with `stop` in C++.
+
+
+# TreeDist 2.4.0
+
+- Correct calculation of trustworthiness and continuity metrics.
 
 - Depict strain in minimum spanning trees with `StrainCol()` and helper
   function `MSTSegments()`.
+
+- Update tests for consistency with "TreeTools" v1.7.
 
 - Use lighter Rcpp headers.
 

@@ -64,10 +64,10 @@ int cpp_mast (IntegerMatrix edge1, IntegerMatrix edge2, IntegerVector nTip) {
               n_all_nodes = n_tip + n_internal,
               n_edge = edge1.nrow();
   if (edge2.nrow() != n_edge) {
-    throw std::length_error("Both trees must contain the same number of edges.");
+    Rcpp::stop("Both trees must contain the same number of edges.");
   }
   if (n_tip > MAST_MAX_TIP) {
-    throw std::length_error("Tree too large; please contact maintainer for advice.");
+    Rcpp::stop("Tree too large; please contact maintainer for advice.");
   }
   
   int16
