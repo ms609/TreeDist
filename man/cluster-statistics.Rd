@@ -12,28 +12,29 @@
 \alias{MeanMSTEdge}
 \title{Cluster size statistics}
 \usage{
-SumOfRanges(mapping, cluster = 1)
+SumOfRanges(x, cluster = 1)
 
-SumOfVariances(mapping, cluster = 1)
+SumOfVariances(x, cluster = 1)
 
-SumOfVars(mapping, cluster = 1)
+SumOfVars(x, cluster = 1)
 
-MeanCentroidDistance(mapping, cluster = 1)
+MeanCentroidDistance(x, cluster = 1)
 
-MeanCentDist(mapping, cluster = 1)
+MeanCentDist(x, cluster = 1)
 
-MeanCentroidDist(mapping, cluster = 1)
+MeanCentroidDist(x, cluster = 1)
 
-MeanNN(mapping, cluster = 1)
+MeanNN(x, cluster = 1)
 
-MeanMSTEdge(mapping, cluster = 1)
+MeanMSTEdge(x, cluster = 1)
 }
 \arguments{
-\item{mapping}{Matrix in which each row lists the coordinates of a point
-in a Euclidian space.}
+\item{x}{Matrix in which each row lists the coordinates of a point
+in a Euclidian space; or, where supported, \code{dist} object specifying
+distances between each pair of points.}
 
 \item{cluster}{Optional integer vector specifying the cluster or group to
-which each row in \code{mapping} belongs.}
+which each row in \code{x} belongs.}
 }
 \value{
 \code{SumOfRanges()} returns a numeric specifying the sum of ranges

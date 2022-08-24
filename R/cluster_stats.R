@@ -1,10 +1,11 @@
 #' Cluster size statistics
 #' @name cluster-statistics
 #' 
-#' @param mapping Matrix in which each row lists the coordinates of a point
-#' in a Euclidian space.
+#' @param x Matrix in which each row lists the coordinates of a point
+#' in a Euclidian space; or, where supported, `dist` object specifying
+#' distances between each pair of points.
 #' @param cluster Optional integer vector specifying the cluster or group to
-#' which each row in `mapping` belongs.
+#' which each row in `x` belongs.
 #' 
 #' @examples
 #' points <- rbind(matrix(1:16, 4), rep(1, 4), matrix(1:32, 8, 4) / 10)
@@ -26,16 +27,16 @@ NULL
 #' @rdname cluster-statistics
 #' @examples SumOfRanges(points, cluster)
 #' @export
-SumOfRanges <- function(mapping, cluster = 1) {
-  if (is.null(dim(mapping))) {
-    warning(paste0("`mapping` lacks dimensions. ",
+SumOfRanges <- function(x, cluster = 1) {
+  if (is.null(dim(x))) {
+    warning(paste0("`x` lacks dimensions. ",
                    "Did you subset without specifying `drop = FALSE`?"))
-    mapping <- matrix(mapping, 1)
+    x <- matrix(x, 1)
   }
   
   # Return:
   vapply(seq_along(unique(cluster)), 
-         function(i) .SumOfRanges(mapping[cluster == i, , drop = FALSE]),
+         function(i) .SumOfRanges(x[cluster == i, , drop = FALSE]),
          numeric(1))
 }
 
@@ -52,16 +53,16 @@ SumOfRanges <- function(mapping, cluster = 1) {
 #' @examples SumOfVariances(points, cluster)
 #' @importFrom stats var
 #' @export
-SumOfVariances <- function(mapping, cluster = 1) {
-  if (is.null(dim(mapping))) {
-    warning(paste0("`mapping` lacks dimensions. ",
+SumOfVariances <- function(x, cluster = 1) {
+  if (is.null(dim(x))) {
+    warning(paste0("`x` lacks dimensions. ",
                    "Did you subset without specifying `drop = FALSE`?"))
-    mapping <- matrix(mapping, 1)
+    x <- matrix(x, 1)
   }
   
   # Return:
   vapply(seq_along(unique(cluster)), 
-         function(i) .SumOfVariances(mapping[cluster == i, , drop = FALSE]),
+         function(i) .SumOfVariances(x[cluster == i, , drop = FALSE]),
          numeric(1))
 }
 
@@ -79,16 +80,16 @@ SumOfVars <- SumOfVariances
 #' distance from the centroid to points in each cluster.
 #' @examples MeanCentroidDistance(points, cluster)
 #' @export
-MeanCentroidDistance <- function(mapping, cluster = 1) {
-  if (is.null(dim(mapping))) {
-    warning(paste0("`mapping` lacks dimensions. ",
+MeanCentroidDistance <- function(x, cluster = 1) {
+  if (is.null(dim(x))) {
+    warning(paste0("`x` lacks dimensions. ",
                    "Did you subset without specifying `drop = FALSE`?"))
-    mapping <- matrix(mapping, 1)
+    x <- matrix(x, 1)
   }
   
   # Return:
   vapply(seq_along(unique(cluster)),
-         function(i) .MeanCentroidDist(mapping[cluster == i, , drop = FALSE]),
+         function(i) .MeanCentroidDist(x[cluster == i, , drop = FALSE]),
          numeric(1))
 }
 
@@ -112,16 +113,36 @@ MeanCentroidDist <- MeanCentroidDistance
 #' point within a cluster to its nearest neighbour.
 #' @examples MeanNN(points, cluster)
 #' @export
-MeanNN <- function(mapping, cluster = 1) {
-  if (is.null(dim(mapping))) {
-    warning(paste0("`mapping` lacks dimensions. ",
+MeanNN <- function(x, cluster = 1) UseMethod("MeanNN")
+
+#' @export
+MeanNN.dist <- function(x, cluster = 1) {
+  d <- as.matrix(x)
+  diag(d) <- NA_real_
+  vapply(seq_along(unique(cluster)),
+         function(i) .MeanNN.dist(d[cluster == i, cluster == i, drop = FALSE]),
+         numeric(1))
+}
+
+.MeanNN.dist <- function(x) {
+  if (dim(x)[1] > 1) {
+    mean(apply(x, 1, min, na.rm = TRUE))
+  } else {
+    NA_real_
+  }
+}
+
+#' @export
+MeanNN.numeric <- function(x, cluster = 1) {
+  if (is.null(dim(x))) {
+    warning(paste0("`x` lacks dimensions. ",
                    "Did you subset without specifying `drop = FALSE`?"))
-    mapping <- matrix(mapping, 1)
+    x <- matrix(x, 1)
   }
   
   # Return:
   vapply(seq_along(unique(cluster)),
-         function(i) .MeanNN(mapping[cluster == i, , drop = FALSE]),
+         function(i) .MeanNN(x[cluster == i, , drop = FALSE]),
          numeric(1))
 }
 
@@ -144,16 +165,16 @@ MeanNN <- function(mapping, cluster = 1) {
 #' edge in the minimum spanning tree of points within each cluster.
 #' @examples MeanMSTEdge(points, cluster)
 #' @export
-MeanMSTEdge <- function(mapping, cluster = 1) {
-  if (is.null(dim(mapping))) {
-    warning(paste0("`mapping` lacks dimensions. ",
+MeanMSTEdge <- function(x, cluster = 1) {
+  if (is.null(dim(x))) {
+    warning(paste0("`x` lacks dimensions. ",
                    "Did you subset without specifying `drop = FALSE`?"))
-    mapping <- matrix(mapping, 1)
+    x <- matrix(x, 1)
   }
   
   # Return:
   vapply(seq_along(unique(cluster)),
-         function(i) .MeanMSTEdge(mapping[cluster == i, , drop = FALSE]),
+         function(i) .MeanMSTEdge(x[cluster == i, , drop = FALSE]),
          numeric(1))
 }
 

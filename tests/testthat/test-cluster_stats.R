@@ -43,6 +43,7 @@ test_that("MeanNN()", {
     sapply(1:3, function(i) MeanNN(points[cluster == i, , drop = FALSE])),
     MeanNN(points, cluster)
   )
+  expect_equal(MeanNN(points, cluster), MeanNN(dist(points), cluster))
 })
 
 test_that("MeanMSTEdge()", {
