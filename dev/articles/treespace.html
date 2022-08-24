@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tree space &amp; landscape analysis • TreeDist</title>
+<title>Tree space analysis • TreeDist</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
@@ -13,7 +13,7 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><!-- docsearch --><script src="../docsearch.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.3/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous">
 <link href="../docsearch.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Tree space &amp; landscape analysis">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Tree space analysis">
 <meta property="og:description" content="TreeDist">
 <meta name="robots" content="noindex">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -42,7 +42,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.4.1.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.4.1.9001</span>
       </span>
     </div>
 
@@ -80,7 +80,10 @@
     </li>
 <li class="dropdown-header">Tree space analysis</li>
     <li>
-      <a href="../articles/treespace.html">Tree space &amp; landscape analysis</a>
+      <a href="../articles/treespace.html">Tree space analysis</a>
+    </li>
+    <li>
+      <a href="../articles/landscapes.html">Analysing landscapes of phylogenetic trees</a>
     </li>
     <li>
       <a href="../articles/compare-treesets.html">Comparing sets of trees from different analyses</a>
@@ -129,7 +132,7 @@
       </header><script src="treespace_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Tree space &amp; landscape analysis</h1>
+      <h1 data-toc-skip>Tree space analysis</h1>
                         <h4 data-toc-skip class="author"><a href="https://smithlabdurham.github.io/" class="external-link">Martin R. Smith</a></h4>
             
       
@@ -140,7 +143,7 @@
 
     
     
-<p>It can be instructive to visualize the distribution of trees in a spatial “landscape”. This can be a helpful means to address whether discrete islands of trees exist, or whether analytical runs have converged. Such analysis is relatively simple to conduct, but a few common oversights can mislead interpretation.</p>
+<p>It can be instructive to visualize the distribution of trees by mapping their spatial relationships. This can be a helpful means to address whether discrete islands exist in a sample of trees, or whether analytical runs have converged. Such analysis is relatively simple to conduct, but a few common oversights can mislead interpretation.</p>
 <div class="section level3">
 <h3 id="tree-space-analysis-via-user-interface">Tree space analysis via user interface<a class="anchor" aria-label="anchor" href="#tree-space-analysis-via-user-interface"></a>
 </h3>
@@ -278,7 +281,7 @@
 <span><span class="va">plotSeq</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/lower.tri.html" class="external-link">upper.tri</a></span><span class="op">(</span><span class="va">plotSeq</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">nDim</span> <span class="op">*</span> <span class="op">(</span><span class="va">nDim</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">/</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="va">plotSeq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">plotSeq</span><span class="op">[</span><span class="op">-</span><span class="va">nDim</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">plotSeq</span><span class="op">[</span><span class="va">nDim</span> <span class="op">*</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">nDim</span> <span class="op">*</span> <span class="op">(</span><span class="va">nDim</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">/</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">layout</a></span><span class="op">(</span><span class="va">plotSeq</span><span class="op">)</span></span>
+<span><span class="fu">layout</span><span class="op">(</span><span class="va">plotSeq</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">2</span><span class="op">:</span><span class="va">nDim</span><span class="op">)</span> <span class="kw">for</span> <span class="op">(</span><span class="va">j</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">i</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
@@ -399,6 +402,7 @@
 </h3>
 <p>You may wish to:</p>
 <ul>
+<li><p><a href="landscapes.html">Analyse landscapes</a> of phylogenetic trees</p></li>
 <li><p><a href="using-distances.html">Provide context</a> for tree distances</p></li>
 <li><p>Review <a href="https://ms609.github.io/TreeDist/index.html">available distance measures</a> and the corresponding <a href="https://ms609.github.io/TreeDist/reference/index.html#section-tree-distance-measures">functions</a></p></li>
 <li><p><a href="https://ms609.github.io/TreeDistData/articles/09-expected-similarity.html">Interpret tree distance metrics</a></p></li>

@@ -42,7 +42,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.4.1.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.4.1.9001</span>
       </span>
     </div>
 
@@ -80,7 +80,10 @@
     </li>
 <li class="dropdown-header">Tree space analysis</li>
     <li>
-      <a href="../articles/treespace.html">Tree space &amp; landscape analysis</a>
+      <a href="../articles/treespace.html">Tree space analysis</a>
+    </li>
+    <li>
+      <a href="../articles/landscapes.html">Analysing landscapes of phylogenetic trees</a>
     </li>
     <li>
       <a href="../articles/compare-treesets.html">Comparing sets of trees from different analyses</a>
@@ -366,7 +369,7 @@ In such a context, it can be relevant to normalize tree similarity against the <
 <p>Now we can plot this information on a ternary diagram.</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="va">treeSearchInstalled</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"Ternary"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">layout</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu">layout</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, widths <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="va">oldPar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://ms609.github.io/Ternary/reference/TernaryPlot.html" class="external-link">TernaryPlot</a></span><span class="op">(</span>alab <span class="op">=</span> <span class="st">"Information absent in degraded tree"</span>, </span>
 <span>              blab <span class="op">=</span> <span class="st">"\n\nCorrect information in degraded tree"</span>, </span>
