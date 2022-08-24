@@ -16,6 +16,9 @@ vignette: >
 Landscapes of trees are [mappings of tree space](treespace.html) that are
 contoured according to some optimality criterion -- often, but not necessarily,
 a tree's score under a phylogenetic reconstruction technique [@Bastert2002].
+Detecting "islands" or "terraces" of trees can illuminate the nature of the
+space of optimal trees and thus inform tree search strategy [@Maddison1991;
+@Sanderson2011].
 
 For simplicity (and to avoid scoring trees against a dataset), this example
 uses a tree's balance (measured using the total cophenetic index) as its score
