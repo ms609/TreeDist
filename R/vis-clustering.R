@@ -17,6 +17,7 @@
 #' group <- rep(1:4, each = 21)
 #' trees <- as.phylo(treeNumbers, 8)
 #' distances <- ClusteringInfoDist(trees)
+#' set.seed(2) # Good clustering
 #' set.seed(1) # Bad clustering
 #' clustering <- kmeans(distances, 4)
 #' plot(cmdscale(distances), col = clustering$cluster, cex = 1.5,
