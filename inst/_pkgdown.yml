@@ -81,6 +81,7 @@ articles:
     navbar: Tree space analysis
     contents:
       - treespace
+      - landscapes
       - compare-treesets
   - title: Tree distance introductions
     navbar: Tree distance introductions
