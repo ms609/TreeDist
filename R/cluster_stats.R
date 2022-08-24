@@ -165,7 +165,29 @@ MeanNN.numeric <- function(x, cluster = 1) {
 #' edge in the minimum spanning tree of points within each cluster.
 #' @examples MeanMSTEdge(points, cluster)
 #' @export
-MeanMSTEdge <- function(x, cluster = 1) {
+MeanMSTEdge <- function(x, cluster = 1) UseMethod("MeanMSTEdge")
+
+#' @export
+MeanMSTEdge.dist <- function(x, cluster = 1) {
+  d <- as.matrix(x)
+  diag(d) <- NA_real_
+  vapply(seq_along(unique(cluster)),
+         function(i) .MeanNN.dist(d[cluster == i, cluster == i, drop = FALSE]),
+         numeric(1))
+}
+
+.MeanMSTEdge.dist <- function(x) {
+  n <- dim(x)[1]
+  # Return:
+  if (n > 1) {
+    MSTLength(as.dist(x)) / (n - 1)
+  } else {
+    NA_real_
+  }
+}
+
+#' @export
+MeanMSTEdge.numeric <- function(x, cluster = 1) {
   if (is.null(dim(x))) {
     warning(paste0("`x` lacks dimensions. ",
                    "Did you subset without specifying `drop = FALSE`?"))

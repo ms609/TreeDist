@@ -55,4 +55,5 @@ test_that("MeanMSTEdge()", {
     sapply(1:3, function(i) MeanMSTEdge(points[cluster == i, , drop = FALSE])),
     MeanMSTEdge(points, cluster)
   )
+  expect_equal(MeanMSTEdge(dist(points), cluster), MeanMSTEdge(points, cluster))
 })
