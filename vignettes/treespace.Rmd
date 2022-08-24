@@ -22,9 +22,10 @@ protoclust <- if (requireNamespace("protoclust", quietly = TRUE)) {
 }
 ```
 
-It can be instructive to visualize the distribution of trees in a spatial
-"landscape". This can be a helpful means to address whether discrete islands
-of trees exist, or whether analytical runs have converged.
+It can be instructive to visualize the distribution of trees by mapping their
+spatial relationships.
+This can be a helpful means to address whether discrete islands exist in a
+sample of trees, or whether analytical runs have converged.
 Such analysis is relatively simple to conduct, but a few common oversights
 can mislead interpretation.
 

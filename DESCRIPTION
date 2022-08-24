@@ -58,6 +58,7 @@ Suggests:
   knitr,
   MASS,
   parallel,
+  plotly,
   protoclust,
   Quartet,
   readxl,
