@@ -2,6 +2,9 @@
 
 - New functions to measure cluster sizes.
 
+- New [vignette](https://ms609.github.io/TreeDist/articles/landscapes.html)
+  on tree landscape analysis.
+
 
 # TreeDist 2.4.1
 
