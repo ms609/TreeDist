@@ -10,7 +10,7 @@ ClusterMDS(
   proposal = cmdscale(distances),
   maxIter = 1e+06,
   stability = 42,
-  weight = list(sil = 1, mst = 1, icd = NULL),
+  weight = c(sil = 1, mst = 1, sor = 1, sov = 1, mcd = 1, mnn = 1, mse = 1, icd = 0),
   trace = FALSE
 )
 }

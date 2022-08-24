@@ -17,7 +17,6 @@
 #' group <- rep(1:4, each = 21)
 #' trees <- as.phylo(treeNumbers, 8)
 #' distances <- ClusteringInfoDist(trees)
-#' set.seed(2) # Good clustering
 #' set.seed(1) # Bad clustering
 #' clustering <- kmeans(distances, 4)
 #' plot(cmdscale(distances), col = clustering$cluster, cex = 1.5,
@@ -114,13 +113,22 @@ ClusVis <- function(distances, clust, col = seq_len) {
 #' @export
 ClusterMDS <- function(clust, distances, proposal = cmdscale(distances),
                        maxIter = 1e6, stability = 42,
-                       weight = list("sil" = 1, "mst" = 1, "icd" = NULL),
+                       weight = c("sil" = 1,
+                                  "mst" = 1,
+                                  "sor" = 1,
+                                  "sov" = 1,
+                                  "mcd" = 1,
+                                  "mnn" = 1,
+                                  "mse" = 1,
+                                  "icd" = 0),
                        trace = FALSE) {
   distances <- as.dist(distances)
   treeID <- combn(attr(distances, "Size"), 2)
+  Measuring <- function(x) !is.na(weight[x]) && weight[x] != 0
   Score <- function(orig, new) sqrt(sum((orig - new) ^ 2))
+  scores <- 0 * weight
   
-  if (!is.null(weight[["icd"]])) {
+  if (Measuring("icd")) {
     clustID <- matrix(clust[treeID], 2)
     nClust <- max(clust)
     clustPairs <- combn(nClust + 1, 2)
@@ -135,12 +143,16 @@ ClusterMDS <- function(clust, distances, proposal = cmdscale(distances),
     interClustDists <- apply(clustPair, 2, function(x) mean(distances[x]))
   }
   
-  if (!is.null(weight[["mst"]])) {
+  if (Measuring("mst")) {
     mst <- MSTEdges(distances)
     onMST <- duplicated(cbind(t(mst), treeID), MARGIN = 2)[
       -seq_len(dim(mst)[1])]
     mstLength <- distances[onMST]
     mstLength <- mstLength / sum(mstLength)
+  }
+  
+  if (Measuring("mnn")) {
+    mnnZero <- MeanNN(distances)
   }
   
   sil <- cluster::silhouette(clust, distances)
@@ -162,24 +174,25 @@ ClusterMDS <- function(clust, distances, proposal = cmdscale(distances),
   for (i in seq_len(maxIter)) {
     dprime <- dist(proposal)
     
-    if (!is.null(weight[["icd"]])) {
+    if (Measuring("icd")) {
       icd <- apply(clustPair, 2, function(x) sum(dprime[x]) / sum(x))
       rescale <- sum(interClustDists) / sum(icd)
       proposal <- proposal * rescale
       icd <- icd * rescale
-      icdScore <- sqrt(sum((interClustDists - icd) ^ 2)) * weight[["icd"]]
-    } else {
-      icdScore <- 0
+      scores["icd"] <- sqrt(sum((interClustDists - icd) ^ 2))
     }
     
-    if (!is.null(weight[["mst"]])) {
+    if (Measuring("mst")) {
       mstPrime <- dprime[onMST]
       mstPrime <- mstPrime / sum(mstPrime)
-      mstScore <- weight[["mst"]] * Score(mstLength, mstPrime)
-    } else {
-      mstScore <- 0
+      scores["mst"] <- Score(mstLength, mstPrime)
     }
     
+    if (Measuring("mnn")) {
+      scores["mnn"] <- Score(mnnZero, MeanNN(proposal, cluster))
+    }
+
+
     mappedSil <- cluster::silhouette(clust, dprime)
     dSil <- mappedSil[, "sil_width"] - silWidth
     dSil2 <- dSil * dSil
