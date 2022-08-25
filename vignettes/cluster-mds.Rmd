@@ -39,6 +39,51 @@ two-dimensional cluster geometry.  Each distance is then modified by adding
 Gaussian noise with standard deviation 1; the sign of any resulting
 negative distances is inverted so that all distances are positive.
 
+```{r init}
+LayoutRow <- function(nCl, zero = 0) {
+  zero + cbind(rep(0, nCl), rep(1, nCl), 1 + seq_len(nCl))
+}
+layouts <- list(
+  rbind(cbind(rep(0, 1), rep(1, 1), 2:2),
+        cbind(rep(3, 1), rep(4, 1), 5:5),
+        cbind(rep(6, 1), rep(7, 1), 8:8)),
+  rbind(cbind(rep(0, 2), rep(1, 2), 2:3),
+        cbind(rep(4, 2), rep(5, 2), 6:7),
+        cbind(rep(8, 2), rep(9, 2), 10:11)),
+  rbind(cbind(rep(0, 3), rep(1, 3), 2:4),
+        cbind(rep(5, 3), rep(6, 3), 7:9),
+        cbind(rep(10, 3), rep(11, 3), 12:14)),
+  rbind(cbind(rep(0, 4), rep(1, 4), 2:5),
+        cbind(rep(6, 4), rep(7, 4), 8:11),
+        cbind(rep(12, 4), rep(13, 4), 14:17))
+)
+```
+
+```{r simplest}
+hiDim <- 6
+clust <- rep(1, 32)
+nPts <- length(clust)
+points <- matrix(rnorm(nPts * hiDim, 1), nPts, hiDim)
+distances <- dist(points)
+cmds <- cmdscale(distances)
+
+par(mar = rep(1.5, 4))
+silmds <- ClusterMDS(clust, distances, cmds, trace = TRUE)
+
+layout(1 + LayoutRow(1, 1))
+plot(points, col = 1:nCl)
+plot(cluster::silhouette(clust, distances), col = 1:nCl, main = "Original")
+ClusVis(distances, clust, setPar = FALSE)
+
+plot(silmds, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
+plot(cluster::silhouette(clust, dist(silmds)), col = 1:nCl, main = "SilMDS")
+ClusVis(dist(silmds), clust, setPar = FALSE)
+
+plot(cmds, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
+plot(cluster::silhouette(clust, dist(cmds)), col = 1:nCl, main = "Classic MDS")
+ClusVis(dist(cmds), clust, setPar = FALSE)
+ClusVis(dist(cmds), clust, setPar = FALSE)
+```
 
 ```{r simple-clusters, message = FALSE}
 library("TreeDist")

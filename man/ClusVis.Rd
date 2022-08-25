@@ -4,7 +4,7 @@
 \alias{ClusVis}
 \title{Visualize clustering distances}
 \usage{
-ClusVis(distances, clust, col = seq_len)
+ClusVis(distances, clust, col = seq_len, setPar = TRUE)
 }
 \arguments{
 \item{distances}{Matrix or \code{dist} object giving distance between each
@@ -17,6 +17,9 @@ which each tree is assigned.}
 Either specify a vector of colours with an entry for each cluster,
 or a function that will generate a palette when passed a variable denoting
 the number of colours required.}
+
+\item{setPar}{Logical specifying whether to set graphical parameters to
+display all plots at once.}
 }
 \description{
 Visualize clustering distances

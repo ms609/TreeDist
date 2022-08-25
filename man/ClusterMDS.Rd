@@ -10,7 +10,8 @@ ClusterMDS(
   proposal = cmdscale(distances),
   maxIter = 1e+06,
   stability = 42,
-  weight = c(sil = 1, mst = 1, sor = 1, sov = 1, mcd = 1, mnn = 1, mse = 1, icd = 0),
+  weight = c(sil = 1, ave = 1, max = 1, ks = 0, mst = 0, sor = 1, sov = 1, dfm = 1, mnn =
+    1, ste = 1),
   trace = FALSE
 )
 }
@@ -19,6 +20,23 @@ ClusterMDS(
 
 \item{stability}{After proposing \code{stability} moves without improvement,
 stop.}
+
+\item{weight}{A named vector listing weights to apply to clustering
+properties when constructing mapping. Options:
+\code{sil}: silhouette coefficients
+\code{ave}: Mean and median distances between points within each cluster,
+and between each pair of clusters
+\code{max}: Minimum and maximum distances between points within each cluster,
+and between each pair of clusters
+
+\code{ks}: Kolmogorov–Smirnov test statistic between original and mapped
+distances, conducted for all cluster pairs
+\code{mst}: relative lengths of edges of minimum spanning tree
+\code{sor}: Sum of Ranges of each cluster
+\code{sov}: Sum of Variance within each cluster
+\code{dfm}: Mean distance from median
+\code{mnn}: Mean distance to nearest neighbour
+\code{ste}: Mean length of minimum spanning tree edge}
 }
 \description{
 Visualize clustering structure via Multi-dimensional scaling
@@ -30,19 +48,31 @@ trees <- as.phylo(treeNumbers, 8)
 distances <- ClusteringInfoDist(trees)
 clustering <- kmeans(distances, 4)
 clust <- clustering$cluster
+clust <- rep(1:4, c(21, 21, 21, 21))
+nCl <- 4
 cmds <- cmdscale(distances)
 
-par(mfrow = c(2, 3))
-plot(cmds, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
-plot(cluster::silhouette(clust, distances), col = 1:4, main = "Original")
-plot(cluster::silhouette(clust, dist(cmds)), col = 1:4, main = "Classic MDS")
+layout4 <- rbind(cbind(rep(0, 4), rep(1, 4), 2:5),
+             cbind(rep(6, 4), rep(7, 4), 8:11),
+             cbind(rep(12, 4), rep(13, 4), 14:17))
+layout3 <- rbind(cbind(rep(0, 3), rep(1, 3), 2:4),
+             cbind(rep(5, 3), rep(6, 3), 7:9),
+             cbind(rep(10, 3), rep(11, 3), 12:14))
+layout(1 + if(nCl == 4) layout4 else layout3)
+par(mar = rep(1.5, 4))
+silmds <- ClusterMDS(clust, distances, cmds, trace = TRUE, stab = 32)
+plot(cluster::silhouette(clust, distances), col = 1:nCl, main = "Original")
+ClusVis(distances, clust, setPar = FALSE)
 
-silmds <- ClusterMDS(clust, distances, cmds)
 plot(silmds, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
-MSTSegments(silmds, MSTEdges(distances),
-            col = StrainCol(distances, silmds))
-plot(cluster::silhouette(clust, dist(silmds)), col = 1:4, main = "SilMDS")
+# MSTSegments(silmds, MSTEdges(distances),
+#             col = StrainCol(distances, silmds))
+plot(cluster::silhouette(clust, dist(silmds)), col = 1:nCl, main = "SilMDS")
+ClusVis(dist(silmds), clust, setPar = FALSE)
 
+plot(cmds, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
+plot(cluster::silhouette(clust, dist(cmds)), col = 1:nCl, main = "Classic MDS")
+ClusVis(dist(cmds), clust, setPar = FALSE)
 
 }
 \author{
