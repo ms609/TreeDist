@@ -200,6 +200,39 @@ ClusVis(dist(cmds), clust, setPar = FALSE)
 ```
 
 
+Three Gaussian clusters
+
+```{r 3-clust, message = FALSE}
+clN <- c(32, 32, 32)
+nCl <- length(clN)
+clust <- rep(seq_len(nCl), clN)
+clVar <- rep(c(1, 1, 2), clN)
+clOffset <- rep(c(-1, 0, 2), clN)
+
+nPts <- length(clust)
+points <- (matrix(rnorm(nPts * hiDim), nPts, hiDim) * clVar) + clOffset
+distances <- dist(points)
+cmds <- cmdscale(distances)
+
+silmds <- ClusterMDS(clust, distances, cmds, trace = TRUE, stability = 24)
+
+layout(LayoutRow(nCl, 1))
+par(mar = rep(1.5, 4))
+
+plot(points, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
+plot(cluster::silhouette(clust, distances), col = 1:nCl, main = "Original")
+ClusVis(distances, clust, setPar = FALSE)
+
+plot(silmds, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
+plot(cluster::silhouette(clust, dist(silmds)), col = 1:nCl, main = "SilMDS")
+ClusVis(dist(silmds), clust, setPar = FALSE)
+
+plot(cmds, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
+plot(cluster::silhouette(clust, dist(cmds)), col = 1:nCl, main = "Classic MDS")
+ClusVis(dist(cmds), clust, setPar = FALSE)
+```
+
+
 
 
 And more complicatedly:
