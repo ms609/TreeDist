@@ -35,6 +35,26 @@ test_that("MeanCentroidDistance()", {
   )
 })
 
+test_that("DistanceFromMedian()", {
+  expect_warning(
+    expect_equal(DistanceFromMedian(points[cluster == 2, ]), NA_real_),
+    "lacks dimensions"
+  )
+  
+  expect_equal(DistanceFromMedian(points, cluster),
+               c((2 + 2 + 4) / 3,
+                 NA_real_,
+                 sum(0.6, 0.4, 0.2, 0.2, 0.4, 0.6, 0.8) / 7)
+  )
+  
+  expect_equal(
+    sapply(1:3, function(i) DistFromMed(points[cluster == i, , drop = FALSE])),
+    DistanceFromMedian(points, cluster)
+  )
+  expect_equal(DistFromMed(dist(points), cluster),
+               DistanceFromMedian(points, cluster))
+})
+
 test_that("MeanNN()", {
   expect_warning(expect_equal(MeanNN(points[cluster == 2, ]), NA_real_),
                  "lacks dimensions")
@@ -43,7 +63,7 @@ test_that("MeanNN()", {
     sapply(1:3, function(i) MeanNN(points[cluster == i, , drop = FALSE])),
     MeanNN(points, cluster)
   )
-  expect_equal(MeanNN(points, cluster), MeanNN(dist(points), cluster))
+  expect_equal(MeanNN(dist(points), cluster), MeanNN(points, cluster))
 })
 
 test_that("MeanMSTEdge()", {
