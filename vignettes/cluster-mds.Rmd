@@ -40,6 +40,8 @@ Gaussian noise with standard deviation 1; the sign of any resulting
 negative distances is inverted so that all distances are positive.
 
 ```{r init}
+library("TreeTools", quietly = TRUE)
+library("TreeDist")
 LayoutRow <- function(nCl, zero = 0) {
   if (nCl > 1) {
     zero + cbind(rep(0, nCl), rep(1, nCl), 1 + seq_len(nCl))
@@ -237,7 +239,7 @@ ClusVis(dist(cmds), clust, setPar = FALSE)
 
 And more complicatedly:
 
-```{r simple-clusters, message = FALSE}
+```{r simple-clusters, message = FALSE, eval = FALSE}
 library("TreeDist")
 par(mfrow = 1:2)
 cl <- rep(1:4, 6:9)
@@ -279,7 +281,7 @@ plot(cluster::silhouette(cl, dist(silmds)), col = 1:4, main = "Cluster MDS")
 
 It's good to be sure that we're robust to different starting positions.
 
-```{r where-to-start, message = FALSE}
+```{r where-to-start, message = FALSE, eval = FALSE}
 randomStart <- matrix(runif(nPts * 2), nPts, 2)
 silmds <- ClusterMDS(cl, distances, randomStart,
                      stability = 200, trace = TRUE)

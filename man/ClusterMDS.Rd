@@ -10,8 +10,8 @@ ClusterMDS(
   proposal = cmdscale(distances),
   maxIter = 1e+06,
   stability = 42,
-  weight = c(sil = 1, ave = 1, max = 1, ks = 0, mst = 0, sor = 1, sov = 1, dfm = 1, mnn =
-    1, ste = 1),
+  weight = c(sil = 1, ave = 1, max = 1, ks = 1, sor = 1, sov = 1, dfm = 1, mnn = 1, ste =
+    1),
   trace = FALSE
 )
 }
@@ -31,7 +31,6 @@ and between each pair of clusters
 
 \code{ks}: Kolmogorov–Smirnov test statistic between original and mapped
 distances, conducted for all cluster pairs
-\code{mst}: relative lengths of edges of minimum spanning tree
 \code{sor}: Sum of Ranges of each cluster
 \code{sov}: Sum of Variance within each cluster
 \code{dfm}: Mean distance from median
@@ -51,6 +50,7 @@ clust <- clustering$cluster
 clust <- rep(1:4, c(21, 21, 21, 21))
 nCl <- 4
 cmds <- cmdscale(distances)
+silmds <- cmds
 
 layout4 <- rbind(cbind(rep(0, 4), rep(1, 4), 2:5),
              cbind(rep(6, 4), rep(7, 4), 8:11),
@@ -60,13 +60,21 @@ layout3 <- rbind(cbind(rep(0, 3), rep(1, 3), 2:4),
              cbind(rep(10, 3), rep(11, 3), 12:14))
 layout(1 + if(nCl == 4) layout4 else layout3)
 par(mar = rep(1.5, 4))
-silmds <- ClusterMDS(clust, distances, cmds, trace = TRUE, stab = 32)
+silmds <- ClusterMDS(clust, distances, silmds, trace = TRUE, stab = 72,
+weight = c("sil" = 1,
+           "ave" = 1,
+           "max" = 1,
+           "ks" = 1,
+           "sor" = 1,
+           "sov" = 1,
+           "dfm" = 1,
+           "mnn" = 1,
+           "ste" = 1)
+)
 plot(cluster::silhouette(clust, distances), col = 1:nCl, main = "Original")
 ClusVis(distances, clust, setPar = FALSE)
 
 plot(silmds, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
-# MSTSegments(silmds, MSTEdges(distances),
-#             col = StrainCol(distances, silmds))
 plot(cluster::silhouette(clust, dist(silmds)), col = 1:nCl, main = "SilMDS")
 ClusVis(dist(silmds), clust, setPar = FALSE)
 
