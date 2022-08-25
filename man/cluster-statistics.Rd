@@ -8,6 +8,8 @@
 \alias{MeanCentroidDistance}
 \alias{MeanCentDist}
 \alias{MeanCentroidDist}
+\alias{DistanceFromMedian}
+\alias{DistFromMed}
 \alias{MeanNN}
 \alias{MeanMSTEdge}
 \title{Cluster size statistics}
@@ -23,6 +25,10 @@ MeanCentroidDistance(x, cluster = 1)
 MeanCentDist(x, cluster = 1)
 
 MeanCentroidDist(x, cluster = 1)
+
+DistanceFromMedian(x, cluster = 1)
+
+DistFromMed(x, cluster = 1)
 
 MeanNN(x, cluster = 1)
 
@@ -45,6 +51,9 @@ within each cluster across all dimensions.
 
 \code{MeanCentroidDistance()} returns a numeric specifying the mean
 distance from the centroid to points in each cluster.
+
+\code{DistanceFromMedian()} returns a numeric specifying the mean distance
+of each point (except the median) from the median point of its cluster.
 
 \code{MeanNN()} returns a numeric specifying the mean distance from each
 point within a cluster to its nearest neighbour.
@@ -69,6 +78,7 @@ plot(
 SumOfRanges(points, cluster)
 SumOfVariances(points, cluster)
 MeanCentroidDistance(points, cluster)
+DistanceFromMedian(points, cluster)
 MeanNN(points, cluster)
 MeanMSTEdge(points, cluster)
 }

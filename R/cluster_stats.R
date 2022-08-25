@@ -109,6 +109,59 @@ MeanCentroidDist <- MeanCentroidDistance
 }
 
 #' @rdname cluster-statistics
+#' @return `DistanceFromMedian()` returns a numeric specifying the mean distance
+#' of each point (except the median) from the median point of its cluster.
+#' @examples DistanceFromMedian(points, cluster)
+#' @export
+DistanceFromMedian <- function(x, cluster = 1) UseMethod("DistanceFromMedian")
+
+#' @rdname cluster-statistics
+#' @export
+DistFromMed <- DistanceFromMedian
+
+#' @export
+DistanceFromMedian.dist <- function(x, cluster = 1) {
+  d <- as.matrix(x)
+  vapply(seq_along(unique(cluster)),
+         function(i) {
+           .DistanceFromMedian.dist(
+             d[cluster == i, cluster == i, drop = FALSE])
+         },
+         numeric(1))
+}
+
+#' @export
+DistanceFromMedian.numeric <- function(x, cluster = 1) {
+  if (is.null(dim(x))) {
+    warning(paste0("`x` lacks dimensions. ",
+                   "Did you subset without specifying `drop = FALSE`?"))
+    x <- matrix(x, 1)
+  }
+  
+  # Return:
+  vapply(seq_along(unique(cluster)),
+         function(i) .DistanceFromMedian(x[cluster == i, , drop = FALSE]),
+         numeric(1))
+}
+
+.DistanceFromMedian <- function(x) {
+  if (dim(x)[1] > 1) {
+    .DistanceFromMedian.dist(as.matrix(dist(x)))
+  } else {
+    NA_real_
+  }
+}
+
+.DistanceFromMedian.dist <- function(d) {
+  if (dim(d)[1] > 1) {
+    medPoint <- which.min(unname(colSums(d)))
+    mean(d[medPoint, -medPoint])
+  } else {
+    NA_real_
+  }
+}
+
+#' @rdname cluster-statistics
 #' @return `MeanNN()` returns a numeric specifying the mean distance from each
 #' point within a cluster to its nearest neighbour.
 #' @examples MeanNN(points, cluster)
