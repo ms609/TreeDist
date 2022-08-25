@@ -110,33 +110,38 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">SumOfRanges</span><span class="op">(</span><span class="va">mapping</span>, cluster <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">SumOfRanges</span><span class="op">(</span><span class="va">x</span>, cluster <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">SumOfVariances</span><span class="op">(</span><span class="va">mapping</span>, cluster <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu">SumOfVariances</span><span class="op">(</span><span class="va">x</span>, cluster <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">SumOfVars</span><span class="op">(</span><span class="va">mapping</span>, cluster <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu">SumOfVars</span><span class="op">(</span><span class="va">x</span>, cluster <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">MeanCentroidDistance</span><span class="op">(</span><span class="va">mapping</span>, cluster <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu">MeanCentroidDistance</span><span class="op">(</span><span class="va">x</span>, cluster <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">MeanCentDist</span><span class="op">(</span><span class="va">mapping</span>, cluster <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu">MeanCentDist</span><span class="op">(</span><span class="va">x</span>, cluster <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">MeanCentroidDist</span><span class="op">(</span><span class="va">mapping</span>, cluster <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu">MeanCentroidDist</span><span class="op">(</span><span class="va">x</span>, cluster <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">MeanNN</span><span class="op">(</span><span class="va">mapping</span>, cluster <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu">DistanceFromMedian</span><span class="op">(</span><span class="va">x</span>, cluster <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">MeanMSTEdge</span><span class="op">(</span><span class="va">mapping</span>, cluster <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">DistFromMed</span><span class="op">(</span><span class="va">x</span>, cluster <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">MeanNN</span><span class="op">(</span><span class="va">x</span>, cluster <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">MeanMSTEdge</span><span class="op">(</span><span class="va">x</span>, cluster <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>mapping</dt>
+    <dl><dt>x</dt>
 <dd><p>Matrix in which each row lists the coordinates of a point
-in a Euclidian space.</p></dd>
+in a Euclidian space; or, where supported, <code>dist</code> object specifying
+distances between each pair of points.</p></dd>
 
 
 <dt>cluster</dt>
 <dd><p>Optional integer vector specifying the cluster or group to
-which each row in <code>mapping</code> belongs.</p></dd>
+which each row in <code>x</code> belongs.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -153,6 +158,10 @@ within each cluster across all dimensions.</p>
 
 <p><code>MeanCentroidDistance()</code> returns a numeric specifying the mean
 distance from the centroid to points in each cluster.</p>
+
+
+<p><code>DistanceFromMedian()</code> returns a numeric specifying the mean distance
+of each point (except the median) from the median point of its cluster.</p>
 
 
 <p><code>MeanNN()</code> returns a numeric specifying the mean distance from each
@@ -196,6 +205,8 @@ edge in the minimum spanning tree of points within each cluster.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 6.666667       NA 0.240000</span>
 <span class="r-in"><span><span class="fu">MeanCentroidDistance</span><span class="op">(</span><span class="va">points</span>, <span class="va">cluster</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2.0 0.0 0.4</span>
+<span class="r-in"><span><span class="fu">DistanceFromMedian</span><span class="op">(</span><span class="va">points</span>, <span class="va">cluster</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2.6666667        NA 0.4571429</span>
 <span class="r-in"><span><span class="fu">MeanNN</span><span class="op">(</span><span class="va">points</span>, <span class="va">cluster</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2.0  NA 0.2</span>
 <span class="r-in"><span><span class="fu">MeanMSTEdge</span><span class="op">(</span><span class="va">points</span>, <span class="va">cluster</span><span class="op">)</span></span></span>
