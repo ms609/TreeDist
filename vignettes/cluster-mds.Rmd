@@ -74,10 +74,8 @@ distances <- dist(points)
 cmds <- cmdscale(distances)
 
 par(mar = rep(1.5, 4))
-silmds <- ClusterMDS(clust, distances, cmds, trace = TRUE, stability = 5)
-```
+silmds <- ClusterMDS(clust, distances, cmds, trace = TRUE, stability = 12)
 
-```{r simplest-results}
 layout(LayoutRow(1, 1))
 par(mar = rep(1.5, 4))
 plot(points, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
@@ -98,16 +96,14 @@ Two gaussian clusters with same mean & variance
 
 ```{r 2-clust, message = FALSE}
 nCl <- 2
-clust <- rep(seq_along(nCl), c(32, 32))
+clust <- rep(seq_len(nCl), c(32, 32))
 nPts <- length(clust)
 points <- matrix(rnorm(nPts * hiDim, 1), nPts, hiDim)
 distances <- dist(points)
 cmds <- cmdscale(distances)
 
 silmds <- ClusterMDS(clust, distances, cmds, trace = TRUE, stability = 22)
-```
 
-```{r 2clust-results}
 layout(LayoutRow(2, 1))
 par(mar = rep(1.5, 4))
 plot(points, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
@@ -124,18 +120,16 @@ ClusVis(dist(cmds), clust, setPar = FALSE)
 ```
 Two Gaussian clusters with same mean, different variance
 
-```{r 2-clust, message = FALSE}
+```{r 2-clust-smdv, message = FALSE}
 nCl <- 2
-clust <- rep(seq_along(nCl), c(32, 32))
+clust <- rep(seq_len(nCl), c(32, 32))
 nPts <- length(clust)
-points <- matrix(rnorm(nPts * hiDim, 1), nPts, hiDim)
+points <- matrix(rnorm(nPts * hiDim, 1), nPts, hiDim) * clust
 distances <- dist(points)
 cmds <- cmdscale(distances)
 
-silmds <- ClusterMDS(clust, distances, cmds, trace = TRUE, stability = 22)
-```
+silmds <- ClusterMDS(clust, distances, cmds, trace = TRUE, stability = 24)
 
-```{r 2clust-results}
 layout(LayoutRow(2, 1))
 par(mar = rep(1.5, 4))
 plot(points, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
@@ -150,6 +144,65 @@ plot(cmds, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
 plot(cluster::silhouette(clust, dist(cmds)), col = 1:nCl, main = "Classic MDS")
 ClusVis(dist(cmds), clust, setPar = FALSE)
 ```
+
+Two Gaussian clusters different mean, same variance
+
+```{r 2-clust-dmsv, message = FALSE}
+nCl <- 2
+clust <- rep(seq_len(nCl), c(32, 32))
+nPts <- length(clust)
+points <- matrix(rnorm(nPts * hiDim, 1), nPts, hiDim) + (2 * clust)
+distances <- dist(points)
+cmds <- cmdscale(distances)
+
+silmds <- ClusterMDS(clust, distances, cmds, trace = TRUE, stability = 24)
+
+layout(LayoutRow(2, 1))
+par(mar = rep(1.5, 4))
+plot(points, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
+plot(cluster::silhouette(clust, distances), col = 1:nCl, main = "Original")
+ClusVis(distances, clust, setPar = FALSE)
+
+plot(silmds, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
+plot(cluster::silhouette(clust, dist(silmds)), col = 1:nCl, main = "SilMDS")
+ClusVis(dist(silmds), clust, setPar = FALSE)
+
+plot(cmds, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
+plot(cluster::silhouette(clust, dist(cmds)), col = 1:nCl, main = "Classic MDS")
+ClusVis(dist(cmds), clust, setPar = FALSE)
+```
+
+Two Gaussian clusters different mean and variance
+
+```{r 2-clust-dmdv, message = FALSE}
+nCl <- 2
+clust <- rep(seq_len(nCl), c(32, 32))
+nPts <- length(clust)
+points <- (matrix(rnorm(nPts * hiDim), nPts, hiDim) * clust) + (2 * clust)
+distances <- dist(points)
+cmds <- cmdscale(distances)
+
+silmds <- ClusterMDS(clust, distances, cmds, trace = TRUE, stability = 24)
+
+layout(LayoutRow(2, 1))
+par(mar = rep(1.5, 4))
+plot(points, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
+plot(cluster::silhouette(clust, distances), col = 1:nCl, main = "Original")
+ClusVis(distances, clust, setPar = FALSE)
+
+plot(silmds, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
+plot(cluster::silhouette(clust, dist(silmds)), col = 1:nCl, main = "SilMDS")
+ClusVis(dist(silmds), clust, setPar = FALSE)
+
+plot(cmds, col = clust, cex = 1.5, asp = 1, axes = FALSE, ann = FALSE)
+plot(cluster::silhouette(clust, dist(cmds)), col = 1:nCl, main = "Classic MDS")
+ClusVis(dist(cmds), clust, setPar = FALSE)
+```
+
+
+
+
+And more complicatedly:
 
 ```{r simple-clusters, message = FALSE}
 library("TreeDist")
