@@ -196,7 +196,7 @@ ClusterMDS <- function(clust, distances, proposal = cmdscale(distances),
     #clustDists <- apply(clustPair, 2, function(x) normD[x])
     clustDists <- apply(clustPair, 2, function(x) distances[x])
     ClusterStats <- function(d) {
-      smry <- if(dim(d)[2] > 1) {
+      smry <- if(is.null(dim(d))) {
         vapply(d, summary, summary(1:3))
       } else {
         matrix(summary(d[, 1]), ncol = 1,
@@ -370,32 +370,24 @@ ClusterMDS <- function(clust, distances, proposal = cmdscale(distances),
   cli_progress_done()
   
   if (trace) {
-    TracePoints <- function(x, col, ...) {
+    TracePoints <- function(x) {
       if (x %in% names(scores)) {
+        style <- match(x, names(scores)) + 1
         values <- log[seq_len(i), x]
         points(
           which(!is.na(values)),
           values[!is.na(values)] * sum(accepted) / max(log[, x], na.rm = TRUE),
-          col = col,
-          type = "l",
-          ...
+          col = style,
+          lty = (style %/% 8) + 1,
+          type = "l"
         )
       }
     }
     plot(cumsum(accepted[seq_len(i)]), type = "n", frame.plot = FALSE)
     points(cumsum(accepted[seq_len(i)]), type = "l", col = 1)
+    lapply(names(scores), TracePoints)
     #points(la[seq_len(i)] * sum(accepted) / stability, type = "l", col = 2)
-    TracePoints("sil", 2)
-    TracePoints("ks", 3)
-    TracePoints("ave", 4)
-    TracePoints("max", 5)
-    TracePoints("ste", 6)
-    TracePoints("sor", 7)
-    TracePoints("sov", 8)
-    TracePoints("dfm", 9, lty = "dashed")
-    TracePoints("mnn", 10, lty = "dashed")
-    legend("left", c("Accepted", "sil-d2", "ave", "max",
-                    "ste", "sor", "sov", "dfm", "mnn"),
+    legend("left", c("Accepted", names(scores)),
            col = 1:15, pch = 15, bty = "n", pt.cex = 2.5, text.font = 2, cex = 1)
   }
   mapped
