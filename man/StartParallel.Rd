@@ -22,7 +22,7 @@ StopParallel()
 }
 \value{
 \code{StartParallel()} and \code{SetParallel()} return the previous value of
-\code{options('TreeDist-cluster')}.
+\code{options("TreeDist-cluster")}.
 
 \code{GetParallel()} returns the currently specified cluster.
 
@@ -35,7 +35,7 @@ Accelerate distance calculation by employing multiple \acronym{CPU} workers.
 \details{
 "TreeDist" parallelizes the calculation of tree to tree distances via
 the \code{\link[=parCapply]{parCapply()}} function, using a user-defined cluster specified in
-\code{options('TreeDist-cluster')}.
+\code{options("TreeDist-cluster")}.
 
 \code{StartParallel()} calls \code{parallel::makeCluster()} and tells "TreeDist" to
 use the created cluster.

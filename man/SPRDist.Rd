@@ -17,7 +17,7 @@ by calculating the minimum of \code{SPRDist(t1, t2)} and \code{SPRDist(t2, t1)},
 which are not guaranteed to be equal due to the heuristic nature of the
 approximation (see
 \href{https://github.com/KlausVigo/phangorn/issues/97}{phangorn#97}). Set to
-\code{FALSE} for the faster approximation, as implemented in 'phangorn'.}
+\code{FALSE} for the faster approximation, as implemented in "phangorn".}
 }
 \value{
 \code{SPRDist()} returns a vector or distance matrix of distances
@@ -35,10 +35,10 @@ not cause the \code{SPR.dist()} function to crash R, and allows an improved
 
 A memory leak is present in phangorn v2.5.5.  To avoid a drain on system
 resources, install the latest version of phangorn with
-\code{devtools::install_github('KlausVigo/phangorn')}.
+\code{devtools::install_github("KlausVigo/phangorn")}.
 }
 \examples{
-library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+library("TreeTools", quietly = TRUE)
 
 SPRDist(BalancedTree(7), PectinateTree(7))
 
