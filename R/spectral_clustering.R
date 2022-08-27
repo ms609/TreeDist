@@ -13,7 +13,7 @@
 #' @return `SpectralEigens()` returns spectral eigenvalues that can then be
 #'   clustered using a method of choice.
 #' @examples
-#' library('TreeTools', quietly = TRUE, warn.conflict = FALSE)
+#' library("TreeTools", quietly = TRUE, warn.conflict = FALSE)
 #' trees <- as.phylo(0:18, nTip = 8)
 #' distances <- ClusteringInfoDistance(trees)
 #' eigens <- SpectralEigens(distances)

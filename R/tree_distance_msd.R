@@ -51,7 +51,7 @@ MatchingSplitDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
 #' @useDynLib TreeDist, .registration = TRUE
 #' @export
 MatchingSplitDistanceSplits <- function(splits1, splits2, 
-                                         nTip = attr(splits1, 'nTip'),
+                                         nTip = attr(splits1, "nTip"),
                                          normalize = TRUE, 
                                          reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, nTip, cpp_matching_split_distance,

@@ -46,7 +46,7 @@ Plot3 <- function(x, y = NULL, z = NULL,
   zScale <- zScale / max(zScale)
   
   fogOffset <- zResolution * fog
-  bgCol <- if (is.na(plot.bg)) 'white' else plot.bg
+  bgCol <- if (is.na(plot.bg)) "white" else plot.bg
   .FadeCol <- function(x, fadeAmount) {
     if (is.na(x)) {
       NA_character_
@@ -62,7 +62,7 @@ Plot3 <- function(x, y = NULL, z = NULL,
     .FadeCol(bg[i], zScale[i])
   }, character(1))
   if (!add) {
-    plot(x, y, type = 'n', axes = axes, frame.plot = frame.plot, ...)
+    plot(x, y, type = "n", axes = axes, frame.plot = frame.plot, ...)
     if (!is.na(plot.bg)) {
       rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4],
            col = plot.bg, border = frame.plot)

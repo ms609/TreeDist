@@ -80,8 +80,8 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
   
   FunValue <- function(nTip) double(nTip * (nTip - 1L) / 2L)
   
-  if (inherits(tree1, 'phylo')) {
-    if (inherits(tree2, 'phylo')) {
+  if (inherits(tree1, "phylo")) {
+    if (inherits(tree2, "phylo")) {
       if (length(tree1$tip.label) != length(tree2$tip.label) || 
           length(setdiff(tree1$tip.label, tree2$tip.label)) > 0) {
         stop("Leaves must bear identical labels.")
@@ -97,7 +97,7 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
       }
     }
   } else {
-    if (inherits(tree2, 'phylo')) {
+    if (inherits(tree2, "phylo")) {
       apply(Vector(tree2) - vapply(tree1, Vector,
                                    FunValue(length(tree2$tip.label))),
             2L, .EuclideanDistance)
@@ -108,7 +108,7 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
       ret <- matrix(0, nTree, nTree)
       is <- combn(seq_len(nTree), 2)
       
-      ret <- structure(class = 'dist', Size = nTree,
+      ret <- structure(class = "dist", Size = nTree,
                        diag = FALSE, upper = FALSE,
                        apply(is, 2, function(i)
                          .EuclideanDistance(treeVec[, i[1]] - treeVec[, i[2]])))
@@ -149,7 +149,7 @@ KCVector <- function(tree) {
     max(intersect(ancestors[[i[1]]], ancestors[[i[2]]])))
   
   rootDist <- vapply(ancestors, length, integer(1))
-  structure(rootDist[mrca], Size = nTip, class = 'dist')
+  structure(rootDist[mrca], Size = nTip, class = "dist")
 }
 
 #' @describeIn KendallColijn Creates a vector reporting the number of edges
@@ -183,7 +183,7 @@ PathVector <- function(tree) {
         )
   })
   
-  structure(pathLength, Size = nTip, class = 'dist')
+  structure(pathLength, Size = nTip, class = "dist")
 }
 
 #' @describeIn KendallColijn Creates a vector reporting the smallest split
@@ -202,7 +202,7 @@ SplitVector <- function(tree) {
   smallestSplit <- apply(is, 2, function(i)
     min(inSplit[splits[, i[1]] & splits[, i[2]]], nTip - 1L))
   
-  structure(smallestSplit, Size = nTip, class = 'dist')
+  structure(smallestSplit, Size = nTip, class = "dist")
 }
 
 #' Approximate diameter of the Kendall&ndash;Collijn metric
@@ -219,7 +219,7 @@ SplitVector <- function(tree) {
 #' @importFrom TreeTools PectinateTree
 #' @rdname KendallColijn
 #' @export
-KCDiameter <- function(tree) UseMethod('KCDiameter')
+KCDiameter <- function(tree) UseMethod("KCDiameter")
 
 #' @importFrom TreeTools NTip
 #' @export

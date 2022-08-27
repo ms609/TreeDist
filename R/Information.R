@@ -199,9 +199,9 @@ AllSplitPairings <- memoise(function(n) {
             VoI = jointEntropies + jointEntropies - hA - hB)
         }, double(dataRows))
       }))
-    })), dataRows, dimnames=list(c('nTotal', 'VoI'), NULL))
+    })), dataRows, dimnames=list(c("nTotal", "VoI"), NULL))
   
-  tapply(unevenPairs['nTotal', ], unevenPairs['VoI', ], sum)
+  tapply(unevenPairs["nTotal", ], unevenPairs["VoI", ], sum)
 })
 
 #' Entropy of two splits

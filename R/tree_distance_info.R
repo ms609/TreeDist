@@ -82,7 +82,7 @@
 #' splits in the most or least informative tree, use `normalize = `[`pmax`] or 
 #' [`pmin`] respectively.
 #' To calculate the relative similarity against a reference tree that is known
-#' to be 'correct', use `normalize = SplitwiseInfo(trueTree)` (SPI, MSI) or
+#' to be "correct", use `normalize = SplitwiseInfo(trueTree)` (SPI, MSI) or
 #' `ClusteringEntropy(trueTree)` (MCI).
 #' 
 #' # Troubleshooting
@@ -95,7 +95,7 @@
 #' To determine which tips do not occur in both trees, try:
 #' 
 #' ```r
-#' library('TreeTools')
+#' library("TreeTools")
 #' setdiff(TipLabels(tree1), TipLabels(tree2)) # In tree1 but not tree2
 #' setdiff(TipLabels(tree2), TipLabels(tree1)) # In tree2 but not tree1
 #' ```
@@ -106,7 +106,7 @@
 #' @param normalize If a numeric value is provided, this will be used as a 
 #' maximum value against which to rescale results.
 #' If `TRUE`, results will be rescaled against a maximum value calculated from
-#' the specified tree sizes and topology, as specified in the 'Normalization' 
+#' the specified tree sizes and topology, as specified in the "Normalization" 
 #' section below.
 #' If `FALSE`, results will not be rescaled.
 #' 
@@ -127,9 +127,9 @@
 #' Use [`VisualizeMatching()`] to plot the optimal matching.
 #'  
 #' @examples 
-#' tree1 <- ape::read.tree(text='((((a, b), c), d), (e, (f, (g, h))));')
-#' tree2 <- ape::read.tree(text='(((a, b), (c, d)), ((e, f), (g, h)));')
-#' tree3 <- ape::read.tree(text='((((h, b), c), d), (e, (f, (g, a))));')
+#' tree1 <- ape::read.tree(text="((((a, b), c), d), (e, (f, (g, h))));")
+#' tree2 <- ape::read.tree(text="(((a, b), (c, d)), ((e, f), (g, h)));")
+#' tree3 <- ape::read.tree(text="((((h, b), c), d), (e, (f, (g, a))));")
 #' 
 #' # Best possible score is obtained by matching a tree with itself
 #' DifferentPhylogeneticInfo(tree1, tree1) # 0, by definition
@@ -142,14 +142,14 @@
 #' 
 #' # How similar are two trees?
 #' SharedPhylogeneticInfo(tree1, tree2) # Amount of phylogenetic information in common
-#' attr(SharedPhylogeneticInfo(tree1, tree2, reportMatching = TRUE), 'matching')
+#' attr(SharedPhylogeneticInfo(tree1, tree2, reportMatching = TRUE), "matching")
 #' VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2) # Which clades are matched?
 #' 
 #' DifferentPhylogeneticInfo(tree1, tree2) # Distance measure
 #' DifferentPhylogeneticInfo(tree2, tree1) # The metric is symmetric
 #'
 #' # Are they more similar than two trees of this shape would be by chance?
-#' ExpectedVariation(tree1, tree2, sample=12)['DifferentPhylogeneticInfo', 'Estimate']
+#' ExpectedVariation(tree1, tree2, sample=12)["DifferentPhylogeneticInfo", "Estimate"]
 #' 
 #' # Every split in tree1 conflicts with every split in tree3
 #' # Pairs of conflicting splits contain clustering, but not phylogenetic, 
@@ -183,7 +183,7 @@ SharedPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
   unnormalized <- CalculateTreeDistance(SharedPhylogeneticInfoSplits, tree1,
                                         tree2, reportMatching = reportMatching)
   
-  if (diag && inherits(unnormalized, 'dist')) {
+  if (diag && inherits(unnormalized, "dist")) {
     unnormalized <- as.matrix(unnormalized)
     diag(unnormalized) <- SplitwiseInfo(tree1)
   }
@@ -204,7 +204,7 @@ DifferentPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
   ret <- treesIndependentInfo - spi - spi
   ret <- NormalizeInfo(ret, tree1, tree2, how = normalize, 
                        infoInBoth = treesIndependentInfo,
-                       InfoInTree = SplitwiseInfo, Combine = '+')
+                       InfoInTree = SplitwiseInfo, Combine = "+")
   
   ret[ret < .Machine$double.eps ^ 0.5] <- 0 # Catch floating point inaccuracy
   attributes(ret) <- attributes(spi)
@@ -229,7 +229,7 @@ ClusteringInfoDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
   ret <- treesIndependentInfo - mci - mci
   ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
                        infoInBoth = treesIndependentInfo,
-                       InfoInTree = ClusteringEntropy, Combine = '+')
+                       InfoInTree = ClusteringEntropy, Combine = "+")
   
   ret[ret < .Machine$double.eps^0.5] <- 0 # In case of floating point inaccuracy
   attributes(ret) <- attributes(mci)
@@ -252,8 +252,8 @@ ExpectedVariation <- function(tree1, tree2, samples = 1e+4) {
   info1 <- SplitwiseInfo(tree1)
   info2 <- SplitwiseInfo(tree2)
   splits1 <- as.Splits(tree1)
-  tipLabels <- attr(splits1, 'tip.label')
-  nTip <- attr(splits1, 'nTip')
+  tipLabels <- attr(splits1, "tip.label")
+  nTip <- attr(splits1, "nTip")
   splits2 <- as.Splits(tree2, tipLabels)
   
   mutualEstimates <- vapply(seq_len(samples), function(x) {
@@ -283,7 +283,7 @@ ExpectedVariation <- function(tree1, tree2, samples = 1e+4) {
   
   # Return:
   cbind(Estimate = ret[, 1],
-        'Std. Err.' = ret[, 'sd'] / sqrt(ret[, 'n']), 
+        "Std. Err." = ret[, "sd"] / sqrt(ret[, "n"]), 
         ret[, 2:3])
 }
 
@@ -310,7 +310,7 @@ MutualClusteringInformation <- MutualClusteringInfo
 #' @param nTip (Optional) Integer specifying the number of leaves in each split.
 #' @export
 SharedPhylogeneticInfoSplits <- function(splits1, splits2,
-                                          nTip = attr(splits1, 'nTip'),
+                                          nTip = attr(splits1, "nTip"),
                                           reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, nTip, cpp_shared_phylo,
                 maximize = TRUE, reportMatching = reportMatching)
@@ -319,7 +319,7 @@ SharedPhylogeneticInfoSplits <- function(splits1, splits2,
 #' @rdname TreeDistance
 #' @export
 MutualClusteringInfoSplits <- function(splits1, splits2,
-                                        nTip = attr(splits1, 'nTip'),
+                                        nTip = attr(splits1, "nTip"),
                                         reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, nTip, cpp_mutual_clustering,
                 maximize = TRUE, reportMatching = reportMatching)

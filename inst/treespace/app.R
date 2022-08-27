@@ -1,6 +1,6 @@
 suppressPackageStartupMessages({
   library("shiny", exclude = "runExample")
-  library("shinyjs", exclude = "runExample", warn.conflicts = FALSE)
+  library("shinyjs", exclude = "runExample")
 })
 library("TreeTools", quietly = TRUE)
 library("TreeDist")

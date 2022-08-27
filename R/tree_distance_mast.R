@@ -19,7 +19,7 @@
 #' 
 #' @examples
 #'  # for as.phylo, BalancedTree, PectinateTree:
-#' library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+#' library("TreeTools", quietly = TRUE)
 #'
 #' MASTSize(PectinateTree(8), BalancedTree(8))
 #' MASTInfo(PectinateTree(8), BalancedTree(8))

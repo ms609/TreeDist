@@ -57,16 +57,16 @@
 #' @importFrom TreeTools Postorder
 #' @export
 PathDist <- function(tree1, tree2 = NULL) {
-  if (inherits(tree1, 'phylo')) {
+  if (inherits(tree1, "phylo")) {
     tree1 <- Postorder(tree1)
   } else {
-    tree1 <- structure(lapply(tree1, Postorder), class = 'multiPhylo')
+    tree1 <- structure(lapply(tree1, Postorder), class = "multiPhylo")
   }
   
-  if (inherits(tree2, 'phylo')) {
+  if (inherits(tree2, "phylo")) {
     tree2 <- Postorder(tree2)
   } else if (!is.null(tree2)) {
-    tree2 <- structure(lapply(tree2, Postorder), class = 'multiPhylo')
+    tree2 <- structure(lapply(tree2, Postorder), class = "multiPhylo")
   }
   path.dist(tree1, tree2)
 }
