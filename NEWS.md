@@ -2,6 +2,8 @@
 
 - New functions to measure cluster sizes.
 
+- `kmeanspp()` conducts clustering using K-means++
+
 - New [vignette](https://ms609.github.io/TreeDist/articles/landscapes.html)
   on tree landscape analysis.
 

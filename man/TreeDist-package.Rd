@@ -139,6 +139,7 @@ Other contributors:
   \item Roy Jonker \email{roy_jonker@magiclogic.com} [programmer, copyright holder]
   \item Yong Yang \email{yongyanglink@gmail.com} [contributor, copyright holder]
   \item Yi Cao [contributor, copyright holder]
+  \item Georg M. Goerg \email{gmg@stat.cmu.edu} [contributor]
 }
 
 }
