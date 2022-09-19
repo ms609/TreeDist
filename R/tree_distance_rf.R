@@ -39,7 +39,7 @@
 #' 
 #' @examples
 #'  # For BalancedTree, PectinateTree, as.phylo:
-#' library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+#' library("TreeTools", quietly = TRUE)
 #' balanced7 <- BalancedTree(7)
 #' pectinate7 <- PectinateTree(7)
 #' RobinsonFoulds(balanced7, pectinate7)
@@ -74,7 +74,7 @@ InfoRobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                InfoInTree = SplitwiseInfo, Combine = '+')
+                InfoInTree = SplitwiseInfo, Combine = "+")
 }
 
 #' @export
@@ -84,7 +84,7 @@ RobinsonFouldsInfo <- InfoRobinsonFoulds
 #' @inheritParams SharedPhylogeneticInfoSplits
 #' @export
 InfoRobinsonFouldsSplits <- function(splits1, splits2, 
-                                      nTip = attr(splits1, 'nTip'),
+                                      nTip = attr(splits1, "nTip"),
                                       reportMatching = FALSE) {
   
   GeneralizedRF(splits1, splits2, nTip, cpp_robinson_foulds_info,
@@ -100,13 +100,13 @@ RobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
     ct <- as.ClusterTable(tree1)
     rf <- robinson_foulds_all_pairs(if(is.list(ct)) ct else list(ct))
     if (similarity) {
-      unnormalized <- structure(rf + rf, Size = length(tree1), class = 'dist')
+      unnormalized <- structure(rf + rf, Size = length(tree1), class = "dist")
     } else {
       splits <- NSplits(tree1)
-      nSplits <- outer(splits, splits, '+')
+      nSplits <- outer(splits, splits, "+")
       unnormalized <- structure(nSplits[lower.tri(nSplits)] - rf - rf,
                                 Size = length(tree1),
-                                class = 'dist')
+                                class = "dist")
     }
   } else {
     unnormalized <- CalculateTreeDistance(RobinsonFouldsSplits, tree1, tree2,
@@ -134,7 +134,7 @@ RobinsonFouldsMatching <- function(tree1, tree2, similarity = FALSE,
 
   ret <- .MaxValue(tree1, tree2, NSplits) - ret
   
-  attr(ret, 'pairScores') <- !attr(ret, 'pairScores')
+  attr(ret, "pairScores") <- !attr(ret, "pairScores")
   
   # Return:
   ret
@@ -144,7 +144,7 @@ RobinsonFouldsMatching <- function(tree1, tree2, similarity = FALSE,
 #' @inheritParams SharedPhylogeneticInfoSplits
 #' @export
 RobinsonFouldsSplits <- function(splits1, splits2,
-                                  nTip = attr(splits1, 'nTip'),
+                                  nTip = attr(splits1, "nTip"),
                                   reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, nTip, cpp_robinson_foulds_distance,
                 maximize = FALSE, reportMatching = reportMatching)

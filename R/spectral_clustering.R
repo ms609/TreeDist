@@ -13,12 +13,12 @@
 #' @return `SpectralEigens()` returns spectral eigenvalues that can then be
 #'   clustered using a method of choice.
 #' @examples
-#' library('TreeTools', quietly = TRUE, warn.conflict = FALSE)
+#' library("TreeTools", quietly = TRUE)
 #' trees <- as.phylo(0:18, nTip = 8)
 #' distances <- ClusteringInfoDistance(trees)
 #' eigens <- SpectralEigens(distances)
 #' # Perform clustering:
-#' clusts <- kmeans(dist(eigens), centers = 3)
+#' clusts <- KMeansPP(dist(eigens), k = 3)
 #' plot(eigens, pch = 15, col = clusts$cluster)
 #' plot(cmdscale(distances), pch = 15, col = clusts$cluster)
 #' @family tree space functions

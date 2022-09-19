@@ -5,7 +5,7 @@
 #' 
 #' "TreeDist" parallelizes the calculation of tree to tree distances via
 #' the [`parCapply()`] function, using a user-defined cluster specified in
-#' `options('TreeDist-cluster')`.
+#' `options("TreeDist-cluster")`.
 #' 
 #' `StartParallel()` calls `parallel::makeCluster()` and tells "TreeDist" to
 #' use the created cluster.
@@ -34,15 +34,15 @@
 StartParallel <- function(...) {
   cl <- makeCluster(...)
   cli_alert_success("Started cluster")
-  options('TreeDist-cluster' = cl)
+  options("TreeDist-cluster" = cl)
 }
 
 #' @rdname StartParallel
 #' @return `StartParallel()` and `SetParallel()` return the previous value of
-#' `options('TreeDist-cluster')`.
+#' `options("TreeDist-cluster")`.
 #' @export
 SetParallel <- function(cl) {
-  options('TreeDist-cluster' = cl)
+  options("TreeDist-cluster" = cl)
 }
 
 #' @rdname StartParallel
@@ -50,7 +50,7 @@ SetParallel <- function(cl) {
 #' @return `GetParallel()` returns the currently specified cluster.
 #' @export
 GetParallel <- function(cl) {
-  ret <- getOption('TreeDist-cluster')
+  ret <- getOption("TreeDist-cluster")
   if (is.null(ret)) {
     cli_alert_info("No cluster currently specified")
   }
@@ -63,7 +63,7 @@ GetParallel <- function(cl) {
 #' @return `StopParallel()` returns `TRUE` if a cluster was destroyed,
 #' `FALSE` otherwise.
 StopParallel <- function() {
-  cluster <- getOption('TreeDist-cluster')
+  cluster <- getOption("TreeDist-cluster")
   if (!is.null(cluster)) {
     stopCluster(cluster)
     cli_alert_success("Cluster destroyed")

@@ -135,12 +135,14 @@ But visual inspection can be
 highly misleading [@SmithSpace].  We must take a statistical approach.
 A combination of partitioning around medoids and hierarchical clustering with
 minimax linkage will typically find a clustering solution that is close to 
-optimal, if one exists [@SmithSpace].
+optimal, if one exists [@SmithSpace]; if suitably initialized, k-means++
+clustering [@Arthur2007] can also be worthwhile.
 
 
 ```{r clustering, fig.align="center"}
 possibleClusters <- 2:10
 
+# Partitioning around medoids
 pamClusters <- lapply(possibleClusters, function(k) cluster::pam(distances, k = k))
 pamSils <- vapply(pamClusters, function(pamCluster) {
   mean(cluster::silhouette(pamCluster)[, 3])
@@ -150,22 +152,34 @@ bestPam <- which.max(pamSils)
 pamSil <- pamSils[bestPam]
 pamCluster <- pamClusters[[bestPam]]$cluster
 
+# Hierarchical clustering
 hTree <- protoclust(distances)
 hClusters <- lapply(possibleClusters, function(k) cutree(hTree, k = k))
 hSils <- vapply(hClusters, function(hCluster) {
   mean(cluster::silhouette(hCluster, distances)[, 3])
 }, double(1))
 
-
 bestH <- which.max(hSils)
 hSil <- hSils[bestH]
 hCluster <- hClusters[[bestH]]
 
+# k-means++ clustering
+kClusters <- lapply(possibleClusters, function(k) KMeansPP(distances, k = k))
+kSils <- vapply(kClusters, function(kCluster) {
+  mean(cluster::silhouette(kCluster$cluster, distances)[, 3])
+}, double(1))
+
+bestK <- which.max(kSils)
+kSil <- kSils[bestK]
+kCluster <- kClusters[[bestK]]$cluster
+
 plot(pamSils ~ possibleClusters,
      xlab = "Number of clusters", ylab = "Silhouette coefficient",
      ylim = range(c(pamSils, hSils)))
-points(hSils ~ possibleClusters, pch = 2)
-legend("topright", c("PAM", "Hierarchical"), pch = 1:2)
+points(hSils ~ possibleClusters, pch = 2, col = 2)
+points(kSils ~ possibleClusters, pch = 3, col = 3)
+legend("topright", c("PAM", "Hierarchical", "k-means++"),
+       pch = 1:3, col = 1:3)
 ```
 
 Silhouette coefficients of < 0.25 suggest that structure is not meaningful; 

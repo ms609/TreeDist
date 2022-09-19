@@ -24,5 +24,5 @@ release_questions <- function() {
 # build_manual() # PDF support for special characters
 
 # # Unnecessary:
-# # tools::resaveRdaFiles('R', compress='auto') - is default bzip2 the optimal?
-# # tools::checkRdaFiles('R') - set optimal compression in `data-raw`
+# # tools::resaveRdaFiles("R", compress="auto") - is default bzip2 the optimal?
+# # tools::checkRdaFiles("R") - set optimal compression in `data-raw`

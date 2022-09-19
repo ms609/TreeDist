@@ -13,12 +13,12 @@
 #' @export
 CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
                                    reportMatching = FALSE, ...) {
-  supportedClasses <- c('phylo', 'Splits')
+  supportedClasses <- c("phylo", "Splits")
   
   single1 <- inherits(tree1, supportedClasses)
   if (!single1 && !inherits(tree1[[1]], supportedClasses)) {
     stop("`tree1` must be a tree, or list of trees, with class ", 
-         paste(supportedClasses, collapse = ' / '))
+         paste(supportedClasses, collapse = " / "))
   }
   labels1 <- TipLabels(tree1, single = TRUE)
   nTip <- length(labels1)
@@ -28,7 +28,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
     single2 <- inherits(tree2, supportedClasses)
     if (!single2 && !inherits(tree2[[1]], supportedClasses)) {
       stop("`tree2` must be a tree, or list of trees, with class ", 
-           paste(supportedClasses, collapse = ' / '))
+           paste(supportedClasses, collapse = " / "))
     }
     labels2 <- TipLabels(tree2, single = TRUE)
     
@@ -100,7 +100,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
          nTip = nTip, reportMatching = FALSE, ...)
   }
   
-  ret <- structure(class = 'dist', Size = nSplits,
+  ret <- structure(class = "dist", Size = nSplits,
                    diag = FALSE, upper = FALSE,
                    if (is.null(cluster)) {
                      apply(is, 2, .CliPairDist)
@@ -130,11 +130,11 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 #' @seealso [`CalculateTreeDistance`]
 #' @export
 .TreeDistance <- function(Func, tree1, tree2, checks = TRUE, ...) {
-  single1 <- inherits(tree1, 'phylo')
+  single1 <- inherits(tree1, "phylo")
   labels1 <- TipLabels(tree1, single = TRUE)
   nTip <- length(labels1)
   
-  single2 <- inherits(tree2, 'phylo')
+  single2 <- inherits(tree2, "phylo")
   labels2 <- TipLabels(tree2, single = TRUE)
   
   if (checks) {
@@ -210,9 +210,9 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
   tipLabel <- unique(lapply(labelList, sort))
   if (length(tipLabel) != 1L) {
     stop("All trees must bear identical labels. Found:\n >  ", 
-         paste0(lapply(tipLabel, paste, collapse = ' '), 
-               ' (', lapply(tipLabel, class), ')',
-                collapse = '\n >  '))
+         paste0(lapply(tipLabel, paste, collapse = " "), 
+               " (", lapply(tipLabel, class), ")",
+                collapse = "\n >  "))
   }
 }
 
@@ -258,7 +258,7 @@ Entropy <- function(...) {
 #' 
 #' @examples
 #' # Generate a list of trees to compare
-#' library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+#' library("TreeTools", quietly = TRUE)
 #' trees <- list(bal1 = BalancedTree(1:8), 
 #'               pec1 = PectinateTree(1:8),
 #'               pec2 = PectinateTree(c(4:1, 5:8)))
@@ -286,13 +286,13 @@ CompareAll <- function(x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
   
   cluster <- getOption("TreeDist-cluster")
   ret <- if (is.null(cluster)) {
-    cli_progress_bar('Comparing', total = length(i))
+    cli_progress_bar("Comparing", total = length(i))
     vapply(seq_along(i), function(k) {
       cli_progress_update(1, .envir = parent.frame(2))
       Func(i[[k]], j[[k]], ...)
       }, FUN.VALUE)
   } else {
-    do.call('cbind', 
+    do.call("cbind", 
             parLapply(cluster, seq_along(i), 
                       function(k, Func) Func(i[[k]], j[[k]]),
                       Func = Func))
@@ -304,7 +304,7 @@ CompareAll <- function(x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
               Labels = names(x),
               Diag = FALSE,
               Upper = TRUE,
-              class = 'dist')
+              class = "dist")
   }
   
   # Return:
@@ -332,14 +332,14 @@ CompareAll <- function(x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
 #' @export
 NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree, 
                            infoInBoth = NULL,
-                           how = TRUE, Combine = '+', ...) {
+                           how = TRUE, Combine = "+", ...) {
   
   CombineInfo <- function(tree1Info, tree2Info, Combiner = Combine) {
     if (length(tree1Info) == 1 || length(tree2Info) == 1) {
       mapply(Combiner, tree1Info, tree2Info)
     } else {
       ret <- outer(tree1Info, tree2Info, Combiner)
-      if (inherits(unnormalized, 'dist')) ret[lower.tri(ret)] else ret
+      if (inherits(unnormalized, "dist")) ret[lower.tri(ret)] else ret
     }
   }
   
@@ -378,6 +378,6 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
 #' @keywords internal
 #' @export
 ReportMatching <- function(splits1, splits2, realMatch = TRUE) {
-  paste(as.character(splits1), ifelse(realMatch, '=>', '..'),
+  paste(as.character(splits1), ifelse(realMatch, "=>", ".."),
         as.character(splits2))
 }

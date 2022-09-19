@@ -27,12 +27,12 @@ it avoids some of the issues that arise from clustering around means /
 medoids.
 }
 \examples{
-library('TreeTools', quietly = TRUE, warn.conflict = FALSE)
+library("TreeTools", quietly = TRUE)
 trees <- as.phylo(0:18, nTip = 8)
 distances <- ClusteringInfoDistance(trees)
 eigens <- SpectralEigens(distances)
 # Perform clustering:
-clusts <- kmeans(dist(eigens), centers = 3)
+clusts <- KMeansPP(dist(eigens), k = 3)
 plot(eigens, pch = 15, col = clusts$cluster)
 plot(cmdscale(distances), pch = 15, col = clusts$cluster)
 }

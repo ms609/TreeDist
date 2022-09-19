@@ -1,20 +1,20 @@
 # Labels in different order to confound as.Splits
-treeSym8 <- ape::read.tree(text='((e, (f, (g, h))), (((a, b), c), d));')
-treeBal8 <- ape::read.tree(text='(((e, f), (g, h)), ((a, b), (c, d)));')
-treeOpp8 <- ape::read.tree(text='(((a, f), (c, h)), ((g, b), (e, d)));')
+treeSym8 <- ape::read.tree(text="((e, (f, (g, h))), (((a, b), c), d));")
+treeBal8 <- ape::read.tree(text="(((e, f), (g, h)), ((a, b), (c, d)));")
+treeOpp8 <- ape::read.tree(text="(((a, f), (c, h)), ((g, b), (e, d)));")
 treesSBO8 <- structure(list(treeSym8, treeBal8, treeOpp8), 
-                            class = 'multiPhylo')
+                            class = "multiPhylo")
 treesSSBB8 <- structure(list(treeSym8, treeSym8, treeBal8, treeBal8), 
-                            class = 'multiPhylo')
+                            class = "multiPhylo")
 
-treeCat8 <- ape::read.tree(text='((((h, g), f), e), (d, (c, (b, a))));')
-treeTac8 <- ape::read.tree(text='((((e, c), g), a), (h, (b, (d, f))));')
-treeStar8 <- ape::read.tree(text='(e, c, g, h, b, a, d, f);')
+treeCat8 <- ape::read.tree(text="((((h, g), f), e), (d, (c, (b, a))));")
+treeTac8 <- ape::read.tree(text="((((e, c), g), a), (h, (b, (d, f))));")
+treeStar8 <- ape::read.tree(text="(e, c, g, h, b, a, d, f);")
 
-treeAb.Cdefgh <- ape::read.tree(text='((a, b), (c, d, e, f, g, h));')
-treeAbc.Defgh <- ape::read.tree(text='((a, b, c), (d, e, f, g, h));')
-treeAcd.Befgh <- ape::read.tree(text='((a, c, d), (b, e, f, g, h));')
-treeAbcd.Efgh <- ape::read.tree(text='((a, b, c, d), (e, f, g, h));')
+treeAb.Cdefgh <- ape::read.tree(text="((a, b), (c, d, e, f, g, h));")
+treeAbc.Defgh <- ape::read.tree(text="((a, b, c), (d, e, f, g, h));")
+treeAcd.Befgh <- ape::read.tree(text="((a, c, d), (b, e, f, g, h));")
+treeAbcd.Efgh <- ape::read.tree(text="((a, b, c, d), (e, f, g, h));")
 treeTwoSplits <- ape::read.tree(text="(((a, b), c, d), (e, f, g, h));")
 
 testTrees <- c(treesSBO8, treeCat8, treeTac8, treeStar8, treeAb.Cdefgh,
@@ -54,14 +54,14 @@ NormalizationTest <- function(FUNC, ...) {
                tolerance = 1e-7)
 }
 
-test_that('Bad labels cause error', {
-  treeBadLabel8 <- ape::read.tree(text='((a, b, c, D), (e, f, g, h));')
+test_that("Bad labels cause error", {
+  treeBadLabel8 <- ape::read.tree(text="((a, b, c, D), (e, f, g, h));")
   lapply(methodsToTest, function(Func) 
     expect_error(Func(treeSym8, treeBadLabel8)))
 })
 
-test_that('Size mismatch causes error', {
-  treeSym7 <- ape::read.tree(text='((e, (f, g)), (((a, b), c), d));')
+test_that("Size mismatch causes error", {
+  treeSym7 <- ape::read.tree(text="((e, (f, g)), (((a, b), c), d));")
   splits7 <- as.Splits(treeSym7)
   splits8 <- as.Splits(treeSym8)
   
@@ -85,18 +85,18 @@ test_that('Size mismatch causes error', {
   Test(cpp_shared_phylo)
 })
 
-test_that('Metrics handle polytomies', {
-  polytomy8 <- ape::read.tree(text='(a, b, c, d, e, f, g, h);')
+test_that("Metrics handle polytomies", {
+  polytomy8 <- ape::read.tree(text="(a, b, c, d, e, f, g, h);")
   lapply(list(SharedPhylogeneticInfo, MutualClusteringInfo,
               MatchingSplitDistance, NyeSimilarity),
          function(Func) expect_equal(0, Func(treeSym8, polytomy8)))
 })
 
 #Func <- ClusteringInfoDistance # FUNC =
-test_that('Output dimensions are correct', {
+test_that("Output dimensions are correct", {
   list1 <- list(sym = treeSym8, bal = treeBal8)
   list2 <- list(sym = treeSym8, abc = treeAbc.Defgh, abcd = treeAbcd.Efgh)
-  dimNames <- list(c('sym', 'bal'), c('sym', 'abc', 'abcd'))
+  dimNames <- list(c("sym", "bal"), c("sym", "abc", "abcd"))
   
   Test <- function(Func) {
     allPhylo <- matrix(
@@ -117,7 +117,7 @@ test_that('Output dimensions are correct', {
   lapply(methodsToTest, Test)
 })
 
-test_that('Robinson Foulds Distance is correctly calculated', {
+test_that("Robinson Foulds Distance is correctly calculated", {
   PhangRF2 <- function(t1, t2) phangorn::RF.dist(reorder(t1, "cladewise"),
                                                  reorder(t2, "cladewise"))
   RFTest <- function(t1, t2) {
@@ -125,7 +125,7 @@ test_that('Robinson Foulds Distance is correctly calculated', {
                  RobinsonFoulds(t1, t2))
     
     expected <- RobinsonFoulds(t1, t2, reportMatching = TRUE, similarity = TRUE)
-    attr(expected, 'pairScores') <- attr(expected, 'pairScores') == 0L
+    attr(expected, "pairScores") <- attr(expected, "pairScores") == 0L
     expect_equal(expected, RobinsonFouldsMatching(t1, t2))
   }
   RFTest(treeSym8, treeSym8)
@@ -140,9 +140,9 @@ test_that('Robinson Foulds Distance is correctly calculated', {
                ignore_attr = TRUE)
   
   # Invariant to tree description order
-  sq_pectinate <- ape::read.tree(text='((((((1, 2), 3), 4), 5), 6), (7, (8, (9, (10, 11)))));')
-  shuffle1 <- ape::read.tree(text='(((((1, 5), 2), 6), (3, 4)), ((8, (7, 9)), (10, 11)));')
-  shuffle2 <- ape::read.tree(text='(((8, (7, 9)), (10, 11)), ((((1, 5), 2), 6), (3, 4)));')
+  sq_pectinate <- ape::read.tree(text="((((((1, 2), 3), 4), 5), 6), (7, (8, (9, (10, 11)))));")
+  shuffle1 <- ape::read.tree(text="(((((1, 5), 2), 6), (3, 4)), ((8, (7, 9)), (10, 11)));")
+  shuffle2 <- ape::read.tree(text="(((8, (7, 9)), (10, 11)), ((((1, 5), 2), 6), (3, 4)));")
   RFTest(shuffle1, sq_pectinate)
   RFTest(sq_pectinate, shuffle1)
   RFTest(shuffle1, shuffle2)
@@ -150,7 +150,7 @@ test_that('Robinson Foulds Distance is correctly calculated', {
   RFTest(shuffle2, sq_pectinate)
 })
 
-test_that('Shared Phylogenetic Info is correctly calculated', {
+test_that("Shared Phylogenetic Info is correctly calculated", {
   
   expect_equal(5.529821, tolerance = 1e-7,
                cpp_shared_phylo(
@@ -256,7 +256,7 @@ test_that('Shared Phylogenetic Info is correctly calculated', {
                SharedPhylogeneticInfo(t2, t1))
 })
 
-test_that('MatchingSplitInfo() is correctly calculated', {
+test_that("MatchingSplitInfo() is correctly calculated", {
   BinaryToSplit <- function(binary) matrix(as.logical(binary))
   expect_equal(log2(3),
                MatchingSplitInfoSplits(
@@ -299,20 +299,20 @@ test_that('MatchingSplitInfo() is correctly calculated', {
 
 test_that("Shared Phylogenetic Information is correctly estimated", {
   exp <- ExpectedVariation(treeSym8, treeAbc.Defgh, samples = 1000L)
-  tol <- exp[, 'Std. Err.'] * 2
+  tol <- exp[, "Std. Err."] * 2
   # Expected values calculated with 100k samples
-  expect_equal(1.175422, exp['SharedPhylogeneticInfo', 'Estimate'], 
+  expect_equal(1.175422, exp["SharedPhylogeneticInfo", "Estimate"], 
                tolerance = tol[1])
-  expect_equal(3.099776, exp['MatchingSplitInfo', 'Estimate'], 
+  expect_equal(3.099776, exp["MatchingSplitInfo", "Estimate"], 
                tolerance = tol[2])
-  expect_equal(25.231023, exp['DifferentPhylogeneticInfo', 'Estimate'], 
+  expect_equal(25.231023, exp["DifferentPhylogeneticInfo", "Estimate"], 
                tolerance = tol[3])
-  expect_equal(21.382314, exp['MatchingSplitInfoDistance', 'Estimate'], 
+  expect_equal(21.382314, exp["MatchingSplitInfoDistance", "Estimate"], 
                tolerance = tol[4])
-  expect_equal(exp[, 'sd'], exp[, 'Std. Err.'] * sqrt(exp[, 'n']))
+  expect_equal(exp[, "sd"], exp[, "Std. Err."] * sqrt(exp[, "n"]))
 })
 
-test_that('Clustering information is correctly calculated', {
+test_that("Clustering information is correctly calculated", {
   expect_equal(Entropy(c(3, 5) / 8) * 2 - Entropy(c(0, 0, 3, 5) / 8),
                cpp_mutual_clustering(
                  as.Splits(as.logical(c(1, 1, 1, 0, 0, 0, 0, 0))),
@@ -400,10 +400,10 @@ test_that('Clustering information is correctly calculated', {
     MutualClusteringInfo(randomBif20, threeAwayPoly))
   match <- MutualClusteringInfo(randomBif20, threeAwayPoly, reportMatching = TRUE)
   expect_equal(c(NA, NA,  1,  2, NA,  3,  7, 11, 10,  4,  6,  9,  8, NA,  5, 12, NA),
-               attr(match, 'matching'))
+               attr(match, "matching"))
   
   # Multiple bins, calculated expectation
-  library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+  library("TreeTools", quietly = TRUE)
   b65m <- lapply(c(1, 2, 70), AddTip, tree = BalancedTree(64))
   self <- ClusteringEntropy(b65m)
   diff <- ClusteringEntropy(b65m[[1]], sum = FALSE)["72"]
@@ -483,7 +483,7 @@ test_that("Matchings are correct", {
   
   
   t1 <- PectinateTree(letters[1:11])
-  t2 <- ape::read.tree(text = '(a, (c, (b, (d, e, ((g, h, f), (k, (j, i)))))));')
+  t2 <- ape::read.tree(text = "(a, (c, (b, (d, e, ((g, h, f), (k, (j, i)))))));")
   t3 <- CollapseNode(PectinateTree(c(letters[11], letters[1:10])), 16:19)
   s1 <- as.Splits(t1)
   s2 <- as.Splits(t2, t1)
@@ -572,7 +572,7 @@ test_that("Matchings are correct", {
 
 })
 
-test_that('Matching Split Distance is correctly calculated', {
+test_that("Matching Split Distance is correctly calculated", {
   expect_equal(0L, MatchingSplitDistance(treeSym8, treeSym8))
   expect_equal(0L, MatchingSplitDistance(treeStar8, treeSym8))
   expect_equal(0L, MatchingSplitDistance(treeStar8, treeStar8))
@@ -597,9 +597,9 @@ test_that('Matching Split Distance is correctly calculated', {
                MatchingSplitDistanceSplits(splitAEF, splitABC))
   
   # Invariant to tree description order
-  sq_pectinate <- ape::read.tree(text='((((((1, 2), 3), 4), 5), 6), (7, (8, (9, (10, 11)))));')
-  shuffle1 <- ape::read.tree(text='(((((1, 5), 2), 6), (3, 4)), ((8, (7, 9)), (10, 11)));')
-  shuffle2 <- ape::read.tree(text='(((8, (7, 9)), (10, 11)), ((((1, 5), 2), 6), (3, 4)));')
+  sq_pectinate <- ape::read.tree(text="((((((1, 2), 3), 4), 5), 6), (7, (8, (9, (10, 11)))));")
+  shuffle1 <- ape::read.tree(text="(((((1, 5), 2), 6), (3, 4)), ((8, (7, 9)), (10, 11)));")
+  shuffle2 <- ape::read.tree(text="(((8, (7, 9)), (10, 11)), ((((1, 5), 2), 6), (3, 4)));")
   expect_equal(MatchingSplitDistance(shuffle1, sq_pectinate),
                MatchingSplitDistance(sq_pectinate, shuffle1))
   expect_equal(0L, MatchingSplitDistance(shuffle1, shuffle2))
@@ -607,7 +607,7 @@ test_that('Matching Split Distance is correctly calculated', {
                MatchingSplitDistance(shuffle2, sq_pectinate))
 })
 
-test_that('NyeSimilarity is correctly calculated, and matches JRF', {
+test_that("NyeSimilarity is correctly calculated, and matches JRF", {
   listBalSym <- list(treeBal8, treeSym8)
   
   JRF <- function(..., sim = TRUE)
@@ -649,7 +649,7 @@ test_that('NyeSimilarity is correctly calculated, and matches JRF', {
 })
 
 
-test_that('Jaccard RF extremes tend to equivalent functions', {
+test_that("Jaccard RF extremes tend to equivalent functions", {
   expect_equal(JaccardRobinsonFoulds(treeSym8, list(treeBal8, treeSym8),
                                      similarity = TRUE, k = 1L,
                                      allowConflict = TRUE),
@@ -664,7 +664,7 @@ test_that('Jaccard RF extremes tend to equivalent functions', {
                RobinsonFoulds(treeSym8, list(treeBal8, treeSym8)))
 })
 
-test_that('Jaccard RF is correctly calculated', {
+test_that("Jaccard RF is correctly calculated", {
   expect_equal(5L * 2L, JaccardRobinsonFoulds(treeSym8, treeSym8,
                                          k = 2, similarity = TRUE))
   expect_equal(c(3.32, 5) * 2L, 
@@ -696,7 +696,7 @@ test_that('Jaccard RF is correctly calculated', {
   expect_lt(0, JaccardRobinsonFoulds(BalancedTree(264), PectinateTree(264)))
 })
 
-test_that('RobinsonFoulds() is correctly calculated', {
+test_that("RobinsonFoulds() is correctly calculated", {
   RF <- function(tree1, tree2) {
     suppressMessages(phangorn::RF.dist(reorder(tree1, "cladewise"),
                                        reorder(tree2, "cladewise")))
@@ -715,7 +715,7 @@ test_that('RobinsonFoulds() is correctly calculated', {
   RFTest(treeSym8, treeOpp8)
   
   RFNtipTest <- function(nTip) {
-    backLeaves <- paste0('t', rev(seq_len(nTip)))
+    backLeaves <- paste0("t", rev(seq_len(nTip)))
     RFTest(TreeTools::PectinateTree(backLeaves), 
            TreeTools::BalancedTree(nTip))
   }
@@ -735,7 +735,7 @@ test_that('RobinsonFoulds() is correctly calculated', {
 })
 
 
-test_that('Robinson Foulds Info is correctly calculated', {
+test_that("Robinson Foulds Info is correctly calculated", {
   expect_equal(22.53747 * 2L, tolerance = 1e-05,
                InfoRobinsonFoulds(treeSym8, treeSym8, similarity = TRUE,
                                   normalize = FALSE))
@@ -774,7 +774,7 @@ test_that('Robinson Foulds Info is correctly calculated', {
 })
 
 
-test_that('Kendall-Colijn distance is correctly calculated', {
+test_that("Kendall-Colijn distance is correctly calculated", {
   # Expected values calculated using treespace::treeDist(treeSym8, treeBal8)
   expect_equal(2.828427, KendallColijn(treeSym8, treeBal8), tolerance=1e-06)
   expect_equal(2.828427, KendallColijn(treeCat8, treeBal8), tolerance=1e-06)
@@ -794,7 +794,7 @@ test_that('Kendall-Colijn distance is correctly calculated', {
   expect_equal(2.828427, KendallColijn(treeAbc.Defgh, treeTwoSplits), tolerance=1e-06)
 })
 
-test_that('Multiple comparisons are correctly ordered', {
+test_that("Multiple comparisons are correctly ordered", {
   nTrees <- 6L
   nTip <- 16L
   
@@ -802,7 +802,7 @@ test_that('Multiple comparisons are correctly ordered', {
   trees <- lapply(rep(nTip, nTrees), ape::rtree, br = NULL)
   trees[[1]] <- TreeTools::BalancedTree(nTip)
   trees[[nTrees - 1L]] <- TreeTools::PectinateTree(nTip)
-  class(trees) <- 'multiPhylo'
+  class(trees) <- "multiPhylo"
   
   PhangRF <- function (trees) {
     phangorn::RF.dist(reorder(trees, "cladewise"))
@@ -817,14 +817,14 @@ test_that('Multiple comparisons are correctly ordered', {
                                     phangorn::RF.dist, 0L)),
                ignore_attr = TRUE)
   
-  NNILoose <- function(x, y) NNIDist(x, y)['loose_upper']
+  NNILoose <- function(x, y) NNIDist(x, y)["loose_upper"]
   expect_equal(CompareAll(trees, NNILoose),
                CompareAll(trees, NNIDist)$loose_upper,
                ignore_attr = TRUE)
 })
 
-test_that('Normalization occurs as documented', {
-  library('TreeTools')
+test_that("Normalization occurs as documented", {
+  library("TreeTools")
   tree1 <- BalancedTree(8)
   tree2 <- CollapseNode(PectinateTree(8), 12:13)
   
@@ -869,13 +869,13 @@ test_that('Normalization occurs as documented', {
 
 test_that("Independent of root position", {
   
-  library('TreeTools')
+  library("TreeTools")
   
   bal8 <- BalancedTree(8)
   pec8 <- PectinateTree(8)
   
-  trees <- lapply(list(bal8, RootTree(bal8, 't4'),
-                       pec8, RootTree(pec8, 't4')), UnrootTree)
+  trees <- lapply(list(bal8, RootTree(bal8, "t4"),
+                       pec8, RootTree(pec8, "t4")), UnrootTree)
   
   lapply(methodsToTest[-length(methodsToTest)], function(Method) {
     dists <- as.matrix(Method(trees))

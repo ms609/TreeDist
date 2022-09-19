@@ -1,12 +1,12 @@
-library('TreeTools')
+library("TreeTools")
 
 test_that("SplitwiseInfo() / ClusteringInfo() handle probabilities", {
   Tree <- function(txt) ape::read.tree(text = txt)
-  tree <- Tree('((a, b)60, (c, d)60);')
-  treeP <- Tree('((a, b)0.60, (c, d)0.60);')
-  treeProfile <- list(Tree('((a, b), (c, d));'),
-                      Tree('(a, b, c, d);'),
-                      Tree('((a, d), (c, b));'))[c(1, 1, 1, 2, 3)]
+  tree <- Tree("((a, b)60, (c, d)60);")
+  treeP <- Tree("((a, b)0.60, (c, d)0.60);")
+  treeProfile <- list(Tree("((a, b), (c, d));"),
+                      Tree("(a, b, c, d);"),
+                      Tree("((a, d), (c, b));"))[c(1, 1, 1, 2, 3)]
   
   Test <- function(Expect, tree, p = NULL, ...) {
     Expect(..., SplitwiseInfo(tree, p))
@@ -48,31 +48,31 @@ test_that("SplitwiseInfo() / ClusteringInfo() handle probabilities", {
   expect_equal(SplitwiseInfo(tree, 100), SplitwiseInfo(treeP, TRUE))
   expect_equal(Clust(tree, 100), Clust(treeP, TRUE))
   
-  expect_equal(SplitwiseInfo(tree, 100), ConsensusInfo(treeProfile, 'p'))
-  expect_equal(ClusteringInfo(tree, 100), ConsensusInfo(treeProfile, 'c'))
+  expect_equal(SplitwiseInfo(tree, 100), ConsensusInfo(treeProfile, "p"))
+  expect_equal(ClusteringInfo(tree, 100), ConsensusInfo(treeProfile, "c"))
   
-  expect_equal(SplitwiseInfo(Tree('(a, b, (c, (d, e)0.8)0.75);'), TRUE),
-               SplitwiseInfo(Tree('(a, b, (c, d, e)0.75);'), TRUE) +
-                 SplitwiseInfo(Tree('(a, b, c, (d, e)0.8);'), TRUE))
-  expect_equal(Clust(Tree('(a, b, (c, (d, e)0.8)0.75);'), TRUE),
-               Clust(Tree('(a, b, (c, d, e)0.75);'), TRUE) +
-                 Clust(Tree('(a, b, c, (d, e)0.8);'), TRUE))
-  expect_equal(SplitwiseInfo(Tree('(a, b, (c, (d, e)0.8)0.75);'), TRUE),
-               SplitwiseInfo(Tree('(a, b, (c, (d, e)));'), c(0.75, 0.8)))
-  expect_equal(Clust(Tree('(a, b, (c, (d, e)0.8)0.75);'), TRUE),
-               Clust(Tree('(a, b, (c, (d, e)));'), c(0.75, 0.8)))
-  expect_equal(SplitwiseInfo(Tree('(a, b, (c, (d, e)0.8));'), TRUE),
-               SplitwiseInfo(Tree('(a, b, (c, (d, e)));'), c(1, 0.8)))
-  expect_equal(Clust(Tree('(a, b, (c, (d, e)0.8));'), TRUE),
-               Clust(Tree('(a, b, (c, (d, e)));'), c(1, 0.8)))
-  expect_equal(SplitwiseInfo(Tree('(a, b, (c, (d, e)));')),
-               SplitwiseInfo(Tree('(a, b, (c, (d, e)));'), TRUE))
-  expect_equal(Clust(Tree('(a, b, (c, (d, e)));')),
-               Clust(Tree('(a, b, (c, (d, e)));'), TRUE))
-  expect_equal(SplitwiseInfo(Tree('(a, b, (c, (d, e)));'), TRUE),
-               SplitwiseInfo(Tree('(a, b, (c, (d, e)));'), c(1, 1)))
-  expect_equal(Clust(Tree('(a, b, (c, (d, e)));'), TRUE),
-               Clust(Tree('(a, b, (c, (d, e)));'), c(1, 1)))
+  expect_equal(SplitwiseInfo(Tree("(a, b, (c, (d, e)0.8)0.75);"), TRUE),
+               SplitwiseInfo(Tree("(a, b, (c, d, e)0.75);"), TRUE) +
+                 SplitwiseInfo(Tree("(a, b, c, (d, e)0.8);"), TRUE))
+  expect_equal(Clust(Tree("(a, b, (c, (d, e)0.8)0.75);"), TRUE),
+               Clust(Tree("(a, b, (c, d, e)0.75);"), TRUE) +
+                 Clust(Tree("(a, b, c, (d, e)0.8);"), TRUE))
+  expect_equal(SplitwiseInfo(Tree("(a, b, (c, (d, e)0.8)0.75);"), TRUE),
+               SplitwiseInfo(Tree("(a, b, (c, (d, e)));"), c(0.75, 0.8)))
+  expect_equal(Clust(Tree("(a, b, (c, (d, e)0.8)0.75);"), TRUE),
+               Clust(Tree("(a, b, (c, (d, e)));"), c(0.75, 0.8)))
+  expect_equal(SplitwiseInfo(Tree("(a, b, (c, (d, e)0.8));"), TRUE),
+               SplitwiseInfo(Tree("(a, b, (c, (d, e)));"), c(1, 0.8)))
+  expect_equal(Clust(Tree("(a, b, (c, (d, e)0.8));"), TRUE),
+               Clust(Tree("(a, b, (c, (d, e)));"), c(1, 0.8)))
+  expect_equal(SplitwiseInfo(Tree("(a, b, (c, (d, e)));")),
+               SplitwiseInfo(Tree("(a, b, (c, (d, e)));"), TRUE))
+  expect_equal(Clust(Tree("(a, b, (c, (d, e)));")),
+               Clust(Tree("(a, b, (c, (d, e)));"), TRUE))
+  expect_equal(SplitwiseInfo(Tree("(a, b, (c, (d, e)));"), TRUE),
+               SplitwiseInfo(Tree("(a, b, (c, (d, e)));"), c(1, 1)))
+  expect_equal(Clust(Tree("(a, b, (c, (d, e)));"), TRUE),
+               Clust(Tree("(a, b, (c, (d, e)));"), c(1, 1)))
 })
 
 
@@ -106,10 +106,10 @@ test_that("SplitwiseInfo() can't be improved by dropping resolved tip", {
   expect_lt(SplitwiseInfo(balancedWith, p = p), SplitwiseInfo(balancedWithout))
 })
 
-test_that('ClusteringInfo() method works', {
+test_that("ClusteringInfo() method works", {
   trees <- list(BalancedTree(8), PectinateTree(8))
   expect_equal(vapply(trees, ClusteringInfo, 0),
-               ClusteringInfo(structure(trees, class = 'multiPhylo')))
+               ClusteringInfo(structure(trees, class = "multiPhylo")))
   expect_equal(vapply(trees, ClusteringInfo, 0),
                ClusteringInfo(trees))
   
@@ -119,17 +119,17 @@ test_that('ClusteringInfo() method works', {
   # Consensus assumes trees are rooted (!)
   cons <- consensus(lapply(trees, RootTree, 1), p = 0.5)
   p <- SplitFrequency(cons, trees) / length(trees)
-  expect_equal(SplitwiseInfo(cons, p), ConsensusInfo(trees, 'spic'))
-  expect_equal(ClusteringInfo(cons, p), ConsensusInfo(trees, 'scic'))
+  expect_equal(SplitwiseInfo(cons, p), ConsensusInfo(trees, "spic"))
+  expect_equal(ClusteringInfo(cons, p), ConsensusInfo(trees, "scic"))
   
 })
 
 
 test_that("ConsensusInfo() is robust", {
-  trees <- list(ape::read.tree(text = '(a, (b, (c, (d, (e, X)))));'),
-                ape::read.tree(text = '((a, X), (b, (c, (d, e))));'))
-  expect_equal(0, ConsensusInfo(trees, 'cl'))
-  expect_error(ConsensusInfo(trees, 'ERROR'))
+  trees <- list(ape::read.tree(text = "(a, (b, (c, (d, (e, X)))));"),
+                ape::read.tree(text = "((a, X), (b, (c, (d, e))));"))
+  expect_equal(0, ConsensusInfo(trees, "cl"))
+  expect_error(ConsensusInfo(trees, "ERROR"))
   # multiPhylo vs phylo
   expect_equal(ConsensusInfo(trees[1]), ConsensusInfo(trees[[1]]))
 })
@@ -139,11 +139,11 @@ test_that("ConsensusInfo() generates correct value", {
                 ape::read.tree(text = "((a, c), (b, d));"),
                 ape::read.tree(text = "((a, d), (c, b));"))
   expect_equal(0, ConsensusInfo(trees))
-  expect_equal(0, ConsensusInfo(trees, 'cl'))
+  expect_equal(0, ConsensusInfo(trees, "cl"))
   expect_equal(log2(3), ConsensusInfo(trees[1]))
-  expect_equal(4, ConsensusInfo(trees[1], 'cl'))
+  expect_equal(4, ConsensusInfo(trees[1], "cl"))
   expect_equal(log2(3), ConsensusInfo(trees[c(1, 1)]))
-  expect_equal(4, ConsensusInfo(trees[c(1, 1)], 'cl'))
+  expect_equal(4, ConsensusInfo(trees[c(1, 1)], "cl"))
   
   expect_equal(Entropy(c(1, 1, 1) / 3) - Entropy(c(1/2, 1/2, 9)/10),
                ConsensusInfo(trees[c(rep(1, 9), 2)]))

@@ -274,7 +274,7 @@ test_that("LAPJV doesn't crash", {
 })
 
 test_that("Avoid infinite loop in LAP", {
-  library('TreeTools')
+  library("TreeTools")
   tree1 <- PectinateTree(11L)
   tree2 <- as.phylo(18253832, 11L)
   owch <- 1927

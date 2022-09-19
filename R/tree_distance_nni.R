@@ -8,7 +8,7 @@
 #' tree that do not match edges in the second.  Each of these edges must
 #' undergo at least one NNI operation in order to reconcile the trees.
 #' Edges that match in both trees need never undergo an NNI operation, and 
-#' divide each tree into smaller regions.  By 'cutting' matched edges into two,
+#' divide each tree into smaller regions.  By "cutting" matched edges into two,
 #' a tree can be divided into a number of regions that solely comprise unmatched
 #' edges.
 #' 
@@ -51,7 +51,7 @@
 #' \insertAllCited{}
 #' 
 #' @examples
-#' library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+#' library("TreeTools", quietly = TRUE)
 #' 
 #' NNIDist(BalancedTree(7), PectinateTree(7))
 #' 
@@ -115,7 +115,7 @@ NNIDist <- function(tree1, tree2 = tree1) {
 #' @encoding UTF-8
 #' @rdname NNIDist
 #' @export
-NNIDiameter <- function(tree) UseMethod('NNIDiameter')
+NNIDiameter <- function(tree) UseMethod("NNIDiameter")
 
 .SortingNumber <- function(n_tip) {
   lgN <- ceiling(log2(n_tip))

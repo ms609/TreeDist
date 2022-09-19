@@ -35,7 +35,7 @@ similarity, rather than a difference.}
 \item{normalize}{If a numeric value is provided, this will be used as a
 maximum value against which to rescale results.
 If \code{TRUE}, results will be rescaled against a maximum value calculated from
-the specified tree sizes and topology, as specified in the 'Normalization'
+the specified tree sizes and topology, as specified in the "Normalization"
 section below.
 If \code{FALSE}, results will not be rescaled.}
 
@@ -107,7 +107,7 @@ of trees being considered.
 }
 
 \examples{
-library('TreeTools')
+library("TreeTools")
 NyeSimilarity(BalancedTree(8), PectinateTree(8))
 VisualizeMatching(NyeSimilarity ,BalancedTree(8), PectinateTree(8))
 NyeSimilarity(as.phylo(0:5, nTip = 8), PectinateTree(8))

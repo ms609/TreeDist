@@ -19,7 +19,7 @@
 #' @export
 TreeDistPlot <- function(tr, title = NULL, bold = NULL, leaveRoom = FALSE,
                           prune = integer(0), graft = integer(0),
-                          edge.color = 'black', edge.width = NULL, ...) {
+                          edge.color = "black", edge.width = NULL, ...) {
   
   if (is.null(tr$edge.length)) tr$edge.length <- rep(1, dim(tr$edge)[1])
   if (is.null(edge.width)) {
@@ -101,13 +101,13 @@ TreeDistPlot <- function(tr, title = NULL, bold = NULL, leaveRoom = FALSE,
 VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
                               precision = 3L, Plot = plot.phylo,
                               matchZeros = TRUE, plainEdges = FALSE,
-                              edge.width = 1, edge.color = 'black',
+                              edge.width = 1, edge.color = "black",
                               ...) {
   
   splits1 <- as.Splits(tree1)
   edge1 <- tree1$edge
   child1 <- edge1[, 2]
-  nTip <- attr(splits1, 'nTip')
+  nTip <- attr(splits1, "nTip")
   splitEdges1 <- vapply(as.integer(rownames(splits1)),
                         function(node) which(child1 == node), integer(1))
   
@@ -118,14 +118,14 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
                         function(node) which(child2 == node), integer(1))
   
   matching <- Func(tree1, tree2, reportMatching = TRUE)
-  pairings <- attr(matching, 'matching')
-  scores <- attr(matching, 'pairScores')
+  pairings <- attr(matching, "matching")
+  scores <- attr(matching, "pairScores")
   pairScores <- signif(mapply(function(i, j) scores[i, j],
                               seq_along(pairings), pairings), precision)
   
   adjNo <- c(0.5, -0.2)
   adjVal <- c(0.5, 1.1)
-  faint <- '#aaaaaa'
+  faint <- "#aaaaaa"
   
   if (setPar) {
     origPar <- par(mfrow = c(1, 2), mar = rep(0.5, 4))
@@ -135,10 +135,10 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
   LabelUnpaired <- function(splitEdges, unpaired) {
     if (any(unpaired)) {
       #edgelabels(text="\u2012", edge=splitEdges[unpaired],
-      edgelabels(text = expression('-'), edge = splitEdges[unpaired],
-                 frame = 'n', col = faint, adj = adjNo)
-      edgelabels(text = '0', edge = splitEdges[unpaired],
-                 frame = 'n', col = faint, cex = 0.8, adj = adjVal)
+      edgelabels(text = expression("-"), edge = splitEdges[unpaired],
+                 frame = "n", col = faint, adj = adjNo)
+      edgelabels(text = "0", edge = splitEdges[unpaired],
+                 frame = "n", col = faint, cex = 0.8, adj = adjVal)
     }
   }
   
@@ -153,7 +153,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
         scores[is.na(scores)] <- 0
       }
       if (any(scores < 0)) {
-        stop('Negative scores not supported')                                   # nocov
+        stop("Negative scores not supported")                                   # nocov
       }
       if (max(scores) == 0) return(scores)
       if (min(scores) == max(scores)) return(rep(1L, length(scores)))
@@ -175,14 +175,14 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
         c(score = NA, edge = NA)
       }
     }
-    edgeColPalette <- sequential_hcl(n = 256L, palette = 'Viridis')
+    edgeColPalette <- sequential_hcl(n = 256L, palette = "Viridis")
      
     EdgyPlot <- function(tree, splits, edge, splitEdges,
                          normalizedScores, ...) {
       splitNodes <- as.integer(names(splits))
       ore <- OtherRootEdge(splitNodes, edge)
       if (length(normalizedScores) && !is.na(ore[1])) {
-        ns <- c(normalizedScores, normalizedScores[ore['score']])
+        ns <- c(normalizedScores, normalizedScores[ore["score"]])
         se <- c(splitEdges, ore[2])
       } else {
         ns <- normalizedScores
@@ -191,7 +191,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
       
       edge.width <- rep(1, nrow(edge))
       edge.width[se] <-  1 + (10 * ns)
-      edge.color <- rep('black', nrow(edge))
+      edge.color <- rep("black", nrow(edge))
       edge.color[se] <- edgeColPalette[1 + ceiling(255 * ns)]
       
       Plot(tree, edge.width = edge.width, edge.color = edge.color, ...)
@@ -211,8 +211,8 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
     edgelabels(text = pairLabels, edge = splitEdges1[paired1],
                bg = palette, adj = adjNo)
     edgelabels(text = pairedPairScores, edge = splitEdges1[paired1], 
-               frame = 'n', adj = adjVal, cex = 0.8,
-               col = ifelse(pairedPairScores, 'black', faint))
+               frame = "n", adj = adjVal, cex = 0.8,
+               col = ifelse(pairedPairScores, "black", faint))
   }
   LabelUnpaired(splitEdges1, !paired1)
   
@@ -230,8 +230,8 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
     edgelabels(text = pairLabels, edge = splitEdges2[pairNames2],
                bg = palette, adj=adjNo)
     edgelabels(text = pairedPairScores, edge = splitEdges2[pairNames2], 
-               frame = 'n', adj = adjVal, cex = 0.8,
-               col = ifelse(pairedPairScores, 'black', faint))
+               frame = "n", adj = adjVal, cex = 0.8,
+               col = ifelse(pairedPairScores, "black", faint))
   }
   LabelUnpaired(splitEdges2, !paired2)
   
@@ -258,7 +258,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
 #'
 #' @examples
 #' set.seed(0)
-#' library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
+#' library("TreeTools", quietly = TRUE)
 #' distances <- ClusteringInfoDist(as.phylo(5:16, 8))
 #' mapping <- cmdscale(distances, k = 2)
 #' mstEnds <- MSTEdges(distances)

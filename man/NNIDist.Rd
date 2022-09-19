@@ -62,7 +62,7 @@ In brief, this approximation algorithm works by identifying edges in one
 tree that do not match edges in the second.  Each of these edges must
 undergo at least one NNI operation in order to reconcile the trees.
 Edges that match in both trees need never undergo an NNI operation, and
-divide each tree into smaller regions.  By 'cutting' matched edges into two,
+divide each tree into smaller regions.  By "cutting" matched edges into two,
 a tree can be divided into a number of regions that solely comprise unmatched
 edges.
 
@@ -85,7 +85,7 @@ Diameter: \tab 0 \tab 0 \tab 0 \tab 1 \tab 3 \tab 5 \tab 7 \tab 10 \tab 12
 }
 }
 \examples{
-library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+library("TreeTools", quietly = TRUE)
 
 NNIDist(BalancedTree(7), PectinateTree(7))
 

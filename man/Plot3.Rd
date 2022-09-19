@@ -29,18 +29,25 @@ Plot3(
 
 \item{plot.bg}{Colour with which to fill plot area, used as fog colour.}
 
-\item{fog}{Numeric specifying amount of mist to apply to distant points.}
+\item{fog}{Numeric from zero (no fading) to one (furthest points are
+invisible) specifying amount to fade distant points.}
 
 \item{shrink}{Numeric specifying degree to which size of plotted point
-should reflect \code{z} position.}
+should reflect \code{z} position. \code{0} denotes no scaling; if \code{1}, furthest
+point will have zero size.}
 }
 \description{
-\code{Plot3()} is an experimental function that generates
-a two-dimensional plot with the impression of a third dimension
-obtained through point scaling, overlap and fogging.
+\code{Plot3()} displays three-dimensional data in two dimensions, reflecting the
+third dimension with point scaling, overlap and fogging.
+Points with a lower \code{z} value are smaller than, fainter than, and overlapped
+by points with a higher value.
 }
 \examples{
 Plot3(1:10, 1:10, 1:10, cex = 7, pch = 16, axes = FALSE, asp = 1)
+# Extreme values of fog and shrink will cause smallest z values to
+# become invisible.
+Plot3(1:10, 1:10, 1:10, cex = 7, pch = 16, axes = FALSE, asp = 1,
+      fog = 1, shrink = 1)
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

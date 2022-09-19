@@ -48,7 +48,7 @@
 #' @template distReturn
 #' 
 #' @examples 
-#' library('TreeTools')
+#' library("TreeTools")
 #' NyeSimilarity(BalancedTree(8), PectinateTree(8))
 #' VisualizeMatching(NyeSimilarity ,BalancedTree(8), PectinateTree(8))
 
@@ -86,7 +86,7 @@ NyeSimilarity <- function(tree1, tree2 = NULL, similarity = TRUE,
     
     # Return:
     NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                  InfoInTree = NSplits, Combine = '+')
+                  InfoInTree = NSplits, Combine = "+")
   }
 }
 
@@ -96,7 +96,7 @@ NyeSimilarity <- function(tree1, tree2 = NULL, similarity = TRUE,
 #' @inheritParams SharedPhylogeneticInfoSplits
 #' @export
 NyeSplitSimilarity <- function(splits1, splits2, 
-                                nTip = attr(splits1, 'nTip'),
+                                nTip = attr(splits1, "nTip"),
                                 reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, nTip, cpp_jaccard_similarity, k = 1L,
                 allowConflict = TRUE, maximize = TRUE,
@@ -184,14 +184,14 @@ JaccardRobinsonFoulds <- function(tree1, tree2 = NULL, k = 1L,
   }
 
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                InfoInTree = NSplits, Combine = '+')
+                InfoInTree = NSplits, Combine = "+")
 }
 
 #' @rdname JaccardRobinsonFoulds
 #' @inheritParams SharedPhylogeneticInfoSplits
 #' @export
 JaccardSplitSimilarity <- function(splits1, splits2,
-                                    nTip = attr(splits1, 'nTip'),
+                                    nTip = attr(splits1, "nTip"),
                                     k = 1L, allowConflict = TRUE,
                                     reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, nTip, cpp_jaccard_similarity, k = k,

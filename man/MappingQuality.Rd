@@ -31,7 +31,7 @@ neighbours; continuity, the extent to which points that are truly nearby
 retain their close spatial proximity in a mapping.
 }
 \examples{
-library('TreeTools', quietly = TRUE, warn.conflict = FALSE)
+library("TreeTools", quietly = TRUE)
 trees <- as.phylo(0:10, nTip = 8)
 distances <- ClusteringInfoDistance(trees)
 mapping <- cmdscale(distances)

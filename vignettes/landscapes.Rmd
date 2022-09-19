@@ -118,4 +118,6 @@ if (requireNamespace("plotly", quietly = TRUE)) {
 }
 ```
 
+(Use the mouse to reorient)
+
 # References

@@ -104,7 +104,7 @@ or lists of such trees to undergo pairwise comparison.  Where implemented,
 \item{normalize}{If a numeric value is provided, this will be used as a
 maximum value against which to rescale results.
 If \code{TRUE}, results will be rescaled against a maximum value calculated from
-the specified tree sizes and topology, as specified in the 'Normalization'
+the specified tree sizes and topology, as specified in the "Normalization"
 section below.
 If \code{FALSE}, results will not be rescaled.}
 
@@ -218,7 +218,7 @@ Alternatively, to scale against the information content or entropy of all
 splits in the most or least informative tree, use \verb{normalize = }\code{\link{pmax}} or
 \code{\link{pmin}} respectively.
 To calculate the relative similarity against a reference tree that is known
-to be 'correct', use \code{normalize = SplitwiseInfo(trueTree)} (SPI, MSI) or
+to be "correct", use \code{normalize = SplitwiseInfo(trueTree)} (SPI, MSI) or
 \code{ClusteringEntropy(trueTree)} (MCI).
 }
 }
@@ -231,16 +231,16 @@ or drop the package maintainer an e-mail.)
 
 To determine which tips do not occur in both trees, try:
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{library('TreeTools')
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{library("TreeTools")
 setdiff(TipLabels(tree1), TipLabels(tree2)) # In tree1 but not tree2
 setdiff(TipLabels(tree2), TipLabels(tree1)) # In tree2 but not tree1
 }\if{html}{\out{</div>}}
 }
 
 \examples{
-tree1 <- ape::read.tree(text='((((a, b), c), d), (e, (f, (g, h))));')
-tree2 <- ape::read.tree(text='(((a, b), (c, d)), ((e, f), (g, h)));')
-tree3 <- ape::read.tree(text='((((h, b), c), d), (e, (f, (g, a))));')
+tree1 <- ape::read.tree(text="((((a, b), c), d), (e, (f, (g, h))));")
+tree2 <- ape::read.tree(text="(((a, b), (c, d)), ((e, f), (g, h)));")
+tree3 <- ape::read.tree(text="((((h, b), c), d), (e, (f, (g, a))));")
 
 # Best possible score is obtained by matching a tree with itself
 DifferentPhylogeneticInfo(tree1, tree1) # 0, by definition
@@ -253,14 +253,14 @@ SplitwiseInfo(tree2)
 
 # How similar are two trees?
 SharedPhylogeneticInfo(tree1, tree2) # Amount of phylogenetic information in common
-attr(SharedPhylogeneticInfo(tree1, tree2, reportMatching = TRUE), 'matching')
+attr(SharedPhylogeneticInfo(tree1, tree2, reportMatching = TRUE), "matching")
 VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2) # Which clades are matched?
 
 DifferentPhylogeneticInfo(tree1, tree2) # Distance measure
 DifferentPhylogeneticInfo(tree2, tree1) # The metric is symmetric
 
 # Are they more similar than two trees of this shape would be by chance?
-ExpectedVariation(tree1, tree2, sample=12)['DifferentPhylogeneticInfo', 'Estimate']
+ExpectedVariation(tree1, tree2, sample=12)["DifferentPhylogeneticInfo", "Estimate"]
 
 # Every split in tree1 conflicts with every split in tree3
 # Pairs of conflicting splits contain clustering, but not phylogenetic, 

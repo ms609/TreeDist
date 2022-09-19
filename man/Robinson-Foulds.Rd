@@ -62,7 +62,7 @@ similarity, rather than a difference.}
 \item{normalize}{If a numeric value is provided, this will be used as a
 maximum value against which to rescale results.
 If \code{TRUE}, results will be rescaled against a maximum value calculated from
-the specified tree sizes and topology, as specified in the 'Normalization'
+the specified tree sizes and topology, as specified in the "Normalization"
 section below.
 If \code{FALSE}, results will not be rescaled.}
 
@@ -123,7 +123,7 @@ information of all splits in both trees, treated independently.
 
 \examples{
  # For BalancedTree, PectinateTree, as.phylo:
-library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+library("TreeTools", quietly = TRUE)
 balanced7 <- BalancedTree(7)
 pectinate7 <- PectinateTree(7)
 RobinsonFoulds(balanced7, pectinate7)

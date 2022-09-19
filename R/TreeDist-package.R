@@ -2,12 +2,12 @@
 #' 
 #' 'TreeDist' is an R package that implements a suite of metrics that quantify the
 #' topological distance between pairs of unweighted phylogenetic trees.
-#' It also includes a simple 'Shiny' application to allow the visualization of
+#' It also includes a simple "Shiny" application to allow the visualization of
 #' distance-based tree spaces, and functions to calculate the information content
 #' of trees and splits.
 #' 
-#' 'TreeDist' primarily employs metrics in the category of
-#' 'generalized Robinson&ndash;Foulds distances': they are based on comparing splits
+#' "TreeDist" primarily employs metrics in the category of
+#' "generalized Robinson&ndash;Foulds distances": they are based on comparing splits
 #' (bipartitions) between trees, and thus reflect the relationship data within 
 #' trees, with no reference to branch lengths.
 #' Detailed documentation and usage instructions are 
@@ -24,7 +24,7 @@
 #' By overlooking potential similarities between almost-identical splits, 
 #' this conservative approach has undesirable properties.
 #' 
-#' ['Generalized' RF metrics](https://ms609.github.io/TreeDist/articles/Generalized-RF.html)
+#' ["Generalized" RF metrics](https://ms609.github.io/TreeDist/articles/Generalized-RF.html)
 #' generate _matchings_ that pair each split in one tree with a similar split 
 #' in the other.
 #' Each pair of splits is assigned a similarity score; the sum of these scores in
@@ -55,7 +55,7 @@
 #' * [`MatchingSplitDistance()`](https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html)
 #' 
 #'   + Bogdanowicz and Giaro (2012) and  Lin _et al._ (2012) independently proposed
-#'     counting the number of 'mismatched' leaves in a pair of splits.
+#'     counting the number of "mismatched" leaves in a pair of splits.
 #'     [`MatchingSplitInfoDistance()`](https://ms609.github.io/TreeDist/reference/TreeDistance.html)
 #'     provides an information-based equivalent (Smith 2020).
 #' 
@@ -94,7 +94,7 @@
 #' 
 #' Further documentation is available in the 
 #' [package vignettes](https://ms609.github.io/TreeDist/articles/), visible from
-#' R using `vignette(package = 'TreeDist')`.
+#' R using `vignette(package = "TreeDist")`.
 #' 
 #' Other R packages implementing tree distance functions include:
 #'   

@@ -1,6 +1,6 @@
-library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
+library("TreeTools", quietly = TRUE)
 
-test_that('Tree normalization works', {
+test_that("Tree normalization works", {
   expect_equal(0.5, NormalizeInfo(5, 3, 5, how = TRUE, 
                                   InfoInTree = function(x, y) x + y, y = 1L))
   expect_equal(0:4 / c(1, 2, 3, 3, 3), 
@@ -16,12 +16,12 @@ test_that('Tree normalization works', {
 })
 
 test_that("CalculateTreeDistance() errs appropriately", {
-  expect_error(CalculateTreeDistance(RobinsonFouldsSplits, 'Not a tree'))
-  expect_error(CalculateTreeDistance(RobinsonFouldsSplits, 'Not a tree', BalancedTree(8)))
-  expect_error(CalculateTreeDistance(RobinsonFouldsSplits, BalancedTree(8), 'Not a tree'))
+  expect_error(CalculateTreeDistance(RobinsonFouldsSplits, "Not a tree"))
+  expect_error(CalculateTreeDistance(RobinsonFouldsSplits, "Not a tree", BalancedTree(8)))
+  expect_error(CalculateTreeDistance(RobinsonFouldsSplits, BalancedTree(8), "Not a tree"))
 })
 
-test_that('CalculateTreeDistance() handles splits appropriately', {
+test_that("CalculateTreeDistance() handles splits appropriately", {
   set.seed(101)
   tree10 <- ape::rtree(10)
   tree10.1 <- ape::rtree(10)
@@ -41,7 +41,7 @@ test_that('CalculateTreeDistance() handles splits appropriately', {
   expect_equal(dist(0), CalculateTreeDistance(RobinsonFouldsSplits, splits10, NULL))
   expect_equal(seq_len(7),
                attr(CalculateTreeDistance(RobinsonFouldsSplits, 
-                                          splits10, splits10, TRUE), 'matching')
+                                          splits10, splits10, TRUE), "matching")
                )
   expect_equal(CalculateTreeDistance(RobinsonFouldsSplits, splits10, splits10.1),
                CalculateTreeDistance(RobinsonFouldsSplits, splits10.1, splits10))
@@ -74,10 +74,10 @@ test_that('CalculateTreeDistance() handles splits appropriately', {
     t(CalculateTreeDistance(RobinsonFouldsSplits, splits10.3, splits10.4)))
 })
 
-test_that('Matches are reported', {
+test_that("Matches are reported", {
   # Trees copied from test-tree_distance.R
-  treeSym8 <- ape::read.tree(text='((e, (f, (g, h))), (((a, b), c), d));')
-  treeBal8 <- ape::read.tree(text='(((e, f), (g, h)), ((a, b), (c, d)));')
+  treeSym8 <- ape::read.tree(text="((e, (f, (g, h))), (((a, b), c), d));")
+  treeBal8 <- ape::read.tree(text="(((e, f), (g, h)), ((a, b), (c, d)));")
   treeTwoSplits <- ape::read.tree(text="(((a, b), c, d), (e, f, g, h));")
   
   A <- TRUE
@@ -88,7 +88,7 @@ test_that('Matches are reported', {
                           B, B, A, A, A, A, A, A,
                           A, A, A, A, A, B, A, B), nrow = 4, byrow = TRUE),
                        tipLabels = letters[1:8])
-  match <- TreeTools::match # Avoid being re-masked by 'base'
+  match <- TreeTools::match # Avoid being re-masked by "base"
   
   expect_equal("a b | c d e f g h => a b c | d e f g h",
                ReportMatching(splitsA, splitsB[[2]]))
@@ -105,13 +105,13 @@ test_that('Matches are reported', {
                attr(GeneralizedRF(as.Splits(treeSym8), as.Splits(treeBal8), 8L, 
                                   cpp_shared_phylo, maximize = TRUE, 
                                   reportMatching = TRUE),
-                    'matching'))
+                    "matching"))
     
   expect_equal(matchedSplits,
                attr(SharedPhylogeneticInfoSplits(as.Splits(treeSym8),
                                                  as.Splits(treeBal8),
                                                  reportMatching = TRUE),
-                    'matching'))
+                    "matching"))
   
   tree1 <- PectinateTree(letters[1:8])
   tree2 <- BalancedTree(letters[8:1])
@@ -137,13 +137,13 @@ test_that('Matches are reported', {
     ghSplit <- at$matchedSplits[
       match(as.Splits(c(rep(FALSE, 6), TRUE, TRUE), letters[1:8]),
             splits1[[which(!is.na(matchedSplits))]])]
-    expect_equal('g h | a b c d e f => g h | a b c d e f', ghSplit)
+    expect_equal("g h | a b c d e f => g h | a b c d e f", ghSplit)
     
     at <- attributes(Func(treeSym8, treeTwoSplits, reportMatching = TRUE, ...))
     expect_equal(3L, length(at))
     expect_equal(match(as.Splits(treeSym8), as.Splits(treeTwoSplits, treeSym8)),
                  as.integer(at$matching))
-    expect_equal('a b | e f g h c d => a b | e f g h c d', at$matchedSplits[2])
+    expect_equal("a b | e f g h c d => a b | e f g h c d", at$matchedSplits[2])
   }
   
   Test(SharedPhylogeneticInfo)
@@ -165,33 +165,33 @@ test_that('Matches are reported', {
                                          reportMatching = TRUE))
   expect_equal(3L, length(at))
   expect_equal(c(1:3, 5:4), as.integer(at$matching))
-  expect_equal('a b | e f g h c d => a b | e f g h c d', at$matchedSplits[5])
+  expect_equal("a b | e f g h c d => a b | e f g h c d", at$matchedSplits[5])
   
   # Zero match:
   expect_true(attr(SharedPhylogeneticInfo(
                     ape::read.tree(text="((a, b), (c, d));"),
                     ape::read.tree(text="((a, c), (b, d));"), 
                     reportMatching = TRUE),
-                    'matchedSplits') %in% c(
-                      'a b | c d .. a c | b d',
-                      'a b | c d .. b d | a c',
-                      'c d | a b .. a c | b d',
-                      'c d | a b .. b d | a c'))
+                    "matchedSplits") %in% c(
+                      "a b | c d .. a c | b d",
+                      "a b | c d .. b d | a c",
+                      "c d | a b .. a c | b d",
+                      "c d | a b .. b d | a c"))
 })
 
-test_that('Matchings are calculated in both directions', {
-  tree1 <- ape::read.tree(text='((1, 2), ((3, 4, (5, 9)), (6, (7, 8))));')
-  tree2 <- ape::read.tree(text='((1, 2), ((3, (4, 5)), (6, (7, (8, 9)))));')
+test_that("Matchings are calculated in both directions", {
+  tree1 <- ape::read.tree(text="((1, 2), ((3, 4, (5, 9)), (6, (7, 8))));")
+  tree2 <- ape::read.tree(text="((1, 2), ((3, (4, 5)), (6, (7, (8, 9)))));")
   splits1 <- as.Splits(tree1)
   splits2 <- as.Splits(tree2)
   nMatches <- min(length(splits1), length(splits2))
   
   Test <- function(Func, ...) {
     matching12 <- Func(tree1, tree2, reportMatching = TRUE, ...)
-    expect_equal(nMatches, length(attr(matching12, 'matchedSplits')))
+    expect_equal(nMatches, length(attr(matching12, "matchedSplits")))
     
     matching21 <- Func(tree2, tree1, reportMatching = TRUE, ...)
-    expect_equal(nMatches, length(attr(matching21, 'matchedSplits')))
+    expect_equal(nMatches, length(attr(matching21, "matchedSplits")))
   }
   
   Test(SharedPhylogeneticInfo)
@@ -212,7 +212,7 @@ test_that('Matchings are calculated in both directions', {
   
 })
 
-test_that('.TreeDistance() supports all sizes', {
+test_that(".TreeDistance() supports all sizes", {
   expect_equal(rbind(
     bal = MASTSize(BalancedTree(7), as.phylo(0:3, 7)),
     pec = MASTSize(as.phylo(0:3, 7), PectinateTree(7))),
