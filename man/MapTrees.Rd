@@ -100,13 +100,11 @@ A list of references employed when constructing the tree space is populated
 according to the methods used; it would be appropriate to cite and briefly
 discuss these studies in any publication using figures generated using
 this application.  The application itself can be cited using
-Smith (2020, 2021) below.
+Smith \insertCite{SmithDist;textual,SmithSpace;textual}{TreeDist}
 }
 
 \references{
-\insertRef{SmithDist}{TreeDist}
-
-\insertRef{SmithSpace}{TreeDist}
+\insertAllCited{}
 }
 \seealso{
 Full detail of tree space analysis in R is provided in the accompanying

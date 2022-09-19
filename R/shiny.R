@@ -95,18 +95,15 @@
 #' according to the methods used; it would be appropriate to cite and briefly 
 #' discuss these studies in any publication using figures generated using
 #' this application.  The application itself can be cited using 
-#' Smith (2020, 2021) below.
+#' Smith \insertCite{SmithDist;textual,SmithSpace;textual}{TreeDist}
 #'  
-#' 
 #' 
 #' @seealso
 #' Full detail of tree space analysis in R is provided in the accompanying
 #' [vignette](https://ms609.github.io/TreeDist/articles/treespace.html).
 #' 
 #' @references 
-#' \insertRef{SmithDist}{TreeDist}
-#' 
-#' \insertRef{SmithSpace}{TreeDist}
+#' \insertAllCited{}
 #' 
 #' @template MRS
 #' @family tree space functions
