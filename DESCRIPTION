@@ -10,9 +10,7 @@ Authors@R: c(person("Martin R.", "Smith",
                   role = c("prg", "cph")),
              person("Yong", "Yang", email = "yongyanglink@gmail.com",
                     role = c("ctb", "cph")),
-             person("Yi", "Cao", role=c("ctb", "cph")),
-             person("Georg M.", "Goerg", email = "gmg@stat.cmu.edu",
-                    role = c("ctb"))
+             person("Yi", "Cao", role=c("ctb", "cph"))
             )
 License: GPL (>= 3)
 Description: Implements measures of tree similarity, including 
