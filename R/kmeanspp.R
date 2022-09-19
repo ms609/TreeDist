@@ -11,11 +11,10 @@
 #' chosen
 #' @param \dots additional arguments passed to \code{\link[stats]{kmeans}}
 #' @references
-#' \insertAllCited{}#'  
+#' \insertAllCited{} 
 #'  
 #' @author Modified by Martin R. Smith from [code](
 #' https://rdrr.io/cran/LICORS/src/R/kmeanspp.R) by Georg M. Goerg.
-#' @export
 #' @seealso \code{\link[stats]{kmeans}}
 #' @examples 
 #' # Generate random points
@@ -27,19 +26,16 @@
 #' )
 #' 
 #' # Compute clustering
-#' clusters <- kmeanspp(x, k = 5)
+#' clusters <- KMeansPP(x, k = 5)
 #' 
 #' # Plot
 #' plot(x, col = clusters$cluster, pch = 16)
 #' @importFrom stats kmeans
-kmeanspp <- function(x, k = 2, nstart = 10, ...) {
-  
-  if (length(dim(x)) == 0) {
-    x <- matrix(x, ncol = 1)
-  } else {
-    x <- cbind(x)
-  }
-  
+#' @export
+KMeansPP <- function(x, k = 2, nstart = 10, ...) UseMethod("KMeansPP")
+
+#' @export
+KMeansPP.matrix <- function(x, k = 2, nstart = 10, ...) {
   if (k < 2) {
     return(kmeans(x, centers = k, ...))
   }
@@ -67,4 +63,9 @@ kmeanspp <- function(x, k = 2, nstart = 10, ...) {
   
   # Return:
   ret
+}
+
+#' @export
+KMeansPP.numeric <- function(x, k = 2, nstart = 10, ...) {
+  KMeansPP(matrix(x, ncol = 1), k = k, nstart = nstart, ...)
 }
