@@ -39,7 +39,7 @@
 #' (the product of these values), and `sqrtTxC` (its square root).
 #' 
 #' @examples
-#' library("TreeTools", quietly = TRUE, warn.conflict = FALSE)
+#' library("TreeTools", quietly = TRUE)
 #' trees <- as.phylo(0:10, nTip = 8)
 #' distances <- ClusteringInfoDistance(trees)
 #' mapping <- cmdscale(distances)

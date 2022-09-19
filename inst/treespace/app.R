@@ -70,6 +70,13 @@ Reference <- function(authors, year, title, journal = "",
 }
 
 
+Arthur2007 <- Reference(
+  c("Arthur, D.", "Vassilvitskii, S"),
+  title = "k-means++: the advantages of careful seeding",
+  year = 2007,
+  journal = "Proceedings of the Eighteenth Annual ACM-SIAM Symposium on Discrete Algorithms",
+  pages = c(1027, 1035)
+)
 Bien2011 <- Reference(
   c("Bien, J.", "Tibshirani, R."),
   title = "Hierarchical clustering with prototypes via minimax linkage",
@@ -77,15 +84,16 @@ Bien2011 <- Reference(
   volume = 106,
   doi = "10.1198/jasa.2011.tm10183",
   pages = c(1075, 1084),
-  journal = "Journal of the American Statistical Association")
-
+  journal = "Journal of the American Statistical Association"
+)
 Day1985 <- Reference(
   title = "Optimal algorithms for comparing trees with labeled leaves",
   author = "Day, W.H.E.", year = 1985,
   volume = 2,
   pages = c(7, 28),
   doi = "10.1007/BF01908061",
-  journal = "Journal of Classification")
+  journal = "Journal of Classification"
+)
 Estabrook1985 <- Reference(
   c("Estabrook, G.F.", "McMorris, F.R.", "Meacham, C.A."), 1985,
   title = "Comparison of undirected phylogenetic trees based on subtrees of four evolutionary units",
@@ -278,17 +286,18 @@ ui <- fluidPage(theme = "treespace.css",
                              min = 2, max = 100, value = 15)),
           
           checkboxGroupInput("clustering", "Clustering methods",
-                             choices = list("Partitioning around medoids" = "pam",
-                                            "Hierarchical, minimax linkage" = "hmm",
-                                            "Hierarchical, single linkage" = "hsi",
-                                            "Hierarchical, complete linkage" = "hco",
-                                            "Hierarchical, average linkage" = "hav",
-                                            "Hierarchical, median linkage" = "hmd",
-                                            "Hierarchical, centroid linkage" = "hct",
-                                            "Hierarchical, Ward d\ub2 linkage" = "hwd",
-                                            "K-means" = "kmn",
-                                            "Spectral" = "spec"),
-                             selected = c("pam", "hmm")),
+                             choices = list(
+                               "Partitioning around medoids" = "pam",
+                               "Hierarchical, minimax linkage" = "hmm",
+                               "Hierarchical, single linkage" = "hsi",
+                               "Hierarchical, complete linkage" = "hco",
+                               "Hierarchical, average linkage" = "hav",
+                               "Hierarchical, median linkage" = "hmd",
+                               "Hierarchical, centroid linkage" = "hct",
+                               "Hierarchical, Ward d\ub2 linkage" = "hwd",
+                               "K-means++" = "kmn",
+                               "Spectral" = "spec"),
+                             selected = c("pam", "hmm", "kmn")),
           sliderInput(inputId = "maxClusters",
                       label = "Maximum cluster number:",
                       min = 2,
@@ -769,7 +778,8 @@ server <- function(input, output, session) {
           if ("hmm" %in% input$clustering) {
             incProgress(methInc / 2, detail = "minimax clustering")
             hTree <- protoclust::protoclust(dists)
-            hClusters <- lapply(possibleClusters, function(k) cutree(hTree, k = k))
+            hClusters <- lapply(possibleClusters,
+                                function(k) cutree(hTree, k = k))
             hSils <- vapply(hClusters, function(hCluster) {
               incProgress(kInc / 2, detail = "minimax silhouettes")
               mean(cluster::silhouette(hCluster, dists)[, 3])
@@ -782,7 +792,8 @@ server <- function(input, output, session) {
           if ("hwd" %in% input$clustering) {
             incProgress(methInc / 2, detail = "Ward D\ub2 clustering")
             hTree <- stats::hclust(dists, method = "ward.D2")
-            hwdClusters <- lapply(possibleClusters, function(k) cutree(hTree, k = k))
+            hwdClusters <- lapply(possibleClusters,
+                                  function(k) cutree(hTree, k = k))
             hwdSils <- vapply(hwdClusters, function(hCluster) {
               incProgress(kInc / 2, detail = "Ward D\ub2 silhouettes")
               mean(cluster::silhouette(hCluster, dists)[, 3])
@@ -795,7 +806,8 @@ server <- function(input, output, session) {
           if ("hsi" %in% input$clustering) {
             incProgress(methInc / 2, detail = "single clustering")
             hTree <- stats::hclust(dists, method = "single")
-            hsiClusters <- lapply(possibleClusters, function(k) cutree(hTree, k = k))
+            hsiClusters <- lapply(possibleClusters,
+                                  function(k) cutree(hTree, k = k))
             hsiSils <- vapply(hsiClusters, function(hCluster) {
               incProgress(kInc / 2, detail = "single silhouettes")
               mean(cluster::silhouette(hCluster, dists)[, 3])
@@ -808,7 +820,8 @@ server <- function(input, output, session) {
           if ("hco" %in% input$clustering) {
             incProgress(methInc / 2, detail = "complete clustering")
             hTree <- stats::hclust(dists, method = "complete")
-            hcoClusters <- lapply(possibleClusters, function(k) cutree(hTree, k = k))
+            hcoClusters <- lapply(possibleClusters,
+                                  function(k) cutree(hTree, k = k))
             hcoSils <- vapply(hcoClusters, function(hCluster) {
               incProgress(kInc / 2, detail = "complete silhouettes")
               mean(cluster::silhouette(hCluster, dists)[, 3])
@@ -822,7 +835,8 @@ server <- function(input, output, session) {
           if ("hav" %in% input$clustering) {
             incProgress(methInc / 2, detail = "average clustering")
             hTree <- stats::hclust(dists, method = "average")
-            havClusters <- lapply(possibleClusters, function(k) cutree(hTree, k = k))
+            havClusters <- lapply(possibleClusters,
+                                  function(k) cutree(hTree, k = k))
             havSils <- vapply(havClusters, function(hCluster) {
               incProgress(kInc / 2, detail = "average silhouettes")
               mean(cluster::silhouette(hCluster, dists)[, 3])
@@ -836,7 +850,8 @@ server <- function(input, output, session) {
           if ("hmd" %in% input$clustering) {
             incProgress(methInc / 2, detail = "median clustering")
             hTree <- stats::hclust(dists, method = "median")
-            hmdClusters <- lapply(possibleClusters, function(k) cutree(hTree, k = k))
+            hmdClusters <- lapply(possibleClusters,
+                                  function(k) cutree(hTree, k = k))
             hmdSils <- vapply(hmdClusters, function(hCluster) {
               incProgress(kInc / 2, detail = "median silhouettes")
               mean(cluster::silhouette(hCluster, dists)[, 3])
@@ -850,7 +865,8 @@ server <- function(input, output, session) {
           if ("hct" %in% input$clustering) {
             incProgress(methInc / 2, detail = "centroid clustering")
             hTree <- stats::hclust(dists ^ 2, method = "centroid")
-            hctClusters <- lapply(possibleClusters, function(k) cutree(hTree, k = k))
+            hctClusters <- lapply(possibleClusters,
+                                  function(k) cutree(hTree, k = k))
             hctSils <- vapply(hctClusters, function(hCluster) {
               incProgress(kInc / 2, detail = "centroid silhouettes")
               mean(cluster::silhouette(hCluster, dists)[, 3])
@@ -861,10 +877,11 @@ server <- function(input, output, session) {
           }
           
           if ("kmn" %in% input$clustering) {
-            incProgress(methInc / 2, detail = "K-means clustering")
-            kClusters <- lapply(possibleClusters, function(k) kmeans(dists, k))
+            incProgress(methInc / 2, detail = "K-means++ clustering")
+            kClusters <- lapply(possibleClusters,
+                                function(k) KMeansPP(dists, k))
             kSils <- vapply(kClusters, function(kCluster) {
-              incProgress(kInc / 2, detail = "K-means silhouettes")
+              incProgress(kInc / 2, detail = "K-means++ silhouettes")
               mean(cluster::silhouette(kCluster$cluster, dists)[, 3])
             }, double(1))
             
@@ -874,9 +891,11 @@ server <- function(input, output, session) {
           }
           
           if ("spec" %in% input$clustering) {
-            spectralEigens <- SpectralEigens(dists,
-                                             nn = min(ncol(as.matrix(dists)) - 1L, 10),
-                                             nEig = 3L)
+            spectralEigens <- SpectralEigens(
+              dists,
+              nn = min(ncol(as.matrix(dists)) - 1L, 10),
+              nEig = 3L
+            )
             specClusters <- lapply(possibleClusters, function(k) {
               incProgress(kInc / 2, detail = "spectral clustering")
               cluster::pam(spectralEigens, k = k)
@@ -890,9 +909,10 @@ server <- function(input, output, session) {
             specSil <- specSils[bestSpec]
             specCluster <- specClusters[[bestSpec]]$cluster
           }
-          bestCluster <- c("none", "pam", "hmm", "hsi", "hco", "hav", "hmd", "hct",
-                           "hwd", "kmn", "spec")[
-                             which.max(c(0, pamSil, hSil, hsiSil, hcoSil, havSil, hmdSil, hctSil,
+          bestCluster <- c("none", "pam", "hmm", "hsi", "hco", "hav",
+                           "hmd", "hct", "hwd", "kmn", "spec")[
+                             which.max(c(0, pamSil, hSil, hsiSil, hcoSil,
+                                         havSil, hmdSil, hctSil,
                                          hwdSil, kSil, specSil))]
           
         })
@@ -909,7 +929,7 @@ server <- function(input, output, session) {
                                             hmd = "median linkage",
                                             hct = "centroid linkage",
                                             hwd = "Ward d\ub2 linkage",
-                                            kmn = "K-means",
+                                            kmn = "K-means++",
                                             spec = "spectral",
                                             "no attempt to find any"),
                             n = 1 + switch(bestCluster,
@@ -1312,10 +1332,11 @@ server <- function(input, output, session) {
   # References
   ##############################################################################
   output$references <- renderUI({
-    tags$div(style = paste0("position: relative; top: ", 
-                            (input$plotSize - 600)
-                            + if ("cons" %in% input$display) consSize() - 200 else 0
-                            , "px"),
+    tags$div(style = paste0(
+      "position: relative; top: ",
+      (input$plotSize - 600) +
+        if ("cons" %in% input$display) consSize() - 200 else 0,
+      "px"),
     tagList(
       tags$h2("References for methods used"),
       #HTML(paste0("<h2>References", input$plotSize, "</h2>")),
@@ -1350,7 +1371,7 @@ server <- function(input, output, session) {
         hmd = "",#paste0("Hierarchical, median linkage:"),
         hct = "",#paste0("Hierarchical, centroid linkage:"),
         hwd = paste0("Hierarchical, Ward d\ub2 linkage: ", Ward1963),
-        kmn = "",#paste0("K-means:"),
+        kmn = paste0("K-means++:", Arthur2007),
         spec = ""#paste0("Spectral:")
         )[input$clustering])),
       HTML(paste("Cluster consensus trees:", Stockham2002))

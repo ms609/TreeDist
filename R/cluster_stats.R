@@ -19,6 +19,7 @@
 #' )
 #' 
 #' @family tree space functions
+#' @family cluster functions
 #' @template MRS
 NULL
 
@@ -229,6 +230,7 @@ MeanMSTEdge.dist <- function(x, cluster = 1) {
          numeric(1))
 }
 
+#' @importFrom stats as.dist
 .MeanMSTEdge.dist <- function(x) {
   n <- dim(x)[1]
   # Return:
