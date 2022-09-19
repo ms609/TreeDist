@@ -27,7 +27,7 @@ between phylogenetic trees."><meta name="robots" content="noindex"><!-- mathjax 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.4.1.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.4.1.9002</span>
       </span>
     </div>
 
@@ -169,7 +169,7 @@ i.e. $$n - 2$$.</p>
 tree that do not match edges in the second.  Each of these edges must
 undergo at least one NNI operation in order to reconcile the trees.
 Edges that match in both trees need never undergo an NNI operation, and
-divide each tree into smaller regions.  By 'cutting' matched edges into two,
+divide each tree into smaller regions.  By "cutting" matched edges into two,
 a tree can be divided into a number of regions that solely comprise unmatched
 edges.</p>
 <p>These regions can be viewed as separate trees that need to be reconciled.
@@ -222,7 +222,7 @@ ISBN 978-3-540-61332-9 978-3-540-68461-9, <a href="https://doi.org/10.1007/3-540
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeTools/" class="external-link">'TreeTools'</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeTools/" class="external-link">"TreeTools"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">NNIDist</span><span class="op">(</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/GenerateTree.html" class="external-link">BalancedTree</a></span><span class="op">(</span><span class="fl">7</span><span class="op">)</span>, <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/GenerateTree.html" class="external-link">PectinateTree</a></span><span class="op">(</span><span class="fl">7</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       lower  best_lower tight_upper  best_upper loose_upper  fack_upper </span>

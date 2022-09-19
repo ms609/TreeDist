@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.4.1.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.4.1.9002</span>
       </span>
     </div>
 
@@ -134,7 +134,7 @@
     
 
 <p><code>StartParallel()</code> and <code>SetParallel()</code> return the previous value of
-<code>options('TreeDist-cluster')</code>.</p>
+<code>options("TreeDist-cluster")</code>.</p>
 
 
 <p><code>GetParallel()</code> returns the currently specified cluster.</p>
@@ -147,7 +147,7 @@
     <h2>Details</h2>
     <p>"TreeDist" parallelizes the calculation of tree to tree distances via
 the <code>parCapply()</code> function, using a user-defined cluster specified in
-<code>options('TreeDist-cluster')</code>.</p>
+<code>options("TreeDist-cluster")</code>.</p>
 <p><code>StartParallel()</code> calls <code><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">parallel::makeCluster()</a></code> and tells "TreeDist" to
 use the created cluster.</p>
 <p><code>SetParallel()</code> tells "TreeDist" to use a pre-existing or user-specified

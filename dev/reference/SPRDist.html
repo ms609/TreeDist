@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.4.1.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.4.1.9002</span>
       </span>
     </div>
 
@@ -128,7 +128,7 @@ by calculating the minimum of <code>SPRDist(t1, t2)</code> and <code>SPRDist(t2,
 which are not guaranteed to be equal due to the heuristic nature of the
 approximation (see
 <a href="https://github.com/KlausVigo/phangorn/issues/97" class="external-link">phangorn#97</a>). Set to
-<code>FALSE</code> for the faster approximation, as implemented in 'phangorn'.</p></dd>
+<code>FALSE</code> for the faster approximation, as implemented in "phangorn".</p></dd>
 
 </dl></div>
     <div id="value">
@@ -147,7 +147,7 @@ not cause the <code>SPR.dist()</code> function to crash R, and allows an improve
 (but slower) symmetric heuristic.</p>
 <p>A memory leak is present in phangorn v2.5.5.  To avoid a drain on system
 resources, install the latest version of phangorn with
-<code>devtools::install_github('KlausVigo/phangorn')</code>.</p>
+<code>devtools::install_github("KlausVigo/phangorn")</code>.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -170,7 +170,7 @@ resources, install the latest version of phangorn with
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeTools/" class="external-link">'TreeTools'</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span>, warn.conflicts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeTools/" class="external-link">"TreeTools"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">SPRDist</span><span class="op">(</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/GenerateTree.html" class="external-link">BalancedTree</a></span><span class="op">(</span><span class="fl">7</span><span class="op">)</span>, <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/GenerateTree.html" class="external-link">PectinateTree</a></span><span class="op">(</span><span class="fl">7</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> spr </span>

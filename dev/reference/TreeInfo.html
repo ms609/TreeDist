@@ -30,7 +30,7 @@ counted more than once"><meta name="robots" content="noindex"><!-- mathjax --><s
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.4.1.9001</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.4.1.9002</span>
       </span>
     </div>
 
@@ -178,7 +178,7 @@ provide the total splitwise information content of the tree.</p></dd>
 
 
 <dt>info</dt>
-<dd><p>Abbreviation of 'phylogenetic' or 'clustering', specifying
+<dd><p>Abbreviation of "phylogenetic" or "clustering", specifying
 the concept of information to employ.</p></dd>
 
 
@@ -229,15 +229,15 @@ common, and thus less surprising; it can be signified using fewer bits in an
 optimal compression system.</p>
 <p>If this sounds confusing, let's consider creating a code to transmit the
 cluster label of two randomly selected leaves.  One straightforward
-option would be to use</p><ul><li><p><code>00</code> = 'Both leaves belong to partition A'</p></li>
-<li><p><code>11</code> = 'Both leaves belong to partition B'</p></li>
+option would be to use</p><ul><li><p><code>00</code> = "Both leaves belong to partition A"</p></li>
+<li><p><code>11</code> = "Both leaves belong to partition B"</p></li>
 <li><p><code>01</code> = 'First leaf in A, second in B`</p></li>
 <li><p><code>10</code> = 'First leaf in B, second in A`</p></li>
 </ul><p>This code uses two bits to transmit the partition labels of two leaves.
 If partitions A and B are equiprobable, this is the optimal code; our
 entropy -- the average information content required per leaf -- is 1 bit.</p>
-<p>Alternatively, we could use the (suboptimal) code</p><ul><li><p><code>0</code> = 'Both leaves belong to partition A'</p></li>
-<li><p><code>111</code> = 'Both leaves belong to partition B'</p></li>
+<p>Alternatively, we could use the (suboptimal) code</p><ul><li><p><code>0</code> = "Both leaves belong to partition A"</p></li>
+<li><p><code>111</code> = "Both leaves belong to partition B"</p></li>
 <li><p><code>101</code> = 'First leaf in A, second in B`</p></li>
 <li><p><code>110</code> = 'First leaf in B, second in A`</p></li>
 </ul><p>If A is much larger than B, then most pairs of leaves will require just
@@ -362,7 +362,7 @@ and in a <a href="https://ms609.github.io/TreeDist/articles/information.html">pa
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5.646428</span>
 <span class="r-in"><span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/LabelSplits.html" class="external-link">LabelSplits</a></span><span class="op">(</span><span class="va">cons</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">signif</a></span><span class="op">(</span><span class="fu">ClusteringInfo</span><span class="op">(</span><span class="va">cons</span>, <span class="va">p</span>, sum <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="TreeInfo-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="fu">ConsensusInfo</span><span class="op">(</span><span class="va">trees</span>, <span class="st">'clustering'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">ConsensusInfo</span><span class="op">(</span><span class="va">trees</span>, <span class="st">"clustering"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 13.98697</span>
 </code></pre></div>
     </div>
