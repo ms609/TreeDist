@@ -8,6 +8,7 @@ test_that("k-means++ works", {
   five <- cbind(c(rnorm(10, -8), rnorm(5, 0), rnorm(10, 8)),
                 c(rnorm(5, -5), rnorm(15, 5), rnorm(5, 0)))
   dists <- dist(five)
+  expect_equal(unname(KMeansPP(dists, k = 1)$cluster), rep(1, 25))
   cl <- KMeansPP(dists, k = 5)$cluster
   # plot(five, col = KMeansPP(dists, k = 5)$cluster, pch = rep(15:19, each = 5))
   # plot(five, col = kmeans(dists, cent = 5)$cluster, pch = rep(15:19, each = 5))
