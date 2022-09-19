@@ -95,7 +95,7 @@
 #' according to the methods used; it would be appropriate to cite and briefly 
 #' discuss these studies in any publication using figures generated using
 #' this application.  The application itself can be cited using 
-#' Smith \insertCite{SmithDist;textual,SmithSpace;textual}{TreeDist}
+#' \insertCite{SmithDist,SmithSpace;textual}{TreeDist}
 #'  
 #' 
 #' @seealso
