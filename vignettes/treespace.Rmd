@@ -142,6 +142,7 @@ clustering [@Arthur2007] can also be worthwhile.
 ```{r clustering, fig.align="center"}
 possibleClusters <- 2:10
 
+# Partitioning around medoids
 pamClusters <- lapply(possibleClusters, function(k) cluster::pam(distances, k = k))
 pamSils <- vapply(pamClusters, function(pamCluster) {
   mean(cluster::silhouette(pamCluster)[, 3])
@@ -151,6 +152,7 @@ bestPam <- which.max(pamSils)
 pamSil <- pamSils[bestPam]
 pamCluster <- pamClusters[[bestPam]]$cluster
 
+# Hierarchical clustering
 hTree <- protoclust(distances)
 hClusters <- lapply(possibleClusters, function(k) cutree(hTree, k = k))
 hSils <- vapply(hClusters, function(hCluster) {
@@ -161,6 +163,7 @@ bestH <- which.max(hSils)
 hSil <- hSils[bestH]
 hCluster <- hClusters[[bestH]]
 
+# k-means++ clustering
 kClusters <- lapply(possibleClusters, function(k) KMeansPP(distances, k = k))
 kSils <- vapply(kClusters, function(kCluster) {
   mean(cluster::silhouette(kCluster$cluster, distances)[, 3])
