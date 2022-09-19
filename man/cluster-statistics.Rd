@@ -89,9 +89,13 @@ Other tree space functions:
 \code{\link{MappingQuality}()},
 \code{\link{SpectralEigens}()},
 \code{\link{median.multiPhylo}()}
+
+Other cluster functions: 
+\code{\link{KMeansPP}()}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
 (\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }
+\concept{cluster functions}
 \concept{tree space functions}

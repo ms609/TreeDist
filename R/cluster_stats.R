@@ -19,6 +19,7 @@
 #' )
 #' 
 #' @family tree space functions
+#' @family cluster functions
 #' @template MRS
 NULL
 

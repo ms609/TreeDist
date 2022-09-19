@@ -17,12 +17,19 @@ reference:
       - KendallColijn
       - MatchingSplitDistance
       - has_concept("tree distances")
+      - CompareAll
+      - VisualizeMatching
   - title: "Tree space"
     desc: >
-      Functions used for the construction, evaluation and exploration of tree 
-      space.
+      Functions for the construction, evaluation and exploration of tree space.
     contents:
      - has_concept("tree space functions")
+     - Plot3
+  - title: "Cluster analysis"
+    desc: >
+      Functions for identifying and interrogating clusters of trees.
+    contents:
+     - has_concept("cluster functions")
   - title: "Information"
     desc: >
       Functions addressing the information content and entropy of splits.
@@ -35,10 +42,9 @@ reference:
   - title: "Utility functions"
     desc: Functions to facilitate interaction with the package.
     contents:
-      - Plot3
       - CompareAll
-      - median.multiPhylo
       - LAPJV
+      - Plot3
       - StartParallel
       - VisualizeMatching
 

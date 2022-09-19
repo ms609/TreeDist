@@ -30,6 +30,7 @@
 #' # Here, k-means++ recovers a better clustering
 #' plusters <- KMeansPP(x, k = 5)
 #' plot(x, col = plusters$cluster, pch = rep(15:19, each = 5))
+#' @family cluster functions
 #' @importFrom stats kmeans
 #' @export
 KMeansPP <- function(x, k = 2, nstart = 10, ...) UseMethod("KMeansPP")
