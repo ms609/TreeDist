@@ -1,8 +1,8 @@
-# TreeDist 2.4.1.9001 (development)
+# TreeDist 2.4.1.9002 (development)
 
 - New functions to measure cluster sizes.
 
-- `kmeanspp()` conducts clustering using K-means++
+- `KMeansPP()` conducts clustering using K-means++, replacing K-means in app.
 
 - New [vignette](https://ms609.github.io/TreeDist/articles/landscapes.html)
   on tree landscape analysis.

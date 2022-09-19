@@ -19,23 +19,24 @@ chosen}
 }
 \description{
 k-means++ clustering \insertCite{Arthur2007}{TreeDist} improves the speed and
-accuracy of standard \code{\link[stats]{kmeans}} clustering by selecting
-random seeds that are far from existing cluster centroids.
+accuracy of standard \code{\link[stats]{kmeans}} clustering by preferring
+initial cluster centres that are far from others.
+A scalable version of the algorithm has been proposed for larger data sets
+\insertCite{Bahmani2012}{TreeDist}, but is not implemented here.
 }
 \examples{
 # Generate random points
 set.seed(1)
-n <- 100
-x <- rbind(
-  matrix(rnorm(n), ncol = 2),
-  matrix(runif(n * 2, -1, 1), ncol = 2)
-)
+x <- cbind(c(rnorm(10, -5), rnorm(5, 1), rnorm(10, 6)),
+           c(rnorm(5, 0), rnorm(15, 4), rnorm(5, 0)))
 
-# Compute clustering
-clusters <- KMeansPP(x, k = 5)
+# Conventional k-means may perform poorly
+klusters <- kmeans(x, cent = 5)
+plot(x, col = klusters$cluster, pch = rep(15:19, each = 5))
 
-# Plot
-plot(x, col = clusters$cluster, pch = 16)
+# Here, k-means++ recovers a better clustering
+plusters <- KMeansPP(x, k = 5)
+plot(x, col = plusters$cluster, pch = rep(15:19, each = 5))
 }
 \references{
 \insertAllCited{}
@@ -44,5 +45,6 @@ plot(x, col = clusters$cluster, pch = 16)
 \code{\link[stats]{kmeans}}
 }
 \author{
-Modified by Martin R. Smith from \href{https://rdrr.io/cran/LICORS/src/R/kmeanspp.R}{code} by Georg M. Goerg.
+\href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
+(\href{mailto:martin.smith@durham.ac.uk}{martin.smith@durham.ac.uk})
 }

@@ -18,7 +18,7 @@
 #' distances <- ClusteringInfoDistance(trees)
 #' eigens <- SpectralEigens(distances)
 #' # Perform clustering:
-#' clusts <- kmeans(dist(eigens), centers = 3)
+#' clusts <- KMeansPP(dist(eigens), k = 3)
 #' plot(eigens, pch = 15, col = clusts$cluster)
 #' plot(cmdscale(distances), pch = 15, col = clusts$cluster)
 #' @family tree space functions
