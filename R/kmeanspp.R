@@ -1,8 +1,9 @@
 #' k-means++ clustering
 #'
 #' k-means++ clustering \insertCite{Arthur2007}{TreeDist} improves the speed and
-#' accuracy of standard \code{\link[stats]{kmeans}} clustering by preferring
-#' initial cluster centres that are far from others.
+#' accuracy of standard \code{\link[stats]{kmeans}} clustering
+#' \insertCite{Hartigan1979}{TreeDist} by preferring initial cluster centres 
+#' that are far from others.
 #' A scalable version of the algorithm has been proposed for larger data sets
 #' \insertCite{Bahmani2012}{TreeDist}, but is not implemented here.
 #' 
