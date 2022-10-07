@@ -1,6 +1,7 @@
-# TreeDist 2.4.1.9002 (development)
+# TreeDist 2.5.0
 
-- New functions to measure cluster sizes.
+- New functions to measure cluster sizes (see [`?"cluster-statistics"`](
+  https://ms609.github.io/TreeDist/dev/reference/cluster-statistics.html)).
 
 - `KMeansPP()` conducts clustering using K-means++, replacing K-means in app.
 
