@@ -329,7 +329,7 @@ convex hulls on a two-dimensional mapping.  However, mapped areas do [not
 necessarily correspond](https://xkcd.com/2489/) to true hypervolumes.
 
 Accuracy may be improved by comparing higher dimensions of projections using
-the "[hypervolume](http://www.benjaminblonder.org/hypervolume_faq.html)"
+the "[hypervolume](https://www.benjaminblonder.org/hypervolume_faq.html)"
 package, though the same considerations apply [@Blonder2018].
 Interpretation of overlap statistics is detailed in @Mammola2019.
 
