@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.5.0</span>
       </span>
     </div>
 
@@ -57,7 +57,7 @@
   <a href="../articles/Using-TreeDist.html">Get started</a>
 </li>
 <li>
-  <a href="../reference/index.html">Reference</a>
+  <a href="../reference/index.html">Function reference</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -66,26 +66,38 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../articles/Using-TreeDist.html">Using TreeDist to calculate tree similarity</a>
+<li class="divider">
     </li>
+<li class="dropdown-header">Tree distance analysis</li>
     <li>
-      <a href="../articles/treespace.html">Tree space analysis in TreeDist</a>
-    </li>
-    <li>
-      <a href="../articles/compare-treesets.html">Comparing different sets of trees</a>
+      <a href="../articles/Using-TreeDist.html">Calculate tree similarity with 'TreeDist'</a>
     </li>
     <li>
       <a href="../articles/using-distances.html">Contextualizing tree distances</a>
     </li>
+    <li class="divider">
+    </li>
+<li class="dropdown-header">Tree space analysis</li>
     <li>
-      <a href="../articles/Robinson-Foulds.html">Robinson-Foulds metric</a>
+      <a href="../articles/treespace.html">Tree space analysis</a>
+    </li>
+    <li>
+      <a href="../articles/landscapes.html">Analysing landscapes of phylogenetic trees</a>
+    </li>
+    <li>
+      <a href="../articles/compare-treesets.html">Comparing sets of trees from different analyses</a>
+    </li>
+    <li class="divider">
+    </li>
+<li class="dropdown-header">Tree distance introductions</li>
+    <li>
+      <a href="../articles/information.html">Comparing splits using information theory</a>
+    </li>
+    <li>
+      <a href="../articles/Robinson-Foulds.html">Extending the Robinson-Foulds metric</a>
     </li>
     <li>
       <a href="../articles/Generalized-RF.html">Generalized Robinson-Foulds distances</a>
-    </li>
-    <li>
-      <a href="../articles/information.html">Concepts of information</a>
     </li>
   </ul>
 </li>
@@ -173,12 +185,12 @@
 <span></span>
 <span><span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span><span class="op">(</span><span class="va">oneTree</span>, <span class="va">twoTrees</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##       one       two </span></span>
-<span><span class="co">## 0.8589221 0.8212973</span></span></code></pre>
+<span><span class="co">## 0.7835958 0.6637405</span></span></code></pre>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/TreeDistance.html">TreeDistance</a></span><span class="op">(</span><span class="va">twoTrees</span>, <span class="va">threeTrees</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##             a         b         c</span></span>
-<span><span class="co">## one 0.7201652 0.8213418 0.8291687</span></span>
-<span><span class="co">## two 0.8357220 0.7927913 0.6179549</span></span></code></pre>
+<span><span class="co">## one 0.8440392 0.7471939 0.7636537</span></span>
+<span><span class="co">## two 0.6887316 0.7955975 0.8315213</span></span></code></pre>
 </div>
 </div>
 <div class="section level2">

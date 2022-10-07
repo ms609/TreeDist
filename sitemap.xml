@@ -28,6 +28,9 @@
     <loc>https://ms609.github.io/TreeDist/articles/information.html</loc>
   </url>
   <url>
+    <loc>https://ms609.github.io/TreeDist/articles/landscapes.html</loc>
+  </url>
+  <url>
     <loc>https://ms609.github.io/TreeDist/articles/treespace.html</loc>
   </url>
   <url>
@@ -139,6 +142,9 @@
     <loc>https://ms609.github.io/TreeDist/reference/VisualizeMatching.html</loc>
   </url>
   <url>
+    <loc>https://ms609.github.io/TreeDist/reference/cluster-statistics.html</loc>
+  </url>
+  <url>
     <loc>https://ms609.github.io/TreeDist/reference/dot-MASTSizeEdges.html</loc>
   </url>
   <url>
@@ -149,6 +155,9 @@
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>https://ms609.github.io/TreeDist/reference/kmeanspp.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/median.multiPhylo.html</loc>

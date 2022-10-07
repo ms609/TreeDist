@@ -25,7 +25,7 @@ proposed in Smith (2020)."><!-- mathjax --><script src="https://cdnjs.cloudflare
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.5.0</span>
       </span>
     </div>
 
@@ -40,7 +40,7 @@ proposed in Smith (2020)."><!-- mathjax --><script src="https://cdnjs.cloudflare
   <a href="../articles/Using-TreeDist.html">Get started</a>
 </li>
 <li>
-  <a href="../reference/index.html">Reference</a>
+  <a href="../reference/index.html">Function reference</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -48,26 +48,35 @@ proposed in Smith (2020)."><!-- mathjax --><script src="https://cdnjs.cloudflare
      
     <span class="caret"></span>
   </a>
-  <ul class="dropdown-menu" role="menu"><li>
-      <a href="../articles/Using-TreeDist.html">Using TreeDist to calculate tree similarity</a>
-    </li>
+  <ul class="dropdown-menu" role="menu"><li class="divider">
+    <li class="dropdown-header">Tree distance analysis</li>
     <li>
-      <a href="../articles/treespace.html">Tree space analysis in TreeDist</a>
-    </li>
-    <li>
-      <a href="../articles/compare-treesets.html">Comparing different sets of trees</a>
+      <a href="../articles/Using-TreeDist.html">Calculate tree similarity with 'TreeDist'</a>
     </li>
     <li>
       <a href="../articles/using-distances.html">Contextualizing tree distances</a>
     </li>
+    <li class="divider">
+    <li class="dropdown-header">Tree space analysis</li>
     <li>
-      <a href="../articles/Robinson-Foulds.html">Robinson-Foulds metric</a>
+      <a href="../articles/treespace.html">Tree space analysis</a>
+    </li>
+    <li>
+      <a href="../articles/landscapes.html">Analysing landscapes of phylogenetic trees</a>
+    </li>
+    <li>
+      <a href="../articles/compare-treesets.html">Comparing sets of trees from different analyses</a>
+    </li>
+    <li class="divider">
+    <li class="dropdown-header">Tree distance introductions</li>
+    <li>
+      <a href="../articles/information.html">Comparing splits using information theory</a>
+    </li>
+    <li>
+      <a href="../articles/Robinson-Foulds.html">Extending the Robinson-Foulds metric</a>
     </li>
     <li>
       <a href="../articles/Generalized-RF.html">Generalized Robinson-Foulds distances</a>
-    </li>
-    <li>
-      <a href="../articles/information.html">Concepts of information</a>
     </li>
   </ul></li>
 <li>
@@ -196,7 +205,7 @@ or lists of such trees to undergo pairwise comparison.  Where implemented,
 <dd><p>If a numeric value is provided, this will be used as a
 maximum value against which to rescale results.
 If <code>TRUE</code>, results will be rescaled against a maximum value calculated from
-the specified tree sizes and topology, as specified in the 'Normalization'
+the specified tree sizes and topology, as specified in the "Normalization"
 section below.
 If <code>FALSE</code>, results will not be rescaled.</p></dd>
 
@@ -323,7 +332,7 @@ up to 200 leaves.</p>
 splits in the most or least informative tree, use <code>normalize = </code><code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmax</a></code> or
 <code><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmin</a></code> respectively.
 To calculate the relative similarity against a reference tree that is known
-to be 'correct', use <code>normalize = SplitwiseInfo(trueTree)</code> (SPI, MSI) or
+to be "correct", use <code>normalize = SplitwiseInfo(trueTree)</code> (SPI, MSI) or
 <code>ClusteringEntropy(trueTree)</code> (MCI).</p>
 </div>
 
@@ -335,7 +344,7 @@ to be 'correct', use <code>normalize = SplitwiseInfo(trueTree)</code> (SPI, MSI)
 <a href="https://github.com/ms609/TreeDist/issues/new?title=Non-identical+tips" class="external-link">GitHub issue</a>
 or drop the package maintainer an e-mail.)</p>
 <p>To determine which tips do not occur in both trees, try:</p>
-<p></p><div class="sourceCode r"><pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeTools/" class="external-link">'TreeTools'</a></span><span class="op">)</span></span>
+<p></p><div class="sourceCode r"><pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeTools/" class="external-link">"TreeTools"</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TipLabels.html" class="external-link">TipLabels</a></span><span class="op">(</span><span class="va">tree1</span><span class="op">)</span>, <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TipLabels.html" class="external-link">TipLabels</a></span><span class="op">(</span><span class="va">tree2</span><span class="op">)</span><span class="op">)</span> <span class="co"># In tree1 but not tree2</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TipLabels.html" class="external-link">TipLabels</a></span><span class="op">(</span><span class="va">tree2</span><span class="op">)</span>, <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TipLabels.html" class="external-link">TipLabels</a></span><span class="op">(</span><span class="va">tree1</span><span class="op">)</span><span class="op">)</span> <span class="co"># In tree2 but not tree1</span></span></code></pre><p></p></div>
     </div>
@@ -379,9 +388,9 @@ Cambridge University Press, Cambridge.
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">tree1</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'((((a, b), c), d), (e, (f, (g, h))));'</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tree2</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'(((a, b), (c, d)), ((e, f), (g, h)));'</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tree3</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'((((h, b), c), d), (e, (f, (g, a))));'</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">tree1</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">"((((a, b), c), d), (e, (f, (g, h))));"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tree2</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">"(((a, b), (c, d)), ((e, f), (g, h)));"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tree3</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">"((((h, b), c), d), (e, (f, (g, a))));"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Best possible score is obtained by matching a tree with itself</span></span></span>
 <span class="r-in"><span><span class="fu">DifferentPhylogeneticInfo</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree1</span><span class="op">)</span> <span class="co"># 0, by definition</span></span></span>
@@ -399,7 +408,7 @@ Cambridge University Press, Cambridge.
 <span class="r-in"><span><span class="co"># How similar are two trees?</span></span></span>
 <span class="r-in"><span><span class="fu">SharedPhylogeneticInfo</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span> <span class="co"># Amount of phylogenetic information in common</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 13.75284</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="fu">SharedPhylogeneticInfo</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span>, reportMatching <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="st">'matching'</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="fu">SharedPhylogeneticInfo</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span>, reportMatching <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="st">"matching"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 4 2 3 5</span>
 <span class="r-in"><span><span class="fu"><a href="VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">SharedPhylogeneticInfo</span>, <span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span> <span class="co"># Which clades are matched?</span></span></span>
 <span class="r-plt img"><img src="TreeDistance-1.png" alt="" width="700" height="433"></span>
@@ -410,8 +419,8 @@ Cambridge University Press, Cambridge.
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 14.39934</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Are they more similar than two trees of this shape would be by chance?</span></span></span>
-<span class="r-in"><span><span class="fu">ExpectedVariation</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span>, sample<span class="op">=</span><span class="fl">12</span><span class="op">)</span><span class="op">[</span><span class="st">'DifferentPhylogeneticInfo'</span>, <span class="st">'Estimate'</span><span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 31.7014</span>
+<span class="r-in"><span><span class="fu">ExpectedVariation</span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span>, sample<span class="op">=</span><span class="fl">12</span><span class="op">)</span><span class="op">[</span><span class="st">"DifferentPhylogeneticInfo"</span>, <span class="st">"Estimate"</span><span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 31.25202</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Every split in tree1 conflicts with every split in tree3</span></span></span>
 <span class="r-in"><span><span class="co"># Pairs of conflicting splits contain clustering, but not phylogenetic, </span></span></span>

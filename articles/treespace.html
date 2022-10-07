@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tree space &amp; landscape analysis • TreeDist</title>
+<title>Tree space analysis • TreeDist</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
@@ -13,7 +13,7 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><!-- docsearch --><script src="../docsearch.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.3/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous">
 <link href="../docsearch.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Tree space &amp; landscape analysis">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Tree space analysis">
 <meta property="og:description" content="TreeDist">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.5.0</span>
       </span>
     </div>
 
@@ -57,7 +57,7 @@
   <a href="../articles/Using-TreeDist.html">Get started</a>
 </li>
 <li>
-  <a href="../reference/index.html">Reference</a>
+  <a href="../reference/index.html">Function reference</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -66,26 +66,38 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../articles/Using-TreeDist.html">Using TreeDist to calculate tree similarity</a>
+<li class="divider">
     </li>
+<li class="dropdown-header">Tree distance analysis</li>
     <li>
-      <a href="../articles/treespace.html">Tree space analysis in TreeDist</a>
-    </li>
-    <li>
-      <a href="../articles/compare-treesets.html">Comparing different sets of trees</a>
+      <a href="../articles/Using-TreeDist.html">Calculate tree similarity with 'TreeDist'</a>
     </li>
     <li>
       <a href="../articles/using-distances.html">Contextualizing tree distances</a>
     </li>
+    <li class="divider">
+    </li>
+<li class="dropdown-header">Tree space analysis</li>
     <li>
-      <a href="../articles/Robinson-Foulds.html">Robinson-Foulds metric</a>
+      <a href="../articles/treespace.html">Tree space analysis</a>
+    </li>
+    <li>
+      <a href="../articles/landscapes.html">Analysing landscapes of phylogenetic trees</a>
+    </li>
+    <li>
+      <a href="../articles/compare-treesets.html">Comparing sets of trees from different analyses</a>
+    </li>
+    <li class="divider">
+    </li>
+<li class="dropdown-header">Tree distance introductions</li>
+    <li>
+      <a href="../articles/information.html">Comparing splits using information theory</a>
+    </li>
+    <li>
+      <a href="../articles/Robinson-Foulds.html">Extending the Robinson-Foulds metric</a>
     </li>
     <li>
       <a href="../articles/Generalized-RF.html">Generalized Robinson-Foulds distances</a>
-    </li>
-    <li>
-      <a href="../articles/information.html">Concepts of information</a>
     </li>
   </ul>
 </li>
@@ -119,7 +131,7 @@
       </header><script src="treespace_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Tree space &amp; landscape analysis</h1>
+      <h1 data-toc-skip>Tree space analysis</h1>
                         <h4 data-toc-skip class="author"><a href="https://smithlabdurham.github.io/" class="external-link">Martin R. Smith</a></h4>
             
       
@@ -130,7 +142,7 @@
 
     
     
-<p>It can be instructive to visualize the distribution of trees in a spatial “landscape”. This can be a helpful means to address whether discrete islands of trees exist, or whether analytical runs have converged. Such analysis is relatively simple to conduct, but a few common oversights can mislead interpretation.</p>
+<p>It can be instructive to visualize the distribution of trees by mapping their spatial relationships. This can be a helpful means to address whether discrete islands exist in a sample of trees, or whether analytical runs have converged. Such analysis is relatively simple to conduct, but a few common oversights can mislead interpretation.</p>
 <div class="section level3">
 <h3 id="tree-space-analysis-via-user-interface">Tree space analysis via user interface<a class="anchor" aria-label="anchor" href="#tree-space-analysis-via-user-interface"></a>
 </h3>
@@ -154,7 +166,7 @@
 <div class="section level4">
 <h4 id="using-a-suitable-distance-metric">Using a suitable distance metric<a class="anchor" aria-label="anchor" href="#using-a-suitable-distance-metric"></a>
 </h4>
-<p>Now we need to calculate the distance between each pair of trees in our list. The choice of distance metric is important <span class="citation">(Smith, 2022)</span>. The widely used Robinson–Foulds distance is, unfortunately, unsuitable for tree space analysis. The clustering information distance <span class="citation">(Smith, 2020)</span> is a reliable alternative that is fast to calculate:</p>
+<p>Now we need to calculate the distance between each pair of trees in our list. The choice of distance metric is important <span class="citation">(M. R. Smith, 2022)</span>. The widely used Robinson–Foulds distance is, unfortunately, unsuitable for tree space analysis. The clustering information distance <span class="citation">(Smith, 2020)</span> is a reliable alternative that is fast to calculate:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeDist/">"TreeDist"</a></span><span class="op">)</span></span>
 <span><span class="va">distances</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeDistance.html">ClusteringInfoDistance</a></span><span class="op">(</span><span class="va">trees</span><span class="op">)</span></span></code></pre></div>
@@ -192,10 +204,11 @@
 <div class="section level4">
 <h4 id="identifying-clusters">Identifying clusters<a class="anchor" aria-label="anchor" href="#identifying-clusters"></a>
 </h4>
-<p>A quick visual inspection suggests at least two clusters, with the possibility of further subdivision of the brighter trees. But visual inspection can be highly misleading <span class="citation">(Smith, 2022)</span>. We must take a statistical approach. A combination of partitioning around medoids and hierarchical clustering with minimax linkage will typically find a clustering solution that is close to optimal, if one exists <span class="citation">(Smith, 2022)</span>.</p>
+<p>A quick visual inspection suggests at least two clusters, with the possibility of further subdivision of the brighter trees. But visual inspection can be highly misleading <span class="citation">(M. R. Smith, 2022)</span>. We must take a statistical approach. A combination of partitioning around medoids and hierarchical clustering with minimax linkage will typically find a clustering solution that is close to optimal, if one exists <span class="citation">(M. R. Smith, 2022)</span>; if suitably initialized, k-means++ clustering <span class="citation">(Arthur &amp; Vassilvitskii, 2007)</span> can also be worthwhile.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">possibleClusters</span> <span class="op">&lt;-</span> <span class="fl">2</span><span class="op">:</span><span class="fl">10</span></span>
 <span></span>
+<span><span class="co"># Partitioning around medoids</span></span>
 <span><span class="va">pamClusters</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">possibleClusters</span>, <span class="kw">function</span><span class="op">(</span><span class="va">k</span><span class="op">)</span> <span class="fu">cluster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/cluster/man/pam.html" class="external-link">pam</a></span><span class="op">(</span><span class="va">distances</span>, k <span class="op">=</span> <span class="va">k</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">pamSils</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="va">pamClusters</span>, <span class="kw">function</span><span class="op">(</span><span class="va">pamCluster</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu">cluster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/cluster/man/silhouette.html" class="external-link">silhouette</a></span><span class="op">(</span><span class="va">pamCluster</span><span class="op">)</span><span class="op">[</span>, <span class="fl">3</span><span class="op">]</span><span class="op">)</span></span>
@@ -205,22 +218,34 @@
 <span><span class="va">pamSil</span> <span class="op">&lt;-</span> <span class="va">pamSils</span><span class="op">[</span><span class="va">bestPam</span><span class="op">]</span></span>
 <span><span class="va">pamCluster</span> <span class="op">&lt;-</span> <span class="va">pamClusters</span><span class="op">[[</span><span class="va">bestPam</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">cluster</span></span>
 <span></span>
+<span><span class="co"># Hierarchical clustering</span></span>
 <span><span class="va">hTree</span> <span class="op">&lt;-</span> <span class="fu">protoclust</span><span class="op">(</span><span class="va">distances</span><span class="op">)</span></span>
 <span><span class="va">hClusters</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">possibleClusters</span>, <span class="kw">function</span><span class="op">(</span><span class="va">k</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/cutree.html" class="external-link">cutree</a></span><span class="op">(</span><span class="va">hTree</span>, k <span class="op">=</span> <span class="va">k</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">hSils</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="va">hClusters</span>, <span class="kw">function</span><span class="op">(</span><span class="va">hCluster</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu">cluster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/cluster/man/silhouette.html" class="external-link">silhouette</a></span><span class="op">(</span><span class="va">hCluster</span>, <span class="va">distances</span><span class="op">)</span><span class="op">[</span>, <span class="fl">3</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="op">}</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span></span>
 <span><span class="va">bestH</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">hSils</span><span class="op">)</span></span>
 <span><span class="va">hSil</span> <span class="op">&lt;-</span> <span class="va">hSils</span><span class="op">[</span><span class="va">bestH</span><span class="op">]</span></span>
 <span><span class="va">hCluster</span> <span class="op">&lt;-</span> <span class="va">hClusters</span><span class="op">[[</span><span class="va">bestH</span><span class="op">]</span><span class="op">]</span></span>
 <span></span>
+<span><span class="co"># k-means++ clustering</span></span>
+<span><span class="va">kClusters</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">possibleClusters</span>, <span class="kw">function</span><span class="op">(</span><span class="va">k</span><span class="op">)</span> <span class="fu"><a href="../reference/kmeanspp.html">KMeansPP</a></span><span class="op">(</span><span class="va">distances</span>, k <span class="op">=</span> <span class="va">k</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">kSils</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="va">kClusters</span>, <span class="kw">function</span><span class="op">(</span><span class="va">kCluster</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu">cluster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/cluster/man/silhouette.html" class="external-link">silhouette</a></span><span class="op">(</span><span class="va">kCluster</span><span class="op">$</span><span class="va">cluster</span>, <span class="va">distances</span><span class="op">)</span><span class="op">[</span>, <span class="fl">3</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="op">}</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">bestK</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">kSils</span><span class="op">)</span></span>
+<span><span class="va">kSil</span> <span class="op">&lt;-</span> <span class="va">kSils</span><span class="op">[</span><span class="va">bestK</span><span class="op">]</span></span>
+<span><span class="va">kCluster</span> <span class="op">&lt;-</span> <span class="va">kClusters</span><span class="op">[[</span><span class="va">bestK</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">cluster</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">pamSils</span> <span class="op">~</span> <span class="va">possibleClusters</span>,</span>
 <span>     xlab <span class="op">=</span> <span class="st">"Number of clusters"</span>, ylab <span class="op">=</span> <span class="st">"Silhouette coefficient"</span>,</span>
 <span>     ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">pamSils</span>, <span class="va">hSils</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">hSils</span> <span class="op">~</span> <span class="va">possibleClusters</span>, pch <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topright"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PAM"</span>, <span class="st">"Hierarchical"</span><span class="op">)</span>, pch <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">hSils</span> <span class="op">~</span> <span class="va">possibleClusters</span>, pch <span class="op">=</span> <span class="fl">2</span>, col <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">kSils</span> <span class="op">~</span> <span class="va">possibleClusters</span>, pch <span class="op">=</span> <span class="fl">3</span>, col <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topright"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PAM"</span>, <span class="st">"Hierarchical"</span>, <span class="st">"k-means++"</span><span class="op">)</span>,</span>
+<span>       pch <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, col <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <p><img src="treespace_files/figure-html/clustering-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>Silhouette coefficients of &lt; 0.25 suggest that structure is not meaningful; &gt; 0.5 denotes good evidence of clustering, and &gt; 0.7 strong evidence <span class="citation">(Kaufman &amp; Rousseeuw, 1990)</span>. The evidence for the visually apparent clustering is not as strong as it first appears. Let’s explore our two-cluster hierarchical clustering solution anyway.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -268,7 +293,7 @@
 <span><span class="va">plotSeq</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/lower.tri.html" class="external-link">upper.tri</a></span><span class="op">(</span><span class="va">plotSeq</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">nDim</span> <span class="op">*</span> <span class="op">(</span><span class="va">nDim</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">/</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="va">plotSeq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">plotSeq</span><span class="op">[</span><span class="op">-</span><span class="va">nDim</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">plotSeq</span><span class="op">[</span><span class="va">nDim</span> <span class="op">*</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">nDim</span> <span class="op">*</span> <span class="op">(</span><span class="va">nDim</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">/</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">layout</a></span><span class="op">(</span><span class="va">plotSeq</span><span class="op">)</span></span>
+<span><span class="fu">layout</span><span class="op">(</span><span class="va">plotSeq</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">2</span><span class="op">:</span><span class="va">nDim</span><span class="op">)</span> <span class="kw">for</span> <span class="op">(</span><span class="va">j</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">i</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
@@ -307,10 +332,10 @@
 <p><img src="treespace_files/figure-html/pid-1.png" width="384" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
-<h4 id="comparing-cluster-hypervolumes">Comparing cluster hypervolumes<a class="anchor" aria-label="anchor" href="#comparing-cluster-hypervolumes"></a>
+<h4 id="comparing-cluster-size">Comparing cluster size<a class="anchor" aria-label="anchor" href="#comparing-cluster-size"></a>
 </h4>
 <p>It is tempting to compare the size of clusters by calculating the area of convex hulls on a two-dimensional mapping. However, mapped areas do <a href="https://xkcd.com/2489/" class="external-link">not necessarily correspond</a> to true hypervolumes.</p>
-<p>Accuracy may be improved by comparing higher dimensions of projections using the “<a href="http://www.benjaminblonder.org/hypervolume_faq.html" class="external-link">hypervolume</a>” package, though the same considerations apply <span class="citation">(Blonder et al., 2018)</span>. Interpretation of overlap statistics is detailed in <span class="citation">Mammola (2019)</span>.</p>
+<p>Accuracy may be improved by comparing higher dimensions of projections using the “<a href="https://www.benjaminblonder.org/hypervolume_faq.html" class="external-link">hypervolume</a>” package, though the same considerations apply <span class="citation">(Blonder et al., 2018)</span>. Interpretation of overlap statistics is detailed in <span class="citation">Mammola (2019)</span>.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hypervolumeInstalled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"hypervolume"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">hypervolumeInstalled</span><span class="op">)</span> <span class="op">{</span></span>
@@ -331,14 +356,36 @@
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"Install the 'hypervolume' package to run this example"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <pre><code><span><span class="co">##       jaccard      sorensen frac_unique_1 frac_unique_2 </span></span>
-<span><span class="co">##    0.02655966    0.05174498    0.94574038    0.95054689</span></span></code></pre>
+<span><span class="co">##    0.02648093    0.05159556    0.94582792    0.95074700</span></span></code></pre>
+<p>If the objective is to quantify the spread of different clusters, other metrics may be easier to interpret than the clusters’ hypervolume (e.g. <span class="citation">T. J. Smith &amp; Donoghue (2022)</span>).</p>
+<p>The divergence of outlying points can be measures using the sum of ranges:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">SumOfRanges</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 132.0758 127.3610</span></span></code></pre>
+<p>The overall size of a cluster can be measured using the sum of variances, or the mean distance from the centroid or median:</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">SumOfVariances</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 173.0981 176.8212</span></span></code></pre>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">MeanCentroidDistance</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 12.58064 12.80727</span></span></code></pre>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">DistanceFromMedian</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 13.42931 13.48348</span></span></code></pre>
+<p>The density of points within a cluster can be measured using the mean nearest-neighbour distance or the mean minimum spanning tree edge length:</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">MeanNN</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 4.676416 5.274230</span></span></code></pre>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">MeanMSTEdge</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] 5.558778 5.804829</span></span></code></pre>
 </div>
 </div>
 <div class="section level3">
 <h3 id="self-organizing-maps">Self-organizing maps<a class="anchor" aria-label="anchor" href="#self-organizing-maps"></a>
 </h3>
 <p>An alternative approach to visualizing tree space is to create emergent self-organizing maps <span class="citation">(Kohonen, 1982; Thrun, Lerch, Lötsch, &amp; Ultsch, 2016; Ultsch, 2003)</span>, which map high-dimensional data into two dimensions, then add a third dimension to indicate distance between data points: nearby points occur in valleys, and are separated by ridges from more distant data points.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">umatrixInstalled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"Umatrix"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">umatrixInstalled</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">map</span> <span class="op">&lt;-</span> <span class="fu">Umatrix</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Umatrix/man/esomTrain.html" class="external-link">esomTrain</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">distances</span><span class="op">)</span>, Key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">trees</span><span class="op">)</span>,</span>
@@ -370,6 +417,7 @@
 </h3>
 <p>You may wish to:</p>
 <ul>
+<li><p><a href="landscapes.html">Analyse landscapes</a> of phylogenetic trees</p></li>
 <li><p><a href="using-distances.html">Provide context</a> for tree distances</p></li>
 <li><p>Review <a href="https://ms609.github.io/TreeDist/index.html">available distance measures</a> and the corresponding <a href="https://ms609.github.io/TreeDist/reference/index.html#section-tree-distance-measures">functions</a></p></li>
 <li><p><a href="https://ms609.github.io/TreeDistData/articles/09-expected-similarity.html">Interpret tree distance metrics</a></p></li>
@@ -380,6 +428,9 @@
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references">
+<div id="ref-Arthur2007">
+<p>Arthur, D., &amp; Vassilvitskii, S. (2007). K-means++: The advantages of careful seeding. <em>Proceedings of the Eighteenth Annual ACM-SIAM Symposium on Discrete Algorithms</em>, 1027–1035. USA: Society for Industrial and Applied Mathematics.</p>
+</div>
 <div id="ref-Blonder2018">
 <p>Blonder, B., Morrow, C. B., Maitner, B., Harris, D. J., Lamanna, C., Violle, C., … Kerkhoff, A. J. (2018). New approaches for delineating <em>n</em>-dimensional hypervolumes. <em>Methods in Ecology and Evolution</em>, <em>9</em>(2), 305–319. doi: <a href="https://doi.org/10.1111/2041-210X.12865" class="external-link">10.1111/2041-210X.12865</a></p>
 </div>
@@ -403,6 +454,9 @@
 </div>
 <div id="ref-SmithSpace">
 <p>Smith, M. R. (2022). Robust analysis of phylogenetic tree space. <em>Systematic Biology</em>, <em>71</em>(5), 1255–1270. doi: <a href="https://doi.org/10.1093/sysbio/syab100" class="external-link">10.1093/sysbio/syab100</a></p>
+</div>
+<div id="ref-Smith2022">
+<p>Smith, T. J., &amp; Donoghue, P. C. J. (2022). Evolution of fungal phenotypic disparity. <em>Nature Ecology &amp; Evolution</em>, s41559–022–01844–01846. doi: <a href="https://doi.org/10.1038/s41559-022-01844-6" class="external-link">10.1038/s41559-022-01844-6</a></p>
 </div>
 <div id="ref-Thrun2016">
 <p>Thrun, M. C., Lerch, F., Lötsch, J., &amp; Ultsch, A. (2016). Visualization and 3D printing of multivariate data of biomarkers. <em>International Conference in Central Europe on Computer Graphics, Visualization and Computer Vision</em>. Plzen.</p>
