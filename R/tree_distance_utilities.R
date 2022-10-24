@@ -20,8 +20,16 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
     stop("`tree1` must be a tree, or list of trees, with class ", 
          paste(supportedClasses, collapse = " / "))
   }
-  labels1 <- TipLabels(tree1, single = TRUE)
-  nTip <- length(labels1)
+  labels1 <- TipLabels(tree1)
+  if (is.list(labels1)) {
+    if (any(vapply(labels1[-1],
+                   function(l) length(setdiff(l, labels1[[1]])), 0))) {
+      nTip <- NA
+    } else {
+      labels1 <- labels1[[1]]
+      nTip <- length(labels1)
+    }
+  }
   
   null2 <- is.null(tree2)
   if (!null2) {
@@ -30,10 +38,18 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
       stop("`tree2` must be a tree, or list of trees, with class ", 
            paste(supportedClasses, collapse = " / "))
     }
-    labels2 <- TipLabels(tree2, single = TRUE)
+    labels2 <- TipLabels(tree2)
+    if (is.list(labels2)) {
+      if (any(vapply(labels2[-1],
+                     function(l) length(setdiff(l, labels2[[1]])), 0))) {
+        nTip <- NA
+      } else {
+        labels2 <- labels2[[1]]
+      }
+    }
     
     if (length(setdiff(labels1, labels2)) > 0) {
-      stop("Leaves must bear identical labels.")
+      nTip <- NA
     }
   }
   
@@ -62,6 +78,12 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 
 .SplitDistanceOneOne <- function(Func, split1, split2, tipLabels, 
                                  nTip = length(tipLabels), reportMatching, ...) {
+  if (is.na(nTip)) {
+    common <- intersect(TipLabels(split1), TipLabels(split2))
+    split1 <- KeepTip(split1, common)
+    split2 <- KeepTip(split2, common)
+    nTip <- length(common)
+  }
   Func(as.Splits(split1, asSplits = reportMatching),
        as.Splits(split2, tipLabels = tipLabels, asSplits = reportMatching),
        nTip = nTip, reportMatching = reportMatching, ...)

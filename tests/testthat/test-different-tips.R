@@ -1,0 +1,18 @@
+library("TreeTools", quietly = TRUE)
+bal8 <- BalancedTree(8)
+pec8 <- PectinateTree(8)
+bal8AF <- DropTip(bal8, 7:8)
+pec8AF <- DropTip(bal8, 7:8)
+bal8CH <- DropTip(bal8, 1:2)
+pec8CH <- DropTip(bal8, 1:2)
+
+test_that("Non-identical tips handled okay", {
+  fullDist <- TreeDistance(bal8, pec8)
+  TreeDistance(bal8, bal8AF)
+  TreeDistance(bal8AF, bal8)
+  TreeDistance(bal8AF, bal8CH)
+  TreeDistance(bal8, pec8AF)
+  TreeDistance(bal8AF, pec8)
+  TreeDistance(bal8AF, pec8CH)
+  TreeDistance(BalancedTree(1:5), BalancedTree(6:9))
+})
