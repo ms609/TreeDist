@@ -230,7 +230,7 @@ ClusteringInfoDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
                        infoInBoth = treesIndependentInfo,
                        InfoInTree = ClusteringEntropy, Combine = "+")
   
-  ret[ret < .Machine$double.eps^0.5] <- 0 # In case of floating point inaccuracy
+  ret[ret < .Machine$double.eps ^ 0.5] <- 0 # Handle floating point inaccuracy
   attributes(ret) <- attributes(mci)
   
   # Return:
@@ -318,8 +318,8 @@ SharedPhylogeneticInfoSplits <- function(splits1, splits2,
 #' @rdname TreeDistance
 #' @export
 MutualClusteringInfoSplits <- function(splits1, splits2,
-                                        nTip = attr(splits1, "nTip"),
-                                        reportMatching = FALSE) {
+                                       nTip = attr(splits1, "nTip"),
+                                       reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, nTip, cpp_mutual_clustering,
                 maximize = TRUE, reportMatching = reportMatching)
 }
