@@ -12,7 +12,7 @@
 #' @importFrom utils combn
 #' @export
 CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
-                                   reportMatching = FALSE, ...) {
+                                  reportMatching = FALSE, ...) {
   supportedClasses <- c("phylo", "Splits")
   
   single1 <- inherits(tree1, supportedClasses)
