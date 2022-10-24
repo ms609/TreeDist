@@ -87,10 +87,9 @@
 #' 
 #' # Troubleshooting
 #' 
-#' Trees being compared must have identical tips.
-#' (If you have a use case for comparing trees with non-identical tips, do file a 
-#' [GitHub issue](https://github.com/ms609/TreeDist/issues/new?title=Non-identical+tips)
-#' or drop the package maintainer an e-mail.)
+#' Trees being compared must currently have identical tips.
+#' [Work is underway](https://github.com/ms609/TreeDist/issues/92) to support
+#' comparison between trees with non-overlapping leaf sets.
 #' 
 #' To determine which tips do not occur in both trees, try:
 #' 
