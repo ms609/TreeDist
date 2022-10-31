@@ -21,4 +21,24 @@ test_that("Non-identical tips handled okay", {
                MutualClusteringInfo(bal8BG, pec8BG))
   expect_equal(TreeDistance(BalancedTree(1:5), BalancedTree(6:9)), NaN)
   expect_equal(MutualClusteringInfo(BalancedTree(1:5), BalancedTree(6:9)), 0)
+  
+  fullList <- list(
+    bal8 = bal8,
+    pec8 = pec8,
+    
+    bal8BG = bal8BG,
+    pec8BG = pec8BG,
+    bal8CH = bal8CH,
+    pec8CH = pec8CH,
+    
+    balAE = BalancedTree(5),
+    balFI = BalancedTree(paste0("t", 6:9))
+  )
+  
+  expect_equal(MutualClusteringInfo(bal8, fullList),
+               lapply(fullList, MutualClusteringInfo, bal8))
+  expect_equal(TreeDistance(bal8, fullList),
+               lapply(fullList, TreeDistance, bal8))
+  expect_equal(TreeDistance(fullList, bal8), TreeDistance(bal8, fullList))
+  expect_equal(TreeDistance(fullList))
 })
