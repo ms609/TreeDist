@@ -96,12 +96,25 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 
 .SplitDistanceOneMany <- function(Func, oneSplit, manySplits, 
                                   tipLabels, nTip = length(tipLabels), ...) {
-  s1 <- as.Splits(oneSplit, tipLabels = tipLabels, asSplits = FALSE)
-  vapply(manySplits,
-         function(s2) Func(s1, as.Splits(s2, tipLabels = tipLabels,
-                                          asSplits = FALSE),
-                            nTip = nTip, ...),
-         double(1))
+  if (is.na(nTip)) {
+    oneLabels <- TipLabels(oneSplit)
+    common <- lapply(TipLabels(manySplits), intersect, oneLabels)
+    unlist(.mapply(function(s2, keep) {
+      Func(
+        as.Splits(KeepTip(oneSplit, keep), tipLabels = keep, asSplits = FALSE),
+        as.Splits(KeepTip(s2, keep), tipLabels = keep, asSplits = FALSE),
+        nTip = length(keep),
+        ...
+      )
+    }, dots = list(manySplits, common), MoreArgs = NULL))
+  } else {
+    s1 <- as.Splits(oneSplit, tipLabels = tipLabels, asSplits = FALSE)
+    vapply(manySplits,
+           function(s2) Func(s1, as.Splits(s2, tipLabels = tipLabels,
+                                            asSplits = FALSE),
+                              nTip = nTip, ...),
+           double(1))
+  }
 }
 
 #' @importFrom parallel parCapply
