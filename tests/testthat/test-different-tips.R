@@ -37,8 +37,11 @@ test_that("Non-identical tips handled okay", {
   
   expect_equal(MutualClusteringInfo(bal8, fullList),
                unlist(vapply(fullList, MutualClusteringInfo, 1, bal8)))
+  expect_equal(MutualClusteringInfo(bal8, fullList, normalize = TRUE),
+               unlist(vapply(fullList, MutualClusteringInfo, 1, bal8,
+                             normalize = TRUE)))
   expect_equal(TreeDistance(bal8, fullList),
-               lapply(fullList, TreeDistance, bal8))
+               unlist(lapply(fullList, TreeDistance, bal8)))
   expect_equal(TreeDistance(fullList, bal8), TreeDistance(bal8, fullList))
   expect_equal(TreeDistance(fullList))
 })

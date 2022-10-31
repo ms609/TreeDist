@@ -55,7 +55,7 @@
 #' @template MRS
 #' 
 #' @seealso Consensus methods:
-#'   [`ape::consensus()`], 
+#'   [`ape::consensus()`],
 #'   [`TreeTools::ConsensusWithout()`]
 #'   
 #' @importFrom stats median

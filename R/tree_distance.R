@@ -74,16 +74,24 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
 }
 
 .MaxValue <- function(tree1, tree2, Value) {
-  trees <- .CommonLeaves(tree1, tree2)
-  tree1 <- trees[[1]]
-  tree2 <- trees[[2]]
+  sameTips <- setequal(TipLabels(tree1), TipLabels(tree2))
+  if (!sameTips) {
+    trees <- .SharedOnly(tree1, tree2)
+    tree1 <- trees[[1]]
+    tree2 <- trees[[2]]
+  }
   
   value1 <- Value(tree1)
   if (is.null(tree2)) {
+    if (sameTips)
     maxValue <- outer(value1, value1, "+")[, , drop = TRUE]
     maxValue[lower.tri(maxValue)]
   } else {
-    outer(value1, Value(tree2), "+")[, , drop = TRUE]
+    if (sameTips) {
+      outer(value1, Value(tree2), "+")[, , drop = TRUE]
+    } else {
+      value1 + Value(tree2)
+    }
   }
 }
 

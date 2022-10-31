@@ -371,12 +371,12 @@ CompareAll <- function(x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
 #' @template MRS
 #' @importFrom TreeTools KeepTip TipLabels
 #' @export
-NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree, 
-                           infoInBoth = NULL,
-                           how = TRUE, Combine = "+", ...) {
+NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
+                          infoInBoth = NULL, how = TRUE, Combine = "+", ...) {
   
-  CombineInfo <- function(tree1Info, tree2Info, Combiner = Combine) {
-    if (length(tree1Info) == 1 || length(tree2Info) == 1) {
+  CombineInfo <- function(tree1Info, tree2Info, Combiner = Combine,
+                          pairwise = FALSE) {
+    if (length(tree1Info) == 1 || length(tree2Info) == 1 || pairwise) {
       mapply(Combiner, tree1Info, tree2Info)
     } else {
       ret <- outer(tree1Info, tree2Info, Combiner)
@@ -384,13 +384,19 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
     }
   }
   
-  .trees <- .CommonLabels(tree1, tree2)
-  tree1 <- .trees[[1]]
-  tree2 <- .trees[[2]]
+  lab1 <- TipLabels(tree1)
+  lab2 <- TipLabels(tree2)
+  sameLabels <- setequal(lab1, lab2)
+  
+  if (!sameLabels) {
+    trees <- .SharedOnly(tree1, tree2)
+    tree1 <- trees[[1]]
+    tree2 <- trees[[2]]
+  }
   
   if (is.logical(how)) {
     if (how == FALSE) {
-      return (unnormalized)
+      return(unnormalized)
     } else {
       if (is.null(infoInBoth)) {
         info1 <- InfoInTree(tree1, ...)
@@ -399,25 +405,25 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
         } else {
           InfoInTree(tree2, ...)
         }
-        infoInBoth <- CombineInfo(info1, info2)
+        infoInBoth <- CombineInfo(info1, info2, pairwise = !sameLabels)
       }
     }
   } else if (is.function(how)) {
     if (is.null(infoInBoth)) {
       info1 <- InfoInTree(tree1, ...)
       info2 <- if (is.null(tree2)) info1 else InfoInTree(tree2, ...)
-      infoInBoth <- CombineInfo(info1, info2, Combiner = how)
+      infoInBoth <- CombineInfo(info1, info2, Combiner = how,
+                                pairwise = !sameLabels)
     }
   } else {
     infoInBoth <- how
   }
-  
   # Return:
   unnormalized / infoInBoth
 }
 
 #' @importFrom TreeTools KeepTip TipLabels
-.CommonLabels <- function (tree1, tree2) {
+.SharedOnly <- function (tree1, tree2) {
   if (is.null(tree2)) {
     list(tree1, tree2)
   } else {
