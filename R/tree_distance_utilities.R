@@ -84,9 +84,13 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
     split2 <- KeepTip(split2, common)
     nTip <- length(common)
   }
-  Func(as.Splits(split1, asSplits = reportMatching),
-       as.Splits(split2, tipLabels = tipLabels, asSplits = reportMatching),
-       nTip = nTip, reportMatching = reportMatching, ...)
+  if (nTip < 4) {
+    0
+  } else {
+    Func(as.Splits(split1, asSplits = reportMatching),
+         as.Splits(split2, tipLabels = tipLabels, asSplits = reportMatching),
+         nTip = nTip, reportMatching = reportMatching, ...)
+  }
 }
 
 .SplitDistanceOneMany <- function(Func, oneSplit, manySplits, 
@@ -351,6 +355,7 @@ CompareAll <- function(x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
 #' @param \dots Additional parameters to `InfoInTree()` or `how`.
 #' @keywords internal
 #' @template MRS
+#' @importFrom TreeTools KeepTip TipLabels
 #' @export
 NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree, 
                            infoInBoth = NULL,
@@ -365,13 +370,21 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
     }
   }
   
+  commonLeaves <- intersect(TipLabels(tree1), TipLabels(tree2))
+  tree1 <- KeepTip(tree1, commonLeaves)
+  tree2 <- KeepTip(tree2, commonLeaves)
+  
   if (is.logical(how)) {
     if (how == FALSE) {
       return (unnormalized)
     } else {
       if (is.null(infoInBoth)) {
         info1 <- InfoInTree(tree1, ...)
-        info2 <- if (is.null(tree2)) info1 else InfoInTree(tree2, ...)
+        info2 <- if (is.null(tree2)) {
+          info1
+        } else {
+          InfoInTree(tree2, ...)
+        }
         infoInBoth <- CombineInfo(info1, info2)
       }
     }

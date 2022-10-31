@@ -74,6 +74,10 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
 }
 
 .MaxValue <- function(tree1, tree2, Value) {
+  commonLeaves <- intersect(TipLabels(tree1), TipLabels(tree2))
+  tree1 <- KeepTip(tree1, commonLeaves)
+  tree2 <- KeepTip(tree2, commonLeaves)
+  
   value1 <- Value(tree1)
   if (is.null(tree2)) {
     maxValue <- outer(value1, value1, "+")[, , drop = TRUE]

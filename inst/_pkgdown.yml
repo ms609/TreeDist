@@ -83,6 +83,7 @@ articles:
     contents:
       - Using-TreeDist
       - using-distances
+      - different-leaves
   - title: Tree space analysis
     navbar: Tree space analysis
     contents:
