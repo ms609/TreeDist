@@ -22,8 +22,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
   }
   labels1 <- TipLabels(tree1)
   if (is.list(labels1)) {
-    if (any(vapply(labels1[-1],
-                   function(l) length(setdiff(l, labels1[[1]])), 0))) {
+    if (!all(vapply(labels1[-1], setequal, logical(1), labels1[[1]]))) {
       nTip <- NA
     } else {
       labels1 <- labels1[[1]]
@@ -42,8 +41,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
     }
     labels2 <- TipLabels(tree2)
     if (is.list(labels2)) {
-      if (any(vapply(labels2[-1],
-                     function(l) length(setdiff(l, labels2[[1]])), 0))) {
+      if (!all(vapply(labels2[-1], setequal, logical(1), labels2[[1]]))) {
         nTip <- NA
       } else {
         labels2 <- labels2[[1]]
@@ -70,10 +68,10 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
       .SplitDistanceAllPairs(Func, tree1, tipLabels = labels1, nTip, ...)
     } else if (single2) {
       .SplitDistanceOneMany(Func, oneSplit = tree2, manySplits = tree1,
-                            tipLabels = labels2, ...)
+                            tipLabels = labels2, nTip = nTip, ...)
     } else {
-      .SplitDistanceManyMany(Func, tree1, tree2,
-                             tipLabels = labels1, ...)
+      .SplitDistanceManyMany(Func, tree1, tree2, tipLabels = labels1,
+                             nTip = nTip, ...)
     }
   }
 }
