@@ -29,6 +29,8 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
       labels1 <- labels1[[1]]
       nTip <- length(labels1)
     }
+  } else {
+    nTip <- length(labels1)
   }
   
   null2 <- is.null(tree2)
@@ -48,7 +50,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
       }
     }
     
-    if (length(setdiff(labels1, labels2)) > 0) {
+    if (!setequal(labels1, labels2)) {
       nTip <- NA
     }
   }
@@ -77,7 +79,8 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 }
 
 .SplitDistanceOneOne <- function(Func, split1, split2, tipLabels, 
-                                 nTip = length(tipLabels), reportMatching, ...) {
+                                 nTip = length(tipLabels), reportMatching,
+                                 ...) {
   if (is.na(nTip)) {
     common <- intersect(TipLabels(split1), TipLabels(split2))
     split1 <- KeepTip(split1, common)

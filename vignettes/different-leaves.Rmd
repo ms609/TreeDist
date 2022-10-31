@@ -30,6 +30,9 @@ pecAF <- DropTip(pecAL, letters[7:12])
 pecAJ <- DropTip(pecAL, letters[11:12])
 pecCL <- DropTip(pecAL, letters[1:2])
 
+treeList <- list(balAL = balAL, balAJ = balAJ, balCL = balCL, balGL = balGL,
+                 pecAL = pecAL, pecAJ = pecAJ, pecCL = pecCL, pecAF = pecAF)
+
 # Function to plot two trees
 Plot2 <- function(t1, t2) {
   oPar <- par(mfrow = c(1, 2), mar = rep(0, 4), cex = 0.9)
@@ -60,4 +63,12 @@ MutualClusteringInfo(balAL, balCL)
 # balAL also contains information about leaves A and B,
 # so contains more information in total
 ClusteringEntropy(balAL)
+```
+This raises a question about how tree distances should be normalized.
+The obvious suggestion is to normalize against the maximum similarity that could
+be obtained, given the set of leaves that two trees have in common -- but
+this may not be appropriate in every circumstance.
+
+```{r full-list}
+MutualClusteringInfo(treeList)
 ```
