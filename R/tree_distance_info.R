@@ -297,7 +297,7 @@ MutualClusteringInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
     unnormalized <- as.matrix(unnormalized)
     diag(unnormalized) <- ClusteringEntropy(tree1)
   }
-  NormalizeInfo(unnormalized, tree1, tree2, ClusteringEntropy, 
+  NormalizeInfo(unnormalized, tree1, tree2, ClusteringEntropy,
                 how = normalize, Combine = .PairMean)
 }
 

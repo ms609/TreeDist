@@ -99,14 +99,14 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
   if (is.na(nTip)) {
     oneLabels <- TipLabels(oneSplit)
     common <- lapply(TipLabels(manySplits), intersect, oneLabels)
-    unlist(.mapply(function(s2, keep) {
+    setNames(unlist(.mapply(function(s2, keep) {
       Func(
         as.Splits(KeepTip(oneSplit, keep), tipLabels = keep, asSplits = FALSE),
         as.Splits(KeepTip(s2, keep), tipLabels = keep, asSplits = FALSE),
         nTip = length(keep),
         ...
       )
-    }, dots = list(manySplits, common), MoreArgs = NULL))
+    }, dots = list(manySplits, common), MoreArgs = NULL)), names(manySplits))
   } else {
     s1 <- as.Splits(oneSplit, tipLabels = tipLabels, asSplits = FALSE)
     vapply(manySplits,
@@ -384,9 +384,9 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
     }
   }
   
-  commonLeaves <- intersect(TipLabels(tree1), TipLabels(tree2))
-  tree1 <- KeepTip(tree1, commonLeaves)
-  tree2 <- KeepTip(tree2, commonLeaves)
+  .trees <- .CommonLabels(tree1, tree2)
+  tree1 <- .trees[[1]]
+  tree2 <- .trees[[2]]
   
   if (is.logical(how)) {
     if (how == FALSE) {
@@ -414,6 +414,34 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
   
   # Return:
   unnormalized / infoInBoth
+}
+
+#' @importFrom TreeTools KeepTip TipLabels
+.CommonLabels <- function (tree1, tree2) {
+  if (is.null(tree2)) {
+    list(tree1, tree2)
+  } else {
+    lab1 <- TipLabels(tree1)
+    lab2 <- TipLabels(tree2)
+    if (is.list(lab1)) {
+      if (is.list(lab2)) {
+        stop("Unhandled exceptioN")
+      } else {
+        commonLeaves <- lapply(lab1, intersect, lab2)
+        list(.mapply(KeepTip, list(tree1, commonLeaves), NULL),
+             lapply(commonLeaves, function (common) KeepTip(tree2, common)))
+      }
+    } else {
+      if (is.list(lab2)) {
+        commonLeaves <- lapply(lab2, intersect, lab1)
+        list(lapply(commonLeaves, function (common) KeepTip(tree1, common)),
+             .mapply(KeepTip, list(tree2, commonLeaves), NULL))
+      } else {
+        commonLeaves <- intersect(lab1, lab2)
+        list(KeepTip(tree1, commonLeaves), KeepTip(tree2, commonLeaves))
+      }
+    }
+  }
 }
 
 #' List clades as text
