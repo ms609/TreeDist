@@ -54,24 +54,13 @@ NormalizationTest <- function(FUNC, ...) {
                tolerance = 1e-7)
 }
 
-test_that("Bad labels cause error", {
-  treeBadLabel8 <- ape::read.tree(text="((a, b, c, D), (e, f, g, h));")
-  lapply(methodsToTest, function(Func) 
-    expect_error(Func(treeSym8, treeBadLabel8)))
-})
-
 test_that("Size mismatch causes error", {
   treeSym7 <- ape::read.tree(text="((e, (f, g)), (((a, b), c), d));")
   splits7 <- as.Splits(treeSym7)
   splits8 <- as.Splits(treeSym8)
   
-  lapply(methodsToTest, function(Func) 
-    expect_error(Func(treeSym8, treeSym7)))
-  
-  lapply(methodsToTest, function(Func) 
-    expect_error(Func(treeSym7, treeSym8)))
-  
-  expect_error(MeilaVariationOfInformation(splits7, splits8))
+  expect_error(MeilaVariationOfInformation(splits7, splits8),
+               "Split lengths differ")
   
   Test <- function(Func) {
     expect_error(Func(splits8, as.Splits(BalancedTree(9)), 8))
