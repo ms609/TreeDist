@@ -178,7 +178,7 @@ TreeDistance <- function(tree1, tree2 = tree1) {
 #' @rdname TreeDistance
 #' @export
 SharedPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
-                                    reportMatching = FALSE, diag = TRUE) {
+                                   reportMatching = FALSE, diag = TRUE) {
   unnormalized <- CalculateTreeDistance(SharedPhylogeneticInfoSplits, tree1,
                                         tree2, reportMatching = reportMatching)
   
@@ -195,7 +195,7 @@ SharedPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
 #' @rdname TreeDistance
 #' @export
 DifferentPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
-                                       reportMatching = FALSE) {
+                                      reportMatching = FALSE) {
   spi <- SharedPhylogeneticInfo(tree1, tree2, normalize = FALSE, diag = FALSE,
                                 reportMatching = reportMatching)
   treesIndependentInfo <- .MaxValue(tree1, tree2, SplitwiseInfo)
@@ -220,7 +220,7 @@ PhylogeneticInfoDistance <- DifferentPhylogeneticInfo
 #' @aliases ClusteringInfoDist
 #' @export
 ClusteringInfoDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
-                                       reportMatching = FALSE) {
+                                   reportMatching = FALSE) {
   mci <- MutualClusteringInfo(tree1, tree2, normalize = FALSE, diag = FALSE,
                               reportMatching = reportMatching)
   treesIndependentInfo <- .MaxValue(tree1, tree2, ClusteringEntropy)
@@ -290,7 +290,7 @@ ExpectedVariation <- function(tree1, tree2, samples = 1e+4) {
 #' @aliases MutualClusteringInformation
 #' @export
 MutualClusteringInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
-                                  reportMatching = FALSE, diag = TRUE) {
+                                 reportMatching = FALSE, diag = TRUE) {
   unnormalized <- CalculateTreeDistance(MutualClusteringInfoSplits, tree1,
                                         tree2, reportMatching)
   if (diag && is.null(tree2)) {
@@ -309,8 +309,8 @@ MutualClusteringInformation <- MutualClusteringInfo
 #' @param nTip (Optional) Integer specifying the number of leaves in each split.
 #' @export
 SharedPhylogeneticInfoSplits <- function(splits1, splits2,
-                                          nTip = attr(splits1, "nTip"),
-                                          reportMatching = FALSE) {
+                                         nTip = attr(splits1, "nTip"),
+                                         reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, nTip, cpp_shared_phylo,
                 maximize = TRUE, reportMatching = reportMatching)
 }
