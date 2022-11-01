@@ -120,7 +120,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 #' @importFrom parallel parCapply
 #' @importFrom cli cli_progress_bar cli_progress_update
 .SplitDistanceAllPairs <- function(Func, splits1, tipLabels,
-                                    nTip = length(tipLabels), ...) {
+                                   nTip = length(tipLabels), ...) {
   splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
   nSplits <- length(splits)
   is <- combn(seq_len(nSplits), 2)
@@ -152,13 +152,33 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 }
 
 .SplitDistanceManyMany <- function(Func, splits1, splits2, 
-                                    tipLabels, nTip = length(tipLabels), ...) {
-  splits1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
-  splits2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = FALSE)
-  matrix(mapply(Func, rep(splits2, each = length(splits1)), splits1,
-                nTip = nTip, ...),
-         length(splits1), length(splits2),
-         dimnames = list(names(splits1), names(splits2)))
+                                   tipLabels, nTip = length(tipLabels), ...) {
+  
+  if (is.na(nTip)) {
+    tipLabels <- union(unlist(tipLabels), unlist(TipLabels(splits2)))
+    splits1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = TRUE)
+    splits2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = TRUE)
+    vapply(splits1, function(s1) {
+        l1 <- TipLabels(s1)
+        vapply(splits2, function(s2) {
+          common <- intersect(l1, TipLabels(s2))
+          Func(KeepTip(s1, common), KeepTip(s2, common),
+               nTip = length(common))#, ...)
+        }, double(1))
+      },
+      setNames(double(length(splits2)), names(splits2))
+    )
+  } else {
+    splits1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
+    splits2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = FALSE)
+    matrix(
+      .mapply(Func, list(rep(splits2, each = length(splits1)),
+                         splits1, nTip = nTip, ...), NULL),
+      length(splits1),
+      length(splits2),
+      dimnames = list(names(splits1), names(splits2))
+    )
+  }
 }
 
 #' Calculate distance between trees, or lists of trees
