@@ -368,6 +368,9 @@ test_that("Clustering information is correctly calculated", {
                MutualClusteringInfo(treeAbc.Defgh, treeAb.Cdefgh),
                tolerance = 1e-05)
   
+  expect_equal(MutualClusteringInfo(ZeroTaxonTree(), ZeroTaxonTree()), 0)
+  expect_equal(ClusteringInfoDistance(ZeroTaxonTree(), ZeroTaxonTree()), 0)
+  
   
   
   # Different resolution
@@ -485,6 +488,7 @@ test_that("Matchings are correct", {
   t1 <- PectinateTree(letters[1:11])
   t2 <- ape::read.tree(text = "(a, (c, (b, (d, e, ((g, h, f), (k, (j, i)))))));")
   t3 <- CollapseNode(PectinateTree(c(letters[11], letters[1:10])), 16:19)
+  s0 <- as.Splits(ZeroTaxonTree())
   s1 <- as.Splits(t1)
   s2 <- as.Splits(t2, t1)
   s3 <- as.Splits(t3, t1)
@@ -504,6 +508,9 @@ test_that("Matchings are correct", {
   
   
   Test <- function(CppFn, x12, x21, ...) {
+    
+    r0 <- CppFn(s0, s0, 0, ...)
+    expect_equal(r0$score, 0)
     
     r12 <- CppFn(s1, s2, n, ...)
     r21 <- CppFn(s2, s1, n, ...)
