@@ -121,23 +121,39 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 #' @importFrom cli cli_progress_bar cli_progress_update
 .SplitDistanceAllPairs <- function(Func, splits1, tipLabels,
                                    nTip = length(tipLabels), ...) {
-  splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
+  cluster <- getOption("TreeDist-cluster")
+
+  if (is.na(nTip)) {
+    splits <- lapply(splits1, as.Splits)
+    
+    .PairDist <- function(i) {
+      s1 <- splits[[i[1]]]
+      s2 <- splits[[i[2]]]
+      common <- intersect(TipLabels(s1), TipLabels(s2))
+      Func(KeepTip(s1, common), KeepTip(s2, common),
+           nTip = length(common), reportMatching = FALSE, ...)
+    }
+    
+  } else {
+    splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
+    
+    .PairDist <- function(i) {
+      Func(splits[[i[1]]], splits[[i[2]]],
+           nTip = nTip, reportMatching = FALSE, ...)
+    }
+    
+  }
+  
   nSplits <- length(splits)
   is <- combn(seq_len(nSplits), 2)
-  
-  cluster <- getOption("TreeDist-cluster")
   
   if (is.null(cluster)) {
     cli_progress_bar("Calculating distances", total = ncol(is))
   }
-  .PairDist <- function(i) {
-    Func(splits[[i[1]]], splits[[i[2]]],
-         nTip = nTip, reportMatching = FALSE, ...)
-  }
+  
   .CliPairDist <- function(i) { # TODO if cli possible from parallel, merge.
     cli_progress_update(1, .envir = parent.frame(2))
-    Func(splits[[i[1]]], splits[[i[2]]],
-         nTip = nTip, reportMatching = FALSE, ...)
+    .PairDist(i)
   }
   
   ret <- structure(class = "dist", Size = nSplits,
