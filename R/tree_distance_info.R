@@ -291,8 +291,8 @@ ExpectedVariation <- function(tree1, tree2, samples = 1e+4) {
 #' @export
 MutualClusteringInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                                  reportMatching = FALSE, diag = TRUE) {
-  unnormalized <- CalculateTreeDistance(MutualClusteringInfoSplits, tree1,
-                                        tree2, reportMatching)
+  unnormalized <- CalculateTreeDistance(Func = MutualClusteringInfoSplits,
+                                        tree1, tree2, reportMatching)
   if (diag && is.null(tree2)) {
     unnormalized <- as.matrix(unnormalized)
     diag(unnormalized) <- ClusteringEntropy(tree1)
