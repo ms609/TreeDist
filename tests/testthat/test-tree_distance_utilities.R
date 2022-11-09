@@ -1,5 +1,6 @@
 library("TreeTools", quietly = TRUE)
 
+
 test_that("Tree normalization works", {
   expect_equal(0.5, NormalizeInfo(5, 3, 5, how = TRUE, 
                                   InfoInTree = function(x, y) x + y, y = 1L))
@@ -234,4 +235,64 @@ test_that("Unrooteds are handled by MAST", {
 test_that("Entropy() supports dots input", {
   expect_identical(2, Entropy(rep(1/4, 4)))
   expect_identical(1, Entropy(0, .5, 1/2))
+})
+
+test_that(".SharedOnly() works", {
+  ah <- letters[1:8]
+  bi <- letters[2:9]
+  bh <- letters[2:8]
+  ch <- letters[3:8]
+  ci <- letters[3:9]
+  balAH <- BalancedTree(ah)
+  pecBI <- PectinateTree(bi)
+  balCH <- BalancedTree(ch)
+  pecCI <- PectinateTree(ci)
+  expect_equal(
+    .SharedOnly(balAH, balCH),
+    list(KeepTip(balAH, intersect(ah, ch)),
+         KeepTip(balCH, intersect(ah, ch)))
+  )
+  expect_equal(
+    .SharedOnly(balAH, c(balAH, balCH)),
+    list(list(balAH, KeepTip(balAH, ch)),
+         list(balAH, balCH))
+  )
+  expect_equal(
+    .SharedOnly(c(balAH, balCH), balAH),
+    list(list(balAH, balCH),
+         list(balAH, KeepTip(balAH, ch)))
+  )
+  expect_equal(
+    .SharedOnly(c(balAH, balCH), c(pecBI, pecCI)),
+    list(
+      list(KeepTip(balAH, bh), balCH),
+      list(KeepTip(pecBI, bh), KeepTip(pecCI, ch))
+    )
+  )
+  expect_equal(
+    .SharedOnly(c(balAH, balAH), c(pecBI, pecCI)),
+    list(
+      list(KeepTip(balAH, bh), KeepTip(balAH, ch)),
+      list(KeepTip(pecBI, bh), KeepTip(pecCI, ch))
+    )
+  )
+  expect_equal(
+    .SharedOnly(c(balAH, balAH), c(pecCI, pecCI)),
+    list(
+      list(KeepTip(balAH, ch), KeepTip(balAH, ch)),
+      list(KeepTip(pecCI, ch), KeepTip(pecCI, ch))
+    )
+  )
+  expect_equal(
+    .SharedOnly(c(balAH, balAH), c(pecBI, pecBI)),
+    list(
+      list(KeepTip(balAH, bh), KeepTip(balAH, bh)),
+      list(KeepTip(pecBI, bh), KeepTip(pecBI, bh))
+    )
+  )
+  expect_equal(.SharedOnly(balAH, NULL), list(balAH, NULL))
+  expect_equal(
+    .SharedOnly(c(balAH, pecBI, balCH), NULL),
+    list(c(balAH, pecBI, balCH), NULL)
+  )
 })

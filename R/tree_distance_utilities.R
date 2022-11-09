@@ -431,7 +431,7 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
   sameLabels <- setequal(lab1, lab2)
   
   if (!sameLabels) {
-    trees <- .SharedOnly(tree1, tree2)
+    trees <- .SharedOnly(tree1, tree2, lab1, lab2)
     tree1 <- trees[[1]]
     tree2 <- trees[[2]]
   }
@@ -465,39 +465,45 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
 }
 
 #' @importFrom TreeTools KeepTip TipLabels
-.SharedOnly <- function(tree1, tree2) {
+.SharedOnly <- function(tree1, tree2,
+                        lab1 = TipLabels(tree1),
+                        lab2 = TipLabels(tree2)) {
   if (is.null(tree2)) {
+    # Case: N trees vs themselves
     list(tree1, tree2)
-  } else {
-    lab1 <- TipLabels(tree1)
-    lab2 <- TipLabels(tree2)
-    if (is.list(lab1)) {
-      if (is.list(lab2)) {
-        stop("Unhandled exceptioN")
-      } else {
-        commonLeaves <- lapply(lab1, intersect, lab2)
-        if (.MultipleTrees(tree2)) {
-          list(.mapply(KeepTip, list(tree1, commonLeaves), NULL),
-               .mapply(KeepTip, list(tree2, commonLeaves), NULL))
+  } else if (.MultipleTrees(tree1)) {
+    if (.MultipleTrees(tree2)) {
+      # Case: N vs M
+      # Must return: list of length m x n
+      commonLeaves <- if (is.list(lab2)) {
+        if (is.list(lab1)) {
+          .mapply(intersect, list(lab1, lab2), NULL)
         } else {
-          list(.mapply(KeepTip, list(tree1, commonLeaves), NULL),
-               lapply(commonLeaves, function (common) KeepTip(tree2, common)))
+          lapply(lab2, intersect, lab1)
         }
+      } else {
+        lapply(if (is.list(lab1)) lab1 else list(lab1), intersect, lab2)
       }
+      list(.mapply(KeepTip, list(tree1, commonLeaves), NULL),
+           .mapply(KeepTip, list(tree2, commonLeaves), NULL))
     } else {
-      if (is.list(lab2)) {
-        commonLeaves <- lapply(lab2, intersect, lab1)
-        if (.MultipleTrees(tree1)) {
-          list(.mapply(KeepTip, list(tree1, commonLeaves), NULL),
-               .mapply(KeepTip, list(tree2, commonLeaves), NULL))
-        } else {
-          list(lapply(commonLeaves, function (common) KeepTip(tree1, common)),
-               .mapply(KeepTip, list(tree2, commonLeaves), NULL))
-        }
-      } else {
-        commonLeaves <- intersect(lab1, lab2)
-        list(KeepTip(tree1, commonLeaves), KeepTip(tree2, commonLeaves))
-      }
+      # Case: N vs 1
+      commonLeaves <- lapply(if (is.list(lab1)) lab1 else list(lab1),
+                             intersect, lab2)
+      list(.mapply(KeepTip, list(tree1, commonLeaves), NULL),
+           lapply(commonLeaves, function (common) KeepTip(tree2, common)))
+    }
+  } else {
+    if (.MultipleTrees(tree2)) {
+      # Case: 1 vs N
+      commonLeaves <- lapply(if (is.list(lab2)) lab2 else list(lab2),
+                             intersect, lab1)
+      list(lapply(commonLeaves, function (common) KeepTip(tree1, common)),
+           .mapply(KeepTip, list(tree2, commonLeaves), NULL))
+    } else {
+      # Case: 1 vs 1
+      commonLeaves <- intersect(lab1, lab2)
+      list(KeepTip(tree1, commonLeaves), KeepTip(tree2, commonLeaves))
     }
   }
 }
