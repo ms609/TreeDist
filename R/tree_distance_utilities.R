@@ -163,7 +163,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
   
   ret <- structure(class = "dist", Size = nSplits,
                    Labels = names(splits1),
-                   diag = FALSE, upper = FALSE,
+                   Diag = FALSE, Upper = FALSE,
                    if (is.null(cluster)) {
                      apply(is, 2, .CliPairDist)
                    } else {
