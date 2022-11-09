@@ -70,7 +70,11 @@ test_that("Non-identical tips handled okay", {
                                    normalize = TRUE), dim = c(1, 1),
               dimnames = list(names(fullList[2]), names(fullList[1])))
   )
-  expect_equal(TreeDistance(fullList),
-               vapply(fullList, TreeDistance, double(length(fullList)),
-                      fullList))
+  
+  # No overlap
+  exp <- as.dist(vapply(fullList, TreeDistance, double(length(fullList)),
+                        fullList), diag = FALSE, upper = FALSE)
+  attr(exp, "call") <- NULL
+  expect_equal(ClusteringInfoDistance(fullList, normalize = TRUE), exp)
+  expect_equal(TreeDistance(fullList), exp)
 })
