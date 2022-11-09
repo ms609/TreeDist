@@ -460,7 +460,7 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
 }
 
 #' @importFrom TreeTools KeepTip TipLabels
-.SharedOnly <- function (tree1, tree2) {
+.SharedOnly <- function(tree1, tree2) {
   if (is.null(tree2)) {
     list(tree1, tree2)
   } else {
@@ -471,20 +471,34 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
         stop("Unhandled exceptioN")
       } else {
         commonLeaves <- lapply(lab1, intersect, lab2)
-        list(.mapply(KeepTip, list(tree1, commonLeaves), NULL),
-             lapply(commonLeaves, function (common) KeepTip(tree2, common)))
+        if (.MultipleTrees(tree2)) {
+          list(.mapply(KeepTip, list(tree1, commonLeaves), NULL),
+               .mapply(KeepTip, list(tree2, commonLeaves), NULL))
+        } else {
+          list(.mapply(KeepTip, list(tree1, commonLeaves), NULL),
+               lapply(commonLeaves, function (common) KeepTip(tree2, common)))
+        }
       }
     } else {
       if (is.list(lab2)) {
         commonLeaves <- lapply(lab2, intersect, lab1)
-        list(lapply(commonLeaves, function (common) KeepTip(tree1, common)),
-             .mapply(KeepTip, list(tree2, commonLeaves), NULL))
+        if (.MultipleTrees(tree1)) {
+          list(.mapply(KeepTip, list(tree1, commonLeaves), NULL),
+               .mapply(KeepTip, list(tree2, commonLeaves), NULL))
+        } else {
+          list(lapply(commonLeaves, function (common) KeepTip(tree1, common)),
+               .mapply(KeepTip, list(tree2, commonLeaves), NULL))
+        }
       } else {
         commonLeaves <- intersect(lab1, lab2)
         list(KeepTip(tree1, commonLeaves), KeepTip(tree2, commonLeaves))
       }
     }
   }
+}
+
+.MultipleTrees <- function(tree) {
+  is.list(tree) && inherits(tree[[1]], "phylo") && length(tree) > 1
 }
 
 #' List clades as text
