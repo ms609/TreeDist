@@ -244,50 +244,61 @@ test_that(".SharedOnly() works", {
   ch <- letters[3:8]
   ci <- letters[3:9]
   balAH <- BalancedTree(ah)
+  pecAH <- PectinateTree(ah)
   pecBI <- PectinateTree(bi)
   balCH <- BalancedTree(ch)
   pecCI <- PectinateTree(ci)
-  expect_equal(
+  expect_equal( # 1 v 1
     .SharedOnly(balAH, balCH),
     list(KeepTip(balAH, intersect(ah, ch)),
          KeepTip(balCH, intersect(ah, ch)))
   )
-  expect_equal(
+  expect_equal( # 1 v N
     .SharedOnly(balAH, c(balAH, balCH)),
     list(list(balAH, KeepTip(balAH, ch)),
          list(balAH, balCH))
   )
-  expect_equal(
+  expect_equal( # N v 1
     .SharedOnly(c(balAH, balCH), balAH),
     list(list(balAH, balCH),
          list(balAH, KeepTip(balAH, ch)))
   )
-  expect_equal(
+  expect_equal( # N v N, all tips differ
     .SharedOnly(c(balAH, balCH), c(pecBI, pecCI)),
     list(
-      list(KeepTip(balAH, bh), balCH),
-      list(KeepTip(pecBI, bh), KeepTip(pecCI, ch))
+      list(KeepTip(balAH, bh), KeepTip(balAH, ch),
+           balCH, balCH),
+      list(KeepTip(pecBI, bh), KeepTip(pecCI, ch),
+           KeepTip(pecBI, ch), KeepTip(pecCI, ch))
     )
   )
-  expect_equal(
-    .SharedOnly(c(balAH, balAH), c(pecBI, pecCI)),
+  expect_equal( # N v N, each list same tips
+    .SharedOnly(c(balAH, pecAH), c(pecBI, pecBI)),
     list(
-      list(KeepTip(balAH, bh), KeepTip(balAH, ch)),
-      list(KeepTip(pecBI, bh), KeepTip(pecCI, ch))
+      list(KeepTip(balAH, bh), KeepTip(balAH, bh),
+           KeepTip(pecAH, bh), KeepTip(pecAH, bh)),
+      list(KeepTip(pecBI, bh), KeepTip(pecBI, bh),
+           KeepTip(pecBI, bh), KeepTip(pecBI, bh))
     )
   )
-  expect_equal(
-    .SharedOnly(c(balAH, balAH), c(pecCI, pecCI)),
+  expect_equal( # N v M, first tips same
+    .SharedOnly(c(balAH, balAH), c(pecBI, pecCI, balAH)),
     list(
-      list(KeepTip(balAH, ch), KeepTip(balAH, ch)),
-      list(KeepTip(pecCI, ch), KeepTip(pecCI, ch))
+      list(KeepTip(balAH, bh), KeepTip(balAH, ch), balAH,
+           KeepTip(balAH, bh), KeepTip(balAH, ch), balAH),
+      list(KeepTip(pecBI, bh), KeepTip(pecCI, ch), balAH,
+           KeepTip(pecBI, bh), KeepTip(pecCI, ch), balAH)
     )
   )
-  expect_equal(
-    .SharedOnly(c(balAH, balAH), c(pecBI, pecBI)),
+  expect_equal( # N v M, second tips same
+    .SharedOnly(c(pecBI, pecCI, balAH), c(balAH, balAH)),
     list(
-      list(KeepTip(balAH, bh), KeepTip(balAH, bh)),
-      list(KeepTip(pecBI, bh), KeepTip(pecBI, bh))
+      list(KeepTip(pecBI, bh), KeepTip(pecBI, bh),
+           KeepTip(pecCI, ch), KeepTip(pecCI, ch),
+           balAH, balAH),
+      list(KeepTip(balAH, bh), KeepTip(balAH, bh),
+           KeepTip(balAH, ch), KeepTip(balAH, ch),
+           balAH, balAH)
     )
   )
   expect_equal(.SharedOnly(balAH, NULL), list(balAH, NULL))

@@ -474,18 +474,29 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
   } else if (.MultipleTrees(tree1)) {
     if (.MultipleTrees(tree2)) {
       # Case: N vs M
-      # Must return: list of length m x n
-      commonLeaves <- if (is.list(lab2)) {
-        if (is.list(lab1)) {
-          .mapply(intersect, list(lab1, lab2), NULL)
-        } else {
-          lapply(lab2, intersect, lab1)
-        }
+      n1 <- length(tree1)
+      n2 <- length(tree2)
+      nPairs <- n1 * n2
+      ret <- list(vector("list", nPairs), vector("list", nPairs))
+      pair1 <- rep(tree1, each = n2)
+      pair2 <- rep.int(tree2, times = n1)
+      lab1 <- if (is.list(lab1)) {
+        rep(lab1, each = n2)
       } else {
-        lapply(if (is.list(lab1)) lab1 else list(lab1), intersect, lab2)
+        rep.int(list(lab1), times = n1 * n2)
       }
-      list(.mapply(KeepTip, list(tree1, commonLeaves), NULL),
-           .mapply(KeepTip, list(tree2, commonLeaves), NULL))
+      lab2 <- if (is.list(lab2)) {
+        rep.int(lab2, times = n1)
+      } else {
+        rep.int(list(lab2), times = n1 * n2)
+      }
+      for (i in seq_len(nPairs)) {
+        common <- intersect(lab1[[i]], lab2[[i]])
+        ret[[1]][[i]] <- KeepTip(pair1[[i]], common)
+        ret[[2]][[i]] <- KeepTip(pair2[[i]], common)
+      }
+      # Return:
+      ret
     } else {
       # Case: N vs 1
       commonLeaves <- lapply(if (is.list(lab1)) lab1 else list(lab1),
