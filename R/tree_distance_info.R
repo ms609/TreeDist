@@ -171,7 +171,7 @@
 #' @encoding UTF-8
 #' @family tree distances
 #' @export
-TreeDistance <- function(tree1, tree2 = tree1) {
+TreeDistance <- function(tree1, tree2 = NULL) {
   ClusteringInfoDistance(tree1, tree2, normalize = TRUE, reportMatching = FALSE)
 }
 
