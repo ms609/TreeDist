@@ -182,9 +182,10 @@ SharedPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
   unnormalized <- CalculateTreeDistance(SharedPhylogeneticInfoSplits, tree1,
                                         tree2, reportMatching = reportMatching)
   
-  if (diag && inherits(unnormalized, "dist")) {
+  if (diag && is.null(tree2)) {
     unnormalized <- as.matrix(unnormalized)
     diag(unnormalized) <- SplitwiseInfo(tree1)
+    tree2 <- tree1
   }
   
   # Return:
@@ -296,6 +297,7 @@ MutualClusteringInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
   if (diag && is.null(tree2)) {
     unnormalized <- as.matrix(unnormalized)
     diag(unnormalized) <- ClusteringEntropy(tree1)
+    tree2 <- tree1
   }
   NormalizeInfo(unnormalized, tree1, tree2, ClusteringEntropy,
                 how = normalize, Combine = .PairMean)
