@@ -75,7 +75,8 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
 
 .MaxValue <- function(tree1, tree2, Value) {
   if (!is.null(tree2)) {
-    sameTips <- setequal(TipLabels(tree1), TipLabels(tree2))
+    lab1 <- TipLabels(tree1)
+    sameTips <- !is.list(lab1) && setequal(lab1, TipLabels(tree2))
     if (!sameTips) {
       trees <- .SharedOnly(tree1, tree2)
       tree1 <- trees[[1]]
