@@ -18,7 +18,7 @@
 \alias{MatchingSplitInfoSplits}
 \title{Information-based generalized Robinson–Foulds distances}
 \usage{
-TreeDistance(tree1, tree2 = tree1)
+TreeDistance(tree1, tree2 = NULL)
 
 SharedPhylogeneticInfo(
   tree1,
