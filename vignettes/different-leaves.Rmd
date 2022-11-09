@@ -46,7 +46,7 @@ Plot2 <- function(t1, t2) {
 First let's consider the scenario where we are identifying two identical trees
 -- except that some leaves present in one tree are missing from the other.
 
-```{r drop-some}
+```{r drop-some-plot}
 Plot2(balAL, balCL)
 ```
 
@@ -56,6 +56,7 @@ The information held in common between the trees is thus equal to the
 information held in common if only the common leaves are retained:
 
 ```{r drop-some}
+library("TreeDist")
 commonTips <- intersect(TipLabels(balAL), TipLabels(balCL))
 ClusteringEntropy(balCL)
 # All the information in balCL is also present in balAL
