@@ -59,7 +59,7 @@ test_that("Non-identical tips handled okay", {
   expect_equal(# Lists of trees
     MutualClusteringInfo(fullList[2:3], fullList[1:2], normalize = TRUE),
     vapply(fullList[2:3], MutualClusteringInfo,
-           double(2), fullList[1:2], normalize = TRUE))
+           double(2), fullList[1:2], normalize = TRUE)
   )
   MutualClusteringInfo(fullList[1:2], fullList[2], normalize = TRUE)
   MutualClusteringInfo(fullList[2], fullList[1:2], normalize = TRUE)

@@ -98,7 +98,12 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
                                   tipLabels, nTip = length(tipLabels), ...) {
   if (is.na(nTip)) {
     oneLabels <- TipLabels(oneSplit)
-    common <- lapply(TipLabels(manySplits), intersect, oneLabels)
+    manyLabels <- TipLabels(manySplits)
+    common <- if (is.list(manyLabels)) {
+      lapply(manyLabels, intersect, oneLabels)
+    } else {
+      list(intersect(manyLabels, oneLabels))
+    }
     setNames(unlist(.mapply(function(s2, keep) {
       Func(
         as.Splits(KeepTip(oneSplit, keep), tipLabels = keep, asSplits = FALSE),
@@ -111,7 +116,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
     s1 <- as.Splits(oneSplit, tipLabels = tipLabels, asSplits = FALSE)
     vapply(manySplits,
            function(s2) Func(s1, as.Splits(s2, tipLabels = tipLabels,
-                                            asSplits = FALSE),
+                                           asSplits = FALSE),
                               nTip = nTip, ...),
            double(1))
   }
@@ -189,8 +194,8 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
     splits1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
     splits2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = FALSE)
     matrix(
-      .mapply(Func, list(rep(splits2, each = length(splits1)),
-                         splits1, nTip = nTip, ...), NULL),
+      unlist(.mapply(Func, list(rep(splits2, each = length(splits1)),
+                         splits1, nTip = nTip, ...), NULL)),
       length(splits1),
       length(splits2),
       dimnames = list(names(splits1), names(splits2))
