@@ -471,7 +471,7 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
                         lab2 = TipLabels(tree2)) {
   if (is.null(tree2)) {
     # Case: N trees vs themselves
-    # Desire a triangular matrix suitable for a dist object
+    # We require a triangular matrix suitable for a dist object
     if (.MultipleTrees(tree1)) {
       pairs <- combn(seq_along(tree1), 2)
       nPairs <- dim(pairs)[2]
@@ -484,6 +484,7 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
         ret[[1]][[n]] <- KeepTip(tree1[[i]], common)
         ret[[2]][[n]] <- KeepTip(tree1[[j]], common)
       }
+      
       # Return:
       ret
     } else {
