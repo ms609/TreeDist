@@ -113,11 +113,39 @@ test_that(".AllTipsSame()", {
   expect_true(.AllTipsSame(1:4, list(a = 1:4, b = 4:1, c = c(4L, 1L, 2L, 3L))))
 })
 
+test_that(".MaxValue() succeeds", {
+  list1 <- list(sym = treeSym8, bal = treeBal8)
+  list2 <- list(sym = treeSym8, abc = treeAbc.Defgh, abcd = treeAbcd.Efgh)
+  dimNames <- list(names(list1), names(list2))
+  
+  expect_equal(
+    MutualClusteringInfo(list1, list2[[2]], normalize = FALSE),
+    c(sym = MutualClusteringInfo(treeSym8, treeAbc.Defgh, normalize = FALSE),
+      bal = MutualClusteringInfo(treeBal8, treeAbc.Defgh, normalize = FALSE))
+  )
+  expect_equal(
+    as.double(t(MutualClusteringInfo(list1, list2, normalize = FALSE))),
+    as.double(c(MutualClusteringInfo(list1[[1]], list2, normalize = FALSE),
+                MutualClusteringInfo(list1[[2]], list2, normalize = FALSE)))
+  )
+  
+  expect_equal(
+    .MaxValue(list1, list2[[2]], Value = ClusteringEntropy),
+    c(sym = .MaxValue(treeSym8, treeAbc.Defgh, Value = ClusteringEntropy),
+      bal = .MaxValue(treeBal8, treeAbc.Defgh, Value = ClusteringEntropy))
+  )
+  expect_equal(
+    as.double(t(.MaxValue(list1, list2, ClusteringEntropy))),
+    as.double(c(.MaxValue(list1[[1]], list2, ClusteringEntropy),
+                .MaxValue(list1[[2]], list2, ClusteringEntropy)))
+  )
+})
+
 #Func <- ClusteringInfoDistance # FUNC =
 test_that("Output dimensions are correct", {
   list1 <- list(sym = treeSym8, bal = treeBal8)
   list2 <- list(sym = treeSym8, abc = treeAbc.Defgh, abcd = treeAbcd.Efgh)
-  dimNames <- list(c("sym", "bal"), c("sym", "abc", "abcd"))
+  dimNames <- list(names(list1), names(list2))
   
   Test <- function(Func) {
     allPhylo <- matrix(
