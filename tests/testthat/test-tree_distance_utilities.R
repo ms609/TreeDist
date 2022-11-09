@@ -2,11 +2,20 @@ library("TreeTools", quietly = TRUE)
 
 
 test_that("Tree normalization works", {
-  expect_equal(0.5, NormalizeInfo(5, 3, 5, how = TRUE, 
-                                  InfoInTree = function(x, y) x + y, y = 1L))
-  expect_equal(0:4 / c(1, 2, 3, 3, 3), 
-               NormalizeInfo(0:4, 1:5, 3, InfoInTree = I, Combine = min))
-  expect_equal(3/4, NormalizeInfo(unnormalized = 3, 1, 1, how = 4L))
+  expect_equal(NormalizeInfo(unnormalized = 5,
+                             tree1 = BalancedTree(3),
+                             tree2 = BalancedTree(5),
+                             how = TRUE,
+                             InfoInTree = function(x, y) NTip(x) + NTip(y),
+                             y = SingleTaxonTree()),
+               5 / ((3 + 1) + (3 + 1)))
+  expect_equal(NormalizeInfo(unnormalized = 0:4,
+                             tree1 = lapply(1:5, BalancedTree),
+                             tree2 = BalancedTree(3),
+                             InfoInTree = NTip,
+                             Combine = min),
+               0:4 / c(1, 2, 3, 3, 3))
+  expect_equal(NormalizeInfo(unnormalized = 3, 1, 1, how = 4L), 3 / 4)
   expect_equal(as.dist(matrix(0:24 / 10, 5, 5)),
                NormalizeInfo(as.dist(matrix(0:24, 5, 5)),
                              rep(5, 5), rep(5, 5), InfoInTree = I),
