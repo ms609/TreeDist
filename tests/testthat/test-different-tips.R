@@ -61,9 +61,15 @@ test_that("Non-identical tips handled okay", {
     vapply(fullList[2:3], MutualClusteringInfo,
            double(2), fullList[1:2], normalize = TRUE)
   )
-  MutualClusteringInfo(fullList[1:2], fullList[2], normalize = TRUE)
-  MutualClusteringInfo(fullList[2], fullList[1:2], normalize = TRUE)
-  MutualClusteringInfo(fullList[2], fullList[1], normalize = TRUE)
+  expect_equal(
+    MutualClusteringInfo(fullList[1:2], fullList[2], normalize = TRUE),
+    t(MutualClusteringInfo(fullList[2], fullList[1:2], normalize = TRUE)))
+  expect_equal(
+    MutualClusteringInfo(fullList[2], fullList[1], normalize = TRUE),
+    structure(MutualClusteringInfo(fullList[[2]], fullList[[1]],
+                                   normalize = TRUE), dim = c(1, 1),
+              dimnames = list(names(fullList[2]), names(fullList[1])))
+  )
   expect_equal(TreeDistance(fullList),
                vapply(fullList, TreeDistance, double(length(fullList)),
                       fullList))
