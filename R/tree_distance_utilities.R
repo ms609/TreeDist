@@ -94,6 +94,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
   }
 }
 
+#' @importFrom stats setNames
 .SplitDistanceOneMany <- function(Func, oneSplit, manySplits, 
                                   tipLabels, nTip = length(tipLabels), ...) {
   if (is.na(nTip)) {
@@ -173,6 +174,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
   ret
 }
 
+#' @importFrom stats setNames
 .SplitDistanceManyMany <- function(Func, splits1, splits2, 
                                    tipLabels, nTip = length(tipLabels), ...) {
   
