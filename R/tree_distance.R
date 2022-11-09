@@ -116,8 +116,33 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
   }
 }
 
-.AllTipsSame <- function(lab1, lab2) {
-  !is.list(lab1) && (is.null(lab2) || setequal(lab1, lab2))
+.AllTipsSame <- function(x, y) {
+  if (is.list(x)) {
+    xPrime <- x[[1]]
+    if (length(x) > 1 && !all(vapply(x[-1], setequal, logical(1), xPrime))) {
+      return(FALSE)
+    }
+  } else {
+    xPrime <- x
+  }
+  if (is.null(y)) {
+    TRUE
+  } else {
+    if (is.list(y)) {
+      all(vapply(y, setequal, logical(1), xPrime))
+    } else {
+      setequal(xPrime, y)
+    }
+  }
+}
+
+.LowerTri <- function(x, Func) {
+  pairs <- combn(seq_along(x), 2)
+  nPairs <- dim(pairs)[2]
+  
+  apply(pairs, 2, function(ij) {
+    Func(x[[ij[1]]], x[[ij[2]]])
+  })
 }
 
 #' Are splits compatible?

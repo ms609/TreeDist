@@ -81,6 +81,38 @@ test_that("Metrics handle polytomies", {
          function(Func) expect_equal(0, Func(treeSym8, polytomy8)))
 })
 
+test_that(".AllTipsSame()", {
+  expect_true(.AllTipsSame(1:2, NULL))
+  expect_true(.AllTipsSame(list(1:2, 1:2), NULL))
+  expect_false(.AllTipsSame(list(1:2, 3:2), NULL))
+  expect_true(.AllTipsSame(list(1:2, 1:2, 1:2), NULL))
+  expect_false(.AllTipsSame(list(1:2, 3:2, 1:2), NULL))
+  expect_false(.AllTipsSame(list(3:2, 1:2, 1:2), NULL))
+  expect_true(.AllTipsSame(1:2, 1:2))
+  expect_false(.AllTipsSame(1:2, 1))
+  
+  expect_true(.AllTipsSame(list(1:2), list(1:2)))
+  expect_true(.AllTipsSame(1:2, list(1:2)))
+  expect_true(.AllTipsSame(1:2, 1:2))
+  expect_true(.AllTipsSame(list(1:2), 1:2))
+  
+  expect_false(.AllTipsSame(list(1:2), list(3:2)))
+  expect_false(.AllTipsSame(1:2, list(3:2)))
+  expect_false(.AllTipsSame(1:2, 3:2))
+  expect_false(.AllTipsSame(list(1:2), 3:2))
+  
+  expect_true(.AllTipsSame(1:2, list(1:2, 1:2)))
+  expect_true(.AllTipsSame(list(1:2), list(1:2, 1:2)))
+  expect_true(.AllTipsSame(list(1:2, 1:2), list(1:2, 1:2)))
+  expect_true(.AllTipsSame(list(1:2, 1:2), 1:2))
+  
+  expect_false(.AllTipsSame(1:3, list(1:2, 1:3)))
+  expect_false(.AllTipsSame(1:3, list(1:3, 1:2)))
+  expect_false(.AllTipsSame(list(1:3), list(1:3, 1:2)))
+  
+  expect_true(.AllTipsSame(1:4, list(a = 1:4, b = 4:1, c = c(4L, 1L, 2L, 3L))))
+})
+
 #Func <- ClusteringInfoDistance # FUNC =
 test_that("Output dimensions are correct", {
   list1 <- list(sym = treeSym8, bal = treeBal8)
