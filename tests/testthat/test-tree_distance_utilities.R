@@ -248,6 +248,7 @@ test_that(".SharedOnly() works", {
   pecBI <- PectinateTree(bi)
   balCH <- BalancedTree(ch)
   pecCI <- PectinateTree(ci)
+  
   expect_equal( # 1 v 1
     .SharedOnly(balAH, balCH),
     list(KeepTip(balAH, intersect(ah, ch)),
@@ -301,9 +302,14 @@ test_that(".SharedOnly() works", {
            balAH, balAH)
     )
   )
-  expect_equal(.SharedOnly(balAH, NULL), list(balAH, NULL))
+  expect_equal(.SharedOnly(balAH, NULL), list(NULL, NULL))
   expect_equal(
     .SharedOnly(c(balAH, pecBI, balCH), NULL),
-    list(c(balAH, pecBI, balCH), NULL)
+    list(
+      list(KeepTip(balAH, bh), KeepTip(balAH, ch),
+           KeepTip(pecBI, ch)),
+      list(KeepTip(pecBI, bh), balCH,
+           balCH)
+      )
   )
 })
