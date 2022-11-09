@@ -75,7 +75,7 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
 
 .MaxValue <- function(tree1, tree2, Value) {
   lab1 <- TipLabels(tree1)
-  sameTips <- !is.list(lab1) && setequal(lab1, TipLabels(tree2))
+  sameTips <- .AllTipsSame(lab1, TipLabels(tree2))
   if (!is.null(tree2)) {
     if (!sameTips) {
       trees <- .SharedOnly(tree1, tree2)
@@ -114,6 +114,10 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
       value1 + Value(tree2)
     }
   }
+}
+
+.AllTipsSame <- function(lab1, lab2) {
+  !is.list(lab1) && (is.null(lab2) || setequal(lab1, lab2))
 }
 
 #' Are splits compatible?

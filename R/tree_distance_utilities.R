@@ -428,7 +428,7 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
   
   lab1 <- TipLabels(tree1)
   lab2 <- TipLabels(tree2)
-  sameLabels <- !is.list(lab1) && setequal(lab1, lab2)
+  sameLabels <- .AllTipsSame(lab1, lab2)
   
   if (!sameLabels) {
     trees <- .SharedOnly(tree1, tree2, lab1, lab2)
@@ -465,6 +465,7 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
 }
 
 #' @importFrom TreeTools KeepTip TipLabels
+#' We only call this function when not all trees contain identical leaf sets
 .SharedOnly <- function(tree1, tree2,
                         lab1 = TipLabels(tree1),
                         lab2 = TipLabels(tree2)) {
