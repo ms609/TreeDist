@@ -136,15 +136,6 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
   }
 }
 
-.LowerTri <- function(x, Func) {
-  pairs <- combn(seq_along(x), 2)
-  nPairs <- dim(pairs)[2]
-  
-  apply(pairs, 2, function(ij) {
-    Func(x[[ij[1]]], x[[ij[2]]])
-  })
-}
-
 #' Are splits compatible?
 #' 
 #' Determine whether splits are compatible (concave); i.e. they can both occur
