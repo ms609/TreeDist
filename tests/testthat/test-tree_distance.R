@@ -139,6 +139,17 @@ test_that(".MaxValue() succeeds", {
     as.double(c(.MaxValue(list1[[1]], list2, ClusteringEntropy),
                 .MaxValue(list1[[2]], list2, ClusteringEntropy)))
   )
+  
+  expect_equal(.MaxValue(list1[[1]], NULL, ClusteringEntropy), double(0))
+  
+  expect_equal(.MaxValue(list1, NULL, ClusteringEntropy),
+               sum(ClusteringEntropy(list1)))
+  
+  expect_equal(.MaxValue(list2, NULL, ClusteringEntropy),
+               c(.MaxValue(list2[-3], NULL, ClusteringEntropy),
+                 .MaxValue(list2[-2], NULL, ClusteringEntropy),
+                 .MaxValue(list2[-1], NULL, ClusteringEntropy)
+                 ))
 })
 
 #Func <- ClusteringInfoDistance # FUNC =
