@@ -177,7 +177,7 @@ test_that("Output dimensions are correct", {
   lapply(methodsToTest, Test)
 })
 
-test_that("Robinson Foulds Distance is correctly calculated", {
+test_that("RF Distance is correctly calculated", {
   PhangRF2 <- function(t1, t2) phangorn::RF.dist(reorder(t1, "cladewise"),
                                                  reorder(t2, "cladewise"))
   RFTest <- function(t1, t2) {
@@ -428,8 +428,9 @@ test_that("Clustering information is correctly calculated", {
                MutualClusteringInfo(treeAbc.Defgh, treeAb.Cdefgh),
                tolerance = 1e-05)
   
-  expect_equal(MutualClusteringInfo(ZeroTaxonTree(), ZeroTaxonTree()), 0)
-  expect_equal(ClusteringInfoDistance(ZeroTaxonTree(), ZeroTaxonTree()), 0)
+  zeroTree <- TreeTools::ZeroTaxonTree()
+  expect_equal(MutualClusteringInfo(zeroTree, zeroTree), 0)
+  expect_equal(ClusteringInfoDistance(zeroTree, zeroTree), 0)
   
   
   
@@ -547,8 +548,9 @@ test_that("Matchings are correct", {
   
   t1 <- PectinateTree(letters[1:11])
   t2 <- ape::read.tree(text = "(a, (c, (b, (d, e, ((g, h, f), (k, (j, i)))))));")
-  t3 <- CollapseNode(PectinateTree(c(letters[11], letters[1:10])), 16:19)
-  s0 <- as.Splits(ZeroTaxonTree())
+  t3 <- CollapseNode(TreeTools::PectinateTree(
+    c(letters[11], letters[1:10])), 16:19)
+  s0 <- as.Splits(TreeTools::ZeroTaxonTree())
   s1 <- as.Splits(t1)
   s2 <- as.Splits(t2, t1)
   s3 <- as.Splits(t3, t1)
@@ -757,6 +759,7 @@ test_that("Jaccard RF is correctly calculated", {
   expect_lt(JaccardRobinsonFoulds(treeCat8, treeTac8, allowConflict = TRUE),
             JaccardRobinsonFoulds(treeCat8, treeTac8, allowConflict = FALSE))
   
+  library("TreeTools", quietly = TRUE)
   expect_equal(0, JaccardRobinsonFoulds(BalancedTree(64), BalancedTree(64)))
   expect_lt(0, JaccardRobinsonFoulds(BalancedTree(64), PectinateTree(64)))
   expect_equal(0, JaccardRobinsonFoulds(BalancedTree(264), BalancedTree(264)))
@@ -834,6 +837,7 @@ test_that("Robinson Foulds Info is correctly calculated", {
                RobinsonFouldsInfo(list(treeSym8, treeBal8), treeSym8))
   
   # Check that large trees work
+  library("TreeTools", quietly = TRUE)
   expect_equal(0, InfoRobinsonFoulds(BalancedTree(64), BalancedTree(64)))
   expect_lt(0, InfoRobinsonFoulds(BalancedTree(64), PectinateTree(64)))
   expect_equal(0, InfoRobinsonFoulds(BalancedTree(129), BalancedTree(129)))

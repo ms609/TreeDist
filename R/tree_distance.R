@@ -91,20 +91,17 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
       maxValue <- outer(value1, value1, "+")[, , drop = TRUE]
       maxValue[lower.tri(maxValue)]
     } else {
-      if (.MultipleTrees(tree1)) {
-        pairs <- combn(seq_along(tree1), 2)
-        nPairs <- dim(pairs)[2]
-        
-        apply(pairs, 2, function(ij) {
-          i <- ij[1]
-          j <- ij[2]
-          common <- intersect(lab1[[i]], lab1[[j]])
-          Value(KeepTip(tree1[[i]], common)) +
-            Value(KeepTip(tree1[[j]], common))
-        })
-      } else {
-        double(0)
-      }
+      # !sameTips implies that tree1 contains multiple trees
+      pairs <- combn(seq_along(tree1), 2)
+      nPairs <- dim(pairs)[2]
+      
+      apply(pairs, 2, function(ij) {
+        i <- ij[1]
+        j <- ij[2]
+        common <- intersect(lab1[[i]], lab1[[j]])
+        Value(KeepTip(tree1[[i]], common)) +
+          Value(KeepTip(tree1[[j]], common))
+      })
     }
   } else {
     value1 <- Value(tree1)
