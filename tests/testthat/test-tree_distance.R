@@ -894,7 +894,7 @@ test_that("Multiple comparisons are correctly ordered", {
 })
 
 test_that("Normalization occurs as documented", {
-  library("TreeTools")
+  library("TreeTools", quietly = TRUE)
   tree1 <- BalancedTree(8)
   tree2 <- CollapseNode(PectinateTree(8), 12:13)
   
