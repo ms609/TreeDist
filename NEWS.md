@@ -1,3 +1,10 @@
+# differentTips
+
+- Support comparison of trees with different tips.
+
+- Support visualization of consequent distances via uncertain-MDS.
+
+
 # TreeDist 2.5.0
 
 - New functions to measure cluster sizes (see [`?"cluster-statistics"`](
