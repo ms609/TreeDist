@@ -64,6 +64,8 @@ in a number of ways.
 - Distances between unlabelled trees (tree shapes)
   * Polynomial distance: [@Liu2021;@Liu2020]
   
+- Laplacian distance [https://academic.oup.com/sysbio/article/65/3/495/2468938] (RPANDA)
+  
 - Mixture distances: @Juan2020
 
 - Taxonomic index of congruence (Ctax) which quantifies the congruence between two taxonomies,
