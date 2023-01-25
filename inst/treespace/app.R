@@ -848,6 +848,28 @@ server <- function(input, output, session) {
     input$distance
   )
   
+  hctClusters <- bindCache(
+    reactive({
+      hTree <- stats::hclust(distances() ^ 2, method = "centroid")
+      lapply(possibleClusters(), function(k) cutree(hTree, k = k))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  hctSils <- bindCache(
+    reactive({
+      vapply(hctClusters, function(hCluster) {
+        mean(cluster::silhouette(hCluster, distances())[, 3])
+      }, double(1))
+      
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
   .Ascending <- function(x) {
     order(unique(x))[x]
   }
@@ -913,15 +935,8 @@ server <- function(input, output, session) {
             hmdCluster <- hmdClusters()[[bestHmd]]
           }
           
-          
           incProgress(methInc, detail = "centroid clustering")
           if ("hct" %in% input$clustering) {
-            hTree <- stats::hclust(distances() ^ 2, method = "centroid")
-            hctClusters <- lapply(possibleClusters(),
-                                  function(k) cutree(hTree, k = k))
-            hctSils <- vapply(hctClusters, function(hCluster) {
-              mean(cluster::silhouette(hCluster, distances())[, 3])
-            }, double(1))
             bestHct <- which.max(hctSils)
             hctSil <- hctSils[bestHct]
             hctCluster <- hctClusters[[bestHct]]
