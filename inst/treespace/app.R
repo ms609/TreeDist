@@ -2,8 +2,8 @@
 logging <- isTRUE(getOption("TreeDist.logging"))
 
 if (logging) {
-  .DateTime <- function() { # Copy, because not exported
-    format(Sys.time(), "%Y-%m-%d %T")
+  .DateTime <- function(time = Sys.time()) { # Copy, because not exported
+    format(time, "%Y-%m-%d %T")
   }
   LogMsg <- function(...) {
     message(.DateTime(), ": ", ...)
@@ -481,7 +481,7 @@ server <- function(input, output, session) {
                       value = min(input$dims, nProjDim()))
     updateSliderInput(session, "nNeighb",
                       max = nTrees,
-                      value = min(input$nNeighb, nTrees, 100))
+                      value = min(nNeighb(), nTrees, 100))
   }
   
   observeEvent(input$addTrees, {
@@ -530,6 +530,8 @@ server <- function(input, output, session) {
   distances <- bindCache(
     reactive({
       if (length(r$allTrees) > 1L) {
+        LogMsg("Calculating distances: ", input$distance, " _ ",
+               .DateTime(r$treesUpdated))
         withProgress(
           message = "Calculating distances", value = 0.99,
           switch(
@@ -582,42 +584,45 @@ server <- function(input, output, session) {
     }
   })
   
-  mapping <- debounce(bindCache(
+  nNeighb <- debounce(reactive(input$nNeighb), 300)
+  
+  mapping <- bindCache(
     reactive({
       if (maxProjDim() > 1L) {
-      
+        LogMsg("Mapping distances")
         withProgress(
           message = "Mapping distances",
           value = 0.99,
-          proj <- switch(input$mapping,
-                         "pca" = cmdscale(distances(), k = maxProjDim()),
-                         "k" = MASS::isoMDS(distances(), k = maxProjDim())$points,
-                         "nls" = MASS::sammon(distances(), k = maxProjDim())$points,
-                         "tumap" = uwot::tumap(distances(), verbose = FALSE,
-                                               n_neighbors = input$nNeighb,
-                                               n_components = maxProjDim()),
-                         "umap" = uwot::umap(distances(), verbose = FALSE,
-                                             a = 1.8956, b = 0.8006,
-                                             approx_pow = TRUE,
-                                             n_neighbors = input$nNeighb,
-                                             n_components = maxProjDim())
-                         )
+          switch(
+            input$mapping,
+            "pca" = cmdscale(distances(), k = maxProjDim()),
+            "k" = MASS::isoMDS(distances(), k = maxProjDim())$points,
+            "nls" = MASS::sammon(distances(), k = maxProjDim())$points,
+            "tumap" = uwot::tumap(distances(), verbose = FALSE,
+                                  n_neighbors = nNeighb(),
+                                  n_components = maxProjDim()),
+            "umap" = uwot::umap(distances(), verbose = FALSE,
+                                a = 1.8956, b = 0.8006,
+                                approx_pow = TRUE,
+                                n_neighbors = nNeighb(),
+                                n_components = maxProjDim())
+          )
         )
-        LogMsg("Mapped dimensions: ", paste0(dim(proj), collapse = ", "))
-        # Return:
-        proj
       } else {
         matrix(0, 0, 0)
       }
     }),
+    r$treesUpdated,
     input$mapping,
     input$distance,
-    input$nNeighb
-  ), 300)
+    nNeighb()
+  )
   
   
   projQual <- bindCache(
     reactive({
+      LogMsg("Estimate quality of mapping with dimensions: ",
+             paste0(dim(mapping()), collapse = ", "))
       withProgress(message = "Estimating mapping quality", {
         vapply(seq_len(nProjDim()), function(k) {
           incProgress(1 / nProjDim())
@@ -625,9 +630,10 @@ server <- function(input, output, session) {
         }, numeric(4))
       })
     }),
+    nProjDim(),
     input$mapping,
     input$distance,
-    input$nNeighb
+    nNeighb()
   )
     
   
@@ -946,8 +952,7 @@ server <- function(input, output, session) {
   output$clustQuality <- renderPlot({
     par(mar = c(2, 0.5, 0, 0.5), xpd = NA, mgp = c(2, 1, 0))
     cl <- clusterings()
-    clust_id <- paste0("clust_", input$distance)
-    sil <- r[[clust_id]]$sil
+    sil <- cl$sil
     if (length(sil) == 0) sil <- -0.5
     nStop <- 400
     range <- c(0.5, 1)
