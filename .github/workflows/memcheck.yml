@@ -55,4 +55,5 @@ jobs:
     steps:
       - uses: ms609/actions/memcheck@main
         with:
+          extra-repositories: "https://ms609.github.io/packages/"
           test: ${{ matrix.config.test}}
