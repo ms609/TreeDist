@@ -1,3 +1,8 @@
+# TreeDist 2.5.0.9000
+
+- Fix some bugs when loading trees in `MapDist()`
+  ([#98](https://github.com/ms609/TreeDist/issues/98)).
+
 # TreeDist 2.5.0
 
 - New functions to measure cluster sizes (see [`?"cluster-statistics"`](
