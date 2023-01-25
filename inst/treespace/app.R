@@ -222,7 +222,6 @@ pages = c(131, 147)
 )
 
 
-# Define UI for app that draws a histogram ----
 ui <- fluidPage(theme = "treespace.css",
     useShinyjs(),
     column(3, 
@@ -446,7 +445,7 @@ server <- function(input, output, session) {
     if (is.null(input)) return("No tree file selected.")
     tmpFile <- fileInput$datapath
     if (is.null(tmpFile)) return ("No trees found.")
-    if (length(grep("#NEXUS", toupper(readLines(tmpFile)[1]),
+    if (length(grep("#NEXUS", toupper(readLines(tmpFile, 1L)),
                     fixed = TRUE)) > 0) {
       ret <- read.nexus(tmpFile)
     } else {
