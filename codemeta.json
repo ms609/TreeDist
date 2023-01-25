@@ -482,12 +482,12 @@
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://github.com/ms609/TreeTools"
+      "sameAs": "https://CRAN.R-project.org/package=TreeTools"
     },
     "SystemRequirements": "C++14"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "1405.124KB",
+  "fileSize": "1405.089KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
