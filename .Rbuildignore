@@ -1,7 +1,6 @@
 ^Meta$
 ^doc$
 ^data-raw$
-^memcheck$
 ^CRAN-RELEASE$
 ^src\-
 CONTRIBUTING
