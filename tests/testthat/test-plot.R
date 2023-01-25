@@ -173,3 +173,9 @@ test_that("MST example plots as expected", {
                    palette = hcl.colors(256L, "RdYlBu", rev = TRUE))
   })
 })
+
+test_that("StrainCol() handles zeroes", {
+  distances <- dist(c(1, 1, 10, 100))
+  mapping <- cmdscale(distances)
+  expect_equal(attr(StrainCol(distances, mapping), "logStrain")[1], Inf)
+})
