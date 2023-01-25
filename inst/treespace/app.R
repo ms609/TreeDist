@@ -647,8 +647,8 @@ server <- function(input, output, session) {
     
     plot(NULL, xlim = c(0, 1), ylim = c(-1.5, 2.5),
          ann = FALSE, axes = FALSE)
-    x <- seq.int(from = 0, to = 1, length.out = nStop)
-    segments(x[-nStop], numeric(nStop), x[-1], lwd = 5, col = badToGood)
+    x <- seq.int(from = 0, to = 1, length.out = nStop + 1)
+    segments(x[-(nStop + 1)], numeric(nStop), x[-1], lwd = 5, col = badToGood)
     
     logScore <- LogScore(projQual()["TxC", nProjDim()])
     lines(rep(logScore, 2), c(-1, 1), lty = 3)
