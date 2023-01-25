@@ -764,6 +764,10 @@ server <- function(input, output, session) {
     input$distance
   )
   
+  .Ascending <- function(x) {
+    order(unique(x))[x]
+  }
+  
   clusterings <- bindCache(
     reactive({
       if (maxClust() > 1) {
