@@ -889,6 +889,33 @@ server <- function(input, output, session) {
     input$distance
   )
   
+  specClusters <- bindCache(
+    reactive({
+      spectralEigens <- SpectralEigens(
+        distances(),
+        nn = min(ncol(as.matrix(distances())) - 1L, 10),
+        nEig = 3L
+      )
+      lapply(possibleClusters(), function(k) {
+        cluster::pam(spectralEigens, k = k)
+      })
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  specSils <- bindCache(
+    reactive({
+      vapply(specClusters(), function(cluster) {
+        mean(cluster::silhouette(cluster$cluster, distances())[, 3])
+      }, double(1))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
   .Ascending <- function(x) {
     order(unique(x))[x]
   }
@@ -942,9 +969,9 @@ server <- function(input, output, session) {
           
           incProgress(methInc, detail = "average clustering")
           if ("hav" %in% input$clustering) {
-            bestHav <- which.max(havSils)
-            havSil <- havSils[bestHav]
-            havCluster <- havClusters[[bestHav]]
+            bestHav <- which.max(havSils())
+            havSil <- havSils()[bestHav]
+            havCluster <- havClusters()[[bestHav]]
           }
           
           incProgress(methInc, detail = "median clustering")
@@ -970,21 +997,9 @@ server <- function(input, output, session) {
           
           incProgress(methInc, detail = "spectral clustering")
           if ("spec" %in% input$clustering) {
-            spectralEigens <- SpectralEigens(
-              distances(),
-              nn = min(ncol(as.matrix(distances())) - 1L, 10),
-              nEig = 3L
-            )
-            specClusters <- lapply(possibleClusters(), function(k) {
-              cluster::pam(spectralEigens, k = k)
-            })
-            specSils <- vapply(specClusters, function(cluster) {
-              mean(cluster::silhouette(cluster$cluster, distances())[, 3])
-            }, double(1))
-            
-            bestSpec <- which.max(specSils)
-            specSil <- specSils[bestSpec]
-            specCluster <- specClusters[[bestSpec]]$cluster
+            bestSpec <- which.max(specSils())
+            specSil <- specSils()[bestSpec]
+            specCluster <- specClusters()[[bestSpec]]$cluster
           }
           
           bestCluster <- c("none", "pam", "hmm", "hsi", "hco", "hav",
