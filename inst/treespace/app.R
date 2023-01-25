@@ -860,10 +860,29 @@ server <- function(input, output, session) {
   
   hctSils <- bindCache(
     reactive({
-      vapply(hctClusters, function(hCluster) {
+      vapply(hctClusters(), function(hCluster) {
         mean(cluster::silhouette(hCluster, distances())[, 3])
       }, double(1))
-      
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  kppClusters <- bindCache(
+    reactive({
+      lapply(possibleClusters(), function(k) KMeansPP(distances(), k))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  kppSils <- bindCache(
+    reactive({
+      vapply(kppClusters(), function(kCluster) {
+        mean(cluster::silhouette(kCluster$cluster, distances())[, 3])
+      }, double(1))
     }),
     maxClust(),
     r$treesUpdated,
@@ -937,22 +956,16 @@ server <- function(input, output, session) {
           
           incProgress(methInc, detail = "centroid clustering")
           if ("hct" %in% input$clustering) {
-            bestHct <- which.max(hctSils)
-            hctSil <- hctSils[bestHct]
-            hctCluster <- hctClusters[[bestHct]]
+            bestHct <- which.max(hctSils())
+            hctSil <- hctSils()[bestHct]
+            hctCluster <- hctClusters()[[bestHct]]
           }
           
           incProgress(methInc, detail = "K-means++ clustering")
           if ("kmn" %in% input$clustering) {
-            kClusters <- lapply(possibleClusters(),
-                                function(k) KMeansPP(distances(), k))
-            kSils <- vapply(kClusters, function(kCluster) {
-              mean(cluster::silhouette(kCluster$cluster, distances())[, 3])
-            }, double(1))
-            
-            bestK <- which.max(kSils)
-            kSil <- kSils[bestK]
-            kCluster <- kClusters[[bestK]]$cluster
+            bestK <- which.max(kppSils())
+            kSil <- kppSils()[bestK]
+            kCluster <- kppClusters()[[bestK]]$cluster
           }
           
           incProgress(methInc, detail = "spectral clustering")
