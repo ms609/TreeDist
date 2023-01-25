@@ -1,6 +1,6 @@
 # TreeDist 2.5.0.9000
 
-- Fix some bugs when loading trees in `MapDist()`
+- Fix caching errors in `MapDist()`
   ([#98](https://github.com/ms609/TreeDist/issues/98)).
 
 # TreeDist 2.5.0
