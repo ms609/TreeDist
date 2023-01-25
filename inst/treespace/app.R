@@ -33,7 +33,7 @@ if (!requireNamespace("uwot", quietly = TRUE)) install.packages("uwot")
 options(shiny.maxRequestSize = 100 * 1024^2)
 
 palettes <- list("#91aaa7",
-                 c("#497a8f", "#c1d0c0"),
+                 c("#2a7df6", "#b9e17b"),
                  c("#be83ae", "#2ea7af", "#fbcdcf"),
                  c("#72c5a9", "#b7c5ff", "#dbdabb", "#a28bac"),
                  c("#59c4c0", "#ea9a9a", "#7998a6", "#e9d7a9", "#9c9379"),
