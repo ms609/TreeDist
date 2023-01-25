@@ -734,7 +734,28 @@ server <- function(input, output, session) {
   
   hmmSils <- bindCache(
     reactive({
-      hSils <- vapply(hmmClusters(), function(hCluster) {
+      vapply(hmmClusters(), function(hCluster) {
+        mean(cluster::silhouette(hCluster, distances())[, 3])
+      }, double(1))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  hwdClusters <- bindCache(
+    reactive({
+      hTree <- stats::hclust(distances(), method = "ward.D2")
+      lapply(possibleClusters(), function(k) cutree(hTree, k = k))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  hwdSils <- bindCache(
+    reactive({
+      vapply(hwdClusters(), function(hCluster) {
         mean(cluster::silhouette(hCluster, distances())[, 3])
       }, double(1))
     }),
@@ -771,15 +792,9 @@ server <- function(input, output, session) {
           
           incProgress(methInc, detail = "Ward D\ub2 clustering")
           if ("hwd" %in% input$clustering) {
-            hTree <- stats::hclust(distances(), method = "ward.D2")
-            hwdClusters <- lapply(possibleClusters(),
-                                  function(k) cutree(hTree, k = k))
-            hwdSils <- vapply(hwdClusters, function(hCluster) {
-              mean(cluster::silhouette(hCluster, distances())[, 3])
-            }, double(1))
-            bestHwd <- which.max(hwdSils)
-            hwdSil <- hwdSils[bestHwd]
-            hwdCluster <- hwdClusters[[bestHwd]]
+            bestHwd <- which.max(hwdSils())
+            hwdSil <- hwdSils()[bestHwd]
+            hwdCluster <- hwdClusters()[[bestHwd]]
           }
           
           incProgress(methInc, detail = "single clustering")
@@ -929,18 +944,19 @@ server <- function(input, output, session) {
                      hwd = hwdSil,
                      kmn = kSil, spec = specSil, 
                      0), 
-        cluster = switch(bestCluster,
-                         pam = pamCluster,
-                         hmm = hCluster,
-                         hsi = hsiCluster,
-                         hco = hcoCluster,
-                         hav = havCluster,
-                         hmd = hmdCluster,
-                         hct = hctCluster,
-                         hwd = hwdCluster,
-                         kmn = kCluster,
-                         spec = specCluster,
-                         1)
+        cluster = .Ascending(switch(
+          bestCluster,
+          pam = pamCluster,
+          hmm = hCluster,
+          hsi = hsiCluster,
+          hco = hcoCluster,
+          hav = havCluster,
+          hmd = hmdCluster,
+          hct = hctCluster,
+          hwd = hwdCluster,
+          kmn = kCluster,
+          spec = specCluster,
+          1))
       )
     }),
     input$clustering,
