@@ -407,7 +407,7 @@ server <- function(input, output, session) {
     if (is.null(tmpFile)) return ("No trees found.")
     if (length(grep("#NEXUS", toupper(readLines(tmpFile, 1L)),
                     fixed = TRUE)) > 0) {
-      ret <- read.nexus(tmpFile)
+      ret <- c(read.nexus(tmpFile))
     } else {
       ret <- ReadTntTree(tmpFile)
       if (length(ret) == 0) ret <- read.tree(tmpFile)
