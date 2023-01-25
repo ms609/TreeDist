@@ -316,7 +316,6 @@ ui <- fluidPage(theme = "treespace.css",
                       min = 2,
                       max = 20,
                       value = 8),
-          actionButton("calcClusters", "Recalculate clustering"),
           fluidRow(plotOutput(outputId = "clustQuality", height = "80px")),
         ),
         tabPanel("Display",
@@ -469,7 +468,7 @@ server <- function(input, output, session) {
   })
   
   thinnedTrees <- reactive({
-    as.integer(seq(keptRange()[1], keptRange()[2], by = 2^input$thinTrees))
+    as.integer(seq(keptRange()[1], keptRange()[2], by = 2 ^ input$thinTrees))
   })
   
   TreeNumberUpdate <- function() {
@@ -698,54 +697,85 @@ server <- function(input, output, session) {
   # Clusterings
   ##############################################################################
   maxClust <- reactive(min(input$maxClusters, length(r$allTrees) - 1L))
+  
+  possibleClusters <- reactive(2:maxClust())
+  
+  pamClusters <- bindCache(
+    reactive({
+      lapply(possibleClusters(), function(k) {
+        cluster::pam(distances(), k = k)
+      })
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  pamSils <- bindCache(
+    reactive({
+      vapply(pamClusters(), function(pamCluster) {
+        mean(cluster::silhouette(pamCluster)[, 3])
+      }, double(1))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  hmmClusters <- bindCache(
+    reactive({
+      hTree <- protoclust::protoclust(distances())
+      lapply(possibleClusters(), function(k) cutree(hTree, k = k))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  hmmSils <- bindCache(
+    reactive({
+      hSils <- vapply(hmmClusters(), function(hCluster) {
+        mean(cluster::silhouette(hCluster, distances())[, 3])
+      }, double(1))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
   clusterings <- bindCache(
     reactive({
       if (maxClust() > 1) {
-        possibleClusters <- 2:maxClust()
         
         hSil <- pamSil <- havSil <- kSil <- specSil <-
           hsiSil <- hcoSil <- hmdSil <- hctSil <- hwdSil <- -99
-        dists <- distances()
         
-        nMethodsChecked <- length(input$clustering)
+        nMethodsChecked <- 10
         methInc <- 1 / nMethodsChecked
         nK <- length(possibleClusters)
         kInc <- 1 / (nMethodsChecked * nK)
         
+        dists <- distances() # TODO DELETE
+        
         withProgress(message = "Clustering", {
           if ("pam" %in% input$clustering) {
-            pamClusters <- lapply(possibleClusters, function(k) {
-              incProgress(kInc, detail = "PAM clustering")
-              cluster::pam(dists, k = k)
-            })
-            pamSils <- vapply(pamClusters, function(pamCluster) {
-              incProgress(kInc, detail = "PAM silhouettes")
-              mean(cluster::silhouette(pamCluster)[, 3])
-            }, double(1))
-            
-            bestPam <- which.max(pamSils)
-            pamSil <- pamSils[bestPam]
-            pamCluster <- pamClusters[[bestPam]]$cluster
+            bestPam <- which.max(pamSils())
+            pamSil <- pamSils()[bestPam]
+            pamCluster <- pamClusters()[[bestPam]]$cluster
           }
+          incProgress(methInc, detail = "PAM clustering")
           
           if ("hmm" %in% input$clustering) {
-            incProgress(methInc / 2, detail = "minimax clustering")
-            hTree <- protoclust::protoclust(dists)
-            hClusters <- lapply(possibleClusters,
-                                function(k) cutree(hTree, k = k))
-            hSils <- vapply(hClusters, function(hCluster) {
-              incProgress(kInc / 2, detail = "minimax silhouettes")
-              mean(cluster::silhouette(hCluster, dists)[, 3])
-            }, double(1))
-            bestH <- which.max(hSils)
-            hSil <- hSils[bestH]
-            hCluster <- hClusters[[bestH]]
+            bestH <- which.max(hmmSils())
+            hSil <- hmmSils()[bestH]
+            hCluster <- hmmClusters()[[bestH]]
           }
+          incProgress(methInc, detail = "minimax clustering")
           
           if ("hwd" %in% input$clustering) {
             incProgress(methInc / 2, detail = "Ward D\ub2 clustering")
             hTree <- stats::hclust(dists, method = "ward.D2")
-            hwdClusters <- lapply(possibleClusters,
+            hwdClusters <- lapply(possibleClusters(),
                                   function(k) cutree(hTree, k = k))
             hwdSils <- vapply(hwdClusters, function(hCluster) {
               incProgress(kInc / 2, detail = "Ward D\ub2 silhouettes")
@@ -759,7 +789,7 @@ server <- function(input, output, session) {
           if ("hsi" %in% input$clustering) {
             incProgress(methInc / 2, detail = "single clustering")
             hTree <- stats::hclust(dists, method = "single")
-            hsiClusters <- lapply(possibleClusters,
+            hsiClusters <- lapply(possibleClusters(),
                                   function(k) cutree(hTree, k = k))
             hsiSils <- vapply(hsiClusters, function(hCluster) {
               incProgress(kInc / 2, detail = "single silhouettes")
@@ -773,7 +803,7 @@ server <- function(input, output, session) {
           if ("hco" %in% input$clustering) {
             incProgress(methInc / 2, detail = "complete clustering")
             hTree <- stats::hclust(dists, method = "complete")
-            hcoClusters <- lapply(possibleClusters,
+            hcoClusters <- lapply(possibleClusters(),
                                   function(k) cutree(hTree, k = k))
             hcoSils <- vapply(hcoClusters, function(hCluster) {
               incProgress(kInc / 2, detail = "complete silhouettes")
@@ -788,7 +818,7 @@ server <- function(input, output, session) {
           if ("hav" %in% input$clustering) {
             incProgress(methInc / 2, detail = "average clustering")
             hTree <- stats::hclust(dists, method = "average")
-            havClusters <- lapply(possibleClusters,
+            havClusters <- lapply(possibleClusters(),
                                   function(k) cutree(hTree, k = k))
             havSils <- vapply(havClusters, function(hCluster) {
               incProgress(kInc / 2, detail = "average silhouettes")
@@ -803,7 +833,7 @@ server <- function(input, output, session) {
           if ("hmd" %in% input$clustering) {
             incProgress(methInc / 2, detail = "median clustering")
             hTree <- stats::hclust(dists, method = "median")
-            hmdClusters <- lapply(possibleClusters,
+            hmdClusters <- lapply(possibleClusters(),
                                   function(k) cutree(hTree, k = k))
             hmdSils <- vapply(hmdClusters, function(hCluster) {
               incProgress(kInc / 2, detail = "median silhouettes")
@@ -818,7 +848,7 @@ server <- function(input, output, session) {
           if ("hct" %in% input$clustering) {
             incProgress(methInc / 2, detail = "centroid clustering")
             hTree <- stats::hclust(dists ^ 2, method = "centroid")
-            hctClusters <- lapply(possibleClusters,
+            hctClusters <- lapply(possibleClusters(),
                                   function(k) cutree(hTree, k = k))
             hctSils <- vapply(hctClusters, function(hCluster) {
               incProgress(kInc / 2, detail = "centroid silhouettes")
@@ -831,7 +861,7 @@ server <- function(input, output, session) {
           
           if ("kmn" %in% input$clustering) {
             incProgress(methInc / 2, detail = "K-means++ clustering")
-            kClusters <- lapply(possibleClusters,
+            kClusters <- lapply(possibleClusters(),
                                 function(k) KMeansPP(dists, k))
             kSils <- vapply(kClusters, function(kCluster) {
               incProgress(kInc / 2, detail = "K-means++ silhouettes")
@@ -849,7 +879,7 @@ server <- function(input, output, session) {
               nn = min(ncol(as.matrix(dists)) - 1L, 10),
               nEig = 3L
             )
-            specClusters <- lapply(possibleClusters, function(k) {
+            specClusters <- lapply(possibleClusters(), function(k) {
               incProgress(kInc / 2, detail = "spectral clustering")
               cluster::pam(spectralEigens, k = k)
             })
@@ -923,12 +953,11 @@ server <- function(input, output, session) {
                          1)
       )
     }),
+    input$clustering,
     maxClust(),
     r$treesUpdated,
     input$distance
   )
-  
-  observeEvent(input$calcClusters, {ClearClusters()})
   
   mstSize <- debounce(reactive(input$mst), 100)
   
@@ -1164,7 +1193,6 @@ server <- function(input, output, session) {
     plotSeq[upper.tri(plotSeq)] <- seq_len(nPanels)
     layout(t(plotSeq[-nDim, -1]))
     par(mar = rep(0.2, 4))
-    LogMsg("Drawing ", nDim, "-dimensional plot")
     withProgress(message = "Drawing plot", {
       for (i in 2:nDim) for (j in seq_len(i - 1)) {
         incProgress(1 / nPanels)
