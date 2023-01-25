@@ -1,3 +1,17 @@
+# options("TreeDist.logging" = TRUE) # Log function entry and exit
+logging <- isTRUE(getOption("TreeDist.logging"))
+
+if (logging) {
+  .DateTime <- function() { # Copy, because not exported
+    format(Sys.time(), "%Y-%m-%d %T")
+  }
+  LogMsg <- function(...) {
+    message(.DateTime(), ": ", ...)
+  }
+} else {
+  LogMsg <- function(...) {}
+}
+
 suppressPackageStartupMessages({
   library("shiny", exclude = "runExample")
   library("shinyjs", exclude = "runExample")
@@ -380,62 +394,8 @@ server <- function(input, output, session) {
   treeNumbers <- c(1:50, 401:440)
   
   r <- reactiveValues(allTrees = as.phylo(treeNumbers, 8),
-                      entryOrder = rep(1, length(treeNumbers)))
-  
-  ##############################################################################
-  # Reset cache
-  ##############################################################################
-  ClearClusters <- function() {
-    r$clust_cid = NULL
-    r$clust_pid = NULL
-    r$clust_qd = NULL
-    r$clust_kc = NULL
-    r$clust_path = NULL
-    r$clust_rf = NULL
-  }
-  
-  ClearMST <- function() {
-    r$mst_cid = NULL
-    r$mst_pid = NULL
-    r$mst_qd = NULL
-    r$mst_kc = NULL
-    r$mst_path = NULL
-    r$mst_rf = NULL
-  }
-  
-  ClearDistances <- function() {
-    r$dist_cid = NULL
-    r$dist_pid = NULL
-    r$dist_qd = NULL
-    r$dist_kc = NULL
-    r$dist_path = NULL
-    r$dist_rf = NULL
-    
-    r$proj_pca_cid = NULL
-    r$proj_pca_pid = NULL
-    r$proj_pca_qd = NULL
-    r$proj_pca_kc = NULL
-    r$proj_pca_path = NULL
-    r$proj_pca_rf = NULL
-    
-    r$proj_k_cid = NULL
-    r$proj_k_pid = NULL
-    r$proj_k_qd = NULL
-    r$proj_k_kc = NULL
-    r$proj_k_path = NULL
-    r$proj_k_rf = NULL
-    
-    r$proj_nls_cid = NULL
-    r$proj_nls_pid = NULL
-    r$proj_nls_qd = NULL
-    r$proj_nls_kc = NULL
-    r$proj_nls_path = NULL
-    r$proj_nls_rf = NULL
-    
-    ClearClusters()
-    
-    ClearMST()
-  }
+                      entryOrder = rep(1, length(treeNumbers)),
+                      treesUpdated = Sys.time())
   
   ##############################################################################
   # Load trees
@@ -513,7 +473,6 @@ server <- function(input, output, session) {
   })
   
   TreeNumberUpdate <- function() {
-    ClearDistances()
     nTrees <- length(r$allTrees)
     updateSliderInput(session, "mst", value = min(500, nTrees), max = nTrees)
     updateSliderInput(session, "which.tree", max = nTrees)
@@ -544,6 +503,10 @@ server <- function(input, output, session) {
     TreeNumberUpdate()
   })
   
+  observeEvent(r$allTrees, {
+    r$treesUpdated <- Sys.time()
+  })
+  
   output$treesInMemory <- renderText({
     paste(length(r$allTrees), "trees in memory.")
   })
@@ -564,43 +527,31 @@ server <- function(input, output, session) {
            rf = "Robinson\u2212Foulds distance")
   }
   
-  distances <- reactive({
-    if (length(r$allTrees) > 1L) {
-      withProgress(
-        message = "Calculating distances", value = 0.99,
-        switch(input$distance,
-               "cid" = {
-                 if (is.null(r$dist_cid)) r$dist_cid = ClusteringInfoDistance(r$allTrees)
-                 r$dist_cid
-               },
-               "pid" = {
-                 if (is.null(r$dist_pid)) r$dist_pid = PhylogeneticInfoDistance(r$allTrees)
-                 r$dist_pid
-               },
-               "qd" = {
-                 if (is.null(r$dist_qd)) r$dist_qd = as.dist(Quartet::QuartetDivergence(
-                   Quartet::ManyToManyQuartetAgreement(r$allTrees), similarity = FALSE))
-                 r$dist_qd
-               },
-               "kc" = {
-                 if (is.null(r$dist_kc)) r$dist_kc = KendallColijn(r$allTrees)
-                 r$dist_kc
-               },
-               "path" = {
-                 if (is.null(r$dist_path)) r$dist_path = PathDist(r$allTrees)
-                 r$dist_path
-               },
-               "rf" = {
-                 if (is.null(r$dist_rf)) r$dist_rf = RobinsonFoulds(r$allTrees)
-                 r$dist_rf
-               }
-         )
-      )
-    } else {
-      matrix(0, 0, 0)
-    }
-    
-  })
+  distances <- bindCache(
+    reactive({
+      if (length(r$allTrees) > 1L) {
+        withProgress(
+          message = "Calculating distances", value = 0.99,
+          switch(
+            input$distance,
+            "cid" = ClusteringInfoDistance(r$allTrees),
+            "pid" = PhylogeneticInfoDistance(r$allTrees),
+            "qd" = as.dist(Quartet::QuartetDivergence(
+              Quartet::ManyToManyQuartetAgreement(r$allTrees),
+              similarity = FALSE)
+            ),
+            "kc" = KendallColijn(r$allTrees),
+            "path" = PathDist(r$allTrees),
+            "rf" = RobinsonFoulds(r$allTrees)
+          )
+        )
+      } else {
+        matrix(0, 0, 0)
+      }
+    }),
+    r$treesUpdated,
+    input$distance
+  )
   
   ##############################################################################
   # Mapping
@@ -631,14 +582,10 @@ server <- function(input, output, session) {
     }
   })
   
-  projId <- function() {
-    paste0("proj_", input$mapping, "_", input$distance, "_",
-           if(mappingUsesNeighb()) input$nNeighb)
-  }
-  
-  mapping <- debounce(reactive({
-    if (maxProjDim() > 1L) {
-      if (is.null(r[[projId()]])) {
+  mapping <- debounce(bindCache(
+    reactive({
+      if (maxProjDim() > 1L) {
+      
         withProgress(
           message = "Mapping distances",
           value = 0.99,
@@ -656,28 +603,33 @@ server <- function(input, output, session) {
                                              n_components = maxProjDim())
                          )
         )
-        r[[projId()]] <- proj
+        LogMsg("Mapped dimensions: ", paste0(dim(proj), collapse = ", "))
+        # Return:
+        proj
+      } else {
+        matrix(0, 0, 0)
       }
-      
-      # Return:
-      r[[projId()]]
-    } else {
-      matrix(0, 0, 0)
-    }
-  }), 300)
+    }),
+    input$mapping,
+    input$distance,
+    input$nNeighb
+  ), 300)
   
-  projQual <- reactive({
-    qual_id <- paste0("qual_", projId())
-    if (is.null(r[[qual_id]])) {
-      r[[qual_id]] <- withProgress(message = "Estimating mapping quality", {
+  
+  projQual <- bindCache(
+    reactive({
+      withProgress(message = "Estimating mapping quality", {
         vapply(seq_len(nProjDim()), function(k) {
           incProgress(1 / nProjDim())
           MappingQuality(distances(), dist(mapping()[, seq_len(k)]), 10)
         }, numeric(4))
       })
-    }
-    r[[qual_id]]
-  })
+    }),
+    input$mapping,
+    input$distance,
+    input$nNeighb
+  )
+    
   
   LogScore <- function(x) {
     (-(log10(1 - x + 1e-2))) / 2
@@ -740,12 +692,8 @@ server <- function(input, output, session) {
   # Clusterings
   ##############################################################################
   maxClust <- reactive(min(input$maxClusters, length(r$allTrees) - 1L))
-  clusterings <- reactive({
-    maxCluster <- input$maxClusters
-    if (!is.null(r$clust_max) && maxCluster != r$clust_max) ClearClusters()
-    clust_id <- paste0("clust_", input$distance)
-    
-    if (is.null(r[[clust_id]])) {
+  clusterings <- bindCache(
+    reactive({
       if (maxClust() > 1) {
         possibleClusters <- 2:maxClust()
         
@@ -919,68 +867,67 @@ server <- function(input, output, session) {
         bestCluster <- "none"
       }
       
-      r[[clust_id]] <- list(method = switch(bestCluster,
-                                            pam = "part. around medoids",
-                                            hmm = "minimax linkage",
-                                            hsi = "single linkage",
-                                            hco = "complete linkage",
-                                            hav = "average linkage",
-                                            hmd = "median linkage",
-                                            hct = "centroid linkage",
-                                            hwd = "Ward d\ub2 linkage",
-                                            kmn = "K-means++",
-                                            spec = "spectral",
-                                            "no attempt to find any"),
-                            n = 1 + switch(bestCluster,
-                                           pam = bestPam,
-                                           hmm = bestH,
-                                           hsi = bestHsi,
-                                           hco = bestHco,
-                                           hav = bestHav,
-                                           hmd = bestHmd,
-                                           hct = bestHct,
-                                           hwd = bestHwd,
-                                           har = bestHav, kmn = bestK,
-                                           spec = bestSpec,
-                                           0),
-                            sil = switch(bestCluster,
-                                         pam = pamSil,
-                                         hmm = hSil,
-                                         hsi = hsiSil,
-                                         hco = hcoSil,
-                                         hav = havSil,
-                                         hmd = hmdSil,
-                                         hct = hctSil,
-                                         hwd = hwdSil,
-                                         kmn = kSil, spec = specSil, 
-                                         0), 
-                            cluster = switch(bestCluster,
-                                             pam = pamCluster,
-                                             hmm = hCluster,
-                                             hsi = hsiCluster,
-                                             hco = hcoCluster,
-                                             hav = havCluster,
-                                             hmd = hmdCluster,
-                                             hct = hctCluster,
-                                             hwd = hwdCluster,
-                                             kmn = kCluster,
-                                             spec = specCluster,
-                                             1)
+      list(
+        method = switch(bestCluster,
+                        pam = "part. around medoids",
+                        hmm = "minimax linkage",
+                        hsi = "single linkage",
+                        hco = "complete linkage",
+                        hav = "average linkage",
+                        hmd = "median linkage",
+                        hct = "centroid linkage",
+                        hwd = "Ward d\ub2 linkage",
+                        kmn = "K-means++",
+                        spec = "spectral",
+                        "no attempt to find any"),
+        n = 1 + switch(bestCluster,
+                       pam = bestPam,
+                       hmm = bestH,
+                       hsi = bestHsi,
+                       hco = bestHco,
+                       hav = bestHav,
+                       hmd = bestHmd,
+                       hct = bestHct,
+                       hwd = bestHwd,
+                       har = bestHav, kmn = bestK,
+                       spec = bestSpec,
+                       0),
+        sil = switch(bestCluster,
+                     pam = pamSil,
+                     hmm = hSil,
+                     hsi = hsiSil,
+                     hco = hcoSil,
+                     hav = havSil,
+                     hmd = hmdSil,
+                     hct = hctSil,
+                     hwd = hwdSil,
+                     kmn = kSil, spec = specSil, 
+                     0), 
+        cluster = switch(bestCluster,
+                         pam = pamCluster,
+                         hmm = hCluster,
+                         hsi = hsiCluster,
+                         hco = hcoCluster,
+                         hav = havCluster,
+                         hmd = hmdCluster,
+                         hct = hctCluster,
+                         hwd = hwdCluster,
+                         kmn = kCluster,
+                         spec = specCluster,
+                         1)
       )
-      r$clust_max <- maxCluster
-    }
-    r[[clust_id]]
-  })
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
   
   observeEvent(input$calcClusters, {ClearClusters()})
   
   mstSize <- debounce(reactive(input$mst), 100)
   
-  mstEnds <- reactive({
-    
-    if (!is.null(r$mst_size) && mstSize() != r$mst_size) ClearMST()
-    mst_id <- paste0("mst_", input$distance)
-    if (is.null(r[[mst_id]])) {
+  mstEnds <- bindCache(
+    reactive({
       dist <- as.matrix(distances())
       nRows <- dim(dist)[1]
       withProgress(message = "Calculating MST", {
@@ -988,13 +935,13 @@ server <- function(input, output, session) {
         edges <- MSTEdges(dist[selection, selection])
         edges[, 1] <- selection[edges[, 1]]
         edges[, 2] <- selection[edges[, 2]]
-        r[[mst_id]] <- edges
+        edges
       })
-    }
-    
-    r$mst_size <- mstSize()
-    r[[mst_id]]
-  })
+    }),
+    r$treesUpdated,
+    input$distance,
+    mstSize
+  )
   
   output$clustQuality <- renderPlot({
     par(mar = c(2, 0.5, 0, 0.5), xpd = NA, mgp = c(2, 1, 0))
