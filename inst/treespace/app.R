@@ -937,7 +937,8 @@ server <- function(input, output, session) {
       dist <- as.matrix(distances())
       nRows <- dim(dist)[1]
       withProgress(message = "Calculating MST", {
-        selection <- unique(round(seq.int(1, nRows, length.out = max(2L, mstSize()))))
+        selection <- unique(round(seq.int(1, nRows,
+                                          length.out = max(2L, mstSize()))))
         edges <- MSTEdges(dist[selection, selection])
         edges[, 1] <- selection[edges[, 1]]
         edges[, 2] <- selection[edges[, 2]]
@@ -946,7 +947,7 @@ server <- function(input, output, session) {
     }),
     r$treesUpdated,
     input$distance,
-    mstSize
+    mstSize()
   )
   
   output$clustQuality <- renderPlot({
@@ -1163,6 +1164,7 @@ server <- function(input, output, session) {
     plotSeq[upper.tri(plotSeq)] <- seq_len(nPanels)
     layout(t(plotSeq[-nDim, -1]))
     par(mar = rep(0.2, 4))
+    LogMsg("Drawing ", nDim, "-dimensional plot")
     withProgress(message = "Drawing plot", {
       for (i in 2:nDim) for (j in seq_len(i - 1)) {
         incProgress(1 / nPanels)
