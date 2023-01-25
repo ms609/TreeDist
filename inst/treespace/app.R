@@ -764,6 +764,69 @@ server <- function(input, output, session) {
     input$distance
   )
   
+  hsiClusters <- bindCache(
+    reactive({
+      hTree <- stats::hclust(distances(), method = "single")
+      lapply(possibleClusters(), function(k) cutree(hTree, k = k))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  hsiSils <- bindCache(
+    reactive({
+      vapply(hsiClusters(), function(hCluster) {
+        mean(cluster::silhouette(hCluster, distances())[, 3])
+      }, double(1))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  hcoClusters <- bindCache(
+    reactive({
+      hTree <- stats::hclust(distances(), method = "complete")
+      lapply(possibleClusters(), function(k) cutree(hTree, k = k))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  hcoSils <- bindCache(
+    reactive({
+      vapply(hcoClusters(), function(hCluster) {
+        mean(cluster::silhouette(hCluster, distances())[, 3])
+      }, double(1))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  havClusters <- bindCache(
+    reactive({
+      hTree <- stats::hclust(distances(), method = "average")
+      lapply(possibleClusters(), function(k) cutree(hTree, k = k))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  havSils <- bindCache(
+    reactive({
+      vapply(havClusters(), function(hCluster) {
+        mean(cluster::silhouette(hCluster, distances())[, 3])
+      }, double(1))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
   .Ascending <- function(x) {
     order(unique(x))[x]
   }
@@ -803,39 +866,20 @@ server <- function(input, output, session) {
           
           incProgress(methInc, detail = "single clustering")
           if ("hsi" %in% input$clustering) {
-            hTree <- stats::hclust(distances(), method = "single")
-            hsiClusters <- lapply(possibleClusters(),
-                                  function(k) cutree(hTree, k = k))
-            hsiSils <- vapply(hsiClusters, function(hCluster) {
-              mean(cluster::silhouette(hCluster, distances())[, 3])
-            }, double(1))
-            bestHsi <- which.max(hsiSils)
-            hsiSil <- hsiSils[bestHsi]
-            hsiCluster <- hsiClusters[[bestHsi]]
+            bestHsi <- which.max(hsiSils())
+            hsiSil <- hsiSils()[bestHsi]
+            hsiCluster <- hsiClusters()[[bestHsi]]
           }
           
           incProgress(methInc, detail = "complete clustering")
           if ("hco" %in% input$clustering) {
-            hTree <- stats::hclust(distances(), method = "complete")
-            hcoClusters <- lapply(possibleClusters(),
-                                  function(k) cutree(hTree, k = k))
-            hcoSils <- vapply(hcoClusters, function(hCluster) {
-              mean(cluster::silhouette(hCluster, distances())[, 3])
-            }, double(1))
-            bestHco <- which.max(hcoSils)
-            hcoSil <- hcoSils[bestHco]
-            hcoCluster <- hcoClusters[[bestHco]]
+            bestHco <- which.max(hcoSils())
+            hcoSil <- hcoSils()[bestHco]
+            hcoCluster <- hcoClusters()[[bestHco]]
           }
-          
           
           incProgress(methInc, detail = "average clustering")
           if ("hav" %in% input$clustering) {
-            hTree <- stats::hclust(distances(), method = "average")
-            havClusters <- lapply(possibleClusters(),
-                                  function(k) cutree(hTree, k = k))
-            havSils <- vapply(havClusters, function(hCluster) {
-              mean(cluster::silhouette(hCluster, distances())[, 3])
-            }, double(1))
             bestHav <- which.max(havSils)
             havSil <- havSils[bestHav]
             havCluster <- havClusters[[bestHav]]
