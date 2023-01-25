@@ -752,8 +752,6 @@ server <- function(input, output, session) {
         
         nMethodsChecked <- 10
         methInc <- 1 / nMethodsChecked
-        nK <- length(possibleClusters)
-        kInc <- 1 / (nMethodsChecked * nK)
         
         withProgress(message = "Clustering", {
           
