@@ -827,6 +827,27 @@ server <- function(input, output, session) {
     input$distance
   )
   
+  hmdClusters <- bindCache(
+    reactive({
+      hTree <- stats::hclust(distances(), method = "median")
+      lapply(possibleClusters(), function(k) cutree(hTree, k = k))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  hmdSils <- bindCache(
+    reactive({
+      vapply(hmdClusters(), function(hCluster) {
+        mean(cluster::silhouette(hCluster, distances())[, 3])
+      }, double(1))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
   .Ascending <- function(x) {
     order(unique(x))[x]
   }
@@ -885,18 +906,11 @@ server <- function(input, output, session) {
             havCluster <- havClusters[[bestHav]]
           }
           
-          
           incProgress(methInc, detail = "median clustering")
           if ("hmd" %in% input$clustering) {
-            hTree <- stats::hclust(distances(), method = "median")
-            hmdClusters <- lapply(possibleClusters(),
-                                  function(k) cutree(hTree, k = k))
-            hmdSils <- vapply(hmdClusters, function(hCluster) {
-              mean(cluster::silhouette(hCluster, distances())[, 3])
-            }, double(1))
-            bestHmd <- which.max(hmdSils)
-            hmdSil <- hmdSils[bestHmd]
-            hmdCluster <- hmdClusters[[bestHmd]]
+            bestHmd <- which.max(hmdSils())
+            hmdSil <- hmdSils()[bestHmd]
+            hmdCluster <- hmdClusters()[[bestHmd]]
           }
           
           
