@@ -294,17 +294,20 @@ MSTSegments <- function(mapping, mstEnds, ...) {
 #' @importFrom TreeTools MSTEdges
 #' @export
 StrainCol <- function(distances, mapping, mstEnds = MSTEdges(distances),
-                       palette = rev(hcl.colors(256L, "RdYlBu"))) {
+                      palette = rev(hcl.colors(256L, "RdYlBu"))) {
   distMat <- as.matrix(distances)
   x <- mapping[, 1]
   y <- mapping[, 2]
   logStrain <- apply(mstEnds, 1, function(ends) {
     orig <- distMat[ends[1], ends[2]]
-    mapped <- sqrt(sum((x[ends[1]] - y[ends[2]]) ^ 2))
-    log(mapped / orig) # High when mapping extends original distances
+    mapped <- sum((x[ends[1]] - y[ends[2]]) ^ 2)
+    (
+      log(mapped) / 2 # sqrt
+    ) - log(orig) # High when mapping extends original distances
   })
-  strain <- logStrain - median(logStrain)
-  maxVal <- max(abs(strain)) + sqrt(.Machine$double.eps)
+  strain <- logStrain - median(logStrain[is.finite(logStrain)])
+  # Infinite values arise when orig == 0
+  maxVal <- max(abs(strain[is.finite(strain)])) + sqrt(.Machine$double.eps)
   nCols <- length(palette)
   bins <- cut(strain, seq(-maxVal, maxVal, length.out = nCols))
   

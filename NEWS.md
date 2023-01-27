@@ -5,6 +5,11 @@
 - Support visualization of consequent distances via uncertain-MDS.
 
 
+# TreeDist 2.5.0.9000
+
+- Fix caching errors in `MapDist()`
+  ([#98](https://github.com/ms609/TreeDist/issues/98)).
+
 # TreeDist 2.5.0
 
 - New functions to measure cluster sizes (see [`?"cluster-statistics"`](
