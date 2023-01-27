@@ -1,4 +1,4 @@
-# differentTips
+# Branch `differentTips`
 
 - Support comparison of trees with different tips.
 
