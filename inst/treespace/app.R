@@ -1,3 +1,17 @@
+# options("TreeDist.logging" = TRUE) # Log function entry and exit
+logging <- isTRUE(getOption("TreeDist.logging"))
+
+if (logging) {
+  .DateTime <- function(time = Sys.time()) { # Copy, because not exported
+    format(time, "%Y-%m-%d %T")
+  }
+  LogMsg <- function(...) {
+    message(.DateTime(), ": ", ...)
+  }
+} else {
+  LogMsg <- function(...) {}
+}
+
 suppressPackageStartupMessages({
   library("shiny", exclude = "runExample")
   library("shinyjs", exclude = "runExample")
@@ -18,27 +32,28 @@ if (!requireNamespace("uwot", quietly = TRUE)) install.packages("uwot")
 # Allow large files to be submitted
 options(shiny.maxRequestSize = 100 * 1024^2)
 
-palettes <- list("#91aaa7",
-                 c("#497a8f", "#c1d0c0"),
-                 c("#be83ae", "#2ea7af", "#fbcdcf"),
-                 c("#72c5a9", "#b7c5ff", "#dbdabb", "#a28bac"),
-                 c("#59c4c0", "#ea9a9a", "#7998a6", "#e9d7a9", "#9c9379"),
-                 c("#e8b889", "#67c6eb", "#e5d5c2", "#938fba", "#64b69a", "#779c7b"),
-                 c("#c4808f", "#5ba08f", "#f0a693", "#ccd7fe", "#cdb87e", "#c6aae2", "#d2dad8"),
-                 c("#d0847f", "#63a5d7", "#d7b981", "#5a9bbb", "#9bb67e", "#dea6d5", "#91967e", "#ca7f96"),
-                 c("#8b93a8", "#ccb97e", "#8e9dd7", "#57a384", "#dbb1e7", "#2da7af", "#d68986", "#75d2f9", "#e4d1f0"),
-                 c("#dfcf92", "#40b3cb", "#b88a61", "#ecb2e0", "#d6dbbc", "#a28bae", "#edcfeb", "#7498ab", "#b187a0", "#8f939c"),
-                 c("#a98f70", "#7be5e2", "#d295c0", "#9ae2bd", "#d3b7f1", "#eca88d", "#8993cd", "#ffc7bb", "#8695a8", "#b3e1df", "#b6878a"),
-                 c("#eaa9d3", "#7ac09b", "#fdaca8", "#8ce7e4", "#eed69b", "#70a4d9", "#e8d6ba", "#589bbb", "#959672", "#d0dbd1", "#9b9282", "#d9d9c6"),
-                 c("#7498ab", "#e5bd8a", "#7ed8ff", "#de8f8e", "#46bac6", "#ffc0d3", "#57ae96", "#f7cddd", "#50a098", "#b58a6d", "#add49d", "#a18da1", "#cedad9"),
-                 c("#8097a4", "#d0dea9", "#a78cc3", "#aee4bf", "#bb82a8", "#5dc9c6", "#b88690", "#26a3b9", "#ad8e6f", "#a4e2ef", "#869a65", "#efcfdd", "#60a089", "#9e927b"),
-                 c("#b9aae5", "#bbd69c", "#e2adde", "#77a777", "#f8abc8", "#8ee7ce", "#f2a1a5", "#81bdf1", "#f2bb91", "#b8dcfe", "#aeb276", "#f2cdef", "#e8d6b2", "#8d92b0", "#b7878d"),
-                 c("#c3d79b", "#b28cc0", "#64a985", "#e3a7d4", "#2ea2aa", "#e69892", "#85c6f9", "#fbd1a0", "#7696be", "#89996c", "#ddcdff", "#719d89", "#f5cde6", "#b6e0da", "#e8d4cd", "#b5ddfa"),
-                 c("#a98d83", "#84e1ff", "#bb8964", "#46b1d1", "#ffbfa5", "#6199c0", "#bbcb8f", "#bf82ab", "#85ddc4", "#eea0ba", "#c1d8ff", "#c3818b", "#c5c6ff", "#999388", "#e8cbff", "#ffb5b6", "#d2dad7"),
-                 c("#faccde", "#60a987", "#c6abe4", "#6f9e77", "#c48093", "#a5e5d3", "#cc8f6f", "#499fae", "#d9dca6", "#7796b8", "#bee1ba", "#b4daff", "#919583", "#e2d3e9", "#47a19b", "#ebd4bc", "#7c9993", "#a9e3e0"),
-                 c("#739e6e", "#ffbfd9", "#43b6bb", "#e8ad88", "#5e9bce", "#c2af75", "#a8e0fe", "#fad0a8", "#679e8d", "#ffc7b1", "#abe5c0", "#ac8d78", "#c5dddc", "#a48f84", "#cadfb0", "#899694", "#fdcdc1", "#d1dad5", "#dfd8c4"),
-                 c("#6e9c93", "#ffb4b3", "#7ec6a2", "#eeccfe", "#cddb9d", "#8a90c5", "#dcb983", "#77bff0", "#f0ab92", "#90ddff", "#f1d3a9", "#b5c2fe", "#c1e1b7", "#7596ba", "#bce1c4", "#a88c96", "#5a9daf", "#b18b80", "#d4d6f3", "#949577"),
-                 c("#e7d6bb", "#749ed5", "#f9d29d", "#67b3e2", "#d09773", "#65ccec", "#d38585", "#7fe8ef", "#cf8190", "#94e8cd", "#ae8cc1", "#b3cf95", "#cbc0fc", "#94a66c", "#eeccff", "#ada368", "#e9a6ce", "#48a297", "#ffc1df", "#799c7a", "#facbe0", "#5d9e9a", "#ffc6c1", "#619bb0", "#fccdcb", "#7197bb", "#b1e4c3", "#9390b1", "#c3e0c0", "#a98c90", "#ade3ce", "#9c927d", "#c2dafe", "#869881", "#e6d3dc", "#6e9ba4", "#bde0d0", "#8196a4", "#b2e1df", "#b9deea")
+palettes <- list(
+  "#91aaa7",
+  c("#2a7df6", "#b9e17b"),
+  c("#be83ae", "#2ea7af", "#fbcdcf"),
+  c("#72c5a9", "#b7c5ff", "#dbdabb", "#a28bac"),
+  c("#59c4c0", "#ea9a9a", "#7998a6", "#e9d7a9", "#9c9379"),
+  c("#e8b889", "#67c6eb", "#e5d5c2", "#938fba", "#64b69a", "#779c7b"),
+  c("#c4808f", "#5ba08f", "#f0a693", "#ccd7fe", "#cdb87e", "#c6aae2", "#d2dad8"),
+  c("#d0847f", "#63a5d7", "#d7b981", "#5a9bbb", "#9bb67e", "#dea6d5", "#91967e", "#ca7f96"),
+  c("#8b93a8", "#ccb97e", "#8e9dd7", "#57a384", "#dbb1e7", "#2da7af", "#d68986", "#75d2f9", "#e4d1f0"),
+  c("#dfcf92", "#40b3cb", "#b88a61", "#ecb2e0", "#d6dbbc", "#a28bae", "#edcfeb", "#7498ab", "#b187a0", "#8f939c"),
+  c("#a98f70", "#7be5e2", "#d295c0", "#9ae2bd", "#d3b7f1", "#eca88d", "#8993cd", "#ffc7bb", "#8695a8", "#b3e1df", "#b6878a"),
+  c("#eaa9d3", "#7ac09b", "#fdaca8", "#8ce7e4", "#eed69b", "#70a4d9", "#e8d6ba", "#589bbb", "#959672", "#d0dbd1", "#9b9282", "#d9d9c6"),
+  c("#7498ab", "#e5bd8a", "#7ed8ff", "#de8f8e", "#46bac6", "#ffc0d3", "#57ae96", "#f7cddd", "#50a098", "#b58a6d", "#add49d", "#a18da1", "#cedad9"),
+  c("#8097a4", "#d0dea9", "#a78cc3", "#aee4bf", "#bb82a8", "#5dc9c6", "#b88690", "#26a3b9", "#ad8e6f", "#a4e2ef", "#869a65", "#efcfdd", "#60a089", "#9e927b"),
+  c("#b9aae5", "#bbd69c", "#e2adde", "#77a777", "#f8abc8", "#8ee7ce", "#f2a1a5", "#81bdf1", "#f2bb91", "#b8dcfe", "#aeb276", "#f2cdef", "#e8d6b2", "#8d92b0", "#b7878d"),
+  c("#c3d79b", "#b28cc0", "#64a985", "#e3a7d4", "#2ea2aa", "#e69892", "#85c6f9", "#fbd1a0", "#7696be", "#89996c", "#ddcdff", "#719d89", "#f5cde6", "#b6e0da", "#e8d4cd", "#b5ddfa"),
+  c("#a98d83", "#84e1ff", "#bb8964", "#46b1d1", "#ffbfa5", "#6199c0", "#bbcb8f", "#bf82ab", "#85ddc4", "#eea0ba", "#c1d8ff", "#c3818b", "#c5c6ff", "#999388", "#e8cbff", "#ffb5b6", "#d2dad7"),
+  c("#faccde", "#60a987", "#c6abe4", "#6f9e77", "#c48093", "#a5e5d3", "#cc8f6f", "#499fae", "#d9dca6", "#7796b8", "#bee1ba", "#b4daff", "#919583", "#e2d3e9", "#47a19b", "#ebd4bc", "#7c9993", "#a9e3e0"),
+  c("#739e6e", "#ffbfd9", "#43b6bb", "#e8ad88", "#5e9bce", "#c2af75", "#a8e0fe", "#fad0a8", "#679e8d", "#ffc7b1", "#abe5c0", "#ac8d78", "#c5dddc", "#a48f84", "#cadfb0", "#899694", "#fdcdc1", "#d1dad5", "#dfd8c4"),
+  c("#6e9c93", "#ffb4b3", "#7ec6a2", "#eeccfe", "#cddb9d", "#8a90c5", "#dcb983", "#77bff0", "#f0ab92", "#90ddff", "#f1d3a9", "#b5c2fe", "#c1e1b7", "#7596ba", "#bce1c4", "#a88c96", "#5a9daf", "#b18b80", "#d4d6f3", "#949577"),
+  c("#e7d6bb", "#749ed5", "#f9d29d", "#67b3e2", "#d09773", "#65ccec", "#d38585", "#7fe8ef", "#cf8190", "#94e8cd", "#ae8cc1", "#b3cf95", "#cbc0fc", "#94a66c", "#eeccff", "#ada368", "#e9a6ce", "#48a297", "#ffc1df", "#799c7a", "#facbe0", "#5d9e9a", "#ffc6c1", "#619bb0", "#fccdcb", "#7197bb", "#b1e4c3", "#9390b1", "#c3e0c0", "#a98c90", "#ade3ce", "#9c927d", "#c2dafe", "#869881", "#e6d3dc", "#6e9ba4", "#bde0d0", "#8196a4", "#b2e1df", "#b9deea")
 )
 
 badToGood <- rev(c("#1AB958", "#23B956", "#2BB954", "#31B952", "#37B850", "#3CB84E", "#41B84C", "#45B74A", "#49B749", "#4DB747", "#51B645", "#54B643", "#58B641", "#5BB53F", "#5FB53D", "#62B53C", "#65B43A", "#68B438", "#6BB336", "#6DB335", "#70B333", "#73B231", "#76B230", "#78B12E", "#7BB12C", "#7DB02B", "#80B029", "#82AF28", "#85AF26", "#87AE25", "#8AAE23", "#8CAD22", "#8EAD21", "#91AC1F", "#93AC1E", "#95AB1D", "#97AB1C", "#9AAA1B", "#9CAA1A", "#9EA919", "#A0A918", "#A2A818", "#A4A717", "#A6A716", "#A8A616", "#AAA616", "#ACA515", "#AEA415", "#B0A415", "#B2A315", "#B4A315", "#B6A216", "#B8A116", "#B9A117", "#BBA017", "#BD9F18", "#BF9F18", "#C19E19", "#C29D1A", "#C49D1B", "#C69C1C", "#C79B1D", "#C99A1E", "#CB9A1F", "#CC9920", "#CE9822", "#CF9823", "#D19724", "#D29625", "#D49626", "#D59528", "#D79429", "#D8932A", "#D9932C", "#DB922D", "#DC912E", "#DD9130", "#DF9031", "#E08F33", "#E18F34", "#E28E35", "#E38D37", "#E58C38", "#E68C3A", "#E78B3B", "#E88A3D", "#E98A3E", "#EA8940", "#EB8841", "#EC8843", "#ED8744", "#EE8746", "#EE8647", "#EF8549", "#F0854A", "#F1844C", "#F2844D", "#F2834F", "#F38350", "#F48252", "#F48253", "#F58155", "#F58157", "#F68058", "#F6805A", "#F77F5B", "#F77F5D", "#F87E5E"))
@@ -222,7 +237,6 @@ pages = c(131, 147)
 )
 
 
-# Define UI for app that draws a histogram ----
 ui <- fluidPage(theme = "treespace.css",
     useShinyjs(),
     column(3, 
@@ -303,7 +317,6 @@ ui <- fluidPage(theme = "treespace.css",
                       min = 2,
                       max = 20,
                       value = 8),
-          actionButton("calcClusters", "Recalculate clustering"),
           fluidRow(plotOutput(outputId = "clustQuality", height = "80px")),
         ),
         tabPanel("Display",
@@ -381,62 +394,8 @@ server <- function(input, output, session) {
   treeNumbers <- c(1:50, 401:440)
   
   r <- reactiveValues(allTrees = as.phylo(treeNumbers, 8),
-                      entryOrder = rep(1, length(treeNumbers)))
-  
-  ##############################################################################
-  # Reset cache
-  ##############################################################################
-  ClearClusters <- function() {
-    r$clust_cid = NULL
-    r$clust_pid = NULL
-    r$clust_qd = NULL
-    r$clust_kc = NULL
-    r$clust_path = NULL
-    r$clust_rf = NULL
-  }
-  
-  ClearMST <- function() {
-    r$mst_cid = NULL
-    r$mst_pid = NULL
-    r$mst_qd = NULL
-    r$mst_kc = NULL
-    r$mst_path = NULL
-    r$mst_rf = NULL
-  }
-  
-  ClearDistances <- function() {
-    r$dist_cid = NULL
-    r$dist_pid = NULL
-    r$dist_qd = NULL
-    r$dist_kc = NULL
-    r$dist_path = NULL
-    r$dist_rf = NULL
-    
-    r$proj_pca_cid = NULL
-    r$proj_pca_pid = NULL
-    r$proj_pca_qd = NULL
-    r$proj_pca_kc = NULL
-    r$proj_pca_path = NULL
-    r$proj_pca_rf = NULL
-    
-    r$proj_k_cid = NULL
-    r$proj_k_pid = NULL
-    r$proj_k_qd = NULL
-    r$proj_k_kc = NULL
-    r$proj_k_path = NULL
-    r$proj_k_rf = NULL
-    
-    r$proj_nls_cid = NULL
-    r$proj_nls_pid = NULL
-    r$proj_nls_qd = NULL
-    r$proj_nls_kc = NULL
-    r$proj_nls_path = NULL
-    r$proj_nls_rf = NULL
-    
-    ClearClusters()
-    
-    ClearMST()
-  }
+                      entryOrder = rep(1, length(treeNumbers)),
+                      treesUpdated = Sys.time())
   
   ##############################################################################
   # Load trees
@@ -446,9 +405,9 @@ server <- function(input, output, session) {
     if (is.null(input)) return("No tree file selected.")
     tmpFile <- fileInput$datapath
     if (is.null(tmpFile)) return ("No trees found.")
-    if (length(grep("#NEXUS", toupper(readLines(tmpFile)[1]),
+    if (length(grep("#NEXUS", toupper(readLines(tmpFile, 1L)),
                     fixed = TRUE)) > 0) {
-      ret <- read.nexus(tmpFile)
+      ret <- c(read.nexus(tmpFile))
     } else {
       ret <- ReadTntTree(tmpFile)
       if (length(ret) == 0) ret <- read.tree(tmpFile)
@@ -510,11 +469,10 @@ server <- function(input, output, session) {
   })
   
   thinnedTrees <- reactive({
-    as.integer(seq(keptRange()[1], keptRange()[2], by = 2^input$thinTrees))
+    as.integer(seq(keptRange()[1], keptRange()[2], by = 2 ^ input$thinTrees))
   })
   
   TreeNumberUpdate <- function() {
-    ClearDistances()
     nTrees <- length(r$allTrees)
     updateSliderInput(session, "mst", value = min(500, nTrees), max = nTrees)
     updateSliderInput(session, "which.tree", max = nTrees)
@@ -523,7 +481,7 @@ server <- function(input, output, session) {
                       value = min(input$dims, nProjDim()))
     updateSliderInput(session, "nNeighb",
                       max = nTrees,
-                      value = min(input$nNeighb, nTrees, 100))
+                      value = min(nNeighb(), nTrees, 100))
   }
   
   observeEvent(input$addTrees, {
@@ -543,6 +501,10 @@ server <- function(input, output, session) {
     r$allTrees <- c(treeFile()[thinnedTrees()])
     r$entryOrder <- rep(1L, length(r$allTrees))
     TreeNumberUpdate()
+  })
+  
+  observeEvent(r$allTrees, {
+    r$treesUpdated <- Sys.time()
   })
   
   output$treesInMemory <- renderText({
@@ -565,43 +527,33 @@ server <- function(input, output, session) {
            rf = "Robinson\u2212Foulds distance")
   }
   
-  distances <- reactive({
-    if (length(r$allTrees) > 1L) {
-      withProgress(
-        message = "Calculating distances", value = 0.99,
-        switch(input$distance,
-               "cid" = {
-                 if (is.null(r$dist_cid)) r$dist_cid = ClusteringInfoDistance(r$allTrees)
-                 r$dist_cid
-               },
-               "pid" = {
-                 if (is.null(r$dist_pid)) r$dist_pid = PhylogeneticInfoDistance(r$allTrees)
-                 r$dist_pid
-               },
-               "qd" = {
-                 if (is.null(r$dist_qd)) r$dist_qd = as.dist(Quartet::QuartetDivergence(
-                   Quartet::ManyToManyQuartetAgreement(r$allTrees), similarity = FALSE))
-                 r$dist_qd
-               },
-               "kc" = {
-                 if (is.null(r$dist_kc)) r$dist_kc = KendallColijn(r$allTrees)
-                 r$dist_kc
-               },
-               "path" = {
-                 if (is.null(r$dist_path)) r$dist_path = PathDist(r$allTrees)
-                 r$dist_path
-               },
-               "rf" = {
-                 if (is.null(r$dist_rf)) r$dist_rf = RobinsonFoulds(r$allTrees)
-                 r$dist_rf
-               }
-         )
-      )
-    } else {
-      matrix(0, 0, 0)
-    }
-    
-  })
+  distances <- bindCache(
+    reactive({
+      if (length(r$allTrees) > 1L) {
+        LogMsg("Calculating distances: ", input$distance, " _ ",
+               .DateTime(r$treesUpdated))
+        withProgress(
+          message = "Calculating distances", value = 0.99,
+          switch(
+            input$distance,
+            "cid" = ClusteringInfoDistance(r$allTrees),
+            "pid" = PhylogeneticInfoDistance(r$allTrees),
+            "qd" = as.dist(Quartet::QuartetDivergence(
+              Quartet::ManyToManyQuartetAgreement(r$allTrees),
+              similarity = FALSE)
+            ),
+            "kc" = KendallColijn(r$allTrees),
+            "path" = PathDist(r$allTrees),
+            "rf" = RobinsonFoulds(r$allTrees)
+          )
+        )
+      } else {
+        matrix(0, 0, 0)
+      }
+    }),
+    r$treesUpdated,
+    input$distance
+  )
   
   ##############################################################################
   # Mapping
@@ -632,53 +584,58 @@ server <- function(input, output, session) {
     }
   })
   
-  projId <- function() {
-    paste0("proj_", input$mapping, "_", input$distance, "_",
-           if(mappingUsesNeighb()) input$nNeighb)
-  }
+  nNeighb <- debounce(reactive(input$nNeighb), 300)
   
-  mapping <- debounce(reactive({
-    if (maxProjDim() > 1L) {
-      if (is.null(r[[projId()]])) {
+  mapping <- bindCache(
+    reactive({
+      if (maxProjDim() > 1L) {
+        LogMsg("Mapping distances")
         withProgress(
           message = "Mapping distances",
           value = 0.99,
-          proj <- switch(input$mapping,
-                         "pca" = cmdscale(distances(), k = maxProjDim()),
-                         "k" = MASS::isoMDS(distances(), k = maxProjDim())$points,
-                         "nls" = MASS::sammon(distances(), k = maxProjDim())$points,
-                         "tumap" = uwot::tumap(distances(), verbose = FALSE,
-                                               n_neighbors = input$nNeighb,
-                                               n_components = maxProjDim()),
-                         "umap" = uwot::umap(distances(), verbose = FALSE,
-                                             a = 1.8956, b = 0.8006,
-                                             approx_pow = TRUE,
-                                             n_neighbors = input$nNeighb,
-                                             n_components = maxProjDim())
-                         )
+          switch(
+            input$mapping,
+            "pca" = cmdscale(distances(), k = maxProjDim()),
+            "k" = MASS::isoMDS(distances(), k = maxProjDim())$points,
+            "nls" = MASS::sammon(distances(), k = maxProjDim())$points,
+            "tumap" = uwot::tumap(distances(), verbose = FALSE,
+                                  n_neighbors = nNeighb(),
+                                  n_components = maxProjDim()),
+            "umap" = uwot::umap(distances(), verbose = FALSE,
+                                a = 1.8956, b = 0.8006,
+                                approx_pow = TRUE,
+                                n_neighbors = nNeighb(),
+                                n_components = maxProjDim())
+          )
         )
-        r[[projId()]] <- proj
+      } else {
+        matrix(0, 0, 0)
       }
-      
-      # Return:
-      r[[projId()]]
-    } else {
-      matrix(0, 0, 0)
-    }
-  }), 300)
+    }),
+    r$treesUpdated,
+    input$mapping,
+    input$distance,
+    nNeighb()
+  )
   
-  projQual <- reactive({
-    qual_id <- paste0("qual_", projId())
-    if (is.null(r[[qual_id]])) {
-      r[[qual_id]] <- withProgress(message = "Estimating mapping quality", {
+  
+  projQual <- bindCache(
+    reactive({
+      LogMsg("Estimate quality of mapping with dimensions: ",
+             paste0(dim(mapping()), collapse = ", "))
+      withProgress(message = "Estimating mapping quality", {
         vapply(seq_len(nProjDim()), function(k) {
           incProgress(1 / nProjDim())
           MappingQuality(distances(), dist(mapping()[, seq_len(k)]), 10)
         }, numeric(4))
       })
-    }
-    r[[qual_id]]
-  })
+    }),
+    nProjDim(),
+    input$mapping,
+    input$distance,
+    nNeighb()
+  )
+    
   
   LogScore <- function(x) {
     (-(log10(1 - x + 1e-2))) / 2
@@ -690,8 +647,8 @@ server <- function(input, output, session) {
     
     plot(NULL, xlim = c(0, 1), ylim = c(-1.5, 2.5),
          ann = FALSE, axes = FALSE)
-    x <- seq.int(from = 0, to = 1, length.out = nStop)
-    segments(x[-nStop], numeric(nStop), x[-1], lwd = 5, col = badToGood)
+    x <- seq.int(from = 0, to = 1, length.out = nStop + 1)
+    segments(x[-(nStop + 1)], numeric(nStop), x[-1], lwd = 5, col = badToGood)
     
     logScore <- LogScore(projQual()["TxC", nProjDim()])
     lines(rep(logScore, 2), c(-1, 1), lty = 3)
@@ -741,174 +698,311 @@ server <- function(input, output, session) {
   # Clusterings
   ##############################################################################
   maxClust <- reactive(min(input$maxClusters, length(r$allTrees) - 1L))
-  clusterings <- reactive({
-    maxCluster <- input$maxClusters
-    if (!is.null(r$clust_max) && maxCluster != r$clust_max) ClearClusters()
-    clust_id <- paste0("clust_", input$distance)
-    
-    if (is.null(r[[clust_id]])) {
+  
+  possibleClusters <- reactive(2:maxClust())
+  
+  pamClusters <- bindCache(
+    reactive({
+      lapply(possibleClusters(), function(k) {
+        cluster::pam(distances(), k = k)
+      })
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  pamSils <- bindCache(
+    reactive({
+      vapply(pamClusters(), function(pamCluster) {
+        mean(cluster::silhouette(pamCluster)[, 3])
+      }, double(1))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  hmmClusters <- bindCache(
+    reactive({
+      hTree <- protoclust::protoclust(distances())
+      lapply(possibleClusters(), function(k) cutree(hTree, k = k))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  hmmSils <- bindCache(
+    reactive({
+      vapply(hmmClusters(), function(hCluster) {
+        mean(cluster::silhouette(hCluster, distances())[, 3])
+      }, double(1))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  hwdClusters <- bindCache(
+    reactive({
+      hTree <- stats::hclust(distances(), method = "ward.D2")
+      lapply(possibleClusters(), function(k) cutree(hTree, k = k))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  hwdSils <- bindCache(
+    reactive({
+      vapply(hwdClusters(), function(hCluster) {
+        mean(cluster::silhouette(hCluster, distances())[, 3])
+      }, double(1))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  hsiClusters <- bindCache(
+    reactive({
+      hTree <- stats::hclust(distances(), method = "single")
+      lapply(possibleClusters(), function(k) cutree(hTree, k = k))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  hsiSils <- bindCache(
+    reactive({
+      vapply(hsiClusters(), function(hCluster) {
+        mean(cluster::silhouette(hCluster, distances())[, 3])
+      }, double(1))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  hcoClusters <- bindCache(
+    reactive({
+      hTree <- stats::hclust(distances(), method = "complete")
+      lapply(possibleClusters(), function(k) cutree(hTree, k = k))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  hcoSils <- bindCache(
+    reactive({
+      vapply(hcoClusters(), function(hCluster) {
+        mean(cluster::silhouette(hCluster, distances())[, 3])
+      }, double(1))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  havClusters <- bindCache(
+    reactive({
+      hTree <- stats::hclust(distances(), method = "average")
+      lapply(possibleClusters(), function(k) cutree(hTree, k = k))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  havSils <- bindCache(
+    reactive({
+      vapply(havClusters(), function(hCluster) {
+        mean(cluster::silhouette(hCluster, distances())[, 3])
+      }, double(1))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  hmdClusters <- bindCache(
+    reactive({
+      hTree <- stats::hclust(distances(), method = "median")
+      lapply(possibleClusters(), function(k) cutree(hTree, k = k))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  hmdSils <- bindCache(
+    reactive({
+      vapply(hmdClusters(), function(hCluster) {
+        mean(cluster::silhouette(hCluster, distances())[, 3])
+      }, double(1))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  hctClusters <- bindCache(
+    reactive({
+      hTree <- stats::hclust(distances() ^ 2, method = "centroid")
+      lapply(possibleClusters(), function(k) cutree(hTree, k = k))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  hctSils <- bindCache(
+    reactive({
+      vapply(hctClusters(), function(hCluster) {
+        mean(cluster::silhouette(hCluster, distances())[, 3])
+      }, double(1))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  kppClusters <- bindCache(
+    reactive({
+      lapply(possibleClusters(), function(k) KMeansPP(distances(), k))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  kppSils <- bindCache(
+    reactive({
+      vapply(kppClusters(), function(kCluster) {
+        mean(cluster::silhouette(kCluster$cluster, distances())[, 3])
+      }, double(1))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  specClusters <- bindCache(
+    reactive({
+      spectralEigens <- SpectralEigens(
+        distances(),
+        nn = min(ncol(as.matrix(distances())) - 1L, 10),
+        nEig = 3L
+      )
+      lapply(possibleClusters(), function(k) {
+        cluster::pam(spectralEigens, k = k)
+      })
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  specSils <- bindCache(
+    reactive({
+      vapply(specClusters(), function(cluster) {
+        mean(cluster::silhouette(cluster$cluster, distances())[, 3])
+      }, double(1))
+    }),
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
+  
+  .Ascending <- function(x) {
+    order(unique(x))[x]
+  }
+  
+  clusterings <- bindCache(
+    reactive({
       if (maxClust() > 1) {
-        possibleClusters <- 2:maxClust()
         
         hSil <- pamSil <- havSil <- kSil <- specSil <-
           hsiSil <- hcoSil <- hmdSil <- hctSil <- hwdSil <- -99
-        dists <- distances()
         
-        nMethodsChecked <- length(input$clustering)
+        nMethodsChecked <- 10
         methInc <- 1 / nMethodsChecked
-        nK <- length(possibleClusters)
-        kInc <- 1 / (nMethodsChecked * nK)
         
         withProgress(message = "Clustering", {
+          
+          incProgress(methInc, detail = "PAM clustering")
           if ("pam" %in% input$clustering) {
-            pamClusters <- lapply(possibleClusters, function(k) {
-              incProgress(kInc, detail = "PAM clustering")
-              cluster::pam(dists, k = k)
-            })
-            pamSils <- vapply(pamClusters, function(pamCluster) {
-              incProgress(kInc, detail = "PAM silhouettes")
-              mean(cluster::silhouette(pamCluster)[, 3])
-            }, double(1))
-            
-            bestPam <- which.max(pamSils)
-            pamSil <- pamSils[bestPam]
-            pamCluster <- pamClusters[[bestPam]]$cluster
+            bestPam <- which.max(pamSils())
+            pamSil <- pamSils()[bestPam]
+            pamCluster <- pamClusters()[[bestPam]]$cluster
           }
           
+          incProgress(methInc, detail = "minimax clustering")
           if ("hmm" %in% input$clustering) {
-            incProgress(methInc / 2, detail = "minimax clustering")
-            hTree <- protoclust::protoclust(dists)
-            hClusters <- lapply(possibleClusters,
-                                function(k) cutree(hTree, k = k))
-            hSils <- vapply(hClusters, function(hCluster) {
-              incProgress(kInc / 2, detail = "minimax silhouettes")
-              mean(cluster::silhouette(hCluster, dists)[, 3])
-            }, double(1))
-            bestH <- which.max(hSils)
-            hSil <- hSils[bestH]
-            hCluster <- hClusters[[bestH]]
+            bestH <- which.max(hmmSils())
+            hSil <- hmmSils()[bestH]
+            hCluster <- hmmClusters()[[bestH]]
           }
           
+          incProgress(methInc, detail = "Ward D\ub2 clustering")
           if ("hwd" %in% input$clustering) {
-            incProgress(methInc / 2, detail = "Ward D\ub2 clustering")
-            hTree <- stats::hclust(dists, method = "ward.D2")
-            hwdClusters <- lapply(possibleClusters,
-                                  function(k) cutree(hTree, k = k))
-            hwdSils <- vapply(hwdClusters, function(hCluster) {
-              incProgress(kInc / 2, detail = "Ward D\ub2 silhouettes")
-              mean(cluster::silhouette(hCluster, dists)[, 3])
-            }, double(1))
-            bestHwd <- which.max(hwdSils)
-            hwdSil <- hwdSils[bestHwd]
-            hwdCluster <- hwdClusters[[bestHwd]]
+            bestHwd <- which.max(hwdSils())
+            hwdSil <- hwdSils()[bestHwd]
+            hwdCluster <- hwdClusters()[[bestHwd]]
           }
           
+          incProgress(methInc, detail = "single clustering")
           if ("hsi" %in% input$clustering) {
-            incProgress(methInc / 2, detail = "single clustering")
-            hTree <- stats::hclust(dists, method = "single")
-            hsiClusters <- lapply(possibleClusters,
-                                  function(k) cutree(hTree, k = k))
-            hsiSils <- vapply(hsiClusters, function(hCluster) {
-              incProgress(kInc / 2, detail = "single silhouettes")
-              mean(cluster::silhouette(hCluster, dists)[, 3])
-            }, double(1))
-            bestHsi <- which.max(hsiSils)
-            hsiSil <- hsiSils[bestHsi]
-            hsiCluster <- hsiClusters[[bestHsi]]
+            bestHsi <- which.max(hsiSils())
+            hsiSil <- hsiSils()[bestHsi]
+            hsiCluster <- hsiClusters()[[bestHsi]]
           }
           
+          incProgress(methInc, detail = "complete clustering")
           if ("hco" %in% input$clustering) {
-            incProgress(methInc / 2, detail = "complete clustering")
-            hTree <- stats::hclust(dists, method = "complete")
-            hcoClusters <- lapply(possibleClusters,
-                                  function(k) cutree(hTree, k = k))
-            hcoSils <- vapply(hcoClusters, function(hCluster) {
-              incProgress(kInc / 2, detail = "complete silhouettes")
-              mean(cluster::silhouette(hCluster, dists)[, 3])
-            }, double(1))
-            bestHco <- which.max(hcoSils)
-            hcoSil <- hcoSils[bestHco]
-            hcoCluster <- hcoClusters[[bestHco]]
+            bestHco <- which.max(hcoSils())
+            hcoSil <- hcoSils()[bestHco]
+            hcoCluster <- hcoClusters()[[bestHco]]
           }
           
-          
+          incProgress(methInc, detail = "average clustering")
           if ("hav" %in% input$clustering) {
-            incProgress(methInc / 2, detail = "average clustering")
-            hTree <- stats::hclust(dists, method = "average")
-            havClusters <- lapply(possibleClusters,
-                                  function(k) cutree(hTree, k = k))
-            havSils <- vapply(havClusters, function(hCluster) {
-              incProgress(kInc / 2, detail = "average silhouettes")
-              mean(cluster::silhouette(hCluster, dists)[, 3])
-            }, double(1))
-            bestHav <- which.max(havSils)
-            havSil <- havSils[bestHav]
-            havCluster <- havClusters[[bestHav]]
+            bestHav <- which.max(havSils())
+            havSil <- havSils()[bestHav]
+            havCluster <- havClusters()[[bestHav]]
           }
           
-          
+          incProgress(methInc, detail = "median clustering")
           if ("hmd" %in% input$clustering) {
-            incProgress(methInc / 2, detail = "median clustering")
-            hTree <- stats::hclust(dists, method = "median")
-            hmdClusters <- lapply(possibleClusters,
-                                  function(k) cutree(hTree, k = k))
-            hmdSils <- vapply(hmdClusters, function(hCluster) {
-              incProgress(kInc / 2, detail = "median silhouettes")
-              mean(cluster::silhouette(hCluster, dists)[, 3])
-            }, double(1))
-            bestHmd <- which.max(hmdSils)
-            hmdSil <- hmdSils[bestHmd]
-            hmdCluster <- hmdClusters[[bestHmd]]
+            bestHmd <- which.max(hmdSils())
+            hmdSil <- hmdSils()[bestHmd]
+            hmdCluster <- hmdClusters()[[bestHmd]]
           }
           
-          
+          incProgress(methInc, detail = "centroid clustering")
           if ("hct" %in% input$clustering) {
-            incProgress(methInc / 2, detail = "centroid clustering")
-            hTree <- stats::hclust(dists ^ 2, method = "centroid")
-            hctClusters <- lapply(possibleClusters,
-                                  function(k) cutree(hTree, k = k))
-            hctSils <- vapply(hctClusters, function(hCluster) {
-              incProgress(kInc / 2, detail = "centroid silhouettes")
-              mean(cluster::silhouette(hCluster, dists)[, 3])
-            }, double(1))
-            bestHct <- which.max(hctSils)
-            hctSil <- hctSils[bestHct]
-            hctCluster <- hctClusters[[bestHct]]
+            bestHct <- which.max(hctSils())
+            hctSil <- hctSils()[bestHct]
+            hctCluster <- hctClusters()[[bestHct]]
           }
           
+          incProgress(methInc, detail = "K-means++ clustering")
           if ("kmn" %in% input$clustering) {
-            incProgress(methInc / 2, detail = "K-means++ clustering")
-            kClusters <- lapply(possibleClusters,
-                                function(k) KMeansPP(dists, k))
-            kSils <- vapply(kClusters, function(kCluster) {
-              incProgress(kInc / 2, detail = "K-means++ silhouettes")
-              mean(cluster::silhouette(kCluster$cluster, dists)[, 3])
-            }, double(1))
-            
-            bestK <- which.max(kSils)
-            kSil <- kSils[bestK]
-            kCluster <- kClusters[[bestK]]$cluster
+            bestK <- which.max(kppSils())
+            kSil <- kppSils()[bestK]
+            kCluster <- kppClusters()[[bestK]]$cluster
           }
           
+          incProgress(methInc, detail = "spectral clustering")
           if ("spec" %in% input$clustering) {
-            spectralEigens <- SpectralEigens(
-              dists,
-              nn = min(ncol(as.matrix(dists)) - 1L, 10),
-              nEig = 3L
-            )
-            specClusters <- lapply(possibleClusters, function(k) {
-              incProgress(kInc / 2, detail = "spectral clustering")
-              cluster::pam(spectralEigens, k = k)
-            })
-            specSils <- vapply(specClusters, function(cluster) {
-              incProgress(kInc / 2, detail = "spectral silhouettes")
-              mean(cluster::silhouette(cluster$cluster, dists)[, 3])
-            }, double(1))
-            
-            bestSpec <- which.max(specSils)
-            specSil <- specSils[bestSpec]
-            specCluster <- specClusters[[bestSpec]]$cluster
+            bestSpec <- which.max(specSils())
+            specSil <- specSils()[bestSpec]
+            specCluster <- specClusters()[[bestSpec]]$cluster
           }
+          
           bestCluster <- c("none", "pam", "hmm", "hsi", "hco", "hav",
                            "hmd", "hct", "hwd", "kmn", "spec")[
                              which.max(c(0, pamSil, hSil, hsiSil, hcoSil,
@@ -920,88 +1014,87 @@ server <- function(input, output, session) {
         bestCluster <- "none"
       }
       
-      r[[clust_id]] <- list(method = switch(bestCluster,
-                                            pam = "part. around medoids",
-                                            hmm = "minimax linkage",
-                                            hsi = "single linkage",
-                                            hco = "complete linkage",
-                                            hav = "average linkage",
-                                            hmd = "median linkage",
-                                            hct = "centroid linkage",
-                                            hwd = "Ward d\ub2 linkage",
-                                            kmn = "K-means++",
-                                            spec = "spectral",
-                                            "no attempt to find any"),
-                            n = 1 + switch(bestCluster,
-                                           pam = bestPam,
-                                           hmm = bestH,
-                                           hsi = bestHsi,
-                                           hco = bestHco,
-                                           hav = bestHav,
-                                           hmd = bestHmd,
-                                           hct = bestHct,
-                                           hwd = bestHwd,
-                                           har = bestHav, kmn = bestK,
-                                           spec = bestSpec,
-                                           0),
-                            sil = switch(bestCluster,
-                                         pam = pamSil,
-                                         hmm = hSil,
-                                         hsi = hsiSil,
-                                         hco = hcoSil,
-                                         hav = havSil,
-                                         hmd = hmdSil,
-                                         hct = hctSil,
-                                         hwd = hwdSil,
-                                         kmn = kSil, spec = specSil, 
-                                         0), 
-                            cluster = switch(bestCluster,
-                                             pam = pamCluster,
-                                             hmm = hCluster,
-                                             hsi = hsiCluster,
-                                             hco = hcoCluster,
-                                             hav = havCluster,
-                                             hmd = hmdCluster,
-                                             hct = hctCluster,
-                                             hwd = hwdCluster,
-                                             kmn = kCluster,
-                                             spec = specCluster,
-                                             1)
+      list(
+        method = switch(bestCluster,
+                        pam = "part. around medoids",
+                        hmm = "minimax linkage",
+                        hsi = "single linkage",
+                        hco = "complete linkage",
+                        hav = "average linkage",
+                        hmd = "median linkage",
+                        hct = "centroid linkage",
+                        hwd = "Ward d\ub2 linkage",
+                        kmn = "K-means++",
+                        spec = "spectral",
+                        "no attempt to find any"),
+        n = 1 + switch(bestCluster,
+                       pam = bestPam,
+                       hmm = bestH,
+                       hsi = bestHsi,
+                       hco = bestHco,
+                       hav = bestHav,
+                       hmd = bestHmd,
+                       hct = bestHct,
+                       hwd = bestHwd,
+                       har = bestHav, kmn = bestK,
+                       spec = bestSpec,
+                       0),
+        sil = switch(bestCluster,
+                     pam = pamSil,
+                     hmm = hSil,
+                     hsi = hsiSil,
+                     hco = hcoSil,
+                     hav = havSil,
+                     hmd = hmdSil,
+                     hct = hctSil,
+                     hwd = hwdSil,
+                     kmn = kSil, spec = specSil, 
+                     0), 
+        cluster = .Ascending(switch(
+          bestCluster,
+          pam = pamCluster,
+          hmm = hCluster,
+          hsi = hsiCluster,
+          hco = hcoCluster,
+          hav = havCluster,
+          hmd = hmdCluster,
+          hct = hctCluster,
+          hwd = hwdCluster,
+          kmn = kCluster,
+          spec = specCluster,
+          1))
       )
-      r$clust_max <- maxCluster
-    }
-    r[[clust_id]]
-  })
-  
-  observeEvent(input$calcClusters, {ClearClusters()})
+    }),
+    input$clustering,
+    maxClust(),
+    r$treesUpdated,
+    input$distance
+  )
   
   mstSize <- debounce(reactive(input$mst), 100)
   
-  mstEnds <- reactive({
-    
-    if (!is.null(r$mst_size) && mstSize() != r$mst_size) ClearMST()
-    mst_id <- paste0("mst_", input$distance)
-    if (is.null(r[[mst_id]])) {
+  mstEnds <- bindCache(
+    reactive({
       dist <- as.matrix(distances())
       nRows <- dim(dist)[1]
       withProgress(message = "Calculating MST", {
-        selection <- unique(round(seq.int(1, nRows, length.out = max(2L, mstSize()))))
+        selection <- unique(round(seq.int(1, nRows,
+                                          length.out = max(2L, mstSize()))))
         edges <- MSTEdges(dist[selection, selection])
         edges[, 1] <- selection[edges[, 1]]
         edges[, 2] <- selection[edges[, 2]]
-        r[[mst_id]] <- edges
+        edges
       })
-    }
-    
-    r$mst_size <- mstSize()
-    r[[mst_id]]
-  })
+    }),
+    r$treesUpdated,
+    input$distance,
+    mstSize()
+  )
   
   output$clustQuality <- renderPlot({
     par(mar = c(2, 0.5, 0, 0.5), xpd = NA, mgp = c(2, 1, 0))
     cl <- clusterings()
-    clust_id <- paste0("clust_", input$distance)
-    sil <- r[[clust_id]]$sil
+    sil <- cl$sil
     if (length(sil) == 0) sil <- -0.5
     nStop <- 400
     range <- c(0.5, 1)

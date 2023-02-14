@@ -8,7 +8,7 @@
   "codeRepository": "https://github.com/ms609/TreeDist/",
   "issueTracker": "https://github.com/ms609/TreeDist/issues/",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "2.5.0",
+  "version": "2.5.0.9000",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -482,12 +482,12 @@
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://github.com/ms609/TreeTools"
+      "sameAs": "https://CRAN.R-project.org/package=TreeTools"
     },
     "SystemRequirements": "C++14"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "1407.08KB",
+  "fileSize": "1405.089KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
@@ -551,7 +551,7 @@
           "familyName": "Smith"
         }
       ],
-      "name": "TreeDist: Distances between Phylogenetic Trees. R package version 2.5.0",
+      "name": "TreeDist: Distances between Phylogenetic Trees. R package version 2.5.0.9000",
       "identifier": "10.5281/zenodo.3528124",
       "@id": "https://doi.org/10.5281/zenodo.3528124",
       "sameAs": "https://doi.org/10.5281/zenodo.3528124",
