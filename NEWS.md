@@ -1,11 +1,6 @@
-# Branch `differentTips`
+# TreeDist 2.6.0
 
 - Support comparison of trees with different tips.
-
-- Support visualization of consequent distances via uncertain-MDS.
-
-
-# TreeDist 2.5.0.9000
 
 - Fix caching errors in `MapDist()`
   ([#98](https://github.com/ms609/TreeDist/issues/98)).
