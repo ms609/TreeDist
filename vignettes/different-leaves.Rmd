@@ -10,7 +10,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Sometimes we may wish to compare trees whose tip sets only partially overlap:
+Sometimes one may wish to compare trees whose tip sets only partially overlap:
 that is, certain leaves are missing in one tree or the other.
 
 Whilst this process is computationally trivial, interpreting the resultant
@@ -33,21 +33,25 @@ pecCL <- DropTip(pecAL, letters[1:2])
 treeList <- list(balAL = balAL, balAJ = balAJ, balCL = balCL, balGL = balGL,
                  pecAL = pecAL, pecAJ = pecAJ, pecCL = pecCL, pecAF = pecAF)
 
-# Function to plot two trees
-Plot2 <- function(t1, t2) {
-  oPar <- par(mfrow = c(1, 2), mar = rep(0, 4), cex = 0.9)
+# Define a function to plot two trees
+Plot2 <- function(t1, t2, ..., main2 = "") {
+  oPar <- par(mfrow = c(1, 2), mar = rep(1, 4), cex = 0.9)
   on.exit(par(oPar)) # Restore original parameters
-  plot(t1)
-  plot(t2)
+  plot(t1, ...)
+  plot(t2, main = main2)
 }
 ```
 
 
 First let's consider the scenario where we are identifying two identical trees
--- except that some leaves present in one tree are missing from the other.
+-- except that some leaves present in one tree (here, `a` and `b`) are
+missing from the other.
 
-```{r drop-some-plot}
-Plot2(balAL, balCL)
+```{r drop-some-plot, fig.width = 8}
+Plot2(balAL, balCL,
+      main = "balAL", main2 = "balCL",
+      font = c(rep(4, 2), rep(3, 10)) # Emphasize missing tips
+      )
 ```
 
 From an information theoretic perspective, all the information present in
@@ -58,18 +62,36 @@ information held in common if only the common leaves are retained:
 ```{r drop-some}
 library("TreeDist")
 commonTips <- intersect(TipLabels(balAL), TipLabels(balCL))
+
+# How much information is in tree balCL?
 ClusteringEntropy(balCL)
 # All the information in balCL is also present in balAL
-MutualClusteringInfo(balAL, balCL)
+MutualClusteringInfo(balCL, balAL)
 # balAL also contains information about leaves A and B,
 # so contains more information in total
 ClusteringEntropy(balAL)
 ```
-This raises a question about how tree distances should be normalized.
-The obvious suggestion is to normalize against the maximum similarity that could
-be obtained, given the set of leaves that two trees have in common -- but
-this may not be appropriate in every circumstance.
+
+_Some_ information is held in common between any pair of trees with
+more than a few leaves.  Two random trees with many leaves may thus have
+more information in common than two identical trees with only a few leaves,
+simply because they have more information overall.
+As such, it is clearly necessary to perform some form of normalization before
+comparing tree distances.
+The obvious choice -- and the default, if `normalize = TRUE` -- 
+is to normalize against the maximum similarity that could be obtained,
+given the set of leaves that a pair of trees have in common.
+A `NaN` result is returned when a pair of trees has no leaves in common.
 
 ```{r full-list}
-MutualClusteringInfo(treeList)
+# Information in common (bits)
+raw <- MutualClusteringInfo(treeList)
+heatmap(raw, symm = TRUE)
+# Normalized
+normalized <- MutualClusteringInfo(treeList, normalize = TRUE)
+heatmap(normalized, symm = TRUE)
 ```
+
+A more nuanced perspective may be obtained by computing the range of distances
+that could in principle be obtained if missing tips were added to each tree.
+This is not yet implemented in 'TreeDist'.
