@@ -18,9 +18,13 @@
 #' 
 #' The returned tree similarity measures state the amount of information, 
 #' in bits, that the splits in two trees hold in common 
-#' when they are optimally matched, following \insertCite{SmithDist;textual}{TreeDist}.
+#' when they are optimally matched, following 
+#' \insertCite{SmithDist;textual}{TreeDist}.
 #' The complementary tree distance measures state how much information is 
 #' different in the splits of two trees, under an optimal matching.
+#' Where trees contain different tips, tips present in one tree but not the
+#' other are removed before each comparison (as by definition, the trees neither
+#' hold information in common nor differ regarding these tips).
 #' 
 #' # Concepts of information
 #'
@@ -49,9 +53,9 @@
 #' splits as the phylogenetic information content of the most informative 
 #' split that is consistent with both input splits; `MatchingSplitInfoDistance()`
 #' is the corresponding measure of tree difference.
-#' [(More information here.)](https://ms609.github.io/TreeDist/articles/Generalized-RF.html)
+#' ([More information here](https://ms609.github.io/TreeDist/articles/Generalized-RF.html).)
 #' 
-#' ## Conversion to distances
+#' # Conversion to distances
 #' 
 #' To convert similarity measures to distances, it is necessary to 
 #' subtract the similarity score from a maximum value.  In order to generate
@@ -59,7 +63,7 @@
 #' total information content (SPI, MSI) or entropy (MCI) of all the splits in 
 #' both trees \insertCite{SmithDist}{TreeDist}.
 #' 
-#' ## Normalization
+#' # Normalization
 #' 
 #' If `normalize = TRUE`, then results will be rescaled such that distance
 #' ranges from zero to (in principle) one.
@@ -84,21 +88,7 @@
 #' To calculate the relative similarity against a reference tree that is known
 #' to be "correct", use `normalize = SplitwiseInfo(trueTree)` (SPI, MSI) or
 #' `ClusteringEntropy(trueTree)` (MCI).
-#' 
-#' # Troubleshooting
-#' 
-#' Trees being compared must currently have identical tips.
-#' [Work is underway](https://github.com/ms609/TreeDist/issues/92) to support
-#' comparison between trees with non-overlapping leaf sets.
-#' 
-#' To determine which tips do not occur in both trees, try:
-#' 
-#' ```r
-#' library("TreeTools")
-#' setdiff(TipLabels(tree1), TipLabels(tree2)) # In tree1 but not tree2
-#' setdiff(TipLabels(tree2), TipLabels(tree1)) # In tree2 but not tree1
-#' ```
-#' 
+#'
 #' 
 #' @template tree12ListParams
 #' 
