@@ -1,8 +1,16 @@
-# differentTips
+# range-mds
+
+- Support visualization of consequent distances via uncertain-MDS.
+
+
+# TreeDist 2.6.0
 
 - Support comparison of trees with different tips.
 
-- Support visualization of consequent distances via uncertain-MDS.
+- Fix caching errors in `MapDist()`
+  ([#98](https://github.com/ms609/TreeDist/issues/98)).
+
+- Update tests for compatability with ape 5.7
 
 
 # TreeDist 2.5.0

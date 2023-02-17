@@ -1,3 +1,12 @@
+test_that("k-means++ fails", {
+  indistinct <- dist(rep(1, 100))
+  expect_error(KMeansPP(indistinct), "Not enough distinct data points")
+  expect_error(
+    KMeansPP(as.matrix(indistinct)),
+    "Not enough distinct data points"
+  )
+})
+
 test_that("k-means++ works", {
   set.seed(0)
   two <- c(1:5, 11:15)
