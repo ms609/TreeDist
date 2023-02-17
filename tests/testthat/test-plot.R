@@ -15,7 +15,7 @@ test_that("TreeDistPlot works", {
                            leaveRoom = FALSE)
   }
   skip_if_not_installed("vdiffr")
-  skip_if(packageVersion("graphics") < "4.1")
+  skip_if(packageVersion("graphics") < "4.3")
   skip_if(packageVersion("vdiffr") < "1.0")
   
   vdiffr::expect_doppelganger("Test with space", Test1)
@@ -42,7 +42,7 @@ test_that("VisualizeMatching() works", {
                                  setPar = FALSE))
   
   skip_if_not_installed("vdiffr")
-  skip_if(packageVersion("graphics") < "4.1")
+  skip_if(packageVersion("graphics") < "4.3")
   skip_if(packageVersion("vdiffr") < "1.0")
   
   TestVM <- function() {
@@ -138,7 +138,7 @@ test_that("VisualizeMatching() works", {
 })
 
 test_that("MST example plots as expected", {
-  skip_if_not_installed("graphics", "4.1")
+  skip_if_not_installed("graphics", "4.3")
   skip_if_not_installed("vdiffr", "1.0")
   skip_if_not_installed("TreeTools", "1.6.0.9008")
   vdiffr::expect_doppelganger("MST example plot", function() {
