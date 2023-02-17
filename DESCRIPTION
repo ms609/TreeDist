@@ -87,7 +87,7 @@ Config/Needs/revdeps: revdepcheck
 Config/Needs/website: pkgdown
 Config/testthat/parallel: false
 Config/testthat/edition: 3
-SystemRequirements: C++14
+SystemRequirements: C++17
 ByteCompile: true
 Encoding: UTF-8
 Language: en-GB
