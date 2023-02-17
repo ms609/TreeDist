@@ -84,7 +84,7 @@ Config/Needs/coverage: covr
 Config/Needs/memcheck: devtools
 Config/Needs/metadata: codemetar
 Config/Needs/revdeps: revdepcheck
-Config/Needs/website: pkgdown
+Config/Needs/website: pkgdown, TreeDistData
 Config/testthat/parallel: false
 Config/testthat/edition: 3
 SystemRequirements: C++17
