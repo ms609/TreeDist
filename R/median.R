@@ -55,7 +55,7 @@
 #' @template MRS
 #' 
 #' @seealso Consensus methods:
-#'   [`ape::consensus()`], 
+#'   [`ape::consensus()`],
 #'   [`TreeTools::ConsensusWithout()`]
 #'   
 #' @importFrom stats median
@@ -63,9 +63,9 @@
 #' @encoding UTF-8
 #' @export
 median.multiPhylo <- function(x, na.rm = FALSE,
-                               Distance = ClusteringInfoDistance,
-                               index = FALSE,
-                               breakTies = TRUE, ...) {
+                              Distance = ClusteringInfoDistance,
+                              index = FALSE,
+                              breakTies = TRUE, ...) {
   distances <- unname(colSums(as.matrix(Distance(x))))
   
   # Return:

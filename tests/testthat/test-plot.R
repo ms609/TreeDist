@@ -148,7 +148,7 @@ test_that("MST example plots as expected", {
         4.6, 2.6, 2.3, 1.5, 3, 2.6, 1.5, 4.3, 4.7, 1.7, 2.6, 1.5, 3, 1.6, 4.6,
         4.7, 2.3, 2.3, 1.7, 1.7, 4.4, 3.8, 3.1, 3.1, 1.5, 4.4, 4.4, 3.1, 2.6,
         4.2, 4.8, 3, 4.8, 4.2, 4.7, 4.3, 1.6),
-      class = "dist", Size = 12L, diag = FALSE, upper = FALSE
+      class = "dist", Size = 12L, Diag = FALSE, Upper = FALSE
     ) # dput(round(ClusteringInfoDist(as.phylo(5:16, 8)), 1))
     
     mapping <- structure(

@@ -1,11 +1,21 @@
 library("TreeTools", quietly = TRUE)
 
+
 test_that("Tree normalization works", {
-  expect_equal(0.5, NormalizeInfo(5, 3, 5, how = TRUE, 
-                                  InfoInTree = function(x, y) x + y, y = 1L))
-  expect_equal(0:4 / c(1, 2, 3, 3, 3), 
-               NormalizeInfo(0:4, 1:5, 3, InfoInTree = I, Combine = min))
-  expect_equal(3/4, NormalizeInfo(unnormalized = 3, 1, 1, how = 4L))
+  expect_equal(NormalizeInfo(unnormalized = 5,
+                             tree1 = BalancedTree(3),
+                             tree2 = BalancedTree(5),
+                             how = TRUE,
+                             InfoInTree = function(x, y) NTip(x) + NTip(y),
+                             y = SingleTaxonTree()),
+               5 / ((3 + 1) + (3 + 1)))
+  expect_equal(NormalizeInfo(unnormalized = 0:4,
+                             tree1 = lapply(1:5, BalancedTree),
+                             tree2 = BalancedTree(3),
+                             InfoInTree = NTip,
+                             Combine = min),
+               0:4 / c(1, 2, 3, 3, 3))
+  expect_equal(NormalizeInfo(unnormalized = 3, 1, 1, how = 4L), 3 / 4)
   expect_equal(as.dist(matrix(0:24 / 10, 5, 5)),
                NormalizeInfo(as.dist(matrix(0:24, 5, 5)),
                              rep(5, 5), rep(5, 5), InfoInTree = I),
@@ -234,4 +244,81 @@ test_that("Unrooteds are handled by MAST", {
 test_that("Entropy() supports dots input", {
   expect_identical(2, Entropy(rep(1/4, 4)))
   expect_identical(1, Entropy(0, .5, 1/2))
+})
+
+test_that(".SharedOnly() works", {
+  ah <- letters[1:8]
+  bi <- letters[2:9]
+  bh <- letters[2:8]
+  ch <- letters[3:8]
+  ci <- letters[3:9]
+  balAH <- BalancedTree(ah)
+  pecAH <- PectinateTree(ah)
+  pecBI <- PectinateTree(bi)
+  balCH <- BalancedTree(ch)
+  pecCI <- PectinateTree(ci)
+  
+  expect_equal( # 1 v 1
+    .SharedOnly(balAH, balCH),
+    list(KeepTip(balAH, intersect(ah, ch)),
+         KeepTip(balCH, intersect(ah, ch)))
+  )
+  expect_equal( # 1 v N
+    .SharedOnly(balAH, c(balAH, balCH)),
+    list(list(balAH, KeepTip(balAH, ch)),
+         list(balAH, balCH))
+  )
+  expect_equal( # N v 1
+    .SharedOnly(c(balAH, balCH), balAH),
+    list(list(balAH, balCH),
+         list(balAH, KeepTip(balAH, ch)))
+  )
+  expect_equal( # N v N, all tips differ
+    .SharedOnly(c(balAH, balCH), c(pecBI, pecCI)),
+    list(
+      list(KeepTip(balAH, bh), KeepTip(balAH, ch),
+           balCH, balCH),
+      list(KeepTip(pecBI, bh), KeepTip(pecCI, ch),
+           KeepTip(pecBI, ch), KeepTip(pecCI, ch))
+    )
+  )
+  expect_equal( # N v N, each list same tips
+    .SharedOnly(c(balAH, pecAH), c(pecBI, pecBI)),
+    list(
+      list(KeepTip(balAH, bh), KeepTip(balAH, bh),
+           KeepTip(pecAH, bh), KeepTip(pecAH, bh)),
+      list(KeepTip(pecBI, bh), KeepTip(pecBI, bh),
+           KeepTip(pecBI, bh), KeepTip(pecBI, bh))
+    )
+  )
+  expect_equal( # N v M, first tips same
+    .SharedOnly(c(balAH, balAH), c(pecBI, pecCI, balAH)),
+    list(
+      list(KeepTip(balAH, bh), KeepTip(balAH, ch), balAH,
+           KeepTip(balAH, bh), KeepTip(balAH, ch), balAH),
+      list(KeepTip(pecBI, bh), KeepTip(pecCI, ch), balAH,
+           KeepTip(pecBI, bh), KeepTip(pecCI, ch), balAH)
+    )
+  )
+  expect_equal( # N v M, second tips same
+    .SharedOnly(c(pecBI, pecCI, balAH), c(balAH, balAH)),
+    list(
+      list(KeepTip(pecBI, bh), KeepTip(pecBI, bh),
+           KeepTip(pecCI, ch), KeepTip(pecCI, ch),
+           balAH, balAH),
+      list(KeepTip(balAH, bh), KeepTip(balAH, bh),
+           KeepTip(balAH, ch), KeepTip(balAH, ch),
+           balAH, balAH)
+    )
+  )
+  expect_equal(.SharedOnly(balAH, NULL), list(NULL, NULL))
+  expect_equal(
+    .SharedOnly(c(balAH, pecBI, balCH), NULL),
+    list(
+      list(KeepTip(balAH, bh), KeepTip(balAH, ch),
+           KeepTip(pecBI, ch)),
+      list(KeepTip(pecBI, bh), balCH,
+           balCH)
+      )
+  )
 })

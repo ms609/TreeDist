@@ -109,7 +109,7 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
       is <- combn(seq_len(nTree), 2)
       
       ret <- structure(class = "dist", Size = nTree,
-                       diag = FALSE, upper = FALSE,
+                       Diag = FALSE, Upper = FALSE,
                        apply(is, 2, function(i)
                          .EuclideanDistance(treeVec[, i[1]] - treeVec[, i[2]])))
       # Return:

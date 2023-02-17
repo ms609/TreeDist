@@ -413,6 +413,8 @@ You may wish to:
 
 - [Interpret tree distance metrics](https://ms609.github.io/TreeDistData/articles/09-expected-similarity.html)
 
+- Compare trees with [different tips](different-leaves.html)
+
 - Review [available distance measures](https://ms609.github.io/TreeDist/index.html)
   and the corresponding [TreeDist functions](https://ms609.github.io/TreeDist/reference/index.html#section-tree-distance-measures)
 

@@ -8,6 +8,7 @@ MatchingSplitInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
   if (diag && is.null(tree2)) {
     unnormalized <- as.matrix(unnormalized)
     diag(unnormalized) <- SplitwiseInfo(tree1)
+    tree2 <- tree1
   }
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,

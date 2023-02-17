@@ -75,6 +75,7 @@ NyeSimilarity <- function(tree1, tree2 = NULL, similarity = TRUE,
     if (diag && is.null(tree2)) {
       unnormalized <- as.matrix(unnormalized)
       diag(unnormalized) <- InfoInTree(tree1)
+      tree2 <- tree1
     }
     
     # Return:

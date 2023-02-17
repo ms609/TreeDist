@@ -74,12 +74,62 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
 }
 
 .MaxValue <- function(tree1, tree2, Value) {
-  value1 <- Value(tree1)
+  lab1 <- TipLabels(tree1)
+  sameTips <- .AllTipsSame(lab1, TipLabels(tree2))
+  if (!is.null(tree2)) {
+    if (!sameTips) {
+      trees <- .SharedOnly(tree1, tree2)
+      tree1 <- trees[[1]]
+      tree2 <- trees[[2]]
+    }
+  }
+  
   if (is.null(tree2)) {
-    maxValue <- outer(value1, value1, "+")[, , drop = TRUE]
-    maxValue[lower.tri(maxValue)]
+    if (sameTips) {
+      value1 <- Value(tree1)
+      # Much faster to discard unneeded than to only calculate required
+      maxValue <- outer(value1, value1, "+")[, , drop = TRUE]
+      maxValue[lower.tri(maxValue)]
+    } else {
+      # !sameTips implies that tree1 contains multiple trees
+      pairs <- combn(seq_along(tree1), 2)
+      nPairs <- dim(pairs)[2]
+      
+      apply(pairs, 2, function(ij) {
+        i <- ij[1]
+        j <- ij[2]
+        common <- intersect(lab1[[i]], lab1[[j]])
+        Value(KeepTip(tree1[[i]], common)) +
+          Value(KeepTip(tree1[[j]], common))
+      })
+    }
   } else {
-    outer(value1, Value(tree2), "+")[, , drop = TRUE]
+    value1 <- Value(tree1)
+    if (sameTips) {
+      outer(value1, Value(tree2), "+")[, , drop = TRUE]
+    } else {
+      value1 + Value(tree2)
+    }
+  }
+}
+
+.AllTipsSame <- function(x, y) {
+  if (is.list(x)) {
+    xPrime <- x[[1]]
+    if (length(x) > 1 && !all(vapply(x[-1], setequal, logical(1), xPrime))) {
+      return(FALSE)
+    }
+  } else {
+    xPrime <- x
+  }
+  if (is.null(y)) {
+    TRUE
+  } else {
+    if (is.list(y)) {
+      all(vapply(y, setequal, logical(1), xPrime))
+    } else {
+      setequal(xPrime, y)
+    }
   }
 }
 

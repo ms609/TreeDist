@@ -18,7 +18,7 @@
 \alias{MatchingSplitInfoSplits}
 \title{Information-based generalized Robinson–Foulds distances}
 \usage{
-TreeDistance(tree1, tree2 = tree1)
+TreeDistance(tree1, tree2 = NULL)
 
 SharedPhylogeneticInfo(
   tree1,
@@ -155,9 +155,13 @@ pair of splits.
 
 The returned tree similarity measures state the amount of information,
 in bits, that the splits in two trees hold in common
-when they are optimally matched, following \insertCite{SmithDist;textual}{TreeDist}.
+when they are optimally matched, following
+\insertCite{SmithDist;textual}{TreeDist}.
 The complementary tree distance measures state how much information is
 different in the splits of two trees, under an optimal matching.
+Where trees contain different tips, tips present in one tree but not the
+other are removed before each comparison (as by definition, the trees neither
+hold information in common nor differ regarding these tips).
 }
 \section{Concepts of information}{
 The phylogenetic (Shannon) information content and entropy of a split are
@@ -185,9 +189,10 @@ The Matching Split Information measure (\code{MatchingSplitInfo()},
 splits as the phylogenetic information content of the most informative
 split that is consistent with both input splits; \code{MatchingSplitInfoDistance()}
 is the corresponding measure of tree difference.
-\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html}{(More information here.)}
-\subsection{Conversion to distances}{
+(\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html}{More information here}.)
+}
 
+\section{Conversion to distances}{
 To convert similarity measures to distances, it is necessary to
 subtract the similarity score from a maximum value.  In order to generate
 distance \emph{metrics}, these functions subtract the similarity twice from the
@@ -195,8 +200,7 @@ total information content (SPI, MSI) or entropy (MCI) of all the splits in
 both trees \insertCite{SmithDist}{TreeDist}.
 }
 
-\subsection{Normalization}{
-
+\section{Normalization}{
 If \code{normalize = TRUE}, then results will be rescaled such that distance
 ranges from zero to (in principle) one.
 The maximum \strong{distance} is the sum of the information content or entropy of
@@ -220,20 +224,6 @@ splits in the most or least informative tree, use \verb{normalize = }\code{\link
 To calculate the relative similarity against a reference tree that is known
 to be "correct", use \code{normalize = SplitwiseInfo(trueTree)} (SPI, MSI) or
 \code{ClusteringEntropy(trueTree)} (MCI).
-}
-}
-
-\section{Troubleshooting}{
-Trees being compared must currently have identical tips.
-\href{https://github.com/ms609/TreeDist/issues/92}{Work is underway} to support
-comparison between trees with non-overlapping leaf sets.
-
-To determine which tips do not occur in both trees, try:
-
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{library("TreeTools")
-setdiff(TipLabels(tree1), TipLabels(tree2)) # In tree1 but not tree2
-setdiff(TipLabels(tree2), TipLabels(tree1)) # In tree2 but not tree1
-}\if{html}{\out{</div>}}
 }
 
 \examples{

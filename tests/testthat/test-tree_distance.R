@@ -54,24 +54,13 @@ NormalizationTest <- function(FUNC, ...) {
                tolerance = 1e-7)
 }
 
-test_that("Bad labels cause error", {
-  treeBadLabel8 <- ape::read.tree(text="((a, b, c, D), (e, f, g, h));")
-  lapply(methodsToTest, function(Func) 
-    expect_error(Func(treeSym8, treeBadLabel8)))
-})
-
 test_that("Size mismatch causes error", {
   treeSym7 <- ape::read.tree(text="((e, (f, g)), (((a, b), c), d));")
   splits7 <- as.Splits(treeSym7)
   splits8 <- as.Splits(treeSym8)
   
-  lapply(methodsToTest, function(Func) 
-    expect_error(Func(treeSym8, treeSym7)))
-  
-  lapply(methodsToTest, function(Func) 
-    expect_error(Func(treeSym7, treeSym8)))
-  
-  expect_error(MeilaVariationOfInformation(splits7, splits8))
+  expect_error(MeilaVariationOfInformation(splits7, splits8),
+               "Split lengths differ")
   
   Test <- function(Func) {
     expect_error(Func(splits8, as.Splits(BalancedTree(9)), 8))
@@ -92,11 +81,82 @@ test_that("Metrics handle polytomies", {
          function(Func) expect_equal(0, Func(treeSym8, polytomy8)))
 })
 
+test_that(".AllTipsSame()", {
+  expect_true(.AllTipsSame(1:2, NULL))
+  expect_true(.AllTipsSame(list(1:2, 1:2), NULL))
+  expect_false(.AllTipsSame(list(1:2, 3:2), NULL))
+  expect_true(.AllTipsSame(list(1:2, 1:2, 1:2), NULL))
+  expect_false(.AllTipsSame(list(1:2, 3:2, 1:2), NULL))
+  expect_false(.AllTipsSame(list(3:2, 1:2, 1:2), NULL))
+  expect_true(.AllTipsSame(1:2, 1:2))
+  expect_false(.AllTipsSame(1:2, 1))
+  
+  expect_true(.AllTipsSame(list(1:2), list(1:2)))
+  expect_true(.AllTipsSame(1:2, list(1:2)))
+  expect_true(.AllTipsSame(1:2, 1:2))
+  expect_true(.AllTipsSame(list(1:2), 1:2))
+  
+  expect_false(.AllTipsSame(list(1:2), list(3:2)))
+  expect_false(.AllTipsSame(1:2, list(3:2)))
+  expect_false(.AllTipsSame(1:2, 3:2))
+  expect_false(.AllTipsSame(list(1:2), 3:2))
+  
+  expect_true(.AllTipsSame(1:2, list(1:2, 1:2)))
+  expect_true(.AllTipsSame(list(1:2), list(1:2, 1:2)))
+  expect_true(.AllTipsSame(list(1:2, 1:2), list(1:2, 1:2)))
+  expect_true(.AllTipsSame(list(1:2, 1:2), 1:2))
+  
+  expect_false(.AllTipsSame(1:3, list(1:2, 1:3)))
+  expect_false(.AllTipsSame(1:3, list(1:3, 1:2)))
+  expect_false(.AllTipsSame(list(1:3), list(1:3, 1:2)))
+  
+  expect_true(.AllTipsSame(1:4, list(a = 1:4, b = 4:1, c = c(4L, 1L, 2L, 3L))))
+})
+
+test_that(".MaxValue() succeeds", {
+  list1 <- list(sym = treeSym8, bal = treeBal8)
+  list2 <- list(sym = treeSym8, abc = treeAbc.Defgh, abcd = treeAbcd.Efgh)
+  dimNames <- list(names(list1), names(list2))
+  
+  expect_equal(
+    MutualClusteringInfo(list1, list2[[2]], normalize = FALSE),
+    c(sym = MutualClusteringInfo(treeSym8, treeAbc.Defgh, normalize = FALSE),
+      bal = MutualClusteringInfo(treeBal8, treeAbc.Defgh, normalize = FALSE))
+  )
+  expect_equal(
+    as.double(t(MutualClusteringInfo(list1, list2, normalize = FALSE))),
+    as.double(c(MutualClusteringInfo(list1[[1]], list2, normalize = FALSE),
+                MutualClusteringInfo(list1[[2]], list2, normalize = FALSE)))
+  )
+  
+  expect_equal(
+    .MaxValue(list1, list2[[2]], Value = ClusteringEntropy),
+    c(sym = .MaxValue(treeSym8, treeAbc.Defgh, Value = ClusteringEntropy),
+      bal = .MaxValue(treeBal8, treeAbc.Defgh, Value = ClusteringEntropy))
+  )
+  expect_equal(
+    as.double(t(.MaxValue(list1, list2, ClusteringEntropy))),
+    as.double(c(.MaxValue(list1[[1]], list2, ClusteringEntropy),
+                .MaxValue(list1[[2]], list2, ClusteringEntropy)))
+  )
+  
+  expect_equal(.MaxValue(list1[[1]], NULL, ClusteringEntropy), double(0))
+  
+  expect_equal(.MaxValue(list1, NULL, ClusteringEntropy),
+               sum(ClusteringEntropy(list1)))
+  
+  expect_equal(.MaxValue(list2, NULL, ClusteringEntropy),
+               c(.MaxValue(list2[-3], NULL, ClusteringEntropy),
+                 .MaxValue(list2[-2], NULL, ClusteringEntropy),
+                 .MaxValue(list2[-1], NULL, ClusteringEntropy)
+                 ))
+})
+
 #Func <- ClusteringInfoDistance # FUNC =
 test_that("Output dimensions are correct", {
   list1 <- list(sym = treeSym8, bal = treeBal8)
   list2 <- list(sym = treeSym8, abc = treeAbc.Defgh, abcd = treeAbcd.Efgh)
-  dimNames <- list(c("sym", "bal"), c("sym", "abc", "abcd"))
+  dimNames <- list(names(list1), names(list2))
   
   Test <- function(Func) {
     allPhylo <- matrix(
@@ -117,7 +177,7 @@ test_that("Output dimensions are correct", {
   lapply(methodsToTest, Test)
 })
 
-test_that("Robinson Foulds Distance is correctly calculated", {
+test_that("RF Distance is correctly calculated", {
   PhangRF2 <- function(t1, t2) phangorn::RF.dist(reorder(t1, "cladewise"),
                                                  reorder(t2, "cladewise"))
   RFTest <- function(t1, t2) {
@@ -368,6 +428,10 @@ test_that("Clustering information is correctly calculated", {
                MutualClusteringInfo(treeAbc.Defgh, treeAb.Cdefgh),
                tolerance = 1e-05)
   
+  zeroTree <- TreeTools::ZeroTaxonTree()
+  expect_equal(MutualClusteringInfo(zeroTree, zeroTree), 0)
+  expect_equal(ClusteringInfoDistance(zeroTree, zeroTree), 0)
+  
   
   
   # Different resolution
@@ -481,10 +545,11 @@ test_that("Matchings are correct", {
     MutualClusteringInfo(threeAwayPoly, randomBif20),
     MutualClusteringInfo(randomBif20, threeAwayPoly))
   
-  
+  library("TreeTools", quietly = TRUE)
   t1 <- PectinateTree(letters[1:11])
   t2 <- ape::read.tree(text = "(a, (c, (b, (d, e, ((g, h, f), (k, (j, i)))))));")
   t3 <- CollapseNode(PectinateTree(c(letters[11], letters[1:10])), 16:19)
+  s0 <- as.Splits(ZeroTaxonTree())
   s1 <- as.Splits(t1)
   s2 <- as.Splits(t2, t1)
   s3 <- as.Splits(t3, t1)
@@ -504,6 +569,9 @@ test_that("Matchings are correct", {
   
   
   Test <- function(CppFn, x12, x21, ...) {
+    
+    r0 <- CppFn(s0, s0, 0, ...)
+    expect_equal(r0$score, 0)
     
     r12 <- CppFn(s1, s2, n, ...)
     r21 <- CppFn(s2, s1, n, ...)
@@ -690,6 +758,7 @@ test_that("Jaccard RF is correctly calculated", {
   expect_lt(JaccardRobinsonFoulds(treeCat8, treeTac8, allowConflict = TRUE),
             JaccardRobinsonFoulds(treeCat8, treeTac8, allowConflict = FALSE))
   
+  library("TreeTools", quietly = TRUE)
   expect_equal(0, JaccardRobinsonFoulds(BalancedTree(64), BalancedTree(64)))
   expect_lt(0, JaccardRobinsonFoulds(BalancedTree(64), PectinateTree(64)))
   expect_equal(0, JaccardRobinsonFoulds(BalancedTree(264), BalancedTree(264)))
@@ -767,6 +836,7 @@ test_that("Robinson Foulds Info is correctly calculated", {
                RobinsonFouldsInfo(list(treeSym8, treeBal8), treeSym8))
   
   # Check that large trees work
+  library("TreeTools", quietly = TRUE)
   expect_equal(0, InfoRobinsonFoulds(BalancedTree(64), BalancedTree(64)))
   expect_lt(0, InfoRobinsonFoulds(BalancedTree(64), PectinateTree(64)))
   expect_equal(0, InfoRobinsonFoulds(BalancedTree(129), BalancedTree(129)))
@@ -824,7 +894,7 @@ test_that("Multiple comparisons are correctly ordered", {
 })
 
 test_that("Normalization occurs as documented", {
-  library("TreeTools")
+  library("TreeTools", quietly = TRUE)
   tree1 <- BalancedTree(8)
   tree2 <- CollapseNode(PectinateTree(8), 12:13)
   
