@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.6.0</span>
       </span>
     </div>
 
@@ -74,6 +74,9 @@
     </li>
     <li>
       <a href="../articles/using-distances.html">Contextualizing tree distances</a>
+    </li>
+    <li>
+      <a href="../articles/different-leaves.html">Trees with different leaves</a>
     </li>
     <li class="divider">
     </li>
@@ -128,10 +131,11 @@
 
       
 
-      </header><script src="compare-treesets_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Comparing sets of trees from different analyses</h1>
+      <h1 data-toc-skip>Comparing sets of trees from different
+analyses</h1>
                         <h4 data-toc-skip class="author"><a href="https://smithlabdurham.github.io/" class="external-link">Martin R. Smith</a></h4>
             
       
@@ -142,22 +146,31 @@
 
     
     
-<p>A common application of tree space analysis is to compare the outputs of different analyses – for instance, trees obtained from different gene sequences, or results obtained using different models or methods (e.g. Bayesian, maximum likelihood, or parsimony).</p>
+<p>A common application of tree space analysis is to compare the outputs
+of different analyses – for instance, trees obtained from different gene
+sequences, or results obtained using different models or methods
+(e.g. Bayesian, maximum likelihood, or parsimony).</p>
 <div class="section level2">
 <h2 id="shiny-app">Shiny app<a class="anchor" aria-label="anchor" href="#shiny-app"></a>
 </h2>
-<p>This can be accomplished quickly using the <code><a href="../reference/MapTrees.html">MapTrees()</a></code> graphical user interface:</p>
+<p>This can be accomplished quickly using the <code><a href="../reference/MapTrees.html">MapTrees()</a></code>
+graphical user interface:</p>
 <ul>
-<li><p><span style="border: solid 2px #e69f00">Load trees</span> from file: Select first tree file</p></li>
+<li><p><span style="border: solid 2px #e69f00">Load trees</span> from
+file: Select first tree file</p></li>
 <li><p>Select an appropriate sample size</p></li>
-<li><p>Select <span style="border: solid 2px #009e73">Replace existing</span></p></li>
+<li><p>Select <span style="border: solid 2px #009e73">Replace
+existing</span></p></li>
 <li><p>Load each additional set of trees from file using <span style="border: solid 2px #d55e00">Add batch to existing</span></p></li>
 </ul>
 <div class="figure">
 <img src="Batch1.svg" width="245" alt=""><p class="caption">Load tree batches</p>
 </div>
 <ul>
-<li>On the <span style="border: solid 2px #e69f00">Display</span> tab, select <span style="border: solid 2px #009e73">Point symbols: One per batch</span>, or <span style="border: solid 2px #d55e00">Colour points by: Batch</span>
+<li>On the <span style="border: solid 2px #e69f00">Display</span> tab,
+select <span style="border: solid 2px #009e73">Point symbols: One per
+batch</span>, or <span style="border: solid 2px #d55e00">Colour points
+by: Batch</span>
 </li>
 </ul>
 <div class="figure">
@@ -167,7 +180,8 @@
 <div class="section level2">
 <h2 id="scripting-at-the-r-command-line">Scripting at the R command line<a class="anchor" aria-label="anchor" href="#scripting-at-the-r-command-line"></a>
 </h2>
-<p>More control over the mapping can be obtained at the command line:</p>
+<p>More control over the mapping can be obtained at the command
+line:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load trees</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeTools/" class="external-link">"TreeTools"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -193,16 +207,23 @@
 <span>     <span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"left"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Batch 1"</span>, <span class="st">"Batch 2"</span><span class="op">)</span>, col <span class="op">=</span> <span class="va">styles</span>, pch <span class="op">=</span> <span class="va">styles</span><span class="op">)</span></span></code></pre></div>
 <p><img src="compare-treesets_files/figure-html/plot-mapping-1.png" width="700" style="display: block; margin: auto;"></p>
-<p>For more robust analyses than the (potentially misleading!) 2D plot above, consult the companion <a href="treespace.html">vignette</a>. Note also that mapped areas and their regions of overlap may not correspond to reality; see the warnings and recommendations in <span class="citation">Smith (2022a)</span>.</p>
+<p>For more robust analyses than the (potentially misleading!) 2D plot
+above, consult the companion <a href="treespace.html">vignette</a>. Note
+also that mapped areas and their regions of overlap may not correspond
+to reality; see the warnings and recommendations in <span class="citation">Smith (2022a)</span>.</p>
 </div>
 <div class="section level2">
 <h2 id="comparing-trees-dispersal-hypervolume">Comparing trees’ dispersal / hypervolume<a class="anchor" aria-label="anchor" href="#comparing-trees-dispersal-hypervolume"></a>
 </h2>
-<p>Interpreting and comparing the areas of tree space from a projection can be misleading – the expanded apparent area of Greenland under the Mercator projection being a familiar example.</p>
+<p>Interpreting and comparing the areas of tree space from a projection
+can be misleading – the expanded apparent area of Greenland under the
+Mercator projection being a familiar example.</p>
 <div class="figure">
 <img src="https://i0.wp.com/geoffboeing.com/wp-content/uploads/2015/08/greenland-vs-africa-mercator-projection.jpg" alt=""><p class="caption">Mapping can introduce distortion</p>
 </div>
-<p>As such, it is always best to work with original distances when interpreting whether sets of trees occupy larger or smaller regions of tree space.</p>
+<p>As such, it is always best to work with original distances when
+interpreting whether sets of trees occupy larger or smaller regions of
+tree space.</p>
 <div class="section level3">
 <h3 id="distances-from-median">Distances from median<a class="anchor" aria-label="anchor" href="#distances-from-median"></a>
 </h3>
@@ -234,12 +255,23 @@
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topleft"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Batch 1"</span>, <span class="st">"Batch 2"</span><span class="op">)</span>,</span>
 <span>       fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#00000022"</span>,  <span class="st">"#ff000022"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="compare-treesets_files/figure-html/compare-dist-from-median-1.png" width="700" style="display: block; margin: auto;"></p>
-<p>In the plotted example, distances to the median tree are greater for batch 2 than batch 1, indicating a more dispersed set of trees that occupies a greater hypervolume. Note that the increased frequency at higher distances is expected: the outer shell of a sphere contains more volume than a layer of equivalent thickness closer to the centre, and this phenomenon becomes more pronounced as the dimensionality of tree space increases.</p>
+<p>In the plotted example, distances to the median tree are greater for
+batch 2 than batch 1, indicating a more dispersed set of trees that
+occupies a greater hypervolume. Note that the increased frequency at
+higher distances is expected: the outer shell of a sphere contains more
+volume than a layer of equivalent thickness closer to the centre, and
+this phenomenon becomes more pronounced as the dimensionality of tree
+space increases.</p>
 </div>
 <div class="section level3">
 <h3 id="consensus-resolution">Consensus resolution<a class="anchor" aria-label="anchor" href="#consensus-resolution"></a>
 </h3>
-<p>A complementary approach is to identify the resolution of the consensus of each batch of trees. This approach shares many of the <a href="https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html">problems with the Robinson–Foulds distance</a>: in particular, resolution can be decimated by a single “rogue” taxon whose position is poorly defined <span class="citation">(Smith, 2022b)</span>. Detecting and removing rogue taxa can provide a more meaningful point of comparison.</p>
+<p>A complementary approach is to identify the resolution of the
+consensus of each batch of trees. This approach shares many of the <a href="https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html">problems
+with the Robinson–Foulds distance</a>: in particular, resolution can be
+decimated by a single “rogue” taxon whose position is poorly defined
+<span class="citation">(Smith, 2022b)</span>. Detecting and removing
+rogue taxa can provide a more meaningful point of comparison.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create tree set with a rogue taxon</span></span>
 <span><span class="va">batch3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/AddTip.html" class="external-link">AddTipEverywhere</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html" class="external-link">as.phylo</a></span><span class="op">(</span><span class="fl">7</span>, <span class="fl">7</span><span class="op">)</span>, <span class="st">"t8"</span><span class="op">)</span></span>
@@ -270,18 +302,23 @@
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"The package 'Rogue' is required to run this example."</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p><img src="compare-treesets_files/figure-html/rogue-detection-1.png" width="700"></p>
-<p>Whereas a direct interpretation of this analysis is not straightforward, it can provide a complementary way of understanding the distribution of trees across tree space.</p>
+<p>Whereas a direct interpretation of this analysis is not
+straightforward, it can provide a complementary way of understanding the
+distribution of trees across tree space.</p>
 </div>
 </div>
 <div class="section level2 unnumbered">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references">
-<div id="ref-SmithSpace">
-<p>Smith, M. R. (2022a). Robust analysis of phylogenetic tree space. <em>Systematic Biology</em>, <em>71</em>(5), 1255–1270. doi: <a href="https://doi.org/10.1093/sysbio/syab100" class="external-link">10.1093/sysbio/syab100</a></p>
+<div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
+<div id="ref-SmithSpace" class="csl-entry">
+Smith, M. R. (2022a). Robust analysis of phylogenetic tree space.
+<em>Systematic Biology</em>, <em>71</em>(5), 1255–1270. doi: <a href="https://doi.org/10.1093/sysbio/syab100" class="external-link">10.1093/sysbio/syab100</a>
 </div>
-<div id="ref-SmithRogue">
-<p>Smith, M. R. (2022b). Using information theory to detect rogue taxa and improve consensus trees. <em>Systematic Biology</em>, <em>71</em>(5), 1088–1094. doi: <a href="https://doi.org/10.1093/sysbio/syab099" class="external-link">10.1093/sysbio/syab099</a></p>
+<div id="ref-SmithRogue" class="csl-entry">
+Smith, M. R. (2022b). Using information theory to detect rogue taxa and
+improve consensus trees. <em>Systematic Biology</em>, <em>71</em>(5),
+1088–1094. doi: <a href="https://doi.org/10.1093/sysbio/syab099" class="external-link">10.1093/sysbio/syab099</a>
 </div>
 </div>
 </div>
@@ -304,7 +341,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
