@@ -10,6 +10,9 @@
 - Fix caching errors in `MapDist()`
   ([#98](https://github.com/ms609/TreeDist/issues/98)).
 
+- Update tests for compatability with ape 5.7
+
+
 # TreeDist 2.5.0
 
 - New functions to measure cluster sizes (see [`?"cluster-statistics"`](

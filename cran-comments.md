@@ -17,7 +17,7 @@
 ## R CMD check results
 There were no ERRORs or WARNINGs.
 
-There was one NOTE:
+There were two NOTEs:
 
 > Suggests or Enhances not in mainstream repositories:
 >   TreeDistData
@@ -31,6 +31,11 @@ There was one NOTE:
 All calls to `data(package = "TreeDistData")` are wrapped within 
 `if(require('TreeDistData'))` to ensure that vignettes fail gracefully when
 'TreeDistData' is not installed.
+
+> Specified C++14: please drop specification unless essential
+
+'TreeDist' uses C++14 features not available in C++11, so the specification is
+required.
 
 
 ## Downstream dependencies
