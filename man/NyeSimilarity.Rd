@@ -109,7 +109,7 @@ of trees being considered.
 \examples{
 library("TreeTools")
 NyeSimilarity(BalancedTree(8), PectinateTree(8))
-VisualizeMatching(NyeSimilarity ,BalancedTree(8), PectinateTree(8))
+VisualizeMatching(NyeSimilarity, BalancedTree(8), PectinateTree(8))
 NyeSimilarity(as.phylo(0:5, nTip = 8), PectinateTree(8))
 NyeSimilarity(as.phylo(0:5, nTip = 8), similarity = FALSE)
 }
