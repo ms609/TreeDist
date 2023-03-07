@@ -25,7 +25,7 @@ proposed in Smith (2020)."><meta name="robots" content="noindex"><!-- mathjax --
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.4.1.9002</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.6.0.9000</span>
       </span>
     </div>
 
@@ -55,6 +55,9 @@ proposed in Smith (2020)."><meta name="robots" content="noindex"><!-- mathjax --
     </li>
     <li>
       <a href="../articles/using-distances.html">Contextualizing tree distances</a>
+    </li>
+    <li>
+      <a href="../articles/different-leaves.html">Trees with different leaves</a>
     </li>
     <li class="divider">
     <li class="dropdown-header">Tree space analysis</li>
@@ -114,7 +117,7 @@ proposed in Smith (2020).</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">TreeDistance</span><span class="op">(</span><span class="va">tree1</span>, tree2 <span class="op">=</span> <span class="va">tree1</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">TreeDistance</span><span class="op">(</span><span class="va">tree1</span>, tree2 <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">SharedPhylogeneticInfo</span><span class="op">(</span></span>
 <span>  <span class="va">tree1</span>,</span>
@@ -266,10 +269,14 @@ between trees (including leaving a split unpaired).</p>
 pair of splits.</p>
 <p>The returned tree similarity measures state the amount of information,
 in bits, that the splits in two trees hold in common
-when they are optimally matched, following Smith (2020)
+when they are optimally matched, following
+Smith (2020)
 .
 The complementary tree distance measures state how much information is
-different in the splits of two trees, under an optimal matching.</p>
+different in the splits of two trees, under an optimal matching.
+Where trees contain different tips, tips present in one tree but not the
+other are removed before each comparison (as by definition, the trees neither
+hold information in common nor differ regarding these tips).</p>
     </div>
     <div id="concepts-of-information">
     <h2>Concepts of information</h2>
@@ -296,23 +303,20 @@ Information distance metric (<code>DifferentPhylogeneticInfo()</code>).</p>
 splits as the phylogenetic information content of the most informative
 split that is consistent with both input splits; <code>MatchingSplitInfoDistance()</code>
 is the corresponding measure of tree difference.
-<a href="https://ms609.github.io/TreeDist/articles/Generalized-RF.html">(More information here.)</a></p><div class="section">
-<h3 id="conversion-to-distances">Conversion to distances<a class="anchor" aria-label="anchor" href="#conversion-to-distances"></a></h3>
-
-
-<p>To convert similarity measures to distances, it is necessary to
+(<a href="https://ms609.github.io/TreeDist/articles/Generalized-RF.html">More information here</a>.)</p>
+    </div>
+    <div id="conversion-to-distances">
+    <h2>Conversion to distances</h2>
+    <p>To convert similarity measures to distances, it is necessary to
 subtract the similarity score from a maximum value.  In order to generate
 distance <em>metrics</em>, these functions subtract the similarity twice from the
 total information content (SPI, MSI) or entropy (MCI) of all the splits in
 both trees (Smith 2020)
 .</p>
-</div>
-
-<div class="section">
-<h3 id="normalization">Normalization<a class="anchor" aria-label="anchor" href="#normalization"></a></h3>
-
-
-<p>If <code>normalize = TRUE</code>, then results will be rescaled such that distance
+    </div>
+    <div id="normalization">
+    <h2>Normalization</h2>
+    <p>If <code>normalize = TRUE</code>, then results will be rescaled such that distance
 ranges from zero to (in principle) one.
 The maximum <strong>distance</strong> is the sum of the information content or entropy of
 each split in each tree; the maximum <strong>similarity</strong> is half this value.
@@ -334,19 +338,6 @@ splits in the most or least informative tree, use <code>normalize = </code><code
 To calculate the relative similarity against a reference tree that is known
 to be "correct", use <code>normalize = SplitwiseInfo(trueTree)</code> (SPI, MSI) or
 <code>ClusteringEntropy(trueTree)</code> (MCI).</p>
-</div>
-
-    </div>
-    <div id="troubleshooting">
-    <h2>Troubleshooting</h2>
-    <p>Trees being compared must have identical tips.
-(If you have a use case for comparing trees with non-identical tips, do file a
-<a href="https://github.com/ms609/TreeDist/issues/new?title=Non-identical+tips" class="external-link">GitHub issue</a>
-or drop the package maintainer an e-mail.)</p>
-<p>To determine which tips do not occur in both trees, try:</p>
-<p></p><div class="sourceCode r"><pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeTools/" class="external-link">"TreeTools"</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TipLabels.html" class="external-link">TipLabels</a></span><span class="op">(</span><span class="va">tree1</span><span class="op">)</span>, <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TipLabels.html" class="external-link">TipLabels</a></span><span class="op">(</span><span class="va">tree2</span><span class="op">)</span><span class="op">)</span> <span class="co"># In tree1 but not tree2</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/sets.html" class="external-link">setdiff</a></span><span class="op">(</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TipLabels.html" class="external-link">TipLabels</a></span><span class="op">(</span><span class="va">tree2</span><span class="op">)</span>, <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TipLabels.html" class="external-link">TipLabels</a></span><span class="op">(</span><span class="va">tree1</span><span class="op">)</span><span class="op">)</span> <span class="co"># In tree2 but not tree1</span></span></code></pre><p></p></div>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -454,7 +445,7 @@ Cambridge University Press, Cambridge.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

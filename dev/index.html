@@ -59,7 +59,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.4.1.9002</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.6.0.9000</span>
       </span>
     </div>
 
@@ -92,6 +92,9 @@
     </li>
     <li>
       <a href="articles/using-distances.html">Contextualizing tree distances</a>
+    </li>
+    <li>
+      <a href="articles/different-leaves.html">Trees with different leaves</a>
     </li>
     <li class="divider">
     </li>
@@ -152,7 +155,7 @@
 <div class="section level1">
 <div class="page-header"><h1 id="treedist">TreeDist<a class="anchor" aria-label="anchor" href="#treedist"></a>
 </h1></div>
-
+<p><a href="https://www.repostatus.org/#inactive" class="external-link"><img src="http://www.repostatus.org/badges/latest/inactive.svg" alt="Project Status: The project has reached a stable, usable state but is no longer being actively developed; support/maintenance will be provided as time allows."></a> <a href="https://codecov.io/gh/ms609/TreeDist" class="external-link"><img src="https://codecov.io/gh/ms609/TreeDist/branch/master/graph/badge.svg" alt="codecov"></a> <a href="https://cran.r-project.org/package=TreeDist" class="external-link"><img src="http://www.r-pkg.org/badges/version/TreeDist" alt="CRAN Status Badge"></a> <a href="https://cran.r-project.org/package=TreeDist" class="external-link"><img src="http://cranlogs.r-pkg.org/badges/TreeDist" alt="CRAN Downloads"></a> <a href="https://zenodo.org/badge/latestdoi/196188301" class="external-link"><img src="https://zenodo.org/badge/196188301.svg" alt="DOI"></a></p>
 <p>‘TreeDist’ is an R package that implements a suite of metrics that quantify the topological distance between pairs of unweighted phylogenetic trees. It also includes a simple ‘Shiny’ application to allow the visualization of distance-based tree spaces, and functions to calculate the information content of trees and splits.</p>
 <p>‘TreeDist’ primarily employs metrics in the category of ‘generalized Robinson–Foulds distances’: they are based on comparing splits (bipartitions) between trees, and thus reflect the relationship data within trees, with no reference to branch lengths.</p>
 <div class="section level2">
@@ -191,7 +194,7 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://github.com/jeroen/curl" class="external-link">"curl"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"curl"</span><span class="op">)</span></span>
 <span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org" class="external-link">"remotes"</a></span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"ms609/TreeDist"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"ms609/TreeDist"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level1">
 <h1 id="tree-space-analysis">Tree space analysis<a class="anchor" aria-label="anchor" href="#tree-space-analysis"></a>
@@ -219,15 +222,19 @@
 </h1>
 <p>Other R packages implementing tree distance functions include:</p>
 <ul>
-<li>‘<a href="http://ape-package.ird.fr/" class="external-link">ape</a>’:<ul>
+<li>‘<a href="http://ape-package.ird.fr/" class="external-link">ape</a>’:
+<ul>
 <li>
 <code>cophenetic.phylo()</code>: Cophenetic distance</li>
 <li>
 <code>dist.topo()</code>: Path (topological) distance, Robinson-Foulds distance.</li>
 </ul>
 </li>
-<li>‘<a href="https://cran.r-project.org/package=phangorn" class="external-link">phangorn</a>’<ul><li>
-<code>treedist()</code>: Path, Robinson-Foulds and approximate SPR distances.</li></ul>
+<li>‘<a href="https://cran.r-project.org/package=phangorn" class="external-link">phangorn</a>’
+<ul>
+<li>
+<code>treedist()</code>: Path, Robinson-Foulds and approximate SPR distances.</li>
+</ul>
 </li>
 <li>‘<a href="http://ms609.github.io/Quartet/" class="external-link">Quartet</a>’: Triplet and Quartet distances, using the tqDist algorithm.</li>
 <li>‘<a href="http://ms609.github.io/TBRDist/" class="external-link">TBRDist</a>’: TBR and SPR distances on unrooted trees, using the ‘uspr’ C library.</li>
@@ -293,16 +300,7 @@
 </ul>
 </div>
 
-<div class="dev-status">
-<h2 data-toc-skip>Dev status</h2>
-<ul class="list-unstyled">
-<li><a href="https://www.repostatus.org/#inactive" class="external-link"><img src="http://www.repostatus.org/badges/latest/inactive.svg" alt="Project Status: The project has reached a stable, usable state but is no longer being actively developed; support/maintenance will be provided as time allows."></a></li>
-<li><a href="https://codecov.io/gh/ms609/TreeDist" class="external-link"><img src="https://codecov.io/gh/ms609/TreeDist/branch/master/graph/badge.svg" alt="codecov"></a></li>
-<li><a href="https://cran.r-project.org/package=TreeDist" class="external-link"><img src="http://www.r-pkg.org/badges/version/TreeDist" alt="CRAN Status Badge"></a></li>
-<li><a href="https://cran.r-project.org/package=TreeDist" class="external-link"><img src="http://cranlogs.r-pkg.org/badges/TreeDist" alt="CRAN Downloads"></a></li>
-<li><a href="https://zenodo.org/badge/latestdoi/196188301" class="external-link"><img src="https://zenodo.org/badge/196188301.svg" alt="DOI"></a></li>
-</ul>
-</div>
+
 
   </div>
 </div>
@@ -315,7 +313,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

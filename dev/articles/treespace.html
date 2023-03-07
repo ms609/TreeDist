@@ -42,7 +42,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.4.1.9002</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.6.0.9000</span>
       </span>
     </div>
 
@@ -75,6 +75,9 @@
     </li>
     <li>
       <a href="../articles/using-distances.html">Contextualizing tree distances</a>
+    </li>
+    <li>
+      <a href="../articles/different-leaves.html">Trees with different leaves</a>
     </li>
     <li class="divider">
     </li>
@@ -129,7 +132,7 @@
 
       
 
-      </header><script src="treespace_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Tree space analysis</h1>
@@ -143,21 +146,36 @@
 
     
     
-<p>It can be instructive to visualize the distribution of trees by mapping their spatial relationships. This can be a helpful means to address whether discrete islands exist in a sample of trees, or whether analytical runs have converged. Such analysis is relatively simple to conduct, but a few common oversights can mislead interpretation.</p>
+<p>It can be instructive to visualize the distribution of trees by
+mapping their spatial relationships. This can be a helpful means to
+address whether discrete islands exist in a sample of trees, or whether
+analytical runs have converged. Such analysis is relatively simple to
+conduct, but a few common oversights can mislead interpretation.</p>
 <div class="section level3">
 <h3 id="tree-space-analysis-via-user-interface">Tree space analysis via user interface<a class="anchor" aria-label="anchor" href="#tree-space-analysis-via-user-interface"></a>
 </h3>
-<p>Tree space mapping and analysis is made simple with the Shiny app included in the “TreeDist” R package. Simply install <a href="https://www.r-project.org/" class="external-link">R</a> or <a href="https://www.rstudio.com/" class="external-link">RStudio</a>, then copy the code below into the R command line:</p>
+<p>Tree space mapping and analysis is made simple with the Shiny app
+included in the “TreeDist” R package. Simply install <a href="https://www.r-project.org/" class="external-link">R</a> or <a href="https://posit.co/" class="external-link">RStudio</a>, then copy the code below into the
+R command line:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"TreeDist"</span><span class="op">)</span></span>
 <span><span class="fu">TreeDist</span><span class="fu">::</span><span class="fu"><a href="../reference/MapTrees.html">MapTrees</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>This will allow you to conduct and evaluate basic tree space mappings from tree lists saved in most common file formats; see an <a href="https://ms609.github.io/TreeDist/reference/MapTrees.html">outline of the basic functionality</a>. To avoid misinterpreting tree space, it’s worth having a broad idea of what an analysis involves, and some potential pitfalls.</p>
+<p>This will allow you to conduct and evaluate basic tree space mappings
+from tree lists saved in most common file formats; see an <a href="https://ms609.github.io/TreeDist/reference/MapTrees.html">outline
+of the basic functionality</a>. To avoid misinterpreting tree space,
+it’s worth having a broad idea of what an analysis involves, and some
+potential pitfalls.</p>
 </div>
 <div class="section level3">
 <h3 id="avoiding-common-pitfalls-in-tree-space-analysis">Avoiding common pitfalls in tree space analysis<a class="anchor" aria-label="anchor" href="#avoiding-common-pitfalls-in-tree-space-analysis"></a>
 </h3>
-<p>Here’s an example analysis of a series of 200 trees from an ordered list. The list corresponds to a mixed-base representation of trees (see <code><a href="https://ms609.github.io/TreeTools/reference/TreeNumber.html" class="external-link">TreeTools::as.TreeNumber()</a></code>), so is expected to contain some structure as we jump from one “class” of tree to another. Let’s see whether we can visualize and corroborate this structure.</p>
-<p>First we’ll generate the trees, and load some colours with which we might identify them.</p>
+<p>Here’s an example analysis of a series of 200 trees from an ordered
+list. The list corresponds to a mixed-base representation of trees (see
+<code><a href="https://ms609.github.io/TreeTools/reference/TreeNumber.html" class="external-link">TreeTools::as.TreeNumber()</a></code>), so is expected to contain some
+structure as we jump from one “class” of tree to another. Let’s see
+whether we can visualize and corroborate this structure.</p>
+<p>First we’ll generate the trees, and load some colours with which we
+might identify them.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeTools/" class="external-link">"TreeTools"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">treeNumbers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">220</span><span class="op">)</span></span>
@@ -167,11 +185,17 @@
 <div class="section level4">
 <h4 id="using-a-suitable-distance-metric">Using a suitable distance metric<a class="anchor" aria-label="anchor" href="#using-a-suitable-distance-metric"></a>
 </h4>
-<p>Now we need to calculate the distance between each pair of trees in our list. The choice of distance metric is important <span class="citation">(M. R. Smith, 2022)</span>. The widely used Robinson–Foulds distance is, unfortunately, unsuitable for tree space analysis. The clustering information distance <span class="citation">(Smith, 2020)</span> is a reliable alternative that is fast to calculate:</p>
+<p>Now we need to calculate the distance between each pair of trees in
+our list. The choice of distance metric is important <span class="citation">(M. R. Smith, 2022)</span>. The widely used
+Robinson–Foulds distance is, unfortunately, unsuitable for tree space
+analysis. The clustering information distance <span class="citation">(M.
+R. Smith, 2020)</span> is a reliable alternative that is fast to
+calculate:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeDist/">"TreeDist"</a></span><span class="op">)</span></span>
 <span><span class="va">distances</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeDistance.html">ClusteringInfoDistance</a></span><span class="op">(</span><span class="va">trees</span><span class="op">)</span></span></code></pre></div>
-<p>The reader is encouraged to repeat the exercise with other distances:</p>
+<p>The reader is encouraged to repeat the exercise with other
+distances:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">distances</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Robinson-Foulds.html">RobinsonFoulds</a></span><span class="op">(</span><span class="va">trees</span><span class="op">)</span></span>
 <span><span class="va">distances</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeDistance.html">PhylogeneticInfoDistance</a></span><span class="op">(</span><span class="va">trees</span><span class="op">)</span></span>
@@ -181,18 +205,25 @@
 <div class="section level4">
 <h4 id="mapping-distances">Mapping distances<a class="anchor" aria-label="anchor" href="#mapping-distances"></a>
 </h4>
-<p>Then we need to reduce the dimensionality of these distances. We’ll start out with a 12-dimensional mapping; if needed, we can always drop higher dimensions.</p>
+<p>Then we need to reduce the dimensionality of these distances. We’ll
+start out with a 12-dimensional mapping; if needed, we can always drop
+higher dimensions.</p>
 <p>Principal coordinates analysis is quick and performs very well:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mapping</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cmdscale.html" class="external-link">cmdscale</a></span><span class="op">(</span><span class="va">distances</span>, k <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span></code></pre></div>
-<p>Alternative mapping methods do exist, and sometimes give slightly better mappings. <code>isoMDS()</code> performs non-metric multidimensional scaling (MDS) with the Kruskal-1 stress function <span class="citation">(Kruskal, 1964)</span>:</p>
+<p>Alternative mapping methods do exist, and sometimes give slightly
+better mappings. <code>isoMDS()</code> performs non-metric
+multidimensional scaling (MDS) with the Kruskal-1 stress function <span class="citation">(Kruskal, 1964)</span>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">kruskal</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/MASS/man/isoMDS.html" class="external-link">isoMDS</a></span><span class="op">(</span><span class="va">distances</span>, k <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span>
 <span><span class="va">mapping</span> <span class="op">&lt;-</span> <span class="va">kruskal</span><span class="op">$</span><span class="va">points</span></span></code></pre></div>
-<p>whereas <code>sammon()</code>, one of many metric MDS methods, uses Sammon’s stress function <span class="citation">(Sammon, 1969)</span>:</p>
+<p>whereas <code>sammon()</code>, one of many metric MDS methods, uses
+Sammon’s stress function <span class="citation">(Sammon,
+1969)</span>:</p>
 <pre><code><span><span class="va">sammon</span> <span class="op">&lt;-</span> <span class="fu">MASS</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/MASS/man/sammon.html" class="external-link">sammon</a></span><span class="op">(</span><span class="va">distances</span>, k <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span>
 <span><span class="va">mapping</span> <span class="op">&lt;-</span> <span class="va">sammon</span><span class="op">$</span><span class="va">points</span></span></code></pre>
-<p>That’s a good start. It is tempting to plot the first two dimensions arising from this mapping and be done:</p>
+<p>That’s a good start. It is tempting to plot the first two dimensions
+arising from this mapping and be done:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mapping</span>,</span>
@@ -205,7 +236,15 @@
 <div class="section level4">
 <h4 id="identifying-clusters">Identifying clusters<a class="anchor" aria-label="anchor" href="#identifying-clusters"></a>
 </h4>
-<p>A quick visual inspection suggests at least two clusters, with the possibility of further subdivision of the brighter trees. But visual inspection can be highly misleading <span class="citation">(M. R. Smith, 2022)</span>. We must take a statistical approach. A combination of partitioning around medoids and hierarchical clustering with minimax linkage will typically find a clustering solution that is close to optimal, if one exists <span class="citation">(M. R. Smith, 2022)</span>; if suitably initialized, k-means++ clustering <span class="citation">(Arthur &amp; Vassilvitskii, 2007)</span> can also be worthwhile.</p>
+<p>A quick visual inspection suggests at least two clusters, with the
+possibility of further subdivision of the brighter trees. But visual
+inspection can be highly misleading <span class="citation">(M. R. Smith,
+2022)</span>. We must take a statistical approach. A combination of
+partitioning around medoids and hierarchical clustering with minimax
+linkage will typically find a clustering solution that is close to
+optimal, if one exists <span class="citation">(M. R. Smith,
+2022)</span>; if suitably initialized, k-means++ clustering <span class="citation">(Arthur &amp; Vassilvitskii, 2007)</span> can also be
+worthwhile.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">possibleClusters</span> <span class="op">&lt;-</span> <span class="fl">2</span><span class="op">:</span><span class="fl">10</span></span>
 <span></span>
@@ -248,7 +287,12 @@
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topright"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PAM"</span>, <span class="st">"Hierarchical"</span>, <span class="st">"k-means++"</span><span class="op">)</span>,</span>
 <span>       pch <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, col <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <p><img src="treespace_files/figure-html/clustering-1.png" width="700" style="display: block; margin: auto;"></p>
-<p>Silhouette coefficients of &lt; 0.25 suggest that structure is not meaningful; &gt; 0.5 denotes good evidence of clustering, and &gt; 0.7 strong evidence <span class="citation">(Kaufman &amp; Rousseeuw, 1990)</span>. The evidence for the visually apparent clustering is not as strong as it first appears. Let’s explore our two-cluster hierarchical clustering solution anyway.</p>
+<p>Silhouette coefficients of &lt; 0.25 suggest that structure is not
+meaningful; &gt; 0.5 denotes good evidence of clustering, and &gt; 0.7
+strong evidence <span class="citation">(Kaufman &amp; Rousseeuw,
+1990)</span>. The evidence for the visually apparent clustering is not
+as strong as it first appears. Let’s explore our two-cluster
+hierarchical clustering solution anyway.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cluster</span> <span class="op">&lt;-</span> <span class="va">hClusters</span><span class="op">[[</span><span class="fl">2</span> <span class="op">-</span> <span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
 <p>We can visualize the clustering solution as a tree:</p>
@@ -259,7 +303,8 @@
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">trees</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">trees</span><span class="op">)</span><span class="op">)</span>, pch <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>       col <span class="op">=</span> <span class="va">spectrum</span><span class="op">[</span><span class="va">hTree</span><span class="op">$</span><span class="va">order</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p><img src="treespace_files/figure-html/h-tree-1.png" width="700" style="display: block; margin: auto;"></p>
-<p>Another thing we may wish to do is to take the consensus of each cluster:</p>
+<p>Another thing we may wish to do is to take the consensus of each
+cluster:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">col1</span> <span class="op">&lt;-</span> <span class="va">spectrum</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">treeNumbers</span><span class="op">[</span><span class="va">cluster</span> <span class="op">==</span> <span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">]</span></span>
@@ -269,12 +314,17 @@
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/consensus.html" class="external-link">consensus</a></span><span class="op">(</span><span class="va">trees</span><span class="op">[</span><span class="va">cluster</span> <span class="op">==</span> <span class="fl">2</span><span class="op">]</span>, p <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>,</span>
 <span>     edge.color <span class="op">=</span> <span class="va">col2</span>, edge.width <span class="op">=</span> <span class="fl">2</span>, tip.color <span class="op">=</span> <span class="va">col2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="treespace_files/figure-html/consensus-1.png" width="700" style="display: block; margin: auto;"></p>
-<p>Here, we learn that the two clusters are distinguished by the position of <code>t7</code>.</p>
+<p>Here, we learn that the two clusters are distinguished by the
+position of <code>t7</code>.</p>
 </div>
 <div class="section level4">
 <h4 id="validating-a-mapping">Validating a mapping<a class="anchor" aria-label="anchor" href="#validating-a-mapping"></a>
 </h4>
-<p>Now let’s evaluate whether our map of tree space is representative. First we want to know how many dimensions are necessary to adequately represent the true distances between trees. We hope for a trustworthiness × continuity score of &gt; 0.9 for a usable mapping, or &gt; 0.95 for a good one.</p>
+<p>Now let’s evaluate whether our map of tree space is representative.
+First we want to know how many dimensions are necessary to adequately
+represent the true distances between trees. We hope for a
+trustworthiness × continuity score of &gt; 0.9 for a usable mapping, or
+&gt; 0.95 for a good one.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">txc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">mapping</span><span class="op">)</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">k</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">newDist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></span><span class="op">(</span><span class="va">mapping</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">k</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
@@ -283,11 +333,14 @@
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">txc</span>, xlab <span class="op">=</span> <span class="st">"Dimension"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="fl">0.9</span>, lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="treespace_files/figure-html/how-many-dims-1.png" width="700" style="display: block; margin: auto;"></p>
-<p>We are going to need at least five dimensions to adequately represent the distances between trees.</p>
-<p>To help establish visually what structures are more likely to be genuine, we might also choose to calculate a minimum spanning tree:</p>
+<p>We are going to need at least five dimensions to adequately represent
+the distances between trees.</p>
+<p>To help establish visually what structures are more likely to be
+genuine, we might also choose to calculate a minimum spanning tree:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mstEnds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/MSTEdges.html" class="external-link">MSTEdges</a></span><span class="op">(</span><span class="va">distances</span><span class="op">)</span></span></code></pre></div>
-<p>Let’s plot the first five dimensions of our tree space, highlighting the convex hulls of our clusters:</p>
+<p>Let’s plot the first five dimensions of our tree space, highlighting
+the convex hulls of our clusters:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nDim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">txc</span> <span class="op">&gt;</span> <span class="fl">0.9</span><span class="op">)</span></span>
 <span><span class="va">plotSeq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">nDim</span>, <span class="va">nDim</span><span class="op">)</span></span>
@@ -328,15 +381,29 @@
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, type <span class="op">=</span> <span class="st">"n"</span>, ann <span class="op">=</span> <span class="cn">FALSE</span>, axes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/text.html" class="external-link">text</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="st">"Dimension 4"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="treespace_files/figure-html/plot-mapping-5d-1.png" width="700" style="display: block; margin: auto;"></p>
-<p>Our clusters, so distinct in dimension 1, overlap strongly in every other dimension. The fact that the minimum spanning tree moves between clusters also underlines the fact that they are not as well defined as they appear by eye.</p>
-<p>Note that cluster membership, as well as the precise shape of tree space, is a function of the tree distance metric. The phylogenetic information distance recovers a different pair of clusters, which may not correspond to those that are most apparent from a simple visual inspection of the two-dimensional tree space plot:</p>
+<p>Our clusters, so distinct in dimension 1, overlap strongly in every
+other dimension. The fact that the minimum spanning tree moves between
+clusters also underlines the fact that they are not as well defined as
+they appear by eye.</p>
+<p>Note that cluster membership, as well as the precise shape of tree
+space, is a function of the tree distance metric. The phylogenetic
+information distance recovers a different pair of clusters, which may
+not correspond to those that are most apparent from a simple visual
+inspection of the two-dimensional tree space plot:</p>
 <p><img src="treespace_files/figure-html/pid-1.png" width="384" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="comparing-cluster-size">Comparing cluster size<a class="anchor" aria-label="anchor" href="#comparing-cluster-size"></a>
 </h4>
-<p>It is tempting to compare the size of clusters by calculating the area of convex hulls on a two-dimensional mapping. However, mapped areas do <a href="https://xkcd.com/2489/" class="external-link">not necessarily correspond</a> to true hypervolumes.</p>
-<p>Accuracy may be improved by comparing higher dimensions of projections using the “<a href="http://www.benjaminblonder.org/hypervolume_faq.html" class="external-link">hypervolume</a>” package, though the same considerations apply <span class="citation">(Blonder et al., 2018)</span>. Interpretation of overlap statistics is detailed in <span class="citation">Mammola (2019)</span>.</p>
+<p>It is tempting to compare the size of clusters by calculating the
+area of convex hulls on a two-dimensional mapping. However, mapped areas
+do <a href="https://xkcd.com/2489/" class="external-link">not necessarily correspond</a> to
+true hypervolumes.</p>
+<p>Accuracy may be improved by comparing higher dimensions of
+projections using the “<a href="https://www.benjaminblonder.org/hypervolume_faq.html" class="external-link">hypervolume</a>”
+package, though the same considerations apply <span class="citation">(Blonder et al., 2018)</span>. Interpretation of
+overlap statistics is detailed in <span class="citation">Mammola
+(2019)</span>.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hypervolumeInstalled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"hypervolume"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">hypervolumeInstalled</span><span class="op">)</span> <span class="op">{</span></span>
@@ -358,12 +425,17 @@
 <span><span class="op">}</span></span></code></pre></div>
 <pre><code><span><span class="co">##       jaccard      sorensen frac_unique_1 frac_unique_2 </span></span>
 <span><span class="co">##    0.02648093    0.05159556    0.94582792    0.95074700</span></span></code></pre>
-<p>If the objective is to quantify the spread of different clusters, other metrics may be easier to interpret than the clusters’ hypervolume (e.g. <span class="citation">T. J. Smith &amp; Donoghue (2022)</span>).</p>
-<p>The divergence of outlying points can be measures using the sum of ranges:</p>
+<p>If the objective is to quantify the spread of different clusters,
+other metrics may be easier to interpret than the clusters’ hypervolume
+(e.g. <span class="citation">T. J. Smith &amp; Donoghue
+(2022)</span>).</p>
+<p>The divergence of outlying points can be measures using the sum of
+ranges:</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">SumOfRanges</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 132.0758 127.3610</span></span></code></pre>
-<p>The overall size of a cluster can be measured using the sum of variances, or the mean distance from the centroid or median:</p>
+<p>The overall size of a cluster can be measured using the sum of
+variances, or the mean distance from the centroid or median:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">SumOfVariances</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 173.0981 176.8212</span></span></code></pre>
@@ -373,7 +445,9 @@
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">DistanceFromMedian</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 13.42931 13.48348</span></span></code></pre>
-<p>The density of points within a cluster can be measured using the mean nearest-neighbour distance or the mean minimum spanning tree edge length:</p>
+<p>The density of points within a cluster can be measured using the mean
+nearest-neighbour distance or the mean minimum spanning tree edge
+length:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">MeanNN</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 4.676416 5.274230</span></span></code></pre>
@@ -385,7 +459,13 @@
 <div class="section level3">
 <h3 id="self-organizing-maps">Self-organizing maps<a class="anchor" aria-label="anchor" href="#self-organizing-maps"></a>
 </h3>
-<p>An alternative approach to visualizing tree space is to create emergent self-organizing maps <span class="citation">(Kohonen, 1982; Thrun, Lerch, Lötsch, &amp; Ultsch, 2016; Ultsch, 2003)</span>, which map high-dimensional data into two dimensions, then add a third dimension to indicate distance between data points: nearby points occur in valleys, and are separated by ridges from more distant data points.</p>
+<p>An alternative approach to visualizing tree space is to create
+emergent self-organizing maps <span class="citation">(Kohonen, 1982;
+Thrun, Lerch, Lötsch, &amp; Ultsch, 2016; Ultsch, 2003)</span>, which
+map high-dimensional data into two dimensions, then add a third
+dimension to indicate distance between data points: nearby points occur
+in valleys, and are separated by ridges from more distant data
+points.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">umatrixInstalled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"Umatrix"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">umatrixInstalled</span><span class="op">)</span> <span class="op">{</span></span>
@@ -418,52 +498,88 @@
 </h3>
 <p>You may wish to:</p>
 <ul>
-<li><p><a href="landscapes.html">Analyse landscapes</a> of phylogenetic trees</p></li>
-<li><p><a href="using-distances.html">Provide context</a> for tree distances</p></li>
-<li><p>Review <a href="https://ms609.github.io/TreeDist/index.html">available distance measures</a> and the corresponding <a href="https://ms609.github.io/TreeDist/reference/index.html#section-tree-distance-measures">functions</a></p></li>
-<li><p><a href="https://ms609.github.io/TreeDistData/articles/09-expected-similarity.html">Interpret tree distance metrics</a></p></li>
+<li><p><a href="landscapes.html">Analyse landscapes</a> of phylogenetic
+trees</p></li>
+<li><p><a href="using-distances.html">Provide context</a> for tree
+distances</p></li>
+<li><p>Review <a href="https://ms609.github.io/TreeDist/index.html">available distance
+measures</a> and the corresponding <a href="https://ms609.github.io/TreeDist/reference/index.html#section-tree-distance-measures">functions</a></p></li>
+<li><p><a href="https://ms609.github.io/TreeDistData/articles/09-expected-similarity.html">Interpret
+tree distance metrics</a></p></li>
 <li><p>Compare the distribution of different <a href="compare-treesets.html">sets of trees</a></p></li>
 </ul>
 </div>
 <div class="section level2">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references">
-<div id="ref-Arthur2007">
-<p>Arthur, D., &amp; Vassilvitskii, S. (2007). K-means++: The advantages of careful seeding. <em>Proceedings of the Eighteenth Annual ACM-SIAM Symposium on Discrete Algorithms</em>, 1027–1035. USA: Society for Industrial and Applied Mathematics.</p>
+<div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
+<div id="ref-Arthur2007" class="csl-entry">
+Arthur, D., &amp; Vassilvitskii, S. (2007). K-means++: The advantages of
+careful seeding. <em>Proceedings of the Eighteenth Annual
+<span>ACM-SIAM</span> Symposium on <span>Discrete</span>
+Algorithms</em>, 1027–1035. <span>USA</span>: <span>Society for
+Industrial and Applied Mathematics</span>.
 </div>
-<div id="ref-Blonder2018">
-<p>Blonder, B., Morrow, C. B., Maitner, B., Harris, D. J., Lamanna, C., Violle, C., … Kerkhoff, A. J. (2018). New approaches for delineating <em>n</em>-dimensional hypervolumes. <em>Methods in Ecology and Evolution</em>, <em>9</em>(2), 305–319. doi: <a href="https://doi.org/10.1111/2041-210X.12865" class="external-link">10.1111/2041-210X.12865</a></p>
+<div id="ref-Blonder2018" class="csl-entry">
+Blonder, B., Morrow, C. B., Maitner, B., Harris, D. J., Lamanna, C.,
+Violle, C., … Kerkhoff, A. J. (2018). New approaches for delineating
+<span><em>n</em></span>-dimensional hypervolumes. <em>Methods in Ecology
+and Evolution</em>, <em>9</em>(2), 305–319. doi: <a href="https://doi.org/10.1111/2041-210X.12865" class="external-link">10.1111/2041-210X.12865</a>
 </div>
-<div id="ref-Kaufman1990">
-<p>Kaufman, L., &amp; Rousseeuw, P. J. (1990). Partitioning around medoids (Program PAM). In <em>Wiley Series in Probability and Statistics</em>. <em>Finding groups in data: An introduction to cluster analysis</em> (pp. 68–125). John Wiley &amp; Sons, Ltd. doi: <a href="https://doi.org/10.1002/9780470316801.ch2" class="external-link">10.1002/9780470316801.ch2</a></p>
+<div id="ref-Kaufman1990" class="csl-entry">
+Kaufman, L., &amp; Rousseeuw, P. J. (1990). Partitioning around medoids
+(<span>Program PAM</span>). In <em>Wiley <span>Series</span> in
+<span>Probability</span> and <span>Statistics</span></em>. <em>Finding
+groups in data: An introduction to cluster analysis</em> (pp. 68–125).
+<span>John Wiley &amp; Sons, Ltd</span>. doi: <a href="https://doi.org/10.1002/9780470316801.ch2" class="external-link">10.1002/9780470316801.ch2</a>
 </div>
-<div id="ref-Kohonen1982">
-<p>Kohonen, T. (1982). Self-organized formation of topologically correct feature maps. <em>Biological Cybernetics</em>, <em>43</em>(1), 59–69. doi: <a href="https://doi.org/10.1007/BF00337288" class="external-link">10.1007/BF00337288</a></p>
+<div id="ref-Kohonen1982" class="csl-entry">
+Kohonen, T. (1982). Self-organized formation of topologically correct
+feature maps. <em>Biological Cybernetics</em>, <em>43</em>(1), 59–69.
+doi: <a href="https://doi.org/10.1007/BF00337288" class="external-link">10.1007/BF00337288</a>
 </div>
-<div id="ref-Kruskal1964">
-<p>Kruskal, J. B. (1964). Multidimensional scaling by optimizing goodness of fit to a nonmetric hypothesis. <em>Psychometrika</em>, <em>29</em>(1), 1–27. doi: <a href="https://doi.org/10.1007/BF02289565" class="external-link">10.1007/BF02289565</a></p>
+<div id="ref-Kruskal1964" class="csl-entry">
+Kruskal, J. B. (1964). Multidimensional scaling by optimizing goodness
+of fit to a nonmetric hypothesis. <em>Psychometrika</em>,
+<em>29</em>(1), 1–27. doi: <a href="https://doi.org/10.1007/BF02289565" class="external-link">10.1007/BF02289565</a>
 </div>
-<div id="ref-Mammola2019">
-<p>Mammola, S. (2019). Assessing similarity of <em>n</em>-dimensional hypervolumes: Which metric to use? <em>Journal of Biogeography</em>, <em>46</em>(9), 2012–2023. doi: <a href="https://doi.org/10.1111/jbi.13618" class="external-link">10.1111/jbi.13618</a></p>
+<div id="ref-Mammola2019" class="csl-entry">
+Mammola, S. (2019). Assessing similarity of
+<span><em>n</em></span>-dimensional hypervolumes: <span>Which</span>
+metric to use? <em>Journal of Biogeography</em>, <em>46</em>(9),
+2012–2023. doi: <a href="https://doi.org/10.1111/jbi.13618" class="external-link">10.1111/jbi.13618</a>
 </div>
-<div id="ref-Sammon1969">
-<p>Sammon, J. W. (1969). A nonlinear mapping for data structure analysis. <em>IEEE Transactions on Computers</em>, <em>C-18</em>(5), 401–409. doi: <a href="https://doi.org/10.1109/T-C.1969.222678" class="external-link">10.1109/T-C.1969.222678</a></p>
+<div id="ref-Sammon1969" class="csl-entry">
+Sammon, J. W. (1969). A nonlinear mapping for data structure analysis.
+<em>IEEE Transactions on Computers</em>, <em>C-18</em>(5), 401–409. doi:
+<a href="https://doi.org/10.1109/T-C.1969.222678" class="external-link">10.1109/T-C.1969.222678</a>
 </div>
-<div id="ref-SmithDist">
-<p>Smith, M. R. (2020). Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees. <em>Bioinformatics</em>, <em>36</em>(20), 5007–5013. doi: <a href="https://doi.org/10.1093/bioinformatics/btaa614" class="external-link">10.1093/bioinformatics/btaa614</a></p>
+<div id="ref-SmithDist" class="csl-entry">
+Smith, M. R. (2020). Information theoretic <span>Generalized
+Robinson-Foulds</span> metrics for comparing phylogenetic trees.
+<em>Bioinformatics</em>, <em>36</em>(20), 5007–5013. doi: <a href="https://doi.org/10.1093/bioinformatics/btaa614" class="external-link">10.1093/bioinformatics/btaa614</a>
 </div>
-<div id="ref-SmithSpace">
-<p>Smith, M. R. (2022). Robust analysis of phylogenetic tree space. <em>Systematic Biology</em>, <em>71</em>(5), 1255–1270. doi: <a href="https://doi.org/10.1093/sysbio/syab100" class="external-link">10.1093/sysbio/syab100</a></p>
+<div id="ref-SmithSpace" class="csl-entry">
+Smith, M. R. (2022). Robust analysis of phylogenetic tree space.
+<em>Systematic Biology</em>, <em>71</em>(5), 1255–1270. doi: <a href="https://doi.org/10.1093/sysbio/syab100" class="external-link">10.1093/sysbio/syab100</a>
 </div>
-<div id="ref-Smith2022">
-<p>Smith, T. J., &amp; Donoghue, P. C. J. (2022). Evolution of fungal phenotypic disparity. <em>Nature Ecology &amp; Evolution</em>, s41559–022–01844–01846. doi: <a href="https://doi.org/10.1038/s41559-022-01844-6" class="external-link">10.1038/s41559-022-01844-6</a></p>
+<div id="ref-Smith2022" class="csl-entry">
+Smith, T. J., &amp; Donoghue, P. C. J. (2022). Evolution of fungal
+phenotypic disparity. <em>Nature Ecology &amp; Evolution</em>,
+s41559-022-01844-6. doi: <a href="https://doi.org/10.1038/s41559-022-01844-6" class="external-link">10.1038/s41559-022-01844-6</a>
 </div>
-<div id="ref-Thrun2016">
-<p>Thrun, M. C., Lerch, F., Lötsch, J., &amp; Ultsch, A. (2016). Visualization and 3D printing of multivariate data of biomarkers. <em>International Conference in Central Europe on Computer Graphics, Visualization and Computer Vision</em>. Plzen.</p>
+<div id="ref-Thrun2016" class="csl-entry">
+Thrun, M. C., Lerch, F., Lötsch, J., &amp; Ultsch, A. (2016).
+Visualization and <span>3D</span> printing of multivariate data of
+biomarkers. <em>International <span>Conference</span> in <span>Central
+Europe</span> on <span>Computer Graphics</span>,
+<span>Visualization</span> and <span>Computer Vision</span></em>.
+<span>Plzen</span>.
 </div>
-<div id="ref-Ultsch2003">
-<p>Ultsch, A. (2003). Maps for the visualization of high-dimensional data spaces. <em>Proceedings Workshop on Self-Organizing Maps (Wsom 2003)</em>, 225–230. Kyushu, Japan.</p>
+<div id="ref-Ultsch2003" class="csl-entry">
+Ultsch, A. (2003). Maps for the visualization of high-dimensional data
+spaces. <em>Proceedings Workshop on Self-Organizing Maps (WSOM
+2003)</em>, 225–230. Kyushu, Japan.
 </div>
 </div>
 </div>
@@ -486,7 +602,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

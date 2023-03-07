@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.4.1.9002</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.6.0.9000</span>
       </span>
     </div>
 
@@ -53,6 +53,9 @@
     </li>
     <li>
       <a href="../articles/using-distances.html">Contextualizing tree distances</a>
+    </li>
+    <li>
+      <a href="../articles/different-leaves.html">Trees with different leaves</a>
     </li>
     <li class="divider">
     <li class="dropdown-header">Tree space analysis</li>
@@ -116,7 +119,7 @@
 <span></span>
 <span><span class="fu">GetParallel</span><span class="op">(</span><span class="va">cl</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">StopParallel</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">StopParallel</span><span class="op">(</span>quietly <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -127,6 +130,10 @@
 
 <dt>cl</dt>
 <dd><p>An existing cluster.</p></dd>
+
+
+<dt>quietly</dt>
+<dd><p>Logical; if <code>TRUE</code>, do not warn when no cluster was running.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -184,7 +191,7 @@ cluster.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

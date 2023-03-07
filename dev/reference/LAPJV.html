@@ -25,7 +25,7 @@ Linear Sum Assignment Problem."><meta name="robots" content="noindex"><!-- mathj
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.4.1.9002</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.6.0.9000</span>
       </span>
     </div>
 
@@ -55,6 +55,9 @@ Linear Sum Assignment Problem."><meta name="robots" content="noindex"><!-- mathj
     </li>
     <li>
       <a href="../articles/using-distances.html">Contextualizing tree distances</a>
+    </li>
+    <li>
+      <a href="../articles/different-leaves.html">Trees with different leaves</a>
     </li>
     <li class="divider">
     <li class="dropdown-header">Tree space analysis</li>
@@ -137,7 +140,7 @@ column, such that the cost of the matching is minimized.</p>
 <p>The Jonker &amp; Volgenant approach is a faster alternative to the Hungarian
 algorithm (Munkres 1957)
 , which is implemented in
-<code><a href="https://rdrr.io/pkg/clue/man/solve_LSAP.html" class="external-link">clue::solve_LSAP()</a></code>.</p>
+<code>clue::solve_LSAP()</code>.</p>
 <p>Note: the JV algorithm expects integers. In order to apply the function
 to a non-integer <em>n</em>, as in the tree distance calculations in this package,
 each <em>n</em> is multiplied by the largest available integer before applying
@@ -200,7 +203,7 @@ with contributions from Yong Yang <a href="mailto:yongyanglink@gmail.com">yongya
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

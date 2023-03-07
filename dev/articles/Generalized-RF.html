@@ -42,7 +42,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.4.1.9002</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.6.0.9000</span>
       </span>
     </div>
 
@@ -75,6 +75,9 @@
     </li>
     <li>
       <a href="../articles/using-distances.html">Contextualizing tree distances</a>
+    </li>
+    <li>
+      <a href="../articles/different-leaves.html">Trees with different leaves</a>
     </li>
     <li class="divider">
     </li>
@@ -129,7 +132,7 @@
 
       
 
-      </header><script src="Generalized-RF_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Generalized Robinson-Foulds distances</h1>
@@ -143,12 +146,19 @@
 
     
     
-<p>This document outlines the similarity measures employed by the generalized Robinson–Foulds distances implemented in this package.</p>
-<p>Generalized RF distances are introduced <a href="Robinson-Foulds.html">elsewhere</a>; before you read further, you may also wish to revisit how to <a href="Using-TreeDist.html">use the ‘TreeDist’ package</a>, and relevant <a href="information.html">principles of information theory</a>.</p>
+<p>This document outlines the similarity measures employed by the
+generalized Robinson–Foulds distances implemented in this package.</p>
+<p>Generalized RF distances are introduced <a href="Robinson-Foulds.html">elsewhere</a>; before you read further, you
+may also wish to revisit how to <a href="Using-TreeDist.html">use the
+‘TreeDist’ package</a>, and relevant <a href="information.html">principles of information theory</a>.</p>
 <div class="section level2">
 <h2 id="shared-phylogenetic-information">Shared phylogenetic information<a class="anchor" aria-label="anchor" href="#shared-phylogenetic-information"></a>
 </h2>
-<p>Under the shared phylogenetic information tree distance measure <span class="citation">(Smith, 2020)</span>, pairs of splits are assigned a similarity score that corresponds to the amount of phylogenetic information <span class="citation">(<em>sensu</em> Steel &amp; Penny, 2006)</span> that they share in common (see <a href="information.html">separate vignette</a>), a concept introduced (though not developed) by Nelson <span class="citation">(1979)</span>.</p>
+<p>Under the shared phylogenetic information tree distance measure <span class="citation">(Smith, 2020)</span>, pairs of splits are assigned a
+similarity score that corresponds to the amount of phylogenetic
+information <span class="citation">(<em>sensu</em> Steel &amp; Penny,
+2006)</span> that they share in common (see <a href="information.html">separate vignette</a>), a concept introduced
+(though not developed) by Nelson <span class="citation">(1979)</span>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">SharedPhylogeneticInfo</span>, <span class="va">tree1</span>, <span class="va">tree2</span>, </span>
 <span>                  Plot <span class="op">=</span> <span class="va">TreeDistPlot</span>, matchZeros <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
@@ -159,7 +169,12 @@
 <div class="section level3">
 <h3 id="conflicting-splits-can-nevertheless-be-instructive">Conflicting splits can nevertheless be instructive<a class="anchor" aria-label="anchor" href="#conflicting-splits-can-nevertheless-be-instructive"></a>
 </h3>
-<p>Shared phylogenetic information assigns zero similarity to incompatible splits, i.e. those that cannot both occur on a single tree. This leads to problematic behaviour in certain cases: for example, swapping the position of two distant leaves (as with leaves ‘A’ and ‘J’ below) can disproportionately reduce similarity – in this example, to zero.</p>
+<p>Shared phylogenetic information assigns zero similarity to
+incompatible splits, i.e. those that cannot both occur on a single tree.
+This leads to problematic behaviour in certain cases: for example,
+swapping the position of two distant leaves (as with leaves ‘A’ and ‘J’
+below) can disproportionately reduce similarity – in this example, to
+zero.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">SharedPhylogeneticInfo</span>, <span class="va">AtoJ</span>, <span class="va">swapAJ</span>,</span>
 <span>                  Plot <span class="op">=</span> <span class="va">TreeDistPlot</span>, matchZeros <span class="op">=</span> <span class="cn">FALSE</span>, prune <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">18</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -169,7 +184,10 @@
 <div class="section level2">
 <h2 id="mutual-clustering-information">Mutual clustering information<a class="anchor" aria-label="anchor" href="#mutual-clustering-information"></a>
 </h2>
-<p>Scoring each pair of splits according to their mutual clustering information <span class="citation">(Smith, 2020)</span> (see <a href="information.html">separate vignette</a>) results in a information-based tree distance metric that recognizes similarity in tree structure even when every possible pairing of splits conflicts:</p>
+<p>Scoring each pair of splits according to their mutual clustering
+information <span class="citation">(Smith, 2020)</span> (see <a href="information.html">separate vignette</a>) results in a
+information-based tree distance metric that recognizes similarity in
+tree structure even when every possible pairing of splits conflicts:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">MutualClusteringInfo</span>, <span class="va">AtoJ</span>, <span class="va">swapAJ</span>,</span>
 <span>                  Plot <span class="op">=</span> <span class="va">TreeDistPlot</span>, matchZeros <span class="op">=</span> <span class="cn">FALSE</span>, prune <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">18</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -177,7 +195,10 @@
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/TreeDistance.html">MutualClusteringInfo</a></span><span class="op">(</span><span class="va">AtoJ</span>, <span class="va">swapAJ</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 1.348339</span></span></code></pre>
-<p>Because no pair of non-trivial splits has zero mutual clustering information, even a dissimilar pairing (such as <code>HI|ABCDEFG</code> ⇒ <code>EI|ABCDFGH</code> below) is (slightly) preferable to leaving a split unpaired.</p>
+<p>Because no pair of non-trivial splits has zero mutual clustering
+information, even a dissimilar pairing (such as <code>HI|ABCDEFG</code>
+⇒ <code>EI|ABCDFGH</code> below) is (slightly) preferable to leaving a
+split unpaired.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">MutualClusteringInfo</span>, <span class="va">tree1</span>, <span class="va">tree2</span>, </span>
 <span>                  Plot <span class="op">=</span> <span class="va">TreeDistPlot</span>, matchZeros <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
@@ -186,18 +207,35 @@
 <div class="section level2">
 <h2 id="nye-et-al--tree-similarity-metric">Nye <em>et al.</em> tree similarity metric<a class="anchor" aria-label="anchor" href="#nye-et-al--tree-similarity-metric"></a>
 </h2>
-<p>The Nye <em>et al</em>. <span class="citation">(2006)</span> tree similarity metric scores pairs by considering the elements held in common between subsets of each split.</p>
-<p>Consider a pair of splits <code>ABCDEF|GHIJ</code> and <code>ABCDEIJ|FGH</code>. These can be aligned thus:</p>
+<p>The Nye <em>et al</em>. <span class="citation">(2006)</span> tree
+similarity metric scores pairs by considering the elements held in
+common between subsets of each split.</p>
+<p>Consider a pair of splits <code>ABCDEF|GHIJ</code> and
+<code>ABCDEIJ|FGH</code>. These can be aligned thus:</p>
 <pre><code>ABCDEF  | GHIJ
 ABCDE IJ|FGH</code></pre>
-<p>The first pair of subsets, <code>ABCDEF</code> and <code>ABCDEIJ</code>, have five elements in common (<code>ABCDE</code>), and together encompass eight elements (<code>ABCDEFIJ</code>). Their <em>subset score</em> is thus <span class="math inline">\(\frac{5}{8}\)</span>.</p>
-<p>The second pair of subsets, <code>GHIJ</code> and <code>FGH</code>, have two elements (<code>GH</code>) in common, of the five total (<code>FGHIJ</code>), and hence receive a subset score of <span class="math inline">\(\frac{2}{5}\)</span>.</p>
-<p>This split alignment then receives an <em>alignment score</em> corresponding to the lower of the two subset scores, <span class="math inline">\(\frac{2}{5}\)</span>.</p>
+<p>The first pair of subsets, <code>ABCDEF</code> and
+<code>ABCDEIJ</code>, have five elements in common (<code>ABCDE</code>),
+and together encompass eight elements (<code>ABCDEFIJ</code>). Their
+<em>subset score</em> is thus <span class="math inline">\(\frac{5}{8}\)</span>.</p>
+<p>The second pair of subsets, <code>GHIJ</code> and <code>FGH</code>,
+have two elements (<code>GH</code>) in common, of the five total
+(<code>FGHIJ</code>), and hence receive a subset score of <span class="math inline">\(\frac{2}{5}\)</span>.</p>
+<p>This split alignment then receives an <em>alignment score</em>
+corresponding to the lower of the two subset scores, <span class="math inline">\(\frac{2}{5}\)</span>.</p>
 <p>We must now consider the other alignment of this pair of splits,</p>
 <pre><code>ABCDEF  |     GHIJ
      FGH|ABCDE  IJ</code></pre>
-<p>This yields subset scores of <span class="math inline">\(\frac{1}{8}\)</span> and <span class="math inline">\(\frac{2}{9}\)</span>, and thus has an alignment score of <span class="math inline">\(\frac{1}{8}\)</span>. This alignment gives a lower score than the other, so is disregarded. The pair of splits is allocated a similarity score corresponding to the better alignment: <span class="math inline">\(\frac{2}{5}\)</span>.</p>
-<p>As such, splits that match exactly will receive a similarity score of 1, in a manner analogous to the Robinson–Foulds distance. (This is despite the fact that some splits are more likely to match than others.) It is not possible for a pair of splits to receive a zero similarity score.</p>
+<p>This yields subset scores of <span class="math inline">\(\frac{1}{8}\)</span> and <span class="math inline">\(\frac{2}{9}\)</span>, and thus has an alignment
+score of <span class="math inline">\(\frac{1}{8}\)</span>. This
+alignment gives a lower score than the other, so is disregarded. The
+pair of splits is allocated a similarity score corresponding to the
+better alignment: <span class="math inline">\(\frac{2}{5}\)</span>.</p>
+<p>As such, splits that match exactly will receive a similarity score of
+1, in a manner analogous to the Robinson–Foulds distance. (This is
+despite the fact that some splits are more likely to match than others.)
+It is not possible for a pair of splits to receive a zero similarity
+score.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">NyeSimilarity</span>, <span class="va">tree1</span>, <span class="va">tree2</span>, </span>
 <span>                  Plot <span class="op">=</span> <span class="va">TreeDistPlot</span>, matchZeros <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
@@ -208,7 +246,13 @@ ABCDE IJ|FGH</code></pre>
 <div class="section level3">
 <h3 id="jaccardrobinsonfoulds-metric">Jaccard–Robinson–Foulds metric<a class="anchor" aria-label="anchor" href="#jaccardrobinsonfoulds-metric"></a>
 </h3>
-<p>Böcker <em>et al</em>. <span class="citation">(2013)</span> employ the same split similarity calculation as Nye <em>et al.</em> (above), which they suggest ought to be raised to an arbitrary exponent in order to down-weight the contribution of paired splits that are not identical. In order for the metric to converge to the Robinson–Foulds metric as the exponent grows towards infinity, the resulting score is then doubled.</p>
+<p>Böcker <em>et al</em>. <span class="citation">(2013)</span> employ
+the same split similarity calculation as Nye <em>et al.</em> (above),
+which they suggest ought to be raised to an arbitrary exponent in order
+to down-weight the contribution of paired splits that are not identical.
+In order for the metric to converge to the Robinson–Foulds metric as the
+exponent grows towards infinity, the resulting score is then
+doubled.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/JaccardRobinsonFoulds.html">JaccardRobinsonFoulds</a></span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span>, k <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 4</span></span></code></pre>
@@ -224,23 +268,45 @@ ABCDE IJ|FGH</code></pre>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">JRF2</span>, <span class="va">tree1</span>, <span class="va">tree2</span>,</span>
 <span>                  Plot <span class="op">=</span> <span class="va">TreeDistPlot</span>, matchZeros <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Generalized-RF_files/figure-html/unnamed-chunk-6-2.png" width="576" style="display: block; margin: auto;"></p>
-<p>The figure below shows how the JRF distance between the two trees plotted above varies with the value of the exponent <em>k</em>, relative to the Nye <em>et al.</em> and Robinson–Foulds distances between the trees:</p>
+<p>The figure below shows how the JRF distance between the two trees
+plotted above varies with the value of the exponent <em>k</em>, relative
+to the Nye <em>et al.</em> and Robinson–Foulds distances between the
+trees:</p>
 <p><img src="Generalized-RF_files/figure-html/unnamed-chunk-7-1.png" width="576" style="display: block; margin: auto;"></p>
-<p>The theoretical and practical performance of the JRF metric, and its speed of calculation, are best at lower values of <em>k</em> <span class="citation">(Smith, 2020)</span>, raising the question of whether an exponent is useful.</p>
-<p>Böcker <em>et al</em>. <span class="citation">(2013)</span> suggest that ‘reasonable’ matchings exhibit a property they term <em>arboreality</em>. Their definition of an arboreal matching supposes that trees are rooted, in which case each split corresponds to a clade. In an arboreal matching on a rooted tree, no pairing of splits conflicts with any other pairing of splits. Consider the case where splits ‘A’ and ‘B’ in tree 1 are paired respectively with splits ‘C’ and ‘D’ in tree 2. If ‘A’ is paired with ‘C’ and ‘B’ with ‘D’, then to avoid conflict:</p>
+<p>The theoretical and practical performance of the JRF metric, and its
+speed of calculation, are best at lower values of <em>k</em> <span class="citation">(Smith, 2020)</span>, raising the question of whether
+an exponent is useful.</p>
+<p>Böcker <em>et al</em>. <span class="citation">(2013)</span> suggest
+that ‘reasonable’ matchings exhibit a property they term
+<em>arboreality</em>. Their definition of an arboreal matching supposes
+that trees are rooted, in which case each split corresponds to a clade.
+In an arboreal matching on a rooted tree, no pairing of splits conflicts
+with any other pairing of splits. Consider the case where splits ‘A’ and
+‘B’ in tree 1 are paired respectively with splits ‘C’ and ‘D’ in tree 2.
+If ‘A’ is paired with ‘C’ and ‘B’ with ‘D’, then to avoid conflict:</p>
 <ul>
 <li><p>if A is nested within B, then C must be nested within D</p></li>
 <li><p>if B is nested within A, then D must be nested within C</p></li>
-<li><p>if A and B do not overlap, then C and D must not overlap.</p></li>
+<li><p>if A and B do not overlap, then C and D must not
+overlap.</p></li>
 </ul>
-<p>Equivalent statements for unrooted trees are a little harder to express.</p>
-<p>Unfortunately, constructing arboreal matchings is NP-complete, making an optimal arboreal matching slow to find. A faster alternative is to prohibit pairings of contradictory splits, though distances generated under such an approach are theoretically less coherent and practically no more effective than those calculated when contradictory splits may be paired, so the only advantage of this approach is a slight increase in calculation speed <span class="citation">(Smith, 2020)</span>.</p>
+<p>Equivalent statements for unrooted trees are a little harder to
+express.</p>
+<p>Unfortunately, constructing arboreal matchings is NP-complete, making
+an optimal arboreal matching slow to find. A faster alternative is to
+prohibit pairings of contradictory splits, though distances generated
+under such an approach are theoretically less coherent and practically
+no more effective than those calculated when contradictory splits may be
+paired, so the only advantage of this approach is a slight increase in
+calculation speed <span class="citation">(Smith, 2020)</span>.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="matching-split-distance">Matching Split Distance<a class="anchor" aria-label="anchor" href="#matching-split-distance"></a>
 </h2>
-<p>Bogdanowicz &amp; Giaro <span class="citation">(2012)</span> propose an alternative distance, which they term the Matching Split Distance. (This approach was independently proposed by Lin <em>et al.</em> <span class="citation">(2012)</span>.)</p>
+<p>Bogdanowicz &amp; Giaro <span class="citation">(2012)</span> propose
+an alternative distance, which they term the Matching Split Distance.
+(This approach was independently proposed by Lin <em>et al.</em> <span class="citation">(2012)</span>.)</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/MatchingSplitDistance.html">MatchingSplitDistance</a></span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 5</span></span></code></pre>
@@ -248,25 +314,39 @@ ABCDE IJ|FGH</code></pre>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">MatchingSplitDistance</span>, <span class="va">tree1</span>, <span class="va">tree2</span>,</span>
 <span>                  Plot <span class="op">=</span> <span class="va">TreeDistPlot</span>, matchZeros <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Generalized-RF_files/figure-html/unnamed-chunk-8-1.png" width="576" style="display: block; margin: auto;"></p>
-<p>Note that the visualization shows the difference, rather than the similarity, between splits.</p>
-<p>Similar to the Nye <em>et al</em>. similarity metric, this method compares the subsets implied by a pair of splits. Here, the relevant quantity is the number of elements that must be moved from one subset to another in order to make the two splits identical. With the pair of splits</p>
+<p>Note that the visualization shows the difference, rather than the
+similarity, between splits.</p>
+<p>Similar to the Nye <em>et al</em>. similarity metric, this method
+compares the subsets implied by a pair of splits. Here, the relevant
+quantity is the number of elements that must be moved from one subset to
+another in order to make the two splits identical. With the pair of
+splits</p>
 <pre><code>ABCDEF  | GHIJ
 ABCDE IJ|FGH</code></pre>
-<p>three leaves (‘F’, ‘I’ and ‘J’) must be moved before the splits are identical; as such, the pair of splits are assigned a difference score of three.<br>
-Formally, where <span class="math inline">\(S_i\)</span> splits <span class="math inline">\(n\)</span> leaves into bipartitions <span class="math inline">\(A_i\)</span> and <span class="math inline">\(B_i\)</span>, the difference score is calculated by</p>
+<p>three leaves (‘F’, ‘I’ and ‘J’) must be moved before the splits are
+identical; as such, the pair of splits are assigned a difference score
+of three.<br>
+Formally, where <span class="math inline">\(S_i\)</span> splits <span class="math inline">\(n\)</span> leaves into bipartitions <span class="math inline">\(A_i\)</span> and <span class="math inline">\(B_i\)</span>, the difference score is calculated
+by</p>
 <p><span class="math inline">\(n - m\)</span></p>
-<p>where <span class="math inline">\(m\)</span> counts the number of leaves that already match, and is defined as</p>
-<p><span class="math inline">\(m = \max\{|A_1 \cap A_2| + |B_1 \cap B_2|, |A_1 \cap B_2| + |B_1 \cap A_2|\}\)</span></p>
+<p>where <span class="math inline">\(m\)</span> counts the number of
+leaves that already match, and is defined as</p>
+<p><span class="math inline">\(m = \max\{|A_1 \cap A_2| + |B_1 \cap
+B_2|, |A_1 \cap B_2| + |B_1 \cap A_2|\}\)</span></p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/MatchingSplitDistance.html">MatchingSplitDistance</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'((a, b, c, d, e, f), (g, h, i, j));'</span><span class="op">)</span>,</span>
 <span>                      <span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span>text<span class="op">=</span><span class="st">'((a, b, c, d, e, i, j), (g, h, f));'</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 3</span></span></code></pre>
-<p>This distance is difficult to normalize, as it is not easy to calculate its maximum value.</p>
+<p>This distance is difficult to normalize, as it is not easy to
+calculate its maximum value.</p>
 <div class="section level3">
 <h3 id="information-theoretic-alternative">Information theoretic alternative<a class="anchor" aria-label="anchor" href="#information-theoretic-alternative"></a>
 </h3>
-<p>In the matching split distance, <span class="math inline">\(m\)</span> represents a simple count of the number of shared taxa. An alternative is to measure the phylogenetic information content of the largest split consistent with <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span>:</p>
-<p><span class="math inline">\(m = \max\{h(A_1 \cap A_2 | B_1 \cap B_2), h(A_1 \cap B_2 | B_1 \cap A_2)\}\)</span></p>
+<p>In the matching split distance, <span class="math inline">\(m\)</span> represents a simple count of the number
+of shared taxa. An alternative is to measure the phylogenetic
+information content of the largest split consistent with <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span>:</p>
+<p><span class="math inline">\(m = \max\{h(A_1 \cap A_2 | B_1 \cap B_2),
+h(A_1 \cap B_2 | B_1 \cap A_2)\}\)</span></p>
 <p>The most information-rich split consistent with</p>
 <pre><code>ABCDEF  | GHIJ
 ABCDE IJ|FGH  </code></pre>
@@ -274,7 +354,8 @@ ABCDE IJ|FGH  </code></pre>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">TreeTools</span><span class="fu">::</span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/SplitInformation.html" class="external-link">SplitInformation</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 3.169925</span></span></code></pre>
-<p>bits of phylogenetic information. This value can be used as a similarity score for this pairing of splits.</p>
+<p>bits of phylogenetic information. This value can be used as a
+similarity score for this pairing of splits.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/TreeDistance.html">MatchingSplitInfoDistance</a></span><span class="op">(</span><span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 17.27586</span></span></code></pre>
@@ -285,29 +366,50 @@ ABCDE IJ|FGH  </code></pre>
 </div>
 </div>
 <div class="section level2 unnumbered">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references">
-<div id="ref-Bogdanowicz2012">
-<p>Bogdanowicz, D., &amp; Giaro, K. (2012). Matching split distance for unrooted binary phylogenetic trees. <em>IEEE/ACM Transactions on Computational Biology and Bioinformatics</em>, <em>9</em>(1), 150–160. doi:<a href="https://doi.org/10.1109/TCBB.2011.48" class="external-link">10.1109/TCBB.2011.48</a></p>
+<div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
+<div id="ref-Bocker2013" class="csl-entry">
+Böcker, S., Canzar, S., &amp; Klau, G. W. (2013). The generalized
+<span>Robinson</span>-<span>Foulds</span> metric. In A. Darling &amp; J.
+Stoye (Eds.), <em>Algorithms in <span>Bioinformatics</span>.
+<span>WABI</span> 2013. <span>Lecture</span> <span>Notes</span> in
+<span>Computer</span> <span>Science</span>, vol 8126</em> (pp. 156–169).
+Berlin, Heidelberg: Springer. doi:<a href="https://doi.org/10.1007/978-3-642-40453-5_13" class="external-link">10.1007/978-3-642-40453-5_13</a>
 </div>
-<div id="ref-Bocker2013">
-<p>Böcker, S., Canzar, S., &amp; Klau, G. W. (2013). The generalized Robinson-Foulds metric. In A. Darling &amp; J. Stoye (Eds.), <em>Algorithms in Bioinformatics. WABI 2013. Lecture Notes in Computer Science, vol 8126</em> (pp. 156–169). Berlin, Heidelberg: Springer. doi:<a href="https://doi.org/10.1007/978-3-642-40453-5_13" class="external-link">10.1007/978-3-642-40453-5_13</a></p>
+<div id="ref-Bogdanowicz2012" class="csl-entry">
+Bogdanowicz, D., &amp; Giaro, K. (2012). <span class="nocase">Matching
+split distance for unrooted binary phylogenetic trees</span>.
+<em>IEEE/ACM Transactions on Computational Biology and
+Bioinformatics</em>, <em>9</em>(1), 150–160. doi:<a href="https://doi.org/10.1109/TCBB.2011.48" class="external-link">10.1109/TCBB.2011.48</a>
 </div>
-<div id="ref-Lin2012">
-<p>Lin, Y., Rajan, V., &amp; Moret, B. M. E. (2012). A metric for phylogenetic trees based on matching. <em>IEEE/ACM Transactions on Computational Biology and Bioinformatics</em>, <em>4</em>(9), 1014–1022. doi:<a href="https://doi.org/10.1109/TCBB.2011.157" class="external-link">10.1109/TCBB.2011.157</a></p>
+<div id="ref-Lin2012" class="csl-entry">
+Lin, Y., Rajan, V., &amp; Moret, B. M. E. (2012). A metric for
+phylogenetic trees based on matching. <em>IEEE/ACM Transactions on
+Computational Biology and Bioinformatics</em>, <em>4</em>(9), 1014–1022.
+doi:<a href="https://doi.org/10.1109/TCBB.2011.157" class="external-link">10.1109/TCBB.2011.157</a>
 </div>
-<div id="ref-Nelson1979">
-<p>Nelson, G. (1979). Cladistic analysis and synthesis: Principles and definitions, with a historical note on Adanson’s <em>Familles des Plantes</em> (1763–1764). <em>Systematic Biology</em>, <em>28</em>(1), 1–21. doi:<a href="https://doi.org/10.1093/sysbio/28.1.1" class="external-link">10.1093/sysbio/28.1.1</a></p>
+<div id="ref-Nelson1979" class="csl-entry">
+Nelson, G. (1979). Cladistic analysis and synthesis: Principles and
+definitions, with a historical note on <span>Adanson</span>’s
+<em><span>Familles</span> des <span>Plantes</span></em> (1763–1764).
+<em>Systematic Biology</em>, <em>28</em>(1), 1–21. doi:<a href="https://doi.org/10.1093/sysbio/28.1.1" class="external-link">10.1093/sysbio/28.1.1</a>
 </div>
-<div id="ref-Nye2006">
-<p>Nye, T. M. W., Liò, P., &amp; Gilks, W. R. (2006). A novel algorithm and web-based tool for comparing two alternative phylogenetic trees. <em>Bioinformatics</em>, <em>22</em>(1), 117–119. doi:<a href="https://doi.org/10.1093/bioinformatics/bti720" class="external-link">10.1093/bioinformatics/bti720</a></p>
+<div id="ref-Nye2006" class="csl-entry">
+Nye, T. M. W., Liò, P., &amp; Gilks, W. R. (2006). <span class="nocase">A novel algorithm and web-based tool for comparing two
+alternative phylogenetic trees</span>. <em>Bioinformatics</em>,
+<em>22</em>(1), 117–119. doi:<a href="https://doi.org/10.1093/bioinformatics/bti720" class="external-link">10.1093/bioinformatics/bti720</a>
 </div>
-<div id="ref-SmithDist">
-<p>Smith, M. R. (2020). Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees. <em>Bioinformatics</em>, <em>36</em>(20), 5007–5013. doi:<a href="https://doi.org/10.1093/bioinformatics/btaa614" class="external-link">10.1093/bioinformatics/btaa614</a></p>
+<div id="ref-SmithDist" class="csl-entry">
+Smith, M. R. (2020). Information theoretic <span>Generalized
+Robinson-Foulds</span> metrics for comparing phylogenetic trees.
+<em>Bioinformatics</em>, <em>36</em>(20), 5007–5013. doi:<a href="https://doi.org/10.1093/bioinformatics/btaa614" class="external-link">10.1093/bioinformatics/btaa614</a>
 </div>
-<div id="ref-Steel2006">
-<p>Steel, M. A., &amp; Penny, D. (2006). Maximum parsimony and the phylogenetic information in multistate characters. In V. A. Albert (Ed.), <em>Parsimony, phylogeny, and genomics</em> (pp. 163–178). Oxford: Oxford University Press.</p>
+<div id="ref-Steel2006" class="csl-entry">
+Steel, M. A., &amp; Penny, D. (2006). Maximum parsimony and the
+phylogenetic information in multistate characters. In V. A. Albert
+(Ed.), <em>Parsimony, phylogeny, and genomics</em> (pp. 163–178).
+Oxford: Oxford University Press.
 </div>
 </div>
 </div>
@@ -330,7 +432,7 @@ ABCDE IJ|FGH  </code></pre>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
