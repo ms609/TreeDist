@@ -91,6 +91,10 @@ the equivalent similarity measure, with options to
 (i) annotate matched splits;
 (ii) weight splits according to their phylogenetic information content
 \insertCite{SmithDist}{TreeDist}.
+Whilst slower to calculate, information theoretic modifications of the
+Robinson–Foulds distance (see \code{\link[=TreeDistance]{TreeDistance()}})
+are better suited to most use cases
+\insertCite{SmithDist,SmithSpace}{TreeDist}.
 }
 \details{
 Note that if \code{reportMatching = TRUE}, the \code{pairScores} attribute returns
@@ -102,7 +106,7 @@ identical in both trees.  Consequently, splits that are more likely
 to be identical by chance alone make a smaller contribution to overall
 tree distance, because their similarity is less remarkable.
 
-Rapid comparison between multiple pairs of trees employs the Day
+Rapid comparison between multiple pairs of trees employs the
 \insertCite{Day1985;textual}{TreeDist} linear-time algorithm.
 }
 \section{Functions}{

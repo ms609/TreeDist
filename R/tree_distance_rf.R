@@ -7,6 +7,10 @@
 #' (i) annotate matched splits; 
 #' (ii) weight splits according to their phylogenetic information content 
 #' \insertCite{SmithDist}{TreeDist}.
+#' Whilst slower to calculate, information theoretic modifications of the
+#' Robinson&ndash;Foulds distance (see [`TreeDistance()`])
+#' are better suited to most use cases
+#' \insertCite{SmithDist,SmithSpace}{TreeDist}.
 #' 
 #' Note that if `reportMatching = TRUE`, the `pairScores` attribute returns
 #' a logical matrix specifying whether each pair of splits is identical.
@@ -17,7 +21,7 @@
 #' to be identical by chance alone make a smaller contribution to overall
 #' tree distance, because their similarity is less remarkable.
 #' 
-#' Rapid comparison between multiple pairs of trees employs the Day 
+#' Rapid comparison between multiple pairs of trees employs the
 #' \insertCite{Day1985;textual}{TreeDist} linear-time algorithm.
 #' 
 #' @inheritParams TreeDistance
