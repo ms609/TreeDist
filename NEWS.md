@@ -1,5 +1,7 @@
 # TreeDist 2.6.0.9000
 
+- `StopParallel()` gains `quietly` argument to suppress unnecessary messages.
+
 - Minor documentation tweaks.
 
 # TreeDist 2.6.0

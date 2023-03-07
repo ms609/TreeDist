@@ -13,12 +13,14 @@ SetParallel(cl)
 
 GetParallel(cl)
 
-StopParallel()
+StopParallel(quietly = FALSE)
 }
 \arguments{
 \item{\dots}{Parameters to pass to \code{\link[=makeCluster]{makeCluster()}}.}
 
 \item{cl}{An existing cluster.}
+
+\item{quietly}{Logical; if \code{TRUE}, do not warn when no cluster was running.}
 }
 \value{
 \code{StartParallel()} and \code{SetParallel()} return the previous value of
