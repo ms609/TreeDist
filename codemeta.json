@@ -8,13 +8,13 @@
   "codeRepository": "https://github.com/ms609/TreeDist/",
   "issueTracker": "https://github.com/ms609/TreeDist/issues/",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "2.6.0",
+  "version": "2.6.0.9000",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.2.2 (2022-10-31)",
+  "runtimePlatform": "R version 4.2.3 (2023-03-15)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -179,6 +179,11 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=plotly"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "PlotTools",
+      "name": "PlotTools"
     },
     {
       "@type": "SoftwareApplication",
@@ -487,7 +492,7 @@
     "SystemRequirements": "C++17"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "1424.366KB",
+  "fileSize": "1424.812KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
@@ -554,7 +559,7 @@
           "email": "martin.smith@durham.ac.uk"
         }
       ],
-      "name": "TreeDist: Distances between Phylogenetic Trees. R package version 2.6.0",
+      "name": "TreeDist: Distances between Phylogenetic Trees. R package version 2.6.0.9000",
       "identifier": "10.5281/zenodo.3528124",
       "@id": "https://doi.org/10.5281/zenodo.3528124",
       "sameAs": "https://doi.org/10.5281/zenodo.3528124",
