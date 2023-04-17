@@ -1,3 +1,8 @@
+# TreeDist 2.6.0.9000
+
+- Use "PlotTools" package for spectrum legends.
+
+
 # TreeDist 2.6.0
 
 - Support comparison of trees with different tips.

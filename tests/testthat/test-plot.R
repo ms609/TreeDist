@@ -169,8 +169,13 @@ test_that("MST example plots as expected", {
     
     # Add points at end so they overprint the MST
     points(mapping)
-    SpectrumLegend(legend = c("Contracted", "Median", "Extended"),
-                   palette = hcl.colors(256L, "RdYlBu", rev = TRUE))
+    PlotTools::SpectrumLegend(
+      "bottomleft",
+      legend = c("Extended", "Median", "Contracted"),
+      bty = "n",
+      y.intersp = 2,
+      palette = hcl.colors(256L, "RdYlBu", rev = TRUE)
+    )
   })
 })
 
