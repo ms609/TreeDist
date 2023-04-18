@@ -59,6 +59,7 @@ Suggests:
   MASS,
   parallel,
   plotly,
+  PlotTools,
   protoclust,
   Quartet,
   readxl,

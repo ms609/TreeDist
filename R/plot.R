@@ -271,8 +271,13 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
 #'             col = StrainCol(distances, mapping, mstEnds))
 #' # Add points at end so they overprint the MST
 #' points(mapping)
-#' SpectrumLegend(legend = c("Contracted", "Median", "Extended"),
-#'                palette = rev(hcl.colors(256L, "RdYlBu")))
+#' PlotTools::SpectrumLegend(
+#'  "bottomleft",
+#'  legend = c("Extended", "Median", "Contracted"),
+#'  bty = "n",     # No box
+#'  y.intersp = 2, # Expand in Y direction
+#'  palette = hcl.colors(256L, "RdYlBu", rev = TRUE)
+#' )
 #' @template MRS
 #' @references \insertAllCited{}
 #' @family tree space functions
