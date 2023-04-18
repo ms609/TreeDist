@@ -14,7 +14,7 @@
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.2.2 (2022-10-31)",
+  "runtimePlatform": "R version 4.2.3 (2023-03-15)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -179,6 +179,11 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=plotly"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "PlotTools",
+      "name": "PlotTools"
     },
     {
       "@type": "SoftwareApplication",
@@ -487,7 +492,7 @@
     "SystemRequirements": "C++14"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "1425.17KB",
+  "fileSize": "1425.588KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
