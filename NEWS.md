@@ -1,10 +1,10 @@
-# TreeDist 2.6.0.9000
+# TreeDist 2.6.1
 
 - `StopParallel()` gains `quietly` argument to suppress unnecessary messages.
 
-- Minor documentation tweaks.
-
 - Use "PlotTools" package for spectrum legends.
+
+- Minor documentation tweaks.
 
 
 # TreeDist 2.6.0
