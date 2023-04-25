@@ -23,7 +23,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.6.1</span>
       </span>
     </div>
 
@@ -119,7 +119,7 @@
 <span></span>
 <span><span class="fu">GetParallel</span><span class="op">(</span><span class="va">cl</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">StopParallel</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">StopParallel</span><span class="op">(</span>quietly <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -130,6 +130,10 @@
 
 <dt>cl</dt>
 <dd><p>An existing cluster.</p></dd>
+
+
+<dt>quietly</dt>
+<dd><p>Logical; if <code>TRUE</code>, do not warn when no cluster was running.</p></dd>
 
 </dl></div>
     <div id="value">

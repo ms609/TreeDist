@@ -28,7 +28,7 @@ stretched or compressed."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.6.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.6.1</span>
       </span>
     </div>
 
@@ -212,8 +212,13 @@ distance to original distance is small.</p>
 <span class="r-in"><span>            col <span class="op">=</span> <span class="fu">StrainCol</span><span class="op">(</span><span class="va">distances</span>, <span class="va">mapping</span>, <span class="va">mstEnds</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Add points at end so they overprint the MST</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="va">mapping</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://ms609.github.io/TreeTools/reference/SpectrumLegend.html" class="external-link">SpectrumLegend</a></span><span class="op">(</span>legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Contracted"</span>, <span class="st">"Median"</span>, <span class="st">"Extended"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>               palette <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rev.html" class="external-link">rev</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">hcl.colors</a></span><span class="op">(</span><span class="fl">256L</span>, <span class="st">"RdYlBu"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">PlotTools</span><span class="fu">::</span><span class="fu"><a href="https://ms609.github.io/PlotTools/reference/SpectrumLegend.html" class="external-link">SpectrumLegend</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span> <span class="st">"bottomleft"</span>,</span></span>
+<span class="r-in"><span> legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Extended"</span>, <span class="st">"Median"</span>, <span class="st">"Contracted"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span> bty <span class="op">=</span> <span class="st">"n"</span>,     <span class="co"># No box</span></span></span>
+<span class="r-in"><span> y.intersp <span class="op">=</span> <span class="fl">2</span>, <span class="co"># Expand in Y direction</span></span></span>
+<span class="r-in"><span> palette <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">hcl.colors</a></span><span class="op">(</span><span class="fl">256L</span>, <span class="st">"RdYlBu"</span>, rev <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="MSTSegments-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
