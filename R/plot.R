@@ -169,6 +169,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
       splitEdges <- vapply(splitNodes, match, table = child, 0)
       got <- rootChildren %in% splitNodes
       if (any(got)) {
+        stopifnot("Tree is not rooted" = length(got) == 1)
         c(score = as.integer(which(splitNodes == rootChildren[got])),
           edge = rootEdges[!got])
       } else {
