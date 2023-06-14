@@ -137,6 +137,30 @@ test_that("VisualizeMatching() works", {
   })
 })
 
+test_that("VisualizeMatching() handles unrooted trees", {
+  skip_if(packageVersion("graphics") < "4.3")
+  skip_if(packageVersion("vdiffr") < "1.0")
+  
+  
+  vdiffr::expect_doppelganger("VM unrooted", function() {
+    par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.5)
+    tree1 <- UnrootTree(BalancedTree(5))
+    tree2 <- UnrootTree(PectinateTree(5))
+    VisualizeMatching(RobinsonFouldsMatching, tree1, tree2,
+                      setPar = FALSE,
+                      Plot = TreeDistPlot)
+  })
+  
+  vdiffr::expect_doppelganger("VM one rooted", function() {
+    par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.5)
+    tree1 <- UnrootTree(BalancedTree(5))
+    tree2 <- PectinateTree(5)
+    VisualizeMatching(RobinsonFouldsMatching, tree1, tree2,
+                      setPar = FALSE,
+                      Plot = TreeDistPlot)
+  })
+})
+
 test_that("MST example plots as expected", {
   skip_if_not_installed("graphics", "4.3")
   skip_if_not_installed("vdiffr", "1.0")
