@@ -166,14 +166,23 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
       child <- edge[, 2]
       rootEdges <- which(parent == min(parent))
       rootChildren <- child[rootEdges]
-      splitEdges <- vapply(splitNodes, match, table = child, 0)
-      got <- rootChildren %in% splitNodes
-      if (any(got)) {
-        stopifnot("Tree is not rooted" = length(got) == 1)
-        c(score = as.integer(which(splitNodes == rootChildren[got])),
-          edge = rootEdges[!got])
+      treeIsRooted <- length(rootChildren) < 3
+      if (treeIsRooted) {
+        splitEdges <- vapply(splitNodes, match, table = child, 0)
+        got <- rootChildren %in% splitNodes
+        if (any(got)) {
+          if(sum(got) != 1) {
+            warning("Unexpected polytomy")
+          }
+          c(score = as.integer(which(splitNodes %in% rootChildren[got])),
+            edge = rootEdges[!got])
+        } else {
+          # `edge` is not a root edge
+          c(score = NA_integer_, edge = NA_integer_)
+        }
       } else {
-        c(score = NA, edge = NA)
+        # Tree is unrooted => there is no root edge at all
+        c(score = NA_integer_, edge = NA_integer_)
       }
     }
     edgeColPalette <- sequential_hcl(n = 256L, palette = "Viridis")
