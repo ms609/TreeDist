@@ -7,10 +7,11 @@
 LAPJV(x)
 }
 \arguments{
-\item{x}{Square matrix of costs.}
+\item{x}{Matrix of costs.}
 }
 \value{
-A list with two entries: \code{score}, the score of the optimal matching;
+\code{LAPJV()} returns a list with two entries: \code{score}, the score of the
+optimal matching;
 and \code{matching}, the columns matched to each row of the matrix in turn.
 }
 \description{
@@ -34,17 +35,12 @@ run times.  (If numbers of the magnitude of billions differ only in their
 last significant digit, then the JV algorithm may undergo billions of
 iterations.)  To avoid this, integers over 2^22 that differ by a value of
 8 or less are treated as equal.
-
-NB. At present, only square matrices are supported; if you need support for
-non-square matrices, drop a note at
-\href{https://github.com/ms609/TreeDist/issues/25}{issue #25}
-and I'll prioritize development.
 }
 \examples{
-problem <- matrix(c(7, 9, 8, 9,
-                    2, 8, 5, 7,
-                    1, 6, 6, 9,
-                    3, 6, 2, 2), 4, 4, byrow=TRUE)
+problem <- matrix(c(7, 9, 8, 9, 9,
+                    2, 8, 5, 7, 9,
+                    1, 6, 6, 9, 9,
+                    3, 6, 2, 2, 9), 4, 5, byrow = TRUE)
 
 LAPJV(problem)
 }
