@@ -1,3 +1,8 @@
+# TreeDist 2.6.1.9000 (development)
+
+- Support non-square matrices in `LAPJV()`.
+
+
 # TreeDist 2.6.1
 
 - `StopParallel()` gains `quietly` argument to suppress unnecessary messages.
