@@ -1,4 +1,4 @@
-# TreeDist 2.6.1.9000 (development)
+# TreeDist 2.6.2
 
 - Support non-square matrices in `LAPJV()`.
 
