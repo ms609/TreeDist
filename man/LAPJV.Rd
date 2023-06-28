@@ -47,6 +47,14 @@ LAPJV(problem)
 \references{
 \insertAllCited{}
 }
+\seealso{
+Implementations of the Hungarian algorithm exist in \pkg{adagio},
+\pkg{RcppHungarian}, and \pkg{clue} and \pkg{lpSolve}; for larger matrices,
+these are substantially slower. (See discussion at \href{https://stackoverflow.com/questions/72806265/}{Stack Overflow}.)
+
+The JV algorithm is implemented for square matrices in the Bioconductor
+package \href{https://www.bioconductor.org/packages/release/bioc/html/GraphAlignment.html}{\code{GraphAlignment::LinearAssignment()}}.
+}
 \author{
 \href{https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/LAPJV/lap.cpp}{C++ code}
 by Roy Jonker, MagicLogic Optimization Inc. \href{mailto:roy_jonker@magiclogic.com}{roy_jonker@magiclogic.com},

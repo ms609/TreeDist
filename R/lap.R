@@ -41,6 +41,16 @@
 #'                     3, 6, 2, 2, 9), 4, 5, byrow = TRUE)
 #'
 #' LAPJV(problem)
+#' @seealso 
+#' Implementations of the Hungarian algorithm exist in \pkg{adagio},
+#' \pkg{RcppHungarian}, and \pkg{clue} and \pkg{lpSolve}; for larger matrices,
+#' these are substantially slower. (See discussion at [Stack Overflow](
+#' https://stackoverflow.com/questions/72806265/).)
+#' 
+#' The JV algorithm is implemented for square matrices in the Bioconductor
+#' package [`GraphAlignment::LinearAssignment()`](
+#' https://www.bioconductor.org/packages/release/bioc/html/GraphAlignment.html).
+#' 
 #' @export
 LAPJV <- function(x) {
   dims <- dim(x)
