@@ -25,7 +25,7 @@ Linear Sum Assignment Problem."><!-- mathjax --><script src="https://cdnjs.cloud
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.6.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.6.2</span>
       </span>
     </div>
 
@@ -123,14 +123,15 @@ Linear Sum Assignment Problem."><!-- mathjax --><script src="https://cdnjs.cloud
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>x</dt>
-<dd><p>Square matrix of costs.</p></dd>
+<dd><p>Matrix of costs.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     
 
-<p>A list with two entries: <code>score</code>, the score of the optimal matching;
+<p><code>LAPJV()</code> returns a list with two entries: <code>score</code>, the score of the
+optimal matching;
 and <code>matching</code>, the columns matched to each row of the matrix in turn.</p>
     </div>
     <div id="details">
@@ -150,10 +151,6 @@ run times.  (If numbers of the magnitude of billions differ only in their
 last significant digit, then the JV algorithm may undergo billions of
 iterations.)  To avoid this, integers over 2^22 that differ by a value of
 8 or less are treated as equal.</p>
-<p>NB. At present, only square matrices are supported; if you need support for
-non-square matrices, drop a note at
-<a href="https://github.com/ms609/TreeDist/issues/25" class="external-link">issue #25</a>
-and I'll prioritize development.</p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -177,10 +174,10 @@ with contributions from Yong Yang <a href="mailto:yongyanglink@gmail.com">yongya
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">problem</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">7</span>, <span class="fl">9</span>, <span class="fl">8</span>, <span class="fl">9</span>,</span></span>
-<span class="r-in"><span>                    <span class="fl">2</span>, <span class="fl">8</span>, <span class="fl">5</span>, <span class="fl">7</span>,</span></span>
-<span class="r-in"><span>                    <span class="fl">1</span>, <span class="fl">6</span>, <span class="fl">6</span>, <span class="fl">9</span>,</span></span>
-<span class="r-in"><span>                    <span class="fl">3</span>, <span class="fl">6</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fl">4</span>, <span class="fl">4</span>, byrow<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">problem</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">7</span>, <span class="fl">9</span>, <span class="fl">8</span>, <span class="fl">9</span>, <span class="fl">9</span>,</span></span>
+<span class="r-in"><span>                    <span class="fl">2</span>, <span class="fl">8</span>, <span class="fl">5</span>, <span class="fl">7</span>, <span class="fl">9</span>,</span></span>
+<span class="r-in"><span>                    <span class="fl">1</span>, <span class="fl">6</span>, <span class="fl">6</span>, <span class="fl">9</span>, <span class="fl">9</span>,</span></span>
+<span class="r-in"><span>                    <span class="fl">3</span>, <span class="fl">6</span>, <span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">9</span><span class="op">)</span>, <span class="fl">4</span>, <span class="fl">5</span>, byrow <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">LAPJV</span><span class="op">(</span><span class="va">problem</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $score</span>
