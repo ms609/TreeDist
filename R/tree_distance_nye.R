@@ -44,6 +44,10 @@
 #' from zero to one by dividing by the total number of splits in the pair
 #' of trees being considered.
 #' 
+#' Trees need not contain identical leaves; scores are based on the leaves that
+#' trees hold in common.  Check for unexpected differences in tip labelling
+#' with `setdiff(TipLabels(tree1), TipLabels(tree2))`.
+#' 
 #' @templateVar returns `NyeSimilarity()` returns
 #' @template distReturn
 #' 
@@ -130,6 +134,10 @@ NyeSplitSimilarity <- function(splits1, splits2,
 #' 
 #' The examples section below details how to visualize matchings with 
 #' non-default parameter values.
+#' 
+#' Trees need not contain identical leaves; scores are based on the leaves that
+#' trees hold in common.  Check for unexpected differences in tip labelling
+#' with `setdiff(TipLabels(tree1), TipLabels(tree2))`.
 #' 
 #' @inheritParams RobinsonFoulds
 #' @param k An arbitrary exponent to which to raise the Jaccard index.

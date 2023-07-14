@@ -1,3 +1,8 @@
+# TreeDist 2.6.2.9000 (development)
+
+- Documentation clarification: finding non-matching leaves.
+
+
 # TreeDist 2.6.2 (2023-06-28)
 
 - Support non-square matrices in `LAPJV()`.

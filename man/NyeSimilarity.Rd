@@ -104,6 +104,10 @@ or the maximum value possible for any pair of trees with  \emph{n} leaves,
 If \code{normalize = TRUE} and \code{similarity = FALSE}, then results will be rescaled
 from zero to one by dividing by the total number of splits in the pair
 of trees being considered.
+
+Trees need not contain identical leaves; scores are based on the leaves that
+trees hold in common.  Check for unexpected differences in tip labelling
+with \code{setdiff(TipLabels(tree1), TipLabels(tree2))}.
 }
 
 \examples{

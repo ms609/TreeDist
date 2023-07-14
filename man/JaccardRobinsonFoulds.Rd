@@ -93,6 +93,10 @@ a slightly faster implementation of this metric is available as
 
 The examples section below details how to visualize matchings with
 non-default parameter values.
+
+Trees need not contain identical leaves; scores are based on the leaves that
+trees hold in common.  Check for unexpected differences in tip labelling
+with \code{setdiff(TipLabels(tree1), TipLabels(tree2))}.
 }
 \section{Normalization}{
 
