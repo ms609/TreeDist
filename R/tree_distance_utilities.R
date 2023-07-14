@@ -520,6 +520,9 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
       ret
     } else {
       # Case: N vs 1
+      if (inherits(tree2, "multiPhylo")) {
+        tree2 <- tree2[[1]]
+      }
       commonLeaves <- lapply(if (is.list(lab1)) lab1 else list(lab1),
                              intersect, lab2)
       list(.mapply(KeepTip, list(tree1, commonLeaves), NULL),
@@ -528,6 +531,9 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
   } else {
     if (.MultipleTrees(tree2)) {
       # Case: 1 vs N
+      if (inherits(tree1, "multiPhylo")) {
+        tree1 <- tree1[[1]]
+      }
       commonLeaves <- lapply(if (is.list(lab2)) lab2 else list(lab2),
                              intersect, lab1)
       list(lapply(commonLeaves, function (common) KeepTip(tree1, common)),
