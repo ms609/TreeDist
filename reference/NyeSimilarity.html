@@ -32,7 +32,7 @@ vignettes."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.6.3</span>
       </span>
     </div>
 
@@ -239,6 +239,9 @@ or the maximum value possible for any pair of trees with  <em>n</em> leaves,
 <p>If <code>normalize = TRUE</code> and <code>similarity = FALSE</code>, then results will be rescaled
 from zero to one by dividing by the total number of splits in the pair
 of trees being considered.</p>
+<p>Trees need not contain identical leaves; scores are based on the leaves that
+trees hold in common.  Check for unexpected differences in tip labelling
+with <code>setdiff(TipLabels(tree1), TipLabels(tree2))</code>.</p>
     </div>
     <div id="references">
     <h2>References</h2>

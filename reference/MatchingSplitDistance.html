@@ -26,7 +26,7 @@ Matching Split Distance
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.6.3</span>
       </span>
     </div>
 
@@ -177,6 +177,12 @@ split.</p></dd>
 <p><code>MatchingSplitDistance()</code> returns an array of numerics providing the
 distances between each  pair of trees in <code>tree1</code> and <code>tree2</code>,
 or <code>splits1</code> and <code>splits2</code>.</p>
+    </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>Trees need not contain identical leaves; scores are based on the leaves that
+trees hold in common.  Check for unexpected differences in tip labelling
+with <code>setdiff(TipLabels(tree1), TipLabels(tree2))</code>.</p>
     </div>
     <div id="normalization">
     <h2>Normalization</h2>

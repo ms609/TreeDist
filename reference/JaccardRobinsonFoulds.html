@@ -27,7 +27,7 @@ Generalized Robinson–Foulds metric."><!-- mathjax --><script src="https://cdnj
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.6.3</span>
       </span>
     </div>
 
@@ -222,6 +222,9 @@ a slightly faster implementation of this metric is available as
 <code><a href="NyeSimilarity.html">NyeSimilarity()</a></code>.</p>
 <p>The examples section below details how to visualize matchings with
 non-default parameter values.</p>
+<p>Trees need not contain identical leaves; scores are based on the leaves that
+trees hold in common.  Check for unexpected differences in tip labelling
+with <code>setdiff(TipLabels(tree1), TipLabels(tree2))</code>.</p>
     </div>
     <div id="normalization">
     <h2>Normalization</h2>
