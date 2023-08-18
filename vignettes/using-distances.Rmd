@@ -269,8 +269,9 @@ resolution by taking the consensus of this tree and three trees from its
 immediate neighbourhood (one NNI move away).
 
 ```{r}
-treeSearchInstalled <- requireNamespace("TreeSearch", quietly = TRUE)
-if (treeSearchInstalled && packageVersion("TreeSearch") > "1.3.2") {
+treeSearchInstalled <- requireNamespace("TreeSearch", quietly = TRUE) &&
+  packageVersion("TreeSearch") > "1.3.2"
+if (treeSearchInstalled) {
   library("TreeSearch", quietly = TRUE) # for TBR, NNI
   oneAway <- structure(lapply(seq_len(200), function(x) {
     tbrTree <- TBR(trueTree)
