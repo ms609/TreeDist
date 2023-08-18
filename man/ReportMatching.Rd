@@ -7,7 +7,7 @@
 ReportMatching(splits1, splits2, realMatch = TRUE)
 }
 \arguments{
-\item{splits, splits1, splits2}{Logical matrices with columns specifying membership
+\item{splits1, splits2}{Logical matrices with columns specifying membership
 of each corresponding matched clade.}
 }
 \value{

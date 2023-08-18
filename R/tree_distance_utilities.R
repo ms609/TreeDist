@@ -408,8 +408,6 @@ CompareAll <- function(x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
 #' @param infoInBoth Numeric specifying information content of both trees
 #' independently (optional)
 #' @param how Method for normalization
-#' @param Func Function that takes as inputs `tree1Info` and `tree2Info`, and
-#' returns a normalizing constant against which to divide `unnormalized`.
 #' @param \dots Additional parameters to `InfoInTree()` or `how`.
 #' @keywords internal
 #' @template MRS
@@ -551,7 +549,7 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
 }
 
 #' List clades as text
-#' @param splits,splits1,splits2 Logical matrices with columns specifying membership
+#' @param splits1,splits2 Logical matrices with columns specifying membership
 #' of each corresponding matched clade.
 #' @return `ReportMatching` returns a character vector describing each pairing 
 #' in a matching.
