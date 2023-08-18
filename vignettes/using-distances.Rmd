@@ -270,7 +270,7 @@ immediate neighbourhood (one NNI move away).
 
 ```{r}
 treeSearchInstalled <- requireNamespace("TreeSearch", quietly = TRUE)
-if (treeSearchInstalled) {
+if (treeSearchInstalled && packageVersion("TreeSearch") > "1.3.2") {
   library("TreeSearch", quietly = TRUE) # for TBR, NNI
   oneAway <- structure(lapply(seq_len(200), function(x) {
     tbrTree <- TBR(trueTree)
