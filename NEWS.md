@@ -1,4 +1,4 @@
-# TreeDist 2.6.3 (development)
+# TreeDist 2.6.3 (2023-08-25)
 
 - Fix bug when comparing a "multiPhylo" object containing a single tree.
 
