@@ -32,7 +32,9 @@ using namespace std;
 // [[Rcpp::export]]
 List lapjv (NumericMatrix x, NumericVector maxX) {
   const int16 n_row = x.nrow(), n_col = x.ncol(),
-               max_dim = (n_row > n_col) ? n_row : n_col;
+              max_dim = (n_row > n_col) ? n_row : n_col,
+              spare_rows = n_row - n_col
+              ;
   const cost max_score = BIG / max_dim;
   const double x_max = maxX[0];
   
@@ -41,7 +43,9 @@ List lapjv (NumericMatrix x, NumericVector maxX) {
   cost *u = new cost[max_dim], *v = new cost[max_dim];
   
   cost** input = new cost*[max_dim];
-  for (int16 i = 0; i != max_dim; i++) input[i] = new cost[max_dim];
+  for (int16 i = 0; i != max_dim; i++) {
+    input[i] = new cost[max_dim];
+  }
   
   for (int16 r = n_row; r--;) {
     for (int16 c = n_col; c--;) {
@@ -58,9 +62,9 @@ List lapjv (NumericMatrix x, NumericVector maxX) {
   }
   
   cost score = lap(max_dim, input, rowsol, colsol, u, v);
-  NumericVector matching (max_dim);
-  for (int16 i = 0; i != max_dim; i++) {
-    matching[i] = rowsol[i] + 1;
+  IntegerVector matching (n_row);
+  for (int16 i = 0; i != n_row; i++) {
+    matching[i] = rowsol[i] < n_col ? rowsol[i] + 1 : NA_INTEGER;
   }
   
   delete [] u;
@@ -70,8 +74,11 @@ List lapjv (NumericMatrix x, NumericVector maxX) {
   for (int16 i = 0; i != max_dim; i++) delete [] input[i];
   delete [] input;
   
-  return List::create(Named("score") = double(score) / max_score * x_max,
-                      _["matching"] = matching);
+  return List::create(
+    Named("score") = (double(score) - (std::abs(spare_rows) * max_score))
+    / max_score * x_max,
+    _["matching"] = matching
+  );
 }
 
 bool nontrivially_less_than(cost a, cost b) {

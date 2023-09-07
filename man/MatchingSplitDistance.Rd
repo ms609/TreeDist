@@ -54,6 +54,11 @@ Calculate the
 \href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#matching-split-distance}{Matching Split Distance}
 \insertCite{Bogdanowicz2012,Lin2012}{TreeDist} for unrooted binary trees.
 }
+\details{
+Trees need not contain identical leaves; scores are based on the leaves that
+trees hold in common.  Check for unexpected differences in tip labelling
+with \code{setdiff(TipLabels(tree1), TipLabels(tree2))}.
+}
 \section{Normalization}{
 
 

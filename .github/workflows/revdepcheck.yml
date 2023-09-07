@@ -1,3 +1,5 @@
+name: rev-dep-check
+
 on:
   push:
     branches:
@@ -40,13 +42,13 @@ on:
       - "**.R[dD]ata"
       - "**.Rpro*"
 
-name: revdep-check
-
+# Not using ms609/revdepcheck as pak fails with external dependencies
+# https://github.com/r-lib/actions/issues/534
 jobs:
   mem-check:
-    runs-on: macOS-latest
+    runs-on: ubuntu-latest
 
-    name: revdepcheck, macOS, R release
+    name: revdepcheck, R release
 
     env:
       _R_CHECK_CRAN_INCOMING_: true # Seemingly not set by --as-cran

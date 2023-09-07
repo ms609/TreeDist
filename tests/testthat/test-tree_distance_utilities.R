@@ -321,4 +321,28 @@ test_that(".SharedOnly() works", {
            balCH)
       )
   )
+  
+  t1 <- structure(list(
+    t1_1 = structure(list(edge = structure(
+      c(7L, 8L, 9L, 9L, 8L, 7L, 10L, 10L, 11L, 11L, 8L, 9L, 1L, 6L, 2L, 10L, 
+        3L, 11L, 4L, 5L), dim = c(10L, 2L)),
+      Nnode = 5L, tip.label = c("1", "2", "3", "4", "5", "6")),
+      order = "preorder", class = "phylo"),
+    t1_2 = structure(list(edge = structure(
+      c(7L, 8L, 8L, 7L, 9L, 10L, 10L, 9L, 11L, 11L, 8L, 1L, 6L, 9L, 10L, 2L, 3L,
+        11L, 4L, 5L), dim = c(10L, 2L)),
+      Nnode = 5L, tip.label = c("1", "2", "3", "4", "5", "6")),
+      order = "preorder", class = "phylo")),
+    firstHit = c(seed = 0, final = 2), class = "multiPhylo")
+  t2 <- structure(list(
+    t2_1 = structure(list(
+      edge = structure(c(6L, 6L, 7L, 7L, 8L, 8L, 9L, 9L, 1L, 7L, 2L, 8L, 3L, 9L,
+                         4L, 5L), dim = c(8L, 2L)),
+      Nnode = 4L, tip.label = c("2", "3", "4", "5", "6")), order = "preorder",
+      class = "phylo")),
+    firstHit = c(seed = 0, final = 1), class = "multiPhylo")
+  expect_equal(class(.SharedOnly(t1, t2)[[2]][[1]]), class(t2[[1]]))
+  expect_equal(class(.SharedOnly(t2, t1)[[1]][[1]]), class(t2[[1]]))
+  expect_equal(class(.SharedOnly(t2, t2)[[1]][[1]]), class(t2[[1]]))
+  
 })

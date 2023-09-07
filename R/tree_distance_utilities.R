@@ -408,8 +408,6 @@ CompareAll <- function(x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
 #' @param infoInBoth Numeric specifying information content of both trees
 #' independently (optional)
 #' @param how Method for normalization
-#' @param Func Function that takes as inputs `tree1Info` and `tree2Info`, and
-#' returns a normalizing constant against which to divide `unnormalized`.
 #' @param \dots Additional parameters to `InfoInTree()` or `how`.
 #' @keywords internal
 #' @template MRS
@@ -520,6 +518,9 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
       ret
     } else {
       # Case: N vs 1
+      if (inherits(tree2, "multiPhylo")) {
+        tree2 <- tree2[[1]]
+      }
       commonLeaves <- lapply(if (is.list(lab1)) lab1 else list(lab1),
                              intersect, lab2)
       list(.mapply(KeepTip, list(tree1, commonLeaves), NULL),
@@ -528,6 +529,9 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
   } else {
     if (.MultipleTrees(tree2)) {
       # Case: 1 vs N
+      if (inherits(tree1, "multiPhylo")) {
+        tree1 <- tree1[[1]]
+      }
       commonLeaves <- lapply(if (is.list(lab2)) lab2 else list(lab2),
                              intersect, lab1)
       list(lapply(commonLeaves, function (common) KeepTip(tree1, common)),
@@ -545,7 +549,7 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
 }
 
 #' List clades as text
-#' @param splits,splits1,splits2 Logical matrices with columns specifying membership
+#' @param splits1,splits2 Logical matrices with columns specifying membership
 #' of each corresponding matched clade.
 #' @return `ReportMatching` returns a character vector describing each pairing 
 #' in a matching.

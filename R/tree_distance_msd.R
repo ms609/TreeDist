@@ -4,6 +4,10 @@
 #' [Matching Split Distance](https://ms609.github.io/TreeDist/articles/Generalized-RF.html#matching-split-distance)
 #' \insertCite{Bogdanowicz2012,Lin2012}{TreeDist} for unrooted binary trees.
 #' 
+#' Trees need not contain identical leaves; scores are based on the leaves that
+#' trees hold in common.  Check for unexpected differences in tip labelling
+#' with `setdiff(TipLabels(tree1), TipLabels(tree2))`.
+#' 
 #' @inheritParams TreeDistance
 #' 
 #' @templateVar returns `MatchingSplitDistance()` returns
