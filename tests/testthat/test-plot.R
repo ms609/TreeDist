@@ -138,8 +138,8 @@ test_that("VisualizeMatching() works", {
 })
 
 test_that("VisualizeMatching() handles unrooted trees", {
-  skip_if(packageVersion("graphics") < "4.3")
-  skip_if(packageVersion("vdiffr") < "1.0")
+  skip_if_not_installed("graphics", "4.3")
+  skip_if_not_installed("vdiffr", "1.0")
   
   
   vdiffr::expect_doppelganger("VM unrooted", function() {
