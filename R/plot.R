@@ -21,15 +21,20 @@ TreeDistPlot <- function(tr, title = NULL, bold = NULL, leaveRoom = FALSE,
                           prune = integer(0), graft = integer(0),
                           edge.color = "black", edge.width = NULL, ...) {
   
-  if (is.null(tr$edge.length)) tr$edge.length <- rep(1, dim(tr$edge)[1])
+  nEdge <- dim(tr$edge)[1]
+  if (is.null(tr$edge.length)) {
+    tr$edge.length <- rep(1, nEdge)
+  }
   if (is.null(edge.width)) {
     edge.width <- if (is.null(tr$edge.width)) {
-      rep(1, dim(tr$edge)[1])
+      rep(1, nEdge)
     } else {
       tr$edge.width
     }
   }
-  if (length(edge.color) == 1) edge.color <- rep(edge.color, dim(tr$edge)[1])
+  if (length(edge.color) == 1) {
+    edge.color <- rep(edge.color, nEdge)
+  }
   nTip <- length(tr$tip.label)
   if (all(tr$tip.label %in% LETTERS)) {
     tr$tip.label <- match(tr$tip.label, LETTERS)
@@ -48,11 +53,22 @@ TreeDistPlot <- function(tr, title = NULL, bold = NULL, leaveRoom = FALSE,
 
   tipNumbers <- tr$tip.label
   font <- rep(1L, length(tipNumbers))
-  if (!is.null(bold)) font[tipNumbers %in% bold] <- 4L
-  yLim <- if (leaveRoom) c(-0.4 - 8 # = -0.4 - length(legendSequence)
-                           , nTip) else c(-0.4, nTip)
-  tr$tip.label <- LETTERS[as.integer(tipNumbers)]
-  plot.phylo(tr, tip.color = tipCols[as.integer(tipNumbers)], 
+  if (!is.null(bold)) {
+    font[tipNumbers %in% bold] <- 4L
+  }
+  yLim <- if (leaveRoom) {
+    c(-0.4 - 8, # = -0.4 - length(legendSequence)
+      nTip) 
+  } else {
+    c(-0.4, nTip)
+  }
+  tipInts <- tryCatch(as.integer(tipNumbers),
+                      warning = function(e) {
+                        warning("Leaves of `tr` must be labelled with integers")
+                      })
+  
+  tr$tip.label <- LETTERS[tipInts]
+  plot.phylo(tr, tip.color = tipCols[tipInts],
              main = title, cex.main = 0.8, font = font, 
              edge.width = edge.width, edge.color = edge.color, 
              y.lim=yLim, ...)
@@ -61,7 +77,8 @@ TreeDistPlot <- function(tr, title = NULL, bold = NULL, leaveRoom = FALSE,
 #' Visualise a matching
 #' 
 #' Depict the splits that are matched between two trees using a specified 
-#' [Generalized Robinson&ndash;Foulds](https://ms609.github.io/TreeDist/articles/Generalized-RF.html)
+#' [Generalized Robinson&ndash;Foulds](
+#' https://ms609.github.io/TreeDist/articles/Generalized-RF.html)
 #' similarity measure.
 #' 
 #' Note that when visualizing a Robinson&ndash;Foulds distance (using 
