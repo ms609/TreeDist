@@ -140,7 +140,6 @@ test_that("VisualizeMatching() works", {
 test_that("MST example plots as expected", {
   skip_if_not_installed("graphics", "4.3")
   skip_if_not_installed("vdiffr", "1.0")
-  skip_if_not_installed("TreeTools", "1.6.0.9008")
   vdiffr::expect_doppelganger("MST example plot", function() {
     distances <- structure(
       c(3, 2.3, 2.3, 2.3, 3, 1.7, 2.3, 2.3, 2.3, 4.5, 4.5, 1.7, 1.7, 2.3, 3,
