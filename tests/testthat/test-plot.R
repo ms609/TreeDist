@@ -1,6 +1,15 @@
 library("TreeTools")
 
-test_that("TreeDistPlot works", {
+test_that("TreeDistPlot() warns", {
+  expect_warning(
+    expect_warning(
+      expect_null(TreeDist::TreeDistPlot(PectinateTree(8))),
+      "Leaves.*must be labelled with integers"),
+    "fewer than 2 tips" # From plot.phylo: I don't understand why!
+  )
+})
+
+test_that("TreeDistPlot() works", {
   tr <- PectinateTree(1:11)
   tr$edge.width <- rep(1:2, 10)
   Test1 <- function() {
