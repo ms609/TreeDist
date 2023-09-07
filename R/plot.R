@@ -18,8 +18,8 @@
 #' @keywords internal
 #' @export
 TreeDistPlot <- function(tr, title = NULL, bold = NULL, leaveRoom = FALSE,
-                          prune = integer(0), graft = integer(0),
-                          edge.color = "black", edge.width = NULL, ...) {
+                         prune = integer(0), graft = integer(0),
+                         edge.color = "black", edge.width = NULL, ...) {
   
   nEdge <- dim(tr$edge)[1]
   if (is.null(tr$edge.length)) {
