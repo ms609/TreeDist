@@ -1,6 +1,15 @@
 library("TreeTools")
 
-test_that("TreeDistPlot works", {
+test_that("TreeDistPlot() warns", {
+  expect_warning(
+    expect_warning(
+      expect_null(TreeDist::TreeDistPlot(PectinateTree(8))),
+      "Leaves.*must be labelled with integers"),
+    "fewer than 2 tips" # From plot.phylo: I don't understand why!
+  )
+})
+
+test_that("TreeDistPlot() works", {
   tr <- PectinateTree(1:11)
   tr$edge.width <- rep(1:2, 10)
   Test1 <- function() {
@@ -134,6 +143,29 @@ test_that("VisualizeMatching() works", {
     tree1 <- RootTree(as.phylo(704564, 10), paste0("t", c(1, 4, 5, 8, 9)))
     tree2 <- RootTree(as.phylo(20165 , 10), paste0("t", c(1, 4)))
     VisualizeMatching(JRF2, tree1, tree2, matchZeros = FALSE)
+  })
+})
+
+test_that("VisualizeMatching() handles unrooted trees", {
+  skip_if_not_installed("graphics", "4.3")
+  skip_if_not_installed("vdiffr", "1.0")
+  
+  vdiffr::expect_doppelganger("VM unrooted", function() {
+    par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.5)
+    tree1 <- UnrootTree(BalancedTree(1:5))
+    tree2 <- UnrootTree(PectinateTree(1:5))
+    VisualizeMatching(RobinsonFouldsMatching, tree1, tree2,
+                      setPar = FALSE,
+                      Plot = TreeDistPlot)
+  })
+  
+  vdiffr::expect_doppelganger("VM one rooted", function() {
+    par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.5)
+    tree1 <- UnrootTree(BalancedTree(1:5))
+    tree2 <- PectinateTree(1:5)
+    VisualizeMatching(RobinsonFouldsMatching, tree1, tree2,
+                      setPar = FALSE,
+                      Plot = TreeDistPlot)
   })
 })
 

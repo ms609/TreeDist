@@ -1,3 +1,9 @@
+# TreeDist 2.6.3.9000 (development)
+
+- Support unrooted trees in `VisualizeMatching()`
+  ([#103](https://github.com/ms609/TreeDist/issues/103)).
+
+
 # TreeDist 2.6.3 (2023-08-25)
 
 - Fix bug when comparing a "multiPhylo" object containing a single tree.
