@@ -189,7 +189,9 @@ The evidence for the visually apparent clustering is not as strong as it first
 appears.  Let's explore our two-cluster hierarchical clustering solution anyway.
 
 ```{r chosen-cluster}
-cluster <- hClusters[[2 - 1]]
+nClusters <- 2
+whichResult <- match(nClusters, possibleClusters)
+cluster <- hClusters[[whichResult]]
 ```
 
 
