@@ -294,7 +294,9 @@ strong evidence <span class="citation">(Kaufman &amp; Rousseeuw,
 as strong as it first appears. Let’s explore our two-cluster
 hierarchical clustering solution anyway.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cluster</span> <span class="op">&lt;-</span> <span class="va">hClusters</span><span class="op">[[</span><span class="fl">2</span> <span class="op">-</span> <span class="fl">1</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">nClusters</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
+<span><span class="va">whichResult</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/match.Splits.html" class="external-link">match</a></span><span class="op">(</span><span class="va">nClusters</span>, <span class="va">possibleClusters</span><span class="op">)</span></span>
+<span><span class="va">cluster</span> <span class="op">&lt;-</span> <span class="va">hClusters</span><span class="op">[[</span><span class="va">whichResult</span><span class="op">]</span><span class="op">]</span></span></code></pre></div>
 <p>We can visualize the clustering solution as a tree:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">hTree</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"hclust"</span></span>
