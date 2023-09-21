@@ -1,3 +1,7 @@
+# TreeDist 2.6.3.9001 (development)
+
+- Support for distances between larger trees
+
 # TreeDist 2.6.3.9000 (development)
 
 - Support unrooted trees in `VisualizeMatching()`

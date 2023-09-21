@@ -89,6 +89,14 @@
 #' to be "correct", use `normalize = SplitwiseInfo(trueTree)` (SPI, MSI) or
 #' `ClusteringEntropy(trueTree)` (MCI).
 #'
+#' # Limitations
+#' 
+#' To balance memory demands and runtime with flexibility, these functions are
+#' implemented for trees with up to 2048 leaves.
+#' To analyse larger trees you will need to install a modified version of
+#' "TreeTools" using 
+#' `devtools::install_github("ms609/TreeTools", rel = "more-leaves")`.
+#' You may then need to re-install "TreeDist".
 #' 
 #' @template tree12ListParams
 #' 

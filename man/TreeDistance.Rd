@@ -226,6 +226,15 @@ to be "correct", use \code{normalize = SplitwiseInfo(trueTree)} (SPI, MSI) or
 \code{ClusteringEntropy(trueTree)} (MCI).
 }
 
+\section{Limitations}{
+To balance memory demands and runtime with flexibility, these functions are
+implemented for trees with up to 2048 leaves.
+To analyse larger trees you will need to install a modified version of
+"TreeTools" using
+\code{devtools::install_github("ms609/TreeTools", rel = "more-leaves")}.
+You may then need to re-install "TreeDist".
+}
+
 \examples{
 tree1 <- ape::read.tree(text="((((a, b), c), d), (e, (f, (g, h))));")
 tree2 <- ape::read.tree(text="(((a, b), (c, d)), ((e, f), (g, h)));")
