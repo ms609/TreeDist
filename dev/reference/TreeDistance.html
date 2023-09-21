@@ -25,7 +25,7 @@ proposed in Smith (2020)."><meta name="robots" content="noindex"><!-- mathjax --
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.6.3.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.6.3.9001</span>
       </span>
     </div>
 
@@ -338,6 +338,15 @@ splits in the most or least informative tree, use <code>normalize = </code><code
 To calculate the relative similarity against a reference tree that is known
 to be "correct", use <code>normalize = SplitwiseInfo(trueTree)</code> (SPI, MSI) or
 <code>ClusteringEntropy(trueTree)</code> (MCI).</p>
+    </div>
+    <div id="limitations">
+    <h2>Limitations</h2>
+    <p>To balance memory demands and runtime with flexibility, these functions are
+implemented for trees with up to 2048 leaves.
+To analyse larger trees you will need to install a modified version of
+"TreeTools" using
+<code>devtools::install_github("ms609/TreeTools", rel = "more-leaves")</code>.
+You may then need to re-install "TreeDist".</p>
     </div>
     <div id="references">
     <h2>References</h2>
