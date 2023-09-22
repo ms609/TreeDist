@@ -20,6 +20,7 @@ library("TreeTools", quietly = TRUE)
 library("TreeDist")
 
 if (!requireNamespace("cluster", quietly = TRUE)) install.packages("cluster")
+if (!requireNamespace("dbscan", quietly = TRUE)) install.packages("dbscan")
 if (!requireNamespace("protoclust", quietly = TRUE)) {
   install.packages("protoclust")
 }
@@ -310,14 +311,16 @@ ui <- fluidPage(theme = "treespace.css",
                                "Hierarchical, centroid linkage" = "hct",
                                "Hierarchical, Ward d\ub2 linkage" = "hwd",
                                "K-means++" = "kmn",
-                               "Spectral" = "spec"),
-                             selected = c("pam", "hmm", "kmn")),
+                               "Spectral" = "spec",
+                               "Density-based" = "opt"),
+                             selected = c("pam", "hmm", "kmn", "opt")),
           sliderInput(inputId = "maxClusters",
                       label = "Maximum cluster number:",
                       min = 2,
                       max = 20,
                       value = 8),
           fluidRow(plotOutput(outputId = "clustQuality", height = "80px")),
+          fluidRow(plotOutput(outputId = "optics", height = "120px")),
         ),
         tabPanel("Display",
           sliderInput(inputId = "dims",
@@ -554,6 +557,8 @@ server <- function(input, output, session) {
     r$treesUpdated,
     input$distance
   )
+  
+  distMat <- reactive(as.matrix(distances()))
   
   ##############################################################################
   # Mapping
@@ -894,7 +899,7 @@ server <- function(input, output, session) {
     reactive({
       spectralEigens <- SpectralEigens(
         distances(),
-        nn = min(ncol(as.matrix(distances())) - 1L, 10),
+        nn = min(ncol(distMat()) - 1L, 10),
         nEig = 3L
       )
       lapply(possibleClusters(), function(k) {
@@ -920,6 +925,15 @@ server <- function(input, output, session) {
   .Ascending <- function(x) {
     order(unique(x))[x]
   }
+  
+  optic <- bindCache(
+    reactive({
+      nTrees <- dim(distMat())[2]
+      dbscan::optics(distances(), 10, min(max(nTrees * 0.4, 6), nTrees * 0.01))
+    }),
+    input$distance
+  )
+  
   
   clusterings <- bindCache(
     reactive({
@@ -1003,6 +1017,11 @@ server <- function(input, output, session) {
             specCluster <- specClusters()[[bestSpec]]$cluster
           }
           
+          incProgress(methInc, detail = "Density-based clustering")
+          if ("opt" %in% input$clustering) {
+            opt <- optic()
+          }
+          
           bestCluster <- c("none", "pam", "hmm", "hsi", "hco", "hav",
                            "hmd", "hct", "hwd", "kmn", "spec")[
                              which.max(c(0, pamSil, hSil, hsiSil, hcoSil,
@@ -1075,7 +1094,7 @@ server <- function(input, output, session) {
   
   mstEnds <- bindCache(
     reactive({
-      dist <- as.matrix(distances())
+      dist <- distMat()
       nRows <- dim(dist)[1]
       withProgress(message = "Calculating MST", {
         selection <- unique(round(seq.int(1, nRows,
@@ -1095,7 +1114,9 @@ server <- function(input, output, session) {
     par(mar = c(2, 0.5, 0, 0.5), xpd = NA, mgp = c(2, 1, 0))
     cl <- clusterings()
     sil <- cl$sil
-    if (length(sil) == 0) sil <- -0.5
+    if (length(sil) == 0) {
+      sil <- -0.5
+    }
     nStop <- 400
     range <- c(0.5, 1)
     negScale <- hcl.colors(nStop, "plasma")[seq(range[1] * nStop, 1,
@@ -1124,6 +1145,14 @@ server <- function(input, output, session) {
            paste0(cl$n, " clusters found with ", cl$method) else 
              paste0("No meaningful clusters found"))
     
+  })
+  
+  output$optics <- renderPlot({
+    if ("opt" %in% input$clustering) {
+      par(mar = c(1.5, 1.5, 0, 0.5), mgp = c(2, 0.5, 0))
+      plot(optic(),  main = "", frame = FALSE)
+      title("Reachability", line = -1, font.main = 1, cex.main = 1)
+    }
   })
   
   observeEvent(input$display, {
@@ -1233,10 +1262,10 @@ server <- function(input, output, session) {
              ContinuousPtCol(seq_along(r$allTrees))
            },
            "dist" = {
-             dat <- as.matrix(distances())[input$which.tree, ]
+             dat <- distMat()[input$which.tree, ]
              message(paste0(round(dat, 2)[1:10], collapse = ", "))
              message(cut(dat, 256)[1:10])
-             ContinuousPtCol(as.matrix(distances())[input$which.tree, ],
+             ContinuousPtCol(distMat()[input$which.tree, ],
                              bigDark = TRUE)
            },
            "discrete" = {

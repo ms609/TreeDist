@@ -52,6 +52,7 @@ Imports:
 Suggests:
   bookdown,
   cluster,
+  dbscan,
   ggplot2,
   hypervolume,
   kdensity,
