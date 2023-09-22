@@ -59,6 +59,20 @@ palettes <- list(
 
 badToGood <- rev(c("#1AB958", "#23B956", "#2BB954", "#31B952", "#37B850", "#3CB84E", "#41B84C", "#45B74A", "#49B749", "#4DB747", "#51B645", "#54B643", "#58B641", "#5BB53F", "#5FB53D", "#62B53C", "#65B43A", "#68B438", "#6BB336", "#6DB335", "#70B333", "#73B231", "#76B230", "#78B12E", "#7BB12C", "#7DB02B", "#80B029", "#82AF28", "#85AF26", "#87AE25", "#8AAE23", "#8CAD22", "#8EAD21", "#91AC1F", "#93AC1E", "#95AB1D", "#97AB1C", "#9AAA1B", "#9CAA1A", "#9EA919", "#A0A918", "#A2A818", "#A4A717", "#A6A716", "#A8A616", "#AAA616", "#ACA515", "#AEA415", "#B0A415", "#B2A315", "#B4A315", "#B6A216", "#B8A116", "#B9A117", "#BBA017", "#BD9F18", "#BF9F18", "#C19E19", "#C29D1A", "#C49D1B", "#C69C1C", "#C79B1D", "#C99A1E", "#CB9A1F", "#CC9920", "#CE9822", "#CF9823", "#D19724", "#D29625", "#D49626", "#D59528", "#D79429", "#D8932A", "#D9932C", "#DB922D", "#DC912E", "#DD9130", "#DF9031", "#E08F33", "#E18F34", "#E28E35", "#E38D37", "#E58C38", "#E68C3A", "#E78B3B", "#E88A3D", "#E98A3E", "#EA8940", "#EB8841", "#EC8843", "#ED8744", "#EE8746", "#EE8647", "#EF8549", "#F0854A", "#F1844C", "#F2844D", "#F2834F", "#F38350", "#F48252", "#F48253", "#F58155", "#F58157", "#F68058", "#F6805A", "#F77F5B", "#F77F5D", "#F87E5E"))
 
+clusteringMethods <- list(
+  "Partitioning around medoids" = "pam",
+  "Spectral" = "spec",
+  "K-means++" = "kmn",
+  "Hierarchical, minimax linkage" = "hmm",
+  "Hierarchical, single linkage" = "hsi",
+  "Hierarchical, complete linkage" = "hco",
+  "Hierarchical, average linkage" = "hav",
+  "Hierarchical, median linkage" = "hmd",
+  "Hierarchical, centroid linkage" = "hct",
+  "Hierarchical, Ward d\ub2 linkage" = "hwd",
+  "Hierarchical, density-based" = "hdb",
+  "OPTICS density-based" = "opt")
+
 Reference <- function(authors, year, title, journal = "",
                        volume = NULL, pages = NULL, doi = NULL,
                        publisher = NULL, editors = NULL) {
@@ -107,6 +121,13 @@ Bien2011 <- Reference(
   doi = "10.1198/jasa.2011.tm10183",
   pages = c(1075, 1084),
   journal = "Journal of the American Statistical Association"
+)
+Campello2015 <- Reference(
+  c("Campello, R.J.G.B.", "Moulavi, D.", "Zimek, A.", "Sander, J."),
+  year = 2015,
+  title = "Hierarchical density estimates for data clustering, visualization, and outlier detection",
+  journal = "ACM Transactions on Knowledge Discovery from Data (TKDD)",
+  volume = 10, pages = c(1, 51), doi = "10.1145/2733381"
 )
 Day1985 <- Reference(
   title = "Optimal algorithms for comparing trees with labeled leaves",
@@ -324,24 +345,17 @@ ui <- fluidPage(theme = "treespace.css",
                              min = 2, max = 100, value = 15)),
           
           checkboxGroupInput("clustering", "Clustering methods",
-                             choices = list(
-                               "Partitioning around medoids" = "pam",
-                               "Hierarchical, minimax linkage" = "hmm",
-                               "Hierarchical, single linkage" = "hsi",
-                               "Hierarchical, complete linkage" = "hco",
-                               "Hierarchical, average linkage" = "hav",
-                               "Hierarchical, median linkage" = "hmd",
-                               "Hierarchical, centroid linkage" = "hct",
-                               "Hierarchical, Ward d\ub2 linkage" = "hwd",
-                               "K-means++" = "kmn",
-                               "Spectral" = "spec",
-                               "Density-based" = "opt"),
-                             selected = c("pam", "hmm", "kmn", "opt")),
+                             choices = clusteringMethods,
+                             selected = c("hdb", "opt")),
+                             #selected = c("pam", "hmm", "kmn", "hdb", "opt")),
           sliderInput(inputId = "maxClusters",
                       label = "Maximum cluster number:",
                       min = 2,
                       max = 20,
                       value = 8),
+          sliderInput(inputId = "densityN",
+                      labe = "Density cluster min. size",
+                      min = 2, max = 30, value = 4, step = 1),
           fluidRow(plotOutput(outputId = "clustQuality", height = "80px")),
           fluidRow(plotOutput(outputId = "optics", height = "120px")),
         ),
@@ -583,6 +597,8 @@ server <- function(input, output, session) {
   
   distMat <- reactive(as.matrix(distances()))
   
+  nPts <- reactive(dim(distMat())[1])
+  
   ##############################################################################
   # Mapping
   ##############################################################################
@@ -725,6 +741,26 @@ server <- function(input, output, session) {
   ##############################################################################
   # Clusterings
   ##############################################################################
+  observeEvent(input$clusterings, {
+    if (densityClustering()) {
+      showElement("densityN")
+    } else {
+      hideElement("densityN")
+    }
+    if (nonDensityClustering()) {
+      showElement("maxClusters")
+    } else {
+      hideElement("maxClusters")
+    }
+    
+    
+  })
+  
+  densityMethods <- c("hdb", "opt")
+  densityClustering <- reactive(any(densityMethods) %in% input$clusterings)
+  nonDensityClustering <- reactive(any(
+    setdiff(clusteringMethods, densityMethods) %in% input$clusterings))
+  
   maxClust <- reactive(min(input$maxClusters, length(r$allTrees) - 1L))
   
   possibleClusters <- reactive(2:maxClust())
@@ -898,6 +934,12 @@ server <- function(input, output, session) {
     input$distance
   )
   
+  hdbClusters <- bindCache(
+    reactive(hdbscan(distances(), minPts = densityMinPts())$cluster),
+    densityMinPts(),
+    r$treesUpdated,
+    input$distance
+  )
   kppClusters <- bindCache(
     reactive({
       lapply(possibleClusters(), function(k) KMeansPP(distances(), k))
@@ -949,21 +991,35 @@ server <- function(input, output, session) {
     order(unique(x))[x]
   }
   
+  densityEps <- reactive(as.numeric(quantile(distances(), 0.025)))
+  densityXi <- reactive(densityEps())
+  densityMinPts <- reactive(input$densityN)
+  
+  NoisySilhouette <- function(x) {
+    inCluster <- as.logical(x)
+    if (any(inCluster)) {
+      mean(cluster::silhouette(x[inCluster],
+                               distMat()[inCluster, inCluster])[, 3])
+    } else {
+      -99
+    }
+  }
+  
   optic <- bindCache(
     reactive({
-      nTrees <- dim(distMat())[2]
-      dbscan::optics(distances(), 10, min(max(nTrees * 0.4, 6), nTrees * 0.01))
+      dbscan::optics(distances(),
+                     eps = min(max(nPts() * 0.4, 6), nPts() * 0.01),
+                     minPts = densityMinPts())
     }),
     input$distance
   )
-  
   
   clusterings <- bindCache(
     reactive({
       if (maxClust() > 1) {
         
-        hSil <- pamSil <- havSil <- kSil <- specSil <-
-          hsiSil <- hcoSil <- hmdSil <- hctSil <- hwdSil <- -99
+        hSil <- pamSil <- havSil <- kSil <- specSil <- hsiSil <- hcoSil <-
+          hmdSil <- hctSil <- hwdSil <- hdbSil <- optSil <- -99
         
         nMethodsChecked <- 10
         methInc <- 1 / nMethodsChecked
@@ -1026,6 +1082,12 @@ server <- function(input, output, session) {
             hctCluster <- hctClusters()[[bestHct]]
           }
           
+          incProgress(methInc, detail = "heirarchical density-based clustering")
+          if ("hdb" %in% input$clustering) {
+            hdbCluster <- hdbClusters()
+            hdbSil <- NoisySilhouette(hdbClusters())
+          }
+          
           incProgress(methInc, detail = "K-means++ clustering")
           if ("kmn" %in% input$clustering) {
             bestK <- which.max(kppSils())
@@ -1042,14 +1104,19 @@ server <- function(input, output, session) {
           
           incProgress(methInc, detail = "Density-based clustering")
           if ("opt" %in% input$clustering) {
-            opt <- optic()
+            db <- extractDBSCAN(optic(), eps_cl = densityEps())
+            dbSil <- NoisySilhouette(db$cluster)
+            #xi <- extractXi(optic(), xi = densityXi())
+            
+            optSil <- dbSil
+            optCluster <- db$cluster
           }
           
           bestCluster <- c("none", "pam", "hmm", "hsi", "hco", "hav",
-                           "hmd", "hct", "hwd", "kmn", "spec")[
+                           "hmd", "hct", "hwd", "hdb", "kmn", "spec", "opt")[
                              which.max(c(0, pamSil, hSil, hsiSil, hcoSil,
-                                         havSil, hmdSil, hctSil,
-                                         hwdSil, kSil, specSil))]
+                                         havSil, hmdSil, hctSil, hwdSil, 
+                                         hdbSil, kSil, specSil, optSil))]
           
         })
       } else {
@@ -1066,8 +1133,10 @@ server <- function(input, output, session) {
                         hmd = "median linkage",
                         hct = "centroid linkage",
                         hwd = "Ward d\ub2 linkage",
+                        hdb = "HDBSCAN",
                         kmn = "K-means++",
                         spec = "spectral",
+                        opt = "density-based",
                         "no attempt to find any"),
         n = 1 + switch(bestCluster,
                        pam = bestPam,
@@ -1078,8 +1147,10 @@ server <- function(input, output, session) {
                        hmd = bestHmd,
                        hct = bestHct,
                        hwd = bestHwd,
+                       hdb = length(unique(hdbCluster)) - 1,
                        har = bestHav, kmn = bestK,
                        spec = bestSpec,
+                       opt = length(unique(optCluster)) - 1,
                        0),
         sil = switch(bestCluster,
                      pam = pamSil,
@@ -1090,7 +1161,9 @@ server <- function(input, output, session) {
                      hmd = hmdSil,
                      hct = hctSil,
                      hwd = hwdSil,
-                     kmn = kSil, spec = specSil, 
+                     hdb = hdbSil,
+                     kmn = kSil, spec = specSil,
+                     opt = optSil,
                      0), 
         cluster = .Ascending(switch(
           bestCluster,
@@ -1102,13 +1175,16 @@ server <- function(input, output, session) {
           hmd = hmdCluster,
           hct = hctCluster,
           hwd = hwdCluster,
+          hdb = hdbCluster,
           kmn = kCluster,
           spec = specCluster,
+          opt = optCluster,
           1))
       )
     }),
     input$clustering,
     maxClust(),
+    densityMinPts(),
     r$treesUpdated,
     input$distance
   )
@@ -1118,7 +1194,7 @@ server <- function(input, output, session) {
   mstEnds <- bindCache(
     reactive({
       dist <- distMat()
-      nRows <- dim(dist)[1]
+      nRows <- nPts()
       withProgress(message = "Calculating MST", {
         selection <- unique(round(seq.int(1, nRows,
                                           length.out = max(2L, mstSize()))))
@@ -1175,6 +1251,7 @@ server <- function(input, output, session) {
       par(mar = c(1.5, 1.5, 0, 0.5), mgp = c(2, 0.5, 0))
       plot(optic(),  main = "", frame = FALSE)
       title("Reachability", line = -1, font.main = 1, cex.main = 1)
+      abline(h = densityEps(), col = 2, lty = 2)
     }
   })
   
@@ -1273,8 +1350,12 @@ server <- function(input, output, session) {
              hide("pt.col.scale")
              cl <- clusterings()
              if (cl$sil > 0.25) {
-               palettes[[min(length(palettes), cl$n)]][cl$cluster]
-             } else palettes[[1]]
+               ifelse(cl$cluster == 0,
+                      palettes[[1]],
+                      palettes[[min(length(palettes), cl$n)]][cl$cluster])
+             } else {
+               palettes[[1]]
+             }
            },
            "entry" = {
              hide("pt.col.scale")
@@ -1516,6 +1597,7 @@ server <- function(input, output, session) {
         hmd = "",#paste0("Hierarchical, median linkage:"),
         hct = "",#paste0("Hierarchical, centroid linkage:"),
         hwd = paste0("Hierarchical, Ward d\ub2 linkage: ", Ward1963),
+        hdb = paste0("Hierarchical density-based: ", Campello2015, Hahsler2019),
         kmn = paste0("K-means++:", Arthur2007),
         spec = "",#paste0("Spectral:")
         opt = paste0("Density-based clustering: ",
