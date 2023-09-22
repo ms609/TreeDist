@@ -118,25 +118,35 @@ Estabrook1985 <- Reference(
   doi = "10.2307/sysbio/34.2.193",
   journal = "Systematic Zoology"
 )
-Farris1973 <- Reference(title = "On comparing the shapes of taxonomic trees",
-                        author = "Farris, J.S.",
-                        year = 1973,
-                        volume = 22,
-                        pages = c(50, 54),
-                        doi = "10.2307/2412378",
-                        journal = "Systematic Zoology")
-Gower1966 <- Reference(  title = "Some distance properties of latent root and vector methods used in multivariate analysis",
-                         author = "Gower, J.C.",
-                         year = 1966,
-                         volume = 53,
-                         pages = c(325, 338),
-                         doi = "10.2307/2333639",
-                         journal = "Biometrika")
+Farris1973 <- Reference(
+  title = "On comparing the shapes of taxonomic trees",
+  author = "Farris, J.S.",
+  year = 1973,
+  volume = 22,
+  pages = c(50, 54),
+  doi = "10.2307/2412378",
+  journal = "Systematic Zoology"
+)
+Gower1966 <- Reference(
+  title = "Some distance properties of latent root and vector methods used in multivariate analysis",
+  author = "Gower, J.C.",
+  year = 1966, volume = 53, pages = c(325, 338),
+  doi = "10.2307/2333639",
+  journal = "Biometrika"
+)
 Gower1969 <- Reference(
   title = "Minimum spanning trees and single linkage cluster analysis",
   author = c("Gower, J.C.", "Ross, G.J.S."),
   year = 1969, volume = 18, pages = c(54, 64), doi = "10.2307/2346439",
   journal = "Journal of the Royal Statistical Society. Series C (Applied Statistics)")
+Hahsler2019 <- Reference(
+  author = c("Hahsler, M.", "Piekenbrock, M.", "Doran, D."),
+  title = "dbscan: Fast Density-Based Clustering with R",
+  year = 2019, volume = 91,
+  doi = "10.18637/jss.v091.i01",
+  journal = "Journal of Statistical Software",
+  pages = c(1, 30)
+)
 Kendall2016 <- Reference(
   c("Kendall, M.", "Colijn, C"), 2016,
   "Mapping phylogenetic trees to reveal distinct patterns of evolution",
@@ -1494,7 +1504,8 @@ server <- function(input, output, session) {
         hct = "",#paste0("Hierarchical, centroid linkage:"),
         hwd = paste0("Hierarchical, Ward d\ub2 linkage: ", Ward1963),
         kmn = paste0("K-means++:", Arthur2007),
-        spec = ""#paste0("Spectral:")
+        spec = "",#paste0("Spectral:")
+        opt = paste0("Density-based clustering: ", Hahsler2019)
         )[input$clustering])),
       HTML(paste("Cluster consensus trees:", Stockham2002))
     ))
