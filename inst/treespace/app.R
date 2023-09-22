@@ -85,7 +85,13 @@ Reference <- function(authors, year, title, journal = "",
          "</p>")
 }
 
-
+Ankerst1999 <- Reference(
+  c("Ankerst, M.", "Breunig, M.M.", "Kriegel, H.P.", "Sander, J."),
+  year = 1999,
+  title = "OPTICS: Ordering Points to Identify the Clustering Structure.",
+  journal = "Proceedings of the 1999 ACM SIGMOD International Conference on Management of Data",
+  pages = c(49, 60)
+)
 Arthur2007 <- Reference(
   c("Arthur, D.", "Vassilvitskii, S"),
   title = "k-means++: the advantages of careful seeding",
@@ -117,6 +123,13 @@ Estabrook1985 <- Reference(
   pages = c(193, 200),
   doi = "10.2307/sysbio/34.2.193",
   journal = "Systematic Zoology"
+)
+Ester1996 <- Reference(
+  c("Ester, M.", "Kriegel, H.P.", "Sander, J.", "Xu, X.", "et al."),
+  year = 1996,
+  title = "A Density-Based Algorithm for Discovering Clusters in Large Spatial Databases with Noise.",
+  journal = "KDD '96 Proceedings of the Second International Conference on Knowledge Discovery and Data Mining",
+  volume = 96, pages = c(226, 231)
 )
 Farris1973 <- Reference(
   title = "On comparing the shapes of taxonomic trees",
@@ -1505,7 +1518,8 @@ server <- function(input, output, session) {
         hwd = paste0("Hierarchical, Ward d\ub2 linkage: ", Ward1963),
         kmn = paste0("K-means++:", Arthur2007),
         spec = "",#paste0("Spectral:")
-        opt = paste0("Density-based clustering: ", Hahsler2019)
+        opt = paste0("Density-based clustering: ",
+                     Ankerst1999, Ester1996, Hahsler2019)
         )[input$clustering])),
       HTML(paste("Cluster consensus trees:", Stockham2002))
     ))
