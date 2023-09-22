@@ -72,6 +72,7 @@ clusteringMethods <- list(
   "Hierarchical, Ward d\ub2 linkage" = "hwd",
   "Hierarchical, density-based" = "hdb",
   "OPTICS density-based" = "opt")
+densityMethods <- c("hdb", "opt")
 
 Reference <- function(authors, year, title, journal = "",
                        volume = NULL, pages = NULL, doi = NULL,
@@ -354,8 +355,8 @@ ui <- fluidPage(theme = "treespace.css",
                       max = 20,
                       value = 8),
           sliderInput(inputId = "densityN",
-                      labe = "Density cluster min. size",
-                      min = 2, max = 30, value = 4, step = 1),
+                      labe = "Minimum d-b. cluster size",
+                      min = 2, max = 30, value = 7, step = 1),
           fluidRow(plotOutput(outputId = "clustQuality", height = "80px")),
           fluidRow(plotOutput(outputId = "optics", height = "120px")),
         ),
@@ -741,7 +742,12 @@ server <- function(input, output, session) {
   ##############################################################################
   # Clusterings
   ##############################################################################
-  observeEvent(input$clusterings, {
+  
+  densityClustering <- reactive(any(densityMethods %in% input$clustering))
+  nonDensityClustering <- reactive(any(
+    setdiff(unlist(clusteringMethods), densityMethods) %in% input$clustering))
+  
+  bindEvent(observe(input$clustering), {
     if (densityClustering()) {
       showElement("densityN")
     } else {
@@ -752,14 +758,8 @@ server <- function(input, output, session) {
     } else {
       hideElement("maxClusters")
     }
-    
-    
   })
   
-  densityMethods <- c("hdb", "opt")
-  densityClustering <- reactive(any(densityMethods) %in% input$clusterings)
-  nonDensityClustering <- reactive(any(
-    setdiff(clusteringMethods, densityMethods) %in% input$clusterings))
   
   maxClust <- reactive(min(input$maxClusters, length(r$allTrees) - 1L))
   

@@ -46,7 +46,7 @@ Imports:
   memoise,
   phangorn (>= 2.2.1),
   Rdpack (>= 0.7),
-  shiny,
+  shiny (>= 1.6),
   shinyjs,
   TreeTools (>= 1.7.2),
 Suggests:
