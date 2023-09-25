@@ -97,14 +97,14 @@ for a command-line interface.
 
 \references{
 \itemize{
-\item \insertRef{Bocker2013}{TreeDist}
-\item \insertRef{Bogdanowicz2012}{TreeDist}
-\item \insertRef{Kendall2016}{TreeDist}
-\item \insertRef{Li1996}{TreeDist}
-\item \insertRef{Lin2012}{TreeDist}
-\item \insertRef{Nye2006}{TreeDist}
-\item \insertRef{SmithDist}{TreeDist}
-\item \insertRef{SmithSpace}{TreeDist}
+\item \insertRef{Bocker2013}{BigTreeDist}
+\item \insertRef{Bogdanowicz2012}{BigTreeDist}
+\item \insertRef{Kendall2016}{BigTreeDist}
+\item \insertRef{Li1996}{BigTreeDist}
+\item \insertRef{Lin2012}{BigTreeDist}
+\item \insertRef{Nye2006}{BigTreeDist}
+\item \insertRef{SmithDist}{BigTreeDist}
+\item \insertRef{SmithSpace}{BigTreeDist}
 }
 }
 \seealso{

@@ -19,7 +19,7 @@ StrainCol(
 points.}
 
 \item{mstEnds}{Two-column matrix identifying rows of \code{mapping} at end of
-each edge of the MST, as output by \code{\link[TreeTools:MSTEdges]{TreeTools::MSTEdges()}}.}
+each edge of the MST, as output by \code{\link[BigTreeTools:MSTEdges]{BigTreeTools::MSTEdges()}}.}
 
 \item{\dots}{Additional arguments to \code{\link[=segments]{segments()}}.}
 

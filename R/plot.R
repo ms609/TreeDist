@@ -277,7 +277,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
 #' @param mapping Two-column matrix giving _x_ and _y_ coordinates of plotted
 #' points.
 #' @param mstEnds Two-column matrix identifying rows of `mapping` at end of
-#' each edge of the MST, as output by [`TreeTools::MSTEdges()`].
+#' each edge of the MST, as output by [`BigTreeTools::MSTEdges()`].
 #' @param distances Matrix or `dist` object giving original distances between
 #' each pair of points.
 #' @param palette Vector of colours with which to colour edges.

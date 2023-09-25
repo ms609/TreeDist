@@ -112,21 +112,21 @@
 #' 
 #' @references
 #' 
-#' - \insertRef{Bocker2013}{TreeDist}
+#' - \insertRef{Bocker2013}{BigTreeDist}
 #' 
-#' - \insertRef{Bogdanowicz2012}{TreeDist}
+#' - \insertRef{Bogdanowicz2012}{BigTreeDist}
 #' 
-#' - \insertRef{Kendall2016}{TreeDist}
+#' - \insertRef{Kendall2016}{BigTreeDist}
 #' 
-#' - \insertRef{Li1996}{TreeDist}
+#' - \insertRef{Li1996}{BigTreeDist}
 #' 
-#' - \insertRef{Lin2012}{TreeDist}
+#' - \insertRef{Lin2012}{BigTreeDist}
 #' 
-#' - \insertRef{Nye2006}{TreeDist}
+#' - \insertRef{Nye2006}{BigTreeDist}
 #' 
-#' - \insertRef{SmithDist}{TreeDist}
+#' - \insertRef{SmithDist}{BigTreeDist}
 #' 
-#' - \insertRef{SmithSpace}{TreeDist}
+#' - \insertRef{SmithSpace}{BigTreeDist}
 #' 
 #' @encoding UTF-8
 #' @keywords internal
