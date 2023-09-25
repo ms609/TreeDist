@@ -33,7 +33,7 @@ First we'll install the package.
 We can either install the stable version from the CRAN repository:
 
 ```r
-install.packages('TreeDist')
+install.packages('BigTreeDist')
 ```
 
 or the development version, from GitHub -- which will contain the latest
@@ -46,7 +46,7 @@ devtools::install_github('ms609/TreeDist')
 Then we'll load the package in to R's working environment:
 
 ```{r load-package, message=FALSE}
-library('TreeDist')
+library('BigTreeDist')
 ```
 
 Now the package's functions are available within R.

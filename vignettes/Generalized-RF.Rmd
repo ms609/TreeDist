@@ -12,7 +12,7 @@ vignette: >
 
 ```{r init, message=FALSE, warning=FALSE, echo = FALSE}
 library('ape')
-library('TreeDist')
+library('BigTreeDist')
 tree1 <- read.tree(text='((A, B), ((C, (D, E)), (F, (G, (H, I)))));')
 tree2 <- read.tree(text='((A, B), ((C, D, (E, I)), (F, (G, H))));')
 AtoJ <-  read.tree(text='(((((A, B), C), D), E), (F, (G, (H, (I, J)))));')

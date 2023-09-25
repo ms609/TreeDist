@@ -60,7 +60,7 @@ The information held in common between the trees is thus equal to the
 information held in common if only the common leaves are retained:
 
 ```{r drop-some}
-library("TreeDist")
+library("BigTreeDist")
 commonTips <- intersect(TipLabels(balAL), TipLabels(balCL))
 
 # How much information is in tree balCL?

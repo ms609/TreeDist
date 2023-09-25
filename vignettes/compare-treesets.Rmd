@@ -54,7 +54,7 @@ styles <- c(1, 2) # Select plotting colours / symbols
 treeStyle <- rep(styles, c(length(batch1), length(batch2)))
 
 # Calculate distances
-library("TreeDist")
+library("BigTreeDist")
 distances <- ClusteringInfoDistance(c(batch1, batch2))
 
 # Construct over-simple 2D PCoA mapping

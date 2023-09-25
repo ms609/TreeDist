@@ -12,7 +12,7 @@ vignette: >
 
 ```{r init, echo=FALSE, warning=FALSE, message=FALSE}
 library('ape')
-library('TreeDist')
+library('BigTreeDist')
 standardMargin <- c(0.4, 0.4, 0.8, 0.4)
 cbPalette8 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
                 "#0072B2", "#D55E00", "#CC79A7")
