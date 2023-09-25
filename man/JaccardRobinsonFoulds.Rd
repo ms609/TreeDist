@@ -69,9 +69,9 @@ or \code{splits1} and \code{splits2}.
 }
 \description{
 Calculate the
-\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric}{Jaccard–Robinson–Foulds metric}
-\insertCite{Bocker2013}{TreeDist}, a
-\href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson–Foulds metric}.
+\href{https://ms609.github.io/BigTreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric}{Jaccard–Robinson–Foulds metric}
+\insertCite{Bocker2013}{BigTreeDist}, a
+\href{https://ms609.github.io/BigTreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson–Foulds metric}.
 }
 \details{
 In short, the Jaccard–Robinson–Foulds
@@ -82,12 +82,12 @@ Matchings are scored according to the size of the largest split that is
 consistent with both of them, normalized against the Jaccard index, and
 raised to an arbitrary exponent.
 A more detailed explanation is provided in the
-\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric}{vignettes}.
+\href{https://ms609.github.io/BigTreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric}{vignettes}.
 
 By default, conflicting splits may be paired.
 
 Note that the settings \verb{k = 1, allowConflict = TRUE, similarity = TRUE}
-give the similarity metric of \insertCite{Nye2006;textual}{TreeDist};
+give the similarity metric of \insertCite{Nye2006;textual}{BigTreeDist};
 a slightly faster implementation of this metric is available as
 \code{\link[=NyeSimilarity]{NyeSimilarity()}}.
 

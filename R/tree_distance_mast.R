@@ -1,11 +1,11 @@
 #' Maximum Agreement Subtree size
 #' 
 #' Calculate the size or phylogenetic information content 
-#' \insertCite{Steel2006}{TreeDist}
+#' \insertCite{Steel2006}{BigTreeDist}
 #' of the maximum agreement subtree between two phylogenetic trees, i.e.
 #' the largest tree that can be obtained from both `tree1` and `tree2` by
 #' deleting, but not rearranging, leaves, using the algorithm of
-#' \insertCite{Valiente2009;textual}{TreeDist}.
+#' \insertCite{Valiente2009;textual}{BigTreeDist}.
 #' 
 #' Implemented for trees with up to 4096 tips.  Contact the maintainer if you
 #' need to process larger trees.
@@ -53,7 +53,7 @@ MASTSize <- function(tree1, tree2 = tree1, rooted = TRUE) {
 }
 
 #' @importFrom ape drop.tip
-#' @importFrom TreeTools Postorder RenumberTips TreeIsRooted RootOnNode
+#' @importFrom BigTreeTools Postorder RenumberTips TreeIsRooted RootOnNode
 .MASTSizeSingle <- function(tree1, tree2, rooted = TRUE,
                              tipLabels = tree1$tip.label,
                              ...) {
@@ -99,7 +99,7 @@ MASTSize <- function(tree1, tree2 = tree1, rooted = TRUE) {
 #' @rdname MASTSize
 #' @return `MASTInfo()` returns a vector or matrix listing the phylogenetic
 #' information content, in bits, of the maximum agreement subtree.
-#' @importFrom TreeTools Log2Rooted.int Log2Unrooted.int
+#' @importFrom BigTreeTools Log2Rooted.int Log2Unrooted.int
 #' @export
 MASTInfo <- function(tree1, tree2 = tree1, rooted = TRUE) {
   size <- MASTSize(tree1, tree2, rooted = rooted)

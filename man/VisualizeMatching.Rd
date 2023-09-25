@@ -43,7 +43,7 @@ similarity of the associated splits (\code{FALSE}).}
 }
 \description{
 Depict the splits that are matched between two trees using a specified
-\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html}{Generalized Robinson–Foulds}
+\href{https://ms609.github.io/BigTreeDist/articles/Generalized-RF.html}{Generalized Robinson–Foulds}
 similarity measure.
 }
 \details{

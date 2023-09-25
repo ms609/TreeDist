@@ -104,7 +104,7 @@ TreeDistPlot <- function(tr, title = NULL, bold = NULL, leaveRoom = FALSE,
 #' @importFrom ape nodelabels edgelabels plot.phylo
 #' @importFrom colorspace qualitative_hcl sequential_hcl
 #' @importFrom graphics par
-#' @importFrom TreeTools as.Splits
+#' @importFrom BigTreeTools as.Splits
 #' 
 #' @examples 
 #' tree1 <- TreeTools::BalancedTree(6)
@@ -270,7 +270,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
 #' 
 #' To identify strain in a multidimensional scaling of distances, it can be
 #' useful to plot a minimum spanning tree
-#' \insertCite{Gower1966,SmithSpace}{TreeDist}.  Colouring each edge of the
+#' \insertCite{Gower1966,SmithSpace}{BigTreeDist}.  Colouring each edge of the
 #' tree according to its strain can identify areas where the mapping is
 #' stretched or compressed.
 #' 
@@ -323,7 +323,7 @@ MSTSegments <- function(mapping, mstEnds, ...) {
 #' early in `palette` assigned to edges in which the ratio of mapped
 #' distance to original distance is small.
 #' @importFrom grDevices hcl.colors
-#' @importFrom TreeTools MSTEdges
+#' @importFrom BigTreeTools MSTEdges
 #' @export
 StrainCol <- function(distances, mapping, mstEnds = MSTEdges(distances),
                       palette = rev(hcl.colors(256L, "RdYlBu"))) {

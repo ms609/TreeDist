@@ -84,7 +84,7 @@ in the splits within a tree". Its approach is complementary to the
 phylogenetic information content, used in \code{\link[=SplitwiseInfo]{SplitwiseInfo()}}.
 In essence, it asks, given a split that subdivides the leaves of a tree into
 two partitions, how easy it is to predict which partition a randomly drawn
-leaf belongs to \insertCite{@Meila2007; @Vinh2010}{TreeDist}.
+leaf belongs to \insertCite{@Meila2007; @Vinh2010}{BigTreeDist}.
 
 Formally, the entropy of a split \emph{S} that divides \emph{n} leaves into two
 partitions of sizes \emph{a} and \emph{b} is given by
@@ -134,7 +134,7 @@ requires fewer than two bits for two leaves, so the entropy is less than
 of A and B.)
 
 As entropy measures the bits required to transmit the cluster label of each
-leaf \insertCite{@Vinh2010: p. 2840}{TreeDist}, the information content of
+leaf \insertCite{@Vinh2010: p. 2840}{BigTreeDist}, the information content of
 a split is its entropy multiplied by the number of leaves.
 }
 
@@ -143,7 +143,7 @@ a split is its entropy multiplied by the number of leaves.
 
 Phylogenetic information expresses the information content of a split
 in terms of the probability that a uniformly selected tree will contain it
-\insertCite{Thorley1998}{TreeDist}.
+\insertCite{Thorley1998}{BigTreeDist}.
 }
 
 \section{Consensus information}{
@@ -152,7 +152,7 @@ in terms of the probability that a uniformly selected tree will contain it
 The information content of splits in a consensus tree is calculated by
 interpreting support values (i.e. the proportion of trees containing
 each split in the consensus) as probabilities that the true tree contains
-that split, following \insertCite{SmithCons;textual}{TreeDist}.
+that split, following \insertCite{SmithCons;textual}{BigTreeDist}.
 }
 
 \examples{
@@ -203,7 +203,7 @@ ConsensusInfo(trees, "clustering")
 \seealso{
 An introduction to the phylogenetic information content of a split is given
 in \href{https://ms609.github.io/TreeTools/reference/SplitInformation.html}{\code{SplitInformation()}}
-and in a \href{https://ms609.github.io/TreeDist/articles/information.html}{package vignette}.
+and in a \href{https://ms609.github.io/BigTreeDist/articles/information.html}{package vignette}.
 
 Other information functions: 
 \code{\link{SplitEntropy}()},

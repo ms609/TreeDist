@@ -1,6 +1,6 @@
 .onUnload <- function(libpath) {
   StopParallel(quietly = TRUE)
-  library.dynam.unload("TreeDist", libpath)
+  library.dynam.unload("BigTreeDist", libpath)
 }
 
 ## Reminders when releasing for CRAN

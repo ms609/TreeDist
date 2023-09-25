@@ -24,11 +24,11 @@ measured in bits.
 }
 \description{
 Compare a pair of splits viewed as clusterings of taxa, using the variation
-of clustering information proposed by \insertCite{Meila2007}{TreeDist}.
+of clustering information proposed by \insertCite{Meila2007}{BigTreeDist}.
 }
 \details{
 This is equivalent to the mutual clustering information
-\insertCite{Vinh2010}{TreeDist}.
+\insertCite{Vinh2010}{BigTreeDist}.
 For the total information content, multiply the VoI by the number of leaves.
 }
 \examples{

@@ -2,7 +2,7 @@
 #define _TREEDIST_INFO_H
 
 #include <cmath> /* for log2() */
-#include <TreeTools/ClusterTable.h> /* for CT_MAX_LEAVES */
+#include <BigTreeTools/ClusterTable.h> /* for CT_MAX_LEAVES */
 
 #include "ints.h" /* for int16 */
 

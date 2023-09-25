@@ -100,7 +100,7 @@ A list of references employed when constructing the tree space is populated
 according to the methods used; it would be appropriate to cite and briefly
 discuss these studies in any publication using figures generated using
 this application.  The application itself can be cited using
-\insertCite{SmithDist,SmithSpace;textual}{TreeDist}
+\insertCite{SmithDist,SmithSpace;textual}{BigTreeDist}
 }
 
 \references{
@@ -108,7 +108,7 @@ this application.  The application itself can be cited using
 }
 \seealso{
 Full detail of tree space analysis in R is provided in the accompanying
-\href{https://ms609.github.io/TreeDist/articles/treespace.html}{vignette}.
+\href{https://ms609.github.io/BigTreeDist/articles/treespace.html}{vignette}.
 
 Other tree space functions: 
 \code{\link{MSTSegments}()},

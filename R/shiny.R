@@ -95,7 +95,7 @@
 #' according to the methods used; it would be appropriate to cite and briefly 
 #' discuss these studies in any publication using figures generated using
 #' this application.  The application itself can be cited using 
-#' \insertCite{SmithDist,SmithSpace;textual}{TreeDist}
+#' \insertCite{SmithDist,SmithSpace;textual}{BigTreeDist}
 #'  
 #' 
 #' @seealso
@@ -112,7 +112,7 @@
 #' @importFrom shinyjs useShinyjs
 #' @export
 MapTrees <- function() {
-  appDir <- system.file("treespace", package = "TreeDist")
+  appDir <- system.file("treespace", package = "BigTreeDist")
   if (appDir == "") {
     stop("Could not find example directory. Try re-installing 'TreeDist'.", 
          call. = FALSE)

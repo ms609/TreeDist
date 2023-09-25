@@ -31,7 +31,7 @@ once the splits have been arranged such that \emph{A1} fully overlaps with \emph
 trees consistent with two splits.
 
 \code{SplitSharedInformation()} returns the phylogenetic information that two splits
-have in common \insertCite{Meila2007}{TreeDist}, in bits.
+have in common \insertCite{Meila2007}{BigTreeDist}, in bits.
 
 \code{SplitDifferentInformation()} returns the amount of phylogenetic information
 distinct to one of the two splits, in bits.
@@ -39,7 +39,7 @@ distinct to one of the two splits, in bits.
 \description{
 Calculate the phylogenetic information shared, or not shared, between two
 splits.
-See the \href{https://ms609.github.io/TreeDist/articles/information.html}{accompanying vignette}
+See the \href{https://ms609.github.io/BigTreeDist/articles/information.html}{accompanying vignette}
 for definitions.
 }
 \details{

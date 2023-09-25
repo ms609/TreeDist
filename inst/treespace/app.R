@@ -16,8 +16,8 @@ suppressPackageStartupMessages({
   library("shiny", exclude = "runExample")
   library("shinyjs", exclude = "runExample")
 })
-library("TreeTools", quietly = TRUE)
-library("TreeDist")
+library("BigTreeTools", quietly = TRUE)
+library("BigTreeDist")
 
 if (!requireNamespace("cluster", quietly = TRUE)) install.packages("cluster")
 if (!requireNamespace("protoclust", quietly = TRUE)) {

@@ -86,15 +86,15 @@ or \code{splits1} and \code{splits2}.
 }
 \description{
 Calculate the Robinson–Foulds distance
-\insertCite{Robinson1981}{TreeDist}, or
+\insertCite{Robinson1981}{BigTreeDist}, or
 the equivalent similarity measure, with options to
 (i) annotate matched splits;
 (ii) weight splits according to their phylogenetic information content
-\insertCite{SmithDist}{TreeDist}.
+\insertCite{SmithDist}{BigTreeDist}.
 Whilst slower to calculate, information theoretic modifications of the
 Robinson–Foulds distance (see \code{\link[=TreeDistance]{TreeDistance()}})
 are better suited to most use cases
-\insertCite{SmithDist,SmithSpace}{TreeDist}.
+\insertCite{SmithDist,SmithSpace}{BigTreeDist}.
 }
 \details{
 Note that if \code{reportMatching = TRUE}, the \code{pairScores} attribute returns
@@ -107,7 +107,7 @@ to be identical by chance alone make a smaller contribution to overall
 tree distance, because their similarity is less remarkable.
 
 Rapid comparison between multiple pairs of trees employs the
-\insertCite{Day1985;textual}{TreeDist} linear-time algorithm.
+\insertCite{Day1985;textual}{BigTreeDist} linear-time algorithm.
 }
 \section{Functions}{
 \itemize{

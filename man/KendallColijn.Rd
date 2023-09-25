@@ -29,13 +29,13 @@ or lists of such trees to undergo pairwise comparison.  Where implemented,
 
 \code{KCVector}, the default, returns the number of edges between the common
 ancestor of each pair of leaves and the root of the tree
-\insertCite{@per @Kendall2016}{TreeDist}.
+\insertCite{@per @Kendall2016}{BigTreeDist}.
 
 \code{PathVector} returns the number of edges between each pair of leaves
-\insertCite{@per @Steel1993}{TreeDist}.
+\insertCite{@per @Steel1993}{BigTreeDist}.
 
 \code{SplitVector} returns the size of the smallest split that contains each
-pair of leaves (per \insertCite{SmithSpace;nobrackets}{TreeDist}).}
+pair of leaves (per \insertCite{SmithSpace;nobrackets}{BigTreeDist}).}
 
 \item{tree}{A tree of class \code{\link[ape:read.tree]{phylo}}.}
 }
@@ -68,32 +68,32 @@ of the squares of the differences between the vectors.
 
 An analogous distance can be created from any vector representation of a
 tree.
-The split size vector metric \insertCite{SmithSpace}{TreeDist} is an attempt
+The split size vector metric \insertCite{SmithSpace}{BigTreeDist} is an attempt
 to mimic the Kendall Colijn metric in situations where the position of
 the root should not be afforded special significance; and the path distance
-\insertCite{Steel1993}{TreeDist} is a familiar alternative whose underlying
+\insertCite{Steel1993}{BigTreeDist} is a familiar alternative whose underlying
 vector measures the distance of the last common ancestor of each pair
 of leaves from the leaves themselves, i.e. the length of the path from one
 leaf to another.
 
 None of these vector-based methods performs as well as other tree distances
 in measuring similarities in the relationships implied by a pair of trees
-\insertCite{SmithDist}{TreeDist}; in particular, the Kendall Colijn
+\insertCite{SmithDist}{BigTreeDist}; in particular, the Kendall Colijn
 metric is strongly influenced by tree balance, and may not be appropriate
-for a suite of common applications \insertCite{SmithSpace}{TreeDist}.
+for a suite of common applications \insertCite{SmithSpace}{BigTreeDist}.
 }
 \section{Functions}{
 \itemize{
 \item \code{KCVector()}: Creates a vector that characterises a rooted tree,
-as described in \insertCite{Kendall2016;textual}{TreeDist}.
+as described in \insertCite{Kendall2016;textual}{BigTreeDist}.
 
 \item \code{PathVector()}: Creates a vector reporting the number of edges
 between each pair of leaves, per the path metric of
-\insertCite{Steel1993;textual}{TreeDist}.
+\insertCite{Steel1993;textual}{BigTreeDist}.
 
 \item \code{SplitVector()}: Creates a vector reporting the smallest split
 containing each pair of leaves, per the metric proposed in
-\insertCite{SmithSpace;textual}{TreeDist}.
+\insertCite{SmithSpace;textual}{BigTreeDist}.
 
 }}
 \examples{
@@ -120,7 +120,7 @@ KCDiameter(4)
 \insertAllCited{}
 }
 \seealso{
-\href{https://CRAN.R-project.org/package=treespace/vignettes/introduction.html}{\code{treespace::treeDist}}
+\href{https://CRAN.R-project.org/package=treespace/vignettes/introduction.html}{\code{treespace::BigTreeDist}}
 is a more sophisticated, if more cumbersome, implementation that supports
 lambda > 0, i.e. use of edge lengths in tree comparison.
 

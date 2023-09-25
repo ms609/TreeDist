@@ -21,7 +21,7 @@
 #' Faithfulness of mapped distances
 #' 
 #' `MappingQuality()` calculates the trustworthiness and continuity
-#' of mapped distances \insertCite{Venna2001,Kaski2003}{TreeDist}.
+#' of mapped distances \insertCite{Venna2001,Kaski2003}{BigTreeDist}.
 #' Trustworthiness measures, on a scale from 0--1,
 #' the degree to which points that are nearby in a mapping are truly close
 #' neighbours; continuity, the extent to which points that are truly nearby 

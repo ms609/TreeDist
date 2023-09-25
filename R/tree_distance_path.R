@@ -9,15 +9,15 @@
 #' 
 #' The path distance is calculated by tabulating the cladistic difference (=
 #' topological distance) between each pair of tips in each tree.
-#' A precursor to the path distance \insertCite{Farris1969}{TreeDist}
+#' A precursor to the path distance \insertCite{Farris1969}{BigTreeDist}
 #' took the mean squared 
 #' difference between the elements of each tree's tabulation (Farris, 1973);
 #' the method used here is that proposed by
-#' \insertCite{Steel1993;textual}{TreeDist}, which takes the square root of this
+#' \insertCite{Steel1993;textual}{BigTreeDist}, which takes the square root of this
 #' sum.
 #' Other precursor measures are described in 
-#' \insertCite{Williams1971;textual}{TreeDist} and
-#' \insertCite{Phipps1971;textual}{TreeDist}.
+#' \insertCite{Williams1971;textual}{BigTreeDist} and
+#' \insertCite{Phipps1971;textual}{BigTreeDist}.
 #' 
 #' If a root node is present, trees are treated as rooted.
 #' To avoid counting the root edge twice, use `UnrootTree(tree)` before
@@ -25,7 +25,7 @@
 #' 
 #' Use of the path distance is discouraged as it emphasizes 
 #' shallow relationships at the expense of deeper (and arguably more
-#' fundamental) relationships \insertCite{Farris1973}{TreeDist}.
+#' fundamental) relationships \insertCite{Farris1973}{BigTreeDist}.
 #' 
 #' @template tree12ListParams
 #' 
@@ -54,7 +54,7 @@
 #' @template MRS
 #' @family tree distances
 #' @importFrom phangorn path.dist
-#' @importFrom TreeTools Postorder
+#' @importFrom BigTreeTools Postorder
 #' @export
 PathDist <- function(tree1, tree2 = NULL) {
   if (inherits(tree1, "phylo")) {

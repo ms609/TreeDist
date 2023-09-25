@@ -1,7 +1,7 @@
 #ifndef _TREEDIST_TREE_DISTANCES_H
 #define _TREEDIST_TREE_DISTANCES_H
 
-#include <TreeTools/SplitList.h>
+#include <BigTreeTools/SplitList.h>
 #include <Rcpp/Lightest>
 
 #include <limits> /* for numeric_limits */

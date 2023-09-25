@@ -21,21 +21,21 @@ Calculate the path distance between rooted or unrooted trees.
 }
 \details{
 This function is a wrapper for the function
-\code{\link[phangorn:treedist]{path.dist()}} in the phangorn package.
+\code{\link[phangorn:BigTreeDist]{path.dist()}} in the phangorn package.
 It pre-processes trees to ensure that their internal representation does
 not cause the \code{path.dist()} function to crash R.
 
 The path distance is calculated by tabulating the cladistic difference (=
 topological distance) between each pair of tips in each tree.
-A precursor to the path distance \insertCite{Farris1969}{TreeDist}
+A precursor to the path distance \insertCite{Farris1969}{BigTreeDist}
 took the mean squared
 difference between the elements of each tree's tabulation (Farris, 1973);
 the method used here is that proposed by
-\insertCite{Steel1993;textual}{TreeDist}, which takes the square root of this
+\insertCite{Steel1993;textual}{BigTreeDist}, which takes the square root of this
 sum.
 Other precursor measures are described in
-\insertCite{Williams1971;textual}{TreeDist} and
-\insertCite{Phipps1971;textual}{TreeDist}.
+\insertCite{Williams1971;textual}{BigTreeDist} and
+\insertCite{Phipps1971;textual}{BigTreeDist}.
 
 If a root node is present, trees are treated as rooted.
 To avoid counting the root edge twice, use \code{UnrootTree(tree)} before
@@ -43,7 +43,7 @@ calculating the path distance.
 
 Use of the path distance is discouraged as it emphasizes
 shallow relationships at the expense of deeper (and arguably more
-fundamental) relationships \insertCite{Farris1973}{TreeDist}.
+fundamental) relationships \insertCite{Farris1973}{BigTreeDist}.
 }
 \examples{
 library("TreeTools")

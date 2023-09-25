@@ -53,8 +53,8 @@ where \emph{n} is the number of leaves, and \emph{N} the number of internal node
 i.e. \deqn{n - 2}{_n_ &minus; 2}.
 }
 \description{
-Use the approach of \insertCite{Li1996;textual}{TreeDist} to approximate the
-Nearest Neighbour Interchange distance \insertCite{Robinson1971}{TreeDist}
+Use the approach of \insertCite{Li1996;textual}{BigTreeDist} to approximate the
+Nearest Neighbour Interchange distance \insertCite{Robinson1971}{BigTreeDist}
 between phylogenetic trees.
 }
 \details{
@@ -73,7 +73,7 @@ analogue of the mergesort algorithm.  This takes at most \emph{n} log \emph{n} +
 NNI operations, and provides a loose upper bound on the NNI score.
 The maximum number of moves for an \emph{n}-leaf tree
 (\href{https://oeis.org/A182136}{OEIS A182136}) can be calculated exactly for
-small trees \insertCite{Fack2002}{TreeDist}; this provides a tighter upper
+small trees \insertCite{Fack2002}{BigTreeDist}; this provides a tighter upper
 bound, but is unavailable for \emph{n} > 12.
 \code{NNIDiameter()} reports the limits on this bound.
 

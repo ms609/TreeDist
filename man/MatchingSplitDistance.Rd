@@ -51,8 +51,8 @@ or \code{splits1} and \code{splits2}.
 }
 \description{
 Calculate the
-\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#matching-split-distance}{Matching Split Distance}
-\insertCite{Bogdanowicz2012,Lin2012}{TreeDist} for unrooted binary trees.
+\href{https://ms609.github.io/BigTreeDist/articles/Generalized-RF.html#matching-split-distance}{Matching Split Distance}
+\insertCite{Bogdanowicz2012,Lin2012}{BigTreeDist} for unrooted binary trees.
 }
 \details{
 Trees need not contain identical leaves; scores are based on the leaves that
@@ -65,7 +65,7 @@ with \code{setdiff(TipLabels(tree1), TipLabels(tree2))}.
 A normalization value or function must be provided in order to return a
 normalized value.  If you are aware of a generalised formula, please
 let me know by
-\href{https://github.com/ms609/TreeDist/issues/new}{creating a GitHub issue}
+\href{https://github.com/ms609/BigTreeDist/issues/new}{creating a GitHub issue}
 so that it can be implemented.
 }
 

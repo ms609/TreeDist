@@ -24,11 +24,11 @@ information content, in bits, of the maximum agreement subtree.
 }
 \description{
 Calculate the size or phylogenetic information content
-\insertCite{Steel2006}{TreeDist}
+\insertCite{Steel2006}{BigTreeDist}
 of the maximum agreement subtree between two phylogenetic trees, i.e.
 the largest tree that can be obtained from both \code{tree1} and \code{tree2} by
 deleting, but not rearranging, leaves, using the algorithm of
-\insertCite{Valiente2009;textual}{TreeDist}.
+\insertCite{Valiente2009;textual}{BigTreeDist}.
 }
 \details{
 Implemented for trees with up to 4096 tips.  Contact the maintainer if you

@@ -10,7 +10,7 @@ CompareAll(x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...), ...)
 \item{x}{List of trees, in the format expected by \code{Func()}.}
 
 \item{Func}{distance function returning distance between two trees,
-e.g. \code{\link[phangorn:treedist]{path.dist()}}.}
+e.g. \code{\link[phangorn:BigTreeDist]{path.dist()}}.}
 
 \item{FUN.VALUE}{Format of output of \code{Func()}, to be passed to \code{\link[=vapply]{vapply()}}.
 If unspecified, calculated by running \code{Func(x[[1]], x[[1]])}.}

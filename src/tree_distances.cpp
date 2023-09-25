@@ -1,15 +1,15 @@
-#include <TreeTools/SplitList.h>
+#include <BigTreeTools/SplitList.h>
 #include <cmath>
 #include <memory> /* for unique_ptr, make_unique */
 #include <Rcpp/Lightest>
 #include "tree_distances.h"
 
 using namespace Rcpp;
-using TreeTools::SplitList;
-using TreeTools::bitcounts;
-using TreeTools::count_bits;
+using BigTreeTools::SplitList;
+using BigTreeTools::bitcounts;
+using BigTreeTools::count_bits;
 
-TREETOOLS_SPLITLIST_INIT
+BIGTREETOOLS_SPLITLIST_INIT
 
 // [[Rcpp::export]]
 List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y, 

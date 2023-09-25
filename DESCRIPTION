@@ -1,4 +1,4 @@
-Package: TreeDist
+Package: BigTreeDist
 Type: Package
 Title: Calculate and Map Distances Between Phylogenetic Trees
 Version: 2.6.3.9001
@@ -77,7 +77,7 @@ Suggests:
   vdiffr (>= 1.0.0),
 LinkingTo: 
   Rcpp,
-  TreeTools,
+  BigTreeTools,
 RdMacros: Rdpack
 VignetteBuilder: knitr
 Config/Needs/check: rcmdcheck

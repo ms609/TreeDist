@@ -15,7 +15,7 @@ optimal matching;
 and \code{matching}, the columns matched to each row of the matrix in turn.
 }
 \description{
-Use the algorithm of \insertCite{Jonker1987;textual}{TreeDist} to solve the
+Use the algorithm of \insertCite{Jonker1987;textual}{BigTreeDist} to solve the
 \href{http://www.assignmentproblems.com/doc/LSAPIntroduction.pdf}{Linear Sum Assignment Problem}.
 }
 \details{
@@ -23,7 +23,7 @@ The Linear Assignment Problem seeks to match each row of a matrix with a
 column, such that the cost of the matching is minimized.
 
 The Jonker & Volgenant approach is a faster alternative to the Hungarian
-algorithm \insertCite{Munkres1957}{TreeDist}, which is implemented in
+algorithm \insertCite{Munkres1957}{BigTreeDist}, which is implemented in
 \code{clue::solve_LSAP()}.
 
 Note: the JV algorithm expects integers. In order to apply the function

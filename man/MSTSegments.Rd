@@ -39,7 +39,7 @@ distance to original distance is small.
 \description{
 To identify strain in a multidimensional scaling of distances, it can be
 useful to plot a minimum spanning tree
-\insertCite{Gower1966,SmithSpace}{TreeDist}.  Colouring each edge of the
+\insertCite{Gower1966,SmithSpace}{BigTreeDist}.  Colouring each edge of the
 tree according to its strain can identify areas where the mapping is
 stretched or compressed.
 }
