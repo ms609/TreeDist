@@ -203,7 +203,7 @@ ConsensusInfo(trees, "clustering")
 \seealso{
 An introduction to the phylogenetic information content of a split is given
 in \href{https://ms609.github.io/TreeTools/reference/SplitInformation.html}{\code{SplitInformation()}}
-and in a \href{https://ms609.github.io/BigTreeDist/articles/information.html}{package vignette}.
+and in a \href{https://ms609.github.io/TreeDist/articles/information.html}{package vignette}.
 
 Other information functions: 
 \code{\link{SplitEntropy}()},

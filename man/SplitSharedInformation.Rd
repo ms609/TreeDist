@@ -39,7 +39,7 @@ distinct to one of the two splits, in bits.
 \description{
 Calculate the phylogenetic information shared, or not shared, between two
 splits.
-See the \href{https://ms609.github.io/BigTreeDist/articles/information.html}{accompanying vignette}
+See the \href{https://ms609.github.io/TreeDist/articles/information.html}{accompanying vignette}
 for definitions.
 }
 \details{

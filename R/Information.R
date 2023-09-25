@@ -22,7 +22,7 @@
 #' trees consistent with two splits.
 #' 
 #' `SplitSharedInformation()` returns the phylogenetic information that two splits
-#' have in common \insertCite{Meila2007}{TreeDist}, in bits.
+#' have in common \insertCite{Meila2007}{BigTreeDist}, in bits.
 #' 
 #' `SplitDifferentInformation()` returns the amount of phylogenetic information
 #' distinct to one of the two splits, in bits.
@@ -146,8 +146,8 @@ MeilaMutualInformation <- function(split1, split2) {
 #' Variation of information for all split pairings
 #' 
 #' Calculate the variation of clustering information
-#' \insertCite{Meila2007}{TreeDist} for each possible pairing of
-#' non-trivial splits on _n_ leaves \insertCite{SmithDist}{TreeDist},
+#' \insertCite{Meila2007}{BigTreeDist} for each possible pairing of
+#' non-trivial splits on _n_ leaves \insertCite{SmithDist}{BigTreeDist},
 #' tabulating the number of pairings with each similarity.
 #' 
 #' @param n Integer specifying the number of leaves in a tree.
@@ -211,8 +211,8 @@ AllSplitPairings <- memoise(function(n) {
 #' two groups.
 #' Further details are available in a 
 #' [vignette](https://ms609.github.io/TreeDist/articles/information.html),
-#' \insertCite{Mackay2003;textual}{TreeDist} and
-#' \insertCite{Meila2007;textual}{TreeDist}.
+#' \insertCite{Mackay2003;textual}{BigTreeDist} and
+#' \insertCite{Meila2007;textual}{BigTreeDist}.
 #' 
 #' @template split12Params
 #' 

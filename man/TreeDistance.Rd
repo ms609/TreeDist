@@ -142,15 +142,15 @@ phylogenetic or clustering information that two trees hold in common, as
 proposed in Smith (2020).
 }
 \details{
-\href{https://ms609.github.io/BigTreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson–Foulds distances}
+\href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson–Foulds distances}
 calculate tree similarity by finding an
 optimal matching that the similarity between a split on one tree
 and its pair on a second, considering all possible ways to pair splits
 between trees (including leaving a split unpaired).
 
 The methods implemented here use the concepts of
-\href{https://ms609.github.io/BigTreeDist/articles/information.html}{entropy and information}
-\insertCite{Mackay2003}{BigTreeDist} to assign a similarity score between each
+\href{https://ms609.github.io/TreeDist/articles/information.html}{entropy and information}
+\insertCite{Mackay2003}{TreeDist} to assign a similarity score between each
 pair of splits.
 
 The returned tree similarity measures state the amount of information,
@@ -166,7 +166,7 @@ hold information in common nor differ regarding these tips).
 \section{Concepts of information}{
 The phylogenetic (Shannon) information content and entropy of a split are
 defined in
-\href{https://ms609.github.io/BigTreeDist/articles/information.html}{a separate vignette}.
+\href{https://ms609.github.io/TreeDist/articles/information.html}{a separate vignette}.
 
 Using the mutual (clustering) information
 \insertCite{Meila2007,Vinh2010}{BigTreeDist} of two splits to quantify their
@@ -189,7 +189,7 @@ The Matching Split Information measure (\code{MatchingSplitInfo()},
 splits as the phylogenetic information content of the most informative
 split that is consistent with both input splits; \code{MatchingSplitInfoDistance()}
 is the corresponding measure of tree difference.
-(\href{https://ms609.github.io/BigTreeDist/articles/Generalized-RF.html}{More information here}.)
+(\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html}{More information here}.)
 }
 
 \section{Conversion to distances}{
@@ -231,12 +231,12 @@ To balance memory demands and runtime with flexibility, these functions are
 implemented for trees with up to 2048 leaves.
 To analyse trees with up to 8192 leaves, you will need to a modified version
 of \pkg{TreeTools}.
-First uninstall \pkg{BigTreeDist} and \pkg{TreeTools} using \code{remove.packages()}.
+First uninstall \pkg{TreeDist} and \pkg{TreeTools} using \code{remove.packages()}.
 Then use \code{devtools::install_github("ms609/TreeTools", ref = "more-leaves")}
 to install the modified \pkg{TreeTools} package.
-Finally, install \pkg{BigTreeDist} using
-\code{devtools::install_github("ms609/BigTreeDist")}.
-(\pkg{BigTreeDist} will need building from source \emph{after} the modified
+Finally, install \pkg{TreeDist} using
+\code{devtools::install_github("ms609/TreeDist")}.
+(\pkg{TreeDist} will need building from source \emph{after} the modified
 \pkg{TreeTools} package has been installed, as its code links to values
 set in the TreeTools source code.)
 

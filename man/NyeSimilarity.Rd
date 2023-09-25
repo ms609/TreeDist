@@ -68,14 +68,14 @@ or \code{splits1} and \code{splits2}.
 }
 \description{
 \code{NyeSimilarity()} and \code{NyeSplitSimilarity()} implement the
-\href{https://ms609.github.io/BigTreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson–Foulds}
-tree comparison metric of \insertCite{Nye2006;textual}{BigTreeDist}.
+\href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson–Foulds}
+tree comparison metric of \insertCite{Nye2006;textual}{TreeDist}.
 In short, this finds the optimal matching that pairs each branch from
 one tree with a branch in the second, where matchings are scored according to
 the size of the largest split that is consistent with both of them,
 normalized against the Jaccard index.
 A more detailed account is available in the
-\href{https://ms609.github.io/BigTreeDist/articles/Generalized-RF.html#nye-et-al--tree-similarity-metric}{vignettes}.
+\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#nye-et-al--tree-similarity-metric}{vignettes}.
 }
 \details{
 The measure is defined as a similarity score.  If \code{similarity = FALSE}, the

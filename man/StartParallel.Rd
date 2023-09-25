@@ -24,7 +24,7 @@ StopParallel(quietly = FALSE)
 }
 \value{
 \code{StartParallel()} and \code{SetParallel()} return the previous value of
-\code{options("BigTreeDist-cluster")}.
+\code{options("TreeDist-cluster")}.
 
 \code{GetParallel()} returns the currently specified cluster.
 
@@ -35,17 +35,17 @@ StopParallel(quietly = FALSE)
 Accelerate distance calculation by employing multiple \acronym{CPU} workers.
 }
 \details{
-"BigTreeDist" parallelizes the calculation of tree to tree distances via
+"TreeDist" parallelizes the calculation of tree to tree distances via
 the \code{\link[=parCapply]{parCapply()}} function, using a user-defined cluster specified in
-\code{options("BigTreeDist-cluster")}.
+\code{options("TreeDist-cluster")}.
 
-\code{StartParallel()} calls \code{parallel::makeCluster()} and tells "BigTreeDist" to
+\code{StartParallel()} calls \code{parallel::makeCluster()} and tells "TreeDist" to
 use the created cluster.
 
-\code{SetParallel()} tells "BigTreeDist" to use a pre-existing or user-specified
+\code{SetParallel()} tells "TreeDist" to use a pre-existing or user-specified
 cluster.
 
-\code{StopParallel()} stops the current BigTreeDist cluster.
+\code{StopParallel()} stops the current TreeDist cluster.
 }
 \examples{
 if (interactive()) { # Only run in terminal

@@ -21,7 +21,7 @@ Calculate the path distance between rooted or unrooted trees.
 }
 \details{
 This function is a wrapper for the function
-\code{\link[phangorn:BigTreeDist]{path.dist()}} in the phangorn package.
+\code{\link[phangorn:treedist]{path.dist()}} in the phangorn package.
 It pre-processes trees to ensure that their internal representation does
 not cause the \code{path.dist()} function to crash R.
 

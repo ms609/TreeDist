@@ -27,7 +27,7 @@ Calculate the entropy, joint entropy, entropy distance and information
 content of two splits, treating each split as a division of \emph{n} leaves into
 two groups.
 Further details are available in a
-\href{https://ms609.github.io/BigTreeDist/articles/information.html}{vignette},
+\href{https://ms609.github.io/TreeDist/articles/information.html}{vignette},
 \insertCite{Mackay2003;textual}{BigTreeDist} and
 \insertCite{Meila2007;textual}{BigTreeDist}.
 }

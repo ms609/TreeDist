@@ -28,7 +28,7 @@ Approximate the Subtree Prune and Regraft (SPR) distance.
 }
 \details{
 \code{SPRDist()} is a wrapper for the function
-\code{\link[phangorn:BigTreeDist]{SPR.dist()}} in the phangorn package.
+\code{\link[phangorn:treedist]{SPR.dist()}} in the phangorn package.
 It pre-processes trees to ensure that their internal representation does
 not cause the \code{SPR.dist()} function to crash R, and allows an improved
 (but slower) symmetric heuristic.
