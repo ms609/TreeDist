@@ -13,7 +13,7 @@
 #' 
 #' The methods implemented here use the concepts of 
 #' [entropy and information](https://ms609.github.io/TreeDist/articles/information.html)
-#' \insertCite{Mackay2003}{TreeDist} to assign a similarity score between each
+#' \insertCite{Mackay2003}{BigTreeDist} to assign a similarity score between each
 #' pair of splits.
 #' 
 #' The returned tree similarity measures state the amount of information, 

@@ -70,7 +70,7 @@ or \code{splits1} and \code{splits2}.
 \description{
 Calculate the
 \href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric}{Jaccard–Robinson–Foulds metric}
-\insertCite{Bocker2013}{TreeDist}, a
+\insertCite{Bocker2013}{BigTreeDist}, a
 \href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson–Foulds metric}.
 }
 \details{

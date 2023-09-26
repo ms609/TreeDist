@@ -69,7 +69,7 @@ or \code{splits1} and \code{splits2}.
 \description{
 \code{NyeSimilarity()} and \code{NyeSplitSimilarity()} implement the
 \href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson–Foulds}
-tree comparison metric of \insertCite{Nye2006;textual}{TreeDist}.
+tree comparison metric of \insertCite{Nye2006;textual}{BigTreeDist}.
 In short, this finds the optimal matching that pairs each branch from
 one tree with a branch in the second, where matchings are scored according to
 the size of the largest split that is consistent with both of them,
