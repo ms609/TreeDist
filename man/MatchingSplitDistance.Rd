@@ -52,7 +52,7 @@ or \code{splits1} and \code{splits2}.
 \description{
 Calculate the
 \href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#matching-split-distance}{Matching Split Distance}
-\insertCite{Bogdanowicz2012,Lin2012}{TreeDist} for unrooted binary trees.
+\insertCite{Bogdanowicz2012,Lin2012}{BigTreeDist} for unrooted binary trees.
 }
 \details{
 Trees need not contain identical leaves; scores are based on the leaves that

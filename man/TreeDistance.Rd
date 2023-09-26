@@ -150,7 +150,7 @@ between trees (including leaving a split unpaired).
 
 The methods implemented here use the concepts of
 \href{https://ms609.github.io/TreeDist/articles/information.html}{entropy and information}
-\insertCite{Mackay2003}{TreeDist} to assign a similarity score between each
+\insertCite{Mackay2003}{BigTreeDist} to assign a similarity score between each
 pair of splits.
 
 The returned tree similarity measures state the amount of information,
