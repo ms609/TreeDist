@@ -78,6 +78,8 @@ Suggests:
 LinkingTo: 
   Rcpp,
   BigTreeTools,
+Remotes:
+  ms609/TreeTools@more-leaves
 RdMacros: Rdpack
 VignetteBuilder: knitr
 Config/Needs/check: rcmdcheck
