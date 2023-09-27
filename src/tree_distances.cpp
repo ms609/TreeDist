@@ -28,26 +28,26 @@ List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y,
   for (int16 i = a.n_splits; i--; ) matching[i] = NA_INTEGER;
   
   splitbit b_complement[SL_MAX_SPLITS][SL_MAX_BINS];
-  for (int16 i = b.n_splits; i--; ) {
-    for (int16 bin = last_bin; bin--; ) {
+  for (int32 i = b.n_splits; i--; ) {
+    for (int32 bin = last_bin; bin--; ) {
       b_complement[i][bin] = ~b.state[i][bin];
     }
     b_complement[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
-  for (int16 ai = a.n_splits; ai--; ) {
-    for (int16 bi = b.n_splits; bi--; ) {
+  for (int32 ai = a.n_splits; ai--; ) {
+    for (int32 bi = b.n_splits; bi--; ) {
     
       bool all_match = true, all_complement = true;
     
-      for (int16 bin = 0; bin != a.n_bins; ++bin) {
+      for (int32 bin = 0; bin != a.n_bins; ++bin) {
         if ((a.state[ai][bin] != b.state[bi][bin])) {
           all_match = false;
           break;
         }
       }
       if (!all_match) {
-        for (int16 bin = 0; bin != a.n_bins; ++bin) {
+        for (int32 bin = 0; bin != a.n_bins; ++bin) {
           if ((a.state[ai][bin] != b_complement[bi][bin])) {
             all_complement = false;
             break;
