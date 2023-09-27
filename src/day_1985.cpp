@@ -4,10 +4,10 @@ using namespace Rcpp;
 #include "tree_distances.h" /* includes <TreeTools/SplitList.h> */
 #include "information.h"
 
-#include <TreeTools.h> /* for root_on_node() */
-#include <TreeTools/root_tree.h> /* for root_on_node() */
-#include <TreeTools/ClusterTable.h> /* for ClusterTable() */
-using TreeTools::ClusterTable;
+#include <BigTreeTools.h> /* for root_on_node() */
+#include <BigTreeTools/root_tree.h> /* for root_on_node() */
+#include <BigTreeTools/ClusterTable.h> /* for ClusterTable() */
+using BigTreeTools::ClusterTable;
 
 #include <array> /* for array */
 #include <bitset> /* for bitset */

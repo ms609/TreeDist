@@ -22,7 +22,7 @@
 #' trees consistent with two splits.
 #' 
 #' `SplitSharedInformation()` returns the phylogenetic information that two splits
-#' have in common \insertCite{Meila2007}{TreeDist}, in bits.
+#' have in common \insertCite{Meila2007}{BigTreeDist}, in bits.
 #' 
 #' `SplitDifferentInformation()` returns the amount of phylogenetic information
 #' distinct to one of the two splits, in bits.
@@ -47,7 +47,7 @@
 #' @references \insertAllCited{}
 #' 
 #' @family information functions
-#' @importFrom TreeTools Log2TreesMatchingSplit Log2Unrooted
+#' @importFrom BigTreeTools Log2TreesMatchingSplit Log2Unrooted
 #' @export
 SplitSharedInformation <- function(n, A1, A2 = A1) {
   Log2Unrooted(n) +
@@ -57,7 +57,7 @@ SplitSharedInformation <- function(n, A1, A2 = A1) {
 }
 
 #' @describeIn SplitSharedInformation Different information between two splits.
-#' @importFrom TreeTools SplitInformation
+#' @importFrom BigTreeTools SplitInformation
 #' @export
 SplitDifferentInformation <- function(n, A1, A2 = A1) {
   Log2TreesMatchingSplit(A1, n - A1) +
@@ -69,10 +69,10 @@ SplitDifferentInformation <- function(n, A1, A2 = A1) {
 #' Use variation of clustering information to compare pairs of splits
 #' 
 #' Compare a pair of splits viewed as clusterings of taxa, using the variation
-#' of clustering information proposed by \insertCite{Meila2007}{TreeDist}.
+#' of clustering information proposed by \insertCite{Meila2007}{BigTreeDist}.
 #' 
 #' This is equivalent to the mutual clustering information
-#' \insertCite{Vinh2010}{TreeDist}.
+#' \insertCite{Vinh2010}{BigTreeDist}.
 #' For the total information content, multiply the VoI by the number of leaves.
 #' 
 #' @template split12Params
@@ -146,8 +146,8 @@ MeilaMutualInformation <- function(split1, split2) {
 #' Variation of information for all split pairings
 #' 
 #' Calculate the variation of clustering information
-#' \insertCite{Meila2007}{TreeDist} for each possible pairing of
-#' non-trivial splits on _n_ leaves \insertCite{SmithDist}{TreeDist},
+#' \insertCite{Meila2007}{BigTreeDist} for each possible pairing of
+#' non-trivial splits on _n_ leaves \insertCite{SmithDist}{BigTreeDist},
 #' tabulating the number of pairings with each similarity.
 #' 
 #' @param n Integer specifying the number of leaves in a tree.
@@ -211,8 +211,8 @@ AllSplitPairings <- memoise(function(n) {
 #' two groups.
 #' Further details are available in a 
 #' [vignette](https://ms609.github.io/TreeDist/articles/information.html),
-#' \insertCite{Mackay2003;textual}{TreeDist} and
-#' \insertCite{Meila2007;textual}{TreeDist}.
+#' \insertCite{Mackay2003;textual}{BigTreeDist} and
+#' \insertCite{Meila2007;textual}{BigTreeDist}.
 #' 
 #' @template split12Params
 #' 
@@ -259,7 +259,7 @@ SplitEntropy <- function(split1, split2 = split1) {
 
 #' @describeIn SplitSharedInformation Number of trees consistent with two 
 #' splits.
-#' @importFrom TreeTools TreesMatchingSplit NRooted
+#' @importFrom BigTreeTools TreesMatchingSplit NRooted
 #' @export
 TreesConsistentWithTwoSplits <- function(n, A1, A2 = A1) {
   
@@ -306,7 +306,7 @@ TreesConsistentWithTwoSplits <- function(n, A1, A2 = A1) {
 
 #' @describeIn SplitSharedInformation Natural logarithm of 
 #' `TreesConsistentWithTwoSplits()`.
-#' @importFrom TreeTools LnTreesMatchingSplit LnRooted.int
+#' @importFrom BigTreeTools LnTreesMatchingSplit LnRooted.int
 #' @export
 LnTreesConsistentWithTwoSplits <- function(n, A1, A2 = A1) {
   smallSplit <- min(A1, A2)
@@ -326,7 +326,7 @@ LnTreesConsistentWithTwoSplits <- function(n, A1, A2 = A1) {
 
 #' @describeIn SplitSharedInformation Base two logarithm of 
 #' `TreesConsistentWithTwoSplits()`.
-#' @importFrom TreeTools Log2TreesMatchingSplit Log2Rooted.int
+#' @importFrom BigTreeTools Log2TreesMatchingSplit Log2Rooted.int
 #' @export
 Log2TreesConsistentWithTwoSplits <- function(n, A1, A2 = A1) {
   smallSplit <- min(A1, A2)
@@ -346,7 +346,7 @@ Log2TreesConsistentWithTwoSplits <- function(n, A1, A2 = A1) {
 
 #' @describeIn SplitSharedInformation Base 2 logarithm of 
 #' `TreesConsistentWithTwoSplits()`.
-#' @importFrom TreeTools Log2TreesMatchingSplit Log2Rooted.int
+#' @importFrom BigTreeTools Log2TreesMatchingSplit Log2Rooted.int
 #' @export
 Log2TreesConsistentWithTwoSplits <- function(n, A1, A2 = A1) {
   smallSplit <- min(A1, A2)

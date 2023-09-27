@@ -1,6 +1,6 @@
 #' Solve linear assignment problem using LAPJV
 #'
-#' Use the algorithm of \insertCite{Jonker1987;textual}{TreeDist} to solve the 
+#' Use the algorithm of \insertCite{Jonker1987;textual}{BigTreeDist} to solve the 
 #' [Linear Sum Assignment Problem](
 #' http://www.assignmentproblems.com/doc/LSAPIntroduction.pdf).
 #' 
@@ -8,7 +8,7 @@
 #' column, such that the cost of the matching is minimized.
 #' 
 #' The Jonker & Volgenant approach is a faster alternative to the Hungarian
-#' algorithm \insertCite{Munkres1957}{TreeDist}, which is implemented in 
+#' algorithm \insertCite{Munkres1957}{BigTreeDist}, which is implemented in 
 #' `clue::solve_LSAP()`.
 #' 
 #' Note: the JV algorithm expects integers. In order to apply the function

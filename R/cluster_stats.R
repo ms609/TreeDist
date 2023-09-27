@@ -255,7 +255,7 @@ MeanMSTEdge.numeric <- function(x, cluster = 1) {
          numeric(1))
 }
 
-#' @importFrom TreeTools MSTLength
+#' @importFrom BigTreeTools MSTLength
 .MeanMSTEdge <- function(x) {
   n <- dim(x)[1]
   # Return:

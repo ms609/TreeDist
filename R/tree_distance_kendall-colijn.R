@@ -16,10 +16,10 @@
 #' 
 #' An analogous distance can be created from any vector representation of a
 #' tree.
-#' The split size vector metric \insertCite{SmithSpace}{TreeDist} is an attempt
+#' The split size vector metric \insertCite{SmithSpace}{BigTreeDist} is an attempt
 #' to mimic the Kendall&nbsp;Colijn metric in situations where the position of
 #' the root should not be afforded special significance; and the path distance
-#' \insertCite{Steel1993}{TreeDist} is a familiar alternative whose underlying
+#' \insertCite{Steel1993}{BigTreeDist} is a familiar alternative whose underlying
 #' vector measures the distance of the last common ancestor of each pair
 #' of leaves from the leaves themselves, i.e. the length of the path from one 
 #' leaf to another.
@@ -27,22 +27,22 @@
 #' 
 #' None of these vector-based methods performs as well as other tree distances
 #' in measuring similarities in the relationships implied by a pair of trees
-#' \insertCite{SmithDist}{TreeDist}; in particular, the Kendall&nbsp;Colijn
+#' \insertCite{SmithDist}{BigTreeDist}; in particular, the Kendall&nbsp;Colijn
 #' metric is strongly influenced by tree balance, and may not be appropriate
-#' for a suite of common applications \insertCite{SmithSpace}{TreeDist}.
+#' for a suite of common applications \insertCite{SmithSpace}{BigTreeDist}.
 #' 
 #' @template tree12ListParams
 #' @param Vector Function converting a tree to a numeric vector.
 #' 
 #' `KCVector`, the default, returns the number of edges between the common
 #' ancestor of each pair of leaves and the root of the tree
-#' \insertCite{@per @Kendall2016}{TreeDist}.
+#' \insertCite{@per @Kendall2016}{BigTreeDist}.
 #' 
 #' `PathVector` returns the number of edges between each pair of leaves
-#' \insertCite{@per @Steel1993}{TreeDist}.
+#' \insertCite{@per @Steel1993}{BigTreeDist}.
 #' 
 #' `SplitVector` returns the size of the smallest split that contains each
-#' pair of leaves (per \insertCite{SmithSpace;nobrackets}{TreeDist}).
+#' pair of leaves (per \insertCite{SmithSpace;nobrackets}{BigTreeDist}).
 #' 
 #' @templateVar returns `KendallColijn()` returns
 #' @template distReturn
@@ -128,9 +128,9 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
 .EuclideanDistance <- function(x) sqrt(sum(x * x))
 
 #' @describeIn KendallColijn Creates a vector that characterises a rooted tree,
-#' as described in \insertCite{Kendall2016;textual}{TreeDist}.
+#' as described in \insertCite{Kendall2016;textual}{BigTreeDist}.
 #' @param tree A tree of class \code{\link[ape:read.tree]{phylo}}.
-#' @importFrom TreeTools AllAncestors Preorder
+#' @importFrom BigTreeTools AllAncestors Preorder
 #' @importFrom utils combn
 #' @export
 KCVector <- function(tree) {
@@ -154,8 +154,8 @@ KCVector <- function(tree) {
 
 #' @describeIn KendallColijn Creates a vector reporting the number of edges
 #' between each pair of leaves, per the path metric of
-#' \insertCite{Steel1993;textual}{TreeDist}.
-#' @importFrom TreeTools AllAncestors Preorder
+#' \insertCite{Steel1993;textual}{BigTreeDist}.
+#' @importFrom BigTreeTools AllAncestors Preorder
 #' @importFrom utils combn
 #' @export
 PathVector <- function(tree) {
@@ -188,8 +188,8 @@ PathVector <- function(tree) {
 
 #' @describeIn KendallColijn Creates a vector reporting the smallest split
 #' containing each pair of leaves, per the metric proposed in
-#' \insertCite{SmithSpace;textual}{TreeDist}.
-#' @importFrom TreeTools as.Splits
+#' \insertCite{SmithSpace;textual}{BigTreeDist}.
+#' @importFrom BigTreeTools as.Splits
 #' @export
 SplitVector <- function(tree) {
   tipLabel <- tree$tip.label
@@ -216,12 +216,12 @@ SplitVector <- function(tree) {
 #' @examples
 #' KCDiameter(trees)
 #' KCDiameter(4)
-#' @importFrom TreeTools PectinateTree
+#' @importFrom BigTreeTools PectinateTree
 #' @rdname KendallColijn
 #' @export
 KCDiameter <- function(tree) UseMethod("KCDiameter")
 
-#' @importFrom TreeTools NTip
+#' @importFrom BigTreeTools NTip
 #' @export
 KCDiameter.phylo <- function(tree) {
   KCDiameter.numeric(NTip(tree))

@@ -37,8 +37,8 @@ the "TreeDist" R package.  Simply install [R](https://www.r-project.org/) or
 line:
 
 ```r
-install.packages("TreeDist")
-TreeDist::MapTrees()
+install.packages("BigTreeDist")
+BigTreeDist::MapTrees()
 ```
 
 This will allow you to conduct and evaluate basic tree space mappings
@@ -76,7 +76,7 @@ The clustering information distance [@SmithDist] is a reliable alternative
 that is fast to calculate:
 
 ```{r calculate-distances, message=FALSE}
-library("TreeDist")
+library("BigTreeDist")
 distances <- ClusteringInfoDistance(trees)
 ```
 
@@ -301,7 +301,7 @@ two-dimensional tree space plot:
 
 
 ```{r pid, fig.asp = 1, fig.width = 4, fig.align = "center", echo = FALSE, message = FALSE}
-library("TreeDist")
+library("BigTreeDist")
 pid_distances <- PhylogeneticInfoDistance(trees)
 pid_mapping <- cmdscale(pid_distances, k = 6)
 pid_cluster <- cutree(protoclust(pid_distances), k = 2)

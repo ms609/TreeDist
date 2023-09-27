@@ -39,7 +39,7 @@
 #'   
 #' @family tree distances
 #' @importFrom phangorn SPR.dist
-#' @importFrom TreeTools Postorder
+#' @importFrom BigTreeTools Postorder
 #' @export
 SPRDist <- function(tree1, tree2 = NULL, symmetric = TRUE) {
   if (inherits(tree1, "phylo")) {

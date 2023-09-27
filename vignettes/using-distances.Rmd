@@ -37,7 +37,7 @@ Let's work through a simple example using the Nye _et al_. [-@Nye2006]
 similarity metric to compare two imperfectly-resolved trees.
 
 ```{r, fig.width=6, out.width="90%", fig.align="center"}
-library("TreeDist")
+library("BigTreeDist")
 tree1 <- ape::read.tree(text = '(A, ((B, ((C, D), (E, F))), (G, (H, (I, J, K)))));')
 tree2 <- ape::read.tree(text = '(A, (B, (C, D, E, (J, K)), (F, (G, H, I))));')
 VisualizeMatching(NyeSimilarity, tree1, tree2,

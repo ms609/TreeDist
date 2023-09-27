@@ -77,7 +77,7 @@ median(structure(treeList, class = "multiPhylo"))
 \seealso{
 Consensus methods:
 \code{\link[ape:consensus]{ape::consensus()}},
-\code{\link[TreeTools:ConsensusWithout]{TreeTools::ConsensusWithout()}}
+\code{\link[BigTreeTools:ConsensusWithout]{BigTreeTools::ConsensusWithout()}}
 
 Other tree space functions: 
 \code{\link{MSTSegments}()},

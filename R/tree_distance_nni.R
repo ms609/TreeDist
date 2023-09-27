@@ -1,7 +1,7 @@
 #' Approximate Nearest Neighbour Interchange distance
 #' 
-#' Use the approach of \insertCite{Li1996;textual}{TreeDist} to approximate the
-#' Nearest Neighbour Interchange distance \insertCite{Robinson1971}{TreeDist} 
+#' Use the approach of \insertCite{Li1996;textual}{BigTreeDist} to approximate the
+#' Nearest Neighbour Interchange distance \insertCite{Robinson1971}{BigTreeDist} 
 #' between phylogenetic trees.
 #' 
 #' In brief, this approximation algorithm works by identifying edges in one
@@ -19,7 +19,7 @@
 #' NNI operations, and provides a loose upper bound on the NNI score. 
 #' The maximum number of moves for an _n_-leaf tree
 #' ([OEIS A182136](https://oeis.org/A182136)) can be calculated exactly for
-#' small trees \insertCite{Fack2002}{TreeDist}; this provides a tighter upper
+#' small trees \insertCite{Fack2002}{BigTreeDist}; this provides a tighter upper
 #' bound, but is unavailable for _n_ > 12.
 #' `NNIDiameter()` reports the limits on this bound.
 #' 
@@ -70,7 +70,7 @@ NNIDist <- function(tree1, tree2 = tree1) {
   .TreeDistance(.NNIDistSingle, tree1, tree2)
 }
 
-#' @importFrom TreeTools Postorder RenumberTips
+#' @importFrom BigTreeTools Postorder RenumberTips
 #' @importFrom ape Nnode.phylo
 .NNIDistSingle <- function(tree1, tree2, nTip, ...) {
   tree2 <- RenumberTips(tree2, tree1$tip.label)
@@ -151,7 +151,7 @@ NNIDiameter.numeric <- function(tree) {
   )
 }
 
-#' @importFrom TreeTools NTip
+#' @importFrom BigTreeTools NTip
 #' @export
 NNIDiameter.phylo <- function(tree) {
   NNIDiameter(NTip(tree))

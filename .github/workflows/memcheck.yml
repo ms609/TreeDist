@@ -87,6 +87,7 @@ jobs:
           
       - name: Install dependencies
         run: |
+          remotes::install_github("ms609/TreeTools", "more-leaves")
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("devtools")
         shell: Rscript {0}

@@ -1,4 +1,4 @@
 library("testthat", warn.conflicts = FALSE)
-library("TreeDist")
+library("BigTreeDist")
 
-test_check("TreeDist")
+test_check("BigTreeDist")

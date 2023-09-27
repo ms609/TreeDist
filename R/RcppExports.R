@@ -2,54 +2,54 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 COMCLUST <- function(trees) {
-    .Call(`_TreeDist_COMCLUST`, trees)
+    .Call(`_BigTreeDist_COMCLUST`, trees)
 }
 
 consensus_info <- function(trees, phylo, p) {
-    .Call(`_TreeDist_consensus_info`, trees, phylo, p)
+    .Call(`_BigTreeDist_consensus_info`, trees, phylo, p)
 }
 
 robinson_foulds_all_pairs <- function(tables) {
-    .Call(`_TreeDist_robinson_foulds_all_pairs`, tables)
+    .Call(`_BigTreeDist_robinson_foulds_all_pairs`, tables)
 }
 
 lapjv <- function(x, maxX) {
-    .Call(`_TreeDist_lapjv`, x, maxX)
+    .Call(`_BigTreeDist_lapjv`, x, maxX)
 }
 
 cpp_mast <- function(edge1, edge2, nTip) {
-    .Call(`_TreeDist_cpp_mast`, edge1, edge2, nTip)
+    .Call(`_BigTreeDist_cpp_mast`, edge1, edge2, nTip)
 }
 
 cpp_nni_distance <- function(edge1, edge2, nTip) {
-    .Call(`_TreeDist_cpp_nni_distance`, edge1, edge2, nTip)
+    .Call(`_BigTreeDist_cpp_nni_distance`, edge1, edge2, nTip)
 }
 
 cpp_robinson_foulds_distance <- function(x, y, nTip) {
-    .Call(`_TreeDist_cpp_robinson_foulds_distance`, x, y, nTip)
+    .Call(`_BigTreeDist_cpp_robinson_foulds_distance`, x, y, nTip)
 }
 
 cpp_robinson_foulds_info <- function(x, y, nTip) {
-    .Call(`_TreeDist_cpp_robinson_foulds_info`, x, y, nTip)
+    .Call(`_BigTreeDist_cpp_robinson_foulds_info`, x, y, nTip)
 }
 
 cpp_matching_split_distance <- function(x, y, nTip) {
-    .Call(`_TreeDist_cpp_matching_split_distance`, x, y, nTip)
+    .Call(`_BigTreeDist_cpp_matching_split_distance`, x, y, nTip)
 }
 
 cpp_jaccard_similarity <- function(x, y, nTip, k, allowConflict) {
-    .Call(`_TreeDist_cpp_jaccard_similarity`, x, y, nTip, k, allowConflict)
+    .Call(`_BigTreeDist_cpp_jaccard_similarity`, x, y, nTip, k, allowConflict)
 }
 
 cpp_msi_distance <- function(x, y, nTip) {
-    .Call(`_TreeDist_cpp_msi_distance`, x, y, nTip)
+    .Call(`_BigTreeDist_cpp_msi_distance`, x, y, nTip)
 }
 
 cpp_mutual_clustering <- function(x, y, nTip) {
-    .Call(`_TreeDist_cpp_mutual_clustering`, x, y, nTip)
+    .Call(`_BigTreeDist_cpp_mutual_clustering`, x, y, nTip)
 }
 
 cpp_shared_phylo <- function(x, y, nTip) {
-    .Call(`_TreeDist_cpp_shared_phylo`, x, y, nTip)
+    .Call(`_BigTreeDist_cpp_shared_phylo`, x, y, nTip)
 }
 

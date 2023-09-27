@@ -28,8 +28,8 @@ content of two splits, treating each split as a division of \emph{n} leaves into
 two groups.
 Further details are available in a
 \href{https://ms609.github.io/TreeDist/articles/information.html}{vignette},
-\insertCite{Mackay2003;textual}{TreeDist} and
-\insertCite{Meila2007;textual}{TreeDist}.
+\insertCite{Mackay2003;textual}{BigTreeDist} and
+\insertCite{Meila2007;textual}{BigTreeDist}.
 }
 \examples{
 A <- TRUE

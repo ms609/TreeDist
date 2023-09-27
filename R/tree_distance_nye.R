@@ -2,7 +2,7 @@
 #' 
 #' `NyeSimilarity()` and `NyeSplitSimilarity()` implement the 
 #' [Generalized Robinson&ndash;Foulds](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances)
-#' tree comparison metric of \insertCite{Nye2006;textual}{TreeDist}.
+#' tree comparison metric of \insertCite{Nye2006;textual}{BigTreeDist}.
 #' In short, this finds the optimal matching that pairs each branch from
 #' one tree with a branch in the second, where matchings are scored according to
 #' the size of the largest split that is consistent with both of them,
@@ -64,7 +64,7 @@
 #' @family tree distances
 #' 
 #' @encoding UTF-8
-#' @importFrom TreeTools NSplits SplitsInBinaryTree
+#' @importFrom BigTreeTools NSplits SplitsInBinaryTree
 #' @export
 NyeSimilarity <- function(tree1, tree2 = NULL, similarity = TRUE,
                            normalize = FALSE,
@@ -112,7 +112,7 @@ NyeSplitSimilarity <- function(splits1, splits2,
 #' 
 #' Calculate the 
 #' [Jaccard&ndash;Robinson&ndash;Foulds metric](https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric)
-#' \insertCite{Bocker2013}{TreeDist}, a 
+#' \insertCite{Bocker2013}{BigTreeDist}, a 
 #' [Generalized Robinson&ndash;Foulds metric](https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances).
 #' 
 #' In short, the Jaccard&ndash;Robinson&ndash;Foulds
@@ -128,7 +128,7 @@ NyeSplitSimilarity <- function(splits1, splits2,
 #' By default, conflicting splits may be paired. 
 #' 
 #' Note that the settings `k = 1, allowConflict = TRUE, similarity = TRUE`
-#' give the similarity metric of \insertCite{Nye2006;textual}{TreeDist};
+#' give the similarity metric of \insertCite{Nye2006;textual}{BigTreeDist};
 #' a slightly faster implementation of this metric is available as
 #' [`NyeSimilarity()`].
 #' 
@@ -179,7 +179,7 @@ NyeSplitSimilarity <- function(splits1, splits2,
 #' @family tree distances
 #' 
 #' @encoding UTF-8
-#' @importFrom TreeTools NSplits
+#' @importFrom BigTreeTools NSplits
 #' @export
 JaccardRobinsonFoulds <- function(tree1, tree2 = NULL, k = 1L, 
                                    allowConflict = TRUE, similarity = FALSE,

@@ -85,7 +85,7 @@ These quantities can be calculated using functions in the
 
 ```{r}
 library("TreeTools", quietly = TRUE)
-library("TreeDist")
+library("BigTreeDist")
 treesMatchingSplit <- c(
   AB.CDEF = TreesMatchingSplit(2, 4),
   ABC.DEF = TreesMatchingSplit(3, 3)
@@ -183,7 +183,7 @@ statement from the other; the maximum entropy distance occurs when the two
 statements are entirely independent.
 
 ```{r mackay-8-1, echo=FALSE, fig.width=4, out.width='50%', fig.height=3, fig.align='center'}
-library('TreeDist')
+library('BigTreeDist')
 H <- function(inBracket) {
   expression(paste(italic('H'), plain('('), italic(inBracket), plain(')')))
 }

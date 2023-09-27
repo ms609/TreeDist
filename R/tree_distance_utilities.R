@@ -8,7 +8,7 @@
 #' 
 #' @template MRS
 #' @keywords internal
-#' @importFrom TreeTools as.Splits TipLabels
+#' @importFrom BigTreeTools as.Splits TipLabels
 #' @importFrom utils combn
 #' @export
 CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
@@ -207,7 +207,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 
 #' Calculate distance between trees, or lists of trees
 #' @template MRS
-#' @importFrom TreeTools TipLabels
+#' @importFrom BigTreeTools TipLabels
 #' @param checks Logical specifying whether to perform basic sanity checks to
 #' avoid crashes in C++.
 #' @keywords internal
@@ -411,7 +411,7 @@ CompareAll <- function(x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
 #' @param \dots Additional parameters to `InfoInTree()` or `how`.
 #' @keywords internal
 #' @template MRS
-#' @importFrom TreeTools KeepTip TipLabels
+#' @importFrom BigTreeTools KeepTip TipLabels
 #' @export
 NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
                           infoInBoth = NULL, how = TRUE, Combine = "+", ...) {
@@ -465,7 +465,7 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
 }
 
 # We only call this function when not all trees contain identical leaf sets
-#' @importFrom TreeTools KeepTip TipLabels
+#' @importFrom BigTreeTools KeepTip TipLabels
 .SharedOnly <- function(tree1, tree2,
                         lab1 = TipLabels(tree1),
                         lab2 = TipLabels(tree2)) {

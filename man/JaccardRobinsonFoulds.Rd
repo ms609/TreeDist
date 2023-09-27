@@ -70,7 +70,7 @@ or \code{splits1} and \code{splits2}.
 \description{
 Calculate the
 \href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#jaccard-robinson-foulds-metric}{Jaccard–Robinson–Foulds metric}
-\insertCite{Bocker2013}{TreeDist}, a
+\insertCite{Bocker2013}{BigTreeDist}, a
 \href{https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html#generalized-robinson-foulds-distances}{Generalized Robinson–Foulds metric}.
 }
 \details{
@@ -87,7 +87,7 @@ A more detailed explanation is provided in the
 By default, conflicting splits may be paired.
 
 Note that the settings \verb{k = 1, allowConflict = TRUE, similarity = TRUE}
-give the similarity metric of \insertCite{Nye2006;textual}{TreeDist};
+give the similarity metric of \insertCite{Nye2006;textual}{BigTreeDist};
 a slightly faster implementation of this metric is available as
 \code{\link[=NyeSimilarity]{NyeSimilarity()}}.
 

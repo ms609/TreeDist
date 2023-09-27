@@ -2,7 +2,7 @@
 #' 
 #' Calculate the 
 #' [Matching Split Distance](https://ms609.github.io/TreeDist/articles/Generalized-RF.html#matching-split-distance)
-#' \insertCite{Bogdanowicz2012,Lin2012}{TreeDist} for unrooted binary trees.
+#' \insertCite{Bogdanowicz2012,Lin2012}{BigTreeDist} for unrooted binary trees.
 #' 
 #' Trees need not contain identical leaves; scores are based on the leaves that
 #' trees hold in common.  Check for unexpected differences in tip labelling
@@ -18,7 +18,7 @@
 #' A normalization value or function must be provided in order to return a
 #' normalized value.  If you are aware of a generalised formula, please
 #' let me know by
-#' \href{https://github.com/ms609/TreeDist/issues/new}{creating a GitHub issue}
+#' \href{https://github.com/ms609/BigTreeDist/issues/new}{creating a GitHub issue}
 #' so that it can be implemented.
 #' 
 #' @examples 
@@ -52,7 +52,7 @@ MatchingSplitDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
 
 #' @rdname MatchingSplitDistance
 #' @inheritParams SharedPhylogeneticInfoSplits
-#' @useDynLib TreeDist, .registration = TRUE
+#' @useDynLib BigTreeDist, .registration = TRUE
 #' @export
 MatchingSplitDistanceSplits <- function(splits1, splits2, 
                                          nTip = attr(splits1, "nTip"),

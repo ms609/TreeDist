@@ -21,8 +21,8 @@ values should be divided by four.
 }
 \description{
 Calculate the variation of clustering information
-\insertCite{Meila2007}{TreeDist} for each possible pairing of
-non-trivial splits on \emph{n} leaves \insertCite{SmithDist}{TreeDist},
+\insertCite{Meila2007}{BigTreeDist} for each possible pairing of
+non-trivial splits on \emph{n} leaves \insertCite{SmithDist}{BigTreeDist},
 tabulating the number of pairings with each similarity.
 }
 \examples{

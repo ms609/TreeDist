@@ -93,6 +93,7 @@ jobs:
         run: |
           install.packages("pak")
           install.packages("pkgdepends")
+          pak::pkg_install("ms609/TreeTools@more-leaves")
         shell: Rscript {0}
 
       - name: pak bug workaround - install TreeDist (CRAN)

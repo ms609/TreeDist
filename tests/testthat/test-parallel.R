@@ -1,5 +1,5 @@
 test_that("Parallelization works", {
-  library("TreeTools")
+  library("BigTreeTools")
   trees <- as.phylo(0:20, 20)
   
   suppressMessages({

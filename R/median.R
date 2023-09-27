@@ -56,7 +56,7 @@
 #' 
 #' @seealso Consensus methods:
 #'   [`ape::consensus()`],
-#'   [`TreeTools::ConsensusWithout()`]
+#'   [`BigTreeTools::ConsensusWithout()`]
 #'   
 #' @importFrom stats median
 #' @family tree space functions

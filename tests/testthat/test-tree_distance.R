@@ -603,37 +603,37 @@ test_that("Matchings are correct", {
     
   }
   
-  Test(TreeDist:::cpp_robinson_foulds_distance,
+  Test(BigTreeDist:::cpp_robinson_foulds_distance,
        list(NA, 2, NA, 3, NA, NA, 5, NA),
        list(NA, 2, 4, NA, 7, NA)
        )
-  Test(TreeDist:::cpp_robinson_foulds_info,
+  Test(BigTreeDist:::cpp_robinson_foulds_info,
        list(NA, 2, NA, 3, NA, NA, 5, NA),
        list(NA, 2, 4, NA, 7, NA)
        )
-  Test(TreeDist:::cpp_matching_split_distance,
+  Test(BigTreeDist:::cpp_matching_split_distance,
        list(1, 2, 4, 3, NA, NA, 5, 6),
        list(1, 2, 5, 4, 7, 6)
        )
-  Test(TreeDist:::cpp_jaccard_similarity,
+  Test(BigTreeDist:::cpp_jaccard_similarity,
        list(NA, 2, 1, 3, 4, 6, 5, NA),
        list(3, 2, 4, 5, 7, 6),
        k = 2,
        allowConflict = TRUE)
-  Test(TreeDist:::cpp_jaccard_similarity,
+  Test(BigTreeDist:::cpp_jaccard_similarity,
        list(NA, 2, 1, 3, NA, 6, 5, 4),
        list(3, 2, 4, 1, 7, 6),
        k = 2,
        allowConflict = FALSE)
-  Test(TreeDist:::cpp_msi_distance,
+  Test(BigTreeDist:::cpp_msi_distance,
        list(NA, 2, 1, 4, 3, 6, 5, NA),
        list(3, 2, c(4, 5), c(4, 5), c(6, 7), c(7, 6))
        )
-  Test(TreeDist:::cpp_shared_phylo,
+  Test(BigTreeDist:::cpp_shared_phylo,
        list(NA, 2, 4, 3, 1, 6, 5, NA),
        list(5, 2, 4, 3, 7, 6)
        )
-  Test(TreeDist:::cpp_mutual_clustering, 
+  Test(BigTreeDist:::cpp_mutual_clustering, 
        list(4, 2, NA, 3, 6, NA, 5, 1),
        list(8, 2, 4, 5, 7, 1)
        )

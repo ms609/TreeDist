@@ -12,7 +12,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 // COMCLUST
 int COMCLUST(List trees);
-RcppExport SEXP _TreeDist_COMCLUST(SEXP treesSEXP) {
+RcppExport SEXP _BigTreeDist_COMCLUST(SEXP treesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -23,7 +23,7 @@ END_RCPP
 }
 // consensus_info
 double consensus_info(const List trees, const LogicalVector phylo, const NumericVector p);
-RcppExport SEXP _TreeDist_consensus_info(SEXP treesSEXP, SEXP phyloSEXP, SEXP pSEXP) {
+RcppExport SEXP _BigTreeDist_consensus_info(SEXP treesSEXP, SEXP phyloSEXP, SEXP pSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -36,7 +36,7 @@ END_RCPP
 }
 // robinson_foulds_all_pairs
 IntegerVector robinson_foulds_all_pairs(List tables);
-RcppExport SEXP _TreeDist_robinson_foulds_all_pairs(SEXP tablesSEXP) {
+RcppExport SEXP _BigTreeDist_robinson_foulds_all_pairs(SEXP tablesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -47,7 +47,7 @@ END_RCPP
 }
 // lapjv
 List lapjv(NumericMatrix x, NumericVector maxX);
-RcppExport SEXP _TreeDist_lapjv(SEXP xSEXP, SEXP maxXSEXP) {
+RcppExport SEXP _BigTreeDist_lapjv(SEXP xSEXP, SEXP maxXSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -59,7 +59,7 @@ END_RCPP
 }
 // cpp_mast
 int cpp_mast(IntegerMatrix edge1, IntegerMatrix edge2, IntegerVector nTip);
-RcppExport SEXP _TreeDist_cpp_mast(SEXP edge1SEXP, SEXP edge2SEXP, SEXP nTipSEXP) {
+RcppExport SEXP _BigTreeDist_cpp_mast(SEXP edge1SEXP, SEXP edge2SEXP, SEXP nTipSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -72,7 +72,7 @@ END_RCPP
 }
 // cpp_nni_distance
 IntegerVector cpp_nni_distance(const IntegerMatrix edge1, const IntegerMatrix edge2, const IntegerVector nTip);
-RcppExport SEXP _TreeDist_cpp_nni_distance(SEXP edge1SEXP, SEXP edge2SEXP, SEXP nTipSEXP) {
+RcppExport SEXP _BigTreeDist_cpp_nni_distance(SEXP edge1SEXP, SEXP edge2SEXP, SEXP nTipSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -85,7 +85,7 @@ END_RCPP
 }
 // cpp_robinson_foulds_distance
 List cpp_robinson_foulds_distance(const RawMatrix x, const RawMatrix y, const IntegerVector nTip);
-RcppExport SEXP _TreeDist_cpp_robinson_foulds_distance(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
+RcppExport SEXP _BigTreeDist_cpp_robinson_foulds_distance(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -98,7 +98,7 @@ END_RCPP
 }
 // cpp_robinson_foulds_info
 List cpp_robinson_foulds_info(const RawMatrix x, const RawMatrix y, const IntegerVector nTip);
-RcppExport SEXP _TreeDist_cpp_robinson_foulds_info(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
+RcppExport SEXP _BigTreeDist_cpp_robinson_foulds_info(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -111,7 +111,7 @@ END_RCPP
 }
 // cpp_matching_split_distance
 List cpp_matching_split_distance(const RawMatrix x, const RawMatrix y, const IntegerVector nTip);
-RcppExport SEXP _TreeDist_cpp_matching_split_distance(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
+RcppExport SEXP _BigTreeDist_cpp_matching_split_distance(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -124,7 +124,7 @@ END_RCPP
 }
 // cpp_jaccard_similarity
 List cpp_jaccard_similarity(const RawMatrix x, const RawMatrix y, const IntegerVector nTip, const NumericVector k, const LogicalVector allowConflict);
-RcppExport SEXP _TreeDist_cpp_jaccard_similarity(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP, SEXP kSEXP, SEXP allowConflictSEXP) {
+RcppExport SEXP _BigTreeDist_cpp_jaccard_similarity(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP, SEXP kSEXP, SEXP allowConflictSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -139,7 +139,7 @@ END_RCPP
 }
 // cpp_msi_distance
 List cpp_msi_distance(const RawMatrix x, const RawMatrix y, const IntegerVector nTip);
-RcppExport SEXP _TreeDist_cpp_msi_distance(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
+RcppExport SEXP _BigTreeDist_cpp_msi_distance(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -152,7 +152,7 @@ END_RCPP
 }
 // cpp_mutual_clustering
 List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y, const IntegerVector nTip);
-RcppExport SEXP _TreeDist_cpp_mutual_clustering(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
+RcppExport SEXP _BigTreeDist_cpp_mutual_clustering(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -165,7 +165,7 @@ END_RCPP
 }
 // cpp_shared_phylo
 List cpp_shared_phylo(const RawMatrix x, const RawMatrix y, const IntegerVector nTip);
-RcppExport SEXP _TreeDist_cpp_shared_phylo(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
+RcppExport SEXP _BigTreeDist_cpp_shared_phylo(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -178,23 +178,23 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_TreeDist_COMCLUST", (DL_FUNC) &_TreeDist_COMCLUST, 1},
-    {"_TreeDist_consensus_info", (DL_FUNC) &_TreeDist_consensus_info, 3},
-    {"_TreeDist_robinson_foulds_all_pairs", (DL_FUNC) &_TreeDist_robinson_foulds_all_pairs, 1},
-    {"_TreeDist_lapjv", (DL_FUNC) &_TreeDist_lapjv, 2},
-    {"_TreeDist_cpp_mast", (DL_FUNC) &_TreeDist_cpp_mast, 3},
-    {"_TreeDist_cpp_nni_distance", (DL_FUNC) &_TreeDist_cpp_nni_distance, 3},
-    {"_TreeDist_cpp_robinson_foulds_distance", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_distance, 3},
-    {"_TreeDist_cpp_robinson_foulds_info", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_info, 3},
-    {"_TreeDist_cpp_matching_split_distance", (DL_FUNC) &_TreeDist_cpp_matching_split_distance, 3},
-    {"_TreeDist_cpp_jaccard_similarity", (DL_FUNC) &_TreeDist_cpp_jaccard_similarity, 5},
-    {"_TreeDist_cpp_msi_distance", (DL_FUNC) &_TreeDist_cpp_msi_distance, 3},
-    {"_TreeDist_cpp_mutual_clustering", (DL_FUNC) &_TreeDist_cpp_mutual_clustering, 3},
-    {"_TreeDist_cpp_shared_phylo", (DL_FUNC) &_TreeDist_cpp_shared_phylo, 3},
+    {"_BigTreeDist_COMCLUST", (DL_FUNC) &_BigTreeDist_COMCLUST, 1},
+    {"_BigTreeDist_consensus_info", (DL_FUNC) &_BigTreeDist_consensus_info, 3},
+    {"_BigTreeDist_robinson_foulds_all_pairs", (DL_FUNC) &_BigTreeDist_robinson_foulds_all_pairs, 1},
+    {"_BigTreeDist_lapjv", (DL_FUNC) &_BigTreeDist_lapjv, 2},
+    {"_BigTreeDist_cpp_mast", (DL_FUNC) &_BigTreeDist_cpp_mast, 3},
+    {"_BigTreeDist_cpp_nni_distance", (DL_FUNC) &_BigTreeDist_cpp_nni_distance, 3},
+    {"_BigTreeDist_cpp_robinson_foulds_distance", (DL_FUNC) &_BigTreeDist_cpp_robinson_foulds_distance, 3},
+    {"_BigTreeDist_cpp_robinson_foulds_info", (DL_FUNC) &_BigTreeDist_cpp_robinson_foulds_info, 3},
+    {"_BigTreeDist_cpp_matching_split_distance", (DL_FUNC) &_BigTreeDist_cpp_matching_split_distance, 3},
+    {"_BigTreeDist_cpp_jaccard_similarity", (DL_FUNC) &_BigTreeDist_cpp_jaccard_similarity, 5},
+    {"_BigTreeDist_cpp_msi_distance", (DL_FUNC) &_BigTreeDist_cpp_msi_distance, 3},
+    {"_BigTreeDist_cpp_mutual_clustering", (DL_FUNC) &_BigTreeDist_cpp_mutual_clustering, 3},
+    {"_BigTreeDist_cpp_shared_phylo", (DL_FUNC) &_BigTreeDist_cpp_shared_phylo, 3},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_TreeDist(DllInfo *dll) {
+RcppExport void R_init_BigTreeDist(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

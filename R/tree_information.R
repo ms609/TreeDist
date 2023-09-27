@@ -16,7 +16,7 @@
 #' phylogenetic information content, used in [`SplitwiseInfo()`].
 #' In essence, it asks, given a split that subdivides the leaves of a tree into
 #' two partitions, how easy it is to predict which partition a randomly drawn 
-#' leaf belongs to \insertCite{@Meila2007; @Vinh2010}{TreeDist}.
+#' leaf belongs to \insertCite{@Meila2007; @Vinh2010}{BigTreeDist}.
 #' 
 #' 
 #' Formally, the entropy of a split _S_ that divides _n_ leaves into two
@@ -73,21 +73,21 @@
 #' 
 #' 
 #' As entropy measures the bits required to transmit the cluster label of each 
-#' leaf \insertCite{@@Vinh2010: p. 2840}{TreeDist}, the information content of 
+#' leaf \insertCite{@@Vinh2010: p. 2840}{BigTreeDist}, the information content of 
 #' a split is its entropy multiplied by the number of leaves. 
 #' 
 #' @section Phylogenetic information:
 #' 
 #' Phylogenetic information expresses the information content of a split
 #' in terms of the probability that a uniformly selected tree will contain it
-#' \insertCite{Thorley1998}{TreeDist}.
+#' \insertCite{Thorley1998}{BigTreeDist}.
 #' 
 #' @section Consensus information:
 #' 
 #' The information content of splits in a consensus tree is calculated by
 #' interpreting support values (i.e. the proportion of trees containing
 #' each split in the consensus) as probabilities that the true tree contains
-#' that split, following \insertCite{SmithCons;textual}{TreeDist}.
+#' that split, following \insertCite{SmithCons;textual}{BigTreeDist}.
 #' 
 #' @return `SplitwiseInfo()`, `ClusteringInfo()` and `ClusteringEntropy()`
 #' return the splitwise information content of the tree -- or of each split
@@ -165,7 +165,7 @@ SplitwiseInfo.multiPhylo <- function(x, p = NULL, sum = TRUE) {
 #' @export
 SplitwiseInfo.list <- SplitwiseInfo.multiPhylo
 
-#' @importFrom TreeTools Log2Rooted.int Log2Unrooted.int TipsInSplits
+#' @importFrom BigTreeTools Log2Rooted.int Log2Unrooted.int TipsInSplits
 #' @export
 SplitwiseInfo.Splits <- function(x, p = NULL, sum = TRUE) {
   nTip <- attr(x, "nTip")
@@ -232,7 +232,7 @@ SplitwiseInfo.NULL <- function(x, p = NULL, sum = TRUE) NULL
 #' tree <- ape::read.tree(text = "(a, b, (c, (d, e, (f, g)0.8))0.9);")
 #' ClusteringInfo(tree)
 #' ClusteringInfo(tree, TRUE)
-#' @importFrom TreeTools as.Splits
+#' @importFrom BigTreeTools as.Splits
 #' @rdname TreeInfo
 #' @export
 ClusteringEntropy <- function(x, p = NULL, sum = TRUE) {

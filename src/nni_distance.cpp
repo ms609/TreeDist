@@ -1,13 +1,13 @@
 #include <Rcpp/Lightest>
-#include <TreeTools/SplitList.h>
+#include <BigTreeTools/SplitList.h>
 
 #include <cmath>
 
 #include "tree_distances.h"
 
 using namespace Rcpp;
-using TreeTools::SplitList;
-using TreeTools::powers_of_two;
+using BigTreeTools::SplitList;
+using BigTreeTools::powers_of_two;
 
 #define PARENT1(i) edge1(i, 0)
 #define PARENT2(i) edge2(i, 0)
