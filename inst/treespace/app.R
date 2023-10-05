@@ -994,7 +994,7 @@ server <- function(input, output, session) {
   }
   
   densityEps <- reactive(as.numeric(quantile(distances(), 0.025)))
-  densityXi <- reactive(densityEps())
+  densityXi <- reactive(0.01)
   densityMinPts <- reactive(input$densityN)
   
   NoisySilhouette <- function(x) {
