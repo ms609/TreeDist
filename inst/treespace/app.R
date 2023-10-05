@@ -1528,7 +1528,8 @@ server <- function(input, output, session) {
              axes = FALSE, # Dimensions are meaningless
              col = pointCols(),
              alpha = input$pt.opacity / 255,
-             cex = input$pt.cex,
+             size = input$pt.cex * 0.68, # * 3.8 if using type = "p",
+             type = "s",
              xlab = "", ylab = "", zlab = ""
         )
         incProgress(0.6)
