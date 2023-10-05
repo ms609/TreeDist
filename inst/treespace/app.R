@@ -998,7 +998,7 @@ server <- function(input, output, session) {
   
   NoisySilhouette <- function(x) {
     inCluster <- as.logical(x)
-    if (any(inCluster)) {
+    if (any(inCluster) && length(unique(x[inCluster])) > 1) {
       mean(cluster::silhouette(x[inCluster],
                                distMat()[inCluster, inCluster])[, 3])
     } else {
