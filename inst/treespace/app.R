@@ -1249,7 +1249,7 @@ server <- function(input, output, session) {
   
   output$optics <- renderPlot({
     if ("opt" %in% input$clustering) {
-      par(mar = c(1.5, 1.5, 0, 0.5), mgp = c(2, 0.5, 0))
+      par(mar = c(1.5, 1.5, 0.5, 0.5), mgp = c(2, 0.5, 0))
       plot(optic(),  main = "", frame = FALSE)
       title("Reachability", line = -1, font.main = 1, cex.main = 1)
       abline(h = densityEps(), col = 2, lty = 2)
