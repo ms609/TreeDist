@@ -1104,7 +1104,7 @@ server <- function(input, output, session) {
             specCluster <- specClusters()[[bestSpec]]$cluster
           }
           
-          incProgress(methInc, detail = "Density-based clustering")
+          incProgress(methInc, detail = "density-based clustering")
           if ("opt" %in% input$clustering) {
             db <- dbscan::extractDBSCAN(optic(), eps_cl = densityEps())
             dbSil <- NoisySilhouette(db$cluster)
