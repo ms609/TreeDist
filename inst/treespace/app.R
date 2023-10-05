@@ -1086,10 +1086,19 @@ server <- function(input, output, session) {
             hctCluster <- hctClusters()[[bestHct]]
           }
           
-          incProgress(methInc, detail = "heirarchical density-based clustering")
           if ("hdb" %in% input$clustering) {
-            hdbCluster <- hdbClusters()
-            hdbSil <- NoisySilhouette(hdbClusters())
+            if (input$distance == "rf") {
+              showNotification(
+                "Cannot perform denisty based clustering on RF distances",
+                type = "warning"
+              )
+              optSil <- -99
+              optCluster <- NA
+            } else {
+              incProgress(methInc, detail = "heirarchical density-based clustering")
+              hdbCluster <- hdbClusters()
+              hdbSil <- NoisySilhouette(hdbClusters())
+            }
           }
           
           incProgress(methInc, detail = "K-means++ clustering")
@@ -1108,12 +1117,25 @@ server <- function(input, output, session) {
           
           incProgress(methInc, detail = "density-based clustering")
           if ("opt" %in% input$clustering) {
-            db <- dbscan::extractDBSCAN(optic(), eps_cl = densityEps())
-            dbSil <- NoisySilhouette(db$cluster)
-            #xi <- extractXi(optic(), xi = densityXi())
-            
-            optSil <- dbSil
-            optCluster <- db$cluster
+            if (input$distance == "rf") {
+              showNotification(
+                "Cannot perform denisty based clustering on RF distances",
+                type = "warning"
+              )
+              optSil <- -99
+              optCluster <- NA
+            } else {
+              
+              db <- dbscan::extractDBSCAN(optic(), eps_cl = densityEps())
+              dbSil <- NoisySilhouette(db$cluster)
+              xi <- dbscan::extractXi(optic(), xi = densityXi())
+              xiSil <- NoisySilhouette(xi$cluster)
+              
+              xiWins <- xiSil > dbSil
+              
+              optSil <- if (xiWins) xiSil else dbSil
+              optCluster <- if(xiWins) xi$cluster else db$cluster
+            }
           }
           
           bestCluster <- c("none", "pam", "hmm", "hsi", "hco", "hav",
@@ -1251,7 +1273,7 @@ server <- function(input, output, session) {
   })
   
   output$optics <- renderPlot({
-    if ("opt" %in% input$clustering) {
+    if ("opt" %in% input$clustering && input$distance != "rf") {
       par(mar = c(1.5, 1.5, 0.5, 0.5), mgp = c(2, 0.5, 0))
       plot(optic(),  main = "", frame = FALSE)
       title("Reachability", line = -1, font.main = 1, cex.main = 1)
