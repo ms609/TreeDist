@@ -1013,6 +1013,7 @@ server <- function(input, output, session) {
                      eps = quantile(distances(), 0.25),
                      minPts = densityMinPts())
     }),
+    r$treesUpdated,
     input$distance,
     densityMinPts()
   )
