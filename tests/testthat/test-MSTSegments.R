@@ -34,6 +34,7 @@ test_that("MST example plots as expected", {
       legend = c("Extended", "Median", "Contracted"),
       bty = "n",
       y.intersp = 2,
+      lend = "square",
       palette = hcl.colors(256L, "RdYlBu", rev = TRUE)
     )
   })
