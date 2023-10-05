@@ -935,7 +935,7 @@ server <- function(input, output, session) {
   )
   
   hdbClusters <- bindCache(
-    reactive(hdbscan(distances(), minPts = densityMinPts())$cluster),
+    reactive(dbscan::hdbscan(distances(), minPts = densityMinPts())$cluster),
     densityMinPts(),
     r$treesUpdated,
     input$distance
@@ -1008,10 +1008,11 @@ server <- function(input, output, session) {
   optic <- bindCache(
     reactive({
       dbscan::optics(distances(),
-                     eps = min(max(nPts() * 0.4, 6), nPts() * 0.01),
+                     eps = quantile(distances(), 0.25),
                      minPts = densityMinPts())
     }),
-    input$distance
+    input$distance,
+    densityMinPts()
   )
   
   clusterings <- bindCache(
@@ -1104,7 +1105,7 @@ server <- function(input, output, session) {
           
           incProgress(methInc, detail = "Density-based clustering")
           if ("opt" %in% input$clustering) {
-            db <- extractDBSCAN(optic(), eps_cl = densityEps())
+            db <- dbscan::extractDBSCAN(optic(), eps_cl = densityEps())
             dbSil <- NoisySilhouette(db$cluster)
             #xi <- extractXi(optic(), xi = densityXi())
             
