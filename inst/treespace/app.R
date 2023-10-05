@@ -1030,57 +1030,57 @@ server <- function(input, output, session) {
         
         withProgress(message = "Clustering", {
           
-          incProgress(methInc, detail = "PAM clustering")
           if ("pam" %in% input$clustering) {
+            incProgress(methInc, detail = "PAM clustering")
             bestPam <- which.max(pamSils())
             pamSil <- pamSils()[bestPam]
             pamCluster <- pamClusters()[[bestPam]]$cluster
           }
           
-          incProgress(methInc, detail = "minimax clustering")
           if ("hmm" %in% input$clustering) {
+            incProgress(methInc, detail = "minimax clustering")
             bestH <- which.max(hmmSils())
             hSil <- hmmSils()[bestH]
             hCluster <- hmmClusters()[[bestH]]
           }
           
-          incProgress(methInc, detail = "Ward D\ub2 clustering")
           if ("hwd" %in% input$clustering) {
+            incProgress(methInc, detail = "Ward D\ub2 clustering")
             bestHwd <- which.max(hwdSils())
             hwdSil <- hwdSils()[bestHwd]
             hwdCluster <- hwdClusters()[[bestHwd]]
           }
           
-          incProgress(methInc, detail = "single clustering")
           if ("hsi" %in% input$clustering) {
+            incProgress(methInc, detail = "single clustering")
             bestHsi <- which.max(hsiSils())
             hsiSil <- hsiSils()[bestHsi]
             hsiCluster <- hsiClusters()[[bestHsi]]
           }
           
-          incProgress(methInc, detail = "complete clustering")
           if ("hco" %in% input$clustering) {
+            incProgress(methInc, detail = "complete clustering")
             bestHco <- which.max(hcoSils())
             hcoSil <- hcoSils()[bestHco]
             hcoCluster <- hcoClusters()[[bestHco]]
           }
           
-          incProgress(methInc, detail = "average clustering")
           if ("hav" %in% input$clustering) {
+            incProgress(methInc, detail = "average clustering")
             bestHav <- which.max(havSils())
             havSil <- havSils()[bestHav]
             havCluster <- havClusters()[[bestHav]]
           }
           
-          incProgress(methInc, detail = "median clustering")
           if ("hmd" %in% input$clustering) {
+            incProgress(methInc, detail = "median clustering")
             bestHmd <- which.max(hmdSils())
             hmdSil <- hmdSils()[bestHmd]
             hmdCluster <- hmdClusters()[[bestHmd]]
           }
           
-          incProgress(methInc, detail = "centroid clustering")
           if ("hct" %in% input$clustering) {
+            incProgress(methInc, detail = "centroid clustering")
             bestHct <- which.max(hctSils())
             hctSil <- hctSils()[bestHct]
             hctCluster <- hctClusters()[[bestHct]]
@@ -1101,22 +1101,22 @@ server <- function(input, output, session) {
             }
           }
           
-          incProgress(methInc, detail = "K-means++ clustering")
           if ("kmn" %in% input$clustering) {
+            incProgress(methInc, detail = "K-means++ clustering")
             bestK <- which.max(kppSils())
             kSil <- kppSils()[bestK]
             kCluster <- kppClusters()[[bestK]]$cluster
           }
           
-          incProgress(methInc, detail = "spectral clustering")
           if ("spec" %in% input$clustering) {
+            incProgress(methInc, detail = "spectral clustering")
             bestSpec <- which.max(specSils())
             specSil <- specSils()[bestSpec]
             specCluster <- specClusters()[[bestSpec]]$cluster
           }
           
-          incProgress(methInc, detail = "density-based clustering")
           if ("opt" %in% input$clustering) {
+            incProgress(methInc, detail = "density-based clustering")
             if (input$distance == "rf") {
               showNotification(
                 "Cannot perform denisty based clustering on RF distances",
