@@ -35,10 +35,10 @@ options(shiny.maxRequestSize = 100 * 1024^2)
 
 palettes <- list(
   "#91aaa7",
-  c("#2a7df6", "#b9e17b"),
-  c("#be83ae", "#2ea7af", "#fbcdcf"),
-  c("#72c5a9", "#b7c5ff", "#dbdabb", "#a28bac"),
-  c("#59c4c0", "#ea9a9a", "#7998a6", "#e9d7a9", "#9c9379"),
+  Col2Hex(2:3),
+  Col2Hex(2:4),
+  Col2Hex(2:5),
+  Col2Hex(2:6),
   c("#e8b889", "#67c6eb", "#e5d5c2", "#938fba", "#64b69a", "#779c7b"),
   c("#c4808f", "#5ba08f", "#f0a693", "#ccd7fe", "#cdb87e", "#c6aae2", "#d2dad8"),
   c("#d0847f", "#63a5d7", "#d7b981", "#5a9bbb", "#9bb67e", "#dea6d5", "#91967e", "#ca7f96"),
