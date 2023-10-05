@@ -988,7 +988,8 @@ server <- function(input, output, session) {
   )
   
   .Ascending <- function(x) {
-    order(unique(x))[x]
+    zeroes <- (0 %in% x)
+    order(unique(x))[x + zeroes] - zeroes
   }
   
   densityEps <- reactive(as.numeric(quantile(distances(), 0.025)))
