@@ -1362,9 +1362,9 @@ server <- function(input, output, session) {
       cl <- clusterings()
       proj <- mapping()
       withProgress(message = "Drawing 3D plot", {
-        rgl::rgl.open(useNULL = TRUE)
+        rgl::open3d(useNULL = TRUE)
         incProgress(0.1)
-        rgl::rgl.bg(color = "white")
+        rgl::bg3d(color = "white")
         rgl::plot3d(proj[, 1], proj[, 2], proj[, 3],
              aspect = 1, # Preserve aspect ratio - do not distort distances
              axes = FALSE, # Dimensions are meaningless
