@@ -1,6 +1,13 @@
+# TreeDist 2.6.3.9002 (development)
+
+- Fix calculation error in `StrainCol()`
+- App: Display strain in 3D tree space viewer
+
+
 # TreeDist 2.6.3.9001 (development)
 
 - Support for distances between larger trees
+
 
 # TreeDist 2.6.3.9000 (development)
 
