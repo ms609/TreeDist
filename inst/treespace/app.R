@@ -1352,9 +1352,8 @@ server <- function(input, output, session) {
              hide("pt.col.scale")
              cl <- clusterings()
              if (cl$sil > 0.25) {
-               ifelse(cl$cluster == 0,
-                      palettes[[1]],
-                      palettes[[min(length(palettes), cl$n)]][cl$cluster])
+               c(palettes[[1]], palettes[[min(length(palettes), cl$n)]])[
+                 cl$cluster + 1]
              } else {
                palettes[[1]]
              }
