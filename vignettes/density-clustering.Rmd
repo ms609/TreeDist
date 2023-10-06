@@ -34,8 +34,58 @@ posterior sample of trees from a single MCMC analysis.
 In such settings, the density of trees may offer a useful tool for defining
 clusters.
 
+```{r}
+library("TreeTools", quietly = TRUE)
+treeNumbers <- c(1:220)
+trees <- as.phylo(treeNumbers, 8)
+spectrum <- hcl.colors(220, "plasma")
+treeCols <- spectrum[treeNumbers]
+library("TreeDist")
+distances <- ClusteringInfoDistance(trees)
+mapping <- cmdscale(distances, k = 12)
+par(mar = rep(0, 4))
+plot(mapping,
+     asp = 1, # Preserve aspect ratio - do not distort distances
+     ann = FALSE, axes = FALSE, # Don't label axes: dimensions are meaningless
+     col = treeCols, pch = 16
+     )
+```
 
+## Heirarchical density-based clustering
 
+@Campello2015 @Hahsler2019
+
+```{r hdbscan}
+minPts <- 6
+hdb <- dbscan::hdbscan(distances, minPts = minPts)$cluster
+plot(mapping, asp = 1, ann = FALSE, axes = FALSE, pch = 16,
+     col = hdb + 1 # +1 so points not assigned to a cluster (0) will be colour 1
+     )
+```
+
+## DBSCAN/OPTICS
+
+@Ankerst1999, @Ester1996, @Hahsler2019
+
+```{r optics}
+optic <- dbscan::optics(distances,
+                        eps = quantile(distances, 0.25),
+                        minPts = minPts)
+plot(optic)
+
+eps <- as.numeric(quantile(distances, 0.025))
+db <- dbscan::extractDBSCAN(optic, eps_cl = eps)$cluster
+plot(mapping, asp = 1, ann = FALSE, axes = FALSE, pch = 16,
+     col = db + 1 # +1 so points not assigned to a cluster (0) will be colour 1
+     )
+
+xiValue <- 0.01
+xi <- dbscan::extractXi(optic, xi = xiValue)$cluster
+plot(mapping, asp = 1, ann = FALSE, axes = FALSE, pch = 16,
+     col = xi + 1 # +1 so points not assigned to a cluster (0) will be colour 1
+     )
+              
+```
 
 
 
@@ -56,3 +106,4 @@ You may wish to:
 
 - Visualize [tree landscapes](treespace.html) using distance-based tree spaces
 
+# References
