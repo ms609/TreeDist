@@ -219,6 +219,12 @@ plot(consensus(trees[cluster == 2], p = 0.5),
 
 Here, we learn that the two clusters are distinguished by the position of `t7`.
 
+These clustering methods assume that clusters are similarly sized and regularly
+shaped, and that all trees belong to a cluster.
+These are often strong assumptions, particularly when analysing a Bayesian
+posterior sample; in such cases, it may also be worth employing
+[density based clustering](density-clustering.html).
+
 ### Validating a mapping
 
 Now let's evaluate whether our map of tree space is representative.
@@ -419,6 +425,8 @@ if (umatrixInstalled) {
 You may wish to:
 
 - [Analyse landscapes](landscapes.html) of phylogenetic trees
+
+- Explore [Density-based clustering](density-clustering.html)
 
 - [Provide context](using-distances.html) for tree distances
 

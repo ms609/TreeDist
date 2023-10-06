@@ -405,6 +405,7 @@ if (treeSearchInstalled && requireNamespace("Ternary", quietly = TRUE)) {
 In the ternary plot, the vertical direction corresponds to the normalized tree
 quality, as depicted in the accompanying histogram.
 
+
 ## What next?
 
 You may wish to:
@@ -418,8 +419,8 @@ You may wish to:
 - Review [available distance measures](https://ms609.github.io/TreeDist/index.html)
   and the corresponding [TreeDist functions](https://ms609.github.io/TreeDist/reference/index.html#section-tree-distance-measures)
 
-- Construct [tree spaces](treespace.html) to visualize landscapes of
-  phylogenetic trees
+- Visualize [tree landscapes](treespace.html) using distance-based tree spaces,
+  and search for [density-based clusters](density-clustering.html)
 
 
 ## References

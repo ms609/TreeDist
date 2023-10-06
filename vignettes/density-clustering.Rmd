@@ -1,0 +1,58 @@
+---
+title: "Identify clusters of trees using density"
+author: "[Martin R. Smith](https://smithlabdurham.github.io/)"
+output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
+vignette: >
+  %\VignetteIndexEntry{Identify clusters of trees using density}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Having [computed distances](Using-TreeDist.html) between pairs of trees and
+[visualized their distribution](treespace.html), it may be useful to identify
+statistically robust clusters of similar trees.
+Such clusters can reveal biologically interpretable structure in tree space;
+and summarising such clusters separately can highlight [rogue taxa](
+https://ms609.github.io/Rogue/) and lead to more informative summaries of
+phylogenetic results.
+
+Most straightforward clustering methods implicitly assume that all points
+(trees) belong to a cluster, and that all clusters have a uniform shape
+and similar size.
+Where such assumptions are likely to be reasonable – for instance, where
+comparing results from different methods or datasets – these methods can be
+straightforward to apply (as documented [elsewhere](
+treespace.html#identifying-clusters)).
+
+However, clumps of trees that may be tightly crowded may nevertheless be
+difficult to discriminate as clusters if their shapes are different, or if
+separate clumps are bridged by a lower density of trees that do not obviously
+fall into any cluster – as may particularly be the case when analysing the 
+posterior sample of trees from a single MCMC analysis.
+In such settings, the density of trees may offer a useful tool for defining
+clusters.
+
+
+
+
+
+
+## What next?
+
+You may wish to:
+
+- [Provide context](using-distances.html) for tree distances
+
+- Compare trees with [different tips](different-leaves.html)
+
+- Review [available distance measures](https://ms609.github.io/TreeDist/index.html)
+  and the corresponding [functions](
+  https://ms609.github.io/TreeDist/reference/index.html#section-tree-distance-measures)
+
+- [Interpret tree distance metrics](
+   https://ms609.github.io/TreeDistData/articles/09-expected-similarity.html)
+
+- Visualize [tree landscapes](treespace.html) using distance-based tree spaces
+

@@ -139,8 +139,12 @@ You may wish to:
 - Compare trees with [different tips](different-leaves.html)
 
 - Review [available distance measures](https://ms609.github.io/TreeDist/index.html)
-  and the corresponding [functions](https://ms609.github.io/TreeDist/reference/index.html#section-tree-distance-measures)
+  and the corresponding [functions](
+  https://ms609.github.io/TreeDist/reference/index.html#section-tree-distance-measures)
 
-- [Interpret tree distance metrics](https://ms609.github.io/TreeDistData/articles/09-expected-similarity.html)
+- [Interpret tree distance metrics](
+   https://ms609.github.io/TreeDistData/articles/09-expected-similarity.html)
 
-- Visualize [tree landscapes](treespace.html) using distance-based tree spaces
+- Visualize [tree landscapes](treespace.html) using distance-based tree spaces,
+  and search for [density-based clusters](density-clustering.html)
+
