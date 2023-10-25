@@ -1,15 +1,10 @@
-# TreeDist 2.6.3.9002 (development)
+# TreeDist 2.7.0 (2023-10-25)
 
-- Fix calculation error in `StrainCol()`
-- App: Display strain in 3D tree space viewer
+- Fix calculation error in `StrainCol()`.
 
+- App: Display strain in 3D tree space viewer.
 
-# TreeDist 2.6.3.9001 (development)
-
-- Support for distances between larger trees
-
-
-# TreeDist 2.6.3.9000 (development)
+- Support for distances between larger trees.
 
 - Support unrooted trees in `VisualizeMatching()`
   ([#103](https://github.com/ms609/TreeDist/issues/103)).
