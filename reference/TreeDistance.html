@@ -25,7 +25,7 @@ proposed in Smith (2020)."><!-- mathjax --><script src="https://cdnjs.cloudflare
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.6.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.7.0</span>
       </span>
     </div>
 
@@ -338,6 +338,23 @@ splits in the most or least informative tree, use <code>normalize = </code><code
 To calculate the relative similarity against a reference tree that is known
 to be "correct", use <code>normalize = SplitwiseInfo(trueTree)</code> (SPI, MSI) or
 <code>ClusteringEntropy(trueTree)</code> (MCI).</p>
+    </div>
+    <div id="distances-between-large-trees">
+    <h2>Distances between large trees</h2>
+    <p>To balance memory demands and runtime with flexibility, these functions are
+implemented for trees with up to 2048 leaves.
+To analyse trees with up to 8192 leaves, you will need to a modified version
+of <span class="pkg">TreeTools</span>.
+First uninstall <span class="pkg">TreeDist</span> and <span class="pkg">TreeTools</span> using <code><a href="https://rdrr.io/r/utils/remove.packages.html" class="external-link">remove.packages()</a></code>.
+Then use <code>devtools::install_github("ms609/TreeTools", ref = "more-leaves")</code>
+to install the modified <span class="pkg">TreeTools</span> package.
+Finally, install <span class="pkg">TreeDist</span> using
+<code>devtools::install_github("ms609/TreeDist")</code>.
+(<span class="pkg">TreeDist</span> will need building from source <em>after</em> the modified
+<span class="pkg">TreeTools</span> package has been installed, as its code links to values
+set in the TreeTools source code.)</p>
+<p>Trees with over 8192 leaves require further modification of the source code,
+which the maintainer will attempt on demand; please <a href="https://github.com/ms609/TreeTools/issues/141" class="external-link">comment on GitHub</a> if you would find this useful.</p>
     </div>
     <div id="references">
     <h2>References</h2>
