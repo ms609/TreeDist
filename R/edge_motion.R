@@ -13,8 +13,6 @@
 #' tree1[["edge.length"]] <- rep(1, 18)
 #' tree2[["edge.length"]] <- rep(1, 18)
 #' 
-#' tree1 <- treeB
-#' tree2 <- treeA
 #' tree2 <- RenumberTips(tree2, tree1)
 #' tipMotion <- colSums(TipMotion(tree1, tree2))
 #' maxMotion <- max(tipMotion)
@@ -29,7 +27,6 @@
 #' tiplabels(bg = hcl.colors(maxMotion + 1)[tipMotion + 1])
 #' # Add legend
 #' PlotTools::SpectrumLegend(
-#'   "topleft",
 #'   palette = hcl.colors(maxMotion + 1),
 #'   title = "Tip Motion",
 #'   legend = round(seq(maxMotion, 0, len = 4), 1),
@@ -58,7 +55,7 @@ Heritage <- function(tree) {
   edge <- tree[["edge"]]
   parent <- edge[, 1]
   child <- edge[, 2]
-  desc <- DescendantTips(parent, child, nEdge = nEdge, nTip = nTip)
+  desc <- DescendantTips(parent, child, nTip = nTip)
   
   length <- tree[["edge.length"]]
   if (is.null(length)) {
