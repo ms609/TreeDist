@@ -1,0 +1,43 @@
+---
+title: "Triangle inequality"
+author: "[Martin R. Smith](https://smithlabdurham.github.io/)"
+output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+csl: ../inst/apa-old-doi-prefix.csl
+vignette: >
+  %\VignetteIndexEntry{Triangle inequality}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Pablo Goloboff has identified a set of partially-resolved trees in which the
+normalized MCI distance violates the triangle inequality.
+
+Reproduction:
+
+```{r reproduce}
+library("TreeTools")
+library("TreeDist")
+trees6 <- as.phylo(0:104, 6)
+
+mci <- ClusteringInfoDistance(trees6)
+fossil::tri.ineq(mci) # TRUE means Tri Eq is not violated
+mci_ <- ClusteringInfoDistance(trees6, normalize = TRUE)
+fossil::tri.ineq(mci_)
+
+collapse9 <- lapply(trees6, CollapseNode, 9)
+collapse10 <- lapply(trees6, CollapseNode, 10)
+collapse11 <- lapply(trees6, CollapseNode, 11)
+
+collapse1 <- as.multiPhylo(unique(c(collapse9, collapse10, collapse11)))
+
+
+fossil::tri.ineq(ClusteringInfoDistance(c(trees6, collapse1), normalize = TRUE))
+```
+
+
+Triangle inequality not violated if using unnormalized distances.
+
+```{r not-normalized}
+fossil::tri.ineq(ClusteringInfoDistance(c(trees6, collapse1)))
+```
