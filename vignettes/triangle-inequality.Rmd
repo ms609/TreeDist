@@ -35,3 +35,39 @@ The triangle inequality is not violated if using unnormalized distances.
 ```{r not-normalized}
 fossil::tri.ineq(ClusteringInfoDistance(c(trees6, collapse1)))
 ```
+
+Reproduction:
+
+```{r reproduce}
+trees7 <- UnrootTree(as.phylo(0:944, 7))
+plot(trees7[[1]])
+nodes <- 9:12
+
+collapse1 <- as.multiPhylo(unique(do.call(c, lapply(nodes, function (x) {
+  SortTree(lapply(trees7, CollapseNode, x))
+}))))
+
+collapse2 <- as.multiPhylo(unique(do.call(c, apply(combn(nodes, 2), 2, function(x) {
+  SortTree(lapply(trees7, CollapseNode, x))
+}))))
+
+collapse3 <- as.multiPhylo(unique(do.call(c, apply(combn(nodes, 3), 2, function(x) {
+  SortTree(lapply(trees7, CollapseNode, x))
+}))))
+
+collapse4 <- as.multiPhylo(unique(do.call(c, apply(combn(nodes, 4), 2, function(x) {
+  SortTree(lapply(trees7, CollapseNode, x))
+}))))
+
+
+allTrees <- Preorder(c(trees7, collapse1, collapse2, collapse3, collapse4))
+
+fossil::tri.ineq(ClusteringInfoDistance(allTrees, normalize = TRUE))
+```
+
+
+The triangle inequality is not violated if using unnormalized distances.
+
+```{r not-normalized}
+fossil::tri.ineq(ClusteringInfoDistance(c(trees6, collapse1)))
+```
