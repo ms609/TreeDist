@@ -1,3 +1,7 @@
+# TreeDist 2.7.0.9000 (development)
+
+- Fix dead links in documentation
+
 # TreeDist 2.7.0 (2023-10-25)
 
 - Fix calculation error in `StrainCol()`.
