@@ -42,7 +42,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.6.3.9002</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.7.0.9000</span>
       </span>
     </div>
 
@@ -469,15 +469,8 @@ dimension to indicate distance between data points: nearby points occur
 in valleys, and are separated by ridges from more distant data
 points.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">umatrixInstalled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"Umatrix"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## The legacy packages maptools, rgdal, and rgeos, underpinning the sp package,</span></span>
-<span><span class="co">## which was just loaded, were retired in October 2023.</span></span>
-<span><span class="co">## Please refer to R-spatial evolution reports for details, especially</span></span>
-<span><span class="co">## https://r-spatial.org/r/2023/05/15/evolution4.html.</span></span>
-<span><span class="co">## It may be desirable to make the sf package available;</span></span>
-<span><span class="co">## package maintainers should consider adding sf to Suggests:.</span></span></code></pre>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="va">umatrixInstalled</span><span class="op">)</span> <span class="op">{</span></span>
+<code class="sourceCode R"><span><span class="va">umatrixInstalled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"Umatrix"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="va">umatrixInstalled</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">map</span> <span class="op">&lt;-</span> <span class="fu">Umatrix</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Umatrix/man/esomTrain.html" class="external-link">esomTrain</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">distances</span><span class="op">)</span>, Key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">trees</span><span class="op">)</span>,</span>
 <span>                            Epochs <span class="op">=</span> <span class="fl">5</span>, <span class="co"># Increase for better results</span></span>
 <span>                            Lines <span class="op">=</span> <span class="fl">42</span>,</span>
