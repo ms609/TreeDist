@@ -16,7 +16,7 @@ and \code{matching}, the columns matched to each row of the matrix in turn.
 }
 \description{
 Use the algorithm of \insertCite{Jonker1987;textual}{TreeDist} to solve the
-\href{http://www.assignmentproblems.com/doc/LSAPIntroduction.pdf}{Linear Sum Assignment Problem}.
+Linear Sum Assignment Problem (LSAP).
 }
 \details{
 The Linear Assignment Problem seeks to match each row of a matrix with a
