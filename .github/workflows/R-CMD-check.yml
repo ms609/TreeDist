@@ -64,7 +64,7 @@ jobs:
 
     steps:
       - name: Checkout git repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       # https://github.com/r-lib/actions/issues/534
       - name: Remove TreeDistData from DESCRIPTION - pak bug workaround

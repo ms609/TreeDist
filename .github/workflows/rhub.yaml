@@ -15,12 +15,12 @@ on:
       config:
         description: 'A comma separated list of R-hub platforms to use.'
         type: string
-        default: 'linux,windows,macos'
+        default: 'clang-asan,valgrind'
       name:
-        description: 'Run name. You can leave this empty now.'
+        description: 'Run name (optional)'
         type: string
       id:
-        description: 'Unique ID. You can leave this empty now.'
+        description: 'Unique ID (optional)'
         type: string
 
 jobs:
@@ -32,11 +32,13 @@ jobs:
       platforms: ${{ steps.rhub-setup.outputs.platforms }}
 
     steps:
-    # NO NEED TO CHECKOUT HERE
-    - uses: r-hub/rhub2/actions/rhub-setup@v1
-      with:
-        config: ${{ github.event.inputs.config }}
-      id: rhub-setup
+      - uses: r-lib/actions/setup-pandoc@v2
+      
+      # NO NEED TO CHECKOUT HERE
+      - uses: r-hub/rhub2/actions/rhub-setup@v1
+        with:
+          config: ${{ github.event.inputs.config }}
+        id: rhub-setup
 
   linux-containers:
     needs: setup
