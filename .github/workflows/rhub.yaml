@@ -32,8 +32,6 @@ jobs:
       platforms: ${{ steps.rhub-setup.outputs.platforms }}
 
     steps:
-      - uses: r-lib/actions/setup-pandoc@v2
-      
       # NO NEED TO CHECKOUT HERE
       - uses: r-hub/rhub2/actions/rhub-setup@v1
         with:
@@ -79,6 +77,10 @@ jobs:
         config: ${{ fromJson(needs.setup.outputs.platforms) }}
 
     steps:
+      - uses: teatimeguest/setup-texlive-action@v3
+        with:
+          packages: scheme-basic
+      - uses: r-lib/actions/setup-pandoc@v2
       - uses: r-hub/rhub2/actions/rhub-checkout@v1
       - uses: r-hub/rhub2/actions/rhub-setup-r@v1
         with:
