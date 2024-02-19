@@ -51,6 +51,9 @@ jobs:
       image: ${{ matrix.config.container }}
 
     steps:
+      - name: Install sudo
+          run: apt-get install sudo
+          shell: bash
       - uses: r-lib/actions/setup-pandoc@v2
       - uses: r-hub/rhub2/actions/rhub-checkout@v1
       - uses: r-hub/rhub2/actions/rhub-platform-info@v1
