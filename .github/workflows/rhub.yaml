@@ -53,7 +53,11 @@ jobs:
     steps:
       - name: Install sudo (Linux)
         if: runner.os == 'Linux'
-        run: apt-get install sudo
+        run: |
+          if command -v apt-get &> /dev/null
+          then
+              apt-get install sudo
+          fi
       - uses: r-lib/actions/setup-pandoc@v2
       - uses: r-hub/rhub2/actions/rhub-checkout@v1
       - uses: r-hub/rhub2/actions/rhub-platform-info@v1
