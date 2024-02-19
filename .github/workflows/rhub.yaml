@@ -54,7 +54,18 @@ jobs:
       - name: Install sudo (Linux)
         if: runner.os == 'Linux'
         run: |
-          lsb_release -a
+          if command -v cat
+          then
+              cat /etc/os-release
+          fi
+          if command -v hostnamectl
+          then
+              hostnamectl
+          fi
+          if command -v uname
+          then
+              uname -r
+          fi
           if command -v apt-get &> /dev/null
           then
               apt-get install sudo
