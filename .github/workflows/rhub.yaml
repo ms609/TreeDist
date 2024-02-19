@@ -54,9 +54,11 @@ jobs:
       - name: Install sudo (Linux)
         if: runner.os == 'Linux'
         run: |
-          if command -v cat
+          . /etc/os-release
+          echo $ID
+          if $ID=="fedora"
           then
-              cat /etc/os-release
+              echo "RUNNING FEDORA!"
           fi
           if command -v hostnamectl
           then
