@@ -54,12 +54,13 @@ jobs:
       - name: Check distribution
         run: echo "::set-output name=distribution::$(awk -F= '/^ID=/{print $2}' /etc/os-release)"
         id: check_distribution
-      - name: Run step only on Fedora
+      - name: Install pandoc (except Fedora)
         if: ${{ steps.check_distribution.outputs.distribution != 'fedora' }}
         run: |
-          echo steps.check_distribution.outputs.distribution
+          echo ${{ steps.check_distribution.outputs.distribution }}
           apt-get install sudo
       - uses: r-lib/actions/setup-pandoc@v2
+        if: ${{ steps.check_distribution.outputs.distribution != 'fedora' }}
       - uses: r-hub/rhub2/actions/rhub-checkout@v1
       - uses: r-hub/rhub2/actions/rhub-platform-info@v1
         with:
