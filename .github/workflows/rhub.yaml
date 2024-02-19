@@ -52,7 +52,9 @@ jobs:
 
     steps:
       - name: Check distribution
-        run: echo "::set-output name=distribution::$(awk -F= '/^ID=/{print $2}' /etc/os-release)"
+        run: |
+          echo "{distribution}={$(awk -F= '/^ID=/{print $2}' /etc/os-release)}" \
+          >> $GITHUB_OUTPUT
         id: check_distribution
       - name: Install pandoc (except Fedora)
         if: ${{ steps.check_distribution.outputs.distribution != 'fedora' }}
