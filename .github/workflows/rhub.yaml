@@ -54,9 +54,13 @@ jobs:
       - name: Check distribution
         run: |
           echo "{distribution}={$(awk -F= '/^ID=/{print $2}' /etc/os-release)}" >> $GITHUB_OUTPUT
+          echo "{dist}={$(awk -F= '/^ID=/{print $2}' /etc/os-release)}" >> $GITHUB_OUTPUT
+          echo "::set-output name=distribution::$(awk -F= '/^ID=/{print $2}' /etc/os-release)"
         id: check_distribution
       - name: Echo distribution
-        run: echo ${{ steps.check_distribution.outputs.distribution }}
+        run: |
+          echo ${{ steps.check_distribution.outputs.distribution }}
+          echo ${{ steps.check_distribution.outputs.dist }}
       - name: apt-get install sudo (Ubuntu, for clang-asan)
         run: apt-get install sudo
         if: ${{ steps.check_distribution.outputs.distribution == 'ubuntu' }}
