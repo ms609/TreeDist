@@ -11,9 +11,7 @@ run-name: "${{ github.event.inputs.id }}: ${{ github.event.inputs.name || format
 
 on:
   push:
-    branch: rhub.yaml
-    inputs:
-      config: 'clang-asan,valgrind'
+    branches: rhub.yaml
   workflow_dispatch:
     inputs:
       config:
