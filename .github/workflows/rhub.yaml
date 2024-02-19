@@ -54,6 +54,7 @@ jobs:
       - name: Install sudo (Linux)
         if: runner.os == 'Linux'
         run: |
+          lsb_release -a
           if command -v apt-get &> /dev/null
           then
               apt-get install sudo
