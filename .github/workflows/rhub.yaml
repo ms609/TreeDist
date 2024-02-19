@@ -12,6 +12,11 @@ run-name: "${{ github.event.inputs.id }}: ${{ github.event.inputs.name || format
 on:
   push:
     branch: rhub.yaml
+    inputs:
+      config:
+        description: 'A comma separated list of R-hub platforms to use.'
+        type: string
+        default: 'clang-asan,valgrind'
   workflow_dispatch:
     inputs:
       config:
