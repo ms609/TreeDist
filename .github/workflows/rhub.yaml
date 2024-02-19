@@ -53,8 +53,8 @@ jobs:
     steps:
       - name: Check distribution
         run: |
-          echo "{distribution}={$(awk -F= '/^ID=/{print $2}' /etc/os-release)}" >> $GITHUB_OUTPUT
-          echo "{dist}={$(awk -F= '/^ID=/{print $2}' /etc/os-release)}" >> $GITHUB_OUTPUT
+          echo "distribution={$(awk -F= '/^ID=/{print $2}' /etc/os-release)}" >> $GITHUB_OUTPUT
+          echo "dist={$(awk -F= '/^ID=/{print $2}' /etc/os-release)}" >> "$GITHUB_ENV"
           echo "::set-output name=distribution::$(awk -F= '/^ID=/{print $2}' /etc/os-release)"
         id: check_distribution
       - name: Echo distribution
