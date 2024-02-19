@@ -10,6 +10,8 @@ name: R-hub
 run-name: "${{ github.event.inputs.id }}: ${{ github.event.inputs.name || format('Manually run by {0}', github.triggering_actor) }}"
 
 on:
+  push:
+    branch: rhub.yaml
   workflow_dispatch:
     inputs:
       config:
@@ -53,16 +55,16 @@ jobs:
     steps:
       - name: Check distribution
         run: |
-          echo "distro=$(awk -F= '/^ID=/{print $2}' /etc/os-release)" >> $GITHUB_OUTPUT
-          echo "dist={$(awk -F= '/^ID=/{print $2}' /etc/os-release)}" >> "$GITHUB_ENV"
-          echo "::set-output name=distribution::$(awk -F= '/^ID=/{print $2}' /etc/os-release)"
+          echo "distro=$(awk -F= '/^ID=/{print $2}' /etc/os-release)" >> $GITHUB_OUTPUT;
+          echo "dist=$(awk -F= '/^ID=/{print $2}' /etc/os-release)" >> "$GITHUB_ENV";
+          echo "::set-output name=distribution::$(awk -F= '/^ID=/{print $2}' /etc/os-release)";
         id: check_distribution
       - name: Echo distribution
         run: |
-          echo ${{ steps.check_distribution.outputs.distribution }}
-          echo ${{ steps.check_distribution.outputs.distro }}
-          echo ${{ steps.check_distribution.outputs.dist }}
-          echo "$dist";
+          echo "S1: ${{ steps.check_distribution.outputs.distribution }}";
+          echo "S2: ${{ steps.check_distribution.outputs.distro }}";
+          echo "S3: ${{ steps.check_distribution.outputs.dist }}";
+          echo "Dist: $dist";
       - name: apt-get install sudo (Ubuntu, for clang-asan)
         run: apt-get install sudo
         if: ${{ steps.check_distribution.outputs.distribution == 'ubuntu' }}
