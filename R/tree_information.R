@@ -352,3 +352,72 @@ ConsensusInfo <- function(trees, info = "phylogenetic", p = 0.5,
   }
   consensus_info(trees, mode == 1L, p = safeP)
 }
+
+#' Maximum Clade Information Tree
+#' 
+#' Analogous to the Maximum Clade Credibility tree:
+#' Selects the tree from the posterior distribution whose clades have the
+#' highest information content.
+#' Generate the MCC tree by specifying `info = "credibility"`.
+#' 
+#' @inheritParams ConsensusInfo
+#' @return `MCITree()` returns the binary tree with the highest information
+#' content, given the posterior distribution
+#' @examples
+#' library("TreeTools", quietly = TRUE)
+#' trees <- as.phylo(1:42, 16)
+#' 
+#' # Maximum Clade Information tree
+#' mci <- MCITree(trees)
+#' plot(mci)
+#' p <- SplitFrequency(mccl, trees) / length(trees)
+#' LabelSplits(mccl, round(p * 100), "%", bg = SupportColor(p))
+#' SplitwiseInfo(mci)
+#' 
+#' # Compare with Maximum Clade Credibility tree
+#' mcc <- MCITree(trees, "credibility")
+#' plot(mcc)
+#' p <- SplitFrequency(mcc, trees) / length(trees)
+#' LabelSplits(mcc, round(p * 100), "%", bg = SupportColor(p))
+#' SplitwiseInfo(mcc)
+#' 
+#' @template MRS
+#' @importFrom TreeTools as.Splits TipsInSplits
+#' @export
+MCITree <- function(trees, info = "phylogenetic", check.tips = TRUE) {
+  mode <- pmatch(tolower(info),
+                 c("phylogenetic", "clustering", "credibility", "spic", "scic"))
+  if (is.na(mode)) {
+    stop("`info` must be 'phylogenetic' or 'clustering'")
+  }
+  if (inherits(trees, "phylo")) {
+    return(trees)
+  }
+  if (length(trees) == 1L) {
+    return(trees[[1]])
+  }
+  if (check.tips) {
+    trees <- RenumberTips(trees, trees[[1]])
+  }
+  splits <- as.Splits(trees)
+  nSplits <- NSplits(splits[[1]])
+  nTree <- length(trees)
+  nTip <- NTip(trees[[1]])
+  Info <- switch(mode, SplitwiseInfo, ClusteringInfo, function(tree, p) sum(p),
+                 SplitwiseInfo, ClusteringInfo)
+  # TODO implement in C++
+  treeInfo <- vapply(seq_along(splits), function(i) {
+    sp <- splits[[i]]
+    p <- (1 + rowSums(
+      vapply(splits[-i], function (cf) sp %in% cf, logical(nSplits)))
+      ) / nTree
+    size <- TipsInSplits(sp)
+    Info(trees[[i]], p)
+  }, double(1))
+  chosen <- which.max(treeInfo)
+  message("Selected tree ", chosen, "; ",
+          sum(treeInfo == max(treeInfo)), " had best score")
+  
+  # Return:
+  trees[[chosen]]
+}
