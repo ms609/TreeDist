@@ -3,20 +3,33 @@
 #' Calculate the Kendall&ndash;Colijn tree distance, a measure related to the 
 #' path difference. 
 #' 
-#' The Kendall&ndash;Colijn distance works by measuring, for each pair of leaves,
-#' the distance from the most recent
-#' common ancestor of those leaves and the root node.  For a given tree, this 
-#' produces a vector of values recording the distance-from-the-root of each
-#' most recent common ancestor of each pair of leaves.
+#' The Kendall&ndash;Colijn distance works by measuring, for each pair of
+#' leaves, the distance from the most recent common ancestor of those leaves
+#' and the root node.
+#' For a given tree, this produces a vector of values recording the
+#' distance-from-the-root of each most recent common ancestor of each pair of
+#' leaves.
 #' 
-#' Two trees are compared by taking the Euclidian distance between the
+#' Two trees are compared by taking the Euclidean distance between the
 #' respective vectors.  This is calculated by taking the square root of the sum 
 #' of the squares of the differences between the vectors.
 #' 
-#' This metric emphasizes the position of the root; the path difference 
-#' instead measures the distance of the last common ancestor of each pair
+#' An analogous distance can be created from any vector representation of a
+#' tree.
+#' The split size vector metric \insertCite{SmithSpace}{TreeDist} is an attempt
+#' to mimic the Kendall&nbsp;Colijn metric in situations where the position of
+#' the root should not be afforded special significance; and the path distance
+#' \insertCite{Steel1993}{TreeDist} is a familiar alternative whose underlying
+#' vector measures the distance of the last common ancestor of each pair
 #' of leaves from the leaves themselves, i.e. the length of the path from one 
 #' leaf to another.
+#' 
+#' 
+#' None of these vector-based methods performs as well as other tree distances
+#' in measuring similarities in the relationships implied by a pair of trees
+#' \insertCite{SmithDist}{TreeDist}; in particular, the Kendall&nbsp;Colijn
+#' metric is strongly influenced by tree balance, and may not be appropriate
+#' for a suite of common applications \insertCite{SmithSpace}{TreeDist}.
 #' 
 #' @template tree12ListParams
 #' @param Vector Function converting a tree to a numeric vector.
@@ -29,7 +42,7 @@
 #' \insertCite{@per @Steel1993}{TreeDist}.
 #' 
 #' `SplitVector` returns the size of the smallest split that contains each
-#' pair of leaves \insertCite{@per @SmithSpace}{TreeDist}.
+#' pair of leaves (per \insertCite{SmithSpace;nobrackets}{TreeDist}).
 #' 
 #' @templateVar returns `KendallColijn()` returns
 #' @template distReturn
@@ -67,8 +80,8 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
   
   FunValue <- function(nTip) double(nTip * (nTip - 1L) / 2L)
   
-  if (inherits(tree1, 'phylo')) {
-    if (inherits(tree2, 'phylo')) {
+  if (inherits(tree1, "phylo")) {
+    if (inherits(tree2, "phylo")) {
       if (length(tree1$tip.label) != length(tree2$tip.label) || 
           length(setdiff(tree1$tip.label, tree2$tip.label)) > 0) {
         stop("Leaves must bear identical labels.")
@@ -84,7 +97,7 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
       }
     }
   } else {
-    if (inherits(tree2, 'phylo')) {
+    if (inherits(tree2, "phylo")) {
       apply(Vector(tree2) - vapply(tree1, Vector,
                                    FunValue(length(tree2$tip.label))),
             2L, .EuclideanDistance)
@@ -95,8 +108,8 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
       ret <- matrix(0, nTree, nTree)
       is <- combn(seq_len(nTree), 2)
       
-      ret <- structure(class = 'dist', Size = nTree,
-                       diag = FALSE, upper = FALSE,
+      ret <- structure(class = "dist", Size = nTree,
+                       Diag = FALSE, Upper = FALSE,
                        apply(is, 2, function(i)
                          .EuclideanDistance(treeVec[, i[1]] - treeVec[, i[2]])))
       # Return:
@@ -112,8 +125,10 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
   }
 }
 
+.EuclideanDistance <- function(x) sqrt(sum(x * x))
+
 #' @describeIn KendallColijn Creates a vector that characterises a rooted tree,
-#' as described in Kendall & Colijn (2016).
+#' as described in \insertCite{Kendall2016;textual}{TreeDist}.
 #' @param tree A tree of class \code{\link[ape:read.tree]{phylo}}.
 #' @importFrom TreeTools AllAncestors Preorder
 #' @importFrom utils combn
@@ -134,12 +149,12 @@ KCVector <- function(tree) {
     max(intersect(ancestors[[i[1]]], ancestors[[i[2]]])))
   
   rootDist <- vapply(ancestors, length, integer(1))
-  structure(rootDist[mrca], Size = nTip, class = 'dist')
+  structure(rootDist[mrca], Size = nTip, class = "dist")
 }
 
 #' @describeIn KendallColijn Creates a vector reporting the number of edges
 #' between each pair of leaves, per the path metric of
-#' \insertCite{Steel1993}{TreeDist}.
+#' \insertCite{Steel1993;textual}{TreeDist}.
 #' @importFrom TreeTools AllAncestors Preorder
 #' @importFrom utils combn
 #' @export
@@ -147,16 +162,6 @@ PathVector <- function(tree) {
   if (!inherits(tree, "phylo")) {
     stop("`tree` must be of class `phylo`")
   }
-  edge <- tree$edge
-  structure(path_vector(edge), Size = NTip(tree), class = 'dist')
-}
-
-PathVector2 <- function(tree) {
-  edge <- tree$edge
-  structure(path_vector2(edge), Size = NTip(tree), class = 'dist')
-}
-
-.PathVectorR <- function(tree) {
   tree <- Preorder(tree)
   edge <- tree$edge
   parent <- edge[, 1L]
@@ -178,12 +183,12 @@ PathVector2 <- function(tree) {
         )
   })
   
-  structure(pathLength, Size = nTip, class = 'dist')
+  structure(pathLength, Size = nTip, class = "dist")
 }
 
 #' @describeIn KendallColijn Creates a vector reporting the smallest split
-#' containing each pair of leaves, per the metric proposed in Smith
-#' (forthcoming).
+#' containing each pair of leaves, per the metric proposed in
+#' \insertCite{SmithSpace;textual}{TreeDist}.
 #' @importFrom TreeTools as.Splits
 #' @export
 SplitVector <- function(tree) {
@@ -197,7 +202,7 @@ SplitVector <- function(tree) {
   smallestSplit <- apply(is, 2, function(i)
     min(inSplit[splits[, i[1]] & splits[, i[2]]], nTip - 1L))
   
-  structure(smallestSplit, Size = nTip, class = 'dist')
+  structure(smallestSplit, Size = nTip, class = "dist")
 }
 
 #' Approximate diameter of the Kendall&ndash;Collijn metric
@@ -211,11 +216,10 @@ SplitVector <- function(tree) {
 #' @examples
 #' KCDiameter(trees)
 #' KCDiameter(4)
-#' @template MRS
 #' @importFrom TreeTools PectinateTree
 #' @rdname KendallColijn
 #' @export
-KCDiameter <- function(tree) UseMethod('KCDiameter')
+KCDiameter <- function(tree) UseMethod("KCDiameter")
 
 #' @importFrom TreeTools NTip
 #' @export

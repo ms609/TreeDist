@@ -11,7 +11,7 @@ MapTrees()
 Project()
 }
 \description{
-\code{MapTrees()} launches a 'Shiny' application for the visualization and
+\code{MapTrees()} launches a "Shiny" application for the visualization and
 evaluation of tree spaces.
 }
 \section{Input tab}{
@@ -30,7 +30,7 @@ for each tree, with one entry per line/row, can be uploaded along with
 the trees.  Points in tree space can then be styled according to the
 corresponding property.
 
-If trees are subsampled (using the 'Sample every' slider), then the values
+If trees are subsampled (using the "Sample every" slider), then the values
 in the tree properties file can also be subsampled accordingly.
 Unfortunately there is not yet support for multiple point property files;
 one file will be applied to all trees, in the sequence that they were added
@@ -52,7 +52,7 @@ Partitioning around medoids or minimax-linkage hierarchical clustering
 will typically find a close-to-optimal clustering where one exists;
 select additional methods for a more exhaustive search.
 To avoid redundant calculation, clusterings are only updated when
-'recalculate clustering' is clicked, or the 'maximum cluster number' slider
+"recalculate clustering" is clicked, or the "maximum cluster number" slider
 is modified; clustering solutions using more than this many clusters are
 not considered
 Clusterings with silhouette coefficients < 0.25 are unlikely to represent
@@ -82,7 +82,7 @@ file, before subsampling.
 
 Each tree is denoted by a point, whose symbol can be styled according to
 cluster membership or according to the file that contains the tree,
-with each click of 'Add to existing' on the input tab constituting a
+with each click of "Add to existing" on the input tab constituting a
 new batch with a new symbol.
 
 Points can be coloured according to a category -- the cluster or batch to
@@ -100,21 +100,21 @@ A list of references employed when constructing the tree space is populated
 according to the methods used; it would be appropriate to cite and briefly
 discuss these studies in any publication using figures generated using
 this application.  The application itself can be cited using
-Smith (2020, 2021) below.
+\insertCite{SmithDist,SmithSpace;textual}{TreeDist}
 }
 
 \references{
-\insertRef{SmithDist}{TreeDist}
-
-\insertRef{SmithSpace}{TreeDist}
+\insertAllCited{}
 }
 \seealso{
 Full detail of tree space analysis in R is provided in the accompanying
 \href{https://ms609.github.io/TreeDist/articles/treespace.html}{vignette}.
 
 Other tree space functions: 
+\code{\link{MSTSegments}()},
 \code{\link{MappingQuality}()},
 \code{\link{SpectralEigens}()},
+\code{\link{cluster-statistics}},
 \code{\link{median.multiPhylo}()}
 }
 \author{

@@ -1,0 +1,34 @@
+on:
+  push:
+    branches:
+      - main
+      - master
+      - '**valgrind**'
+    paths:
+      - '.github/workflows/RcppDeepState.yml'
+      - 'src/**'
+      - 'inst/include/**'
+      - 'memcheck/**'
+      - 'tests/testthat/**.R'
+      - 'vignettes/**.Rmd'
+      
+name: 'RcppDeepState analysis'
+jobs:
+  RcppDeepState:
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps: 
+      - uses: actions/checkout@v2
+
+      - uses: FabrizioSandri/RcppDeepState-action@main
+        with:
+          fail_ci_if_error: 'true'
+          location: '/'
+          seed: '-1'
+          max_seconds_per_function: '2'
+          max_inputs: '3'
+          comment: 'true'
+          verbose: 'true'

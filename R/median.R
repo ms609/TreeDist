@@ -1,12 +1,12 @@
 #' Median of a set of trees
 #' 
 #' Calculate the single binary tree that represents the geometric median -- 
-#' an 'average' -- of a forest of tree topologies.
+#' an "average" -- of a forest of tree topologies.
 #' 
 #' The geometric median is the tree that exhibits the shortest average distance
 #' from each other tree topology in the set.
-#' It represents an 'average' of a set of trees, though note that an unsampled 
-#' tree may be closer to the geometric 'centre of gravity' of the input set --
+#' It represents an "average" of a set of trees, though note that an unsampled 
+#' tree may be closer to the geometric "centre of gravity" of the input set --
 #' such a tree would not be considered.
 #' 
 #' The result will depend on the metric chosen to calculate distances between
@@ -35,7 +35,7 @@
 #' containing all such trees will be returned.
 #' 
 #' @examples
-#' library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+#' library("TreeTools", quietly = TRUE)
 #' tenTrees <- as.phylo(1:10, nTip = 8)
 #' 
 #' # Default settings:
@@ -51,11 +51,11 @@
 #' # To analyse a list of trees that is not of class multiPhylo:
 #' treeList <- lapply(1:10, as.phylo, nTip = 8)
 #' class(treeList)
-#' median(structure(treeList, class = 'multiPhylo'))
+#' median(structure(treeList, class = "multiPhylo"))
 #' @template MRS
 #' 
 #' @seealso Consensus methods:
-#'   [`ape::consensus()`], 
+#'   [`ape::consensus()`],
 #'   [`TreeTools::ConsensusWithout()`]
 #'   
 #' @importFrom stats median
@@ -63,9 +63,9 @@
 #' @encoding UTF-8
 #' @export
 median.multiPhylo <- function(x, na.rm = FALSE,
-                               Distance = ClusteringInfoDistance,
-                               index = FALSE,
-                               breakTies = TRUE, ...) {
+                              Distance = ClusteringInfoDistance,
+                              index = FALSE,
+                              breakTies = TRUE, ...) {
   distances <- unname(colSums(as.matrix(Distance(x))))
   
   # Return:

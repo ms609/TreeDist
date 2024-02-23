@@ -9,13 +9,13 @@
 \description{
 'TreeDist' is an R package that implements a suite of metrics that quantify the
 topological distance between pairs of unweighted phylogenetic trees.
-It also includes a simple 'Shiny' application to allow the visualization of
+It also includes a simple "Shiny" application to allow the visualization of
 distance-based tree spaces, and functions to calculate the information content
 of trees and splits.
 }
 \details{
-'TreeDist' primarily employs metrics in the category of
-'generalized Robinson–Foulds distances': they are based on comparing splits
+"TreeDist" primarily employs metrics in the category of
+"generalized Robinson–Foulds distances": they are based on comparing splits
 (bipartitions) between trees, and thus reflect the relationship data within
 trees, with no reference to branch lengths.
 Detailed documentation and usage instructions are
@@ -30,7 +30,7 @@ however similar or different they are.
 By overlooking potential similarities between almost-identical splits,
 this conservative approach has undesirable properties.
 
-\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html}{'Generalized' RF metrics}
+\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html}{"Generalized" RF metrics}
 generate \emph{matchings} that pair each split in one tree with a similar split
 in the other.
 Each pair of splits is assigned a similarity score; the sum of these scores in
@@ -61,7 +61,7 @@ with the Jaccard–Robinson–Foulds metric (function
 \item \href{https://ms609.github.io/TreeDist/reference/MatchingSplitDistance.html}{\code{MatchingSplitDistance()}}
 \itemize{
 \item Bogdanowicz and Giaro (2012) and  Lin \emph{et al.} (2012) independently proposed
-counting the number of 'mismatched' leaves in a pair of splits.
+counting the number of "mismatched" leaves in a pair of splits.
 \href{https://ms609.github.io/TreeDist/reference/TreeDistance.html}{\code{MatchingSplitInfoDistance()}}
 provides an information-based equivalent (Smith 2020).
 }
@@ -85,7 +85,9 @@ the package '\href{https://ms609.github.io/TBRDist/index.html}{TBRDist}'.
 \section{Tree space analysis}{
 Map tree spaces and readily visualize mapped landscapes, avoiding
 common analytical pitfalls (Smith, forthcoming),
-using the inbuilt graphical user interface:\if{html}{\out{<div class="sourceCode r">}}\preformatted{TreeDist::MapTrees()
+using the inbuilt graphical user interface:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{TreeDist::MapTrees()
 }\if{html}{\out{</div>}}
 
 Serious analysts should consult the
@@ -108,11 +110,11 @@ for a command-line interface.
 \seealso{
 Further documentation is available in the
 \href{https://ms609.github.io/TreeDist/articles/}{package vignettes}, visible from
-R using \code{vignette(package = 'TreeDist')}.
+R using \code{vignette(package = "TreeDist")}.
 
 Other R packages implementing tree distance functions include:
 \itemize{
-\item \href{http://ape-package.ird.fr/}{ape}:
+\item \href{https://emmanuelparadis.github.io/}{ape}:
 \itemize{
 \item \code{cophenetic.phylo()}: Cophenetic distance
 \item \code{dist.topo()}: Path (topological) distance, Robinson–Foulds distance.
@@ -124,7 +126,7 @@ Other R packages implementing tree distance functions include:
 \item \href{https://ms609.github.io/Quartet/}{Quartet}: Triplet and Quartet distances,
 using the tqDist algorithm.
 \item \href{https://ms609.github.io/TBRDist/}{TBRDist}: TBR and SPR distances on
-unrooted trees, using the 'uspr; C library.
+unrooted trees, using the 'uspr' C library.
 \item \href{https://cran.r-project.org/package=distory}{distory} (unmaintained):
 Geodesic distance
 }

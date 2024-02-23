@@ -1,5 +1,3 @@
-#' Approximate Subtree Prune and Regraft distance
-#' 
 #' Approximate the Subtree Prune and Regraft (SPR) distance.
 #' 
 #' `SPRDist()` calculates an upper bound on the SPR distance between trees
@@ -17,7 +15,7 @@
 #' @references \insertAllCited{}
 #' 
 #' @examples
-#' library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+#' library("TreeTools", quietly = TRUE)
 #' 
 #' SPRDist(BalancedTree(7), PectinateTree(7))
 #' 
@@ -76,19 +74,19 @@ SPRDist.multiPhylo <- SPRDist.list
 
 #' @importFrom phangorn SPR.dist
 .phangornSPRDist <- function(tree1, tree2 = NULL, symmetric) {
-  if (inherits(tree1, 'phylo')) {
+  if (inherits(tree1, "phylo")) {
     tree1 <- Postorder(tree1)
   } else {
-    if (inherits(tree2, 'multiPhylo')) {
+    if (inherits(tree2, "multiPhylo")) {
       return(vapply(tree2, SPRDist, double(length(tree1)), tree1))
     }
-    tree1 <- structure(lapply(tree1, Postorder), class = 'multiPhylo')
+    tree1 <- structure(lapply(tree1, Postorder), class = "multiPhylo")
   }
   
-  if (inherits(tree2, 'phylo')) {
+  if (inherits(tree2, "phylo")) {
     tree2 <- Postorder(tree2)
   } else if (!is.null(tree2)) {
-    tree2 <- structure(lapply(tree2, Postorder), class = 'multiPhylo')
+    tree2 <- structure(lapply(tree2, Postorder), class = "multiPhylo")
   }
   
   SPR.dist(tree1, tree2)
@@ -105,7 +103,7 @@ SPRDist.multiPhylo <- SPRDist.list
 #' plot(tree1)
 #' plot(tree2)
 #' .SPRPair(tree1, tree2)
-#' @importFrom TreeTools DropTip TipsInSplits root_on_node KeepTipPostorder
+#' @importFrom TreeTools DropTip TipsInSplits KeepTipPostorder
 #' @export
 .SPRConfl <- function(tree1, tree2, debug = FALSE) {
   moves <- 0

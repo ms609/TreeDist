@@ -7,14 +7,16 @@
 
 using namespace Rcpp;
 
-double lg2[int32(SL_MAX_TIPS - 1) * (SL_MAX_TIPS - 1) + 1];
+#define LG2_SIZE ((int32(SL_MAX_TIPS) - 1) * (SL_MAX_TIPS - 1) + 1)
+
+double lg2[LG2_SIZE];
 double lg2_double_factorial[SL_MAX_TIPS + SL_MAX_TIPS - 2];
 double lg2_unrooted[SL_MAX_TIPS + 2];
 double *lg2_rooted = &lg2_unrooted[0] + 1;
 __attribute__((constructor))
   void initialize_ldf() {
     lg2[0] = 0;
-    for (int32 i = 1; i != int32(SL_MAX_TIPS - 1) * (SL_MAX_TIPS - 1) + 1; ++i) { 
+    for (int32 i = 1; i != LG2_SIZE; ++i) {
       lg2[i] = log2(i);
     }
     for (int16 i = 0; i != 3; ++i) {
@@ -23,18 +25,20 @@ __attribute__((constructor))
     }
     assert(lg2_rooted[0] == 0);
     assert(lg2_rooted[1] == 0);
-    for (int16 i = 2; i != SL_MAX_TIPS + SL_MAX_TIPS - 2; ++i) {
+    for (int32 i = 2; i != SL_MAX_TIPS + SL_MAX_TIPS - 2; ++i) {
       lg2_double_factorial[i] = lg2_double_factorial[i - 2] + lg2[i];
     }
-    for (int16 i = 3; i != SL_MAX_TIPS + 2; ++i) {
+    for (int32 i = 3; i != SL_MAX_TIPS + 2; ++i) {
       lg2_unrooted[i] = lg2_double_factorial[i + i - 5];
       assert(lg2_rooted[i - 1] == lg2_double_factorial[i + i - 5]);
     }
   }
 
 
+// Returns lg2_unrooted[x] - lg2_trees_matching_split(y, x - y)
 double mmsi_pair_score (const int16 x, const int16 y) {
-  // lg2_unrooted[x] - lg2_trees_matching_split(y, x - y) =
+  assert(SL_MAX_TIPS + 2 <= INT_16_MAX); // verify int16 ok
+  
   return lg2_unrooted[x] - (lg2_rooted[y] + lg2_rooted[x - y]);
 }
 
@@ -81,16 +85,26 @@ double ic_matching (const int16 a, const int16 b, const int16 n) {
 }
 
 double one_overlap (const int16 a, const int16 b, const int16 n) {
-  if (a == b) return lg2_rooted[a] + lg2_rooted[n - a];
-  if (a < b) return lg2_rooted[b] + lg2_rooted[n - a] - lg2_rooted[b - a + 1];
-  return lg2_rooted[a] + lg2_rooted[n - b] - lg2_rooted[a - b + 1];
+  assert(SL_MAX_TIPS + 2 <= INT_16_MAX); // verify int16 ok
+  if (a == b) {
+    return lg2_rooted[a] + lg2_rooted[n - a];
+  } else if (a < b) {
+    return lg2_rooted[b] + lg2_rooted[n - a] - lg2_rooted[b - a + 1];
+  } else {
+    return lg2_rooted[a] + lg2_rooted[n - b] - lg2_rooted[a - b + 1];
+  }
 }
 
 double one_overlap_notb (const int16 a, const int16 n_minus_b, const int16 n) {
+  assert(SL_MAX_TIPS + 2 <= INT_16_MAX); // verify int16 ok
   const int16 b = n - n_minus_b;
-  if (a == b) return lg2_rooted[b] + lg2_rooted[n_minus_b];
-  if (a < b) return lg2_rooted[b] + lg2_rooted[n - a] - lg2_rooted[b - a + 1];
-  return lg2_rooted[a] + lg2_rooted[n_minus_b] - lg2_rooted[a - b + 1];
+  if (a == b) {
+    return lg2_rooted[b] + lg2_rooted[n_minus_b];
+  } else if (a < b) {
+    return lg2_rooted[b] + lg2_rooted[n - a] - lg2_rooted[b - a + 1];
+  } else {
+    return lg2_rooted[a] + lg2_rooted[n_minus_b] - lg2_rooted[a - b + 1];
+  }
 }
 
 double spi_overlap (const splitbit* a_state, const splitbit* b_state,
@@ -98,6 +112,7 @@ double spi_overlap (const splitbit* a_state, const splitbit* b_state,
                     const int16 n_bins) {
   bool flag = true;
   
+  assert(SL_MAX_BINS <= INT16_MAX);
   for (int16 bin = 0; bin != n_bins; bin++) {
     if (a_state[bin] & b_state[bin]) {
       flag = false;

@@ -10,7 +10,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Once you understand [how to use 'TreeDist'](Using-TreeDist.html) to calculate
+Once you understand [how to use "TreeDist"](Using-TreeDist.html) to calculate
 tree distances, the next step is to provide some context for the calculated
 distances.
 
@@ -36,8 +36,8 @@ by typing `?FunctionName` in the R terminal.
 Let's work through a simple example using the Nye _et al_. [-@Nye2006]
 similarity metric to compare two imperfectly-resolved trees.
 
-```{r, fig.width=6, out.width='90%', fig.align='center'}
-library('TreeDist')
+```{r, fig.width=6, out.width="90%", fig.align="center"}
+library("TreeDist")
 tree1 <- ape::read.tree(text = '(A, ((B, ((C, D), (E, F))), (G, (H, (I, J, K)))));')
 tree2 <- ape::read.tree(text = '(A, (B, (C, D, E, (J, K)), (F, (G, H, I))));')
 VisualizeMatching(NyeSimilarity, tree1, tree2,
@@ -51,7 +51,7 @@ that's a harder problem to overcome.)
 
 As such, the maximum similarity possible between two 11-leaf trees is 
 [`NSplits(11)`](https://ms609.github.io/TreeTools/reference/NSplits.html)
-= `r suppressMessages(library('TreeTools')); NSplits(11)`.  
+= `r suppressMessages(library("TreeTools")); NSplits(11)`.  
 
 Normalizing against this value tells us how similar the two trees are, compared
 to two identical eleven-leaf binary trees.
@@ -99,7 +99,7 @@ This is the default normalization method for
 NyeSimilarity(tree1, tree2, normalize = TRUE)
 ```
 
-Finally, if `tree1` is a 'target' tree -- perhaps one that has been used
+Finally, if `tree1` is a "target" tree -- perhaps one that has been used
 to simulate data from, or which is independently known to be true or virtuous --
 we may wish to normalize against the best possible match to that tree.
 
@@ -135,7 +135,7 @@ With the quartet divergence, the expected tree distance is readily calculated:
 any given quartet has a one in three chance of matching by chance.
 
 ```{r}
-library('Quartet', exclude = 'RobinsonFoulds')
+library("Quartet", exclude = "RobinsonFoulds")
 expectedQD <- 2 / 3
 normalizedQD <- QuartetDivergence(QuartetStatus(tree1, tree2),
                                   similarity = FALSE) / expectedQD
@@ -149,34 +149,34 @@ available in the data package
 We can view (normalized) distances for a selection of methods:
 
 ```{r, fig.width=7, fig.height=4, message=FALSE}
-if (requireNamespace('TreeDistData', quietly = TRUE)) {
-  library('TreeDistData', exclude = 'PairwiseDistances')
-  data('randomTreeDistances', package = 'TreeDistData')
+if (requireNamespace("TreeDistData", quietly = TRUE)) {
+  library("TreeDistData", exclude = "PairwiseDistances")
+  data("randomTreeDistances", package = "TreeDistData")
   
-  methods <- c('pid', 'cid', 'nye', 'qd')
-  methodCol <- c(pid = '#e15659', cid = '#58a14e', nye = '#edc949',
-                 qd = '#af7aa1')
+  methods <- c("pid", "cid", "nye", "qd")
+  methodCol <- c(pid = "#e15659", cid = "#58a14e", nye = "#edc949",
+                 qd = "#af7aa1")
   
   oldPar <- par(cex = 0.7, mar = c(5, 5, 0.01, 0.01))
   nLeaves <- as.integer(dimnames(randomTreeDistances)[[3]])
-  plot(nLeaves, type = 'n', randomTreeDistances['pid', 'mean', ],
+  plot(nLeaves, type = "n", randomTreeDistances["pid", "mean", ],
        ylim = c(0.54, 1),
        xlab = "Number of leaves",
        ylab = "Normalized distance between random tree pairs")
   
   for (method in methods) {
     dat <- randomTreeDistances[method, , ]
-    lines(nLeaves, dat['50%', ], pch = 1, col = methodCol[method])
-    polygon(c(nLeaves, rev(nLeaves)), c(dat['25%', ], rev(dat['75%', ])),
-            border = NA, col = paste0(methodCol[method], '55'))
+    lines(nLeaves, dat["50%", ], pch = 1, col = methodCol[method])
+    polygon(c(nLeaves, rev(nLeaves)), c(dat["25%", ], rev(dat["75%", ])),
+            border = NA, col = paste0(methodCol[method], "55"))
     
   }
   
-  text(202, randomTreeDistances[methods, '50%', '200'] + 0.02, 
-       c('Different phylogenetic information', 
-         'Clustering information distance',
-         expression(paste(plain('Nye '), italic('et al.'))),
-         'Quartet divergence'
+  text(202, randomTreeDistances[methods, "50%", "200"] + 0.02, 
+       c("Different phylogenetic information", 
+         "Clustering information distance",
+         expression(paste(plain("Nye "), italic("et al."))),
+         "Quartet divergence"
          ), col = methodCol[methods], pos = 2)
   par(oldPar)
 }
@@ -185,7 +185,7 @@ if (requireNamespace('TreeDistData', quietly = TRUE)) {
 or use these calculated values to normalize our tree distance:
 
 ```{r, eval = FALSE}
-expectedCID <- randomTreeDistances['cid', 'mean', '9']
+expectedCID <- randomTreeDistances["cid", "mean", "9"]
 ClusteringInfoDistance(tree1, tree2, normalize = TRUE) / expectedCID
 ```
 
@@ -206,9 +206,9 @@ proportion of information that has been correctly resolved: the goal is to find
 a tree that is as informative as possible about the true tree.
 
 Ternary diagrams allow us to visualise the quality of a reconstructed tree
-with reference to a known 'true' tree:
+with reference to a known "true" tree:
 
-```{r fig.align='center', fig.height=1.8, fig.width=6, out.width='80%'}
+```{r fig.align="center", fig.height=1.8, fig.width=6, out.width="80%"}
 testTrees <- list(
   trueTree = ape::read.tree(text = '(a, (b, (c, (d, (e, (f, (g, h)))))));'),
   lackRes = ape::read.tree(text = '(a, (b, c, (d, e, (f, g, h))));'),
@@ -223,26 +223,26 @@ VisualizeMatching(MutualClusteringInfo, testTrees$trueTree, testTrees$bigErr)
 points(4, 7.5, pch = 4, cex = 3, col = "#009E73")
 ```
 
-Better trees plot vertically towards the '100% shared information' vertex. 
+Better trees plot vertically towards the "100% shared information" vertex. 
 Resolution of trees increases towards the right; trees that are more
 resolved may be no better than less-resolved trees if the addition of 
 resolution introduces error.
 
-```{r, fig.width=4, fig.align='center', fig.asp=1, out.width='50%'}
-if (requireNamespace('Ternary', quietly = TRUE)) {
-  library('Ternary')
+```{r, fig.width=4, fig.align="center", fig.asp=1, out.width="50%"}
+if (requireNamespace("Ternary", quietly = TRUE)) {
+  library("Ternary")
   oldPar <- par(mar = rep(0.1, 4))
-  TernaryPlot(alab = 'Absent information', blab = 'Shared information',
-              clab = 'Misinformation',
+  TernaryPlot(alab = "Absent information", blab = "Shared information",
+              clab = "Misinformation",
               lab.cex = 0.8, lab.offset = 0.18,
-              point = 'left', clockwise = FALSE,
-              grid.col = '#dedede', grid.minor.lines = 0,
+              point = "left", clockwise = FALSE,
+              grid.col = "#dedede", grid.minor.lines = 0,
               axis.labels = 0:10 / 10, axis.col = "#aaaaaa")
   
   HorizontalGrid()
   correct <- MutualClusteringInfo(testTrees$trueTree, testTrees)
   resolved <- ClusteringEntropy(testTrees)
-  unresolved <- resolved['trueTree'] - resolved
+  unresolved <- resolved["trueTree"] - resolved
   incorrect <- resolved - correct
   TernaryPoints(cbind(unresolved, correct, incorrect), 
                 pch = 1:4, cex = 2, col = Ternary::cbPalette8[1:4])
@@ -269,14 +269,19 @@ resolution by taking the consensus of this tree and three trees from its
 immediate neighbourhood (one NNI move away).
 
 ```{r}
-library('TreeSearch', quietly = TRUE, warn.conflict = FALSE) # for TBR, NNI
-oneAway <- structure(lapply(seq_len(200), function(x) {
-  tbrTree <- TBR(trueTree)
-  ape::consensus(list(tbrTree,
-                      NNI(tbrTree),
-                      NNI(tbrTree),
-                      NNI(tbrTree)))
-}), class = 'multiPhylo')
+treeSearchInstalled <- requireNamespace("TreeSearch", quietly = TRUE)
+if (treeSearchInstalled) {
+  library("TreeSearch", quietly = TRUE) # for TBR, NNI
+  oneAway <- structure(lapply(seq_len(200), function(x) {
+    tbrTree <- TBR(trueTree)
+    ape::consensus(list(tbrTree,
+                        NNI(tbrTree),
+                        NNI(tbrTree),
+                        NNI(tbrTree)))
+  }), class = "multiPhylo")
+} else {
+  message("Install \"TreeSearch\" to run this example")
+}
 ```
 
 And let's generate 200 more trees that are even more degraded.
@@ -285,13 +290,15 @@ resolution by taking a consensus with three trees from its wider neighbourhood
 (each two NNI moves away).
 
 ```{r}
-threeAway <- structure(lapply(seq_len(200), function(x) {
-  tbrTree <- TBR(TBR(TBR(trueTree)))
-  ape::consensus(list(tbrTree, 
-                      NNI(NNI(tbrTree)),
-                      NNI(NNI(tbrTree)),
-                      NNI(NNI(tbrTree))))
-}), class = 'multiPhylo')
+if (treeSearchInstalled) {
+  threeAway <- structure(lapply(seq_len(200), function(x) {
+    tbrTree <- TBR(TBR(TBR(trueTree)))
+    ape::consensus(list(tbrTree, 
+                        NNI(NNI(tbrTree)),
+                        NNI(NNI(tbrTree)),
+                        NNI(NNI(tbrTree))))
+  }), class = "multiPhylo")
+}
 ```
 
 Now let's calculate their tree similarity scores.
@@ -299,26 +306,34 @@ We need to calculate the amount of information each tree has in common with
 the true tree:
 
 ```{r}
-correct1 <- MutualClusteringInfo(trueTree, oneAway)
-correct3 <- MutualClusteringInfo(trueTree, threeAway)
+if (treeSearchInstalled) {
+  correct1 <- MutualClusteringInfo(trueTree, oneAway)
+  correct3 <- MutualClusteringInfo(trueTree, threeAway)
+}
 ```
 
 The amount of information in each degraded tree:
 ```{r}
-infoInTree1 <- ClusteringEntropy(oneAway)
-infoInTree3 <- ClusteringEntropy(threeAway)
+if (treeSearchInstalled) {
+  infoInTree1 <- ClusteringEntropy(oneAway)
+  infoInTree3 <- ClusteringEntropy(threeAway)
+}
 ```
 
 The amount of information that could have been resolved, but was not:
 ```{r}
-unresolved1 <- ClusteringEntropy(trueTree) - infoInTree1
-unresolved3 <- ClusteringEntropy(trueTree) - infoInTree3
+if (treeSearchInstalled) {
+  unresolved1 <- ClusteringEntropy(trueTree) - infoInTree1
+  unresolved3 <- ClusteringEntropy(trueTree) - infoInTree3
+}
 ```
 
 And the amount of information incorrectly resolved:
 ```{r}
-incorrect1 <- infoInTree1 - correct1
-incorrect3 <- infoInTree3 - correct3
+if (treeSearchInstalled) {
+  incorrect1 <- infoInTree1 - correct1
+  incorrect3 <- infoInTree3 - correct3
+}
 ```
 
 In preparation for our plot, let's colour our one-away trees 
@@ -339,14 +354,14 @@ spec3 <- apply(spec3, 2, ColToHex)
 
 Now we can plot this information on a ternary diagram.
 
-```{r, fig.width=7, fig.align='center', fig.asp=5/7, out.width='70%'}
-if (requireNamespace('Ternary', quietly = TRUE)) {
+```{r, fig.width=7, fig.align="center", fig.asp=5/7, out.width="70%"}
+if (treeSearchInstalled && requireNamespace("Ternary", quietly = TRUE)) {
   layout(matrix(c(1, 2), ncol = 2), widths = c(5, 2))
   oldPar <- par(mar = rep(0, 4))
-  TernaryPlot(alab = 'Information absent in degraded tree', 
-              blab = '\n\nCorrect information in degraded tree', 
-              clab = 'Misinformation in degraded tree',
-              point = 'left', clockwise = FALSE, grid.minor.lines = 0,
+  TernaryPlot(alab = "Information absent in degraded tree", 
+              blab = "\n\nCorrect information in degraded tree", 
+              clab = "Misinformation in degraded tree",
+              point = "left", clockwise = FALSE, grid.minor.lines = 0,
               axis.labels = 0:10 / 10)
   
   HorizontalGrid()
@@ -360,8 +375,8 @@ if (requireNamespace('Ternary', quietly = TRUE)) {
   TernaryDensityContour(coords3, col = col3, nlevels = 4)
   TernaryDensityContour(coords1, col = col1, nlevels = 4)
   
-  if (requireNamespace('kdensity', quietly = TRUE)) {
-    library('kdensity')
+  if (requireNamespace("kdensity", quietly = TRUE)) {
+    library("kdensity")
     HorizontalKDE <- function(dat, col, add = FALSE) {
       lty <- 1
       lwd <- 2
@@ -371,7 +386,7 @@ if (requireNamespace('Ternary', quietly = TRUE)) {
         lines(kde(kdeRange), kdeRange, col = col, lty = lty, lwd = lwd)
       } else {
         plot(kde(kdeRange), kdeRange, col = col, lty = lty, lwd = lwd, 
-             ylim = c(0, 1), main = '', axes = FALSE, type = 'l')
+             ylim = c(0, 1), main = "", axes = FALSE, type = "l")
       }
       # abline(h = 0:10 / 10) # Useful for confirming alignment
     }
@@ -379,9 +394,11 @@ if (requireNamespace('Ternary', quietly = TRUE)) {
     par(mar = c(1.8, 0, 1.8, 0)) # align plot limits with ternary plot
     HorizontalKDE(correct1 / infoInTree1, col1, add = FALSE)
     HorizontalKDE(correct3 / infoInTree3, col3, add = TRUE)
-    mtext('\u2192 Normalized tree quality \u2192', 2)
+    mtext("\u2192 Normalized tree quality \u2192", 2)
   }
   par(oldPar)
+} else {
+  message("Install \"TreeSearch\" and \"Ternary\" to generate this plot")
 }
 ```
 
@@ -395,6 +412,8 @@ You may wish to:
 - Explore the [Ternary package](https://ms609.github.io/Ternary/)
 
 - [Interpret tree distance metrics](https://ms609.github.io/TreeDistData/articles/09-expected-similarity.html)
+
+- Compare trees with [different tips](different-leaves.html)
 
 - Review [available distance measures](https://ms609.github.io/TreeDist/index.html)
   and the corresponding [TreeDist functions](https://ms609.github.io/TreeDist/reference/index.html#section-tree-distance-measures)

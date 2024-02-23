@@ -1,4 +1,4 @@
-library('TreeTools')
+library("TreeTools")
 test_that("Median is calculated", {
   tenTrees <- as.phylo(1:10, 8L)
   expect_equal(4, median(tenTrees, index = TRUE))

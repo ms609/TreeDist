@@ -1,0 +1,19 @@
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'DESCRIPTION'
+      - '**codemeta.yml'
+
+name: codemeta
+      
+jobs:
+  codemeta:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      
+    steps:
+      - uses: ms609/actions/codemeta@main

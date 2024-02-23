@@ -14,7 +14,6 @@ src/*.dll
 *.log
 *.out
 *.Rhistory
-*.Rproj*
 *.site
 *.utf8.md
 /* *.Rd */

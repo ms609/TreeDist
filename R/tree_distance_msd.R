@@ -2,7 +2,11 @@
 #' 
 #' Calculate the 
 #' [Matching Split Distance](https://ms609.github.io/TreeDist/articles/Generalized-RF.html#matching-split-distance)
-#' (Bogdanowicz and Giaro 2012; Lin _et al._ 2012) for unrooted binary trees.
+#' \insertCite{Bogdanowicz2012,Lin2012}{TreeDist} for unrooted binary trees.
+#' 
+#' Trees need not contain identical leaves; scores are based on the leaves that
+#' trees hold in common.  Check for unexpected differences in tip labelling
+#' with `setdiff(TipLabels(tree1), TipLabels(tree2))`.
 #' 
 #' @inheritParams TreeDistance
 #' 
@@ -28,10 +32,7 @@
 #'                   TreeTools::PectinateTree(6))
 #' @template MRS
 #'  
-#' @references 
-#' \insertRef{Bogdanowicz2012}{TreeDist}
-#' 
-#' \insertRef{Lin2012}{TreeDist}
+#' @references \insertAllCited{}
 #' 
 #' @family tree distances
 #' 
@@ -43,7 +44,9 @@ MatchingSplitDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
-                InfoInTree = function(X) stop("Please specify a function to generate a normalizing constant"),
+                InfoInTree = function(X) stop(
+                  "Please specify a function to generate a normalizing constant"
+                  ),
                 Combine = max)
 }
 
@@ -52,7 +55,7 @@ MatchingSplitDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
 #' @useDynLib TreeDist, .registration = TRUE
 #' @export
 MatchingSplitDistanceSplits <- function(splits1, splits2, 
-                                         nTip = attr(splits1, 'nTip'),
+                                         nTip = attr(splits1, "nTip"),
                                          normalize = TRUE, 
                                          reportMatching = FALSE) {
   GeneralizedRF(splits1, splits2, nTip, cpp_matching_split_distance,

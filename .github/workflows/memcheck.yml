@@ -5,10 +5,30 @@ on:
     branches:
       - main
       - master
+    paths-ignore:
+      - "Meta**"
+      - "docs**"
+      - "**.git"
+      - "**.json"
+      - "**.md"
+      - "**.yml"
+      - "!**memcheck.yml"
+      - "**.R[dD]ata"
+      - "**.Rpro*"
   pull_request:
     branches:
       - main
       - master
+    paths-ignore:
+      - "Meta**"
+      - "docs**"
+      - "**.git"
+      - "**.json"
+      - "**.md"
+      - "**.yml"
+      - "!**memcheck.yml"
+      - "**.R[dD]ata"
+      - "**.Rpro*"
 
 name: mem-check
 
@@ -33,13 +53,13 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: release
 
-      - uses: r-lib/actions/setup-pandoc@master
+      - uses: r-lib/actions/setup-pandoc@v2
 
       - name: Install valgrind
         run: sudo apt-get install valgrind texlive-latex-base
@@ -52,7 +72,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Cache R packages
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
@@ -67,11 +87,7 @@ jobs:
           
       - name: Install dependencies
         run: |
-          remotes::install_github("ms609/TreeTools") # for v1.4.5.9007
           remotes::install_deps(dependencies = TRUE)
-          if ("${{ matrix.config.test }}" == 'tests') {
-            remotes::install_github('r-lib/brio#20') # brio mem leak
-          }
           remotes::install_cran("devtools")
         shell: Rscript {0}
         

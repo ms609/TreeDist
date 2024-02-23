@@ -33,20 +33,20 @@ inline void add_child(const int *parent, const int *child,
   a_child[parents[(tip)]] = (tip)
 
 #define TODO_DELETE_RMTIP_DEBUG                                \
-Rcout << "\n\n ==== Remove tip " << tip << ". ====\n";       \
+Rcout << "\n\n ==== Remove tip " << tip << ". ====\n";         \
 Rcout << "parents[" << sibling[(tip)] << "] <- parents[" << parents[(tip)] \
-      << "] = " << parents[parents[(tip)]] << ";\n";         \
+      << "] = " << parents[parents[(tip)]] << ";\n";           \
 Rcout << "sibling[" << sibling[parents[(tip)]] << "] = " << sibling[(tip)] << ";\n";\
 Rcout << "sibling["<<sibling[(tip)]<<"] = "<<sibling[parents[(tip)]]<<"\n"; \
 Rcout << "a_child["<<parents[sibling[(tip)]]<<"] = "<< sibling[sibling[(tip)]] <<"\n";\
 Rcout << "";
   
-#define REMOVE_TIP(tip, a_child, sibling, parents)           \
-  ASSERT(parents[parents[(tip)]])                            \
-  parents[sibling[(tip)]] = parents[parents[(tip)]];         \
-  sibling[sibling[parents[(tip)]]] = sibling[(tip)];         \
-  sibling[sibling[(tip)]] = sibling[parents[(tip)]];         \
-  a_child[parents[sibling[(tip)]]] = sibling[sibling[(tip)]];         \
+#define REMOVE_TIP(tip, a_child, sibling, parents)             \
+  ASSERT(parents[parents[(tip)]]);                             \
+  parents[sibling[(tip)]] = parents[parents[(tip)]];           \
+  sibling[sibling[parents[(tip)]]] = sibling[(tip)];           \
+  sibling[sibling[(tip)]] = sibling[parents[(tip)]];           \
+  a_child[parents[sibling[(tip)]]] = sibling[sibling[(tip)]];  \
   sibling[(tip)] = 0                                           
   
 #define REDUCE_CHAIN                                           \

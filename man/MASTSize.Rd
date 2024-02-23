@@ -23,11 +23,12 @@ the maximum agreement subtree.
 information content, in bits, of the maximum agreement subtree.
 }
 \description{
-Calculate the size or phylogenetic information content (Steel & Penny 2006)
+Calculate the size or phylogenetic information content
+\insertCite{Steel2006}{TreeDist}
 of the maximum agreement subtree between two phylogenetic trees, i.e.
 the largest tree that can be obtained from both \code{tree1} and \code{tree2} by
-deleting, but not rearranging, leaves, using the algorithm of Valiente
-(2009).
+deleting, but not rearranging, leaves, using the algorithm of
+\insertCite{Valiente2009;textual}{TreeDist}.
 }
 \details{
 Implemented for trees with up to 4096 tips.  Contact the maintainer if you
@@ -35,7 +36,7 @@ need to process larger trees.
 }
 \examples{
  # for as.phylo, BalancedTree, PectinateTree:
-library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+library("TreeTools", quietly = TRUE)
 
 MASTSize(PectinateTree(8), BalancedTree(8))
 MASTInfo(PectinateTree(8), BalancedTree(8))
@@ -55,9 +56,7 @@ CompareAll(as.phylo(0:4, 8), MASTSize)
 CompareAll(as.phylo(0:4, 8), MASTInfo)
 }
 \references{
-\insertRef{Steel2006}{TreeDist}
-
-\insertRef{Valiente2009}{TreeDist}
+\insertAllCited{}
 }
 \seealso{
 \code{\link[phangorn:mast]{phangorn::mast()}}, a slower implementation that also lists the

@@ -1,13 +1,14 @@
 #' Approximate Nearest Neighbour Interchange distance
 #' 
-#' Use the approach of Li _et al._ (1996) to approximate the Nearest Neighbour
-#' Interchange distance (Robinson, 1971) between phylogenetic trees.
+#' Use the approach of \insertCite{Li1996;textual}{TreeDist} to approximate the
+#' Nearest Neighbour Interchange distance \insertCite{Robinson1971}{TreeDist} 
+#' between phylogenetic trees.
 #' 
 #' In brief, this approximation algorithm works by identifying edges in one
 #' tree that do not match edges in the second.  Each of these edges must
 #' undergo at least one NNI operation in order to reconcile the trees.
 #' Edges that match in both trees need never undergo an NNI operation, and 
-#' divide each tree into smaller regions.  By 'cutting' matched edges into two,
+#' divide each tree into smaller regions.  By "cutting" matched edges into two,
 #' a tree can be divided into a number of regions that solely comprise unmatched
 #' edges.
 #' 
@@ -18,8 +19,9 @@
 #' NNI operations, and provides a loose upper bound on the NNI score. 
 #' The maximum number of moves for an _n_-leaf tree
 #' ([OEIS A182136](https://oeis.org/A182136)) can be calculated exactly for
-#' small trees (Fack _et al._ 2002); this provides a tighter upper bound, but is 
-#' unavailable for _n_ > 12.  `NNIDiameter()` reports the limits on this bound.
+#' small trees \insertCite{Fack2002}{TreeDist}; this provides a tighter upper
+#' bound, but is unavailable for _n_ > 12.
+#' `NNIDiameter()` reports the limits on this bound.
 #' 
 #' 
 #' \tabular{rccccccccccccc}{
@@ -46,14 +48,10 @@
 #' 
 #' 
 #' @references 
-#' \insertRef{Fack2002}{TreeDist}
-#' 
-#' \insertRef{Li1996}{TreeDist}
-#'   
-#' \insertRef{Robinson1971}{TreeDist}  
+#' \insertAllCited{}
 #' 
 #' @examples
-#' library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+#' library("TreeTools", quietly = TRUE)
 #' 
 #' NNIDist(BalancedTree(7), PectinateTree(7))
 #' 
@@ -117,7 +115,7 @@ NNIDist <- function(tree1, tree2 = tree1) {
 #' @encoding UTF-8
 #' @rdname NNIDist
 #' @export
-NNIDiameter <- function(tree) UseMethod('NNIDiameter')
+NNIDiameter <- function(tree) UseMethod("NNIDiameter")
 
 .SortingNumber <- function(n_tip) {
   lgN <- ceiling(log2(n_tip))

@@ -1,8 +1,7 @@
 #' Generalized Robinson&ndash;Foulds distance
 #' 
-#' An internal function to calculate Generalized 
-#' Robinson&ndash;Foulds distances from
-#' splits.
+#' An internal function to calculate Generalized Robinson&ndash;Foulds
+#' distances from splits.
 #'
 #' Note that no checks will be made to confirm that `splits1` and `splits2`
 #' contain the same leaves in the same order.
@@ -30,7 +29,6 @@
 #' @template MRS
 #' @encoding UTF-8
 #' @export
-#' @references \insertRef{Jonker1987}{TreeDist}
 GeneralizedRF <- function(splits1, splits2, nTip, PairScorer, 
                            maximize, reportMatching, ...) {
   nSplits1 <- dim(splits1)[1]
@@ -45,7 +43,7 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
     if (nSplits1 < nSplits2) {
       matching <- matching[seq_len(nSplits1)]
     }
-    attr(ret, 'matching') <- matching
+    attr(ret, "matching") <- matching
     
     # If reporting matching, we're not worried about performance
     pairScores <- matrix(0, nSplits1, nSplits2)
@@ -56,14 +54,14 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
                                        nTip = nTip, ...)$score
       }
     }
-    attr(ret, 'pairScores') <- pairScores
+    attr(ret, "pairScores") <- pairScores
     
-    if (!is.null(attr(splits1, 'tip.label'))) {
+    if (!is.null(attr(splits1, "tip.label"))) {
       matched1 <- !is.na(matching)
       matched2 <- matching[matched1]
       matched1 <- which(matched1)
       
-      attr(ret, 'matchedSplits') <- 
+      attr(ret, "matchedSplits") <- 
         ReportMatching(splits1[[matched1]],
                        splits2[[matched2]],
                        realMatch = if (maximize) {
@@ -76,12 +74,62 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
 }
 
 .MaxValue <- function(tree1, tree2, Value) {
-  value1 <- Value(tree1)
+  lab1 <- TipLabels(tree1)
+  sameTips <- .AllTipsSame(lab1, TipLabels(tree2))
+  if (!is.null(tree2)) {
+    if (!sameTips) {
+      trees <- .SharedOnly(tree1, tree2)
+      tree1 <- trees[[1]]
+      tree2 <- trees[[2]]
+    }
+  }
+  
   if (is.null(tree2)) {
-    maxValue <- outer(value1, value1, '+')[, , drop = TRUE]
-    maxValue[lower.tri(maxValue)]
+    if (sameTips) {
+      value1 <- Value(tree1)
+      # Much faster to discard unneeded than to only calculate required
+      maxValue <- outer(value1, value1, "+")[, , drop = TRUE]
+      maxValue[lower.tri(maxValue)]
+    } else {
+      # !sameTips implies that tree1 contains multiple trees
+      pairs <- combn(seq_along(tree1), 2)
+      nPairs <- dim(pairs)[2]
+      
+      apply(pairs, 2, function(ij) {
+        i <- ij[1]
+        j <- ij[2]
+        common <- intersect(lab1[[i]], lab1[[j]])
+        Value(KeepTip(tree1[[i]], common)) +
+          Value(KeepTip(tree1[[j]], common))
+      })
+    }
   } else {
-    outer(value1, Value(tree2), '+')[, , drop = TRUE]
+    value1 <- Value(tree1)
+    if (sameTips) {
+      outer(value1, Value(tree2), "+")[, , drop = TRUE]
+    } else {
+      value1 + Value(tree2)
+    }
+  }
+}
+
+.AllTipsSame <- function(x, y) {
+  if (is.list(x)) {
+    xPrime <- x[[1]]
+    if (length(x) > 1 && !all(vapply(x[-1], setequal, logical(1), xPrime))) {
+      return(FALSE)
+    }
+  } else {
+    xPrime <- x
+  }
+  if (is.null(y)) {
+    TRUE
+  } else {
+    if (is.list(y)) {
+      all(vapply(y, setequal, logical(1), xPrime))
+    } else {
+      setequal(xPrime, y)
+    }
   }
 }
 

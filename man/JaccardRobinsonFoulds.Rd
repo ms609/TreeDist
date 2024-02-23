@@ -26,13 +26,7 @@ JaccardSplitSimilarity(
 )
 }
 \arguments{
-\item{tree1}{Trees of class \code{phylo}, with leaves labelled identically,
-or lists of such trees to undergo pairwise comparison.  Where implemented,
-\code{tree2 = NULL} will compute distances between each pair of trees in the list
-\code{tree1} using a fast algorithm based on
-\insertCite{Day1985;textual}{TreeDist}.}
-
-\item{tree2}{Trees of class \code{phylo}, with leaves labelled identically,
+\item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 \code{tree2 = NULL} will compute distances between each pair of trees in the list
 \code{tree1} using a fast algorithm based on
@@ -54,20 +48,14 @@ similarity, rather than a difference.}
 \item{normalize}{If a numeric value is provided, this will be used as a
 maximum value against which to rescale results.
 If \code{TRUE}, results will be rescaled against a maximum value calculated from
-the specified tree sizes and topology, as specified in the 'Normalization'
+the specified tree sizes and topology, as specified in the "Normalization"
 section below.
 If \code{FALSE}, results will not be rescaled.}
 
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}
 
-\item{splits1}{Logical matrices where each row corresponds to a leaf,
-either listed in the same order or bearing identical names (in any sequence),
-and each column corresponds to a split, such that each leaf is identified as
-a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
-split.}
-
-\item{splits2}{Logical matrices where each row corresponds to a leaf,
+\item{splits1, splits2}{Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
 and each column corresponds to a split, such that each leaf is identified as
 a member of the ingroup (\code{TRUE}) or outgroup (\code{FALSE}) of the respective
@@ -106,6 +94,10 @@ a slightly faster implementation of this metric is available as
 
 The examples section below details how to visualize matchings with
 non-default parameter values.
+
+Trees need not contain identical leaves; scores are based on the leaves that
+trees hold in common.  Check for unexpected differences in tip labelling
+with \code{setdiff(TipLabels(tree1), TipLabels(tree2))}.
 }
 \section{Normalization}{
 

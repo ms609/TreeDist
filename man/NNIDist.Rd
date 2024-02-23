@@ -53,15 +53,16 @@ where \emph{n} is the number of leaves, and \emph{N} the number of internal node
 i.e. \deqn{n - 2}{_n_ &minus; 2}.
 }
 \description{
-Use the approach of Li \emph{et al.} (1996) to approximate the Nearest Neighbour
-Interchange distance (Robinson, 1971) between phylogenetic trees.
+Use the approach of \insertCite{Li1996;textual}{TreeDist} to approximate the
+Nearest Neighbour Interchange distance \insertCite{Robinson1971}{TreeDist}
+between phylogenetic trees.
 }
 \details{
 In brief, this approximation algorithm works by identifying edges in one
 tree that do not match edges in the second.  Each of these edges must
 undergo at least one NNI operation in order to reconcile the trees.
 Edges that match in both trees need never undergo an NNI operation, and
-divide each tree into smaller regions.  By 'cutting' matched edges into two,
+divide each tree into smaller regions.  By "cutting" matched edges into two,
 a tree can be divided into a number of regions that solely comprise unmatched
 edges.
 
@@ -72,8 +73,9 @@ analogue of the mergesort algorithm.  This takes at most \emph{n} log \emph{n} +
 NNI operations, and provides a loose upper bound on the NNI score.
 The maximum number of moves for an \emph{n}-leaf tree
 (\href{https://oeis.org/A182136}{OEIS A182136}) can be calculated exactly for
-small trees (Fack \emph{et al.} 2002); this provides a tighter upper bound, but is
-unavailable for \emph{n} > 12.  \code{NNIDiameter()} reports the limits on this bound.
+small trees \insertCite{Fack2002}{TreeDist}; this provides a tighter upper
+bound, but is unavailable for \emph{n} > 12.
+\code{NNIDiameter()} reports the limits on this bound.
 
 \tabular{rccccccccccccc}{
 Leaves:   \tab 1 \tab 2 \tab 3 \tab 4 \tab 5 \tab 6 \tab 7 \tab 8 \tab 9
@@ -83,7 +85,7 @@ Diameter: \tab 0 \tab 0 \tab 0 \tab 1 \tab 3 \tab 5 \tab 7 \tab 10 \tab 12
 }
 }
 \examples{
-library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+library("TreeTools", quietly = TRUE)
 
 NNIDist(BalancedTree(7), PectinateTree(7))
 
@@ -96,11 +98,7 @@ NNIDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
 CompareAll(as.phylo(30:33, 8), NNIDist)
 }
 \references{
-\insertRef{Fack2002}{TreeDist}
-
-\insertRef{Li1996}{TreeDist}
-
-\insertRef{Robinson1971}{TreeDist}
+\insertAllCited{}
 }
 \seealso{
 Other tree distances: 

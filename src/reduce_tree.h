@@ -1,6 +1,7 @@
 #ifndef _TREEDIST_REDUCE_TREE_H
 #define _TREEDIST_REDUCE_TREE_H
 
+#include <memory> // for unique_ptr
 #include <Rcpp/Lightest>
 #include <TreeTools/assert.h> // for ASSERT
 #include <TreeTools/types.h> // for intx

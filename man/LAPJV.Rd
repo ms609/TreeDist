@@ -7,22 +7,24 @@
 LAPJV(x)
 }
 \arguments{
-\item{x}{Square matrix of costs.}
+\item{x}{Matrix of costs.}
 }
 \value{
-A list with two entries: \code{score}, the score of the optimal matching;
+\code{LAPJV()} returns a list with two entries: \code{score}, the score of the
+optimal matching;
 and \code{matching}, the columns matched to each row of the matrix in turn.
 }
 \description{
-Use the algorithm of Jonker & Volgenant (1987) to solve the
-\href{http://www.assignmentproblems.com/doc/LSAPIntroduction.pdf}{Linear Sum Assignment Problem}.
+Use the algorithm of \insertCite{Jonker1987;textual}{TreeDist} to solve the
+Linear Sum Assignment Problem (LSAP).
 }
 \details{
 The Linear Assignment Problem seeks to match each row of a matrix with a
 column, such that the cost of the matching is minimized.
 
 The Jonker & Volgenant approach is a faster alternative to the Hungarian
-algorithm (Munkres 1957), which is implemented in \code{clue::solve_LSAP()}.
+algorithm \insertCite{Munkres1957}{TreeDist}, which is implemented in
+\code{clue::solve_LSAP()}.
 
 Note: the JV algorithm expects integers. In order to apply the function
 to a non-integer \emph{n}, as in the tree distance calculations in this package,
@@ -33,24 +35,25 @@ run times.  (If numbers of the magnitude of billions differ only in their
 last significant digit, then the JV algorithm may undergo billions of
 iterations.)  To avoid this, integers over 2^22 that differ by a value of
 8 or less are treated as equal.
-
-NB. At present, only square matrices are supported; if you need support for
-non-square matrices, drop a note at
-\href{https://github.com/ms609/TreeDist/issues/25}{issue #25}
-and I'll prioritize development.
 }
 \examples{
-problem <- matrix(c(7, 9, 8, 9,
-                    2, 8, 5, 7,
-                    1, 6, 6, 9,
-                    3, 6, 2, 2), 4, 4, byrow=TRUE)
+problem <- matrix(c(7, 9, 8, 9, 9,
+                    2, 8, 5, 7, 9,
+                    1, 6, 6, 9, 9,
+                    3, 6, 2, 2, 9), 4, 5, byrow = TRUE)
 
 LAPJV(problem)
 }
 \references{
-\insertRef{Jonker1987}{TreeDist}
+\insertAllCited{}
+}
+\seealso{
+Implementations of the Hungarian algorithm exist in \pkg{adagio},
+\pkg{RcppHungarian}, and \pkg{clue} and \pkg{lpSolve}; for larger matrices,
+these are substantially slower. (See discussion at \href{https://stackoverflow.com/questions/72806265/}{Stack Overflow}.)
 
-\insertRef{Munkres1957}{TreeDist}
+The JV algorithm is implemented for square matrices in the Bioconductor
+package \href{https://www.bioconductor.org/packages/release/bioc/html/GraphAlignment.html}{\code{GraphAlignment::LinearAssignment()}}.
 }
 \author{
 \href{https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/LAPJV/lap.cpp}{C++ code}

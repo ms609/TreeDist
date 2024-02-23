@@ -6,7 +6,7 @@
 \alias{SPRDist.list}
 \alias{SPRDist.multiPhylo}
 \alias{.SPRConfl}
-\title{Approximate Subtree Prune and Regraft distance}
+\title{Approximate the Subtree Prune and Regraft (SPR) distance.}
 \usage{
 SPRDist(tree1, tree2 = NULL, symmetric)
 
@@ -33,16 +33,13 @@ or lists of such trees to undergo pairwise comparison.  Where implemented,
 between trees.
 }
 \description{
-Approximate the Subtree Prune and Regraft (SPR) distance.
-}
-\details{
 \code{SPRDist()} calculates an upper bound on the SPR distance between trees
 using the heuristic method of \insertCite{deOliveira2008;textual}{TreeDist}.
 Other approximations are available
 \insertCite{@e.g. @Hickey2008, @Goloboff2008SPR, @Whidden2018}{TreeDist}.
 }
 \examples{
-library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+library("TreeTools", quietly = TRUE)
 
 SPRDist(BalancedTree(7), PectinateTree(7))
 

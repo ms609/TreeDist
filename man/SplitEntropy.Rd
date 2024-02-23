@@ -28,7 +28,8 @@ content of two splits, treating each split as a division of \emph{n} leaves into
 two groups.
 Further details are available in a
 \href{https://ms609.github.io/TreeDist/articles/information.html}{vignette},
-MacKay (2003) and Meil\ifelse{html}{\out{&#259;}}{a} (2007).
+\insertCite{Mackay2003;textual}{TreeDist} and
+\insertCite{Meila2007;textual}{TreeDist}.
 }
 \examples{
 A <- TRUE
@@ -36,9 +37,7 @@ B <- FALSE
 SplitEntropy(c(A, A, A, B, B, B), c(A, A, B, B, B, B))
 }
 \references{
-\insertRef{Mackay2003}{TreeDist}
-
-\insertRef{Meila2007}{TreeDist}
+\insertAllCited{}
 }
 \seealso{
 Other information functions: 

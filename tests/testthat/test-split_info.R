@@ -1,17 +1,18 @@
 test_that("Split info calculated", {
   library("ape")
   trees <- rev(list( # rev() because trees are emplaced backwards
-    read.tree(text = '(a, (b, (c, (z, ((d, e), (f, (g, x)))))));'),
-    read.tree(text = '(a, (b, (c, (z, ((d, e), (f, (g, x)))))));'),
-    read.tree(text = '(a, (b, ((c, z), ((d, e), ((f, x), g)))));'),
-    read.tree(text = '(a, (b, ((c, z), ((d, (e, x)), (f, g)))));'),
-    read.tree(text = '(a, ((b, x), ((c, z), ((d, e), (f, g)))));')
+    read.tree(text = "(a, (b, (c, (z, ((d, e), (f, (g, x)))))));"),
+    read.tree(text = "(a, (b, (c, (z, ((d, e), (f, (g, x)))))));"),
+    read.tree(text = "(a, (b, ((c, z), ((d, e), ((f, x), g)))));"),
+    read.tree(text = "(a, (b, ((c, z), ((d, (e, x)), (f, g)))));"),
+    read.tree(text = "(a, ((b, x), ((c, z), ((d, e), (f, g)))));")
   ))
   split_p <- c(ab = 0.8, d..x = 0.8, fgx = 0.6, de = 0.8, cz = 0.6)
   
-  trees[] <- lapply(trees, RenumberTips, c(letters[1:7], 'x', 'z'))
+  trees[] <- lapply(trees, RenumberTips, c(letters[1:7], "x", "z"))
   expect_equal(consensus_info(trees, TRUE, 1), 0)
-  expect_equal(SplitwiseInfo(consensus(trees, p = 0.5), p = split_p),
+  expect_equal(SplitwiseInfo(consensus(trees, p = 0.5, rooted = TRUE),
+                             p = split_p),
                ConsensusInfo(trees, p = 0.5))
   expect_warning(expect_equal(ConsensusInfo(trees, p = 0.4),
                               ConsensusInfo(trees, p = 0.5)))
