@@ -103,7 +103,7 @@ SPRDist.multiPhylo <- SPRDist.list
 #' plot(tree1)
 #' plot(tree2)
 #' .SPRPair(tree1, tree2)
-#' @importFrom TreeTools DropTip TipsInSplits KeepTipPostorder
+#' @importFrom TreeTools DropTip KeepTipPostorder TipsInSplits root_on_node
 #' @export
 .SPRConfl <- function(tree1, tree2, debug = FALSE) {
   moves <- 0
