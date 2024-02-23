@@ -958,9 +958,9 @@ test_that("Independent of root position", {
 
   
   Test <- function(Method, score = 0L, ...) {
-    expect_equal(score, Method(trees[[1]], trees[[1]], ...))
-    expect_equal(score, Method(trees[[1]], trees[[2]], ...))
-    expect_equal(score, Method(trees[[3]], trees[[3]], ...))
+    expect_equal(Method(trees[[1]], trees[[1]], ...), score)
+    expect_equal(Method(trees[[1]], trees[[2]], ...), score)
+    expect_equal(Method(trees[[3]], trees[[3]], ...), score)
   }
   
   Test(MASTSize, 8L, rooted = FALSE)
