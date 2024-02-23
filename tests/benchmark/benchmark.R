@@ -11,3 +11,8 @@ xx <- PathDist(postTrees)
 message(Sys.time(), ": phangorn.")
 xx <- phangorn::path.dist(postTrees)
 message(Sys.time(), ": End.")
+
+microbenchmark::microbenchmark(times = 1,
+xx <- PathDist(postTrees),
+xx <- phangorn::path.dist(postTrees)
+)
