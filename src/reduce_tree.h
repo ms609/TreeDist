@@ -7,7 +7,6 @@
 #include <TreeTools/types.h> // for intx
 #include <TreeTools/renumber_tree.h> // for postorder_order
 using namespace Rcpp;
-// #define TD_DEBUG
 
 #define R_TO_C 1
 #define IS_TIP(i) ((i) <= n_tip)

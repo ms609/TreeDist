@@ -164,8 +164,10 @@ List keep_and_reroot(const List tree1,
     pre2 = reverse(postorder2)
   ;
   
+  ASSERT((postorder1.nrow() / 2 + 1) == keep.length());
   // Rcout << "\n \n === Keep & Reroot ===\n";
   // Rcout << " Keeping: ";
+  // for (int i = 0; i != keep.size(); i++) Rcout << (keep[i] ? "*" : ".");
   IntegerMatrix ret_edge1 = TreeTools::keep_tip(pre1, keep);
   IntegerMatrix ret_edge2 = TreeTools::keep_tip(pre2, keep);
   

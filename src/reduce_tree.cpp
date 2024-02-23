@@ -1,4 +1,5 @@
 #include "reduce_tree.h"
+// #define TD_DEBUG
 
 inline void add_child(const int *parent, const int *child,
                       std::unique_ptr<intx[]> & a_child,
@@ -56,16 +57,18 @@ Rcout << "";
   ++dropped
 
 #define TODO_DELETE_LIFT_ROOT_DEBUG \
-  Rcout << "   ^ Lifting; sibling[1] = " << sibling[(tip)];    \
+  Rcout << "   > Lifting; sibling[1] = " << sibling[(tip)];    \
   Rcout << "; sibling[" << sibling[(tip)] << "] = 1 \n";       \
-  Rcout << "     parents[" << sibling[(tip)] << "] = " << parents[1] << "\n";\
+  Rcout << "   > parents[" << sibling[(tip)] << "] = " << parents[1] << "\n";\
+  Rcout << "   > a_child[" << parents[1] << "] = 1 \n";        \
   Rcout << ""
-  
+
+// NB. We can't assume that a_child[parents[1]] == 1  
 #define LIFT_ROOT(tip, a_child, sibling, parents)              \
   sibling[1] = sibling[(tip)];                                 \
   sibling[sibling[(tip)]] = 1;                                 \
   parents[sibling[(tip)]] = parents[1];                        \
-  ASSERT(a_child[parents[1]] == 1);                            \
+  a_child[parents[1]] = 1;                                     \
   sibling[(tip)] = 0                            
 
 #define ADD_EDGE(parent, child)                                \

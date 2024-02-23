@@ -287,7 +287,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 }
 
 .CheckLabelsSame <- function(labelList) {
-  nTip <- unique(vapply(labelList, length, 0L))
+  nTip <- unique(lengths(labelList))
   if (length(nTip) != 1) {
     stop("All trees must contain the same number of leaves.")
   }
