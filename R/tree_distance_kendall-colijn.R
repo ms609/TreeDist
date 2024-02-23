@@ -148,7 +148,7 @@ KCVector <- function(tree) {
   mrca <- apply(is, 2, function(i) 
     max(intersect(ancestors[[i[1]]], ancestors[[i[2]]])))
   
-  rootDist <- vapply(ancestors, length, integer(1))
+  rootDist <- lengths(ancestors)
   structure(rootDist[mrca], Size = nTip, class = "dist")
 }
 
