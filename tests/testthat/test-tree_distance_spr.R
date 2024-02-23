@@ -35,7 +35,7 @@ test_that("SPR: Under the hood", {
     i <- rep(seq_len(nSplits), nSplits)
     j <- rep(seq_len(nSplits), each = nSplits)
     expect_equal(mismatch_size(s1, s2),
-                 TipsInSplits(xor.Splits(s1[[i]], s2[[j]]), smallest = TRUE))
+                 TipsInSplits(xor_splits(s1[[i]], s2[[j]]), smallest = TRUE))
   }
   Test(as.Splits(c(T, T, T, F, F)), as.Splits(c(T, F, F, F, T)))
   
