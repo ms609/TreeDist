@@ -365,14 +365,14 @@ ConsensusInfo <- function(trees, info = "phylogenetic", p = 0.5,
 #' content, given the posterior distribution
 #' @examples
 #' library("TreeTools", quietly = TRUE)
-#' trees <- as.phylo(1:42, 16)
+#' trees <- as.phylo(24:40, 16)
 #' 
 #' # Maximum Clade Information tree
 #' mci <- MCITree(trees)
-#' plot(mci)
-#' p <- SplitFrequency(mccl, trees) / length(trees)
-#' LabelSplits(mccl, round(p * 100), "%", bg = SupportColor(p))
 #' SplitwiseInfo(mci)
+#' plot(mci)
+#' p <- SplitFrequency(mci, trees) / length(trees)
+#' LabelSplits(mci, round(p * 100), "%", bg = SupportColor(p))
 #' 
 #' # Compare with Maximum Clade Credibility tree
 #' mcc <- MCITree(trees, "credibility")
