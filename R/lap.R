@@ -1,8 +1,7 @@
 #' Solve linear assignment problem using LAPJV
 #'
 #' Use the algorithm of \insertCite{Jonker1987;textual}{TreeDist} to solve the 
-#' [Linear Sum Assignment Problem](
-#' http://www.assignmentproblems.com/doc/LSAPIntroduction.pdf).
+#' Linear Sum Assignment Problem (LSAP).
 #' 
 #' The Linear Assignment Problem seeks to match each row of a matrix with a 
 #' column, such that the cost of the matching is minimized.
