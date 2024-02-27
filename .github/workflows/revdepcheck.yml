@@ -42,8 +42,6 @@ on:
       - "**.R[dD]ata"
       - "**.Rpro*"
 
-# Not using ms609/revdepcheck as pak fails with external dependencies
-# https://github.com/r-lib/actions/issues/534
 jobs:
   mem-check:
     runs-on: ubuntu-latest
