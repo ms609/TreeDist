@@ -98,7 +98,7 @@
 #' 
 #' Other R packages implementing tree distance functions include:
 #'   
-#'   * [ape](http://ape-package.ird.fr/):
+#'   * [ape](https://emmanuelparadis.github.io/):
 #'     - `cophenetic.phylo()`: Cophenetic distance
 #'     - `dist.topo()`: Path (topological) distance, Robinson&ndash;Foulds distance.
 #'   * [phangorn](https://cran.r-project.org/package=phangorn)
@@ -106,7 +106,7 @@
 #'   * [Quartet](https://ms609.github.io/Quartet/): Triplet and Quartet distances, 
 #'   using the tqDist algorithm.
 #'   * [TBRDist](https://ms609.github.io/TBRDist/): TBR and SPR distances on 
-#'   unrooted trees, using the 'uspr; C library.
+#'   unrooted trees, using the 'uspr' C library.
 #'   * [distory](https://cran.r-project.org/package=distory) (unmaintained): 
 #'     Geodesic distance
 #' 

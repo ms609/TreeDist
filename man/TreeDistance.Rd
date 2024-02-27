@@ -230,18 +230,25 @@ to be "correct", use \code{normalize = SplitwiseInfo(trueTree)} (SPI, MSI) or
 To balance memory demands and runtime with flexibility, these functions are
 implemented for trees with up to 2048 leaves.
 To analyse trees with up to 8192 leaves, you will need to a modified version
-of \pkg{TreeTools}.
-First uninstall \pkg{TreeDist} and \pkg{TreeTools} using \code{remove.packages()}.
-Then use \code{devtools::install_github("ms609/TreeTools", ref = "more-leaves")}
-to install the modified \pkg{TreeTools} package.
-Finally, install \pkg{TreeDist} using
-\code{devtools::install_github("ms609/TreeDist")}.
+of the package:
+\code{install.packages("BigTreeDist", repos = "https://ms609.github.io/packages/")}
+Use \code{library("BigTreeDist")} \emph{instead} of \code{library("TreeDist")} to load
+the modified package – or prefix functions with the package name, e.g.
+\code{BigTreeDist::TreeDistance()}.
+
+As an alternative download method,
+uninstall \pkg{TreeDist} and \pkg{TreeTools} using
+\code{remove.packages()}, then use
+\code{devtools::install_github("ms609/TreeTools", ref = "more-leaves")}
+to install the modified \pkg{TreeTools} package; then,
+install \pkg{TreeDist} using
+\code{devtools::install_github("ms609/TreeDist", ref = "more-leaves")}.
 (\pkg{TreeDist} will need building from source \emph{after} the modified
 \pkg{TreeTools} package has been installed, as its code links to values
 set in the TreeTools source code.)
 
 Trees with over 8192 leaves require further modification of the source code,
-which the maintainer will attempt on demand; please \href{https://github.com/ms609/TreeTools/issues/141}{comment on GitHub} if you would find this useful.
+which the maintainer plans to attempt in the future; please \href{https://github.com/ms609/TreeTools/issues/141}{comment on GitHub} if you would find this useful.
 }
 
 \examples{
