@@ -63,3 +63,4 @@ jobs:
       - uses: ms609/actions/revdepcheck@main
         with:
           deps: ${{ matrix.config.deps }}
+          extra-packages: ms609/TreeDistData
