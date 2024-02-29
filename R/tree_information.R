@@ -388,7 +388,7 @@ MCITree <- function(trees, info = "phylogenetic", check.tips = TRUE) {
   mode <- pmatch(tolower(info),
                  c("phylogenetic", "clustering", "credibility", "spic", "scic"))
   if (is.na(mode)) {
-    stop("`info` must be 'phylogenetic' or 'clustering'")
+    stop("`info` must be 'phylogenetic', 'clustering' or 'credibility'")
   }
   if (inherits(trees, "phylo")) {
     return(trees)
