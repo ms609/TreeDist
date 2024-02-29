@@ -113,8 +113,8 @@ tree3 <- ape::read.tree(text = "(a, (b, (c, (d, (e, ((f, g), h))))));")
 trees <- c(tree1, tree2, tree3)
 KendallColijn(trees)
 KendallColijn(trees, Vector = SplitVector)
-KCDiameter(trees)
 KCDiameter(4)
+KCDiameter(trees)
 }
 \references{
 \insertAllCited{}
