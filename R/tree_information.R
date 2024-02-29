@@ -421,3 +421,54 @@ MCITree <- function(trees, info = "phylogenetic", check.tips = TRUE) {
   # Return:
   trees[[chosen]]
 }
+
+#' @rdname MCITree
+#' @export
+GreedyCI <- function(trees, info = "phylogenetic", check.tips = TRUE) {
+  mode <- pmatch(tolower(info),
+                 c("phylogenetic", "clustering", "credibility", "spic", "scic"))
+  if (is.na(mode)) {
+    stop("`info` must be 'phylogenetic' or 'clustering'")
+  }
+  if (inherits(trees, "phylo")) {
+    return(trees)
+  }
+  if (length(trees) == 1L) {
+    return(trees[[1]])
+  }
+  if (check.tips) {
+    trees <- RenumberTips(trees, trees[[1]])
+  }
+  nTree <- length(trees)
+  # nTip <- NTip(trees[[1]])
+  treeSplits <- as.Splits(trees)
+  # nSplits <- NSplits(treeSplits[[1]])
+  allSplits <- do.call(c, treeSplits)
+  splits <- unname(unique(allSplits))
+  n <- vapply(splits, function(sp) sum(allSplits[] %in% sp), double(1))
+  p <- n / nTree
+  
+  Info <- switch(mode, SplitwiseInfo, ClusteringInfo, function(tree, p) sum(p),
+                 SplitwiseInfo, ClusteringInfo)
+  splitInfo <- vapply(
+    seq_along(splits),
+    function(i) Info(splits[[i]], p[i]),
+    double(1)
+  )
+  ok <- rep(TRUE, length(splits))
+  kept <- logical(length(splits))
+  
+  # TODO implement in C++
+  repeat {
+    new <- which.max(splitInfo * ok)
+    kept[new] <- TRUE
+    ok[new] <- FALSE
+    ok[ok] <- CompatibleSplits(splits[[new]], splits[[ok]])
+    if (!any(ok)) {
+      break
+    }
+  }
+  # TODO Use split information to make tree binary
+  # Return:
+  MakeTreeBinary(as.phylo(splits[[kept]]))
+}
