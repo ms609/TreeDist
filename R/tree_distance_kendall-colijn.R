@@ -214,8 +214,8 @@ SplitVector <- function(tree) {
 #' metric.
 #'
 #' @examples
-#' KCDiameter(trees)
 #' KCDiameter(4)
+#' KCDiameter(trees)
 #' @importFrom TreeTools PectinateTree
 #' @rdname KendallColijn
 #' @export
@@ -238,9 +238,11 @@ KCDiameter.numeric <- function(tree) {
 }
 
 #' @export
-KCDiameter.multiPhylo <- KCDiameter.phylo
-
-#' @export
 KCDiameter.list <- function(tree) {
   lapply(tree, KCDiameter)
+}
+
+#' @export
+KCDiameter.multiPhylo <- function(tree) {
+  vapply(tree, KCDiameter, double(1))
 }
