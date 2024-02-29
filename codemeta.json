@@ -497,10 +497,10 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=TreeTools"
     },
-    "SystemRequirements": "C++17"
+    "SystemRequirements": "C++17, pandoc-citeproc"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "1449.048KB",
+  "fileSize": "1449.065KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
