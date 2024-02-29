@@ -44,4 +44,10 @@ test_that("KCDiameter() calculated", {
   }
   Test(4)
   Test(40)
+  tree1 <- ape::read.tree(text = "(a, (b, (c, (d, (e, (f, (g, h)))))));")
+  tree2 <- ape::read.tree(text = "(a, ((b, c), (d, (e, (f, (g, h))))));")
+  tree3 <- ape::read.tree(text = "(a, (b, (c, (d, (e, (f, g))))));")
+  trees <- c(tree1, tree2, tree3)
+  expect_equal(KCDiameter(trees),
+               c(KCDiameter(tree1), KCDiameter(tree2), KCDiameter(tree3)))
 })
