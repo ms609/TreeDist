@@ -26,7 +26,7 @@ There was one NOTE:
 [...]
 > Package suggested but not available for checking: 'TreeDistData'
 
-'TreeDistData' is too large to be submitted on CRAN.
+'TreeDistData' is too large for CRAN.
 
 All calls to `data(package = "TreeDistData")` are wrapped within 
 `if(require('TreeDistData'))` to ensure that vignettes fail gracefully when
