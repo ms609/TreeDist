@@ -2,12 +2,9 @@
 % Please edit documentation in R/tree_information.R
 \name{MCITree}
 \alias{MCITree}
-\alias{GreedyCI}
 \title{Maximum Clade Information Tree}
 \usage{
 MCITree(trees, info = "phylogenetic", check.tips = TRUE)
-
-GreedyCI(trees, info = "phylogenetic", check.tips = TRUE)
 }
 \arguments{
 \item{trees}{List of \code{phylo} objects, optionally with class \code{multiPhylo}.}
