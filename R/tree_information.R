@@ -382,7 +382,7 @@ ConsensusInfo <- function(trees, info = "phylogenetic", p = 0.5,
 #' SplitwiseInfo(mcc)
 #' 
 #' @template MRS
-#' @importFrom TreeTools as.Splits TipsInSplits
+#' @importFrom TreeTools .CountSplits as.Splits TipsInSplits
 #' @export
 MCITree <- function(trees, info = "phylogenetic", check.tips = TRUE) {
   mode <- pmatch(tolower(info),
@@ -399,9 +399,9 @@ MCITree <- function(trees, info = "phylogenetic", check.tips = TRUE) {
   if (check.tips) {
     trees <- RenumberTips(trees, trees[[1]])
   }
-  counts <- TreeTools:::count_splits(trees)
+  counts <- .CountSplits(trees)
   treeInfo <- colSums(
-    matrix(counts[[switch(mode, "pic", "cic")]], ncol = length(trees))
+    matrix(counts[[switch(mode, "pic", "cic", "count")]], ncol = length(trees))
     )
   
   chosen <- which.max(treeInfo)
