@@ -61,7 +61,7 @@ SpectralEigens <- function(D, nn = 10L, nEig = 2L) {
   ei <- eigen(L, symmetric = TRUE) # 3. Compute the eigenvectors and values of L
   
   # Return the eigenvectors of the n_eig smallest eigenvalues:
-  ei$vectors[, nrow(L) - rev(seq_len(nEig))]
+  ei[["vectors"]][, nrow(L) - rev(seq_len(nEig))]
 }
 
 #' @export

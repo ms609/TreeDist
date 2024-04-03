@@ -35,10 +35,10 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
   nSplits2 <- dim(splits2)[1]
   
   solution <- PairScorer(splits1, splits2, nTip, ...)
-  ret <- solution$score
+  ret <- solution[["score"]]
   
   if (reportMatching) {
-    matching <- solution$matching
+    matching <- solution[["matching"]]
     matching[matching > nSplits2 | matching == 0L] <- NA
     if (nSplits1 < nSplits2) {
       matching <- matching[seq_len(nSplits1)]
@@ -51,7 +51,7 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
       for (j in seq_len(nSplits2)) {
         pairScores[i, j] <- PairScorer(splits1[i, , drop = FALSE], 
                                        splits2[j, , drop = FALSE],
-                                       nTip = nTip, ...)$score
+                                       nTip = nTip, ...)[["score"]]
       }
     }
     attr(ret, "pairScores") <- pairScores

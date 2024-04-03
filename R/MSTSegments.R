@@ -69,7 +69,7 @@ StrainCol <- function(distances, mapping, mstEnds = MSTEdges(distances),
   })
   strain <- logStrain - median(logStrain[is.finite(logStrain)])
   # Infinite values arise when orig == 0
-  maxVal <- max(abs(strain[is.finite(strain)])) + sqrt(.Machine$double.eps)
+  maxVal <- max(abs(strain[is.finite(strain)])) + sqrt(.Machine[["double.eps"]])
   nCols <- length(palette)
   bins <- cut(strain, seq(-maxVal, maxVal, length.out = nCols))
   

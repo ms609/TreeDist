@@ -46,14 +46,14 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
                               ...) {
   
   splits1 <- as.Splits(tree1)
-  edge1 <- tree1$edge
+  edge1 <- tree1[["edge"]]
   child1 <- edge1[, 2]
   nTip <- attr(splits1, "nTip")
   splitEdges1 <- vapply(as.integer(rownames(splits1)),
                         function(node) which(child1 == node), integer(1))
   
   splits2 <- as.Splits(tree2, tipLabels = tree1)
-  edge2 <- tree2$edge
+  edge2 <- tree2[["edge"]]
   child2 <- edge2[, 2]
   splitEdges2 <- vapply(as.integer(rownames(splits2)),
                         function(node) which(child2 == node), integer(1))

@@ -21,25 +21,25 @@ TreeDistPlot <- function(tr, title = NULL, bold = NULL, leaveRoom = FALSE,
                          prune = integer(0), graft = integer(0),
                          edge.color = "black", edge.width = NULL, ...) {
   
-  nEdge <- dim(tr$edge)[1]
-  if (is.null(tr$edge.length)) {
-    tr$edge.length <- rep(1, nEdge)
+  nEdge <- dim(tr[["edge"]])[1]
+  if (is.null(tr[["edge.length"]])) {
+    tr[["edge.length"]] <- rep(1, nEdge)
   }
   if (is.null(edge.width)) {
-    edge.width <- if (is.null(tr$edge.width)) {
+    edge.width <- if (is.null(tr[["edge.width"]])) {
       rep(1, nEdge)
     } else {
-      tr$edge.width
+      tr[["edge.width"]]
     }
   }
   if (length(edge.color) == 1) {
     edge.color <- rep(edge.color, nEdge)
   }
-  nTip <- length(tr$tip.label)
-  if (all(tr$tip.label %in% LETTERS)) {
-    tr$tip.label <- match(tr$tip.label, LETTERS)
-  } else if (all(tr$tip.label %in% letters)) {
-    tr$tip.label <- match(tr$tip.label, letters)
+  nTip <- length(tr[["tip.label"]])
+  if (all(tr[["tip.label"]] %in% LETTERS)) {
+    tr[["tip.label"]] <- match(tr[["tip.label"]], LETTERS)
+  } else if (all(tr[["tip.label"]] %in% letters)) {
+    tr[["tip.label"]] <- match(tr[["tip.label"]], letters)
   }
 
   if (length(prune) > 0 || length(graft) > 0) {
@@ -51,7 +51,7 @@ TreeDistPlot <- function(tr, title = NULL, bold = NULL, leaveRoom = FALSE,
                "#6DB6FF", "#B6DBFF", "#920000", "#924900", "#DB6D00", "#24FF24",
                "#FFFF6D") # Ternary::cbPalette15[-c(4, 7)]
 
-  tipNumbers <- tr$tip.label
+  tipNumbers <- tr[["tip.label"]]
   font <- rep(1L, length(tipNumbers))
   if (!is.null(bold)) {
     font[tipNumbers %in% bold] <- 4L
@@ -67,7 +67,7 @@ TreeDistPlot <- function(tr, title = NULL, bold = NULL, leaveRoom = FALSE,
                         warning("Leaves of `tr` must be labelled with integers")
                       })
   
-  tr$tip.label <- LETTERS[tipInts]
+  tr[["tip.label"]] <- LETTERS[tipInts]
   plot.phylo(tr, tip.color = tipCols[tipInts],
              main = title, cex.main = 0.8, font = font, 
              edge.width = edge.width, edge.color = edge.color, 

@@ -58,7 +58,7 @@ KMeansPP.matrix <- function(x, k = 2, nstart = 10, ...) {
     }
     
     proposal <- kmeans(x, centers = x[centres, ], ...)
-    if (proposal$tot.withinss < ret$tot.withinss){
+    if (proposal[["tot.withinss"]] < ret[["tot.withinss"]]){
       ret <- proposal
     }
   }
@@ -94,7 +94,7 @@ KMeansPP.dist <- function(x, k = 2, nstart = 10, ...) {
     }
     
     proposal <- kmeans(x, centers = d[centres, ], ...)
-    if (proposal$tot.withinss < ret$tot.withinss){
+    if (proposal[["tot.withinss"]] < ret[["tot.withinss"]]){
       ret <- proposal
     }
   }

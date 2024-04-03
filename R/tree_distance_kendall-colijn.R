@@ -82,8 +82,8 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
   
   if (inherits(tree1, "phylo")) {
     if (inherits(tree2, "phylo")) {
-      if (length(tree1$tip.label) != length(tree2$tip.label) || 
-          length(setdiff(tree1$tip.label, tree2$tip.label)) > 0) {
+      if (length(tree1[["tip.label"]]) != length(tree2[["tip.label"]]) || 
+          length(setdiff(tree1[["tip.label"]], tree2[["tip.label"]])) > 0) {
         stop("Leaves must bear identical labels.")
       }
       .EuclideanDistance(Vector(tree1) - Vector(tree2))
@@ -92,18 +92,18 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
         0
       } else {
         apply(Vector(tree1) - vapply(tree2, Vector,
-                                     FunValue(length(tree1$tip.label))),
+                                     FunValue(length(tree1[["tip.label"]]))),
               2L, .EuclideanDistance)
       }
     }
   } else {
     if (inherits(tree2, "phylo")) {
       apply(Vector(tree2) - vapply(tree1, Vector,
-                                   FunValue(length(tree2$tip.label))),
+                                   FunValue(length(tree2[["tip.label"]]))),
             2L, .EuclideanDistance)
     } else if (is.null(tree2)) {
       
-      treeVec <- vapply(tree1, Vector, FunValue(length(tree1[[1]]$tip.label)))
+      treeVec <- vapply(tree1, Vector, FunValue(length(tree1[[1]][["tip.label"]])))
       nTree <- length(tree1)
       ret <- matrix(0, nTree, nTree)
       is <- combn(seq_len(nTree), 2)
@@ -116,8 +116,8 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
       ret
     }
       else {
-      vector1 <- vapply(tree1, Vector, FunValue(length(tree1[[1]]$tip.label)))
-      vector2 <- vapply(tree2, Vector, FunValue(length(tree2[[1]]$tip.label)))
+      vector1 <- vapply(tree1, Vector, FunValue(length(tree1[[1]][["tip.label"]])))
+      vector2 <- vapply(tree2, Vector, FunValue(length(tree2[[1]][["tip.label"]])))
       apply(vector2, 2, function(i) 
         apply(vector1, 2, function(j) 
           .EuclideanDistance(i - j)))
@@ -135,12 +135,12 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
 #' @export
 KCVector <- function(tree) {
   tree <- Preorder(tree)
-  edge <- tree$edge
+  edge <- tree[["edge"]]
   parent <- edge[, 1L]
   child <- edge[, 2L]
   root <- parent[1]
   nTip <- root - 1L
-  tipOrder <- order(tree$tip.label)
+  tipOrder <- order(tree[["tip.label"]])
   is <- combn(tipOrder, 2)
   
   ancestors <- AllAncestors(parent, child)
@@ -163,13 +163,13 @@ PathVector <- function(tree) {
     stop("`tree` must be of class `phylo`")
   }
   tree <- Preorder(tree)
-  edge <- tree$edge
+  edge <- tree[["edge"]]
   parent <- edge[, 1L]
   child <- edge[, 2L]
   root <- parent[1]
   nTip <- root - 1L
   tipAncs <- seq_len(nTip)
-  tipOrder <- order(tree$tip.label)
+  tipOrder <- order(tree[["tip.label"]])
   is <- combn(tipOrder, 2)
   
   ancestors <- AllAncestors(parent, child)
@@ -192,7 +192,7 @@ PathVector <- function(tree) {
 #' @importFrom TreeTools as.Splits
 #' @export
 SplitVector <- function(tree) {
-  tipLabel <- tree$tip.label
+  tipLabel <- tree[["tip.label"]]
   nTip <- length(tipLabel)
   splits <- as.logical(as.Splits(tree, tipLabel[order(tipLabel)]))
   splits <- rbind(splits, !splits)
