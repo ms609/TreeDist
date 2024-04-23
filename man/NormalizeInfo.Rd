@@ -29,8 +29,43 @@ independently (optional)}
 
 \item{\dots}{Additional parameters to \code{InfoInTree()} or \code{how}.}
 }
+\value{
+\code{NormalizeInfo()} returns an object corresponding to the normalized
+values of \code{unnormalized}.
+}
 \description{
 Normalize information against total present in both starting trees
+}
+\examples{
+library("TreeTools", quietly = TRUE)
+pair1 <- c(BalancedTree(9), StarTree(9))
+pair2 <- c(BalancedTree(9), PectinateTree(9))
+
+# We'll let the number of nodes define the total information in a tree
+Nnode(pair1)
+Nnode(pair2)
+
+# Let's normalize a unit distance
+rawDist <- cbind(c(1, 1), c(1, 1))
+
+# With `Combine = "+"`, the maximum distance is the sum of
+# the information in each tree
+denominator <- outer(Nnode(pair1), Nnode(pair2), "+")
+
+NormalizeInfo(rawDist, pair1, pair2, InfoInTree = ape::Nnode, Combine = "+")
+rawDist / denominator
+
+
+# A denominator can be specified manually using `how`:
+NormalizeInfo(rawDist, pair1, pair2, InfoInTree = ape::Nnode, how = 16)
+rawDist / 16
+
+
+# `how` also allows the denominator to be computed from trees:
+outer(Nnode(pair1), Nnode(pair2), pmin)
+NormalizeInfo(rawDist, pair1, pair2, InfoInTree = ape::Nnode, how = pmin)
+rawDist / outer(Nnode(pair1), Nnode(pair2), pmin)
+
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

@@ -82,12 +82,16 @@
 #' for a compilation of expected values under different metrics for trees with
 #' up to 200 leaves.
 #' 
-#' Alternatively, to scale against the information content or entropy of all 
-#' splits in the most or least informative tree, use `normalize = `[`pmax`] or 
-#' [`pmin`] respectively.
+#' Alternatively, use `normalize = `[`pmax`] or [`pmin`] to scale against the
+#' information content or entropy of all splits in the most (`pmax`) or
+#' least (`pmin`) informative tree in each pair.
 #' To calculate the relative similarity against a reference tree that is known
 #' to be "correct", use `normalize = SplitwiseInfo(trueTree)` (SPI, MSI) or
 #' `ClusteringEntropy(trueTree)` (MCI).
+#' For worked examples, see the internal function [`NormalizeInfo()`], which is
+#' called from distance functions with the parameter `how = normalize`.
+#' .
+#' 
 #'
 #' # Distances between large trees
 #' 
@@ -171,7 +175,9 @@
 #' SharedPhylogeneticInfo(tree1, tree3) # = 0
 #' MutualClusteringInfo(tree1, tree3) # > 0
 #' 
-#' # Converting trees to Splits objects can speed up multiple comparisons
+#' # Distance functions internally convert trees to Splits objects.
+#' # Pre-conversion can reduce run time if the same trees will feature in
+#' # multiple comparisons
 #' splits1 <- TreeTools::as.Splits(tree1)
 #' splits2 <- TreeTools::as.Splits(tree2)
 #' 

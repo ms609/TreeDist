@@ -409,6 +409,38 @@ CompareAll <- function(x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
 #' independently (optional)
 #' @param how Method for normalization
 #' @param \dots Additional parameters to `InfoInTree()` or `how`.
+#' @returns `NormalizeInfo()` returns an object corresponding to the normalized
+#' values of `unnormalized`.
+#' @examples
+#' library("TreeTools", quietly = TRUE)
+#' pair1 <- c(BalancedTree(9), StarTree(9))
+#' pair2 <- c(BalancedTree(9), PectinateTree(9))
+#' 
+#' # We'll let the number of nodes define the total information in a tree
+#' Nnode(pair1)
+#' Nnode(pair2)
+#' 
+#' # Let's normalize a unit distance
+#' rawDist <- cbind(c(1, 1), c(1, 1))
+#' 
+#' # With `Combine = "+"`, the maximum distance is the sum of
+#' # the information in each tree
+#' denominator <- outer(Nnode(pair1), Nnode(pair2), "+")
+#' 
+#' NormalizeInfo(rawDist, pair1, pair2, InfoInTree = ape::Nnode, Combine = "+")
+#' rawDist / denominator
+#' 
+#' 
+#' # A denominator can be specified manually using `how`:
+#' NormalizeInfo(rawDist, pair1, pair2, InfoInTree = ape::Nnode, how = 16)
+#' rawDist / 16
+#' 
+#' 
+#' # `how` also allows the denominator to be computed from trees:
+#' outer(Nnode(pair1), Nnode(pair2), pmin)
+#' NormalizeInfo(rawDist, pair1, pair2, InfoInTree = ape::Nnode, how = pmin)
+#' rawDist / outer(Nnode(pair1), Nnode(pair2), pmin)
+#' 
 #' @keywords internal
 #' @template MRS
 #' @importFrom TreeTools KeepTip TipLabels

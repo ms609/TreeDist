@@ -218,12 +218,15 @@ be calculated with \code{ExpectedVariation()}; or see package
 for a compilation of expected values under different metrics for trees with
 up to 200 leaves.
 
-Alternatively, to scale against the information content or entropy of all
-splits in the most or least informative tree, use \verb{normalize = }\code{\link{pmax}} or
-\code{\link{pmin}} respectively.
+Alternatively, use \verb{normalize = }\code{\link{pmax}} or \code{\link{pmin}} to scale against the
+information content or entropy of all splits in the most (\code{pmax}) or
+least (\code{pmin}) informative tree in each pair.
 To calculate the relative similarity against a reference tree that is known
 to be "correct", use \code{normalize = SplitwiseInfo(trueTree)} (SPI, MSI) or
 \code{ClusteringEntropy(trueTree)} (MCI).
+For worked examples, see the internal function \code{\link[=NormalizeInfo]{NormalizeInfo()}}, which is
+called from distance functions with the parameter \code{how = normalize}.
+.
 }
 
 \section{Distances between large trees}{
@@ -282,7 +285,9 @@ ExpectedVariation(tree1, tree2, sample=12)["DifferentPhylogeneticInfo", "Estimat
 SharedPhylogeneticInfo(tree1, tree3) # = 0
 MutualClusteringInfo(tree1, tree3) # > 0
 
-# Converting trees to Splits objects can speed up multiple comparisons
+# Distance functions internally convert trees to Splits objects.
+# Pre-conversion can reduce run time if the same trees will feature in
+# multiple comparisons
 splits1 <- TreeTools::as.Splits(tree1)
 splits2 <- TreeTools::as.Splits(tree2)
 
