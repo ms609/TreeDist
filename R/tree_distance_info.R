@@ -253,7 +253,6 @@ ClusteringInfoDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
   ret
 }
 
-# TODO check that Internalizing this hasn't hidden TreeDistance from the index.
 #' @export
 ClusteringInfoDist <- ClusteringInfoDistance
 
