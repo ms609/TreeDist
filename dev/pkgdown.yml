@@ -1,17 +1,17 @@
 pandoc: 3.1.11
-pkgdown: 2.0.7
+pkgdown: 2.0.9
 pkgdown_sha: ~
 articles:
-  Generalized-RF: Generalized-RF.html
-  Robinson-Foulds: Robinson-Foulds.html
-  Using-TreeDist: Using-TreeDist.html
   compare-treesets: compare-treesets.html
   different-leaves: different-leaves.html
+  Generalized-RF: Generalized-RF.html
   information: information.html
   landscapes: landscapes.html
+  Robinson-Foulds: Robinson-Foulds.html
   treespace: treespace.html
   using-distances: using-distances.html
-last_built: 2024-04-03T13:44Z
+  Using-TreeDist: Using-TreeDist.html
+last_built: 2024-04-23T09:14Z
 urls:
   reference: https://ms609.github.io/TreeDist/reference
   article: https://ms609.github.io/TreeDist/articles
