@@ -135,6 +135,9 @@ vector listing the index of the split in \code{tree2} that is matched with
 each split in \code{tree1} in the optimal matching.
 Unmatched splits are denoted \code{NA}.
 Use \code{\link[=VisualizeMatching]{VisualizeMatching()}} to plot the optimal matching.
+
+\code{TreeDistance()} simply returns the clustering information distance (it is
+an alias of \code{ClusteringInfoDistance()}).
 }
 \description{
 Calculate tree similarity and distance measures based on the amount of

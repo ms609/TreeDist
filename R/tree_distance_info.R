@@ -53,7 +53,8 @@
 #' splits as the phylogenetic information content of the most informative 
 #' split that is consistent with both input splits; `MatchingSplitInfoDistance()`
 #' is the corresponding measure of tree difference.
-#' ([More information here](https://ms609.github.io/TreeDist/articles/Generalized-RF.html).)
+#' ([More information here](
+#' https://ms609.github.io/TreeDist/articles/Generalized-RF.html).)
 #' 
 #' # Conversion to distances
 #' 
@@ -78,7 +79,8 @@
 #' It may thus be helpful to rescale the normalized value such that the
 #' _expected_ distance between a random pair of trees equals one.  This can
 #' be calculated with `ExpectedVariation()`; or see package
-#' '[TreeDistData](https://ms609.github.io/TreeDistData/reference/randomTreeDistances.html)'
+#' '[TreeDistData](
+#' https://ms609.github.io/TreeDistData/reference/randomTreeDistances.html)'
 #' for a compilation of expected values under different metrics for trees with
 #' up to 200 leaves.
 #' 
@@ -135,7 +137,8 @@
 #' @param reportMatching Logical specifying whether to return the clade
 #' matchings as an attribute of the score.
 #'
-#' @return If `reportMatching = FALSE`, the functions return a numeric 
+#' @returns
+#' If `reportMatching = FALSE`, the functions return a numeric 
 #' vector specifying the requested similarities or differences.
 #' 
 #' If `reportMatching = TRUE`, the functions additionally return an integer
@@ -143,6 +146,9 @@
 #' each split in `tree1` in the optimal matching.
 #' Unmatched splits are denoted `NA`.
 #' Use [`VisualizeMatching()`] to plot the optimal matching.
+#' 
+#' `TreeDistance()` simply returns the clustering information distance (it is
+#' an alias of `ClusteringInfoDistance()`).
 #'  
 #' @examples 
 #' tree1 <- ape::read.tree(text="((((a, b), c), d), (e, (f, (g, h))));")
