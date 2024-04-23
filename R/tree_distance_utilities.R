@@ -401,14 +401,38 @@ CompareAll <- function(x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
   }
 }
 
-#' Normalize information against total present in both starting trees
-#' @param unnormalized Numeric value to be normalized.
-#' @param tree1,tree2 Trees from which `unnormalized` was calculated
-#' @param InfoInTree Function to calculate the information content of each tree
-#' @param infoInBoth Numeric specifying information content of both trees
-#' independently (optional)
-#' @param how Method for normalization
-#' @param \dots Additional parameters to `InfoInTree()` or `how`.
+#' Normalize tree distances
+#' 
+#' `NormalizeInfo()` is an internal function used to normalize information
+#' against a reference, such as the total information present in a pair of
+#' trees.
+#' 
+#' The unnormalized value(s) are normalized by dividing by a denominator
+#' calculated based on the `how` parameter.  Valid options include:
+#' 
+#' \describe{
+#'  \item{`FALSE`}{No normalization is performed; the unnormalized values
+#'  are returned.}
+#'  \item{`TRUE`}{Unless `infoInBoth` is specified, the information in
+#'  each tree is computed using `InfoInTree()`, and the two values combined
+#'  using `Combine()`.}
+#'  \item{A numeric value, vector or matrix}{`how` is used as the denominator;
+#'  the returned value is `unnormalized / how`.}
+#'  \item{A function}{Unless `infoInBoth` is specified, the information in
+#'  each tree is computed using `InfoInTree()`, and the two values combined
+#'  using `how`.  `NormalizeInfo(how = Func)` is thus equivalent to
+#'  `NormalizeInfo(how = TRUE, Combine = Func)`.}
+#' }
+#' 
+#' @param unnormalized Numeric value, vector or matrix to be normalized.
+#' @param tree1,tree2 Trees from which `unnormalized` was calculated.
+#' @param InfoInTree Function to calculate the information content of each tree.
+#' @param infoInBoth Optional numeric specifying information content of both
+#' trees independently. If unspecified (`NULL`), this will be calculated using
+#' the method specified by `how`.
+#' @param how Method for normalization, perhaps specified using the `normalize`
+#' argument to a tree distance function.  See details for options.
+#' @param \dots Additional parameters to `InfoInTree()` or `how()`.
 #' @returns `NormalizeInfo()` returns an object corresponding to the normalized
 #' values of `unnormalized`.
 #' @examples

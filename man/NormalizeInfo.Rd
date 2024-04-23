@@ -2,7 +2,7 @@
 % Please edit documentation in R/tree_distance_utilities.R
 \name{NormalizeInfo}
 \alias{NormalizeInfo}
-\title{Normalize information against total present in both starting trees}
+\title{Normalize tree distances}
 \usage{
 NormalizeInfo(
   unnormalized,
@@ -16,25 +16,47 @@ NormalizeInfo(
 )
 }
 \arguments{
-\item{unnormalized}{Numeric value to be normalized.}
+\item{unnormalized}{Numeric value, vector or matrix to be normalized.}
 
-\item{tree1, tree2}{Trees from which \code{unnormalized} was calculated}
+\item{tree1, tree2}{Trees from which \code{unnormalized} was calculated.}
 
-\item{InfoInTree}{Function to calculate the information content of each tree}
+\item{InfoInTree}{Function to calculate the information content of each tree.}
 
-\item{infoInBoth}{Numeric specifying information content of both trees
-independently (optional)}
+\item{infoInBoth}{Optional numeric specifying information content of both
+trees independently. If unspecified (\code{NULL}), this will be calculated using
+the method specified by \code{how}.}
 
-\item{how}{Method for normalization}
+\item{how}{Method for normalization, perhaps specified using the \code{normalize}
+argument to a tree distance function.  See details for options.}
 
-\item{\dots}{Additional parameters to \code{InfoInTree()} or \code{how}.}
+\item{\dots}{Additional parameters to \code{InfoInTree()} or \code{how()}.}
 }
 \value{
 \code{NormalizeInfo()} returns an object corresponding to the normalized
 values of \code{unnormalized}.
 }
 \description{
-Normalize information against total present in both starting trees
+\code{NormalizeInfo()} is an internal function used to normalize information
+against a reference, such as the total information present in a pair of
+trees.
+}
+\details{
+The unnormalized value(s) are normalized by dividing by a denominator
+calculated based on the \code{how} parameter.  Valid options include:
+
+\describe{
+\item{\code{FALSE}}{No normalization is performed; the unnormalized values
+are returned.}
+\item{\code{TRUE}}{Unless \code{infoInBoth} is specified, the information in
+each tree is computed using \code{InfoInTree()}, and the two values combined
+using \code{Combine()}.}
+\item{A numeric value, vector or matrix}{\code{how} is used as the denominator;
+the returned value is \code{unnormalized / how}.}
+\item{A function}{Unless \code{infoInBoth} is specified, the information in
+each tree is computed using \code{InfoInTree()}, and the two values combined
+using \code{how}.  \code{NormalizeInfo(how = Func)} is thus equivalent to
+\code{NormalizeInfo(how = TRUE, Combine = Func)}.}
+}
 }
 \examples{
 library("TreeTools", quietly = TRUE)
