@@ -230,7 +230,9 @@ returns a logical matrix specifying whether each pair of splits is identical.</p
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p><code>InfoRobinsonFoulds()</code> calculates the tree similarity or distance by summing
+    <p><code>RobinsonFoulds()</code> calculates the standard Robinson–Foulds distance,
+i.e. the number of splits that occur in one tree but not the other.
+<code>InfoRobinsonFoulds()</code> calculates the tree similarity or distance by summing
 the phylogenetic information content of all splits that are (or are not)
 identical in both trees.  Consequently, splits that are more likely
 to be identical by chance alone make a smaller contribution to overall
@@ -252,7 +254,7 @@ Day (1985)
 <ul><li><p><code>RobinsonFoulds()</code> is normalized against the total number of splits that
 are present.</p></li>
 <li><p><code>InfoRobinsonFoulds()</code> is normalized against the sum of the phylogenetic
-information of all splits in both trees, treated independently.</p></li>
+information of all splits in each tree, treated independently.</p></li>
 </ul></div>
     <div id="references">
     <h2>References</h2>
