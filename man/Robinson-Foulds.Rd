@@ -98,6 +98,8 @@ are better suited to most use cases
 \insertCite{SmithDist,SmithSpace}{TreeDist}.
 }
 \details{
+\code{RobinsonFoulds()} calculates the standard Robinson–Foulds distance,
+i.e. the number of splits that occur in one tree but not the other.
 \code{InfoRobinsonFoulds()} calculates the tree similarity or distance by summing
 the phylogenetic information content of all splits that are (or are not)
 identical in both trees.  Consequently, splits that are more likely
@@ -119,7 +121,7 @@ Rapid comparison between multiple pairs of trees employs the
 \item \code{RobinsonFoulds()} is normalized against the total number of splits that
 are present.
 \item \code{InfoRobinsonFoulds()} is normalized against the sum of the phylogenetic
-information of all splits in both trees, treated independently.
+information of all splits in each tree, treated independently.
 }
 }
 
