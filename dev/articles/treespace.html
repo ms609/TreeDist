@@ -42,7 +42,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.7.0.9002</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.7.0.9003</span>
       </span>
     </div>
 
@@ -409,7 +409,7 @@ overlap statistics is detailed in <span class="citation">Mammola
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hypervolumeInstalled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"hypervolume"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">hypervolumeInstalled</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"hypervolume"</span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/bblonder/hypervolume" class="external-link">"hypervolume"</a></span><span class="op">)</span></span>
 <span>  <span class="va">hv1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/hypervolume/man/hypervolume_gaussian.html" class="external-link">hypervolume_gaussian</a></span><span class="op">(</span><span class="va">pid_mapping</span><span class="op">[</span><span class="va">pid_cluster</span> <span class="op">==</span> <span class="fl">1</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>,</span>
 <span>                              verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span>  <span class="va">hv2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/hypervolume/man/hypervolume_gaussian.html" class="external-link">hypervolume_gaussian</a></span><span class="op">(</span><span class="va">pid_mapping</span><span class="op">[</span><span class="va">pid_cluster</span> <span class="op">==</span> <span class="fl">2</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>,</span>
@@ -488,10 +488,15 @@ points.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Install the 'Umatrix' package to run this example"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "Epoch: 1 started"</span></span>
+<span><span class="co">## [1] "Epoch: 1 finished. 220 datapoints changed bestmatch"</span></span>
 <span><span class="co">## [1] "Epoch: 2 started"</span></span>
+<span><span class="co">## [1] "Epoch: 2 finished. 216 datapoints changed bestmatch"</span></span>
 <span><span class="co">## [1] "Epoch: 3 started"</span></span>
+<span><span class="co">## [1] "Epoch: 3 finished. 212 datapoints changed bestmatch"</span></span>
 <span><span class="co">## [1] "Epoch: 4 started"</span></span>
+<span><span class="co">## [1] "Epoch: 4 finished. 203 datapoints changed bestmatch"</span></span>
 <span><span class="co">## [1] "Epoch: 5 started"</span></span>
+<span><span class="co">## [1] "Epoch: 5 finished. 165 datapoints changed bestmatch"</span></span>
 <span><span class="co">## [1] "---- Esom Training Finished ----"</span></span></code></pre>
 <p><img src="treespace_files/figure-html/umatrix-1.png" width="700" style="display: block; margin: auto;"></p>
 </div>
