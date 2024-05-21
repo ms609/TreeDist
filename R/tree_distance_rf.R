@@ -1,19 +1,14 @@
 #' Robinson&ndash;Foulds distances, with adjustments for phylogenetic information
 #' content
 #' 
-#' Calculate the Robinson&ndash;Foulds distance
-#' \insertCite{Robinson1981}{TreeDist}, or
-#' the equivalent similarity measure, with options to
-#' (i) annotate matched splits; 
-#' (ii) weight splits according to their phylogenetic information content 
-#' \insertCite{SmithDist}{TreeDist}.
-#' Whilst slower to calculate, information theoretic modifications of the
-#' Robinson&ndash;Foulds distance (see [`TreeDistance()`])
+#' `RobinsonFoulds()` calculates the Robinson&ndash;Foulds distance
+#' \insertCite{Robinson1981}{TreeDist}, or the corresponding similarity measure.
+#' `InfoRobinsonFoulds()` weights splits according to their phylogenetic
+#' information content \insertCite{@§2.1 in @SmithDist}{TreeDist}.
+#' Optionally, the matching between identical splits may reported.
+#' Generalized Robinson&ndash;Foulds distances (see [`TreeDistance()`])
 #' are better suited to most use cases
 #' \insertCite{SmithDist,SmithSpace}{TreeDist}.
-#' 
-#' Note that if `reportMatching = TRUE`, the `pairScores` attribute returns
-#' a logical matrix specifying whether each pair of splits is identical.
 #' 
 #' `InfoRobinsonFoulds()` calculates the tree similarity or distance by summing 
 #' the phylogenetic information content of all splits that are (or are not)
@@ -30,6 +25,9 @@
 #' 
 #' @templateVar returns `RobinsonFoulds()` and `InfoRobinsonFoulds()` return
 #' @template distReturn
+#' @return If `reportMatching = TRUE`, the `pairScores` attribute 
+#' returns a logical matrix specifying whether each pair of splits is identical.
+#' 
 #' 
 #' @section Normalization:
 #' 

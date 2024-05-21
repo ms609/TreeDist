@@ -1,8 +1,6 @@
-# TreeDist 2.7.0.9002 (development)
+# TreeDist 2.7.0.9003 (development)
 
-- Improve documentation of normalization.
-
-- Fix dead links in documentation.
+- Documentation improvements.
 
 - Fix `KCDiameter.multiPhylo()` for multiple trees.
 

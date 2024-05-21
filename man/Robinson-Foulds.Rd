@@ -83,23 +83,21 @@ split.}
 \code{RobinsonFoulds()} and \code{InfoRobinsonFoulds()} return an array of numerics providing the
 distances between each  pair of trees in \code{tree1} and \code{tree2},
 or \code{splits1} and \code{splits2}.
+
+If \code{reportMatching = TRUE}, the \code{pairScores} attribute
+returns a logical matrix specifying whether each pair of splits is identical.
 }
 \description{
-Calculate the Robinson–Foulds distance
-\insertCite{Robinson1981}{TreeDist}, or
-the equivalent similarity measure, with options to
-(i) annotate matched splits;
-(ii) weight splits according to their phylogenetic information content
-\insertCite{SmithDist}{TreeDist}.
-Whilst slower to calculate, information theoretic modifications of the
-Robinson–Foulds distance (see \code{\link[=TreeDistance]{TreeDistance()}})
+\code{RobinsonFoulds()} calculates the Robinson–Foulds distance
+\insertCite{Robinson1981}{TreeDist}, or the corresponding similarity measure.
+\code{InfoRobinsonFoulds()} weights splits according to their phylogenetic
+information content \insertCite{@§2.1 in @SmithDist}{TreeDist}.
+Optionally, the matching between identical splits may reported.
+Generalized Robinson–Foulds distances (see \code{\link[=TreeDistance]{TreeDistance()}})
 are better suited to most use cases
 \insertCite{SmithDist,SmithSpace}{TreeDist}.
 }
 \details{
-Note that if \code{reportMatching = TRUE}, the \code{pairScores} attribute returns
-a logical matrix specifying whether each pair of splits is identical.
-
 \code{InfoRobinsonFoulds()} calculates the tree similarity or distance by summing
 the phylogenetic information content of all splits that are (or are not)
 identical in both trees.  Consequently, splits that are more likely
