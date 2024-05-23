@@ -132,9 +132,9 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
                          normalizedScores, ...) {
       splitNodes <- as.integer(names(splits))
       ore <- OtherRootEdge(splitNodes, edge)
-      if (length(normalizedScores) && !is.na(ore[1])) {
+      if (length(normalizedScores) && !is.na(ore[[1]])) {
         ns <- c(normalizedScores, normalizedScores[ore["score"]])
-        se <- c(splitEdges, ore[2])
+        se <- c(splitEdges, ore[[2]])
       } else {
         ns <- normalizedScores
         se <- splitEdges

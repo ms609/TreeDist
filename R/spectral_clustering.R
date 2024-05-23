@@ -30,7 +30,7 @@ SpectralEigens <- function(D, nn = 10L, nEig = 2L) {
     dims <- dim(D)
     
     # intialize the knn matrix
-    knn_mat <- matrix(FALSE, nrow = dims[1], ncol = dims[2])
+    knn_mat <- matrix(FALSE, nrow = dims[[1]], ncol = dims[[2]])
     
     # find the 10 nearest neighbors for each point
     for (i in seq_len(nrow(D))) {
@@ -49,7 +49,7 @@ SpectralEigens <- function(D, nn = 10L, nEig = 2L) {
     stopifnot(nrow(W) == ncol(W))
     
     g <- colSums(W) # degrees of vertices
-    n <- dim(W)[1]
+    n <- dim(W)[[1]]
     D_half <- diag(1 / sqrt(g))
     
     # Return:

@@ -133,8 +133,8 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
     splits <- lapply(splits1, as.Splits)
     
     .PairDist <- function(i) {
-      s1 <- splits[[i[1]]]
-      s2 <- splits[[i[2]]]
+      s1 <- splits[[i[[1]]]]
+      s2 <- splits[[i[[2]]]]
       common <- intersect(TipLabels(s1), TipLabels(s2))
       Func(KeepTip(s1, common), KeepTip(s2, common),
            nTip = length(common), reportMatching = FALSE, ...)
@@ -144,7 +144,7 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
     splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
     
     .PairDist <- function(i) {
-      Func(splits[[i[1]]], splits[[i[2]]],
+      Func(splits[[i[[1]]]], splits[[i[[2]]]],
            nTip = nTip, reportMatching = FALSE, ...)
     }
     
@@ -395,7 +395,7 @@ CompareAll <- function(x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
   if (length(FUN.VALUE) == 1) {
     .WrapReturn(ret)
   } else {
-    structure(lapply(seq_len(dim(ret)[1]), 
+    structure(lapply(seq_len(dim(ret)[[1]]), 
                      function(i) .WrapReturn(unlist(ret[i, ]))),
               names = rownames(ret))
   }
@@ -530,7 +530,7 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
     # We require a triangular matrix suitable for a dist object
     if (.MultipleTrees(tree1)) {
       pairs <- combn(seq_along(tree1), 2)
-      nPairs <- dim(pairs)[2]
+      nPairs <- dim(pairs)[[2]]
       ret <- list(vector("list", nPairs), vector("list", nPairs))
       
       for (n in seq_len(nPairs)) {

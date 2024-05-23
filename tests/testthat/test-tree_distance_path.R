@@ -8,6 +8,6 @@ test_that("path.dist called safely", {
                tolerance = 2)
   
   expect_equal(PathDist(BalancedTree(6), PectinateTree(6)),
-               PathDist(list(BalancedTree(6), PectinateTree(6)))[1],
+               PathDist(list(BalancedTree(6), PectinateTree(6)))[[1]],
                ignore_attr = TRUE)
 })

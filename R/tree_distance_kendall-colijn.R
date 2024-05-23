@@ -111,7 +111,7 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
       ret <- structure(class = "dist", Size = nTree,
                        Diag = FALSE, Upper = FALSE,
                        apply(is, 2, function(i)
-                         .EuclideanDistance(treeVec[, i[1]] - treeVec[, i[2]])))
+                         .EuclideanDistance(treeVec[, i[[1]]] - treeVec[, i[[2]]])))
       # Return:
       ret
     }
@@ -138,7 +138,7 @@ KCVector <- function(tree) {
   edge <- tree[["edge"]]
   parent <- edge[, 1L]
   child <- edge[, 2L]
-  root <- parent[1]
+  root <- parent[[1]]
   nTip <- root - 1L
   tipOrder <- order(tree[["tip.label"]])
   is <- combn(tipOrder, 2)
@@ -146,7 +146,7 @@ KCVector <- function(tree) {
   ancestors <- AllAncestors(parent, child)
   
   mrca <- apply(is, 2, function(i) 
-    max(intersect(ancestors[[i[1]]], ancestors[[i[2]]])))
+    max(intersect(ancestors[[i[[1]]]], ancestors[[i[[2]]]])))
   
   rootDist <- lengths(ancestors)
   structure(rootDist[mrca], Size = nTip, class = "dist")
@@ -166,7 +166,7 @@ PathVector <- function(tree) {
   edge <- tree[["edge"]]
   parent <- edge[, 1L]
   child <- edge[, 2L]
-  root <- parent[1]
+  root <- parent[[1]]
   nTip <- root - 1L
   tipAncs <- seq_len(nTip)
   tipOrder <- order(tree[["tip.label"]])
@@ -175,8 +175,8 @@ PathVector <- function(tree) {
   ancestors <- AllAncestors(parent, child)
   
   pathLength <- apply(is, 2, function(i) {
-    anc1 <- ancestors[[i[1]]]
-    anc2 <- ancestors[[i[2]]]
+    anc1 <- ancestors[[i[[1]]]]
+    anc2 <- ancestors[[i[[2]]]]
     mrca <- max(intersect(anc1, anc2))
     sum(anc1 >= mrca, anc2 >= mrca
         # , -(mrca == root) # don't count root edge twice
@@ -200,7 +200,7 @@ SplitVector <- function(tree) {
   is <- combn(seq_len(nTip), 2)
   
   smallestSplit <- apply(is, 2, function(i)
-    min(inSplit[splits[, i[1]] & splits[, i[2]]], nTip - 1L))
+    min(inSplit[splits[, i[[1]]] & splits[, i[[2]]]], nTip - 1L))
   
   structure(smallestSplit, Size = nTip, class = "dist")
 }

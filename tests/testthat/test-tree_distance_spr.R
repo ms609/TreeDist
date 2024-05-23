@@ -8,7 +8,7 @@ test_that("SPR.dist called safely", {
   expect_equal(SPRDist(BalancedTree(6), as.phylo(0:5, 6)),
                SPRDist(as.phylo(0:5, 6), BalancedTree(6)))
   expect_equal(SPRDist(BalancedTree(6), PectinateTree(6)),
-               SPRDist(list(BalancedTree(6), PectinateTree(6)))[1],
+               SPRDist(list(BalancedTree(6), PectinateTree(6)))[[1]],
                ignore_attr = TRUE)
   
   # https://github.com/KlausVigo/phangorn/issues/97

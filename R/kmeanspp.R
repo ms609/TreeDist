@@ -42,7 +42,7 @@ KMeansPP.matrix <- function(x, k = 2, nstart = 10, ...) {
     return(kmeans(x, centers = k, ...))
   }
   
-  n <- dim(x)[1]
+  n <- dim(x)[[1]]
   ret <- list(tot.withinss = Inf)
   d <- as.matrix(dist(x))
   

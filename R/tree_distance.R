@@ -31,8 +31,8 @@
 #' @export
 GeneralizedRF <- function(splits1, splits2, nTip, PairScorer, 
                            maximize, reportMatching, ...) {
-  nSplits1 <- dim(splits1)[1]
-  nSplits2 <- dim(splits2)[1]
+  nSplits1 <- dim(splits1)[[1]]
+  nSplits2 <- dim(splits2)[[1]]
   
   solution <- PairScorer(splits1, splits2, nTip, ...)
   ret <- solution[["score"]]
@@ -93,11 +93,11 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
     } else {
       # !sameTips implies that tree1 contains multiple trees
       pairs <- combn(seq_along(tree1), 2)
-      nPairs <- dim(pairs)[2]
+      nPairs <- dim(pairs)[[2]]
       
       apply(pairs, 2, function(ij) {
-        i <- ij[1]
-        j <- ij[2]
+        i <- ij[[1]]
+        j <- ij[[2]]
         common <- intersect(lab1[[i]], lab1[[j]])
         Value(KeepTip(tree1[[i]], common)) +
           Value(KeepTip(tree1[[j]], common))
