@@ -56,7 +56,7 @@ The JV algorithm is implemented for square matrices in the Bioconductor
 package \href{https://www.bioconductor.org/packages/release/bioc/html/GraphAlignment.html}{\code{GraphAlignment::LinearAssignment()}}.
 }
 \author{
-\href{https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/LAPJV/lap.cpp}{C++ code}
+\href{https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/src/lap.cpp}{C++ code}
 by Roy Jonker, MagicLogic Optimization Inc. \href{mailto:roy_jonker@magiclogic.com}{roy_jonker@magiclogic.com},
 with contributions from Yong Yang \href{mailto:yongyanglink@gmail.com}{yongyanglink@gmail.com}, after
 \href{https://uk.mathworks.com/matlabcentral/profile/authors/69713-yi-cao}{Yi Cao}
