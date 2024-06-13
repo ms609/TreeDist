@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Comparing sets of trees from different analyses • TreeDist</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -41,7 +41,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.7.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.7.1</span>
       </span>
     </div>
 
@@ -163,8 +163,8 @@ file: Select first tree file</p></li>
 existing</span></p></li>
 <li><p>Load each additional set of trees from file using <span style="border: solid 2px #d55e00">Add batch to existing</span></p></li>
 </ul>
-<div class="figure">
-<img src="Batch1.svg" width="245" alt=""><p class="caption">Load tree batches</p>
+<div class="float">
+<img src="Batch1.svg" width="245" alt="Load tree batches"><div class="figcaption">Load tree batches</div>
 </div>
 <ul>
 <li>On the <span style="border: solid 2px #e69f00">Display</span> tab,
@@ -173,8 +173,8 @@ batch</span>, or <span style="border: solid 2px #d55e00">Colour points
 by: Batch</span>
 </li>
 </ul>
-<div class="figure">
-<img src="Batch2.svg" style="width:100.0%" alt=""><p class="caption">Tree batch styles</p>
+<div class="float">
+<img src="Batch2.svg" style="width:100.0%" alt="Tree batch styles"><div class="figcaption">Tree batch styles</div>
 </div>
 </div>
 <div class="section level2">
@@ -191,12 +191,16 @@ line:</p>
 <span><span class="va">treeStyle</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">styles</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">batch1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">batch2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculate distances</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeDist/">"TreeDist"</a></span><span class="op">)</span></span>
-<span><span class="va">distances</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeDistance.html">ClusteringInfoDistance</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">batch1</span>, <span class="va">batch2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeDist/">"TreeDist"</a></span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Registered S3 method overwritten by 'phangorn':</span></span>
+<span><span class="co">##   method   from     </span></span>
+<span><span class="co">##   [.phyDat TreeTools</span></span></code></pre>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">distances</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeDistance.html">ClusteringInfoDistance</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">batch1</span>, <span class="va">batch2</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Construct over-simple 2D PCoA mapping</span></span>
 <span><span class="va">mapping</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/cmdscale.html" class="external-link">cmdscale</a></span><span class="op">(</span><span class="va">distances</span>, k <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plot mapping</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mapping</span>,</span>
@@ -218,8 +222,8 @@ to reality; see the warnings and recommendations in <span class="citation">Smith
 <p>Interpreting and comparing the areas of tree space from a projection
 can be misleading – the expanded apparent area of Greenland under the
 Mercator projection being a familiar example.</p>
-<div class="figure">
-<img src="https://i0.wp.com/geoffboeing.com/wp-content/uploads/2015/08/greenland-vs-africa-mercator-projection.jpg" alt=""><p class="caption">Mapping can introduce distortion</p>
+<div class="float">
+<img src="https://i0.wp.com/geoffboeing.com/wp-content/uploads/2015/08/greenland-vs-africa-mercator-projection.jpg" alt="Mapping can introduce distortion"><div class="figcaption">Mapping can introduce distortion</div>
 </div>
 <p>As such, it is always best to work with original distances when
 interpreting whether sets of trees occupy larger or smaller regions of
@@ -228,7 +232,7 @@ tree space.</p>
 <h3 id="distances-from-median">Distances from median<a class="anchor" aria-label="anchor" href="#distances-from-median"></a>
 </h3>
 <p>One approach is to plot distances from a median tree:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate median trees</span></span>
 <span><span class="va">median1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html" class="external-link">median</a></span><span class="op">(</span><span class="va">batch1</span><span class="op">)</span></span>
 <span><span class="va">median2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/median.html" class="external-link">median</a></span><span class="op">(</span><span class="va">batch2</span><span class="op">)</span></span>
@@ -272,7 +276,7 @@ with the Robinson–Foulds distance</a>: in particular, resolution can be
 decimated by a single “rogue” taxon whose position is poorly defined
 <span class="citation">(Smith, 2022b)</span>. Detecting and removing
 rogue taxa can provide a more meaningful point of comparison.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Create tree set with a rogue taxon</span></span>
 <span><span class="va">batch3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/AddTip.html" class="external-link">AddTipEverywhere</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/as.phylo.html" class="external-link">as.phylo</a></span><span class="op">(</span><span class="fl">7</span>, <span class="fl">7</span><span class="op">)</span>, <span class="st">"t8"</span><span class="op">)</span></span>
 <span></span>
@@ -310,7 +314,7 @@ distribution of trees across tree space.</p>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" line-spacing="2">
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0" line-spacing="2">
 <div id="ref-SmithSpace" class="csl-entry">
 Smith, M. R. (2022a). Robust analysis of phylogenetic tree space.
 <em>Systematic Biology</em>, <em>71</em>(5), 1255–1270. doi: <a href="https://doi.org/10.1093/sysbio/syab100" class="external-link">10.1093/sysbio/syab100</a>
@@ -341,7 +345,7 @@ improve consensus trees. <em>Systematic Biology</em>, <em>71</em>(5),
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
 </div>
 
       </footer>
