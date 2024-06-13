@@ -1,4 +1,4 @@
-# TreeDist 2.7.0.9003 (development)
+# TreeDist 2.7.1 (2024-06-13)
 
 - Documentation improvements.
 
