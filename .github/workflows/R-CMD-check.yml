@@ -46,9 +46,9 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: windows-latest, r: '4.5.0'}
-          - {os: macOS-latest, r: '4.5.0'}
-          - {os: ubuntu-20.04, r: '4.5.0', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+          - {os: windows-latest, r: '4.4.0'}
+          - {os: macOS-latest, r: '4.4.0'}
+          - {os: ubuntu-20.04, r: '4.4.0', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
 
     env:
       _R_CHECK_CRAN_INCOMING_: true # Seemingly not set by --as-cran
