@@ -46,11 +46,13 @@ jobs:
         config:
           - {os: windows-latest, r: 'release'}
           - {os: macOS-latest, r: 'release'}
+          - {os: ubuntu-20.04, r: '4.1', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
           - {os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+          - {os: ubuntu-20.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
 
     env:
-      _R_CHECK_CRAN_INCOMING_: true
-      _R_CHECK_FORCE_SUGGESTS_: false
+      _R_CHECK_CRAN_INCOMING_: true # Seemingly not set by --as-cran
+      _R_CHECK_FORCE_SUGGESTS_: false # CRAN settings
       R_COMPILE_AND_INSTALL_PACKAGES: 'never'
       _R_CHECK_THINGS_IN_CHECK_DIR_: false
       R_REMOTES_STANDALONE: true
@@ -68,7 +70,7 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
 
-      - name: Install system dependencies (Linux)
+      - name: Install apt packages (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
@@ -79,6 +81,9 @@ jobs:
 
       - name: Install TreeDistData from GitHub
         run: Rscript -e 'devtools::install_github("ms609/TreeDistData")'
+
+      - name: Install dependencies
+        run: Rscript -e 'pak::pkg_install(c("fGarch", "univariateML", "kdensity"))'
 
       - name: Install remaining dependencies
         run: Rscript -e 'pak::pkg_install(c("TreeDist", "phangorn", "Rcpp"))'
