@@ -81,7 +81,7 @@ jobs:
         run: Rscript -e 'devtools::install_github("ms609/TreeDistData")'
 
       - name: Install remaining dependencies
-        run: Rscript -e 'pak::pkg_install()'
+        run: Rscript -e 'pak::pkg_install(c("TreeDist", "phangorn", "Rcpp"))'
 
       - name: Set up pandoc
         uses: r-lib/actions/setup-pandoc@v2
