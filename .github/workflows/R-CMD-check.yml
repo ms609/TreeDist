@@ -84,3 +84,12 @@ jobs:
         run: Rscript -e 'pak::pkg_install()'
 
       - name: Set up pandoc
+        uses: r-lib/actions/setup-pandoc@v2
+        
+      - name: Check package
+        uses: r-lib/actions/check-r-package@v2
+
+      - name: Code coverage
+        if: runner.os == 'Windows'
+        run: covr::codecov()
+        shell: Rscript {0}
