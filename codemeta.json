@@ -400,6 +400,18 @@
     },
     "5": {
       "@type": "SoftwareApplication",
+      "identifier": "kdensity",
+      "name": "kdensity",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=kdensity"
+    },
+    "6": {
+      "@type": "SoftwareApplication",
       "identifier": "colorspace",
       "name": "colorspace",
       "provider": {
@@ -410,7 +422,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=colorspace"
     },
-    "6": {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "memoise",
       "name": "memoise",
@@ -422,7 +434,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=memoise"
     },
-    "7": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "phangorn",
       "name": "phangorn",
@@ -435,7 +447,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=phangorn"
     },
-    "8": {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "Rdpack",
       "name": "Rdpack",
@@ -448,7 +460,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=Rdpack"
     },
-    "9": {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "shiny",
       "name": "shiny",
@@ -460,7 +472,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=shiny"
     },
-    "10": {
+    "11": {
       "@type": "SoftwareApplication",
       "identifier": "shinyjs",
       "name": "shinyjs",
@@ -472,7 +484,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=shinyjs"
     },
-    "11": {
+    "12": {
       "@type": "SoftwareApplication",
       "identifier": "TreeTools",
       "name": "TreeTools",
@@ -485,22 +497,10 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=TreeTools"
     },
-    "12": {
-      "@type": "SoftwareApplication",
-      "identifier": "kdensity",
-      "name": "kdensity",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=kdensity"
-    },
     "SystemRequirements": "C++17, pandoc-citeproc"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "1455.366KB",
+  "fileSize": "1455.368KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
