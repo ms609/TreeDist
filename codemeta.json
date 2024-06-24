@@ -400,6 +400,18 @@
     },
     "5": {
       "@type": "SoftwareApplication",
+      "identifier": "Matrix",
+      "name": "Matrix",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=Matrix"
+    },
+    "6": {
+      "@type": "SoftwareApplication",
       "identifier": "kdensity",
       "name": "kdensity",
       "provider": {
@@ -410,7 +422,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=kdensity"
     },
-    "6": {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "colorspace",
       "name": "colorspace",
@@ -422,7 +434,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=colorspace"
     },
-    "7": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "memoise",
       "name": "memoise",
@@ -434,7 +446,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=memoise"
     },
-    "8": {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "phangorn",
       "name": "phangorn",
@@ -447,7 +459,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=phangorn"
     },
-    "9": {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "Rdpack",
       "name": "Rdpack",
@@ -460,7 +472,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=Rdpack"
     },
-    "10": {
+    "11": {
       "@type": "SoftwareApplication",
       "identifier": "shiny",
       "name": "shiny",
@@ -472,7 +484,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=shiny"
     },
-    "11": {
+    "12": {
       "@type": "SoftwareApplication",
       "identifier": "shinyjs",
       "name": "shinyjs",
@@ -484,7 +496,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=shinyjs"
     },
-    "12": {
+    "13": {
       "@type": "SoftwareApplication",
       "identifier": "TreeTools",
       "name": "TreeTools",
@@ -499,7 +511,7 @@
     "SystemRequirements": "C++17, pandoc-citeproc"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "1455.3KB",
+  "fileSize": "1455.312KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
