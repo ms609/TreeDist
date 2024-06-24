@@ -51,8 +51,8 @@ jobs:
           - {os: ubuntu-20.04, r: '4.4.0', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
 
     env:
-      _R_CHECK_CRAN_INCOMING_: true # Seemingly not set by --as-cran
-      _R_CHECK_FORCE_SUGGESTS_: false # CRAN settings
+      _R_CHECK_CRAN_INCOMING_: true
+      _R_CHECK_FORCE_SUGGESTS_: false
       R_COMPILE_AND_INSTALL_PACKAGES: 'never'
       _R_CHECK_THINGS_IN_CHECK_DIR_: false
       R_REMOTES_STANDALONE: true
@@ -61,7 +61,6 @@ jobs:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
- 
     steps:
       - name: Checkout git repo
         uses: actions/checkout@v4
@@ -71,17 +70,17 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
 
+      - name: Install apt packages (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev libglpk40
+
       - name: Install devtools
         run: Rscript -e 'install.packages("devtools")'
 
       - name: Install TreeDistData from GitHub
         run: Rscript -e 'devtools::install_github("ms609/TreeDistData")'
-
-      - name: Install apt packages (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get install \
-            texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev
 
       - name: Set up R dependencies (Windows)
         if: runner.os == 'Windows'
@@ -114,5 +113,3 @@ jobs:
         if: runner.os == 'Windows'
         run: covr::codecov()
         shell: Rscript {0}
-
-        
