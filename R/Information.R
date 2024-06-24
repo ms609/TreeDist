@@ -56,6 +56,7 @@ SplitSharedInformation <- function(n, A1, A2 = A1) {
     Log2TreesMatchingSplit(A2, n - A2)
 }
 
+
 #' @describeIn SplitSharedInformation Different information between two splits.
 #' @importFrom TreeTools SplitInformation
 #' @export
