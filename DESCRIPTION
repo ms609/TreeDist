@@ -41,6 +41,7 @@ Depends:
 Imports: 
   ape (>= 5.6),
   cli (>= 3.0),
+  Matrix , 
   kdensity , 
   colorspace,
   memoise,
