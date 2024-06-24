@@ -37,7 +37,7 @@ URL: https://ms609.github.io/TreeDist/, https://github.com/ms609/TreeDist/
 BugReports: https://github.com/ms609/TreeDist/issues/
 Additional_repositories: https://ms609.github.io/packages/
 Depends: 
-  R (>= 4.4.0),
+  R (>= 3.4.0),
   stats,
 Imports: 
   ape (>= 5.6),
