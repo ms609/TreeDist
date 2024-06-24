@@ -49,12 +49,12 @@ Imports:
   shiny,
   shinyjs,
   TreeTools (>= 1.7.2),
+  kdensity
 Suggests:
   bookdown,
   cluster,
   ggplot2,
   hypervolume,
-  kdensity,
   knitr,
   MASS,
   parallel,
