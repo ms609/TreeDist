@@ -14,7 +14,7 @@
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.4.0 (2024-04-24)",
+  "runtimePlatform": "R version 4.4.1 (2024-06-14)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -126,18 +126,6 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=hypervolume"
-    },
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "kdensity",
-      "name": "kdensity",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=kdensity"
     },
     {
       "@type": "SoftwareApplication",
@@ -388,7 +376,7 @@
       "@type": "SoftwareApplication",
       "identifier": "ape",
       "name": "ape",
-      "version": ">= 5.0",
+      "version": ">= 5.6",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
@@ -497,10 +485,22 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=TreeTools"
     },
+    "12": {
+      "@type": "SoftwareApplication",
+      "identifier": "kdensity",
+      "name": "kdensity",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=kdensity"
+    },
     "SystemRequirements": "C++17, pandoc-citeproc"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "1455.331KB",
+  "fileSize": "1455.366KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
