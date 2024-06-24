@@ -51,7 +51,6 @@ Imports:
   Rdpack (>= 0.7),
   shiny,
   shinyjs,
-  TreeDistData (>= 0.1.1) ,
   TreeTools  
 Suggests:
   bookdown,
