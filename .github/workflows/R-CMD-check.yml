@@ -13,7 +13,7 @@ on:
       - master
 
 jobs:
-  R-CMD-check-latest-Rcpp:
+  R-CMD-check:
     runs-on: ${{ matrix.config.os }}
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
     strategy:
@@ -22,7 +22,10 @@ jobs:
         config:
           - { os: windows-latest, r: 'release' }
           - { os: macOS-latest, r: 'release' }
+          - { os: ubuntu-20.04, r: '4.4.0', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
           - { os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
+          - { os: ubuntu-20.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
+
 
     env:
       _R_CHECK_CRAN_INCOMING_: true
