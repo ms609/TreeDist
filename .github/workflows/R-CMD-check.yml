@@ -76,8 +76,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev libglpk40
 
-      - name: Install devtools and pak
-        run: Rscript -e 'install.packages(c("devtools", "pak"))'
+      - name: Install devtools
+        run: Rscript -e 'install.packages("devtools")'
+
+      - name: Install pak
+        run: Rscript -e 'install.packages("pak")'
+
       - name: Install covr
         run: Rscript -e 'install.packages("covr")'
         
