@@ -42,14 +42,14 @@ Depends:
 Imports: 
   ape (>= 5.6),
   cli (>= 3.0),
+  kdensity , 
   colorspace,
   memoise,
   phangorn (>= 2.2.1),
   Rdpack (>= 0.7),
   shiny,
   shinyjs,
-  TreeTools (>= 1.7.2),
-  kdensity
+  TreeTools (>= 1.7.2)
 Suggests:
   bookdown,
   cluster,
