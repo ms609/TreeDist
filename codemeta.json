@@ -412,6 +412,30 @@
     },
     "6": {
       "@type": "SoftwareApplication",
+      "identifier": "fGarch",
+      "name": "fGarch",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=fGarch"
+    },
+    "7": {
+      "@type": "SoftwareApplication",
+      "identifier": "univariateML",
+      "name": "univariateML",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=univariateML"
+    },
+    "8": {
+      "@type": "SoftwareApplication",
       "identifier": "kdensity",
       "name": "kdensity",
       "provider": {
@@ -422,7 +446,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=kdensity"
     },
-    "7": {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "colorspace",
       "name": "colorspace",
@@ -434,7 +458,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=colorspace"
     },
-    "8": {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "memoise",
       "name": "memoise",
@@ -446,7 +470,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=memoise"
     },
-    "9": {
+    "11": {
       "@type": "SoftwareApplication",
       "identifier": "phangorn",
       "name": "phangorn",
@@ -459,7 +483,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=phangorn"
     },
-    "10": {
+    "12": {
       "@type": "SoftwareApplication",
       "identifier": "Rdpack",
       "name": "Rdpack",
@@ -472,7 +496,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=Rdpack"
     },
-    "11": {
+    "13": {
       "@type": "SoftwareApplication",
       "identifier": "shiny",
       "name": "shiny",
@@ -484,7 +508,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=shiny"
     },
-    "12": {
+    "14": {
       "@type": "SoftwareApplication",
       "identifier": "shinyjs",
       "name": "shinyjs",
@@ -496,7 +520,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=shinyjs"
     },
-    "13": {
+    "15": {
       "@type": "SoftwareApplication",
       "identifier": "TreeTools",
       "name": "TreeTools",
@@ -511,7 +535,7 @@
     "SystemRequirements": "C++17, pandoc-citeproc"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "1455.312KB",
+  "fileSize": "1455.342KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
