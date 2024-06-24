@@ -35,7 +35,6 @@ Copyright: Jonker-Volgenant Linear Assignment Problem implementation
   by Roy Jonker modified by Yong Yang and Yi Cao.
 URL: https://ms609.github.io/TreeDist/, https://github.com/ms609/TreeDist/
 BugReports: https://github.com/ms609/TreeDist/issues/
-Additional_repositories: https://ms609.github.io/packages/
 Depends: 
   R (>= 3.4.0),
   stats,
