@@ -400,54 +400,6 @@
     },
     "5": {
       "@type": "SoftwareApplication",
-      "identifier": "Matrix",
-      "name": "Matrix",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=Matrix"
-    },
-    "6": {
-      "@type": "SoftwareApplication",
-      "identifier": "fGarch",
-      "name": "fGarch",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=fGarch"
-    },
-    "7": {
-      "@type": "SoftwareApplication",
-      "identifier": "univariateML",
-      "name": "univariateML",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=univariateML"
-    },
-    "8": {
-      "@type": "SoftwareApplication",
-      "identifier": "kdensity",
-      "name": "kdensity",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=kdensity"
-    },
-    "9": {
-      "@type": "SoftwareApplication",
       "identifier": "colorspace",
       "name": "colorspace",
       "provider": {
@@ -458,7 +410,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=colorspace"
     },
-    "10": {
+    "6": {
       "@type": "SoftwareApplication",
       "identifier": "memoise",
       "name": "memoise",
@@ -470,7 +422,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=memoise"
     },
-    "11": {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "phangorn",
       "name": "phangorn",
@@ -483,7 +435,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=phangorn"
     },
-    "12": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "Rdpack",
       "name": "Rdpack",
@@ -496,7 +448,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=Rdpack"
     },
-    "13": {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "shiny",
       "name": "shiny",
@@ -508,7 +460,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=shiny"
     },
-    "14": {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "shinyjs",
       "name": "shinyjs",
@@ -520,10 +472,11 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=shinyjs"
     },
-    "15": {
+    "11": {
       "@type": "SoftwareApplication",
       "identifier": "TreeTools",
       "name": "TreeTools",
+      "version": ">= 1.7.2",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
@@ -535,7 +488,7 @@
     "SystemRequirements": "C++17, pandoc-citeproc"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "1455.343KB",
+  "fileSize": "1455.355KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
