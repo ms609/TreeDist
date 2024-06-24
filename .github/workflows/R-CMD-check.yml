@@ -1,58 +1,32 @@
+# For help debugging build failures open an issue on the RStudio community with the 'github-actions' tag.
+# https://community.rstudio.com/new-topic?category=Package%20development&tags=github-actions
+name: Check Package with Latest Rcpp
+
 on:
-  schedule:
-    - cron: "24 06 * * 1"
   push:
     branches:
       - main
       - master
-    paths-ignore:
-      - "Meta**"
-      - "memcheck**"
-      - "docs**"
-      - "**.git"
-      - "**.json"
-      - "**.md"
-      - "**.yml"
-      - "!**R-CMD-check.yml"
-      - "**.R[dD]ata"
-      - "**.Rpro*"
   pull_request:
     branches:
       - main
       - master
-    paths-ignore:
-      - "Meta**"
-      - "memcheck**"
-      - "docs**"
-      - "**.git"
-      - "**.json"
-      - "**.md"
-      - "**.yml"
-      - "!**R-CMD-check.yml"
-      - "**.R[dD]ata"
-      - "**.Rpro*"
-
-name: R-CMD-check
 
 jobs:
-  R-CMD-check:
+  R-CMD-check-latest-Rcpp:
     runs-on: ${{ matrix.config.os }}
-
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
-
     strategy:
       fail-fast: false
       matrix:
         config:
-          - {os: windows-latest, r: 'release'}
-          - {os: macOS-latest, r: 'release'}
-          - {os: ubuntu-20.04, r: '4.4.0', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
-          - {os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
-          - {os: ubuntu-20.04, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+          - { os: windows-latest, r: 'release' }
+          - { os: macOS-latest, r: 'release' }
+          - { os: ubuntu-20.04, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest" }
 
     env:
-      _R_CHECK_CRAN_INCOMING_: true # Seemingly not set by --as-cran
-      _R_CHECK_FORCE_SUGGESTS_: false # CRAN settings
+      _R_CHECK_CRAN_INCOMING_: true
+      _R_CHECK_FORCE_SUGGESTS_: false
       R_COMPILE_AND_INSTALL_PACKAGES: 'never'
       _R_CHECK_THINGS_IN_CHECK_DIR_: false
       R_REMOTES_STANDALONE: true
@@ -76,15 +50,18 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev libglpk40
 
-      - name: Install devtools
-        run: Rscript -e 'install.packages("devtools")'
+      - name: Install devtools and remotes
+        run: Rscript -e 'install.packages(c("devtools", "remotes"))'
 
       - name: Install pak
         run: Rscript -e 'install.packages("pak")'
 
       - name: Install covr
         run: Rscript -e 'install.packages("covr")'
-        
+
+      - name: Install latest Rcpp from GitHub
+        run: Rscript -e 'remotes::install_github("RcppCore/Rcpp")'
+
       - name: Install TreeDistData from GitHub
         run: Rscript -e 'devtools::install_github("ms609/TreeDistData")'
 
@@ -96,11 +73,9 @@ jobs:
 
       - name: Set up pandoc
         uses: r-lib/actions/setup-pandoc@v2
-        
+
       - name: Check package
         uses: r-lib/actions/check-r-package@v2
 
       - name: Code coverage
-        if: runner.os == 'Windows'
-        run: covr::codecov()
-        shell: Rscript {0}
+        run: Rscript -e 'covr::codecov()'
