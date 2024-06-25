@@ -99,6 +99,7 @@ jobs:
             RcppCore/Rcpp
             ms609/TreeDistData
             phangorn=?ignore-before-r=4.1.0
+            Umatrix=?ignore-before-r=4.4.0
           needs: |
             check
 
