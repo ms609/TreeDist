@@ -62,7 +62,8 @@ jobs:
       - uses: r-lib/actions/setup-pandoc@v2
 
       - name: Install valgrind
-        run: sudo apt-get install valgrind texlive-latex-bas           
+        run: sudo apt-get install valgrind texlive-latex-base 
+        
       - name: Install system dependencies
         run: |
           
