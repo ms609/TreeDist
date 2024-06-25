@@ -75,14 +75,17 @@ jobs:
       - name: Install apt packages (Linux)
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get install \
-            texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev
+          sudo apt-get update
+          sudo apt-get install -y \
+            texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev \
+            libglpk40
 
       - name: Set up R dependencies (Windows)
         if: runner.os == 'Windows'
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
+            RcppCore/Rcpp
             ms609/TreeDistData
           needs: |
             check
@@ -93,9 +96,9 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
+            RcppCore/Rcpp
             ms609/TreeDistData
             phangorn=?ignore-before-r=4.1.0
-            RcppCore/Rcpp
           needs: |
             check
 
