@@ -62,9 +62,12 @@ jobs:
       - uses: r-lib/actions/setup-pandoc@v2
 
       - name: Install valgrind
-        run: sudo apt-get install valgrind texlive-latex-base
-
-      - name: Query dependencies
+        run: sudo apt-get install valgrind texlive-latex-bas           
+      - name: Install system dependencies
+        run: |
+          
+            sudo apt-get update
+            sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev libglpk40 libicu-dev libicu66        - name: Query dependencies
         run: |
           install.packages('remotes')
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
@@ -102,3 +105,6 @@ jobs:
       - name: valgrind - memcheck ${{ matrix.config.test }}
         run: |
           R -d "valgrind --tool=memcheck --leak-check=full --error-exitcode=1" --vanilla < memcheck/${{ matrix.config.test }}.R
+
+
+          
