@@ -49,8 +49,9 @@ jobs:
       - name: Install apt packages (Linux)
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get update
-          sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev libglpk40
+            sudo apt-get update
+            sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev libglpk40 libicu-dev
+  
 
       - name: Install devtools and remotes
         run: Rscript -e 'install.packages(c("devtools", "remotes"))'
