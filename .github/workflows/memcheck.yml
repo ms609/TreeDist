@@ -64,13 +64,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev libglpk40 wget valgrind
-          wget http://archive.ubuntu.com/ubuntu/pool/main/i/icu/icu-devtools_66.1-2ubuntu2_amd64.deb
-          wget http://archive.ubuntu.com/ubuntu/pool/main/i/icu/libicu66_66.1-2ubuntu2_amd64.deb
-          wget http://archive.ubuntu.com/ubuntu/pool/main/i/icu/libicudata66_66.1-2ubuntu2_amd64.deb
-          wget http://archive.ubuntu.com/ubuntu/pool/main/i/icu/libicui18n66_66.1-2ubuntu2_amd64.deb
-          sudo dpkg -i icu-devtools_66.1-2ubuntu2_amd64.deb libicu66_66.1-2ubuntu2_amd64.deb libicudata66_66.1-2ubuntu2_amd64.deb libicui18n66_66.1-2ubuntu2_amd64.deb
-          rm -f icu-devtools_66.1-2ubuntu2_amd64.deb libicu66_66.1-2ubuntu2_amd64.deb libicudata66_66.1-2ubuntu2_amd64.deb libicui18n66_66.1-2ubuntu2_amd64.deb
+          sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev libglpk40 wget valgrind libicu66
 
       - name: Query dependencies
         run: |
