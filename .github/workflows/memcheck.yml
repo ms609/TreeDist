@@ -64,7 +64,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev libglpk40 wget valgrind libicu66
+          sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev libglpk40 wget valgrind libicu-dev
 
       - name: Query dependencies
         run: |
