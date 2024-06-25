@@ -67,12 +67,13 @@ jobs:
         run: |
           
             sudo apt-get update
-            sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev libglpk40 libicu-dev libicu66        - name: Query dependencies
+            sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev libglpk40 libicu-dev libicu66      
+      - name: Query dependencies
         run: |
           install.packages('remotes')
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
           writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
-        shell: Rscript {0}
+          shell: Rscript {0}
 
       - name: Cache R packages
         uses: actions/cache@v3
@@ -107,4 +108,3 @@ jobs:
           R -d "valgrind --tool=memcheck --leak-check=full --error-exitcode=1" --vanilla < memcheck/${{ matrix.config.test }}.R
 
 
-          
