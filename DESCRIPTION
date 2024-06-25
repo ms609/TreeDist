@@ -40,7 +40,7 @@ Depends:
   R (>= 4.4.0),
   stats,
 Imports: 
-  ape (>= 5.6),
+  ape (>= 5.0),
   cli (>= 3.0),
   colorspace,
   memoise,
