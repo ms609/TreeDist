@@ -376,7 +376,7 @@
       "@type": "SoftwareApplication",
       "identifier": "ape",
       "name": "ape",
-      "version": ">= 5.6",
+      "version": ">= 5.0",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
@@ -488,7 +488,7 @@
     "SystemRequirements": "C++17, pandoc-citeproc"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "1455.355KB",
+  "fileSize": "1456.31KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
