@@ -34,7 +34,7 @@ name: mem-check
 
 jobs:
   mem-check:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     name: valgrind ${{ matrix.config.test }}, ubuntu, R release
 
@@ -88,6 +88,7 @@ jobs:
       - name: Install dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
+          remotes::install_github('RcppCore/Rcpp')
           remotes::install_cran("devtools")
         shell: Rscript {0}
         

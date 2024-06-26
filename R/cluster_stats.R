@@ -146,7 +146,7 @@ DistanceFromMedian.numeric <- function(x, cluster = 1) {
 }
 
 .DistanceFromMedian <- function(x) {
-  if (dim(x)[1] > 1) {
+  if (dim(x)[[1]] > 1) {
     .DistanceFromMedian.dist(as.matrix(dist(x)))
   } else {
     NA_real_
@@ -154,7 +154,7 @@ DistanceFromMedian.numeric <- function(x, cluster = 1) {
 }
 
 .DistanceFromMedian.dist <- function(d) {
-  if (dim(d)[1] > 1) {
+  if (dim(d)[[1]] > 1) {
     medPoint <- which.min(unname(colSums(d)))
     mean(d[medPoint, -medPoint])
   } else {
@@ -179,7 +179,7 @@ MeanNN.dist <- function(x, cluster = 1) {
 }
 
 .MeanNN.dist <- function(x) {
-  if (dim(x)[1] > 1) {
+  if (dim(x)[[1]] > 1) {
     mean(apply(x, 1, min, na.rm = TRUE))
   } else {
     NA_real_
@@ -201,7 +201,7 @@ MeanNN.numeric <- function(x, cluster = 1) {
 }
 
 .MeanNN <- function(x) {
-  if (dim(x)[1] > 1) {
+  if (dim(x)[[1]] > 1) {
     distances <- as.matrix(dist(x))
     diag(distances) <- NA_real_
     
@@ -232,7 +232,7 @@ MeanMSTEdge.dist <- function(x, cluster = 1) {
 
 #' @importFrom stats as.dist
 .MeanMSTEdge.dist <- function(x) {
-  n <- dim(x)[1]
+  n <- dim(x)[[1]]
   # Return:
   if (n > 1) {
     MSTLength(as.dist(x)) / (n - 1)
@@ -257,7 +257,7 @@ MeanMSTEdge.numeric <- function(x, cluster = 1) {
 
 #' @importFrom TreeTools MSTLength
 .MeanMSTEdge <- function(x) {
-  n <- dim(x)[1]
+  n <- dim(x)[[1]]
   # Return:
   if (n > 1) {
     MSTLength(dist(x)) / (n - 1)

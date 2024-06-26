@@ -63,7 +63,8 @@ test_that("Non-identical tips handled okay", {
   )
   expect_equal(
     MutualClusteringInfo(fullList[1:2], fullList[2], normalize = TRUE),
-    t(MutualClusteringInfo(fullList[2], fullList[1:2], normalize = TRUE)))
+    t(MutualClusteringInfo(fullList[2], fullList[1:2], normalize = TRUE))
+  )
   expect_equal(
     MutualClusteringInfo(fullList[2], fullList[1], normalize = TRUE),
     structure(MutualClusteringInfo(fullList[[2]], fullList[[1]],

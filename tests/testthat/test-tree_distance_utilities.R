@@ -153,7 +153,7 @@ test_that("Matches are reported", {
     expect_equal(3L, length(at))
     expect_equal(match(as.Splits(treeSym8), as.Splits(treeTwoSplits, treeSym8)),
                  as.integer(at$matching))
-    expect_equal("a b | e f g h c d => a b | e f g h c d", at$matchedSplits[2])
+    expect_equal("a b | e f g h c d => a b | e f g h c d", at$matchedSplits[[2]])
   }
   
   Test(SharedPhylogeneticInfo)
@@ -175,7 +175,7 @@ test_that("Matches are reported", {
                                          reportMatching = TRUE))
   expect_equal(3L, length(at))
   expect_equal(c(1:3, 5:4), as.integer(at$matching))
-  expect_equal("a b | e f g h c d => a b | e f g h c d", at$matchedSplits[5])
+  expect_equal("a b | e f g h c d => a b | e f g h c d", at$matchedSplits[[5]])
   
   # Zero match:
   expect_true(attr(SharedPhylogeneticInfo(

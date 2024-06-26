@@ -61,15 +61,15 @@ StrainCol <- function(distances, mapping, mstEnds = MSTEdges(distances),
                       palette = rev(hcl.colors(256L, "RdYlBu"))) {
   distMat <- as.matrix(distances)
   logStrain <- apply(mstEnds, 1, function(ends) {
-    orig <- distMat[ends[1], ends[2]]
-    mapped <- sum((mapping[ends[1], ] - mapping[ends[2], ]) ^ 2)
+    orig <- distMat[ends[[1]], ends[[2]]]
+    mapped <- sum((mapping[ends[[1]], ] - mapping[ends[[2]], ]) ^ 2)
     (
       log(mapped) / 2 # sqrt
     ) - log(orig) # High when mapping extends original distances
   })
   strain <- logStrain - median(logStrain[is.finite(logStrain)])
   # Infinite values arise when orig == 0
-  maxVal <- max(abs(strain[is.finite(strain)])) + sqrt(.Machine$double.eps)
+  maxVal <- max(abs(strain[is.finite(strain)])) + sqrt(.Machine[["double.eps"]])
   nCols <- length(palette)
   bins <- cut(strain, seq(-maxVal, maxVal, length.out = nCols))
   
