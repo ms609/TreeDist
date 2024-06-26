@@ -81,7 +81,7 @@ jobs:
           sudo apt-get update
           sudo apt-get update
           sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev libglpk40 wget valgrind libicu-dev
-          sudo apt-get install -y libicu66 valgrind texlive-latex-base
+          sudo apt-get install -y valgrind texlive-latex-base
 
       - name: Cache R packages
         uses: actions/cache@v4
