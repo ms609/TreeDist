@@ -72,7 +72,7 @@ jobs:
       - name: Install additional dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev libglpk40 wget valgrind
+          sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libglpk40 wget valgrind
           sudo apt-get install -y valgrind texlive-latex-base
 
       - name: Install system dependencies
