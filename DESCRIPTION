@@ -44,6 +44,7 @@ Imports:
   cli (>= 3.0),
   colorspace,
   memoise,
+  phangorn (>=2.2.1),
   Rdpack (>= 0.7),
   shiny,
   shinyjs,
