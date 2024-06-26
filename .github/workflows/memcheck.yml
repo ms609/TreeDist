@@ -107,4 +107,4 @@ jobs:
 
       - name: valgrind - memcheck ${{ matrix.config.test }}
         run: |
-          R -d "valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --error-exitcode=1" --vanilla < memcheck/${{ matrix.config.test }}.R
+          R -d "valgrind --tool=memcheck --leak-check=full --error-exitcode=1" --vanilla < memcheck/${{ matrix.config.test }}.R
