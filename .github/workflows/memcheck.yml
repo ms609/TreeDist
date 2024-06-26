@@ -66,9 +66,11 @@ jobs:
         run: sudo apt-get install valgrind texlive-latex-base
 
 
-      - name: Install apt packages (Linux)
+      - name: Install libicu66
         run: |
-          sudo apt-get install -y libglpk40 libicu66
+          wget http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu66_66.1-2ubuntu2_amd64.deb
+          sudo apt-get update
+          sudo dpkg -i http://security.ubuntu.com/ubuntu/pool/main/i/icu/libicu66_66.1-2ubuntu2_amd64.deb
 
       - name: Query dependencies
         run: |
