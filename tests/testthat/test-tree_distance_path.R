@@ -1,5 +1,5 @@
 test_that("PathDist()", {
-  library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
+  library("TreeTools", quietly = TRUE)
   t05 <- as.phylo(0:5, 6)
   bal6 <- BalancedTree(paste0("t", 6:1))
   vec6 <- PathVector(RenumberTips(bal6, t05))
