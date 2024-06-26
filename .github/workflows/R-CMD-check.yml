@@ -99,7 +99,13 @@ jobs:
             RcppCore/Rcpp
             ms609/TreeDistData
             phangorn=?ignore-before-r=4.1.0
+            ggplot2=?ignore-before-r=4.4.0
+            hypervolume=?ignore-before-r=4.4.0
+            kdensity=?ignore-before-r=4.4.0
+            Rogue=?ignore-before-r=4.4.0
+            TreeSearch=?ignore-before-r=4.4.0
             Umatrix=?ignore-before-r=4.4.0
+            uwot=?ignore-before-r=4.4.0
           needs: |
             check
 
