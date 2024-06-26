@@ -21,7 +21,7 @@ between trees.
 Calculate the path distance between rooted or unrooted trees.
 }
 \details{
-This function is a faster alternative to the function
+This function is an alternative to the function
 \code{\link[phangorn:treedist]{path.dist()}} in the phangorn package,
 which can crash if the internal representation of trees does not conform to
 certain (unspecified) expectations, and which treats all trees as unrooted.
@@ -37,10 +37,6 @@ sum.
 Other precursor measures are described in
 \insertCite{Williams1971;textual}{TreeDist} and
 \insertCite{Phipps1971;textual}{TreeDist}.
-
-If a root node is present, trees are treated as rooted.
-To avoid counting the root edge twice, use \code{UnrootTree(tree)} before
-calculating the path distance.
 
 If a root node is present, trees are treated as rooted.
 To avoid counting the root edge twice, use \code{UnrootTree(tree)} before
