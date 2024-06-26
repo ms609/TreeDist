@@ -1,6 +1,7 @@
 name: rev-dep-check
 
 on:
+  workflow_dispatch:
   workflow_run:
     workflows: ["R-CMD-check"]
     types:
