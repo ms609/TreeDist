@@ -62,14 +62,10 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v2
 
-      - name: Install valgrind
-        run: sudo apt-get install valgrind texlive-latex-base
-
-
-      - name: Install libicu66
+      - name: Install apt packages
         run: |
           sudo apt-get update
-          sudo apt-get install -y libicu-dev
+          sudo apt-get install -y libicu-dev valgrind texlive-latex-base
 
       - name: Query dependencies
         run: |
