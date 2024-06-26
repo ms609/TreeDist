@@ -2,7 +2,7 @@
 #' 
 #' Calculate the path distance between rooted or unrooted trees.
 #' 
-#' This function is an alternative to the function 
+#' This function is a faster alternative to the function 
 #' \code{\link[phangorn:treedist]{path.dist()}} in the phangorn package,
 #' which can crash if the internal representation of trees does not conform to
 #' certain (unspecified) expectations, and which treats all trees as unrooted.
