@@ -65,6 +65,8 @@ jobs:
       - name: Install apt packages
         run: |
           sudo apt-get update
+          sudo apt-get update
+          sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev libglpk40 wget valgrind libicu-dev
           sudo apt-get install -y libicu-dev valgrind texlive-latex-base
 
       - name: Query dependencies
@@ -104,4 +106,4 @@ jobs:
 
       - name: valgrind - memcheck ${{ matrix.config.test }}
         run: |
-          R -d "valgrind --tool=memcheck --leak-check=full --error-exitcode=1" --vanilla < memcheck/${{ matrix.config.test }}.R
+          R -d "valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all --error-exitcode=1" --vanilla < memcheck/${{ matrix.config.test }}.R
