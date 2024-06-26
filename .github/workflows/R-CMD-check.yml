@@ -100,7 +100,7 @@ jobs:
             ms609/TreeDistData
             RcppCore/Rcpp
             ms609/TreeTools
-            phangorn=?ignore-before-r=4.1.0
+            phangorn=?ignore-before-r=4.4.0
             ggplot2=?ignore-before-r=4.4.0
             hypervolume=?ignore-before-r=4.4.0
             kdensity=?ignore-before-r=4.4.0
