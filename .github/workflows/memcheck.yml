@@ -67,7 +67,6 @@ jobs:
 
 
       - name: Install apt packages (Linux)
-        comment: Seemingly requires for stringi
         run: |
           sudo apt-get install -y libglpk40 libicu66
 
