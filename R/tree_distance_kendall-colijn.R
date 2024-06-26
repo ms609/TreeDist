@@ -171,31 +171,6 @@ PathVector2 <- function(tree) {
   structure(path_vector2(edge), Size = NTip(tree), class = "dist")
 }
 
-.PathVectorR <- function(tree) {
-  tree <- Preorder(tree)
-  edge <- tree[["edge"]]
-  parent <- edge[, 1L]
-  child <- edge[, 2L]
-  root <- parent[[1]]
-  nTip <- root - 1L
-  tipAncs <- seq_len(nTip)
-  tipOrder <- order(tree[["tip.label"]])
-  is <- combn(tipOrder, 2)
-  
-  ancestors <- AllAncestors(parent, child)
-  
-  pathLength <- apply(is, 2, function(i) {
-    anc1 <- ancestors[[i[[1]]]]
-    anc2 <- ancestors[[i[[2]]]]
-    mrca <- max(intersect(anc1, anc2))
-    sum(anc1 >= mrca, anc2 >= mrca
-        # , -(mrca == root) # don't count root edge twice
-        )
-  })
-  
-  structure(pathLength, Size = nTip, class = "dist")
-}
-
 #' @describeIn KendallColijn Creates a vector reporting the smallest split
 #' containing each pair of leaves, per the metric proposed in
 #' \insertCite{SmithSpace;textual}{TreeDist}.
