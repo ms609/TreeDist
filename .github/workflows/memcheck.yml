@@ -62,13 +62,6 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@v2
 
-      - name: Install apt packages
-        run: |
-          sudo apt-get update
-          sudo apt-get update
-          sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev libglpk40 wget valgrind libicu-dev
-          sudo apt-get install -y libicu-dev valgrind texlive-latex-base
-
       - name: Query dependencies
         run: |
           install.packages('remotes')
@@ -76,23 +69,31 @@ jobs:
           writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
         shell: Rscript {0}
 
+      - name: Install system dependencies
+        run: |
+          while read -r cmd
+          do
+            eval sudo $cmd
+          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "22.04"))')
+
+      - name: Install additional packages
+        run: |
+          sudo apt-get update
+          sudo apt-get update
+          sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev libglpk40 wget valgrind libicu-dev
+          sudo apt-get install -y libicu66 valgrind texlive-latex-base
+
       - name: Cache R packages
         uses: actions/cache@v4
         with:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
-
-      - name: Install system dependencies
-        run: |
-          while read -r cmd
-          do
-            eval sudo $cmd
-          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
           
       - name: Install dependencies
         run: |
           remotes::install_github('RcppCore/Rcpp')
+          remotes::install_github('ms609/TreeDistData')
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("devtools")
         shell: Rscript {0}
