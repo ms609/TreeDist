@@ -69,9 +69,8 @@ jobs:
           writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
         shell: Rscript {0}
         
-      - name: Install additional packages
+      - name: Install additional dependencies
         run: |
-          sudo apt-get update
           sudo apt-get update
           sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev libglpk40 wget valgrind libicu66
           sudo apt-get install -y valgrind texlive-latex-base
