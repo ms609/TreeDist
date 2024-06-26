@@ -79,6 +79,15 @@ jobs:
           sudo apt-get install -y \
             texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev \
             libglpk40 libicu66
+                      
+      - name: Install GitHub packages
+        if: runner.os != 'Linux'
+        run: |
+          # Handled by extra-packages on Linux, oddly not for Mac or Windows
+          install.packages('remotes')
+          remotes::install_github('RcppCore/Rcpp')
+          remotes::install_github('ms609/TreeDistData')
+        shell: Rscript {0}
 
       - name: Set up R dependencies (Windows)
         if: runner.os == 'Windows'
