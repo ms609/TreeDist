@@ -106,6 +106,3 @@ PathDist <- function(tree1, tree2 = NULL) {
   # Return:
   ret
 }
-
-
-#  ub(sqrt(pair_square_diffs(v1)), pair_square_diffs_n(v1))
