@@ -28,7 +28,7 @@
 #' CompareAll(as.phylo(30:33, 8), SPRDist)
 #' @template MRS
 #'   
-#' @seealso More sophisticated calculation with [\pkg{TBRDist}](
+#' @seealso Exact calculation with [\pkg{TBRDist}](
 #' https://ms609.github.io/TBRDist/reference/TreeRearrangementDistances.html)
 #' functions `USPRDist()` and `ReplugDist()`.
 #' 

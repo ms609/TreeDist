@@ -5,7 +5,7 @@
 \alias{SPRDist.phylo}
 \alias{SPRDist.list}
 \alias{SPRDist.multiPhylo}
-\alias{.SPRConfl}
+\alias{.SPRPair}
 \title{Approximate the Subtree Prune and Regraft (SPR) distance.}
 \usage{
 SPRDist(tree1, tree2 = NULL, symmetric)
@@ -16,7 +16,7 @@ SPRDist(tree1, tree2 = NULL, symmetric)
 
 \method{SPRDist}{multiPhylo}(tree1, tree2 = NULL, symmetric)
 
-.SPRConfl(tree1, tree2, debug = FALSE)
+.SPRPair(tree1, tree2, check = TRUE, debug = FALSE)
 }
 \arguments{
 \item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
@@ -50,18 +50,12 @@ SPRDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
         as.phylo(0:2, 7))
 
 CompareAll(as.phylo(30:33, 8), SPRDist)
-# de Oliveira Martins et al 2008, fig. 7
-tree1 <- ape::read.tree(text = "((1, 2), ((a, b), (c, d)), (3, (4, (5, (6, 7)))));")
-tree2 <- ape::read.tree(text = "((1, 2), 3, (4, (5, (((a, b), (c, d)), (6, 7)))));")
-plot(tree1)
-plot(tree2)
-.SPRPair(tree1, tree2)
 }
 \references{
 \insertAllCited{}
 }
 \seealso{
-More sophisticated calculation with \href{https://ms609.github.io/TBRDist/reference/TreeRearrangementDistances.html}{\pkg{TBRDist}}
+Exact calculation with \href{https://ms609.github.io/TBRDist/reference/TreeRearrangementDistances.html}{\pkg{TBRDist}}
 functions \code{USPRDist()} and \code{ReplugDist()}.
 
 \pkg{phangorn} function \code{\link[phangorn:treedist]{SPR.dist()}} employs
