@@ -1,5 +1,5 @@
 .onUnload <- function(libpath) {
-  StopParallel()
+  StopParallel(quietly = TRUE)
   library.dynam.unload("TreeDist", libpath)
 }
 
@@ -7,7 +7,7 @@
 release_questions <- function() {
   c(
     "Is the code free of #TODOs?",
-    "Have you updated README.md, DESCRIPTION, inst/REFERENCES.bib & inst/CITATION with a citation to the published studies?"
+    "Have you updated inst/REFERENCES.bib with a full citation to Smith & Donoghue 2022?"
     )
 }
 
@@ -24,5 +24,5 @@ release_questions <- function() {
 # build_manual() # PDF support for special characters
 
 # # Unnecessary:
-# # tools::resaveRdaFiles('R', compress='auto') - is default bzip2 the optimal?
-# # tools::checkRdaFiles('R') - set optimal compression in `data-raw`
+# # tools::resaveRdaFiles("R", compress="auto") - is default bzip2 the optimal?
+# # tools::checkRdaFiles("R") - set optimal compression in `data-raw`

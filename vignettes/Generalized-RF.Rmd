@@ -41,6 +41,12 @@ VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2,
 SharedPhylogeneticInfo(tree1, tree2)
 ```
 
+This distance is measured in bits; on this measure, the total information 
+content of a tree is given by 
+```{r, total-phylo-info}
+SplitwiseInfo(tree1)
+```
+
 ### Conflicting splits can nevertheless be instructive
 
 Shared phylogenetic information assigns zero similarity to incompatible splits,
@@ -74,6 +80,11 @@ is (slightly) preferable to leaving a split unpaired.
 ```{r, fig.width=6, fig.align='center'}
 VisualizeMatching(MutualClusteringInfo, tree1, tree2, 
                   Plot = TreeDistPlot, matchZeros = FALSE)
+```
+
+The total mutual clustering information in a single tree is given by
+```{r total-mci}
+ClusteringEntropy(tree1)
 ```
 
 ## Nye _et al._ tree similarity metric

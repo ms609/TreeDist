@@ -32,7 +32,7 @@ in the same list.
 }
 \examples{
 # Generate a list of trees to compare
-library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+library("TreeTools", quietly = TRUE)
 trees <- list(bal1 = BalancedTree(1:8), 
               pec1 = PectinateTree(1:8),
               pec2 = PectinateTree(c(4:1, 5:8)))

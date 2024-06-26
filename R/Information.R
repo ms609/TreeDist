@@ -2,8 +2,8 @@
 #' 
 #' Calculate the phylogenetic information shared, or not shared, between two
 #' splits.
-#' See the 
-#' [accompanying vignette](https://ms609.github.io/TreeDist/articles/information.html)
+#' See the [accompanying vignette](
+#' https://ms609.github.io/TreeDist/articles/information.html)
 #' for definitions.
 #' 
 #' 
@@ -22,7 +22,7 @@
 #' trees consistent with two splits.
 #' 
 #' `SplitSharedInformation()` returns the phylogenetic information that two splits
-#' have in common, in bits.
+#' have in common \insertCite{Meila2007}{TreeDist}, in bits.
 #' 
 #' `SplitDifferentInformation()` returns the amount of phylogenetic information
 #' distinct to one of the two splits, in bits.
@@ -44,7 +44,7 @@
 #'   TreeTools::SplitInformation(3, 5)
 #' @template MRS
 #'   
-#' @references \insertRef{Meila2007}{TreeDist}
+#' @references \insertAllCited{}
 #' 
 #' @family information functions
 #' @importFrom TreeTools Log2TreesMatchingSplit Log2Unrooted
@@ -69,9 +69,10 @@ SplitDifferentInformation <- function(n, A1, A2 = A1) {
 #' Use variation of clustering information to compare pairs of splits
 #' 
 #' Compare a pair of splits viewed as clusterings of taxa, using the variation
-#' of clustering information proposed by Meil\ifelse{html}{\out{&#259;}}{a} (2007).
+#' of clustering information proposed by \insertCite{Meila2007}{TreeDist}.
 #' 
-#' This is equivalent to the mutual clustering information (Vinh _et al._ 2010).
+#' This is equivalent to the mutual clustering information
+#' \insertCite{Vinh2010}{TreeDist}.
 #' For the total information content, multiply the VoI by the number of leaves.
 #' 
 #' @template split12Params
@@ -79,11 +80,7 @@ SplitDifferentInformation <- function(n, A1, A2 = A1) {
 #' @return `MeilaVariationOfInformation()` returns the variation of (clustering)
 #' information, measured in bits.
 #' 
-#' @references 
-#' 
-#' \insertRef{Meila2007}{TreeDist}
-#'   
-#' \insertRef{Vinh2010}{TreeDist}
+#' @references \insertAllCited{}
 #' 
 #' @examples 
 #' # Maximum variation = information content of each split separately
@@ -114,8 +111,8 @@ MeilaVariationOfInformation <- function(split1, split2) {
   associationMatrix <- c(sum(split1 & split2), sum(split1 & !split2),
                          sum(!split1 & split2), sum(!split1 & !split2))
   probabilities <- associationMatrix / n
-  p1 <- probabilities[1] + probabilities[3]
-  p2 <- probabilities[1] + probabilities[2]
+  p1 <- probabilities[[1]] + probabilities[[3]]
+  p2 <- probabilities[[1]] + probabilities[[2]]
   
   jointEntropies <- Entropy(probabilities)
   
@@ -135,23 +132,23 @@ MeilaMutualInformation <- function(split1, split2) {
   associationMatrix <- c(sum(split1 & split2), sum(split1 & !split2),
                          sum(!split1 & split2), sum(!split1 & !split2))
   probabilities <- associationMatrix / n
-  p1 <- probabilities[1] + probabilities[3]
-  p2 <- probabilities[1] + probabilities[2]
+  p1 <- probabilities[[1]] + probabilities[[3]]
+  p2 <- probabilities[[1]] + probabilities[[2]]
   
   jointEntropies <- Entropy(probabilities)
   mutualInformation <- Entropy(c(p1, 1 - p1)) + Entropy(c(p2, 1 - p2)) -
     jointEntropies
   
   # Return:
-  if (abs(mutualInformation) < .Machine$double.eps^0.5) 0 else mutualInformation
+  if (abs(mutualInformation) < .Machine[["double.eps"]]^0.5) 0 else mutualInformation
 }
 
 #' Variation of information for all split pairings
 #' 
 #' Calculate the variation of clustering information
-#' (Meil\ifelse{html}{\out{&#259;}}{a} 2007) for each possible pairing of
-#' non-trivial splits on _n_ leaves, tabulating the number of pairings with
-#' each similarity.
+#' \insertCite{Meila2007}{TreeDist} for each possible pairing of
+#' non-trivial splits on _n_ leaves \insertCite{SmithDist}{TreeDist},
+#' tabulating the number of pairings with each similarity.
 #' 
 #' @param n Integer specifying the number of leaves in a tree.
 #' 
@@ -169,10 +166,7 @@ MeilaMutualInformation <- function(split1, split2) {
 #' AllSplitPairings(6) / 4L
 #' @template MRS
 #' 
-#' @references 
-#' \insertRef{Meila2007}{TreeDist}
-#' 
-#' \insertRef{SmithDist}{TreeDist}
+#' @references \insertAllCited{}
 #' 
 #' @encoding UTF-8
 #' @importFrom memoise memoise
@@ -205,9 +199,9 @@ AllSplitPairings <- memoise(function(n) {
             VoI = jointEntropies + jointEntropies - hA - hB)
         }, double(dataRows))
       }))
-    })), dataRows, dimnames=list(c('nTotal', 'VoI'), NULL))
+    })), dataRows, dimnames=list(c("nTotal", "VoI"), NULL))
   
-  tapply(unevenPairs['nTotal', ], unevenPairs['VoI', ], sum)
+  tapply(unevenPairs["nTotal", ], unevenPairs["VoI", ], sum)
 })
 
 #' Entropy of two splits
@@ -217,7 +211,8 @@ AllSplitPairings <- memoise(function(n) {
 #' two groups.
 #' Further details are available in a 
 #' [vignette](https://ms609.github.io/TreeDist/articles/information.html),
-#' MacKay (2003) and Meil\ifelse{html}{\out{&#259;}}{a} (2007).
+#' \insertCite{Mackay2003;textual}{TreeDist} and
+#' \insertCite{Meila2007;textual}{TreeDist}.
 #' 
 #' @template split12Params
 #' 
@@ -228,10 +223,7 @@ AllSplitPairings <- memoise(function(n) {
 #'  * `I` The mutual information of the splits;
 #'  * `Hd` The entropy distance (variation of information) of the splits.
 #' 
-#' @references 
-#' \insertRef{Mackay2003}{TreeDist}
-#' 
-#' \insertRef{Meila2007}{TreeDist}
+#' @references \insertAllCited{}
 #' 
 #' @examples
 #' A <- TRUE

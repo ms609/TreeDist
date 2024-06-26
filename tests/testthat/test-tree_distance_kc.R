@@ -3,7 +3,7 @@ library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
 test_that("KC vector calculations", {
   
   bal7 <- ape::read.tree(text = "(((t1,t2),(t3,t4)),((t5,t6),t7));")
-  expect_error(PathVector(bal7$edge), "\\bclass\\b")
+  expect_error(PathVector(bal7$edge), "must be of class\\b")
   bal7b <- ape::read.tree(text = "(((t5,t6),t7), ((t1,t2),(t3,t4)));")
   expect_equal(PathVector(UnrootTree(bal7)),
                PathVector(UnrootTree(RootTree(bal7, 1))))
@@ -44,4 +44,10 @@ test_that("KCDiameter() calculated", {
   }
   Test(4)
   Test(40)
+  tree1 <- ape::read.tree(text = "(a, (b, (c, (d, (e, (f, (g, h)))))));")
+  tree2 <- ape::read.tree(text = "(a, ((b, c), (d, (e, (f, (g, h))))));")
+  tree3 <- ape::read.tree(text = "(a, (b, (c, (d, (e, (f, g))))));")
+  trees <- c(tree1, tree2, tree3)
+  expect_equal(KCDiameter(trees),
+               c(KCDiameter(tree1), KCDiameter(tree2), KCDiameter(tree3)))
 })

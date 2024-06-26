@@ -2,13 +2,13 @@ test_that("SPR.dist called safely", {
   library("TreeTools")
   PhangornSPR <- phangorn::SPR.dist
   expect_equal(PhangornSPR(structure(lapply(as.phylo(0:5, 6), Postorder),
-                                     class = 'multiPhylo'),
+                                     class = "multiPhylo"),
                            Postorder(BalancedTree(6))),
                SPRDist(as.phylo(0:5, 6), BalancedTree(6), symmetric = FALSE))
   expect_equal(SPRDist(BalancedTree(6), as.phylo(0:5, 6)),
                SPRDist(as.phylo(0:5, 6), BalancedTree(6)))
   expect_equal(SPRDist(BalancedTree(6), PectinateTree(6)),
-               SPRDist(list(BalancedTree(6), PectinateTree(6)))[1],
+               SPRDist(list(BalancedTree(6), PectinateTree(6)))[[1]],
                ignore_attr = TRUE)
   
   # https://github.com/KlausVigo/phangorn/issues/97
@@ -32,9 +32,9 @@ test_that("SPR.dist called safely", {
                         Nnode = 5L, 
                         tip.label = c("t1", "t2", "t3", "t4", "t5", "t6")),
                    class = "phylo")
-  trs12 <- structure(list(tr1, tr2), class = 'multiPhylo')
-  trs123 <- structure(list('one' = tr1, 'two' = tr2, 'thr' = tr3),
-                      class = 'multiPhylo')
+  trs12 <- structure(list(tr1, tr2), class = "multiPhylo")
+  trs123 <- structure(list("one" = tr1, "two" = tr2, "thr" = tr3),
+                      class = "multiPhylo")
   SprpS <- function(...) SPRDist(..., symmetric = TRUE)
   expect_equal(SprpS(tr1, tr3), SprpS(tr3, tr1))
   expect_equal(2L, length(SprpS(trs12, tr3)))

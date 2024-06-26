@@ -39,7 +39,7 @@
 #' (the product of these values), and `sqrtTxC` (its square root).
 #' 
 #' @examples
-#' library('TreeTools', quietly = TRUE, warn.conflict = FALSE)
+#' library("TreeTools", quietly = TRUE)
 #' trees <- as.phylo(0:10, nTip = 8)
 #' distances <- ClusteringInfoDistance(trees)
 #' mapping <- cmdscale(distances)
@@ -59,17 +59,17 @@ MappingQuality <- function(original, mapped, neighbours = 10L) {
     stop("Original and mapped distances must have the same dimensions")
   }
   
-  N <- dim(originalRank)[2]
+  N <- dim(originalRank)[[2]]
   k <- neighbours
   MMax <- .MMax(N, k)
   
   trust <- 1 - (.TrustSum(originalRank, mappedRank, N, neighbours) / MMax)
   cont <- 1 - (.TrustSum(mappedRank, originalRank, N, neighbours) / MMax)
   txc <- trust * cont
-  c('Trustworthiness' = trust,
-    'Continuity' = cont,
-    'TxC' = txc,
-    'sqrtTxC' = sqrt(txc))
+  c("Trustworthiness" = trust,
+    "Continuity" = cont,
+    "TxC" = txc,
+    "sqrtTxC" = sqrt(txc))
 }
 
 #' @rdname MappingQuality

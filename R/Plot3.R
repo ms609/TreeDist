@@ -1,19 +1,26 @@
 #' Pseudo-3D plotting
 #' 
-#' `Plot3()` is an experimental function that generates
-#' a two-dimensional plot with the impression of a third dimension
-#' obtained through point scaling, overlap and fogging.
+#' `Plot3()` displays three-dimensional data in two dimensions, reflecting the
+#' third dimension with point scaling, overlap and fogging.
+#' Points with a lower `z` value are smaller than, fainter than, and overlapped
+#' by points with a higher value.
 #' 
 #' @param x,y,z Coordinates of points to plot.
-#' @param fog Numeric specifying amount of mist to apply to distant points.
+#' @param fog Numeric from zero (no fading) to one (furthest points are
+#' invisible) specifying amount to fade distant points.
 #' @param shrink Numeric specifying degree to which size of plotted point
-#' should reflect `z` position.
+#' should reflect `z` position. `0` denotes no scaling; if `1`, furthest
+#' point will have zero size.
 #' @param plot.bg Colour with which to fill plot area, used as fog colour.
 #' @param bg,cex,col,pch,add,axes,frame.plot,\dots Parameters passed to 
 #' [plot.default()].
 #' 
 #' @examples 
 #' Plot3(1:10, 1:10, 1:10, cex = 7, pch = 16, axes = FALSE, asp = 1)
+#' # Extreme values of fog and shrink will cause smallest z values to
+#' # become invisible.
+#' Plot3(1:10, 1:10, 1:10, cex = 7, pch = 16, axes = FALSE, asp = 1,
+#'       fog = 1, shrink = 1)
 #' @template MRS
 #' @importFrom graphics plot points rect
 #' @importFrom grDevices colorRamp rgb
@@ -46,7 +53,7 @@ Plot3 <- function(x, y = NULL, z = NULL,
   zScale <- zScale / max(zScale)
   
   fogOffset <- zResolution * fog
-  bgCol <- if (is.na(plot.bg)) 'white' else plot.bg
+  bgCol <- if (is.na(plot.bg)) "white" else plot.bg
   .FadeCol <- function(x, fadeAmount) {
     if (is.na(x)) {
       NA_character_
@@ -62,9 +69,9 @@ Plot3 <- function(x, y = NULL, z = NULL,
     .FadeCol(bg[i], zScale[i])
   }, character(1))
   if (!add) {
-    plot(x, y, type = 'n', axes = axes, frame.plot = frame.plot, ...)
+    plot(x, y, type = "n", axes = axes, frame.plot = frame.plot, ...)
     if (!is.na(plot.bg)) {
-      rect(par("usr")[1], par("usr")[3], par("usr")[2], par("usr")[4],
+      rect(par("usr")[[1]], par("usr")[[3]], par("usr")[[2]], par("usr")[[4]],
            col = plot.bg, border = frame.plot)
     }
   }

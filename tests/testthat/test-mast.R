@@ -1,4 +1,4 @@
-library('TreeTools')
+library("TreeTools")
 
 test_that("MAST fails gracefully", {
   expect_error(cpp_mast(BalancedTree(7)$edge, BalancedTree(8)$edge, 7)) # Different sizes
@@ -7,7 +7,7 @@ test_that("MAST fails gracefully", {
   
 })
 
-test_that('MAST works', {
+test_that("MAST works", {
   tree1 <- BalancedTree(8L)
   tree2 <- PectinateTree(8L)
   expect_equal(8L, MASTSize(tree1, tree1, rooted = TRUE))
@@ -39,7 +39,7 @@ test_that("MAST supports funnily-ordered edges", {
 })
 
 test_that("MAST size calculated correctly on small trees", {
-  library('TreeTools')
+  library("TreeTools")
   #expect_equal(4L, MASTSize(as.phylo(0, 5), as.phylo(1, 5)))
   t1 <- structure(list(edge = structure(c(6L, 6L, 7L, 7L, 8L, 8L, 9L, 
                                           9L, 1L, 7L, 2L, 8L, 3L, 9L, 4L, 5L),
@@ -51,7 +51,7 @@ test_that("MAST size calculated correctly on small trees", {
                                         .Dim = c(8L, 2L)), 
                        tip.label = c("t3", "t4", "t1", "t2", "t5"), Nnode = 4L), 
                   class = "phylo", order = "cladewise")
-  t1 <- RenumberTips(t1, paste0('t', 1:5))
+  t1 <- RenumberTips(t1, paste0("t", 1:5))
   
   t2 <- RenumberTips(t2, t1)
   t2 <- Preorder(t2)

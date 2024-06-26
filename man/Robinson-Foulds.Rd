@@ -54,8 +54,7 @@ RobinsonFouldsSplits(
 \item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 \code{tree2 = NULL} will compute distances between each pair of trees in the list
-\code{tree1} using a fast algorithm based on
-\insertCite{Day1985;textual}{TreeDist}.}
+\code{tree1} using a fast algorithm based on Day (1985).}
 
 \item{similarity}{Logical specifying whether to report the result as a tree
 similarity, rather than a difference.}
@@ -63,7 +62,7 @@ similarity, rather than a difference.}
 \item{normalize}{If a numeric value is provided, this will be used as a
 maximum value against which to rescale results.
 If \code{TRUE}, results will be rescaled against a maximum value calculated from
-the specified tree sizes and topology, as specified in the 'Normalization'
+the specified tree sizes and topology, as specified in the "Normalization"
 section below.
 If \code{FALSE}, results will not be rescaled.}
 
@@ -84,26 +83,31 @@ split.}
 \code{RobinsonFoulds()} and \code{InfoRobinsonFoulds()} return an array of numerics providing the
 distances between each  pair of trees in \code{tree1} and \code{tree2},
 or \code{splits1} and \code{splits2}.
+
+If \code{reportMatching = TRUE}, the \code{pairScores} attribute
+returns a logical matrix specifying whether each pair of splits is identical.
 }
 \description{
-Calculate the Robinson–Foulds distance, or
-the equivalent similarity measure, with options to
-(i) annotate matched splits;
-(ii) weight splits according to their phylogenetic information content
-(Smith 2020).
+\code{RobinsonFoulds()} calculates the Robinson–Foulds distance
+\insertCite{Robinson1981}{TreeDist}, or the corresponding similarity measure.
+\code{InfoRobinsonFoulds()} weights splits according to their phylogenetic
+information content \insertCite{@§2.1 in @SmithDist}{TreeDist}.
+Optionally, the matching between identical splits may reported.
+Generalized Robinson–Foulds distances (see \code{\link[=TreeDistance]{TreeDistance()}})
+are better suited to most use cases
+\insertCite{SmithDist,SmithSpace}{TreeDist}.
 }
 \details{
-Note that if \code{reportMatching = TRUE}, the \code{pairScores} attribute returns
-a logical matrix specifying whether each pair of splits is identical.
-
+\code{RobinsonFoulds()} calculates the standard Robinson–Foulds distance,
+i.e. the number of splits that occur in one tree but not the other.
 \code{InfoRobinsonFoulds()} calculates the tree similarity or distance by summing
 the phylogenetic information content of all splits that are (or are not)
 identical in both trees.  Consequently, splits that are more likely
 to be identical by chance alone make a smaller contribution to overall
 tree distance, because their similarity is less remarkable.
 
-Rapid comparison between multiple pairs of trees employs the Day (1985)
-linear-time algorithm.
+Rapid comparison between multiple pairs of trees employs the
+\insertCite{Day1985;textual}{TreeDist} linear-time algorithm.
 }
 \section{Functions}{
 \itemize{
@@ -117,13 +121,13 @@ linear-time algorithm.
 \item \code{RobinsonFoulds()} is normalized against the total number of splits that
 are present.
 \item \code{InfoRobinsonFoulds()} is normalized against the sum of the phylogenetic
-information of all splits in both trees, treated independently.
+information of all splits in each tree, treated independently.
 }
 }
 
 \examples{
  # For BalancedTree, PectinateTree, as.phylo:
-library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+library("TreeTools", quietly = TRUE)
 balanced7 <- BalancedTree(7)
 pectinate7 <- PectinateTree(7)
 RobinsonFoulds(balanced7, pectinate7)
@@ -134,13 +138,7 @@ InfoRobinsonFoulds(balanced7, pectinate7)
 VisualizeMatching(InfoRobinsonFoulds, balanced7, pectinate7)
 }
 \references{
-\insertRef{Robinson1981}{TreeDist}
-
-\insertRef{Day1985}{TreeDist}
-
-\insertRef{Steel2006}{TreeDist}
-
-\insertRef{SmithDist}{TreeDist}
+\insertAllCited{}
 }
 \seealso{
 Display paired splits: \code{\link[=VisualizeMatching]{VisualizeMatching()}}

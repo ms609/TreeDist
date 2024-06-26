@@ -1,6 +1,6 @@
 # TreeDist
 
-[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![Project Status: The project has reached a stable, usable state but is no longer being actively developed; support/maintenance will be provided as time allows.](http://www.repostatus.org/badges/latest/inactive.svg)](https://www.repostatus.org/#inactive)
 [![codecov](https://codecov.io/gh/ms609/TreeDist/branch/master/graph/badge.svg)](https://codecov.io/gh/ms609/TreeDist)
 [![CRAN Status Badge](http://www.r-pkg.org/badges/version/TreeDist)](https://cran.r-project.org/package=TreeDist)
 [![CRAN Downloads](http://cranlogs.r-pkg.org/badges/TreeDist)](https://cran.r-project.org/package=TreeDist)
@@ -173,7 +173,7 @@ _Bioinformatics_, 36, 5007–5013.
 
 - Smith, M.R. (2022) [Robust analysis of phylogenetic tree
 space](https://dx.doi.org/10.1093/sysbio/syab100).
-_Systematic Biology_, syab100.
+_Systematic Biology_, 71, 1255–1270.
 
 
 Please note that the 'TreeDist' project is released with a

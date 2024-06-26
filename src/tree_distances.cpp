@@ -399,6 +399,10 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     b_extra_splits = a_has_more_splits ? 0 : most_splits - a.n_splits,
     n_tips = nTip[0]
   ;
+  if (most_splits == 0 || n_tips == 0) {
+    return List::create(Named("score") = 0,
+                        _["matching"] = IntegerVector(0));
+  }
   const cost max_score = BIG;
   
   cost** score = new cost*[most_splits];

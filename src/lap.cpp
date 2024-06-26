@@ -32,7 +32,9 @@ using namespace std;
 // [[Rcpp::export]]
 List lapjv (NumericMatrix x, NumericVector maxX) {
   const int16 n_row = x.nrow(), n_col = x.ncol(),
-               max_dim = (n_row > n_col) ? n_row : n_col;
+              max_dim = (n_row > n_col) ? n_row : n_col,
+              spare_rows = n_row - n_col
+              ;
   const cost max_score = BIG / max_dim;
   const double x_max = maxX[0];
   
@@ -41,7 +43,9 @@ List lapjv (NumericMatrix x, NumericVector maxX) {
   cost *u = new cost[max_dim], *v = new cost[max_dim];
   
   cost** input = new cost*[max_dim];
-  for (int16 i = 0; i != max_dim; i++) input[i] = new cost[max_dim];
+  for (int16 i = 0; i != max_dim; i++) {
+    input[i] = new cost[max_dim];
+  }
   
   for (int16 r = n_row; r--;) {
     for (int16 c = n_col; c--;) {
@@ -58,9 +62,9 @@ List lapjv (NumericMatrix x, NumericVector maxX) {
   }
   
   cost score = lap(max_dim, input, rowsol, colsol, u, v);
-  NumericVector matching (max_dim);
-  for (int16 i = 0; i != max_dim; i++) {
-    matching[i] = rowsol[i] + 1;
+  IntegerVector matching (n_row);
+  for (int16 i = 0; i != n_row; i++) {
+    matching[i] = rowsol[i] < n_col ? rowsol[i] + 1 : NA_INTEGER;
   }
   
   delete [] u;
@@ -70,8 +74,11 @@ List lapjv (NumericMatrix x, NumericVector maxX) {
   for (int16 i = 0; i != max_dim; i++) delete [] input[i];
   delete [] input;
   
-  return List::create(Named("score") = double(score) / max_score * x_max,
-                      _["matching"] = matching);
+  return List::create(
+    Named("score") = (double(score) - (std::abs(spare_rows) * max_score))
+    / max_score * x_max,
+    _["matching"] = matching
+  );
 }
 
 bool nontrivially_less_than(cost a, cost b) {
@@ -100,13 +107,13 @@ cost lap(int16 dim,
 {
   bool unassignedfound;
   lap_row  i, imin, num_free = 0, previous_num_free, f, i0, k, free_row,
-           *predecessor, *free;
+           *predecessor, *freeunassigned;
   lap_col  j, j1, j2 = 0, endofpath = 0, last = 0, low, up, *col_list, *matches;
   /* Initializing min, endofpath, j2 and last is unnecessary, 
    * but avoids compiler warnings */
   cost min = 0, h, umin, usubmin, v2, *d;
   
-  free = new lap_row[dim];        // List of unassigned rows.
+  freeunassigned = new lap_row[dim];        // List of unassigned rows.
   col_list = new lap_col[dim];    // List of columns to be scanned in various ways.
   matches = new lap_col[dim];     // Counts how many times a row could be assigned.
   d = new cost[dim];              // 'Cost-distance' in augmenting path calculation.
@@ -146,7 +153,7 @@ cost lap(int16 dim,
   // REDUCTION TRANSFER
   for (i = 0; i != dim; i++) {
     if (matches[i] == 0) { // Fill list of unassigned 'free' rows.
-      free[num_free++] = i;
+      freeunassigned[num_free++] = i;
     } else {
       if (matches[i] == 1) { // Transfer reduction from rows that are assigned once.
         j1 = rowsol[i];
@@ -176,7 +183,7 @@ cost lap(int16 dim,
     num_free = 0;             // Start list of rows still free after augmenting
                               // row reduction.
     while (k < previous_num_free) {
-      i = free[k];
+      i = freeunassigned[k];
       k++;
       
       //     Find minimum and second minimum reduced cost over columns.
@@ -219,12 +226,12 @@ cost lap(int16 dim,
         if (nontrivially_less_than(umin, usubmin)) {
           // Put in current k, and go back to that k.
           // Continue augmenting path i - j1 with i0.
-          free[--k] = i0;
+          freeunassigned[--k] = i0;
           Rcpp::checkUserInterrupt();
         } else {
           // No further augmenting reduction possible.
           // Store i0 in list of free rows for next phase.
-          free[num_free++] = i0;
+          freeunassigned[num_free++] = i0;
         }
       }
     }
@@ -232,7 +239,7 @@ cost lap(int16 dim,
   
   // AUGMENT SOLUTION for each free row.
   for (f = 0; f != num_free; f++) {
-    free_row = free[f];       // Start row of augmenting path.
+    free_row = freeunassigned[f];       // Start row of augmenting path.
     
     // Dijkstra shortest path algorithm.
     // Runs until unassigned column added to shortest path tree.
@@ -335,7 +342,7 @@ cost lap(int16 dim,
   
   // Free reserved memory.
   delete[] predecessor;
-  delete[] free;
+  delete[] freeunassigned;
   delete[] col_list;
   delete[] matches;
   delete[] d;

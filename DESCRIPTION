@@ -1,16 +1,16 @@
 Package: TreeDist
 Type: Package
 Title: Calculate and Map Distances Between Phylogenetic Trees
-Version: 2.4.1.9002
+Version: 2.7.1.9002
 Authors@R: c(person("Martin R.", "Smith",
-                  email="martin.smith@durham.ac.uk", 
-                  role=c("aut", "cre", "cph", "prg"), 
-                  comment=c(ORCID = "0000-0001-5660-1727")),
-             person("Roy", "Jonker", email="roy_jonker@magiclogic.com",
-                  role=c("prg", "cph")),
-             person("Yong", "Yang", email="yongyanglink@gmail.com",
-                    role=c("ctb", "cph")),
-             person("Yi", "Cao", role=c("ctb", "cph"))
+                    email = "martin.smith@durham.ac.uk", 
+                    role = c("aut", "cre", "cph", "prg"), 
+                    comment = c(ORCID = "0000-0001-5660-1727")),
+             person("Roy", "Jonker", email = "roy_jonker@magiclogic.com",
+                    role = c("prg", "cph")),
+             person("Yong", "Yang", email = "yongyanglink@gmail.com",
+                    role = c("ctb", "cph")),
+             person("Yi", "Cao", role = c("ctb", "cph"))
             )
 License: GPL (>= 3)
 Description: Implements measures of tree similarity, including 
@@ -47,7 +47,7 @@ Imports:
   Rdpack (>= 0.7),
   shiny,
   shinyjs,
-  TreeTools (>= 1.7.1.9000),
+  TreeTools (>= 1.7.2),
 Suggests:
   bookdown,
   cluster,
@@ -57,7 +57,8 @@ Suggests:
   knitr,
   MASS,
   parallel,
-  phangorn (>= 2.2.1),
+  plotly,
+  PlotTools,
   protoclust,
   Quartet,
   readxl,
@@ -69,7 +70,7 @@ Suggests:
   testthat (>= 3.0),
   Ternary (>= 1.1.2),
   TreeDistData (> 0.1.0),
-  TreeSearch,
+  TreeSearch (>= 1.4.0),
   Umatrix,
   uwot,
   vdiffr (>= 1.0.0),
@@ -86,10 +87,10 @@ Config/Needs/revdeps: revdepcheck
 Config/Needs/website: pkgdown
 Config/testthat/parallel: false
 Config/testthat/edition: 3
-SystemRequirements: C++14
+SystemRequirements: C++17, pandoc-citeproc
 ByteCompile: true
 Encoding: UTF-8
 Language: en-GB
 X-schema.org-keywords: phylogenetics, tree-distance
-RoxygenNote: 7.2.0.9000
+RoxygenNote: 7.3.1
 Roxygen: list(markdown = TRUE)

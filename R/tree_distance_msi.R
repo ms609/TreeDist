@@ -8,6 +8,7 @@ MatchingSplitInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
   if (diag && is.null(tree2)) {
     unnormalized <- as.matrix(unnormalized)
     diag(unnormalized) <- SplitwiseInfo(tree1)
+    tree2 <- tree1
   }
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
@@ -26,9 +27,9 @@ MatchingSplitInfoDistance <- function(tree1, tree2 = NULL,
   ret <- treesIndependentInfo - msi - msi
   ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
                        infoInBoth = treesIndependentInfo,
-                       InfoInTree = SplitwiseInfo, Combine = '+')
+                       InfoInTree = SplitwiseInfo, Combine = "+")
   
-  ret[ret < .Machine$double.eps^0.5] <- 0 # In case of floating point inaccuracy
+  ret[ret < .Machine[["double.eps"]]^0.5] <- 0 # In case of floating point inaccuracy
   attributes(ret) <- attributes(msi)
   # Return:
   ret
@@ -38,7 +39,7 @@ MatchingSplitInfoDistance <- function(tree1, tree2 = NULL,
 #' @rdname TreeDistance
 #' @export
 MatchingSplitInfoSplits <- function(splits1, splits2,
-                                     nTip = attr(splits1, 'nTip'),
+                                     nTip = attr(splits1, "nTip"),
                                      reportMatching = FALSE) {
   
   GeneralizedRF(splits1, splits2, nTip, cpp_msi_distance, maximize = TRUE,

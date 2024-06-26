@@ -1,12 +1,12 @@
 ## Test environments
 * Microsoft Windows:
+  * Windows 10, R devel, locally
   * windows-latest: Microsoft Windows Server 2019, Windows 10.0.17763, 
     R release, via [GitHub Actions](https://github.com/ms609/TreeDist/actions)
   * win_devel: with `devtools::check_win_devel()`, R devel
   * win_oldrel: with `devtools::check_win_oldrelease()`.
   
 * Linux:
-  * Ubuntu 21.10, R 4.1.2, locally
   * Ubuntu 20.04.1 LTS, R 4.1, release and devel, via GitHub Actions
   * [valgrind mem-check](https://github.com/ms609/TreeDist/actions/workflows/memcheck.yml)
   * via R-hub, with `rhub::check_for_cran()`.
@@ -28,7 +28,7 @@ There was one NOTE:
 
 'TreeDistData' is too large to be submitted on CRAN.
 
-All calls to `data(package = 'TreeDistData')` are wrapped within 
+All calls to `data(package = "TreeDistData")` are wrapped within 
 `if(require('TreeDistData'))` to ensure that vignettes fail gracefully when
 'TreeDistData' is not installed.
 

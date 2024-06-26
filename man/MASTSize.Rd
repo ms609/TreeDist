@@ -27,7 +27,7 @@ Calculate the size or phylogenetic information content
 \insertCite{Steel2006}{TreeDist}
 of the maximum agreement subtree between two phylogenetic trees, i.e.
 the largest tree that can be obtained from both \code{tree1} and \code{tree2} by
-deleting, but not rearranging, leaves, using the algorithm of Valiente
+deleting, but not rearranging, leaves, using the algorithm of
 \insertCite{Valiente2009;textual}{TreeDist}.
 }
 \details{
@@ -36,7 +36,7 @@ need to process larger trees.
 }
 \examples{
  # for as.phylo, BalancedTree, PectinateTree:
-library('TreeTools', quietly = TRUE, warn.conflicts = FALSE)
+library("TreeTools", quietly = TRUE)
 
 MASTSize(PectinateTree(8), BalancedTree(8))
 MASTInfo(PectinateTree(8), BalancedTree(8))

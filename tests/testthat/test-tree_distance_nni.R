@@ -1,4 +1,4 @@
-library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
+library("TreeTools", quietly = TRUE)
 
 test_that("NNIDist() handles exceptions", {
   expect_error(NNIDist(list(PectinateTree(7), PectinateTree(8))),
@@ -50,14 +50,14 @@ test_that("Simple NNI approximations", {
   
   Test <- function(expect, tree) {
     expectation <- rep(NA_integer_, 7L)
-    names(expectation) <- c('lower', 'best_lower', 'tight_upper', 'best_upper',
-                            'loose_upper', 'fack_upper', 'li_upper')
+    names(expectation) <- c("lower", "best_lower", "tight_upper", "best_upper",
+                            "loose_upper", "fack_upper", "li_upper")
     expectation[names(expect)] <- expect
-    if (is.na(expectation['best_lower']) && !is.na(expect['tight_upper'])) {
-      expectation[c('best_lower', 'best_upper')] <- expect['tight_upper']
+    if (is.na(expectation["best_lower"]) && !is.na(expect["tight_upper"])) {
+      expectation[c("best_lower", "best_upper")] <- expect["tight_upper"]
     }
-    if (is.na(expect['loose_upper'])) {
-      expectation['loose_upper'] <- min(expect[c('fack_upper', 'li_upper')])
+    if (is.na(expect["loose_upper"])) {
+      expectation["loose_upper"] <- min(expect[c("fack_upper", "li_upper")])
     }
     
     expect_equal(expectation, NNIDist(tree1, tree))
@@ -84,7 +84,7 @@ test_that("Simple NNI approximations", {
   # Tree names
   output <- NNIDist(list(bal = tree1, pec = tree2), 
                     as.phylo(0:2, tipLabels = letters[1:8]))
-  expect_equal(rownames(output), c('bal', 'pec'))
+  expect_equal(rownames(output), c("bal", "pec"))
   
   # Only root edge is different
   Test(oneUnmatched, 
@@ -109,14 +109,14 @@ test_that("Simple NNI approximations", {
   # Trees with different leaves at root
   tree1 <- PectinateTree(1:8)
   Test(fiveUnmatched, 
-       ape::read.tree(text = '(3, ((5, 6), (7, (1, (2, (4, 8))))));'))
+       ape::read.tree(text = "(3, ((5, 6), (7, (1, (2, (4, 8))))));"))
   
   # Too different for tight upper bound
   expect_true(is.na(NNIDist(BalancedTree(100), 
-                            PectinateTree(100))['tight_upper']))
+                            PectinateTree(100))["tight_upper"]))
   
   # Large, different trees: check that 64 leaf disagreements don't cause crash
-  expect_gt(NNIDist(RandomTree(600), RandomTree(600))['li_upper'], 1)
+  expect_gt(NNIDist(RandomTree(600), RandomTree(600))["li_upper"], 1)
   
 })
 
@@ -146,15 +146,14 @@ test_that("NNI with lists of trees", {
 })
 
 test_that("NNIDiameter() is sane", {
-  library('TreeTools')
   
   exacts <- NNIDiameter(3:12)
   expect_equal(exacts, do.call(rbind, NNIDiameter(lapply(3:12, as.integer))))
-  expect_true(all(exacts[, 'min'] <= exacts[, 'exact']))
-  expect_true(all(exacts[, 'max'] >= exacts[, 'exact']))
-  expect_true(is.na(NNIDiameter(13)[, 'exact']))
-  expect_true(is.na(NNIDiameter(1)[, 'exact']))
-  expect_equal(c(exact = 10L), NNIDiameter(BalancedTree(8))[, 'exact'])
+  expect_true(all(exacts[, "min"] <= exacts[, "exact"]))
+  expect_true(all(exacts[, "max"] >= exacts[, "exact"]))
+  expect_true(is.na(NNIDiameter(13)[, "exact"]))
+  expect_true(is.na(NNIDiameter(1)[, "exact"]))
+  expect_equal(c(exact = 10L), NNIDiameter(BalancedTree(8))[, "exact"])
   
   FackMin <- function(n) ceiling(0.25 * lfactorial(n) / log(2))
   exacts <- c(0, 0, 0, 1, 3, 5, 7, 10, 12, 15, 18, 21)

@@ -26,6 +26,7 @@ Kawa
 KendallColijn
 LAPJV
 Leeuwen
+LSAP
 MASTInfo
 MASTSize
 MDS
@@ -44,6 +45,7 @@ NNIDist
 NyeTreeSimilarity
 OEIS
 ORCID
+PlotTools
 R's
 Rcpp
 RStudio
@@ -128,6 +130,7 @@ tqDist
 treeDist
 treespace
 uk
+uninstall
 unrooted
 unsampled
 uspr

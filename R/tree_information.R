@@ -41,9 +41,9 @@
 #' cluster label of two randomly selected leaves.  One straightforward
 #' option would be to use 
 #' 
-#' - `00` = 'Both leaves belong to partition A'
+#' - `00` = "Both leaves belong to partition A"
 #' 
-#' - `11` = 'Both leaves belong to partition B'
+#' - `11` = "Both leaves belong to partition B"
 #' 
 #' - `01` = 'First leaf in A, second in B`
 #' 
@@ -56,9 +56,9 @@
 #' 
 #' Alternatively, we could use the (suboptimal) code
 #' 
-#' - `0` = 'Both leaves belong to partition A'
+#' - `0` = "Both leaves belong to partition A"
 #' 
-#' - `111` = 'Both leaves belong to partition B'
+#' - `111` = "Both leaves belong to partition B"
 #' 
 #' - `101` = 'First leaf in A, second in B`
 #' 
@@ -128,7 +128,7 @@ NULL
 #' @rdname TreeInfo
 #' @export
 SplitwiseInfo <- function(x, p = NULL, sum = TRUE) {
-  UseMethod('SplitwiseInfo')
+  UseMethod("SplitwiseInfo")
 }
 
 .GetPFromLabels <- function(tree, p, splits = as.Splits(tree)) {
@@ -136,7 +136,7 @@ SplitwiseInfo <- function(x, p = NULL, sum = TRUE) {
     if (p == FALSE) {
       p <- NULL
     } else {
-      np <- tree$node.label[as.integer(names(splits)) - NTip(tree)]
+      np <- tree[["node.label"]][as.integer(names(splits)) - NTip(tree)]
       if (is.null(np)) {
         np <- rep_len(p, length(splits))
       }
@@ -168,7 +168,7 @@ SplitwiseInfo.list <- SplitwiseInfo.multiPhylo
 #' @importFrom TreeTools Log2Rooted.int Log2Unrooted.int TipsInSplits
 #' @export
 SplitwiseInfo.Splits <- function(x, p = NULL, sum = TRUE) {
-  nTip <- attr(x, 'nTip')
+  nTip <- attr(x, "nTip")
   inSplit <- TipsInSplits(x)
   
   if (is.null(p)) {
@@ -264,7 +264,7 @@ ClusteringEntropy.multiPhylo <- ClusteringEntropy.list
 #' @rdname TreeInfo
 #' @export
 ClusteringEntropy.Splits <- function(x, p = NULL, sum = TRUE) {
-  nLeaves <- attr(x, 'nTip')
+  nLeaves <- attr(x, "nTip")
   inSplit <- TipsInSplits(x)
   splitP <- rbind(inSplit, nLeaves - inSplit, deparse.level = 0L) / nLeaves
   if (is.null(p)) {
@@ -298,7 +298,7 @@ ClusteringInfo.multiPhylo <- ClusteringInfo.list
 #' @rdname TreeInfo
 #' @export
 ClusteringInfo.Splits <- function(x, p = NULL, sum = TRUE) {
-  nLeaves <- attr(x, 'nTip')
+  nLeaves <- attr(x, "nTip")
   ClusteringEntropy.Splits(x, p, sum) * nLeaves
 }
 
@@ -308,7 +308,7 @@ ClusteringInfo.NULL <- function(x, p = NULL, sum = TRUE) NULL
 #' @rdname TreeInfo
 #' 
 #' @param trees List of `phylo` objects, optionally with class `multiPhylo`.
-#' @param info Abbreviation of 'phylogenetic' or 'clustering', specifying
+#' @param info Abbreviation of "phylogenetic" or "clustering", specifying
 #' the concept of information to employ.
 #' @param p Scalar from 0.5 to 1 specifying minimum proportion of trees that
 #' must contain a split for it to appear within the consensus.
@@ -326,9 +326,9 @@ ClusteringInfo.NULL <- function(x, p = NULL, sum = TRUE) NULL
 #' LabelSplits(cons, signif(SplitwiseInfo(cons, p, sum = FALSE), 4))
 #' ConsensusInfo(trees)
 #' LabelSplits(cons, signif(ClusteringInfo(cons, p, sum = FALSE), 4))
-#' ConsensusInfo(trees, 'clustering')
+#' ConsensusInfo(trees, "clustering")
 #' @export
-ConsensusInfo <- function(trees, info = 'phylogenetic', p = 0.5,
+ConsensusInfo <- function(trees, info = "phylogenetic", p = 0.5,
                            check.tips = TRUE) {
   safeP <- min(1, max(0.5, p))
   if (safeP != p) {
@@ -336,11 +336,11 @@ ConsensusInfo <- function(trees, info = 'phylogenetic', p = 0.5,
   }
   
   mode <- pmatch(tolower(info),
-                 c('phylogenetic', 'clustering', 'spic', 'scic')) %% 2
+                 c("phylogenetic", "clustering", "spic", "scic")) %% 2
   if (is.na(mode)) {
     stop("`info` must be 'phylogenetic' or 'clustering'")
   }
-  if (inherits(trees, 'phylo')) {
+  if (inherits(trees, "phylo")) {
     # Convert to length-1 multiphylo object
     trees <- c(trees)
   }

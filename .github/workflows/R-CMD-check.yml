@@ -60,35 +60,33 @@ jobs:
       R_REMOTES_STANDALONE: true
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       RSPM: ${{ matrix.config.rspm }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Checkout git repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.config.r }}
 
-      - name: Install apt packages
+      - name: Install apt packages (Linux)
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get install \
-            texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev
-
-      - name: temporary pak bug workaround
-        run: |
-          install.packages("pak")
-          pak::pkg_install("ms609/TreeDistData")
-        shell: Rscript {0}
+          sudo apt-get update
+          sudo apt-get install -y \
+            texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev \
+            libglpk40
 
       - name: Set up R dependencies (Windows)
         if: runner.os == 'Windows'
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
-            TreeDistData=?ignore-before-r=99.0.0
+            RcppCore/Rcpp
+            ms609/TreeDistData
           needs: |
             check
             coverage
@@ -98,8 +96,16 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
-            TreeDistData=?ignore-before-r=99.0.0
+            ms609/TreeDistData
+            RcppCore/Rcpp
             phangorn=?ignore-before-r=4.1.0
+            ggplot2=?ignore-before-r=4.4.0
+            hypervolume=?ignore-before-r=4.4.0
+            kdensity=?ignore-before-r=4.4.0
+            Rogue=?ignore-before-r=4.4.0
+            TreeSearch=?ignore-before-r=4.4.0
+            Umatrix=?ignore-before-r=4.4.0
+            uwot=?ignore-before-r=4.4.0
           needs: |
             check
 

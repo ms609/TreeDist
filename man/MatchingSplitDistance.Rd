@@ -24,13 +24,12 @@ MatchingSplitDistanceSplits(
 \item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 \code{tree2 = NULL} will compute distances between each pair of trees in the list
-\code{tree1} using a fast algorithm based on
-\insertCite{Day1985;textual}{TreeDist}.}
+\code{tree1} using a fast algorithm based on Day (1985).}
 
 \item{normalize}{If a numeric value is provided, this will be used as a
 maximum value against which to rescale results.
 If \code{TRUE}, results will be rescaled against a maximum value calculated from
-the specified tree sizes and topology, as specified in the 'Normalization'
+the specified tree sizes and topology, as specified in the "Normalization"
 section below.
 If \code{FALSE}, results will not be rescaled.}
 
@@ -53,7 +52,12 @@ or \code{splits1} and \code{splits2}.
 \description{
 Calculate the
 \href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html#matching-split-distance}{Matching Split Distance}
-(Bogdanowicz and Giaro 2012; Lin \emph{et al.} 2012) for unrooted binary trees.
+\insertCite{Bogdanowicz2012,Lin2012}{TreeDist} for unrooted binary trees.
+}
+\details{
+Trees need not contain identical leaves; scores are based on the leaves that
+trees hold in common.  Check for unexpected differences in tip labelling
+with \code{setdiff(TipLabels(tree1), TipLabels(tree2))}.
 }
 \section{Normalization}{
 
@@ -76,9 +80,7 @@ VisualizeMatching(MatchingSplitDistance, TreeTools::BalancedTree(6),
                   TreeTools::PectinateTree(6))
 }
 \references{
-\insertRef{Bogdanowicz2012}{TreeDist}
-
-\insertRef{Lin2012}{TreeDist}
+\insertAllCited{}
 }
 \seealso{
 Other tree distances: 

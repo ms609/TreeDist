@@ -52,7 +52,7 @@ provide the total splitwise information content of the tree.}
 
 \item{trees}{List of \code{phylo} objects, optionally with class \code{multiPhylo}.}
 
-\item{info}{Abbreviation of 'phylogenetic' or 'clustering', specifying
+\item{info}{Abbreviation of "phylogenetic" or "clustering", specifying
 the concept of information to employ.}
 
 \item{check.tips}{Logical specifying whether to renumber leaves such that
@@ -108,8 +108,8 @@ If this sounds confusing, let's consider creating a code to transmit the
 cluster label of two randomly selected leaves.  One straightforward
 option would be to use
 \itemize{
-\item \code{00} = 'Both leaves belong to partition A'
-\item \code{11} = 'Both leaves belong to partition B'
+\item \code{00} = "Both leaves belong to partition A"
+\item \code{11} = "Both leaves belong to partition B"
 \item \code{01} = 'First leaf in A, second in B`
 \item \code{10} = 'First leaf in B, second in A`
 }
@@ -120,8 +120,8 @@ entropy -- the average information content required per leaf -- is 1 bit.
 
 Alternatively, we could use the (suboptimal) code
 \itemize{
-\item \code{0} = 'Both leaves belong to partition A'
-\item \code{111} = 'Both leaves belong to partition B'
+\item \code{0} = "Both leaves belong to partition A"
+\item \code{111} = "Both leaves belong to partition B"
 \item \code{101} = 'First leaf in A, second in B`
 \item \code{110} = 'First leaf in B, second in A`
 }
@@ -195,7 +195,7 @@ plot(cons)
 LabelSplits(cons, signif(SplitwiseInfo(cons, p, sum = FALSE), 4))
 ConsensusInfo(trees)
 LabelSplits(cons, signif(ClusteringInfo(cons, p, sum = FALSE), 4))
-ConsensusInfo(trees, 'clustering')
+ConsensusInfo(trees, "clustering")
 }
 \references{
 \insertAllCited{}

@@ -1,5 +1,5 @@
 ---
-title: "Tree space & landscape analysis"
+title: "Tree space analysis"
 author: "[Martin R. Smith](https://smithlabdurham.github.io/)"
 output: 
   rmarkdown::html_vignette:
@@ -8,7 +8,7 @@ output:
 bibliography: ../inst/REFERENCES.bib
 csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
 vignette: >
-  %\VignetteIndexEntry{Tree space & landscape analysis}
+  %\VignetteIndexEntry{Tree space analysis}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -22,9 +22,10 @@ protoclust <- if (requireNamespace("protoclust", quietly = TRUE)) {
 }
 ```
 
-It can be instructive to visualize the distribution of trees in a spatial
-"landscape". This can be a helpful means to address whether discrete islands
-of trees exist, or whether analytical runs have converged.
+It can be instructive to visualize the distribution of trees by mapping their
+spatial relationships.
+This can be a helpful means to address whether discrete islands exist in a
+sample of trees, or whether analytical runs have converged.
 Such analysis is relatively simple to conduct, but a few common oversights
 can mislead interpretation.
 
@@ -32,7 +33,7 @@ can mislead interpretation.
 
 Tree space mapping and analysis is made simple with the Shiny app included in
 the "TreeDist" R package.  Simply install [R](https://www.r-project.org/) or
-[RStudio](https://www.rstudio.com/), then copy the code below into the R command
+[RStudio](https://posit.co/), then copy the code below into the R command
 line:
 
 ```r
@@ -134,12 +135,14 @@ But visual inspection can be
 highly misleading [@SmithSpace].  We must take a statistical approach.
 A combination of partitioning around medoids and hierarchical clustering with
 minimax linkage will typically find a clustering solution that is close to 
-optimal, if one exists [@SmithSpace].
+optimal, if one exists [@SmithSpace]; if suitably initialized, k-means++
+clustering [@Arthur2007] can also be worthwhile.
 
 
 ```{r clustering, fig.align="center"}
 possibleClusters <- 2:10
 
+# Partitioning around medoids
 pamClusters <- lapply(possibleClusters, function(k) cluster::pam(distances, k = k))
 pamSils <- vapply(pamClusters, function(pamCluster) {
   mean(cluster::silhouette(pamCluster)[, 3])
@@ -149,22 +152,34 @@ bestPam <- which.max(pamSils)
 pamSil <- pamSils[bestPam]
 pamCluster <- pamClusters[[bestPam]]$cluster
 
+# Hierarchical clustering
 hTree <- protoclust(distances)
 hClusters <- lapply(possibleClusters, function(k) cutree(hTree, k = k))
 hSils <- vapply(hClusters, function(hCluster) {
   mean(cluster::silhouette(hCluster, distances)[, 3])
 }, double(1))
 
-
 bestH <- which.max(hSils)
 hSil <- hSils[bestH]
 hCluster <- hClusters[[bestH]]
 
+# k-means++ clustering
+kClusters <- lapply(possibleClusters, function(k) KMeansPP(distances, k = k))
+kSils <- vapply(kClusters, function(kCluster) {
+  mean(cluster::silhouette(kCluster$cluster, distances)[, 3])
+}, double(1))
+
+bestK <- which.max(kSils)
+kSil <- kSils[bestK]
+kCluster <- kClusters[[bestK]]$cluster
+
 plot(pamSils ~ possibleClusters,
      xlab = "Number of clusters", ylab = "Silhouette coefficient",
      ylim = range(c(pamSils, hSils)))
-points(hSils ~ possibleClusters, pch = 2)
-legend("topright", c("PAM", "Hierarchical"), pch = 1:2)
+points(hSils ~ possibleClusters, pch = 2, col = 2)
+points(kSils ~ possibleClusters, pch = 3, col = 3)
+legend("topright", c("PAM", "Hierarchical", "k-means++"),
+       pch = 1:3, col = 1:3)
 ```
 
 Silhouette coefficients of < 0.25 suggest that structure is not meaningful; 
@@ -174,7 +189,9 @@ The evidence for the visually apparent clustering is not as strong as it first
 appears.  Let's explore our two-cluster hierarchical clustering solution anyway.
 
 ```{r chosen-cluster}
-cluster <- hClusters[[2 - 1]]
+nClusters <- 2
+whichResult <- match(nClusters, possibleClusters)
+cluster <- hClusters[[whichResult]]
 ```
 
 
@@ -294,7 +311,10 @@ plot(pid_mapping, ann = FALSE, axes = FALSE, asp = 1,
      col = treeCols, pch = 16)
 MSTEdges(pid_distances, TRUE, pid_mapping[, 1], pid_mapping[, 2],
          col = "#bbbbbb", lty = 1)
-for (clI in 1:2) {
+
+
+pid_clusters <- seq_along(unique(pid_cluster))
+for (clI in pid_clusters) {
   inCluster <- pid_cluster == clI
   clusterX <- pid_mapping[inCluster, 1]
   clusterY <- pid_mapping[inCluster, 2]
@@ -304,14 +324,14 @@ for (clI in 1:2) {
 }
 ```
 
-### Comparing cluster hypervolumes
+### Comparing cluster size
 
 It is tempting to compare the size of clusters by calculating the area of 
 convex hulls on a two-dimensional mapping.  However, mapped areas do [not
 necessarily correspond](https://xkcd.com/2489/) to true hypervolumes.
 
 Accuracy may be improved by comparing higher dimensions of projections using
-the "[hypervolume](http://www.benjaminblonder.org/hypervolume_faq.html)"
+the "[hypervolume](https://www.benjaminblonder.org/hypervolume_faq.html)"
 package, though the same considerations apply [@Blonder2018].
 Interpretation of overlap statistics is detailed in @Mammola2019.
 
@@ -335,6 +355,31 @@ if (hypervolumeInstalled) {
   print("Install the 'hypervolume' package to run this example")
 }
 
+```
+
+If the objective is to quantify the spread of different clusters, other metrics
+may be easier to interpret than the clusters' hypervolume (e.g. @Smith2022).
+
+The divergence of outlying points can be measures using the sum of ranges:
+
+```{r sum-of-ranges}
+SumOfRanges(pid_mapping, pid_cluster)
+```
+
+The overall size of a cluster can be measured using the sum of variances,
+or the mean distance from the centroid or median:
+
+```{r cluster-size}
+SumOfVariances(pid_mapping, pid_cluster)
+MeanCentroidDistance(pid_mapping, pid_cluster)
+DistanceFromMedian(pid_mapping, pid_cluster)
+```
+
+The density of points within a cluster can be measured using the mean nearest-neighbour distance or the mean minimum spanning tree edge length:
+
+```{r cluster-density}
+MeanNN(pid_mapping, pid_cluster)
+MeanMSTEdge(pid_mapping, pid_cluster)
 ```
 
 
@@ -372,6 +417,8 @@ if (umatrixInstalled) {
 ## What next?
 
 You may wish to:
+
+- [Analyse landscapes](landscapes.html) of phylogenetic trees
 
 - [Provide context](using-distances.html) for tree distances
 
