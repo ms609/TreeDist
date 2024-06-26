@@ -80,7 +80,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get update
-          sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev libglpk40 wget valgrind libicu-dev
+          sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libcurl4-openssl-dev libglpk40 wget valgrind libicu66 libicu-dev
           sudo apt-get install -y valgrind texlive-latex-base
 
       - name: Cache R packages
