@@ -65,6 +65,12 @@ jobs:
       - name: Install valgrind
         run: sudo apt-get install valgrind texlive-latex-base
 
+
+      - name: Install apt packages (Linux)
+        comment: Seemingly requires for stringi
+        run: |
+          sudo apt-get install -y libglpk40 libicu66
+
       - name: Query dependencies
         run: |
           install.packages('remotes')
