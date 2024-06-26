@@ -96,8 +96,8 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
-            RcppCore/Rcpp
             ms609/TreeDistData
+            RcppCore/Rcpp
             phangorn=?ignore-before-r=4.1.0
             ggplot2=?ignore-before-r=4.4.0
             hypervolume=?ignore-before-r=4.4.0
