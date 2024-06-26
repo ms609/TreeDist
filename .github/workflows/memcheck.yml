@@ -35,7 +35,7 @@ name: mem-check
 
 jobs:
   mem-check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     name: valgrind ${{ matrix.config.test }}, ubuntu, R release
 
@@ -80,7 +80,7 @@ jobs:
           while read -r cmd
           do
             eval sudo $cmd
-          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "22.04"))')
+          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
       
       - name: Cache R packages
         uses: actions/cache@v4
