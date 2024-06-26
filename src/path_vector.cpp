@@ -12,7 +12,7 @@ using namespace Rcpp;
 #define ANC(label, i) ancestry[n_tip * (label - 1) + i]
 
 // [[Rcpp::export]]
-IntegerVector path_vector (IntegerMatrix edge) {
+IntegerVector path_vector(IntegerMatrix edge) {
   const int
     n_edge = edge.nrow(),
     n_vert = n_edge + 1
@@ -72,8 +72,8 @@ IntegerVector path_vector (IntegerMatrix edge) {
 }
 
 // [[Rcpp::export]]
-NumericMatrix vec_diff_euclidean (const IntegerMatrix vec1,
-                                  const IntegerMatrix vec2) {
+NumericMatrix vec_diff_euclidean(const IntegerMatrix vec1,
+                                 const IntegerMatrix vec2) {
   const int 
     col1 = vec1.cols(),
     col2 = vec2.cols(),
@@ -97,7 +97,7 @@ NumericMatrix vec_diff_euclidean (const IntegerMatrix vec1,
 }
 
 // [[Rcpp::export]]
-NumericVector pair_diff_euclidean (const IntegerMatrix vecs) {
+NumericVector pair_diff_euclidean(const IntegerMatrix vecs) {
   const int 
     n_col = vecs.cols(),
     n_row = vecs.rows()
@@ -124,7 +124,7 @@ NumericVector pair_diff_euclidean (const IntegerMatrix vecs) {
 }
 
 // [[Rcpp::export]]
-IntegerVector path_vector2 (IntegerMatrix edge) {
+IntegerVector path_vector2(IntegerMatrix edge) {
   const int
     n_edge = edge.nrow(),
     n_vert = n_edge + 1
@@ -138,7 +138,7 @@ IntegerVector path_vector2 (IntegerMatrix edge) {
   IntegerMatrix dist_from(n_vert + 1, n_tip + 1);
   // Rcout << "Ret with dims " << (n_vert + 1) << ", " << (n_tip + 1) <<"\n\n";
   for (int i = 0; i != n_edge; ++i) {
-    const int 
+    const int
       parent = PO_PARENT(i),
       child = PO_CHILD(i)
     ;
