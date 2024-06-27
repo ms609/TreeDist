@@ -35,7 +35,10 @@ name: mem-check
 
 jobs:
   mem-check:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
+    # stringi requires libicui18n - apt get libicu-dev too recent,
+    # libicu66 deprecated in ubuntu 22.04
+    # Reinstalling stringi seems not to help
 
     name: valgrind ${{ matrix.config.test }}, ubuntu, R release
 
@@ -81,11 +84,6 @@ jobs:
           do
             eval sudo $cmd
           done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", gsub("#\\d+~(\\d{2}\\.\\d{2}).*", "\\1", Sys.info()[["version"]]))')
-
-      - name: Reinstall stringi
-        run: |
-          install.packages("stringi", type = "source")
-        shell: Rscript {0}
       
       - name: Cache R packages
         uses: actions/cache@v4
