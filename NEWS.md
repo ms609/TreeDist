@@ -1,7 +1,6 @@
 # branch no-phangorn (9002)
 
-- Internal implementation of path and SPR distances, removing dependency
-  on phangorn (and thus R 4.4).
+- `PathDist()` uses internal implementation of path distance.
 
 
 # TreeDist 2.7.1 (2024-06-13)
