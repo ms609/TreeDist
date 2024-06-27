@@ -31,4 +31,3 @@ test_that("PathDist() equivalent to path.dist()", {
   postTrees <- Postorder(as.phylo(0:5, 182))
   expect_equal(PathDist(postTrees), phangorn::path.dist(postTrees))
 })
-  
