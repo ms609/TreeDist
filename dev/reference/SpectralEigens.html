@@ -25,7 +25,7 @@ medoids."><meta name="robots" content="noindex"><!-- mathjax --><script src="htt
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.7.0.9003</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.7.1.9002</span>
       </span>
     </div>
 
@@ -165,7 +165,7 @@ clustered using a method of choice.</p>
 <span class="r-in"><span><span class="va">distances</span> <span class="op">&lt;-</span> <span class="fu"><a href="TreeDistance.html">ClusteringInfoDistance</a></span><span class="op">(</span><span class="va">trees</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">eigens</span> <span class="op">&lt;-</span> <span class="fu">SpectralEigens</span><span class="op">(</span><span class="va">distances</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Perform clustering:</span></span></span>
-<span class="r-in"><span><span class="va">clusts</span> <span class="op">&lt;-</span> <span class="fu"><a href="kmeanspp.html">KMeansPP</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></span><span class="op">(</span><span class="va">eigens</span><span class="op">)</span>, k <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">clusts</span> <span class="op">&lt;-</span> <span class="fu"><a href="KMeansPP.html">KMeansPP</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></span><span class="op">(</span><span class="va">eigens</span><span class="op">)</span>, k <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">eigens</span>, pch <span class="op">=</span> <span class="fl">15</span>, col <span class="op">=</span> <span class="va">clusts</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="SpectralEigens-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/cmdscale.html" class="external-link">cmdscale</a></span><span class="op">(</span><span class="va">distances</span><span class="op">)</span>, pch <span class="op">=</span> <span class="fl">15</span>, col <span class="op">=</span> <span class="va">clusts</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span></span></span>

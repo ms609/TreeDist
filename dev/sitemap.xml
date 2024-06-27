@@ -64,6 +64,9 @@
     <loc>https://ms609.github.io/TreeDist/reference/JaccardRobinsonFoulds.html</loc>
   </url>
   <url>
+    <loc>https://ms609.github.io/TreeDist/reference/KMeansPP.html</loc>
+  </url>
+  <url>
     <loc>https://ms609.github.io/TreeDist/reference/KendallColijn.html</loc>
   </url>
   <url>
@@ -155,9 +158,6 @@
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://ms609.github.io/TreeDist/reference/kmeanspp.html</loc>
   </url>
   <url>
     <loc>https://ms609.github.io/TreeDist/reference/median.multiPhylo.html</loc>
