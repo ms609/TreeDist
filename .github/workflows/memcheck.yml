@@ -97,6 +97,7 @@ jobs:
       - name: Install dependencies
         run: |
           remotes::install_github('RcppCore/Rcpp')
+          remotes::install_github('ms609/TreeTools')
           remotes::install_github('ms609/TreeDistData')
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("devtools")

@@ -92,9 +92,9 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
-            ms609/TreeDistData
             RcppCore/Rcpp
             ms609/TreeTools
+            ms609/TreeDistData
           needs: |
             check
             coverage
