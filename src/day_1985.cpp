@@ -83,7 +83,7 @@ double consensus_info (const List trees, const LogicalVector phylo,
   
   std::vector<ClusterTable> tables;
   if (std::size_t(n_trees) > tables.max_size()) {
-    Rcpp::stop("Not enough memory available to compute consensus of so many trees");
+    Rcpp::stop("Not enough memory available to compute consensus of so many trees"); // LCOV_EXCL_LINE
   }
   tables.reserve(n_trees);
   for (int16 i = n_trees; i--; ) {
