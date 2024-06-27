@@ -23,10 +23,6 @@
 #' To avoid counting the root edge twice, use `UnrootTree(tree)` before
 #' calculating the path distance.
 #' 
-#' If a root node is present, trees are treated as rooted.
-#' To avoid counting the root edge twice, use `UnrootTree(tree)` before
-#' calculating the path distance.
-#' 
 #' Use of the path distance is discouraged as it emphasizes 
 #' shallow relationships at the expense of deeper (and arguably more
 #' fundamental) relationships \insertCite{Farris1973}{TreeDist}.
@@ -110,6 +106,3 @@ PathDist <- function(tree1, tree2 = NULL) {
   # Return:
   ret
 }
-
-
-#  ub(sqrt(pair_square_diffs(v1)), pair_square_diffs_n(v1))

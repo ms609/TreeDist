@@ -1,5 +1,5 @@
 test_that("PathDist()", {
-  library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
+  library("TreeTools", quietly = TRUE)
   t05 <- as.phylo(0:5, 6)
   bal6 <- BalancedTree(paste0("t", 6:1))
   vec6 <- PathVector(RenumberTips(bal6, t05))
@@ -30,9 +30,4 @@ test_that("PathDist() equivalent to path.dist()", {
   
   postTrees <- Postorder(as.phylo(0:5, 182))
   expect_equal(PathDist(postTrees), phangorn::path.dist(postTrees))
-  ub <- microbenchmark::microbenchmark
-  ub(PathDist(postTrees), phangorn::path.dist(postTrees))
-  pv <- profvis::profvis
-  pv(ub(PathDist(postTrees), phangorn::path.dist(postTrees)))
 })
-  

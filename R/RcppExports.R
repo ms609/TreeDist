@@ -37,10 +37,6 @@ pair_diff_euclidean <- function(vecs) {
     .Call(`_TreeDist_pair_diff_euclidean`, vecs)
 }
 
-path_vector2 <- function(edge) {
-    .Call(`_TreeDist_path_vector2`, edge)
-}
-
 reduce_trees <- function(x, y, original_label) {
     .Call(`_TreeDist_reduce_trees`, x, y, original_label)
 }

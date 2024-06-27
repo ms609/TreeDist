@@ -1,4 +1,4 @@
-library("TreeTools", quietly = TRUE, warn.conflicts = FALSE)
+library("TreeTools", quietly = TRUE)
 
 test_that("KC vector calculations", {
   
