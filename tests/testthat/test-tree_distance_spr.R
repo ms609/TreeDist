@@ -1,4 +1,4 @@
-library("TreeTools", quiet = TRUE, warn.conflicts = FALSE)
+library("TreeTools", quiet = TRUE)
 if(!exists("pv")) pv <- function (x) x
 
 test_that("SPR: keep_and_reroot()", {
@@ -15,7 +15,6 @@ test_that("SPR: keep_and_reroot()", {
 })
 
 test_that("SPR: Under the hood", {
-  skip(5)
   expect_error(mismatch_size(as.Splits(c(T, T, F)), as.Splits(c(T, T, T, T))),
                "differ in `nTip")
   expect_error(mismatch_size(matrix(as.raw(3), 1, 1), 
@@ -35,7 +34,7 @@ test_that("SPR: Under the hood", {
     i <- rep(seq_len(nSplits), nSplits)
     j <- rep(seq_len(nSplits), each = nSplits)
     expect_equal(mismatch_size(s1, s2),
-                 TipsInSplits(xor_splits(s1[[i]], s2[[j]]), smallest = TRUE))
+                 TipsInSplits(xor(s1[[i]], s2[[j]]), smallest = TRUE))
   }
   Test(as.Splits(c(T, T, T, F, F)), as.Splits(c(T, F, F, F, T)))
   
