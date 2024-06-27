@@ -2,8 +2,6 @@
 
 - Internal implementation of path and SPR distances, removing dependency
   on phangorn (and thus R 4.4).
-  
-- `PathVector()` now treats trees with a root node as rooted.
 
 
 # TreeDist 2.7.1 (2024-06-13)
@@ -75,6 +73,10 @@
 - `PathVector()` now treats trees with a root node as rooted.
 
 - Fix plot layout in [treespace vignette](https://ms609.github.io/TreeDist/articles/treespace.html).
+
+- Informative failure when not enough memory for `consensus_info()`.
+
+- Replace `throw` with `stop` in C++.
 
 
 # TreeDist 2.4.0 (2022-03-23)
