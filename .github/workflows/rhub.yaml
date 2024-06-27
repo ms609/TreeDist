@@ -1,4 +1,4 @@
-# R-hub's genetic GitHub Actions workflow file. It's canonical location is at
+# R-hub's generic GitHub Actions workflow file. Its canonical location is at
 # https://github.com/r-hub/rhub2/blob/v1/inst/workflow/rhub.yaml
 # You can update this file to a newer version using the rhub2 package:
 #
@@ -7,7 +7,7 @@
 # It is unlikely that you need to modify this file manually.
 
 name: R-hub
-run-name: ${{ github.event.inputs.name || format('Manually run by {0}', github.triggering_actor) }} (${{ github.event.inputs.id }})
+run-name: "${{ github.event.inputs.id || github.event.inputs.config }}: ${{ github.event.inputs.name || format('Manually run by {0}', github.triggering_actor) }}"
 
 on:
   workflow_dispatch:
@@ -15,12 +15,12 @@ on:
       config:
         description: 'A comma separated list of R-hub platforms to use.'
         type: string
-        default: 'linux,windows,macos'
+        default: 'linux,macos,macos-arm64,windows,atlas,clang-asan,valgrind'
       name:
-        description: 'Run name. You can leave this empty now.'
+        description: 'Run name (optional)'
         type: string
       id:
-        description: 'Unique ID. You can leave this empty now.'
+        description: 'Unique ID (optional)'
         type: string
 
 jobs:
@@ -32,11 +32,11 @@ jobs:
       platforms: ${{ steps.rhub-setup.outputs.platforms }}
 
     steps:
-    # NO NEED TO CHECKOUT HERE
-    - uses: r-hub/rhub2/actions/rhub-setup@v1
-      with:
-        config: ${{ github.event.inputs.config }}
-      id: rhub-setup
+      # NO NEED TO CHECKOUT HERE
+      - uses: r-hub/rhub2/actions/rhub-setup@v1
+        with:
+          config: ${{ github.event.inputs.config }}
+        id: rhub-setup
 
   linux-containers:
     needs: setup
@@ -51,8 +51,27 @@ jobs:
       image: ${{ matrix.config.container }}
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: r-hub/rhub2/actions/rhub-check@v1
+      - name: Check distribution
+        run: |
+          echo "distribution=$(awk -F= '/^ID=/{print $2}' /etc/os-release)" \
+            >> $GITHUB_OUTPUT;
+        id: check_distribution
+      - name: apt-get install sudo (Ubuntu, for clang-asan)
+        run: apt-get install sudo
+        if: ${{ steps.check_distribution.outputs.distribution == 'ubuntu' }}
+      - uses: r-lib/actions/setup-pandoc@v2
+        if: ${{ steps.check_distribution.outputs.distribution != 'fedora' }}
+      - uses: r-hub/rhub2/actions/rhub-checkout@v1
+      - uses: r-hub/rhub2/actions/rhub-platform-info@v1
+        with:
+          token: ${{ secrets.RHUB_TOKEN }}
+          job-config: ${{ matrix.config.job-config }}
+      - uses: r-hub/rhub2/actions/rhub-setup-deps@v1
+        with:
+          token: ${{ secrets.RHUB_TOKEN }}
+          job-config: ${{ matrix.config.job-config }}
+          extra-packages: TreeDistData=?ignore-before-r=99.0.0
+      - uses: r-hub/rhub2/actions/rhub-run-check@v1
         with:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
@@ -68,12 +87,25 @@ jobs:
         config: ${{ fromJson(needs.setup.outputs.platforms) }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: teatimeguest/setup-texlive-action@v3
+        with:
+          packages: scheme-basic
+      - uses: r-lib/actions/setup-pandoc@v2
+      - uses: r-hub/rhub2/actions/rhub-checkout@v1
       - uses: r-hub/rhub2/actions/rhub-setup-r@v1
         with:
           job-config: ${{ matrix.config.job-config }}
           token: ${{ secrets.RHUB_TOKEN }}
-      - uses: r-hub/rhub2/actions/rhub-check@v1
+      - uses: r-hub/rhub2/actions/rhub-platform-info@v1
+        with:
+          token: ${{ secrets.RHUB_TOKEN }}
+          job-config: ${{ matrix.config.job-config }}
+      - uses: r-hub/rhub2/actions/rhub-setup-deps@v1
+        with:
+          job-config: ${{ matrix.config.job-config }}
+          token: ${{ secrets.RHUB_TOKEN }}
+          extra-packages: TreeDistData=?ignore-before-r=99.0.0
+      - uses: r-hub/rhub2/actions/rhub-run-check@v1
         with:
           job-config: ${{ matrix.config.job-config }}
           token: ${{ secrets.RHUB_TOKEN }}

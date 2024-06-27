@@ -449,7 +449,7 @@ server <- function(input, output, session) {
   output$keptTrees <- renderText({
     nTrees <- length(treeFile())
     if (treesLoaded()) {
-      paste0("Keeping trees ", keptRange()[1], " to ", keptRange()[2], ".")
+      paste0("Keeping trees ", keptRange()[[1]], " to ", keptRange()[[2]], ".")
     } else {
       "Using example trees."
     }
@@ -469,7 +469,7 @@ server <- function(input, output, session) {
   })
   
   thinnedTrees <- reactive({
-    as.integer(seq(keptRange()[1], keptRange()[2], by = 2 ^ input$thinTrees))
+    as.integer(seq(keptRange()[[1]], keptRange()[[2]], by = 2 ^ input$thinTrees))
   })
   
   TreeNumberUpdate <- function() {
@@ -563,7 +563,7 @@ server <- function(input, output, session) {
   })
   
   nProjDim <- reactive({
-    dim(mapping())[2]
+    dim(mapping())[[2]]
   })
   
   dims <- debounce(reactive({
@@ -1076,7 +1076,7 @@ server <- function(input, output, session) {
   mstEnds <- bindCache(
     reactive({
       dist <- as.matrix(distances())
-      nRows <- dim(dist)[1]
+      nRows <- dim(dist)[[1]]
       withProgress(message = "Calculating MST", {
         selection <- unique(round(seq.int(1, nRows,
                                           length.out = max(2L, mstSize()))))
@@ -1098,11 +1098,11 @@ server <- function(input, output, session) {
     if (length(sil) == 0) sil <- -0.5
     nStop <- 400
     range <- c(0.5, 1)
-    negScale <- hcl.colors(nStop, "plasma")[seq(range[1] * nStop, 1,
-                                            length.out = nStop * range[1])]
+    negScale <- hcl.colors(nStop, "plasma")[seq(range[[1]] * nStop, 1,
+                                            length.out = nStop * range[[1]])]
     posScale <- hcl.colors(nStop, "viridis")
     
-    plot(seq(-range[1], range[2], length.out = nStop * sum(range)),
+    plot(seq(-range[[1]], range[[2]], length.out = nStop * sum(range)),
          rep(0, nStop * sum(range)),
          pch = 15, col = c(negScale, posScale),
          ylim = c(-2, 2),
@@ -1152,13 +1152,13 @@ server <- function(input, output, session) {
       for (i in seq_len(cl$n)) {
         col <- palettes[[min(length(palettes), cl$n)]][i]
         tr <- ape::consensus(r$allTrees[cl$cluster == i])
-        tr$edge.length <- rep(1, dim(tr$edge)[1])
+        tr$edge.length <- rep(1, dim(tr$edge)[[1]])
         plot(tr, edge.width = 2, font = 1, cex = 1,
              edge.color = col, tip.color = col)
       }
     } else {
       tr <- ape::consensus(r$allTrees)
-      tr$edge.length <- rep(1, dim(tr$edge)[1])
+      tr$edge.length <- rep(1, dim(tr$edge)[[1]])
       plot(tr,edge.width = 2, font = 1, cex = 1,
            edge.color = palettes[[1]],
            tip.color = palettes[[1]])

@@ -1,7 +1,7 @@
 Package: TreeDist
 Type: Package
 Title: Calculate and Map Distances Between Phylogenetic Trees
-Version: 2.7.0.9002
+Version: 2.7.1.9002
 Authors@R: c(person("Martin R.", "Smith",
                     email = "martin.smith@durham.ac.uk", 
                     role = c("aut", "cre", "cph", "prg"), 
@@ -88,7 +88,7 @@ Config/Needs/revdeps: revdepcheck
 Config/Needs/website: pkgdown
 Config/testthat/parallel: false
 Config/testthat/edition: 3
-SystemRequirements: C++17
+SystemRequirements: C++17, pandoc-citeproc
 ByteCompile: true
 Encoding: UTF-8
 Language: en-GB

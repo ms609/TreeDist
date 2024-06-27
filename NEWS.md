@@ -1,14 +1,14 @@
 # branch no-phangorn (9002)
 
-- Internal implementation of path and SPR distances, removing dependency
-  on phangorn (and thus R 4.1).
-  
-- `PathVector()` now treats trees with a root node as rooted.
+- Native implementation of path and SPR distances, removing dependency
+  on phangorn (and thus R 4.4).
 
 
-# TreeDist 2.7.0.9000 (development)
+# TreeDist 2.7.1 (2024-06-13)
 
-- Fix dead links in documentation
+- Documentation improvements.
+
+- Fix `KCDiameter.multiPhylo()` for multiple trees.
 
 
 # TreeDist 2.7.0 (2023-10-25)

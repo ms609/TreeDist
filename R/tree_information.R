@@ -136,7 +136,7 @@ SplitwiseInfo <- function(x, p = NULL, sum = TRUE) {
     if (p == FALSE) {
       p <- NULL
     } else {
-      np <- tree$node.label[as.integer(names(splits)) - NTip(tree)]
+      np <- tree[["node.label"]][as.integer(names(splits)) - NTip(tree)]
       if (is.null(np)) {
         np <- rep_len(p, length(splits))
       }

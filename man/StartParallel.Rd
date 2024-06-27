@@ -50,7 +50,7 @@ cluster.
 \examples{
 if (interactive()) { # Only run in terminal
   library("TreeTools", quietly = TRUE)
-  nCores <- ceiling(detectCores() / 2)
+  nCores <- ceiling(parallel::detectCores() / 2)
   StartParallel(nCores) # Takes a few seconds to set up processes
   GetParallel()
   ClusteringInfoDistance(as.phylo(0:6, 100))

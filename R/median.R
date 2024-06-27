@@ -74,9 +74,13 @@ median.multiPhylo <- function(x, na.rm = FALSE,
   } else {
     chosen <- distances == min(distances)
     if (index) {
-      which(chosen) 
+      which(chosen)
     } else {
-      if (sum(chosen) == 1L) x[[which(chosen)]] else x[chosen]
+      if (sum(chosen) == 1L) {
+        x[[which(chosen)]]
+      } else {
+        x[chosen]
+      }
     }
   }
 }
