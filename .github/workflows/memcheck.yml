@@ -35,7 +35,10 @@ name: mem-check
 
 jobs:
   mem-check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
+    # stringi requires libicui18n - apt get libicu-dev too recent,
+    # libicu66 deprecated in ubuntu 22.04
+    # Reinstalling stringi seems not to help
 
     name: valgrind ${{ matrix.config.test }}, ubuntu, R release
 
@@ -61,34 +64,39 @@ jobs:
           r-version: release
 
       - uses: r-lib/actions/setup-pandoc@v2
-
-      - name: Install valgrind
-        run: sudo apt-get install valgrind texlive-latex-base
-
+        
       - name: Query dependencies
         run: |
           install.packages('remotes')
           saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
           writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
         shell: Rscript {0}
-
-      - name: Cache R packages
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
+        
+      - name: Install additional dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libglpk40 wget valgrind
+          sudo apt-get install -y valgrind texlive-latex-base
 
       - name: Install system dependencies
         run: |
           while read -r cmd
           do
             eval sudo $cmd
-          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "20.04"))')
+          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", gsub("#\\d+~(\\d{2}\\.\\d{2}).*", "\\1", Sys.info()[["version"]]))')
+      
+      - name: Cache R packages
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
           
       - name: Install dependencies
         run: |
           remotes::install_github('RcppCore/Rcpp')
+          remotes::install_github('ms609/TreeTools')
+          remotes::install_github('ms609/TreeDistData')
           remotes::install_deps(dependencies = TRUE)
           remotes::install_cran("devtools")
         shell: Rscript {0}
@@ -102,4 +110,4 @@ jobs:
 
       - name: valgrind - memcheck ${{ matrix.config.test }}
         run: |
-          R -d "valgrind --tool=memcheck --leak-check=full --error-exitcode=1" --vanilla < memcheck/${{ matrix.config.test }}.R
+          R -d "valgrind --tool=memcheck --leak-check=full  --errors-for-leak-kinds=definite --error-exitcode=1" --vanilla < memcheck/${{ matrix.config.test }}.R

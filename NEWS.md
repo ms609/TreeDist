@@ -1,3 +1,8 @@
+# branch no-phangorn (9002)
+
+- `PathDist()` uses internal implementation of path distance.
+
+
 # TreeDist 2.7.1 (2024-06-13)
 
 - Documentation improvements.
