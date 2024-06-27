@@ -178,6 +178,7 @@ test_that("Output dimensions are correct", {
 })
 
 test_that("RF Distance is correctly calculated", {
+  skip_if_not_installed("phangorn")
   PhangRF2 <- function(t1, t2) phangorn::RF.dist(reorder(t1, "cladewise"),
                                                  reorder(t2, "cladewise"))
   RFTest <- function(t1, t2) {
