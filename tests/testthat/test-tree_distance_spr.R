@@ -103,10 +103,41 @@ test_that("SPR calculated correctly", {
   expect_equal(SPRDist(tr[[3]], tr[[11]]), 7)
   # expect_equal(TBRDist::USPRDist(tr[[3]], tr[[11]]), 7)
   
-  if (interactive()) {
-  #  trueDist <- TBRDist::USPRDist(tr)
-    trueDist <- readRDS("true-25tip-12spr.Rds")
+  nTip <- 130
+  nSPR <- 35
   
+  set.seed(0)
+  tr <- vector("list", nSPR + 1L)
+  tr[[1]] <- Postorder(RandomTree(nTip, root = TRUE))
+  expect_equal(SPRDist(tr[[1]], tr[[1]]), 0)
+  for (i in seq_len(nSPR) + 1L) {
+    tr[[i]] <- Postorder(TreeSearch::SPR(tr[[i - 1]]))
+  }
+  
+  phanDist <- .phangornSPRDist(tr)
+  
+  SPRDist(tr[[1]], tr)
+  
+  testDist <- SPRDist(tr)
+  simDist <- dist(seq_along(tr))
+  
+  expect_true(all(testDist <= simDist))
+  
+  # bestDist <- as.dist(pmin(as.matrix(testDist), as.matrix(SPRDist(rev(tr)))[rev(seq_along(tr)), rev(seq_along(tr))]))
+  bestDist <- testDist # assert symmetry
+  
+  overShot <- as.matrix(testDist) > as.matrix(simDist)
+  overs <- colSums(overShot) > 0
+  overShot[overs, overs]
+  
+  underShot <- as.matrix(testDist) < as.matrix(phanDist)
+  unders <- colSums(underShot) > 0
+  underShot[unders, unders]
+  
+  if (interactive()) {
+    #  trueDist <- TBRDist::USPRDist(tr)
+    trueDist <- readRDS("true-25tip-12spr.Rds")
+    
     
     
     par(mfrow = c(1, 2))
@@ -126,38 +157,7 @@ test_that("SPR calculated correctly", {
     points(jd, bestDist - trueDist, pch = 4, col = 5)
   }
   
-  nTip <- 130
-  nSPR <- 35
-  
-  set.seed(0)
-  tr <- vector("list", nSPR + 1L)
-  tr[[1]] <- Postorder(RandomTree(nTip, root = TRUE))
-  expect_equal(SPRDist(tr[[1]], tr[[1]]), 0)
-  for (i in seq_len(nSPR) + 1L) {
-    tr[[i]] <- Postorder(TreeSearch::SPR(tr[[i - 1]]))
-  }
-  
-  phanDist <- .phangornSPRDist(tr)
-  
-  SPRDist(tr[[1]], tr)
-  
-  
-  testDist <- SPRDist(tr)
-  simDist <- dist(seq_along(tr))
-  
   expect_true(all(testDist >= phanDist))
-  expect_true(all(testDist <= simDist))
-  
-  # bestDist <- as.dist(pmin(as.matrix(testDist), as.matrix(SPRDist(rev(tr)))[rev(seq_along(tr)), rev(seq_along(tr))]))
-  bestDist <- testDist # assert symmetry
-  
-  overShot <- as.matrix(testDist) > as.matrix(simDist)
-  overs <- colSums(overShot) > 0
-  overShot[overs, overs]
-  
-  underShot <- as.matrix(testDist) < as.matrix(phanDist)
-  unders <- colSums(underShot) > 0
-  underShot[unders, unders]
   
   tree1 <- tr[[1]]
   tree2 <- tr[[36]]
