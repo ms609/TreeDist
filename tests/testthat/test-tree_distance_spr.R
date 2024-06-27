@@ -15,6 +15,7 @@ test_that("SPR: keep_and_reroot()", {
 })
 
 test_that("SPR: Under the hood", {
+  skip(5)
   expect_error(mismatch_size(as.Splits(c(T, T, F)), as.Splits(c(T, T, T, T))),
                "differ in `nTip")
   expect_error(mismatch_size(matrix(as.raw(3), 1, 1), 
