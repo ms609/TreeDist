@@ -84,7 +84,7 @@ jobs:
 
       - name: Reinstall stringi
         run: |
-          install.packages('stringi')
+          install.packages("stringi", type = "source")
         shell: Rscript {0}
       
       - name: Cache R packages
