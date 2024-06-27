@@ -239,7 +239,7 @@ KCDiameter.numeric <- function(tree) {
 
 #' @export
 KCDiameter.list <- function(tree) {
-  lapply(tree, KCDiameter)
+  vapply(tree, KCDiameter, double(1))
 }
 
 #' @export
