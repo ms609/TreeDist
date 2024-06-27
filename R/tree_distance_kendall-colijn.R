@@ -166,11 +166,6 @@ PathVector <- function(tree) {
   structure(path_vector(edge), Size = NTip(tree), class = "dist")
 }
 
-PathVector2 <- function(tree) {
-  edge <- tree[["edge"]]
-  structure(path_vector2(edge), Size = NTip(tree), class = "dist")
-}
-
 #' @describeIn KendallColijn Creates a vector reporting the smallest split
 #' containing each pair of leaves, per the metric proposed in
 #' \insertCite{SmithSpace;textual}{TreeDist}.
