@@ -84,7 +84,6 @@ jobs:
 
       - name: Reinstall stringi
         run: |
-          remove.packages('stringi')
           install.packages('stringi')
         shell: Rscript {0}
       
