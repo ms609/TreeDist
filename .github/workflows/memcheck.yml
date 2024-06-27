@@ -61,11 +61,6 @@ jobs:
           r-version: release
 
       - uses: r-lib/actions/setup-pandoc@v2
-
-      - name: Reinstall stringi
-        run: |
-          install.packages('stringi')
-        shell: Rscript {0}
         
       - name: Query dependencies
         run: |
@@ -80,15 +75,18 @@ jobs:
           sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libglpk40 wget valgrind
           sudo apt-get install -y valgrind texlive-latex-base
 
-      - run: Sys.info()
-        shell: Rscript {0}
-
       - name: Install system dependencies
         run: |
           while read -r cmd
           do
             eval sudo $cmd
-          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", "22.04"))')
+          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", gsub("#\\d+~(\\d{2}\\.\\d{2}).*", "\\1", Sys.info()[["version"]]))')
+
+      - name: Reinstall stringi
+        run: |
+          remove.packages('stringi')
+          install.packages('stringi')
+        shell: Rscript {0}
       
       - name: Cache R packages
         uses: actions/cache@v4
