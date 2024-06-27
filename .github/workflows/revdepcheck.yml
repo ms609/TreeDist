@@ -6,6 +6,10 @@ on:
     workflows: ["R-CMD-check"]
     types:
       - completed
+  push:
+    paths: "**revdepcheck.yml"
+  pull_request:
+    paths: "**revdepcheck.yml"
 
 jobs:
   mem-check:
