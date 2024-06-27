@@ -226,7 +226,7 @@ MeanMSTEdge.dist <- function(x, cluster = 1) {
   d <- as.matrix(x)
   diag(d) <- NA_real_
   vapply(seq_along(unique(cluster)),
-         function(i) .MeanNN.dist(d[cluster == i, cluster == i, drop = FALSE]),
+         function(i) .MeanMSTEdge.dist(d[cluster == i, cluster == i, drop = FALSE]),
          numeric(1))
 }
 

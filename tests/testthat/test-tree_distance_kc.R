@@ -1,5 +1,10 @@
 library("TreeTools", quietly = TRUE)
 
+test_that("KC fails gracefully", {
+  expect_error(KendallColijn(BalancedTree(8), BalancedTree(1:8)),
+               "Leaves must bear identical labels.")
+})
+
 test_that("KC vector calculations", {
   
   bal7 <- ape::read.tree(text = "(((t1,t2),(t3,t4)),((t5,t6),t7));")
@@ -45,9 +50,11 @@ test_that("KCDiameter() calculated", {
   Test(4)
   Test(40)
   tree1 <- ape::read.tree(text = "(a, (b, (c, (d, (e, (f, (g, h)))))));")
+  expect_equal(KendallColijn(tree1), 0)
   tree2 <- ape::read.tree(text = "(a, ((b, c), (d, (e, (f, (g, h))))));")
   tree3 <- ape::read.tree(text = "(a, (b, (c, (d, (e, (f, g))))));")
   trees <- c(tree1, tree2, tree3)
   expect_equal(KCDiameter(trees),
                c(KCDiameter(tree1), KCDiameter(tree2), KCDiameter(tree3)))
+  expect_equal(KCDiameter(list(tree1, tree2, tree3)), KCDiameter(trees))
 })
