@@ -1,46 +1,15 @@
 name: rev-dep-check
 
 on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["R-CMD-check"]
+    types:
+      - completed
   push:
-    branches:
-      - main
-      - master
-    paths-ignore:
-      - "Meta**"
-      - "docs**"
-      - "inst**"
-      - "man**"
-      - "man-roxygen**"
-      - "memcheck**"
-      - "tests**"
-      - "vignettes**"
-      - "**.git"
-      - "**.json"
-      - "**.md"
-      - "**.yml"
-      - "!**revdepcheck.yml"
-      - "**.R[dD]ata"
-      - "**.Rpro*"
+    paths: "**revdepcheck.yml"
   pull_request:
-    branches:
-      - main
-      - master
-    paths-ignore:
-      - "Meta**"
-      - "docs**"
-      - "inst**"
-      - "man**"
-      - "man-roxygen**"
-      - "memcheck**"
-      - "tests**"
-      - "vignettes**"
-      - "**.git"
-      - "**.json"
-      - "**.md"
-      - "**.yml"
-      - "!**revdepcheck.yml"
-      - "**.R[dD]ata"
-      - "**.Rpro*"
+    paths: "**revdepcheck.yml"
 
 jobs:
   mem-check:
