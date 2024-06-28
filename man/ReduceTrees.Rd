@@ -19,7 +19,7 @@ binary \code{phylo} objects with identical leaf labels, rooted on leaf 1.}
 with tree edges listed in postorder; or \code{NULL} if the trees are equivalent.
 }
 \description{
-ReduceTreess trees according to the tree reduction rules of
+\code{ReduceTrees()} reduces trees according to the tree reduction rules of
 \insertCite{Allen2001;textual}{TreeDist}:
 \itemize{
 \item Collapse identical pendant subtrees;

@@ -1,6 +1,6 @@
 #' Collapse areas of agreement between two trees
 #' 
-#' ReduceTreess trees according to the tree reduction rules of
+#' `ReduceTrees()` reduces trees according to the tree reduction rules of
 #' \insertCite{Allen2001;textual}{TreeDist}:
 #' - Collapse identical pendant subtrees;
 #' - Compress equivalent internal chains.
@@ -54,7 +54,7 @@ ReduceTrees <- function(tree1, tree2, check = TRUE) {
       stop("Trees must be binary")
     }
   }
-  ret <- ReduceTrees_trees(tree1$edge[PostorderOrder(tree1), ],
+  ret <- reduce_trees(tree1$edge[PostorderOrder(tree1), ],
                       tree2$edge[PostorderOrder(tree2), ],
                       tree1[["tip.label"]])
   
