@@ -178,6 +178,7 @@ test_that("Output dimensions are correct", {
 })
 
 test_that("RF Distance is correctly calculated", {
+  skip_if_not_installed("phangorn")
   PhangRF2 <- function(t1, t2) phangorn::RF.dist(reorder(t1, "cladewise"),
                                                  reorder(t2, "cladewise"))
   RFTest <- function(t1, t2) {
@@ -958,15 +959,15 @@ test_that("Independent of root position", {
 
   
   Test <- function(Method, score = 0L, ...) {
-    expect_equal(score, Method(trees[[1]], trees[[1]], ...))
-    expect_equal(score, Method(trees[[1]], trees[[2]], ...))
-    expect_equal(score, Method(trees[[3]], trees[[3]], ...))
+    expect_equal(Method(trees[[1]], trees[[1]], ...), score)
+    expect_equal(Method(trees[[1]], trees[[2]], ...), score)
+    expect_equal(Method(trees[[3]], trees[[3]], ...), score)
   }
   
   Test(MASTSize, 8L, rooted = FALSE)
   # Tested further for NNIDist in test-tree_distance_nni.R
   Test(NNIDist, c(lower = 0, best_lower = 0, tight_upper = 0, best_upper = 0,
                   loose_upper = 0, fack_upper = 0, li_upper = 0))
-  Test(SPRDist, c(spr = 0))
+  Test(SPRDist, 0)
   
 })
