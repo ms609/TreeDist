@@ -4,6 +4,7 @@ test_that("SPR: keep_and_reroot()", {
   tree1 <- Postorder(BalancedTree(12))
   tree2 <- Postorder(PectinateTree(12))
   keep <- as.logical(tabulate(8:12, 12))
+
   result <- keep_and_reroot(tree1, tree2, keep)
   expect_equal(result[[1]], RootTree(KeepTip(tree1, keep), 1))
   expect_equal(result[[2]], RootTree(KeepTip(tree2, keep), 1))
@@ -82,6 +83,8 @@ test_that("confusion()", {
 test_that("SPRDist handles input formats", {
   bal9 <- BalancedTree(9)
   pec9 <- PectinateTree(9)
+  
+  expect_null(SPRDist(bal9))
   expect_equal(SPRDist(bal9, bal9), 0)
   
   expect_equal(SPRDist(list(bal9, bal9), bal9), c(0, 0))

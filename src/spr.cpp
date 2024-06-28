@@ -172,13 +172,24 @@ List keep_and_reroot(const List tree1,
   IntegerMatrix ret_edge2 = TreeTools::keep_tip(pre2, keep);
   
   const intx n_node = ret_edge1.nrow() / 2;
+  if (!n_node) {
+    List nullTree = List::create(Named("edge") = ret_edge1,
+                                 _["tip.label"] = CharacterVector(0),
+                                 _["Nnode"] = n_node);
+    
+    nullTree.attr("class") = "phylo";
+    nullTree.attr("order") = "preorder";
+    return List::create(nullTree, nullTree);
+  }
+  
   const intx n_tip = n_node + 1;
   CharacterVector
     old_label = tree1["tip.label"],
     new_labels(n_tip)
   ;
   
-  // Rcout << ret_edge1.nrow() << " rows; Kept " << n_tip << " tips and " << n_node << " nodes.\n";
+  // Rcout << ret_edge1.nrow() << " rows; Kept " << n_tip << " tips and "
+  //       << n_node << " nodes.\n";
   
   intx next_tip = n_tip;
   for (intx i = old_label.size(); i--; ) {
@@ -200,15 +211,19 @@ List keep_and_reroot(const List tree1,
   ret2.attr("order") = "preorder";
   return List::create(
     TreeTools::root_on_node(ret1, 1),
-    TreeTools::root_on_node(ret2, 1));
+    TreeTools::root_on_node(ret2, 1)
+  );
 }
 
 // [[Rcpp::export]]
 List keep_and_reduce(const List tree1,
                      const List tree2,
                      const LogicalVector keep) {
+    Rcout << "Welcome\n";
   List rerooted = keep_and_reroot(tree1, tree2, keep);
+    Rcout << rerooted.size() <<".\n";
   if (rerooted.size() == 1) {
+    Rcout << "ARAGH";
     return Rcpp::List::create(R_NilValue);
   }
   
