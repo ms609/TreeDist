@@ -1,3 +1,10 @@
+test_that("ReduceTrees() handles invalid input", {
+  expect_error(ReduceTrees("STRING", as.phylo(1, 4)), "must be a `phylo`")
+  expect_error(ReduceTrees(as.phylo(1, 4), logical(2)), "must be a `phylo`")
+  expect_error(ReduceTrees(as.phylo(1, 4), as.phylo(1, 5)), "same leaf labels")
+  expect_error(ReduceTrees(BalancedTree(5), StarTree(5)), "binary")
+})
+
 test_that("ReduceTrees()", {
   bal9 <- TreeTools::BalancedTree(9)
   pec9 <- TreeTools::PectinateTree(9)
