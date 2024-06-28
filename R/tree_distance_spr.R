@@ -94,7 +94,7 @@ SPRDist.multiPhylo <- SPRDist.list
 
 #' @importFrom TreeTools DropTip TipsInSplits KeepTipPostorder
 #' @importFrom TreeTools edge_to_splits
-.SPRPairDeO <- function(tree1, tree2, check = TRUE, debug = FALSE) {
+.SPRPairDeO <- function(tree1, tree2, check = TRUE) {
   moves <- 0
   
   # Reduce trees (Fig. 7A in deOliveira2008)
@@ -112,10 +112,7 @@ SPRDist.multiPhylo <- SPRDist.list
     matched <- cpp_robinson_foulds_distance(sp1, sp2, nTip)
     nMatched <- matched[["score"]]
     if (nMatched != length(sp1) * 2) {
-      if (debug) {
-        message("Identical splits: ", length(sp1) - (nMatched / 2))
-      }
-      unmatchedSplits <- is.na(matched$matching)
+      unmatchedSplits <- is.na(matched[["matching"]])
       sp1 <- sp1[[unmatchedSplits]]
       sp2 <- sp2[[-matched$matching[!unmatchedSplits]]]
     }
@@ -123,11 +120,6 @@ SPRDist.multiPhylo <- SPRDist.list
     nSplits <- length(sp1)
     # Compute size of disagreement splits - see Fig. 7C in @deOliv2008
     mmSize <- mismatch_size(sp1, sp2)
-    if (any(mmSize == 0)) {
-      message("Zero-sizers!")
-      sapply(which(mmSize == 0), .Which1, nSplits)
-      sapply(which(mmSize == 0), .Which2, nSplits)
-    }
     
     # Arbitrary selection of leaves to remove introduces a stochastic element
     minMismatch <- which.min(mmSize)

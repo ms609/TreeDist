@@ -67,6 +67,30 @@ test_that("confusion()", {
   TestConfusion(splits, rev(splits))
 })
 
+test_that("SPRDist handles input formats", {
+  bal9 <- BalancedTree(9)
+  pec9 <- PectinateTree(9)
+  expect_equal(SPRDist(bal9, bal9), 0)
+  
+  expect_equal(SPRDist(list(bal9, bal9), bal9), c(0, 0))
+  expect_equal(SPRDist(c(bal9, bal9), bal9), c(0, 0))
+  expect_equal(SPRDist(bal9, list(bal9, bal9)), c(0, 0))
+  expect_equal(SPRDist(bal9, c(bal9, bal9)), c(0, 0))
+  
+  expect_equal(SPRDist(list(bal9, pec9, pec9), list(pec9, bal9)),
+               matrix(c(2, 0, 0, 0, 2, 2), 3, 2))
+  expect_equal(SPRDist(c(bal9, pec9, pec9), c(pec9, bal9)),
+               matrix(c(2, 0, 0, 0, 2, 2), 3, 2))
+  
+  self <- SPRDist(list(bal9, pec9))
+  at <- attributes(self)
+  expect_equal(at[["Size"]], 2)
+  expect_equal(at[["class"]], "dist")
+  expect_equal(at[["Diag"]], FALSE)
+  expect_equal(at[["Upper"]], TRUE)
+  expect_equal(self[[1]], dist(c(0, 2))[[1]])
+})
+
 test_that("SPR deOliveira2008 calculation looks valid", {
   # We do not expect to obtain identical results to phangorn::SPR.dist,
   # because ties are broken in a different arbitrary manner.
