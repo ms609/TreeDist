@@ -37,14 +37,12 @@ library("TreeDist")
 # Generate a set of trees
 trees <- as.phylo(as.TreeNumber(BalancedTree(16)) + 0:100 - 15, 16)
 
-# Calculate distances between trees
-distances <- ClusteringInfoDist(trees)
-summary(distances)
-
-islands <- Islands(distances, threshold = 0.1)
-
 # Create a 2D mapping
+distances <- ClusteringInfoDist(trees)
 mapping <- cmdscale(distances, 2)
+
+# Score trees according to their balance
+scores <- TotalCopheneticIndex(trees)
 
 # Normalize scores
 scoreMax <- TCIContext(trees[[1]])[["maximum"]]
