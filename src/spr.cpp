@@ -27,7 +27,7 @@ IntegerVector mismatch_size (const RawMatrix x, const RawMatrix y) {
   // Rcout << "\n Debugging mismatch_size()\n";
   const int16 n_split = x.rows();
   if (n_split != y.rows()) {
-    throw std::invalid_argument("Input splits contain same number of splits.");
+    throw std::invalid_argument("`x` and `y` differ in number of splits.");
   }
   if (!x.hasAttribute("nTip")) {
     Rcpp::stop("`x` lacks nTip attribute");

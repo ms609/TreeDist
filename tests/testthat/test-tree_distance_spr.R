@@ -44,6 +44,18 @@ test_that("SPR: Under the hood", {
   Test(splits, rev(splits))
 })
 
+test_that("confusion() fails gracefully", {
+  x <- as.Splits(c(T, T, T, F, F))
+  xNoTip <- x
+  attr(xNoTip, "nTip") <- NULL
+  xx <- as.Splits(rep(c(T, F, F, F, T), 4))
+  expect_error(confusion(x, xx), "differ in `nTip`")
+  expect_error(confusion(xNoTip, x), "`x` lacks nTip attribute")
+  expect_error(confusion(x, xNoTip), "`y` lacks nTip attribute")
+  expect_error(confusion(x, xx), "differ in `nTip`")
+  expect_error(confusion(c(x, x), x), "number of splits")
+})
+
 test_that("confusion()", {
   TestConfusion <- function (a, b) {
     i <- rep(seq_along(a), each = length(b))
