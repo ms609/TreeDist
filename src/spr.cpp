@@ -219,11 +219,8 @@ List keep_and_reroot(const List tree1,
 List keep_and_reduce(const List tree1,
                      const List tree2,
                      const LogicalVector keep) {
-    Rcout << "Welcome\n";
   List rerooted = keep_and_reroot(tree1, tree2, keep);
-    Rcout << rerooted.size() <<".\n";
   if (rerooted.size() == 1) {
-    Rcout << "ARAGH";
     return Rcpp::List::create(R_NilValue);
   }
   
