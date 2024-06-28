@@ -170,6 +170,19 @@
     },
     {
       "@type": "SoftwareApplication",
+      "identifier": "phangorn",
+      "name": "phangorn",
+      "version": ">= 2.2.1",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=phangorn"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "plotly",
       "name": "plotly",
       "provider": {
@@ -436,19 +449,6 @@
     },
     "7": {
       "@type": "SoftwareApplication",
-      "identifier": "phangorn",
-      "name": "phangorn",
-      "version": ">= 2.2.1",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=phangorn"
-    },
-    "8": {
-      "@type": "SoftwareApplication",
       "identifier": "Rdpack",
       "name": "Rdpack",
       "version": ">= 0.7",
@@ -460,7 +460,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=Rdpack"
     },
-    "9": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "shiny",
       "name": "shiny",
@@ -472,7 +472,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=shiny"
     },
-    "10": {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "shinyjs",
       "name": "shinyjs",
@@ -484,11 +484,11 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=shinyjs"
     },
-    "11": {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "TreeTools",
       "name": "TreeTools",
-      "version": ">= 1.7.2",
+      "version": "> 1.10.0",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
@@ -500,7 +500,7 @@
     "SystemRequirements": "C++17, pandoc-citeproc"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "1462.654KB",
+  "fileSize": "1502.075KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
