@@ -2,13 +2,13 @@
   "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
   "@type": "SoftwareSourceCode",
   "identifier": "TreeDist",
-  "description": "Implements measures of tree similarity, including information-based generalized Robinson-Foulds distances (Phylogenetic Information Distance, Clustering Information Distance, Matching Split Information Distance; Smith 2020) <doi:10.1093/bioinformatics/btaa614>; Jaccard-Robinson-Foulds distances (Bocker et al. 2013) <doi:10.1007/978-3-642-40453-5_13>, including the Nye et al. (2006) metric <doi:10.1093/bioinformatics/bti720>; the Matching Split Distance (Bogdanowicz & Giaro 2012) <doi:10.1109/TCBB.2011.48>; Maximum Agreement Subtree distances; the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>, and the Nearest Neighbour Interchange (NNI) distance, approximated per Li et al. (1996) <doi:10.1007/3-540-61332-3_168>. Includes tools for visualizing mappings of tree space (Smith 2022) <doi:10.1093/sysbio/syab100>, for calculating the median of sets of trees, and for computing the information content of trees and splits.",
+  "description": "Implements measures of tree similarity, including information-based generalized Robinson-Foulds distances (Phylogenetic Information Distance, Clustering Information Distance, Matching Split Information Distance; Smith 2020) <doi:10.1093/bioinformatics/btaa614>; Jaccard-Robinson-Foulds distances (Bocker et al. 2013) <doi:10.1007/978-3-642-40453-5_13>, including the Nye et al. (2006) metric <doi:10.1093/bioinformatics/bti720>; the Matching Split Distance (Bogdanowicz & Giaro 2012) <doi:10.1109/TCBB.2011.48>; Maximum Agreement Subtree distances; the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>, and the Nearest Neighbour Interchange (NNI) distance, approximated per Li et al. (1996) <doi:10.1007/3-540-61332-3_168>. Includes tools for visualizing mappings of tree space (Smith 2022) <doi:10.1093/sysbio/syab100>, for identifying islands of trees (Silva and Wilkinson 2021) <doi:10.1093/sysbio/syab015>, for calculating the median of sets of trees, and for computing the information content of trees and splits.",
   "name": "TreeDist: Calculate and Map Distances Between Phylogenetic Trees",
   "relatedLink": "https://ms609.github.io/TreeDist/",
   "codeRepository": "https://github.com/ms609/TreeDist/",
   "issueTracker": "https://github.com/ms609/TreeDist/issues/",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "2.7.1.9002",
+  "version": "2.7.1.9003",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -500,7 +500,7 @@
     "SystemRequirements": "C++17, pandoc-citeproc"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "1502.075KB",
+  "fileSize": "1511.343KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
@@ -567,7 +567,7 @@
           "email": "martin.smith@durham.ac.uk"
         }
       ],
-      "name": "TreeDist: Distances between Phylogenetic Trees. R package version 2.7.1.9002",
+      "name": "TreeDist: Distances between Phylogenetic Trees. R package version 2.7.1.9003",
       "identifier": "10.5281/zenodo.3528124",
       "@id": "https://doi.org/10.5281/zenodo.3528124",
       "sameAs": "https://doi.org/10.5281/zenodo.3528124",
