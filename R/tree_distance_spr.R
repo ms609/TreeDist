@@ -6,11 +6,11 @@
 #' \insertCite{@e.g. @Hickey2008, @Goloboff2008SPR, @Whidden2018}{TreeDist}.
 #' 
 #' @template tree12ListParams
-#' @param symmetric Ignored (redundant after fix of
-#' [phangorn#97](https://github.com/KlausVigo/phangorn/issues/97)).
 #' @param method Character specifying which method to use to approximate the
 #' SPR distance.  Currently defaults to "deOliveira", the only accepted option;
-#' a new method will be available soon.
+#' a new method will become the default once available.
+#' @param symmetric Ignored (redundant after fix of
+#' [phangorn#97](https://github.com/KlausVigo/phangorn/issues/97)).
 #' 
 #' @return `SPRDist()` returns a vector or distance matrix of distances 
 #' between trees.
@@ -59,7 +59,8 @@ SPRDist.phylo <- function (tree1, tree2 = NULL, method = "deOliveira", symmetric
 }
 
 .SPRFunc <- function(method) {
-  switch(pmatch(tolower(method), c("deoliveira", "confl", "experiment")),
+  switch(pmatch(tolower(gsub("\\s", "", method)),
+                c("deoliveira2008", "confl", "experiment")),
          .SPRPairDeOCutter, .SPRConfl, .SPRExperiment)
 }
 

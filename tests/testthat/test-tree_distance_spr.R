@@ -92,7 +92,7 @@ test_that("SPR deOliveira2008 calculation looks valid", {
     tr[[i]] <- Postorder(TreeSearch::SPR(tr[[i - 1]]))
   }
   
-  testDist <- as.matrix(SPRDist(tr, method = "deO"))
+  testDist <- as.matrix(SPRDist(tr, method = "de Oliv"))
   simDist <- as.matrix(dist(seq_along(tr)))
   for (i in 1:nSPR) for (j in 2:nSPR) {
     {if (i < j) expect_gte else expect_lte}(testDist[i, j], testDist[i, j - 1])
