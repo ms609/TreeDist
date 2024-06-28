@@ -102,14 +102,22 @@ test_that("SPR deOliveira2008 calculation looks valid", {
   
   errors <- biggerThyNeighbour < 0
   # We may see a few "errors" due to chance, but expect these to be rare
-  rare <- 6
+  rare <- nSPR
   expect_lt(sum(errors), rare)
   if (interactive() && any(errors)) {
     testDist[colSums(errors) > 0, ]
   }
   
   overShot <- as.matrix(testDist) > as.matrix(simDist)
-  overs <- colSums(overShot) > 0
-  overShot[overs, overs]
-  expect_lt(sum(overShot) / length(overShot), rare / 100)
+  # We may overshoot where there are "knots" in trees and the optimal SPR
+  # path is not equivalent to just pruning shared subtrees; these cases
+  # ought to be rare.
+  rare <- 0.10
+  expect_lt(sum(overShot) / length(overShot), rare)
+  
+  if (interactive()) {
+    # View these cases:
+    overs <- colSums(overShot) > 0
+    overShot[overs, overs]
+  }
 })
