@@ -968,6 +968,6 @@ test_that("Independent of root position", {
   # Tested further for NNIDist in test-tree_distance_nni.R
   Test(NNIDist, c(lower = 0, best_lower = 0, tight_upper = 0, best_upper = 0,
                   loose_upper = 0, fack_upper = 0, li_upper = 0))
-  Test(SPRDist, c(spr = 0))
+  Test(SPRDist, 0)
   
 })

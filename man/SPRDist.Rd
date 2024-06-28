@@ -24,7 +24,7 @@ or lists of such trees to undergo pairwise comparison.  Where implemented,
 
 \item{method}{Character specifying which method to use to approximate the
 SPR distance.  Currently defaults to "deOliveira", the only accepted option;
-a new method will be available soon.}
+a new method will become the default once available.}
 
 \item{symmetric}{Ignored (redundant after fix of
 \href{https://github.com/KlausVigo/phangorn/issues/97}{phangorn#97}).}
