@@ -1,7 +1,7 @@
 Package: TreeDist
 Type: Package
 Title: Calculate and Map Distances Between Phylogenetic Trees
-Version: 2.7.1.9002
+Version: 2.7.1.9003
 Authors@R: c(person("Martin R.", "Smith",
                     email = "martin.smith@durham.ac.uk", 
                     role = c("aut", "cre", "cph", "prg"), 
@@ -29,6 +29,8 @@ Description: Implements measures of tree similarity, including
   (1996) <doi:10.1007/3-540-61332-3_168>.
   Includes tools for visualizing mappings of tree space (Smith 2022)
   <doi:10.1093/sysbio/syab100>,
+  for identifying islands of trees (Silva and Wilkinson 2021)
+  <doi:10.1093/sysbio/syab015>,
   for calculating the median of sets of trees,
   and for computing the information content of trees and splits.
 Copyright: Jonker-Volgenant Linear Assignment Problem implementation

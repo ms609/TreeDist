@@ -1,5 +1,6 @@
-# branch no-phangorn (9002)
+# TreeDist 2.7.1.9003
 
+- `Islands()` allows the identification of islands of trees.
 - `PathDist()` uses internal implementation of path distance.
 
 
