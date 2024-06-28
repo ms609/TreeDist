@@ -174,8 +174,8 @@ List keep_and_reroot(const List tree1,
   const intx n_node = ret_edge1.nrow() / 2;
   if (!n_node) {
     List nullTree = List::create(Named("edge") = ret_edge1,
-                                 _["tip.label"] = CharacterVector(0),
-                                 _["Nnode"] = n_node);
+                                 _["Nnode"] = n_node,
+                                 _["tip.label"] = CharacterVector(0));
     
     nullTree.attr("class") = "phylo";
     nullTree.attr("order") = "preorder";
@@ -228,8 +228,8 @@ List keep_and_reduce(const List tree1,
   
   if (edge1.nrow() < 1) {
     List nullTree = List::create(Named("edge") = NumericMatrix(0, 2),
-                                 _["tip.label"] = CharacterVector(0),
-                                 _["Nnode"] = 0);
+                                 _["Nnode"] = 0,
+                                 _["tip.label"] = CharacterVector(0));
     
     nullTree.attr("class") = "phylo";
     nullTree.attr("order") = "preorder";
