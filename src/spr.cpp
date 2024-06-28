@@ -220,14 +220,22 @@ List keep_and_reduce(const List tree1,
                      const List tree2,
                      const LogicalVector keep) {
   List rerooted = keep_and_reroot(tree1, tree2, keep);
-  if (rerooted.size() == 1) {
-    return Rcpp::List::create(R_NilValue);
-  }
   
   List rerooted1 = rerooted[0];
   List rerooted2 = rerooted[1];
   IntegerMatrix edge1 = reverse(rerooted1["edge"]);
   IntegerMatrix edge2 = reverse(rerooted2["edge"]);
+  
+  if (edge1.nrow() < 1) {
+    List nullTree = List::create(Named("edge") = NumericMatrix(0, 2),
+                                 _["tip.label"] = CharacterVector(0),
+                                 _["Nnode"] = 0);
+    
+    nullTree.attr("class") = "phylo";
+    nullTree.attr("order") = "preorder";
+    return List::create(nullTree, nullTree);
+  }
+  
   CharacterVector tip_label = rerooted1["tip.label"];
   return reduce_trees(edge1, edge2, tip_label);
 }
