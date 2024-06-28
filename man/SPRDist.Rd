@@ -23,8 +23,8 @@ or lists of such trees to undergo pairwise comparison.  Where implemented,
 \insertCite{Day1985;textual}{TreeDist}.}
 
 \item{method}{Character specifying which method to use to approximate the
-SPR distance.  Currently defaults to "deOliveira", the only accepted option;
-a new method will become the default once available.}
+SPR distance.  Currently defaults to \code{"deOliveira"}, the only available
+option; a new method will eventually become the default.}
 
 \item{symmetric}{Ignored (redundant after fix of
 \href{https://github.com/KlausVigo/phangorn/issues/97}{phangorn#97}).}
@@ -42,15 +42,18 @@ Other approximations are available
 \examples{
 library("TreeTools", quietly = TRUE)
 
+# Compare single pair of trees
 SPRDist(BalancedTree(7), PectinateTree(7))
 
+# Compare all pairs of trees        
+SPRDist(as.phylo(30:33, 8))
+
+# Compare each tree in one list with each tree in another
 SPRDist(BalancedTree(7), as.phylo(0:2, 7))
 SPRDist(as.phylo(0:2, 7), PectinateTree(7))
 
 SPRDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
         as.phylo(0:2, 7))
-
-CompareAll(as.phylo(30:33, 8), SPRDist)
 }
 \references{
 \insertAllCited{}
