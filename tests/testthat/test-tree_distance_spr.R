@@ -13,7 +13,7 @@ test_that("SPR: keep_and_reroot()", {
   expect_equal(Preorder(reduced[[1]]), Preorder(DropTip(result[[1]], "t9")))
   expect_equal(Preorder(reduced[[2]]), Preorder(DropTip(result[[2]], "t9")))
   
-  skip_if_not_installed("TreeTools", "1.11.1.9002")
+  skip_if_not_installed("TreeTools", "1.11.1.9003")
   twoZeroes <- list(Preorder(ZeroTaxonTree()), Preorder(ZeroTaxonTree()))
   expect_equal(keep_and_reroot(SingleTaxonTree(), SingleTaxonTree(), FALSE),
                twoZeroes)
