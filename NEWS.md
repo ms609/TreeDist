@@ -1,7 +1,9 @@
-# TreeDist 2.7.1.9003
+# TreeDist 2.7.1.9003 (2024-06-28)
 
 - `Islands()` allows the identification of islands of trees.
-- `PathDist()` uses internal implementation of path distance.
+
+- Internal implementation of path and SPR distances, removing dependency
+  on phangorn (and thus R 4.4).
 
 
 # TreeDist 2.7.1 (2024-06-13)
