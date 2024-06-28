@@ -618,7 +618,7 @@ SPRDist.multiPhylo <- SPRDist.list
 # An attempt to reproduce the phangorn results using the actual algorithm
 # described, in which matched edges are not considered further.
 # Using the algorithm of \insertCite{deOliveira2008;textual}{TreeDist}
-#' @examples 
+#' @examples
 #' # de Oliveira Martins et al 2008, fig. 7
 #' tree1 <- ape::read.tree(text = "((1, 2), ((a, b), (c, d)), (3, (4, (5, (6, 7)))));")
 #' tree2 <- ape::read.tree(text = "((1, 2), 3, (4, (5, (((a, b), (c, d)), (6, 7)))));")
