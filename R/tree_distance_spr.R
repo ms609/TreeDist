@@ -652,7 +652,7 @@ SPRDist.multiPhylo <- SPRDist.list
     sp1 <- edge_to_splits(edge1, PostorderOrder(edge1), labels, nTip = nTip)
     sp2 <- edge_to_splits(edge2, PostorderOrder(edge2), labels, nTip = nTip)
     matched <- cpp_robinson_foulds_distance(sp1, sp2, nTip)
-    nMatched <- matched$score
+    nMatched <- matched[["score"]]
     if (nMatched != length(sp1) * 2) {
       if (debug) {
         message("Identical splits: ", length(sp1) - (nMatched / 2))
