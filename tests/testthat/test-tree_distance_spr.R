@@ -70,162 +70,38 @@ test_that("confusion()", {
   TestConfusion(splits, rev(splits))
 })
 
-test_that("SPR deOliveira2008 calculation matches phangorn", {
-  skip_if_not_installed("phangorn")
-  
+test_that("SPR deOliveira2008 calculation looks valid", {
+  # We do not expect to obtain identical results to phangorn::SPR.dist,
+  # because ties are broken in a different arbitrary manner.
+  # We're thus left with quite a loose test.
   Tree <- function (txt) ape::read.tree(text = txt)
-  
-  .phangornSPRDist <- function(tree1, tree2 = NULL) {
-    if (inherits(tree1, "phylo")) {
-      tree1 <- Postorder(tree1)
-    } else {
-      if (inherits(tree2, "multiPhylo")) {
-        return(vapply(tree2, SPRDist, double(length(tree1)), tree1))
-      }
-      tree1 <- structure(lapply(tree1, Postorder), class = "multiPhylo")
-    }
-    
-    if (inherits(tree2, "phylo")) {
-      tree2 <- Postorder(tree2)
-    } else if (!is.null(tree2)) {
-      tree2 <- structure(lapply(tree2, Postorder), class = "multiPhylo")
-    }
-    
-    ret <- phangorn::SPR.dist(tree1, tree2)
-    if ("spr" %in% names(ret)) {
-      ret[["spr"]]
-    } else {
-      ret
-    }
-  }
-  
-  expect_equal(.phangornSPRDist(PectinateTree(letters[1:26]),
-                                PectinateTree(letters[c(2:26, 1)])),
-               1L)
   
   expect_equal(SPRDist(PectinateTree(letters[1:26]),
                        PectinateTree(letters[c(2:26, 1)]),
                        method = "deOliv"),
                1L)
   
-  expect_phangorn <- function(...) {
-    expect_equal(as.matrix(SPRDist(..., method = "deO")),
-                 as.matrix(.phangornSPRDist(...)))
-  }
-  
-  set.seed(0)
-  tr <- vector("list", 13)
-  tr[[1]] <- Postorder(RandomTree(25, root = TRUE))
-  for (i in seq_len(12) + 1L) {
-    tr[[i]] <- Postorder(TreeSearch::SPR(tr[[i - 1]]))
-  }
-  
-  expect_gt(.phangornSPRDist(tr[[3]], tr[[11]]), 7) # it's 8
-  expect_phangorn(tr[[3]], tr[[11]])
-  expect_phangorn(tr[[1]], tr[[10]])
-  expect_phangorn(tr)
-  
   nTip <- 130
   nSPR <- 35
   
   set.seed(0)
   tr <- vector("list", nSPR + 1L)
-  tr[[1]] <- Postorder(RandomTree(nTip, root = TRUE))
+  tr[[1]] <- Postorder(TreeTools::RandomTree(nTip, root = TRUE))
   expect_equal(SPRDist(tr[[1]], tr[[1]]), 0)
   for (i in seq_len(nSPR) + 1L) {
     tr[[i]] <- Postorder(TreeSearch::SPR(tr[[i - 1]]))
   }
   
-  expect_phangorn(tr)
-  phanDist <- .phangornSPRDist(tr)
-  
   testDist <- as.matrix(SPRDist(tr, method = "deO"))
-  pgDist <- as.matrix(.phangornSPRDist(tr))
   simDist <- as.matrix(dist(seq_along(tr)))
-  
+  for (i in 1:nSPR) for (j in 2:nSPR) {
+    {if (i < j) expect_gte else expect_lte}(testDist[i, j], testDist[i, j - 1])
+  }
   
   overShot <- as.matrix(testDist) > as.matrix(simDist)
   overs <- colSums(overShot) > 0
   overShot[overs, overs]
-  
-  underShot <- as.matrix(testDist) < as.matrix(phanDist)
-  unders <- colSums(underShot) > 0
-  underShot[unders, unders]
-  
-  expect_equal(pgDist <= simDist, simDist == simDist)
-  expect_equal(testDist <= simDist, simDist == simDist)
-  
-  if (interactive()) {
-    #  trueDist <- TBRDist::USPRDist(tr)
-    trueDist <- readRDS("true-25tip-12spr.Rds")
-    
-    
-    
-    par(mfrow = c(1, 2))
-    distRange <- c(simDist - phanDist, simDist - testDist)
-    hist(distRange, col = NA, border = NA)
-    hist(simDist - phanDist, add = TRUE, col = 2)
-    hist(simDist - bestDist, add = TRUE, col = "#88ee4488")
-    
-    plot(simDist, simDist, type = "n", asp = 1, ylim = range(distRange),
-         xlab = "Number of SPR moves")
-    abline(0, 0, col = 3)
-    jd <- jitter(simDist)
-    #points(jd, trueDist, pch = 7, col = 3)
-    #points(jd, phanDist, pch = 1)
-    #points(jd, bestDist, pch = 3, col = 2)
-    points(jd, phanDist - trueDist, pch = 5, col = 4)
-    points(jd, bestDist - trueDist, pch = 4, col = 5)
-  }
-  
-  expect_true(all(testDist >= phanDist))
-  
-  tree1 <- tr[[1]]
-  tree2 <- tr[[36]]
-  .SPRPair(tree1, tree2, debug = TRUE)
-  
-  
-  tree1 <- tr[[3]]
-  tree2 <- tr[[11]]
-  .SPRPair(tree1, tree2, debug = TRUE)
-  
-  tree1 <- tr[[14]]
-  tree2 <- tr[[24]]
-  .SPRPair(tree1, tree2, debug = TRUE)
-  
-  # ub(SPRDist(tr), .phangornSPRDist(tr), times = 3)
-  # pv(testDist <- SPRDist(tr))
-  
-  
-  if (interactive()) {
-    skip("This shouldn't run!")
-    if (nTip < 51 && nSPR < 13) {
-      if (nTip == 25 && nSPR == 12) {
-        trueDist <- readRDS("true-25tip-12spr.Rds")
-      } else {
-        trueDist <- TBRDist::USPRDist(tr)
-      }
-    }
-  } else {
-    trueDist <- simDist
-  }
-  
-  
-  par(mfrow = c(1, 2))
-  distRange <- c(simDist - phanDist, simDist - bestDist)
-  hist(distRange, col = NA, border = NA)
-  hist(simDist - phanDist, add = TRUE, col = 2)
-  hist(simDist - bestDist, add = TRUE, col = "#88ee4488")
-  
-  plot(simDist, simDist, type = "n", asp = 1, ylim = range(distRange),
-       xlab = "Number of SPR moves")
-  abline(0, 0, col = 3)
-  jd <- jitter(simDist)
-  #points(jd, trueDist, pch = 7, col = 3)
-  #points(jd, phanDist, pch = 1)
-  #points(jd, bestDist, pch = 3, col = 2)
-  points(jd, phanDist - trueDist, pch = 5, col = 4)
-  points(jd, bestDist - trueDist, pch = 4, col = 5)
+  expect_false(any(overs))
 })
 
 test_that("SPR calculated correctly", {
@@ -267,7 +143,7 @@ test_that("SPR calculated correctly", {
     tr[[i]] <- Postorder(TreeSearch::SPR(tr[[i - 1]]))
   }
   
-  phanDist <- .phangornSPRDist(tr)
+  phanDist <- SPRDist(tr, method = "deO")
   
   SPRDist(tr[[1]], tr)
   

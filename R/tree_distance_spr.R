@@ -42,13 +42,13 @@
 #' @family tree distances
 #' @importFrom TreeTools PairwiseDistances Postorder
 #' @export
-SPRDist <- function (tree1, tree2 = NULL, symmetric, method = "deOliveira") {
+SPRDist <- function (tree1, tree2 = NULL, method = "deOliveira", symmetric) {
   UseMethod("SPRDist")
 }
 
 #' @rdname SPRDist
 #' @export
-SPRDist.phylo <- function (tree1, tree2 = NULL, symmetric, method = "deOliveira") {
+SPRDist.phylo <- function (tree1, tree2 = NULL, method = "deOliveira", symmetric) {
   if (is.null(tree2)) {
     NULL
   } else if (inherits(tree2, "phylo")) {
@@ -65,7 +65,7 @@ SPRDist.phylo <- function (tree1, tree2 = NULL, symmetric, method = "deOliveira"
 
 #' @rdname SPRDist
 #' @export
-SPRDist.list <- function (tree1, tree2 = NULL, symmetric, method = "deOliveira") {
+SPRDist.list <- function (tree1, tree2 = NULL, method = "deOliveira", symmetric) {
   if (is.null(tree2)) {
     PairwiseDistances(RootTree(RenumberTips(tree1, tree1), 1),
                       .SPRFunc(method), check = FALSE)
@@ -95,21 +95,21 @@ SPRDist.multiPhylo <- SPRDist.list
   moves <- 0
   if (debug) dropList <- character(0)
   
-  simplified <- Reduce(tree1, tree2, check = check)
+  reduced <- Reduce(tree1, tree2, check = check)
   if (debug) {
     dropList <- character(0)
     par(mfrow = 1:2, mai = rep(0.1, 4))
     oldBG <- par(bg = "#eeddcc")
-    plot(simplified[[1]])
+    plot(reduced[[1]])
     nodelabels(cex = 0.7, bg = NA, frame = "n", adj = 1.5)
-    plot(simplified[[2]])
+    plot(reduced[[2]])
     nodelabels(cex = 0.7, bg = NA, frame = "n", adj = 1.5)
     par(oldBG)
   }
   
-  while (!is.null(simplified)) {
-    tr1 <- simplified[[1]]
-    tr2 <- simplified[[2]]
+  while (!is.null(reduced)) {
+    tr1 <- reduced[[1]]
+    tr2 <- reduced[[2]]
     edge1 <- tr1[["edge"]]
     edge2 <- tr2[["edge"]]
     labels <- tr1[["tip.label"]]
@@ -270,22 +270,22 @@ SPRDist.multiPhylo <- SPRDist.list
                      frame = "n", col = "darkred", font = 2)
       message(action)
     }
-    simplified <- if (nKeep < 4L) {
+    reduced <- if (nKeep < 4L) {
       NULL
     } else {
       keep_and_reduce(tr1, tr2, keep)
     }
-    if (length(simplified) == 1) {
-      simplified <- NULL
+    if (length(reduced) == 1) {
+      reduced <- NULL
     }
     
     if (debug) {
-      if (is.null(simplified)) {
+      if (is.null(reduced)) {
         plot.new(); plot.new()
       } else {
-        plot(simplified[[1]])
+        plot(reduced[[1]])
         nodelabels(cex = 0.7, bg = NA, frame = "n", adj = 1.5)
-        plot(simplified[[2]])
+        plot(reduced[[2]])
         nodelabels(cex = 0.7, bg = NA, frame = "n", adj = 1.5)
       }
     }
@@ -303,16 +303,16 @@ SPRDist.multiPhylo <- SPRDist.list
   moves <- 0
   if (debug) dropList <- character(0)
   
-  simplified <- Reduce(tree1, tree2, check = check)
+  reduced <- Reduce(tree1, tree2, check = check)
   if (debug) {
     par(mfrow = 1:2, mai = rep(0.1, 4))
-    plot(simplified[[1]])
-    plot(simplified[[2]])
+    plot(reduced[[1]])
+    plot(reduced[[2]])
   }
   
-  while (!is.null(simplified)) {
-    tr1 <- simplified[[1]]
-    tr2 <- simplified[[2]]
+  while (!is.null(reduced)) {
+    tr1 <- reduced[[1]]
+    tr2 <- reduced[[2]]
     edge1 <- tr1[["edge"]]
     edge2 <- tr2[["edge"]]
     labels <- tr1[["tip.label"]]
@@ -452,20 +452,20 @@ SPRDist.multiPhylo <- SPRDist.list
       drop <- as.logical(tabulate(which.max(drop), length(drop)))
     }
     if (debug) {
-      dropList <- c(dropList, TipLabels(simplified[[1]])[drop])
-      message("Dropping: ", TipLabels(simplified[[1]])[drop],
+      dropList <- c(dropList, TipLabels(reduced[[1]])[drop])
+      message("Dropping: ", TipLabels(reduced[[1]])[drop],
               " (", which(drop), ")")
     }
-    simplified <- keep_and_reduce(tr1, tr2, !drop)
-    if (length(simplified) == 1L) {
-      simplified <- NULL
+    reduced <- keep_and_reduce(tr1, tr2, !drop)
+    if (length(reduced) == 1L) {
+      reduced <- NULL
     }
     if (debug) {
-      if (is.null(simplified[[1]])) {
+      if (is.null(reduced[[1]])) {
         plot.new(); plot.new()
       } else {
-        plot(simplified[[1]])
-        plot(simplified[[2]])
+        plot(reduced[[1]])
+        plot(reduced[[2]])
       }
     }
       
@@ -481,22 +481,22 @@ SPRDist.multiPhylo <- SPRDist.list
 #' @importFrom TreeTools edge_to_splits
 .SPRPairDeOCutter <- function(tree1, tree2, check = TRUE, debug = FALSE) {
   moves <- 0
-  simplified <- Reduce(tree1, tree2, check = check)
+  reduced <- Reduce(tree1, tree2, check = check)
   if (debug) {
     dropList <- character(0)
     par(mfrow = 1:2, mai = rep(0.1, 4))
     oldBG <- par(bg = "#eeddcc")
-    plot(simplified[[1]])
+    plot(reduced[[1]])
     nodelabels(cex = 0.7, bg = NA, frame = "n", adj = 1.5)
-    plot(simplified[[2]])
+    plot(reduced[[2]])
     nodelabels(cex = 0.7, bg = NA, frame = "n", adj = 1.5)
     par(oldBG)
   }
   
   
-  while (!is.null(simplified)) {
-    tr1 <- simplified[[1]]
-    tr2 <- simplified[[2]]
+  while (!is.null(reduced)) {
+    tr1 <- reduced[[1]]
+    tr2 <- reduced[[2]]
     edge1 <- tr1[["edge"]]
     edge2 <- tr2[["edge"]]
     labels <- tr1[["tip.label"]]
@@ -533,14 +533,14 @@ SPRDist.multiPhylo <- SPRDist.list
       if (debug) {
         message("> First subtree:")
       }
-      submoves1 <- .SPRPairDeOCutter(KeepTipPostorder(simplified[[1]], subtips1),
-                            KeepTipPostorder(simplified[[2]], subtips1),
+      submoves1 <- .SPRPairDeOCutter(KeepTipPostorder(reduced[[1]], subtips1),
+                            KeepTipPostorder(reduced[[2]], subtips1),
                             debug = debug)
       if (debug) {
         message("> Second subtree:")
       }
-      submoves2 <- .SPRPairDeOCutter(KeepTipPostorder(simplified[[1]], subtips2),
-                            KeepTipPostorder(simplified[[2]], subtips2),
+      submoves2 <- .SPRPairDeOCutter(KeepTipPostorder(reduced[[1]], subtips2),
+                            KeepTipPostorder(reduced[[2]], subtips2),
                             debug = debug)
       return(moves + submoves1 + submoves2)
     }
@@ -566,23 +566,23 @@ SPRDist.multiPhylo <- SPRDist.list
                      frame = "n", col = "darkred", font = 2)
       message(action)
     }
-    simplified <- if (nKeep < 4L) {
+    reduced <- if (nKeep < 4L) {
       NULL
     } else {
       keep_and_reduce(tr1, tr2, keep)
     }
     
-    if (length(simplified) == 1L) {
-      simplified <- NULL
+    if (length(reduced) == 1L) {
+      reduced <- NULL
     }
     
     if (debug) {
-      if (is.null(simplified[[1]])) {
+      if (is.null(reduced[[1]])) {
         plot.new(); plot.new()
       } else {
-        plot(simplified[[1]])
+        plot(reduced[[1]])
         nodelabels(cex = 0.7, bg = NA, frame = "n", adj = 1.5)
-        plot(simplified[[2]])
+        plot(reduced[[2]])
         nodelabels(cex = 0.7, bg = NA, frame = "n", adj = 1.5)
       }
     }
@@ -597,9 +597,10 @@ SPRDist.multiPhylo <- SPRDist.list
   moves
 }
 
-# An attempt to reproduce the phangorn results using the actual algorithm
-# described, in which matched edges are not considered further.
-# Using the algorithm of \insertCite{deOliveira2008;textual}{TreeDist}
+# An attempt to reproduce the phangorn results using the algorithm of 
+# \insertCite{deOliveira2008;textual}{TreeDist}
+# An exact match is unlikely due to the arbitrary breaking of ties when leaves
+# are selected for removal.
 #' @examples
 #' # de Oliveira Martins et al 2008, fig. 7
 #' tree1 <- ape::read.tree(text = "((1, 2), ((a, b), (c, d)), (3, (4, (5, (6, 7)))));")
@@ -613,22 +614,13 @@ SPRDist.multiPhylo <- SPRDist.list
 #' @importFrom TreeTools edge_to_splits
 .SPRPairDeO <- function(tree1, tree2, check = TRUE, debug = FALSE) {
   moves <- 0
-  simplified <- Reduce(tree1, tree2, check = check)
-  if (debug) {
-    dropList <- character(0)
-    par(mfrow = 1:2, mai = rep(0.1, 4))
-    oldBG <- par(bg = "#eeddcc")
-    plot(simplified[[1]])
-    nodelabels(cex = 0.7, bg = NA, frame = "n", adj = 1.5)
-    plot(simplified[[2]])
-    nodelabels(cex = 0.7, bg = NA, frame = "n", adj = 1.5)
-    par(oldBG)
-  }
   
+  # Reduce trees (Fig. 7A in deOliveira2008)
+  reduced <- Reduce(tree1, tree2, check = check)
   
-  while (!is.null(simplified)) {
-    tr1 <- simplified[[1]]
-    tr2 <- simplified[[2]]
+  while (!is.null(reduced)) {
+    tr1 <- reduced[[1]]
+    tr2 <- reduced[[2]]
     edge1 <- tr1[["edge"]]
     edge2 <- tr2[["edge"]]
     labels <- tr1[["tip.label"]]
@@ -645,22 +637,25 @@ SPRDist.multiPhylo <- SPRDist.list
       sp1 <- sp1[[unmatchedSplits]]
       sp2 <- sp2[[-matched$matching[!unmatchedSplits]]]
     }
-    stopifnot(cpp_robinson_foulds_distance(sp1, sp2, nTip)$score ==
-                matched$score)
     
     nSplits <- length(sp1)
-    stopifnot(nSplits > 0)
+    # Compute size of disagreement splits - see Fig. 7C in @deOliv2008
     mmSize <- mismatch_size(sp1, sp2)
-    sapply(which(mmSize == 0), .Which1, nSplits)
-    sapply(which(mmSize == 0), .Which2, nSplits)
+    if (any(mmSize == 0)) {
+      message("Zero-sizers!")
+      sapply(which(mmSize == 0), .Which1, nSplits)
+      sapply(which(mmSize == 0), .Which2, nSplits)
+    }
+    
+    # Arbitrary selection of leaves to remove introduces a stochastic element
     minMismatch <- which.min(mmSize)
-    stopifnot(mmSize[minMismatch] > 0)
     
     split1 <- structure(sp1[.Which1(minMismatch, nSplits), , drop = FALSE],
                         nTip = nTip, class = "Splits")
     split2 <- structure(sp2[.Which2(minMismatch, nSplits), , drop = FALSE],
-                        nTip = nTip)
+                        nTip = nTip, class = "Splits")
     disagreementSplit <- xor(split1, split2)
+    
     keep <- as.logical(disagreementSplit)
     nKeep <- sum(keep)
     if (nKeep < length(keep) / 2) {
@@ -668,38 +663,18 @@ SPRDist.multiPhylo <- SPRDist.list
       nKeep <- length(keep) - nKeep
     }
     
-    if (debug) {
-      drop <- !keep
-      dropList <- c(dropList, labels[drop])
-      action <- paste0("Dropping: ", paste(labels[drop], collapse = ", "),
-                       " (", paste(which(drop), collapse = ", "), ")")
-      legend("topleft", action, bty = "n")
-      ape::tiplabels("|________", which(drop),
-                     frame = "n", col = "red", font = 2)
-      message(action)
-    }
-    simplified <- if (nKeep < 4L) {
+    reduced <- if (nKeep < 4L) {
       NULL
     } else {
       keep_and_reduce(tr1, tr2, keep)
     }
     
-    if (length(simplified) == 1L) {
-      simplified <- NULL
+    if (length(reduced) == 1L) {
+      reduced <- NULL
     }
     
-    if (debug) {
-      if (is.null(simplified[[1]])) {
-        plot.new(); plot.new()
-      } else {
-        plot(simplified[[1]])
-        nodelabels(cex = 0.7, bg = NA, frame = "n", adj = 1.5)
-        plot(simplified[[2]])
-        nodelabels(cex = 0.7, bg = NA, frame = "n", adj = 1.5)
-      }
-    }
-    
-    moves <- moves + 1
+    moves <- moves + 1 # Usually an underestimate, unless we've lost a chance
+                       # to "untangle a knot"
   }
   
   # Return:
