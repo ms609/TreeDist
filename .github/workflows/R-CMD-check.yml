@@ -77,7 +77,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive-latex-base texlive-fonts-recommended
+          sudo apt-get install -y texlive-latex-base libglpk-dev texlive-fonts-recommended
                       
       - name: Set up R dependencies (Windows)
         if: runner.os == 'Windows'

@@ -82,6 +82,7 @@ test_that("SPR deOliveira2008 calculation looks valid", {
   nSPR <- 35
   
   set.seed(0)
+  skip_if_not_installed("TreeSearch")
   tr <- vector("list", nSPR + 1L)
   tr[[1]] <- Postorder(TreeTools::RandomTree(nTip, root = TRUE))
   expect_equal(SPRDist(tr[[1]], tr[[1]]), 0)
