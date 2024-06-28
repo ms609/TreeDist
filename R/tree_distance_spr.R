@@ -624,7 +624,7 @@ SPRDist.multiPhylo <- SPRDist.list
 #' tree2 <- ape::read.tree(text = "((1, 2), 3, (4, (5, (((a, b), (c, d)), (6, 7)))));")
 #' plot(tree1)
 #' plot(tree2)
-#' .SPRPair(tree1, tree2)
+#' .SPRPairDeO(tree1, tree2)
 #' @importFrom TreeTools DropTip TipsInSplits KeepTipPostorder
 #' @importFrom TreeTools edge_to_splits
 .SPRPairDeO <- function(tree1, tree2, check = TRUE, debug = FALSE) {
