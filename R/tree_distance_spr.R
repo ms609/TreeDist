@@ -98,7 +98,7 @@ SPRDist.multiPhylo <- SPRDist.list
   moves <- 0
   
   # Reduce trees (Fig. 7A in deOliveira2008)
-  reduced <- Reduce(tree1, tree2, check = check)
+  reduced <- ReduceTrees(tree1, tree2, check = check)
   
   while (!is.null(reduced)) {
     tr1 <- reduced[[1]]
