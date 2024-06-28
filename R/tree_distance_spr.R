@@ -8,6 +8,9 @@
 #' @template tree12ListParams
 #' @param symmetric Ignored (redundant after fix of
 #' [phangorn#97](https://github.com/KlausVigo/phangorn/issues/97)).
+#' @param method Character specifying which method to use to approximate the
+#' SPR distance.  Currently defaults to "deOliveira", the only accepted option;
+#' a new method will be available soon.
 #' 
 #' @return `SPRDist()` returns a vector or distance matrix of distances 
 #' between trees.
@@ -33,70 +36,49 @@
 #' functions `USPRDist()` and `ReplugDist()`.
 #' 
 #' \pkg{phangorn} function \code{\link[phangorn:treedist]{SPR.dist()}} employs
-#' the same algorithm but can crash when sent trees of certain formats,
-#' and tends to have a longer running time.
+#' the \insertCite{deOliveira2008;textual}{TreeDist} algorithm but can crash
+#' when sent trees of certain formats, and tends to have a longer running time.
 #' 
 #' @family tree distances
 #' @importFrom TreeTools PairwiseDistances Postorder
 #' @export
-SPRDist <- function (tree1, tree2 = NULL, symmetric) {
+SPRDist <- function (tree1, tree2 = NULL, symmetric, method = "deOliveira") {
   UseMethod("SPRDist")
 }
 
 #' @rdname SPRDist
 #' @export
-SPRDist.phylo <- function (tree1, tree2 = NULL, symmetric) {
+SPRDist.phylo <- function (tree1, tree2 = NULL, symmetric, method = "deOliveira") {
   if (is.null(tree2)) {
     NULL
   } else if (inherits(tree2, "phylo")) {
-    .SPRPair(tree1, tree2)
+    .SPRFunc(method)(tree1, tree2)
   } else {
-    vapply(tree2, .SPRPair, double(1), tree1)
+    vapply(tree2, .SPRFunc(method), double(1), tree1)
   }
+}
+
+.SPRFunc <- function(method) {
+  switch(pmatch(tolower(method), c("deoliveira", "confl", "experiment")),
+         .SPRPairDeOCutter, .SPRConfl, .SPRExperiment)
 }
 
 #' @rdname SPRDist
 #' @export
-SPRDist.list <- function (tree1, tree2 = NULL, symmetric) {
+SPRDist.list <- function (tree1, tree2 = NULL, symmetric, method = "deOliveira") {
   if (is.null(tree2)) {
     PairwiseDistances(RootTree(RenumberTips(tree1, tree1), 1),
-                      .SPRPair, check = FALSE)
+                      .SPRFunc(method), check = FALSE)
   } else if (inherits(tree2, 'phylo')) {
-    vapply(tree1, .SPRPair, double(1), tree2)
+    vapply(tree1, .SPRFunc(method), double(1), tree2)
   } else {
-    vapply(tree2, SPRDist, double(length(tree1)), tree1)
+    vapply(tree2, SPRDist, double(length(tree1)), tree1, method = method)
   }
 }
 
 #' @rdname SPRDist
 #' @export
 SPRDist.multiPhylo <- SPRDist.list
-
-#' @importFrom phangorn SPR.dist
-.phangornSPRDist <- function(tree1, tree2 = NULL, symmetric) {
-  if (inherits(tree1, "phylo")) {
-    tree1 <- Postorder(tree1)
-  } else {
-    if (inherits(tree2, "multiPhylo")) {
-      return(vapply(tree2, SPRDist, double(length(tree1)), tree1))
-    }
-    tree1 <- structure(lapply(tree1, Postorder), class = "multiPhylo")
-  }
-  
-  if (inherits(tree2, "phylo")) {
-    tree2 <- Postorder(tree2)
-  } else if (!is.null(tree2)) {
-    tree2 <- structure(lapply(tree2, Postorder), class = "multiPhylo")
-  }
-  
-  SPR.dist(tree1, tree2)
-}
-
-.PairUnstab <- function(trees) {
-  dist1 <- Rogue::GraphGeodesic(trees[[1]])
-  dist2 <- Rogue::GraphGeodesic(trees[[2]])
-  colSums(abs(dist1 - dist2))
-}
 
 .Which1 <- function (x, nSplits) {
   ret <- x %% nSplits
@@ -551,13 +533,13 @@ SPRDist.multiPhylo <- SPRDist.list
       if (debug) {
         message("> First subtree:")
       }
-      submoves1 <- .SPRPair(KeepTipPostorder(simplified[[1]], subtips1),
+      submoves1 <- .SPRPairDeOCutter(KeepTipPostorder(simplified[[1]], subtips1),
                             KeepTipPostorder(simplified[[2]], subtips1),
                             debug = debug)
       if (debug) {
         message("> Second subtree:")
       }
-      submoves2 <- .SPRPair(KeepTipPostorder(simplified[[1]], subtips2),
+      submoves2 <- .SPRPairDeOCutter(KeepTipPostorder(simplified[[1]], subtips2),
                             KeepTipPostorder(simplified[[2]], subtips2),
                             debug = debug)
       return(moves + submoves1 + submoves2)
@@ -723,9 +705,3 @@ SPRDist.multiPhylo <- SPRDist.list
   # Return:
   moves
 }
-
-.SPRPair <- .SPRConfl
-.SPRPair <- .SPRPairDeO
-#' @rdname SPRDist
-#' @export
-.SPRPair <- .SPRExperiment

@@ -5,18 +5,15 @@
 \alias{SPRDist.phylo}
 \alias{SPRDist.list}
 \alias{SPRDist.multiPhylo}
-\alias{.SPRPair}
 \title{Approximate the Subtree Prune and Regraft (SPR) distance.}
 \usage{
-SPRDist(tree1, tree2 = NULL, symmetric)
+SPRDist(tree1, tree2 = NULL, symmetric, method = "deOliveira")
 
-\method{SPRDist}{phylo}(tree1, tree2 = NULL, symmetric)
+\method{SPRDist}{phylo}(tree1, tree2 = NULL, symmetric, method = "deOliveira")
 
-\method{SPRDist}{list}(tree1, tree2 = NULL, symmetric)
+\method{SPRDist}{list}(tree1, tree2 = NULL, symmetric, method = "deOliveira")
 
-\method{SPRDist}{multiPhylo}(tree1, tree2 = NULL, symmetric)
-
-.SPRPair(tree1, tree2, check = TRUE, debug = FALSE)
+\method{SPRDist}{multiPhylo}(tree1, tree2 = NULL, symmetric, method = "deOliveira")
 }
 \arguments{
 \item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
@@ -27,6 +24,10 @@ or lists of such trees to undergo pairwise comparison.  Where implemented,
 
 \item{symmetric}{Ignored (redundant after fix of
 \href{https://github.com/KlausVigo/phangorn/issues/97}{phangorn#97}).}
+
+\item{method}{Character specifying which method to use to approximate the
+SPR distance.  Currently defaults to "deOliveira", the only accepted option;
+a new method will be available soon.}
 }
 \value{
 \code{SPRDist()} returns a vector or distance matrix of distances
@@ -59,8 +60,8 @@ Exact calculation with \href{https://ms609.github.io/TBRDist/reference/TreeRearr
 functions \code{USPRDist()} and \code{ReplugDist()}.
 
 \pkg{phangorn} function \code{\link[phangorn:treedist]{SPR.dist()}} employs
-the same algorithm but can crash when sent trees of certain formats,
-and tends to have a longer running time.
+the \insertCite{deOliveira2008;textual}{TreeDist} algorithm but can crash
+when sent trees of certain formats, and tends to have a longer running time.
 
 Other tree distances: 
 \code{\link{JaccardRobinsonFoulds}()},
