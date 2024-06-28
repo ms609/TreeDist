@@ -1,7 +1,6 @@
-# branch no-phangorn (9002)
+# branch spr-dist (9010)
 
-- Internal implementation of path and SPR distances, removing dependency
-  on phangorn (and thus R 4.4).
+- `SPRDist()` implements a novel algorithm for approximating SPR distances.
 
 
 # TreeDist 2.7.1 (2024-06-13)
