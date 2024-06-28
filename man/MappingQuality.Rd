@@ -42,6 +42,7 @@ MappingQuality(distances, dist(mapping), 4)
 }
 \seealso{
 Other tree space functions: 
+\code{\link{Islands}()},
 \code{\link{MSTSegments}()},
 \code{\link{MapTrees}()},
 \code{\link{SpectralEigens}()},

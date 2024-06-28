@@ -84,6 +84,7 @@ MeanMSTEdge(points, cluster)
 }
 \seealso{
 Other tree space functions: 
+\code{\link{Islands}()},
 \code{\link{MSTSegments}()},
 \code{\link{MapTrees}()},
 \code{\link{MappingQuality}()},

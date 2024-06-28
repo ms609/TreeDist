@@ -1,4 +1,6 @@
-# branch no-phangorn (9002)
+# TreeDist 2.7.1.9003 (2024-06-28)
+
+- `Islands()` allows the identification of islands of trees.
 
 - Internal implementation of path and SPR distances, removing dependency
   on phangorn (and thus R 4.4).
