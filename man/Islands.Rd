@@ -4,7 +4,7 @@
 \alias{Islands}
 \title{Find islands from distance matrix}
 \usage{
-Islands(D, threshold, dense = TRUE)
+Islands(D, threshold, dense = TRUE, smallest = 0)
 }
 \arguments{
 \item{D}{Square matrix or \code{dist} object containing Euclidean distances
@@ -16,6 +16,9 @@ assigned to the same island.}
 \item{dense}{Logical; if \code{FALSE}, each island will be named according to the
 index of its lowest-indexed member; if \code{TRUE}, each island will be numbered
 sequentially from \code{1}, ordered by the index of the lowest-indexed member.}
+
+\item{smallest}{Integer; Islands comprising no more than \code{smallest} elements
+will be assigned to island \code{NA}.}
 }
 \value{
 \code{Islands()} returns a vector listing the island to which
