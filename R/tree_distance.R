@@ -73,6 +73,8 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
   ret
 }
 
+
+#' @importFrom cli cli_progress_along
 .MaxValue <- function(tree1, tree2, Value) {
   lab1 <- TipLabels(tree1)
   sameTips <- .AllTipsSame(lab1, TipLabels(tree2))
@@ -95,13 +97,15 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
       pairs <- combn(seq_along(tree1), 2)
       nPairs <- dim(pairs)[[2]]
       
-      apply(pairs, 2, function(ij) {
-        i <- ij[[1]]
-        j <- ij[[2]]
-        common <- intersect(lab1[[i]], lab1[[j]])
-        Value(KeepTip(tree1[[i]], common)) +
-          Value(KeepTip(tree1[[j]], common))
-      })
+      vapply(cli_progress_along(seq_len(nPairs), "Calc max value"),
+             function(pair) {
+               i <- pairs[1, pair]
+               j <- pairs[2, pair]
+               common <- intersect(lab1[[i]], lab1[[j]])
+               Value(KeepTip(tree1[[i]], common)) +
+                 Value(KeepTip(tree1[[j]], common))
+             }, double(1))
+      
     }
   } else {
     value1 <- Value(tree1)
