@@ -14,7 +14,7 @@
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.4.1 (2024-06-14 ucrt)",
+  "runtimePlatform": "R version 4.4.1 (2024-06-14)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -500,7 +500,7 @@
     "SystemRequirements": "C++17, pandoc-citeproc"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "6502.277KB",
+  "fileSize": "1513.159KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
