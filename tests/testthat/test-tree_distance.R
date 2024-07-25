@@ -448,6 +448,7 @@ test_that("Clustering information is correctly calculated", {
     tip.label = c("t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10",
                   "t11", "t12", "t13", "t14", "t15", "t16", "t17", "t18", "t19",
                   "t20"), br = NULL), class = "phylo")
+  # NOT in Preorder.  Preordering the tree will change the matching.
   threeAwayPoly <- structure(
     list(edge = structure(c(21L, 22L, 23L, 24L, 25L, 26L, 27L, 28L, 29L, 29L, 
                             28L, 27L, 26L, 30L, 30L, 30L, 26L, 31L, 31L, 25L, 
@@ -463,8 +464,9 @@ test_that("Clustering information is correctly calculated", {
   expect_equal(
     MutualClusteringInfo(threeAwayPoly, randomBif20),
     MutualClusteringInfo(randomBif20, threeAwayPoly))
-  match <- MutualClusteringInfo(randomBif20, threeAwayPoly, reportMatching = TRUE)
-  expect_equal(c(NA, NA,  1,  2, NA,  3,  7, 11, 10,  4,  6,  9,  8, NA,  5, 12, NA),
+  match <- MutualClusteringInfo(randomBif20, threeAwayPoly, 
+                                reportMatching = TRUE)
+  expect_equal(c(NA, NA, 1, 2, NA, 3, 7, 11, 10, 4, 6, 9, 8, NA, 5, 12, NA),
                attr(match, "matching"))
   
   # Multiple bins, calculated expectation
