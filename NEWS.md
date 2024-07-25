@@ -1,4 +1,4 @@
-# TreeDist 2.7.1.9004 (2024-07-25)
+# TreeDist 2.8.0 (2024-07-25)
 
 - `Islands()` allows the identification of islands of trees.
 
