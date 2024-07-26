@@ -12,7 +12,7 @@ for definitions."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax
 
   gtag('config', 'G-BTKEG66D3F');
 </script></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -34,7 +34,7 @@ for definitions."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax
       <ul class="nav navbar-nav"><li>
   <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
-     
+
   </a>
 </li>
 <li>
@@ -46,7 +46,7 @@ for definitions."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li class="divider">
@@ -89,25 +89,25 @@ for definitions."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/ms609/TreeDist" class="external-link">
     <span class="fa fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul><form class="navbar-form navbar-right hidden-xs hidden-sm" role="search">
         <div class="form-group">
           <input type="search" class="form-control" name="search-input" id="search-input" placeholder="Search..." aria-label="Search for..." autocomplete="off"></div>
       </form>
-      
+
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Shared information content of two splits</h1>
-    <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/HEAD/R/Information.R" class="external-link"><code>R/Information.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/2.7.1/R/Information.R" class="external-link"><code>R/Information.R</code></a></small>
     <div class="hidden name"><code>SplitSharedInformation.Rd</code></div>
     </div>
 
@@ -134,28 +134,24 @@ for definitions.</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>n</dt>
+
+
+<dl><dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
 <dd><p>Integer specifying the number of leaves</p></dd>
 
 
-<dt>A1, A2</dt>
+<dt id="arg-a-a-">A1, A2<a class="anchor" aria-label="anchor" href="#arg-a-a-"></a></dt>
 <dd><p>Integers specifying the number of taxa in <em>A1</em> and <em>A2</em>,
 once the splits have been arranged such that <em>A1</em> fully overlaps with <em>A2</em>.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p><code>TreesConsistentWithTwoSplits()</code> returns the number of unrooted bifurcating
+    <p><code>TreesConsistentWithTwoSplits()</code> returns the number of unrooted bifurcating
 trees consistent with two splits.</p>
-
-
 <p><code>SplitSharedInformation()</code> returns the phylogenetic information that two splits
 have in common (Meila 2007)
 , in bits.</p>
-
-
 <p><code>SplitDifferentInformation()</code> returns the amount of phylogenetic information
 distinct to one of the two splits, in bits.</p>
     </div>
@@ -169,7 +165,7 @@ Thus, all taxa in the smaller of <em>A1</em> and <em>A2</em> also occur in the l
     </div>
     <div id="functions">
     <h2>Functions</h2>
-    
+
 <ul><li><p><code>SplitDifferentInformation()</code>: Different information between two splits.</p></li>
 <li><p><code>TreesConsistentWithTwoSplits()</code>: Number of trees consistent with two
 splits.</p></li>
@@ -183,14 +179,14 @@ splits.</p></li>
     <div id="references">
     <h2>References</h2>
     <p>Meila M (2007).
-“Comparing clusterings---an information based distance.”
-<em>Journal of Multivariate Analysis</em>, <b>98</b>(5), 873--895.
+“Comparing clusterings—an information based distance.”
+<em>Journal of Multivariate Analysis</em>, <b>98</b>(5), 873–895.
 <a href="https://doi.org/10.1016/j.jmva.2006.11.013" class="external-link">doi:10.1016/j.jmva.2006.11.013</a>
 .</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p>Other information functions: 
+    <div class="dont-index"><p>Other information functions:
 <code><a href="SplitEntropy.html">SplitEntropy</a>()</code>,
 <code><a href="TreeInfo.html">TreeInfo</a></code></p></div>
     </div>
@@ -235,16 +231,16 @@ splits.</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.js" integrity="sha256-GKvGqXDznoRYHCwKXGnuchvKSwmx9SRMrZOTh2g4Sb0=" crossorigin="anonymous"></script><script>
   docsearch({
-    
-    
+
+
     apiKey: '8bf44d312479af73720c5ca5fcc12eba',
     indexName: 'treedist',
     inputSelector: 'input#search-input.form-control',

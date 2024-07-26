@@ -9,7 +9,7 @@
 
   gtag('config', 'G-BTKEG66D3F');
 </script></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -31,7 +31,7 @@
       <ul class="nav navbar-nav"><li>
   <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
-     
+
   </a>
 </li>
 <li>
@@ -43,7 +43,7 @@
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li class="divider">
@@ -86,25 +86,25 @@
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/ms609/TreeDist" class="external-link">
     <span class="fa fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul><form class="navbar-form navbar-right hidden-xs hidden-sm" role="search">
         <div class="form-group">
           <input type="search" class="form-control" name="search-input" id="search-input" placeholder="Search..." aria-label="Search for..." autocomplete="off"></div>
       </form>
-      
+
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Approximate Subtree Prune and Regraft distance</h1>
-    <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/HEAD/R/tree_distance_spr.R" class="external-link"><code>R/tree_distance_spr.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/2.7.1/R/tree_distance_spr.R" class="external-link"><code>R/tree_distance_spr.R</code></a></small>
     <div class="hidden name"><code>SPRDist.Rd</code></div>
     </div>
 
@@ -118,14 +118,16 @@
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>tree1, tree2</dt>
+
+
+<dl><dt id="arg-tree-tree-">tree1, tree2<a class="anchor" aria-label="anchor" href="#arg-tree-tree-"></a></dt>
 <dd><p>Trees of class <code>phylo</code>, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 <code>tree2 = NULL</code> will compute distances between each pair of trees in the list
 <code>tree1</code> using a fast algorithm based on Day (1985).</p></dd>
 
 
-<dt>symmetric</dt>
+<dt id="arg-symmetric">symmetric<a class="anchor" aria-label="anchor" href="#arg-symmetric"></a></dt>
 <dd><p>Logical specifying whether to produce a better heuristic
 by calculating the minimum of <code>SPRDist(t1, t2)</code> and <code>SPRDist(t2, t1)</code>,
 which are not guaranteed to be equal due to the heuristic nature of the
@@ -136,9 +138,7 @@ approximation (see
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p><code>SPRDist()</code> returns a vector or distance matrix of distances
+    <p><code>SPRDist()</code> returns a vector or distance matrix of distances
 between trees.</p>
     </div>
     <div id="details">
@@ -154,7 +154,7 @@ resources, install the latest version of phangorn with
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p>Other tree distances: 
+    <div class="dont-index"><p>Other tree distances:
 <code><a href="JaccardRobinsonFoulds.html">JaccardRobinsonFoulds</a>()</code>,
 <code><a href="KendallColijn.html">KendallColijn</a>()</code>,
 <code><a href="MASTSize.html">MASTSize</a>()</code>,
@@ -210,16 +210,16 @@ resources, install the latest version of phangorn with
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.js" integrity="sha256-GKvGqXDznoRYHCwKXGnuchvKSwmx9SRMrZOTh2g4Sb0=" crossorigin="anonymous"></script><script>
   docsearch({
-    
-    
+
+
     apiKey: '8bf44d312479af73720c5ca5fcc12eba',
     indexName: 'treedist',
     inputSelector: 'input#search-input.form-control',

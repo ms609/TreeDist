@@ -11,7 +11,7 @@ proposed in Smith (2020)."><!-- mathjax --><script src="https://cdnjs.cloudflare
 
   gtag('config', 'G-BTKEG66D3F');
 </script></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -33,7 +33,7 @@ proposed in Smith (2020)."><!-- mathjax --><script src="https://cdnjs.cloudflare
       <ul class="nav navbar-nav"><li>
   <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
-     
+
   </a>
 </li>
 <li>
@@ -45,7 +45,7 @@ proposed in Smith (2020)."><!-- mathjax --><script src="https://cdnjs.cloudflare
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li class="divider">
@@ -88,25 +88,25 @@ proposed in Smith (2020)."><!-- mathjax --><script src="https://cdnjs.cloudflare
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/ms609/TreeDist" class="external-link">
     <span class="fa fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul><form class="navbar-form navbar-right hidden-xs hidden-sm" role="search">
         <div class="form-group">
           <input type="search" class="form-control" name="search-input" id="search-input" placeholder="Search..." aria-label="Search for..." autocomplete="off"></div>
       </form>
-      
+
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Information-based generalized Robinson–Foulds distances</h1>
-    <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/HEAD/R/tree_distance_info.R" class="external-link"><code>R/tree_distance_info.R</code></a>, <a href="https://github.com/ms609/TreeDist/blob/HEAD/R/tree_distance_msi.R" class="external-link"><code>R/tree_distance_msi.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/2.7.1/R/tree_distance_info.R" class="external-link"><code>R/tree_distance_info.R</code></a>, <a href="https://github.com/ms609/TreeDist/blob/2.7.1/R/tree_distance_msi.R" class="external-link"><code>R/tree_distance_msi.R</code></a></small>
     <div class="hidden name"><code>TreeDistance.Rd</code></div>
     </div>
 
@@ -197,14 +197,16 @@ proposed in Smith (2020).</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>tree1, tree2</dt>
+
+
+<dl><dt id="arg-tree-tree-">tree1, tree2<a class="anchor" aria-label="anchor" href="#arg-tree-tree-"></a></dt>
 <dd><p>Trees of class <code>phylo</code>, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 <code>tree2 = NULL</code> will compute distances between each pair of trees in the list
 <code>tree1</code> using a fast algorithm based on Day (1985).</p></dd>
 
 
-<dt>normalize</dt>
+<dt id="arg-normalize">normalize<a class="anchor" aria-label="anchor" href="#arg-normalize"></a></dt>
 <dd><p>If a numeric value is provided, this will be used as a
 maximum value against which to rescale results.
 If <code>TRUE</code>, results will be rescaled against a maximum value calculated from
@@ -213,23 +215,23 @@ section below.
 If <code>FALSE</code>, results will not be rescaled.</p></dd>
 
 
-<dt>reportMatching</dt>
+<dt id="arg-reportmatching">reportMatching<a class="anchor" aria-label="anchor" href="#arg-reportmatching"></a></dt>
 <dd><p>Logical specifying whether to return the clade
 matchings as an attribute of the score.</p></dd>
 
 
-<dt>diag</dt>
+<dt id="arg-diag">diag<a class="anchor" aria-label="anchor" href="#arg-diag"></a></dt>
 <dd><p>Logical specifying whether to return similarities along the
 diagonal, i.e. of each tree with itself.  Applies only if <code>tree2</code> is
 a list identical to <code>tree1</code>, or <code>NULL</code>.</p></dd>
 
 
-<dt>samples</dt>
+<dt id="arg-samples">samples<a class="anchor" aria-label="anchor" href="#arg-samples"></a></dt>
 <dd><p>Integer specifying how many samplings to obtain;
 accuracy of estimate increases with <code>sqrt(samples)</code>.</p></dd>
 
 
-<dt>splits1, splits2</dt>
+<dt id="arg-splits-splits-">splits1, splits2<a class="anchor" aria-label="anchor" href="#arg-splits-splits-"></a></dt>
 <dd><p>Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
 and each column corresponds to a split, such that each leaf is identified as
@@ -237,25 +239,19 @@ a member of the ingroup (<code>TRUE</code>) or outgroup (<code>FALSE</code>) of 
 split.</p></dd>
 
 
-<dt>nTip</dt>
+<dt id="arg-ntip">nTip<a class="anchor" aria-label="anchor" href="#arg-ntip"></a></dt>
 <dd><p>(Optional) Integer specifying the number of leaves in each split.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>If <code>reportMatching = FALSE</code>, the functions return a numeric
+    <p>If <code>reportMatching = FALSE</code>, the functions return a numeric
 vector specifying the requested similarities or differences.</p>
-
-
 <p>If <code>reportMatching = TRUE</code>, the functions additionally return an integer
 vector listing the index of the split in <code>tree2</code> that is matched with
 each split in <code>tree1</code> in the optimal matching.
 Unmatched splits are denoted <code>NA</code>.
 Use <code><a href="VisualizeMatching.html">VisualizeMatching()</a></code> to plot the optimal matching.</p>
-
-
 <p><code>TreeDistance()</code> simply returns the clustering information distance (it is
 an alias of <code>ClusteringInfoDistance()</code>).</p>
     </div>
@@ -375,22 +371,22 @@ which the maintainer plans to attempt in the future; please <a href="https://git
 <em>Information Theory, Inference, and Learning Algorithms</em>.
 Cambridge University Press, Cambridge.
 <a href="https://www.inference.org.uk/itprnn/book.pdf" class="external-link">https://www.inference.org.uk/itprnn/book.pdf</a>.<br><br> Meila M (2007).
-“Comparing clusterings---an information based distance.”
-<em>Journal of Multivariate Analysis</em>, <b>98</b>(5), 873--895.
+“Comparing clusterings—an information based distance.”
+<em>Journal of Multivariate Analysis</em>, <b>98</b>(5), 873–895.
 <a href="https://doi.org/10.1016/j.jmva.2006.11.013" class="external-link">doi:10.1016/j.jmva.2006.11.013</a>
 .<br><br> Smith MR (2020).
 “Information theoretic Generalized Robinson-Foulds metrics for comparing phylogenetic trees.”
-<em>Bioinformatics</em>, <b>36</b>(20), 5007--5013.
+<em>Bioinformatics</em>, <b>36</b>(20), 5007–5013.
 <a href="https://doi.org/10.1093/bioinformatics/btaa614" class="external-link">doi:10.1093/bioinformatics/btaa614</a>
 .<br><br> Vinh NX, Epps J, Bailey J (2010).
 “Information theoretic measures for clusterings comparison: variants, properties, normalization and correction for chance.”
-<em>Journal of Machine Learning Research</em>, <b>11</b>, 2837--2854.
+<em>Journal of Machine Learning Research</em>, <b>11</b>, 2837–2854.
 <a href="https://doi.org/10.1145/1553374.1553511" class="external-link">doi:10.1145/1553374.1553511</a>
 .</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p>Other tree distances: 
+    <div class="dont-index"><p>Other tree distances:
 <code><a href="JaccardRobinsonFoulds.html">JaccardRobinsonFoulds</a>()</code>,
 <code><a href="KendallColijn.html">KendallColijn</a>()</code>,
 <code><a href="MASTSize.html">MASTSize</a>()</code>,
@@ -477,16 +473,16 @@ Cambridge University Press, Cambridge.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.js" integrity="sha256-GKvGqXDznoRYHCwKXGnuchvKSwmx9SRMrZOTh2g4Sb0=" crossorigin="anonymous"></script><script>
   docsearch({
-    
-    
+
+
     apiKey: '8bf44d312479af73720c5ca5fcc12eba',
     indexName: 'treedist',
     inputSelector: 'input#search-input.form-control',

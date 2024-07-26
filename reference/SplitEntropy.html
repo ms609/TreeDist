@@ -17,7 +17,7 @@ Meila (2007)
 
   gtag('config', 'G-BTKEG66D3F');
 </script></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -39,7 +39,7 @@ Meila (2007)
       <ul class="nav navbar-nav"><li>
   <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
-     
+
   </a>
 </li>
 <li>
@@ -51,7 +51,7 @@ Meila (2007)
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li class="divider">
@@ -94,25 +94,25 @@ Meila (2007)
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/ms609/TreeDist" class="external-link">
     <span class="fa fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul><form class="navbar-form navbar-right hidden-xs hidden-sm" role="search">
         <div class="form-group">
           <input type="search" class="form-control" name="search-input" id="search-input" placeholder="Search..." aria-label="Search for..." autocomplete="off"></div>
       </form>
-      
+
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Entropy of two splits</h1>
-    <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/HEAD/R/Information.R" class="external-link"><code>R/Information.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/2.7.1/R/Information.R" class="external-link"><code>R/Information.R</code></a></small>
     <div class="hidden name"><code>SplitEntropy.Rd</code></div>
     </div>
 
@@ -134,7 +134,9 @@ Meila (2007)
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>split1, split2</dt>
+
+
+<dl><dt id="arg-split-split-">split1, split2<a class="anchor" aria-label="anchor" href="#arg-split-split-"></a></dt>
 <dd><p>Logical vectors listing leaves in a consistent order,
 identifying each leaf as a member of the ingroup (<code>TRUE</code>) or outgroup
 (<code>FALSE</code>) of the split in question.</p></dd>
@@ -142,9 +144,7 @@ identifying each leaf as a member of the ingroup (<code>TRUE</code>) or outgroup
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>A numeric vector listing, in bits:</p><ul><li><p><code>H1</code> The entropy of split 1;</p></li>
+    <p>A numeric vector listing, in bits:</p><ul><li><p><code>H1</code> The entropy of split 1;</p></li>
 <li><p><code>H2</code> The entropy of split 2;</p></li>
 <li><p><code>H12</code> The joint entropy of both splits;</p></li>
 <li><p><code>I</code> The mutual information of the splits;</p></li>
@@ -156,14 +156,14 @@ identifying each leaf as a member of the ingroup (<code>TRUE</code>) or outgroup
 <em>Information Theory, Inference, and Learning Algorithms</em>.
 Cambridge University Press, Cambridge.
 <a href="https://www.inference.org.uk/itprnn/book.pdf" class="external-link">https://www.inference.org.uk/itprnn/book.pdf</a>.<br><br> Meila M (2007).
-“Comparing clusterings---an information based distance.”
-<em>Journal of Multivariate Analysis</em>, <b>98</b>(5), 873--895.
+“Comparing clusterings—an information based distance.”
+<em>Journal of Multivariate Analysis</em>, <b>98</b>(5), 873–895.
 <a href="https://doi.org/10.1016/j.jmva.2006.11.013" class="external-link">doi:10.1016/j.jmva.2006.11.013</a>
 .</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p>Other information functions: 
+    <div class="dont-index"><p>Other information functions:
 <code><a href="SplitSharedInformation.html">SplitSharedInformation</a>()</code>,
 <code><a href="TreeInfo.html">TreeInfo</a></code></p></div>
     </div>
@@ -194,16 +194,16 @@ Cambridge University Press, Cambridge.
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.js" integrity="sha256-GKvGqXDznoRYHCwKXGnuchvKSwmx9SRMrZOTh2g4Sb0=" crossorigin="anonymous"></script><script>
   docsearch({
-    
-    
+
+
     apiKey: '8bf44d312479af73720c5ca5fcc12eba',
     indexName: 'treedist',
     inputSelector: 'input#search-input.form-control',

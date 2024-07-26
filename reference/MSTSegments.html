@@ -14,7 +14,7 @@ stretched or compressed."><!-- mathjax --><script src="https://cdnjs.cloudflare.
 
   gtag('config', 'G-BTKEG66D3F');
 </script></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -36,7 +36,7 @@ stretched or compressed."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       <ul class="nav navbar-nav"><li>
   <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
-     
+
   </a>
 </li>
 <li>
@@ -48,7 +48,7 @@ stretched or compressed."><!-- mathjax --><script src="https://cdnjs.cloudflare.
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li class="divider">
@@ -91,25 +91,25 @@ stretched or compressed."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/ms609/TreeDist" class="external-link">
     <span class="fa fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul><form class="navbar-form navbar-right hidden-xs hidden-sm" role="search">
         <div class="form-group">
           <input type="search" class="form-control" name="search-input" id="search-input" placeholder="Search..." aria-label="Search for..." autocomplete="off"></div>
       </form>
-      
+
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Add minimum spanning tree to plot, colouring by stress</h1>
-    <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/HEAD/R/MSTSegments.R" class="external-link"><code>R/MSTSegments.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/2.7.1/R/MSTSegments.R" class="external-link"><code>R/MSTSegments.R</code></a></small>
     <div class="hidden name"><code>MSTSegments.Rd</code></div>
     </div>
 
@@ -135,34 +135,34 @@ stretched or compressed.</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>mapping</dt>
+
+
+<dl><dt id="arg-mapping">mapping<a class="anchor" aria-label="anchor" href="#arg-mapping"></a></dt>
 <dd><p>Two-column matrix giving <em>x</em> and <em>y</em> coordinates of plotted
 points.</p></dd>
 
 
-<dt>mstEnds</dt>
+<dt id="arg-mstends">mstEnds<a class="anchor" aria-label="anchor" href="#arg-mstends"></a></dt>
 <dd><p>Two-column matrix identifying rows of <code>mapping</code> at end of
 each edge of the MST, as output by <code><a href="https://ms609.github.io/TreeTools/reference/MSTEdges.html" class="external-link">TreeTools::MSTEdges()</a></code>.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional arguments to <code><a href="https://rdrr.io/r/graphics/segments.html" class="external-link">segments()</a></code>.</p></dd>
 
 
-<dt>distances</dt>
+<dt id="arg-distances">distances<a class="anchor" aria-label="anchor" href="#arg-distances"></a></dt>
 <dd><p>Matrix or <code>dist</code> object giving original distances between
 each pair of points.</p></dd>
 
 
-<dt>palette</dt>
+<dt id="arg-palette">palette<a class="anchor" aria-label="anchor" href="#arg-palette"></a></dt>
 <dd><p>Vector of colours with which to colour edges.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p><code>StrainCol()</code> returns a vector in which each entry is selected from
+    <p><code>StrainCol()</code> returns a vector in which each entry is selected from
 <code>palette</code>, with an attribute <code>logStrain</code> denoting the logarithm of the
 mapped over original distance, shifted such that the median value is zero.
 Palette colours are assigned centred on the median value, with entries
@@ -173,17 +173,17 @@ distance to original distance is small.</p>
     <h2>References</h2>
     <p>Gower JC (1966).
 “Some distance properties of latent root and vector methods used in multivariate analysis.”
-<em>Biometrika</em>, <b>53</b>(3/4), 325--338.
+<em>Biometrika</em>, <b>53</b>(3/4), 325–338.
 <a href="https://doi.org/10.2307/2333639" class="external-link">doi:10.2307/2333639</a>
 .<br><br> Smith MR (2022).
 “Robust analysis of phylogenetic tree space.”
-<em>Systematic Biology</em>, <b>71</b>(5), 1255--1270.
+<em>Systematic Biology</em>, <b>71</b>(5), 1255–1270.
 <a href="https://doi.org/10.1093/sysbio/syab100" class="external-link">doi:10.1093/sysbio/syab100</a>
 .</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p>Other tree space functions: 
+    <div class="dont-index"><p>Other tree space functions:
 <code><a href="MapTrees.html">MapTrees</a>()</code>,
 <code><a href="MappingQuality.html">MappingQuality</a>()</code>,
 <code><a href="SpectralEigens.html">SpectralEigens</a>()</code>,
@@ -234,16 +234,16 @@ distance to original distance is small.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.js" integrity="sha256-GKvGqXDznoRYHCwKXGnuchvKSwmx9SRMrZOTh2g4Sb0=" crossorigin="anonymous"></script><script>
   docsearch({
-    
-    
+
+
     apiKey: '8bf44d312479af73720c5ca5fcc12eba',
     indexName: 'treedist',
     inputSelector: 'input#search-input.form-control',

@@ -11,7 +11,7 @@ trees."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/math
 
   gtag('config', 'G-BTKEG66D3F');
 </script></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -33,7 +33,7 @@ trees."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/math
       <ul class="nav navbar-nav"><li>
   <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
-     
+
   </a>
 </li>
 <li>
@@ -45,7 +45,7 @@ trees."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/math
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li class="divider">
@@ -88,25 +88,25 @@ trees."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/math
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/ms609/TreeDist" class="external-link">
     <span class="fa fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul><form class="navbar-form navbar-right hidden-xs hidden-sm" role="search">
         <div class="form-group">
           <input type="search" class="form-control" name="search-input" id="search-input" placeholder="Search..." aria-label="Search for..." autocomplete="off"></div>
       </form>
-      
+
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Normalize tree distances</h1>
-    <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/HEAD/R/tree_distance_utilities.R" class="external-link"><code>R/tree_distance_utilities.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/2.7.1/R/tree_distance_utilities.R" class="external-link"><code>R/tree_distance_utilities.R</code></a></small>
     <div class="hidden name"><code>NormalizeInfo.Rd</code></div>
     </div>
 
@@ -131,38 +131,38 @@ trees.</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>unnormalized</dt>
+
+
+<dl><dt id="arg-unnormalized">unnormalized<a class="anchor" aria-label="anchor" href="#arg-unnormalized"></a></dt>
 <dd><p>Numeric value, vector or matrix to be normalized.</p></dd>
 
 
-<dt>tree1, tree2</dt>
+<dt id="arg-tree-tree-">tree1, tree2<a class="anchor" aria-label="anchor" href="#arg-tree-tree-"></a></dt>
 <dd><p>Trees from which <code>unnormalized</code> was calculated.</p></dd>
 
 
-<dt>InfoInTree</dt>
+<dt id="arg-infointree">InfoInTree<a class="anchor" aria-label="anchor" href="#arg-infointree"></a></dt>
 <dd><p>Function to calculate the information content of each tree.</p></dd>
 
 
-<dt>infoInBoth</dt>
+<dt id="arg-infoinboth">infoInBoth<a class="anchor" aria-label="anchor" href="#arg-infoinboth"></a></dt>
 <dd><p>Optional numeric specifying information content of both
 trees independently. If unspecified (<code>NULL</code>), this will be calculated using
 the method specified by <code>how</code>.</p></dd>
 
 
-<dt>how</dt>
+<dt id="arg-how">how<a class="anchor" aria-label="anchor" href="#arg-how"></a></dt>
 <dd><p>Method for normalization, perhaps specified using the <code>normalize</code>
 argument to a tree distance function.  See details for options.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional parameters to <code>InfoInTree()</code> or <code>how()</code>.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p><code>NormalizeInfo()</code> returns an object corresponding to the normalized
+    <p><code>NormalizeInfo()</code> returns an object corresponding to the normalized
 values of <code>unnormalized</code>.</p>
     </div>
     <div id="details">
@@ -264,16 +264,16 @@ using <code>how</code>.  <code>NormalizeInfo(how = Func)</code> is thus equivale
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.js" integrity="sha256-GKvGqXDznoRYHCwKXGnuchvKSwmx9SRMrZOTh2g4Sb0=" crossorigin="anonymous"></script><script>
   docsearch({
-    
-    
+
+
     apiKey: '8bf44d312479af73720c5ca5fcc12eba',
     indexName: 'treedist',
     inputSelector: 'input#search-input.form-control',

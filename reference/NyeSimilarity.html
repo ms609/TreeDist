@@ -18,7 +18,7 @@ vignettes."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/
 
   gtag('config', 'G-BTKEG66D3F');
 </script></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -40,7 +40,7 @@ vignettes."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/
       <ul class="nav navbar-nav"><li>
   <a href="../index.html">
     <span class="fa fa-home fa-lg"></span>
-     
+
   </a>
 </li>
 <li>
@@ -52,7 +52,7 @@ vignettes."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li class="divider">
@@ -95,25 +95,25 @@ vignettes."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/ms609/TreeDist" class="external-link">
     <span class="fa fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul><form class="navbar-form navbar-right hidden-xs hidden-sm" role="search">
         <div class="form-group">
           <input type="search" class="form-control" name="search-input" id="search-input" placeholder="Search..." aria-label="Search for..." autocomplete="off"></div>
       </form>
-      
+
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Nye <em>et al</em>. (2006) tree comparison</h1>
-    <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/HEAD/R/tree_distance_nye.R" class="external-link"><code>R/tree_distance_nye.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/2.7.1/R/tree_distance_nye.R" class="external-link"><code>R/tree_distance_nye.R</code></a></small>
     <div class="hidden name"><code>NyeSimilarity.Rd</code></div>
     </div>
 
@@ -151,19 +151,21 @@ A more detailed account is available in the
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>tree1, tree2</dt>
+
+
+<dl><dt id="arg-tree-tree-">tree1, tree2<a class="anchor" aria-label="anchor" href="#arg-tree-tree-"></a></dt>
 <dd><p>Trees of class <code>phylo</code>, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 <code>tree2 = NULL</code> will compute distances between each pair of trees in the list
 <code>tree1</code> using a fast algorithm based on Day (1985).</p></dd>
 
 
-<dt>similarity</dt>
+<dt id="arg-similarity">similarity<a class="anchor" aria-label="anchor" href="#arg-similarity"></a></dt>
 <dd><p>Logical specifying whether to report the result as a tree
 similarity, rather than a difference.</p></dd>
 
 
-<dt>normalize</dt>
+<dt id="arg-normalize">normalize<a class="anchor" aria-label="anchor" href="#arg-normalize"></a></dt>
 <dd><p>If a numeric value is provided, this will be used as a
 maximum value against which to rescale results.
 If <code>TRUE</code>, results will be rescaled against a maximum value calculated from
@@ -172,7 +174,7 @@ section below.
 If <code>FALSE</code>, results will not be rescaled.</p></dd>
 
 
-<dt>normalizeMax</dt>
+<dt id="arg-normalizemax">normalizeMax<a class="anchor" aria-label="anchor" href="#arg-normalizemax"></a></dt>
 <dd><p>When calculating similarity, normalize against the
 maximum number of splits that could have been present (<code>TRUE</code>),
 or the number of splits that were actually observed (<code>FALSE</code>)?
@@ -181,18 +183,18 @@ Defaults to the number of splits in the better-resolved tree; set
 tree.</p></dd>
 
 
-<dt>reportMatching</dt>
+<dt id="arg-reportmatching">reportMatching<a class="anchor" aria-label="anchor" href="#arg-reportmatching"></a></dt>
 <dd><p>Logical specifying whether to return the clade
 matchings as an attribute of the score.</p></dd>
 
 
-<dt>diag</dt>
+<dt id="arg-diag">diag<a class="anchor" aria-label="anchor" href="#arg-diag"></a></dt>
 <dd><p>Logical specifying whether to return similarities along the
 diagonal, i.e. of each tree with itself.  Applies only if <code>tree2</code> is
 a list identical to <code>tree1</code>, or <code>NULL</code>.</p></dd>
 
 
-<dt>splits1, splits2</dt>
+<dt id="arg-splits-splits-">splits1, splits2<a class="anchor" aria-label="anchor" href="#arg-splits-splits-"></a></dt>
 <dd><p>Logical matrices where each row corresponds to a leaf,
 either listed in the same order or bearing identical names (in any sequence),
 and each column corresponds to a split, such that each leaf is identified as
@@ -200,15 +202,13 @@ a member of the ingroup (<code>TRUE</code>) or outgroup (<code>FALSE</code>) of 
 split.</p></dd>
 
 
-<dt>nTip</dt>
+<dt id="arg-ntip">nTip<a class="anchor" aria-label="anchor" href="#arg-ntip"></a></dt>
 <dd><p>(Optional) Integer specifying the number of leaves in each split.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p><code>NyeSimilarity()</code> returns an array of numerics providing the
+    <p><code>NyeSimilarity()</code> returns an array of numerics providing the
 distances between each  pair of trees in <code>tree1</code> and <code>tree2</code>,
 or <code>splits1</code> and <code>splits2</code>.</p>
     </div>
@@ -224,7 +224,7 @@ slightly faster than, <code><a href="JaccardRobinsonFoulds.html">JaccardRobinson
     </div>
     <div id="normalization">
     <h2>Normalization</h2>
-    
+
 
 
 <p>If <code>normalize = TRUE</code> and <code>similarity = TRUE</code>, then results will be rescaled
@@ -247,13 +247,13 @@ with <code>setdiff(TipLabels(tree1), TipLabels(tree2))</code>.</p>
     <h2>References</h2>
     <p>Nye TMW, Liò P, Gilks WR (2006).
 “A novel algorithm and web-based tool for comparing two alternative phylogenetic trees.”
-<em>Bioinformatics</em>, <b>22</b>(1), 117--119.
+<em>Bioinformatics</em>, <b>22</b>(1), 117–119.
 <a href="https://doi.org/10.1093/bioinformatics/bti720" class="external-link">doi:10.1093/bioinformatics/bti720</a>
 .</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p>Other tree distances: 
+    <div class="dont-index"><p>Other tree distances:
 <code><a href="JaccardRobinsonFoulds.html">JaccardRobinsonFoulds</a>()</code>,
 <code><a href="KendallColijn.html">KendallColijn</a>()</code>,
 <code><a href="MASTSize.html">MASTSize</a>()</code>,
@@ -300,16 +300,16 @@ with <code>setdiff(TipLabels(tree1), TipLabels(tree2))</code>.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.js" integrity="sha256-GKvGqXDznoRYHCwKXGnuchvKSwmx9SRMrZOTh2g4Sb0=" crossorigin="anonymous"></script><script>
   docsearch({
-    
-    
+
+
     apiKey: '8bf44d312479af73720c5ca5fcc12eba',
     indexName: 'treedist',
     inputSelector: 'input#search-input.form-control',
