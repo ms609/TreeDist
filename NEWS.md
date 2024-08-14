@@ -1,6 +1,7 @@
 # TreeDist 2.8.0.9000 (development)
 
-- `SpectralEigens()` survives values of nEig larger than the input
+- `SpectralEigens()` returns correct eigenvalues (smallest was overlooked)
+- `SpectralEigens()` handles values of nEig larger than the input
 
 # TreeDist 2.8.0 (2024-07-25)
 
