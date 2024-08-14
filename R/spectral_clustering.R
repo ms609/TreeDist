@@ -60,8 +60,14 @@ SpectralEigens <- function(D, nn = 10L, nEig = 2L) {
   L <- GraphLaplacian(W) # 2. compute graph laplacian
   ei <- eigen(L, symmetric = TRUE) # 3. Compute the eigenvectors and values of L
   
-  # Return the eigenvectors of the n_eig smallest eigenvalues:
-  ei[["vectors"]][, nrow(L) - rev(seq_len(nEig))]
+  nL <- dim(L)[[1]]
+  
+  if (nL > nEig) {
+    # Return the eigenvectors of the n_eig smallest eigenvalues:
+    ei[["vectors"]][, nL - rev(seq_len(nEig))]
+  } else {
+    ei[["vectors"]]
+  }
 }
 
 #' @export
