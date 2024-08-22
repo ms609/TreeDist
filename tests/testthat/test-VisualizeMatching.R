@@ -18,19 +18,18 @@ test_that("VisualizeMatching() works", {
   skip_if(packageVersion("graphics") < "4.3")
   skip_if(packageVersion("vdiffr") < "1.0")
   
-  TestVM <- function() {
+  vdiffr::expect_doppelganger("Test VM", TestVM <- function() {
     VisualizeMatching(MutualClusteringInfo, tree1, tree2, 
                       setPar = TRUE, precision = 3, matchZeros = FALSE,
-                      Plot = plot.phylo)
-  }
-  vdiffr::expect_doppelganger("Test VM", TestVM)
+                      Plot = plot.phylo) -> x
+    expect_equal(sum(attr(x, "matchedScores")), x[[1]])
+  })
   
-  TestVMr <- function() {
+  vdiffr::expect_doppelganger("Test VMr", function() {
     VisualizeMatching(MutualClusteringInfo, tree1, tree2r,
                       setPar = TRUE, precision = 3, matchZeros = TRUE, 
                       Plot = plot.phylo, cex = 1.5)
-  }
-  vdiffr::expect_doppelganger("Test VMr", TestVMr)
+  })
   
   vdiffr::expect_doppelganger("Visualize MCI matching", function() {
     par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.5)
