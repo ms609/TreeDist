@@ -99,6 +99,7 @@ articles:
       - Generalized-RF
 
 template:
+  bootstrap: 5
   params:
     bootswatch: cerulean
     docsearch:
