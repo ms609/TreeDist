@@ -777,6 +777,7 @@ test_that("Jaccard RF is correctly calculated", {
 })
 
 test_that("RobinsonFoulds() is correctly calculated", {
+  skip_if_not_installed("phangorn")
   RF <- function(tree1, tree2) {
     suppressMessages(phangorn::RF.dist(reorder(tree1, "cladewise"),
                                        reorder(tree2, "cladewise")))
