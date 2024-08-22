@@ -4,22 +4,15 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Comparing splits using information theory • TreeDist</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><!-- docsearch --><script src="../docsearch.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.3/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous">
-<link href="../docsearch.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Comparing splits using information theory">
-<meta property="og:description" content="TreeDist">
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Comparing splits using information theory">
 <meta name="robots" content="noindex">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]--><!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-BTKEG66D3F"></script><script>
+<!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-BTKEG66D3F"></script><script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
@@ -27,121 +20,69 @@
   gtag('config', 'G-BTKEG66D3F');
 </script>
 </head>
-<body data-spy="scroll" data-target="#toc">
-    
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
-    <div class="container template-article">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">2.7.1.9002</span>
-      </span>
-    </div>
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
-  <a href="../articles/Using-TreeDist.html">Get started</a>
-</li>
-<li>
-  <a href="../reference/index.html">Function reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li class="divider">
-    </li>
-<li class="dropdown-header">Tree distance analysis</li>
-    <li>
-      <a href="../articles/Using-TreeDist.html">Calculate tree similarity with 'TreeDist'</a>
-    </li>
-    <li>
-      <a href="../articles/using-distances.html">Contextualizing tree distances</a>
-    </li>
-    <li>
-      <a href="../articles/different-leaves.html">Trees with different leaves</a>
-    </li>
-    <li class="divider">
-    </li>
-<li class="dropdown-header">Tree space analysis</li>
-    <li>
-      <a href="../articles/treespace.html">Tree space analysis</a>
-    </li>
-    <li>
-      <a href="../articles/landscapes.html">Analysing landscapes of phylogenetic trees</a>
-    </li>
-    <li>
-      <a href="../articles/compare-treesets.html">Comparing sets of trees from different analyses</a>
-    </li>
-    <li class="divider">
-    </li>
-<li class="dropdown-header">Tree distance introductions</li>
-    <li>
-      <a href="../articles/information.html">Comparing splits using information theory</a>
-    </li>
-    <li>
-      <a href="../articles/Robinson-Foulds.html">Extending the Robinson-Foulds metric</a>
-    </li>
-    <li>
-      <a href="../articles/Generalized-RF.html">Generalized Robinson-Foulds distances</a>
-    </li>
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+
+    <a class="navbar-brand me-2" href="../index.html">TreeDist</a>
+
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.8.0.9000</small>
+
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="../index.html"><span class="fa fa-home fa-lg"></span></a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/Using-TreeDist.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Function reference</a></li>
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Tree distance analysis</h6></li>
+    <li><a class="dropdown-item" href="../articles/Using-TreeDist.html">Calculate tree similarity with 'TreeDist'</a></li>
+    <li><a class="dropdown-item" href="../articles/using-distances.html">Contextualizing tree distances</a></li>
+    <li><a class="dropdown-item" href="../articles/different-leaves.html">Trees with different leaves</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Tree space analysis</h6></li>
+    <li><a class="dropdown-item" href="../articles/treespace.html">Tree space analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/landscapes.html">Analysing landscapes of phylogenetic trees</a></li>
+    <li><a class="dropdown-item" href="../articles/compare-treesets.html">Comparing sets of trees from different analyses</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Tree distance introductions</h6></li>
+    <li><a class="dropdown-item" href="../articles/information.html">Comparing splits using information theory</a></li>
+    <li><a class="dropdown-item" href="../articles/Robinson-Foulds.html">Extending the Robinson-Foulds metric</a></li>
+    <li><a class="dropdown-item" href="../articles/Generalized-RF.html">Generalized Robinson-Foulds distances</a></li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://github.com/ms609/TreeDist" class="external-link">
-    <span class="fa fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/ms609/TreeDist"><span class="fa fa-github fa-lg"></span></a></li>
       </ul>
-<form class="navbar-form navbar-right hidden-xs hidden-sm" role="search">
-        <div class="form-group">
-          <input type="search" class="form-control" name="search-input" id="search-input" placeholder="Search..." aria-label="Search for..." autocomplete="off">
 </div>
-      </form>
-      
-    </div>
-<!--/.nav-collapse -->
+
+
   </div>
-<!--/.container -->
-</div>
-<!--/.navbar -->
+</nav><div class="container template-article">
 
-      
 
-      </header><div class="row">
-  <div class="col-md-9 contents">
-    <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Comparing splits using information theory</h1>
+
+
+<div class="row">
+  <main id="main" class="col-md-9"><div class="page-header">
+
+      <h1>Comparing splits using information theory</h1>
                         <h4 data-toc-skip class="author"><a href="https://smithlabdurham.github.io/" class="external-link">Martin R. Smith</a></h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/HEAD/vignettes/information.Rmd" class="external-link"><code>vignettes/information.Rmd</code></a></small>
-      <div class="hidden name"><code>information.Rmd</code></div>
-
+      <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/information.Rmd" class="external-link"><code>vignettes/information.Rmd</code></a></small>
+      <div class="d-none name"><code>information.Rmd</code></div>
     </div>
 
     
@@ -175,76 +116,102 @@ outcome of a coin toss, I must record either a <code>H</code> or a
 <code>T</code>, and with each of the two symbols equally likely, there
 is no way to compress the results of multiple tosses.</p>
 <p>The Shannon <span class="citation">(1948)</span> information content
-of an outcome <span class="math inline">\(x\)</span> is defined to be
-<span class="math inline">\(h(x) = -\log_2{P(x)}\)</span>, which
-simplifies to <span class="math inline">\(\log_2{n}\)</span> when all
-<span class="math inline">\(n\)</span> outcomes are equally likely.
-Thus, the outcome of a fair coin toss delivers <span class="math inline">\(\log_2{2} = 1\textrm{ bit}\)</span> of
-information; the outcome of rolling a fair six-sided die contains <span class="math inline">\(\log_2{6} \approx 2.58\textrm{ bits}\)</span> of
-information; and the outcome of selecting at random one of the 105
-unrooted binary six-leaf trees is <span class="math inline">\(\log_2{105} \approx 6.71\textrm{
-bits}\)</span>.</p>
+of an outcome
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>
+is defined to be
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>−</mo><msub><mo>log</mo><mn>2</mn></msub><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mrow><annotation encoding="application/x-tex">h(x) = -\log_2{P(x)}</annotation></semantics></math>,
+which simplifies to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>log</mo><mn>2</mn></msub><mi>n</mi></mrow><annotation encoding="application/x-tex">\log_2{n}</annotation></semantics></math>
+when all
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+outcomes are equally likely. Thus, the outcome of a fair coin toss
+delivers
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>log</mo><mn>2</mn></msub><mn>2</mn><mo>=</mo><mn>1</mn><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> bit</mtext></mrow></mrow><annotation encoding="application/x-tex">\log_2{2} = 1\textrm{ bit}</annotation></semantics></math>
+of information; the outcome of rolling a fair six-sided die contains
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>log</mo><mn>2</mn></msub><mn>6</mn><mo>≈</mo><mn>2.58</mn><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> bits</mtext></mrow></mrow><annotation encoding="application/x-tex">\log_2{6} \approx 2.58\textrm{ bits}</annotation></semantics></math>
+of information; and the outcome of selecting at random one of the 105
+unrooted binary six-leaf trees is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>log</mo><mn>2</mn></msub><mn>105</mn><mo>≈</mo><mn>6.71</mn><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> bits</mtext></mrow></mrow><annotation encoding="application/x-tex">\log_2{105} \approx 6.71\textrm{ bits}</annotation></semantics></math>.</p>
 <p>Unlikely outcomes are more surprising, and thus contain more
 information than likely outcomes. The information content of rolling a
-twelve on two fair six-sided dice is <span class="math inline">\(-\log_2{\frac{1}{36}} \approx 5.16\textrm{
-bits}\)</span>, whereas a seven, which could be produced by six of the
-36 possible rolls (<code>1 &amp; 6</code>, <code>2 &amp; 5</code>, …),
-is less surprising, and thus contains less information: <span class="math inline">\(-\log_2{\frac{6}{36}} \approx 2.58\textrm{
-bits}\)</span>. An additional 2.58 bits of information would be required
-to establish which of the six possible rolls produced the seven.</p>
+twelve on two fair six-sided dice is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><msub><mo>log</mo><mn>2</mn></msub><mfrac><mn>1</mn><mn>36</mn></mfrac><mo>≈</mo><mn>5.16</mn><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> bits</mtext></mrow></mrow><annotation encoding="application/x-tex">-\log_2{\frac{1}{36}} \approx 5.16\textrm{ bits}</annotation></semantics></math>,
+whereas a seven, which could be produced by six of the 36 possible rolls
+(<code>1 &amp; 6</code>, <code>2 &amp; 5</code>, …), is less surprising,
+and thus contains less information:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><msub><mo>log</mo><mn>2</mn></msub><mfrac><mn>6</mn><mn>36</mn></mfrac><mo>≈</mo><mn>2.58</mn><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> bits</mtext></mrow></mrow><annotation encoding="application/x-tex">-\log_2{\frac{6}{36}} \approx 2.58\textrm{ bits}</annotation></semantics></math>.
+An additional 2.58 bits of information would be required to establish
+which of the six possible rolls produced the seven.</p>
 <div class="section level3">
 <h3 id="application-to-splits">Application to splits<a class="anchor" aria-label="anchor" href="#application-to-splits"></a>
 </h3>
-<p>The split <span class="math inline">\(S_1 =\)</span>
-<code>AB|CDEF</code> is found in 15 of the 105 six-leaf trees; as such,
-the probability that a randomly drawn tree contains <span class="math inline">\(S_1\)</span> is <span class="math inline">\(P(S_1)
-= \frac{15}{105}\)</span>, and the information content <span class="math inline">\(h(S_1) =
--\log_2{\frac{15}{105}} \approx 2.81\textrm{ bits}\)</span>. <span class="citation">Steel &amp; Penny (2006)</span> dub this quantity the
-<strong>phylogenetic information content</strong>.</p>
-<p>Likewise, the split <span class="math inline">\(S_2 =\)</span>
-<code>ABC|DEF</code> occurs in nine of the 105 six-leaf trees, so <span class="math inline">\(h(S_2) = -\log_2{\frac{9}{105}} \approx
-3.54\textrm{ bits}\)</span>. Three six-leaf trees contain both splits,
-so in combination the splits deliver <span class="math inline">\(h(S_1,S_2) = -\log_2{\frac{3}{105}} \approx
-5.13\textrm{ bits}\)</span> of information.</p>
-<p>Because <span class="math inline">\(h(S_1,S_2) &lt; h(S_1) +
-h(S_2)\)</span>, some of the information in <span class="math inline">\(S_1\)</span> is also present in <span class="math inline">\(S_2\)</span>. The information in common between
-<span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> is <span class="math inline">\(h_{shared}(S_1, S_2) =
-h(S_1) + h(S_2) - h(S_1,S_2) \approx 1.22\textrm{ bits}\)</span>. The
-information unique to <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> is <span class="math inline">\(h_{different}(S_1,S_2) =
-2h(S_1,S_2) - h(S_1) - h(S_2) \approx 3.91\textrm{ bits}\)</span>.</p>
+<p>The split
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mn>1</mn></msub><mo>=</mo></mrow><annotation encoding="application/x-tex">S_1 =</annotation></semantics></math><code>AB|CDEF</code> is found in 15 of the 105 six-leaf trees; as such,
+the probability that a randomly drawn tree contains
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>1</mn></msub><annotation encoding="application/x-tex">S_1</annotation></semantics></math>
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mn>15</mn><mn>105</mn></mfrac></mrow><annotation encoding="application/x-tex">P(S_1) = \frac{15}{105}</annotation></semantics></math>,
+and the information content
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>−</mo><msub><mo>log</mo><mn>2</mn></msub><mfrac><mn>15</mn><mn>105</mn></mfrac><mo>≈</mo><mn>2.81</mn><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> bits</mtext></mrow></mrow><annotation encoding="application/x-tex">h(S_1) =
+-\log_2{\frac{15}{105}} \approx 2.81\textrm{ bits}</annotation></semantics></math>.
+<span class="citation">Steel &amp; Penny (2006)</span> dub this quantity
+the <strong>phylogenetic information content</strong>.</p>
+<p>Likewise, the split
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mn>2</mn></msub><mo>=</mo></mrow><annotation encoding="application/x-tex">S_2 =</annotation></semantics></math><code>ABC|DEF</code> occurs in nine of the 105 six-leaf trees, so
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>−</mo><msub><mo>log</mo><mn>2</mn></msub><mfrac><mn>9</mn><mn>105</mn></mfrac><mo>≈</mo><mn>3.54</mn><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> bits</mtext></mrow></mrow><annotation encoding="application/x-tex">h(S_2) = -\log_2{\frac{9}{105}} \approx 3.54\textrm{ bits}</annotation></semantics></math>.
+Three six-leaf trees contain both splits, so in combination the splits
+deliver
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo>,</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>−</mo><msub><mo>log</mo><mn>2</mn></msub><mfrac><mn>3</mn><mn>105</mn></mfrac><mo>≈</mo><mn>5.13</mn><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> bits</mtext></mrow></mrow><annotation encoding="application/x-tex">h(S_1,S_2) = -\log_2{\frac{3}{105}} \approx 5.13\textrm{ bits}</annotation></semantics></math>
+of information.</p>
+<p>Because
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo>,</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>&lt;</mo><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">h(S_1,S_2) &lt; h(S_1) + h(S_2)</annotation></semantics></math>,
+some of the information in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>1</mn></msub><annotation encoding="application/x-tex">S_1</annotation></semantics></math>
+is also present in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>2</mn></msub><annotation encoding="application/x-tex">S_2</annotation></semantics></math>.
+The information in common between
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>1</mn></msub><annotation encoding="application/x-tex">S_1</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>2</mn></msub><annotation encoding="application/x-tex">S_2</annotation></semantics></math>
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>h</mi><mrow><mi>s</mi><mi>h</mi><mi>a</mi><mi>r</mi><mi>e</mi><mi>d</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo>,</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo>,</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>≈</mo><mn>1.22</mn><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> bits</mtext></mrow></mrow><annotation encoding="application/x-tex">h_{shared}(S_1, S_2) =
+h(S_1) + h(S_2) - h(S_1,S_2) \approx 1.22\textrm{ bits}</annotation></semantics></math>.
+The information unique to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>1</mn></msub><annotation encoding="application/x-tex">S_1</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>2</mn></msub><annotation encoding="application/x-tex">S_2</annotation></semantics></math>
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>h</mi><mrow><mi>d</mi><mi>i</mi><mi>f</mi><mi>f</mi><mi>e</mi><mi>r</mi><mi>e</mi><mi>n</mi><mi>t</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo>,</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>2</mn><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo>,</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>h</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>≈</mo><mn>3.91</mn><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> bits</mtext></mrow></mrow><annotation encoding="application/x-tex">h_{different}(S_1,S_2) =
+2h(S_1,S_2) - h(S_1) - h(S_2) \approx 3.91\textrm{ bits}</annotation></semantics></math>.</p>
 <p>These quantities can be calculated using functions in the ‘<a href="https://ms609.github.io/TreeTools/" class="external-link">TreeTools</a>’ package.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeTools/" class="external-link">"TreeTools"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeDist/">"TreeDist"</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Registered S3 method overwritten by 'phangorn':</span></span>
-<span><span class="co">##   method   from     </span></span>
-<span><span class="co">##   [.phyDat TreeTools</span></span></code></pre>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">treesMatchingSplit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ms609.github.io/TreeDist/">"TreeDist"</a></span><span class="op">)</span></span>
+<span><span class="va">treesMatchingSplit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  AB.CDEF <span class="op">=</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TreesMatchingSplit.html" class="external-link">TreesMatchingSplit</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span>,</span>
 <span>  ABC.DEF <span class="op">=</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/TreesMatchingSplit.html" class="external-link">TreesMatchingSplit</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">treesMatchingSplit</span></span></code></pre></div>
 <pre><code><span><span class="co">## AB.CDEF ABC.DEF </span></span>
 <span><span class="co">##      15       9</span></span></code></pre>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">proportionMatchingSplit</span> <span class="op">&lt;-</span> <span class="va">treesMatchingSplit</span> <span class="op">/</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/NRooted.html" class="external-link">NUnrooted</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span>
 <span><span class="va">proportionMatchingSplit</span></span></code></pre></div>
 <pre><code><span><span class="co">##    AB.CDEF    ABC.DEF </span></span>
 <span><span class="co">## 0.14285714 0.08571429</span></span></code></pre>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">splitInformation</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">proportionMatchingSplit</span><span class="op">)</span></span>
 <span><span class="va">splitInformation</span></span></code></pre></div>
 <pre><code><span><span class="co">##  AB.CDEF  ABC.DEF </span></span>
 <span><span class="co">## 2.807355 3.544321</span></span></code></pre>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">treesMatchingBoth</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SplitSharedInformation.html">TreesConsistentWithTwoSplits</a></span><span class="op">(</span><span class="fl">6</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="va">combinedInformation</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">treesMatchingBoth</span> <span class="op">/</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/NRooted.html" class="external-link">NUnrooted</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">sharedInformation</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">splitInformation</span><span class="op">)</span> <span class="op">-</span> <span class="va">combinedInformation</span></span>
 <span><span class="va">sharedInformation</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 1.222392</span></span></code></pre>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Or more concisely:</span></span>
 <span><span class="fu"><a href="../reference/SplitSharedInformation.html">SplitSharedInformation</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">6</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 1.222392</span></span></code></pre>
@@ -258,27 +225,35 @@ Likewise, more even splits contain more information than less even splits
 <h2 id="entropy">Entropy<a class="anchor" aria-label="anchor" href="#entropy"></a>
 </h2>
 <p>Entropy is the average information content of each outcome, weighted
-by its probability: <span class="math inline">\(\sum{-p
-\log_2(p)}\)</span>. Where all <span class="math inline">\(n\)</span>
-outcomes are equiprobable, this simplifies to <span class="math inline">\(\log_2{n}\)</span>.</p>
+by its probability:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∑</mo><mrow><mo>−</mo><mi>p</mi><msub><mo>log</mo><mn>2</mn></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>p</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mrow><annotation encoding="application/x-tex">\sum{-p \log_2(p)}</annotation></semantics></math>.
+Where all
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+outcomes are equiprobable, this simplifies to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>log</mo><mn>2</mn></msub><mi>n</mi></mrow><annotation encoding="application/x-tex">\log_2{n}</annotation></semantics></math>.</p>
 <p>Consider a case in which Jane rolls a dice, and makes two true
-statements about the outcome <span class="math inline">\(x\)</span>:</p>
-<p><span class="math inline">\(S_1\)</span>: “Is the roll even?”.</p>
+statements about the outcome
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>:</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>1</mn></msub><annotation encoding="application/x-tex">S_1</annotation></semantics></math>:
+“Is the roll even?”.</p>
 <ul>
 <li>Two equally-possible outcomes: yes or no</li>
-<li>Entropy: <span class="math inline">\(H(S_1) = \log_2{2} = 1\textrm{
-bit}\)</span>.</li>
+<li>Entropy:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mo>log</mo><mn>2</mn></msub><mn>2</mn><mo>=</mo><mn>1</mn><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> bit</mtext></mrow></mrow><annotation encoding="application/x-tex">H(S_1) = \log_2{2} = 1\textrm{ bit}</annotation></semantics></math>.</li>
 </ul>
-<p><span class="math inline">\(S_2\)</span>: “Is the roll greater than
-3?”</p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>2</mn></msub><annotation encoding="application/x-tex">S_2</annotation></semantics></math>:
+“Is the roll greater than 3?”</p>
 <ul>
 <li>Two equally-possible outcomes: yes or no</li>
-<li>Entropy: <span class="math inline">\(H(S_2) = \log_2{2} = 1\textrm{
-bit}\)</span>.</li>
+<li>Entropy:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><msub><mo>log</mo><mn>2</mn></msub><mn>2</mn><mo>=</mo><mn>1</mn><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> bit</mtext></mrow></mrow><annotation encoding="application/x-tex">H(S_2) = \log_2{2} = 1\textrm{ bit}</annotation></semantics></math>.</li>
 </ul>
-<p>The joint entropy of <span class="math inline">\(S_1\)</span> and
-<span class="math inline">\(S_2\)</span> is the entropy of the
-association matrix that considers each possible outcome:</p>
+<p>The joint entropy of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>1</mn></msub><annotation encoding="application/x-tex">S_1</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>2</mn></msub><annotation encoding="application/x-tex">S_2</annotation></semantics></math>
+is the entropy of the association matrix that considers each possible
+outcome:</p>
 <table class="table">
 <colgroup>
 <col width="25%">
@@ -288,58 +263,69 @@ association matrix that considers each possible outcome:</p>
 <thead><tr class="header">
 <th> </th>
 <th>
-<span class="math inline">\(S_1: x\)</span> odd</th>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mn>1</mn></msub><mo>:</mo><mi>x</mi></mrow><annotation encoding="application/x-tex">S_1: x</annotation></semantics></math>
+odd</th>
 <th>
-<span class="math inline">\(S_1: x\)</span> even</th>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mn>1</mn></msub><mo>:</mo><mi>x</mi></mrow><annotation encoding="application/x-tex">S_1: x</annotation></semantics></math>
+even</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><span class="math inline">\(S_2: x \le 3\)</span></td>
-<td><span class="math inline">\(x \in {1, 3}; p =
-\frac{2}{6}\)</span></td>
-<td><span class="math inline">\(x = 2; p = \frac{1}{6}\)</span></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mn>2</mn></msub><mo>:</mo><mi>x</mi><mo>≤</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">S_2: x \le 3</annotation></semantics></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>∈</mo><mrow><mn>1</mn><mo>,</mo><mn>3</mn></mrow><mo>;</mo><mi>p</mi><mo>=</mo><mfrac><mn>2</mn><mn>6</mn></mfrac></mrow><annotation encoding="application/x-tex">x \in {1, 3}; p = \frac{2}{6}</annotation></semantics></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mn>2</mn><mo>;</mo><mi>p</mi><mo>=</mo><mfrac><mn>1</mn><mn>6</mn></mfrac></mrow><annotation encoding="application/x-tex">x = 2; p = \frac{1}{6}</annotation></semantics></math></td>
 </tr>
 <tr class="even">
-<td><span class="math inline">\(S_2: x &gt; 3\)</span></td>
-<td><span class="math inline">\(x = 5; p = \frac{1}{6}\)</span></td>
-<td><span class="math inline">\(x \in {4, 6}; p =
-\frac{2}{6}\)</span></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mn>2</mn></msub><mo>:</mo><mi>x</mi><mo>&gt;</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">S_2: x &gt; 3</annotation></semantics></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mn>5</mn><mo>;</mo><mi>p</mi><mo>=</mo><mfrac><mn>1</mn><mn>6</mn></mfrac></mrow><annotation encoding="application/x-tex">x = 5; p = \frac{1}{6}</annotation></semantics></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>∈</mo><mrow><mn>4</mn><mo>,</mo><mn>6</mn></mrow><mo>;</mo><mi>p</mi><mo>=</mo><mfrac><mn>2</mn><mn>6</mn></mfrac></mrow><annotation encoding="application/x-tex">x \in {4, 6}; p = \frac{2}{6}</annotation></semantics></math></td>
 </tr>
 </tbody>
 </table>
-<p><span class="math inline">\(\begin{aligned}
-H(S_1, S_2) = \frac{2}{3}\log_2{\frac{2}{3}} +
-\frac{1}{3}\log_2{\frac{1}{3}} + \frac{1}{3}\log_2{\frac{1}{3}} +
-\frac{2}{3}\log_2{\frac{2}{3}} \approx
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo>,</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mn>2</mn><mn>3</mn></mfrac><msub><mo>log</mo><mn>2</mn></msub><mfrac><mn>2</mn><mn>3</mn></mfrac><mo>+</mo><mfrac><mn>1</mn><mn>3</mn></mfrac><msub><mo>log</mo><mn>2</mn></msub><mfrac><mn>1</mn><mn>3</mn></mfrac><mo>+</mo><mfrac><mn>1</mn><mn>3</mn></mfrac><msub><mo>log</mo><mn>2</mn></msub><mfrac><mn>1</mn><mn>3</mn></mfrac><mo>+</mo><mfrac><mn>2</mn><mn>3</mn></mfrac><msub><mo>log</mo><mn>2</mn></msub><mfrac><mn>2</mn><mn>3</mn></mfrac><mo>≈</mo><mn>1.84</mn><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> bits</mtext></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned}
+H(S_1, S_2) = \frac{2}{3}\log_2{\frac{2}{3}} + \frac{1}{3}\log_2{\frac{1}{3}} + \frac{1}{3}\log_2{\frac{1}{3}} + \frac{2}{3}\log_2{\frac{2}{3}} \approx
 1.84 \textrm{ bits}
-\end{aligned}\)</span></p>
-<p>Note that this less than the <span class="math inline">\(\log_2{6}
-\approx 2.58\textrm{ bits}\)</span> we require to determine the exact
-value of the roll: knowledge of <span class="math inline">\(S_1\)</span>
-and <span class="math inline">\(S_2\)</span> is not guaranteed to be
-sufficient to unambiguously identify <span class="math inline">\(x\)</span>.</p>
-<p>The mutual information between <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> describes how much knowledge of <span class="math inline">\(S_1\)</span> reduces our uncertainty in <span class="math inline">\(S_2\)</span> (or <em>vice versa</em>). So if we
-learn that <span class="math inline">\(S_1\)</span> is ‘even’, we become
-a little more confident that <span class="math inline">\(S_2\)</span> is
-‘greater than three’.</p>
-<p>The mutual information <span class="math inline">\(I(S_1;S_2)\)</span>, denoted in blue below,
-corresponds to the sum of the individual entropies, minus the joint
-entropy:</p>
-<span class="math display">\[\begin{aligned}
+\end{aligned}</annotation></semantics></math></p>
+<p>Note that this less than the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mo>log</mo><mn>2</mn></msub><mn>6</mn><mo>≈</mo><mn>2.58</mn><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> bits</mtext></mrow></mrow><annotation encoding="application/x-tex">\log_2{6} \approx 2.58\textrm{ bits}</annotation></semantics></math>
+we require to determine the exact value of the roll: knowledge of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>1</mn></msub><annotation encoding="application/x-tex">S_1</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>2</mn></msub><annotation encoding="application/x-tex">S_2</annotation></semantics></math>
+is not guaranteed to be sufficient to unambiguously identify
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>.</p>
+<p>The mutual information between
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>1</mn></msub><annotation encoding="application/x-tex">S_1</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>2</mn></msub><annotation encoding="application/x-tex">S_2</annotation></semantics></math>
+describes how much knowledge of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>1</mn></msub><annotation encoding="application/x-tex">S_1</annotation></semantics></math>
+reduces our uncertainty in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>2</mn></msub><annotation encoding="application/x-tex">S_2</annotation></semantics></math>
+(or <em>vice versa</em>). So if we learn that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>1</mn></msub><annotation encoding="application/x-tex">S_1</annotation></semantics></math>
+is ‘even’, we become a little more confident that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>2</mn></msub><annotation encoding="application/x-tex">S_2</annotation></semantics></math>
+is ‘greater than three’.</p>
+<p>The mutual information
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo>;</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">I(S_1;S_2)</annotation></semantics></math>,
+denoted in blue below, corresponds to the sum of the individual
+entropies, minus the joint entropy:</p>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo>;</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>+</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo>,</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned}
 I(S_1;S_2) = H(S_1) + H(S_2) - H(S_1, S_2)
-\end{aligned}\]</span>
-<p>If two statements have high mutual information, then once you have
+\end{aligned}</annotation></semantics></math><p>If two statements have high mutual information, then once you have
 heard one statement, you already have a good idea what the outcome of
 the other statement will be, and thus learn little new on hearing
 it.</p>
 <p>The entropy distance, also termed the variation of information <span class="citation">(Meila, 2007)</span>, corresponds to the information
-that <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> do <em>not</em> have in common
-(denoted below in yellow):</p>
-<span class="math display">\[\begin{aligned}
-H_D(S_1, S_2) = H(S_1, S_2) - I(S_1;S_2) = 2H(S_1, S_2) - H(S_1) -
-H(S_2)
-\end{aligned}\]</span>
-<p>The higher the entropy distance, the harder it is to predict the
+that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>1</mn></msub><annotation encoding="application/x-tex">S_1</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>2</mn></msub><annotation encoding="application/x-tex">S_2</annotation></semantics></math>
+do <em>not</em> have in common (denoted below in yellow):</p>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mtable><mtr><mtd columnalign="right" style="text-align: right"><msub><mi>H</mi><mi>D</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo>,</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo>,</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>I</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo>;</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mn>2</mn><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo>,</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mtd></mtr></mtable><annotation encoding="application/x-tex">\begin{aligned}
+H_D(S_1, S_2) = H(S_1, S_2) - I(S_1;S_2) = 2H(S_1, S_2) - H(S_1) - H(S_2)
+\end{aligned}</annotation></semantics></math><p>The higher the entropy distance, the harder it is to predict the
 outcome of one statement from the other; the maximum entropy distance
 occurs when the two statements are entirely independent.</p>
 <p><img src="information_files/figure-html/mackay-8-1-1.png" width="50%" style="display: block; margin: auto;"></p>
@@ -350,13 +336,14 @@ occurs when the two statements are entirely independent.</p>
 these partitions ‘A’ and ‘B’, and select a leaf at random, we can view
 the partition label associated with the leaf. If 60/100 leaves belong to
 partition ‘A’, and 40/100 to ‘B’, then the a leaf drawn at random has a
-40% chance of bearing the label ‘A’; the split has an entropy of <span class="math inline">\(-\frac{60}{100}\log_2{\frac{60}{100}}-\frac{40}{100}\log_2{\frac{40}{100}}
-\approx 0.97\textrm{ bits}\)</span>.</p>
+40% chance of bearing the label ‘A’; the split has an entropy of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mfrac><mn>60</mn><mn>100</mn></mfrac><msub><mo>log</mo><mn>2</mn></msub><mfrac><mn>60</mn><mn>100</mn></mfrac><mo>−</mo><mfrac><mn>40</mn><mn>100</mn></mfrac><msub><mo>log</mo><mn>2</mn></msub><mfrac><mn>40</mn><mn>100</mn></mfrac><mo>≈</mo><mn>0.97</mn><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> bits</mtext></mrow></mrow><annotation encoding="application/x-tex">-\frac{60}{100}\log_2{\frac{60}{100}}-\frac{40}{100}\log_2{\frac{40}{100}} \approx 0.97\textrm{ bits}</annotation></semantics></math>.</p>
 <p>Now consider a different split, perhaps in a different tree, that
 assigns 50 leaves from ‘A’ to a partition ‘C’, leaving the remaining 10
 leaves from ‘A’, along with the 40 from ‘B’, in partition ‘D’. This
-split has <span class="math inline">\(-\frac{50}{100}\log_2{\frac{50}{100}}-\frac{50}{100}\log_2{\frac{50}{100}}
-= 1\textrm{ bit}\)</span> of entropy.<br>
+split has
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mfrac><mn>50</mn><mn>100</mn></mfrac><msub><mo>log</mo><mn>2</mn></msub><mfrac><mn>50</mn><mn>100</mn></mfrac><mo>−</mo><mfrac><mn>50</mn><mn>100</mn></mfrac><msub><mo>log</mo><mn>2</mn></msub><mfrac><mn>50</mn><mn>100</mn></mfrac><mo>=</mo><mn>1</mn><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> bit</mtext></mrow></mrow><annotation encoding="application/x-tex">-\frac{50}{100}\log_2{\frac{50}{100}}-\frac{50}{100}\log_2{\frac{50}{100}} = 1\textrm{ bit}</annotation></semantics></math>
+of entropy.<br>
 Put these together, and a randomly selected leaf may now bear one of
 three possible labellings:</p>
 <ul>
@@ -364,10 +351,10 @@ three possible labellings:</p>
 <li>‘A’ and ‘D’: 10 leaves</li>
 <li>‘B’ and ‘D’: 40 leaves.</li>
 </ul>
-<p>The two splits thus have a joint entropy of <span class="math inline">\(-\frac{50}{100}\log_2{\frac{50}{100}}
+<p>The two splits thus have a joint entropy of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mfrac><mn>50</mn><mn>100</mn></mfrac><msub><mo>log</mo><mn>2</mn></msub><mfrac><mn>50</mn><mn>100</mn></mfrac><mo>−</mo><mfrac><mn>10</mn><mn>100</mn></mfrac><msub><mo>log</mo><mn>2</mn></msub><mfrac><mn>10</mn><mn>100</mn></mfrac><mo>−</mo><mfrac><mn>40</mn><mn>100</mn></mfrac><msub><mo>log</mo><mn>2</mn></msub><mfrac><mn>40</mn><mn>100</mn></mfrac><mo>≈</mo><mn>1.36</mn><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> bits</mtext></mrow><mo>&lt;</mo><mn>0.97</mn><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">-\frac{50}{100}\log_2{\frac{50}{100}}
 -\frac{10}{100}\log_2{\frac{10}{100}}
--\frac{40}{100}\log_2{\frac{40}{100}} \approx 1.36\textrm{ bits} &lt;
-0.97 + 1\)</span>.</p>
+-\frac{40}{100}\log_2{\frac{40}{100}} \approx 1.36\textrm{ bits} &lt; 0.97 + 1</annotation></semantics></math>.</p>
 <p>The joint entropy is less than the sum of the individual entropies
 because the two splits contain some mutual information: for instance, if
 a leaf bears the label ‘B’, we can be certain that it will also bear the
@@ -376,16 +363,29 @@ their division of leaves, the more mutual information they will exhibit.
 I term this the <strong>clustering information</strong>, in
 contradistinction to the concept of phylogenetic information discussed
 above.</p>
-<p>More formally, let split <span class="math inline">\(S\)</span>
-divides <span class="math inline">\(n\)</span> leaves into two
-partitions <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>. The probability that a randomly chosen
-leaf <span class="math inline">\(x\)</span> is in partition <span class="math inline">\(k\)</span> is <span class="math inline">\(P(x \in
-k) = \frac{|k|}{n}\)</span>. <span class="math inline">\(S\)</span> thus
-corresponds to a random variable with entropy <span class="math inline">\(H(S) = -\frac{|A|}{n} \log_2{\frac{|A|}{n}} -
-\frac{|B|}{n}\log_2{\frac{|B|}{n}}\)</span> <span class="citation">(Meila, 2007)</span>. The joint entropy of two splits,
-<span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span>, corresponds to the entropy of the
-association matrix of probabilities that a randomly selected leaf
-belongs to each pair of partitions:</p>
+<p>More formally, let split
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
+divides
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+leaves into two partitions
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>.
+The probability that a randomly chosen leaf
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>
+is in partition
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>x</mi><mo>∈</mo><mi>k</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><mo stretchy="true" form="prefix">|</mo><mi>k</mi><mo stretchy="true" form="postfix">|</mo></mrow><mi>n</mi></mfrac></mrow><annotation encoding="application/x-tex">P(x \in k) = \frac{|k|}{n}</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
+thus corresponds to a random variable with entropy
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>S</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>−</mo><mfrac><mrow><mo stretchy="true" form="prefix">|</mo><mi>A</mi><mo stretchy="true" form="postfix">|</mo></mrow><mi>n</mi></mfrac><msub><mo>log</mo><mn>2</mn></msub><mfrac><mrow><mo stretchy="true" form="prefix">|</mo><mi>A</mi><mo stretchy="true" form="postfix">|</mo></mrow><mi>n</mi></mfrac><mo>−</mo><mfrac><mrow><mo stretchy="true" form="prefix">|</mo><mi>B</mi><mo stretchy="true" form="postfix">|</mo></mrow><mi>n</mi></mfrac><msub><mo>log</mo><mn>2</mn></msub><mfrac><mrow><mo stretchy="true" form="prefix">|</mo><mi>B</mi><mo stretchy="true" form="postfix">|</mo></mrow><mi>n</mi></mfrac></mrow><annotation encoding="application/x-tex">H(S) = -\frac{|A|}{n} \log_2{\frac{|A|}{n}} -
+\frac{|B|}{n}\log_2{\frac{|B|}{n}}</annotation></semantics></math><span class="citation">(Meila, 2007)</span>. The joint entropy of two splits,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>1</mn></msub><annotation encoding="application/x-tex">S_1</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>2</mn></msub><annotation encoding="application/x-tex">S_2</annotation></semantics></math>,
+corresponds to the entropy of the association matrix of probabilities
+that a randomly selected leaf belongs to each pair of partitions:</p>
 <table class="table">
 <colgroup>
 <col width="23%">
@@ -394,37 +394,40 @@ belongs to each pair of partitions:</p>
 </colgroup>
 <thead><tr class="header">
 <th> </th>
-<th><span class="math inline">\(S_1: x \in A_1\)</span></th>
-<th><span class="math inline">\(S_1: x \in B_1\)</span></th>
+<th><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mn>1</mn></msub><mo>:</mo><mi>x</mi><mo>∈</mo><msub><mi>A</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">S_1: x \in A_1</annotation></semantics></math></th>
+<th><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mn>1</mn></msub><mo>:</mo><mi>x</mi><mo>∈</mo><msub><mi>B</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">S_1: x \in B_1</annotation></semantics></math></th>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><span class="math inline">\(S_2: x \in A_2\)</span></td>
-<td><span class="math inline">\(P(A_1,A_2) =
-\frac{|A_1 \cap A_2|}{n}\)</span></td>
-<td><span class="math inline">\(P(B_1,A_2) = \frac{|B_1 \cap
-A_2|}{n}\)</span></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mn>2</mn></msub><mo>:</mo><mi>x</mi><mo>∈</mo><msub><mi>A</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">S_2: x \in A_2</annotation></semantics></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>A</mi><mn>1</mn></msub><mo>,</mo><msub><mi>A</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>A</mi><mn>1</mn></msub><mo>∩</mo><msub><mi>A</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">|</mo></mrow><mi>n</mi></mfrac></mrow><annotation encoding="application/x-tex">P(A_1,A_2) =
+\frac{|A_1 \cap A_2|}{n}</annotation></semantics></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>B</mi><mn>1</mn></msub><mo>,</mo><msub><mi>A</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>B</mi><mn>1</mn></msub><mo>∩</mo><msub><mi>A</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">|</mo></mrow><mi>n</mi></mfrac></mrow><annotation encoding="application/x-tex">P(B_1,A_2) = \frac{|B_1 \cap A_2|}{n}</annotation></semantics></math></td>
 </tr>
 <tr class="even">
-<td><span class="math inline">\(S_2: x \in B_2\)</span></td>
-<td><span class="math inline">\(P(A_1,B_2) =
-\frac{|A_1 \cap B_2|}{n}\)</span></td>
-<td><span class="math inline">\(P(B_1,B_2) = \frac{|B_1 \cap
-B_2|}{n}\)</span></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>S</mi><mn>2</mn></msub><mo>:</mo><mi>x</mi><mo>∈</mo><msub><mi>B</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">S_2: x \in B_2</annotation></semantics></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>A</mi><mn>1</mn></msub><mo>,</mo><msub><mi>B</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>A</mi><mn>1</mn></msub><mo>∩</mo><msub><mi>B</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">|</mo></mrow><mi>n</mi></mfrac></mrow><annotation encoding="application/x-tex">P(A_1,B_2) =
+\frac{|A_1 \cap B_2|}{n}</annotation></semantics></math></td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>B</mi><mn>1</mn></msub><mo>,</mo><msub><mi>B</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mfrac><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi>B</mi><mn>1</mn></msub><mo>∩</mo><msub><mi>B</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">|</mo></mrow><mi>n</mi></mfrac></mrow><annotation encoding="application/x-tex">P(B_1,B_2) = \frac{|B_1 \cap B_2|}{n}</annotation></semantics></math></td>
 </tr>
 </tbody>
 </table>
-<p><span class="math inline">\(H(S_1, S_2) =
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>H</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>S</mi><mn>1</mn></msub><mo>,</mo><msub><mi>S</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>A</mi><mn>1</mn></msub><mo>,</mo><msub><mi>A</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><msub><mo>log</mo><mn>2</mn></msub><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>A</mi><mn>1</mn></msub><mo>,</mo><msub><mi>A</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mo>+</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>B</mi><mn>1</mn></msub><mo>,</mo><msub><mi>A</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><msub><mo>log</mo><mn>2</mn></msub><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>B</mi><mn>1</mn></msub><mo>,</mo><msub><mi>A</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mrow><annotation encoding="application/x-tex">H(S_1, S_2) =
 P(A_1,A_2) \log_2 {P(A_1,A_2)} +
-P(B_1,A_2) \log_2 {P(B_1,A_2)}\)</span></p>
-<p><span class="math inline">\(+ P(A_1,B_2)\log_2{P(A_1,B_2)} +
-P(B_1,B_2)\log_2{P(B_1,B_2)}\)</span></p>
+P(B_1,A_2) \log_2 {P(B_1,A_2)}</annotation></semantics></math></p>
+<p><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>+</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>A</mi><mn>1</mn></msub><mo>,</mo><msub><mi>B</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><msub><mo>log</mo><mn>2</mn></msub><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>A</mi><mn>1</mn></msub><mo>,</mo><msub><mi>B</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><mo>+</mo><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>B</mi><mn>1</mn></msub><mo>,</mo><msub><mi>B</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow><msub><mo>log</mo><mn>2</mn></msub><mrow><mi>P</mi><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>B</mi><mn>1</mn></msub><mo>,</mo><msub><mi>B</mi><mn>2</mn></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mrow><annotation encoding="application/x-tex">+ P(A_1,B_2)\log_2{P(A_1,B_2)} +
+P(B_1,B_2)\log_2{P(B_1,B_2)}</annotation></semantics></math></p>
 <p>These values can then be substituted into the definitions of mutual
 information and entropy distance given above.</p>
-<p>As <span class="math inline">\(S_1\)</span> and <span class="math inline">\(S_2\)</span> become more different, the
-disposition of <span class="math inline">\(S_1\)</span> gives less
-information about the configuration of <span class="math inline">\(S_2\)</span>, and the mutual information decreases
-accordingly.</p>
+<p>As
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>1</mn></msub><annotation encoding="application/x-tex">S_1</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>2</mn></msub><annotation encoding="application/x-tex">S_2</annotation></semantics></math>
+become more different, the disposition of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>1</mn></msub><annotation encoding="application/x-tex">S_1</annotation></semantics></math>
+gives less information about the configuration of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>2</mn></msub><annotation encoding="application/x-tex">S_2</annotation></semantics></math>,
+and the mutual information decreases accordingly.</p>
 </div>
 </div>
 <div class="section level2 unnumbered">
@@ -453,46 +456,26 @@ Oxford: Oxford University Press.
 </div>
 </div>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
-
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
 
-      <footer><div class="copyright">
-  <p></p>
-<p>Developed by <a href="https://smithlabdurham.github.io/" class="external-link">Martin R. Smith</a>.</p>
+    <footer><div class="pkgdown-footer-left">
+  <p>Developed by <a href="https://smithlabdurham.github.io/" class="external-link">Martin R. Smith</a>.</p>
 </div>
 
-<div class="pkgdown">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+<div class="pkgdown-footer-right">
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
 
-  
-<script src="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.js" integrity="sha256-GKvGqXDznoRYHCwKXGnuchvKSwmx9SRMrZOTh2g4Sb0=" crossorigin="anonymous"></script><script>
-  docsearch({
-    
-    
-    apiKey: '8bf44d312479af73720c5ca5fcc12eba',
-    indexName: 'treedist',
-    inputSelector: 'input#search-input.form-control',
-    transformData: function(hits) {
-      return hits.map(function (hit) {
-        hit.url = updateHitURL(hit);
-        return hit;
-      });
-    }
-  });
-</script>
-</body>
+
+
+
+
+  </body>
 </html>

@@ -1,5 +1,5 @@
 pandoc: 3.1.11
-pkgdown: 2.0.9
+pkgdown: 2.1.0
 pkgdown_sha: ~
 articles:
   compare-treesets: compare-treesets.html
@@ -11,8 +11,7 @@ articles:
   treespace: treespace.html
   using-distances: using-distances.html
   Using-TreeDist: Using-TreeDist.html
-last_built: 2024-06-27T13:09Z
+last_built: 2024-08-22T15:06Z
 urls:
   reference: https://ms609.github.io/TreeDist/reference
   article: https://ms609.github.io/TreeDist/articles
-
