@@ -3,7 +3,7 @@
 \encoding{UTF-8}
 \name{VisualizeMatching}
 \alias{VisualizeMatching}
-\title{Visualise a matching}
+\title{Visualize a matching}
 \usage{
 VisualizeMatching(
   Func,

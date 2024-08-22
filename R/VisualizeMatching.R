@@ -1,4 +1,4 @@
-#' Visualise a matching
+#' Visualize a matching
 #' 
 #' Depict the splits that are matched between two trees using a specified 
 #' [Generalized Robinson&ndash;Foulds](
