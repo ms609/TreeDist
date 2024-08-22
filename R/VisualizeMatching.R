@@ -32,10 +32,9 @@
 #' or `"none"`.
 #' @param edge.width,edge.color,\dots Additional parameters to send to `Plot()`.
 #' 
-#' @importFrom ape nodelabels edgelabels plot.phylo
-#' @importFrom colorspace qualitative_hcl sequential_hcl
-#' @importFrom graphics par
-#' @importFrom TreeTools as.Splits
+#' @returns `VisualizeMatching()` invisibly returns the matching of splits
+#' between `tree1` and `tree2` (i.e. 
+#' `Func(tree1, tree2, reportMatching = TRUE)`)
 #' 
 #' @examples 
 #' tree1 <- TreeTools::BalancedTree(6)
@@ -45,6 +44,10 @@
 #' VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2, matchZeros = FALSE)
 #' @template MRS
 #' @encoding UTF-8
+#' @importFrom ape nodelabels edgelabels plot.phylo
+#' @importFrom colorspace qualitative_hcl sequential_hcl
+#' @importFrom graphics par
+#' @importFrom TreeTools as.Splits
 #' @export
 VisualizeMatching <- function (Func, tree1, tree2, setPar = TRUE,
                                precision = 3L, Plot = plot.phylo,
@@ -208,5 +211,5 @@ VisualizeMatching <- function (Func, tree1, tree2, setPar = TRUE,
   .LabelUnpaired(splitEdges2, !paired2)
   
   # Return:
-  invisible()
+  invisible(matching)
 }

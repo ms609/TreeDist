@@ -54,6 +54,11 @@ or \code{"none"}.}
 
 \item{edge.width, edge.color, \dots}{Additional parameters to send to \code{Plot()}.}
 }
+\value{
+\code{VisualizeMatching()} invisibly returns the matching of splits
+between \code{tree1} and \code{tree2} (i.e.
+\code{Func(tree1, tree2, reportMatching = TRUE)})
+}
 \description{
 Depict the splits that are matched between two trees using a specified
 \href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html}{Generalized Robinson–Foulds}
