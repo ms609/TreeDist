@@ -41,7 +41,9 @@
 #' tree2 <- TreeTools::PectinateTree(6)
 #' 
 #' VisualizeMatching(RobinsonFouldsMatching, tree1, tree2)
-#' VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2, matchZeros = FALSE)
+#' matching <- VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2,
+#'                               matchZeros = FALSE)
+#' attributes(matching)
 #' @template MRS
 #' @encoding UTF-8
 #' @importFrom ape nodelabels edgelabels plot.phylo

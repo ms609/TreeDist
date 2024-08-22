@@ -76,7 +76,9 @@ tree1 <- TreeTools::BalancedTree(6)
 tree2 <- TreeTools::PectinateTree(6)
 
 VisualizeMatching(RobinsonFouldsMatching, tree1, tree2)
-VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2, matchZeros = FALSE)
+matching <- VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2,
+                              matchZeros = FALSE)
+attributes(matching)
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
