@@ -45,6 +45,7 @@ reference:
       - CompareAll
       - LAPJV
       - Plot3
+      - ReduceTrees
       - StartParallel
       - VisualizeMatching
 
