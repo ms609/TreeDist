@@ -100,6 +100,8 @@ articles:
 
 template:
   bootstrap: 5
+  bslib:
+    danger: "#A6081A" # Accessibility suggestion
   params:
     bootswatch: cerulean
     docsearch:
