@@ -19,7 +19,6 @@ VisualizeMatching(
   edge.frame = "rect",
   edge.width = 1,
   edge.color = "black",
-  show.edgelabels = TRUE,
   ...
 )
 }
@@ -43,9 +42,11 @@ similarity (\code{TRUE}), or leave them unpaired (\code{FALSE}).}
 width and colour (\code{TRUE}), or whether to draw edge widths according to the
 similarity of the associated splits (\code{FALSE}).}
 
-\item{edge.cex}{Character expansion for edge labels.}
+\item{edge.cex}{Character expansion for edge labels.
+If \code{FALSE}, suppress edge labels.}
 
-\item{value.cex}{Character expansion for values on edge labels.}
+\item{value.cex}{Character expansion for values on edge labels.
+If \code{FALSE}, values are not displayed.}
 
 \item{edge.frame}{Character specifying the kind of frame to be printed around
 the text of the edge labels.  Choose an abbreviation of \code{"rect"}, \code{"circle"},

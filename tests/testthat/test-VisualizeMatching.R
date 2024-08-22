@@ -65,6 +65,26 @@ test_that("VisualizeMatching() works", {
                       leaveRoom = FALSE)
   })
   
+  vdiffr::expect_doppelganger("Hidden edge labels", function() {
+    par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.2)
+    tree1 <- ape::read.tree(text="((1, 2), ((6, (7, 8)), (3, 4, (5, 9))));")
+    tree2 <- ape::read.tree(text="((1, 2), ((3, (4, (5, 9))), (6, (7, 8))));")
+    VisualizeMatching(RobinsonFouldsMatching, tree1, tree2,
+                      setPar = FALSE, precision = 3,
+                      edge.cex = 0,
+                      value.cex = 2,
+                      Plot = TreeDistPlot,
+                      matchZeros = TRUE,
+                      leaveRoom = FALSE)
+    VisualizeMatching(RobinsonFouldsMatching, tree1, tree2,
+                      setPar = FALSE, precision = 3,
+                      edge.cex = 2,
+                      value.cex = FALSE,
+                      Plot = TreeDistPlot,
+                      matchZeros = TRUE,
+                      leaveRoom = FALSE)
+  })
+  
   
   vdiffr::expect_doppelganger("RF: Collapse and change", function() {
     par(mfrow = c(2, 2), mar = rep(0.1, 4), cex = 1.5)
