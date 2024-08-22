@@ -14,8 +14,10 @@ VisualizeMatching(
   Plot = plot.phylo,
   matchZeros = TRUE,
   plainEdges = FALSE,
+  edge.cex = 0.8,
   edge.width = 1,
   edge.color = "black",
+  show.edgelabels = TRUE,
   ...
 )
 }
@@ -38,6 +40,8 @@ similarity (\code{TRUE}), or leave them unpaired (\code{FALSE}).}
 \item{plainEdges}{Logical specifying whether to plot edges with a uniform
 width and colour (\code{TRUE}), or whether to draw edge widths according to the
 similarity of the associated splits (\code{FALSE}).}
+
+\item{edge.cex}{Character expansion for edge labels.}
 
 \item{edge.width, edge.color, \dots}{Additional parameters to send to \code{Plot()}.}
 }

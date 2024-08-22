@@ -23,6 +23,7 @@
 #' @param plainEdges Logical specifying whether to plot edges with a uniform
 #' width and colour (`TRUE`), or whether to draw edge widths according to the
 #' similarity of the associated splits (`FALSE`).
+#' @param edge.cex Character expansion for edge labels.
 #' @param edge.width,edge.color,\dots Additional parameters to send to `Plot()`.
 #' 
 #' @importFrom ape nodelabels edgelabels plot.phylo
@@ -77,9 +78,9 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
     if (any(unpaired)) {
       #edgelabels(text="\u2012", edge=splitEdges[unpaired],
       edgelabels(text = expression("-"), edge = splitEdges[unpaired],
-                 frame = "n", col = faint, adj = adjNo)
+                 frame = "n", col = faint, cex = edge.cex, adj = adjNo)
       edgelabels(text = "0", edge = splitEdges[unpaired],
-                 frame = "n", col = faint, cex = 0.8, adj = adjVal)
+                 frame = "n", col = faint, cex = edge.cex, adj = adjVal)
     }
   }
   
@@ -165,7 +166,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
     edgelabels(text = pairLabels, edge = splitEdges1[paired1],
                bg = palette, adj = adjNo)
     edgelabels(text = pairedPairScores, edge = splitEdges1[paired1], 
-               frame = "n", adj = adjVal, cex = 0.8,
+               frame = "n", adj = adjVal, cex = edge.cex,
                col = ifelse(pairedPairScores, "black", faint))
   }
   LabelUnpaired(splitEdges1, !paired1)
@@ -181,10 +182,12 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
              Normalize(pairedPairScores, na.rm = TRUE), ...)
   }
   if (any(pairLabels)) {
-    edgelabels(text = pairLabels, edge = splitEdges2[pairNames2],
                bg = palette, adj=adjNo)
+    edgelabels(text = pairLabels, edge = splitEdges2[pairNames2], 
+               cex = edge.cex,
+               bg = palette, adj = adjNo)
     edgelabels(text = pairedPairScores, edge = splitEdges2[pairNames2], 
-               frame = "n", adj = adjVal, cex = 0.8,
+               frame = "n", adj = adjVal, cex = edge.cex, 
                col = ifelse(pairedPairScores, "black", faint))
   }
   LabelUnpaired(splitEdges2, !paired2)
