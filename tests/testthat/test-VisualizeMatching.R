@@ -54,6 +54,7 @@ test_that("VisualizeMatching() works", {
     tree2 <- ape::read.tree(text="((1, 2), ((3, (4, (5, 9))), (6, (7, 8))));")
     VisualizeMatching(RobinsonFouldsMatching, tree1, tree2,
                       setPar = FALSE, precision = 3,
+                      edge.cex = 1,
                       Plot = TreeDistPlot,
                       matchZeros = TRUE,
                       leaveRoom = FALSE)
@@ -119,6 +120,7 @@ test_that("VisualizeMatching() handles unrooted trees", {
     tree1 <- UnrootTree(BalancedTree(1:5))
     tree2 <- UnrootTree(PectinateTree(1:5))
     VisualizeMatching(RobinsonFouldsMatching, tree1, tree2,
+                      edge.frame = "n",
                       setPar = FALSE,
                       Plot = TreeDistPlot)
   })
