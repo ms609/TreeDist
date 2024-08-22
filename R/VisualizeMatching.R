@@ -96,9 +96,12 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
       if (any(scores < 0)) {
         stop("Negative scores not supported")                                   # nocov
       }
-      if (max(scores) == 0) return(scores)
-      if (min(scores) == max(scores)) return(rep(1L, length(scores)))
-      
+      if (max(scores) == 0) {
+        return(scores)
+      }
+      if (min(scores) == max(scores)) {
+        return(rep(1L, length(scores)))
+      }
       scores / max(scores)
     }
     
@@ -112,7 +115,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
         splitEdges <- vapply(splitNodes, match, table = child, 0)
         got <- rootChildren %in% splitNodes
         if (any(got)) {
-          if(sum(got) != 1) {
+          if (sum(got) != 1) {
             warning("Unexpected polytomy")
           }
           c(score = as.integer(which(splitNodes %in% rootChildren[got])),
@@ -141,7 +144,7 @@ VisualizeMatching <- function(Func, tree1, tree2, setPar = TRUE,
       }
       
       edge.width <- rep(1, nrow(edge))
-      edge.width[se] <-  1 + (10 * ns)
+      edge.width[se] <- 1 + (10 * ns)
       edge.color <- rep("black", nrow(edge))
       edge.color[se] <- edgeColPalette[1 + ceiling(255 * ns)]
       
