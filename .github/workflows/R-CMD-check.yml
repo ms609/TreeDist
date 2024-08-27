@@ -88,6 +88,7 @@ jobs:
             RcppGSL@0.3.8
             RcppZiggurat@0.1.5
             Rfast@1.9.8
+            uwot@0.1.5
             actuar@2.3-3
             evaluate@0.23
             fastICA@1.2-1
