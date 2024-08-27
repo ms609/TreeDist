@@ -77,7 +77,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive-latex-base libglpk-dev texlive-fonts-recommended libgsl-dev
+          sudo apt-get install -y texlive-latex-base libglpk-dev texlive-fonts-recommended
       
       - name: Check GSL library location
         run: ls -l /usr/lib/x86_64-linux-gnu/libgsl*
@@ -95,6 +95,8 @@ jobs:
         with:
           extra-packages: |
             Matrix@1.6-5
+            RcppGSL@0.3.8
+            RcppZiggurat@0.1.5
             Rfast@1.9.8
             actuar@2.3-3
             evaluate@0.23
