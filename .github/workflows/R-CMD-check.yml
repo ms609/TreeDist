@@ -78,16 +78,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y texlive-latex-base libglpk-dev texlive-fonts-recommended
-      
-      - name: Check GSL library location
-        run: ls -l /usr/lib/x86_64-linux-gnu/libgsl*
-      
-      - name: Set LD_LIBRARY_PATH
-        run: |
-          echo "LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH" >> $GITHUB_ENV
-      
-      - name: Verify LD_LIBRARY_PATH
-        run: echo $LD_LIBRARY_PATH
         
       - name: Set up R dependencies (R 3.6)
         if: matrix.config.r == '3.6'
