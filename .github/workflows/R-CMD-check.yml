@@ -92,8 +92,7 @@ jobs:
             Rfast@1.9.8
             uwot@0.1.8
             Umatrix@3.3
-            rgeos@0.5-3
-            hypervolume@2.0.12
+            hypervolume@3.1.1
             actuar@2.3-3
             evaluate@0.23
             fastICA@1.2-1
