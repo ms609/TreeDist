@@ -84,6 +84,7 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
+            Matrix@1.6-5
             actuar@2.3-3
             evaluate@0.23
             fastICA@1.2-1
