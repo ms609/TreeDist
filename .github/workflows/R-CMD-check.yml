@@ -77,7 +77,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive-latex-base libglpk-dev texlive-fonts-recommended
+          sudo apt-get install -y texlive-latex-base libglpk-dev texlive-fonts-recommended libgsl-dev
 
       - name: Set up R dependencies (R 3.6)
         if: matrix.config.r == '3.6'
