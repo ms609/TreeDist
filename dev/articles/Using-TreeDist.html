@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">TreeDist</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.8.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.8.0.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -178,6 +178,15 @@ examination in R with:</p>
 <pre><code><span><span class="co">## [1] 6.960578</span></span>
 <span><span class="co">## attr(,"matching")</span></span>
 <span><span class="co">## [1] 1 2 3 5 6 4</span></span>
+<span><span class="co">## attr(,"matchedSplits")</span></span>
+<span><span class="co">## [1] "B C D E | A F G H I =&gt; B C D H I | A E F G"</span></span>
+<span><span class="co">## [2] "C D E | A B F G H I =&gt; C D H I | A B E F G"</span></span>
+<span><span class="co">## [3] "D E | A B C F G H I =&gt; D H I | A B C E F G"</span></span>
+<span><span class="co">## [4] "F G H I | A B C D E =&gt; E F G | A B C D H I"</span></span>
+<span><span class="co">## [5] "F G | A B C D E H I =&gt; F G | A B C D E H I"</span></span>
+<span><span class="co">## [6] "H I | A B C D E F G =&gt; H I | A B C D E F G"</span></span>
+<span><span class="co">## attr(,"matchedScores")</span></span>
+<span><span class="co">## [1] 0.09109101 0.07278023 0.02475761 0.07278023 0.76420451 0.76420451</span></span>
 <span><span class="co">## attr(,"pairScores")</span></span>
 <span><span class="co">##             [,1]        [,2]       [,3]       [,4]       [,5]       [,6]</span></span>
 <span><span class="co">## [1,] 0.091091008 0.007214618 0.01831078 0.22478751 0.01831078 0.22478751</span></span>
@@ -185,14 +194,7 @@ examination in R with:</p>
 <span><span class="co">## [3,] 0.002565287 0.002565287 0.02475761 0.09288851 0.02475761 0.09288851</span></span>
 <span><span class="co">## [4,] 0.007214618 0.007214618 0.07278023 0.31976006 0.07278023 0.31976006</span></span>
 <span><span class="co">## [5,] 0.319760062 0.224787510 0.15200728 0.09288851 0.45810590 0.76420451</span></span>
-<span><span class="co">## [6,] 0.224787510 0.319760062 0.45810590 0.76420451 0.15200728 0.09288851</span></span>
-<span><span class="co">## attr(,"matchedSplits")</span></span>
-<span><span class="co">## [1] "B C D E | A F G H I =&gt; B C D H I | A E F G"</span></span>
-<span><span class="co">## [2] "C D E | A B F G H I =&gt; C D H I | A B E F G"</span></span>
-<span><span class="co">## [3] "D E | A B C F G H I =&gt; D H I | A B C E F G"</span></span>
-<span><span class="co">## [4] "F G H I | A B C D E =&gt; E F G | A B C D H I"</span></span>
-<span><span class="co">## [5] "F G | A B C D E H I =&gt; F G | A B C D E H I"</span></span>
-<span><span class="co">## [6] "H I | A B C D E F G =&gt; H I | A B C D E F G"</span></span></code></pre>
+<span><span class="co">## [6,] 0.224787510 0.319760062 0.45810590 0.76420451 0.15200728 0.09288851</span></span></code></pre>
 <p>Here, the <code>pairScores</code> attribute lists the score of each
 possible matching of splits.</p>
 <p>We can identify the splits with:</p>

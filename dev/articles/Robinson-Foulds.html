@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">TreeDist</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.8.0.9000</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.8.0.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -323,6 +323,16 @@ with the optimal matching:</p>
 <pre><code><span><span class="co">## $matching</span></span>
 <span><span class="co">## [1]  1  2 NA  4  5  3</span></span>
 <span><span class="co">## </span></span>
+<span><span class="co">## $matchedSplits</span></span>
+<span><span class="co">## [1] "A B | C D E F G H I =&gt; A B | C D E F G H I"</span></span>
+<span><span class="co">## [2] "C D E | A B F G H I =&gt; C D E I | A B F G H"</span></span>
+<span><span class="co">## [3] "F G H I | A B C D E =&gt; F G H | A B C D E I"</span></span>
+<span><span class="co">## [4] "G H I | A B C D E F =&gt; G H | A B C D E F I"</span></span>
+<span><span class="co">## [5] "H I | A B C D E F G .. E I | A B C D F G H"</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## $matchedScores</span></span>
+<span><span class="co">## [1] 3.700440 3.252981       NA 3.252981 2.115477 0.000000</span></span>
+<span><span class="co">## </span></span>
 <span><span class="co">## $pairScores</span></span>
 <span><span class="co">##           [,1]      [,2]      [,3]      [,4]      [,5]</span></span>
 <span><span class="co">## [1,] 3.7004397 0.8930848 0.2410081 0.5305147 0.2410081</span></span>
@@ -330,14 +340,7 @@ with the optimal matching:</p>
 <span><span class="co">## [3,] 0.2410081 1.3785116 0.0000000 0.5305147 0.2410081</span></span>
 <span><span class="co">## [4,] 0.8930848 0.0000000 0.0000000 3.2529807 1.3785116</span></span>
 <span><span class="co">## [5,] 0.5305147 0.0000000 0.0000000 0.0000000 2.1154772</span></span>
-<span><span class="co">## [6,] 0.2410081 0.0000000 0.0000000 0.0000000 0.0000000</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## $matchedSplits</span></span>
-<span><span class="co">## [1] "A B | C D E F G H I =&gt; A B | C D E F G H I"</span></span>
-<span><span class="co">## [2] "C D E | A B F G H I =&gt; C D E I | A B F G H"</span></span>
-<span><span class="co">## [3] "F G H I | A B C D E =&gt; F G H | A B C D E I"</span></span>
-<span><span class="co">## [4] "G H I | A B C D E F =&gt; G H | A B C D E F I"</span></span>
-<span><span class="co">## [5] "H I | A B C D E F G .. E I | A B C D F G H"</span></span></code></pre>
+<span><span class="co">## [6,] 0.2410081 0.0000000 0.0000000 0.0000000 0.0000000</span></span></code></pre>
 <p><code>..</code> denotes that the fifth matching contributes zero to
 similarity score; an alternative optimal matching would leave these
 splits unpaired.</p>
