@@ -39,8 +39,8 @@
 #' @export
 MatchingSplitDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
                                    reportMatching = FALSE) {
-  unnormalized <- CalculateTreeDistance(MatchingSplitDistanceSplits, tree1, tree2, 
-                                        reportMatching)
+  unnormalized <- CalculateTreeDistance(MatchingSplitDistanceSplits, tree1,
+                                        tree2, reportMatching)
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
