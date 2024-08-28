@@ -1,5 +1,7 @@
-# TreeDist 2.8.0.9000 (development)
+# TreeDist 2.8.0.9001 (development)
 
+- `VisualizeMatching()` allows more control over output format, and returns
+  the matching ([#124](https://github.com/ms609/TreeDist/issues/124))
 - `SpectralEigens()` returns correct eigenvalues (smallest was overlooked)
 - `SpectralEigens()` handles values of `nEig` larger than the input
 

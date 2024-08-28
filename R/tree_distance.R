@@ -19,12 +19,14 @@
 #' specified pair scorer. If `reportMatching = TRUE`, attribute also list:
 #' 
 #' - `matching`: which split in `splits2` is optimally matched to each split in 
-#' `split1` (`NA` if not matched);
-#'
-#' - `pairScores`: Calculated scores for each possible matching of each split.
+#'   `split1` (`NA` if not matched);
 #' 
 #' - `matchedSplits`: Textual representation of each match
+#'
+#' - `matchedScores`: Scores for matched split.
 #' 
+#' - `pairScores`: Calculated scores for each possible matching of each split.
+#'
 #' @keywords internal
 #' @template MRS
 #' @encoding UTF-8
@@ -54,7 +56,6 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
                                        nTip = nTip, ...)[["score"]]
       }
     }
-    attr(ret, "pairScores") <- pairScores
     
     if (!is.null(attr(splits1, "tip.label"))) {
       matched1 <- !is.na(matching)
@@ -68,6 +69,14 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
                          pairScores[matrix(c(matched1, matched2), ncol = 2L)] > 0
                        } else rep(TRUE, length(matched1)))
     }
+    
+    attr(ret, "matchedScores") <- vapply(
+      seq_along(matching),
+      function(i) pairScores[i, matching[[i]]],
+      vector(mode(pairScores), 1)
+    )
+    
+    attr(ret, "pairScores") <- pairScores
   }
   # Return:
   ret

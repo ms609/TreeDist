@@ -12,9 +12,11 @@ test_that("ReduceTrees()", {
   bal9 <- TreeTools::BalancedTree(9)
   pec9 <- TreeTools::PectinateTree(9)
   expect_null(ReduceTrees(bal9, bal9))
-  par(mai = rep(0.1, 4), mfrow = c(2, 2))
-  plot(RootTree(bal9, 1)); nodelabels()
-  plot(RootTree(pec9, 1)); nodelabels()
+  if (interactive()) {
+    par(mai = rep(0.1, 4), mfrow = c(2, 2))
+    plot(RootTree(bal9, 1)); nodelabels()
+    plot(RootTree(pec9, 1)); nodelabels()
+  }
   confl <- ReduceTrees(bal9, pec9)
   expect_true(
     all.equal(confl[[1]],

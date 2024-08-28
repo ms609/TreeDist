@@ -47,12 +47,10 @@
 <text x='162.56' y='119.25' style='font-size: 27.00px; fill: #009292; font-family: sans;' textLength='19.50px' lengthAdjust='spacingAndGlyphs'>C</text>
 <text x='309.79' y='70.60' style='font-size: 27.00px; fill: #FFB6DB; font-family: sans;' textLength='19.50px' lengthAdjust='spacingAndGlyphs'>D</text>
 <text x='309.79' y='21.96' style='font-size: 27.00px; fill: #490092; font-family: sans;' textLength='18.01px' lengthAdjust='spacingAndGlyphs'>E</text>
-<rect x='79.28' y='158.46' width='17.18' height='22.18' style='stroke-width: 0.75; fill: #FFCBD7;' />
-<rect x='79.28' y='12.53' width='17.18' height='22.18' style='stroke-width: 0.75; fill: #92EDE2;' />
-<text x='88.95' y='180.44' text-anchor='middle' style='font-size: 18.00px; font-family: sans;' textLength='10.01px' lengthAdjust='spacingAndGlyphs'>1</text>
-<text x='88.95' y='34.51' text-anchor='middle' style='font-size: 18.00px; font-family: sans;' textLength='10.01px' lengthAdjust='spacingAndGlyphs'>2</text>
-<text x='88.95' y='193.81' text-anchor='middle' style='font-size: 14.40px; font-family: sans;' textLength='8.01px' lengthAdjust='spacingAndGlyphs'>1</text>
-<text x='88.95' y='47.89' text-anchor='middle' style='font-size: 14.40px; font-family: sans;' textLength='8.01px' lengthAdjust='spacingAndGlyphs'>1</text>
+<text x='88.95' y='179.20' text-anchor='middle' style='font-size: 27.00px; font-family: sans;' textLength='15.02px' lengthAdjust='spacingAndGlyphs'>1</text>
+<text x='88.95' y='33.27' text-anchor='middle' style='font-size: 27.00px; font-family: sans;' textLength='15.02px' lengthAdjust='spacingAndGlyphs'>2</text>
+<text x='88.95' y='199.27' text-anchor='middle' style='font-size: 21.60px; font-family: sans;' textLength='12.01px' lengthAdjust='spacingAndGlyphs'>1</text>
+<text x='88.95' y='53.34' text-anchor='middle' style='font-size: 21.60px; font-family: sans;' textLength='12.01px' lengthAdjust='spacingAndGlyphs'>1</text>
 </g>
 <defs>
   <clipPath id='cpMzYyLjE2fDcxNy44NHwyLjE2fDI4NS44NA=='>
@@ -85,11 +83,9 @@
 <text x='582.85' y='119.25' style='font-size: 27.00px; fill: #009292; font-family: sans;' textLength='19.50px' lengthAdjust='spacingAndGlyphs'>C</text>
 <text x='686.61' y='70.60' style='font-size: 27.00px; fill: #FFB6DB; font-family: sans;' textLength='19.50px' lengthAdjust='spacingAndGlyphs'>D</text>
 <text x='686.61' y='21.96' style='font-size: 27.00px; fill: #490092; font-family: sans;' textLength='18.01px' lengthAdjust='spacingAndGlyphs'>E</text>
-<rect x='417.54' y='49.01' width='17.18' height='22.18' style='stroke-width: 0.75; fill: #FFCBD7;' />
-<rect x='521.30' y='12.53' width='17.18' height='22.18' style='stroke-width: 0.75; fill: #92EDE2;' />
-<text x='427.21' y='70.99' text-anchor='middle' style='font-size: 18.00px; font-family: sans;' textLength='10.01px' lengthAdjust='spacingAndGlyphs'>1</text>
-<text x='530.97' y='34.51' text-anchor='middle' style='font-size: 18.00px; font-family: sans;' textLength='10.01px' lengthAdjust='spacingAndGlyphs'>2</text>
-<text x='427.21' y='84.37' text-anchor='middle' style='font-size: 14.40px; font-family: sans;' textLength='8.01px' lengthAdjust='spacingAndGlyphs'>1</text>
-<text x='530.97' y='47.89' text-anchor='middle' style='font-size: 14.40px; font-family: sans;' textLength='8.01px' lengthAdjust='spacingAndGlyphs'>1</text>
+<text x='427.21' y='69.75' text-anchor='middle' style='font-size: 27.00px; font-family: sans;' textLength='15.02px' lengthAdjust='spacingAndGlyphs'>1</text>
+<text x='530.97' y='33.27' text-anchor='middle' style='font-size: 27.00px; font-family: sans;' textLength='15.02px' lengthAdjust='spacingAndGlyphs'>2</text>
+<text x='427.21' y='89.82' text-anchor='middle' style='font-size: 21.60px; font-family: sans;' textLength='12.01px' lengthAdjust='spacingAndGlyphs'>1</text>
+<text x='530.97' y='53.34' text-anchor='middle' style='font-size: 21.60px; font-family: sans;' textLength='12.01px' lengthAdjust='spacingAndGlyphs'>1</text>
 </g>
 </svg>

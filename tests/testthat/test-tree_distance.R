@@ -1,24 +1,26 @@
-# Labels in different order to confound as.Splits
-treeSym8 <- ape::read.tree(text="((e, (f, (g, h))), (((a, b), c), d));")
-treeBal8 <- ape::read.tree(text="(((e, f), (g, h)), ((a, b), (c, d)));")
-treeOpp8 <- ape::read.tree(text="(((a, f), (c, h)), ((g, b), (e, d)));")
-treesSBO8 <- structure(list(treeSym8, treeBal8, treeOpp8), 
-                            class = "multiPhylo")
-treesSSBB8 <- structure(list(treeSym8, treeSym8, treeBal8, treeBal8), 
-                            class = "multiPhylo")
-
-treeCat8 <- ape::read.tree(text="((((h, g), f), e), (d, (c, (b, a))));")
-treeTac8 <- ape::read.tree(text="((((e, c), g), a), (h, (b, (d, f))));")
-treeStar8 <- ape::read.tree(text="(e, c, g, h, b, a, d, f);")
-
-treeAb.Cdefgh <- ape::read.tree(text="((a, b), (c, d, e, f, g, h));")
-treeAbc.Defgh <- ape::read.tree(text="((a, b, c), (d, e, f, g, h));")
-treeAcd.Befgh <- ape::read.tree(text="((a, c, d), (b, e, f, g, h));")
-treeAbcd.Efgh <- ape::read.tree(text="((a, b, c, d), (e, f, g, h));")
-treeTwoSplits <- ape::read.tree(text="(((a, b), c, d), (e, f, g, h));")
-
-testTrees <- c(treesSBO8, treeCat8, treeTac8, treeStar8, treeAb.Cdefgh,
-               treeAbc.Defgh, treeAbcd.Efgh, treeAcd.Befgh, treeTwoSplits)
+{
+  # Labels in different order to confound as.Splits
+  treeSym8 <- ape::read.tree(text="((e, (f, (g, h))), (((a, b), c), d));")
+  treeBal8 <- ape::read.tree(text="(((e, f), (g, h)), ((a, b), (c, d)));")
+  treeOpp8 <- ape::read.tree(text="(((a, f), (c, h)), ((g, b), (e, d)));")
+  treesSBO8 <- structure(list(treeSym8, treeBal8, treeOpp8), 
+                              class = "multiPhylo")
+  treesSSBB8 <- structure(list(treeSym8, treeSym8, treeBal8, treeBal8), 
+                              class = "multiPhylo")
+  
+  treeCat8 <- ape::read.tree(text="((((h, g), f), e), (d, (c, (b, a))));")
+  treeTac8 <- ape::read.tree(text="((((e, c), g), a), (h, (b, (d, f))));")
+  treeStar8 <- ape::read.tree(text="(e, c, g, h, b, a, d, f);")
+  
+  treeAb.Cdefgh <- ape::read.tree(text="((a, b), (c, d, e, f, g, h));")
+  treeAbc.Defgh <- ape::read.tree(text="((a, b, c), (d, e, f, g, h));")
+  treeAcd.Befgh <- ape::read.tree(text="((a, c, d), (b, e, f, g, h));")
+  treeAbcd.Efgh <- ape::read.tree(text="((a, b, c, d), (e, f, g, h));")
+  treeTwoSplits <- ape::read.tree(text="(((a, b), c, d), (e, f, g, h));")
+  
+  testTrees <- c(treesSBO8, treeCat8, treeTac8, treeStar8, treeAb.Cdefgh,
+                 treeAbc.Defgh, treeAbcd.Efgh, treeAcd.Befgh, treeTwoSplits)
+}
 
 test_that("Split compatibility is correctly established", {
   expect_true(SplitsCompatible(as.logical(c(0,0,1,1,0)), 
@@ -644,14 +646,14 @@ test_that("Matchings are correct", {
 })
 
 test_that("Matching Split Distance is correctly calculated", {
-  expect_equal(0L, MatchingSplitDistance(treeSym8, treeSym8))
-  expect_equal(0L, MatchingSplitDistance(treeStar8, treeSym8))
-  expect_equal(0L, MatchingSplitDistance(treeStar8, treeStar8))
+  expect_equal(MatchingSplitDistance(treeSym8, treeSym8), 0L)
+  expect_equal(MatchingSplitDistance(treeStar8, treeSym8), 0L)
+  expect_equal(MatchingSplitDistance(treeStar8, treeStar8), 0L)
   match0 <- MatchingSplitDistance(treeStar8, treeStar8, reportMatching = TRUE)
-  expect_equal(rep(0L, 4), c(match0, vapply(attributes(match0), length, 0)),
-               ignore_attr = TRUE)
-  expect_equal(1L, MatchingSplitDistance(treeAb.Cdefgh, treeAbc.Defgh))
-  expect_equal(2L, MatchingSplitDistance(treeAb.Cdefgh, treeAbcd.Efgh))
+  expect_equal(c(match0, vapply(attributes(match0), length, 0)),
+               rep(0L, 5), ignore_attr = TRUE)
+  expect_equal(MatchingSplitDistance(treeAb.Cdefgh, treeAbc.Defgh), 1L)
+  expect_equal(MatchingSplitDistance(treeAb.Cdefgh, treeAbcd.Efgh), 2L)
   
   splitAB <- as.Splits(c(rep(TRUE, 2), rep(FALSE, 7)))
   splitABC <- as.Splits(c(rep(TRUE, 3), rep(FALSE, 6)))
@@ -660,20 +662,26 @@ test_that("Matching Split Distance is correctly calculated", {
   splitABCDE <- as.Splits(c(rep(TRUE, 5), rep(FALSE, 4)))
   splitAI <- as.Splits(c(TRUE, rep(FALSE, 7), TRUE))
   
-  expect_equal(2L, MatchingSplitDistanceSplits(splitAB, splitAI))
-  expect_equal(2L, MatchingSplitDistanceSplits(splitAB, splitABCD))
-  expect_equal(3L, MatchingSplitDistanceSplits(splitAB, splitABCDE))
-  expect_equal(4L, MatchingSplitDistanceSplits(splitABC, splitAEF))
+  expect_equal(MatchingSplitDistanceSplits(splitAB, splitAI), 2L)
+  expect_equal(MatchingSplitDistanceSplits(splitAB, splitABCD), 2L)
+  expect_equal(MatchingSplitDistanceSplits(splitAB, splitABCDE), 3L)
+  expect_equal(MatchingSplitDistanceSplits(splitABC, splitAEF), 4L)
   expect_equal(MatchingSplitDistanceSplits(splitABC, splitAEF),
                MatchingSplitDistanceSplits(splitAEF, splitABC))
   
   # Invariant to tree description order
-  sq_pectinate <- ape::read.tree(text="((((((1, 2), 3), 4), 5), 6), (7, (8, (9, (10, 11)))));")
-  shuffle1 <- ape::read.tree(text="(((((1, 5), 2), 6), (3, 4)), ((8, (7, 9)), (10, 11)));")
-  shuffle2 <- ape::read.tree(text="(((8, (7, 9)), (10, 11)), ((((1, 5), 2), 6), (3, 4)));")
+  sq_pectinate <- ape::read.tree(
+    text = "((((((1, 2), 3), 4), 5), 6), (7, (8, (9, (10, 11)))));"
+  )
+  shuffle1 <- ape::read.tree(
+    text = "(((((1, 5), 2), 6), (3, 4)), ((8, (7, 9)), (10, 11)));"
+  )
+  shuffle2 <- ape::read.tree(
+    text = "(((8, (7, 9)), (10, 11)), ((((1, 5), 2), 6), (3, 4)));"
+  )
   expect_equal(MatchingSplitDistance(shuffle1, sq_pectinate),
                MatchingSplitDistance(sq_pectinate, shuffle1))
-  expect_equal(0L, MatchingSplitDistance(shuffle1, shuffle2))
+  expect_equal(MatchingSplitDistance(shuffle1, shuffle2), 0L)
   expect_equal(MatchingSplitDistance(shuffle1, sq_pectinate),
                MatchingSplitDistance(shuffle2, sq_pectinate))
 })
