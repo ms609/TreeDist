@@ -9,6 +9,8 @@
 
 - `SpectralEigens()` handles values of `nEig` larger than the input.
 
+- Anticipate new behaviour of `unlist(use.names = TRUE)` in R 4.5.
+
 
 # TreeDist 2.8.0 (2024-07-25)
 
