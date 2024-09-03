@@ -4,20 +4,14 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Tree space analysis • TreeDist</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><!-- docsearch --><script src="../docsearch.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.3/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous">
-<link href="../docsearch.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Tree space analysis">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]--><!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-BTKEG66D3F"></script><script>
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Tree space analysis">
+<!-- Global site tag (gtag.js) - Google Analytics --><script async src="https://www.googletagmanager.com/gtag/js?id=G-BTKEG66D3F"></script><script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
@@ -25,121 +19,72 @@
   gtag('config', 'G-BTKEG66D3F');
 </script>
 </head>
-<body data-spy="scroll" data-target="#toc">
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <div class="container template-article">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">TreeDist</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.7.1</span>
-      </span>
-    </div>
+    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fa fa-home fa-lg"></span>
+    <a class="navbar-brand me-2" href="../index.html">TreeDist</a>
 
-  </a>
-</li>
-<li>
-  <a href="../articles/Using-TreeDist.html">Get started</a>
-</li>
-<li>
-  <a href="../reference/index.html">Function reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.9.0</small>
 
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li class="divider">
-    </li>
-<li class="dropdown-header">Tree distance analysis</li>
-    <li>
-      <a href="../articles/Using-TreeDist.html">Calculate tree similarity with 'TreeDist'</a>
-    </li>
-    <li>
-      <a href="../articles/using-distances.html">Contextualizing tree distances</a>
-    </li>
-    <li>
-      <a href="../articles/different-leaves.html">Trees with different leaves</a>
-    </li>
-    <li class="divider">
-    </li>
-<li class="dropdown-header">Tree space analysis</li>
-    <li>
-      <a href="../articles/treespace.html">Tree space analysis</a>
-    </li>
-    <li>
-      <a href="../articles/landscapes.html">Analysing landscapes of phylogenetic trees</a>
-    </li>
-    <li>
-      <a href="../articles/compare-treesets.html">Comparing sets of trees from different analyses</a>
-    </li>
-    <li class="divider">
-    </li>
-<li class="dropdown-header">Tree distance introductions</li>
-    <li>
-      <a href="../articles/information.html">Comparing splits using information theory</a>
-    </li>
-    <li>
-      <a href="../articles/Robinson-Foulds.html">Extending the Robinson-Foulds metric</a>
-    </li>
-    <li>
-      <a href="../articles/Generalized-RF.html">Generalized Robinson-Foulds distances</a>
-    </li>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="../index.html"><span class="fa fa-home fa-lg"></span></a></li>
+<li class="nav-item"><a class="nav-link" href="../articles/Using-TreeDist.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Function reference</a></li>
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Tree distance analysis</h6></li>
+    <li><a class="dropdown-item" href="../articles/Using-TreeDist.html">Calculate tree similarity with 'TreeDist'</a></li>
+    <li><a class="dropdown-item" href="../articles/using-distances.html">Contextualizing tree distances</a></li>
+    <li><a class="dropdown-item" href="../articles/different-leaves.html">Trees with different leaves</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Tree space analysis</h6></li>
+    <li><a class="dropdown-item" href="../articles/treespace.html">Tree space analysis</a></li>
+    <li><a class="dropdown-item" href="../articles/landscapes.html">Analysing landscapes of phylogenetic trees</a></li>
+    <li><a class="dropdown-item" href="../articles/compare-treesets.html">Comparing sets of trees from different analyses</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Tree distance introductions</h6></li>
+    <li><a class="dropdown-item" href="../articles/information.html">Comparing splits using information theory</a></li>
+    <li><a class="dropdown-item" href="../articles/Robinson-Foulds.html">Extending the Robinson-Foulds metric</a></li>
+    <li><a class="dropdown-item" href="../articles/Generalized-RF.html">Generalized Robinson-Foulds distances</a></li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://github.com/ms609/TreeDist" class="external-link">
-    <span class="fa fa-github fa-lg"></span>
-
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/ms609/TreeDist"><span class="fa fa-github fa-lg"></span></a></li>
       </ul>
-<form class="navbar-form navbar-right hidden-xs hidden-sm" role="search">
-        <div class="form-group">
-          <input type="search" class="form-control" name="search-input" id="search-input" placeholder="Search..." aria-label="Search for..." autocomplete="off">
 </div>
-      </form>
 
-    </div>
-<!--/.nav-collapse -->
+
   </div>
-<!--/.container -->
-</div>
-<!--/.navbar -->
+</nav><div class="container template-article">
 
 
 
-      </header><div class="row">
-  <div class="col-md-9 contents">
-    <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Tree space analysis</h1>
+
+<div class="row">
+  <main id="main" class="col-md-9"><div class="page-header">
+
+      <h1>Tree space analysis</h1>
                         <h4 data-toc-skip class="author"><a href="https://smithlabdurham.github.io/" class="external-link">Martin R. Smith</a></h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/2.7.1/vignettes/treespace.Rmd" class="external-link"><code>vignettes/treespace.Rmd</code></a></small>
-      <div class="hidden name"><code>treespace.Rmd</code></div>
-
+      <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/master/vignettes/treespace.Rmd" class="external-link"><code>vignettes/treespace.Rmd</code></a></small>
+      <div class="d-none name"><code>treespace.Rmd</code></div>
     </div>
 
     
@@ -268,7 +213,7 @@ worthwhile.</p>
 <span><span class="va">hCluster</span> <span class="op">&lt;-</span> <span class="va">hClusters</span><span class="op">[[</span><span class="va">bestH</span><span class="op">]</span><span class="op">]</span></span>
 <span></span>
 <span><span class="co"># k-means++ clustering</span></span>
-<span><span class="va">kClusters</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">possibleClusters</span>, <span class="kw">function</span><span class="op">(</span><span class="va">k</span><span class="op">)</span> <span class="fu"><a href="../reference/kmeanspp.html">KMeansPP</a></span><span class="op">(</span><span class="va">distances</span>, k <span class="op">=</span> <span class="va">k</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">kClusters</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">possibleClusters</span>, <span class="kw">function</span><span class="op">(</span><span class="va">k</span><span class="op">)</span> <span class="fu"><a href="../reference/KMeansPP.html">KMeansPP</a></span><span class="op">(</span><span class="va">distances</span>, k <span class="op">=</span> <span class="va">k</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">kSils</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="va">kClusters</span>, <span class="kw">function</span><span class="op">(</span><span class="va">kCluster</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu">cluster</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/cluster/man/silhouette.html" class="external-link">silhouette</a></span><span class="op">(</span><span class="va">kCluster</span><span class="op">$</span><span class="va">cluster</span>, <span class="va">distances</span><span class="op">)</span><span class="op">[</span>, <span class="fl">3</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="op">}</span>, <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
@@ -313,9 +258,49 @@ cluster:</p>
 <span>     edge.color <span class="op">=</span> <span class="va">col1</span>, edge.width <span class="op">=</span> <span class="fl">2</span>, tip.color <span class="op">=</span> <span class="va">col1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/consensus.html" class="external-link">consensus</a></span><span class="op">(</span><span class="va">trees</span><span class="op">[</span><span class="va">cluster</span> <span class="op">==</span> <span class="fl">2</span><span class="op">]</span>, p <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>,</span>
 <span>     edge.color <span class="op">=</span> <span class="va">col2</span>, edge.width <span class="op">=</span> <span class="fl">2</span>, tip.color <span class="op">=</span> <span class="va">col2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="treespace_files/figure-html/consensus-1.png" width="700" style="display: block; margin: auto;"></p>
+<p><img src="treespace_files/figure-html/cluster-consensus-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>Here, we learn that the two clusters are distinguished by the
 position of <code>t7</code>.</p>
+</div>
+<div class="section level4">
+<h4 id="identifying-islands">Identifying islands<a class="anchor" aria-label="anchor" href="#identifying-islands"></a>
+</h4>
+<p>Besides clustering, we can also define ‘islands’ in tree space that
+are separated by a ‘moat’, such that all trees on one island are
+separated from all trees on another by at least a certain distance <span class="citation">(Silva &amp; Wilkinson, 2021)</span>.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># set a threshold corresponding to the width of the "moat" between islands</span></span>
+<span><span class="va">threshold</span> <span class="op">&lt;-</span> <span class="fl">1.8</span></span>
+<span><span class="va">island</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Islands.html">Islands</a></span><span class="op">(</span><span class="va">distances</span>, <span class="va">threshold</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># See how many trees are on each island</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">island</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## island</span></span>
+<span><span class="co">##  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 </span></span>
+<span><span class="co">## 89  3  3  3  3  3  3  3  3  3  3 57  1  1  3  2  1  1  3  1  1  3  1  3  3  3 </span></span>
+<span><span class="co">## 27 28 29 30 31 32 33 34 35 36 </span></span>
+<span><span class="co">##  3  3  1  1  1  1  2  3  1  1</span></span></code></pre>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Let's ignore the small islands for now</span></span>
+<span><span class="va">largeIsle</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Islands.html">Islands</a></span><span class="op">(</span><span class="va">distances</span>, <span class="va">threshold</span>, smallest <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Colour trees according to their island</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mapping</span>,</span>
+<span>     asp <span class="op">=</span> <span class="fl">1</span>, <span class="co"># Preserve aspect ratio - do not distort distances</span></span>
+<span>     ann <span class="op">=</span> <span class="cn">FALSE</span>, axes <span class="op">=</span> <span class="cn">FALSE</span>, <span class="co"># Don't label axes: dimensions are meaningless</span></span>
+<span>     col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">largeIsle</span><span class="op">)</span>, <span class="st">"grey"</span>, <span class="va">largeIsle</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>     pch <span class="op">=</span> <span class="fl">16</span></span>
+<span>     <span class="op">)</span></span></code></pre></div>
+<p><img src="treespace_files/figure-html/island-id-1.png" width="288" style="display: block; margin: auto;"></p>
+<p>Let’s view the consensus of each large island cluster:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/consensus.html" class="external-link">consensus</a></span><span class="op">(</span><span class="va">trees</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">largeIsle</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">largeIsle</span> <span class="op">==</span> <span class="fl">1</span><span class="op">]</span>, p <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>,</span>
+<span>     edge.color <span class="op">=</span> <span class="fl">2</span>, edge.width <span class="op">=</span> <span class="fl">2</span>, tip.color <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/consensus.html" class="external-link">consensus</a></span><span class="op">(</span><span class="va">trees</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">largeIsle</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">largeIsle</span> <span class="op">==</span> <span class="fl">2</span><span class="op">]</span>, p <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>,</span>
+<span>     edge.color <span class="op">=</span> <span class="fl">3</span>, edge.width <span class="op">=</span> <span class="fl">2</span>, tip.color <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<p><img src="treespace_files/figure-html/island-consensus-1.png" width="700" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="validating-a-mapping">Validating a mapping<a class="anchor" aria-label="anchor" href="#validating-a-mapping"></a>
@@ -325,7 +310,7 @@ First we want to know how many dimensions are necessary to adequately
 represent the true distances between trees. We hope for a
 trustworthiness × continuity score of &gt; 0.9 for a usable mapping, or
 &gt; 0.95 for a good one.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">txc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">mapping</span><span class="op">)</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">k</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">newDist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/dist.html" class="external-link">dist</a></span><span class="op">(</span><span class="va">mapping</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">k</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="../reference/MappingQuality.html">MappingQuality</a></span><span class="op">(</span><span class="va">distances</span>, <span class="va">newDist</span>, <span class="fl">10</span><span class="op">)</span><span class="op">[</span><span class="st">"TxC"</span><span class="op">]</span></span>
@@ -337,11 +322,11 @@ trustworthiness × continuity score of &gt; 0.9 for a usable mapping, or
 the distances between trees.</p>
 <p>To help establish visually what structures are more likely to be
 genuine, we might also choose to calculate a minimum spanning tree:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mstEnds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ms609.github.io/TreeTools/reference/MSTEdges.html" class="external-link">MSTEdges</a></span><span class="op">(</span><span class="va">distances</span><span class="op">)</span></span></code></pre></div>
 <p>Let’s plot the first five dimensions of our tree space, highlighting
 the convex hulls of our clusters:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nDim</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.min.html" class="external-link">which.max</a></span><span class="op">(</span><span class="va">txc</span> <span class="op">&gt;</span> <span class="fl">0.9</span><span class="op">)</span></span>
 <span><span class="va">plotSeq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">nDim</span>, <span class="va">nDim</span><span class="op">)</span></span>
 <span><span class="va">plotSeq</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/lower.tri.html" class="external-link">upper.tri</a></span><span class="op">(</span><span class="va">plotSeq</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="va">nDim</span> <span class="op">*</span> <span class="op">(</span><span class="va">nDim</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">/</span> <span class="fl">2</span><span class="op">)</span></span>
@@ -404,7 +389,7 @@ projections using the “<a href="https://www.benjaminblonder.org/hypervolume_fa
 package, though the same considerations apply <span class="citation">(Blonder et al., 2018)</span>. Interpretation of
 overlap statistics is detailed in <span class="citation">Mammola
 (2019)</span>.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hypervolumeInstalled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"hypervolume"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">hypervolumeInstalled</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/bblonder/hypervolume" class="external-link">"hypervolume"</a></span><span class="op">)</span></span>
@@ -431,27 +416,27 @@ other metrics may be easier to interpret than the clusters’ hypervolume
 (2022)</span>).</p>
 <p>The divergence of outlying points can be measures using the sum of
 ranges:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">SumOfRanges</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 132.0758 127.3610</span></span></code></pre>
 <p>The overall size of a cluster can be measured using the sum of
 variances, or the mean distance from the centroid or median:</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">SumOfVariances</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 173.0981 176.8212</span></span></code></pre>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">MeanCentroidDistance</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 12.58064 12.80727</span></span></code></pre>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">DistanceFromMedian</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 13.42931 13.48348</span></span></code></pre>
 <p>The density of points within a cluster can be measured using the mean
 nearest-neighbour distance or the mean minimum spanning tree edge
 length:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">MeanNN</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 4.676416 5.274230</span></span></code></pre>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cluster-statistics.html">MeanMSTEdge</a></span><span class="op">(</span><span class="va">pid_mapping</span>, <span class="va">pid_cluster</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 5.558778 5.804829</span></span></code></pre>
 </div>
@@ -466,7 +451,7 @@ map high-dimensional data into two dimensions, then add a third
 dimension to indicate distance between data points: nearby points occur
 in valleys, and are separated by ridges from more distant data
 points.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">umatrixInstalled</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"Umatrix"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="va">umatrixInstalled</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">map</span> <span class="op">&lt;-</span> <span class="fu">Umatrix</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Umatrix/man/esomTrain.html" class="external-link">esomTrain</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">distances</span><span class="op">)</span>, Key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">trees</span><span class="op">)</span>,</span>
@@ -559,6 +544,11 @@ Sammon, J. W. (1969). A nonlinear mapping for data structure analysis.
 <em>IEEE Transactions on Computers</em>, <em>C-18</em>(5), 401–409. doi:
 <a href="https://doi.org/10.1109/T-C.1969.222678" class="external-link">10.1109/T-C.1969.222678</a>
 </div>
+<div id="ref-Silva2021" class="csl-entry">
+Silva, A. S., &amp; Wilkinson, M. (2021). On defining and finding
+islands of trees and mitigating large island bias. <em>Systematic
+Biology</em>, <em>70</em>(6), 1282–1294. doi: <a href="https://doi.org/10.1093/sysbio/syab015" class="external-link">10.1093/sysbio/syab015</a>
+</div>
 <div id="ref-SmithDist" class="csl-entry">
 Smith, M. R. (2020). Information theoretic <span>Generalized
 Robinson-Foulds</span> metrics for comparing phylogenetic trees.
@@ -588,44 +578,26 @@ spaces. <em>Proceedings Workshop on Self-Organizing Maps (WSOM
 </div>
 </div>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-
-      </div>
-
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
 
-      <footer><div class="copyright">
-  <p></p>
-<p>Developed by <a href="https://smithlabdurham.github.io/" class="external-link">Martin R. Smith</a>.</p>
+    <footer><div class="pkgdown-footer-left">
+  <p>Developed by <a href="https://smithlabdurham.github.io/" class="external-link">Martin R. Smith</a>.</p>
 </div>
 
-<div class="pkgdown">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+<div class="pkgdown-footer-right">
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.1/docsearch.min.js" integrity="sha256-GKvGqXDznoRYHCwKXGnuchvKSwmx9SRMrZOTh2g4Sb0=" crossorigin="anonymous"></script><script>
-  docsearch({
 
 
-    apiKey: '8bf44d312479af73720c5ca5fcc12eba',
-    indexName: 'treedist',
-    inputSelector: 'input#search-input.form-control',
-    transformData: function(hits) {
-      return hits.map(function (hit) {
-        hit.url = updateHitURL(hit);
-        return hit;
-      });
-    }
-  });
-</script>
-</body>
+
+  </body>
 </html>

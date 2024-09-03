@@ -20,7 +20,9 @@
 <url><loc>https://ms609.github.io/TreeDist/reference/CompareAll.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/reference/Entropy.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/reference/GeneralizedRF.html</loc></url>
+<url><loc>https://ms609.github.io/TreeDist/reference/Islands.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/reference/JaccardRobinsonFoulds.html</loc></url>
+<url><loc>https://ms609.github.io/TreeDist/reference/KMeansPP.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/reference/KendallColijn.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/reference/LAPJV.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/reference/MASTSize.html</loc></url>
@@ -34,6 +36,7 @@
 <url><loc>https://ms609.github.io/TreeDist/reference/NyeSimilarity.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/reference/PathDist.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/reference/Plot3.html</loc></url>
+<url><loc>https://ms609.github.io/TreeDist/reference/ReduceTrees.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/reference/ReportMatching.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/reference/Robinson-Foulds.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/reference/SPRDist.html</loc></url>
@@ -52,7 +55,6 @@
 <url><loc>https://ms609.github.io/TreeDist/reference/dot-PairMean.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/reference/dot-TreeDistance.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/reference/index.html</loc></url>
-<url><loc>https://ms609.github.io/TreeDist/reference/kmeanspp.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/reference/median.multiPhylo.html</loc></url>
 </urlset>
 
