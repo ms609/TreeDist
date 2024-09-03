@@ -179,7 +179,8 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
                                    tipLabels, nTip = length(tipLabels), ...) {
   
   if (is.na(nTip)) {
-    tipLabels <- union(unlist(tipLabels), unlist(TipLabels(splits2)))
+    tipLabels <- union(unlist(tipLabels, use.names = FALSE),
+                       unlist(TipLabels(splits2), use.names = FALSE))
     splits1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = TRUE)
     splits2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = TRUE)
     vapply(splits1, function(s1) {
