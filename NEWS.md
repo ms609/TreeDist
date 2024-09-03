@@ -1,4 +1,4 @@
-# TreeDist 2.8.0.9002 (2024-09-03)
+# TreeDist 2.9.0 (2024-09-03)
 
 - `VisualizeMatching()` allows more control over output format, and returns
   the matching ([#124](https://github.com/ms609/TreeDist/issues/124)).
