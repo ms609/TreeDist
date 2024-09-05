@@ -1,3 +1,8 @@
+# TreeDist 2.9.1 (2024-09-05)
+
+- Avoid false positive in MKL testing environment.
+
+
 # TreeDist 2.9.0 (2024-09-03)
 
 - `VisualizeMatching()` allows more control over output format, and returns

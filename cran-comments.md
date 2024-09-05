@@ -1,5 +1,5 @@
 ## Test environments
-* Local machine, Windows 10, R 4.4.1 (2024-06-14 ucrt)
+* Local machine, Windows 10, R devel (2024-09-02 r87090 ucrt)
 
 * `devtools::check_win_devel()`
 
@@ -11,7 +11,7 @@
 * [valgrind mem-check](https://github.com/ms609/TreeDist/actions/workflows/memcheck.yml)
 
 * [R-hub](https://github.com/ms609/TreeDist/actions/workflows/rhub.yaml):
-  - linux,macos,macos-arm64,windows,atlas,clang-asan,valgrind
+  - linux,macos,macos-arm64,windows,atlas,mkl,clang-asan,valgrind
 
 
 ## Downstream dependencies
