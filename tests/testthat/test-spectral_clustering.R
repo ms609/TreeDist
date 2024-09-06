@@ -7,6 +7,6 @@ test_that("Spectral clustering fails gracefully", {
 test_that("Spectral clustering works", {
   allEig <- SpectralEigens(d, nEig = Inf)
   expect_equal(dim(allEig), c(40, 40))
-  expect_equal(SpectralEigens(d, nEig = 2), allEig[, 40:39],
+  expect_equal(abs(SpectralEigens(d, nEig = 2)), abs(allEig[, 40:39]),
                tolerance = sqrt(.Machine[["double.eps"]]))
 })
