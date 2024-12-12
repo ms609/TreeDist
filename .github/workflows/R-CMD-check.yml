@@ -85,6 +85,8 @@ jobs:
         with:
           # Guesses: Umatrix; uwot
           extra-packages: |
+            waldo@0.5.3
+            testthat@3.2.1
             Matrix@1.6-5
             RcppAnnoy@0.0.14
             RcppGSL@0.3.8
