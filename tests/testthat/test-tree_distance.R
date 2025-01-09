@@ -76,6 +76,21 @@ test_that("Size mismatch causes error", {
   Test(cpp_shared_phylo)
 })
 
+test_that("Overflows fail safely", {
+  expect_error(cpp_shared_phylo(
+    as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
+    as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
+    2^15 + 1
+  ),
+  "This many tips")
+  expect_error(cpp_mutual_clustering(
+    as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
+    as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
+    2^15 + 1
+  ),
+  "This many tips")
+})
+
 test_that("Metrics handle polytomies", {
   polytomy8 <- ape::read.tree(text="(a, b, c, d, e, f, g, h);")
   lapply(list(SharedPhylogeneticInfo, MutualClusteringInfo,
@@ -214,13 +229,6 @@ test_that("RF Distance is correctly calculated", {
 })
 
 test_that("Shared Phylogenetic Info is correctly calculated", {
-  expect_error(cpp_shared_phylo(
-      as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
-      as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
-      2^15 + 1
-    ),
-    "This many tips")
-  
   expect_equal(5.529821, tolerance = 1e-7,
                cpp_shared_phylo(
                  as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),

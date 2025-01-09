@@ -391,6 +391,10 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
+  if (nTip[0] > INT16_MAX) {
+    Rcpp::stop("This many tips are not (yet) supported.");
+  }
+  
   const SplitList a(x), b(y);
   const bool a_has_more_splits = (a.n_splits > b.n_splits);
   const int16
@@ -411,7 +415,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   int16 exact_matches = 0;
   // NumericVector zero-initializes [so does make_unique]
   // match will have one added to it so numbering follows R; hence 0 = UNMATCHED
-  NumericVector a_match(a.n_splits);
+  IntegerVector a_match(a.n_splits);
   std::unique_ptr<int16[]> b_match = std::make_unique<int16[]>(b.n_splits);
   
   for (int16 ai = 0; ai != a.n_splits; ++ai) {
