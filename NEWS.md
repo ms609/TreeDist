@@ -1,3 +1,8 @@
+# TreeDist 2.9.1.9000 (2025-01-09)
+
+- Address M1-SAN issues.
+
+
 # TreeDist 2.9.1 (2024-09-05)
 
 - Avoid false positive in MKL testing environment.
