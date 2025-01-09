@@ -199,8 +199,6 @@ List keep_and_reroot(const List tree1,
   if (old_label.size() > std::numeric_limits<int16>::max()) {
     Rcpp::stop("This many leaves are not (yet) supported.");
   }
-  const int16 n_split = int16(x.rows());
-  
   intx next_tip = n_tip;
   for (intx i = intx(old_label.size()); i--; ) {
     if (keep[i]) {
