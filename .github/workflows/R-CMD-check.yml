@@ -143,8 +143,15 @@ jobs:
       - name: Set up pandoc
         uses: r-lib/actions/setup-pandoc@v2
         
-      - name: Check package
+      - name: Check with incoming checks (PR)
+        if: github.event_name == 'pull_request'
         uses: r-lib/actions/check-r-package@v2
+
+      - name: Check without incoming checks (push/schedule)
+        if: github.event_name == 'push' || github.event_name == 'schedule'
+        uses: r-lib/actions/check-r-package@v2
+        with:
+          check_args: "--no-incoming-check"
 
       - name: Code coverage
         if: runner.os == 'Windows'
