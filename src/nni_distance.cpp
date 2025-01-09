@@ -1,5 +1,6 @@
 #include <Rcpp/Lightest>
 #include <TreeTools/SplitList.h>
+#include <TreeTools/assert.h>
 
 #include <cmath>
 
@@ -14,7 +15,9 @@ using TreeTools::powers_of_two;
 #define CHILD1(i) int16(edge1(i, 1))
 #define CHILD2(i) int16(edge2(i, 1))
 
-const int16 NNI_MAX_TIPS = 5000; /* To avoid variable length arrays */
+const int16 NNI_MAX_TIPS = 5000 > SL_MAX_TIPS ? SL_MAX_TIPS : 5000; /* To avoid variable length arrays */
+// If updating NNI_MAX_TIPS, also update lg2_ceiling constructor
+const int16 NNI_MAX_BINS = SL_MAX_BINS + SL_MAX_BINS;
 
 /* Exact value of diameter for trees with 0..N_EXACT edges, 
  * calculated by Li et al. 1996. */
@@ -24,7 +27,7 @@ const int16 min_diameter[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 
 
 int16 lg2_ceiling[NNI_MAX_TIPS + 1];
 int16 fack_lookup[NNI_MAX_TIPS + 1];
-int16 li[NNI_MAX_TIPS + 1];
+int32 li[NNI_MAX_TIPS + 1];
   __attribute__((constructor)) // Construction avoids floating point worries
     void initialize_cache() {
       lg2_ceiling[0] = -1;
@@ -42,15 +45,20 @@ int16 li[NNI_MAX_TIPS + 1];
       for (int16 i = 256  + 1; i != 512  + 1; i++) lg2_ceiling[i] = 9;
       for (int16 i = 512  + 1; i != 1024 + 1; i++) lg2_ceiling[i] = 10;
       for (int16 i = 1024 + 1; i != 2048 + 1; i++) lg2_ceiling[i] = 11;
-      for (int16 i = 2048 + 1; i != 4096 + 1; i++) lg2_ceiling[i] = 12;
-      for (int16 i = 4096 + 1; i != NNI_MAX_TIPS + 1; i++) lg2_ceiling[i] = 13;
+      if (NNI_MAX_TIPS > 4096) {
+        for (int16 i = 2048 + 1; i != 4096 + 1; i++) lg2_ceiling[i] = 12;
+        for (int16 i = 4096 + 1; i != NNI_MAX_TIPS + 1; i++) lg2_ceiling[i] = 13;
+      } else if (NNI_MAX_TIPS > 2048) {
+        for (int16 i = 2048 + 1; i != NNI_MAX_TIPS + 1; i++) lg2_ceiling[i] = 12;
+      }
       
       for (int16 i = 4; i != NNI_MAX_TIPS + 1; i++) {
         fack_lookup[i] = int16(((i - 2 - 2) * lg2_ceiling[i - 2]) + i - 2);
       }
       for (int16 i = 4; i != NNI_MAX_TIPS + 1; i++) {
-        const int16 log_ceiling = lg2_ceiling[i];
-        const int16 sorting_number = i * log_ceiling - std::pow(2, log_ceiling) + 1;
+        const int32 log_ceiling = lg2_ceiling[i];
+        const int32 sorting_number = int32(
+          i * log_ceiling - std::pow(2, log_ceiling) + 1);
       
         /* Calculate the shortest length of the longest path in a tree.
          * To make this path as short as possible, divide tips into three 
@@ -78,20 +86,21 @@ int16 li[NNI_MAX_TIPS + 1];
     }
 
 // Score subtree, add to score, and reset subtree size
-void update_score (const int16 subtree_edges, int16 *lower_bound,
-                   int16 *closest_lower_bound,
-                   int16 *tight_bound, 
-                   int16 *closest_upper_bound,
-                   int16 *loose_bound, 
-                   int16 *li_bound, int16 *fack_bound) {
+void update_score(const int16 subtree_edges, int16 *lower_bound,
+                  int16 *closest_lower_bound,
+                  int16 *tight_bound, 
+                  int32 *closest_upper_bound,
+                  int32 *loose_bound, 
+                  int32 *li_bound, int16 *fack_bound) {
   if (subtree_edges) {
     const int16 
       subtree_tips = subtree_edges + 3,
       lower = min_diameter[subtree_edges],
-      this_li = li[subtree_tips],
-      fack = fack_lookup[subtree_tips],
-      upper = this_li < fack ? this_li : fack
+      fack = fack_lookup[subtree_tips]
     ;
+    const int32 this_li = li[subtree_tips],
+      upper = this_li < fack ? this_li : fack;
+    
     *lower_bound += lower;
     *li_bound += this_li;
     *fack_bound += fack;
@@ -167,19 +176,40 @@ grf_match nni_rf_matching (
     const int16* n_bins,
     const int16* n_tips) {
     
+    if (*n_splits > SL_MAX_SPLITS) {
+      Rcpp::stop("Cannot calculate NNI distance for trees with "
+                              "so many splits."); // nocov
+    }
+    if (*n_tips > SL_MAX_TIPS) {
+      Rcpp::stop("Cannot calculate NNI distance for trees with "
+                              "so many tips."); // nocov
+    }
+    
     const int16
       last_bin = *n_bins - 1,
-      unset_tips = (*n_tips % SL_BIN_SIZE) ? SL_BIN_SIZE - *n_tips % SL_BIN_SIZE : 0;
+      unset_tips = (*n_tips % SL_BIN_SIZE) ?
+        SL_BIN_SIZE - *n_tips % SL_BIN_SIZE :
+        0;
+    if (*n_bins + last_bin > NNI_MAX_BINS) {
+      Rcpp::stop("Cannot calculate NNI distance for trees with "
+                   "so many bins."); // nocov
+    }
     const splitbit unset_mask = ALL_ONES >> unset_tips;
     
-    grf_match matching (*n_splits);
+    grf_match matching(*n_splits);
     for (int16 i = 0; i != *n_splits; i++) matching[i] = NA_INT16;
     
-    splitbit b_complement[SL_MAX_SPLITS][SL_MAX_BINS];
+    splitbit b_complement[SL_MAX_SPLITS][NNI_MAX_BINS];
     for (int16 i = 0; i != *n_splits; i++) {
       for (int16 bin = 0; bin != last_bin; bin++) {
+        ASSERT(i <= SL_MAX_SPLITS);
+        ASSERT(bin <= NNI_MAX_BINS);
+        ASSERT(i * *n_bins + bin < (*n_splits * *n_bins));
         b_complement[i][bin] = ~b[i * *n_bins + bin];
       }
+      ASSERT(i <= SL_MAX_SPLITS);
+      ASSERT(last_bin <= NNI_MAX_BINS);
+      ASSERT(i * *n_bins + last_bin < (*n_splits * *n_bins));
       b_complement[i][last_bin] = b[i * *n_bins + last_bin] ^ unset_mask;
     }
     
@@ -230,10 +260,11 @@ IntegerVector cpp_nni_distance(const IntegerMatrix edge1,
   int16 lower_bound = 0,
     best_lower_bound = 0,
     tight_score_bound = 0,
-    best_upper_bound = 0,
-    loose_score_bound = 0,
-    li_score_bound = 0,
     fack_score_bound = 0
+  ;
+  int32 loose_score_bound = 0,
+    best_upper_bound = 0,
+    li_score_bound = 0
   ;
   if (n_edge != int16(edge2.nrow())) {
     Rcpp::stop("Both trees must have the same number of edges. "
