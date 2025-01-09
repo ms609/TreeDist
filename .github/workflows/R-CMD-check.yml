@@ -85,6 +85,7 @@ jobs:
         with:
           # Guesses: Umatrix; uwot
           extra-packages: |
+            dotCall64@1.1-1
             spam@2.10-0
             waldo@0.5.3
             testthat@3.2.1
