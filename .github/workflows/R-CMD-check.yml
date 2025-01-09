@@ -86,6 +86,7 @@ jobs:
           # Guesses: Umatrix; uwot
           extra-packages: |
             gtable@0.3.5
+            spam@2.10-0
             waldo@0.5.3
             vdiffr@1.0.7
             cpp11@0.5.0
