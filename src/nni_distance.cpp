@@ -15,9 +15,11 @@ using TreeTools::powers_of_two;
 #define CHILD1(i) int16(edge1(i, 1))
 #define CHILD2(i) int16(edge2(i, 1))
 
-const int16 NNI_MAX_TIPS = 5000 > SL_MAX_TIPS ? SL_MAX_TIPS : 5000; /* To avoid variable length arrays */
+/* To avoid variable length arrays */
+const int16 NNI_MAX_BINS = SL_MAX_BINS * 4;
+const int16 NNI_MAX_SPLITS = SL_MAX_SPLITS * 4;
+const int16 NNI_MAX_TIPS = NNI_MAX_BINS * SL_BIN_SIZE;
 // If updating NNI_MAX_TIPS, also update lg2_ceiling constructor
-const int16 NNI_MAX_BINS = SL_MAX_BINS + SL_MAX_BINS;
 
 /* Exact value of diameter for trees with 0..N_EXACT edges, 
  * calculated by Li et al. 1996. */
@@ -176,13 +178,9 @@ grf_match nni_rf_matching (
     const int16* n_bins,
     const int16* n_tips) {
     
-    if (*n_splits > SL_MAX_SPLITS) {
+    if (*n_splits > NNI_MAX_SPLITS) {
       Rcpp::stop("Cannot calculate NNI distance for trees with "
                               "so many splits."); // nocov
-    }
-    if (*n_tips > SL_MAX_TIPS) {
-      Rcpp::stop("Cannot calculate NNI distance for trees with "
-                              "so many tips."); // nocov
     }
     
     const int16
@@ -199,15 +197,15 @@ grf_match nni_rf_matching (
     grf_match matching(*n_splits);
     for (int16 i = 0; i != *n_splits; i++) matching[i] = NA_INT16;
     
-    splitbit b_complement[SL_MAX_SPLITS][NNI_MAX_BINS];
+    splitbit b_complement[NNI_MAX_SPLITS][NNI_MAX_BINS];
     for (int16 i = 0; i != *n_splits; i++) {
       for (int16 bin = 0; bin != last_bin; bin++) {
-        ASSERT(i <= SL_MAX_SPLITS);
+        ASSERT(i <= NNI_MAX_SPLITS);
         ASSERT(bin <= NNI_MAX_BINS);
         ASSERT(i * *n_bins + bin < (*n_splits * *n_bins));
         b_complement[i][bin] = ~b[i * *n_bins + bin];
       }
-      ASSERT(i <= SL_MAX_SPLITS);
+      ASSERT(i <= NNI_MAX_SPLITS);
       ASSERT(last_bin <= NNI_MAX_BINS);
       ASSERT(i * *n_bins + last_bin < (*n_splits * *n_bins));
       b_complement[i][last_bin] = b[i * *n_bins + last_bin] ^ unset_mask;
