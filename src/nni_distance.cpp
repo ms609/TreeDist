@@ -270,7 +270,7 @@ IntegerVector cpp_nni_distance(const IntegerMatrix edge1,
     trivial_two_1 = (rooted ? (CHILD1(n_edge - 1) - 1) : NOT_TRIVIAL),
     trivial_two_2 = (rooted ? (CHILD2(n_edge - 1) - 1) : NOT_TRIVIAL),
     
-    n_distinct_edge = int16(n_edge - rooted ? 1 : 0),
+    n_distinct_edge = int16(n_edge - (rooted ? 1 : 0)),
     n_splits = n_distinct_edge - n_tip
   ;
   
