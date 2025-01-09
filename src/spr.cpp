@@ -143,7 +143,10 @@ IntegerVector confusion (const RawMatrix x, const RawMatrix y) {
 }
 
 IntegerMatrix reverse (const IntegerMatrix x) {
-  const intx n_edge = x.nrow();
+  if (x.nrow() > std::numeric_limits<intx>::max()) {
+    Rcpp::stop("This many edges are not (yet) supported.");
+  }
+  const intx n_edge = intx(x.nrow());
   ASSERT(n_edge % 2 == 0); // Tree is binary
   IntegerMatrix ret(n_edge, 2);
   
