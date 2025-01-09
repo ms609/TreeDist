@@ -24,8 +24,10 @@ __attribute__((constructor))                                     \
   
 // [[Rcpp::export]]
 IntegerVector mismatch_size (const RawMatrix x, const RawMatrix y) {
-  // Rcout << "\n Debugging mismatch_size()\n";
-  const int16 n_split = x.rows();
+  if (x.rows() > std::numeric_limits<int16>::max()) {
+    Rcpp::stop("This many splits are not (yet) supported.");
+  }
+  const int16 n_split = int16(x.rows());
   if (n_split != y.rows()) {
     throw std::invalid_argument("`x` and `y` differ in number of splits.");
   }
@@ -85,7 +87,10 @@ IntegerVector mismatch_size (const RawMatrix x, const RawMatrix y) {
 
 // [[Rcpp::export]]
 IntegerVector confusion (const RawMatrix x, const RawMatrix y) {
-  const int16 n_split = x.rows();
+  if (x.rows() > std::numeric_limits<int16>::max()) {
+    Rcpp::stop("This many splits are not (yet) supported.");
+  }
+  const int16 n_split = int16(x.rows());
   if (n_split != y.rows()) {
     throw std::invalid_argument("Input splits contain same number of splits.");
   }
@@ -191,8 +196,13 @@ List keep_and_reroot(const List tree1,
   // Rcout << ret_edge1.nrow() << " rows; Kept " << n_tip << " tips and "
   //       << n_node << " nodes.\n";
   
+  if (old_label.size() > std::numeric_limits<int16>::max()) {
+    Rcpp::stop("This many leaves are not (yet) supported.");
+  }
+  const int16 n_split = int16(x.rows());
+  
   intx next_tip = n_tip;
-  for (intx i = old_label.size(); i--; ) {
+  for (intx i = intx(old_label.size()); i--; ) {
     if (keep[i]) {
       --next_tip;
       new_labels[next_tip] = old_label[i];
