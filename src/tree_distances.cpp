@@ -584,18 +584,19 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
-  if (nTip[0] > INT16_MAX) {
+  if (nTip[0] >= std::numeric_limits<int16>::max()) {
     Rcpp::stop("This many tips are not (yet) supported.");
   }
   const SplitList a(x), b(y);
   const int16
     most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-    n_tips = int16(nTip[0])
+    n_tips = int16(nTip[0]),
+    overlap_a = int16(n_tips + 1) / 2 // calculate here to avoid promotion to int
   ;
   const cost max_score = BIG;
   const double
     lg2_unrooted_n = lg2_unrooted[n_tips],
-    best_overlap = one_overlap((n_tips + 1) / 2, n_tips / 2, n_tips),
+    best_overlap = one_overlap(overlap_a, n_tips / 2, n_tips),
     max_possible = lg2_unrooted_n - best_overlap
   ;
   
