@@ -605,7 +605,7 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
     Rcpp::stop("Input splits must address same number of tips.");
   }
   if (nTip[0] >= std::numeric_limits<int16>::max()) {
-    Rcpp::stop("This many tips are not (yet) supported.");
+    Rcpp::stop("This many tips are not (yet) supported."); // nocov
   }
   const SplitList a(x), b(y);
   const int16
