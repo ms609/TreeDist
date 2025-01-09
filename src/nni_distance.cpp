@@ -9,10 +9,10 @@ using namespace Rcpp;
 using TreeTools::SplitList;
 using TreeTools::powers_of_two;
 
-#define PARENT1(i) edge1(i, 0)
-#define PARENT2(i) edge2(i, 0)
-#define CHILD1(i) edge1(i, 1)
-#define CHILD2(i) edge2(i, 1)
+#define PARENT1(i) int16(edge1(i, 0))
+#define PARENT2(i) int16(edge2(i, 0))
+#define CHILD1(i) int16(edge1(i, 1))
+#define CHILD2(i) int16(edge2(i, 1))
 
 const int16 NNI_MAX_TIPS = 5000; /* To avoid variable length arrays */
 
@@ -222,10 +222,10 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
                             "so many tips.");
   }
   const int16 
-    n_tip = nTip[0],
+    n_tip = int16(nTip[0]),
     node_0 = n_tip,
     node_0_r = n_tip + 1,
-    n_edge = edge1.nrow()
+    n_edge = int16(edge1.nrow())
   ;
   int16 lower_bound = 0,
     best_lower_bound = 0,
@@ -335,9 +335,9 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
       const int16 unmatched_2 = (root_child_2 < n_tip ? 0 :
                                    unmatched_below[root_child_2 - node_0]);
       if (!matched_1[root_child_2 - node_0]) {
-        update_score(unmatched_below[root_node]
-                       + unmatched_1
-                       + unmatched_2, &lower_bound, &best_lower_bound,
+        update_score(int16(unmatched_below[root_node]
+                             + unmatched_1
+                             + unmatched_2), &lower_bound, &best_lower_bound,
                      &tight_score_bound, &best_upper_bound, &loose_score_bound,
                      &li_score_bound, &fack_score_bound);
       } else {
