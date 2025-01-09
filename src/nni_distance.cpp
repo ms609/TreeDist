@@ -189,7 +189,6 @@ grf_match nni_rf_matching (
         SL_BIN_SIZE - *n_tips % SL_BIN_SIZE :
         0;
     if (*n_bins + last_bin > NNI_MAX_BINS) {
-      Rcout << "\n\nToo many bins: " << *n_bins + last_bin << "!\n";
       Rcpp::stop("Cannot calculate NNI distance for trees with "
                    "so many tips.");
     }
