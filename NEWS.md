@@ -1,6 +1,6 @@
 # TreeDist 2.9.1.9000 (2025-01-09)
 
-- Address M1-SAN issues.
+- Fix crash when calculating NNI distance for large trees.
 
 
 # TreeDist 2.9.1 (2024-09-05)
