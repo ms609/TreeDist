@@ -77,9 +77,11 @@ Suggests:
   Umatrix,
   uwot,
   vdiffr (>= 1.0.0),
-LinkingTo: 
+LinkingTo:
   Rcpp,
   TreeTools,
+Remotes:
+  ms609/TreeTools
 RdMacros: Rdpack
 VignetteBuilder: knitr
 Config/Needs/check: rcmdcheck
