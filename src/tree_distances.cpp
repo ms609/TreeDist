@@ -580,10 +580,13 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
+  if (nTip[0] > INT16_MAX) {
+    Rcpp::stop("This many tips are not (yet) supported.");
+  }
   const SplitList a(x), b(y);
   const int16
     most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-    n_tips = nTip[0]
+    n_tips = int16(nTip[0])
   ;
   const cost max_score = BIG;
   const double
@@ -603,9 +606,8 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
                                           a.in_split[ai], b.in_split[bi],
                                           a.n_bins);
       
-      score[ai][bi] = spi_over ?
-        (spi_over - best_overlap) * (max_score / max_possible) :
-        max_score;
+      score[ai][bi] = spi_over == 0 ? max_score :
+        cost((spi_over - best_overlap) * (max_score / max_possible));
         
     }
     for (int16 bi = b.n_splits; bi < most_splits; ++bi) {
