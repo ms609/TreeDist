@@ -1,4 +1,8 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wall"
 #include <Rcpp/Lightest>
+#pragma GCC diagnostic pop
+
 #include <TreeTools/SplitList.h> /* for SL_MAX_TIPS */
 
 #include <cmath> /* for log2() */
