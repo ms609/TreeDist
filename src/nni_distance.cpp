@@ -46,7 +46,7 @@ int16 li[NNI_MAX_TIPS + 1];
       for (int16 i = 4096 + 1; i != NNI_MAX_TIPS + 1; i++) lg2_ceiling[i] = 13;
       
       for (int16 i = 4; i != NNI_MAX_TIPS + 1; i++) {
-        fack_lookup[i] = ((i - 2 - 2) * lg2_ceiling[i - 2]) + i - 2;
+        fack_lookup[i] = int16(((i - 2 - 2) * lg2_ceiling[i - 2]) + i - 2);
       }
       for (int16 i = 4; i != NNI_MAX_TIPS + 1; i++) {
         const int16 log_ceiling = lg2_ceiling[i];
@@ -56,10 +56,10 @@ int16 li[NNI_MAX_TIPS + 1];
          * To make this path as short as possible, divide tips into three 
          * balanced trees, joined by a single node that will form part of every 
          * longest path.  One of these subtrees will be filled with >= n/3 nodes */
-        const int16 nodes_in_full = std::ceil(log2(double(i) / 3));
+        const int16 nodes_in_full = int16(std::ceil(log2(double(i) / 3)));
         /* We want to put a power of two tips in this subtree, such that every node is 
          * equally close to its root */
-        const int16 tips_in_full = std::pow(2, nodes_in_full);
+        const int16 tips_in_full = int16(std::pow(2, nodes_in_full));
         /* Now the remaining tips must be spread sub-evenly between the remaining 
          * edges from this node.  Picture halving the tips; removing tips from one side
          * until it is a power of two will reduce the number of nodes by one, whilst 
@@ -213,9 +213,9 @@ grf_match nni_rf_matching (
   }
 
 // [[Rcpp::export]]
-IntegerVector cpp_nni_distance (const IntegerMatrix edge1, 
-                                const IntegerMatrix edge2,
-                                const IntegerVector nTip) {
+IntegerVector cpp_nni_distance(const IntegerMatrix edge1, 
+                               const IntegerMatrix edge2,
+                               const IntegerVector nTip) {
   
   if (nTip[0] > NNI_MAX_TIPS) {
     Rcpp::stop("Cannot calculate NNI distance for trees with "
@@ -262,7 +262,7 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
   
   const int16
     n_node = n_edge + 1,
-    n_bin = ((n_tip - 1) / SL_BIN_SIZE) + 1,
+    n_bin = int16(((n_tip - 1) / SL_BIN_SIZE) + 1),
     
     trivial_origin_1 = root_1 - 1,
     trivial_origin_2 = root_2 - 1,
@@ -270,7 +270,7 @@ IntegerVector cpp_nni_distance (const IntegerMatrix edge1,
     trivial_two_1 = (rooted ? (CHILD1(n_edge - 1) - 1) : NOT_TRIVIAL),
     trivial_two_2 = (rooted ? (CHILD2(n_edge - 1) - 1) : NOT_TRIVIAL),
     
-    n_distinct_edge = n_edge - (rooted ? 1 : 0),
+    n_distinct_edge = int16(n_edge - rooted ? 1 : 0),
     n_splits = n_distinct_edge - n_tip
   ;
   
