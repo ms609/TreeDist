@@ -17,6 +17,8 @@ using TreeTools::powers_of_two;
 #define CHILD2(i) int16(edge2(i, 1))
 
 /* Defining these here avoids variable length arrays */
+/* However, setting larger values can cause the stack to overflow. */
+/* 128 (SL_MAX_BINS * 4) and 8192 (SL_MAX_SPLITS * 4) are too large on MacOS */
 const int16 NNI_MAX_BINS = SL_MAX_BINS * 2;
 const int16 NNI_MAX_SPLITS = SL_MAX_SPLITS * 2;
 const int16 NNI_MAX_TIPS = NNI_MAX_BINS * SL_BIN_SIZE;
