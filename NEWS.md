@@ -1,6 +1,6 @@
-# TreeDist 2.9.1.9000 (2025-01-09)
+# TreeDist 2.9.2 (2025-01-10)
 
-- Fix crash when calculating NNI distance for large trees.
+- Avoid crashing when calculating NNI distance for large trees.
 
 
 # TreeDist 2.9.1 (2024-09-05)
