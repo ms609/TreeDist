@@ -16,9 +16,9 @@ using TreeTools::powers_of_two;
 #define CHILD1(i) int16(edge1(i, 1))
 #define CHILD2(i) int16(edge2(i, 1))
 
-/* To avoid variable length arrays */
-const int16 NNI_MAX_BINS = SL_MAX_BINS * 4;
-const int16 NNI_MAX_SPLITS = SL_MAX_SPLITS * 4;
+/* Defining these here avoids variable length arrays */
+const int16 NNI_MAX_BINS = SL_MAX_BINS * 2;
+const int16 NNI_MAX_SPLITS = SL_MAX_SPLITS * 2;
 const int16 NNI_MAX_TIPS = NNI_MAX_BINS * SL_BIN_SIZE;
 // If updating NNI_MAX_TIPS, also update lg2_ceiling constructor
 
