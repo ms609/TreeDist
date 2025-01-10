@@ -324,6 +324,7 @@ IntegerVector cpp_nni_distance(const IntegerMatrix edge1,
   int16 unmatched_below[NNI_MAX_TIPS] = {0};
 
   for (int16 i = 0; i != int16(match.size()); i++) {
+    ASSERT(n_edge != n_tip && n_tip > 3); // else names_1 uninitialized
     int16 node_i = names_1[i] - node_0_r;
     if (match[i] == NA_INT16) {
       matched_1[node_i] = false;
