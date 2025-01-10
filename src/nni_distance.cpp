@@ -179,8 +179,8 @@ grf_match nni_rf_matching (
     const int16* n_tips) {
     
     if (*n_splits > NNI_MAX_SPLITS) {
-      Rcpp::stop("Cannot calculate NNI distance for trees with "
-                              "so many splits."); // nocov
+      Rcpp::stop("Cannot calculate NNI distance for trees with "        // nocov
+                              "so many splits.");                       // nocov
     }
     
     const int16
