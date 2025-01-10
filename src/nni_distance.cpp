@@ -3,6 +3,7 @@
 #include <TreeTools/assert.h>
 
 #include <cmath>
+#include <memory> // for unique_ptr
 
 #include "tree_distances.h"
 
@@ -132,8 +133,8 @@ void nni_edge_to_splits(const IntegerMatrix edge,
                         const int16* n_bin,
                         const int16* trivial_origin,
                         const int16* trivial_two,
-                        splitbit* splits,
-                        int16* names) {
+                        std::unique_ptr<splitbit[]>& splits,
+                        std::unique_ptr<int16[]>& names) {
   
   
   splitbit** tmp_splits = new splitbit*[*n_node];
@@ -172,8 +173,8 @@ void nni_edge_to_splits(const IntegerMatrix edge,
 }
 
 grf_match nni_rf_matching (
-    const splitbit* a, 
-    const splitbit* b,
+    const std::unique_ptr<splitbit[]>& a, 
+    const std::unique_ptr<splitbit[]>& b,
     const int16* n_splits,
     const int16* n_bins,
     const int16* n_tips) {
@@ -303,10 +304,11 @@ IntegerVector cpp_nni_distance(const IntegerMatrix edge1,
     n_splits = n_distinct_edge - n_tip
   ;
   
-  splitbit 
-    *splits1 = new splitbit[n_splits * n_bin],
-    *splits2 = new splitbit[n_splits * n_bin];
-  int16 *names_1 = new int16[n_splits];
+  std::unique_ptr<splitbit[]> splits1(new splitbit[n_splits * n_bin]);
+  std::unique_ptr<splitbit[]> splits2(new splitbit[n_splits * n_bin]);
+  // std::vector<int16> names_1;
+  // names_1.reserve(n_splits);
+  std::unique_ptr<int16[]> names_1(new int16[n_splits]);
   
   if (n_edge != n_tip && n_tip > 3) {
     nni_edge_to_splits(edge2, &n_tip, &n_edge, &n_node, &n_bin, 
@@ -316,9 +318,6 @@ IntegerVector cpp_nni_distance(const IntegerMatrix edge1,
   } // else no internal nodes resolved
   
   grf_match match = nni_rf_matching(splits1, splits2, &n_splits, &n_bin, &n_tip);
-  
-  delete[] splits1;
-  delete[] splits2;
   
   bool matched_1[NNI_MAX_TIPS] = {0};
   int16 unmatched_below[NNI_MAX_TIPS] = {0};
@@ -333,7 +332,6 @@ IntegerVector cpp_nni_distance(const IntegerMatrix edge1,
       matched_1[node_i] = true;
     }
   }
-  delete[] names_1;
   
   for (int16 i = 0; i != n_distinct_edge - (rooted ? 1 : 0); i++) {
     const int16 parent_i = PARENT1(i) - 1, child_i = CHILD1(i) - 1;
