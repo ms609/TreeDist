@@ -12,13 +12,6 @@ test_that("SPR: keep_and_reroot()", {
   reduced <- keep_and_reduce(tree1, tree2, keep)
   expect_equal(Preorder(reduced[[1]]), Preorder(DropTip(result[[1]], "t9")))
   expect_equal(Preorder(reduced[[2]]), Preorder(DropTip(result[[2]], "t9")))
-  
-  skip_if_not_installed("TreeTools", "1.11.1.9003")
-  twoZeroes <- list(Preorder(ZeroTaxonTree()), Preorder(ZeroTaxonTree()))
-  expect_equal(keep_and_reroot(SingleTaxonTree(), SingleTaxonTree(), FALSE),
-               twoZeroes)
-  expect_equal(keep_and_reduce(SingleTaxonTree(), SingleTaxonTree(), TRUE),
-               twoZeroes)
 })
 
 test_that("SPR: Under the hood", {

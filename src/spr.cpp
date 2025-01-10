@@ -24,8 +24,10 @@ __attribute__((constructor))                                     \
   
 // [[Rcpp::export]]
 IntegerVector mismatch_size (const RawMatrix x, const RawMatrix y) {
-  // Rcout << "\n Debugging mismatch_size()\n";
-  const int16 n_split = x.rows();
+  if (x.rows() > std::numeric_limits<int16>::max()) {
+    Rcpp::stop("This many splits are not (yet) supported.");
+  }
+  const int16 n_split = int16(x.rows());
   if (n_split != y.rows()) {
     throw std::invalid_argument("`x` and `y` differ in number of splits.");
   }
@@ -85,7 +87,10 @@ IntegerVector mismatch_size (const RawMatrix x, const RawMatrix y) {
 
 // [[Rcpp::export]]
 IntegerVector confusion (const RawMatrix x, const RawMatrix y) {
-  const int16 n_split = x.rows();
+  if (x.rows() > std::numeric_limits<int16>::max()) {
+    Rcpp::stop("This many splits are not (yet) supported.");
+  }
+  const int16 n_split = int16(x.rows());
   if (n_split != y.rows()) {
     throw std::invalid_argument("Input splits contain same number of splits.");
   }
@@ -138,7 +143,10 @@ IntegerVector confusion (const RawMatrix x, const RawMatrix y) {
 }
 
 IntegerMatrix reverse (const IntegerMatrix x) {
-  const intx n_edge = x.nrow();
+  if (x.nrow() > std::numeric_limits<intx>::max()) {
+    Rcpp::stop("This many edges are not (yet) supported.");
+  }
+  const intx n_edge = intx(x.nrow());
   ASSERT(n_edge % 2 == 0); // Tree is binary
   IntegerMatrix ret(n_edge, 2);
   
@@ -157,14 +165,20 @@ IntegerMatrix reverse (const IntegerMatrix x) {
 List keep_and_reroot(const List tree1,
                      const List tree2,
                      const LogicalVector keep) {
-  IntegerMatrix 
+  IntegerMatrix
     postorder1 = tree1["edge"],
-    postorder2 = tree2["edge"],
+    postorder2 = tree2["edge"]
+  ;
+  
+  ASSERT(postorder1.nrow() % 2 == 0); // Tree is binary
+  ASSERT(postorder2.nrow() % 2 == 0); // Tree is binary
+  
+  IntegerMatrix
     pre1 = reverse(postorder1),
     pre2 = reverse(postorder2)
   ;
   
-  ASSERT((postorder1.nrow() / 2 + 1) == keep.length());
+  ASSERT(postorder1.nrow() / 2 + 1 == keep.length());
   // Rcout << "\n \n === Keep & Reroot ===\n";
   // Rcout << " Keeping: ";
   // for (int i = 0; i != keep.size(); i++) Rcout << (keep[i] ? "*" : ".");
@@ -191,8 +205,11 @@ List keep_and_reroot(const List tree1,
   // Rcout << ret_edge1.nrow() << " rows; Kept " << n_tip << " tips and "
   //       << n_node << " nodes.\n";
   
+  if (old_label.size() > std::numeric_limits<int16>::max()) {
+    Rcpp::stop("This many leaves are not (yet) supported.");
+  }
   intx next_tip = n_tip;
-  for (intx i = old_label.size(); i--; ) {
+  for (intx i = intx(old_label.size()); i--; ) {
     if (keep[i]) {
       --next_tip;
       new_labels[next_tip] = old_label[i];

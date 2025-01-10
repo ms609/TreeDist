@@ -1,3 +1,8 @@
+# TreeDist 2.9.2 (2025-01-10)
+
+- Avoid crashing when calculating NNI distance for large trees.
+
+
 # TreeDist 2.9.1 (2024-09-05)
 
 - Avoid false positive in MKL testing environment.

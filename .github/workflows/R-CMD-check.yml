@@ -85,16 +85,21 @@ jobs:
         with:
           # Guesses: Umatrix; uwot
           extra-packages: |
+            dotCall64@1.1-1
+            spam@2.10-0
             waldo@0.5.3
+            testthat@3.2.1
             vdiffr@1.0.7
             cpp11@0.5.0
             httr2@1.0.1
-            testthat@3.2.1
+            downlit@0.4.3
+            pkgdown@2.0.9
+            profvis@0.3.8
+            gtable@0.3.5
             Matrix@1.6-5
             RcppAnnoy@0.0.14
             RcppGSL@0.3.8
             RcppZiggurat@0.1.5
-            Rfast@1.9.8
             uwot@0.1.8
             Umatrix@3.3
             hypervolume@3.1.1
@@ -104,6 +109,7 @@ jobs:
             FNN@1.1.3.2
             knitr@1.45
             phangorn@2.7.1
+            Rfast@1.9.8
             rjson@0.2.20
             XML@3.99-0.3
           needs: |

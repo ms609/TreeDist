@@ -177,8 +177,8 @@ test_that("Matches are reported", {
   Test(JaccardRobinsonFoulds, k = 2, allowConflict = TRUE)
   Test(RobinsonFoulds, relaxed = TRUE)
   Test(InfoRobinsonFoulds, relaxed = TRUE)
-
-    # Matching Split Distance matches differently:  
+  
+  # Matching Split Distance matches differently:  
   at <- attributes(MatchingSplitDistance(treeSym8, treeBal8, 
                                          reportMatching = TRUE))
   .ExpectAtOK(at)
@@ -188,14 +188,14 @@ test_that("Matches are reported", {
   
   # Zero match:
   expect_true(attr(SharedPhylogeneticInfo(
-                    ape::read.tree(text = "((a, b), (c, d));"),
-                    ape::read.tree(text = "((a, c), (b, d));"), 
-                    reportMatching = TRUE),
-                    "matchedSplits") %in% c(
-                      "a b | c d .. a c | b d",
-                      "a b | c d .. b d | a c",
-                      "c d | a b .. a c | b d",
-                      "c d | a b .. b d | a c"))
+    ape::read.tree(text = "((a, b), (c, d));"),
+    ape::read.tree(text = "((a, c), (b, d));"), 
+    reportMatching = TRUE),
+    "matchedSplits") %in% c(
+      "a b | c d .. a c | b d",
+      "a b | c d .. b d | a c",
+      "c d | a b .. a c | b d",
+      "c d | a b .. b d | a c"))
 })
 
 test_that("Matchings are calculated in both directions", {
@@ -238,8 +238,8 @@ test_that(".TreeDistance() supports all sizes", {
     MASTSize(list(bal = BalancedTree(7), pec = PectinateTree(7)),
              as.phylo(0:3, 7)))
   expect_equal(t(NNIDist(BalancedTree(7), as.phylo(0:3, 7))),
-    NNIDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
-             as.phylo(0:3, 7))[1, , ])
+               NNIDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
+                       as.phylo(0:3, 7))[1, , ])
   expect_error(.TreeDistance(RobinsonFoulds, PectinateTree(1:6),
                              PectinateTree(6)))
 })
@@ -328,7 +328,7 @@ test_that(".SharedOnly() works", {
            KeepTip(pecBI, ch)),
       list(KeepTip(pecBI, bh), balCH,
            balCH)
-      )
+    )
   )
   
   t1 <- structure(list(
