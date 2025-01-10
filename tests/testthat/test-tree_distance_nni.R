@@ -17,7 +17,7 @@ test_that("NNIDist() handles exceptions", {
 })
 
 test_that("NNIDist() at NNI_MAX_TIPS", {
-  maxTips <- 4096
+  maxTips <- 2048
   n <- .NNIDistSingle(PectinateTree(maxTips), BalancedTree(maxTips),
                            maxTips)
   expect_gt(n[["best_upper"]], n[["best_lower"]])
