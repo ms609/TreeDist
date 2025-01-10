@@ -128,7 +128,7 @@ void update_score(const int16 subtree_edges, int16 *lower_bound,
 
 
 // Edges must be listed in postorder
-void nni_edge_to_splits(const IntegerMatrix edge,
+void nni_edge_to_splits(const IntegerMatrix& edge,
                         const int16* n_tip,
                         const int16* n_edge,
                         const int16* n_node,
@@ -138,10 +138,10 @@ void nni_edge_to_splits(const IntegerMatrix edge,
                         std::unique_ptr<splitbit[]>& splits,
                         std::unique_ptr<int16[]>& names) {
   
+  std::vector<std::unique_ptr<splitbit[]>> tmp_splits(*n_node);
   
-  splitbit** tmp_splits = new splitbit*[*n_node];
   for (int16 i = 0; i != *n_node; i++) {
-    tmp_splits[i] = new splitbit[*n_bin]();
+    tmp_splits[i] = std::make_unique<splitbit[]>(*n_bin);
   }
   
   for (int16 i = 0; i != *n_tip; i++) {
@@ -154,10 +154,6 @@ void nni_edge_to_splits(const IntegerMatrix edge,
     }
   }
   
-  for (int16 i = 0; i != *n_tip; i++) {
-    delete[] tmp_splits[i];
-  }
-  
   int16 n_trivial = 0;
   for (int16 i = *n_tip; i != *n_node; i++) {
     if (i == *trivial_origin || i == *trivial_two) {
@@ -168,10 +164,7 @@ void nni_edge_to_splits(const IntegerMatrix edge,
         names[i - *n_tip - n_trivial] = (i + 1);
       }
     }
-    delete[] tmp_splits[i];
   }
-  
-  delete[] tmp_splits;
 }
 
 grf_match nni_rf_matching (
