@@ -165,9 +165,15 @@ IntegerMatrix reverse (const IntegerMatrix x) {
 List keep_and_reroot(const List tree1,
                      const List tree2,
                      const LogicalVector keep) {
-  IntegerMatrix 
+  IntegerMatrix
     postorder1 = tree1["edge"],
-    postorder2 = tree2["edge"],
+    postorder2 = tree2["edge"]
+  ;
+  
+  ASSERT(postorder1.nrow() % 2 == 0); // Tree is binary
+  ASSERT(postorder2.nrow() % 2 == 0); // Tree is binary
+  
+  IntegerMatrix
     pre1 = reverse(postorder1),
     pre2 = reverse(postorder2)
   ;
