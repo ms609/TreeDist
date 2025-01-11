@@ -11,15 +11,19 @@ using TreeTools::count_bits;
 
 TREETOOLS_SPLITLIST_INIT
 
+void check_ntip(const double n) {
+  if (n > double(std::numeric_limits<int16>::max())) {
+    Rcpp::stop("This many tips are not (yet) supported.");
+  }
+}
+
 // [[Rcpp::export]]
 List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y, 
                                    const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
-  if (nTip[0] > std::numeric_limits<int16>::max()) {
-    Rcpp::stop("This many tips are not (yet) supported.");
-  }
+  check_ntip(nTip[0]);
   
   const SplitList a(x), b(y);
   const int16 last_bin = a.n_bins - 1,
@@ -78,9 +82,7 @@ List cpp_robinson_foulds_info (const RawMatrix x, const RawMatrix y,
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
-  if (nTip[0] > std::numeric_limits<int16>::max()) {
-    Rcpp::stop("This many tips are not (yet) supported.");
-  }
+  check_ntip(nTip[0]);
   
   const SplitList a(x), b(y);
   const int16 last_bin = a.n_bins - 1,
@@ -148,9 +150,7 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
-  if (nTip[0] > std::numeric_limits<int16>::max()) {
-    Rcpp::stop("This many tips are not (yet) supported.");
-  }
+  check_ntip(nTip[0]);
   
   const SplitList a(x), b(y);
   const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
@@ -216,9 +216,7 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
-  if (nTip[0] > std::numeric_limits<int16>::max()) {
-    Rcpp::stop("This many tips are not (yet) supported.");
-  }
+  check_ntip(nTip[0]);
   
   const SplitList a(x), b(y);
   const int16
@@ -336,9 +334,7 @@ List cpp_msi_distance (const RawMatrix x, const RawMatrix y,
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
-  if (nTip[0] > std::numeric_limits<int16>::max()) {
-    Rcpp::stop("This many tips are not (yet) supported.");
-  }
+  check_ntip(nTip[0]);
   
   const SplitList a(x), b(y);
   const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
@@ -411,9 +407,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
-  if (nTip[0] > std::numeric_limits<int16>::max()) {
-    Rcpp::stop("This many tips are not (yet) supported.");
-  }
+  check_ntip(nTip[0]);
   
   const SplitList a(x), b(y);
   const bool a_has_more_splits = (a.n_splits > b.n_splits);
@@ -604,9 +598,8 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
-  if (nTip[0] >= std::numeric_limits<int16>::max()) {
-    Rcpp::stop("This many tips are not (yet) supported."); // nocov
-  }
+  check_ntip(nTip[0]);
+  
   const SplitList a(x), b(y);
   const int16
     most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,

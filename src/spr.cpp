@@ -24,7 +24,7 @@ __attribute__((constructor))                                     \
   
 // [[Rcpp::export]]
 IntegerVector mismatch_size (const RawMatrix x, const RawMatrix y) {
-  if (x.rows() > std::numeric_limits<int16>::max()) {
+  if (double(x.rows()) > double(std::numeric_limits<int16>::max())) {
     Rcpp::stop("This many splits are not (yet) supported.");
   }
   const int16 n_split = int16(x.rows());
@@ -87,7 +87,7 @@ IntegerVector mismatch_size (const RawMatrix x, const RawMatrix y) {
 
 // [[Rcpp::export]]
 IntegerVector confusion (const RawMatrix x, const RawMatrix y) {
-  if (x.rows() > std::numeric_limits<int16>::max()) {
+  if (double(x.rows()) > double(std::numeric_limits<int16>::max())) {
     Rcpp::stop("This many splits are not (yet) supported.");
   }
   const int16 n_split = int16(x.rows());
@@ -143,7 +143,7 @@ IntegerVector confusion (const RawMatrix x, const RawMatrix y) {
 }
 
 IntegerMatrix reverse (const IntegerMatrix x) {
-  if (x.nrow() > std::numeric_limits<intx>::max()) {
+  if (double(x.nrow()) > double(std::numeric_limits<intx>::max())) {
     Rcpp::stop("This many edges are not (yet) supported.");
   }
   const intx n_edge = intx(x.nrow());
