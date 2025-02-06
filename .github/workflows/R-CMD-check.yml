@@ -87,6 +87,7 @@ jobs:
           extra-packages: |
             purrr@1.0.2
             bench@1.1.3
+            hardhat@1.4.0
             dotCall64@1.1-1
             spam@2.10-0
             waldo@0.5.3
