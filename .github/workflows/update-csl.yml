@@ -17,12 +17,15 @@ jobs:
       - name: Check for changes
         id: changes
         run: |
-          if git diff --quiet; then
+          if git diff --quiet inst/apa-old-doi-prefix.csl; then
+            echo "::set-output name=changed::false"
             echo "No changes to commit"
-            exit 0
+          else
+            echo "::set-output name=changed::true"
           fi
           
-      - name: Commit and push if changed
+      - name: Commit and push
+        if: steps.changes.outputs.changed == 'true'
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
