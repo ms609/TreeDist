@@ -79,13 +79,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y texlive-latex-base libglpk-dev texlive-fonts-recommended
         
-      - name: Cache R packages
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
-      
       - name: Set up R dependencies (R 3.6)
         if: matrix.config.r == '3.6'
         uses: r-lib/actions/setup-r-dependencies@v2
