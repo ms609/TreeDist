@@ -85,7 +85,7 @@ jobs:
         with:
           # Guesses: Umatrix; uwot
           extra-packages: |
-            clock@0.7.2
+            clock@0.7.1
             workflows@1.1.4
             slider@0.3.1
             tzdb@0.4.0
