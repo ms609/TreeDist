@@ -78,7 +78,17 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y texlive-latex-base libglpk-dev texlive-fonts-recommended
-        
+
+      - name: Configure C++14 for R 3.6 (ranger)
+        if: matrix.config.r == '3.6'
+        run: |
+          mkdir -p ~/.R
+          echo "CXX14 = g++ -std=c++14" > ~/.R/Makevars
+          echo "CXX14FLAGS = -O3 -mtune=native -march=native -Wno-unused-variable -Wno-unused-function" >> ~/.R/Makevars
+          echo "CXX14PICFLAGS = -fPIC" >> ~/.R/Makevars
+          echo "CXX14STD = -std=c++14" >> ~/.R/Makevars
+          echo "CXX = g++ -std=c++14" >> ~/.R/Makevars
+      
       - name: Set up R dependencies (R 3.6)
         if: matrix.config.r == '3.6'
         uses: r-lib/actions/setup-r-dependencies@v2
