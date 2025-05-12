@@ -86,7 +86,8 @@ jobs:
           # Guesses: Umatrix; uwot
           extra-packages: |
             clock@0.7.1
-            parsnip@1.2.0
+            prodlim@2024.06.25
+            parsnip@1.2.1
             workflows@1.1.4
             slider@0.3.1
             tzdb@0.4.0
