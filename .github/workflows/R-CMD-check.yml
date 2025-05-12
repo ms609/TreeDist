@@ -84,6 +84,8 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
+            VGAMextra@0.0-5
+            VGAMdata@1.1-8
             VGAM@1.1-7
             clock@0.7.1
             prodlim@2024.06.25
