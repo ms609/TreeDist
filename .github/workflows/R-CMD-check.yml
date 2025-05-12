@@ -83,7 +83,6 @@ jobs:
         if: matrix.config.r == '3.6'
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          # Guesses: Umatrix; uwot
           extra-packages: |
             clock@0.7.1
             prodlim@2024.06.25
@@ -144,8 +143,6 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
-            RcppCore/Rcpp
-            ms609/TreeTools
             ms609/TreeDistData
             phangorn=?ignore-before-r=4.4.0
             ggplot2=?ignore-before-r=4.4.0
