@@ -18,8 +18,7 @@ constexpr splitbit ALL_ONES = (std::numeric_limits<splitbit>::max)();
 
 /* For a reason I've not determined, shrinking BIG is necessary to avoid 
  * an infinite loop in lap. */
-constexpr cost BIG = cost((std::numeric_limits<cost>::max)() / SL_MAX_SPLITS);
-
+constexpr cost BIG = (std::numeric_limits<cost>::max)() / SL_MAX_SPLITS;
 constexpr cost ROUND_PRECISION = 2048 * 2048;
 
 /***** Constants requiring initialization *****/
