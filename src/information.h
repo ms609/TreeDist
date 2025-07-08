@@ -4,11 +4,19 @@
 #include <cmath> /* for log2() */
 #include <TreeTools/ClusterTable.h> /* for CT_MAX_LEAVES */
 
+#include <Rcpp.h>
 #include "ints.h" /* for int16 */
 
-constexpr int_fast32_t
-  FACT_MAX = CT_MAX_LEAVES + CT_MAX_LEAVES + 5 + 1
-;
+constexpr int_fast32_t LOG_MAX = 2048;
+double log2_table[LOG_MAX];
+__attribute__((constructor))
+void compute_log2_table() {
+  for (int i = 1; i < LOG_MAX; ++i) {
+    log2_table[i] = std::log2(i);
+  }
+}
+
+constexpr int_fast32_t FACT_MAX = CT_MAX_LEAVES + CT_MAX_LEAVES + 5 + 1;
 
 constexpr double log_2 = log(2.0);
 double ldfact[FACT_MAX];
@@ -71,6 +79,26 @@ inline double split_clust_info (const int16 n_in, const int16 *n_tip,
   return -p * (
       (((n_in * l2[n_in]) + (n_out * l2[n_out])) / *n_tip) - l2[*n_tip]
   );
+}
+
+
+// [[Rcpp::export]]
+double entropy_int(const IntegerVector &n) {
+  int N = 0;
+  double sum = 0;
+  
+  for (int x : n) {
+    if (x > 0) {
+      if (x < LOG_MAX) {
+        sum += x * log2_table[x];
+      } else {
+        sum += x * std::log2(x);
+      }
+      N += x;
+    }
+  }
+  
+  return (N == 0) ? 0.0 : std::log2(N) - sum / N;
 }
 
 #endif
