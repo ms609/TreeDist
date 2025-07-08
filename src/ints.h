@@ -3,10 +3,10 @@
 
 #include <cstdint>
 
-typedef int_fast16_t int16;
-typedef int_fast32_t int32;
-typedef uint_fast16_t uint16;
-typedef std::vector<decltype(NA_INTEGER)> grf_match;
+using int16 = int_fast16_t;
+using int32 = int_fast32_t;
+using uint16 = uint_fast16_t;
+using grf_match = std::vector<decltype(NA_INTEGER)> ;
 
 constexpr uint16 INT_16_MAX = INT_FAST16_MAX;
 constexpr uint16 UINT_16_MAX = UINT_FAST16_MAX;

@@ -10,9 +10,9 @@
 
 /*************** TYPES      *******************/
 
-typedef int_fast64_t cost;
-typedef int16 lap_row;
-typedef int16 lap_col;
+using cost = int_fast64_t cost;
+using lap_row = int16;
+using lap_col = int16;
 
 #define ALL_ONES splitbit((std::numeric_limits<splitbit>::max)())
 
