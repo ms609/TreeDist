@@ -13,6 +13,11 @@ robinson_foulds_all_pairs <- function(tables) {
     .Call(`_TreeDist_robinson_foulds_all_pairs`, tables)
 }
 
+#' Calculate entropy of integer vector of counts
+#' @param n a vector of integer counts
+#' @return a numeric corresponding to the entropy of each observation, in bits
+#' @export
+#' @keywords internal
 entropy_int <- function(n) {
     .Call(`_TreeDist_entropy_int`, n)
 }

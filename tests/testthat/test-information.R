@@ -5,6 +5,7 @@ test_that("Entropy is calculated correctly", {
   expect_equal(Entropy(c(1/4, 1/4, 0, 1/4, 0, 1/4)), 2)
   expect_equal(entropy_int(as.integer(c(1, 1, 0, 1, 1))), 2)
   expect_equal(Ntropy(c(0, 1, 1)), 1)
+  expect_equal(Ntropy(c(0, 65536 + 1, 65536 + 1)), 1)
 })
 
 test_that("AllSplitPairings counted correctly", {

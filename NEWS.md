@@ -1,6 +1,6 @@
 # TreeDist 2.9.2.9000 (development)
 
-- No changes yet.
+- `Ntropy()` computes entropy from integer counts.
 
 
 # TreeDist 2.9.2 (2025-01-11)

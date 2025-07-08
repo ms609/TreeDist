@@ -8,7 +8,7 @@
 #include "ints.h" /* for int16 */
 
 constexpr int_fast32_t LOG_MAX = 2048;
-double log2_table[LOG_MAX];
+static double log2_table[LOG_MAX];
 __attribute__((constructor))
 void compute_log2_table() {
   for (int i = 1; i < LOG_MAX; ++i) {
@@ -82,6 +82,11 @@ inline double split_clust_info (const int16 n_in, const int16 *n_tip,
 }
 
 
+//' Calculate entropy of integer vector of counts
+//' @param n a vector of integer counts
+//' @return a numeric corresponding to the entropy of each observation, in bits
+//' @export
+//' @keywords internal
 // [[Rcpp::export]]
 double entropy_int(const IntegerVector &n) {
   int N = 0;
@@ -98,7 +103,7 @@ double entropy_int(const IntegerVector &n) {
     }
   }
   
-  return (N == 0) ? 0.0 : std::log2(N) - sum / N;
+  return (N == 0) ? 0.0 : (N < LOG_MAX ? log2_table[N] : std::log2(N)) - sum / N;
 }
 
 #endif
