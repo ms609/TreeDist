@@ -48,7 +48,7 @@ IntegerVector mismatch_size (const RawMatrix x, const RawMatrix y) {
     last_bin = a.n_bins - 1,
     unset_tips = (n_tip % SL_BIN_SIZE) ? SL_BIN_SIZE - n_tip % SL_BIN_SIZE : 0
   ;
-  const splitbit all_ones = ~(splitbit(0U));
+  constexpr splitbit all_ones = ~(splitbit(0U));
   const splitbit unset_mask = all_ones >> unset_tips;
 
   IntegerVector ret(n_split * n_split);

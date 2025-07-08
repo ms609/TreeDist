@@ -223,8 +223,9 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
     most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     n_tips = int16(nTip[0])
   ;
-  const cost max_score = BIG;
-  const double exponent = k[0], max_scoreL = max_score;
+  constexpr cost max_score = BIG;
+  constexpr double max_scoreL = max_score;
+  const double exponent = k[0];
   
   bool allow_conflict = allowConflict[0];
   
@@ -339,7 +340,7 @@ List cpp_msi_distance (const RawMatrix x, const RawMatrix y,
   const SplitList a(x), b(y);
   const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
               n_tips = int16(nTip[0]);
-  const cost max_score = BIG;
+  constexpr cost max_score = BIG;
   const double max_possible = lg2_unrooted[n_tips] - 
     lg2_rooted[int16((n_tips + 1) / 2)] - lg2_rooted[int16(n_tips / 2)];
   
@@ -421,7 +422,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     return List::create(Named("score") = 0,
                         _["matching"] = IntegerVector(0));
   }
-  const cost max_score = BIG;
+  constexpr cost max_score = BIG;
   
   cost** score = new cost*[most_splits];
   for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
@@ -606,7 +607,7 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
     n_tips = int16(nTip[0]),
     overlap_a = int16(n_tips + 1) / 2 // avoids promotion to int
   ;
-  const cost max_score = BIG;
+  constexpr cost max_score = BIG;
   const double
     lg2_unrooted_n = lg2_unrooted[n_tips],
     best_overlap = one_overlap(overlap_a, n_tips / 2, n_tips),
