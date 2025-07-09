@@ -83,8 +83,12 @@ inline double split_clust_info (const int16 n_in, const int16 *n_tip,
 
 
 //' Calculate entropy of integer vector of counts
+//' 
+//' Wrapper for C++ function; no input checking is performed.
+//' [`Ntropy()`] is better suited for use where performance is not critical.
 //' @param n a vector of integer counts
-//' @return a numeric corresponding to the entropy of each observation, in bits
+//' @return `entropy_int()` returns a numeric corresponding to the entropy of
+//' each observation, in bits.
 //' @export
 //' @keywords internal
 // [[Rcpp::export]]
