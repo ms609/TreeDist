@@ -2,16 +2,20 @@
 % Please edit documentation in R/tree_distance_utilities.R
 \name{Entropy}
 \alias{Entropy}
+\alias{Ntropy}
 \title{Entropy in bits}
 \usage{
 Entropy(...)
+
+Ntropy(...)
 }
 \arguments{
-\item{\dots}{Numerics or numeric vector specifying probabilities of outcomes.}
+\item{\dots}{Numerics or numeric vector specifying probabilities of outcomes
+(for \code{Entropy()}) or counts (for \code{Ntropy()}).}
 }
 \value{
-\code{Entropy()} returns the entropy of the specified probabilities,
-in bits.
+\code{Entropy()} and \code{Ntropy()} return the entropy of the specified
+probabilities or counts, in bits.
 }
 \description{
 Calculate the entropy of a vector of probabilities, in bits.
@@ -21,6 +25,7 @@ Probabilities equalling zero will be ignored.
 \examples{
 Entropy(1/2, 0, 1/2) # = 1
 Entropy(rep(1/4, 4)) # = 2
+Ntropy(c(2, 2, 0, 2, 2)) # = 2
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}
