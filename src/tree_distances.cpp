@@ -38,26 +38,26 @@ List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y,
 
   // Use stack allocation for b_complement for maximum speed
   splitbit b_complement[SL_MAX_SPLITS][SL_MAX_BINS];
-  for (int16 i = b.n_splits; i--; ) {
-    for (int16 bin = last_bin; bin--; ) {
+  for (int16 i = 0; i < b.n_splits; ++i) {
+    for (int16 bin = 0; bin < last_bin; ++bin) {
       b_complement[i][bin] = ~b.state[i][bin];
     }
     b_complement[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
-  
-  for (int16 ai = a.n_splits; ai--; ) {
-    for (int16 bi = b.n_splits; bi--; ) {
-    
+
+  for (int16 ai = 0; ai < a.n_splits; ++ai) {
+    for (int16 bi = 0; bi < b.n_splits; ++bi) {
       bool all_match = true, all_complement = true;
-      for (int16 bin = 0; bin != a.n_bins; ++bin) {
+
+      for (int16 bin = 0; bin < a.n_bins; ++bin) {
         if (a.state[ai][bin] != b.state[bi][bin]) {
           all_match = false;
           break;
         }
       }
       if (!all_match) {
-        for (int16 bin = 0; bin != a.n_bins; ++bin) {
-          if ((a.state[ai][bin] != b_complement[bi][bin])) {
+        for (int16 bin = 0; bin < a.n_bins; ++bin) {
+          if (a.state[ai][bin] != b_complement[bi][bin]) {
             all_complement = false;
             break;
           }
@@ -73,8 +73,7 @@ List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y,
   score = cost(a.n_splits + b.n_splits) - score - score;
 
   return List::create(Named("score") = Rcpp::wrap(score),
-                       _["matching"] = Rcpp::wrap(matching));
-  
+                     _["matching"] = Rcpp::wrap(matching));
 }
 
 // [[Rcpp::export]]
