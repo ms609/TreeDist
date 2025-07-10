@@ -338,8 +338,8 @@ List cpp_msi_distance(const RawMatrix x, const RawMatrix y,
   check_ntip(nTip[0]);
   
   const SplitList a(x), b(y);
-  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-              n_tips = int16(nTip[0]);
+  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits;
+  const int16 n_tips = int16(nTip[0]);
   constexpr cost max_score = BIG;
   const double max_possible = lg2_unrooted[n_tips] - 
     lg2_rooted[int16((n_tips + 1) / 2)] - lg2_rooted[int16(n_tips / 2)];
