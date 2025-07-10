@@ -24,17 +24,19 @@ List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y,
     Rcpp::stop("Input splits must address same number of tips.");
   }
   check_ntip(nTip[0]);
-  
+
   const SplitList a(x), b(y);
-  const int16 last_bin = a.n_bins - 1,
-              n_tips = int16(nTip[0]),
-              unset_tips = (n_tips % SL_BIN_SIZE) ? SL_BIN_SIZE - n_tips % SL_BIN_SIZE : 0;
+  const int16 last_bin = a.n_bins - 1;
+  const int16 n_tips = int16(nTip[0]);
+  const int16 unset_tips = (n_tips % SL_BIN_SIZE) ? SL_BIN_SIZE - n_tips % SL_BIN_SIZE : 0;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   cost score = 0;
-  
-  grf_match matching (a.n_splits);
-  for (int16 i = a.n_splits; i--; ) matching[i] = NA_INTEGER;
-  
+
+
+  grf_match matching(a.n_splits);
+  std::fill(matching.begin(), matching.end(), NA_INTEGER);
+
+  // Use stack allocation for b_complement for maximum speed
   splitbit b_complement[SL_MAX_SPLITS][SL_MAX_BINS];
   for (int16 i = b.n_splits; i--; ) {
     for (int16 bin = last_bin; bin--; ) {
