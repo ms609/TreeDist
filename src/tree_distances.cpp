@@ -330,8 +330,8 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_msi_distance (const RawMatrix x, const RawMatrix y,
-                        const IntegerVector nTip) {
+List cpp_msi_distance(const RawMatrix x, const RawMatrix y,
+                      const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
@@ -403,8 +403,8 @@ List cpp_msi_distance (const RawMatrix x, const RawMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
-                            const IntegerVector nTip) {
+List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
+                           const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
@@ -431,51 +431,37 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   IntegerVector a_match(a.n_splits);
   std::unique_ptr<int16[]> b_match = std::make_unique<int16[]>(b.n_splits);
   
-  for (int16 ai = 0; ai != a.n_splits; ++ai) {
+  for (int16 ai = 0; ai < a.n_splits; ++ai) {
     if (a_match[ai]) continue;
-    const int16
-      na = a.in_split[ai],
-      nA = n_tips - na
-    ;
-    
-    for (int16 bi = 0; bi != b.n_splits; ++bi) {
-      
+    const int16 na = a.in_split[ai];
+    const int16 nA = n_tips - na;
+    for (int16 bi = 0; bi < b.n_splits; ++bi) {
       // x divides tips into a|A; y divides tips into b|B
       int16 a_and_b = 0;
-      for (int16 bin = 0; bin != a.n_bins; ++bin) {
+      for (int16 bin = 0; bin < a.n_bins; ++bin) {
         a_and_b += count_bits(a.state[ai][bin] & b.state[bi][bin]);
       }
-      
-      const int16
-        nb = b.in_split[bi],
-        nB = n_tips - nb,
-        a_and_B = na - a_and_b,
-        A_and_b = nb - a_and_b,
-        A_and_B = nA - A_and_b
-      ;
-      
-      if ((!a_and_B && !A_and_b) ||
-          (!a_and_b && !A_and_B)) {
+      const int16 nb = b.in_split[bi];
+      const int16 nB = n_tips - nb;
+      const int16 a_and_B = na - a_and_b;
+      const int16 A_and_b = nb - a_and_b;
+      const int16 A_and_B = nA - A_and_b;
+      if ((!a_and_B && !A_and_b) || (!a_and_b && !A_and_B)) {
         exact_match_score += ic_matching(na, nA, n_tips);
-        exact_matches++;
+        ++exact_matches;
         a_match[ai] = bi + 1;
         b_match[bi] = ai + 1;
         break;
-      } else if (a_and_b == A_and_b &&
-          a_and_b == a_and_B &&
-          a_and_b == A_and_B) {
+      } else if (a_and_b == A_and_b && a_and_b == a_and_B && a_and_b == A_and_B) {
         score[ai][bi] = max_score; // Don't risk rounding error
       } else {
         score[ai][bi] = max_score -
-          // Division by n_tips converts n(A&B) to P(A&B) for each ic_element
           cost(max_score * ((
-            // 0 < Sum of IC_elements <= n_tips
             ic_element(a_and_b, na, nb, n_tips) +
             ic_element(a_and_B, na, nB, n_tips) +
             ic_element(A_and_b, nA, nb, n_tips) +
             ic_element(A_and_B, nA, nB, n_tips)
-          ) / n_tips)
-        );
+          ) / n_tips));
       }
     }
     for (int16 bi = b.n_splits; bi < most_splits; ++bi) {
