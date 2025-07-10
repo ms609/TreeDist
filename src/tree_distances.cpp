@@ -412,12 +412,10 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   
   const SplitList a(x), b(y);
   const bool a_has_more_splits = (a.n_splits > b.n_splits);
-  const int16
-    most_splits = a_has_more_splits ? a.n_splits : b.n_splits,
-    a_extra_splits = a_has_more_splits ? most_splits - b.n_splits : 0,
-    b_extra_splits = a_has_more_splits ? 0 : most_splits - a.n_splits,
-    n_tips = int16(nTip[0])
-  ;
+  const int16 most_splits = a_has_more_splits ? a.n_splits : b.n_splits;
+  const int16 a_extra_splits = a_has_more_splits ? most_splits - b.n_splits : 0;
+  const int16 b_extra_splits = a_has_more_splits ? 0 : most_splits - a.n_splits;
+  const int16 n_tips = int16(nTip[0]);
   if (most_splits == 0 || n_tips == 0) {
     return List::create(Named("score") = 0,
                         _["matching"] = IntegerVector(0));
