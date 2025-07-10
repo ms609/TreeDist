@@ -49,9 +49,8 @@ List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y,
     for (int16 bi = b.n_splits; bi--; ) {
     
       bool all_match = true, all_complement = true;
-    
       for (int16 bin = 0; bin != a.n_bins; ++bin) {
-        if ((a.state[ai][bin] != b.state[bi][bin])) {
+        if (a.state[ai][bin] != b.state[bi][bin]) {
           all_match = false;
           break;
         }
@@ -67,12 +66,12 @@ List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y,
       if (all_match || all_complement) {
         ++score;
         matching[ai] = bi + 1;
-        break; /* Only one match possible per split */
+        break; // Only one match possible per split
       }
     }
   }
   score = cost(a.n_splits + b.n_splits) - score - score;
-  
+
   return List::create(Named("score") = Rcpp::wrap(score),
                        _["matching"] = Rcpp::wrap(matching));
   
