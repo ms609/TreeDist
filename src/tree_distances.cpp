@@ -28,7 +28,8 @@ List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y,
   const SplitList a(x), b(y);
   const int16 last_bin = a.n_bins - 1;
   const int16 n_tips = int16(nTip[0]);
-  const int16 unset_tips = (n_tips % SL_BIN_SIZE) ? SL_BIN_SIZE - n_tips % SL_BIN_SIZE : 0;
+  const int16 unset_tips = (n_tips % SL_BIN_SIZE) ?
+    SL_BIN_SIZE - n_tips % SL_BIN_SIZE : 0;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   cost score = 0;
 
@@ -73,7 +74,7 @@ List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y,
   score = cost(a.n_splits + b.n_splits) - score - score;
 
   return List::create(Named("score") = Rcpp::wrap(score),
-                     _["matching"] = Rcpp::wrap(matching));
+                      _["matching"] = Rcpp::wrap(matching));
 }
 
 // [[Rcpp::export]]
@@ -410,12 +411,14 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
   }
   check_ntip(nTip[0]);
   
-  const SplitList a(x), b(y);
+  const SplitList a(x);
+  const SplitList b(y);
   const bool a_has_more_splits = (a.n_splits > b.n_splits);
   const int16 most_splits = a_has_more_splits ? a.n_splits : b.n_splits;
   const int16 a_extra_splits = a_has_more_splits ? most_splits - b.n_splits : 0;
   const int16 b_extra_splits = a_has_more_splits ? 0 : most_splits - a.n_splits;
   const int16 n_tips = int16(nTip[0]);
+
   if (most_splits == 0 || n_tips == 0) {
     return List::create(Named("score") = 0,
                         _["matching"] = IntegerVector(0));
@@ -435,18 +438,21 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
     if (a_match[ai]) continue;
     const int16 na = a.in_split[ai];
     const int16 nA = n_tips - na;
+
     for (int16 bi = 0; bi < b.n_splits; ++bi) {
       // x divides tips into a|A; y divides tips into b|B
       int16 a_and_b = 0;
       for (int16 bin = 0; bin < a.n_bins; ++bin) {
         a_and_b += count_bits(a.state[ai][bin] & b.state[bi][bin]);
       }
+      
       const int16 nb = b.in_split[bi];
       const int16 nB = n_tips - nb;
       const int16 a_and_B = na - a_and_b;
       const int16 A_and_b = nb - a_and_b;
       const int16 A_and_B = nA - A_and_b;
-      if ((!a_and_B && !A_and_b) || (!a_and_b && !A_and_B)) {
+      if ((!a_and_B && !A_and_b) ||
+          (!a_and_b && !A_and_B)) {
         exact_match_score += ic_matching(na, nA, n_tips);
         ++exact_matches;
         a_match[ai] = bi + 1;
