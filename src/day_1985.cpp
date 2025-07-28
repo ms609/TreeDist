@@ -200,7 +200,7 @@ double consensus_info (const List trees, const LogicalVector phylo,
 
 // [[Rcpp::export]]
 IntegerVector robinson_foulds_all_pairs(List tables) {
-  int16 
+  int16
     v = 0, w = 0,
     L, R, N, W,
     L_i, R_i, N_i, W_i

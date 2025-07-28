@@ -1,6 +1,6 @@
 # TreeDist 2.9.2.9000 (development)
 
-- No changes yet.
+- C++ formatting and modernization.
 
 
 # TreeDist 2.9.2 (2025-01-11)
