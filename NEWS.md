@@ -1,7 +1,7 @@
 # TreeDist 2.9.2.9000 (development)
 
 - C++ source formatting.
-
+- Discontinue tests against R 3.6.
 
 # TreeDist 2.9.2 (2025-01-11)
 
