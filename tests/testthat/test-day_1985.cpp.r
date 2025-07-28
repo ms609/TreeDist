@@ -53,3 +53,23 @@ test_that("Day 1985 examples", {
 
 })
   
+test_that("RobinsonFoulds() with realistic trees", {
+  # Test exposes segfault that has arisen whilst modernizing C++
+  tr1 <- structure(list(
+    edge = structure(c(8L, 8L, 9L, 10L, 10L, 9L, 11L, 11L, 8L, 12L, 12L,
+                       1L, 9L, 10L, 2L, 3L, 11L, 4L, 5L, 12L, 6L, 7L),
+                     dim = c(11L, 2L)),
+    Nnode = 5L, tip.label = c("t1", "t2", "t3", "t4", "t5", "t6", "t7")),
+    class = "phylo", order = "preorder")
+  tr2 <- structure(list(
+    edge = structure(c(8L, 9L, 10L, 10L, 9L, 11L, 11L, 8L, 12L, 12L, 8L,
+                       9L, 10L, 1L, 2L, 11L, 3L, 4L, 12L, 5L, 6L, 7L),
+                     dim = c(11L, 2L)),
+    Nnode = 5L, tip.label = c("t1", "t2", "t3", "t4", "t5", "t6", "t7")),
+    class = "phylo", order = "preorder")
+  t4 <- list(a = tr1, b = tr2, c = tr1, d = tr2)
+  r4 <- TreeTools::RootTree(t4, 1)
+  
+  expect_equal(as.numeric(RobinsonFoulds(r4)),
+               c(8, 0, 8, 8, 0, 8))
+})
