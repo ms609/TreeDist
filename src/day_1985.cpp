@@ -200,17 +200,23 @@ double consensus_info (const List trees, const LogicalVector phylo,
 
 // [[Rcpp::export]]
 IntegerVector robinson_foulds_all_pairs(List tables) {
-  int16 
-    v = 0, w = 0,
-    L, R, N, W,
-    L_i, R_i, N_i, W_i
-  ;
   const int16 n_trees = tables.length();
   if (n_trees < 2) return IntegerVector(0);
   
   IntegerVector shared(n_trees * (n_trees - 1) / 2);
   IntegerVector::iterator write_pos = shared.begin();
   std::array<int16, CT_MAX_LEAVES> S;
+  
+  int16 v = 0;
+  int16 w = 0;
+  int16 L;
+  int16 R;
+  int16 N;
+  int16 W;
+  int16 L_i;
+  int16 R_i;
+  int16 N_i;
+  int16 W_i;
   
   for (int16 i = 0; i != n_trees - 1; i++) {
     Rcpp::XPtr<ClusterTable> table_i = tables(i);
