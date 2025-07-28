@@ -6,11 +6,8 @@
 
 #include "ints.h" /* for int16 */
 
-constexpr int_fast32_t
-  FACT_MAX = CT_MAX_LEAVES + CT_MAX_LEAVES + 5 + 1
-;
-
-constexpr double log_2 = log(2.0);
+constexpr int_fast32_t FACT_MAX = CT_MAX_LEAVES + CT_MAX_LEAVES + 5 + 1;
+constexpr double log_2 = 0.6931471805599452862268; // log(2.0);
 double ldfact[FACT_MAX];
 double l2rooted[CT_MAX_LEAVES];
 double *l2unrooted = &l2rooted[0] - 1;
