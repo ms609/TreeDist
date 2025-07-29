@@ -27,7 +27,7 @@ int COMCLUST (List trees) {
   ;
   
   ClusterTable X(List(trees(0)));
-  std::array<int16, CT_MAX_LEAVES> S;
+  std::array<int16, TreeTools::ct_max_leaves> S;
   
   for (int16 i = 1; i != trees.length(); i++) {
     int16 Spos = 0; // Empty the stack S
@@ -105,8 +105,8 @@ double consensus_info (const List trees, const LogicalVector phylo,
   
   const bool phylo_info = phylo[0];
   
-  std::array<int16, CT_STACK_SIZE * CT_MAX_LEAVES> S;
-  std::array<int16, CT_MAX_LEAVES> split_count;
+  std::array<int16, TreeTools::ct_stack_size * TreeTools::ct_max_leaves> S;
+  std::array<int16, TreeTools::ct_max_leaves> split_count;
   
   double info = 0;
   
@@ -205,7 +205,7 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
   
   IntegerVector shared(n_trees * (n_trees - 1) / 2);
   IntegerVector::iterator write_pos = shared.begin();
-  std::array<int16, CT_MAX_LEAVES> S;
+  std::array<int16, TreeTools::ct_max_leaves> S;
   
   int16 v = 0;
   int16 w = 0;
