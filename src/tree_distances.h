@@ -94,9 +94,7 @@ extern double *lg2_rooted;
 extern cost lap(int16 dim,
                 cost_matrix &input_cost,
                 std::vector<lap_col> &rowsol,
-                std::vector<lap_row> &colsol,
-                std::vector<cost> &u,
-                std::vector<cost> &v);
+                std::vector<lap_row> &colsol);
 
 extern double 
   mmsi_score(const int16 n_same, const int16 n_a_and_b,

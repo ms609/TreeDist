@@ -186,11 +186,9 @@ List cpp_matching_split_distance(const RawMatrix x, const RawMatrix y,
   
   std::vector<lap_col> rowsol(most_splits);
   std::vector<lap_row> colsol(most_splits);
-  std::vector<cost> u(most_splits);
-  std::vector<cost> v(most_splits);
   
   NumericVector final_score = NumericVector::create(
-    lap(most_splits, score, rowsol, colsol, u, v) - (max_score * split_diff));
+    lap(most_splits, score, rowsol, colsol) - (max_score * split_diff));
   
   IntegerVector final_matching (a.n_splits);
   
@@ -301,12 +299,10 @@ List cpp_jaccard_similarity(const RawMatrix x, const RawMatrix y,
   
   std::vector<lap_col> rowsol(most_splits);
   std::vector<lap_row> colsol(most_splits);
-  std::vector<cost> u(most_splits);
-  std::vector<cost> v(most_splits);
   
   NumericVector final_score = NumericVector::create(
     (double)((max_score * most_splits) 
-               - lap(most_splits, score, rowsol, colsol, u, v))
+               - lap(most_splits, score, rowsol, colsol))
     / max_score);
   IntegerVector final_matching (a.n_splits);
   
@@ -369,12 +365,10 @@ List cpp_msi_distance(const RawMatrix x, const RawMatrix y,
   
   std::vector<lap_col> rowsol(most_splits);
   std::vector<lap_row> colsol(most_splits);
-  std::vector<cost> u(most_splits);
-  std::vector<cost> v(most_splits);
   
   NumericVector final_score = NumericVector::create(
     double((max_score * most_splits) - 
-           lap(most_splits, score, rowsol, colsol, u, v))
+           lap(most_splits, score, rowsol, colsol))
     * max_possible / max_score);
   
   IntegerVector final_matching (a.n_splits);
@@ -474,8 +468,6 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
   const int16 lap_dim = most_splits - exact_matches;
   std::vector<lap_col> rowsol(lap_dim);
   std::vector<lap_row> colsol(lap_dim);
-  std::vector<cost> u(lap_dim);
-  std::vector<cost> v(lap_dim);
   
   if (exact_matches) {
     int16 a_pos = 0;
@@ -499,7 +491,7 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
     }
     
     const double lap_score = 
-      double((max_score * lap_dim) - lap(lap_dim, score, rowsol, colsol, u, v))
+      double((max_score * lap_dim) - lap(lap_dim, score, rowsol, colsol))
       / max_score;
     NumericVector final_score = 
       NumericVector::create(lap_score + (exact_match_score / n_tips));
@@ -546,9 +538,8 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
     }
     
     const double lap_score = double(
-        (max_score * lap_dim) -
-          lap(most_splits, score, rowsol, colsol, u, v)
-    ) / max_score;
+        (max_score * lap_dim) - lap(most_splits, score, rowsol, colsol)) /
+          max_score;
     NumericVector final_score = NumericVector::create(lap_score);
     
     IntegerVector final_matching (a.n_splits);
@@ -605,17 +596,15 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   
   std::vector<lap_col> rowsol(most_splits);
   std::vector<lap_row> colsol(most_splits);
-  std::vector<cost> u(most_splits);
-  std::vector<cost> v(most_splits);
   
   NumericVector final_score = NumericVector::create(
     double((max_score * most_splits) - 
-      lap(most_splits, score, rowsol, colsol, u, v))
+      lap(most_splits, score, rowsol, colsol))
     * (max_possible / max_score));
   
-  IntegerVector final_matching (a.n_splits);
+  IntegerVector final_matching(a.n_splits);
   
-  for (int16 i = a.n_splits; i--; ) {
+  for (int16 i = 0; i < a.n_splits; ++i) {
     final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
   }
   
