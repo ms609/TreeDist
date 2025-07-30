@@ -101,12 +101,9 @@ cost lap(const lap_row dim,
   
   lap_col j;
   lap_col j1;
-  lap_col endofpath = 0;
-  lap_col last = 0;
   lap_col low;
   lap_col up;
-  /* Initializing min, endofpath, j2 and last is unnecessary, 
-   * but avoids compiler warnings */
+  
   cost min = 0, h, umin, usubmin, v2;
   
   std::vector<lap_row> freeunassigned(dim);        // List of unassigned rows.
@@ -242,6 +239,8 @@ cost lap(const lap_row dim,
   // AUGMENT SOLUTION for each free row.
   for (lap_row f = 0; f < num_free; ++f) {
     lap_row free_row = freeunassigned[f];       // Start row of augmenting path.
+    lap_col endofpath = 0;
+    lap_col last = 0;
     
     // Dijkstra shortest path algorithm.
     // Runs until unassigned column added to shortest path tree.
