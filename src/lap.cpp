@@ -71,7 +71,7 @@ List lapjv(NumericMatrix x, NumericVector maxX) {
   );
 }
 
-bool nontrivially_less_than(cost a, cost b) {
+inline bool nontrivially_less_than(cost a, cost b) noexcept {
   return a + ((a > ROUND_PRECISION) ? 8 : 0) < b;
 }
 
