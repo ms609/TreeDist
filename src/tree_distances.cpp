@@ -12,7 +12,7 @@ using TreeTools::count_bits;
 TREETOOLS_SPLITLIST_INIT
 
 void check_ntip(const double n) {
-  if (n > double(std::numeric_limits<int16>::max())) {
+  if (n > static_cast<double>(std::numeric_limits<int16>::max())) {
     Rcpp::stop("This many tips are not (yet) supported.");
   }
 }
@@ -33,8 +33,7 @@ List cpp_robinson_foulds_distance(const RawMatrix x, const RawMatrix y,
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   cost score = 0;
   
-  grf_match matching (a.n_splits);
-  for (int16 i = a.n_splits; i--; ) matching[i] = NA_INTEGER;
+  grf_match matching(a.n_splits, NA_INTEGER);
   
   splitbit b_complement[SL_MAX_SPLITS][SL_MAX_BINS];
   for (int16 i = b.n_splits; i--; ) {
@@ -87,15 +86,17 @@ List cpp_robinson_foulds_info(const RawMatrix x, const RawMatrix y,
   check_ntip(nTip[0]);
   
   const SplitList a(x), b(y);
-  const int16 last_bin = a.n_bins - 1,
-              n_tips = int16(nTip[0]),
-              unset_tips = (n_tips % SL_BIN_SIZE) ? SL_BIN_SIZE - n_tips % SL_BIN_SIZE : 0;
+  
+  const int16 last_bin = a.n_bins - 1;
+  const int16 n_tips = int16(nTip[0]);
+  const int16 unset_tips = (n_tips % SL_BIN_SIZE) ?
+    SL_BIN_SIZE - n_tips % SL_BIN_SIZE : 0;
+  
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   const double lg2_unrooted_n = lg2_unrooted[n_tips];
   double score = 0;
   
-  IntegerVector matching (a.n_splits);
-  for (int16 i = 0; i != a.n_splits; i++) matching[i] = NA_INTEGER;
+  grf_match matching(a.n_splits, NA_INTEGER);
   
   /* Dynamic allocation 20% faster for 105 tips, but VLA not permitted in C11 */
   splitbit b_complement[SL_MAX_SPLITS][SL_MAX_BINS]; 
@@ -190,9 +191,9 @@ List cpp_matching_split_distance(const RawMatrix x, const RawMatrix y,
   NumericVector final_score = NumericVector::create(
     lap(most_splits, score, rowsol, colsol) - (max_score * split_diff));
   
-  IntegerVector final_matching (a.n_splits);
+  IntegerVector final_matching(a.n_splits);
   
-  for (int16 i = a.n_splits; i--; ) {
+  for (int16 i = 0; i < a.n_splits; ++i) {
     final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
   }
   
@@ -210,10 +211,9 @@ List cpp_jaccard_similarity(const RawMatrix x, const RawMatrix y,
   check_ntip(nTip[0]);
   
   const SplitList a(x), b(y);
-  const int16
-    most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-    n_tips = int16(nTip[0])
-  ;
+  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits;
+  const int16 n_tips = int16(nTip[0]);
+  
   constexpr cost max_score = BIG;
   constexpr double max_scoreL = max_score;
   const double exponent = k[0];
@@ -222,12 +222,10 @@ List cpp_jaccard_similarity(const RawMatrix x, const RawMatrix y,
   
   cost_matrix score(most_splits);
   
-  for (int16 ai = 0; ai != a.n_splits; ++ai) {
+  for (int16 ai = 0; ai < a.n_splits; ++ai) {
     
-    const int16 
-      na = a.in_split[ai],
-      nA = n_tips - na
-    ;
+    const int16 na = a.in_split[ai];
+    const int16 nA = n_tips - na;
     
     for (int16 bi = 0; bi != b.n_splits; ++bi) {
       
@@ -262,10 +260,10 @@ List cpp_jaccard_similarity(const RawMatrix x, const RawMatrix y,
           A_or_B = n_tips - a_and_b
         ;
         const double 
-          ars_ab = double(a_and_b) / double(a_or_b),
-          ars_Ab = double(A_and_b) / double(A_or_b),
-          ars_aB = double(a_and_B) / double(a_or_B),
-          ars_AB = double(A_and_B) / double(A_or_B),
+          ars_ab = static_cast<double>(a_and_b) / static_cast<double>(a_or_b),
+          ars_Ab = static_cast<double>(A_and_b) / static_cast<double>(A_or_b),
+          ars_aB = static_cast<double>(a_and_B) / static_cast<double>(a_or_B),
+          ars_AB = static_cast<double>(A_and_B) / static_cast<double>(A_or_B),
           
           min_ars_both = (ars_ab < ars_AB) ? ars_ab : ars_AB,
           min_ars_either = (ars_aB < ars_Ab) ? ars_aB : ars_Ab
@@ -301,12 +299,12 @@ List cpp_jaccard_similarity(const RawMatrix x, const RawMatrix y,
   std::vector<lap_row> colsol(most_splits);
   
   NumericVector final_score = NumericVector::create(
-    (double)((max_score * most_splits) 
-               - lap(most_splits, score, rowsol, colsol))
+    (double)((max_score * most_splits) - 
+      lap(most_splits, score, rowsol, colsol))
     / max_score);
-  IntegerVector final_matching (a.n_splits);
+  IntegerVector final_matching(a.n_splits);
   
-  for (int16 i = a.n_splits; i--; ) {
+  for (int16 i = 0; i < a.n_splits; ++i) {
     final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
   }
   
@@ -367,12 +365,13 @@ List cpp_msi_distance(const RawMatrix x, const RawMatrix y,
   std::vector<lap_row> colsol(most_splits);
   
   NumericVector final_score = NumericVector::create(
-    double((max_score * most_splits) - 
-           lap(most_splits, score, rowsol, colsol))
-    * max_possible / max_score);
+    static_cast<double>((max_score * most_splits) - 
+                        lap(most_splits, score, rowsol, colsol))
+    * max_possible / max_score
+  );
   
-  IntegerVector final_matching (a.n_splits);
-  for (int16 i = a.n_splits; i--; ) {
+  IntegerVector final_matching(a.n_splits);
+  for (int16 i = 0; i < a.n_splits; ++i) {
     final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
   }
   
@@ -538,13 +537,13 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
       }
     }
     
-    const double lap_score = double(
+    const double lap_score = static_cast<double>(
         (max_score * lap_dim) - lap(lap_dim, score, rowsol, colsol)
       ) / max_score;
     NumericVector final_score = NumericVector::create(lap_score);
     
-    IntegerVector final_matching (a.n_splits);
-    for (int16 i = a.n_splits; i--; ) {
+    IntegerVector final_matching(a.n_splits);
+    for (int16 i = 0; i < a.n_splits; ++i) {
       final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
     }
     
@@ -599,9 +598,10 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   std::vector<lap_row> colsol(most_splits);
   
   NumericVector final_score = NumericVector::create(
-    double((max_score * most_splits) - 
-      lap(most_splits, score, rowsol, colsol))
-    * (max_possible / max_score));
+    static_cast<double>(
+      (max_score * most_splits) - lap(most_splits, score, rowsol, colsol)) *
+        (max_possible / max_score)
+    );
   
   IntegerVector final_matching(a.n_splits);
   

@@ -62,7 +62,8 @@ List lapjv(NumericMatrix x, NumericVector maxX) {
   }
   
   return List::create(
-    Named("score") = (double(score) - (std::abs(spare_rows) * max_score))
+    Named("score") = (static_cast<double>(score) -
+      (std::abs(spare_rows) * max_score))
     / max_score * x_max,
     _["matching"] = matching
   );
