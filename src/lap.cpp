@@ -40,7 +40,8 @@ List lapjv (NumericMatrix x, NumericVector maxX) {
   
   lap_col *rowsol = new lap_col[max_dim];
   lap_row *colsol = new lap_row[max_dim];
-  cost *u = new cost[max_dim], *v = new cost[max_dim];
+  cost *u = new cost[max_dim];
+  cost *v = new cost[max_dim];
   
   cost** input = new cost*[max_dim];
   for (int16 i = 0; i != max_dim; i++) {
