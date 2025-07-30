@@ -98,7 +98,6 @@ cost lap(const lap_row dim,
   lap_dim i;
   lap_row num_free = 0;
   
-  lap_col j;
   lap_col j1;
   
   std::vector<lap_col> matches(dim);     // Counts how many times a row could be assigned.
@@ -268,7 +267,7 @@ cost lap(const lap_row dim,
         min = d[col_list[up++]];
         
         for (lap_dim k = up; k < dim; ++k) {
-          j = col_list[k];
+          const lap_col j = col_list[k];
           const cost h = d[j];
           if (h <= min) {
             if (h < min) {   // New minimum.
@@ -299,7 +298,7 @@ cost lap(const lap_row dim,
         const cost h = input_cost(i, j1) - v[j1] - min;
         
         for (lap_dim k = up; k < dim; ++k) {
-          j = col_list[k];
+          const lap_col j = col_list[k];
           cost v2 = input_cost(i, j) - v[j] - h;
           if (v2 < d[j]) {
             predecessor[j] = i;
