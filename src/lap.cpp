@@ -166,13 +166,13 @@ cost lap(const lap_row dim,
       const row_offset i_offset = static_cast<size_t>(i) * dim;
       
       //     Find minimum and second minimum reduced cost over columns.
-      cost umin = input_cost.entry0(static_cast<size_t>(i)) - v[0];
+      cost umin = input_cost.atOffset(i_offset) - v[0];
       lap_col j1 = 0;
       lap_col j2 = 0;
       usubmin = BIG;
       
       for (lap_col j = 1; j < dim; ++j) {
-        const cost h = input_cost(i, j) - v[j];
+        const cost h = input_cost.fromRow(i_offset, j) - v[j];
         if (h < usubmin) {
           if (h >= umin) {
             usubmin = h;
@@ -225,6 +225,7 @@ cost lap(const lap_row dim,
   for (lap_row f = 0; f < num_free; ++f) {
     bool unassignedfound = false;
     lap_row free_row = freeunassigned[f];       // Start row of augmenting path.
+    const row_offset free_row_offset = static_cast<row_offset>(free_row) * dim;
     lap_col endofpath = 0;
     lap_col last = 0;
     lap_row i;
@@ -233,7 +234,7 @@ cost lap(const lap_row dim,
     // Dijkstra shortest path algorithm.
     // Runs until unassigned column added to shortest path tree.
     for (lap_col j = 0; j < dim; ++j) {
-      d[j] = input_cost(free_row, j) - v[j];
+      d[j] = input_cost.fromRow(free_row_offset, j) - v[j];
       predecessor[j] = free_row;
       col_list[j] = j;        // Init column list.
     }
@@ -281,11 +282,12 @@ cost lap(const lap_row dim,
         // via next scanned column.
         j1 = col_list[low++];
         i = colsol[j1];
-        const cost h = input_cost(i, j1) - v[j1] - min;
+        const row_offset i_offset = static_cast<row_offset>(i) * dim;
+        const cost h = input_cost.fromRow(i_offset, j1) - v[j1] - min;
         
         for (lap_dim k = up; k < dim; ++k) {
           const lap_col j = col_list[k];
-          cost v2 = input_cost(i, j) - v[j] - h;
+          cost v2 = input_cost.fromRow(i_offset, j) - v[j] - h;
           if (v2 < d[j]) {
             predecessor[j] = i;
             if (v2 == min) { // New column found at same minimum value

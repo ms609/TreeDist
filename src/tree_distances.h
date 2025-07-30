@@ -55,7 +55,7 @@ public:
     return data_[static_cast<size_t>(i) * dim_];
   }
   
-  const T& rowElement0(row_offset i) const {
+  const T& atOffset(row_offset i) const {
     return data_[i];
   }
   
