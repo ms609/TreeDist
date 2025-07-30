@@ -14,27 +14,30 @@
 using cost = int_fast64_t;
 using lap_row = int16;
 using lap_col = int16;
+using row_offset = size_t; // must hold int16 * int16
 
 template<typename T>
 class FlatMatrix {
 private:
-  std::vector<std::vector<T>> data_;
-  lap_row dim_;
+  std::vector<T> data_;
+  size_t dim_; // Important not to use int16, which will overflow
   
 public:
   FlatMatrix(size_t dim)
-    : data_(dim, std::vector<T>(dim)), dim_(dim) {}
+    : data_(std::vector<T>(dim * dim)), dim_(dim) {}
   
   // Access operator for read/write
   T& operator()(lap_row i, lap_col j) {
-    return data_[i][j];
-    // return data_[i * dim_ + j];
+    return data_[static_cast<size_t>(i) * dim_ + j];
   }
   
   // Const version for read-only access
   const T& operator()(lap_row i, lap_col j) const {
-    return data_[i][j];
-    // return data_[i * dim_ + j];
+    return data_[static_cast<size_t>(i) * dim_ + j];
+  }
+  
+  const T& row0(lap_col j) const {
+    return data_[j];
   }
 };
 

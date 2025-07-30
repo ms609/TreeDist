@@ -131,7 +131,7 @@ cost lap(int16 dim,
   // COLUMN REDUCTION
   for (j = dim; j--; ) { // Reverse order gives better results.
     // Find minimum cost over rows.
-    min = input_cost(0, j);
+    min = input_cost.row0(j);
     imin = 0;
     for (i = 1; i < dim; ++i) {
       const cost current_cost = input_cost(i, j);
