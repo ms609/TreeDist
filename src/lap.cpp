@@ -218,7 +218,7 @@ cost lap(int16 dim,
       if (nontrivially_less_than(umin, usubmin)) {
         //  Change the reduction of the minimum column to increase the minimum
         //  reduced cost in the row to the subminimum.
-        v[j1] = v[j1] - (usubmin - umin);
+        v[j1] -= (usubmin - umin);
       } else if (i0 > -1) {
           // Minimum and subminimum equal.
           // Minimum column j1 is assigned.
@@ -271,8 +271,8 @@ cost lap(int16 dim,
         // Scan columns for up..dim-1 to find all indices for which new minimum occurs.
         // Store these indices between low..up-1 (increasing up).
         min = d[col_list[up++]];
-        for (k = up; k < dim; k++) {
         
+        for (k = up; k < dim; ++k) {
           j = col_list[k];
           h = d[j];
           if (h <= min) {
@@ -330,7 +330,7 @@ cost lap(int16 dim,
     // Update column prices.
     for(k = last + 1; k--;) {
       j1 = col_list[k];
-      v[j1] = v[j1] + d[j1] - min;
+      v[j1] += d[j1] - min;
     }
     
     // Reset row and column assignments along the alternating path.
@@ -348,7 +348,7 @@ cost lap(int16 dim,
   for(i = dim; i--;) {
     j = rowsol[i];
     u[i] = input_cost[i][j] - v[j];
-    lapcost = lapcost + input_cost[i][j];
+    lapcost += input_cost[i][j];
   }
 
   return lapcost;
