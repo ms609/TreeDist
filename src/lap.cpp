@@ -159,14 +159,14 @@ cost lap(int16 dim,
   }
   
   // REDUCTION TRANSFER
-  for (i = 0; i != dim; i++) {
+  for (i = 0; i < dim; ++i) {
     if (matches[i] == 0) { // Fill list of unassigned 'free' rows.
       freeunassigned[num_free++] = i;
     } else {
       if (matches[i] == 1) { // Transfer reduction from rows that are assigned once.
         j1 = rowsol[i];
         min = BIG;
-        for (j = 0; j < dim; j++) {
+        for (j = 0; j < dim; ++j) {
           if (j != j1) {
             if (input_cost[i][j] - v[j] < min) {
               min = input_cost[i][j] - v[j];
@@ -181,7 +181,7 @@ cost lap(int16 dim,
   //   AUGMENTING ROW REDUCTION
   int16 loopcnt = 0;           // do-loop to be done twice.
   do {
-    loopcnt++;
+    ++loopcnt;
     
     //     Scan all free rows.
     //     In some cases, a free row may be replaced with another one to be 
@@ -198,7 +198,8 @@ cost lap(int16 dim,
       umin = input_cost[i][0] - v[0];
       j1 = 0;
       usubmin = BIG;
-      for (j = 1; j < dim; j++) {
+      
+      for (j = 1; j < dim; ++j) {
         h = input_cost[i][j] - v[j];
         if (h < usubmin) {
           if (h >= umin) {
@@ -246,7 +247,7 @@ cost lap(int16 dim,
   } while (loopcnt < 2); // Repeat once.
   
   // AUGMENT SOLUTION for each free row.
-  for (f = 0; f != num_free; f++) {
+  for (f = 0; f < num_free; ++f) {
     free_row = freeunassigned[f];       // Start row of augmenting path.
     
     // Dijkstra shortest path algorithm.
@@ -262,6 +263,7 @@ cost lap(int16 dim,
     // Columns in up..dim-1 are to be considered later to find new minimum;
     // at this stage the list simply contains all columns.
     unassignedfound = false;
+    
     do {
       if (up == low) { // No more columns to be scanned for current minimum.
         last = low - 1;
@@ -270,6 +272,7 @@ cost lap(int16 dim,
         // Store these indices between low..up-1 (increasing up).
         min = d[col_list[up++]];
         for (k = up; k < dim; k++) {
+        
           j = col_list[k];
           h = d[j];
           if (h <= min) {
@@ -284,7 +287,7 @@ cost lap(int16 dim,
         }
         // Check if any of the minimum columns happens to be unassigned.
         // If so, we have an augmenting path right away.
-        for (k = low; k != up; k++) {
+        for (k = low; k < up; ++k) {
           if (colsol[col_list[k]] < 0) {
             endofpath = col_list[k];
             unassignedfound = true;
@@ -301,7 +304,7 @@ cost lap(int16 dim,
         i = colsol[j1];
         h = input_cost[i][j1] - v[j1] - min;
         
-        for (k = up; k != dim; k++) {
+        for (k = up; k < dim; ++k) {
           j = col_list[k];
           v2 = input_cost[i][j] - v[j] - h;
           if (v2 < d[j]) {
