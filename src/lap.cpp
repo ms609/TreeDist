@@ -25,29 +25,25 @@
  *
  *************************************************************************/
 #include "tree_distances.h"
-
 using namespace Rcpp;
 
 
 // [[Rcpp::export]]
 List lapjv (NumericMatrix x, NumericVector maxX) {
-  const int16 n_row = x.nrow(), n_col = x.ncol(),
-              max_dim = (n_row > n_col) ? n_row : n_col,
-              spare_rows = n_row - n_col
-              ;
-  const cost max_score = BIG / max_dim;
+  const int16 n_row = x.nrow();
+  const int16 n_col = x.ncol();
+  const int16 max_dim = (n_row > n_col) ? n_row : n_col;
+  const int16 spare_rows = n_row - n_col;
+  const cost max_score = cost(BIG / max_dim);
+  
+  std::vector<lap_col> rowsol(max_dim);
+  std::vector<lap_row> colsol(max_dim);
+  std::vector<cost> u(max_dim);
+  std::vector<cost> v(max_dim);
+  
+  cost_matrix input(max_dim, std::vector<cost>(max_dim));
+  
   const double x_max = maxX[0];
-  
-  lap_col *rowsol = new lap_col[max_dim];
-  lap_row *colsol = new lap_row[max_dim];
-  cost *u = new cost[max_dim];
-  cost *v = new cost[max_dim];
-  
-  cost** input = new cost*[max_dim];
-  for (int16 i = 0; i != max_dim; i++) {
-    input[i] = new cost[max_dim];
-  }
-  
   for (int16 r = n_row; r--;) {
     for (int16 c = n_col; c--;) {
       input[r][c] = cost(max_score * (x(r, c) / x_max));
@@ -68,13 +64,6 @@ List lapjv (NumericMatrix x, NumericVector maxX) {
     matching[i] = rowsol[i] < n_col ? rowsol[i] + 1 : NA_INTEGER;
   }
   
-  delete [] u;
-  delete [] v;
-  delete [] rowsol;
-  delete [] colsol;
-  for (int16 i = 0; i != max_dim; i++) delete [] input[i];
-  delete [] input;
-  
   return List::create(
     Named("score") = (double(score) - (std::abs(spare_rows) * max_score))
     / max_score * x_max,
@@ -89,11 +78,11 @@ bool nontrivially_less_than(cost a, cost b) {
 /* This function is the jv shortest augmenting path algorithm to solve the 
    assignment problem */
 cost lap(int16 dim,
-         cost **input_cost,
-         lap_col *rowsol,
-         lap_row *colsol,
-         cost *u,
-         cost *v)
+         cost_matrix &input_cost,
+         std::vector<lap_col> &rowsol,
+         std::vector<lap_row> &colsol,
+         std::vector<cost> &u,
+         std::vector<cost> &v)
   
   // input:
   // dim        - problem size
@@ -107,9 +96,26 @@ cost lap(int16 dim,
   
 {
   bool unassignedfound;
-  lap_row  i, imin, num_free = 0, previous_num_free, f, i0, k, free_row,
-           *predecessor, *freeunassigned;
-  lap_col  j, j1, j2 = 0, endofpath = 0, last = 0, low, up, *col_list, *matches;
+  lap_row i;
+  lap_row imin;
+  lap_row num_free = 0;
+  lap_row previous_num_free;
+  lap_row f;
+  lap_row i0;
+  lap_row k;
+  lap_row free_row;
+  lap_row *predecessor;
+  lap_row *freeunassigned;
+  
+  lap_col j;
+  lap_col j1;
+  lap_col j2 = 0;
+  lap_col endofpath = 0;
+  lap_col last = 0;
+  lap_col low;
+  lap_col up;
+  lap_col *col_list;
+  lap_col *matches;
   /* Initializing min, endofpath, j2 and last is unnecessary, 
    * but avoids compiler warnings */
   cost min = 0, h, umin, usubmin, v2, *d;
