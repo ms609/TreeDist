@@ -104,15 +104,11 @@ cost lap(const lap_row dim,
   lap_col low;
   lap_col up;
   
-  std::vector<lap_row> freeunassigned(dim);        // List of unassigned rows.
-  std::vector<lap_col> col_list(dim);    // List of columns to be scanned in various ways.
   std::vector<lap_col> matches(dim);     // Counts how many times a row could be assigned.
-  std::vector<cost> d(dim);              // 'Cost-distance' in augmenting path calculation.
-  std::vector<lap_row> predecessor(dim); // Row-predecessor of column in augmenting/alternating path.
   
   // Init how many times a row will be assigned in the column reduction.
   for (lap_row i = 0; i != dim; i++) {
-    matches[i] = 0;
+    
   }
   
   // COLUMN REDUCTION
@@ -146,6 +142,8 @@ cost lap(const lap_row dim,
   }
   
   // REDUCTION TRANSFER
+  std::vector<lap_row> freeunassigned(dim);        // List of unassigned rows.
+  
   for (lap_row i = 0; i < dim; ++i) {
     cost min = 0;
     if (matches[i] == 0) { // Fill list of unassigned 'free' rows.
@@ -167,7 +165,10 @@ cost lap(const lap_row dim,
   }
   
   //   AUGMENTING ROW REDUCTION
-  int16 loopcnt = 0;           // do-loop to be done twice.
+  std::vector<lap_col> col_list(dim);    // List of columns to be scanned in various ways.
+  int16 loopcnt = 0;                     // do-loop to be done twice.
+  
+  
   do {
     ++loopcnt;
     
@@ -238,6 +239,9 @@ cost lap(const lap_row dim,
   } while (loopcnt < 2); // Repeat once.
   
   // AUGMENT SOLUTION for each free row.
+  std::vector<cost> d(dim);              // 'Cost-distance' in augmenting path calculation.
+  std::vector<lap_row> predecessor(dim); // Row-predecessor of column in augmenting/alternating path.
+  
   for (lap_row f = 0; f < num_free; ++f) {
     lap_row free_row = freeunassigned[f];       // Start row of augmenting path.
     lap_col endofpath = 0;
