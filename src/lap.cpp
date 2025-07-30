@@ -97,12 +97,9 @@ cost lap(const lap_row dim,
   bool unassignedfound;
   lap_dim i;
   lap_row num_free = 0;
-  lap_row k;
   
   lap_col j;
   lap_col j1;
-  lap_col low;
-  lap_col up;
   
   std::vector<lap_col> matches(dim);     // Counts how many times a row could be assigned.
   
@@ -177,7 +174,7 @@ cost lap(const lap_row dim,
     //     scanned next.
     cost usubmin;
     cost umin;
-    k = 0;
+    lap_row k = 0;
     lap_row previous_num_free = num_free;
     num_free = 0;             // Start list of rows still free after augmenting
                               // row reduction.
@@ -256,8 +253,8 @@ cost lap(const lap_row dim,
     }
     
     cost min = 0;
-    low = 0; // Columns in 0..low-1 are ready, now none.
-    up = 0;  // Columns in low..up-1 are to be scanned for current minimum, now none.
+    lap_col low = 0; // Columns in 0..low-1 are ready, now none.
+    lap_col up = 0;  // Columns in low..up-1 are to be scanned for current minimum, now none.
     // Columns in up..dim-1 are to be considered later to find new minimum;
     // at this stage the list simply contains all columns.
     unassignedfound = false;
