@@ -25,8 +25,8 @@
  *
  *************************************************************************/
 #include "tree_distances.h"
+
 using namespace Rcpp;
-using namespace std;
 
 
 // [[Rcpp::export]]
