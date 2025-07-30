@@ -86,12 +86,9 @@ cost lap(const lap_row dim,
   // output:
   // rowsol     - column assigned to row in solution
   // colsol     - row assigned to column in solution
-  // u          - dual variables, row reduction numbers
-  // v          - dual variables, column reduction numbers
   
 {
   lap_row num_free = 0;
-  std::vector<cost> u(dim);
   std::vector<cost> v(dim);
   std::vector<lap_col> matches(dim);     // Counts how many times a row could be assigned.
   
@@ -329,7 +326,6 @@ cost lap(const lap_row dim,
   for (lap_dim i = 0; i < dim; ++i) {
     const lap_dim j = rowsol[i];
     const cost element_cost = input_cost(i, j);
-    u[i] = element_cost - v[j];
     lapcost += element_cost;
   }
 
