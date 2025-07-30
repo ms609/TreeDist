@@ -18,8 +18,8 @@ void check_ntip(const double n) {
 }
 
 // [[Rcpp::export]]
-List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y, 
-                                   const IntegerVector nTip) {
+List cpp_robinson_foulds_distance(const RawMatrix x, const RawMatrix y, 
+                                  const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
@@ -79,8 +79,8 @@ List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_robinson_foulds_info (const RawMatrix x, const RawMatrix y, 
-                               const IntegerVector nTip) {
+List cpp_robinson_foulds_info(const RawMatrix x, const RawMatrix y, 
+                              const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
@@ -147,8 +147,8 @@ List cpp_robinson_foulds_info (const RawMatrix x, const RawMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y, 
-                                  const IntegerVector nTip) {
+List cpp_matching_split_distance(const RawMatrix x, const RawMatrix y, 
+                                 const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
@@ -203,9 +203,9 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
-                             const IntegerVector nTip, const NumericVector k,
-                             const LogicalVector allowConflict) {
+List cpp_jaccard_similarity(const RawMatrix x, const RawMatrix y,
+                            const IntegerVector nTip, const NumericVector k,
+                            const LogicalVector allowConflict) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
@@ -623,4 +623,3 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
                       _["matching"] = final_matching);
 
 }
- 
