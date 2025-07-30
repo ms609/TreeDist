@@ -152,8 +152,7 @@ cost lap(const lap_row dim,
   
   //   AUGMENTING ROW REDUCTION
   std::vector<lap_col> col_list(dim);    // List of columns to be scanned in various ways.
-  int16 loopcnt = 0;                     // do-loop to be done twice.
-  
+  int loopcnt = 0;                       // do-loop to be done twice.
   
   do {
     ++loopcnt;
@@ -162,17 +161,15 @@ cost lap(const lap_row dim,
     //     In some cases, a free row may be replaced with another one to be 
     //     scanned next.
     cost usubmin;
-    cost umin;
-    lap_row k = 0;
     lap_row previous_num_free = num_free;
     num_free = 0;             // Start list of rows still free after augmenting
                               // row reduction.
+    lap_row k = 0;
     while (k < previous_num_free) {
-      const row_offset i_offset = static_cast<size_t>(iii) * dim;
       const lap_row i = freeunassigned[k++];
+      const row_offset i_offset = static_cast<size_t>(i) * dim;
       
       //     Find minimum and second minimum reduced cost over columns.
-      umin = input_cost.entry0(static_cast<size_t>(i)) - v[0];
       lap_col j1 = 0;
       lap_col j2 = 0;
       usubmin = BIG;
