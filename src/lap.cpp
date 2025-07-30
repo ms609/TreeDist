@@ -173,7 +173,7 @@ cost lap(int16 dim,
           }
         }
       }
-      v[j1] = v[j1] - min;
+      v[j1] -= min;
     }
   }
   
