@@ -44,23 +44,24 @@ List lapjv(NumericMatrix x, NumericVector maxX) {
   cost_matrix input(max_dim, std::vector<cost>(max_dim));
   
   const double x_max = maxX[0];
-  for (int16 r = n_row; r--;) {
-    for (int16 c = n_col; c--;) {
-      input[r][c] = cost(max_score * (x(r, c) / x_max));
+  const double scale_factor = max_score / x_max;
+  for (int16 r = 0; r < n_row; ++r) {
+    for (int16 c = 0; c < n_col; ++c) {
+      input[r][c] = cost(x(r, c) * scale_factor);
     }
-    for (int16 c = n_col; c != max_dim; c++) {
+    for (int16 c = n_col; c < max_dim; ++c) {
       input[r][c] = max_score;
     }
   }
-  for (int16 r = n_row; r != max_dim; r++) {
-    for (int16 c = 0; c != max_dim; c++) {
+  for (int16 r = n_row; r < max_dim; ++r) {
+    for (int16 c = 0; c < max_dim; ++c) {
       input[r][c] = max_score;
     }
   }
   
   cost score = lap(max_dim, input, rowsol, colsol, u, v);
   IntegerVector matching (n_row);
-  for (int16 i = 0; i != n_row; i++) {
+  for (int16 i = 0; i < n_row; ++i) {
     matching[i] = rowsol[i] < n_col ? rowsol[i] + 1 : NA_INTEGER;
   }
   
@@ -132,19 +133,23 @@ cost lap(int16 dim,
     // Find minimum cost over rows.
     min = input_cost[0][j];
     imin = 0;
-    for (i = 1; i != dim; i++) {
-      if (input_cost[i][j] < min) {
-        min = input_cost[i][j];
+    for (i = 1; i < dim; ++i) {
+      const cost current_cost = input_cost[i][j];
+      if (current_cost < min) {
+        min = current_cost;
         imin = i;
       }
     }
+    
     v[j] = min;
-    if (++matches[imin] == 1) {
+    ++matches[imin];
+    
+    if (matches[imin] == 1) {
       // Init assignment if minimum row assigned for first time.
       rowsol[imin] = j;
       colsol[j] = imin;
     } else if (v[j] < v[rowsol[imin]]) {
-      int16 j1 = rowsol[imin];
+      const lap_col j1 = rowsol[imin];
       rowsol[imin] = j;
       colsol[j] = imin;
       colsol[j1] = -1;
