@@ -104,8 +104,6 @@ cost lap(const lap_row dim,
   lap_col low;
   lap_col up;
   
-  cost min = 0, h, umin, usubmin, v2;
-  
   std::vector<lap_row> freeunassigned(dim);        // List of unassigned rows.
   std::vector<lap_col> col_list(dim);    // List of columns to be scanned in various ways.
   std::vector<lap_col> matches(dim);     // Counts how many times a row could be assigned.
@@ -120,7 +118,7 @@ cost lap(const lap_row dim,
   // COLUMN REDUCTION
   for (lap_col j = dim; j--; ) { // Reverse order gives better results.
     // Find minimum cost over rows.
-    min = input_cost.row0(j);
+    cost min = input_cost.row0(j);
     lap_dim imin = 0;
     for (lap_row i = 1; i < dim; ++i) {
       const cost current_cost = input_cost(i, j);
@@ -149,6 +147,7 @@ cost lap(const lap_row dim,
   
   // REDUCTION TRANSFER
   for (lap_row i = 0; i < dim; ++i) {
+    cost min = 0;
     if (matches[i] == 0) { // Fill list of unassigned 'free' rows.
       freeunassigned[num_free++] = i;
     } else if (matches[i] == 1) { // Transfer reduction from rows that are assigned once.
@@ -175,6 +174,8 @@ cost lap(const lap_row dim,
     //     Scan all free rows.
     //     In some cases, a free row may be replaced with another one to be 
     //     scanned next.
+    cost usubmin;
+    cost umin;
     k = 0;
     lap_row previous_num_free = num_free;
     num_free = 0;             // Start list of rows still free after augmenting
@@ -190,7 +191,7 @@ cost lap(const lap_row dim,
       usubmin = BIG;
       
       for (lap_col j = 1; j < dim; ++j) {
-        h = input_cost(iii, j) - v[j];
+        const cost h = input_cost(iii, j) - v[j];
         if (h < usubmin) {
           if (h >= umin) {
             usubmin = h;
@@ -250,6 +251,7 @@ cost lap(const lap_row dim,
       col_list[j] = j;        // Init column list.
     }
     
+    cost min = 0;
     low = 0; // Columns in 0..low-1 are ready, now none.
     up = 0;  // Columns in low..up-1 are to be scanned for current minimum, now none.
     // Columns in up..dim-1 are to be considered later to find new minimum;
@@ -266,7 +268,7 @@ cost lap(const lap_row dim,
         
         for (lap_dim k = up; k < dim; ++k) {
           j = col_list[k];
-          h = d[j];
+          const cost h = d[j];
           if (h <= min) {
             if (h < min) {   // New minimum.
               up = low;      // Restart list at index low.
@@ -293,11 +295,11 @@ cost lap(const lap_row dim,
         // via next scanned column.
         j1 = col_list[low++];
         i = colsol[j1];
-        h = input_cost(i, j1) - v[j1] - min;
+        const cost h = input_cost(i, j1) - v[j1] - min;
         
         for (lap_dim k = up; k < dim; ++k) {
           j = col_list[k];
-          v2 = input_cost(i, j) - v[j] - h;
+          cost v2 = input_cost(i, j) - v[j] - h;
           if (v2 < d[j]) {
             predecessor[j] = i;
             if (v2 == min) { // New column found at same minimum value
