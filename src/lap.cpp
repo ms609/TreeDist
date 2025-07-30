@@ -191,8 +191,7 @@ cost lap(int16 dim,
     num_free = 0;             // Start list of rows still free after augmenting
                               // row reduction.
     while (k < previous_num_free) {
-      i = freeunassigned[k];
-      k++;
+      i = freeunassigned[k++];
       
       //     Find minimum and second minimum reduced cost over columns.
       umin = input_cost[i][0] - v[0];
@@ -299,8 +298,7 @@ cost lap(int16 dim,
       if (!unassignedfound) {
         // Update 'distances' between free_row and all unscanned columns,
         // via next scanned column.
-        j1 = col_list[low];
-        low++;
+        j1 = col_list[low++];
         i = colsol[j1];
         h = input_cost[i][j1] - v[j1] - min;
         
