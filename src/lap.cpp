@@ -170,6 +170,11 @@ cost lap(const lap_row dim,
       const row_offset i_offset = static_cast<size_t>(i) * dim;
       
       //     Find minimum and second minimum reduced cost over columns.
+      assert(i_offset == static_cast<size_t>(i) * dim);
+      Rcpp::Rcout << i <<"x" << dim << "  " << (input_cost.entry0(static_cast<size_t>(i))) << " != " <<
+        input_cost.rowElement0(i_offset) << ".\n";
+      assert(input_cost.entry0(static_cast<size_t>(i)) == input_cost.rowElement0(i_offset));
+      cost umin = input_cost.entry0(static_cast<size_t>(i)) - v[0];
       lap_col j1 = 0;
       lap_col j2 = 0;
       usubmin = BIG;
