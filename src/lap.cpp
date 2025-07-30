@@ -346,8 +346,9 @@ cost lap(int16 dim,
   cost lapcost = 0;
   for(i = 0; i < dim; ++i) {
     j = rowsol[i];
-    u[i] = input_cost[i][j] - v[j];
-    lapcost += input_cost[i][j];
+    const cost element_cost = input_cost[i][j];
+    u[i] = element_cost - v[j];
+    lapcost += element_cost;
   }
 
   return lapcost;
