@@ -324,9 +324,7 @@ cost lap(const lap_row dim,
   // Calculate optimal cost.
   cost lapcost = 0;
   for (lap_dim i = 0; i < dim; ++i) {
-    const lap_dim j = rowsol[i];
-    const cost element_cost = input_cost(i, j);
-    lapcost += element_cost;
+    lapcost += input_cost(i, rowsol[i]);
   }
 
   return lapcost;
