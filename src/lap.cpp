@@ -38,8 +38,6 @@ List lapjv(NumericMatrix x, NumericVector maxX) {
   
   std::vector<lap_col> rowsol(max_dim);
   std::vector<lap_row> colsol(max_dim);
-  std::vector<cost> u(max_dim);
-  std::vector<cost> v(max_dim);
   
   cost_matrix input(max_dim);
   
@@ -57,7 +55,7 @@ List lapjv(NumericMatrix x, NumericVector maxX) {
   }
   input.padAfterRow(n_row, max_score);
   
-  cost score = lap(max_dim, input, rowsol, colsol, u, v);
+  cost score = lap(max_dim, input, rowsol, colsol);
   IntegerVector matching(n_row);
   for (int16 i = 0; i < n_row; ++i) {
     matching[i] = rowsol[i] < n_col ? rowsol[i] + 1 : NA_INTEGER;
@@ -79,9 +77,7 @@ inline bool nontrivially_less_than(cost a, cost b) noexcept {
 cost lap(const lap_row dim,
          cost_matrix &input_cost,
          std::vector<lap_col> &rowsol,
-         std::vector<lap_row> &colsol,
-         std::vector<cost> &u,
-         std::vector<cost> &v)
+         std::vector<lap_row> &colsol)
   
   // input:
   // dim        - problem size
@@ -95,6 +91,8 @@ cost lap(const lap_row dim,
   
 {
   lap_row num_free = 0;
+  std::vector<cost> u(dim);
+  std::vector<cost> v(dim);
   std::vector<lap_col> matches(dim);     // Counts how many times a row could be assigned.
   
   // COLUMN REDUCTION
