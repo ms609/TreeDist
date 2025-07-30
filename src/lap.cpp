@@ -96,11 +96,8 @@ cost lap(const lap_row dim,
 {
   bool unassignedfound;
   lap_dim i;
-  lap_dim imin;
   lap_row num_free = 0;
-  lap_row previous_num_free;
   lap_row k;
-  lap_row free_row;
   
   lap_col j;
   lap_col j1;
@@ -128,7 +125,7 @@ cost lap(const lap_row dim,
   for (lap_col j = dim; j--; ) { // Reverse order gives better results.
     // Find minimum cost over rows.
     min = input_cost.row0(j);
-    imin = 0;
+    lap_dim imin = 0;
     for (lap_row i = 1; i < dim; ++i) {
       const cost current_cost = input_cost(i, j);
       if (current_cost < min) {
@@ -183,7 +180,7 @@ cost lap(const lap_row dim,
     //     In some cases, a free row may be replaced with another one to be 
     //     scanned next.
     k = 0;
-    previous_num_free = num_free;
+    lap_row previous_num_free = num_free;
     num_free = 0;             // Start list of rows still free after augmenting
                               // row reduction.
     while (k < previous_num_free) {
@@ -244,7 +241,7 @@ cost lap(const lap_row dim,
   
   // AUGMENT SOLUTION for each free row.
   for (lap_row f = 0; f < num_free; ++f) {
-    free_row = freeunassigned[f];       // Start row of augmenting path.
+    lap_row free_row = freeunassigned[f];       // Start row of augmenting path.
     
     // Dijkstra shortest path algorithm.
     // Runs until unassigned column added to shortest path tree.
