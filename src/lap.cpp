@@ -94,15 +94,8 @@ cost lap(const lap_row dim,
   // v          - dual variables, column reduction numbers
   
 {
-  lap_dim i;
   lap_row num_free = 0;
-  
   std::vector<lap_col> matches(dim);     // Counts how many times a row could be assigned.
-  
-  // Init how many times a row will be assigned in the column reduction.
-  for (lap_row i = 0; i != dim; i++) {
-    
-  }
   
   // COLUMN REDUCTION
   for (lap_col j = dim; j--; ) { // Reverse order gives better results.
@@ -175,17 +168,17 @@ cost lap(const lap_row dim,
     num_free = 0;             // Start list of rows still free after augmenting
                               // row reduction.
     while (k < previous_num_free) {
-      const lap_row iii = freeunassigned[k++];
       const row_offset i_offset = static_cast<size_t>(iii) * dim;
+      const lap_row i = freeunassigned[k++];
       
       //     Find minimum and second minimum reduced cost over columns.
-      umin = input_cost.entry0(static_cast<size_t>(iii)) - v[0];
+      umin = input_cost.entry0(static_cast<size_t>(i)) - v[0];
       lap_col j1 = 0;
       lap_col j2 = 0;
       usubmin = BIG;
       
       for (lap_col j = 1; j < dim; ++j) {
-        const cost h = input_cost(iii, j) - v[j];
+        const cost h = input_cost(i, j) - v[j];
         if (h < usubmin) {
           if (h >= umin) {
             usubmin = h;
@@ -213,8 +206,8 @@ cost lap(const lap_row dim,
       }
         
       //    (Re-)assign i to j1, possibly de-assigning an i0.
-      rowsol[iii] = j1;
-      colsol[j1] = iii;
+      rowsol[i] = j1;
+      colsol[j1] = i;
       
       if (i0 > -1) { // Minimum column j1 assigned earlier.
         if (nontrivially_less_than(umin, usubmin)) {
@@ -240,6 +233,7 @@ cost lap(const lap_row dim,
     lap_row free_row = freeunassigned[f];       // Start row of augmenting path.
     lap_col endofpath = 0;
     lap_col last = 0;
+    lap_row i;
     lap_col j1;
     
     // Dijkstra shortest path algorithm.
