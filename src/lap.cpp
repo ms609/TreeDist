@@ -41,21 +41,21 @@ List lapjv(NumericMatrix x, NumericVector maxX) {
   std::vector<cost> u(max_dim);
   std::vector<cost> v(max_dim);
   
-  cost_matrix input(max_dim, std::vector<cost>(max_dim));
+  cost_matrix input(max_dim);
   
   const double x_max = maxX[0];
   const double scale_factor = max_score / x_max;
   for (int16 r = 0; r < n_row; ++r) {
     for (int16 c = 0; c < n_col; ++c) {
-      input[r][c] = cost(x(r, c) * scale_factor);
+      input(r, c) = cost(x(r, c) * scale_factor);
     }
     for (int16 c = n_col; c < max_dim; ++c) {
-      input[r][c] = max_score;
+      input(r, c) = max_score;
     }
   }
   for (int16 r = n_row; r < max_dim; ++r) {
     for (int16 c = 0; c < max_dim; ++c) {
-      input[r][c] = max_score;
+      input(r, c) = max_score;
     }
   }
   
@@ -131,10 +131,10 @@ cost lap(int16 dim,
   // COLUMN REDUCTION
   for (j = dim; j--; ) { // Reverse order gives better results.
     // Find minimum cost over rows.
-    min = input_cost[0][j];
+    min = input_cost(0, j);
     imin = 0;
     for (i = 1; i < dim; ++i) {
-      const cost current_cost = input_cost[i][j];
+      const cost current_cost = input_cost(i, j);
       if (current_cost < min) {
         min = current_cost;
         imin = i;
@@ -167,7 +167,7 @@ cost lap(int16 dim,
       min = BIG;
       for (j = 0; j < dim; ++j) {
         if (j != j1) {
-          const cost reduced_cost = input_cost[i][j] - v[j];
+          const cost reduced_cost = input_cost(i, j) - v[j];
           if (reduced_cost < min) {
             min = reduced_cost;
           }
@@ -193,12 +193,12 @@ cost lap(int16 dim,
       i = freeunassigned[k++];
       
       //     Find minimum and second minimum reduced cost over columns.
-      umin = input_cost[i][0] - v[0];
+      umin = input_cost(i, 0) - v[0];
       j1 = 0;
       usubmin = BIG;
       
       for (j = 1; j < dim; ++j) {
-        h = input_cost[i][j] - v[j];
+        h = input_cost(i, j) - v[j];
         if (h < usubmin) {
           if (h >= umin) {
             usubmin = h;
@@ -251,7 +251,7 @@ cost lap(int16 dim,
     // Dijkstra shortest path algorithm.
     // Runs until unassigned column added to shortest path tree.
     for(j = 0; j < dim; ++j) {
-      d[j] = input_cost[free_row][j] - v[j];
+      d[j] = input_cost(free_row, j) - v[j];
       predecessor[j] = free_row;
       col_list[j] = j;        // Init column list.
     }
@@ -299,11 +299,11 @@ cost lap(int16 dim,
         // via next scanned column.
         j1 = col_list[low++];
         i = colsol[j1];
-        h = input_cost[i][j1] - v[j1] - min;
+        h = input_cost(i, j1) - v[j1] - min;
         
         for (k = up; k < dim; ++k) {
           j = col_list[k];
-          v2 = input_cost[i][j] - v[j] - h;
+          v2 = input_cost(i, j) - v[j] - h;
           if (v2 < d[j]) {
             predecessor[j] = i;
             if (v2 == min) { // New column found at same minimum value
@@ -344,7 +344,7 @@ cost lap(int16 dim,
   cost lapcost = 0;
   for(i = 0; i < dim; ++i) {
     j = rowsol[i];
-    const cost element_cost = input_cost[i][j];
+    const cost element_cost = input_cost(i, j);
     u[i] = element_cost - v[j];
     lapcost += element_cost;
   }

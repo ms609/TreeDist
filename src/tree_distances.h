@@ -14,7 +14,31 @@
 using cost = int_fast64_t;
 using lap_row = int16;
 using lap_col = int16;
-using cost_matrix = std::vector<std::vector<cost>>;
+
+template<typename T>
+class FlatMatrix {
+private:
+  std::vector<std::vector<T>> data_;
+  lap_row dim_;
+  
+public:
+  FlatMatrix(size_t dim)
+    : data_(dim, std::vector<T>(dim)), dim_(dim) {}
+  
+  // Access operator for read/write
+  T& operator()(lap_row i, lap_col j) {
+    return data_[i][j];
+    // return data_[i * dim_ + j];
+  }
+  
+  // Const version for read-only access
+  const T& operator()(lap_row i, lap_col j) const {
+    return data_[i][j];
+    // return data_[i * dim_ + j];
+  }
+};
+
+using cost_matrix = FlatMatrix<cost>;
 
 constexpr splitbit ALL_ONES = (std::numeric_limits<splitbit>::max)();
 

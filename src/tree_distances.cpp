@@ -164,23 +164,23 @@ List cpp_matching_split_distance(const RawMatrix x, const RawMatrix y,
     return List::create(Named("score") = 0);
   }
   const cost max_score = BIG / most_splits;
-  cost_matrix score(most_splits, std::vector<cost>(most_splits));
+  cost_matrix score(most_splits);
   
   for (int16 ai = 0; ai != a.n_splits; ++ai) {
     for (int16 bi = 0; bi != b.n_splits; ++bi) {
-      score[ai][bi] = 0;
+      score(ai, bi) = 0;
       for (int16 bin = 0; bin != a.n_bins; ++bin) {
-        score[ai][bi] += count_bits(a.state[ai][bin] ^ b.state[bi][bin]);
+        score(ai, bi) += count_bits(a.state[ai][bin] ^ b.state[bi][bin]);
       }
-      if (score[ai][bi] > half_tips) score[ai][bi] = n_tips - score[ai][bi];
+      if (score(ai, bi) > half_tips) score(ai, bi) = n_tips - score(ai, bi);
     }
     for (int16 bi = b.n_splits; bi < most_splits; ++bi) {
-      score[ai][bi] = max_score;
+      score(ai, bi) = max_score;
     }
   }
   for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
     for (int16 bi = 0; bi != most_splits; ++bi) {
-      score[ai][bi] = max_score;
+      score(ai, bi) = max_score;
     }
   }
   
@@ -222,7 +222,7 @@ List cpp_jaccard_similarity(const RawMatrix x, const RawMatrix y,
   
   bool allow_conflict = allowConflict[0];
   
-  cost_matrix score(most_splits, std::vector<cost>(most_splits));
+  cost_matrix score(most_splits);
   
   for (int16 ai = 0; ai != a.n_splits; ++ai) {
     
@@ -254,7 +254,7 @@ List cpp_jaccard_similarity(const RawMatrix x, const RawMatrix y,
             A_and_B == nA)
           ) {
         
-        score[ai][bi] = max_score; /* Prohibited */
+        score(ai, bi) = max_score; /* Prohibited */
         
       } else {
         const int16
@@ -276,26 +276,26 @@ List cpp_jaccard_similarity(const RawMatrix x, const RawMatrix y,
         /* LAP will look to minimize an integer. max(ars) is between 0 and 1. */
         if (exponent == 1) {
           /* Nye et al. similarity metric */
-          score[ai][bi] = cost(max_scoreL - (max_scoreL * 
+          score(ai, bi) = cost(max_scoreL - (max_scoreL * 
             ((min_ars_both > min_ars_either) ? 
             min_ars_both : min_ars_either)));
         } else if (exponent == R_PosInf) {
-          score[ai][bi] = cost((min_ars_both == 1 || min_ars_either == 1) ?
+          score(ai, bi) = cost((min_ars_both == 1 || min_ars_either == 1) ?
                                  0 : max_scoreL);
         } else {
-          score[ai][bi] = cost(max_scoreL - (max_scoreL * 
+          score(ai, bi) = cost(max_scoreL - (max_scoreL * 
             std::pow((min_ars_both > min_ars_either) ? 
             min_ars_both : min_ars_either, exponent)));
         }
       }
     }
     for (int16 bi = b.n_splits; bi < most_splits; ++bi) {
-      score[ai][bi] = max_score;
+      score(ai, bi) = max_score;
     }
   }
   for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
     for (int16 bi = 0; bi != most_splits; ++bi) {
-      score[ai][bi] = max_score;
+      score(ai, bi) = max_score;
     }
   }
   
@@ -334,7 +334,7 @@ List cpp_msi_distance(const RawMatrix x, const RawMatrix y,
   const double max_possible = lg2_unrooted[n_tips] - 
     lg2_rooted[int16((n_tips + 1) / 2)] - lg2_rooted[int16(n_tips / 2)];
   
-  cost_matrix score(most_splits, std::vector<cost>(most_splits));
+  cost_matrix score(most_splits);
   
   splitbit different[SL_MAX_BINS];
   
@@ -353,17 +353,17 @@ List cpp_msi_distance(const RawMatrix x, const RawMatrix y,
       }
       const int16 n_same = n_tips - n_different;
       
-      score[ai][bi] = cost(max_score - 
+      score(ai, bi) = cost(max_score - 
         ((max_score / max_possible) *
           mmsi_score(n_same, n_a_and_b, n_different, n_a_only)));
     }
     for (int16 bi = b.n_splits; bi < most_splits; ++bi) {
-      score[ai][bi] = max_score;
+      score(ai, bi) = max_score;
     }
   }
   for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
     for (int16 bi = 0; bi < most_splits; ++bi) {
-      score[ai][bi] = max_score;
+      score(ai, bi) = max_score;
     }
   }
   
@@ -408,7 +408,7 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
                         _["matching"] = IntegerVector(0));
   }
   constexpr cost max_score = BIG;
-  cost_matrix score(most_splits, std::vector<cost>(most_splits));
+  cost_matrix score(most_splits);
   
   double exact_match_score = 0;
   int16 exact_matches = 0;
@@ -446,9 +446,9 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
       } else if (a_and_b == A_and_b &&
           a_and_b == a_and_B &&
           a_and_b == A_and_B) {
-        score[ai][bi] = max_score; // Don't risk rounding error
+        score(ai, bi) = max_score; // Don't risk rounding error
       } else {
-        score[ai][bi] = max_score -
+        score(ai, bi) = max_score -
           // Division by n_tips converts n(A&B) to P(A&B) for each ic_element
           cost(max_score * ((
             // 0 < Sum of IC_elements <= n_tips
@@ -461,7 +461,7 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
       }
     }
     for (int16 bi = b.n_splits; bi < most_splits; ++bi) {
-      score[ai][bi] = max_score;
+      score(ai, bi) = max_score;
     }
   }
   if (exact_matches == b.n_splits || exact_matches == a.n_splits) {
@@ -484,17 +484,17 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
       int16 b_pos = 0;
       for (int16 bi = 0; bi != b.n_splits; ++bi) {
         if (b_match[bi]) continue;
-        score[a_pos][b_pos] = score[ai][bi];
+        score(a_pos, b_pos) = score(ai, bi);
         b_pos++;
       }
       for (int16 bi = lap_dim - a_extra_splits; bi < lap_dim; ++bi) {
-        score[a_pos][bi] = max_score;
+        score(a_pos, bi) = max_score;
       }
       a_pos++;
     }
     for (int16 ai = lap_dim - b_extra_splits; ai < lap_dim; ++ai) {
       for (int16 bi = 0; bi != lap_dim; ++bi) {
-        score[ai][bi] = max_score;
+        score(ai, bi) = max_score;
       }
     }
     
@@ -541,7 +541,7 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
   } else {
     for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
       for (int16 bi = 0; bi < most_splits; ++bi) {
-        score[ai][bi] = max_score;
+        score(ai, bi) = max_score;
       }
     }
     
@@ -581,7 +581,7 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   
   // a and b are "clades" separating an "ingroup" [1] from an "outgroup" [0].
   // In/out direction [i.e. 1/0 bit] is arbitrary.
-  cost_matrix score(most_splits, std::vector<cost>(most_splits));
+  cost_matrix score(most_splits);
   
   for (int16 ai = a.n_splits; ai--; ) {
     for (int16 bi = b.n_splits; bi--; ) {
@@ -589,17 +589,17 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
                                           a.in_split[ai], b.in_split[bi],
                                           a.n_bins);
       
-      score[ai][bi] = spi_over == 0 ? max_score :
+      score(ai, bi) = spi_over == 0 ? max_score :
         cost((spi_over - best_overlap) * (max_score / max_possible));
         
     }
     for (int16 bi = b.n_splits; bi < most_splits; ++bi) {
-      score[ai][bi] = max_score;
+      score(ai, bi) = max_score;
     }
   }
   for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
     for (int16 bi = 0; bi != most_splits; ++bi) {
-      score[ai][bi] = max_score;
+      score(ai, bi) = max_score;
     }
   }
   
