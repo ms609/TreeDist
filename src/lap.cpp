@@ -58,7 +58,7 @@ List lapjv(NumericMatrix x, NumericVector maxX) {
   input.padAfterRow(n_row, max_score);
   
   cost score = lap(max_dim, input, rowsol, colsol, u, v);
-  IntegerVector matching (n_row);
+  IntegerVector matching(n_row);
   for (int16 i = 0; i < n_row; ++i) {
     matching[i] = rowsol[i] < n_col ? rowsol[i] + 1 : NA_INTEGER;
   }
@@ -76,7 +76,7 @@ inline bool nontrivially_less_than(cost a, cost b) noexcept {
 
 /* This function is the jv shortest augmenting path algorithm to solve the 
    assignment problem */
-cost lap(int16 dim,
+cost lap(const lap_row dim,
          cost_matrix &input_cost,
          std::vector<lap_col> &rowsol,
          std::vector<lap_row> &colsol,
@@ -95,8 +95,8 @@ cost lap(int16 dim,
   
 {
   bool unassignedfound;
-  lap_row i;
-  lap_row imin;
+  lap_dim i;
+  lap_dim imin;
   lap_row num_free = 0;
   lap_row previous_num_free;
   lap_row f;

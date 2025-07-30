@@ -12,8 +12,9 @@
 /*************** TYPES      *******************/
 
 using cost = int_fast64_t;
-using lap_row = int16;
-using lap_col = int16;
+using lap_dim = int16;
+using lap_row = lap_dim;
+using lap_col = lap_dim;
 using row_offset = size_t; // must hold int16 * int16
 
 template<typename T>
