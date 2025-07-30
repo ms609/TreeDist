@@ -101,7 +101,6 @@ cost lap(const lap_row dim,
   
   lap_col j;
   lap_col j1;
-  lap_col j2 = 0;
   lap_col endofpath = 0;
   lap_col last = 0;
   lap_col low;
@@ -156,7 +155,7 @@ cost lap(const lap_row dim,
     if (matches[i] == 0) { // Fill list of unassigned 'free' rows.
       freeunassigned[num_free++] = i;
     } else if (matches[i] == 1) { // Transfer reduction from rows that are assigned once.
-      j1 = rowsol[i];
+      const lap_col j1 = rowsol[i];
       min = BIG;
       const row_offset i_offset = static_cast<size_t>(i) * dim;
       for (lap_col j = 0; j < dim; ++j) {
@@ -186,6 +185,7 @@ cost lap(const lap_row dim,
     while (k < previous_num_free) {
       const lap_row iii = freeunassigned[k++];
       const row_offset i_offset = static_cast<size_t>(iii) * dim;
+      lap_col j2 = 0;
       
       //     Find minimum and second minimum reduced cost over columns.
       umin = input_cost.entry0(static_cast<size_t>(iii)) - v[0];
