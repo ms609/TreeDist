@@ -51,6 +51,14 @@ public:
     return data_[i + j];
   }
   
+  const T& entry0(lap_row i) const {
+    return data_[static_cast<size_t>(i) * dim_];
+  }
+  
+  const T& rowElement0(row_offset i) const {
+    return data_[i];
+  }
+  
   void padAfterRow(lap_row start_row, T value) {
     size_t start_index = static_cast<size_t>(start_row) * dim_;
     std::fill(data_.begin() + start_index, data_.end(), value);
