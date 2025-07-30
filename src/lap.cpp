@@ -344,7 +344,7 @@ cost lap(int16 dim,
   
   // Calculate optimal cost.
   cost lapcost = 0;
-  for(i = dim; i--;) {
+  for(i = 0; i < dim; ++i) {
     j = rowsol[i];
     u[i] = input_cost[i][j] - v[j];
     lapcost += input_cost[i][j];
