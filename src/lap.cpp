@@ -50,15 +50,12 @@ List lapjv(NumericMatrix x, NumericVector maxX) {
     for (int16 c = 0; c < n_col; ++c) {
       input.fromRow(r_offset, c) = cost(x(r, c) * scale_factor);
     }
+    input.padRowAfterCol(r_offset, n_col, max_score);
     for (int16 c = n_col; c < max_dim; ++c) {
       input.fromRow(r_offset, c) = max_score;
     }
   }
-  for (int16 r = n_row; r < max_dim; ++r) {
-    for (int16 c = 0; c < max_dim; ++c) {
-      input(r, c) = max_score;
-    }
-  }
+  input.padAfterRow(n_row, max_score);
   
   cost score = lap(max_dim, input, rowsol, colsol, u, v);
   IntegerVector matching (n_row);

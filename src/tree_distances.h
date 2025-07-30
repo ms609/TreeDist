@@ -49,6 +49,19 @@ public:
   const T& fromRow(row_offset i, lap_col j) const {
     return data_[i + j];
   }
+  
+  void padAfterRow(lap_row start_row, T value) {
+    size_t start_index = static_cast<size_t>(start_row) * dim_;
+    std::fill(data_.begin() + start_index, data_.end(), value);
+  }
+  
+  void padRowAfterCol(const row_offset r_offset, const lap_col start_col,
+                      const T value) {
+    size_t actual_start_col = static_cast<size_t>(start_col);
+    size_t start_index = r_offset + actual_start_col;
+    size_t end_index = start_index + dim_ - actual_start_col;
+    std::fill(data_.begin() + start_index, data_.begin() + end_index, value);
+  }
 };
 
 using cost_matrix = FlatMatrix<cost>;
