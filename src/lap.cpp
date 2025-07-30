@@ -99,8 +99,6 @@ cost lap(const lap_row dim,
   lap_dim imin;
   lap_row num_free = 0;
   lap_row previous_num_free;
-  lap_row f;
-  lap_row i0;
   lap_row k;
   lap_row free_row;
   
@@ -122,16 +120,16 @@ cost lap(const lap_row dim,
   std::vector<lap_row> predecessor(dim); // Row-predecessor of column in augmenting/alternating path.
   
   // Init how many times a row will be assigned in the column reduction.
-  for (i = 0; i != dim; i++) {
+  for (lap_row i = 0; i != dim; i++) {
     matches[i] = 0;
   }
   
   // COLUMN REDUCTION
-  for (j = dim; j--; ) { // Reverse order gives better results.
+  for (lap_col j = dim; j--; ) { // Reverse order gives better results.
     // Find minimum cost over rows.
     min = input_cost.row0(j);
     imin = 0;
-    for (i = 1; i < dim; ++i) {
+    for (lap_row i = 1; i < dim; ++i) {
       const cost current_cost = input_cost(i, j);
       if (current_cost < min) {
         min = current_cost;
@@ -157,14 +155,14 @@ cost lap(const lap_row dim,
   }
   
   // REDUCTION TRANSFER
-  for (i = 0; i < dim; ++i) {
+  for (lap_row i = 0; i < dim; ++i) {
     if (matches[i] == 0) { // Fill list of unassigned 'free' rows.
       freeunassigned[num_free++] = i;
     } else if (matches[i] == 1) { // Transfer reduction from rows that are assigned once.
       j1 = rowsol[i];
       min = BIG;
       const row_offset i_offset = static_cast<size_t>(i) * dim;
-      for (j = 0; j < dim; ++j) {
+      for (lap_col j = 0; j < dim; ++j) {
         if (j != j1) {
           const cost reduced_cost = input_cost.fromRow(i_offset, j) - v[j];
           if (reduced_cost < min) {
@@ -189,16 +187,16 @@ cost lap(const lap_row dim,
     num_free = 0;             // Start list of rows still free after augmenting
                               // row reduction.
     while (k < previous_num_free) {
-      i = freeunassigned[k++];
-      const row_offset i_offset = static_cast<size_t>(i) * dim;
+      const lap_row iii = freeunassigned[k++];
+      const row_offset i_offset = static_cast<size_t>(iii) * dim;
       
       //     Find minimum and second minimum reduced cost over columns.
-      umin = input_cost(i, 0) - v[0];
+      umin = input_cost.entry0(static_cast<size_t>(iii)) - v[0];
       j1 = 0;
       usubmin = BIG;
       
-      for (j = 1; j < dim; ++j) {
-        h = input_cost(i, j) - v[j];
+      for (lap_col j = 1; j < dim; ++j) {
+        h = input_cost(iii, j) - v[j];
         if (h < usubmin) {
           if (h >= umin) {
             usubmin = h;
@@ -212,7 +210,7 @@ cost lap(const lap_row dim,
         }
       }
       
-      i0 = colsol[j1];
+      lap_row i0 = colsol[j1];
       if (nontrivially_less_than(umin, usubmin)) {
         //  Change the reduction of the minimum column to increase the minimum
         //  reduced cost in the row to the subminimum.
@@ -226,8 +224,8 @@ cost lap(const lap_row dim,
       }
         
       //    (Re-)assign i to j1, possibly de-assigning an i0.
-      rowsol[i] = j1;
-      colsol[j1] = i;
+      rowsol[iii] = j1;
+      colsol[j1] = iii;
       
       if (i0 > -1) { // Minimum column j1 assigned earlier.
         if (nontrivially_less_than(umin, usubmin)) {
@@ -245,12 +243,12 @@ cost lap(const lap_row dim,
   } while (loopcnt < 2); // Repeat once.
   
   // AUGMENT SOLUTION for each free row.
-  for (f = 0; f < num_free; ++f) {
+  for (lap_row f = 0; f < num_free; ++f) {
     free_row = freeunassigned[f];       // Start row of augmenting path.
     
     // Dijkstra shortest path algorithm.
     // Runs until unassigned column added to shortest path tree.
-    for(j = 0; j < dim; ++j) {
+    for (lap_col j = 0; j < dim; ++j) {
       d[j] = input_cost(free_row, j) - v[j];
       predecessor[j] = free_row;
       col_list[j] = j;        // Init column list.
@@ -270,7 +268,7 @@ cost lap(const lap_row dim,
         // Store these indices between low..up-1 (increasing up).
         min = d[col_list[up++]];
         
-        for (k = up; k < dim; ++k) {
+        for (lap_dim k = up; k < dim; ++k) {
           j = col_list[k];
           h = d[j];
           if (h <= min) {
@@ -285,7 +283,7 @@ cost lap(const lap_row dim,
         }
         // Check if any of the minimum columns happens to be unassigned.
         // If so, we have an augmenting path right away.
-        for (k = low; k < up; ++k) {
+        for (lap_dim k = low; k < up; ++k) {
           if (colsol[col_list[k]] < 0) {
             endofpath = col_list[k];
             unassignedfound = true;
@@ -301,7 +299,7 @@ cost lap(const lap_row dim,
         i = colsol[j1];
         h = input_cost(i, j1) - v[j1] - min;
         
-        for (k = up; k < dim; ++k) {
+        for (lap_dim k = up; k < dim; ++k) {
           j = col_list[k];
           v2 = input_cost(i, j) - v[j] - h;
           if (v2 < d[j]) {
@@ -325,7 +323,7 @@ cost lap(const lap_row dim,
     } while (!unassignedfound);
     
     // Update column prices.
-    for(k = 0; k <= last; ++k) {
+    for(lap_dim k = 0; k <= last; ++k) {
       j1 = col_list[k];
       v[j1] += d[j1] - min;
     }
@@ -342,8 +340,8 @@ cost lap(const lap_row dim,
   
   // Calculate optimal cost.
   cost lapcost = 0;
-  for(i = 0; i < dim; ++i) {
-    j = rowsol[i];
+  for (lap_dim i = 0; i < dim; ++i) {
+    const lap_dim j = rowsol[i];
     const cost element_cost = input_cost(i, j);
     u[i] = element_cost - v[j];
     lapcost += element_cost;
