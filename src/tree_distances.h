@@ -5,6 +5,7 @@
 #include <Rcpp/Lightest>
 
 #include <limits> /* for numeric_limits */
+#include <vector> /* for vector */
 
 #include "ints.h"
 
@@ -13,6 +14,7 @@
 using cost = int_fast64_t;
 using lap_row = int16;
 using lap_col = int16;
+using cost_matrix = std::vector<std::vector<cost>>;
 
 constexpr splitbit ALL_ONES = (std::numeric_limits<splitbit>::max)();
 
@@ -23,17 +25,19 @@ constexpr cost ROUND_PRECISION = 2048 * 2048;
 
 /***** Constants requiring initialization *****/
 
-extern double
-  lg2[int32(SL_MAX_TIPS - 1) * (SL_MAX_TIPS - 1) + 1],
-  lg2_double_factorial[SL_MAX_TIPS + SL_MAX_TIPS - 2],
-  lg2_unrooted[SL_MAX_TIPS + 2];
+extern double lg2[int32(SL_MAX_TIPS - 1) * (SL_MAX_TIPS - 1) + 1];
+extern double lg2_double_factorial[SL_MAX_TIPS + SL_MAX_TIPS - 2];
+extern double lg2_unrooted[SL_MAX_TIPS + 2];
 extern double *lg2_rooted;
 
 /*************** FUNCTIONS  *******************/
 
-extern cost lap(int16 dim, cost **assigncost,
-                lap_col *rowsol, lap_row *colsol,
-                cost *u, cost *v);
+extern cost lap(int16 dim,
+                cost_matrix &input_cost,
+                std::vector<lap_col> &rowsol,
+                std::vector<lap_row> &colsol,
+                std::vector<cost> &u,
+                std::vector<cost> &v);
 
 extern double 
   mmsi_score(const int16 n_same, const int16 n_a_and_b,
