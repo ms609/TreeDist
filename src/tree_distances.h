@@ -39,6 +39,16 @@ public:
   const T& row0(lap_col j) const {
     return data_[j];
   }
+  
+  // Access operator for read/write
+  T& fromRow(row_offset i, lap_col j) {
+    return data_[i + j];
+  }
+  
+  // Const version for read-only access
+  const T& fromRow(row_offset i, lap_col j) const {
+    return data_[i + j];
+  }
 };
 
 using cost_matrix = FlatMatrix<cost>;

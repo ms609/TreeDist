@@ -46,11 +46,12 @@ List lapjv(NumericMatrix x, NumericVector maxX) {
   const double x_max = maxX[0];
   const double scale_factor = max_score / x_max;
   for (int16 r = 0; r < n_row; ++r) {
+    const row_offset r_offset = static_cast<size_t>(r) * max_dim;
     for (int16 c = 0; c < n_col; ++c) {
-      input(r, c) = cost(x(r, c) * scale_factor);
+      input.fromRow(r_offset, c) = cost(x(r, c) * scale_factor);
     }
     for (int16 c = n_col; c < max_dim; ++c) {
-      input(r, c) = max_score;
+      input.fromRow(r_offset, c) = max_score;
     }
   }
   for (int16 r = n_row; r < max_dim; ++r) {
@@ -165,9 +166,10 @@ cost lap(int16 dim,
     } else if (matches[i] == 1) { // Transfer reduction from rows that are assigned once.
       j1 = rowsol[i];
       min = BIG;
+      const row_offset i_offset = static_cast<size_t>(i) * dim;
       for (j = 0; j < dim; ++j) {
         if (j != j1) {
-          const cost reduced_cost = input_cost(i, j) - v[j];
+          const cost reduced_cost = input_cost.fromRow(i_offset, j) - v[j];
           if (reduced_cost < min) {
             min = reduced_cost;
           }
@@ -191,6 +193,7 @@ cost lap(int16 dim,
                               // row reduction.
     while (k < previous_num_free) {
       i = freeunassigned[k++];
+      const row_offset i_offset = static_cast<size_t>(i) * dim;
       
       //     Find minimum and second minimum reduced cost over columns.
       umin = input_cost(i, 0) - v[0];
