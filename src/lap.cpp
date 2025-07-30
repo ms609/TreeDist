@@ -94,11 +94,8 @@ cost lap(const lap_row dim,
   // v          - dual variables, column reduction numbers
   
 {
-  bool unassignedfound;
   lap_dim i;
   lap_row num_free = 0;
-  
-  lap_col j1;
   
   std::vector<lap_col> matches(dim);     // Counts how many times a row could be assigned.
   
@@ -180,11 +177,11 @@ cost lap(const lap_row dim,
     while (k < previous_num_free) {
       const lap_row iii = freeunassigned[k++];
       const row_offset i_offset = static_cast<size_t>(iii) * dim;
-      lap_col j2 = 0;
       
       //     Find minimum and second minimum reduced cost over columns.
       umin = input_cost.entry0(static_cast<size_t>(iii)) - v[0];
-      j1 = 0;
+      lap_col j1 = 0;
+      lap_col j2 = 0;
       usubmin = BIG;
       
       for (lap_col j = 1; j < dim; ++j) {
@@ -239,9 +236,11 @@ cost lap(const lap_row dim,
   std::vector<lap_row> predecessor(dim); // Row-predecessor of column in augmenting/alternating path.
   
   for (lap_row f = 0; f < num_free; ++f) {
+    bool unassignedfound = false;
     lap_row free_row = freeunassigned[f];       // Start row of augmenting path.
     lap_col endofpath = 0;
     lap_col last = 0;
+    lap_col j1;
     
     // Dijkstra shortest path algorithm.
     // Runs until unassigned column added to shortest path tree.
@@ -256,7 +255,6 @@ cost lap(const lap_row dim,
     lap_col up = 0;  // Columns in low..up-1 are to be scanned for current minimum, now none.
     // Columns in up..dim-1 are to be considered later to find new minimum;
     // at this stage the list simply contains all columns.
-    unassignedfound = false;
     
     do {
       if (up == low) { // No more columns to be scanned for current minimum.
