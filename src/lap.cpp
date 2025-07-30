@@ -252,7 +252,7 @@ cost lap(int16 dim,
     
     // Dijkstra shortest path algorithm.
     // Runs until unassigned column added to shortest path tree.
-    for(j = dim; j--;) {
+    for(j = 0; j < dim; ++j) {
       d[j] = input_cost[free_row][j] - v[j];
       predecessor[j] = free_row;
       col_list[j] = j;        // Init column list.
@@ -327,7 +327,7 @@ cost lap(int16 dim,
     } while (!unassignedfound);
     
     // Update column prices.
-    for(k = last + 1; k--;) {
+    for(k = 0; k <= last; ++k) {
       j1 = col_list[k];
       v[j1] += d[j1] - min;
     }
