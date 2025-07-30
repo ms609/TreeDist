@@ -168,8 +168,9 @@ cost lap(int16 dim,
         min = BIG;
         for (j = 0; j < dim; ++j) {
           if (j != j1) {
-            if (input_cost[i][j] - v[j] < min) {
-              min = input_cost[i][j] - v[j];
+            const cost reduced_cost = input_cost[i][j] - v[j];
+            if (reduced_cost < min) {
+              min = reduced_cost;
             }
           }
         }
