@@ -162,20 +162,18 @@ cost lap(int16 dim,
   for (i = 0; i < dim; ++i) {
     if (matches[i] == 0) { // Fill list of unassigned 'free' rows.
       freeunassigned[num_free++] = i;
-    } else {
-      if (matches[i] == 1) { // Transfer reduction from rows that are assigned once.
-        j1 = rowsol[i];
-        min = BIG;
-        for (j = 0; j < dim; ++j) {
-          if (j != j1) {
-            const cost reduced_cost = input_cost[i][j] - v[j];
-            if (reduced_cost < min) {
-              min = reduced_cost;
-            }
+    } else if (matches[i] == 1) { // Transfer reduction from rows that are assigned once.
+      j1 = rowsol[i];
+      min = BIG;
+      for (j = 0; j < dim; ++j) {
+        if (j != j1) {
+          const cost reduced_cost = input_cost[i][j] - v[j];
+          if (reduced_cost < min) {
+            min = reduced_cost;
           }
         }
-        v[j1] = v[j1] - min;
       }
+      v[j1] = v[j1] - min;
     }
   }
   
