@@ -104,8 +104,6 @@ cost lap(int16 dim,
   lap_row i0;
   lap_row k;
   lap_row free_row;
-  lap_row *predecessor;
-  lap_row *freeunassigned;
   
   lap_col j;
   lap_col j1;
@@ -114,17 +112,15 @@ cost lap(int16 dim,
   lap_col last = 0;
   lap_col low;
   lap_col up;
-  lap_col *col_list;
-  lap_col *matches;
   /* Initializing min, endofpath, j2 and last is unnecessary, 
    * but avoids compiler warnings */
-  cost min = 0, h, umin, usubmin, v2, *d;
+  cost min = 0, h, umin, usubmin, v2;
   
-  freeunassigned = new lap_row[dim];        // List of unassigned rows.
-  col_list = new lap_col[dim];    // List of columns to be scanned in various ways.
-  matches = new lap_col[dim];     // Counts how many times a row could be assigned.
-  d = new cost[dim];              // 'Cost-distance' in augmenting path calculation.
-  predecessor = new lap_row[dim]; // Row-predecessor of column in augmenting/alternating path.
+  std::vector<lap_row> freeunassigned(dim);        // List of unassigned rows.
+  std::vector<lap_col> col_list(dim);    // List of columns to be scanned in various ways.
+  std::vector<lap_col> matches(dim);     // Counts how many times a row could be assigned.
+  std::vector<cost> d(dim);              // 'Cost-distance' in augmenting path calculation.
+  std::vector<lap_row> predecessor(dim); // Row-predecessor of column in augmenting/alternating path.
   
   // Init how many times a row will be assigned in the column reduction.
   for (i = 0; i != dim; i++) {
@@ -346,13 +342,6 @@ cost lap(int16 dim,
     u[i] = input_cost[i][j] - v[j];
     lapcost = lapcost + input_cost[i][j];
   }
-  
-  // Free reserved memory.
-  delete[] predecessor;
-  delete[] freeunassigned;
-  delete[] col_list;
-  delete[] matches;
-  delete[] d;
-  
+
   return lapcost;
 }
