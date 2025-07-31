@@ -156,7 +156,6 @@ cost lap(const lap_row dim,
     //     Scan all free rows.
     //     In some cases, a free row may be replaced with another one to be 
     //     scanned next.
-    cost usubmin;
     lap_row previous_num_free = num_free;
     num_free = 0;             // Start list of rows still free after augmenting
                               // row reduction.
@@ -169,7 +168,7 @@ cost lap(const lap_row dim,
       cost umin = row_i[0] - v[0];
       lap_col j1 = 0;
       lap_col j2 = 0;
-      usubmin = BIG;
+      cost usubmin = BIG;
       
       for (lap_col j = 1; j < dim; ++j) {
         const cost h = row_i[j] - v[j];
