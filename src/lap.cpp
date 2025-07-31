@@ -163,16 +163,16 @@ cost lap(const lap_row dim,
     lap_row k = 0;
     while (k < previous_num_free) {
       const lap_row i = freeunassigned[k++];
-      const row_offset i_offset = static_cast<size_t>(i) * dim;
+      const cost* row_i = input_cost.row(i);
       
       //     Find minimum and second minimum reduced cost over columns.
-      cost umin = input_cost.atOffset(i_offset) - v[0];
+      cost umin = row_i[0] - v[0];
       lap_col j1 = 0;
       lap_col j2 = 0;
       usubmin = BIG;
       
       for (lap_col j = 1; j < dim; ++j) {
-        const cost h = input_cost.fromRow(i_offset, j) - v[j];
+        const cost h = row_i[j] - v[j];
         if (h < usubmin) {
           if (h >= umin) {
             usubmin = h;

@@ -33,30 +33,34 @@ public:
   }
   
   // Const version for read-only access
-  const T& operator()(lap_row i, lap_col j) const {
+  [[nodiscard]] const T& operator()(lap_row i, lap_col j) const {
     return data_[static_cast<size_t>(i) * dim_ + j];
   }
   
-  const T& row0(lap_col j) const {
+  [[nodiscard]] const T& row0(lap_col j) const {
     return data_[j];
   }
   
   // Access operator for read/write
-  T& fromRow(row_offset i, lap_col j) {
+  [[nodiscard]] T& fromRow(row_offset i, lap_col j) {
     return data_[i + j];
   }
   
   // Const version for read-only access
-  const T& fromRow(row_offset i, lap_col j) const {
+  [[nodiscard]] const T& fromRow(row_offset i, lap_col j) const {
     return data_[i + j];
   }
   
-  const T& entry0(lap_row i) const {
+  [[nodiscard]] const T& entry0(lap_row i) const {
     return data_[static_cast<size_t>(i) * dim_];
   }
   
-  const T& atOffset(row_offset i) const {
+  [[nodiscard]] const T& atOffset(row_offset i) const {
     return data_[i];
+  }
+  
+  [[nodiscard]] const T* row(lap_row i) const {
+    return &data_[static_cast<size_t>(i) * dim_];
   }
   
   void padAfterRow(lap_row start_row, T value) {
