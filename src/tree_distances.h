@@ -28,7 +28,7 @@ extern double *lg2_rooted;
  * an infinite loop in lap. */
 constexpr cost BIG = (std::numeric_limits<cost>::max)() / SL_MAX_SPLITS;
 constexpr cost ROUND_PRECISION = 2048 * 2048;
-constexpr size_t BLOCK_SIZE = 8;
+constexpr size_t BLOCK_SIZE = 16;
 
 template<typename T>
 class FlatMatrix {
