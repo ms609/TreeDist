@@ -80,6 +80,7 @@ cost lap(const lap_row dim,
 {
   lap_row num_free = 0;
   alignas(64) std::vector<cost> v(((dim + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
+  const cost* __restrict__ v_ptr = v.data();
   std::vector<lap_col> matches(dim); // Counts how many times a row could be assigned.
   
   // COLUMN REDUCTION
@@ -102,7 +103,7 @@ cost lap(const lap_row dim,
       // Init assignment if minimum row assigned for first time.
       rowsol[imin] = j;
       colsol[j] = imin;
-    } else if (v[j] < v[rowsol[imin]]) {
+    } else if (v_ptr[j] < v_ptr[rowsol[imin]]) {
       const lap_col j1 = rowsol[imin];
       rowsol[imin] = j;
       colsol[j] = imin;
@@ -125,7 +126,7 @@ cost lap(const lap_row dim,
       const cost* row_i = input_cost.row(i);
       for (lap_col j = 0; j < dim; ++j) {
         if (j != j1) {
-          const cost reduced_cost = row_i[j] - v[j];
+          const cost reduced_cost = row_i[j] - v_ptr[j];
           if (reduced_cost < min) {
             min = reduced_cost;
           }
@@ -151,126 +152,78 @@ cost lap(const lap_row dim,
     lap_row k = 0;
     while (k < previous_num_free) {
       const lap_row i = freeunassigned[k++];
-      const cost* row_i = input_cost.row(i);
+      const cost* __restrict__ row_i = input_cost.row(i);
       
       //     Find minimum and second minimum reduced cost over columns.
-      cost umin = row_i[0] - v[0];
+      cost umin = row_i[0] - v_ptr[0];
       lap_col j1 = 0;
       lap_col j2 = 0;
       cost usubmin = BIG;
       
       lap_col j = 1;
       // Unrolled loop
-      for (; j + 7 < dim; j += 8) {
-        assert(BLOCK_SIZE >= 8);
+      for (; j + 3 < dim; j += 4) {
+        assert(BLOCK_SIZE >= 4);
         const cost h0 = row_i[j] - v[j];
         const cost h1 = row_i[j + 1] - v[j + 1];
         const cost h2 = row_i[j + 2] - v[j + 2];
         const cost h3 = row_i[j + 3] - v[j + 3];
-        const cost h4 = row_i[j + 4] - v[j + 4];
-        const cost h5 = row_i[j + 5] - v[j + 5];
-        const cost h6 = row_i[j + 6] - v[j + 6];
-        const cost h7 = row_i[j + 7] - v[j + 7];
         if (h0 < usubmin) {
-          if (h0 >= umin) {
-            usubmin = h0;
-            j2 = j;
-          } else {
+          if (h0 < umin) {
             usubmin = umin;
             umin = h0;
             j2 = j1;
             j1 = j;
+          } else {
+            usubmin = h0;
+            j2 = j;
           }
         }
         if (h1 < usubmin) {
-          if (h1 >= umin) {
-            usubmin = h1;
-            j2 = j + 1;
-          } else {
+          if (h1 < umin) {
             usubmin = umin;
             umin = h1;
             j2 = j1;
             j1 = j + 1;
+          } else {
+            usubmin = h1;
+            j2 = j + 1;
           }
         }
         if (h2 < usubmin) {
-          if (h2 >= umin) {
-            usubmin = h2;
-            j2 = j + 2;
-          } else {
+          if (h2 < umin) {
             usubmin = umin;
             umin = h2;
             j2 = j1;
             j1 = j + 2;
+          } else {
+            usubmin = h2;
+            j2 = j + 2;
           }
         }
         if (h3 < usubmin) {
-          if (h3 >= umin) {
-            usubmin = h3;
-            j2 = j + 3;
-          } else {
+          if (h3 < umin) {
             usubmin = umin;
             umin = h3;
             j2 = j1;
             j1 = j + 3;
-          }
-        }
-        if (h4 < usubmin) {
-          if (h4 >= umin) {
-            usubmin = h4;
-            j2 = j + 4;
           } else {
-            usubmin = umin;
-            umin = h4;
-            j2 = j1;
-            j1 = j + 4;
-          }
-        }
-        if (h5 < usubmin) {
-          if (h5 >= umin) {
-            usubmin = h5;
-            j2 = j + 5;
-          } else {
-            usubmin = umin;
-            umin = h5;
-            j2 = j1;
-            j1 = j + 5;
-          }
-        }
-        if (h6 < usubmin) {
-          if (h6 >= umin) {
-            usubmin = h6;
-            j2 = j + 6;
-          } else {
-            usubmin = umin;
-            umin = h6;
-            j2 = j1;
-            j1 = j + 6;
-          }
-        }
-        if (h7 < usubmin) {
-          if (h7 >= umin) {
-            usubmin = h7;
-            j2 = j + 7;
-          } else {
-            usubmin = umin;
-            umin = h7;
-            j2 = j1;
-            j1 = j + 7;
+            usubmin = h3;
+            j2 = j + 3;
           }
         }
       }
       for (; j < dim; ++j) {
-        const cost h = row_i[j] - v[j];
+        const cost h = row_i[j] - v_ptr[j];
         if (h < usubmin) {
-          if (h >= umin) {
-            usubmin = h;
-            j2 = j;
-          } else {
+          if (h < umin) {
             usubmin = umin;
             umin = h;
             j2 = j1;
             j1 = j;
+          } else {
+            usubmin = h;
+            j2 = j;
           }
         }
       }
@@ -323,7 +276,7 @@ cost lap(const lap_row dim,
     // Dijkstra shortest path algorithm.
     // Runs until unassigned column added to shortest path tree.
     for (lap_col j = 0; j < dim; ++j) {
-      d[j] = free_row_cost[j] - v[j];
+      d[j] = free_row_cost[j] - v_ptr[j];
       predecessor[j] = free_row;
       col_list[j] = j;        // Init column list.
     }
@@ -372,11 +325,11 @@ cost lap(const lap_row dim,
         j1 = col_list[low++];
         i = colsol[j1];
         const cost* row_i = input_cost.row(i);
-        const cost h = row_i[j1] - v[j1] - min;
+        const cost h = row_i[j1] - v_ptr[j1] - min;
         
         for (lap_dim k = up; k < dim; ++k) {
           const lap_col j = col_list[k];
-          cost v2 = row_i[j] - v[j] - h;
+          cost v2 = row_i[j] - v_ptr[j] - h;
           if (v2 < d[j]) {
             predecessor[j] = i;
             if (v2 == min) { // New column found at same minimum value
