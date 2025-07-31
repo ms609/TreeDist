@@ -107,7 +107,7 @@ public:
     size_t r_offset = r * dim8_;
     size_t actual_start_col = static_cast<size_t>(start_col);
     size_t start_index = r_offset + actual_start_col;
-    size_t end_index = start_index + dim8_ - actual_start_col;
+    size_t end_index = start_index + dim_ - actual_start_col;
     std::fill(data_.begin() + start_index, data_.begin() + end_index, value);
   }
 };
