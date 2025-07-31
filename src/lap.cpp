@@ -32,31 +32,20 @@ using namespace Rcpp;
 List lapjv(NumericMatrix x, NumericVector maxX) {
   const int16 n_row = x.nrow();
   const int16 n_col = x.ncol();
-  const int16 max_dim = (n_row > n_col) ? n_row : n_col;
+  const int16 max_dim = std::max(n_row, n_col);
   const int16 spare_rows = n_row - n_col;
   const cost max_score = cost(BIG / max_dim);
+  const double x_max = maxX[0];
   
   std::vector<lap_col> rowsol(max_dim);
   std::vector<lap_row> colsol(max_dim);
   
-  cost_matrix input(max_dim);
-  
-  const double x_max = maxX[0];
-  const double scale_factor = max_score / x_max;
-  for (int16 r = 0; r < n_row; ++r) {
-    const row_offset r_offset = static_cast<size_t>(r) * max_dim;
-    for (int16 c = 0; c < n_col; ++c) {
-      input.fromRow(r_offset, c) = cost(x(r, c) * scale_factor);
-    }
-    input.padRowAfterCol(r_offset, n_col, max_score);
-    for (int16 c = n_col; c < max_dim; ++c) {
-      input.fromRow(r_offset, c) = max_score;
-    }
-  }
-  input.padAfterRow(n_row, max_score);
+  cost_matrix input(x, x_max);
   
   cost score = lap(max_dim, input, rowsol, colsol);
+  
   IntegerVector matching(n_row);
+  
   for (int16 i = 0; i < n_row; ++i) {
     matching[i] = rowsol[i] < n_col ? rowsol[i] + 1 : NA_INTEGER;
   }

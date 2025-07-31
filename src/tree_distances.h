@@ -17,15 +17,67 @@ using lap_row = lap_dim;
 using lap_col = lap_dim;
 using row_offset = size_t; // must hold int16 * int16
 
+
+/***** Constants requiring initialization *****/
+
+constexpr splitbit ALL_ONES = (std::numeric_limits<splitbit>::max)();
+extern double lg2[int32(SL_MAX_TIPS - 1) * (SL_MAX_TIPS - 1) + 1];
+extern double lg2_double_factorial[SL_MAX_TIPS + SL_MAX_TIPS - 2];
+extern double lg2_unrooted[SL_MAX_TIPS + 2];
+extern double *lg2_rooted;
+
+/* For a reason I've not determined, shrinking BIG is necessary to avoid 
+ * an infinite loop in lap. */
+constexpr cost BIG = (std::numeric_limits<cost>::max)() / SL_MAX_SPLITS;
+constexpr cost ROUND_PRECISION = 2048 * 2048;
+
 template<typename T>
 class FlatMatrix {
 private:
-  size_t dim_; // Important not to use int16, which will overflow
+  static constexpr size_t BLOCK_SIZE = 8;
+  const size_t dim_; // Important not to use int16, which will overflow on *
+  const size_t dim8_;
   alignas(64) std::vector<T> data_;
+  const size_t block_containing(const size_t x) {
+    return ((x + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE;
+  }
   
 public:
   FlatMatrix(size_t dim)
-    : data_(std::vector<T>(dim * dim)), dim_(dim) {}
+    : dim_(dim),
+      dim8_(block_containing(dim_)),
+      data_(std::vector<T>(dim_ * dim_)) {}
+      
+  FlatMatrix(const Rcpp::NumericMatrix& src, const double x_max)
+    : dim_((std::max(src.nrow(), src.ncol()))),  // or pad here as needed
+      dim8_(block_containing(dim_)),
+      data_(std::vector<T>(dim_ * dim_))
+  {
+    // Compute scale factor
+    const cost max_score = cost(BIG / dim_);
+    double scale_factor = max_score / x_max;
+    
+    const int16 n_row = src.nrow();
+    const int16 n_col = src.ncol();
+    
+    for (int16 r = 0; r < n_row; ++r) {
+      const size_t r_offset = static_cast<size_t>(r) * dim_;
+      
+      for (int16 c = 0; c < n_col; ++c) {
+        data_[r_offset + c] = static_cast<T>(src(r, c) * scale_factor);
+      }
+      
+      // Pad remainder of row
+      std::fill(data_.begin() + r_offset + n_col,
+                data_.begin() + r_offset + dim_,
+                max_score);
+    }
+    
+    // Pad rows after n_row
+    std::fill(data_.begin() + static_cast<size_t>(n_row) * dim_,
+              data_.end(),
+              max_score);
+  }
   
   // Access operator for read/write
   T& operator()(lap_row i, lap_col j) {
@@ -67,6 +119,27 @@ public:
     return &data_[static_cast<size_t>(i) * dim_];
   }
   
+  template<typename SrcMat>
+  void fillAndPad(const SrcMat& src, const double maxX, cost max_score) {
+    const int16 n_row = src.nrow();
+    const int16 n_col = src.ncol();
+    const size_t max_dim = dim_;
+    
+    const double scale_factor = max_score / maxX;
+    
+    for (int16 r = 0; r < n_row; ++r) {
+      const row_offset r_offset = static_cast<size_t>(r) * max_dim;
+      
+      for (int16 c = 0; c < n_col; ++c) {
+        fromRow(r_offset, c) = static_cast<cost>(src(r, c) * scale_factor);
+      }
+      
+      padRowAfterCol(r_offset, n_col, max_score);
+    }
+    
+    padAfterRow(n_row, max_score);
+  }
+  
   void padAfterRow(lap_row start_row, T value) {
     size_t start_index = static_cast<size_t>(start_row) * dim_;
     std::fill(data_.begin() + start_index, data_.end(), value);
@@ -82,20 +155,6 @@ public:
 };
 
 using cost_matrix = FlatMatrix<cost>;
-
-constexpr splitbit ALL_ONES = (std::numeric_limits<splitbit>::max)();
-
-/* For a reason I've not determined, shrinking BIG is necessary to avoid 
- * an infinite loop in lap. */
-constexpr cost BIG = (std::numeric_limits<cost>::max)() / SL_MAX_SPLITS;
-constexpr cost ROUND_PRECISION = 2048 * 2048;
-
-/***** Constants requiring initialization *****/
-
-extern double lg2[int32(SL_MAX_TIPS - 1) * (SL_MAX_TIPS - 1) + 1];
-extern double lg2_double_factorial[SL_MAX_TIPS + SL_MAX_TIPS - 2];
-extern double lg2_unrooted[SL_MAX_TIPS + 2];
-extern double *lg2_rooted;
 
 /*************** FUNCTIONS  *******************/
 
