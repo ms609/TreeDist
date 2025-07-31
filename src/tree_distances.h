@@ -30,29 +30,28 @@ constexpr cost BIG = (std::numeric_limits<cost>::max)() / SL_MAX_SPLITS;
 constexpr cost ROUND_PRECISION = 2048 * 2048;
 constexpr size_t BLOCK_SIZE = 16;
 
-template<typename T>
-class FlatMatrix {
+class CostMatrix {
 private:
   const size_t dim_; // Important not to use int16, which will overflow on *
   const size_t dim8_;
-  alignas(64) std::vector<T> data_;
-  alignas(64) std::vector<T> t_data_;
+  alignas(64) std::vector<cost> data_;
+  alignas(64) std::vector<cost> t_data_;
   const size_t block_containing(const size_t x) {
     return ((x + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE;
   }
   
 public:
-  FlatMatrix(size_t dim)
+  CostMatrix(size_t dim)
     : dim_(dim),
       dim8_(block_containing(dim_)),
-      data_(std::vector<T>(dim8_ * dim8_)),
-      t_data_(std::vector<T>(dim8_ * dim8_)) {}
+      data_(std::vector<cost>(dim8_ * dim8_)),
+      t_data_(std::vector<cost>(dim8_ * dim8_)) {}
       
-  FlatMatrix(const Rcpp::NumericMatrix& src, const double x_max)
+  CostMatrix(const Rcpp::NumericMatrix& src, const double x_max)
     : dim_((std::max(src.nrow(), src.ncol()))),  // or pad here as needed
       dim8_(block_containing(dim_)),
-      data_(std::vector<T>(dim8_ * dim_)),
-      t_data_(std::vector<T>(dim8_ * dim_))
+      data_(std::vector<cost>(dim8_ * dim_)),
+      t_data_(std::vector<cost>(dim8_ * dim_))
   {
     // Compute scale factor
     const cost max_score = cost(BIG / dim_);
@@ -65,7 +64,7 @@ public:
       const size_t r_offset = static_cast<size_t>(r) * dim8_;
       
       for (lap_col c = 0; c < n_col; ++c) {
-        data_[r_offset + c] = static_cast<T>(src(r, c) * scale_factor);
+        data_[r_offset + c] = static_cast<cost>(src(r, c) * scale_factor);
       }
       
       padRowAfterCol(r, n_col, max_score);
@@ -87,46 +86,46 @@ public:
   }
   
   // Access operator for read/write
-  T& operator()(lap_row i, lap_col j) {
+  cost& operator()(lap_row i, lap_col j) {
     return data_[static_cast<size_t>(i) * dim8_ + j];
   }
   
   // Const version for read-only access
-  [[nodiscard]] const T& operator()(lap_row i, lap_col j) const {
+  [[nodiscard]] const cost& operator()(lap_row i, lap_col j) const {
     return data_[static_cast<size_t>(i) * dim8_ + j];
   }
   
-  [[nodiscard]] const T& row0(lap_col j) const {
+  [[nodiscard]] const cost& row0(lap_col j) const {
     return data_[j];
   }
   
-  [[nodiscard]] const T& entry0(lap_row i) const {
+  [[nodiscard]] const cost& entry0(lap_row i) const {
     return data_[static_cast<size_t>(i) * dim8_];
   }
   
-  [[nodiscard]] T* row(lap_row i) {
+  [[nodiscard]] cost* row(lap_row i) {
     return &data_[static_cast<size_t>(i) * dim8_];
   }
   
-  [[nodiscard]] const T* row(lap_row i) const {
+  [[nodiscard]] const cost* row(lap_row i) const {
     return &data_[static_cast<size_t>(i) * dim8_];
   }
   
-  [[nodiscard]] T* col(lap_col i) {
+  [[nodiscard]] cost* col(lap_col i) {
     return &t_data_[static_cast<size_t>(i) * dim8_];
   }
   
-  [[nodiscard]] const T* col(lap_col i) const {
+  [[nodiscard]] const cost* col(lap_col i) const {
     return &t_data_[static_cast<size_t>(i) * dim8_];
   }
   
-  void padAfterRow(lap_row start_row, T value) {
+  void padAfterRow(lap_row start_row, cost value) {
     size_t start_index = static_cast<size_t>(start_row) * dim8_;
     std::fill(data_.begin() + start_index, data_.end(), value);
   }
   
   void padRowAfterCol(const lap_row r, const lap_col start_col,
-                      const T value) {
+                      const cost value) {
     size_t r_offset = r * dim8_;
     size_t actual_start_col = static_cast<size_t>(start_col);
     size_t start_index = r_offset + actual_start_col;
@@ -135,7 +134,7 @@ public:
   }
 };
 
-using cost_matrix = FlatMatrix<cost>;
+using cost_matrix = CostMatrix;
 
 /*************** FUNCTIONS  *******************/
 
