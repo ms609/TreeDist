@@ -67,16 +67,10 @@ public:
         data_[r_offset + c] = static_cast<T>(src(r, c) * scale_factor);
       }
       
-      // Pad remainder of row
-      std::fill(data_.begin() + r_offset + n_col,
-                data_.begin() + r_offset + dim_,
-                max_score);
+      padRowAfterCol(r_offset, n_col, max_score);
     }
     
-    // Pad rows after n_row
-    std::fill(data_.begin() + static_cast<size_t>(n_row) * dim_,
-              data_.end(),
-              max_score);
+    padAfterRow(n_row, max_score);
   }
   
   // Access operator for read/write
@@ -117,27 +111,6 @@ public:
   
   [[nodiscard]] const T* row(lap_row i) const {
     return &data_[static_cast<size_t>(i) * dim_];
-  }
-  
-  template<typename SrcMat>
-  void fillAndPad(const SrcMat& src, const double maxX, cost max_score) {
-    const int16 n_row = src.nrow();
-    const int16 n_col = src.ncol();
-    const size_t max_dim = dim_;
-    
-    const double scale_factor = max_score / maxX;
-    
-    for (int16 r = 0; r < n_row; ++r) {
-      const row_offset r_offset = static_cast<size_t>(r) * max_dim;
-      
-      for (int16 c = 0; c < n_col; ++c) {
-        fromRow(r_offset, c) = static_cast<cost>(src(r, c) * scale_factor);
-      }
-      
-      padRowAfterCol(r_offset, n_col, max_score);
-    }
-    
-    padAfterRow(n_row, max_score);
   }
   
   void padAfterRow(lap_row start_row, T value) {
