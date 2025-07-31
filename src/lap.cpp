@@ -90,7 +90,7 @@ cost lap(const lap_row dim,
   
 {
   lap_row num_free = 0;
-  std::vector<cost> v(dim);
+  alignas(64) std::vector<cost> v(dim);
   std::vector<lap_col> matches(dim);     // Counts how many times a row could be assigned.
   
   // COLUMN REDUCTION
@@ -133,10 +133,10 @@ cost lap(const lap_row dim,
     } else if (matches[i] == 1) { // Transfer reduction from rows that are assigned once.
       const lap_col j1 = rowsol[i];
       min = BIG;
-      const row_offset i_offset = static_cast<size_t>(i) * dim;
+      const cost* row_i = input_cost.row(i);
       for (lap_col j = 0; j < dim; ++j) {
         if (j != j1) {
-          const cost reduced_cost = input_cost.fromRow(i_offset, j) - v[j];
+          const cost reduced_cost = row_i[j] - v[j];
           if (reduced_cost < min) {
             min = reduced_cost;
           }
@@ -224,7 +224,7 @@ cost lap(const lap_row dim,
   for (lap_row f = 0; f < num_free; ++f) {
     bool unassignedfound = false;
     lap_row free_row = freeunassigned[f];       // Start row of augmenting path.
-    const row_offset free_row_offset = static_cast<row_offset>(free_row) * dim;
+    const cost* free_row_cost = input_cost.row(free_row);
     lap_col endofpath = 0;
     lap_col last = 0;
     lap_row i;
@@ -233,7 +233,7 @@ cost lap(const lap_row dim,
     // Dijkstra shortest path algorithm.
     // Runs until unassigned column added to shortest path tree.
     for (lap_col j = 0; j < dim; ++j) {
-      d[j] = input_cost.fromRow(free_row_offset, j) - v[j];
+      d[j] = free_row_cost[j] - v[j];
       predecessor[j] = free_row;
       col_list[j] = j;        // Init column list.
     }
@@ -281,12 +281,12 @@ cost lap(const lap_row dim,
         // via next scanned column.
         j1 = col_list[low++];
         i = colsol[j1];
-        const row_offset i_offset = static_cast<row_offset>(i) * dim;
-        const cost h = input_cost.fromRow(i_offset, j1) - v[j1] - min;
+        const cost* row_i = input_cost.row(i);
+        const cost h = row_i[j1] - v[j1] - min;
         
         for (lap_dim k = up; k < dim; ++k) {
           const lap_col j = col_list[k];
-          cost v2 = input_cost.fromRow(i_offset, j) - v[j] - h;
+          cost v2 = row_i[j] - v[j] - h;
           if (v2 < d[j]) {
             predecessor[j] = i;
             if (v2 == min) { // New column found at same minimum value

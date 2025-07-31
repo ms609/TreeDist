@@ -20,8 +20,8 @@ using row_offset = size_t; // must hold int16 * int16
 template<typename T>
 class FlatMatrix {
 private:
-  std::vector<T> data_;
   size_t dim_; // Important not to use int16, which will overflow
+  alignas(64) std::vector<T> data_;
   
 public:
   FlatMatrix(size_t dim)
@@ -57,6 +57,10 @@ public:
   
   [[nodiscard]] const T& atOffset(row_offset i) const {
     return data_[i];
+  }
+  
+  [[nodiscard]] T* row(lap_row i) {
+    return &data_[static_cast<size_t>(i) * dim_];
   }
   
   [[nodiscard]] const T* row(lap_row i) const {
