@@ -67,7 +67,7 @@ public:
         data_[r_offset + c] = static_cast<T>(src(r, c) * scale_factor);
       }
       
-      padRowAfterCol(r_offset, n_col, max_score);
+      padRowAfterCol(r, n_col, max_score);
     }
     
     padAfterRow(n_row, max_score);
@@ -118,8 +118,9 @@ public:
     std::fill(data_.begin() + start_index, data_.end(), value);
   }
   
-  void padRowAfterCol(const row_offset r_offset, const lap_col start_col,
+  void padRowAfterCol(const lap_row r, const lap_col start_col,
                       const T value) {
+    row_offset r_offset = r * dim_;
     size_t actual_start_col = static_cast<size_t>(start_col);
     size_t start_index = r_offset + actual_start_col;
     size_t end_index = start_index + dim_ - actual_start_col;

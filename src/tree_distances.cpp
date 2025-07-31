@@ -582,17 +582,10 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
       
       score(ai, bi) = spi_over == 0 ? max_score :
         cost((spi_over - best_overlap) * (max_score / max_possible));
-        
     }
-    for (int16 bi = b.n_splits; bi < most_splits; ++bi) {
-      score(ai, bi) = max_score;
-    }
+    score.padRowAfterCol(ai, b.n_splits, max_score);
   }
-  for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
-    for (int16 bi = 0; bi != most_splits; ++bi) {
-      score(ai, bi) = max_score;
-    }
-  }
+  score.padAfterRow(a.n_splits, max_score);
   
   std::vector<lap_col> rowsol(most_splits);
   std::vector<lap_row> colsol(most_splits);
