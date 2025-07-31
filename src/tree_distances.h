@@ -28,11 +28,11 @@ extern double *lg2_rooted;
  * an infinite loop in lap. */
 constexpr cost BIG = (std::numeric_limits<cost>::max)() / SL_MAX_SPLITS;
 constexpr cost ROUND_PRECISION = 2048 * 2048;
+constexpr size_t BLOCK_SIZE = 8;
 
 template<typename T>
 class FlatMatrix {
 private:
-  static constexpr size_t BLOCK_SIZE = 8;
   const size_t dim_; // Important not to use int16, which will overflow on *
   const size_t dim8_;
   alignas(64) std::vector<T> data_;

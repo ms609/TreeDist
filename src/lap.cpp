@@ -79,8 +79,8 @@ cost lap(const lap_row dim,
   
 {
   lap_row num_free = 0;
-  alignas(64) std::vector<cost> v(dim);
-  std::vector<lap_col> matches(dim);     // Counts how many times a row could be assigned.
+  alignas(64) std::vector<cost> v(((dim + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
+  std::vector<lap_col> matches(dim); // Counts how many times a row could be assigned.
   
   // COLUMN REDUCTION
   for (lap_col j = dim; j--; ) { // Reverse order gives better results.
