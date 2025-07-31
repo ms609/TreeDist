@@ -159,7 +159,108 @@ cost lap(const lap_row dim,
       lap_col j2 = 0;
       cost usubmin = BIG;
       
-      for (lap_col j = 1; j < dim; ++j) {
+      lap_col j = 1;
+      // Unrolled loop
+      for (; j + 7 < dim; j += 8) {
+        assert(BLOCK_SIZE >= 8);
+        const cost h0 = row_i[j] - v[j];
+        const cost h1 = row_i[j + 1] - v[j + 1];
+        const cost h2 = row_i[j + 2] - v[j + 2];
+        const cost h3 = row_i[j + 3] - v[j + 3];
+        const cost h4 = row_i[j + 4] - v[j + 4];
+        const cost h5 = row_i[j + 5] - v[j + 5];
+        const cost h6 = row_i[j + 6] - v[j + 6];
+        const cost h7 = row_i[j + 7] - v[j + 7];
+        if (h0 < usubmin) {
+          if (h0 >= umin) {
+            usubmin = h0;
+            j2 = j;
+          } else {
+            usubmin = umin;
+            umin = h0;
+            j2 = j1;
+            j1 = j;
+          }
+        }
+        if (h1 < usubmin) {
+          if (h1 >= umin) {
+            usubmin = h1;
+            j2 = j + 1;
+          } else {
+            usubmin = umin;
+            umin = h1;
+            j2 = j1;
+            j1 = j + 1;
+          }
+        }
+        if (h2 < usubmin) {
+          if (h2 >= umin) {
+            usubmin = h2;
+            j2 = j + 2;
+          } else {
+            usubmin = umin;
+            umin = h2;
+            j2 = j1;
+            j1 = j + 2;
+          }
+        }
+        if (h3 < usubmin) {
+          if (h3 >= umin) {
+            usubmin = h3;
+            j2 = j + 3;
+          } else {
+            usubmin = umin;
+            umin = h3;
+            j2 = j1;
+            j1 = j + 3;
+          }
+        }
+        if (h4 < usubmin) {
+          if (h4 >= umin) {
+            usubmin = h4;
+            j2 = j + 4;
+          } else {
+            usubmin = umin;
+            umin = h4;
+            j2 = j1;
+            j1 = j + 4;
+          }
+        }
+        if (h5 < usubmin) {
+          if (h5 >= umin) {
+            usubmin = h5;
+            j2 = j + 5;
+          } else {
+            usubmin = umin;
+            umin = h5;
+            j2 = j1;
+            j1 = j + 5;
+          }
+        }
+        if (h6 < usubmin) {
+          if (h6 >= umin) {
+            usubmin = h6;
+            j2 = j + 6;
+          } else {
+            usubmin = umin;
+            umin = h6;
+            j2 = j1;
+            j1 = j + 6;
+          }
+        }
+        if (h7 < usubmin) {
+          if (h7 >= umin) {
+            usubmin = h7;
+            j2 = j + 7;
+          } else {
+            usubmin = umin;
+            umin = h7;
+            j2 = j1;
+            j1 = j + 7;
+          }
+        }
+      }
+      for (; j < dim; ++j) {
         const cost h = row_i[j] - v[j];
         if (h < usubmin) {
           if (h >= umin) {
