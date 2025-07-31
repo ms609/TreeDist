@@ -44,12 +44,12 @@ public:
   FlatMatrix(size_t dim)
     : dim_(dim),
       dim8_(block_containing(dim_)),
-      data_(std::vector<T>(dim_ * dim_)) {}
+      data_(std::vector<T>(dim8_ * dim8_)) {}
       
   FlatMatrix(const Rcpp::NumericMatrix& src, const double x_max)
     : dim_((std::max(src.nrow(), src.ncol()))),  // or pad here as needed
       dim8_(block_containing(dim_)),
-      data_(std::vector<T>(dim_ * dim_))
+      data_(std::vector<T>(dim8_ * dim8_))
   {
     // Compute scale factor
     const cost max_score = cost(BIG / dim_);
@@ -59,7 +59,7 @@ public:
     const int16 n_col = src.ncol();
     
     for (int16 r = 0; r < n_row; ++r) {
-      const size_t r_offset = static_cast<size_t>(r) * dim_;
+      const size_t r_offset = static_cast<size_t>(r) * dim8_;
       
       for (int16 c = 0; c < n_col; ++c) {
         data_[r_offset + c] = static_cast<T>(src(r, c) * scale_factor);
@@ -73,12 +73,12 @@ public:
   
   // Access operator for read/write
   T& operator()(lap_row i, lap_col j) {
-    return data_[static_cast<size_t>(i) * dim_ + j];
+    return data_[static_cast<size_t>(i) * dim8_ + j];
   }
   
   // Const version for read-only access
   [[nodiscard]] const T& operator()(lap_row i, lap_col j) const {
-    return data_[static_cast<size_t>(i) * dim_ + j];
+    return data_[static_cast<size_t>(i) * dim8_ + j];
   }
   
   [[nodiscard]] const T& row0(lap_col j) const {
@@ -86,28 +86,28 @@ public:
   }
   
   [[nodiscard]] const T& entry0(lap_row i) const {
-    return data_[static_cast<size_t>(i) * dim_];
+    return data_[static_cast<size_t>(i) * dim8_];
   }
   
   [[nodiscard]] T* row(lap_row i) {
-    return &data_[static_cast<size_t>(i) * dim_];
+    return &data_[static_cast<size_t>(i) * dim8_];
   }
   
   [[nodiscard]] const T* row(lap_row i) const {
-    return &data_[static_cast<size_t>(i) * dim_];
+    return &data_[static_cast<size_t>(i) * dim8_];
   }
   
   void padAfterRow(lap_row start_row, T value) {
-    size_t start_index = static_cast<size_t>(start_row) * dim_;
+    size_t start_index = static_cast<size_t>(start_row) * dim8_;
     std::fill(data_.begin() + start_index, data_.end(), value);
   }
   
   void padRowAfterCol(const lap_row r, const lap_col start_col,
                       const T value) {
-    size_t r_offset = r * dim_;
+    size_t r_offset = r * dim8_;
     size_t actual_start_col = static_cast<size_t>(start_col);
     size_t start_index = r_offset + actual_start_col;
-    size_t end_index = start_index + dim_ - actual_start_col;
+    size_t end_index = start_index + dim8_ - actual_start_col;
     std::fill(data_.begin() + start_index, data_.begin() + end_index, value);
   }
 };
