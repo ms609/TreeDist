@@ -49,7 +49,7 @@ public:
   FlatMatrix(const Rcpp::NumericMatrix& src, const double x_max)
     : dim_((std::max(src.nrow(), src.ncol()))),  // or pad here as needed
       dim8_(block_containing(dim_)),
-      data_(std::vector<T>(dim8_ * dim8_))
+      data_(std::vector<T>(dim8_ * dim_))
   {
     // Compute scale factor
     const cost max_score = cost(BIG / dim_);
