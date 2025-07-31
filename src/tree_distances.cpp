@@ -175,15 +175,9 @@ List cpp_matching_split_distance(const RawMatrix x, const RawMatrix y,
       }
       if (score(ai, bi) > half_tips) score(ai, bi) = n_tips - score(ai, bi);
     }
-    for (int16 bi = b.n_splits; bi < most_splits; ++bi) {
-      score(ai, bi) = max_score;
-    }
+    score.padRowAfterCol(ai, b.n_splits, max_score);
   }
-  for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
-    for (int16 bi = 0; bi != most_splits; ++bi) {
-      score(ai, bi) = max_score;
-    }
-  }
+  score.padAfterRow(a.n_splits, max_score);
   
   std::vector<lap_col> rowsol(most_splits);
   std::vector<lap_row> colsol(most_splits);
@@ -285,15 +279,9 @@ List cpp_jaccard_similarity(const RawMatrix x, const RawMatrix y,
         }
       }
     }
-    for (int16 bi = b.n_splits; bi < most_splits; ++bi) {
-      score(ai, bi) = max_score;
-    }
+    score.padRowAfterCol(ai, b.n_splits, max_score);
   }
-  for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
-    for (int16 bi = 0; bi != most_splits; ++bi) {
-      score(ai, bi) = max_score;
-    }
-  }
+  score.padAfterRow(a.n_splits, max_score);
   
   std::vector<lap_col> rowsol(most_splits);
   std::vector<lap_row> colsol(most_splits);
@@ -351,15 +339,9 @@ List cpp_msi_distance(const RawMatrix x, const RawMatrix y,
         ((max_score / max_possible) *
           mmsi_score(n_same, n_a_and_b, n_different, n_a_only)));
     }
-    for (int16 bi = b.n_splits; bi < most_splits; ++bi) {
-      score(ai, bi) = max_score;
-    }
+    score.padRowAfterCol(ai, b.n_splits, max_score);
   }
-  for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
-    for (int16 bi = 0; bi < most_splits; ++bi) {
-      score(ai, bi) = max_score;
-    }
-  }
+  score.padAfterRow(a.n_splits, max_score);
   
   std::vector<lap_col> rowsol(most_splits);
   std::vector<lap_row> colsol(most_splits);
@@ -453,9 +435,7 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
         );
       }
     }
-    for (int16 bi = b.n_splits; bi < most_splits; ++bi) {
-      score(ai, bi) = max_score;
-    }
+    score.padRowAfterCol(ai, b.n_splits, max_score);
   }
   if (exact_matches == b.n_splits || exact_matches == a.n_splits) {
     return List::create(
@@ -479,16 +459,10 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
         small_score(a_pos, b_pos) = score(ai, bi);
         b_pos++;
       }
-      for (int16 bi = lap_dim - a_extra_splits; bi < lap_dim; ++bi) {
-        small_score(a_pos, bi) = max_score;
-      }
+      small_score.padRowAfterCol(a_pos, lap_dim - a_extra_splits, max_score);
       a_pos++;
     }
-    for (int16 ai = lap_dim - b_extra_splits; ai < lap_dim; ++ai) {
-      for (int16 bi = 0; bi != lap_dim; ++bi) {
-        small_score(ai, bi) = max_score;
-      }
-    }
+    small_score.padAfterRow(lap_dim - b_extra_splits, max_score);
     
     const double lap_score = static_cast<double>(
       (max_score * lap_dim) - lap(lap_dim, small_score, rowsol, colsol)
