@@ -15,8 +15,6 @@ using cost = int_fast64_t;
 using lap_dim = int16;
 using lap_row = lap_dim;
 using lap_col = lap_dim;
-using row_offset = size_t; // must hold int16 * int16
-
 
 /***** Constants requiring initialization *****/
 
@@ -87,22 +85,8 @@ public:
     return data_[j];
   }
   
-  // Access operator for read/write
-  [[nodiscard]] T& fromRow(row_offset i, lap_col j) {
-    return data_[i + j];
-  }
-  
-  // Const version for read-only access
-  [[nodiscard]] const T& fromRow(row_offset i, lap_col j) const {
-    return data_[i + j];
-  }
-  
   [[nodiscard]] const T& entry0(lap_row i) const {
     return data_[static_cast<size_t>(i) * dim_];
-  }
-  
-  [[nodiscard]] const T& atOffset(row_offset i) const {
-    return data_[i];
   }
   
   [[nodiscard]] T* row(lap_row i) {
@@ -120,7 +104,7 @@ public:
   
   void padRowAfterCol(const lap_row r, const lap_col start_col,
                       const T value) {
-    row_offset r_offset = r * dim_;
+    size_t r_offset = r * dim_;
     size_t actual_start_col = static_cast<size_t>(start_col);
     size_t start_index = r_offset + actual_start_col;
     size_t end_index = start_index + dim_ - actual_start_col;
