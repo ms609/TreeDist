@@ -91,7 +91,24 @@ cost lap(const lap_row dim,
     const cost* col_j = input_cost.col(j);
     cost min = col_j[0];
     lap_dim imin = 0;
-    for (lap_row i = 1; i < dim; ++i) {
+    
+    lap_row i = 1;
+    const lap_row i_limit = (dim < 4 ? 0 : static_cast<lap_col>(dim - 3));
+    
+    for (; i < i_limit; i += 4) {
+      // Very modest performance gain from unrolling this loop.
+      const cost c0 = col_j[i];
+      const cost c1 = col_j[i + 1];
+      const cost c2 = col_j[i + 2];
+      const cost c3 = col_j[i + 3];
+      
+      if (c0 < min) { min = c0; imin = i; }
+      if (c1 < min) { min = c1; imin = i + 1; }
+      if (c2 < min) { min = c2; imin = i + 2; }
+      if (c3 < min) { min = c3; imin = i + 3; }
+    }
+    
+    for (; i < dim; ++i) {
       const cost current_cost = col_j[i];
       if (current_cost < min) {
         min = current_cost;
@@ -128,11 +145,11 @@ cost lap(const lap_row dim,
       min = BIG;
       const cost* row_i = input_cost.row(i);
       for (lap_col j = 0; j < dim; ++j) {
-        if (j != j1) {
-          const cost reduced_cost = row_i[j] - v_ptr[j];
-          if (reduced_cost < min) {
-            min = reduced_cost;
-          }
+        if (j == j1) continue;
+        
+        const cost reduced_cost = row_i[j] - v_ptr[j];
+        if (reduced_cost < min) {
+          min = reduced_cost;
         }
       }
       v[j1] -= min;

@@ -36,6 +36,7 @@ private:
   const size_t dim_; // Important not to use int16, which will overflow on *
   const size_t dim8_;
   alignas(64) std::vector<T> data_;
+  alignas(64) std::vector<T> t_data_;
   const size_t block_containing(const size_t x) {
     return ((x + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE;
   }
@@ -44,24 +45,26 @@ public:
   FlatMatrix(size_t dim)
     : dim_(dim),
       dim8_(block_containing(dim_)),
-      data_(std::vector<T>(dim8_ * dim8_)) {}
+      data_(std::vector<T>(dim8_ * dim8_)),
+      t_data_(std::vector<T>(dim8_ * dim8_)) {}
       
   FlatMatrix(const Rcpp::NumericMatrix& src, const double x_max)
     : dim_((std::max(src.nrow(), src.ncol()))),  // or pad here as needed
       dim8_(block_containing(dim_)),
-      data_(std::vector<T>(dim8_ * dim_))
+      data_(std::vector<T>(dim8_ * dim_)),
+      t_data_(std::vector<T>(dim8_ * dim_))
   {
     // Compute scale factor
     const cost max_score = cost(BIG / dim_);
     double scale_factor = max_score / x_max;
     
-    const int16 n_row = src.nrow();
-    const int16 n_col = src.ncol();
+    const lap_row n_row = src.nrow();
+    const lap_col n_col = src.ncol();
     
-    for (int16 r = 0; r < n_row; ++r) {
+    for (lap_row r = 0; r < n_row; ++r) {
       const size_t r_offset = static_cast<size_t>(r) * dim8_;
       
-      for (int16 c = 0; c < n_col; ++c) {
+      for (lap_col c = 0; c < n_col; ++c) {
         data_[r_offset + c] = static_cast<T>(src(r, c) * scale_factor);
       }
       
@@ -69,6 +72,18 @@ public:
     }
     
     padAfterRow(n_row, max_score);
+  }
+  
+  void transpose() noexcept {
+    for (size_t i = 0; i < dim_; i += BLOCK_SIZE) {
+      for (size_t j = 0; j < dim_; j += BLOCK_SIZE) {
+        for (size_t r = i; r < std::min(i + BLOCK_SIZE, dim_); ++r) {
+          for (size_t c = j; c < std::min(j + BLOCK_SIZE, dim_); ++c) {
+            t_data_[c * dim8_ + r] = data_[r * dim8_ + c];
+          }
+        }
+      }
+    }
   }
   
   // Access operator for read/write
@@ -95,6 +110,14 @@ public:
   
   [[nodiscard]] const T* row(lap_row i) const {
     return &data_[static_cast<size_t>(i) * dim8_];
+  }
+  
+  [[nodiscard]] T* col(lap_col i) {
+    return &t_data_[static_cast<size_t>(i) * dim8_];
+  }
+  
+  [[nodiscard]] const T* col(lap_col i) const {
+    return &t_data_[static_cast<size_t>(i) * dim8_];
   }
   
   void padAfterRow(lap_row start_row, T value) {
