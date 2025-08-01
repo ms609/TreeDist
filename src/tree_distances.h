@@ -71,6 +71,7 @@ public:
       const size_t data_c = c * dim8_;
       const size_t src_c = c * n_row;
       for (lap_row r = 0; r < n_row; ++r) {
+        // Marginally faster than std::transform
         dest_data[data_c + r] = static_cast<cost>(src_data[src_c + r] * scale_factor);
       }
       
