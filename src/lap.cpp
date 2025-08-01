@@ -142,83 +142,10 @@ cost lap(const lap_row dim,
                               // row reduction.
     lap_row k = 0;
     while (k < previous_num_free) {
+      //  Find minimum and second minimum reduced cost over columns.
       const lap_row i = freeunassigned[k++];
-      const cost* __restrict__ row_i = input_cost.row(i);
-      
-      //     Find minimum and second minimum reduced cost over columns.
-      cost umin = row_i[0] - v_ptr[0];
-      lap_col j1 = 0;
-      lap_col j2 = 0;
-      cost usubmin = BIG;
-      
-      lap_col j = 1;
-      const lap_col j_limit = (dim < 4 ? 0 : static_cast<lap_col>(dim - 3));
-      
-      for (; j < j_limit; j += 4) {
-        assert(BLOCK_SIZE >= 4);  // Unrolling loop x4 gives ~20% speedup
-        const cost h0 = row_i[j] - v[j];
-        const cost h1 = row_i[j + 1] - v[j + 1];
-        const cost h2 = row_i[j + 2] - v[j + 2];
-        const cost h3 = row_i[j + 3] - v[j + 3];
-        if (h0 < usubmin) {
-          if (h0 < umin) {
-            usubmin = umin;
-            umin = h0;
-            j2 = j1;
-            j1 = j;
-          } else {
-            usubmin = h0;
-            j2 = j;
-          }
-        }
-        if (h1 < usubmin) {
-          if (h1 < umin) {
-            usubmin = umin;
-            umin = h1;
-            j2 = j1;
-            j1 = j + 1;
-          } else {
-            usubmin = h1;
-            j2 = j + 1;
-          }
-        }
-        if (h2 < usubmin) {
-          if (h2 < umin) {
-            usubmin = umin;
-            umin = h2;
-            j2 = j1;
-            j1 = j + 2;
-          } else {
-            usubmin = h2;
-            j2 = j + 2;
-          }
-        }
-        if (h3 < usubmin) {
-          if (h3 < umin) {
-            usubmin = umin;
-            umin = h3;
-            j2 = j1;
-            j1 = j + 3;
-          } else {
-            usubmin = h3;
-            j2 = j + 3;
-          }
-        }
-      }
-      for (; j < dim; ++j) {
-        const cost h = row_i[j] - v_ptr[j];
-        if (h < usubmin) {
-          if (h < umin) {
-            usubmin = umin;
-            umin = h;
-            j2 = j1;
-            j1 = j;
-          } else {
-            usubmin = h;
-            j2 = j;
-          }
-        }
-      }
+      const auto [umin, usubmin, min_idx, j2] = input_cost.findRowSubmin(&i, v);
+      lap_col j1 = min_idx;
       
       lap_row i0 = colsol[j1];
       if (nontrivially_less_than(umin, usubmin)) {

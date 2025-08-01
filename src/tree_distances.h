@@ -156,6 +156,39 @@ public:
             static_cast<lap_row>(std::distance(col_data, min_ptr))};
   }
   
+  std::tuple<cost, cost, lap_col, lap_col> findRowSubmin(
+      const lap_row* i,
+      const std::vector<cost>& v_ptr
+  ) {
+    const cost* __restrict row_i = row(*i);
+    cost min_val = std::numeric_limits<cost>::max();
+    lap_col j1 = 0;
+    const lap_col dim = static_cast<lap_col>(dim_);
+    
+    for (lap_col j = 0; j < dim; ++j) {
+      const cost h = row_i[j] - v_ptr[j];
+      if (h < min_val) {
+        min_val = h;
+        j1 = j;
+      }
+    }
+    
+    // Second pass: find subminimum
+    cost submin_val = std::numeric_limits<cost>::max();
+    lap_col j2 = (j1 == 0) ? 1 : 0;
+    
+    for (lap_col j = 0; j < dim; ++j) {
+      if (j != j1) {
+        const cost h = row_i[j] - v_ptr[j];
+        if (h < submin_val) {
+          submin_val = h;
+          j2 = j;
+        }
+      }
+    }
+    
+    return {min_val, submin_val, j1, j2};
+  }
 };
 
 using cost_matrix = CostMatrix;
