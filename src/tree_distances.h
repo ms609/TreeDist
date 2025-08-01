@@ -156,24 +156,37 @@ public:
             static_cast<lap_row>(std::distance(col_data, min_ptr))};
   }
   
-  // test2000 = 207 ms
+  // test2000 = 119 ms (!)
+  //     Find minimum and second minimum reduced cost over columns.
   std::tuple<cost, cost, lap_col, lap_col> findRowSubmin(
       const lap_row* i, const std::vector<cost>& v
   ) const {
-    const cost* __restrict v_ptr = v.data();
     const cost* __restrict row_i = row(*i);
     const lap_col dim = static_cast<lap_col>(dim_);
+    const cost* __restrict v_ptr = v.data();
     
-    //     Find minimum and second minimum reduced cost over columns.
-    cost min_val = row_i[0] - v_ptr[0];
-    lap_col min_idx = 0;
-    lap_col submin_idx = 0;
-    cost submin_val = BIG;
+    if (dim_ < 2) {
+      const cost h0 = row_i[0] - v_ptr[0];
+      return {h0, std::numeric_limits<cost>::max(), 0, 0};
+    }
     
-    lap_col j = 1;
+    const cost h0 = row_i[0] - v_ptr[0];
+    const cost h1 = row_i[1] - v_ptr[1];
+    
+    cost min_val, submin_val;
+    lap_col min_idx, submin_idx;
+    
+    if (h0 > h1) {
+      min_val = h1; submin_val = h0;
+      min_idx = 1; submin_idx = 0;
+    } else {
+      min_val = h0; submin_val = h1;
+      min_idx = 0; submin_idx = 1;
+    }
+    
     const lap_col j_limit = (dim < 4 ? 0 : static_cast<lap_col>(dim - 3));
     
-    for (; j < j_limit; j += 4) {
+    for (lap_col j = 2; j < j_limit; j += 4) {
       assert(BLOCK_SIZE >= 4);  // Unrolling loop x4 gives ~20% speedup
       const cost h0 = row_i[j] - v_ptr[j];
       const cost h1 = row_i[j + 1] - v_ptr[j + 1];
@@ -224,7 +237,7 @@ public:
         }
       }
     }
-    for (; j < dim; ++j) {
+    for (lap_col j = j_limit; j < dim; ++j) {
       const cost h = row_i[j] - v_ptr[j];
       if (h < submin_val) {
         if (h < min_val) {
