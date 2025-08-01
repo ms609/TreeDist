@@ -36,6 +36,7 @@ private:
   const size_t dim8_;
   alignas(64) std::vector<cost> data_;
   alignas(64) std::vector<cost> t_data_;
+  bool transposed_;
   const size_t block_containing(const size_t x) {
     return ((x + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE;
   }
@@ -45,13 +46,15 @@ public:
     : dim_(dim),
       dim8_(block_containing(dim_)),
       data_(std::vector<cost>(dim8_ * dim8_)),
-      t_data_(std::vector<cost>(dim8_ * dim8_)) {}
+      t_data_(std::vector<cost>(dim8_ * dim8_)),
+      transposed_(false) {}
       
   CostMatrix(const Rcpp::NumericMatrix& src, const double x_max)
     : dim_((std::max(src.nrow(), src.ncol()))),  // or pad here as needed
       dim8_(block_containing(dim_)),
       data_(std::vector<cost>(dim8_ * dim_)),
-      t_data_(std::vector<cost>(dim8_ * dim_))
+      t_data_(std::vector<cost>(dim8_ * dim_)),
+      transposed_(false)
   {
     // Compute scale factor
     const cost max_score = cost(BIG / dim_);
@@ -75,7 +78,9 @@ public:
   
   // With this optimization, the cost of copying the data is almost offset
   // by the savings in reading column-wise.
-  void transpose() noexcept {
+  void makeTranspose() noexcept {
+    if (transposed_) return;
+    
     const cost* __restrict data_ptr = data_.data();
     cost* __restrict t_data_ptr = t_data_.data();
     
@@ -92,6 +97,8 @@ public:
         }
       }
     }
+    
+    transposed_ = true;
   }
   
   // Access operator for read/write

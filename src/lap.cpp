@@ -78,8 +78,6 @@ cost lap(const lap_row dim,
   // colsol     - row assigned to column in solution
   
 {
-  // input_cost.transpose();
-  
   lap_row num_free = 0;
   alignas(64) std::vector<cost> v(((dim + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
   const cost* __restrict__ v_ptr = v.data();
