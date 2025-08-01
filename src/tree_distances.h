@@ -55,7 +55,7 @@ public:
       dim8_(block_containing(dim_)),
       data_(std::vector<cost>(dim8_ * dim_)),
       t_data_(std::vector<cost>(dim8_ * dim_)),
-      transposed_(false)
+      transposed_(true)
   {
     // Compute scale factor
     const cost max_score = cost(BIG / dim_);
@@ -64,17 +64,20 @@ public:
     const lap_row n_row = src.nrow();
     const lap_col n_col = src.ncol();
     
-    for (lap_row r = 0; r < n_row; ++r) {
-      const size_t r_offset = static_cast<size_t>(r) * dim8_;
-      
-      for (lap_col c = 0; c < n_col; ++c) {
-        data_[r_offset + c] = static_cast<cost>(src(r, c) * scale_factor);
+    const double* __restrict src_data = REAL(src);
+    cost* __restrict dest_data = t_data_.data();
+    
+    for (lap_col c = 0; c < n_col; ++c) {
+      for (lap_row r = 0; r < n_row; ++r) {
+        dest_data[c * dim8_ + r] = static_cast<cost>(src_data[c * n_row + r] * scale_factor);
       }
       
-      padRowAfterCol(r, n_col, max_score);
+      padTrColAfterRow(c, n_row, max_score);  // padding now goes after row `c`
     }
     
-    padAfterRow(n_row, max_score);
+    padTrAfterCol(n_col, max_score);
+    
+    makeUntranspose();
   }
   
   void makeTranspose() noexcept {
@@ -99,6 +102,26 @@ public:
     
     transposed_ = true;
   }
+  
+  void makeUntranspose() noexcept {
+    const cost* __restrict data_ptr = t_data_.data();
+    cost* __restrict t_data_ptr = data_.data();
+    
+#if defined(__GNUC__) || defined(__clang__)
+    data_ptr = static_cast<const cost*>(__builtin_assume_aligned(data_ptr, 64));
+    t_data_ptr = static_cast<cost*>(__builtin_assume_aligned(t_data_ptr, 64));
+#endif
+    for (size_t i = 0; i < dim_; i += BLOCK_SIZE) {
+      for (size_t j = 0; j < dim_; j += BLOCK_SIZE) {
+        for (size_t r = i; r < std::min(i + BLOCK_SIZE, dim_); ++r) {
+          for (size_t c = j; c < std::min(j + BLOCK_SIZE, dim_); ++c) {
+            t_data_ptr[c * dim8_ + r] = data_ptr[r * dim8_ + c];
+          }
+        }
+      }
+    }
+  }
+  
   
   // Access operator for read/write
   cost& operator()(lap_row i, lap_col j) {
@@ -134,9 +157,23 @@ public:
     return &t_data_[static_cast<size_t>(i) * dim8_];
   }
   
+  void padTrAfterCol(lap_row start_row, cost value) {
+    size_t start_index = static_cast<size_t>(start_row) * dim8_;
+    std::fill(t_data_.begin() + start_index, t_data_.end(), value);
+  }
+  
   void padAfterRow(lap_row start_row, cost value) {
     size_t start_index = static_cast<size_t>(start_row) * dim8_;
     std::fill(data_.begin() + start_index, data_.end(), value);
+  }
+  
+  void padTrColAfterRow(const lap_row r, const lap_col start_col,
+                         const cost value) {
+    size_t r_offset = r * dim8_;
+    size_t actual_start_col = static_cast<size_t>(start_col);
+    size_t start_index = r_offset + actual_start_col;
+    size_t end_index = start_index + dim_ - actual_start_col;
+    std::fill(t_data_.begin() + start_index, t_data_.begin() + end_index, value);
   }
   
   void padRowAfterCol(const lap_row r, const lap_col start_col,
@@ -161,14 +198,11 @@ public:
   std::tuple<cost, cost, lap_col, lap_col> findRowSubmin(
       const lap_row* i, const std::vector<cost>& v
   ) const {
+    assert(dim_ > 1);
+    
     const cost* __restrict row_i = row(*i);
     const lap_col dim = static_cast<lap_col>(dim_);
     const cost* __restrict v_ptr = v.data();
-    
-    if (dim_ < 2) {
-      const cost h0 = row_i[0] - v_ptr[0];
-      return {h0, std::numeric_limits<cost>::max(), 0, 0};
-    }
     
     const cost h0 = row_i[0] - v_ptr[0];
     const cost h1 = row_i[1] - v_ptr[1];
