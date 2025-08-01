@@ -74,11 +74,18 @@ public:
   }
   
   void transpose() noexcept {
+    const cost* __restrict data_ptr = data_.data();
+    cost* __restrict t_data_ptr = t_data_.data();
+    
+#if defined(__GNUC__) || defined(__clang__)
+    data_ptr = static_cast<const cost*>(__builtin_assume_aligned(data_ptr, 64));
+    t_data_ptr = static_cast<cost*>(__builtin_assume_aligned(t_data_ptr, 64));
+#endif
     for (size_t i = 0; i < dim_; i += BLOCK_SIZE) {
       for (size_t j = 0; j < dim_; j += BLOCK_SIZE) {
         for (size_t r = i; r < std::min(i + BLOCK_SIZE, dim_); ++r) {
           for (size_t c = j; c < std::min(j + BLOCK_SIZE, dim_); ++c) {
-            t_data_[c * dim8_ + r] = data_[r * dim8_ + c];
+            t_data_ptr[c * dim8_ + r] = data_ptr[r * dim8_ + c];
           }
         }
       }
