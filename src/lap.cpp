@@ -15,11 +15,13 @@
  R. Jonker and A. Volgenant, University of Amsterdam.
  
  *
+ CHANGED 2025-08-01 by Martin Smith <martin.smith@durham.ac.uk> to optimize
+ performance.
  CHANGED 2020-01-01 by Martin Smith <martin.smith@durham.ac.uk> for 
  integration with R.
  CHANGED 2016-05-13 by Yong Yang(yongyanglink@gmail.com) in column reduction 
- part according to matlab version of LAPJV algorithm 
- https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/LAPJV/lap.cpp
+ part according to matlab version of LAPJV algorithm
+ https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/src/lap.cpp
  (Copyright (c) 2010, Yi Cao All rights reserved)--
  https://www.mathworks.com/matlabcentral/fileexchange/26836-lapjv-jonker-volgenant-algorithm-for-linear-assignment-problem-v3-0:
  *
