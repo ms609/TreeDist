@@ -279,9 +279,9 @@ test_that("Precision avoids interminable loop in LAP", {
 })
 
 test_that("LAPJV fails gracefully", {
-  expect_equal(integer(0L), LAPJV(matrix(NA, 0, 0)))
-  expect_equal(integer(0L), LAPJV(matrix(NA, 1, 0)))
-  expect_equal(integer(0L), LAPJV(matrix(NA, 0, 1)))
+  expect_equal(LAPJV(matrix(NA, 0, 0)), list(score = 0, matching = integer(0)))
+  expect_equal(LAPJV(matrix(NA, 1, 0)), list(score = 0, matching = integer(0)))
+  expect_equal(LAPJV(matrix(NA, 0, 1)), list(score = 0, matching = integer(0)))
   expect_error(LAPJV(1:10), "x must be a.* matrix")
 })
 
