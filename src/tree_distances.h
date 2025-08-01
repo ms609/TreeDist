@@ -37,6 +37,7 @@ private:
   alignas(64) std::vector<cost> data_;
   alignas(64) std::vector<cost> t_data_;
   bool transposed_;
+  
   const size_t block_containing(const size_t x) {
     return ((x + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE;
   }
@@ -76,8 +77,6 @@ public:
     padAfterRow(n_row, max_score);
   }
   
-  // With this optimization, the cost of copying the data is almost offset
-  // by the savings in reading column-wise.
   void makeTranspose() noexcept {
     if (transposed_) return;
     
@@ -149,32 +148,12 @@ public:
     std::fill(data_.begin() + start_index, data_.begin() + end_index, value);
   }
   
-  std::pair<cost, lap_dim> findColMin(const lap_col j) {
-    cost min = firstInCol(j);
-    size_t imin = 0;
-    const size_t i_limit = (dim_ < 4 ? 0 : dim_ - 3);
-    
-    for (size_t i = 1; i < i_limit; i += 4) {
-      // Very modest performance gain from unrolling this loop.
-      const cost c0 = nextInCol();
-      const cost c1 = nextInCol();
-      const cost c2 = nextInCol();
-      const cost c3 = nextInCol();
-      
-      if (c0 < min_val) { min_val = c0; min_idx = i; }
-      if (c1 < min_val) { min_val = c1; min_idx = i + 1; }
-      if (c2 < min_val) { min_val = c2; min_idx = i + 2; }
-      if (c3 < min_val) { min_val = c3; min_idx = i + 3; }
-    }
-    
-    for (size_t i = i_limit; i < dim_; ++i) {
-      const cost current_cost = nextInCol();
-      if (current_cost < min_val) {
-        min_val = current_cost;
-        min_idx = i;
-      }
-    }
-    return {min_val, static_cast<lap_row>(min_idx)};
+  std::pair<cost, lap_row> findColMin(lap_col j) {
+    makeTranspose();
+    const cost* col_data = col(j);
+    const auto min_ptr = std::min_element(col_data, col_data + dim_);
+    return {*min_ptr,
+            static_cast<lap_row>(std::distance(col_data, min_ptr))};
   }
   
 };
