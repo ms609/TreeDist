@@ -5,7 +5,7 @@
 
 * [GitHub Actions](https://github.com/ms609/TreeDist/actions):
   - windows-latest, R release
-  - Ubuntu-latest, R 4.0, release and devel
+  - Ubuntu-latest, R 4.1, release and devel
   - Mac OS X 10.15.7, R release, via GitHub actions
   
 * [valgrind mem-check](https://github.com/ms609/TreeDist/actions/workflows/memcheck.yml)
