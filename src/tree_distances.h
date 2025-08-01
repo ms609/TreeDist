@@ -154,20 +154,20 @@ public:
       const cost c2 = nextInCol();
       const cost c3 = nextInCol();
       
-      if (c0 < min) { min = c0; imin = i; }
-      if (c1 < min) { min = c1; imin = i + 1; }
-      if (c2 < min) { min = c2; imin = i + 2; }
-      if (c3 < min) { min = c3; imin = i + 3; }
+      if (c0 < min_val) { min_val = c0; min_idx = i; }
+      if (c1 < min_val) { min_val = c1; min_idx = i + 1; }
+      if (c2 < min_val) { min_val = c2; min_idx = i + 2; }
+      if (c3 < min_val) { min_val = c3; min_idx = i + 3; }
     }
     
     for (size_t i = i_limit; i < dim_; ++i) {
       const cost current_cost = nextInCol();
-      if (current_cost < min) {
-        min = current_cost;
-        imin = i;
+      if (current_cost < min_val) {
+        min_val = current_cost;
+        min_idx = i;
       }
     }
-    return {min, static_cast<lap_row>(imin)};
+    return {min_val, static_cast<lap_row>(min_idx)};
   }
   
 };
