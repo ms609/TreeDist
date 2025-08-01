@@ -68,8 +68,10 @@ public:
     cost* __restrict dest_data = t_data_.data();
     
     for (lap_col c = 0; c < n_col; ++c) {
+      const size_t data_c = c * dim8_;
+      const size_t src_c = c * n_row;
       for (lap_row r = 0; r < n_row; ++r) {
-        dest_data[c * dim8_ + r] = static_cast<cost>(src_data[c * n_row + r] * scale_factor);
+        dest_data[data_c + r] = static_cast<cost>(src_data[src_c + r] * scale_factor);
       }
       
       padTrColAfterRow(c, n_row, max_score);  // padding now goes after row `c`
