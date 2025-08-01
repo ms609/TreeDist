@@ -376,7 +376,7 @@ using cost_matrix = CostMatrix;
 
 /*************** FUNCTIONS  *******************/
 
-extern cost lap(int16 dim,
+extern cost lap(lap_row dim,
                 cost_matrix &input_cost,
                 std::vector<lap_col> &rowsol,
                 std::vector<lap_row> &colsol);

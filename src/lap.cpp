@@ -32,10 +32,10 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 List lapjv(NumericMatrix x, NumericVector maxX) {
-  const int16 n_row = x.nrow();
-  const int16 n_col = x.ncol();
-  const int16 max_dim = std::max(n_row, n_col);
-  const int16 spare_rows = n_row - n_col;
+  const lap_dim n_row = x.nrow();
+  const lap_dim n_col = x.ncol();
+  const lap_dim max_dim = std::max(n_row, n_col);
+  const lap_dim spare_rows = n_row - n_col;
   const cost max_score = cost(BIG / max_dim);
   const double x_max = maxX[0];
   
@@ -48,7 +48,7 @@ List lapjv(NumericMatrix x, NumericVector maxX) {
   
   IntegerVector matching(n_row);
   
-  for (int16 i = 0; i < n_row; ++i) {
+  for (lap_dim i = 0; i < n_row; ++i) {
     matching[i] = rowsol[i] < n_col ? rowsol[i] + 1 : NA_INTEGER;
   }
   
