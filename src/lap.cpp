@@ -108,22 +108,37 @@ cost lap(const lap_row dim,
   std::vector<lap_row> freeunassigned(dim);        // List of unassigned rows.
   
   for (lap_row i = 0; i < dim; ++i) {
-    cost min = 0;
-    if (matches[i] == 0) { // Fill list of unassigned 'free' rows.
+    if (matches[i] == 0) {
+      // Fill list of unassigned 'free' rows.
       freeunassigned[num_free++] = i;
-    } else if (matches[i] == 1) { // Transfer reduction from rows that are assigned once.
+    } else if (matches[i] == 1) {
+      // Transfer reduction from rows that are assigned once.
       const lap_col j1 = rowsol[i];
-      min = BIG;
       const cost* row_i = input_cost.row(i);
-      for (lap_col j = 0; j < dim; ++j) {
-        if (j == j1) continue;
+      cost min_cost;
+      if (j1 == 0) {
+        // Just worth the trouble to initialize with a realistic value
+        min_cost = row_i[1] - v_ptr[1];
         
-        const cost reduced_cost = row_i[j] - v_ptr[j];
-        if (reduced_cost < min) {
-          min = reduced_cost;
+        for (lap_col j = 2; j < dim; ++j) {
+          const cost reduced_cost = row_i[j] - v_ptr[j];
+          if (reduced_cost < min_cost) {
+            min_cost = reduced_cost;
+          }
+        }
+      } else {
+        min_cost = row_i[0] - v_ptr[0];
+        
+        for (lap_col j = 1; j < dim; ++j) {
+          if (j == j1) continue;
+          
+          const cost reduced_cost = row_i[j] - v_ptr[j];
+          if (reduced_cost < min_cost) {
+            min_cost = reduced_cost;
+          }
         }
       }
-      v[j1] -= min;
+      v[j1] -= min_cost;
     }
   }
   
