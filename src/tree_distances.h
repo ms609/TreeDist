@@ -156,38 +156,169 @@ public:
             static_cast<lap_row>(std::distance(col_data, min_ptr))};
   }
   
+  // test2000 = 207 ms
   std::tuple<cost, cost, lap_col, lap_col> findRowSubmin(
+      const lap_row* i, const std::vector<cost>& v
+  ) const {
+    const cost* __restrict v_ptr = v.data();
+    const cost* __restrict row_i = row(*i);
+    const lap_col dim = static_cast<lap_col>(dim_);
+    
+    //     Find minimum and second minimum reduced cost over columns.
+    cost min_val = row_i[0] - v_ptr[0];
+    lap_col min_idx = 0;
+    lap_col submin_idx = 0;
+    cost submin_val = BIG;
+    
+    lap_col j = 1;
+    const lap_col j_limit = (dim < 4 ? 0 : static_cast<lap_col>(dim - 3));
+    
+    for (; j < j_limit; j += 4) {
+      assert(BLOCK_SIZE >= 4);  // Unrolling loop x4 gives ~20% speedup
+      const cost h0 = row_i[j] - v_ptr[j];
+      const cost h1 = row_i[j + 1] - v_ptr[j + 1];
+      const cost h2 = row_i[j + 2] - v_ptr[j + 2];
+      const cost h3 = row_i[j + 3] - v_ptr[j + 3];
+      if (h0 < submin_val) {
+        if (h0 < min_val) {
+          submin_val = min_val;
+          min_val = h0;
+          submin_idx = min_idx;
+          min_idx = j;
+        } else {
+          submin_val = h0;
+          submin_idx = j;
+        }
+      }
+      if (h1 < submin_val) {
+        if (h1 < min_val) {
+          submin_val = min_val;
+          min_val = h1;
+          submin_idx = min_idx;
+          min_idx = j + 1;
+        } else {
+          submin_val = h1;
+          submin_idx = j + 1;
+        }
+      }
+      if (h2 < submin_val) {
+        if (h2 < min_val) {
+          submin_val = min_val;
+          min_val = h2;
+          submin_idx = min_idx;
+          min_idx = j + 2;
+        } else {
+          submin_val = h2;
+          submin_idx = j + 2;
+        }
+      }
+      if (h3 < submin_val) {
+        if (h3 < min_val) {
+          submin_val = min_val;
+          min_val = h3;
+          submin_idx = min_idx;
+          min_idx = j + 3;
+        } else {
+          submin_val = h3;
+          submin_idx = j + 3;
+        }
+      }
+    }
+    for (; j < dim; ++j) {
+      const cost h = row_i[j] - v_ptr[j];
+      if (h < submin_val) {
+        if (h < min_val) {
+          submin_val = min_val;
+          min_val = h;
+          submin_idx = min_idx;
+          min_idx = j;
+        } else {
+          submin_val = h;
+          submin_idx = j;
+        }
+      }
+    }
+    return {min_val, submin_val, min_idx, submin_idx};
+  }
+  
+  // test2000 = 260 ms
+  std::tuple<cost, cost, lap_col, lap_col> findRowSubminNaive(
+      const lap_row* i,
+      const std::vector<cost>& v_ptr
+  ) {
+    const cost* __restrict row_i = row(*i);
+    const lap_col dim = static_cast<lap_col>(dim_);
+    
+    if (dim < 2) {
+      return {row_i[0] - v_ptr[0], std::numeric_limits<cost>::max(), 0, 0};
+    }
+    
+    // Initialize with first two elements
+    cost h0 = row_i[0] - v_ptr[0];
+    cost h1 = row_i[1] - v_ptr[1];
+    
+    cost min_val, submin_val;
+    lap_col min_idx, submin_idx;
+    
+    if (h0 <= h1) {
+      min_val = h0; submin_val = h1;
+      min_idx = 0; submin_idx = 1;
+    } else {
+      min_val = h1; submin_val = h0;
+      min_idx = 1; submin_idx = 0;
+    }
+    
+    // Process remaining elements
+    for (lap_col j = 2; j < dim; ++j) {
+      const cost h = row_i[j] - v_ptr[j];
+      
+      if (h < min_val) {
+        submin_val = min_val;
+        submin_idx = min_idx;
+        min_val = h;
+        min_idx = j;
+      } else if (h < submin_val) {
+        submin_val = h;
+        submin_idx = j;
+      }
+    }
+    
+    return {min_val, submin_val, min_idx, submin_idx};
+  }
+  
+  // test2000 = 370 ms (!)
+  std::tuple<cost, cost, lap_col, lap_col> findRowSubminTwoPassNaive(
       const lap_row* i,
       const std::vector<cost>& v_ptr
   ) {
     const cost* __restrict row_i = row(*i);
     cost min_val = std::numeric_limits<cost>::max();
-    lap_col j1 = 0;
+    lap_col min_idx = 0;
     const lap_col dim = static_cast<lap_col>(dim_);
     
     for (lap_col j = 0; j < dim; ++j) {
       const cost h = row_i[j] - v_ptr[j];
       if (h < min_val) {
         min_val = h;
-        j1 = j;
+        min_idx = j;
       }
     }
     
     // Second pass: find subminimum
     cost submin_val = std::numeric_limits<cost>::max();
-    lap_col j2 = (j1 == 0) ? 1 : 0;
+    lap_col submin_idx = (min_idx == 0) ? 1 : 0;
     
     for (lap_col j = 0; j < dim; ++j) {
-      if (j != j1) {
+      if (j != min_idx) {
         const cost h = row_i[j] - v_ptr[j];
         if (h < submin_val) {
           submin_val = h;
-          j2 = j;
+          submin_idx = j;
         }
       }
     }
     
-    return {min_val, submin_val, j1, j2};
+    return {min_val, submin_val, min_idx, submin_idx};
   }
 };
 
