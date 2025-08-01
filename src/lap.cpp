@@ -78,7 +78,7 @@ cost lap(const lap_row dim,
   // colsol     - row assigned to column in solution
   
 {
-  input_cost.transpose();
+  // input_cost.transpose();
   
   lap_row num_free = 0;
   alignas(64) std::vector<cost> v(((dim + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
@@ -87,35 +87,8 @@ cost lap(const lap_row dim,
   
   // COLUMN REDUCTION
   for (lap_col j = dim; j--; ) { // Reverse order gives better results.
-    // Find minimum cost over rows.
-    const cost* col_j = input_cost.col(j);
-    cost min = col_j[0];
-    lap_dim imin = 0;
     
-    lap_row i = 1;
-    const lap_row i_limit = (dim < 4 ? 0 : static_cast<lap_col>(dim - 3));
-    
-    for (; i < i_limit; i += 4) {
-      // Very modest performance gain from unrolling this loop.
-      const cost c0 = col_j[i];
-      const cost c1 = col_j[i + 1];
-      const cost c2 = col_j[i + 2];
-      const cost c3 = col_j[i + 3];
-      
-      if (c0 < min) { min = c0; imin = i; }
-      if (c1 < min) { min = c1; imin = i + 1; }
-      if (c2 < min) { min = c2; imin = i + 2; }
-      if (c3 < min) { min = c3; imin = i + 3; }
-    }
-    
-    for (; i < dim; ++i) {
-      const cost current_cost = col_j[i];
-      if (current_cost < min) {
-        min = current_cost;
-        imin = i;
-      }
-    }
-    
+    const auto [min, imin] = input_cost.findColMin(j);
     v[j] = min;
     ++matches[imin];
     

@@ -73,6 +73,8 @@ public:
     padAfterRow(n_row, max_score);
   }
   
+  // With this optimization, the cost of copying the data is almost offset
+  // by the savings in reading column-wise.
   void transpose() noexcept {
     const cost* __restrict data_ptr = data_.data();
     cost* __restrict t_data_ptr = t_data_.data();
@@ -139,6 +141,36 @@ public:
     size_t end_index = start_index + dim_ - actual_start_col;
     std::fill(data_.begin() + start_index, data_.begin() + end_index, value);
   }
+  
+  std::pair<cost, lap_dim> findColMin(const lap_col j) {
+    cost min = firstInCol(j);
+    size_t imin = 0;
+    size_t i = 1;
+    const size_t i_limit = (dim_ < 4 ? 0 : dim_ - 3);
+    
+    for (; i < i_limit; i += 4) {
+      // Very modest performance gain from unrolling this loop.
+      const cost c0 = nextInCol();
+      const cost c1 = nextInCol();
+      const cost c2 = nextInCol();
+      const cost c3 = nextInCol();
+      
+      if (c0 < min) { min = c0; imin = i; }
+      if (c1 < min) { min = c1; imin = i + 1; }
+      if (c2 < min) { min = c2; imin = i + 2; }
+      if (c3 < min) { min = c3; imin = i + 3; }
+    }
+    
+    for (; i < dim_; ++i) {
+      const cost current_cost = nextInCol();
+      if (current_cost < min) {
+        min = current_cost;
+        imin = i;
+      }
+    }
+    return {min, static_cast<lap_row>(imin)};
+  }
+  
 };
 
 using cost_matrix = CostMatrix;
