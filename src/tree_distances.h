@@ -12,7 +12,7 @@
 /*************** TYPES      *******************/
 
 using cost = int_fast64_t;
-using lap_dim = int16;
+using lap_dim = int;
 using lap_row = lap_dim;
 using lap_col = lap_dim;
 
