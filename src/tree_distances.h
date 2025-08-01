@@ -145,10 +145,9 @@ public:
   std::pair<cost, lap_dim> findColMin(const lap_col j) {
     cost min = firstInCol(j);
     size_t imin = 0;
-    size_t i = 1;
     const size_t i_limit = (dim_ < 4 ? 0 : dim_ - 3);
     
-    for (; i < i_limit; i += 4) {
+    for (size_t i = 1; i < i_limit; i += 4) {
       // Very modest performance gain from unrolling this loop.
       const cost c0 = nextInCol();
       const cost c1 = nextInCol();
@@ -161,7 +160,7 @@ public:
       if (c3 < min) { min = c3; imin = i + 3; }
     }
     
-    for (; i < dim_; ++i) {
+    for (size_t i = i_limit; i < dim_; ++i) {
       const cost current_cost = nextInCol();
       if (current_cost < min) {
         min = current_cost;
