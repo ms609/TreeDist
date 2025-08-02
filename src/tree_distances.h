@@ -387,14 +387,117 @@ extern inline void add_ic_element(double& ic_sum, int16 nkK, int16 nk, int16 nK,
 extern double 
   mmsi_score(const int16 n_same, const int16 n_a_and_b,
              const int16 n_different, const int16 n_a_only),
-  ic_matching(const int16 a, const int16 b, const int16 n),
-  one_overlap(const int16 a, const int16 b, const int16 n),
-  one_overlap_notb(const int16 a, const int16 n_minus_b, const int16 n),
-  spi_overlap(const splitbit* a_state, const splitbit* b_state,
-              const int16 n_tips, const int16 in_a, const int16 in_b,
-              const int16 n_bins);
+  ic_matching(const int16 a, const int16 b, const int16 n);
+
+namespace TreeDist {
+
+  inline double one_overlap(const int16 a, const int16 b, const int16 n) {
+    assert(SL_MAX_TIPS + 2 <= INT_16_MAX); // verify int16 ok
+    if (a == b) {
+      return lg2_rooted[a] + lg2_rooted[n - a];
+    } else if (a < b) {
+      return lg2_rooted[b] + lg2_rooted[n - a] - lg2_rooted[b - a + 1];
+    } else {
+      return lg2_rooted[a] + lg2_rooted[n - b] - lg2_rooted[a - b + 1];
+    }
+  }
+  
+  inline double one_overlap_notb(const int16 a, const int16 n_minus_b, const int16 n) {
+    assert(SL_MAX_TIPS + 2 <= INT_16_MAX); // verify int16 ok
+    const int16 b = n - n_minus_b;
+    if (a == b) {
+      return lg2_rooted[b] + lg2_rooted[n_minus_b];
+    } else if (a < b) {
+      return lg2_rooted[b] + lg2_rooted[n - a] - lg2_rooted[b - a + 1];
+    } else {
+      return lg2_rooted[a] + lg2_rooted[n_minus_b] - lg2_rooted[a - b + 1];
+    }
+  }
+
+
+  inline double spi_overlap(const splitbit* a_state, const splitbit* b_state,
+                     const int16 n_tips, const int16 in_a,
+                     const int16 in_b, const int16 n_bins) {
+    
+    assert(SL_MAX_BINS <= INT16_MAX);
+    
+    const splitbit* a_ptr = a_state;
+    const splitbit* b_ptr = b_state;
+    const splitbit* end_ptr = a_state + n_bins;
+    
+    bool a_and_b = false;
+    
+    while(a_ptr != end_ptr) {
+      if (*a_ptr & *b_ptr) {
+        a_and_b = true;
+        break;
+      }
+      ++a_ptr;
+      ++b_ptr;
+    }
+    
+    if (!a_and_b) return one_overlap_notb(in_a, in_b, n_tips);
+    
+    
+    a_ptr = a_state;
+    b_ptr = b_state;
+    
+    bool b_only = false;
+    
+    while (a_ptr != end_ptr) {
+      if (~(*a_ptr) & *b_ptr) {
+        b_only = true;
+        break;
+      }
+      ++a_ptr;
+      ++b_ptr;
+    }
+    
+    if (!b_only) return one_overlap(in_a, in_b, n_tips);
+    
+    
+    a_ptr = a_state;
+    b_ptr = b_state;
+    bool a_only = false;
+    
+    while (a_ptr != end_ptr) {
+      if (*a_ptr & ~(*b_ptr)) {
+        a_only = true;
+        break;
+      }
+      ++a_ptr;
+      ++b_ptr;
+    }
+    
+    if (!a_only) return one_overlap(in_a, in_b, n_tips);
+    
+    
+    const int16 loose_end_tips = n_tips % SL_BIN_SIZE;
+    const splitbit tidy_ends = ~(ALL_ONES << loose_end_tips);
+    bool neither = false;
+    
+    for (int16 bin = 0; bin != n_bins; bin++) {
+      
+      splitbit test = ~(a_state[bin] | b_state[bin]);
+      
+      if (bin == n_bins - 1 && loose_end_tips) {
+        test &= tidy_ends;
+      }
+      
+      if (test) {
+        neither = true;
+        break;
+      }
+    }
+    
+    if (!neither) return one_overlap_notb(in_a, in_b, n_tips);
+    
+    return 0;
+  }
+}
 
 extern Rcpp::List cpp_robinson_foulds_distance(Rcpp::RawMatrix x,
                                                Rcpp::RawMatrix y,
                                                Rcpp::IntegerVector nTip);
+
 #endif
