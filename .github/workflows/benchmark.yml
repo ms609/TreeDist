@@ -112,13 +112,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: pr-benchmark-results
-          path: .
+          path: pr-benchmark-results
 
       - name: Download main benchmark results
         uses: actions/download-artifact@v4
         with:
           name: main-benchmark-results
-          path: .
+          path: main-benchmark-results
 
       - name: Compare benchmarks and comment on PR
         env:
