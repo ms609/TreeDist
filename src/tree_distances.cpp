@@ -421,7 +421,7 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
       if ((!a_and_B && !A_and_b) ||
           (!a_and_b && !A_and_B)) {
         exact_match_score += ic_matching(na, nA, n_tips);
-        exact_matches++;
+        ++exact_matches;
         a_match[ai] = bi + 1;
         b_match[bi] = ai + 1;
         break;
