@@ -54,7 +54,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pr-benchmark-results
-          path: benchmark_results.rds
+          path: '*.bench.Rds'
 
   benchmark_main:
     runs-on: ubuntu-latest
@@ -91,7 +91,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: main-benchmark-results
-          path: benchmark_results.rds
+          path: '*.bench.Rds'
 
   compare_benchmarks:
     runs-on: ubuntu-latest
