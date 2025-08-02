@@ -36,7 +36,7 @@ __attribute__((constructor))
 
 
 // Returns lg2_unrooted[x] - lg2_trees_matching_split(y, x - y)
-double mmsi_pair_score (const int16 x, const int16 y) {
+double mmsi_pair_score(const int16 x, const int16 y) {
   assert(SL_MAX_TIPS + 2 <= INT_16_MAX); // verify int16 ok
   
   return lg2_unrooted[x] - (lg2_rooted[y] + lg2_rooted[x - y]);
@@ -56,12 +56,12 @@ double mmsi_score(const int16 n_same, const int16 n_a_and_b,
   return (score1 > score2) ? score1 : score2;
 }
 
-double ic_matching (const int16 a, const int16 b, const int16 n) {
+double ic_matching(const int16 a, const int16 b, const int16 n) {
   return (a * (lg2[n] - lg2[a])) + 
          (b * (lg2[n] - lg2[b]));
 }
 
-double one_overlap (const int16 a, const int16 b, const int16 n) {
+double one_overlap(const int16 a, const int16 b, const int16 n) {
   assert(SL_MAX_TIPS + 2 <= INT_16_MAX); // verify int16 ok
   if (a == b) {
     return lg2_rooted[a] + lg2_rooted[n - a];
@@ -72,7 +72,7 @@ double one_overlap (const int16 a, const int16 b, const int16 n) {
   }
 }
 
-double one_overlap_notb (const int16 a, const int16 n_minus_b, const int16 n) {
+double one_overlap_notb(const int16 a, const int16 n_minus_b, const int16 n) {
   assert(SL_MAX_TIPS + 2 <= INT_16_MAX); // verify int16 ok
   const int16 b = n - n_minus_b;
   if (a == b) {
@@ -84,9 +84,9 @@ double one_overlap_notb (const int16 a, const int16 n_minus_b, const int16 n) {
   }
 }
 
-double spi_overlap (const splitbit* a_state, const splitbit* b_state,
-                    const int16 n_tips, const int16 in_a, const int16 in_b,
-                    const int16 n_bins) {
+double spi_overlap(const splitbit* a_state, const splitbit* b_state,
+                   const int16 n_tips, const int16 in_a, const int16 in_b,
+                   const int16 n_bins) {
   bool flag = true;
   
   assert(SL_MAX_BINS <= INT16_MAX);
