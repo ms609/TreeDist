@@ -43,7 +43,7 @@ jobs:
           needs: benchmark
         
       - name: Install package
-        run: R CMD INSTALL . --preclean --clean --byte-compile --no-multiarch --no-build-vignettes
+        run: R CMD INSTALL . --preclean --clean --byte-compile --no-docs --no-help --no-test-check --no-build-vignettes --no-multiarch
 
       - name: Run benchmarks for PR
         run: Rscript benchmark/_run_benchmarks.R
@@ -79,7 +79,7 @@ jobs:
           needs: benchmark
 
       - name: Install package
-        run: R CMD INSTALL . --preclean --clean --byte-compile --no-multiarch --no-build-vignettes
+        run: R CMD INSTALL . --preclean --clean --byte-compile --no-docs --no-help --no-test-check --no-build-vignettes --no-multiarch
         
       - name: Run benchmarks for main branch
         run: Rscript benchmark/_run_benchmarks.R
