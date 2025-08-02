@@ -90,45 +90,75 @@ double spi_overlap(const splitbit* a_state, const splitbit* b_state,
   
   assert(SL_MAX_BINS <= INT16_MAX);
   
+  const splitbit* a_ptr = a_state;
+  const splitbit* b_ptr = b_state;
+  const splitbit* end_ptr = a_state + n_bins;
+  
   bool a_and_b = false;
-  for (int16 bin = 0; bin != n_bins; bin++) {
-    if (a_state[bin] & b_state[bin]) {
+  
+  while(a_ptr != end_ptr) {
+    if (*a_ptr & *b_ptr) {
       a_and_b = true;
       break;
     }
+    ++a_ptr;
+    ++b_ptr;
   }
+  
   if (!a_and_b) return one_overlap_notb(in_a, in_b, n_tips);
   
+  
+  a_ptr = a_state;
+  b_ptr = b_state;
+  
   bool b_only = false;
-  for (int16 bin = 0; bin != n_bins; bin++) {
-    if ((~a_state[bin] & b_state[bin])) {
+  
+  while (a_ptr != end_ptr) {
+    if (~(*a_ptr) & *b_ptr) {
       b_only = true;
       break;
     }
+    ++a_ptr;
+    ++b_ptr;
   }
+  
   if (!b_only) return one_overlap(in_a, in_b, n_tips);
   
+  
+  a_ptr = a_state;
+  b_ptr = b_state;
   bool a_only = false;
-  for (int16 bin = 0; bin != n_bins; bin++) {
-    if ((a_state[bin] & ~b_state[bin])) {
+  
+  while (a_ptr != end_ptr) {
+    if (*a_ptr & ~(*b_ptr)) {
       a_only = true;
       break;
     }
+    ++a_ptr;
+    ++b_ptr;
   }
+  
   if (!a_only) return one_overlap(in_a, in_b, n_tips);
   
+  
   const int16 loose_end_tips = n_tips % SL_BIN_SIZE;
+  const splitbit tidy_ends = ~(ALL_ONES << loose_end_tips);
   bool neither = false;
+  
   for (int16 bin = 0; bin != n_bins; bin++) {
+  
     splitbit test = ~(a_state[bin] | b_state[bin]);
+  
     if (bin == n_bins - 1 && loose_end_tips) {
-      test &= ~(ALL_ONES << loose_end_tips);
+      test &= tidy_ends;
     }
+  
     if (test) {
       neither = true;
       break;
     }
   }
+  
   if (!neither) return one_overlap_notb(in_a, in_b, n_tips);
   
   return 0;
