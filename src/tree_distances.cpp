@@ -22,7 +22,7 @@ namespace TreeDist {
      * elements is divided by n.
      */
     if (nkK && nk && nK) {
-      if (nkK == nk && nkK == nK && nkK + nkK == n_tips) {
+      if (nkK == nk && nkK == nK && nkK << 1 == n_tips) {
         ic_sum += nkK;
       } else {
         const int32 numerator = nkK * n_tips;
@@ -464,8 +464,7 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
         TreeDist::add_ic_element(ic_sum, A_and_B, nA, nB, n_tips);
         
         // Division by n_tips converts n(A&B) to P(A&B) for each ic_element
-        score(ai, bi) = max_score -
-          static_cast<cost>(ic_sum * max_over_tips);
+        score(ai, bi) = max_score - static_cast<cost>(ic_sum * max_over_tips);
       }
     }
     score.padRowAfterCol(ai, b.n_splits, max_score);
