@@ -47,7 +47,7 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
-            github::ms609/TreeTools
+            github::ms609/TreeTools@benchmark
           dependencies: '"hard"'
           needs: benchmark
         
