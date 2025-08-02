@@ -43,11 +43,14 @@ jobs:
         with:
           extra-repositories: https://ms609.github.io/packages/
         
+      - name: Install packages
+        run: |
+          Rscript -e 'install.packages("remotes")'
+          Rscript -e 'remotes::install_github("ms609", "TreeTools", ref = "benchmarking")'
+          
       - name: Set up R dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: |
-            github::ms609/TreeTools@benchmarking
           dependencies: '"hard"'
           needs: benchmark
         
