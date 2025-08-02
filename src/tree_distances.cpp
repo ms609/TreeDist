@@ -345,6 +345,8 @@ List cpp_msi_distance(const RawMatrix x, const RawMatrix y,
   constexpr cost max_score = BIG;
   const double max_possible = lg2_unrooted[n_tips] - 
     lg2_rooted[int16((n_tips + 1) / 2)] - lg2_rooted[int16(n_tips / 2)];
+  const double score_over_possible = static_cast<double>(max_score) / max_possible;
+  const double possible_over_score = max_possible / max_score;
   
   cost_matrix score(most_splits);
   
@@ -366,7 +368,7 @@ List cpp_msi_distance(const RawMatrix x, const RawMatrix y,
       const int16 n_same = n_tips - n_different;
       
       score(ai, bi) = cost(max_score - 
-        ((max_score / max_possible) *
+        (score_over_possible *
           mmsi_score(n_same, n_a_and_b, n_different, n_a_only)));
     }
     score.padRowAfterCol(ai, b.n_splits, max_score);
@@ -379,7 +381,7 @@ List cpp_msi_distance(const RawMatrix x, const RawMatrix y,
   NumericVector final_score = NumericVector::create(
     static_cast<double>((max_score * most_splits) - 
                         lap(most_splits, score, rowsol, colsol))
-    * max_possible / max_score
+    * possible_over_score
   );
   
   IntegerVector final_matching(a.n_splits);
@@ -407,12 +409,14 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
   const int16 a_extra_splits = a_has_more_splits ? most_splits - b.n_splits : 0;
   const int16 b_extra_splits = a_has_more_splits ? 0 : most_splits - a.n_splits;
   const int16 n_tips = int16(nTip[0]);
+  const double n_tips_reciprocal = 1.0 / n_tips;
   
   if (most_splits == 0 || n_tips == 0) {
     return List::create(Named("score") = 0,
                         _["matching"] = IntegerVector(0));
   }
   constexpr cost max_score = BIG;
+  const double max_over_tips = static_cast<double>(max_score) * n_tips_reciprocal;
   cost_matrix score(most_splits);
   
   double exact_match_score = 0;
@@ -461,14 +465,14 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
         
         // Division by n_tips converts n(A&B) to P(A&B) for each ic_element
         score(ai, bi) = max_score -
-          static_cast<cost>(max_score * ic_sum / n_tips);
+          static_cast<cost>(ic_sum * max_over_tips);
       }
     }
     score.padRowAfterCol(ai, b.n_splits, max_score);
   }
   if (exact_matches == b.n_splits || exact_matches == a.n_splits) {
     return List::create(
-      Named("score") = NumericVector::create(exact_match_score / n_tips),
+      Named("score") = NumericVector::create(exact_match_score * n_tips_reciprocal),
       _["matching"] = a_match);
   }
   
@@ -497,7 +501,7 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
       (max_score * lap_dim) - lap(lap_dim, small_score, rowsol, colsol)
       ) / max_score;
     NumericVector final_score = 
-      NumericVector::create(lap_score + (exact_match_score / n_tips));
+      NumericVector::create(lap_score + (exact_match_score * n_tips_reciprocal));
     
     std::unique_ptr<int16[]> lap_decode = std::make_unique<int16[]>(lap_dim);
     int16 fuzzy_match = 0;
@@ -572,6 +576,8 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   const double lg2_unrooted_n = lg2_unrooted[n_tips];
   const double best_overlap = one_overlap(overlap_a, n_tips / 2, n_tips);
   const double max_possible = lg2_unrooted_n - best_overlap;
+  const double score_over_possible = max_score / max_possible;
+  const double possible_over_score = max_possible / max_score;
   
   // a and b are "clades" separating an "ingroup" [1] from an "outgroup" [0].
   // In/out direction [i.e. 1/0 bit] is arbitrary.
@@ -584,7 +590,7 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
                                           a.n_bins);
       
       score(ai, bi) = spi_over == 0 ? max_score :
-        cost((spi_over - best_overlap) * (max_score / max_possible));
+        cost((spi_over - best_overlap) * score_over_possible);
     }
     score.padRowAfterCol(ai, b.n_splits, max_score);
   }
@@ -596,7 +602,7 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   NumericVector final_score = NumericVector::create(
     static_cast<double>(
       (max_score * most_splits) - lap(most_splits, score, rowsol, colsol)) *
-        (max_possible / max_score)
+        possible_over_score
     );
   
   IntegerVector final_matching(a.n_splits);
