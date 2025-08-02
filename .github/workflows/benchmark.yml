@@ -47,7 +47,7 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
-            github::ms609/TreeTools@benchmark
+            github::ms609/TreeTools@benchmarking
           dependencies: '"hard"'
           needs: benchmark
         
@@ -114,7 +114,6 @@ jobs:
       - name: Install packages
         run: |
           Rscript -e 'install.packages("microbenchmark")'
-          Rscript -e 'install.packages("gh")'
 
       - name: Download PR benchmark results
         uses: actions/download-artifact@v4
