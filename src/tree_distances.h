@@ -409,7 +409,11 @@ namespace TreeDist {
 
 
 [[nodiscard]] inline double ic_matching(const int16 a, const int16 b, const int16 n) noexcept {
-    return (a * (lg2[n] - lg2[a])) + (b * (lg2[n] - lg2[b]));
+    const double lg2a = lg2[a];
+    const double lg2b = lg2[b];
+    const double lg2n = lg2[n];
+    return (a + b) * lg2n - a * lg2a - b * lg2b;
+    //  (a * (lg2n - lg2a)) + (b * (lg2n - lg2b)); is substantially slower
   }
 
 [[nodiscard]] inline double one_overlap(const int16 a, const int16 b, const int16 n) noexcept {
