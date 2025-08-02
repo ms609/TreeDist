@@ -40,7 +40,7 @@ jobs:
       - name: Set up R dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          dependencies: hard
+          dependencies: "hard"
           needs: benchmark
         
       - name: Install package
@@ -77,7 +77,7 @@ jobs:
       - name: Set up R dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          dependencies: hard
+          dependencies: "hard"
           needs: benchmark
 
       - name: Install package
