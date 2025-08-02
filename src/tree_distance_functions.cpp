@@ -33,30 +33,3 @@ __attribute__((constructor))
       assert(lg2_rooted[i - 1] == lg2_double_factorial[i + i - 5]);
     }
   }
-
-
-// Returns lg2_unrooted[x] - lg2_trees_matching_split(y, x - y)
-double mmsi_pair_score(const int16 x, const int16 y) {
-  assert(SL_MAX_TIPS + 2 <= INT_16_MAX); // verify int16 ok
-  
-  return lg2_unrooted[x] - (lg2_rooted[y] + lg2_rooted[x - y]);
-}
-
-double mmsi_score(const int16 n_same, const int16 n_a_and_b,
-                  const int16 n_different, const int16 n_a_only) {
-  if (n_same == 0 || n_same == n_a_and_b)
-    return mmsi_pair_score(n_different, n_a_only);
-  if (n_different == 0 || n_different == n_a_only)
-    return mmsi_pair_score(n_same, n_a_and_b);
-  
-  const double
-    score1 = mmsi_pair_score(n_same, n_a_and_b),
-      score2 = mmsi_pair_score(n_different, n_a_only);
-  
-  return (score1 > score2) ? score1 : score2;
-}
-
-double ic_matching(const int16 a, const int16 b, const int16 n) {
-  return (a * (lg2[n] - lg2[a])) + 
-         (b * (lg2[n] - lg2[b]));
-}

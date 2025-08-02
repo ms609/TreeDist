@@ -384,14 +384,35 @@ extern cost lap(lap_row dim,
 extern inline void add_ic_element(double& ic_sum, int16 nkK, int16 nk, int16 nK,
                                   int16 n_tips);
 
-extern double 
-  mmsi_score(const int16 n_same, const int16 n_a_and_b,
-             const int16 n_different, const int16 n_a_only),
-  ic_matching(const int16 a, const int16 b, const int16 n);
-
 namespace TreeDist {
 
-  inline double one_overlap(const int16 a, const int16 b, const int16 n) {
+  // Returns lg2_unrooted[x] - lg2_trees_matching_split(y, x - y)
+  [[nodiscard]] inline double mmsi_pair_score(const int16 x, const int16 y) noexcept {
+    assert(SL_MAX_TIPS + 2 <= INT_16_MAX); // verify int16 ok
+    
+    return lg2_unrooted[x] - (lg2_rooted[y] + lg2_rooted[x - y]);
+  }
+
+  [[nodiscard]] inline double mmsi_score(const int16 n_same, const int16 n_a_and_b,
+                    const int16 n_different, const int16 n_a_only)  noexcept {
+    if (n_same == 0 || n_same == n_a_and_b)
+      return mmsi_pair_score(n_different, n_a_only);
+    if (n_different == 0 || n_different == n_a_only)
+      return mmsi_pair_score(n_same, n_a_and_b);
+    
+    const double
+      score1 = mmsi_pair_score(n_same, n_a_and_b),
+        score2 = mmsi_pair_score(n_different, n_a_only);
+    
+    return (score1 > score2) ? score1 : score2;
+  }
+
+
+[[nodiscard]] inline double ic_matching(const int16 a, const int16 b, const int16 n) noexcept {
+    return (a * (lg2[n] - lg2[a])) + (b * (lg2[n] - lg2[b]));
+  }
+
+[[nodiscard]] inline double one_overlap(const int16 a, const int16 b, const int16 n) noexcept {
     assert(SL_MAX_TIPS + 2 <= INT_16_MAX); // verify int16 ok
     if (a == b) {
       return lg2_rooted[a] + lg2_rooted[n - a];
@@ -402,7 +423,7 @@ namespace TreeDist {
     }
   }
   
-  inline double one_overlap_notb(const int16 a, const int16 n_minus_b, const int16 n) {
+  [[nodiscard]] inline double one_overlap_notb(const int16 a, const int16 n_minus_b, const int16 n) noexcept {
     assert(SL_MAX_TIPS + 2 <= INT_16_MAX); // verify int16 ok
     const int16 b = n - n_minus_b;
     if (a == b) {
@@ -415,9 +436,9 @@ namespace TreeDist {
   }
 
 
-  inline double spi_overlap(const splitbit* a_state, const splitbit* b_state,
+[[nodiscard]] inline double spi_overlap(const splitbit* a_state, const splitbit* b_state,
                      const int16 n_tips, const int16 in_a,
-                     const int16 in_b, const int16 n_bins) {
+                     const int16 in_b, const int16 n_bins) noexcept {
     
     assert(SL_MAX_BINS <= INT16_MAX);
     

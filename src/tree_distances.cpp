@@ -9,13 +9,15 @@ using TreeTools::SplitList;
 using TreeTools::count_bits;
 
 namespace TreeDist {
+
   void check_ntip(const double n) {
     if (n > static_cast<double>(std::numeric_limits<int16>::max())) {
       Rcpp::stop("This many tips are not (yet) supported.");
     }
   }
+
   inline void add_ic_element(double& ic_sum, int16 nkK, int16 nk, int16 nK,
-                             int16 n_tips) {
+                             int16 n_tips) noexcept {
     /* 
      * See equation 16 in Meila 2007. I denote k' as K.
      * nkK is converted to pkK in the calling function, when the sum of all
@@ -33,6 +35,7 @@ namespace TreeDist {
       }
     }
   }
+
 }
 
 
@@ -369,7 +372,7 @@ List cpp_msi_distance(const RawMatrix x, const RawMatrix y,
       
       score(ai, bi) = cost(max_score - 
         (score_over_possible *
-          mmsi_score(n_same, n_a_and_b, n_different, n_a_only)));
+          TreeDist::mmsi_score(n_same, n_a_and_b, n_different, n_a_only)));
     }
     score.padRowAfterCol(ai, b.n_splits, max_score);
   }
@@ -447,7 +450,7 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
       
       if ((!a_and_B && !A_and_b) ||
           (!a_and_b && !A_and_B)) {
-        exact_match_score += ic_matching(na, nA, n_tips);
+        exact_match_score += TreeDist::ic_matching(na, nA, n_tips);
         ++exact_matches;
         a_match[ai] = bi + 1;
         b_match[bi] = ai + 1;
