@@ -14,6 +14,25 @@ namespace TreeDist {
       Rcpp::stop("This many tips are not (yet) supported.");
     }
   }
+  inline void add_ic_element(double& ic_sum, int16 nkK, int16 nk, int16 nK,
+                             int16 n_tips) {
+    /* 
+     * See equation 16 in Meila 2007. I denote k' as K.
+     * nkK is converted to pkK in the calling function, when the sum of all
+     * elements is divided by n.
+     */
+    if (nkK && nk && nK) {
+      if (nkK == nk && nkK == nK && nkK + nkK == n_tips) {
+        ic_sum += nkK;
+      } else {
+        const int32 numerator = nkK * n_tips;
+        const int32 denominator = nk * nK;
+        if (numerator != denominator) {
+          ic_sum += nkK * (lg2[numerator] - lg2[denominator]);
+        }
+      }
+    }
+  }
 }
 
 
@@ -434,38 +453,11 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
           a_and_b == A_and_B) {
         score(ai, bi) = max_score; // Don't risk rounding error
       } else {
-        
-        
-        const int16 nkK_vals[4] = {a_and_b, a_and_B, A_and_b, A_and_B};
-        const int16 nk_vals[4] = {na, na, nA, nA};
-        const int16 nK_vals[4] = {nb, nB, nb, nB};
-        
         double ic_sum = 0;
-        for (int i = 0; i < 4; ++i) {
-          /* 
-           * Sum information content of each element.
-           * See equation 16 in Meila 2007. I denote k' as K.
-           * nkK is converted to pkK in the calling function, when the sum of all
-           * elements is divided by n.
-           */
-          
-          const int16 nkK = nkK_vals[i];
-          const int16 nk = nk_vals[i];
-          const int16 nK = nK_vals[i];
-          
-          if (nkK && nk && nK) {
-            if (nkK == nk && nkK == nK && nkK + nkK == n_tips) {
-              ic_sum += nkK;
-            } else {
-              const int32 numerator = nkK * n_tips;
-              const int32 denominator = nk * nK;
-              if (numerator != denominator) {
-                // Multiply-then-log is twice as fast log-then-add
-                ic_sum += nkK * (lg2[numerator] - lg2[denominator]);
-              }
-            }
-          }
-        }
+        TreeDist::add_ic_element(ic_sum, a_and_b, na, nb, n_tips);
+        TreeDist::add_ic_element(ic_sum, a_and_B, na, nB, n_tips);
+        TreeDist::add_ic_element(ic_sum, A_and_b, nA, nb, n_tips);
+        TreeDist::add_ic_element(ic_sum, A_and_B, nA, nB, n_tips);
         
         // Division by n_tips converts n(A&B) to P(A&B) for each ic_element
         score(ai, bi) = max_score -

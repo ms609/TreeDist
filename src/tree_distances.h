@@ -381,6 +381,9 @@ extern cost lap(lap_row dim,
                 std::vector<lap_col> &rowsol,
                 std::vector<lap_row> &colsol);
 
+extern inline void add_ic_element(double& ic_sum, int16 nkK, int16 nk, int16 nK,
+                                  int16 n_tips);
+
 extern double 
   mmsi_score(const int16 n_same, const int16 n_a_and_b,
              const int16 n_different, const int16 n_a_only),
