@@ -40,6 +40,8 @@ jobs:
       - name: Set up R dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
+          extra-packages: |
+            github::ms609/TreeTools
           dependencies: '"hard"'
           needs: benchmark
         
