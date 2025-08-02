@@ -430,16 +430,44 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
           a_and_b == A_and_B) {
         score(ai, bi) = max_score; // Don't risk rounding error
       } else {
+        
+        const int16 factors[4][3] = {
+          {a_and_b, na, nb},
+          {a_and_B, na, nB}, 
+          {A_and_b, nA, nb},
+          {A_and_B, nA, nB}
+        };
+        
+        double ic_sum = 0;
+        for (int i = 0; i < 4; ++i) {
+          /* 
+           * Sum information content of each element.
+           * See equation 16 in Meila 2007. I denote k' as K.
+           * nkK is converted to pkK in the calling function, when the sum of all
+           * elements is divided by n.
+           */
+          
+          const int16 nkK = factors[i][0];
+          const int16 nk = factors[i][1];
+          const int16 nK = factors[i][2];
+          
+          if (nkK && nk && nK) {
+            if (nkK == nk && nkK == nK && nkK + nkK == n_tips) {
+              ic_sum += nkK;
+            } else {
+              const int32 numerator = nkK * n_tips;
+              const int32 denominator = nk * nK;
+              if (numerator != denominator) {
+                // Multiply-then-log is twice as fast log-then-add
+                ic_sum += nkK * (lg2[numerator] - lg2[denominator]);
+              }
+            }
+          }
+        }
+        
+        // Division by n_tips converts n(A&B) to P(A&B) for each ic_element
         score(ai, bi) = max_score -
-          // Division by n_tips converts n(A&B) to P(A&B) for each ic_element
-          cost(max_score * ((
-            // 0 < Sum of IC_elements <= n_tips
-            ic_element(a_and_b, na, nb, n_tips) +
-            ic_element(a_and_B, na, nB, n_tips) +
-            ic_element(A_and_b, nA, nb, n_tips) +
-            ic_element(A_and_B, nA, nB, n_tips)
-          ) / n_tips)
-        );
+          static_cast<cost>(max_score * ic_sum / n_tips);
       }
     }
     score.padRowAfterCol(ai, b.n_splits, max_score);

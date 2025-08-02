@@ -56,29 +56,6 @@ double mmsi_score(const int16 n_same, const int16 n_a_and_b,
   return (score1 > score2) ? score1 : score2;
 }
 
-
-/* 
- * See equation 16 in Meila 2007. I denote k' as K.
- * nkK is converted to pkK in the calling function, when the sum of all
- * elements is divided by n.
-*/
-double ic_element (const int16 nkK, const int16 nk,
-                   const int16 nK, const int16 n) {
-  if (nkK && nk && nK) {
-    // Avoid possible rounding errors
-    
-    if (nkK == nk && nkK == nK && nkK + nkK == n) return nkK;
-    const int32
-      numerator = nkK * n,
-      denominator = nk * nK
-    ;
-    if (numerator == denominator) return 0; 
-    
-    // Multiply-then-log is twice as fast log-then-add
-    return nkK * (lg2[numerator] - lg2[denominator]);
-  } else return 0;
-}
-
 double ic_matching (const int16 a, const int16 b, const int16 n) {
   return (a * (lg2[n] - lg2[a])) + 
          (b * (lg2[n] - lg2[b]));

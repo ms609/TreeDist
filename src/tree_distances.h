@@ -384,8 +384,6 @@ extern cost lap(lap_row dim,
 extern double 
   mmsi_score(const int16 n_same, const int16 n_a_and_b,
              const int16 n_different, const int16 n_a_only),
-  ic_element(const int16 nkK, const int16 nk,
-             const int16 nK, const int16 n),
   ic_matching(const int16 a, const int16 b, const int16 n),
   one_overlap(const int16 a, const int16 b, const int16 n),
   one_overlap_notb(const int16 a, const int16 n_minus_b, const int16 n),
