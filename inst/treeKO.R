@@ -1,5 +1,5 @@
 library("TreeTools")
-geneTree1 <- ape::read.tree(text = "((E1, D1), (A3, ((C1, A2), (B1, A1))D2 )D1);")
+geneTree1 <- ape::read.tree(text = "((E, D), (A3, ((C, A2), (B, A1))D2 )D1);")
 plot(geneTree1, show.node.label = TRUE)
 nodelabels()
 edgelabels()
@@ -23,9 +23,8 @@ DuplicationTrees <- function(tree, duplications) {
     }
     parent <- edge[, 1]
     child <- edge[, 2]
-    for (dupNode in duplications) {
-      children <- child[parent == dupNode]
-      do.call(c, lapply(children, function(c) DropTip(tree, c)))
-    }
+    children <- child[parent == duplications[[1]]]
+    do.call(c, lapply(children, function(ch) DuplicationTrees(DropTip(tree, ch))))
   }
 }
+DuplicationTrees(geneTree1)
