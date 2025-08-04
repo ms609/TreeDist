@@ -32,108 +32,82 @@ jobs:
       R_REMOTES_STANDALONE: true
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       R_REALLY_FORCE_SYMBOLS: true # Until R4.3
-      R_COMPILE_OPT: "3"
       
     steps:
       - name: Checkout PR branch
         uses: actions/checkout@v4
-
-      - name: Set up R
-        uses: r-lib/actions/setup-r@v2
         with:
-          extra-repositories: https://ms609.github.io/packages/
-        
-      - name: Install packages
-        run: |
-          Rscript -e 'install.packages("remotes")'
-          Rscript -e 'remotes::install_github("ms609/TreeTools", ref = "benchmarking")'
+          path: pr
           
-      - name: Set up R dependencies
-        uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          dependencies: '"hard"'
-          needs: benchmark
-        
-      - name: Install package
-        run: R CMD INSTALL . --preclean --clean --byte-compile --no-docs --no-help --no-test-load --no-multiarch
-
-      - name: Run benchmarks for PR
-        run: Rscript benchmark/_run_benchmarks.R
-        shell: bash
-
-      - name: Upload PR benchmark results
-        uses: actions/upload-artifact@v4
-        with:
-          name: pr-benchmark-results
-          path: '*.bench.Rds'
-
-  benchmark_main:
-    runs-on: ubuntu-latest
-    
-    env:
-      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      RSPM: "https://packagemanager.rstudio.com/cran/__linux__/noble/latest"
-      R_COMPILE_OPT: "3"
-    steps:
-      - name: Checkout main branch
+      - name: Checkout target branch
         uses: actions/checkout@v4
         with:
-          ref: master
+          ref: ${{ github.event.pull_request.base.ref || 'master' }}
+          path: main
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
         with:
           extra-repositories: https://ms609.github.io/packages/
-
-      - name: Set up R dependencies
+        
+      - name: Install R dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
+          extra-packages: |
+            github::ms609/TreeTools
           dependencies: '"hard"'
           needs: benchmark
 
-      - name: Install package
-        run: R CMD INSTALL . --preclean --clean --byte-compile --no-docs --no-help --no-test-load --no-multiarch
+      - name: Benchmark PR
+        working-directory: pr
+        run: |
+          R CMD INSTALL . --preclean --clean --byte-compile --no-docs --no-help --no-test-load --no-multiarch
+          Rscript benchmark/_run_benchmarks.R
+          mkdir ./pr-benchmark-results/
+          mv *.bench.Rds ./pr-benchmark-results/
+        shell: bash
         
-      - name: Run benchmarks for main branch
-        run: Rscript benchmark/_run_benchmarks.R
+      - name: Benchmark main
+        working-directory: main
+        run: |
+          R CMD INSTALL . --preclean --clean --byte-compile --no-docs --no-help --no-test-load --no-multiarch
+          Rscript benchmark/_run_benchmarks.R
+          mkdir ../pr/main-benchmark-results/
+          mv *.bench.Rds ../pr/main-benchmark-results/
+        shell: bash
+        
+      - name: Benchmark PR
+        working-directory: pr
+        run: |
+          R CMD INSTALL . --preclean --clean --byte-compile --no-docs --no-help --no-test-load --no-multiarch
+          Rscript benchmark/_run_benchmarks.R
+          mkdir ./pr2-benchmark-results/
+          mv *.bench.Rds ./pr2-benchmark-results/
         shell: bash
 
-      - name: Upload main benchmark results
-        uses: actions/upload-artifact@v4
-        with:
-          name: main-benchmark-results
-          path: '*.bench.Rds'
+      - run: dir pr-benchmark-results
+        working-directory: pr
+      - run: dir main-benchmark-results
+        working-directory: pr
 
-  compare_benchmarks:
-    runs-on: ubuntu-latest
-    needs: [benchmark_pr, benchmark_main]
-    steps:
-      - name: Checkout PR branch
-        uses: actions/checkout@v4
-
-      - name: Set up R
-        uses: r-lib/actions/setup-r@v2
-
-      - name: Install packages
-        run: |
-          Rscript -e 'install.packages("microbenchmark")'
-
-      - name: Download PR benchmark results
-        uses: actions/download-artifact@v4
-        with:
-          name: pr-benchmark-results
-          path: pr-benchmark-results
-
-      - name: Download main benchmark results
-        uses: actions/download-artifact@v4
-        with:
-          name: main-benchmark-results
-          path: main-benchmark-results
-
-      - name: Compare benchmarks and comment on PR
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+      - name: Compare benchmarks
+        id: compare_results
+        working-directory: pr
         run: |
           Rscript benchmark/_compare_results.R
         shell: bash
+        
+      - name: Comment on PR
+        if: always() && github.event_name == 'pull_request' && steps.compare_results.outputs.report != ''
+        uses: actions/github-script@v7
+        env:
+          BENCHMARK_MESSAGE: ${{ steps.compare_results.outputs.report }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: process.env.BENCHMARK_MESSAGE
+            });
