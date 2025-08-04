@@ -1,0 +1,24 @@
+---
+title: "Comparison of trees with duplication events"
+author: "[Martin R. Smith](https://smithlabdurham.github.io/)"
+output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+csl: ../inst/apa-old-doi-prefix.csl
+vignette: >
+  %\VignetteIndexEntry{Comparison of trees with duplication events}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+#' TreeKO
+
+TreeKO is an algorithm for comparing trees that contain duplications
+[@MarcetHouben2011]
+
+```{r init}
+library("ape")
+geneTree1 <- ape::read.tree(text = "((E1, D1), ((A3, ((C1, A2), (B1, A1))D2)D1));")
+plot(geneTree1, show.node.label = TRUE)
+mtext("Gene tree 1", 1)
+```
+
