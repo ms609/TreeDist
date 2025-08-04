@@ -1,5 +1,6 @@
 #include <Rcpp/Lightest>
 #include <TreeTools/renumber_tree.h> // for postorder_order
+#include <algorithm> // for std::copy
 #include <cmath> // for sqrt
 #include <memory> // for make_unique
 using namespace Rcpp;
@@ -35,14 +36,13 @@ IntegerVector path_vector(IntegerMatrix edge) {
     anc_child[parent_ancs] = child;
     n_ancs[child] = parent_ancs + 1;
     
-    for (int j = 0; j < parent_ancs; ++j) {
-      anc_child[j] = anc_parent[j];
-    }
+    std::copy(anc_parent, anc_parent + parent_ancs, anc_child);
   }
   
-  int ptr = n_tip * (n_tip - 1) / 2;
+  const int ret_size = n_tip * (n_tip - 1) / 2;
+  int ptr = ret_size;
   IntegerVector ret(ptr);
-  for (int i = n_tip - 1; i--; ) {
+  for (int i = n_tip - 1; i--; ) { // faster in reverse, for a benchmark
     for (int j = n_tip - i - 1; j--; ) {
       const int tip_i = i + 1;
       const int tip_j = i + 2 + j;
