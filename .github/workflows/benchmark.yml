@@ -20,7 +20,7 @@ on:
       - "**.Rpro*"
 
 jobs:
-  benchmark_pr:
+  benchmark:
     runs-on: ubuntu-latest
     
     env:
