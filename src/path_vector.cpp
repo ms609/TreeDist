@@ -27,12 +27,16 @@ IntegerVector path_vector(IntegerMatrix edge) {
   for (int i = n_edge; i--; ) { // Preorder traversal
     const int parent = PO_PARENT(i);
     const int child = PO_CHILD(i);
+    const int parent_ancs = n_ancs[parent];
     
-    ANC(child, n_ancs[parent]) = child;
-    n_ancs[child] = n_ancs[parent] + 1;
+    const int* anc_parent = &ancestry[n_tip * (parent - 1)];
+    int* anc_child = &ancestry[n_tip * (child - 1)];
     
-    for (int j = 0; j < n_ancs[parent]; ++j) {
-      ANC(child, j) = ANC(parent, j);
+    anc_child[parent_ancs] = child;
+    n_ancs[child] = parent_ancs + 1;
+    
+    for (int j = 0; j < parent_ancs; ++j) {
+      anc_child[j] = anc_parent[j];
     }
   }
   
