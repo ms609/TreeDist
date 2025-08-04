@@ -13,15 +13,19 @@ DuplicationTrees <- function(tree, duplications) {
   if (missing(duplications)) {
     duplications <- NTip(tree) + which(tree[["node.label"]] != "")
   }
-  edge <- tree[["edge"]]
-  if (dim(edge)[[1]] != NTip(tree) * 2 - 2) {
-    stop("`tree` must be bifurcating; try `MakeTreeBinary(tree)`")
-  }
-  parent <- edge[, 1]
-  child <- edge[, 2]
-  for (dupNode in duplications) {
-    children <- child[parent == dupNode]
+  if (length(duplications) == 0) {
+    tree
+  } else {
+    
+    edge <- tree[["edge"]]
+    if (dim(edge)[[1]] != NTip(tree) * 2 - 2) {
+      stop("`tree` must be bifurcating; try `MakeTreeBinary(tree)`")
+    }
+    parent <- edge[, 1]
+    child <- edge[, 2]
+    for (dupNode in duplications) {
+      children <- child[parent == dupNode]
+      do.call(c, lapply(children, function(c) DropTip(tree, c)))
+    }
   }
 }
-
-
