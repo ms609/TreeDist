@@ -8,20 +8,6 @@
 
 using namespace Rcpp;
 
-// Equivalent to TREETOOLS_SPLITLIST_INIT
-// Is it possible to invoke the constructor in a more elegant way,
-// and to avoid duplicating the process from TreeTools?
-__attribute__((constructor))                                     \
-  void _treedist_initialize_bitcounts() {                        \
-    for (int i = 65536; i--; ) {                                 \
-      int16 n_bits = 0;                                          \
-      for (int j = 16; j--; ) {                                  \
-        if (i & (1 << j)) n_bits += 1;                           \
-      }                                                          \
-      TreeTools::bitcounts[i] = n_bits;                          \
-    }                                                            \
-  }   
-  
 // [[Rcpp::export]]
 IntegerVector mismatch_size (const RawMatrix x, const RawMatrix y) {
   if (double(x.rows()) > double(std::numeric_limits<int16>::max())) {

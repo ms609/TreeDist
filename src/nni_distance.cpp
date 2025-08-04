@@ -9,7 +9,6 @@
 
 using namespace Rcpp;
 using TreeTools::SplitList;
-using TreeTools::powers_of_two;
 
 #define PARENT1(i) int16(edge1(i, 0))
 #define PARENT2(i) int16(edge2(i, 0))
@@ -145,7 +144,7 @@ void nni_edge_to_splits(const IntegerMatrix& edge,
   }
   
   for (int16 i = 0; i != *n_tip; i++) {
-    tmp_splits[i][int16(i / SL_BIN_SIZE)] = powers_of_two[i % SL_BIN_SIZE];
+    tmp_splits[i][int16(i / SL_BIN_SIZE)] = splitbit(1) << (i % SL_BIN_SIZE);
   }
   
   for (int16 i = 0; i != *n_edge - 1; i++) { /* final edge is second root edge */
