@@ -54,6 +54,7 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
+            remotes
             github::ms609/TreeTools
           dependencies: '"hard"'
           needs: benchmark
@@ -70,6 +71,7 @@ jobs:
       - name: Benchmark main
         working-directory: main
         run: |
+          Rscript -e 'install.packages("TreeTools")'
           R CMD INSTALL . --preclean --clean --byte-compile --no-docs --no-help --no-test-load --no-multiarch
           Rscript benchmark/_run_benchmarks.R
           mkdir ../pr/main-benchmark-results/
@@ -79,6 +81,7 @@ jobs:
       - name: Benchmark PR
         working-directory: pr
         run: |
+          Rscript -e 'remotes::install_github("ms609/TreeTools")'
           R CMD INSTALL . --preclean --clean --byte-compile --no-docs --no-help --no-test-load --no-multiarch
           Rscript benchmark/_run_benchmarks.R
           mkdir ./pr2-benchmark-results/
