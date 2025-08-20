@@ -200,11 +200,18 @@ double consensus_info (const List trees, const LogicalVector phylo,
 
 // [[Rcpp::export]]
 IntegerVector robinson_foulds_all_pairs(List tables) {
-  const int16 n_trees = tables.length();
+  const int16 n_trees = tables.size();
   if (n_trees < 2) return IntegerVector(0);
   
+  std::vector<Rcpp::XPtr<ClusterTable>> tbl;
+  tbl.reserve(n_trees);
+  for (int i = 0; i < n_trees; ++i) {
+    tbl.emplace_back(tables[i]);
+  }
+  
   IntegerVector shared(n_trees * (n_trees - 1) / 2);
-  IntegerVector::iterator write_pos = shared.begin();
+  auto write_pos = shared.begin();
+  
   std::array<int16, CT_MAX_LEAVES> S;
   
   int16 v = 0;
@@ -219,12 +226,11 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
   int16 W_i;
   
   for (int16 i = 0; i != n_trees - 1; i++) {
-    Rcpp::XPtr<ClusterTable> table_i = tables(i);
-    Rcpp::XPtr<ClusterTable> Xi(table_i);
+    auto Xi = tbl[i];
     
     for (int16 j = i + 1; j != n_trees; j++) {
-      Rcpp::XPtr<ClusterTable> table_j = tables(j);
-      Rcpp::XPtr<ClusterTable> Tj(table_j);
+      auto Tj = tbl[j];
+      
       int16 Spos = 0; // Empty the stack S
       int16 n_shared = 0;
       
@@ -237,14 +243,14 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
         } else {
           CT_POP(L, R, N, W_i);
           W = 1 + W_i;
-          w = w - W_i;
+          w -= W_i;
           while (w) {
             CT_POP(L_i, R_i, N_i, W_i);
             if (L_i < L) L = L_i;
             if (R_i > R) R = R_i;
-            N = N + N_i;
-            W = W + W_i;
-            w = w - W_i;
+            N += N_i;
+            W += W_i;
+            w -= W_i;
           };
           CT_PUSH(L, R, N, W);
           if (N == R - L + 1) { // L..R is contiguous, and must be tested
@@ -256,5 +262,6 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
       *write_pos++ = n_shared;
     }
   }
+  
   return shared;
 }
