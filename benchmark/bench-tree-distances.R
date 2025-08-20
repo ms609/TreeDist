@@ -10,6 +10,7 @@ Benchmark(PhylogeneticInfoDistance(tr200))
 
 Benchmark(RobinsonFoulds(tr50))
 Benchmark(RobinsonFoulds(tr200))
+Benchmark(RobinsonFoulds(tr200), min_time = 20)
 
 Benchmark(MutualClusteringInfo(tr50))
 Benchmark(MutualClusteringInfo(tr200))

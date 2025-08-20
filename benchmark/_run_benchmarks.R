@@ -1,2 +1,4 @@
-source("benchmark/_init.R")
-sapply(list.files("benchmark", "^bench\\-.*\\.R$", full.names = TRUE), source)
+benchFiles <- list.files("benchmark", "^bench\\-.*\\.R$", full.names = TRUE)
+for (benchFile in sample(benchFiles)) {
+  system2("Rscript", c("-e", shQuote(paste0("source('", benchFile, "')"))))
+}
