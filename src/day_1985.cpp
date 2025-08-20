@@ -199,18 +199,22 @@ double consensus_info (const List trees, const LogicalVector phylo,
 }
 
 // [[Rcpp::export]]
-IntegerVector robinson_foulds_all_pairs(List tables) {
+Rcpp::IntegerVector robinson_foulds_all_pairs(Rcpp::List tables) {
   const int16 n_trees = tables.size();
-  if (n_trees < 2) return IntegerVector(0);
+  if (n_trees < 2) return Rcpp::IntegerVector(0);
   
+  // Cache XPtrs once
   std::vector<Rcpp::XPtr<ClusterTable>> tbl;
   tbl.reserve(n_trees);
   for (int i = 0; i < n_trees; ++i) {
     tbl.emplace_back(tables[i]);
   }
   
-  IntegerVector shared(n_trees * (n_trees - 1) / 2);
-  auto write_pos = shared.begin();
+  const size_t n_pairs = static_cast<size_t>(n_trees) * (n_trees - 1) / 2;
+  
+  // Preallocate plain C++ memory
+  std::unique_ptr<int[]> buf(new int[n_pairs]);
+  int *write_pos = buf.get();
   
   std::array<int16, CT_MAX_LEAVES> S;
   
@@ -263,5 +267,5 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
     }
   }
   
-  return shared;
+  return Rcpp::IntegerVector(buf.get(), buf.get() + n_pairs);
 }
