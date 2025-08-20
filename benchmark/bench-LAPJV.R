@@ -5,5 +5,6 @@ test40 <- UnifMat(40)
 test400 <- UnifMat(400)
 test2000 <- UnifMat(2000)
 
-Benchmark("LAPJV40", ub(LAPJV(test40), LAPJV(test400), times = 100))
-Benchmark("LAPJV40", ub(LAPJV(test2000), times = 25))
+Benchmark(LAPJV(test40))
+Benchmark(LAPJV(test400))
+Benchmark(LAPJV(test2000))

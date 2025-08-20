@@ -15,4 +15,4 @@ if (interactive()) {
   ub(PathDist(postTrees), phangorn::path.dist(postTrees))
 }
 
-Benchmark("PathDist", ub(PathDist(postTrees)))
+Benchmark(PathDist(postTrees))
