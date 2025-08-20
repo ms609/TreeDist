@@ -35,12 +35,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // robinson_foulds_all_pairs
-IntegerVector robinson_foulds_all_pairs(List tables);
+Rcpp::IntegerVector robinson_foulds_all_pairs(Rcpp::List tables);
 RcppExport SEXP _TreeDist_robinson_foulds_all_pairs(SEXP tablesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type tables(tablesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type tables(tablesSEXP);
     rcpp_result_gen = Rcpp::wrap(robinson_foulds_all_pairs(tables));
     return rcpp_result_gen;
 END_RCPP
