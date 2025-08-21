@@ -104,7 +104,7 @@ InfoRobinsonFouldsSplits <- function(splits1, splits2,
 }
 
 #' @rdname Robinson-Foulds
-#' @importFrom TreeTools as.ClusterTable NSplits TopologyOnly
+#' @importFrom TreeTools NSplits TopologyOnly
 #' @export
 RobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
                             normalize = FALSE, reportMatching = FALSE) {
@@ -117,8 +117,7 @@ RobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
   }
   
   if (is.null(tree2)) {
-    ct <- as.ClusterTable(tree1)
-    rf <- robinson_foulds_all_pairs(if(is.list(ct)) ct else list(ct))
+    rf <- robinson_foulds_all_pairs_direct(tree1)
     if (similarity) {
       unnormalized <- structure(rf + rf, Size = length(tree1), class = "dist")
     } else {

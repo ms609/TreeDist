@@ -15,6 +15,9 @@ using TreeTools::ClusterTable;
 #include <cmath> /* for log2(), ceil() */
 #include <memory> /* for unique_ptr, make_unique */
 
+// Forward declaration
+IntegerVector robinson_foulds_all_pairs_impl(const std::vector<ClusterTable*>& tbl);
+
 // COMCLUSTER computes a strict consensus tree in O(knn).
 // COMCLUST requires O(kn).
 // trees is a list of objects of class phylo.
@@ -198,6 +201,7 @@ double consensus_info(const List trees, const LogicalVector phylo,
   return phylo_info ? info : info * n_tip;
 }
 
+// Original function that takes ClusterTable XPtrs (kept for backward compatibility)
 // [[Rcpp::export]]
 IntegerVector robinson_foulds_all_pairs(List tables) {
   const int n_trees = static_cast<int>(tables.size());
@@ -215,6 +219,34 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
   for (int i = 0; i < n_trees; ++i) {
     tbl.push_back(xptrs[i].get()); // .get() on XPtr => ClusterTable*
   }
+
+  return robinson_foulds_all_pairs_impl(tbl);
+}
+
+// Optimized function that takes phylo objects directly
+// [[Rcpp::export]]
+IntegerVector robinson_foulds_all_pairs_direct(List trees) {
+  const int n_trees = static_cast<int>(trees.size());
+  if (n_trees < 2) return IntegerVector(0);
+  
+  std::vector<std::unique_ptr<ClusterTable>> tables;
+  tables.reserve(n_trees);
+  for (int i = 0; i < n_trees; ++i) {
+    tables.emplace_back(std::make_unique<ClusterTable>(List(trees(i))));
+  }
+  
+  std::vector<ClusterTable*> tbl;
+  tbl.reserve(n_trees);
+  for (int i = 0; i < n_trees; ++i) {
+    tbl.push_back(tables[i].get());
+  }
+
+  return robinson_foulds_all_pairs_impl(tbl);
+}
+
+// Shared implementation for both functions
+IntegerVector robinson_foulds_all_pairs_impl(const std::vector<ClusterTable*>& tbl) {
+  const int n_trees = static_cast<int>(tbl.size());
   
   const size_t n_pairs = static_cast<size_t>(n_trees) * (n_trees - 1) / 2;
   IntegerVector shared = Rcpp::no_init(n_pairs);
