@@ -253,8 +253,10 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
       while (v) {
         if (Tj->is_leaf(v)) {
           const auto enc_v = Xi->ENCODE(v);
+          ASSERT(S_top < S_entries.data() + ct_max_leaves);
           *S_top++ = pack4(enc_v, enc_v, 1, 1);
         } else {
+          ASSERT(S_top > S_entries.data());
           Packed tmp = *--S_top;
           unpack4(tmp, L, R, N, W_i);
           
@@ -262,6 +264,7 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
           w -= W_i;
           
           if (w) { // Unroll first iteration - common case
+            ASSERT(S_top > S_entries.data());
             tmp = *--S_top;
             unpack4(tmp, L_i, R_i, N_i, W_i);
             
@@ -272,6 +275,7 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
             w -= W_i;
             
             while (w) {
+              ASSERT(S_top > S_entries.data());
               tmp = *--S_top;
               unpack4(tmp, L_i, R_i, N_i, W_i);
               
@@ -283,6 +287,7 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
             }
           }
           
+          ASSERT(S_top < S_entries.data() + ct_max_leaves);
           *S_top++ = pack4(L, R, N, W);
           
           if (N == R - L + 1) { // L..R is contiguous, and must be tested
