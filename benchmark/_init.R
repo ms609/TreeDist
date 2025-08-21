@@ -1,4 +1,5 @@
 library("TreeTools")
+library("TreeDist")
 set.seed(54321)
 
 Benchmark <- function(..., min_iterations = NULL) {
