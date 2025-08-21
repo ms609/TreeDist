@@ -69,9 +69,7 @@ InfoRobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
   if (!isTRUE(reportMatching)) {
     # Remove unnecessary metadata that will slow calculations
     tree1 <- TopologyOnly(tree1)
-    if (!is.null(tree2)) {
-      tree2 <- TopologyOnly(tree2)
-    }
+    tree2 <- TopologyOnly(tree2)
   }
   
   unnormalized <- CalculateTreeDistance(InfoRobinsonFouldsSplits, tree1, tree2, 
@@ -104,20 +102,25 @@ InfoRobinsonFouldsSplits <- function(splits1, splits2,
 }
 
 #' @rdname Robinson-Foulds
-#' @importFrom TreeTools NSplits TopologyOnly
+#' @importFrom TreeTools as.ClusterTable NSplits TopologyOnly
 #' @export
 RobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
                             normalize = FALSE, reportMatching = FALSE) {
   if (!isTRUE(reportMatching)) {
     # Remove unnecessary metadata that will slow calculations
     tree1 <- TopologyOnly(tree1)
-    if (!is.null(tree2)) {
-      tree2 <- TopologyOnly(tree2)
-    }
+    tree2 <- TopologyOnly(tree2)
   }
   
   if (is.null(tree2)) {
-    rf <- robinson_foulds_all_pairs_direct(tree1)
+    # Optimized path: avoid as.ClusterTable conversion by creating ClusterTable objects directly in C++
+    # Handle single phylo vs multiPhylo correctly to match as.ClusterTable behavior
+    if (inherits(tree1, "multiPhylo")) {
+      rf <- robinson_foulds_all_pairs_direct(tree1)
+    } else {
+      # Single phylo: pass as a list to match original logic
+      rf <- robinson_foulds_all_pairs_direct(list(tree1))
+    }
     if (similarity) {
       unnormalized <- structure(rf + rf, Size = length(tree1), class = "dist")
     } else {
