@@ -8,6 +8,10 @@ using namespace Rcpp;
 #include <TreeTools/root_tree.h> /* for root_on_node() */
 #include <TreeTools/ClusterTable.h> /* for ClusterTable() */
 using TreeTools::ClusterTable;
+using TreeTools::CTEntry;
+using TreeTools::ct_pop;
+using TreeTools::ct_push;
+using TreeTools::ct_max_leaves;
 
 #include <array> /* for array */
 #include <bitset> /* for bitset */
@@ -21,10 +25,9 @@ using TreeTools::ClusterTable;
 // [[Rcpp::export]]
 int COMCLUST(List trees) {
   
-  int16 v = 0, w = 0,
-    L, R, N, W,
-    L_i, R_i, N_i, W_i
-  ;
+  int16 v = 0, w = 0;
+  int16 L, R, N, W;
+  int16 L_i, R_i, N_i, W_i;
   
   ClusterTable X(List(trees(0)));
   std::array<int16, TreeTools::ct_max_leaves> S;
@@ -220,44 +223,51 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
   IntegerVector shared = Rcpp::no_init(n_pairs);
   int *write_pos = INTEGER(shared); // direct pointer into R memory
   
-  std::array<int16, TreeTools::ct_max_leaves> S; // keep if CT_PUSH/POP rely on it
   int16 v = 0, w = 0, L = 0, R = 0, N = 0, W = 0, L_i = 0, R_i = 0, N_i = 0, W_i = 0;
+  std::array<CTEntry, ct_max_leaves> S_entries;
+  CTEntry* S_top = S_entries.data(); // stack top pointer (points one past last element)
   
   for (int i = 0; i < n_trees - 1; ++i) {
     ClusterTable* Xi = tbl[i];
     
     for (int j = i + 1; j < n_trees; ++j) {
+      int16 n_shared = 0;
       ClusterTable* Tj = tbl[j];
-      
-      int16_t Spos = 0;
-      int16_t n_shared = 0;
       
       Tj->TRESET();
       Tj->NVERTEX_short(&v, &w);
       
-      do {
+      while (v) {
         if (Tj->is_leaf(v)) {
           const auto enc_v = Xi->ENCODE(v);
-          CT_PUSH(enc_v, enc_v, 1, 1);
+          ct_push(S_top, enc_v, enc_v, 1, 1);
         } else {
-          CT_POP(L, R, N, W_i);
+          ct_pop(S_top, L, R, N, W_i);
           W = 1 + W_i;
           w -= W_i;
-          while (w) {
-            CT_POP(L_i, R_i, N_i, W_i);
-            L = (L_i < L) ? L_i : L;
-            R = (R_i > R) ? R_i : R;
+          if (w) { // Unroll first iteration - common case
+            ct_pop(S_top, L_i, R_i, N_i, W_i);
+            L = std::min<int16>(L, L_i);
+            R = std::max<int16>(R, R_i);
             N += N_i;
             W += W_i;
             w -= W_i;
+            
+            while (w) {
+              ct_pop(S_top, L_i, R_i, N_i, W_i);
+              L = std::min<int16>(L, L_i);
+              R = std::max<int16>(R, R_i);
+              N += N_i;
+              W += W_i;
+            }
           }
-          CT_PUSH(L, R, N, W);
+          ct_push(S_top, L, R, N, W);
           if (N == R - L + 1) { // L..R is contiguous, and must be tested
-            if (Xi->ISCLUST(&L, &R)) ++n_shared;
+            if (Xi->ISCLUST(L, R)) ++n_shared;
           }
         }
         Tj->NVERTEX_short(&v, &w); // Doesn't count all-ingroup or all-tips
-      } while (v);
+      }
       *write_pos++ = n_shared;
     }
   }
