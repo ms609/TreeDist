@@ -39,7 +39,7 @@ jobs:
       - name: Checkout target branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.ref || 'master' }}
+          ref: ${{ github.event.pull_request.base.ref || 'main' }}
           path: main
 
       - name: Set up R
