@@ -19,7 +19,7 @@ using TreeTools::ClusterTable;
 // COMCLUST requires O(kn).
 // trees is a list of objects of class phylo.
 // [[Rcpp::export]]
-int COMCLUST (List trees) {
+int COMCLUST(List trees) {
   
   int16 v = 0, w = 0,
     L, R, N, W,
@@ -72,8 +72,8 @@ int COMCLUST (List trees) {
 // trees is a list of objects of class phylo, all with the same tip labels
 // (try RenumberTips(trees, trees[[1]]))
 // [[Rcpp::export]]
-double consensus_info (const List trees, const LogicalVector phylo,
-                       const NumericVector p) {
+double consensus_info(const List trees, const LogicalVector phylo,
+                      const NumericVector p) {
   
   int16 v = 0, w = 0,
     L, R, N, W,
@@ -200,52 +200,57 @@ double consensus_info (const List trees, const LogicalVector phylo,
 
 // [[Rcpp::export]]
 IntegerVector robinson_foulds_all_pairs(List tables) {
-  const int16 n_trees = tables.length();
+  const int n_trees = static_cast<int>(tables.size());
   if (n_trees < 2) return IntegerVector(0);
   
-  IntegerVector shared(n_trees * (n_trees - 1) / 2);
-  IntegerVector::iterator write_pos = shared.begin();
-  std::array<int16, CT_MAX_LEAVES> S;
+  std::vector<Rcpp::XPtr<ClusterTable>> xptrs;
+  xptrs.reserve(n_trees);
+  for (int i = 0; i < n_trees; ++i) {
+    Rcpp::XPtr<ClusterTable> xp = tables[i];
+    xptrs.emplace_back(xp);
+  }
   
-  int16 v = 0;
-  int16 w = 0;
-  int16 L;
-  int16 R;
-  int16 N;
-  int16 W;
-  int16 L_i;
-  int16 R_i;
-  int16 N_i;
-  int16 W_i;
+  std::vector<ClusterTable*> tbl;
+  tbl.reserve(n_trees);
+  for (int i = 0; i < n_trees; ++i) {
+    tbl.push_back(xptrs[i].get()); // .get() on XPtr => ClusterTable*
+  }
   
-  for (int16 i = 0; i != n_trees - 1; i++) {
-    Rcpp::XPtr<ClusterTable> table_i = tables(i);
-    Rcpp::XPtr<ClusterTable> Xi(table_i);
+  const size_t n_pairs = static_cast<size_t>(n_trees) * (n_trees - 1) / 2;
+  IntegerVector shared = Rcpp::no_init(n_pairs);
+  int *write_pos = INTEGER(shared); // direct pointer into R memory
+  
+  std::array<int16, CT_MAX_LEAVES> S; // keep if CT_PUSH/POP rely on it
+  int16 v = 0, w = 0, L = 0, R = 0, N = 0, W = 0, L_i = 0, R_i = 0, N_i = 0, W_i = 0;
+  
+  for (int i = 0; i < n_trees - 1; ++i) {
+    ClusterTable* Xi = tbl[i];
     
-    for (int16 j = i + 1; j != n_trees; j++) {
-      Rcpp::XPtr<ClusterTable> table_j = tables(j);
-      Rcpp::XPtr<ClusterTable> Tj(table_j);
-      int16 Spos = 0; // Empty the stack S
-      int16 n_shared = 0;
+    for (int j = i + 1; j < n_trees; ++j) {
+      ClusterTable* Tj = tbl[j];
+      
+      int16_t Spos = 0;
+      int16_t n_shared = 0;
       
       Tj->TRESET();
       Tj->NVERTEX_short(&v, &w);
       
       do {
         if (Tj->is_leaf(&v)) {
-          CT_PUSH(Xi->ENCODE(v), Xi->ENCODE(v), 1, 1);
+          const auto enc_v = Xi->ENCODE(v);
+          CT_PUSH(enc_v, enc_v, 1, 1);
         } else {
           CT_POP(L, R, N, W_i);
           W = 1 + W_i;
-          w = w - W_i;
+          w -= W_i;
           while (w) {
             CT_POP(L_i, R_i, N_i, W_i);
             if (L_i < L) L = L_i;
             if (R_i > R) R = R_i;
-            N = N + N_i;
-            W = W + W_i;
-            w = w - W_i;
-          };
+            N += N_i;
+            W += W_i;
+            w -= W_i;
+          }
           CT_PUSH(L, R, N, W);
           if (N == R - L + 1) { // L..R is contiguous, and must be tested
             if (Xi->ISCLUST(&L, &R)) ++n_shared;
@@ -256,5 +261,6 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
       *write_pos++ = n_shared;
     }
   }
+  
   return shared;
 }
