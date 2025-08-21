@@ -203,7 +203,6 @@ Rcpp::IntegerVector robinson_foulds_all_pairs(Rcpp::List tables) {
   const int16 n_trees = tables.size();
   if (n_trees < 2) return Rcpp::IntegerVector(0);
   
-  // Cache XPtrs once
   std::vector<Rcpp::XPtr<ClusterTable>> tbl;
   tbl.reserve(n_trees);
   for (int i = 0; i < n_trees; ++i) {
