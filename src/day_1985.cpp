@@ -247,8 +247,8 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
           w -= W_i;
           if (w) { // Unroll first iteration - common case
             ct_pop(S_top, L_i, R_i, N_i, W_i);
-            L = std::min<int16>(L, L_i);
-            R = std::max<int16>(R, R_i);
+            L = (L < L_i) ? L : L_i;
+            R = (R > R_i) ? R : R_i;
             N += N_i;
             W += W_i;
             w -= W_i;
