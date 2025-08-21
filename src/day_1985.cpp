@@ -38,7 +38,7 @@ int COMCLUST (List trees) {
     Ti.NVERTEX(&v, &w);
     
     do {
-      if (Ti.is_leaf(&v)) {
+      if (Ti.is_leaf(v)) {
         CT_PUSH(X.ENCODE(v), X.ENCODE(v), 1, 1);
       } else {
         CT_POP(L, R, N, W_i);
@@ -232,7 +232,7 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
       Tj->NVERTEX_short(&v, &w);
       
       do {
-        if (Tj->is_leaf(&v)) {
+        if (Tj->is_leaf(v)) {
           CT_PUSH(Xi->ENCODE(v), Xi->ENCODE(v), 1, 1);
         } else {
           CT_POP(L, R, N, W_i);
