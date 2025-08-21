@@ -19,7 +19,7 @@ using TreeTools::ClusterTable;
 // COMCLUST requires O(kn).
 // trees is a list of objects of class phylo.
 // [[Rcpp::export]]
-int COMCLUST (List trees) {
+int COMCLUST(List trees) {
   
   int16 v = 0, w = 0,
     L, R, N, W,
@@ -72,8 +72,8 @@ int COMCLUST (List trees) {
 // trees is a list of objects of class phylo, all with the same tip labels
 // (try RenumberTips(trees, trees[[1]]))
 // [[Rcpp::export]]
-double consensus_info (const List trees, const LogicalVector phylo,
-                       const NumericVector p) {
+double consensus_info(const List trees, const LogicalVector phylo,
+                      const NumericVector p) {
   
   int16 v = 0, w = 0,
     L, R, N, W,
