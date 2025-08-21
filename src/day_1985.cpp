@@ -232,7 +232,14 @@ IntegerVector robinson_foulds_all_pairs_direct(List trees) {
   std::vector<std::unique_ptr<ClusterTable>> tables;
   tables.reserve(n_trees);
   for (int i = 0; i < n_trees; ++i) {
-    tables.emplace_back(std::make_unique<ClusterTable>(List(trees(i))));
+    // Pass the phylo object directly, not wrapped in List()
+    // The ClusterTable constructor should handle error checking for large trees
+    try {
+      tables.emplace_back(std::make_unique<ClusterTable>(trees[i]));
+    } catch (const std::exception& e) {
+      // Re-throw any exceptions from ClusterTable constructor (e.g., large tree errors)
+      throw;
+    }
   }
   
   std::vector<ClusterTable*> tbl;
