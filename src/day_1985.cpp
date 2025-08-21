@@ -203,6 +203,13 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
   const int n_trees = static_cast<int>(tables.size());
   if (n_trees < 2) return IntegerVector(0);
   
+  std::vector<Rcpp::XPtr<ClusterTable>> xptrs;
+  xptrs.reserve(n_trees);
+  for (int i = 0; i < n_trees; ++i) {
+    Rcpp::XPtr<ClusterTable> xp = tables[i];
+    xptrs.emplace_back(xp);
+  }
+  
   std::vector<ClusterTable*> tbl;
   tbl.reserve(n_trees);
   for (int i = 0; i < n_trees; ++i) {
