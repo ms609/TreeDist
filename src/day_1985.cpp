@@ -238,8 +238,8 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
           w -= W_i;
           while (w) {
             CT_POP(L_i, R_i, N_i, W_i);
-            if (L_i < L) L = L_i;
-            if (R_i > R) R = R_i;
+            L = (L_i < L) ? L_i : L;
+            R = (R_i > R) ? R_i : R;
             N += N_i;
             W += W_i;
             w -= W_i;
