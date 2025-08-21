@@ -69,7 +69,9 @@ InfoRobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
   if (!isTRUE(reportMatching)) {
     # Remove unnecessary metadata that will slow calculations
     tree1 <- TopologyOnly(tree1)
-    tree2 <- TopologyOnly(tree2)
+    if (!is.null(tree2)) {
+      tree2 <- TopologyOnly(tree2)
+    }
   }
   
   unnormalized <- CalculateTreeDistance(InfoRobinsonFouldsSplits, tree1, tree2, 
@@ -109,7 +111,9 @@ RobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
   if (!isTRUE(reportMatching)) {
     # Remove unnecessary metadata that will slow calculations
     tree1 <- TopologyOnly(tree1)
-    tree2 <- TopologyOnly(tree2)
+    if (!is.null(tree2)) {
+      tree2 <- TopologyOnly(tree2)
+    }
   }
   
   if (is.null(tree2)) {
