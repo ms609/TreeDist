@@ -74,7 +74,9 @@ NyeSimilarity <- function(tree1, tree2 = NULL, similarity = TRUE,
   if (!isTRUE(reportMatching)) {
     # Remove unnecessary metadata that will slow calculations
     tree1 <- TopologyOnly(tree1)
-    tree2 <- TopologyOnly(tree2)
+    if (!is.null(tree2)) {
+      tree2 <- TopologyOnly(tree2)
+    }
   }
   
   unnormalized <- CalculateTreeDistance(NyeSplitSimilarity, tree1, tree2, 
@@ -192,7 +194,9 @@ JaccardRobinsonFoulds <- function(tree1, tree2 = NULL, k = 1L,
   if (!isTRUE(reportMatching)) {
     # Remove unnecessary metadata that will slow calculations
     tree1 <- TopologyOnly(tree1)
-    tree2 <- TopologyOnly(tree2)
+    if (!is.null(tree2)) {
+      tree2 <- TopologyOnly(tree2)
+    }
   }
   unnormalized <- CalculateTreeDistance(JaccardSplitSimilarity, tree1, tree2, 
                                         k = k, allowConflict = allowConflict, 
