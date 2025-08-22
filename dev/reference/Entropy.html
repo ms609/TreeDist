@@ -71,7 +71,9 @@ Probabilities equalling zero will be ignored.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">Entropy</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">Entropy</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">Ntropy</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -79,13 +81,14 @@ Probabilities equalling zero will be ignored.</p>
 
 
 <dl><dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Numerics or numeric vector specifying probabilities of outcomes.</p></dd>
+<dd><p>Series of numerics, or single numeric vector, specifying
+probabilities of outcomes (for <code>Entropy()</code>) or counts (for <code>Ntropy()</code>).</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p><code>Entropy()</code> returns the entropy of the specified probabilities,
-in bits.</p>
+    <p><code>Entropy()</code> and <code>Ntropy()</code> return the entropy of the specified
+probabilities or counts, in bits.</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
@@ -98,6 +101,8 @@ in bits.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">Entropy</span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">2</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span> <span class="co"># = 1</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
 <span class="r-in"><span><span class="fu">Entropy</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">4</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span> <span class="co"># = 2</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
+<span class="r-in"><span><span class="fu">Ntropy</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span>, <span class="fl">0</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="co"># = 2</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
 </code></pre></div>
     </div>
