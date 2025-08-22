@@ -26,53 +26,44 @@
  *************************************************************************/
 #include "tree_distances.h"
 using namespace Rcpp;
-using namespace std;
 
 
 // [[Rcpp::export]]
-List lapjv (NumericMatrix x, NumericVector maxX) {
-  const int16 n_row = x.nrow(), n_col = x.ncol(),
-              max_dim = (n_row > n_col) ? n_row : n_col,
-              spare_rows = n_row - n_col
-              ;
-  const cost max_score = BIG / max_dim;
+List lapjv(NumericMatrix x, NumericVector maxX) {
+  const int16 n_row = x.nrow();
+  const int16 n_col = x.ncol();
+  const int16 max_dim = (n_row > n_col) ? n_row : n_col;
+  const int16 spare_rows = n_row - n_col;
+  const cost max_score = cost(BIG / max_dim);
+  
+  std::vector<lap_col> rowsol(max_dim);
+  std::vector<lap_row> colsol(max_dim);
+  std::vector<cost> u(max_dim);
+  std::vector<cost> v(max_dim);
+  
+  cost_matrix input(max_dim, std::vector<cost>(max_dim));
+  
   const double x_max = maxX[0];
-  
-  lap_col *rowsol = new lap_col[max_dim];
-  lap_row *colsol = new lap_row[max_dim];
-  cost *u = new cost[max_dim], *v = new cost[max_dim];
-  
-  cost** input = new cost*[max_dim];
-  for (int16 i = 0; i != max_dim; i++) {
-    input[i] = new cost[max_dim];
-  }
-  
-  for (int16 r = n_row; r--;) {
-    for (int16 c = n_col; c--;) {
-      input[r][c] = cost(max_score * (x(r, c) / x_max));
+  const double scale_factor = max_score / x_max;
+  for (int16 r = 0; r < n_row; ++r) {
+    for (int16 c = 0; c < n_col; ++c) {
+      input[r][c] = cost(x(r, c) * scale_factor);
     }
-    for (int16 c = n_col; c != max_dim; c++) {
+    for (int16 c = n_col; c < max_dim; ++c) {
       input[r][c] = max_score;
     }
   }
-  for (int16 r = n_row; r != max_dim; r++) {
-    for (int16 c = 0; c != max_dim; c++) {
+  for (int16 r = n_row; r < max_dim; ++r) {
+    for (int16 c = 0; c < max_dim; ++c) {
       input[r][c] = max_score;
     }
   }
   
   cost score = lap(max_dim, input, rowsol, colsol, u, v);
   IntegerVector matching (n_row);
-  for (int16 i = 0; i != n_row; i++) {
+  for (int16 i = 0; i < n_row; ++i) {
     matching[i] = rowsol[i] < n_col ? rowsol[i] + 1 : NA_INTEGER;
   }
-  
-  delete [] u;
-  delete [] v;
-  delete [] rowsol;
-  delete [] colsol;
-  for (int16 i = 0; i != max_dim; i++) delete [] input[i];
-  delete [] input;
   
   return List::create(
     Named("score") = (double(score) - (std::abs(spare_rows) * max_score))
@@ -81,18 +72,18 @@ List lapjv (NumericMatrix x, NumericVector maxX) {
   );
 }
 
-bool nontrivially_less_than(cost a, cost b) {
+inline bool nontrivially_less_than(cost a, cost b) noexcept {
   return a + ((a > ROUND_PRECISION) ? 8 : 0) < b;
 }
 
 /* This function is the jv shortest augmenting path algorithm to solve the 
    assignment problem */
 cost lap(int16 dim,
-         cost **input_cost,
-         lap_col *rowsol,
-         lap_row *colsol,
-         cost *u,
-         cost *v)
+         cost_matrix &input_cost,
+         std::vector<lap_col> &rowsol,
+         std::vector<lap_row> &colsol,
+         std::vector<cost> &u,
+         std::vector<cost> &v)
   
   // input:
   // dim        - problem size
@@ -106,18 +97,31 @@ cost lap(int16 dim,
   
 {
   bool unassignedfound;
-  lap_row  i, imin, num_free = 0, previous_num_free, f, i0, k, free_row,
-           *predecessor, *freeunassigned;
-  lap_col  j, j1, j2 = 0, endofpath = 0, last = 0, low, up, *col_list, *matches;
+  lap_row i;
+  lap_row imin;
+  lap_row num_free = 0;
+  lap_row previous_num_free;
+  lap_row f;
+  lap_row i0;
+  lap_row k;
+  lap_row free_row;
+  
+  lap_col j;
+  lap_col j1;
+  lap_col j2 = 0;
+  lap_col endofpath = 0;
+  lap_col last = 0;
+  lap_col low;
+  lap_col up;
   /* Initializing min, endofpath, j2 and last is unnecessary, 
    * but avoids compiler warnings */
-  cost min = 0, h, umin, usubmin, v2, *d;
+  cost min = 0, h, umin, usubmin, v2;
   
-  freeunassigned = new lap_row[dim];        // List of unassigned rows.
-  col_list = new lap_col[dim];    // List of columns to be scanned in various ways.
-  matches = new lap_col[dim];     // Counts how many times a row could be assigned.
-  d = new cost[dim];              // 'Cost-distance' in augmenting path calculation.
-  predecessor = new lap_row[dim]; // Row-predecessor of column in augmenting/alternating path.
+  std::vector<lap_row> freeunassigned(dim);        // List of unassigned rows.
+  std::vector<lap_col> col_list(dim);    // List of columns to be scanned in various ways.
+  std::vector<lap_col> matches(dim);     // Counts how many times a row could be assigned.
+  std::vector<cost> d(dim);              // 'Cost-distance' in augmenting path calculation.
+  std::vector<lap_row> predecessor(dim); // Row-predecessor of column in augmenting/alternating path.
   
   // Init how many times a row will be assigned in the column reduction.
   for (i = 0; i != dim; i++) {
@@ -129,19 +133,23 @@ cost lap(int16 dim,
     // Find minimum cost over rows.
     min = input_cost[0][j];
     imin = 0;
-    for (i = 1; i != dim; i++) {
-      if (input_cost[i][j] < min) {
-        min = input_cost[i][j];
+    for (i = 1; i < dim; ++i) {
+      const cost current_cost = input_cost[i][j];
+      if (current_cost < min) {
+        min = current_cost;
         imin = i;
       }
     }
+    
     v[j] = min;
-    if (++matches[imin] == 1) {
+    ++matches[imin];
+    
+    if (matches[imin] == 1) {
       // Init assignment if minimum row assigned for first time.
       rowsol[imin] = j;
       colsol[j] = imin;
     } else if (v[j] < v[rowsol[imin]]) {
-      int16 j1 = rowsol[imin];
+      const lap_col j1 = rowsol[imin];
       rowsol[imin] = j;
       colsol[j] = imin;
       colsol[j1] = -1;
@@ -151,14 +159,14 @@ cost lap(int16 dim,
   }
   
   // REDUCTION TRANSFER
-  for (i = 0; i != dim; i++) {
+  for (i = 0; i < dim; ++i) {
     if (matches[i] == 0) { // Fill list of unassigned 'free' rows.
       freeunassigned[num_free++] = i;
     } else {
       if (matches[i] == 1) { // Transfer reduction from rows that are assigned once.
         j1 = rowsol[i];
         min = BIG;
-        for (j = 0; j < dim; j++) {
+        for (j = 0; j < dim; ++j) {
           if (j != j1) {
             if (input_cost[i][j] - v[j] < min) {
               min = input_cost[i][j] - v[j];
@@ -173,7 +181,7 @@ cost lap(int16 dim,
   //   AUGMENTING ROW REDUCTION
   int16 loopcnt = 0;           // do-loop to be done twice.
   do {
-    loopcnt++;
+    ++loopcnt;
     
     //     Scan all free rows.
     //     In some cases, a free row may be replaced with another one to be 
@@ -190,7 +198,8 @@ cost lap(int16 dim,
       umin = input_cost[i][0] - v[0];
       j1 = 0;
       usubmin = BIG;
-      for (j = 1; j < dim; j++) {
+      
+      for (j = 1; j < dim; ++j) {
         h = input_cost[i][j] - v[j];
         if (h < usubmin) {
           if (h >= umin) {
@@ -209,7 +218,7 @@ cost lap(int16 dim,
       if (nontrivially_less_than(umin, usubmin)) {
         //  Change the reduction of the minimum column to increase the minimum
         //  reduced cost in the row to the subminimum.
-        v[j1] = v[j1] - (usubmin - umin);
+        v[j1] -= (usubmin - umin);
       } else if (i0 > -1) {
           // Minimum and subminimum equal.
           // Minimum column j1 is assigned.
@@ -238,7 +247,7 @@ cost lap(int16 dim,
   } while (loopcnt < 2); // Repeat once.
   
   // AUGMENT SOLUTION for each free row.
-  for (f = 0; f != num_free; f++) {
+  for (f = 0; f < num_free; ++f) {
     free_row = freeunassigned[f];       // Start row of augmenting path.
     
     // Dijkstra shortest path algorithm.
@@ -254,6 +263,7 @@ cost lap(int16 dim,
     // Columns in up..dim-1 are to be considered later to find new minimum;
     // at this stage the list simply contains all columns.
     unassignedfound = false;
+    
     do {
       if (up == low) { // No more columns to be scanned for current minimum.
         last = low - 1;
@@ -261,7 +271,8 @@ cost lap(int16 dim,
         // Scan columns for up..dim-1 to find all indices for which new minimum occurs.
         // Store these indices between low..up-1 (increasing up).
         min = d[col_list[up++]];
-        for (k = up; k < dim; k++) {
+        
+        for (k = up; k < dim; ++k) {
           j = col_list[k];
           h = d[j];
           if (h <= min) {
@@ -276,7 +287,7 @@ cost lap(int16 dim,
         }
         // Check if any of the minimum columns happens to be unassigned.
         // If so, we have an augmenting path right away.
-        for (k = low; k != up; k++) {
+        for (k = low; k < up; ++k) {
           if (colsol[col_list[k]] < 0) {
             endofpath = col_list[k];
             unassignedfound = true;
@@ -293,7 +304,7 @@ cost lap(int16 dim,
         i = colsol[j1];
         h = input_cost[i][j1] - v[j1] - min;
         
-        for (k = up; k != dim; k++) {
+        for (k = up; k < dim; ++k) {
           j = col_list[k];
           v2 = input_cost[i][j] - v[j] - h;
           if (v2 < d[j]) {
@@ -319,7 +330,7 @@ cost lap(int16 dim,
     // Update column prices.
     for(k = last + 1; k--;) {
       j1 = col_list[k];
-      v[j1] = v[j1] + d[j1] - min;
+      v[j1] += d[j1] - min;
     }
     
     // Reset row and column assignments along the alternating path.
@@ -337,15 +348,8 @@ cost lap(int16 dim,
   for(i = dim; i--;) {
     j = rowsol[i];
     u[i] = input_cost[i][j] - v[j];
-    lapcost = lapcost + input_cost[i][j];
+    lapcost += input_cost[i][j];
   }
-  
-  // Free reserved memory.
-  delete[] predecessor;
-  delete[] freeunassigned;
-  delete[] col_list;
-  delete[] matches;
-  delete[] d;
-  
+
   return lapcost;
 }
