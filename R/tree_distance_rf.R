@@ -66,7 +66,6 @@
 #' @rdname Robinson-Foulds
 InfoRobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
                                 normalize = FALSE, reportMatching = FALSE) {
-  
   unnormalized <- CalculateTreeDistance(InfoRobinsonFouldsSplits, tree1, tree2, 
                                         reportMatching) * 2
   
@@ -101,9 +100,7 @@ InfoRobinsonFouldsSplits <- function(splits1, splits2,
 #' @export
 RobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
                             normalize = FALSE, reportMatching = FALSE) {
-  
   if (is.null(tree2)) {
-    # Optimized: pass trees directly to C++ to avoid as.ClusterTable conversion overhead
     ct <- as.ClusterTable(tree1)
     rf <- robinson_foulds_all_pairs(if (is.list(ct)) ct else list(ct))
     if (similarity) {
