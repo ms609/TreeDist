@@ -56,7 +56,7 @@ int COMCLUST(List trees) {
         };
         CT_PUSH(L, R, N, W);
         if (N == R - L + 1) { // L..R is contiguous, and must be tested
-          X.SETSW(&L, &R);
+          X.SETSW(L, R);
         }
       }
       Ti.NVERTEX(&v, &w);
@@ -154,7 +154,7 @@ double consensus_info(const List trees, const LogicalVector phylo,
           } else {
             if (N == R - L + 1) { // L..R is contiguous, and must be tested
               if (tables[i].CLUSTONL(&L, &R)) {
-                tables[j].SETSWX(&j_pos);
+                tables[j].SETSWX(j_pos);
                 assert(L > 0);
                 ++split_count[L - 1];
                 if (!split_size[L - 1]) {
@@ -162,7 +162,7 @@ double consensus_info(const List trees, const LogicalVector phylo,
                 }
                 assert(split_size[L - 1] > 0);
               } else if (tables[i].CLUSTONR(&L, &R)) {
-                tables[j].SETSWX(&j_pos);
+                tables[j].SETSWX(j_pos);
                 assert(R > 0);
                 ++split_count[R - 1];
                 if (!split_size[R - 1]) {
