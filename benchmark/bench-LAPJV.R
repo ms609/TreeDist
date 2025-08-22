@@ -1,0 +1,10 @@
+source("benchmark/_init.R")
+set.seed(1)
+UnifMat <- function(n) matrix(runif(n * n), n, n)
+test40 <- UnifMat(40)
+test400 <- UnifMat(400)
+test2000 <- UnifMat(2000)
+
+Benchmark(LAPJV(test40))
+Benchmark(LAPJV(test400))
+Benchmark(LAPJV(test2000))

@@ -11,17 +11,6 @@ on:
       - 'memcheck/**'
       - 'tests/testthat/**.R'
       - 'vignettes/**.Rmd'
-  pull_request:
-    branches:
-      - main
-      - master
-    paths:
-      - '.github/workflows/RcppDeepState.yml'
-      - 'src/**'
-      - 'inst/include/**'
-      - 'memcheck/**'
-      - 'tests/testthat/**.R'
-      - 'vignettes/**.Rmd'
       
 name: 'RcppDeepState analysis'
 jobs:

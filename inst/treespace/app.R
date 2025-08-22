@@ -273,7 +273,7 @@ ui <- fluidPage(theme = "treespace.css",
           HTML("<p>Do <a href=\"https://github.com/ms609/TreeTools/issues/new?title=Treespace",
                "app:\" title=\"Suggest improvements\">report</a> any bugs or",
                "feature requests to the maintainer (<a",
-               "href=\"https://community.dur.ac.uk/martin.smith/\"",
+               "href=\"https://smithlabdurham.github.io/\"",
                "title=\"Martin Smith\">Martin R. Smith</a>).</p>"),
         ),
         tabPanel("Analysis",
@@ -449,7 +449,7 @@ server <- function(input, output, session) {
   output$keptTrees <- renderText({
     nTrees <- length(treeFile())
     if (treesLoaded()) {
-      paste0("Keeping trees ", keptRange()[1], " to ", keptRange()[2], ".")
+      paste0("Keeping trees ", keptRange()[[1]], " to ", keptRange()[[2]], ".")
     } else {
       "Using example trees."
     }
@@ -469,7 +469,7 @@ server <- function(input, output, session) {
   })
   
   thinnedTrees <- reactive({
-    as.integer(seq(keptRange()[1], keptRange()[2], by = 2 ^ input$thinTrees))
+    as.integer(seq(keptRange()[[1]], keptRange()[[2]], by = 2 ^ input$thinTrees))
   })
   
   TreeNumberUpdate <- function() {
@@ -563,7 +563,7 @@ server <- function(input, output, session) {
   })
   
   nProjDim <- reactive({
-    dim(mapping())[2]
+    dim(mapping())[[2]]
   })
   
   dims <- debounce(reactive({
@@ -1076,7 +1076,7 @@ server <- function(input, output, session) {
   mstEnds <- bindCache(
     reactive({
       dist <- as.matrix(distances())
-      nRows <- dim(dist)[1]
+      nRows <- dim(dist)[[1]]
       withProgress(message = "Calculating MST", {
         selection <- unique(round(seq.int(1, nRows,
                                           length.out = max(2L, mstSize()))))
@@ -1098,11 +1098,11 @@ server <- function(input, output, session) {
     if (length(sil) == 0) sil <- -0.5
     nStop <- 400
     range <- c(0.5, 1)
-    negScale <- hcl.colors(nStop, "plasma")[seq(range[1] * nStop, 1,
-                                            length.out = nStop * range[1])]
+    negScale <- hcl.colors(nStop, "plasma")[seq(range[[1]] * nStop, 1,
+                                            length.out = nStop * range[[1]])]
     posScale <- hcl.colors(nStop, "viridis")
     
-    plot(seq(-range[1], range[2], length.out = nStop * sum(range)),
+    plot(seq(-range[[1]], range[[2]], length.out = nStop * sum(range)),
          rep(0, nStop * sum(range)),
          pch = 15, col = c(negScale, posScale),
          ylim = c(-2, 2),
@@ -1152,13 +1152,13 @@ server <- function(input, output, session) {
       for (i in seq_len(cl$n)) {
         col <- palettes[[min(length(palettes), cl$n)]][i]
         tr <- ape::consensus(r$allTrees[cl$cluster == i])
-        tr$edge.length <- rep(1, dim(tr$edge)[1])
+        tr$edge.length <- rep(1, dim(tr$edge)[[1]])
         plot(tr, edge.width = 2, font = 1, cex = 1,
              edge.color = col, tip.color = col)
       }
     } else {
       tr <- ape::consensus(r$allTrees)
-      tr$edge.length <- rep(1, dim(tr$edge)[1])
+      tr$edge.length <- rep(1, dim(tr$edge)[[1]])
       plot(tr,edge.width = 2, font = 1, cex = 1,
            edge.color = palettes[[1]],
            tip.color = palettes[[1]])
@@ -1362,9 +1362,9 @@ server <- function(input, output, session) {
       cl <- clusterings()
       proj <- mapping()
       withProgress(message = "Drawing 3D plot", {
-        rgl::rgl.open(useNULL = TRUE)
+        rgl::open3d(useNULL = TRUE)
         incProgress(0.1)
-        rgl::rgl.bg(color = "white")
+        rgl::bg3d(color = "white")
         rgl::plot3d(proj[, 1], proj[, 2], proj[, 3],
              aspect = 1, # Preserve aspect ratio - do not distort distances
              axes = FALSE, # Dimensions are meaningless
@@ -1378,9 +1378,16 @@ server <- function(input, output, session) {
           rgl::text3d(proj[, 1], proj[, 2], proj[, 3], thinnedTrees())
         }
         if (mstSize() > 0) {
-          apply(mstEnds(), 1, function(segment)
-            rgl::lines3d(proj[segment, 1], proj[segment, 2], proj[segment, 3],
-                    col = "#bbbbbb", lty = 1))
+          rgl::segments3d(
+            proj[t(mstEnds()), ],
+            col = if ("mstStrain" %in% input$display) {
+                rep(StrainCol(distances(), proj[, 1:3]), 
+                    each = 2) # each end of each segment
+              } else {
+                "#bbbbbb"
+              },
+            lty = 1
+          )
         }
       })
       rgl::rglwidget()

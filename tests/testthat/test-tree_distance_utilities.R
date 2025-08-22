@@ -1,11 +1,21 @@
 library("TreeTools", quietly = TRUE)
 
+
 test_that("Tree normalization works", {
-  expect_equal(0.5, NormalizeInfo(5, 3, 5, how = TRUE, 
-                                  InfoInTree = function(x, y) x + y, y = 1L))
-  expect_equal(0:4 / c(1, 2, 3, 3, 3), 
-               NormalizeInfo(0:4, 1:5, 3, InfoInTree = I, Combine = min))
-  expect_equal(3/4, NormalizeInfo(unnormalized = 3, 1, 1, how = 4L))
+  expect_equal(NormalizeInfo(unnormalized = 5,
+                             tree1 = BalancedTree(3),
+                             tree2 = BalancedTree(5),
+                             how = TRUE,
+                             InfoInTree = function(x, y) NTip(x) + NTip(y),
+                             y = SingleTaxonTree()),
+               5 / ((3 + 1) + (3 + 1)))
+  expect_equal(NormalizeInfo(unnormalized = 0:4,
+                             tree1 = lapply(1:5, BalancedTree),
+                             tree2 = BalancedTree(3),
+                             InfoInTree = NTip,
+                             Combine = min),
+               0:4 / c(1, 2, 3, 3, 3))
+  expect_equal(NormalizeInfo(unnormalized = 3, 1, 1, how = 4L), 3 / 4)
   expect_equal(as.dist(matrix(0:24 / 10, 5, 5)),
                NormalizeInfo(as.dist(matrix(0:24, 5, 5)),
                              rep(5, 5), rep(5, 5), InfoInTree = I),
@@ -118,14 +128,21 @@ test_that("Matches are reported", {
   splits1 <- as.Splits(tree1)
   splits2 <- as.Splits(tree2, tree1)
   
+  .ExpectAtOK <- function(at) {
+    expect_equal(4L, length(at))
+    expect_equal(names(at),
+                 c("matching", "matchedSplits", "matchedScores", "pairScores"))
+  }
+  
   Test <- function(Func, relaxed = FALSE, ...) {
+    
     at <- attributes(Func(tree1, tree2, reportMatching = TRUE, ...))
-    expect_equal(3L, length(at))
+    .ExpectAtOK(at)
     
     matchedSplits <- match(splits1, splits2)
     if (relaxed) {
       expect_equal(matchedSplits[!is.na(matchedSplits)],
-                   as.integer(at$matching[c(1, 3, 5)]))
+                   as.integer(at[["matching"]][c(1, 3, 5)]))
     } else {
       cs <- CompatibleSplits(splits1, splits2)
       cs[, matchedSplits] <- FALSE
@@ -134,16 +151,17 @@ test_that("Matches are reported", {
       
       expect_equal(matchedSplits, as.integer(at$matching))
     }
-    ghSplit <- at$matchedSplits[
+    ghSplit <- at[["matchedSplits"]][
       match(as.Splits(c(rep(FALSE, 6), TRUE, TRUE), letters[1:8]),
             splits1[[which(!is.na(matchedSplits))]])]
-    expect_equal("g h | a b c d e f => g h | a b c d e f", ghSplit)
+    expect_equal(ghSplit, "g h | a b c d e f => g h | a b c d e f")
     
     at <- attributes(Func(treeSym8, treeTwoSplits, reportMatching = TRUE, ...))
-    expect_equal(3L, length(at))
-    expect_equal(match(as.Splits(treeSym8), as.Splits(treeTwoSplits, treeSym8)),
-                 as.integer(at$matching))
-    expect_equal("a b | e f g h c d => a b | e f g h c d", at$matchedSplits[2])
+    .ExpectAtOK(at)
+    expect_equal(as.integer(at[["matching"]]),
+                 match(as.Splits(treeSym8), as.Splits(treeTwoSplits, treeSym8)))
+    expect_equal(at[["matchedSplits"]][[2]],
+                 "a b | e f g h c d => a b | e f g h c d")
   }
   
   Test(SharedPhylogeneticInfo)
@@ -159,24 +177,25 @@ test_that("Matches are reported", {
   Test(JaccardRobinsonFoulds, k = 2, allowConflict = TRUE)
   Test(RobinsonFoulds, relaxed = TRUE)
   Test(InfoRobinsonFoulds, relaxed = TRUE)
-
-    # Matching Split Distance matches differently:  
+  
+  # Matching Split Distance matches differently:  
   at <- attributes(MatchingSplitDistance(treeSym8, treeBal8, 
                                          reportMatching = TRUE))
-  expect_equal(3L, length(at))
-  expect_equal(c(1:3, 5:4), as.integer(at$matching))
-  expect_equal("a b | e f g h c d => a b | e f g h c d", at$matchedSplits[5])
+  .ExpectAtOK(at)
+  expect_equal(as.integer(at$matching), c(1:3, 5:4))
+  expect_equal(at[["matchedSplits"]][[5]],
+               "a b | e f g h c d => a b | e f g h c d")
   
   # Zero match:
   expect_true(attr(SharedPhylogeneticInfo(
-                    ape::read.tree(text="((a, b), (c, d));"),
-                    ape::read.tree(text="((a, c), (b, d));"), 
-                    reportMatching = TRUE),
-                    "matchedSplits") %in% c(
-                      "a b | c d .. a c | b d",
-                      "a b | c d .. b d | a c",
-                      "c d | a b .. a c | b d",
-                      "c d | a b .. b d | a c"))
+    ape::read.tree(text = "((a, b), (c, d));"),
+    ape::read.tree(text = "((a, c), (b, d));"), 
+    reportMatching = TRUE),
+    "matchedSplits") %in% c(
+      "a b | c d .. a c | b d",
+      "a b | c d .. b d | a c",
+      "c d | a b .. a c | b d",
+      "c d | a b .. b d | a c"))
 })
 
 test_that("Matchings are calculated in both directions", {
@@ -219,8 +238,8 @@ test_that(".TreeDistance() supports all sizes", {
     MASTSize(list(bal = BalancedTree(7), pec = PectinateTree(7)),
              as.phylo(0:3, 7)))
   expect_equal(t(NNIDist(BalancedTree(7), as.phylo(0:3, 7))),
-    NNIDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
-             as.phylo(0:3, 7))[1, , ])
+               NNIDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
+                       as.phylo(0:3, 7))[1, , ])
   expect_error(.TreeDistance(RobinsonFoulds, PectinateTree(1:6),
                              PectinateTree(6)))
 })
@@ -234,4 +253,105 @@ test_that("Unrooteds are handled by MAST", {
 test_that("Entropy() supports dots input", {
   expect_identical(2, Entropy(rep(1/4, 4)))
   expect_identical(1, Entropy(0, .5, 1/2))
+})
+
+test_that(".SharedOnly() works", {
+  ah <- letters[1:8]
+  bi <- letters[2:9]
+  bh <- letters[2:8]
+  ch <- letters[3:8]
+  ci <- letters[3:9]
+  balAH <- BalancedTree(ah)
+  pecAH <- PectinateTree(ah)
+  pecBI <- PectinateTree(bi)
+  balCH <- BalancedTree(ch)
+  pecCI <- PectinateTree(ci)
+  
+  expect_equal( # 1 v 1
+    .SharedOnly(balAH, balCH),
+    list(KeepTip(balAH, intersect(ah, ch)),
+         KeepTip(balCH, intersect(ah, ch)))
+  )
+  expect_equal( # 1 v N
+    .SharedOnly(balAH, c(balAH, balCH)),
+    list(list(balAH, KeepTip(balAH, ch)),
+         list(balAH, balCH))
+  )
+  expect_equal( # N v 1
+    .SharedOnly(c(balAH, balCH), balAH),
+    list(list(balAH, balCH),
+         list(balAH, KeepTip(balAH, ch)))
+  )
+  expect_equal( # N v N, all tips differ
+    .SharedOnly(c(balAH, balCH), c(pecBI, pecCI)),
+    list(
+      list(KeepTip(balAH, bh), KeepTip(balAH, ch),
+           balCH, balCH),
+      list(KeepTip(pecBI, bh), KeepTip(pecCI, ch),
+           KeepTip(pecBI, ch), KeepTip(pecCI, ch))
+    )
+  )
+  expect_equal( # N v N, each list same tips
+    .SharedOnly(c(balAH, pecAH), c(pecBI, pecBI)),
+    list(
+      list(KeepTip(balAH, bh), KeepTip(balAH, bh),
+           KeepTip(pecAH, bh), KeepTip(pecAH, bh)),
+      list(KeepTip(pecBI, bh), KeepTip(pecBI, bh),
+           KeepTip(pecBI, bh), KeepTip(pecBI, bh))
+    )
+  )
+  expect_equal( # N v M, first tips same
+    .SharedOnly(c(balAH, balAH), c(pecBI, pecCI, balAH)),
+    list(
+      list(KeepTip(balAH, bh), KeepTip(balAH, ch), balAH,
+           KeepTip(balAH, bh), KeepTip(balAH, ch), balAH),
+      list(KeepTip(pecBI, bh), KeepTip(pecCI, ch), balAH,
+           KeepTip(pecBI, bh), KeepTip(pecCI, ch), balAH)
+    )
+  )
+  expect_equal( # N v M, second tips same
+    .SharedOnly(c(pecBI, pecCI, balAH), c(balAH, balAH)),
+    list(
+      list(KeepTip(pecBI, bh), KeepTip(pecBI, bh),
+           KeepTip(pecCI, ch), KeepTip(pecCI, ch),
+           balAH, balAH),
+      list(KeepTip(balAH, bh), KeepTip(balAH, bh),
+           KeepTip(balAH, ch), KeepTip(balAH, ch),
+           balAH, balAH)
+    )
+  )
+  expect_equal(.SharedOnly(balAH, NULL), list(NULL, NULL))
+  expect_equal(
+    .SharedOnly(c(balAH, pecBI, balCH), NULL),
+    list(
+      list(KeepTip(balAH, bh), KeepTip(balAH, ch),
+           KeepTip(pecBI, ch)),
+      list(KeepTip(pecBI, bh), balCH,
+           balCH)
+    )
+  )
+  
+  t1 <- structure(list(
+    t1_1 = structure(list(edge = structure(
+      c(7L, 8L, 9L, 9L, 8L, 7L, 10L, 10L, 11L, 11L, 8L, 9L, 1L, 6L, 2L, 10L, 
+        3L, 11L, 4L, 5L), dim = c(10L, 2L)),
+      Nnode = 5L, tip.label = c("1", "2", "3", "4", "5", "6")),
+      order = "preorder", class = "phylo"),
+    t1_2 = structure(list(edge = structure(
+      c(7L, 8L, 8L, 7L, 9L, 10L, 10L, 9L, 11L, 11L, 8L, 1L, 6L, 9L, 10L, 2L, 3L,
+        11L, 4L, 5L), dim = c(10L, 2L)),
+      Nnode = 5L, tip.label = c("1", "2", "3", "4", "5", "6")),
+      order = "preorder", class = "phylo")),
+    firstHit = c(seed = 0, final = 2), class = "multiPhylo")
+  t2 <- structure(list(
+    t2_1 = structure(list(
+      edge = structure(c(6L, 6L, 7L, 7L, 8L, 8L, 9L, 9L, 1L, 7L, 2L, 8L, 3L, 9L,
+                         4L, 5L), dim = c(8L, 2L)),
+      Nnode = 4L, tip.label = c("2", "3", "4", "5", "6")), order = "preorder",
+      class = "phylo")),
+    firstHit = c(seed = 0, final = 1), class = "multiPhylo")
+  expect_equal(class(.SharedOnly(t1, t2)[[2]][[1]]), class(t2[[1]]))
+  expect_equal(class(.SharedOnly(t2, t1)[[1]][[1]]), class(t2[[1]]))
+  expect_equal(class(.SharedOnly(t2, t2)[[1]][[1]]), class(t2[[1]]))
+  
 })

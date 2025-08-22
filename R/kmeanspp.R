@@ -42,7 +42,7 @@ KMeansPP.matrix <- function(x, k = 2, nstart = 10, ...) {
     return(kmeans(x, centers = k, ...))
   }
   
-  n <- dim(x)[1]
+  n <- dim(x)[[1]]
   ret <- list(tot.withinss = Inf)
   d <- as.matrix(dist(x))
   
@@ -50,13 +50,15 @@ KMeansPP.matrix <- function(x, k = 2, nstart = 10, ...) {
     centres <- c(sample.int(n, 1), numeric(k - 1))
     
     for (i in 2:k) {
-      centres[i] <- sample.int(
-        n, 1, prob = apply(d[centres, , drop = FALSE], 2, min) ^ 2
-      )
+      p <- apply(d[centres, , drop = FALSE], 2, min) ^ 2
+      if (!any(p != 0)) {
+        stop("Not enough distinct data points to compute clustering")
+      }
+      centres[i] <- sample.int(n, 1, prob = p)
     }
     
     proposal <- kmeans(x, centers = x[centres, ], ...)
-    if (proposal$tot.withinss < ret$tot.withinss){
+    if (proposal[["tot.withinss"]] < ret[["tot.withinss"]]){
       ret <- proposal
     }
   }
@@ -84,13 +86,15 @@ KMeansPP.dist <- function(x, k = 2, nstart = 10, ...) {
     centres <- c(sample.int(n, 1), numeric(k - 1))
     
     for (i in 2:k) {
-      centres[i] <- sample.int(
-        n, 1, prob = apply(d[centres, , drop = FALSE], 2, min) ^ 2
-      )
+      p <- apply(d[centres, , drop = FALSE], 2, min) ^ 2
+      if (!any(p != 0)) {
+        stop("Not enough distinct data points to compute clustering")
+      }
+      centres[i] <- sample.int(n, 1, prob = p)
     }
     
     proposal <- kmeans(x, centers = d[centres, ], ...)
-    if (proposal$tot.withinss < ret$tot.withinss){
+    if (proposal[["tot.withinss"]] < ret[["tot.withinss"]]){
       ret <- proposal
     }
   }

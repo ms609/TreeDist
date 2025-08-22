@@ -23,7 +23,8 @@ KCDiameter(tree)
 \item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 \code{tree2 = NULL} will compute distances between each pair of trees in the list
-\code{tree1} using a fast algorithm based on Day (1985).}
+\code{tree1} using a fast algorithm based on
+\insertCite{Day1985;textual}{TreeDist}.}
 
 \item{Vector}{Function converting a tree to a numeric vector.
 
@@ -113,8 +114,8 @@ tree3 <- ape::read.tree(text = "(a, (b, (c, (d, (e, ((f, g), h))))));")
 trees <- c(tree1, tree2, tree3)
 KendallColijn(trees)
 KendallColijn(trees, Vector = SplitVector)
-KCDiameter(trees)
 KCDiameter(4)
+KCDiameter(trees)
 }
 \references{
 \insertAllCited{}

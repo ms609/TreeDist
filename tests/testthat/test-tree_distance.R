@@ -1,24 +1,26 @@
-# Labels in different order to confound as.Splits
-treeSym8 <- ape::read.tree(text="((e, (f, (g, h))), (((a, b), c), d));")
-treeBal8 <- ape::read.tree(text="(((e, f), (g, h)), ((a, b), (c, d)));")
-treeOpp8 <- ape::read.tree(text="(((a, f), (c, h)), ((g, b), (e, d)));")
-treesSBO8 <- structure(list(treeSym8, treeBal8, treeOpp8), 
-                            class = "multiPhylo")
-treesSSBB8 <- structure(list(treeSym8, treeSym8, treeBal8, treeBal8), 
-                            class = "multiPhylo")
-
-treeCat8 <- ape::read.tree(text="((((h, g), f), e), (d, (c, (b, a))));")
-treeTac8 <- ape::read.tree(text="((((e, c), g), a), (h, (b, (d, f))));")
-treeStar8 <- ape::read.tree(text="(e, c, g, h, b, a, d, f);")
-
-treeAb.Cdefgh <- ape::read.tree(text="((a, b), (c, d, e, f, g, h));")
-treeAbc.Defgh <- ape::read.tree(text="((a, b, c), (d, e, f, g, h));")
-treeAcd.Befgh <- ape::read.tree(text="((a, c, d), (b, e, f, g, h));")
-treeAbcd.Efgh <- ape::read.tree(text="((a, b, c, d), (e, f, g, h));")
-treeTwoSplits <- ape::read.tree(text="(((a, b), c, d), (e, f, g, h));")
-
-testTrees <- c(treesSBO8, treeCat8, treeTac8, treeStar8, treeAb.Cdefgh,
-               treeAbc.Defgh, treeAbcd.Efgh, treeAcd.Befgh, treeTwoSplits)
+{
+  # Labels in different order to confound as.Splits
+  treeSym8 <- ape::read.tree(text="((e, (f, (g, h))), (((a, b), c), d));")
+  treeBal8 <- ape::read.tree(text="(((e, f), (g, h)), ((a, b), (c, d)));")
+  treeOpp8 <- ape::read.tree(text="(((a, f), (c, h)), ((g, b), (e, d)));")
+  treesSBO8 <- structure(list(treeSym8, treeBal8, treeOpp8), 
+                              class = "multiPhylo")
+  treesSSBB8 <- structure(list(treeSym8, treeSym8, treeBal8, treeBal8), 
+                              class = "multiPhylo")
+  
+  treeCat8 <- ape::read.tree(text="((((h, g), f), e), (d, (c, (b, a))));")
+  treeTac8 <- ape::read.tree(text="((((e, c), g), a), (h, (b, (d, f))));")
+  treeStar8 <- ape::read.tree(text="(e, c, g, h, b, a, d, f);")
+  
+  treeAb.Cdefgh <- ape::read.tree(text="((a, b), (c, d, e, f, g, h));")
+  treeAbc.Defgh <- ape::read.tree(text="((a, b, c), (d, e, f, g, h));")
+  treeAcd.Befgh <- ape::read.tree(text="((a, c, d), (b, e, f, g, h));")
+  treeAbcd.Efgh <- ape::read.tree(text="((a, b, c, d), (e, f, g, h));")
+  treeTwoSplits <- ape::read.tree(text="(((a, b), c, d), (e, f, g, h));")
+  
+  testTrees <- c(treesSBO8, treeCat8, treeTac8, treeStar8, treeAb.Cdefgh,
+                 treeAbc.Defgh, treeAbcd.Efgh, treeAcd.Befgh, treeTwoSplits)
+}
 
 test_that("Split compatibility is correctly established", {
   expect_true(SplitsCompatible(as.logical(c(0,0,1,1,0)), 
@@ -54,24 +56,13 @@ NormalizationTest <- function(FUNC, ...) {
                tolerance = 1e-7)
 }
 
-test_that("Bad labels cause error", {
-  treeBadLabel8 <- ape::read.tree(text="((a, b, c, D), (e, f, g, h));")
-  lapply(methodsToTest, function(Func) 
-    expect_error(Func(treeSym8, treeBadLabel8)))
-})
-
 test_that("Size mismatch causes error", {
   treeSym7 <- ape::read.tree(text="((e, (f, g)), (((a, b), c), d));")
   splits7 <- as.Splits(treeSym7)
   splits8 <- as.Splits(treeSym8)
   
-  lapply(methodsToTest, function(Func) 
-    expect_error(Func(treeSym8, treeSym7)))
-  
-  lapply(methodsToTest, function(Func) 
-    expect_error(Func(treeSym7, treeSym8)))
-  
-  expect_error(MeilaVariationOfInformation(splits7, splits8))
+  expect_error(MeilaVariationOfInformation(splits7, splits8),
+               "Split lengths differ")
   
   Test <- function(Func) {
     expect_error(Func(splits8, as.Splits(BalancedTree(9)), 8))
@@ -92,11 +83,82 @@ test_that("Metrics handle polytomies", {
          function(Func) expect_equal(0, Func(treeSym8, polytomy8)))
 })
 
+test_that(".AllTipsSame()", {
+  expect_true(.AllTipsSame(1:2, NULL))
+  expect_true(.AllTipsSame(list(1:2, 1:2), NULL))
+  expect_false(.AllTipsSame(list(1:2, 3:2), NULL))
+  expect_true(.AllTipsSame(list(1:2, 1:2, 1:2), NULL))
+  expect_false(.AllTipsSame(list(1:2, 3:2, 1:2), NULL))
+  expect_false(.AllTipsSame(list(3:2, 1:2, 1:2), NULL))
+  expect_true(.AllTipsSame(1:2, 1:2))
+  expect_false(.AllTipsSame(1:2, 1))
+  
+  expect_true(.AllTipsSame(list(1:2), list(1:2)))
+  expect_true(.AllTipsSame(1:2, list(1:2)))
+  expect_true(.AllTipsSame(1:2, 1:2))
+  expect_true(.AllTipsSame(list(1:2), 1:2))
+  
+  expect_false(.AllTipsSame(list(1:2), list(3:2)))
+  expect_false(.AllTipsSame(1:2, list(3:2)))
+  expect_false(.AllTipsSame(1:2, 3:2))
+  expect_false(.AllTipsSame(list(1:2), 3:2))
+  
+  expect_true(.AllTipsSame(1:2, list(1:2, 1:2)))
+  expect_true(.AllTipsSame(list(1:2), list(1:2, 1:2)))
+  expect_true(.AllTipsSame(list(1:2, 1:2), list(1:2, 1:2)))
+  expect_true(.AllTipsSame(list(1:2, 1:2), 1:2))
+  
+  expect_false(.AllTipsSame(1:3, list(1:2, 1:3)))
+  expect_false(.AllTipsSame(1:3, list(1:3, 1:2)))
+  expect_false(.AllTipsSame(list(1:3), list(1:3, 1:2)))
+  
+  expect_true(.AllTipsSame(1:4, list(a = 1:4, b = 4:1, c = c(4L, 1L, 2L, 3L))))
+})
+
+test_that(".MaxValue() succeeds", {
+  list1 <- list(sym = treeSym8, bal = treeBal8)
+  list2 <- list(sym = treeSym8, abc = treeAbc.Defgh, abcd = treeAbcd.Efgh)
+  dimNames <- list(names(list1), names(list2))
+  
+  expect_equal(
+    MutualClusteringInfo(list1, list2[[2]], normalize = FALSE),
+    c(sym = MutualClusteringInfo(treeSym8, treeAbc.Defgh, normalize = FALSE),
+      bal = MutualClusteringInfo(treeBal8, treeAbc.Defgh, normalize = FALSE))
+  )
+  expect_equal(
+    as.double(t(MutualClusteringInfo(list1, list2, normalize = FALSE))),
+    as.double(c(MutualClusteringInfo(list1[[1]], list2, normalize = FALSE),
+                MutualClusteringInfo(list1[[2]], list2, normalize = FALSE)))
+  )
+  
+  expect_equal(
+    .MaxValue(list1, list2[[2]], Value = ClusteringEntropy),
+    c(sym = .MaxValue(treeSym8, treeAbc.Defgh, Value = ClusteringEntropy),
+      bal = .MaxValue(treeBal8, treeAbc.Defgh, Value = ClusteringEntropy))
+  )
+  expect_equal(
+    as.double(t(.MaxValue(list1, list2, ClusteringEntropy))),
+    as.double(c(.MaxValue(list1[[1]], list2, ClusteringEntropy),
+                .MaxValue(list1[[2]], list2, ClusteringEntropy)))
+  )
+  
+  expect_equal(.MaxValue(list1[[1]], NULL, ClusteringEntropy), double(0))
+  
+  expect_equal(.MaxValue(list1, NULL, ClusteringEntropy),
+               sum(ClusteringEntropy(list1)))
+  
+  expect_equal(.MaxValue(list2, NULL, ClusteringEntropy),
+               c(.MaxValue(list2[-3], NULL, ClusteringEntropy),
+                 .MaxValue(list2[-2], NULL, ClusteringEntropy),
+                 .MaxValue(list2[-1], NULL, ClusteringEntropy)
+                 ))
+})
+
 #Func <- ClusteringInfoDistance # FUNC =
 test_that("Output dimensions are correct", {
   list1 <- list(sym = treeSym8, bal = treeBal8)
   list2 <- list(sym = treeSym8, abc = treeAbc.Defgh, abcd = treeAbcd.Efgh)
-  dimNames <- list(c("sym", "bal"), c("sym", "abc", "abcd"))
+  dimNames <- list(names(list1), names(list2))
   
   Test <- function(Func) {
     allPhylo <- matrix(
@@ -117,7 +179,8 @@ test_that("Output dimensions are correct", {
   lapply(methodsToTest, Test)
 })
 
-test_that("Robinson Foulds Distance is correctly calculated", {
+test_that("RF Distance is correctly calculated", {
+  skip_if_not_installed("phangorn")
   PhangRF2 <- function(t1, t2) phangorn::RF.dist(reorder(t1, "cladewise"),
                                                  reorder(t2, "cladewise"))
   RFTest <- function(t1, t2) {
@@ -151,7 +214,6 @@ test_that("Robinson Foulds Distance is correctly calculated", {
 })
 
 test_that("Shared Phylogenetic Info is correctly calculated", {
-  
   expect_equal(5.529821, tolerance = 1e-7,
                cpp_shared_phylo(
                  as.Splits(as.logical(c(1, 1, 1, 1, 0, 0, 0, 0))),
@@ -368,6 +430,10 @@ test_that("Clustering information is correctly calculated", {
                MutualClusteringInfo(treeAbc.Defgh, treeAb.Cdefgh),
                tolerance = 1e-05)
   
+  zeroTree <- TreeTools::ZeroTaxonTree()
+  expect_equal(MutualClusteringInfo(zeroTree, zeroTree), 0)
+  expect_equal(ClusteringInfoDistance(zeroTree, zeroTree), 0)
+  
   
   
   # Different resolution
@@ -383,6 +449,7 @@ test_that("Clustering information is correctly calculated", {
     tip.label = c("t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10",
                   "t11", "t12", "t13", "t14", "t15", "t16", "t17", "t18", "t19",
                   "t20"), br = NULL), class = "phylo")
+  # NOT in Preorder.  Preordering the tree will change the matching.
   threeAwayPoly <- structure(
     list(edge = structure(c(21L, 22L, 23L, 24L, 25L, 26L, 27L, 28L, 29L, 29L, 
                             28L, 27L, 26L, 30L, 30L, 30L, 26L, 31L, 31L, 25L, 
@@ -398,8 +465,9 @@ test_that("Clustering information is correctly calculated", {
   expect_equal(
     MutualClusteringInfo(threeAwayPoly, randomBif20),
     MutualClusteringInfo(randomBif20, threeAwayPoly))
-  match <- MutualClusteringInfo(randomBif20, threeAwayPoly, reportMatching = TRUE)
-  expect_equal(c(NA, NA,  1,  2, NA,  3,  7, 11, 10,  4,  6,  9,  8, NA,  5, 12, NA),
+  match <- MutualClusteringInfo(randomBif20, threeAwayPoly, 
+                                reportMatching = TRUE)
+  expect_equal(c(NA, NA, 1, 2, NA, 3, 7, 11, 10, 4, 6, 9, 8, NA, 5, 12, NA),
                attr(match, "matching"))
   
   # Multiple bins, calculated expectation
@@ -481,10 +549,11 @@ test_that("Matchings are correct", {
     MutualClusteringInfo(threeAwayPoly, randomBif20),
     MutualClusteringInfo(randomBif20, threeAwayPoly))
   
-  
+  library("TreeTools", quietly = TRUE)
   t1 <- PectinateTree(letters[1:11])
   t2 <- ape::read.tree(text = "(a, (c, (b, (d, e, ((g, h, f), (k, (j, i)))))));")
   t3 <- CollapseNode(PectinateTree(c(letters[11], letters[1:10])), 16:19)
+  s0 <- as.Splits(ZeroTaxonTree())
   s1 <- as.Splits(t1)
   s2 <- as.Splits(t2, t1)
   s3 <- as.Splits(t3, t1)
@@ -504,6 +573,9 @@ test_that("Matchings are correct", {
   
   
   Test <- function(CppFn, x12, x21, ...) {
+    
+    r0 <- CppFn(s0, s0, 0, ...)
+    expect_equal(r0$score, 0)
     
     r12 <- CppFn(s1, s2, n, ...)
     r21 <- CppFn(s2, s1, n, ...)
@@ -573,14 +645,14 @@ test_that("Matchings are correct", {
 })
 
 test_that("Matching Split Distance is correctly calculated", {
-  expect_equal(0L, MatchingSplitDistance(treeSym8, treeSym8))
-  expect_equal(0L, MatchingSplitDistance(treeStar8, treeSym8))
-  expect_equal(0L, MatchingSplitDistance(treeStar8, treeStar8))
+  expect_equal(MatchingSplitDistance(treeSym8, treeSym8), 0L)
+  expect_equal(MatchingSplitDistance(treeStar8, treeSym8), 0L)
+  expect_equal(MatchingSplitDistance(treeStar8, treeStar8), 0L)
   match0 <- MatchingSplitDistance(treeStar8, treeStar8, reportMatching = TRUE)
-  expect_equal(rep(0L, 4), c(match0, vapply(attributes(match0), length, 0)),
-               ignore_attr = TRUE)
-  expect_equal(1L, MatchingSplitDistance(treeAb.Cdefgh, treeAbc.Defgh))
-  expect_equal(2L, MatchingSplitDistance(treeAb.Cdefgh, treeAbcd.Efgh))
+  expect_equal(c(match0, vapply(attributes(match0), length, 0)),
+               rep(0L, 5), ignore_attr = TRUE)
+  expect_equal(MatchingSplitDistance(treeAb.Cdefgh, treeAbc.Defgh), 1L)
+  expect_equal(MatchingSplitDistance(treeAb.Cdefgh, treeAbcd.Efgh), 2L)
   
   splitAB <- as.Splits(c(rep(TRUE, 2), rep(FALSE, 7)))
   splitABC <- as.Splits(c(rep(TRUE, 3), rep(FALSE, 6)))
@@ -589,20 +661,26 @@ test_that("Matching Split Distance is correctly calculated", {
   splitABCDE <- as.Splits(c(rep(TRUE, 5), rep(FALSE, 4)))
   splitAI <- as.Splits(c(TRUE, rep(FALSE, 7), TRUE))
   
-  expect_equal(2L, MatchingSplitDistanceSplits(splitAB, splitAI))
-  expect_equal(2L, MatchingSplitDistanceSplits(splitAB, splitABCD))
-  expect_equal(3L, MatchingSplitDistanceSplits(splitAB, splitABCDE))
-  expect_equal(4L, MatchingSplitDistanceSplits(splitABC, splitAEF))
+  expect_equal(MatchingSplitDistanceSplits(splitAB, splitAI), 2L)
+  expect_equal(MatchingSplitDistanceSplits(splitAB, splitABCD), 2L)
+  expect_equal(MatchingSplitDistanceSplits(splitAB, splitABCDE), 3L)
+  expect_equal(MatchingSplitDistanceSplits(splitABC, splitAEF), 4L)
   expect_equal(MatchingSplitDistanceSplits(splitABC, splitAEF),
                MatchingSplitDistanceSplits(splitAEF, splitABC))
   
   # Invariant to tree description order
-  sq_pectinate <- ape::read.tree(text="((((((1, 2), 3), 4), 5), 6), (7, (8, (9, (10, 11)))));")
-  shuffle1 <- ape::read.tree(text="(((((1, 5), 2), 6), (3, 4)), ((8, (7, 9)), (10, 11)));")
-  shuffle2 <- ape::read.tree(text="(((8, (7, 9)), (10, 11)), ((((1, 5), 2), 6), (3, 4)));")
+  sq_pectinate <- ape::read.tree(
+    text = "((((((1, 2), 3), 4), 5), 6), (7, (8, (9, (10, 11)))));"
+  )
+  shuffle1 <- ape::read.tree(
+    text = "(((((1, 5), 2), 6), (3, 4)), ((8, (7, 9)), (10, 11)));"
+  )
+  shuffle2 <- ape::read.tree(
+    text = "(((8, (7, 9)), (10, 11)), ((((1, 5), 2), 6), (3, 4)));"
+  )
   expect_equal(MatchingSplitDistance(shuffle1, sq_pectinate),
                MatchingSplitDistance(sq_pectinate, shuffle1))
-  expect_equal(0L, MatchingSplitDistance(shuffle1, shuffle2))
+  expect_equal(MatchingSplitDistance(shuffle1, shuffle2), 0L)
   expect_equal(MatchingSplitDistance(shuffle1, sq_pectinate),
                MatchingSplitDistance(shuffle2, sq_pectinate))
 })
@@ -690,6 +768,7 @@ test_that("Jaccard RF is correctly calculated", {
   expect_lt(JaccardRobinsonFoulds(treeCat8, treeTac8, allowConflict = TRUE),
             JaccardRobinsonFoulds(treeCat8, treeTac8, allowConflict = FALSE))
   
+  library("TreeTools", quietly = TRUE)
   expect_equal(0, JaccardRobinsonFoulds(BalancedTree(64), BalancedTree(64)))
   expect_lt(0, JaccardRobinsonFoulds(BalancedTree(64), PectinateTree(64)))
   expect_equal(0, JaccardRobinsonFoulds(BalancedTree(264), BalancedTree(264)))
@@ -697,6 +776,7 @@ test_that("Jaccard RF is correctly calculated", {
 })
 
 test_that("RobinsonFoulds() is correctly calculated", {
+  skip_if_not_installed("phangorn")
   RF <- function(tree1, tree2) {
     suppressMessages(phangorn::RF.dist(reorder(tree1, "cladewise"),
                                        reorder(tree2, "cladewise")))
@@ -767,6 +847,7 @@ test_that("Robinson Foulds Info is correctly calculated", {
                RobinsonFouldsInfo(list(treeSym8, treeBal8), treeSym8))
   
   # Check that large trees work
+  library("TreeTools", quietly = TRUE)
   expect_equal(0, InfoRobinsonFoulds(BalancedTree(64), BalancedTree(64)))
   expect_lt(0, InfoRobinsonFoulds(BalancedTree(64), PectinateTree(64)))
   expect_equal(0, InfoRobinsonFoulds(BalancedTree(129), BalancedTree(129)))
@@ -804,6 +885,7 @@ test_that("Multiple comparisons are correctly ordered", {
   trees[[nTrees - 1L]] <- TreeTools::PectinateTree(nTip)
   class(trees) <- "multiPhylo"
   
+  skip_if_not_installed("phangorn")
   PhangRF <- function (trees) {
     phangorn::RF.dist(reorder(trees, "cladewise"))
   }
@@ -824,7 +906,7 @@ test_that("Multiple comparisons are correctly ordered", {
 })
 
 test_that("Normalization occurs as documented", {
-  library("TreeTools")
+  library("TreeTools", quietly = TRUE)
   tree1 <- BalancedTree(8)
   tree2 <- CollapseNode(PectinateTree(8), 12:13)
   
@@ -888,15 +970,15 @@ test_that("Independent of root position", {
 
   
   Test <- function(Method, score = 0L, ...) {
-    expect_equal(score, Method(trees[[1]], trees[[1]], ...))
-    expect_equal(score, Method(trees[[1]], trees[[2]], ...))
-    expect_equal(score, Method(trees[[3]], trees[[3]], ...))
+    expect_equal(Method(trees[[1]], trees[[1]], ...), score)
+    expect_equal(Method(trees[[1]], trees[[2]], ...), score)
+    expect_equal(Method(trees[[3]], trees[[3]], ...), score)
   }
   
   Test(MASTSize, 8L, rooted = FALSE)
   # Tested further for NNIDist in test-tree_distance_nni.R
   Test(NNIDist, c(lower = 0, best_lower = 0, tight_upper = 0, best_upper = 0,
                   loose_upper = 0, fack_upper = 0, li_upper = 0))
-  Test(SPRDist, c(spr = 0))
+  Test(SPRDist, 0)
   
 })

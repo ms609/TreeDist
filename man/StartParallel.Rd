@@ -13,12 +13,14 @@ SetParallel(cl)
 
 GetParallel(cl)
 
-StopParallel()
+StopParallel(quietly = FALSE)
 }
 \arguments{
 \item{\dots}{Parameters to pass to \code{\link[=makeCluster]{makeCluster()}}.}
 
 \item{cl}{An existing cluster.}
+
+\item{quietly}{Logical; if \code{TRUE}, do not warn when no cluster was running.}
 }
 \value{
 \code{StartParallel()} and \code{SetParallel()} return the previous value of
@@ -48,7 +50,7 @@ cluster.
 \examples{
 if (interactive()) { # Only run in terminal
   library("TreeTools", quietly = TRUE)
-  nCores <- ceiling(detectCores() / 2)
+  nCores <- ceiling(parallel::detectCores() / 2)
   StartParallel(nCores) # Takes a few seconds to set up processes
   GetParallel()
   ClusteringInfoDistance(as.phylo(0:6, 100))

@@ -21,7 +21,7 @@
 #' @examples
 #' if (interactive()) { # Only run in terminal
 #'   library("TreeTools", quietly = TRUE)
-#'   nCores <- ceiling(detectCores() / 2)
+#'   nCores <- ceiling(parallel::detectCores() / 2)
 #'   StartParallel(nCores) # Takes a few seconds to set up processes
 #'   GetParallel()
 #'   ClusteringInfoDistance(as.phylo(0:6, 100))
@@ -58,11 +58,12 @@ GetParallel <- function(cl) {
 }
 
 #' @rdname StartParallel
+#' @param quietly Logical; if `TRUE`, do not warn when no cluster was running.
 #' @export
 #' @importFrom parallel stopCluster
 #' @return `StopParallel()` returns `TRUE` if a cluster was destroyed,
 #' `FALSE` otherwise.
-StopParallel <- function() {
+StopParallel <- function(quietly = FALSE) {
   cluster <- getOption("TreeDist-cluster")
   if (!is.null(cluster)) {
     stopCluster(cluster)
@@ -70,7 +71,9 @@ StopParallel <- function() {
     options("TreeDist-cluster" = NULL)
     TRUE
   } else {
-    cli_alert_danger("No cluster running")
+    if (!quietly) {
+      cli_alert_danger("No cluster running")
+    }
     FALSE
   }
 }

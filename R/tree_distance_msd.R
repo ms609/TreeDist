@@ -4,6 +4,10 @@
 #' [Matching Split Distance](https://ms609.github.io/TreeDist/articles/Generalized-RF.html#matching-split-distance)
 #' \insertCite{Bogdanowicz2012,Lin2012}{TreeDist} for unrooted binary trees.
 #' 
+#' Trees need not contain identical leaves; scores are based on the leaves that
+#' trees hold in common.  Check for unexpected differences in tip labelling
+#' with `setdiff(TipLabels(tree1), TipLabels(tree2))`.
+#' 
 #' @inheritParams TreeDistance
 #' 
 #' @templateVar returns `MatchingSplitDistance()` returns
@@ -35,8 +39,8 @@
 #' @export
 MatchingSplitDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
                                    reportMatching = FALSE) {
-  unnormalized <- CalculateTreeDistance(MatchingSplitDistanceSplits, tree1, tree2, 
-                                        reportMatching)
+  unnormalized <- CalculateTreeDistance(MatchingSplitDistanceSplits, tree1,
+                                        tree2, reportMatching)
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,

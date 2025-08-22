@@ -20,17 +20,17 @@ SumOfVariances(x, cluster = 1)
 
 SumOfVars(x, cluster = 1)
 
-MeanCentroidDistance(x, cluster = 1)
+MeanCentroidDistance(x, cluster = 1, Average = mean)
 
-MeanCentDist(x, cluster = 1)
+MeanCentDist(x, cluster = 1, Average = mean)
 
-MeanCentroidDist(x, cluster = 1)
+MeanCentroidDist(x, cluster = 1, Average = mean)
 
-DistanceFromMedian(x, cluster = 1)
+DistanceFromMedian(x, cluster = 1, Average = mean)
 
-DistFromMed(x, cluster = 1)
+DistFromMed(x, cluster = 1, Average = mean)
 
-MeanNN(x, cluster = 1)
+MeanNN(x, cluster = 1, Average = mean)
 
 MeanMSTEdge(x, cluster = 1)
 }
@@ -41,6 +41,10 @@ distances between each pair of points.}
 
 \item{cluster}{Optional integer vector specifying the cluster or group to
 which each row in \code{x} belongs.}
+
+\item{Average}{Function to use to summarize distances. Defaults to \code{mean};
+specifying \code{median} returns a value akin to the median absolute divergence
+(see \code{\link{mad}}).}
 }
 \value{
 \code{SumOfRanges()} returns a numeric specifying the sum of ranges
@@ -84,6 +88,7 @@ MeanMSTEdge(points, cluster)
 }
 \seealso{
 Other tree space functions: 
+\code{\link{Islands}()},
 \code{\link{MSTSegments}()},
 \code{\link{MapTrees}()},
 \code{\link{MappingQuality}()},

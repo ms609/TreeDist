@@ -11,16 +11,25 @@ using TreeTools::count_bits;
 
 TREETOOLS_SPLITLIST_INIT
 
+void check_ntip(const double n) {
+  if (n > double(std::numeric_limits<int16>::max())) {
+    Rcpp::stop("This many tips are not (yet) supported.");
+  }
+}
+
 // [[Rcpp::export]]
 List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y, 
                                    const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
+  check_ntip(nTip[0]);
+  
   const SplitList a(x), b(y);
-  const int16 last_bin = a.n_bins - 1,
-              n_tips = nTip[0],
-              unset_tips = (n_tips % SL_BIN_SIZE) ? SL_BIN_SIZE - n_tips % SL_BIN_SIZE : 0;
+  const int16 last_bin = a.n_bins - 1;
+  const int16 n_tips = int16(nTip[0]);
+  const int16 unset_tips = (n_tips % SL_BIN_SIZE) ?
+    SL_BIN_SIZE - n_tips % SL_BIN_SIZE : 0;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   cost score = 0;
   
@@ -37,18 +46,19 @@ List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y,
   
   for (int16 ai = a.n_splits; ai--; ) {
     for (int16 bi = b.n_splits; bi--; ) {
-    
-      bool all_match = true, all_complement = true;
-    
-      for (int16 bin = 0; bin != a.n_bins; ++bin) {
+      
+      bool all_match = true;
+      bool all_complement = true;
+      
+      for (int16 bin = 0; bin < a.n_bins; ++bin) {
         if ((a.state[ai][bin] != b.state[bi][bin])) {
           all_match = false;
           break;
         }
       }
       if (!all_match) {
-        for (int16 bin = 0; bin != a.n_bins; ++bin) {
-          if ((a.state[ai][bin] != b_complement[bi][bin])) {
+        for (int16 bin = 0; bin < a.n_bins; ++bin) {
+          if (a.state[ai][bin] != b_complement[bi][bin]) {
             all_complement = false;
             break;
           }
@@ -57,14 +67,14 @@ List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y,
       if (all_match || all_complement) {
         ++score;
         matching[ai] = bi + 1;
-        break; /* Only one match possible per split */
+        break; // Only one match possible per split
       }
     }
   }
   score = cost(a.n_splits + b.n_splits) - score - score;
   
   return List::create(Named("score") = Rcpp::wrap(score),
-                       _["matching"] = Rcpp::wrap(matching));
+                      _["matching"] = Rcpp::wrap(matching));
   
 }
 
@@ -74,9 +84,11 @@ List cpp_robinson_foulds_info (const RawMatrix x, const RawMatrix y,
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
+  check_ntip(nTip[0]);
+  
   const SplitList a(x), b(y);
   const int16 last_bin = a.n_bins - 1,
-              n_tips = nTip[0],
+              n_tips = int16(nTip[0]),
               unset_tips = (n_tips % SL_BIN_SIZE) ? SL_BIN_SIZE - n_tips % SL_BIN_SIZE : 0;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   const double lg2_unrooted_n = lg2_unrooted[n_tips];
@@ -140,11 +152,13 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
+  check_ntip(nTip[0]);
+  
   const SplitList a(x), b(y);
   const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
     split_diff = most_splits - 
       ((a.n_splits > b.n_splits) ? b.n_splits : a.n_splits),
-    n_tips = nTip[0],
+    n_tips = int16(nTip[0]),
     half_tips = n_tips / 2;
   if (most_splits == 0) {
     return List::create(Named("score") = 0);
@@ -204,13 +218,16 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
+  check_ntip(nTip[0]);
+  
   const SplitList a(x), b(y);
   const int16
     most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-    n_tips = nTip[0]
+    n_tips = int16(nTip[0])
   ;
-  const cost max_score = BIG;
-  const double exponent = k[0], max_scoreL = max_score;
+  constexpr cost max_score = BIG;
+  constexpr double max_scoreL = max_score;
+  const double exponent = k[0];
   
   bool allow_conflict = allowConflict[0];
   
@@ -315,15 +332,17 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_msi_distance (const RawMatrix x, const RawMatrix y,
-                        const IntegerVector nTip) {
+List cpp_msi_distance(const RawMatrix x, const RawMatrix y,
+                      const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
+  check_ntip(nTip[0]);
+  
   const SplitList a(x), b(y);
-  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-              n_tips = nTip[0];
-  const cost max_score = BIG;
+  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits;
+  const int16 n_tips = int16(nTip[0]);
+  constexpr cost max_score = BIG;
   const double max_possible = lg2_unrooted[n_tips] - 
     lg2_rooted[int16((n_tips + 1) / 2)] - lg2_rooted[int16(n_tips / 2)];
   
@@ -347,9 +366,9 @@ List cpp_msi_distance (const RawMatrix x, const RawMatrix y,
       }
       const int16 n_same = n_tips - n_different;
       
-      score[ai][bi] = max_score - 
+      score[ai][bi] = cost(max_score - 
         ((max_score / max_possible) *
-          mmsi_score(n_same, n_a_and_b, n_different, n_a_only));
+          mmsi_score(n_same, n_a_and_b, n_different, n_a_only)));
     }
     for (int16 bi = b.n_splits; bi < most_splits; ++bi) {
       score[ai][bi] = max_score;
@@ -386,20 +405,26 @@ List cpp_msi_distance (const RawMatrix x, const RawMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
-                            const IntegerVector nTip) {
+List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
+                           const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
-  const SplitList a(x), b(y);
+  check_ntip(nTip[0]);
+  
+  const SplitList a(x);
+  const SplitList b(y);
   const bool a_has_more_splits = (a.n_splits > b.n_splits);
-  const int16
-    most_splits = a_has_more_splits ? a.n_splits : b.n_splits,
-    a_extra_splits = a_has_more_splits ? most_splits - b.n_splits : 0,
-    b_extra_splits = a_has_more_splits ? 0 : most_splits - a.n_splits,
-    n_tips = nTip[0]
-  ;
-  const cost max_score = BIG;
+  const int16 most_splits = a_has_more_splits ? a.n_splits : b.n_splits;
+  const int16 a_extra_splits = a_has_more_splits ? most_splits - b.n_splits : 0;
+  const int16 b_extra_splits = a_has_more_splits ? 0 : most_splits - a.n_splits;
+  const int16 n_tips = int16(nTip[0]);
+  
+  if (most_splits == 0 || n_tips == 0) {
+    return List::create(Named("score") = 0,
+                        _["matching"] = IntegerVector(0));
+  }
+  constexpr cost max_score = BIG;
   
   cost** score = new cost*[most_splits];
   for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
@@ -407,17 +432,15 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
   int16 exact_matches = 0;
   // NumericVector zero-initializes [so does make_unique]
   // match will have one added to it so numbering follows R; hence 0 = UNMATCHED
-  NumericVector a_match(a.n_splits);
+  IntegerVector a_match(a.n_splits);
   std::unique_ptr<int16[]> b_match = std::make_unique<int16[]>(b.n_splits);
   
-  for (int16 ai = 0; ai != a.n_splits; ++ai) {
+  for (int16 ai = 0; ai < a.n_splits; ++ai) {
     if (a_match[ai]) continue;
-    const int16
-      na = a.in_split[ai],
-      nA = n_tips - na
-    ;
+    const int16 na = a.in_split[ai];
+    const int16 nA = n_tips - na;
     
-    for (int16 bi = 0; bi != b.n_splits; ++bi) {
+    for (int16 bi = 0; bi < b.n_splits; ++bi) {
       
       // x divides tips into a|A; y divides tips into b|B
       int16 a_and_b = 0;
@@ -425,13 +448,11 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
         a_and_b += count_bits(a.state[ai][bin] & b.state[bi][bin]);
       }
       
-      const int16
-        nb = b.in_split[bi],
-        nB = n_tips - nb,
-        a_and_B = na - a_and_b,
-        A_and_b = nb - a_and_b,
-        A_and_B = nA - A_and_b
-      ;
+      const int16 nb = b.in_split[bi];
+      const int16 nB = n_tips - nb;
+      const int16 a_and_B = na - a_and_b;
+      const int16 A_and_b = nb - a_and_b;
+      const int16 A_and_B = nA - A_and_b;
       
       if ((!a_and_B && !A_and_b) ||
           (!a_and_b && !A_and_B)) {
@@ -517,7 +538,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
     
     fuzzy_match = 0;
     IntegerVector final_matching(a.n_splits);
-    for (int16 i = 0; i != a.n_splits; i++) {
+    for (int16 i = 0; i < a.n_splits; ++i) {
       if (a_match[i]) {
         // Rcout << "a" << (1+i) << " exactly matches b" << a_match[i]<< "\n";
         final_matching[i] = a_match[i];
@@ -544,7 +565,7 @@ List cpp_mutual_clustering (const RawMatrix x, const RawMatrix y,
                         _["matching"] = final_matching);
   } else {
     for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
-      for (int16 bi = 0; bi != most_splits; ++bi) {
+      for (int16 bi = 0; bi < most_splits; ++bi) {
         score[ai][bi] = max_score;
       }
     }
@@ -576,15 +597,18 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
+  check_ntip(nTip[0]);
+  
   const SplitList a(x), b(y);
   const int16
     most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-    n_tips = nTip[0]
+    n_tips = int16(nTip[0]),
+    overlap_a = int16(n_tips + 1) / 2 // avoids promotion to int
   ;
-  const cost max_score = BIG;
+  constexpr cost max_score = BIG;
   const double
     lg2_unrooted_n = lg2_unrooted[n_tips],
-    best_overlap = one_overlap((n_tips + 1) / 2, n_tips / 2, n_tips),
+    best_overlap = one_overlap(overlap_a, n_tips / 2, n_tips),
     max_possible = lg2_unrooted_n - best_overlap
   ;
   
@@ -599,9 +623,8 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
                                           a.in_split[ai], b.in_split[bi],
                                           a.n_bins);
       
-      score[ai][bi] = spi_over ?
-        (spi_over - best_overlap) * (max_score / max_possible) :
-        max_score;
+      score[ai][bi] = spi_over == 0 ? max_score :
+        cost((spi_over - best_overlap) * (max_score / max_possible));
         
     }
     for (int16 bi = b.n_splits; bi < most_splits; ++bi) {

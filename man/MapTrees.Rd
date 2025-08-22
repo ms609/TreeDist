@@ -111,6 +111,7 @@ Full detail of tree space analysis in R is provided in the accompanying
 \href{https://ms609.github.io/TreeDist/articles/treespace.html}{vignette}.
 
 Other tree space functions: 
+\code{\link{Islands}()},
 \code{\link{MSTSegments}()},
 \code{\link{MappingQuality}()},
 \code{\link{SpectralEigens}()},

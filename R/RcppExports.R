@@ -25,6 +25,38 @@ cpp_nni_distance <- function(edge1, edge2, nTip) {
     .Call(`_TreeDist_cpp_nni_distance`, edge1, edge2, nTip)
 }
 
+path_vector <- function(edge) {
+    .Call(`_TreeDist_path_vector`, edge)
+}
+
+vec_diff_euclidean <- function(vec1, vec2) {
+    .Call(`_TreeDist_vec_diff_euclidean`, vec1, vec2)
+}
+
+pair_diff_euclidean <- function(vecs) {
+    .Call(`_TreeDist_pair_diff_euclidean`, vecs)
+}
+
+reduce_trees <- function(x, y, original_label) {
+    .Call(`_TreeDist_reduce_trees`, x, y, original_label)
+}
+
+mismatch_size <- function(x, y) {
+    .Call(`_TreeDist_mismatch_size`, x, y)
+}
+
+confusion <- function(x, y) {
+    .Call(`_TreeDist_confusion`, x, y)
+}
+
+keep_and_reroot <- function(tree1, tree2, keep) {
+    .Call(`_TreeDist_keep_and_reroot`, tree1, tree2, keep)
+}
+
+keep_and_reduce <- function(tree1, tree2, keep) {
+    .Call(`_TreeDist_keep_and_reduce`, tree1, tree2, keep)
+}
+
 cpp_robinson_foulds_distance <- function(x, y, nTip) {
     .Call(`_TreeDist_cpp_robinson_foulds_distance`, x, y, nTip)
 }

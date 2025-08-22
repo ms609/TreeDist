@@ -18,7 +18,7 @@
 \alias{MatchingSplitInfoSplits}
 \title{Information-based generalized Robinson–Foulds distances}
 \usage{
-TreeDistance(tree1, tree2 = tree1)
+TreeDistance(tree1, tree2 = NULL)
 
 SharedPhylogeneticInfo(
   tree1,
@@ -99,7 +99,8 @@ MatchingSplitInfoSplits(
 \item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
 or lists of such trees to undergo pairwise comparison.  Where implemented,
 \code{tree2 = NULL} will compute distances between each pair of trees in the list
-\code{tree1} using a fast algorithm based on Day (1985).}
+\code{tree1} using a fast algorithm based on
+\insertCite{Day1985;textual}{TreeDist}.}
 
 \item{normalize}{If a numeric value is provided, this will be used as a
 maximum value against which to rescale results.
@@ -135,6 +136,9 @@ vector listing the index of the split in \code{tree2} that is matched with
 each split in \code{tree1} in the optimal matching.
 Unmatched splits are denoted \code{NA}.
 Use \code{\link[=VisualizeMatching]{VisualizeMatching()}} to plot the optimal matching.
+
+\code{TreeDistance()} simply returns the clustering information distance (it is
+an alias of \code{ClusteringInfoDistance()}).
 }
 \description{
 Calculate tree similarity and distance measures based on the amount of
@@ -155,9 +159,13 @@ pair of splits.
 
 The returned tree similarity measures state the amount of information,
 in bits, that the splits in two trees hold in common
-when they are optimally matched, following \insertCite{SmithDist;textual}{TreeDist}.
+when they are optimally matched, following
+\insertCite{SmithDist;textual}{TreeDist}.
 The complementary tree distance measures state how much information is
 different in the splits of two trees, under an optimal matching.
+Where trees contain different tips, tips present in one tree but not the
+other are removed before each comparison (as by definition, the trees neither
+hold information in common nor differ regarding these tips).
 }
 \section{Concepts of information}{
 The phylogenetic (Shannon) information content and entropy of a split are
@@ -185,9 +193,10 @@ The Matching Split Information measure (\code{MatchingSplitInfo()},
 splits as the phylogenetic information content of the most informative
 split that is consistent with both input splits; \code{MatchingSplitInfoDistance()}
 is the corresponding measure of tree difference.
-\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html}{(More information here.)}
-\subsection{Conversion to distances}{
+(\href{https://ms609.github.io/TreeDist/articles/Generalized-RF.html}{More information here}.)
+}
 
+\section{Conversion to distances}{
 To convert similarity measures to distances, it is necessary to
 subtract the similarity score from a maximum value.  In order to generate
 distance \emph{metrics}, these functions subtract the similarity twice from the
@@ -195,8 +204,7 @@ total information content (SPI, MSI) or entropy (MCI) of all the splits in
 both trees \insertCite{SmithDist}{TreeDist}.
 }
 
-\subsection{Normalization}{
-
+\section{Normalization}{
 If \code{normalize = TRUE}, then results will be rescaled such that distance
 ranges from zero to (in principle) one.
 The maximum \strong{distance} is the sum of the information content or entropy of
@@ -214,26 +222,40 @@ be calculated with \code{ExpectedVariation()}; or see package
 for a compilation of expected values under different metrics for trees with
 up to 200 leaves.
 
-Alternatively, to scale against the information content or entropy of all
-splits in the most or least informative tree, use \verb{normalize = }\code{\link{pmax}} or
-\code{\link{pmin}} respectively.
+Alternatively, use \verb{normalize = }\code{\link{pmax}} or \code{\link{pmin}} to scale against the
+information content or entropy of all splits in the most (\code{pmax}) or
+least (\code{pmin}) informative tree in each pair.
 To calculate the relative similarity against a reference tree that is known
 to be "correct", use \code{normalize = SplitwiseInfo(trueTree)} (SPI, MSI) or
 \code{ClusteringEntropy(trueTree)} (MCI).
+For worked examples, see the internal function \code{\link[=NormalizeInfo]{NormalizeInfo()}}, which is
+called from distance functions with the parameter \code{how = normalize}.
+.
 }
-}
 
-\section{Troubleshooting}{
-Trees being compared must currently have identical tips.
-\href{https://github.com/ms609/TreeDist/issues/92}{Work is underway} to support
-comparison between trees with non-overlapping leaf sets.
+\section{Distances between large trees}{
+To balance memory demands and runtime with flexibility, these functions are
+implemented for trees with up to 2048 leaves.
+To analyse trees with up to 8192 leaves, you will need to a modified version
+of the package:
+\code{install.packages("BigTreeDist", repos = "https://ms609.github.io/packages/")}
+Use \code{library("BigTreeDist")} \emph{instead} of \code{library("TreeDist")} to load
+the modified package – or prefix functions with the package name, e.g.
+\code{BigTreeDist::TreeDistance()}.
 
-To determine which tips do not occur in both trees, try:
+As an alternative download method,
+uninstall \pkg{TreeDist} and \pkg{TreeTools} using
+\code{remove.packages()}, then use
+\code{devtools::install_github("ms609/TreeTools", ref = "more-leaves")}
+to install the modified \pkg{TreeTools} package; then,
+install \pkg{TreeDist} using
+\code{devtools::install_github("ms609/TreeDist", ref = "more-leaves")}.
+(\pkg{TreeDist} will need building from source \emph{after} the modified
+\pkg{TreeTools} package has been installed, as its code links to values
+set in the TreeTools source code.)
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{library("TreeTools")
-setdiff(TipLabels(tree1), TipLabels(tree2)) # In tree1 but not tree2
-setdiff(TipLabels(tree2), TipLabels(tree1)) # In tree2 but not tree1
-}\if{html}{\out{</div>}}
+Trees with over 8192 leaves require further modification of the source code,
+which the maintainer plans to attempt in the future; please \href{https://github.com/ms609/TreeTools/issues/141}{comment on GitHub} if you would find this useful.
 }
 
 \examples{
@@ -267,7 +289,9 @@ ExpectedVariation(tree1, tree2, sample=12)["DifferentPhylogeneticInfo", "Estimat
 SharedPhylogeneticInfo(tree1, tree3) # = 0
 MutualClusteringInfo(tree1, tree3) # > 0
 
-# Converting trees to Splits objects can speed up multiple comparisons
+# Distance functions internally convert trees to Splits objects.
+# Pre-conversion can reduce run time if the same trees will feature in
+# multiple comparisons
 splits1 <- TreeTools::as.Splits(tree1)
 splits2 <- TreeTools::as.Splits(tree2)
 

@@ -44,13 +44,17 @@
 #' from zero to one by dividing by the total number of splits in the pair
 #' of trees being considered.
 #' 
+#' Trees need not contain identical leaves; scores are based on the leaves that
+#' trees hold in common.  Check for unexpected differences in tip labelling
+#' with `setdiff(TipLabels(tree1), TipLabels(tree2))`.
+#' 
 #' @templateVar returns `NyeSimilarity()` returns
 #' @template distReturn
 #' 
 #' @examples 
 #' library("TreeTools")
 #' NyeSimilarity(BalancedTree(8), PectinateTree(8))
-#' VisualizeMatching(NyeSimilarity ,BalancedTree(8), PectinateTree(8))
+#' VisualizeMatching(NyeSimilarity, BalancedTree(8), PectinateTree(8))
 
 #' NyeSimilarity(as.phylo(0:5, nTip = 8), PectinateTree(8))
 #' NyeSimilarity(as.phylo(0:5, nTip = 8), similarity = FALSE)
@@ -67,7 +71,6 @@ NyeSimilarity <- function(tree1, tree2 = NULL, similarity = TRUE,
                            normalizeMax = !is.logical(normalize),
                            reportMatching = FALSE,
                            diag = TRUE) {
-  
   unnormalized <- CalculateTreeDistance(NyeSplitSimilarity, tree1, tree2, 
                                         reportMatching)
   if (similarity) {
@@ -75,6 +78,7 @@ NyeSimilarity <- function(tree1, tree2 = NULL, similarity = TRUE,
     if (diag && is.null(tree2)) {
       unnormalized <- as.matrix(unnormalized)
       diag(unnormalized) <- InfoInTree(tree1)
+      tree2 <- tree1
     }
     
     # Return:
@@ -129,6 +133,10 @@ NyeSplitSimilarity <- function(splits1, splits2,
 #' 
 #' The examples section below details how to visualize matchings with 
 #' non-default parameter values.
+#' 
+#' Trees need not contain identical leaves; scores are based on the leaves that
+#' trees hold in common.  Check for unexpected differences in tip labelling
+#' with `setdiff(TipLabels(tree1), TipLabels(tree2))`.
 #' 
 #' @inheritParams RobinsonFoulds
 #' @param k An arbitrary exponent to which to raise the Jaccard index.

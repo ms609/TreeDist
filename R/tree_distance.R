@@ -19,26 +19,28 @@
 #' specified pair scorer. If `reportMatching = TRUE`, attribute also list:
 #' 
 #' - `matching`: which split in `splits2` is optimally matched to each split in 
-#' `split1` (`NA` if not matched);
-#'
-#' - `pairScores`: Calculated scores for each possible matching of each split.
+#'   `split1` (`NA` if not matched);
 #' 
 #' - `matchedSplits`: Textual representation of each match
+#'
+#' - `matchedScores`: Scores for matched split.
 #' 
+#' - `pairScores`: Calculated scores for each possible matching of each split.
+#'
 #' @keywords internal
 #' @template MRS
 #' @encoding UTF-8
 #' @export
 GeneralizedRF <- function(splits1, splits2, nTip, PairScorer, 
                            maximize, reportMatching, ...) {
-  nSplits1 <- dim(splits1)[1]
-  nSplits2 <- dim(splits2)[1]
+  nSplits1 <- dim(splits1)[[1]]
+  nSplits2 <- dim(splits2)[[1]]
   
   solution <- PairScorer(splits1, splits2, nTip, ...)
-  ret <- solution$score
+  ret <- solution[["score"]]
   
   if (reportMatching) {
-    matching <- solution$matching
+    matching <- solution[["matching"]]
     matching[matching > nSplits2 | matching == 0L] <- NA
     if (nSplits1 < nSplits2) {
       matching <- matching[seq_len(nSplits1)]
@@ -51,10 +53,9 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
       for (j in seq_len(nSplits2)) {
         pairScores[i, j] <- PairScorer(splits1[i, , drop = FALSE], 
                                        splits2[j, , drop = FALSE],
-                                       nTip = nTip, ...)$score
+                                       nTip = nTip, ...)[["score"]]
       }
     }
-    attr(ret, "pairScores") <- pairScores
     
     if (!is.null(attr(splits1, "tip.label"))) {
       matched1 <- !is.na(matching)
@@ -68,18 +69,80 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
                          pairScores[matrix(c(matched1, matched2), ncol = 2L)] > 0
                        } else rep(TRUE, length(matched1)))
     }
+    
+    attr(ret, "matchedScores") <- vapply(
+      seq_along(matching),
+      function(i) pairScores[i, matching[[i]]],
+      vector(mode(pairScores), 1)
+    )
+    
+    attr(ret, "pairScores") <- pairScores
   }
   # Return:
   ret
 }
 
+
+#' @importFrom cli cli_progress_along
 .MaxValue <- function(tree1, tree2, Value) {
-  value1 <- Value(tree1)
+  lab1 <- TipLabels(tree1)
+  sameTips <- .AllTipsSame(lab1, TipLabels(tree2))
+  if (!is.null(tree2)) {
+    if (!sameTips) {
+      trees <- .SharedOnly(tree1, tree2)
+      tree1 <- trees[[1]]
+      tree2 <- trees[[2]]
+    }
+  }
+  
   if (is.null(tree2)) {
-    maxValue <- outer(value1, value1, "+")[, , drop = TRUE]
-    maxValue[lower.tri(maxValue)]
+    if (sameTips) {
+      value1 <- Value(tree1)
+      # Much faster to discard unneeded than to only calculate required
+      maxValue <- outer(value1, value1, "+")[, , drop = TRUE]
+      maxValue[lower.tri(maxValue)]
+    } else {
+      # !sameTips implies that tree1 contains multiple trees
+      pairs <- combn(seq_along(tree1), 2)
+      nPairs <- dim(pairs)[[2]]
+      
+      vapply(cli_progress_along(seq_len(nPairs), "Calc max value"),
+             function(pair) {
+               i <- pairs[1, pair]
+               j <- pairs[2, pair]
+               common <- intersect(lab1[[i]], lab1[[j]])
+               Value(KeepTip(tree1[[i]], common)) +
+                 Value(KeepTip(tree1[[j]], common))
+             }, double(1))
+      
+    }
   } else {
-    outer(value1, Value(tree2), "+")[, , drop = TRUE]
+    value1 <- Value(tree1)
+    if (sameTips) {
+      outer(value1, Value(tree2), "+")[, , drop = TRUE]
+    } else {
+      value1 + Value(tree2)
+    }
+  }
+}
+
+.AllTipsSame <- function(x, y) {
+  if (is.list(x)) {
+    xPrime <- x[[1]]
+    if (length(x) > 1 && !all(vapply(x[-1], setequal, logical(1), xPrime))) {
+      return(FALSE)
+    }
+  } else {
+    xPrime <- x
+  }
+  if (is.null(y)) {
+    TRUE
+  } else {
+    if (is.list(y)) {
+      all(vapply(y, setequal, logical(1), xPrime))
+    } else {
+      setequal(xPrime, y)
+    }
   }
 }
 

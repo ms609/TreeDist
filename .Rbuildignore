@@ -1,3 +1,4 @@
+^benchmark$
 ^Meta$
 ^doc$
 ^data-raw$
@@ -23,6 +24,7 @@ revdep
 ^vignettes/.*_cache$
 ^codemeta\.json$
 ^CODE_OF_CONDUCT\.md$
+^\codecov\.yml$
 ^\.travis\.yml$
 ^\.zenodo\.json$
 ^\.covrignore$

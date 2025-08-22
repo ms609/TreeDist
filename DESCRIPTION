@@ -1,7 +1,7 @@
 Package: TreeDist
 Type: Package
 Title: Calculate and Map Distances Between Phylogenetic Trees
-Version: 2.5.0.9000
+Version: 2.9.2.9000
 Authors@R: c(person("Martin R.", "Smith",
                     email = "martin.smith@durham.ac.uk", 
                     role = c("aut", "cre", "cph", "prg"), 
@@ -10,7 +10,7 @@ Authors@R: c(person("Martin R.", "Smith",
                     role = c("prg", "cph")),
              person("Yong", "Yang", email = "yongyanglink@gmail.com",
                     role = c("ctb", "cph")),
-             person("Yi", "Cao", role=c("ctb", "cph"))
+             person("Yi", "Cao", role = c("ctb", "cph"))
             )
 License: GPL (>= 3)
 Description: Implements measures of tree similarity, including 
@@ -29,6 +29,8 @@ Description: Implements measures of tree similarity, including
   (1996) <doi:10.1007/3-540-61332-3_168>.
   Includes tools for visualizing mappings of tree space (Smith 2022)
   <doi:10.1093/sysbio/syab100>,
+  for identifying islands of trees (Silva and Wilkinson 2021)
+  <doi:10.1093/sysbio/syab015>,
   for calculating the median of sets of trees,
   and for computing the information content of trees and splits.
 Copyright: Jonker-Volgenant Linear Assignment Problem implementation
@@ -36,6 +38,8 @@ Copyright: Jonker-Volgenant Linear Assignment Problem implementation
 URL: https://ms609.github.io/TreeDist/, https://github.com/ms609/TreeDist/
 BugReports: https://github.com/ms609/TreeDist/issues/
 Additional_repositories: https://ms609.github.io/packages/
+Remotes:
+  ms609/TreeTools
 Depends: 
   R (>= 3.4.0),
   stats,
@@ -43,12 +47,10 @@ Imports:
   ape (>= 5.0),
   cli (>= 3.0),
   colorspace,
-  memoise,
-  phangorn (>= 2.2.1),
   Rdpack (>= 0.7),
   shiny,
   shinyjs,
-  TreeTools (>= 1.7.1.9000),
+  TreeTools (>= 1.15.0.9008),
 Suggests:
   bookdown,
   cluster,
@@ -58,7 +60,9 @@ Suggests:
   knitr,
   MASS,
   parallel,
+  phangorn (>= 2.2.1),
   plotly,
+  PlotTools,
   protoclust,
   Quartet,
   readxl,
@@ -70,11 +74,11 @@ Suggests:
   testthat (>= 3.0),
   Ternary (>= 1.1.2),
   TreeDistData (> 0.1.0),
-  TreeSearch,
+  TreeSearch (>= 1.4.0),
   Umatrix,
   uwot,
   vdiffr (>= 1.0.0),
-LinkingTo: 
+LinkingTo:
   Rcpp,
   TreeTools,
 RdMacros: Rdpack
@@ -87,10 +91,10 @@ Config/Needs/revdeps: revdepcheck
 Config/Needs/website: pkgdown
 Config/testthat/parallel: false
 Config/testthat/edition: 3
-SystemRequirements: C++14
+SystemRequirements: C++17, pandoc-citeproc
 ByteCompile: true
 Encoding: UTF-8
 Language: en-GB
 X-schema.org-keywords: phylogenetics, tree-distance
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)

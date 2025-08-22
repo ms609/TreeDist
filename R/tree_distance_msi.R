@@ -8,6 +8,7 @@ MatchingSplitInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
   if (diag && is.null(tree2)) {
     unnormalized <- as.matrix(unnormalized)
     diag(unnormalized) <- SplitwiseInfo(tree1)
+    tree2 <- tree1
   }
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
@@ -28,7 +29,7 @@ MatchingSplitInfoDistance <- function(tree1, tree2 = NULL,
                        infoInBoth = treesIndependentInfo,
                        InfoInTree = SplitwiseInfo, Combine = "+")
   
-  ret[ret < .Machine$double.eps^0.5] <- 0 # In case of floating point inaccuracy
+  ret[ret < .Machine[["double.eps"]]^0.5] <- 0 # In case of floating point inaccuracy
   attributes(ret) <- attributes(msi)
   # Return:
   ret

@@ -7,15 +7,16 @@
 LAPJV(x)
 }
 \arguments{
-\item{x}{Square matrix of costs.}
+\item{x}{Matrix of costs.}
 }
 \value{
-A list with two entries: \code{score}, the score of the optimal matching;
+\code{LAPJV()} returns a list with two entries: \code{score}, the score of the
+optimal matching;
 and \code{matching}, the columns matched to each row of the matrix in turn.
 }
 \description{
 Use the algorithm of \insertCite{Jonker1987;textual}{TreeDist} to solve the
-\href{http://www.assignmentproblems.com/doc/LSAPIntroduction.pdf}{Linear Sum Assignment Problem}.
+Linear Sum Assignment Problem (LSAP).
 }
 \details{
 The Linear Assignment Problem seeks to match each row of a matrix with a
@@ -34,25 +35,28 @@ run times.  (If numbers of the magnitude of billions differ only in their
 last significant digit, then the JV algorithm may undergo billions of
 iterations.)  To avoid this, integers over 2^22 that differ by a value of
 8 or less are treated as equal.
-
-NB. At present, only square matrices are supported; if you need support for
-non-square matrices, drop a note at
-\href{https://github.com/ms609/TreeDist/issues/25}{issue #25}
-and I'll prioritize development.
 }
 \examples{
-problem <- matrix(c(7, 9, 8, 9,
-                    2, 8, 5, 7,
-                    1, 6, 6, 9,
-                    3, 6, 2, 2), 4, 4, byrow=TRUE)
+problem <- matrix(c(7, 9, 8, 9, 9,
+                    2, 8, 5, 7, 9,
+                    1, 6, 6, 9, 9,
+                    3, 6, 2, 2, 9), 4, 5, byrow = TRUE)
 
 LAPJV(problem)
 }
 \references{
 \insertAllCited{}
 }
+\seealso{
+Implementations of the Hungarian algorithm exist in \pkg{adagio},
+\pkg{RcppHungarian}, and \pkg{clue} and \pkg{lpSolve}; for larger matrices,
+these are substantially slower. (See discussion at \href{https://stackoverflow.com/questions/72806265/}{Stack Overflow}.)
+
+The JV algorithm is implemented for square matrices in the Bioconductor
+package \href{https://www.bioconductor.org/packages/release/bioc/html/GraphAlignment.html}{\code{GraphAlignment::LinearAssignment()}}.
+}
 \author{
-\href{https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/LAPJV/lap.cpp}{C++ code}
+\href{https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/src/lap.cpp}{C++ code}
 by Roy Jonker, MagicLogic Optimization Inc. \href{mailto:roy_jonker@magiclogic.com}{roy_jonker@magiclogic.com},
 with contributions from Yong Yang \href{mailto:yongyanglink@gmail.com}{yongyanglink@gmail.com}, after
 \href{https://uk.mathworks.com/matlabcentral/profile/authors/69713-yi-cao}{Yi Cao}

@@ -26,9 +26,11 @@ Kawa
 KendallColijn
 LAPJV
 Leeuwen
+LSAP
 MASTInfo
 MASTSize
 MDS
+MKL
 MacKay
 MagicLogic
 MatchingSplitDistance
@@ -44,6 +46,7 @@ NNIDist
 NyeTreeSimilarity
 OEIS
 ORCID
+PlotTools
 R's
 Rcpp
 RStudio
@@ -83,6 +86,7 @@ codecov
 com
 cpp
 csoneson
+deOliveira
 dist
 distory
 doi
@@ -128,6 +132,7 @@ tqDist
 treeDist
 treespace
 uk
+uninstall
 unrooted
 unsampled
 uspr

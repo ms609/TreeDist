@@ -1,3 +1,28 @@
+test_that("LAP handles non-square matrices", {
+  problem <- matrix(c(7, 9, 8, 9, 9,
+                      2, 8, 5, 7, 9,
+                      1, 6, 6, 9, 9,
+                      3, 6, 2, 2, 9), 4, 5, byrow = TRUE)
+  expect_equal(LAPJV(problem), LAPJV(problem[, -5]))
+  expected <- LAPJV(t(problem[, -5]))
+  expected$matching <- c(expected$matching, NA_integer_)
+  expect_equal(LAPJV(t(problem)), expected)
+  
+  problem <- matrix(c(7, 9, 8, 9,
+                      2, 8, 5, 7,
+                      1, 6, 6, 9), 3, 4, byrow = TRUE)
+  expectation <- LAPJV(rbind(problem, 100))
+  expectation$score <- expectation$score - 100
+  expectation$matching <- expectation$matching[1:3]
+  expect_equal(LAPJV(problem), expectation)
+  
+})
+
+test_that("LAP handles tiny matrices", {
+  expect_equal(LAPJV(matrix(0, 0, 0)), list(score = 0, matching = integer(0)))
+  expect_equal(LAPJV(matrix(8, 1, 1)), list(score = 8, matching = 1))
+})
+
 test_that("Precision avoids interminable loop in LAP", {
   # Increase value of epsilon in nontrivially_less_than to avoid loop.
   spl636 <- structure(as.raw(c(0xfe, 0xfe, 0xb6, 0xb6, 0xb6, 0xb6, 0xb6, 0xb2, 0x92, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x00, 
@@ -254,9 +279,10 @@ test_that("Precision avoids interminable loop in LAP", {
 })
 
 test_that("LAPJV fails gracefully", {
-  expect_equal(integer(0L), LAPJV(matrix(NA, 0, 0)))
-  expect_error(LAPJV(1:10))
-  expect_error(LAPJV(matrix(1, 3, 4)))
+  expect_equal(LAPJV(matrix(NA, 0, 0)), list(score = 0, matching = integer(0)))
+  expect_equal(LAPJV(matrix(NA, 1, 0)), list(score = 0, matching = integer(0)))
+  expect_equal(LAPJV(matrix(NA, 0, 1)), list(score = 0, matching = integer(0)))
+  expect_error(LAPJV(1:10), "x must be a.* matrix")
 })
 
 test_that("LAPJV doesn't crash", {
@@ -274,7 +300,7 @@ test_that("LAPJV doesn't crash", {
 })
 
 test_that("Avoid infinite loop in LAP", {
-  library("TreeTools")
+  library("TreeTools", quietly = TRUE)
   tree1 <- PectinateTree(11L)
   tree2 <- as.phylo(18253832, 11L)
   owch <- 1927
