@@ -268,8 +268,8 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
             tmp = *--S_top;
             unpack4(tmp, L_i, R_i, N_i, W_i);
             
-            L = (L < L_i) ? L : L_i;
-            R = (R > R_i) ? R : R_i;
+            L = std::min(L, L_i); // Faster than ternary operator
+            R = std::max(R, R_i);
             N += N_i;
             W += W_i;
             w -= W_i;
@@ -279,8 +279,8 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
               tmp = *--S_top;
               unpack4(tmp, L_i, R_i, N_i, W_i);
               
-              L = (L < L_i) ? L : L_i;
-              R = (R > R_i) ? R : R_i;
+              L = std::min(L, L_i);
+              R = std::max(R, R_i);
               N += N_i;
               W += W_i;
               w -= W_i;
