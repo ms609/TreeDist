@@ -18,8 +18,8 @@ void check_ntip(const double n) {
 }
 
 // [[Rcpp::export]]
-List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y, 
-                                   const IntegerVector nTip) {
+List cpp_robinson_foulds_distance(const RawMatrix x, const RawMatrix y, 
+                                  const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
@@ -79,8 +79,8 @@ List cpp_robinson_foulds_distance (const RawMatrix x, const RawMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_robinson_foulds_info (const RawMatrix x, const RawMatrix y, 
-                               const IntegerVector nTip) {
+List cpp_robinson_foulds_info(const RawMatrix x, const RawMatrix y, 
+                              const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
@@ -147,26 +147,24 @@ List cpp_robinson_foulds_info (const RawMatrix x, const RawMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y, 
-                                  const IntegerVector nTip) {
+List cpp_matching_split_distance(const RawMatrix x, const RawMatrix y, 
+                                 const IntegerVector nTip) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
   check_ntip(nTip[0]);
   
   const SplitList a(x), b(y);
-  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-    split_diff = most_splits - 
-      ((a.n_splits > b.n_splits) ? b.n_splits : a.n_splits),
-    n_tips = int16(nTip[0]),
-    half_tips = n_tips / 2;
+  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits;
+  const int16 split_diff = most_splits - 
+    ((a.n_splits > b.n_splits) ? b.n_splits : a.n_splits);
+  const int16 n_tips = int16(nTip[0]);
+  const int16 half_tips = n_tips / 2;
   if (most_splits == 0) {
     return List::create(Named("score") = 0);
   }
   const cost max_score = BIG / most_splits;
-  
-  cost** score = new cost*[most_splits];
-  for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
+  cost_matrix score(most_splits, std::vector<cost>(most_splits));
   
   for (int16 ai = 0; ai != a.n_splits; ++ai) {
     for (int16 bi = 0; bi != b.n_splits; ++bi) {
@@ -186,18 +184,13 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
     }
   }
   
-  lap_col *rowsol = new lap_col[most_splits];
-  lap_row *colsol = new lap_row[most_splits];
-  cost 
-    *u = new cost[most_splits],
-    *v = new cost[most_splits]
-  ;
+  std::vector<lap_col> rowsol(most_splits);
+  std::vector<lap_row> colsol(most_splits);
+  std::vector<cost> u(most_splits);
+  std::vector<cost> v(most_splits);
   
   NumericVector final_score = NumericVector::create(
     lap(most_splits, score, rowsol, colsol, u, v) - (max_score * split_diff));
-  
-  for (int16 i = most_splits; i--; ) delete[] score[i];
-  delete[] u; delete[] v; delete[] colsol; delete[] score;
   
   IntegerVector final_matching (a.n_splits);
   
@@ -205,16 +198,14 @@ List cpp_matching_split_distance (const RawMatrix x, const RawMatrix y,
     final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
   }
   
-  delete[] rowsol;
-  
   return List::create(Named("score") = final_score,
                       _["matching"] = final_matching);
 }
 
 // [[Rcpp::export]]
-List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
-                             const IntegerVector nTip, const NumericVector k,
-                             const LogicalVector allowConflict) {
+List cpp_jaccard_similarity(const RawMatrix x, const RawMatrix y,
+                            const IntegerVector nTip, const NumericVector k,
+                            const LogicalVector allowConflict) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
@@ -231,8 +222,7 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
   
   bool allow_conflict = allowConflict[0];
   
-  cost** score = new cost*[most_splits];
-  for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
+  cost_matrix score(most_splits, std::vector<cost>(most_splits));
   
   for (int16 ai = 0; ai != a.n_splits; ++ai) {
     
@@ -309,22 +299,20 @@ List cpp_jaccard_similarity (const RawMatrix x, const RawMatrix y,
     }
   }
   
-  lap_col *rowsol = new lap_col[most_splits];
-  lap_row *colsol = new lap_row[most_splits];
-  cost *u = new cost[most_splits], *v = new cost[most_splits];
+  std::vector<lap_col> rowsol(most_splits);
+  std::vector<lap_row> colsol(most_splits);
+  std::vector<cost> u(most_splits);
+  std::vector<cost> v(most_splits);
   
   NumericVector final_score = NumericVector::create(
     (double)((max_score * most_splits) 
                - lap(most_splits, score, rowsol, colsol, u, v))
     / max_score);
-  for (int16 i = most_splits; i--; ) delete[] score[i];
-  delete[] u; delete[] v; delete[] colsol; delete[] score;
   IntegerVector final_matching (a.n_splits);
   
   for (int16 i = a.n_splits; i--; ) {
     final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
   }
-  delete[] rowsol;
   
   return List::create(Named("score") = final_score,
                       _["matching"] = final_matching);
@@ -346,8 +334,7 @@ List cpp_msi_distance(const RawMatrix x, const RawMatrix y,
   const double max_possible = lg2_unrooted[n_tips] - 
     lg2_rooted[int16((n_tips + 1) / 2)] - lg2_rooted[int16(n_tips / 2)];
   
-  cost** score = new cost*[most_splits];
-  for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
+  cost_matrix score(most_splits, std::vector<cost>(most_splits));
   
   splitbit different[SL_MAX_BINS];
   
@@ -380,24 +367,20 @@ List cpp_msi_distance(const RawMatrix x, const RawMatrix y,
     }
   }
   
-  lap_col *rowsol = new lap_col[most_splits];
-  lap_row *colsol = new lap_row[most_splits];
-  cost *u = new cost[most_splits], *v = new cost[most_splits];
+  std::vector<lap_col> rowsol(most_splits);
+  std::vector<lap_row> colsol(most_splits);
+  std::vector<cost> u(most_splits);
+  std::vector<cost> v(most_splits);
   
   NumericVector final_score = NumericVector::create(
     double((max_score * most_splits) - 
            lap(most_splits, score, rowsol, colsol, u, v))
     * max_possible / max_score);
   
-  for (int16 i = most_splits; i--; ) delete[] score[i];
-  delete[] u; delete[] v; delete[] colsol; delete[] score;
-  
   IntegerVector final_matching (a.n_splits);
   for (int16 i = a.n_splits; i--; ) {
     final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
   }
-  
-  delete[] rowsol;
   
   return List::create(Named("score") = final_score,
                       _["matching"] = final_matching);
@@ -425,9 +408,8 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
                         _["matching"] = IntegerVector(0));
   }
   constexpr cost max_score = BIG;
+  cost_matrix score(most_splits, std::vector<cost>(most_splits));
   
-  cost** score = new cost*[most_splits];
-  for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
   double exact_match_score = 0;
   int16 exact_matches = 0;
   // NumericVector zero-initializes [so does make_unique]
@@ -483,9 +465,6 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
     }
   }
   if (exact_matches == b.n_splits || exact_matches == a.n_splits) {
-    for (int16 i = most_splits; i--; ) delete[] score[i];
-    delete[] score;
-    
     return List::create(
       Named("score") = NumericVector::create(exact_match_score / n_tips),
       _["matching"] = a_match);
@@ -493,9 +472,10 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
   
   
   const int16 lap_dim = most_splits - exact_matches;
-  lap_col *rowsol = new lap_col[lap_dim];
-  lap_row *colsol = new lap_row[lap_dim];
-  cost *u = new cost[lap_dim], *v = new cost[lap_dim];
+  std::vector<lap_col> rowsol(lap_dim);
+  std::vector<lap_row> colsol(lap_dim);
+  std::vector<cost> u(lap_dim);
+  std::vector<cost> v(lap_dim);
   
   if (exact_matches) {
     int16 a_pos = 0;
@@ -523,9 +503,6 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
       / max_score;
     NumericVector final_score = 
       NumericVector::create(lap_score + (exact_match_score / n_tips));
-    
-    for (int16 i = most_splits; i--; ) delete[] score[i];
-    delete[] colsol; delete[] u; delete[] v; delete[] score;
     
     std::unique_ptr<int16[]> lap_decode = std::make_unique<int16[]>(lap_dim);
     int16 fuzzy_match = 0;
@@ -559,8 +536,6 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
       // if (final_matching[i] > 0) Rcout << final_matching[i]; else Rcout << "NA";
     }
     
-    delete[] rowsol;
-    
     return List::create(Named("score") = final_score,
                         _["matching"] = final_matching);
   } else {
@@ -576,15 +551,10 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
     ) / max_score;
     NumericVector final_score = NumericVector::create(lap_score);
     
-    for (int16 i = most_splits; i--; ) delete[] score[i];
-    delete[] colsol; delete[] u; delete[] v; delete[] score;
-    
     IntegerVector final_matching (a.n_splits);
     for (int16 i = a.n_splits; i--; ) {
       final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
     }
-    
-    delete[] rowsol;
     
     return List::create(Named("score") = final_score,
                         _["matching"] = final_matching);
@@ -600,22 +570,18 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   check_ntip(nTip[0]);
   
   const SplitList a(x), b(y);
-  const int16
-    most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits,
-    n_tips = int16(nTip[0]),
-    overlap_a = int16(n_tips + 1) / 2 // avoids promotion to int
-  ;
+  const int16 most_splits = std::max(a.n_splits, b.n_splits);
+  const int16 n_tips = int16(nTip[0]);
+  const int16 overlap_a = int16(n_tips + 1) / 2; // avoids promotion to int
+  
   constexpr cost max_score = BIG;
-  const double
-    lg2_unrooted_n = lg2_unrooted[n_tips],
-    best_overlap = one_overlap(overlap_a, n_tips / 2, n_tips),
-    max_possible = lg2_unrooted_n - best_overlap
-  ;
+  const double lg2_unrooted_n = lg2_unrooted[n_tips];
+  const double best_overlap = one_overlap(overlap_a, n_tips / 2, n_tips);
+  const double max_possible = lg2_unrooted_n - best_overlap;
   
   // a and b are "clades" separating an "ingroup" [1] from an "outgroup" [0].
   // In/out direction [i.e. 1/0 bit] is arbitrary.
-  cost** score = new cost*[most_splits];
-  for (int16 i = most_splits; i--; ) score[i] = new cost[most_splits];
+  cost_matrix score(most_splits, std::vector<cost>(most_splits));
   
   for (int16 ai = a.n_splits; ai--; ) {
     for (int16 bi = b.n_splits; bi--; ) {
@@ -637,30 +603,28 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
     }
   }
   
-  lap_col *rowsol = new lap_col[most_splits];
-  lap_row *colsol = new lap_row[most_splits];
-  cost *u = new cost[most_splits], *v = new cost[most_splits];
+  std::vector<lap_col> rowsol;
+  std::vector<lap_row> colsol;
+  std::vector<cost> u;
+  std::vector<cost> v;
+  
+  rowsol.reserve(most_splits);
+  colsol.reserve(most_splits);
+  u.reserve(most_splits);
+  v.reserve(most_splits);
   
   NumericVector final_score = NumericVector::create(
     double((max_score * most_splits) - 
       lap(most_splits, score, rowsol, colsol, u, v))
     * (max_possible / max_score));
   
-  delete[] u; delete[] v; delete[] colsol;
-  
   IntegerVector final_matching (a.n_splits);
-  
-  for (int16 i = most_splits; i--; ) delete[] score[i];
-  delete[] score;
   
   for (int16 i = a.n_splits; i--; ) {
     final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
   }
   
-  delete[] rowsol;
-  
   return List::create(Named("score") = final_score,
                       _["matching"] = final_matching);
 
 }
- 
