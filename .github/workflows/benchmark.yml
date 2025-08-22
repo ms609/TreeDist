@@ -3,9 +3,6 @@ name: Benchmark
 on:
   workflow_dispatch:
   pull_request:
-    branches:
-      - main
-      - master
     paths-ignore:
       - "Meta**"
       - "memcheck**"
@@ -42,7 +39,7 @@ jobs:
       - name: Checkout target branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.ref || 'master' }}
+          ref: ${{ github.event.pull_request.base.ref || 'main' }}
           path: main
 
       - name: Set up R
@@ -53,41 +50,29 @@ jobs:
       - name: Install R dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: |
-            remotes
-            github::ms609/TreeTools
           dependencies: '"hard"'
+          extra-packages: |
+            github::ms609/TreeTools
           needs: benchmark
-
+          
       - name: Benchmark PR
-        working-directory: pr
-        run: |
-          R CMD INSTALL . --preclean --clean --byte-compile --no-docs --no-help --no-test-load --no-multiarch
-          Rscript benchmark/_run_benchmarks.R
-          mkdir ./pr-benchmark-results/
-          mv *.bench.Rds ./pr-benchmark-results/
-        shell: bash
+        uses: ms609/actions/benchmark-step@main
+        with:
+          path: pr
+          output: pr
         
-      - name: Benchmark main
-        working-directory: main
-        run: |
-          Rscript -e 'install.packages("TreeTools")'
-          R CMD INSTALL . --preclean --clean --byte-compile --no-docs --no-help --no-test-load --no-multiarch
-          Rscript benchmark/_run_benchmarks.R
-          mkdir ../pr/main-benchmark-results/
-          mv *.bench.Rds ../pr/main-benchmark-results/
-        shell: bash
+      - name: Benchmark target
+        uses: ms609/actions/benchmark-step@main
+        with: 
+          path: main
+          output: main
+          
+      - name: Benchmark PR again
+        uses: ms609/actions/benchmark-step@main
+        with: 
+          path: pr
+          output: pr2
         
-      - name: Benchmark PR
-        working-directory: pr
-        run: |
-          Rscript -e 'remotes::install_github("ms609/TreeTools")'
-          R CMD INSTALL . --preclean --clean --byte-compile --no-docs --no-help --no-test-load --no-multiarch
-          Rscript benchmark/_run_benchmarks.R
-          mkdir ./pr2-benchmark-results/
-          mv *.bench.Rds ./pr2-benchmark-results/
-        shell: bash
-
       - run: dir pr-benchmark-results
         working-directory: pr
       - run: dir main-benchmark-results
@@ -99,6 +84,20 @@ jobs:
         run: |
           Rscript benchmark/_compare_results.R
         shell: bash
+        
+      - name: Upload PR benchmark results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-benchmark-results
+          path: pr/pr-benchmark-results/*.bench.Rds
+            
+      - name: Upload main benchmark results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: main-benchmark-results
+          path: pr/main-benchmark-results/*.bench.Rds
         
       - name: Comment on PR
         if: always() && github.event_name == 'pull_request' && steps.compare_results.outputs.report != ''

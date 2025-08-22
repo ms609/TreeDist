@@ -473,33 +473,34 @@ CompareAll <- function(x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
 NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
                           infoInBoth = NULL, how = TRUE, Combine = "+", ...) {
   
-  CombineInfo <- function(tree1Info, tree2Info, Combiner = Combine,
-                          pairwise = FALSE) {
-    if (length(tree1Info) == 1 || length(tree2Info) == 1 || pairwise) {
-      # TODO When requriring R4.0, remove match.fun - which is now part of
-      # .mapply
-      unlist(.mapply(match.fun(Combiner),
-                     dots = list(tree1Info, tree2Info), NULL))
-    } else {
-      ret <- outer(tree1Info, tree2Info, Combiner)
-      if (inherits(unnormalized, "dist")) ret[lower.tri(ret)] else ret
+  if (is.logical(how) && how == FALSE) {
+    # Return:
+    unnormalized
+  } else {
+    
+    CombineInfo <- function(tree1Info, tree2Info, Combiner = Combine,
+                            pairwise = FALSE) {
+
+      if (length(tree1Info) == 1 || length(tree2Info) == 1 || pairwise) {
+        unlist(.mapply(Combiner, dots = list(tree1Info, tree2Info), NULL))
+      } else {
+        ret <- outer(tree1Info, tree2Info, Combiner)
+        if (inherits(unnormalized, "dist")) ret[lower.tri(ret)] else ret
+      }
     }
-  }
-  
-  lab1 <- TipLabels(tree1)
-  lab2 <- TipLabels(tree2)
-  sameLabels <- .AllTipsSame(lab1, lab2)
-  
-  if (!sameLabels) {
-    trees <- .SharedOnly(tree1, tree2, lab1, lab2)
-    tree1 <- trees[[1]]
-    tree2 <- trees[[2]]
-  }
-  
-  if (is.logical(how)) {
-    if (how == FALSE) {
-      return(unnormalized)
-    } else {
+    
+    lab1 <- TipLabels(tree1)
+    lab2 <- TipLabels(tree2)
+    sameLabels <- .AllTipsSame(lab1, lab2)
+    
+    if (!sameLabels) {
+      trees <- .SharedOnly(tree1, tree2, lab1, lab2)
+      tree1 <- trees[[1]]
+      tree2 <- trees[[2]]
+    }
+    
+    if (is.logical(how)) {
+      # how == FALSE case handled early above
       if (is.null(infoInBoth)) {
         info1 <- InfoInTree(tree1, ...)
         info2 <- if (is.null(tree2)) {
@@ -509,19 +510,19 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
         }
         infoInBoth <- CombineInfo(info1, info2, pairwise = !sameLabels)
       }
+    } else if (is.function(how)) {
+      if (is.null(infoInBoth)) {
+        info1 <- InfoInTree(tree1, ...)
+        info2 <- if (is.null(tree2)) info1 else InfoInTree(tree2, ...)
+        infoInBoth <- CombineInfo(info1, info2, Combiner = how,
+                                  pairwise = !sameLabels)
+      }
+    } else {
+      infoInBoth <- how
     }
-  } else if (is.function(how)) {
-    if (is.null(infoInBoth)) {
-      info1 <- InfoInTree(tree1, ...)
-      info2 <- if (is.null(tree2)) info1 else InfoInTree(tree2, ...)
-      infoInBoth <- CombineInfo(info1, info2, Combiner = how,
-                                pairwise = !sameLabels)
-    }
-  } else {
-    infoInBoth <- how
+    # Return:
+    unnormalized / infoInBoth
   }
-  # Return:
-  unnormalized / infoInBoth
 }
 
 # We only call this function when not all trees contain identical leaf sets

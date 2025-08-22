@@ -2,6 +2,7 @@
 
 - C++ source formatting.
 - Optimize LAPJV code - 2x speed-up for large matrices.
+- Require R4.0.
 - Discontinue tests against R 3.6 and 4.0.
 
 # TreeDist 2.9.2 (2025-01-11)

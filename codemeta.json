@@ -390,7 +390,7 @@
       "@type": "SoftwareApplication",
       "identifier": "R",
       "name": "R",
-      "version": ">= 3.4.0"
+      "version": ">= 4.0"
     },
     "2": {
       "@type": "SoftwareApplication",
@@ -437,18 +437,6 @@
     },
     "6": {
       "@type": "SoftwareApplication",
-      "identifier": "memoise",
-      "name": "memoise",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=memoise"
-    },
-    "7": {
-      "@type": "SoftwareApplication",
       "identifier": "Rdpack",
       "name": "Rdpack",
       "version": ">= 0.7",
@@ -460,7 +448,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=Rdpack"
     },
-    "8": {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "shiny",
       "name": "shiny",
@@ -472,7 +460,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=shiny"
     },
-    "9": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "shinyjs",
       "name": "shinyjs",
@@ -484,11 +472,11 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=shinyjs"
     },
-    "10": {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "TreeTools",
       "name": "TreeTools",
-      "version": ">= 1.13.0",
+      "version": ">= 1.15.0.9008",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
@@ -500,7 +488,7 @@
     "SystemRequirements": "C++17, pandoc-citeproc"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "1577.467KB",
+  "fileSize": "1577.723KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
