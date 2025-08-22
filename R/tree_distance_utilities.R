@@ -307,8 +307,8 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 #' Probabilities should sum to one.
 #' Probabilities equalling zero will be ignored.
 #' 
-#' @param \dots Numerics or numeric vector specifying probabilities of outcomes
-#' (for `Entropy()`) or counts (for `Ntropy()`).
+#' @param \dots Series of numerics, or single numeric vector, specifying
+#' probabilities of outcomes (for `Entropy()`) or counts (for `Ntropy()`).
 #' 
 #' @return `Entropy()` and `Ntropy()` return the entropy of the specified
 #' probabilities or counts, in bits.

@@ -10,8 +10,8 @@ Entropy(...)
 Ntropy(...)
 }
 \arguments{
-\item{\dots}{Numerics or numeric vector specifying probabilities of outcomes
-(for \code{Entropy()}) or counts (for \code{Ntropy()}).}
+\item{\dots}{Series of numerics, or single numeric vector, specifying
+probabilities of outcomes (for \code{Entropy()}) or counts (for \code{Ntropy()}).}
 }
 \value{
 \code{Entropy()} and \code{Ntropy()} return the entropy of the specified
