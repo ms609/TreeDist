@@ -26,10 +26,10 @@ static inline Packed pack4(int16 a, int16 b, int16 c, int16 d) noexcept {
     (uint64_t(uint16_t(d)) << 48);
 }
 static inline void unpack4(Packed p, int16 &a, int16 &b, int16 &c, int16 &d) noexcept {
-  a = int16(uint16_t( p        & 0xFFFF));
-  b = int16(uint16_t((p >> 16) & 0xFFFF));
-  c = int16(uint16_t((p >> 32) & 0xFFFF));
-  d = int16(uint16_t((p >> 48) & 0xFFFF));
+  a = int16(p & 0xFFFF);
+  b = int16(p >> 16);
+  c = int16(p >> 32);
+  d = int16(p >> 48);
 }
 
 // COMCLUSTER computes a strict consensus tree in O(knn).
