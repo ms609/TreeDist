@@ -885,6 +885,7 @@ test_that("Multiple comparisons are correctly ordered", {
   trees[[nTrees - 1L]] <- TreeTools::PectinateTree(nTip)
   class(trees) <- "multiPhylo"
   
+  skip_if_not_installed("phangorn")
   PhangRF <- function (trees) {
     phangorn::RF.dist(reorder(trees, "cladewise"))
   }

@@ -48,9 +48,12 @@ jobs:
         config:
           - {os: windows-latest, r: 'release'}
           - {os: macOS-latest, r: 'release'}
-          - {os: ubuntu-20.04, r: '4.0', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
-          - {os: ubuntu-latest, r: 'release', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
-          - {os: ubuntu-latest, r: 'devel', rspm: "https://packagemanager.rstudio.com/cran/__linux__/focal/latest"}
+          - {os: ubuntu-22.04, r: '4.1',
+          rspm: "https://packagemanager.rstudio.com/cran/__linux__/jammy/latest"}
+          - {os: ubuntu-latest, r: 'release',
+          rspm: "https://packagemanager.rstudio.com/cran/__linux__/noble/latest"}
+          - {os: ubuntu-latest, r: 'devel',
+          rspm: "https://packagemanager.rstudio.com/cran/__linux__/noble/latest"}
 
     env:
       _R_CHECK_CRAN_INCOMING_: true # Seemingly not set by --as-cran
@@ -84,8 +87,6 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
-            RcppCore/Rcpp
-            ms609/TreeTools
             ms609/TreeDistData
           needs: |
             check
@@ -96,8 +97,6 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: |
-            RcppCore/Rcpp
-            ms609/TreeTools
             ms609/TreeDistData
             phangorn=?ignore-before-r=4.4.0
             ggplot2=?ignore-before-r=4.4.0

@@ -8,13 +8,13 @@
   "codeRepository": "https://github.com/ms609/TreeDist/",
   "issueTracker": "https://github.com/ms609/TreeDist/issues/",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "2.9.2",
+  "version": "2.9.2.9000",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.4.2 (2024-10-31)",
+  "runtimePlatform": "R version 4.5.1 (2025-06-13)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -437,18 +437,6 @@
     },
     "6": {
       "@type": "SoftwareApplication",
-      "identifier": "memoise",
-      "name": "memoise",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=memoise"
-    },
-    "7": {
-      "@type": "SoftwareApplication",
       "identifier": "Rdpack",
       "name": "Rdpack",
       "version": ">= 0.7",
@@ -460,7 +448,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=Rdpack"
     },
-    "8": {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "shiny",
       "name": "shiny",
@@ -472,7 +460,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=shiny"
     },
-    "9": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "shinyjs",
       "name": "shinyjs",
@@ -484,11 +472,11 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=shinyjs"
     },
-    "10": {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "TreeTools",
       "name": "TreeTools",
-      "version": ">= 1.13.0",
+      "version": ">= 1.15.0.9008",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
@@ -500,7 +488,7 @@
     "SystemRequirements": "C++17, pandoc-citeproc"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "1576.267KB",
+  "fileSize": "1578.28KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
@@ -567,7 +555,7 @@
           "email": "martin.smith@durham.ac.uk"
         }
       ],
-      "name": "TreeDist: Distances between Phylogenetic Trees. R package version 2.9.2",
+      "name": "TreeDist: Distances between Phylogenetic Trees. R package version 2.9.2.9000",
       "identifier": "10.5281/zenodo.3528124",
       "@id": "https://doi.org/10.5281/zenodo.3528124",
       "sameAs": "https://doi.org/10.5281/zenodo.3528124",

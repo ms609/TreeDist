@@ -8,7 +8,7 @@
 #include <TreeTools/renumber_tree.h> // for postorder_order
 using namespace Rcpp;
 
-#define R_TO_C 1
+constexpr intx R_TO_C = 1;
 #define IS_TIP(i) ((i) <= n_tip)
 #define X_AUNT(i) x_sibling[x_parents[(i)]]
 #define Y_AUNT(i) y_sibling[y_parents[(i)]]

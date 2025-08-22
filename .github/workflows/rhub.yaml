@@ -7,7 +7,7 @@
 # It is unlikely that you need to modify this file manually.
 
 name: R-hub
-run-name: "${{ github.event.inputs.id || github.event.inputs.config }}: ${{ github.event.inputs.name || format('Manually run by {0}', github.triggering_actor) }}"
+run-name: "${{ github.event.inputs.id }}: ${{ github.event.inputs.name || format('Manually run by {0}', github.triggering_actor) }}"
 
 on:
   workflow_dispatch:
@@ -32,11 +32,11 @@ jobs:
       platforms: ${{ steps.rhub-setup.outputs.platforms }}
 
     steps:
-      # NO NEED TO CHECKOUT HERE
-      - uses: r-hub/rhub2/actions/rhub-setup@v1
-        with:
-          config: ${{ github.event.inputs.config }}
-        id: rhub-setup
+    # NO NEED TO CHECKOUT HERE
+    - uses: r-hub/rhub2/actions/rhub-setup@v1
+      with:
+        config: ${{ github.event.inputs.config }}
+      id: rhub-setup
 
   linux-containers:
     needs: setup
