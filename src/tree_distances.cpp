@@ -570,7 +570,7 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   TreeDist::check_ntip(nTip[0]);
   
   const SplitList a(x), b(y);
-  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits;
+  const int16 most_splits = std::max(a.n_splits, b.n_splits);
   const int16 n_tips = int16(nTip[0]);
   const int16 overlap_a = int16(n_tips + 1) / 2; // avoids promotion to int
   
@@ -598,8 +598,12 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   }
   score.padAfterRow(a.n_splits, max_score);
   
-  std::vector<lap_col> rowsol(most_splits);
-  std::vector<lap_row> colsol(most_splits);
+  std::vector<lap_col> rowsol;
+  std::vector<lap_row> colsol;
+  
+  rowsol.reserve(most_splits);
+  colsol.reserve(most_splits);
+  
   
   NumericVector final_score = NumericVector::create(
     static_cast<double>(
