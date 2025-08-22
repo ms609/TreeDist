@@ -4,7 +4,13 @@
 #include <Rcpp/Lightest>
 #include "tree_distances.h"
 
-using namespace Rcpp;
+using Rcpp::_;
+using Rcpp::IntegerVector;
+using Rcpp::List;
+using Rcpp::LogicalVector;
+using Rcpp::Named;
+using Rcpp::NumericVector;
+using Rcpp::RawMatrix;
 using TreeTools::SplitList;
 using TreeTools::count_bits;
 
@@ -40,8 +46,8 @@ namespace TreeDist {
 
 
 // [[Rcpp::export]]
-List cpp_robinson_foulds_distance(const RawMatrix x, const RawMatrix y, 
-                                  const IntegerVector nTip) {
+List cpp_robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
+                                  const IntegerVector &nTip) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
@@ -100,8 +106,8 @@ List cpp_robinson_foulds_distance(const RawMatrix x, const RawMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_robinson_foulds_info(const RawMatrix x, const RawMatrix y, 
-                              const IntegerVector nTip) {
+List cpp_robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
+                              const IntegerVector &nTip) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
@@ -169,8 +175,8 @@ List cpp_robinson_foulds_info(const RawMatrix x, const RawMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_matching_split_distance(const RawMatrix x, const RawMatrix y, 
-                                 const IntegerVector nTip) {
+List cpp_matching_split_distance(const RawMatrix &x, const RawMatrix &y,
+                                 const IntegerVector &nTip) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
@@ -234,9 +240,9 @@ List cpp_matching_split_distance(const RawMatrix x, const RawMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_jaccard_similarity(const RawMatrix x, const RawMatrix y,
-                            const IntegerVector nTip, const NumericVector k,
-                            const LogicalVector allowConflict) {
+List cpp_jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
+                            const IntegerVector &nTip, const NumericVector &k,
+                            const LogicalVector &allowConflict) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
@@ -348,8 +354,8 @@ List cpp_jaccard_similarity(const RawMatrix x, const RawMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_msi_distance(const RawMatrix x, const RawMatrix y,
-                      const IntegerVector nTip) {
+List cpp_msi_distance(const RawMatrix &x, const RawMatrix &y,
+                      const IntegerVector &nTip) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
@@ -417,8 +423,8 @@ List cpp_msi_distance(const RawMatrix x, const RawMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
-                           const IntegerVector nTip) {
+List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
+                           const IntegerVector &nTip) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
@@ -582,8 +588,8 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
 }
 
 // [[Rcpp::export]]
-List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
-                       const IntegerVector nTip) {
+List cpp_shared_phylo (const RawMatrix &x, const RawMatrix &y,
+                       const IntegerVector &nTip) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
