@@ -21,9 +21,9 @@ using Packed = uint64_t;
 static inline Packed pack4(int16 a, int16 b, int16 c, int16 d) noexcept {
   // Pack as unsigned to avoid UB on shifts; reinterpret sign on unpack.
   return (uint64_t(uint16_t(a))      ) |
-    (uint64_t(uint16_t(b)) << 16) |
-    (uint64_t(uint16_t(c)) << 32) |
-    (uint64_t(uint16_t(d)) << 48);
+         (uint64_t(uint16_t(b)) << 16) |
+         (uint64_t(uint16_t(c)) << 32) |
+         (uint64_t(uint16_t(d)) << 48);
 }
 static inline void unpack4(Packed p, int16 &a, int16 &b, int16 &c, int16 &d) noexcept {
   a = int16(p & 0xFFFF);
