@@ -222,15 +222,18 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
   IntegerVector shared = Rcpp::no_init(n_pairs);
   int *write_pos = INTEGER(shared); // direct pointer into R memory
   
-  int16 v = 0, w = 0, L = 0, R = 0, N = 0, W = 0, L_i = 0, R_i = 0, N_i = 0, W_i = 0;
   std::array<StackEntry, ct_max_leaves> S_entries;
   StackEntry* S_top = S_entries.data(); // stack top pointer (points one past last element)
   
   for (int i = 0; i < n_trees - 1; ++i) {
+    
     ClusterTable* Xi = tbl[i];
     
     for (int j = i + 1; j < n_trees; ++j) {
+      
+      int16 v, w;
       int16 n_shared = 0;
+      
       ClusterTable* Tj = tbl[j];
       
       Tj->TRESET();
@@ -244,39 +247,33 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
         } else {
           ASSERT(S_top > S_entries.data());
           const StackEntry& entry = *--S_top;
-          L = entry.L;
-          R = entry.R;
-          N = entry.N;
-          W_i = entry.W;
+          int16 L = entry.L;
+          int16 R = entry.R;
+          int16 N = entry.N;
+          const int16 W_i = entry.W;
+          int16 W = 1 + W_i;
           
-          W = 1 + W_i;
           w -= W_i;
           
           if (w) { // Unroll first iteration - common case
             ASSERT(S_top > S_entries.data());
             const StackEntry& entry = *--S_top;
-            L_i = entry.L;
-            R_i = entry.R; 
-            N_i = entry.N;
-            W_i = entry.W;
+            const int16 W_i = entry.W;
             
-            L = std::min(L, L_i); // Faster than ternary operator
-            R = std::max(R, R_i);
-            N += N_i;
+            L = std::min(L, entry.L); // Faster than ternary operator
+            R = std::max(R, entry.R);
+            N += entry.N;
             W += W_i;
             w -= W_i;
             
             while (w) {
               ASSERT(S_top > S_entries.data());
               const StackEntry& entry = *--S_top;
-              L_i = entry.L;
-              R_i = entry.R; 
-              N_i = entry.N;
-              W_i = entry.W;
+              const int16 W_i = entry.W;
               
-              L = std::min(L, L_i);
-              R = std::max(R, R_i);
-              N += N_i;
+              L = std::min(L, entry.L);
+              R = std::max(R, entry.R);
+              N += entry.N;
               W += W_i;
               w -= W_i;
             }
