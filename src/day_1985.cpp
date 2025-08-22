@@ -15,9 +15,6 @@ using TreeTools::ClusterTable;
 #include <cmath> /* for log2(), ceil() */
 #include <memory> /* for unique_ptr, make_unique */
 
-// Forward declaration
-IntegerVector robinson_foulds_all_pairs_impl(const std::vector<ClusterTable*>& tbl);
-
 // COMCLUSTER computes a strict consensus tree in O(knn).
 // COMCLUST requires O(kn).
 // trees is a list of objects of class phylo.
@@ -201,7 +198,6 @@ double consensus_info(const List trees, const LogicalVector phylo,
   return phylo_info ? info : info * n_tip;
 }
 
-// Original function that takes ClusterTable XPtrs (kept for backward compatibility)
 // [[Rcpp::export]]
 IntegerVector robinson_foulds_all_pairs(List tables) {
   const int n_trees = static_cast<int>(tables.size());
