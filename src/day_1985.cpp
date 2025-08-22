@@ -16,21 +16,7 @@ using TreeTools::ct_max_leaves;
 #include <cmath> /* for log2(), ceil() */
 #include <memory> /* for unique_ptr, make_unique */
 
-using Packed = uint64_t;
-
-static inline Packed pack4(int16 a, int16 b, int16 c, int16 d) noexcept {
-  // Pack as unsigned to avoid UB on shifts; reinterpret sign on unpack.
-  return (uint64_t(uint16_t(a))      ) |
-    (uint64_t(uint16_t(b)) << 16) |
-    (uint64_t(uint16_t(c)) << 32) |
-    (uint64_t(uint16_t(d)) << 48);
-}
-static inline void unpack4(Packed p, int16 &a, int16 &b, int16 &c, int16 &d) noexcept {
-  a = int16(uint16_t( p        & 0xFFFF));
-  b = int16(uint16_t((p >> 16) & 0xFFFF));
-  c = int16(uint16_t((p >> 32) & 0xFFFF));
-  d = int16(uint16_t((p >> 48) & 0xFFFF));
-}
+struct StackEntry { int16 L, R, N, W; };
 
 // COMCLUSTER computes a strict consensus tree in O(knn).
 // COMCLUST requires O(kn).
@@ -237,8 +223,8 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
   int *write_pos = INTEGER(shared); // direct pointer into R memory
   
   int16 v = 0, w = 0, L = 0, R = 0, N = 0, W = 0, L_i = 0, R_i = 0, N_i = 0, W_i = 0;
-  std::array<Packed, ct_max_leaves> S_entries;
-  Packed* S_top = S_entries.data(); // stack top pointer (points one past last element)
+  std::array<StackEntry, ct_max_leaves> S_entries;
+  StackEntry* S_top = S_entries.data(); // stack top pointer (points one past last element)
   
   for (int i = 0; i < n_trees - 1; ++i) {
     ClusterTable* Xi = tbl[i];
@@ -254,19 +240,25 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
         if (Tj->is_leaf(v)) {
           const auto enc_v = Xi->ENCODE(v);
           ASSERT(S_top < S_entries.data() + ct_max_leaves);
-          *S_top++ = pack4(enc_v, enc_v, 1, 1);
+          *S_top++ = {enc_v, enc_v, 1, 1};
         } else {
           ASSERT(S_top > S_entries.data());
-          Packed tmp = *--S_top;
-          unpack4(tmp, L, R, N, W_i);
+          const StackEntry& entry = *--S_top;
+          L = entry.L;
+          R = entry.R;
+          N = entry.N;
+          W_i = entry.W;
           
           W = 1 + W_i;
           w -= W_i;
           
           if (w) { // Unroll first iteration - common case
             ASSERT(S_top > S_entries.data());
-            tmp = *--S_top;
-            unpack4(tmp, L_i, R_i, N_i, W_i);
+            const StackEntry& entry = *--S_top;
+            L_i = entry.L;
+            R_i = entry.R; 
+            N_i = entry.N;
+            W_i = entry.W;
             
             L = std::min(L, L_i); // Faster than ternary operator
             R = std::max(R, R_i);
@@ -276,8 +268,11 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
             
             while (w) {
               ASSERT(S_top > S_entries.data());
-              tmp = *--S_top;
-              unpack4(tmp, L_i, R_i, N_i, W_i);
+              const StackEntry& entry = *--S_top;
+              L_i = entry.L;
+              R_i = entry.R; 
+              N_i = entry.N;
+              W_i = entry.W;
               
               L = std::min(L, L_i);
               R = std::max(R, R_i);
@@ -288,7 +283,7 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
           }
           
           ASSERT(S_top < S_entries.data() + ct_max_leaves);
-          *S_top++ = pack4(L, R, N, W);
+          *S_top++ = {L, R, N, W};
           
           if (N == R - L + 1) { // L..R is contiguous, and must be tested
             if (Xi->ISCLUST(L, R)) ++n_shared;
