@@ -38,6 +38,8 @@ Copyright: Jonker-Volgenant Linear Assignment Problem implementation
 URL: https://ms609.github.io/TreeDist/, https://github.com/ms609/TreeDist/
 BugReports: https://github.com/ms609/TreeDist/issues/
 Additional_repositories: https://ms609.github.io/packages/
+Remotes:
+  ms609/TreeTools
 Depends: 
   R (>= 3.4.0),
   stats,
@@ -45,11 +47,10 @@ Imports:
   ape (>= 5.0),
   cli (>= 3.0),
   colorspace,
-  memoise,
   Rdpack (>= 0.7),
   shiny,
   shinyjs,
-  TreeTools (>= 1.13.0),
+  TreeTools (>= 1.15.0.9008),
 Suggests:
   bookdown,
   cluster,
