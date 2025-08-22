@@ -8,9 +8,6 @@ using namespace Rcpp;
 #include <TreeTools/root_tree.h> /* for root_on_node() */
 #include <TreeTools/ClusterTable.h> /* for ClusterTable() */
 using TreeTools::ClusterTable;
-using TreeTools::CTEntry;
-using TreeTools::ct_pop;
-using TreeTools::ct_push;
 using TreeTools::ct_max_leaves;
 
 #include <array> /* for array */
@@ -18,6 +15,8 @@ using TreeTools::ct_max_leaves;
 #include <vector> /* for vector */
 #include <cmath> /* for log2(), ceil() */
 #include <memory> /* for unique_ptr, make_unique */
+
+struct StackEntry { int16 L, R, N, W; };
 
 // COMCLUSTER computes a strict consensus tree in O(knn).
 // COMCLUST requires O(kn).
@@ -223,15 +222,18 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
   IntegerVector shared = Rcpp::no_init(n_pairs);
   int *write_pos = INTEGER(shared); // direct pointer into R memory
   
-  int16 v = 0, w = 0, L = 0, R = 0, N = 0, W = 0, L_i = 0, R_i = 0, N_i = 0, W_i = 0;
-  std::array<CTEntry, ct_max_leaves> S_entries;
-  CTEntry* S_top = S_entries.data(); // stack top pointer (points one past last element)
+  std::array<StackEntry, ct_max_leaves> S_entries;
+  StackEntry* S_top = S_entries.data(); // stack top pointer (points one past last element)
   
   for (int i = 0; i < n_trees - 1; ++i) {
+    
     ClusterTable* Xi = tbl[i];
     
     for (int j = i + 1; j < n_trees; ++j) {
+      
+      int16 v, w;
       int16 n_shared = 0;
+      
       ClusterTable* Tj = tbl[j];
       
       Tj->TRESET();
@@ -240,28 +242,46 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
       while (v) {
         if (Tj->is_leaf(v)) {
           const auto enc_v = Xi->ENCODE(v);
-          ct_push(S_top, enc_v, enc_v, 1, 1);
+          ASSERT(S_top < S_entries.data() + ct_max_leaves);
+          *S_top++ = {enc_v, enc_v, 1, 1};
         } else {
-          ct_pop(S_top, L, R, N, W_i);
-          W = 1 + W_i;
+          ASSERT(S_top > S_entries.data());
+          const StackEntry& entry = *--S_top;
+          int16 L = entry.L;
+          int16 R = entry.R;
+          int16 N = entry.N;
+          const int16 W_i = entry.W;
+          int16 W = 1 + W_i;
+          
           w -= W_i;
+          
           if (w) { // Unroll first iteration - common case
-            ct_pop(S_top, L_i, R_i, N_i, W_i);
-            L = (L < L_i) ? L : L_i;
-            R = (R > R_i) ? R : R_i;
-            N += N_i;
+            ASSERT(S_top > S_entries.data());
+            const StackEntry& entry = *--S_top;
+            const int16 W_i = entry.W;
+            
+            L = std::min(L, entry.L); // Faster than ternary operator
+            R = std::max(R, entry.R);
+            N += entry.N;
             W += W_i;
             w -= W_i;
             
             while (w) {
-              ct_pop(S_top, L_i, R_i, N_i, W_i);
-              L = std::min<int16>(L, L_i);
-              R = std::max<int16>(R, R_i);
-              N += N_i;
+              ASSERT(S_top > S_entries.data());
+              const StackEntry& entry = *--S_top;
+              const int16 W_i = entry.W;
+              
+              L = std::min(L, entry.L);
+              R = std::max(R, entry.R);
+              N += entry.N;
               W += W_i;
+              w -= W_i;
             }
           }
-          ct_push(S_top, L, R, N, W);
+          
+          ASSERT(S_top < S_entries.data() + ct_max_leaves);
+          *S_top++ = {L, R, N, W};
+          
           if (N == R - L + 1) { // L..R is contiguous, and must be tested
             if (Xi->ISCLUST(L, R)) ++n_shared;
           }
