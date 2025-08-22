@@ -47,7 +47,6 @@ Imports:
   ape (>= 5.0),
   cli (>= 3.0),
   colorspace,
-  memoise,
   Rdpack (>= 0.7),
   shiny,
   shinyjs,
