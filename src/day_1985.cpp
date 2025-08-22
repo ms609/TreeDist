@@ -219,41 +219,6 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
   for (int i = 0; i < n_trees; ++i) {
     tbl.push_back(xptrs[i].get()); // .get() on XPtr => ClusterTable*
   }
-
-  return robinson_foulds_all_pairs_impl(tbl);
-}
-
-// Optimized function that takes phylo objects directly
-// [[Rcpp::export]]
-IntegerVector robinson_foulds_all_pairs_direct(List trees) {
-  const int n_trees = static_cast<int>(trees.size());
-  if (n_trees < 2) return IntegerVector(0);
-  
-  std::vector<std::unique_ptr<ClusterTable>> tables;
-  tables.reserve(n_trees);
-  for (int i = 0; i < n_trees; ++i) {
-    // Pass the phylo object directly, not wrapped in List()
-    // The ClusterTable constructor should handle error checking for large trees
-    try {
-      tables.emplace_back(std::make_unique<ClusterTable>(trees[i]));
-    } catch (const std::exception& e) {
-      // Re-throw any exceptions from ClusterTable constructor (e.g., large tree errors)
-      throw;
-    }
-  }
-  
-  std::vector<ClusterTable*> tbl;
-  tbl.reserve(n_trees);
-  for (int i = 0; i < n_trees; ++i) {
-    tbl.push_back(tables[i].get());
-  }
-
-  return robinson_foulds_all_pairs_impl(tbl);
-}
-
-// Shared implementation for both functions
-IntegerVector robinson_foulds_all_pairs_impl(const std::vector<ClusterTable*>& tbl) {
-  const int n_trees = static_cast<int>(tbl.size());
   
   const size_t n_pairs = static_cast<size_t>(n_trees) * (n_trees - 1) / 2;
   IntegerVector shared = Rcpp::no_init(n_pairs);

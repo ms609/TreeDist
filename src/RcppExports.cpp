@@ -45,17 +45,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// robinson_foulds_all_pairs_direct
-IntegerVector robinson_foulds_all_pairs_direct(List trees);
-RcppExport SEXP _TreeDist_robinson_foulds_all_pairs_direct(SEXP treesSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type trees(treesSEXP);
-    rcpp_result_gen = Rcpp::wrap(robinson_foulds_all_pairs_direct(trees));
-    return rcpp_result_gen;
-END_RCPP
-}
 // lapjv
 List lapjv(NumericMatrix x, NumericVector maxX);
 RcppExport SEXP _TreeDist_lapjv(SEXP xSEXP, SEXP maxXSEXP) {
@@ -289,7 +278,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_COMCLUST", (DL_FUNC) &_TreeDist_COMCLUST, 1},
     {"_TreeDist_consensus_info", (DL_FUNC) &_TreeDist_consensus_info, 3},
     {"_TreeDist_robinson_foulds_all_pairs", (DL_FUNC) &_TreeDist_robinson_foulds_all_pairs, 1},
-    {"_TreeDist_robinson_foulds_all_pairs_direct", (DL_FUNC) &_TreeDist_robinson_foulds_all_pairs_direct, 1},
     {"_TreeDist_lapjv", (DL_FUNC) &_TreeDist_lapjv, 2},
     {"_TreeDist_cpp_mast", (DL_FUNC) &_TreeDist_cpp_mast, 3},
     {"_TreeDist_cpp_nni_distance", (DL_FUNC) &_TreeDist_cpp_nni_distance, 3},

@@ -104,12 +104,8 @@ RobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
   
   if (is.null(tree2)) {
     # Optimized: pass trees directly to C++ to avoid as.ClusterTable conversion overhead
-    rf <- if (inherits(tree1, "multiPhylo")) {
-      robinson_foulds_all_pairs_direct(tree1)
-    } else {
-      # For single phylo, the original logic wraps the ClusterTable in a list
-      robinson_foulds_all_pairs_direct(list(tree1))
-    }
+    ct <- as.ClusterTable(tree1)
+    rf <- robinson_foulds_all_pairs(if (is.list(ct)) ct else list(ct))
     if (similarity) {
       unnormalized <- structure(rf + rf, Size = length(tree1), class = "dist")
     } else {

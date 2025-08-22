@@ -13,10 +13,6 @@ robinson_foulds_all_pairs <- function(tables) {
     .Call(`_TreeDist_robinson_foulds_all_pairs`, tables)
 }
 
-robinson_foulds_all_pairs_direct <- function(trees) {
-    .Call(`_TreeDist_robinson_foulds_all_pairs_direct`, trees)
-}
-
 lapjv <- function(x, maxX) {
     .Call(`_TreeDist_lapjv`, x, maxX)
 }
