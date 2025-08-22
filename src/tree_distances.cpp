@@ -39,7 +39,6 @@ namespace TreeDist {
 }
 
 
-
 // [[Rcpp::export]]
 List cpp_robinson_foulds_distance(const RawMatrix x, const RawMatrix y, 
                                   const IntegerVector nTip) {
@@ -164,9 +163,8 @@ List cpp_robinson_foulds_info(const RawMatrix x, const RawMatrix y,
     }
   }
   
-  NumericVector final_score = NumericVector::create(score);
-  return List::create(Named("score") = final_score,
-                      _["matching"] = matching);
+  return List::create(Named("score") = Rcpp::wrap(score),
+                      _["matching"] = Rcpp::wrap(matching));
   
 }
 
@@ -217,17 +215,22 @@ List cpp_matching_split_distance(const RawMatrix x, const RawMatrix y,
   rowsol.reserve(most_splits);
   colsol.reserve(most_splits);
   
-  NumericVector final_score = NumericVector::create(
-    lap(most_splits, score, rowsol, colsol) - (max_score * split_diff));
+  const double final_score = lap(most_splits, score, rowsol, colsol) -
+    (max_score * split_diff);
   
-  IntegerVector final_matching(a.n_splits);
+  std::vector<int> final_matching;
+  final_matching.reserve(a.n_splits);
   
   for (int16 i = 0; i < a.n_splits; ++i) {
-    final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
+    const int match = (rowsol[i] < b.n_splits)
+    ? static_cast<int>(rowsol[i]) + 1
+    : NA_INTEGER;
+    final_matching.push_back(match);
   }
   
-  return List::create(Named("score") = final_score,
-                      _["matching"] = final_matching);
+  
+  return List::create(Named("score") = Rcpp::wrap(final_score),
+                      _["matching"] = Rcpp::wrap(final_matching));
 }
 
 // [[Rcpp::export]]
@@ -324,18 +327,23 @@ List cpp_jaccard_similarity(const RawMatrix x, const RawMatrix y,
   rowsol.reserve(most_splits);
   colsol.reserve(most_splits);
   
-  NumericVector final_score = NumericVector::create(
-    (double)((max_score * most_splits) - 
+  const double final_score = static_cast<double>((max_score * most_splits) - 
       lap(most_splits, score, rowsol, colsol))
-    / max_score);
-  IntegerVector final_matching(a.n_splits);
+    / max_score;
+  
+  std::vector<int> final_matching;
+  final_matching.reserve(a.n_splits);
   
   for (int16 i = 0; i < a.n_splits; ++i) {
-    final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
+    const int match = (rowsol[i] < b.n_splits)
+    ? static_cast<int>(rowsol[i]) + 1
+    : NA_INTEGER;
+    final_matching.push_back(match);
   }
   
-  return List::create(Named("score") = final_score,
-                      _["matching"] = final_matching);
+  
+  return List::create(Named("score") = Rcpp::wrap(final_score),
+                      _["matching"] = Rcpp::wrap(final_matching));
   
 }
 
@@ -389,19 +397,22 @@ List cpp_msi_distance(const RawMatrix x, const RawMatrix y,
   rowsol.reserve(most_splits);
   colsol.reserve(most_splits);
   
-  NumericVector final_score = NumericVector::create(
-    static_cast<double>((max_score * most_splits) - 
-                        lap(most_splits, score, rowsol, colsol))
-    * possible_over_score
-  );
+  const double final_score = static_cast<double>(
+    (max_score * most_splits) - lap(most_splits, score, rowsol, colsol)) *
+      possible_over_score;
   
-  IntegerVector final_matching(a.n_splits);
+  std::vector<int> final_matching;
+  final_matching.reserve(a.n_splits);
+  
   for (int16 i = 0; i < a.n_splits; ++i) {
-    final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
+    const int match = (rowsol[i] < b.n_splits)
+    ? static_cast<int>(rowsol[i]) + 1
+    : NA_INTEGER;
+    final_matching.push_back(match);
   }
   
-  return List::create(Named("score") = final_score,
-                      _["matching"] = final_matching);
+  return List::create(Named("score") = Rcpp::wrap(final_score),
+                      _["matching"] = Rcpp::wrap(final_matching));
 
 }
 
@@ -482,7 +493,7 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
   }
   if (exact_matches == b.n_splits || exact_matches == a.n_splits) {
     return List::create(
-      Named("score") = NumericVector::create(exact_match_score * n_tips_reciprocal),
+      Named("score") = Rcpp::wrap(exact_match_score * n_tips_reciprocal),
       _["matching"] = a_match);
   }
   
@@ -562,15 +573,19 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
     const double lap_score = static_cast<double>(
         (max_score * lap_dim) - lap(lap_dim, score, rowsol, colsol)
       ) / max_score;
-    NumericVector final_score = NumericVector::create(lap_score);
     
-    IntegerVector final_matching(a.n_splits);
+    std::vector<int> final_matching;
+    final_matching.reserve(a.n_splits);
+    
     for (int16 i = 0; i < a.n_splits; ++i) {
-      final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
+      const int match = (rowsol[i] < b.n_splits)
+      ? static_cast<int>(rowsol[i]) + 1
+      : NA_INTEGER;
+      final_matching.push_back(match);
     }
     
-    return List::create(Named("score") = final_score,
-                        _["matching"] = final_matching);
+    return List::create(Named("score") = Rcpp::wrap(lap_score),
+                        _["matching"] = Rcpp::wrap(final_matching));
   }
 }
 
@@ -618,19 +633,21 @@ List cpp_shared_phylo (const RawMatrix x, const RawMatrix y,
   colsol.reserve(most_splits);
   
   
-  NumericVector final_score = NumericVector::create(
-    static_cast<double>(
+  const double final_score = static_cast<double>(
       (max_score * most_splits) - lap(most_splits, score, rowsol, colsol)) *
-        possible_over_score
-    );
+        possible_over_score;
   
-  IntegerVector final_matching(a.n_splits);
+  std::vector<int> final_matching;
+  final_matching.reserve(a.n_splits);
   
   for (int16 i = 0; i < a.n_splits; ++i) {
-    final_matching[i] = (rowsol[i] < b.n_splits) ? rowsol[i] + 1 : NA_INTEGER;
+    const int match = (rowsol[i] < b.n_splits)
+    ? static_cast<int>(rowsol[i]) + 1
+    : NA_INTEGER;
+    final_matching.push_back(match);
   }
   
-  return List::create(Named("score") = final_score,
-                      _["matching"] = final_matching);
+  return List::create(Named("score") = Rcpp::wrap(final_score),
+                      _["matching"] = Rcpp::wrap(final_matching));
 
 }
