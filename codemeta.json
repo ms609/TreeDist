@@ -390,7 +390,7 @@
       "@type": "SoftwareApplication",
       "identifier": "R",
       "name": "R",
-      "version": ">= 3.4.0"
+      "version": ">= 4.0"
     },
     "2": {
       "@type": "SoftwareApplication",
@@ -488,7 +488,7 @@
     "SystemRequirements": "C++17, pandoc-citeproc"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "1578.28KB",
+  "fileSize": "1577.723KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
