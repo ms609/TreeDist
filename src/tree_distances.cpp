@@ -100,8 +100,7 @@ List cpp_robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
   }
   score = cost(a.n_splits + b.n_splits) - score - score;
   
-  return List::create(Named("score") = Rcpp::wrap(score),
-                      _["matching"] = Rcpp::wrap(matching));
+  return List::create(Named("score") = score, _["matching"] = matching);
   
 }
 
@@ -169,8 +168,7 @@ List cpp_robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
     }
   }
   
-  return List::create(Named("score") = Rcpp::wrap(score),
-                      _["matching"] = Rcpp::wrap(matching));
+  return List::create(Named("score") = score, _["matching"] = matching);
   
 }
 
@@ -235,8 +233,8 @@ List cpp_matching_split_distance(const RawMatrix &x, const RawMatrix &y,
   }
   
   
-  return List::create(Named("score") = Rcpp::wrap(final_score),
-                      _["matching"] = Rcpp::wrap(final_matching));
+  return List::create(Named("score") = final_score,
+                      _["matching"] = final_matching);
 }
 
 // [[Rcpp::export]]
@@ -348,8 +346,8 @@ List cpp_jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
   }
   
   
-  return List::create(Named("score") = Rcpp::wrap(final_score),
-                      _["matching"] = Rcpp::wrap(final_matching));
+  return List::create(Named("score") = final_score,
+                      _["matching"] = final_matching);
   
 }
 
@@ -417,8 +415,8 @@ List cpp_msi_distance(const RawMatrix &x, const RawMatrix &y,
     final_matching.push_back(match);
   }
   
-  return List::create(Named("score") = Rcpp::wrap(final_score),
-                      _["matching"] = Rcpp::wrap(final_matching));
+  return List::create(Named("score") = final_score,
+                      _["matching"] = final_matching);
 
 }
 
@@ -499,8 +497,8 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   }
   if (exact_matches == b.n_splits || exact_matches == a.n_splits) {
     return List::create(
-      Named("score") = Rcpp::wrap(exact_match_score * n_tips_reciprocal),
-      _["matching"] = Rcpp::wrap(a_match));
+      Named("score") = exact_match_score * n_tips_reciprocal,
+      _["matching"] = a_match);
   }
   
   
@@ -559,8 +557,8 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
       }
     }
     
-    return List::create(Named("score") = Rcpp::wrap(final_score),
-                        _["matching"] = Rcpp::wrap(final_matching));
+    return List::create(Named("score") = final_score,
+                        _["matching"] = final_matching);
   } else {
     for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
       for (int16 bi = 0; bi < most_splits; ++bi) {
@@ -582,8 +580,8 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
       final_matching.push_back(match);
     }
     
-    return List::create(Named("score") = Rcpp::wrap(lap_score),
-                        _["matching"] = Rcpp::wrap(final_matching));
+    return List::create(Named("score") = lap_score,
+                        _["matching"] = final_matching);
   }
 }
 
@@ -645,7 +643,7 @@ List cpp_shared_phylo (const RawMatrix &x, const RawMatrix &y,
     final_matching.push_back(match);
   }
   
-  return List::create(Named("score") = Rcpp::wrap(final_score),
-                      _["matching"] = Rcpp::wrap(final_matching));
+  return List::create(Named("score") = final_score,
+                      _["matching"] = final_matching);
 
 }
