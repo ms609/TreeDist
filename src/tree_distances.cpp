@@ -196,8 +196,8 @@ List cpp_matching_split_distance(const RawMatrix &x, const RawMatrix &y,
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
     for (int16 bi = 0; bi < b.n_splits; ++bi) {
       splitbit total = 0;
-      for (int16 bin = 0; bin < a.n_bins; ++bin) { // hot hot hot 11.3% -> 20.4%
-         total += count_bits(a.state[ai][bin] ^ b.state[bi][bin]); // hot hot 8.0% → 15%
+      for (int16 bin = 0; bin < a.n_bins; ++bin) {
+         total += count_bits(a.state[ai][bin] ^ b.state[bi][bin]);
       }
       score(ai, bi) = total;
     }
