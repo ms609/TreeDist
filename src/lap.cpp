@@ -27,11 +27,10 @@
  *
  *************************************************************************/
 #include "tree_distances.h"
-using namespace Rcpp;
-
+#include <Rcpp/Lightest>
 
 // [[Rcpp::export]]
-List lapjv(NumericMatrix &x, NumericVector &maxX) {
+Rcpp::List lapjv(Rcpp::NumericMatrix &x, Rcpp::NumericVector &maxX) {
   const lap_dim n_row = x.nrow();
   const lap_dim n_col = x.ncol();
   const lap_dim max_dim = std::max(n_row, n_col);
@@ -46,17 +45,18 @@ List lapjv(NumericMatrix &x, NumericVector &maxX) {
   
   cost score = lap(max_dim, input, rowsol, colsol);
   
-  IntegerVector matching(n_row);
+  std::vector<int> matching;
+  matching.reserve(n_row);
   
   for (lap_dim i = 0; i < n_row; ++i) {
-    matching[i] = rowsol[i] < n_col ? rowsol[i] + 1 : NA_INTEGER;
+    const int match = (rowsol[i] < n_col) ? rowsol[i] + 1 : NA_INTEGER;
+    matching.push_back(match);
   }
   
-  return List::create(
-    Named("score") = (static_cast<double>(score) -
-      (std::abs(spare_rows) * max_score))
-    / max_score * x_max,
-    _["matching"] = matching
+  return Rcpp::List::create(
+    Rcpp::Named("score") = (static_cast<double>(score) -
+      (std::abs(spare_rows) * max_score)) / max_score * x_max,
+    Rcpp::_["matching"] = matching
   );
 }
 

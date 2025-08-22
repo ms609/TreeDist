@@ -46,13 +46,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // lapjv
-List lapjv(NumericMatrix x, NumericVector maxX);
+Rcpp::List lapjv(Rcpp::NumericMatrix& x, Rcpp::NumericVector& maxX);
 RcppExport SEXP _TreeDist_lapjv(SEXP xSEXP, SEXP maxXSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type maxX(maxXSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type maxX(maxXSEXP);
     rcpp_result_gen = Rcpp::wrap(lapjv(x, maxX));
     return rcpp_result_gen;
 END_RCPP
