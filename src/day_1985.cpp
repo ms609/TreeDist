@@ -8,6 +8,7 @@ using namespace Rcpp;
 #include <TreeTools/root_tree.h> /* for root_on_node() */
 #include <TreeTools/ClusterTable.h> /* for ClusterTable() */
 using TreeTools::ClusterTable;
+using TreeTools::ct_max_leaves;
 
 #include <array> /* for array */
 #include <bitset> /* for bitset */
@@ -15,19 +16,34 @@ using TreeTools::ClusterTable;
 #include <cmath> /* for log2(), ceil() */
 #include <memory> /* for unique_ptr, make_unique */
 
+using Packed = uint64_t;
+
+static inline Packed pack4(int16 a, int16 b, int16 c, int16 d) noexcept {
+  // Pack as unsigned to avoid UB on shifts; reinterpret sign on unpack.
+  return (uint64_t(uint16_t(a))      ) |
+    (uint64_t(uint16_t(b)) << 16) |
+    (uint64_t(uint16_t(c)) << 32) |
+    (uint64_t(uint16_t(d)) << 48);
+}
+static inline void unpack4(Packed p, int16 &a, int16 &b, int16 &c, int16 &d) noexcept {
+  a = int16(uint16_t( p        & 0xFFFF));
+  b = int16(uint16_t((p >> 16) & 0xFFFF));
+  c = int16(uint16_t((p >> 32) & 0xFFFF));
+  d = int16(uint16_t((p >> 48) & 0xFFFF));
+}
+
 // COMCLUSTER computes a strict consensus tree in O(knn).
 // COMCLUST requires O(kn).
 // trees is a list of objects of class phylo.
 // [[Rcpp::export]]
 int COMCLUST(List trees) {
   
-  int16 v = 0, w = 0,
-    L, R, N, W,
-    L_i, R_i, N_i, W_i
-  ;
+  int16 v = 0, w = 0;
+  int16 L, R, N, W;
+  int16 L_i, R_i, N_i, W_i;
   
   ClusterTable X(List(trees(0)));
-  std::array<int16, CT_MAX_LEAVES> S;
+  std::array<int16, TreeTools::ct_max_leaves> S;
   
   for (int16 i = 1; i != trees.length(); i++) {
     int16 Spos = 0; // Empty the stack S
@@ -38,7 +54,7 @@ int COMCLUST(List trees) {
     Ti.NVERTEX(&v, &w);
     
     do {
-      if (Ti.is_leaf(&v)) {
+      if (Ti.is_leaf(v)) {
         CT_PUSH(X.ENCODE(v), X.ENCODE(v), 1, 1);
       } else {
         CT_POP(L, R, N, W_i);
@@ -105,8 +121,8 @@ double consensus_info(const List trees, const LogicalVector phylo,
   
   const bool phylo_info = phylo[0];
   
-  std::array<int16, CT_STACK_SIZE * CT_MAX_LEAVES> S;
-  std::array<int16, CT_MAX_LEAVES> split_count;
+  std::array<int16, TreeTools::ct_stack_size * TreeTools::ct_max_leaves> S;
+  std::array<int16, TreeTools::ct_max_leaves> split_count;
   
   double info = 0;
   
@@ -220,44 +236,66 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
   IntegerVector shared = Rcpp::no_init(n_pairs);
   int *write_pos = INTEGER(shared); // direct pointer into R memory
   
-  std::array<int16, CT_MAX_LEAVES> S; // keep if CT_PUSH/POP rely on it
   int16 v = 0, w = 0, L = 0, R = 0, N = 0, W = 0, L_i = 0, R_i = 0, N_i = 0, W_i = 0;
+  std::array<Packed, ct_max_leaves> S_entries;
+  Packed* S_top = S_entries.data(); // stack top pointer (points one past last element)
   
   for (int i = 0; i < n_trees - 1; ++i) {
     ClusterTable* Xi = tbl[i];
     
     for (int j = i + 1; j < n_trees; ++j) {
+      int16 n_shared = 0;
       ClusterTable* Tj = tbl[j];
-      
-      int16_t Spos = 0;
-      int16_t n_shared = 0;
       
       Tj->TRESET();
       Tj->NVERTEX_short(&v, &w);
       
-      do {
-        if (Tj->is_leaf(&v)) {
+      while (v) {
+        if (Tj->is_leaf(v)) {
           const auto enc_v = Xi->ENCODE(v);
-          CT_PUSH(enc_v, enc_v, 1, 1);
+          ASSERT(S_top < S_entries.data() + ct_max_leaves);
+          *S_top++ = pack4(enc_v, enc_v, 1, 1);
         } else {
-          CT_POP(L, R, N, W_i);
+          ASSERT(S_top > S_entries.data());
+          Packed tmp = *--S_top;
+          unpack4(tmp, L, R, N, W_i);
+          
           W = 1 + W_i;
           w -= W_i;
-          while (w) {
-            CT_POP(L_i, R_i, N_i, W_i);
-            if (L_i < L) L = L_i;
-            if (R_i > R) R = R_i;
+          
+          if (w) { // Unroll first iteration - common case
+            ASSERT(S_top > S_entries.data());
+            tmp = *--S_top;
+            unpack4(tmp, L_i, R_i, N_i, W_i);
+            
+            L = std::min(L, L_i); // Faster than ternary operator
+            R = std::max(R, R_i);
             N += N_i;
             W += W_i;
             w -= W_i;
+            
+            while (w) {
+              ASSERT(S_top > S_entries.data());
+              tmp = *--S_top;
+              unpack4(tmp, L_i, R_i, N_i, W_i);
+              
+              L = std::min(L, L_i);
+              R = std::max(R, R_i);
+              N += N_i;
+              W += W_i;
+              w -= W_i;
+            }
           }
-          CT_PUSH(L, R, N, W);
+          
+          ASSERT(S_top < S_entries.data() + ct_max_leaves);
+          *S_top++ = pack4(L, R, N, W);
+          
           if (N == R - L + 1) { // L..R is contiguous, and must be tested
-            if (Xi->ISCLUST(&L, &R)) ++n_shared;
+            if (Xi->ISCLUST(L, R)) ++n_shared;
           }
         }
         Tj->NVERTEX_short(&v, &w); // Doesn't count all-ingroup or all-tips
-      } while (v);
+      }
       *write_pos++ = n_shared;
     }
   }
