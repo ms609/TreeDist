@@ -55,7 +55,7 @@ LAPJV <- function(x) {
   dims <- dim(x)
   if (length(dims) == 2L) {
     if (any(dims == 0L)) {
-      integer(0)
+      list(score = 0, matching = integer(0))
     } else {
       lapjv(x, max(x))
     }

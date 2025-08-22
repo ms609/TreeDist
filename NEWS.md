@@ -1,7 +1,8 @@
 # TreeDist 2.9.2.9000 (development)
 
 - `Ntropy()` computes entropy from integer counts.
-
+- C++ source formatting.
+- Discontinue tests against R 3.6 and 4.0.
 
 # TreeDist 2.9.2 (2025-01-11)
 
