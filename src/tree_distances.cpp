@@ -211,8 +211,11 @@ List cpp_matching_split_distance(const RawMatrix x, const RawMatrix y,
   
   score.padAfterRow(a.n_splits, max_score);
   
-  std::vector<lap_col> rowsol(most_splits);
-  std::vector<lap_row> colsol(most_splits);
+  std::vector<lap_col> rowsol;
+  std::vector<lap_row> colsol;
+  
+  rowsol.reserve(most_splits);
+  colsol.reserve(most_splits);
   
   NumericVector final_score = NumericVector::create(
     lap(most_splits, score, rowsol, colsol) - (max_score * split_diff));
@@ -315,8 +318,11 @@ List cpp_jaccard_similarity(const RawMatrix x, const RawMatrix y,
   }
   score.padAfterRow(a.n_splits, max_score);
   
-  std::vector<lap_col> rowsol(most_splits);
-  std::vector<lap_row> colsol(most_splits);
+  std::vector<lap_col> rowsol;
+  std::vector<lap_row> colsol;
+  
+  rowsol.reserve(most_splits);
+  colsol.reserve(most_splits);
   
   NumericVector final_score = NumericVector::create(
     (double)((max_score * most_splits) - 
@@ -377,8 +383,11 @@ List cpp_msi_distance(const RawMatrix x, const RawMatrix y,
   }
   score.padAfterRow(a.n_splits, max_score);
   
-  std::vector<lap_col> rowsol(most_splits);
-  std::vector<lap_row> colsol(most_splits);
+  std::vector<lap_col> rowsol;
+  std::vector<lap_row> colsol;
+  
+  rowsol.reserve(most_splits);
+  colsol.reserve(most_splits);
   
   NumericVector final_score = NumericVector::create(
     static_cast<double>((max_score * most_splits) - 
@@ -479,8 +488,13 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
   
   
   const int16 lap_dim = most_splits - exact_matches;
-  std::vector<lap_col> rowsol(lap_dim);
-  std::vector<lap_row> colsol(lap_dim);
+  
+  std::vector<lap_col> rowsol;
+  std::vector<lap_row> colsol;
+  
+  rowsol.reserve(lap_dim);
+  colsol.reserve(lap_dim);
+  
   cost_matrix small_score(lap_dim);
   
   if (exact_matches) {
