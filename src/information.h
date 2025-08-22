@@ -4,7 +4,6 @@
 #include <cmath> /* for log2() */
 #include <TreeTools/ClusterTable.h> /* for CT_MAX_LEAVES */
 
-#include <Rcpp.h>
 #include "ints.h" /* for int16 */
 
 constexpr int_fast32_t LOG_MAX = 2048;
@@ -92,7 +91,7 @@ inline double split_clust_info (const int16 n_in, const int16 *n_tip,
 //' @export
 //' @keywords internal
 // [[Rcpp::export]]
-double entropy_int(const IntegerVector &n) {
+double entropy_int(const Rcpp::IntegerVector &n) {
   int N = 0;
   double sum = 0;
   

@@ -46,12 +46,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // entropy_int
-double entropy_int(const IntegerVector& n);
+double entropy_int(const Rcpp::IntegerVector& n);
 RcppExport SEXP _TreeDist_entropy_int(SEXP nSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const IntegerVector& >::type n(nSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type n(nSEXP);
     rcpp_result_gen = Rcpp::wrap(entropy_int(n));
     return rcpp_result_gen;
 END_RCPP
