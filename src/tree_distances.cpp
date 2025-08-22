@@ -443,9 +443,9 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
   
   double exact_match_score = 0;
   int16 exact_matches = 0;
-  // NumericVector zero-initializes [so does make_unique]
+  // vector zero-initializes [so does make_unique]
   // match will have one added to it so numbering follows R; hence 0 = UNMATCHED
-  IntegerVector a_match(a.n_splits);
+  std::vector<int> a_match(a.n_splits);
   std::unique_ptr<int16[]> b_match = std::make_unique<int16[]>(b.n_splits);
   
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
@@ -494,7 +494,7 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
   if (exact_matches == b.n_splits || exact_matches == a.n_splits) {
     return List::create(
       Named("score") = Rcpp::wrap(exact_match_score * n_tips_reciprocal),
-      _["matching"] = a_match);
+      _["matching"] = Rcpp::wrap(a_match));
   }
   
   
@@ -526,8 +526,7 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
     const double lap_score = static_cast<double>(
       (max_score * lap_dim) - lap(lap_dim, small_score, rowsol, colsol)
       ) / max_score;
-    NumericVector final_score = 
-      NumericVector::create(lap_score + (exact_match_score * n_tips_reciprocal));
+    const double final_score = lap_score + (exact_match_score * n_tips_reciprocal);
     
     std::unique_ptr<int16[]> lap_decode = std::make_unique<int16[]>(lap_dim);
     int16 fuzzy_match = 0;
@@ -539,30 +538,23 @@ List cpp_mutual_clustering(const RawMatrix x, const RawMatrix y,
     }
     
     fuzzy_match = 0;
-    IntegerVector final_matching(a.n_splits);
+    std::vector<int> final_matching(a.n_splits);
     for (int16 i = 0; i < a.n_splits; ++i) {
       if (a_match[i]) {
-        // Rcout << "a" << (1+i) << " exactly matches b" << a_match[i]<< "\n";
         final_matching[i] = a_match[i];
       } else {
         assert(fuzzy_match < lap_dim);
         const int16 this_sol = rowsol[fuzzy_match++];
-        // Rcout << "a"<<(1+i) << " fuzzily matches rowsol[" << this_sol <<"] == "
-        //       << rowsol[this_sol] << "; ";
         if (rowsol[this_sol] >= lap_dim - a_extra_splits) {
-          // Rcout << " unmatched (NA)\n";
           final_matching[i] = NA_INTEGER;
         } else {
-          // Rcout << " matched with b" << lap_decode[rowsol[this_sol]] <<".\n";
           final_matching[i] = lap_decode[rowsol[this_sol]];
         }
       }
-      // Rcout << " ";
-      // if (final_matching[i] > 0) Rcout << final_matching[i]; else Rcout << "NA";
     }
     
-    return List::create(Named("score") = final_score,
-                        _["matching"] = final_matching);
+    return List::create(Named("score") = Rcpp::wrap(final_score),
+                        _["matching"] = Rcpp::wrap(final_matching));
   } else {
     for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
       for (int16 bi = 0; bi < most_splits; ++bi) {
