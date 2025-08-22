@@ -480,11 +480,9 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
     
     CombineInfo <- function(tree1Info, tree2Info, Combiner = Combine,
                             pairwise = FALSE) {
+
       if (length(tree1Info) == 1 || length(tree2Info) == 1 || pairwise) {
-        # TODO When requiring R4.0, remove match.fun - which is now part of
-        # .mapply
-        unlist(.mapply(match.fun(Combiner),
-                       dots = list(tree1Info, tree2Info), NULL))
+        unlist(.mapply(Combiner, dots = list(tree1Info, tree2Info), NULL))
       } else {
         ret <- outer(tree1Info, tree2Info, Combiner)
         if (inherits(unnormalized, "dist")) ret[lower.tri(ret)] else ret

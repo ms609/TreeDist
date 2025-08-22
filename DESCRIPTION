@@ -41,7 +41,7 @@ Additional_repositories: https://ms609.github.io/packages/
 Remotes:
   ms609/TreeTools
 Depends: 
-  R (>= 3.4.0),
+  R (>= 4.0),
   stats,
 Imports: 
   ape (>= 5.0),
