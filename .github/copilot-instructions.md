@@ -73,6 +73,12 @@ Always reference these instructions first and fallback to search or bash command
   ```
 
 ## Validation
+
+**CRITICAL: Always run the full test suite before proposing changes**
+  ```bash
+  R -e "devtools::test()"
+  ```
+
 - Always run R CMD check for complete validation before finalizing changes.
 - ALWAYS run the full test suite when modifying C++ code in src/ directory.
 - ALWAYS run lintr to ensure code style compliance before committing.
