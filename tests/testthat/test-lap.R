@@ -311,7 +311,7 @@ test_that("Precision avoids interminable loop in LAP", {
                                      "Vulcanodon_karibaensis", "Muyelensaurus", "Mamenchisaurus"), class = "Splits")
   
   expect_gt(MutualClusteringInfoSplits(spl2180, spl2180), 0)
-  expect_equal(MutualClusteringInfoSplits(spl2180, spl636), 
+  expect_equal(MutualClusteringInfoSplits(spl2180, spl636),
                MutualClusteringInfoSplits(spl636, spl2180))
 })
 
