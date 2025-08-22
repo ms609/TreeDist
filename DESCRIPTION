@@ -1,7 +1,7 @@
 Package: TreeDist
 Type: Package
 Title: Calculate and Map Distances Between Phylogenetic Trees
-Version: 2.9.2.9002
+Version: 2.10.0
 Authors@R: c(person("Martin R.", "Smith",
                     email = "martin.smith@durham.ac.uk", 
                     role = c("aut", "cre", "cph", "prg"), 
@@ -38,8 +38,6 @@ Copyright: Jonker-Volgenant Linear Assignment Problem implementation
 URL: https://ms609.github.io/TreeDist/, https://github.com/ms609/TreeDist/
 BugReports: https://github.com/ms609/TreeDist/issues/
 Additional_repositories: https://ms609.github.io/packages/
-Remotes:
-  ms609/TreeTools
 Depends: 
   R (>= 4.0),
   stats,
@@ -50,7 +48,7 @@ Imports:
   Rdpack (>= 0.7),
   shiny,
   shinyjs,
-  TreeTools (>= 1.15.0.9008),
+  TreeTools (>= 1.16),
 Suggests:
   bookdown,
   cluster,
@@ -80,7 +78,7 @@ Suggests:
   vdiffr (>= 1.0.0),
 LinkingTo:
   Rcpp,
-  TreeTools (>= 1.15.0.9006),
+  TreeTools (>= 1.16),
 RdMacros: Rdpack
 VignetteBuilder: knitr
 Config/Needs/check: rcmdcheck
