@@ -179,9 +179,8 @@ List cpp_matching_split_distance(const RawMatrix x, const RawMatrix y,
   TreeDist::check_ntip(nTip[0]);
   
   const SplitList a(x), b(y);
-  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits;
-  const int16 split_diff = most_splits - 
-    ((a.n_splits > b.n_splits) ? b.n_splits : a.n_splits);
+  const int16 most_splits = std::max(a.n_splits, b.n_splits);
+  const int16 split_diff = most_splits - std::min(a.n_splits, b.n_splits);
   const int16 n_tips = int16(nTip[0]);
   const int16 half_tips = n_tips / 2;
   if (most_splits == 0) {
@@ -238,7 +237,7 @@ List cpp_jaccard_similarity(const RawMatrix x, const RawMatrix y,
   TreeDist::check_ntip(nTip[0]);
   
   const SplitList a(x), b(y);
-  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits;
+  const int16 most_splits = std::max(a.n_splits, b.n_splits);
   const int16 n_tips = int16(nTip[0]);
   
   constexpr cost max_score = BIG;
@@ -343,7 +342,7 @@ List cpp_msi_distance(const RawMatrix x, const RawMatrix y,
   TreeDist::check_ntip(nTip[0]);
   
   const SplitList a(x), b(y);
-  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits;
+  const int16 most_splits = std::max(a.n_splits, b.n_splits);
   const int16 n_tips = int16(nTip[0]);
   constexpr cost max_score = BIG;
   const double max_possible = lg2_unrooted[n_tips] - 
