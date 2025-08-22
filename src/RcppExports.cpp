@@ -45,6 +45,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// entropy_int
+double entropy_int(const Rcpp::IntegerVector& n);
+RcppExport SEXP _TreeDist_entropy_int(SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(entropy_int(n));
+    return rcpp_result_gen;
+END_RCPP
+}
 // lapjv
 Rcpp::List lapjv(Rcpp::NumericMatrix& x, Rcpp::NumericVector& maxX);
 RcppExport SEXP _TreeDist_lapjv(SEXP xSEXP, SEXP maxXSEXP) {
@@ -278,6 +289,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_COMCLUST", (DL_FUNC) &_TreeDist_COMCLUST, 1},
     {"_TreeDist_consensus_info", (DL_FUNC) &_TreeDist_consensus_info, 3},
     {"_TreeDist_robinson_foulds_all_pairs", (DL_FUNC) &_TreeDist_robinson_foulds_all_pairs, 1},
+    {"_TreeDist_entropy_int", (DL_FUNC) &_TreeDist_entropy_int, 1},
     {"_TreeDist_lapjv", (DL_FUNC) &_TreeDist_lapjv, 2},
     {"_TreeDist_cpp_mast", (DL_FUNC) &_TreeDist_cpp_mast, 3},
     {"_TreeDist_cpp_nni_distance", (DL_FUNC) &_TreeDist_cpp_nni_distance, 3},

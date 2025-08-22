@@ -1,5 +1,6 @@
 # TreeDist 2.9.2.9001 (development)
 
+- `Ntropy()` computes entropy from integer counts.
 - C++ source formatting.
 - Optimize LAPJV code - 2x speed-up for large matrices.
 - Require R4.0.

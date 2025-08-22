@@ -13,6 +13,19 @@ robinson_foulds_all_pairs <- function(tables) {
     .Call(`_TreeDist_robinson_foulds_all_pairs`, tables)
 }
 
+#' Calculate entropy of integer vector of counts
+#' 
+#' Wrapper for C++ function; no input checking is performed.
+#' [`Ntropy()`] is better suited for use where performance is not critical.
+#' @param n a vector of integer counts
+#' @return `entropy_int()` returns a numeric corresponding to the entropy of
+#' each observation, in bits.
+#' @export
+#' @keywords internal
+entropy_int <- function(n) {
+    .Call(`_TreeDist_entropy_int`, n)
+}
+
 lapjv <- function(x, maxX) {
     .Call(`_TreeDist_lapjv`, x, maxX)
 }

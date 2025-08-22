@@ -6,8 +6,18 @@
 
 #include "ints.h" /* for int16 */
 
+constexpr int_fast32_t LOG_MAX = 2048;
+static double log2_table[LOG_MAX];
+__attribute__((constructor))
+void compute_log2_table() {
+  for (int i = 1; i < LOG_MAX; ++i) {
+    log2_table[i] = std::log2(i);
+  }
+}
+
 constexpr int_fast32_t FACT_MAX = CT_MAX_LEAVES + CT_MAX_LEAVES + 5 + 1;
-constexpr double log_2 = 0.6931471805599452862268; // log(2.0);
+constexpr double log_2 = 0.6931471805599452862268;
+
 double ldfact[FACT_MAX];
 double l2rooted[CT_MAX_LEAVES];
 double *l2unrooted = &l2rooted[0] - 1;
@@ -68,6 +78,35 @@ inline double split_clust_info (const int16 n_in, const int16 *n_tip,
   return -p * (
       (((n_in * l2[n_in]) + (n_out * l2[n_out])) / *n_tip) - l2[*n_tip]
   );
+}
+
+
+//' Calculate entropy of integer vector of counts
+//' 
+//' Wrapper for C++ function; no input checking is performed.
+//' [`Ntropy()`] is better suited for use where performance is not critical.
+//' @param n a vector of integer counts
+//' @return `entropy_int()` returns a numeric corresponding to the entropy of
+//' each observation, in bits.
+//' @export
+//' @keywords internal
+// [[Rcpp::export]]
+double entropy_int(const Rcpp::IntegerVector &n) {
+  int N = 0;
+  double sum = 0;
+  
+  for (int x : n) {
+    if (x > 0) {
+      if (x < LOG_MAX) {
+        sum += x * log2_table[x];
+      } else {
+        sum += x * std::log2(x);
+      }
+      N += x;
+    }
+  }
+  
+  return (N == 0) ? 0.0 : (N < LOG_MAX ? log2_table[N] : std::log2(N)) - sum / N;
 }
 
 #endif
