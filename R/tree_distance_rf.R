@@ -66,13 +66,6 @@
 #' @rdname Robinson-Foulds
 InfoRobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
                                 normalize = FALSE, reportMatching = FALSE) {
-  if (!isTRUE(reportMatching)) {
-    # Remove unnecessary metadata that will slow calculations
-    tree1 <- TopologyOnly(tree1)
-    if (!is.null(tree2)) {
-      tree2 <- TopologyOnly(tree2)
-    }
-  }
   
   unnormalized <- CalculateTreeDistance(InfoRobinsonFouldsSplits, tree1, tree2, 
                                         reportMatching) * 2
@@ -104,17 +97,10 @@ InfoRobinsonFouldsSplits <- function(splits1, splits2,
 }
 
 #' @rdname Robinson-Foulds
-#' @importFrom TreeTools as.ClusterTable NSplits TopologyOnly
+#' @importFrom TreeTools as.ClusterTable NSplits
 #' @export
 RobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
                             normalize = FALSE, reportMatching = FALSE) {
-  if (!isTRUE(reportMatching)) {
-    # Remove unnecessary metadata that will slow calculations
-    tree1 <- TopologyOnly(tree1)
-    if (!is.null(tree2)) {
-      tree2 <- TopologyOnly(tree2)
-    }
-  }
   
   if (is.null(tree2)) {
     # Optimized: pass trees directly to C++ to avoid as.ClusterTable conversion overhead

@@ -203,17 +203,9 @@ TreeDistance <- function(tree1, tree2 = NULL) {
 }
 
 #' @rdname TreeDistance
-#' @importFrom TreeTools TopologyOnly
 #' @export
 SharedPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                                    reportMatching = FALSE, diag = TRUE) {
-  if (!isTRUE(reportMatching)) {
-    # Remove unnecessary metadata that will slow calculations
-    tree1 <- TopologyOnly(tree1)
-    if (!is.null(tree2)) {
-      tree2 <- TopologyOnly(tree2)
-    }
-  }
   
   unnormalized <- CalculateTreeDistance(SharedPhylogeneticInfoSplits, tree1,
                                         tree2, reportMatching = reportMatching)
@@ -233,13 +225,6 @@ SharedPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
 #' @export
 DifferentPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                                       reportMatching = FALSE) {
-  if (!isTRUE(reportMatching)) {
-    # Remove unnecessary metadata that will slow calculations
-    tree1 <- TopologyOnly(tree1)
-    if (!is.null(tree2)) {
-      tree2 <- TopologyOnly(tree2)
-    }
-  }
   
   spi <- SharedPhylogeneticInfo(tree1, tree2, normalize = FALSE, diag = FALSE,
                                 reportMatching = reportMatching)
@@ -266,13 +251,6 @@ PhylogeneticInfoDistance <- DifferentPhylogeneticInfo
 #' @export
 ClusteringInfoDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
                                    reportMatching = FALSE) {
-  if (!isTRUE(reportMatching)) {
-    # Remove unnecessary metadata that will slow calculations
-    tree1 <- TopologyOnly(tree1)
-    if (!is.null(tree2)) {
-      tree2 <- TopologyOnly(tree2)
-    }
-  }
   
   mci <- MutualClusteringInfo(tree1, tree2, normalize = FALSE, diag = FALSE,
                               reportMatching = reportMatching)
@@ -340,18 +318,9 @@ ExpectedVariation <- function(tree1, tree2, samples = 1e+4) {
 
 #' @rdname TreeDistance
 #' @aliases MutualClusteringInformation
-#' @importFrom TreeTools TopologyOnly
 #' @export
 MutualClusteringInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                                  reportMatching = FALSE, diag = TRUE) {
-  if (!reportMatching) {
-    # Remove unnecessary metadata that will slow calculations
-    tree1 <- TopologyOnly(tree1)
-    if (!is.null(tree2)) {
-      tree2 <- TopologyOnly(tree2)
-    }
-  }
-  
   unnormalized <- CalculateTreeDistance(Func = MutualClusteringInfoSplits,
                                         tree1, tree2, reportMatching)
   if (diag && is.null(tree2)) {
