@@ -55,6 +55,7 @@ inline void resize_uninitialized(std::vector<T>& v, std::size_t n) {
 
 }
 
+using TreeDist::resize_uninitialized;
 
 // [[Rcpp::export]]
 List cpp_robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
