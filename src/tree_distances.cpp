@@ -16,6 +16,21 @@ using TreeTools::count_bits;
 
 namespace TreeDist {
 
+template <typename T>
+inline void resize_uninitialized(std::vector<T>& v, std::size_t n) {
+#if defined(__GLIBCXX__) && __has_include(<bits/stl_vector.h>)
+  // libstdc++ (GCC) doesn't expose __resize_default_init,
+  // but trivial types (int16_t, etc.) will be mem-initialized efficiently.
+  v.assign(n, T{});
+#elif defined(_LIBCPP_VERSION)
+  // libc++ (Clang, Apple, LLVM) supports __resize_default_init
+  v.__resize_default_init(n);
+#else
+  // Generic fallback (C++17 portable): single memset for trivial types
+  v.assign(n, T{});
+#endif
+}
+
   void check_ntip(const double n) {
     if (n > static_cast<double>(std::numeric_limits<int16>::max())) {
       Rcpp::stop("This many tips are not (yet) supported.");
@@ -216,14 +231,14 @@ List cpp_matching_split_distance(const RawMatrix &x, const RawMatrix &y,
   std::vector<lap_col> rowsol;
   std::vector<lap_row> colsol;
   
-  rowsol.reserve(most_splits);
-  colsol.reserve(most_splits);
+  resize_uninitialized(rowsol, most_splits);
+  resize_uninitialized(colsol, most_splits);
   
   const double final_score = lap(most_splits, score, rowsol, colsol) -
     (max_score * split_diff);
   
   std::vector<int> final_matching;
-  final_matching.reserve(a.n_splits);
+  resize_uninitialized(final_matching, a.n_splits);
   
   for (int16 i = 0; i < a.n_splits; ++i) {
     const int match = (rowsol[i] < b.n_splits)
@@ -328,15 +343,15 @@ List cpp_jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
   std::vector<lap_col> rowsol;
   std::vector<lap_row> colsol;
   
-  rowsol.reserve(most_splits);
-  colsol.reserve(most_splits);
+  resize_uninitialized(rowsol, most_splits);
+  resize_uninitialized(colsol, most_splits);
   
   const double final_score = static_cast<double>((max_score * most_splits) - 
       lap(most_splits, score, rowsol, colsol))
     / max_score;
   
   std::vector<int> final_matching;
-  final_matching.reserve(a.n_splits);
+  resize_uninitialized(final_matching, a.n_splits);
   
   for (int16 i = 0; i < a.n_splits; ++i) {
     const int match = (rowsol[i] < b.n_splits)
@@ -398,15 +413,15 @@ List cpp_msi_distance(const RawMatrix &x, const RawMatrix &y,
   std::vector<lap_col> rowsol;
   std::vector<lap_row> colsol;
   
-  rowsol.reserve(most_splits);
-  colsol.reserve(most_splits);
+  resize_uninitialized(rowsol, most_splits);
+  resize_uninitialized(colsol, most_splits);
   
   const double final_score = static_cast<double>(
     (max_score * most_splits) - lap(most_splits, score, rowsol, colsol)) *
       possible_over_score;
   
   std::vector<int> final_matching;
-  final_matching.reserve(a.n_splits);
+  resize_uninitialized(final_matching, a.n_splits);
   
   for (int16 i = 0; i < a.n_splits; ++i) {
     const int match = (rowsol[i] < b.n_splits)
@@ -507,8 +522,8 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   std::vector<lap_col> rowsol;
   std::vector<lap_row> colsol;
   
-  rowsol.reserve(lap_dim);
-  colsol.reserve(lap_dim);
+  resize_uninitialized(rowsol, lap_dim);
+  resize_uninitialized(colsol, lap_dim);
   
   cost_matrix small_score(lap_dim);
   
@@ -571,7 +586,7 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
       ) / max_score;
     
     std::vector<int> final_matching;
-    final_matching.reserve(a.n_splits);
+    resize_uninitialized(final_matching, a.n_splits);
     
     for (int16 i = 0; i < a.n_splits; ++i) {
       const int match = (rowsol[i] < b.n_splits)
@@ -625,8 +640,8 @@ List cpp_shared_phylo (const RawMatrix &x, const RawMatrix &y,
   std::vector<lap_col> rowsol;
   std::vector<lap_row> colsol;
   
-  rowsol.reserve(most_splits);
-  colsol.reserve(most_splits);
+  resize_uninitialized(rowsol, most_splits);
+  resize_uninitialized(colsol, most_splits);
   
   
   const double final_score = static_cast<double>(
@@ -634,7 +649,7 @@ List cpp_shared_phylo (const RawMatrix &x, const RawMatrix &y,
         possible_over_score;
   
   std::vector<int> final_matching;
-  final_matching.reserve(a.n_splits);
+  resize_uninitialized(final_matching, a.n_splits);
   
   for (int16 i = 0; i < a.n_splits; ++i) {
     const int match = (rowsol[i] < b.n_splits)

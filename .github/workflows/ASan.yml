@@ -46,7 +46,7 @@ jobs:
       STRINGI_DISABLE_PKG_CONFIG: true
       BIOCONDUCTOR_USE_CONTAINER_REPOSITORY: FALSE # For stringi
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      ASAN_OPTIONS: verify_asan_link_order=0
+      ASAN_OPTIONS: detect_container_overflow=1:verify_asan_link_order=0
 
     steps:
       - uses: actions/checkout@v4

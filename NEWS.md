@@ -1,3 +1,8 @@
+# TreeDist 2.10.1 (2025-08-24)
+
+- Compiler-safe vector initialization, resolving M1-SAN warnings.
+
+
 # TreeDist 2.10.0 (2025-08-22)
 
 - `Ntropy()` computes entropy from integer counts.

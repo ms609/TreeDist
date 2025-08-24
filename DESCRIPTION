@@ -78,7 +78,7 @@ Suggests:
   vdiffr (>= 1.0.0),
 LinkingTo:
   Rcpp,
-  TreeTools (>= 1.16),
+  TreeTools (>= 1.16.1),
 RdMacros: Rdpack
 VignetteBuilder: knitr
 Config/Needs/check: rcmdcheck
