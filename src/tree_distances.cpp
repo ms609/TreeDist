@@ -18,17 +18,13 @@ namespace TreeDist {
 
 template <typename T>
 inline void resize_uninitialized(std::vector<T>& v, std::size_t n) {
-#if defined(__GLIBCXX__) && __has_include(<bits/stl_vector.h>)
-  // libstdc++ (GCC) doesn't expose __resize_default_init,
-  // but trivial types (int16_t, etc.) will be mem-initialized efficiently.
-  v.assign(n, T{});
-#elif defined(_LIBCPP_VERSION)
-  // libc++ (Clang, Apple, LLVM) supports __resize_default_init
-  v.__resize_default_init(n);
-#else
-  // Generic fallback (C++17 portable): single memset for trivial types
-  v.assign(n, T{});
-#endif
+  static_assert(std::is_trivial<T>::value, "Requires trivial type");
+  if (n > v.size()) {
+    v.reserve(n);
+    v.insert(v.end(), n - v.size(), T{});
+  } else {
+    v.resize(n);
+  }
 }
 
   void check_ntip(const double n) {
