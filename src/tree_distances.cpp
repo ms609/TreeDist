@@ -235,7 +235,7 @@ List cpp_matching_split_distance(const RawMatrix &x, const RawMatrix &y,
     (max_score * split_diff);
   
   std::vector<int> final_matching;
-  resize_uninitialized(final_matching, a.n_splits);
+  final_matching.reserve(a.n_splits);
   
   for (int16 i = 0; i < a.n_splits; ++i) {
     const int match = (rowsol[i] < b.n_splits)
@@ -348,7 +348,7 @@ List cpp_jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
     / max_score;
   
   std::vector<int> final_matching;
-  resize_uninitialized(final_matching, a.n_splits);
+  final_matching.reserve(a.n_splits);
   
   for (int16 i = 0; i < a.n_splits; ++i) {
     const int match = (rowsol[i] < b.n_splits)
@@ -418,7 +418,7 @@ List cpp_msi_distance(const RawMatrix &x, const RawMatrix &y,
       possible_over_score;
   
   std::vector<int> final_matching;
-  resize_uninitialized(final_matching, a.n_splits);
+  final_matching.reserve(a.n_splits);
   
   for (int16 i = 0; i < a.n_splits; ++i) {
     const int match = (rowsol[i] < b.n_splits)
@@ -583,7 +583,7 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
       ) / max_score;
     
     std::vector<int> final_matching;
-    resize_uninitialized(final_matching, a.n_splits);
+    final_matching.reserve(a.n_splits);
     
     for (int16 i = 0; i < a.n_splits; ++i) {
       const int match = (rowsol[i] < b.n_splits)
@@ -646,7 +646,7 @@ List cpp_shared_phylo (const RawMatrix &x, const RawMatrix &y,
         possible_over_score;
   
   std::vector<int> final_matching;
-  resize_uninitialized(final_matching, a.n_splits);
+  final_matching.reserve(a.n_splits);
   
   for (int16 i = 0; i < a.n_splits; ++i) {
     const int match = (rowsol[i] < b.n_splits)
