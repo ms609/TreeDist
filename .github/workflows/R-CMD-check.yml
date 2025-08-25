@@ -120,7 +120,7 @@ jobs:
         if: github.event_name == 'push' || github.event_name == 'schedule'
         uses: r-lib/actions/check-r-package@v2
         with:
-          check_args: "--no-incoming-check"
+          args: "--no-incoming-check"
 
       - name: Code coverage
         if: runner.os == 'Windows'
