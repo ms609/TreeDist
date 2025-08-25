@@ -554,7 +554,8 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
     }
     
     fuzzy_match = 0;
-    std::vector<int> final_matching(a.n_splits);
+    std::vector<int> final_matching;
+    TreeDist::resize_uninitialized(final_matching, a.n_splits);
     for (int16 i = 0; i < a.n_splits; ++i) {
       if (a_match[i]) {
         final_matching[i] = a_match[i];
