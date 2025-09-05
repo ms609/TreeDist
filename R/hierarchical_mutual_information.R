@@ -99,7 +99,16 @@ HierarchicalMutualInfoSplits <- function(splits1, splits2,
                                         normalize = FALSE,
                                         reportMatching = FALSE) {
   
-  if (attr(splits1, "nTip") != attr(splits2, "nTip")) {
+  # Ensure nTip is valid
+  if (is.null(nTip) || length(nTip) == 0) {
+    nTip <- attr(splits1, "nTip")
+    if (is.null(nTip) || length(nTip) == 0) {
+      stop("nTip attribute missing from splits")
+    }
+  }
+  
+  nTip2 <- attr(splits2, "nTip")
+  if (!is.null(nTip2) && length(nTip2) > 0 && nTip != nTip2) {
     stop("Trees must have the same number of tips")
   }
   
@@ -130,19 +139,29 @@ HierarchicalMutualInfoSplits <- function(splits1, splits2,
 
 #' Calculate hierarchical weights for splits based on tree structure
 #' 
-#' @param splits A \code{Splits} object
+#' @param splits A \code{Splits} object or raw matrix
 #' @param nTip Number of tips in the tree
 #' 
 #' @return Numeric vector of weights for each split
 #' 
 #' @keywords internal
 .CalculateHierarchicalWeights <- function(splits, nTip) {
-  n_splits <- length(splits)
+  
+  # Handle different split formats
+  if (is.matrix(splits)) {
+    n_splits <- nrow(splits)
+  } else {
+    n_splits <- length(splits)
+  }
+  
   if (n_splits == 0) return(numeric(0))
   
-  # Calculate depth-based weights
-  # Deeper splits (closer to tips) get higher weights
-  split_sizes <- TreeTools::TipsInSplits(splits)
+  # Calculate split sizes for each split
+  split_sizes <- numeric(n_splits)
+  for (i in seq_len(n_splits)) {
+    split_logical <- .SplitToLogical(splits, i, nTip)
+    split_sizes[i] <- sum(split_logical)
+  }
   
   # Weight splits by their information content and hierarchy level
   # More balanced splits and deeper splits get higher weights  
@@ -167,7 +186,7 @@ HierarchicalMutualInfoSplits <- function(splits1, splits2,
 
 #' Calculate weighted mutual information between two sets of splits
 #' 
-#' @param splits1,splits2 \code{Splits} objects
+#' @param splits1,splits2 \code{Splits} objects or raw matrices
 #' @param weights1,weights2 Numeric vectors of weights for each split
 #' @param nTip Number of tips
 #' 
@@ -176,15 +195,28 @@ HierarchicalMutualInfoSplits <- function(splits1, splits2,
 #' @keywords internal
 .CalculateWeightedMutualInfo <- function(splits1, splits2, weights1, weights2, nTip) {
   
-  if (length(splits1) == 0 || length(splits2) == 0) {
+  # Handle different split formats
+  if (is.matrix(splits1)) {
+    n_splits1 <- nrow(splits1)
+  } else {
+    n_splits1 <- length(splits1)
+  }
+  
+  if (is.matrix(splits2)) {
+    n_splits2 <- nrow(splits2)
+  } else {
+    n_splits2 <- length(splits2)
+  }
+  
+  if (n_splits1 == 0 || n_splits2 == 0) {
     return(0)
   }
   
   # Calculate pairwise mutual information between all split pairs
   hmi_total <- 0
   
-  for (i in seq_along(splits1)) {
-    for (j in seq_along(splits2)) {
+  for (i in seq_len(n_splits1)) {
+    for (j in seq_len(n_splits2)) {
       # Convert splits to logical vectors if they're raw
       split1_logical <- .SplitToLogical(splits1, i, nTip)
       split2_logical <- .SplitToLogical(splits2, j, nTip)
@@ -234,7 +266,7 @@ HierarchicalMutualInfoSplits <- function(splits1, splits2,
 
 #' Calculate maximum possible HMI for normalization
 #' 
-#' @param splits1,splits2 \code{Splits} objects
+#' @param splits1,splits2 \code{Splits} objects or raw matrices
 #' @param weights1,weights2 Numeric vectors of weights
 #' 
 #' @return Maximum possible HMI value
@@ -257,7 +289,14 @@ HierarchicalMutualInfoSplits <- function(splits1, splits2,
     nTip <- attr(splits2, "nTip")
   }
   
-  for (i in seq_along(ref_splits)) {
+  # Handle different split formats
+  if (is.matrix(ref_splits)) {
+    n_splits <- nrow(ref_splits)
+  } else {
+    n_splits <- length(ref_splits)
+  }
+  
+  for (i in seq_len(n_splits)) {
     split_logical <- .SplitToLogical(ref_splits, i, nTip)
     
     # Self mutual information is just the entropy
