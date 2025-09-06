@@ -127,6 +127,7 @@ VisualizeMatching(JRF2, tree1, tree2, matchZeros = FALSE)
 }
 \seealso{
 Other tree distances: 
+\code{\link{HierarchicalMutualInfo}()},
 \code{\link{KendallColijn}()},
 \code{\link{MASTSize}()},
 \code{\link{MatchingSplitDistance}()},
