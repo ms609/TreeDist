@@ -166,14 +166,17 @@ HierarchicalMutualInfoSplits <- function(splits1, splits2,
 #' @keywords internal
 .PhyloToHierarchicalPartition <- function(tree) {
   
+  # Convert tree to hierarchical partition where each leaf contains
+  # all descendant tip labels (not individual tips)
+  
   # Get number of tips
   nTip <- length(tree$tip.label)
   
-  # Build hierarchical partition from tree structure, collecting descendant tips
-  .BuildHierarchicalPartitionWithDescendants(tree, nTip + 1, tree$tip.label)  # Start from root
+  # Build hierarchical partition from tree structure
+  .BuildHierarchicalPartitionWithSets(tree, nTip + 1, tree$tip.label)  # Start from root
 }
 
-#' Build hierarchical partition recursively from tree structure
+#' Build hierarchical partition with sets of descendant tips
 #' 
 #' @param tree Phylo object
 #' @param node Current node number
@@ -182,54 +185,52 @@ HierarchicalMutualInfoSplits <- function(splits1, splits2,
 #' @return Hierarchical partition for this subtree
 #' 
 #' @keywords internal
-.BuildHierarchicalPartitionWithDescendants <- function(tree, node, tip_labels) {
+.BuildHierarchicalPartitionWithSets <- function(tree, node, tip_labels) {
   
   # Find children of this node
   children <- tree$edge[tree$edge[, 1] == node, 2]
   
   # If no children, this is a tip
   if (length(children) == 0) {
-    # This is a tip node, return the tip label 
-    return(tip_labels[node])
+    # For a tip, return a list containing just this tip
+    return(list(tip_labels[node]))
   }
   
   # If this node has children, recursively build partition for each child
   result <- list()
   for (child in children) {
-    child_partition <- .BuildHierarchicalPartitionWithDescendants(tree, child, tip_labels)
-    result <- append(result, list(child_partition))
+    child_partition <- .BuildHierarchicalPartitionWithSets(tree, child, tip_labels)
+    
+    # If child is a tip, child_partition is list("tip_label")
+    # If child is internal, child_partition is a nested structure
+    # We want to collect all descendant tips for this child
+    child_tips <- .GetAllDescendantTips(child_partition)
+    result <- append(result, list(child_tips))
   }
   
   return(result)
 }
 
-#' Get all descendant tips for a node
+#' Get all descendant tips from a hierarchical partition
 #' 
-#' @param tree Phylo object
-#' @param node Node number
-#' @param tip_labels Vector of tip labels
+#' @param partition Hierarchical partition (nested list)
 #' 
-#' @return Vector of descendant tip labels
+#' @return Vector of all tip labels in the partition
 #' 
 #' @keywords internal
-.GetDescendantTips <- function(tree, node, tip_labels) {
-  
-  # Find children of this node
-  children <- tree$edge[tree$edge[, 1] == node, 2]
-  
-  # If no children, this is a tip
-  if (length(children) == 0) {
-    return(tip_labels[node])
+.GetAllDescendantTips <- function(partition) {
+  if (is.list(partition)) {
+    # If it's a list, recursively get all tips
+    all_tips <- c()
+    for (child in partition) {
+      child_tips <- .GetAllDescendantTips(child)
+      all_tips <- c(all_tips, child_tips)
+    }
+    return(all_tips)
+  } else {
+    # If it's not a list, it's a tip label
+    return(partition)
   }
-  
-  # Collect all descendant tips
-  descendants <- c()
-  for (child in children) {
-    child_descendants <- .GetDescendantTips(tree, child, tip_labels)
-    descendants <- c(descendants, child_descendants)
-  }
-  
-  return(descendants)
 }
 
 #' Calculate Hierarchical Mutual Information recursively
@@ -241,7 +242,7 @@ HierarchicalMutualInfoSplits <- function(splits1, splits2,
 #' @keywords internal
 .CalculateHMIRecursive <- function(Ut, Us) {
   
-  # Helper function for x*log(x)
+  # Helper function for x*log(x) - back to natural log as in reference
   xlnx <- function(x) {
     if (x <= 0) 0 else x * log(x)
   }
