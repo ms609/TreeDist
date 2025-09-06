@@ -78,6 +78,15 @@ HierarchicalMutualInfoDist <- function(tree1, tree2 = NULL, normalize = FALSE,
 # Core function for calculating distance between two trees
 .HierarchicalMutualInfoPair <- function(tree1, tree2, normalize = FALSE, reportMatching = FALSE) {
   
+  # Handle identical trees case first
+  if (identical(tree1, tree2)) {
+    result <- 0
+    if (reportMatching) {
+      attr(result, "matching") <- list(identical = TRUE)
+    }
+    return(result)
+  }
+  
   # Ensure trees have same tip labels for comparison
   labels1 <- tree1$tip.label
   labels2 <- tree2$tip.label
@@ -100,6 +109,15 @@ HierarchicalMutualInfoDist <- function(tree1, tree2 = NULL, normalize = FALSE,
   # Get splits for both trees
   splits1 <- TreeTools::as.Splits(tree1)
   splits2 <- TreeTools::as.Splits(tree2)
+  
+  # Check if splits are identical (same tree topology)
+  if (identical(splits1, splits2)) {
+    result <- 0
+    if (reportMatching) {
+      attr(result, "matching") <- list(identical_splits = TRUE)
+    }
+    return(result)
+  }
   
   # Calculate hierarchical information content
   hinfo1 <- .CalculateHierarchicalInfoFromSplits(splits1)
