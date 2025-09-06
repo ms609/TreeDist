@@ -85,6 +85,7 @@ VisualizeMatching(MatchingSplitDistance, TreeTools::BalancedTree(6),
 }
 \seealso{
 Other tree distances: 
+\code{\link{HierarchicalMutualInfo}()},
 \code{\link{JaccardRobinsonFoulds}()},
 \code{\link{KendallColijn}()},
 \code{\link{MASTSize}()},

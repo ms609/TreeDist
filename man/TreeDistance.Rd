@@ -304,6 +304,7 @@ MutualClusteringInfoSplits(splits1, splits2)
 }
 \seealso{
 Other tree distances: 
+\code{\link{HierarchicalMutualInfo}()},
 \code{\link{JaccardRobinsonFoulds}()},
 \code{\link{KendallColijn}()},
 \code{\link{MASTSize}()},

@@ -145,6 +145,7 @@ VisualizeMatching(InfoRobinsonFoulds, balanced7, pectinate7)
 Display paired splits: \code{\link[=VisualizeMatching]{VisualizeMatching()}}
 
 Other tree distances: 
+\code{\link{HierarchicalMutualInfo}()},
 \code{\link{JaccardRobinsonFoulds}()},
 \code{\link{KendallColijn}()},
 \code{\link{MASTSize}()},

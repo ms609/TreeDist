@@ -45,6 +45,31 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// HMI_nested
+double HMI_nested(SEXP t1, SEXP t2);
+RcppExport SEXP _TreeDist_HMI_nested(SEXP t1SEXP, SEXP t2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type t1(t1SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type t2(t2SEXP);
+    rcpp_result_gen = Rcpp::wrap(HMI_nested(t1, t2));
+    return rcpp_result_gen;
+END_RCPP
+}
+// d_n_nested
+double d_n_nested(SEXP t1, SEXP t2, int n);
+RcppExport SEXP _TreeDist_d_n_nested(SEXP t1SEXP, SEXP t2SEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type t1(t1SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type t2(t2SEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(d_n_nested(t1, t2, n));
+    return rcpp_result_gen;
+END_RCPP
+}
 // entropy_int
 double entropy_int(const Rcpp::IntegerVector& n);
 RcppExport SEXP _TreeDist_entropy_int(SEXP nSEXP) {
@@ -289,6 +314,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_COMCLUST", (DL_FUNC) &_TreeDist_COMCLUST, 1},
     {"_TreeDist_consensus_info", (DL_FUNC) &_TreeDist_consensus_info, 3},
     {"_TreeDist_robinson_foulds_all_pairs", (DL_FUNC) &_TreeDist_robinson_foulds_all_pairs, 1},
+    {"_TreeDist_HMI_nested", (DL_FUNC) &_TreeDist_HMI_nested, 2},
+    {"_TreeDist_d_n_nested", (DL_FUNC) &_TreeDist_d_n_nested, 3},
     {"_TreeDist_entropy_int", (DL_FUNC) &_TreeDist_entropy_int, 1},
     {"_TreeDist_lapjv", (DL_FUNC) &_TreeDist_lapjv, 2},
     {"_TreeDist_cpp_mast", (DL_FUNC) &_TreeDist_cpp_mast, 3},
