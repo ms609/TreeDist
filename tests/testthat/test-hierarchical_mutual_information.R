@@ -1,4 +1,5 @@
 test_that("Hierarchical Mutual Information", {
+  skip_if_not_installed("TreeTools")
   library("TreeTools", quietly = TRUE)
   
   # Create test trees
@@ -36,13 +37,6 @@ test_that("Hierarchical Mutual Information", {
   hmi_self_norm <- HierarchicalMutualInfo(tree1, tree1, normalize = TRUE)
   expect_equal(hmi_self_norm, 1, tolerance = 1e-10)
   
-  # Test with splits objects
-  splits1 <- as.Splits(tree1)
-  splits2 <- as.Splits(tree2)
-  
-  hmi_splits <- HierarchicalMutualInfoSplits(splits1, splits2)
-  expect_equal(hmi, hmi_splits, tolerance = 1e-10)
-  
   # Test error handling
   expect_error(HierarchicalMutualInfo(tree1), "tree2 must be provided")
   
@@ -54,44 +48,40 @@ test_that("Hierarchical Mutual Information", {
   hmi_with_matching <- HierarchicalMutualInfo(tree1, tree2, reportMatching = TRUE)
   expect_true(is.numeric(hmi_with_matching))
   expect_true("matching" %in% names(attributes(hmi_with_matching)))
-})
+  
+  # Test expected value for bal6 vs pec6 (should be approximately 0.24)
+  bal6 <- BalancedTree(6)
+  pec6 <- PectinateTree(6)
+  hmi_bal_pec <- HierarchicalMutualInfo(bal6, pec6)
+  
+  # The expected value is 0.24 based on Python reference implementation
+  expect_equal(hmi_bal_pec, 0.24, tolerance = 0.02)
+}))
 
 test_that("HMI helper functions", {
+  skip_if_not_installed("TreeTools")
   library("TreeTools", quietly = TRUE)
   
   tree <- BalancedTree(8)
-  splits <- as.Splits(tree)
   
-  # Test hierarchical weights calculation
-  weights <- .CalculateHierarchicalWeights(splits, 8)
+  # Test hierarchical partition building
+  partition <- .PhyloToHierarchicalPartition(tree)
   
-  expect_true(is.numeric(weights))
-  expect_equal(length(weights), length(splits))
-  expect_true(all(weights >= 0))
-  expect_equal(sum(weights), 1, tolerance = 1e-10) # Should be normalized
+  expect_true(is.list(partition))
   
-  # Test with empty splits - just create an empty matrix  
-  empty_splits <- matrix(raw(0), 0, 0)
-  empty_weights <- .CalculateHierarchicalWeights(empty_splits, 0)
-  expect_equal(length(empty_weights), 0)
-  
-  # Test weighted mutual information calculation
+  # Test HMI recursive calculation
   tree2 <- PectinateTree(8)
-  splits2 <- as.Splits(tree2)
-  weights2 <- .CalculateHierarchicalWeights(splits2, 8)
+  partition2 <- .PhyloToHierarchicalPartition(tree2)
   
-  wmi <- .CalculateWeightedMutualInfo(splits, splits2, weights, weights2, 8)
-  expect_true(is.numeric(wmi))
-  expect_true(wmi >= 0)
-  
-  # Test maximum HMI calculation - max should be based on self-comparison
-  max_hmi1 <- .MaxHierarchicalMutualInfo(splits, splits, weights, weights)
-  max_hmi2 <- .MaxHierarchicalMutualInfo(splits2, splits2, weights2, weights2)
-  expect_true(is.numeric(max_hmi1))
-  expect_true(max_hmi1 >= 0)
-  expect_true(is.numeric(max_hmi2))
-  expect_true(max_hmi2 >= 0)
-})
+  result <- .CalculateHMIRecursive(partition, partition2)
+  expect_true(is.list(result))
+  expect_true("n_ts" %in% names(result))
+  expect_true("I_ts" %in% names(result))
+  expect_true(is.numeric(result$n_ts))
+  expect_true(is.numeric(result$I_ts))
+  expect_true(result$n_ts >= 0)
+  expect_true(result$I_ts >= 0)
+}))
 
 test_that("HMI comparison with standard mutual information", {
   library("TreeTools", quietly = TRUE)

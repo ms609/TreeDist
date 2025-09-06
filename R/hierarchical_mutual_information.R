@@ -5,19 +5,22 @@
 #' hierarchical structure inherent in phylogenetic trees.
 #' 
 #' @details
-#' Hierarchical Mutual Information considers the nested, hierarchical structure
-#' of phylogenetic trees when computing information measures. Unlike standard
-#' mutual information which treats all splits equally, HMI weights splits
-#' according to their position in the tree hierarchy, providing a more
-#' nuanced measure of tree similarity that accounts for the evolutionary
-#' relationships represented.
+#' Hierarchical Mutual Information is a recursive algorithm that considers the 
+#' nested, hierarchical structure of phylogenetic trees when computing information 
+#' measures. The algorithm converts trees to hierarchical partitions and computes
+#' mutual information recursively, weighting contributions by the number of
+#' overlapping elements at each level of the hierarchy.
 #' 
-#' The measure is calculated by considering:
+#' The algorithm follows the implementation described in Perotti et al. (2015)
+#' and is based on the recursive formula:
+#' 
+#' For internal nodes: I(t,s) = log(n_ts) - (H_us + H_tv - H_uv)/n_ts + mean(I_uv)
+#' 
+#' Where:
 #' \itemize{
-#'   \item The depth of each split in the tree hierarchy
-#'   \item The information content of each split
-#'   \item The mutual information between corresponding splits across trees
-#'   \item Hierarchical weighting based on tree structure
+#'   \item n_ts is the number of common elements between partitions
+#'   \item H_us, H_tv, H_uv are entropy terms from child comparisons
+#'   \item I_uv is the recursive HMI for child pairs
 #' }
 #' 
 #' @param tree1,tree2 Trees of class \code{phylo}, or lists of such trees.
@@ -32,6 +35,7 @@
 #' attributes showing the optimal matching between splits.
 #' 
 #' @examples
+#' \dontrun{
 #' library("TreeTools", quietly = TRUE)
 #' 
 #' tree1 <- BalancedTree(8)
@@ -43,13 +47,17 @@
 #' # Normalized HMI
 #' HierarchicalMutualInfo(tree1, tree2, normalize = TRUE)
 #' 
-#' # Compare with standard mutual information
-#' MutualClusteringInfo(tree1, tree2)
+#' # Expected result for 6-tip balanced vs pectinate trees
+#' bal6 <- BalancedTree(6)
+#' pec6 <- PectinateTree(6)
+#' HierarchicalMutualInfo(bal6, pec6)  # Should be approximately 0.24
+#' }
 #' 
 #' @references
-#' Based on concepts from:
-#' - Meila, M. (2007). Comparing clusterings - an information based distance.
-#' - Vinh, N. X. et al. (2010). Information theoretic measures for clusterings comparison
+#' Perotti, J. I., Tessone, C. J., & Caldarelli, G. (2015). 
+#' Hierarchical mutual information for the comparison of hierarchical 
+#' community structures in complex networks. 
+#' Physical Review E, 92(6), 062825.
 #' 
 #' @family tree distances
 #' @export
@@ -65,20 +73,65 @@ HierarchicalMutualInfo.phylo <- function(tree1, tree2 = NULL, normalize = FALSE,
     stop("tree2 must be provided for phylo objects")
   }
   
-  # Convert trees to splits
-  splits1 <- TreeTools::as.Splits(tree1)
-  splits2 <- TreeTools::as.Splits(tree2)
+  # Ensure trees have the same number of tips
+  if (length(tree1$tip.label) != length(tree2$tip.label)) {
+    stop("Trees must have the same number of tips")
+  }
   
-  # Calculate HMI using splits
-  HierarchicalMutualInfoSplits(splits1, splits2, normalize = normalize,
-                              reportMatching = reportMatching)
+  # Convert trees to hierarchical partitions 
+  partition1 <- .PhyloToHierarchicalPartition(tree1)
+  partition2 <- .PhyloToHierarchicalPartition(tree2)
+  
+  # Calculate HMI using recursive algorithm
+  result <- .CalculateHMIRecursive(partition1, partition2)
+  hmi <- result$I_ts
+  
+  if (normalize) {
+    # Normalize by the maximum of the two self-comparisons
+    hmi_self1 <- .CalculateHMIRecursive(partition1, partition1)$I_ts
+    hmi_self2 <- .CalculateHMIRecursive(partition2, partition2)$I_ts
+    max_hmi <- max(hmi_self1, hmi_self2)
+    if (max_hmi > 0) {
+      hmi <- hmi / max_hmi
+    }
+  }
+  
+  if (reportMatching) {
+    # For now, return empty matching - can be extended later
+    attr(hmi, "matching") <- integer(0)
+  }
+  
+  return(hmi)
 }
 
 #' @export  
 HierarchicalMutualInfo.list <- function(tree1, tree2 = NULL, normalize = FALSE,
                                        reportMatching = FALSE) {
-  CalculateTreeDistance(HierarchicalMutualInfoSplits, tree1, tree2, 
-                        reportMatching = reportMatching, normalize = normalize)
+  # For lists, we need to handle them as distance calculations
+  # This would require significant rework of CalculateTreeDistance function
+  # For now, provide a basic implementation
+  
+  if (is.null(tree2)) {
+    # Calculate all pairwise distances
+    n <- length(tree1)
+    result_matrix <- matrix(0, n, n)
+    
+    for (i in 1:(n-1)) {
+      for (j in (i+1):n) {
+        hmi_val <- HierarchicalMutualInfo.phylo(tree1[[i]], tree1[[j]], 
+                                               normalize = normalize,
+                                               reportMatching = reportMatching)
+        result_matrix[i, j] <- hmi_val
+        result_matrix[j, i] <- hmi_val
+      }
+    }
+    
+    # Convert to dist object
+    return(as.dist(result_matrix))
+  } else {
+    # Pairwise between two lists
+    stop("Pairwise list comparison not yet implemented")
+  }
 }
 
 #' @export
@@ -99,214 +152,140 @@ HierarchicalMutualInfoSplits <- function(splits1, splits2,
                                         normalize = FALSE,
                                         reportMatching = FALSE) {
   
-  # Ensure nTip is valid
-  if (is.null(nTip) || length(nTip) == 0) {
-    nTip <- attr(splits1, "nTip")
-    if (is.null(nTip) || length(nTip) == 0) {
-      stop("nTip attribute missing from splits")
-    }
-  }
-  
-  nTip2 <- attr(splits2, "nTip")
-  if (!is.null(nTip2) && length(nTip2) > 0 && nTip != nTip2) {
-    stop("Trees must have the same number of tips")
-  }
-  
-  # Calculate hierarchical weights for each split
-  weights1 <- .CalculateHierarchicalWeights(splits1, nTip)
-  weights2 <- .CalculateHierarchicalWeights(splits2, nTip) 
-  
-  # Calculate mutual information with hierarchical weighting
-  hmi <- .CalculateWeightedMutualInfo(splits1, splits2, weights1, weights2, nTip)
-  
-  if (normalize) {
-    # Normalize by the maximum of the two self-comparisons
-    hmi_self1 <- .CalculateWeightedMutualInfo(splits1, splits1, weights1, weights1, nTip)
-    hmi_self2 <- .CalculateWeightedMutualInfo(splits2, splits2, weights2, weights2, nTip)
-    max_hmi <- max(hmi_self1, hmi_self2)
-    if (max_hmi > 0) {
-      hmi <- hmi / max_hmi
-    }
-  }
-  
-  if (reportMatching) {
-    # For now, return empty matching - can be extended later
-    attr(hmi, "matching") <- integer(0)
-  }
-  
-  return(hmi)
+  # This function will now convert splits back to trees and use the proper HMI algorithm
+  # For now, use a simplified approach - the main function should handle tree objects
+  stop("HierarchicalMutualInfoSplits is deprecated. Use HierarchicalMutualInfo with phylo objects.")
 }
 
-#' Calculate hierarchical weights for splits based on tree structure
+#' Convert phylo tree to hierarchical partition
 #' 
-#' @param splits A \code{Splits} object or raw matrix
-#' @param nTip Number of tips in the tree
+#' @param tree A phylo object
 #' 
-#' @return Numeric vector of weights for each split
+#' @return A nested list representing the hierarchical partition
 #' 
 #' @keywords internal
-.CalculateHierarchicalWeights <- function(splits, nTip) {
+.PhyloToHierarchicalPartition <- function(tree) {
   
-  # Handle different split formats
-  if (is.matrix(splits)) {
-    n_splits <- nrow(splits)
-  } else {
-    n_splits <- length(splits)
-  }
+  # Convert tree structure to hierarchical partition directly from edge matrix
+  # This avoids dependency on write.tree
   
-  if (n_splits == 0) return(numeric(0))
+  # Get number of tips
+  nTip <- length(tree$tip.label)
   
-  # Calculate split sizes for each split
-  split_sizes <- numeric(n_splits)
-  for (i in seq_len(n_splits)) {
-    split_logical <- .SplitToLogical(splits, i, nTip)
-    split_sizes[i] <- sum(split_logical)
-  }
-  
-  # Weight splits by their information content and hierarchy level
-  # More balanced splits and deeper splits get higher weights  
-  weights <- vapply(split_sizes, function(size) {
-    # Entropy component (balanced splits are more informative)
-    entropy_weight <- Entropy(c(size, nTip - size) / nTip)
-    
-    # Depth component (smaller splits are typically deeper)
-    depth_weight <- 1 / (1 + abs(size - nTip/2))
-    
-    # Combine weights
-    entropy_weight * (1 + depth_weight)
-  }, numeric(1))
-  
-  # Normalize weights
-  if (sum(weights) > 0) {
-    weights <- weights / sum(weights)
-  }
-  
-  return(weights)
+  # Build hierarchical partition from tree structure
+  .BuildHierarchicalPartition(tree, nTip + 1, nTip)  # Start from root
 }
 
-#' Calculate weighted mutual information between two sets of splits
+#' Build hierarchical partition recursively from tree structure
 #' 
-#' @param splits1,splits2 \code{Splits} objects or raw matrices
-#' @param weights1,weights2 Numeric vectors of weights for each split
+#' @param tree Phylo object
+#' @param node Current node number
 #' @param nTip Number of tips
 #' 
-#' @return Numeric value of weighted mutual information
+#' @return Hierarchical partition for this subtree
 #' 
 #' @keywords internal
-.CalculateWeightedMutualInfo <- function(splits1, splits2, weights1, weights2, nTip) {
+.BuildHierarchicalPartition <- function(tree, node, nTip) {
   
-  # Handle different split formats
-  if (is.matrix(splits1)) {
-    n_splits1 <- nrow(splits1)
-  } else {
-    n_splits1 <- length(splits1)
+  # Find children of this node
+  children <- tree$edge[tree$edge[, 1] == node, 2]
+  
+  # If no children, this is a tip
+  if (length(children) == 0) {
+    # This is a tip node, return the tip number
+    return(node)
   }
   
-  if (is.matrix(splits2)) {
-    n_splits2 <- nrow(splits2)
-  } else {
-    n_splits2 <- length(splits2)
+  # If this node has children, recursively build partition for each child
+  result <- list()
+  for (child in children) {
+    child_partition <- .BuildHierarchicalPartition(tree, child, nTip)
+    result <- append(result, list(child_partition))
   }
   
-  if (n_splits1 == 0 || n_splits2 == 0) {
-    return(0)
-  }
-  
-  # Calculate pairwise mutual information between all split pairs
-  hmi_total <- 0
-  
-  for (i in seq_len(n_splits1)) {
-    for (j in seq_len(n_splits2)) {
-      # Convert splits to logical vectors if they're raw
-      split1_logical <- .SplitToLogical(splits1, i, nTip)
-      split2_logical <- .SplitToLogical(splits2, j, nTip)
-      
-      # Calculate mutual information between these splits
-      mi <- MeilaMutualInformation(split1_logical, split2_logical)
-      
-      # Weight by hierarchical position
-      weight <- weights1[i] * weights2[j]
-      
-      # Add to total HMI
-      hmi_total <- hmi_total + (mi * weight)
-    }
-  }
-  
-  return(hmi_total)
+  return(result)
 }
 
-#' Convert a split from a Splits object to logical vector
+#' Calculate Hierarchical Mutual Information recursively
 #' 
-#' @param splits A Splits object
-#' @param index Index of the split to extract
-#' @param nTip Number of tips
+#' @param Ut,Us Hierarchical partitions (nested lists)
 #' 
-#' @return Logical vector representing the split
+#' @return List with n_ts and I_ts values
 #' 
 #' @keywords internal
-.SplitToLogical <- function(splits, index, nTip) {
-  # Extract the split
-  if (is.matrix(splits)) {
-    # Raw matrix format used by TreeTools
-    split_raw <- splits[index, ]
-    # Convert raw to logical
-    split_logical <- as.logical(rawToBits(split_raw)[seq_len(nTip)])
-  } else {
-    # Already in list format
-    split_logical <- splits[[index]]
-    if (is.raw(split_logical)) {
-      split_logical <- as.logical(rawToBits(split_logical)[seq_len(nTip)])
-    } else if (!is.logical(split_logical)) {
-      split_logical <- as.logical(split_logical)
-    }
+.CalculateHMIRecursive <- function(Ut, Us) {
+  
+  # Helper function for x*log(x)
+  xlnx <- function(x) {
+    if (x <= 0) 0 else x * log(x)
   }
   
-  return(split_logical)
+  # Flatten function
+  flattenator <- function(partition) {
+    if (!is.list(partition)) {
+      return(partition)
+    }
+    unlist(partition)
+  }
+  
+  # Base case: both are leaves
+  if (!is.list(Ut) && !is.list(Us)) {
+    overlap <- length(intersect(Ut, Us))
+    return(list(n_ts = overlap, I_ts = 0))
+  }
+  
+  # Ut is internal node and Us is leaf
+  if (is.list(Ut) && !is.list(Us)) {
+    all_Ut <- flattenator(Ut)
+    overlap <- length(intersect(all_Ut, Us))
+    return(list(n_ts = overlap, I_ts = 0))
+  }
+  
+  # Ut is leaf and Us is internal node  
+  if (!is.list(Ut) && is.list(Us)) {
+    all_Us <- flattenator(Us)
+    overlap <- length(intersect(Ut, all_Us))
+    return(list(n_ts = overlap, I_ts = 0))
+  }
+  
+  # Both are internal nodes - main computation
+  n_ts <- 0
+  H_uv <- 0
+  H_us <- 0
+  H_tv <- 0
+  mean_I_ts <- 0
+  n_tv <- numeric(length(Us))
+  
+  for (u_idx in seq_along(Ut)) {
+    Uu <- Ut[[u_idx]]
+    n_us <- 0
+    
+    for (v_idx in seq_along(Us)) {
+      Uv <- Us[[v_idx]]
+      result <- .CalculateHMIRecursive(Uu, Uv)
+      n_uv <- result$n_ts
+      I_uv <- result$I_ts
+      
+      n_ts <- n_ts + n_uv
+      n_tv[v_idx] <- n_tv[v_idx] + n_uv
+      n_us <- n_us + n_uv
+      H_uv <- H_uv + xlnx(n_uv)
+      mean_I_ts <- mean_I_ts + n_uv * I_uv
+    }
+    H_us <- H_us + xlnx(n_us)
+  }
+  
+  for (n_tv_val in n_tv) {
+    H_tv <- H_tv + xlnx(n_tv_val)
+  }
+  
+  if (n_ts > 0) {
+    local_I_ts <- log(n_ts) - (H_us + H_tv - H_uv) / n_ts
+    mean_I_ts <- mean_I_ts / n_ts
+    I_ts <- local_I_ts + mean_I_ts
+    return(list(n_ts = n_ts, I_ts = I_ts))
+  } else {
+    return(list(n_ts = 0, I_ts = 0))
+  }
 }
 
-#' Calculate maximum possible HMI for normalization
-#' 
-#' @param splits1,splits2 \code{Splits} objects or raw matrices
-#' @param weights1,weights2 Numeric vectors of weights
-#' 
-#' @return Maximum possible HMI value
-#' 
-#' @keywords internal
-.MaxHierarchicalMutualInfo <- function(splits1, splits2, weights1, weights2) {
-  
-  # Maximum occurs when trees are identical
-  # Calculate self-mutual information with weights
-  max_hmi <- 0
-  
-  # Use the tree with higher total weight as reference
-  if (sum(weights1) >= sum(weights2)) {
-    ref_splits <- splits1
-    ref_weights <- weights1
-    nTip <- attr(splits1, "nTip")
-  } else {
-    ref_splits <- splits2  
-    ref_weights <- weights2
-    nTip <- attr(splits2, "nTip")
-  }
-  
-  # Handle different split formats
-  if (is.matrix(ref_splits)) {
-    n_splits <- nrow(ref_splits)
-  } else {
-    n_splits <- length(ref_splits)
-  }
-  
-  for (i in seq_len(n_splits)) {
-    split_logical <- .SplitToLogical(ref_splits, i, nTip)
-    
-    # Self mutual information is just the entropy
-    entropy <- Entropy(c(sum(split_logical), sum(!split_logical)) / length(split_logical))
-    
-    # Weight by hierarchical position (squared for self-comparison)
-    weight <- ref_weights[i]^2
-    
-    max_hmi <- max_hmi + (entropy * weight)
-  }
-  
-  return(max_hmi)
-}
