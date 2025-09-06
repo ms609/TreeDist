@@ -75,242 +75,247 @@ HierarchicalMutualInfoDist <- function(tree1, tree2 = NULL, normalize = FALSE,
   }
 }
 
-#' @rdname HierarchicalMutualInfoDist
-#' @export
-HierarchicalMutualInfoSplits <- function(splits1, splits2,
-                                         nTip = attr(splits1, "nTip"),
-                                         reportMatching = FALSE) {
+# Core function for calculating distance between two trees
+.HierarchicalMutualInfoPair <- function(tree1, tree2, normalize = FALSE, reportMatching = FALSE) {
   
-  # Convert splits to hierarchical partitions
-  hp1 <- .SplitsToHierarchicalPartition(splits1, nTip)
-  hp2 <- .SplitsToHierarchicalPartition(splits2, nTip)
+  # Ensure trees have same tip labels for comparison
+  labels1 <- tree1$tip.label
+  labels2 <- tree2$tip.label
   
-  # Calculate hierarchical mutual information
-  hmi <- .HierarchicalMutualInfo(hp1, hp2)
+  # Find common labels
+  common_labels <- intersect(labels1, labels2)
   
-  # Calculate hierarchical entropies
-  h1 <- .HierarchicalEntropy(hp1)
-  h2 <- .HierarchicalEntropy(hp2)
+  if (length(common_labels) < 3) {
+    # Not enough tips for meaningful comparison
+    result <- 0
+    if (reportMatching) {
+      attr(result, "matching") <- list()
+    }
+    return(result)
+  }
   
-  # Distance is total entropy minus twice the mutual information
-  distance <- h1 + h2 - 2 * hmi
+  # For now, implement a simplified version that treats the tree
+  # as a series of nested partitions based on the splits
   
+  # Get splits for both trees
+  splits1 <- TreeTools::as.Splits(tree1)
+  splits2 <- TreeTools::as.Splits(tree2)
+  
+  # Calculate hierarchical information content
+  hinfo1 <- .CalculateHierarchicalInfoFromSplits(splits1)
+  hinfo2 <- .CalculateHierarchicalInfoFromSplits(splits2)
+  
+  # Calculate shared hierarchical information (simplified)
+  shared_info <- .CalculateSharedHierarchicalInfo(splits1, splits2)
+  
+  # Distance = H1 + H2 - 2*I(X,Y)
+  distance <- hinfo1 + hinfo2 - 2 * shared_info
+  
+  # Ensure non-negative
+  distance <- max(0, distance)
+  
+  # Normalize if requested
+  if (normalize && (hinfo1 + hinfo2) > 0) {
+    distance <- distance / (hinfo1 + hinfo2)
+  }
+  
+  # Add matching information if requested
   if (reportMatching) {
-    # For now, we don't implement detailed matching reporting
-    attr(distance, "matching") <- NA
+    attr(distance, "matching") <- list(
+      shared_info = shared_info, 
+      h1 = hinfo1, 
+      h2 = hinfo2
+    )
   }
   
-  distance
+  return(distance)
 }
 
-# Helper function to convert splits to hierarchical partition
-.SplitsToHierarchicalPartition <- function(splits, nTip) {
-  
-  if (length(splits) == 0 || nTip <= 2) {
-    # Base case: return flat partition of individual tips
-    return(as.list(seq_len(nTip)))
-  }
-  
-  # Convert splits to hierarchical structure
-  # This is a simplified version - in practice, we need to build the tree structure
-  # For now, create a basic hierarchical representation
-  tip_names <- seq_len(nTip)
-  
-  # Build hierarchy from splits
-  hierarchy <- .BuildHierarchyFromSplits(splits, tip_names)
-  
-  hierarchy
-}
-
-# Build hierarchy from splits (simplified implementation)
-.BuildHierarchyFromSplits <- function(splits, tips) {
-  
-  if (length(tips) <= 1) {
-    return(tips)
-  }
+# Calculate hierarchical information content from splits
+.CalculateHierarchicalInfoFromSplits <- function(splits) {
   
   if (length(splits) == 0) {
-    return(as.list(tips))
-  }
-  
-  # Find the most inclusive split
-  split_sizes <- sapply(splits, function(s) sum(s))
-  
-  # Simple heuristic: use the split that's closest to half the tips
-  best_split_idx <- which.min(abs(split_sizes - length(tips) / 2))
-  best_split <- splits[[best_split_idx]]
-  
-  # Partition tips according to this split
-  left_tips <- tips[best_split]
-  right_tips <- tips[!best_split]
-  
-  # Recursively build sub-hierarchies
-  if (length(left_tips) == 1) {
-    left_part <- left_tips
-  } else {
-    # Filter splits that are relevant to left partition
-    relevant_left <- lapply(splits[-best_split_idx], function(s) s[best_split])
-    left_part <- .BuildHierarchyFromSplits(relevant_left, left_tips)
-  }
-  
-  if (length(right_tips) == 1) {
-    right_part <- right_tips
-  } else {
-    # Filter splits that are relevant to right partition  
-    relevant_right <- lapply(splits[-best_split_idx], function(s) s[!best_split])
-    right_part <- .BuildHierarchyFromSplits(relevant_right, right_tips)
-  }
-  
-  # Return hierarchical partition
-  list(left_part, right_part)
-}
-
-# Calculate hierarchical mutual information between two hierarchical partitions
-.HierarchicalMutualInfo <- function(hp1, hp2) {
-  
-  # Base case: if either partition is atomic, calculate standard mutual info
-  if (.IsAtomic(hp1) || .IsAtomic(hp2)) {
-    return(.StandardMutualInfo(hp1, hp2))
-  }
-  
-  # Recursive case: calculate hierarchical mutual information
-  # This follows the Perotti et al. algorithm
-  
-  # Get flat representations
-  flat1 <- .FlattenPartition(hp1)
-  flat2 <- .FlattenPartition(hp2)
-  
-  # Calculate mutual information at this level
-  mi_level <- .StandardMutualInfo(flat1, flat2)
-  
-  # Calculate conditional mutual information from sub-partitions
-  cmi <- 0
-  
-  # For each part in hp1, find best matching part in hp2
-  for (i in seq_along(hp1)) {
-    for (j in seq_along(hp2)) {
-      # Calculate overlap and conditional MI
-      overlap <- .CalculateOverlap(hp1[[i]], hp2[[j]])
-      if (overlap > 0) {
-        sub_mi <- .HierarchicalMutualInfo(hp1[[i]], hp2[[j]])
-        weight <- overlap / length(.FlattenPartition(hp1))
-        cmi <- cmi + weight * sub_mi
-      }
-    }
-  }
-  
-  # Return hierarchical mutual information
-  mi_level + cmi
-}
-
-# Calculate hierarchical entropy of a hierarchical partition
-.HierarchicalEntropy <- function(hp) {
-  
-  if (.IsAtomic(hp)) {
-    # For atomic partitions, return standard entropy
-    flat <- .FlattenPartition(hp)
-    return(.StandardEntropy(flat))
-  }
-  
-  # Calculate entropy at this level
-  flat <- .FlattenPartition(hp)
-  h_level <- .StandardEntropy(flat)
-  
-  # Add conditional entropy from sub-partitions
-  h_conditional <- 0
-  total_size <- length(flat)
-  
-  for (part in hp) {
-    if (!.IsAtomic(part)) {
-      part_size <- length(.FlattenPartition(part))
-      weight <- part_size / total_size
-      h_conditional <- h_conditional + weight * .HierarchicalEntropy(part)
-    }
-  }
-  
-  h_level + h_conditional
-}
-
-# Helper functions
-
-.IsAtomic <- function(partition) {
-  # Check if partition contains only individual elements (not lists)
-  if (is.list(partition)) {
-    return(all(!sapply(partition, is.list)))
-  }
-  return(TRUE)
-}
-
-.FlattenPartition <- function(partition) {
-  # Flatten hierarchical partition to get all elements
-  if (.IsAtomic(partition)) {
-    return(unlist(partition))
-  }
-  unlist(partition, recursive = TRUE)
-}
-
-.StandardMutualInfo <- function(part1, part2) {
-  # Calculate standard mutual information between two flat partitions
-  # This is a simplified implementation
-  
-  flat1 <- .FlattenPartition(part1)
-  flat2 <- .FlattenPartition(part2)
-  
-  # Create contingency table
-  # For simplicity, assume partitions assign each element to a cluster
-  # In practice, this would need more sophisticated handling
-  
-  if (length(flat1) != length(flat2)) {
     return(0)
   }
   
-  # Calculate mutual information using standard formula
-  # MI(X,Y) = H(X) + H(Y) - H(X,Y)
-  h1 <- .StandardEntropy(part1)
-  h2 <- .StandardEntropy(part2) 
-  h_joint <- .JointEntropy(part1, part2)
+  n_tips <- attr(splits, "nTip")
   
-  h1 + h2 - h_joint
-}
-
-.StandardEntropy <- function(partition) {
-  # Calculate Shannon entropy of a partition
-  # For now, return a simplified calculation
+  # Simple approach: weight each split by its hierarchical position
+  # More informative splits (closer to balanced) get higher weight
+  total_info <- 0
   
-  flat <- .FlattenPartition(partition)
-  n <- length(flat)
-  
-  if (n <= 1) return(0)
-  
-  # Count cluster sizes (simplified)
-  if (is.list(partition) && !.IsAtomic(partition)) {
-    sizes <- sapply(partition, function(x) length(.FlattenPartition(x)))
-  } else {
-    sizes <- rep(1, n)
+  for (i in seq_len(nrow(splits))) {
+    # Convert raw split to logical
+    split_raw <- splits[i, ]
+    split_logical <- as.logical(split_raw)
+    
+    n_in_split <- sum(split_logical, na.rm = TRUE)
+    n_out_split <- n_tips - n_in_split
+    
+    if (n_in_split > 0 && n_out_split > 0) {
+      # Information content of this split
+      split_info <- .SplitInformation(n_in_split, n_out_split)
+      
+      # Hierarchical weight - more balanced splits are more informative
+      balance_weight <- .HierarchicalWeight(n_in_split, n_out_split)
+      
+      total_info <- total_info + split_info * balance_weight
+    }
   }
   
-  # Calculate entropy
-  probs <- sizes / sum(sizes)
-  probs <- probs[probs > 0]
-  
-  if (length(probs) <= 1) return(0)
-  
-  -sum(probs * log2(probs))
+  return(total_info)
 }
 
-.JointEntropy <- function(part1, part2) {
-  # Calculate joint entropy (simplified)
-  h1 <- .StandardEntropy(part1)
-  h2 <- .StandardEntropy(part2)
+# Calculate shared hierarchical information between two sets of splits
+.CalculateSharedHierarchicalInfo <- function(splits1, splits2) {
   
-  # For simplicity, assume independence (this should be improved)
-  h1 + h2
+  if (length(splits1) == 0 || length(splits2) == 0) {
+    return(0)
+  }
+  
+  n_tips1 <- attr(splits1, "nTip")
+  n_tips2 <- attr(splits2, "nTip")
+  
+  if (n_tips1 != n_tips2) {
+    return(0)
+  }
+  
+  n_tips <- n_tips1
+  shared_info <- 0
+  
+  # Compare each split in splits1 with each split in splits2
+  total_shared_info <- 0
+  total_weight <- 0
+  
+  for (i in seq_len(nrow(splits1))) {
+    split1_logical <- as.logical(splits1[i, ])
+    
+    # Find best matching split in splits2
+    best_compatibility <- 0
+    best_shared_info <- 0
+    
+    for (j in seq_len(nrow(splits2))) {
+      split2_logical <- as.logical(splits2[j, ])
+      
+      # Calculate compatibility and shared information
+      compatibility <- .SplitCompatibility(split1_logical, split2_logical)
+      
+      if (compatibility > 0) {
+        # Calculate information shared by these compatible splits
+        n_in_1 <- sum(split1_logical, na.rm = TRUE)
+        n_out_1 <- n_tips - n_in_1
+        n_in_2 <- sum(split2_logical, na.rm = TRUE)
+        n_out_2 <- n_tips - n_in_2
+        
+        info1 <- .SplitInformation(n_in_1, n_out_1)
+        info2 <- .SplitInformation(n_in_2, n_out_2)
+        
+        # Hierarchical weights
+        weight1 <- .HierarchicalWeight(n_in_1, n_out_1)
+        weight2 <- .HierarchicalWeight(n_in_2, n_out_2)
+        
+        # Shared information is proportional to compatibility and information content
+        current_shared_info <- compatibility * min(info1 * weight1, info2 * weight2)
+        
+        if (current_shared_info > best_shared_info) {
+          best_compatibility <- compatibility
+          best_shared_info <- current_shared_info
+        }
+      }
+    }
+    
+    # Add the best shared information for this split
+    total_shared_info <- total_shared_info + best_shared_info
+    total_weight <- total_weight + 1
+  }
+  
+  # Normalize by the number of splits
+  if (total_weight > 0) {
+    shared_info <- total_shared_info / total_weight
+  } else {
+    shared_info <- 0
+  }
+  
+  return(shared_info)
 }
 
-.CalculateOverlap <- function(part1, part2) {
-  # Calculate overlap between two partitions
-  flat1 <- .FlattenPartition(part1)
-  flat2 <- .FlattenPartition(part2)
+# Calculate information content of a split
+.SplitInformation <- function(n_in, n_out) {
+  n_total <- n_in + n_out
   
-  length(intersect(flat1, flat2))
+  if (n_in <= 0 || n_out <= 0 || n_total <= 1) {
+    return(0)
+  }
+  
+  # Use a simplified information formula
+  # In a proper implementation, this would use TreeTools functions
+  # For now, use a basic entropy-based calculation
+  p_in <- n_in / n_total
+  p_out <- n_out / n_total
+  
+  # Information content is higher for more balanced splits
+  if (p_in > 0 && p_out > 0) {
+    return(-(p_in * log2(p_in) + p_out * log2(p_out)))
+  } else {
+    return(0)
+  }
+}
+
+# Calculate hierarchical weight for a split
+.HierarchicalWeight <- function(n_in, n_out) {
+  n_total <- n_in + n_out
+  
+  if (n_total <= 1) {
+    return(0)
+  }
+  
+  # Weight based on how balanced the split is
+  # More balanced splits get higher hierarchical weight
+  balance <- min(n_in, n_out) / max(n_in, n_out)
+  
+  # Also weight by the size of the split (larger splits are more important hierarchically)
+  size_weight <- log2(n_total)
+  
+  return(balance * size_weight)
+}
+
+# Calculate compatibility between two splits
+.SplitCompatibility <- function(split1, split2) {
+  
+  # Check if splits are identical
+  if (identical(split1, split2) || identical(split1, !split2)) {
+    return(1.0)
+  }
+  
+  # Check if splits are compatible (non-conflicting)
+  # Two splits are compatible if they can coexist in the same tree
+  
+  # Calculate the four-way partition created by the two splits
+  both_true <- split1 & split2
+  split1_only <- split1 & !split2
+  split2_only <- !split1 & split2
+  neither <- !split1 & !split2
+  
+  # Count non-empty partitions
+  non_empty <- sum(c(any(both_true), any(split1_only), any(split2_only), any(neither)))
+  
+  # If all four partitions are non-empty, splits conflict
+  if (non_empty == 4) {
+    return(0)
+  }
+  
+  # If splits are compatible, calculate similarity based on overlap
+  # This is a more sophisticated compatibility measure
+  total_overlap <- sum(both_true) + sum(neither)
+  total_length <- length(split1)
+  
+  # Base compatibility on overlap
+  base_compatibility <- total_overlap / total_length
+  
+  # Bonus for identical splits
+  if (identical(split1, split2) || identical(split1, !split2)) {
+    return(1.0)
+  }
+  
+  return(base_compatibility)
 }
