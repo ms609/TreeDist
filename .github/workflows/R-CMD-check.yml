@@ -116,8 +116,8 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: r-lib/actions/check-r-package@v2
 
-      - name: Check without incoming checks (push/actions/@v5)
-        if: github.event_name == 'push' || github.event_name == 'actions/@v5'
+      - name: Check without incoming checks (push/schedule)
+        if: github.event_name == 'push' || github.event_name == 'schedule'
         uses: r-lib/actions/check-r-package@v2
         with:
           args: "--no-incoming-check"
