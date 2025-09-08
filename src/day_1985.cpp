@@ -239,7 +239,6 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
       // Reset stack pointer for each tree pair comparison
       S_top = S_entries.data();
       
-      
       Tj->TRESET();
       Tj->NVERTEX_short(&v, &w);
       
