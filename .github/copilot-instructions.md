@@ -198,6 +198,9 @@ After making code changes, validate functionality by testing core phylogenetic t
    ```bash
    R CMD check --no-build-vignettes .
    ```
+5. Ensure that temporary files are not included in the commit,
+   either by deleting them, not `git add`ing them, or adding a parsimonious
+   pattern to `.gitignore`.
 
 ### Code Style Guidelines
 - Follow Google's R style guide

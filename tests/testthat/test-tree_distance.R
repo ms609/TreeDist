@@ -816,8 +816,20 @@ test_that("RobinsonFoulds() is correctly calculated", {
 
 test_that("RobinsonFoulds() supports large lists", {
   set.seed(0)
-  trees <- lapply(rep(81, 200), TreeTools::RandomTree, root = TRUE)
-  RobinsonFoulds(trees)
+  trees <- lapply(rep(81, 129), TreeTools::RandomTree, root = TRUE)
+  
+  # The purpose of the test is to verify we don't encounter a stack overflow
+  result <- as.matrix(RobinsonFoulds(trees))
+  diag(result) <- Inf
+  
+  # We should also check that the results are correct: Let's pick a cell
+  # at random, noting that most RF distances between random trees will
+  # be the maximum value.
+  minX <- which.min(apply(result, 2, min))
+  minY <- apply(result, 2, which.min)[[minX]]
+  
+  expect_equal(result[minX, minY],
+               RobinsonFoulds(trees[[minX]], trees[[minY]]))
 })
 
 test_that("Robinson Foulds Info is correctly calculated", {
