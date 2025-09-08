@@ -1,12 +1,17 @@
-phylo_to_nested <- function(tree) {
-  stopifnot(inherits(tree, "phylo"))
-  
+#' @export
+as.HPart <- function(tree) {
+  UseMethod("as.HPart")
+}
+
+#' @export
+as.HPart.phylo <- function(tree) {
   # Ensure tree is rooted and binary (ape usually handles this)
-  edge <- tree$edge
-  nTips <- length(tree$tip.label)
+  edge <- Preorder(tree$edge)
+  tips <- tree$tip.label
+  nTip <- length(tips)
   
   # Build adjacency list
-  children <- vector("list", nTips + tree$Nnode)
+  children <- vector("list", nTip + tree$Nnode)
   for (i in seq_len(nrow(edge))) {
     parent <- edge[i, 1]
     child  <- edge[i, 2]
@@ -14,36 +19,36 @@ phylo_to_nested <- function(tree) {
   }
   
   # Recursive builder
-  build <- function(node) {
-    if (node <= nTips) {
-      # It's a leaf → return its label
-      return(tree$tip.label[node])
+  .Build <- function(node) {
+    kids <- children[[node]]
+    if (length(kids) == 0) {
+      list(tips[[node]])
     } else {
-      # Internal node → return a list of children
-      return(lapply(children[[node]], build))
+      leaves <- kids <= nTip
+      if (all(leaves)) {
+        as.list(tips[kids])
+      } else {
+        lapply(children[[node]], .Build)
+      }
     }
   }
   
-  root <- nTips + 1
-  build(root)
+  root <- nTip + 1
+  structure(.Build(root), class = "HPart")
 }
-phylo_to_nested_python_like <- function(tree) {
-  newick <- ape::write.tree(tree)
-  parse_newick <- function(text) {
-    text <- gsub("\\s+","", text)
-    text <- gsub(";","", text)
-    if (!grepl("^\\(", text)) return(text)
-    text <- substring(text, 2, nchar(text)-1)
-    parts <- character(); cur <- ""; depth <- 0
-    for (i in seq_len(nchar(text))) {
-      ch <- substr(text,i,i)
-      if (ch=="(") {depth<-depth+1; cur<-paste0(cur,ch)}
-      else if (ch==")") {depth<-depth-1; cur<-paste0(cur,ch)}
-      else if (ch=="," && depth==0) {parts<-c(parts,cur); cur<-""}
-      else cur<-paste0(cur,ch)
-    }
-    if (nchar(cur)>0) parts<-c(parts,cur)
-    lapply(parts, parse_newick)
+
+.ValidPartition <- function(x) {
+  if (all(vapply(x, is.list, logical(1)))) {
+    all(vapply(x, .ValidPartition, logical(1)))
+  } else {
+    all(vapply(x, is.character, logical(1))) ||
+      all(vapply(x, is.numeric, logical(1)))
   }
-  parse_newick(newick)
+}
+
+# Replicates check(hp)
+#' @source https://github.com/jipphysics/hit/blob/master/hit.ipynb
+#' @export
+is.HPart <- function(x) {
+  inherits(x, "HPart") && .ValidPartition(x)
 }
