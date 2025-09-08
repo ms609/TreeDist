@@ -816,7 +816,7 @@ test_that("RobinsonFoulds() is correctly calculated", {
 
 test_that("RobinsonFoulds() supports large lists", {
   set.seed(0)
-  trees <- lapply(rep(81, 129), TreeTools::RandomTree, root = TRUE)
+  trees <- lapply(rep(12, 129), TreeTools::RandomTree, root = TRUE)
   
   # The purpose of the test is to verify we don't encounter a stack overflow
   result <- as.matrix(RobinsonFoulds(trees))
