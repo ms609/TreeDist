@@ -814,6 +814,11 @@ test_that("RobinsonFoulds() is correctly calculated", {
   expect_equal(numeric(0), RobinsonFoulds(treeSym8, normalize = TRUE))
 })
 
+test_that("RobinsonFoulds() supports large lists", {
+  set.seed(0)
+  trees <- lapply(rep(81, 200), TreeTools::RandomTree, root = TRUE)
+  RobinsonFoulds(trees)
+})
 
 test_that("Robinson Foulds Info is correctly calculated", {
   expect_equal(22.53747 * 2L, tolerance = 1e-05,
