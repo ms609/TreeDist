@@ -1,0 +1,359 @@
+---
+title: "Extending the Robinson-Foulds metric"
+author: "[Martin R. Smith](https://smithlabdurham.github.io/)"
+output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+csl: ../inst/apa-old-doi-prefix.csl
+vignette: >
+  %\VignetteIndexEntry{Extending the Robinson-Foulds metric}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r init, echo=FALSE, warning=FALSE, message=FALSE}
+library('ape')
+library('TreeDist')
+standardMargin <- c(0.4, 0.4, 0.8, 0.4)
+cbPalette8 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442",
+                "#0072B2", "#D55E00", "#CC79A7")
+TwoTreePlot <- function() par(mfrow = c(1, 2), mar = standardMargin, cex = 0.9)
+
+Plot <- function(tree, tree2 = NULL, highlight = character(0),
+                  prune = if (is.null(tree2)) integer(0) 
+                          else list(integer(0), integer(0))
+                  ) {
+  ABCDEFGHIJK <- LETTERS[1:11]
+  if (is.null(tree2)) {
+    if(!all(tree$tip.label %in% 1:11)) {
+      tree$tip.label <- match(tree$tip.label, ABCDEFGHIJK)
+    }
+    
+    highlightTip <- match(highlight, ABCDEFGHIJK)
+    TreeDistPlot(tree, bold = highlightTip, prune = prune,
+                 graft = which(tree$edge[, 2] == 
+                                 match(highlightTip, tree$tip.label)))
+  } else {
+    par(mfrow = c(1, 2), mar = rep(0.4, 4))
+    Plot(tree, highlight = highlight, prune = prune[[1]])
+    Plot(tree2, highlight = highlight, prune = prune[[2]])
+  }
+}
+```
+
+# The Robinson–Foulds distance
+
+An intuitive way to calculate the similarity between two trees is to calculate
+the resolution of their strict consensus, which corresponds to the number
+of splits that occur in both trees [@Schuh1980].
+The corresponding distance measure, the Robinson–Foulds distance
+[@Robinson1981], counts the number of splits that are unique to one of the 
+two trees.
+
+It is important to remember that counting splits is not the same as counting
+clades, edges or nodes.  If a tree is drawn as rooted (even without a root 
+edge),
+then the number of splits is one less than the number of edges or clades,
+and two less than the number of nodes.
+For example, the trees below have one split, two edges and three nodes in 
+common.
+
+```{R, echo=FALSE, fig.width = 6, fig.align = 'center'}
+startPar <- TwoTreePlot()
+palette <- colorspace::qualitative_hcl(5, c=42, l=88)
+TreeDistPlot(balancedTree <- 
+               read.tree(text="(((1, 2), (3, 4)), ((5, 6), (7, 8)));"))
+edgelabels(1:5, c(1, 2, 5, 9, 12), adj = c(1.5, 0.5), bg = palette[1]) # Splits
+edgelabels(1:6, edge = c(1, 2, 5, 8, 9, 12), bg = palette[2],
+           adj = c(-0.5, 0.5)) # Internal edges
+nodelabels(1:7, bg = palette[3], adj=c(1, 0.5)) # Nodes
+nodelabels(1:6, node = 10:15, bg = palette[4], adj=c(-1, 0.5)) # Clades
+legend('bottomleft', col=palette[1:2], pch=15, bty='n',
+       c('Splits (5)', 'Internal edges (6)'))
+legend('bottomright', col=palette[3:4], pch=15, bty='n',
+       c('Nodes (7)', 'Clades (6)'))
+
+TreeDistPlot(read.tree(text="((1, 2, 3, 4), (5, 6, 7, 8));"))
+edgelabels(1, 1, adj = c(1.5, 0.5), bg = palette[1])
+edgelabels(1:2, edge = c(1, 6), adj = c(-0.5, 0.5), bg = palette[2])
+nodelabels(1:3, bg = palette[3], adj = c(1, 0.5))
+nodelabels(1:2, node=10:11, bg = palette[4], adj = c(-1, 0.5))
+
+```
+
+The simplicity of counting splits is appealing, but limited by the underlying
+assumption that all splits are equivalent.
+
+As an example, a split that separates eight leaves into two sets of four
+(as in the right-hand tree above) has a $\frac{1}{`r choose(8, 4) / 2`}$
+chance of being compatible with the reference tree.
+In contrast, a split that separates two leaves from the other six has a
+$\frac{1}{7}$ chance of matching the reference tree: the similarity observed 
+is five times more likely to have arisen by chance.
+In other words, failure to match an even split is less noteworthy than failure
+to match an uneven one.
+
+As a consequence, trees whose splits are less even will, on average, exhibit
+higher Robinson–Foulds distances with comparison trees.
+Compare a balanced and an unbalanced eight-taxon tree:
+
+```{r two-trees, echo=FALSE, fig.height = 3, fig.width=6, fig.align = 'center'}
+TwoTreePlot()
+TreeDistPlot(balancedTree, edge.color = cbPalette8[3])
+ape::edgelabels(1:5, c(1, 2, 5, 9, 12), bg = palette[1], adj=c(0.5, -0.25))
+ape::edgelabels(c('4:4', rep('2:6', 4)), c(1, 2, 5, 9, 12),
+                adj=c(0.5, 1.25), frame = 'n')
+ape::edgelabels(c(5.53, rep(3.46, 4)), c(1, 2, 5, 9, 12),
+                adj=c(0.5, 2.75), frame = 'n')
+legend('topleft', 'Balanced tree', bty='n', inset=c(-0.05, -0.03))
+
+TreeDistPlot(caterpillarTree <- 
+               ape::read.tree(text="(1, (2, (3, (4, (5, (6, (7, 8)))))));"),
+             edge.color = cbPalette8[2])
+ape::edgelabels(1:5, bg = palette[1], c(4, 6, 8, 10, 12), adj = c(0.5, -0.25))
+ape::edgelabels(c('2|6', '3|5', '4|4', '3|5', '2|6'), edge = c(4, 6, 8, 10, 12),
+                frame = 'n', adj = c(0.5, 1.25))
+ape::edgelabels(c(3.46, 5.04, 5.53, 5.04, 3.46), edge = c(4, 6, 8, 10, 12),
+                frame = 'n', adj = c(0.5, 2.75))
+legend('topleft', 'Asymmetric tree', bty = 'n', inset = c(-0.05, -0.03))
+```
+
+Each tree divides the eight taxa into five splits.
+The [phylogenetic information content](information.html) of a split is a 
+function of the probability that the split will match a uniformly chosen random
+tree, i.e. the proportion of eight-leaf binary trees that contain the split in
+question.
+(Information content, in bits, is defined as $-\log_2(\textrm{probability})$.)
+This, in turn, is a function of the evenness of the split:
+
+```{r ic-of-splits, display='asis', echo=FALSE, warnings=FALSE}
+splitSmall <- 2:4
+splitLarge <- 8L - splitSmall
+
+rootedTrees <- c(
+  '1' = 1,
+  '2' = 1 * 1,
+  '3' = 3 * 1,
+  '4' = 5 * 3 * 1,
+  '5' = 7 * 5 * 3 * 1,
+  '6' = 9 * 7 * 5 * 3 * 1
+)
+
+matchingTrees <- rootedTrees[splitSmall] * rootedTrees[splitLarge]
+names(matchingTrees) <- paste0("Split size: ", splitSmall, ':', splitLarge)
+
+matchingP <- matchingTrees / (11 * 9 * 7 * 5 * 3 * 1 * 1)
+
+ic <- -log2(matchingP)
+
+knitr::kable(cbind(
+      'Matching trees' = paste(matchingTrees, "/ 10 395"),
+      '_P_(Match in random tree)' = signif(matchingP, 3),
+      'Phylogenetic information content' = paste(signif(ic, 3), 'bits')))
+```
+
+In the first tree, split 1 is even, dividing four taxa from four others (`4|4`);
+splits 2--5 are maximally uneven (`2|6`).  If each split is treated as 
+independent, then the total information content of the five splits is
+`r signif(sum(ic[c(4, 2, 2, 2, 2) - 1]), 4)`&nbsp;bits,
+whereas that of the five splits in the second tree, of sizes 
+`2|6`, `3|5`, `4|4`, `3|5` and `2|6`, is
+`r signif(sum(ic[c(2, 3, 4, 3, 2) - 1]), 4)`&nbsp;bits.
+Put another way, a random tree will
+on average share more splits with the balanced tree (whose splits are 
+predominantly uneven and thus likely to be matched) than the asymmetric tree 
+(which contains more even splits that are less likely to occur in a random 
+tree).
+
+Indeed, of the 10&nbsp;395 eight-leaf trees, many more bear at least one split 
+in common with a balanced tree than with an asymmetric tree:
+
+```{r all-8-tip-trees, echo=FALSE, cache=TRUE, fig.width=4, fig.height=4, fig.align='center'}
+calculate <- FALSE
+if (calculate) {
+  # Generate all eight-leaf trees
+  all8 <- as.phylo(seq_len(NUnrooted(8)), tipLabels = 1:8)
+  inBalanced <- RobinsonFoulds(all8, balancedTree, similarity = TRUE) / 2
+  inCaterpillar <- RobinsonFoulds(all8, caterpillarTree, similarity = TRUE) / 2
+} else {
+  inBalanced <- rep(0:5, c(7088, 2708, 512, 76, 10, 1))
+  inCaterpillar <- rep(0:5, c(8162, 1808, 350, 64, 10, 1))
+}
+
+par(cex = 0.8)
+sch <- hist(inCaterpillar + 0.7, breaks = 0:18 / 3 - (1/6),
+            main = "8-leaf trees with N common splits", cex.main = 1,
+            xlim = c(0, 6), axes = FALSE,
+            xlab = "Splits in common", ylab = "Number of trees")
+sbh <- hist(inBalanced + 0.4, breaks = 0:18 / 3 - (1/6), plot = FALSE)
+plot(sch, col = paste0(cbPalette8[2], "44"), add = TRUE)
+plot(sbh, col = paste0(cbPalette8[3], "44"), add = TRUE)
+text(1/6, 100, paste0("Balanced: ", sum(inBalanced == 0)), 
+     pos = 4, srt = 90, cex = 0.7)
+text(0.5, 100, paste0("Asymmetric: ", sum(inCaterpillar == 0)), 
+     pos = 4, srt = 90, cex = 0.7)
+
+
+legend("topright", pch = 22,
+       pt.cex = 2, col = "black",
+       pt.bg = paste0(cbPalette8[2:3], "44"), bty = "n",
+       c("Asymmetric", "Balanced"))
+
+axis(1, at = 0:5 + 0.5, labels = 0:5)
+axis(2)
+```
+
+
+# Information-corrected Robinson–Foulds distance
+
+This differing information content can be accommodated by weighting each
+split according to the amount of phylogenetic information it contains
+[@SmithDist].
+The two tree pairs below both have a Robinson–Foulds distance of two,
+but the first pair differ with regard to 
+an uneven split (`ABCDEF|GH`), so obtain a total difference
+of 22.54 &minus; (3.46 + 5.04 + 5.53 + 5.04) = 3.46&nbsp;bits:
+
+```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
+tree1 <- ape::read.tree(text='(1, (2, (3, (4, (5, (6, (7, 8)))))));')
+tree2 <- ape::read.tree(text='(1, (2, (3, (4, (5, (7, (6, 8)))))));')
+tree3 <- ape::read.tree(text='(1, (2, (3, (5, (4, (6, (7, 8)))))));')
+
+VisualizeMatching(InfoRobinsonFoulds, tree1, tree2, 
+                  Plot = TreeDistPlot, prune = 12)
+```
+
+whereas the second pair differ in the resolution of a more even, and thus more
+information-rich, split (`ABCD|EFGH`), and so receive a distance score of 
+5.53&nbsp;bits:
+
+```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
+VisualizeMatching(InfoRobinsonFoulds, tree1, tree3, 
+                  Plot = TreeDistPlot, prune = 8)
+```
+
+# Generalized Robinson–Foulds distances
+
+Even when accounting for the information content of splits in this way,
+the Robinson–Foulds distance is readily saturated: the maximum value can be 
+obtained by moving a single leaf.
+
+```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
+tree1 <- ape::read.tree(text='(1, (2, (3, (4, (5, (6, (7, 8)))))));')
+tree2 <- ape::read.tree(text='(8, (1, (2, (3, (4, (5, (6, 7)))))));')
+
+VisualizeMatching(RobinsonFouldsMatching, tree1, tree2, Plot = TreeDistPlot)
+```
+
+Generalized Robinson–Foulds distances [@Nye2006;@Bocker2013] seek to address
+this issue. 
+This category of metrics aim to acknowledge semblances between similar-but-not-quite-identical pairs of splits, which would contribute 
+zero to tree similarity under the standard Robinson–Foulds measure.
+
+Generalized RF distances work by finding a _matching_ that pairs splits from
+one tree with splits in the other.
+Each pairing is scored according to the similarity of the paired splits;
+the sum of these scores is the score of the matching.
+The tree distance is given by the score of the optimal matching.
+
+## Constructing a matching
+
+Let's consider two trees that differ in the position of one wildcard leaf,
+and in the resolution of a clade:
+
+```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
+tree1 <- ape::read.tree(text='((A, B), ((C, (D, E)), (F, (G, (H, I)))));')
+tree2 <- ape::read.tree(text='((A, B), ((C, D, (E, I)), (F, (G, H))));')
+
+Plot(tree1, tree2, highlight = 'I', prune = list(8, integer(0)))
+```
+
+These trees obtain a Robinson–Foulds distance of nine: a large distances, as
+the maximum possible for trees of this resolution is eleven.
+`AB|CDEFGHI` is the only split in common between the two trees:
+
+```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
+TwoTreePlot()
+VisualizeMatching(RobinsonFouldsMatching, tree1, tree2)
+```
+
+This distance score is higher than might be expected, given how much the trees 
+have in common;
+removing the single leaf 'I' results in two trees that differ only 
+in the resolution of a single node:
+
+```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
+TwoTreePlot()
+VisualizeMatching(RobinsonFouldsMatching,
+                  drop.tip(tree1, 'I'),
+                  drop.tip(tree2, 'I'))
+```
+
+This hidden similarity can be better reflected if similar, but non-identical,
+splits are assigned non-zero similarity scores.
+
+There are various ways to score the similarity between two splits. 
+One is to build on the idea introduced above, where identical splits are
+scored according to their phylogenetic information content.
+Non-matching splits can be scored according to the amount of phylogenetic 
+information that they hold in common, which is a function of the proportion of 
+trees that are consistent with both splits.
+(A full explanation is provided in the discussion of
+[Generalized Robinson–Foulds distances](Generalized-RF.html).)
+
+```{r, fig.height = 3, fig.width=6, fig.align = 'center'}
+TwoTreePlot()
+VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2)
+```
+
+Here, the split `AB|CDEFGHI` occurs in both trees,
+and, as it happens, makes the largest contribution to the tree similarity 
+score (3.70) for this particular pair of trees.
+This is the same contribution it would
+have made to the information-corrected Robinson–Foulds similarity.
+
+The split `ABCDEF|GHI` in the left-hand tree is paired with the split
+`ABCDEFI|GH` in the right-hand tree.  Had `ABCDEF|GHI` been available in the 
+right-hand tree, then this perfect match would have been assigned a similarity 
+of `SplitInformation(3, 6)` = 5.57&nbsp;bits.  The partial match is instead 
+allocated a lower score of 2.12&nbsp;bits.  Pairings of incompatible splits,
+i.e. those that cannot co-exist on a tree, such as `ABCDEFG|HI` - `ABCDFGH|EI`,
+have no phylogenetic information in common.
+([clustering information](information.html) is an alternative way to think
+about split similarity that recognizes similarity even between incompatible
+splits.)
+
+The matching depicted above is one of many.
+It happens to be optimal: an optimal matching can be found by considering the
+similarity score of each possible pairing, and solving a linear assignment
+problem to find the optimal set of pairings.
+
+We can view the splits in each tree, named according to the number of their
+associated node:
+
+```{r}
+summary(TreeTools::as.Splits(tree1, LETTERS[1:9]))
+summary(TreeTools::as.Splits(tree2, LETTERS[1:9]))
+```
+
+We can then see the similarity scores for each pair of splits, along with the 
+optimal matching:
+
+```{r}
+attributes(SharedPhylogeneticInfo(tree1, tree2, reportMatching = TRUE))
+```
+
+`..` denotes that the fifth matching contributes zero to similarity score; an 
+alternative optimal matching would leave these splits unpaired.
+
+## What next?
+
+- Alternatives measures of split similarity, such as 
+[mutual clustering information](information.html), give rise to other
+[Generalized Robinson–Foulds distances](Generalized-RF.html), and can be used
+to generate meaningful [tree spaces](treespace.html).
+
+```{r echo=FALSE}
+par(startPar)
+```
+
+## References

@@ -1,0 +1,76 @@
+Package: TreeDist
+Type: Package
+Title: Calculate and Map Distances Between Phylogenetic Trees
+Version: 2.10.1.9000
+Authors@R: c(person("Martin R.", "Smith",
+                    email = "martin.smith@durham.ac.uk", 
+                    role = c("aut", "cre", "cph", "prg"), 
+                    comment = c(ORCID = "0000-0001-5660-1727")),
+             person("Roy", "Jonker", email = "roy_jonker@magiclogic.com",
+                    role = c("prg", "cph")),
+             person("Yong", "Yang", email = "yongyanglink@gmail.com",
+                    role = c("ctb", "cph")),
+             person("Yi", "Cao", role = c("ctb", "cph"))
+            )
+License: GPL (>= 3)
+Description: Implements measures of tree similarity, including 
+  information-based generalized Robinson-Foulds distances
+  (Phylogenetic Information Distance, Clustering Information Distance,
+  Matching Split Information Distance; Smith 2020)
+  <doi:10.1093/bioinformatics/btaa614>; 
+  Jaccard-Robinson-Foulds distances (Bocker et al. 2013)
+  <doi:10.1007/978-3-642-40453-5_13>, 
+  including the Nye et al. (2006) metric <doi:10.1093/bioinformatics/bti720>;
+  the Matching Split Distance (Bogdanowicz & Giaro 2012)
+  <doi:10.1109/TCBB.2011.48>;
+  Maximum Agreement Subtree distances;
+  the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>, and the
+  Nearest Neighbour Interchange (NNI) distance, approximated per Li et al. 
+  (1996) <doi:10.1007/3-540-61332-3_168>.
+  Includes tools for visualizing mappings of tree space (Smith 2022)
+  <doi:10.1093/sysbio/syab100>,
+  for identifying islands of trees (Silva and Wilkinson 2021)
+  <doi:10.1093/sysbio/syab015>,
+  for calculating the median of sets of trees,
+  and for computing the information content of trees and splits.
+Copyright: Jonker-Volgenant Linear Assignment Problem implementation by
+        Roy Jonker modified by Yong Yang and Yi Cao.
+URL: https://ms609.github.io/TreeDist/,
+        https://github.com/ms609/TreeDist/
+BugReports: https://github.com/ms609/TreeDist/issues/
+Additional_repositories: https://ms609.github.io/packages/
+Depends: R (>= 4.0), stats,
+Imports: ape (>= 5.0), cli (>= 3.0), colorspace, Rdpack (>= 0.7),
+        shiny, shinyjs, TreeTools (>= 1.16),
+Suggests: bookdown, cluster, ggplot2, hypervolume, kdensity, knitr,
+        MASS, parallel, phangorn (>= 2.2.1), plotly, PlotTools,
+        protoclust, Quartet, readxl, rmarkdown, Rcpp (>= 1.0.8), rgl,
+        Rogue, spelling, testthat (>= 3.0), Ternary (>= 1.1.2),
+        TreeDistData (> 0.1.0), TreeSearch (>= 1.4.0), Umatrix, uwot,
+        vdiffr (>= 1.0.0),
+LinkingTo: Rcpp, TreeTools (>= 1.16.1),
+RdMacros: Rdpack
+VignetteBuilder: knitr
+Config/Needs/check: rcmdcheck
+Config/Needs/coverage: covr
+Config/Needs/memcheck: devtools
+Config/Needs/metadata: codemetar
+Config/Needs/revdeps: revdepcheck
+Config/Needs/website: pkgdown
+Config/testthat/parallel: false
+Config/testthat/edition: 3
+SystemRequirements: C++17, pandoc-citeproc
+ByteCompile: true
+Encoding: UTF-8
+Language: en-GB
+X-schema.org-keywords: phylogenetics, tree-distance
+RoxygenNote: 7.3.2
+Roxygen: list(markdown = TRUE)
+NeedsCompilation: yes
+Packaged: 2025-09-08 09:25:52 UTC; runner
+Author: Martin R. Smith [aut, cre, cph, prg]
+    (<https://orcid.org/0000-0001-5660-1727>),
+  Roy Jonker [prg, cph],
+  Yong Yang [ctb, cph],
+  Yi Cao [ctb, cph]
+Maintainer: Martin R. Smith <martin.smith@durham.ac.uk>

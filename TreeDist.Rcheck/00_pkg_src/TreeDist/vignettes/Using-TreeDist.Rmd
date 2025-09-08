@@ -1,0 +1,152 @@
+---
+title: "Calculate tree similarity with 'TreeDist'"
+author: "[Martin R. Smith](https://smithlabdurham.github.io/)"
+output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
+vignette: >
+  %\VignetteIndexEntry{Calculate tree similarity with 'TreeDist'}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This document should contain all you need to get started measuring tree 
+distances with 'TreeDist'.  If you get stuck, please 
+[let me know](https://github.com/ms609/TreeDist/issues/new?title=Suggestion:+)
+so I can improve this documentation.
+
+## Loading trees
+
+Instructions for loading phylogenetic trees into R can be found in a [separate vignette](https://ms609.github.io/TreeTools/articles/load-trees.html).
+For these examples, we'll enter two simple trees by hand:
+
+```{r set-up}
+tree1 <- ape::read.tree(text = '(A, ((B, (C, (D, E))), ((F, G), (H, I))));')
+tree2 <- ape::read.tree(text = '(A, ((B, (C, (D, (H, I)))), ((F, G), E)));')
+```
+
+## Calculating distances
+
+We can calculate distances between pairs of trees using the 'TreeDist' package.
+
+First we'll install the package.
+We can either install the stable version from the CRAN repository:
+
+```r
+install.packages('TreeDist')
+```
+
+or the development version, from GitHub -- which will contain the latest
+features but may not be as extensively tested:
+
+```r 
+devtools::install_github('ms609/TreeDist')
+```
+
+Then we'll load the package in to R's working environment:
+
+```{r load-package, message=FALSE}
+library('TreeDist')
+```
+
+Now the package's functions are available within R.
+Let's proceed to calculate some tree distances.
+
+### Pairs of trees
+
+Calculating the distance between two trees is as simple as:
+
+```{r measure-distance}
+distance <- TreeDistance(tree1, tree2)
+```
+
+The convenience function `TreeDistance()` returns the variation of clustering
+information between two trees, [normalized](using-distances.html#normalizing)
+against the total information content of all splits.  
+
+### Multiple comparisons
+
+If you have more than two trees to compare, you can send a list of trees 
+(class: `list` or `multiPhylo`) to the distance comparison function.
+The function will then calculate the distance between each tree in the first
+list and each tree in the second.
+
+```{r multi-trees}
+oneTree <- ape::rtree(11)
+twoTrees <- structure(list(one = ape::rtree(11), two = ape::rtree(11)),
+                      class = 'multiPhylo')
+threeTrees <- list(a = ape::rtree(11), b = ape::rtree(11), c = ape::rtree(11))
+
+TreeDistance(oneTree, twoTrees)
+TreeDistance(twoTrees, threeTrees)
+```
+
+## Visualizing a matching
+
+[Generalized Robinson–Foulds metrics](Generalized-RF.html),
+such as the variation of clustering information,
+rely on matching each split within a tree with another split in the other tree.  
+We can view an optimal matching:
+
+```{r visualise-matching, fig.align='center', fig.width=8, out.width='90%'}
+#| fig.alt: >
+#|   Pair of similar phylogenetic trees with matched splits highlighted
+#|   according to the amount of clustering information in common.
+VisualizeMatching(ClusteringInfoDistance, tree1, tree2)
+```
+
+This shows the six splits in tree 1, and the paired splits in tree two.  
+Each split is labelled with a measure of its similarity, which is its 
+contribution to the total tree similarity score.
+
+We can view this information in a format accessible for further examination in R with:
+
+```{r write-vis-matching, fig.align='center', fig.width=8, out.width='90%'}
+ClusteringInfoDistance(tree1, tree2, reportMatching = TRUE)
+```
+
+Here, the `pairScores` attribute lists the score of each possible matching of 
+splits.
+
+We can identify the splits with:
+
+```{r}
+splits <- as.character(TreeTools::as.Splits(tree2))
+splits
+```
+
+The names of the splits correspond to the number of an associated node in the
+original tree:
+
+```{r named-splits, fig.align='center', fig.width=7, fig.height = 5, out.width='80%'}
+#| fig.alt: >
+#|   Phylogenetic tree with nodes numbered, and labelled with the splits
+#|   to which they correspond.
+oldPar <- par(mar = rep(0, 4))
+plot(tree2)
+ape::nodelabels()
+ape::nodelabels(splits, as.integer(names(splits)), 
+                adj = c(1.1, -0.2), cex = 0.8, frame = 'none')
+```
+```{r, echo=FALSE}
+par(oldPar)
+```
+
+Note that strictly, (informative) splits are associated with (internal) edges.
+To avoid listing the same split twice, nodes close to the root (here, 10 and 11)
+will not be associated with a split.
+
+## What next?
+
+You may wish to:
+
+- [Provide context](using-distances.html) for tree distances
+
+- Compare trees with [different tips](different-leaves.html)
+
+- Review [available distance measures](https://ms609.github.io/TreeDist/index.html)
+  and the corresponding [functions](https://ms609.github.io/TreeDist/reference/index.html#section-tree-distance-measures)
+
+- [Interpret tree distance metrics](https://ms609.github.io/TreeDistData/articles/09-expected-similarity.html)
+
+- Visualize [tree landscapes](treespace.html) using distance-based tree spaces

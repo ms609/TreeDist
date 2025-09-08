@@ -1,0 +1,177 @@
+---
+title: "Comparing sets of trees from different analyses"
+author: "[Martin R. Smith](https://smithlabdurham.github.io/)"
+output: 
+  rmarkdown::html_vignette:
+    fig_width: 6
+    fig_height: 4
+bibliography: ../inst/REFERENCES.bib
+csl: https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
+vignette: >
+  %\VignetteIndexEntry{Comparing sets of trees from different analyses}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+A common application of tree space analysis is to compare the outputs of
+different analyses – for instance, trees obtained from different gene sequences,
+or results obtained using different models or methods 
+(e.g. Bayesian, maximum likelihood, or parsimony).
+
+## Shiny app
+
+This can be accomplished quickly using the `MapTrees()` graphical user interface:
+
+- <span style="border: solid 2px #e69f00">Load trees</span> from file: Select first tree file
+
+- Select an appropriate sample size
+
+- Select <span style="border: solid 2px #009e73">Replace existing</span>
+
+- Load each additional set of trees from file using <span style="border: solid 2px #d55e00">Add batch to existing</span>
+
+![Load tree batches](Batch1.svg){ width="245px" }
+
+
+- On the <span style="border: solid 2px #e69f00">Display</span> tab, 
+  select <span style="border: solid 2px #009e73">Point symbols: One per batch</span>,
+  or <span style="border: solid 2px #d55e00">Colour points by: Batch</span>
+
+
+![Tree batch styles](Batch2.svg){ width=100% }
+
+
+## Scripting at the R command line
+
+More control over the mapping can be obtained at the command line:
+
+```{r generate-trees}
+# Load trees
+library("TreeTools", quietly = TRUE)
+batch1 <- as.phylo(1:60, 8) # Generate 60 similar trees 
+batch2 <- as.phylo(seq(200, 800, length.out = 30), 8) # A separate batch of 30 trees
+styles <- c(1, 2) # Select plotting colours / symbols
+treeStyle <- rep(styles, c(length(batch1), length(batch2)))
+
+# Calculate distances
+library("TreeDist")
+distances <- ClusteringInfoDistance(c(batch1, batch2))
+
+# Construct over-simple 2D PCoA mapping
+mapping <- cmdscale(distances, k = 2)
+```
+
+```{r plot-mapping, fig.align = "center"}
+# Plot mapping
+par(mar = rep(0, 4))
+plot(mapping,
+     asp = 1, # Preserve aspect ratio - do not distort distances
+     ann = FALSE, axes = FALSE, # Don't label axes: dimensions are meaningless
+     col = treeStyle, # Colour
+     pch = treeStyle # Plotting symbol
+     )
+legend("left", c("Batch 1", "Batch 2"), col = styles, pch = styles)
+```
+
+For more robust analyses than the (potentially misleading!) 2D plot above,
+consult the companion [vignette](treespace.html).
+Note also that mapped areas and their regions of overlap may not correspond
+to reality; see the warnings and recommendations in @SmithSpace.
+
+## Comparing trees' dispersal / hypervolume
+
+Interpreting and comparing the areas of tree space from a projection can be
+misleading -- the expanded apparent area of Greenland under the Mercator projection
+being a familiar example.
+
+![Mapping can introduce distortion](https://i0.wp.com/geoffboeing.com/wp-content/uploads/2015/08/greenland-vs-africa-mercator-projection.jpg)
+
+As such, it is always best to work with original distances when interpreting
+whether sets of trees occupy larger or smaller regions of tree space.
+
+### Distances from median
+
+One approach is to plot distances from a median tree:
+
+```{r compare-dist-from-median, fig.align = "center"}
+# Calculate median trees
+median1 <- median(batch1)
+median2 <- median(batch2)
+
+# Compute distance from each tree to the median of its batch
+dist1 <- ClusteringInfoDist(batch1, median1)
+dist2 <- ClusteringInfoDist(batch2, median2)
+
+# Set resolution of histogram
+nBreaks <- 10
+breaks <- seq(0, max(dist1, dist2), length.out = nBreaks)
+
+# Plot first distance set
+hist(dist1, col = "#00000022", breaks = breaks,
+     main = "Distance from median of batch",
+     xlab = "Clustering information distance",
+     ylim = c(0, 25) # Omit this line to infer Y axis limit from first batch.
+     )
+
+# Add second distance set
+hist(dist2, col = "#ff000022", breaks = breaks, add = TRUE)
+
+# Add legend
+legend("topleft", c("Batch 1", "Batch 2"),
+       fill = c("#00000022",  "#ff000022"))
+```
+
+In the plotted example, distances to the median tree are greater for batch 2
+than batch 1, indicating a more dispersed set of trees that occupies a greater
+hypervolume.  Note that the increased frequency at higher distances is expected:
+the outer shell of a sphere contains more volume than a layer of equivalent
+thickness closer to the centre, and this phenomenon becomes more pronounced as
+the dimensionality of tree space increases.
+
+### Consensus resolution
+
+A complementary approach is to identify the resolution of the consensus of each
+batch of trees.  This approach shares many of the 
+[problems with the Robinson--Foulds distance](
+https://ms609.github.io/TreeDist/articles/Robinson-Foulds.html): in particular,
+resolution can be decimated by a single "rogue" taxon whose position is poorly
+defined [@SmithRogue].
+Detecting and removing rogue taxa can provide a more meaningful point of
+comparison.
+
+```{r rogue-detection}
+# Create tree set with a rogue taxon
+batch3 <- AddTipEverywhere(as.phylo(7, 7), "t8")
+
+# Set up plotting area
+par(mfrow = c(2, 2), mar = rep(0.4, 4))
+
+# Plot naive strict consensus
+plot(consensus(batch1, p = 1))
+plot(consensus(batch3, p = 1))
+
+if (requireNamespace("Rogue", quietly = TRUE)) {
+  cons1 <- ConsensusWithout(batch1, p = 1,
+                            Rogue::QuickRogue(batch1, p = 1)[-1, "taxon"])
+  cons3 <- ConsensusWithout(batch3, p = 1,
+                            Rogue::QuickRogue(batch3, p = 1)[-1, "taxon"])
+  
+  # The information content of each tree gives a measure of its resolution,
+  # accounting for omitted rogue leaves
+  SplitwiseInfo(cons1) # 8.5 bits
+  SplitwiseInfo(cons3) # 15.1 bits: higher resolution indicates that these
+  # trees are more similar, notwithstanding rogue taxa.
+  
+  # Plot the trees
+  plot(cons1)
+  plot(cons3)
+} else {
+  message("The package 'Rogue' is required to run this example.")
+}
+```
+
+Whereas a direct interpretation of this analysis is not straightforward, it can
+provide a complementary way of understanding the distribution of trees
+across tree space.
+
+## References
