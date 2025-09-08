@@ -4,12 +4,7 @@
 \alias{HierarchicalMutualInfo}
 \title{Hierarchical Mutual Information for phylogenetic trees}
 \usage{
-HierarchicalMutualInfo(
-  tree1,
-  tree2 = NULL,
-  normalize = FALSE,
-  reportMatching = FALSE
-)
+HierarchicalMutualInfo(tree1, tree2 = NULL, normalize = FALSE)
 }
 \arguments{
 \item{tree1, tree2}{Trees of class \code{phylo}, or lists of such trees.
@@ -23,25 +18,21 @@ matchings as an attribute of the score.}
 }
 \value{
 A numeric value representing the Hierarchical Mutual Information
-between the input trees. If \code{reportMatching = TRUE}, returns additional
-attributes showing the optimal matching between splits.
+between the input trees. Higher values indicate more shared
+hierarchical structure.
 }
 \description{
 Calculate the Hierarchical Mutual Information (HMI) between two phylogenetic
-trees, which extends traditional mutual information to account for the
-hierarchical structure inherent in phylogenetic trees.
+trees, following the recursive algorithm from Perotti et al. (2015).
 }
 \details{
-Hierarchical Mutual Information is a recursive algorithm that considers the
-nested, hierarchical structure of phylogenetic trees when computing information
-measures. The algorithm converts trees to hierarchical partitions and computes
-mutual information recursively, weighting contributions by the number of
-overlapping elements at each level of the hierarchy.
+This function implements the recursive Hierarchical Mutual Information algorithm
+that considers the nested, hierarchical structure of phylogenetic trees when
+computing information measures. The algorithm converts trees to hierarchical
+partitions and computes mutual information recursively using natural logarithm.
 
-The algorithm follows the implementation described in Perotti et al. (2015)
-and is based on the recursive formula:
-
-For internal nodes: I(t,s) = log(n_ts) - (H_us + H_tv - H_uv)/n_ts + mean(I_uv)
+The recursive HMI formula for internal nodes is:
+I(t,s) = ln(n_ts) - (H_us + H_tv - H_uv)/n_ts + mean(I_uv)
 
 Where:
 \itemize{
@@ -66,7 +57,7 @@ HierarchicalMutualInfo(tree1, tree2, normalize = TRUE)
 # Expected result for 6-tip balanced vs pectinate trees
 bal6 <- BalancedTree(6)
 pec6 <- PectinateTree(6)
-HierarchicalMutualInfo(bal6, pec6)  # Should be approximately 0.24
+HierarchicalMutualInfo(bal6, pec6)  # Returns approximately 0.22
 }
 
 }

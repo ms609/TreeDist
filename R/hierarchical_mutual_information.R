@@ -70,6 +70,15 @@ ReplicateHPart <- function(x, d) {
   rapply(x, function(x) d[[x]], how = "replace")
 }
 
+#' @importFrom stats setNames
+#' @export
+ShuffleHPart <- function(x) {
+  labels <- as.character(TipLabels(x))
+  d <- setNames(sample(labels), labels)
+  ReplicateHPart(x, d)
+}
+
+
 #'   Computes the hierarchical mutual information between two hierarchical partitions.
 #' @return Returns 
 #' n_ts,HMI(Ut,Us) : where n_ts is the number of common elements between the hierarchical #' partitions Ut and Us.
@@ -90,7 +99,7 @@ HMI <- function(Ut, Us) {
         n_us = 0
         for (v in seq_along(Us)) {
           Uv <- Us[[v]]
-          niUV <- HMIR(Uu, Uv)
+          niUV <- HMI(Uu, Uv)
           n_uv <- niUV[[1]]
           I_uv <- niUV[[2]]
           n_ts <- n_ts + n_uv
@@ -127,14 +136,73 @@ HMI <- function(Ut, Us) {
   }
 }
 
+# TODO implement more efficiently
+#' @export
+SelfHMI <- function(tree) {
+  part <- as.HPart(tree)
+  HMI(part, part)[[2]]
+}
+
 #' @export
 NHMI <- function(tree1, tree2) {
   part1 <- as.HPart(tree1)
   part2 <- as.HPart(tree2)
-  gm <- mean(HMI(part1, part1)[[2]], HMI(part2, part2)[[2]])
+  gm <- mean(SelfHMI(part1), SelfHMI(part2))
   if (gm > 0) {
     HMI(part1, part2)[[2]] / gm
   } else {
     0
   }
+}
+
+EHMI <- function(tree1, tree2, tolerance = 0.01, minResample = 36) {
+  if (minResample < 2) {
+    stop("Must perform at least one resampling")
+  }
+  
+  part1 <- as.HPart(tree1)
+  part2 <- as.HPart(tree2)
+  
+  part1 <- rapply(part1, as.character, how = "replace")
+  part2 <- rapply(part2, as.character, how = "replace")
+  
+  relativeError <- 2 * tolerance
+  
+  runMean <- 0
+  runS <- 0
+  runN <- 0
+  
+  progBar <- cli::cli_progress_bar("Sampling", total = NA, format = "{cli::pb_spin} Sample {runN}: {signif(runMean, 3)} ± {signif(runSEM, 3)} ({signif(relativeError * 100, 3)}%)")
+
+  while(relativeError > tolerance || runN < minResample) {
+    shuf1 <- ShuffleHPart(part1)
+    x <- HMI(shuf1, part2)[[2]]
+    
+    runN <- runN + 1
+    oldMean <- runMean
+    runMean <- runMean + (x - runMean) / runN
+    runS <- runS + (x - oldMean) * (x - runMean)
+    runVar <- runS / (runN - 1)
+    runSD <- sqrt(runVar)
+    runSEM <- runSD / sqrt(runN)
+    tolSD <- 0.05
+    relativeError <- runSEM / (abs(runMean) + tolSD)
+    cli::cli_progress_update(id = progBar,
+                             status = list(runN = runN, runMean = runMean,
+                                           runSEM = runSEM,
+                                           relativeError = relativeError))
+  }
+  cli::cli_progress_done()
+  
+  structure(runMean, var = runVar, sd = runSD, sem = runSEM,
+            relativeError = relativeError)
+}
+
+#' @export
+AHMI <- function(tree1, tree2, Mean = max, tolerance = 0.01, minResample = 36) {
+  hp1 <- as.HPart(tree1)
+  hp2 <- as.HPart(tree2)
+  ehmi <- EHMI(hp1, hp2, tolerance = tolerance, minResample = minResample)[[1]]
+  # Return:
+  (HMI(hp1, hp2)[[2]] - ehmi) / (Mean(SelfHMI(hp1), SelfHMI(hp2)) - ehmi)
 }

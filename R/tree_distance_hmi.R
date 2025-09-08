@@ -60,3 +60,13 @@ as.HPart.phylo <- function(tree) {
 is.HPart <- function(x) {
   inherits(x, "HPart") && .ValidPartition(x)
 }
+
+#' @export
+TipLabels.HPart <- function(phy) {
+  unlist(phy, recursive = TRUE, use.names = FALSE)
+}
+
+#' @export
+NTip.HPart <- function(phy) {
+  length(TipLabels(phy))
+}
