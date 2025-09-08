@@ -13,14 +13,6 @@ robinson_foulds_all_pairs <- function(tables) {
     .Call(`_TreeDist_robinson_foulds_all_pairs`, tables)
 }
 
-HMI_nested <- function(t1, t2) {
-    .Call(`_TreeDist_HMI_nested`, t1, t2)
-}
-
-d_n_nested <- function(t1, t2, n = 1L) {
-    .Call(`_TreeDist_d_n_nested`, t1, t2, n)
-}
-
 #' Calculate entropy of integer vector of counts
 #' 
 #' Wrapper for C++ function; no input checking is performed.

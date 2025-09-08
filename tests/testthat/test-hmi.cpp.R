@@ -34,7 +34,4 @@ test_that("HMI calculated correctly", {
   pec6 <- PectinateTree(6)
   expect_equal(HierarchicalMutualInfo(bal6, pec6),
                HierachicalMutual(bal6, pec6))
-  expect_equal(d_n_nested(as.HPart(bal6), as.HPart(pec6)),
-               HierachicalMutual(bal6, pec6))
-
 })
