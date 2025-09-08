@@ -5,6 +5,28 @@ Correctness, speed and user-friendliness are priorities.
 
 Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.
 
+
+## Context: Object structures
+
+TreeDist handles phylogenetic trees, which are typically presented in one of two formats:
+
+- A `phylo` object is a list containing elements:
+  - `"edge": a 2d matrix in which each row identifies the parent vertex (column 1) and child vertex (column 2) of an edge
+    in the tree
+  - `"Nnode"`: Number of internal nodes
+  - `"tip.label"`: Labels for tips with index 1, 2, ... `NTip(tree) == length(tree[["tip.label"]])`
+  A phylo object with the attribute "preorder" has edges and internal nodes listed in a strict preorder sequence
+  (see `TreeTools::Preorder()`; the attribute "postorder" indicates that edges are numbered in an arbitrary postorder sequence.
+
+- A `Splits` object (from `TreeTools::as.Splits()`) is a raw matrix where each row corresponds to an edge in the tree.
+  Each row is named with the integer index of a node associated with the edge (=bipartition split); the bits of the raw
+  vector determine which of the two bipartitions each of the `attr(x, "nTip")` leaves (labelled as in the "tip.label" attribute)
+  belongs to.  The `TRUE/FALSE` labelling is arbitrary unless `TreeTools::PolarizeSplits` is called.
+
+TreeDist can be considered a "descendant package" of TreeTools, which I also maintain;
+TreeTools contains core functionality for tree and split manipulation, designed to be compatible with TreeDist.
+
+
 ## Working Effectively
 
 ### Bootstrap and Development Setup
