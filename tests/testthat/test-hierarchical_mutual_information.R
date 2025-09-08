@@ -56,7 +56,7 @@ test_that("Hierarchical Mutual Information", {
   
   # The expected value is 0.24 based on Python reference implementation
   expect_equal(hmi_bal_pec, 0.24, tolerance = 0.02)
-}))
+})
 
 test_that("HMI helper functions", {
   skip_if_not_installed("TreeTools")
@@ -65,13 +65,13 @@ test_that("HMI helper functions", {
   tree <- BalancedTree(8)
   
   # Test hierarchical partition building
-  partition <- .PhyloToHierarchicalPartition(tree)
+  partition <- as.HPart(tree)
   
   expect_true(is.list(partition))
   
   # Test HMI recursive calculation
   tree2 <- PectinateTree(8)
-  partition2 <- .PhyloToHierarchicalPartition(tree2)
+  partition2 <- as.HPart(tree2)
   
   result <- .CalculateHMIRecursive(partition, partition2)
   expect_true(is.list(result))
@@ -81,7 +81,7 @@ test_that("HMI helper functions", {
   expect_true(is.numeric(result$I_ts))
   expect_true(result$n_ts >= 0)
   expect_true(result$I_ts >= 0)
-}))
+})
 
 test_that("HMI comparison with standard mutual information", {
   library("TreeTools", quietly = TRUE)
