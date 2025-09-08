@@ -26,3 +26,5 @@ vignettes/*.R
 .Rproj.user
 *.bak
 codecov.yml
+TreeDist.Rcheck/
+TreeDist_*.tar.gz
