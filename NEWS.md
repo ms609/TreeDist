@@ -1,6 +1,6 @@
 # TreeDist 2.10.1.9000 (development)
 
-No changes yet.
+- Fix crash in `robinson_foulds_all_pairs()` and `RobinsonFoulds(list)`.
 
 
 # TreeDist 2.10.1 (2025-08-24)

@@ -24,5 +24,7 @@ vignettes/*_files
 vignettes/*_cache
 vignettes/*.R
 .Rproj.user
+*.Rcheck**
+*.tar.gz
 *.bak
 codecov.yml
