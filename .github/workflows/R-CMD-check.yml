@@ -68,7 +68,7 @@ jobs:
 
     steps:
       - name: Checkout git repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
