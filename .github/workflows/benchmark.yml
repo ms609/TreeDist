@@ -87,14 +87,14 @@ jobs:
         
       - name: Upload PR benchmark results
         if: failure()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v4
         with:
           name: pr-benchmark-results
           path: pr/pr-benchmark-results/*.bench.Rds
             
       - name: Upload main benchmark results
         if: failure()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v4
         with:
           name: main-benchmark-results
           path: pr/main-benchmark-results/*.bench.Rds
