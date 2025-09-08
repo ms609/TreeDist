@@ -4,6 +4,14 @@ as.HPart <- function(tree) {
 }
 
 #' @export
+as.HPart.HPart <- function(tree) tree
+
+#' @export
+as.HPart.list <- function(tree) {
+  structure(tree, class = "HPart")
+}
+
+#' @export
 as.HPart.phylo <- function(tree) {
   # Ensure tree is rooted and binary (ape usually handles this)
   edge <- Preorder(tree$edge)
