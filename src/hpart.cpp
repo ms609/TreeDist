@@ -5,6 +5,7 @@
 #include <TreeTools/renumber_tree.h> // for preorder_edges_and_nodes
 
 using namespace Rcpp;
+using Node = TreeDist::HNode;
 
 // Forward
 static void compute_bitsets_from(int node, HPart &hp);
@@ -51,27 +52,52 @@ static void compute_bitsets_from(int node, HPart &hp) {
 SEXP build_hpart_from_phylo(List phy) {
   IntegerMatrix edge = phy["edge"];
   CharacterVector tip_label = phy["tip.label"];
-  int nTip = tip_label.size();
-  int Nnode = phy["Nnode"];
+  int n_tip = tip_label.size();
+  int n_node = phy["Nnode"];
   
-  // preorder edges
   IntegerMatrix reordered = TreeTools::preorder_edges_and_nodes(edge(_,0), edge(_,1));
   
-  std::vector<std::vector<int>> children(nTip + Nnode + 1);
-  for (int i = 0; i < reordered.nrow(); ++i) {
-    int p = reordered(i, 0);
-    int c = reordered(i, 1);
+  const size_t vec_size = n_tip + n_node + 1;
+  std::vector<std::vector<size_t>> children(vec_size);
+  for (size_t i = 0; i < children.size(); ++i) {
+    children[i].reserve(2);
+  }
+  for (size_t i = 0; i < reordered.nrow(); ++i) {
+    size_t p = reordered(i, 0);
+    size_t c = reordered(i, 1);
     children[p].push_back(c);
   }
   
-  HPart* hp = new HPart();
-  hp->nTips = nTip;
-  hp->nBlocks = (nTip + 63) / 64;
-  hp->rootIndex = nTip + 1;
-  hp->nodes.resize(nTip + Nnode + 1);
+  HPart* hpart = new HPart();
+  hpart->nodes.resize(vec_size);
   
-  build_node(hp->rootIndex, *hp, children, nTip);
-  compute_bitsets_from(hp->rootIndex, *hp);
+  // Initialize all nodes to empty
+  const int n_block = (n_tip + 63) / 64;
+  for (size_t i = 1; i < vec_size; ++i) {
+    hpart->nodes[i].nTip = nTip;
+    hpart->nodes[i].bitset.resize(nBlock, 0);
+  }
   
-  return Rcpp::XPtr<HPart>(hp, true); // managed by R
+  // Initialize tips
+  for (size_t i = 1; i <= n_tip; ++i) {
+    const size_t bit_index = i - 1; // 0-based indexing
+    const size_t vector_pos = bit_index / 64; 
+    const size_t bit_pos_in_block = bit_index % 64;
+    hpart->nodes[i].bitset[vector_pos] = 1ULL << bit_pos_in_block;
+  }
+  
+  // Traverse nodes in postorder
+  for (size_t i = vec_size; i > (size_t)n_tip; --i) {
+    hpart->nodes[i].children.reserve(children[i].size());
+    for (size_t child_id : children[i]) {
+      hpart->nodes[i].children.push_back(&hpart->nodes[child_id]);
+      for (size_t chunk = 0; chunk < nodes[i].bitset.size(); ++chunk) {
+        hpart->nodes[i].bitset[chunk] |= hpart->nodes[child_id].bitset[chunk];
+      }
+    }
+  }
+  
+  hpart->root = hpart->nodes[n_tip + 1];
+  
+  return Rcpp::XPtr<HPart>(hpart, true);
 }
