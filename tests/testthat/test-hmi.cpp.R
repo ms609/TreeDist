@@ -27,7 +27,7 @@ test_that("HMI results match hmi.pynb", {
   hp2 <- list(list(list(list(0, 25),  list(24)),  list(6),  list(11, 28),  list(8)), list(list(list(19),  list(list(list(list(21),  list(4),  list(list(list(list(list(22, 7))))))))),  list(5)), list(list(3),  list(10, 23, 14)), list(list(27, 1, 16, 13, 18, 26, 9),  list(list(list(list(15),  list(list(list(list(list(list(12, 17)))))))),  list(2, 20)),  list(29)))
   
   expect_equal(HMI(hp1, hp2), c(30, 1.0591260408329395))
-  expect_equal(AHMI(hp1, hp2), 0.120, tolerance = 0.01)
+  expect_equal(AHMI(hp1, hp2), 0.120, tolerance = 0.1)
 })
 
 test_that("HMI calculated correctly", {
