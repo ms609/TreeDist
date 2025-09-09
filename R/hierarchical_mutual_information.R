@@ -78,10 +78,10 @@ ShuffleHPart <- function(x) {
   ReplicateHPart(x, d)
 }
 
-
-#'   Computes the hierarchical mutual information between two hierarchical partitions.
+#' Computes the hierarchical mutual information between two hierarchical partitions.
 #' @return Returns 
-#' n_ts,HMI(Ut,Us) : where n_ts is the number of common elements between the hierarchical #' partitions Ut and Us.
+#' n_ts,HMI(Ut,Us) : where n_ts is the number of common elements between the
+#' hierarchical partitions Ut and Us.
 #'
 #' NOTE: We label by u,v the children of t,s respectively.
 #' @export
