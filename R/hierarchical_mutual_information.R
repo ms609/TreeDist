@@ -61,16 +61,16 @@
 #' @family tree distances
 #' @export
 HierarchicalMutualInfo <- function(tree1, tree2 = NULL, normalize = FALSE) {
-  hp1 <- as.HPart_cpp(tree1)
+  hp1 <- as.HPart(tree1)
   if (is.null(tree2)) {
     if (isFALSE(normalize)) {
-      SelfHMI_cpp(hp1)
+      SelfHMI(hp1)
     } else {
       warning("Normalized self-information == 1; did you mean to provide tree2?")
       1
     }
   } else {
-    hp2 <- as.HPart_cpp(tree2)
+    hp2 <- as.HPart(tree2)
     hmi <- HMI_xptr(hp1, hp2)
     if (isFALSE(normalize)) {
       hmi
@@ -81,91 +81,16 @@ HierarchicalMutualInfo <- function(tree1, tree2 = NULL, normalize = FALSE) {
       if (!is.function(normalize)) {
         stop("`normalize` must be logical, or a function")
       }
-      denom <- normalize(SelfHMI_cpp(hp1), SelfHMI_cpp(hp2))
+      denom <- normalize(SelfHMI(hp1), SelfHMI(hp2))
       hmi / denom
     }
   }
 }
 
-XLnX <- function(x) {
-  ifelse(x > 0, x * log(x), 0)
-}
-
 #' @export
-ReplicateHPart <- function(x, d) {
-  rapply(x, function(x) d[[x]], how = "replace")
-}
-
-#' @importFrom stats setNames
-#' @export
-ShuffleHPart <- function(x) {
-  labels <- as.character(TipLabels(x))
-  d <- setNames(sample(labels), labels)
-  ReplicateHPart(x, d)
-}
-
-#' Computes the hierarchical mutual information between two hierarchical partitions.
-#' @return Returns 
-#' n_ts,HMI(Ut,Us) : where n_ts is the number of common elements between the
-#' hierarchical partitions Ut and Us.
-#'
-#' NOTE: We label by u,v the children of t,s respectively.
-#' @export
-HMI <- function(Ut, Us) {
-  if (is.list(Ut[[1]])) {
-    if (is.list(Us[[1]])) {
-      # Ut and Us are both internal nodes since they contain other lists.
-      n_ts = 0
-      H_uv = 0
-      H_us = 0
-      H_tv = 0
-      n_tv = integer(length(Us))
-      mean_I_ts = 0
-      for (Uu in Ut) {
-        n_us = 0
-        for (v in seq_along(Us)) {
-          Uv <- Us[[v]]
-          niUV <- HMI(Uu, Uv)
-          n_uv <- niUV[[1]]
-          I_uv <- niUV[[2]]
-          n_ts <- n_ts + n_uv
-          n_tv[[v]] <- n_tv[[v]] + n_uv
-          n_us <- n_us + n_uv
-          H_uv <- H_uv + XLnX(n_uv)
-          mean_I_ts <- mean_I_ts + (n_uv * I_uv)
-        }
-        H_us <- H_us + XLnX(n_us)
-      }
-      for (.n_tv in n_tv) {
-        H_tv <- H_tv + XLnX(.n_tv)
-      }
-      if (n_ts > 0) {
-        local_I_ts <- log(n_ts) - (H_us + H_tv - H_uv) / n_ts
-        mean_I_ts <- mean_I_ts / n_ts
-        I_ts <- local_I_ts + mean_I_ts
-        c(n_ts, I_ts)
-      } else {
-        c(0, 0)
-      }
-    } else {
-      # Ut is internal node and Us is leaf
-      c(length(intersect(unlist(Ut, recursive = TRUE), Us)), 0)
-    }
-  } else {
-      if (is.list(Us)) {
-        # Ut is leaf and Us internal node
-        c(length(intersect(unlist(Us, recursive = TRUE), Ut)), 0)
-      } else {
-        # Both Ut and Us are leaves
-        c(length(intersect(Ut, Us)), 0)
-      }
-  }
-}
-
-#' @export
-HMI_cpp <- function(tree1, tree2) {
-  hp1 <- as.HPart_cpp(tree1)
-  hp2 <- as.HPart_cpp(tree2)
+HMI <- function(tree1, tree2) {
+  hp1 <- as.HPart(tree1)
+  hp2 <- as.HPart(tree2)
   HMI_xptr(hp1, hp2)
 }
 
@@ -176,82 +101,15 @@ SelfHMI <- function(tree) {
 }
 
 #' @export
-SelfHMI_cpp <- function(tree) {
-  part <- as.HPart_cpp(tree)
+SelfHMI <- function(tree) {
+  part <- as.HPart(tree)
   HME_xptr(part)
 }
 
 #' @export
-NHMI <- function(tree1, tree2) {
-  part1 <- as.HPart(tree1)
-  part2 <- as.HPart(tree2)
-  gm <- mean(SelfHMI(part1), SelfHMI(part2))
-  if (gm > 0) {
-    HMI(part1, part2)[[2]] / gm
-  } else {
-    0
-  }
-}
-
 EHMI <- function(tree1, tree2, tolerance = 0.01, minResample = 36) {
-  if (minResample < 2) {
-    stop("Must perform at least one resampling")
-  }
-  
-  part1 <- as.HPart(tree1)
-  part2 <- as.HPart(tree2)
-  
-  part1 <- rapply(part1, as.character, how = "replace")
-  part2 <- rapply(part2, as.character, how = "replace")
-  
-  relativeError <- 2 * tolerance
-  
-  runMean <- 0
-  runS <- 0
-  runN <- 0
-  
-  progBar <- cli::cli_progress_bar("Sampling", total = NA, format = "{cli::pb_spin} Sample {runN}: {signif(runMean, 3)} ± {signif(runSEM, 3)} ({signif(relativeError * 100, 3)}%)")
-
-  while(relativeError > tolerance || runN < minResample) {
-    shuf1 <- ShuffleHPart(part1)
-    x <- HMI(shuf1, part2)[[2]]
-    
-    runN <- runN + 1
-    oldMean <- runMean
-    runMean <- runMean + (x - runMean) / runN
-    runS <- runS + (x - oldMean) * (x - runMean)
-    runVar <- runS / (runN - 1)
-    runSD <- sqrt(runVar)
-    runSEM <- runSD / sqrt(runN)
-    relativeError <- if (abs(runMean) < 1e-6) {
-      runSEM
-    } else {
-      runSEM / abs(runMean)
-    }
-    cli::cli_progress_update(id = progBar,
-                             status = list(runN = runN, runMean = runMean,
-                                           runSEM = runSEM,
-                                           relativeError = relativeError))
-  }
-  cli::cli_progress_done()
-  
-  structure(runMean, var = runVar, sd = runSD, sem = runSEM,
-            relativeError = relativeError)
-}
-
-#' @export
-EHMI_cpp <- function(tree1, tree2, tolerance = 0.01, minResample = 36) {
-  EHMI_xptr(as.HPart_cpp(tree1), as.HPart_cpp(tree2), as.numeric(tolerance),
+  EHMI_xptr(as.HPart(tree1), as.HPart(tree2), as.numeric(tolerance),
                 as.integer(minResample))
-}
-
-#' @export
-AHMI <- function(tree1, tree2, Mean = max, tolerance = 0.01, minResample = 36) {
-  hp1 <- as.HPart(tree1)
-  hp2 <- as.HPart(tree2)
-  ehmi <- EHMI(hp1, hp2, tolerance = tolerance, minResample = minResample)[[1]]
-  # Return:
-  (HMI(hp1, hp2)[[2]] - ehmi) / (Mean(SelfHMI(hp1), SelfHMI(hp2)) - ehmi)
 }
 
 .AHMISEM <- function(hmi, M, ehmi, ehmi_sem) {
@@ -260,9 +118,9 @@ AHMI <- function(tree1, tree2, Mean = max, tolerance = 0.01, minResample = 36) {
 }
 
 #' @export
-AHMI_cpp <- function(tree1, tree2, Mean = max, tolerance = 0.01, minResample = 36) {
-  hp1 <- as.HPart_cpp(tree1)
-  hp2 <- as.HPart_cpp(tree2, hp1)
+AHMI <- function(tree1, tree2, Mean = max, tolerance = 0.01, minResample = 36) {
+  hp1 <- as.HPart(tree1)
+  hp2 <- as.HPart(tree2, hp1)
   
   ehmi <- EHMI_xptr(hp1, hp2, as.numeric(tolerance), as.integer(minResample))
   hmi <- HMI_xptr(hp1, hp2)

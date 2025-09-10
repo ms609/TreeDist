@@ -1,10 +1,14 @@
+#' Hierarchical partition structure
+#' 
+#' @name HPart
 #' @export
-as.HPart_cpp <- function(tree, tipLabels) {
-  UseMethod("as.HPart_cpp")
+as.HPart <- function(tree, tipLabels) {
+  UseMethod("as.HPart")
 }
 
 #' @export
-as.HPart_cpp.HPart_cpp <- function(tree, tipLabels = NULL) {
+#' @rdname HPart
+as.HPart.HPart <- function(tree, tipLabels = NULL) {
   if (is.null(tipLabels) || identical(tipLabels, TipLabels(tree))) {
     tree
   } else {
@@ -14,7 +18,7 @@ as.HPart_cpp.HPart_cpp <- function(tree, tipLabels = NULL) {
 
 #' @param tree hierarchical list-of-lists (leaves = integers 1..n)
 #' @export
-as.HPart_cpp.list <- function(tree, tipLabels = NULL) {
+as.HPart.list <- function(tree, tipLabels = NULL) {
   # Flatten to verify leaves
   leaves <- unlist(tree, recursive = TRUE)
   if (!all(is.numeric(leaves)) || any(leaves != as.integer(leaves))) {
@@ -32,36 +36,34 @@ as.HPart_cpp.list <- function(tree, tipLabels = NULL) {
   }
   
   hpart_ptr <- build_hpart_from_list(tree, n_tip)
-  ret <- structure(hpart_ptr, tip.label = as.character(expected), class = "HPart_cpp")
+  ret <- structure(hpart_ptr, tip.label = as.character(expected), class = "HPart")
   if (!is.null(tipLabels)) {
     RenumberTips(ret, tipLabels)
   }
   ret
 }
 
-
-
 #' @export
-as.HPart_cpp.phylo <- function(tree, tipLabels = TipLabels(tree)) {
+as.HPart.phylo <- function(tree, tipLabels = TipLabels(tree)) {
   if (!identical(TipLabels(tree), tipLabels)) {
     tree <- RenumberTips(tree, tipLabels)
   }
   structure(build_hpart_from_phylo(tree), tip.label = tipLabels,
-            class = "HPart_cpp")
+            class = "HPart")
 }
 
 #' @export
-is.HPart_cpp <- function(x) {
-  inherits(x, "HPart_cpp")
+is.HPart <- function(x) {
+  inherits(x, "HPart")
 }
 
 #' @export
-NTip.HPart_cpp <- function(phy) {
+NTip.HPart <- function(phy) {
   length(TipLabels(phy))
 }
 
 #' @export
-print.HPart_cpp <- function(x, ...) {
+print.HPart <- function(x, ...) {
   nTip <- NTip(x)
   tips <- TipLabels(x)
   cat("Hierarchical partition on", nTip, "leaves: ")
@@ -72,8 +74,9 @@ print.HPart_cpp <- function(x, ...) {
   }
 }
 
+#' @importFrom ape as.phylo
 #' @export
-as.phylo.HPart_cpp <- function(x, ...) {
+as.phylo.HPart <- function(x, ...) {
   edge <- hpart_to_edge(x)
   labels <- TipLabels(x)
   nNode <- dim(edge)[[1]] - length(labels) + 1
@@ -83,7 +86,7 @@ as.phylo.HPart_cpp <- function(x, ...) {
 }
 
 #' @export
-plot.HPart_cpp <- function(x, ...) {
+plot.HPart <- function(x, ...) {
   plot(as.phylo(x), ...)
 }
 
@@ -91,14 +94,14 @@ plot.HPart_cpp <- function(x, ...) {
 clone <- function(x, ...) UseMethod("clone")
 
 #' @export
-clone.HPart_cpp <- function(x, tipLabel = attr(x, "tip.label")) {
+clone.HPart <- function(x, tipLabel = attr(x, "tip.label")) {
   structure(clone_hpart(x), tip.label = tipLabel,
-            class = "HPart_cpp")
+            class = "HPart")
 }
 
 #' @importFrom TreeTools MatchStrings
 #' @export
-RenumberTips.HPart_cpp <- function(tree, tipOrder) {
+RenumberTips.HPart <- function(tree, tipOrder) {
   startOrder <- TipLabels(tree)
   newOrder <- MatchStrings(TipLabels(tipOrder, single = TRUE), startOrder)
   
