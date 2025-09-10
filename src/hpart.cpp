@@ -7,47 +7,6 @@
 using namespace Rcpp;
 using Node = TreeDist::HNode;
 
-// Forward
-static void compute_bitsets_from(int node, HPart &hp);
-
-// Recursive build
-static void build_node(int node, HPart &hp,
-                       const std::vector<std::vector<int>> &children,
-                       int nTip) {
-  Node &nd = hp.nodes[node];
-  if (node <= nTip) {
-    nd.labelIndex = node - 1; // 0-based
-  } else {
-    for (int c : children[node]) {
-      build_node(c, hp, children, nTip);
-      nd.children.push_back(c);
-      if (c > nTip) {
-        nd.allKidsLeaves = false;
-      }
-    }
-  }
-}
-
-static void compute_bitsets_from(int node, HPart &hp) {
-  Node &nd = hp.nodes[node];
-  nd.bitset.assign(hp.nBlocks, 0);
-  
-  if (nd.labelIndex >= 0) {
-    int idx = nd.labelIndex;
-    nd.bitset[idx / 64] |= (1ULL << (idx % 64));
-    nd.leafCount = 1;
-  } else {
-    for (int c : nd.children) {
-      compute_bitsets_from(c, hp);
-      Node &ch = hp.nodes[c];
-      for (int b = 0; b < hp.nBlocks; ++b) {
-        nd.bitset[b] |= ch.bitset[b];
-      }
-      nd.leafCount += ch.leafCount;
-    }
-  }
-}
-
 // [[Rcpp::export]]
 SEXP build_hpart_from_phylo(List phy) {
   IntegerMatrix edge = phy["edge"];
@@ -84,6 +43,8 @@ SEXP build_hpart_from_phylo(List phy) {
     const size_t vector_pos = bit_index / 64; 
     const size_t bit_pos_in_block = bit_index % 64;
     hpart->nodes[i].bitset[vector_pos] = 1ULL << bit_pos_in_block;
+    hpart->nodes[i].leafCount = 1;
+    hpart->nodes[i].calc_entropy();
   }
   
   // Traverse nodes in postorder
@@ -95,6 +56,7 @@ SEXP build_hpart_from_phylo(List phy) {
         hpart->nodes[i].bitset[chunk] |= hpart->nodes[child_id].bitset[chunk];
       }
     }
+    hpart->nodes[i].calc_entropy();
   }
   
   hpart->root = hpart->nodes[n_tip + 1];

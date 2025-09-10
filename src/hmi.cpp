@@ -2,12 +2,8 @@
 #include <Rcpp.h>
 #include <cmath>
 using namespace Rcpp;
+using Node = TreeDist::HNode;
 
-// Compute entropy of a block at node i in hp
-static inline double entropy_node(const Node &nd, size_t nTips) {
-  double p = static_cast<double>(nd.leafCount) / nTips;
-  return -p * std::log(p);
-}
 // A helper function to compute popcount of the intersection
 static inline size_t intersection_size(
     const std::vector<uint64_t>& bitset1,
