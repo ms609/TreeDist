@@ -123,6 +123,8 @@ NyeSimilarity(as.phylo(0:5, nTip = 8), similarity = FALSE)
 }
 \seealso{
 Other tree distances: 
+\code{\link{AHMI}()},
+\code{\link{EHMI}()},
 \code{\link{HierarchicalMutualInfo}()},
 \code{\link{JaccardRobinsonFoulds}()},
 \code{\link{KendallColijn}()},
@@ -132,6 +134,7 @@ Other tree distances:
 \code{\link{PathDist}()},
 \code{\link{Robinson-Foulds}},
 \code{\link{SPRDist}()},
+\code{\link{SelfHMI}()},
 \code{\link{TreeDistance}()}
 }
 \author{

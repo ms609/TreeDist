@@ -304,6 +304,8 @@ MutualClusteringInfoSplits(splits1, splits2)
 }
 \seealso{
 Other tree distances: 
+\code{\link{AHMI}()},
+\code{\link{EHMI}()},
 \code{\link{HierarchicalMutualInfo}()},
 \code{\link{JaccardRobinsonFoulds}()},
 \code{\link{KendallColijn}()},
@@ -313,7 +315,8 @@ Other tree distances:
 \code{\link{NyeSimilarity}()},
 \code{\link{PathDist}()},
 \code{\link{Robinson-Foulds}},
-\code{\link{SPRDist}()}
+\code{\link{SPRDist}()},
+\code{\link{SelfHMI}()}
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

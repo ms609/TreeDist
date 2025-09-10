@@ -69,6 +69,8 @@ PathDist(as.phylo(30:33, 8))
 }
 \seealso{
 Other tree distances: 
+\code{\link{AHMI}()},
+\code{\link{EHMI}()},
 \code{\link{HierarchicalMutualInfo}()},
 \code{\link{JaccardRobinsonFoulds}()},
 \code{\link{KendallColijn}()},
@@ -78,6 +80,7 @@ Other tree distances:
 \code{\link{NyeSimilarity}()},
 \code{\link{Robinson-Foulds}},
 \code{\link{SPRDist}()},
+\code{\link{SelfHMI}()},
 \code{\link{TreeDistance}()}
 }
 \author{

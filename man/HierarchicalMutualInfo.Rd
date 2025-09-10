@@ -15,9 +15,6 @@ each pair of trees in the list \code{tree1}.}
 Normalize the result to range \link{0,1} by dividing by
 \code{Func(SelfHMI(tree1), SelfHMI(tree2))}, where \code{Func()} = \code{max()} if
 \code{normalize == TRUE}, \code{normalize()} otherwise.}
-
-\item{reportMatching}{Logical specifying whether to return the clade
-matchings as an attribute of the score.}
 }
 \value{
 A numeric value representing the Hierarchical Mutual Information
@@ -72,6 +69,8 @@ Physical Review E, 92(6), 062825.
 }
 \seealso{
 Other tree distances: 
+\code{\link{AHMI}()},
+\code{\link{EHMI}()},
 \code{\link{JaccardRobinsonFoulds}()},
 \code{\link{KendallColijn}()},
 \code{\link{MASTSize}()},
@@ -81,6 +80,7 @@ Other tree distances:
 \code{\link{PathDist}()},
 \code{\link{Robinson-Foulds}},
 \code{\link{SPRDist}()},
+\code{\link{SelfHMI}()},
 \code{\link{TreeDistance}()}
 }
 \concept{tree distances}

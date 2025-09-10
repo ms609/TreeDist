@@ -127,6 +127,8 @@ VisualizeMatching(JRF2, tree1, tree2, matchZeros = FALSE)
 }
 \seealso{
 Other tree distances: 
+\code{\link{AHMI}()},
+\code{\link{EHMI}()},
 \code{\link{HierarchicalMutualInfo}()},
 \code{\link{KendallColijn}()},
 \code{\link{MASTSize}()},
@@ -136,6 +138,7 @@ Other tree distances:
 \code{\link{PathDist}()},
 \code{\link{Robinson-Foulds}},
 \code{\link{SPRDist}()},
+\code{\link{SelfHMI}()},
 \code{\link{TreeDistance}()}
 }
 \author{

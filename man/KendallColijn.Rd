@@ -126,6 +126,8 @@ is a more sophisticated, if more cumbersome, implementation that supports
 lambda > 0, i.e. use of edge lengths in tree comparison.
 
 Other tree distances: 
+\code{\link{AHMI}()},
+\code{\link{EHMI}()},
 \code{\link{HierarchicalMutualInfo}()},
 \code{\link{JaccardRobinsonFoulds}()},
 \code{\link{MASTSize}()},
@@ -135,6 +137,7 @@ Other tree distances:
 \code{\link{PathDist}()},
 \code{\link{Robinson-Foulds}},
 \code{\link{SPRDist}()},
+\code{\link{SelfHMI}()},
 \code{\link{TreeDistance}()}
 }
 \author{
