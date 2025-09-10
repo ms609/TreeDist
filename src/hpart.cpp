@@ -89,22 +89,31 @@ size_t build_node_from_list(const RObject& node,
 
 // [[Rcpp::export]]
 SEXP build_hpart_from_list(RObject tree, const int n_tip) {
-  int n_node_est = Rf_length(tree);             // estimate internal nodes
-  size_t vec_size = n_tip + n_node_est + 2;    // +1 for 1-based indexing
+  const size_t vec_size = n_tip + n_tip + 2; // max nodes for a binary tree + 1
   
   auto hpart = new TreeDist::HPart();
   hpart->nodes.resize(vec_size);
   
-  size_t n_block = (n_tip + 63) / 64;
+  const size_t n_block = (n_tip + 63) / 64;
+  
+  // Initialize leaves and internal nodes
   for (size_t i = 1; i < vec_size; ++i) {
-    hpart->nodes[i].n_tip = n_tip;
-    hpart->nodes[i].bitset.resize(n_block, 0ULL);
+    TreeDist::HNode& n = hpart->nodes[i];
+    n.n_tip = n_tip;
+    n.bitset.assign(n_block, 0ULL);
+    n.leaf_count = 0;
+    n.all_kids_leaves = true;
+    n.label = -1;
+    n.children.clear();
   }
   
+  // Start internal nodes at n_tip + 1
   int next_index = n_tip + 1;
+  
+  // Build recursively; returns index into nodes vector (1-based)
   hpart->root = build_node_from_list(tree, hpart->nodes, n_tip, next_index, n_block);
   
-  return XPtr<TreeDist::HPart>(hpart, true);
+  return Rcpp::XPtr<TreeDist::HPart>(hpart, true);
 }
 
 
@@ -114,46 +123,56 @@ size_t build_node_from_list(const RObject& node,
                             int n_tip,
                             int& next_index,
                             size_t n_block) {
+  
   if (Rf_isInteger(node) || Rf_isReal(node)) {
     const IntegerVector leaf_vec(node);
     if (leaf_vec.size() != 1) {
       Rcpp::stop("Leaf must be length 1");
     }
-    const int leaf_zeroed = leaf_vec[0];
-    const int leaf_idx = leaf_zeroed + 1;  // convert 0-based R leaf to nodes index
-    TreeDist::HNode& leaf = nodes[leaf_idx];
-    leaf.label = leaf_zeroed;
+    const int leaf_label = leaf_vec[0];         // 1-based R leaf label
+    const size_t leaf_idx = leaf_label - 1;     // 0-based label for HNode
+    TreeDist::HNode& leaf = nodes[leaf_label];
+    leaf.label = leaf_idx;
     leaf.leaf_count = 1;
-    leaf.bitset[leaf_zeroed / 64] = 1ULL << (leaf_zeroed % 64);
-    return leaf_idx;
+    leaf.bitset[leaf_idx / 64] = 1ULL << (leaf_idx % 64);
+    leaf.all_kids_leaves = true;
+    return leaf_label;
   } else if (Rf_isVectorList(node)) {
-    //  Length one list: treat as leaf
-    if (Rf_length(node) == 1 && 
+    int n_elements = Rf_length(node);
+    
+    // Special case: a single leaf inside a length-1 list
+    if (n_elements == 1 &&
         (Rf_isInteger(VECTOR_ELT(node,0)) || Rf_isReal(VECTOR_ELT(node,0)))) {
       return build_node_from_list(VECTOR_ELT(node, 0), nodes, n_tip, next_index, n_block);
     }
     
-    // A list of multiple elements
-    int my_index = next_index++;
-    TreeDist::HNode& n = nodes[my_index];
-    int n_children = Rf_length(node);
-    n.children.reserve(n_children);
+    // Allocate a new internal node
+    const size_t my_idx = static_cast<size_t>(next_index++);
+    TreeDist::HNode& n = nodes[my_idx];
+    n.children.reserve(n_elements);
+    n.leaf_count = 0;
+    n.all_kids_leaves = true;
+    n.n_tip = n_tip;
     
-    for (int i = 0; i < n_children; ++i) {
-      RObject child = VECTOR_ELT(node, i);
-      size_t child_idx = build_node_from_list(child, nodes, n_tip, next_index, n_block);
+    // Recurse over children
+    for (int i = 0; i < n_elements; ++i) {
+      SEXP child = VECTOR_ELT(node, i);
+      const size_t child_idx = build_node_from_list(child, nodes, n_tip, next_index, n_block);
       n.children.push_back(child_idx);
       
       // Merge bitsets
       for (size_t j = 0; j < n.bitset.size(); ++j) {
         n.bitset[j] |= nodes[child_idx].bitset[j];
       }
+      
       n.leaf_count += nodes[child_idx].leaf_count;
       if (nodes[child_idx].leaf_count > 1) n.all_kids_leaves = false;
     }
-    return my_index;
+    
+    return my_idx;
   }
-  Rcpp::Rcout << "Type: " << TYPEOF(node) << "\n";
+  
+  // Invalid node type
   Rcpp::stop("Invalid node type");
 }
 
