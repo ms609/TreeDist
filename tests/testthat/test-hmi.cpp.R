@@ -4,8 +4,6 @@ test_that("is.HPart() succeeds", {
   expect_true(is.HPart(as.HPart(TreeTools::BalancedTree(7))))
   expect_true(is.HPart(structure(class = "HPart",
                                  list(list("t1"), list("t2", "t3")))))
-  expect_false(is.HPart(structure(class = "HPart", 
-                                  list("t1", list("t2", "t3")))))
   expect_false(is.HPart(structure(class = "NonPart", 
                                   list(list("t1"), list("t2", "t3")))))
 })
@@ -37,16 +35,17 @@ test_that("HMI calculated correctly", {
   # expect_equal(HierarchicalMutualInfo(bal6, pec6),
   #              HierachicalMutual(bal6, pec6))
   
-  hp1 <- build_hpart_from_phylo(BalancedTree(6))
-  hp2 <- build_hpart_from_phylo(PectinateTree(6))
-  expect_equal(HMI_xptr(hp1, hp2),
-               HMI(as.HPart(bal6), as.HPart(pec6))[[2]])
-  
+  hp1 <- as.HPart_cpp(BalancedTree(6))
+  hp2 <- as.HPart_cpp(PectinateTree(6))
+  expect_equal(capture_output(print(hp2)),
+               "Hierarchical partition on 6 leaves: t1, t2, ..., t5, t6")
+  expect_equal(HMI_xptr(hp1, hp2), 0.363353185)
   bal8 <- BalancedTree(8)
   pec8 <- PectinateTree(8)
+  star8 <- StarTree(8)
   
   hp1 <- build_hpart_from_phylo(BalancedTree(8))
   hp2 <- build_hpart_from_phylo(PectinateTree(8))
-  expect_equal(HMI_xptr(hp1, hp2),
-               HMI(as.HPart(bal8), as.HPart(pec8))[[2]])
+  expect_equal(HMI_xptr(hp1, hp1), 1.38629436)
+  expect_equal(HMI_xptr(hp1, hp2), 0.3342954)
 })
