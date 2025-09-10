@@ -40,19 +40,20 @@ test_that("HMI results match hmi.pynb", {
   expect_equal(SelfHMI(hp1), HMI(hp1, hp1)[[2]])
   expect_equal(SelfHMI_cpp(hp1), HMI_cpp(hp1, hp1))
   
-  ehmi <- structure(0.781,
+  ehmi <- structure(0.781, # Calculated from py with tol = 0.001
                     var = 0.01,
                     sd = 0.1, 
                     sem = 0.008,
                     relativeError = 0.01)
-  ehmi_cpp <- EHMI_cpp(hp1, hp2)
+  ehmi_cpp <- EHMI_cpp(hp1, hp2, tolerance = 0.01)
   expect_gt(attr(ehmi_cpp, "samples"), 36)
   attr(ehmi_cpp, "samples") <- NULL # Could vary; no point in testing
   expect_equal(ehmi_cpp, ehmi, tolerance = 0.1)
   expect_equal(EHMI(hp1, hp2), ehmi, tolerance = 0.1)
   
-  expect_equal(AHMI(hp1, hp2), 0.13, tolerance = 0.1)
-  expect_equal(AHMI_cpp(hp1, hp2)[[1]], 0.13, tolerance = 0.1)
+  pyAHMI <- 0.13 # Calculated with tol = 0.001
+  expect_equal(AHMI(hp1, hp2), pyAHMI, tolerance = 0.1)
+  expect_equal(AHMI_cpp(hp1, hp2)[[1]], pyAHMI, tolerance = 0.1)
   
   set.seed(1)
   ahmi1 <- AHMI_cpp(hp1, hp2)
@@ -67,8 +68,6 @@ test_that("HMI calculated correctly", {
   bal6 <- BalancedTree(6)
   pec6 <- PectinateTree(6)
   NHMI(bal6, pec6)
-  # expect_equal(HierarchicalMutualInfo(bal6, pec6),
-  #              HierachicalMutual(bal6, pec6))
   
   hp1 <- as.HPart_cpp(BalancedTree(6))
   hp2 <- as.HPart_cpp(PectinateTree(6))
