@@ -68,6 +68,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// build_hpart_from_list
+SEXP build_hpart_from_list(RObject tree, const int n_tip);
+RcppExport SEXP _TreeDist_build_hpart_from_list(SEXP treeSEXP, SEXP n_tipSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< RObject >::type tree(treeSEXP);
+    Rcpp::traits::input_parameter< const int >::type n_tip(n_tipSEXP);
+    rcpp_result_gen = Rcpp::wrap(build_hpart_from_list(tree, n_tip));
+    return rcpp_result_gen;
+END_RCPP
+}
 // hpart_to_edge
 Rcpp::IntegerMatrix hpart_to_edge(SEXP hpart_xptr);
 RcppExport SEXP _TreeDist_hpart_to_edge(SEXP hpart_xptrSEXP) {
@@ -347,6 +359,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_robinson_foulds_all_pairs", (DL_FUNC) &_TreeDist_robinson_foulds_all_pairs, 1},
     {"_TreeDist_HMI_xptr", (DL_FUNC) &_TreeDist_HMI_xptr, 2},
     {"_TreeDist_build_hpart_from_phylo", (DL_FUNC) &_TreeDist_build_hpart_from_phylo, 1},
+    {"_TreeDist_build_hpart_from_list", (DL_FUNC) &_TreeDist_build_hpart_from_list, 2},
     {"_TreeDist_hpart_to_edge", (DL_FUNC) &_TreeDist_hpart_to_edge, 1},
     {"_TreeDist_clone_hpart", (DL_FUNC) &_TreeDist_clone_hpart, 1},
     {"_TreeDist_relabel_hpart", (DL_FUNC) &_TreeDist_relabel_hpart, 2},

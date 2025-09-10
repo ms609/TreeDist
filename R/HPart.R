@@ -12,10 +12,30 @@ as.HPart_cpp.HPart_cpp <- function(tree, tipLabels) {
   }
 }
 
+#' @param tree hierarchical list-of-lists (leaves = integers 1..n)
 #' @export
 as.HPart_cpp.list <- function(tree) {
-  stop("Not yet implemented") # TODO
+  # Flatten to verify leaves
+  leaves <- unlist(tree, recursive = TRUE)
+  if (!all(is.numeric(leaves)) || any(leaves != as.integer(leaves))) {
+    stop("All leaves must be integers.")
+  }
+  tree <- rapply(tree, as.integer, how = "replace")
+  if (0 %in% leaves) {
+    tree <- rapply(tree, function(x) x + 1L, how = "replace")
+    leaves <- leaves + 1
+  }
+  n_tip <- length(unique(leaves))
+  expected <- seq_len(n_tip)
+  if (!setequal(leaves, expected)) {
+    stop("Leaves must contain all integers 1..n without gaps")
+  }
+  
+  hpart_ptr <- build_hpart_from_list(tree, n_tip)
+  structure(hpart_ptr, tip.label = as.character(expected), class = "HPart_cpp")
 }
+
+
 
 #' @export
 as.HPart_cpp.phylo <- function(tree, tipLabels = TipLabels(tree)) {

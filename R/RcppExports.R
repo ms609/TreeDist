@@ -21,6 +21,10 @@ build_hpart_from_phylo <- function(phy) {
     .Call(`_TreeDist_build_hpart_from_phylo`, phy)
 }
 
+build_hpart_from_list <- function(tree, n_tip) {
+    .Call(`_TreeDist_build_hpart_from_list`, tree, n_tip)
+}
+
 hpart_to_edge <- function(hpart_xptr) {
     .Call(`_TreeDist_hpart_to_edge`, hpart_xptr)
 }

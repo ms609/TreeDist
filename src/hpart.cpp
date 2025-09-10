@@ -75,6 +75,89 @@ SEXP build_hpart_from_phylo(List phy) {
   return Rcpp::XPtr<TreeDist::HPart>(hpart, true);
 }
 
+#include <Rcpp.h>
+#include "hpart.h"
+
+using namespace Rcpp;
+
+// Forward declaration
+size_t build_node_from_list(const RObject& node,
+                            std::vector<TreeDist::HNode>& nodes,
+                            const int n_tip,
+                            int& next_index,
+                            const size_t n_block);
+
+// [[Rcpp::export]]
+SEXP build_hpart_from_list(RObject tree, const int n_tip) {
+  int n_node_est = Rf_length(tree);             // estimate internal nodes
+  size_t vec_size = n_tip + n_node_est + 2;    // +1 for 1-based indexing
+  
+  auto hpart = new TreeDist::HPart();
+  hpart->nodes.resize(vec_size);
+  
+  size_t n_block = (n_tip + 63) / 64;
+  for (size_t i = 1; i < vec_size; ++i) {
+    hpart->nodes[i].n_tip = n_tip;
+    hpart->nodes[i].bitset.resize(n_block, 0ULL);
+  }
+  
+  int next_index = n_tip + 1;
+  hpart->root = build_node_from_list(tree, hpart->nodes, n_tip, next_index, n_block);
+  
+  return XPtr<TreeDist::HPart>(hpart, true);
+}
+
+
+// Recursive builder
+size_t build_node_from_list(const RObject& node,
+                            std::vector<TreeDist::HNode>& nodes,
+                            int n_tip,
+                            int& next_index,
+                            size_t n_block) {
+  if (Rf_isInteger(node) || Rf_isReal(node)) {
+    const IntegerVector leaf_vec(node);
+    if (leaf_vec.size() != 1) {
+      Rcpp::stop("Leaf must be length 1");
+    }
+    const int leaf_zeroed = leaf_vec[0];
+    const int leaf_idx = leaf_zeroed + 1;  // convert 0-based R leaf to nodes index
+    TreeDist::HNode& leaf = nodes[leaf_idx];
+    leaf.label = leaf_zeroed;
+    leaf.leaf_count = 1;
+    leaf.bitset[leaf_zeroed / 64] = 1ULL << (leaf_zeroed % 64);
+    return leaf_idx;
+  } else if (Rf_isVectorList(node)) {
+    //  Length one list: treat as leaf
+    if (Rf_length(node) == 1 && 
+        (Rf_isInteger(VECTOR_ELT(node,0)) || Rf_isReal(VECTOR_ELT(node,0)))) {
+      return build_node_from_list(VECTOR_ELT(node, 0), nodes, n_tip, next_index, n_block);
+    }
+    
+    // A list of multiple elements
+    int my_index = next_index++;
+    TreeDist::HNode& n = nodes[my_index];
+    int n_children = Rf_length(node);
+    n.children.reserve(n_children);
+    
+    for (int i = 0; i < n_children; ++i) {
+      RObject child = VECTOR_ELT(node, i);
+      size_t child_idx = build_node_from_list(child, nodes, n_tip, next_index, n_block);
+      n.children.push_back(child_idx);
+      
+      // Merge bitsets
+      for (size_t j = 0; j < n.bitset.size(); ++j) {
+        n.bitset[j] |= nodes[child_idx].bitset[j];
+      }
+      n.leaf_count += nodes[child_idx].leaf_count;
+      if (nodes[child_idx].leaf_count > 1) n.all_kids_leaves = false;
+    }
+    return my_index;
+  }
+  Rcpp::Rcout << "Type: " << TYPEOF(node) << "\n";
+  Rcpp::stop("Invalid node type");
+}
+
+
 // helper: get index of a node pointer within hpart->nodes
 inline size_t node_index(const TreeDist::HNode* node,
                          const std::vector<TreeDist::HNode>& nodes) {

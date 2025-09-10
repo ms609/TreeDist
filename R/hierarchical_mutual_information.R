@@ -136,6 +136,13 @@ HMI <- function(Ut, Us) {
   }
 }
 
+#' @export
+HMI_cpp <- function(tree1, tree2) {
+  hp1 <- as.HPart_cpp(tree1)
+  hp2 <- as.HPart_cpp(tree2)
+  HMI_xptr(hp1, hp2)
+}
+
 # TODO implement more efficiently
 #' @export
 SelfHMI <- function(tree) {
