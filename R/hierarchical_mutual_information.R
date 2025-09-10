@@ -93,12 +93,6 @@ HMI <- HierarchicalMutualInfo
 #' @export
 SelfHMI <- function(tree) {
   part <- as.HPart(tree)
-  HMI(part, part)[[2]]
-}
-
-#' @export
-SelfHMI <- function(tree) {
-  part <- as.HPart(tree)
   HME_xptr(part)
 }
 
