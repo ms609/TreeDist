@@ -8,8 +8,8 @@
 namespace TreeDist {
 struct HNode {
   std::vector<HNode*> children;
-  int label_index = -1;                  // for tips
-  std::vector<uint64_t> bitset;         // leaf set
+  int label = -1;                  // for tips; counting from zero
+  std::vector<uint64_t> bitset;    // leaf set
   int leaf_count = 0;
   bool all_kids_leaves = true;
   int n_tip = 0;

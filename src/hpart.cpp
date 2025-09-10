@@ -41,9 +41,11 @@ SEXP build_hpart_from_phylo(List phy) {
     const size_t bit_index = i - 1; // 0-based indexing
     const size_t vector_pos = bit_index / 64; 
     const size_t bit_pos_in_block = bit_index % 64;
-    hpart->nodes[i].bitset[vector_pos] = 1ULL << bit_pos_in_block;
-    hpart->nodes[i].leaf_count = 1;
-    hpart->nodes[i].calc_entropy();
+    auto &node_i = hpart->nodes[i];
+    node_i.bitset[vector_pos] = 1ULL << bit_pos_in_block;
+    node_i.leaf_count = 1;
+    node_i.label = i - 1;
+    node_i.calc_entropy();
   }
   
   // Traverse nodes in postorder
@@ -71,4 +73,52 @@ SEXP build_hpart_from_phylo(List phy) {
   hpart->root = &hpart->nodes[n_tip + 1];
   
   return Rcpp::XPtr<TreeDist::HPart>(hpart, true);
+}
+
+// helper: get index of a node pointer within hpart->nodes
+inline size_t node_index(const TreeDist::HNode* node,
+                         const std::vector<TreeDist::HNode>& nodes) {
+  return static_cast<size_t>(node - &nodes[0]);
+}
+
+// [[Rcpp::export]]
+Rcpp::IntegerMatrix hpart_to_edge(SEXP hpart_xptr) {
+  Rcpp::XPtr<TreeDist::HPart> hpart(hpart_xptr);
+  TreeDist::HPart* hp = hpart.get();
+  
+  int n_tip = hp->nodes[1].n_tip;
+  int n_node = static_cast<int>(hp->nodes.size()) - n_tip - 1;
+  int n_edge = n_tip + n_node - 1;
+  
+  // Assign IDs
+  std::vector<int> node_ids(hp->nodes.size(), -1);
+  int next_index = n_tip + 1;
+  for (int i = 1; i <= n_tip; ++i) {
+    node_ids[i] = i; // tips: 1..n_tip
+  }
+  for (size_t i = n_tip + 1; i < hp->nodes.size(); ++i) {
+    node_ids[i] = next_index++;
+  }
+  
+  // Collect edges
+  std::vector<std::pair<int,int>> edges;
+  edges.reserve(n_edge);
+  for (size_t i = n_tip + 1; i < hp->nodes.size(); ++i) {
+    auto& node = hp->nodes[i];
+    int parent_id = node_ids[i];
+    for (auto* child : node.children) {
+      size_t child_idx = node_index(child, hp->nodes);
+      int child_id = node_ids[child_idx];
+      edges.emplace_back(parent_id, child_id);
+    }
+  }
+  
+  // Build R matrix
+  Rcpp::IntegerMatrix edge_mat(edges.size(), 2);
+  for (size_t i = 0; i < edges.size(); ++i) {
+    edge_mat(i, 0) = edges[i].first;
+    edge_mat(i, 1) = edges[i].second;
+  }
+  
+  return edge_mat;
 }

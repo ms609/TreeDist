@@ -47,3 +47,13 @@ print.HPart_cpp <- function(x, ...) {
     cat(paste0(tips, collapse = ", "))
   }
 }
+
+#' @export
+as.phylo.HPart_cpp <- function(x, ...) {
+  edge <- hpart_to_edge(x)
+  labels <- TipLabels(x)
+  nNode <- dim(edge)[[1]] - length(labels) + 1
+  structure(list(edge = edge, Nnode = nNode, tip.label = labels),
+            class = "phylo",
+            order = "cladewise")
+}

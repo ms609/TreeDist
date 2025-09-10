@@ -21,6 +21,14 @@ build_hpart_from_phylo <- function(phy) {
     .Call(`_TreeDist_build_hpart_from_phylo`, phy)
 }
 
+hpart_to_edge <- function(hpart_xptr) {
+    .Call(`_TreeDist_hpart_to_edge`, hpart_xptr)
+}
+
+relabel_hpart <- function(hpart_ptr, map) {
+    invisible(.Call(`_TreeDist_relabel_hpart`, hpart_ptr, map))
+}
+
 #' Calculate entropy of integer vector of counts
 #' 
 #' Wrapper for C++ function; no input checking is performed.
