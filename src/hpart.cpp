@@ -6,8 +6,6 @@
 
 using namespace Rcpp;
 
-namespace TreeDist {
-
 // [[Rcpp::export]]
 SEXP build_hpart_from_phylo(List phy) {
   IntegerMatrix edge = phy["edge"];
@@ -28,7 +26,7 @@ SEXP build_hpart_from_phylo(List phy) {
     children[p].push_back(c);
   }
   
-  HPart* hpart = new HPart();
+  TreeDist::HPart* hpart = new TreeDist::HPart();
   hpart->nodes.resize(vec_size);
   
   // Initialize all nodes to empty
@@ -72,6 +70,5 @@ SEXP build_hpart_from_phylo(List phy) {
   
   hpart->root = &hpart->nodes[n_tip + 1];
   
-  return Rcpp::XPtr<HPart>(hpart, true);
-}
+  return Rcpp::XPtr<TreeDist::HPart>(hpart, true);
 }

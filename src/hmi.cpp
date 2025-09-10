@@ -66,12 +66,12 @@ std::pair<size_t, double> hierarchical_mutual_info(
   const double I_ts = local_I_ts + mean_I_ts;
   return std::pair<size_t, double>{n_ts, I_ts};
 }
+} // namespace TreeDist
 
 // [[Rcpp::export]]
 double HMI_xptr(SEXP ptr1, SEXP ptr2) {
-  Rcpp::XPtr<HPart> hp1(ptr1);
-  Rcpp::XPtr<HPart> hp2(ptr2);
-  return hierarchical_mutual_info(hp1->root, hp2->root).second;
+  Rcpp::XPtr<TreeDist::HPart> hp1(ptr1);
+  Rcpp::XPtr<TreeDist::HPart> hp2(ptr2);
+  return TreeDist::hierarchical_mutual_info(hp1->root, hp2->root).second;
 }
 
-} // namespace TreeDist
