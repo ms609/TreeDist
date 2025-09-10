@@ -6,7 +6,7 @@ using namespace Rcpp;
 namespace TreeDist {
 
 static inline double x_log_x(size_t x) {
-  return x ? x * std::log(x) : 0.0;
+  return x > 1 ? x * std::log(x) : 0.0;
 }
 
 static inline size_t intersection_size(const std::vector<uint64_t>& A,
@@ -28,6 +28,7 @@ std::pair<size_t, double> hierarchical_mutual_info(
     const std::vector<TreeDist::HNode>& v_nodes,
     size_t v_idx
 ) {
+  
   const auto& Ut = u_nodes[u_idx];
   const auto& Us = v_nodes[v_idx];
   
@@ -35,18 +36,21 @@ std::pair<size_t, double> hierarchical_mutual_info(
     return {intersection_size(Ut.bitset, Us.bitset), 0.0};
   }
   
+  const size_t Us_size = Us.children.size();
+  
   size_t n_ts = 0;
   double H_uv = 0.0;
   double H_us = 0.0;
   double H_tv = 0.0;
-  const size_t Us_size = Us.children.size();
   std::vector<size_t> n_tv(Us_size, 0);
   double mean_I_ts = 0.0;
   
   for (size_t u_child_idx : Ut.children) {
     size_t n_us = 0;
+    
     for (size_t v = 0; v < Us_size; ++v) {
       size_t v_child_idx = Us.children[v];
+      
       auto [n_uv, I_uv] = hierarchical_mutual_info(u_nodes, u_child_idx,
                                                    v_nodes, v_child_idx);
       
