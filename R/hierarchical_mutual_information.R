@@ -24,9 +24,9 @@
 #' If \code{tree2} is not provided, distances will be calculated between
 #' each pair of trees in the list \code{tree1}.
 #' @param normalize If `FALSE`, do not normalize the result.  If a function,
-#' Normalize the result to range \[0,1\] by dividing by
-#' `Func(SelfHMI(tree1), SelfHMI(tree2))`, where `Func()` = `max()` if
-#' `normalize == TRUE`, `normalize()` otherwise.
+#'   Normalize the result to range \[0,1\] by dividing by
+#'   `Func(SelfHMI(tree1), SelfHMI(tree2))`, where `Func()` = `max()` if
+#'   `normalize == TRUE`, `normalize()` otherwise.
 #'
 #' @return A numeric value representing the Hierarchical Mutual Information
 #' between the input trees. Higher values indicate more shared
@@ -65,7 +65,8 @@ HierarchicalMutualInfo <- function(tree1, tree2 = NULL, normalize = FALSE) {
       if (isFALSE(normalize)) {
         SelfHMI(tree1)
       } else {
-        warning("Normalized self-information == 1; did you mean to provide tree2?")
+        warning("Normalized self-information == 1; did you mean to ",
+                "provide tree2?")
         1
       }
     } else if (inherits(tree2, "phylo")) {
@@ -79,7 +80,8 @@ HierarchicalMutualInfo <- function(tree1, tree2 = NULL, normalize = FALSE) {
       if (isFALSE(normalize)) {
         HME_xptr(tree1)
       } else {
-        warning("Normalized self-information == 1; did you mean to provide tree2?")
+        warning("Normalized self-information == 1; did you mean to ",
+                "provide tree2?")
         1
       }
     } else if (inherits(tree2, "HPart")) {
@@ -148,13 +150,13 @@ HMI <- function(tree1, tree2 = NULL, normalize = FALSE) {
 #' This represents the total hierarchical information content of the tree.
 #'
 #' @param tree A tree of class \code{phylo}, or a hierarchical partition list.
-#' 
+#'
 #' @return A numeric value representing the self-hierarchical mutual information.
 #'
 #' @examples
 #' \dontrun{
 #' library("TreeTools", quietly = TRUE)
-#' 
+#'
 #' bal6 <- BalancedTree(6)
 #' SelfHMI(bal6)
 #' }
@@ -171,11 +173,12 @@ SelfHMI <- function(tree) {
     # Handle list-based hierarchical partitions
     .HMIListSelf(tree)
   } else {
-    stop("tree must be of class 'phylo', 'HPart', or a hierarchical partition list")
+    stop("tree must be of class 'phylo', 'HPart', or a hierarchical ",
+         "partition list")
   }
 }
 
-#' Expected Hierarchical Mutual Information  
+#' Expected Hierarchical Mutual Information
 #'
 #' Calculate the expected hierarchical mutual information between two trees
 #' under a null model where tip labels are randomly shuffled.
@@ -193,7 +196,7 @@ SelfHMI <- function(tree) {
 #' @examples
 #' \dontrun{
 #' library("TreeTools", quietly = TRUE)
-#' 
+#'
 #' tree1 <- BalancedTree(6)
 #' tree2 <- PectinateTree(6)
 #' EHMI(tree1, tree2)
@@ -228,7 +231,7 @@ EHMI <- function(tree1, tree2, tolerance = 0.01, minResample = 36) {
   hp1 <- as.HPart(tree1)
   hp2 <- as.HPart(tree2, tree1)
   hmi <- HMI_xptr(hp1, hp2)
-  
+
   if (isFALSE(normalize)) {
     hmi
   } else {
@@ -249,7 +252,7 @@ EHMI <- function(tree1, tree2, tolerance = 0.01, minResample = 36) {
     hp2 <- as.HPart(t2, tree1)
     HMI_xptr(hp1, hp2)
   }, numeric(1))
-  
+
   if (isFALSE(normalize)) {
     results
   } else {
@@ -269,7 +272,7 @@ EHMI <- function(tree1, tree2, tolerance = 0.01, minResample = 36) {
 .HMIManySelf <- function(trees, normalize) {
   nTree <- length(trees)
   results <- matrix(0, nTree, nTree)
-  
+
   for (i in seq_len(nTree)) {
     hp_i <- as.HPart(trees[[i]])
     for (j in seq_len(i)) {
@@ -278,7 +281,7 @@ EHMI <- function(tree1, tree2, tolerance = 0.01, minResample = 36) {
       } else {
         hp_j <- as.HPart(trees[[j]], trees[[i]])
         hmi <- HMI_xptr(hp_i, hp_j)
-        
+
         if (isFALSE(normalize)) {
           results[i, j] <- results[j, i] <- hmi
         } else {
@@ -294,25 +297,25 @@ EHMI <- function(tree1, tree2, tolerance = 0.01, minResample = 36) {
       }
     }
   }
-  
+
   # Convert to dist object
-  structure(results[lower.tri(results)], 
-            Size = nTree, 
+  structure(results[lower.tri(results)],
+            Size = nTree,
             Labels = names(trees),
-            Diag = FALSE, 
+            Diag = FALSE,
             Upper = FALSE,
             class = "dist")
 }
 
 .HMIManyMany <- function(trees1, trees2, normalize) {
   results <- matrix(0, length(trees1), length(trees2))
-  
+
   for (i in seq_along(trees1)) {
     hp_i <- as.HPart(trees1[[i]])
     for (j in seq_along(trees2)) {
       hp_j <- as.HPart(trees2[[j]], trees1[[i]])
       hmi <- HMI_xptr(hp_i, hp_j)
-      
+
       if (isFALSE(normalize)) {
         results[i, j] <- hmi
       } else {
@@ -327,7 +330,7 @@ EHMI <- function(tree1, tree2, tolerance = 0.01, minResample = 36) {
       }
     }
   }
-  
+
   results
 }
 
@@ -341,11 +344,12 @@ EHMI <- function(tree1, tree2, tolerance = 0.01, minResample = 36) {
 
 .HMIListList <- function(list1, list2, normalize) {
   # Convert to HPart objects and calculate HMI
-  n_tip <- max(max(unlist(list1)), max(unlist(list2))) + 1  # Assuming 0-based indexing
+  # Assuming 0-based indexing
+  n_tip <- max(max(unlist(list1)), max(unlist(list2))) + 1
   hp1 <- build_hpart_from_list(list1, n_tip)
   hp2 <- build_hpart_from_list(list2, n_tip)
   hmi <- HMI_xptr(hp1, hp2)
-  
+
   if (isFALSE(normalize)) {
     hmi
   } else {
@@ -361,16 +365,7 @@ EHMI <- function(tree1, tree2, tolerance = 0.01, minResample = 36) {
 }
 
 # Remove the splits-based approach for now since HMI requires tree structure
-# HierarchicalMutualInfoSplits <- function(splits1, splits2,
-#                                           nTip = attr(splits1, "nTip"),
-#                                           reportMatching = FALSE) {
-#   # This would require more complex implementation
-#   stop("Splits-based HMI not yet implemented")
-# }
-
-# .SplitsToHPart <- function(splits, nTip) {
-#   stop("Splits to HPart conversion not yet implemented")
-# }
+# This would require more complex implementation to convert splits back to trees
 
 .AHMISEM <- function(hmi, M, ehmi, ehmi_sem) {
   deriv <- (hmi - M) / (M - ehmi)^2
@@ -397,7 +392,7 @@ EHMI <- function(tree1, tree2, tolerance = 0.01, minResample = 36) {
 #' @examples
 #' \dontrun{
 #' library("TreeTools", quietly = TRUE)
-#' 
+#'
 #' tree1 <- BalancedTree(6)
 #' tree2 <- PectinateTree(6)
 #' AHMI(tree1, tree2)
@@ -405,16 +400,18 @@ EHMI <- function(tree1, tree2, tolerance = 0.01, minResample = 36) {
 #'
 #' @family tree distances
 #' @export
-AHMI <- function(tree1, tree2, Mean = max, tolerance = 0.01, minResample = 36) {
+AHMI <- function(tree1, tree2, Mean = max, tolerance = 0.01,
+                 minResample = 36) {
   hp1 <- as.HPart(tree1)
   hp2 <- as.HPart(tree2, hp1)
-  
-  ehmi <- EHMI_xptr(hp1, hp2, as.numeric(tolerance), as.integer(minResample))
+
+  ehmi <- EHMI_xptr(hp1, hp2, as.numeric(tolerance),
+                    as.integer(minResample))
   hmi <- HMI_xptr(hp1, hp2)
   hh1 <- HME_xptr(hp1)
   hh2 <- HME_xptr(hp2)
   M <- Mean(hh1, hh2)
-  
+
   # Return:
   structure((hmi - ehmi[[1]]) / (M - ehmi[[1]]),
             sem = .AHMISEM(hmi, M, ehmi[[1]], attr(ehmi, "sem")))
