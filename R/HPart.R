@@ -105,7 +105,7 @@ RenumberTips.HPart_cpp <- function(tree, tipOrder) {
            " missing from `tipOrder`")
     }
     tree <- clone(tree, newOrder)
-    relabel_hpart(tree, newIndices)
+    relabel_hpart(tree, newIndices - 1L)
     # Return:
     tree
   } else {

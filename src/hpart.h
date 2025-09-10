@@ -28,3 +28,6 @@ struct HPart {
   size_t root;
 };
 }
+
+SEXP clone_hpart(SEXP hpart_ptr);
+void relabel_hpart(SEXP hpart_ptr, const std::vector<int>& map);

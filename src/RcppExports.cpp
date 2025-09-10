@@ -68,6 +68,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// EHMI_xptr
+Rcpp::NumericVector EHMI_xptr(SEXP hp1_ptr, SEXP hp2_ptr, double tolerance, int minResample);
+RcppExport SEXP _TreeDist_EHMI_xptr(SEXP hp1_ptrSEXP, SEXP hp2_ptrSEXP, SEXP toleranceSEXP, SEXP minResampleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type hp1_ptr(hp1_ptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type hp2_ptr(hp2_ptrSEXP);
+    Rcpp::traits::input_parameter< double >::type tolerance(toleranceSEXP);
+    Rcpp::traits::input_parameter< int >::type minResample(minResampleSEXP);
+    rcpp_result_gen = Rcpp::wrap(EHMI_xptr(hp1_ptr, hp2_ptr, tolerance, minResample));
+    return rcpp_result_gen;
+END_RCPP
+}
 // build_hpart_from_phylo
 SEXP build_hpart_from_phylo(List phy);
 RcppExport SEXP _TreeDist_build_hpart_from_phylo(SEXP phySEXP) {
@@ -114,12 +128,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // relabel_hpart
-void relabel_hpart(SEXP hpart_ptr, IntegerVector map);
+void relabel_hpart(SEXP hpart_ptr, const std::vector<int>& map);
 RcppExport SEXP _TreeDist_relabel_hpart(SEXP hpart_ptrSEXP, SEXP mapSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type hpart_ptr(hpart_ptrSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type map(mapSEXP);
+    Rcpp::traits::input_parameter< const std::vector<int>& >::type map(mapSEXP);
     relabel_hpart(hpart_ptr, map);
     return R_NilValue;
 END_RCPP
@@ -370,6 +384,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_robinson_foulds_all_pairs", (DL_FUNC) &_TreeDist_robinson_foulds_all_pairs, 1},
     {"_TreeDist_HMI_xptr", (DL_FUNC) &_TreeDist_HMI_xptr, 2},
     {"_TreeDist_HME_xptr", (DL_FUNC) &_TreeDist_HME_xptr, 1},
+    {"_TreeDist_EHMI_xptr", (DL_FUNC) &_TreeDist_EHMI_xptr, 4},
     {"_TreeDist_build_hpart_from_phylo", (DL_FUNC) &_TreeDist_build_hpart_from_phylo, 1},
     {"_TreeDist_build_hpart_from_list", (DL_FUNC) &_TreeDist_build_hpart_from_list, 2},
     {"_TreeDist_hpart_to_edge", (DL_FUNC) &_TreeDist_hpart_to_edge, 1},

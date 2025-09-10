@@ -5,9 +5,9 @@ using namespace Rcpp;
 namespace TreeDist {
 
 // --- postorder recompute internal nodes ---
-void recompute_bitsets_postorder(TreeDist::HPart &hpart, size_t node_idx,
-                                 const std::vector<size_t> &mapping,
-                                 size_t n_block) {
+void recompute_bitsets_postorder(TreeDist::HPart &hpart, const size_t node_idx,
+                                 const std::vector<int> &mapping,
+                                 const size_t n_block) {
   auto &node = hpart.nodes[node_idx];
   
   if (node.children.empty()) {
@@ -15,8 +15,8 @@ void recompute_bitsets_postorder(TreeDist::HPart &hpart, size_t node_idx,
     if (node.leaf_count != 1) {
       Rcpp::stop("Leaf node has leaf_count != 1");
     }
-    size_t new_index = mapping[node.label]; // mapping is 0-based
-    node.label = static_cast<int>(new_index);
+    int new_index = mapping[node.label]; // mapping is 0-based
+    node.label = new_index;
     node.bitset.assign(n_block, 0ULL);
     node.bitset[new_index / 64] = 1ULL << (new_index % 64);
   } else {
@@ -49,17 +49,11 @@ void recompute_bitsets_postorder(TreeDist::HPart &hpart, size_t node_idx,
 
 
 // [[Rcpp::export]]
-void relabel_hpart(SEXP hpart_ptr, IntegerVector map) {
+void relabel_hpart(SEXP hpart_ptr, const std::vector<int>& map) {
   Rcpp::XPtr<TreeDist::HPart> hpart_xptr(hpart_ptr);
   TreeDist::HPart &hpart = *hpart_xptr;
   
-  // Convert R 1-based map to 0-based vector
-  std::vector<size_t> mapping(map.size());
-  for (int i = 0; i < map.size(); ++i) {
-    mapping[i] = static_cast<size_t>(map[i] - 1);
-  }
-  
   const size_t n_block = hpart.nodes[1].bitset.size();
   
-  TreeDist::recompute_bitsets_postorder(hpart, hpart.root, mapping, n_block);
+  TreeDist::recompute_bitsets_postorder(hpart, hpart.root, map, n_block);
 }

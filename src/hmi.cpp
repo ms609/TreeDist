@@ -73,6 +73,8 @@ std::pair<size_t, double> hierarchical_mutual_info(
   
   return {n_ts, I_ts};
 }
+
+
 double hierarchical_self_info(const std::vector<TreeDist::HNode>& nodes, size_t idx) {
   const auto& n = nodes[idx];
   
@@ -128,4 +130,81 @@ double HMI_xptr(SEXP ptr1, SEXP ptr2) {
 double HME_xptr(SEXP ptr) {
   Rcpp::XPtr<TreeDist::HPart> hp(ptr);
   return hierarchical_self_info(hp->nodes, hp->root);
+}
+
+inline void fisher_yates_shuffle(std::vector<int>& v) noexcept {
+  for (size_t i = v.size() - 1; i > 0; --i) {
+    size_t j = static_cast<size_t>(std::floor(R::unif_rand() * (i + 1)));
+    std::swap(v[i], v[j]);
+  }
+}
+
+// [[Rcpp::export]]
+Rcpp::NumericVector EHMI_xptr(SEXP hp1_ptr, SEXP hp2_ptr, double tolerance = 0.01,
+                         int minResample = 36) {
+  
+  if (minResample < 2) {
+    Rcpp::stop("Must perform at least one resampling");
+  }
+  if (tolerance < 1e-8) {
+    Rcpp::stop("Tolerance too low");
+  }
+  
+  Rcpp::XPtr<TreeDist::HPart> hp1(hp1_ptr);
+  Rcpp::XPtr<TreeDist::HPart> hp2(hp2_ptr);
+  
+  const size_t n_tip = hp1->nodes[hp1->root].n_tip;
+  ASSERT(hp2->nodes[hp2->root].n_tip == n_tip);
+  
+  // Collect original leaf labels (1-based)
+  std::vector<int> leaves;
+  for (size_t i = 1; i < hp1->nodes.size(); ++i) {
+    if (hp1->nodes[i].leaf_count == 1)
+      leaves.push_back(hp1->nodes[i].label + 1); // R 1-based
+  }
+  
+  double runMean = 0.0, runS = 0.0;
+  int runN = 0;
+  double relativeError = 2.0 * tolerance;
+  const double tolSD = 0.05;
+  
+  Rcpp::RNGScope scope;
+  
+  SEXP hp1_shuf = clone_hpart(hp1_ptr);
+  std::vector<int> shuffled(n_tip);
+  std::iota(shuffled.begin(), shuffled.end(), 0);
+  
+  while (relativeError > tolerance || runN < minResample) {
+    // Shuffle leaves
+    fisher_yates_shuffle(shuffled);
+    
+    // Apply shuffled labels
+    relabel_hpart(hp1_shuf, shuffled);
+    
+    // Compute HMI
+    double x = HMI_xptr(hp1_shuf, hp2);
+    
+    // Welford update
+    runN++;
+    double delta = x - runMean;
+    runMean += delta / runN;
+    runS += delta * (x - runMean);
+    
+    double runVar = (runN > 1) ? runS / (runN - 1) : 0.0;
+    double runSD = std::sqrt(runVar);
+    double runSEM = runSD / std::sqrt(runN);
+    relativeError = runSEM / (std::abs(runMean) + tolSD);
+  }
+  
+  double runVar = (runN > 1) ? runS / (runN - 1) : 0.0;
+  double runSD = std::sqrt(runVar);
+  double runSEM = runSD / std::sqrt(runN);
+  
+  Rcpp::NumericVector result = Rcpp::NumericVector::create(runMean);
+  result.attr("var") = runVar;
+  result.attr("sd") = runSD;
+  result.attr("sem") = runSEM;
+  result.attr("relativeError") = relativeError;
+  
+  return result;
 }

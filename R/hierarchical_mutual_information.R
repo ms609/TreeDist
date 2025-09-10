@@ -211,6 +211,12 @@ EHMI <- function(tree1, tree2, tolerance = 0.01, minResample = 36) {
 }
 
 #' @export
+EHMI_cpp <- function(tree1, tree2, tolerance = 0.01, minResample = 36) {
+  EHMI_xptr(as.HPart_cpp(tree1), as.HPart_cpp(tree2), as.numeric(tolerance),
+                as.integer(minResample))
+}
+
+#' @export
 AHMI <- function(tree1, tree2, Mean = max, tolerance = 0.01, minResample = 36) {
   hp1 <- as.HPart(tree1)
   hp2 <- as.HPart(tree2)

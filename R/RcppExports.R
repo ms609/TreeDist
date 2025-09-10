@@ -21,6 +21,10 @@ HME_xptr <- function(ptr) {
     .Call(`_TreeDist_HME_xptr`, ptr)
 }
 
+EHMI_xptr <- function(hp1_ptr, hp2_ptr, tolerance = 0.01, minResample = 36L) {
+    .Call(`_TreeDist_EHMI_xptr`, hp1_ptr, hp2_ptr, tolerance, minResample)
+}
+
 build_hpart_from_phylo <- function(phy) {
     .Call(`_TreeDist_build_hpart_from_phylo`, phy)
 }
