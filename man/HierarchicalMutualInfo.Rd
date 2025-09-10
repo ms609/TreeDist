@@ -11,7 +11,10 @@ HierarchicalMutualInfo(tree1, tree2 = NULL, normalize = FALSE)
 If \code{tree2} is not provided, distances will be calculated between
 each pair of trees in the list \code{tree1}.}
 
-\item{normalize}{Logical. If \code{TRUE}, normalize the result to range \link{0,1}.}
+\item{normalize}{If \code{FALSE}, do not normalize the result.  If a function,
+Normalize the result to range \link{0,1} by dividing by
+\code{Func(SelfHMI(tree1), SelfHMI(tree2))}, where \code{Func()} = \code{max()} if
+\code{normalize == TRUE}, \code{normalize()} otherwise.}
 
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}

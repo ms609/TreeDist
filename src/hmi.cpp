@@ -122,6 +122,9 @@ double hierarchical_self_info(const std::vector<TreeDist::HNode>& nodes, size_t 
 double HMI_xptr(SEXP ptr1, SEXP ptr2) {
   Rcpp::XPtr<TreeDist::HPart> hp1(ptr1);
   Rcpp::XPtr<TreeDist::HPart> hp2(ptr2);
+  if (hp1->nodes[hp1->root].n_tip != hp2->nodes[hp2->root].n_tip) {
+    Rcpp::stop("Trees must have the same number of leaves");
+  }
   return TreeDist::hierarchical_mutual_info(hp1->nodes, hp1->root,
                                             hp2->nodes, hp2->root).second;
 }

@@ -22,7 +22,10 @@
 #' @param tree1,tree2 Trees of class \code{phylo}, or lists of such trees.
 #' If \code{tree2} is not provided, distances will be calculated between
 #' each pair of trees in the list \code{tree1}.
-#' @param normalize Logical. If \code{TRUE}, normalize the result to range [0,1].
+#' @param normalize If `FALSE`, do not normalize the result.  If a function,
+#' Normalize the result to range [0,1] by dividing by
+#' `Func(SelfHMI(tree1), SelfHMI(tree2))`, where `Func()` = `max()` if 
+#' `normalize == TRUE`, `normalize()` otherwise.
 #' @param reportMatching Logical specifying whether to return the clade
 #' matchings as an attribute of the score.
 #' 
@@ -58,7 +61,30 @@
 #' @family tree distances
 #' @export
 HierarchicalMutualInfo <- function(tree1, tree2 = NULL, normalize = FALSE) {
-  UseMethod("HierarchicalMutualInfo")
+  hp1 <- as.HPart_cpp(tree1)
+  if (is.null(tree2)) {
+    if (isFALSE(normalize)) {
+      SelfHMI_cpp(hp1)
+    } else {
+      warning("Normalized self-information == 1; did you mean to provide tree2?")
+      1
+    }
+  } else {
+    hp2 <- as.HPart_cpp(tree2)
+    hmi <- HMI_xptr(hp1, hp2)
+    if (isFALSE(normalize)) {
+      hmi
+    } else {
+      if (isTRUE(normalize)) {
+        normalize <- max
+      }
+      if (!is.function(normalize)) {
+        stop("`normalize` must be logical, or a function")
+      }
+      denom <- normalize(SelfHMI_cpp(hp1), SelfHMI_cpp(hp2))
+      hmi / denom
+    }
+  }
 }
 
 XLnX <- function(x) {
