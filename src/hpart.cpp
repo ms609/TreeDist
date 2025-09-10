@@ -47,7 +47,7 @@ SEXP build_hpart_from_phylo(List phy) {
   }
   
   // Traverse nodes in postorder
-  for (size_t i = vec_size; i > (size_t)n_tip; --i) {
+  for (size_t i = vec_size - 1; i > (size_t)n_tip; --i) {
     auto &node_i = hpart->nodes[i];
     node_i.children.reserve(children[i].size());
     

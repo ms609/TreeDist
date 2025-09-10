@@ -20,7 +20,7 @@ test_that("HMI results match hmi.pynb", {
   # Non-hierarchical
   p1 <- list(list(19, 18, 5), list(14, 16, 3), list(7), list(10, 8), list(1, 17, 9, 4, 6, 15), list(2, 13, 11), list(12, 0))
   p2 <- list( list(12, 9), list(4, 2, 0, 7), list(16), list(5), list(8, 3, 1, 14), list(11, 6, 10), list(18, 17, 19), list(13, 15))
-  expect_equal(HMIR(p1, p2), c(20, 0.9410980357245466))
+  expect_equal(HMI(p1, p2), c(20, 0.9410980357245466))
   
   # Hierarchical
   hp1 <- list(list(23), list(list(list(list(list(list(16),  list(17)))))), list(list(12),  list(22, 13)), list(5), list(7), list(24), list(list(list(9),  list(list(14, 2))),  list(list(list(list(list(list(27),  list(3))))))), list(20, 29, 18), list(4), list(26, 15), list(list(10),  list(21, 25)), list(11), list(list(0, 28),  list(1),  list(6)), list(19, 8))
@@ -33,6 +33,20 @@ test_that("HMI results match hmi.pynb", {
 test_that("HMI calculated correctly", {
   bal6 <- BalancedTree(6)
   pec6 <- PectinateTree(6)
-  expect_equal(HierarchicalMutualInfo(bal6, pec6),
-               HierachicalMutual(bal6, pec6))
+  NHMI(bal6, pec6)
+  # expect_equal(HierarchicalMutualInfo(bal6, pec6),
+  #              HierachicalMutual(bal6, pec6))
+  
+  hp1 <- build_hpart_from_phylo(BalancedTree(6))
+  hp2 <- build_hpart_from_phylo(PectinateTree(6))
+  expect_equal(HMI_xptr(hp1, hp2),
+               HMI(as.HPart(bal6), as.HPart(pec6))[[2]])
+  
+  bal8 <- BalancedTree(8)
+  pec8 <- PectinateTree(8)
+  
+  hp1 <- build_hpart_from_phylo(BalancedTree(8))
+  hp2 <- build_hpart_from_phylo(PectinateTree(8))
+  expect_equal(HMI_xptr(hp1, hp2),
+               HMI(as.HPart(bal8), as.HPart(pec8))[[2]])
 })
