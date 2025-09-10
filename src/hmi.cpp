@@ -163,10 +163,10 @@ Rcpp::NumericVector EHMI_xptr(SEXP hp1_ptr, SEXP hp2_ptr, double tolerance = 0.0
       leaves.push_back(hp1->nodes[i].label + 1); // R 1-based
   }
   
-  double runMean = 0.0, runS = 0.0;
+  double runMean = 0.0;
+  double runS = 0.0;
   int runN = 0;
   double relativeError = 2.0 * tolerance;
-  const double tolSD = 0.05;
   
   Rcpp::RNGScope scope;
   
@@ -193,7 +193,9 @@ Rcpp::NumericVector EHMI_xptr(SEXP hp1_ptr, SEXP hp2_ptr, double tolerance = 0.0
     double runVar = (runN > 1) ? runS / (runN - 1) : 0.0;
     double runSD = std::sqrt(runVar);
     double runSEM = runSD / std::sqrt(runN);
-    relativeError = runSEM / (std::abs(runMean) + tolSD);
+    relativeError = std::abs(runMean) < 1e-6 ?
+      runSEM :
+      runSEM / std::abs(runMean);
   }
   
   double runVar = (runN > 1) ? runS / (runN - 1) : 0.0;
@@ -204,6 +206,7 @@ Rcpp::NumericVector EHMI_xptr(SEXP hp1_ptr, SEXP hp2_ptr, double tolerance = 0.0
   result.attr("var") = runVar;
   result.attr("sd") = runSD;
   result.attr("sem") = runSEM;
+  result.attr("samples") = runN;
   result.attr("relativeError") = relativeError;
   
   return result;

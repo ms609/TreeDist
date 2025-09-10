@@ -4,17 +4,17 @@ as.HPart_cpp <- function(tree, tipLabels) {
 }
 
 #' @export
-as.HPart_cpp.HPart_cpp <- function(tree, tipLabels) {
-  if (identical(tipLabels, TipLabels(tree))) {
+as.HPart_cpp.HPart_cpp <- function(tree, tipLabels = NULL) {
+  if (is.null(tipLabels) || identical(tipLabels, TipLabels(tree))) {
     trees
   } else {
-    stop("Relabelling not yet implemented")
+    RenumberTips(tree, tipLabels)
   }
 }
 
 #' @param tree hierarchical list-of-lists (leaves = integers 1..n)
 #' @export
-as.HPart_cpp.list <- function(tree) {
+as.HPart_cpp.list <- function(tree, tipLabels = NULL) {
   # Flatten to verify leaves
   leaves <- unlist(tree, recursive = TRUE)
   if (!all(is.numeric(leaves)) || any(leaves != as.integer(leaves))) {
@@ -32,7 +32,11 @@ as.HPart_cpp.list <- function(tree) {
   }
   
   hpart_ptr <- build_hpart_from_list(tree, n_tip)
-  structure(hpart_ptr, tip.label = as.character(expected), class = "HPart_cpp")
+  ret <- structure(hpart_ptr, tip.label = as.character(expected), class = "HPart_cpp")
+  if (!is.null(tipLabels)) {
+    RenumberTips(ret, tipLabels)
+  }
+  ret
 }
 
 

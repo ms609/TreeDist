@@ -197,8 +197,11 @@ EHMI <- function(tree1, tree2, tolerance = 0.01, minResample = 36) {
     runVar <- runS / (runN - 1)
     runSD <- sqrt(runVar)
     runSEM <- runSD / sqrt(runN)
-    tolSD <- 0.05
-    relativeError <- runSEM / (abs(runMean) + tolSD)
+    relativeError <- if (abs(runMean) < 1e-6) {
+      runSEM
+    } else {
+      runSEM / abs(runMean)
+    }
     cli::cli_progress_update(id = progBar,
                              status = list(runN = runN, runMean = runMean,
                                            runSEM = runSEM,
@@ -223,4 +226,25 @@ AHMI <- function(tree1, tree2, Mean = max, tolerance = 0.01, minResample = 36) {
   ehmi <- EHMI(hp1, hp2, tolerance = tolerance, minResample = minResample)[[1]]
   # Return:
   (HMI(hp1, hp2)[[2]] - ehmi) / (Mean(SelfHMI(hp1), SelfHMI(hp2)) - ehmi)
+}
+
+.AHMISEM <- function(hmi, M, ehmi, ehmi_sem) {
+  deriv <- (hmi - M) / (M - ehmi)^2
+  abs(deriv) * ehmi_sem
+}
+
+#' @export
+AHMI_cpp <- function(tree1, tree2, Mean = max, tolerance = 0.01, minResample = 36) {
+  hp1 <- as.HPart_cpp(tree1)
+  hp2 <- as.HPart_cpp(tree2, hp1)
+  
+  ehmi <- EHMI_xptr(hp1, hp2, as.numeric(tolerance), as.integer(minResample))
+  hmi <- HMI_xptr(hp1, hp2)
+  hh1 <- HME_xptr(hp1)
+  hh2 <- HME_xptr(hp2)
+  M <- Mean(hh1, hh2)
+  
+  # Return:
+  structure((hmi - ehmi[[1]]) / (M - ehmi[[1]]),
+            sem = .AHMISEM(hmi, M, ehmi[[1]], attr(ehmi, "sem")))
 }
