@@ -79,7 +79,7 @@ RenumberTips.HPart_cpp <- function(tree, tipOrder) {
   newOrder <- MatchStrings(TipLabels(tipOrder, single = TRUE), startOrder)
   
   if (!identical(newOrder, startOrder)) {
-    newIndices <- match(startOrder, newOrder)
+    newIndices <- match(newOrder, startOrder)
     if (any(is.na(newIndices))) {
       stop("Tree labels ", paste0(startOrder[is.na(newIndices)], collapse = ", "),
            " missing from `tipOrder`")
