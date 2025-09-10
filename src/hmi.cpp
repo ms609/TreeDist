@@ -1,5 +1,6 @@
 #include "hpart.h"
 #include <Rcpp.h>
+#include <assert>
 #include <cmath>
 using namespace Rcpp;
 using Node = TreeDist::HNode;
@@ -9,7 +10,7 @@ static inline size_t intersection_size(
     const std::vector<uint64_t>& bitset1,
     const std::vector<uint64_t>& bitset2) {
   size_t count = 0;
-  ASSERT(bitset1.size() == bitset2.size());
+  std::assert(bitset1.size() == bitset2.size());
   size_t size = bitset1.size();
   
   for (size_t i = 0; i < size; ++i) {
@@ -24,7 +25,10 @@ const inline double x_log_x(size_t x) {
 }
 
 // Hierarchical Mutual Information core
-std::pair<size_t, double> hierarchical_mutual_info(const Node &Ut, const Node &Us) {
+std::pair<size_t, double> hierarchical_mutual_info(
+    const Node &Ut,
+    const Node &Us
+) {
   if (Ut.allKidsLeaves || Us.allKidsLeaves) {
     return std::pair<size_t, double>{intersection_size(Ut.bitset, Us.bitset),
                                      0.0};

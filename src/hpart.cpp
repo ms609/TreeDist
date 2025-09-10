@@ -50,10 +50,19 @@ SEXP build_hpart_from_phylo(List phy) {
   // Traverse nodes in postorder
   for (size_t i = vec_size; i > (size_t)n_tip; --i) {
     hpart->nodes[i].children.reserve(children[i].size());
+    
     for (size_t child_id : children[i]) {
-      hpart->nodes[i].children.push_back(&hpart->nodes[child_id]);
+      auto& child_node = &hpart->nodes[child_id];
+      
+      hpart->nodes[i].children.push_back(child_node);
+      const size_t child_leaves = child_node.leaf_count;
+      if (child_leaves > 1) {
+        hpart->nodes[i].all_kids_leaves = false;
+      }
+      hpart->nodes[i].leaf_count += child_leaves;
+      
       for (size_t chunk = 0; chunk < nodes[i].bitset.size(); ++chunk) {
-        hpart->nodes[i].bitset[chunk] |= hpart->nodes[child_id].bitset[chunk];
+        hpart->nodes[i].bitset[chunk] |= child_node.bitset[chunk];
       }
     }
     hpart->nodes[i].calc_entropy();
