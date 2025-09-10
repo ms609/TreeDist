@@ -37,7 +37,7 @@ as.HPart.list <- function(tree, tipLabels = NULL) {
   
   hpart_ptr <- build_hpart_from_list(tree, n_tip)
   ret <- structure(hpart_ptr, tip.label = as.character(expected), class = "HPart")
-  if (!is.null(tipLabels)) {
+  if (!is.null(tipLabels) && !is.list(tipLabels)) {
     RenumberTips(ret, tipLabels)
   }
   ret

@@ -70,7 +70,7 @@ HierarchicalMutualInfo <- function(tree1, tree2 = NULL, normalize = FALSE) {
       1
     }
   } else {
-    hp2 <- as.HPart(tree2)
+    hp2 <- as.HPart(tree2, tree1)
     hmi <- HMI_xptr(hp1, hp2)
     if (isFALSE(normalize)) {
       hmi
@@ -88,11 +88,7 @@ HierarchicalMutualInfo <- function(tree1, tree2 = NULL, normalize = FALSE) {
 }
 
 #' @export
-HMI <- function(tree1, tree2) {
-  hp1 <- as.HPart(tree1)
-  hp2 <- as.HPart(tree2)
-  HMI_xptr(hp1, hp2)
-}
+HMI <- HierarchicalMutualInfo
 
 #' @export
 SelfHMI <- function(tree) {

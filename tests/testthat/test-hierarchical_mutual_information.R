@@ -47,3 +47,16 @@ test_that("Hierarchical Mutual Information", {
   expect_error(HierarchicalMutualInfo(tree1, tree_small),
                "number of leaves")
 })
+
+test_that("HMI edge cases", {
+  bal9 <- BalancedTree(9)
+  bal9b <- BalancedTree(paste0("t", c(3:1, 7:9, 6:4)))
+  
+  expect_lt(HMI(bal9, bal9b), HMI(bal9, bal9))
+  
+  expect_lt(HMI(bal9, bal9b, normalize = TRUE), 0.05)
+  
+  expect_equal(AHMI(StarTree(6), BalancedTree(6))[[1]], 0)
+  expect_equal(AHMI(StarTree(2), BalancedTree(2)), structure(NaN, sem = NaN))
+})
+

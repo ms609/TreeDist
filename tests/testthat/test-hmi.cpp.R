@@ -22,7 +22,7 @@ test_that("HMI results match hmi.pynb", {
   expect_equal(HMI(hp1, hp2), 1.0591260408329395)
   expect_equal(SelfHMI(hp1), HMI(hp1, hp1))
   
-  ehmi <- structure(0.781, # Calculated from py with tol = 0.001
+  ehmi <- structure(0.7806, # Calculated from py with tol = 0.001
                     var = 0.01,
                     sd = 0.1, 
                     sem = 0.008,
