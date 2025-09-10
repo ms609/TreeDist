@@ -143,11 +143,16 @@ HMI_cpp <- function(tree1, tree2) {
   HMI_xptr(hp1, hp2)
 }
 
-# TODO implement more efficiently
 #' @export
 SelfHMI <- function(tree) {
   part <- as.HPart(tree)
   HMI(part, part)[[2]]
+}
+
+#' @export
+SelfHMI_cpp <- function(tree) {
+  part <- as.HPart_cpp(tree)
+  HME_xptr(part)
 }
 
 #' @export

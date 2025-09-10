@@ -73,6 +73,46 @@ std::pair<size_t, double> hierarchical_mutual_info(
   
   return {n_ts, I_ts};
 }
+double hierarchical_self_info(const std::vector<TreeDist::HNode>& nodes, size_t idx) {
+  const auto& n = nodes[idx];
+  
+  if (n.all_kids_leaves) return 0.0;
+  
+  size_t n_ts = 0;
+  double H_uv = 0.0;
+  double H_us = 0.0;
+  double H_tv = 0.0;
+  const size_t n_children = n.children.size();
+  std::vector<size_t> n_tv(n_children, 0);
+  double mean_I_ts = 0.0;
+  
+  for (size_t i = 0; i < n_children; ++i) {
+    size_t u_idx = n.children[i];
+    size_t n_us = 0;
+    for (size_t j = 0; j < n_children; ++j) {
+      size_t v_idx = n.children[j];
+      size_t n_uv = (u_idx == v_idx) ? nodes[u_idx].leaf_count
+      : intersection_size(nodes[u_idx].bitset, nodes[v_idx].bitset);
+      
+      n_ts += n_uv;
+      n_tv[j] += n_uv;
+      n_us += n_uv;
+      H_uv += x_log_x(n_uv);
+      mean_I_ts += n_uv * hierarchical_self_info(nodes, u_idx); // recurse
+    }
+    H_us += x_log_x(n_us);
+  }
+  
+  for (auto _n_tv : n_tv) H_tv += x_log_x(_n_tv);
+  
+  if (n_ts == 0) return 0.0;
+  double local_I_ts = std::log(static_cast<double>(n_ts)) - (H_us + H_tv - H_uv) / static_cast<double>(n_ts);
+  mean_I_ts /= static_cast<double>(n_ts);
+  
+  return local_I_ts + mean_I_ts;
+}
+
+
 
 } // namespace TreeDist
 
@@ -84,3 +124,8 @@ double HMI_xptr(SEXP ptr1, SEXP ptr2) {
                                             hp2->nodes, hp2->root).second;
 }
 
+// [[Rcpp::export]]
+double HME_xptr(SEXP ptr) {
+  Rcpp::XPtr<TreeDist::HPart> hp(ptr);
+  return hierarchical_self_info(hp->nodes, hp->root);
+}

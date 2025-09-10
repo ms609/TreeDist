@@ -17,6 +17,10 @@ HMI_xptr <- function(ptr1, ptr2) {
     .Call(`_TreeDist_HMI_xptr`, ptr1, ptr2)
 }
 
+HME_xptr <- function(ptr) {
+    .Call(`_TreeDist_HME_xptr`, ptr)
+}
+
 build_hpart_from_phylo <- function(phy) {
     .Call(`_TreeDist_build_hpart_from_phylo`, phy)
 }

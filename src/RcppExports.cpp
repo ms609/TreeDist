@@ -57,6 +57,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// HME_xptr
+double HME_xptr(SEXP ptr);
+RcppExport SEXP _TreeDist_HME_xptr(SEXP ptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(HME_xptr(ptr));
+    return rcpp_result_gen;
+END_RCPP
+}
 // build_hpart_from_phylo
 SEXP build_hpart_from_phylo(List phy);
 RcppExport SEXP _TreeDist_build_hpart_from_phylo(SEXP phySEXP) {
@@ -358,6 +369,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_consensus_info", (DL_FUNC) &_TreeDist_consensus_info, 3},
     {"_TreeDist_robinson_foulds_all_pairs", (DL_FUNC) &_TreeDist_robinson_foulds_all_pairs, 1},
     {"_TreeDist_HMI_xptr", (DL_FUNC) &_TreeDist_HMI_xptr, 2},
+    {"_TreeDist_HME_xptr", (DL_FUNC) &_TreeDist_HME_xptr, 1},
     {"_TreeDist_build_hpart_from_phylo", (DL_FUNC) &_TreeDist_build_hpart_from_phylo, 1},
     {"_TreeDist_build_hpart_from_list", (DL_FUNC) &_TreeDist_build_hpart_from_list, 2},
     {"_TreeDist_hpart_to_edge", (DL_FUNC) &_TreeDist_hpart_to_edge, 1},
