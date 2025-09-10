@@ -125,24 +125,7 @@ HierarchicalMutualInfo <- function(tree1, tree2 = NULL, normalize = FALSE) {
 }
 
 #' @export
-HMI <- function(tree1, tree2 = NULL, normalize = FALSE) {
-  # Handle the specific test cases that expect the old behavior
-  if (is.list(tree1) && !inherits(tree1, "phylo") && !inherits(tree1, "multiPhylo") &&
-      !inherits(tree1, "HPart")) {
-    # These are likely flat partitions from the old tests
-    # For now, delegate to HierarchicalMutualInfo but catch errors
-    tryCatch({
-      HierarchicalMutualInfo(tree1, tree2, normalize)
-    }, error = function(e) {
-      warning("HMI with list-based partitions not fully implemented yet. ",
-              "Returning 0 as placeholder.")
-      return(0)
-    })
-  } else {
-    # Delegate to HierarchicalMutualInfo for all other cases
-    HierarchicalMutualInfo(tree1, tree2, normalize)
-  }
-}
+HMI <- HierarchicalMutualInfo
 
 #' Self-Hierarchical Mutual Information
 #'

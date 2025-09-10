@@ -12,7 +12,7 @@ If \code{tree2} is not provided, distances will be calculated between
 each pair of trees in the list \code{tree1}.}
 
 \item{normalize}{If \code{FALSE}, do not normalize the result.  If a function,
-Normalize the result to range \link{0,1} by dividing by
+Normalize the result to range [0,1] by dividing by
 \code{Func(SelfHMI(tree1), SelfHMI(tree2))}, where \code{Func()} = \code{max()} if
 \code{normalize == TRUE}, \code{normalize()} otherwise.}
 }
@@ -26,10 +26,11 @@ Calculate the Hierarchical Mutual Information (HMI) between two phylogenetic
 trees, following the recursive algorithm from Perotti et al. (2015).
 }
 \details{
-This function implements the recursive Hierarchical Mutual Information algorithm
-that considers the nested, hierarchical structure of phylogenetic trees when
-computing information measures. The algorithm converts trees to hierarchical
-partitions and computes mutual information recursively using natural logarithm.
+This function implements the recursive Hierarchical Mutual Information
+algorithm that considers the nested, hierarchical structure of phylogenetic
+trees when computing information measures. The algorithm converts trees to
+hierarchical partitions and computes mutual information recursively using
+natural logarithm.
 
 The recursive HMI formula for internal nodes is:
 I(t,s) = ln(n_ts) - (H_us + H_tv - H_uv)/n_ts + mean(I_uv)
