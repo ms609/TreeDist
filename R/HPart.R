@@ -6,7 +6,7 @@ as.HPart_cpp <- function(tree, tipLabels) {
 #' @export
 as.HPart_cpp.HPart_cpp <- function(tree, tipLabels = NULL) {
   if (is.null(tipLabels) || identical(tipLabels, TipLabels(tree))) {
-    trees
+    tree
   } else {
     RenumberTips(tree, tipLabels)
   }

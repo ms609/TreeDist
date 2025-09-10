@@ -83,3 +83,10 @@ test_that("HMI calculated correctly", {
   expect_equal(HMI_xptr(hp1, hp1), 1.38629436)
   expect_equal(HMI_xptr(hp1, hp2), 0.3342954)
 })
+
+test_that("HMI_cpp equals SelfHMI for same partition", {
+  set.seed(1)
+  tr <- BalancedTree(8)
+  hp <- as.HPart_cpp(tr)
+  expect_equal(SelfHMI_cpp(hp), HMI_cpp(hp, hp), tolerance = 1e-12)
+})
