@@ -1,8 +1,8 @@
 // src/hpart.h
 #pragma once
-#include <assert>
 #include <vector>
 #include <cstdint>
+#include <TreeTools/assert.h> // for ASSERT
 #include <Rcpp.h>
 
 namespace TreeDist {
@@ -16,8 +16,8 @@ struct HNode {
   double entropy = 0;
   
   void calc_entropy() {
-    std::assert(this->leaf_count > 0);
-    std::assert(this->n_tip > 0);
+    ASSERT(this->leaf_count > 0);
+    ASSERT(this->n_tip > 0);
     double p = static_cast<double>(this->leaf_count) / this->n_tip;
     this->entropy = -p * std::log(p);
   }

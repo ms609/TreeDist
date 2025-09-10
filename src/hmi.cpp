@@ -1,16 +1,19 @@
 #include "hpart.h"
 #include <Rcpp.h>
-#include <assert>
 #include <cmath>
 using namespace Rcpp;
-using Node = TreeDist::HNode;
 
-// A helper function to compute popcount of the intersection
+namespace TreeDist {
+
+static inline double x_log_x(size_t x) {
+  return x ? x * std::log(x) : 0.0;
+}
+
 static inline size_t intersection_size(
     const std::vector<uint64_t>& bitset1,
     const std::vector<uint64_t>& bitset2) {
   size_t count = 0;
-  std::assert(bitset1.size() == bitset2.size());
+  ASSERT(bitset1.size() == bitset2.size());
   size_t size = bitset1.size();
   
   for (size_t i = 0; i < size; ++i) {
@@ -20,30 +23,26 @@ static inline size_t intersection_size(
   return count;
 }
 
-const inline double x_log_x(size_t x) {
-  return x ? x * std::log(x) : 0.0;
-}
-
 // Hierarchical Mutual Information core
 std::pair<size_t, double> hierarchical_mutual_info(
-    const Node &Ut,
-    const Node &Us
+    const HNode *Ut,
+    const HNode *Us
 ) {
-  if (Ut.allKidsLeaves || Us.allKidsLeaves) {
-    return std::pair<size_t, double>{intersection_size(Ut.bitset, Us.bitset),
+  if (Ut->all_kids_leaves || Us->all_kids_leaves) {
+    return std::pair<size_t, double>{intersection_size(Ut->bitset, Us->bitset),
                                      0.0};
   }
   size_t n_ts = 0;
   double H_uv = 0.0;
   double H_us = 0.0;
   double H_tv = 0.0;
-  const size_t Us_size = Us.children.size();
+  const size_t Us_size = Us->children.size();
   std::vector<size_t> n_tv(Us_size);
   double mean_I_ts = 0.0;
-  for (const auto& Uu : Ut.children) {
+  for (const auto& Uu : Ut->children) {
     size_t n_us = 0.0;
     for (size_t v = 0; v < Us_size; ++v) {
-      const auto& Uv = Us.children[v];
+      const auto& Uv = Us->children[v];
       const std::pair<size_t, double> niUV = hierarchical_mutual_info(Uu, Uv);
       const size_t n_uv = niUV.first;
       const double I_uv = niUV.second;
@@ -72,6 +71,7 @@ std::pair<size_t, double> hierarchical_mutual_info(
 double HMI_xptr(SEXP ptr1, SEXP ptr2) {
   Rcpp::XPtr<HPart> hp1(ptr1);
   Rcpp::XPtr<HPart> hp2(ptr2);
-  return hierarchical_mutual_info(hp1.nodes[hp1.rootIndex],
-                                  hp2.nodes[hp2.rootIndex]).second;
+  return hierarchical_mutual_info(hp1->root, hp2->root).second;
 }
+
+} // namespace TreeDist
