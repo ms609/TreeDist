@@ -20,6 +20,7 @@ test_that("HMI results match hmi.pynb", {
   hp2 <- list(list(list(list(0, 25),  list(24)),  list(6),  list(11, 28),  list(8)), list(list(list(19),  list(list(list(list(21),  list(4),  list(list(list(list(list(22, 7))))))))),  list(5)), list(list(3),  list(10, 23, 14)), list(list(27, 1, 16, 13, 18, 26, 9),  list(list(list(list(15),  list(list(list(list(list(list(12, 17)))))))),  list(2, 20)),  list(29)))
   
   expect_equal(HMI(hp1, hp2), 1.0591260408329395)
+  expect_equal(HMI(hp1, hp1), 3.0140772805713665)
   expect_equal(SelfHMI(hp1), HMI(hp1, hp1))
   
   ehmi <- structure(0.7806, # Calculated from py with tol = 0.001
@@ -32,7 +33,7 @@ test_that("HMI results match hmi.pynb", {
   attr(ehmi_cpp, "samples") <- NULL # Could vary; no point in testing
   expect_equal(ehmi_cpp, ehmi, tolerance = 0.1)
   
-  pyAHMI <- 0.13 # Calculated with tol = 0.001
+  pyAHMI <- 0.1245 # Calculated with tol = 0.001
   expect_equal(AHMI(hp1, hp2)[[1]], pyAHMI, tolerance = 0.1)
   
   set.seed(1)
