@@ -25,6 +25,10 @@ hpart_to_edge <- function(hpart_xptr) {
     .Call(`_TreeDist_hpart_to_edge`, hpart_xptr)
 }
 
+clone_hpart <- function(hpart_ptr) {
+    .Call(`_TreeDist_clone_hpart`, hpart_ptr)
+}
+
 relabel_hpart <- function(hpart_ptr, map) {
     invisible(.Call(`_TreeDist_relabel_hpart`, hpart_ptr, map))
 }

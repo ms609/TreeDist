@@ -7,9 +7,9 @@
 
 namespace TreeDist {
 struct HNode {
-  std::vector<HNode*> children;
-  int label = -1;                  // for tips; counting from zero
-  std::vector<uint64_t> bitset;    // leaf set
+  std::vector<size_t> children;   // indices of children in HPart.nodes
+  int label = -1;                 // for tips; counting from zero
+  std::vector<uint64_t> bitset;   // leaf set
   int leaf_count = 0;
   bool all_kids_leaves = true;
   int n_tip = 0;
@@ -25,6 +25,6 @@ struct HNode {
 
 struct HPart {
   std::vector<HNode> nodes;  // owns all nodes
-  HNode* root = nullptr;     // pointer into nodes
+  size_t root;
 };
 }

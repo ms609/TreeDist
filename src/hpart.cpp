@@ -56,7 +56,7 @@ SEXP build_hpart_from_phylo(List phy) {
     for (size_t child_id : children[i]) {
       const auto child_node = &hpart->nodes[child_id];
       
-      node_i.children.push_back(child_node);
+      node_i.children.push_back(child_id);
       const size_t child_leaves = child_node->leaf_count;
       if (child_leaves > 1) {
         node_i.all_kids_leaves = false;
@@ -70,7 +70,7 @@ SEXP build_hpart_from_phylo(List phy) {
     node_i.calc_entropy();
   }
   
-  hpart->root = &hpart->nodes[n_tip + 1];
+  hpart->root = n_tip + 1;
   
   return Rcpp::XPtr<TreeDist::HPart>(hpart, true);
 }
@@ -90,11 +90,11 @@ Rcpp::IntegerMatrix hpart_to_edge(SEXP hpart_xptr) {
   int n_node = static_cast<int>(hp->nodes.size()) - n_tip - 1;
   int n_edge = n_tip + n_node - 1;
   
-  // Assign IDs
+  // Assign IDs: tips get their label, internal nodes get sequential IDs
   std::vector<int> node_ids(hp->nodes.size(), -1);
   int next_index = n_tip + 1;
   for (int i = 1; i <= n_tip; ++i) {
-    node_ids[i] = i; // tips: 1..n_tip
+    node_ids[i] = hp->nodes[i].label + 1; // 1-based R tip index
   }
   for (size_t i = n_tip + 1; i < hp->nodes.size(); ++i) {
     node_ids[i] = next_index++;
@@ -103,22 +103,30 @@ Rcpp::IntegerMatrix hpart_to_edge(SEXP hpart_xptr) {
   // Collect edges
   std::vector<std::pair<int,int>> edges;
   edges.reserve(n_edge);
+  
   for (size_t i = n_tip + 1; i < hp->nodes.size(); ++i) {
-    auto& node = hp->nodes[i];
     int parent_id = node_ids[i];
-    for (auto* child : node.children) {
-      size_t child_idx = node_index(child, hp->nodes);
-      int child_id = node_ids[child_idx];
+    for (size_t cidx : hp->nodes[i].children) {
+      int child_id = node_ids[cidx];
       edges.emplace_back(parent_id, child_id);
     }
   }
   
   // Build R matrix
-  Rcpp::IntegerMatrix edge_mat(edges.size(), 2);
+  IntegerMatrix edge_mat(edges.size(), 2);
   for (size_t i = 0; i < edges.size(); ++i) {
     edge_mat(i, 0) = edges[i].first;
     edge_mat(i, 1) = edges[i].second;
   }
   
   return edge_mat;
+}
+
+// [[Rcpp::export]]
+SEXP clone_hpart(SEXP hpart_ptr) {
+  Rcpp::XPtr<TreeDist::HPart> src(hpart_ptr);
+  
+  TreeDist::HPart* copy = new TreeDist::HPart(*src);
+  
+  return Rcpp::XPtr<TreeDist::HPart>(copy, true);
 }

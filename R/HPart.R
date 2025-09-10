@@ -57,3 +57,38 @@ as.phylo.HPart_cpp <- function(x, ...) {
             class = "phylo",
             order = "cladewise")
 }
+
+#' @export
+plot.HPart_cpp <- function(x, ...) {
+  plot(as.phylo(x), ...)
+}
+
+#' @export
+clone <- function(x, ...) UseMethod("clone")
+
+#' @export
+clone.HPart_cpp <- function(x, tipLabel = attr(x, "tip.label")) {
+  structure(clone_hpart(x), tip.label = tipLabel,
+            class = "HPart_cpp")
+}
+
+#' @importFrom TreeTools MatchStrings
+#' @export
+RenumberTips.HPart_cpp <- function(tree, tipOrder) {
+  startOrder <- TipLabels(tree)
+  newOrder <- MatchStrings(TipLabels(tipOrder, single = TRUE), startOrder)
+  
+  if (!identical(newOrder, startOrder)) {
+    newIndices <- match(startOrder, newOrder)
+    if (any(is.na(newIndices))) {
+      stop("Tree labels ", paste0(startOrder[is.na(newIndices)], collapse = ", "),
+           " missing from `tipOrder`")
+    }
+    tree <- clone(tree, newOrder)
+    relabel_hpart(tree, newIndices)
+    # Return:
+    tree
+  } else {
+    clone(tree)
+  }
+}
