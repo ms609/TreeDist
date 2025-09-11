@@ -57,6 +57,6 @@ test_that("HMI edge cases", {
   expect_lt(HMI(bal9, bal9b, normalize = TRUE), 0.05)
   
   expect_equal(AHMI(StarTree(6), BalancedTree(6))[[1]], 0)
-  expect_equal(AHMI(StarTree(2), BalancedTree(2)), structure(NaN, sem = NaN))
+  expect_equal(AHMI(StarTree(2), BalancedTree(2)), structure(0, sem = NaN))
 })
 
