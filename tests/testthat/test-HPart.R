@@ -10,6 +10,19 @@ test_that("as.phylo.HPart", {
   expect_equal(Preorder(as.phylo.HPart(hb17)), bal17)
 })
 
+test_that("as.HPart.numeric", {
+  hpList <- as.HPart(list(list(1, 3, 9),
+                          list(2, 4, 8),
+                          list(5, 6, 7)))
+  expect_equal(class(hpList), "HPart")
+  
+  hpNum <- as.HPart(c(1, 2, 1, 2, 3, 3, 3, 2, 1))
+  expect_equal(class(hpNum), "HPart")
+  
+  expect_equal(SelfHMI(hpNum), SelfHMI(hpList))
+  expect_equal(HMI(hpNum, hpList), SelfHMI(hpNum))
+})
+
 test_that("HParts are relabelled correctly", {
   bal7 <- BalancedTree(7)
   hb7 <- as.HPart(bal7)

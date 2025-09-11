@@ -37,7 +37,12 @@ as.HPart.HPart <- function(tree, tipLabels = NULL) {
 #' @export
 as.HPart.default <- function(tree, tipLabels = NULL) {
   if (is.null(dim(tree))) {
-    lapply(unique(tree), function(x) which(tree == x))
+    structure(build_hpart_from_list(
+      lapply(unique(tree), function(x) as.list(which(tree == x))),
+      length(tree)),
+      tip.label = seq_along(tree),
+      class = "HPart"
+    )
   } else {
     stop("no applicable method for 'as.HPart' applied to an object of class \"",
          paste(class(tree), collapse = "\", \""), "\"")
