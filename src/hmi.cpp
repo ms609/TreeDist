@@ -173,7 +173,7 @@ Rcpp::NumericVector EHMI_xptr(SEXP hp1_ptr, SEXP hp2_ptr, double tolerance = 0.0
   double runMean = 0.0;
   double runS = 0.0;
   int runN = 0;
-  double relativeError;
+  double relativeError = tolerance * 2; // Avoid -Wmaybe-uninitialized
   
   Rcpp::RNGScope scope;
   
