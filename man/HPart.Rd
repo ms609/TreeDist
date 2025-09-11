@@ -4,11 +4,39 @@
 \alias{HPart}
 \alias{as.HPart}
 \alias{as.HPart.HPart}
+\alias{as.HPart.list}
+\alias{as.HPart.phylo}
+\alias{is.HPart}
+\alias{print.HPart}
+\alias{as.phylo.HPart}
+\alias{plot.HPart}
 \title{Hierarchical partition structure}
 \usage{
 as.HPart(tree, tipLabels)
 
 \method{as.HPart}{HPart}(tree, tipLabels = NULL)
+
+\method{as.HPart}{list}(tree, tipLabels = NULL)
+
+\method{as.HPart}{phylo}(tree, tipLabels = TipLabels(tree))
+
+is.HPart(x)
+
+\method{print}{HPart}(x, ...)
+
+\method{as.phylo}{HPart}(x, ...)
+
+\method{plot}{HPart}(x, ...)
+}
+\arguments{
+\item{tree}{hierarchical list-of-lists (leaves = integers 1..n)}
+
+\item{tipLabels}{Character vector specifying sequence in which to order
+tip labels.}
+
+\item{x}{\code{HPart} object to plot}
+
+\item{\dots}{Additional arguments to \code{\link[ape:plot.phylo]{plot.phylo}}}
 }
 \description{
 Hierarchical partition structure

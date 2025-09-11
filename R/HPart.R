@@ -16,6 +16,7 @@ as.HPart.HPart <- function(tree, tipLabels = NULL) {
   }
 }
 
+#' @rdname HPart
 #' @param tree hierarchical list-of-lists (leaves = integers 1..n)
 #' @export
 as.HPart.list <- function(tree, tipLabels = NULL) {
@@ -44,6 +45,8 @@ as.HPart.list <- function(tree, tipLabels = NULL) {
 }
 
 #' @export
+#' @inheritParams TreeTools::as.ClusterTable
+#' @rdname HPart
 as.HPart.phylo <- function(tree, tipLabels = TipLabels(tree)) {
   if (!identical(TipLabels(tree), tipLabels)) {
     tree <- RenumberTips(tree, tipLabels)
@@ -52,6 +55,7 @@ as.HPart.phylo <- function(tree, tipLabels = TipLabels(tree)) {
             class = "HPart")
 }
 
+#' @rdname HPart
 #' @export
 is.HPart <- function(x) {
   inherits(x, "HPart")
@@ -62,6 +66,7 @@ NTip.HPart <- function(phy) {
   length(TipLabels(phy))
 }
 
+#' @rdname HPart
 #' @export
 print.HPart <- function(x, ...) {
   nTip <- NTip(x)
@@ -74,6 +79,7 @@ print.HPart <- function(x, ...) {
   }
 }
 
+#' @rdname HPart
 #' @importFrom ape as.phylo
 #' @export
 as.phylo.HPart <- function(x, ...) {
@@ -85,21 +91,34 @@ as.phylo.HPart <- function(x, ...) {
             order = "cladewise")
 }
 
+#' @rdname HPart
+#' @param x `HPart` object to plot
+#' @param \dots Additional arguments to \code{\link[ape:plot.phylo]{plot.phylo}}
 #' @export
 plot.HPart <- function(x, ...) {
   plot(as.phylo(x), ...)
 }
 
+#' Clone / duplicate an object
+#' `clone()` physically duplicates objects
+#' @param x the object to be cloned
+#' @param \dots additional parameters for methods
+#' @return `clone()` typically returns an object of the same class and "value"
+#' as the input `x`.
 #' @export
 clone <- function(x, ...) UseMethod("clone")
 
+#' @template MRS
+#' @rdname clone
+#' @inheritParams TreeTools::as.ClusterTable
 #' @export
-clone.HPart <- function(x, tipLabel = attr(x, "tip.label")) {
-  structure(clone_hpart(x), tip.label = tipLabel,
+clone.HPart <- function(x, tipLabels = attr(x, "tip.label"), ...) {
+  structure(clone_hpart(x), tip.label = tipLabels,
             class = "HPart")
 }
 
 #' @importFrom TreeTools MatchStrings
+#' @inheritParams TreeTools::RenumberTips
 #' @export
 RenumberTips.HPart <- function(tree, tipOrder) {
   startOrder <- TipLabels(tree)
