@@ -21,6 +21,11 @@ test_that("as.HPart.numeric", {
   
   expect_equal(SelfHMI(hpNum), SelfHMI(hpList))
   expect_equal(HMI(hpNum, hpList), SelfHMI(hpNum))
+  
+  flatP <- as.HPart(list(as.list(1:5), as.list(6:9)))
+  hp9 <- as.HPart(BalancedTree(1:9))
+  expect_equal(HMI(flatP, hp9), 0.99107606)
+  
 })
 
 test_that("HParts are relabelled correctly", {
