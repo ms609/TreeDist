@@ -81,6 +81,9 @@ HierarchicalMutualInfo <- function(tree1, tree2 = NULL, normalize = FALSE) {
   }
 }
 
+#' Hierarchical mutual information
+#' 
+#' An alias of `HierarchicalMutualInfo()`
 #' @keywords internal
 #' @export
 HierarchicalMutualInformation <- HierarchicalMutualInfo
@@ -101,6 +104,9 @@ SelfHMI <- function(tree) {
   HH_xptr(part) / log(2)
 }
 
+#' Self hierarchical mutual information
+#' 
+#' An alias of `SelfHMI()`
 #' @export
 #' @keywords internal
 HH <- SelfHMI
