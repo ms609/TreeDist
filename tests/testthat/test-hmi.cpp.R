@@ -43,6 +43,13 @@ test_that("HMI examples from Perotti et al. 2015", {
   expect_equal(SelfHMI(p1), 1.011 / log(2), tolerance = 0.01)
   expect_equal(SelfHMI(p2), 1.011 / log(2), tolerance = 0.01)
   expect_equal(HMI(p1, p2), log(2) / log(2))
+  expect_equal(HMI(p1, p2, normalize = TRUE), 0.685, tolerance = 0.01)
+})
+
+test_that("HMI is dependent on root position", {
+  bal9 <- BalancedTree(9)
+  expect_lt(HMI(RootTree(bal9, 1), RootTree(bal9, 9), normalize = TRUE), 1)
+  expect_gt(SelfHMI(RootTree(bal9, 1)), SelfHMI(bal9)) # Pectination -> information
 })
 
 test_that("HMI results match hmi.pynb", {
