@@ -136,9 +136,12 @@ double HMI_xptr(SEXP ptr1, SEXP ptr2) {
 // [[Rcpp::export]]
 double HH_xptr(SEXP ptr) {
   Rcpp::XPtr<TreeDist::HPart> hp(ptr);
-  constexpr double eps = std::sqrt(std::numeric_limits<double>::epsilon());
-  const double value = hierarchical_self_info(hp->nodes, hp->root);
-  return std::abs(value) < eps ? 0 : value;
+  if (hp->entropy == std::numeric_limits<double>::min()) {
+    constexpr double eps = std::sqrt(std::numeric_limits<double>::epsilon());
+    const double value = hierarchical_self_info(hp->nodes, hp->root);
+    hp->entropy = std::abs(value) < eps ? 0 : value;
+  }
+  return hp->entropy;
 }
 
 inline void fisher_yates_shuffle(std::vector<int>& v) noexcept {
@@ -149,8 +152,9 @@ inline void fisher_yates_shuffle(std::vector<int>& v) noexcept {
 }
 
 // [[Rcpp::export]]
-Rcpp::NumericVector EHMI_xptr(SEXP hp1_ptr, SEXP hp2_ptr, double tolerance = 0.01,
-                         int minResample = 36) {
+Rcpp::NumericVector EHMI_xptr(SEXP hp1_ptr, SEXP hp2_ptr,
+                              double tolerance = 0.01,
+                              int minResample = 36) {
   
   if (minResample < 2) {
     Rcpp::stop("Must perform at least one resampling");

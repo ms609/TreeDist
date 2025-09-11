@@ -45,7 +45,6 @@ SEXP build_hpart_from_phylo(List phy) {
     node_i.bitset[vector_pos] = 1ULL << bit_pos_in_block;
     node_i.leaf_count = 1;
     node_i.label = i - 1;
-    node_i.calc_entropy();
   }
   
   // Traverse nodes in postorder
@@ -67,7 +66,6 @@ SEXP build_hpart_from_phylo(List phy) {
         node_i.bitset[chunk] |= child_node->bitset[chunk];
       }
     }
-    node_i.calc_entropy();
   }
   
   hpart->root = n_tip + 1;
