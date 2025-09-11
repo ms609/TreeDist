@@ -163,7 +163,9 @@ AHMI <- function(tree1, tree2, Mean = max, precision = 0.01, minResample = 36) {
   hh2 <- HH_xptr(hp2)
   M <- Mean(hh1, hh2)
   
+  num <- hmi - ehmi[[1]]
+  denom <- M - ehmi[[1]]
   # Return:
-  structure((hmi - ehmi[[1]]) / (M - ehmi[[1]]),
+  structure(if (num < sqrt(.Machine$double.eps)) 0 else num / denom,
             sem = .AHMISEM(hmi, M, ehmi[[1]], attr(ehmi, "sem")))
 }
