@@ -10,7 +10,7 @@ test_that("CharMI works with real dataset", {
                   "Lep", "Ter", "Lin")),
     class = "phylo", order = "preorder")
   chPart <- as.HPart(ch)
-  #expect_equal(9 * Ntropy(table(ch)))
+  expect_equal(CharH(ch), length(ch) * Ntropy(table(ch)))
   expect_equal(CharH(bal9),
                NTip(bal9) * log2(NTip(bal9)) # Entropy of identifying each tip
                - 4 * (2 * log2(2)) # But we can't distinguish between cherries

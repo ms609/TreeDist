@@ -104,6 +104,12 @@ SelfHMI <- function(tree) {
   HH_xptr(part) / log(2)
 }
 
+#' @rdname CharMI
+#' @return `CharH` returns the entropy of a tree, in bits, defined as its
+#' capacity to assign leaves to unique clusters.
+#' Because leaves in a cherry are not classed as distinguished, the entropy of
+#' a tree is always less than \eqn{N \log2(N)}.
+#' @export
 CharH <- function(tree) {
   part <- as.HPart(tree)
   H_xptr(part) / log(2)
