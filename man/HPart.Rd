@@ -4,6 +4,7 @@
 \alias{HPart}
 \alias{as.HPart}
 \alias{as.HPart.HPart}
+\alias{as.HPart.default}
 \alias{as.HPart.list}
 \alias{as.HPart.phylo}
 \alias{is.HPart}
@@ -15,6 +16,8 @@
 as.HPart(tree, tipLabels)
 
 \method{as.HPart}{HPart}(tree, tipLabels = NULL)
+
+\method{as.HPart}{default}(tree, tipLabels = NULL)
 
 \method{as.HPart}{list}(tree, tipLabels = NULL)
 
@@ -29,7 +32,8 @@ is.HPart(x)
 \method{plot}{HPart}(x, ...)
 }
 \arguments{
-\item{tree}{hierarchical list-of-lists (leaves = integers 1..n)}
+\item{tree}{An object to convert to an HPart structure, in a supported format
+(see details)}
 
 \item{tipLabels}{Character vector specifying sequence in which to order
 tip labels.}
@@ -39,5 +43,19 @@ tip labels.}
 \item{\dots}{Additional arguments to \code{\link[ape:plot.phylo]{plot.phylo}}}
 }
 \description{
-Hierarchical partition structure
+A structure of class \code{HPart} comprises a pointer to a C++ representation of
+hierarchical partitions, with the attribute \code{tip.label} recording the
+character labels of its leaves.  \code{HPart} objects with identical tip labels
+can be compared using \code{\link[=HierarchicalMutualInfo]{HierarchicalMutualInfo()}}.
+}
+\details{
+An \code{HPart} object may be created from various representations of hierarchical
+structures:
+\itemize{
+\item a tree of class \code{phylo}
+\item A hierarchical list of lists, in which elements are represented by integers
+1\dots{}n
+\item A vector, which will be interpreted as a flat structure
+in which all elements bearing the same label are assigned to the same cluster
+}
 }

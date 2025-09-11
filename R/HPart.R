@@ -1,5 +1,22 @@
 #' Hierarchical partition structure
 #' 
+#' A structure of class `HPart` comprises a pointer to a C++ representation of
+#' hierarchical partitions, with the attribute `tip.label` recording the
+#' character labels of its leaves.  `HPart` objects with identical tip labels
+#' can be compared using [`HierarchicalMutualInfo()`].
+#' 
+#' 
+#' An `HPart` object may be created from various representations of hierarchical
+#' structures:
+#' 
+#' - a tree of class `phylo`
+#' - A hierarchical list of lists, in which elements are represented by integers
+#'   1\dots{}n
+#' - A vector, which will be interpreted as a flat structure
+#'  in which all elements bearing the same label are assigned to the same cluster
+#' 
+#' @param tree An object to convert to an HPart structure, in a supported format
+#' (see details)
 #' @name HPart
 #' @export
 as.HPart <- function(tree, tipLabels) {
@@ -17,7 +34,18 @@ as.HPart.HPart <- function(tree, tipLabels = NULL) {
 }
 
 #' @rdname HPart
-#' @param tree hierarchical list-of-lists (leaves = integers 1..n)
+#' @export
+as.HPart.default <- function(tree, tipLabels = NULL) {
+  if (is.null(dim(tree))) {
+    lapply(unique(tree), function(x) which(tree == x))
+  } else {
+    stop("no applicable method for 'as.HPart' applied to an object of class \"",
+         paste(class(tree), collapse = "\", \""), "\"")
+  }
+}
+
+
+#' @rdname HPart
 #' @export
 as.HPart.list <- function(tree, tipLabels = NULL) {
   # Flatten to verify leaves
