@@ -23,9 +23,10 @@
 #'   \item \eqn{I_{uv}} is the recursive \acronym{HMI} for child pairs
 #' }
 #' 
-#' @param tree1,tree2 Trees of class \code{phylo}, or lists of such trees.
-#' If \code{tree2} is not provided, distances will be calculated between
-#' each pair of trees in the list \code{tree1}.
+#' @param tree,tree1,tree2 An object that can be coerced to an [`HPart`] 
+#' object, or (soon) a list of such objects.
+#' (Not yet implemented: ) If \code{tree2} is not provided, distances will be
+#' calculated between each pair of trees in the list \code{tree1}.
 #' @param normalize If `FALSE`, return the raw \acronym{HMI}, in bits.
 #' If `TRUE`, normalize to range \[0,1\] by dividing by
 #' `max(SelfHMI(tree1), SelfHMI(tree2))`.
@@ -104,6 +105,11 @@ SelfHMI <- function(tree) {
 #' @keywords internal
 HH <- SelfHMI
 
+#' @param tolerance Numeric; Monte Carlo sampling will terminate once the
+#' standard error falls below this value.
+#' @param minResample Integer specifying minimum number of Monte Carlo samples
+#' to conduct.  Avoids early termination when sample size is too small to
+#' reliably estimate the standard error of the mean.
 #' @return `EHMI()` returns the expected \acronym{HMI} against a uniform
 #' shuffling of element labels, estimated by performing Monte Carlo resampling
 #' on the same hierarchical structure until the standard error of the
@@ -127,6 +133,17 @@ EHMI <- function(tree1, tree2, tolerance = 0.01, minResample = 36) {
   abs(deriv) * ehmi_sem
 }
 
+#' @details `AHMI()` calculates the adjusted hierarchical mutual information:
+#' \deqn{\text{AHMI}(t, s) = \dfrac{I(t, s) - \hat{I}(t, s)}{
+#'  \text{mean}(H(t), H(s)) - \hat{I}(t, s)}}
+#' Where:
+#' - \eqn{I(t, s)} is the hierarchical mutual information between `tree1` and
+#'   `tree2`
+#' - \eqn{\hat{I}(t, s)} is the expected \acronym{HMI} between `tree1` and
+#'   `tree2`, estimated by Monte Carlo sampling
+#' - \eqn{H(t), H(s)} is the entropy (self-mutual information) of each tree
+#' @param Mean Function by which to combine the self-information of the 
+#' two input hierarchies, in order to normalize the \acronym{HMI}.
 #' @return `AHMI()` returns the adjusted \acronym{HMI}, normalized such that
 #' zero corresponds to the expected \acronym{HMI} given a random shuffling
 #' of elements on the same hierarchical structure.  The attribute `sem` gives

@@ -19,14 +19,25 @@ EHMI(tree1, tree2, tolerance = 0.01, minResample = 36)
 AHMI(tree1, tree2, Mean = max, tolerance = 0.01, minResample = 36)
 }
 \arguments{
-\item{tree1, tree2}{Trees of class \code{phylo}, or lists of such trees.
-If \code{tree2} is not provided, distances will be calculated between
-each pair of trees in the list \code{tree1}.}
-
 \item{normalize}{If \code{FALSE}, return the raw \acronym{HMI}, in bits.
 If \code{TRUE}, normalize to range [0,1] by dividing by
 \code{max(SelfHMI(tree1), SelfHMI(tree2))}.
 If a function, divide by \code{normalize(SelfHMI(tree1), SelfHMI(tree2))}.}
+
+\item{tree, tree1, tree2}{An object that can be coerced to an \code{\link{HPart}}
+object, or (soon) a list of such objects.
+(Not yet implemented: ) If \code{tree2} is not provided, distances will be
+calculated between each pair of trees in the list \code{tree1}.}
+
+\item{tolerance}{Numeric; Monte Carlo sampling will terminate once the
+standard error falls below this value.}
+
+\item{minResample}{Integer specifying minimum number of Monte Carlo samples
+to conduct.  Avoids early termination when sample size is too small to
+reliably estimate the standard error of the mean.}
+
+\item{Mean}{Function by which to combine the self-information of the
+two input hierarchies, in order to normalize the \acronym{HMI}.}
 }
 \value{
 \code{HierarchicalMutualInfo()} returns a numeric value representing the
@@ -73,6 +84,18 @@ Where:
 \item \eqn{n_{ts}} is the number of common elements between partitions
 \item \eqn{H_{us}, H_{tv}, H_{uv}} are entropy terms from child comparisons
 \item \eqn{I_{uv}} is the recursive \acronym{HMI} for child pairs
+}
+
+\code{AHMI()} calculates the adjusted hierarchical mutual information:
+\deqn{\text{AHMI}(t, s) = \dfrac{I(t, s) - \hat{I}(t, s)}{
+ \text{mean}(H(t), H(s)) - \hat{I}(t, s)}}
+Where:
+\itemize{
+\item \eqn{I(t, s)} is the hierarchical mutual information between \code{tree1} and
+\code{tree2}
+\item \eqn{\hat{I}(t, s)} is the expected \acronym{HMI} between \code{tree1} and
+\code{tree2}, estimated by Monte Carlo sampling
+\item \eqn{H(t), H(s)} is the entropy (self-mutual information) of each tree
 }
 }
 \examples{
