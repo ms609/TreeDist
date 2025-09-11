@@ -37,6 +37,14 @@ test_that("is.HPart() succeeds", {
                                   list(list("t1"), list("t2", "t3")))))
 })
 
+test_that("HMI examples from Perotti et al. 2015", {
+  p1 <- list(list(1, list(2, 3)), list(4, 5, 6))
+  p2 <- list(1, list(2, 3), list(4, 5, 6))
+  expect_equal(SelfHMI(p1), 1.011 / log(2), tolerance = 0.01)
+  expect_equal(SelfHMI(p2), 1.011 / log(2), tolerance = 0.01)
+  expect_equal(HMI(p1, p2), log(2) / log(2))
+})
+
 test_that("HMI results match hmi.pynb", {
   # Non-hierarchical
   p1 <- list(list(19, 18, 5), list(14, 16, 3), list(7), list(10, 8), list(1, 17, 9, 4, 6, 15), list(2, 13, 11), list(12, 0))
