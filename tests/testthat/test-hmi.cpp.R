@@ -12,33 +12,94 @@ test_that("HMI results match hmi.pynb", {
   # Non-hierarchical
   p1 <- list(list(19, 18, 5), list(14, 16, 3), list(7), list(10, 8), list(1, 17, 9, 4, 6, 15), list(2, 13, 11), list(12, 0))
   p2 <- list( list(12, 9), list(4, 2, 0, 7), list(16), list(5), list(8, 3, 1, 14), list(11, 6, 10), list(18, 17, 19), list(13, 15))
-  expect_equal(HMI(p1, p2), 0.9410980357245466)
+  expect_equal(HMI(p1, p2), 0.9410980357245466 / log(2))
   
   
   # Hierarchical
-  hp0 <- list(list(23), list(list(list(list(list(list(16),  list(17)))))), list(list(12),  list(22, 13)), list(5), list(7), list(24), list(list(list(9),  list(list(14, 2))),  list(list(list(list(list(list(27),  list(3))))))), list(20, 29, 18), list(4), list(26, 15), list(list(10),  list(21, 25)), list(11), list(list(0, 28),  list(1),  list(6)), list(19, 8))
+  hp0 <- list(
+    list(23),
+    list(list(list(list(list(list(16), list(17)))))), # Tips above order 2 nodes
+    list(list(12),
+         list(22, 13)),
+    list(5),
+    list(7),
+    list(24),
+    list(list(list(9),
+              list(list(14, 2))),
+         list(list(list(list(list(list(27), list(3))))))),
+    list(20, 29, 18),
+    list(4),
+    list(26, 15),
+    list(list(10),  list(21, 25)),
+    list(11),
+    list(list(0, 28), list(1), list(6)),
+    list(19, 8))
+  
   hp1 <- list(list(23), list(list(list(list(list(16,  17))))), list(list(12),  list(22, 13)), list(5), list(7), list(24), list(list(list(9),  list(list(14, 2))),  list(list(list(list(list(27, 3)))))), list(20, 29, 18), list(4), list(26, 15), list(list(10),  list(21, 25)), list(11), list(list(0, 28),  list(1),  list(6)), list(19, 8))
-  hp1 <- list(list(23), list(16, 17), list(list(12),  list(22, 13)), list(5), list(7), list(24), list(list(list(9),  list(list(14, 2))),  list(27, 3)), list(20, 29, 18), list(4), list(26, 15), list(list(10),  list(21, 25)), list(11), list(list(0, 28),  list(1),  list(6)), list(19, 8))
-  tr1 <- as.phylo(as.HPart(hp1))
-  tr1$tip.label <- 0:29
-  plot(tr1)
-  nodelabels()
   
-  hp2 <- list(list(list(list(0, 25),  list(24)),  list(6),  list(11, 28),  list(8)), list(list(list(19),  list(list(list(list(21),  list(4),  list(list(list(list(list(22, 7))))))))),  list(5)), list(list(3),  list(10, 23, 14)), list(list(27, 1, 16, 13, 18, 26, 9),  list(list(list(list(15),  list(list(list(list(list(list(12, 17)))))))),  list(2, 20)),  list(29)))
+  hp1Collapsed <- list(
+    list(23),
+    list(16, 17),
+    list(list(12),
+         list(22, 13)),
+    list(5),
+    list(7),
+    list(24),
+    list(
+      list(
+        list(9),
+        list(14, 2)),
+      list(27, 3)),
+    list(20, 29, 18),
+    list(4),
+    list(26, 15),
+    list(list(10),
+         list(21, 25)),
+    list(11),
+    list(
+      list(0, 28),
+      list(1),
+      list(6)),
+    list(19, 8)
+  )
   
-  expect_equal(HMI(hp1, hp2), 1.0591260408329395)
+  hp2 <- list(
+    list(
+      list(
+        list(0, 25),
+        list(24)),
+      list(6),
+      list(11, 28),
+      list(8)),
+    list(
+      list(
+        list(19),
+        list(list(list(
+          list(21),
+          list(4),
+          list(list(list(list(list(22, 7))))))))),
+      list(5)),
+    list(list(3),
+         list(10, 23, 14)),
+    list(list(27, 1, 16, 13, 18, 26, 9),
+         list(list(list(list(15),
+                        list(list(list(list(list(list(12, 17)))))))),
+              list(2, 20)),
+         list(29)))
   
-  # expect_equal(HMI(hp0, hp0), 3.0140772805713665)
+  expect_equal(HMI(hp1, hp2), 1.0591260408329395 / log(2))
+  
+  # expect_equal(HMI(hp0, hp0), 3.0140772805713665 / log(2))
   # Note that hp0 contains [[16], [17]] and [[27], [3]], whereas hp1 has
   # [16, 17] and [27, 3].  I haven't yet worked through why this should give a
   # different result.  But I don't think we are likely to encounter this case
   # in our work.
-  expect_equal(HMI(hp1, hp1), 2.921657656496707)
-  expect_equal(HMI(hp2, hp2), 2.606241391162456)
+  expect_equal(HMI(hp1, hp1Collapsed), 2.921657656496707 / log(2))
+  expect_equal(HMI(hp2, hp2), 2.606241391162456 / log(2))
   
   expect_equal(SelfHMI(hp1), HMI(hp1, hp1))
   
-  ehmi <- structure(0.7806, # Calculated from py with tol = 0.001
+  ehmi <- structure(0.7806 / log(2), # Calculated from py with tol = 0.001
                     var = 0.01,
                     sd = 0.1, 
                     sem = 0.008,
@@ -48,8 +109,8 @@ test_that("HMI results match hmi.pynb", {
   attr(ehmi_cpp, "samples") <- NULL # Could vary; no point in testing
   expect_equal(ehmi_cpp, ehmi, tolerance = 0.1)
   
-  pyAHMI <- 0.1245 # Calculated with tol = 0.001
-  expect_equal(AHMI(hp1, hp2)[[1]], pyAHMI, tolerance = 0.1)
+  pyAHMI <- 0.13000 # Calculated with tol = 0.001
+  expect_equal(AHMI(hp1, hp2)[[1]], pyAHMI, tolerance = 0.05)
   
   set.seed(1)
   ahmi1 <- AHMI(hp1, hp2)
@@ -74,7 +135,7 @@ test_that("HMI calculated correctly", {
   star8 <- StarTree(8)
   
   expect_equal(HierarchicalMutualInfo(bal6, pec6, normalize = TRUE),
-               HMI_xptr(hp1, hp2) / max(SelfHMI(bal6), SelfHMI(pec6)))
+               HMI_xptr(hp1, hp2) / max(HH_xptr(hp1), HH_xptr(hp2)))
   
   hp1 <- build_hpart_from_phylo(BalancedTree(8))
   hp2 <- build_hpart_from_phylo(PectinateTree(8))

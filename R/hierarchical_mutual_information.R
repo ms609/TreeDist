@@ -1,36 +1,40 @@
 #' Hierarchical Mutual Information for phylogenetic trees
 #'
 #' Calculate the Hierarchical Mutual Information (\acronym{HMI})
-#' between two phylogenetic trees, following the recursive algorithm from 
-#' \insertCite{Perotti2015,Perotti2020;textual}{TreeDist}.
+#' between two phylogenetic trees, following the recursive algorithm of
+#' \insertCite{Perotti2020;textual}{TreeDist}.
 #' 
 #' @details
-#' This function implements the recursive Hierarchical Mutual Information algorithm
-#' that considers the nested, hierarchical structure of phylogenetic trees when 
-#' computing information measures. The algorithm converts trees to hierarchical 
-#' partitions and computes mutual information recursively using natural logarithm.
+#' `HierarchicalMutualInfo()` computes the hierarchical mutual content of trees
+#' \insertCite{Perotti2015,Perotti2020}{TreeDist}, which accounts for the
+#' non-independence of information represented by nested splits.
 #' 
-#' The recursive \acronym{HMI} formula for internal nodes is:
-#' \deqn{I(t,s) = ln(n_ts) - (H_us + H_tv - H_uv)/n_ts + mean(I_uv)}
+#' `tree` is converted to a set of hierarchical partitions, and the mutual
+#' information (in bits) is computed recursively; the contribution of a node is
+#' given by:
+#' 
+#' \deqn{I(t,s) = \log_2(n_{ts}) - \dfrac{H_{us} + H_{tv} - H_{uv}}{n_{ts}} +
+#' \text{mean}(I_{uv})}
 #' 
 #' Where:
 #' \itemize{
-#'   \item \eqn{n_ts} is the number of common elements between partitions
-#'   \item \eqn{H_us, H_tv, H_uv} are entropy terms from child comparisons 
-#'   \item \eqn{I_uv} is the recursive \acronym{HMI} for child pairs
+#'   \item \eqn{n_{ts}} is the number of common elements between partitions
+#'   \item \eqn{H_{us}, H_{tv}, H_{uv}} are entropy terms from child comparisons 
+#'   \item \eqn{I_{uv}} is the recursive \acronym{HMI} for child pairs
 #' }
 #' 
 #' @param tree1,tree2 Trees of class \code{phylo}, or lists of such trees.
 #' If \code{tree2} is not provided, distances will be calculated between
 #' each pair of trees in the list \code{tree1}.
-#' @param normalize If `FALSE`, do not normalize the result.  If a function,
-#' Normalize the result to range \[0,1\] by dividing by
-#' `Func(SelfHMI(tree1), SelfHMI(tree2))`, where `Func()` = `max()` if 
-#' `normalize == TRUE`, `normalize()` otherwise.
+#' @param normalize If `FALSE`, return the raw \acronym{HMI}, in bits.
+#' If `TRUE`, normalize to range \[0,1\] by dividing by
+#' `max(SelfHMI(tree1), SelfHMI(tree2))`.
+#' If a function, divide by `normalize(SelfHMI(tree1), SelfHMI(tree2))`.
 #' 
-#' @return A numeric value representing the Hierarchical Mutual Information
-#' between the input trees. Higher values indicate more shared 
-#' hierarchical structure.
+#' @return `HierarchicalMutualInfo()` returns a numeric value representing the
+#' Hierarchical Mutual Information between the input trees, in bits,
+#' normalized as specified.
+#' Higher values indicate more shared hierarchical structure.
 #' 
 #' @examples
 #' library("TreeTools", quietly = TRUE)
@@ -62,7 +66,7 @@ HierarchicalMutualInfo <- function(tree1, tree2 = NULL, normalize = FALSE) {
     hp2 <- as.HPart(tree2, tree1)
     hmi <- HMI_xptr(hp1, hp2)
     if (isFALSE(normalize)) {
-      hmi
+      hmi / log(2)
     } else {
       if (isTRUE(normalize)) {
         normalize <- max
@@ -70,19 +74,19 @@ HierarchicalMutualInfo <- function(tree1, tree2 = NULL, normalize = FALSE) {
       if (!is.function(normalize)) {
         stop("`normalize` must be logical, or a function")
       }
-      denom <- normalize(SelfHMI(hp1), SelfHMI(hp2))
+      denom <- normalize(HH_xptr(hp1), HH_xptr(hp2))
       hmi / denom
     }
   }
 }
 
-#' @rdname HierarchicalMutualInfo
+#' @keywords internal
 #' @export
-HMI <- HierarchicalMutualInfo
+HierarchicalMutualInformation <- HierarchicalMutualInfo
 
 #' @rdname HierarchicalMutualInfo
 #' @export
-HierarchicalMutualInformation <- HierarchicalMutualInfo
+HMI <- HierarchicalMutualInfo
 
 #' @return `SelfHMI()` returns the hierarchical mutual information of a tree
 #' compared with itself, i.e. its hierarchical entropy (\acronym{HH}).
@@ -93,8 +97,12 @@ HierarchicalMutualInformation <- HierarchicalMutualInfo
 #' @export
 SelfHMI <- function(tree) {
   part <- as.HPart(tree)
-  HME_xptr(part)
+  HH_xptr(part) / log(2)
 }
+
+#' @export
+#' @keywords internal
+HH <- SelfHMI
 
 #' @return `EHMI()` returns the expected \acronym{HMI} against a uniform
 #' shuffling of element labels, estimated by performing Monte Carlo resampling
@@ -111,7 +119,7 @@ SelfHMI <- function(tree) {
 #' @export
 EHMI <- function(tree1, tree2, tolerance = 0.01, minResample = 36) {
   EHMI_xptr(as.HPart(tree1), as.HPart(tree2), as.numeric(tolerance),
-                as.integer(minResample))
+                as.integer(minResample)) / log(2)
 }
 
 .AHMISEM <- function(hmi, M, ehmi, ehmi_sem) {
@@ -134,8 +142,8 @@ AHMI <- function(tree1, tree2, Mean = max, tolerance = 0.01, minResample = 36) {
   
   ehmi <- EHMI_xptr(hp1, hp2, as.numeric(tolerance), as.integer(minResample))
   hmi <- HMI_xptr(hp1, hp2)
-  hh1 <- HME_xptr(hp1)
-  hh2 <- HME_xptr(hp2)
+  hh1 <- HH_xptr(hp1)
+  hh2 <- HH_xptr(hp2)
   M <- Mean(hh1, hh2)
   
   # Return:

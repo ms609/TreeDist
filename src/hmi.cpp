@@ -134,7 +134,7 @@ double HMI_xptr(SEXP ptr1, SEXP ptr2) {
 }
 
 // [[Rcpp::export]]
-double HME_xptr(SEXP ptr) {
+double HH_xptr(SEXP ptr) {
   Rcpp::XPtr<TreeDist::HPart> hp(ptr);
   return hierarchical_self_info(hp->nodes, hp->root);
 }

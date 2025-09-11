@@ -3,7 +3,6 @@
 \name{HierarchicalMutualInfo}
 \alias{HierarchicalMutualInfo}
 \alias{HMI}
-\alias{HierarchicalMutualInformation}
 \alias{SelfHMI}
 \alias{EHMI}
 \alias{AHMI}
@@ -12,8 +11,6 @@
 HierarchicalMutualInfo(tree1, tree2 = NULL, normalize = FALSE)
 
 HMI(tree1, tree2 = NULL, normalize = FALSE)
-
-HierarchicalMutualInformation(tree1, tree2 = NULL, normalize = FALSE)
 
 SelfHMI(tree)
 
@@ -26,15 +23,16 @@ AHMI(tree1, tree2, Mean = max, tolerance = 0.01, minResample = 36)
 If \code{tree2} is not provided, distances will be calculated between
 each pair of trees in the list \code{tree1}.}
 
-\item{normalize}{If \code{FALSE}, do not normalize the result.  If a function,
-Normalize the result to range [0,1] by dividing by
-\code{Func(SelfHMI(tree1), SelfHMI(tree2))}, where \code{Func()} = \code{max()} if
-\code{normalize == TRUE}, \code{normalize()} otherwise.}
+\item{normalize}{If \code{FALSE}, return the raw \acronym{HMI}, in bits.
+If \code{TRUE}, normalize to range [0,1] by dividing by
+\code{max(SelfHMI(tree1), SelfHMI(tree2))}.
+If a function, divide by \code{normalize(SelfHMI(tree1), SelfHMI(tree2))}.}
 }
 \value{
-A numeric value representing the Hierarchical Mutual Information
-between the input trees. Higher values indicate more shared
-hierarchical structure.
+\code{HierarchicalMutualInfo()} returns a numeric value representing the
+Hierarchical Mutual Information between the input trees, in bits,
+normalized as specified.
+Higher values indicate more shared hierarchical structure.
 
 \code{SelfHMI()} returns the hierarchical mutual information of a tree
 compared with itself, i.e. its hierarchical entropy (\acronym{HH}).
@@ -55,23 +53,26 @@ the standard error of the estimate.
 }
 \description{
 Calculate the Hierarchical Mutual Information (\acronym{HMI})
-between two phylogenetic trees, following the recursive algorithm from
-\insertCite{Perotti2015,Perotti2020;textual}{TreeDist}.
+between two phylogenetic trees, following the recursive algorithm of
+\insertCite{Perotti2020;textual}{TreeDist}.
 }
 \details{
-This function implements the recursive Hierarchical Mutual Information algorithm
-that considers the nested, hierarchical structure of phylogenetic trees when
-computing information measures. The algorithm converts trees to hierarchical
-partitions and computes mutual information recursively using natural logarithm.
+\code{HierarchicalMutualInfo()} computes the hierarchical mutual content of trees
+\insertCite{Perotti2015,Perotti2020}{TreeDist}, which accounts for the
+non-independence of information represented by nested splits.
 
-The recursive \acronym{HMI} formula for internal nodes is:
-\deqn{I(t,s) = ln(n_ts) - (H_us + H_tv - H_uv)/n_ts + mean(I_uv)}
+\code{tree} is converted to a set of hierarchical partitions, and the mutual
+information (in bits) is computed recursively; the contribution of a node is
+given by:
+
+\deqn{I(t,s) = \log_2(n_{ts}) - \dfrac{H_{us} + H_{tv} - H_{uv}}{n_{ts}} +
+\text{mean}(I_{uv})}
 
 Where:
 \itemize{
-\item \eqn{n_ts} is the number of common elements between partitions
-\item \eqn{H_us, H_tv, H_uv} are entropy terms from child comparisons
-\item \eqn{I_uv} is the recursive \acronym{HMI} for child pairs
+\item \eqn{n_{ts}} is the number of common elements between partitions
+\item \eqn{H_{us}, H_{tv}, H_{uv}} are entropy terms from child comparisons
+\item \eqn{I_{uv}} is the recursive \acronym{HMI} for child pairs
 }
 }
 \examples{
