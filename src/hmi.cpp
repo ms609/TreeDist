@@ -5,10 +5,6 @@ using namespace Rcpp;
 
 namespace TreeDist {
 
-static inline double x_log_x(size_t x) {
-  return x > 1 ? x * std::log(x) : 0.0;
-}
-
 static inline size_t intersection_size(const std::vector<uint64_t>& A,
                                        const std::vector<uint64_t>& B) {
   size_t count = 0;
@@ -78,7 +74,6 @@ std::pair<size_t, double> hierarchical_mutual_info(
   return {n_ts, I_ts};
 }
 
-
 double hierarchical_self_info(const std::vector<TreeDist::HNode>& nodes, size_t idx) {
   const auto& n = nodes[idx];
   
@@ -118,6 +113,32 @@ double hierarchical_self_info(const std::vector<TreeDist::HNode>& nodes, size_t 
   return local_I_ts + mean_I_ts;
 }
 
+double tree_entropy(const std::vector<TreeDist::HNode>& nodes, size_t idx) {
+  const auto& nd = nodes[idx];
+  
+  if (nd.all_kids_leaves) return 0; // As we don't distinguish these leaves
+  // We might expect to return nd.x_log_x: but consider the star tree,
+  // whose information content we expect to be zero.
+  // We don't think of the star tree as assigning its leaves to labelled
+  // size-1 clusters.
+  
+  double h = nd.x_log_x;
+  
+  for (auto child : nd.children) {
+    
+    const double child_h = nodes[child].x_log_x;
+    h -= child_h; // contribution to this node's entropy
+    
+    if (child_h > 0) {
+      // Propagate in postorder
+      const double child_contribuition = tree_entropy(nodes, child);
+      h += child_contribuition;
+    }
+  }
+  
+  return h;
+}
+
 
 
 } // namespace TreeDist
@@ -136,10 +157,22 @@ double HMI_xptr(SEXP ptr1, SEXP ptr2) {
 // [[Rcpp::export]]
 double HH_xptr(SEXP ptr) {
   Rcpp::XPtr<TreeDist::HPart> hp(ptr);
-  if (hp->entropy == std::numeric_limits<double>::min()) {
+  if (hp->hier_entropy == std::numeric_limits<double>::min()) {
     // When requring C++26, update to constexpr
     const double eps = std::sqrt(std::numeric_limits<double>::epsilon());
     const double value = hierarchical_self_info(hp->nodes, hp->root);
+    hp->hier_entropy = std::abs(value) < eps ? 0 : value;
+  }
+  return hp->hier_entropy;
+}
+
+// [[Rcpp::export]]
+double H_xptr(SEXP ptr) {
+  Rcpp::XPtr<TreeDist::HPart> hp(ptr);
+  if (hp->entropy == std::numeric_limits<double>::min()) {
+    // When requring C++26, update to constexpr
+    const double eps = std::sqrt(std::numeric_limits<double>::epsilon());
+    const double value = tree_entropy(hp->nodes, hp->root);
     hp->entropy = std::abs(value) < eps ? 0 : value;
   }
   return hp->entropy;

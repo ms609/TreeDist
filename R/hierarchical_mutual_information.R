@@ -101,6 +101,11 @@ SelfHMI <- function(tree) {
   HH_xptr(part) / log(2)
 }
 
+CharH <- function(tree) {
+  part <- as.HPart(tree)
+  H_xptr(part) / log(2)
+}
+
 #' @export
 #' @keywords internal
 HH <- SelfHMI

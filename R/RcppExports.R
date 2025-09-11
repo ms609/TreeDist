@@ -21,6 +21,10 @@ HH_xptr <- function(ptr) {
     .Call(`_TreeDist_HH_xptr`, ptr)
 }
 
+H_xptr <- function(ptr) {
+    .Call(`_TreeDist_H_xptr`, ptr)
+}
+
 EHMI_xptr <- function(hp1_ptr, hp2_ptr, tolerance = 0.01, minResample = 36L) {
     .Call(`_TreeDist_EHMI_xptr`, hp1_ptr, hp2_ptr, tolerance, minResample)
 }

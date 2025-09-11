@@ -12,6 +12,7 @@ test_that("HMI works with real dataset", { # TODO move to appropriate position
                   "Lep", "Ter", "Lin")),
     class = "phylo", order = "preorder")
   chPart <- as.HPart(ch)
+  expect_equal(SelfHMI(chPart), Ntropy(table(ch)))
   
   # Build HPart from tree, then relabel
   trPart <- as.HPart(tr)

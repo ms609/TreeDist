@@ -66,6 +66,7 @@ SEXP build_hpart_from_phylo(List phy) {
         node_i.bitset[chunk] |= child_node->bitset[chunk];
       }
     }
+    node_i.x_log_x = TreeDist::x_log_x(node_i.leaf_count);
   }
   
   hpart->root = n_tip + 1;
@@ -93,11 +94,13 @@ SEXP build_hpart_from_list(RObject tree, const int n_tip) {
   hpart->nodes.resize(vec_size);
   
   const size_t n_block = (n_tip + 63) / 64;
+  const double n_tip_recip = 1 / static_cast<double>(n_tip);
   
   // Initialize leaves and internal nodes
   for (size_t i = 1; i < vec_size; ++i) {
     TreeDist::HNode& n = hpart->nodes[i];
     n.n_tip = n_tip;
+    n.n_tip_reciprocal = n_tip_recip;
     n.bitset.assign(n_block, 0ULL);
     n.leaf_count = 0;
     n.all_kids_leaves = true;
@@ -166,6 +169,8 @@ size_t build_node_from_list(const RObject& node,
       n.leaf_count += nodes[child_idx].leaf_count;
       if (nodes[child_idx].leaf_count > 1) n.all_kids_leaves = false;
     }
+    
+    n.x_log_x = TreeDist::x_log_x(n.leaf_count);
     
     return my_idx;
   }
