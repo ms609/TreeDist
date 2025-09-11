@@ -136,7 +136,9 @@ double HMI_xptr(SEXP ptr1, SEXP ptr2) {
 // [[Rcpp::export]]
 double HH_xptr(SEXP ptr) {
   Rcpp::XPtr<TreeDist::HPart> hp(ptr);
-  return hierarchical_self_info(hp->nodes, hp->root);
+  constexpr double eps = std::sqrt(std::numeric_limits<double>::epsilon());
+  const double value = hierarchical_self_info(hp->nodes, hp->root);
+  return std::abs(value) < eps ? 0 : value;
 }
 
 inline void fisher_yates_shuffle(std::vector<int>& v) noexcept {
