@@ -45,6 +45,99 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// HMI_xptr
+double HMI_xptr(SEXP ptr1, SEXP ptr2);
+RcppExport SEXP _TreeDist_HMI_xptr(SEXP ptr1SEXP, SEXP ptr2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr1(ptr1SEXP);
+    Rcpp::traits::input_parameter< SEXP >::type ptr2(ptr2SEXP);
+    rcpp_result_gen = Rcpp::wrap(HMI_xptr(ptr1, ptr2));
+    return rcpp_result_gen;
+END_RCPP
+}
+// HH_xptr
+double HH_xptr(SEXP ptr);
+RcppExport SEXP _TreeDist_HH_xptr(SEXP ptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type ptr(ptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(HH_xptr(ptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// EHMI_xptr
+Rcpp::NumericVector EHMI_xptr(SEXP hp1_ptr, SEXP hp2_ptr, double tolerance, int minResample);
+RcppExport SEXP _TreeDist_EHMI_xptr(SEXP hp1_ptrSEXP, SEXP hp2_ptrSEXP, SEXP toleranceSEXP, SEXP minResampleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type hp1_ptr(hp1_ptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type hp2_ptr(hp2_ptrSEXP);
+    Rcpp::traits::input_parameter< double >::type tolerance(toleranceSEXP);
+    Rcpp::traits::input_parameter< int >::type minResample(minResampleSEXP);
+    rcpp_result_gen = Rcpp::wrap(EHMI_xptr(hp1_ptr, hp2_ptr, tolerance, minResample));
+    return rcpp_result_gen;
+END_RCPP
+}
+// build_hpart_from_phylo
+SEXP build_hpart_from_phylo(List phy);
+RcppExport SEXP _TreeDist_build_hpart_from_phylo(SEXP phySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< List >::type phy(phySEXP);
+    rcpp_result_gen = Rcpp::wrap(build_hpart_from_phylo(phy));
+    return rcpp_result_gen;
+END_RCPP
+}
+// build_hpart_from_list
+SEXP build_hpart_from_list(RObject tree, const int n_tip);
+RcppExport SEXP _TreeDist_build_hpart_from_list(SEXP treeSEXP, SEXP n_tipSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< RObject >::type tree(treeSEXP);
+    Rcpp::traits::input_parameter< const int >::type n_tip(n_tipSEXP);
+    rcpp_result_gen = Rcpp::wrap(build_hpart_from_list(tree, n_tip));
+    return rcpp_result_gen;
+END_RCPP
+}
+// hpart_to_edge
+Rcpp::IntegerMatrix hpart_to_edge(SEXP hpart_xptr);
+RcppExport SEXP _TreeDist_hpart_to_edge(SEXP hpart_xptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type hpart_xptr(hpart_xptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(hpart_to_edge(hpart_xptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// clone_hpart
+SEXP clone_hpart(SEXP hpart_ptr);
+RcppExport SEXP _TreeDist_clone_hpart(SEXP hpart_ptrSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type hpart_ptr(hpart_ptrSEXP);
+    rcpp_result_gen = Rcpp::wrap(clone_hpart(hpart_ptr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// relabel_hpart
+void relabel_hpart(SEXP hpart_ptr, const std::vector<int>& map);
+RcppExport SEXP _TreeDist_relabel_hpart(SEXP hpart_ptrSEXP, SEXP mapSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type hpart_ptr(hpart_ptrSEXP);
+    Rcpp::traits::input_parameter< const std::vector<int>& >::type map(mapSEXP);
+    relabel_hpart(hpart_ptr, map);
+    return R_NilValue;
+END_RCPP
+}
 // entropy_int
 double entropy_int(const Rcpp::IntegerVector& n);
 RcppExport SEXP _TreeDist_entropy_int(SEXP nSEXP) {
@@ -289,6 +382,14 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_COMCLUST", (DL_FUNC) &_TreeDist_COMCLUST, 1},
     {"_TreeDist_consensus_info", (DL_FUNC) &_TreeDist_consensus_info, 3},
     {"_TreeDist_robinson_foulds_all_pairs", (DL_FUNC) &_TreeDist_robinson_foulds_all_pairs, 1},
+    {"_TreeDist_HMI_xptr", (DL_FUNC) &_TreeDist_HMI_xptr, 2},
+    {"_TreeDist_HH_xptr", (DL_FUNC) &_TreeDist_HH_xptr, 1},
+    {"_TreeDist_EHMI_xptr", (DL_FUNC) &_TreeDist_EHMI_xptr, 4},
+    {"_TreeDist_build_hpart_from_phylo", (DL_FUNC) &_TreeDist_build_hpart_from_phylo, 1},
+    {"_TreeDist_build_hpart_from_list", (DL_FUNC) &_TreeDist_build_hpart_from_list, 2},
+    {"_TreeDist_hpart_to_edge", (DL_FUNC) &_TreeDist_hpart_to_edge, 1},
+    {"_TreeDist_clone_hpart", (DL_FUNC) &_TreeDist_clone_hpart, 1},
+    {"_TreeDist_relabel_hpart", (DL_FUNC) &_TreeDist_relabel_hpart, 2},
     {"_TreeDist_entropy_int", (DL_FUNC) &_TreeDist_entropy_int, 1},
     {"_TreeDist_lapjv", (DL_FUNC) &_TreeDist_lapjv, 2},
     {"_TreeDist_cpp_mast", (DL_FUNC) &_TreeDist_cpp_mast, 3},

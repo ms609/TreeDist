@@ -9,6 +9,7 @@
 CONTRIBUTING
 README.md
 ^\.github
+^\.lintr
 cran-comments.md
 man-roxygen
 data-raw

@@ -18,6 +18,7 @@ src/*.dll
 *.utf8.md
 /* *.Rd */
 revdep/
+inst/__pycache__*
 vignettes/*.html
 vignettes/*.pdf
 vignettes/*_files
