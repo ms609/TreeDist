@@ -105,26 +105,26 @@ SelfHMI <- function(tree) {
 #' @keywords internal
 HH <- SelfHMI
 
-#' @param tolerance Numeric; Monte Carlo sampling will terminate once the
-#' standard error falls below this value.
+#' @param precision Numeric; Monte Carlo sampling will terminate once the
+#' relative standard error falls below this value.
 #' @param minResample Integer specifying minimum number of Monte Carlo samples
 #' to conduct.  Avoids early termination when sample size is too small to
 #' reliably estimate the standard error of the mean.
 #' @return `EHMI()` returns the expected \acronym{HMI} against a uniform
 #' shuffling of element labels, estimated by performing Monte Carlo resampling
-#' on the same hierarchical structure until the standard error of the
-#' estimate falls below `tolerance`.
+#' on the same hierarchical structure until the relative standard error of the
+#' estimate falls below `precision`.
 #' The attributes of the returned object list the variance (`var`),
 #' standard deviation (`sd`), standard error of the mean (`sem`) and 
 #' relative error (`relativeError`) of the estimate, and the number of Monte
 #' Carlo samples used to obtain it (`samples`).
 #' @examples
 #' # Expected mutual info for this pair of hierarchies
-#' EHMI(tree1, tree2, tolerance = 0.1)
+#' EHMI(tree1, tree2, precision = 0.1)
 #' @rdname HierarchicalMutualInfo
 #' @export
-EHMI <- function(tree1, tree2, tolerance = 0.01, minResample = 36) {
-  EHMI_xptr(as.HPart(tree1), as.HPart(tree2), as.numeric(tolerance),
+EHMI <- function(tree1, tree2, precision = 0.01, minResample = 36) {
+  EHMI_xptr(as.HPart(tree1), as.HPart(tree2), as.numeric(precision),
                 as.integer(minResample)) / log(2)
 }
 
@@ -150,14 +150,14 @@ EHMI <- function(tree1, tree2, tolerance = 0.01, minResample = 36) {
 #' the standard error of the estimate.
 #' @examples
 #' # The adjusted HMI normalizes against this expectation
-#' AHMI(tree1, tree2, tolerance = 0.1)
+#' AHMI(tree1, tree2, precision = 0.1)
 #' @rdname HierarchicalMutualInfo
 #' @export
-AHMI <- function(tree1, tree2, Mean = max, tolerance = 0.01, minResample = 36) {
+AHMI <- function(tree1, tree2, Mean = max, precision = 0.01, minResample = 36) {
   hp1 <- as.HPart(tree1)
   hp2 <- as.HPart(tree2, hp1)
   
-  ehmi <- EHMI_xptr(hp1, hp2, as.numeric(tolerance), as.integer(minResample))
+  ehmi <- EHMI_xptr(hp1, hp2, as.numeric(precision), as.integer(minResample))
   hmi <- HMI_xptr(hp1, hp2)
   hh1 <- HH_xptr(hp1)
   hh2 <- HH_xptr(hp2)

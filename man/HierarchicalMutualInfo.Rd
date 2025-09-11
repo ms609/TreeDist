@@ -14,9 +14,9 @@ HMI(tree1, tree2 = NULL, normalize = FALSE)
 
 SelfHMI(tree)
 
-EHMI(tree1, tree2, tolerance = 0.01, minResample = 36)
+EHMI(tree1, tree2, precision = 0.01, minResample = 36)
 
-AHMI(tree1, tree2, Mean = max, tolerance = 0.01, minResample = 36)
+AHMI(tree1, tree2, Mean = max, precision = 0.01, minResample = 36)
 }
 \arguments{
 \item{normalize}{If \code{FALSE}, return the raw \acronym{HMI}, in bits.
@@ -29,8 +29,8 @@ object, or (soon) a list of such objects.
 (Not yet implemented: ) If \code{tree2} is not provided, distances will be
 calculated between each pair of trees in the list \code{tree1}.}
 
-\item{tolerance}{Numeric; Monte Carlo sampling will terminate once the
-standard error falls below this value.}
+\item{precision}{Numeric; Monte Carlo sampling will terminate once the
+relative standard error falls below this value.}
 
 \item{minResample}{Integer specifying minimum number of Monte Carlo samples
 to conduct.  Avoids early termination when sample size is too small to
@@ -50,8 +50,8 @@ compared with itself, i.e. its hierarchical entropy (\acronym{HH}).
 
 \code{EHMI()} returns the expected \acronym{HMI} against a uniform
 shuffling of element labels, estimated by performing Monte Carlo resampling
-on the same hierarchical structure until the standard error of the
-estimate falls below \code{tolerance}.
+on the same hierarchical structure until the relative standard error of the
+estimate falls below \code{precision}.
 The attributes of the returned object list the variance (\code{var}),
 standard deviation (\code{sd}), standard error of the mean (\code{sem}) and
 relative error (\code{relativeError}) of the estimate, and the number of Monte
@@ -113,9 +113,9 @@ HierarchicalMutualInfo(tree1, tree2, normalize = mean)
 # Normalized HMI above is equivalent to:
 HMI(tree1, tree2) / mean(SelfHMI(tree1), SelfHMI(tree2))
 # Expected mutual info for this pair of hierarchies
-EHMI(tree1, tree2, tolerance = 0.1)
+EHMI(tree1, tree2, precision = 0.1)
 # The adjusted HMI normalizes against this expectation
-AHMI(tree1, tree2, tolerance = 0.1)
+AHMI(tree1, tree2, precision = 0.1)
 }
 \references{
 \insertAllCited{}
