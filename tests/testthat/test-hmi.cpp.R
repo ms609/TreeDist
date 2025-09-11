@@ -16,76 +16,30 @@ test_that("HMI results match hmi.pynb", {
   
   
   # Hierarchical
-  hp0 <- list(
-    list(23),
+  hp0 <- list(list(23),
     list(list(list(list(list(list(16), list(17)))))), # Tips above order 2 nodes
-    list(list(12),
-         list(22, 13)),
-    list(5),
-    list(7),
-    list(24),
-    list(list(list(9),
+    list(list(12), list(22, 13)), list(5), list(7), list(24), list(list(list(9),
               list(list(14, 2))),
-         list(list(list(list(list(list(27), list(3))))))),
-    list(20, 29, 18),
-    list(4),
-    list(26, 15),
-    list(list(10),  list(21, 25)),
-    list(11),
-    list(list(0, 28), list(1), list(6)),
-    list(19, 8))
+              list(list(list(list(list(list(27), list(3))))))),
+    list(20, 29, 18), list(4), list(26, 15), list(list(10), list(21, 25)),
+    list(11), list(list(0, 28), list(1), list(6)), list(19, 8))
   
   hp1 <- list(list(23), list(list(list(list(list(16,  17))))), list(list(12),  list(22, 13)), list(5), list(7), list(24), list(list(list(9),  list(list(14, 2))),  list(list(list(list(list(27, 3)))))), list(20, 29, 18), list(4), list(26, 15), list(list(10),  list(21, 25)), list(11), list(list(0, 28),  list(1),  list(6)), list(19, 8))
   
   hp1Collapsed <- list(
-    list(23),
-    list(16, 17),
-    list(list(12),
-         list(22, 13)),
-    list(5),
-    list(7),
-    list(24),
-    list(
-      list(
-        list(9),
-        list(14, 2)),
-      list(27, 3)),
-    list(20, 29, 18),
-    list(4),
-    list(26, 15),
-    list(list(10),
-         list(21, 25)),
-    list(11),
-    list(
-      list(0, 28),
-      list(1),
-      list(6)),
-    list(19, 8)
-  )
+    list(23), list(16, 17), list(list(12), list(22, 13)), list(5), list(7),
+    list(24), list(list(list(9), list(14, 2)), list(27, 3)), list(20, 29, 18),
+        list(4), list(26, 15), list(list(10), list(21, 25)), list(11),
+    list(list(0, 28), list(1), list(6)), list(19, 8))
   
   hp2 <- list(
-    list(
-      list(
-        list(0, 25),
-        list(24)),
-      list(6),
-      list(11, 28),
-      list(8)),
-    list(
-      list(
-        list(19),
-        list(list(list(
-          list(21),
-          list(4),
-          list(list(list(list(list(22, 7))))))))),
-      list(5)),
-    list(list(3),
-         list(10, 23, 14)),
+    list(list(list(0, 25), list(24)), list(6), list(11, 28), list(8)),
+    list(list(list(19), list(list(list(list(21), list(4),
+                                       list(list(list(list(list(22, 7))))))))),
+         list(5)), list(list(3), list(10, 23, 14)),
     list(list(27, 1, 16, 13, 18, 26, 9),
-         list(list(list(list(15),
-                        list(list(list(list(list(list(12, 17)))))))),
-              list(2, 20)),
-         list(29)))
+         list(list(list(list(15), list(list(list(list(list(list(12, 17)))))))),
+              list(2, 20)), list(29)))
   
   expect_equal(HMI(hp1, hp2), 1.0591260408329395 / log(2))
   

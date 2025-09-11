@@ -137,7 +137,8 @@ double HMI_xptr(SEXP ptr1, SEXP ptr2) {
 double HH_xptr(SEXP ptr) {
   Rcpp::XPtr<TreeDist::HPart> hp(ptr);
   if (hp->entropy == std::numeric_limits<double>::min()) {
-    constexpr double eps = std::sqrt(std::numeric_limits<double>::epsilon());
+    // When requring C++26, update to constexpr
+    const double eps = std::sqrt(std::numeric_limits<double>::epsilon());
     const double value = hierarchical_self_info(hp->nodes, hp->root);
     hp->entropy = std::abs(value) < eps ? 0 : value;
   }
