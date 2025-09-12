@@ -92,15 +92,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // EHMI_xptr
-Rcpp::NumericVector EHMI_xptr(SEXP hp1_ptr, SEXP hp2_ptr, double tolerance, int minResample);
+Rcpp::NumericVector EHMI_xptr(const SEXP hp1_ptr, const SEXP hp2_ptr, const double tolerance, const int minResample);
 RcppExport SEXP _TreeDist_EHMI_xptr(SEXP hp1_ptrSEXP, SEXP hp2_ptrSEXP, SEXP toleranceSEXP, SEXP minResampleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type hp1_ptr(hp1_ptrSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type hp2_ptr(hp2_ptrSEXP);
-    Rcpp::traits::input_parameter< double >::type tolerance(toleranceSEXP);
-    Rcpp::traits::input_parameter< int >::type minResample(minResampleSEXP);
+    Rcpp::traits::input_parameter< const SEXP >::type hp1_ptr(hp1_ptrSEXP);
+    Rcpp::traits::input_parameter< const SEXP >::type hp2_ptr(hp2_ptrSEXP);
+    Rcpp::traits::input_parameter< const double >::type tolerance(toleranceSEXP);
+    Rcpp::traits::input_parameter< const int >::type minResample(minResampleSEXP);
     rcpp_result_gen = Rcpp::wrap(EHMI_xptr(hp1_ptr, hp2_ptr, tolerance, minResample));
     return rcpp_result_gen;
 END_RCPP
