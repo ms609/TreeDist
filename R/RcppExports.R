@@ -21,10 +21,24 @@ HH_xptr <- function(ptr) {
     .Call(`_TreeDist_HH_xptr`, ptr)
 }
 
+#' Directly calculate entropy from an HPart pointer
+#' 
+#' Intended for developer use only; no safeguards against bad input.
+#' May crash R if used incorrectly.
+#' 
+#' @param ptr,char_ptr,tree_ptr Pointers to HPart objects for which chosen
+#' entropy value should be calculated.
+#' @inheritParams CharAMI
+#' 
+#' @template MRS
+#' @keywords internal
+#' @export
 H_xptr <- function(ptr) {
     .Call(`_TreeDist_H_xptr`, ptr)
 }
 
+#' @rdname H_xptr
+#' @export
 JH_xptr <- function(char_ptr, tree_ptr) {
     .Call(`_TreeDist_JH_xptr`, char_ptr, tree_ptr)
 }
@@ -33,6 +47,8 @@ EHMI_xptr <- function(hp1_ptr, hp2_ptr, tolerance = 0.01, minResample = 36L) {
     .Call(`_TreeDist_EHMI_xptr`, hp1_ptr, hp2_ptr, tolerance, minResample)
 }
 
+#' @rdname H_xptr
+#' @export
 EJH_xptr <- function(char_ptr, tree_ptr, tolerance = 0.01, minResample = 36L) {
     .Call(`_TreeDist_EJH_xptr`, char_ptr, tree_ptr, tolerance, minResample)
 }

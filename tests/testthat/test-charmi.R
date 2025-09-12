@@ -19,6 +19,30 @@ test_that("CharMI works with simple trees", {
   expect_equal(CharH(TreeTools::StarTree(10)), 0)
 })
 
+test_that("CharAMI arithmetic checks out", {
+  flatP <- as.HPart(list(as.list(1:5), as.list(6:9)))
+  hp9 <- as.HPart(TreeTools::BalancedTree(1:9))
+  
+  mi <- CharMI(flatP, hp9)
+  expect_equal(mi, 0.99107606 * 9)
+  
+  h1 <- CharH(flatP)
+  expect_equal(h1, 0.99107606 * 9)
+  
+  h2 <- CharH(hp9)
+  expect_gt(h2, h1)
+  
+  emi <- CharEMI(flatP, hp9)[[1]]
+  expect_lt(emi, h1)
+  
+  ami <- CharAMI(flatP, hp9, max, precision = 0.005)
+  expect_equal(ami[[1]], (mi - emi) / (max(h1, h2) - emi), tolerance = 2 * 0.01)
+  
+  ami <- CharAMI(flatP, hp9)
+  expect_equal((mi - emi) / (h1 - emi), 1)
+  expect_equal(ami, structure(1, sem = 0))
+})
+
 test_that("CharMI works with real dataset", {
   ch <- c(1L, 2L, 2L, 2L, 2L, 2L, 1L, 1L, 1L, 1L, 1L)
   tr <- structure(list(
@@ -74,8 +98,8 @@ test_that("AHMI succeeds with CharMI", {
   expect_equal(CharH(ch) + CharH(tr) - CharEJH(ch, tr, precision = 0.001)[[1]],
                CharEMI(ch, tr, precision = 0.001)[[1]], tolerance = 0.02)
   
-  expect_lt(CharAMI(ch, tr), CharAMI(ch, tr, min))
+  expect_lt(CharAMI(ch, tr, max), CharAMI(ch, tr, min))
   expect_equal(CharAMI(c(1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1), tr, min)[[1]], 0)
-  expect_equal(CharAMI(c(1, 1, rep(0, 9)), tr, min)[[1]], 1)
+  expect_equal(CharAMI(c(1, 1, rep(0, 9)), tr)[[1]], 1)
   expect_equal(CharAMI(c(rep(TRUE, 6), rep(FALSE, 5)), tr, min)[[1]], 1)
 })

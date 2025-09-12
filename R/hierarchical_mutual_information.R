@@ -168,7 +168,8 @@ CharEMI <- function(char, tree, precision = 0.01, minResample = 36) {
 #' and a tree, in bits, when state labels are shuffled at random.
 #' @inheritParams AHMI
 #' @export
-CharAMI <- function(char, tree, Mean = max, precision = 0.01, minResample = 36) {
+CharAMI <- function(char, tree, Mean = function(charH, treeH) charH,
+                    precision = 0.01, minResample = 36) {
   tree <- as.HPart(tree)
   char <- as.HPart(char, tree)
   
@@ -220,7 +221,8 @@ EHMI <- function(tree1, tree2, precision = 0.01, minResample = 36) {
 
 .AHMISEM <- function(hmi, M, ehmi, ehmi_sem) {
   deriv <- (hmi - M) / (M - ehmi)^2
-  abs(deriv) * ehmi_sem
+  ret <- abs(deriv) * ehmi_sem
+  if (ret < sqrt(.Machine$double.eps)) 0 else ret
 }
 
 #' @details `AHMI()` calculates the adjusted hierarchical mutual information:

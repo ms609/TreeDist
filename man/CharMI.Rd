@@ -19,7 +19,13 @@ CharEJH(char, tree, precision = 0.01, minResample = 36)
 
 CharEMI(char, tree, precision = 0.01, minResample = 36)
 
-CharAMI(char, tree, Mean = max, precision = 0.01, minResample = 36)
+CharAMI(
+  char,
+  tree,
+  Mean = function(charH, treeH) charH,
+  precision = 0.01,
+  minResample = 36
+)
 }
 \arguments{
 \item{tree}{Phylogenetic tree in a format that can be coerced to an \code{\link{HPart}}

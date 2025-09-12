@@ -256,6 +256,18 @@ double HH_xptr(SEXP ptr) {
   return hp->hier_entropy;
 }
 
+//' Directly calculate entropy from an HPart pointer
+//' 
+//' Intended for developer use only; no safeguards against bad input.
+//' May crash R if used incorrectly.
+//' 
+//' @param ptr,char_ptr,tree_ptr Pointers to HPart objects for which chosen
+//' entropy value should be calculated.
+//' @inheritParams CharAMI
+//' 
+//' @template MRS
+//' @keywords internal
+//' @export
 // [[Rcpp::export]]
 double H_xptr(SEXP ptr) {
   Rcpp::XPtr<TreeDist::HPart> hp(ptr);
@@ -268,6 +280,8 @@ double H_xptr(SEXP ptr) {
   return hp->entropy;
 }
 
+//' @rdname H_xptr
+//' @export
 // [[Rcpp::export]]
 double JH_xptr(SEXP char_ptr, SEXP tree_ptr) {
   Rcpp::XPtr<TreeDist::HPart> ch(char_ptr);
@@ -364,6 +378,8 @@ Rcpp::NumericVector EHMI_xptr(SEXP hp1_ptr, SEXP hp2_ptr,
   return result;
 }
 
+//' @rdname H_xptr
+//' @export
 // [[Rcpp::export]]
 Rcpp::NumericVector EJH_xptr(SEXP char_ptr, SEXP tree_ptr,
                              double tolerance = 0.01,
