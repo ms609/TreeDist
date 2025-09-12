@@ -133,7 +133,7 @@ double character_mutual_info(
       // 1b. Continue sum of node's joint information
       h -= x_log_x(n);
     }
-    Rcpp::Rcout << "    Cherry " << idx << ", h = " << (h / std::log(2)) << ".\n";
+    // Rcpp::Rcout << "    Cherry " << idx << ", h = " << (h / std::log(2)) << ".\n";
     return h;
   }
   
@@ -142,27 +142,27 @@ double character_mutual_info(
   double h = nd.x_log_x;
   const auto nd_bits = nd.bitset;
 
-  Rcpp::Rcout << "\n Node " << idx << ": initialize H to " << nd.leaf_count <<
-    " log2(" << nd.leaf_count << ") = " << (h / std::log(2)) << ". \n";
+  // Rcpp::Rcout << "\n Node " << idx << ": initialize H to " << nd.leaf_count <<
+  //   " log2(" << nd.leaf_count << ") = " << (h / std::log(2)) << ". \n";
   
   for (auto child : nd.children) {
     const auto cld_bits = nodes[child].bitset;
-    Rcpp::Rcout << " < Before child " << child << ", h = " << (h / std::log(2)) << ".\n";
+    // Rcpp::Rcout << " < Before child " << child << ", h = " << (h / std::log(2)) << ".\n";
     for (auto chr_bits : bitsets) {
       // 1a. Populate cell in confusion matrix
       const size_t n = intersection_size(cld_bits, chr_bits);
-      Rcpp::Rcout << "     Child " << child << ": Intersection of " <<
-        " (" << intersection_size(cld_bits, cld_bits) << ", " << 
-        intersection_size(chr_bits, chr_bits) << ") = " << n << ".\n";
+      // Rcpp::Rcout << "     Child " << child << ": Intersection of " <<
+      //   " (" << intersection_size(cld_bits, cld_bits) << ", " << 
+      //   intersection_size(chr_bits, chr_bits) << ") = " << n << ".\n";
           
       // 1b. Continue sum of node's joint information
       h -= x_log_x(n);
     }
-    Rcpp::Rcout << " > After child " << child << ", h = " << (h / std::log(2)) << ".\n";
+    // Rcpp::Rcout << " > After child " << child << ", h = " << (h / std::log(2)) << ".\n";
   }
   
-  Rcpp::Rcout << " Unconditioned joint H(char, " << idx << ") = " <<
-    (h / std::log(2)) << " bits.\n\n";
+  // Rcpp::Rcout << " Unconditioned joint H(char, " << idx << ") = " <<
+  //   (h / std::log(2)) << " bits.\n\n";
   
   
   
@@ -176,10 +176,10 @@ double character_mutual_info(
       h -= nodes[child].x_log_x;
       for (auto chr_bits : bitsets) {
         const size_t n = intersection_size(cld_bits, chr_bits);
-        Rcpp::Rcout << "     Child " << child << ": Intersection of " <<
-          " (" << intersection_size(cld_bits, cld_bits) << ", " << 
-            intersection_size(chr_bits, chr_bits) << ") = " << n << 
-              "; reducing H by " << x_log_x(n) << ".\n";
+        // Rcpp::Rcout << "     Child " << child << ": Intersection of " <<
+        //   " (" << intersection_size(cld_bits, cld_bits) << ", " << 
+        //     intersection_size(chr_bits, chr_bits) << ") = " << n << 
+        //       "; reducing H by " << x_log_x(n) << ".\n";
         h += x_log_x(n);
       }
       
@@ -188,13 +188,13 @@ double character_mutual_info(
       // 
       // Propagate in postorder
       const double child_contribuition = character_mutual_info(nodes, child, bitsets);
-      Rcpp::Rcout << " Adding subtree contribution from " << child << " = " <<
-        (child_contribuition / std::log(2))<< "\n";
+      // Rcpp::Rcout << " Adding subtree contribution from " << child << " = " <<
+      //   (child_contribuition / std::log(2))<< "\n";
       h += child_contribuition;
     }
   }
   
-  Rcpp::Rcout << " >>> Final h below " << idx << " is " << (h / std::log(2)) << ".\n\n";
+  // Rcpp::Rcout << " >>> Final h below " << idx << " is " << (h / std::log(2)) << ".\n\n";
   return h;
 }
 

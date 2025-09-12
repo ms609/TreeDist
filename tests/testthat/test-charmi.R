@@ -13,9 +13,6 @@ test_that("CharMI works with simple trees", {
 })
 
 test_that("CharMI works with real dataset", {
-  
-  
-  
   ch <- c(1L, 2L, 2L, 2L, 2L, 2L, 1L, 1L, 1L, 1L, 1L)
   tr <- structure(list(
     edge = structure(c(12L, 12L, 13L, 14L, 15L, 16L, 16L, 17L, 17L, 18L, 18L, 
@@ -54,4 +51,3 @@ test_that("CharMI works with real dataset", {
   expect_equal(HMI(trPart, treePart), SelfHMI(treePart))
   expect_equal(HMI(chPart, trPart), HMI(chPart, treePart))
 })
-
