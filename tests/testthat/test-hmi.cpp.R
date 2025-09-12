@@ -111,7 +111,7 @@ test_that("HMI results match hmi.pynb", {
   expect_equal(ehmi_cpp, ehmi, tolerance = 0.1)
   
   pyAHMI <- 0.13000 # Calculated with tol = 0.001
-  expect_equal(AHMI(hp1, hp2)[[1]], pyAHMI, tolerance = 0.05)
+  expect_equal(AHMI(hp1, hp2, precision = 0.004)[[1]], pyAHMI, tolerance = 0.05)
   
   set.seed(1)
   ahmi1 <- AHMI(hp1, hp2)
