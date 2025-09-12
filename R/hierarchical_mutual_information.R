@@ -64,12 +64,7 @@ HierarchicalMutualInfo <- function(tree1, tree2 = NULL, normalize = FALSE) {
       1
     }
   } else {
-    if (!identical(TipLabels(hp1), TipLabels(tree2))) {
-      hp2 <- as.HPart(tree2, hp1)
-    } else {
-      # Avoid unnecessary copy
-      hp2 <- as.HPart(tree2)
-    }
+    hp2 <- .MakeHPartMatch(tree2, hp1)
     hmi <- HMI_xptr(hp1, hp2)
     if (isFALSE(normalize)) {
       hmi / log(2)
@@ -132,11 +127,7 @@ CharH <- function(tree) {
 #' @export
 CharMI <- function(char, tree) {
   tree <- as.HPart(tree)
-  if (!identical(TipLabels(char), TipLabels(tree))) {
-    char <- as.HPart(char, tree)
-  } else {
-    char <- as.HPart(char)
-  }
+  char <- .MakeHPartMatch(char, tree)
   (H_xptr(char) + H_xptr(tree) - JH_xptr(char, tree)) / log(2)
 }
 
@@ -146,12 +137,16 @@ CharMI <- function(char, tree) {
 #' @export
 CharJH <- function(char, tree) {
   tree <- as.HPart(tree)
-  if (!identical(TipLabels(char), TipLabels(tree))) {
-    char <- as.HPart(char, tree)
-  } else {
-    char <- as.HPart(char)
-  }
+  char <- .MakeHPartMatch(char, tree)
   JH_xptr(char, tree) / log(2)
+}
+
+.MakeHPartMatch <- function(x, target) {
+  if (!identical(as.character(TipLabels(x)), as.character(TipLabels(target)))) {
+    as.HPart(x, target)
+  } else {
+    as.HPart(x)
+  }
 }
 
 #' @rdname CharMI
@@ -160,11 +155,7 @@ CharJH <- function(char, tree) {
 #' @export
 CharEJH <- function(char, tree, precision = 0.01, minResample = 36) {
   tree <- as.HPart(tree)
-  if (!identical(TipLabels(char), TipLabels(tree))) {
-    char <- as.HPart(char, tree)
-  } else {
-    char <- as.HPart(char)
-  }
+  char <- .MakeHPartMatch(char, tree)
   EJH_xptr(char, tree, as.numeric(precision), as.integer(minResample)) / log(2)
 }
 
@@ -175,11 +166,7 @@ CharEJH <- function(char, tree, precision = 0.01, minResample = 36) {
 #' @export
 CharEMI <- function(char, tree, precision = 0.01, minResample = 36) {
   tree <- as.HPart(tree)
-  if (!identical(TipLabels(char), TipLabels(tree))) {
-    char <- as.HPart(char, tree)
-  } else {
-    char <- as.HPart(char)
-  }
+  char <- .MakeHPartMatch(char, tree)
   (H_xptr(char) + H_xptr(tree) - 
       EJH_xptr(char, tree, as.numeric(precision), as.integer(minResample))
     ) / log(2)
@@ -192,11 +179,7 @@ CharEMI <- function(char, tree, precision = 0.01, minResample = 36) {
 CharAMI <- function(char, tree, Mean = function(charH, treeH) charH,
                     precision = 0.01, minResample = 36) {
   tree <- as.HPart(tree)
-  if (!identical(TipLabels(char), TipLabels(tree))) {
-    char <- as.HPart(char, tree)
-  } else {
-    char <- as.HPart(char)
-  }
+  char <- .MakeHPartMatch(char, tree)
   
   eh12 <- EJH_xptr(char, tree, as.numeric(precision), as.integer(minResample))
   h12 <- JH_xptr(char, tree)
@@ -277,12 +260,7 @@ EHMI <- function(tree1, tree2, precision = 0.01, minResample = 36) {
 #' @export
 AHMI <- function(tree1, tree2, Mean = max, precision = 0.01, minResample = 36) {
   hp1 <- as.HPart(tree1)
-  if (!identical(TipLabels(hp1), TipLabels(tree2))) {
-    hp2 <- as.HPart(tree2, hp1)
-  } else {
-    # Avoid unnecessary copy
-    hp2 <- as.HPart(tree2)
-  }
+  hp2 <- .MakeHPartMatch(tree2, hp1)
   
   ehmi <- EHMI_xptr(hp1, hp2, as.numeric(precision), as.integer(minResample))
   hmi <- HMI_xptr(hp1, hp2)
