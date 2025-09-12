@@ -127,8 +127,6 @@ double character_mutual_info(
     double h = nd.x_log_x;
     for (const uint64_t* chr_bits : bitsets) {
       const size_t n = intersection_size(nd_bits, chr_bits, n_block);
-      
-      // 1b. Continue sum of node's joint information
       h -= x_log_x(n);
     }
     return h;
@@ -140,7 +138,6 @@ double character_mutual_info(
   
   for (const auto& child : nd.children) {
     const auto& cld_bits = nodes[child].bitset;
-    // Rcpp::Rcout << " < Before child " << child << ", h = " << (h / std::log(2)) << ".\n";
     for (const uint64_t* chr_bits : bitsets) {
       // 1a. Populate cell in confusion matrix
       const size_t n = intersection_size(cld_bits, chr_bits, n_block);
@@ -148,14 +145,8 @@ double character_mutual_info(
       // 1b. Continue sum of node's joint information
       h -= x_log_x(n);
     }
-  }
-  
-  
-  
-  for (const auto& child : nd.children) { // TODO reintegrate into single loop
+
     // 2. Load the contributions to tree entropy from child nodes, in postorder.
-    const auto& cld_bits = nodes[child].bitset;
-    
     if (nodes[child].leaf_count > 1) { // TODO: can we revert to child_h > 0?
       
       // Remove joint info we've already counted in the parent:
