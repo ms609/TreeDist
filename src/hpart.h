@@ -37,6 +37,8 @@ struct HNode {
   std::vector<size_t> children;   // indices of children in HPart.nodes
   int label = -1;                 // for tips; counting from zero
   uint64_t* bitset;               // pointer into leaf set pool
+                                  // Faster on the heap than the stack.
+  
   int leaf_count = 0;
   double x_log_x = 0;             // where x = leaf_count
   bool all_kids_leaves = true;
