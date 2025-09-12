@@ -140,7 +140,6 @@ double character_mutual_info(
   // Joint info = n_tips * sum [x_log_x(confusion_matrix_tips / n_tips)]
   //            = x_log_x(n_tips) - sum [x_log_x(confusion_matrix_tips)]
   double h = nd.x_log_x;
-  const auto& nd_bits = nd.bitset;
 
   // Rcpp::Rcout << "\n Node " << idx << ": initialize H to " << nd.leaf_count <<
   //   " log2(" << nd.leaf_count << ") = " << (h / std::log(2)) << ". \n";
@@ -166,7 +165,7 @@ double character_mutual_info(
   
   
   
-  for (const auto& child:nd.children) { // TODO reintegrate into single loop
+  for (const auto& child : nd.children) { // TODO reintegrate into single loop
     // 2. Load the contributions to tree entropy from child nodes, in postorder.
     const auto& cld_bits = nodes[child].bitset;
     
