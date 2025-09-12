@@ -220,9 +220,14 @@ EHMI <- function(tree1, tree2, precision = 0.01, minResample = 36) {
 }
 
 .AHMISEM <- function(hmi, M, ehmi, ehmi_sem) {
-  deriv <- (hmi - M) / (M - ehmi)^2
-  ret <- abs(deriv) * ehmi_sem
-  if (ret < sqrt(.Machine$double.eps)) 0 else ret
+  eps <- sqrt(.Machine[["double.eps"]])
+  if (ehmi_sem > eps) {
+    deriv <- (hmi - M) / (M - ehmi)^2
+    ret <- abs(deriv) * ehmi_sem
+    if (ret < eps) 0 else ret
+  } else {
+    0
+  }
 }
 
 #' @details `AHMI()` calculates the adjusted hierarchical mutual information:
