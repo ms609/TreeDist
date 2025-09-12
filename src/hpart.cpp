@@ -52,7 +52,7 @@ SEXP build_hpart_from_phylo(List phy) {
     auto &node_i = hpart->nodes[i];
     node_i.children.reserve(children[i].size());
     
-    for (size_t child_id : children[i]) {
+    for (const size_t child_id : children[i]) {
       const auto child_node = &hpart->nodes[child_id];
       
       node_i.children.push_back(child_id);
@@ -211,7 +211,7 @@ Rcpp::IntegerMatrix hpart_to_edge(SEXP hpart_xptr) {
   
   for (size_t i = n_tip + 1; i < hp->nodes.size(); ++i) {
     int parent_id = node_ids[i];
-    for (size_t cidx : hp->nodes[i].children) {
+    for (const size_t cidx : hp->nodes[i].children) {
       int child_id = node_ids[cidx];
       edges.emplace_back(parent_id, child_id);
     }
