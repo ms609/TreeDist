@@ -32,7 +32,7 @@ std::pair<size_t, double> hierarchical_mutual_info(
     return {intersection_size(Ut.bitset, Us.bitset, Us.n_block), 0.0};
   }
   
-  const size_t Us_size = Us.children.size();
+  const size_t Us_size = Us.n_children;
   
   size_t n_ts = 0;
   double H_uv = 0.0;
@@ -41,7 +41,8 @@ std::pair<size_t, double> hierarchical_mutual_info(
   std::vector<size_t> n_tv(Us_size, 0);
   double mean_I_ts = 0.0;
   
-  for (const size_t u_child_idx : Ut.children) {
+  for (size_t u = 0; u < Ut.n_children; ++u) {
+    size_t u_child_idx = Ut.children[u];
     size_t n_us = 0;
     
     for (size_t v = 0; v < Us_size; ++v) {
@@ -83,7 +84,7 @@ double hierarchical_self_info(const std::vector<TreeDist::HNode>& nodes, size_t 
   double H_uv = 0.0;
   double H_us = 0.0;
   double H_tv = 0.0;
-  const size_t n_children = n.children.size();
+  const size_t n_children = n.n_children;
   std::vector<size_t> n_tv(n_children, 0);
   double mean_I_ts = 0.0;
   
@@ -137,7 +138,8 @@ double character_mutual_info(
   //            = x_log_x(n_tips) - sum [x_log_x(confusion_matrix_tips)]
   double h = nd.x_log_x;
   
-  for (const auto& child : nd.children) {
+  for (size_t i = 0; i < nd.n_children; ++i) {
+    size_t child = nd.children[i];
     const double child_h = nodes[child].x_log_x;
     if (child_h > 0) {
       h -= child_h;
@@ -171,7 +173,8 @@ double tree_entropy(const std::vector<TreeDist::HNode>& nodes,
   
   double h = nd.x_log_x;
   
-  for (const auto& child : nd.children) {
+  for (size_t i = 0; i < nd.n_children; ++i) {
+    size_t child = nd.children[i];
     
     // 1. Continue the summation of this node's entropy
     const double child_h = nodes[child].x_log_x;
@@ -249,11 +252,14 @@ double JH_xptr(SEXP char_ptr, SEXP tree_ptr) {
       "; tree: " << tr->nodes[tr->root].n_tip << "|\n";
     Rcpp::stop("Tree and character must describe the same leaves");
   }
+  
   auto ch_root = ch->nodes[ch->root];
   std::vector<const uint64_t*> bitsets;
-  bitsets.reserve(ch_root.children.size());
+  bitsets.reserve(ch_root.n_children);
   bool warned = false;
-  for (const auto& state : ch_root.children) {
+  
+  for (size_t i = 0; i < ch_root.n_children; ++i) {
+    size_t state = ch_root.children[i];
     bitsets.push_back(ch->nodes[state].bitset);
     if (!warned && !ch->nodes[state].all_kids_leaves) {
       Rcpp::warning("Character is a tree; only first level of hierarchy used");

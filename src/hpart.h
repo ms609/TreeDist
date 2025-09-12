@@ -34,7 +34,9 @@ static inline double x_log_x(size_t x) {
 }
 
 struct HNode {
-  std::vector<size_t> children;   // indices of children in HPart.nodes
+  size_t* children = nullptr;     // pointer to first child in HPart.child_store
+                                  // stores child's index in HPart.nodes
+  size_t n_children;
   int label = -1;                 // for tips; counting from zero
   uint64_t* bitset;               // pointer into leaf set pool
                                   // Faster on the heap than the stack.
@@ -50,6 +52,8 @@ struct HNode {
 struct HPart {
   std::vector<HNode> nodes;
   std::vector<uint64_t> bitset_pool;
+  
+  std::vector<size_t> child_store;
   size_t n_tip;
   size_t n_block;
   
@@ -79,6 +83,7 @@ struct HPart {
   HPart(const HPart& other) {
     // Copy pool and metadata
     bitset_pool = other.bitset_pool;
+    child_store = other.child_store;
     nodes = other.nodes;
     n_tip = other.n_tip;
     n_block = other.n_block;
@@ -98,6 +103,7 @@ struct HPart {
     if (this != &other) {
       nodes = other.nodes;
       bitset_pool = other.bitset_pool;
+      child_store = other.child_store;
       n_tip = other.n_tip;
       n_block = other.n_block;
       

@@ -12,7 +12,7 @@ void recompute_bitsets_postorder(TreeDist::HPart &hpart,
   uint64_t* node_bits = node.bitset;
   const size_t n_block = hpart.n_block;
   
-  if (node.children.empty()) {
+  if (node.n_children == 0) {
     // Leaf node
     if (node.leaf_count != 1) {
       Rcpp::stop("Leaf node has leaf_count != 1");
@@ -36,7 +36,7 @@ void recompute_bitsets_postorder(TreeDist::HPart &hpart,
     node.all_kids_leaves = (node.leaf_count == 1);
     
     // Remaining children
-    for (size_t ci = 1; ci < node.children.size(); ++ci) {
+    for (size_t ci = 1; ci < node.n_children; ++ci) {
       size_t child_idx = node.children[ci];
       recompute_bitsets_postorder(hpart, child_idx, mapping);
       auto &child = hpart.nodes[child_idx];
