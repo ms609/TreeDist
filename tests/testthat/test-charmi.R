@@ -1,15 +1,22 @@
 test_that("CharMI works with simple trees", {
-  
+  Bal <- TreeTools::BalancedTree
   expect_equal(CharJH(c(2, 2, 1, 1, 1), c(1, 1, 2, 2, 2)),
                5 * Ntropy(2, 3))
   
   expect_equal(CharJH(c(2, 2, 1, 1, 1), c(1, 1, 1, 2, 2)),
                5 * Ntropy(2, 1, 2))
   
-  expect_equal(CharJH(c(2, 2, 2, 1, 1), BalancedTree(5)),
-               CharH(BalancedTree(5)))
-  expect_equal(CharJH(c(2, 2, 1, 1, 1), BalancedTree(5)),
-               CharH(BalancedTree(5)))
+  expect_equal(CharJH(c(2, 2, 2, 1, 1), Bal(5)),
+               CharH(Bal(5)))
+  expect_equal(CharJH(c(2, 2, 1, 1, 1), Bal(5)),
+               CharH(Bal(5)))
+  
+  bal9 <- Bal(9)
+  expect_equal(CharH(bal9),
+               NTip(bal9) * log2(NTip(bal9)) # Entropy of identifying each tip
+               - 4 * (2 * log2(2)) # But we can't distinguish between cherries
+  )
+  expect_equal(CharH(TreeTools::StarTree(10)), 0)
 })
 
 test_that("CharMI works with real dataset", {
@@ -25,12 +32,9 @@ test_that("CharMI works with real dataset", {
     class = "phylo", order = "preorder")
   chPart <- as.HPart(ch)
   expect_equal(CharH(ch), length(ch) * Ntropy(table(ch)))
-  expect_equal(CharH(bal9),
-               NTip(bal9) * log2(NTip(bal9)) # Entropy of identifying each tip
-               - 4 * (2 * log2(2)) # But we can't distinguish between cherries
-               )
-  expect_equal(CharH(tr), NTip(tr) * log2(NTip(tr)) - (3 * 2))
-  expect_equal(CharH(StarTree(10)), 0)
+  
+  nTip <- TreeTools::NTip(tr)
+  expect_equal(CharH(tr), nTip * log2(nTip) - (3 * 2)) # Three cherries.
   
   expect_lt(CharJH(ch, tr), CharH(ch) + CharH(tr))
   expect_gte(CharJH(ch, tr), CharH(tr))
