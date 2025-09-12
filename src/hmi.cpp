@@ -7,14 +7,12 @@ namespace TreeDist {
 
 static inline size_t intersection_size(const std::vector<uint64_t>& A,
                                        const std::vector<uint64_t>& B) {
-  size_t count = 0;
-  ASSERT(A.size() == B.size());
-  size_t size = A.size();
-  
-  for (size_t i = 0; i < size; ++i) {
-    count += __builtin_popcountll(A[i] & B[i]);
-  }
-  return count;
+  return std::transform_reduce(
+    A.begin(), A.end(), B.begin(),
+    size_t{0},      // initial value
+    std::plus<>{},  // reduction operation
+    [](uint64_t a, uint64_t b) { return __builtin_popcountll(a & b); }  // transform
+  );
 }
 
 // Hierarchical Mutual Information core
