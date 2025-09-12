@@ -41,7 +41,7 @@ std::pair<size_t, double> hierarchical_mutual_info(
   std::vector<size_t> n_tv(Us_size, 0);
   double mean_I_ts = 0.0;
   
-  for (size_t u_child_idx : Ut.children) {
+  for (const size_t u_child_idx : Ut.children) {
     size_t n_us = 0;
     
     for (size_t v = 0; v < Us_size; ++v) {
@@ -59,7 +59,7 @@ std::pair<size_t, double> hierarchical_mutual_info(
     H_us += x_log_x(n_us);
   }
   
-  for (auto _n_tv : n_tv) {
+  for (const auto _n_tv : n_tv) {
     H_tv += x_log_x(_n_tv);
   }
   
@@ -115,16 +115,16 @@ double hierarchical_self_info(const std::vector<TreeDist::HNode>& nodes, size_t 
 
 double character_mutual_info(
     const std::vector<TreeDist::HNode>& nodes, const size_t idx,
-    const std::vector<std::vector<uint64_t>> bitsets
+    const std::vector<std::vector<uint64_t>>& bitsets
 ) {
   
   const auto& nd = nodes[idx];
   if (nd.leaf_count < 2) return 0; // Exit early
   
   if (nd.all_kids_leaves) {
-    const auto nd_bits = nd.bitset;
+    const auto& nd_bits = nd.bitset;
     double h = nd.x_log_x;
-    for (auto chr_bits : bitsets) {
+    for (const auto& chr_bits : bitsets) {
       const size_t n = intersection_size(nd_bits, chr_bits);
       // Rcpp::Rcout << " Cherry " << idx << ": Intersection of " <<
       //   " (" << intersection_size(nd_bits, nd_bits) << ", " << 
@@ -140,15 +140,15 @@ double character_mutual_info(
   // Joint info = n_tips * sum [x_log_x(confusion_matrix_tips / n_tips)]
   //            = x_log_x(n_tips) - sum [x_log_x(confusion_matrix_tips)]
   double h = nd.x_log_x;
-  const auto nd_bits = nd.bitset;
+  const auto& nd_bits = nd.bitset;
 
   // Rcpp::Rcout << "\n Node " << idx << ": initialize H to " << nd.leaf_count <<
   //   " log2(" << nd.leaf_count << ") = " << (h / std::log(2)) << ". \n";
   
-  for (auto child : nd.children) {
-    const auto cld_bits = nodes[child].bitset;
+  for (const auto& child : nd.children) {
+    const auto& cld_bits = nodes[child].bitset;
     // Rcpp::Rcout << " < Before child " << child << ", h = " << (h / std::log(2)) << ".\n";
-    for (auto chr_bits : bitsets) {
+    for (const auto& chr_bits : bitsets) {
       // 1a. Populate cell in confusion matrix
       const size_t n = intersection_size(cld_bits, chr_bits);
       // Rcpp::Rcout << "     Child " << child << ": Intersection of " <<
@@ -166,15 +166,15 @@ double character_mutual_info(
   
   
   
-  for (auto child:nd.children) { // TODO reintegrate into single loop
+  for (const auto& child:nd.children) { // TODO reintegrate into single loop
     // 2. Load the contributions to tree entropy from child nodes, in postorder.
-    const auto cld_bits = nodes[child].bitset;
+    const auto& cld_bits = nodes[child].bitset;
     
     if (nodes[child].leaf_count > 1) { // TODO: can we revert to child_h > 0?
       
       // Remove joint info we've already counted in the parent:
       h -= nodes[child].x_log_x;
-      for (auto chr_bits : bitsets) {
+      for (const auto& chr_bits : bitsets) {
         const size_t n = intersection_size(cld_bits, chr_bits);
         // Rcpp::Rcout << "     Child " << child << ": Intersection of " <<
         //   " (" << intersection_size(cld_bits, cld_bits) << ", " << 
@@ -213,7 +213,7 @@ double tree_entropy(const std::vector<TreeDist::HNode>& nodes,
   
   double h = nd.x_log_x;
   
-  for (auto child : nd.children) {
+  for (const auto& child : nd.children) {
     
     // 1. Continue the summation of this node's entropy
     const double child_h = nodes[child].x_log_x;
@@ -293,7 +293,7 @@ double JH_xptr(SEXP char_ptr, SEXP tree_ptr) {
   auto ch_root = ch->nodes[ch->root];
   bitsets.reserve(ch_root.children.size());
   bool warned = false;
-  for (auto state : ch_root.children) {
+  for (const auto& state : ch_root.children) {
     bitsets.push_back(ch->nodes[state].bitset);
     if (!warned && !ch->nodes[state].all_kids_leaves) {
       Rcpp::warning("Character is a tree; only first level of hierarchy used");
