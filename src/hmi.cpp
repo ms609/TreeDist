@@ -122,7 +122,6 @@ double character_mutual_info(
   if (nd.leaf_count < 2) return 0; // Exit early
   
   if (nd.all_kids_leaves) {
-    return 0;
     const auto nd_bits = nd.bitset;
     double h = nd.x_log_x;
     for (auto chr_bits : bitsets) {
