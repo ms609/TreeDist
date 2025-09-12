@@ -127,23 +127,16 @@ double character_mutual_info(
     double h = nd.x_log_x;
     for (const uint64_t* chr_bits : bitsets) {
       const size_t n = intersection_size(nd_bits, chr_bits, n_block);
-      // Rcpp::Rcout << " Cherry " << idx << ": Intersection of " <<
-      //   " (" << intersection_size(nd_bits, nd_bits) << ", " << 
-      //     intersection_size(chr_bits, chr_bits) << ") = " << n << ".\n";
       
       // 1b. Continue sum of node's joint information
       h -= x_log_x(n);
     }
-    // Rcpp::Rcout << "    Cherry " << idx << ", h = " << (h / std::log(2)) << ".\n";
     return h;
   }
   
   // Joint info = n_tips * sum [x_log_x(confusion_matrix_tips / n_tips)]
   //            = x_log_x(n_tips) - sum [x_log_x(confusion_matrix_tips)]
   double h = nd.x_log_x;
-
-  // Rcpp::Rcout << "\n Node " << idx << ": initialize H to " << nd.leaf_count <<
-  //   " log2(" << nd.leaf_count << ") = " << (h / std::log(2)) << ". \n";
   
   for (const auto& child : nd.children) {
     const auto& cld_bits = nodes[child].bitset;
@@ -151,18 +144,11 @@ double character_mutual_info(
     for (const uint64_t* chr_bits : bitsets) {
       // 1a. Populate cell in confusion matrix
       const size_t n = intersection_size(cld_bits, chr_bits, n_block);
-      // Rcpp::Rcout << "     Child " << child << ": Intersection of " <<
-      //   " (" << intersection_size(cld_bits, cld_bits) << ", " << 
-      //   intersection_size(chr_bits, chr_bits) << ") = " << n << ".\n";
           
       // 1b. Continue sum of node's joint information
       h -= x_log_x(n);
     }
-    // Rcpp::Rcout << " > After child " << child << ", h = " << (h / std::log(2)) << ".\n";
   }
-  
-  // Rcpp::Rcout << " Unconditioned joint H(char, " << idx << ") = " <<
-  //   (h / std::log(2)) << " bits.\n\n";
   
   
   
@@ -176,10 +162,6 @@ double character_mutual_info(
       h -= nodes[child].x_log_x;
       for (const uint64_t* chr_bits : bitsets) {
         const size_t n = intersection_size(cld_bits, chr_bits, n_block);
-        // Rcpp::Rcout << "     Child " << child << ": Intersection of " <<
-        //   " (" << intersection_size(cld_bits, cld_bits) << ", " << 
-        //     intersection_size(chr_bits, chr_bits) << ") = " << n << 
-        //       "; reducing H by " << x_log_x(n) << ".\n";
         h += x_log_x(n);
       }
       
@@ -188,13 +170,10 @@ double character_mutual_info(
       // 
       // Propagate in postorder
       const double child_contribuition = character_mutual_info(nodes, child, bitsets);
-      // Rcpp::Rcout << " Adding subtree contribution from " << child << " = " <<
-      //   (child_contribuition / std::log(2))<< "\n";
       h += child_contribuition;
     }
   }
   
-  // Rcpp::Rcout << " >>> Final h below " << idx << " is " << (h / std::log(2)) << ".\n\n";
   return h;
 }
 
