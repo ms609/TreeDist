@@ -1,4 +1,21 @@
+test_that("CharMI works with simple trees", {
+  
+  expect_equal(CharJH(c(2, 2, 1, 1, 1), c(1, 1, 2, 2, 2)),
+               5 * Ntropy(2, 3))
+  
+  expect_equal(CharJH(c(2, 2, 1, 1, 1), c(1, 1, 1, 2, 2)),
+               5 * Ntropy(2, 1, 2))
+  
+  expect_equal(CharJH(c(2, 2, 1, 1, 1), BalancedTree(5)),
+               CharH(BalancedTree(5)))
+  expect_equal(CharJH(c(2, 2, 1, 1, 1), BalancedTree(5)),
+               CharH(BalancedTree(5)))
+})
+
 test_that("CharMI works with real dataset", {
+  
+  
+  
   ch <- c(1L, 2L, 2L, 2L, 2L, 2L, 1L, 1L, 1L, 1L, 1L)
   tr <- structure(list(
     edge = structure(c(12L, 12L, 13L, 14L, 15L, 16L, 16L, 17L, 17L, 18L, 18L, 
@@ -17,6 +34,9 @@ test_that("CharMI works with real dataset", {
                )
   expect_equal(CharH(tr), NTip(tr) * log2(NTip(tr)) - (3 * 2))
   expect_equal(CharH(StarTree(10)), 0)
+  
+  expect_lt(CharJH(ch, tr), CharH(ch) + CharH(tr))
+  expect_gte(CharJH(ch, tr), CharH(tr))
   
   # Build HPart from tree, then relabel
   trPart <- as.HPart(tr)

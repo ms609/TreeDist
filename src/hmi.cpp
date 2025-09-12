@@ -113,7 +113,66 @@ double hierarchical_self_info(const std::vector<TreeDist::HNode>& nodes, size_t 
   return local_I_ts + mean_I_ts;
 }
 
-double tree_entropy(const std::vector<TreeDist::HNode>& nodes, size_t idx) {
+double character_mutual_info(
+    const std::vector<TreeDist::HNode>& nodes, const size_t idx,
+    const std::vector<std::vector<uint64_t>> bitsets) {
+  
+  const auto& nd = nodes[idx];
+  if (nd.leaf_count < 2) return 0; // Exit early
+  
+  if (nd.all_kids_leaves) {
+    const auto bits = nd.bitset;
+    double h = nd.x_log_x;
+    for (auto ch_bits : bitsets) {
+      const size_t n = intersection_size(bits, ch_bits);
+      // Rcpp::Rcout << " Cherry " << idx << ": Intersection of " <<
+      //   " (" << intersection_size(bits, bits) << ", " << 
+      //     intersection_size(ch_bits, ch_bits) << ") = " << n << ".\n";
+      
+      // 1b. Continue sum of node's joint information
+      h -= x_log_x(n);
+    }
+    // Rcpp::Rcout << " Cherry " << idx << ", h = " << (h / std::log(2)) << ".\n";
+    return h;
+  }
+  
+  // Joint info = n_tips * sum [x_log_x(confusion_matrix_tips / n_tips)]
+  //            = x_log_x(n_tips) - sum [x_log_x(confusion_matrix_tips)]
+  double h = nd.x_log_x;
+  Rcpp::Rcout << "\n Node " << idx << " 'starts with' " << nd.leaf_count <<
+    " log2(" << nd.leaf_count << ") = " << (h / std::log(2)) << ". \n";
+  
+  for (auto child : nd.children) {
+    const auto tr_bits = nodes[child].bitset;
+    Rcpp::Rcout << " Before child " << child << ", h = " << (h / std::log(2)) << ".\n";
+    for (auto ch_bits : bitsets) {
+      // 1a. Populate cell in confusion matrix
+      const size_t n = intersection_size(tr_bits, ch_bits);
+      Rcpp::Rcout << " Child " << child << ": Intersection of " <<
+        " (" << intersection_size(tr_bits, tr_bits) << ", " << 
+        intersection_size(ch_bits, ch_bits) << ") = " << n << ".\n";
+          
+      // 1b. Continue sum of node's joint information
+      h -= x_log_x(n);
+    }
+    Rcpp::Rcout << " After child " << child << ", h = " << (h / std::log(2)) << ".\n";
+    
+    // 2. Load the contributions to tree entropy from child nodes, in postorder.
+    if (nodes[child].leaf_count > 1) { // TODO: can we revert to child_h > 0?
+      // Propagate in postorder
+      const double child_contribuition = character_mutual_info(nodes, child, bitsets);
+      Rcpp::Rcout << " Adding subtree contribution from " << child << " = " <<
+        (child_contribuition / std::log(2))<< "\n";
+      h += child_contribuition;
+    }
+  }
+  
+  Rcpp::Rcout << " > Final h below " << idx << " is " << (h / std::log(2)) << ".\n\n";
+  return h;
+}
+
+double tree_entropy(const std::vector<TreeDist::HNode>& nodes,
+                    const size_t idx) {
   const auto& nd = nodes[idx];
   
   if (nd.all_kids_leaves) return 0; // As we don't distinguish these leaves
@@ -122,15 +181,19 @@ double tree_entropy(const std::vector<TreeDist::HNode>& nodes, size_t idx) {
   // We don't think of the star tree as assigning its leaves to labelled
   // size-1 clusters.
   
+  // Info = n_tips * sum [x_log_x(child_i_tips / n_tips)]
+  //      = x_log_x(n_tips) - sum [x_log_x(child_i_tips)] <- easier to calculate
+  
   double h = nd.x_log_x;
   
   for (auto child : nd.children) {
     
+    // 1. Continue the summation of this node's entropy
     const double child_h = nodes[child].x_log_x;
     h -= child_h; // contribution to this node's entropy
     
+    // 2. Load the contributions to tree entropy from child nodes, in postorder.
     if (child_h > 0) {
-      // Propagate in postorder
       const double child_contribuition = tree_entropy(nodes, child);
       h += child_contribuition;
     }
@@ -176,6 +239,23 @@ double H_xptr(SEXP ptr) {
     hp->entropy = std::abs(value) < eps ? 0 : value;
   }
   return hp->entropy;
+}
+
+// [[Rcpp::export]]
+double JH_xptr(SEXP char_ptr, SEXP tree_ptr) {
+  Rcpp::XPtr<TreeDist::HPart> ch(char_ptr);
+  Rcpp::XPtr<TreeDist::HPart> tr(tree_ptr);
+  if (ch->nodes[ch->root].n_tip != tr->nodes[tr->root].n_tip) {
+    Rcpp::stop("Tree and character must describe the same leaves");
+  }
+  std::vector<std::vector<uint64_t>> bitsets;
+  auto ch_root = ch->nodes[ch->root];
+  bitsets.reserve(ch_root.children.size());
+  for (auto state : ch_root.children) {
+    bitsets.push_back(ch->nodes[state].bitset);
+  }
+  
+  return TreeDist::character_mutual_info(tr->nodes, tr->root, bitsets);
 }
 
 inline void fisher_yates_shuffle(std::vector<int>& v) noexcept {

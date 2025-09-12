@@ -115,6 +115,16 @@ CharH <- function(tree) {
   H_xptr(part) / log(2)
 }
 
+#' @rdname CharMI
+#' @return `CharJH` returns the joint entropy of a character and a tree,
+#' in bits, defined as the combined capacity to assign leaves to unique clusters.
+#' @export
+CharJH <- function(char, tree) {
+  char <- as.HPart(char)
+  tree <- as.HPart(tree)
+  JH_xptr(char, tree) / log(2)
+}
+
 #' Self hierarchical mutual information
 #' 
 #' An alias of `SelfHMI()`
