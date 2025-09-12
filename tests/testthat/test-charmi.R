@@ -17,9 +17,21 @@ test_that("CharMI works with simple trees", {
                - 4 * (2 * log2(2)) # But we can't distinguish between cherries
   )
   expect_equal(CharH(TreeTools::StarTree(10)), 0)
+  
+  # Trees with >64 bits to test block logic
+  
+  expect_equal(CharJH(c(rep(2, 64), rep(1, 65)),
+                      c(rep(1, 32), 2, rep(3, 32 + 64))),
+               129 * Ntropy(32, 1, 31, 65))
+  bal129 <- Bal(129)
+  expect_equal(CharH(bal129),
+               NTip(bal129) * log2(NTip(bal129)) # Entropy of identifying each tip
+               - 128) # But we can't distinguish between cherries
 })
 
 test_that("CharAMI arithmetic checks out", {
+  set.seed(1)
+  
   flatP <- as.HPart(list(as.list(1:5), as.list(6:9)))
   hp9 <- as.HPart(TreeTools::BalancedTree(1:9))
   
@@ -32,7 +44,7 @@ test_that("CharAMI arithmetic checks out", {
   h2 <- CharH(hp9)
   expect_gt(h2, h1)
   
-  emi <- CharEMI(flatP, hp9)[[1]]
+  emi <- CharEMI(flatP, hp9, precision = 0.003)[[1]]
   expect_lt(emi, h1)
   
   ami <- CharAMI(flatP, hp9, max, precision = 0.003)
