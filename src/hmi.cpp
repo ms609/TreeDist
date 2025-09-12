@@ -1,6 +1,7 @@
 #include "hpart.h"
 #include <Rcpp.h>
 #include <cmath>
+#include <random>
 using namespace Rcpp;
 
 namespace TreeDist {
@@ -263,9 +264,10 @@ double JH_xptr(SEXP char_ptr, SEXP tree_ptr) {
   return TreeDist::character_mutual_info(tr->nodes, tr->root, bitsets);
 }
 
-inline void fisher_yates_shuffle(std::vector<int>& v) noexcept {
+inline void fisher_yates_shuffle(std::vector<int>& v, std::mt19937_64& rng) 
+  noexcept {
   for (size_t i = v.size() - 1; i > 0; --i) {
-    size_t j = static_cast<size_t>(std::floor(R::unif_rand() * (i + 1)));
+    size_t j = rng() % (i + 1);
     std::swap(v[i], v[j]);
   }
 }
@@ -299,9 +301,14 @@ Rcpp::NumericVector EHMI_xptr(SEXP hp1_ptr, SEXP hp2_ptr,
   std::vector<int> shuffled(n_tip);
   std::iota(shuffled.begin(), shuffled.end(), 0);
   
+  unsigned int seed =
+    static_cast<unsigned int>(R::unif_rand() * 
+    std::numeric_limits<unsigned int>::max());
+  std::mt19937_64 rng(seed);
+  
   while (relativeError > tolerance || runN < minResample) {
     // Shuffle leaves
-    fisher_yates_shuffle(shuffled);
+    fisher_yates_shuffle(shuffled, rng);
     
     // Apply shuffled labels
     relabel_hpart(hp1_shuf, shuffled);
@@ -370,9 +377,14 @@ Rcpp::NumericVector EJH_xptr(SEXP char_ptr, SEXP tree_ptr,
   std::vector<int> shuffled(n_tip);
   std::iota(shuffled.begin(), shuffled.end(), 0);
   
+  unsigned int seed =
+    static_cast<unsigned int>(R::unif_rand() * 
+    std::numeric_limits<unsigned int>::max());
+  std::mt19937_64 rng(seed);
+  
   while (relativeError > tolerance || runN < minResample) {
     // Shuffle leaves
-    fisher_yates_shuffle(shuffled);
+    fisher_yates_shuffle(shuffled, rng);
     
     // Apply shuffled labels
     relabel_hpart(ch_shuf, shuffled);
