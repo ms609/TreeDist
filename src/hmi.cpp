@@ -115,12 +115,14 @@ double hierarchical_self_info(const std::vector<TreeDist::HNode>& nodes, size_t 
 
 double character_mutual_info(
     const std::vector<TreeDist::HNode>& nodes, const size_t idx,
-    const std::vector<std::vector<uint64_t>> bitsets) {
+    const std::vector<std::vector<uint64_t>> bitsets
+) {
   
   const auto& nd = nodes[idx];
   if (nd.leaf_count < 2) return 0; // Exit early
   
   if (nd.all_kids_leaves) {
+    return 0;
     const auto bits = nd.bitset;
     double h = nd.x_log_x;
     for (auto ch_bits : bitsets) {
@@ -139,6 +141,8 @@ double character_mutual_info(
   // Joint info = n_tips * sum [x_log_x(confusion_matrix_tips / n_tips)]
   //            = x_log_x(n_tips) - sum [x_log_x(confusion_matrix_tips)]
   double h = nd.x_log_x;
+  const auto bits = nd.bitset;
+
   Rcpp::Rcout << "\n Node " << idx << " 'starts with' " << nd.leaf_count <<
     " log2(" << nd.leaf_count << ") = " << (h / std::log(2)) << ". \n";
   
@@ -157,6 +161,9 @@ double character_mutual_info(
     }
     Rcpp::Rcout << " After child " << child << ", h = " << (h / std::log(2)) << ".\n";
     
+  }
+  
+  for (auto child:nd.children) { // TODO reintegrate into single loop
     // 2. Load the contributions to tree entropy from child nodes, in postorder.
     if (nodes[child].leaf_count > 1) { // TODO: can we revert to child_h > 0?
       // Propagate in postorder
@@ -165,6 +172,7 @@ double character_mutual_info(
         (child_contribuition / std::log(2))<< "\n";
       h += child_contribuition;
     }
+    
   }
   
   Rcpp::Rcout << " > Final h below " << idx << " is " << (h / std::log(2)) << ".\n\n";
