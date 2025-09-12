@@ -115,14 +115,77 @@ CharH <- function(tree) {
   H_xptr(part) / log(2)
 }
 
+#' Mutual information between a character and a tree
+#' @param char Vector that labels each leaf in `tree` such that entries with
+#' the same label share a common character state.
+#' @param tree Phylogenetic tree in a format that can be coerced to an [`HPart`]
+#' object.
+#' @return `CharMI` returns the mutual information content of a character and a
+#' tree, in bits.
+#' @template MRS
+#' @name CharMI
+#' @export
+CharMI <- function(char, tree) {
+  tree <- as.HPart(tree)
+  char <- as.HPart(char, tree)
+  (H_xptr(char) + H_xptr(tree) - JH_xptr(char, tree)) / log(2)
+}
+
 #' @rdname CharMI
-#' @return `CharJH` returns the joint entropy of a character and a tree,
+#' @return `CharJH()` returns the joint entropy of a character and a tree,
 #' in bits, defined as the combined capacity to assign leaves to unique clusters.
 #' @export
 CharJH <- function(char, tree) {
-  char <- as.HPart(char)
   tree <- as.HPart(tree)
+  char <- as.HPart(char, tree)
   JH_xptr(char, tree) / log(2)
+}
+
+#' @rdname CharMI
+#' @return `CharEJH()` returns the expected joint entropy of a character and a
+#' tree, in bits, where state labels are shuffled at random.
+#' @export
+CharEJH <- function(char, tree, precision = 0.01, minResample = 36) {
+  tree <- as.HPart(tree)
+  char <- as.HPart(char, tree)
+  EJH_xptr(char, tree, as.numeric(precision), as.integer(minResample)) / log(2)
+}
+
+#' @rdname CharMI
+#' @inheritParams EHMI
+#' @return `CharEMI()` returns the expected mutual information of a character
+#' and a tree, in bits, when state labels are shuffled at random.
+#' @export
+CharEMI <- function(char, tree, precision = 0.01, minResample = 36) {
+  tree <- as.HPart(tree)
+  char <- as.HPart(char, tree)
+  (H_xptr(char) + H_xptr(tree) - 
+      EJH_xptr(char, tree, as.numeric(precision), as.integer(minResample))
+    ) / log(2)
+}
+#' @rdname CharMI
+#' @return `CharEMI()` returns the expected mutual information of a character
+#' and a tree, in bits, when state labels are shuffled at random.
+#' @inheritParams AHMI
+#' @export
+CharAMI <- function(char, tree, Mean = max, precision = 0.01, minResample = 36) {
+  tree <- as.HPart(tree)
+  char <- as.HPart(char, tree)
+  
+  eh12 <- EJH_xptr(char, tree, as.numeric(precision), as.integer(minResample))
+  h12 <- JH_xptr(char, tree)
+  h1 <- H_xptr(char)
+  h2 <- H_xptr(tree)
+  M <- Mean(h1, h2)
+  
+  mi <- h1 + h2 - h12
+  emi <- h1 + h2 - eh12
+  
+  num <- mi - emi[[1]]
+  denom <- M - emi[[1]]
+  # Return:
+  structure(if (num < sqrt(.Machine$double.eps)) 0 else num / denom,
+            sem = .AHMISEM(mi, M, emi[[1]], attr(emi, "sem")))
 }
 
 #' Self hierarchical mutual information

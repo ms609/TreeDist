@@ -278,8 +278,13 @@ double JH_xptr(SEXP char_ptr, SEXP tree_ptr) {
   std::vector<std::vector<uint64_t>> bitsets;
   auto ch_root = ch->nodes[ch->root];
   bitsets.reserve(ch_root.children.size());
+  bool warned = false;
   for (auto state : ch_root.children) {
     bitsets.push_back(ch->nodes[state].bitset);
+    if (!warned && !ch->nodes[state].all_kids_leaves) {
+      Rcpp::warning("Character is a tree; only first level of hierarchy used");
+      warned = true;
+    }
   }
   
   return TreeDist::character_mutual_info(tr->nodes, tr->root, bitsets);
@@ -310,13 +315,6 @@ Rcpp::NumericVector EHMI_xptr(SEXP hp1_ptr, SEXP hp2_ptr,
   const size_t n_tip = hp1->nodes[hp1->root].n_tip;
   ASSERT(hp2->nodes[hp2->root].n_tip == n_tip);
   
-  // Collect original leaf labels (1-based)
-  std::vector<int> leaves;
-  for (size_t i = 1; i < hp1->nodes.size(); ++i) {
-    if (hp1->nodes[i].leaf_count == 1)
-      leaves.push_back(hp1->nodes[i].label + 1); // R 1-based
-  }
-  
   double runMean = 0.0;
   double runS = 0.0;
   int runN = 0;
@@ -337,6 +335,75 @@ Rcpp::NumericVector EHMI_xptr(SEXP hp1_ptr, SEXP hp2_ptr,
     
     // Compute HMI
     double x = HMI_xptr(hp1_shuf, hp2);
+    
+    // Welford update
+    runN++;
+    double delta = x - runMean;
+    runMean += delta / runN;
+    runS += delta * (x - runMean);
+    
+    double runVar = (runN > 1) ? runS / (runN - 1) : 0.0;
+    double runSD = std::sqrt(runVar);
+    double runSEM = runSD / std::sqrt(runN);
+    relativeError = std::abs(runMean) < 1e-6 ?
+      runSEM :
+      runSEM / std::abs(runMean);
+  }
+  
+  double runVar = (runN > 1) ? runS / (runN - 1) : 0.0;
+  double runSD = std::sqrt(runVar);
+  double runSEM = runSD / std::sqrt(runN);
+  
+  Rcpp::NumericVector result = Rcpp::NumericVector::create(runMean);
+  result.attr("var") = runVar;
+  result.attr("sd") = runSD;
+  result.attr("sem") = runSEM;
+  result.attr("samples") = runN;
+  result.attr("relativeError") = relativeError;
+  
+  return result;
+}
+
+// [[Rcpp::export]]
+Rcpp::NumericVector EJH_xptr(SEXP char_ptr, SEXP tree_ptr,
+                             double tolerance = 0.01,
+                             int minResample = 36) {
+  
+  if (minResample < 2) {
+    Rcpp::stop("Must perform at least one resampling");
+  }
+  if (tolerance < 1e-8) {
+    Rcpp::stop("Tolerance too low");
+  }
+  
+  Rcpp::XPtr<TreeDist::HPart> ch(char_ptr);
+  Rcpp::XPtr<TreeDist::HPart> tr(tree_ptr);
+  
+  const size_t n_tip = ch->nodes[ch->root].n_tip;
+  if (tr->nodes[tr->root].n_tip != static_cast<int>(n_tip)) {
+    Rcpp::stop("Tree and character must describe the same leaves");
+  }
+  
+  double runMean = 0.0;
+  double runS = 0.0;
+  int runN = 0;
+  double relativeError = tolerance * 2; // Avoid -Wmaybe-uninitialized
+  
+  Rcpp::RNGScope scope;
+  
+  SEXP ch_shuf = clone_hpart(char_ptr);
+  std::vector<int> shuffled(n_tip);
+  std::iota(shuffled.begin(), shuffled.end(), 0);
+  
+  while (relativeError > tolerance || runN < minResample) {
+    // Shuffle leaves
+    fisher_yates_shuffle(shuffled);
+    
+    // Apply shuffled labels
+    relabel_hpart(ch_shuf, shuffled);
+    
+    // Compute JH
+    double x = JH_xptr(ch_shuf, tr);
     
     // Welford update
     runN++;

@@ -105,6 +105,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// EJH_xptr
+Rcpp::NumericVector EJH_xptr(SEXP char_ptr, SEXP tree_ptr, double tolerance, int minResample);
+RcppExport SEXP _TreeDist_EJH_xptr(SEXP char_ptrSEXP, SEXP tree_ptrSEXP, SEXP toleranceSEXP, SEXP minResampleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type char_ptr(char_ptrSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type tree_ptr(tree_ptrSEXP);
+    Rcpp::traits::input_parameter< double >::type tolerance(toleranceSEXP);
+    Rcpp::traits::input_parameter< int >::type minResample(minResampleSEXP);
+    rcpp_result_gen = Rcpp::wrap(EJH_xptr(char_ptr, tree_ptr, tolerance, minResample));
+    return rcpp_result_gen;
+END_RCPP
+}
 // build_hpart_from_phylo
 SEXP build_hpart_from_phylo(List phy);
 RcppExport SEXP _TreeDist_build_hpart_from_phylo(SEXP phySEXP) {
@@ -410,6 +424,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_H_xptr", (DL_FUNC) &_TreeDist_H_xptr, 1},
     {"_TreeDist_JH_xptr", (DL_FUNC) &_TreeDist_JH_xptr, 2},
     {"_TreeDist_EHMI_xptr", (DL_FUNC) &_TreeDist_EHMI_xptr, 4},
+    {"_TreeDist_EJH_xptr", (DL_FUNC) &_TreeDist_EJH_xptr, 4},
     {"_TreeDist_build_hpart_from_phylo", (DL_FUNC) &_TreeDist_build_hpart_from_phylo, 1},
     {"_TreeDist_build_hpart_from_list", (DL_FUNC) &_TreeDist_build_hpart_from_list, 2},
     {"_TreeDist_hpart_to_edge", (DL_FUNC) &_TreeDist_hpart_to_edge, 1},

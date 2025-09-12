@@ -55,3 +55,27 @@ test_that("CharMI works with real dataset", {
   expect_equal(HMI(trPart, treePart), SelfHMI(treePart))
   expect_equal(HMI(chPart, trPart), HMI(chPart, treePart))
 })
+
+test_that("AHMI succeeds with CharMI", {
+  ch <- c(1L, 2L, 2L, 2L, 2L, 2L, 1L, 1L, 1L, 1L, 1L)
+  tr <- TreeTools::BalancedTree(11)
+  XLogX <- function(x) x * log2(x)
+  expect_equal(CharH(ch), XLogX(11) - XLogX(6) - XLogX(5))
+  expect_equal(CharH(tr), XLogX(11) - 2 * 4)
+  
+  expect_error(expect_warning(CharJH(tr, ch), "Char.* a tree"), "t11 missing")
+  expect_error(expect_warning(CharMI(tr, ch), "Char.* a tree"), "t11 missing")
+  expect_error(expect_warning(CharEJH(tr, ch), "Char.* a tree"), "t11 missing")
+  expect_error(expect_warning(CharEMI(tr, ch), "Char.* a tree"), "t11 missing")
+  expect_error(expect_warning(CharAMI(tr, ch), "Char.* a tree"), "t11 missing")
+  
+  set.seed(1)
+  expect_equal(CharH(ch) + CharH(tr) - CharJH(ch, tr), CharMI(ch, tr))
+  expect_equal(CharH(ch) + CharH(tr) - CharEJH(ch, tr, precision = 0.001)[[1]],
+               CharEMI(ch, tr, precision = 0.001)[[1]], tolerance = 0.02)
+  
+  expect_lt(CharAMI(ch, tr), CharAMI(ch, tr, min))
+  expect_equal(CharAMI(c(1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1), tr, min)[[1]], 0)
+  expect_equal(CharAMI(c(1, 1, rep(0, 9)), tr, min)[[1]], 1)
+  expect_equal(CharAMI(c(rep(TRUE, 6), rep(FALSE, 5)), tr, min)[[1]], 1)
+})
