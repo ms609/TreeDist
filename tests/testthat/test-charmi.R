@@ -99,7 +99,18 @@ test_that("AHMI succeeds with CharMI", {
                CharEMI(ch, tr, precision = 0.001)[[1]], tolerance = 0.02)
   
   expect_lt(CharAMI(ch, tr, max), CharAMI(ch, tr, min))
-  expect_equal(CharAMI(c(1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1), tr, min)[[1]], 0)
+  expect_lt(CharAMI(c(1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1), tr, min)[[1]], 0)
   expect_equal(CharAMI(c(1, 1, rep(0, 9)), tr)[[1]], 1)
   expect_equal(CharAMI(c(rep(TRUE, 6), rep(FALSE, 5)), tr, min)[[1]], 1)
+})
+
+test_that("AHMI returns zero for random trees", {
+  ch <- c(1L, 2L, 2L, 2L, 2L, 2L, 1L, 1L, 1L, 1L, 1L)
+  tree <- TreeTools::NJTree(TreeTools::StringToPhyDat("12222211111"))
+  expect_gt(CharAMI(ch, tree), 0)
+  set.seed(1)
+  samples <- replicate(256, CharAMI(ch, TreeTools::RandomTree(ch)))
+  ci <- t.test(samples, mu = 0, conf.level = 0.997)$conf.int
+  expect_lt(ci[[1]], 0)
+  expect_gt(ci[[2]], 0)
 })

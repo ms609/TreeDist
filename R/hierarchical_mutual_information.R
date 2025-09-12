@@ -185,7 +185,7 @@ CharAMI <- function(char, tree, Mean = function(charH, treeH) charH,
   num <- mi - emi[[1]]
   denom <- M - emi[[1]]
   # Return:
-  structure(if (num < sqrt(.Machine$double.eps)) 0 else num / denom,
+  structure(if (abs(num) < sqrt(.Machine$double.eps)) 0 else num / denom,
             sem = .AHMISEM(mi, M, emi[[1]], attr(emi, "sem")))
 }
 
