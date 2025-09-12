@@ -5,10 +5,11 @@ using namespace Rcpp;
 
 namespace TreeDist {
 
-static inline size_t intersection_size(const std::vector<uint64_t>& A,
-                                       const std::vector<uint64_t>& B) {
+static inline size_t intersection_size(const uint64_t* A,
+                                       const uint64_t* B,
+                                       const size_t size) {
   return std::transform_reduce(
-    A.begin(), A.end(), B.begin(),
+    A, A + size, B,
     size_t{0},      // initial value
     std::plus<>{},  // reduction operation
     [](uint64_t a, uint64_t b) { return __builtin_popcountll(a & b); }  // transform
@@ -27,7 +28,7 @@ std::pair<size_t, double> hierarchical_mutual_info(
   const auto& Us = v_nodes[v_idx];
   
   if (Ut.all_kids_leaves || Us.all_kids_leaves) {
-    return {intersection_size(Ut.bitset, Us.bitset), 0.0};
+    return {intersection_size(Ut.bitset, Us.bitset, Us.n_block), 0.0};
   }
   
   const size_t Us_size = Us.children.size();
@@ -91,7 +92,8 @@ double hierarchical_self_info(const std::vector<TreeDist::HNode>& nodes, size_t 
     for (size_t j = 0; j < n_children; ++j) {
       size_t v_idx = n.children[j];
       size_t n_uv = (u_idx == v_idx) ? nodes[u_idx].leaf_count
-      : intersection_size(nodes[u_idx].bitset, nodes[v_idx].bitset);
+      : intersection_size(nodes[u_idx].bitset, nodes[v_idx].bitset,
+        nodes[u_idx].n_block);
       
       n_ts += n_uv;
       n_tv[j] += n_uv;
@@ -113,17 +115,18 @@ double hierarchical_self_info(const std::vector<TreeDist::HNode>& nodes, size_t 
 
 double character_mutual_info(
     const std::vector<TreeDist::HNode>& nodes, const size_t idx,
-    const std::vector<std::vector<uint64_t>>& bitsets
+    const std::vector<const uint64_t*>& bitsets
 ) {
   
   const auto& nd = nodes[idx];
   if (nd.leaf_count < 2) return 0; // Exit early
+  const size_t n_block = nodes[idx].n_block;
   
   if (nd.all_kids_leaves) {
-    const auto& nd_bits = nd.bitset;
+    const uint64_t* nd_bits = nd.bitset;
     double h = nd.x_log_x;
-    for (const auto& chr_bits : bitsets) {
-      const size_t n = intersection_size(nd_bits, chr_bits);
+    for (const uint64_t* chr_bits : bitsets) {
+      const size_t n = intersection_size(nd_bits, chr_bits, n_block);
       // Rcpp::Rcout << " Cherry " << idx << ": Intersection of " <<
       //   " (" << intersection_size(nd_bits, nd_bits) << ", " << 
       //     intersection_size(chr_bits, chr_bits) << ") = " << n << ".\n";
@@ -145,9 +148,9 @@ double character_mutual_info(
   for (const auto& child : nd.children) {
     const auto& cld_bits = nodes[child].bitset;
     // Rcpp::Rcout << " < Before child " << child << ", h = " << (h / std::log(2)) << ".\n";
-    for (const auto& chr_bits : bitsets) {
+    for (const uint64_t* chr_bits : bitsets) {
       // 1a. Populate cell in confusion matrix
-      const size_t n = intersection_size(cld_bits, chr_bits);
+      const size_t n = intersection_size(cld_bits, chr_bits, n_block);
       // Rcpp::Rcout << "     Child " << child << ": Intersection of " <<
       //   " (" << intersection_size(cld_bits, cld_bits) << ", " << 
       //   intersection_size(chr_bits, chr_bits) << ") = " << n << ".\n";
@@ -171,8 +174,8 @@ double character_mutual_info(
       
       // Remove joint info we've already counted in the parent:
       h -= nodes[child].x_log_x;
-      for (const auto& chr_bits : bitsets) {
-        const size_t n = intersection_size(cld_bits, chr_bits);
+      for (const uint64_t* chr_bits : bitsets) {
+        const size_t n = intersection_size(cld_bits, chr_bits, n_block);
         // Rcpp::Rcout << "     Child " << child << ": Intersection of " <<
         //   " (" << intersection_size(cld_bits, cld_bits) << ", " << 
         //     intersection_size(chr_bits, chr_bits) << ") = " << n << 
@@ -284,10 +287,12 @@ double JH_xptr(SEXP char_ptr, SEXP tree_ptr) {
   Rcpp::XPtr<TreeDist::HPart> ch(char_ptr);
   Rcpp::XPtr<TreeDist::HPart> tr(tree_ptr);
   if (ch->nodes[ch->root].n_tip != tr->nodes[tr->root].n_tip) {
+    Rcpp::Rcout << "Character: " << ch->nodes[ch->root].n_tip << 
+      "; tree: " << tr->nodes[tr->root].n_tip << "|\n";
     Rcpp::stop("Tree and character must describe the same leaves");
   }
-  std::vector<std::vector<uint64_t>> bitsets;
   auto ch_root = ch->nodes[ch->root];
+  std::vector<const uint64_t*> bitsets;
   bitsets.reserve(ch_root.children.size());
   bool warned = false;
   for (const auto& state : ch_root.children) {

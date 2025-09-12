@@ -26,15 +26,8 @@ SEXP build_hpart_from_phylo(List phy) {
     children[p].push_back(c);
   }
   
-  TreeDist::HPart* hpart = new TreeDist::HPart();
-  hpart->nodes.resize(vec_size);
-  
-  // Initialize all nodes to empty
-  const int n_block = (n_tip + 63) / 64;
-  for (size_t i = 1; i < vec_size; ++i) {
-    hpart->nodes[i].n_tip = n_tip;
-    hpart->nodes[i].bitset.resize(n_block, 0);
-  }
+  TreeDist::HPart* hpart = new TreeDist::HPart(n_tip, vec_size);
+  const int n_block = hpart->n_block;
   
   // Initialize tips
   for (size_t i = 1; i <= (size_t)n_tip; ++i) {
@@ -63,9 +56,9 @@ SEXP build_hpart_from_phylo(List phy) {
       node_i.leaf_count += child_leaves;
       
       std::transform(
-        node_i.bitset.begin(), node_i.bitset.end(),
-        child_node->bitset.begin(),
-        node_i.bitset.begin(),
+        node_i.bitset, node_i.bitset + n_block,
+        child_node->bitset,
+        node_i.bitset,
         std::bit_or<uint64_t>()
       );
     }
@@ -86,25 +79,17 @@ using namespace Rcpp;
 size_t build_node_from_list(const RObject& node,
                             std::vector<TreeDist::HNode>& nodes,
                             const int n_tip,
-                            int& next_index,
-                            const size_t n_block);
+                            int& next_index);
 
 // [[Rcpp::export]]
 SEXP build_hpart_from_list(RObject tree, const int n_tip) {
   const size_t vec_size = n_tip + n_tip + 2; // max nodes for a binary tree + 1
   
-  auto hpart = new TreeDist::HPart();
-  hpart->nodes.resize(vec_size);
-  
-  const size_t n_block = (n_tip + 63) / 64;
-  const double n_tip_recip = 1 / static_cast<double>(n_tip);
+  TreeDist::HPart* hpart = new TreeDist::HPart(n_tip, vec_size);
   
   // Initialize leaves and internal nodes
   for (size_t i = 1; i < vec_size; ++i) {
     TreeDist::HNode& n = hpart->nodes[i];
-    n.n_tip = n_tip;
-    n.n_tip_reciprocal = n_tip_recip;
-    n.bitset.assign(n_block, 0ULL);
     n.leaf_count = 0;
     n.all_kids_leaves = true;
     n.label = -1;
@@ -115,7 +100,7 @@ SEXP build_hpart_from_list(RObject tree, const int n_tip) {
   int next_index = n_tip + 1;
   
   // Build recursively; returns index into nodes vector (1-based)
-  hpart->root = build_node_from_list(tree, hpart->nodes, n_tip, next_index, n_block);
+  hpart->root = build_node_from_list(tree, hpart->nodes, n_tip, next_index);
   
   return Rcpp::XPtr<TreeDist::HPart>(hpart, true);
 }
@@ -125,8 +110,7 @@ SEXP build_hpart_from_list(RObject tree, const int n_tip) {
 size_t build_node_from_list(const RObject& node,
                             std::vector<TreeDist::HNode>& nodes,
                             int n_tip,
-                            int& next_index,
-                            size_t n_block) {
+                            int& next_index) {
   
   if (Rf_isInteger(node) || Rf_isReal(node)) {
     const IntegerVector leaf_vec(node);
@@ -147,7 +131,7 @@ size_t build_node_from_list(const RObject& node,
     // Special case: a single leaf inside a length-1 list
     if (n_elements == 1 &&
         (Rf_isInteger(VECTOR_ELT(node,0)) || Rf_isReal(VECTOR_ELT(node,0)))) {
-      return build_node_from_list(VECTOR_ELT(node, 0), nodes, n_tip, next_index, n_block);
+      return build_node_from_list(VECTOR_ELT(node, 0), nodes, n_tip, next_index);
     }
     
     // Allocate a new internal node
@@ -161,14 +145,14 @@ size_t build_node_from_list(const RObject& node,
     // Recurse over children
     for (int i = 0; i < n_elements; ++i) {
       SEXP child = VECTOR_ELT(node, i);
-      const size_t child_idx = build_node_from_list(child, nodes, n_tip, next_index, n_block);
+      const size_t child_idx = build_node_from_list(child, nodes, n_tip, next_index);
       n.children.push_back(child_idx);
       
       // Merge bitsets
       std::transform(
-        n.bitset.begin(), n.bitset.end(),
-        nodes[child_idx].bitset.begin(),
-        n.bitset.begin(),
+        n.bitset, n.bitset + n.n_block,
+        nodes[child_idx].bitset,
+        n.bitset,
         std::bit_or<uint64_t>()
       );
       
