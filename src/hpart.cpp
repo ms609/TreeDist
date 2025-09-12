@@ -62,9 +62,12 @@ SEXP build_hpart_from_phylo(List phy) {
       }
       node_i.leaf_count += child_leaves;
       
-      for (size_t chunk = 0; chunk < node_i.bitset.size(); ++chunk) {
-        node_i.bitset[chunk] |= child_node->bitset[chunk];
-      }
+      std::transform(
+        node_i.bitset.begin(), node_i.bitset.end(),
+        child_node->bitset.begin(),
+        node_i.bitset.begin(),
+        std::bit_or<uint64_t>()
+      );
     }
     node_i.x_log_x = TreeDist::x_log_x(node_i.leaf_count);
   }
@@ -162,9 +165,12 @@ size_t build_node_from_list(const RObject& node,
       n.children.push_back(child_idx);
       
       // Merge bitsets
-      for (size_t j = 0; j < n.bitset.size(); ++j) {
-        n.bitset[j] |= nodes[child_idx].bitset[j];
-      }
+      std::transform(
+        n.bitset.begin(), n.bitset.end(),
+        nodes[child_idx].bitset.begin(),
+        n.bitset.begin(),
+        std::bit_or<uint64_t>()
+      );
       
       n.leaf_count += nodes[child_idx].leaf_count;
       if (nodes[child_idx].leaf_count > 1) n.all_kids_leaves = false;

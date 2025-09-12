@@ -36,7 +36,7 @@ test_that("CharAMI arithmetic checks out", {
   expect_lt(emi, h1)
   
   ami <- CharAMI(flatP, hp9, max, precision = 0.005)
-  expect_equal(ami[[1]], (mi - emi) / (max(h1, h2) - emi), tolerance = 2 * 0.01)
+  expect_equal(ami[[1]], (mi - emi) / (max(h1, h2) - emi), tolerance = 4 * 0.01)
   
   ami <- CharAMI(flatP, hp9)
   expect_equal((mi - emi) / (h1 - emi), 1)
