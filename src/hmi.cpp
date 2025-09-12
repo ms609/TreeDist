@@ -137,31 +137,18 @@ double character_mutual_info(
   double h = nd.x_log_x;
   
   for (const auto& child : nd.children) {
-    const auto& cld_bits = nodes[child].bitset;
-    for (const uint64_t* chr_bits : bitsets) {
-      // 1a. Populate cell in confusion matrix
-      const size_t n = intersection_size(cld_bits, chr_bits, n_block);
-          
-      // 1b. Continue sum of node's joint information
-      h -= x_log_x(n);
-    }
-
-    // 2. Load the contributions to tree entropy from child nodes, in postorder.
-    if (nodes[child].leaf_count > 1) { // TODO: can we revert to child_h > 0?
+    const double child_h = nodes[child].x_log_x;
+    if (child_h > 0) {
+      h -= child_h;
       
-      // Remove joint info we've already counted in the parent:
-      h -= nodes[child].x_log_x;
-      for (const uint64_t* chr_bits : bitsets) {
-        const size_t n = intersection_size(cld_bits, chr_bits, n_block);
-        h += x_log_x(n);
-      }
-      
-      // Then add the unconditioned information contained within the child
-      // subtree
+      // We can simply add the information contained within the child subtree
+      // The full computation of this node's entropy cancels with the
+      // conditional entropy of the descendent node.
       // 
       // Propagate in postorder
-      const double child_contribuition = character_mutual_info(nodes, child, bitsets);
-      h += child_contribuition;
+      const double child_contribution = character_mutual_info(nodes, child,
+                                                              bitsets);
+      h += child_contribution;
     }
   }
   
