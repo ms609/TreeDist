@@ -18,9 +18,9 @@ void recompute_bitsets_postorder(TreeDist::HPart &hpart,
       Rcpp::stop("Leaf node has leaf_count != 1");
     }
     int new_index = mapping[node.label]; // mapping is 0-based
-    node.label = new_index;
+    node_bits[node.label / 64] = 0;
     
-    std::fill(node_bits, node_bits + n_block, 0ULL);
+    node.label = new_index;
     node_bits[new_index / 64] = 1ULL << (new_index % 64);
     
   } else {
