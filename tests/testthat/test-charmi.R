@@ -6,7 +6,7 @@ test_that("CharMI works with simple trees", {
   expect_equal(CharJH(c(2, 2, 1, 1, 1), c(1, 1, 1, 2, 2)),
                5 * Ntropy(2, 1, 2))
   
-  expect_equal(CharJH(c(2, 2, 1, 1, 1), BalancedTree(5)),
+  expect_equal(CharJH(c(2, 2, 2, 1, 1), BalancedTree(5)),
                CharH(BalancedTree(5)))
   expect_equal(CharJH(c(2, 2, 1, 1, 1), BalancedTree(5)),
                CharH(BalancedTree(5)))

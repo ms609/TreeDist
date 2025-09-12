@@ -123,59 +123,79 @@ double character_mutual_info(
   
   if (nd.all_kids_leaves) {
     return 0;
-    const auto bits = nd.bitset;
+    const auto nd_bits = nd.bitset;
     double h = nd.x_log_x;
-    for (auto ch_bits : bitsets) {
-      const size_t n = intersection_size(bits, ch_bits);
+    for (auto chr_bits : bitsets) {
+      const size_t n = intersection_size(nd_bits, chr_bits);
       // Rcpp::Rcout << " Cherry " << idx << ": Intersection of " <<
-      //   " (" << intersection_size(bits, bits) << ", " << 
-      //     intersection_size(ch_bits, ch_bits) << ") = " << n << ".\n";
+      //   " (" << intersection_size(nd_bits, nd_bits) << ", " << 
+      //     intersection_size(chr_bits, chr_bits) << ") = " << n << ".\n";
       
       // 1b. Continue sum of node's joint information
       h -= x_log_x(n);
     }
-    // Rcpp::Rcout << " Cherry " << idx << ", h = " << (h / std::log(2)) << ".\n";
+    Rcpp::Rcout << "    Cherry " << idx << ", h = " << (h / std::log(2)) << ".\n";
     return h;
   }
   
   // Joint info = n_tips * sum [x_log_x(confusion_matrix_tips / n_tips)]
   //            = x_log_x(n_tips) - sum [x_log_x(confusion_matrix_tips)]
   double h = nd.x_log_x;
-  const auto bits = nd.bitset;
+  const auto nd_bits = nd.bitset;
 
-  Rcpp::Rcout << "\n Node " << idx << " 'starts with' " << nd.leaf_count <<
+  Rcpp::Rcout << "\n Node " << idx << ": initialize H to " << nd.leaf_count <<
     " log2(" << nd.leaf_count << ") = " << (h / std::log(2)) << ". \n";
   
   for (auto child : nd.children) {
-    const auto tr_bits = nodes[child].bitset;
-    Rcpp::Rcout << " Before child " << child << ", h = " << (h / std::log(2)) << ".\n";
-    for (auto ch_bits : bitsets) {
+    const auto cld_bits = nodes[child].bitset;
+    Rcpp::Rcout << " < Before child " << child << ", h = " << (h / std::log(2)) << ".\n";
+    for (auto chr_bits : bitsets) {
       // 1a. Populate cell in confusion matrix
-      const size_t n = intersection_size(tr_bits, ch_bits);
-      Rcpp::Rcout << " Child " << child << ": Intersection of " <<
-        " (" << intersection_size(tr_bits, tr_bits) << ", " << 
-        intersection_size(ch_bits, ch_bits) << ") = " << n << ".\n";
+      const size_t n = intersection_size(cld_bits, chr_bits);
+      Rcpp::Rcout << "     Child " << child << ": Intersection of " <<
+        " (" << intersection_size(cld_bits, cld_bits) << ", " << 
+        intersection_size(chr_bits, chr_bits) << ") = " << n << ".\n";
           
       // 1b. Continue sum of node's joint information
       h -= x_log_x(n);
     }
-    Rcpp::Rcout << " After child " << child << ", h = " << (h / std::log(2)) << ".\n";
-    
+    Rcpp::Rcout << " > After child " << child << ", h = " << (h / std::log(2)) << ".\n";
   }
+  
+  Rcpp::Rcout << " Unconditioned joint H(char, " << idx << ") = " <<
+    (h / std::log(2)) << " bits.\n\n";
+  
+  
   
   for (auto child:nd.children) { // TODO reintegrate into single loop
     // 2. Load the contributions to tree entropy from child nodes, in postorder.
+    const auto cld_bits = nodes[child].bitset;
+    
     if (nodes[child].leaf_count > 1) { // TODO: can we revert to child_h > 0?
+      
+      // Remove joint info we've already counted in the parent:
+      h -= nodes[child].x_log_x;
+      for (auto chr_bits : bitsets) {
+        const size_t n = intersection_size(cld_bits, chr_bits);
+        Rcpp::Rcout << "     Child " << child << ": Intersection of " <<
+          " (" << intersection_size(cld_bits, cld_bits) << ", " << 
+            intersection_size(chr_bits, chr_bits) << ") = " << n << 
+              "; reducing H by " << x_log_x(n) << ".\n";
+        h += x_log_x(n);
+      }
+      
+      // Then add the unconditioned information contained within the child
+      // subtree
+      // 
       // Propagate in postorder
       const double child_contribuition = character_mutual_info(nodes, child, bitsets);
       Rcpp::Rcout << " Adding subtree contribution from " << child << " = " <<
         (child_contribuition / std::log(2))<< "\n";
       h += child_contribuition;
     }
-    
   }
   
-  Rcpp::Rcout << " > Final h below " << idx << " is " << (h / std::log(2)) << ".\n\n";
+  Rcpp::Rcout << " >>> Final h below " << idx << " is " << (h / std::log(2)) << ".\n\n";
   return h;
 }
 
