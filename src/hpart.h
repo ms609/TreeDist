@@ -32,17 +32,6 @@ static inline double x_log_x(size_t x) {
     return x * std::log(static_cast<double>(x));
   }
 }
-// Alternative version with branch-free lookup for even better performance
-// when you're certain x will usually be small
-static inline double x_log_x_branchless(size_t x) {
-  // Use lookup if x < LOOKUP_SIZE, otherwise compute
-  const bool use_table = x < LOOKUP_SIZE;
-  const double table_result = x < LOOKUP_SIZE ? x_log_x_table[x] : 0.0;
-  const double computed_result = x * std::log(static_cast<double>(x));
-  
-  // Branchless selection (compiler will optimize this well)
-  return use_table ? table_result : computed_result;
-}
 
 struct HNode {
   std::vector<size_t> children;   // indices of children in HPart.nodes
