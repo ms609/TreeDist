@@ -167,9 +167,10 @@ CharEJH <- function(char, tree, precision = 0.01, minResample = 36) {
 CharEMI <- function(char, tree, precision = 0.01, minResample = 36) {
   tree <- as.HPart(tree)
   char <- .MakeHPartMatch(char, tree)
-  (H_xptr(char) + H_xptr(tree) - 
-      EJH_xptr(char, tree, as.numeric(precision), as.integer(minResample))
-    ) / log(2)
+  ret <- EMI_xptr(char, tree, as.numeric(precision), as.integer(minResample)) / 
+    log(2)
+  # TODO divide attributes by log2 too
+  ret
 }
 #' @rdname CharMI
 #' @return `CharEMI()` returns the expected mutual information of a character

@@ -312,21 +312,21 @@ Rcpp::NumericVector EHMI_xptr(const SEXP hp1_ptr, const SEXP hp2_ptr,
     run_mean += delta / run_n;
     run_s += delta * (x - run_mean);
     
-    double runVar = (run_n > 1) ? run_s / (run_n - 1) : 0.0;
-    double runSD = std::sqrt(runVar);
-    double run_sem = runSD / std::sqrt(run_n);
+    double run_var = (run_n > 1) ? run_s / (run_n - 1) : 0.0;
+    double run_sd = std::sqrt(run_var);
+    double run_sem = run_sd / std::sqrt(run_n);
     relative_error = std::abs(run_mean) < 1e-6 ?
       run_sem :
       run_sem / std::abs(run_mean);
   }
   
-  double runVar = (run_n > 1) ? run_s / (run_n - 1) : 0.0;
-  double runSD = std::sqrt(runVar);
-  double run_sem = runSD / std::sqrt(run_n);
+  double run_var = (run_n > 1) ? run_s / (run_n - 1) : 0.0;
+  double run_sd = std::sqrt(run_var);
+  double run_sem = run_sd / std::sqrt(run_n);
   
   Rcpp::NumericVector result = Rcpp::NumericVector::create(run_mean);
-  result.attr("var") = runVar;
-  result.attr("sd") = runSD;
+  result.attr("var") = run_var;
+  result.attr("sd") = run_sd;
   result.attr("sem") = run_sem;
   result.attr("samples") = run_n;
   result.attr("relative_error") = relative_error;
@@ -337,12 +337,17 @@ Rcpp::NumericVector EHMI_xptr(const SEXP hp1_ptr, const SEXP hp2_ptr,
 Rcpp::NumericVector EJH_core(SEXP char_ptr, SEXP tree_ptr,
                              double precision = 0.01,
                              int minResample = 36,
-                             std::function<double(const double,const double)> rel_error =
-                               [](const double run_mean, const double run_sem) {
-                                 return std::abs(run_mean) < 1e-6 ?
+                             std::function<double(const double,const double)> propagate_sem =
+                               [](const double jh_mean, const double jh_sem) {
+                                 return jh_sem;
+                               },
+                              std::function<double(const double,const double)> rel_err =
+                               [](const double jh_mean, const double run_sem) {
+                                 return std::abs(jh_mean) < 1e-6 ?
                                  run_sem :
-                                 run_sem / std::abs(run_mean);
-                               }) {
+                                 run_sem / std::abs(jh_mean);
+                               }
+                               ) {
   
   if (minResample < 2) {
     Rcpp::stop("Must perform at least one resampling");
@@ -375,6 +380,11 @@ Rcpp::NumericVector EJH_core(SEXP char_ptr, SEXP tree_ptr,
     std::numeric_limits<unsigned int>::max());
   std::mt19937_64 rng(seed);
   
+  double run_var;
+  double run_sd;
+  double jh_sem;
+  double run_sem;
+  
   while (relative_error > precision || run_n < minResample) {
     
     std::shuffle(shuffled.begin(), shuffled.end(), rng);
@@ -388,19 +398,17 @@ Rcpp::NumericVector EJH_core(SEXP char_ptr, SEXP tree_ptr,
     run_mean += delta / run_n;
     run_s += delta * (x - run_mean);
     
-    double runVar = (run_n > 1) ? run_s / (run_n - 1) : 0.0;
-    double runSD = std::sqrt(runVar);
-    double run_sem = runSD / std::sqrt(run_n);
-    relative_error = rel_error(run_mean, run_sem);
+    run_var = (run_n > 1) ? run_s / (run_n - 1) : 0.0;
+    run_sd = std::sqrt(run_var);
+    jh_sem = run_sd / std::sqrt(run_n);
+    run_sem = propagate_sem(run_mean, jh_sem);
+    relative_error = rel_err(run_mean, run_sem);
   }
   
-  double runVar = (run_n > 1) ? run_s / (run_n - 1) : 0.0;
-  double runSD = std::sqrt(runVar);
-  double run_sem = runSD / std::sqrt(run_n);
   
   Rcpp::NumericVector result = Rcpp::NumericVector::create(run_mean);
-  result.attr("var") = runVar;
-  result.attr("sd") = runSD;
+  result.attr("var") = run_var;
+  result.attr("sd") = run_sd;
   result.attr("sem") = run_sem;
   result.attr("samples") = run_n;
   result.attr("relative_error") = relative_error;
@@ -415,6 +423,50 @@ Rcpp::NumericVector EJH_xptr(SEXP char_ptr, SEXP tree_ptr,
                             double precision = 0.01,
                             int minResample = 36) {
  return EJH_core(char_ptr, tree_ptr, precision, minResample);
+}
+
+//' @rdname H_xptr
+//' @export
+// [[Rcpp::export]]
+Rcpp::NumericVector EMI_xptr(SEXP char_ptr, SEXP tree_ptr,
+                             double precision = 0.01,
+                             int minResample = 36) {
+  
+  if (minResample < 2) {
+    Rcpp::stop("Must perform at least one resampling");
+  }
+  if (precision < 1e-8) {
+    Rcpp::stop("Precision too small");
+  }
+  
+  Rcpp::XPtr<TreeDist::HPart> ch(char_ptr);
+  Rcpp::XPtr<TreeDist::HPart> tr(tree_ptr);
+  
+  const size_t n_tip = ch->nodes[ch->root].n_tip;
+  if (tr->nodes[tr->root].n_tip != static_cast<int>(n_tip)) {
+    Rcpp::stop("Tree and character must describe the same leaves");
+  }
+  
+  const double h1 = H_xptr(ch);
+  const double h2 = H_xptr(tr);
+  const double h1_h2 = h1 + h2;
+  
+  auto emi_sem = [=](const double eh12, const double eh12_sem) {
+    return eh12_sem;
+  };
+  
+  auto emi_rel_err = [=](const double eh12, const double run_sem) {
+    const double emi = h1_h2 - eh12;
+    return std::abs(emi) < 1e-6 ?
+      run_sem :
+      run_sem / std::abs(emi);
+  };
+  
+  Rcpp::NumericVector res = EJH_core(ch, tr, precision, minResample, emi_sem,
+                                     emi_rel_err);
+  const double emi = h1_h2 - res[0];
+  res[0] = emi;
+  return res;
 }
 
 //' @rdname H_xptr
@@ -456,28 +508,43 @@ Rcpp::NumericVector AMI_xptr(SEXP char_ptr, SEXP tree_ptr, SEXP mean_fn,
     result.attr("sd") = 0;
     result.attr("sem") = 0;
     result.attr("samples") = 0;
-    result.attr("relative_error") = 0;
+    result.attr("relativeError") = 0;
     
     return result;
   }
   
-  auto ami_sem = [=](const double run_mean, const double run_sem) {
-    if (run_sem > eps) {
-      const double emi = h1_h2 - run_mean;
+  auto ami_sem = [=](const double eh12, const double eh12_sem) {
+    if (eh12_sem > eps) {
+      const double emi = h1_h2 - eh12;
       const double deriv = (mi - mn) / ((mn - emi) * (mn - emi));
-      const double ret = std::abs(deriv) * run_sem;
+      const double ret = std::abs(deriv) * eh12_sem;
       return (ret < eps) ? 0.0 : ret;
     } else {
       return 0.0;
     }
   };
   
-  Rcpp::NumericVector res = EJH_core(ch, tr, precision, minResample, ami_sem);
+  auto ami_rel_err = [=](const double eh12, const double run_sem) {
+    const double emi = h1_h2 - eh12;
+    const double num = mi - emi;
+    const double denom = mn - emi;
+    const double ami = std::abs(num) < eps ? 0 : num / denom;
+    return std::abs(ami) < 1e-6 ?
+      run_sem :
+      run_sem / std::abs(ami);
+  };
+  
+  Rcpp::NumericVector res = EJH_core(ch, tr, precision, minResample, ami_sem,
+                                     ami_rel_err);
   const double emi = h1_h2 - res[0];
   
   const double num = mi - emi;
-  const double denom = mn - emi;
+  if (std::abs(num) < eps) {
+    res[0] = 0;
+  } else {
+    const double denom = mn - emi;
+    res[0] = std::abs(denom) < eps ? NA_REAL : num / denom;
+  }
   
-  res[0] = std::abs(num) < eps ? 0 : num / denom;
   return res;
 }
