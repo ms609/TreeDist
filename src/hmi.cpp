@@ -407,11 +407,13 @@ Rcpp::NumericVector EJH_core(SEXP char_ptr, SEXP tree_ptr,
   
   
   Rcpp::NumericVector result = Rcpp::NumericVector::create(run_mean);
-  result.attr("var") = run_var;
-  result.attr("sd") = run_sd;
-  result.attr("sem") = run_sem;
   result.attr("samples") = run_n;
-  result.attr("relative_error") = relative_error;
+  result.attr("ejh") = run_mean;
+  result.attr("ejhVar") = run_var;
+  result.attr("ejhSD") = run_sd;
+  result.attr("ejhSEM") = jh_sem;
+  result.attr("sem") = run_sem;
+  result.attr("precision") = relative_error;
   
   return result;
 }
@@ -503,12 +505,14 @@ Rcpp::NumericVector AMI_xptr(SEXP char_ptr, SEXP tree_ptr, SEXP mean_fn,
   const double eps = std::sqrt(std::numeric_limits<double>::epsilon());
   
   if (std::abs(mi - mn) < eps) {
-    Rcpp::NumericVector result = Rcpp::NumericVector::create(1);
-    result.attr("var") = 0;
-    result.attr("sd") = 0;
-    result.attr("sem") = 0;
+    Rcpp::NumericVector result = Rcpp::NumericVector::create(1.0);
     result.attr("samples") = 0;
-    result.attr("relativeError") = 0;
+    result.attr("ejh") = NA_REAL;
+    result.attr("ejhVar") = NA_REAL;
+    result.attr("ejhSD") = NA_REAL;
+    result.attr("ejhSEM") = NA_REAL;
+    result.attr("sem") = 0;
+    result.attr("precision") = 0;
     
     return result;
   }
@@ -524,23 +528,17 @@ Rcpp::NumericVector AMI_xptr(SEXP char_ptr, SEXP tree_ptr, SEXP mean_fn,
     }
   };
   
-  auto ami_rel_err = [=](const double eh12, const double run_sem) {
-    const double emi = h1_h2 - eh12;
-    const double num = mi - emi;
-    const double denom = mn - emi;
-    const double ami = std::abs(num) < eps ? 0 : num / denom;
-    return std::abs(ami) < 1e-6 ?
-      run_sem :
-      run_sem / std::abs(ami);
+  auto absolute_err = [=](const double eh12, const double run_sem) {
+    return run_sem;
   };
   
   Rcpp::NumericVector res = EJH_core(ch, tr, precision, minResample, ami_sem,
-                                     ami_rel_err);
+                                     absolute_err);
   const double emi = h1_h2 - res[0];
   
   const double num = mi - emi;
   if (std::abs(num) < eps) {
-    res[0] = 0;
+    res[0] = 0.0;
   } else {
     const double denom = mn - emi;
     res[0] = std::abs(denom) < eps ? NA_REAL : num / denom;
