@@ -58,7 +58,7 @@ test_that("CharAMI arithmetic checks out", {
                + amAt[["ejhSEM"]])
   
   ami <- CharAMI(flatP, hp9)
-  expect_equal((mi - emi) / (h1 - emi), 1)
+  expect_equal((mi - emi[[1]]) / (h1 - emi[[1]]), 1)
   expect_equal(ami, structure(1, samples = 0, ejh = NA_real_, ejhVar = NA_real_,
                               ejhSD = NA_real_, ejhSEM = NA_real_,
                               sem = 0, precision = 0))

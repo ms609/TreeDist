@@ -30,7 +30,8 @@ object, or (soon) a list of such objects.
 calculated between each pair of trees in the list \code{tree1}.}
 
 \item{precision}{Numeric; Monte Carlo sampling will terminate once the
-relative standard error falls below this value.}
+relative (or for \code{CharAMI()}, absolute) standard error falls below this
+value.}
 
 \item{minResample}{Integer specifying minimum number of Monte Carlo samples
 to conduct.  Avoids early termination when sample size is too small to

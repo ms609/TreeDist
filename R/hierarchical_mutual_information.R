@@ -105,7 +105,7 @@ SelfHMI <- function(tree) {
 }
 
 #' @rdname CharMI
-#' @return `CharH` returns the entropy of a tree, in bits, defined as its
+#' @return `CharH()` returns the entropy of a tree, in bits, defined as its
 #' capacity to assign leaves to unique clusters.
 #' Because leaves in a cherry are not classed as distinguished, the entropy of
 #' a tree is always less than \eqn{N \log2(N)}.
@@ -115,13 +115,23 @@ CharH <- function(tree) {
   H_xptr(part) / log(2)
 }
 
+#' @rdname CharMI
+#' @return `CharJH()` returns the joint entropy of `char` and `tree`, in bits,
+#' defined as the combined capacity to assign leaves to unique clusters.
+#' @export
+CharJH <- function(char, tree) {
+  tree <- as.HPart(tree)
+  char <- .MakeHPartMatch(char, tree)
+  JH_xptr(char, tree) / log(2)
+}
+
 #' Mutual information between a character and a tree
 #' @param char Vector that labels each leaf in `tree` such that entries with
 #' the same label share a common character state.
-#' @param tree Phylogenetic tree in a format that can be coerced to an [`HPart`]
-#' object.
-#' @return `CharMI` returns the mutual information content of a character and a
-#' tree, in bits.
+#' @param tree Hierarchical structure, such as a phylogenetic tree,
+#' that can be coerced to an [`HPart`] object.
+#' @return `CharMI()` returns the mutual information content of `char` and
+#' `tree`, in bits.
 #' @template MRS
 #' @name CharMI
 #' @export
@@ -131,15 +141,6 @@ CharMI <- function(char, tree) {
   (H_xptr(char) + H_xptr(tree) - JH_xptr(char, tree)) / log(2)
 }
 
-#' @rdname CharMI
-#' @return `CharJH()` returns the joint entropy of a character and a tree,
-#' in bits, defined as the combined capacity to assign leaves to unique clusters.
-#' @export
-CharJH <- function(char, tree) {
-  tree <- as.HPart(tree)
-  char <- .MakeHPartMatch(char, tree)
-  JH_xptr(char, tree) / log(2)
-}
 
 .MakeHPartMatch <- function(x, target) {
   if (!identical(as.character(TipLabels(x)), as.character(TipLabels(target)))) {
@@ -150,8 +151,16 @@ CharJH <- function(char, tree) {
 }
 
 #' @rdname CharMI
-#' @return `CharEJH()` returns the expected joint entropy of a character and a
-#' tree, in bits, where state labels are shuffled at random.
+#' @return `CharEJH()` returns the expected joint entropy of `char` and `tree`,
+#' in bits, where state labels are shuffled at random.
+#' Estimates based on the joint entropy bear the attributes:
+#' - `"ejh"`: Estimate of the expected joint entropy
+#' - `"ejhVar"`, `"ejhSD"`, `"ejhSEM"`: variance, standard deviation and 
+#' absolute standard error of the mean of the estimated joint entropy
+#' - `"sem"`: Standard error of the mean of the returned value
+#' - `"precision"`: Precision achieved, in relative terms (`CharEJH()`,
+#' `CharEMI()`) or absolute terms (`CharAMI()`; or other functions where
+#' the returned value is close to zero).
 #' @export
 CharEJH <- function(char, tree, precision = 0.01, minResample = 36) {
   tree <- as.HPart(tree)
@@ -161,8 +170,8 @@ CharEJH <- function(char, tree, precision = 0.01, minResample = 36) {
 
 #' @rdname CharMI
 #' @inheritParams EHMI
-#' @return `CharEMI()` returns the expected mutual information of a character
-#' and a tree, in bits, when state labels are shuffled at random.
+#' @return `CharEMI()` returns the expected mutual information of `char` and
+#' `tree`, in bits, when state labels are shuffled at random.
 #' @export
 CharEMI <- function(char, tree, precision = 0.01, minResample = 36) {
   tree <- as.HPart(tree)
@@ -173,8 +182,9 @@ CharEMI <- function(char, tree, precision = 0.01, minResample = 36) {
   ret
 }
 #' @rdname CharMI
-#' @return `CharEMI()` returns the expected mutual information of a character
-#' and a tree, in bits, when state labels are shuffled at random.
+#' @return `CharAMI()` returns the expected mutual information of `char` and
+#' `tree`, in bits, when state labels are shuffled at random.
+#' The "precision" attribute reports the absolute error of the estimate
 #' @inheritParams AHMI
 #' @export
 CharAMI <- function(char, tree, Mean = function(charH, treeH) charH,
@@ -194,7 +204,8 @@ CharAMI <- function(char, tree, Mean = function(charH, treeH) charH,
 HH <- SelfHMI
 
 #' @param precision Numeric; Monte Carlo sampling will terminate once the
-#' relative standard error falls below this value.
+#' relative (or for `CharAMI()`, absolute) standard error falls below this
+#' value.
 #' @param minResample Integer specifying minimum number of Monte Carlo samples
 #' to conduct.  Avoids early termination when sample size is too small to
 #' reliably estimate the standard error of the mean.

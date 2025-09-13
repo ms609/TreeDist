@@ -4,17 +4,27 @@
 \alias{H_xptr}
 \alias{JH_xptr}
 \alias{EJH_xptr}
+\alias{EMI_xptr}
+\alias{AMI_xptr}
 \title{Directly calculate entropy from an HPart pointer}
 \usage{
 H_xptr(ptr)
 
 JH_xptr(char_ptr, tree_ptr)
 
-EJH_xptr(char_ptr, tree_ptr, tolerance = 0.01, minResample = 36L)
+EJH_xptr(char_ptr, tree_ptr, precision = 0.01, minResample = 36L)
+
+EMI_xptr(char_ptr, tree_ptr, precision = 0.01, minResample = 36L)
+
+AMI_xptr(char_ptr, tree_ptr, mean_fn, precision = 0.01, minResample = 36L)
 }
 \arguments{
 \item{ptr, char_ptr, tree_ptr}{Pointers to HPart objects for which chosen
 entropy value should be calculated.}
+
+\item{precision}{Numeric; Monte Carlo sampling will terminate once the
+relative (or for \code{CharAMI()}, absolute) standard error falls below this
+value.}
 
 \item{minResample}{Integer specifying minimum number of Monte Carlo samples
 to conduct.  Avoids early termination when sample size is too small to

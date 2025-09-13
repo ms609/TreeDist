@@ -2,8 +2,8 @@
 % Please edit documentation in R/hierarchical_mutual_information.R
 \name{CharH}
 \alias{CharH}
-\alias{CharMI}
 \alias{CharJH}
+\alias{CharMI}
 \alias{CharEJH}
 \alias{CharEMI}
 \alias{CharAMI}
@@ -11,9 +11,9 @@
 \usage{
 CharH(tree)
 
-CharMI(char, tree)
-
 CharJH(char, tree)
+
+CharMI(char, tree)
 
 CharEJH(char, tree, precision = 0.01, minResample = 36)
 
@@ -28,14 +28,15 @@ CharAMI(
 )
 }
 \arguments{
-\item{tree}{Phylogenetic tree in a format that can be coerced to an \code{\link{HPart}}
-object.}
+\item{tree}{Hierarchical structure, such as a phylogenetic tree,
+that can be coerced to an \code{\link{HPart}} object.}
 
 \item{char}{Vector that labels each leaf in \code{tree} such that entries with
 the same label share a common character state.}
 
 \item{precision}{Numeric; Monte Carlo sampling will terminate once the
-relative standard error falls below this value.}
+relative (or for \code{CharAMI()}, absolute) standard error falls below this
+value.}
 
 \item{minResample}{Integer specifying minimum number of Monte Carlo samples
 to conduct.  Avoids early termination when sample size is too small to
@@ -45,25 +46,36 @@ reliably estimate the standard error of the mean.}
 two input hierarchies, in order to normalize the \acronym{HMI}.}
 }
 \value{
-\code{CharH} returns the entropy of a tree, in bits, defined as its
+\code{CharH()} returns the entropy of a tree, in bits, defined as its
 capacity to assign leaves to unique clusters.
 Because leaves in a cherry are not classed as distinguished, the entropy of
 a tree is always less than \eqn{N \log2(N)}.
 
-\code{CharMI} returns the mutual information content of a character and a
-tree, in bits.
+\code{CharJH()} returns the joint entropy of \code{char} and \code{tree}, in bits,
+defined as the combined capacity to assign leaves to unique clusters.
 
-\code{CharJH()} returns the joint entropy of a character and a tree,
-in bits, defined as the combined capacity to assign leaves to unique clusters.
+\code{CharMI()} returns the mutual information content of \code{char} and
+\code{tree}, in bits.
 
-\code{CharEJH()} returns the expected joint entropy of a character and a
-tree, in bits, where state labels are shuffled at random.
+\code{CharEJH()} returns the expected joint entropy of \code{char} and \code{tree},
+in bits, where state labels are shuffled at random.
+Estimates based on the joint entropy bear the attributes:
+\itemize{
+\item \code{"ejh"}: Estimate of the expected joint entropy
+\item \code{"ejhVar"}, \code{"ejhSD"}, \code{"ejhSEM"}: variance, standard deviation and
+absolute standard error of the mean of the estimated joint entropy
+\item \code{"sem"}: Standard error of the mean of the returned value
+\item \code{"precision"}: Precision achieved, in relative terms (\code{CharEJH()},
+\code{CharEMI()}) or absolute terms (\code{CharAMI()}; or other functions where
+the returned value is close to zero).
+}
 
-\code{CharEMI()} returns the expected mutual information of a character
-and a tree, in bits, when state labels are shuffled at random.
+\code{CharEMI()} returns the expected mutual information of \code{char} and
+\code{tree}, in bits, when state labels are shuffled at random.
 
-\code{CharEMI()} returns the expected mutual information of a character
-and a tree, in bits, when state labels are shuffled at random.
+\code{CharAMI()} returns the expected mutual information of \code{char} and
+\code{tree}, in bits, when state labels are shuffled at random.
+The "precision" attribute reports the absolute error of the estimate
 }
 \description{
 Mutual information between a character and a tree

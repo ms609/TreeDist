@@ -329,7 +329,7 @@ Rcpp::NumericVector EHMI_xptr(const SEXP hp1_ptr, const SEXP hp2_ptr,
   result.attr("sd") = run_sd;
   result.attr("sem") = run_sem;
   result.attr("samples") = run_n;
-  result.attr("relative_error") = relative_error;
+  result.attr("precision") = relative_error;
   
   return result;
 }

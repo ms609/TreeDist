@@ -104,7 +104,7 @@ test_that("HMI results match hmi.pynb", {
                     var = 0.01,
                     sd = 0.1, 
                     sem = 0.008,
-                    relativeError = 0.01)
+                    precision = 0.01)
   ehmi_cpp <- EHMI(hp1, hp2, precision = 0.01)
   expect_gt(attr(ehmi_cpp, "samples"), 36)
   attr(ehmi_cpp, "samples") <- NULL # Could vary; no point in testing
