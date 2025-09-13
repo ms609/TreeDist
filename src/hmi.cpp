@@ -462,13 +462,10 @@ Rcpp::NumericVector AMI_xptr(SEXP char_ptr, SEXP tree_ptr, SEXP mean_fn,
   const double eps = std::sqrt(std::numeric_limits<double>::epsilon());
   
   auto ami_sem = [=](const double run_mean, const double run_sem) {
-    const double emi_sem = (std::abs(run_mean) < 1e-6) 
-      ? run_sem
-      : run_sem / std::abs(run_mean);
-    if (emi_sem > eps) {
+    if (run_sem > eps) {
       const double emi = h1_h2 - run_mean;
       const double deriv = (mi - mn) / ((mn - emi) * (mn - emi));
-      const double ret = std::abs(deriv) * emi_sem;
+      const double ret = std::abs(deriv) * run_sem;
       return (ret < eps) ? 0.0 : ret;
     } else {
       return 0.0;
