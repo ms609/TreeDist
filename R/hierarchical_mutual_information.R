@@ -151,6 +151,8 @@ CharMI <- function(char, tree) {
 }
 
 #' @rdname CharMI
+#' @param nCores Integer specifying number of cores to employ in calculation.
+#' Performance gains may only be evident in large trees.
 #' @return `CharEJH()` returns the expected joint entropy of `char` and `tree`,
 #' in bits, where state labels are shuffled at random.
 #' Estimates based on the joint entropy bear the attributes:
@@ -162,11 +164,12 @@ CharMI <- function(char, tree) {
 #' `CharEMI()`) or absolute terms (`CharAMI()`; or other functions where
 #' the returned value is close to zero).
 #' @export
-CharEJH <- function(char, tree, precision = 0.01, minResample = 36,
-                    nCores = 2) {
+CharEJH <- function(char, tree, precision = 0.01, minSample = 36,
+                    nCores = 1) {
   tree <- as.HPart(tree)
   char <- .MakeHPartMatch(char, tree)
-  EJH_xptr(char, tree, as.numeric(precision), as.integer(minResample), nCores) /
+  EJH_xptr(char, tree, as.numeric(precision), as.integer(minSample), 
+           as.integer(nCores)) /
     log(2)
   
 }
@@ -176,10 +179,11 @@ CharEJH <- function(char, tree, precision = 0.01, minResample = 36,
 #' @return `CharEMI()` returns the expected mutual information of `char` and
 #' `tree`, in bits, when state labels are shuffled at random.
 #' @export
-CharEMI <- function(char, tree, precision = 0.01, minResample = 36) {
+CharEMI <- function(char, tree, precision = 0.01, minSample = 36, nCores = 2) {
   tree <- as.HPart(tree)
   char <- .MakeHPartMatch(char, tree)
-  ret <- EMI_xptr(char, tree, as.numeric(precision), as.integer(minResample)) / 
+  ret <- EMI_xptr(char, tree, as.numeric(precision), as.integer(minSample),
+                  as.integer(nCores)) / 
     log(2)
   # TODO divide attributes by log2 too
   ret
@@ -191,12 +195,12 @@ CharEMI <- function(char, tree, precision = 0.01, minResample = 36) {
 #' @inheritParams AHMI
 #' @export
 CharAMI <- function(char, tree, Mean = function(charH, treeH) charH,
-                    precision = 0.01, minResample = 36) {
+                    precision = 0.01, minSample = 36, nCores = 2) {
   tree <- as.HPart(tree)
   char <- .MakeHPartMatch(char, tree)
   
   AMI_xptr(char, tree, as.function(Mean), as.numeric(precision),
-           as.integer(minResample))
+           as.integer(minSample), as.integer(nCores))
 }
 
 #' Self hierarchical mutual information
@@ -209,9 +213,10 @@ HH <- SelfHMI
 #' @param precision Numeric; Monte Carlo sampling will terminate once the
 #' relative (or for `CharAMI()`, absolute) standard error falls below this
 #' value.
-#' @param minResample Integer specifying minimum number of Monte Carlo samples
-#' to conduct.  Avoids early termination when sample size is too small to
-#' reliably estimate the standard error of the mean.
+#' @param minSample Integer specifying minimum number of Monte Carlo samples
+#' to conduct per chain.
+#' Avoids early termination when sample size is too small to reliably estimate
+#' the standard error of the mean.
 #' @return `EHMI()` returns the expected \acronym{HMI} against a uniform
 #' shuffling of element labels, estimated by performing Monte Carlo resampling
 #' on the same hierarchical structure until the relative standard error of the
@@ -225,9 +230,9 @@ HH <- SelfHMI
 #' EHMI(tree1, tree2, precision = 0.1)
 #' @rdname HierarchicalMutualInfo
 #' @export
-EHMI <- function(tree1, tree2, precision = 0.01, minResample = 36) {
+EHMI <- function(tree1, tree2, precision = 0.01, minSample = 36) {
   EHMI_xptr(as.HPart(tree1), as.HPart(tree2), as.numeric(precision),
-                as.integer(minResample)) / log(2)
+                as.integer(minSample)) / log(2)
 }
 
 .AHMISEM <- function(hmi, M, ehmi, ehmi_sem) {
@@ -261,11 +266,11 @@ EHMI <- function(tree1, tree2, precision = 0.01, minResample = 36) {
 #' AHMI(tree1, tree2, precision = 0.1)
 #' @rdname HierarchicalMutualInfo
 #' @export
-AHMI <- function(tree1, tree2, Mean = max, precision = 0.01, minResample = 36) {
+AHMI <- function(tree1, tree2, Mean = max, precision = 0.01, minSample = 36) {
   hp1 <- as.HPart(tree1)
   hp2 <- .MakeHPartMatch(tree2, hp1)
   
-  ehmi <- EHMI_xptr(hp1, hp2, as.numeric(precision), as.integer(minResample))
+  ehmi <- EHMI_xptr(hp1, hp2, as.numeric(precision), as.integer(minSample))
   hmi <- HMI_xptr(hp1, hp2)
   hh1 <- HH_xptr(hp1)
   hh2 <- HH_xptr(hp2)

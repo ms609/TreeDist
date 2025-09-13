@@ -15,16 +15,17 @@ CharJH(char, tree)
 
 CharMI(char, tree)
 
-CharEJH(char, tree, precision = 0.01, minResample = 36)
+CharEJH(char, tree, precision = 0.01, minSample = 36, nCores = 1)
 
-CharEMI(char, tree, precision = 0.01, minResample = 36)
+CharEMI(char, tree, precision = 0.01, minSample = 36, nCores = 2)
 
 CharAMI(
   char,
   tree,
   Mean = function(charH, treeH) charH,
   precision = 0.01,
-  minResample = 36
+  minSample = 36,
+  nCores = 2
 )
 }
 \arguments{
@@ -38,9 +39,13 @@ the same label share a common character state.}
 relative (or for \code{CharAMI()}, absolute) standard error falls below this
 value.}
 
-\item{minResample}{Integer specifying minimum number of Monte Carlo samples
-to conduct.  Avoids early termination when sample size is too small to
-reliably estimate the standard error of the mean.}
+\item{minSample}{Integer specifying minimum number of Monte Carlo samples
+to conduct per chain.
+Avoids early termination when sample size is too small to reliably estimate
+the standard error of the mean.}
+
+\item{nCores}{Integer specifying number of cores to employ in calculation.
+Performance gains may only be evident in large trees.}
 
 \item{Mean}{Function by which to combine the self-information of the
 two input hierarchies, in order to normalize the \acronym{HMI}.}

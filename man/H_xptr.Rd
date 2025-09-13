@@ -12,11 +12,18 @@ H_xptr(ptr)
 
 JH_xptr(char_ptr, tree_ptr)
 
-EJH_xptr(char_ptr, tree_ptr, precision = 0.01, minResample = 36L)
+EJH_xptr(char_ptr, tree_ptr, precision = 0.01, minResample = 36L, nCores = 1L)
 
-EMI_xptr(char_ptr, tree_ptr, precision = 0.01, minResample = 36L)
+EMI_xptr(char_ptr, tree_ptr, precision = 0.01, minResample = 36L, nCores = 1L)
 
-AMI_xptr(char_ptr, tree_ptr, mean_fn, precision = 0.01, minResample = 36L)
+AMI_xptr(
+  char_ptr,
+  tree_ptr,
+  mean_fn,
+  precision = 0.01,
+  minResample = 36L,
+  nCores = 1L
+)
 }
 \arguments{
 \item{ptr, char_ptr, tree_ptr}{Pointers to HPart objects for which chosen
@@ -26,9 +33,8 @@ entropy value should be calculated.}
 relative (or for \code{CharAMI()}, absolute) standard error falls below this
 value.}
 
-\item{minResample}{Integer specifying minimum number of Monte Carlo samples
-to conduct.  Avoids early termination when sample size is too small to
-reliably estimate the standard error of the mean.}
+\item{nCores}{Integer specifying number of cores to employ in calculation.
+Performance gains may only be evident in large trees.}
 }
 \description{
 Intended for developer use only; no safeguards against bad input.

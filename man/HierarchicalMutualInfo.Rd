@@ -14,9 +14,9 @@ HMI(tree1, tree2 = NULL, normalize = FALSE)
 
 SelfHMI(tree)
 
-EHMI(tree1, tree2, precision = 0.01, minResample = 36)
+EHMI(tree1, tree2, precision = 0.01, minSample = 36)
 
-AHMI(tree1, tree2, Mean = max, precision = 0.01, minResample = 36)
+AHMI(tree1, tree2, Mean = max, precision = 0.01, minSample = 36)
 }
 \arguments{
 \item{normalize}{If \code{FALSE}, return the raw \acronym{HMI}, in bits.
@@ -33,9 +33,10 @@ calculated between each pair of trees in the list \code{tree1}.}
 relative (or for \code{CharAMI()}, absolute) standard error falls below this
 value.}
 
-\item{minResample}{Integer specifying minimum number of Monte Carlo samples
-to conduct.  Avoids early termination when sample size is too small to
-reliably estimate the standard error of the mean.}
+\item{minSample}{Integer specifying minimum number of Monte Carlo samples
+to conduct per chain.
+Avoids early termination when sample size is too small to reliably estimate
+the standard error of the mean.}
 
 \item{Mean}{Function by which to combine the self-information of the
 two input hierarchies, in order to normalize the \acronym{HMI}.}

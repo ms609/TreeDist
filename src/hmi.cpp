@@ -616,9 +616,10 @@ Rcpp::NumericVector EJH_xptr(const SEXP char_ptr, const SEXP tree_ptr,
 //' @rdname H_xptr
 //' @export
 // [[Rcpp::export]]
-Rcpp::NumericVector EMI_xptr(SEXP char_ptr, SEXP tree_ptr,
-                             double precision = 0.01,
-                             int minResample = 36) {
+Rcpp::NumericVector EMI_xptr(const SEXP char_ptr, const SEXP tree_ptr,
+                             const double precision = 0.01,
+                             const int minResample = 36,
+                             const int nCores = 1) {
   
   if (minResample < 2) {
     Rcpp::stop("Must perform at least one resampling");
@@ -655,18 +656,25 @@ Rcpp::NumericVector EMI_xptr(SEXP char_ptr, SEXP tree_ptr,
       run_sem / std::abs(emi);
   };
   
-  Rcpp::NumericVector res = EJH_core(ch, tr, seed, precision, minResample, emi_sem,
-                                     emi_rel_err);
+  
+  Rcpp::NumericVector res = nCores < 2 ?
+    EJH_core(ch.get(), tr.get(), seed, precision, minResample, emi_sem,
+           emi_rel_err) :
+    EJH_core_parallel(ch.get(), tr.get(), seed, precision, minResample, nCores,
+                      emi_sem, emi_rel_err);
+  
   const double emi = h1_h2 - res[0];
   res[0] = emi;
+  
   return res;
 }
 
 //' @rdname H_xptr
 //' @export
 // [[Rcpp::export]]
-Rcpp::NumericVector AMI_xptr(SEXP char_ptr, SEXP tree_ptr, SEXP mean_fn,
-                             double precision = 0.01, int minResample = 36) {
+Rcpp::NumericVector AMI_xptr(const SEXP char_ptr, const SEXP tree_ptr,
+                             const SEXP mean_fn, const double precision = 0.01,
+                             int minResample = 36, const int nCores = 1) {
   
   if (minResample < 2) {
     Rcpp::stop("Must perform at least one resampling");
@@ -728,11 +736,16 @@ Rcpp::NumericVector AMI_xptr(SEXP char_ptr, SEXP tree_ptr, SEXP mean_fn,
     return run_sem;
   };
   
-  Rcpp::NumericVector res = EJH_core(ch.get(), tr.get(), seed, precision,
-                                     minResample, ami_sem, absolute_err);
-  const double emi = h1_h2 - res[0];
   
+  Rcpp::NumericVector res = nCores < 2 ?
+    EJH_core(ch.get(), tr.get(), seed, precision, minResample, ami_sem,
+           absolute_err) :
+    EJH_core_parallel(ch.get(), tr.get(), seed, precision, minResample, nCores,
+                      ami_sem, absolute_err);
+  
+  const double emi = h1_h2 - res[0];
   const double num = mi - emi;
+  
   if (std::abs(num) < eps) {
     res[0] = 0.0;
   } else {
