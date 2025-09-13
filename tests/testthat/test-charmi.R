@@ -47,12 +47,13 @@ test_that("CharAMI arithmetic checks out", {
   emi <- CharEMI(flatP, hp9, precision = 0.003)[[1]]
   expect_lt(emi, h1)
   
-  ami <- CharAMI(flatP, hp9, max, precision = 0.003)
+  ami <- CharAMI(flatP, hp9, max, precision = 0.01)
   expect_equal(ami[[1]], (mi - emi) / (max(h1, h2) - emi), tolerance = 4 * 0.01)
   
   ami <- CharAMI(flatP, hp9)
   expect_equal((mi - emi) / (h1 - emi), 1)
-  expect_equal(ami, structure(1, sem = 0))
+  expect_equal(ami, structure(1, var = 0, sd = 0, sem = 0, samples = 0,
+                              relative_error = 0))
 })
 
 test_that("CharMI works with real dataset", {

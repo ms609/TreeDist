@@ -448,7 +448,9 @@ Rcpp::NumericVector AMI_xptr(SEXP char_ptr, SEXP tree_ptr, SEXP mean_fn,
   const double h12 = JH_xptr(ch, tr);
   const double mi = h1_h2 - h12;
   
-  if (mi == mn) {
+  const double eps = std::sqrt(std::numeric_limits<double>::epsilon());
+  
+  if (std::abs(mi - mn) < eps) {
     Rcpp::NumericVector result = Rcpp::NumericVector::create(1);
     result.attr("var") = 0;
     result.attr("sd") = 0;
@@ -458,8 +460,6 @@ Rcpp::NumericVector AMI_xptr(SEXP char_ptr, SEXP tree_ptr, SEXP mean_fn,
     
     return result;
   }
-  
-  const double eps = std::sqrt(std::numeric_limits<double>::epsilon());
   
   auto ami_sem = [=](const double run_mean, const double run_sem) {
     if (run_sem > eps) {
