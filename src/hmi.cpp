@@ -1,6 +1,7 @@
 #include "hpart.h"
 #include <Rcpp.h>
 #include <cmath>
+#include <algorithm> // for std::shuffle
 #include <random>
 using namespace Rcpp;
 
@@ -264,15 +265,6 @@ double JH_xptr(SEXP char_ptr, SEXP tree_ptr) {
   return TreeDist::character_mutual_info(tr->nodes, tr->root, bitsets);
 }
 
-inline void fisher_yates_shuffle(std::vector<int>& v, std::mt19937_64& rng) 
-  noexcept {
-  static thread_local std::uniform_int_distribution<size_t> dist;
-  for (size_t i = v.size() - 1; i > 0; --i) {
-    size_t j = dist(rng, std::uniform_int_distribution<size_t>::param_type{0, i});
-    std::swap(v[i], v[j]);
-  }
-}
-
 // [[Rcpp::export]]
 Rcpp::NumericVector EHMI_xptr(const SEXP hp1_ptr, const SEXP hp2_ptr,
                               const double tolerance = 0.01,
@@ -308,13 +300,10 @@ Rcpp::NumericVector EHMI_xptr(const SEXP hp1_ptr, const SEXP hp2_ptr,
   std::mt19937_64 rng(seed);
   
   while (relativeError > tolerance || runN < minResample) {
-    // Shuffle leaves
-    fisher_yates_shuffle(shuffled, rng);
     
-    // Apply shuffled labels
+    std::shuffle(shuffled.begin(), shuffled.end(), rng);
     relabel_hpart(hp1_shuf, shuffled);
     
-    // Compute HMI
     double x = HMI_xptr(hp1_shuf, hp2);
     
     // Welford update
@@ -384,13 +373,10 @@ Rcpp::NumericVector EJH_xptr(SEXP char_ptr, SEXP tree_ptr,
   std::mt19937_64 rng(seed);
   
   while (relativeError > tolerance || runN < minResample) {
-    // Shuffle leaves
-    fisher_yates_shuffle(shuffled, rng);
     
-    // Apply shuffled labels
+    std::shuffle(shuffled.begin(), shuffled.end(), rng);
     relabel_hpart(ch_shuf, shuffled);
     
-    // Compute JH
     double x = JH_xptr(ch_shuf, tr);
     
     // Welford update

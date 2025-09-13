@@ -125,4 +125,9 @@ test_that("AHMI returns zero for random trees", {
   ci <- t.test(samples, mu = 0, conf.level = 0.997)$conf.int
   expect_lt(ci[[1]], 0)
   expect_gt(ci[[2]], 0)
+  
+  # Check that the same seed returns the same output
+  set.seed(1)
+  samples2 <- replicate(256, CharAMI(ch, TreeTools::RandomTree(ch)))
+  expect_equal(samples2, samples)
 })
