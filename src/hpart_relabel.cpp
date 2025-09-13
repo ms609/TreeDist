@@ -21,7 +21,9 @@ void recompute_bitsets_postorder(TreeDist::HPart &hpart,
     node_bits[node.label / 64] = 0;
     
     node.label = new_index;
-    node_bits[new_index / 64] = 1ULL << (new_index % 64);
+    const size_t block_idx = new_index >> 6; // = new_index / 64
+    const size_t bit_idx = new_index & 63;   // = new_index % 64
+    node_bits[block_idx] = 1ULL << bit_idx;
     
   } else {
     // Postorder: compute first child
