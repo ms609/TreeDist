@@ -43,14 +43,20 @@ JH_xptr <- function(char_ptr, tree_ptr) {
     .Call(`_TreeDist_JH_xptr`, char_ptr, tree_ptr)
 }
 
-EHMI_xptr <- function(hp1_ptr, hp2_ptr, tolerance = 0.01, minResample = 36L) {
-    .Call(`_TreeDist_EHMI_xptr`, hp1_ptr, hp2_ptr, tolerance, minResample)
+EHMI_xptr <- function(hp1_ptr, hp2_ptr, precision = 0.01, minResample = 36L) {
+    .Call(`_TreeDist_EHMI_xptr`, hp1_ptr, hp2_ptr, precision, minResample)
 }
 
 #' @rdname H_xptr
 #' @export
-EJH_xptr <- function(char_ptr, tree_ptr, tolerance = 0.01, minResample = 36L) {
-    .Call(`_TreeDist_EJH_xptr`, char_ptr, tree_ptr, tolerance, minResample)
+EJH_xptr <- function(char_ptr, tree_ptr, precision = 0.01, minResample = 36L) {
+    .Call(`_TreeDist_EJH_xptr`, char_ptr, tree_ptr, precision, minResample)
+}
+
+#' @rdname H_xptr
+#' @export
+AMI_xptr <- function(char_ptr, tree_ptr, mean_fn, precision = 0.01, minResample = 36L) {
+    .Call(`_TreeDist_AMI_xptr`, char_ptr, tree_ptr, mean_fn, precision, minResample)
 }
 
 build_hpart_from_phylo <- function(phy) {

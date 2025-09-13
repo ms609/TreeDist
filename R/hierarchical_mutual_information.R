@@ -181,20 +181,8 @@ CharAMI <- function(char, tree, Mean = function(charH, treeH) charH,
   tree <- as.HPart(tree)
   char <- .MakeHPartMatch(char, tree)
   
-  eh12 <- EJH_xptr(char, tree, as.numeric(precision), as.integer(minResample))
-  h12 <- JH_xptr(char, tree)
-  h1 <- H_xptr(char)
-  h2 <- H_xptr(tree)
-  M <- Mean(h1, h2)
-  
-  mi <- h1 + h2 - h12
-  emi <- h1 + h2 - eh12
-  
-  num <- mi - emi[[1]]
-  denom <- M - emi[[1]]
-  # Return:
-  structure(if (abs(num) < sqrt(.Machine$double.eps)) 0 else num / denom,
-            sem = .AHMISEM(mi, M, emi[[1]], attr(emi, "sem")))
+  AMI_xptr(char, tree, as.function(Mean), as.numeric(precision),
+           as.integer(minResample))
 }
 
 #' Self hierarchical mutual information

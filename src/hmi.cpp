@@ -267,14 +267,14 @@ double JH_xptr(SEXP char_ptr, SEXP tree_ptr) {
 
 // [[Rcpp::export]]
 Rcpp::NumericVector EHMI_xptr(const SEXP hp1_ptr, const SEXP hp2_ptr,
-                              const double tolerance = 0.01,
+                              const double precision = 0.01,
                               const int minResample = 36) {
   
   if (minResample < 2) {
     Rcpp::stop("Must perform at least one resampling");
   }
-  if (tolerance < 1e-8) {
-    Rcpp::stop("Tolerance too low");
+  if (precision < 1e-8) {
+    Rcpp::stop("Precision too small");
   }
   
   Rcpp::XPtr<TreeDist::HPart> hp1(hp1_ptr);
@@ -286,7 +286,7 @@ Rcpp::NumericVector EHMI_xptr(const SEXP hp1_ptr, const SEXP hp2_ptr,
   double runMean = 0.0;
   double runS = 0.0;
   int runN = 0;
-  double relativeError = tolerance * 2; // Avoid -Wmaybe-uninitialized
+  double relativeError = precision * 2; // Avoid -Wmaybe-uninitialized
   
   Rcpp::RNGScope scope;
   
@@ -299,7 +299,7 @@ Rcpp::NumericVector EHMI_xptr(const SEXP hp1_ptr, const SEXP hp2_ptr,
     std::numeric_limits<unsigned int>::max());
   std::mt19937_64 rng(seed);
   
-  while (relativeError > tolerance || runN < minResample) {
+  while (relativeError > precision || runN < minResample) {
     
     std::shuffle(shuffled.begin(), shuffled.end(), rng);
     relabel_hpart(hp1_shuf, shuffled);
@@ -338,14 +338,14 @@ Rcpp::NumericVector EHMI_xptr(const SEXP hp1_ptr, const SEXP hp2_ptr,
 //' @export
 // [[Rcpp::export]]
 Rcpp::NumericVector EJH_xptr(SEXP char_ptr, SEXP tree_ptr,
-                             double tolerance = 0.01,
+                             double precision = 0.01,
                              int minResample = 36) {
   
   if (minResample < 2) {
     Rcpp::stop("Must perform at least one resampling");
   }
-  if (tolerance < 1e-8) {
-    Rcpp::stop("Tolerance too low");
+  if (precision < 1e-8) {
+    Rcpp::stop("Precision too small");
   }
   
   Rcpp::XPtr<TreeDist::HPart> ch(char_ptr);
@@ -359,7 +359,7 @@ Rcpp::NumericVector EJH_xptr(SEXP char_ptr, SEXP tree_ptr,
   double runMean = 0.0;
   double runS = 0.0;
   int runN = 0;
-  double relativeError = tolerance * 2; // Avoid -Wmaybe-uninitialized
+  double relativeError = precision * 2; // Avoid -Wmaybe-uninitialized
   
   Rcpp::RNGScope scope;
   
@@ -372,7 +372,7 @@ Rcpp::NumericVector EJH_xptr(SEXP char_ptr, SEXP tree_ptr,
     std::numeric_limits<unsigned int>::max());
   std::mt19937_64 rng(seed);
   
-  while (relativeError > tolerance || runN < minResample) {
+  while (relativeError > precision || runN < minResample) {
     
     std::shuffle(shuffled.begin(), shuffled.end(), rng);
     relabel_hpart(ch_shuf, shuffled);
@@ -405,4 +405,118 @@ Rcpp::NumericVector EJH_xptr(SEXP char_ptr, SEXP tree_ptr,
   result.attr("relativeError") = relativeError;
   
   return result;
+}
+
+//' @rdname H_xptr
+//' @export
+// [[Rcpp::export]]
+Rcpp::NumericVector AMI_xptr(SEXP char_ptr, SEXP tree_ptr, SEXP mean_fn,
+                             double precision = 0.01, int minResample = 36) {
+  
+  if (minResample < 2) {
+    Rcpp::stop("Must perform at least one resampling");
+  }
+  if (precision < 1e-8) {
+    Rcpp::stop("Precision too small");
+  }
+  
+  Rcpp::XPtr<TreeDist::HPart> ch(char_ptr);
+  Rcpp::XPtr<TreeDist::HPart> tr(tree_ptr);
+  
+  const size_t n_tip = ch->nodes[ch->root].n_tip;
+  if (tr->nodes[tr->root].n_tip != static_cast<int>(n_tip)) {
+    Rcpp::stop("Tree and character must describe the same leaves");
+  }
+  
+  const double h1 = H_xptr(ch);
+  const double h2 = H_xptr(tr);
+  
+  Rcpp::Function mean(mean_fn);
+  const double mn = Rcpp::as<double>(mean(h1, h2));
+  const double h1_h2 = h1 + h2;
+  
+  const double h12 = JH_xptr(ch, tr);
+  const double mi = h1_h2 - h12;
+  
+  if (mi == mn) {
+    Rcpp::NumericVector result = Rcpp::NumericVector::create(1);
+    result.attr("var") = 0;
+    result.attr("sd") = 0;
+    result.attr("sem") = 0;
+    result.attr("samples") = 0;
+    result.attr("relativeError") = 0;
+    
+    return result;
+  }
+  
+  const Rcpp::NumericVector eh12 = EJH_xptr(ch, tr, precision, minResample);
+  const double emi = h1_h2 - eh12[0];
+  
+  const double num = mi - emi;
+  const double denom = mn - emi;
+  
+  
+  Rcpp::NumericVector result = Rcpp::NumericVector::create(num / denom);
+  result.attr("var") = 0;
+  result.attr("sd") = 0;
+  result.attr("sem") = 0;
+  result.attr("samples") = 0;
+  result.attr("relativeError") = 0;
+  
+  return result;
+  /*
+  structure(if (abs(num) < sqrt(.Machine$double.eps)) 0 else num / denom,
+            sem = .AHMISEM(mi, M, emi[[1]], attr(emi, "sem")))
+  
+  
+  
+  double runMean = 0.0;
+  double runS = 0.0;
+  int runN = 0;
+  double relativeError = precision * 2; // Avoid -Wmaybe-uninitialized
+  
+  Rcpp::RNGScope scope;
+  
+  SEXP ch_shuf = clone_hpart(char_ptr);
+  std::vector<int> shuffled(n_tip);
+  std::iota(shuffled.begin(), shuffled.end(), 0);
+  
+  unsigned int seed =
+    static_cast<unsigned int>(R::unif_rand() * 
+    std::numeric_limits<unsigned int>::max());
+  std::mt19937_64 rng(seed);
+  
+  while (relativeError > precision || runN < minResample) {
+    
+    std::shuffle(shuffled.begin(), shuffled.end(), rng);
+    relabel_hpart(ch_shuf, shuffled);
+    
+    double x = JH_xptr(ch_shuf, tr);
+    
+    // Welford update
+    runN++;
+    double delta = x - runMean;
+    runMean += delta / runN;
+    runS += delta * (x - runMean);
+    
+    double runVar = (runN > 1) ? runS / (runN - 1) : 0.0;
+    double runSD = std::sqrt(runVar);
+    double runSEM = runSD / std::sqrt(runN);
+    relativeError = std::abs(runMean) < 1e-6 ?
+      runSEM :
+      runSEM / std::abs(runMean);
+  }
+  
+  double runVar = (runN > 1) ? runS / (runN - 1) : 0.0;
+  double runSD = std::sqrt(runVar);
+  double runSEM = runSD / std::sqrt(runN);
+  
+  Rcpp::NumericVector result = Rcpp::NumericVector::create(runMean);
+  result.attr("var") = runVar;
+  result.attr("sd") = runSD;
+  result.attr("sem") = runSEM;
+  result.attr("samples") = runN;
+  result.attr("relativeError") = relativeError;
+  
+  return result;*/
 }
