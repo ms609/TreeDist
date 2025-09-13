@@ -162,10 +162,13 @@ CharMI <- function(char, tree) {
 #' `CharEMI()`) or absolute terms (`CharAMI()`; or other functions where
 #' the returned value is close to zero).
 #' @export
-CharEJH <- function(char, tree, precision = 0.01, minResample = 36) {
+CharEJH <- function(char, tree, precision = 0.01, minResample = 36,
+                    nCores = 2) {
   tree <- as.HPart(tree)
   char <- .MakeHPartMatch(char, tree)
-  EJH_xptr(char, tree, as.numeric(precision), as.integer(minResample)) / log(2)
+  EJH_xptr(char, tree, as.numeric(precision), as.integer(minResample), nCores) /
+    log(2)
+  
 }
 
 #' @rdname CharMI

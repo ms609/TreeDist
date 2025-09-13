@@ -140,3 +140,9 @@ test_that("AHMI returns zero for random trees", {
   samples2 <- replicate(256, CharAMI(ch, TreeTools::RandomTree(ch)))
   expect_equal(samples2, samples)
 })
+
+test_that("CharMI functions parallelize", {
+  ch <- c(1L, 2L, 2L, 2L, 2L, 2L, 1L, 1L, 1L, 1L, 1L)
+  tr <- TreeTools::BalancedTree(11)
+  expect_equal(CharEJH(ch, tr, nCores = 2), CharEJH(ch, tr), tolerance = 0.1)
+})

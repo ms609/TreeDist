@@ -5,12 +5,12 @@ using namespace Rcpp;
 namespace TreeDist {
 
 // --- postorder recompute internal nodes ---
-void recompute_bitsets_postorder(TreeDist::HPart &hpart,
+void recompute_bitsets_postorder(TreeDist::HPart* hpart,
                                  const size_t node_idx,
                                  const std::vector<int> &mapping) {
-  auto &node = hpart.nodes[node_idx];
+  auto &node = hpart->nodes[node_idx];
   uint64_t* node_bits = node.bitset;
-  const size_t n_block = hpart.n_block;
+  const size_t n_block = hpart->n_block;
   
   if (node.children.empty()) {
     // Leaf node
@@ -28,7 +28,7 @@ void recompute_bitsets_postorder(TreeDist::HPart &hpart,
   } else {
     // Postorder: compute first child
     recompute_bitsets_postorder(hpart, node.children[0], mapping);
-    auto &first_child = hpart.nodes[node.children[0]];
+    auto &first_child = hpart->nodes[node.children[0]];
     const uint64_t* child_bits = first_child.bitset;
     
     // Copy first child’s bitset into parent
@@ -41,7 +41,7 @@ void recompute_bitsets_postorder(TreeDist::HPart &hpart,
     for (size_t ci = 1; ci < node.children.size(); ++ci) {
       size_t child_idx = node.children[ci];
       recompute_bitsets_postorder(hpart, child_idx, mapping);
-      auto &child = hpart.nodes[child_idx];
+      auto &child = hpart->nodes[child_idx];
       const uint64_t* cbits = child.bitset;
       
       // OR child into parent in-place
@@ -57,13 +57,17 @@ void recompute_bitsets_postorder(TreeDist::HPart &hpart,
   }
 }
 
+void relabel_hpart_xptr(TreeDist::HPart* hpart, const std::vector<int>& map) {
+  recompute_bitsets_postorder(hpart, hpart->root, map);
+}
+
 } // namespace TreeDist
 
 
 // [[Rcpp::export]]
 void relabel_hpart(SEXP hpart_ptr, const std::vector<int>& map) {
   Rcpp::XPtr<TreeDist::HPart> hpart_xptr(hpart_ptr);
-  TreeDist::HPart &hpart = *hpart_xptr;
-  
-  TreeDist::recompute_bitsets_postorder(hpart, hpart.root, map);
+  TreeDist::HPart* hpart = hpart_xptr.get();
+  TreeDist::relabel_hpart_xptr(hpart, map);
 }
+

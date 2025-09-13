@@ -106,16 +106,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // EJH_xptr
-Rcpp::NumericVector EJH_xptr(SEXP char_ptr, SEXP tree_ptr, double precision, int minResample);
-RcppExport SEXP _TreeDist_EJH_xptr(SEXP char_ptrSEXP, SEXP tree_ptrSEXP, SEXP precisionSEXP, SEXP minResampleSEXP) {
+Rcpp::NumericVector EJH_xptr(const SEXP char_ptr, const SEXP tree_ptr, const double precision, const int minResample, const int nCores);
+RcppExport SEXP _TreeDist_EJH_xptr(SEXP char_ptrSEXP, SEXP tree_ptrSEXP, SEXP precisionSEXP, SEXP minResampleSEXP, SEXP nCoresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type char_ptr(char_ptrSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type tree_ptr(tree_ptrSEXP);
-    Rcpp::traits::input_parameter< double >::type precision(precisionSEXP);
-    Rcpp::traits::input_parameter< int >::type minResample(minResampleSEXP);
-    rcpp_result_gen = Rcpp::wrap(EJH_xptr(char_ptr, tree_ptr, precision, minResample));
+    Rcpp::traits::input_parameter< const SEXP >::type char_ptr(char_ptrSEXP);
+    Rcpp::traits::input_parameter< const SEXP >::type tree_ptr(tree_ptrSEXP);
+    Rcpp::traits::input_parameter< const double >::type precision(precisionSEXP);
+    Rcpp::traits::input_parameter< const int >::type minResample(minResampleSEXP);
+    Rcpp::traits::input_parameter< const int >::type nCores(nCoresSEXP);
+    rcpp_result_gen = Rcpp::wrap(EJH_xptr(char_ptr, tree_ptr, precision, minResample, nCores));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -453,7 +454,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_H_xptr", (DL_FUNC) &_TreeDist_H_xptr, 1},
     {"_TreeDist_JH_xptr", (DL_FUNC) &_TreeDist_JH_xptr, 2},
     {"_TreeDist_EHMI_xptr", (DL_FUNC) &_TreeDist_EHMI_xptr, 4},
-    {"_TreeDist_EJH_xptr", (DL_FUNC) &_TreeDist_EJH_xptr, 4},
+    {"_TreeDist_EJH_xptr", (DL_FUNC) &_TreeDist_EJH_xptr, 5},
     {"_TreeDist_EMI_xptr", (DL_FUNC) &_TreeDist_EMI_xptr, 4},
     {"_TreeDist_AMI_xptr", (DL_FUNC) &_TreeDist_AMI_xptr, 5},
     {"_TreeDist_build_hpart_from_phylo", (DL_FUNC) &_TreeDist_build_hpart_from_phylo, 1},

@@ -78,6 +78,7 @@ Suggests:
   vdiffr (>= 1.0.0),
 LinkingTo:
   Rcpp,
+  RcppParallel,
   TreeTools (>= 1.16.1),
 RdMacros: Rdpack
 VignetteBuilder: knitr

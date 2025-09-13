@@ -89,8 +89,8 @@ struct HPart {
     hier_entropy = other.hier_entropy;
     
     // Rewire pointers
-    for (size_t i = 1; i < nodes.size(); ++i) {
-      nodes[i].bitset = bitset_pool.data() + ((i - 1) * n_block);
+    for (size_t i = 0; i < nodes.size(); ++i) {
+      nodes[i].bitset = bitset_pool.data() + (i * n_block);
     }
   }
   
@@ -106,13 +106,16 @@ struct HPart {
       entropy = other.entropy;
       hier_entropy = other.hier_entropy;
       
-      for (size_t i = 1; i < nodes.size(); ++i) {
-        nodes[i].bitset = bitset_pool.data() + ((i - 1) * n_block);
+      for (size_t i = 0; i < nodes.size(); ++i) {
+        nodes[i].bitset = bitset_pool.data() + (i * n_block);
       }
     }
     return *this;
   }
 };
+
+void relabel_hpart_xptr(TreeDist::HPart* hpart, const std::vector<int>& map);
+
 }
 
 SEXP clone_hpart(SEXP hpart_ptr);

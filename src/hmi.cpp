@@ -2,7 +2,9 @@
 #include <Rcpp.h>
 #include <cmath>
 #include <algorithm> // for std::shuffle
+#include <RcppParallel.h>
 #include <random>
+#include <thread>
 using namespace Rcpp;
 
 namespace TreeDist {
@@ -239,6 +241,21 @@ double H_xptr(SEXP ptr) {
   return hp->entropy;
 }
 
+inline double JH_core(const TreeDist::HPart* ch,
+                      const TreeDist::HPart* tr) {
+  
+  const auto& ch_root = ch->nodes[ch->root];
+  std::vector<const uint64_t*> bitsets;
+  bitsets.reserve(ch_root.children.size());
+  
+  for (const auto& state : ch_root.children) {
+    bitsets.push_back(ch->nodes[state].bitset);
+  }
+  
+  return TreeDist::character_mutual_info(tr->nodes, tr->root, bitsets);
+}
+
+
 //' @rdname H_xptr
 //' @export
 // [[Rcpp::export]]
@@ -251,18 +268,15 @@ double JH_xptr(SEXP char_ptr, SEXP tree_ptr) {
     Rcpp::stop("Tree and character must describe the same leaves");
   }
   auto ch_root = ch->nodes[ch->root];
-  std::vector<const uint64_t*> bitsets;
-  bitsets.reserve(ch_root.children.size());
   bool warned = false;
   for (const auto& state : ch_root.children) {
-    bitsets.push_back(ch->nodes[state].bitset);
     if (!warned && !ch->nodes[state].all_kids_leaves) {
       Rcpp::warning("Character is a tree; only first level of hierarchy used");
       warned = true;
     }
   }
   
-  return TreeDist::character_mutual_info(tr->nodes, tr->root, bitsets);
+  return JH_core(ch.get(), tr.get());
 }
 
 // [[Rcpp::export]]
@@ -288,12 +302,11 @@ Rcpp::NumericVector EHMI_xptr(const SEXP hp1_ptr, const SEXP hp2_ptr,
   int run_n = 0;
   double relative_error = precision * 2; // Avoid -Wmaybe-uninitialized
   
-  Rcpp::RNGScope scope;
-  
   SEXP hp1_shuf = clone_hpart(hp1_ptr);
   std::vector<int> shuffled(n_tip);
   std::iota(shuffled.begin(), shuffled.end(), 0);
   
+  Rcpp::RNGScope scope;
   unsigned int seed =
     static_cast<unsigned int>(R::unif_rand() * 
     std::numeric_limits<unsigned int>::max());
@@ -334,9 +347,177 @@ Rcpp::NumericVector EHMI_xptr(const SEXP hp1_ptr, const SEXP hp2_ptr,
   return result;
 }
 
-Rcpp::NumericVector EJH_core(SEXP char_ptr, SEXP tree_ptr,
-                             double precision = 0.01,
-                             int minResample = 36,
+#include <RcppParallel.h>
+#include <random>
+
+struct MCChain : public RcppParallel::Worker {
+  
+  // Input data
+  const TreeDist::HPart* ch;
+  const TreeDist::HPart* tr;
+  const double precision;
+  const int minResample;
+  const std::function<double(const double,const double)> propagate_sem;
+  const std::function<double(const double,const double)> rel_err;
+  const unsigned int base_seed;
+  const size_t n_tip;
+  
+  // Output data (one per thread)
+  RcppParallel::RVector<double> results_mean;
+  RcppParallel::RVector<double> results_var;
+  RcppParallel::RVector<int> results_n;
+  
+  MCChain(const TreeDist::HPart* ch, const TreeDist::HPart* tr,
+          const double precision,
+          const int minResample,
+          const std::function<double(const double,const double)>& propagate_sem,
+          const std::function<double(const double,const double)>& rel_err,
+          const unsigned int base_seed, size_t n_tip,
+          Rcpp::NumericVector results_mean,
+          Rcpp::NumericVector results_var,
+          Rcpp::IntegerVector results_n) :
+    ch(ch), tr(tr), precision(precision), minResample(minResample),
+    propagate_sem(propagate_sem), rel_err(rel_err),
+    base_seed(base_seed), n_tip(n_tip), results_mean(results_mean),
+    results_var(results_var), results_n(results_n) {}
+  
+  void operator()(std::size_t begin, std::size_t end) {
+    
+    // Each worker processes one chain (begin to end should be consecutive indices)
+    for (std::size_t chain_id = begin; chain_id < end; chain_id++) {
+      
+      // Thread-specific RNG
+      std::mt19937_64 rng(base_seed + static_cast<unsigned int>(chain_id));
+      
+      // Thread-specific character copy and shuffle vector
+      
+      TreeDist::HPart* ch_shuf = new TreeDist::HPart(*ch);
+      std::vector<int> shuffled(n_tip);
+      std::iota(shuffled.begin(), shuffled.end(), 0);
+      
+      // Chain statistics
+      double run_mean = 0.0;
+      double run_s = 0.0;
+      int run_n = 0;
+      double relative_error = precision * 2;
+      
+      double run_var, run_sd, jh_sem, run_sem;
+      
+      // Monte Carlo loop (same logic as original)
+      while (relative_error > precision || run_n < minResample) {
+        
+        std::shuffle(shuffled.begin(), shuffled.end(), rng);
+        TreeDist::relabel_hpart_xptr(ch_shuf, shuffled);
+        
+        double x = JH_core(ch_shuf, tr);
+        
+        // Welford update
+        run_n++;
+        double delta = x - run_mean;
+        run_mean += delta / run_n;
+        run_s += delta * (x - run_mean);
+        
+        run_var = (run_n > 1) ? run_s / (run_n - 1) : 0.0;
+        run_sd = std::sqrt(run_var);
+        jh_sem = run_sd / std::sqrt(run_n);
+        run_sem = propagate_sem(run_mean, jh_sem);
+        relative_error = rel_err(run_mean, run_sem);
+      }
+      
+      // Store results
+      results_mean[chain_id] = run_mean;
+      results_var[chain_id] = run_var;
+      results_n[chain_id] = run_n;
+    }
+  }
+};
+
+Rcpp::NumericVector EJH_core_parallel(const TreeDist::HPart* ch,
+                                      const TreeDist::HPart* tr,
+                                      const unsigned int base_seed,
+                                      const double precision = 0.01,
+                                      const int minResample = 36,
+                                      int n_threads = -1,
+                                      std::function<double(const double,const double)> propagate_sem =
+                                        [](const double jh_mean, const double jh_sem) {
+                                          return jh_sem;
+                                        },
+                                        std::function<double(const double,const double)> rel_err =
+                                          [](const double jh_mean, const double run_sem) {
+                                            return std::abs(jh_mean) < 1e-6 ?
+                                            run_sem :
+                                            run_sem / std::abs(jh_mean);
+                                          }
+) {
+  
+  const size_t n_tip = ch->nodes[ch->root].n_tip;
+  if (tr->nodes[tr->root].n_tip != static_cast<int>(n_tip)) {
+    Rcpp::stop("Tree and character must describe the same leaves");
+  }
+  
+  // Determine number of threads
+  if (n_threads <= 0) {
+    n_threads = std::thread::hardware_concurrency();
+  }
+  if (n_threads > (int)std::thread::hardware_concurrency()) {
+    n_threads = std::thread::hardware_concurrency();
+  }
+  
+  // Scale precision for parallel chains
+  double chain_precision = precision * std::sqrt(static_cast<double>(n_threads));
+  
+  // Storage for chain results
+  Rcpp::NumericVector chain_means(n_threads);
+  Rcpp::NumericVector chain_vars(n_threads);
+  Rcpp::IntegerVector chain_ns(n_threads);
+  
+  // Create and run parallel worker
+  MCChain worker(ch, tr, chain_precision, minResample, propagate_sem, rel_err,
+                 base_seed, n_tip, chain_means, chain_vars, chain_ns);
+  
+  RcppParallel::parallelFor(0, n_threads, worker);
+  
+  // Combine results from all chains
+  double combined_mean = 0.0;
+  double combined_var = 0.0;
+  int total_samples = 0;
+  
+  // Simple average of means
+  for (int i = 0; i < n_threads; i++) {
+    combined_mean += chain_means[i];
+    total_samples += chain_ns[i];
+  }
+  combined_mean /= n_threads;
+  
+  // Combined variance: Var[X̄] = (1/n²) * Σ Var[X_i] for independent X_i
+  for (int i = 0; i < n_threads; i++) {
+    combined_var += chain_vars[i] / (chain_ns[i] * n_threads * n_threads);
+  }
+  
+  double combined_sd = std::sqrt(combined_var * total_samples);
+  double combined_sem = combined_sd / std::sqrt(total_samples);
+  double final_sem = propagate_sem(combined_mean, combined_sem);
+  double final_precision = rel_err(combined_mean, final_sem);
+  
+  // Return result in same format as original
+  Rcpp::NumericVector result = Rcpp::NumericVector::create(combined_mean);
+  result.attr("samples") = total_samples;
+  result.attr("ejh") = combined_mean;
+  result.attr("ejhVar") = combined_var * total_samples;  // Scale back to total variance
+  result.attr("ejhSD") = combined_sd;
+  result.attr("ejhSEM") = combined_sem;
+  result.attr("sem") = final_sem;
+  result.attr("precision") = final_precision;
+  result.attr("chains") = n_threads;
+  
+  return result;
+}
+
+Rcpp::NumericVector EJH_core(const TreeDist::HPart* ch,
+                             const TreeDist::HPart* tr,
+                             const unsigned int seed,
+                             const double precision = 0.01,
+                             const int minResample = 36,
                              std::function<double(const double,const double)> propagate_sem =
                                [](const double jh_mean, const double jh_sem) {
                                  return jh_sem;
@@ -349,35 +530,17 @@ Rcpp::NumericVector EJH_core(SEXP char_ptr, SEXP tree_ptr,
                                }
                                ) {
   
-  if (minResample < 2) {
-    Rcpp::stop("Must perform at least one resampling");
-  }
-  if (precision < 1e-8) {
-    Rcpp::stop("Precision too small");
-  }
-  
-  Rcpp::XPtr<TreeDist::HPart> ch(char_ptr);
-  Rcpp::XPtr<TreeDist::HPart> tr(tree_ptr);
-  
   const size_t n_tip = ch->nodes[ch->root].n_tip;
-  if (tr->nodes[tr->root].n_tip != static_cast<int>(n_tip)) {
-    Rcpp::stop("Tree and character must describe the same leaves");
-  }
   
   double run_mean = 0.0;
   double run_s = 0.0;
   int run_n = 0;
   double relative_error = precision * 2; // Avoid -Wmaybe-uninitialized
   
-  Rcpp::RNGScope scope;
-  
-  SEXP ch_shuf = clone_hpart(char_ptr);
+  TreeDist::HPart* ch_shuf = new TreeDist::HPart(*ch);
   std::vector<int> shuffled(n_tip);
   std::iota(shuffled.begin(), shuffled.end(), 0);
   
-  unsigned int seed =
-    static_cast<unsigned int>(R::unif_rand() * 
-    std::numeric_limits<unsigned int>::max());
   std::mt19937_64 rng(seed);
   
   double run_var;
@@ -388,9 +551,9 @@ Rcpp::NumericVector EJH_core(SEXP char_ptr, SEXP tree_ptr,
   while (relative_error > precision || run_n < minResample) {
     
     std::shuffle(shuffled.begin(), shuffled.end(), rng);
-    relabel_hpart(ch_shuf, shuffled);
+    TreeDist::relabel_hpart_xptr(ch_shuf, shuffled);
     
-    double x = JH_xptr(ch_shuf, tr);
+    double x = JH_core(ch_shuf, tr);
     
     // Welford update
     run_n++;
@@ -421,10 +584,33 @@ Rcpp::NumericVector EJH_core(SEXP char_ptr, SEXP tree_ptr,
 //' @rdname H_xptr
 //' @export
 // [[Rcpp::export]]
-Rcpp::NumericVector EJH_xptr(SEXP char_ptr, SEXP tree_ptr,
-                            double precision = 0.01,
-                            int minResample = 36) {
- return EJH_core(char_ptr, tree_ptr, precision, minResample);
+Rcpp::NumericVector EJH_xptr(const SEXP char_ptr, const SEXP tree_ptr,
+                             const double precision = 0.01,
+                             const int minResample = 36,
+                             const int nCores = 1) {
+  // Input validation
+  if (minResample < 2) {
+    Rcpp::stop("Must perform at least one resampling");
+  }
+  if (precision < 1e-8) {
+    Rcpp::stop("Precision too small");
+  }
+  
+  Rcpp::XPtr<TreeDist::HPart> ch(char_ptr);
+  Rcpp::XPtr<TreeDist::HPart> tr(tree_ptr);
+  
+  const size_t n_tip = ch->nodes[ch->root].n_tip;
+  if (tr->nodes[tr->root].n_tip != static_cast<int>(n_tip)) {
+    Rcpp::stop("Tree and character must describe the same leaves");
+  }
+  
+  const unsigned int seed =
+    static_cast<unsigned int>(R::unif_rand() * 
+    std::numeric_limits<unsigned int>::max());
+  
+  return nCores < 2 ?
+  EJH_core(ch.get(), tr.get(), seed, precision, minResample) :
+  EJH_core_parallel(ch.get(), tr.get(), seed, precision, minResample, nCores);
 }
 
 //' @rdname H_xptr
@@ -453,6 +639,11 @@ Rcpp::NumericVector EMI_xptr(SEXP char_ptr, SEXP tree_ptr,
   const double h2 = H_xptr(tr);
   const double h1_h2 = h1 + h2;
   
+  Rcpp::RNGScope scope;
+  const unsigned int seed =
+    static_cast<unsigned int>(R::unif_rand() * 
+    std::numeric_limits<unsigned int>::max());
+  
   auto emi_sem = [=](const double eh12, const double eh12_sem) {
     return eh12_sem;
   };
@@ -464,7 +655,7 @@ Rcpp::NumericVector EMI_xptr(SEXP char_ptr, SEXP tree_ptr,
       run_sem / std::abs(emi);
   };
   
-  Rcpp::NumericVector res = EJH_core(ch, tr, precision, minResample, emi_sem,
+  Rcpp::NumericVector res = EJH_core(ch, tr, seed, precision, minResample, emi_sem,
                                      emi_rel_err);
   const double emi = h1_h2 - res[0];
   res[0] = emi;
@@ -499,7 +690,7 @@ Rcpp::NumericVector AMI_xptr(SEXP char_ptr, SEXP tree_ptr, SEXP mean_fn,
   const double mn = Rcpp::as<double>(mean(h1, h2));
   const double h1_h2 = h1 + h2;
   
-  const double h12 = JH_xptr(ch, tr);
+  const double h12 = JH_core(ch, tr);
   const double mi = h1_h2 - h12;
   
   const double eps = std::sqrt(std::numeric_limits<double>::epsilon());
@@ -517,6 +708,11 @@ Rcpp::NumericVector AMI_xptr(SEXP char_ptr, SEXP tree_ptr, SEXP mean_fn,
     return result;
   }
   
+  Rcpp::RNGScope scope;
+  const unsigned int seed =
+    static_cast<unsigned int>(R::unif_rand() * 
+    std::numeric_limits<unsigned int>::max());
+
   auto ami_sem = [=](const double eh12, const double eh12_sem) {
     if (eh12_sem > eps) {
       const double emi = h1_h2 - eh12;
@@ -532,8 +728,8 @@ Rcpp::NumericVector AMI_xptr(SEXP char_ptr, SEXP tree_ptr, SEXP mean_fn,
     return run_sem;
   };
   
-  Rcpp::NumericVector res = EJH_core(ch, tr, precision, minResample, ami_sem,
-                                     absolute_err);
+  Rcpp::NumericVector res = EJH_core(ch.get(), tr.get(), seed, precision,
+                                     minResample, ami_sem, absolute_err);
   const double emi = h1_h2 - res[0];
   
   const double num = mi - emi;

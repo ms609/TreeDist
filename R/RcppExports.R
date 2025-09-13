@@ -49,8 +49,8 @@ EHMI_xptr <- function(hp1_ptr, hp2_ptr, precision = 0.01, minResample = 36L) {
 
 #' @rdname H_xptr
 #' @export
-EJH_xptr <- function(char_ptr, tree_ptr, precision = 0.01, minResample = 36L) {
-    .Call(`_TreeDist_EJH_xptr`, char_ptr, tree_ptr, precision, minResample)
+EJH_xptr <- function(char_ptr, tree_ptr, precision = 0.01, minResample = 36L, nCores = 1L) {
+    .Call(`_TreeDist_EJH_xptr`, char_ptr, tree_ptr, precision, minResample, nCores)
 }
 
 #' @rdname H_xptr
