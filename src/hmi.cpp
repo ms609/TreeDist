@@ -283,10 +283,10 @@ Rcpp::NumericVector EHMI_xptr(const SEXP hp1_ptr, const SEXP hp2_ptr,
   const size_t n_tip = hp1->nodes[hp1->root].n_tip;
   ASSERT(hp2->nodes[hp2->root].n_tip == n_tip);
   
-  double runMean = 0.0;
-  double runS = 0.0;
-  int runN = 0;
-  double relativeError = precision * 2; // Avoid -Wmaybe-uninitialized
+  double run_mean = 0.0;
+  double run_s = 0.0;
+  int run_n = 0;
+  double relative_error = precision * 2; // Avoid -Wmaybe-uninitialized
   
   Rcpp::RNGScope scope;
   
@@ -299,7 +299,7 @@ Rcpp::NumericVector EHMI_xptr(const SEXP hp1_ptr, const SEXP hp2_ptr,
     std::numeric_limits<unsigned int>::max());
   std::mt19937_64 rng(seed);
   
-  while (relativeError > precision || runN < minResample) {
+  while (relative_error > precision || run_n < minResample) {
     
     std::shuffle(shuffled.begin(), shuffled.end(), rng);
     relabel_hpart(hp1_shuf, shuffled);
@@ -307,39 +307,42 @@ Rcpp::NumericVector EHMI_xptr(const SEXP hp1_ptr, const SEXP hp2_ptr,
     double x = HMI_xptr(hp1_shuf, hp2);
     
     // Welford update
-    runN++;
-    double delta = x - runMean;
-    runMean += delta / runN;
-    runS += delta * (x - runMean);
+    run_n++;
+    double delta = x - run_mean;
+    run_mean += delta / run_n;
+    run_s += delta * (x - run_mean);
     
-    double runVar = (runN > 1) ? runS / (runN - 1) : 0.0;
+    double runVar = (run_n > 1) ? run_s / (run_n - 1) : 0.0;
     double runSD = std::sqrt(runVar);
-    double runSEM = runSD / std::sqrt(runN);
-    relativeError = std::abs(runMean) < 1e-6 ?
-      runSEM :
-      runSEM / std::abs(runMean);
+    double run_sem = runSD / std::sqrt(run_n);
+    relative_error = std::abs(run_mean) < 1e-6 ?
+      run_sem :
+      run_sem / std::abs(run_mean);
   }
   
-  double runVar = (runN > 1) ? runS / (runN - 1) : 0.0;
+  double runVar = (run_n > 1) ? run_s / (run_n - 1) : 0.0;
   double runSD = std::sqrt(runVar);
-  double runSEM = runSD / std::sqrt(runN);
+  double run_sem = runSD / std::sqrt(run_n);
   
-  Rcpp::NumericVector result = Rcpp::NumericVector::create(runMean);
+  Rcpp::NumericVector result = Rcpp::NumericVector::create(run_mean);
   result.attr("var") = runVar;
   result.attr("sd") = runSD;
-  result.attr("sem") = runSEM;
-  result.attr("samples") = runN;
-  result.attr("relativeError") = relativeError;
+  result.attr("sem") = run_sem;
+  result.attr("samples") = run_n;
+  result.attr("relative_error") = relative_error;
   
   return result;
 }
 
-//' @rdname H_xptr
-//' @export
-// [[Rcpp::export]]
-Rcpp::NumericVector EJH_xptr(SEXP char_ptr, SEXP tree_ptr,
+Rcpp::NumericVector EJH_core(SEXP char_ptr, SEXP tree_ptr,
                              double precision = 0.01,
-                             int minResample = 36) {
+                             int minResample = 36,
+                             std::function<double(const double,const double)> rel_error =
+                               [](const double run_mean, const double run_sem) {
+                                 return std::abs(run_mean) < 1e-6 ?
+                                 run_sem :
+                                 run_sem / std::abs(run_mean);
+                               }) {
   
   if (minResample < 2) {
     Rcpp::stop("Must perform at least one resampling");
@@ -356,10 +359,10 @@ Rcpp::NumericVector EJH_xptr(SEXP char_ptr, SEXP tree_ptr,
     Rcpp::stop("Tree and character must describe the same leaves");
   }
   
-  double runMean = 0.0;
-  double runS = 0.0;
-  int runN = 0;
-  double relativeError = precision * 2; // Avoid -Wmaybe-uninitialized
+  double run_mean = 0.0;
+  double run_s = 0.0;
+  int run_n = 0;
+  double relative_error = precision * 2; // Avoid -Wmaybe-uninitialized
   
   Rcpp::RNGScope scope;
   
@@ -372,7 +375,7 @@ Rcpp::NumericVector EJH_xptr(SEXP char_ptr, SEXP tree_ptr,
     std::numeric_limits<unsigned int>::max());
   std::mt19937_64 rng(seed);
   
-  while (relativeError > precision || runN < minResample) {
+  while (relative_error > precision || run_n < minResample) {
     
     std::shuffle(shuffled.begin(), shuffled.end(), rng);
     relabel_hpart(ch_shuf, shuffled);
@@ -380,31 +383,38 @@ Rcpp::NumericVector EJH_xptr(SEXP char_ptr, SEXP tree_ptr,
     double x = JH_xptr(ch_shuf, tr);
     
     // Welford update
-    runN++;
-    double delta = x - runMean;
-    runMean += delta / runN;
-    runS += delta * (x - runMean);
+    run_n++;
+    double delta = x - run_mean;
+    run_mean += delta / run_n;
+    run_s += delta * (x - run_mean);
     
-    double runVar = (runN > 1) ? runS / (runN - 1) : 0.0;
+    double runVar = (run_n > 1) ? run_s / (run_n - 1) : 0.0;
     double runSD = std::sqrt(runVar);
-    double runSEM = runSD / std::sqrt(runN);
-    relativeError = std::abs(runMean) < 1e-6 ?
-      runSEM :
-      runSEM / std::abs(runMean);
+    double run_sem = runSD / std::sqrt(run_n);
+    relative_error = rel_error(run_mean, run_sem);
   }
   
-  double runVar = (runN > 1) ? runS / (runN - 1) : 0.0;
+  double runVar = (run_n > 1) ? run_s / (run_n - 1) : 0.0;
   double runSD = std::sqrt(runVar);
-  double runSEM = runSD / std::sqrt(runN);
+  double run_sem = runSD / std::sqrt(run_n);
   
-  Rcpp::NumericVector result = Rcpp::NumericVector::create(runMean);
+  Rcpp::NumericVector result = Rcpp::NumericVector::create(run_mean);
   result.attr("var") = runVar;
   result.attr("sd") = runSD;
-  result.attr("sem") = runSEM;
-  result.attr("samples") = runN;
-  result.attr("relativeError") = relativeError;
+  result.attr("sem") = run_sem;
+  result.attr("samples") = run_n;
+  result.attr("relative_error") = relative_error;
   
   return result;
+}
+
+//' @rdname H_xptr
+//' @export
+// [[Rcpp::export]]
+Rcpp::NumericVector EJH_xptr(SEXP char_ptr, SEXP tree_ptr,
+                            double precision = 0.01,
+                            int minResample = 36) {
+ return EJH_core(char_ptr, tree_ptr, precision, minResample);
 }
 
 //' @rdname H_xptr
@@ -444,79 +454,33 @@ Rcpp::NumericVector AMI_xptr(SEXP char_ptr, SEXP tree_ptr, SEXP mean_fn,
     result.attr("sd") = 0;
     result.attr("sem") = 0;
     result.attr("samples") = 0;
-    result.attr("relativeError") = 0;
+    result.attr("relative_error") = 0;
     
     return result;
   }
   
-  const Rcpp::NumericVector eh12 = EJH_xptr(ch, tr, precision, minResample);
-  const double emi = h1_h2 - eh12[0];
+  const double eps = std::sqrt(std::numeric_limits<double>::epsilon());
+  
+  auto ami_sem = [=](const double run_mean, const double run_sem) {
+    const double emi_sem = (std::abs(run_mean) < 1e-6) 
+      ? run_sem
+      : run_sem / std::abs(run_mean);
+    if (emi_sem > eps) {
+      const double emi = h1_h2 - run_mean;
+      const double deriv = (mi - mn) / ((mn - emi) * (mn - emi));
+      const double ret = std::abs(deriv) * emi_sem;
+      return (ret < eps) ? 0.0 : ret;
+    } else {
+      return 0.0;
+    }
+  };
+  
+  Rcpp::NumericVector res = EJH_core(ch, tr, precision, minResample, ami_sem);
+  const double emi = h1_h2 - res[0];
   
   const double num = mi - emi;
   const double denom = mn - emi;
   
-  
-  Rcpp::NumericVector result = Rcpp::NumericVector::create(num / denom);
-  result.attr("var") = 0;
-  result.attr("sd") = 0;
-  result.attr("sem") = 0;
-  result.attr("samples") = 0;
-  result.attr("relativeError") = 0;
-  
-  return result;
-  /*
-  structure(if (abs(num) < sqrt(.Machine$double.eps)) 0 else num / denom,
-            sem = .AHMISEM(mi, M, emi[[1]], attr(emi, "sem")))
-  
-  
-  
-  double runMean = 0.0;
-  double runS = 0.0;
-  int runN = 0;
-  double relativeError = precision * 2; // Avoid -Wmaybe-uninitialized
-  
-  Rcpp::RNGScope scope;
-  
-  SEXP ch_shuf = clone_hpart(char_ptr);
-  std::vector<int> shuffled(n_tip);
-  std::iota(shuffled.begin(), shuffled.end(), 0);
-  
-  unsigned int seed =
-    static_cast<unsigned int>(R::unif_rand() * 
-    std::numeric_limits<unsigned int>::max());
-  std::mt19937_64 rng(seed);
-  
-  while (relativeError > precision || runN < minResample) {
-    
-    std::shuffle(shuffled.begin(), shuffled.end(), rng);
-    relabel_hpart(ch_shuf, shuffled);
-    
-    double x = JH_xptr(ch_shuf, tr);
-    
-    // Welford update
-    runN++;
-    double delta = x - runMean;
-    runMean += delta / runN;
-    runS += delta * (x - runMean);
-    
-    double runVar = (runN > 1) ? runS / (runN - 1) : 0.0;
-    double runSD = std::sqrt(runVar);
-    double runSEM = runSD / std::sqrt(runN);
-    relativeError = std::abs(runMean) < 1e-6 ?
-      runSEM :
-      runSEM / std::abs(runMean);
-  }
-  
-  double runVar = (runN > 1) ? runS / (runN - 1) : 0.0;
-  double runSD = std::sqrt(runVar);
-  double runSEM = runSD / std::sqrt(runN);
-  
-  Rcpp::NumericVector result = Rcpp::NumericVector::create(runMean);
-  result.attr("var") = runVar;
-  result.attr("sd") = runSD;
-  result.attr("sem") = runSEM;
-  result.attr("samples") = runN;
-  result.attr("relativeError") = relativeError;
-  
-  return result;*/
+  res[0] = std::abs(num) < eps ? 0 : num / denom;
+  return res;
 }
