@@ -168,7 +168,7 @@ CharEJH <- function(char, tree, precision = 0.01, minResample = 36) {
   ret <- EJH_xptr(char, tree, as.numeric(precision), as.integer(minResample)) /
     log(2)
   attToScale <- setdiff(names(attributes(ret)), "samples")
-  attributes(ret)[atToScale] <- attributes(ret)[atToScale] / log(2)
+  attributes(ret)[attToScale] <- unlist(attributes(ret)[attToScale]) / log(2)
   ret
 }
 
@@ -187,7 +187,7 @@ CharEMI <- function(char, tree, precision = 0.01, minSample = 36) {
       log(2)
     
     attToScale <- setdiff(names(attributes(ret)), "samples")
-    attributes(ret)[atToScale] <- attributes(ret)[atToScale] / log(2)
+    attributes(ret)[attToScale] <- unlist(attributes(ret)[attToScale]) / log(2)
     ret
 }
 #' @rdname CharMI
@@ -205,7 +205,7 @@ CharAMI <- function(char, tree, Mean = function(charH, treeH) charH,
                   as.integer(minResample))
   
   attToScale <- setdiff(names(attributes(ret)), "samples")
-  attributes(ret)[atToScale] <- attributes(ret)[atToScale] / log(2)
+  attributes(ret)[attToScale] <- unlist(attributes(ret)[attToScale]) / log(2)
   ret
 }
 
