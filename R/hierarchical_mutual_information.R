@@ -165,7 +165,13 @@ CharMI <- function(char, tree) {
 CharEJH <- function(char, tree, precision = 0.01, minResample = 36) {
   tree <- as.HPart(tree)
   char <- .MakeHPartMatch(char, tree)
-  EJH_xptr(char, tree, as.numeric(precision), as.integer(minResample)) / log(2)
+  ret <- EJH_xptr(char, tree, as.numeric(precision), as.integer(minResample)) /
+    log(2)
+  attToScale <- setdiff(names(attributes(ret)), "samples")
+  attributes(ret)[atToScale] <- attributes(ret)[atToScale] / log(2)
+  ret
+}
+
 }
 
 #' @rdname CharMI
@@ -173,13 +179,16 @@ CharEJH <- function(char, tree, precision = 0.01, minResample = 36) {
 #' @return `CharEMI()` returns the expected mutual information of `char` and
 #' `tree`, in bits, when state labels are shuffled at random.
 #' @export
-CharEMI <- function(char, tree, precision = 0.01, minResample = 36) {
-  tree <- as.HPart(tree)
-  char <- .MakeHPartMatch(char, tree)
-  ret <- EMI_xptr(char, tree, as.numeric(precision), as.integer(minResample)) / 
-    log(2)
-  # TODO divide attributes by log2 too
-  ret
+CharEMI <- function(char, tree, precision = 0.01, minSample = 36) {
+    tree <- as.HPart(tree)
+    char <- .MakeHPartMatch(char, tree)
+    ret <- EMI_xptr(char, tree, as.numeric(precision), as.integer(minSample),
+                    as.integer(nCores)) / 
+      log(2)
+    
+    attToScale <- setdiff(names(attributes(ret)), "samples")
+    attributes(ret)[atToScale] <- attributes(ret)[atToScale] / log(2)
+    ret
 }
 #' @rdname CharMI
 #' @return `CharAMI()` returns the expected mutual information of `char` and
@@ -192,8 +201,12 @@ CharAMI <- function(char, tree, Mean = function(charH, treeH) charH,
   tree <- as.HPart(tree)
   char <- .MakeHPartMatch(char, tree)
   
-  AMI_xptr(char, tree, as.function(Mean), as.numeric(precision),
-           as.integer(minResample))
+  ret <- AMI_xptr(char, tree, as.function(Mean), as.numeric(precision),
+                  as.integer(minResample))
+  
+  attToScale <- setdiff(names(attributes(ret)), "samples")
+  attributes(ret)[atToScale] <- attributes(ret)[atToScale] / log(2)
+  ret
 }
 
 #' Self hierarchical mutual information

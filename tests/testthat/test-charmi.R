@@ -1,5 +1,69 @@
+test_that("ExpSameCherries", {
+  expect_simulated <- function(char, cherries) {
+    exp <- ExpSameCherries(char, cherries)
+    tt <- t.test(replicate(16000, sum(apply(matrix(sample(char, 2 * cherries, replace = FALSE), 2, cherries),
+                       2, function(x) x[[1]] == x[[2]]))), mu = exp, conf.level = 0.997)
+    conf <- tt[["conf.int"]]
+    expect_gt(conf[[2]], exp)
+    expect_lt(conf[[1]], exp)
+  }
+  char <- c(1,1,1,1,2,2,2)
+  expect_simulated(char, 1)
+  expect_simulated(char, 2)
+  expect_simulated(char, 3)
+  expect_error(ExpSameCherries(char, length(char)), "cherries can't be filled")
+  
+  char2 <- c(rep(1, 12), rep(2, 4), 4, rep(3, 11))
+  expect_simulated(char2, 1)
+  expect_simulated(char2, 3)
+  expect_simulated(char2, 4)
+  expect_simulated(char2, 6)
+  expect_simulated(char2, 12)
+  
+  expect_emi <- function(char, tree) {
+      
+    nTip <- length(char2)
+    tree <- TreeTools::PectinateTree(nTip)
+    nCherries <- Cherries(tree)
+    expect_equal(nCherries, 1)
+    treeH <- nTip * log2(nTip) - (2 * nCherries)
+    expect_equal(treeH, CharH(tree))
+    
+    tab <- table(char, deparse.level = 0)
+    charH <- (nTip * log2(nTip)) - sum(tab * log2(tab))
+    expect_equal(charH, CharH(char))
+    
+    .ApproxEMI <- function(char, tree) {
+      tree <- as.HPart(tree)
+      char <- .MakeHPartMatch(char, tree)
+      EMI_xptr(char, tree, 0.005, 36L, 1) / log(2)
+    }
+    
+    
+    expect_equal(CharEMI(char, tree)[[1]], .ApproxEMI(char, tree)[[1]],
+                 tolerance = 0.01)
+    expect_equal(
+      CharEMI(char, tree)[[1]],
+      treeH + charH - (nTip * log2(nTip)) + 2 * ExpSameCherries(char, nCherries)
+    )
+  }
+  
+  expect_emi(char2, TreeTools::PectinateTree(nTip))
+  expect_emi(char2, TreeTools::BalancedTree(nTip))
+  set.seed(1)
+  expect_emi(char2, TreeTools::RandomTree(nTip))
+})
+
 test_that("CharMI works with simple trees", {
   Bal <- TreeTools::BalancedTree
+  
+  expect_equal(CharH(c(2, 2, 1, 1, 1)), 5 * Ntropy(2, 3))
+  expect_equal(CharH(Bal(5)), 5 * log2(5) - 4)
+  expect_equal(CharH(TreeTools::UnrootTree(Bal(5))), 5 * log2(5) - 4)
+  expect_equal(CharH(TreeTools::PectinateTree(5)), 5 * log2(5) - 2)
+  # !  - Fails: cherry at root not currently 'backstripped'
+  expect_equal(CharH(TreeTools::UnrootTree(TreeTools::PectinateTree(5))), 5 * log2(5) - 4) 
+  
   expect_equal(CharJH(c(2, 2, 1, 1, 1), c(1, 1, 2, 2, 2)),
                5 * Ntropy(2, 3))
   
@@ -17,6 +81,14 @@ test_that("CharMI works with simple trees", {
                - 4 * (2 * log2(2)) # But we can't distinguish between cherries
   )
   expect_equal(CharH(TreeTools::StarTree(10)), 0)
+  
+  pec7 <- PectinateTree(7)
+  expect_lt(CharMI(c(1,1,1,1,2,2,1), pec7), CharMI(c(1,1,1,1,1,2,2), pec7))
+  expect_lt(CharMI(c(1,1,1,2,2,1,1), pec7), CharMI(c(1,1,1,1,1,2,2), pec7))
+  expect_equal(CharMI(c(1,2,2,1,1,1,1), pec7), CharMI(c(1,1,1,1,2,2,1), pec7))
+  CharMI(c(1,2,1,2,1 ,2,1), pec7)
+  CharMI(c(1,1,1,2,2 ,2,1), pec7)
+  CharMI(c(1,2,2,2,1 ,2,1), pec7)
   
   # Trees with >64 bits to test block logic
   

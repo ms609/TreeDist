@@ -1,0 +1,22 @@
+DEBUG = TRUE
+
+# Completely override R's defaults
+CPPFLAGS = -I"$(R_INCLUDE_DIR)" -I'$(shell "$(R_HOME)/bin$(R_ARCH_BIN)/Rscript.exe" -e "Rcpp:::CxxFlags()")' -I'$(shell "$(R_HOME)/bin$(R_ARCH_BIN)/Rscript.exe" -e "cat(system.file(\"include\", package=\"TreeTools\"))")'
+
+CFLAGS = -g -std=gnu2x $(DEBUGFLAG) -mfpmath=sse -msse2 -mstackrealign  $(LTO)
+C17FLAGS = -g -std=gnu2x $(DEBUGFLAG) -mfpmath=sse -msse2 -mstackrealign  $(LTO)
+CXXFLAGS = -g -ggdb -Wall -std=gnu++17
+
+LDFLAGS = -shared -Wl,--export-all-symbols
+
+# Remove NDEBUG and set DEBUG
+PKG_CPPFLAGS = -DDEBUG -DPROFILE
+
+# Debug compilation flags (override R's defaults)
+PKG_CXXFLAGS = -g -ggdb -Wall -march=native
+
+# Prevent symbol stripping and export symbols
+PKG_LIBS = -flto -Wl,--export-all-symbols
+
+# Ensure shared library keeps debug info
+SHLIB_LDFLAGS = -shared -g -gcodeview

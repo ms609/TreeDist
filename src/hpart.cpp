@@ -3,6 +3,7 @@
 
 // [[Rcpp::depends(TreeTools)]]
 #include <TreeTools/renumber_tree.h> // for preorder_edges_and_nodes
+#include <TreeTools/n_cherries.h> // for n_cherries
 
 using namespace Rcpp;
 
@@ -63,6 +64,16 @@ SEXP build_hpart_from_phylo(List phy) {
       );
     }
     node_i.x_log_x = TreeDist::x_log_x(node_i.leaf_count);
+  }
+  
+  if (n_node == n_tip - 1) { // Rooted binary tree
+    const int* parent = &edge(0, 0);
+    const int* child  = &edge(0, 1);
+    const int cherries = TreeTools::n_cherries(parent, child, edge.nrow(),
+                                               n_tip);
+    constexpr double two_log_two = 2 * 0.6931471805599452862268;
+    hpart->entropy = n_tip * std::log(n_tip) - (cherries * two_log_two);
+      
   }
   
   hpart->root = n_tip + 1;
