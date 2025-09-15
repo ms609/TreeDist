@@ -115,7 +115,7 @@ CharH <- function(tree) {
   if (inherits(tree, "phylo")) { # Shortcut if available
     nTip <- NTip(tree)
     nEdge <- dim(tree[["edge"]])[[1]]
-    if (nEdge >= nTip + nTip - 2) {
+    if (nEdge >= nTip + nTip - 3) {
       return(nTip * log2(nTip) - (2 * Cherries(tree)))
     }
   }
@@ -184,7 +184,7 @@ CharEJH <- function(char, tree, precision = 0.01, minResample = 36) {
   if (inherits(tree, "phylo")) { # Shortcut if available
     nTip <- NTip(tree)
     nEdge <- dim(tree[["edge"]])[[1]]
-    if (nEdge >= nTip + nTip - 2) {
+    if (nEdge >= nTip + nTip - 3) {
       return(.AnalyticEJH(char, tree))
     }
   }
@@ -231,7 +231,7 @@ CharEMI <- function(char, tree, precision = 0.01, minSample = 36) {
   if (inherits(tree, "phylo")) { # Shortcut if available
     nTip <- NTip(tree)
     nEdge <- dim(tree[["edge"]])[[1]]
-    if (nEdge >= nTip + nTip - 2) {
+    if (nEdge >= nTip + nTip - 3) {
       return(.AnalyticEMI(char, tree))
     }
   }
@@ -281,7 +281,7 @@ CharAMI <- function(char, tree, Mean = function(charH, treeH) charH,
   if (inherits(tree, "phylo")) { # Shortcut if available
     nTip <- NTip(tree)
     nEdge <- dim(tree[["edge"]])[[1]]
-    if (nEdge >= nTip + nTip - 2) {
+    if (nEdge >= nTip + nTip - 3) {
       return(.AnalyticAMI(char, tree, Mean))
     }
   }
