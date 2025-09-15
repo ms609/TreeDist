@@ -109,8 +109,17 @@ SelfHMI <- function(tree) {
 #' capacity to assign leaves to unique clusters.
 #' Because leaves in a cherry are not classed as distinguished, the entropy of
 #' a tree is always less than \eqn{N \log2(N)}.
+#' @importFrom TreeTools Cherries
 #' @export
 CharH <- function(tree) {
+  if (inherits(tree, "phylo")) { # Shortcut if available
+    nTip <- NTip(tree)
+    nEdge <- dim(tree[["edge"]])[[1]]
+    if (nEdge >= nTip + nTip - 2) {
+      return(nTip * log2(nTip) - (2 * Cherries(tree)))
+    }
+  }
+  
   part <- as.HPart(tree)
   H_xptr(part) / log(2)
 }
@@ -118,6 +127,7 @@ CharH <- function(tree) {
 #' @rdname CharMI
 #' @return `CharJH()` returns the joint entropy of `char` and `tree`, in bits,
 #' defined as the combined capacity to assign leaves to unique clusters.
+#' @importFrom TreeTools Cherries
 #' @export
 CharJH <- function(char, tree) {
   tree <- as.HPart(tree)
@@ -150,6 +160,13 @@ CharMI <- function(char, tree) {
   }
 }
 
+#' @importFrom TreeTools Cherries
+.AnalyticEJH <- function(char, tree, nTip = NTip(tree)) {
+  nCherries <- Cherries(tree)
+  tipEntropy <- nTip * log2(nTip)
+  tipEntropy - 2 * ExpSameCherries(char, nCherries)
+}
+
 #' @rdname CharMI
 #' @return `CharEJH()` returns the expected joint entropy of `char` and `tree`,
 #' in bits, where state labels are shuffled at random.
@@ -163,6 +180,15 @@ CharMI <- function(char, tree) {
 #' the returned value is close to zero).
 #' @export
 CharEJH <- function(char, tree, precision = 0.01, minResample = 36) {
+  
+  if (inherits(tree, "phylo")) { # Shortcut if available
+    nTip <- NTip(tree)
+    nEdge <- dim(tree[["edge"]])[[1]]
+    if (nEdge >= nTip + nTip - 2) {
+      return(.AnalyticEJH(char, tree))
+    }
+  }
+  
   tree <- as.HPart(tree)
   char <- .MakeHPartMatch(char, tree)
   ret <- EJH_xptr(char, tree, as.numeric(precision), as.integer(minResample)) /
@@ -172,6 +198,27 @@ CharEJH <- function(char, tree, precision = 0.01, minResample = 36) {
   ret
 }
 
+ExpSameCherries <- function(char, nCherries) {
+  nTip <- length(char)
+  if (nCherries + nCherries > nTip) {
+    stop(nCherries, " cherries can't be filled by ", nTip, " leaves.")
+  }
+  tab <- unname(table(char, deparse.level = 0))
+  
+  nCherries * sum(tab * (tab - 1)) / (nTip * (nTip - 1))
+}
+
+#' @importFrom TreeTools Cherries
+.AnalyticEMI <- function(char, tree, nTip = NTip(tree)) {
+  nCherries <- Cherries(tree)
+  tipEntropy <- nTip * log2(nTip)
+  treeH <- tipEntropy - (2 * nCherries)
+  
+  tab <- table(char, deparse.level = 0)
+  charH <- (nTip * log2(nTip)) - sum(tab * log2(tab))
+  
+  # Return:
+  treeH + charH - (nTip * log2(nTip)) + 2 * ExpSameCherries(char, nCherries)
 }
 
 #' @rdname CharMI
@@ -180,16 +227,48 @@ CharEJH <- function(char, tree, precision = 0.01, minResample = 36) {
 #' `tree`, in bits, when state labels are shuffled at random.
 #' @export
 CharEMI <- function(char, tree, precision = 0.01, minSample = 36) {
-    tree <- as.HPart(tree)
-    char <- .MakeHPartMatch(char, tree)
-    ret <- EMI_xptr(char, tree, as.numeric(precision), as.integer(minSample),
-                    as.integer(nCores)) / 
-      log(2)
-    
-    attToScale <- setdiff(names(attributes(ret)), "samples")
-    attributes(ret)[attToScale] <- unlist(attributes(ret)[attToScale]) / log(2)
-    ret
+  
+  if (inherits(tree, "phylo")) { # Shortcut if available
+    nTip <- NTip(tree)
+    nEdge <- dim(tree[["edge"]])[[1]]
+    if (nEdge >= nTip + nTip - 2) {
+      return(.AnalyticEMI(char, tree))
+    }
+  }
+  
+  tree <- as.HPart(tree)
+  char <- .MakeHPartMatch(char, tree)
+  ret <- EMI_xptr(char, tree, as.numeric(precision), as.integer(minSample)) /
+    log(2)
+  
+  attToScale <- setdiff(names(attributes(ret)), "samples")
+  attributes(ret)[attToScale] <- unlist(attributes(ret)[attToScale]) / log(2)
+  
+  # Return:
+  ret
 }
+
+#' @importFrom TreeTools Cherries
+.AnalyticAMI <- function(char, tree, Mean, nTip = NTip(tree)) {
+  nCherries <- Cherries(tree)
+  nLogN <- nTip * log2(nTip)
+  treeH <- nLogN - (2 * nCherries)
+  
+  tab <- table(char, deparse.level = 0)
+  charH <- nLogN - sum(tab * log2(tab))
+  
+  meanH <- Mean(charH, treeH)
+  
+  jointH <- CharJH(char, tree)
+  mi <- charH + treeH - jointH
+  ejh <- nLogN - (2 * ExpSameCherries(char, nCherries))
+  emi <- charH + treeH - ejh
+  ami <- (mi - emi) / (meanH - emi)
+  
+  # Return:
+  ami
+}
+
 #' @rdname CharMI
 #' @return `CharAMI()` returns the expected mutual information of `char` and
 #' `tree`, in bits, when state labels are shuffled at random.
@@ -198,6 +277,15 @@ CharEMI <- function(char, tree, precision = 0.01, minSample = 36) {
 #' @export
 CharAMI <- function(char, tree, Mean = function(charH, treeH) charH,
                     precision = 0.01, minResample = 36) {
+  
+  if (inherits(tree, "phylo")) { # Shortcut if available
+    nTip <- NTip(tree)
+    nEdge <- dim(tree[["edge"]])[[1]]
+    if (nEdge >= nTip + nTip - 2) {
+      return(.AnalyticAMI(char, tree, Mean))
+    }
+  }
+  
   tree <- as.HPart(tree)
   char <- .MakeHPartMatch(char, tree)
   

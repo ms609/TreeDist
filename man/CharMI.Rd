@@ -17,7 +17,7 @@ CharMI(char, tree)
 
 CharEJH(char, tree, precision = 0.01, minResample = 36)
 
-CharEMI(char, tree, precision = 0.01, minResample = 36)
+CharEMI(char, tree, precision = 0.01, minSample = 36)
 
 CharAMI(
   char,

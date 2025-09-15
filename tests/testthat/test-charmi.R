@@ -1,4 +1,5 @@
 test_that("ExpSameCherries", {
+  
   expect_simulated <- function(char, cherries) {
     exp <- ExpSameCherries(char, cherries)
     tt <- t.test(replicate(16000, sum(apply(matrix(sample(char, 2 * cherries, replace = FALSE), 2, cherries),
@@ -7,6 +8,7 @@ test_that("ExpSameCherries", {
     expect_gt(conf[[2]], exp)
     expect_lt(conf[[1]], exp)
   }
+  
   char <- c(1,1,1,1,2,2,2)
   expect_simulated(char, 1)
   expect_simulated(char, 2)
@@ -21,11 +23,10 @@ test_that("ExpSameCherries", {
   expect_simulated(char2, 12)
   
   expect_emi <- function(char, tree) {
-      
-    nTip <- length(char2)
+    
+    nTip <- length(char)
     tree <- TreeTools::PectinateTree(nTip)
     nCherries <- Cherries(tree)
-    expect_equal(nCherries, 1)
     treeH <- nTip * log2(nTip) - (2 * nCherries)
     expect_equal(treeH, CharH(tree))
     
@@ -36,7 +37,7 @@ test_that("ExpSameCherries", {
     .ApproxEMI <- function(char, tree) {
       tree <- as.HPart(tree)
       char <- .MakeHPartMatch(char, tree)
-      EMI_xptr(char, tree, 0.005, 36L, 1) / log(2)
+      EMI_xptr(char, tree, 0.005, 36L) / log(2)
     }
     
     
@@ -46,6 +47,37 @@ test_that("ExpSameCherries", {
       CharEMI(char, tree)[[1]],
       treeH + charH - (nTip * log2(nTip)) + 2 * ExpSameCherries(char, nCherries)
     )
+  }
+  
+  
+  expect_ami <- function(char, tree) {
+    
+    nTip <- length(char)
+    tree <- TreeTools::PectinateTree(nTip)
+    nCherries <- Cherries(tree)
+    treeH <- nTip * log2(nTip) - (2 * nCherries)
+    expect_equal(treeH, CharH(tree))
+    
+    tab <- table(char, deparse.level = 0)
+    charH <- (nTip * log2(nTip)) - sum(tab * log2(tab))
+    expect_equal(charH, CharH(char))
+    
+    .ApproxAMI <- function(char, tree) {
+      tree <- as.HPart(tree)
+      char <- .MakeHPartMatch(char, tree)
+      AMI_xptr(char, tree, as.function(Mean), 0.005, 32L)
+    }
+    
+    expect_equal(CharAMI(char, tree)[[1]], .ApproxAMI(char, tree)[[1]],
+                 tolerance = 0.01)
+    
+    meanH <- charH
+    jointH <- CharJH(char, tree)
+    mi <- charH + treeH - jointH
+    ejh <- CharEJH(char, tree)
+    emi <- charH + treeH - ejh
+    ami <- (mi - emi) / (meanH - emi)
+    expect_equal(CharAMI(char, tree)[[1]], ami)
   }
   
   expect_emi(char2, TreeTools::PectinateTree(nTip))
@@ -84,14 +116,12 @@ test_that("CharMI works with simple trees", {
   
   pec7 <- PectinateTree(7)
   expect_lt(CharMI(c(1,1,1,1,2,2,1), pec7), CharMI(c(1,1,1,1,1,2,2), pec7))
-  expect_lt(CharMI(c(1,1,1,2,2,1,1), pec7), CharMI(c(1,1,1,1,1,2,2), pec7))
-  expect_equal(CharMI(c(1,2,2,1,1,1,1), pec7), CharMI(c(1,1,1,1,2,2,1), pec7))
-  CharMI(c(1,2,1,2,1 ,2,1), pec7)
-  CharMI(c(1,1,1,2,2 ,2,1), pec7)
-  CharMI(c(1,2,2,2,1 ,2,1), pec7)
+  
+  # Mathematically correct test cases illustrate the shortcoming of the paradigm
+  expect_equal(CharMI(c(1,1,1,2,2,1,1), pec7), CharMI(c(1,1,1,1,1,2,2), pec7))
+  expect_gt(CharMI(c(1,2,2,1,1,1,1), pec7), CharMI(c(1,1,1,1,2,2,1), pec7))
   
   # Trees with >64 bits to test block logic
-  
   expect_equal(CharJH(c(rep(2, 64), rep(1, 65)),
                       c(rep(1, 32), 2, rep(3, 32 + 64))),
                129 * Ntropy(32, 1, 31, 65))
