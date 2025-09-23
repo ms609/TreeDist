@@ -129,6 +129,8 @@ test_that("HMI calculated correctly", {
   hp2 <- as.HPart(PectinateTree(6))
   expect_equal(capture_output(print(hp2)),
                "Hierarchical partition on 6 leaves: t1, t2, ..., t5, t6")
+  expect_equal(capture_output(print(as.HPart(BalancedTree(4)))),
+               "Hierarchical partition on 4 leaves: t1, t2, t3, t4")
   expect_equal(HMI_xptr(hp1, hp2), 0.363353185)
   bal8 <- BalancedTree(8)
   pec8 <- PectinateTree(8)
