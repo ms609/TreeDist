@@ -1,42 +1,9 @@
 library("TreeTools")
 
-test_that("HMI works with real dataset", { # TODO move to appropriate position
-  ch <- c(1L, 2L, 2L, 2L, 2L, 2L, 1L, 1L, 1L, 1L, 1L)
-  tr <- structure(list(
-    edge = structure(c(12L, 12L, 13L, 14L, 15L, 16L, 16L, 17L, 17L, 18L, 18L, 
-                       15L, 14L, 19L, 20L, 20L, 19L, 13L, 21L, 21L, 1L, 13L, 
-                       14L, 15L, 16L, 2L, 17L, 3L, 18L, 4L, 5L, 6L, 19L, 20L,
-                       7L, 8L, 9L, 21L, 10L, 11L), dim = c(20L, 2L)),
-    Nnode = 10L,
-    tip.label = c("Nem", "Sco", "Eun", "Aph", "Chr", "Can", "Hel", "Cha",
-                  "Lep", "Ter", "Lin")),
-    class = "phylo", order = "preorder")
-  chPart <- as.HPart(ch)
-  
-  # Build HPart from tree, then relabel
-  trPart <- as.HPart(tr)
-  attr(trPart, "tip.label") <- seq_along(attr(trPart, "tip.label"))
-  expect_equal(attr(chPart, "tip.label"), attr(trPart, "tip.label"))
-  
-  # Because of the difference in levels, this test should NOT pass (!)
-  # expect_equal(HMI(chPart, trPart), SelfHMI(chPart))
-  
-  # Relabel tree first, then build HPart
-  tree <- tr
-  tree$tip.label <- seq_along(tree[["tip.label"]])
-  treePart <- as.HPart(tree)
-  treePart
-  expect_equal(HMI(trPart, treePart), SelfHMI(treePart))
-  expect_equal(HMI(chPart, trPart), HMI(chPart, treePart))
-})
-
-
-test_that("is.HPart() succeeds", {
-  expect_true(is.HPart(as.HPart(TreeTools::BalancedTree(7))))
-  expect_true(is.HPart(structure(class = "HPart",
-                                 list(list("t1"), list("t2", "t3")))))
-  expect_false(is.HPart(structure(class = "NonPart", 
-                                  list(list("t1"), list("t2", "t3")))))
+test_that("HMI fails nicely", {
+  expect_error(HierarchicalMutualInfo(BalancedTree(5), PectinateTree(5),
+                                      normalize = "Error"),
+               "`normalize` must be logical, or a function")
 })
 
 test_that("HMI examples from Perotti et al. 2015", {
@@ -151,4 +118,34 @@ test_that("HMI_cpp equals SelfHMI for same partition", {
   tr <- BalancedTree(8)
   hp <- as.HPart(tr)
   expect_equal(SelfHMI(hp), HMI(hp, hp), tolerance = 1e-12)
+})
+
+test_that("HMI works with real dataset", {
+  ch <- c(1L, 2L, 2L, 2L, 2L, 2L, 1L, 1L, 1L, 1L, 1L)
+  tr <- structure(list(
+    edge = structure(c(12L, 12L, 13L, 14L, 15L, 16L, 16L, 17L, 17L, 18L, 18L, 
+                       15L, 14L, 19L, 20L, 20L, 19L, 13L, 21L, 21L, 1L, 13L, 
+                       14L, 15L, 16L, 2L, 17L, 3L, 18L, 4L, 5L, 6L, 19L, 20L,
+                       7L, 8L, 9L, 21L, 10L, 11L), dim = c(20L, 2L)),
+    Nnode = 10L,
+    tip.label = c("Nem", "Sco", "Eun", "Aph", "Chr", "Can", "Hel", "Cha",
+                  "Lep", "Ter", "Lin")),
+    class = "phylo", order = "preorder")
+  chPart <- as.HPart(ch)
+  
+  # Build HPart from tree, then relabel
+  trPart <- as.HPart(tr)
+  attr(trPart, "tip.label") <- seq_along(attr(trPart, "tip.label"))
+  expect_equal(attr(chPart, "tip.label"), attr(trPart, "tip.label"))
+  
+  # Because of the difference in levels, this test should NOT pass (!)
+  # expect_equal(HMI(chPart, trPart), SelfHMI(chPart))
+  
+  # Relabel tree first, then build HPart
+  tree <- tr
+  tree$tip.label <- seq_along(tree[["tip.label"]])
+  treePart <- as.HPart(tree)
+  treePart
+  expect_equal(HMI(trPart, treePart), SelfHMI(treePart))
+  expect_equal(HMI(chPart, trPart), HMI(chPart, treePart))
 })

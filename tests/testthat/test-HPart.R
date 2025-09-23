@@ -1,5 +1,13 @@
 library("TreeTools")
 
+test_that("is.HPart() succeeds", {
+  expect_true(is.HPart(as.HPart(TreeTools::BalancedTree(7))))
+  expect_true(is.HPart(structure(class = "HPart",
+                                 list(list("t1"), list("t2", "t3")))))
+  expect_false(is.HPart(structure(class = "NonPart", 
+                                  list(list("t1"), list("t2", "t3")))))
+})
+
 test_that("as.phylo.HPart", {
   bal7 <- BalancedTree(7)
   hb7 <- as.HPart(bal7)
