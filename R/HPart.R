@@ -65,8 +65,8 @@ as.HPart.list <- function(tree, tipLabels = NULL) {
   }
   n_tip <- length(unique(leaves))
   expected <- seq_len(n_tip)
-  if (!setequal(leaves, expected)) {
-    stop("Leaves must contain all integers 1..n without gaps")
+  if (!isTRUE(all.equal(sort(leaves), expected))) {
+    stop("Leaves must contain each integer 1..n exactly once")
   }
   
   hpart_ptr <- build_hpart_from_list(tree, n_tip)

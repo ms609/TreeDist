@@ -28,6 +28,15 @@ test_that("as.HPart.numeric", {
   
 })
 
+test_that("as.HPart.unimplemented", {
+  expect_error(as.HPart(matrix()), "no applicable method")
+  expect_error(as.HPart(list(letters, LETTERS)), "leaves must be integers")
+  expect_error(as.HPart(list(list(1, 2, 3), list(0, 1, 2))),
+               ".eaves must contain each integer")
+  expect_error(as.HPart(list(list(1, 2, 3), list(3, 1, 2))),
+               ".eaves must contain each integer")
+})
+
 test_that("HParts are relabelled correctly", {
   bal7 <- BalancedTree(7)
   hb7 <- as.HPart(bal7)
