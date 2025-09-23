@@ -53,3 +53,10 @@ test_that("HParts are relabelled correctly", {
   
   expect_equal(SortTree(Preorder(as.phylo.HPart(hbMap))), SortTree(bal7tl))
 })
+
+test_that("plot.HPart", {
+  skip_if_not_installed("vdiffr")
+  vdiffr::expect_doppelganger("plot-HPart", function() 
+    plot(as.HPart(list(list(1, 2, 3), list(4, list(5, 6)))))
+  )
+})
