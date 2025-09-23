@@ -13,7 +13,7 @@ void recompute_bitsets_postorder(TreeDist::HPart &hpart, const size_t node_idx,
   if (node.children.empty()) {
     // Leaf node
     if (node.leaf_count != 1) {
-      Rcpp::stop("Leaf node has leaf_count != 1");
+      Rcpp::stop("Leaf node has leaf_count != 1");                              // #nocov
     }
     int new_index = mapping[node.label]; // mapping is 0-based
     node.label = new_index;
