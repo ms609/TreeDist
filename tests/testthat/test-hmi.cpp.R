@@ -1,9 +1,15 @@
 library("TreeTools")
 
 test_that("HMI fails nicely", {
-  expect_error(HierarchicalMutualInfo(BalancedTree(5), PectinateTree(5),
-                                      normalize = "Error"),
+  bal5 <- as.HPart(BalancedTree(5))
+  pec5 <- as.HPart(PectinateTree(5))
+  expect_error(HierarchicalMutualInfo(bal5, pec5, normalize = "Error"),
                "`normalize` must be logical, or a function")
+  
+  expect_error(EHMI_xptr(bal5, pec5, tolerance = 1e-16),
+               ".olerance too low")
+  expect_error(EHMI_xptr(bal5, pec5, minResample = 1),
+               "Must perform at least one resampl")
 })
 
 test_that("HMI examples from Perotti et al. 2015", {
