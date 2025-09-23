@@ -158,11 +158,11 @@ RenumberTips.HPart <- function(tree, tipOrder) {
   newOrder <- MatchStrings(TipLabels(tipOrder, single = TRUE), startOrder)
   
   if (!identical(newOrder, startOrder)) {
-    newIndices <- match(newOrder, startOrder)
-    if (any(is.na(newIndices))) {
-      stop("Tree labels ", paste0(startOrder[is.na(newIndices)], collapse = ", "),
+    if (length(newOrder) != length(startOrder)) {
+      stop("Tree labels ", paste0(setdiff(startOrder, tipOrder), collapse = ", "),
            " missing from `tipOrder`")
     }
+    newIndices <- match(newOrder, startOrder)
     tree <- clone(tree, newOrder)
     relabel_hpart(tree, newIndices - 1L)
     # Return:

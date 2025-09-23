@@ -60,3 +60,8 @@ test_that("plot.HPart", {
     plot(as.HPart(list(list(1, 2, 3), list(4, list(5, 6)))))
   )
 })
+
+test_that("Renumber.HPart", {
+  expect_error(RenumberTips(as.HPart(list(1, 2, 4, 3)), 4:2),
+               "labels 1 missing from `tipOrder`")
+})
