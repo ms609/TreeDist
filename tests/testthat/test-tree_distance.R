@@ -467,6 +467,7 @@ test_that("Clustering information is correctly calculated", {
     MutualClusteringInfo(randomBif20, threeAwayPoly))
   match <- MutualClusteringInfo(randomBif20, threeAwayPoly, 
                                 reportMatching = TRUE)
+  expect_equal(sum(attributes(match)$matchedScores, na.rm = TRUE), match[[1]])
   expect_equal(c(NA, NA, 1, 2, NA, 3, 7, 11, 10, 4, 6, 9, 8, NA, 5, 12, NA),
                attr(match, "matching"))
   
