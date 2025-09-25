@@ -64,6 +64,7 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
       matched2 <- matching[matched1]
       matched1 <- which(matched1)
       
+      # Textual representation of matchings
       attr(ret, "matchedSplits") <- 
         ReportMatching(splits1[[matched1]],
                        splits2[[matched2]],
@@ -72,11 +73,8 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
                        } else rep(TRUE, length(matched1)))
     }
     
-    attr(ret, "matchedScores") <- vapply(
-      seq_along(matching),
-      function(i) pairScores[i, matching[[i]]],
-      vector(mode(pairScores), 1)
-    )
+    attr(ret, "matchedScores") <- pairScores[
+      matrix(c(seq_along(matching), matching), ncol = 2L)]
     
     attr(ret, "pairScores") <- pairScores
   }
