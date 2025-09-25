@@ -3,6 +3,9 @@
 \encoding{UTF-8}
 \name{VisualizeMatching}
 \alias{VisualizeMatching}
+\alias{VisualiseMatching}
+\alias{PlotMatching}
+\alias{DisplayMatching}
 \title{Visualize a matching}
 \usage{
 VisualizeMatching(

@@ -20,6 +20,18 @@
   
   testTrees <- c(treesSBO8, treeCat8, treeTac8, treeStar8, treeAb.Cdefgh,
                  treeAbc.Defgh, treeAbcd.Efgh, treeAcd.Befgh, treeTwoSplits)
+
+  # Matching report matches score
+  expect_matching_score <- function(Func) {
+    mtch <- Func(BalancedTree(33), PectinateTree(33), reportMatching = TRUE)
+    expect_equal(mtch[[1]], Func(BalancedTree(33), PectinateTree(33)))
+    matching <- attr(mtch, "matching")
+    matchScores <- vapply(seq_along(matching),
+           function(i) attr(mtch, "pairScores")[i, matching[[i]]],
+           double(1)) # inelegant, but validates cbind logic in function
+    expect_equal(matchScores, attr(mtch, "matchedScores"))
+    expect_equal(mtch[[1]], sum(matchScores))
+  }
 }
 
 test_that("Split compatibility is correctly established", {
@@ -467,8 +479,10 @@ test_that("Clustering information is correctly calculated", {
     MutualClusteringInfo(randomBif20, threeAwayPoly))
   match <- MutualClusteringInfo(randomBif20, threeAwayPoly, 
                                 reportMatching = TRUE)
-  expect_equal(c(NA, NA, 1, 2, NA, 3, 7, 11, 10, 4, 6, 9, 8, NA, 5, 12, NA),
-               attr(match, "matching"))
+  expect_equal(sum(attributes(match)$matchedScores, na.rm = TRUE), match[[1]])
+  expect_equal(attr(match, "matching"),
+               c(NA, 1L, 2L, 3L, 11L, 4L, 7L, 5L, NA, 6L, NA, 9L, 8L, NA, 10L, 
+                 12L, NA)) # Expectation obtained by observation
   
   # Multiple bins, calculated expectation
   library("TreeTools", quietly = TRUE)
@@ -586,13 +600,11 @@ test_that("Matchings are correct", {
     
     m12 <- r12$matching
     m21 <- r21$matching
-    
     expect_equal(n1, length(m12))
     expect_equal(length(m12[!is.na(m12)]), length(unique(m12[!is.na(m12)])))
     expect_equal(n2, length(m21))
     expect_equal(length(m21[!is.na(m21)]), length(unique(m21[!is.na(m21)])))
     expect_lte(dim(s1)[1] - dim(s2)[1], sum(is.na(m12)))
-    
     
     m13 <- r13$matching
     m31 <- r31$matching
@@ -602,11 +614,12 @@ test_that("Matchings are correct", {
     expect_equal(length(m31[!is.na(m31)]), length(unique(m31[!is.na(m31)])))
     expect_lte(dim(s1)[1] - dim(s3)[1], sum(is.na(m13)))
     
-    for (i in seq_along(m12)) expect_true(m12[i] %in% x12[[i]])
-    for (i in seq_along(m21)) expect_true(m21[i] %in% x21[[i]])
+    for (i in seq_along(m12)) expect_true(m12[[i]] %in% x12[[i]])
+    for (i in seq_along(m21)) expect_true(m21[[i]] %in% x21[[i]])
     
   }
   
+  # Expectations by observation
   Test(TreeDist:::cpp_robinson_foulds_distance,
        list(NA, 2, NA, 3, NA, NA, 5, NA),
        list(NA, 2, 4, NA, 7, NA)
@@ -638,10 +651,9 @@ test_that("Matchings are correct", {
        list(5, 2, 4, 3, 7, 6)
        )
   Test(TreeDist:::cpp_mutual_clustering, 
-       list(4, 2, NA, 3, 6, NA, 5, 1),
-       list(8, 2, 4, 5, 7, 1)
+       list(c(NA, 4), 2, 1, 3, NA, 6, 5, c(NA, 4)),
+       list(3, 2, 4, c(1, 8), 7, 6)
        )
-
 })
 
 test_that("Matching Split Distance is correctly calculated", {
@@ -998,4 +1010,10 @@ test_that("Independent of root position", {
                   loose_upper = 0, fack_upper = 0, li_upper = 0))
   Test(SPRDist, 0)
   
+})
+
+test_that("Matchings are correctly reported", {
+  expect_matching_score(MutualClusteringInfo)
+  expect_matching_score(SharedPhylogeneticInfo)
+  expect_matching_score(MatchingSplitInfo)
 })
