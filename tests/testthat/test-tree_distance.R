@@ -28,7 +28,7 @@
     matching <- attr(mtch, "matching")
     matchScores <- vapply(seq_along(matching),
            function(i) attr(mtch, "pairScores")[i, matching[[i]]],
-           double(1))
+           double(1)) # inelegant, but validates cbind logic in function
     expect_equal(matchScores, attr(mtch, "matchedScores"))
     expect_equal(mtch[[1]], sum(matchScores))
   }
