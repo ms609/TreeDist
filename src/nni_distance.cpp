@@ -15,13 +15,42 @@ using TreeTools::SplitList;
 #define CHILD1(i) int16(edge1(i, 1))
 #define CHILD2(i) int16(edge2(i, 1))
 
-/* Defining these here avoids variable length arrays */
-/* However, setting larger values can cause the stack to overflow. */
-/* 128 (SL_MAX_BINS * 4) and 8192 (SL_MAX_SPLITS * 4) are too large on MacOS */
+template <typename T, std::size_t StackSize>
+class HybridBuffer {
+public:
+  explicit HybridBuffer(std::size_t n) : n_(n) {
+    if (n <= StackSize) {
+      data_ = stack_;
+    } else {
+      heap_.reset(new T[n]);
+      data_ = heap_.get();
+    }
+  }
+  
+  T& operator[](std::size_t i) { return data_[i]; }
+  const T& operator[](std::size_t i) const { return data_[i]; }
+  T* data() { return data_; }
+  const T* data() const { return data_; }
+  std::size_t size() const { return n_; }
+  
+private:
+  std::size_t n_;
+  T* data_;
+  T stack_[StackSize];
+  std::unique_ptr<T[]> heap_;
+};
+
+
+
+constexpr int16 NNI_STACK_BINS = SL_MAX_BINS / 2;
+constexpr int16 NNI_STACK_SPLITS = SL_MAX_SPLITS / 2;
+constexpr int16 NNI_STACK_TIPS = 1024;;
+
 constexpr int16 NNI_MAX_BINS = SL_MAX_BINS * 2;
 constexpr int16 NNI_MAX_SPLITS = SL_MAX_SPLITS * 2;
 constexpr int16 NNI_MAX_TIPS = NNI_MAX_BINS * SL_BIN_SIZE;
 // If updating NNI_MAX_TIPS, also update lg2_ceiling constructor
+
 
 /* Exact value of diameter for trees with 0..N_EXACT edges, 
  * calculated by Li et al. 1996. */
@@ -197,7 +226,8 @@ grf_match nni_rf_matching (
       matching[i] = NA_INT16;
     }
     
-    splitbit b_complement[NNI_MAX_SPLITS][NNI_MAX_BINS];
+    HybridBuffer<splitbit, NNI_STACK_SPLITS * NNI_STACK_BINS> 
+      b_complement(n_splits * n_bins);
     for (int16 i = 0; i < n_splits; ++i) {
       for (int16 bin = 0; bin < last_bin; ++bin) {
         ASSERT(i <= NNI_MAX_SPLITS);
@@ -310,8 +340,8 @@ IntegerVector cpp_nni_distance(const IntegerMatrix edge1,
   
   grf_match match = nni_rf_matching(splits1, splits2, n_splits, n_bin, n_tip);
   
-  bool matched_1[NNI_MAX_TIPS] = {0};
-  int16 unmatched_below[NNI_MAX_TIPS] = {0};
+  HybridBuffer<bool, NNI_STACK_TIPS> matched_1(n_tip);
+  HybridBuffer<int16, NNI_STACK_TIPS> unmatched_below(n_tip);
   const int16 match_size = static_cast<int16>(match.size());
   for (int16 i = 0; i < match_size; ++i) {
     ASSERT(n_edge != n_tip && n_tip > 3); // else names_1 uninitialized
