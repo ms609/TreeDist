@@ -12,8 +12,10 @@
 #' @param PairScorer function taking four arguments, `splits1`, `splits2`,
 #' `nSplits1`, `nSplits2`, which should return the score of each pair of splits
 #' in a two-dimensional matrix.  Additional parameters may be specified via 
-#' \dots.
-#' @param \dots Additional parameters to `PairScorer`
+#' \code{\dots}.
+#' @param maximize Logical specifying whether the optimal matching maximizes
+#' or minimizes the scores obtained by `PairScorer()`.
+#' @param \dots Additional parameters to `PairScorer()`.
 #' 
 #' @return A numeric value specifying the score of the tree pairs under the 
 #' specified pair scorer. If `reportMatching = TRUE`, attribute also list:
