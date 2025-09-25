@@ -499,7 +499,6 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
     }
   }
   
-  // TODO verify this is unnecessary; remove.
   for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
     score.padRowAfterCol(ai, 0, max_score);
   }
