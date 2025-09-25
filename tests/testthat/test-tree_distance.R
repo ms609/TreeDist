@@ -480,8 +480,9 @@ test_that("Clustering information is correctly calculated", {
   match <- MutualClusteringInfo(randomBif20, threeAwayPoly, 
                                 reportMatching = TRUE)
   expect_equal(sum(attributes(match)$matchedScores, na.rm = TRUE), match[[1]])
-  expect_equal(c(NA, NA, 1, 2, NA, 3, 7, 11, 10, 4, 6, 9, 8, NA, 5, 12, NA),
-               attr(match, "matching"))
+  expect_equal(attr(match, "matching"),
+               c(NA, 1L, 2L, 3L, 11L, 4L, 7L, 5L, NA, 6L, NA, 9L, 8L, NA, 10L, 
+                 12L, NA)) # Expectation obtained by observation
   
   # Multiple bins, calculated expectation
   library("TreeTools", quietly = TRUE)
