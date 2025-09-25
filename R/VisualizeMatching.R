@@ -50,6 +50,7 @@
 #' @importFrom colorspace qualitative_hcl sequential_hcl
 #' @importFrom graphics par
 #' @importFrom TreeTools as.Splits
+#' @aliases VisualiseMatching PlotMatching DisplayMatching
 #' @export
 VisualizeMatching <- function (Func, tree1, tree2, setPar = TRUE,
                                precision = 3L, Plot = plot.phylo,
@@ -215,3 +216,10 @@ VisualizeMatching <- function (Func, tree1, tree2, setPar = TRUE,
   # Return:
   invisible(matching)
 }
+
+#' @export
+PlotMatching <- VisualizeMatching
+#' @export
+DisplayMatching <- VisualizeMatching
+#' @export
+VisualiseMatching <- VisualizeMatching
