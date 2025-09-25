@@ -6,7 +6,7 @@
 \alias{SelfHMI}
 \alias{EHMI}
 \alias{AHMI}
-\title{Hierarchical Mutual Information for phylogenetic trees}
+\title{Hierarchical Mutual Information}
 \usage{
 HierarchicalMutualInfo(tree1, tree2 = NULL, normalize = FALSE)
 
@@ -25,9 +25,7 @@ If \code{TRUE}, normalize to range [0,1] by dividing by
 If a function, divide by \code{normalize(SelfHMI(tree1), SelfHMI(tree2))}.}
 
 \item{tree, tree1, tree2}{An object that can be coerced to an \code{\link{HPart}}
-object, or (soon) a list of such objects.
-(Not yet implemented: ) If \code{tree2} is not provided, distances will be
-calculated between each pair of trees in the list \code{tree1}.}
+object.}
 
 \item{precision}{Numeric; Monte Carlo sampling will terminate once the
 relative standard error falls below this value.}
@@ -41,7 +39,7 @@ two input hierarchies, in order to normalize the \acronym{HMI}.}
 }
 \value{
 \code{HierarchicalMutualInfo()} returns a numeric value representing the
-Hierarchical Mutual Information between the input trees, in bits,
+hierarchical mutual information between the input trees, in bits,
 normalized as specified.
 Higher values indicate more shared hierarchical structure.
 
@@ -64,8 +62,13 @@ the standard error of the estimate.
 }
 \description{
 Calculate the Hierarchical Mutual Information (\acronym{HMI})
-between two phylogenetic trees, following the recursive algorithm of
+between two trees, following the recursive algorithm of
 \insertCite{Perotti2020;textual}{TreeDist}.
+
+This function was written during a code sprint: its documentation and test
+cases have not yet been carefully scrutinized, and its implementation may
+change without notice.
+Please alert the maintainer to any issues you encounter.
 }
 \details{
 \code{HierarchicalMutualInfo()} computes the hierarchical mutual content of trees

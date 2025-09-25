@@ -1,10 +1,9 @@
-#' Hierarchical Mutual Information for phylogenetic trees
+#' Hierarchical Mutual Information
 #'
 #' Calculate the Hierarchical Mutual Information (\acronym{HMI})
-#' between two phylogenetic trees, following the recursive algorithm of
+#' between two trees, following the recursive algorithm of
 #' \insertCite{Perotti2020;textual}{TreeDist}.
 #' 
-#' @details
 #' `HierarchicalMutualInfo()` computes the hierarchical mutual content of trees
 #' \insertCite{Perotti2015,Perotti2020}{TreeDist}, which accounts for the
 #' non-independence of information represented by nested splits.
@@ -22,18 +21,21 @@
 #'   \item \eqn{H_{us}, H_{tv}, H_{uv}} are entropy terms from child comparisons 
 #'   \item \eqn{I_{uv}} is the recursive \acronym{HMI} for child pairs
 #' }
-#' 
+#'
+#' @template sprint
+#'
 #' @param tree,tree1,tree2 An object that can be coerced to an [`HPart`] 
-#' object, or (soon) a list of such objects.
-#' (Not yet implemented: ) If \code{tree2} is not provided, distances will be
-#' calculated between each pair of trees in the list \code{tree1}.
+#' object.
+# (Not yet implemented: ) object, or a list of such objects.
+# (Not yet implemented: ) If \code{tree2} is not provided, distances will be
+# calculated between each pair of trees in the list \code{tree1}.
 #' @param normalize If `FALSE`, return the raw \acronym{HMI}, in bits.
 #' If `TRUE`, normalize to range \[0,1\] by dividing by
 #' `max(SelfHMI(tree1), SelfHMI(tree2))`.
 #' If a function, divide by `normalize(SelfHMI(tree1), SelfHMI(tree2))`.
 #' 
 #' @return `HierarchicalMutualInfo()` returns a numeric value representing the
-#' Hierarchical Mutual Information between the input trees, in bits,
+#' hierarchical mutual information between the input trees, in bits,
 #' normalized as specified.
 #' Higher values indicate more shared hierarchical structure.
 #' 

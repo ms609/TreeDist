@@ -33,14 +33,18 @@ is.HPart(x)
 }
 \arguments{
 \item{tree}{An object to convert to an HPart structure, in a supported format
-(see details)}
+(see details).}
 
 \item{tipLabels}{Character vector specifying sequence in which to order
 tip labels.}
 
-\item{x}{\code{HPart} object to plot}
+\item{x}{\code{HPart} object to plot.}
 
-\item{\dots}{Additional arguments to \code{\link[ape:plot.phylo]{plot.phylo}}}
+\item{\dots}{Additional arguments to \code{\link[ape:plot.phylo]{plot.phylo}}.}
+}
+\value{
+\code{HPart()} returns a structure containing a pointer to a C++
+representation of a hierarchical partition structure.
 }
 \description{
 A structure of class \code{HPart} comprises a pointer to a C++ representation of
@@ -52,7 +56,7 @@ can be compared using \code{\link[=HierarchicalMutualInfo]{HierarchicalMutualInf
 An \code{HPart} object may be created from various representations of hierarchical
 structures:
 \itemize{
-\item a tree of class \code{phylo}
+\item a tree (possibly phylogenetic) of class \code{phylo}
 \item A hierarchical list of lists, in which elements are represented by integers
 1\dots{}n
 \item A vector, which will be interpreted as a flat structure

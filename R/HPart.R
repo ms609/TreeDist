@@ -9,14 +9,16 @@
 #' An `HPart` object may be created from various representations of hierarchical
 #' structures:
 #' 
-#' - a tree of class `phylo`
+#' - a tree (possibly phylogenetic) of class `phylo`
 #' - A hierarchical list of lists, in which elements are represented by integers
 #'   1\dots{}n
 #' - A vector, which will be interpreted as a flat structure
 #'  in which all elements bearing the same label are assigned to the same cluster
 #' 
 #' @param tree An object to convert to an HPart structure, in a supported format
-#' (see details)
+#' (see details).
+#' @returns `HPart()` returns a structure containing a pointer to a C++
+#' representation of a hierarchical partition structure.
 #' @name HPart
 #' @export
 as.HPart <- function(tree, tipLabels) {
@@ -125,8 +127,8 @@ as.phylo.HPart <- function(x, ...) {
 }
 
 #' @rdname HPart
-#' @param x `HPart` object to plot
-#' @param \dots Additional arguments to \code{\link[ape:plot.phylo]{plot.phylo}}
+#' @param x `HPart` object to plot.
+#' @param \dots Additional arguments to \code{\link[ape:plot.phylo]{plot.phylo}}.
 #' @export
 plot.HPart <- function(x, ...) {
   plot(as.phylo(x), ...)
