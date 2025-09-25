@@ -50,7 +50,7 @@ jobs:
           - {os: macOS-latest, r: 'release'}
           - {os: ubuntu-22.04, r: '4.1',
           rspm: "https://packagemanager.rstudio.com/cran/__linux__/jammy/latest"}
-          - {os: ubuntu-latest, r: 'release',
+          - {os: ubuntu-24.04, r: 'release',
           rspm: "https://packagemanager.rstudio.com/cran/__linux__/noble/latest"}
           - {os: ubuntu-latest, r: 'devel',
           rspm: "https://packagemanager.rstudio.com/cran/__linux__/noble/latest"}
@@ -75,12 +75,6 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
           extra-repositories: https://ms609.github.io/packages/
-
-      - name: Install apt packages (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y texlive-latex-base libglpk-dev texlive-fonts-recommended
 
       - name: Set up R dependencies (Windows)
         if: runner.os == 'Windows'
@@ -126,3 +120,23 @@ jobs:
         if: runner.os == 'Windows'
         run: covr::codecov()
         shell: Rscript {0}
+
+      - name: Notify on failure
+        if: failure() && github.event_name == 'schedule'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: 164,
+              body: 'Scheduled workflow has failed: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+            });
+      
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: 164,
+              state: 'open'
+            });
