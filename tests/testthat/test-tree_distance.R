@@ -20,6 +20,18 @@
   
   testTrees <- c(treesSBO8, treeCat8, treeTac8, treeStar8, treeAb.Cdefgh,
                  treeAbc.Defgh, treeAbcd.Efgh, treeAcd.Befgh, treeTwoSplits)
+
+  # Matching report matches score
+  expect_matching_score <- function(Func) {
+    mtch <- Func(BalancedTree(33), PectinateTree(33), reportMatching = TRUE)
+    expect_equal(mtch[[1]], Func(BalancedTree(33), PectinateTree(33)))
+    matching <- attr(mtch, "matching")
+    matchScores <- vapply(seq_along(matching),
+           function(i) attr(mtch, "pairScores")[i, matching[[i]]],
+           double(1))
+    expect_equal(matchScores, attr(mtch, "matchedScores"))
+    expect_equal(mtch[[1]], sum(matchScores))
+  }
 }
 
 test_that("Split compatibility is correctly established", {
@@ -998,4 +1010,10 @@ test_that("Independent of root position", {
                   loose_upper = 0, fack_upper = 0, li_upper = 0))
   Test(SPRDist, 0)
   
+})
+
+test_that("Matchings are correctly reported", {
+  expect_matching_score(MutualClusteringInfo)
+  expect_matching_score(SharedPhylogeneticInfo)
+  expect_matching_score(MatchingSplitInfo)
 })
