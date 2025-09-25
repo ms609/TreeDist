@@ -1,6 +1,10 @@
-# TreeDist 2.10.1.9000 (development)
+# TreeDist 2.10.1.9001 (development)
 
 - Fix crash in `robinson_foulds_all_pairs()` and `RobinsonFoulds(list)`.
+- Fix bug in calculation of `MutualClusteringInfo()`: greedy optimization
+  was not guaranteed to find globally optimal matching, causing distances to be
+  overestimated in some circumstances
+  ([#163](https://github.com/ms609/TreeDist/issues/162)).
 
 
 # TreeDist 2.10.1 (2025-08-24)
