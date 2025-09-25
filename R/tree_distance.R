@@ -78,6 +78,7 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
     
     attr(ret, "pairScores") <- pairScores
   }
+  
   # Return:
   ret
 }
