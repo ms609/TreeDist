@@ -123,6 +123,7 @@ NyeSimilarity(as.phylo(0:5, nTip = 8), similarity = FALSE)
 }
 \seealso{
 Other tree distances: 
+\code{\link{HierarchicalMutualInfo}()},
 \code{\link{JaccardRobinsonFoulds}()},
 \code{\link{KendallColijn}()},
 \code{\link{MASTSize}()},

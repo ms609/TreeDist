@@ -126,6 +126,7 @@ is a more sophisticated, if more cumbersome, implementation that supports
 lambda > 0, i.e. use of edge lengths in tree comparison.
 
 Other tree distances: 
+\code{\link{HierarchicalMutualInfo}()},
 \code{\link{JaccardRobinsonFoulds}()},
 \code{\link{MASTSize}()},
 \code{\link{MatchingSplitDistance}()},

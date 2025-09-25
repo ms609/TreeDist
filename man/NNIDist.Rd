@@ -102,6 +102,7 @@ CompareAll(as.phylo(30:33, 8), NNIDist)
 }
 \seealso{
 Other tree distances: 
+\code{\link{HierarchicalMutualInfo}()},
 \code{\link{JaccardRobinsonFoulds}()},
 \code{\link{KendallColijn}()},
 \code{\link{MASTSize}()},
