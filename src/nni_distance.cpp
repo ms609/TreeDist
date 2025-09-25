@@ -173,16 +173,13 @@ grf_match nni_rf_matching (
     const int16 n_bins,
     const int16 n_tips) {
     
-    if (n_splits > NNI_MAX_SPLITS) {
-      Rcpp::stop("Cannot calculate NNI distance for trees with "        // nocov
-                              "so many splits.");                       // nocov
-    }
+    ASSERT(n_splits > 0);
+    ASSERT(n_tips > 3);
     
-    if (n_splits < 1) {
-      Rcpp::stop("NNI distance undefined for trees with %d splits.",    // nocov
-                 (int)n_splits);                                        // nocov
+    if (n_splits > NNI_MAX_SPLITS) {
+      Rcpp::stop("Cannot calculate NNI distance for trees with "       // #nocov
+                              "so many splits.");                      // #nocov
     }
-    ASSERT(n_tips < 4);
     
     const int16 last_bin = n_bins - 1;
     const int16 unset_tips = (n_tips % SL_BIN_SIZE) ? 
