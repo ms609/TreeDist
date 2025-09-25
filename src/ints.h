@@ -6,7 +6,7 @@
 using int16 = int_fast16_t;
 using int32 = int_fast32_t;
 using uint16 = uint_fast16_t;
-using grf_match = std::vector<int> ;
+using grf_match = std::vector<int>;
 
 constexpr uint16 INT_16_MAX = INT_FAST16_MAX;
 constexpr uint16 UINT_16_MAX = UINT_FAST16_MAX;

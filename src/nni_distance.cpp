@@ -169,57 +169,65 @@ void nni_edge_to_splits(const IntegerMatrix& edge,
 grf_match nni_rf_matching (
     const std::unique_ptr<splitbit[]>& a, 
     const std::unique_ptr<splitbit[]>& b,
-    const int16* n_splits,
-    const int16* n_bins,
-    const int16* n_tips) {
+    const int16 n_splits,
+    const int16 n_bins,
+    const int16 n_tips) {
     
-    if (*n_splits > NNI_MAX_SPLITS) {
+    if (n_splits > NNI_MAX_SPLITS) {
       Rcpp::stop("Cannot calculate NNI distance for trees with "        // nocov
                               "so many splits.");                       // nocov
     }
     
-    const int16
-      last_bin = *n_bins - 1,
-      unset_tips = (*n_tips % SL_BIN_SIZE) ?
-        SL_BIN_SIZE - *n_tips % SL_BIN_SIZE :
-        0;
-    if (*n_bins + last_bin > NNI_MAX_BINS) {
+    if (n_splits < 1) {
+      Rcpp::stop("NNI distance undefined for trees with %d splits.",    // nocov
+                 (int)n_splits);                                        // nocov
+    }
+    ASSERT(n_tips < 4);
+    
+    const int16 last_bin = n_bins - 1;
+    const int16 unset_tips = (n_tips % SL_BIN_SIZE) ? 
+      SL_BIN_SIZE - n_tips % SL_BIN_SIZE :
+      0;
+    
+    if (n_bins + last_bin > NNI_MAX_BINS) {
       Rcpp::stop("Cannot calculate NNI distance for trees with "
                    "so many tips.");
     }
     const splitbit unset_mask = ALL_ONES >> unset_tips;
     
-    grf_match matching(*n_splits);
-    for (int16 i = 0; i != *n_splits; i++) matching[i] = NA_INT16;
+    grf_match matching(n_splits);
+    for (int16 i = 0; i != n_splits; i++) {
+      matching[i] = NA_INT16;
+    }
     
     splitbit b_complement[NNI_MAX_SPLITS][NNI_MAX_BINS];
-    for (int16 i = 0; i != *n_splits; i++) {
-      for (int16 bin = 0; bin != last_bin; bin++) {
+    for (int16 i = 0; i < n_splits; ++i) {
+      for (int16 bin = 0; bin < last_bin; ++bin) {
         ASSERT(i <= NNI_MAX_SPLITS);
         ASSERT(bin <= NNI_MAX_BINS);
-        ASSERT(i * *n_bins + bin < (*n_splits * *n_bins));
-        b_complement[i][bin] = ~b[i * *n_bins + bin];
+        ASSERT(i * n_bins + bin < (n_splits * n_bins));
+        b_complement[i][bin] = ~b[i * n_bins + bin];
       }
       ASSERT(i <= NNI_MAX_SPLITS);
       ASSERT(last_bin <= NNI_MAX_BINS);
-      ASSERT(i * *n_bins + last_bin < (*n_splits * *n_bins));
-      b_complement[i][last_bin] = b[i * *n_bins + last_bin] ^ unset_mask;
+      ASSERT(i * n_bins + last_bin < (n_splits * n_bins));
+      b_complement[i][last_bin] = b[i * n_bins + last_bin] ^ unset_mask;
     }
     
-    for (int16 ai = 0; ai != *n_splits; ai++) {
-      for (int16 bi = 0; bi != *n_splits; bi++) {
+    for (int16 ai = 0; ai < n_splits; ++ai) {
+      for (int16 bi = 0; bi < n_splits; ++bi) {
         
         bool all_match = true, all_complement = true;
         
-        for (int16 bin = 0; bin != *n_bins; bin++) {
-          if ((a[ai * *n_bins + bin] != b[bi * *n_bins + bin])) {
+        for (int16 bin = 0; bin < n_bins; ++bin) {
+          if ((a[ai * n_bins + bin] != b[bi * n_bins + bin])) {
             all_match = false;
             break;
           }
         }
         if (!all_match) {
-          for (int16 bin = 0; bin != *n_bins; bin++) {
-            if ((a[ai * *n_bins + bin] != b_complement[bi][bin])) {
+          for (int16 bin = 0; bin < n_bins; ++bin) {
+            if ((a[ai * n_bins + bin] != b_complement[bi][bin])) {
               all_complement = false;
               break;
             }
@@ -232,7 +240,7 @@ grf_match nni_rf_matching (
       }
     }
     
-    return (matching);
+    return(matching);
   }
 
 // [[Rcpp::export]]
@@ -244,21 +252,20 @@ IntegerVector cpp_nni_distance(const IntegerMatrix edge1,
     Rcpp::stop("Cannot calculate NNI distance for trees with "
                             "so many tips.");
   }
-  const int16 
-    n_tip = int16(nTip[0]),
-    node_0 = n_tip,
-    node_0_r = n_tip + 1,
-    n_edge = int16(edge1.nrow())
-  ;
-  int16 lower_bound = 0,
-    best_lower_bound = 0,
-    tight_score_bound = 0
-  ;
-  int32 loose_score_bound = 0,
-    best_upper_bound = 0,
-    fack_score_bound = 0,
-    li_score_bound = 0
-  ;
+  const int16 n_tip = int16(nTip[0]);
+  const int16 node_0 = n_tip;
+  const int16 node_0_r = n_tip + 1;
+  const int16 n_edge = int16(edge1.nrow());
+  
+  int16 lower_bound = 0;
+  int16 best_lower_bound = 0;
+  int16 tight_score_bound = 0;
+  
+  int32 loose_score_bound = 0;
+  int32 best_upper_bound = 0;
+  int32 fack_score_bound = 0;
+  int32 li_score_bound = 0;
+  
   if (n_edge != int16(edge2.nrow())) {
     Rcpp::stop("Both trees must have the same number of edges. "
                             "Is one rooted and the other unrooted?");
@@ -274,29 +281,22 @@ IntegerVector cpp_nni_distance(const IntegerMatrix edge1,
                                  _["li_upper"] = 0));
   }
   
-  const int16 
-    root_1 = PARENT1(n_edge - 1),
-    root_2 = PARENT2(n_edge - 1)
-  ;
-  
+  const int16 root_1 = PARENT1(n_edge - 1);
+  const int16 root_2 = PARENT2(n_edge - 1);
   bool rooted = PARENT1(n_edge - 3) != root_1;
+  const uint16 NOT_TRIVIAL = UINT_16_MAX;
+  const int16 n_node = n_edge + 1;
+  const int16 n_bin = int16(((n_tip - 1) / SL_BIN_SIZE) + 1);
+  const int16 trivial_origin_1 = root_1 - 1;
+  const int16 trivial_origin_2 = root_2 - 1;
+  const int16 trivial_two_1 = (rooted ? (CHILD1(n_edge - 1) - 1) : NOT_TRIVIAL);
+  const int16 trivial_two_2 = (rooted ? (CHILD2(n_edge - 1) - 1) : NOT_TRIVIAL);
+  const int16 n_distinct_edge = int16(n_edge - (rooted ? 1 : 0));
+  const int16 n_splits = n_distinct_edge - n_tip;
   
-  const uint16
-    NOT_TRIVIAL = UINT_16_MAX;
-  
-  const int16
-    n_node = n_edge + 1,
-    n_bin = int16(((n_tip - 1) / SL_BIN_SIZE) + 1),
-    
-    trivial_origin_1 = root_1 - 1,
-    trivial_origin_2 = root_2 - 1,
-    
-    trivial_two_1 = (rooted ? (CHILD1(n_edge - 1) - 1) : NOT_TRIVIAL),
-    trivial_two_2 = (rooted ? (CHILD2(n_edge - 1) - 1) : NOT_TRIVIAL),
-    
-    n_distinct_edge = int16(n_edge - (rooted ? 1 : 0)),
-    n_splits = n_distinct_edge - n_tip
-  ;
+  if (n_splits < 1) {
+    Rcpp::stop("NNI distance is undefined for trees with no splits"); // #nocov
+  }
   
   std::unique_ptr<splitbit[]> splits1(new splitbit[n_splits * n_bin]);
   std::unique_ptr<splitbit[]> splits2(new splitbit[n_splits * n_bin]);
@@ -311,12 +311,12 @@ IntegerVector cpp_nni_distance(const IntegerMatrix edge1,
                        &trivial_origin_1, &trivial_two_1, splits1, names_1);
   } // else no internal nodes resolved
   
-  grf_match match = nni_rf_matching(splits1, splits2, &n_splits, &n_bin, &n_tip);
+  grf_match match = nni_rf_matching(splits1, splits2, n_splits, n_bin, n_tip);
   
   bool matched_1[NNI_MAX_TIPS] = {0};
   int16 unmatched_below[NNI_MAX_TIPS] = {0};
-
-  for (int16 i = 0; i != int16(match.size()); i++) {
+  const int16 match_size = static_cast<int16>match.size();
+  for (int16 i = 0; i < match_size; ++i) {
     ASSERT(n_edge != n_tip && n_tip > 3); // else names_1 uninitialized
     int16 node_i = names_1[i] - node_0_r;
     if (match[i] == NA_INT16) {
@@ -327,7 +327,8 @@ IntegerVector cpp_nni_distance(const IntegerMatrix edge1,
     }
   }
   
-  for (int16 i = 0; i != n_distinct_edge - (rooted ? 1 : 0); i++) {
+  const int16 edges_to_check = n_distinct_edge - (rooted ? 1 : 0);
+  for (int16 i = 0; i < edges_to_check; ++i) {
     const int16 parent_i = PARENT1(i) - 1, child_i = CHILD1(i) - 1;
     // If edge is unmatched, add one to subtree size.
     if (child_i >= n_tip) {
@@ -346,13 +347,10 @@ IntegerVector cpp_nni_distance(const IntegerMatrix edge1,
   const int16 root_node = root_1 - node_0_r;
   
   if (rooted) {
-    const int16
-      root_child_1 = CHILD1(n_edge - 1) - 1,
-      root_child_2 = CHILD1(n_edge - 2) - 1,
-      
-      unmatched_1 = root_child_1 < n_tip ? 0 :
-                       unmatched_below[root_child_1 - node_0]
-    ;
+    const int16 root_child_1 = CHILD1(n_edge - 1) - 1;
+    const int16 root_child_2 = CHILD1(n_edge - 2) - 1;
+    const int16 unmatched_1 = root_child_1 < n_tip ? 0 :
+                       unmatched_below[root_child_1 - node_0];
     if (root_child_2 >= n_tip) {
       const int16 unmatched_2 = (root_child_2 < n_tip ? 0 :
                                    unmatched_below[root_child_2 - node_0]);
