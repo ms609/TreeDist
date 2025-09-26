@@ -13,7 +13,7 @@
 using namespace Rcpp;
 using TreeTools::SplitList;
 
-constexpr int32_t NA_INT32 = std::numeric_limits<int32_t>::min();
+constexpr int32_t NA_INT32 = -9999; //std::numeric_limits<int32_t>::min();
 
 
 template <typename T, std::size_t StackSize>
@@ -22,12 +22,19 @@ public:
   explicit HybridBuffer(std::size_t n) : n_(n), data_(nullptr) {
     if (n_ <= StackSize) {
       data_ = stack_;
+      std::uninitialized_fill_n(data_, n_, T{});
     } else {
-      heap_ = std::unique_ptr<T[]>(new T[n_]());                       // #nocov
+      heap_ = std::make_unique<T[]>(n_);                               // #nocov
       data_ = heap_.get();                                             // #nocov
     }
   }
-  
+
+  ~HybridBuffer() {
+    if (n_ <= StackSize) {
+      std::destroy_n(data_, n_);
+    }
+  }
+
   // bounds-checked accessors (ASSERT is a macro in your project)
   T& operator[](std::ptrdiff_t i) {
     ASSERT(i >= 0 && static_cast<std::size_t>(i) < n_);
@@ -37,7 +44,7 @@ public:
     ASSERT(i >= 0 && static_cast<std::size_t>(i) < n_);
     return data_[i];
   }
-  
+
   T* data() {
     return data_;
   }
@@ -47,13 +54,13 @@ public:
   std::size_t size() const {
     return n_;
   }
-  
+
   bool on_stack() const { return n_ <= StackSize; }
-  
+
 private:
   std::size_t n_;
   T* data_;
-  alignas(T) T stack_[StackSize]{};
+  T stack_[StackSize];
   std::unique_ptr<T[]> heap_;
 };
 
