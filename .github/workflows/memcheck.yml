@@ -59,7 +59,7 @@ jobs:
     
   mem-check-legacy:
     runs-on: ubuntu-24.04
-    name: valgrind ${{ matrix.config.test }}, ubuntu, R release
+    name: legacy valgrind ${{ matrix.config.test }}, ubuntu, R release
 
     strategy:
       fail-fast: false

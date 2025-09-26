@@ -180,7 +180,7 @@ inline void nni_edge_to_splits(const IntegerMatrix& edge,
   
   for (int32 i = 0; i < n_node; ++i) {
     tmp_splits[i] = std::make_unique<splitbit[]>(n_bin);
-    std::fill_n(tmp_splits[i].get(), n_bin, splitbit(0));
+    std::fill_n(tmp_splits[i].get(), n_bin, splitbit(0)); // Unnecessary?
   }
   
   for (int32 i = 0; i != n_tip; i++) {
@@ -222,7 +222,7 @@ grf_match nni_rf_matching (
       Rcpp::stop("Cannot calculate NNI distance for trees with so many tips.");
     }
     
-    // #nocov begin
+    // #nocov start
     if (static_cast<int64_t>(n_splits) * static_cast<int64_t>(n_bins) >
           static_cast<int64_t>(std::numeric_limits<int32>::max())) {
       Rcpp::stop("Cannot calculate NNI distance for trees with so many splits.");
