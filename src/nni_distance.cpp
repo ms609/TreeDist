@@ -59,6 +59,8 @@ constexpr int32 NNI_STACK_TIPS = NNI_STACK_BINS * NNI_STACK_SPLITS;
 
 constexpr int32 NNI_MAX_TIPS = 32768;
 // If updating NNI_MAX_TIPS, also update lg2_ceiling constructor
+// Once we get near int16_max, we need to worry about upgrading to int64
+// where we're looking at products of ntips and nbins.
 
 
 /* Exact value of diameter for trees with 0..N_EXACT edges, 
@@ -164,41 +166,42 @@ void update_score(const int32 subtree_edges, int32 *lower_bound,
 
 
 // Edges must be listed in postorder
-void nni_edge_to_splits(const IntegerMatrix& edge,
-                        const int32* n_tip,
-                        const int32* n_edge,
-                        const int32* n_node,
-                        const int32* n_bin,
-                        const int32* trivial_origin,
-                        const int32* trivial_two,
-                        std::unique_ptr<splitbit[]>& splits,
-                        std::unique_ptr<int32[]>& names) {
+inline void nni_edge_to_splits(const IntegerMatrix& edge,
+                               const int32 n_tip,
+                               const int32 n_edge,
+                               const int32 n_node,
+                               const int32 n_bin,
+                               const int32 trivial_origin,
+                               const int32 trivial_two,
+                               std::unique_ptr<splitbit[]>& splits,
+                               std::unique_ptr<int32[]>& names) {
   
-  std::vector<std::unique_ptr<splitbit[]>> tmp_splits(*n_node);
+  std::vector<std::unique_ptr<splitbit[]>> tmp_splits(n_node);
   
-  for (int32 i = 0; i != *n_node; i++) {
-    tmp_splits[i] = std::make_unique<splitbit[]>(*n_bin);
+  for (int32 i = 0; i < n_node; ++i) {
+    tmp_splits[i] = std::make_unique<splitbit[]>(n_bin);
   }
   
-  for (int32 i = 0; i != *n_tip; i++) {
+  for (int32 i = 0; i != n_tip; i++) {
     tmp_splits[i][int32(i / SL_BIN_SIZE)] = splitbit(1) << (i % SL_BIN_SIZE);
   }
   
-  for (int32 i = 0; i != *n_edge - 1; i++) { /* final edge is second root edge */
-    for (int32 j = 0; j != *n_bin; j++) {
-      tmp_splits[int32(edge(i, 0) - 1)][j] |= tmp_splits[int32(edge(i, 1) - 1)][j];
+  for (int32 i = 0; i < n_edge - 1; ++i) { /* final edge is second root edge */
+    for (int32 j = 0; j < n_bin; ++j) {
+      tmp_splits[static_cast<int32>(edge(i, 0) - 1)][j] |= 
+        tmp_splits[static_cast<int32>(edge(i, 1) - 1)][j];
     }
   }
   
   int32 n_trivial = 0;
-  for (int32 i = *n_tip; i != *n_node; i++) {
-    if (i == *trivial_origin || i == *trivial_two) {
-      n_trivial++;
+  for (int32 i = n_tip; i < n_node; ++i) {
+    if (i == trivial_origin || i == trivial_two) {
+      ++n_trivial;
     } else {
-      for (int32 j = 0; j != *n_bin; j++) {
-        const int32 idx = i - *n_tip - n_trivial;
-        ASSERT(idx >= 0 && idx < *n_splits);
-        splits[idx * *n_bin + j] = tmp_splits[i][j];
+      for (int32 j = 0; j < n_bin; ++j) {
+        const size_t idx = i - n_tip - n_trivial;
+        ASSERT(idx >= 0 && idx < n_splits);
+        splits[idx * n_bin + j] = tmp_splits[i][j];
         names[idx] = i + 1;
       }
     }
@@ -217,6 +220,13 @@ grf_match nni_rf_matching (
     if (n_tips > NNI_MAX_TIPS) {
       Rcpp::stop("Cannot calculate NNI distance for trees with so many tips.");
     }
+    
+    // #nocov begin
+    if (static_cast<int64_t>(n_splits) * static_cast<int64_t>(n_bins) >
+          static_cast<int64_t>(std::numeric_limits<int32>::max())) {
+      Rcpp::stop("Cannot calculate NNI distance for trees with so many splits.");
+    }
+    // #nocov end
     
     const int32 last_bin = n_bins - 1;
     const int32 unset_tips = (n_tips % SL_BIN_SIZE) ? 
@@ -285,9 +295,9 @@ grf_match nni_rf_matching (
   }
 
 // [[Rcpp::export]]
-IntegerVector cpp_nni_distance(const IntegerMatrix edge1, 
-                               const IntegerMatrix edge2,
-                               const IntegerVector nTip) {
+IntegerVector cpp_nni_distance(const IntegerMatrix& edge1, 
+                               const IntegerMatrix& edge2,
+                               const IntegerVector& nTip) {
   
   if (nTip[0] > NNI_MAX_TIPS) {
     Rcpp::stop("Cannot calculate NNI distance for trees with "
@@ -350,10 +360,10 @@ IntegerVector cpp_nni_distance(const IntegerMatrix edge1,
   std::unique_ptr<int32[]> names_1(new int32[n_splits]);
   
   if (n_edge != n_tip && n_tip > 3) {
-    nni_edge_to_splits(edge2, &n_tip, &n_edge, &n_node, &n_bin, 
-                       &trivial_origin_2, &trivial_two_2, splits2, names_1);
-    nni_edge_to_splits(edge1, &n_tip, &n_edge, &n_node, &n_bin,
-                       &trivial_origin_1, &trivial_two_1, splits1, names_1);
+    nni_edge_to_splits(edge2, n_tip, n_edge, n_node, n_bin, 
+                       trivial_origin_2, trivial_two_2, splits2, names_1);
+    nni_edge_to_splits(edge1, n_tip, n_edge, n_node, n_bin,
+                       trivial_origin_1, trivial_two_1, splits1, names_1);
   } // else no internal nodes resolved
   
   grf_match match = nni_rf_matching(splits1, splits2, n_splits, n_bin, n_tip);
