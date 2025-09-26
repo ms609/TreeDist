@@ -34,12 +34,8 @@ on:
 name: mem-check
 
 jobs:
-  mem-check:
-    runs-on: ubuntu-20.04
-    # stringi requires libicui18n - apt get libicu-dev too recent,
-    # libicu66 deprecated in ubuntu 22.04
-    # Reinstalling stringi seems not to help
-
+  mem-check-templated:
+    runs-on: ubuntu-24.04
     name: valgrind ${{ matrix.config.test }}, ubuntu, R release
 
     strategy:
@@ -53,10 +49,32 @@ jobs:
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       _R_CHECK_FORCE_SUGGESTS_: false
-      RSPM: https://packagemanager.rstudio.com/cran/__linux__/focal/latest
+      RSPM: https://packagemanager.rstudio.com/cran/__linux__/noble/latest
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
+      - uses: ms609/actions/memcheck@main
+        with:
+          test: ${{ matrix.config.test}}
+    
+  mem-check-legacy:
+    runs-on: ubuntu-24.04
+    name: valgrind ${{ matrix.config.test }}, ubuntu, R release
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {test: 'tests'}
+          - {test: 'examples'}
+          - {test: 'vignettes'}
+          
+    env:
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      _R_CHECK_FORCE_SUGGESTS_: false
+      RSPM: https://packagemanager.rstudio.com/cran/__linux__/noble/latest
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
       - uses: actions/checkout@v5
 
       - uses: r-lib/actions/setup-r@v2

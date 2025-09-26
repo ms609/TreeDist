@@ -63,6 +63,7 @@ CompareAll(as.phylo(0:4, 8), MASTInfo)
 leaves contained within the subtree.
 
 Other tree distances: 
+\code{\link{HierarchicalMutualInfo}()},
 \code{\link{JaccardRobinsonFoulds}()},
 \code{\link{KendallColijn}()},
 \code{\link{MatchingSplitDistance}()},

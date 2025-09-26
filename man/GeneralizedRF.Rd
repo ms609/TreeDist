@@ -27,7 +27,7 @@ split.}
 \item{PairScorer}{function taking four arguments, \code{splits1}, \code{splits2},
 \code{nSplits1}, \code{nSplits2}, which should return the score of each pair of splits
 in a two-dimensional matrix.  Additional parameters may be specified via
-\code{\dots}.}
+\code{...}.}
 
 \item{maximize}{Logical specifying whether the optimal matching maximizes
 or minimizes the scores obtained by \code{PairScorer()}.}
