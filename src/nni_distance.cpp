@@ -200,10 +200,11 @@ inline void nni_edge_to_splits(const IntegerMatrix& edge,
     if (i == trivial_origin || i == trivial_two) {
       ++n_trivial;
     } else {
+      const ptrdiff_t i_row = i * n_bin;
       for (int32 j = 0; j < n_bin; ++j) {
         const size_t idx = i - n_tip - n_trivial;
         ASSERT(idx >= 0 && idx < n_splits);
-        splits[idx * n_bin + j] = tmp_splits[i * n_bin + j];
+        splits[idx * n_bin + j] = tmp_splits[i_row + j];
         names[idx] = i + 1;
       }
     }
