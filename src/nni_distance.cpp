@@ -181,21 +181,17 @@ inline void nni_edge_to_splits(const IntegerMatrix& edge,
                                std::unique_ptr<splitbit[]>& splits,
                                std::unique_ptr<int32[]>& names) {
   
-  std::vector<std::unique_ptr<splitbit[]>> tmp_splits(n_node);
+  std::vector<splitbit> tmp_splits(n_node * n_bin);
   
-  for (int32 i = 0; i < n_node; ++i) {
-    tmp_splits[i] = std::make_unique<splitbit[]>(n_bin);
-    std::fill_n(tmp_splits[i].get(), n_bin, splitbit(0)); // Unnecessary?
-  }
-  
-  for (int32 i = 0; i != n_tip; i++) {
-    tmp_splits[i][int32(i / SL_BIN_SIZE)] = splitbit(1) << (i % SL_BIN_SIZE);
+  for (int32 i = 0; i < n_tip; ++i) {
+    tmp_splits[i * n_bin + int32(i / SL_BIN_SIZE)] = splitbit(1) << (i % SL_BIN_SIZE);
   }
   
   for (int32 i = 0; i < n_edge - 1; ++i) { /* final edge is second root edge */
+    const ptrdiff_t parent_row_i = (edge(i, 0) - 1) * n_bin;
+    const ptrdiff_t child_row_i = (edge(i, 1) - 1) * n_bin;
     for (int32 j = 0; j < n_bin; ++j) {
-      tmp_splits[static_cast<int32>(edge(i, 0) - 1)][j] |= 
-        tmp_splits[static_cast<int32>(edge(i, 1) - 1)][j];
+      tmp_splits[parent_row_i + j] |= tmp_splits[child_row_i + j];
     }
   }
   
@@ -207,7 +203,7 @@ inline void nni_edge_to_splits(const IntegerMatrix& edge,
       for (int32 j = 0; j < n_bin; ++j) {
         const size_t idx = i - n_tip - n_trivial;
         ASSERT(idx >= 0 && idx < n_splits);
-        splits[idx * n_bin + j] = tmp_splits[i][j];
+        splits[idx * n_bin + j] = tmp_splits[i * n_bin + j];
         names[idx] = i + 1;
       }
     }
