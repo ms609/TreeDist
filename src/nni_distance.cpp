@@ -62,9 +62,7 @@ constexpr int32 NNI_STACK_BINS = SL_MAX_BINS / 2;
 constexpr int32 NNI_STACK_SPLITS = SL_MAX_SPLITS / 2;
 constexpr int32 NNI_STACK_TIPS = NNI_STACK_BINS * NNI_STACK_SPLITS;
 
-constexpr int32 NNI_MAX_BINS = SL_MAX_BINS * 2;
-constexpr int32 NNI_MAX_SPLITS = SL_MAX_SPLITS * 2;
-constexpr int32 NNI_MAX_TIPS = NNI_MAX_BINS * SL_BIN_SIZE;
+constexpr int32 NNI_MAX_TIPS = 8192;
 // If updating NNI_MAX_TIPS, also update lg2_ceiling constructor
 
 
@@ -94,12 +92,8 @@ int32 li[NNI_MAX_TIPS + 1];
       for (int32 i = 256  + 1; i != 512  + 1; i++) lg2_ceiling[i] = 9;
       for (int32 i = 512  + 1; i != 1024 + 1; i++) lg2_ceiling[i] = 10;
       for (int32 i = 1024 + 1; i != 2048 + 1; i++) lg2_ceiling[i] = 11;
-      if (NNI_MAX_TIPS > 4096) {
-        for (int32 i = 2048 + 1; i != 4096 + 1; i++) lg2_ceiling[i] = 12;
-        for (int32 i = 4096 + 1; i != NNI_MAX_TIPS + 1; i++) lg2_ceiling[i] = 13;
-      } else if (NNI_MAX_TIPS > 2048) {
-        for (int32 i = 2048 + 1; i != NNI_MAX_TIPS + 1; i++) lg2_ceiling[i] = 12;
-      }
+      for (int32 i = 2048 + 1; i != 4096 + 1; i++) lg2_ceiling[i] = 12;
+      for (int32 i = 4096 + 1; i != NNI_MAX_TIPS + 1; i++) lg2_ceiling[i] = 13;
       
       for (int32 i = 4; i != NNI_MAX_TIPS + 1; i++) {
         fack_lookup[i] = int32(((i - 2 - 2) * lg2_ceiling[i - 2]) + i - 2);
@@ -222,20 +216,14 @@ grf_match nni_rf_matching (
   
     ASSERT(n_splits > 0);
     ASSERT(n_tips > 3);
-    
-    if (n_splits > NNI_MAX_SPLITS) {
-      Rcpp::stop("Cannot calculate NNI distance for trees with "       // #nocov
-                              "so many splits.");                      // #nocov
+    if (n_tips > NNI_MAX_TIPS) {
+      Rcpp::stop("Cannot calculate NNI distance for trees with so many tips.");
     }
     
     const int32 last_bin = n_bins - 1;
     const int32 unset_tips = (n_tips % SL_BIN_SIZE) ? 
       SL_BIN_SIZE - n_tips % SL_BIN_SIZE : 0;
     
-    if (n_bins + last_bin > NNI_MAX_BINS) {
-      Rcpp::stop("Cannot calculate NNI distance for trees with "
-                   "so many tips.");
-    }
     const splitbit unset_mask = ALL_ONES >> unset_tips;
     
     grf_match matching(n_splits, NA_INT32);
