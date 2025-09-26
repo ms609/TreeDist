@@ -8,12 +8,16 @@ test_that("Entropy is calculated correctly", {
   expect_equal(Ntropy(c(0, 65536 + 1, 65536 + 1)), 1)
 })
 
-test_that("AllSplitPairings counted correctly", {
+test_that("AllSplitPairings() counted correctly", {
   expect_error(AllSplitPairings(3))
   for (n in 4:10) {
-    totalSplits <- sum(choose(n, 2:(n-2)))
+    totalSplits <- sum(choose(n, 2:(n - 2)))
     expect_equal(totalSplits * totalSplits, sum(AllSplitPairings(n)))
   }
+})
+
+test_that("AllSplitPairings() cache lookup succeeds", {
+  expect_equal(AllSplitPairings(12), AllSplitPairings(12))
 })
 
 test_that("Removing contradictions improves scores", {
