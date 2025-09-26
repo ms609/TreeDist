@@ -58,7 +58,7 @@ structures:
 \itemize{
 \item a tree (possibly phylogenetic) of class \code{phylo}
 \item A hierarchical list of lists, in which elements are represented by integers
-1\dots{}n
+1 to n
 \item A vector, which will be interpreted as a flat structure
 in which all elements bearing the same label are assigned to the same cluster
 }
