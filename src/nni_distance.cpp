@@ -2,9 +2,8 @@
 #include <TreeTools/SplitList.h>
 #include <TreeTools/assert.h>
 
-#include <algorithm> // for fill_n
 #include <cmath>
-#include <memory> // for unique_ptr
+#include <memory> // for unique_ptr, uninitialized_fill_n
 #include <mutex> // for once_flag
 
 #include "tree_distances.h"
@@ -245,10 +244,6 @@ grf_match nni_rf_matching (
     const uint64_t unset_mask = ALL_ONES >> unset_tips;
     
     grf_match matching(n_splits, NA_INT32);
-    for (int32_t i = 0; i != n_splits; i++) {
-      ASSERT(matching[i] == NA_INT32);
-    }
-    
     HybridBuffer<uint64_t, NNI_STACK_SPLITS * NNI_STACK_BINS>
       b_complement(n_splits * n_bins);
     
