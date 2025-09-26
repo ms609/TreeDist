@@ -17,12 +17,10 @@
 ## Downstream dependencies
 
 ["revdepcheck"](https://github.com/ms609/TreeDist/actions/workflows/revdepcheck.yml)
-confirmed no changes to worse in the three downstream dependencies:
+confirmed no changes to worse in the four downstream dependencies:
 
-  'Rogue', 'TBRDist', and 'TreeSearch'
-  
-(all of which I maintain).
-  
+  'Rogue', 'rwty', 'TBRDist', and 'TreeSearch'
+
 
 ## R CMD check results
 There were no ERRORs or WARNINGs.
