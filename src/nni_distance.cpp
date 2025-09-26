@@ -341,7 +341,7 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
   const int32 root_1 = static_cast<int32>(edge1(n_edge - 1, 0));
   const int32 root_2 = static_cast<int32>(edge2(n_edge - 1, 0));
   bool rooted = static_cast<int32>(edge1(n_edge - 3, 0)) != root_1;
-  const uint32 NOT_TRIVIAL = std::numeric_limits<uint32>::max();
+  constexpr int32 NOT_TRIVIAL = std::numeric_limits<int32>::max();
   const int32 n_node = n_edge + 1;
   const int32 n_bin = int32(((n_tip - 1) / SL_BIN_SIZE) + 1);
   const int32 trivial_origin_1 = root_1 - 1;
