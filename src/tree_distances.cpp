@@ -462,9 +462,9 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   
   double exact_match_score = 0;
   int16 exact_matches = 0;
-  // NumericVector zero-initializes [so does make_unique]
+  // vector zero-initializes [so does make_unique]
   // match will have one added to it so numbering follows R; hence 0 = UNMATCHED
-  IntegerVector a_match(a.n_splits);
+  std::vector<int> a_match(a.n_splits);
   std::unique_ptr<int16[]> b_match = std::make_unique<int16[]>(b.n_splits);
   
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
@@ -492,13 +492,13 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
       if ((!a_and_B && !A_and_b) ||
           (!a_and_b && !A_and_B)) {
         exact_match_score += TreeDist::ic_matching(na, nA, n_tips);
-        exact_matches++;
+        ++exact_matches;
         a_match[ai] = bi + 1;
         b_match[bi] = ai + 1;
         break;
-      } else if (a_and_b == A_and_b &&
-        a_and_b == a_and_B &&
-        a_and_b == A_and_B) {
+      } else if (a_and_b == A_and_b
+                   && a_and_b == a_and_B
+                   && a_and_b == A_and_B) {
         score(ai, bi) = max_score; // Avoid rounding errors
       } else {
         double ic_sum = 0.0;
@@ -519,7 +519,7 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   
   if (exact_matches == b.n_splits || exact_matches == a.n_splits) {
     return List::create(
-      Named("score") = exact_match_score / n_tips,
+      Named("score") = exact_match_score * n_tips_reciprocal,
       _["matching"] = a_match);
   }
   
@@ -541,16 +541,10 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
         small_score(a_pos, b_pos) = score(ai, bi);
         b_pos++;
       }
-      for (int16 bi = lap_dim - a_extra_splits; bi < lap_dim; ++bi) {
-        small_score(a_pos, bi) = max_score;
-      }
+      small_score.padRowAfterCol(a_pos, lap_dim - a_extra_splits, max_score);
       a_pos++;
     }
-    for (int16 ai = lap_dim - b_extra_splits; ai < lap_dim; ++ai) {
-      for (int16 bi = 0; bi < lap_dim; ++bi) {
-        small_score(ai, bi) = max_score;
-      }
-    }
+    small_score.padAfterRow(lap_dim - b_extra_splits, max_score);
     
     const double lap_score = static_cast<double>((max_score * lap_dim) - 
       lap(lap_dim, small_score, rowsol, colsol)) * over_max_score;
@@ -558,7 +552,7 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
     
     std::unique_ptr<int16[]> lap_decode = std::make_unique<int16[]>(lap_dim);
     int16 fuzzy_match = 0;
-    for (int16 bi = 0; bi != b.n_splits; ++bi) {
+    for (int16 bi = 0; bi < b.n_splits; ++bi) {
       if (!b_match[bi]) {
         assert(fuzzy_match < lap_dim);
         lap_decode[fuzzy_match++] = bi + 1;
@@ -566,7 +560,8 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
     }
     
     fuzzy_match = 0;
-    IntegerVector final_matching(a.n_splits);
+    std::vector<int> final_matching;
+    TreeDist::resize_uninitialized(final_matching, a.n_splits);
     for (int16 i = 0; i < a.n_splits; ++i) {
       if (a_match[i]) {
         final_matching[i] = a_match[i];
@@ -593,12 +588,12 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
       (max_score * lap_dim) - lap(lap_dim, score, rowsol, colsol)
     ) / max_score;
     
-    // decode rowsol -> R-style 1-based matching for the original a.n_splits rows
     std::vector<int> final_matching;
     final_matching.reserve(a.n_splits);
     for (int16 i = 0; i < a.n_splits; ++i) {
       const int match = (rowsol[i] < b.n_splits)
-      ? static_cast<int>(rowsol[i]) + 1 : NA_INTEGER;
+      ? static_cast<int>(rowsol[i]) + 1
+      : NA_INTEGER;
       final_matching.push_back(match);
     }
       
