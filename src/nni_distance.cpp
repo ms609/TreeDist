@@ -308,7 +308,7 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
     Rcpp::stop("Cannot calculate NNI distance for trees with "
                             "so many tips.");
   }
-  const int32 n_tip = int32(nTip[0]);
+  const int32 n_tip = static_cast<int32>(nTip[0]);
   const int32 node_0 = n_tip;
   const int32 node_0_r = n_tip + 1;
   const int32 n_edge = int32(edge1.nrow());
@@ -328,6 +328,7 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
   }
 
   if (n_tip < 4) {
+    Rcpp::Rcout << "Zero return: Only " << n_tip << " tips.\n";
     return(IntegerVector::create(Named("lower") = 0,
                                  _["best_lower"] = 0,
                                  _["tight_upper"] = 0,
