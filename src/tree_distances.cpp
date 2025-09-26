@@ -442,8 +442,10 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   
   const SplitList a(x);
   const SplitList b(y);
-  
-  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits;
+  const bool a_has_more_splits = (a.n_splits > b.n_splits);
+  const int16 most_splits = a_has_more_splits ? a.n_splits : b.n_splits;
+  const int16 a_extra_splits = a_has_more_splits ? most_splits - b.n_splits : 0;
+  const int16 b_extra_splits = a_has_more_splits ? 0 : most_splits - a.n_splits;
   const int16 n_tips = int16(nTip[0]);
   const double n_tips_reciprocal = 1.0 / n_tips;
   
@@ -453,14 +455,23 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   }
   
   constexpr cost max_score = BIG;
+  constexpr double over_max_score = 1.0 / static_cast<double>(max_score);
   const double max_over_tips = static_cast<double>(max_score) * n_tips_reciprocal;
   
   cost_matrix score(most_splits);
   
+  double exact_match_score = 0;
+  int16 exact_matches = 0;
+  // vector zero-initializes [so does make_unique]
+  // match will have one added to it so numbering follows R; hence 0 = UNMATCHED
+  std::vector<int> a_match(a.n_splits);
+  std::unique_ptr<int16[]> b_match = std::make_unique<int16[]>(b.n_splits);
+  
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
+    if (a_match[ai]) continue;
+    
     const int16 na = a.in_split[ai];
     const int16 nA = n_tips - na;
-    
     const auto *a_row = a.state[ai];
     
     for (int16 bi = 0; bi < b.n_splits; ++bi) {
@@ -478,9 +489,16 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
       const int16 A_and_b = nb - a_and_b;
       const int16 A_and_B = nA - A_and_b;
       
-      if (a_and_b == A_and_b &&
-          a_and_b == a_and_B &&
-          a_and_b == A_and_B) {
+      if ((!a_and_B && !A_and_b) ||
+          (!a_and_b && !A_and_B)) {
+        exact_match_score += TreeDist::ic_matching(na, nA, n_tips);
+        ++exact_matches;
+        a_match[ai] = bi + 1;
+        b_match[bi] = ai + 1;
+        break;
+      } else if (a_and_b == A_and_b
+                   && a_and_b == a_and_B
+                   && a_and_b == A_and_B) {
         score(ai, bi) = max_score; // Avoid rounding errors
       } else {
         double ic_sum = 0.0;
@@ -499,30 +517,89 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
     }
   }
   
-  for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
-    score.padRowAfterCol(ai, 0, max_score);
+  if (exact_matches == b.n_splits || exact_matches == a.n_splits) {
+    return List::create(
+      Named("score") = exact_match_score * n_tips_reciprocal,
+      _["matching"] = a_match);
   }
   
-  const int16 lap_dim = most_splits;
+  const int16 lap_dim = most_splits - exact_matches;
+  ASSERT(lap_dim > 0);
   std::vector<lap_col> rowsol;
   std::vector<lap_row> colsol;
   resize_uninitialized(rowsol, lap_dim);
   resize_uninitialized(colsol, lap_dim);
+  cost_matrix small_score(lap_dim);
   
-  const double lap_score = static_cast<double>(
-    (max_score * lap_dim) - lap(lap_dim, score, rowsol, colsol)
-  ) / max_score;
-  
-  // decode rowsol -> R-style 1-based matching for the original a.n_splits rows
-  std::vector<int> final_matching;
-  final_matching.reserve(a.n_splits);
-  for (int16 i = 0; i < a.n_splits; ++i) {
-    const int match = (rowsol[i] < b.n_splits) ? static_cast<int>(rowsol[i]) + 1 : NA_INTEGER;
-    final_matching.push_back(match);
+  if (exact_matches) {
+    int16 a_pos = 0;
+    for (int16 ai = 0; ai < a.n_splits; ++ai) {
+      if (a_match[ai]) continue;
+      int16 b_pos = 0;
+      for (int16 bi = 0; bi < b.n_splits; ++bi) {
+        if (b_match[bi]) continue;
+        small_score(a_pos, b_pos) = score(ai, bi);
+        b_pos++;
+      }
+      small_score.padRowAfterCol(a_pos, lap_dim - a_extra_splits, max_score);
+      a_pos++;
+    }
+    small_score.padAfterRow(lap_dim - b_extra_splits, max_score);
+    
+    const double lap_score = static_cast<double>((max_score * lap_dim) - 
+      lap(lap_dim, small_score, rowsol, colsol)) * over_max_score;
+    const double final_score = lap_score + (exact_match_score / n_tips);
+    
+    std::unique_ptr<int16[]> lap_decode = std::make_unique<int16[]>(lap_dim);
+    int16 fuzzy_match = 0;
+    for (int16 bi = 0; bi < b.n_splits; ++bi) {
+      if (!b_match[bi]) {
+        assert(fuzzy_match < lap_dim);
+        lap_decode[fuzzy_match++] = bi + 1;
+      }
+    }
+    
+    fuzzy_match = 0;
+    std::vector<int> final_matching;
+    TreeDist::resize_uninitialized(final_matching, a.n_splits);
+    for (int16 i = 0; i < a.n_splits; ++i) {
+      if (a_match[i]) {
+        final_matching[i] = a_match[i];
+      } else {
+        assert(fuzzy_match < lap_dim);
+        const int16 row_idx = fuzzy_match++;
+        const int16 col_idx = rowsol[row_idx];
+        final_matching[i] = (col_idx >= lap_dim - a_extra_splits) ? NA_INTEGER :
+          lap_decode[col_idx];
+      }
+    }
+    
+    return List::create(Named("score") = final_score,
+                        _["matching"] = final_matching);
+  } else {
+    
+    for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
+      for (int16 bi = 0; bi < most_splits; ++bi) {
+        score(ai, bi) = max_score;
+      }
+    }
+    
+    const double final_score = static_cast<double>(
+      (max_score * lap_dim) - lap(lap_dim, score, rowsol, colsol)
+    ) / max_score;
+    
+    std::vector<int> final_matching;
+    final_matching.reserve(a.n_splits);
+    for (int16 i = 0; i < a.n_splits; ++i) {
+      const int match = (rowsol[i] < b.n_splits)
+      ? static_cast<int>(rowsol[i]) + 1
+      : NA_INTEGER;
+      final_matching.push_back(match);
+    }
+      
+    return List::create(Named("score") = final_score,
+                        _["matching"] = final_matching);
   }
-  
-  return List::create(Named("score") = lap_score,
-                      _["matching"] = final_matching);
 }
 
 // [[Rcpp::export]]

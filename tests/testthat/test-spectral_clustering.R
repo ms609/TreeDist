@@ -9,4 +9,7 @@ test_that("Spectral clustering works", {
   expect_equal(dim(allEig), c(40, 40))
   expect_equal(abs(SpectralEigens(d, nEig = 2)), abs(allEig[, 40:39]),
                tolerance = sqrt(.Machine[["double.eps"]]))
+  
+  expect_warning(expect_equal(SpectralClustering(d, nEig = Inf), allEig),
+                 "'SpectralClustering' is deprecated.")
 })
