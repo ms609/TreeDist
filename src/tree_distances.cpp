@@ -509,20 +509,25 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   resize_uninitialized(rowsol, lap_dim);
   resize_uninitialized(colsol, lap_dim);
   
-  const double lap_score = static_cast<double>(
-    (max_score * lap_dim) - lap(lap_dim, score, rowsol, colsol)
-  ) / max_score;
   
-  // decode rowsol -> R-style 1-based matching for the original a.n_splits rows
-  std::vector<int> final_matching;
-  final_matching.reserve(a.n_splits);
-  for (int16 i = 0; i < a.n_splits; ++i) {
-    const int match = (rowsol[i] < b.n_splits) ? static_cast<int>(rowsol[i]) + 1 : NA_INTEGER;
-    final_matching.push_back(match);
   }
   
-  return List::create(Named("score") = lap_score,
-                      _["matching"] = final_matching);
+    const double final_score = static_cast<double>(
+      (max_score * lap_dim) - lap(lap_dim, score, rowsol, colsol)
+    ) / max_score;
+    
+    // decode rowsol -> R-style 1-based matching for the original a.n_splits rows
+    std::vector<int> final_matching;
+    final_matching.reserve(a.n_splits);
+    for (int16 i = 0; i < a.n_splits; ++i) {
+      const int match = (rowsol[i] < b.n_splits)
+      ? static_cast<int>(rowsol[i]) + 1 : NA_INTEGER;
+      final_matching.push_back(match);
+    }
+      
+    return List::create(Named("score") = final_score,
+                        _["matching"] = final_matching);
+  }
 }
 
 // [[Rcpp::export]]
