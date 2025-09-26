@@ -455,6 +455,7 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   }
   
   constexpr cost max_score = BIG;
+  constexpr double over_max_score = 1.0 / static_cast<double>(max_score);
   const double max_over_tips = static_cast<double>(max_score) * n_tips_reciprocal;
   
   cost_matrix score(most_splits);
@@ -528,6 +529,66 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   std::vector<lap_row> colsol;
   resize_uninitialized(rowsol, lap_dim);
   resize_uninitialized(colsol, lap_dim);
+  cost_matrix small_score(lap_dim);
+  
+  if (exact_matches) {
+    int16 a_pos = 0;
+    for (int16 ai = 0; ai < a.n_splits; ++ai) {
+      if (a_match[ai]) continue;
+      int16 b_pos = 0;
+      for (int16 bi = 0; bi < b.n_splits; ++bi) {
+        if (b_match[bi]) continue;
+        small_score(a_pos, b_pos) = score(ai, bi);
+        b_pos++;
+      }
+      for (int16 bi = lap_dim - a_extra_splits; bi < lap_dim; ++bi) {
+        small_score(a_pos, bi) = max_score;
+      }
+      a_pos++;
+    }
+    for (int16 ai = lap_dim - b_extra_splits; ai < lap_dim; ++ai) {
+      for (int16 bi = 0; bi < lap_dim; ++bi) {
+        small_score(ai, bi) = max_score;
+      }
+    }
+    
+    const double lap_score = static_cast<double>((max_score * lap_dim) - 
+      lap(lap_dim, small_score, rowsol, colsol)) * over_max_score;
+    const double final_score = lap_score + (exact_match_score / n_tips);
+    
+    std::unique_ptr<int16[]> lap_decode = std::make_unique<int16[]>(lap_dim);
+    int16 fuzzy_match = 0;
+    for (int16 bi = 0; bi != b.n_splits; ++bi) {
+      if (!b_match[bi]) {
+        assert(fuzzy_match < lap_dim);
+        lap_decode[fuzzy_match++] = bi + 1;
+      }
+    }
+    
+    fuzzy_match = 0;
+    IntegerVector final_matching(a.n_splits);
+    for (int16 i = 0; i < a.n_splits; ++i) {
+      if (a_match[i]) {
+        final_matching[i] = a_match[i];
+      } else {
+        assert(fuzzy_match < lap_dim);
+        const int16 row_idx = fuzzy_match++;
+        const int16 col_idx = rowsol[row_idx];
+        final_matching[i] = (col_idx >= lap_dim - a_extra_splits) ? NA_INTEGER :
+          lap_decode[col_idx];
+      }
+    }
+    
+    return List::create(Named("score") = final_score,
+                        _["matching"] = final_matching);
+  } else {
+    
+    for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
+      for (int16 bi = 0; bi < most_splits; ++bi) {
+        score(ai, bi) = max_score;
+      }
+    }
+    
     const double final_score = static_cast<double>(
       (max_score * lap_dim) - lap(lap_dim, score, rowsol, colsol)
     ) / max_score;
