@@ -516,19 +516,18 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
     }
   }
   
-  for (int16 ai = a.n_splits; ai < most_splits; ++ai) {
-    score.padRowAfterCol(ai, 0, max_score);
+  if (exact_matches == b.n_splits || exact_matches == a.n_splits) {
+    return List::create(
+      Named("score") = exact_match_score / n_tips,
+      _["matching"] = a_match);
   }
   
-  const int16 lap_dim = most_splits;
+  const int16 lap_dim = most_splits - exact_matches;
+  ASSERT(lap_dim > 0);
   std::vector<lap_col> rowsol;
   std::vector<lap_row> colsol;
   resize_uninitialized(rowsol, lap_dim);
   resize_uninitialized(colsol, lap_dim);
-  
-  
-  }
-  
     const double final_score = static_cast<double>(
       (max_score * lap_dim) - lap(lap_dim, score, rowsol, colsol)
     ) / max_score;
