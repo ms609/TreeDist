@@ -186,6 +186,7 @@ inline void nni_edge_to_splits(const IntegerMatrix& edge,
   for (int32 i = 0; i < n_tip; ++i) {
     const auto idx = i * n_bin + int32(i / SL_BIN_SIZE);
     ASSERT(idx < tmp_splits.size());
+    ASSERT((i % SL_BIN_SIZE) < 64); // 1 << 64 = 0
     tmp_splits[idx] = static_cast<uint64_t>(1) << (i % SL_BIN_SIZE);
   }
   
