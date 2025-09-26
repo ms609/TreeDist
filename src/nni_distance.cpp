@@ -18,7 +18,6 @@ public:
   explicit HybridBuffer(std::size_t n) : n_(n), data_(nullptr) {
     if (n_ <= StackSize) {
       data_ = stack_;
-      std::memset(data_, 0, n_ * sizeof(T)); // Redundant?
     } else {
       heap_ = std::unique_ptr<T[]>(new T[n_]());                       // #nocov
       data_ = heap_.get();                                             // #nocov
@@ -329,7 +328,6 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
   }
 
   if (n_tip < 4) {
-    Rcpp::Rcout << "Zero return: Only " << n_tip << " tips.\n";
     return(IntegerVector::create(Named("lower") = 0,
                                  _["best_lower"] = 0,
                                  _["tight_upper"] = 0,
@@ -378,13 +376,6 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
   
   HybridBuffer<bool, NNI_STACK_TIPS> matched_1(n_tip);
   HybridBuffer<int32, NNI_STACK_TIPS> unmatched_below(n_tip);
-  Rcpp::Rcout << "Unmatched 1st element before fill: " 
-              << unmatched_below[0] << std::endl;
-  Rcpp::Rcout << "Unmatched last element before fill: " 
-              << unmatched_below[n_tip - 1] << std::endl;
-  
-  std::fill_n(matched_1.data(), static_cast<std::size_t>(n_tip), false);
-  std::fill_n(unmatched_below.data(), static_cast<std::size_t>(n_tip), int32(0));
   
   const int32 match_size = static_cast<int32>(match.size());
   for (int32 i = 0; i < match_size; ++i) {
