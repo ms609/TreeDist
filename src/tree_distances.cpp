@@ -442,8 +442,10 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   
   const SplitList a(x);
   const SplitList b(y);
-  
-  const int16 most_splits = (a.n_splits > b.n_splits) ? a.n_splits : b.n_splits;
+  const bool a_has_more_splits = (a.n_splits > b.n_splits);
+  const int16 most_splits = a_has_more_splits ? a.n_splits : b.n_splits;
+  const int16 a_extra_splits = a_has_more_splits ? most_splits - b.n_splits : 0;
+  const int16 b_extra_splits = a_has_more_splits ? 0 : most_splits - a.n_splits;
   const int16 n_tips = int16(nTip[0]);
   const double n_tips_reciprocal = 1.0 / n_tips;
   
@@ -457,10 +459,18 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   
   cost_matrix score(most_splits);
   
+  double exact_match_score = 0;
+  int16 exact_matches = 0;
+  // NumericVector zero-initializes [so does make_unique]
+  // match will have one added to it so numbering follows R; hence 0 = UNMATCHED
+  IntegerVector a_match(a.n_splits);
+  std::unique_ptr<int16[]> b_match = std::make_unique<int16[]>(b.n_splits);
+  
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
+    if (a_match[ai]) continue;
+    
     const int16 na = a.in_split[ai];
     const int16 nA = n_tips - na;
-    
     const auto *a_row = a.state[ai];
     
     for (int16 bi = 0; bi < b.n_splits; ++bi) {
