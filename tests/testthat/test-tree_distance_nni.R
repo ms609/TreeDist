@@ -23,6 +23,12 @@ test_that("NNIDist() at NNI_MAX_TIPS", {
                "so many tips")
   goingQuickly <- TRUE
   skip_if(goingQuickly)
+  
+  heapTips <- 16384 + 1
+  skip_if_not_installed("testthat", "3.2.2")
+  expect_no_error(.NNIDistSingle(PectinateTree(heapTips),
+                                 BalancedTree(heapTips), heapTips))
+  
   n <- .NNIDistSingle(PectinateTree(maxTips), BalancedTree(maxTips),
                            maxTips)
   expect_gt(n[["best_upper"]], n[["best_lower"]])

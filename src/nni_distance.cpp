@@ -18,8 +18,8 @@ public:
     if (n_ <= StackSize) {
       data_ = stack_;
     } else {
-      heap_ = std::make_unique<T[]>(n_);
-      data_ = heap_.get();
+      heap_ = std::make_unique<T[]>(n_);                               // #nocov
+      data_ = heap_.get();                                             // #nocov
     }
   }
   
