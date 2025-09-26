@@ -142,7 +142,7 @@ VisualizeMatching <- function (Func, tree1, tree2, setPar = TRUE,
         got <- rootChildren %in% splitNodes
         if (any(got)) {
           if (sum(got) != 1) {
-            warning("Unexpected polytomy")
+            warning("Unexpected polytomy")                                      # nocov
           }
           c(score = as.integer(which(splitNodes %in% rootChildren[got])),
             edge = rootEdges[!got])
