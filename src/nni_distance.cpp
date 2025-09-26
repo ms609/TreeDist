@@ -5,6 +5,7 @@
 #include <algorithm> // for fill_n
 #include <cmath>
 #include <memory> // for unique_ptr
+#include <mutex> // for once_flag
 
 #include "tree_distances.h"
 
@@ -53,8 +54,8 @@ private:
 };
 
 
-constexpr int32 NNI_STACK_BINS = SL_MAX_BINS / 2;
-constexpr int32 NNI_STACK_SPLITS = SL_MAX_SPLITS / 2;
+constexpr int32 NNI_STACK_BINS = 16;
+constexpr int32 NNI_STACK_SPLITS = 512;
 constexpr int32 NNI_STACK_TIPS = NNI_STACK_BINS * NNI_STACK_SPLITS;
 
 constexpr int32 NNI_MAX_TIPS = 32768;
@@ -72,61 +73,65 @@ constexpr int16 min_diameter[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 
 int32 lg2_ceiling[NNI_MAX_TIPS + 1];
 int32 fack_lookup[NNI_MAX_TIPS + 1];
 int32 li[NNI_MAX_TIPS + 1];
-  __attribute__((constructor)) // Construction avoids floating point worries
-    void initialize_cache() {
-      lg2_ceiling[0] = -1;
-      lg2_ceiling[1] = 0;
-      lg2_ceiling[2] = 1;
-      lg2_ceiling[3] = 2;
-      lg2_ceiling[4] = 2;
-      
-      for (int32 i = 4    + 1; i != 8    + 1; i++) lg2_ceiling[i] = 3;
-      for (int32 i = 8    + 1; i != 16   + 1; i++) lg2_ceiling[i] = 4;
-      for (int32 i = 16   + 1; i != 32   + 1; i++) lg2_ceiling[i] = 5;
-      for (int32 i = 32   + 1; i != 64   + 1; i++) lg2_ceiling[i] = 6;
-      for (int32 i = 64   + 1; i != 128  + 1; i++) lg2_ceiling[i] = 7;
-      for (int32 i = 128  + 1; i != 256  + 1; i++) lg2_ceiling[i] = 8;
-      for (int32 i = 256  + 1; i != 512  + 1; i++) lg2_ceiling[i] = 9;
-      for (int32 i = 512  + 1; i != 1024 + 1; i++) lg2_ceiling[i] = 10;
-      for (int32 i = 1024 + 1; i != 2048 + 1; i++) lg2_ceiling[i] = 11;
-      for (int32 i = 2048 + 1; i != 4096 + 1; i++) lg2_ceiling[i] = 12;
-      for (int32 i = 4096 + 1; i != 8192 + 1; i++) lg2_ceiling[i] = 13;
-      for (int32 i = 8192 + 1; i != 16384 + 1; i++) lg2_ceiling[i] = 14;
-      for (int32 i = 16384 + 1; i != 32768 + 1; i++) lg2_ceiling[i] = 15;
-//      for (int32 i = 32768 + 1; i != NNI_MAX_TIPS + 1; i++) lg2_ceiling[i] = 16;
-      
-      for (int32 i = 4; i != NNI_MAX_TIPS + 1; i++) {
-        fack_lookup[i] = int32(((i - 2 - 2) * lg2_ceiling[i - 2]) + i - 2);
-      }
-      for (int32 i = 4; i != NNI_MAX_TIPS + 1; i++) {
-        const int32 log_ceiling = lg2_ceiling[i];
-        const int32 sorting_number = int32(
-          i * log_ceiling - std::pow(2, log_ceiling) + 1);
-      
-        /* Calculate the shortest length of the longest path in a tree.
-         * To make this path as short as possible, divide tips into three 
-         * balanced trees, joined by a single node that will form part of every 
-         * longest path.  One of these subtrees will be filled with >= n/3 nodes */
-        const int32 nodes_in_full = int32(std::ceil(log2(double(i) / 3)));
-        /* We want to put a power of two tips in this subtree, such that every node is 
-         * equally close to its root */
-        const int32 tips_in_full = int32(std::pow(2, nodes_in_full));
-        /* Now the remaining tips must be spread sub-evenly between the remaining 
-         * edges from this node.  Picture halving the tips; removing tips from one side
-         * until it is a power of two will reduce the number of nodes by one, whilst 
-         * at worst (if this brings the other side over a power of two) increasing the 
-         * other side by one. */
-        const int32 tips_left = i - tips_in_full;
-        // (log2(tips_left / 2) + 1) == (log2(tips_left) - 1) + 1
-        const int32 min_backbone_nodes = nodes_in_full + lg2_ceiling[tips_left];
-        
-        /* The worst-case scenario requires a move for every node not on the backbone: */
-        const int32 n_node = i - 2;
-        const int32 degenerate_distance = n_node - min_backbone_nodes;
-      
-        li[i] = sorting_number + degenerate_distance + degenerate_distance;
-      }
-    }
+
+static std::once_flag cache_init_flag;
+static void initialize_cache() {
+  lg2_ceiling[0] = -1;
+  lg2_ceiling[1] = 0;
+  lg2_ceiling[2] = 1;
+  lg2_ceiling[3] = 2;
+  lg2_ceiling[4] = 2;
+  
+  for (int32 i = 4    + 1; i != 8    + 1; i++) lg2_ceiling[i] = 3;
+  for (int32 i = 8    + 1; i != 16   + 1; i++) lg2_ceiling[i] = 4;
+  for (int32 i = 16   + 1; i != 32   + 1; i++) lg2_ceiling[i] = 5;
+  for (int32 i = 32   + 1; i != 64   + 1; i++) lg2_ceiling[i] = 6;
+  for (int32 i = 64   + 1; i != 128  + 1; i++) lg2_ceiling[i] = 7;
+  for (int32 i = 128  + 1; i != 256  + 1; i++) lg2_ceiling[i] = 8;
+  for (int32 i = 256  + 1; i != 512  + 1; i++) lg2_ceiling[i] = 9;
+  for (int32 i = 512  + 1; i != 1024 + 1; i++) lg2_ceiling[i] = 10;
+  for (int32 i = 1024 + 1; i != 2048 + 1; i++) lg2_ceiling[i] = 11;
+  for (int32 i = 2048 + 1; i != 4096 + 1; i++) lg2_ceiling[i] = 12;
+  for (int32 i = 4096 + 1; i != 8192 + 1; i++) lg2_ceiling[i] = 13;
+  for (int32 i = 8192 + 1; i != 16384 + 1; i++) lg2_ceiling[i] = 14;
+  for (int32 i = 16384 + 1; i != 32768 + 1; i++) lg2_ceiling[i] = 15;
+  
+  for (int32 i = 4; i != NNI_MAX_TIPS + 1; i++) {
+    fack_lookup[i] = int32(((i - 2 - 2) * lg2_ceiling[i - 2]) + i - 2);
+  }
+  for (int32 i = 4; i != NNI_MAX_TIPS + 1; i++) {
+    const int32 log_ceiling = lg2_ceiling[i];
+    const int32 sorting_number = int32(
+      i * log_ceiling - std::pow(2, log_ceiling) + 1);
+  
+    /* Calculate the shortest length of the longest path in a tree.
+     * To make this path as short as possible, divide tips into three 
+     * balanced trees, joined by a single node that will form part of every 
+     * longest path.  One of these subtrees will be filled with >= n/3 nodes */
+    const int32 nodes_in_full = int32(std::ceil(log2(double(i) / 3)));
+    /* We want to put a power of two tips in this subtree, such that every node is 
+     * equally close to its root */
+    const int32 tips_in_full = int32(std::pow(2, nodes_in_full));
+    /* Now the remaining tips must be spread sub-evenly between the remaining 
+     * edges from this node.  Picture halving the tips; removing tips from one side
+     * until it is a power of two will reduce the number of nodes by one, whilst 
+     * at worst (if this brings the other side over a power of two) increasing the 
+     * other side by one. */
+    const int32 tips_left = i - tips_in_full;
+    // (log2(tips_left / 2) + 1) == (log2(tips_left) - 1) + 1
+    const int32 min_backbone_nodes = nodes_in_full + lg2_ceiling[tips_left];
+    
+    /* The worst-case scenario requires a move for every node not on the backbone: */
+    const int32 n_node = i - 2;
+    const int32 degenerate_distance = n_node - min_backbone_nodes;
+  
+    li[i] = sorting_number + degenerate_distance + degenerate_distance;
+  }
+}
+
+inline void ensure_cache() {
+  std::call_once(cache_init_flag, initialize_cache);
+}
 
 // Score subtree, add to score, and reset subtree size
 void update_score(const int32 subtree_edges, int32 *lower_bound,
@@ -359,6 +364,7 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
   // std::vector<int32> names_1;
   // names_1.reserve(n_splits);
   std::unique_ptr<int32[]> names_1(new int32[n_splits]);
+  ensure_cache();
   
   if (n_edge != n_tip && n_tip > 3) {
     nni_edge_to_splits(edge2, n_tip, n_edge, n_node, n_bin, 
