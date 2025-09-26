@@ -179,6 +179,7 @@ inline void nni_edge_to_splits(const IntegerMatrix& edge,
                                std::unique_ptr<uint64_t[]>& splits,
                                std::unique_ptr<int32[]>& names) {
   
+  ASSERT(n_bin == n_tip + SL_BIN_SIZE - 1) / SL_BIN_SIZE);
   std::vector<uint64_t> tmp_splits(n_node * n_bin, 0);
   
   for (int32 i = 0; i < n_tip; ++i) {
