@@ -11,11 +11,6 @@
 using namespace Rcpp;
 using TreeTools::SplitList;
 
-#define PARENT1(i) int32(edge1(i, 0))
-#define PARENT2(i) int32(edge2(i, 0))
-#define CHILD1(i) int32(edge1(i, 1))
-#define CHILD2(i) int32(edge2(i, 1))
-
 template <typename T, std::size_t StackSize>
 class HybridBuffer {
 public:
@@ -327,16 +322,20 @@ IntegerVector cpp_nni_distance(const IntegerMatrix edge1,
                                  _["li_upper"] = 0));
   }
   
-  const int32 root_1 = PARENT1(n_edge - 1);
-  const int32 root_2 = PARENT2(n_edge - 1);
-  bool rooted = PARENT1(n_edge - 3) != root_1;
+  const int32 root_1 = static_cast<int32>(edge1(n_edge - 1, 0));
+  const int32 root_2 = static_cast<int32>(edge2(n_edge - 1, 0));
+  bool rooted = static_cast<int32>(edge1(n_edge - 3, 0)) != root_1;
   const uint32 NOT_TRIVIAL = std::numeric_limits<uint32>::max();
   const int32 n_node = n_edge + 1;
   const int32 n_bin = int32(((n_tip - 1) / SL_BIN_SIZE) + 1);
   const int32 trivial_origin_1 = root_1 - 1;
   const int32 trivial_origin_2 = root_2 - 1;
-  const int32 trivial_two_1 = (rooted ? (CHILD1(n_edge - 1) - 1) : NOT_TRIVIAL);
-  const int32 trivial_two_2 = (rooted ? (CHILD2(n_edge - 1) - 1) : NOT_TRIVIAL);
+  const int32 trivial_two_1 = rooted ?
+    static_cast<int32>(edge1(n_edge - 1, 1)) - 1 :
+    NOT_TRIVIAL;
+  const int32 trivial_two_2 = rooted ?
+    static_cast<int32>(edge2(n_edge - 1, 1)) - 1 :
+    NOT_TRIVIAL;
   const int32 n_distinct_edge = int32(n_edge - (rooted ? 1 : 0));
   const int32 n_splits = n_distinct_edge - n_tip;
   
@@ -380,7 +379,8 @@ IntegerVector cpp_nni_distance(const IntegerMatrix edge1,
   
   const int32 edges_to_check = n_distinct_edge - (rooted ? 1 : 0);
   for (int32 i = 0; i < edges_to_check; ++i) {
-    const int32 parent_i = PARENT1(i) - 1, child_i = CHILD1(i) - 1;
+    const int32 parent_i = static_cast<int32>(edge1(i, 0)) - 1;
+    const int32 child_i = static_cast<int32>(edge1(i, 1)) - 1;
     // If edge is unmatched, add one to subtree size.
     if (child_i >= n_tip) {
       if (!matched_1[child_i - node_0]) {
@@ -398,8 +398,8 @@ IntegerVector cpp_nni_distance(const IntegerMatrix edge1,
   const int32 root_node = root_1 - node_0_r;
   
   if (rooted) {
-    const int32 root_child_1 = CHILD1(n_edge - 1) - 1;
-    const int32 root_child_2 = CHILD1(n_edge - 2) - 1;
+    const int32 root_child_1 = static_cast<int32>(edge1(n_edge - 1, 1)) - 1;
+    const int32 root_child_2 = static_cast<int32>(edge1(n_edge - 2, 1)) - 1;
     const int32 unmatched_1 = root_child_1 < n_tip ? 0 :
                        unmatched_below[root_child_1 - node_0];
     if (root_child_2 >= n_tip) {

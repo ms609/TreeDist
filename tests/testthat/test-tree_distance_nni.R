@@ -21,7 +21,8 @@ test_that("NNIDist() at NNI_MAX_TIPS", {
   more <- maxTips + 1
   expect_error(.NNIDistSingle(PectinateTree(more), BalancedTree(more), more),
                "so many tips")
-  skip_if(TRUE) # Too slow for routine testing
+  goingQuickly <- TRUE
+  skip_if(goingQuickly)
   n <- .NNIDistSingle(PectinateTree(maxTips), BalancedTree(maxTips),
                            maxTips)
   expect_gt(n[["best_upper"]], n[["best_lower"]])
