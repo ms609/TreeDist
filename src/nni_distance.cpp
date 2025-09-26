@@ -62,7 +62,7 @@ constexpr int32 NNI_STACK_BINS = SL_MAX_BINS / 2;
 constexpr int32 NNI_STACK_SPLITS = SL_MAX_SPLITS / 2;
 constexpr int32 NNI_STACK_TIPS = NNI_STACK_BINS * NNI_STACK_SPLITS;
 
-constexpr int32 NNI_MAX_TIPS = 8192;
+constexpr int32 NNI_MAX_TIPS = 32768;
 // If updating NNI_MAX_TIPS, also update lg2_ceiling constructor
 
 
@@ -93,7 +93,10 @@ int32 li[NNI_MAX_TIPS + 1];
       for (int32 i = 512  + 1; i != 1024 + 1; i++) lg2_ceiling[i] = 10;
       for (int32 i = 1024 + 1; i != 2048 + 1; i++) lg2_ceiling[i] = 11;
       for (int32 i = 2048 + 1; i != 4096 + 1; i++) lg2_ceiling[i] = 12;
-      for (int32 i = 4096 + 1; i != NNI_MAX_TIPS + 1; i++) lg2_ceiling[i] = 13;
+      for (int32 i = 4096 + 1; i != 8192 + 1; i++) lg2_ceiling[i] = 13;
+      for (int32 i = 8192 + 1; i != 16384 + 1; i++) lg2_ceiling[i] = 14;
+      for (int32 i = 16384 + 1; i != 32768 + 1; i++) lg2_ceiling[i] = 15;
+//      for (int32 i = 32768 + 1; i != NNI_MAX_TIPS + 1; i++) lg2_ceiling[i] = 16;
       
       for (int32 i = 4; i != NNI_MAX_TIPS + 1; i++) {
         fack_lookup[i] = int32(((i - 2 - 2) * lg2_ceiling[i - 2]) + i - 2);
