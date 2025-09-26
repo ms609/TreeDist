@@ -488,9 +488,16 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
       const int16 A_and_b = nb - a_and_b;
       const int16 A_and_B = nA - A_and_b;
       
-      if (a_and_b == A_and_b &&
-          a_and_b == a_and_B &&
-          a_and_b == A_and_B) {
+      if ((!a_and_B && !A_and_b) ||
+          (!a_and_b && !A_and_B)) {
+        exact_match_score += TreeDist::ic_matching(na, nA, n_tips);
+        exact_matches++;
+        a_match[ai] = bi + 1;
+        b_match[bi] = ai + 1;
+        break;
+      } else if (a_and_b == A_and_b &&
+        a_and_b == a_and_B &&
+        a_and_b == A_and_B) {
         score(ai, bi) = max_score; // Avoid rounding errors
       } else {
         double ic_sum = 0.0;
