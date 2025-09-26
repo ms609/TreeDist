@@ -1,4 +1,4 @@
-# TreeDist 2.10.1.9003 (development)
+# TreeDist 2.11.0 (2025-09-26)
 
 - `HierarchicalMutualInformation()` calculates the information shared between
   pairs of hierarchical partition structures <doi:10.1103/PhysRevE.92.062825>.
