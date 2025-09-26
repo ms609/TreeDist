@@ -388,7 +388,7 @@ namespace TreeDist {
 
   // Returns lg2_unrooted[x] - lg2_trees_matching_split(y, x - y)
   [[nodiscard]] inline double mmsi_pair_score(const int16 x, const int16 y) noexcept {
-    assert(SL_MAX_TIPS + 2 <= INT_16_MAX); // verify int16 ok
+    assert(SL_MAX_TIPS + 2 <= std::numeric_limits<int16>::max()); // verify int16 ok
     
     return lg2_unrooted[x] - (lg2_rooted[y] + lg2_rooted[x - y]);
   }
@@ -417,7 +417,7 @@ namespace TreeDist {
   }
 
 [[nodiscard]] inline double one_overlap(const int16 a, const int16 b, const int16 n) noexcept {
-    assert(SL_MAX_TIPS + 2 <= INT_16_MAX); // verify int16 ok
+    assert(SL_MAX_TIPS + 2 <= std::numeric_limits<int16>::max()); // verify int16 ok
     if (a == b) {
       return lg2_rooted[a] + lg2_rooted[n - a];
     } else if (a < b) {
@@ -428,7 +428,7 @@ namespace TreeDist {
   }
   
   [[nodiscard]] inline double one_overlap_notb(const int16 a, const int16 n_minus_b, const int16 n) noexcept {
-    assert(SL_MAX_TIPS + 2 <= INT_16_MAX); // verify int16 ok
+    assert(SL_MAX_TIPS + 2 <= std::numeric_limits<int16>::max()); // verify int16 ok
     const int16 b = n - n_minus_b;
     if (a == b) {
       return lg2_rooted[b] + lg2_rooted[n_minus_b];

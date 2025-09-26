@@ -1,5 +1,6 @@
 # TreeDist 2.10.1.9001 (development)
 
+- Support larger trees in NNI distance calculations.
 - Fix crash in `robinson_foulds_all_pairs()` and `RobinsonFoulds(list)`.
 - Fix bug in calculation of `MutualClusteringInfo()`: greedy optimization
   was not guaranteed to find globally optimal matching, causing distances to be
