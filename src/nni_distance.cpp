@@ -181,10 +181,12 @@ inline void nni_edge_to_splits(const IntegerMatrix& edge,
                                std::unique_ptr<splitbit[]>& splits,
                                std::unique_ptr<int32[]>& names) {
   
-  std::vector<splitbit> tmp_splits(n_node * n_bin);
+  std::vector<splitbit> tmp_splits(n_node * n_bin, 0);
   
   for (int32 i = 0; i < n_tip; ++i) {
-    tmp_splits[i * n_bin + int32(i / SL_BIN_SIZE)] = splitbit(1) << (i % SL_BIN_SIZE);
+    const auto idx = i * n_bin + int32(i / SL_BIN_SIZE);
+    ASSERT(idx < tmp_splits.size());
+    tmp_splits[idx] = splitbit(1) << (i % SL_BIN_SIZE);
   }
   
   for (int32 i = 0; i < n_edge - 1; ++i) { /* final edge is second root edge */
