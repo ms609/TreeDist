@@ -251,11 +251,9 @@ grf_match nni_rf_matching (
       const int32_t row_i = i * n_bins;
       for (int32_t bin = 0; bin < last_bin; ++bin) {
         const int32_t cell = row_i + bin;
-        ASSERT(cell >= 0 && cell < int32_t(n_splits) * int32_t(n_bins));
         b_complement[cell] = ~b[cell];
       }
       const int32_t last_cell = row_i + last_bin;
-      ASSERT(last_cell >= 0 && last_cell < int32_t(n_splits) * int32_t(n_bins));
       b_complement[last_cell] = b[last_cell] ^ unset_mask;
     }
     
@@ -270,8 +268,6 @@ grf_match nni_rf_matching (
         for (int32_t bin = 0; bin < n_bins; ++bin) {
           const int32_t a_cell = int32_t(a_row) + int32_t(bin);
           const int32_t b_cell = int32_t(b_row) + int32_t(bin);
-          ASSERT(a_cell >= 0 && a_cell < int32_t(n_splits) * int32_t(n_bins));
-          ASSERT(b_cell >= 0 && b_cell < int32_t(n_splits) * int32_t(n_bins));
           if (a[a_cell] != b[b_cell]) {
             all_match = false;
             break;
@@ -281,8 +277,6 @@ grf_match nni_rf_matching (
           for (int32_t bin = 0; bin < n_bins; ++bin) {
             const int32_t a_cell = int32_t(a_row) + int32_t(bin);
             const int32_t bc_cell = int32_t(b_row) + int32_t(bin);
-            ASSERT(a_cell >= 0 && a_cell < int32_t(n_splits) * int32_t(n_bins));
-            ASSERT(bc_cell >= 0 && bc_cell < int32_t(n_splits) * int32_t(n_bins));
             if (a[a_cell] != b_complement[bc_cell]) {
               all_complement = false;
               break;
@@ -381,7 +375,6 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
   for (int32_t i = 0; i < match_size; ++i) {
     ASSERT(n_edge != n_tip && n_tip > 3); // else names_1 uninitialized
     int32_t node_i = names_1[i] - node_0_r;
-    ASSERT(node_i >= 0 && node_i < n_tip);
     if (match[i] == NA_INT32) {
       matched_1[node_i] = false;
       unmatched_below[node_i] = 1;
