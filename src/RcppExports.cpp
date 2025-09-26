@@ -175,14 +175,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpp_nni_distance
-IntegerVector cpp_nni_distance(const IntegerMatrix edge1, const IntegerMatrix edge2, const IntegerVector nTip);
+IntegerVector cpp_nni_distance(const IntegerMatrix& edge1, const IntegerMatrix& edge2, const IntegerVector& nTip);
 RcppExport SEXP _TreeDist_cpp_nni_distance(SEXP edge1SEXP, SEXP edge2SEXP, SEXP nTipSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const IntegerMatrix >::type edge1(edge1SEXP);
-    Rcpp::traits::input_parameter< const IntegerMatrix >::type edge2(edge2SEXP);
-    Rcpp::traits::input_parameter< const IntegerVector >::type nTip(nTipSEXP);
+    Rcpp::traits::input_parameter< const IntegerMatrix& >::type edge1(edge1SEXP);
+    Rcpp::traits::input_parameter< const IntegerMatrix& >::type edge2(edge2SEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type nTip(nTipSEXP);
     rcpp_result_gen = Rcpp::wrap(cpp_nni_distance(edge1, edge2, nTip));
     return rcpp_result_gen;
 END_RCPP

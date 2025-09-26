@@ -31,5 +31,6 @@ revdep
 ^\.travis\.yml$
 ^\.zenodo\.json$
 ^\.covrignore$
+^\.vs.*$
 ^\.vscode.*$
 ^CRAN-SUBMISSION$
