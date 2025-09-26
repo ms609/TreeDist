@@ -180,6 +180,7 @@ inline void nni_edge_to_splits(const IntegerMatrix& edge,
   
   for (int32 i = 0; i < n_node; ++i) {
     tmp_splits[i] = std::make_unique<splitbit[]>(n_bin);
+    std::fill_n(tmp_splits[i].get(), n_bin, splitbit(0));
   }
   
   for (int32 i = 0; i != n_tip; i++) {
