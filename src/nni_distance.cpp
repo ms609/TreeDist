@@ -24,12 +24,12 @@ public:
   }
   
   // bounds-checked accessors (ASSERT is a macro in your project)
-  T& operator[](std::size_t i) {
-    ASSERT(i < n_);
+  T& operator[](std::ptrdiff_t i) {
+    ASSERT(i >= 0 && static_cast<std::size_t>(i) < n_);
     return data_[i];
   }
-  const T& operator[](std::size_t i) const {
-    ASSERT(i < n_);
+  const T& operator[](std::ptrdiff_t i) const {
+    ASSERT(i >= 0 && static_cast<std::size_t>(i) < n_);
     return data_[i];
   }
   
