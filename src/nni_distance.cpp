@@ -184,7 +184,7 @@ inline void nni_edge_to_splits(const IntegerMatrix& edge,
   std::vector<uint64_t> tmp_splits(n_node * n_bin, 0);
   
   for (int32 i = 0; i < n_tip; ++i) {
-    const auto idx = i * n_bin + int32(i / SL_BIN_SIZE);
+    const size_t idx = i * n_bin + int32(i / SL_BIN_SIZE);
     ASSERT(idx < tmp_splits.size());
     ASSERT((i % SL_BIN_SIZE) < 64); // 1 << 64 = 0
     tmp_splits[idx] = static_cast<uint64_t>(1) << (i % SL_BIN_SIZE);
@@ -343,7 +343,7 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
   bool rooted = static_cast<int32>(edge1(n_edge - 3, 0)) != root_1;
   constexpr int32 NOT_TRIVIAL = std::numeric_limits<int32>::max();
   const int32 n_node = n_edge + 1;
-  const int32 n_bin = int32(((n_tip - 1) / SL_BIN_SIZE) + 1);
+  const int32 n_bin = static_cast<int32>(((n_tip - 1) / SL_BIN_SIZE) + 1);
   const int32 trivial_origin_1 = root_1 - 1;
   const int32 trivial_origin_2 = root_2 - 1;
   const int32 trivial_two_1 = rooted ?
