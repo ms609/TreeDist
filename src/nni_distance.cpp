@@ -178,15 +178,15 @@ inline void nni_edge_to_splits(const IntegerMatrix& edge,
                                const int32 n_bin,
                                const int32 trivial_origin,
                                const int32 trivial_two,
-                               std::unique_ptr<splitbit[]>& splits,
+                               std::unique_ptr<uint64_t[]>& splits,
                                std::unique_ptr<int32[]>& names) {
   
-  std::vector<splitbit> tmp_splits(n_node * n_bin, 0);
+  std::vector<uint64_t> tmp_splits(n_node * n_bin, 0);
   
   for (int32 i = 0; i < n_tip; ++i) {
     const auto idx = i * n_bin + int32(i / SL_BIN_SIZE);
     ASSERT(idx < tmp_splits.size());
-    tmp_splits[idx] = splitbit(1) << (i % SL_BIN_SIZE);
+    tmp_splits[idx] = static_cast<uint64_t>(1) << (i % SL_BIN_SIZE);
   }
   
   for (int32 i = 0; i < n_edge - 1; ++i) { /* final edge is second root edge */
@@ -214,8 +214,8 @@ inline void nni_edge_to_splits(const IntegerMatrix& edge,
 }
   
 grf_match nni_rf_matching (
-    const std::unique_ptr<splitbit[]>& a, 
-    const std::unique_ptr<splitbit[]>& b,
+    const std::unique_ptr<uint64_t[]>& a, 
+    const std::unique_ptr<uint64_t[]>& b,
     const int32 n_splits,
     const int32 n_bins,
     const int32 n_tips) {
@@ -237,14 +237,14 @@ grf_match nni_rf_matching (
     const int32 unset_tips = (n_tips % SL_BIN_SIZE) ? 
       SL_BIN_SIZE - n_tips % SL_BIN_SIZE : 0;
     
-    const splitbit unset_mask = ALL_ONES >> unset_tips;
+    const uint64_t unset_mask = ALL_ONES >> unset_tips;
     
     grf_match matching(n_splits, NA_INT32);
     for (int32 i = 0; i != n_splits; i++) {
       ASSERT(matching[i] == NA_INT32);
     }
     
-    HybridBuffer<splitbit, NNI_STACK_SPLITS * NNI_STACK_BINS>
+    HybridBuffer<uint64_t, NNI_STACK_SPLITS * NNI_STACK_BINS>
       b_complement(n_splits * n_bins);
     
     for (int32 i = 0; i < n_splits; ++i) {
@@ -358,8 +358,8 @@ IntegerVector cpp_nni_distance(const IntegerMatrix& edge1,
     Rcpp::stop("NNI distance is undefined for trees with no splits"); // #nocov
   }
   
-  std::unique_ptr<splitbit[]> splits1(new splitbit[n_splits * n_bin]);
-  std::unique_ptr<splitbit[]> splits2(new splitbit[n_splits * n_bin]);
+  std::unique_ptr<uint64_t[]> splits1(new uint64_t[n_splits * n_bin]);
+  std::unique_ptr<uint64_t[]> splits2(new uint64_t[n_splits * n_bin]);
   // std::vector<int32> names_1;
   // names_1.reserve(n_splits);
   std::unique_ptr<int32[]> names_1(new int32[n_splits]);
