@@ -49,7 +49,7 @@ public:
 private:
   std::size_t n_;
   T* data_;
-  alignas(T) T stack_[StackSize];
+  alignas(T) T stack_[StackSize]{};
   std::unique_ptr<T[]> heap_;
 };
 
