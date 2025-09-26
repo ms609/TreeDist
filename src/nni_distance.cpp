@@ -180,7 +180,8 @@ inline void nni_edge_to_splits(const IntegerMatrix& edge,
   std::vector<uint64_t> tmp_splits(n_node * n_bin, 0);
   
   for (int32_t i = 0; i < n_tip; ++i) {
-    const size_t idx = i * n_bin + int32_t(i / SL_BIN_SIZE);
+    const size_t bin_idx = static_cast<size_t>(i / SL_BIN_SIZE);
+    const size_t idx = i * n_bin + bin_idx;
     ASSERT(idx < tmp_splits.size());
     ASSERT((i % SL_BIN_SIZE) < 64); // 1 << 64 = 0
     tmp_splits[idx] = static_cast<uint64_t>(1) << (i % SL_BIN_SIZE);
