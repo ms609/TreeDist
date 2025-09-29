@@ -60,11 +60,10 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.11.0" id="treedist-2110-2025-09-26">TreeDist 2.11.0 (2025-09-26)<a class="anchor" aria-label="anchor" href="#treedist-2110-2025-09-26"></a></h2><p class="text-muted">CRAN release: 2025-09-28</p>
-<ul><li>
-<code><a href="../reference/HierarchicalMutualInformation.html">HierarchicalMutualInformation()</a></code> calculates the information shared between pairs of hierarchical partition structures <a href="doi:10.1103/PhysRevE.92.062825" class="uri">doi:10.1103/PhysRevE.92.062825</a>.</li>
-<li>Support larger trees in NNI distance calculations.</li>
-<li>Fix crash in <code>robinson_foulds_all_pairs()</code> and <code>RobinsonFoulds(list)</code>.</li>
-<li>Fix bug in calculation of <code><a href="../reference/TreeDistance.html">MutualClusteringInfo()</a></code>: greedy optimization was not guaranteed to find globally optimal matching, causing distances to be overestimated in some circumstances (<a href="https://github.com/ms609/TreeDist/issues/162" class="external-link">#163</a>).</li>
+<ul><li><p><code><a href="../reference/HierarchicalMutualInformation.html">HierarchicalMutualInformation()</a></code> calculates the information shared between pairs of hierarchical partition structures .</p></li>
+<li><p>Fix bug in calculation of <code><a href="../reference/TreeDistance.html">MutualClusteringInfo()</a></code>: the matching chosen was not always the global optimum, causing distances to be overestimated in some circumstances (<a href="https://github.com/ms609/TreeDist/issues/162" class="external-link">#163</a>).</p></li>
+<li><p>Fix crash in <code>robinson_foulds_all_pairs()</code> and <code>RobinsonFoulds(list)</code>.</p></li>
+<li><p>Support larger trees in NNI distance calculations.</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.10.1" id="treedist-2101-2025-08-24">TreeDist 2.10.1 (2025-08-24)<a class="anchor" aria-label="anchor" href="#treedist-2101-2025-08-24"></a></h2><p class="text-muted">CRAN release: 2025-08-25</p>
@@ -72,6 +71,7 @@
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.10.0" id="treedist-2100-2025-08-22">TreeDist 2.10.0 (2025-08-22)<a class="anchor" aria-label="anchor" href="#treedist-2100-2025-08-22"></a></h2><p class="text-muted">CRAN release: 2025-08-22</p>
+<p><strong>Note</strong> - this release <strong>introduced a bug</strong> in the computation of the mutual clustering information / clustering information distance. The globally optimal matching between splits was not always found. This was <strong>fixed in v2.11.0</strong>.</p>
 <ul><li><p><code><a href="../reference/Entropy.html">Ntropy()</a></code> computes entropy from integer counts.</p></li>
 <li>
 <p>C++ optimizations and reformatting:</p>
