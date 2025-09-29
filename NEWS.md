@@ -1,13 +1,16 @@
 # TreeDist 2.11.0 (2025-09-26)
 
 - `HierarchicalMutualInformation()` calculates the information shared between
-  pairs of hierarchical partition structures <doi:10.1103/PhysRevE.92.062825>.
-- Support larger trees in NNI distance calculations.
-- Fix crash in `robinson_foulds_all_pairs()` and `RobinsonFoulds(list)`.
+  pairs of hierarchical partition structures \doi{10.1103/PhysRevE.92.062825}.
+
 - Fix bug in calculation of `MutualClusteringInfo()`: greedy optimization
   was not guaranteed to find globally optimal matching, causing distances to be
   overestimated in some circumstances
   ([#163](https://github.com/ms609/TreeDist/issues/162)).
+
+- Fix crash in `robinson_foulds_all_pairs()` and `RobinsonFoulds(list)`.
+  
+- Support larger trees in NNI distance calculations.
 
 
 # TreeDist 2.10.1 (2025-08-24)
@@ -16,6 +19,11 @@
 
 
 # TreeDist 2.10.0 (2025-08-22)
+
+**Note** - this release **introduced a bug** in the computation of the mutual
+clustering information / clustering information distance.
+The globally optimal matching between splits was not always found.
+This was **fixed in v2.11.0**.
 
 - `Ntropy()` computes entropy from integer counts.
 
