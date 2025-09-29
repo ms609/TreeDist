@@ -13,7 +13,8 @@ SEXP build_hpart_from_phylo(List phy) {
   int n_tip = tip_label.size();
   int n_node = phy["Nnode"];
   
-  IntegerMatrix reordered = TreeTools::preorder_edges_and_nodes(edge(_,0), edge(_,1));
+  IntegerMatrix reordered = TreeTools::preorder_edges_and_nodes(edge(_, 0),
+                                                                edge(_, 1));
   
   const size_t vec_size = n_tip + n_node + 1;
   std::vector<std::vector<size_t>> children(vec_size);
