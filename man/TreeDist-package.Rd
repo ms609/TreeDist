@@ -136,9 +136,9 @@ Geodesic distance
 
 Other contributors:
 \itemize{
-  \item Roy Jonker \email{roy_jonker@magiclogic.com} [programmer, copyright holder]
-  \item Yong Yang \email{yongyanglink@gmail.com} [contributor, copyright holder]
-  \item Yi Cao [contributor, copyright holder]
+  \item Roy Jonker \email{roy_jonker@magiclogic.com} (LAP algorithm) [programmer, copyright holder]
+  \item Yong Yang \email{yongyanglink@gmail.com} (LAP algorithm) [contributor, copyright holder]
+  \item Yi Cao (LAP algorithm) [contributor, copyright holder]
 }
 
 }
