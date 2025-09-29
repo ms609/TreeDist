@@ -15,7 +15,7 @@ distances from splits."><!-- Global site tag (gtag.js) - Google Analytics --><sc
 
     <a class="navbar-brand me-2" href="../index.html">TreeDist</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.10.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.11.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,7 +57,7 @@ distances from splits."><!-- Global site tag (gtag.js) - Google Analytics --><sc
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Generalized Robinson–Foulds distance</h1>
-      <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/2.10.1/R/tree_distance.R" class="external-link"><code>R/tree_distance.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/main/R/tree_distance.R" class="external-link"><code>R/tree_distance.R</code></a></small>
       <div class="d-none name"><code>GeneralizedRF.Rd</code></div>
     </div>
 
@@ -99,7 +99,12 @@ split.</p></dd>
 <dd><p>function taking four arguments, <code>splits1</code>, <code>splits2</code>,
 <code>nSplits1</code>, <code>nSplits2</code>, which should return the score of each pair of splits
 in a two-dimensional matrix.  Additional parameters may be specified via
-....</p></dd>
+<code>...</code>.</p></dd>
+
+
+<dt id="arg-maximize">maximize<a class="anchor" aria-label="anchor" href="#arg-maximize"></a></dt>
+<dd><p>Logical specifying whether the optimal matching maximizes
+or minimizes the scores obtained by <code>PairScorer()</code>.</p></dd>
 
 
 <dt id="arg-reportmatching">reportMatching<a class="anchor" aria-label="anchor" href="#arg-reportmatching"></a></dt>
@@ -108,7 +113,7 @@ matchings as an attribute of the score.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional parameters to <code>PairScorer</code></p></dd>
+<dd><p>Additional parameters to <code>PairScorer()</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

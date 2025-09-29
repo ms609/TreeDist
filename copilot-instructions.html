@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="index.html">TreeDist</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.10.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">2.11.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,13 +55,26 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>TreeDist R Package Development</h1>
-      <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/2.10.1/.github/copilot-instructions.md" class="external-link"><code>.github/copilot-instructions.md</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/main/.github/copilot-instructions.md" class="external-link"><code>.github/copilot-instructions.md</code></a></small>
     </div>
 
 <div id="treedist-r-package-development" class="section level1">
 
 <p>TreeDist is an R package providing efficient implementations of functions for the comparison of phylogenetic trees. It includes C++ code for performance, comprehensive testing, benchmarking infrastructure, and extensive CI/CD workflows. Correctness, speed and user-friendliness are priorities.</p>
 <p>Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.</p>
+<div class="section level2">
+<h2 id="context-object-structures">Context: Object structures<a class="anchor" aria-label="anchor" href="#context-object-structures"></a></h2>
+<p>TreeDist handles phylogenetic trees, which are typically presented in one of two formats:</p>
+<ul><li>A <code>phylo</code> object is a list containing elements:
+<ul><li>`“edge”: a 2d matrix in which each row identifies the parent vertex (column 1) and child vertex (column 2) of an edge in the tree</li>
+<li>
+<code>"Nnode"</code>: Number of internal nodes</li>
+<li>
+<code>"tip.label"</code>: Labels for tips with index 1, 2, … <code>NTip(tree) == length(tree[["tip.label"]])</code> A phylo object with the attribute “preorder” has edges and internal nodes listed in a strict preorder sequence (see <code><a href="https://ms609.github.io/TreeTools/reference/Reorder.html" class="external-link">TreeTools::Preorder()</a></code>; the attribute “postorder” indicates that edges are numbered in an arbitrary postorder sequence.</li>
+</ul></li>
+<li>A <code>Splits</code> object (from <code><a href="https://ms609.github.io/TreeTools/reference/Splits.html" class="external-link">TreeTools::as.Splits()</a></code>) is a raw matrix where each row corresponds to an edge in the tree. Each row is named with the integer index of a node associated with the edge (=bipartition split); the bits of the raw vector determine which of the two bipartitions each of the <code>attr(x, "nTip")</code> leaves (labelled as in the “tip.label” attribute) belongs to. The <code>TRUE/FALSE</code> labelling is arbitrary unless <code><a href="https://ms609.github.io/TreeTools/reference/PolarizeSplits.html" class="external-link">TreeTools::PolarizeSplits</a></code> is called.</li>
+</ul><p>TreeDist can be considered a “descendant package” of TreeTools, which I also maintain; TreeTools contains core functionality for tree and split manipulation, designed to be compatible with TreeDist.</p>
+</div>
 <div class="section level2">
 <h2 id="working-effectively">Working Effectively<a class="anchor" aria-label="anchor" href="#working-effectively"></a></h2>
 <div class="section level3">
@@ -133,6 +146,11 @@
 <div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="ex">R</span> <span class="at">-e</span> <span class="st">"devtools::build_vignettes(install = FALSE)"</span></span></code></pre></div>
 </li>
 </ul></div>
+<div class="section level3">
+<h3 id="key-dependencies">Key Dependencies<a class="anchor" aria-label="anchor" href="#key-dependencies"></a></h3>
+<p><strong>Critical</strong>: TreeDist requires these packages to build successfully: - <code>ape</code> (&gt;= 5.0) - Phylogenetic analysis package - <code>Rcpp</code> (&gt;= 1.0.8) - C++ integration (must install before TreeTools) - <code>TreeTools</code> (&gt;= 1.16) - Core tree manipulation (large dependency) - <code>Rdpack</code> (&gt;= 0.7) - Bibliography and citation support<br>
+- <code>shinyjs</code> - Interactive web applications - <code>colorspace</code> - Color space manipulation</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="validation">Validation<a class="anchor" aria-label="anchor" href="#validation"></a></h2>
@@ -147,11 +165,35 @@
 <li>
 <p>Memory checking is available but optional (takes significant time):</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="ex">R</span> <span class="at">-d</span> <span class="st">"valgrind --tool=memcheck --leak-check=full"</span> <span class="at">--vanilla</span> <span class="op">&lt;</span> memcheck/tests.R</span></code></pre></div>
-</li>
+<p><strong>Note</strong>: Memory check scripts available in <code>memcheck/</code> directory:</p>
+<ul><li>
+<code>memcheck/tests.R</code> - Run test suite with valgrind</li>
+<li>
+<code>memcheck/all.R</code> - Run tests, examples, and build vignettes with memory checking</li>
+</ul></li>
 </ul></div>
 <div class="section level2">
 <h2 id="validation-scenarios">Validation Scenarios<a class="anchor" aria-label="anchor" href="#validation-scenarios"></a></h2>
 <p>After making code changes, validate functionality by testing core phylogenetic tree operations:</p>
+<div class="section level3">
+<h3 id="essential-pre-commit-validation-steps">Essential Pre-commit Validation Steps<a class="anchor" aria-label="anchor" href="#essential-pre-commit-validation-steps"></a></h3>
+<ol style="list-style-type: decimal"><li>
+<p><strong>Install core dependencies first</strong>:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="fu">sudo</span> R <span class="at">-e</span> <span class="st">"install.packages(c('ape', 'colorspace', 'Rdpack', 'shinyjs', 'TreeTools'), repos='https://cran.r-project.org/', dependencies=TRUE)"</span></span></code></pre></div>
+</li>
+<li>
+<p><strong>Basic build test</strong> (quick validation):</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="ex">R</span> CMD build . <span class="at">--no-build-vignettes</span></span></code></pre></div>
+</li>
+<li>
+<p><strong>Run linting</strong> (expects GitHub Actions format):</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="ex">R</span> <span class="at">-e</span> <span class="st">"lintr::lint_dir('.')"</span></span></code></pre></div>
+</li>
+<li>
+<p><strong>Load package for testing</strong>:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="ex">R</span> <span class="at">-e</span> <span class="st">"devtools::load_all()"</span></span></code></pre></div>
+</li>
+</ol></div>
 </div>
 <div class="section level2">
 <h2 id="time-expectations--critical-warnings">Time Expectations &amp; Critical Warnings<a class="anchor" aria-label="anchor" href="#time-expectations--critical-warnings"></a></h2>
@@ -179,11 +221,11 @@
 <div class="section level3">
 <h3 id="key-directories">Key Directories<a class="anchor" aria-label="anchor" href="#key-directories"></a></h3>
 <ul><li>
-<code>R/</code> - R source code (59 R files with 500+ exported functions)</li>
+<code>R/</code> - R source code (31 R files with 500+ exported functions)</li>
 <li>
-<code>src/</code> - C++ source code requiring compilation (17 C++ files, SystemRequirements: C++17)</li>
+<code>src/</code> - C++ source code requiring compilation (14 C++ files, SystemRequirements: C++17)</li>
 <li>
-<code>tests/testthat/</code> - Test suite (61+ test files)</li>
+<code>tests/testthat/</code> - Test suite (30+ test files)</li>
 <li>
 <code>benchmark/</code> - Performance benchmarking (10+ benchmark files)<br></li>
 <li>
@@ -202,11 +244,11 @@
 <li>
 <code>NAMESPACE</code> - Generated by roxygen2 (do not edit manually)</li>
 <li>
-<code>.lintr</code> - Code style configuration (follows Google R style guide)</li>
-<li>
 <code>NEWS.md</code> - Version history (update for user-facing changes)</li>
 <li>
 <code>tests/testthat.R</code> - Test runner entry point</li>
+<li>
+<code>inst/_pkgdown.yml</code> - template for online documentation. (Check that new functions are registered here, ideally using <code>@family</code>)</li>
 </ul></div>
 </div>
 <div class="section level2">
@@ -215,20 +257,21 @@
 <h3 id="after-making-changes">After Making Changes<a class="anchor" aria-label="anchor" href="#after-making-changes"></a></h3>
 <ol style="list-style-type: decimal"><li>
 <p>Load and test changes interactively:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="ex">R</span> <span class="at">-e</span> <span class="st">"devtools::load_all(); # test your changes interactively"</span></span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="ex">R</span> <span class="at">-e</span> <span class="st">"devtools::load_all(); # test your changes interactively"</span></span></code></pre></div>
 </li>
 <li>
 <p>Run linting:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="ex">R</span> <span class="at">-e</span> <span class="st">"lintr::lint_dir('.')"</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="ex">R</span> <span class="at">-e</span> <span class="st">"lintr::lint_dir('.')"</span></span></code></pre></div>
 </li>
 <li>
 <p>Run relevant tests:</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="ex">R</span> <span class="at">-e</span> <span class="st">"devtools::test()"</span></span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="ex">R</span> <span class="at">-e</span> <span class="st">"devtools::test()"</span></span></code></pre></div>
 </li>
 <li>
 <p>For C++ changes, always run full check:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="ex">R</span> CMD check <span class="at">--no-build-vignettes</span> .</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="ex">R</span> CMD check <span class="at">--no-build-vignettes</span> .</span></code></pre></div>
 </li>
+<li><p>Ensure that temporary files are not included in the commit, either by deleting them, not <code>git add</code>ing them, or adding a parsimonious pattern to <code>.gitignore</code>.</p></li>
 </ol></div>
 <div class="section level3">
 <h3 id="code-style-guidelines">Code Style Guidelines<a class="anchor" aria-label="anchor" href="#code-style-guidelines"></a></h3>
@@ -246,16 +289,54 @@
 <li>Missing or inadequate documentation</li>
 <li>Missing test coverage for new code</li>
 </ul></div>
+<div class="section level3">
+<h3 id="cicd-workflows-available">CI/CD Workflows Available<a class="anchor" aria-label="anchor" href="#cicd-workflows-available"></a></h3>
+<ul><li>
+<strong>R-CMD-check.yml</strong>: Comprehensive checks on Windows, macOS, Ubuntu across R versions</li>
+<li>
+<strong>benchmark.yml</strong>: Performance regression testing triggered on PRs</li>
+<li>
+<strong>memcheck.yml</strong>: Memory checking with valgrind (runs <code>tests</code>, <code>examples</code>, <code>vignettes</code>)</li>
+<li>
+<strong>ASan.yml</strong>: Address sanitizer checks</li>
+<li>
+<strong>pkgdown.yml</strong>: Documentation site generation.</li>
+<li>
+<strong>revdepcheck.yml</strong>: Downstream dependency validation</li>
+</ul></div>
 </div>
 <div class="section level2">
 <h2 id="troubleshooting">Troubleshooting<a class="anchor" aria-label="anchor" href="#troubleshooting"></a></h2>
-<ul><li>If package won’t build: check that all system dependencies are installed</li>
-<li>If tests fail after C++ changes: rebuild package completely</li>
-<li>If documentation is missing: run <code>devtools::document()</code>
+<div class="section level3">
+<h3 id="common-build-issues">Common Build Issues<a class="anchor" aria-label="anchor" href="#common-build-issues"></a></h3>
+<ul><li>
+<strong>Missing dependencies</strong>: Install system packages first: <code>sudo apt install -y libcurl4-openssl-dev libssl-dev libxml2-dev libfontconfig1-dev libharfbuzz-dev libfribidi-dev</code>
 </li>
-<li>If benchmarks fail: performance regressions may need investigation</li>
-<li>Memory issues: use valgrind checking for C++ code validation</li>
+<li>
+<strong>Rdpack warnings</strong>: These are normal when <code>Rdpack</code> isn’t installed but don’t prevent building</li>
+<li>
+<strong>Package won’t build</strong>: Install core dependencies: <code>ape</code>, <code>colorspace</code>, <code>Rdpack</code>, <code>shinyjs</code>, <code>TreeTools</code>
+</li>
+<li>
+<strong>TreeTools installation fails</strong>: This is a large dependency - allow 10+ minutes for compilation</li>
+<li>
+<strong>Tests fail after C++ changes</strong>: rebuild package completely with <code>R CMD build .</code>
+</li>
+<li>
+<strong>Documentation warnings</strong>: Run <code>devtools::document()</code> to regenerate documentation</li>
+<li>
+<strong>Benchmarks fail</strong>: Performance regressions may need investigation</li>
+<li>
+<strong>Memory issues</strong>: Use valgrind checking for C++ code validation</li>
 </ul></div>
+<div class="section level3">
+<h3 id="system-requirements-validation">System Requirements Validation<a class="anchor" aria-label="anchor" href="#system-requirements-validation"></a></h3>
+<ul><li>R version 4.0+ required (tested with R 4.3.3)</li>
+<li>C++17 compiler support required</li>
+<li>Minimum 2GB RAM recommended for building with dependencies</li>
+<li>Allow 60+ minutes for full dependency installation from scratch</li>
+</ul></div>
+</div>
 </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
