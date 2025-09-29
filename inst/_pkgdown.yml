@@ -43,6 +43,7 @@ reference:
     desc: Functions to facilitate interaction with the package.
     contents:
       - CompareAll
+      - HPart
       - LAPJV
       - Plot3
       - ReduceTrees

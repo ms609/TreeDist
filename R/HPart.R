@@ -140,6 +140,7 @@ plot.HPart <- function(x, ...) {
 #' @param \dots additional parameters for methods
 #' @return `clone()` typically returns an object of the same class and "value"
 #' as the input `x`.
+#' @keywords internal
 #' @export
 clone <- function(x, ...) UseMethod("clone")
 
