@@ -7,10 +7,10 @@ Authors@R: c(person("Martin R.", "Smith",
                     role = c("aut", "cre", "cph", "prg"), 
                     comment = c(ORCID = "0000-0001-5660-1727")),
              person("Roy", "Jonker", email = "roy_jonker@magiclogic.com",
-                    role = c("prg", "cph")),
+                    role = c("prg", "cph"), comment = "LAP algorithm"),
              person("Yong", "Yang", email = "yongyanglink@gmail.com",
-                    role = c("ctb", "cph")),
-             person("Yi", "Cao", role = c("ctb", "cph"))
+                    role = c("ctb", "cph"), comment = "LAP algorithm"),
+             person("Yi", "Cao", role = c("ctb", "cph"), comment = "LAP algorithm")
             )
 License: GPL (>= 3)
 Description: Implements measures of tree similarity, including 
