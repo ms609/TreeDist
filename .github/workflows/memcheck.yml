@@ -6,30 +6,24 @@ on:
     branches:
       - main
       - master
-    paths-ignore:
-      - "Meta**"
-      - "docs**"
-      - "**.git"
-      - "**.json"
-      - "**.md"
-      - "**.yml"
-      - "!**memcheck.yml"
-      - "**.R[dD]ata"
-      - "**.Rpro*"
+    paths:
+      - '.github/workflows/memcheck.yml'
+      - 'src/**'
+      - 'inst/include/**'
+      - 'memcheck/**'
+      - 'tests/testthat/**.R'
+      - 'vignettes/**.Rmd'
   pull_request:
     branches:
       - main
       - master
-    paths-ignore:
-      - "Meta**"
-      - "docs**"
-      - "**.git"
-      - "**.json"
-      - "**.md"
-      - "**.yml"
-      - "!**memcheck.yml"
-      - "**.R[dD]ata"
-      - "**.Rpro*"
+    paths:
+      - '.github/workflows/memcheck.yml'
+      - 'src/**'
+      - 'inst/include/**'
+      - 'memcheck/**'
+      - 'tests/testthat/**.R'
+      - 'vignettes/**.Rmd'
 
 name: mem-check
 
