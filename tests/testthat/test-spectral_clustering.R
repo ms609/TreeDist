@@ -10,15 +10,9 @@ test_that("Spectral clustering works", {
   expect_equal(abs(SpectralEigens(d, nEig = 2)), abs(allEig[, 40:39]),
                tolerance = sqrt(.Machine[["double.eps"]]))
 
-  # SpectralClustering is deprecated but should produce valid eigenvectors
-  # Note: Column ordering may vary across BLAS implementations when
-  # eigenvalues are equal, so we test properties rather than exact equality
   expect_warning(deprecated <- SpectralClustering(d, nEig = Inf),
                  "'SpectralClustering' is deprecated.")
-  expect_equal(dim(deprecated), dim(allEig))
-
-  # Verify eigenvectors are orthonormal (key property that should hold)
-  eigen_prod <- t(deprecated) %*% deprecated
-  expect_equal(eigen_prod, diag(ncol(deprecated)),
-               tolerance = sqrt(.Machine[["double.eps"]]))
+  # Can't check raw equality because signs may flip
+  expect_true(all.equal(crossprod(deprecated), crossprod(allEig),
+                        tolerance = sqrt(.Machine[["double.eps"]])))
 })
