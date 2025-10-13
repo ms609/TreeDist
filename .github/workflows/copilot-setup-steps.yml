@@ -43,17 +43,8 @@ jobs:
       - name: Set up essential R dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          cache: "always"
-          cache-version: 1
-          dependencies: '"hard"'
-            
-      - name: Additional R dependencies
-        # Using two steps to circumvent timeout
-        uses: r-lib/actions/setup-r-dependencies@v2
-        with:
           dependencies: '"hard"'
           cache: "always"
-          cache-version: 2
           extra-packages: |
             ms609/TreeDistData
             devtools
