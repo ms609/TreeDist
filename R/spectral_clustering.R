@@ -77,5 +77,5 @@ SpectralEigens <- function(D, nn = 10L, nEig = 2L) {
 #' @rdname SpectralEigens
 SpectralClustering <- function(D, nn = 10L, nEig = 2L) {
   .Deprecated("SpectralEigens") # 2021-07
-  SpectralEigens(D, nn, nEig)
+  SpectralEigens(D = D, nn = nn, nEig = nEig)
 }

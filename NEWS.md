@@ -1,3 +1,8 @@
+# TreeDist 2.11.1 (2025-10-13)
+
+- Improve robustness of `SpectralEigens()` tests.
+
+
 # TreeDist 2.11.0 (2025-09-26)
 
 - `HierarchicalMutualInformation()` calculates the information shared between
