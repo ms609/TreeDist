@@ -20,6 +20,10 @@
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/CompareAll.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/Entropy.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/GeneralizedRF.html</loc></url>
+<url><loc>https://ms609.github.io/TreeDist/dev/reference/HH.html</loc></url>
+<url><loc>https://ms609.github.io/TreeDist/dev/reference/HPart.html</loc></url>
+<url><loc>https://ms609.github.io/TreeDist/dev/reference/HierarchicalMutualInfo.html</loc></url>
+<url><loc>https://ms609.github.io/TreeDist/dev/reference/HierarchicalMutualInformation.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/Islands.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/JaccardRobinsonFoulds.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/KMeansPP.html</loc></url>
@@ -50,6 +54,7 @@
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/TreeDistance.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/TreeInfo.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/VisualizeMatching.html</loc></url>
+<url><loc>https://ms609.github.io/TreeDist/dev/reference/clone.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/cluster-statistics.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/dot-MASTSizeEdges.html</loc></url>
 <url><loc>https://ms609.github.io/TreeDist/dev/reference/dot-PairMean.html</loc></url>

@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">TreeDist</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.10.1.9001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">2.11.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -166,7 +166,7 @@ tree.<br>
 We can view an optimal matching:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">ClusteringInfoDistance</span>, <span class="va">tree1</span>, <span class="va">tree2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Using-TreeDist_files/figure-html/visualise-matching-1.png" alt="Pair of similar phylogenetic trees with matched splits highlighted according to the amount of clustering information in common." width="90%" style="display: block; margin: auto;"></p>
+<p><img src="Using-TreeDist_files/figure-html/visualise-matching-1.png" class="r-plt" alt="Pair of similar phylogenetic trees with matched splits highlighted according to the amount of clustering information in common." width="90%" style="display: block; margin: auto;"></p>
 <p>This shows the six splits in tree 1, and the paired splits in tree
 two.<br>
 Each split is labelled with a measure of its similarity, which is its
@@ -213,7 +213,7 @@ node in the original tree:</p>
 <span><span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/nodelabels.html" class="external-link">nodelabels</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/nodelabels.html" class="external-link">nodelabels</a></span><span class="op">(</span><span class="va">splits</span>, <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">splits</span><span class="op">)</span><span class="op">)</span>, </span>
 <span>                adj <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.1</span>, <span class="op">-</span><span class="fl">0.2</span><span class="op">)</span>, cex <span class="op">=</span> <span class="fl">0.8</span>, frame <span class="op">=</span> <span class="st">'none'</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Using-TreeDist_files/figure-html/named-splits-1.png" alt="Phylogenetic tree with nodes numbered, and labelled with the splits to which they correspond." width="80%" style="display: block; margin: auto;"></p>
+<p><img src="Using-TreeDist_files/figure-html/named-splits-1.png" class="r-plt" alt="Phylogenetic tree with nodes numbered, and labelled with the splits to which they correspond." width="80%" style="display: block; margin: auto;"></p>
 <p>Note that strictly, (informative) splits are associated with
 (internal) edges. To avoid listing the same split twice, nodes close to
 the root (here, 10 and 11) will not be associated with a split.</p>
@@ -246,7 +246,7 @@ distance-based tree spaces</p></li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
