@@ -83,7 +83,7 @@
                         <h4 data-toc-skip class="author"><a href="https://smithlabdurham.github.io/" class="external-link">Martin R. Smith</a></h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/2.11.1/vignettes/different-leaves.Rmd" class="external-link"><code>vignettes/different-leaves.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/ms609/TreeDist/blob/main/vignettes/different-leaves.Rmd" class="external-link"><code>vignettes/different-leaves.Rmd</code></a></small>
       <div class="d-none name"><code>different-leaves.Rmd</code></div>
     </div>
 
@@ -126,7 +126,7 @@ identical trees – except that some leaves present in one tree (here,
 <span>      main <span class="op">=</span> <span class="st">"balAL"</span>, main2 <span class="op">=</span> <span class="st">"balCL"</span>,</span>
 <span>      font <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="co"># Emphasize missing tips</span></span>
 <span>      <span class="op">)</span></span></code></pre></div>
-<p><img src="different-leaves_files/figure-html/drop-some-plot-1.png" width="768"></p>
+<p><img src="different-leaves_files/figure-html/drop-some-plot-1.png" class="r-plt" width="768"></p>
 <p>From an information theoretic perspective, all the information
 present in our reduced tree is also present in the complete tree. The
 information held in common between the trees is thus equal to the
@@ -161,12 +161,12 @@ pair of trees has no leaves in common.</p>
 <code class="sourceCode R"><span><span class="co"># Information in common (bits)</span></span>
 <span><span class="va">raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeDistance.html">MutualClusteringInfo</a></span><span class="op">(</span><span class="va">treeList</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/heatmap.html" class="external-link">heatmap</a></span><span class="op">(</span><span class="va">raw</span>, symm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="different-leaves_files/figure-html/full-list-1.png" width="700"></p>
+<p><img src="different-leaves_files/figure-html/full-list-1.png" class="r-plt" width="700"></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Normalized</span></span>
 <span><span class="va">normalized</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/TreeDistance.html">MutualClusteringInfo</a></span><span class="op">(</span><span class="va">treeList</span>, normalize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/heatmap.html" class="external-link">heatmap</a></span><span class="op">(</span><span class="va">normalized</span>, symm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="different-leaves_files/figure-html/full-list-2.png" width="700"></p>
+<p><img src="different-leaves_files/figure-html/full-list-2.png" class="r-plt" width="700"></p>
 <p>A more nuanced perspective may be obtained by computing the range of
 distances that could in principle be obtained if missing tips were added
 to each tree. This is not yet implemented in ‘TreeDist’.</p>
@@ -180,7 +180,7 @@ to each tree. This is not yet implemented in ‘TreeDist’.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

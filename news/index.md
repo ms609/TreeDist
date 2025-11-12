@@ -1,0 +1,363 @@
+# Changelog
+
+## TreeDist 2.11.1 (2025-10-13)
+
+CRAN release: 2025-10-13
+
+- Improve robustness of
+  [`SpectralEigens()`](https://ms609.github.io/TreeDist/reference/SpectralEigens.md)
+  tests.
+
+## TreeDist 2.11.0 (2025-09-26)
+
+CRAN release: 2025-09-28
+
+- [`HierarchicalMutualInformation()`](https://ms609.github.io/TreeDist/reference/HierarchicalMutualInformation.md)
+  calculates the information shared between pairs of hierarchical
+  partition structures .
+
+- Fix bug in calculation of
+  [`MutualClusteringInfo()`](https://ms609.github.io/TreeDist/reference/TreeDistance.md):
+  the matching chosen was not always the global optimum, causing
+  distances to be overestimated in some circumstances
+  ([\#163](https://github.com/ms609/TreeDist/issues/162)).
+
+- Fix crash in `robinson_foulds_all_pairs()` and `RobinsonFoulds(list)`.
+
+- Support larger trees in NNI distance calculations.
+
+## TreeDist 2.10.1 (2025-08-24)
+
+CRAN release: 2025-08-25
+
+- Compiler-safe vector initialization, resolving M1-SAN warnings.
+
+## TreeDist 2.10.0 (2025-08-22)
+
+CRAN release: 2025-08-22
+
+**Note** - this release **introduced a bug** in the computation of the
+mutual clustering information / clustering information distance. The
+globally optimal matching between splits was not always found. This was
+**fixed in v2.11.0**.
+
+- [`Ntropy()`](https://ms609.github.io/TreeDist/reference/Entropy.md)
+  computes entropy from integer counts.
+
+- C++ optimizations and reformatting:
+
+  - Faster tree distance calculation.
+  - 2x speed-up of LAPJV for large matrices.
+
+- Require R4.0; discontinue tests against R 3.6 and 4.0.
+
+## TreeDist 2.9.2 (2025-01-11)
+
+CRAN release: 2025-01-11
+
+- Fix crash when calculating NNI distance for large trees.
+
+## TreeDist 2.9.1 (2024-09-05)
+
+CRAN release: 2024-09-07
+
+- Avoid false positive in MKL testing environment.
+
+## TreeDist 2.9.0 (2024-09-03)
+
+CRAN release: 2024-09-03
+
+- [`VisualizeMatching()`](https://ms609.github.io/TreeDist/reference/VisualizeMatching.md)
+  allows more control over output format, and returns the matching
+  ([\#124](https://github.com/ms609/TreeDist/issues/124)).
+
+- `DistanceFromMedian(Average = median)` allows calculation of MAD.
+
+- [`SpectralEigens()`](https://ms609.github.io/TreeDist/reference/SpectralEigens.md)
+  returns correct eigenvalues (smallest was overlooked).
+
+- [`SpectralEigens()`](https://ms609.github.io/TreeDist/reference/SpectralEigens.md)
+  handles values of `nEig` larger than the input.
+
+- Anticipate new behaviour of `unlist(use.names = TRUE)` in R 4.5.
+
+## TreeDist 2.8.0 (2024-07-25)
+
+CRAN release: 2024-07-26
+
+- [`Islands()`](https://ms609.github.io/TreeDist/reference/Islands.md)
+  allows the identification of islands of trees.
+
+- Internal implementation of path and SPR distances, removing dependency
+  on phangorn (and thus R 4.4).
+
+- Add progress bar within `.MaxValue()`
+
+## TreeDist 2.7.1 (2024-06-13)
+
+- Documentation improvements.
+
+- Fix `KCDiameter.multiPhylo()` for multiple trees.
+
+## TreeDist 2.7.0 (2023-10-25)
+
+CRAN release: 2023-10-25
+
+- Fix calculation error in
+  [`StrainCol()`](https://ms609.github.io/TreeDist/reference/MSTSegments.md).
+
+- App: Display strain in 3D tree space viewer.
+
+- Support for distances between larger trees.
+
+- Support unrooted trees in
+  [`VisualizeMatching()`](https://ms609.github.io/TreeDist/reference/VisualizeMatching.md)
+  ([\#103](https://github.com/ms609/TreeDist/issues/103)).
+
+## TreeDist 2.6.3 (2023-08-25)
+
+CRAN release: 2023-08-25
+
+- Fix bug when comparing a “multiPhylo” object containing a single tree.
+
+- Documentation clarification: finding non-matching leaves.
+
+## TreeDist 2.6.2 (2023-06-28)
+
+CRAN release: 2023-06-29
+
+- Support non-square matrices in
+  [`LAPJV()`](https://ms609.github.io/TreeDist/reference/LAPJV.md).
+
+## TreeDist 2.6.1 (2023-04-25)
+
+CRAN release: 2023-05-01
+
+- [`StopParallel()`](https://ms609.github.io/TreeDist/reference/StartParallel.md)
+  gains `quietly` argument to suppress unnecessary messages.
+
+- Use “PlotTools” package for spectrum legends.
+
+- Minor documentation tweaks.
+
+## TreeDist 2.6.0 (2023-02-20)
+
+CRAN release: 2023-02-20
+
+- Support comparison of trees with different tips.
+
+- Fix caching errors in `MapDist()`
+  ([\#98](https://github.com/ms609/TreeDist/issues/98)).
+
+- Update tests for compatibility with ape 5.7.
+
+## TreeDist 2.5.0 (2022-10-07)
+
+CRAN release: 2022-10-07
+
+- New functions to measure cluster sizes (see
+  [`?"cluster-statistics"`](https://ms609.github.io/TreeDist/reference/cluster-statistics.html)).
+
+- [`KMeansPP()`](https://ms609.github.io/TreeDist/reference/KMeansPP.md)
+  conducts clustering using K-means++, replacing K-means in app.
+
+- New
+  [vignette](https://ms609.github.io/TreeDist/articles/landscapes.html)
+  on tree landscape analysis.
+
+## TreeDist 2.4.1 (2022-07-20)
+
+CRAN release: 2022-07-20
+
+- New
+  [vignette](https://ms609.github.io/TreeDist/articles/compare-treesets.html)
+  on how to compare tree sets.
+
+- [`PathVector()`](https://ms609.github.io/TreeDist/reference/KendallColijn.md)
+  now treats trees with a root node as rooted.
+
+- Fix plot layout in [treespace
+  vignette](https://ms609.github.io/TreeDist/articles/treespace.html).
+
+- Informative failure when not enough memory for `consensus_info()`.
+
+- Replace `throw` with `stop` in C++.
+
+## TreeDist 2.4.0 (2022-03-23)
+
+CRAN release: 2022-03-23
+
+- Correct calculation of trustworthiness and continuity metrics.
+
+- Depict strain in minimum spanning trees with
+  [`StrainCol()`](https://ms609.github.io/TreeDist/reference/MSTSegments.md)
+  and helper function
+  [`MSTSegments()`](https://ms609.github.io/TreeDist/reference/MSTSegments.md).
+
+- Update tests for consistency with “TreeTools” v1.7.
+
+- Use lighter Rcpp headers.
+
+## TreeDist 2.3.0 (2022-01-04)
+
+CRAN release: 2022-01-03
+
+- Support `ConsensusInfo(p > 0.5)`.
+
+- Address hypervolume comparison in vignettes.
+
+- Support uniform manifold approximation and projection in app.
+
+## TreeDist 2.2.0 (2021-09-13)
+
+CRAN release: 2021-09-13
+
+- Speed improvements, using optimizations suggested by Alexis
+  Stamatakis’ Bioinformatics group.
+
+- Support for parallel computation via
+  [`StartParallel()`](https://ms609.github.io/TreeDist/reference/StartParallel.md).
+
+- Progress bars.
+
+## TreeDist 2.1.1 (2021-07-13)
+
+CRAN release: 2021-07-13
+
+- Solaris compatibility.
+
+- Modest vignette improvements.
+
+- spic/scic abbreviation recognition.
+
+## TreeDist 2.1.0 (2021-07-12)
+
+CRAN release: 2021-07-12
+
+### New features
+
+- [`ConsensusInfo()`](https://ms609.github.io/TreeDist/reference/TreeInfo.md)
+  quickly calculates the splitwise information content of the consensus
+  of a set of trees, after Smith (forthcoming).
+
+- [`SplitwiseInfo()`](https://ms609.github.io/TreeDist/reference/TreeInfo.md)
+  and
+  [`ClusteringInfo()`](https://ms609.github.io/TreeDist/reference/TreeInfo.md)
+  gain a `p` parameter to reflect the reduced information content of
+  splits with lower support values, and a `sum` parameter to allow
+  return of individual split information content.
+
+- [`KCDiameter()`](https://ms609.github.io/TreeDist/reference/KendallColijn.md)
+  approximates the diameter of the Kendall-Colijn metric.
+
+- [`Plot3()`](https://ms609.github.io/TreeDist/reference/Plot3.md)
+  (experimental) provides pseudo-3D plotting.
+
+### Renamed functions
+
+- [`Project()`](https://ms609.github.io/TreeDist/reference/MapTrees.md)/[`ProjectionQuality()`](https://ms609.github.io/TreeDist/reference/MappingQuality.md)
+  re-named to
+  [`MapTrees()`](https://ms609.github.io/TreeDist/reference/MapTrees.md)/[`MappingQuality()`](https://ms609.github.io/TreeDist/reference/MappingQuality.md).
+
+- [`SpectralClustering()`](https://ms609.github.io/TreeDist/reference/SpectralEigens.md)
+  re-named to
+  [`SpectralEigens()`](https://ms609.github.io/TreeDist/reference/SpectralEigens.md).
+
+### Improvements
+
+- Add self-organizing map example to treespace vignette.
+
+- Allow the specification of custom vectors in the Kendall–Colijn
+  metric.
+
+- Faster all-to-all tree distance calculation.
+
+## TreeDist 2.0.3 (2021-01-31)
+
+CRAN release: 2021-01-31
+
+- Diagnose and fix memory leaks, including over-long reported matchings.
+
+- Explicitly import shiny/shinyjs functions.
+
+## TreeDist 2.0.0 (2021-01-20)
+
+CRAN release: 2021-01-20
+
+- [`Project()`](https://ms609.github.io/TreeDist/reference/MapTrees.md)
+  launches ‘shiny’ app for projection and analysis of tree space.
+
+- [`ProjectionQuality()`](https://ms609.github.io/TreeDist/reference/MappingQuality.md)
+  calculates trustworthiness and continuity of tree space mappings.
+
+- Faster calculation of Robinson–Foulds distance (using algorithm of Day
+  (1985)) and clustering information distance.
+
+- New class `ClusterTable` to allow faster distance computation with
+  Day (1985) algorithm.
+
+- Improve error messages in `CalculateTreeDist()`.
+
+- Improvements to vignettes.
+
+- Use package ‘vdiffr’ conditionally.
+
+## TreeDist 1.2.1 (2020-09-17)
+
+CRAN release: 2020-09-17
+
+- Import RdMacros package ‘RdPack’.
+
+## TreeDist 1.2.0 (2020-08-28)
+
+CRAN release: 2020-08-28
+
+- [`TreeDistance()`](https://ms609.github.io/TreeDist/reference/TreeDistance.md)
+  and related functions now return a `dist` object when computing all
+  distances between all pairs of trees in a list.
+
+- Improve floating-point arithmetic in
+  [`TreeDistance()`](https://ms609.github.io/TreeDist/reference/TreeDistance.md)
+  functions.
+
+- [`TreeDistance()`](https://ms609.github.io/TreeDist/reference/TreeDistance.md)
+  now returns a distance (as documented), rather than a similarity.
+
+- Fix rounding error in NNI ‘Li’ upper estimate, and improve NNI
+  performance.
+
+- Reduce precision of LAPJV so rounding errors do not result in
+  interminable run times.
+
+## TreeDist 1.1.1 (2020-07-10)
+
+CRAN release: 2020-07-10
+
+- Fix range errors when calculating tree distances.
+
+## TreeDist 1.1.0
+
+- Improvements to
+  [`NNIDist()`](https://ms609.github.io/TreeDist/reference/NNIDist.md)
+  in light of Fack *et al.* (2002).
+
+- Add
+  [`NNIDiameter()`](https://ms609.github.io/TreeDist/reference/NNIDist.md):
+  approximate diameter of NNI distance.
+
+- Remove vignette ‘Interpreting tree distances’: duplicates
+  <https://ms609.github.io/TreeDistData/articles/09-expected-similarity.html>.
+
+- Remove redundant data object `oneOverlap`.
+
+- Fix an issue when installing on R 3.x (require C++11 to ensure
+  declaration of `UINT_FAST16_MAX`).
+
+- Fix memory-handling bug in `lapjv()`.
+
+## TreeDist 1.0.0 (2020-06-30)
+
+CRAN release: 2020-06-30
+
+- Initial release, building on some draft functions included in
+  ‘[TreeSearch](https://ms609.github.io/TreeSearch/)’ 0.3.2.9005.
