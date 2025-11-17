@@ -48,6 +48,7 @@ jobs:
         config:
           - {os: windows-latest, r: 'release'}
           - {os: macOS-latest, r: 'release'}
+          - {os: macos-15-intel, r: 'release'} # Until Intel architecture retired 2027-11
           - {os: ubuntu-22.04, r: '4.1',
           rspm: "https://packagemanager.rstudio.com/cran/__linux__/jammy/latest"}
           - {os: ubuntu-24.04, r: 'release',

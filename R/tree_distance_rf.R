@@ -74,7 +74,7 @@ InfoRobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
   }
   
   # In case of floating point inaccuracy
-  unnormalized[unnormalized < .Machine[["double.eps"]]^0.5] <- 0
+  unnormalized[unnormalized < .Machine[["double.eps"]] ^ 0.5] <- 0
   
   # Return:
   NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
