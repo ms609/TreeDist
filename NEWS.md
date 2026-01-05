@@ -1,6 +1,11 @@
+# TreeDist 2.11.1.9001 (development)
+
+- Distance measures support larger trees.
+
 # TreeDist 2.11.1.9000 (2025-11-13)
 
 - `AHMI()` now returns negative values (previously zeroed in error).
+
 
 # TreeDist 2.11.1 (2025-10-13)
 

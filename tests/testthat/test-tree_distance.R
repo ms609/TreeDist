@@ -531,6 +531,12 @@ test_that("Clustering information is correctly calculated", {
   NormalizationTest(MutualClusteringInfo)
 })
 
+test_that("Heap-sized trees are supported", {
+  bigTree <- TreeTools::BalancedTree(3000)
+  expect_equal(MutualClusteringInfo(bigTree, bigTree),
+               ClusteringEntropy(bigTree))
+})
+
 test_that("Matchings are correct", {
   
   # Different resolution: used to cause memory leak
