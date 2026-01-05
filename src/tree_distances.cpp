@@ -15,17 +15,17 @@ using TreeTools::SplitList;
 using TreeTools::count_bits;
 
 namespace TreeDist {
-
-template <typename T>
-inline void resize_uninitialized(std::vector<T>& v, std::size_t n) {
-  static_assert(std::is_trivial<T>::value, "Requires trivial type");
-  if (n > v.size()) {
-    v.reserve(n);
-    v.insert(v.end(), n - v.size(), T{});
-  } else {
-    v.resize(n);
+  
+  template <typename T>
+  inline void resize_uninitialized(std::vector<T>& v, std::size_t n) {
+    static_assert(std::is_trivial<T>::value, "Requires trivial type");
+    if (n > v.size()) {
+      v.reserve(n);
+      v.insert(v.end(), n - v.size(), T{});
+    } else {
+      v.resize(n);
+    }
   }
-}
 
   void check_ntip(const double n) {
     if (n > static_cast<double>(std::numeric_limits<int16>::max())) {
@@ -662,5 +662,4 @@ List cpp_shared_phylo (const RawMatrix &x, const RawMatrix &y,
   
   return List::create(Named("score") = final_score,
                       _["matching"] = final_matching);
-
 }
