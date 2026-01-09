@@ -19,8 +19,8 @@ being put.
 
 The default normalization behaviour of each function when
 `normalize = TRUE` is listed in the [function
-reference](https://ms609.github.io/TreeDist/dev/reference/00Index.md),
-or can be viewed by typing `?FunctionName` in the R terminal.
+reference](https://ms609.github.io/TreeDist/dev/reference/), or can be
+viewed by typing `?FunctionName` in the R terminal.
 
 ### Nye *et al.* tree similarity
 
