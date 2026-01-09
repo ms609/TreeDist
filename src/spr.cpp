@@ -124,7 +124,8 @@ IntegerVector confusion (const RawMatrix x, const RawMatrix y) {
       *(--ret_ptr) = a_and_b;
     }
   }
-  Rf_setAttrib(ret, Rf_install("dim"), Dimension(confusion_size, n_split, n_split));
+  static SEXP dim_sym = Rf_install("dim");
+  Rf_setAttrib(ret, dim_sym, Dimension(confusion_size, n_split, n_split));
   return ret;
 }
 
@@ -177,8 +178,10 @@ List keep_and_reroot(const List tree1,
                                  _["Nnode"] = n_node,
                                  _["tip.label"] = CharacterVector(0));
     
-    Rf_setAttrib(nullTree, Rf_install("class"), Rcpp::wrap("phylo"));
-    Rf_setAttrib(nullTree, Rf_install("order"), Rcpp::wrap("preorder"));
+    static SEXP class_sym = Rf_install("class");
+    static SEXP order_sym = Rf_install("order");
+    Rf_setAttrib(nullTree, class_sym, Rcpp::wrap("phylo"));
+    Rf_setAttrib(nullTree, order_sym, Rcpp::wrap("preorder"));
     return List::create(nullTree, nullTree);
   }
   
@@ -208,10 +211,12 @@ List keep_and_reroot(const List tree1,
        ret2 = List::create(Named("edge") = ret_edge2,
                            _["Nnode"] = n_node,
                            _["tip.label"] = new_labels);
-  Rf_setAttrib(ret1, Rf_install("class"), Rcpp::wrap("phylo"));
-  Rf_setAttrib(ret1, Rf_install("order"), Rcpp::wrap("preorder"));
-  Rf_setAttrib(ret2, Rf_install("class"), Rcpp::wrap("phylo"));
-  Rf_setAttrib(ret2, Rf_install("order"), Rcpp::wrap("preorder"));
+  static SEXP class_sym = Rf_install("class");
+  static SEXP order_sym = Rf_install("order");
+  Rf_setAttrib(ret1, class_sym, Rcpp::wrap("phylo"));
+  Rf_setAttrib(ret1, order_sym, Rcpp::wrap("preorder"));
+  Rf_setAttrib(ret2, class_sym, Rcpp::wrap("phylo"));
+  Rf_setAttrib(ret2, order_sym, Rcpp::wrap("preorder"));
   return List::create(
     TreeTools::root_on_node(ret1, 1),
     TreeTools::root_on_node(ret2, 1)
@@ -234,8 +239,10 @@ List keep_and_reduce(const List tree1,
                                  _["Nnode"] = 0,
                                  _["tip.label"] = CharacterVector(0));
     
-    Rf_setAttrib(nullTree, Rf_install("class"), Rcpp::wrap("phylo"));
-    Rf_setAttrib(nullTree, Rf_install("order"), Rcpp::wrap("preorder"));
+    static SEXP class_sym = Rf_install("class");
+    static SEXP order_sym = Rf_install("order");
+    Rf_setAttrib(nullTree, class_sym, Rcpp::wrap("phylo"));
+    Rf_setAttrib(nullTree, order_sym, Rcpp::wrap("preorder"));
     return List::create(nullTree, nullTree);
   }
   

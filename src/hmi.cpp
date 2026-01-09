@@ -217,11 +217,18 @@ Rcpp::NumericVector EHMI_xptr(SEXP hp1_ptr, SEXP hp2_ptr,
   double runSEM = runSD / std::sqrt(runN);
   
   Rcpp::NumericVector result = Rcpp::NumericVector::create(runMean);
-  Rf_setAttrib(result, Rf_install("var"), Rcpp::wrap(runVar));
-  Rf_setAttrib(result, Rf_install("sd"), Rcpp::wrap(runSD));
-  Rf_setAttrib(result, Rf_install("sem"), Rcpp::wrap(runSEM));
-  Rf_setAttrib(result, Rf_install("samples"), Rcpp::wrap(runN));
-  Rf_setAttrib(result, Rf_install("relativeError"), Rcpp::wrap(relativeError));
+  // Cache symbols to avoid repeated string-to-symbol lookups
+  static SEXP var_sym = Rf_install("var");
+  static SEXP sd_sym = Rf_install("sd");
+  static SEXP sem_sym = Rf_install("sem");
+  static SEXP samples_sym = Rf_install("samples");
+  static SEXP relativeError_sym = Rf_install("relativeError");
+  
+  Rf_setAttrib(result, var_sym, Rcpp::wrap(runVar));
+  Rf_setAttrib(result, sd_sym, Rcpp::wrap(runSD));
+  Rf_setAttrib(result, sem_sym, Rcpp::wrap(runSEM));
+  Rf_setAttrib(result, samples_sym, Rcpp::wrap(runN));
+  Rf_setAttrib(result, relativeError_sym, Rcpp::wrap(relativeError));
   
   return result;
 }

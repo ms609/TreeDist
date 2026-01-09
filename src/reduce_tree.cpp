@@ -325,16 +325,20 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
   auto x_ret = Rcpp::List::create(Rcpp::Named("edge") = x_final,
                                   Rcpp::_["Nnode"] = kept_edges / 2,
                                   Rcpp::_["tip.label"] = tip_label);
-  Rf_setAttrib(x_ret, Rf_install("order"), Rcpp::wrap("postorder"));
-  Rf_setAttrib(x_ret, Rf_install("class"), Rcpp::wrap("phylo"));
+  // Cache symbols to avoid repeated string-to-symbol lookups
+  static SEXP order_sym = Rf_install("order");
+  static SEXP class_sym = Rf_install("class");
+  
+  Rf_setAttrib(x_ret, order_sym, Rcpp::wrap("postorder"));
+  Rf_setAttrib(x_ret, class_sym, Rcpp::wrap("phylo"));
   
   auto y_ret = Rcpp::List::create(Rcpp::Named("edge") = y_final,
                                   Rcpp::_["Nnode"] = kept_edges / 2,
                                   Rcpp::_["tip.label"] = clone(tip_label));
-  Rf_setAttrib(y_ret, Rf_install("order"), Rcpp::wrap("postorder"));
-  Rf_setAttrib(y_ret, Rf_install("class"), Rcpp::wrap("phylo"));
+  Rf_setAttrib(y_ret, order_sym, Rcpp::wrap("postorder"));
+  Rf_setAttrib(y_ret, class_sym, Rcpp::wrap("phylo"));
   
   auto ret = Rcpp::List::create(x_ret, y_ret);
-  Rf_setAttrib(ret, Rf_install("class"), Rcpp::wrap("multiPhylo"));
+  Rf_setAttrib(ret, class_sym, Rcpp::wrap("multiPhylo"));
   return ret;
 }
