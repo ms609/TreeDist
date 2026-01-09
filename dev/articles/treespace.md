@@ -478,7 +478,7 @@ if (umatrixInstalled) {
     ## ℹ See also `vignette("ggplot2-in-packages")` for more information.
     ## ℹ The deprecated feature was likely used in the Umatrix package.
     ##   Please report the issue to the authors.
-    ## This warning is displayed once every 8 hours.
+    ## This warning is displayed once per session.
     ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
     ## generated.
 
@@ -486,7 +486,7 @@ if (umatrixInstalled) {
     ## ℹ Please use `linewidth` instead.
     ## ℹ The deprecated feature was likely used in the Umatrix package.
     ##   Please report the issue to the authors.
-    ## This warning is displayed once every 8 hours.
+    ## This warning is displayed once per session.
     ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
     ## generated.
 

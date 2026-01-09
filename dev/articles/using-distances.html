@@ -105,8 +105,8 @@ obvious. Selecting an appropriate normalizing constant may require
 careful consideration of the purpose to which a tree distance metric is
 being put.</p>
 <p>The default normalization behaviour of each function when
-<code>normalize = TRUE</code> is listed in the <a href="../reference/index.html">function reference</a>, or can be viewed
-by typing <code>?FunctionName</code> in the R terminal.</p>
+<code>normalize = TRUE</code> is listed in the <a href="../reference/00Index.html">function reference</a>, or can be
+viewed by typing <code>?FunctionName</code> in the R terminal.</p>
 <div class="section level3">
 <h3 id="nye-et-al--tree-similarity">Nye <em>et al.</em> tree similarity<a class="anchor" aria-label="anchor" href="#nye-et-al--tree-similarity"></a>
 </h3>
@@ -119,7 +119,7 @@ imperfectly-resolved trees.</p>
 <span><span class="va">tree2</span> <span class="op">&lt;-</span> <span class="fu">ape</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/read.tree.html" class="external-link">read.tree</a></span><span class="op">(</span>text <span class="op">=</span> <span class="st">'(A, (B, (C, D, E, (J, K)), (F, (G, H, I))));'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">NyeSimilarity</span>, <span class="va">tree1</span>, <span class="va">tree2</span>,</span>
 <span>                  Plot <span class="op">=</span> <span class="va">TreeDistPlot</span>, matchZeros <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="using-distances_files/figure-html/unnamed-chunk-1-1.png" class="r-plt" width="90%" style="display: block; margin: auto;"></p>
+<p><img src="using-distances_files/figure-html/unnamed-chunk-1-1.png" class="r-plt" alt="" width="90%" style="display: block; margin: auto;"></p>
 <p>This is a nice metric to start with, because the maximum similarity
 between each pair of splits is defined as one. (Astute readers might
 worry that the minimum similarity is greater than zero – that’s a harder
@@ -242,7 +242,7 @@ view (normalized) distances for a selection of methods:</p>
 <span>         <span class="op">)</span>, col <span class="op">=</span> <span class="va">methodCol</span><span class="op">[</span><span class="va">methods</span><span class="op">]</span>, pos <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">oldPar</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p><img src="using-distances_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" width="672"></p>
+<p><img src="using-distances_files/figure-html/unnamed-chunk-10-1.png" class="r-plt" alt="" width="672"></p>
 <p>or use these calculated values to normalize our tree distance:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">expectedCID</span> <span class="op">&lt;-</span> <span class="va">randomTreeDistances</span><span class="op">[</span><span class="st">"cid"</span>, <span class="st">"mean"</span>, <span class="st">"9"</span><span class="op">]</span></span>
@@ -276,15 +276,15 @@ tree with reference to a known “true” tree:</p>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">MutualClusteringInfo</span>, <span class="va">testTrees</span><span class="op">$</span><span class="va">trueTree</span>, <span class="va">testTrees</span><span class="op">$</span><span class="va">lackRes</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">7.5</span>, pch <span class="op">=</span> <span class="fl">2</span>, cex <span class="op">=</span> <span class="fl">3</span>, col <span class="op">=</span> <span class="st">"#E69F00"</span>, xpd <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></code></pre></div>
-<p><img src="using-distances_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" width="80%" style="display: block; margin: auto;"></p>
+<p><img src="using-distances_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="" width="80%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">MutualClusteringInfo</span>, <span class="va">testTrees</span><span class="op">$</span><span class="va">trueTree</span>, <span class="va">testTrees</span><span class="op">$</span><span class="va">smallErr</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">7.5</span>, pch <span class="op">=</span> <span class="fl">3</span>, cex <span class="op">=</span> <span class="fl">3</span>, col <span class="op">=</span> <span class="st">"#56B4E9"</span>, xpd <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></code></pre></div>
-<p><img src="using-distances_files/figure-html/unnamed-chunk-12-2.png" class="r-plt" width="80%" style="display: block; margin: auto;"></p>
+<p><img src="using-distances_files/figure-html/unnamed-chunk-12-2.png" class="r-plt" alt="" width="80%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/VisualizeMatching.html">VisualizeMatching</a></span><span class="op">(</span><span class="va">MutualClusteringInfo</span>, <span class="va">testTrees</span><span class="op">$</span><span class="va">trueTree</span>, <span class="va">testTrees</span><span class="op">$</span><span class="va">bigErr</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/points.html" class="external-link">points</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">7.5</span>, pch <span class="op">=</span> <span class="fl">4</span>, cex <span class="op">=</span> <span class="fl">3</span>, col <span class="op">=</span> <span class="st">"#009E73"</span>, xpd <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></code></pre></div>
-<p><img src="using-distances_files/figure-html/unnamed-chunk-12-3.png" class="r-plt" width="80%" style="display: block; margin: auto;"></p>
+<p><img src="using-distances_files/figure-html/unnamed-chunk-12-3.png" class="r-plt" alt="" width="80%" style="display: block; margin: auto;"></p>
 <p>Better trees plot vertically towards the “100% shared information”
 vertex. Resolution of trees increases towards the right; trees that are
 more resolved may be no better than less-resolved trees if the addition
@@ -309,7 +309,7 @@ of resolution introduces error.</p>
 <span>                pch <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, cex <span class="op">=</span> <span class="fl">2</span>, col <span class="op">=</span> <span class="fu">Ternary</span><span class="fu">::</span><span class="va"><a href="https://ms609.github.io/Ternary/reference/cbPalettes.html" class="external-link">cbPalette8</a></span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">oldPar</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p><img src="using-distances_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" width="50%" style="display: block; margin: auto;"></p>
+<p><img src="using-distances_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="" width="50%" style="display: block; margin: auto;"></p>
 <div class="section level3">
 <h3 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h3>
@@ -437,7 +437,7 @@ trees <span style="background-color:#9CE0E699"> blue </span>:</p>
 <span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Install \"TreeSearch\" and \"Ternary\" to generate this plot"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p><img src="using-distances_files/figure-html/unnamed-chunk-22-1.png" class="r-plt" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="using-distances_files/figure-html/unnamed-chunk-22-1.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"></p>
 <p>In the ternary plot, the vertical direction corresponds to the
 normalized tree quality, as depicted in the accompanying histogram.</p>
 </div>
