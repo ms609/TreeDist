@@ -325,16 +325,16 @@ Rcpp::List reduce_trees(const IntegerMatrix x,
   auto x_ret = Rcpp::List::create(Rcpp::Named("edge") = x_final,
                                   Rcpp::_["Nnode"] = kept_edges / 2,
                                   Rcpp::_["tip.label"] = tip_label);
-  x_ret.attr("order") = "postorder";
-  x_ret.attr("class") = "phylo";
+  Rf_setAttrib(x_ret, Rf_install("order"), Rcpp::wrap("postorder"));
+  Rf_setAttrib(x_ret, Rf_install("class"), Rcpp::wrap("phylo"));
   
   auto y_ret = Rcpp::List::create(Rcpp::Named("edge") = y_final,
                                   Rcpp::_["Nnode"] = kept_edges / 2,
                                   Rcpp::_["tip.label"] = clone(tip_label));
-  y_ret.attr("order") = "postorder";
-  y_ret.attr("class") = "phylo";
+  Rf_setAttrib(y_ret, Rf_install("order"), Rcpp::wrap("postorder"));
+  Rf_setAttrib(y_ret, Rf_install("class"), Rcpp::wrap("phylo"));
   
   auto ret = Rcpp::List::create(x_ret, y_ret);
-  ret.attr("class") = "multiPhylo";
+  Rf_setAttrib(ret, Rf_install("class"), Rcpp::wrap("multiPhylo"));
   return ret;
 }

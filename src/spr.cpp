@@ -124,7 +124,7 @@ IntegerVector confusion (const RawMatrix x, const RawMatrix y) {
       *(--ret_ptr) = a_and_b;
     }
   }
-  ret.attr("dim") = Dimension(confusion_size, n_split, n_split);
+  Rf_setAttrib(ret, Rf_install("dim"), Dimension(confusion_size, n_split, n_split));
   return ret;
 }
 
@@ -177,8 +177,8 @@ List keep_and_reroot(const List tree1,
                                  _["Nnode"] = n_node,
                                  _["tip.label"] = CharacterVector(0));
     
-    nullTree.attr("class") = "phylo";
-    nullTree.attr("order") = "preorder";
+    Rf_setAttrib(nullTree, Rf_install("class"), Rcpp::wrap("phylo"));
+    Rf_setAttrib(nullTree, Rf_install("order"), Rcpp::wrap("preorder"));
     return List::create(nullTree, nullTree);
   }
   
@@ -208,10 +208,10 @@ List keep_and_reroot(const List tree1,
        ret2 = List::create(Named("edge") = ret_edge2,
                            _["Nnode"] = n_node,
                            _["tip.label"] = new_labels);
-  ret1.attr("class") = "phylo";
-  ret1.attr("order") = "preorder";
-  ret2.attr("class") = "phylo";
-  ret2.attr("order") = "preorder";
+  Rf_setAttrib(ret1, Rf_install("class"), Rcpp::wrap("phylo"));
+  Rf_setAttrib(ret1, Rf_install("order"), Rcpp::wrap("preorder"));
+  Rf_setAttrib(ret2, Rf_install("class"), Rcpp::wrap("phylo"));
+  Rf_setAttrib(ret2, Rf_install("order"), Rcpp::wrap("preorder"));
   return List::create(
     TreeTools::root_on_node(ret1, 1),
     TreeTools::root_on_node(ret2, 1)
@@ -234,8 +234,8 @@ List keep_and_reduce(const List tree1,
                                  _["Nnode"] = 0,
                                  _["tip.label"] = CharacterVector(0));
     
-    nullTree.attr("class") = "phylo";
-    nullTree.attr("order") = "preorder";
+    Rf_setAttrib(nullTree, Rf_install("class"), Rcpp::wrap("phylo"));
+    Rf_setAttrib(nullTree, Rf_install("order"), Rcpp::wrap("preorder"));
     return List::create(nullTree, nullTree);
   }
   

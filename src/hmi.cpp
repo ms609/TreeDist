@@ -217,11 +217,11 @@ Rcpp::NumericVector EHMI_xptr(SEXP hp1_ptr, SEXP hp2_ptr,
   double runSEM = runSD / std::sqrt(runN);
   
   Rcpp::NumericVector result = Rcpp::NumericVector::create(runMean);
-  result.attr("var") = runVar;
-  result.attr("sd") = runSD;
-  result.attr("sem") = runSEM;
-  result.attr("samples") = runN;
-  result.attr("relativeError") = relativeError;
+  Rf_setAttrib(result, Rf_install("var"), Rcpp::wrap(runVar));
+  Rf_setAttrib(result, Rf_install("sd"), Rcpp::wrap(runSD));
+  Rf_setAttrib(result, Rf_install("sem"), Rcpp::wrap(runSEM));
+  Rf_setAttrib(result, Rf_install("samples"), Rcpp::wrap(runN));
+  Rf_setAttrib(result, Rf_install("relativeError"), Rcpp::wrap(relativeError));
   
   return result;
 }
