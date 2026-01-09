@@ -28,7 +28,7 @@ Selecting an appropriate normalizing constant may require careful consideration
 of the purpose to which a tree distance metric is being put.
 
 The default normalization behaviour of each function when `normalize = TRUE` is
-listed in the [function reference](../reference/00Index.html), or can be viewed
+listed in the [function reference](../reference/), or can be viewed
 by typing `?FunctionName` in the R terminal.
 
 ### Nye _et al._ tree similarity
