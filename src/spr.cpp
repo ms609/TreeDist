@@ -24,10 +24,12 @@ __attribute__((constructor))                                     \
   
 // [[Rcpp::export]]
 IntegerVector mismatch_size (const RawMatrix x, const RawMatrix y) {
-  // Rcout << "\n Debugging mismatch_size()\n";
-  const int16 n_split = x.rows();
+  if (double(x.rows()) > double(std::numeric_limits<int16>::max())) {
+    Rcpp::stop("This many splits are not (yet) supported.");
+  }
+  const int16 n_split = int16(x.rows());
   if (n_split != y.rows()) {
-    throw std::invalid_argument("Input splits contain same number of splits.");
+    throw std::invalid_argument("`x` and `y` differ in number of splits.");
   }
   if (!x.hasAttribute("nTip")) {
     Rcpp::stop("`x` lacks nTip attribute");
@@ -46,7 +48,7 @@ IntegerVector mismatch_size (const RawMatrix x, const RawMatrix y) {
     last_bin = a.n_bins - 1,
     unset_tips = (n_tip % SL_BIN_SIZE) ? SL_BIN_SIZE - n_tip % SL_BIN_SIZE : 0
   ;
-  const splitbit all_ones = ~(splitbit(0U));
+  constexpr splitbit all_ones = ~(splitbit(0U));
   const splitbit unset_mask = all_ones >> unset_tips;
 
   IntegerVector ret(n_split * n_split);
@@ -85,7 +87,10 @@ IntegerVector mismatch_size (const RawMatrix x, const RawMatrix y) {
 
 // [[Rcpp::export]]
 IntegerVector confusion (const RawMatrix x, const RawMatrix y) {
-  const int16 n_split = x.rows();
+  if (double(x.rows()) > double(std::numeric_limits<int16>::max())) {
+    Rcpp::stop("This many splits are not (yet) supported.");
+  }
+  const int16 n_split = int16(x.rows());
   if (n_split != y.rows()) {
     throw std::invalid_argument("Input splits contain same number of splits.");
   }
@@ -138,7 +143,10 @@ IntegerVector confusion (const RawMatrix x, const RawMatrix y) {
 }
 
 IntegerMatrix reverse (const IntegerMatrix x) {
-  const intx n_edge = x.nrow();
+  if (double(x.nrow()) > double(std::numeric_limits<intx>::max())) {
+    Rcpp::stop("This many edges are not (yet) supported.");
+  }
+  const intx n_edge = intx(x.nrow());
   ASSERT(n_edge % 2 == 0); // Tree is binary
   IntegerMatrix ret(n_edge, 2);
   
@@ -157,9 +165,15 @@ IntegerMatrix reverse (const IntegerMatrix x) {
 List keep_and_reroot(const List tree1,
                      const List tree2,
                      const LogicalVector keep) {
-  IntegerMatrix 
+  IntegerMatrix
     postorder1 = tree1["edge"],
-    postorder2 = tree2["edge"],
+    postorder2 = tree2["edge"]
+  ;
+  
+  ASSERT(postorder1.nrow() % 2 == 0); // Tree is binary
+  ASSERT(postorder2.nrow() % 2 == 0); // Tree is binary
+  
+  IntegerMatrix
     pre1 = reverse(postorder1),
     pre2 = reverse(postorder2)
   ;
@@ -172,16 +186,30 @@ List keep_and_reroot(const List tree1,
   IntegerMatrix ret_edge2 = TreeTools::keep_tip(pre2, keep);
   
   const intx n_node = ret_edge1.nrow() / 2;
+  if (!n_node) {
+    List nullTree = List::create(Named("edge") = ret_edge1,
+                                 _["Nnode"] = n_node,
+                                 _["tip.label"] = CharacterVector(0));
+    
+    nullTree.attr("class") = "phylo";
+    nullTree.attr("order") = "preorder";
+    return List::create(nullTree, nullTree);
+  }
+  
   const intx n_tip = n_node + 1;
   CharacterVector
     old_label = tree1["tip.label"],
     new_labels(n_tip)
   ;
   
-  // Rcout << ret_edge1.nrow() << " rows; Kept " << n_tip << " tips and " << n_node << " nodes.\n";
+  // Rcout << ret_edge1.nrow() << " rows; Kept " << n_tip << " tips and "
+  //       << n_node << " nodes.\n";
   
+  if (old_label.size() > std::numeric_limits<int16>::max()) {
+    Rcpp::stop("This many leaves are not (yet) supported.");
+  }
   intx next_tip = n_tip;
-  for (intx i = old_label.size(); i--; ) {
+  for (intx i = intx(old_label.size()); i--; ) {
     if (keep[i]) {
       --next_tip;
       new_labels[next_tip] = old_label[i];
@@ -200,7 +228,8 @@ List keep_and_reroot(const List tree1,
   ret2.attr("order") = "preorder";
   return List::create(
     TreeTools::root_on_node(ret1, 1),
-    TreeTools::root_on_node(ret2, 1));
+    TreeTools::root_on_node(ret2, 1)
+  );
 }
 
 // [[Rcpp::export]]
@@ -216,6 +245,17 @@ List keep_and_reduce(const List tree1,
   List rerooted2 = rerooted[1];
   IntegerMatrix edge1 = reverse(rerooted1["edge"]);
   IntegerMatrix edge2 = reverse(rerooted2["edge"]);
+  
+  if (edge1.nrow() < 1) {
+    List nullTree = List::create(Named("edge") = NumericMatrix(0, 2),
+                                 _["Nnode"] = 0,
+                                 _["tip.label"] = CharacterVector(0));
+    
+    nullTree.attr("class") = "phylo";
+    nullTree.attr("order") = "preorder";
+    return List::create(nullTree, nullTree);
+  }
+  
   CharacterVector tip_label = rerooted1["tip.label"];
   return reduce_trees(edge1, edge2, tip_label);
 }

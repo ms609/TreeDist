@@ -128,14 +128,21 @@ test_that("Matches are reported", {
   splits1 <- as.Splits(tree1)
   splits2 <- as.Splits(tree2, tree1)
   
+  .ExpectAtOK <- function(at) {
+    expect_equal(4L, length(at))
+    expect_equal(names(at),
+                 c("matching", "matchedSplits", "matchedScores", "pairScores"))
+  }
+  
   Test <- function(Func, relaxed = FALSE, ...) {
+    
     at <- attributes(Func(tree1, tree2, reportMatching = TRUE, ...))
-    expect_equal(3L, length(at))
+    .ExpectAtOK(at)
     
     matchedSplits <- match(splits1, splits2)
     if (relaxed) {
       expect_equal(matchedSplits[!is.na(matchedSplits)],
-                   as.integer(at$matching[c(1, 3, 5)]))
+                   as.integer(at[["matching"]][c(1, 3, 5)]))
     } else {
       cs <- CompatibleSplits(splits1, splits2)
       cs[, matchedSplits] <- FALSE
@@ -144,16 +151,17 @@ test_that("Matches are reported", {
       
       expect_equal(matchedSplits, as.integer(at$matching))
     }
-    ghSplit <- at$matchedSplits[
+    ghSplit <- at[["matchedSplits"]][
       match(as.Splits(c(rep(FALSE, 6), TRUE, TRUE), letters[1:8]),
             splits1[[which(!is.na(matchedSplits))]])]
-    expect_equal("g h | a b c d e f => g h | a b c d e f", ghSplit)
+    expect_equal(ghSplit, "g h | a b c d e f => g h | a b c d e f")
     
     at <- attributes(Func(treeSym8, treeTwoSplits, reportMatching = TRUE, ...))
-    expect_equal(3L, length(at))
-    expect_equal(match(as.Splits(treeSym8), as.Splits(treeTwoSplits, treeSym8)),
-                 as.integer(at$matching))
-    expect_equal("a b | e f g h c d => a b | e f g h c d", at$matchedSplits[[2]])
+    .ExpectAtOK(at)
+    expect_equal(as.integer(at[["matching"]]),
+                 match(as.Splits(treeSym8), as.Splits(treeTwoSplits, treeSym8)))
+    expect_equal(at[["matchedSplits"]][[2]],
+                 "a b | e f g h c d => a b | e f g h c d")
   }
   
   Test(SharedPhylogeneticInfo)
@@ -169,24 +177,25 @@ test_that("Matches are reported", {
   Test(JaccardRobinsonFoulds, k = 2, allowConflict = TRUE)
   Test(RobinsonFoulds, relaxed = TRUE)
   Test(InfoRobinsonFoulds, relaxed = TRUE)
-
-    # Matching Split Distance matches differently:  
+  
+  # Matching Split Distance matches differently:  
   at <- attributes(MatchingSplitDistance(treeSym8, treeBal8, 
                                          reportMatching = TRUE))
-  expect_equal(3L, length(at))
-  expect_equal(c(1:3, 5:4), as.integer(at$matching))
-  expect_equal("a b | e f g h c d => a b | e f g h c d", at$matchedSplits[[5]])
+  .ExpectAtOK(at)
+  expect_equal(as.integer(at$matching), c(1:3, 5:4))
+  expect_equal(at[["matchedSplits"]][[5]],
+               "a b | e f g h c d => a b | e f g h c d")
   
   # Zero match:
   expect_true(attr(SharedPhylogeneticInfo(
-                    ape::read.tree(text="((a, b), (c, d));"),
-                    ape::read.tree(text="((a, c), (b, d));"), 
-                    reportMatching = TRUE),
-                    "matchedSplits") %in% c(
-                      "a b | c d .. a c | b d",
-                      "a b | c d .. b d | a c",
-                      "c d | a b .. a c | b d",
-                      "c d | a b .. b d | a c"))
+    ape::read.tree(text = "((a, b), (c, d));"),
+    ape::read.tree(text = "((a, c), (b, d));"), 
+    reportMatching = TRUE),
+    "matchedSplits") %in% c(
+      "a b | c d .. a c | b d",
+      "a b | c d .. b d | a c",
+      "c d | a b .. a c | b d",
+      "c d | a b .. b d | a c"))
 })
 
 test_that("Matchings are calculated in both directions", {
@@ -229,8 +238,8 @@ test_that(".TreeDistance() supports all sizes", {
     MASTSize(list(bal = BalancedTree(7), pec = PectinateTree(7)),
              as.phylo(0:3, 7)))
   expect_equal(t(NNIDist(BalancedTree(7), as.phylo(0:3, 7))),
-    NNIDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
-             as.phylo(0:3, 7))[1, , ])
+               NNIDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
+                       as.phylo(0:3, 7))[1, , ])
   expect_error(.TreeDistance(RobinsonFoulds, PectinateTree(1:6),
                              PectinateTree(6)))
 })
@@ -319,7 +328,7 @@ test_that(".SharedOnly() works", {
            KeepTip(pecBI, ch)),
       list(KeepTip(pecBI, bh), balCH,
            balCH)
-      )
+    )
   )
   
   t1 <- structure(list(

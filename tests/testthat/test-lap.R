@@ -1,3 +1,41 @@
+test_that("LAP example1", {
+  # https://github.com/yongyanghz/LAPJV-algorithm-c/tree/40b5883b7492107e87ba8fb6abeb2aa05591dd34/test/examples/example1
+  problem <- rbind(c(13, 4, 7, 6),
+                   c(1, 11, 5, 4),
+                   c(6, 7, 2, 8),
+                   c(1, 3, 5, 9))
+  solution <- c(11, 1, 3, 2, 0)
+  result <- LAPJV(problem)
+  expect_equal(result[["score"]], solution[[1]])
+  expect_equal(result[["matching"]], solution[-1] + 1)
+})
+
+test_that("LAP example2", {
+  # https://github.com/yongyanghz/LAPJV-algorithm-c/tree/40b5883b7492107e87ba8fb6abeb2aa05591dd34/test/examples/example2
+  problem <- rbind(c(10, 5, 13, 15, 16),
+                   c(3, 9, 18, 13, 6),
+                   c(10, 7, 2, 2, 2),
+                   c(7, 11, 9, 7, 12),
+                   c(7, 9, 10, 4,  12))
+  solution <- c(23, 1, 0, 4, 2, 3)
+  result <- LAPJV(problem)
+  expect_equal(result[["score"]], solution[[1]])
+  expect_equal(result[["matching"]], solution[-1] + 1)
+})
+
+test_that("LAP example3", {
+  # https://github.com/yongyanghz/LAPJV-algorithm-c/tree/40b5883b7492107e87ba8fb6abeb2aa05591dd34/test/examples/example3
+  
+  problem <- rbind(c(6, 3, 5),
+                   c(5, 9, 2),
+                   c(5, 7, 8))
+  solution <- c(10, 1, 2, 0)
+  result <- LAPJV(problem)
+  expect_equal(result[["score"]], solution[[1]])
+  expect_equal(result[["matching"]], solution[-1] + 1)
+})
+
+
 test_that("LAP handles non-square matrices", {
   problem <- matrix(c(7, 9, 8, 9, 9,
                       2, 8, 5, 7, 9,
@@ -15,9 +53,12 @@ test_that("LAP handles non-square matrices", {
   expectation$score <- expectation$score - 100
   expectation$matching <- expectation$matching[1:3]
   expect_equal(LAPJV(problem), expectation)
-  
 })
 
+test_that("LAP handles tiny matrices", {
+  expect_equal(LAPJV(matrix(0, 0, 0)), list(score = 0, matching = integer(0)))
+  expect_equal(LAPJV(matrix(8, 1, 1)), list(score = 8, matching = 1))
+})
 
 test_that("Precision avoids interminable loop in LAP", {
   # Increase value of epsilon in nontrivially_less_than to avoid loop.
@@ -270,14 +311,14 @@ test_that("Precision avoids interminable loop in LAP", {
                                      "Vulcanodon_karibaensis", "Muyelensaurus", "Mamenchisaurus"), class = "Splits")
   
   expect_gt(MutualClusteringInfoSplits(spl2180, spl2180), 0)
-  expect_equal(MutualClusteringInfoSplits(spl2180, spl636), 
+  expect_equal(MutualClusteringInfoSplits(spl2180, spl636),
                MutualClusteringInfoSplits(spl636, spl2180))
 })
 
 test_that("LAPJV fails gracefully", {
-  expect_equal(integer(0L), LAPJV(matrix(NA, 0, 0)))
-  expect_equal(integer(0L), LAPJV(matrix(NA, 1, 0)))
-  expect_equal(integer(0L), LAPJV(matrix(NA, 0, 1)))
+  expect_equal(LAPJV(matrix(NA, 0, 0)), list(score = 0, matching = integer(0)))
+  expect_equal(LAPJV(matrix(NA, 1, 0)), list(score = 0, matching = integer(0)))
+  expect_equal(LAPJV(matrix(NA, 0, 1)), list(score = 0, matching = integer(0)))
   expect_error(LAPJV(1:10), "x must be a.* matrix")
 })
 

@@ -5,9 +5,11 @@
 ^memcheck$
 ^CRAN-RELEASE$
 ^src\-
+^src\.
 CONTRIBUTING
 README.md
 ^\.github
+^\.lintr
 cran-comments.md
 man-roxygen
 data-raw
@@ -25,6 +27,10 @@ revdep
 ^vignettes/.*_cache$
 ^codemeta\.json$
 ^CODE_OF_CONDUCT\.md$
+^\codecov\.yml$
 ^\.travis\.yml$
 ^\.zenodo\.json$
 ^\.covrignore$
+^\.vs.*$
+^\.vscode.*$
+^CRAN-SUBMISSION$

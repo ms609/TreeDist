@@ -169,39 +169,54 @@ MeilaMutualInformation <- function(split1, split2) {
 #' @references \insertAllCited{}
 #' 
 #' @encoding UTF-8
-#' @importFrom memoise memoise
 #' @export
-AllSplitPairings <- memoise(function(n) {
+AllSplitPairings <- local({
+  # Simple memoization cache
+  cache <- new.env(parent = emptyenv())
   
-  if (n < 4L) stop("No informative splits with < 4 taxa")
+  function(n) {
+    # Check cache first
+    key <- as.character(n)
+    if (exists(key, envir = cache)) {
+      return(get(key, envir = cache))
+    }
+    
+    # Compute result
+    if (n < 4L) stop("No informative splits with < 4 taxa")
+    
+    # smallHalves <- 1L + seq_len(ceiling(n / 2) - 2L)
+    dataRows <- 2L
   
-  # smallHalves <- 1L + seq_len(ceiling(n / 2) - 2L)
-  dataRows <- 2L
-
-  unevenPairs <- matrix(
-    # For i in 2:largestSmallSplit
-    #TODO: Make faster by not calculating bottom triangle
-    unlist(lapply(1L + seq_len(n - 3L), function(inA) {
-      # For j in 2:(n - 2)
-      nCa <- choose(n, inA)
-      outA <- n - inA
-      hA <- Entropy(c(inA, outA) / n)
-      unlist(lapply(1L + seq_len(n - 3L), function(inB) {
-        outB <- n - inB
-        hB <- Entropy(c(inB, outB) / n)
-        vapply(max(0, inA + inB - n):min(inA, inB), function(inAB) {
-          association <- c(inAB, inA - inAB, inB - inAB, n + inAB - inA - inB)
-          jointEntropies <- Entropy(association / n)
-          
-          c(#inA, inB, inAB, 
-            #npairs = NPartitionPairs(association), nis = choose(n, i),
-            nTotal = nCa * choose(inA, inAB) * choose(outA, inB - inAB),
-            VoI = jointEntropies + jointEntropies - hA - hB)
-        }, double(dataRows))
-      }))
-    })), dataRows, dimnames=list(c("nTotal", "VoI"), NULL))
-  
-  tapply(unevenPairs["nTotal", ], unevenPairs["VoI", ], sum)
+    unevenPairs <- matrix(
+      # For i in 2:largestSmallSplit
+      #TODO: Make faster by not calculating bottom triangle
+      unlist(lapply(1L + seq_len(n - 3L), function(inA) {
+        # For j in 2:(n - 2)
+        nCa <- choose(n, inA)
+        outA <- n - inA
+        hA <- Entropy(c(inA, outA) / n)
+        unlist(lapply(1L + seq_len(n - 3L), function(inB) {
+          outB <- n - inB
+          hB <- Entropy(c(inB, outB) / n)
+          vapply(max(0, inA + inB - n):min(inA, inB), function(inAB) {
+            association <- c(inAB, inA - inAB, inB - inAB, n + inAB - inA - inB)
+            jointEntropies <- Entropy(association / n)
+            
+            c(#inA, inB, inAB, 
+              #npairs = NPartitionPairs(association), nis = choose(n, i),
+              nTotal = nCa * choose(inA, inAB) * choose(outA, inB - inAB),
+              VoI = jointEntropies + jointEntropies - hA - hB)
+          }, double(dataRows))
+        }))
+      })), dataRows, dimnames=list(c("nTotal", "VoI"), NULL))
+    
+    result <- tapply(unevenPairs["nTotal", ], unevenPairs["VoI", ], sum)
+    
+    # Cache the result
+    assign(key, result, envir = cache)
+    
+    return(result)
+  }
 })
 
 #' Entropy of two splits

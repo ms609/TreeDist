@@ -1,0 +1,126 @@
+name: Benchmark
+
+on:
+  workflow_dispatch:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["R-CMD-check"]
+    types:
+      - completed
+    paths:
+      - "src/**"
+      - "R/**"
+      - "**.R"
+      - "**.cpp"
+      - "**.c"
+      - "**.h"
+      - "**.hpp"
+      - "configure*"
+      - "Makevars*"
+      - "**benchmark.yml"
+      - "!memcheck**"
+      - "!docs**"
+      - "!inst**"
+      - "!man**"
+      - "!man-roxygen**"
+      - "!memcheck**"
+      - "!tests**"
+      - "!vignettes**"
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      RSPM: "https://packagemanager.rstudio.com/cran/__linux__/noble/latest"
+      _R_CHECK_BUILD_VIGNETTES_: false
+      _R_CHECK_CRAN_INCOMING_: false
+      _R_CHECK_FORCE_SUGGESTS_: false # CRAN settings
+      R_REMOTES_STANDALONE: true
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      R_REALLY_FORCE_SYMBOLS: true # Until R4.3
+      
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v5
+        with:
+          path: pr
+          
+      - name: Checkout target branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.base.ref || 'main' }}
+          path: main
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          extra-repositories: https://ms609.github.io/packages/
+        
+      - name: Install R dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          dependencies: '"hard"'
+          extra-packages: |
+            github::ms609/TreeTools
+          needs: benchmark
+          
+      - name: Benchmark PR
+        uses: ms609/actions/benchmark-step@main
+        with:
+          path: pr
+          output: pr
+        
+      - name: Benchmark target
+        uses: ms609/actions/benchmark-step@main
+        with: 
+          path: main
+          output: main
+          
+      - name: Benchmark PR again
+        uses: ms609/actions/benchmark-step@main
+        with: 
+          path: pr
+          output: pr2
+        
+      - run: dir pr-benchmark-results
+        working-directory: pr
+      - run: dir main-benchmark-results
+        working-directory: pr
+
+      - name: Compare benchmarks
+        id: compare_results
+        working-directory: pr
+        run: |
+          Rscript benchmark/_compare_results.R
+        shell: bash
+        
+      - name: Upload PR benchmark results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-benchmark-results
+          path: pr/pr-benchmark-results/*.bench.Rds
+            
+      - name: Upload main benchmark results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: main-benchmark-results
+          path: pr/main-benchmark-results/*.bench.Rds
+        
+      - name: Comment on PR
+        if: always() && github.event_name == 'pull_request' && steps.compare_results.outputs.report != ''
+        uses: actions/github-script@v7
+        env:
+          BENCHMARK_MESSAGE: ${{ steps.compare_results.outputs.report }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: process.env.BENCHMARK_MESSAGE
+            });

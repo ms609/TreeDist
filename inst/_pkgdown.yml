@@ -43,8 +43,10 @@ reference:
     desc: Functions to facilitate interaction with the package.
     contents:
       - CompareAll
+      - HPart
       - LAPJV
       - Plot3
+      - ReduceTrees
       - StartParallel
       - VisualizeMatching
 
@@ -58,7 +60,9 @@ navbar:
     - articles
     - tutorials
     - news
-    right: github
+    right: 
+    - search
+    - github
   components:
     home:
       icon: fa-home fa-lg
@@ -98,9 +102,9 @@ articles:
       - Generalized-RF
 
 template:
+  bootstrap: 5
+  bslib:
+    danger: "#A6081A" # Accessibility suggestion
   params:
     bootswatch: cerulean
-    docsearch:
-      api_key: 8bf44d312479af73720c5ca5fcc12eba
-      index_name: treedist
     ganalytics: G-BTKEG66D3F

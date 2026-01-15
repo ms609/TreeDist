@@ -1,12 +1,14 @@
 library("TreeTools", quietly = TRUE)
-bal8 <- BalancedTree(8)
-pec8 <- PectinateTree(8)
-bal8BG <- DropTip(bal8, c(1, 8))
-pec8BG <- DropTip(pec8, c(1, 8))
-bal8CH <- DropTip(bal8, 1:2)
-pec8CH <- DropTip(pec8, 1:2)
+{ # Reference objects
+  bal8 <- BalancedTree(8)
+  pec8 <- PectinateTree(8)
+  bal8BG <- DropTip(bal8, c(1, 8))
+  pec8BG <- DropTip(pec8, c(1, 8))
+  bal8CH <- DropTip(bal8, 1:2)
+  pec8CH <- DropTip(pec8, 1:2)
+}
 
-test_that("Non-identical tips handled okay", {
+test_that("Non-identical tips are handled okay", {
   fullDist <- TreeDistance(bal8, pec8)
   expect_equal(TreeDistance(bal8, bal8BG), 0)
   expect_equal(MutualClusteringInfo(bal8, bal8BG), ClusteringEntropy(bal8BG))

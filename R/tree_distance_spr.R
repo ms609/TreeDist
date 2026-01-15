@@ -7,8 +7,8 @@
 #' 
 #' @template tree12ListParams
 #' @param method Character specifying which method to use to approximate the
-#' SPR distance.  Currently defaults to "deOliveira", the only accepted option;
-#' a new method will become the default once available.
+#' SPR distance.  Currently defaults to `"deOliveira"``, the only available
+#' option; a new method will become the default once available.
 #' @param symmetric Ignored (redundant after fix of
 #' [phangorn#97](https://github.com/KlausVigo/phangorn/issues/97)).
 #' 
@@ -20,15 +20,18 @@
 #' @examples
 #' library("TreeTools", quietly = TRUE)
 #' 
+#' # Compare single pair of trees
 #' SPRDist(BalancedTree(7), PectinateTree(7))
 #' 
+#' # Compare all pairs of trees        
+#' SPRDist(as.phylo(30:33, 8))
+#' 
+#' # Compare each tree in one list with each tree in another
 #' SPRDist(BalancedTree(7), as.phylo(0:2, 7))
 #' SPRDist(as.phylo(0:2, 7), PectinateTree(7))
 #'
 #' SPRDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
 #'         as.phylo(0:2, 7))
-#'
-#' CompareAll(as.phylo(30:33, 8), SPRDist)
 #' @template MRS
 #'   
 #' @seealso Exact calculation with [\pkg{TBRDist}](
@@ -90,7 +93,6 @@ SPRDist.multiPhylo <- SPRDist.list
   }
 }
 .Which2 <- function (x, nSplits) (x - 1) %/% nSplits + 1L
-
 
 .SPRExperiment <- function(tree1, tree2, check = TRUE, debug = FALSE) {
   moves <- 0
@@ -617,8 +619,8 @@ SPRDist.multiPhylo <- SPRDist.list
   moves <- 0
   
   # Reduce trees (Fig. 7A in deOliveira2008)
-  reduced <- Reduce(tree1, tree2, check = check)
-  
+  reduced <- ReduceTrees(tree1, tree2, check = check)
+    
   while (!is.null(reduced)) {
     tr1 <- reduced[[1]]
     tr2 <- reduced[[2]]
@@ -634,7 +636,7 @@ SPRDist.multiPhylo <- SPRDist.list
       if (debug) {
         message("Identical splits: ", length(sp1) - (nMatched / 2))
       }
-      unmatchedSplits <- is.na(matched$matching)
+      unmatchedSplits <- is.na(matched[["matching"]])
       sp1 <- sp1[[unmatchedSplits]]
       sp2 <- sp2[[-matched$matching[!unmatchedSplits]]]
     }

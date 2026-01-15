@@ -24,6 +24,9 @@
 #' @family tree space functions
 #' @export
 SpectralEigens <- function(D, nn = 10L, nEig = 2L) {
+  if (nEig < 1) {
+    stop("nEig must be positive")
+  }
   
   MutualKnnGraph <- function(D, nn) {
     D <- as.matrix(D)
@@ -32,13 +35,13 @@ SpectralEigens <- function(D, nn = 10L, nEig = 2L) {
     # intialize the knn matrix
     knn_mat <- matrix(FALSE, nrow = dims[[1]], ncol = dims[[2]])
     
-    # find the 10 nearest neighbors for each point
+    # find the 10 nearest neighbours for each point
     for (i in seq_len(nrow(D))) {
       neighbor_index <- order(D[i, ])[2:(nn + 1)]
       knn_mat[i, ][neighbor_index] <- TRUE
     }
     
-    # Now we note that i,j are neighbors iff K[i,j] = 1 or K[j,i] = 1
+    # Now we note that i,j are neighbours iff K[i,j] = 1 or K[j, i] = 1
     knn_mat <- knn_mat | t(knn_mat) # find mutual knn
     
     # Return:
@@ -60,13 +63,19 @@ SpectralEigens <- function(D, nn = 10L, nEig = 2L) {
   L <- GraphLaplacian(W) # 2. compute graph laplacian
   ei <- eigen(L, symmetric = TRUE) # 3. Compute the eigenvectors and values of L
   
-  # Return the eigenvectors of the n_eig smallest eigenvalues:
-  ei[["vectors"]][, nrow(L) - rev(seq_len(nEig))]
+  nL <- dim(L)[[1]]
+  
+  if (nL > nEig) {
+    # Return the eigenvectors of the n_eig smallest eigenvalues:
+    ei[["vectors"]][, nL - (0:(nEig - 1))]
+  } else {
+    ei[["vectors"]]
+  }
 }
 
 #' @export
 #' @rdname SpectralEigens
 SpectralClustering <- function(D, nn = 10L, nEig = 2L) {
-  .Deprecated("SpectralEigens")
-  SpectralEigens(D, nn, nEig)
+  .Deprecated("SpectralEigens") # 2021-07
+  SpectralEigens(D = D, nn = nn, nEig = nEig)
 }

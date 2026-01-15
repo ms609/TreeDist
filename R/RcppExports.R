@@ -13,6 +13,51 @@ robinson_foulds_all_pairs <- function(tables) {
     .Call(`_TreeDist_robinson_foulds_all_pairs`, tables)
 }
 
+HMI_xptr <- function(ptr1, ptr2) {
+    .Call(`_TreeDist_HMI_xptr`, ptr1, ptr2)
+}
+
+HH_xptr <- function(ptr) {
+    .Call(`_TreeDist_HH_xptr`, ptr)
+}
+
+EHMI_xptr <- function(hp1_ptr, hp2_ptr, tolerance = 0.01, minResample = 36L) {
+    .Call(`_TreeDist_EHMI_xptr`, hp1_ptr, hp2_ptr, tolerance, minResample)
+}
+
+build_hpart_from_phylo <- function(phy) {
+    .Call(`_TreeDist_build_hpart_from_phylo`, phy)
+}
+
+build_hpart_from_list <- function(tree, n_tip) {
+    .Call(`_TreeDist_build_hpart_from_list`, tree, n_tip)
+}
+
+hpart_to_edge <- function(hpart_xptr) {
+    .Call(`_TreeDist_hpart_to_edge`, hpart_xptr)
+}
+
+clone_hpart <- function(hpart_ptr) {
+    .Call(`_TreeDist_clone_hpart`, hpart_ptr)
+}
+
+relabel_hpart <- function(hpart_ptr, map) {
+    invisible(.Call(`_TreeDist_relabel_hpart`, hpart_ptr, map))
+}
+
+#' Calculate entropy of integer vector of counts
+#' 
+#' Wrapper for C++ function; no input checking is performed.
+#' [`Ntropy()`] is better suited for use where performance is not critical.
+#' @param n a vector of integer counts
+#' @return `entropy_int()` returns a numeric corresponding to the entropy of
+#' each observation, in bits.
+#' @export
+#' @keywords internal
+entropy_int <- function(n) {
+    .Call(`_TreeDist_entropy_int`, n)
+}
+
 lapjv <- function(x, maxX) {
     .Call(`_TreeDist_lapjv`, x, maxX)
 }

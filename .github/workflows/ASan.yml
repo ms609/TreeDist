@@ -1,0 +1,87 @@
+# Address Sanitizer: Replicate CRAN's gcc-ASAN 'Additional Test'
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+      - '**asan**'
+    paths:
+      - '.github/workflows/ASan.yml'
+      - 'src/**'
+      - 'inst/include/**'
+      - 'memcheck/**'
+      - 'tests/testthat/**.R'
+      - 'vignettes/**.Rmd'
+  pull_request:
+    paths:
+      - '.github/workflows/ASan.yml'
+      - 'src/**'
+      - 'inst/include/**'
+      - 'memcheck/**'
+      - 'tests/testthat/**.R'
+      - 'vignettes/**.Rmd'
+
+name: gcc-ASAN
+
+jobs:
+  mem-check:
+    runs-on: ubuntu-24.04 # Update RSPM when increasing
+
+    name: AddressSanitizer ${{ matrix.config.test }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {test: 'tests'}
+          - {test: 'examples'}
+          - {test: 'vignettes'}
+
+    env:
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      _R_CHECK_FORCE_SUGGESTS_: false
+      RSPM: https://packagemanager.rstudio.com/cran/__linux__/noble/latest
+      USING_ASAN: true
+      STRINGI_DISABLE_PKG_CONFIG: true
+      BIOCONDUCTOR_USE_CONTAINER_REPOSITORY: FALSE # For stringi
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      ASAN_OPTIONS: detect_container_overflow=1:verify_asan_link_order=0
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Initialize ASan configuration
+        run: |
+          export LD_PRELOAD=$(gcc -print-file-name=libasan.so)
+
+          echo "PKG_CFLAGS = -g -O0 -fsanitize=address -fno-omit-frame-pointer" > src/Makevars
+          echo "PKG_CXXFLAGS = -g -O0 -fsanitize=address -fno-omit-frame-pointer" >> src/Makevars
+
+          mkdir ~/.R
+          echo "LDFLAGS = -g -O0 -fsanitize=address -fno-omit-frame-pointer" >> ~/.R/Makevars
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: release # CRAN uses devel, but takes ages to load deps.
+          extra-repositories: https://ms609.github.io/packages/
+
+      - name: Set up R dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            ms609/TreeDistData
+          dependencies: "'soft'"
+          needs: |
+            memcheck
+
+      - name: Install package
+        run: |
+          cd ..
+          R CMD build --no-build-vignettes --no-manual --no-resave-data TreeDist
+          R CMD INSTALL TreeDist*.tar.gz
+          cd TreeDist
+
+      - name: ASAN - memcheck ${{ matrix.config.test }}
+        run: |
+          Rscript memcheck/${{ matrix.config.test }}.R

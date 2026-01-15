@@ -18,10 +18,14 @@ src/*.dll
 *.utf8.md
 /* *.Rd */
 revdep/
+inst/__pycache__*
 vignettes/*.html
 vignettes/*.pdf
 vignettes/*_files
 vignettes/*_cache
 vignettes/*.R
 .Rproj.user
+*.Rcheck**
+*.tar.gz
 *.bak
+codecov.yml

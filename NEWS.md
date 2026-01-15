@@ -3,6 +3,85 @@
 - `SPRDist()` implements a novel algorithm for approximating SPR distances.
 
 
+
+# TreeDist 2.11.1.9000 (2025-11-13)
+
+- `AHMI()` now returns negative values (previously zeroed in error).
+
+# TreeDist 2.11.1 (2025-10-13)
+
+- Improve robustness of `SpectralEigens()` tests.
+
+
+# TreeDist 2.11.0 (2025-09-26)
+
+- `HierarchicalMutualInformation()` calculates the information shared between
+  pairs of hierarchical partition structures \doi{10.1103/PhysRevE.92.062825}.
+
+- Fix bug in calculation of `MutualClusteringInfo()`: the matching chosen was
+  not always the global optimum, causing distances to be overestimated in some
+  circumstances ([#163](https://github.com/ms609/TreeDist/issues/162)).
+
+- Fix crash in `robinson_foulds_all_pairs()` and `RobinsonFoulds(list)`.
+  
+- Support larger trees in NNI distance calculations.
+
+
+# TreeDist 2.10.1 (2025-08-24)
+
+- Compiler-safe vector initialization, resolving M1-SAN warnings.
+
+
+# TreeDist 2.10.0 (2025-08-22)
+
+**Note** - this release **introduced a bug** in the computation of the mutual
+clustering information / clustering information distance.
+The globally optimal matching between splits was not always found.
+This was **fixed in v2.11.0**.
+
+- `Ntropy()` computes entropy from integer counts.
+
+- C++ optimizations and reformatting:
+    - Faster tree distance calculation.
+    - 2x speed-up of LAPJV for large matrices.
+    
+- Require R4.0; discontinue tests against R 3.6 and 4.0.
+
+
+# TreeDist 2.9.2 (2025-01-11)
+
+- Fix crash when calculating NNI distance for large trees.
+
+
+# TreeDist 2.9.1 (2024-09-05)
+
+- Avoid false positive in MKL testing environment.
+
+
+# TreeDist 2.9.0 (2024-09-03)
+
+- `VisualizeMatching()` allows more control over output format, and returns
+  the matching ([#124](https://github.com/ms609/TreeDist/issues/124)).
+  
+- `DistanceFromMedian(Average = median)` allows calculation of MAD.
+
+- `SpectralEigens()` returns correct eigenvalues (smallest was overlooked).
+
+- `SpectralEigens()` handles values of `nEig` larger than the input.
+
+- Anticipate new behaviour of `unlist(use.names = TRUE)` in R 4.5.
+
+
+# TreeDist 2.8.0 (2024-07-25)
+
+- `Islands()` allows the identification of islands of trees.
+
+- Internal implementation of path and SPR distances, removing dependency
+  on phangorn (and thus R 4.4).
+  
+- Add progress bar within `.MaxValue()`
+
+
 # TreeDist 2.7.1 (2024-06-13)
 
 - Documentation improvements.

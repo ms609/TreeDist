@@ -3,7 +3,10 @@
 \encoding{UTF-8}
 \name{VisualizeMatching}
 \alias{VisualizeMatching}
-\title{Visualise a matching}
+\alias{VisualiseMatching}
+\alias{PlotMatching}
+\alias{DisplayMatching}
+\title{Visualize a matching}
 \usage{
 VisualizeMatching(
   Func,
@@ -14,6 +17,9 @@ VisualizeMatching(
   Plot = plot.phylo,
   matchZeros = TRUE,
   plainEdges = FALSE,
+  edge.cex = par("cex"),
+  value.cex = edge.cex * 0.8,
+  edge.frame = "rect",
   edge.width = 1,
   edge.color = "black",
   ...
@@ -39,7 +45,22 @@ similarity (\code{TRUE}), or leave them unpaired (\code{FALSE}).}
 width and colour (\code{TRUE}), or whether to draw edge widths according to the
 similarity of the associated splits (\code{FALSE}).}
 
+\item{edge.cex}{Character expansion for edge labels.
+If \code{FALSE}, suppress edge labels.}
+
+\item{value.cex}{Character expansion for values on edge labels.
+If \code{FALSE}, values are not displayed.}
+
+\item{edge.frame}{Character specifying the kind of frame to be printed around
+the text of the edge labels.  Choose an abbreviation of \code{"rect"}, \code{"circle"},
+or \code{"none"}.}
+
 \item{edge.width, edge.color, \dots}{Additional parameters to send to \code{Plot()}.}
+}
+\value{
+\code{VisualizeMatching()} invisibly returns the matching of splits
+between \code{tree1} and \code{tree2} (i.e.
+\code{Func(tree1, tree2, reportMatching = TRUE)})
 }
 \description{
 Depict the splits that are matched between two trees using a specified
@@ -58,7 +79,9 @@ tree1 <- TreeTools::BalancedTree(6)
 tree2 <- TreeTools::PectinateTree(6)
 
 VisualizeMatching(RobinsonFouldsMatching, tree1, tree2)
-VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2, matchZeros = FALSE)
+matching <- VisualizeMatching(SharedPhylogeneticInfo, tree1, tree2,
+                              matchZeros = FALSE)
+attributes(matching)
 }
 \author{
 \href{https://orcid.org/0000-0001-5660-1727}{Martin R. Smith}

@@ -206,6 +206,7 @@ TreeDistance <- function(tree1, tree2 = NULL) {
 #' @export
 SharedPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                                    reportMatching = FALSE, diag = TRUE) {
+  
   unnormalized <- CalculateTreeDistance(SharedPhylogeneticInfoSplits, tree1,
                                         tree2, reportMatching = reportMatching)
   
@@ -224,6 +225,7 @@ SharedPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
 #' @export
 DifferentPhylogeneticInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
                                       reportMatching = FALSE) {
+  
   spi <- SharedPhylogeneticInfo(tree1, tree2, normalize = FALSE, diag = FALSE,
                                 reportMatching = reportMatching)
   treesIndependentInfo <- .MaxValue(tree1, tree2, SplitwiseInfo)
@@ -249,6 +251,7 @@ PhylogeneticInfoDistance <- DifferentPhylogeneticInfo
 #' @export
 ClusteringInfoDistance <- function(tree1, tree2 = NULL, normalize = FALSE,
                                    reportMatching = FALSE) {
+  
   mci <- MutualClusteringInfo(tree1, tree2, normalize = FALSE, diag = FALSE,
                               reportMatching = reportMatching)
   treesIndependentInfo <- .MaxValue(tree1, tree2, ClusteringEntropy)

@@ -71,7 +71,6 @@ NyeSimilarity <- function(tree1, tree2 = NULL, similarity = TRUE,
                            normalizeMax = !is.logical(normalize),
                            reportMatching = FALSE,
                            diag = TRUE) {
-  
   unnormalized <- CalculateTreeDistance(NyeSplitSimilarity, tree1, tree2, 
                                         reportMatching)
   if (similarity) {

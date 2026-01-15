@@ -1,6 +1,6 @@
 #' Collapse areas of agreement between two trees
 #' 
-#' Reduces trees according to the tree reduction rules of
+#' `ReduceTrees()` reduces trees according to the tree reduction rules of
 #' \insertCite{Allen2001;textual}{TreeDist}:
 #' - Collapse identical pendant subtrees;
 #' - Compress equivalent internal chains.
@@ -10,22 +10,31 @@
 #' `FALSE` and you will encounter undefined behaviour if trees are not
 #' binary `phylo` objects with identical leaf labels, rooted on leaf 1.
 #' 
-#' @return `Reduce()` returns a list of two trees, corresponding to 
+#' @return `ReduceTrees()` returns a list of two trees, corresponding to 
 #' `tree1` and `tree2` after any identical groupings have been collapsed,
 #' with tree edges listed in postorder; or `NULL` if the trees are equivalent.
-#' @examples 
+#' @examples
 #' tree1 <- TreeTools::BalancedTree(9)
 #' tree2 <- TreeTools::PectinateTree(9)
-#' par(mai = rep(0.1, 4), mfrow = c(2, 2))
+#' 
+#' # Set graphical parameters
+#' oPar <- par(mai = rep(0.1, 4), mfrow = c(2, 2))
+#' 
 #' plot(tree1)
 #' plot(tree2)
-#' confl <- Reduce(tree1, tree2)
+#' 
+#' # Reduce trees by collapsing identical clades
+#' confl <- ReduceTrees(tree1, tree2)
+#' 
 #' plot(confl[[1]])
 #' plot(confl[[2]])
+#' 
+#' # Restore graphical parameters
+#' par(oPar)
 #' @template MRS
 #' @importFrom TreeTools NTip PostorderOrder RenumberTips RootTree
 #' @export
-Reduce <- function(tree1, tree2, check = TRUE) {
+ReduceTrees <- function(tree1, tree2, check = TRUE) {
   if (check) {
     if (!inherits(tree1, 'phylo')) {
       stop("`tree1` must be a `phylo` object.")

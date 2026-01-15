@@ -1,16 +1,16 @@
 Package: TreeDist
 Type: Package
 Title: Calculate and Map Distances Between Phylogenetic Trees
-Version: 2.7.1.9010
+Version: 2.11.1.9010
 Authors@R: c(person("Martin R.", "Smith",
                     email = "martin.smith@durham.ac.uk", 
                     role = c("aut", "cre", "cph", "prg"), 
                     comment = c(ORCID = "0000-0001-5660-1727")),
              person("Roy", "Jonker", email = "roy_jonker@magiclogic.com",
-                    role = c("prg", "cph")),
+                    role = c("prg", "cph"), comment = "LAP algorithm"),
              person("Yong", "Yang", email = "yongyanglink@gmail.com",
-                    role = c("ctb", "cph")),
-             person("Yi", "Cao", role = c("ctb", "cph"))
+                    role = c("ctb", "cph"), comment = "LAP algorithm"),
+             person("Yi", "Cao", role = c("ctb", "cph"), comment = "LAP algorithm")
             )
 License: GPL (>= 3)
 Description: Implements measures of tree similarity, including 
@@ -23,12 +23,16 @@ Description: Implements measures of tree similarity, including
   including the Nye et al. (2006) metric <doi:10.1093/bioinformatics/bti720>;
   the Matching Split Distance (Bogdanowicz & Giaro 2012)
   <doi:10.1109/TCBB.2011.48>;
+  the Hierarchical Mutual Information (Perotti et al. 2015)
+  <doi:10.1103/PhysRevE.92.062825>;
   Maximum Agreement Subtree distances;
   the Kendall-Colijn (2016) distance <doi:10.1093/molbev/msw124>, and the
   Nearest Neighbour Interchange (NNI) distance, approximated per Li et al. 
   (1996) <doi:10.1007/3-540-61332-3_168>.
   Includes tools for visualizing mappings of tree space (Smith 2022)
   <doi:10.1093/sysbio/syab100>,
+  for identifying islands of trees (Silva and Wilkinson 2021)
+  <doi:10.1093/sysbio/syab015>,
   for calculating the median of sets of trees,
   and for computing the information content of trees and splits.
 Copyright: Jonker-Volgenant Linear Assignment Problem implementation
@@ -37,17 +41,16 @@ URL: https://ms609.github.io/TreeDist/, https://github.com/ms609/TreeDist/
 BugReports: https://github.com/ms609/TreeDist/issues/
 Additional_repositories: https://ms609.github.io/packages/
 Depends: 
-  R (>= 3.4.0),
+  R (>= 4.0),
   stats,
 Imports: 
   ape (>= 5.0),
   cli (>= 3.0),
   colorspace,
-  memoise,
   Rdpack (>= 0.7),
   shiny,
   shinyjs,
-  TreeTools (> 1.10.0),
+  TreeTools (>= 1.16),
 Suggests:
   bookdown,
   cluster,
@@ -75,9 +78,9 @@ Suggests:
   Umatrix,
   uwot,
   vdiffr (>= 1.0.0),
-LinkingTo: 
+LinkingTo:
   Rcpp,
-  TreeTools,
+  TreeTools (>= 1.16.1),
 RdMacros: Rdpack
 VignetteBuilder: knitr
 Config/Needs/check: rcmdcheck
@@ -93,5 +96,5 @@ ByteCompile: true
 Encoding: UTF-8
 Language: en-GB
 X-schema.org-keywords: phylogenetics, tree-distance
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)

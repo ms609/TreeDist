@@ -1,5 +1,6 @@
 #include <Rcpp/Lightest>
 #include <TreeTools/renumber_tree.h> // for postorder_order
+#include <algorithm> // for std::copy
 #include <cmath> // for sqrt
 #include <memory> // for make_unique
 using namespace Rcpp;
@@ -13,58 +14,56 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 IntegerVector path_vector(IntegerMatrix edge) {
-  const int
-    n_edge = edge.nrow(),
-    n_vert = n_edge + 1
-  ;
+  
   IntegerVector postorder = TreeTools::postorder_order(edge);
-  const int
-    root_node = PO_PARENT(n_edge - 1),
-    n_tip = root_node - 1
-  ;
+  
+  const int n_edge = edge.nrow();
+  const int n_vert = n_edge + 1;
+  const int root_node = PO_PARENT(n_edge - 1);
+  const int n_tip = root_node - 1;
 
   auto ancestry = std::make_unique<int[]>(n_tip * n_vert);
   auto n_ancs = std::make_unique<int[]>(n_vert + 1);
   
   for (int i = n_edge; i--; ) { // Preorder traversal
-    const int
-      parent = PO_PARENT(i),
-      child = PO_CHILD(i)
-    ;
-    ANC(child, n_ancs[parent]) = child;
-    n_ancs[child] = n_ancs[parent] + 1;
-    for (int j = n_ancs[parent]; j--; ) {
-      ANC(child, j) = ANC(parent, j);
-    }
+    const int parent = PO_PARENT(i);
+    const int child = PO_CHILD(i);
+    const int parent_ancs = n_ancs[parent];
+    
+    const int* anc_parent = &ancestry[n_tip * (parent - 1)];
+    int* anc_child = &ancestry[n_tip * (child - 1)];
+    
+    anc_child[parent_ancs] = child;
+    n_ancs[child] = parent_ancs + 1;
+    
+    std::copy(anc_parent, anc_parent + parent_ancs, anc_child);
   }
   
-  int ptr = n_tip * (n_tip - 1) / 2;
+  const int ret_size = n_tip * (n_tip - 1) / 2;
+  int ptr = ret_size;
   IntegerVector ret(ptr);
-  for (int i = n_tip - 1; i--; ) {
+  for (int i = n_tip - 1; i--; ) { // faster in reverse, for a benchmark
     for (int j = n_tip - i - 1; j--; ) {
-      const int 
-        tip_i = i + 1,
-        tip_j = i + 2 + j,
-        ancs_i = n_ancs[tip_i],
-        ancs_j = n_ancs[tip_j],
-        min_ancs = ancs_i > ancs_j ? ancs_j : ancs_i
-      ;
+      const int tip_i = i + 1;
+      const int tip_j = i + 2 + j;
+      const int ancs_i = n_ancs[tip_i];
+      const int ancs_j = n_ancs[tip_j];
+      const int min_ancs = ancs_i > ancs_j ? ancs_j : ancs_i;
       
       assert(ptr > 0);
       assert(tip_j > tip_i);
       
-      // Rcout << tip_i << " (" << n_ancs[tip_i] << "), "
-      //       << tip_j << " (" << n_ancs[tip_j] << "): ";
+      const int* anc_i_base = &ancestry[n_tip * (tip_i - 1)];
+      const int* anc_j_base = &ancestry[n_tip * (tip_j - 1)];
+      
       int common = 0;
       for (; common != min_ancs; ++common) {
-        // Rcout << "{" << ANC(tip_i, common) <<" " << ANC(tip_j, common) << "} ";
-        if (ANC(tip_i, common) != ANC(tip_j, common)) {
-          // Rcout << ANC(tip_i, common) << " != " << ANC(tip_j, common)
-          //       << "; common = " << common << ";\n";
+        if (anc_i_base[common] != anc_j_base[common]) {
           break;
         }
       }
-      ret[--ptr] = n_ancs[tip_i] + n_ancs[tip_j] - common - common;
+      --ptr;
+      ret[ptr] = n_ancs[tip_i] + n_ancs[tip_j] - (common << 1);
     }
   }
   
@@ -74,18 +73,17 @@ IntegerVector path_vector(IntegerMatrix edge) {
 // [[Rcpp::export]]
 NumericMatrix vec_diff_euclidean(const IntegerMatrix vec1,
                                  const IntegerMatrix vec2) {
-  const int 
-    col1 = vec1.cols(),
-    col2 = vec2.cols(),
-    n_row = vec1.rows()
-  ;
+  const int col1 = vec1.cols();
+  const int col2 = vec2.cols();
+  const int n_row = vec1.rows();
+  
   assert(n_row == vec2.rows());
   
   NumericMatrix ret(col1, col2);
-  for (int i = col1; i--; ) {
-    for (int j = col2; j--; ) {
+  for (int i = 0; i < col1; ++i) {
+    for (int j = 0; j < col2; ++j) {
       int val = 0;
-      for (int row = n_row; row--; ) {
+      for (int row = 0; row < n_row; ++row) {
         const int x = vec1(row, i) - vec2(row, j);
         val += x * x;
       }

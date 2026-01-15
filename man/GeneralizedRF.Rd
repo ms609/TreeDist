@@ -27,12 +27,15 @@ split.}
 \item{PairScorer}{function taking four arguments, \code{splits1}, \code{splits2},
 \code{nSplits1}, \code{nSplits2}, which should return the score of each pair of splits
 in a two-dimensional matrix.  Additional parameters may be specified via
-\dots.}
+\code{...}.}
+
+\item{maximize}{Logical specifying whether the optimal matching maximizes
+or minimizes the scores obtained by \code{PairScorer()}.}
 
 \item{reportMatching}{Logical specifying whether to return the clade
 matchings as an attribute of the score.}
 
-\item{\dots}{Additional parameters to \code{PairScorer}}
+\item{\dots}{Additional parameters to \code{PairScorer()}.}
 }
 \value{
 A numeric value specifying the score of the tree pairs under the
@@ -40,8 +43,9 @@ specified pair scorer. If \code{reportMatching = TRUE}, attribute also list:
 \itemize{
 \item \code{matching}: which split in \code{splits2} is optimally matched to each split in
 \code{split1} (\code{NA} if not matched);
-\item \code{pairScores}: Calculated scores for each possible matching of each split.
 \item \code{matchedSplits}: Textual representation of each match
+\item \code{matchedScores}: Scores for matched split.
+\item \code{pairScores}: Calculated scores for each possible matching of each split.
 }
 }
 \description{

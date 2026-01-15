@@ -1,0 +1,34 @@
+name: Update CSL file
+on:
+  schedule:
+    - cron: '0 0 * * 1'  # Runs weekly on Monday at 00:00 UTC
+  workflow_dispatch:      # Allows manual triggering
+
+jobs:
+  update-csl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      
+      - name: Download latest CSL file
+        run: |
+          curl -o inst/apa-old-doi-prefix.csl https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
+          
+      - name: Check for changes
+        id: changes
+        run: |
+          if git diff --quiet inst/apa-old-doi-prefix.csl; then
+            echo "::set-output name=changed::false"
+            echo "No changes to commit"
+          else
+            echo "::set-output name=changed::true"
+          fi
+          
+      - name: Commit and push
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add inst/apa-old-doi-prefix.csl
+          git commit -m "Update CSL file from upstream"
+          git push

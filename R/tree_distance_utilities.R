@@ -179,7 +179,8 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
                                    tipLabels, nTip = length(tipLabels), ...) {
   
   if (is.na(nTip)) {
-    tipLabels <- union(unlist(tipLabels), unlist(TipLabels(splits2)))
+    tipLabels <- union(unlist(tipLabels, use.names = FALSE),
+                       unlist(TipLabels(splits2), use.names = FALSE))
     splits1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = TRUE)
     splits2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = TRUE)
     vapply(splits1, function(s1) {
@@ -306,20 +307,28 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
 #' Probabilities should sum to one.
 #' Probabilities equalling zero will be ignored.
 #' 
-#' @param \dots Numerics or numeric vector specifying probabilities of outcomes.
+#' @param \dots Series of numerics, or single numeric vector, specifying
+#' probabilities of outcomes (for `Entropy()`) or counts (for `Ntropy()`).
 #' 
-#' @return `Entropy()` returns the entropy of the specified probabilities, 
-#' in bits.
+#' @return `Entropy()` and `Ntropy()` return the entropy of the specified
+#' probabilities or counts, in bits.
 #' 
 #' @examples
 #' Entropy(1/2, 0, 1/2) # = 1
 #' Entropy(rep(1/4, 4)) # = 2
+#' Ntropy(c(2, 2, 0, 2, 2)) # = 2
 #' @template MRS
 #' @export
 Entropy <- function(...) {
   p <- c(...)
   p <- p[p > 0]
   -sum(p * log2(p))
+}
+
+#' @rdname Entropy
+#' @export
+Ntropy <- function(...) {
+  entropy_int(as.integer(c(...)))
 }
 
 #' Distances between each pair of trees
@@ -346,7 +355,7 @@ Entropy <- function(...) {
 #' trees <- list(bal1 = BalancedTree(1:8), 
 #'               pec1 = PectinateTree(1:8),
 #'               pec2 = PectinateTree(c(4:1, 5:8)))
-#'   
+#' 
 #' # Compare each tree with each other tree
 #' CompareAll(trees, NNIDist)
 #'   
@@ -472,30 +481,34 @@ CompareAll <- function(x, Func, FUN.VALUE = Func(x[[1]], x[[1]], ...),
 NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
                           infoInBoth = NULL, how = TRUE, Combine = "+", ...) {
   
-  CombineInfo <- function(tree1Info, tree2Info, Combiner = Combine,
-                          pairwise = FALSE) {
-    if (length(tree1Info) == 1 || length(tree2Info) == 1 || pairwise) {
-      unlist(.mapply(Combiner, dots = list(tree1Info, tree2Info), NULL))
-    } else {
-      ret <- outer(tree1Info, tree2Info, Combiner)
-      if (inherits(unnormalized, "dist")) ret[lower.tri(ret)] else ret
+  if (is.logical(how) && how == FALSE) {
+    # Return:
+    unnormalized
+  } else {
+    
+    CombineInfo <- function(tree1Info, tree2Info, Combiner = Combine,
+                            pairwise = FALSE) {
+
+      if (length(tree1Info) == 1 || length(tree2Info) == 1 || pairwise) {
+        unlist(.mapply(Combiner, dots = list(tree1Info, tree2Info), NULL))
+      } else {
+        ret <- outer(tree1Info, tree2Info, Combiner)
+        if (inherits(unnormalized, "dist")) ret[lower.tri(ret)] else ret
+      }
     }
-  }
-  
-  lab1 <- TipLabels(tree1)
-  lab2 <- TipLabels(tree2)
-  sameLabels <- .AllTipsSame(lab1, lab2)
-  
-  if (!sameLabels) {
-    trees <- .SharedOnly(tree1, tree2, lab1, lab2)
-    tree1 <- trees[[1]]
-    tree2 <- trees[[2]]
-  }
-  
-  if (is.logical(how)) {
-    if (how == FALSE) {
-      return(unnormalized)
-    } else {
+    
+    lab1 <- TipLabels(tree1)
+    lab2 <- TipLabels(tree2)
+    sameLabels <- .AllTipsSame(lab1, lab2)
+    
+    if (!sameLabels) {
+      trees <- .SharedOnly(tree1, tree2, lab1, lab2)
+      tree1 <- trees[[1]]
+      tree2 <- trees[[2]]
+    }
+    
+    if (is.logical(how)) {
+      # how == FALSE case handled early above
       if (is.null(infoInBoth)) {
         info1 <- InfoInTree(tree1, ...)
         info2 <- if (is.null(tree2)) {
@@ -505,19 +518,19 @@ NormalizeInfo <- function(unnormalized, tree1, tree2, InfoInTree,
         }
         infoInBoth <- CombineInfo(info1, info2, pairwise = !sameLabels)
       }
+    } else if (is.function(how)) {
+      if (is.null(infoInBoth)) {
+        info1 <- InfoInTree(tree1, ...)
+        info2 <- if (is.null(tree2)) info1 else InfoInTree(tree2, ...)
+        infoInBoth <- CombineInfo(info1, info2, Combiner = how,
+                                  pairwise = !sameLabels)
+      }
+    } else {
+      infoInBoth <- how
     }
-  } else if (is.function(how)) {
-    if (is.null(infoInBoth)) {
-      info1 <- InfoInTree(tree1, ...)
-      info2 <- if (is.null(tree2)) info1 else InfoInTree(tree2, ...)
-      infoInBoth <- CombineInfo(info1, info2, Combiner = how,
-                                pairwise = !sameLabels)
-    }
-  } else {
-    infoInBoth <- how
+    # Return:
+    unnormalized / infoInBoth
   }
-  # Return:
-  unnormalized / infoInBoth
 }
 
 # We only call this function when not all trees contain identical leaf sets

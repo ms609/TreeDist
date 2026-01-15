@@ -6,40 +6,30 @@ on:
     branches:
       - main
       - master
-    paths-ignore:
-      - "Meta**"
-      - "docs**"
-      - "**.git"
-      - "**.json"
-      - "**.md"
-      - "**.yml"
-      - "!**memcheck.yml"
-      - "**.R[dD]ata"
-      - "**.Rpro*"
+    paths:
+      - '.github/workflows/memcheck.yml'
+      - 'src/**'
+      - 'inst/include/**'
+      - 'memcheck/**'
+      - 'tests/testthat/**.R'
+      - 'vignettes/**.Rmd'
   pull_request:
     branches:
       - main
       - master
-    paths-ignore:
-      - "Meta**"
-      - "docs**"
-      - "**.git"
-      - "**.json"
-      - "**.md"
-      - "**.yml"
-      - "!**memcheck.yml"
-      - "**.R[dD]ata"
-      - "**.Rpro*"
+    paths:
+      - '.github/workflows/memcheck.yml'
+      - 'src/**'
+      - 'inst/include/**'
+      - 'memcheck/**'
+      - 'tests/testthat/**.R'
+      - 'vignettes/**.Rmd'
 
 name: mem-check
 
 jobs:
   mem-check:
-    runs-on: ubuntu-20.04
-    # stringi requires libicui18n - apt get libicu-dev too recent,
-    # libicu66 deprecated in ubuntu 22.04
-    # Reinstalling stringi seems not to help
-
+    runs-on: ubuntu-24.04
     name: valgrind ${{ matrix.config.test }}, ubuntu, R release
 
     strategy:
@@ -53,61 +43,10 @@ jobs:
     env:
       R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
       _R_CHECK_FORCE_SUGGESTS_: false
-      RSPM: https://packagemanager.rstudio.com/cran/__linux__/focal/latest
+      RSPM: https://packagemanager.rstudio.com/cran/__linux__/noble/latest
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: r-lib/actions/setup-r@v2
+      - uses: ms609/actions/memcheck@main
         with:
-          r-version: release
-
-      - uses: r-lib/actions/setup-pandoc@v2
-        
-      - name: Query dependencies
-        run: |
-          install.packages('remotes')
-          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
-          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
-        shell: Rscript {0}
-        
-      - name: Install additional dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y texlive-latex-base texlive-fonts-recommended libglpk40 wget valgrind
-          sudo apt-get install -y valgrind texlive-latex-base
-
-      - name: Install system dependencies
-        run: |
-          while read -r cmd
-          do
-            eval sudo $cmd
-          done < <(Rscript -e 'writeLines(remotes::system_requirements("ubuntu", gsub("#\\d+~(\\d{2}\\.\\d{2}).*", "\\1", Sys.info()[["version"]]))')
-      
-      - name: Cache R packages
-        uses: actions/cache@v4
-        with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
-          
-      - name: Install dependencies
-        run: |
-          remotes::install_github('RcppCore/Rcpp')
-          remotes::install_github('ms609/TreeTools')
-          remotes::install_github('ms609/TreeDistData')
-          remotes::install_deps(dependencies = TRUE)
-          remotes::install_cran("devtools")
-        shell: Rscript {0}
-        
-      - name: Install TreeDist
-        run: |
-          cd ..
-          R CMD build --no-manual --no-resave-data TreeDist
-          R CMD INSTALL TreeDist*.tar.gz
-          cd TreeDist
-
-      - name: valgrind - memcheck ${{ matrix.config.test }}
-        run: |
-          R -d "valgrind --tool=memcheck --leak-check=full  --errors-for-leak-kinds=definite --error-exitcode=1" --vanilla < memcheck/${{ matrix.config.test }}.R
+          test: ${{ matrix.config.test}}
