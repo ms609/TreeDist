@@ -1,31 +1,31 @@
-#' Approximate the Subtree Prune and Regraft (SPR) distance.
-#' 
+#' Approximate the Subtree Prune and Regraft distance
+#'
 #' `SPRDist()` calculates an upper bound on the SPR distance between trees
 #' using the heuristic method of \insertCite{deOliveira2008;textual}{TreeDist}.
 #' Other approximations are available
 #' \insertCite{@e.g. @Hickey2008, @Goloboff2008SPR, @Whidden2018}{TreeDist}.
-#' 
+#'
 #' @template tree12ListParams
 #' @param method Character specifying which method to use to approximate the
 #' SPR distance.  Currently defaults to `"deOliveira"``, the only available
 #' option; a new method will become the default once available.
-#' @param symmetric Ignored (redundant after fix of
+#' @param symmetric Deprecated (redundant after fix of
 #' [phangorn#97](https://github.com/KlausVigo/phangorn/issues/97)).
-#' 
-#' @return `SPRDist()` returns a vector or distance matrix of distances 
+#'
+#' @return `SPRDist()` returns a vector or distance matrix of distances
 #' between trees.
-#' 
+#'
 #' @references \insertAllCited{}
-#' 
+#'
 #' @examples
 #' library("TreeTools", quietly = TRUE)
-#' 
+#'
 #' # Compare single pair of trees
 #' SPRDist(BalancedTree(7), PectinateTree(7))
-#' 
-#' # Compare all pairs of trees        
+#'
+#' # Compare all pairs of trees
 #' SPRDist(as.phylo(30:33, 8))
-#' 
+#'
 #' # Compare each tree in one list with each tree in another
 #' SPRDist(BalancedTree(7), as.phylo(0:2, 7))
 #' SPRDist(as.phylo(0:2, 7), PectinateTree(7))
@@ -33,25 +33,25 @@
 #' SPRDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
 #'         as.phylo(0:2, 7))
 #' @template MRS
-#'   
+#'
 #' @seealso Exact calculation with [\pkg{TBRDist}](
 #' https://ms609.github.io/TBRDist/reference/TreeRearrangementDistances.html)
 #' functions `USPRDist()` and `ReplugDist()`.
-#' 
+#'
 #' \pkg{phangorn} function \code{\link[phangorn:treedist]{SPR.dist()}} employs
 #' the \insertCite{deOliveira2008;textual}{TreeDist} algorithm but can crash
 #' when sent trees of certain formats, and tends to have a longer running time.
-#' 
+#'
 #' @family tree distances
 #' @importFrom TreeTools PairwiseDistances Postorder
 #' @export
-SPRDist <- function (tree1, tree2 = NULL, method = "deOliveira", symmetric) {
+SPRDist <- function(tree1, tree2 = NULL, method = "confl", symmetric) {
   UseMethod("SPRDist")
 }
 
 #' @rdname SPRDist
 #' @export
-SPRDist.phylo <- function (tree1, tree2 = NULL, method = "deOliveira", symmetric) {
+SPRDist.phylo <- function(tree1, tree2 = NULL, method = "confl", symmetric) {
   if (is.null(tree2)) {
     NULL
   } else if (inherits(tree2, "phylo")) {
@@ -69,10 +69,13 @@ SPRDist.phylo <- function (tree1, tree2 = NULL, method = "deOliveira", symmetric
 
 #' @rdname SPRDist
 #' @export
-SPRDist.list <- function (tree1, tree2 = NULL, method = "deOliveira", symmetric) {
+SPRDist.list <- function(tree1, tree2 = NULL, method = "confl", symmetric) {
   if (is.null(tree2)) {
-    PairwiseDistances(RootTree(RenumberTips(tree1, tree1), 1),
-                      .SPRFunc(method), check = FALSE)
+    PairwiseDistances(
+      RootTree(RenumberTips(tree1, tree1), 1),
+      .SPRFunc(method),
+      check = FALSE
+    )
   } else if (inherits(tree2, 'phylo')) {
     vapply(tree1, .SPRFunc(method), double(1), tree2)
   } else {
@@ -98,7 +101,7 @@ SPRDist.multiPhylo <- SPRDist.list
   moves <- 0
   if (debug) dropList <- character(0)
   
-  reduced <- Reduce(tree1, tree2, check = check)
+  reduced <- ReduceTrees(tree1, tree2, check = check)
   if (debug) {
     dropList <- character(0)
     par(mfrow = 1:2, mai = rep(0.1, 4))
@@ -148,11 +151,16 @@ SPRDist.multiPhylo <- SPRDist.list
       subtips1[!subtips1][1] <- TRUE
       subtips2 <- !agreement
       subtips2[agreement][1] <- TRUE
-      return(moves +
-               .SPRPair(KeepTipPostorder(tr1, subtips1),
-                        KeepTipPostorder(tr2, subtips1)) +
-               .SPRPair(KeepTipPostorder(tr1, subtips2),
-                        KeepTipPostorder(tr2, subtips2))
+      return(
+        moves +
+          .SPRExperiment(
+            KeepTipPostorder(tr1, subtips1),
+            KeepTipPostorder(tr2, subtips1)
+          ) +
+          .SPRExperiment(
+            KeepTipPostorder(tr1, subtips2),
+            KeepTipPostorder(tr2, subtips2)
+          )
       )
     }
     .Is1 <- function (i, j) {
@@ -306,7 +314,7 @@ SPRDist.multiPhylo <- SPRDist.list
   moves <- 0
   if (debug) dropList <- character(0)
   
-  reduced <- Reduce(tree1, tree2, check = check)
+  reduced <- ReduceTrees(tree1, tree2, check = check)
   if (debug) {
     par(mfrow = 1:2, mai = rep(0.1, 4))
     plot(reduced[[1]])
@@ -334,12 +342,17 @@ SPRDist.multiPhylo <- SPRDist.list
       subtips1[!subtips1][1] <- TRUE
       subtips2 <- !agreement
       subtips2[agreement][1] <- TRUE
-      return(moves +
-               .SPRPair(KeepTipPostorder(tr1, subtips1),
-                        KeepTipPostorder(tr2, subtips1)) +
-               .SPRPair(KeepTipPostorder(tr1, subtips2),
-                        KeepTipPostorder(tr2, subtips2))
-             )
+      return(
+        moves +
+          .SPRConfl(
+            KeepTipPostorder(tr1, subtips1),
+            KeepTipPostorder(tr2, subtips1)
+          ) +
+          .SPRConfl(
+            KeepTipPostorder(tr1, subtips2),
+            KeepTipPostorder(tr2, subtips2)
+          )
+      )
     }
     
     confInf <- conf
@@ -484,7 +497,7 @@ SPRDist.multiPhylo <- SPRDist.list
 #' @importFrom TreeTools edge_to_splits
 .SPRPairDeOCutter <- function(tree1, tree2, check = TRUE, debug = FALSE) {
   moves <- 0
-  reduced <- Reduce(tree1, tree2, check = check)
+  reduced <- ReduceTrees(tree1, tree2, check = check)
   if (debug) {
     dropList <- character(0)
     par(mfrow = 1:2, mai = rep(0.1, 4))
