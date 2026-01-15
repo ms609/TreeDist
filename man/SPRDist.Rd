@@ -23,8 +23,8 @@ or lists of such trees to undergo pairwise comparison.  Where implemented,
 \insertCite{Day1985;textual}{TreeDist}.}
 
 \item{method}{Character specifying which method to use to approximate the
-SPR distance.  Currently defaults to \code{"deOliveira"}, the only available
-option; a new method will eventually become the default.}
+SPR distance.  Currently defaults to `"deOliveira"``, the only available
+option; a new method will become the default once available.}
 
 \item{symmetric}{Ignored (redundant after fix of
 \href{https://github.com/KlausVigo/phangorn/issues/97}{phangorn#97}).}
@@ -54,9 +54,6 @@ SPRDist(as.phylo(0:2, 7), PectinateTree(7))
 
 SPRDist(list(bal = BalancedTree(7), pec = PectinateTree(7)),
         as.phylo(0:2, 7))
-}
-\references{
-\insertAllCited{}
 }
 \references{
 \insertAllCited{}
