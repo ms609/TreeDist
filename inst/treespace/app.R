@@ -27,6 +27,7 @@ if (!requireNamespace("MASS", quietly = TRUE)) install.packages("MASS")
 if (!requireNamespace("Quartet", quietly = TRUE)) install.packages("Quartet")
 if (!requireNamespace("rgl", quietly = TRUE)) install.packages("rgl")
 if (!requireNamespace("readxl", quietly = TRUE)) install.packages("readxl")
+if (!requireNamespace("uwot", quietly = TRUE)) install.packages("uwo")
 
 # Allow large files to be submitted
 options(shiny.maxRequestSize = 100 * 1024^2)
@@ -1379,42 +1380,18 @@ server <- function(input, output, session) {
     }
   }, width = PlotSize(), height = PlotSize())
   
-  output$threeDPlot <- rgl::renderRglwidget({
-    if (mode3D() && inherits(distances(), "dist")) {
-      cl <- clusterings()
-      proj <- mapping()
-      withProgress(message = "Drawing 3D plot", {
-        rgl::open3d(useNULL = TRUE)
-        incProgress(0.1)
-        rgl::bg3d(color = "white")
-        rgl::plot3d(proj[, 1], proj[, 2], proj[, 3],
-             aspect = 1, # Preserve aspect ratio - do not distort distances
-             axes = FALSE, # Dimensions are meaningless
-             col = pointCols(),
-             alpha = input$pt.opacity / 255,
-             cex = input$pt.cex,
-             xlab = "", ylab = "", zlab = ""
-        )
-        incProgress(0.6)
-        if ("labelTrees" %in% input$display) {
-          rgl::text3d(proj[, 1], proj[, 2], proj[, 3], thinnedTrees())
-        }
-        if (mstSize() > 0) {
-          rgl::segments3d(
-            proj[t(mstEnds()), ],
-            col = if ("mstStrain" %in% input$display) {
-                rep(StrainCol(distances(), proj[, 1:3]), 
-                    each = 2) # each end of each segment
-              } else {
-                "#bbbbbb"
-              },
-            lty = 1
-          )
-        }
-      })
-      rgl::rglwidget()
-    }
-  })
+  ThreeDPlotServer(
+    input, output,
+    distances   = distances,
+    clusterings = clusterings,
+    mapping     = mapping,
+    mstEnds     = mstEnds,
+    mstSize     = mstSize,
+    pointCols   = pointCols,
+    thinnedTrees = thinnedTrees,
+    StrainCol   = StrainCol,
+    mode3D      = mode3D
+  )
   
   output$savePng <- downloadHandler(
     filename = "TreeSpace.png",
