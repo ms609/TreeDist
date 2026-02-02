@@ -25,9 +25,7 @@ if (!requireNamespace("protoclust", quietly = TRUE)) {
 }
 if (!requireNamespace("MASS", quietly = TRUE)) install.packages("MASS")
 if (!requireNamespace("Quartet", quietly = TRUE)) install.packages("Quartet")
-if (!requireNamespace("rgl", quietly = TRUE)) install.packages("rgl")
 if (!requireNamespace("readxl", quietly = TRUE)) install.packages("readxl")
-if (!requireNamespace("uwot", quietly = TRUE)) install.packages("uwo")
 
 # Allow large files to be submitted
 options(shiny.maxRequestSize = 100 * 1024^2)
@@ -381,8 +379,7 @@ ui <- fluidPage(theme = "treespace.css",
       ),
       fluidRow(
         plotOutput(outputId = "distPlot", height = "0px"),
-        rgl::rglwidgetOutput(outputId = "threeDPlot",
-                             width = "600px", height = "600px"),
+        uiOutput(outputId = "threeDPlot", style = "height: 600px; width: 600px;"),
         hidden(plotOutput("clustCons", height = "200px")),
         htmlOutput("references"),
       ),
