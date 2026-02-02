@@ -76,13 +76,13 @@ Suggests:
   TreeDistData (> 0.1.0),
   TreeSearch (>= 1.4.0),
   Umatrix,
-  uwot,
   vdiffr (>= 1.0.0),
 LinkingTo:
   Rcpp,
   TreeTools (>= 1.16.1),
 RdMacros: Rdpack
 VignetteBuilder: knitr
+Config/Needs/app/optional: uwot
 Config/Needs/check: rcmdcheck
 Config/Needs/coverage: covr
 Config/Needs/memcheck: devtools
