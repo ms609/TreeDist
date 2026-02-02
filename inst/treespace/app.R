@@ -27,7 +27,6 @@ if (!requireNamespace("MASS", quietly = TRUE)) install.packages("MASS")
 if (!requireNamespace("Quartet", quietly = TRUE)) install.packages("Quartet")
 if (!requireNamespace("rgl", quietly = TRUE)) install.packages("rgl")
 if (!requireNamespace("readxl", quietly = TRUE)) install.packages("readxl")
-if (!requireNamespace("uwot", quietly = TRUE)) install.packages("uwot")
 
 # Allow large files to be submitted
 options(shiny.maxRequestSize = 100 * 1024^2)
@@ -586,6 +585,16 @@ server <- function(input, output, session) {
   
   nNeighb <- debounce(reactive(input$nNeighb), 300)
   
+  observe({
+    if (!requireNamespace("uwot", quietly = TRUE)) {
+      updateSelectInput(session, "mapping",
+                        choices = c("Principal Components (PCA)" = "pca", 
+                                    "Kruskal's non-metric MDS" = "k", 
+                                    "Sammon's non-linear mapping" = "nls")
+      )
+    }
+  })
+  
   mapping <- bindCache(
     reactive({
       if (maxProjDim() > 1L) {
@@ -593,20 +602,32 @@ server <- function(input, output, session) {
         withProgress(
           message = "Mapping distances",
           value = 0.99,
-          switch(
-            input$mapping,
-            "pca" = cmdscale(distances(), k = maxProjDim()),
-            "k" = MASS::isoMDS(distances(), k = maxProjDim())$points,
-            "nls" = MASS::sammon(distances(), k = maxProjDim())$points,
-            "tumap" = uwot::tumap(distances(), verbose = FALSE,
-                                  n_neighbors = nNeighb(),
-                                  n_components = maxProjDim()),
-            "umap" = uwot::umap(distances(), verbose = FALSE,
-                                a = 1.8956, b = 0.8006,
-                                approx_pow = TRUE,
-                                n_neighbors = nNeighb(),
-                                n_components = maxProjDim())
-          )
+          {
+            uwot <- requireNamespace("uwot", quietly = TRUE)
+            switch(
+              input$mapping,
+              "pca" = cmdscale(distances(), k = maxProjDim()),
+              "k" = MASS::isoMDS(distances(), k = maxProjDim())$points,
+              "tumap" = if (uwot) {
+                uwot::tumap(distances(), verbose = FALSE,
+                            n_neighbors = nNeighb(),
+                            n_components = maxProjDim())
+              } else {
+                showNotification("uwot package unavailable. Defaulting to PCA.", type = "error")
+                cmdscale(distances(), k = maxProjDim())
+              },
+              "umap" = if (uwot) {
+                uwot::umap(distances(), verbose = FALSE,
+                           a = 1.8956, b = 0.8006,
+                           approx_pow = TRUE,
+                           n_neighbors = nNeighb(),
+                           n_components = maxProjDim())
+              } else {
+                showNotification("uwot package unavailable. Defaulting to PCA.", type = "error")
+                cmdscale(distances(), k = maxProjDim())
+              }
+            )
+          }
         )
       } else {
         matrix(0, 0, 0)
