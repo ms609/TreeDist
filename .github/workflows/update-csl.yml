@@ -16,6 +16,7 @@ jobs:
           
       - name: Validate download
         run: |
+          sudo apt-get update && sudo apt-get install -y libxml2-utils
           if ! xmllint --noout inst/apa-old-doi-prefix.csl; then
             echo "Error: Downloaded file is not valid XML"
             exit 1
