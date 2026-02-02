@@ -610,7 +610,7 @@ server <- function(input, output, session) {
               "k" = MASS::isoMDS(distances(), k = maxProjDim())$points,
               "nls" = MASS::sammon(distances(), k = maxProjDim())$points,
               "tumap" = if (uwot) {
-                uwot::tumap(distances(), verbose = FALSE,
+                getFromNamespace("tumap", "uwot")(distances(), verbose = FALSE,
                             n_neighbors = nNeighb(),
                             n_components = maxProjDim())
               } else {
@@ -618,7 +618,7 @@ server <- function(input, output, session) {
                 cmdscale(distances(), k = maxProjDim())
               },
               "umap" = if (uwot) {
-                uwot::umap(distances(), verbose = FALSE,
+                getFromNamespace("umap", "uwot")(distances(), verbose = FALSE,
                            a = 1.8956, b = 0.8006,
                            approx_pow = TRUE,
                            n_neighbors = nNeighb(),
