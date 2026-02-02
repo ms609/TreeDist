@@ -12,7 +12,7 @@ jobs:
       
       - name: Download latest CSL file
         run: |
-          curl -o -f -L inst/apa-old-doi-prefix.csl https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
+          curl -L -f -o inst/apa-old-doi-prefix.csl https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl
           
       - name: Validate download
         run: |
