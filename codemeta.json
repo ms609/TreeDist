@@ -361,18 +361,6 @@
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "uwot",
-      "name": "uwot",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=uwot"
-    },
-    {
-      "@type": "SoftwareApplication",
       "identifier": "vdiffr",
       "name": "vdiffr",
       "version": ">= 1.0.0",
@@ -488,7 +476,7 @@
     "SystemRequirements": "C++17, pandoc-citeproc"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "1681.307KB",
+  "fileSize": "1681.331KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
