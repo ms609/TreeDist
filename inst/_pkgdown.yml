@@ -106,5 +106,5 @@ template:
   bslib:
     danger: "#A6081A" # Accessibility suggestion
   params:
-    bootswatch: cerulean
+    bootswatch: simplex
     ganalytics: G-BTKEG66D3F
