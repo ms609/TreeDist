@@ -2,7 +2,12 @@ name: Update CSL file
 on:
   schedule:
     - cron: '0 0 * * 1'  # Runs weekly on Monday at 00:00 UTC
-  workflow_dispatch:      # Allows manual triggering
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/update-csl.yml'
 
 jobs:
   update-csl:
@@ -16,11 +21,6 @@ jobs:
           
       - name: Validate download
         run: |
-          sudo apt-get update && sudo apt-get install -y libxml2-utils
-          if ! xmllint --noout inst/apa-old-doi-prefix.csl; then
-            echo "Error: Downloaded file is not valid XML"
-            exit 1
-          fi
           python3 -c "import xml.etree.ElementTree as ET; ET.parse('inst/apa-old-doi-prefix.csl')" || { echo "Invalid XML detected"; exit 1; }
           
       - name: Check for changes
