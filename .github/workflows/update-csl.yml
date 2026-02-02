@@ -21,6 +21,7 @@ jobs:
             echo "Error: Downloaded file is not valid XML"
             exit 1
           fi
+          python3 -c "import xml.etree.ElementTree as ET; ET.parse('inst/apa-old-doi-prefix.csl')" || { echo "Invalid XML detected"; exit 1; }
           
       - name: Check for changes
         id: changes
