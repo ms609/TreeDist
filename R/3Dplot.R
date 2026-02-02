@@ -14,9 +14,13 @@ ThreeDPlotServer <- function(input, output, distances, clusterings,
     if (!requireNamespace("rgl", quietly = TRUE)) {
       is_wasm <- identical(Sys.getenv("R_WASM"), "1")
       if (!is_wasm) {
-        if (!requireNamespace("rgl", quietly = TRUE)) install.packages("rgl")
+        if (!requireNamespace("rgl", quietly = TRUE)) {
+          tryCatch(install.packages("rgl"), error = function(e) {})
+        }
       }
-      
+    }
+    
+    if (!requireNamespace("rgl", quietly = TRUE)) {
       msg <- if (is_wasm) {
         shiny::p(
           shiny::strong("3D plot unavailable."),
