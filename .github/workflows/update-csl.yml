@@ -1,7 +1,7 @@
-name: Update CSL file
+name: Update from TreeTools
 on:
   schedule:
-    - cron: '0 0 * * 1'  # Runs weekly on Monday at 00:00 UTC
+    - cron: '0 1 * * 1'  # Runs weekly on Monday at 01:00 UTC
   workflow_dispatch:
   push:
     branches:
@@ -17,7 +17,7 @@ jobs:
       
       - name: Download latest CSL file
         run: |
-          curl -L -f -o inst/apa-old-doi-prefix.csl https://raw.githubusercontent.com/citation-style-language/styles/master/apa.csl
+          curl -L -f -o inst/apa-old-doi-prefix.csl https://raw.githubusercontent.com/ms609/TreeTools/main/inst/apa-old-doi-prefix.csl
           
       - name: Validate download
         run: |
