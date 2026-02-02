@@ -1365,7 +1365,7 @@ server <- function(input, output, session) {
   }
   
   mode3D <- reactive("show3d" %in% input$display)
-  PlotSize <- function() debounce(reactive(input$plotSize), 100)
+  PlotSize <- debounce(reactive(input$plotSize), 100)
   output$distPlot <- renderPlot({
     if (!mode3D()) {
       if (inherits(distances(), "dist")) {
@@ -1375,7 +1375,7 @@ server <- function(input, output, session) {
         output$mappingStatus <- renderText("No distances available.")
       }
     }
-  }, width = PlotSize(), height = PlotSize())
+  }, width = PlotSize, height = PlotSize)
   
   ThreeDPlotServer(
     input, output,
@@ -1387,6 +1387,7 @@ server <- function(input, output, session) {
     pointCols   = pointCols,
     thinnedTrees = thinnedTrees,
     StrainCol   = StrainCol,
+    PlotSize    = PlotSize,
     mode3D      = mode3D
   )
   

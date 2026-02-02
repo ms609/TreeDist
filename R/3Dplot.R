@@ -3,9 +3,9 @@
 ThreeDPlotServer <- function(input, output, distances, clusterings,
                              mapping, mstEnds, mstSize,
                              pointCols, thinnedTrees,
-                             StrainCol, mode3D) {
+                             StrainCol, PlotSize, mode3D) {
   output$threeDPlot <- shiny::renderUI({
-    plotSize <- sprintf( "height: %spx; width: %spx;", 600, 600)
+    plotSize <- sprintf( "height: %dpx; width: %dpx;", PlotSize(), PlotSize())
     
     if (!mode3D()) {
       return(shiny::div(style = plotSize))
