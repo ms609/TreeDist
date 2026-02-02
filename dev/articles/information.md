@@ -258,16 +258,16 @@ mutual information decreases accordingly.
 ## References
 
 MacKay, D. J. C. (2003). *Information theory, inference, and learning
-algorithms*. Cambridge: Cambridge University Press. Retrieved from
+algorithms*. Cambridge University Press.
 <https://www.inference.org.uk/itprnn/book.pdf>
 
 Meila, M. (2007). Comparing clusterings—an information based distance.
-*Journal of Multivariate Analysis*, *98*(5), 873–895. doi:
-[10.1016/j.jmva.2006.11.013](https://doi.org/10.1016/j.jmva.2006.11.013)
+*Journal of Multivariate Analysis*, *98*(5), 873–895.
+<https://doi.org/10.1016/j.jmva.2006.11.013>
 
 Shannon, C. E. (1948). A mathematical theory of communication. *Bell
 System Technical Journal*, *27*, 379–423, 623–656.
 
 Steel, M. A., & Penny, D. (2006). Maximum parsimony and the phylogenetic
 information in multistate characters. In V. A. Albert (Ed.), *Parsimony,
-phylogeny, and genomics* (pp. 163–178). Oxford: Oxford University Press.
+phylogeny, and genomics* (pp. 163–178). Oxford University Press.

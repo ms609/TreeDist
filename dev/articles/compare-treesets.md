@@ -179,9 +179,9 @@ trees across tree space.
 ## References
 
 Smith, M. R. (2022a). Robust analysis of phylogenetic tree space.
-*Systematic Biology*, *71*(5), 1255–1270. doi:
-[10.1093/sysbio/syab100](https://doi.org/10.1093/sysbio/syab100)
+*Systematic Biology*, *71*(5), 1255–1270.
+<https://doi.org/10.1093/sysbio/syab100>
 
 Smith, M. R. (2022b). Using information theory to detect rogue taxa and
-improve consensus trees. *Systematic Biology*, *71*(5), 1088–1094. doi:
-[10.1093/sysbio/syab099](https://doi.org/10.1093/sysbio/syab099)
+improve consensus trees. *Systematic Biology*, *71*(5), 1088–1094.
+<https://doi.org/10.1093/sysbio/syab099>

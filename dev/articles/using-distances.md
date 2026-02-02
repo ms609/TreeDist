@@ -142,9 +142,9 @@ contradicted by every other split in the other; as such, any pair of
 trees will necessarily have some degree of similarity.  
 In such a context, it can be relevant to normalize tree similarity
 against the *expected* distance between a pair of random trees, rather
-than a maximum value (see Vinh, Epps, & Bailey, 2010). On this measure,
-distances greater than one denote trees that are more different than
-expected by chance, whereas a distance of zero denotes identity.
+than a maximum value (see Vinh et al., 2010). On this measure, distances
+greater than one denote trees that are more different than expected by
+chance, whereas a distance of zero denotes identity.
 
 With the quartet divergence, the expected tree distance is readily
 calculated: any given quartet has a one in three chance of matching by
@@ -464,21 +464,18 @@ You may wish to:
 
 Nye, T. M. W., Liò, P., & Gilks, W. R. (2006). A novel algorithm and
 web-based tool for comparing two alternative phylogenetic trees.
-*Bioinformatics*, *22*(1), 117–119. doi:
-[10.1093/bioinformatics/bti720](https://doi.org/10.1093/bioinformatics/bti720)
+*Bioinformatics*, *22*(1), 117–119.
+<https://doi.org/10.1093/bioinformatics/bti720>
 
 Smith, M. R. (2019). Bayesian and parsimony approaches reconstruct
 informative trees from simulated morphological datasets. *Biology
-Letters*, *15*(2), 20180632. doi:
-[10.1098/rsbl.2018.0632](https://doi.org/10.1098/rsbl.2018.0632)
+Letters*, *15*(2), 20180632. <https://doi.org/10.1098/rsbl.2018.0632>
 
 Smith, M. R. (2020). Information theoretic Generalized Robinson-Foulds
 metrics for comparing phylogenetic trees. *Bioinformatics*, *36*(20),
-5007–5013. doi:
-[10.1093/bioinformatics/btaa614](https://doi.org/10.1093/bioinformatics/btaa614)
+5007–5013. <https://doi.org/10.1093/bioinformatics/btaa614>
 
 Vinh, N. X., Epps, J., & Bailey, J. (2010). Information theoretic
 measures for clusterings comparison: variants, properties, normalization
 and correction for chance. *Journal of Machine Learning Research*, *11*,
-2837–2854. doi:
-[10.1145/1553374.1553511](https://doi.org/10.1145/1553374.1553511)
+2837–2854. <https://doi.org/10.1145/1553374.1553511>
