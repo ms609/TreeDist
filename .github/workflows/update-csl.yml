@@ -12,7 +12,14 @@ jobs:
       
       - name: Download latest CSL file
         run: |
-          curl -o inst/apa-old-doi-prefix.csl https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
+          curl -o -f -L inst/apa-old-doi-prefix.csl https://raw.githubusercontent.com/citation-style-language/styles/master/apa-old-doi-prefix.csl
+          
+      - name: Validate download
+        run: |
+          if ! xmllint --noout inst/apa-old-doi-prefix.csl; then
+            echo "Error: Downloaded file is not valid XML"
+            exit 1
+          fi
           
       - name: Check for changes
         id: changes
