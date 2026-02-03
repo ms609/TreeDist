@@ -134,6 +134,14 @@ test_that("SPR calculated correctly", {
     .SPRConfl(PectinateTree(letters[1:26]), PectinateTree(letters[c(2:26, 1)]))[[1]],
     1L
   )
+  
+  # Looks simple, but requires ties to be broken suitably
+  expect_equal(
+    .SPRConfl(Tree("(a,(d,(b,(c,X))));"), Tree("(a,((b,c),(X,d)));"))[[1]],
+    1L
+  )
+  
+  
   expect_equal(
     .SPRConfl(
       tree1 <- PectinateTree(letters[1:26]),

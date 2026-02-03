@@ -125,14 +125,14 @@ SPRDist.multiPhylo <- SPRDist.list
     sp2 <- edge_to_splits(edge2, PostorderOrder(edge2), labels, nTip = nTip)
     nSplits <- length(sp1)
     
-    conf <- confusion(sp1, sp2)
+    confusion <- confusion(sp1, sp2)
     if (debug) {
-      dimnames(conf) <- list(
+      dimnames(confusion) <- list(
         c("ab", "aB", "Ab", "AB"),
         names(sp1),
         names(sp2))
     }
-    concave <- colSums(conf == 0)
+    concave <- colSums(confusion == 0)
     
     matches <- concave == 2
     if (any(matches)) {
@@ -166,16 +166,16 @@ SPRDist.multiPhylo <- SPRDist.list
     }
     .Is1 <- function (i, j) {
       hitHere <- logical(attr(sp1, "nTip"))
-      if (conf[1, i, j] == 1) {
+      if (confusion[1, i, j] == 1) {
         hitHere <- hitHere | as.logical(sp1[[i]] & sp2[[j]])
       }
-      if (conf[2, i, j] == 1) {
+      if (confusion[2, i, j] == 1) {
         hitHere <- hitHere | as.logical(sp1[[i]] & !sp2[[j]])
       }
-      if (conf[3, i, j] == 1) {
+      if (confusion[3, i, j] == 1) {
         hitHere <- hitHere | as.logical(!sp1[[i]] & sp2[[j]])
       }
-      if (conf[4, i, j] == 1) {
+      if (confusion[4, i, j] == 1) {
         hitHere <- hitHere | as.logical(!sp1[[i]] & !sp2[[j]])
       }
       hitHere
@@ -189,21 +189,21 @@ SPRDist.multiPhylo <- SPRDist.list
       i <- .Which1(x, nSplits)
       j <- .Which2(x, nSplits)
       which(
-      if (conf[1, i, j] > 1) {
+      if (confusion[1, i, j] > 1) {
         as.logical(!sp1[[i]] & !sp2[[j]])
       } else 
-      if (conf[2, i, j] > 1) {
+      if (confusion[2, i, j] > 1) {
         as.logical(!sp1[[i]] & sp2[[j]])
       } else
-      if (conf[3, i, j] > 1) {
+      if (confusion[3, i, j] > 1) {
         as.logical(sp1[[i]] & !sp2[[j]])
       } else
-      if (conf[4, i, j] > 1) {
+      if (confusion[4, i, j] > 1) {
         as.logical(sp1[[i]] & sp2[[j]])
       })
     }
     
-    nits <- which(apply(conf, 2:3, function (x) sum(0:2 %in% x)) == 3)
+    nits <- which(apply(confusion, 2:3, function (x) sum(0:2 %in% x)) == 3)
     nitDrops <- vapply(nits, function (x) which(.Is1(.Which1(x, nSplits), .Which2(x, nSplits))), integer(1))
     nitDups <- duplicated(nitDrops)
     if (any(nitDups)) {
@@ -228,12 +228,12 @@ SPRDist.multiPhylo <- SPRDist.list
     }
     twits <- double(0)
     if (!length(nitDrops)) {
-      twits <- which(apply(conf, 2:3, function (x) sum(x == 1) > 1))
+      twits <- which(apply(confusion, 2:3, function (x) sum(x == 1) > 1))
       if (length(twits)) {
         twitDrops <- unlist(sapply(twits, .FindDrops))
         keep <- !tabulate(which.max(tabulate(twitDrops)), nTip)
       
-        # flits <- which(apply(conf, 2:3, function (x) sum(x == 1) == 3))
+        # flits <- which(apply(confusion, 2:3, function (x) sum(x == 1) == 3))
         # flitDrops <- vapply(flits, .FindOverlap, integer(1))
         # nitDrops <- unique(flitDrops)
         if (debug) {
@@ -336,8 +336,8 @@ SPRDist.multiPhylo <- SPRDist.list
     sp2 <- edge_to_splits(edge2, PostorderOrder(edge2), labels, nTip = nTip)
     nSplits <- length(sp1)
     
-    conf <- confusion(sp1, sp2)
-    concave <- colSums(conf == 0)
+    confusion <- confusion(sp1, sp2)
+    concave <- colSums(confusion == 0)
     
     # Divide and conquer can help - but doesn't always.
     # 
@@ -420,18 +420,33 @@ SPRDist.multiPhylo <- SPRDist.list
       })
     }
     
-    confInf <- conf
-    confInf[conf == 0] <- Inf
+    confInf <- confusion
+    confInf[confusion == 0] <- Inf
     confMin <- apply(confInf, 2:3, min)
     minConf <- min(confMin[confMin > 0])
     if (debug && minConf > 1) {
       message("Minimum conflict: ", minConf)
     }
-    h <- apply(conf / nTip, 2:3, Entropy)
+    # if minConf == 1, then removing a single leaf can resolve a contradiction
+    # We use entropy to decide which leaf might be most profitable to remove.
+    # 
+    # h gives the joint entropy of each pair of splits in tree1 & tree2
+    h <- apply(confusion, 2:3, Ntropy)
     minH <- min(h[confMin == minConf])
     maxH <- max(h[confMin == minConf])
     
-    candidate <- which.max(h == maxH)
+    candidates <- which(h == maxH)
+    if (length(candidates) > 1) {
+      # Let's identify the split in each tree that is most at odds with all
+      # other splits
+      tieBreak <- outer(rowMeans(h), colMeans(h))
+      tieBreak[-candidates] <- -Inf
+      candidates <- which(tieBreak == max(tieBreak))
+    }
+    
+    # If still tied, break arbitrarily.
+    # TODO perhaps we can find a non-arbitrary way to break any remaining ties?
+    candidate <- candidates[[1]]
     
     splitA <- sp1[[.Which1(candidate, nSplits)]]
     splitB <- sp2[[.Which2(candidate, nSplits)]]
