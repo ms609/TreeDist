@@ -435,6 +435,9 @@ SPRDist.multiPhylo <- SPRDist.list
     }
     minConfOpts <- confMin == minConf
     
+    possibleK <- seq_len(nTip / 2)
+    hCalc <- vapply(possibleK, function(k) Ntropy(c(k, nTip - k)), 1.0)
+    
     candidates <- switch(
       pmatch(tolower(getOption("sprH", "confusion")), c("confusion", "vi",
                                                         "ami", "joint", "vinorm")),
@@ -470,11 +473,8 @@ SPRDist.multiPhylo <- SPRDist.list
         nTip <- NTip(sp1)
         in1 <- TipsInSplits(sp1)
         in2 <- TipsInSplits(sp2)
-        n1 <- rbind(in1, nTip - in1)
-        n2 <- rbind(in2, nTip - in2)
-        
-        h1 <- apply(n1, 2, Ntropy)
-        h2 <- apply(n2, 2, Ntropy)
+        h1 <- hCalc[pmin(in1, nTip - in1)]
+        h2 <- hCalc[pmin(in2, nTip - in2)]
         h12 <- apply(confusion, 2:3, Ntropy)
         mi <- outer(h1, h2, "+") - h12
         
@@ -495,11 +495,9 @@ SPRDist.multiPhylo <- SPRDist.list
         nTip <- NTip(sp1)
         in1 <- TipsInSplits(sp1)
         in2 <- TipsInSplits(sp2)
-        n1 <- rbind(in1, nTip - in1)
-        n2 <- rbind(in2, nTip - in2)
+        h1 <- hCalc[pmin(in1, nTip - in1)]
+        h2 <- hCalc[pmin(in2, nTip - in2)]
         
-        h1 <- apply(n1, 2, Ntropy)
-        h2 <- apply(n2, 2, Ntropy)
         h12 <- apply(confusion, 2:3, Ntropy)
         mi <- outer(h1, h2, "+") - h12
         
@@ -538,11 +536,8 @@ SPRDist.multiPhylo <- SPRDist.list
         nTip <- NTip(sp1)
         in1 <- TipsInSplits(sp1)
         in2 <- TipsInSplits(sp2)
-        n1 <- rbind(in1, nTip - in1)
-        n2 <- rbind(in2, nTip - in2)
-        
-        h1 <- apply(n1, 2, Ntropy)
-        h2 <- apply(n2, 2, Ntropy)
+        h1 <- hCalc[pmin(in1, nTip - in1)]
+        h2 <- hCalc[pmin(in2, nTip - in2)]
         h12 <- apply(confusion, 2:3, Ntropy)
         mi <- outer(h1, h2, "+") - h12
         
