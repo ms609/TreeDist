@@ -135,10 +135,10 @@ test_that("SPR calculated correctly", {
     1L
   )
   
-  options(sprH = "conf")
+  options(sprH = "viNorm")
   # Looks simple, but requires ties to be broken suitably
-  # Passes with conf
-  # Fails with joint, ami, viNorm, vi
+  # Passes with conf, viNorm (needed tiebreaker in each case)
+  # Fails with joint, ami, vi: tiebreaker not yet implemented!
   expect_equal(
     .SPRConfl(Tree("(a,(d,(b,(c,X))));"), Tree("(a,((b,c),(X,d)));"))[[1]],
     1L

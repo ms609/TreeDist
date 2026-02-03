@@ -453,7 +453,7 @@ SPRDist.multiPhylo <- SPRDist.list
           # Let's identify the split in each tree that is most at odds with all
           # other splits
           tieBreak <- outer(rowMeans(h), colMeans(h))[candidates]
-          candidates <- candidates[which(tieBreak == max(tieBreak)), , drop = FALSE]
+          candidates <- candidates[tieBreak == max(tieBreak), , drop = FALSE]
         }
         
         # If still tied, break arbitrarily.
@@ -536,8 +536,12 @@ SPRDist.multiPhylo <- SPRDist.list
         vi <- outer(h1, h2, "+") - (ami + ami)
         
         score <- vi / outer(h1, h2, "+")
-        score[!minConfOpts] <- -Inf
-        which(score == max(score), arr.ind = TRUE)
+        candidates <- which(score == max(score[minConfOpts]) & minConfOpts,
+                            arr.ind = TRUE)
+        if (nrow(candidates) > 1) {
+          tieBreak <- outer(rowMeans(score), colMeans(score))[candidates]
+          candidates <- candidates[tieBreak == max(tieBreak), , drop = FALSE]
+        }
       }
     )
     
