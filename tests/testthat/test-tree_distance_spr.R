@@ -145,6 +145,8 @@ test_that("SPR calculated correctly", {
     )[[1]],
     2
   )
+  
+  # Benefits from the "divide and conquer" step, 2026-02-03
   expect_equal(
     .SPRConfl(
       tree1 <- PectinateTree(letters[1:26]),
@@ -163,6 +165,7 @@ test_that("SPR calculated correctly", {
   }
 
   expect_equal(SPRDist(tr[[3]], tr[[11]], method = "DeO"), 8)
+  # 11 with divide and conquer; 9 without
   expect_equal(SPRDist(tr[[3]], tr[[11]], method = "confl"), 7) #
   expect_equal(SPRDist(tr[[3]], tr[[11]], method = "exp"), 7) #
   # expect_equal(TBRDist::USPRDist(tr[[3]], tr[[11]]), 7) # at 2026-01-15: Actually 8
@@ -173,7 +176,7 @@ test_that("SPR calculated correctly", {
   set.seed(0)
   tr <- vector("list", nSPR + 1L)
   tr[[1]] <- Postorder(RandomTree(nTip, root = TRUE))
-  expect_equal(SPRDist(tr[[1]], tr[[1]]), 0)
+  expect_equal(SPRDist(tr[[1]], tr[[1]])[[1]], 0)
   for (i in seq_len(nSPR) + 1L) {
     tr[[i]] <- Postorder(TreeSearch::SPR(tr[[i - 1]]))
   }
@@ -221,17 +224,21 @@ test_that("SPR calculated correctly", {
 
   expect_true(all(testDist >= phanDist))
 
+  # Cases to debug
+  opt <- options(debugSPR = TRUE)
+  on.exit(options(opt))
   tree1 <- tr[[1]]
   tree2 <- tr[[36]]
-  .SPRConfl(tree1, tree2, debug = TRUE)
+  .SPRConfl(tree1, tree2)
 
   tree1 <- tr[[3]]
   tree2 <- tr[[11]]
-  .SPRConfl(tree1, tree2, debug = TRUE)
+  .SPRConfl(tree1, tree2)
 
   tree1 <- tr[[14]]
   tree2 <- tr[[24]]
-  .SPRConfl(tree1, tree2, debug = TRUE)
+  .SPRConfl(tree1, tree2)
+  options(opt)
 
   # ub(SPRDist(tr), .phangornSPRDist(tr), times = 3)
   # pv(testDist <- SPRDist(tr))
