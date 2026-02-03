@@ -426,24 +426,26 @@ SPRDist.multiPhylo <- SPRDist.list
       })
     }
     
+    confInf <- confusion
+    confInf[confusion == 0] <- Inf
+    confMin <- apply(confInf, 2:3, min)
+    minConf <- min(confMin[confMin > 0])
+    if (debug && minConf > 1) {
+      message("Minimum conflict: ", minConf)
+    }
+    minConfOpts <- confMin == minConf
+    
     candidates <- switch(
       pmatch(tolower(getOption("sprH", "confusion")), c("confusion", "vi")),
       {
-        confInf <- confusion
-        confInf[confusion == 0] <- Inf
-        confMin <- apply(confInf, 2:3, min)
-        minConf <- min(confMin[confMin > 0])
-        if (debug && minConf > 1) {
-          message("Minimum conflict: ", minConf)
-        }
         
         # if minConf == 1, then removing a single leaf can resolve a contradiction
         # We use entropy to decide which leaf might be most profitable to remove.
         # 
         # h gives the joint entropy of each pair of splits in tree1 & tree2
         h <- apply(confusion, 2:3, Ntropy)
-        minH <- min(h[confMin == minConf])
-        maxH <- max(h[confMin == minConf])
+        minH <- min(h[minConfOpts])
+        maxH <- max(h[minConfOpts])
         
         candidates <- which(h == maxH, arr.ind = TRUE)
         if (!isFALSE(getOption("sprTies")) && nrow(candidates) > 1) {
@@ -479,6 +481,7 @@ SPRDist.multiPhylo <- SPRDist.list
                      Vectorize(function(i, j) expected_mi(n1[, i], n2[, j])))
         ami <- mi - emi
         vi <- outer(h1, h2, "+") - (ami + ami)
+        vi[!minConfOpts] <- -Inf
         which(vi == max(vi), arr.ind = TRUE)
       }
     )
