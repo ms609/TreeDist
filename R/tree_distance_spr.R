@@ -478,8 +478,13 @@ SPRDist.multiPhylo <- SPRDist.list
         h12 <- apply(confusion, 2:3, Ntropy)
         mi <- outer(h1, h2, "+") - h12
         
-        emi <- outer(seq_along(in1), seq_along(in2),
-                     Vectorize(function(i, j) expected_mi(n1[, i], n2[, j])))
+        unique_in1 <- unique(in1)
+        unique_in2 <- unique(in2)
+        emiCalc <- outer(unique_in1, unique_in2, Vectorize(function(i, j) {
+          expected_mi(c(i, nTip - i), c(j, nTip - j))
+        }))
+        emi <- emiCalc[match(in1, unique_in1), match(in2, unique_in2)]
+        
         ami <- mi - emi
         vi <- outer(h1, h2, "+") - (ami + ami)
         score <- vi
@@ -501,8 +506,13 @@ SPRDist.multiPhylo <- SPRDist.list
         h12 <- apply(confusion, 2:3, Ntropy)
         mi <- outer(h1, h2, "+") - h12
         
-        emi <- outer(seq_along(in1), seq_along(in2),
-                     Vectorize(function(i, j) expected_mi(n1[, i], n2[, j])))
+        unique_in1 <- unique(in1)
+        unique_in2 <- unique(in2)
+        emiCalc <- outer(unique_in1, unique_in2, Vectorize(function(i, j) {
+          expected_mi(c(i, nTip - i), c(j, nTip - j))
+        }))
+        emi <- emiCalc[match(in1, unique_in1), match(in2, unique_in2)]
+        
         ami <- mi - emi
         score <- ami
         candidates <- which(score == max(score[minConfOpts]) & minConfOpts,
@@ -541,8 +551,13 @@ SPRDist.multiPhylo <- SPRDist.list
         h12 <- apply(confusion, 2:3, Ntropy)
         mi <- outer(h1, h2, "+") - h12
         
-        emi <- outer(seq_along(in1), seq_along(in2),
-                     Vectorize(function(i, j) expected_mi(n1[, i], n2[, j])))
+        unique_in1 <- unique(in1)
+        unique_in2 <- unique(in2)
+        emiCalc <- outer(unique_in1, unique_in2, Vectorize(function(i, j) {
+          expected_mi(c(i, nTip - i), c(j, nTip - j))
+        }))
+        emi <- emiCalc[match(in1, unique_in1), match(in2, unique_in2)]
+        
         ami <- mi - emi
         vi <- outer(h1, h2, "+") - (ami + ami)
         
