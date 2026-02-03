@@ -542,6 +542,7 @@ SPRDist.multiPhylo <- SPRDist.list
           tieBreak <- outer(rowMeans(score), colMeans(score))[candidates]
           candidates <- candidates[tieBreak == max(tieBreak), , drop = FALSE]
         }
+        candidates
       }
     )
     
