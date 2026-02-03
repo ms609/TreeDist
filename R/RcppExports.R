@@ -58,6 +58,10 @@ entropy_int <- function(n) {
     .Call(`_TreeDist_entropy_int`, n)
 }
 
+expected_mi <- function(ni, nj) {
+    .Call(`_TreeDist_expected_mi`, ni, nj)
+}
+
 lapjv <- function(x, maxX) {
     .Call(`_TreeDist_lapjv`, x, maxX)
 }

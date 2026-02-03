@@ -325,7 +325,9 @@ SPRDist.multiPhylo <- SPRDist.list
   if (!is.null(reduced) && debug) {
     par(mfrow = 1:2, mai = rep(0.1, 4))
     plot(reduced[[1]])
+    ape::nodelabels(frame = "none", cex = 0.8)
     plot(reduced[[2]])
+    ape::nodelabels(frame = "none", cex = 0.8)
   }
   
   while (!is.null(reduced)) {
@@ -340,6 +342,7 @@ SPRDist.multiPhylo <- SPRDist.list
     nSplits <- length(sp1)
     
     confusion <- confusion(sp1, sp2)
+    
     concave <- colSums(confusion == 0)
     
     # Divide and conquer can help - but doesn't always.
@@ -423,35 +426,62 @@ SPRDist.multiPhylo <- SPRDist.list
       })
     }
     
-    confInf <- confusion
-    confInf[confusion == 0] <- Inf
-    confMin <- apply(confInf, 2:3, min)
-    minConf <- min(confMin[confMin > 0])
-    if (debug && minConf > 1) {
-      message("Minimum conflict: ", minConf)
-    }
-    # if minConf == 1, then removing a single leaf can resolve a contradiction
-    # We use entropy to decide which leaf might be most profitable to remove.
-    # 
-    # h gives the joint entropy of each pair of splits in tree1 & tree2
-    h <- apply(confusion, 2:3, Ntropy)
-    minH <- min(h[confMin == minConf])
-    maxH <- max(h[confMin == minConf])
-    
-    candidates <- which(h == maxH, arr.ind = TRUE)
-    if (!isFALSE(getOption("sprTies")) && nrow(candidates) > 1) {
-      # Let's identify the split in each tree that is most at odds with all
-      # other splits
-      tieBreak <- outer(rowMeans(h), colMeans(h))[candidates]
-      candidates <- candidates[which(tieBreak == max(tieBreak)), , drop = FALSE]
-    }
-    
-    # If still tied, break arbitrarily.
-    if (nrow(candidates) > 1) {
-      # TODO perhaps we can find a non-arbitrary way to break any remaining ties?
-      message("Candidates remain tied: ",
-              paste(apply(candidates, 1, paste, collapse = "-"), collapse = ", "))
-    }
+    candidates <- switch(
+      pmatch(tolower(getOption("sprH", "confusion")), c("confusion", "vi")),
+      {
+        confInf <- confusion
+        confInf[confusion == 0] <- Inf
+        confMin <- apply(confInf, 2:3, min)
+        minConf <- min(confMin[confMin > 0])
+        if (debug && minConf > 1) {
+          message("Minimum conflict: ", minConf)
+        }
+        
+        # if minConf == 1, then removing a single leaf can resolve a contradiction
+        # We use entropy to decide which leaf might be most profitable to remove.
+        # 
+        # h gives the joint entropy of each pair of splits in tree1 & tree2
+        h <- apply(confusion, 2:3, Ntropy)
+        minH <- min(h[confMin == minConf])
+        maxH <- max(h[confMin == minConf])
+        
+        candidates <- which(h == maxH, arr.ind = TRUE)
+        if (!isFALSE(getOption("sprTies")) && nrow(candidates) > 1) {
+          # Let's identify the split in each tree that is most at odds with all
+          # other splits
+          tieBreak <- outer(rowMeans(h), colMeans(h))[candidates]
+          candidates <- candidates[which(tieBreak == max(tieBreak)), , drop = FALSE]
+        }
+        
+        # If still tied, break arbitrarily.
+        if (nrow(candidates) > 1) {
+          # TODO perhaps we can find a non-arbitrary way to break any remaining ties?
+          neyms <- cbind(names(sp1)[candidates[, 1]], names(sp2)[candidates[, 2]])
+          message("Candidates remain tied: ",
+                  paste(apply(neyms, 1, paste, collapse = "-"), collapse = ", "))
+        }
+        candidates
+      },
+      { # vi
+        
+        nTip <- NTip(sp1)
+        in1 <- TipsInSplits(sp1)
+        in2 <- TipsInSplits(sp2)
+        n1 <- rbind(in1, nTip - in1)
+        n2 <- rbind(in2, nTip - in2)
+        
+        h1 <- apply(n1, 2, Ntropy)
+        h2 <- apply(n2, 2, Ntropy)
+        h12 <- apply(confusion, 2:3, Ntropy)
+        mi <- outer(h1, h2, "+") - h12
+        
+        emi <- outer(seq_along(in1), seq_along(in2),
+                     Vectorize(function(i, j) expected_mi(n1[, i], n2[, j])))
+        ami <- mi - emi
+        vi <- outer(h1, h2, "+") - (ami + ami)
+        which(vi == max(vi), arr.ind = TRUE)
+      }
+    )
     
     splitA <- sp1[[candidates[1, 1]]]
     splitB <- sp2[[candidates[1, 2]]]

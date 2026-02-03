@@ -149,6 +149,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// expected_mi
+double expected_mi(const IntegerVector& ni, const IntegerVector& nj);
+RcppExport SEXP _TreeDist_expected_mi(SEXP niSEXP, SEXP njSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const IntegerVector& >::type ni(niSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type nj(njSEXP);
+    rcpp_result_gen = Rcpp::wrap(expected_mi(ni, nj));
+    return rcpp_result_gen;
+END_RCPP
+}
 // lapjv
 Rcpp::List lapjv(Rcpp::NumericMatrix& x, Rcpp::NumericVector& maxX);
 RcppExport SEXP _TreeDist_lapjv(SEXP xSEXP, SEXP maxXSEXP) {
@@ -391,6 +403,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_clone_hpart", (DL_FUNC) &_TreeDist_clone_hpart, 1},
     {"_TreeDist_relabel_hpart", (DL_FUNC) &_TreeDist_relabel_hpart, 2},
     {"_TreeDist_entropy_int", (DL_FUNC) &_TreeDist_entropy_int, 1},
+    {"_TreeDist_expected_mi", (DL_FUNC) &_TreeDist_expected_mi, 2},
     {"_TreeDist_lapjv", (DL_FUNC) &_TreeDist_lapjv, 2},
     {"_TreeDist_cpp_mast", (DL_FUNC) &_TreeDist_cpp_mast, 3},
     {"_TreeDist_cpp_nni_distance", (DL_FUNC) &_TreeDist_cpp_nni_distance, 3},
