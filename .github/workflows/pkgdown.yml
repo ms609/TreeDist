@@ -29,3 +29,4 @@ jobs:
       - uses: ms609/actions/pkgdown@main
         with: 
           extra-repositories: https://ms609.github.io/packages/
+          shinylive-app: treespace
