@@ -97,7 +97,8 @@ SPRDist.multiPhylo <- SPRDist.list
 }
 .Which2 <- function (x, nSplits) (x - 1) %/% nSplits + 1L
 
-.SPRExperiment <- function(tree1, tree2, check = TRUE, debug = FALSE) {
+.SPRExperiment <- function(tree1, tree2, check = TRUE) {
+  debug <- isTRUE(getOption("debugSPR", FALSE))
   moves <- 0
   if (debug) dropList <- character(0)
   
@@ -310,8 +311,9 @@ SPRDist.multiPhylo <- SPRDist.list
 }
 
 
-.SPRConfl <- function(tree1, tree2, check = TRUE, debug = FALSE) {
+.SPRConfl <- function(tree1, tree2, check = TRUE) {
   moves <- 0
+  debug <- isTRUE(getOption("debugSPR", FALSE))
   if (debug) dropList <- character(0)
   
   reduced <- ReduceTrees(tree1, tree2, check = check)
@@ -495,7 +497,8 @@ SPRDist.multiPhylo <- SPRDist.list
 
 # Similar results to phangorn::SPR.dist -- but problem when cutting tree
 #' @importFrom TreeTools edge_to_splits
-.SPRPairDeOCutter <- function(tree1, tree2, check = TRUE, debug = FALSE) {
+.SPRPairDeOCutter <- function(tree1, tree2, check = TRUE) {
+  debug <- isTRUE(getOption("debugSPR", FALSE))
   moves <- 0
   reduced <- ReduceTrees(tree1, tree2, check = check)
   if (debug) {
@@ -550,14 +553,12 @@ SPRDist.multiPhylo <- SPRDist.list
         message("> First subtree:")
       }
       submoves1 <- .SPRPairDeOCutter(KeepTipPostorder(reduced[[1]], subtips1),
-                            KeepTipPostorder(reduced[[2]], subtips1),
-                            debug = debug)
+                            KeepTipPostorder(reduced[[2]], subtips1))
       if (debug) {
         message("> Second subtree:")
       }
       submoves2 <- .SPRPairDeOCutter(KeepTipPostorder(reduced[[1]], subtips2),
-                            KeepTipPostorder(reduced[[2]], subtips2),
-                            debug = debug)
+                            KeepTipPostorder(reduced[[2]], subtips2))
       return(moves + submoves1 + submoves2)
     }
     split1 <- structure(sp1[.Which1(minMismatch, nSplits), , drop = FALSE],
@@ -628,7 +629,8 @@ SPRDist.multiPhylo <- SPRDist.list
 #' .SPRPairDeO(tree1, tree2)
 #' @importFrom TreeTools DropTip TipsInSplits KeepTipPostorder
 #' @importFrom TreeTools edge_to_splits
-.SPRPairDeO <- function(tree1, tree2, check = TRUE, debug = FALSE) {
+.SPRPairDeO <- function(tree1, tree2, check = TRUE) {
+  debug <- isTRUE(getOption("debugSPR", FALSE))
   moves <- 0
   
   # Reduce trees (Fig. 7A in deOliveira2008)
