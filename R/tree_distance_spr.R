@@ -310,7 +310,9 @@ SPRDist.multiPhylo <- SPRDist.list
   if (debug) list(moves, dropList) else moves
 }
 
-
+# tree1, tree2 are phylo objects
+# ReduceTrees implements the reduction rule, i.e. collapsing identical cherries
+# confusion() gives the confusion matrix of tips in each partition of two splits
 .SPRConfl <- function(tree1, tree2, check = TRUE) {
   moves <- 0
   debug <- isTRUE(getOption("debugSPR", FALSE))
@@ -337,38 +339,86 @@ SPRDist.multiPhylo <- SPRDist.list
     conf <- confusion(sp1, sp2)
     concave <- colSums(conf == 0)
     
-    ### This looks like an elegant shortcut to divide and conquer
-    ### In practice - I worry that it means we lose opportunities for subtree
-    ### reduction, and end up counting the same move twice in separate subtrees
-    ### It seems to lead to higher scores as implemented here, so I've removed
-    ### as of 2026-02-03.
-    # matches <- concave == 2
-    # if (any(matches)) {
-    #   # At least one split exists in both trees
-    #   # Divide and conquer by treating the two partitions as independent trees
-    #   browser("Matchy matchy")
-    #   agreement <- as.logical(sp1[[.Which1(which.max(matches), nSplits)]])
-    #   
-    #   # Take left side of split
-    #   subtips1 <- agreement
-    #   # Add dummy tip as placeholder for other half of tree
-    #   subtips1[!subtips1][[1]] <- TRUE
-    #   
-    #   # Repeat for other half-tree
-    #   subtips2 <- !agreement
-    #   subtips2[!subtips2][[1]] <- TRUE
-    #   
-    #   moves1 <- .SPRConfl(
-    #     KeepTipPostorder(tr1, subtips1),
-    #     KeepTipPostorder(tr2, subtips1)
-    #   )
-    #   moves2 <- .SPRConfl(
-    #     KeepTipPostorder(tr1, subtips2),
-    #     KeepTipPostorder(tr2, subtips2)
-    #   )
-    #   # Attributes will be lost here
-    #   return(moves + moves1 + moves2)
-    # }
+    # Divide and conquer can help - but doesn't always.
+    # 
+    # If we have an edge that's shared in both trees, we know that's now
+    # part of our best possible solution . The question becomes: where do we
+    # want that edge?  
+    # If we relocate that edge smartly, we can greatly increase the number
+    # of common edges.  "Knots" are untangled when we increase the number of 
+    # common edges by lots.
+    # 
+    # Consider the pectinate knot:
+    #    z-y-x-...-h-g=F=D-E-[cba]
+    #    h-g-i-...-y-z=F=E-D-[cba]
+    #    
+    # We have two edges in common (=).  If we break off |f d e cba, and attach
+    # next to h, then we gain OODLES of common edges and can massively reduce.
+    # 
+    # If we cut at g=F / z=F, then we have one move to detach the anchor in
+    # z-y-x-...-h-g-*
+    # h-g-i-...-y-z-*
+    # 
+    # Then in our other half we can excise any of D, E, cba to reconcile
+    # [*F]-D-E-cba
+    # [*F]-E-D-cba
+    # 
+    # Without this subdivision we have to lop our way through cba, E, D to reach
+    # the common edge.
+    # 
+    matches <- concave == 2
+    if (isTRUE(getOption("sprMatches")) && any(matches)) {
+      # At least one split exists in both trees
+      matchingSplit <- which.max(matches)
+      agreement <- as.logical(sp1[[.Which1(matchingSplit, nSplits)]])
+
+      # Take left side of split
+      subtips1 <- agreement
+      # Add dummy tip as placeholder for other half of tree
+      subtips1[!subtips1][[1]] <- TRUE
+
+      # Repeat for other half-tree
+      subtips2 <- !agreement
+      subtips2[!subtips2][[1]] <- TRUE
+
+      if (debug) {
+        message("Division A: ", 
+                paste(colnames(agreement)[agreement], collapse = " "), 
+                " | ",
+                paste(colnames(agreement)[!agreement], collapse = " "))
+        colNow <- par("col")
+        if (colNow == "black") colNow <- "#000000"
+        colIdx <- match(colNow, palette.colors(8), 0)
+        oPar <- par(col = palette.colors(8)[colIdx + 1])
+        on.exit(par(oPar))
+      }
+      moves1 <- .SPRConfl(
+        KeepTipPostorder(tr1, subtips1),
+        KeepTipPostorder(tr2, subtips1)
+      )
+      if (debug) {
+        message("Division B: ", paste(colnames(agreement)[!agreement], collapse = " "))
+        colNow <- par("col")
+        colIdx <- match(colNow, palette.colors(8), 0)
+        par(col = palette.colors(8)[colIdx + 1])
+      }
+      moves2 <- .SPRConfl(
+        KeepTipPostorder(tr1, subtips2),
+        KeepTipPostorder(tr2, subtips2)
+      )
+      return(if (debug) {
+        structure(
+          moves + moves1 + moves2,
+          dropList = paste(
+            dropList,
+            attr(moves1, "dropList"),
+            attr(moves2, "dropList"),
+            collapse = " | ", sep = " ")
+          )
+        } else {
+        moves + moves1 + moves2
+      })
+    }
     
     confInf <- conf
     confInf[conf == 0] <- Inf
