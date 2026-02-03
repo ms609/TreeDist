@@ -5,15 +5,15 @@
 \alias{SPRDist.phylo}
 \alias{SPRDist.list}
 \alias{SPRDist.multiPhylo}
-\title{Approximate the Subtree Prune and Regraft (SPR) distance.}
+\title{Approximate the Subtree Prune and Regraft distance}
 \usage{
-SPRDist(tree1, tree2 = NULL, method = "deOliveira", symmetric)
+SPRDist(tree1, tree2 = NULL, method = "confl", symmetric)
 
-\method{SPRDist}{phylo}(tree1, tree2 = NULL, method = "deOliveira", symmetric)
+\method{SPRDist}{phylo}(tree1, tree2 = NULL, method = "confl", symmetric)
 
-\method{SPRDist}{list}(tree1, tree2 = NULL, method = "deOliveira", symmetric)
+\method{SPRDist}{list}(tree1, tree2 = NULL, method = "confl", symmetric)
 
-\method{SPRDist}{multiPhylo}(tree1, tree2 = NULL, method = "deOliveira", symmetric)
+\method{SPRDist}{multiPhylo}(tree1, tree2 = NULL, method = "confl", symmetric)
 }
 \arguments{
 \item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
@@ -26,7 +26,7 @@ or lists of such trees to undergo pairwise comparison.  Where implemented,
 SPR distance.  Currently defaults to `"deOliveira"``, the only available
 option; a new method will become the default once available.}
 
-\item{symmetric}{Ignored (redundant after fix of
+\item{symmetric}{Deprecated (redundant after fix of
 \href{https://github.com/KlausVigo/phangorn/issues/97}{phangorn#97}).}
 }
 \value{
@@ -45,7 +45,7 @@ library("TreeTools", quietly = TRUE)
 # Compare single pair of trees
 SPRDist(BalancedTree(7), PectinateTree(7))
 
-# Compare all pairs of trees        
+# Compare all pairs of trees
 SPRDist(as.phylo(30:33, 8))
 
 # Compare each tree in one list with each tree in another
