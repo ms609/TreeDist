@@ -63,11 +63,15 @@ test_that("confusion()", {
     j <- rep(seq_along(b), length(a))
     expect_equal(
       confusion(a, b),
-      aperm(array(c(TipsInSplits(a[[i]] & b[[j]]),
-                    TipsInSplits(a[[i]] & !b[[j]]),
-                    TipsInSplits(!a[[i]] & b[[j]]),
-                    TipsInSplits(!a[[i]] & !b[[j]])),
-                  c(length(a), length(b), 4)), c(3, 2, 1))
+      aperm(array(
+        c(TipsInSplits(a[[i]] & b[[j]]),
+          TipsInSplits(a[[i]] & !b[[j]]),
+          TipsInSplits(!a[[i]] & b[[j]]),
+          TipsInSplits(!a[[i]] & !b[[j]])
+        ),
+        c(length(a), length(b), 4)),
+        c(3, 2, 1)
+      )
     )
   }
 
