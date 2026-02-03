@@ -337,25 +337,38 @@ SPRDist.multiPhylo <- SPRDist.list
     conf <- confusion(sp1, sp2)
     concave <- colSums(conf == 0)
     
-    matches <- concave == 2
-    if (any(matches)) {
-      agreement <- as.logical(sp1[[.Which1(which.max(matches), nSplits)]])
-      subtips1 <- agreement
-      subtips1[!subtips1][1] <- TRUE
-      subtips2 <- !agreement
-      subtips2[agreement][1] <- TRUE
-      return(
-        moves +
-          .SPRConfl(
-            KeepTipPostorder(tr1, subtips1),
-            KeepTipPostorder(tr2, subtips1)
-          ) +
-          .SPRConfl(
-            KeepTipPostorder(tr1, subtips2),
-            KeepTipPostorder(tr2, subtips2)
-          )
-      )
-    }
+    ### This looks like an elegant shortcut to divide and conquer
+    ### In practice - I worry that it means we lose opportunities for subtree
+    ### reduction, and end up counting the same move twice in separate subtrees
+    ### It seems to lead to higher scores as implemented here, so I've removed
+    ### as of 2026-02-03.
+    # matches <- concave == 2
+    # if (any(matches)) {
+    #   # At least one split exists in both trees
+    #   # Divide and conquer by treating the two partitions as independent trees
+    #   browser("Matchy matchy")
+    #   agreement <- as.logical(sp1[[.Which1(which.max(matches), nSplits)]])
+    #   
+    #   # Take left side of split
+    #   subtips1 <- agreement
+    #   # Add dummy tip as placeholder for other half of tree
+    #   subtips1[!subtips1][[1]] <- TRUE
+    #   
+    #   # Repeat for other half-tree
+    #   subtips2 <- !agreement
+    #   subtips2[!subtips2][[1]] <- TRUE
+    #   
+    #   moves1 <- .SPRConfl(
+    #     KeepTipPostorder(tr1, subtips1),
+    #     KeepTipPostorder(tr2, subtips1)
+    #   )
+    #   moves2 <- .SPRConfl(
+    #     KeepTipPostorder(tr1, subtips2),
+    #     KeepTipPostorder(tr2, subtips2)
+    #   )
+    #   # Attributes will be lost here
+    #   return(moves + moves1 + moves2)
+    # }
     
     confInf <- conf
     confInf[conf == 0] <- Inf
@@ -491,8 +504,7 @@ SPRDist.multiPhylo <- SPRDist.list
   }
   
   # Return:
-  
-  if (debug) list(moves, dropList) else moves
+  if (debug) structure(moves, dropList = dropList) else moves
 }
 
 # Similar results to phangorn::SPR.dist -- but problem when cutting tree
