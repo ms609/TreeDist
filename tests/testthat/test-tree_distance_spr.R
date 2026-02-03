@@ -1,5 +1,3 @@
-if(!exists("pv")) pv <- function (x) x
-
 test_that("SPR: keep_and_reroot()", {
   library("TreeTools", quietly = TRUE)
   
@@ -156,6 +154,12 @@ test_that("SPR calculated correctly", {
     )[[1]],
     2
   )
+  
+  lockedMid1 <- Tree("((((a1, a2), a3), ((b1, b2), b3)),
+                     (((c1, c2), c3), ((d1, d2), d3)));")
+  lockedMid2 <- Tree("(((a1, (a2, a3)), (c1, (c2, c3))),
+                     ((b1, (b2, b3)), (d1, (d2, d3))));")
+  expect_equal(.SPRConfl(lockedMid1, lockedMid2)[[1]], 5)
 
   set.seed(0)
   tr <- vector("list", 13)
