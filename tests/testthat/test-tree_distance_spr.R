@@ -56,7 +56,6 @@ test_that("SPR: Under the hood", {
 })
 
 test_that("confusion()", {
-  skip(37)
   library("TreeTools", quietly = TRUE)
   
   TestConfusion <- function(a, b) {
