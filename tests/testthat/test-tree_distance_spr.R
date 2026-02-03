@@ -145,9 +145,8 @@ test_that("SPR calculated correctly", {
   )
   
   options(sprH = "viNorm")
+  options(sprH = "ami")
   # Looks simple, but requires ties to be broken suitably
-  # Passes with conf, viNorm (needed tiebreaker in each case)
-  # Fails with joint, ami, vi: tiebreaker not yet implemented!
   expect_exact("(a,(d,(b,(c,X))));", "(a,((b,c),(X,d)));") # distance = 1
   
   expect_exact("((((b,c),d),e),a);", "(a,(b,((e,c),d)));") # distance = 2
@@ -155,9 +154,14 @@ test_that("SPR calculated correctly", {
     expect_exact("((((b,c),d),e),a);", "(a,(b,((e,c),d)));", "deo")
   )
   
+  # Passes with ami, joint, vi
+  # Fails with viNorm - should tiebreaker be non-normalized?
+  expect_exact("(((t21,(((t15,t12),t23),t24)),t18),t19);",
+               "((t21,t18),(((t12,(t19,t15)),t23),t24));")
+  
   # Example AZ33: IJK and DEF are schlepped
   # Passes with joint, ami, viNorm
-  # Fails with vi (5), conf (7)
+  # Fails with vi (5, 6 with tiebreaker), conf (7)
   expect_equal(
     .SPRConfl(
       tree1 <- PectinateTree(letters[1:26]),
@@ -168,7 +172,7 @@ test_that("SPR calculated correctly", {
     2
   )
   
-  # Benefits from the "divide and conquer" step, 2026-02-03
+  # Requires "divide and conquer" step
   expect_equal(
     .SPRConfl(
       tree1 <- PectinateTree(letters[1:26]),
@@ -195,10 +199,12 @@ test_that("SPR calculated correctly", {
   write.tree(tr[[3]])
   
   expect_equal(SPRDist(tr[[3]], tr[[11]], method = "DeO"), 8)
-  # 11 with divide and conquer (9 with tie-breaker); 9 without
-  expect_equal(SPRDist(tr[[3]], tr[[11]], method = "confl"), 7) #
-  expect_equal(SPRDist(tr[[3]], tr[[11]], method = "exp"), 7) #
-  # expect_equal(TBRDist::USPRDist(tr[[3]], tr[[11]]), 7) # at 2026-01-15: Actually 8
+  options(sprH = "ami") # = 8
+  # options(sprH = "joint") = 10
+  expect_equal(SPRDist(tr[[3]], tr[[11]], method = "confl"), 8)
+  
+  # TBRDist::USPRDist(tr[[3]], tr[[11]]) = 8
+  
   
   
   # Simplified example for reproducibility
@@ -217,7 +223,34 @@ test_that("SPR calculated correctly", {
   t3 <- Tree("((((t21,(((((t5,t22),t7),t20),t25),(t23,t16))),t18),t10),t3);")
   t11 <- Tree("((((t21,t18),t10),(((t20,t5),(t7,t22)),(t23,(t16,t25)))),t3);")
   
+  TBRDist::USPRDist(t3, t11) # 3
+  expect_equal(SPRDist(t3, t11, method = "DeO"), 3)
+  expect_equal(SPRDist(t3, t11, method = "confl")[[1]], 3)
+  
+  
+  
+  options(debugSPR = T)
+  # Simplified example for reproducibility
+
+  Simplify <- function(tr) {
+    DropTip(tr, paste0("t", c(1:11, 13:14, 16:17, 20, 22, 25)))
+  }
+  # t3 <- Simplify(tr[[3]])
+  # t11 <- Simplify(tr[[11]])
+  write.tree(t3)
+  write.tree(t11)
+  t3 <- Tree( "(((t21,(((t15,t12),t23),t24)),t18),t19);")
+  t11 <- Tree( "((t21,t18),(((t12,(t19,t15)),t23),t24));")
+  for (lab in TipLabels(Simplify(tr[[3]]))) {
+    d <- SPRDist(DropTip(t3, lab), DropTip(t11, lab), method = "DeO")
+    c <- SPRDist(DropTip(t3, lab), DropTip(t11, lab), method = "conf")
+    if (c - d == 3) {
+      stop(c, ", ", d, ": ", lab)
+    }
+  }
+  
   deO <- SPRDist(t3, t11, method = "DeO")
+  options(sprH = "ami")
   conf <- SPRDist(t3, t11, method = "confl")
   
   expect_equal(conf - deO,

@@ -482,8 +482,14 @@ SPRDist.multiPhylo <- SPRDist.list
                      Vectorize(function(i, j) expected_mi(n1[, i], n2[, j])))
         ami <- mi - emi
         vi <- outer(h1, h2, "+") - (ami + ami)
-        vi[!minConfOpts] <- -Inf
-        which(vi == max(vi), arr.ind = TRUE)
+        score <- vi
+        candidates <- which(score == max(score[minConfOpts]) & minConfOpts,
+                            arr.ind = TRUE)
+        if (nrow(candidates) > 1) {
+          tieBreak <- outer(rowMeans(score), colMeans(score))[candidates]
+          candidates <- candidates[tieBreak == max(tieBreak), , drop = FALSE]
+        }
+        candidates
       },
       { # ami
         nTip <- NTip(sp1)
@@ -501,8 +507,13 @@ SPRDist.multiPhylo <- SPRDist.list
                      Vectorize(function(i, j) expected_mi(n1[, i], n2[, j])))
         ami <- mi - emi
         score <- ami
-        score[!minConfOpts] <- Inf
-        which(score == min(score), arr.ind = TRUE)
+        candidates <- which(score == max(score[minConfOpts]) & minConfOpts,
+                                                arr.ind = TRUE)
+        if (nrow(candidates) > 1) {
+          tieBreak <- outer(rowMeans(score), colMeans(score))[candidates]
+          candidates <- candidates[tieBreak == max(tieBreak), , drop = FALSE]
+        }
+        candidates
       },
       { # joint
         nTip <- NTip(sp1)
@@ -515,8 +526,13 @@ SPRDist.multiPhylo <- SPRDist.list
         h2 <- apply(n2, 2, Ntropy)
         h12 <- apply(confusion, 2:3, Ntropy)
         score <- h12
-        score[!minConfOpts] <- -Inf
-        which(score == max(score), arr.ind = TRUE)
+        candidates <- which(score == min(score[minConfOpts]) & minConfOpts,
+                            arr.ind = TRUE)
+        if (nrow(candidates) > 1) {
+          tieBreak <- outer(rowMeans(score), colMeans(score))[candidates]
+          candidates <- candidates[tieBreak == min(tieBreak), , drop = FALSE]
+        }
+        candidates
       },
       { # viNorm
         nTip <- NTip(sp1)
