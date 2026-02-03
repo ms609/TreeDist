@@ -317,7 +317,7 @@ SPRDist.multiPhylo <- SPRDist.list
   if (debug) dropList <- character(0)
   
   reduced <- ReduceTrees(tree1, tree2, check = check)
-  if (debug) {
+  if (!is.null(reduced) && debug) {
     par(mfrow = 1:2, mai = rep(0.1, 4))
     plot(reduced[[1]])
     plot(reduced[[2]])

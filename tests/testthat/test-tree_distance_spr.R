@@ -1,7 +1,8 @@
-library("TreeTools", quietly = TRUE)
 if(!exists("pv")) pv <- function (x) x
 
 test_that("SPR: keep_and_reroot()", {
+  library("TreeTools", quietly = TRUE)
+  
   tree1 <- Postorder(BalancedTree(12))
   tree2 <- Postorder(PectinateTree(12))
   keep <- as.logical(tabulate(8:12, 12))
@@ -16,30 +17,37 @@ test_that("SPR: keep_and_reroot()", {
 })
 
 test_that("SPR: Under the hood", {
-  skip(5)
-  expect_error(mismatch_size(as.Splits(c(T, T, F)), as.Splits(c(T, T, T, T))),
-               "differ in `nTip")
-  expect_error(mismatch_size(matrix(as.raw(3), 1, 1), 
-                             as.Splits(c(T, T, T, T))),
-               "nTip attribute")
-  expect_error(mismatch_size(as.Splits(c(T, T, T, T)),
-                             matrix(as.raw(3), 1, 1)),
-               "nTip attribute")
-  expect_error(mismatch_size(as.Splits(matrix(T, 2, 4)),
-                             as.Splits(c(T, T, T, T))),
-               "number of splits")
-  splits <- as.Splits(rbind(c(T, T, T, F, F),
-                            c(T, F, F, F, T)))
-  Test <- function (s1, s2) {
+  library("TreeTools", quietly = TRUE)
+  
+  expect_error(
+    mismatch_size(as.Splits(c(T, T, F)), as.Splits(c(T, T, T, T))),
+    "differ in `nTip"
+  )
+  expect_error(
+    mismatch_size(matrix(as.raw(3), 1, 1), as.Splits(c(T, T, T, T))),
+    "nTip attribute"
+  )
+  expect_error(
+    mismatch_size(as.Splits(c(T, T, T, T)), matrix(as.raw(3), 1, 1)),
+    "nTip attribute"
+  )
+  expect_error(
+    mismatch_size(as.Splits(matrix(T, 2, 4)), as.Splits(c(T, T, T, T))),
+    "number of splits"
+  )
+  splits <- as.Splits(rbind(c(T, T, T, F, F), c(T, F, F, F, T)))
+  Test <- function(s1, s2) {
     expect_equal(length(s1), length(s2))
     nSplits <- length(s1)
     i <- rep(seq_len(nSplits), nSplits)
     j <- rep(seq_len(nSplits), each = nSplits)
-    expect_equal(mismatch_size(s1, s2),
-                 TipsInSplits(xor(s1[[i]], s2[[j]]), smallest = TRUE))
+    expect_equal(
+      mismatch_size(s1, s2),
+      TipsInSplits(xor(s1[[i]], s2[[j]]), smallest = TRUE)
+    )
   }
   Test(as.Splits(c(T, T, T, F, F)), as.Splits(c(T, F, F, F, T)))
-  
+
   set.seed(0)
   splits <- as.Splits(t(replicate(10, sample(c(T, F), 99, replace = TRUE))))
   Test(splits[[1]], splits[[2]])
@@ -49,7 +57,9 @@ test_that("SPR: Under the hood", {
 
 test_that("confusion()", {
   skip(37)
-  TestConfusion <- function (a, b) {
+  library("TreeTools", quietly = TRUE)
+  
+  TestConfusion <- function(a, b) {
     i <- rep(seq_along(a), each = length(b))
     j <- rep(seq_along(b), length(a))
     expect_equal(
@@ -61,9 +71,9 @@ test_that("confusion()", {
                   c(length(a), length(b), 4)), c(3, 2, 1))
     )
   }
-  
+
   TestConfusion(as.Splits(c(T, T, T, F, F)), as.Splits(c(T, F, F, F, T)))
-  
+
   set.seed(0)
   splits <- as.Splits(t(replicate(10, sample(c(T, F), 99, replace = TRUE))))
   TestConfusion(splits[[1]], splits[[2]])
@@ -72,6 +82,8 @@ test_that("confusion()", {
 })
 
 test_that("SPR deOliveira2008 calculation looks valid", {
+  library("TreeTools", quietly = TRUE)
+  
   # We do not expect to obtain identical results to phangorn::SPR.dist,
   # because ties are broken in a different arbitrary manner.
   # We're thus left with quite a loose test.
@@ -88,7 +100,7 @@ test_that("SPR deOliveira2008 calculation looks valid", {
   set.seed(0)
   tr <- vector("list", nSPR + 1L)
   tr[[1]] <- Postorder(TreeTools::RandomTree(nTip, root = TRUE))
-  expect_equal(SPRDist(tr[[1]], tr[[1]]), 0)
+  expect_equal(SPRDist(tr[[1]], tr[[1]])[[1]], 0)
   for (i in seq_len(nSPR) + 1L) {
     tr[[i]] <- Postorder(TreeSearch::SPR(tr[[i - 1]]))
   }
@@ -106,36 +118,55 @@ test_that("SPR deOliveira2008 calculation looks valid", {
 })
 
 test_that("SPR calculated correctly", {
-  Tree <- function (txt) ape::read.tree(text = txt)
-  expect_equal(.SPRPair(ape::read.tree(text = "((a, b), (c, d));"),
-                        ape::read.tree(text = "((a, c), (b, d));")),
-               1L)
-  expect_equal(.SPRPair(PectinateTree(letters[1:26]),
-                        PectinateTree(letters[c(2:26, 1)])),
-               1L)
-  expect_equal(.SPRPair(
-    tree1 <- PectinateTree(letters[1:26]),
-    tree2 <- Tree("(g, (h, (i, (j, (k, (l, ((m, (c, (b, a))), (n, (o, (p, (q, (r, (s, (t, (u, (v, (w, (x, (y, (z, (f, (e, d))))))))))))))))))))));")),
-    2)
-  expect_equal(.SPRPair(
-    tree1 <- PectinateTree(letters[1:26]),
-    tree2 <- Tree("(g, (h, (i, (j, (k, (l, (m, (n, (o, (p, (q, (r, (s, (t, (u, (v, (w, (x, (y, (z, (f, ((e, (c, (b, a))), d))))))))))))))))))))));")),
-    2)
+  library("TreeTools", quietly = TRUE)
   
+  Tree <- function(txt) ape::read.tree(text = txt)
+
+  expect_equal(
+    .SPRConfl(
+      ape::read.tree(text = "((a, b), (c, d));"),
+      ape::read.tree(text = "((a, c), (b, d));")
+    )[[1]],
+    1L
+  )
+  expect_equal(
+    .SPRConfl(PectinateTree(letters[1:26]), PectinateTree(letters[c(2:26, 1)]))[[1]],
+    1L
+  )
+  expect_equal(
+    .SPRConfl(
+      tree1 <- PectinateTree(letters[1:26]),
+      tree2 <- Tree(
+        "(g, (h, (i, (j, (k, (l, ((m, (c, (b, a))), (n, (o, (p, (q, (r, (s, (t, (u, (v, (w, (x, (y, (z, (f, (e, d))))))))))))))))))))));"
+      )
+    )[[1]],
+    2
+  )
+  expect_equal(
+    .SPRConfl(
+      tree1 <- PectinateTree(letters[1:26]),
+      tree2 <- Tree(
+        "(g, (h, (i, (j, (k, (l, (m, (n, (o, (p, (q, (r, (s, (t, (u, (v, (w, (x, (y, (z, (f, ((e, (c, (b, a))), d))))))))))))))))))))));"
+      )
+    )[[1]],
+    2
+  )
+
   set.seed(0)
   tr <- vector("list", 13)
   tr[[1]] <- Postorder(RandomTree(25, root = TRUE))
   for (i in seq_len(12) + 1L) {
     tr[[i]] <- Postorder(TreeSearch::SPR(tr[[i - 1]]))
   }
-  
+
   expect_equal(SPRDist(tr[[3]], tr[[11]], method = "DeO"), 8)
-  expect_equal(SPRDist(tr[[3]], tr[[11]], method = "Smith"), 7) # 
-  # expect_equal(TBRDist::USPRDist(tr[[3]], tr[[11]]), 7)
-  
+  expect_equal(SPRDist(tr[[3]], tr[[11]], method = "confl"), 7) #
+  expect_equal(SPRDist(tr[[3]], tr[[11]], method = "exp"), 7) #
+  # expect_equal(TBRDist::USPRDist(tr[[3]], tr[[11]]), 7) # at 2026-01-15: Actually 8
+
   nTip <- 130
   nSPR <- 35
-  
+
   set.seed(0)
   tr <- vector("list", nSPR + 1L)
   tr[[1]] <- Postorder(RandomTree(nTip, root = TRUE))
@@ -143,33 +174,31 @@ test_that("SPR calculated correctly", {
   for (i in seq_len(nSPR) + 1L) {
     tr[[i]] <- Postorder(TreeSearch::SPR(tr[[i - 1]]))
   }
-  
+
   phanDist <- SPRDist(tr, method = "deO")
-  
+
   SPRDist(tr[[1]], tr)
-  
+
   testDist <- SPRDist(tr)
   simDist <- dist(seq_along(tr))
-  
+
   expect_true(all(testDist <= simDist))
-  
+
   # bestDist <- as.dist(pmin(as.matrix(testDist), as.matrix(SPRDist(rev(tr)))[rev(seq_along(tr)), rev(seq_along(tr))]))
   bestDist <- testDist # assert symmetry
-  
+
   overShot <- as.matrix(testDist) > as.matrix(simDist)
   overs <- colSums(overShot) > 0
   overShot[overs, overs]
-  
+
   underShot <- as.matrix(testDist) < as.matrix(phanDist)
   unders <- colSums(underShot) > 0
   underShot[unders, unders]
-  
+
   if (interactive()) {
     #  trueDist <- TBRDist::USPRDist(tr)
     trueDist <- readRDS("true-25tip-12spr.Rds")
-    
-    
-    
+
     par(mfrow = c(1, 2))
     distRange <- c(simDist - phanDist, simDist - bestDist)
     hist(distRange, col = NA, border = NA)
@@ -186,26 +215,24 @@ test_that("SPR calculated correctly", {
     points(jd, phanDist - trueDist, pch = 5, col = 4)
     points(jd, bestDist - trueDist, pch = 4, col = 5)
   }
-  
+
   expect_true(all(testDist >= phanDist))
-  
+
   tree1 <- tr[[1]]
   tree2 <- tr[[36]]
-  .SPRPair(tree1, tree2, debug = TRUE)
-  
-  
+  .SPRConfl(tree1, tree2, debug = TRUE)
+
   tree1 <- tr[[3]]
   tree2 <- tr[[11]]
-  .SPRPair(tree1, tree2, debug = TRUE)
-  
+  .SPRConfl(tree1, tree2, debug = TRUE)
+
   tree1 <- tr[[14]]
   tree2 <- tr[[24]]
-  .SPRPair(tree1, tree2, debug = TRUE)
+  .SPRConfl(tree1, tree2, debug = TRUE)
 
   # ub(SPRDist(tr), .phangornSPRDist(tr), times = 3)
   # pv(testDist <- SPRDist(tr))
 
-  
   if (interactive()) {
     skip("This shouldn't run!")
     if (nTip < 51 && nSPR < 13) {
@@ -218,8 +245,7 @@ test_that("SPR calculated correctly", {
   } else {
     trueDist <- simDist
   }
-  
-  
+
   par(mfrow = c(1, 2))
   distRange <- c(simDist - phanDist, simDist - bestDist)
   hist(distRange, col = NA, border = NA)
