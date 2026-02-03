@@ -436,7 +436,8 @@ SPRDist.multiPhylo <- SPRDist.list
     minConfOpts <- confMin == minConf
     
     candidates <- switch(
-      pmatch(tolower(getOption("sprH", "confusion")), c("confusion", "vi")),
+      pmatch(tolower(getOption("sprH", "confusion")), c("confusion", "vi",
+                                                        "ami", "joint", "vinorm")),
       {
         
         # if minConf == 1, then removing a single leaf can resolve a contradiction
@@ -465,7 +466,7 @@ SPRDist.multiPhylo <- SPRDist.list
         candidates
       },
       { # vi
-        
+        # In AZ33, gets "distracted" by Z, Y, L before finding the AD trick
         nTip <- NTip(sp1)
         in1 <- TipsInSplits(sp1)
         in2 <- TipsInSplits(sp2)
@@ -483,6 +484,60 @@ SPRDist.multiPhylo <- SPRDist.list
         vi <- outer(h1, h2, "+") - (ami + ami)
         vi[!minConfOpts] <- -Inf
         which(vi == max(vi), arr.ind = TRUE)
+      },
+      { # ami
+        nTip <- NTip(sp1)
+        in1 <- TipsInSplits(sp1)
+        in2 <- TipsInSplits(sp2)
+        n1 <- rbind(in1, nTip - in1)
+        n2 <- rbind(in2, nTip - in2)
+        
+        h1 <- apply(n1, 2, Ntropy)
+        h2 <- apply(n2, 2, Ntropy)
+        h12 <- apply(confusion, 2:3, Ntropy)
+        mi <- outer(h1, h2, "+") - h12
+        
+        emi <- outer(seq_along(in1), seq_along(in2),
+                     Vectorize(function(i, j) expected_mi(n1[, i], n2[, j])))
+        ami <- mi - emi
+        score <- ami
+        score[!minConfOpts] <- Inf
+        which(score == min(score), arr.ind = TRUE)
+      },
+      { # joint
+        nTip <- NTip(sp1)
+        in1 <- TipsInSplits(sp1)
+        in2 <- TipsInSplits(sp2)
+        n1 <- rbind(in1, nTip - in1)
+        n2 <- rbind(in2, nTip - in2)
+        
+        h1 <- apply(n1, 2, Ntropy)
+        h2 <- apply(n2, 2, Ntropy)
+        h12 <- apply(confusion, 2:3, Ntropy)
+        score <- h12
+        score[!minConfOpts] <- -Inf
+        which(score == max(score), arr.ind = TRUE)
+      },
+      { # viNorm
+        nTip <- NTip(sp1)
+        in1 <- TipsInSplits(sp1)
+        in2 <- TipsInSplits(sp2)
+        n1 <- rbind(in1, nTip - in1)
+        n2 <- rbind(in2, nTip - in2)
+        
+        h1 <- apply(n1, 2, Ntropy)
+        h2 <- apply(n2, 2, Ntropy)
+        h12 <- apply(confusion, 2:3, Ntropy)
+        mi <- outer(h1, h2, "+") - h12
+        
+        emi <- outer(seq_along(in1), seq_along(in2),
+                     Vectorize(function(i, j) expected_mi(n1[, i], n2[, j])))
+        ami <- mi - emi
+        vi <- outer(h1, h2, "+") - (ami + ami)
+        
+        score <- vi / outer(h1, h2, "+")
+        score[!minConfOpts] <- -Inf
+        which(score == max(score), arr.ind = TRUE)
       }
     )
     

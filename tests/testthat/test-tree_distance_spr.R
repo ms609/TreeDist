@@ -135,13 +135,18 @@ test_that("SPR calculated correctly", {
     1L
   )
   
+  options(sprH = "conf")
   # Looks simple, but requires ties to be broken suitably
+  # Passes with conf
+  # Fails with joint, ami, viNorm, vi
   expect_equal(
     .SPRConfl(Tree("(a,(d,(b,(c,X))));"), Tree("(a,((b,c),(X,d)));"))[[1]],
     1L
   )
   
-  
+  # Example AZ33: IJK and DEF are schlepped
+  # Passes with joint, ami, viNorm
+  # Fails with vi (5), conf (7)
   expect_equal(
     .SPRConfl(
       tree1 <- PectinateTree(letters[1:26]),
