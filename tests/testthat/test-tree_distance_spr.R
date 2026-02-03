@@ -179,7 +179,7 @@ test_that("SPR calculated correctly", {
   write.tree(tr[[3]])
   
   expect_equal(SPRDist(tr[[3]], tr[[11]], method = "DeO"), 8)
-  # 11 with divide and conquer; 9 without
+  # 11 with divide and conquer (9 with tie-breaker); 9 without
   expect_equal(SPRDist(tr[[3]], tr[[11]], method = "confl"), 7) #
   expect_equal(SPRDist(tr[[3]], tr[[11]], method = "exp"), 7) #
   # expect_equal(TBRDist::USPRDist(tr[[3]], tr[[11]]), 7) # at 2026-01-15: Actually 8

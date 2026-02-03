@@ -87,6 +87,9 @@ SPRDist.list <- function(tree1, tree2 = NULL, method = "confl", symmetric) {
 #' @export
 SPRDist.multiPhylo <- SPRDist.list
 
+# if x <- which(condition, arr.ind = FALSE), and
+# y <-  which(condition, arr.ind = TRUE), then
+# .Which1 and .Which2 give y[1] and y[2].
 .Which1 <- function (x, nSplits) {
   ret <- x %% nSplits
   if (ret == 0L) {
@@ -236,14 +239,14 @@ SPRDist.multiPhylo <- SPRDist.list
         # flits <- which(apply(confusion, 2:3, function (x) sum(x == 1) == 3))
         # flitDrops <- vapply(flits, .FindOverlap, integer(1))
         # nitDrops <- unique(flitDrops)
-        if (debug) {
-          message("    Flit candidates: ",
-                  paste(labels[nitDrops], collapse = ", "),
-                  "; duplicates: ",
-                  paste(labels[flitDrops[duplicated(as.integer(flitDrops))]],
-                        collapse = ", ")
-          )
-        }
+        # if (debug) {
+        #   message("    Flit candidates: ",
+        #           paste(labels[nitDrops], collapse = ", "),
+        #           "; duplicates: ",
+        #           paste(labels[flitDrops[duplicated(as.integer(flitDrops))]],
+        #                 collapse = ", ")
+        #   )
+        # }
       }
     }
     if (!length(twits)) {
@@ -367,7 +370,7 @@ SPRDist.multiPhylo <- SPRDist.list
     # the common edge.
     # 
     matches <- concave == 2
-    if (isTRUE(getOption("sprMatches")) && any(matches)) {
+    if (!isFALSE(getOption("sprMatches")) && any(matches)) {
       # At least one split exists in both trees
       matchingSplit <- which.max(matches)
       agreement <- as.logical(sp1[[.Which1(matchingSplit, nSplits)]])
@@ -435,21 +438,23 @@ SPRDist.multiPhylo <- SPRDist.list
     minH <- min(h[confMin == minConf])
     maxH <- max(h[confMin == minConf])
     
-    candidates <- which(h == maxH)
-    if (length(candidates) > 1) {
+    candidates <- which(h == maxH, arr.ind = TRUE)
+    if (!isFALSE(getOption("sprTies")) && nrow(candidates) > 1) {
       # Let's identify the split in each tree that is most at odds with all
       # other splits
-      tieBreak <- outer(rowMeans(h), colMeans(h))
-      tieBreak[-candidates] <- -Inf
-      candidates <- which(tieBreak == max(tieBreak))
+      tieBreak <- outer(rowMeans(h), colMeans(h))[candidates]
+      candidates <- candidates[which(tieBreak == max(tieBreak)), , drop = FALSE]
     }
     
     # If still tied, break arbitrarily.
-    # TODO perhaps we can find a non-arbitrary way to break any remaining ties?
-    candidate <- candidates[[1]]
+    if (nrow(candidates) > 1) {
+      # TODO perhaps we can find a non-arbitrary way to break any remaining ties?
+      message("Candidates remain tied: ",
+              paste(apply(candidates, 1, paste, collapse = "-"), collapse = ", "))
+    }
     
-    splitA <- sp1[[.Which1(candidate, nSplits)]]
-    splitB <- sp2[[.Which2(candidate, nSplits)]]
+    splitA <- sp1[[candidates[1, 1]]]
+    splitB <- sp2[[candidates[1, 2]]]
     ins <- TipsInSplits(c(splitA, splitB, splitA & splitB),
                         keep.names = FALSE)
     nTip <- attr(splitA, "nTip")
