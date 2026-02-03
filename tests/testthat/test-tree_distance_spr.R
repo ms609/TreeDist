@@ -121,6 +121,15 @@ test_that("SPR deOliveira2008 calculation looks valid", {
 test_that("SPR calculated correctly", {
   library("TreeTools", quietly = TRUE)
   
+  expect_exact <- function(x, y, method = "confl") {
+    if (is.character(x)) x <- Tree(x)
+    if (is.character(y)) y <- Tree(y)
+    expect_equal(
+      SPRDist(x, y, method = method)[[1]],
+      TBRDist::USPRDist(x, y)
+    )
+  }
+  
   Tree <- function(txt) ape::read.tree(text = txt)
 
   expect_equal(
@@ -139,9 +148,11 @@ test_that("SPR calculated correctly", {
   # Looks simple, but requires ties to be broken suitably
   # Passes with conf, viNorm (needed tiebreaker in each case)
   # Fails with joint, ami, vi: tiebreaker not yet implemented!
-  expect_equal(
-    .SPRConfl(Tree("(a,(d,(b,(c,X))));"), Tree("(a,((b,c),(X,d)));"))[[1]],
-    1L
+  expect_exact("(a,(d,(b,(c,X))));", "(a,((b,c),(X,d)));") # distance = 1
+  
+  expect_exact("((((b,c),d),e),a);", "(a,(b,((e,c),d)));") # distance = 2
+  expect_failure(
+    expect_exact("((((b,c),d),e),a);", "(a,(b,((e,c),d)));", "deo")
   )
   
   # Example AZ33: IJK and DEF are schlepped
