@@ -168,11 +168,39 @@ test_that("SPR calculated correctly", {
     tr[[i]] <- Postorder(TreeSearch::SPR(tr[[i - 1]]))
   }
 
+  write.tree(tr[[3]])
+  
   expect_equal(SPRDist(tr[[3]], tr[[11]], method = "DeO"), 8)
   # 11 with divide and conquer; 9 without
   expect_equal(SPRDist(tr[[3]], tr[[11]], method = "confl"), 7) #
   expect_equal(SPRDist(tr[[3]], tr[[11]], method = "exp"), 7) #
   # expect_equal(TBRDist::USPRDist(tr[[3]], tr[[11]]), 7) # at 2026-01-15: Actually 8
+  
+  
+  # Simplified example for reproducibility
+  Simplify <- function(tr) {
+    # Critical to the behaviour: t19, t25, t5
+    tr |>
+      DropTip("t17") |> # Reduces by a step
+      DropTip("t13") |> # Reduces by a step
+      DropTip("t8") |> # Reduces by a step
+      DropTip("t2") |> # Reduces by a step
+      DropTip("t19") |> # Reduces by a step
+      DropTip(c("t1", "t4", "t6", "t11", "t12", "t14", "t15", "t9", "t24")) # No difference to score
+  }
+  # t3 <- Simplify(tr[[3]])
+  # t11 <- Simplify(tr[[11]])
+  t3 <- Tree("((((t21,(((((t5,t22),t7),t20),t25),(t23,t16))),t18),t10),t3);")
+  t11 <- Tree("((((t21,t18),t10),(((t20,t5),(t7,t22)),(t23,(t16,t25)))),t3);")
+  
+  deO <- SPRDist(t3, t11, method = "DeO")
+  conf <- SPRDist(t3, t11, method = "confl")
+  
+  expect_equal(conf - deO,
+               SPRDist(tr[[3]], tr[[11]], method = "confl") -
+                 SPRDist(tr[[3]], tr[[11]], method = "DeO"))
+  
+  
 
   nTip <- 130
   nSPR <- 35
