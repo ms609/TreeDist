@@ -1,6 +1,7 @@
 #' @export
 #' @keywords internal
-ThreeDPlotServer <- function(input, output, distances, clusterings,
+#' @importFrom utils install.packages
+.ThreeDPlotServer <- function(input, output, distances, clusterings,
                              mapping, mstEnds, mstSize,
                              pointCols, thinnedTrees,
                              StrainCol, PlotSize, mode3D) {

@@ -1377,7 +1377,7 @@ server <- function(input, output, session) {
     }
   }, width = PlotSize, height = PlotSize)
   
-  ThreeDPlotServer(
+  .ThreeDPlotServer(
     input, output,
     distances   = distances,
     clusterings = clusterings,
