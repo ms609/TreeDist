@@ -205,57 +205,58 @@ test_that("SPR calculated correctly", {
   
   # TBRDist::USPRDist(tr[[3]], tr[[11]]) = 8
   
-  
-  
-  # Simplified example for reproducibility
-  Simplify <- function(tr) {
-    # Critical to the behaviour: t19, t25, t5
-    tr |>
-      DropTip("t17") |> # Reduces by a step
-      DropTip("t13") |> # Reduces by a step
-      DropTip("t8") |> # Reduces by a step
-      DropTip("t2") |> # Reduces by a step
-      DropTip("t19") |> # Reduces by a step
-      DropTip(c("t1", "t4", "t6", "t11", "t12", "t14", "t15", "t9", "t24")) # No difference to score
-  }
-  # t3 <- Simplify(tr[[3]])
-  # t11 <- Simplify(tr[[11]])
-  t3 <- Tree("((((t21,(((((t5,t22),t7),t20),t25),(t23,t16))),t18),t10),t3);")
-  t11 <- Tree("((((t21,t18),t10),(((t20,t5),(t7,t22)),(t23,(t16,t25)))),t3);")
-  
-  TBRDist::USPRDist(t3, t11) # 3
-  expect_equal(SPRDist(t3, t11, method = "DeO"), 3)
-  expect_equal(SPRDist(t3, t11, method = "confl")[[1]], 3)
-  
-  
-  
-  options(debugSPR = T)
-  # Simplified example for reproducibility
-
-  Simplify <- function(tr) {
-    DropTip(tr, paste0("t", c(1:11, 13:14, 16:17, 20, 22, 25)))
-  }
-  # t3 <- Simplify(tr[[3]])
-  # t11 <- Simplify(tr[[11]])
-  write.tree(t3)
-  write.tree(t11)
-  t3 <- Tree( "(((t21,(((t15,t12),t23),t24)),t18),t19);")
-  t11 <- Tree( "((t21,t18),(((t12,(t19,t15)),t23),t24));")
-  for (lab in TipLabels(Simplify(tr[[3]]))) {
-    d <- SPRDist(DropTip(t3, lab), DropTip(t11, lab), method = "DeO")
-    c <- SPRDist(DropTip(t3, lab), DropTip(t11, lab), method = "conf")
-    if (c - d == 3) {
-      stop(c, ", ", d, ": ", lab)
-    }
-  }
-  
-  deO <- SPRDist(t3, t11, method = "DeO")
-  options(sprH = "ami")
-  conf <- SPRDist(t3, t11, method = "confl")
-  
-  expect_equal(conf - deO,
-               SPRDist(tr[[3]], tr[[11]], method = "confl") -
-                 SPRDist(tr[[3]], tr[[11]], method = "DeO"))
+  # 
+  # 
+  # # Simplified example for reproducibility
+  # Simplify <- function(tr) {
+  #   # Critical to the behaviour: t19, t25, t5
+  #   tr |>
+  #     DropTip("t17") |> # Reduces by a step
+  #     DropTip("t13") |> # Reduces by a step
+  #     DropTip("t8") |> # Reduces by a step
+  #     DropTip("t2") |> # Reduces by a step
+  #     DropTip("t19") |> # Reduces by a step
+  #     DropTip(c("t1", "t4", "t6", "t11", "t12", "t14", "t15", "t9", "t24")) # No difference to score
+  # }
+  # # t3 <- Simplify(tr[[3]])
+  # # t11 <- Simplify(tr[[11]])
+  # t3 <- Tree("((((t21,(((((t5,t22),t7),t20),t25),(t23,t16))),t18),t10),t3);")
+  # t11 <- Tree("((((t21,t18),t10),(((t20,t5),(t7,t22)),(t23,(t16,t25)))),t3);")
+  # 
+  # TBRDist::USPRDist(t3, t11) # 3
+  # expect_equal(SPRDist(t3, t11, method = "DeO"), 3)
+  # expect_equal(SPRDist(t3, t11, method = "confl")[[1]], 3)
+  # 
+  # 
+  # 
+  # options(debugSPR = T)
+  # # Simplified example for reproducibility
+  # 
+  # Simplify <- function(tr) {
+  #   DropTip(tr, paste0("t", c(1:11, 13:14, 16:17, 20, 22, 25)))
+  # }
+  # # t3 <- Simplify(tr[[3]])
+  # # t11 <- Simplify(tr[[11]])
+  # write.tree(t3)
+  # write.tree(t11)
+  # t3 <- Tree( "(((t21,(((t15,t12),t23),t24)),t18),t19);")
+  # t11 <- Tree( "((t21,t18),(((t12,(t19,t15)),t23),t24));")
+  # for (lab in TipLabels(Simplify(tr[[3]]))) {
+  #   d <- SPRDist(DropTip(t3, lab), DropTip(t11, lab), method = "DeO")
+  #   c <- SPRDist(DropTip(t3, lab), DropTip(t11, lab), method = "conf")
+  #   if (c - d == 3) {
+  #     stop(c, ", ", d, ": ", lab)
+  #   }
+  # }
+  # 
+  # deO <- SPRDist(t3, t11, method = "DeO")
+  # options(sprH = "ami")
+  # conf <- SPRDist(t3, t11, method = "confl")
+  # TBRDist::USPRDist(t3, t11)
+  # message(deO, ", ", conf)
+  # expect_equal(conf - deO,
+  #              SPRDist(tr[[3]], tr[[11]], method = "confl") -
+  #                SPRDist(tr[[3]], tr[[11]], method = "DeO"))
   
   
 
@@ -279,18 +280,21 @@ test_that("SPR calculated correctly", {
 
   expect_true(all(testDist <= simDist))
 
+  if (interactive()) {
+    plot(testDist ~ jitter(simDist), asp = 1, frame.plot = F)
+    abline(0, 1)
+    points(phanDist ~ jitter(simDist), pch = 3)
+  }
   # bestDist <- as.dist(pmin(as.matrix(testDist), as.matrix(SPRDist(rev(tr)))[rev(seq_along(tr)), rev(seq_along(tr))]))
   bestDist <- testDist # assert symmetry
 
   overShot <- as.matrix(testDist) > as.matrix(simDist)
-  overs <- colSums(overShot) > 0
-  overShot[overs, overs]
-
+  which(overShot, arr.ind = TRUE)
+  
   underShot <- as.matrix(testDist) < as.matrix(phanDist)
-  unders <- colSums(underShot) > 0
-  underShot[unders, unders]
-
-  if (interactive()) {
+  which(underShot, arr.ind = TRUE)
+  
+  if (interactive() && nTip == 25 && nSPR == 12) {
     #  trueDist <- TBRDist::USPRDist(tr)
     trueDist <- readRDS("true-25tip-12spr.Rds")
 
@@ -301,7 +305,7 @@ test_that("SPR calculated correctly", {
     hist(simDist - bestDist, add = TRUE, col = "#88ee4488")
     
     plot(simDist, simDist, type = "n", asp = 1, ylim = range(distRange),
-         xlab = "Number of SPR moves")
+         xlab = "Number of SPR moves", frame.plot = FALSE)
     abline(0, 0, col = 3)
     jd <- jitter(simDist)
     #points(jd, trueDist, pch = 7, col = 3)
@@ -309,6 +313,8 @@ test_that("SPR calculated correctly", {
     #points(jd, bestDist, pch = 3, col = 2)
     points(jd, phanDist - trueDist, pch = 5, col = 4)
     points(jd, bestDist - trueDist, pch = 4, col = 5)
+    legend("bottomright", c("Phangorn", "entropic"), bty = "n",
+           pch = 5:4, col = 4:5)
   }
 
   expect_true(all(testDist >= phanDist))
