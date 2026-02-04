@@ -1,6 +1,7 @@
-#' @export
-#' @keywords internal
+#' Helper function for shiny 3D plotting
 #' @importFrom utils install.packages
+#' @keywords internal
+#' @export
 .ThreeDPlotServer <- function(input, output, distances, clusterings,
                              mapping, mstEnds, mstSize,
                              pointCols, thinnedTrees,
