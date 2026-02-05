@@ -235,6 +235,7 @@ test_that("SPR calculated correctly", {
   write.tree(tr[[3]])
   
   expect_equal(SPRDist(tr[[3]], tr[[11]], method = "DeO"), 8)
+  expect_equal(SPRDist(tr[[3]], tr[[11]], method = "rogue")[[1]], 8)
   options(sprH = "ami") # = 8
   # options(sprH = "joint") = 10
   expect_equal(SPRDist(tr[[3]], tr[[11]], method = "confl"), 8)
@@ -308,18 +309,15 @@ test_that("SPR calculated correctly", {
   }
 
   phanDist <- SPRDist(tr, method = "deO")
-
-  SPRDist(tr[[1]], tr)
-
-  testDist <- SPRDist(tr)
+  testDist <- SPRDist(tr, method = "rogue")
   simDist <- dist(seq_along(tr))
 
   expect_true(all(testDist <= simDist))
 
   if (interactive()) {
-    plot(testDist ~ jitter(simDist), asp = 1, frame.plot = F)
+    plot(testDist ~ jitter(simDist), asp = 1, frame.plot = F, col = 3)
     abline(0, 1)
-    points(phanDist ~ jitter(simDist), pch = 3)
+    points(phanDist ~ jitter(simDist), pch = 3, col = 2)
   }
   # bestDist <- as.dist(pmin(as.matrix(testDist), as.matrix(SPRDist(rev(tr)))[rev(seq_along(tr)), rev(seq_along(tr))]))
   bestDist <- testDist # assert symmetry
@@ -342,15 +340,15 @@ test_that("SPR calculated correctly", {
     
     plot(simDist, simDist, type = "n", asp = 1, ylim = range(distRange),
          xlab = "Number of SPR moves", frame.plot = FALSE)
-    abline(0, 0, col = 3)
+    abline(0, 0, col = 4)
     jd <- jitter(simDist)
     #points(jd, trueDist, pch = 7, col = 3)
     #points(jd, phanDist, pch = 1)
     #points(jd, bestDist, pch = 3, col = 2)
-    points(jd, phanDist - trueDist, pch = 5, col = 4)
-    points(jd, bestDist - trueDist, pch = 4, col = 5)
-    legend("bottomright", c("Phangorn", "entropic"), bty = "n",
-           pch = 5:4, col = 4:5)
+    points(jd, phanDist - trueDist, pch = 5, col = 2)
+    points(jd, bestDist - trueDist, pch = 4, col = 3)
+    legend("bottomright", c("Phangorn", "Rogue"), bty = "n",
+           pch = 5:4, col = 2:3)
   }
 
   expect_true(all(testDist >= phanDist))

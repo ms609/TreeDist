@@ -705,6 +705,7 @@ SPRDist.multiPhylo <- SPRDist.list
   
   reduced <- ReduceTrees(tree1, tree2, check = check)
   if (!is.null(reduced) && debug) {
+    message("Rogue SPR heuristic underway")
     par(mfrow = 1:2, mai = rep(0.1, 4))
     plot(reduced[[1]])
     ape::nodelabels(frame = "none", cex = 0.8)
