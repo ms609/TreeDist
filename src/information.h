@@ -1,6 +1,8 @@
 #ifndef _TREEDIST_INFO_H
 #define _TREEDIST_INFO_H
 
+#include <Rcpp/Lightest>
+#include <cassert> /* for log2() */
 #include <cmath> /* for log2() */
 #include "ints.h" /* for int16 */
 
