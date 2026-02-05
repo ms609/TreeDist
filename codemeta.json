@@ -464,7 +464,7 @@
       "@type": "SoftwareApplication",
       "identifier": "TreeTools",
       "name": "TreeTools",
-      "version": ">= 2.0.0.9002",
+      "version": ">= 2.0.0.9004",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
@@ -476,7 +476,7 @@
     "SystemRequirements": "C++17, pandoc-citeproc"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "1684.151KB",
+  "fileSize": "1685.8KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
