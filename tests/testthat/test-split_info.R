@@ -21,6 +21,15 @@ test_that("Split info calculated", {
                consensus_info(trees, TRUE, 0.7))
   expect_error(consensus_info(trees, TRUE, 7))
   expect_error(consensus_info(trees, TRUE, -7))
+  expect_error(
+    consensus_info(list(rtree(20000), rtree(20000)), TRUE, p = 1),
+    "This many leaves are not yet supported"
+  )
+  expect_error(
+    consensus_info(list(rtree(20000), rtree(20000)), FALSE, p = 1),
+    "This many leaves are not yet supported"
+  )
+
   
   # Expected:
   # - tablei = 0: 

@@ -57,18 +57,12 @@ namespace TreeDist {
 
 using TreeDist::resize_uninitialized;
 
-// [[Rcpp::export]]
-List cpp_robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
-                                  const IntegerVector &nTip) {
-  if (x.cols() != y.cols()) {
-    Rcpp::stop("Input splits must address same number of tips.");
-  }
-  TreeDist::check_ntip(nTip[0]);
-  
+inline List robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
+                                     const int32 n_tips) {
+
   const SplitList a(x), b(y);
-  const int16 last_bin = a.n_bins - 1;
-  const int16 n_tips = int16(nTip[0]);
-  const int16 unset_tips = (n_tips % SL_BIN_SIZE) ?
+  const int32 last_bin = a.n_bins - 1;
+  const int32 unset_tips = (n_tips % SL_BIN_SIZE) ?
     SL_BIN_SIZE - n_tips % SL_BIN_SIZE : 0;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   cost score = 0;
@@ -76,27 +70,27 @@ List cpp_robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
   grf_match matching(a.n_splits, NA_INTEGER);
   
   splitbit b_complement[SL_MAX_SPLITS][SL_MAX_BINS];
-  for (int16 i = b.n_splits; i--; ) {
-    for (int16 bin = last_bin; bin--; ) {
+  for (int32 i = b.n_splits; i--; ) {
+    for (int32 bin = last_bin; bin--; ) {
       b_complement[i][bin] = ~b.state[i][bin];
     }
     b_complement[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
-  for (int16 ai = a.n_splits; ai--; ) {
-    for (int16 bi = b.n_splits; bi--; ) {
+  for (int32 ai = a.n_splits; ai--; ) {
+    for (int32 bi = b.n_splits; bi--; ) {
       
       bool all_match = true;
       bool all_complement = true;
       
-      for (int16 bin = 0; bin < a.n_bins; ++bin) {
+      for (int32 bin = 0; bin < a.n_bins; ++bin) {
         if ((a.state[ai][bin] != b.state[bi][bin])) {
           all_match = false;
           break;
         }
       }
       if (!all_match) {
-        for (int16 bin = 0; bin < a.n_bins; ++bin) {
+        for (int32 bin = 0; bin < a.n_bins; ++bin) {
           if (a.state[ai][bin] != b_complement[bi][bin]) {
             all_complement = false;
             break;
@@ -115,19 +109,11 @@ List cpp_robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
   return List::create(Named("score") = score, _["matching"] = matching);
   
 }
-
-// [[Rcpp::export]]
-List cpp_robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
-                              const IntegerVector &nTip) {
-  if (x.cols() != y.cols()) {
-    Rcpp::stop("Input splits must address same number of tips.");
-  }
-  TreeDist::check_ntip(nTip[0]);
-  
+inline List robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
+                                 const int32 n_tips) {
   const SplitList a(x), b(y);
   
   const int16 last_bin = a.n_bins - 1;
-  const int16 n_tips = int16(nTip[0]);
   const int16 unset_tips = (n_tips % SL_BIN_SIZE) ?
     SL_BIN_SIZE - n_tips % SL_BIN_SIZE : 0;
   
@@ -184,18 +170,14 @@ List cpp_robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
   
 }
 
-// [[Rcpp::export]]
-List cpp_matching_split_distance(const RawMatrix &x, const RawMatrix &y,
-                                 const IntegerVector &nTip) {
-  if (x.cols() != y.cols()) {
-    Rcpp::stop("Input splits must address same number of tips.");
-  }
-  TreeDist::check_ntip(nTip[0]);
+
+
   
+inline List matching_split_distance(const RawMatrix &x, const RawMatrix &y,
+                                    const int32 n_tips) {
   const SplitList a(x), b(y);
   const int16 most_splits = std::max(a.n_splits, b.n_splits);
   const int16 split_diff = most_splits - std::min(a.n_splits, b.n_splits);
-  const int16 n_tips = int16(nTip[0]);
   const int16 half_tips = n_tips / 2;
   if (most_splits == 0) {
     return List::create(Named("score") = 0);
@@ -249,18 +231,11 @@ List cpp_matching_split_distance(const RawMatrix &x, const RawMatrix &y,
                       _["matching"] = final_matching);
 }
 
-// [[Rcpp::export]]
-List cpp_jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
-                            const IntegerVector &nTip, const NumericVector &k,
-                            const LogicalVector &allowConflict) {
-  if (x.cols() != y.cols()) {
-    Rcpp::stop("Input splits must address same number of tips.");
-  }
-  TreeDist::check_ntip(nTip[0]);
-  
+inline List jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
+                                   const int32 n_tips, const NumericVector &k,
+                                   const LogicalVector &allowConflict) {
   const SplitList a(x), b(y);
   const int16 most_splits = std::max(a.n_splits, b.n_splits);
-  const int16 n_tips = int16(nTip[0]);
   
   constexpr cost max_score = BIG;
   constexpr double max_scoreL = max_score;
@@ -363,17 +338,9 @@ List cpp_jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
   
 }
 
-// [[Rcpp::export]]
-List cpp_msi_distance(const RawMatrix &x, const RawMatrix &y,
-                      const IntegerVector &nTip) {
-  if (x.cols() != y.cols()) {
-    Rcpp::stop("Input splits must address same number of tips.");
-  }
-  TreeDist::check_ntip(nTip[0]);
-  
+List msi_distance(const RawMatrix &x, const RawMatrix &y, const int32 n_tips) {
   const SplitList a(x), b(y);
   const int16 most_splits = std::max(a.n_splits, b.n_splits);
-  const int16 n_tips = int16(nTip[0]);
   constexpr cost max_score = BIG;
   const double max_possible = lg2_unrooted[n_tips] - 
     lg2_rooted[int16((n_tips + 1) / 2)] - lg2_rooted[int16(n_tips / 2)];
@@ -432,21 +399,14 @@ List cpp_msi_distance(const RawMatrix &x, const RawMatrix &y,
 
 }
 
-// [[Rcpp::export]]
-List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
-                           const IntegerVector &nTip) {
-  if (x.cols() != y.cols()) {
-    Rcpp::stop("Input splits must address same number of tips.");
-  }
-  TreeDist::check_ntip(nTip[0]);
-  
+List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
+                       const int32 n_tips) {
   const SplitList a(x);
   const SplitList b(y);
   const bool a_has_more_splits = (a.n_splits > b.n_splits);
   const int16 most_splits = a_has_more_splits ? a.n_splits : b.n_splits;
   const int16 a_extra_splits = a_has_more_splits ? most_splits - b.n_splits : 0;
   const int16 b_extra_splits = a_has_more_splits ? 0 : most_splits - a.n_splits;
-  const int16 n_tips = int16(nTip[0]);
   const double n_tips_reciprocal = 1.0 / n_tips;
   
   if (most_splits == 0 || n_tips == 0) {
@@ -602,17 +562,10 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   }
 }
 
-// [[Rcpp::export]]
-List cpp_shared_phylo (const RawMatrix &x, const RawMatrix &y,
-                       const IntegerVector &nTip) {
-  if (x.cols() != y.cols()) {
-    Rcpp::stop("Input splits must address same number of tips.");
-  }
-  TreeDist::check_ntip(nTip[0]);
-  
+inline List shared_phylo (const RawMatrix &x, const RawMatrix &y,
+                          const int32 n_tips) {
   const SplitList a(x), b(y);
   const int16 most_splits = std::max(a.n_splits, b.n_splits);
-  const int16 n_tips = int16(nTip[0]);
   const int16 overlap_a = int16(n_tips + 1) / 2; // avoids promotion to int
   
   constexpr cost max_score = BIG;
@@ -662,4 +615,80 @@ List cpp_shared_phylo (const RawMatrix &x, const RawMatrix &y,
   
   return List::create(Named("score") = final_score,
                       _["matching"] = final_matching);
+}
+
+// [[Rcpp::export]]
+List cpp_robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
+                                  const IntegerVector &nTip) {
+  if (x.cols() != y.cols()) {
+    Rcpp::stop("Input splits must address same number of tips.");
+  }
+  return robinson_foulds_distance(x, y, static_cast<int32>(nTip[0]));
+}
+
+// [[Rcpp::export]]
+List cpp_robinson_foulds_info(const RawMatrix &x, const RawMatrix &y,
+                              const IntegerVector &nTip) {
+  if (x.cols() != y.cols()) {
+    Rcpp::stop("Input splits must address same number of tips.");
+  }
+  const int32 n_tip = static_cast<int32>(nTip[0]);
+  TreeDist::check_ntip(n_tip);
+  return robinson_foulds_info(x, y, n_tip);
+}
+
+// [[Rcpp::export]]
+List cpp_matching_split_distance(const RawMatrix &x, const RawMatrix &y,
+                                 const IntegerVector &nTip) {
+  if (x.cols() != y.cols()) {
+    Rcpp::stop("Input splits must address same number of tips.");
+  }
+  const int32 n_tip = static_cast<int32>(nTip[0]);
+  TreeDist::check_ntip(n_tip);
+  return matching_split_distance(x, y, n_tip);
+}
+
+// [[Rcpp::export]]
+List cpp_jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
+                            const IntegerVector &nTip, const NumericVector &k,
+                            const LogicalVector &allowConflict) {
+  if (x.cols() != y.cols()) {
+    Rcpp::stop("Input splits must address same number of tips.");
+  }
+  const int32 n_tip = static_cast<int32>(nTip[0]);
+  TreeDist::check_ntip(n_tip);
+  return jaccard_similarity(x, y, n_tip, k, allowConflict);
+}
+
+// [[Rcpp::export]]
+List cpp_msi_distance(const RawMatrix &x, const RawMatrix &y,
+                      const IntegerVector &nTip) {
+  if (x.cols() != y.cols()) {
+    Rcpp::stop("Input splits must address same number of tips.");
+  }
+  const int32 n_tip = static_cast<int32>(nTip[0]);
+  TreeDist::check_ntip(n_tip);
+  return msi_distance(x, y, n_tip);
+}
+
+// [[Rcpp::export]]
+List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
+                           const IntegerVector &nTip) {
+  if (x.cols() != y.cols()) {
+    Rcpp::stop("Input splits must address same number of tips.");
+  }
+  const int32 n_tip = static_cast<int32>(nTip[0]);
+  TreeDist::check_ntip(n_tip);
+  return mutual_clustering(x, y, n_tip);
+}
+
+// [[Rcpp::export]]
+List cpp_shared_phylo(const RawMatrix &x, const RawMatrix &y,
+                      const IntegerVector &nTip) {
+  if (x.cols() != y.cols()) {
+    Rcpp::stop("Input splits must address same number of tips.");
+  }
+  const int32 n_tip = static_cast<int32>(nTip[0]);
+  TreeDist::check_ntip(n_tip);
+  return shared_phylo(x, y, n_tip);
 }

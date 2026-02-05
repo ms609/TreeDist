@@ -26,7 +26,7 @@
 #' https://github.com/yongyanghz/LAPJV-algorithm-c/blob/master/src/lap.cpp)
 #' by Roy Jonker, MagicLogic Optimization Inc. <roy_jonker@magiclogic.com>, 
 #' with contributions from Yong Yang <yongyanglink@gmail.com>, after 
-#' [Yi Cao](https://uk.mathworks.com/matlabcentral/profile/authors/69713-yi-cao)
+#' [Yi Cao](https://uk.mathworks.com/matlabcentral/profile/authors/69713)
 #' 
 #' @param x Matrix of costs.
 #' @return `LAPJV()` returns a list with two entries: `score`, the score of the

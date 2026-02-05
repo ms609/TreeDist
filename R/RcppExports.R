@@ -5,12 +5,12 @@ COMCLUST <- function(trees) {
     .Call(`_TreeDist_COMCLUST`, trees)
 }
 
-consensus_info <- function(trees, phylo, p) {
-    .Call(`_TreeDist_consensus_info`, trees, phylo, p)
-}
-
 robinson_foulds_all_pairs <- function(tables) {
     .Call(`_TreeDist_robinson_foulds_all_pairs`, tables)
+}
+
+consensus_info <- function(trees, phylo, p) {
+    .Call(`_TreeDist_consensus_info`, trees, phylo, p)
 }
 
 HMI_xptr <- function(ptr1, ptr2) {

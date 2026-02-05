@@ -2,7 +2,9 @@
 
 - `SPRDist()` implements a novel algorithm for approximating SPR distances.
 
+# TreeDist 2.11.1.9001 (2026-02-05)
 
+- Support larger trees by updating some functions to use 32-bit integers, per TreeTools v2.1.0.
 
 # TreeDist 2.11.1.9000 (2025-11-13)
 
@@ -45,7 +47,7 @@ This was **fixed in v2.11.0**.
     - Faster tree distance calculation.
     - 2x speed-up of LAPJV for large matrices.
     
-- Require R4.0; discontinue tests against R 3.6 and 4.0.
+- Require R4.0; discontinue tests against R4.0.
 
 
 # TreeDist 2.9.2 (2025-01-11)
