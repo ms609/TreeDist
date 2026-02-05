@@ -140,7 +140,18 @@ test_that("SPR calculated correctly", {
     1L
   )
   expect_equal(
+    .SPRRogue(
+      ape::read.tree(text = "((a, b), (c, d));"),
+      ape::read.tree(text = "((a, c), (b, d));")
+    )[[1]],
+    1L
+  )
+  expect_equal(
     .SPRConfl(PectinateTree(letters[1:26]), PectinateTree(letters[c(2:26, 1)]))[[1]],
+    1L
+  )
+  expect_equal(
+    .SPRRogue(PectinateTree(letters[1:26]), PectinateTree(letters[c(2:26, 1)]))[[1]],
     1L
   )
   
@@ -148,8 +159,10 @@ test_that("SPR calculated correctly", {
   options(sprH = "ami")
   # Looks simple, but requires ties to be broken suitably
   expect_exact("(a,(d,(b,(c,X))));", "(a,((b,c),(X,d)));") # distance = 1
+  expect_exact("(a,(d,(b,(c,X))));", "(a,((b,c),(X,d)));", "rogue") # distance = 1
   
   expect_exact("((((b,c),d),e),a);", "(a,(b,((e,c),d)));") # distance = 2
+  expect_exact("((((b,c),d),e),a);", "(a,(b,((e,c),d)));", "rogue")
   expect_failure(
     expect_exact("((((b,c),d),e),a);", "(a,(b,((e,c),d)));", "deo")
   )
@@ -158,6 +171,8 @@ test_that("SPR calculated correctly", {
   # Fails with viNorm - should tiebreaker be non-normalized?
   expect_exact("(((t21,(((t15,t12),t23),t24)),t18),t19);",
                "((t21,t18),(((t12,(t19,t15)),t23),t24));")
+  expect_exact("(((t21,(((t15,t12),t23),t24)),t18),t19);",
+               "((t21,t18),(((t12,(t19,t15)),t23),t24));", "rogue")
   
   # Example AZ33: IJK and DEF are schlepped
   # Passes with joint, ami, viNorm
@@ -172,9 +187,29 @@ test_that("SPR calculated correctly", {
     2
   )
   
+  expect_equal(
+    .SPRRogue(
+      tree1 <- PectinateTree(letters[1:26]),
+      tree2 <- Tree(
+        "(g, (h, (i, (j, (k, (l, ((m, (c, (b, a))), (n, (o, (p, (q, (r, (s, (t, (u, (v, (w, (x, (y, (z, (f, (e, d))))))))))))))))))))));"
+      )
+    )[[1]],
+    2
+  )
+  
   # Requires "divide and conquer" step
   expect_equal(
     .SPRConfl(
+      tree1 <- PectinateTree(letters[1:26]),
+      tree2 <- Tree(
+        "(g, (h, (i, (j, (k, (l, (m, (n, (o, (p, (q, (r, (s, (t, (u, (v, (w, (x, (y, (z, (f, ((e, (c, (b, a))), d))))))))))))))))))))));"
+      )
+    )[[1]],
+    2
+  )
+  
+  expect_equal(
+    .SPRRogue(
       tree1 <- PectinateTree(letters[1:26]),
       tree2 <- Tree(
         "(g, (h, (i, (j, (k, (l, (m, (n, (o, (p, (q, (r, (s, (t, (u, (v, (w, (x, (y, (z, (f, ((e, (c, (b, a))), d))))))))))))))))))))));"

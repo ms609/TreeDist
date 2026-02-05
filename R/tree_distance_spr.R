@@ -63,8 +63,8 @@ SPRDist.phylo <- function(tree1, tree2 = NULL, method = "confl", symmetric) {
 
 .SPRFunc <- function(method) {
   switch(pmatch(tolower(gsub("\\s", "", method)),
-                c("deoliveira2008", "confl", "experiment")),
-         .SPRPairDeOCutter, .SPRConfl, .SPRExperiment)
+                c("deoliveira2008", "confl", "rogue", "experiment")),
+         .SPRPairDeOCutter, .SPRConfl, .SPRRogue, .SPRExperiment)
 }
 
 #' @rdname SPRDist
@@ -671,6 +671,124 @@ SPRDist.multiPhylo <- SPRDist.list
     if (sum(drop) > 1) {
       drop <- as.logical(tabulate(which.max(drop), length(drop)))
     }
+    if (debug) {
+      dropList <- c(dropList, TipLabels(reduced[[1]])[drop])
+      message("Dropping: ", TipLabels(reduced[[1]])[drop],
+              " (", which(drop), ")")
+    }
+    reduced <- keep_and_reduce(tr1, tr2, !drop)
+    if (length(reduced) == 1L) {
+      reduced <- NULL
+    }
+    if (debug) {
+      if (is.null(reduced[[1]])) {
+        plot.new(); plot.new()
+      } else {
+        plot(reduced[[1]])
+        plot(reduced[[2]])
+      }
+    }
+      
+    moves <- moves + 1
+  }
+  
+  # Return:
+  if (debug) structure(moves, dropList = dropList) else moves
+}
+
+# Takes a 'Rogue' approach: finds the leaf that introduces the most conflict,
+# and nixes it.
+.SPRRogue <- function(tree1, tree2, check = TRUE) {
+  moves <- 0
+  debug <- isTRUE(getOption("debugSPR", FALSE))
+  if (debug) dropList <- character(0)
+  
+  reduced <- ReduceTrees(tree1, tree2, check = check)
+  if (!is.null(reduced) && debug) {
+    par(mfrow = 1:2, mai = rep(0.1, 4))
+    plot(reduced[[1]])
+    ape::nodelabels(frame = "none", cex = 0.8)
+    plot(reduced[[2]])
+    ape::nodelabels(frame = "none", cex = 0.8)
+  }
+  
+  while (!is.null(reduced)) {
+    
+    matchedSplits <- sp1 %in% sp2
+    if (!isFALSE(getOption("sprMatches")) && any(matchedSplits)) {
+      # At least one split exists in both trees
+      
+      # Take left side of split
+      subtips1 <- agreement
+      # Add dummy tip as placeholder for other half of tree
+      subtips1[!subtips1][[1]] <- TRUE
+
+      # Repeat for other half-tree
+      subtips2 <- !agreement
+      subtips2[!subtips2][[1]] <- TRUE
+
+      if (debug) {
+        message("Division A: ", 
+                paste(colnames(agreement)[agreement], collapse = " "), 
+                " | ",
+                paste(colnames(agreement)[!agreement], collapse = " "))
+        colNow <- par("col")
+        if (colNow == "black") colNow <- "#000000"
+        colIdx <- match(colNow, palette.colors(8), 0)
+        oPar <- par(col = palette.colors(8)[colIdx + 1])
+        on.exit(par(oPar))
+      }
+      moves1 <- .SPRConfl(
+        KeepTipPostorder(tr1, subtips1),
+        KeepTipPostorder(tr2, subtips1)
+      )
+      if (debug) {
+        message("Division B: ", paste(colnames(agreement)[!agreement], collapse = " "))
+        colNow <- par("col")
+        colIdx <- match(colNow, palette.colors(8), 0)
+        par(col = palette.colors(8)[colIdx + 1])
+      }
+      moves2 <- .SPRConfl(
+        KeepTipPostorder(tr1, subtips2),
+        KeepTipPostorder(tr2, subtips2)
+      )
+      return(if (debug) {
+        structure(
+          moves + moves1 + moves2,
+          dropList = paste(
+            dropList,
+            attr(moves1, "dropList"),
+            attr(moves2, "dropList"),
+            collapse = " | ", sep = " ")
+          )
+        } else {
+        moves + moves1 + moves2
+      })
+    }
+    
+    tr1 <- reduced[[1]]
+    tr2 <- reduced[[2]]
+    labels <- TipLabels(tr1)
+    scores <- numeric(length(labels))
+    blank <- !logical(length(labels))
+    for (i in seq_along(labels)) {
+      keep <- blank
+      keep[[i]] <- FALSE
+      outcome <- keep_and_reduce(tr1, tr2, keep)
+      if (is.null(outcome[[1]])) {
+        scores[[i]] <- -Inf
+        break
+      }
+      # TODO could look for shared edges and treat subtrees separately
+      scores[[i]] <- ClusteringInfoDist(outcome)
+    }
+    
+    couldDrop <- scores == min(scores)
+    if (debug && sum(couldDrop) > 1) {
+      message(sum(couldDrop), " options to drop")
+    }
+    drop <- logical(length(labels))
+    drop[[which.min(scores)]] <- TRUE
     if (debug) {
       dropList <- c(dropList, TipLabels(reduced[[1]])[drop])
       message("Dropping: ", TipLabels(reduced[[1]])[drop],
