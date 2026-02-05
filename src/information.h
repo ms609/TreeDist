@@ -43,9 +43,9 @@ __attribute__((constructor))
     }
   }
 
-inline double split_phylo_info (const int16 n_in, const int16 *n_tip,
-                                const double p) {
-  const int16 n_out = *n_tip - n_in;
+inline double split_phylo_info(const int32 n_in, const int32 *n_tip,
+                               const double p) {
+  const int32 n_out = *n_tip - n_in;
   assert(p > 0);
   assert(p <= 1);
   assert(n_in > 1);
@@ -53,14 +53,12 @@ inline double split_phylo_info (const int16 n_in, const int16 *n_tip,
   if (p == 1) {
     return (l2unrooted[*n_tip] - l2rooted[n_in] - l2rooted[n_out]);
   } else {
-    const double 
-      q = 1 - p,
-      l2n = l2unrooted[*n_tip],
-      l2n_consistent = l2rooted[n_in] + l2rooted[n_out],
-      l2p_consistent = l2n_consistent - l2n,
-      l2p_inconsistent = log2(-expm1(l2p_consistent * log_2)),
-      l2n_inconsistent = l2p_inconsistent + l2n
-    ;
+    const double q = 1 - p;
+    const double l2n = l2unrooted[*n_tip];
+    const double l2n_consistent = l2rooted[n_in] + l2rooted[n_out];
+    const double l2p_consistent = l2n_consistent - l2n;
+    const double l2p_inconsistent = log2(-expm1(l2p_consistent * log_2));
+    const double l2n_inconsistent = l2p_inconsistent + l2n;
     
     return(l2n +
            p * (log2(p) - l2n_consistent) +
@@ -68,9 +66,9 @@ inline double split_phylo_info (const int16 n_in, const int16 *n_tip,
   }
 }
 
-inline double split_clust_info (const int16 n_in, const int16 *n_tip,
-                                const double p) {
-  const int16 n_out = *n_tip - n_in;
+inline double split_clust_info(const int32 n_in, const int32 *n_tip,
+                               const double p) {
+  const int32 n_out = *n_tip - n_in;
   assert(p > 0);
   assert(p <= 1);
   assert(n_in > 1);

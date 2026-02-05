@@ -16,7 +16,7 @@ using TreeTools::ct_max_leaves;
 #include <cmath> /* for log2(), ceil() */
 #include <memory> /* for unique_ptr, make_unique */
 
-struct StackEntry { int16 L, R, N, W; };
+struct StackEntry { int32 L, R, N, W; };
 
 // COMCLUSTER computes a strict consensus tree in O(knn).
 // COMCLUST requires O(kn).
@@ -24,15 +24,16 @@ struct StackEntry { int16 L, R, N, W; };
 // [[Rcpp::export]]
 int COMCLUST(List trees) {
   
-  int16 v = 0, w = 0;
-  int16 L, R, N, W;
-  int16 L_i, R_i, N_i, W_i;
+  int32 v = 0;
+  int32 w = 0;
+  int32 L, R, N, W;
+  int32 L_i, R_i, N_i, W_i;
   
   ClusterTable X(List(trees(0)));
-  std::array<int16, TreeTools::ct_max_leaves> S;
+  std::array<int32, TreeTools::ct_max_leaves> S;
   
-  for (int16 i = 1; i != trees.length(); i++) {
-    int16 Spos = 0; // Empty the stack S
+  for (int32 i = 1; i != trees.length(); i++) {
+    int32 Spos = 0; // Empty the stack S
     
     X.CLEAR();
     ClusterTable Ti(List(trees(i)));
@@ -77,18 +78,24 @@ int COMCLUST(List trees) {
 double consensus_info(const List trees, const LogicalVector phylo,
                       const NumericVector p) {
   
-  int16 v = 0, w = 0,
-    L, R, N, W,
-    L_j, R_j, N_j, W_j
-  ;
-  const int16 n_trees = trees.length();
+  int32 v = 0;
+  int32 w = 0;
+  int32 L;
+  int32 R;
+  int32 N;
+  int32 W;
+  int32 L_j;
+  int32 R_j;
+  int32 N_j;
+  int32 W_j;
+  const int32 n_trees = trees.length();
   
   std::vector<ClusterTable> tables;
   if (std::size_t(n_trees) > tables.max_size()) {
     Rcpp::stop("Not enough memory available to compute consensus of so many trees"); // LCOV_EXCL_LINE
   }
   tables.reserve(n_trees);
-  for (int16 i = n_trees; i--; ) {
+  for (int32 i = n_trees; i--; ) {
     tables.emplace_back(ClusterTable(List(trees(i))));
   }
   
@@ -97,39 +104,38 @@ double consensus_info(const List trees, const LogicalVector phylo,
   } else if (p[0] < 0.5) {
     Rcpp::stop("p must be >= 0.5 in consensus_info()");
   }
-  const int16
-    n_tip = tables[0].N(),
-    thresh = p[0] <= 0.5 ?
+  const int32 n_tip = tables[0].N();
+  const int32 thresh = p[0] <= 0.5 ?
       (n_trees / 2) + 1 : // Splits must occur in MORE THAN 0.5 to be in majority.
-      std::ceil(p[0] * n_trees),
-    must_occur_before = 1 + n_trees - thresh
-  ;
+      std::ceil(p[0] * n_trees);
+  const int32 must_occur_before = 1 + n_trees - thresh;
   
   const bool phylo_info = phylo[0];
   
-  std::array<int16, TreeTools::ct_stack_size * TreeTools::ct_max_leaves> S;
-  std::array<int16, TreeTools::ct_max_leaves> split_count;
+  std::array<int32, TreeTools::ct_stack_size * TreeTools::ct_max_leaves> S;
+  std::array<int32, TreeTools::ct_max_leaves> split_count;
   
   double info = 0;
   
   const std::size_t ntip_3 = n_tip - 3;
   // All clades in p consensus must occur in first (1-p) of trees.
-  for (int16 i = 0; i != must_occur_before; i++) {
+  for (int32 i = 0; i < must_occur_before; ++i) {
     if (tables[i].NOSWX(ntip_3)) {
-      continue; 
+      continue;
     }
     
-    std::vector<int16> split_size(n_tip);
+    std::vector<int32> split_size(n_tip);
     std::fill(split_count.begin(), split_count.begin() + n_tip, 1);
     
-    for (int16 j = i + 1; j != n_trees; j++) {
+    for (int32 j = i + 1; j < n_trees; ++j) {
       
       tables[i].CLEAR();
       
       tables[j].TRESET();
       tables[j].READT(&v, &w);
       
-      int16 j_pos = 0, Spos = 0; // Empty the stack S
+      int32 j_pos = 0;
+      int32 Spos = 0; // Empty the stack S
       
       do {
         if (IS_LEAF(v)) {
@@ -177,8 +183,8 @@ double consensus_info(const List trees, const LogicalVector phylo,
       } while (v);
     }
     
-    int16 splits_found = 0;
-    for (int16 k = n_tip; k--; ) {
+    int32 splits_found = 0;
+    for (int32 k = n_tip; k--; ) {
       if (split_count[k] >= thresh) {
         ++splits_found;
         if (phylo_info) {
@@ -231,8 +237,9 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
     
     for (int j = i + 1; j < n_trees; ++j) {
       
-      int16 v, w;
-      int16 n_shared = 0;
+      int32 v;
+      int32 w;
+      int32 n_shared = 0;
       
       ClusterTable* Tj = tbl[j];
       
@@ -250,18 +257,18 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
         } else {
           ASSERT(S_top > S_entries.data());
           const StackEntry& entry = *--S_top;
-          int16 L = entry.L;
-          int16 R = entry.R;
-          int16 N = entry.N;
-          const int16 W_i = entry.W;
-          int16 W = 1 + W_i;
+          int32 L = entry.L;
+          int32 R = entry.R;
+          int32 N = entry.N;
+          const int32 W_i = entry.W;
+          int32 W = 1 + W_i;
           
           w -= W_i;
           
           if (w) { // Unroll first iteration - common case
             ASSERT(S_top > S_entries.data());
             const StackEntry& entry = *--S_top;
-            const int16 W_i = entry.W;
+            const int32 W_i = entry.W;
             
             L = std::min(L, entry.L); // Faster than ternary operator
             R = std::max(R, entry.R);
@@ -272,7 +279,7 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
             while (w) {
               ASSERT(S_top > S_entries.data());
               const StackEntry& entry = *--S_top;
-              const int16 W_i = entry.W;
+              const int32 W_i = entry.W;
               
               L = std::min(L, entry.L);
               R = std::max(R, entry.R);
