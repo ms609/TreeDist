@@ -46,9 +46,13 @@ test_that("Day 1985 examples", {
   t2 <- PrepareTree("(((2, 4, 5, 7, 9, 10, 12, 13), 1, 14), (6, (8, 11)), 3);")
   as.ClusterTable(t2)
   
-  expect_equal(2L, COMCLUST(list(t1, t2)))
-  expect_equal(7L, as.integer(RobinsonFoulds(list(t1, t2))))
+  expect_equal(COMCLUST(list(t1, t2)), 2L)
+  expect_equal(as.integer(RobinsonFoulds(list(t1, t2))), 7L)
 
+  # Large trees
+  twoBiggies <- list(BalancedTree(20000), BalancedTree(20000))
+  expect_no_error(COMCLUST(twoBiggies))
+  expect_equal(RobinsonFoulds(twoBiggies)[[1]], 0)
 })
   
 test_that("RobinsonFoulds() with realistic trees", {

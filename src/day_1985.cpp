@@ -8,13 +8,12 @@ using namespace Rcpp;
 #include <TreeTools/root_tree.h> /* for root_on_node() */
 #include <TreeTools/ClusterTable.h> /* for ClusterTable() */
 using TreeTools::ClusterTable;
-using TreeTools::ct_max_leaves;
+using TreeTools::ct_stack_size;
+using TreeTools::ct_stack_threshold;
 
-#include <array> /* for array */
-#include <bitset> /* for bitset */
-#include <vector> /* for vector */
+using  TreeTools::ct_max_leaves; /* TODO remove */
+
 #include <cmath> /* for log2(), ceil() */
-#include <memory> /* for unique_ptr, make_unique */
 
 struct StackEntry { int32 L, R, N, W; };
 
@@ -22,17 +21,27 @@ struct StackEntry { int32 L, R, N, W; };
 // COMCLUST requires O(kn).
 // trees is a list of objects of class phylo.
 // [[Rcpp::export]]
-int COMCLUST(List trees) {
+int COMCLUST(const List& trees) {
   
   int32 v = 0;
   int32 w = 0;
   int32 L, R, N, W;
-  int32 L_i, R_i, N_i, W_i;
-  
+
   ClusterTable X(List(trees(0)));
-  std::array<int32, TreeTools::ct_max_leaves> S;
-  
-  for (int32 i = 1; i != trees.length(); i++) {
+  const int32 n_tip = X.N();
+
+  StackEntry* S_ptr;
+  std::array<StackEntry, TreeTools::ct_stack_threshold> S_stack;
+  std::vector<StackEntry> S_heap;
+
+  if (n_tip <= TreeTools::ct_stack_threshold) {
+    S_ptr = S_stack.data();
+  } else {
+    S_heap.resize(n_tip);
+    S_ptr = S_heap.data();
+  }
+
+  for (int32 i = 1; i < trees.length(); ++i) {
     int32 Spos = 0; // Empty the stack S
     
     X.CLEAR();
@@ -42,20 +51,27 @@ int COMCLUST(List trees) {
     
     do {
       if (Ti.is_leaf(v)) {
-        CT_PUSH(X.ENCODE(v), X.ENCODE(v), 1, 1);
+        S_ptr[Spos++] = {X.ENCODE(v), X.ENCODE(v), 1, 1};
       } else {
-        CT_POP(L, R, N, W_i);
+        const StackEntry& top = S_ptr[--Spos];
+        L = top.L;
+        R = top.R;
+        N = top.N;
+        const int32 W_i = top.W;
+        
         W = 1 + W_i;
         w = w - W_i;
         while (w) {
-          CT_POP(L_i, R_i, N_i, W_i);
-          if (L_i < L) L = L_i;
-          if (R_i > R) R = R_i;
-          N += N_i;
-          W += W_i;
-          w -= W_i;
+          const StackEntry& next = S_ptr[--Spos];
+          if (next.L < L) L = next.L;
+          if (next.R > R) R = next.R;
+          N += next.N;
+          W += next.W;
+          w -= next.W;
         };
-        CT_PUSH(L, R, N, W);
+
+        S_ptr[Spos++] = {L, R, N, W};
+
         if (N == R - L + 1) { // L..R is contiguous, and must be tested
           X.SETSW(L, R);
         }
@@ -69,20 +85,12 @@ int COMCLUST(List trees) {
 }
 
 #define IS_LEAF(a) (a) <= n_tip
-  
-// COMCLUSTER computes a strict consensus tree in O(knn).
-// COMCLUST requires O(kn).
+
 // trees is a list of objects of class phylo, all with the same tip labels
 // (try RenumberTips(trees, trees[[1]]))
-// [[Rcpp::export]]
-double consensus_info(const List trees, const LogicalVector phylo,
-                      const NumericVector p) {
-  if (p[0] > 1 + 1e-15) { // epsilon catches floating point error
-    Rcpp::stop("p must be <= 1.0 in consensus_info()");
-  } else if (p[0] < 0.5) {
-    Rcpp::stop("p must be >= 0.5 in consensus_info()");
-  }
-  
+template <typename StackContainer>
+double calc_consensus_info(const List &trees, const LogicalVector &phylo,
+                           const NumericVector& p, StackContainer& S) {
   int32 v = 0;
   int32 w = 0;
   int32 L;
@@ -93,12 +101,14 @@ double consensus_info(const List trees, const LogicalVector phylo,
   int32 R_j;
   int32 N_j;
   int32 W_j;
+
   const int32 n_trees = trees.length();
-  
+
   std::vector<ClusterTable> tables;
   if (std::size_t(n_trees) > tables.max_size()) {
     Rcpp::stop("Not enough memory available to compute consensus of so many trees"); // LCOV_EXCL_LINE
   }
+
   tables.reserve(n_trees);
   for (int32 i = n_trees; i--; ) {
     tables.emplace_back(ClusterTable(List(trees(i))));
@@ -109,12 +119,17 @@ double consensus_info(const List trees, const LogicalVector phylo,
       (n_trees / 2) + 1 : // Splits must occur in MORE THAN 0.5 to be in majority.
       std::ceil(p[0] * n_trees);
   const int32 must_occur_before = 1 + n_trees - thresh;
-  
+
+  std::array<int32, TreeTools::ct_stack_threshold> split_count_stack;
+  std::vector<int32> split_count_heap;
+  int32* split_count;
+  if (n_tip < TreeTools::ct_stack_threshold) {
+    split_count = split_count_stack.data();
+  } else {
+    split_count_heap.resize(n_tip);
+    split_count = split_count_heap.data();
+  }
   const bool phylo_info = phylo[0];
-  
-  std::array<int32, TreeTools::ct_stack_size * TreeTools::ct_max_leaves> S;
-  std::array<int32, TreeTools::ct_max_leaves> split_count;
-  
   double info = 0;
   
   const std::size_t ntip_3 = n_tip - 3;
@@ -125,7 +140,7 @@ double consensus_info(const List trees, const LogicalVector phylo,
     }
     
     std::vector<int32> split_size(n_tip);
-    std::fill(split_count.begin(), split_count.begin() + n_tip, 1);
+    std::fill(split_count, split_count + n_tip, 1);
     
     for (int32 j = i + 1; j < n_trees; ++j) {
       
@@ -207,7 +222,7 @@ double consensus_info(const List trees, const LogicalVector phylo,
 }
 
 // [[Rcpp::export]]
-IntegerVector robinson_foulds_all_pairs(List tables) {
+IntegerVector robinson_foulds_all_pairs(const List& tables) {
   const int n_trees = static_cast<int>(tables.size());
   if (n_trees < 2) return IntegerVector(0);
   
@@ -303,4 +318,36 @@ IntegerVector robinson_foulds_all_pairs(List tables) {
   }
   
   return shared;
+}
+
+// [[Rcpp::export]]
+double consensus_info(const List trees, const LogicalVector phylo,
+                      const NumericVector p) {
+  if (p[0] > 1 + 1e-15) { // epsilon catches floating point error
+    Rcpp::stop("p must be <= 1.0 in consensus_info()");
+  } else if (p[0] < 0.5) {
+    Rcpp::stop("p must be >= 0.5 in consensus_info()");
+  }
+
+  // First, peek at the tree size to determine allocation strategy
+  // We'll create a temporary ClusterTable just to check the size
+  try {
+    TreeTools::ClusterTable temp_table(Rcpp::List(trees(0)));
+    const int32 n_tip = temp_table.N();
+    
+    if (n_tip <= ct_stack_threshold) {
+      // Small tree: use stack-allocated array
+      std::array<int32, ct_stack_size * ct_stack_threshold> S;
+      return calc_consensus_info(trees, phylo, p, S);
+    } else {
+      // Large tree: use heap-allocated vector
+      std::vector<int32> S(ct_stack_size * n_tip);
+      return calc_consensus_info(trees, phylo, p, S);
+    }
+  } catch(const std::exception& e) {
+    Rcpp::stop(e.what());
+  }
+  
+  ASSERT(false && "Unreachable code in consensus_tree");
+  return 0.0;
 }
