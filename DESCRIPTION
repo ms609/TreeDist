@@ -50,7 +50,7 @@ Imports:
   Rdpack (>= 0.7),
   shiny,
   shinyjs,
-  TreeTools (>= 2.0.0.9002),
+  TreeTools (>= 2.0.0.9004),
 Suggests:
   bookdown,
   cluster,
