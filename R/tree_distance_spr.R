@@ -714,41 +714,44 @@ SPRDist.multiPhylo <- SPRDist.list
   
   while (!is.null(reduced)) {
     
+    tr1 <- reduced[[1]]
+    tr2 <- reduced[[2]]
+    sp1 <- as.Splits(tr1)
+    sp2 <- as.Splits(tr2, tr1)
     matchedSplits <- sp1 %in% sp2
     if (!isFALSE(getOption("sprMatches")) && any(matchedSplits)) {
       # At least one split exists in both trees
+      subtips1 <- as.logical(sp1[[which.max(matchedSplits)]])
+      subtips2 <- !subtips1
       
-      # Take left side of split
-      subtips1 <- agreement
       # Add dummy tip as placeholder for other half of tree
       subtips1[!subtips1][[1]] <- TRUE
 
       # Repeat for other half-tree
-      subtips2 <- !agreement
       subtips2[!subtips2][[1]] <- TRUE
 
       if (debug) {
-        message("Division A: ", 
-                paste(colnames(agreement)[agreement], collapse = " "), 
-                " | ",
-                paste(colnames(agreement)[!agreement], collapse = " "))
+        # message("Division A: ", 
+        #         paste(colnames(agreement)[agreement], collapse = " "), 
+        #         " | ",
+        #         paste(colnames(agreement)[!agreement], collapse = " "))
         colNow <- par("col")
         if (colNow == "black") colNow <- "#000000"
         colIdx <- match(colNow, palette.colors(8), 0)
         oPar <- par(col = palette.colors(8)[colIdx + 1])
         on.exit(par(oPar))
       }
-      moves1 <- .SPRConfl(
+      moves1 <- .SPRRogue(
         KeepTipPostorder(tr1, subtips1),
         KeepTipPostorder(tr2, subtips1)
       )
       if (debug) {
-        message("Division B: ", paste(colnames(agreement)[!agreement], collapse = " "))
+        # message("Division B: ", paste(colnames(agreement)[!agreement], collapse = " "))
         colNow <- par("col")
         colIdx <- match(colNow, palette.colors(8), 0)
         par(col = palette.colors(8)[colIdx + 1])
       }
-      moves2 <- .SPRConfl(
+      moves2 <- .SPRRogue(
         KeepTipPostorder(tr1, subtips2),
         KeepTipPostorder(tr2, subtips2)
       )
@@ -766,8 +769,6 @@ SPRDist.multiPhylo <- SPRDist.list
       })
     }
     
-    tr1 <- reduced[[1]]
-    tr2 <- reduced[[2]]
     labels <- TipLabels(tr1)
     scores <- numeric(length(labels))
     blank <- !logical(length(labels))
