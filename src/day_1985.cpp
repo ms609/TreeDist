@@ -159,7 +159,7 @@ double consensus_info(const List trees, const LogicalVector phylo,
             // Split has already been counted; next!
           } else {
             if (N == R - L + 1) { // L..R is contiguous, and must be tested
-              if (tables[i].CLUSTONL(&L, &R)) {
+              if (tables[i].CLUSTONL(L, R)) {
                 tables[j].SETSWX(j_pos);
                 assert(L > 0);
                 ++split_count[L - 1];
@@ -167,7 +167,7 @@ double consensus_info(const List trees, const LogicalVector phylo,
                   split_size[L - 1] = N;
                 }
                 assert(split_size[L - 1] > 0);
-              } else if (tables[i].CLUSTONR(&L, &R)) {
+              } else if (tables[i].CLUSTONR(L, R)) {
                 tables[j].SETSWX(j_pos);
                 assert(R > 0);
                 ++split_count[R - 1];
