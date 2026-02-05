@@ -11,8 +11,6 @@ using TreeTools::ClusterTable;
 using TreeTools::ct_stack_size;
 using TreeTools::ct_stack_threshold;
 
-using  TreeTools::ct_max_leaves; /* TODO remove */
-
 #include <cmath> /* for log2(), ceil() */
 
 struct StackEntry { int32 L, R, N, W; };
@@ -31,10 +29,10 @@ int COMCLUST(const List& trees) {
   const int32 n_tip = X.N();
 
   StackEntry* S_ptr;
-  std::array<StackEntry, TreeTools::ct_stack_threshold> S_stack;
+  std::array<StackEntry, ct_stack_threshold> S_stack;
   std::vector<StackEntry> S_heap;
 
-  if (n_tip <= TreeTools::ct_stack_threshold) {
+  if (n_tip <= ct_stack_threshold) {
     S_ptr = S_stack.data();
   } else {
     S_heap.resize(n_tip);
@@ -62,12 +60,12 @@ int COMCLUST(const List& trees) {
         W = 1 + W_i;
         w = w - W_i;
         while (w) {
-          const StackEntry& next = S_ptr[--Spos];
-          if (next.L < L) L = next.L;
-          if (next.R > R) R = next.R;
-          N += next.N;
-          W += next.W;
-          w -= next.W;
+          const StackEntry &entry = S_ptr[--Spos];          
+          L = std::min(L, entry.L); // Faster than ternary operator
+          R = std::max(R, entry.R);
+          N += entry.N;
+          W += entry.W;
+          w -= entry.W;
         };
 
         S_ptr[Spos++] = {L, R, N, W};
@@ -120,10 +118,10 @@ double calc_consensus_info(const List &trees, const LogicalVector &phylo,
       std::ceil(p[0] * n_trees);
   const int32 must_occur_before = 1 + n_trees - thresh;
 
-  std::array<int32, TreeTools::ct_stack_threshold> split_count_stack;
+  std::array<int32, ct_stack_threshold> split_count_stack;
   std::vector<int32> split_count_heap;
   int32* split_count;
-  if (n_tip < TreeTools::ct_stack_threshold) {
+  if (n_tip < ct_stack_threshold) {
     split_count = split_count_stack.data();
   } else {
     split_count_heap.resize(n_tip);
@@ -225,27 +223,29 @@ double calc_consensus_info(const List &trees, const LogicalVector &phylo,
 IntegerVector robinson_foulds_all_pairs(const List& tables) {
   const int n_trees = static_cast<int>(tables.size());
   if (n_trees < 2) return IntegerVector(0);
-  
-  std::vector<Rcpp::XPtr<ClusterTable>> xptrs;
-  xptrs.reserve(n_trees);
-  for (int i = 0; i < n_trees; ++i) {
-    Rcpp::XPtr<ClusterTable> xp = tables[i];
-    xptrs.emplace_back(xp);
-  }
-  
+
   std::vector<ClusterTable*> tbl;
   tbl.reserve(n_trees);
   for (int i = 0; i < n_trees; ++i) {
-    tbl.push_back(xptrs[i].get()); // .get() on XPtr => ClusterTable*
+    Rcpp::XPtr<ClusterTable> xp = tables[i];
+    tbl.push_back(xp.get()); // .get() on XPtr => ClusterTable*
   }
-  
+
   const size_t n_pairs = static_cast<size_t>(n_trees) * (n_trees - 1) / 2;
   IntegerVector shared = Rcpp::no_init(n_pairs);
   int *write_pos = INTEGER(shared); // direct pointer into R memory
-  
-  std::array<StackEntry, ct_max_leaves> S_entries;
-  StackEntry* S_top = S_entries.data(); // stack top pointer (points one past last element)
-  
+
+  const int32 n_tip = tbl[0]->N();
+  StackEntry* S_start;
+  std::array<StackEntry, ct_stack_size> S_stack;
+  std::vector<StackEntry> S_heap;
+  if (n_tip <= ct_stack_threshold) {
+    S_start = S_stack.data();
+  } else {
+    S_heap.resize(n_tip);
+    S_start = S_heap.data();
+  }
+
   for (int i = 0; i < n_trees - 1; ++i) {
     
     ClusterTable* Xi = tbl[i];
@@ -259,7 +259,7 @@ IntegerVector robinson_foulds_all_pairs(const List& tables) {
       ClusterTable* Tj = tbl[j];
       
       // Reset stack pointer for each tree pair comparison
-      S_top = S_entries.data();
+      StackEntry* S_top = S_start;
       
       Tj->TRESET();
       Tj->NVERTEX_short(&v, &w);
@@ -267,10 +267,8 @@ IntegerVector robinson_foulds_all_pairs(const List& tables) {
       while (v) {
         if (Tj->is_leaf(v)) {
           const auto enc_v = Xi->ENCODE(v);
-          ASSERT(S_top < S_entries.data() + ct_max_leaves);
           *S_top++ = {enc_v, enc_v, 1, 1};
         } else {
-          ASSERT(S_top > S_entries.data());
           const StackEntry& entry = *--S_top;
           int32 L = entry.L;
           int32 R = entry.R;
@@ -281,7 +279,6 @@ IntegerVector robinson_foulds_all_pairs(const List& tables) {
           w -= W_i;
           
           if (w) { // Unroll first iteration - common case
-            ASSERT(S_top > S_entries.data());
             const StackEntry& entry = *--S_top;
             const int32 W_i = entry.W;
             
@@ -292,7 +289,6 @@ IntegerVector robinson_foulds_all_pairs(const List& tables) {
             w -= W_i;
             
             while (w) {
-              ASSERT(S_top > S_entries.data());
               const StackEntry& entry = *--S_top;
               const int32 W_i = entry.W;
               
@@ -304,7 +300,6 @@ IntegerVector robinson_foulds_all_pairs(const List& tables) {
             }
           }
           
-          ASSERT(S_top < S_entries.data() + ct_max_leaves);
           *S_top++ = {L, R, N, W};
           
           if (N == R - L + 1) { // L..R is contiguous, and must be tested
@@ -332,7 +327,7 @@ double consensus_info(const List trees, const LogicalVector phylo,
   // First, peek at the tree size to determine allocation strategy
   // We'll create a temporary ClusterTable just to check the size
   try {
-    TreeTools::ClusterTable temp_table(Rcpp::List(trees(0)));
+    ClusterTable temp_table(Rcpp::List(trees(0)));
     const int32 n_tip = temp_table.N();
     
     if (n_tip <= ct_stack_threshold) {
