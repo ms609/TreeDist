@@ -1,9 +1,7 @@
-test_that("Day 1985 overflow", {
+test_that("Day 1985 does not overflow", {
   bigTree <- PectinateTree(2^14 + 1)
-  expect_error(TreeTools::as.ClusterTable(bigTree),
-               "Tree has too many leaves. Contact the .TreeTools. maintainer")
-  expect_error(RobinsonFoulds(list(bigTree, bigTree)),
-               "Tree has too many leaves. Contact the .TreeTools. maintainer")
+  expect_no_error(TreeTools::as.ClusterTable(bigTree))
+  expect_equal(RobinsonFoulds(list(bigTree, bigTree))[[1]], 0)
 })
 
 test_that("Day 1985 examples", {

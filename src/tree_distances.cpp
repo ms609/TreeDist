@@ -63,12 +63,11 @@ List cpp_robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
-  TreeDist::check_ntip(nTip[0]);
   
   const SplitList a(x), b(y);
-  const int16 last_bin = a.n_bins - 1;
-  const int16 n_tips = int16(nTip[0]);
-  const int16 unset_tips = (n_tips % SL_BIN_SIZE) ?
+  const int32 last_bin = a.n_bins - 1;
+  const int32 n_tips = int32(nTip[0]);
+  const int32 unset_tips = (n_tips % SL_BIN_SIZE) ?
     SL_BIN_SIZE - n_tips % SL_BIN_SIZE : 0;
   const splitbit unset_mask = ALL_ONES >> unset_tips;
   cost score = 0;
@@ -76,27 +75,27 @@ List cpp_robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
   grf_match matching(a.n_splits, NA_INTEGER);
   
   splitbit b_complement[SL_MAX_SPLITS][SL_MAX_BINS];
-  for (int16 i = b.n_splits; i--; ) {
-    for (int16 bin = last_bin; bin--; ) {
+  for (int32 i = b.n_splits; i--; ) {
+    for (int32 bin = last_bin; bin--; ) {
       b_complement[i][bin] = ~b.state[i][bin];
     }
     b_complement[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
   }
   
-  for (int16 ai = a.n_splits; ai--; ) {
-    for (int16 bi = b.n_splits; bi--; ) {
+  for (int32 ai = a.n_splits; ai--; ) {
+    for (int32 bi = b.n_splits; bi--; ) {
       
       bool all_match = true;
       bool all_complement = true;
       
-      for (int16 bin = 0; bin < a.n_bins; ++bin) {
+      for (int32 bin = 0; bin < a.n_bins; ++bin) {
         if ((a.state[ai][bin] != b.state[bi][bin])) {
           all_match = false;
           break;
         }
       }
       if (!all_match) {
-        for (int16 bin = 0; bin < a.n_bins; ++bin) {
+        for (int32 bin = 0; bin < a.n_bins; ++bin) {
           if (a.state[ai][bin] != b_complement[bi][bin]) {
             all_complement = false;
             break;
