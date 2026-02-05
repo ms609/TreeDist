@@ -426,16 +426,6 @@ List msi_distance(const RawMatrix &x, const RawMatrix &y, const int32 n_tips) {
 
 }
 
-// [[Rcpp::export]]
-List cpp_msi_distance(const RawMatrix &x, const RawMatrix &y,
-                      const IntegerVector &nTip) {
-  if (x.cols() != y.cols()) {
-    Rcpp::stop("Input splits must address same number of tips.");
-  }
-  TreeDist::check_ntip(nTip[0]);
-  return msi_distance(x, y, nTip);
-}
-
 List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
                        const int32 n_tips) {
   const SplitList a(x);
