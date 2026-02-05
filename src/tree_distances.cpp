@@ -390,14 +390,8 @@ List cpp_jaccard_similarity(const RawMatrix &x, const RawMatrix &y,
   
 }
 
-// [[Rcpp::export]]
-List cpp_msi_distance(const RawMatrix &x, const RawMatrix &y,
+List msi_distance(const RawMatrix &x, const RawMatrix &y,
                       const IntegerVector &nTip) {
-  if (x.cols() != y.cols()) {
-    Rcpp::stop("Input splits must address same number of tips.");
-  }
-  TreeDist::check_ntip(nTip[0]);
-  
   const SplitList a(x), b(y);
   const int32 most_splits = std::max(a.n_splits, b.n_splits);
   const int32 n_tips = int32(nTip[0]);
@@ -460,13 +454,17 @@ List cpp_msi_distance(const RawMatrix &x, const RawMatrix &y,
 }
 
 // [[Rcpp::export]]
-List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
-                           const IntegerVector &nTip) {
+List cpp_msi_distance(const RawMatrix &x, const RawMatrix &y,
+                      const IntegerVector &nTip) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
   TreeDist::check_ntip(nTip[0]);
-  
+  return msi_distance(x, y, nTip);
+}
+
+List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
+                           const IntegerVector &nTip) {
   const SplitList a(x);
   const SplitList b(y);
   const bool a_has_more_splits = (a.n_splits > b.n_splits);
@@ -630,16 +628,20 @@ List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
 }
 
 // [[Rcpp::export]]
-List cpp_shared_phylo (const RawMatrix &x, const RawMatrix &y,
-                       const IntegerVector &nTip) {
+List cpp_mutual_clustering(const RawMatrix &x, const RawMatrix &y,
+                           const IntegerVector &nTip) {
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
   TreeDist::check_ntip(nTip[0]);
+  return mutual_clustering(x, y, nTip);
+}
+  
+List shared_phylo (const RawMatrix &x, const RawMatrix &y,
+                   const int32 n_tips) {
   
   const SplitList a(x), b(y);
   const int32 most_splits = std::max(a.n_splits, b.n_splits);
-  const int32 n_tips = int32(nTip[0]);
   const int32 overlap_a = int32(n_tips + 1) / 2; // avoids promotion to int
   
   constexpr cost max_score = BIG;
@@ -689,4 +691,15 @@ List cpp_shared_phylo (const RawMatrix &x, const RawMatrix &y,
   
   return List::create(Named("score") = final_score,
                       _["matching"] = final_matching);
+}
+
+// [[Rcpp::export]]
+List cpp_shared_phylo (const RawMatrix &x, const RawMatrix &y,
+                       const IntegerVector &nTip) {
+  if (x.cols() != y.cols()) {
+    Rcpp::stop("Input splits must address same number of tips.");
+  }
+  const int32 n_tip = static_cast<int32>(nTip[0]);
+  TreeDist::check_ntip(n_tip);
+  return shared_phylo(x, y, n_tip);
 }
