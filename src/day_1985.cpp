@@ -77,6 +77,11 @@ int COMCLUST(List trees) {
 // [[Rcpp::export]]
 double consensus_info(const List trees, const LogicalVector phylo,
                       const NumericVector p) {
+  if (p[0] > 1 + 1e-15) { // epsilon catches floating point error
+    Rcpp::stop("p must be <= 1.0 in consensus_info()");
+  } else if (p[0] < 0.5) {
+    Rcpp::stop("p must be >= 0.5 in consensus_info()");
+  }
   
   int32 v = 0;
   int32 w = 0;
@@ -98,12 +103,7 @@ double consensus_info(const List trees, const LogicalVector phylo,
   for (int32 i = n_trees; i--; ) {
     tables.emplace_back(ClusterTable(List(trees(i))));
   }
-  
-  if (p[0] > 1) {
-    Rcpp::stop("p must be <= 1.0 in consensus_info()");
-  } else if (p[0] < 0.5) {
-    Rcpp::stop("p must be >= 0.5 in consensus_info()");
-  }
+
   const int32 n_tip = tables[0].N();
   const int32 thresh = p[0] <= 0.5 ?
       (n_trees / 2) + 1 : // Splits must occur in MORE THAN 0.5 to be in majority.
