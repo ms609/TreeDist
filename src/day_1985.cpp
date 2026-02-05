@@ -8,7 +8,6 @@ using namespace Rcpp;
 #include <TreeTools/root_tree.h> /* for root_on_node() */
 #include <TreeTools/ClusterTable.h> /* for ClusterTable() */
 using TreeTools::ClusterTable;
-using TreeTools::ct_stack_size;
 using TreeTools::ct_stack_threshold;
 
 #include <cmath> /* for log2(), ceil() */
@@ -60,7 +59,7 @@ int COMCLUST(const List& trees) {
         W = 1 + W_i;
         w = w - W_i;
         while (w) {
-          const StackEntry &entry = S_ptr[--Spos];          
+          const StackEntry &entry = S_ptr[--Spos];
           L = std::min(L, entry.L); // Faster than ternary operator
           R = std::max(R, entry.R);
           N += entry.N;
@@ -91,14 +90,7 @@ double calc_consensus_info(const List &trees, const LogicalVector &phylo,
                            const NumericVector& p, StackContainer& S) {
   int32 v = 0;
   int32 w = 0;
-  int32 L;
-  int32 R;
-  int32 N;
-  int32 W;
-  int32 L_j;
-  int32 R_j;
-  int32 N_j;
-  int32 W_j;
+  int32 L, R, N, W;
 
   const int32 n_trees = trees.length();
 
@@ -117,7 +109,7 @@ double calc_consensus_info(const List &trees, const LogicalVector &phylo,
       (n_trees / 2) + 1 : // Splits must occur in MORE THAN 0.5 to be in majority.
       std::ceil(p[0] * n_trees);
   const int32 must_occur_before = 1 + n_trees - thresh;
-
+  
   std::array<int32, ct_stack_threshold> split_count_stack;
   std::vector<int32> split_count_heap;
   int32* split_count;
@@ -127,6 +119,8 @@ double calc_consensus_info(const List &trees, const LogicalVector &phylo,
     split_count_heap.resize(n_tip);
     split_count = split_count_heap.data();
   }
+
+  StackEntry *const S_start = S.data();
   const bool phylo_info = phylo[0];
   double info = 0;
   
@@ -148,24 +142,28 @@ double calc_consensus_info(const List &trees, const LogicalVector &phylo,
       tables[j].READT(&v, &w);
       
       int32 j_pos = 0;
-      int32 Spos = 0; // Empty the stack S
+      StackEntry* S_top = S_start; // Empty the stack S
       
       do {
         if (IS_LEAF(v)) {
-          CT_PUSH(tables[i].ENCODE(v), tables[i].ENCODE(v), 1, 1);
+          const auto enc_v = tables[i].ENCODE(v);
+          *S_top++ = {enc_v, enc_v, 1, 1};
         } else {
-          CT_POP(L, R, N, W_j);
-          W = 1 + W_j;
-          w = w - W_j;
+          const StackEntry& entry = *--S_top;
+          L = entry.L;
+          R = entry.R;
+          N = entry.N;
+          W = 1 + entry.W;
+          w -= entry.W;
           while (w) {
-            CT_POP(L_j, R_j, N_j, W_j);
-            if (L_j < L) L = L_j;
-            if (R_j > R) R = R_j;
-            N = N + N_j;
-            W = W + W_j;
-            w = w - W_j;
+            const StackEntry& next = *--S_top;         
+            L = std::min(L, next.L); // Faster than ternary operator
+            R = std::max(R, next.R);
+            N += next.N;
+            W += next.W;
+            w -= next.W;
           };
-          CT_PUSH(L, R, N, W);
+          *S_top++ = {L, R, N, W};
           
           ++j_pos;
           if (tables[j].GETSWX(&j_pos)) {
@@ -237,7 +235,7 @@ IntegerVector robinson_foulds_all_pairs(const List& tables) {
 
   const int32 n_tip = tbl[0]->N();
   StackEntry* S_start;
-  std::array<StackEntry, ct_stack_size> S_stack;
+  std::array<StackEntry, ct_stack_threshold> S_stack;
   std::vector<StackEntry> S_heap;
   if (n_tip <= ct_stack_threshold) {
     S_start = S_stack.data();
@@ -332,11 +330,11 @@ double consensus_info(const List trees, const LogicalVector phylo,
     
     if (n_tip <= ct_stack_threshold) {
       // Small tree: use stack-allocated array
-      std::array<int32, ct_stack_size * ct_stack_threshold> S;
+      std::array<StackEntry, ct_stack_threshold> S;
       return calc_consensus_info(trees, phylo, p, S);
     } else {
       // Large tree: use heap-allocated vector
-      std::vector<int32> S(ct_stack_size * n_tip);
+      std::vector<StackEntry> S(n_tip);
       return calc_consensus_info(trees, phylo, p, S);
     }
   } catch(const std::exception& e) {
