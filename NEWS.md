@@ -1,6 +1,6 @@
 # TreeDist 2.11.1.9001 (2026-02-05)
 
-- Use int32 to support larger trees, per TreeTools v2.1.0.
+- Support larger trees by updating some functions to use 32-bit integers, per TreeTools v2.1.0.
 
 
 # TreeDist 2.11.1.9000 (2025-11-13)
