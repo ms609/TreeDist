@@ -117,9 +117,6 @@ jobs:
             uwot=?ignore-before-r=4.4.0
           needs: |
             check
-
-      - name: Set up pandoc
-        uses: r-lib/actions/setup-pandoc@v2
         
       - name: Check package
         uses: r-lib/actions/check-r-package@v2
