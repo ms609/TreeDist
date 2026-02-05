@@ -91,7 +91,6 @@ List cpp_robinson_foulds_distance(const RawMatrix &x, const RawMatrix &y,
   if (x.cols() != y.cols()) {
     Rcpp::stop("Input splits must address same number of tips.");
   }
-  TreeDist::check_ntip(nTip[0]);
   
   const SplitList a(x), b(y);
   const int32 last_bin = a.n_bins - 1;

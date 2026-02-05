@@ -11,13 +11,24 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // COMCLUST
-int COMCLUST(List trees);
+int COMCLUST(const List& trees);
 RcppExport SEXP _TreeDist_COMCLUST(SEXP treesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type trees(treesSEXP);
+    Rcpp::traits::input_parameter< const List& >::type trees(treesSEXP);
     rcpp_result_gen = Rcpp::wrap(COMCLUST(trees));
+    return rcpp_result_gen;
+END_RCPP
+}
+// robinson_foulds_all_pairs
+IntegerVector robinson_foulds_all_pairs(const List& tables);
+RcppExport SEXP _TreeDist_robinson_foulds_all_pairs(SEXP tablesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const List& >::type tables(tablesSEXP);
+    rcpp_result_gen = Rcpp::wrap(robinson_foulds_all_pairs(tables));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -31,17 +42,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const LogicalVector >::type phylo(phyloSEXP);
     Rcpp::traits::input_parameter< const NumericVector >::type p(pSEXP);
     rcpp_result_gen = Rcpp::wrap(consensus_info(trees, phylo, p));
-    return rcpp_result_gen;
-END_RCPP
-}
-// robinson_foulds_all_pairs
-IntegerVector robinson_foulds_all_pairs(List tables);
-RcppExport SEXP _TreeDist_robinson_foulds_all_pairs(SEXP tablesSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< List >::type tables(tablesSEXP);
-    rcpp_result_gen = Rcpp::wrap(robinson_foulds_all_pairs(tables));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -380,8 +380,8 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_COMCLUST", (DL_FUNC) &_TreeDist_COMCLUST, 1},
-    {"_TreeDist_consensus_info", (DL_FUNC) &_TreeDist_consensus_info, 3},
     {"_TreeDist_robinson_foulds_all_pairs", (DL_FUNC) &_TreeDist_robinson_foulds_all_pairs, 1},
+    {"_TreeDist_consensus_info", (DL_FUNC) &_TreeDist_consensus_info, 3},
     {"_TreeDist_HMI_xptr", (DL_FUNC) &_TreeDist_HMI_xptr, 2},
     {"_TreeDist_HH_xptr", (DL_FUNC) &_TreeDist_HH_xptr, 1},
     {"_TreeDist_EHMI_xptr", (DL_FUNC) &_TreeDist_EHMI_xptr, 4},

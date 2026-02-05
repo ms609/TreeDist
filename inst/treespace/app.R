@@ -25,9 +25,7 @@ if (!requireNamespace("protoclust", quietly = TRUE)) {
 }
 if (!requireNamespace("MASS", quietly = TRUE)) install.packages("MASS")
 if (!requireNamespace("Quartet", quietly = TRUE)) install.packages("Quartet")
-if (!requireNamespace("rgl", quietly = TRUE)) install.packages("rgl")
 if (!requireNamespace("readxl", quietly = TRUE)) install.packages("readxl")
-if (!requireNamespace("uwot", quietly = TRUE)) install.packages("uwot")
 
 # Allow large files to be submitted
 options(shiny.maxRequestSize = 100 * 1024^2)
@@ -381,8 +379,7 @@ ui <- fluidPage(theme = "treespace.css",
       ),
       fluidRow(
         plotOutput(outputId = "distPlot", height = "0px"),
-        rgl::rglwidgetOutput(outputId = "threeDPlot",
-                             width = "600px", height = "600px"),
+        uiOutput(outputId = "threeDPlot", style = "height: 600px; width: 600px;"),
         hidden(plotOutput("clustCons", height = "200px")),
         htmlOutput("references"),
       ),
@@ -586,6 +583,16 @@ server <- function(input, output, session) {
   
   nNeighb <- debounce(reactive(input$nNeighb), 300)
   
+  observe({
+    if (!requireNamespace("uwot", quietly = TRUE)) {
+      updateSelectInput(session, "mapping",
+                        choices = c("Principal Components (PCA)" = "pca", 
+                                    "Kruskal's non-metric MDS" = "k", 
+                                    "Sammon's non-linear mapping" = "nls")
+      )
+    }
+  })
+  
   mapping <- bindCache(
     reactive({
       if (maxProjDim() > 1L) {
@@ -593,20 +600,33 @@ server <- function(input, output, session) {
         withProgress(
           message = "Mapping distances",
           value = 0.99,
-          switch(
-            input$mapping,
-            "pca" = cmdscale(distances(), k = maxProjDim()),
-            "k" = MASS::isoMDS(distances(), k = maxProjDim())$points,
-            "nls" = MASS::sammon(distances(), k = maxProjDim())$points,
-            "tumap" = uwot::tumap(distances(), verbose = FALSE,
-                                  n_neighbors = nNeighb(),
-                                  n_components = maxProjDim()),
-            "umap" = uwot::umap(distances(), verbose = FALSE,
-                                a = 1.8956, b = 0.8006,
-                                approx_pow = TRUE,
-                                n_neighbors = nNeighb(),
-                                n_components = maxProjDim())
-          )
+          {
+            uwot <- requireNamespace("uwot", quietly = TRUE)
+            switch(
+              input$mapping,
+              "pca" = cmdscale(distances(), k = maxProjDim()),
+              "k" = MASS::isoMDS(distances(), k = maxProjDim())$points,
+              "nls" = MASS::sammon(distances(), k = maxProjDim())$points,
+              "tumap" = if (uwot) {
+                getFromNamespace("tumap", "uwot")(distances(), verbose = FALSE,
+                            n_neighbors = nNeighb(),
+                            n_components = maxProjDim())
+              } else {
+                showNotification("uwot package unavailable. Defaulting to PCA.", type = "error")
+                cmdscale(distances(), k = maxProjDim())
+              },
+              "umap" = if (uwot) {
+                getFromNamespace("umap", "uwot")(distances(), verbose = FALSE,
+                           a = 1.8956, b = 0.8006,
+                           approx_pow = TRUE,
+                           n_neighbors = nNeighb(),
+                           n_components = maxProjDim())
+              } else {
+                showNotification("uwot package unavailable. Defaulting to PCA.", type = "error")
+                cmdscale(distances(), k = maxProjDim())
+              }
+            )
+          }
         )
       } else {
         matrix(0, 0, 0)
@@ -1345,7 +1365,7 @@ server <- function(input, output, session) {
   }
   
   mode3D <- reactive("show3d" %in% input$display)
-  PlotSize <- function() debounce(reactive(input$plotSize), 100)
+  PlotSize <- debounce(reactive(input$plotSize), 100)
   output$distPlot <- renderPlot({
     if (!mode3D()) {
       if (inherits(distances(), "dist")) {
@@ -1355,44 +1375,21 @@ server <- function(input, output, session) {
         output$mappingStatus <- renderText("No distances available.")
       }
     }
-  }, width = PlotSize(), height = PlotSize())
+  }, width = PlotSize, height = PlotSize)
   
-  output$threeDPlot <- rgl::renderRglwidget({
-    if (mode3D() && inherits(distances(), "dist")) {
-      cl <- clusterings()
-      proj <- mapping()
-      withProgress(message = "Drawing 3D plot", {
-        rgl::open3d(useNULL = TRUE)
-        incProgress(0.1)
-        rgl::bg3d(color = "white")
-        rgl::plot3d(proj[, 1], proj[, 2], proj[, 3],
-             aspect = 1, # Preserve aspect ratio - do not distort distances
-             axes = FALSE, # Dimensions are meaningless
-             col = pointCols(),
-             alpha = input$pt.opacity / 255,
-             cex = input$pt.cex,
-             xlab = "", ylab = "", zlab = ""
-        )
-        incProgress(0.6)
-        if ("labelTrees" %in% input$display) {
-          rgl::text3d(proj[, 1], proj[, 2], proj[, 3], thinnedTrees())
-        }
-        if (mstSize() > 0) {
-          rgl::segments3d(
-            proj[t(mstEnds()), ],
-            col = if ("mstStrain" %in% input$display) {
-                rep(StrainCol(distances(), proj[, 1:3]), 
-                    each = 2) # each end of each segment
-              } else {
-                "#bbbbbb"
-              },
-            lty = 1
-          )
-        }
-      })
-      rgl::rglwidget()
-    }
-  })
+  .ThreeDPlotServer(
+    input, output,
+    distances   = distances,
+    clusterings = clusterings,
+    mapping     = mapping,
+    mstEnds     = mstEnds,
+    mstSize     = mstSize,
+    pointCols   = pointCols,
+    thinnedTrees = thinnedTrees,
+    StrainCol   = StrainCol,
+    PlotSize    = PlotSize,
+    mode3D      = mode3D
+  )
   
   output$savePng <- downloadHandler(
     filename = "TreeSpace.png",
