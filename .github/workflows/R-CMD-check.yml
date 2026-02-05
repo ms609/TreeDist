@@ -132,16 +132,35 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            await github.rest.issues.createComment({
+            const issue_number = 164;
+
+            const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: 164,
-              body: 'Scheduled workflow has failed: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+              issue_number: issue_number,
+              per_page: 3
             });
-      
-            await github.rest.issues.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: 164,
-              state: 'open'
-            });
+
+            const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+            const recentFailureNotified = comments.some(comment => 
+              new Date(comment.created_at) > oneHourAgo && 
+              comment.body.includes('Scheduled workflow has failed')
+            );
+            
+            if (recentFailureNotified) {
+              console.log("Recently notified; don't bombard");
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue_number,
+                body: 'Scheduled workflow has failed: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+              });
+        
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue_number,
+                state: 'open'
+              });
+            }
