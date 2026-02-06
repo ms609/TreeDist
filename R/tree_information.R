@@ -73,7 +73,7 @@
 #' 
 #' 
 #' As entropy measures the bits required to transmit the cluster label of each 
-#' leaf \insertCite{@@Vinh2010: p. 2840}{TreeDist}, the information content of 
+#' leaf \insertCite{@Vinh2010: p. 2840}{TreeDist}, the information content of 
 #' a split is its entropy multiplied by the number of leaves. 
 #' 
 #' @section Phylogenetic information:
