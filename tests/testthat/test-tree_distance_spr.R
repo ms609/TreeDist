@@ -121,7 +121,7 @@ test_that("SPR deOliveira2008 calculation looks valid", {
 test_that("SPR calculated correctly", {
   library("TreeTools", quietly = TRUE)
   
-  expect_exact <- function(x, y, method = "confl") {
+  expect_exact <- function(x, y, method = "rogue") {
     if (is.character(x)) x <- Tree(x)
     if (is.character(y)) y <- Tree(y)
     expect_equal(
@@ -158,10 +158,10 @@ test_that("SPR calculated correctly", {
   options(sprH = "viNorm")
   options(sprH = "ami")
   # Looks simple, but requires ties to be broken suitably
-  expect_exact("(a,(d,(b,(c,X))));", "(a,((b,c),(X,d)));") # distance = 1
+  expect_exact("(a,(d,(b,(c,X))));", "(a,((b,c),(X,d)));", "confl") # distance = 1
   expect_exact("(a,(d,(b,(c,X))));", "(a,((b,c),(X,d)));", "rogue") # distance = 1
   
-  expect_exact("((((b,c),d),e),a);", "(a,(b,((e,c),d)));") # distance = 2
+  expect_exact("((((b,c),d),e),a);", "(a,(b,((e,c),d)));", "confl") # distance = 2
   expect_exact("((((b,c),d),e),a);", "(a,(b,((e,c),d)));", "rogue")
   expect_failure(
     expect_exact("((((b,c),d),e),a);", "(a,(b,((e,c),d)));", "deo")
@@ -170,7 +170,7 @@ test_that("SPR calculated correctly", {
   # Passes with ami, joint, vi
   # Fails with viNorm - should tiebreaker be non-normalized?
   expect_exact("(((t21,(((t15,t12),t23),t24)),t18),t19);",
-               "((t21,t18),(((t12,(t19,t15)),t23),t24));")
+               "((t21,t18),(((t12,(t19,t15)),t23),t24));", "confl")
   expect_exact("(((t21,(((t15,t12),t23),t24)),t18),t19);",
                "((t21,t18),(((t12,(t19,t15)),t23),t24));", "rogue")
   
@@ -227,7 +227,7 @@ test_that("SPR calculated correctly", {
   
   # Aspirational
   expect_exact("((((b3,b2),b1),(((d2,d1),((e3,e2),e1)),c)),a);",
-               "((((d2,e3),d1),c),(((((e2,b3),e1),b1),b2),a));")
+               "((((d2,e3),d1),c),(((((e2,b3),e1),b1),b2),a));", method = "Rogue")
 
   set.seed(0)
   tr <- vector("list", 13)

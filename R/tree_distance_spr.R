@@ -773,28 +773,92 @@ SPRDist.multiPhylo <- SPRDist.list
     labels <- TipLabels(tr1)
     scores <- numeric(length(labels))
     blank <- !logical(length(labels))
-    for (i in seq_along(labels)) {
+    ProxyDistance <- switch(
+      pmatch(toupper(getOption("sprProxy", "C")), c("C", "P", "Q", "R")),
+      ClusteringInfoDist,
+      PhylogeneticInfoDistance,
+      function(x, y) Quartet::QuartetDivergence(Quartet::QuartetStatus(x, y)),
+      RobinsonFoulds
+    )
+    if (debug) message(switch(
+      pmatch(toupper(getOption("sprProxy", "C")), c("C", "P", "Q", "R")),
+      "ClusteringInfoDist", "PhyloInfoDist", "Quartet","RobinsonFoulds"))
+    
+    depth <- max(getOption("sprDepth", 1), 1)
+    
+    
+    .ScoreWithout <- function(idx) {
       keep <- blank
-      keep[[i]] <- FALSE
+      keep[idx] <- FALSE
+      
       outcome <- keep_and_reduce(tr1, tr2, keep)
       if (is.null(outcome[[1]])) {
-        scores[[i]] <- -Inf
-        break
+        return(-Inf)
       }
-      # TODO could look for shared edges and treat subtrees separately
-      scores[[i]] <- ClusteringInfoDist(outcome)
+      
+      oSpl <- as.Splits(outcome)
+      matchedSpl <- oSpl[[1]] %in% oSpl[[2]]
+      
+      if (any(matchedSpl)) {
+        subtips1 <- as.logical(oSpl[[1]][[which.max(matchedSpl)]])
+        subtips2 <- !subtips1
+        # Anchor to shared edge
+        subtips1[!subtips1][[1]] <- TRUE
+        subtips2[!subtips2][[1]] <- TRUE
+        
+        sub1 <- ReduceTrees(KeepTip(outcome[[1]], subtips1),
+                            KeepTip(outcome[[2]], subtips1))
+        
+        sub2 <- ReduceTrees(KeepTip(outcome[[1]], subtips2),
+                            KeepTip(outcome[[2]], subtips2))
+        
+        # Return:
+        ProxyDistance(sub1[[1]], sub1[[2]]) +
+          ProxyDistance(sub2[[1]], sub2[[2]])
+        
+      } else {
+        # Return:
+        ProxyDistance(outcome[[1]], outcome[[2]])
+      }
+    }
+    for (i in seq_along(labels)) {
+      scores[[i]] <- .ScoreWithout(i)
+      if (!is.finite(scores[[i]])) break
+    }
+    if (any(!is.finite(scores))) {
+      depth <- 1
+    }
+    if (depth > 1) {
+      pairs <- combn(seq_along(labels), 2)
+      pairScores <- apply(pairs, 2, function(pair) {
+        .ScoreWithout(pair)
+      })
     }
     
+    drop <- logical(length(labels))
     couldDrop <- scores == min(scores)
     if (debug && sum(couldDrop) > 1) {
-      message(sum(couldDrop), " options to drop")
+      message(sum(couldDrop), " options to drop: ",
+              paste(labels[couldDrop], collapse = ", "))
     }
-    drop <- logical(length(labels))
-    drop[[which.min(scores)]] <- TRUE
+    
+    if (depth > 1 && min(pairScores) < min(scores)) {
+      pairDrop <- pairScores == min(pairScores)
+      if (debug && sum(pairDrop) > 1) {
+        message(sum(pairDrop), " pair-options to drop: ",
+                paste(apply(rbind(labels[pairs[1, pairDrop]],
+                                  labels[pairs[2, pairDrop]]), 2, paste0,
+                            collapse = "-"), collapse = ", "))
+      }
+      drop[pairs[, which.max(pairDrop)]] <- TRUE
+    } else {
+      drop[[which.min(scores)]] <- TRUE
+    }
+    
     if (debug) {
-      dropList <- c(dropList, TipLabels(reduced[[1]])[drop])
-      message("Dropping: ", TipLabels(reduced[[1]])[drop],
-              " (", which(drop), ")")
+      dropList <- c(dropList, labels[drop])
+      message("Dropping: ", paste0(labels[drop], collapse = ", "),
+              " (", paste(which(drop), collapse = ", "), ")")
     }
     reduced <- keep_and_reduce(tr1, tr2, !drop)
     if (length(reduced) == 1L) {
@@ -808,8 +872,8 @@ SPRDist.multiPhylo <- SPRDist.list
         plot(reduced[[2]])
       }
     }
-      
-    moves <- moves + 1
+    
+    moves <- sum(moves, drop)
   }
   
   # Return:
