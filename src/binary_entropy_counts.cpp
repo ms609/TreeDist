@@ -36,6 +36,6 @@ NumericVector binary_entropy_counts(IntegerVector inSplit, int nLeaves) {
     double H = -(x * std::log(x) + one_minus_x * std::log1p(-x));
     out[j] = H;
   }
-  constexpr double oneOverLog2 = 1.442695040888963387005;
-  return out * oneOverLog2;
+  constexpr double invLog2 = 1.442695040888963387005;
+  return out * invLog2;
 }

@@ -35,9 +35,6 @@ is.HPart(x)
 \item{tree}{An object to convert to an HPart structure, in a supported format
 (see details).}
 
-\item{tipLabels}{Character vector specifying sequence in which to order
-tip labels.}
-
 \item{x}{\code{HPart} object to plot.}
 
 \item{\dots}{Additional arguments to \code{\link[ape:plot.phylo]{plot.phylo}}.}

@@ -293,10 +293,14 @@ ClusteringEntropy.Splits <- function(x, p = NULL, sum = TRUE) {
   if (!(length(p) %in% c(1L, nSplits))) {
     stop("`p` must be length 1 or length equal to number of splits (", nSplits, ").")
   }
+  ret <- H * p
   
-  ret <- p * apply(splitP, 2, Entropy)
   # Return:
-  if (sum) sum(ret) else ret
+  if (isTRUE(sum)) {
+    sum(ret)
+  } else {
+    setNames(ret, names(inSplit))
+  }
 }
 
 #' @export

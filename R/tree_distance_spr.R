@@ -698,6 +698,7 @@ SPRDist.multiPhylo <- SPRDist.list
 
 # Takes a 'Rogue' approach: finds the leaf that introduces the most conflict,
 # and nixes it.
+#' @importFrom TreeTools FirstMatchingSplit
 .SPRRogue <- function(tree1, tree2, check = TRUE) {
   moves <- 0
   debug <- isTRUE(getOption("debugSPR", FALSE))
@@ -713,16 +714,24 @@ SPRDist.multiPhylo <- SPRDist.list
     ape::nodelabels(frame = "none", cex = 0.8)
   }
   
+  ProxyDistance <- switch(
+    pmatch(toupper(getOption("sprProxy", "C")), c("C", "P", "Q", "R")),
+    ClusteringInfoDist,
+    PhylogeneticInfoDistance,
+    function(x, y) Quartet::QuartetDivergence(Quartet::QuartetStatus(x, y)),
+    RobinsonFoulds
+  )
+  
   while (!is.null(reduced)) {
     
     tr1 <- reduced[[1]]
     tr2 <- reduced[[2]]
     sp1 <- as.Splits(tr1)
     sp2 <- as.Splits(tr2, tr1)
-    matchedSplits <- sp1 %in% sp2
-    if (!isFALSE(getOption("sprMatches")) && any(matchedSplits)) {
+    firstMatchedSplit <- FirstMatchingSplit(sp1, sp2)
+    if (!isFALSE(getOption("sprMatches")) && firstMatchedSplit > 0) {
       # At least one split exists in both trees
-      subtips1 <- as.logical(sp1[[which.max(matchedSplits)]])
+      subtips1 <- as.logical(sp1[[firstMatchedSplit]])
       subtips2 <- !subtips1
       
       # Add dummy tip as placeholder for other half of tree
@@ -772,14 +781,8 @@ SPRDist.multiPhylo <- SPRDist.list
     
     labels <- TipLabels(tr1)
     scores <- numeric(length(labels))
-    blank <- !logical(length(labels))
-    ProxyDistance <- switch(
-      pmatch(toupper(getOption("sprProxy", "C")), c("C", "P", "Q", "R")),
-      ClusteringInfoDist,
-      PhylogeneticInfoDistance,
-      function(x, y) Quartet::QuartetDivergence(Quartet::QuartetStatus(x, y)),
-      RobinsonFoulds
-    )
+    blank <- rep_len(TRUE, length(labels))
+
     if (debug) message(switch(
       pmatch(toupper(getOption("sprProxy", "C")), c("C", "P", "Q", "R")),
       "ClusteringInfoDist", "PhyloInfoDist", "Quartet","RobinsonFoulds"))
@@ -797,20 +800,20 @@ SPRDist.multiPhylo <- SPRDist.list
       }
       
       oSpl <- as.Splits(outcome)
-      matchedSpl <- oSpl[[1]] %in% oSpl[[2]]
+      firstMatch <- FirstMatchingSplit(oSpl[[1]], oSpl[[2]])
       
-      if (any(matchedSpl)) {
-        subtips1 <- as.logical(oSpl[[1]][[which.max(matchedSpl)]])
+      if (firstMatch > 0) {
+        subtips1 <- as.logical(oSpl[[1]][[firstMatch]])
         subtips2 <- !subtips1
         # Anchor to shared edge
         subtips1[!subtips1][[1]] <- TRUE
         subtips2[!subtips2][[1]] <- TRUE
         
-        sub1 <- ReduceTrees(KeepTip(outcome[[1]], subtips1),
-                            KeepTip(outcome[[2]], subtips1))
+        sub1 <- ReduceTrees(KeepTipPostorder(outcome[[1]], subtips1),
+                            KeepTipPostorder(outcome[[2]], subtips1))
         
-        sub2 <- ReduceTrees(KeepTip(outcome[[1]], subtips2),
-                            KeepTip(outcome[[2]], subtips2))
+        sub2 <- ReduceTrees(KeepTipPostorder(outcome[[1]], subtips2),
+                            KeepTipPostorder(outcome[[2]], subtips2))
         
         # Return:
         ProxyDistance(sub1[[1]], sub1[[2]]) +
@@ -831,9 +834,9 @@ SPRDist.multiPhylo <- SPRDist.list
     if (depth > 1) {
       pairs <- combn(seq_along(labels), 2)
       nPairs <- dim(pairs)[[2]]
-      pairScores <- double(length(nPairs))
-      for (i in seq_along(ncol(pairs))) {
-        pairScores[[i]] <- .ScoreWithout(pairs[[i]])
+      pairScores <- double(nPairs)
+      for (i in seq_len(nPairs)) {
+        pairScores[[i]] <- .ScoreWithout(pairs[, i])
         if (!is.finite(pairScores[[i]])) break
       }
     }
