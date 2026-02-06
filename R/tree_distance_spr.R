@@ -844,13 +844,22 @@ SPRDist.multiPhylo <- SPRDist.list
     
     if (depth > 1 && min(pairScores) < min(scores)) {
       pairDrop <- pairScores == min(pairScores)
-      if (debug && sum(pairDrop) > 1) {
+      if (debug && sum(pairDrop) > 0) {
         message(sum(pairDrop), " pair-options to drop: ",
                 paste(apply(rbind(labels[pairs[1, pairDrop]],
                                   labels[pairs[2, pairDrop]]), 2, paste0,
                             collapse = "-"), collapse = ", "))
       }
-      drop[pairs[, which.max(pairDrop)]] <- TRUE
+      dropTions <- pairs[, pairDrop]
+      if (any(couldDrop[dropTions])) {
+        # Dropping two at once doesn't give us any benefit over dropping one
+        # at a time – but will mean we can't spot a handy pair next time.
+        drop[dropTions[which.min(scores[dropTions])]] <- TRUE
+      } else {
+        # If dropping two gives us a better solution, drop both at once -
+        # failing to do so can cause an optimal path to be missed.
+        drop[pairs[, which.max(pairDrop)]] <- TRUE
+      }
     } else {
       drop[[which.min(scores)]] <- TRUE
     }
