@@ -224,6 +224,10 @@ test_that("SPR calculated correctly", {
                      ((b1, (b2, b3)), (d1, (d2, d3))));")
   expect_equal(.SPRConfl(lockedMid1, lockedMid2)[[1]], 5)
   expect_equal(.SPRRogue(lockedMid1, lockedMid2)[[1]], 5)
+  
+  # Aspirational
+  expect_exact("((((b3,b2),b1),(((d2,d1),((e3,e2),e1)),c)),a);",
+               "((((d2,e3),d1),c),(((((e2,b3),e1),b1),b2),a));")
 
   set.seed(0)
   tr <- vector("list", 13)
