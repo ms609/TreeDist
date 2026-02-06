@@ -265,10 +265,33 @@ ClusteringEntropy.multiPhylo <- ClusteringEntropy.list
 #' @export
 ClusteringEntropy.Splits <- function(x, p = NULL, sum = TRUE) {
   nLeaves <- attr(x, "nTip")
-  inSplit <- TipsInSplits(x)
-  splitP <- rbind(inSplit, nLeaves - inSplit, deparse.level = 0L) / nLeaves
-  if (is.null(p)) {
-    p <- 1L
+  if (is.null(nLeaves) || !is.finite(nLeaves)) {
+    stop("`x` must have a valid 'nTip' attribute.")
+  }
+  if (nLeaves <= 0) {
+    return(if (sum) 0 else double(0))
+  }
+  
+  inSplit <- TipsInSplits(x)  # integer vector, names correspond to splits
+  nSplits <- length(inSplit)
+  
+  H <- tryCatch(
+    binary_entropy_counts(inSplit, as.integer(nLeaves)),
+    error = function(e) {
+      pi <- inSplit / nLeaves
+      H <- numeric(nSplits)
+      nz <- (pi > 0) & (pi < 1)
+      pz <- pi[nz]
+      H[nz] <- -(pz * log(pz) + (1 - pz) * log1p(-pz))
+      H[!nz] <- 0.0
+      H
+    }
+  )
+  
+  # Weighting
+  if (is.null(p)) p <- 1
+  if (!(length(p) %in% c(1L, nSplits))) {
+    stop("`p` must be length 1 or length equal to number of splits (", nSplits, ").")
   }
   
   ret <- p * apply(splitP, 2, Entropy)

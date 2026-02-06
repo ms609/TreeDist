@@ -10,6 +10,18 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// binary_entropy_counts
+NumericVector binary_entropy_counts(IntegerVector inSplit, int nLeaves);
+RcppExport SEXP _TreeDist_binary_entropy_counts(SEXP inSplitSEXP, SEXP nLeavesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type inSplit(inSplitSEXP);
+    Rcpp::traits::input_parameter< int >::type nLeaves(nLeavesSEXP);
+    rcpp_result_gen = Rcpp::wrap(binary_entropy_counts(inSplit, nLeaves));
+    return rcpp_result_gen;
+END_RCPP
+}
 // COMCLUST
 int COMCLUST(const List& trees);
 RcppExport SEXP _TreeDist_COMCLUST(SEXP treesSEXP) {
@@ -391,6 +403,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_TreeDist_binary_entropy_counts", (DL_FUNC) &_TreeDist_binary_entropy_counts, 2},
     {"_TreeDist_COMCLUST", (DL_FUNC) &_TreeDist_COMCLUST, 1},
     {"_TreeDist_robinson_foulds_all_pairs", (DL_FUNC) &_TreeDist_robinson_foulds_all_pairs, 1},
     {"_TreeDist_consensus_info", (DL_FUNC) &_TreeDist_consensus_info, 3},
