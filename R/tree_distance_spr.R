@@ -830,9 +830,12 @@ SPRDist.multiPhylo <- SPRDist.list
     }
     if (depth > 1) {
       pairs <- combn(seq_along(labels), 2)
-      pairScores <- apply(pairs, 2, function(pair) {
-        .ScoreWithout(pair)
-      })
+      nPairs <- dim(pairs)[[2]]
+      pairScores <- double(length(nPairs))
+      for (i in seq_along(ncol(pairs))) {
+        pairScores[[i]] <- .ScoreWithout(pairs[[i]])
+        if (!is.finite(pairScores[[i]])) break
+      }
     }
     
     drop <- logical(length(labels))
@@ -851,7 +854,7 @@ SPRDist.multiPhylo <- SPRDist.list
                             collapse = "-"), collapse = ", "))
       }
       dropTions <- pairs[, pairDrop]
-      if (any(couldDrop[dropTions])) {
+      if (any(couldDrop[dropTions]) && !any(!is.finite(pairScores))) {
         # Dropping two at once doesn't give us any benefit over dropping one
         # at a time – but will mean we can't spot a handy pair next time.
         drop[dropTions[which.min(scores[dropTions])]] <- TRUE
