@@ -704,6 +704,14 @@ SPRDist.multiPhylo <- SPRDist.list
   debug <- isTRUE(getOption("debugSPR", FALSE))
   if (debug) dropList <- character(0)
   
+  ProxyDistance <- switch(
+    pmatch(toupper(getOption("sprProxy", "C")), c("C", "P", "Q", "R")),
+    ClusteringInfoDist,
+    PhylogeneticInfoDistance,
+    function(x, y) Quartet::QuartetDivergence(Quartet::QuartetStatus(x, y)),
+    RobinsonFoulds
+  )
+  
   reduced <- ReduceTrees(tree1, tree2, check = check)
   if (!is.null(reduced) && debug) {
     message("Rogue SPR heuristic underway")
@@ -713,14 +721,6 @@ SPRDist.multiPhylo <- SPRDist.list
     plot(reduced[[2]])
     ape::nodelabels(frame = "none", cex = 0.8)
   }
-  
-  ProxyDistance <- switch(
-    pmatch(toupper(getOption("sprProxy", "C")), c("C", "P", "Q", "R")),
-    ClusteringInfoDist,
-    PhylogeneticInfoDistance,
-    function(x, y) Quartet::QuartetDivergence(Quartet::QuartetStatus(x, y)),
-    RobinsonFoulds
-  )
   
   while (!is.null(reduced)) {
     
