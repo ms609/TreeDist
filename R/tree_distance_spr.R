@@ -780,11 +780,11 @@ SPRDist.multiPhylo <- SPRDist.list
           # La and Ra are both in the cherries
           # (((?, La), Lb), (Lc, (?, ?)))
           #   (((Rb, La), Lb), (Lc, (Ra, Rc))) = 2
-          return(moves + 2)
-          
+          # 
+          # (((?, ?), Rb), (Rc, (?, ?)))
+          #   (((Lc, Ra), Rb), (Rc, (La, Lb))) = 2
           #   
           # (((?, ?), Lb), (Rb, (?, ?)))
-          return(moves + 2)
           #   (((?, La), Lb), (Rb, (?, ?)))
           #     (((Lc, La), Lb), (Rb, (Ra, Rc))) = 2
           #     (((Ra, La), Lb), (Rb, (Lc, Rc))) = 2
@@ -802,11 +802,7 @@ SPRDist.multiPhylo <- SPRDist.list
           #     (((Ra, La), Lb), (Rb, (Rc, Lc))) = 2
           #     (((Rc, La), Lb), (Rb, (Ra, Lc))) = 2
           #     (((Lc, La), Lb), (Rb, (Ra, Rc))) = 2
-          
-          #   
-          # (((?, ?), Rb), (Rc, (?, ?)))
-          #   (((?, ?), Rb), (Rc, (?, ?)))
-          return(moves + ??)
+          return(moves + 2)
         }
         # Else La = La, Ra != Ra: (((Lb, Lc), La), (Ra, (Rb, Rc))) with
         # 
