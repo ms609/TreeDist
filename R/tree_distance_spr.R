@@ -696,6 +696,148 @@ SPRDist.multiPhylo <- SPRDist.list
   if (debug) structure(moves, dropList = dropList) else moves
 }
 
+.SPRExact5 <- function(sp1, sp2) {
+  # Trees have shape (r, (p1, p2), (q1, q2)) after reduction.
+  # There are two cases:
+  if (all(xor(sp1[[1]] , sp1[[2]]) == xor(sp2[[1]] , sp2[[2]]))) {
+    # Case 1: `r` has the same label in each tree
+    # As the tree cannot be reduced by the reduction rule, we have
+    # (X, (A, B), (C, D)) vs (X, (A, C), (B, C)) = 2 moves
+    #
+    2
+  } else {
+    # Case 2: `r` has a different label in each tree.
+    # Assign `r` the label X in tree 1 and Y in tree 2.
+    # (X, (Y, ?), (?, ?)) vs (Y, (X, ?), (?, ?))
+    #
+    # Then label the sister to X in tree2 X', and Y mutas mutantis
+    # Notice that if X' == Y', the unlabelled cherry reduces by reduction rule
+    # Hence we have
+    # (X, ((Y, Y'), (X', ?))) vs (Y, ((X, X'), (Y', ?))) = 1 moves
+    1
+  }
+}
+
+.SPRExact6 <- function(sp1, sp2) {
+  # Surprisingly, there is only one configuration with a distance of 1:
+  # (((Lb, Lc), La), (Ra, (Rb, Rc))) vs (((Ra, Rb), La), (Lb, (Lc, Rc)))
+  pairs1 <- TipsInSplits(sp1, smallest = TRUE) == 2
+  pairs2 <- TipsInSplits(sp2, smallest = TRUE) == 2
+  if (all(pairs1) || all(pairs2)) {
+    return (2)
+  }
+  duo1 <- sp1[[pairs1]]
+  trio1 <- sp1[[!pairs1]]
+  
+  .Overlapper <- function(s1, s2) {
+    res <- as.logical(xor(s1, s2))
+    if (sum(res) == 1) res else !res
+  }
+  middle1a <- .Overlapper(duo1[[1]], trio1)
+  middle1b <- .Overlapper(duo1[[2]], trio1)
+  
+  duo2 <- sp2[[pairs2]]
+  trio2 <- sp2[[!pairs2]]
+  middle2a <- .Overlapper(duo2[[1]], trio2)
+  middle2b <- .Overlapper(duo2[[2]], trio2)
+  
+  inMiddleEachTime <- (middle1a | middle1b) & (middle2a | middle2b)
+  if (sum(inMiddleEachTime) == 1) {
+    La <- if (inMiddleEachTime[middle1a]) middle1a else middle1b
+    Lbc1 <- as.logical(duo1[[if (inMiddleEachTime[middle1a]) 1 else 2]])
+    if (Lbc1[La]) {
+      Lbc1 <- !Lbc1
+    }
+    if (any(Lbc1[middle2a | middle2b])) {
+      # Lb is in the other middle position in tree 2:
+      # (((?, ?), La), (Lb, (?, ?)))
+      Lbc2 <- as.logical(duo2[[if (La[middle2a]) 1 else 2]])
+      if (Lbc2[La]) {
+        Lbc2 <- !Lbc2
+      }
+      if (!any(Lbc2[Lbc1])) {
+        #   (((?, ?), La), (Lb, (Lc, ?)))
+        #     (((Ra, Rb), La), (Lb, (Lc, Rc))) = 1 !!!
+        return(1)
+      }
+      #   (((Lc, ?), La), (Lb, (?, ?)))
+      #     (((Lc, Rc), La), (Lb, (Ra, Rb))) = 2
+    }
+    # (((?, ?), La), (Rb, (?, ?)))
+    #   (((?, Ra), La), (Rb, (?, ?)))
+    #     (((Lb, Ra), La), (Rb, (Rc, Lc))) = 2
+    #   (((?, ?), La), (Rb, (Ra, ?)))
+    #     (((Rc, Lc), La), (Rb, (Ra, Lb))) = 2
+    # 
+  }
+  
+  # All other tree pairs have a distance of 2 - see below
+  return(2)
+  
+  # Trees may be one of two shapes: 
+  #   ((a1, a2), (b1, b2), (c1, c2))
+  #   (((Lb, Lc), La), (Ra, (Rb, Rc)))
+  balanced1 <- all(pairs1)
+  balanced2 <- all(pairs2)
+  if (balanced1 && balanced2) {
+    # There's only one possible configuration:
+    # ((ab, ac), (ba, bc), (ca, cb)) vs ((ba, ca), (ab, cb), (ac, bc)) = 2
+  }
+  if (!balanced1 && !balanced2) {
+    # Both trees have the shape
+    # (((Lb, Lc), La), (Ra, (Rb, Rc)))
+    # We will use the same labels for Tree 2, matching where possible.
+    if (La1 == La2 && Ra1 == Ra2) {
+      # La = La, Ra = Ra:
+      # (((Lb, Lc), La), (Ra, (Rb, Rc))), (((Lb, Rb), La), (Ra, (Rc, Lc))) = 2
+    }
+    # As we can't match La and Ra, we'll match La if we can.
+    if (La1 != La2 && Ra1 != Ra2) {
+      # LO != La, Ra != Ra
+      # La and Ra are both in the cherries
+      # (((?, La), Lb), (Lc, (?, ?)))
+      #   (((Rb, La), Lb), (Lc, (Ra, Rc))) = 2
+      # 
+      # (((?, ?), Rb), (Rc, (?, ?)))
+      #   (((Lc, Ra), Rb), (Rc, (La, Lb))) = 2
+      #   
+      # (((?, ?), Lb), (Rb, (?, ?)))
+      #   (((?, La), Lb), (Rb, (?, ?)))
+      #     (((Lc, La), Lb), (Rb, (Ra, Rc))) = 2
+      #     (((Ra, La), Lb), (Rb, (Lc, Rc))) = 2
+      #     (((Rc, La), Lb), (Rb, (Ra, Lc))) = 2
+      #     
+      #   (((?, ?), Lb), (Rb, (La, ?)))
+      #     (((Ra, Rc), Lb), (Rb, (La, Lc))) = 2
+      #     (((Lc, Rc), Lb), (Rb, (La, Ra))) = 2
+      #     (((Ra, Lc), Lb), (Rb, (La, Rc))) = 2
+      #   
+      #   (((?, ?), Lb), (Rb, (?, ?)))
+      #     (((Lc, Rc), Lb), (Rb, (La, Ra))) = 2
+      #     (((Lc, Ra), Lb), (Rb, (La, Rc))) = 2
+      #     (((Ra, Rc), Lb), (Rb, (La, Lc))) = 2
+      #     (((Ra, La), Lb), (Rb, (Rc, Lc))) = 2
+      #     (((Rc, La), Lb), (Rb, (Ra, Lc))) = 2
+      #     (((Lc, La), Lb), (Rb, (Ra, Rc))) = 2
+    }
+    # Else exactly one of the bridging leaves is the same; call this La.
+    # 
+    # (((?, ?), La), (Rb, (?, ?)))
+    #   (((?, Ra), La), (Rb, (?, ?)))
+    #     (((Lb, Ra), La), (Rb, (Rc, Lc))) = 2
+    #   (((?, ?), La), (Rb, (Ra, ?)))
+    #     (((Rc, Lc), La), (Rb, (Ra, Lb))) = 2
+    # 
+    # (((?, ?), La), (Lb, (?, ?)))
+    #   (((Lc, ?), La), (Lb, (?, ?)))
+    #     (((Lc, Rc), La), (Lb, (Ra, Rb))) = 2
+    #   (((?, ?), La), (Lb, (Lc, ?)))
+    #     (((Ra, Rb), La), (Lb, (Lc, Rc))) = 1 !!!
+    # 
+    # 
+  }
+}
+
 # Takes a 'Rogue' approach: finds the leaf that introduces the most conflict,
 # and nixes it.
 #' @importFrom TreeTools FirstMatchingSplit
@@ -727,153 +869,17 @@ SPRDist.multiPhylo <- SPRDist.list
     tr1 <- reduced[[1]]
     tr2 <- reduced[[2]]
     nTip <- NTip(tr1)
-    if (nTip == 4 && getOption("sprShortcut", Inf) > 3) {
+    if (nTip == 4 && getOption("sprShortcut", Inf) >= 4) {
       return(moves + 1)
     }
     
     sp1 <- as.Splits(tr1)
     sp2 <- as.Splits(tr2, tr1)
-    if (nTip == 5 && getOption("sprShortcut", Inf) > 4) {
-      # Trees have shape (r, (p1, p2), (q1, q2)) after reduction.
-      # There are two cases:
-      if (all(xor(sp1[[1]] , sp1[[2]]) == xor(sp2[[1]] , sp2[[2]]))) {
-        # Case 1: `r` has the same label in each tree
-        # As the tree cannot be reduced by the reduction rule, we have
-        # (X, (A, B), (C, D)) vs (X, (A, C), (B, C)) = 2 moves
-        #
-        return(moves + 2)
-      } else {
-        # Case 2: `r` has a different label in each tree.
-        # Assign `r` the label X in tree 1 and Y in tree 2.
-        # (X, (Y, ?), (?, ?)) vs (Y, (X, ?), (?, ?))
-        #
-        # Then label the sister to X in tree2 X', and Y mutas mutantis
-        # Notice that if X' == Y', the unlabelled cherry reduces by reduction rule
-        # Hence we have
-        # (X, ((Y, Y'), (X', ?))) vs (Y, ((X, X'), (Y', ?))) = 1 moves
-        return(moves + 1)
-      }
+    if (nTip == 5 && getOption("sprShortcut", Inf) >= 5) {
+      return(moves + .SPRExact5(sp1, sp2))
     }
-    if (nTip == 6 && getOption("sprShortcut", Inf) > 4) {
-      
-      # Surprisingly, there is only one configuration with a distance of 1:
-      # (((Lb, Lc), La), (Ra, (Rb, Rc))) vs (((Ra, Rb), La), (Lb, (Lc, Rc)))
-      pairs1 <- TipsInSplits(sp1, smallest = TRUE) == 2
-      pairs2 <- TipsInSplits(sp2, smallest = TRUE) == 2
-      if (all(pairs1) || all(pairs2)) {
-        return (moves + 2)
-      }
-      duo1 <- sp1[[pairs1]]
-      trio1 <- sp1[[!pairs1]]
-      
-      .Overlapper <- function(s1, s2) {
-        res <- as.logical(xor(s1, s2))
-        if (sum(res) == 1) res else !res
-      }
-      middle1a <- .Overlapper(duo1[[1]], trio1)
-      middle1b <- .Overlapper(duo1[[2]], trio1)
-      
-      duo2 <- sp2[[pairs2]]
-      trio2 <- sp2[[!pairs2]]
-      middle2a <- .Overlapper(duo2[[1]], trio2)
-      middle2b <- .Overlapper(duo2[[2]], trio2)
-      
-      inMiddleEachTime <- (middle1a | middle1b) & (middle2a | middle2b)
-      if (sum(inMiddleEachTime) == 1) {
-        La <- if (inMiddleEachTime[middle1a]) middle1a else middle1b
-        Lbc1 <- as.logical(duo1[[if (inMiddleEachTime[middle1a]) 1 else 2]])
-        if (Lbc1[La]) {
-          Lbc1 <- !Lbc1
-        }
-        if (any(Lbc1[middle2a | middle2b])) {
-          # Lb is in the other middle position in tree 2:
-          # (((?, ?), La), (Lb, (?, ?)))
-          Lbc2 <- as.logical(duo2[[if (La[middle2a]) 1 else 2]])
-          if (Lbc2[La]) {
-            Lbc2 <- !Lbc2
-          }
-          if (!any(Lbc2[Lbc1])) {
-          #   (((?, ?), La), (Lb, (Lc, ?)))
-          #     (((Ra, Rb), La), (Lb, (Lc, Rc))) = 1 !!!
-            return(moves + 1)
-          }
-          #   (((Lc, ?), La), (Lb, (?, ?)))
-          #     (((Lc, Rc), La), (Lb, (Ra, Rb))) = 2
-        }
-        # (((?, ?), La), (Rb, (?, ?)))
-        #   (((?, Ra), La), (Rb, (?, ?)))
-        #     (((Lb, Ra), La), (Rb, (Rc, Lc))) = 2
-        #   (((?, ?), La), (Rb, (Ra, ?)))
-        #     (((Rc, Lc), La), (Rb, (Ra, Lb))) = 2
-        # 
-      }
-      
-      # All other tree pairs have a distance of 2 - see below
-      return(moves + 2)
-      
-      # Trees may be one of two shapes: 
-      #   ((a1, a2), (b1, b2), (c1, c2))
-      #   (((Lb, Lc), La), (Ra, (Rb, Rc)))
-      balanced1 <- all(pairs1)
-      balanced2 <- all(pairs2)
-      if (balanced1 && balanced2) {
-        # There's only one possible configuration:
-        # ((ab, ac), (ba, bc), (ca, cb)) vs ((ba, ca), (ab, cb), (ac, bc)) = 2
-      }
-      if (!balanced1 && !balanced2) {
-        # Both trees have the shape
-        # (((Lb, Lc), La), (Ra, (Rb, Rc)))
-        # We will use the same labels for Tree 2, matching where possible.
-        if (La1 == La2 && Ra1 == Ra2) {
-          # La = La, Ra = Ra:
-          # (((Lb, Lc), La), (Ra, (Rb, Rc))), (((Lb, Rb), La), (Ra, (Rc, Lc))) = 2
-        }
-        # As we can't match La and Ra, we'll match La if we can.
-        if (La1 != La2 && Ra1 != Ra2) {
-          # LO != La, Ra != Ra
-          # La and Ra are both in the cherries
-          # (((?, La), Lb), (Lc, (?, ?)))
-          #   (((Rb, La), Lb), (Lc, (Ra, Rc))) = 2
-          # 
-          # (((?, ?), Rb), (Rc, (?, ?)))
-          #   (((Lc, Ra), Rb), (Rc, (La, Lb))) = 2
-          #   
-          # (((?, ?), Lb), (Rb, (?, ?)))
-          #   (((?, La), Lb), (Rb, (?, ?)))
-          #     (((Lc, La), Lb), (Rb, (Ra, Rc))) = 2
-          #     (((Ra, La), Lb), (Rb, (Lc, Rc))) = 2
-          #     (((Rc, La), Lb), (Rb, (Ra, Lc))) = 2
-          #     
-          #   (((?, ?), Lb), (Rb, (La, ?)))
-          #     (((Ra, Rc), Lb), (Rb, (La, Lc))) = 2
-          #     (((Lc, Rc), Lb), (Rb, (La, Ra))) = 2
-          #     (((Ra, Lc), Lb), (Rb, (La, Rc))) = 2
-          #   
-          #   (((?, ?), Lb), (Rb, (?, ?)))
-          #     (((Lc, Rc), Lb), (Rb, (La, Ra))) = 2
-          #     (((Lc, Ra), Lb), (Rb, (La, Rc))) = 2
-          #     (((Ra, Rc), Lb), (Rb, (La, Lc))) = 2
-          #     (((Ra, La), Lb), (Rb, (Rc, Lc))) = 2
-          #     (((Rc, La), Lb), (Rb, (Ra, Lc))) = 2
-          #     (((Lc, La), Lb), (Rb, (Ra, Rc))) = 2
-        }
-        # Else exactly one of the bridging leaves is the same; call this La.
-        # 
-        # (((?, ?), La), (Rb, (?, ?)))
-        #   (((?, Ra), La), (Rb, (?, ?)))
-        #     (((Lb, Ra), La), (Rb, (Rc, Lc))) = 2
-        #   (((?, ?), La), (Rb, (Ra, ?)))
-        #     (((Rc, Lc), La), (Rb, (Ra, Lb))) = 2
-        # 
-        # (((?, ?), La), (Lb, (?, ?)))
-        #   (((Lc, ?), La), (Lb, (?, ?)))
-        #     (((Lc, Rc), La), (Lb, (Ra, Rb))) = 2
-        #   (((?, ?), La), (Lb, (Lc, ?)))
-        #     (((Ra, Rb), La), (Lb, (Lc, Rc))) = 1 !!!
-        # 
-        # 
-      }
-      
+    if (nTip == 6 && getOption("sprShortcut", Inf) >= 6) {
+      return(moves + .SPRExact6(sp1, sp2))
     }
     
     firstMatchedSplit <- FirstMatchingSplit(sp1, sp2)
