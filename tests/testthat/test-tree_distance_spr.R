@@ -84,14 +84,41 @@ test_that("confusion()", {
 
 test_that("SPR shortcuts okay", {
   library("TreeTools", quietly = TRUE)
-  trees <- lapply(1:8, function(XX) RandomTree(32, root = TRUE))
+  set.seed(0)
+  trees <- lapply(1:8, function(XX) RandomTree(9, root = TRUE))
+    
+  exact <- apply(combn(length(trees), 2), 2, function(ij) {
+    TBRDist::USPRDist(trees[[ij[[1]]]], trees[[ij[[2]]]])
+  })
   opt <- options("sprShortcut" = 0)
   on.exit(options(opt))
   noCuts <- SPRDist(trees, method = "rogue")
+  
   options("sprShortcut" = 4)
-  withCuts <- SPRDist(trees, method = "rogue")
-  expect_true(all(withCuts <= noCuts))
-  expect_true(all(withCuts == noCuts))
+  cuts4 <- SPRDist(trees, method = "rogue")
+  expect_true(all(cuts4 == noCuts))
+  
+  options("sprShortcut" = 5)
+  cuts5 <- SPRDist(trees, method = "rogue")
+  expect_true(all(cuts5 <= noCuts))
+  expect_true(all(cuts5 >= exact))
+}
+
+test_that("SPR shortcuts okay - larger trees", {
+  library("TreeTools", quietly = TRUE)
+  set.seed(0)
+  trees <- lapply(1:8, function(XX) RandomTree(45, root = TRUE))
+  opt <- options("sprShortcut" = 0)
+  on.exit(options(opt))
+  noCuts <- SPRDist(trees, method = "rogue")
+  
+  options("sprShortcut" = 4)
+  cuts4 <- SPRDist(trees, method = "rogue")
+  expect_true(all(cuts4 == noCuts))
+  
+  options("sprShortcut" = 5)
+  cuts5 <- SPRDist(trees, method = "rogue")
+  expect_true(all(cuts5 <= noCuts))
   
 })
 

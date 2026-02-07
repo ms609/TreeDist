@@ -733,6 +733,29 @@ SPRDist.multiPhylo <- SPRDist.list
     
     sp1 <- as.Splits(tr1)
     sp2 <- as.Splits(tr2, tr1)
+    if (nTip == 5 && getOption("sprShortcut", Inf) > 4) {
+      
+      # Trees have shape (r, (p1, p2), (q1, q2)) after reduction.
+      # There are two cases:
+      if (all(xor(sp1[[1]] , sp1[[2]]) == xor(sp2[[1]] , sp2[[2]]))) {
+        # Case 1: `r` has the same label in each tree
+        # As the tree cannot be reduced by the reduction rule, we have
+        # (X, (A, B), (C, D)) vs (X, (A, C), (B, C)) = 2 moves
+        #
+        return(moves + 2)
+      } else {
+        # Case 2: `r` has a different label in each tree.
+        # Assign `r` the label X in tree 1 and Y in tree 2.
+        # (X, (Y, ?), (?, ?)) vs (Y, (X, ?), (?, ?))
+        #
+        # Then label the sister to X in tree2 X', and Y mutas mutantis
+        # Notice that if X' == Y', the unlabelled cherry reduces by reduction rule
+        # Hence we have
+        # (X, ((Y, Y'), (X', ?))) vs (Y, ((X, X'), (Y', ?))) = 1 moves
+        return(moves + 1)
+      }
+    }
+    
     firstMatchedSplit <- FirstMatchingSplit(sp1, sp2)
     if (!isFALSE(getOption("sprMatches")) && firstMatchedSplit > 0) {
       # At least one split exists in both trees
