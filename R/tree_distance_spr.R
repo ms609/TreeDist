@@ -45,13 +45,13 @@
 #' @family tree distances
 #' @importFrom TreeTools PairwiseDistances Postorder
 #' @export
-SPRDist <- function(tree1, tree2 = NULL, method = "confl", symmetric) {
+SPRDist <- function(tree1, tree2 = NULL, method = "rogue", symmetric) {
   UseMethod("SPRDist")
 }
 
 #' @rdname SPRDist
 #' @export
-SPRDist.phylo <- function(tree1, tree2 = NULL, method = "confl", symmetric) {
+SPRDist.phylo <- function(tree1, tree2 = NULL, method = "rogue", symmetric) {
   if (is.null(tree2)) {
     NULL
   } else if (inherits(tree2, "phylo")) {
@@ -69,7 +69,7 @@ SPRDist.phylo <- function(tree1, tree2 = NULL, method = "confl", symmetric) {
 
 #' @rdname SPRDist
 #' @export
-SPRDist.list <- function(tree1, tree2 = NULL, method = "confl", symmetric) {
+SPRDist.list <- function(tree1, tree2 = NULL, method = "rogue", symmetric) {
   if (is.null(tree2)) {
     PairwiseDistances(
       RootTree(RenumberTips(tree1, tree1), 1),
@@ -755,15 +755,70 @@ SPRDist.multiPhylo <- SPRDist.list
       }
     }
     if (nTip == 6 && getOption("sprShortcut", Inf) > 4) {
+      
+      # Surprisingly, there is only one configuration with a distance of 1:
+      # (((Lb, Lc), La), (Ra, (Rb, Rc))) vs (((Ra, Rb), La), (Lb, (Lc, Rc)))
+      pairs1 <- TipsInSplits(sp1, smallest = TRUE) == 2
+      pairs2 <- TipsInSplits(sp2, smallest = TRUE) == 2
+      if (all(pairs1) || all(pairs2)) {
+        return (moves + 2)
+      }
+      duo1 <- sp1[[pairs1]]
+      trio1 <- sp1[[!pairs1]]
+      
+      .Overlapper <- function(s1, s2) {
+        res <- as.logical(xor(s1, s2))
+        if (sum(res) == 1) res else !res
+      }
+      middle1a <- .Overlapper(duo1[[1]], trio1)
+      middle1b <- .Overlapper(duo1[[2]], trio1)
+      
+      duo2 <- sp2[[pairs2]]
+      trio2 <- sp2[[!pairs2]]
+      middle2a <- .Overlapper(duo2[[1]], trio2)
+      middle2b <- .Overlapper(duo2[[2]], trio2)
+      
+      inMiddleEachTime <- (middle1a | middle1b) & (middle2a | middle2b)
+      if (sum(inMiddleEachTime) == 1) {
+        La <- if (inMiddleEachTime[middle1a]) middle1a else middle1b
+        Lbc1 <- as.logical(duo1[[if (inMiddleEachTime[middle1a]) 1 else 2]])
+        if (Lbc1[La]) {
+          Lbc1 <- !Lbc1
+        }
+        if (any(Lbc1[middle2a | middle2b])) {
+          # Lb is in the other middle position in tree 2:
+          # (((?, ?), La), (Lb, (?, ?)))
+          Lbc2 <- as.logical(duo2[[if (La[middle2a]) 1 else 2]])
+          if (Lbc2[La]) {
+            Lbc2 <- !Lbc2
+          }
+          if (!any(Lbc2[Lbc1])) {
+          #   (((?, ?), La), (Lb, (Lc, ?)))
+          #     (((Ra, Rb), La), (Lb, (Lc, Rc))) = 1 !!!
+            return(moves + 1)
+          }
+          #   (((Lc, ?), La), (Lb, (?, ?)))
+          #     (((Lc, Rc), La), (Lb, (Ra, Rb))) = 2
+        }
+        # (((?, ?), La), (Rb, (?, ?)))
+        #   (((?, Ra), La), (Rb, (?, ?)))
+        #     (((Lb, Ra), La), (Rb, (Rc, Lc))) = 2
+        #   (((?, ?), La), (Rb, (Ra, ?)))
+        #     (((Rc, Lc), La), (Rb, (Ra, Lb))) = 2
+        # 
+      }
+      
+      # All other tree pairs have a distance of 2 - see below
+      return(moves + 2)
+      
       # Trees may be one of two shapes: 
       #   ((a1, a2), (b1, b2), (c1, c2))
-      #   (((p1, p2), rp), (rq, (q1, q2)))
-      balanced1 <- all(TipsInSplits(sp1, smallest = TRUE) == 2)
-      balanced2 <- all(TipsInSplits(sp2, smallest = TRUE) == 2)
+      #   (((Lb, Lc), La), (Ra, (Rb, Rc)))
+      balanced1 <- all(pairs1)
+      balanced2 <- all(pairs2)
       if (balanced1 && balanced2) {
         # There's only one possible configuration:
-        # ((ab, ac), (ba, bc), (ca, cb)) vs ((ba, ca), (ab, cb), (ac, bc))
-        return(moves + 2)
+        # ((ab, ac), (ba, bc), (ca, cb)) vs ((ba, ca), (ab, cb), (ac, bc)) = 2
       }
       if (!balanced1 && !balanced2) {
         # Both trees have the shape
@@ -771,8 +826,7 @@ SPRDist.multiPhylo <- SPRDist.list
         # We will use the same labels for Tree 2, matching where possible.
         if (La1 == La2 && Ra1 == Ra2) {
           # La = La, Ra = Ra:
-          # (((Lb, Lc), La), (Ra, (Rb, Rc))), (((Lb, Rb), La), (Ra, (Rc, Lc))): 2
-          return(moves + 2)
+          # (((Lb, Lc), La), (Ra, (Rb, Rc))), (((Lb, Rb), La), (Ra, (Rc, Lc))) = 2
         }
         # As we can't match La and Ra, we'll match La if we can.
         if (La1 != La2 && Ra1 != Ra2) {
@@ -802,18 +856,20 @@ SPRDist.multiPhylo <- SPRDist.list
           #     (((Ra, La), Lb), (Rb, (Rc, Lc))) = 2
           #     (((Rc, La), Lb), (Rb, (Ra, Lc))) = 2
           #     (((Lc, La), Lb), (Rb, (Ra, Rc))) = 2
-          return(moves + 2)
         }
-        # Else La = La, Ra != Ra: (((Lb, Lc), La), (Ra, (Rb, Rc))) with
+        # Else exactly one of the bridging leaves is the same; call this La.
         # 
-        # RO with LO
-        # (((?, ?), La), (Rb, (?, ?))),
-        # (((Lb, Ra), La), (Rb, (Rc, Lc))),
+        # (((?, ?), La), (Rb, (?, ?)))
+        #   (((?, Ra), La), (Rb, (?, ?)))
+        #     (((Lb, Ra), La), (Rb, (Rc, Lc))) = 2
+        #   (((?, ?), La), (Rb, (Ra, ?)))
+        #     (((Rc, Lc), La), (Rb, (Ra, Lb))) = 2
         # 
-        # (((Rc, Ra), La), (Rb, (Rc, Lc))),
-        # 
-        # (((?, ?), La), (Lb, (?, ?))),
-        # (((Lc, Ra), La), (Lb, (Rb, Lc))),
+        # (((?, ?), La), (Lb, (?, ?)))
+        #   (((Lc, ?), La), (Lb, (?, ?)))
+        #     (((Lc, Rc), La), (Lb, (Ra, Rb))) = 2
+        #   (((?, ?), La), (Lb, (Lc, ?)))
+        #     (((Ra, Rb), La), (Lb, (Lc, Rc))) = 1 !!!
         # 
         # 
       }

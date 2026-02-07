@@ -88,7 +88,7 @@ test_that("SPR shortcuts okay - exhaustive", {
   nTip <- 6
   allTrees <- as.phylo(seq_len(NUnrooted(nTip)), nTip)
   
-  apply(combn(length(allTrees), 2), 2, function(ij) {
+  sum(apply(combn(length(allTrees), 2), 2, function(ij) {
     reduced <- ReduceTrees(allTrees[[ij[[1]]]], allTrees[[ij[[2]]]])
     r1 <- reduced[[1]]
     if (NTip(r1) != nTip) return(NA)
@@ -99,7 +99,7 @@ test_that("SPR shortcuts okay - exhaustive", {
     if (!equal) message("Mismatch: ", paste(ij, collapse = ", "))
     expect_true(equal)
     equal
-  })
+  }), na.rm = TRUE)
 }
 
 test_that("SPR shortcuts okay - known answer", {
@@ -122,6 +122,11 @@ test_that("SPR shortcuts okay - known answer", {
   cuts5 <- SPRDist(trees, method = "rogue")
   expect_true(all(cuts5 <= noCuts))
   expect_true(all(cuts5 >= exact))
+  
+  options("sprShortcut" = 6)
+  cuts6 <- SPRDist(trees, method = "rogue")
+  expect_true(all(cuts6 <= noCuts))
+  expect_true(all(cuts6 >= exact))
 }
 
 test_that("SPR shortcuts okay - larger trees", {
@@ -140,6 +145,9 @@ test_that("SPR shortcuts okay - larger trees", {
   cuts5 <- SPRDist(trees, method = "rogue")
   expect_true(all(cuts5 <= noCuts))
   
+  options("sprShortcut" = 6)
+  cuts6 <- SPRDist(trees, method = "rogue")
+  expect_true(all(cuts6 <= noCuts))
 })
 
 test_that("SPR calculated correctly", {
