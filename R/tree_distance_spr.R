@@ -726,6 +726,11 @@ SPRDist.multiPhylo <- SPRDist.list
     
     tr1 <- reduced[[1]]
     tr2 <- reduced[[2]]
+    nTip <- NTip(tr1)
+    if (nTip == 4 && getOption("sprShortcut", Inf) > 3) {
+      return(moves + 1)
+    }
+    
     sp1 <- as.Splits(tr1)
     sp2 <- as.Splits(tr2, tr1)
     firstMatchedSplit <- FirstMatchingSplit(sp1, sp2)

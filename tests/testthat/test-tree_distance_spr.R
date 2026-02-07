@@ -82,40 +82,17 @@ test_that("confusion()", {
   TestConfusion(splits, rev(splits))
 })
 
-test_that("SPR deOliveira2008 calculation looks valid", {
+test_that("SPR shortcuts okay", {
   library("TreeTools", quietly = TRUE)
+  trees <- lapply(1:8, function(XX) RandomTree(32, root = TRUE))
+  opt <- options("sprShortcut" = 0)
+  on.exit(options(opt))
+  noCuts <- SPRDist(trees, method = "rogue")
+  options("sprShortcut" = 4)
+  withCuts <- SPRDist(trees, method = "rogue")
+  expect_true(all(withCuts <= noCuts))
+  expect_true(all(withCuts == noCuts))
   
-  # We do not expect to obtain identical results to phangorn::SPR.dist,
-  # because ties are broken in a different arbitrary manner.
-  # We're thus left with quite a loose test.
-  Tree <- function (txt) ape::read.tree(text = txt)
-  
-  expect_equal(SPRDist(PectinateTree(letters[1:26]),
-                       PectinateTree(letters[c(2:26, 1)]),
-                       method = "deOliv"),
-               1L)
-  
-  nTip <- 130
-  nSPR <- 35
-  
-  set.seed(0)
-  tr <- vector("list", nSPR + 1L)
-  tr[[1]] <- Postorder(TreeTools::RandomTree(nTip, root = TRUE))
-  expect_equal(SPRDist(tr[[1]], tr[[1]])[[1]], 0)
-  for (i in seq_len(nSPR) + 1L) {
-    tr[[i]] <- Postorder(TreeSearch::SPR(tr[[i - 1]]))
-  }
-  
-  testDist <- as.matrix(SPRDist(tr, method = "de Oliv"))
-  simDist <- as.matrix(dist(seq_along(tr)))
-  for (i in 1:nSPR) for (j in 2:nSPR) {
-    {if (i < j) expect_gte else expect_lte}(testDist[i, j], testDist[i, j - 1])
-  }
-  
-  overShot <- as.matrix(testDist) > as.matrix(simDist)
-  overs <- colSums(overShot) > 0
-  overShot[overs, overs]
-  expect_false(any(overs))
 })
 
 test_that("SPR calculated correctly", {
@@ -429,6 +406,44 @@ test_that("SPR.dist called safely", {
   expect_equal(Preorder(reduced[[1]]), Preorder(DropTip(result[[1]], "t9")))
   expect_equal(Preorder(reduced[[2]]), Preorder(DropTip(result[[2]], "t9")))
 })
+
+
+test_that("SPR deOliveira2008 calculation looks valid", {
+  library("TreeTools", quietly = TRUE)
+  
+  # We do not expect to obtain identical results to phangorn::SPR.dist,
+  # because ties are broken in a different arbitrary manner.
+  # We're thus left with quite a loose test.
+  Tree <- function (txt) ape::read.tree(text = txt)
+  
+  expect_equal(SPRDist(PectinateTree(letters[1:26]),
+                       PectinateTree(letters[c(2:26, 1)]),
+                       method = "deOliv"),
+               1L)
+  
+  nTip <- 130
+  nSPR <- 35
+  
+  set.seed(0)
+  tr <- vector("list", nSPR + 1L)
+  tr[[1]] <- Postorder(TreeTools::RandomTree(nTip, root = TRUE))
+  expect_equal(SPRDist(tr[[1]], tr[[1]])[[1]], 0)
+  for (i in seq_len(nSPR) + 1L) {
+    tr[[i]] <- Postorder(TreeSearch::SPR(tr[[i - 1]]))
+  }
+  
+  testDist <- as.matrix(SPRDist(tr, method = "de Oliv"))
+  simDist <- as.matrix(dist(seq_along(tr)))
+  for (i in 1:nSPR) for (j in 2:nSPR) {
+    {if (i < j) expect_gte else expect_lte}(testDist[i, j], testDist[i, j - 1])
+  }
+  
+  overShot <- as.matrix(testDist) > as.matrix(simDist)
+  overs <- colSums(overShot) > 0
+  overShot[overs, overs]
+  expect_false(any(overs))
+})
+
 
 test_that("SPR: Under the hood", {
   expect_error(mismatch_size(as.Splits(c(T, T, F)), as.Splits(c(T, T, T, T))),
