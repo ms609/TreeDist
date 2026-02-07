@@ -82,7 +82,27 @@ test_that("confusion()", {
   TestConfusion(splits, rev(splits))
 })
 
-test_that("SPR shortcuts okay", {
+test_that("SPR shortcuts okay - exhaustive", {
+  skip_if_not(getOption("slowMode", FALSE))
+  library("TreeTools", quietly = TRUE)
+  nTip <- 6
+  allTrees <- as.phylo(seq_len(NUnrooted(nTip)), nTip)
+  
+  apply(combn(length(allTrees), 2), 2, function(ij) {
+    reduced <- ReduceTrees(allTrees[[ij[[1]]]], allTrees[[ij[[2]]]])
+    r1 <- reduced[[1]]
+    if (NTip(r1) != nTip) return(NA)
+    r2 <- reduced[[2]]
+    exact <- TBRDist::USPRDist(r1, r2)
+    shortcut <- SPRDist(r1, r2, method = "Rogue")
+    equal <- exact == shortcut
+    if (!equal) message("Mismatch: ", paste(ij, collapse = ", "))
+    expect_true(equal)
+    equal
+  })
+}
+
+test_that("SPR shortcuts okay - known answer", {
   library("TreeTools", quietly = TRUE)
   set.seed(0)
   trees <- lapply(1:8, function(XX) RandomTree(9, root = TRUE))
