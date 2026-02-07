@@ -14,7 +14,7 @@ test_that("SPR: keep_and_reroot()", {
   expect_equal(Preorder(reduced[[2]]), Preorder(DropTip(result[[2]], "t9")))
 })
 
-test_that("SPR: Under the hood", {
+test_that("SPRDist() handles different inputs", {
   library("TreeTools", quietly = TRUE)
   
   expect_error(
