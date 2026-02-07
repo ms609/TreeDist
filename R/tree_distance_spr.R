@@ -734,7 +734,6 @@ SPRDist.multiPhylo <- SPRDist.list
     sp1 <- as.Splits(tr1)
     sp2 <- as.Splits(tr2, tr1)
     if (nTip == 5 && getOption("sprShortcut", Inf) > 4) {
-      
       # Trees have shape (r, (p1, p2), (q1, q2)) after reduction.
       # There are two cases:
       if (all(xor(sp1[[1]] , sp1[[2]]) == xor(sp2[[1]] , sp2[[2]]))) {
@@ -754,6 +753,75 @@ SPRDist.multiPhylo <- SPRDist.list
         # (X, ((Y, Y'), (X', ?))) vs (Y, ((X, X'), (Y', ?))) = 1 moves
         return(moves + 1)
       }
+    }
+    if (nTip == 6 && getOption("sprShortcut", Inf) > 4) {
+      # Trees may be one of two shapes: 
+      #   ((a1, a2), (b1, b2), (c1, c2))
+      #   (((p1, p2), rp), (rq, (q1, q2)))
+      balanced1 <- all(TipsInSplits(sp1, smallest = TRUE) == 2)
+      balanced2 <- all(TipsInSplits(sp2, smallest = TRUE) == 2)
+      if (balanced1 && balanced2) {
+        # There's only one possible configuration:
+        # ((ab, ac), (ba, bc), (ca, cb)) vs ((ba, ca), (ab, cb), (ac, bc))
+        return(moves + 2)
+      }
+      if (!balanced1 && !balanced2) {
+        # Both trees have the shape
+        # (((Lb, Lc), La), (Ra, (Rb, Rc)))
+        # We will use the same labels for Tree 2, matching where possible.
+        if (La1 == La2 && Ra1 == Ra2) {
+          # La = La, Ra = Ra:
+          # (((Lb, Lc), La), (Ra, (Rb, Rc))), (((Lb, Rb), La), (Ra, (Rc, Lc))): 2
+          return(moves + 2)
+        }
+        # As we can't match La and Ra, we'll match La if we can.
+        if (La1 != La2 && Ra1 != Ra2) {
+          # LO != La, Ra != Ra
+          # La and Ra are both in the cherries
+          # (((?, La), Lb), (Lc, (?, ?)))
+          #   (((Rb, La), Lb), (Lc, (Ra, Rc))) = 2
+          return(moves + 2)
+          
+          #   
+          # (((?, ?), Lb), (Rb, (?, ?)))
+          return(moves + 2)
+          #   (((?, La), Lb), (Rb, (?, ?)))
+          #     (((Lc, La), Lb), (Rb, (Ra, Rc))) = 2
+          #     (((Ra, La), Lb), (Rb, (Lc, Rc))) = 2
+          #     (((Rc, La), Lb), (Rb, (Ra, Lc))) = 2
+          #     
+          #   (((?, ?), Lb), (Rb, (La, ?)))
+          #     (((Ra, Rc), Lb), (Rb, (La, Lc))) = 2
+          #     (((Lc, Rc), Lb), (Rb, (La, Ra))) = 2
+          #     (((Ra, Lc), Lb), (Rb, (La, Rc))) = 2
+          #   
+          #   (((?, ?), Lb), (Rb, (?, ?)))
+          #     (((Lc, Rc), Lb), (Rb, (La, Ra))) = 2
+          #     (((Lc, Ra), Lb), (Rb, (La, Rc))) = 2
+          #     (((Ra, Rc), Lb), (Rb, (La, Lc))) = 2
+          #     (((Ra, La), Lb), (Rb, (Rc, Lc))) = 2
+          #     (((Rc, La), Lb), (Rb, (Ra, Lc))) = 2
+          #     (((Lc, La), Lb), (Rb, (Ra, Rc))) = 2
+          
+          #   
+          # (((?, ?), Rb), (Rc, (?, ?)))
+          #   (((?, ?), Rb), (Rc, (?, ?)))
+          return(moves + ??)
+        }
+        # Else La = La, Ra != Ra: (((Lb, Lc), La), (Ra, (Rb, Rc))) with
+        # 
+        # RO with LO
+        # (((?, ?), La), (Rb, (?, ?))),
+        # (((Lb, Ra), La), (Rb, (Rc, Lc))),
+        # 
+        # (((Rc, Ra), La), (Rb, (Rc, Lc))),
+        # 
+        # (((?, ?), La), (Lb, (?, ?))),
+        # (((Lc, Ra), La), (Lb, (Rb, Lc))),
+        # 
+        # 
+      }
+      
     }
     
     firstMatchedSplit <- FirstMatchingSplit(sp1, sp2)
