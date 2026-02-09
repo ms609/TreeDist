@@ -12,11 +12,16 @@ inline int popcount7(uint8_t x) {
   return __builtin_popcount(x & 0x7F);
 }
 
+inline int tips_in_smallest7(uint8_t x) {
+  const int count = __builtin_popcount(x & 0x7F);
+  return count < 4 ? count : 7 - count;
+}
+
 inline Split xor_split(Split a, Split b) {
   return (a ^ b) & 0x7F;
 }
 
-inline Split normalize_split(Split s) {
+inline Split smaller_split(Split s) {
   if (popcount7(s) > 3) {
     s ^= 0x7F;
   }
@@ -34,16 +39,15 @@ Shape detect_shape(const SplitSet& sp) {
   int trio_count = 0;
   for (auto s : sp) {
     int t = popcount7(s);
-    if (t == 3 || t == 4) ++trio_count;
+    if (t == 3) ++trio_count;
   }
   return (trio_count == 2) ? Shape::Pectinate : Shape::Balanced;
 }
 
 CanonicalInfo canonical_pectinate(const SplitSet& sp) {
-  std::array<int,4> tiss;
+  std::array<int,4> tiss; // Tips in split (smallest)
   for (int i = 0; i < 4; ++i) {
-    int t = popcount7(sp[i]);
-    tiss[i] = (t > 3) ? 7 - t : t;
+    tiss[i] = popcount7(sp[i]);
   }
   
   int trio1 = -1, trio2 = -1;
@@ -59,26 +63,27 @@ CanonicalInfo canonical_pectinate(const SplitSet& sp) {
       (pair1 == -1 ? pair1 : pair2) = i;
     }
   }
-    
-  Split midpoint = xor_split(sp[trio1], sp[trio2]);
   
-  if (popcount7(xor_split(sp[pair1], sp[trio1])) != 1) {
+  const Split mid = xor_split(sp[trio1], sp[trio2]) ^ 0x7F;
+  
+  if (tips_in_smallest7(xor_split(sp[pair1], sp[trio1])) != 1) {
     std::swap(pair1, pair2);
   }
-  
-  Split mid = midpoint;
-  Split trio1Tip = normalize_split(xor_split(sp[trio1], sp[pair1]));
-  Split trio2Tip = normalize_split(xor_split(sp[trio2], sp[pair2]));
-  Split duo1 = normalize_split(sp[pair1]);
-  Split duo2 = normalize_split(sp[pair2]);
+  Split trio1Tip = smaller_split(xor_split(sp[trio1], sp[pair1]));
+  Split trio2Tip = smaller_split(xor_split(sp[trio2], sp[pair2]));
+  Split duo1 = smaller_split(sp[pair1]);
+  Split duo2 = smaller_split(sp[pair2]);
   
   Perm perm{};
   int k = 0;
   
   auto emit = [&](Split s) {
-    for (int i = 0; i < 7; ++i)
-      if (s & (1 << i))
+    Rcpp::Rcout << static_cast<int>(s) << " ";
+    for (int i = 0; i < 7; ++i) {
+      if (s & (1 << i)) {
         perm[k++] = i;
+      }
+    }
   };
   
   emit(mid);
@@ -91,12 +96,9 @@ CanonicalInfo canonical_pectinate(const SplitSet& sp) {
 }
 
 CanonicalInfo canonical_balanced(const SplitSet& sp) {
-  std::array<int,4> tiss;
-  std::array<bool,4> big;
+  std::array<int,4> tiss; // Tips in smallest split
   for (int i = 0; i < 4; ++i) {
-    int t = popcount7(sp[i]);
-    big[i] = t > 3;
-    tiss[i] = big[i] ? 7 - t : t;
+    tiss[i] = popcount7(sp[i]);
   }
   
   int firstTrio = std::max_element(tiss.begin(), tiss.end()) - tiss.begin();
@@ -121,9 +123,9 @@ CanonicalInfo canonical_balanced(const SplitSet& sp) {
   }
   
   Split singleton = solo ^ 0x7F;
-  Split trio = normalize_split(sp[trioPair]);
-  Split o1 = normalize_split(sp[other1]);
-  Split o2 = normalize_split(sp[other2]);
+  Split trio = smaller_split(sp[trioPair]);
+  Split o1 = smaller_split(sp[other1]);
+  Split o2 = smaller_split(sp[other2]);
   
   Perm perm{};
   int k = 0;
@@ -174,18 +176,6 @@ int lookup(uint32_t key, const std::array<SPRScore, N>& table) {
   return (it != table.end() && it->key == key) ? it->score : -1;
 }
 
-inline SplitSet read_splits(const Rcpp::RawVector& r) {
-  if (r.size() != 4)
-    Rcpp::stop("Expected a length-4 raw vector of splits");
-  
-  SplitSet sp{};
-  for (int i = 0; i < 4; ++i) {
-    sp[i] = static_cast<uint8_t>(r[i]);
-  }
-  
-  return sp;
-}
-
 int lookup_7(const SplitSet& sp1, const SplitSet& sp2) {
   Shape shape = detect_shape(sp1);
   
@@ -199,25 +189,48 @@ int lookup_7(const SplitSet& sp1, const SplitSet& sp2) {
     Split s = permute_split(sp2[i], canon.perm);
     s = polarize(s);
     packed[i] = s;
+    Rcpp::Rcout << static_cast<int>(s) << " ";
   }
   
   std::sort(packed.begin(), packed.end());
-  uint32_t key = BitPack7(packed);
   
+  uint32_t key = BitPack7(packed);
+  Rcpp::Rcout << "-> " << key << "\n";
   return (shape == Shape::Pectinate)
     ? lookup(key, PEC_LOOKUP)
       : lookup(key, BAL_LOOKUP);
 }
 
+inline SplitSet read_splits(const Rcpp::RawVector& r) {
+  if (r.size() != 4)
+    Rcpp::stop("Expected a length-4 raw vector of splits");
+  
+  SplitSet sp{};
+  Rcpp::Rcout << "Reading split: ";
+  for (int i = 0; i < 4; ++i) {
+    sp[i] = static_cast<uint8_t>(r[i]);
+    Rcpp::Rcout << static_cast<int>(sp[i]) << " ";
+  }
+  Rcpp::Rcout << ";\n";
+  
+  return sp;
+}
+
+inline SplitSet smallest_splits(SplitSet sp) {
+  for (auto& s : sp) {
+    if (popcount7(s) > 3) {
+      s ^= 0x7F;
+    }
+  }
+  return sp;
+}
+
 // [[Rcpp::export]]
 int spr_table_7(const Rcpp::RawVector& sp1, const Rcpp::RawVector& sp2) {
-  SplitSet s1 = read_splits(sp1);
+  SplitSet s1_raw = read_splits(sp1);
+  SplitSet s1 = smallest_splits(s1_raw);
+  
   SplitSet s2 = read_splits(sp2);
   
-  int score = lookup_7(s1, s2);
-  
-  if (score < 0)
-    Rcpp::stop("SPRExact7 lookup failed: key not found");
-  
-  return score;
+  return lookup_7(s1, s2);
 }
