@@ -320,6 +320,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// spr_table_8
+int spr_table_8(const Rcpp::RawVector& sp1, const Rcpp::RawVector& sp2);
+RcppExport SEXP _TreeDist_spr_table_8(SEXP sp1SEXP, SEXP sp2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::RawVector& >::type sp1(sp1SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::RawVector& >::type sp2(sp2SEXP);
+    rcpp_result_gen = Rcpp::wrap(spr_table_8(sp1, sp2));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpp_robinson_foulds_distance
 List cpp_robinson_foulds_distance(const RawMatrix& x, const RawMatrix& y, const IntegerVector& nTip);
 RcppExport SEXP _TreeDist_cpp_robinson_foulds_distance(SEXP xSEXP, SEXP ySEXP, SEXP nTipSEXP) {
@@ -441,6 +453,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_keep_and_reroot", (DL_FUNC) &_TreeDist_keep_and_reroot, 3},
     {"_TreeDist_keep_and_reduce", (DL_FUNC) &_TreeDist_keep_and_reduce, 3},
     {"_TreeDist_spr_table_7", (DL_FUNC) &_TreeDist_spr_table_7, 2},
+    {"_TreeDist_spr_table_8", (DL_FUNC) &_TreeDist_spr_table_8, 2},
     {"_TreeDist_cpp_robinson_foulds_distance", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_distance, 3},
     {"_TreeDist_cpp_robinson_foulds_info", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_info, 3},
     {"_TreeDist_cpp_matching_split_distance", (DL_FUNC) &_TreeDist_cpp_matching_split_distance, 3},

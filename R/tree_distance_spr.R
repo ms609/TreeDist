@@ -887,12 +887,42 @@ SPRDist.multiPhylo <- SPRDist.list
     }
     if (nTip == 7 && getOption("sprShortcut", Inf) >= 7) {
       exact <- .SPRExact7(sp1, sp2)
-      if (is.na(exact)) {
+      if (is.na(exact) || exact < 1) {
+        dput(sp1)
+        dput(as.integer(as.TreeNumber(as.phylo(sp1))))
         summary(sp1)
+        dput(as.integer(as.TreeNumber(as.phylo(sp2))))
+        dput(sp2)
         summary(sp2)
         stop("Lookup failed.")
       }
       return(moves + .SPRExact7(sp1, sp2))
+    }
+    if (nTip == 8 && getOption("sprShortcut", Inf) >= 8) {
+      exact <- .SPRExact8(sp1, sp2)
+      if (is.na(exact) || exact < 1) {
+        dput(sp1)
+        dput(as.integer(as.TreeNumber(as.phylo(sp1))))
+        summary(sp1)
+        dput(as.integer(as.TreeNumber(as.phylo(sp2))))
+        dput(sp2)
+        summary(sp2)
+        stop("Lookup failed.")
+      }
+      return(moves + .SPRExact8(sp1, sp2))
+    }
+    if (nTip == 9 && getOption("sprShortcut", Inf) >= 8 && FALSE) {
+      exact <- .SPRExact9(sp1, sp2)
+      if (is.na(exact) || exact < 1) {
+        dput(sp1)
+        dput(as.integer(as.TreeNumber(as.phylo(sp1))))
+        summary(sp1)
+        dput(as.integer(as.TreeNumber(as.phylo(sp2))))
+        dput(sp2)
+        summary(sp2)
+        stop("Lookup failed.")
+      }
+      return(moves + .SPRExact9(sp1, sp2))
     }
     
     firstMatchedSplit <- FirstMatchingSplit(sp1, sp2)
