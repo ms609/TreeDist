@@ -207,31 +207,27 @@ BitPack8 <- function(vec) {
   v <- as.integer64(vec)
   as.character(
     (v[1] - offset[[1]]) * 134217728L +
-  (v[2] - offset[[1]]) * 1048576L +
-  (v[3] - offset[[1]]) * 8192L +
-  (v[4] - offset[[1]]) * 64L +
-  (v[5] - offset[[1]]))
+      (v[2] - offset[[1]]) * 1048576L +
+      (v[3] - offset[[1]]) * 8192L +
+      (v[4] - offset[[1]]) * 64L +
+      (v[5] - offset[[1]]))
 }
 
 pecPack <- apply(pecSplits, 2, BitPack8)
 pecDF <- data.frame(key = pecPack, score = pecScores[pecValid])
 pecDF <- pecDF[order(pecDF$key), ]
-pecDF$key_str <- paste0(as.character(pecDF$key), "ULL")
 
 mixPack <- apply(mixSplits, 2, BitPack8)
 mixDF <- data.frame(key = mixPack, score = mixScores[mixValid])
 mixDF <- mixDF[order(mixDF$key), ]
-mixDF$key_str <- paste0(as.character(mixDF$key), "ULL")
 
 midPack <- apply(midSplits, 2, BitPack8)
 midDF <- data.frame(key = midPack, score = midScores[midValid])
 midDF <- midDF[order(midDF$key), ]
-midDF$key_str <- paste0(as.character(midDF$key), "ULL")
 
 balPack <- apply(balSplits, 2, BitPack8)
 balDF <- data.frame(key = balPack, score = balScores[balValid])
 balDF <- balDF[order(balDF$key), ]
-balDF$key_str <- paste0(as.character(balDF$key), "ULL")
 
 
 header_content <- paste0(
@@ -241,22 +237,22 @@ header_content <- paste0(
   
   "static constexpr std::array<SPRScore64, ", nrow(pecDF), "> PEC_LOOKUP",
   nTip, " = {{\n",
-  paste0("    {", pecDF$key_str, ", ", pecDF$score, "}", collapse = ",\n"),
+  paste0("    {", pecDF$key, "ULL, ", pecDF$score, "}", collapse = ",\n"),
   "\n}};\n",
   
   "static constexpr std::array<SPRScore64, ", nrow(mixDF), "> MIX_LOOKUP",
   nTip, " = {{\n",
-  paste0("    {", mixDF$key_str, ", ", mixDF$score, "}", collapse = ",\n"),
+  paste0("    {", mixDF$key, "ULL, ", mixDF$score, "}", collapse = ",\n"),
   "\n}};\n",
   
   "static constexpr std::array<SPRScore64, ", nrow(midDF), "> MID_LOOKUP",
   nTip, " = {{\n",
-  paste0("    {", midDF$key_str, ", ", midDF$score, "}", collapse = ",\n"),
+  paste0("    {", midDF$key, "ULL, ", midDF$score, "}", collapse = ",\n"),
   "\n}};\n",
   
   "static constexpr std::array<SPRScore64, ", nrow(balDF), "> BAL_LOOKUP",
   nTip, " = {{\n",
-  paste0("    {", balDF$key_str, ", ", balDF$score, "}", collapse = ",\n"),
+  paste0("    {", balDF$key, "ULL, ", balDF$score, "}", collapse = ",\n"),
   "\n}};"
 )
 
