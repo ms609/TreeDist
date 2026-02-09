@@ -169,24 +169,12 @@ tisBig <- tis > nTip / 2
 tiss <- tis
 tiss[tisBig] <- nTip - tis[tisBig]
 
-firstTrio <- which.max(tiss)
-firstTrioSp <- balSp[[firstTrio]]
-for (trioPair in seq_along(tis)[-firstTrio]) {
-  soloSp <- xor(balSp[[trioPair]], firstTrioSp)
-  if (TipsInSplits(soloSp) == nTip - 1) break
-}
-otherSp <- seq_along(tis)[-c(trioPair, firstTrio)]
-singleton <- !soloSp
-singleTip <- which(as.logical(singleton))
-trioPairTip <- as.logical(balSp[[trioPair]])
-if (tisBig[[trioPair]]) trioPairTip <- !as.logical(trioPairTip)
-otherSp1 <- as.logical(balSp[[otherSp[[1]]]])
-if (tisBig[[otherSp[[1]]]]) otherSp1 <- !as.logical(otherSp1)
-otherSp2 <- as.logical(balSp[[otherSp[[2]]]])
-if (tisBig[[otherSp[[2]]]]) otherSp2 <- !as.logical(otherSp2)
-canonOrder <- TipLabels(bal)[
-  c(singleTip, which(trioPairTip), which(otherSp1), which(otherSp2))]
+cherries <- tiss == 2
 
+canonOrder <- TipLabels(bal)[unlist(
+  lapply(which(cherries), function(idx) .FewerTips(balSp[[idx]])),
+  use.names = FALSE)
+]
 bal <- RenumberTips(bal, canonOrder)
 
 balTrees <- as.phylo(seq_len(NUnrooted(nTip)), nTip, canonOrder)
@@ -206,49 +194,69 @@ balSplits <- vapply(which(balValid), function(i) {
 }, integer(nTip - 3))
 
 # Define packing algorithm based on range
-range(pecSplits[1, ], mixSplits[1, ], midSplits[1, ], balSplits[1, ])
-range(pecSplits[2, ], mixSplits[2, ], midSplits[2, ], balSplits[2, ])
-range(pecSplits[3, ], mixSplits[3, ], midSplits[3, ], balSplits[3, ])
-range(pecSplits[4, ], mixSplits[4, ], midSplits[4, ], balSplits[4, ])
-BitPack7 <- function(vec) {
-  bitwShiftL(vec[1] - 3, 18) +
-    bitwShiftL(vec[2] - 7, 12) +
-    bitwShiftL(vec[3] - 15, 6)  +
-    vec[4] - 33
+library("bit64")
+offset <- c(
+  min(pecSplits[1, ], mixSplits[1, ], midSplits[1, ], balSplits[1, ]),
+  min(pecSplits[2, ], mixSplits[2, ], midSplits[2, ], balSplits[2, ]),
+  min(pecSplits[3, ], mixSplits[3, ], midSplits[3, ], balSplits[3, ]),
+  min(pecSplits[4, ], mixSplits[4, ], midSplits[4, ], balSplits[4, ]),
+  min(pecSplits[5, ], mixSplits[5, ], midSplits[5, ], balSplits[5, ])) |>
+  as.integer64()
+
+BitPack8 <- function(vec) {
+  v <- as.integer64(vec)
+  as.character(
+    (v[1] - offset[[1]]) * 134217728L +
+  (v[2] - offset[[1]]) * 1048576L +
+  (v[3] - offset[[1]]) * 8192L +
+  (v[4] - offset[[1]]) * 64L +
+  (v[5] - offset[[1]]))
 }
 
-pecPack <- apply(pecSplits, 2, BitPack7)
+pecPack <- apply(pecSplits, 2, BitPack8)
 pecDF <- data.frame(key = pecPack, score = pecScores[pecValid])
 pecDF <- pecDF[order(pecDF$key), ]
+pecDF$key_str <- paste0(as.character(pecDF$key), "ULL")
 
-balPack <- apply(balSplits, 2, BitPack7)
+mixPack <- apply(mixSplits, 2, BitPack8)
+mixDF <- data.frame(key = mixPack, score = mixScores[mixValid])
+mixDF <- mixDF[order(mixDF$key), ]
+mixDF$key_str <- paste0(as.character(mixDF$key), "ULL")
+
+midPack <- apply(midSplits, 2, BitPack8)
+midDF <- data.frame(key = midPack, score = midScores[midValid])
+midDF <- midDF[order(midDF$key), ]
+midDF$key_str <- paste0(as.character(midDF$key), "ULL")
+
+balPack <- apply(balSplits, 2, BitPack8)
 balDF <- data.frame(key = balPack, score = balScores[balValid])
 balDF <- balDF[order(balDF$key), ]
+balDF$key_str <- paste0(as.character(balDF$key), "ULL")
 
 
 header_content <- paste0(
   "// Generated from data-raw/spr-exact.R\n",
   "#include <cstdint>\n#include <array>\n#include <algorithm>\n\n",
-  "struct SPRScore { uint32_t key; int score; };\n\n",
+  "struct SPRScore64 { uint64_t key; int score; };\n\n",
   
-  "static constexpr std::array<SPRScore, ", nrow(pecDF), "> PEC_LOOKUP",
+  "static constexpr std::array<SPRScore64, ", nrow(pecDF), "> PEC_LOOKUP",
   nTip, " = {{\n",
-  paste0("    {", pecDF$key, "u, ", pecDF$score, "}", collapse = ",\n"),
+  paste0("    {", pecDF$key_str, ", ", pecDF$score, "}", collapse = ",\n"),
   "\n}};\n",
   
-  "static constexpr std::array<SPRScore, ", nrow(mixDF), "> MIX_LOOKUP",
+  "static constexpr std::array<SPRScore64, ", nrow(mixDF), "> MIX_LOOKUP",
   nTip, " = {{\n",
-  paste0("    {", mixDF$key, "u, ", mixDF$score, "}", collapse = ",\n"),
+  paste0("    {", mixDF$key_str, ", ", mixDF$score, "}", collapse = ",\n"),
   "\n}};\n",
   
-  "static constexpr std::array<SPRScore, ", nrow(midDF), "> MID_LOOKUP",
+  "static constexpr std::array<SPRScore64, ", nrow(midDF), "> MID_LOOKUP",
   nTip, " = {{\n",
-  paste0("    {", midDF$key, "u, ", midDF$score, "}", collapse = ",\n"),
+  paste0("    {", midDF$key_str, ", ", midDF$score, "}", collapse = ",\n"),
   "\n}};\n",
   
-  "static constexpr std::array<SPRScore, ", nrow(balDF), "> BAL_LOOKUP",
+  "static constexpr std::array<SPRScore64, ", nrow(balDF), "> BAL_LOOKUP",
   nTip, " = {{\n",
-  paste0("    {", balDF$key, "u, ", balDF$score, "}", collapse = ",\n"),
+  paste0("    {", balDF$key_str, ", ", balDF$score, "}", collapse = ",\n"),
   "\n}};"
 )
 
