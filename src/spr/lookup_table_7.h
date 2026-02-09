@@ -5,7 +5,7 @@
 
 struct SPRScore { uint32_t key; int score; };
 
-static constexpr std::array<SPRScore, 750> PEC_LOOKUP = {{
+static constexpr std::array<SPRScore, 750> PEC_LOOKUP7 = {{
     {14u, 2},
     {15u, 2},
     {519u, 2},
@@ -757,7 +757,7 @@ static constexpr std::array<SPRScore, 750> PEC_LOOKUP = {{
     {12000092u, 2},
     {12000093u, 2}
 }};
-static constexpr std::array<SPRScore, 672> BAL_LOOKUP = {{
+static constexpr std::array<SPRScore, 672> BAL_LOOKUP7 = {{
     {14u, 2},
     {15u, 2},
     {519u, 2},

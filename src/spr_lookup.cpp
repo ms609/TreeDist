@@ -205,8 +205,8 @@ int lookup_7(const SplitSet& sp1, const SplitSet& sp2) {
   
   uint32_t key = BitPack7(packed);
   return (shape == Shape::Pectinate)
-    ? lookup(key, PEC_LOOKUP)
-      : lookup(key, BAL_LOOKUP);
+    ? lookup(key, PEC_LOOKUP7)
+      : lookup(key, BAL_LOOKUP7);
 }
 
 inline SplitSet read_splits(const Rcpp::RawVector& r) {
