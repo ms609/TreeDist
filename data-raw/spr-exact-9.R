@@ -162,7 +162,7 @@ splits2 <- vapply(which(valid2), function(i) {
 }, integer(nTip - 3))
 
 
-shape3 <- Tree("((c1, c2), (s, ((p1, p2), (t, (u, (q1, q2))))));")
+shape3 <- Tree("((c1, c2), (s, ((h1, h2), ((p1, p2), (q1, q2)))));")
 sp3 <- as.Splits(shape3)
 tis <- TipsInSplits(sp3)
 tisBig <- tis > nTip / 2
@@ -215,7 +215,7 @@ splits3 <- vapply(which(valid3), function(i) {
 
 
 
-shape4 <- Tree("((c1, c2), (s, ((r1, r1), ((p1, p2), (q1, q2)))));")
+shape4 <- Tree("((c1, c2), (s, ((t, (p1, p2)), (u, (q1, q2)))));")
 sp4 <- as.Splits(shape4)
 tis <- TipsInSplits(sp4)
 tisBig <- tis > nTip / 2
@@ -269,7 +269,7 @@ splits4 <- vapply(which(valid4), function(i) {
 
 
 
-shape5 <- Tree("((c1, c2), (s, ((t, (p1, p2)), (u, (q1, q2)))));")
+shape5 <- Tree("(((c1, c2), (h1, h2)), (s, ((p1, p2)), (q1, q2)));")
 sp5 <- as.Splits(shape5)
 tis <- TipsInSplits(sp5)
 tisBig <- tis > nTip / 2
