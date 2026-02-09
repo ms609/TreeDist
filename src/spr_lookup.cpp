@@ -3,6 +3,7 @@
 #include <array>
 #include <cstdint>
 #include "spr/lookup_table_7.h"
+#include "TreeTools/assert.h"
 
 using Split = uint8_t;          // 7 bits used
 using SplitSet = std::array<Split, 4>;
@@ -78,7 +79,6 @@ CanonicalInfo canonical_pectinate(const SplitSet& sp) {
   int k = 0;
   
   auto emit = [&](Split s) {
-    Rcpp::Rcout << static_cast<int>(s) << " ";
     for (int i = 0; i < 7; ++i) {
       if (s & (1 << i)) {
         perm[k++] = i;
@@ -109,20 +109,28 @@ CanonicalInfo canonical_balanced(const SplitSet& sp) {
   for (int i = 0; i < 4; ++i) {
     if (i == firstTrio) continue;
     Split s = xor_split(sp[i], firstSp);
-    if (popcount7(s) == 6) {
+    const int s_count = popcount7(s);
+    if (s_count == 1) {
       trioPair = i;
       solo = s;
       break;
+    } else if (s_count == 6) {
+      trioPair = i;
+      solo = s ^ 0x7F;
+      break;
     }
   }
+  ASSERT(trioPair > -1);
   
   int other1 = -1, other2 = -1;
   for (int i = 0; i < 4; ++i) {
     if (i != firstTrio && i != trioPair)
       (other1 == -1 ? other1 : other2) = i;
   }
+  ASSERT(other1 > -1);
+  ASSERT(other2 > -1);
   
-  Split singleton = solo ^ 0x7F;
+  Split singleton = solo;
   Split trio = smaller_split(sp[trioPair]);
   Split o1 = smaller_split(sp[other1]);
   Split o2 = smaller_split(sp[other2]);
@@ -131,9 +139,11 @@ CanonicalInfo canonical_balanced(const SplitSet& sp) {
   int k = 0;
   
   auto emit = [&](Split s) {
-    for (int i = 0; i < 7; ++i)
-      if (s & (1 << i))
+    for (int i = 0; i < 7; ++i) {
+      if (s & (1 << i)) {
         perm[k++] = i;
+      }
+    }
   };
   
   emit(singleton);
@@ -189,13 +199,11 @@ int lookup_7(const SplitSet& sp1, const SplitSet& sp2) {
     Split s = permute_split(sp2[i], canon.perm);
     s = polarize(s);
     packed[i] = s;
-    Rcpp::Rcout << static_cast<int>(s) << " ";
   }
   
   std::sort(packed.begin(), packed.end());
   
   uint32_t key = BitPack7(packed);
-  Rcpp::Rcout << "-> " << key << "\n";
   return (shape == Shape::Pectinate)
     ? lookup(key, PEC_LOOKUP)
       : lookup(key, BAL_LOOKUP);
@@ -206,12 +214,9 @@ inline SplitSet read_splits(const Rcpp::RawVector& r) {
     Rcpp::stop("Expected a length-4 raw vector of splits");
   
   SplitSet sp{};
-  Rcpp::Rcout << "Reading split: ";
   for (int i = 0; i < 4; ++i) {
     sp[i] = static_cast<uint8_t>(r[i]);
-    Rcpp::Rcout << static_cast<int>(sp[i]) << " ";
   }
-  Rcpp::Rcout << ";\n";
   
   return sp;
 }
