@@ -838,6 +838,10 @@ SPRDist.multiPhylo <- SPRDist.list
   }
 }
 
+.SPRExact7 <- function(sp1, sp2) {
+  lookup_from_table(sp1, sp2)
+}
+
 # Takes a 'Rogue' approach: finds the leaf that introduces the most conflict,
 # and nixes it.
 #' @importFrom TreeTools FirstMatchingSplit
@@ -880,6 +884,15 @@ SPRDist.multiPhylo <- SPRDist.list
     }
     if (nTip == 6 && getOption("sprShortcut", Inf) >= 6) {
       return(moves + .SPRExact6(sp1, sp2))
+    }
+    if (nTip == 7 && getOption("sprShortcut", Inf) >= 7) {
+      exact <- .SPRExact7(sp1, sp2)
+      if (is.na(exact)) {
+        summary(sp1)
+        summary(sp2)
+        stop("Lookup failed.")
+      }
+      return(moves + .SPRExact7(sp1, sp2))
     }
     
     firstMatchedSplit <- FirstMatchingSplit(sp1, sp2)

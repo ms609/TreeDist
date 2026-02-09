@@ -85,13 +85,13 @@ test_that("confusion()", {
 test_that("SPR shortcuts okay - exhaustive", {
   skip_if_not(getOption("slowMode", FALSE))
   library("TreeTools", quietly = TRUE)
-  nTip <- 6
+  nTip <- 7
   allTrees <- as.phylo(seq_len(NUnrooted(nTip)), nTip)
   
   sum(apply(combn(length(allTrees), 2), 2, function(ij) {
     reduced <- ReduceTrees(allTrees[[ij[[1]]]], allTrees[[ij[[2]]]])
     r1 <- reduced[[1]]
-    if (NTip(r1) != nTip) return(NA)
+    if (is.null(r1) || NTip(r1) != nTip) return(NA)
     r2 <- reduced[[2]]
     exact <- TBRDist::USPRDist(r1, r2)
     shortcut <- SPRDist(r1, r2, method = "Rogue")
@@ -100,7 +100,7 @@ test_that("SPR shortcuts okay - exhaustive", {
     expect_true(equal)
     equal
   }), na.rm = TRUE)
-}
+})
 
 test_that("SPR shortcuts okay - known answer", {
   library("TreeTools", quietly = TRUE)
@@ -127,7 +127,16 @@ test_that("SPR shortcuts okay - known answer", {
   cuts6 <- SPRDist(trees, method = "rogue")
   expect_true(all(cuts6 <= noCuts))
   expect_true(all(cuts6 >= exact))
-}
+  # Aspirational:
+  expect_true(all(cuts6 == exact))
+  
+  options("sprShortcut" = 7)
+  cuts6 <- SPRDist(trees, method = "rogue")
+  expect_true(all(cuts7 <= noCuts))
+  expect_true(all(cuts7 >= exact))
+  # Aspirational:
+  expect_true(all(cuts7 == exact))
+})
 
 test_that("SPR shortcuts okay - larger trees", {
   library("TreeTools", quietly = TRUE)
