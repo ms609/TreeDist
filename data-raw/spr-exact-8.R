@@ -1,4 +1,5 @@
 library("TreeTools")
+ReduceTrees <- TreeDist::ReduceTrees
 
 Tree <- function(txt) ape::read.tree(text = txt)
 nTip <- 8
@@ -207,10 +208,10 @@ BitPack8 <- function(vec) {
   v <- as.integer64(vec)
   as.character(
     (v[1] - offset[[1]]) * 134217728L +
-      (v[2] - offset[[1]]) * 1048576L +
-      (v[3] - offset[[1]]) * 8192L +
-      (v[4] - offset[[1]]) * 64L +
-      (v[5] - offset[[1]]))
+      (v[2] - offset[[2]]) * 1048576L +
+      (v[3] - offset[[3]]) * 8192L +
+      (v[4] - offset[[4]]) * 64L +
+      (v[5] - offset[[5]]))
 }
 
 pecPack <- apply(pecSplits, 2, BitPack8)
