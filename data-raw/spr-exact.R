@@ -1,14 +1,6 @@
 library("TreeTools")
 
 Tree <- function(txt) ape::read.tree(text = txt)
-BitPack7 <- function(vec) {
-  val <- 0
-  val <- bitwShiftL(vec[1] - 6, 20) +
-    bitwShiftL(vec[2] - 14, 13) +
-    bitwShiftL(vec[3] - 30, 6)  +
-    (vec[4] - 62)
-  return(val)
-}
 
 pec7 <- Tree("((c1, c2), (s, (t, (u, (h1, h2)))));")
 pecSp <- as.Splits(pec7)
@@ -56,13 +48,8 @@ pecScores <- sapply(seq_along(pecTrees), function(i) {
 pecValid <- !is.na(pecScores)
 
 pecSplits <- vapply(which(pecValid), function(i) {
-  pecTrees[[i]] |> as.Splits() |> as.integer() |> sort()
+  as.integer(!pecTrees[[i]] |> as.Splits() |> PolarizeSplits(7)) |> sort()
 }, integer(4))
-pecPack <- apply(pecSplits, 2, BitPack7)
-
-pecDF <- data.frame(key = pecPack, score = pecScores[pecValid])
-pecDF <- pecDF[order(pecDF$key), ]
-
 
 
 bal7 <- Tree("(((p1, p2), (q1, q2)), (s, (r1, r2)));")
@@ -104,9 +91,25 @@ balScores <- vapply(seq_along(balTrees), function(i) {
 balValid <- !is.na(balScores)
 
 balSplits <- vapply(which(balValid), function(i) {
-  balTrees[[i]] |> as.Splits() |> as.integer() |> sort()
+  as.integer(!(balTrees[[i]] |> as.Splits() |> PolarizeSplits(7))) |>
+    sort()
 }, integer(4))
 
+# Define packing algorithm based on range
+range(pecSplits[1, ], balSplits[1, ])
+range(pecSplits[2, ], balSplits[2, ])
+range(pecSplits[3, ], balSplits[3, ])
+range(pecSplits[4, ], balSplits[4, ])
+BitPack7 <- function(vec) {
+  bitwShiftL(vec[1] - 3, 18) +
+    bitwShiftL(vec[2] - 7, 12) +
+    bitwShiftL(vec[3] - 15, 6)  +
+    vec[4] - 33
+}
+
+pecPack <- apply(pecSplits, 2, BitPack7)
+pecDF <- data.frame(key = pecPack, score = pecScores[pecValid])
+pecDF <- pecDF[order(pecDF$key), ]
 
 balPack <- apply(balSplits, 2, BitPack7)
 balDF <- data.frame(key = balPack, score = balScores[balValid])

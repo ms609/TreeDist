@@ -7,10 +7,13 @@ using namespace Rcpp;
 
 inline int count_bits(uint8_t n) { return __builtin_popcount(n); }
 
-// Standard normalization: ensure split has < 4 tips and bit 0 is 0
-inline uint8_t norm(uint8_t s) {
-  if (count_bits(s) > 3) s = ~s & 0x7F;
-  return s;
+// Polarize on Tip 7 (bit 6): Ensure bit 6 is always 0
+// This matches R: !PolarizeSplits(splits, 7)
+inline uint8_t norm7(uint8_t s) {
+  if (s & 0x40) { // If tip 7 (bit 6) is set
+    return ~s & 0x7F; // Flip bits and mask to 7 bits
+  }
+  return s & 0x7F;
 }
 
 template <size_t N>
@@ -25,62 +28,98 @@ double search_table(const std::array<SPRScore, N>& table, uint32_t key) {
   return NA_REAL;
 }
 
+// Logic to identify the map from sp1 to canonOrder
 void get_pec_map(const std::array<uint8_t, 4>& s1, int* map) {
   uint8_t t[2], p[2];
   int ti = 0, pi = 0;
   
   for (uint8_t s : s1) {
-    uint8_t n = norm(s);
+    uint8_t n = norm7(s);
     if (count_bits(n) == 3) t[ti++] = n;
     else p[pi++] = n;
   }
   
   uint8_t midpoint = t[0] ^ t[1];
-  // R: if (!TipsInSplits(xor(p1, t1)) %in% c(1, 6)) { pairs <- pairs[2:1] }
+  // Align pair1 with trio1
   if (count_bits(p[0] ^ t[0]) != 1) std::swap(p[0], p[1]);
   
   int midTip = __builtin_ctz(midpoint);
-  uint8_t trio1Tip = norm(t[0] ^ p[0]);
-  uint8_t trio2Tip = norm(t[1] ^ p[1]);
+  uint8_t trio1Tip = norm7(t[0] ^ p[0]);
+  uint8_t trio2Tip = norm7(t[1] ^ p[1]);
   uint8_t duo1Tips = p[0];
   uint8_t duo2Tips = p[1];
   
-  // Filling the map based on canonOrder:
-  // c(midTip, which(trio1Tip), which(duo1Tips), which(trio2Tip), which(duo2Tips))
   map[midTip] = 0;
   map[__builtin_ctz(trio1Tip)] = 1;
   
-  // Duo1 has two tips
   int d1a = __builtin_ctz(duo1Tips);
-  int d1b = __builtin_ctz(duo1Tips ^ (1 << d1a));
-  map[d1a] = 2; map[d1b] = 3;
+  map[d1a] = 2; map[__builtin_ctz(duo1Tips ^ (1 << d1a))] = 3;
   
   map[__builtin_ctz(trio2Tip)] = 4;
   
-  // Duo2 has two tips
   int d2a = __builtin_ctz(duo2Tips);
-  int d2b = __builtin_ctz(duo2Tips ^ (1 << d2a));
-  map[d2a] = 5; map[d2b] = 6;
+  map[d2a] = 5; map[__builtin_ctz(duo2Tips ^ (1 << d2a))] = 6;
+}
+
+void get_bal_map(const std::array<uint8_t, 4>& s1, int* map) {
+  int tiss[4];
+  for (int i = 0; i < 4; ++i) tiss[i] = count_bits(norm7(s1[i]));
+  
+  int firstTrioIdx = 0;
+  for (int i = 1; i < 4; ++i) if (tiss[i] > tiss[firstTrioIdx]) firstTrioIdx = i;
+  
+  uint8_t firstTrioSp = norm7(s1[firstTrioIdx]);
+  
+  uint8_t soloSp = 0;
+  int trioPairIdx = -1;
+  for (int i = 0; i < 4; ++i) {
+    if (i == firstTrioIdx) continue;
+    uint8_t curSp = norm7(s1[i]);
+    uint8_t testSolo = firstTrioSp ^ curSp;
+    if (count_bits(testSolo) == 6 || count_bits(testSolo) == 1) {
+      soloSp = norm7(testSolo);
+      trioPairIdx = i;
+      break;
+    }
+  }
+  
+  int other[2], o_count = 0;
+  for (int i = 0; i < 4; ++i) {
+    if (i != firstTrioIdx && i != trioPairIdx) other[o_count++] = i;
+  }
+  
+  uint8_t singleton = norm7(~soloSp & 0x7F);
+  int singleTip = __builtin_ctz(singleton);
+  uint8_t trioPairTip = norm7(s1[trioPairIdx]);
+  uint8_t osp1 = norm7(s1[other[0]]);
+  uint8_t osp2 = norm7(s1[other[1]]);
+  
+  map[singleTip] = 0;
+  int tp1 = __builtin_ctz(trioPairTip);
+  map[tp1] = 1; map[__builtin_ctz(trioPairTip ^ (1 << tp1))] = 2;
+  int o1a = __builtin_ctz(osp1);
+  map[o1a] = 3; map[__builtin_ctz(osp1 ^ (1 << o1a))] = 4;
+  int o2a = __builtin_ctz(osp2);
+  map[o2a] = 5; map[__builtin_ctz(osp2 ^ (1 << o2a))] = 6;
 }
 
 // [[Rcpp::export]]
 double lookup_from_table(RawVector sp1, RawVector sp2) {
+  if (sp1.size() < 4 || sp2.size() < 4) return NA_REAL;
+  
   std::array<uint8_t, 4> s1, s2;
   int trios = 0;
   for (int i = 0; i < 4; ++i) {
     s1[i] = sp1[i];
     s2[i] = sp2[i];
-    if (count_bits(norm(s1[i])) == 3) trios++;
+    if (count_bits(norm7(s1[i])) == 3) trios++;
   }
   
   int map[7];
   bool is_pec = (trios == 2);
   
-  if (is_pec) {
-    get_pec_map(s1, map);
-  } else {
-    // ... Similar logic for get_bal_map ...
-  }
+  if (is_pec) get_pec_map(s1, map);
+  else get_bal_map(s1, map);
   
   std::array<int, 4> remapped_s2;
   for (int i = 0; i < 4; ++i) {
@@ -88,18 +127,18 @@ double lookup_from_table(RawVector sp1, RawVector sp2) {
     for (int bit = 0; bit < 7; ++bit) {
       if (s2[i] & (1 << bit)) res |= (1 << map[bit]);
     }
-    remapped_s2[i] = (int)norm(res);
+    remapped_s2[i] = (int)norm7(res);
   }
   std::sort(remapped_s2.begin(), remapped_s2.end());
   
-  uint32_t key = (static_cast<uint32_t>(remapped_s2[0] - 6) << 20) |
-    (static_cast<uint32_t>(remapped_s2[1] - 14) << 13) |
-    (static_cast<uint32_t>(remapped_s2[2] - 30) << 6)  |
-    (static_cast<uint32_t>(remapped_s2[3] - 62));
+  // Check if within bounds for the ultra-compact pack
+  if (remapped_s2[0] < 3 || remapped_s2[1] < 7 || 
+      remapped_s2[2] < 15 || remapped_s2[3] < 33) return NA_REAL;
   
-  if (is_pec) {
-    return search_table(PEC_LOOKUP, key);
-  } else {
-    return search_table(BAL_LOOKUP, key);
-  }
+  uint32_t key = (static_cast<uint32_t>(remapped_s2[0] - 3) << 18) |
+    (static_cast<uint32_t>(remapped_s2[1] - 7) << 12) |
+    (static_cast<uint32_t>(remapped_s2[2] - 15) << 6) |
+    (static_cast<uint32_t>(remapped_s2[3] - 33));
+  
+  return is_pec ? search_table(PEC_LOOKUP, key) : search_table(BAL_LOOKUP, key);
 }
