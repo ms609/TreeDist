@@ -68,23 +68,29 @@ tisBig <- tis > nTip / 2
 tiss <- tis
 tiss[tisBig] <- nTip - tis[tisBig]
 
-firstTrio <- which.max(tiss)
-firstTrioSp <- mixSp[[firstTrio]]
-for (trioPair in seq_along(tis)[-firstTrio]) {
-  soloSp <- xor(mixSp[[trioPair]], firstTrioSp)
-  if (TipsInSplits(soloSp) == nTip - 1) break
+quad <- which(tiss == 4)
+trio <- which(tiss == 3)
+pairs <- (1:5)[-c(quad, trio)]
+
+trioSp <- mixSp[[trio]]
+sTip <- xor(mixSp[[quad]], trioSp)
+for (trioPair in pairs) {
+  soloSp <- xor(trioSp, mixSp[[trioPair]])
+  if (TipsInSplits(soloSp) %in% c(1, nTip - 1)) break
 }
-otherSp <- seq_along(tis)[-c(trioPair, firstTrio)]
-singleton <- !soloSp
-singleTip <- which(as.logical(singleton))
-trioPairTip <- as.logical(mixSp[[trioPair]])
-if (tisBig[[trioPair]]) trioPairTip <- !as.logical(trioPairTip)
-otherSp1 <- as.logical(mixSp[[otherSp[[1]]]])
-if (tisBig[[otherSp[[1]]]]) otherSp1 <- !as.logical(otherSp1)
-otherSp2 <- as.logical(mixSp[[otherSp[[2]]]])
-if (tisBig[[otherSp[[2]]]]) otherSp2 <- !as.logical(otherSp2)
+cherries <- pairs[pairs != trioPair]
+
+.FewerTips <- function(sp) {
+  which(as.logical(if (TipsInSplits(sp) > nTip / 2) !sp else sp))
+}
+midTip <- .FewerTips(sTip)
+trioTip <- .FewerTips(xor(mixSp[[trioPair]], trioSp))
+trioPairTip <- .FewerTips(mixSp[[trioPair]])
+otherSp1 <- .FewerTips(mixSp[[cherries[[1]]]])
+otherSp2 <- .FewerTips(mixSp[[cherries[[2]]]])
 canonOrder <- TipLabels(mix)[
-  c(singleTip, which(trioPairTip), which(otherSp1), which(otherSp2))]
+  c(midTip, trioTip, trioPairTip, otherSp1, otherSp2)
+  ]
 
 mix <- RenumberTips(mix, canonOrder)
 
@@ -114,23 +120,26 @@ tisBig <- tis > nTip / 2
 tiss <- tis
 tiss[tisBig] <- nTip - tis[tisBig]
 
-firstTrio <- which.max(tiss)
-firstTrioSp <- midSp[[firstTrio]]
-for (trioPair in seq_along(tis)[-firstTrio]) {
-  soloSp <- xor(midSp[[trioPair]], firstTrioSp)
-  if (TipsInSplits(soloSp) == nTip - 1) break
+trios <- unname(which(tiss == 3))
+trioSp1 <- midSp[[trios[[1]]]]
+for (trioPair1 in seq_along(tis)[-trios]) {
+  solo1 <- xor(midSp[[trioPair1]], trioSp1)
+  if (TipsInSplits(solo1) %in% c(1, nTip - 1)) break
 }
-otherSp <- seq_along(tis)[-c(trioPair, firstTrio)]
-singleton <- !soloSp
-singleTip <- which(as.logical(singleton))
-trioPairTip <- as.logical(midSp[[trioPair]])
-if (tisBig[[trioPair]]) trioPairTip <- !as.logical(trioPairTip)
-otherSp1 <- as.logical(midSp[[otherSp[[1]]]])
-if (tisBig[[otherSp[[1]]]]) otherSp1 <- !as.logical(otherSp1)
-otherSp2 <- as.logical(midSp[[otherSp[[2]]]])
-if (tisBig[[otherSp[[2]]]]) otherSp2 <- !as.logical(otherSp2)
-canonOrder <- TipLabels(mid)[
-  c(singleTip, which(trioPairTip), which(otherSp1), which(otherSp2))]
+
+trioSp2 <- midSp[[trios[[2]]]]
+for (trioPair2 in seq_along(tis)[-c(trios, trioPair1)]) {
+  solo2 <- xor(midSp[[trioPair2]], trioSp2)
+  if (TipsInSplits(solo2) %in% c(1, nTip - 1)) break
+}
+
+canonOrder <- TipLabels(mid)[c(
+  .FewerTips(solo1),
+  .FewerTips(midSp[[trioPair1]]),
+  .FewerTips(solo2),
+  .FewerTips(midSp[[trioPair2]]),
+  .FewerTips(midSp[[setdiff(1:5, c(trios, trioPair1, trioPair2))]])
+)]
 
 mid <- RenumberTips(mid, canonOrder)
 
