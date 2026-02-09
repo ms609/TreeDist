@@ -839,7 +839,7 @@ SPRDist.multiPhylo <- SPRDist.list
 }
 
 .SPRExact7 <- function(sp1, sp2) {
-  lookup_from_table(sp1, sp2)
+  spr_table_7(sp1, sp2)
 }
 
 # Takes a 'Rogue' approach: finds the leaf that introduces the most conflict,

@@ -48,7 +48,7 @@ pecScores <- sapply(seq_along(pecTrees), function(i) {
 pecValid <- !is.na(pecScores)
 
 pecSplits <- vapply(which(pecValid), function(i) {
-  as.integer(!pecTrees[[i]] |> as.Splits() |> PolarizeSplits(7)) |> sort()
+  as.integer(!(pecTrees[[i]] |> as.Splits() |> PolarizeSplits(7))) |> sort()
 }, integer(4))
 
 
