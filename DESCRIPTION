@@ -79,8 +79,7 @@ Suggests:
   vdiffr (>= 1.0.0),
 LinkingTo:
   Rcpp,
-  TreeTools (>= 1.16.1),
-Remotes: ms609/TreeTools
+  TreeTools (>= 2.1.0),
 RdMacros: Rdpack
 VignetteBuilder: knitr
 Config/Needs/app/optional: uwot
