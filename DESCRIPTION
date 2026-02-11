@@ -50,7 +50,7 @@ Imports:
   Rdpack (>= 0.7),
   shiny,
   shinyjs,
-  TreeTools (>= 2.0.0.9005),
+  TreeTools (>= 2.1.0),
 Suggests:
   bookdown,
   cluster,
@@ -79,7 +79,7 @@ Suggests:
   vdiffr (>= 1.0.0),
 LinkingTo:
   Rcpp,
-  TreeTools (>= 1.16.1),
+  TreeTools (>= 2.1.0),
 Remotes: ms609/TreeTools
 RdMacros: Rdpack
 VignetteBuilder: knitr
