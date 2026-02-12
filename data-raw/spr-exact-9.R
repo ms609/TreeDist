@@ -173,28 +173,26 @@ fours <- unname(which(tiss == 4))
 trios <- unname(which(tiss == 3))
 pairs <- seq_len(nTip - 3)[-c(trios, fours)]
 
-mid1 <- xor(sp3[[fours[[1]]]], sp3[[trios[[1]]]])
-if (TipsInSplits(mid1) %in% c(1, nTip - 1)) {
-  mid2 <- xor(sp3[[fours[[2]]]], sp3[[trios[[2]]]])
-} else {
-  trios <- trios[2:1]
-  mid1 <- xor(sp3[[fours[[1]]]], sp3[[trios[[1]]]])
-  mid2 <- xor(sp3[[fours[[2]]]], sp3[[trios[[2]]]])
+trioSp <- sp3[[trios]]
+for (trioPair in pairs) {
+  soloSp <- xor(trioSp, sp3[[trioPair]])
+  if (TipsInSplits(soloSp) %in% c(1, nTip - 1)) break
+}
+soloTip <- AsTips(soloSp)
+quadSp <- PolarizeSplits(sp3[[fours]], soloTip)
+
+for (midPair in pairs[pairs != trioPair]) {
+  midPairSp <- quadSp & PolarizeSplits(sp3[[midPair]], soloTip)
+  if (TipsInSplits(midPairSp) == 3) break
 }
 
-# Align trio1 with mid1
-if (!TipsInSplits(xor(sp3[[trios[[1]]]], sp3[[pairs[[1]]]])) %in% 
-    c(1, nTip - 1)) {
-  pairs <- pairs[2:1]
-}
+pairs <- setdiff(pairs, c(trioPair, midPair))
 
 canonOrder <- TipLabels(shape3)[c(
-  centre = AsTips(xor(sp3[[fours[[1]]]], sp3[[fours[[2]]]])),
-  mid1 = AsTips(mid1),
-  trio1 = AsTips(xor(sp3[[trios[[1]]]], sp3[[pairs[[1]]]])),
+  solo = soloTip,
+  soloPair = AsTips(sp3[[trioPair]]),
+  midPair = AsTips(sp3[[midPair]]),
   pair1 = AsTips(sp3[[pairs[[1]]]]),
-  mid2 = AsTips(mid2),
-  trio2 = AsTips(xor(sp3[[trios[[2]]]], sp3[[pairs[[2]]]])),
   pair2 = AsTips(sp3[[pairs[[2]]]])
 )]
 shape3 <- RenumberTips(shape3, canonOrder)
