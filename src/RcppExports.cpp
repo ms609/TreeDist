@@ -10,6 +10,18 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// binary_entropy_counts
+NumericVector binary_entropy_counts(IntegerVector inSplit, int nLeaves);
+RcppExport SEXP _TreeDist_binary_entropy_counts(SEXP inSplitSEXP, SEXP nLeavesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type inSplit(inSplitSEXP);
+    Rcpp::traits::input_parameter< int >::type nLeaves(nLeavesSEXP);
+    rcpp_result_gen = Rcpp::wrap(binary_entropy_counts(inSplit, nLeaves));
+    return rcpp_result_gen;
+END_RCPP
+}
 // COMCLUST
 int COMCLUST(const List& trees);
 RcppExport SEXP _TreeDist_COMCLUST(SEXP treesSEXP) {
@@ -149,6 +161,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// expected_mi
+double expected_mi(const IntegerVector& ni, const IntegerVector& nj);
+RcppExport SEXP _TreeDist_expected_mi(SEXP niSEXP, SEXP njSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const IntegerVector& >::type ni(niSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type nj(njSEXP);
+    rcpp_result_gen = Rcpp::wrap(expected_mi(ni, nj));
+    return rcpp_result_gen;
+END_RCPP
+}
 // lapjv
 Rcpp::List lapjv(Rcpp::NumericMatrix& x, Rcpp::NumericVector& maxX);
 RcppExport SEXP _TreeDist_lapjv(SEXP xSEXP, SEXP maxXSEXP) {
@@ -235,52 +259,64 @@ BEGIN_RCPP
 END_RCPP
 }
 // mismatch_size
-IntegerVector mismatch_size(const RawMatrix x, const RawMatrix y);
+IntegerVector mismatch_size(const RawMatrix& x, const RawMatrix& y);
 RcppExport SEXP _TreeDist_mismatch_size(SEXP xSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const RawMatrix >::type x(xSEXP);
-    Rcpp::traits::input_parameter< const RawMatrix >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const RawMatrix& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const RawMatrix& >::type y(ySEXP);
     rcpp_result_gen = Rcpp::wrap(mismatch_size(x, y));
     return rcpp_result_gen;
 END_RCPP
 }
 // confusion
-IntegerVector confusion(const RawMatrix x, const RawMatrix y);
+IntegerVector confusion(const RawMatrix& x, const RawMatrix& y);
 RcppExport SEXP _TreeDist_confusion(SEXP xSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const RawMatrix >::type x(xSEXP);
-    Rcpp::traits::input_parameter< const RawMatrix >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const RawMatrix& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const RawMatrix& >::type y(ySEXP);
     rcpp_result_gen = Rcpp::wrap(confusion(x, y));
     return rcpp_result_gen;
 END_RCPP
 }
 // keep_and_reroot
-List keep_and_reroot(const List tree1, const List tree2, const LogicalVector keep);
+List keep_and_reroot(const List& tree1, const List& tree2, const LogicalVector& keep);
 RcppExport SEXP _TreeDist_keep_and_reroot(SEXP tree1SEXP, SEXP tree2SEXP, SEXP keepSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const List >::type tree1(tree1SEXP);
-    Rcpp::traits::input_parameter< const List >::type tree2(tree2SEXP);
-    Rcpp::traits::input_parameter< const LogicalVector >::type keep(keepSEXP);
+    Rcpp::traits::input_parameter< const List& >::type tree1(tree1SEXP);
+    Rcpp::traits::input_parameter< const List& >::type tree2(tree2SEXP);
+    Rcpp::traits::input_parameter< const LogicalVector& >::type keep(keepSEXP);
     rcpp_result_gen = Rcpp::wrap(keep_and_reroot(tree1, tree2, keep));
     return rcpp_result_gen;
 END_RCPP
 }
 // keep_and_reduce
-List keep_and_reduce(const List tree1, const List tree2, const LogicalVector keep);
+List keep_and_reduce(const List& tree1, const List& tree2, const LogicalVector& keep);
 RcppExport SEXP _TreeDist_keep_and_reduce(SEXP tree1SEXP, SEXP tree2SEXP, SEXP keepSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const List >::type tree1(tree1SEXP);
-    Rcpp::traits::input_parameter< const List >::type tree2(tree2SEXP);
-    Rcpp::traits::input_parameter< const LogicalVector >::type keep(keepSEXP);
+    Rcpp::traits::input_parameter< const List& >::type tree1(tree1SEXP);
+    Rcpp::traits::input_parameter< const List& >::type tree2(tree2SEXP);
+    Rcpp::traits::input_parameter< const LogicalVector& >::type keep(keepSEXP);
     rcpp_result_gen = Rcpp::wrap(keep_and_reduce(tree1, tree2, keep));
+    return rcpp_result_gen;
+END_RCPP
+}
+// spr_table_7
+int spr_table_7(const Rcpp::RawVector& sp1, const Rcpp::RawVector& sp2);
+RcppExport SEXP _TreeDist_spr_table_7(SEXP sp1SEXP, SEXP sp2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::RawVector& >::type sp1(sp1SEXP);
+    Rcpp::traits::input_parameter< const Rcpp::RawVector& >::type sp2(sp2SEXP);
+    rcpp_result_gen = Rcpp::wrap(spr_table_7(sp1, sp2));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -379,6 +415,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_TreeDist_binary_entropy_counts", (DL_FUNC) &_TreeDist_binary_entropy_counts, 2},
     {"_TreeDist_COMCLUST", (DL_FUNC) &_TreeDist_COMCLUST, 1},
     {"_TreeDist_robinson_foulds_all_pairs", (DL_FUNC) &_TreeDist_robinson_foulds_all_pairs, 1},
     {"_TreeDist_consensus_info", (DL_FUNC) &_TreeDist_consensus_info, 3},
@@ -391,6 +428,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_clone_hpart", (DL_FUNC) &_TreeDist_clone_hpart, 1},
     {"_TreeDist_relabel_hpart", (DL_FUNC) &_TreeDist_relabel_hpart, 2},
     {"_TreeDist_entropy_int", (DL_FUNC) &_TreeDist_entropy_int, 1},
+    {"_TreeDist_expected_mi", (DL_FUNC) &_TreeDist_expected_mi, 2},
     {"_TreeDist_lapjv", (DL_FUNC) &_TreeDist_lapjv, 2},
     {"_TreeDist_cpp_mast", (DL_FUNC) &_TreeDist_cpp_mast, 3},
     {"_TreeDist_cpp_nni_distance", (DL_FUNC) &_TreeDist_cpp_nni_distance, 3},
@@ -402,6 +440,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_TreeDist_confusion", (DL_FUNC) &_TreeDist_confusion, 2},
     {"_TreeDist_keep_and_reroot", (DL_FUNC) &_TreeDist_keep_and_reroot, 3},
     {"_TreeDist_keep_and_reduce", (DL_FUNC) &_TreeDist_keep_and_reduce, 3},
+    {"_TreeDist_spr_table_7", (DL_FUNC) &_TreeDist_spr_table_7, 2},
     {"_TreeDist_cpp_robinson_foulds_distance", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_distance, 3},
     {"_TreeDist_cpp_robinson_foulds_info", (DL_FUNC) &_TreeDist_cpp_robinson_foulds_info, 3},
     {"_TreeDist_cpp_matching_split_distance", (DL_FUNC) &_TreeDist_cpp_matching_split_distance, 3},

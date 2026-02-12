@@ -5,7 +5,7 @@
 \alias{SPRDist.phylo}
 \alias{SPRDist.list}
 \alias{SPRDist.multiPhylo}
-\title{Approximate the Subtree Prune and Regraft (SPR) distance.}
+\title{Approximate the Subtree Prune and Regraft distance}
 \usage{
 SPRDist(tree1, tree2 = NULL, method = "deOliveira", symmetric)
 
@@ -23,10 +23,12 @@ or lists of such trees to undergo pairwise comparison.  Where implemented,
 \insertCite{Day1985;textual}{TreeDist}.}
 
 \item{method}{Character specifying which method to use to approximate the
-SPR distance.  Currently defaults to \code{"deOliveira"}, the only available
-option; a new method will eventually become the default.}
+SPR distance.  Currently defaults to \verb{"deOliveira"``. }"Rogue"` implements an experimental method whose details are pending
+publication; this function is under development, and may be modified or
+removed without notice.  Once formally validated, it is anticipated that this
+method will become the default.}
 
-\item{symmetric}{Ignored (redundant after fix of
+\item{symmetric}{Deprecated (redundant after fix of
 \href{https://github.com/KlausVigo/phangorn/issues/97}{phangorn#97}).}
 }
 \value{
@@ -34,10 +36,16 @@ option; a new method will eventually become the default.}
 between trees.
 }
 \description{
-\code{SPRDist()} calculates an upper bound on the SPR distance between trees
-using the heuristic method of \insertCite{deOliveira2008;textual}{TreeDist}.
-Other approximations are available
-\insertCite{@e.g. @Hickey2008, @Goloboff2008SPR, @Whidden2018}{TreeDist}.
+\code{SPRDist()} approximates the \acronym{SPR} distance between
+trees.
+}
+\details{
+The function currently defaults to the heuristic method of
+\insertCite{deOliveira2008;textual}{TreeDist}, which purports to provide an
+upper bound on the \acronym{SPR} distance (though exceptions exist).
+Other approximations
+\insertCite{@e.g. @Hickey2008, @Goloboff2008SPR, @Whidden2018}{TreeDist} are
+not yet implemented.
 }
 \examples{
 library("TreeTools", quietly = TRUE)
@@ -45,7 +53,7 @@ library("TreeTools", quietly = TRUE)
 # Compare single pair of trees
 SPRDist(BalancedTree(7), PectinateTree(7))
 
-# Compare all pairs of trees        
+# Compare all pairs of trees
 SPRDist(as.phylo(30:33, 8))
 
 # Compare each tree in one list with each tree in another

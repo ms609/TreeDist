@@ -1,0 +1,240 @@
+#include <Rcpp.h>
+#include <algorithm>
+#include <array>
+#include <cstdint>
+#include "spr/lookup_table_7.h"
+#include "TreeTools/assert.h"
+
+using Split7 = uint8_t;          // 7 bits used
+using SplitSet7 = std::array<Split7, 4>;
+using Perm7 = std::array<uint8_t, 7>;
+
+inline int popcount7(uint8_t x) {
+  return __builtin_popcount(x & 0x7F);
+}
+
+inline int tips_in_smallest7(uint8_t x) {
+  const int count = __builtin_popcount(x & 0x7F);
+  return count < 4 ? count : 7 - count;
+}
+
+inline Split7 xor_split7(Split7 a, Split7 b) {
+  return (a ^ b) & 0x7F;
+}
+
+inline Split7 smaller_split7(Split7 s) {
+  if (popcount7(s) > 3) {
+    s ^= 0x7F;
+  }
+  return s;
+}
+
+enum class Shape7 { Pectinate, Balanced };
+
+struct CanonicalInfo7 {
+  Shape7 shape;
+  Perm7 perm;
+};
+
+inline Shape7 detect_shape7(const SplitSet7& sp) {
+  int trio_count = 0;
+  for (auto s : sp) {
+    int t = popcount7(s);
+    if (t == 3) ++trio_count;
+  }
+  return (trio_count == 2) ? Shape7::Pectinate : Shape7::Balanced;
+}
+
+CanonicalInfo7 canonical_pectinate(const SplitSet7& sp) {
+  std::array<int,4> tiss; // Tips in split (smallest)
+  for (int i = 0; i < 4; ++i) {
+    tiss[i] = popcount7(sp[i]);
+  }
+  
+  int trio1 = -1, trio2 = -1;
+  int p = 0;
+  for (int i = 0; i < 4; ++i) {
+    if (tiss[i] == 3) {
+      (p++ == 0 ? trio1 : trio2) = i;
+    }
+  }
+  int pair1 = -1, pair2 = -1;
+  for (int i = 0; i < 4; ++i) {
+    if (i != trio1 && i != trio2) {
+      (pair1 == -1 ? pair1 : pair2) = i;
+    }
+  }
+  
+  const Split7 mid = xor_split7(sp[trio1], sp[trio2]) ^ 0x7F;
+  
+  if (tips_in_smallest7(xor_split7(sp[pair1], sp[trio1])) != 1) {
+    std::swap(pair1, pair2);
+  }
+  Split7 trio1Tip = smaller_split7(xor_split7(sp[trio1], sp[pair1]));
+  Split7 trio2Tip = smaller_split7(xor_split7(sp[trio2], sp[pair2]));
+  Split7 duo1 = smaller_split7(sp[pair1]);
+  Split7 duo2 = smaller_split7(sp[pair2]);
+  
+  Perm7 perm{};
+  int k = 0;
+  
+  auto emit = [&](Split7 s) {
+    for (int i = 0; i < 7; ++i) {
+      if (s & (1 << i)) {
+        perm[k++] = i;
+      }
+    }
+  };
+  
+  emit(mid);
+  emit(trio1Tip);
+  emit(duo1);
+  emit(trio2Tip);
+  emit(duo2);
+  
+  return { Shape7::Pectinate, perm };
+}
+
+CanonicalInfo7 canonical_balanced(const SplitSet7& sp) {
+  std::array<int,4> tiss; // Tips in smallest split
+  for (int i = 0; i < 4; ++i) {
+    tiss[i] = popcount7(sp[i]);
+  }
+  
+  int firstTrio = std::max_element(tiss.begin(), tiss.end()) - tiss.begin();
+  Split7 firstSp = sp[firstTrio];
+  
+  int trioPair = -1;
+  Split7 solo{};
+  for (int i = 0; i < 4; ++i) {
+    if (i == firstTrio) continue;
+    Split7 s = xor_split7(sp[i], firstSp);
+    const int s_count = popcount7(s);
+    if (s_count == 1) {
+      trioPair = i;
+      solo = s;
+      break;
+    } else if (s_count == 6) {
+      trioPair = i;
+      solo = s ^ 0x7F;
+      break;
+    }
+  }
+  ASSERT(trioPair > -1);
+  
+  int other1 = -1, other2 = -1;
+  for (int i = 0; i < 4; ++i) {
+    if (i != firstTrio && i != trioPair)
+      (other1 == -1 ? other1 : other2) = i;
+  }
+  ASSERT(other1 > -1);
+  ASSERT(other2 > -1);
+  
+  Split7 singleton = solo;
+  Split7 trio = smaller_split7(sp[trioPair]);
+  Split7 o1 = smaller_split7(sp[other1]);
+  Split7 o2 = smaller_split7(sp[other2]);
+  
+  Perm7 perm{};
+  int k = 0;
+  
+  auto emit = [&](Split7 s) {
+    for (int i = 0; i < 7; ++i) {
+      if (s & (1 << i)) {
+        perm[k++] = i;
+      }
+    }
+  };
+  
+  emit(singleton);
+  emit(trio);
+  emit(o1);
+  emit(o2);
+  
+  return { Shape7::Balanced, perm };
+}
+
+Split7 permute_split(Split7 s, const Perm7& p) {
+  Split7 out = 0;
+  for (int i = 0; i < 7; ++i) {
+    if (s & (1 << p[i])) {
+      out |= (1 << i);
+    }
+  }
+  return out;
+}
+
+inline Split7 polarize7(Split7 s) {
+  if (s & (1 << 6)) s ^= 0x7F;
+  return s;
+}
+
+inline uint32_t BitPack7(const std::array<int,4>& v) {
+  return ((v[0] - 3)  << 18) |
+    ((v[1] - 7)  << 12) |
+    ((v[2] - 15) << 6)  |
+    ( v[3] - 33);
+}
+
+template <size_t N>
+int lookup(uint32_t key, const std::array<SPRScore, N>& table) {
+  auto it = std::lower_bound(
+    table.begin(), table.end(), key,
+    [](const SPRScore& a, uint32_t k) { return a.key < k; }
+  );
+  return (it != table.end() && it->key == key) ? it->score : -1;
+}
+
+int lookup_7(const SplitSet7& sp1, const SplitSet7& sp2) {
+  Shape7 shape = detect_shape7(sp1);
+  
+  CanonicalInfo7 canon =
+    (shape == Shape7::Pectinate)
+    ? canonical_pectinate(sp1)
+      : canonical_balanced(sp1);
+  
+  std::array<int,4> packed{};
+  for (int i = 0; i < 4; ++i) {
+    Split7 s = permute_split(sp2[i], canon.perm);
+    s = polarize7(s);
+    packed[i] = s;
+  }
+  
+  std::sort(packed.begin(), packed.end());
+  
+  uint32_t key = BitPack7(packed);
+  return (shape == Shape7::Pectinate)
+    ? lookup(key, PEC_LOOKUP7)
+      : lookup(key, BAL_LOOKUP7);
+}
+
+inline SplitSet7 read_splits(const Rcpp::RawVector& r) {
+  if (r.size() != 4)
+    Rcpp::stop("Expected a length-4 raw vector of splits");
+  
+  SplitSet7 sp{};
+  for (int i = 0; i < 4; ++i) {
+    sp[i] = static_cast<uint8_t>(r[i]);
+  }
+  
+  return sp;
+}
+
+inline SplitSet7 smallest_splits(SplitSet7 sp) {
+  for (auto& s : sp) {
+    if (popcount7(s) > 3) {
+      s ^= 0x7F;
+    }
+  }
+  return sp;
+}
+
+// [[Rcpp::export]]
+int spr_table_7(const Rcpp::RawVector& sp1, const Rcpp::RawVector& sp2) {
+  SplitSet7 s1_raw = read_splits(sp1);
+  SplitSet7 s1 = smallest_splits(s1_raw);
+  
+  SplitSet7 s2 = read_splits(sp2);
+  
+  return lookup_7(s1, s2);
+}

@@ -1,11 +1,13 @@
-# TreeDist 2.11.1.9001 (2026-02-05)
+# TreeDist 2.12.0 (2026-02-12)
 
-- Support larger trees by updating some functions to use 32-bit integers, per TreeTools v2.1.0.
-
-
-# TreeDist 2.11.1.9000 (2025-11-13)
-
+- Support larger trees in some functions by updating some functions to use
+  32-bit integers, per TreeTools v2.1.0.
+  
 - `AHMI()` now returns negative values (previously zeroed in error).
+
+- Experimental support for a new method of SPR distance calculation:
+  subject to change or removal.
+  
 
 # TreeDist 2.11.1 (2025-10-13)
 
