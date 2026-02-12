@@ -62,53 +62,34 @@ IntegerVector mismatch_size (const RawMatrix& x, const RawMatrix& y) {
   return calc_mismatch_size(x, y);
 }
 
-// [[Rcpp::export]]
-IntegerVector confusion (const RawMatrix& x, const RawMatrix& y) {
-  if (double(x.rows()) > double(std::numeric_limits<int16>::max())) {
-    Rcpp::stop("This many splits are not (yet) supported.");
-  }
-  const int16 n_split = int16(x.rows());
-  if (n_split != y.rows()) {
-    throw std::invalid_argument("Input splits contain same number of splits.");
-  }
-  if (!x.hasAttribute("nTip")) {
-    Rcpp::stop("`x` lacks nTip attribute");
-  }
-  if (!y.hasAttribute("nTip")) {
-    Rcpp::stop("`y` lacks nTip attribute");
-  }
-  const int16 n_tip = x.attr("nTip");
-  if (n_tip != int16(y.attr("nTip"))) {
-    Rcpp::stop("`x` and `y` differ in `nTip`");
-  }
+IntegerVector calc_confusion(const RawMatrix &x, const RawMatrix &y) {
   
   const TreeTools::SplitList a(x), b(y);
-  const int16
-    n_bin = a.n_bins,
-    confusion_size = 4
-  ;
+  
+  const int32 n_split = static_cast<int32>(x.rows());
+  const int32 n_tip = x.attr("nTip");
+  const int32 n_bin = a.n_bins;
+  const int32 confusion_size = 4;
+  
   IntegerVector ret(n_split * n_split * confusion_size);
   int *ret_ptr = ret.end();
-  for (int16 bi = n_split; bi--; ) {
-    const int16
-      nb = b.in_split[bi],
-      nB = n_tip - nb
-    ;
+  for (int32 bi = n_split; bi--; ) {
+    const int32 nb = b.in_split[bi];
+    const int32 nB = n_tip - nb;
     
-    for (int16 ai = n_split; ai--; ) {
+    for (int32 ai = n_split; ai--; ) {
       
       // x divides tips into a|A; y divides tips into b|B
-      int16 a_and_b = 0;
-      for (int16 bin = n_bin; bin--; ) {
+      int32 a_and_b = 0;
+      for (int32 bin = n_bin; bin--; ) {
         a_and_b += TreeTools::count_bits(a.state[ai][bin] & b.state[bi][bin]);
       }
       
-      const int16
-        na = a.in_split[ai],
-        a_and_B = na - a_and_b,
-        A_and_b = nb - a_and_b,
-        A_and_B = nB - a_and_B
-      ;
+      const int32 na = a.in_split[ai];
+      const int32 a_and_B = na - a_and_b;
+      const int32 A_and_b = nb - a_and_b;
+      const int32 A_and_B = nB - a_and_B;
+      
       *(--ret_ptr) = A_and_B;
       *(--ret_ptr) = A_and_b;
       *(--ret_ptr) = a_and_B;
@@ -117,6 +98,23 @@ IntegerVector confusion (const RawMatrix& x, const RawMatrix& y) {
   }
   ret.attr("dim") = Dimension(confusion_size, n_split, n_split);
   return ret;
+}
+
+// [[Rcpp::export]]
+IntegerVector confusion(const RawMatrix& x, const RawMatrix& y) {
+  if (x.rows() != y.rows()) {
+    throw std::invalid_argument("Input splits contain same number of splits.");
+  }
+  if (!x.hasAttribute("nTip")) {
+    Rcpp::stop("`x` lacks nTip attribute");
+  }
+  if (!y.hasAttribute("nTip")) {
+    Rcpp::stop("`y` lacks nTip attribute");
+  }
+  if (static_cast<int>(x.attr("nTip")) != static_cast<int>(y.attr("nTip"))) {
+    Rcpp::stop("`x` and `y` differ in `nTip`");
+  }
+  return calc_confusion(x, y);
 }
 
 IntegerMatrix reverse (const IntegerMatrix x) {
