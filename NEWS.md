@@ -7,6 +7,7 @@
 
 - Experimental support for a new method of SPR distance calculation:
   subject to change or removal.
+  
 
 # TreeDist 2.11.1 (2025-10-13)
 

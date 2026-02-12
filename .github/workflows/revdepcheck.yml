@@ -1,21 +1,14 @@
+# Now integrated into R CMD check.yml.
 name: rev-dep-check
 
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: ["R-CMD-check"]
-    types:
-      - completed
-  push:
-    paths: "**revdepcheck.yml"
-  pull_request:
-    paths: "**revdepcheck.yml"
 
 jobs:
   mem-check:
     runs-on: ubuntu-latest
 
-    name: revdepcheck
+    name: revdepcheck (manual)
 
     env:
       R_COMPILE_AND_INSTALL_PACKAGES: 'never'
