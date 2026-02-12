@@ -84,6 +84,7 @@ test_that("confusion()", {
 
 test_that("SPR shortcuts okay - exhaustive", {
   skip_if_not(getOption("slowMode", FALSE))
+  skip_if_not_installed("TBRDist")
   library("TreeTools", quietly = TRUE)
   nTip <- 7
   allTrees <- as.phylo(seq_len(NUnrooted(nTip)), nTip)

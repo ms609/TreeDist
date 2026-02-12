@@ -259,8 +259,6 @@ SPRDist.multiPhylo <- SPRDist.list
 #' @importFrom TreeTools FirstMatchingSplit
 .SPRRogue <- function(tree1, tree2, check = TRUE) {
   moves <- 0
-  debug <- isTRUE(getOption("debugSPR", FALSE))
-  if (debug) dropList <- character(0)
   
   ProxyDistance <- switch(
     pmatch(toupper(getOption("sprProxy", "C")), c("C", "P", "Q", "R")),
@@ -271,14 +269,6 @@ SPRDist.multiPhylo <- SPRDist.list
   )
   
   reduced <- ReduceTrees(tree1, tree2, check = check)
-  if (!is.null(reduced) && debug) {
-    message("Rogue SPR heuristic underway")
-    par(mfrow = 1:2, mai = rep(0.1, 4))
-    plot(reduced[[1]])
-    ape::nodelabels(frame = "none", cex = 0.8)
-    plot(reduced[[2]])
-    ape::nodelabels(frame = "none", cex = 0.8)
-  }
   
   while (!is.null(reduced)) {
     
@@ -298,16 +288,6 @@ SPRDist.multiPhylo <- SPRDist.list
       return(moves + .SPRExact6(sp1, sp2))
     }
     if (nTip == 7 && getOption("sprShortcut", Inf) >= 7) {
-      exact <- .SPRExact7(sp1, sp2)
-      if (is.na(exact) || exact < 1) {
-        dput(sp1)
-        dput(as.integer(as.TreeNumber(as.phylo(sp1))))
-        summary(sp1)
-        dput(as.integer(as.TreeNumber(as.phylo(sp2))))
-        dput(sp2)
-        summary(sp2)
-        stop("Lookup failed.")
-      }
       return(moves + .SPRExact7(sp1, sp2))
     }
     
@@ -323,53 +303,21 @@ SPRDist.multiPhylo <- SPRDist.list
       # Repeat for other half-tree
       subtips2[!subtips2][[1]] <- TRUE
 
-      if (debug) {
-        # message("Division A: ", 
-        #         paste(colnames(agreement)[agreement], collapse = " "), 
-        #         " | ",
-        #         paste(colnames(agreement)[!agreement], collapse = " "))
-        colNow <- par("col")
-        if (colNow == "black") colNow <- "#000000"
-        colIdx <- match(colNow, palette.colors(8), 0)
-        oPar <- par(col = palette.colors(8)[colIdx + 1])
-        on.exit(par(oPar))
-      }
       moves1 <- .SPRRogue(
         KeepTipPostorder(tr1, subtips1),
         KeepTipPostorder(tr2, subtips1)
       )
-      if (debug) {
-        # message("Division B: ", paste(colnames(agreement)[!agreement], collapse = " "))
-        colNow <- par("col")
-        colIdx <- match(colNow, palette.colors(8), 0)
-        par(col = palette.colors(8)[colIdx + 1])
-      }
       moves2 <- .SPRRogue(
         KeepTipPostorder(tr1, subtips2),
         KeepTipPostorder(tr2, subtips2)
       )
-      return(if (debug) {
-        structure(
-          moves + moves1 + moves2,
-          dropList = paste(
-            dropList,
-            attr(moves1, "dropList"),
-            attr(moves2, "dropList"),
-            collapse = " | ", sep = " ")
-          )
-        } else {
-        moves + moves1 + moves2
-      })
+      return(moves + moves1 + moves2)
     }
     
     labels <- TipLabels(tr1)
     scores <- numeric(length(labels))
     blank <- rep_len(TRUE, length(labels))
 
-    if (debug) message(switch(
-      pmatch(toupper(getOption("sprProxy", "C")), c("C", "P", "Q", "R")),
-      "ClusteringInfoDist", "PhyloInfoDist", "Quartet","RobinsonFoulds"))
-    
     depth <- max(getOption("sprDepth", 1), 1)
     
     
@@ -426,19 +374,9 @@ SPRDist.multiPhylo <- SPRDist.list
     
     drop <- logical(length(labels))
     couldDrop <- scores == min(scores)
-    if (debug && sum(couldDrop) > 1) {
-      message(sum(couldDrop), " options to drop: ",
-              paste(labels[couldDrop], collapse = ", "))
-    }
-    
+
     if (depth > 1 && min(pairScores) < min(scores)) {
       pairDrop <- pairScores == min(pairScores)
-      if (debug && sum(pairDrop) > 0) {
-        message(sum(pairDrop), " pair-options to drop: ",
-                paste(apply(rbind(labels[pairs[1, pairDrop]],
-                                  labels[pairs[2, pairDrop]]), 2, paste0,
-                            collapse = "-"), collapse = ", "))
-      }
       dropTions <- pairs[, pairDrop]
       if (any(couldDrop[dropTions]) && !any(!is.finite(pairScores))) {
         # Dropping two at once doesn't give us any benefit over dropping one
@@ -453,29 +391,16 @@ SPRDist.multiPhylo <- SPRDist.list
       drop[[which.min(scores)]] <- TRUE
     }
     
-    if (debug) {
-      dropList <- c(dropList, labels[drop])
-      message("Dropping: ", paste0(labels[drop], collapse = ", "),
-              " (", paste(which(drop), collapse = ", "), ")")
-    }
     reduced <- keep_and_reduce(tr1, tr2, !drop)
     if (length(reduced) == 1L) {
       reduced <- NULL
-    }
-    if (debug) {
-      if (is.null(reduced[[1]])) {
-        plot.new(); plot.new()
-      } else {
-        plot(reduced[[1]])
-        plot(reduced[[2]])
-      }
     }
     
     moves <- sum(moves, drop)
   }
   
   # Return:
-  if (debug) structure(moves, dropList = dropList) else moves
+  moves
 }
 
 # An attempt to reproduce the phangorn results using the algorithm of 
@@ -495,7 +420,6 @@ SPRDist.multiPhylo <- SPRDist.list
 #' @importFrom TreeTools DropTip TipsInSplits KeepTipPostorder
 #' @importFrom TreeTools edge_to_splits
 .SPRPairDeO <- function(tree1, tree2, check = TRUE) {
-  debug <- isTRUE(getOption("debugSPR", FALSE))
   moves <- 0
   
   # Reduce trees (Fig. 7A in deOliveira2008)
@@ -513,9 +437,6 @@ SPRDist.multiPhylo <- SPRDist.list
     matched <- cpp_robinson_foulds_distance(sp1, sp2, nTip)
     nMatched <- matched[["score"]]
     if (nMatched != length(sp1) * 2) {
-      if (debug) {
-        message("Identical splits: ", length(sp1) - (nMatched / 2))
-      }
       unmatchedSplits <- is.na(matched[["matching"]])
       sp1 <- sp1[[unmatchedSplits]]
       sp2 <- sp2[[-matched$matching[!unmatchedSplits]]]
