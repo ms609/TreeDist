@@ -80,7 +80,6 @@ Suggests:
 LinkingTo:
   Rcpp,
   TreeTools (>= 2.1.0),
-Remotes: ms609/TreeTools
 RdMacros: Rdpack
 VignetteBuilder: knitr
 Config/Needs/app/optional: uwot

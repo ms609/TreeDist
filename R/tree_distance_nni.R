@@ -73,7 +73,7 @@ NNIDist <- function(tree1, tree2 = tree1) {
 #' @importFrom TreeTools Postorder RenumberTips
 #' @importFrom ape Nnode.phylo
 .NNIDistSingle <- function(tree1, tree2, nTip, ...) {
-  tree2 <- RenumberTips(tree2, tree1[["tip.label"]])
+  tree2 <- RenumberTips(tree2, as.character(tree1[["tip.label"]]))
   
   edge1 <- Postorder(tree1[["edge"]])
   edge2 <- Postorder(tree2[["edge"]])

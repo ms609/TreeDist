@@ -1,7 +1,7 @@
 library("TreeTools")
 
 test_that("VisualizeMatching() works", {
-  tree1 <- PectinateTree(1:11)
+  tree1 <- PectinateTree(as.character(1:11))
   tree2 <- tree1
   tree2$tip.label[c(11, 1)] <- tree1$tip.label[c(1, 11)]
   tree2r <- CollapseNode(tree2, 20:21)
