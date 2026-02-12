@@ -264,7 +264,7 @@ splits4 <- vapply(which(valid4), function(i) {
 
 
 
-shape5 <- Tree("(((c1, c2), (h1, h2)), (s, ((p1, p2)), (q1, q2)));")
+shape5 <- Tree("(((c1, c2), (h1, h2)), (s, ((p1, p2), (q1, q2))));")
 sp5 <- as.Splits(shape5)
 tis <- TipsInSplits(sp5)
 tisBig <- tis > nTip / 2
@@ -272,32 +272,24 @@ tiss <- tis
 tiss[tisBig] <- nTip - tis[tisBig]
 
 fours <- unname(which(tiss == 4))
-trios <- unname(which(tiss == 3))
-pairs <- seq_len(nTip - 3)[-c(trios, fours)]
+pairs <- seq_len(nTip - 3)[-fours]
+soloTip <- AsTips(xor(sp5[[fours[[1]]]], sp5[[fours[[2]]]]))
+sp5 <- !PolarizeSplits(sp5, soloTip)
 
-mid1 <- xor(sp5[[fours[[1]]]], sp5[[trios[[1]]]])
-if (TipsInSplits(mid1) %in% c(1, nTip - 1)) {
-  mid2 <- xor(sp5[[fours[[2]]]], sp5[[trios[[2]]]])
-} else {
-  trios <- trios[2:1]
-  mid1 <- xor(sp5[[fours[[1]]]], sp5[[trios[[1]]]])
-  mid2 <- xor(sp5[[fours[[2]]]], sp5[[trios[[2]]]])
-}
+four1 <- sp5[[fours[[1]]]]
+pairedWith1 <- vapply(pairs, function(p) {
+  TipsInSplits(four1 & sp5[[p]]) > 0
+}, logical(1))
 
-# Align trio1 with mid1
-if (!TipsInSplits(xor(sp5[[trios[[1]]]], sp5[[pairs[[1]]]])) %in% 
-    c(1, nTip - 1)) {
-  pairs <- pairs[2:1]
-}
+pairs1 <- pairs[pairedWith1]
+pairs2 <- pairs[!pairedWith1]
 
 canonOrder <- TipLabels(shape5)[c(
-  centre = AsTips(xor(sp5[[fours[[1]]]], sp5[[fours[[2]]]])),
-  mid1 = AsTips(mid1),
-  trio1 = AsTips(xor(sp5[[trios[[1]]]], sp5[[pairs[[1]]]])),
-  pair1 = AsTips(sp5[[pairs[[1]]]]),
-  mid2 = AsTips(mid2),
-  trio2 = AsTips(xor(sp5[[trios[[2]]]], sp5[[pairs[[2]]]])),
-  pair2 = AsTips(sp5[[pairs[[2]]]])
+  solo = soloTip,
+  pair1a = AsTips(sp5[[pairs1[[1]]]]),
+  pair1b = AsTips(sp5[[pairs1[[2]]]]),
+  pair2a = AsTips(sp5[[pairs2[[1]]]]),
+  pair2b = AsTips(sp5[[pairs2[[2]]]])
 )]
 shape5 <- RenumberTips(shape5, canonOrder)
 
