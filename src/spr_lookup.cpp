@@ -18,6 +18,7 @@ constexpr Split7 MASK7 = 0x7F;          // 01111111
 using Split8 = uint8_t;                 // 8 bits used
 using SplitSet8 = std::array<Split8, 5>;
 using Perm8 = std::array<uint8_t, 8>;
+constexpr Split8 MASK8 = 0xFF;
 
 using Split9 = uint16_t;                // 9 bits used
 using SplitSet9 = std::array<Split9, 6>;
@@ -67,7 +68,7 @@ inline Split7 smaller_split7(Split7 s) {
 }
 
 inline Split8 smaller_split8(Split8 s) {
-  if (popcount8(s) > 4) s ^= 0xFF;
+  if (popcount8(s) > 4) s ^= MASK8;
   return s;
 }
 
@@ -231,8 +232,9 @@ CanonicalInfo7 canonical_balanced(const SplitSet7& sp) {
 
 CanonicalInfo8 canonical_pectinate8(const SplitSet8& sp) {
   std::array<int,5> tiss;
-  for (int i = 0; i < 5; ++i)
+  for (int i = 0; i < 5; ++i) {
     tiss[i] = tips_in_smallest8(sp[i]);
+  }
   
   int quad = -1;
   std::array<int,2> trios{};
@@ -246,6 +248,7 @@ CanonicalInfo8 canonical_pectinate8(const SplitSet8& sp) {
   }
   
   ASSERT(quad >= 0 && ti == 2 && pi == 2);
+  
   
   Split8 mid1 = xor_split8(sp[quad], sp[trios[0]]);
   Split8 mid2 = xor_split8(sp[quad], sp[trios[1]]);
@@ -267,8 +270,11 @@ CanonicalInfo8 canonical_pectinate8(const SplitSet8& sp) {
   int k = 0;
   
   auto emit = [&](Split8 s) {
-    for (int i = 0; i < 8; ++i)
-      if (s & (1 << i)) perm[k++] = i;
+    for (int i = 0; i < 8; ++i) {
+      if (s & (1 << i)) {
+        perm[k++] = i;
+      }
+    }
   };
   
   emit(mid1);
@@ -281,6 +287,7 @@ CanonicalInfo8 canonical_pectinate8(const SplitSet8& sp) {
   ASSERT(k == 8);
   return { Shape8::Pectinate, perm };
 }
+
 CanonicalInfo8 canonical_mix8(const SplitSet8& sp) {
   std::array<int,5> tiss;
   for (int i = 0; i < 5; ++i)
@@ -337,6 +344,7 @@ CanonicalInfo8 canonical_mix8(const SplitSet8& sp) {
   ASSERT(k == 8);
   return { Shape8::Mix, perm };
 }
+
 CanonicalInfo8 canonical_mid8(const SplitSet8& sp) {
   std::array<int,5> tiss;
   for (int i = 0; i < 5; ++i)
