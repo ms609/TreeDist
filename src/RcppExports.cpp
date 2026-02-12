@@ -259,51 +259,51 @@ BEGIN_RCPP
 END_RCPP
 }
 // mismatch_size
-IntegerVector mismatch_size(const RawMatrix x, const RawMatrix y);
+IntegerVector mismatch_size(const RawMatrix& x, const RawMatrix& y);
 RcppExport SEXP _TreeDist_mismatch_size(SEXP xSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const RawMatrix >::type x(xSEXP);
-    Rcpp::traits::input_parameter< const RawMatrix >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const RawMatrix& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const RawMatrix& >::type y(ySEXP);
     rcpp_result_gen = Rcpp::wrap(mismatch_size(x, y));
     return rcpp_result_gen;
 END_RCPP
 }
 // confusion
-IntegerVector confusion(const RawMatrix x, const RawMatrix y);
+IntegerVector confusion(const RawMatrix& x, const RawMatrix& y);
 RcppExport SEXP _TreeDist_confusion(SEXP xSEXP, SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const RawMatrix >::type x(xSEXP);
-    Rcpp::traits::input_parameter< const RawMatrix >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const RawMatrix& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const RawMatrix& >::type y(ySEXP);
     rcpp_result_gen = Rcpp::wrap(confusion(x, y));
     return rcpp_result_gen;
 END_RCPP
 }
 // keep_and_reroot
-List keep_and_reroot(const List tree1, const List tree2, const LogicalVector keep);
+List keep_and_reroot(const List& tree1, const List& tree2, const LogicalVector& keep);
 RcppExport SEXP _TreeDist_keep_and_reroot(SEXP tree1SEXP, SEXP tree2SEXP, SEXP keepSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const List >::type tree1(tree1SEXP);
-    Rcpp::traits::input_parameter< const List >::type tree2(tree2SEXP);
-    Rcpp::traits::input_parameter< const LogicalVector >::type keep(keepSEXP);
+    Rcpp::traits::input_parameter< const List& >::type tree1(tree1SEXP);
+    Rcpp::traits::input_parameter< const List& >::type tree2(tree2SEXP);
+    Rcpp::traits::input_parameter< const LogicalVector& >::type keep(keepSEXP);
     rcpp_result_gen = Rcpp::wrap(keep_and_reroot(tree1, tree2, keep));
     return rcpp_result_gen;
 END_RCPP
 }
 // keep_and_reduce
-List keep_and_reduce(const List tree1, const List tree2, const LogicalVector keep);
+List keep_and_reduce(const List& tree1, const List& tree2, const LogicalVector& keep);
 RcppExport SEXP _TreeDist_keep_and_reduce(SEXP tree1SEXP, SEXP tree2SEXP, SEXP keepSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const List >::type tree1(tree1SEXP);
-    Rcpp::traits::input_parameter< const List >::type tree2(tree2SEXP);
-    Rcpp::traits::input_parameter< const LogicalVector >::type keep(keepSEXP);
+    Rcpp::traits::input_parameter< const List& >::type tree1(tree1SEXP);
+    Rcpp::traits::input_parameter< const List& >::type tree2(tree2SEXP);
+    Rcpp::traits::input_parameter< const LogicalVector& >::type keep(keepSEXP);
     rcpp_result_gen = Rcpp::wrap(keep_and_reduce(tree1, tree2, keep));
     return rcpp_result_gen;
 END_RCPP
