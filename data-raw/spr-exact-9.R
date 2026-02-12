@@ -48,18 +48,20 @@ canonOrder <- TipLabels(shape0)[c(
 shape0 <- RenumberTips(shape0, canonOrder)
 
 trees0 <- as.phylo(seq_len(NUnrooted(nTip)), nTip, canonOrder)
-scores0 <- sapply(seq_along(trees0), function(i) {
+scores0 <- sapply(cli::cli_progress_along(trees0), function(i) {
   reduced <- ReduceTrees(shape0, trees0[[i]])
   r1 <- reduced[[1]]
   if (is.null(r1) || NTip(r1) != nTip) return(NA)
   r2 <- reduced[[2]]
   TBRDist::USPRDist(r1, r2)
 })
+saveRDS(scores0, file = "scores0.rds")
 valid0 <- !is.na(scores0)
 
 splits0 <- vapply(which(valid0), function(i) {
-  as.integer(!(trees0[[i]] |> as.Splits() |> PolarizeSplits(nTip))) |> sort()
+  as.integer(!(trees0[[i]] |> as.Splits() |> PolarizeSplits(nTip))[, 1]) |> sort()
 }, integer(nTip - 3))
+saveRDS(splits0, file = "splits0.rds")
 
 
 shape1 <- Tree("((c1, c2), (s, (t, (u, ((p1, p2), (q1, q2))))));")
@@ -96,7 +98,7 @@ canonOrder <- TipLabels(shape1)[c(
 shape1 <- RenumberTips(shape1, canonOrder)
 
 trees1 <- as.phylo(seq_len(NUnrooted(nTip)), nTip, canonOrder)
-scores1 <- sapply(seq_along(trees1), function(i) {
+scores1 <- sapply(cli::cli_progress_along(trees1), function(i) {
   reduced <- ReduceTrees(shape1, trees1[[i]])
   r1 <- reduced[[1]]
   if (is.null(r1) || NTip(r1) != nTip) return(NA)
@@ -148,7 +150,7 @@ canonOrder <- TipLabels(shape2)[c(
 shape2 <- RenumberTips(shape2, canonOrder)
 
 trees2 <- as.phylo(seq_len(NUnrooted(nTip)), nTip, canonOrder)
-scores2 <- sapply(seq_along(trees2), function(i) {
+scores2 <- sapply(cli::cli_progress_along(trees2), function(i) {
   reduced <- ReduceTrees(shape2, trees2[[i]])
   r1 <- reduced[[1]]
   if (is.null(r1) || NTip(r1) != nTip) return(NA)
@@ -198,7 +200,7 @@ canonOrder <- TipLabels(shape3)[c(
 shape3 <- RenumberTips(shape3, canonOrder)
 
 trees3 <- as.phylo(seq_len(NUnrooted(nTip)), nTip, canonOrder)
-scores3 <- sapply(seq_along(trees3), function(i) {
+scores3 <- sapply(cli::cli_progress_along(trees3), function(i) {
   reduced <- ReduceTrees(shape3, trees3[[i]])
   r1 <- reduced[[1]]
   if (is.null(r1) || NTip(r1) != nTip) return(NA)
@@ -248,7 +250,7 @@ canonOrder <- TipLabels(shape4)[c(
 shape4 <- RenumberTips(shape4, canonOrder)
 
 trees4 <- as.phylo(seq_len(NUnrooted(nTip)), nTip, canonOrder)
-scores4 <- sapply(seq_along(trees4), function(i) {
+scores4 <- sapply(cli::cli_progress_along(trees4), function(i) {
   reduced <- ReduceTrees(shape4, trees4[[i]])
   r1 <- reduced[[1]]
   if (is.null(r1) || NTip(r1) != nTip) return(NA)
@@ -294,7 +296,7 @@ canonOrder <- TipLabels(shape5)[c(
 shape5 <- RenumberTips(shape5, canonOrder)
 
 trees5 <- as.phylo(seq_len(NUnrooted(nTip)), nTip, canonOrder)
-scores5 <- sapply(seq_along(trees5), function(i) {
+scores5 <- sapply(cli::cli_progress_along(trees5), function(i) {
   reduced <- ReduceTrees(shape5, trees5[[i]])
   r1 <- reduced[[1]]
   if (is.null(r1) || NTip(r1) != nTip) return(NA)
@@ -313,47 +315,29 @@ splits5 <- vapply(which(valid5), function(i) {
 # Define packing algorithm based on range
 library("bit64")
 offset <- c(
-  min(splits1[1, ], splits2[1, ], splits3[1, ],
-      splits4[1, ], splits5[1, ], splits6[1, ]),
-  min(splits1[2, ], splits2[2, ], splits3[2, ],
-      splits4[2, ], splits5[2, ], splits6[2, ]),
-  min(splits1[3, ], splits2[3, ], splits3[3, ],
-      splits4[3, ], splits5[3, ], splits6[3, ]),
-  min(splits1[4, ], splits2[4, ], splits3[4, ],
-      splits4[4, ], splits5[4, ], splits6[4, ]),
-  min(splits1[5, ], splits2[5, ], splits3[5, ],
-      splits4[5, ], splits5[5, ], splits6[5, ]),
-  min(splits1[6, ], splits2[6, ], splits3[6, ],
-      splits4[6, ], splits5[6, ], splits6[6, ])
+  min(sp0[1, ], sp1[1, ], sp2[1, ], sp3[1, ], sp4[1, ], sp5[1, ]),
+  min(sp0[2, ], sp1[2, ], sp2[2, ], sp3[2, ], sp4[2, ], sp5[2, ]),
+  min(sp0[3, ], sp1[3, ], sp2[3, ], sp3[3, ], sp4[3, ], sp5[3, ]),
+  min(sp0[4, ], sp1[4, ], sp2[4, ], sp3[4, ], sp4[4, ], sp5[4, ]),
+  min(sp0[5, ], sp1[5, ], sp2[5, ], sp3[5, ], sp4[5, ], sp5[5, ]),
+  min(sp0[6, ], sp1[6, ], sp2[6, ], sp3[6, ], sp4[6, ], sp5[6, ])
   ) |>
   as.integer64()
 
 rng <-  c(
-  max(splits1[1, ], splits2[1, ], splits3[1, ],
-      splits4[1, ], splits5[1, ], splits6[1, ]),
-  max(splits1[2, ], splits2[2, ], splits3[2, ],
-      splits4[2, ], splits5[2, ], splits6[2, ]),
-  max(splits1[3, ], splits2[3, ], splits3[3, ],
-      splits4[3, ], splits5[3, ], splits6[3, ]),
-  max(splits1[4, ], splits2[4, ], splits3[4, ],
-      splits4[4, ], splits5[4, ], splits6[4, ]),
-  max(splits1[5, ], splits2[5, ], splits3[5, ],
-      splits4[5, ], splits5[5, ], splits6[5, ]),
-  max(splits1[6, ], splits2[6, ], splits3[6, ],
-      splits4[6, ], splits5[6, ], splits6[6, ])
+  min(sp0[1, ], sp1[1, ], sp2[1, ], sp3[1, ], sp4[1, ], sp5[1, ]),
+  min(sp0[2, ], sp1[2, ], sp2[2, ], sp3[2, ], sp4[2, ], sp5[2, ]),
+  min(sp0[3, ], sp1[3, ], sp2[3, ], sp3[3, ], sp4[3, ], sp5[3, ]),
+  min(sp0[4, ], sp1[4, ], sp2[4, ], sp3[4, ], sp4[4, ], sp5[4, ]),
+  min(sp0[5, ], sp1[5, ], sp2[5, ], sp3[5, ], sp4[5, ], sp5[5, ]),
+  min(sp0[6, ], sp1[6, ], sp2[6, ], sp3[6, ], sp4[6, ], sp5[6, ])
 ) -  c(
-  min(splits1[1, ], splits2[1, ], splits3[1, ],
-      splits4[1, ], splits5[1, ], splits6[1, ]),
-  min(splits1[2, ], splits2[2, ], splits3[2, ],
-      splits4[2, ], splits5[2, ], splits6[2, ]),
-  min(splits1[3, ], splits2[3, ], splits3[3, ],
-      splits4[3, ], splits5[3, ], splits6[3, ]),
-  min(splits1[4, ], splits2[4, ], splits3[4, ],
-      splits4[4, ], splits5[4, ], splits6[4, ]),
-  min(splits1[5, ], splits2[5, ], splits3[5, ],
-      splits4[5, ], splits5[5, ], splits6[5, ]),
-  min(splits1[6, ], splits2[6, ], splits3[6, ],
-      splits4[6, ], splits5[6, ], splits6[6, ])
+  min(sp0[1, ], sp1[1, ], sp2[1, ], sp3[1, ], sp4[1, ], sp5[1, ]),
+  min(sp0[2, ], sp1[2, ], sp2[2, ], sp3[2, ], sp4[2, ], sp5[2, ]),
+  min(sp0[3, ], sp1[3, ], sp2[3, ], sp3[3, ], sp4[3, ], sp5[3, ]),
+  min(sp0[4, ], sp1[4, ], sp2[4, ], sp3[4, ], sp4[4, ], sp5[4, ]),
+  min(sp0[5, ], sp1[5, ], sp2[5, ], sp3[5, ], sp4[5, ], sp5[5, ]),
+  min(sp0[6, ], sp1[6, ], sp2[6, ], sp3[6, ], sp4[6, ], sp5[6, ])
 )
 
 BitPack9 <- function(vec) {
@@ -367,47 +351,59 @@ BitPack9 <- function(vec) {
       (v[6] - offset[[6]]))
 }
 
-pecPack <- apply(pecSplits, 2, BitPack8)
-pecDF <- data.frame(key = pecPack, score = pecScores[pecValid])
-pecDF <- pecDF[order(pecDF$key), ]
+pack0 <- apply(sp0, 2, BitPack9)
+df0 <- data.frame(key = pack0, score = scores0[valid0])
+df0 <- df0[order(df0$key), ]
 
-mixPack <- apply(mixSplits, 2, BitPack8)
-mixDF <- data.frame(key = mixPack, score = mixScores[mixValid])
-mixDF <- mixDF[order(mixDF$key), ]
+pack1 <- apply(sp1, 2, BitPack9)
+df1 <- data.frame(key = pack1, score = scores1[valid1])
+df1 <- df1[order(df1$key), ]
 
-midPack <- apply(midSplits, 2, BitPack8)
-midDF <- data.frame(key = midPack, score = midScores[midValid])
-midDF <- midDF[order(midDF$key), ]
+pack2 <- apply(sp2, 2, BitPack9)
+df2 <- data.frame(key = pack2, score = scores2[valid2])
+df2 <- df2[order(df2$key), ]
 
-balPack <- apply(balSplits, 2, BitPack8)
-balDF <- data.frame(key = balPack, score = balScores[balValid])
-balDF <- balDF[order(balDF$key), ]
+pack3 <- apply(sp3, 2, BitPack9)
+df3 <- data.frame(key = pack3, score = scores3[valid3])
+df3 <- df3[order(df3$key), ]
 
+pack4 <- apply(sp4, 2, BitPack9)
+df4 <- data.frame(key = pack4, score = scores4[valid4])
+df4 <- df4[order(df4$key), ]
+
+pack5 <- apply(sp5, 2, BitPack9)
+df5 <- data.frame(key = pack5, score = scores5[valid5])
+df5 <- df5[order(df5$key), ]
 
 header_content <- paste0(
   "// Generated from data-raw/spr-exact.R\n",
   "#include <cstdint>\n#include <array>\n#include <algorithm>\n\n",
   "struct SPRScore64 { uint64_t key; int score; };\n\n",
   
-  "static constexpr std::array<SPRScore64, ", nrow(pecDF), "> PEC_LOOKUP",
+  "static constexpr std::array<SPRScore64, ", nrow(df0), "> LOOKUP9_0",
   nTip, " = {{\n",
-  paste0("    {", pecDF$key, "ULL, ", pecDF$score, "}", collapse = ",\n"),
+  paste0("    {", df0$key, "ULL, ", df0$score, "}", collapse = ",\n"),
   "\n}};\n",
-  
-  "static constexpr std::array<SPRScore64, ", nrow(mixDF), "> MIX_LOOKUP",
+  "static constexpr std::array<SPRScore64, ", nrow(df1), "> LOOKUP9_1",
   nTip, " = {{\n",
-  paste0("    {", mixDF$key, "ULL, ", mixDF$score, "}", collapse = ",\n"),
+  paste0("    {", df1$key, "ULL, ", df1$score, "}", collapse = ",\n"),
   "\n}};\n",
-  
-  "static constexpr std::array<SPRScore64, ", nrow(midDF), "> MID_LOOKUP",
+  "static constexpr std::array<SPRScore64, ", nrow(df2), "> LOOKUP9_2",
   nTip, " = {{\n",
-  paste0("    {", midDF$key, "ULL, ", midDF$score, "}", collapse = ",\n"),
+  paste0("    {", df2$key, "ULL, ", df2$score, "}", collapse = ",\n"),
   "\n}};\n",
-  
-  "static constexpr std::array<SPRScore64, ", nrow(balDF), "> BAL_LOOKUP",
+  "static constexpr std::array<SPRScore64, ", nrow(df3), "> LOOKUP9_3",
   nTip, " = {{\n",
-  paste0("    {", balDF$key, "ULL, ", balDF$score, "}", collapse = ",\n"),
-  "\n}};"
+  paste0("    {", df3$key, "ULL, ", df3$score, "}", collapse = ",\n"),
+  "\n}};\n",
+  "static constexpr std::array<SPRScore64, ", nrow(df4), "> LOOKUP9_4",
+  nTip, " = {{\n",
+  paste0("    {", df4$key, "ULL, ", df4$score, "}", collapse = ",\n"),
+  "\n}};\n",
+  "static constexpr std::array<SPRScore64, ", nrow(df5), "> LOOKUP9_5",
+  nTip, " = {{\n",
+  paste0("    {", df5$key, "ULL, ", df5$score, "}", collapse = ",\n"),
+  "\n}};\n",
 )
 
 writeLines(header_content, sprintf("src/spr/lookup_table_%d.h", nTip))
