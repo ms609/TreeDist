@@ -7,13 +7,13 @@
 \alias{SPRDist.multiPhylo}
 \title{Approximate the Subtree Prune and Regraft distance}
 \usage{
-SPRDist(tree1, tree2 = NULL, method = "confl", symmetric)
+SPRDist(tree1, tree2 = NULL, method = "deOliveira", symmetric)
 
-\method{SPRDist}{phylo}(tree1, tree2 = NULL, method = "confl", symmetric)
+\method{SPRDist}{phylo}(tree1, tree2 = NULL, method = "deOliveira", symmetric)
 
-\method{SPRDist}{list}(tree1, tree2 = NULL, method = "confl", symmetric)
+\method{SPRDist}{list}(tree1, tree2 = NULL, method = "deOliveira", symmetric)
 
-\method{SPRDist}{multiPhylo}(tree1, tree2 = NULL, method = "confl", symmetric)
+\method{SPRDist}{multiPhylo}(tree1, tree2 = NULL, method = "deOliveira", symmetric)
 }
 \arguments{
 \item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
@@ -23,8 +23,10 @@ or lists of such trees to undergo pairwise comparison.  Where implemented,
 \insertCite{Day1985;textual}{TreeDist}.}
 
 \item{method}{Character specifying which method to use to approximate the
-SPR distance.  Currently defaults to `"deOliveira"``, the only available
-option; a new method will become the default once available.}
+SPR distance.  Currently defaults to \verb{"deOliveira"``. }"Rogue"` implements an experimental method whose details are pending
+publication; this function is under development, and may be modified or
+removed without notice.  Once formally validated, it is anticipated that this
+method will become the default.}
 
 \item{symmetric}{Deprecated (redundant after fix of
 \href{https://github.com/KlausVigo/phangorn/issues/97}{phangorn#97}).}
@@ -34,10 +36,16 @@ option; a new method will become the default once available.}
 between trees.
 }
 \description{
-\code{SPRDist()} calculates an upper bound on the SPR distance between trees
-using the heuristic method of \insertCite{deOliveira2008;textual}{TreeDist}.
-Other approximations are available
-\insertCite{@e.g. @Hickey2008, @Goloboff2008SPR, @Whidden2018}{TreeDist}.
+\code{SPRDist()} approximates the \acronym{SPR} distance between
+trees.
+}
+\details{
+The function currently defaults to the heuristic method of
+\insertCite{deOliveira2008;textual}{TreeDist}, which purports to provide an
+upper bound on the \acronym{SPR} distance (though exceptions exist).
+Other approximations
+\insertCite{@e.g. @Hickey2008, @Goloboff2008SPR, @Whidden2018}{TreeDist} are
+not yet implemented.
 }
 \examples{
 library("TreeTools", quietly = TRUE)

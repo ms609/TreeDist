@@ -14,6 +14,9 @@ clone(x, ...)
 \item{x}{the object to be cloned}
 
 \item{\dots}{additional parameters for methods}
+
+\item{tipLabels}{Character vector specifying sequence in which to order
+tip labels.}
 }
 \value{
 \code{clone()} typically returns an object of the same class and "value"

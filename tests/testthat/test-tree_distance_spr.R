@@ -103,6 +103,7 @@ test_that("SPR shortcuts okay - exhaustive", {
 })
 
 test_that("SPR shortcuts okay - known answer", {
+  skip_if_not(getOption("slowMode", FALSE))
   library("TreeTools", quietly = TRUE)
   set.seed(0)
   trees <- lapply(1:8, function(XX) RandomTree(9, root = TRUE))
@@ -131,7 +132,7 @@ test_that("SPR shortcuts okay - known answer", {
   expect_true(all(cuts6 == exact))
   
   options("sprShortcut" = 7)
-  cuts6 <- SPRDist(trees, method = "rogue")
+  cuts7 <- SPRDist(trees, method = "rogue")
   expect_true(all(cuts7 <= noCuts))
   expect_true(all(cuts7 >= exact))
   # Aspirational:
@@ -139,6 +140,8 @@ test_that("SPR shortcuts okay - known answer", {
 })
 
 test_that("SPR shortcuts okay - larger trees", {
+  skip_if_not(getOption("slowMode", FALSE))
+  
   library("TreeTools", quietly = TRUE)
   set.seed(0)
   trees <- lapply(1:8, function(XX) RandomTree(45, root = TRUE))
@@ -174,13 +177,6 @@ test_that("SPR calculated correctly", {
   Tree <- function(txt) ape::read.tree(text = txt)
 
   expect_equal(
-    .SPRConfl(
-      ape::read.tree(text = "((a, b), (c, d));"),
-      ape::read.tree(text = "((a, c), (b, d));")
-    )[[1]],
-    1L
-  )
-  expect_equal(
     .SPRRogue(
       ape::read.tree(text = "((a, b), (c, d));"),
       ape::read.tree(text = "((a, c), (b, d));")
@@ -188,21 +184,13 @@ test_that("SPR calculated correctly", {
     1L
   )
   expect_equal(
-    .SPRConfl(PectinateTree(letters[1:26]), PectinateTree(letters[c(2:26, 1)]))[[1]],
-    1L
-  )
-  expect_equal(
     .SPRRogue(PectinateTree(letters[1:26]), PectinateTree(letters[c(2:26, 1)]))[[1]],
     1L
   )
   
-  options(sprH = "viNorm")
-  options(sprH = "ami")
   # Looks simple, but requires ties to be broken suitably
-  expect_exact("(a,(d,(b,(c,X))));", "(a,((b,c),(X,d)));", "confl") # distance = 1
   expect_exact("(a,(d,(b,(c,X))));", "(a,((b,c),(X,d)));", "rogue") # distance = 1
   
-  expect_exact("((((b,c),d),e),a);", "(a,(b,((e,c),d)));", "confl") # distance = 2
   expect_exact("((((b,c),d),e),a);", "(a,(b,((e,c),d)));", "rogue")
   expect_failure(
     expect_exact("((((b,c),d),e),a);", "(a,(b,((e,c),d)));", "deo")
@@ -211,23 +199,11 @@ test_that("SPR calculated correctly", {
   # Passes with ami, joint, vi
   # Fails with viNorm - should tiebreaker be non-normalized?
   expect_exact("(((t21,(((t15,t12),t23),t24)),t18),t19);",
-               "((t21,t18),(((t12,(t19,t15)),t23),t24));", "confl")
-  expect_exact("(((t21,(((t15,t12),t23),t24)),t18),t19);",
                "((t21,t18),(((t12,(t19,t15)),t23),t24));", "rogue")
   
   # Example AZ33: IJK and DEF are schlepped
   # Passes with joint, ami, viNorm
   # Fails with vi (5, 6 with tiebreaker), conf (7)
-  expect_equal(
-    .SPRConfl(
-      tree1 <- PectinateTree(letters[1:26]),
-      tree2 <- Tree(
-        "(g, (h, (i, (j, (k, (l, ((m, (c, (b, a))), (n, (o, (p, (q, (r, (s, (t, (u, (v, (w, (x, (y, (z, (f, (e, d))))))))))))))))))))));"
-      )
-    )[[1]],
-    2
-  )
-  
   expect_equal(
     .SPRRogue(
       tree1 <- PectinateTree(letters[1:26]),
@@ -239,16 +215,6 @@ test_that("SPR calculated correctly", {
   )
   
   # Requires "divide and conquer" step
-  expect_equal(
-    .SPRConfl(
-      tree1 <- PectinateTree(letters[1:26]),
-      tree2 <- Tree(
-        "(g, (h, (i, (j, (k, (l, (m, (n, (o, (p, (q, (r, (s, (t, (u, (v, (w, (x, (y, (z, (f, ((e, (c, (b, a))), d))))))))))))))))))))));"
-      )
-    )[[1]],
-    2
-  )
-  
   expect_equal(
     .SPRRogue(
       tree1 <- PectinateTree(letters[1:26]),
@@ -263,188 +229,7 @@ test_that("SPR calculated correctly", {
                      (((c1, c2), c3), ((d1, d2), d3)));")
   lockedMid2 <- Tree("(((a1, (a2, a3)), (c1, (c2, c3))),
                      ((b1, (b2, b3)), (d1, (d2, d3))));")
-  expect_equal(.SPRConfl(lockedMid1, lockedMid2)[[1]], 5)
   expect_equal(.SPRRogue(lockedMid1, lockedMid2)[[1]], 5)
-  
-  # Aspirational
-  expect_exact("((((b3,b2),b1),(((d2,d1),((e3,e2),e1)),c)),a);",
-               "((((d2,e3),d1),c),(((((e2,b3),e1),b1),b2),a));", method = "Rogue")
-
-  set.seed(0)
-  tr <- vector("list", 13)
-  tr[[1]] <- Postorder(RandomTree(25, root = TRUE))
-  for (i in seq_len(12) + 1L) {
-    tr[[i]] <- Postorder(TreeSearch::SPR(tr[[i - 1]]))
-  }
-
-  write.tree(tr[[3]])
-  
-  expect_equal(SPRDist(tr[[3]], tr[[11]], method = "DeO"), 8)
-  expect_equal(SPRDist(tr[[3]], tr[[11]], method = "rogue")[[1]], 8)
-  options(sprH = "ami") # = 8
-  # options(sprH = "joint") = 10
-  expect_equal(SPRDist(tr[[3]], tr[[11]], method = "confl"), 8)
-  
-  # TBRDist::USPRDist(tr[[3]], tr[[11]]) = 8
-  
-  # 
-  # 
-  # # Simplified example for reproducibility
-  # Simplify <- function(tr) {
-  #   # Critical to the behaviour: t19, t25, t5
-  #   tr |>
-  #     DropTip("t17") |> # Reduces by a step
-  #     DropTip("t13") |> # Reduces by a step
-  #     DropTip("t8") |> # Reduces by a step
-  #     DropTip("t2") |> # Reduces by a step
-  #     DropTip("t19") |> # Reduces by a step
-  #     DropTip(c("t1", "t4", "t6", "t11", "t12", "t14", "t15", "t9", "t24")) # No difference to score
-  # }
-  # # t3 <- Simplify(tr[[3]])
-  # # t11 <- Simplify(tr[[11]])
-  # t3 <- Tree("((((t21,(((((t5,t22),t7),t20),t25),(t23,t16))),t18),t10),t3);")
-  # t11 <- Tree("((((t21,t18),t10),(((t20,t5),(t7,t22)),(t23,(t16,t25)))),t3);")
-  # 
-  # TBRDist::USPRDist(t3, t11) # 3
-  # expect_equal(SPRDist(t3, t11, method = "DeO"), 3)
-  # expect_equal(SPRDist(t3, t11, method = "confl")[[1]], 3)
-  # 
-  # 
-  # 
-  # options(debugSPR = T)
-  # # Simplified example for reproducibility
-  # 
-  # Simplify <- function(tr) {
-  #   DropTip(tr, paste0("t", c(1:11, 13:14, 16:17, 20, 22, 25)))
-  # }
-  # # t3 <- Simplify(tr[[3]])
-  # # t11 <- Simplify(tr[[11]])
-  # write.tree(t3)
-  # write.tree(t11)
-  # t3 <- Tree( "(((t21,(((t15,t12),t23),t24)),t18),t19);")
-  # t11 <- Tree( "((t21,t18),(((t12,(t19,t15)),t23),t24));")
-  # for (lab in TipLabels(Simplify(tr[[3]]))) {
-  #   d <- SPRDist(DropTip(t3, lab), DropTip(t11, lab), method = "DeO")
-  #   c <- SPRDist(DropTip(t3, lab), DropTip(t11, lab), method = "conf")
-  #   if (c - d == 3) {
-  #     stop(c, ", ", d, ": ", lab)
-  #   }
-  # }
-  # 
-  # deO <- SPRDist(t3, t11, method = "DeO")
-  # options(sprH = "ami")
-  # conf <- SPRDist(t3, t11, method = "confl")
-  # TBRDist::USPRDist(t3, t11)
-  # message(deO, ", ", conf)
-  # expect_equal(conf - deO,
-  #              SPRDist(tr[[3]], tr[[11]], method = "confl") -
-  #                SPRDist(tr[[3]], tr[[11]], method = "DeO"))
-  
-  
-
-  nTip <- 130
-  nSPR <- 35
-
-  set.seed(0)
-  tr <- vector("list", nSPR + 1L)
-  tr[[1]] <- Postorder(RandomTree(nTip, root = TRUE))
-  expect_equal(SPRDist(tr[[1]], tr[[1]])[[1]], 0)
-  for (i in seq_len(nSPR) + 1L) {
-    tr[[i]] <- Postorder(TreeSearch::SPR(tr[[i - 1]]))
-  }
-
-  phanDist <- SPRDist(tr, method = "deO")
-  testDist <- SPRDist(tr, method = "rogue")
-  simDist <- dist(seq_along(tr))
-
-  expect_true(all(testDist <= simDist))
-
-  if (interactive()) {
-    plot(testDist ~ jitter(simDist), asp = 1, frame.plot = F, col = 3)
-    abline(0, 1)
-    points(phanDist ~ jitter(simDist), pch = 3, col = 2)
-  }
-  # bestDist <- as.dist(pmin(as.matrix(testDist), as.matrix(SPRDist(rev(tr)))[rev(seq_along(tr)), rev(seq_along(tr))]))
-  bestDist <- testDist # assert symmetry
-
-  overShot <- as.matrix(testDist) > as.matrix(simDist)
-  which(overShot, arr.ind = TRUE)
-  
-  underShot <- as.matrix(testDist) < as.matrix(phanDist)
-  which(underShot, arr.ind = TRUE)
-  
-  if (interactive() && nTip == 25 && nSPR == 12) {
-    #  trueDist <- TBRDist::USPRDist(tr)
-    trueDist <- readRDS("true-25tip-12spr.Rds")
-
-    par(mfrow = c(1, 2))
-    distRange <- c(simDist - phanDist, simDist - bestDist)
-    hist(distRange, col = NA, border = NA)
-    hist(simDist - phanDist, add = TRUE, col = 2)
-    hist(simDist - bestDist, add = TRUE, col = "#88ee4488")
-    
-    plot(simDist, simDist, type = "n", asp = 1, ylim = range(distRange),
-         xlab = "Number of SPR moves", frame.plot = FALSE)
-    abline(0, 0, col = 4)
-    jd <- jitter(simDist)
-    #points(jd, trueDist, pch = 7, col = 3)
-    #points(jd, phanDist, pch = 1)
-    #points(jd, bestDist, pch = 3, col = 2)
-    points(jd, phanDist - trueDist, pch = 5, col = 2)
-    points(jd, bestDist - trueDist, pch = 4, col = 3)
-    legend("bottomright", c("Phangorn", "Rogue"), bty = "n",
-           pch = 5:4, col = 2:3)
-  }
-
-  expect_true(all(testDist >= phanDist))
-
-  # Cases to debug
-  opt <- options(debugSPR = TRUE)
-  on.exit(options(opt))
-  tree1 <- tr[[1]]
-  tree2 <- tr[[36]]
-  .SPRConfl(tree1, tree2)
-
-  tree1 <- tr[[3]]
-  tree2 <- tr[[11]]
-  .SPRConfl(tree1, tree2)
-
-  tree1 <- tr[[14]]
-  tree2 <- tr[[24]]
-  .SPRConfl(tree1, tree2)
-  options(opt)
-
-  # ub(SPRDist(tr), .phangornSPRDist(tr), times = 3)
-  # pv(testDist <- SPRDist(tr))
-
-  if (interactive()) {
-    skip("This shouldn't run!")
-    if (nTip < 51 && nSPR < 13) {
-      if (nTip == 25 && nSPR == 12) {
-        trueDist <- readRDS("true-25tip-12spr.Rds")
-      } else {
-        trueDist <- TBRDist::USPRDist(tr)
-      }
-    }
-  } else {
-    trueDist <- simDist
-  }
-
-  par(mfrow = c(1, 2))
-  distRange <- c(simDist - phanDist, simDist - bestDist)
-  hist(distRange, col = NA, border = NA)
-  hist(simDist - phanDist, add = TRUE, col = 2)
-  hist(simDist - bestDist, add = TRUE, col = "#88ee4488")
-  
-  plot(simDist, simDist, type = "n", asp = 1, ylim = range(distRange),
-       xlab = "Number of SPR moves")
-  abline(0, 0, col = 3)
-  jd <- jitter(simDist)
-  #points(jd, trueDist, pch = 7, col = 3)
-  #points(jd, phanDist, pch = 1)
-  #points(jd, bestDist, pch = 3, col = 2)
-  points(jd, phanDist - trueDist, pch = 5, col = 4)
-  points(jd, bestDist - trueDist, pch = 4, col = 5)
 })
 
 test_that("SPR.dist called safely", {
@@ -478,34 +263,10 @@ test_that("SPR deOliveira2008 calculation looks valid", {
   # We do not expect to obtain identical results to phangorn::SPR.dist,
   # because ties are broken in a different arbitrary manner.
   # We're thus left with quite a loose test.
-  Tree <- function (txt) ape::read.tree(text = txt)
-  
   expect_equal(SPRDist(PectinateTree(letters[1:26]),
                        PectinateTree(letters[c(2:26, 1)]),
                        method = "deOliv"),
                1L)
-  
-  nTip <- 130
-  nSPR <- 35
-  
-  set.seed(0)
-  tr <- vector("list", nSPR + 1L)
-  tr[[1]] <- Postorder(TreeTools::RandomTree(nTip, root = TRUE))
-  expect_equal(SPRDist(tr[[1]], tr[[1]])[[1]], 0)
-  for (i in seq_len(nSPR) + 1L) {
-    tr[[i]] <- Postorder(TreeSearch::SPR(tr[[i - 1]]))
-  }
-  
-  testDist <- as.matrix(SPRDist(tr, method = "de Oliv"))
-  simDist <- as.matrix(dist(seq_along(tr)))
-  for (i in 1:nSPR) for (j in 2:nSPR) {
-    {if (i < j) expect_gte else expect_lte}(testDist[i, j], testDist[i, j - 1])
-  }
-  
-  overShot <- as.matrix(testDist) > as.matrix(simDist)
-  overs <- colSums(overShot) > 0
-  overShot[overs, overs]
-  expect_false(any(overs))
 })
 
 
