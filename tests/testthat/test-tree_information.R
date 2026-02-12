@@ -1,5 +1,13 @@
 library("TreeTools")
 
+test_that("ClusteringInfo() fails gracefully", {
+  bal6 <- as.Splits(BalancedTree(6))
+  bad6 <- bal6
+  attr(bad6, "nTip") <- NULL
+  expect_error(ClusteringEntropy(bad6), "nTip")
+  expect_error(ClusteringEntropy(bal6, p = c(3, 5)), "number of splits .3\\)")
+})
+
 test_that("SplitwiseInfo() / ClusteringInfo() handle probabilities", {
   Tree <- function(txt) ape::read.tree(text = txt)
   tree <- Tree("((a, b)60, (c, d)60);")
