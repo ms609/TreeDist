@@ -9,9 +9,19 @@ test_that("SPR: keep_and_reroot()", {
   expect_equal(result[[1]], RootTree(KeepTip(tree1, keep), 1))
   expect_equal(result[[2]], RootTree(KeepTip(tree2, keep), 1))
   
+  result1 <- keep_and_reroot(tree1, tree2, 1:12 %in% 4)
+  expect_equal(result1[[1]], Preorder(SingleTaxonTree("t4")))
+  expect_equal(result1[[2]], Preorder(SingleTaxonTree("t4")))
+  
+  result0 <- keep_and_reduce(tree1, tree2, logical(12))
+  expect_equal(result0[[1]], Preorder(ZeroTaxonTree()))
+  
   reduced <- keep_and_reduce(tree1, tree2, keep)
   expect_equal(Preorder(reduced[[1]]), Preorder(DropTip(result[[1]], "t9")))
   expect_equal(Preorder(reduced[[2]]), Preorder(DropTip(result[[2]], "t9")))
+  
+  result0 <- keep_and_reduce(tree1, tree2, 1:12 %in% 4)
+  expect_null(result0[[1]])
 })
 
 test_that("SPRDist() handles different inputs", {

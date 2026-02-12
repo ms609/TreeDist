@@ -151,30 +151,28 @@ IntegerMatrix reverse (const IntegerMatrix x) {
 List keep_and_reroot(const List tree1,
                      const List tree2,
                      const LogicalVector keep) {
-  IntegerMatrix
-    postorder1 = tree1["edge"],
-    postorder2 = tree2["edge"]
-  ;
   
+  IntegerMatrix postorder1 = tree1["edge"];
   ASSERT(postorder1.nrow() % 2 == 0); // Tree is binary
-  ASSERT(postorder2.nrow() % 2 == 0); // Tree is binary
+  IntegerMatrix pre1 = reverse(postorder1);
   
-  IntegerMatrix
-    pre1 = reverse(postorder1),
-    pre2 = reverse(postorder2)
-  ;
+  IntegerMatrix postorder2 = tree2["edge"];
+  ASSERT(postorder2.nrow() % 2 == 0); // Tree is binary
+  IntegerMatrix pre2 = reverse(postorder2);
   
   ASSERT((postorder1.nrow() / 2 + 1) == keep.length());
-  // Rcout << "\n \n === Keep & Reroot ===\n";
-  // Rcout << " Keeping: ";
-  // for (int i = 0; i != keep.size(); i++) Rcout << (keep[i] ? "*" : ".");
-  IntegerMatrix ret_edge1 = TreeTools::keep_tip(pre1, keep);
-  IntegerMatrix ret_edge2 = TreeTools::keep_tip(pre2, keep);
   
-  const intx n_node = ret_edge1.nrow() / 2;
-  if (!n_node) {
-    List nullTree = List::create(Named("edge") = ret_edge1,
-                                 _["Nnode"] = n_node,
+  bool any_kept = false;
+  for (auto i : keep) {
+    if (i) {
+      any_kept = true;
+      break;
+    }
+  }
+  
+  if (!any_kept) {
+    List nullTree = List::create(Named("edge") = IntegerMatrix(0, 2),
+                                 _["Nnode"] = 0,
                                  _["tip.label"] = CharacterVector(0));
     
     nullTree.attr("class") = "phylo";
@@ -182,20 +180,37 @@ List keep_and_reroot(const List tree1,
     return List::create(nullTree, nullTree);
   }
   
-  const intx n_tip = n_node + 1;
+  IntegerMatrix ret_edge1 = TreeTools::keep_tip(pre1, keep);
+  IntegerMatrix ret_edge2 = TreeTools::keep_tip(pre2, keep);
+  
+  const int32 n_edge = ret_edge1.nrow();
+  const int32 n_node = n_edge / 2;
+  
+  if (n_node == 0) {
+    const CharacterVector all_labels = tree1["tip.label"];
+    const CharacterVector kept_labels = all_labels[keep];
+    ASSERT(kept_labels.length() == 1);
+    IntegerVector e_val = IntegerVector::create(2, 1);
+    e_val.attr("dim") = Dimension(1, 2);
+    List oneTipTree = List::create(
+      Named("edge") = as<IntegerMatrix>(e_val),
+      _["tip.label"] = kept_labels,
+      _["Nnode"] = 1
+    );
+    
+    oneTipTree.attr("class") = "phylo";
+    oneTipTree.attr("order") = "preorder";
+    return List::create(oneTipTree, oneTipTree);
+  }
+  
+  const int32 n_tip = n_node + 1;
   CharacterVector
     old_label = tree1["tip.label"],
     new_labels(n_tip)
   ;
   
-  // Rcout << ret_edge1.nrow() << " rows; Kept " << n_tip << " tips and "
-  //       << n_node << " nodes.\n";
-  
-  if (old_label.size() > std::numeric_limits<int16>::max()) {
-    Rcpp::stop("This many leaves are not (yet) supported.");
-  }
-  intx next_tip = n_tip;
-  for (intx i = intx(old_label.size()); i--; ) {
+  int32 next_tip = n_tip;
+  for (int32 i = int32(old_label.size()); i--; ) {
     if (keep[i]) {
       --next_tip;
       new_labels[next_tip] = old_label[i];
