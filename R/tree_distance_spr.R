@@ -872,23 +872,21 @@ SPRDist.multiPhylo <- SPRDist.list
   
   while (!is.null(reduced)) {
     
-    tr1 <- reduced[[1]]
-    tr2 <- reduced[[2]]
-    nTip <- NTip(tr1)
+    nTip <- NTip(reduced[[1]])
     if (nTip == 4 && getOption("sprShortcut", Inf) >= 4) {
       return(moves + 1)
     }
     
-    sp1 <- as.Splits(tr1)
-    sp2 <- as.Splits(tr2, tr1)
+    sp1 <- as.Splits(reduced[[1]])
+    sp2 <- as.Splits(reduced[[2]], sp1)
     if (nTip == 5 && getOption("sprShortcut", Inf) >= 5) {
       return(moves + .SPRExact5(sp1, sp2))
     }
     if (nTip == 6 && getOption("sprShortcut", Inf) >= 6) {
-      return(moves + .SPRExact6(sp1, sp2))
+      return(moves + spr_table_6(sp1, sp2))
     }
     if (nTip == 7 && getOption("sprShortcut", Inf) >= 7) {
-      exact <- .SPRExact7(sp1, sp2)
+      exact <- spr_table_7(sp1, sp2)
       if (is.na(exact) || exact < 1) {
         dput(sp1)
         dput(as.integer(as.TreeNumber(as.phylo(sp1))))
@@ -898,10 +896,10 @@ SPRDist.multiPhylo <- SPRDist.list
         summary(sp2)
         stop("Lookup failed.")
       }
-      return(moves + .SPRExact7(sp1, sp2))
+      return(moves + spr_table_7(sp1, sp2))
     }
     if (nTip == 8 && getOption("sprShortcut", Inf) >= 8) {
-      exact <- .SPRExact8(sp1, sp2)
+      exact <- spr_table_8(sp1, sp2)
       if (is.na(exact) || exact < 1) {
         dput(sp1)
         dput(as.integer(as.TreeNumber(as.phylo(sp1))))
@@ -911,10 +909,10 @@ SPRDist.multiPhylo <- SPRDist.list
         summary(sp2)
         stop("Lookup failed.")
       }
-      return(moves + .SPRExact8(sp1, sp2))
+      return(moves + exact)
     }
     if (nTip == 9 && getOption("sprShortcut", Inf) >= 8 && FALSE) {
-      exact <- .SPRExact9(sp1, sp2)
+      exact <- spr_table_9(sp1, sp2)
       if (is.na(exact) || exact < 1) {
         dput(sp1)
         dput(as.integer(as.TreeNumber(as.phylo(sp1))))
@@ -924,9 +922,11 @@ SPRDist.multiPhylo <- SPRDist.list
         summary(sp2)
         stop("Lookup failed.")
       }
-      return(moves + .SPRExact9(sp1, sp2))
+      return(moves + exact)
     }
     
+    tr1 <- reduced[[1]]
+    tr2 <- reduced[[2]]
     firstMatchedSplit <- FirstMatchingSplit(sp1, sp2)
     if (!isFALSE(getOption("sprMatches")) && firstMatchedSplit > 0) {
       # At least one split exists in both trees
