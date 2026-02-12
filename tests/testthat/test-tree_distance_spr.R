@@ -141,7 +141,7 @@ test_that("SPR shortcuts okay - known answer", {
   expect_true(all(cuts6 == exact))
   
   options("sprShortcut" = 7)
-  cuts6 <- SPRDist(trees, method = "rogue")
+  cuts7 <- SPRDist(trees, method = "rogue")
   expect_true(all(cuts7 <= noCuts))
   expect_true(all(cuts7 >= exact))
   # Aspirational:
