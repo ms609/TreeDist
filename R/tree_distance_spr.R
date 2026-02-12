@@ -189,22 +189,22 @@ SPRDist.multiPhylo <- SPRDist.list
   # Trees may be one of two shapes: 
   #   ((a1, a2), (b1, b2), (c1, c2))
   #   (((Lb, Lc), La), (Ra, (Rb, Rc)))
-  balanced1 <- all(pairs1)
-  balanced2 <- all(pairs2)
-  if (balanced1 && balanced2) {
+  # balanced1 <- all(pairs1)
+  # balanced2 <- all(pairs2)
+  # if (balanced1 && balanced2) {
     # There's only one possible configuration:
     # ((ab, ac), (ba, bc), (ca, cb)) vs ((ba, ca), (ab, cb), (ac, bc)) = 2
-  }
-  if (!balanced1 && !balanced2) {
+  # }
+  # if (!balanced1 && !balanced2) {
     # Both trees have the shape
     # (((Lb, Lc), La), (Ra, (Rb, Rc)))
     # We will use the same labels for Tree 2, matching where possible.
-    if (La1 == La2 && Ra1 == Ra2) {
+    # if (La1 == La2 && Ra1 == Ra2) {
       # La = La, Ra = Ra:
       # (((Lb, Lc), La), (Ra, (Rb, Rc))), (((Lb, Rb), La), (Ra, (Rc, Lc))) = 2
-    }
+    # }
     # As we can't match La and Ra, we'll match La if we can.
-    if (La1 != La2 && Ra1 != Ra2) {
+    # if (La1 != La2 && Ra1 != Ra2) {
       # LO != La, Ra != Ra
       # La and Ra are both in the cherries
       # (((?, La), Lb), (Lc, (?, ?)))
@@ -231,7 +231,7 @@ SPRDist.multiPhylo <- SPRDist.list
       #     (((Ra, La), Lb), (Rb, (Rc, Lc))) = 2
       #     (((Rc, La), Lb), (Rb, (Ra, Lc))) = 2
       #     (((Lc, La), Lb), (Rb, (Ra, Rc))) = 2
-    }
+    # }
     # Else exactly one of the bridging leaves is the same; call this La.
     # 
     # (((?, ?), La), (Rb, (?, ?)))
@@ -247,7 +247,7 @@ SPRDist.multiPhylo <- SPRDist.list
     #     (((Ra, Rb), La), (Lb, (Lc, Rc))) = 1 !!!
     # 
     # 
-  }
+  # }
 }
 
 .SPRExact7 <- function(sp1, sp2) {
