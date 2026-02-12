@@ -110,6 +110,10 @@ keep_and_reduce <- function(tree1, tree2, keep) {
     .Call(`_TreeDist_keep_and_reduce`, tree1, tree2, keep)
 }
 
+spr_table_6 <- function(sp1, sp2) {
+    .Call(`_TreeDist_spr_table_6`, sp1, sp2)
+}
+
 spr_table_7 <- function(sp1, sp2) {
     .Call(`_TreeDist_spr_table_7`, sp1, sp2)
 }

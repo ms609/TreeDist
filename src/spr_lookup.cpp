@@ -6,20 +6,29 @@
 #include "spr/lookup_table_8.h"
 #include "TreeTools/assert.h"
 
-using Split7 = uint8_t;          // 7 bits used
+using Split6 = uint8_t;                 // lower 6 bits used
+using SplitSet6 = std::array<Split6, 3>;
+constexpr Split6 MASK6 = 0x3F;          // 00111111
+
+using Split7 = uint8_t;                 // 7 bits used
 using SplitSet7 = std::array<Split7, 4>;
 using Perm7 = std::array<uint8_t, 7>;
+constexpr Split7 MASK7 = 0x7F;          // 01111111
 
 using Split8 = uint8_t;                 // 8 bits used
 using SplitSet8 = std::array<Split8, 5>;
 using Perm8 = std::array<uint8_t, 8>;
 
-using Split9 = uint16_t;                 // 9 bits used
+using Split9 = uint16_t;                // 9 bits used
 using SplitSet9 = std::array<Split9, 6>;
 using Perm9 = std::array<uint16_t, 9>;
 
+inline int popcount6(Split6 x) {
+  return __builtin_popcount(x & MASK6);
+}
+
 inline int popcount7(uint8_t x) {
-  return __builtin_popcount(x & 0x7F);
+  return __builtin_popcount(x & MASK7);
 }
 
 inline int popcount8(uint8_t x) {
@@ -27,7 +36,7 @@ inline int popcount8(uint8_t x) {
 }
 
 inline int tips_in_smallest7(uint8_t x) {
-  const int count = __builtin_popcount(x & 0x7F);
+  const int count = __builtin_popcount(x & MASK7);
   return count < 4 ? count : 7 - count;
 }
 
@@ -37,16 +46,22 @@ inline int tips_in_smallest8(uint8_t x) {
 }
 
 inline Split7 xor_split7(Split7 a, Split7 b) {
-  return (a ^ b) & 0x7F;
+  return (a ^ b) & MASK7;
 }
 
 inline Split8 xor_split8(Split8 a, Split8 b) {
   return a ^ b;
 }
 
+inline Split6 smaller_split6(Split6 s) {
+  int c = popcount6(s);
+  if (c > 3) s ^= MASK6;
+  return s;
+}
+
 inline Split7 smaller_split7(Split7 s) {
   if (popcount7(s) > 3) {
-    s ^= 0x7F;
+    s ^= MASK7;
   }
   return s;
 }
@@ -54,6 +69,11 @@ inline Split7 smaller_split7(Split7 s) {
 inline Split8 smaller_split8(Split8 s) {
   if (popcount8(s) > 4) s ^= 0xFF;
   return s;
+}
+
+inline Split6 overlapper6(Split6 a, Split6 b) {
+  Split6 x = (a ^ b) & MASK6;
+  return (popcount6(x) == 1) ? x : (x ^ MASK6);
 }
 
 enum class Shape7 { Pectinate, Balanced };
@@ -120,7 +140,7 @@ CanonicalInfo7 canonical_pectinate(const SplitSet7& sp) {
     }
   }
   
-  const Split7 mid = xor_split7(sp[trio1], sp[trio2]) ^ 0x7F;
+  const Split7 mid = xor_split7(sp[trio1], sp[trio2]) ^ MASK7;
   
   if (tips_in_smallest7(xor_split7(sp[pair1], sp[trio1])) != 1) {
     std::swap(pair1, pair2);
@@ -171,7 +191,7 @@ CanonicalInfo7 canonical_balanced(const SplitSet7& sp) {
       break;
     } else if (s_count == 6) {
       trioPair = i;
-      solo = s ^ 0x7F;
+      solo = s ^ MASK7;
       break;
     }
   }
@@ -411,7 +431,7 @@ Split8 permute_split8(Split8 s, const Perm8& p) {
 }
 
 inline Split7 polarize7(Split7 s) {
-  if (s & (1 << 6)) s ^= 0x7F;
+  if (s & (1 << 6)) s ^= MASK7;
   return s;
 }
 
@@ -454,6 +474,69 @@ int lookup8(uint64_t key, const std::array<SPRScore64, N>& table) {
   return (it != table.end() && it->key == key) ? it->score : -1;
 }
 
+int lookup_6(const SplitSet6& sp1_raw, const SplitSet6& sp2_raw) {
+  
+  SplitSet6 sp1 = sp1_raw;
+  SplitSet6 sp2 = sp2_raw;
+  
+  for (auto& s : sp1) s = smaller_split6(s);
+  for (auto& s : sp2) s = smaller_split6(s);
+  
+  std::array<bool,3> pairs1{}, pairs2{};
+  
+  for (int i = 0; i < 3; ++i) {
+    pairs1[i] = (popcount6(sp1[i]) == 2);
+    pairs2[i] = (popcount6(sp2[i]) == 2);
+  }
+  
+  /* All cherries shortcut */
+  if ((pairs1[0] && pairs1[1] && pairs1[2]) ||
+  (pairs2[0] && pairs2[1] && pairs2[2])) {
+    return 2;
+  }
+  
+  Split6 duo1[2], duo2[2];
+  Split6 trio1 = 0, trio2 = 0;
+  
+  int d = 0;
+  for (int i = 0; i < 3; ++i) {
+    if (pairs1[i]) duo1[d++] = sp1[i];
+    else trio1 = sp1[i];
+  }
+  
+  d = 0;
+  for (int i = 0; i < 3; ++i) {
+    if (pairs2[i]) duo2[d++] = sp2[i];
+    else trio2 = sp2[i];
+  }
+  
+  Split6 middle1a = overlapper6(duo1[0], trio1);
+  Split6 middle1b = overlapper6(duo1[1], trio1);
+  
+  Split6 middle2a = overlapper6(duo2[0], trio2);
+  Split6 middle2b = overlapper6(duo2[1], trio2);
+  
+  Split6 inMiddle = (middle1a | middle1b) & (middle2a | middle2b);
+  
+  if (popcount6(inMiddle) == 1) {
+    Split6 La = (middle1a & inMiddle) ? middle1a : middle1b;
+    Split6 Lbc1 = (middle1a & inMiddle) ? duo1[0] : duo1[1];
+    
+    if (Lbc1 & La) Lbc1 ^= MASK6;
+    if (Lbc1 & (middle2a | middle2b)) {
+      
+      Split6 Lbc2 = (middle2a & La) ? duo2[0] : duo2[1];
+      
+      if (Lbc2 & La) Lbc2 ^= MASK6;
+      
+      if ((Lbc2 & Lbc1) == 0) return 1;
+    }
+  }
+  
+  return 2;
+}
+
+
 int lookup_7(const SplitSet7& sp1, const SplitSet7& sp2) {
   Shape7 shape = detect_shape7(sp1);
   
@@ -476,6 +559,7 @@ int lookup_7(const SplitSet7& sp1, const SplitSet7& sp2) {
     ? lookup(key, PEC_LOOKUP7)
       : lookup(key, BAL_LOOKUP7);
 }
+
 int lookup_8(const SplitSet8& sp1, const SplitSet8& sp2) {
   Shape8 shape = detect_shape8(sp1);
   
@@ -504,9 +588,23 @@ int lookup_8(const SplitSet8& sp1, const SplitSet8& sp2) {
   return -1;
 }
 
-inline SplitSet7 read_splits(const Rcpp::RawVector& r) {
-  if (r.size() != 4)
+inline SplitSet6 read_splits6(const Rcpp::RawVector& r) {
+  if (r.size() != 3) {
+    Rcpp::stop("Expected length-3 raw vector");
+  }
+  
+  SplitSet6 sp{};
+  for (int i = 0; i < 3; ++i) {
+    sp[i] = static_cast<uint8_t>(r[i]);
+  }
+  
+  return sp;
+}
+
+inline SplitSet7 read_splits7(const Rcpp::RawVector& r) {
+  if (r.size() != 4) {
     Rcpp::stop("Expected a length-4 raw vector of splits");
+  }
   
   SplitSet7 sp{};
   for (int i = 0; i < 4; ++i) {
@@ -516,21 +614,30 @@ inline SplitSet7 read_splits(const Rcpp::RawVector& r) {
   return sp;
 }
 
-inline SplitSet7 smallest_splits(SplitSet7 sp) {
+inline SplitSet7 smallest_splits7(SplitSet7 sp) {
   for (auto& s : sp) {
     if (popcount7(s) > 3) {
-      s ^= 0x7F;
+      s ^= MASK7;
     }
   }
   return sp;
 }
 
+
+// [[Rcpp::export]]
+int spr_table_6(const Rcpp::RawVector& sp1,
+                const Rcpp::RawVector& sp2)
+{
+  return lookup_6(read_splits6(sp1), read_splits6(sp2));
+}
+
+
 // [[Rcpp::export]]
 int spr_table_7(const Rcpp::RawVector& sp1, const Rcpp::RawVector& sp2) {
-  SplitSet7 s1_raw = read_splits(sp1);
-  SplitSet7 s1 = smallest_splits(s1_raw);
+  SplitSet7 s1_raw = read_splits7(sp1);
+  SplitSet7 s1 = smallest_splits7(s1_raw);
   
-  SplitSet7 s2 = read_splits(sp2);
+  SplitSet7 s2 = read_splits7(sp2);
   
   return lookup_7(s1, s2);
 }
