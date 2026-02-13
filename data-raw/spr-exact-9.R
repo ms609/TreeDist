@@ -328,6 +328,13 @@ saveRDS(splits5, file = "splits5.rds")
 
 # Define packing algorithm based on range
 library("bit64")
+scores0 <- readRDS("scores0.rds")
+sp0 <- readRDS("splits0.rds")
+sp1 <- splits1
+sp2 <- splits2
+sp3 <- splits3
+sp4 <- splits4
+sp5 <- splits5
 offset <- c(
   min(sp0[1, ], sp1[1, ], sp2[1, ], sp3[1, ], sp4[1, ], sp5[1, ]),
   min(sp0[2, ], sp1[2, ], sp2[2, ], sp3[2, ], sp4[2, ], sp5[2, ]),
@@ -339,12 +346,12 @@ offset <- c(
   as.integer64()
 
 rng <-  c(
-  min(sp0[1, ], sp1[1, ], sp2[1, ], sp3[1, ], sp4[1, ], sp5[1, ]),
-  min(sp0[2, ], sp1[2, ], sp2[2, ], sp3[2, ], sp4[2, ], sp5[2, ]),
-  min(sp0[3, ], sp1[3, ], sp2[3, ], sp3[3, ], sp4[3, ], sp5[3, ]),
-  min(sp0[4, ], sp1[4, ], sp2[4, ], sp3[4, ], sp4[4, ], sp5[4, ]),
-  min(sp0[5, ], sp1[5, ], sp2[5, ], sp3[5, ], sp4[5, ], sp5[5, ]),
-  min(sp0[6, ], sp1[6, ], sp2[6, ], sp3[6, ], sp4[6, ], sp5[6, ])
+  max(sp0[1, ], sp1[1, ], sp2[1, ], sp3[1, ], sp4[1, ], sp5[1, ]),
+  max(sp0[2, ], sp1[2, ], sp2[2, ], sp3[2, ], sp4[2, ], sp5[2, ]),
+  max(sp0[3, ], sp1[3, ], sp2[3, ], sp3[3, ], sp4[3, ], sp5[3, ]),
+  max(sp0[4, ], sp1[4, ], sp2[4, ], sp3[4, ], sp4[4, ], sp5[4, ]),
+  max(sp0[5, ], sp1[5, ], sp2[5, ], sp3[5, ], sp4[5, ], sp5[5, ]),
+  max(sp0[6, ], sp1[6, ], sp2[6, ], sp3[6, ], sp4[6, ], sp5[6, ])
 ) -  c(
   min(sp0[1, ], sp1[1, ], sp2[1, ], sp3[1, ], sp4[1, ], sp5[1, ]),
   min(sp0[2, ], sp1[2, ], sp2[2, ], sp3[2, ], sp4[2, ], sp5[2, ]),
@@ -354,14 +361,16 @@ rng <-  c(
   min(sp0[6, ], sp1[6, ], sp2[6, ], sp3[6, ], sp4[6, ], sp5[6, ])
 )
 
+2^as.integer64(cumsum(rev(ceiling(log2(rng)))))
+
 BitPack9 <- function(vec) {
   v <- as.integer64(vec)
   as.character(
-    (v[1] - offset[[1]]) * 134217728L +
-      (v[2] - offset[[2]]) * 1048576L +
-      (v[3] - offset[[3]]) * 8192L +
-      (v[4] - offset[[4]]) * 64L +
-      (v[5] - offset[[5]]) * 64L +
+    (v[1] - offset[[1]]) * as.integer64("549755813888") +
+      (v[2] - offset[[2]]) * as.integer64("2147483648") +
+      (v[3] - offset[[3]]) * 8388608L +
+      (v[4] - offset[[4]]) * 32768L +
+      (v[5] - offset[[5]]) * 128L +
       (v[6] - offset[[6]]))
 }
 .Order <- function(keys) {

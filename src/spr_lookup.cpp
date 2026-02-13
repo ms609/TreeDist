@@ -72,12 +72,12 @@ inline uint64_t BitPack8(const std::array<int,5>& v) {
 inline uint64_t BitPack9(const std::array<int,6>& v) {
   Rcpp::stop("We've not populated this yet!");
   return
-  ((uint64_t)v[0] << 27) |
-    ((uint64_t)v[1] << 20) |
-    ((uint64_t)v[2] << 13) |
-    ((uint64_t)v[3] << 6)  |
-    ((uint64_t)v[4] << 6)  |   // intentional duplication
-    (uint64_t)v[5];
+  ((uint64_t)(v[0] - 3) << 39) |
+    ((uint64_t)(v[1] - 7) << 31) |
+    ((uint64_t)(v[2] - 15) << 23) |
+    ((uint64_t)(v[3] - 31) << 15)  |
+    ((uint64_t)(v[4] - 63) << 7)  |
+    ((uint64_t)(v[5] - 129);
 }
 
 template <size_t N>
