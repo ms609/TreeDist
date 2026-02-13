@@ -2,8 +2,7 @@
 #include "lookup.h"
 #include "TreeTools/assert.h"
 
-CanonicalInfo9 canonical9_0(const SplitSet9& sp)
-{
+CanonicalInfo9 canonical9_0(const SplitSet9& sp) {
   std::array<int,6> tiss;
   for (int i = 0; i < 6; ++i)
     tiss[i] = tips_in_smallest9(sp[i]);
@@ -66,8 +65,8 @@ CanonicalInfo9 canonical9_0(const SplitSet9& sp)
   ASSERT(k == 9);
   return { Shape9::s0, perm };
 }
-CanonicalInfo9 canonical9_1(const SplitSet9& sp)
-{
+
+CanonicalInfo9 canonical9_1(const SplitSet9& sp) {
   std::array<int,6> tiss;
   for (int i = 0; i < 6; ++i)
     tiss[i] = tips_in_smallest9(sp[i]);
@@ -140,8 +139,7 @@ CanonicalInfo9 canonical9_1(const SplitSet9& sp)
   return { Shape9::s1, perm };
 }
 
-CanonicalInfo9 canonical9_2(const SplitSet9& sp)
-{
+CanonicalInfo9 canonical9_2(const SplitSet9& sp) {
   std::array<int,6> tiss;
   for (int i = 0; i < 6; ++i) {
     tiss[i] = tips_in_smallest9(sp[i]);
@@ -212,8 +210,44 @@ CanonicalInfo9 canonical9_2(const SplitSet9& sp)
   return { Shape9::s2, perm };
 }
 
-CanonicalInfo9 canonical9_3(const SplitSet9& sp)
-{
+inline int single_tip(Split9 s) {
+  s &= MASK9; // TODO remove - surely unnecessary?
+  
+  const int c = popcount9(s);
+  
+  if (c == 1) {
+    for (int i = 0; i < 9; ++i) {
+      if (s & (Split9(1) << i)) {
+        return i;
+      }
+    }
+  }
+  
+  if (c == 8) {
+    Split9 t = (~s) & MASK9;
+    
+    for (int i = 0; i < 9; ++i) {
+      if (t & (Split9(1) << i)) {
+        return i;
+      }
+    }
+  }
+  
+  Rcpp::stop("single_tip(): split is not singleton-sized");
+}
+
+inline Split9 polarize9(Split9 s, int tip) {
+  s &= MASK9;
+  
+  if (!(s & (Split9(1) << tip))) {
+    s ^= MASK9;
+  }
+  
+  return s;
+}
+
+
+CanonicalInfo9 canonical9_3(const SplitSet9& sp) {
   std::array<int, 6> tiss{};
   for (int i = 0; i < 6; ++i) {
     int k = popcount9(sp[i]);
@@ -261,25 +295,27 @@ CanonicalInfo9 canonical9_3(const SplitSet9& sp)
   }
   
   std::vector<int> remaining;
-  for (int i = 0; i < 6; ++i)
-    if (tiss[i] == 2 && i != trioPair && i != midPair)
+  for (int i = 0; i < 6; ++i) {
+    if (tiss[i] == 2 && i != trioPair && i != midPair) {
       remaining.push_back(i);
-    
-    CanonicalInfo9 out{};
-    
-    out.order = {
-      soloTip,
-      single_tip(sp[trioPair]),
-      single_tip(sp[midPair]),
-      single_tip(sp[remaining[0]]),
-      single_tip(sp[remaining[1]]),
-      -1, -1, -1, -1
-    };
-    
-    return out;
+    }
+  }
+  
+  CanonicalInfo9 out{};
+  
+  out.order = {
+    soloTip,
+    single_tip(sp[trioPair]),
+    single_tip(sp[midPair]),
+    single_tip(sp[remaining[0]]),
+    single_tip(sp[remaining[1]]),
+    -1, -1, -1, -1
+  };
+  
+  return out;
 }
-CanonicalInfo9 canonical9_4(const SplitSet9& sp)
-{
+
+CanonicalInfo9 canonical9_4(const SplitSet9& sp) {
   std::array<int, 6> tiss{};
   for (int i = 0; i < 6; ++i) {
     int k = popcount9(sp[i]);
@@ -318,29 +354,30 @@ CanonicalInfo9 canonical9_4(const SplitSet9& sp)
   }
   
   int pair3 = -1;
-  for (int p : pairs)
-    if (p != pair1 && p != pair2)
+  for (int p : pairs) {
+    if (p != pair1 && p != pair2) {
       pair3 = p;
-    
-    solo3 = xor_split9(sp[trios[2]], sp[pair3]);
-    
-    CanonicalInfo9 out{};
-    
-    out.order = {
-      single_tip(solo1),
-      single_tip(sp[pair1]),
-      single_tip(solo2),
-      single_tip(sp[pair2]),
-      single_tip(solo3),
-      single_tip(sp[pair3]),
-      -1, -1, -1
-    };
-    
-    return out;
+    }
+  }
+  
+  solo3 = xor_split9(sp[trios[2]], sp[pair3]);
+  
+  CanonicalInfo9 out{};
+  
+  out.order = {
+    single_tip(solo1),
+    single_tip(sp[pair1]),
+    single_tip(solo2),
+    single_tip(sp[pair2]),
+    single_tip(solo3),
+    single_tip(sp[pair3]),
+    -1, -1, -1
+  };
+  
+  return out;
 }
 
-CanonicalInfo9 canonical9_5(const SplitSet9& sp)
-{
+CanonicalInfo9 canonical9_5(const SplitSet9& sp) {
   std::array<int, 6> tiss{};
   for (int i = 0; i < 6; ++i) {
     int k = popcount9(sp[i]);
