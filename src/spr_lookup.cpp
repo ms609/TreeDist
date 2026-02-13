@@ -628,12 +628,12 @@ inline SplitSet7 read_splits7(const Rcpp::RawVector& r) {
   return sp;
 }
 
-inline SplitSet7 smallest_splits7(SplitSet7 sp) {
-  for (auto& s : sp) {
-    if (popcount7(s) > 3) {
-      s ^= MASK7;
-    }
-  }
+inline SplitSet8 read_splits8(const Rcpp::RawVector& r) {
+  if (r.size() != 5)
+    Rcpp::stop("Expected length-5 raw vector");
+  SplitSet8 sp{};
+  for (int i = 0; i < 5; ++i)
+    sp[i] = static_cast<uint8_t>(r[i]);
   return sp;
 }
 
@@ -648,21 +648,10 @@ int spr_table_6(const Rcpp::RawVector& sp1,
 
 // [[Rcpp::export]]
 int spr_table_7(const Rcpp::RawVector& sp1, const Rcpp::RawVector& sp2) {
-  SplitSet7 s1_raw = read_splits7(sp1);
-  SplitSet7 s1 = smallest_splits7(s1_raw);
+  SplitSet7 s1 = read_splits7(sp1);
+  for (auto& s : s1) s = smaller_split7(s);
   
-  SplitSet7 s2 = read_splits7(sp2);
-  
-  return lookup7(s1, s2);
-}
-
-inline SplitSet8 read_splits8(const Rcpp::RawVector& r) {
-  if (r.size() != 5)
-    Rcpp::stop("Expected length-5 raw vector");
-  SplitSet8 sp{};
-  for (int i = 0; i < 5; ++i)
-    sp[i] = static_cast<uint8_t>(r[i]);
-  return sp;
+  return lookup7(s1, read_splits7(sp2));
 }
 
 // [[Rcpp::export]]
@@ -671,6 +660,5 @@ int spr_table_8(const Rcpp::RawVector& sp1,
   SplitSet8 s1 = read_splits8(sp1);
   for (auto& s : s1) s = smaller_split8(s);
   
-  SplitSet8 s2 = read_splits8(sp2);
-  return lookup8(s1, s2);
+  return lookup8(s1, read_splits8(sp2));
 }

@@ -866,8 +866,10 @@ SPRDist.multiPhylo <- SPRDist.list
     par(mfrow = 1:2, mai = rep(0.1, 4))
     plot(reduced[[1]])
     ape::nodelabels(frame = "none", cex = 0.8)
+    ape::tiplabels(adj = -1.6, frame = "none", col = 2)
     plot(reduced[[2]])
     ape::nodelabels(frame = "none", cex = 0.8)
+    ape::tiplabels(adj = -1.6, frame = "none", col = 2)
   }
   
   while (!is.null(reduced)) {
