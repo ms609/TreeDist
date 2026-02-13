@@ -28,22 +28,22 @@ inline int popcount6(Split6 x) {
   return __builtin_popcount(x & MASK6);
 }
 
-inline int popcount7(uint8_t x) {
+inline int popcount7(Split7 x) {
   return __builtin_popcount(x & MASK7);
 }
 
-inline int popcount8(uint8_t x) {
-  return __builtin_popcount(x);
+inline int popcount8(Split8 x) {
+  return __builtin_popcount(x & MASK8);
 }
 
 inline int tips_in_smallest7(uint8_t x) {
-  const int count = __builtin_popcount(x & MASK7);
+  const int count = popcount7(x);
   return count < 4 ? count : 7 - count;
 }
 
 inline int tips_in_smallest8(uint8_t x) {
-  int c = popcount8(x);
-  return (c <= 4) ? c : 8 - c;
+  const int count = popcount8(x);
+  return (count <= 4) ? count : 8 - count;
 }
 
 inline Split7 xor_split7(Split7 a, Split7 b) {
@@ -51,19 +51,16 @@ inline Split7 xor_split7(Split7 a, Split7 b) {
 }
 
 inline Split8 xor_split8(Split8 a, Split8 b) {
-  return a ^ b;
+  return (a ^ b) & MASK8;
 }
 
 inline Split6 smaller_split6(Split6 s) {
-  int c = popcount6(s);
-  if (c > 3) s ^= MASK6;
+  if (popcount6(s) > 3) s ^= MASK6;
   return s;
 }
 
 inline Split7 smaller_split7(Split7 s) {
-  if (popcount7(s) > 3) {
-    s ^= MASK7;
-  }
+  if (popcount7(s) > 3) s ^= MASK7;
   return s;
 }
 
@@ -460,11 +457,11 @@ inline uint32_t BitPack7(const std::array<int,4>& v) {
 
 inline uint64_t BitPack8(const std::array<int,5>& v) {
   return
-  ((uint64_t)(v[0]) << 27) |
-    ((uint64_t)(v[1]) << 20) |
-    ((uint64_t)(v[2]) << 13) |
-    ((uint64_t)(v[3]) << 6)  |
-    (uint64_t)(v[4]);
+  ((uint64_t)(v[0] - 3) << 27) |
+    ((uint64_t)(v[1] - 7) << 20) |
+    ((uint64_t)(v[2] - 15) << 13) |
+    ((uint64_t)(v[3] - 31) << 6)  |
+    (uint64_t)(v[4] - 65);
 }
 
 template <size_t N>
@@ -639,12 +636,9 @@ inline SplitSet8 read_splits8(const Rcpp::RawVector& r) {
 
 
 // [[Rcpp::export]]
-int spr_table_6(const Rcpp::RawVector& sp1,
-                const Rcpp::RawVector& sp2)
-{
+int spr_table_6(const Rcpp::RawVector& sp1, const Rcpp::RawVector& sp2) {
   return lookup6(read_splits6(sp1), read_splits6(sp2));
 }
-
 
 // [[Rcpp::export]]
 int spr_table_7(const Rcpp::RawVector& sp1, const Rcpp::RawVector& sp2) {
@@ -655,10 +649,9 @@ int spr_table_7(const Rcpp::RawVector& sp1, const Rcpp::RawVector& sp2) {
 }
 
 // [[Rcpp::export]]
-int spr_table_8(const Rcpp::RawVector& sp1,
-                const Rcpp::RawVector& sp2) {
+int spr_table_8(const Rcpp::RawVector& sp1, const Rcpp::RawVector& sp2) {
   SplitSet8 s1 = read_splits8(sp1);
   for (auto& s : s1) s = smaller_split8(s);
-  
+ 
   return lookup8(s1, read_splits8(sp2));
 }
