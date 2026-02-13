@@ -108,9 +108,11 @@ scores1 <- sapply(cli::cli_progress_along(trees1), function(i) {
 valid1 <- !is.na(scores1)
 
 splits1 <- vapply(which(valid1), function(i) {
-  as.integer(!(trees1[[i]] |> as.Splits() |> PolarizeSplits(nTip))) |> sort()
+  as.integer(!(trees1[[i]] |> as.Splits() |> PolarizeSplits(nTip))[, 1]) |> sort()
 }, integer(nTip - 3))
 
+saveRDS(scores1, file = "scores1.rds")
+saveRDS(splits1, file = "splits1.rds")
 
 
 shape2 <- Tree("((c1, c2), (s, (t, ((p1, p2), (u, (q1, q2))))));")
@@ -160,8 +162,11 @@ scores2 <- sapply(cli::cli_progress_along(trees2), function(i) {
 valid2 <- !is.na(scores2)
 
 splits2 <- vapply(which(valid2), function(i) {
-  as.integer(!(trees2[[i]] |> as.Splits() |> PolarizeSplits(nTip))) |> sort()
+  as.integer(!(trees2[[i]] |> as.Splits() |> PolarizeSplits(nTip))[, 1]) |> sort()
 }, integer(nTip - 3))
+
+saveRDS(scores2, file = "scores2.rds")
+saveRDS(splits2, file = "splits2.rds")
 
 
 shape3 <- Tree("((c1, c2), (s, ((h1, h2), ((p1, p2), (q1, q2)))));")
@@ -210,8 +215,11 @@ scores3 <- sapply(cli::cli_progress_along(trees3), function(i) {
 valid3 <- !is.na(scores3)
 
 splits3 <- vapply(which(valid3), function(i) {
-  as.integer(!(trees3[[i]] |> as.Splits() |> PolarizeSplits(nTip))) |> sort()
+  as.integer(!(trees3[[i]] |> as.Splits() |> PolarizeSplits(nTip))[, 1]) |> sort()
 }, integer(nTip - 3))
+
+saveRDS(scores3, file = "scores3.rds")
+saveRDS(splits3, file = "splits3.rds")
 
 
 
@@ -260,8 +268,11 @@ scores4 <- sapply(cli::cli_progress_along(trees4), function(i) {
 valid4 <- !is.na(scores4)
 
 splits4 <- vapply(which(valid4), function(i) {
-  as.integer(!(trees4[[i]] |> as.Splits() |> PolarizeSplits(nTip))) |> sort()
+  as.integer(!(trees4[[i]] |> as.Splits() |> PolarizeSplits(nTip))[, 1]) |> sort()
 }, integer(nTip - 3))
+
+saveRDS(scores4, file = "scores4.rds")
+saveRDS(splits4, file = "splits4.rds")
 
 
 
@@ -306,8 +317,11 @@ scores5 <- sapply(cli::cli_progress_along(trees5), function(i) {
 valid5 <- !is.na(scores5)
 
 splits5 <- vapply(which(valid5), function(i) {
-  as.integer(!(trees5[[i]] |> as.Splits() |> PolarizeSplits(nTip))) |> sort()
+  as.integer(!(trees5[[i]] |> as.Splits() |> PolarizeSplits(nTip))[, 1]) |> sort()
 }, integer(nTip - 3))
+
+saveRDS(scores5, file = "scores5.rds")
+saveRDS(splits5, file = "splits5.rds")
 
 
 
