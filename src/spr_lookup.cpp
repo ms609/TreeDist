@@ -53,52 +53,6 @@ inline Shape9 detect_shape9(const SplitSet9& sp) {
   return Shape9::s5;
 }
 
-// Reorder the leaves of s to match the sequence given by p
-Split7 permute_split7(Split7 s, const Perm7& p) {
-  Split7 out = 0;
-  for (int i = 0; i < 7; ++i) {
-    if (s & (1 << p[i])) {
-      out |= (1 << i);
-    }
-  }
-  return out;
-}
-
-Split8 permute_split8(Split8 s, const Perm8& p) {
-  Split8 out = 0;
-  for (int i = 0; i < 8; ++i) {
-    if (s & (1 << p[i])) {
-      out |= (1 << i);
-    }
-  }
-  return out;
-}
-
-Split9 permute_split9(Split9 s, const Perm9& p) {
-  Split9 out = 0;
-  for (int i = 0; i < 9; ++i) {
-    if (s & (1 << p[i])) {
-      out |= (1 << i);
-    }
-  }
-  return out;
-}
-
-inline Split7 polarize7(Split7 s) {
-  if (s & (1 << 6)) s ^= MASK7;
-  return s;
-}
-
-inline Split8 polarize8(Split8 s) {
-  if (s & (1 << 7)) s ^= MASK8;
-  return s;
-}
-
-inline Split9 polarize9(Split9 s) {
-  if (s & (1 << 8)) s ^= MASK9;
-  return s;
-}
-
 inline uint32_t BitPack7(const std::array<int,4>& v) {
   return ((v[0] - 3)  << 18) |
     ((v[1] - 7)  << 12) |

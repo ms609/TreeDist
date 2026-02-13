@@ -226,15 +226,15 @@ CanonicalInfo9 canonical9_3(const SplitSet9& sp)
     if (tiss[i] == 4 && four < 0) four = i;
   }
   
-  split_t9 trioSp = sp[trio];
+  Split9 trioSp = sp[trio];
   
   int trioPair = -1;
-  split_t9 soloSp{};
+  Split9 soloSp{};
   
   for (int i = 0; i < 6; ++i) {
     if (i == trio || tiss[i] != 2) continue;
     
-    split_t9 x = xor_split(trioSp, sp[i]);
+    Split9 x = xor_split9(trioSp, sp[i]);
     int k = popcount9(x);
     
     if (k == 1 || k == 8) {
@@ -246,14 +246,14 @@ CanonicalInfo9 canonical9_3(const SplitSet9& sp)
   
   int soloTip = single_tip(soloSp);
   
-  split_t9 fourSp = polarize9(sp[four], soloTip);
+  Split9 fourSp = polarize9(sp[four], soloTip);
   
   int midPair = -1;
   for (int i = 0; i < 6; ++i) {
     if (i == trio || i == four || i == trioPair || tiss[i] != 2)
       continue;
     
-    split_t9 mid = fourSp & polarize9(sp[i], soloTip);
+    Split9 mid = fourSp & polarize9(sp[i], soloTip);
     if (popcount9(mid) == 3) {
       midPair = i;
       break;
@@ -294,10 +294,10 @@ CanonicalInfo9 canonical9_4(const SplitSet9& sp)
   
   int pair1 = -1, pair2 = -1;
   
-  split_t9 solo1{}, solo2{}, solo3{};
+  Split9 solo1{}, solo2{}, solo3{};
   
   for (int p : pairs) {
-    split_t9 x = xor_split(sp[trios[0]], sp[p]);
+    Split9 x = xor_split9(sp[trios[0]], sp[p]);
     int k = popcount9(x);
     if (k == 1 || k == 8) {
       pair1 = p;
@@ -308,7 +308,7 @@ CanonicalInfo9 canonical9_4(const SplitSet9& sp)
   
   for (int p : pairs) {
     if (p == pair1) continue;
-    split_t9 x = xor_split(sp[trios[1]], sp[p]);
+    Split9 x = xor_split9(sp[trios[1]], sp[p]);
     int k = popcount9(x);
     if (k == 1 || k == 8) {
       pair2 = p;
@@ -322,7 +322,7 @@ CanonicalInfo9 canonical9_4(const SplitSet9& sp)
     if (p != pair1 && p != pair2)
       pair3 = p;
     
-    solo3 = xor_split(sp[trios[2]], sp[pair3]);
+    solo3 = xor_split9(sp[trios[2]], sp[pair3]);
     
     CanonicalInfo9 out{};
     
@@ -353,15 +353,15 @@ CanonicalInfo9 canonical9_5(const SplitSet9& sp)
     else if (tiss[i] == 2) pairs.push_back(i);
   }
   
-  split_t9 soloSp = xor_split(sp[fours[0]], sp[fours[1]]);
+  Split9 soloSp = xor_split9(sp[fours[0]], sp[fours[1]]);
   int soloTip = single_tip(soloSp);
   
-  split_t9 four1 = polarize9(sp[fours[0]], soloTip);
+  Split9 four1 = polarize9(sp[fours[0]], soloTip);
   
   std::vector<int> group1, group2;
   
   for (int p : pairs) {
-    split_t9 x = four1 & polarize9(sp[p], soloTip);
+    Split9 x = four1 & polarize9(sp[p], soloTip);
     if (popcount9(x) > 0) group1.push_back(p);
     else group2.push_back(p);
   }
