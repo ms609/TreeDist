@@ -429,7 +429,7 @@ header_content <- paste0(
   "static constexpr std::array<SPRScore64, ", nrow(df5), "> LOOKUP9_5",
   " = {{\n",
   paste0("    {", df5$key, "ULL, ", df5$score, "}", collapse = ",\n"),
-  "\n}};\n",
+  "\n}};\n"
 )
 
 writeLines(header_content, sprintf("src/spr/lookup_table_%d.h", nTip))
