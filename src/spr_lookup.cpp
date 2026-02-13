@@ -100,7 +100,7 @@ struct CanonicalInfo9 {
 inline Shape7 detect_shape7(const SplitSet7& sp) {
   int trio_count = 0;
   for (auto s : sp) {
-    int t = popcount7(s);
+    const int t = popcount7(s);
     if (t == 3) ++trio_count;
   }
   return (trio_count == 2) ? Shape7::Pectinate : Shape7::Balanced;
@@ -109,7 +109,7 @@ inline Shape7 detect_shape7(const SplitSet7& sp) {
 inline Shape8 detect_shape8(const SplitSet8& sp) {
   int n4 = 0, n3 = 0, n2 = 0;
   for (auto s : sp) {
-    int t = tips_in_smallest8(s);
+    const int t = tips_in_smallest8(s);
     if (t == 4) ++n4;
     else if (t == 3) ++n3;
     else if (t == 2) ++n2;
@@ -117,7 +117,7 @@ inline Shape8 detect_shape8(const SplitSet8& sp) {
   
   if (n4 == 1 && n3 == 2) return Shape8::Pectinate;
   if (n4 == 1 && n3 == 1) return Shape8::Mix;
-  if (n3 == 2)           return Shape8::Mid;
+  if (n3 == 2)            return Shape8::Mid;
   return Shape8::Balanced;
 }
 
@@ -420,7 +420,8 @@ CanonicalInfo8 canonical_balanced8(const SplitSet8& sp) {
   return { Shape8::Balanced, perm };
 }
 
-Split7 permute_split(Split7 s, const Perm7& p) {
+// Reorder the leaves of s to match the sequence given by p
+Split7 permute_split7(Split7 s, const Perm7& p) {
   Split7 out = 0;
   for (int i = 0; i < 7; ++i) {
     if (s & (1 << p[i])) {
@@ -433,7 +434,9 @@ Split7 permute_split(Split7 s, const Perm7& p) {
 Split8 permute_split8(Split8 s, const Perm8& p) {
   Split8 out = 0;
   for (int i = 0; i < 8; ++i) {
-    if (s & (1 << p[i])) out |= (1 << i);
+    if (s & (1 << p[i])) {
+      out |= (1 << i);
+    }
   }
   return out;
 }
@@ -451,17 +454,8 @@ inline Split8 polarize8(Split8 s) {
 inline uint32_t BitPack7(const std::array<int,4>& v) {
   return ((v[0] - 3)  << 18) |
     ((v[1] - 7)  << 12) |
-    ((v[2] - 15) << 6)  |
+    ((v[2] - 15) << 6) |
     ( v[3] - 33);
-}
-
-template <size_t N>
-int lookup(uint32_t key, const std::array<SPRScore, N>& table) {
-  auto it = std::lower_bound(
-    table.begin(), table.end(), key,
-    [](const SPRScore& a, uint32_t k) { return a.key < k; }
-  );
-  return (it != table.end() && it->key == key) ? it->score : -1;
 }
 
 inline uint64_t BitPack8(const std::array<int,5>& v) {
@@ -474,6 +468,15 @@ inline uint64_t BitPack8(const std::array<int,5>& v) {
 }
 
 template <size_t N>
+int lookup7(uint32_t key, const std::array<SPRScore, N>& table) {
+  auto it = std::lower_bound(
+    table.begin(), table.end(), key,
+    [](const SPRScore& a, uint32_t k) { return a.key < k; }
+  );
+  return (it != table.end() && it->key == key) ? it->score : -1;
+}
+
+template <size_t N>
 int lookup8(uint64_t key, const std::array<SPRScore64, N>& table) {
   auto it = std::lower_bound(
     table.begin(), table.end(), key,
@@ -482,7 +485,7 @@ int lookup8(uint64_t key, const std::array<SPRScore64, N>& table) {
   return (it != table.end() && it->key == key) ? it->score : -1;
 }
 
-int lookup_6(const SplitSet6& sp1_raw, const SplitSet6& sp2_raw) {
+int lookup6(const SplitSet6& sp1_raw, const SplitSet6& sp2_raw) {
   
   SplitSet6 sp1 = sp1_raw;
   SplitSet6 sp2 = sp2_raw;
@@ -545,7 +548,7 @@ int lookup_6(const SplitSet6& sp1_raw, const SplitSet6& sp2_raw) {
 }
 
 
-int lookup_7(const SplitSet7& sp1, const SplitSet7& sp2) {
+int lookup7(const SplitSet7& sp1, const SplitSet7& sp2) {
   Shape7 shape = detect_shape7(sp1);
   
   CanonicalInfo7 canon =
@@ -555,7 +558,7 @@ int lookup_7(const SplitSet7& sp1, const SplitSet7& sp2) {
   
   std::array<int,4> packed{};
   for (int i = 0; i < 4; ++i) {
-    Split7 s = permute_split(sp2[i], canon.perm);
+    Split7 s = permute_split7(sp2[i], canon.perm);
     s = polarize7(s);
     packed[i] = s;
   }
@@ -564,11 +567,11 @@ int lookup_7(const SplitSet7& sp1, const SplitSet7& sp2) {
   
   uint32_t key = BitPack7(packed);
   return (shape == Shape7::Pectinate)
-    ? lookup(key, PEC_LOOKUP7)
-      : lookup(key, BAL_LOOKUP7);
+    ? lookup7(key, PEC_LOOKUP7)
+      : lookup7(key, BAL_LOOKUP7);
 }
 
-int lookup_8(const SplitSet8& sp1, const SplitSet8& sp2) {
+int lookup8(const SplitSet8& sp1, const SplitSet8& sp2) {
   Shape8 shape = detect_shape8(sp1);
   
   CanonicalInfo8 canon =
@@ -580,12 +583,15 @@ int lookup_8(const SplitSet8& sp1, const SplitSet8& sp2) {
   std::array<int,5> packed{};
   for (int i = 0; i < 5; ++i) {
     Split8 s = permute_split8(sp2[i], canon.perm);
+    Rcpp::Rcout << i << ": " << int(s) << " -> ";
     s = polarize8(s);
+    Rcpp::Rcout << int(s) << "; ";
     packed[i] = s;
   }
   
   std::sort(packed.begin(), packed.end());
   uint64_t key = BitPack8(packed);
+  Rcpp::Rcout << "; key = " << key << ".\n";
   
   switch (shape) {
   case Shape8::Pectinate: return lookup8(key, PEC_LOOKUP8);
@@ -636,7 +642,7 @@ inline SplitSet7 smallest_splits7(SplitSet7 sp) {
 int spr_table_6(const Rcpp::RawVector& sp1,
                 const Rcpp::RawVector& sp2)
 {
-  return lookup_6(read_splits6(sp1), read_splits6(sp2));
+  return lookup6(read_splits6(sp1), read_splits6(sp2));
 }
 
 
@@ -647,7 +653,7 @@ int spr_table_7(const Rcpp::RawVector& sp1, const Rcpp::RawVector& sp2) {
   
   SplitSet7 s2 = read_splits7(sp2);
   
-  return lookup_7(s1, s2);
+  return lookup7(s1, s2);
 }
 
 inline SplitSet8 read_splits8(const Rcpp::RawVector& r) {
@@ -666,5 +672,5 @@ int spr_table_8(const Rcpp::RawVector& sp1,
   for (auto& s : s1) s = smaller_split8(s);
   
   SplitSet8 s2 = read_splits8(sp2);
-  return lookup_8(s1, s2);
+  return lookup8(s1, s2);
 }
