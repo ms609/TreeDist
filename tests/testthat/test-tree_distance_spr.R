@@ -96,14 +96,14 @@ test_that("SPR shortcuts okay - shape-pairs", {
   library("TreeTools", quietly = TRUE)
   
   depth <- if (getOption("slowMode", FALSE)) 5 else 1
-  test_spr_exact <- function(nTip, nRep, seed = 0) {
+  test_spr_exact <- function(nTip, nRep = 1, seed = 0) {
     set.seed(seed)
     combs <- as.integer(NUnrootedShapes(nTip))
     nIter <- nRep * depth
     for (i in seq_len(combs) - 1) {
       t1 <- UnrootedTreeWithShape(i, nTip, tipLabels = TipLabels(nTip))
-      for (j in seq_len(combs)) {
-        t2 <- UnrootedTreeWithShape(i, nTip)
+      for (j in seq_len(combs) - 1) {
+        t2 <- UnrootedTreeWithShape(j, nTip)
         res <- vapply(seq_len(nIter), function(k) {
           t2$tip.label <- paste0("t", sample.int(nTip))
           c(.SPRRogue(t1, t2), TBRDist::USPRDist(t1, t2))
