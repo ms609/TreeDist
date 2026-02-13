@@ -1,5 +1,5 @@
 library("TreeTools")
-ReduceTrees <- TreeDist::ReduceTrees
+if (!exists("ReduceTrees")) ReduceTrees <- TreeDist::ReduceTrees
 
 Tree <- function(txt) ape::read.tree(text = txt)
 AsTips <- function(sp) {
@@ -364,30 +364,33 @@ BitPack9 <- function(vec) {
       (v[5] - offset[[5]]) * 64L +
       (v[6] - offset[[6]]))
 }
+.Order <- function(keys) {
+  order(sprintf("%020s", keys))
+}
 
 pack0 <- apply(sp0, 2, BitPack9)
 df0 <- data.frame(key = pack0, score = scores0[valid0])
-df0 <- df0[order(df0$key), ]
+df0 <- df0[.Order(df0$key), ]
 
 pack1 <- apply(sp1, 2, BitPack9)
 df1 <- data.frame(key = pack1, score = scores1[valid1])
-df1 <- df1[order(df1$key), ]
+df1 <- df1[.Order(df1$key), ]
 
 pack2 <- apply(sp2, 2, BitPack9)
 df2 <- data.frame(key = pack2, score = scores2[valid2])
-df2 <- df2[order(df2$key), ]
+df2 <- df2[.Order(df2$key), ]
 
 pack3 <- apply(sp3, 2, BitPack9)
 df3 <- data.frame(key = pack3, score = scores3[valid3])
-df3 <- df3[order(df3$key), ]
+df3 <- df3[.Order(df3$key), ]
 
 pack4 <- apply(sp4, 2, BitPack9)
 df4 <- data.frame(key = pack4, score = scores4[valid4])
-df4 <- df4[order(df4$key), ]
+df4 <- df4[.Order(df4$key), ]
 
 pack5 <- apply(sp5, 2, BitPack9)
 df5 <- data.frame(key = pack5, score = scores5[valid5])
-df5 <- df5[order(df5$key), ]
+df5 <- df5[.Order(df5$key), ]
 
 header_content <- paste0(
   "// Generated from data-raw/spr-exact.R\n",

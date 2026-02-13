@@ -1,5 +1,5 @@
 library("TreeTools")
-ReduceTrees <- TreeDist::ReduceTrees
+if (!exists("ReduceTrees")) ReduceTrees <- TreeDist::ReduceTrees
 
 Tree <- function(txt) ape::read.tree(text = txt)
 nTip <- 8
@@ -53,6 +53,7 @@ pecScores <- sapply(seq_along(pecTrees), function(i) {
   r2 <- reduced[[2]]
   TBRDist::USPRDist(r1, r2)
 })
+saveRDS(pecScores, "pecScores.rds")
 pecValid <- !is.na(pecScores)
 
 pecSplits <- vapply(which(pecValid), function(i) {
@@ -103,6 +104,7 @@ mixScores <- vapply(seq_along(mixTrees), function(i) {
   r2 <- reduced[[2]]
   TBRDist::USPRDist(r1, r2)
 }, double(1))
+saveRDS(mixScores, "mixScores.rds")
 
 mixValid <- !is.na(mixScores)
 
@@ -152,6 +154,7 @@ midScores <- vapply(seq_along(midTrees), function(i) {
   r2 <- reduced[[2]]
   TBRDist::USPRDist(r1, r2)
 }, double(1))
+saveRDS(midScores, "midScores.rds")
 
 midValid <- !is.na(midScores)
 
@@ -186,6 +189,7 @@ balScores <- vapply(seq_along(balTrees), function(i) {
   r2 <- reduced[[2]]
   TBRDist::USPRDist(r1, r2)
 }, double(1))
+saveRDS(balScores, "balScores.rds")
 
 balValid <- !is.na(balScores)
 
@@ -201,8 +205,9 @@ offset <- c(
   min(pecSplits[2, ], mixSplits[2, ], midSplits[2, ], balSplits[2, ]),
   min(pecSplits[3, ], mixSplits[3, ], midSplits[3, ], balSplits[3, ]),
   min(pecSplits[4, ], mixSplits[4, ], midSplits[4, ], balSplits[4, ]),
-  min(pecSplits[5, ], mixSplits[5, ], midSplits[5, ], balSplits[5, ])) |>
-  as.integer64()
+  min(pecSplits[5, ], mixSplits[5, ], midSplits[5, ], balSplits[5, ]))
+print(offset)
+offset <- as.integer64(offset)
 
 BitPack8 <- function(vec) {
   v <- as.integer64(vec)
@@ -216,19 +221,19 @@ BitPack8 <- function(vec) {
 
 pecPack <- apply(pecSplits, 2, BitPack8)
 pecDF <- data.frame(key = pecPack, score = pecScores[pecValid])
-pecDF <- pecDF[order(pecDF$key), ]
+pecDF <- pecDF[order(sprintf("%020s", pecDF$key)), ]
 
 mixPack <- apply(mixSplits, 2, BitPack8)
 mixDF <- data.frame(key = mixPack, score = mixScores[mixValid])
-mixDF <- mixDF[order(mixDF$key), ]
+mixDF <- mixDF[order(sprintf("%020s", mixDF$key)), ]
 
 midPack <- apply(midSplits, 2, BitPack8)
 midDF <- data.frame(key = midPack, score = midScores[midValid])
-midDF <- midDF[order(midDF$key), ]
+midDF <- midDF[order(sprintf("%020s", midDF$key)), ]
 
 balPack <- apply(balSplits, 2, BitPack8)
 balDF <- data.frame(key = balPack, score = balScores[balValid])
-balDF <- balDF[order(balDF$key), ]
+balDF <- balDF[order(sprintf("%020s", balDF$key)), ]
 
 
 header_content <- paste0(
