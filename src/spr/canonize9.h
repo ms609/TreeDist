@@ -246,173 +246,232 @@ inline Split9 polarize9(Split9 s, int tip) {
   return s;
 }
 
-
 CanonicalInfo9 canonical9_3(const SplitSet9& sp) {
   std::array<int, 6> tiss{};
   for (int i = 0; i < 6; ++i) {
-    int k = popcount9(sp[i]);
-    tiss[i] = std::min(k, 9 - k);
+    tiss[i] = tips_in_smallest9(sp[i]);
   }
   
-  int trio = -1, four = -1;
+  std::array<int, 2> fours{};
+  std::array<int, 1> trios{};
+  std::array<int, 3> pairs{};
+  
+  int fi = 0, ti = 0, pi = 0;
+  
   for (int i = 0; i < 6; ++i) {
-    if (tiss[i] == 3 && trio < 0) trio = i;
-    if (tiss[i] == 4 && four < 0) four = i;
+    if (tiss[i] == 4) {
+      fours[fi++] = i;
+    } else if (tiss[i] == 3) {
+      trios[ti++] = i;
+    } else if (tiss[i] == 2) {
+      pairs[pi++] = i;
+    }
   }
   
+  ASSERT(fi == 2 && ti == 1 && pi == 3);
+  
+  const int trio = trios[0];
   Split9 trioSp = sp[trio];
   
   int trioPair = -1;
   Split9 soloSp{};
   
-  for (int i = 0; i < 6; ++i) {
-    if (i == trio || tiss[i] != 2) continue;
+  for (int i = 0; i < 3; ++i) {
+    const int p = pairs[i];
     
-    Split9 x = xor_split9(trioSp, sp[i]);
-    int k = popcount9(x);
-    
-    if (k == 1 || k == 8) {
-      trioPair = i;
-      soloSp = x;
+    Split9 s = xor_split9(trioSp, sp[p]);
+    if (tips_in_smallest9(s) == 1) {
+      trioPair = p;
+      soloSp = smaller_split9(s);
       break;
     }
   }
   
-  int soloTip = single_tip(soloSp);
+  ASSERT(trioPair >= 0);
   
-  Split9 fourSp = polarize9(sp[four], soloTip);
+  const int soloTip = single_tip(soloSp);
+  
+  Split9 quadSp = polarize9(sp[fours[0]], soloTip) &
+    polarize9(sp[fours[1]], soloTip);
   
   int midPair = -1;
-  for (int i = 0; i < 6; ++i) {
-    if (i == trio || i == four || i == trioPair || tiss[i] != 2)
+  
+  for (int i = 0; i < 3; ++i) {
+    const int p = pairs[i];
+    if (p == trioPair) {
       continue;
+    }
     
-    Split9 mid = fourSp & polarize9(sp[i], soloTip);
-    if (popcount9(mid) == 3) {
-      midPair = i;
+    Split9 mid = quadSp & polarize9(sp[p], soloTip);
+    if (tips_in_smallest9(mid) == 3) {
+      midPair = p;
       break;
     }
   }
   
-  std::vector<int> remaining;
-  for (int i = 0; i < 6; ++i) {
-    if (tiss[i] == 2 && i != trioPair && i != midPair) {
-      remaining.push_back(i);
+  ASSERT(midPair >= 0);
+  
+  std::array<int, 2> remaining{};
+  int ri = 0;
+  
+  for (int i = 0; i < 3; ++i) {
+    const int p = pairs[i];
+    if (p != trioPair && p != midPair) {
+      remaining[ri++] = p;
     }
   }
   
-  CanonicalInfo9 out{};
+  ASSERT(ri == 2);
   
-  out.order = {
-    soloTip,
-    single_tip(sp[trioPair]),
-    single_tip(sp[midPair]),
-    single_tip(sp[remaining[0]]),
-    single_tip(sp[remaining[1]]),
-    -1, -1, -1, -1
+  Perm9 perm{};
+  int k = 0;
+  
+  auto emit = [&](Split9 s) {
+    s = smaller_split9(s);
+    for (int i = 0; i < 9; ++i) {
+      if (s & (Split9(1) << i)) {
+        perm[k++] = i;
+      }
+    }
   };
   
-  return out;
+  emit(soloSp);
+  emit(sp[trioPair]);
+  emit(sp[midPair]);
+  emit(sp[remaining[0]]);
+  emit(sp[remaining[1]]);
+  
+  ASSERT(k == 9);
+  return { Shape9::s3, perm };
 }
 
 CanonicalInfo9 canonical9_4(const SplitSet9& sp) {
   std::array<int, 6> tiss{};
   for (int i = 0; i < 6; ++i) {
-    int k = popcount9(sp[i]);
-    tiss[i] = std::min(k, 9 - k);
+    tiss[i] = tips_in_smallest9(sp[i]);
   }
   
-  std::vector<int> trios, pairs;
+  std::array<int, 3> trios{};
+  std::array<int, 3> pairs{};
+  
+  int ti = 0, pi = 0;
+  
   for (int i = 0; i < 6; ++i) {
-    if (tiss[i] == 3) trios.push_back(i);
-    else if (tiss[i] == 2) pairs.push_back(i);
-  }
-  
-  int pair1 = -1, pair2 = -1;
-  
-  Split9 solo1{}, solo2{}, solo3{};
-  
-  for (int p : pairs) {
-    Split9 x = xor_split9(sp[trios[0]], sp[p]);
-    int k = popcount9(x);
-    if (k == 1 || k == 8) {
-      pair1 = p;
-      solo1 = x;
-      break;
+    if (tiss[i] == 3) {
+      trios[ti++] = i;
+    } else if (tiss[i] == 2) {
+      pairs[pi++] = i;
     }
   }
   
-  for (int p : pairs) {
-    if (p == pair1) continue;
-    Split9 x = xor_split9(sp[trios[1]], sp[p]);
-    int k = popcount9(x);
-    if (k == 1 || k == 8) {
-      pair2 = p;
-      solo2 = x;
-      break;
+  ASSERT(ti == 3 && pi == 3);
+  
+  std::array<Split9, 3> solo{};
+  std::array<int, 3> pairIdx{};
+  
+  std::array<bool, 3> usedPair{ false, false, false };
+  
+  for (int t = 0; t < 3; ++t) {
+    Split9 trioSp = sp[trios[t]];
+    
+    for (int p = 0; p < 3; ++p) {
+      if (usedPair[p]) {
+        continue;
+      }
+      
+      Split9 s = xor_split9(trioSp, sp[pairs[p]]);
+      if (tips_in_smallest9(s) == 1) {
+        solo[t] = smaller_split9(s);
+        pairIdx[t] = pairs[p];
+        usedPair[p] = true;
+        break;
+      }
     }
   }
   
-  int pair3 = -1;
-  for (int p : pairs) {
-    if (p != pair1 && p != pair2) {
-      pair3 = p;
+  Perm9 perm{};
+  int k = 0;
+  
+  auto emit = [&](Split9 s) {
+    s = smaller_split9(s);
+    for (int i = 0; i < 9; ++i) {
+      if (s & (Split9(1) << i)) {
+        perm[k++] = i;
+      }
     }
-  }
-  
-  solo3 = xor_split9(sp[trios[2]], sp[pair3]);
-  
-  CanonicalInfo9 out{};
-  
-  out.order = {
-    single_tip(solo1),
-    single_tip(sp[pair1]),
-    single_tip(solo2),
-    single_tip(sp[pair2]),
-    single_tip(solo3),
-    single_tip(sp[pair3]),
-    -1, -1, -1
   };
   
-  return out;
+  for (int i = 0; i < 3; ++i) {
+    emit(solo[i]);
+    emit(sp[pairIdx[i]]);
+  }
+  
+  ASSERT(k == 9);
+  return { Shape9::s4, perm };
 }
 
 CanonicalInfo9 canonical9_5(const SplitSet9& sp) {
   std::array<int, 6> tiss{};
   for (int i = 0; i < 6; ++i) {
-    int k = popcount9(sp[i]);
-    tiss[i] = std::min(k, 9 - k);
+    tiss[i] = tips_in_smallest9(sp[i]);
   }
   
-  std::vector<int> fours, pairs;
+  std::array<int, 2> fours{};
+  std::array<int, 4> pairs{};
+  
+  int fi = 0, pi = 0;
+  
   for (int i = 0; i < 6; ++i) {
-    if (tiss[i] == 4) fours.push_back(i);
-    else if (tiss[i] == 2) pairs.push_back(i);
+    if (tiss[i] == 4) {
+      fours[fi++] = i;
+    } else if (tiss[i] == 2) {
+      pairs[pi++] = i;
+    }
   }
   
-  Split9 soloSp = xor_split9(sp[fours[0]], sp[fours[1]]);
-  int soloTip = single_tip(soloSp);
+  ASSERT(fi == 2 && pi == 4);
+  
+  Split9 soloSp = smaller_split9(xor_split9(sp[fours[0]], sp[fours[1]]));
+  const int soloTip = single_tip(soloSp);
   
   Split9 four1 = polarize9(sp[fours[0]], soloTip);
   
-  std::vector<int> group1, group2;
+  std::array<int, 2> cluster1{};
+  std::array<int, 2> cluster2{};
+  int c1 = 0, c2 = 0;
   
-  for (int p : pairs) {
-    Split9 x = four1 & polarize9(sp[p], soloTip);
-    if (popcount9(x) > 0) group1.push_back(p);
-    else group2.push_back(p);
+  for (int i = 0; i < 4; ++i) {
+    const int p = pairs[i];
+    
+    Split9 s = polarize9(sp[p], soloTip);
+    
+    if (four1 & s) {
+      cluster1[c1++] = p;
+    } else {
+      cluster2[c2++] = p;
+    }
   }
   
-  CanonicalInfo9 out{};
+  ASSERT(c1 == 2 && c2 == 2);
   
-  out.order = {
-    soloTip,
-    single_tip(sp[group1[0]]),
-    single_tip(sp[group1[1]]),
-    single_tip(sp[group2[0]]),
-    single_tip(sp[group2[1]]),
-    -1, -1, -1, -1
+  Perm9 perm{};
+  int k = 0;
+  
+  auto emit = [&](Split9 s) {
+    s = smaller_split9(s);
+    for (int i = 0; i < 9; ++i) {
+      if (s & (Split9(1) << i)) {
+        perm[k++] = i;
+      }
+    }
   };
   
-  return out;
+  emit(soloSp);
+  emit(sp[cluster1[0]]);
+  emit(sp[cluster1[1]]);
+  emit(sp[cluster2[0]]);
+  emit(sp[cluster2[1]]);
+  
+  ASSERT(k == 9);
+  return { Shape9::s5, perm };
 }
