@@ -580,15 +580,12 @@ int lookup8(const SplitSet8& sp1, const SplitSet8& sp2) {
   std::array<int,5> packed{};
   for (int i = 0; i < 5; ++i) {
     Split8 s = permute_split8(sp2[i], canon.perm);
-    Rcpp::Rcout << i << ": " << int(s) << " -> ";
     s = polarize8(s);
-    Rcpp::Rcout << int(s) << "; ";
     packed[i] = s;
   }
   
   std::sort(packed.begin(), packed.end());
   uint64_t key = BitPack8(packed);
-  Rcpp::Rcout << "; key = " << key << ".\n";
   
   switch (shape) {
   case Shape8::Pectinate: return lookup8(key, PEC_LOOKUP8);
