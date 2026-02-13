@@ -7,13 +7,13 @@
 \alias{SPRDist.multiPhylo}
 \title{Approximate the Subtree Prune and Regraft distance}
 \usage{
-SPRDist(tree1, tree2 = NULL, method = "confl", symmetric)
+SPRDist(tree1, tree2 = NULL, method = "rogue", symmetric)
 
-\method{SPRDist}{phylo}(tree1, tree2 = NULL, method = "confl", symmetric)
+\method{SPRDist}{phylo}(tree1, tree2 = NULL, method = "rogue", symmetric)
 
-\method{SPRDist}{list}(tree1, tree2 = NULL, method = "confl", symmetric)
+\method{SPRDist}{list}(tree1, tree2 = NULL, method = "rogue", symmetric)
 
-\method{SPRDist}{multiPhylo}(tree1, tree2 = NULL, method = "confl", symmetric)
+\method{SPRDist}{multiPhylo}(tree1, tree2 = NULL, method = "rogue", symmetric)
 }
 \arguments{
 \item{tree1, tree2}{Trees of class \code{phylo}, with leaves labelled identically,
