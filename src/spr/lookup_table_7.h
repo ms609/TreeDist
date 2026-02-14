@@ -2,8 +2,7 @@
 #include <cstdint>
 #include <array>
 #include <algorithm>
-
-struct SPRScore { uint32_t key; int score; };
+#include "lookup.h"
 
 static constexpr std::array<SPRScore, 750> PEC_LOOKUP7 = {{
     {14u, 2},

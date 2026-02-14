@@ -8,6 +8,7 @@
 #include "spr/canonize9.h"
 #include "spr/lookup_table_7.h"
 #include "spr/lookup_table_8.h"
+#include "spr/lookup_table_9.h"
 #include "TreeTools/assert.h"
 
 
@@ -62,7 +63,7 @@ inline uint32_t BitPack7(const std::array<int,4>& v) {
 
 inline uint64_t BitPack8(const std::array<int,5>& v) {
   return
-  ((uint64_t)(v[0] - 3) << 27) |
+    ((uint64_t)(v[0] - 3) << 27) |
     ((uint64_t)(v[1] - 7) << 20) |
     ((uint64_t)(v[2] - 15) << 13) |
     ((uint64_t)(v[3] - 31) << 6)  |
@@ -70,14 +71,13 @@ inline uint64_t BitPack8(const std::array<int,5>& v) {
 }
 
 inline uint64_t BitPack9(const std::array<int,6>& v) {
-  Rcpp::stop("We've not populated this yet!");
   return
-  ((uint64_t)(v[0] - 3) << 39) |
+    ((uint64_t)(v[0] - 3) << 39) |
     ((uint64_t)(v[1] - 7) << 31) |
     ((uint64_t)(v[2] - 15) << 23) |
     ((uint64_t)(v[3] - 31) << 15)  |
     ((uint64_t)(v[4] - 63) << 7)  |
-    ((uint64_t)(v[5] - 129);
+    ((uint64_t)(v[5] - 129));
 }
 
 template <size_t N>
@@ -287,19 +287,23 @@ inline SplitSet8 read_splits8(const Rcpp::RawVector& r) {
   if (r.size() != 5)
     Rcpp::stop("Expected length-5 raw vector");
   SplitSet8 sp{};
-  for (int i = 0; i < 5; ++i)
+  for (int i = 0; i < 5; ++i) {
     sp[i] = static_cast<uint8_t>(r[i]);
+  }
   return sp;
 }
 
 inline SplitSet9 read_splits9(const Rcpp::RawVector& r) {
-  if (r.size() != 6)
-    Rcpp::stop("Expected length-6 raw vector");
+  if (r.size() != 12) {
+    Rcpp::stop("Expected length-12 raw vector for 9 tips (6 splits × 2 bytes)");
+  }
   
   SplitSet9 sp{};
-  for (int i = 0; i < 6; ++i)
-    sp[i] = static_cast<uint16_t>(r[i]);
-  
+  for (int i = 0; i < 6; ++i) {
+    const uint16_t lo = static_cast<uint8_t>(r[i]);      // ensure 0–255
+    const uint16_t hi = static_cast<uint8_t>(r[i + 6]);  // ensure 0–255
+    sp[i] = static_cast<uint16_t>(lo | (hi << 8));
+  }
   return sp;
 }
 

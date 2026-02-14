@@ -896,7 +896,7 @@ SPRDist.multiPhylo <- SPRDist.list
         dput(as.integer(as.TreeNumber(as.phylo(sp2))))
         dput(sp2)
         summary(sp2)
-        stop("Lookup failed.")
+        stop("Lookup7 failed.")
       }
       return(moves + spr_table_7(sp1, sp2))
     }
@@ -909,11 +909,11 @@ SPRDist.multiPhylo <- SPRDist.list
         dput(as.integer(as.TreeNumber(as.phylo(sp2))))
         dput(sp2)
         summary(sp2)
-        stop("Lookup failed.")
+        stop("Lookup8 failed.")
       }
       return(moves + exact)
     }
-    if (nTip == 9 && getOption("sprShortcut", Inf) >= 8 && FALSE) {
+    if (nTip == 9 && getOption("sprShortcut", 8) >= 9) {
       exact <- spr_table_9(sp1, sp2)
       if (is.na(exact) || exact < 1) {
         dput(sp1)
@@ -922,7 +922,7 @@ SPRDist.multiPhylo <- SPRDist.list
         dput(as.integer(as.TreeNumber(as.phylo(sp2))))
         dput(sp2)
         summary(sp2)
-        stop("Lookup failed.")
+        stop("Lookup9 failed.")
       }
       return(moves + exact)
     }

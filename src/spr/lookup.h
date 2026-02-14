@@ -27,6 +27,8 @@ struct CanonicalInfo7 { Shape7 shape; Perm7 perm; };
 struct CanonicalInfo8 { Shape8 shape; Perm8 perm; };
 struct CanonicalInfo9 { Shape9 shape; Perm9 perm; };
 
+struct SPRScore { uint32_t key; int score; };
+struct SPRScore64 { uint64_t key; int score; };
 
 inline int popcount6(Split6 x) {
   return __builtin_popcount(x & MASK6);

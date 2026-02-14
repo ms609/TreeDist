@@ -238,8 +238,8 @@ balDF <- balDF[order(sprintf("%020s", balDF$key)), ]
 
 header_content <- paste0(
   "// Generated from data-raw/spr-exact.R\n",
-  "#include <cstdint>\n#include <array>\n#include <algorithm>\n\n",
-  "struct SPRScore64 { uint64_t key; int score; };\n\n",
+  "#include <cstdint>\n#include <array>\n#include <algorithm>\n",
+  "#include \"lookup.h\"\n\n",
   
   "static constexpr std::array<SPRScore64, ", nrow(pecDF), "> PEC_LOOKUP",
   nTip, " = {{\n",
