@@ -238,7 +238,7 @@ balDF <- balDF[order(sprintf("%020s", balDF$key)), ]
 KeySuffix <-function(x) {
   lim31 <- bit64::as.integer64(2147483647)
   lim32 <- bit64::as.integer64(4294967295)
-  x64 <- as.integer64(x)
+  x64 <- bit64::as.integer64(x)
   ifelse(x64 > lim31, ifelse(x64 > lim32, "ULL", "U"), "")
 }
 KeyEntry <- function(str, df) {

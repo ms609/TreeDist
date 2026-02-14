@@ -401,35 +401,34 @@ pack5 <- apply(sp5, 2, BitPack9)
 df5 <- data.frame(key = pack5, score = scores5[valid5])
 df5 <- df5[.Order(df5$key), ]
 
+KeySuffix <-function(x) {
+  lim31 <- bit64::as.integer64(2147483647)
+  lim32 <- bit64::as.integer64(4294967295)
+  x64 <- bit64::as.integer64(x)
+  ifelse(x64 > lim31, ifelse(x64 > lim32, "ULL", "U"), "")
+}
+KeyEntry <- function(str, df) {
+  keyString <- paste0(df$key, KeySuffix(df$key))
+  paste0("static constexpr std::array<uint64_t, ", nrow(df), "> ",
+         str, "_KEY9 = {", paste(keyString, collapse = ","), "};")
+}
+ValEntry <- function(str, df) {
+  paste0("alignas(64) static constexpr std::array<uint8_t, ", nrow(df), "> ",
+         str, "_VAL9 = {", paste(df$score, collapse = ","), "};")
+}
+Entries <- function(str, df) {
+  c(KeyEntry(str, df), ValEntry(str, df))
+}
+
 header_content <- paste0(
-  "// Generated from data-raw/spr-exact.R\n",
-  "#include <cstdint>\n#include <array>\n#include <algorithm>\n\n",
-  "#include \"spr/lookup.h\"\n\n",
-  
-  "static constexpr std::array<SPRScore64, ", nrow(df0), "> LOOKUP9_0",
-  " = {{\n",
-  paste0("    {", df0$key, "ULL, ", df0$score, "}", collapse = ",\n"),
-  "\n}};\n",
-  "static constexpr std::array<SPRScore64, ", nrow(df1), "> LOOKUP9_1",
-  " = {{\n",
-  paste0("    {", df1$key, "ULL, ", df1$score, "}", collapse = ",\n"),
-  "\n}};\n",
-  "static constexpr std::array<SPRScore64, ", nrow(df2), "> LOOKUP9_2",
-  " = {{\n",
-  paste0("    {", df2$key, "ULL, ", df2$score, "}", collapse = ",\n"),
-  "\n}};\n",
-  "static constexpr std::array<SPRScore64, ", nrow(df3), "> LOOKUP9_3",
-  " = {{\n",
-  paste0("    {", df3$key, "ULL, ", df3$score, "}", collapse = ",\n"),
-  "\n}};\n",
-  "static constexpr std::array<SPRScore64, ", nrow(df4), "> LOOKUP9_4",
-  " = {{\n",
-  paste0("    {", df4$key, "ULL, ", df4$score, "}", collapse = ",\n"),
-  "\n}};\n",
-  "static constexpr std::array<SPRScore64, ", nrow(df5), "> LOOKUP9_5",
-  " = {{\n",
-  paste0("    {", df5$key, "ULL, ", df5$score, "}", collapse = ",\n"),
-  "\n}};\n"
+  c("// Generated in data-raw/spr-exact-9.R",
+    "#include <cstdint>\n#include <array>",
+    Entries("S0", df0),
+    Entries("S1", df1),
+    Entries("S2", df2),
+    Entries("S3", df3),
+    Entries("S4", df4),
+    Entries("S5", df5))
 )
 
-writeLines(header_content, sprintf("src/spr/lookup_table_%d.h", nTip))
+writeLines(header_content, "src/spr/lookup9.h")

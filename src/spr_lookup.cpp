@@ -8,7 +8,7 @@
 #include "spr/canonize9.h"
 #include "spr/lookup7.h"
 #include "spr/lookup8.h"
-#include "spr/lookup_table_9.h"
+#include "spr/lookup9.h"
 #include "TreeTools/assert.h"
 
 
@@ -217,18 +217,6 @@ int lookup8(const SplitSet8& sp1, const SplitSet8& sp2) {
   return -2;
 }
 
-template <size_t N>
-int lookup9(uint64_t key, const std::array<SPRScore64, N>& table) {
-  auto it = std::lower_bound(
-    table.begin(), table.end(), key,
-    [](const SPRScore64& a, uint64_t k) {
-      return a.key < k;
-    }
-  );
-  
-  return (it != table.end() && it->key == key) ? it->score : -1;
-}
-
 int lookup9(const SplitSet9& sp1, const SplitSet9& sp2) {
   Shape9 shape = detect_shape9(sp1);
   
@@ -251,12 +239,12 @@ int lookup9(const SplitSet9& sp1, const SplitSet9& sp2) {
   uint64_t key = BitPack9(packed);
   
   switch (shape) {
-  case Shape9::s0: return lookup9(key, LOOKUP9_0);
-  case Shape9::s1: return lookup9(key, LOOKUP9_1);
-  case Shape9::s2: return lookup9(key, LOOKUP9_2);
-  case Shape9::s3: return lookup9(key, LOOKUP9_3);
-  case Shape9::s4: return lookup9(key, LOOKUP9_4);
-  case Shape9::s5: return lookup9(key, LOOKUP9_5);
+  case Shape9::s0: return lookup_from_table(key, S0_KEY9, S0_VAL9);
+  case Shape9::s1: return lookup_from_table(key, S1_KEY9, S1_VAL9);
+  case Shape9::s2: return lookup_from_table(key, S2_KEY9, S2_VAL9);
+  case Shape9::s3: return lookup_from_table(key, S3_KEY9, S3_VAL9);
+  case Shape9::s4: return lookup_from_table(key, S4_KEY9, S4_VAL9);
+  case Shape9::s5: return lookup_from_table(key, S5_KEY9, S5_VAL9);
   }
   
   return -1;
