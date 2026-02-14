@@ -6,7 +6,7 @@
 #include "spr/canonize7.h"
 #include "spr/canonize8.h"
 #include "spr/canonize9.h"
-#include "spr/lookup_table_7.h"
+#include "spr/lookup7.h"
 #include "spr/lookup_table_8.h"
 #include "spr/lookup_table_9.h"
 #include "TreeTools/assert.h"
@@ -81,12 +81,15 @@ inline uint64_t BitPack9(const std::array<int,6>& v) {
 }
 
 template <size_t N>
-int lookup7(uint32_t key, const std::array<SPRScore, N>& table) {
-  auto it = std::lower_bound(
-    table.begin(), table.end(), key,
-    [](const SPRScore& a, uint32_t k) { return a.key < k; }
-  );
-  return (it != table.end() && it->key == key) ? it->score : -1;
+int lookup7(uint32_t key, const std::array<uint32_t, N>& keys,
+            const std::array<uint8_t, N>& values) {
+  auto it = std::lower_bound(keys.begin(), keys.end(), key);
+  
+  if (it != keys.end() && *it == key) {
+    size_t index = std::distance(keys.begin(), it);
+    return values[index];
+  }
+  return -1; // Or your default
 }
 
 template <size_t N>
@@ -180,8 +183,8 @@ int lookup7(const SplitSet7& sp1, const SplitSet7& sp2) {
   
   uint32_t key = BitPack7(packed);
   return (shape == Shape7::Pectinate)
-    ? lookup7(key, PEC_LOOKUP7)
-      : lookup7(key, BAL_LOOKUP7);
+    ? lookup7(key, PEC_KEY7, PEC_VAL7)
+      : lookup7(key, BAL_KEY7, BAL_VAL7);
 }
 
 int lookup8(const SplitSet8& sp1, const SplitSet8& sp2) {

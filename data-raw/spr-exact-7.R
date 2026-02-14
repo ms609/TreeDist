@@ -117,15 +117,17 @@ balDF <- balDF[order(balDF$key), ]
 
 
 header_content <- paste0(
-  "// Generated from data-raw/spr-exact.R\n",
-  "#include <cstdint>\n#include <array>\n#include <algorithm>\n\n",
-  "struct SPRScore { uint32_t key; int score; };\n\n",
-  "static constexpr std::array<SPRScore, ", nrow(pecDF), "> PEC_LOOKUP = {{\n",
-  paste0("    {", pecDF$key, "u, ", pecDF$score, "}", collapse = ",\n"),
-  "\n}};\n",
-  "static constexpr std::array<SPRScore, ", nrow(balDF), "> BAL_LOOKUP = {{\n",
-  paste0("    {", balDF$key, "u, ", balDF$score, "}", collapse = ",\n"),
-  "\n}};"
+  "// Generated in data-raw/spr-exact-7.R\n",
+  "#include <cstdint>\n#include <array>\n",
+  "static constexpr std::array<uint32_t, ", nrow(pecDF), "> PEC_KEY7 = {",
+  paste0(pecDF$key, "U", collapse = ","), "};\n",
+  "static constexpr std::array<uint8_t, ", nrow(pecDF), "> PEC_VAL7 = {",
+  paste0(pecDF$score, collapse = ","), "};\n",
+  
+  "static constexpr std::array<uint32_t, ", nrow(balDF), "> BAL_KEY7 = {",
+  paste0(balDF$key, "U", collapse = ","), "};\n",
+  "static constexpr std::array<uint8_t, ", nrow(balDF), "> BAL_VAL7 = {",
+  paste0(balDF$score, collapse = ","), "};\n"
 )
 
-writeLines(header_content, "src/spr/lookup_table_7.h")
+writeLines(header_content, "src/spr/lookup7.h")
