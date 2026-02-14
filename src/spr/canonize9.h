@@ -215,28 +215,10 @@ CanonicalInfo9 canonical9_2(const SplitSet9& sp) {
 }
 
 inline int single_tip(Split9 s) {
-  s &= MASK9; // TODO remove - surely unnecessary?
-  
+  ASSERT(s == (s &= MASK9));
   const int c = popcount9(s);
-  
-  if (c == 1) {
-    for (int i = 0; i < 9; ++i) {
-      if (s & (Split9(1) << i)) {
-        return i;
-      }
-    }
-  }
-  
-  if (c == 8) {
-    Split9 t = (~s) & MASK9;
-    
-    for (int i = 0; i < 9; ++i) {
-      if (t & (Split9(1) << i)) {
-        return i;
-      }
-    }
-  }
-  
+  if (c == 1) return __builtin_ctz(s);
+  if (c == 8) return __builtin_ctz((~s) & MASK9);
   Rcpp::stop("single_tip(): split is not singleton-sized");
 }
 
