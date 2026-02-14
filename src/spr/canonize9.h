@@ -144,7 +144,6 @@ CanonicalInfo9 canonical9_2(const SplitSet9& sp) {
     tiss[i] = tips_in_smallest9(sp[i]);
   }
   
-  // 2) fours = first index where size==4
   int four = -1;
   std::array<int, 2> trios{};
   int ti = 0;
@@ -154,59 +153,55 @@ CanonicalInfo9 canonical9_2(const SplitSet9& sp) {
   for (int i = 0; i < 6; ++i) {
     if      (tiss[i] == 4 && four < 0) four = i;
     else if (tiss[i] == 3)             trios[ti++] = i;
+    else if (tiss[i] == 2)             pairs[pi++] = i;
   }
-  ASSERT(four >= 0 && ti == 2);
+  ASSERT(four >= 0 && ti == 2 && pi == 3);
   
-  // Build 'pairs' in ascending split index, excluding fours and trios
-  for (int i = 0; i < 6; ++i) {
-    if (i == four || i == trios[0] || i == trios[1]) continue;
-    ASSERT(tiss[i] == 2);
-    pairs[pi++] = i;
-  }
-  ASSERT(pi == 3);
+  // tie-break: if xor(trios[2], fours) is pendant, reverse trios
+  Split9 r = xor_split9(sp[trios[1]], sp[four]);
+  const int c = popcount9(r);
+  if (c == 1 || c == 8) std::swap(trios[0], trios[1]);
   
-  // 3) tie-break: if xor(trios[2], fours) is pendant, reverse trios
-  {
-    Split9 r = xor_split9(sp[trios[1]], sp[four]);
-    int c = popcount9(r);
-    if (c == 1 || c == 8) std::swap(trios[0], trios[1]);
-  }
-  
-  // 4) trioSp = trios[1], find the first pair that makes pendant xor
-  int pair1 = -1, pair2 = -1, pair3 = -1;
-  Split9 trioSp  = sp[trios[0]];
-  Split9 soloSp1 = 0, soloSp2 = 0;
-  
+  Split9 solo1 = 0; int pair1 = -1;
   for (int j = 0; j < 3; ++j) {
     int i = pairs[j];
-    Split9 s = xor_split9(trioSp, sp[i]);
-    if (tips_in_smallest9(s) == 1) { pair1 = i; soloSp1 = s; break; }
+    Split9 s_raw = xor_split9(sp[trios[0]], sp[i]);
+    if (tips_in_smallest9(s_raw) == 1) {
+      pair1 = i;
+      solo1 = smaller_split9(s_raw);
+      break;
+    }
   }
-  ASSERT(pair1 >= 0);
+  ASSERT(pair1 >= 0 && solo1 != 0);
   
-  // 5) trioSp2 = other trio, find first remaining pair that makes pendant xor
-  Split9 trioSp2 = sp[trios[1]];
+  
+  Split9 solo2 = 0; int pair2 = -1;
   for (int j = 0; j < 3; ++j) {
     int i = pairs[j];
     if (i == pair1) continue;
-    Split9 s = xor_split9(trioSp2, sp[i]);
-    if (tips_in_smallest9(s) == 1) { pair2 = i; soloSp2 = s; break; }
+    Split9 s_raw = xor_split9(sp[trios[1]], sp[i]);
+    if (tips_in_smallest9(s_raw) == 1) {
+      pair2 = i;
+      solo2 = smaller_split9(s_raw);
+      break;
+    }
   }
-  ASSERT(pair2 >= 0);
+  ASSERT(pair2 >= 0 && solo2 != 0);
   
-  // 6) remaining pair
+  int pair3 = -1;
   for (int j = 0; j < 3; ++j) {
     int i = pairs[j];
     if (i != pair1 && i != pair2) { pair3 = i; break; }
   }
   ASSERT(pair3 >= 0);
   
+  
   // 7) Build the six blocks in the exact R order, using "AsTips" semantics
   //    AsTips == smaller side; within a block, tips are in ascending index.
-  Split9 block_s = smaller_split9(soloSp1);
+  Split9 block_s = smaller_split9(solo1);
   Split9 block_c = smaller_split9(sp[pair1]);
-  Split9 block_t = smaller_split9(xor_split9(sp[four], trioSp));
-  Split9 block_u = smaller_split9(soloSp2);
+  Split9 block_t = smaller_split9(xor_split9(sp[four], sp[trios[0]]));
+  Split9 block_u = smaller_split9(solo2);
   Split9 block_q = smaller_split9(sp[pair2]);
   Split9 block_p = smaller_split9(sp[pair3]);
   
