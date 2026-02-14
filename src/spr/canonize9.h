@@ -138,87 +138,113 @@ CanonicalInfo9 canonical9_1(const SplitSet9& sp) {
   ASSERT(k == 9);
   return { Shape9::s1, perm };
 }
-
 CanonicalInfo9 canonical9_2(const SplitSet9& sp) {
-  std::array<int,6> tiss;
+  std::array<int, 6> tiss{};
   for (int i = 0; i < 6; ++i) {
     tiss[i] = tips_in_smallest9(sp[i]);
   }
   
+  // 2) fours = first index where size==4
   int four = -1;
-  std::array<int,2> trios{};
+  std::array<int, 2> trios{};
   int ti = 0;
+  std::array<int, 3> pairs{};
+  int pi = 0;
   
   for (int i = 0; i < 6; ++i) {
-    if      (tiss[i] == 4) four = i;
-    else if (tiss[i] == 3) trios[ti++] = i;
+    if      (tiss[i] == 4 && four < 0) four = i;
+    else if (tiss[i] == 3)             trios[ti++] = i;
   }
-  
   ASSERT(four >= 0 && ti == 2);
   
-  Split9 r = xor_split9(sp[trios[1]], sp[four]);
-  int c = popcount9(r);
-  if (c == 1 || c == 8) std::swap(trios[0], trios[1]);
-  
-  Split9 trioSp1 = sp[trios[0]];
-  Split9 trioSp2 = sp[trios[1]];
-  
-  Split9 solo1{}, solo2{};
-  int pair1 = -1, pair2 = -1;
-  
+  // Build 'pairs' in ascending split index, excluding fours and trios
   for (int i = 0; i < 6; ++i) {
     if (i == four || i == trios[0] || i == trios[1]) continue;
-    
-    Split9 s1 = xor_split9(trioSp1, sp[i]);
-    if (tips_in_smallest9(s1) == 1)
-    {
-      pair1 = i;
-      solo1 = smaller_split9(s1);
-      break;
-    }
+    ASSERT(tiss[i] == 2);
+    pairs[pi++] = i;
   }
+  ASSERT(pi == 3);
   
-  for (int i = 0; i < 6; ++i)
+  // 3) tie-break: if xor(trios[2], fours) is pendant, reverse trios
   {
-    if (i == four || i == trios[0] || i == trios[1] || i == pair1) continue;
-    
-    Split9 s2 = xor_split9(trioSp2, sp[i]);
-    if (tips_in_smallest9(s2) == 1)
-    {
-      pair2 = i;
-      solo2 = smaller_split9(s2);
-      break;
-    }
+    Split9 r = xor_split9(sp[trios[1]], sp[four]);
+    int c = popcount9(r);
+    if (c == 1 || c == 8) std::swap(trios[0], trios[1]);
   }
   
-  ASSERT(pair1 >= 0 && pair2 >= 0);
+  // 4) trioSp = trios[1], find the first pair that makes pendant xor
+  int pair1 = -1, pair2 = -1, pair3 = -1;
+  Split9 trioSp  = sp[trios[0]];
+  Split9 soloSp1 = 0, soloSp2 = 0;
   
-  Split9 t = smaller_split9(xor_split9(sp[four], trioSp1));
+  for (int j = 0; j < 3; ++j) {
+    int i = pairs[j];
+    Split9 s = xor_split9(trioSp, sp[i]);
+    if (tips_in_smallest9(s) == 1) { pair1 = i; soloSp1 = s; break; }
+  }
+  ASSERT(pair1 >= 0);
   
+  // 5) trioSp2 = other trio, find first remaining pair that makes pendant xor
+  Split9 trioSp2 = sp[trios[1]];
+  for (int j = 0; j < 3; ++j) {
+    int i = pairs[j];
+    if (i == pair1) continue;
+    Split9 s = xor_split9(trioSp2, sp[i]);
+    if (tips_in_smallest9(s) == 1) { pair2 = i; soloSp2 = s; break; }
+  }
+  ASSERT(pair2 >= 0);
+  
+  // 6) remaining pair
+  for (int j = 0; j < 3; ++j) {
+    int i = pairs[j];
+    if (i != pair1 && i != pair2) { pair3 = i; break; }
+  }
+  ASSERT(pair3 >= 0);
+  
+  // 7) Build the six blocks in the exact R order, using "AsTips" semantics
+  //    AsTips == smaller side; within a block, tips are in ascending index.
+  Split9 block_s = smaller_split9(soloSp1);
+  Split9 block_c = smaller_split9(sp[pair1]);
+  Split9 block_t = smaller_split9(xor_split9(sp[four], trioSp));
+  Split9 block_u = smaller_split9(soloSp2);
+  Split9 block_q = smaller_split9(sp[pair2]);
+  Split9 block_p = smaller_split9(sp[pair3]);
+  
+  // 8) Emit FIRST OCCURRENCE ONLY across the concatenation (R's behavior)
+  bool seen[9] = {false,false,false,false,false,false,false,false,false};
   Perm9 perm{};
   int k = 0;
   
-  auto emit = [&](Split9 s)
-  {
-    for (int i = 0; i < 9; ++i)
-      if (s & (1 << i)) perm[k++] = i;
+  auto emit_unique = [&](Split9 s) {
+    for (int bit = 0; bit < 9; ++bit) {
+      if (s & (Split9(1) << bit)) {
+        if (!seen[bit]) {
+          seen[bit] = true;
+          perm[k++] = bit;
+        }
+      }
+    }
   };
   
-  emit(solo1);
-  emit(smaller_split9(sp[pair1]));
-  emit(t);
-  emit(solo2);
-  emit(smaller_split9(sp[pair2]));
+  emit_unique(block_s); // s
+  emit_unique(block_c); // c
+  emit_unique(block_t); // t
+  emit_unique(block_u); // u
+  emit_unique(block_q); // q
+  emit_unique(block_p); // p
   
   ASSERT(k == 9);
+  // Verify bijection
+  for (int i = 0; i < 9; ++i) ASSERT(seen[i]);
+  
   return { Shape9::s2, perm };
 }
-
 inline int single_tip(Split9 s) {
   ASSERT(s == (s &= MASK9));
   const int c = popcount9(s);
   if (c == 1) return __builtin_ctz(s);
   if (c == 8) return __builtin_ctz((~s) & MASK9);
+  Rcpp::Rcout << int(s);
   Rcpp::stop("single_tip(): split is not singleton-sized");
 }
 
