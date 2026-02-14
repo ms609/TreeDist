@@ -95,10 +95,10 @@ test_that("confusion()", {
 test_that("SPR shortcuts okay - shape-pairs", {
   library("TreeTools", quietly = TRUE)
   
-  depth <- if (getOption("slowMode", FALSE)) 5 else 1
   test_spr_exact <- function(nTip, nRep = 1, seed = 0) {
     set.seed(seed)
     combs <- as.integer(NUnrootedShapes(nTip))
+    depth <- if (getOption("slowMode", FALSE)) 5 else 1
     nIter <- nRep * depth
     for (i in seq_len(combs) - 1) {
       t1 <- UnrootedTreeWithShape(i, nTip, tipLabels = TipLabels(nTip))
@@ -112,8 +112,12 @@ test_that("SPR shortcuts okay - shape-pairs", {
       }
     }
   }
-  test_spr_exact(6, 20)
-  test_spr_exact(7, 4)
+  opt <- options("sprShortcut" = Inf)
+  on.exit(options(opt))
+  test_spr_exact(6, 10)
+  test_spr_exact(7, 8)
+  test_spr_exact(8, 2)
+  test_spr_exact(9, 2)
 })
 
 test_that("SPR shortcuts okay - exhaustive", {
