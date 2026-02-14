@@ -235,31 +235,32 @@ balPack <- apply(balSplits, 2, BitPack8)
 balDF <- data.frame(key = balPack, score = balScores[balValid])
 balDF <- balDF[order(sprintf("%020s", balDF$key)), ]
 
+KeySuffix <-function(x) {
+  lim31 <- bit64::as.integer64(2147483647)
+  lim32 <- bit64::as.integer64(4294967295)
+  x64 <- as.integer64(x)
+  ifelse(x64 > lim31, ifelse(x64 > lim32, "ULL", "U"), "")
+}
+KeyEntry <- function(str, df) {
+  keyString <- paste0(df$key, KeySuffix(df$key))
+  paste0("static constexpr std::array<uint64_t, ", nrow(df), "> ",
+         str, "_KEY8 = {", paste(keyString, collapse = ","), "};")
+}
+ValEntry <- function(str, df) {
+  paste0("alignas(64) static constexpr std::array<uint8_t, ", nrow(df), "> ",
+         str, "_VAL8 = {", paste(df$score, collapse = ","), "};")
+}
+Entries <- function(str, df) {
+  c(KeyEntry(str, df), ValEntry(str, df))
+}
 
 header_content <- paste0(
-  "// Generated from data-raw/spr-exact.R\n",
-  "#include <cstdint>\n#include <array>\n#include <algorithm>\n",
-  "#include \"lookup.h\"\n\n",
-  
-  "static constexpr std::array<SPRScore64, ", nrow(pecDF), "> PEC_LOOKUP",
-  nTip, " = {{\n",
-  paste0("    {", pecDF$key, "ULL, ", pecDF$score, "}", collapse = ",\n"),
-  "\n}};\n",
-  
-  "static constexpr std::array<SPRScore64, ", nrow(mixDF), "> MIX_LOOKUP",
-  nTip, " = {{\n",
-  paste0("    {", mixDF$key, "ULL, ", mixDF$score, "}", collapse = ",\n"),
-  "\n}};\n",
-  
-  "static constexpr std::array<SPRScore64, ", nrow(midDF), "> MID_LOOKUP",
-  nTip, " = {{\n",
-  paste0("    {", midDF$key, "ULL, ", midDF$score, "}", collapse = ",\n"),
-  "\n}};\n",
-  
-  "static constexpr std::array<SPRScore64, ", nrow(balDF), "> BAL_LOOKUP",
-  nTip, " = {{\n",
-  paste0("    {", balDF$key, "ULL, ", balDF$score, "}", collapse = ",\n"),
-  "\n}};"
+  c("// Generated in data-raw/spr-exact-8.R",
+    "#include <cstdint>\n#include <array>",
+    Entries("PEC", pecDF),
+    Entries("MIX", mixDF),
+    Entries("MID", midDF),
+    Entries("BAL", balDF))
 )
 
-writeLines(header_content, sprintf("src/spr/lookup_table_%d.h", nTip))
+writeLines(header_content, "src/spr/lookup8.h")
