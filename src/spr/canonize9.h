@@ -243,13 +243,13 @@ inline int single_tip(Split9 s) {
   Rcpp::stop("single_tip(): split is not singleton-sized");
 }
 
-inline Split9 polarize9(Split9 s, int tip) {
-  s &= MASK9;
-  
-  if (!(s & (Split9(1) << tip))) {
-    s ^= MASK9;
-  }
-  
+inline Split9 polarize9(Split9 s, int tipIndex) {
+  if (s & (Split9(1) << tipIndex)) s = (~s) & MASK9;
+  return s;
+}
+
+inline Split9 polarize9_true(Split9 s, int tipIndex) {
+  if ((s & (Split9(1) << tipIndex)) == 0) s = (~s) & MASK9;
   return s;
 }
 
@@ -259,96 +259,86 @@ CanonicalInfo9 canonical9_3(const SplitSet9& sp) {
     tiss[i] = tips_in_smallest9(sp[i]);
   }
   
-  std::array<int, 2> fours{};
-  std::array<int, 1> trios{};
-  std::array<int, 3> pairs{};
-  
-  int fi = 0, ti = 0, pi = 0;
+  int four = -1;
+  int trio = -1;
+  std::array<int, 4> pairs{};
+  int pi = 0;
   
   for (int i = 0; i < 6; ++i) {
-    if (tiss[i] == 4) {
-      fours[fi++] = i;
-    } else if (tiss[i] == 3) {
-      trios[ti++] = i;
-    } else if (tiss[i] == 2) {
-      pairs[pi++] = i;
-    }
+    if      (tiss[i] == 4) four = i;
+    else if (tiss[i] == 3) trio = i;
+    else pairs[pi++] = i;
   }
+  ASSERT(four >= 0 && trio >= 0 && pi == 4);
   
-  ASSERT(fi == 2 && ti == 1 && pi == 3);
+  const Split9 trioSp = sp[trio];
   
-  const int trio = trios[0];
-  Split9 trioSp = sp[trio];
   
   int trioPair = -1;
-  Split9 soloSp{};
-  
-  for (int i = 0; i < 3; ++i) {
-    const int p = pairs[i];
-    
-    Split9 s = xor_split9(trioSp, sp[p]);
-    if (tips_in_smallest9(s) == 1) {
+  Split9 soloSp = 0; // will be 1-bit after normalization
+  for (int p : pairs) {
+    const Split9 s_raw = xor_split9(trioSp, sp[p]); // RAW XOR — matches R
+    if (tips_in_smallest9(s_raw) == 1) {
       trioPair = p;
-      soloSp = smaller_split9(s);
+      soloSp   = smaller_split9(s_raw);             // store as canonical 1-bit split
       break;
     }
   }
+  ASSERT(trioPair >= 0 && soloSp != 0 && popcount9(soloSp) == 1);
+  const int soloTip = single_tip(soloSp);           // 0..8
   
-  ASSERT(trioPair >= 0);
   
-  const int soloTip = single_tip(soloSp);
+  // 4) quadSp: AND of both 4-splits after *polarizing-by-tip to TRUE*
+  //    R: quadSp <- PolarizeSplits(sp3[[fours]], soloTip)
+  const Split9 quadSp = polarize9_true(sp[four], soloTip);
   
-  Split9 quadSp = polarize9(sp[fours[0]], soloTip) &
-    polarize9(sp[fours[1]], soloTip);
-  
+  // 5) midPair: first remaining pair where popcount( quadSp & Polarize(pair, soloTip) ) == 3
   int midPair = -1;
-  
-  for (int i = 0; i < 3; ++i) {
-    const int p = pairs[i];
-    if (p == trioPair) {
-      continue;
-    }
-    
-    Split9 mid = quadSp & polarize9(sp[p], soloTip);
-    if (tips_in_smallest9(mid) == 3) {
+  for (int p : pairs) {
+    if (p == trioPair) continue;
+    const Split9 midMask = quadSp & polarize9_true(sp[p], soloTip);
+    // R checks raw TipsInSplits(midMask) == 3 -> popcount == 3
+    if (popcount9(midMask) == 3) {
       midPair = p;
       break;
     }
   }
-  
   ASSERT(midPair >= 0);
   
-  std::array<int, 2> remaining{};
-  int ri = 0;
-  
-  for (int i = 0; i < 3; ++i) {
-    const int p = pairs[i];
-    if (p != trioPair && p != midPair) {
-      remaining[ri++] = p;
-    }
+  // 6) Remaining two pairs, in the original 'pairs' order
+  std::array<int, 2> rest{}; int ri = 0;
+  for (const int p : pairs) {
+    if (p != trioPair && p != midPair) rest[ri++] = p;
   }
-  
   ASSERT(ri == 2);
   
-  Perm9 perm{};
-  int k = 0;
+  // 7) Blocks in exact R concatenation order with AsTips (smaller side)
+  const Split9 block_solo     = smaller_split9(soloSp);          // 1 tip
+  const Split9 block_soloPair = smaller_split9(sp[trioPair]);    // 2 tips (contains solo)
+  const Split9 block_midPair  = smaller_split9(sp[midPair]);     // 2 tips
+  const Split9 block_pair1    = smaller_split9(sp[rest[0]]);     // 2 tips
+  const Split9 block_pair2    = smaller_split9(sp[rest[1]]);     // 2 tips
   
-  auto emit = [&](Split9 s) {
-    s = smaller_split9(s);
-    for (int i = 0; i < 9; ++i) {
-      if (s & (Split9(1) << i)) {
-        perm[k++] = i;
+  // 8) Emit with FIRST-OCCURRENCE-ONLY (exactly like R after RenumberTips)
+  bool seen[9] = {false,false,false,false,false,false,false,false,false};
+  Perm9 perm{}; int k = 0;
+  
+  auto emit_unique = [&](Split9 s) {
+    for (int bit = 0; bit < 9; ++bit) {
+      if (s & (Split9(1) << bit)) {
+        if (!seen[bit]) { seen[bit] = true; perm[k++] = bit; }
       }
     }
   };
   
-  emit(soloSp);
-  emit(sp[trioPair]);
-  emit(sp[midPair]);
-  emit(sp[remaining[0]]);
-  emit(sp[remaining[1]]);
+  emit_unique(block_solo);     // solo
+  emit_unique(block_soloPair); // soloPair
+  emit_unique(block_midPair);  // midPair
+  emit_unique(block_pair1);    // pair1
+  emit_unique(block_pair2);    // pair2
   
   ASSERT(k == 9);
+  for (int i = 0; i < 9; ++i) ASSERT(seen[i]);     // bijection
   return { Shape9::s3, perm };
 }
 
