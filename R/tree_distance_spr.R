@@ -913,7 +913,7 @@ SPRDist.multiPhylo <- SPRDist.list
       }
       return(moves + exact)
     }
-    if (nTip == 9 && getOption("sprShortcut", 8) >= 9) {
+    if (nTip == 9 && getOption("sprShortcut", Inf) >= 9) {
       exact <- spr_table_9(sp1, sp2)
       if (is.na(exact) || exact < 1) {
         dput(sp1)

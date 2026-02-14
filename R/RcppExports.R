@@ -122,6 +122,10 @@ spr_table_8 <- function(sp1, sp2) {
     .Call(`_TreeDist_spr_table_8`, sp1, sp2)
 }
 
+spr_table_9 <- function(sp1, sp2) {
+    .Call(`_TreeDist_spr_table_9`, sp1, sp2)
+}
+
 cpp_robinson_foulds_distance <- function(x, y, nTip) {
     .Call(`_TreeDist_cpp_robinson_foulds_distance`, x, y, nTip)
 }
