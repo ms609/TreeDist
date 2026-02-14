@@ -156,6 +156,10 @@ CanonicalInfo9 canonical9_2(const SplitSet9& sp) {
   
   ASSERT(four >= 0 && ti == 2);
   
+  Split9 r = xor_split9(sp[trios[1]], sp[four]);
+  int c = popcount9(r);
+  if (c == 1 || c == 8) std::swap(trios[0], trios[1]);
+  
   Split9 trioSp1 = sp[trios[0]];
   Split9 trioSp2 = sp[trios[1]];
   

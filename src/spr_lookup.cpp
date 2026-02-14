@@ -238,7 +238,7 @@ int lookup9(const SplitSet9& sp1, const SplitSet9& sp2) {
   std::array<int,6> packed{};
   for (int i = 0; i < 6; ++i) {
     Split9 s = permute_split9(sp2[i], canon.perm);
-    s = polarize9(sp2[i]);
+    s = polarize9(s);
     packed[i] = s;
   }
   
