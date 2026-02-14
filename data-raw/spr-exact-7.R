@@ -115,19 +115,23 @@ balPack <- apply(balSplits, 2, BitPack7)
 balDF <- data.frame(key = balPack, score = balScores[balValid])
 balDF <- balDF[order(balDF$key), ]
 
-
-header_content <- paste0(
-  "// Generated in data-raw/spr-exact-7.R\n",
-  "#include <cstdint>\n#include <array>\n",
-  "static constexpr std::array<uint32_t, ", nrow(pecDF), "> PEC_KEY7 = {",
-  paste0(pecDF$key, "U", collapse = ","), "};\n",
-  "static constexpr std::array<uint8_t, ", nrow(pecDF), "> PEC_VAL7 = {",
-  paste0(pecDF$score, collapse = ","), "};\n",
+KeyEntry <- function(str, df) {
+  paste0("alignas(64) static constexpr std::array<uint32_t, ", nrow(df), "> ",
+         str, "_KEY7 = {", paste(df$key, collapse = "U,"), "U};")
+}
+ValEntry <- function(str, df) {
+  paste0("alignas(64) static constexpr std::array<uint8_t, ", nrow(df), "> ",
+         str, "_VAL7 = {", paste(df$score, collapse = ","), "};")
+}
+Entries <- function(str, df) {
+  c(KeyEntry(str, df), ValEntry(str, df))
+}
   
-  "static constexpr std::array<uint32_t, ", nrow(balDF), "> BAL_KEY7 = {",
-  paste0(balDF$key, "U", collapse = ","), "};\n",
-  "static constexpr std::array<uint8_t, ", nrow(balDF), "> BAL_VAL7 = {",
-  paste0(balDF$score, collapse = ","), "};\n"
+header_content <- paste0(
+  c("// Generated in data-raw/spr-exact-7.R",
+  "#include <cstdint>\n#include <array>",
+  Entries("PEC", pecDF),
+  Entries("BAL", balDF))
 )
 
 writeLines(header_content, "src/spr/lookup7.h")
