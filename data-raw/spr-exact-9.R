@@ -61,11 +61,15 @@ if (file.exists("scores0.rds")) {
   saveRDS(scores0, file = "scores0.rds")
 }
 valid0 <- !is.na(scores0)
-
-splits0 <- vapply(which(valid0), function(i) {
-  as.integer(!(trees0[[i]] |> as.Splits() |> PolarizeSplits(nTip))[, 1]) |> sort()
-}, integer(nTip - 3))
-saveRDS(splits0, file = "splits0.rds")
+  
+if (file.exists("splits0.rds")) {
+  splits0 <- readRDS("splits0.rds")
+} else {
+  splits0 <- vapply(which(valid0), function(i) {
+    as.integer(!(trees0[[i]] |> as.Splits() |> PolarizeSplits(nTip))[, 1]) |> sort()
+  }, integer(nTip - 3))
+  saveRDS(splits0, file = "splits0.rds")
+}
 
 
 shape1 <- Tree("((c1, c2), (s, (t, (u, ((p1, p2), (q1, q2))))));")
@@ -106,20 +110,24 @@ if (file.exists("scores1.rds")) {
   scores1 <- readRDS("scores1.rds")
 } else {
   scores1 <- sapply(cli::cli_progress_along(trees1), function(i) {
-  reduced <- ReduceTrees(shape1, trees1[[i]])
-  r1 <- reduced[[1]]
-  if (is.null(r1) || NTip(r1) != nTip) return(NA)
-  r2 <- reduced[[2]]
-  TBRDist::USPRDist(r1, r2)
-})
+    reduced <- ReduceTrees(shape1, trees1[[i]])
+    r1 <- reduced[[1]]
+    if (is.null(r1) || NTip(r1) != nTip) return(NA)
+    r2 <- reduced[[2]]
+    TBRDist::USPRDist(r1, r2)
+  })
+  saveRDS(scores1, file = "scores1.rds")
+}
 valid1 <- !is.na(scores1)
-
-splits1 <- vapply(which(valid1), function(i) {
-  as.integer(!(trees1[[i]] |> as.Splits() |> PolarizeSplits(nTip))[, 1]) |> sort()
-}, integer(nTip - 3))
-
-saveRDS(scores1, file = "scores1.rds")
-saveRDS(splits1, file = "splits1.rds")
+  
+if (file.exists("splits1.rds")) {
+  splits1 <- readRDS("splits1.rds")
+} else {
+  splits1 <- vapply(which(valid1), function(i) {
+    as.integer(!(trees1[[i]] |> as.Splits() |> PolarizeSplits(nTip))[, 1]) |> sort()
+  }, integer(nTip - 3))
+  saveRDS(splits1, file = "splits1.rds")
+}
 
 
 shape2 <- Tree("((c1, c2), (s, (t, ((p1, p2), (u, (q1, q2))))));")
@@ -361,111 +369,17 @@ if (file.exists("splits5.rds")) {
 
 
 
-
-
-# Define packing algorithm based on range
-library("bit64")
-scores0 <- readRDS("scores0.rds")
-sp0 <- readRDS("splits0.rds")
-sp1 <- splits1
-sp2 <- splits2
-sp3 <- splits3
-sp4 <- splits4
-sp5 <- splits5
-offset <- c(
-  min(sp0[1, ], sp1[1, ], sp2[1, ], sp3[1, ], sp4[1, ], sp5[1, ]),
-  min(sp0[2, ], sp1[2, ], sp2[2, ], sp3[2, ], sp4[2, ], sp5[2, ]),
-  min(sp0[3, ], sp1[3, ], sp2[3, ], sp3[3, ], sp4[3, ], sp5[3, ]),
-  min(sp0[4, ], sp1[4, ], sp2[4, ], sp3[4, ], sp4[4, ], sp5[4, ]),
-  min(sp0[5, ], sp1[5, ], sp2[5, ], sp3[5, ], sp4[5, ], sp5[5, ]),
-  min(sp0[6, ], sp1[6, ], sp2[6, ], sp3[6, ], sp4[6, ], sp5[6, ])
-  ) |>
-  as.integer64()
-
-rng <-  c(
-  max(sp0[1, ], sp1[1, ], sp2[1, ], sp3[1, ], sp4[1, ], sp5[1, ]),
-  max(sp0[2, ], sp1[2, ], sp2[2, ], sp3[2, ], sp4[2, ], sp5[2, ]),
-  max(sp0[3, ], sp1[3, ], sp2[3, ], sp3[3, ], sp4[3, ], sp5[3, ]),
-  max(sp0[4, ], sp1[4, ], sp2[4, ], sp3[4, ], sp4[4, ], sp5[4, ]),
-  max(sp0[5, ], sp1[5, ], sp2[5, ], sp3[5, ], sp4[5, ], sp5[5, ]),
-  max(sp0[6, ], sp1[6, ], sp2[6, ], sp3[6, ], sp4[6, ], sp5[6, ])
-) -  c(
-  min(sp0[1, ], sp1[1, ], sp2[1, ], sp3[1, ], sp4[1, ], sp5[1, ]),
-  min(sp0[2, ], sp1[2, ], sp2[2, ], sp3[2, ], sp4[2, ], sp5[2, ]),
-  min(sp0[3, ], sp1[3, ], sp2[3, ], sp3[3, ], sp4[3, ], sp5[3, ]),
-  min(sp0[4, ], sp1[4, ], sp2[4, ], sp3[4, ], sp4[4, ], sp5[4, ]),
-  min(sp0[5, ], sp1[5, ], sp2[5, ], sp3[5, ], sp4[5, ], sp5[5, ]),
-  min(sp0[6, ], sp1[6, ], sp2[6, ], sp3[6, ], sp4[6, ], sp5[6, ])
-)
-
-2^as.integer64(cumsum(rev(ceiling(log2(rng)))))
-
-BitPack9 <- function(vec) {
-  v <- as.integer64(vec)
-  as.character(
-    (v[1] - offset[[1]]) * as.integer64("549755813888") +
-      (v[2] - offset[[2]]) * as.integer64("2147483648") +
-      (v[3] - offset[[3]]) * 8388608L +
-      (v[4] - offset[[4]]) * 32768L +
-      (v[5] - offset[[5]]) * 128L +
-      (v[6] - offset[[6]]))
-}
-.Order <- function(keys) {
-  order(sprintf("%020s", keys))
-}
-
-pack0 <- apply(sp0, 2, BitPack9)
-df0 <- data.frame(key = pack0, score = scores0[valid0])
-df0 <- df0[.Order(df0$key), ]
-
-pack1 <- apply(sp1, 2, BitPack9)
-df1 <- data.frame(key = pack1, score = scores1[valid1])
-df1 <- df1[.Order(df1$key), ]
-
-pack2 <- apply(sp2, 2, BitPack9)
-df2 <- data.frame(key = pack2, score = scores2[valid2])
-df2 <- df2[.Order(df2$key), ]
-
-pack3 <- apply(sp3, 2, BitPack9)
-df3 <- data.frame(key = pack3, score = scores3[valid3])
-df3 <- df3[.Order(df3$key), ]
-
-pack4 <- apply(sp4, 2, BitPack9)
-df4 <- data.frame(key = pack4, score = scores4[valid4])
-df4 <- df4[.Order(df4$key), ]
-
-pack5 <- apply(sp5, 2, BitPack9)
-df5 <- data.frame(key = pack5, score = scores5[valid5])
-df5 <- df5[.Order(df5$key), ]
-
-KeySuffix <-function(x) {
-  lim31 <- bit64::as.integer64(2147483647)
-  lim32 <- bit64::as.integer64(4294967295)
-  x64 <- bit64::as.integer64(x)
-  ifelse(x64 > lim31, ifelse(x64 > lim32, "ULL", "U"), "")
-}
-KeyEntry <- function(str, df) {
-  keyString <- paste0(df$key, KeySuffix(df$key))
-  paste0("static constexpr std::array<uint64_t, ", nrow(df), "> ",
-         str, "_KEY9 = {", paste(keyString, collapse = ","), "};")
-}
-ValEntry <- function(str, df) {
-  paste0("alignas(64) static constexpr std::array<uint8_t, ", nrow(df), "> ",
-         str, "_VAL9 = {", paste(df$score, collapse = ","), "};")
-}
-Entries <- function(str, df) {
-  c(KeyEntry(str, df), ValEntry(str, df))
-}
+source("data-raw/spr-exact-builders.R")
 
 header_content <- paste0(
   c("// Generated in data-raw/spr-exact-9.R",
-    "#include <cstdint>\n#include <array>",
-    Entries("S0", df0),
-    Entries("S1", df1),
-    Entries("S2", df2),
-    Entries("S3", df3),
-    Entries("S4", df4),
-    Entries("S5", df5))
+    DecisionTreeLine("S9_0", scores0, valid0, splits0),
+    DecisionTreeLine("S9_1", scores1, valid1, splits1),
+    DecisionTreeLine("S9_2", scores2, valid2, splits2),
+    DecisionTreeLine("S9_3", scores3, valid3, splits3),
+    DecisionTreeLine("S9_4", scores4, valid4, splits4),
+    DecisionTreeLine("S9_5", scores5, valid5, splits5)
+  )
 )
 
 writeLines(header_content, "src/spr/lookup9.h")

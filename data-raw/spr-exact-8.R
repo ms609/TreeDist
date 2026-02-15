@@ -203,10 +203,10 @@ source("data-raw/spr-exact-builders.R")
 
 header_content <- paste0(
   c("// Generated in data-raw/spr-exact-8.R",
-    DecisionTreeLine("PEC", pecScores, pecValid, pecSplits),
-    DecisionTreeLine("MID", midScores, midValid, midSplits),
-    DecisionTreeLine("MIX", mixScores, mixValid, mixSplits),
-    DecisionTreeLine("BAL", balScores, balValid, balSplits)
+    DecisionTreeLine("PEC8", pecScores, pecValid, pecSplits),
+    DecisionTreeLine("MID8", midScores, midValid, midSplits),
+    DecisionTreeLine("MIX8", mixScores, mixValid, mixSplits),
+    DecisionTreeLine("BAL8", balScores, balValid, balSplits)
   )
 )
 

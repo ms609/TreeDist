@@ -103,8 +103,8 @@ balMap <- .EntropyTree(balScores[balValid], PAMap(balSplits))
 
 header_content <- paste0(
   c("// Generated in data-raw/spr-exact-7.R",
-    DecisionTreeLine("PEC", pecMap),
-    DecisionTreeLine("BAL", balMap))
+    DecisionTreeLine("PEC7", pecMap),
+    DecisionTreeLine("BAL7", balMap))
 )
 
 writeLines(header_content, "src/spr/lookup7.h")

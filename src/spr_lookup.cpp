@@ -54,32 +54,6 @@ inline Shape9 detect_shape9(const SplitSet9& sp) {
   return Shape9::s5;
 }
 
-inline uint32_t BitPack7(const std::array<int,4>& v) {
-  return ((v[0] - 3)  << 18) |
-    ((v[1] - 7)  << 12) |
-    ((v[2] - 15) << 6) |
-    ( v[3] - 33);
-}
-
-inline uint64_t BitPack8(const std::array<int,5>& v) {
-  return
-    ((uint64_t)(v[0] - 3) << 27) |
-    ((uint64_t)(v[1] - 7) << 20) |
-    ((uint64_t)(v[2] - 15) << 13) |
-    ((uint64_t)(v[3] - 31) << 6)  |
-    (uint64_t)(v[4] - 65);
-}
-
-inline uint64_t BitPack9(const std::array<int,6>& v) {
-  return
-    ((uint64_t)(v[0] - 3) << 39) |
-    ((uint64_t)(v[1] - 7) << 31) |
-    ((uint64_t)(v[2] - 15) << 23) |
-    ((uint64_t)(v[3] - 31) << 15)  |
-    ((uint64_t)(v[4] - 63) << 7)  |
-    ((uint64_t)(v[5] - 129));
-}
-
 template <size_t N>
 int lookup_from_table(uint64_t key, const std::array<uint64_t, N>& keys,
                       const std::array<uint8_t, N>& values) {
@@ -221,7 +195,7 @@ int lookup8(const SplitSet8& sp1, const SplitSet8& sp2) {
   case Shape8::Mid:       return lookup_from_tree(packed, MID8_SCORES);
   case Shape8::Balanced:  return lookup_from_tree(packed, BAL8_SCORES);
   }
-  return -2;
+  return -1;
 }
 
 int lookup9(const SplitSet9& sp1, const SplitSet9& sp2) {
@@ -235,23 +209,20 @@ int lookup9(const SplitSet9& sp1, const SplitSet9& sp2) {
     (shape == Shape9::s4) ? canonical9_4(sp1) :
                             canonical9_5(sp1);
   
-  std::array<int,6> packed{};
+  std::array<size_t,6> packed{};
   for (int i = 0; i < 6; ++i) {
     Split9 s = permute_split9(sp2[i], canon.perm);
     s = polarize9(s);
-    packed[i] = s;
+    packed[i] = static_cast<size_t>(s);
   }
   
-  std::sort(packed.begin(), packed.end());
-  uint64_t key = BitPack9(packed);
-  
   switch (shape) {
-  case Shape9::s0: return lookup_from_table(key, S0_KEY9, S0_VAL9);
-  case Shape9::s1: return lookup_from_table(key, S1_KEY9, S1_VAL9);
-  case Shape9::s2: return lookup_from_table(key, S2_KEY9, S2_VAL9);
-  case Shape9::s3: return lookup_from_table(key, S3_KEY9, S3_VAL9);
-  case Shape9::s4: return lookup_from_table(key, S4_KEY9, S4_VAL9);
-  case Shape9::s5: return lookup_from_table(key, S5_KEY9, S5_VAL9);
+  case Shape9::s0: return lookup_from_tree(packed, S9_0_SCORES);
+  case Shape9::s1: return lookup_from_tree(packed, S9_1_SCORES);
+  case Shape9::s2: return lookup_from_tree(packed, S9_2_SCORES);
+  case Shape9::s3: return lookup_from_tree(packed, S9_3_SCORES);
+  case Shape9::s4: return lookup_from_tree(packed, S9_4_SCORES);
+  case Shape9::s5: return lookup_from_tree(packed, S9_5_SCORES);
   }
   
   return -1;
