@@ -48,14 +48,18 @@ canonOrder <- TipLabels(shape0)[c(
 shape0 <- RenumberTips(shape0, canonOrder)
 
 trees0 <- as.phylo(seq_len(NUnrooted(nTip)), nTip, canonOrder)
-scores0 <- sapply(cli::cli_progress_along(trees0), function(i) {
-  reduced <- ReduceTrees(shape0, trees0[[i]])
-  r1 <- reduced[[1]]
-  if (is.null(r1) || NTip(r1) != nTip) return(NA)
-  r2 <- reduced[[2]]
-  TBRDist::USPRDist(r1, r2)
-})
-saveRDS(scores0, file = "scores0.rds")
+if (file.exists("scores0.rds")) {
+  scores0 <- readRDS("scores0.rds")
+} else {
+  scores0 <- sapply(cli::cli_progress_along(trees0), function(i) {
+    reduced <- ReduceTrees(shape0, trees0[[i]])
+    r1 <- reduced[[1]]
+    if (is.null(r1) || NTip(r1) != nTip) return(NA)
+    r2 <- reduced[[2]]
+    TBRDist::USPRDist(r1, r2)
+  })
+  saveRDS(scores0, file = "scores0.rds")
+}
 valid0 <- !is.na(scores0)
 
 splits0 <- vapply(which(valid0), function(i) {
@@ -98,7 +102,10 @@ canonOrder <- TipLabels(shape1)[c(
 shape1 <- RenumberTips(shape1, canonOrder)
 
 trees1 <- as.phylo(seq_len(NUnrooted(nTip)), nTip, canonOrder)
-scores1 <- sapply(cli::cli_progress_along(trees1), function(i) {
+if (file.exists("scores1.rds")) {
+  scores1 <- readRDS("scores1.rds")
+} else {
+  scores1 <- sapply(cli::cli_progress_along(trees1), function(i) {
   reduced <- ReduceTrees(shape1, trees1[[i]])
   r1 <- reduced[[1]]
   if (is.null(r1) || NTip(r1) != nTip) return(NA)
@@ -152,21 +159,28 @@ canonOrder <- TipLabels(shape2)[c(
 shape2 <- RenumberTips(shape2, canonOrder)
 
 trees2 <- as.phylo(seq_len(NUnrooted(nTip)), nTip, canonOrder)
-scores2 <- sapply(cli::cli_progress_along(trees2), function(i) {
-  reduced <- ReduceTrees(shape2, trees2[[i]])
-  r1 <- reduced[[1]]
-  if (is.null(r1) || NTip(r1) != nTip) return(NA)
-  r2 <- reduced[[2]]
-  TBRDist::USPRDist(r1, r2)
-})
+if (file.exists("scores2.rds")) {
+  scores2 <- readRDS("scores2.rds")
+} else {
+  scores2 <- sapply(cli::cli_progress_along(trees2), function(i) {
+    reduced <- ReduceTrees(shape2, trees2[[i]])
+    r1 <- reduced[[1]]
+    if (is.null(r1) || NTip(r1) != nTip) return(NA)
+    r2 <- reduced[[2]]
+    TBRDist::USPRDist(r1, r2)
+  })
+  saveRDS(scores2, file = "scores2.rds")
+}
 valid2 <- !is.na(scores2)
-
-splits2 <- vapply(which(valid2), function(i) {
-  as.integer(!(trees2[[i]] |> as.Splits() |> PolarizeSplits(nTip))[, 1]) |> sort()
-}, integer(nTip - 3))
-
-saveRDS(scores2, file = "scores2.rds")
-saveRDS(splits2, file = "splits2.rds")
+  
+if (file.exists("splits2.rds")) {
+  splits2 <- readRDS("splits2.rds")
+} else {
+  splits2 <- vapply(which(valid2), function(i) {
+    as.integer(!(trees2[[i]] |> as.Splits() |> PolarizeSplits(nTip))[, 1]) |> sort()
+  }, integer(nTip - 3))
+  saveRDS(splits2, file = "splits2.rds")
+}
 
 
 shape3 <- Tree("((c1, c2), (s, ((h1, h2), ((p1, p2), (q1, q2)))));")
@@ -205,21 +219,29 @@ canonOrder <- TipLabels(shape3)[c(
 shape3 <- RenumberTips(shape3, canonOrder)
 
 trees3 <- as.phylo(seq_len(NUnrooted(nTip)), nTip, canonOrder)
-scores3 <- sapply(cli::cli_progress_along(trees3), function(i) {
-  reduced <- ReduceTrees(shape3, trees3[[i]])
-  r1 <- reduced[[1]]
-  if (is.null(r1) || NTip(r1) != nTip) return(NA)
-  r2 <- reduced[[2]]
-  TBRDist::USPRDist(r1, r2)
-})
+if (file.exists("scores3.rds")) {
+  scores3 <- readRDS("scores3.rds")
+} else {
+  scores3 <- sapply(cli::cli_progress_along(trees3), function(i) {
+    reduced <- ReduceTrees(shape3, trees3[[i]])
+    r1 <- reduced[[1]]
+    if (is.null(r1) || NTip(r1) != nTip) return(NA)
+    r2 <- reduced[[2]]
+    TBRDist::USPRDist(r1, r2)
+  })
+  saveRDS(scores3, file = "scores3.rds")
+}
 valid3 <- !is.na(scores3)
+  
+if (file.exists("splits3.rds")) {
+  splits3 <- readRDS("splits3.rds")
+} else {
+  splits3 <- vapply(which(valid3), function(i) {
+    as.integer(!(trees3[[i]] |> as.Splits() |> PolarizeSplits(nTip))[, 1]) |> sort()
+  }, integer(nTip - 3))
+  saveRDS(splits3, file = "splits3.rds")
+}
 
-splits3 <- vapply(which(valid3), function(i) {
-  as.integer(!(trees3[[i]] |> as.Splits() |> PolarizeSplits(nTip))[, 1]) |> sort()
-}, integer(nTip - 3))
-
-saveRDS(scores3, file = "scores3.rds")
-saveRDS(splits3, file = "splits3.rds")
 
 
 
@@ -258,21 +280,28 @@ canonOrder <- TipLabels(shape4)[c(
 shape4 <- RenumberTips(shape4, canonOrder)
 
 trees4 <- as.phylo(seq_len(NUnrooted(nTip)), nTip, canonOrder)
-scores4 <- sapply(cli::cli_progress_along(trees4), function(i) {
-  reduced <- ReduceTrees(shape4, trees4[[i]])
-  r1 <- reduced[[1]]
-  if (is.null(r1) || NTip(r1) != nTip) return(NA)
-  r2 <- reduced[[2]]
-  TBRDist::USPRDist(r1, r2)
-})
+if (file.exists("scores4.rds")) {
+  scores4 <- readRDS("scores4.rds")
+} else {
+    scores4 <- sapply(cli::cli_progress_along(trees4), function(i) {
+    reduced <- ReduceTrees(shape4, trees4[[i]])
+    r1 <- reduced[[1]]
+    if (is.null(r1) || NTip(r1) != nTip) return(NA)
+    r2 <- reduced[[2]]
+    TBRDist::USPRDist(r1, r2)
+  })
+  saveRDS(scores4, file = "scores4.rds")
+}
 valid4 <- !is.na(scores4)
 
-splits4 <- vapply(which(valid4), function(i) {
-  as.integer(!(trees4[[i]] |> as.Splits() |> PolarizeSplits(nTip))[, 1]) |> sort()
-}, integer(nTip - 3))
-
-saveRDS(scores4, file = "scores4.rds")
-saveRDS(splits4, file = "splits4.rds")
+if (file.exists("splits4.rds")) {
+  splits4 <- readRDS("splits4.rds")
+} else {
+  splits4 <- vapply(which(valid4), function(i) {
+    as.integer(!(trees4[[i]] |> as.Splits() |> PolarizeSplits(nTip))[, 1]) |> sort()
+  }, integer(nTip - 3))
+  saveRDS(splits4, file = "splits4.rds")
+}
 
 
 
@@ -307,21 +336,29 @@ canonOrder <- TipLabels(shape5)[c(
 shape5 <- RenumberTips(shape5, canonOrder)
 
 trees5 <- as.phylo(seq_len(NUnrooted(nTip)), nTip, canonOrder)
-scores5 <- sapply(cli::cli_progress_along(trees5), function(i) {
-  reduced <- ReduceTrees(shape5, trees5[[i]])
-  r1 <- reduced[[1]]
-  if (is.null(r1) || NTip(r1) != nTip) return(NA)
-  r2 <- reduced[[2]]
-  TBRDist::USPRDist(r1, r2)
-})
+if (file.exists("scores5.rds")) {
+  scores5 <- readRDS("scores5.rds")
+} else {
+  scores5 <- sapply(cli::cli_progress_along(trees5), function(i) {
+    reduced <- ReduceTrees(shape5, trees5[[i]])
+    r1 <- reduced[[1]]
+    if (is.null(r1) || NTip(r1) != nTip) return(NA)
+    r2 <- reduced[[2]]
+    TBRDist::USPRDist(r1, r2)
+  })
+  saveRDS(scores5, file = "scores5.rds")
+}
 valid5 <- !is.na(scores5)
 
-splits5 <- vapply(which(valid5), function(i) {
-  as.integer(!(trees5[[i]] |> as.Splits() |> PolarizeSplits(nTip))[, 1]) |> sort()
-}, integer(nTip - 3))
+if (file.exists("splits5.rds")) {
+  splits5 <- readRDS("splits5.rds")
+} else {
+  splits5 <- vapply(which(valid5), function(i) {
+    as.integer(!(trees5[[i]] |> as.Splits() |> PolarizeSplits(nTip))[, 1]) |> sort()
+  }, integer(nTip - 3))
+  saveRDS(splits5, file = "splits5.rds")
+}
 
-saveRDS(scores5, file = "scores5.rds")
-saveRDS(splits5, file = "splits5.rds")
 
 
 
