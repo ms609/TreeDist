@@ -108,10 +108,44 @@ BitPack7 <- function(vec) {
 }
 
 pecPack <- apply(pecSplits, 2, BitPack7)
-pecDF <- data.frame(key = pecPack, score = pecScores[pecValid])
-pecDF <- pecDF[order(pecDF$key), ]
 
-balPack <- apply(balSplits, 2, BitPack7)
+.EntropyMap <- function(scores, tags) {
+  if (length(scores) == 0) return(NULL)
+  h0 <- Ntropy(table(scores))
+  if (h0 == 0) return(scores[[1]])
+  hJ <- apply(tags, 2, function(sp) {
+    Ntropy(table(scores, sp))
+  })
+  flag <- which.min(hJ)
+  if (hJ[flag] == h0) {
+    ayeScore <- scores[flag]
+    nayScore <- setdiff(scores, ayeScore)
+    list(
+      q = names(flag),
+      aye = ayeScore,
+      nay = nayScore
+    )
+  } else {
+    has <- tags[, flag]
+    ayeTags <- tags[has, -flag, drop = FALSE]
+    nayTags <- tags[!has, -flag, drop = FALSE]
+    list(
+      q = names(flag),
+      aye = .EntropyMap(scores[has], ayeTags[, colSums(ayeTags) > 0, drop = FALSE]),
+      nay = .EntropyMap(scores[!has], nayTags[, colSums(nayTags) > 0, drop = FALSE])
+    )
+  }
+}
+.Translate <- function(node) {
+  if (is.list(node)) {
+    sprintf("f(%s,%s,%s)", sub("sp", "", node[[1]]),
+            .Translate(node[[2]]),
+            .Translate(node[[3]]))
+  } else {
+    as.character(node)
+  }
+}
+
 balDF <- data.frame(key = balPack, score = balScores[balValid])
 balDF <- balDF[order(balDF$key), ]
 

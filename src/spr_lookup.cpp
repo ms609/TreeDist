@@ -165,6 +165,22 @@ int lookup6(const SplitSet6& sp1_raw, const SplitSet6& sp2_raw) {
   return 2;
 }
 
+template <size_t N, typename F>
+int lookup_from_func(std::array<size_t,N> packed, F lookup_logic) {
+  std::array<char,256> split_present{};
+  for (auto sp : packed) {
+    Rcpp::Rcout << int(sp) << " - ";
+    ASSERT(sp >=0);
+    ASSERT(sp < 256);
+    split_present[sp] = 1;
+  }
+  Rcpp::Rcout << " \n";
+  auto f = [&](size_t a, int b, int c) __attribute__((always_inline)) -> int{
+    return split_present[a] ? b : c;
+  };
+  
+  return lookup_logic(f);
+}
 
 int lookup7(const SplitSet7& sp1, const SplitSet7& sp2) {
   Shape7 shape = detect_shape7(sp1);
@@ -174,19 +190,16 @@ int lookup7(const SplitSet7& sp1, const SplitSet7& sp2) {
     ? canonical_pectinate(sp1)
       : canonical_balanced(sp1);
   
-  std::array<int,4> packed{};
+  std::array<size_t,4> packed{};
   for (int i = 0; i < 4; ++i) {
     Split7 s = permute_split7(sp2[i], canon.perm);
     s = polarize7(s);
-    packed[i] = s;
+    packed[i] = static_cast<size_t>(s);
   }
   
-  std::sort(packed.begin(), packed.end());
-  
-  uint32_t key = BitPack7(packed);
   return (shape == Shape7::Pectinate)
-    ? lookup_from_table(key, PEC_KEY7, PEC_VAL7)
-      : lookup_from_table(key, BAL_KEY7, BAL_VAL7);
+    ? lookup_from_func(packed, PEC_LOGIC)
+      : lookup_from_func(packed, BAL_LOGIC);
 }
 
 int lookup8(const SplitSet8& sp1, const SplitSet8& sp2) {
