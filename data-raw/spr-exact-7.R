@@ -217,9 +217,78 @@ pecMap <- .EntropyTree(pecScores[pecValid], PAMap(pecSplits))
 balMap <- .EntropyTree(balScores[balValid], PAMap(balSplits))
 
 
-
-x <- .FlattenMap(pecMap) |> matrix(3) |> t()
-head(x)
+.BuildMatrix <- function(node) {
+  # Internal recursive helper
+  walk <- function(x) {
+    if (!is.list(x)) return(list(table = matrix(0, 0, 3), root_val = -as.integer(x)))
+    
+    aye <- walk(x$aye)
+    nay <- walk(x$nay)
+    
+    # aye rows start immediately after the current root (offset 1)
+    # nay rows start after current root + all aye rows
+    aye_offset <- 1
+    nay_offset <- 1 + nrow(aye$table)
+    
+    # Adjust internal jump targets
+    if (nrow(aye$table) > 0) {
+      idx <- aye$table[, 2:3] >= 0
+      aye$table[, 2:3][idx] <- aye$table[, 2:3][idx] + aye_offset
+    }
+    if (nrow(nay$table) > 0) {
+      idx <- nay$table[, 2:3] >= 0
+      nay$table[, 2:3][idx] <- nay$table[, 2:3][idx] + nay_offset
+    }
+    
+    root_row <- c(
+      as.integer(sub("sp", "", x$q)),
+      if (nrow(aye$table) == 0) aye$root_val else aye_offset,
+      if (nrow(nay$table) == 0) nay$root_val else nay_offset
+    )
+    
+    return(list(
+      table = rbind(root_row, aye$table, nay$table)
+    ))
+  }
+  
+  walk(node)$table
+}
+.CompressMatrix <- function(x) {
+  repeat {
+    dups <- which(duplicated(x))
+    if (length(dups) == 0) break
+    
+    # Always merge the highest index first to keep earlier indices stable
+    dup <- max(dups)
+    
+    # Find the first occurrence of this identical row
+    duplicateOf <- which(apply(x, 1, function(row) all(row == x[dup, ])))[1]
+    
+    old_ptr <- dup - 1
+    new_ptr <- duplicateOf - 1
+    
+    # Redirect pointers to the duplicate
+    targets <- x[, 2:3]
+    x[, 2:3][targets == old_ptr] <- new_ptr
+    
+    # Shift all pointers higher than the removed row down by 1
+    x[, 2:3][targets > old_ptr] <- x[, 2:3][targets > old_ptr] - 1
+    
+    # Remove the redundant row
+    x <- x[-dup, , drop = FALSE]
+  }
+  x
+}
+.FlattenMap <- function(node) {
+  # 1. Recursive walk to build the raw tree matrix
+  m <- .BuildMatrix(node)
+  
+  # 2. Iterative compression to turn the tree into a DAG
+  m_compressed <- .CompressMatrix(m)
+  
+  # 3. Final flattening for C++ (Row-major vector)
+  as.vector(t(m_compressed))
+}
 
 # Generate the C++ definition
 DecisionTreeLine <- function(name, map) {
@@ -270,6 +339,13 @@ for (i in seq_len(sum(pecValid))) {
   message(paste0(pecSplits[, i], collapse = "-"))
   expect_equal(DebugWalkTree(pecFlat, pecSplits[, i])$result,
                pecScores[pecValid][i])
+}
+
+balFlat <- .FlattenMap(balMap)
+for (i in seq_len(sum(balValid))) {
+  message(paste0(balSplits[, i], collapse = "-"))
+  expect_equal(DebugWalkTree(balFlat, balSplits[, i])$result,
+               balScores[balValid][i])
 }
 
 header_content <- paste0(
