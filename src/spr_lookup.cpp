@@ -117,7 +117,7 @@ int lookup6(const SplitSet6& sp1_raw, const SplitSet6& sp2_raw) {
 }
 
 template <size_t N>
-int lookup_from_tree(std::array<size_t,N> packed, const int* tree) {
+int lookup_from_tree(std::array<size_t,N> packed, const int16_t* tree) {
   std::array<char,256> split_present{};
   for (auto sp : packed) {
     ASSERT(sp >=0);
@@ -128,12 +128,12 @@ int lookup_from_tree(std::array<size_t,N> packed, const int* tree) {
     split_present[sp] = 1;
   }
   
-  int cursor = 0; // the first node
+  int16_t cursor = 0; // the first node
   while (true) {
-    const int base = cursor * 3;
-    const int split_idx = tree[base];
+    const size_t base = static_cast<size_t>(cursor) * 3;
     
-    int next_node = split_present[split_idx] ? tree[base + 1] : tree[base + 2];
+    const int16_t split_idx = tree[base];
+    const int16_t next_node = split_present[split_idx] ? tree[base + 1] : tree[base + 2];
     
     if (next_node < 0) {
       return -next_node;

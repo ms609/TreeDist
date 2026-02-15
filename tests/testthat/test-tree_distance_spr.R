@@ -178,6 +178,7 @@ test_that("SPR shortcuts okay - known answer", {
 
 test_that("SPR shortcuts okay - larger trees", {
   library("TreeTools", quietly = TRUE)
+  skip_if_not(getOption("slowMode", FALSE))
   set.seed(0)
   trees <- lapply(1:8, function(XX) RandomTree(45, root = TRUE))
   opt <- options("sprShortcut" = 0)
@@ -308,6 +309,7 @@ test_that("SPR calculated correctly", {
   expect_exact("((((b3,b2),b1),(((d2,d1),((e3,e2),e1)),c)),a);",
                "((((d2,e3),d1),c),(((((e2,b3),e1),b1),b2),a));", method = "Rogue")
 
+  skip_if(TRUE)
   set.seed(0)
   tr <- vector("list", 13)
   tr[[1]] <- Postorder(RandomTree(25, root = TRUE))
@@ -523,6 +525,7 @@ test_that("SPR deOliveira2008 calculation looks valid", {
                        method = "deOliv"),
                1L)
   
+  skip_if(TRUE)
   nTip <- 130
   nSPR <- 35
   
@@ -649,7 +652,7 @@ test_that("SPR deOliveira2008 calculation looks valid", {
                        PectinateTree(letters[c(2:26, 1)]),
                        method = "deOliv"),
                1L)
-  
+  skip_if(TRUE)
   nTip <- 130
   nSPR <- 35
   

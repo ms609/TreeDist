@@ -153,6 +153,6 @@ CheckMap <- function(map, splits, scores, valid) {
 DecisionTreeLine <- function(name, scores, valid, splits) {
   map <- .EntropyTree(scores[valid], PAMap(splits))
   flat <- .FlattenMap(map)
-  sprintf("inline constexpr int %s_SCORES[] = {%s};", 
+  sprintf("inline constexpr int16_t %s_SCORES[] = {%s};", 
           name, paste(flat, collapse = ","))
 }
