@@ -165,21 +165,38 @@ int lookup6(const SplitSet6& sp1_raw, const SplitSet6& sp2_raw) {
   return 2;
 }
 
-template <size_t N, typename F>
-int lookup_from_func(std::array<size_t,N> packed, F lookup_logic) {
+template <size_t N>
+int lookup_from_tree(std::array<size_t,N> packed, const int* tree) {
   std::array<char,256> split_present{};
   for (auto sp : packed) {
-    Rcpp::Rcout << int(sp) << " - ";
     ASSERT(sp >=0);
     ASSERT(sp < 256);
+    if (sp >= 256) {
+      Rcpp::stop("OVER 256 LIMIT!");
+    }
     split_present[sp] = 1;
   }
-  Rcpp::Rcout << " \n";
-  auto f = [&](size_t a, int b, int c) __attribute__((always_inline)) -> int{
-    return split_present[a] ? b : c;
-  };
   
-  return lookup_logic(f);
+  int cursor = 0; // the first node
+  while (true) {
+    const int base = cursor * 3;
+    
+    if (base + 2 >= (int)456) {
+      Rcpp::stop("DEBUGGING: base + 2 >= (int)tree_size_in_ints");
+    }
+    
+    const int split_idx = tree[base];
+    if (split_idx < 0 || split_idx >= 256) {
+      Rcpp::stop("DEBUGGING: (split_idx < 0 || split_idx >= 256)");
+    }
+    
+    int next_node = split_present[split_idx] ? tree[base + 1] : tree[base + 2];
+    
+    if (next_node < 0) {
+      return -next_node;
+    }
+    cursor = next_node;
+  }
 }
 
 int lookup7(const SplitSet7& sp1, const SplitSet7& sp2) {
@@ -198,8 +215,8 @@ int lookup7(const SplitSet7& sp1, const SplitSet7& sp2) {
   }
   
   return (shape == Shape7::Pectinate)
-    ? lookup_from_func(packed, PEC_LOGIC)
-      : lookup_from_func(packed, BAL_LOGIC);
+    ? lookup_from_tree(packed, PEC7_SCORES)
+      : lookup_from_tree(packed, BAL7_SCORES);
 }
 
 int lookup8(const SplitSet8& sp1, const SplitSet8& sp2) {
