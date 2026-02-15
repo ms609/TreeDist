@@ -54,17 +54,6 @@ inline Shape9 detect_shape9(const SplitSet9& sp) {
   return Shape9::s5;
 }
 
-template <size_t N>
-int lookup_from_table(uint64_t key, const std::array<uint64_t, N>& keys,
-                      const std::array<uint8_t, N>& values) {
-  auto it = std::lower_bound(keys.begin(), keys.end(), key);
-  if (it != keys.end() && *it == key) {
-    size_t index = std::distance(keys.begin(), it);
-    return values[index];
-  }
-  return -1;
-}
-
 int lookup6(const SplitSet6& sp1_raw, const SplitSet6& sp2_raw) {
   
   SplitSet6 sp1 = sp1_raw;
