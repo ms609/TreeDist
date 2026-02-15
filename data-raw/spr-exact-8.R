@@ -198,69 +198,16 @@ balSplits <- vapply(which(balValid), function(i) {
     sort()
 }, integer(nTip - 3))
 
-# Define packing algorithm based on range
-library("bit64")
-offset <- c(
-  min(pecSplits[1, ], mixSplits[1, ], midSplits[1, ], balSplits[1, ]),
-  min(pecSplits[2, ], mixSplits[2, ], midSplits[2, ], balSplits[2, ]),
-  min(pecSplits[3, ], mixSplits[3, ], midSplits[3, ], balSplits[3, ]),
-  min(pecSplits[4, ], mixSplits[4, ], midSplits[4, ], balSplits[4, ]),
-  min(pecSplits[5, ], mixSplits[5, ], midSplits[5, ], balSplits[5, ]))
-print(offset)
-offset <- as.integer64(offset)
 
-BitPack8 <- function(vec) {
-  v <- as.integer64(vec)
-  as.character(
-    (v[1] - offset[[1]]) * 134217728L +
-      (v[2] - offset[[2]]) * 1048576L +
-      (v[3] - offset[[3]]) * 8192L +
-      (v[4] - offset[[4]]) * 64L +
-      (v[5] - offset[[5]]))
-}
-
-pecPack <- apply(pecSplits, 2, BitPack8)
-pecDF <- data.frame(key = pecPack, score = pecScores[pecValid])
-pecDF <- pecDF[order(sprintf("%020s", pecDF$key)), ]
-
-mixPack <- apply(mixSplits, 2, BitPack8)
-mixDF <- data.frame(key = mixPack, score = mixScores[mixValid])
-mixDF <- mixDF[order(sprintf("%020s", mixDF$key)), ]
-
-midPack <- apply(midSplits, 2, BitPack8)
-midDF <- data.frame(key = midPack, score = midScores[midValid])
-midDF <- midDF[order(sprintf("%020s", midDF$key)), ]
-
-balPack <- apply(balSplits, 2, BitPack8)
-balDF <- data.frame(key = balPack, score = balScores[balValid])
-balDF <- balDF[order(sprintf("%020s", balDF$key)), ]
-
-KeySuffix <-function(x) {
-  lim31 <- bit64::as.integer64(2147483647)
-  lim32 <- bit64::as.integer64(4294967295)
-  x64 <- bit64::as.integer64(x)
-  ifelse(x64 > lim31, ifelse(x64 > lim32, "ULL", "U"), "")
-}
-KeyEntry <- function(str, df) {
-  keyString <- paste0(df$key, KeySuffix(df$key))
-  paste0("static constexpr std::array<uint64_t, ", nrow(df), "> ",
-         str, "_KEY8 = {", paste(keyString, collapse = ","), "};")
-}
-ValEntry <- function(str, df) {
-  paste0("alignas(64) static constexpr std::array<uint8_t, ", nrow(df), "> ",
-         str, "_VAL8 = {", paste(df$score, collapse = ","), "};")
-}
-Entries <- function(str, df) {
-  c(KeyEntry(str, df), ValEntry(str, df))
-}
+source("data-raw/spr-exact-builders.R")
 
 header_content <- paste0(
   c("// Generated in data-raw/spr-exact-8.R",
-    "#include <cstdint>\n#include <array>",
-    Entries("PEC", pecDF),
-    Entries("MIX", mixDF),
-    Entries("MID", midDF),
-    Entries("BAL", balDF))
+    DecisionTreeLine("PEC", pecScores, pecValid, pecSplits),
+    DecisionTreeLine("MID", midScores, midValid, midSplits),
+    DecisionTreeLine("MIX", mixScores, mixValid, mixSplits),
+    DecisionTreeLine("BAL", balScores, balValid, balSplits)
+  )
 )
 
 writeLines(header_content, "src/spr/lookup8.h")

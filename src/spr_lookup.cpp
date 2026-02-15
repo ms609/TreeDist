@@ -81,18 +81,6 @@ inline uint64_t BitPack9(const std::array<int,6>& v) {
 }
 
 template <size_t N>
-int lookup_from_table(uint32_t key, const std::array<uint32_t, N>& keys,
-                      const std::array<uint8_t, N>& values) {
-  auto it = std::lower_bound(keys.begin(), keys.end(), key);
-  
-  if (it != keys.end() && *it == key) {
-    size_t index = std::distance(keys.begin(), it);
-    return values[index];
-  }
-  return -1;
-}
-
-template <size_t N>
 int lookup_from_table(uint64_t key, const std::array<uint64_t, N>& keys,
                       const std::array<uint8_t, N>& values) {
   auto it = std::lower_bound(keys.begin(), keys.end(), key);
@@ -180,15 +168,7 @@ int lookup_from_tree(std::array<size_t,N> packed, const int* tree) {
   int cursor = 0; // the first node
   while (true) {
     const int base = cursor * 3;
-    
-    if (base + 2 >= (int)456) {
-      Rcpp::stop("DEBUGGING: base + 2 >= (int)tree_size_in_ints");
-    }
-    
     const int split_idx = tree[base];
-    if (split_idx < 0 || split_idx >= 256) {
-      Rcpp::stop("DEBUGGING: (split_idx < 0 || split_idx >= 256)");
-    }
     
     int next_node = split_present[split_idx] ? tree[base + 1] : tree[base + 2];
     
@@ -228,21 +208,18 @@ int lookup8(const SplitSet8& sp1, const SplitSet8& sp2) {
     (shape == Shape8::Mid)       ? canonical_mid8(sp1) :
     canonical_balanced8(sp1);
   
-  std::array<int,5> packed{};
+  std::array<size_t,5> packed{};
   for (int i = 0; i < 5; ++i) {
     Split8 s = permute_split8(sp2[i], canon.perm);
     s = polarize8(s);
-    packed[i] = s;
+    packed[i] = static_cast<size_t>(s);
   }
   
-  std::sort(packed.begin(), packed.end());
-  uint64_t key = BitPack8(packed);
-  
   switch (shape) {
-  case Shape8::Pectinate: return lookup_from_table(key, PEC_KEY8, PEC_VAL8);
-  case Shape8::Mix:       return lookup_from_table(key, MIX_KEY8, MIX_VAL8);
-  case Shape8::Mid:       return lookup_from_table(key, MID_KEY8, MID_VAL8);
-  case Shape8::Balanced:  return lookup_from_table(key, BAL_KEY8, BAL_VAL8);
+  case Shape8::Pectinate: return lookup_from_tree(packed, PEC8_SCORES);
+  case Shape8::Mix:       return lookup_from_tree(packed, MIX8_SCORES);
+  case Shape8::Mid:       return lookup_from_tree(packed, MID8_SCORES);
+  case Shape8::Balanced:  return lookup_from_tree(packed, BAL8_SCORES);
   }
   return -2;
 }
