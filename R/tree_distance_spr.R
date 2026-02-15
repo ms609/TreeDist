@@ -888,41 +888,14 @@ SPRDist.multiPhylo <- SPRDist.list
     }
     if (nTip == 7 && getOption("sprShortcut", Inf) >= 7) {
       exact <- spr_table_7(sp1, sp2)
-      if (is.na(exact) || exact < 1) {
-        dput(sp1)
-        dput(as.integer(as.TreeNumber(as.phylo(sp1))))
-        summary(sp1)
-        dput(as.integer(as.TreeNumber(as.phylo(sp2))))
-        dput(sp2)
-        summary(sp2)
-        stop("Lookup7 failed.")
-      }
       return(moves + spr_table_7(sp1, sp2))
     }
     if (nTip == 8 && getOption("sprShortcut", Inf) >= 8) {
       exact <- spr_table_8(sp1, sp2)
-      if (is.na(exact) || exact < 1) {
-        dput(sp1)
-        dput(as.integer(as.TreeNumber(as.phylo(sp1))))
-        summary(sp1)
-        dput(as.integer(as.TreeNumber(as.phylo(sp2))))
-        dput(sp2)
-        summary(sp2)
-        stop("Lookup8 failed.")
-      }
       return(moves + exact)
     }
     if (nTip == 9 && getOption("sprShortcut", Inf) >= 9) {
       exact <- spr_table_9(sp1, sp2)
-      if (is.na(exact) || exact < 1) {
-        dput(sp1)
-        dput(as.integer(as.TreeNumber(as.phylo(sp1))))
-        summary(sp1)
-        dput(as.integer(as.TreeNumber(as.phylo(sp2))))
-        dput(sp2)
-        summary(sp2)
-        stop("Lookup9 failed.")
-      }
       return(moves + exact)
     }
     
@@ -982,92 +955,119 @@ SPRDist.multiPhylo <- SPRDist.list
     labels <- TipLabels(tr1)
     scores <- numeric(length(labels))
     blank <- rep_len(TRUE, length(labels))
-
-    if (debug) message(switch(
-      pmatch(toupper(getOption("sprProxy", "C")), c("C", "P", "Q", "R")),
-      "ClusteringInfoDist", "PhyloInfoDist", "Quartet","RobinsonFoulds"))
     
-    depth <- max(getOption("sprDepth", 1), 1)
+    proxyAbbrev <- c("C", "I", "P", "Q", "R", "V")
+    proxyMethod <- proxyAbbrev[[pmatch(toupper(getOption("sprProxy", "C")),
+                                       proxyAbbrev)]]
     
+    if (debug) message(switch(proxyMethod,
+                              "C" = "ClusteringInfoDist", 
+                              "I" = "Tip Instability",
+                              "P" = "PhyloInfoDist",
+                              "Q" = "Quartet",
+                              "R" = "RobinsonFoulds",
+                              "V" = "Tip Volatility"))
     
-    .ScoreWithout <- function(idx) {
-      keep <- blank
-      keep[idx] <- FALSE
-      
-      outcome <- keep_and_reduce(tr1, tr2, keep)
-      if (is.null(outcome[[1]])) {
-        return(-Inf)
+    if (proxyMethod %in% c("I", "V")) {
+      if (!requireNamespace("Rogue", quietly = TRUE)) {
+        install.packages("Rogue")
       }
-      
-      oSpl <- as.Splits(outcome)
-      firstMatch <- FirstMatchingSplit(oSpl[[1]], oSpl[[2]])
-      
-      if (firstMatch > 0) {
-        subtips1 <- as.logical(oSpl[[1]][[firstMatch]])
-        subtips2 <- !subtips1
-        # Anchor to shared edge
-        subtips1[!subtips1][[1]] <- TRUE
-        subtips2[!subtips2][[1]] <- TRUE
-        
-        sub1 <- ReduceTrees(KeepTipPostorder(outcome[[1]], subtips1),
-                            KeepTipPostorder(outcome[[2]], subtips1))
-        
-        sub2 <- ReduceTrees(KeepTipPostorder(outcome[[1]], subtips2),
-                            KeepTipPostorder(outcome[[2]], subtips2))
-        
-        # Return:
-        ProxyDistance(sub1[[1]], sub1[[2]]) +
-          ProxyDistance(sub2[[1]], sub2[[2]])
-        
+      tipScores <- if (proxyMethod == "I") {
+        Rogue::TipInstability(list(tree1, tree2))
       } else {
-        # Return:
-        ProxyDistance(outcome[[1]], outcome[[2]])
+        Rogue::TipVolatility(list(tree1, tree2))
       }
-    }
-    for (i in seq_along(labels)) {
-      scores[[i]] <- .ScoreWithout(i)
-      if (!is.finite(scores[[i]])) break
-    }
-    if (any(!is.finite(scores))) {
-      depth <- 1
-    }
-    if (depth > 1) {
-      pairs <- combn(seq_along(labels), 2)
-      nPairs <- dim(pairs)[[2]]
-      pairScores <- double(nPairs)
-      for (i in seq_len(nPairs)) {
-        pairScores[[i]] <- .ScoreWithout(pairs[, i])
-        if (!is.finite(pairScores[[i]])) break
+      drop <- logical(length(labels))
+      couldDrop <- scores == min(scores)
+      if (debug && sum(couldDrop) > 1) {
+        message(sum(couldDrop), " options to drop: ",
+                paste(labels[couldDrop], collapse = ", "))
       }
-    }
-    
-    drop <- logical(length(labels))
-    couldDrop <- scores == min(scores)
-    if (debug && sum(couldDrop) > 1) {
-      message(sum(couldDrop), " options to drop: ",
-              paste(labels[couldDrop], collapse = ", "))
-    }
-    
-    if (depth > 1 && min(pairScores) < min(scores)) {
-      pairDrop <- pairScores == min(pairScores)
-      if (debug && sum(pairDrop) > 0) {
-        message(sum(pairDrop), " pair-options to drop: ",
-                paste(apply(rbind(labels[pairs[1, pairDrop]],
-                                  labels[pairs[2, pairDrop]]), 2, paste0,
-                            collapse = "-"), collapse = ", "))
-      }
-      dropTions <- pairs[, pairDrop]
-      if (any(couldDrop[dropTions]) && !any(!is.finite(pairScores))) {
-        # Dropping two at once doesn't give us any benefit over dropping one
-        # at a time – but will mean we can't spot a handy pair next time.
-        drop[dropTions[which.min(scores[dropTions])]] <- TRUE
-      } else {
-        # If dropping two gives us a better solution, drop both at once -
-        # failing to do so can cause an optimal path to be missed.
-        drop[pairs[, which.max(pairDrop)]] <- TRUE
-      }
+      drop[[which.max(couldDrop)]] <- TRUE
     } else {
-      drop[[which.min(scores)]] <- TRUE
+      
+      depth <- max(getOption("sprDepth", 1), 1)
+      
+      
+      .ScoreWithout <- function(idx) {
+        keep <- blank
+        keep[idx] <- FALSE
+        
+        outcome <- keep_and_reduce(tr1, tr2, keep)
+        if (is.null(outcome[[1]])) {
+          return(-Inf)
+        }
+        
+        oSpl <- as.Splits(outcome)
+        firstMatch <- FirstMatchingSplit(oSpl[[1]], oSpl[[2]])
+        
+        if (firstMatch > 0) {
+          subtips1 <- as.logical(oSpl[[1]][[firstMatch]])
+          subtips2 <- !subtips1
+          # Anchor to shared edge
+          subtips1[!subtips1][[1]] <- TRUE
+          subtips2[!subtips2][[1]] <- TRUE
+          
+          sub1 <- ReduceTrees(KeepTipPostorder(outcome[[1]], subtips1),
+                              KeepTipPostorder(outcome[[2]], subtips1))
+          
+          sub2 <- ReduceTrees(KeepTipPostorder(outcome[[1]], subtips2),
+                              KeepTipPostorder(outcome[[2]], subtips2))
+          
+          # Return:
+          ProxyDistance(sub1[[1]], sub1[[2]]) +
+            ProxyDistance(sub2[[1]], sub2[[2]])
+          
+        } else {
+          # Return:
+          ProxyDistance(outcome[[1]], outcome[[2]])
+        }
+      }
+      for (i in seq_along(labels)) {
+        scores[[i]] <- .ScoreWithout(i)
+        if (!is.finite(scores[[i]])) break
+      }
+      if (any(!is.finite(scores))) {
+        depth <- 1
+      }
+      if (depth > 1) {
+        pairs <- combn(seq_along(labels), 2)
+        nPairs <- dim(pairs)[[2]]
+        pairScores <- double(nPairs)
+        for (i in seq_len(nPairs)) {
+          pairScores[[i]] <- .ScoreWithout(pairs[, i])
+          if (!is.finite(pairScores[[i]])) break
+        }
+      }
+      
+      drop <- logical(length(labels))
+      couldDrop <- scores == min(scores)
+      if (debug && sum(couldDrop) > 1) {
+        message(sum(couldDrop), " options to drop: ",
+                paste(labels[couldDrop], collapse = ", "))
+      }
+      
+      if (depth > 1 && min(pairScores) < min(scores)) {
+        pairDrop <- pairScores == min(pairScores)
+        if (debug && sum(pairDrop) > 0) {
+          message(sum(pairDrop), " pair-options to drop: ",
+                  paste(apply(rbind(labels[pairs[1, pairDrop]],
+                                    labels[pairs[2, pairDrop]]), 2, paste0,
+                              collapse = "-"), collapse = ", "))
+        }
+        dropTions <- pairs[, pairDrop]
+        if (any(couldDrop[dropTions]) && !any(!is.finite(pairScores))) {
+          # Dropping two at once doesn't give us any benefit over dropping one
+          # at a time – but will mean we can't spot a handy pair next time.
+          drop[dropTions[which.min(scores[dropTions])]] <- TRUE
+        } else {
+          # If dropping two gives us a better solution, drop both at once -
+          # failing to do so can cause an optimal path to be missed.
+          drop[pairs[, which.max(pairDrop)]] <- TRUE
+        }
+      } else {
+        drop[[which.min(scores)]] <- TRUE
+      }
     }
     
     if (debug) {
