@@ -101,7 +101,7 @@ balSplits <- vapply(which(balValid), function(i) {
 
 
 
-.EntropyMap <- function(scores, tags) {
+.EntropyTree <- function(scores, tags) {
   if (length(unique(scores)) == 1) return(scores[[1]])
   
   hJ <- apply(tags, 2, function(sp) Ntropy(table(scores, sp)))
@@ -119,8 +119,8 @@ balSplits <- vapply(which(balValid), function(i) {
   
   list(
     q = names(flag),
-    aye = .EntropyMap(scores[has], .Retain(has)),
-    nay = .EntropyMap(scores[!has], .Retain(!has))
+    aye = .EntropyTree(scores[has], .Retain(has)),
+    nay = .EntropyTree(scores[!has], .Retain(!has))
   )
 }
 
@@ -169,9 +169,53 @@ balSplits <- vapply(which(balValid), function(i) {
   return(as.vector(t(flat_table)))
 }
 
+Compress <- function(x) {
+  x <- x |>
+    .FlattenMap() |>
+    matrix(3) |>
+    t() |>
+    as.data.frame() |>
+    `colnames<-`(c("sp", "aye", "nay"))
+  
+  repeat {
+    dups <- which(duplicated(x))
+    if (length(dups) == 0) break
+    
+    # Process the last duplicate first to keep indices stable for earlier ones
+    dup <- max(dups)
+    
+    # Find the original row that this is a duplicate of
+    duplicateOf <- which(apply(x, 1, function(row) all(row == x[dup, ])))[[1]]
+    
+    # 1. Redirect all pointers that were going to 'dup' to 'duplicateOf'
+    # We use 0-based indexing for targets, so Row 1 is index 0
+    # In R matrix, we are looking at columns 2 and 3 (aye and nay)
+    old_idx <- dup - 1
+    new_idx <- duplicateOf - 1
+    
+    targets <- x[, 2:3]
+    x[, 2:3][targets == old_idx] <- new_idx
+    
+    x[, 2:3][targets > old_idx] <- x[, 2:3][targets > old_idx] - 1
+    
+    x <- x[-dup, ]
+    message("Merged row ", dup, " into ", duplicateOf, ". Rows remaining: ", nrow(x))
+  }
+  x
+}
 
-pecMap <- .EntropyMap(pecScores[pecValid], PAMap(pecSplits))
-balMap <- .EntropyMap(balScores[balValid], PAMap(balSplits))
+PAMap <- function(splits) {
+  ids <- sort(unique(as.integer(splits)))
+  `colnames<-`(
+    vapply(ids, function(id) apply(splits, 2, function(r) id %in% r),
+           logical(ncol(splits))),
+    paste0("sp", ids)
+  )
+}
+
+pecMap <- .EntropyTree(pecScores[pecValid], PAMap(pecSplits))
+balMap <- .EntropyTree(balScores[balValid], PAMap(balSplits))
+
 
 
 x <- .FlattenMap(pecMap) |> matrix(3) |> t()
