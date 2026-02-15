@@ -124,86 +124,6 @@ balSplits <- vapply(which(balValid), function(i) {
   )
 }
 
-.FlattenMap <- function(node) {
-  # 1. First pass: Linearize the tree into a list of nodes
-  nodes <- list()
-  
-  register_node <- function(x) {
-    if (!is.list(x)) {
-      return(-as.integer(x)) # Leaf
-    }
-    
-    this_id <- length(nodes)
-    # Placeholder
-    nodes[[this_id + 1]] <<- list(q = x$q, aye = x$aye, nay = x$nay)
-    
-    # We must process the current node's children *after* # the children of nodes already in the list to keep indices predictable.
-    return(this_id)
-  }
-  
-  # To avoid complexity, we'll use a standard recursive flattening
-  # that builds the table by simply tracking the "next available row"
-  
-  flat_table <- matrix(0, ncol = 3, nrow = 0)
-  
-  walk <- function(x) {
-    if (!is.list(x)) return(-as.integer(x))
-    
-    this_row_idx <- nrow(flat_table)
-    # Reserve the row with a dummy
-    flat_table <<- rbind(flat_table, c(as.integer(sub("sp", "", x[[1]])), 0, 0))
-    
-    # Recurse
-    aye_val <- walk(x$aye)
-    nay_val <- walk(x$nay)
-    
-    # Update the reserved row
-    # (using this_row_idx + 1 because R is 1-indexed)
-    flat_table[this_row_idx + 1, 2] <<- aye_val
-    flat_table[this_row_idx + 1, 3] <<- nay_val
-    
-    return(this_row_idx)
-  }
-  
-  walk(node)
-  return(as.vector(t(flat_table)))
-}
-
-Compress <- function(x) {
-  x <- x |>
-    .FlattenMap() |>
-    matrix(3) |>
-    t() |>
-    as.data.frame() |>
-    `colnames<-`(c("sp", "aye", "nay"))
-  
-  repeat {
-    dups <- which(duplicated(x))
-    if (length(dups) == 0) break
-    
-    # Process the last duplicate first to keep indices stable for earlier ones
-    dup <- max(dups)
-    
-    # Find the original row that this is a duplicate of
-    duplicateOf <- which(apply(x, 1, function(row) all(row == x[dup, ])))[[1]]
-    
-    # 1. Redirect all pointers that were going to 'dup' to 'duplicateOf'
-    # We use 0-based indexing for targets, so Row 1 is index 0
-    # In R matrix, we are looking at columns 2 and 3 (aye and nay)
-    old_idx <- dup - 1
-    new_idx <- duplicateOf - 1
-    
-    targets <- x[, 2:3]
-    x[, 2:3][targets == old_idx] <- new_idx
-    
-    x[, 2:3][targets > old_idx] <- x[, 2:3][targets > old_idx] - 1
-    
-    x <- x[-dup, ]
-    message("Merged row ", dup, " into ", duplicateOf, ". Rows remaining: ", nrow(x))
-  }
-  x
-}
-
 PAMap <- function(splits) {
   ids <- sort(unique(as.integer(splits)))
   `colnames<-`(
@@ -352,50 +272,6 @@ header_content <- paste0(
   c("// Generated in data-raw/spr-exact-7.R",
     DecisionTreeLine("PEC", pecMap),
     DecisionTreeLine("BAL", balMap))
-)
-
-writeLines(header_content, "src/spr/lookup7.h")
-
-
-
-
-# Define packing algorithm based on range
-range(pecSplits[1, ], balSplits[1, ])
-range(pecSplits[2, ], balSplits[2, ])
-range(pecSplits[3, ], balSplits[3, ])
-range(pecSplits[4, ], balSplits[4, ])
-BitPack7 <- function(vec) {
-  bitwShiftL(vec[1] - 3, 18) +
-    bitwShiftL(vec[2] - 7, 12) +
-    bitwShiftL(vec[3] - 15, 6)  +
-    vec[4] - 33
-}
-
-pecPack <- apply(pecSplits, 2, BitPack7)
-
-pecDF <- data.frame(key = pecPack, score = pecScores[pecValid])
-balDF <- data.frame(key = balPack, score = balScores[balValid])
-# pecDF <- pecDF[order(pecDF$key), ]
-# balDF <- balDF[order(balDF$key), ]
-
-
-KeyEntry <- function(str, df) {
-  paste0("alignas(64) static constexpr std::array<uint32_t, ", nrow(df), "> ",
-         str, "_KEY7 = {", paste(df$key, collapse = "U,"), "U};")
-}
-ValEntry <- function(str, df) {
-  paste0("alignas(64) static constexpr std::array<uint8_t, ", nrow(df), "> ",
-         str, "_VAL7 = {", paste(df$score, collapse = ","), "};")
-}
-Entries <- function(str, df) {
-  c(KeyEntry(str, df), ValEntry(str, df))
-}
-  
-header_content <- paste0(
-  c("// Generated in data-raw/spr-exact-7.R",
-  "#include <cstdint>\n#include <array>",
-  Entries("PEC", pecDF),
-  Entries("BAL", balDF))
 )
 
 writeLines(header_content, "src/spr/lookup7.h")
