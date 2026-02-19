@@ -135,10 +135,12 @@ With the quartet divergence, the expected tree distance is readily calculated:
 any given quartet has a one in three chance of matching by chance.
 
 ```{r}
-library("Quartet", exclude = "RobinsonFoulds")
-expectedQD <- 2 / 3
-normalizedQD <- QuartetDivergence(QuartetStatus(tree1, tree2),
-                                  similarity = FALSE) / expectedQD
+if (requireNamespace("Quartet", quietly = TRUE)) {
+  library("Quartet", exclude = "RobinsonFoulds")
+  expectedQD <- 2 / 3
+  normalizedQD <- QuartetDivergence(QuartetStatus(tree1, tree2),
+                                    similarity = FALSE) / expectedQD
+}
 ```
 
 The expected distance is more difficult to calculate for other metrics, but 
