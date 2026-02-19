@@ -1,3 +1,8 @@
+# TreeDist 2.12.0.9000 (2026-02-19)
+
+- Tweak vignettes.
+
+
 # TreeDist 2.12.0 (2026-02-12)
 
 - Support larger trees in some functions by updating some functions to use
