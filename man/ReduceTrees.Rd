@@ -22,9 +22,13 @@ with tree edges listed in postorder; or \code{NULL} if the trees are equivalent.
 \code{ReduceTrees()} reduces trees according to the tree reduction rules of
 \insertCite{Allen2001;textual}{TreeDist}:
 \itemize{
-\item Collapse identical pendant subtrees;
-\item Compress equivalent internal chains.
+\item Subtree reduction rule: Collapse identical pendant subtrees;
+\item Chain reduction rule: Compress equivalent internal chains.
 }
+}
+\details{
+Applying these rules does not affect the rooted or unrooted SPR distance
+between two trees \insertCite{Whidden2016}{TreeDist}.
 }
 \examples{
 tree1 <- TreeTools::BalancedTree(9)

@@ -2,8 +2,11 @@
 #' 
 #' `ReduceTrees()` reduces trees according to the tree reduction rules of
 #' \insertCite{Allen2001;textual}{TreeDist}:
-#' - Collapse identical pendant subtrees;
-#' - Compress equivalent internal chains.
+#' - Subtree reduction rule: Collapse identical pendant subtrees;
+#' - Chain reduction rule: Compress equivalent internal chains.
+#' 
+#' Applying these rules does not affect the rooted or unrooted SPR distance
+#' between two trees \insertCite{Whidden2016}{TreeDist}.
 #' 
 #' @template tree12Params
 #' @param check Logical specifying whether to validate input. Specify

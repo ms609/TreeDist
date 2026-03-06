@@ -34,3 +34,5 @@ revdep
 ^\.vs.*$
 ^\.vscode.*$
 ^CRAN-SUBMISSION$
+^\.positai$
+^\.claude$
