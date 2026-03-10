@@ -136,7 +136,8 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
       identical(Func, MutualClusteringInfoSplits)) {
     splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
     return(structure(
-      cpp_mutual_clustering_all_pairs(splits, as.integer(nTip)),
+      cpp_mutual_clustering_all_pairs(splits, as.integer(nTip),
+                                       as.integer(getOption("mc.cores", 1L))),
       class  = "dist",
       Size   = length(splits1),
       Labels = names(splits1),

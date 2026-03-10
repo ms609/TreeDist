@@ -203,13 +203,40 @@ Added `#pragma omp parallel for schedule(dynamic)` over the pairwise loop for
 - `add_ic_element` moved from `tree_distances.cpp` (inside `namespace TreeDist`,
   inaccessible to other TUs) into `tree_distances.h` as a proper `inline`,
   fixing a latent ODR issue and making it visible to `pairwise_distances.cpp`.
+- `SplitList` is not move-constructible; `std::vector<SplitList>` therefore
+  cannot be used (reserve/emplace_back require movability).  Fix: use
+  `std::vector<std::unique_ptr<SplitList>>` instead.
 - R fast path: `.SplitDistanceAllPairs()` in `tree_distance_utilities.R` detects
   `Func == MutualClusteringInfoSplits` with a same-tip-set, no-cluster call and
   routes it to `cpp_mutual_clustering_all_pairs()`.
 
 **Benchmark script**: `benchmark/bench-MCI-openmp.R`
-**To measure speedup**: run `bench-MCI-openmp.R` in a **fresh R session** after
-`devtools::load_all()` (Windows locks the DLL in the session that compiles it).
+**To measure speedup**: install with `install.packages(".", repos=NULL, type="source")`
+into a fresh library (avoids `devtools::load_all()` debug flags and Windows DLL lock).
+Use `TreeDist:::cpp_mutual_clustering_all_pairs` when calling from an installed package.
+
+#### Measured speedups (release build, -O2, 16-core Windows machine)
+
+| Scenario | Serial R loop | R parallel (16 workers) | OpenMP batch |
+|---|---|---|---|
+| 100 trees × 50 tips (4 950 pairs) | 117 ms | 78 ms | **17 ms** |
+| 40 trees × 200 tips (780 pairs) | 292 ms | 3 350 ms | **35 ms** |
+
+OpenMP vs serial: **7–8×**.  OpenMP vs R-parallel cluster: **5–95×** (R-parallel
+incurs ~2–3 s serialisation overhead regardless of problem size).
+
+#### R parallel cluster crossover (50-tip trees, 16 workers)
+
+The R parallel cluster is only competitive with the serial loop when the problem
+is large enough to amortise its ~2–3 s IPC/serialisation overhead.  For 50-tip
+trees that crossover is around **500 trees (~125 000 pairs)**, where serial takes
+~2.9 s and parallel takes ~2.8 s.  The OpenMP batch path remains faster than
+both at every size measured.
+
+Practical implication: **`StartParallel()` provides no benefit for MCI/CID** on
+machines where OpenMP is available, and actively harms performance for typical
+analysis sizes (≤ 200 trees).  The fast path therefore bypasses the R cluster
+entirely when `cluster` is `NULL`.
 
 ---
 

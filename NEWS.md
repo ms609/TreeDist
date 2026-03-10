@@ -1,3 +1,17 @@
+# TreeDist 2.12.0.9001 (2026-03-10)
+
+- Pairwise `ClusteringInfoDistance()` / `MutualClusteringInfo()` now uses
+  an OpenMP multi-threaded batch path when the package is compiled with
+  OpenMP support, giving ~7–8× speed-up over the serial path on a 16-core
+  machine.
+
+- The number of OpenMP threads is controlled by `options(mc.cores = N)`;
+  the default is `1` (single-threaded).  Set `mc.cores` to
+  `parallel::detectCores()` or a fixed integer to enable multi-threading.
+  `StartParallel()` / `StopParallel()` are no longer needed for
+  `ClusteringInfoDistance()` when OpenMP is available.
+
+
 # TreeDist 2.12.0.9000 (2026-02-19)
 
 - Tweak vignettes.

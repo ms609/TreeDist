@@ -158,7 +158,8 @@ static double mutual_clustering_score(
 // [[Rcpp::export]]
 NumericVector cpp_mutual_clustering_all_pairs(
     const List& splits_list,
-    const int   n_tip
+    const int   n_tip,
+    const int   n_threads = 1
 ) {
   const int N = splits_list.size();
   if (N < 2) return NumericVector(0);
@@ -183,7 +184,7 @@ NumericVector cpp_mutual_clustering_all_pairs(
   // Pair (col, row) with col < row maps to dist-vector index:
   //   p = col*(N-1) - col*(col-1)/2 + row - col - 1
 #ifdef _OPENMP
-#pragma omp parallel for schedule(dynamic)
+#pragma omp parallel for schedule(dynamic) num_threads(n_threads)
 #endif
   for (int col = 0; col < N - 1; ++col) {
 #ifndef _OPENMP

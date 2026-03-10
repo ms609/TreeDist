@@ -35,25 +35,57 @@ StopParallel(quietly = FALSE)
 Accelerate distance calculation by employing multiple \acronym{CPU} workers.
 }
 \details{
-"TreeDist" parallelizes the calculation of tree to tree distances via
-the \code{\link[=parCapply]{parCapply()}} function, using a user-defined cluster specified in
+\subsection{OpenMP (recommended for \code{ClusteringInfoDistance} / \code{MutualClusteringInfo})}{
+
+When the package is built with \acronym{OpenMP} support (the default on
+Linux and Windows; optional on macOS), pairwise
+\code{\link[=ClusteringInfoDistance]{ClusteringInfoDistance()}} / \code{\link[=MutualClusteringInfo]{MutualClusteringInfo()}} calculations use
+an efficient multi-threaded code path automatically — no cluster setup is
+required.
+
+The number of \acronym{OpenMP} threads is controlled by the standard
+\code{"mc.cores"} option:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{options(mc.cores = parallel::detectCores())  # use all available cores
+options(mc.cores = 4L)                        # or a fixed number
+}\if{html}{\out{</div>}}
+
+The default is \code{1} (single-threaded). The \acronym{OpenMP} path is
+substantially faster than the R-cluster path for typical analysis sizes and
+is preferred when available.
+}
+
+\subsection{R parallel cluster (other metrics)}{
+
+For metrics that do not yet have an \acronym{OpenMP} batch implementation
+(e.g. \code{\link[=RobinsonFoulds]{RobinsonFoulds()}}, \code{\link[=MatchingSplitDistance]{MatchingSplitDistance()}}), "TreeDist"
+parallelizes via \code{\link[=parCapply]{parCapply()}} using a cluster stored in
 \code{options("TreeDist-cluster")}.
 
-\code{StartParallel()} calls \code{parallel::makeCluster()} and tells "TreeDist" to
-use the created cluster.
+\code{StartParallel()} calls \code{parallel::makeCluster()} and registers the cluster.
 
-\code{SetParallel()} tells "TreeDist" to use a pre-existing or user-specified
-cluster.
+\code{SetParallel()} registers a pre-existing cluster.
 
-\code{StopParallel()} stops the current TreeDist cluster.
+\code{StopParallel()} stops the current TreeDist cluster and releases resources.
+
+Note that R-cluster parallelism carries a serialisation overhead of ~2–3 s,
+so it is only beneficial for large problems (roughly > 500 trees at 50 tips).
+For \code{\link[=ClusteringInfoDistance]{ClusteringInfoDistance()}} the \acronym{OpenMP} path is faster at
+every problem size and is used automatically when no cluster is registered.
+}
 }
 \examples{
-if (interactive()) { # Only run in terminal
+# OpenMP parallelism: just set mc.cores before calling distance functions.
+options(mc.cores = 2L)
+# ClusteringInfoDistance(trees)  # now uses 2 OpenMP threads
+options(mc.cores = NULL)  # restore default (single-threaded)
+
+if (interactive()) { # R cluster: only worthwhile for non-OpenMP metrics
   library("TreeTools", quietly = TRUE)
   nCores <- ceiling(parallel::detectCores() / 2)
   StartParallel(nCores) # Takes a few seconds to set up processes
   GetParallel()
-  ClusteringInfoDistance(as.phylo(0:6, 100))
+  RobinsonFoulds(as.phylo(0:6, 100))
   StopParallel() # Returns system resources
 }
 }
