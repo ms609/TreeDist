@@ -1,0 +1,25 @@
+{
+  "permission": {
+    "read": {
+      "*.r": "allow",
+      "*.h": "allow",
+      "*.cpp": "allow",
+      "*.R": "allow",
+      "*": "allow"
+    },
+    "edit": {
+      "*.cpp": "allow",
+      "*.h": "allow",
+      "*.R": "allow",
+      "*.md": "allow"
+    },
+    "bash": {
+      "echo *": "allow",
+      "grep *": "allow",
+      "head *": "allow"
+      "ls *": "allow",
+      "rm -f src/*.o src/*.dll": "allow",
+      "tail *": "allow",
+    }
+  }
+}
