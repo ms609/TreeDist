@@ -121,6 +121,22 @@
 #' which the maintainer plans to attempt in the future; please [comment on GitHub](
 #' https://github.com/ms609/TreeTools/issues/141) if you would find this useful.
 #' 
+#' # Parallelism
+#' 
+#' When `tree2 = NULL` and all trees share the same tip labels, pairwise
+#' distance calculation uses a multi-threaded \acronym{OpenMP} batch path
+#' automatically.  Control the number of threads with the `"mc.cores"` option:
+#' 
+#' ```r
+#' options(mc.cores = parallel::detectCores())  # use all cores
+#' options(mc.cores = 4L)                        # or a fixed number
+#' ```
+#' 
+#' Do **not** call [`StartParallel()`] for these functions: a registered
+#' R cluster disables the \acronym{OpenMP} path and replaces it with slower
+#' inter-process communication.  See [`StartParallel()`] for full guidance
+#' on when an R cluster is appropriate.
+#' 
 #' @template tree12ListParams
 #' 
 #' @param normalize If a numeric value is provided, this will be used as a 

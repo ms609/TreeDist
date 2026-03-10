@@ -129,21 +129,59 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
                                    nTip = length(tipLabels), ...) {
   cluster <- getOption("TreeDist-cluster")
 
-  # Fast path: use the OpenMP batch function for mutual clustering when all
-  # trees share the same tip set and no R-level cluster has been configured.
-  # Matches the behaviour of the generic path but avoids per-pair R overhead.
-  if (!is.na(nTip) && is.null(cluster) &&
-      identical(Func, MutualClusteringInfoSplits)) {
-    splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
-    return(structure(
-      cpp_mutual_clustering_all_pairs(splits, as.integer(nTip),
-                                       as.integer(getOption("mc.cores", 1L))),
-      class  = "dist",
-      Size   = length(splits1),
-      Labels = names(splits1),
-      Diag   = FALSE,
-      Upper  = FALSE
-    ))
+  # Fast paths: use OpenMP batch functions when all trees share the same tip
+  # set and no R-level cluster has been configured.  Each branch mirrors the
+  # generic path exactly but avoids per-pair R overhead.
+  if (!is.na(nTip) && is.null(cluster)) {
+    .n_threads <- as.integer(getOption("mc.cores", 1L))
+    .batch_result <- if (identical(Func, MutualClusteringInfoSplits)) {
+      splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
+      cpp_mutual_clustering_all_pairs(splits, as.integer(nTip), .n_threads)
+
+    } else if (identical(Func, InfoRobinsonFouldsSplits)) {
+      splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
+      cpp_rf_info_all_pairs(splits, as.integer(nTip), .n_threads)
+
+    } else if (identical(Func, MatchingSplitDistanceSplits)) {
+      splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
+      cpp_msd_all_pairs(splits, as.integer(nTip), .n_threads)
+
+    } else if (identical(Func, MatchingSplitInfoSplits)) {
+      splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
+      cpp_msi_all_pairs(splits, as.integer(nTip), .n_threads)
+
+    } else if (identical(Func, SharedPhylogeneticInfoSplits)) {
+      splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
+      cpp_shared_phylo_all_pairs(splits, as.integer(nTip), .n_threads)
+
+    } else if (identical(Func, NyeSplitSimilarity)) {
+      splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
+      cpp_jaccard_all_pairs(splits, as.integer(nTip),
+                            k = 1.0, allow_conflict = TRUE, .n_threads)
+
+    } else if (identical(Func, JaccardSplitSimilarity)) {
+      dots <- list(...)
+      splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
+      cpp_jaccard_all_pairs(
+        splits, as.integer(nTip),
+        k            = as.double(if ("k" %in% names(dots)) dots[["k"]] else 1L),
+        allow_conflict = as.logical(
+          if ("allowConflict" %in% names(dots)) dots[["allowConflict"]] else TRUE),
+        .n_threads
+      )
+
+    } else {
+      NULL
+    }
+
+    if (!is.null(.batch_result)) {
+      return(structure(.batch_result,
+                       class  = "dist",
+                       Size   = length(splits1),
+                       Labels = names(splits1),
+                       Diag   = FALSE,
+                       Upper  = FALSE))
+    }
   }
 
   if (is.na(nTip)) {

@@ -35,13 +35,21 @@ StopParallel(quietly = FALSE)
 Accelerate distance calculation by employing multiple \acronym{CPU} workers.
 }
 \details{
-\subsection{OpenMP (recommended for \code{ClusteringInfoDistance} / \code{MutualClusteringInfo})}{
+\subsection{OpenMP (recommended for all split-based metrics)}{
 
 When the package is built with \acronym{OpenMP} support (the default on
-Linux and Windows; optional on macOS), pairwise
-\code{\link[=ClusteringInfoDistance]{ClusteringInfoDistance()}} / \code{\link[=MutualClusteringInfo]{MutualClusteringInfo()}} calculations use
-an efficient multi-threaded code path automatically — no cluster setup is
-required.
+Linux and Windows; optional on macOS), all pairwise split-based distance
+calculations use an efficient multi-threaded batch path automatically —
+no cluster setup is required.  The affected functions are:
+\itemize{
+\item \code{\link[=ClusteringInfoDistance]{ClusteringInfoDistance()}} / \code{\link[=MutualClusteringInfo]{MutualClusteringInfo()}}
+\item \code{\link[=SharedPhylogeneticInfo]{SharedPhylogeneticInfo()}} / \code{\link[=DifferentPhylogeneticInfo]{DifferentPhylogeneticInfo()}}
+\item \code{\link[=MatchingSplitInfo]{MatchingSplitInfo()}} / \code{\link[=MatchingSplitInfoDistance]{MatchingSplitInfoDistance()}}
+\item \code{\link[=MatchingSplitDistance]{MatchingSplitDistance()}}
+\item \code{\link[=InfoRobinsonFoulds]{InfoRobinsonFoulds()}}
+\item \code{\link[=NyeSimilarity]{NyeSimilarity()}}
+\item \code{\link[=JaccardRobinsonFoulds]{JaccardRobinsonFoulds()}}
+}
 
 The number of \acronym{OpenMP} threads is controlled by the standard
 \code{"mc.cores"} option:
@@ -50,42 +58,44 @@ The number of \acronym{OpenMP} threads is controlled by the standard
 options(mc.cores = 4L)                        # or a fixed number
 }\if{html}{\out{</div>}}
 
-The default is \code{1} (single-threaded). The \acronym{OpenMP} path is
-substantially faster than the R-cluster path for typical analysis sizes and
-is preferred when available.
+The default is \code{1} (single-threaded).
 }
 
-\subsection{R parallel cluster (other metrics)}{
+\subsection{R parallel cluster}{
 
-For metrics that do not yet have an \acronym{OpenMP} batch implementation
-(e.g. \code{\link[=RobinsonFoulds]{RobinsonFoulds()}}, \code{\link[=MatchingSplitDistance]{MatchingSplitDistance()}}), "TreeDist"
-parallelizes via \code{\link[=parCapply]{parCapply()}} using a cluster stored in
-\code{options("TreeDist-cluster")}.
+\code{StartParallel()} creates an R socket cluster (via \code{\link[=makeCluster]{makeCluster()}}) and
+registers it for use by TreeDist.  \code{SetParallel()} registers a pre-existing
+cluster.  \code{StopParallel()} stops the cluster and releases resources.
 
-\code{StartParallel()} calls \code{parallel::makeCluster()} and registers the cluster.
+\strong{When to use \code{StartParallel()}:} for metrics that do not have an
+\acronym{OpenMP} batch path, namely tree-object-based distances such as
+\code{\link[=NNIDist]{NNIDist()}} and \code{\link[=MASTSize]{MASTSize()}} / \code{\link[=MASTInfo]{MASTInfo()}}, or any function called
+via \code{\link[=CompareAll]{CompareAll()}}.  R-cluster parallelism carries a serialisation overhead
+of ~2–3 s, so it is only beneficial for large problems.
 
-\code{SetParallel()} registers a pre-existing cluster.
-
-\code{StopParallel()} stops the current TreeDist cluster and releases resources.
-
-Note that R-cluster parallelism carries a serialisation overhead of ~2–3 s,
-so it is only beneficial for large problems (roughly > 500 trees at 50 tips).
-For \code{\link[=ClusteringInfoDistance]{ClusteringInfoDistance()}} the \acronym{OpenMP} path is faster at
-every problem size and is used automatically when no cluster is registered.
+\strong{When \emph{not} to use \code{StartParallel()}:} for the split-based metrics listed
+above.  Registering a cluster disables the \acronym{OpenMP} batch path for
+those functions, replacing a thread-local C++ loop with inter-process
+communication — which is slower at every problem size measured.  Call
+\code{StopParallel()} before computing split-based distances if a cluster is
+active.
 }
 }
 \examples{
-# OpenMP parallelism: just set mc.cores before calling distance functions.
+# OpenMP parallelism: set mc.cores before calling any split-based metric.
 options(mc.cores = 2L)
-# ClusteringInfoDistance(trees)  # now uses 2 OpenMP threads
+# MutualClusteringInfo(trees)  # uses 2 OpenMP threads automatically
 options(mc.cores = NULL)  # restore default (single-threaded)
 
-if (interactive()) { # R cluster: only worthwhile for non-OpenMP metrics
+if (interactive()) {
+  # R cluster: beneficial for NNIDist, MASTSize/MASTInfo, CompareAll(), etc.
+  # Do NOT activate while computing split-based distances (MCI, SPI, MSI, …)
+  # as it bypasses the faster OpenMP path.
   library("TreeTools", quietly = TRUE)
   nCores <- ceiling(parallel::detectCores() / 2)
   StartParallel(nCores) # Takes a few seconds to set up processes
   GetParallel()
-  RobinsonFoulds(as.phylo(0:6, 100))
+  CompareAll(as.phylo(0:6, 100), NNIDist)
   StopParallel() # Returns system resources
 }
 }

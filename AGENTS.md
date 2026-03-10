@@ -238,6 +238,26 @@ machines where OpenMP is available, and actively harms performance for typical
 analysis sizes (≤ 200 trees).  The fast path therefore bypasses the R cluster
 entirely when `cluster` is `NULL`.
 
+#### OpenMP rollout to all remaining distance metrics (this dev cycle)
+
+Extended OpenMP batch computation to all LAP-based and RF-info metrics.
+Added score-only static functions and `cpp_*_all_pairs` exports in
+`pairwise_distances.cpp` for:
+
+| C++ batch function | R `Func` intercepted | LAP? |
+|---|---|---|
+| `cpp_rf_info_all_pairs` | `InfoRobinsonFouldsSplits` | No |
+| `cpp_msd_all_pairs` | `MatchingSplitDistanceSplits` | Yes |
+| `cpp_msi_all_pairs` | `MatchingSplitInfoSplits` | Yes |
+| `cpp_shared_phylo_all_pairs` | `SharedPhylogeneticInfoSplits` | Yes |
+| `cpp_jaccard_all_pairs` | `NyeSplitSimilarity`, `JaccardSplitSimilarity` | Yes |
+
+The R fast-path in `.SplitDistanceAllPairs()` was refactored from a single
+`if` block into a unified `if (!is.na(nTip) && is.null(cluster))` guard with
+per-function branches, returning early only when a batch function matches.
+For `JaccardSplitSimilarity`, `k` and `allowConflict` are extracted from `...`
+with sensible defaults (1.0, TRUE) if absent.
+
 ---
 
 ## Known Optimization Opportunities / TODOs
@@ -253,9 +273,6 @@ entirely when `cluster` is `NULL`.
   bandwidth further.
 - SPR distance (`spr.cpp`, `spr_lookup.cpp`): the algorithm is relatively recent
   (v2.8.0); profiling under VTune may reveal further hot spots.
-- OpenMP for other metrics: `pairwise_distances.cpp` currently covers only MCI/CID.
-  Adding equivalent batch functions for `SharedPhylogeneticInfo`, `MatchingSplitInfo`,
-  `RobinsonFoulds`, and `MatchingSplitDistance` would extend the speedup; each needs
-  a score-only variant of its computation.
+- OpenMP for other metrics: **DONE** — see "Completed Optimizations" below.
 - Large-tree path (`int32` migration, v2.12.0 dev): ensure new code paths are as
   optimized as the original `int16` paths.
