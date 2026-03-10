@@ -166,7 +166,8 @@ cost lap(const lap_row dim,
       lap_col j1 = min_idx;
       
       lap_row i0 = colsol[j1];
-      if (nontrivially_less_than(umin, usubmin)) {
+      const bool strictly_less = nontrivially_less_than(umin, usubmin);
+      if (strictly_less) {
         //  Change the reduction of the minimum column to increase the minimum
         //  reduced cost in the row to the subminimum.
         v[j1] -= (usubmin - umin);
@@ -183,7 +184,7 @@ cost lap(const lap_row dim,
       colsol[j1] = i;
       
       if (i0 > -1) { // Minimum column j1 assigned earlier.
-        if (nontrivially_less_than(umin, usubmin)) {
+        if (strictly_less) {
           // Put in current k, and go back to that k.
           // Continue augmenting path i - j1 with i0.
           freeunassigned[--k] = i0;
