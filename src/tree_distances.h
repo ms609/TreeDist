@@ -389,14 +389,11 @@ namespace TreeDist {
   inline void add_ic_element(double& ic_sum, const int16 nkK, const int16 nk,
                              const int16 nK, const int16 n_tips) noexcept {
     if (nkK && nk && nK) {
-      if (nkK == nk && nkK == nK && nkK << 1 == n_tips) {
-        ic_sum += nkK;
-      } else {
-        const int32 numerator = nkK * n_tips;
-        const int32 denominator = nk * nK;
-        if (numerator != denominator) {
-          ic_sum += nkK * (lg2[numerator] - lg2[denominator]);
-        }
+      assert(!(nkK == nk && nkK == nK && nkK << 1 == n_tips));
+      const int32 numerator = nkK * n_tips;
+      const int32 denominator = nk * nK;
+      if (numerator != denominator) {
+        ic_sum += nkK * (lg2[numerator] - lg2[denominator]);
       }
     }
   }
