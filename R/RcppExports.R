@@ -78,6 +78,10 @@ cpp_nni_distance <- function(edge1, edge2, nTip) {
     .Call(`_TreeDist_cpp_nni_distance`, edge1, edge2, nTip)
 }
 
+cpp_mutual_clustering_all_pairs <- function(splits_list, n_tip) {
+    .Call(`_TreeDist_cpp_mutual_clustering_all_pairs`, splits_list, n_tip)
+}
+
 path_vector <- function(edge) {
     .Call(`_TreeDist_path_vector`, edge)
 }

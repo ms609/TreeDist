@@ -116,6 +116,7 @@ regression > 4 %.
 | `bench-tree-distances.R` | CID, PID, RF, MCI on 100×50-tip and 40×200-tip tree sets |
 | `bench-LAPJV.R` | LAPJV on 40×40, 400×400, 1999×1999 uniform random matrices |
 | `bench-PathDist.R` | PathDist on 6×182-tip trees |
+| `bench-MCI-openmp.R` | MCI/CID OpenMP scaling on 100×50, 40×200, and 200×200-tip tree sets |
 
 To add a new benchmark, create `benchmark/bench-<topic>.R` following the existing pattern
 and add it to `_run_benchmarks.R`.
@@ -186,11 +187,38 @@ The package requires **C++17** (`CXX_STD = CXX17`).
 
 ---
 
+## Completed Optimizations (this dev cycle)
+
+### OpenMP parallelism for pairwise distances (`src/pairwise_distances.cpp`)
+Added `#pragma omp parallel for schedule(dynamic)` over the pairwise loop for
+`MutualClusteringInfo` / `ClusteringInfoDistance`.  Build infrastructure:
+
+- `src/Makevars` and `src/Makevars.win` created (these did not exist before);
+  both set `CXX_STD = CXX17` and `PKG_CXXFLAGS/PKG_LIBS = $(SHLIB_OPENMP_CXXFLAGS)`.
+  On platforms without OpenMP the flags are empty and the package builds
+  single-threaded.
+- `lap()` in `lap.cpp` gained an `allow_interrupt = true` parameter; the batch
+  path passes `false` to avoid calling `Rcpp::checkUserInterrupt()` from a
+  worker thread.
+- `add_ic_element` moved from `tree_distances.cpp` (inside `namespace TreeDist`,
+  inaccessible to other TUs) into `tree_distances.h` as a proper `inline`,
+  fixing a latent ODR issue and making it visible to `pairwise_distances.cpp`.
+- R fast path: `.SplitDistanceAllPairs()` in `tree_distance_utilities.R` detects
+  `Func == MutualClusteringInfoSplits` with a same-tip-set, no-cluster call and
+  routes it to `cpp_mutual_clustering_all_pairs()`.
+
+**Benchmark script**: `benchmark/bench-MCI-openmp.R`
+**To measure speedup**: run `bench-MCI-openmp.R` in a **fresh R session** after
+`devtools::load_all()` (Windows locks the DLL in the session that compiles it).
+
+---
+
 ## Known Optimization Opportunities / TODOs
 
 - `information.h` line 19: comment suggests considering increasing `MAX_FACTORIAL_LOOKUP`
   beyond 8192 or falling back to runtime calculation for larger values.
-- `information.h` lines 120–122: code duplication flagged for consolidation.
+- `information.h` lines 120–122: `log2_factorial_table` is a verbatim copy from
+  `TreeSearch/src/expected_mi.cpp`; should be defined once (TreeTools?) and shared.
 - LAP inner loop: the 4× manual unroll works well; investigate whether AVX2 SIMD
   intrinsics (`_mm256_*`) could replace it on modern hardware.
 - `CostMatrix` transpose: currently maintained as a full second copy; a cache-oblivious
@@ -198,8 +226,9 @@ The package requires **C++17** (`CXX_STD = CXX17`).
   bandwidth further.
 - SPR distance (`spr.cpp`, `spr_lookup.cpp`): the algorithm is relatively recent
   (v2.8.0); profiling under VTune may reveal further hot spots.
-- Parallelism: `parallel.R` exposes a parallel interface at the R level; the C++ layer
-  does not yet use OpenMP. Pairwise distance matrices are an embarrassingly parallel
-  workload.
+- OpenMP for other metrics: `pairwise_distances.cpp` currently covers only MCI/CID.
+  Adding equivalent batch functions for `SharedPhylogeneticInfo`, `MatchingSplitInfo`,
+  `RobinsonFoulds`, and `MatchingSplitDistance` would extend the speedup; each needs
+  a score-only variant of its computation.
 - Large-tree path (`int32` migration, v2.12.0 dev): ensure new code paths are as
   optimized as the original `int16` paths.

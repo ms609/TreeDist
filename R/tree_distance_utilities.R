@@ -129,6 +129,22 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
                                    nTip = length(tipLabels), ...) {
   cluster <- getOption("TreeDist-cluster")
 
+  # Fast path: use the OpenMP batch function for mutual clustering when all
+  # trees share the same tip set and no R-level cluster has been configured.
+  # Matches the behaviour of the generic path but avoids per-pair R overhead.
+  if (!is.na(nTip) && is.null(cluster) &&
+      identical(Func, MutualClusteringInfoSplits)) {
+    splits <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
+    return(structure(
+      cpp_mutual_clustering_all_pairs(splits, as.integer(nTip)),
+      class  = "dist",
+      Size   = length(splits1),
+      Labels = names(splits1),
+      Diag   = FALSE,
+      Upper  = FALSE
+    ))
+  }
+
   if (is.na(nTip)) {
     splits <- lapply(splits1, as.Splits)
     

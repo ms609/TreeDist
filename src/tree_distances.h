@@ -379,12 +379,28 @@ using cost_matrix = CostMatrix;
 extern cost lap(lap_row dim,
                 cost_matrix &input_cost,
                 std::vector<lap_col> &rowsol,
-                std::vector<lap_row> &colsol);
-
-extern inline void add_ic_element(double& ic_sum, int16 nkK, int16 nk, int16 nK,
-                                  int16 n_tips);
+                std::vector<lap_row> &colsol,
+                bool allow_interrupt = true);
 
 namespace TreeDist {
+
+  // See equation 16 in Meila 2007 (k' denoted K).
+  // nkK is converted to pkK in the calling function when divided by n.
+  inline void add_ic_element(double& ic_sum, const int16 nkK, const int16 nk,
+                             const int16 nK, const int16 n_tips) noexcept {
+    if (nkK && nk && nK) {
+      if (nkK == nk && nkK == nK && nkK << 1 == n_tips) {
+        ic_sum += nkK;
+      } else {
+        const int32 numerator = nkK * n_tips;
+        const int32 denominator = nk * nK;
+        if (numerator != denominator) {
+          ic_sum += nkK * (lg2[numerator] - lg2[denominator]);
+        }
+      }
+    }
+  }
+
 
   // Returns lg2_unrooted[x] - lg2_trees_matching_split(y, x - y)
   [[nodiscard]] inline double mmsi_pair_score(const int16 x, const int16 y) noexcept {

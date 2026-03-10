@@ -69,7 +69,8 @@ inline bool nontrivially_less_than(cost a, cost b) noexcept {
 cost lap(const lap_row dim,
          cost_matrix &input_cost,
          std::vector<lap_col> &rowsol,
-         std::vector<lap_row> &colsol)
+         std::vector<lap_row> &colsol,
+         const bool allow_interrupt)
   
   // input:
   // dim        - problem size
@@ -186,7 +187,7 @@ cost lap(const lap_row dim,
           // Put in current k, and go back to that k.
           // Continue augmenting path i - j1 with i0.
           freeunassigned[--k] = i0;
-          Rcpp::checkUserInterrupt();
+          if (allow_interrupt) Rcpp::checkUserInterrupt();
         } else {
           // No further augmenting reduction possible.
           // Store i0 in list of free rows for next phase.

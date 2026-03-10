@@ -33,25 +33,6 @@ namespace TreeDist {
     }
   }
 
-  inline void add_ic_element(double& ic_sum, int16 nkK, int16 nk, int16 nK,
-                             int16 n_tips) noexcept {
-    /* 
-     * See equation 16 in Meila 2007. I denote k' as K.
-     * nkK is converted to pkK in the calling function, when the sum of all
-     * elements is divided by n.
-     */
-    if (nkK && nk && nK) {
-      if (nkK == nk && nkK == nK && nkK << 1 == n_tips) {
-        ic_sum += nkK;
-      } else {
-        const int32 numerator = nkK * n_tips;
-        const int32 denominator = nk * nK;
-        if (numerator != denominator) {
-          ic_sum += nkK * (lg2[numerator] - lg2[denominator]);
-        }
-      }
-    }
-  }
 
 }
 
