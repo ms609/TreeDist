@@ -109,6 +109,35 @@ When run non-interactively (e.g. CI) results are serialised to `.bench.Rds` file
 `_compare_results.R` compares PR results against `main` and fails the build on a
 regression > 4 %.
 
+### ⚠ Benchmarking protocol — always use a release install
+
+**Do not benchmark with `devtools::load_all()`.**  It appends
+`-UNDEBUG -Wall -pedantic -g -O0` to the compiler flags, which overrides the
+`-O2` in `~/.R/Makevars` and produces an unrepresentative (typically 3–5×
+slower) build.  All timing figures in this file were produced from a release
+install unless noted otherwise.
+
+**Correct workflow** (run from a *fresh* R session — do NOT load TreeDist first,
+to avoid the Windows DLL lock):
+
+```r
+source("benchmark/bench-release.R")
+
+# 1. Benchmark HEAD (before your patch)
+bench_release(label = "baseline")
+
+# 2. Apply your changes, then benchmark again
+bench_release(label = "my-optimisation")
+
+# 3. Compare
+bench_compare("baseline", "my-optimisation")
+```
+
+`bench_release()` installs the current working-tree source to a private temp
+library via `install.packages(..., type = "source")` (so Makevars flags apply
+correctly) and runs the suite in a `Rscript` subprocess.  Results are saved to
+`benchmark/results/<label>.Rds` and persist across sessions.
+
 ### Existing benchmark scripts
 
 | Script | What it tests |
@@ -238,6 +267,21 @@ machines where OpenMP is available, and actively harms performance for typical
 analysis sizes (≤ 200 trees).  The fast path therefore bypasses the R cluster
 entirely when `cluster` is `NULL`.
 
+#### Per-call heap allocation elimination via `LapScratch` (attempted, reverted)
+
+Attempted to eliminate the ~8 per-pair `std::vector` / `CostMatrix` heap
+allocations in `pairwise_distances.cpp` by defining a `LapScratch` struct that
+holds all scratch storage and is reused across pairs (one instance per OpenMP
+thread, indexed by `omp_get_thread_num()`).
+
+**Release-build (`-O2`) benchmarks showed no measurable difference (−0.7% to
++0.5% across all scenarios)** — the allocator is fast enough at `-O2` that
+allocation overhead is buried in the Dijkstra phase, which dominates throughout.
+
+The implementation was reverted because it added substantial complexity for
+zero measured benefit.
+
+
 #### OpenMP rollout to all remaining distance metrics (this dev cycle)
 
 Extended OpenMP batch computation to all LAP-based and RF-info metrics.
@@ -281,9 +325,12 @@ The Dijkstra augmentation phase is the dominant cost from n ≈ 100 upward.
 
 - **Column reduction** (n² total, O(n) per column via transposed sequential scan):
   already well-optimised; the one-time transpose pays for itself immediately.
-- **Reduction transfer** (n² total): was blocked from SIMD auto-vectorisation
-  by an `if (j == j1) continue;` branch inside the minimum-search loop.
-  **Fixed** by splitting around `j1` into two clean vectorisable loops.
+- **Reduction transfer** (n² total): the `if (j == j1) continue;` branch inside
+  the minimum-search loop was investigated as a vectorisation blocker. Assembly
+  analysis (GCC 14 / MinGW, `-O2 -march=native`) showed that **neither** the
+  branched nor the split form vectorises — `int_fast64_t` has no SIMD vector
+  type on this toolchain, and the outer `matches[i] != 1` check creates a
+  multi-loop nest the vectoriser refuses regardless. No change was made.
 - **Augmenting row reduction** (2 × free_rows × n): calls `findRowSubmin`,
   already 4× manually unrolled.  `nontrivially_less_than()` was called twice
   per free row with identical arguments; **fixed** by caching as `strictly_less`.
