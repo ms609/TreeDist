@@ -70,7 +70,8 @@ cost lap(const lap_row dim,
          cost_matrix &input_cost,
          std::vector<lap_col> &rowsol,
          std::vector<lap_row> &colsol,
-         const bool allow_interrupt)
+         const bool allow_interrupt,
+         LapScratch &scratch)
   
   // input:
   // dim        - problem size
@@ -82,9 +83,12 @@ cost lap(const lap_row dim,
   
 {
   lap_row num_free = 0;
-  alignas(64) std::vector<cost> v(((dim + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
+  scratch.ensure(dim);
+  auto& v       = scratch.v;
+  auto& matches = scratch.matches;
+  // matches must start at zero for the column-reduction counter
+  std::fill(matches.begin(), matches.begin() + dim, 0);
   const cost* __restrict__ v_ptr = v.data();
-  std::vector<lap_col> matches(dim); // Counts how many times a row could be assigned.
   
   // COLUMN REDUCTION
   for (lap_col j = dim; j--; ) { // Reverse order gives better results.
@@ -108,7 +112,7 @@ cost lap(const lap_row dim,
   }
   
   // REDUCTION TRANSFER
-  std::vector<lap_row> freeunassigned(dim);        // List of unassigned rows.
+  auto& freeunassigned = scratch.freeunassigned;   // List of unassigned rows.
   
   for (lap_row i = 0; i < dim; ++i) {
     if (matches[i] == 0) {
@@ -146,7 +150,7 @@ cost lap(const lap_row dim,
   }
   
   //   AUGMENTING ROW REDUCTION
-  std::vector<lap_col> col_list(dim);    // List of columns to be scanned in various ways.
+  auto& col_list = scratch.col_list;    // List of columns to be scanned in various ways.
   int loopcnt = 0;                       // do-loop to be done twice.
   
   do {
@@ -199,8 +203,8 @@ cost lap(const lap_row dim,
   } while (loopcnt < 2); // Repeat once.
   
   // AUGMENT SOLUTION for each free row.
-  std::vector<cost> d(dim);              // 'Cost-distance' in augmenting path calculation.
-  std::vector<lap_row> predecessor(dim); // Row-predecessor of column in augmenting/alternating path.
+  auto& d           = scratch.d;           // 'Cost-distance' in augmenting path calculation.
+  auto& predecessor = scratch.predecessor; // Row-predecessor of column in augmenting/alternating path.
   
   for (lap_row f = 0; f < num_free; ++f) {
     bool unassignedfound = false;

@@ -32,7 +32,8 @@ using TreeTools::count_bits;
 // Passes allow_interrupt = false to lap() so it is safe to call from an
 // OpenMP parallel region.
 static double mutual_clustering_score(
-    const SplitList& a, const SplitList& b, const int32 n_tips
+    const SplitList& a, const SplitList& b, const int32 n_tips,
+    LapScratch& scratch
 ) {
   if (a.n_splits == 0 || b.n_splits == 0 || n_tips == 0) return 0.0;
 
@@ -104,8 +105,9 @@ static double mutual_clustering_score(
   }
 
   const int16 lap_n = most_splits - exact_n;
-  std::vector<lap_col> rowsol(lap_n);
-  std::vector<lap_row> colsol(lap_n);
+  scratch.ensure(most_splits);
+  auto& rowsol = scratch.rowsol;
+  auto& colsol = scratch.colsol;
 
   if (exact_n) {
     // Build a reduced cost matrix omitting exact-matched rows/cols
@@ -126,7 +128,7 @@ static double mutual_clustering_score(
 
     const double lap_score =
       static_cast<double>((max_score * lap_n) -
-                          lap(lap_n, small, rowsol, colsol, false)) * over_max;
+                          lap(lap_n, small, rowsol, colsol, false, scratch)) * over_max;
     return lap_score + exact_score * n_tips_rcp;
 
   } else {
@@ -137,7 +139,7 @@ static double mutual_clustering_score(
       }
     }
     return static_cast<double>(
-      (max_score * lap_n) - lap(lap_n, score, rowsol, colsol, false)
+      (max_score * lap_n) - lap(lap_n, score, rowsol, colsol, false, scratch)
     ) / max_score;
   }
 }
@@ -183,6 +185,11 @@ NumericVector cpp_mutual_clustering_all_pairs(
   NumericVector result(n_pairs);
   double* const res = result.begin();
 
+  // One LapScratch per thread — grown lazily on first use, never freed between
+  // pairs.  Indexed by omp_get_thread_num() (always 0 in the serial path).
+  const int n_scratch = std::max(1, n_threads);
+  std::vector<LapScratch> scratches(n_scratch);
+
   // Iterate over columns of the combn(N,2) lower triangle.
   // Pair (col, row) with col < row maps to dist-vector index:
   //   p = col*(N-1) - col*(col-1)/2 + row - col - 1
@@ -193,9 +200,14 @@ NumericVector cpp_mutual_clustering_all_pairs(
 #ifndef _OPENMP
     Rcpp::checkUserInterrupt();
 #endif
+#ifdef _OPENMP
+    LapScratch& scratch = scratches[omp_get_thread_num()];
+#else
+    LapScratch& scratch = scratches[0];
+#endif
     for (int row = col + 1; row < N; ++row) {
       const int p = col * (N - 1) - col * (col - 1) / 2 + row - col - 1;
-      res[p] = mutual_clustering_score(*splits[col], *splits[row], n_tip);
+      res[p] = mutual_clustering_score(*splits[col], *splits[row], n_tip, scratch);
     }
   }
 
@@ -296,7 +308,8 @@ NumericVector cpp_rf_info_all_pairs(
 // =============================================================================
 
 static double msd_score(
-    const SplitList& a, const SplitList& b, const int32 n_tips
+    const SplitList& a, const SplitList& b, const int32 n_tips,
+    LapScratch& scratch
 ) {
   const int16 most_splits = std::max(a.n_splits, b.n_splits);
   if (most_splits == 0) return 0.0;
@@ -321,11 +334,12 @@ static double msd_score(
   }
   score.padAfterRow(a.n_splits, max_score);
 
-  std::vector<lap_col> rowsol(most_splits);
-  std::vector<lap_row> colsol(most_splits);
+  scratch.ensure(most_splits);
+  auto& rowsol = scratch.rowsol;
+  auto& colsol = scratch.colsol;
 
   return static_cast<double>(
-    lap(most_splits, score, rowsol, colsol, false) - max_score * split_diff
+    lap(most_splits, score, rowsol, colsol, false, scratch) - max_score * split_diff
   );
 }
 
@@ -351,6 +365,9 @@ NumericVector cpp_msd_all_pairs(
   NumericVector result(n_pairs);
   double* const res = result.begin();
 
+  const int n_scratch = std::max(1, n_threads);
+  std::vector<LapScratch> scratches(n_scratch);
+
 #ifdef _OPENMP
 #pragma omp parallel for schedule(dynamic) num_threads(n_threads)
 #endif
@@ -358,9 +375,14 @@ NumericVector cpp_msd_all_pairs(
 #ifndef _OPENMP
     Rcpp::checkUserInterrupt();
 #endif
+#ifdef _OPENMP
+    LapScratch& scratch = scratches[omp_get_thread_num()];
+#else
+    LapScratch& scratch = scratches[0];
+#endif
     for (int row = col + 1; row < N; ++row) {
       const int p = col * (N - 1) - col * (col - 1) / 2 + row - col - 1;
-      res[p] = msd_score(*splits[col], *splits[row], n_tip);
+      res[p] = msd_score(*splits[col], *splits[row], n_tip, scratch);
     }
   }
   return result;
@@ -372,7 +394,8 @@ NumericVector cpp_msd_all_pairs(
 // =============================================================================
 
 static double msi_score(
-    const SplitList& a, const SplitList& b, const int32 n_tips
+    const SplitList& a, const SplitList& b, const int32 n_tips,
+    LapScratch& scratch
 ) {
   const int16 most_splits = std::max(a.n_splits, b.n_splits);
   if (most_splits == 0) return 0.0;
@@ -404,11 +427,12 @@ static double msi_score(
   }
   score.padAfterRow(a.n_splits, max_score);
 
-  std::vector<lap_col> rowsol(most_splits);
-  std::vector<lap_row> colsol(most_splits);
+  scratch.ensure(most_splits);
+  auto& rowsol = scratch.rowsol;
+  auto& colsol = scratch.colsol;
 
   return static_cast<double>(
-    (max_score * most_splits) - lap(most_splits, score, rowsol, colsol, false)
+    (max_score * most_splits) - lap(most_splits, score, rowsol, colsol, false, scratch)
   ) * possible_over_score;
 }
 
@@ -434,6 +458,9 @@ NumericVector cpp_msi_all_pairs(
   NumericVector result(n_pairs);
   double* const res = result.begin();
 
+  const int n_scratch = std::max(1, n_threads);
+  std::vector<LapScratch> scratches(n_scratch);
+
 #ifdef _OPENMP
 #pragma omp parallel for schedule(dynamic) num_threads(n_threads)
 #endif
@@ -441,9 +468,14 @@ NumericVector cpp_msi_all_pairs(
 #ifndef _OPENMP
     Rcpp::checkUserInterrupt();
 #endif
+#ifdef _OPENMP
+    LapScratch& scratch = scratches[omp_get_thread_num()];
+#else
+    LapScratch& scratch = scratches[0];
+#endif
     for (int row = col + 1; row < N; ++row) {
       const int p = col * (N - 1) - col * (col - 1) / 2 + row - col - 1;
-      res[p] = msi_score(*splits[col], *splits[row], n_tip);
+      res[p] = msi_score(*splits[col], *splits[row], n_tip, scratch);
     }
   }
   return result;
@@ -455,7 +487,8 @@ NumericVector cpp_msi_all_pairs(
 // =============================================================================
 
 static double shared_phylo_score(
-    const SplitList& a, const SplitList& b, const int32 n_tips
+    const SplitList& a, const SplitList& b, const int32 n_tips,
+    LapScratch& scratch
 ) {
   const int16 most_splits = std::max(a.n_splits, b.n_splits);
   if (most_splits == 0) return 0.0;
@@ -481,11 +514,12 @@ static double shared_phylo_score(
   }
   score.padAfterRow(a.n_splits, max_score);
 
-  std::vector<lap_col> rowsol(most_splits);
-  std::vector<lap_row> colsol(most_splits);
+  scratch.ensure(most_splits);
+  auto& rowsol = scratch.rowsol;
+  auto& colsol = scratch.colsol;
 
   return static_cast<double>(
-    (max_score * most_splits) - lap(most_splits, score, rowsol, colsol, false)
+    (max_score * most_splits) - lap(most_splits, score, rowsol, colsol, false, scratch)
   ) * possible_over_score;
 }
 
@@ -511,6 +545,9 @@ NumericVector cpp_shared_phylo_all_pairs(
   NumericVector result(n_pairs);
   double* const res = result.begin();
 
+  const int n_scratch = std::max(1, n_threads);
+  std::vector<LapScratch> scratches(n_scratch);
+
 #ifdef _OPENMP
 #pragma omp parallel for schedule(dynamic) num_threads(n_threads)
 #endif
@@ -518,9 +555,14 @@ NumericVector cpp_shared_phylo_all_pairs(
 #ifndef _OPENMP
     Rcpp::checkUserInterrupt();
 #endif
+#ifdef _OPENMP
+    LapScratch& scratch = scratches[omp_get_thread_num()];
+#else
+    LapScratch& scratch = scratches[0];
+#endif
     for (int row = col + 1; row < N; ++row) {
       const int p = col * (N - 1) - col * (col - 1) / 2 + row - col - 1;
-      res[p] = shared_phylo_score(*splits[col], *splits[row], n_tip);
+      res[p] = shared_phylo_score(*splits[col], *splits[row], n_tip, scratch);
     }
   }
   return result;
@@ -533,7 +575,8 @@ NumericVector cpp_shared_phylo_all_pairs(
 
 static double jaccard_score(
     const SplitList& a, const SplitList& b, const int32 n_tips,
-    const double exponent, const bool allow_conflict
+    const double exponent, const bool allow_conflict,
+    LapScratch& scratch
 ) {
   const int16 most_splits = std::max(a.n_splits, b.n_splits);
   if (most_splits == 0) return 0.0;
@@ -588,11 +631,12 @@ static double jaccard_score(
   }
   score.padAfterRow(a.n_splits, max_score);
 
-  std::vector<lap_col> rowsol(most_splits);
-  std::vector<lap_row> colsol(most_splits);
+  scratch.ensure(most_splits);
+  auto& rowsol = scratch.rowsol;
+  auto& colsol = scratch.colsol;
 
   return static_cast<double>(
-    (max_score * most_splits) - lap(most_splits, score, rowsol, colsol, false)
+    (max_score * most_splits) - lap(most_splits, score, rowsol, colsol, false, scratch)
   ) / max_scoreL;
 }
 
@@ -620,6 +664,9 @@ NumericVector cpp_jaccard_all_pairs(
   NumericVector result(n_pairs);
   double* const res = result.begin();
 
+  const int n_scratch = std::max(1, n_threads);
+  std::vector<LapScratch> scratches(n_scratch);
+
 #ifdef _OPENMP
 #pragma omp parallel for schedule(dynamic) num_threads(n_threads)
 #endif
@@ -627,9 +674,14 @@ NumericVector cpp_jaccard_all_pairs(
 #ifndef _OPENMP
     Rcpp::checkUserInterrupt();
 #endif
+#ifdef _OPENMP
+    LapScratch& scratch = scratches[omp_get_thread_num()];
+#else
+    LapScratch& scratch = scratches[0];
+#endif
     for (int row = col + 1; row < N; ++row) {
       const int p = col * (N - 1) - col * (col - 1) / 2 + row - col - 1;
-      res[p] = jaccard_score(*splits[col], *splits[row], n_tip, k, allow_conflict);
+      res[p] = jaccard_score(*splits[col], *splits[row], n_tip, k, allow_conflict, scratch);
     }
   }
   return result;
