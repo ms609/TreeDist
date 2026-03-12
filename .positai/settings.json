@@ -26,7 +26,12 @@
       "head *": "allow",
       "ls *": "allow",
       "rm -f src/*.o src/*.dll": "allow",
-      "tail *": "allow"
+      "tail *": "allow",
+      "wc *": "allow"
     }
+  },
+  "model": {
+    "id": "claude-opus-4-6",
+    "provider": "positai"
   }
 }
