@@ -477,8 +477,8 @@ of the null device, so snapshot tests are unaffected.
 - lg2 table working set: **DONE** — shrunk from 32 MB to 16 KB; see above.
 - Large-tree path (`int32` migration, v2.12.0 dev): **AUDITED** — no issues.
   Fix applied: `split_size` vector in `calc_consensus_info()` moved outside the
-  Fix applied: `split_size` vector in `calc_consensus_info()` moved outside the
   per-pair loop to avoid repeated heap allocation for large trees.
+- Hardware POPCNT (`-mpopcnt`): **DONE** — see "Completed Optimizations" below.
 ### Dijkstra restructuring in LAP (attempted, reverted)
 
 Replaced the `col_list` permutation in the Dijkstra augment-solution phase with a
@@ -546,3 +546,55 @@ Based on the VTune profile, attempted two changes to `tree_distances.h`:
 Key lesson: the spi_overlap VTune profile was representative of the pre-lg2-shrink
 build where the add_ic_element inner loop was slower.  The current LAP is the
 overwhelmingly dominant bottleneck for PID and CID.
+
+---
+
+### VTune hotspot collection workflow (updated)
+
+R's default `DLLFLAGS` includes `-s` (strip-all), which removes all symbols from the
+DLL and makes VTune show addresses like `func@0x340a9ca80` instead of function names.
+To produce a profiling build with full symbols:
+
+1. Ensure `src/Makevars.win` exists with `-fno-omit-frame-pointer` in `PKG_CXXFLAGS`.
+2. Override `DLLFLAGS` via `MAKEFLAGS` when installing to `.vtune-lib/`:
+   ```r
+   old_mf <- Sys.getenv("MAKEFLAGS")
+   Sys.setenv(MAKEFLAGS = "DLLFLAGS=-static-libgcc")
+   install.packages(".", lib = ".vtune-lib", repos = NULL, type = "source",
+                    INSTALL_opts = "--no-multiarch")
+   Sys.setenv(MAKEFLAGS = old_mf)
+   ```
+3. Run the VTune hotspot collection:
+   ```
+   vtune -collect hotspots -result-dir vtune-current \
+         -- Rscript benchmark/vtune-driver.R
+   ```
+   (`benchmark/vtune-driver.R` exercises CID and PID workloads for ~30 s each.)
+
+**Do not** add `DLLFLAGS` to `src/Makevars.win` — it has no effect there because
+R's `Makeconf` sets `DLLFLAGS` after the package Makevars is parsed.  The `MAKEFLAGS`
+environment variable overrides it correctly at the `make` command level.
+
+After profiling, remove `-fno-omit-frame-pointer` from `src/Makevars.win`.
+
+### VTune hotspot profile — current build (vtune-current/, 2026-03-12)
+
+**Workload**: CID 50-tip (100 trees, 30 s) + CID 200-tip (40 trees, 30 s) + PID
+50-tip (100 trees, 30 s).  Build flags: `-O2 -fopenmp -fno-omit-frame-pointer -mpopcnt`.
+
+| Function | CPU Time | % | Notes |
+|---|---|---|---|
+| `mutual_clustering_score` | 40.9s | 44.8% | CID/MCI per-pair kernel |
+| `TreeDist::spi_overlap` | 9.1s | 10.0% | Split overlap (PID/MSD path) |
+| `_popcountdi2` | 8.8s | 9.7% | **Software popcount** — eliminated by `-mpopcnt` |
+| `[TreeDist.dll]` (unresolved) | 6.6s | 7.2% | Likely inlined callees |
+| `lap` | 5.8s | 6.4% | LAP solver |
+
+This profile was collected AFTER adding `-mpopcnt`.  Without `-mpopcnt`, `_popcountdi2`
+accounted for ~9.7% of runtime.  See "Hardware POPCNT" entry below.
+
+Key changes since the `vtune-lap/` profile:
+- `lap` dropped from ~50% to 6.4%: the CID fast-path now uses OpenMP, bypassing LAP.
+  LAP dominance remains for the serial metrics (PID, MSD, etc.) on large matrices.
+- `mutual_clustering_score` is now the top hotspot.  Its inner loop accesses the 16 KB
+  `lg2[]` table (already L1-hot after the table shrink) and calls `count_bits` per bin.
