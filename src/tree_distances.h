@@ -19,7 +19,7 @@ using lap_col = lap_dim;
 /***** Constants requiring initialization *****/
 
 constexpr splitbit ALL_ONES = (std::numeric_limits<splitbit>::max)();
-extern double lg2[int32(SL_MAX_TIPS - 1) * (SL_MAX_TIPS - 1) + 1];
+extern double lg2[SL_MAX_TIPS + 1];
 extern double lg2_double_factorial[SL_MAX_TIPS + SL_MAX_TIPS - 2];
 extern double lg2_unrooted[SL_MAX_TIPS + 2];
 extern double *lg2_rooted;
@@ -83,6 +83,13 @@ public:
     makeUntranspose();
   }
   
+  // Reset for reuse at the same dimension — clears the transpose cache so the
+  // next findColMin() re-builds it from fresh data.  Call between pair
+  // computations when reusing a thread-local CostMatrix instance.
+  void reset() noexcept { transposed_ = false; }
+
+  [[nodiscard]] size_t dim() const noexcept { return dim_; }
+
   void makeTranspose() noexcept {
     if (transposed_) return;
     
@@ -188,10 +195,12 @@ public:
     std::fill(data_.begin() + start_index, data_.begin() + end_index, value);
   }
   
-  std::pair<cost, lap_row> findColMin(lap_col j) {
+  std::pair<cost, lap_row> findColMin(lap_col j,
+                                      lap_row search_dim = -1) {
     makeTranspose();
     const cost* col_data = col(j);
-    const auto min_ptr = std::min_element(col_data, col_data + dim_);
+    const lap_row n = (search_dim < 0) ? static_cast<lap_row>(dim_) : search_dim;
+    const auto min_ptr = std::min_element(col_data, col_data + n);
     return {*min_ptr,
             static_cast<lap_row>(std::distance(col_data, min_ptr))};
   }
@@ -374,17 +383,77 @@ public:
 
 using cost_matrix = CostMatrix;
 
+// ---------------------------------------------------------------------------
+// LapScratch — reusable heap storage for one thread's LAPJV workspace.
+//
+// Pass to the scratch-taking overload of lap() to eliminate the ~6 per-call
+// std::vector allocations.  In a serial context construct once before the
+// loop; in an OpenMP context allocate one per thread and index by
+// omp_get_thread_num().  All vectors are grown lazily; never shrunk.
+// ---------------------------------------------------------------------------
+struct LapScratch {
+  std::vector<cost>    v;               // column dual variables (padded)
+  std::vector<lap_col> matches;         // assignment-count per row
+  std::vector<lap_row> freeunassigned;  // list of unassigned rows
+  std::vector<lap_col> col_list;        // column scan list
+  std::vector<cost>    d;               // Dijkstra distances
+  std::vector<lap_row> predecessor;     // augmenting-path predecessors
+  // rowsol / colsol are included so score functions that don't need the
+  // solution afterwards can avoid a separate allocation.
+  std::vector<lap_col> rowsol;
+  std::vector<lap_row> colsol;
+
+  void ensure(int dim) noexcept {
+    const int padded = static_cast<int>(
+        ((static_cast<size_t>(dim) + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
+    if (static_cast<int>(v.size())              < padded) v.resize(padded);
+    if (static_cast<int>(matches.size())        < dim)    matches.resize(dim);
+    if (static_cast<int>(freeunassigned.size()) < dim)    freeunassigned.resize(dim);
+    if (static_cast<int>(col_list.size())       < dim)    col_list.resize(dim);
+    if (static_cast<int>(d.size())              < dim)    d.resize(dim);
+    if (static_cast<int>(predecessor.size())    < dim)    predecessor.resize(dim);
+    if (static_cast<int>(rowsol.size())         < dim)    rowsol.resize(dim);
+    if (static_cast<int>(colsol.size())         < dim)    colsol.resize(dim);
+  }
+};
+
 /*************** FUNCTIONS  *******************/
 
+// Primary overload: caller supplies pre-allocated scratch (zero alloc in hot loop).
 extern cost lap(lap_row dim,
                 cost_matrix &input_cost,
                 std::vector<lap_col> &rowsol,
-                std::vector<lap_row> &colsol);
+                std::vector<lap_row> &colsol,
+                bool allow_interrupt,
+                LapScratch &scratch);
 
-extern inline void add_ic_element(double& ic_sum, int16 nkK, int16 nk, int16 nK,
-                                  int16 n_tips);
+// Convenience overload: creates a temporary scratch (for one-off calls).
+inline cost lap(lap_row dim,
+                cost_matrix &input_cost,
+                std::vector<lap_col> &rowsol,
+                std::vector<lap_row> &colsol,
+                bool allow_interrupt = true) {
+  LapScratch scratch;
+  return lap(dim, input_cost, rowsol, colsol, allow_interrupt, scratch);
+}
 
 namespace TreeDist {
+
+  // See equation 16 in Meila 2007 (k' denoted K).
+  // nkK is converted to pkK in the calling function when divided by n.
+  inline void add_ic_element(double& ic_sum, const int16 nkK, const int16 nk,
+                             const int16 nK, const int16 n_tips,
+                             const double lg2_n) noexcept {
+    if (nkK && nk && nK) {
+      assert(!(nkK == nk && nkK == nK && nkK << 1 == n_tips));
+      const int32 numerator = nkK * n_tips;
+      const int32 denominator = nk * nK;
+      if (numerator != denominator) {
+        ic_sum += nkK * (lg2[nkK] + lg2_n - lg2[nk] - lg2[nK]);
+      }
+    }
+  }
+
 
   // Returns lg2_unrooted[x] - lg2_trees_matching_split(y, x - y)
   [[nodiscard]] inline double mmsi_pair_score(const int16 x, const int16 y) noexcept {

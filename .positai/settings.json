@@ -1,0 +1,32 @@
+{
+  "permission": {
+    "read": {
+      "*.r": "allow",
+      "*.h": "allow",
+      "*.log": "allow",
+      "*.cpp": "allow",
+      "*.R": "allow",
+      "*": "allow"
+    },
+    "edit": {
+      "*.cpp": "allow",
+      "*.h": "allow",
+      "DESCRIPTION": "allow",
+      "src/Makevars": "allow",
+      "src/Makevars.win": "allow",
+      "*.R": "allow",
+      "*.md": "allow"
+    },
+    "bash": {
+      "cd C:/Users/pjjg18/GitHub/TreeDist": "allow",
+      "cat *": "allow",
+      "echo *": "allow",
+      "find *": "allow",
+      "grep *": "allow",
+      "head *": "allow",
+      "ls *": "allow",
+      "rm -f src/*.o src/*.dll": "allow",
+      "tail *": "allow"
+    }
+  }
+}

@@ -139,6 +139,7 @@ Other contributors:
   \item Roy Jonker \email{roy_jonker@magiclogic.com} (LAP algorithm) [programmer, copyright holder]
   \item Yong Yang \email{yongyanglink@gmail.com} (LAP algorithm) [contributor, copyright holder]
   \item Yi Cao (LAP algorithm) [contributor, copyright holder]
+  \item Neil Kaye (Mercator image)
 }
 
 }

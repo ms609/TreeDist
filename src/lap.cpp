@@ -69,7 +69,9 @@ inline bool nontrivially_less_than(cost a, cost b) noexcept {
 cost lap(const lap_row dim,
          cost_matrix &input_cost,
          std::vector<lap_col> &rowsol,
-         std::vector<lap_row> &colsol)
+         std::vector<lap_row> &colsol,
+         const bool allow_interrupt,
+         LapScratch &scratch)
   
   // input:
   // dim        - problem size
@@ -81,9 +83,12 @@ cost lap(const lap_row dim,
   
 {
   lap_row num_free = 0;
-  alignas(64) std::vector<cost> v(((dim + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE);
+  scratch.ensure(dim);
+  auto& v       = scratch.v;
+  auto& matches = scratch.matches;
+  // matches must start at zero for the column-reduction counter
+  std::fill(matches.begin(), matches.begin() + dim, 0);
   const cost* __restrict__ v_ptr = v.data();
-  std::vector<lap_col> matches(dim); // Counts how many times a row could be assigned.
   
   // COLUMN REDUCTION
   for (lap_col j = dim; j--; ) { // Reverse order gives better results.
@@ -107,7 +112,7 @@ cost lap(const lap_row dim,
   }
   
   // REDUCTION TRANSFER
-  std::vector<lap_row> freeunassigned(dim);        // List of unassigned rows.
+  auto& freeunassigned = scratch.freeunassigned;   // List of unassigned rows.
   
   for (lap_row i = 0; i < dim; ++i) {
     if (matches[i] == 0) {
@@ -145,7 +150,7 @@ cost lap(const lap_row dim,
   }
   
   //   AUGMENTING ROW REDUCTION
-  std::vector<lap_col> col_list(dim);    // List of columns to be scanned in various ways.
+  auto& col_list = scratch.col_list;    // List of columns to be scanned in various ways.
   int loopcnt = 0;                       // do-loop to be done twice.
   
   do {
@@ -165,7 +170,8 @@ cost lap(const lap_row dim,
       lap_col j1 = min_idx;
       
       lap_row i0 = colsol[j1];
-      if (nontrivially_less_than(umin, usubmin)) {
+      const bool strictly_less = nontrivially_less_than(umin, usubmin);
+      if (strictly_less) {
         //  Change the reduction of the minimum column to increase the minimum
         //  reduced cost in the row to the subminimum.
         v[j1] -= (usubmin - umin);
@@ -182,11 +188,11 @@ cost lap(const lap_row dim,
       colsol[j1] = i;
       
       if (i0 > -1) { // Minimum column j1 assigned earlier.
-        if (nontrivially_less_than(umin, usubmin)) {
+        if (strictly_less) {
           // Put in current k, and go back to that k.
           // Continue augmenting path i - j1 with i0.
           freeunassigned[--k] = i0;
-          Rcpp::checkUserInterrupt();
+          if (allow_interrupt) Rcpp::checkUserInterrupt();
         } else {
           // No further augmenting reduction possible.
           // Store i0 in list of free rows for next phase.
@@ -197,8 +203,8 @@ cost lap(const lap_row dim,
   } while (loopcnt < 2); // Repeat once.
   
   // AUGMENT SOLUTION for each free row.
-  std::vector<cost> d(dim);              // 'Cost-distance' in augmenting path calculation.
-  std::vector<lap_row> predecessor(dim); // Row-predecessor of column in augmenting/alternating path.
+  auto& d           = scratch.d;           // 'Cost-distance' in augmenting path calculation.
+  auto& predecessor = scratch.predecessor; // Row-predecessor of column in augmenting/alternating path.
   
   for (lap_row f = 0; f < num_free; ++f) {
     bool unassignedfound = false;

@@ -14,7 +14,7 @@
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.5.2 (2025-10-31)",
+  "runtimePlatform": "R version 4.5.2 (2025-10-31 ucrt)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -28,11 +28,6 @@
       "familyName": "Smith",
       "email": "martin.smith@durham.ac.uk",
       "@id": "https://orcid.org/0000-0001-5660-1727"
-    },
-    {
-      "@type": "Person",
-      "givenName": "Neil",
-      "familyName": "Kaye"
     }
   ],
   "contributor": [
@@ -72,6 +67,11 @@
       "@type": "Person",
       "givenName": "Yi",
       "familyName": "Cao"
+    },
+    {
+      "@type": "Person",
+      "givenName": "Neil",
+      "familyName": "Kaye"
     }
   ],
   "maintainer": [
@@ -388,6 +388,18 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=vdiffr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "withr",
+      "name": "withr",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=withr"
     }
   ],
   "softwareRequirements": {
@@ -493,7 +505,7 @@
     "SystemRequirements": "C++17, pandoc-citeproc"
   },
   "keywords": ["phylogenetics", "tree-distance"],
-  "fileSize": "1793.872KB",
+  "fileSize": "12501.765KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",

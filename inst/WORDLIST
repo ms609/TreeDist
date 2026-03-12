@@ -43,6 +43,7 @@ NNIDist
 NyeTreeSimilarity
 OEIS
 ORCID
+OpenMP
 Perotti
 PhysRevE
 PlotTools
@@ -97,6 +98,7 @@ ingroup
 interdecile
 jonker
 magiclogic
+macOS
 mergesort
 molbev
 msw

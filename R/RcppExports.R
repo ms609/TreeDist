@@ -78,6 +78,50 @@ cpp_nni_distance <- function(edge1, edge2, nTip) {
     .Call(`_TreeDist_cpp_nni_distance`, edge1, edge2, nTip)
 }
 
+#' Pairwise mutual clustering information — batch computation
+#'
+#' Internal function. Computes all pairwise MCI scores for a set of trees,
+#' using OpenMP threads when available (falling back to single-threaded
+#' execution otherwise). No interrupt checking is performed inside the
+#' parallel region; the outer R call remains interruptible between batches.
+#'
+#' @param splits_list A list of split matrices (class `Splits` or `RawMatrix`),
+#'   one per tree, all covering the same tip set.  Typically the object
+#'   returned by `as.Splits(trees, tipLabels = labs, asSplits = FALSE)`.
+#' @param n_tip Integer; number of tips shared by all trees.
+#' @return Numeric vector of length `n*(n-1)/2` containing pairwise MCI
+#'   scores in `combn(n, 2)` column-major order (i.e. the data payload of
+#'   an R `dist` object).
+#' @keywords internal
+cpp_mutual_clustering_all_pairs <- function(splits_list, n_tip, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_mutual_clustering_all_pairs`, splits_list, n_tip, n_threads)
+}
+
+#' @keywords internal
+cpp_rf_info_all_pairs <- function(splits_list, n_tip, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_rf_info_all_pairs`, splits_list, n_tip, n_threads)
+}
+
+#' @keywords internal
+cpp_msd_all_pairs <- function(splits_list, n_tip, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_msd_all_pairs`, splits_list, n_tip, n_threads)
+}
+
+#' @keywords internal
+cpp_msi_all_pairs <- function(splits_list, n_tip, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_msi_all_pairs`, splits_list, n_tip, n_threads)
+}
+
+#' @keywords internal
+cpp_shared_phylo_all_pairs <- function(splits_list, n_tip, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_shared_phylo_all_pairs`, splits_list, n_tip, n_threads)
+}
+
+#' @keywords internal
+cpp_jaccard_all_pairs <- function(splits_list, n_tip, k = 1.0, allow_conflict = TRUE, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_jaccard_all_pairs`, splits_list, n_tip, k, allow_conflict, n_threads)
+}
+
 path_vector <- function(edge) {
     .Call(`_TreeDist_path_vector`, edge)
 }

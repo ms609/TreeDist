@@ -11,7 +11,7 @@ Authors@R: c(person("Martin R.", "Smith",
              person("Yong", "Yang", email = "yongyanglink@gmail.com",
                     role = c("ctb", "cph"), comment = "LAP algorithm"),
              person("Yi", "Cao", role = c("ctb", "cph"), comment = "LAP algorithm"),
-             person("Neil", "Kaye", comment = "Mercator image")
+             person("Neil", "Kaye", role = c("cph"), comment = "Mercator image")
             )
 License: GPL (>= 3)
 Description: Implements measures of tree similarity, including 
@@ -79,6 +79,7 @@ Suggests:
   TreeSearch (>= 1.4.0),
   Umatrix,
   vdiffr (>= 1.0.0),
+  withr,
 LinkingTo:
   Rcpp,
   TreeTools (>= 2.1.0),

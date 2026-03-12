@@ -7,6 +7,7 @@
 ^src\-
 ^src\.
 CONTRIBUTING
+AGENTS.md
 README.md
 ^\.github
 ^\.lintr
@@ -34,3 +35,5 @@ revdep
 ^\.vs.*$
 ^\.vscode.*$
 ^CRAN-SUBMISSION$
+^\.positai$
+^\.claude$
