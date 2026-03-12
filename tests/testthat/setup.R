@@ -4,4 +4,4 @@
 # vdiffr opens its own svglite device on top of this one, so snapshot
 # tests are unaffected.
 pdf(NULL)
-withr::defer(grDevices::dev.off(), teardown_env())
+teardown(dev.off())
