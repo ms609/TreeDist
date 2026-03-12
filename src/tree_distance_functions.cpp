@@ -26,7 +26,7 @@ __attribute__((constructor))
     assert(lg2_rooted[0] == 0);
     assert(lg2_rooted[1] == 0);
     for (int32 i = 2; i != SL_MAX_TIPS + SL_MAX_TIPS - 2; ++i) {
-      lg2_double_factorial[i] = lg2_double_factorial[i - 2] + lg2[i];
+      lg2_double_factorial[i] = lg2_double_factorial[i - 2] + log2(i);
     }
     for (int32 i = 3; i != SL_MAX_TIPS + 2; ++i) {
       lg2_unrooted[i] = lg2_double_factorial[i + i - 5];

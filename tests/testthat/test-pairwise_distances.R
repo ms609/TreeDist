@@ -61,3 +61,28 @@ test_that("cpp_mutual_clustering_all_pairs: unequal split counts (lines 94, 131-
   expect_equal(r[3, 1], MutualClusteringInfo(tr_1a, tr_1b), tolerance = 1e-9)
   expect_equal(r[3, 2], MutualClusteringInfo(tr_3,  tr_1b), tolerance = 1e-9)
 })
+
+test_that("Large trees: batch and single-pair paths agree (lg2 table bounds)", {
+  # Exercise the lg2 / lg2_double_factorial / lg2_unrooted tables at indices
+
+  # well beyond small-tree tests.  Catches out-of-bounds table access and
+  # ensures the log2 decomposition in add_ic_element remains correct for
+  # trees with many splits.
+  skip_on_cran()
+  set.seed(4728)
+  trees <- ape::as.phylo(0:4, tipLabels = paste0("t", seq_len(200)))
+
+  batch <- MutualClusteringInfo(trees)
+  n <- length(trees)
+  pairs <- which(upper.tri(batch), arr.ind = TRUE)
+  for (k in seq_len(nrow(pairs))) {
+    i <- pairs[k, 1]
+    j <- pairs[k, 2]
+    expect_equal(
+      batch[i, j],
+      MutualClusteringInfo(trees[[i]], trees[[j]]),
+      tolerance = 1e-8,
+      label = paste0("pair (", i, ",", j, ")")
+    )
+  }
+})
