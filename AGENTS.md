@@ -598,3 +598,81 @@ Key changes since the `vtune-lap/` profile:
   LAP dominance remains for the serial metrics (PID, MSD, etc.) on large matrices.
 - `mutual_clustering_score` is now the top hotspot.  Its inner loop accesses the 16 KB
   `lg2[]` table (already L1-hot after the table shrink) and calls `count_bits` per bin.
+
+### Branchless IC hoisting in `mutual_clustering_score` (DONE, kept)
+
+The `add_ic_element()` function was called 4× per (ai, bi) split pair in the CID cost
+matrix filling loop.  Each call contained two branches (`nkK && nk && nK` and
+`numerator != denominator`) plus 4 lg2 table lookups — 16 lookups and 8 branches per
+pair total.
+
+**Fix:** algebraically expand the 4 `add_ic_element` calls into a single branchless
+expression.  Key observations:
+- `lg2[na]`, `lg2[nA]` are constant for all `bi` in the inner loop → hoisted per `ai`
+  as `offset_a = lg2_n - lg2[na]`, `offset_A = lg2_n - lg2[nA]`.
+- `lg2[nb]`, `lg2[nB]` are constant for each `bi` → computed once per `bi`.
+- `lg2[0] = 0` by convention (0 * log2(0) = 0), so zero overlap counts contribute 0
+  without branching.
+- The `numerator != denominator` check (independence case) produces `log2(1) = 0`
+  naturally in floating point, making the branch unnecessary.
+
+Result: 16 lg2 lookups → 4 per pair; 8 branches → 0; 12 int multiplies → 0.
+
+**Files changed:** `pairwise_distances.cpp` (OpenMP batch path), `tree_distances.cpp`
+(serial per-pair path).
+
+**A/B benchmark (release build, same-process comparison):**
+
+| Scenario | ref | dev | Change |
+|---|---|---|---|
+| CID 100 × 50-tip | 66.7 ms | 58.9 ms | **−12%** |
+| CID 40 × 200-tip | 176 ms | 154 ms | **−12.5%** |
+| MSD 100 × 50-tip (canary) | 63.3 ms | 63.9 ms | +0.9% (noise) |
+| MSD 40 × 200-tip (canary) | 211 ms | 216 ms | +2.4% (noise) |
+
+Numerical accuracy: max |ref − dev| ≈ 5.7 × 10⁻¹⁴ (unchanged precision).
+
+**Post-optimization observation:** CID is now **faster than MSD** per-pair:
+
+| Metric | 50-tip (μs/pair) | 200-tip (μs/pair) |
+|---|---|---|
+| CID | 11.9 | 197 |
+| MSD | 12.9 | 271 |
+
+This revealed that MSD's cost is dominated by LAP on the full matrix, not matrix filling.
+
+### MSD exact-match detection in batch path (DONE, kept)
+
+CID already had an exact-match shortcut (detecting identical/complementary splits and
+solving a reduced LAP).  MSD lacked this, solving the full n_splits × n_splits LAP
+every time.
+
+**Root cause investigation:** the `as.phylo(0:N, tips)` benchmark trees share ~95% of
+splits (mean RF ≈ 5 for 200-tip trees → ~195 of 197 splits match).  CID's effective
+LAP dimension was ~3 while MSD's was ~197.  For truly random trees (ape::rtree), exact
+matches ≈ 0.
+
+**Fix:** added exact-match detection to `msd_score()` in `pairwise_distances.cpp`:
+- Fused the half_tips complement flip into the popcount loop (eliminates second row pass)
+- When XOR popcount = 0 (after flip), marks both splits as matched and breaks
+- Builds a reduced cost matrix for remaining unmatched splits
+- Solves the smaller LAP
+
+**A/B benchmark (release build, same-process comparison):**
+
+| Scenario | ref | dev | Change |
+|---|---|---|---|
+| MSD similar 50-tip (4 950 pairs) | 64.2 ms | 24.5 ms | **−62%** |
+| MSD similar 200-tip (780 pairs) | 212 ms | 70.9 ms | **−67%** |
+| MSD random 50-tip | 106 ms | 104 ms | −2% (noise) |
+| MSD random 200-tip | 304 ms | 299 ms | −2% (noise) |
+| CID similar 50 (canary) | 57.9 ms | 57.4 ms | −1% (noise) |
+
+Numerically exact (max |ref − dev| = 0).  No regression for random trees.
+
+MCMC posteriors and bootstrap replicates typically share most splits — the "similar
+trees" scenario is the common real-world case.
+
+**Extension opportunity:** the same exact-match pattern applies to MSI, SPI, and Jaccard
+batch paths (all LAP-based).  The detection logic is identical (XOR popcount = 0 after
+complement flip); only the "exact match contribution" differs per metric.
