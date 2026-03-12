@@ -79,6 +79,7 @@ Suggests:
   TreeSearch (>= 1.4.0),
   Umatrix,
   vdiffr (>= 1.0.0),
+  withr,
 LinkingTo:
   Rcpp,
   TreeTools (>= 2.1.0),
