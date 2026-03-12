@@ -117,9 +117,39 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            github.rest.issues.createComment({
+            const benchmarkIdentifier = '<!-- benchmark-comment -->';
+            const outdatedPrefix = '> **⚠️ This benchmark result is outdated. See the latest comment below.**\n\n';
+            
+            // Get all comments on the PR
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+            
+            // Find previous benchmark comments by this bot
+            const previousBenchmarkComments = comments.data.filter(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes(benchmarkIdentifier) &&
+              !comment.body.startsWith('> **⚠️ This benchmark result is outdated.')
+            );
+            
+            // Mark previous comments as outdated
+            for (const comment of previousBenchmarkComments) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: comment.id,
+                body: outdatedPrefix + comment.body
+              });
+            }
+            
+            // Create new comment with identifier
+            const newCommentBody = benchmarkIdentifier + '\n' + process.env.BENCHMARK_MESSAGE;
+            
+            await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
-              body: process.env.BENCHMARK_MESSAGE
+              body: newCommentBody
             });
