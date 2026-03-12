@@ -19,7 +19,7 @@ using lap_col = lap_dim;
 /***** Constants requiring initialization *****/
 
 constexpr splitbit ALL_ONES = (std::numeric_limits<splitbit>::max)();
-extern double lg2[int32(SL_MAX_TIPS - 1) * (SL_MAX_TIPS - 1) + 1];
+extern double lg2[SL_MAX_TIPS + 1];
 extern double lg2_double_factorial[SL_MAX_TIPS + SL_MAX_TIPS - 2];
 extern double lg2_unrooted[SL_MAX_TIPS + 2];
 extern double *lg2_rooted;
@@ -442,13 +442,14 @@ namespace TreeDist {
   // See equation 16 in Meila 2007 (k' denoted K).
   // nkK is converted to pkK in the calling function when divided by n.
   inline void add_ic_element(double& ic_sum, const int16 nkK, const int16 nk,
-                             const int16 nK, const int16 n_tips) noexcept {
+                             const int16 nK, const int16 n_tips,
+                             const double lg2_n) noexcept {
     if (nkK && nk && nK) {
       assert(!(nkK == nk && nkK == nK && nkK << 1 == n_tips));
       const int32 numerator = nkK * n_tips;
       const int32 denominator = nk * nK;
       if (numerator != denominator) {
-        ic_sum += nkK * (lg2[numerator] - lg2[denominator]);
+        ic_sum += nkK * (lg2[nkK] + lg2_n - lg2[nk] - lg2[nK]);
       }
     }
   }

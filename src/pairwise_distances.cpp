@@ -46,6 +46,7 @@ static double mutual_clustering_score(
   constexpr cost max_score  = BIG;
   constexpr double over_max = 1.0 / static_cast<double>(BIG);
   const double max_over_tips = static_cast<double>(BIG) * n_tips_rcp;
+  const double lg2_n = lg2[n_tips];
 
   cost_matrix score(most_splits);
   double exact_score  = 0.0;
@@ -86,10 +87,10 @@ static double mutual_clustering_score(
         score(ai, bi) = max_score; // Avoid rounding errors on orthogonal splits
       } else {
         double ic_sum = 0.0;
-        TreeDist::add_ic_element(ic_sum, a_and_b, na, nb, n_tips);
-        TreeDist::add_ic_element(ic_sum, a_and_B, na, nB, n_tips);
-        TreeDist::add_ic_element(ic_sum, A_and_b, nA, nb, n_tips);
-        TreeDist::add_ic_element(ic_sum, A_and_B, nA, nB, n_tips);
+        TreeDist::add_ic_element(ic_sum, a_and_b, na, nb, n_tips, lg2_n);
+        TreeDist::add_ic_element(ic_sum, a_and_B, na, nB, n_tips, lg2_n);
+        TreeDist::add_ic_element(ic_sum, A_and_b, nA, nb, n_tips, lg2_n);
+        TreeDist::add_ic_element(ic_sum, A_and_B, nA, nB, n_tips, lg2_n);
         score(ai, bi) = max_score - static_cast<cost>(ic_sum * max_over_tips);
       }
     }

@@ -398,6 +398,7 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
   constexpr cost max_score = BIG;
   constexpr double over_max_score = 1.0 / static_cast<double>(max_score);
   const double max_over_tips = static_cast<double>(max_score) * n_tips_reciprocal;
+  const double lg2_n = lg2[n_tips];
   
   cost_matrix score(most_splits);
   
@@ -443,10 +444,10 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
         score(ai, bi) = max_score; // Avoid rounding errors
       } else {
         double ic_sum = 0.0;
-        TreeDist::add_ic_element(ic_sum, a_and_b, na, nb, n_tips);
-        TreeDist::add_ic_element(ic_sum, a_and_B, na, nB, n_tips);
-        TreeDist::add_ic_element(ic_sum, A_and_b, nA, nb, n_tips);
-        TreeDist::add_ic_element(ic_sum, A_and_B, nA, nB, n_tips);
+        TreeDist::add_ic_element(ic_sum, a_and_b, na, nb, n_tips, lg2_n);
+        TreeDist::add_ic_element(ic_sum, a_and_B, na, nB, n_tips, lg2_n);
+        TreeDist::add_ic_element(ic_sum, A_and_b, nA, nb, n_tips, lg2_n);
+        TreeDist::add_ic_element(ic_sum, A_and_B, nA, nB, n_tips, lg2_n);
         
         // Division by n_tips converts n(A&B) to P(A&B) for each ic_element
         score(ai, bi) = max_score - static_cast<cost>(ic_sum * max_over_tips);

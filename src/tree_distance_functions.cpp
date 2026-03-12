@@ -7,7 +7,7 @@
 
 using namespace Rcpp;
 
-constexpr int32 LG2_SIZE = (int32(SL_MAX_TIPS) - 1) * (SL_MAX_TIPS - 1) + 1;
+constexpr int32 LG2_SIZE = SL_MAX_TIPS + 1;
 
 double lg2[LG2_SIZE];
 double lg2_double_factorial[SL_MAX_TIPS + SL_MAX_TIPS - 2];
