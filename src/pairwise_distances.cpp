@@ -63,6 +63,12 @@ static double mutual_clustering_score(
     const int16  nA    = n_tips - na;
     const auto*  a_row = a.state[ai];
 
+    // Hoist lg2 lookups that are constant across all bi for this ai.
+    // lg2[0] = 0 by convention (0 * log2(0) = 0), so the branchless
+    // formulation below is safe for zero overlap counts.
+    const double offset_a = lg2_n - lg2[na];
+    const double offset_A = lg2_n - lg2[nA];
+
     for (int16 bi = 0; bi < b.n_splits; ++bi) {
       int16       a_and_b = 0;
       const auto* b_row   = b.state[bi];
@@ -86,11 +92,17 @@ static double mutual_clustering_score(
       } else if (a_and_b == A_and_b && a_and_b == a_and_B && a_and_b == A_and_B) {
         score(ai, bi) = max_score; // Avoid rounding errors on orthogonal splits
       } else {
-        double ic_sum = 0.0;
-        TreeDist::add_ic_element(ic_sum, a_and_b, na, nb, n_tips, lg2_n);
-        TreeDist::add_ic_element(ic_sum, a_and_B, na, nB, n_tips, lg2_n);
-        TreeDist::add_ic_element(ic_sum, A_and_b, nA, nb, n_tips, lg2_n);
-        TreeDist::add_ic_element(ic_sum, A_and_B, nA, nB, n_tips, lg2_n);
+        // Branchless IC accumulation.  Each add_ic_element(nkK, nk, nK)
+        // contributes nkK * (lg2[nkK] + lg2_n - lg2[nk] - lg2[nK]).
+        // The lg2[nk] and lg2[nK] terms for (na,nA) and (nb,nB) are
+        // hoisted as offset_a/offset_A (per ai) and lg2_nb/lg2_nB (per bi).
+        const double lg2_nb = lg2[nb];
+        const double lg2_nB = lg2[nB];
+        const double ic_sum =
+          a_and_b * (lg2[a_and_b] + offset_a - lg2_nb) +
+          a_and_B * (lg2[a_and_B] + offset_a - lg2_nB) +
+          A_and_b * (lg2[A_and_b] + offset_A - lg2_nb) +
+          A_and_B * (lg2[A_and_B] + offset_A - lg2_nB);
         score(ai, bi) = max_score - static_cast<cost>(ic_sum * max_over_tips);
       }
     }

@@ -415,6 +415,8 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
     const int16 na = a.in_split[ai];
     const int16 nA = n_tips - na;
     const auto *a_row = a.state[ai];
+    const double offset_a = lg2_n - lg2[na];
+    const double offset_A = lg2_n - lg2[nA];
     
     for (int16 bi = 0; bi < b.n_splits; ++bi) {
       
@@ -443,11 +445,13 @@ List mutual_clustering(const RawMatrix &x, const RawMatrix &y,
                    && a_and_b == A_and_B) {
         score(ai, bi) = max_score; // Avoid rounding errors
       } else {
-        double ic_sum = 0.0;
-        TreeDist::add_ic_element(ic_sum, a_and_b, na, nb, n_tips, lg2_n);
-        TreeDist::add_ic_element(ic_sum, a_and_B, na, nB, n_tips, lg2_n);
-        TreeDist::add_ic_element(ic_sum, A_and_b, nA, nb, n_tips, lg2_n);
-        TreeDist::add_ic_element(ic_sum, A_and_B, nA, nB, n_tips, lg2_n);
+        const double lg2_nb = lg2[nb];
+        const double lg2_nB = lg2[nB];
+        const double ic_sum =
+          a_and_b * (lg2[a_and_b] + offset_a - lg2_nb) +
+          a_and_B * (lg2[a_and_B] + offset_a - lg2_nB) +
+          A_and_b * (lg2[A_and_b] + offset_A - lg2_nb) +
+          A_and_B * (lg2[A_and_B] + offset_A - lg2_nB);
         
         // Division by n_tips converts n(A&B) to P(A&B) for each ic_element
         score(ai, bi) = max_score - static_cast<cost>(ic_sum * max_over_tips);
