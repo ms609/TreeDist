@@ -489,11 +489,11 @@ namespace TreeDist {
     assert(SL_MAX_TIPS + 2 <= std::numeric_limits<int16>::max()); // verify int16 ok
     if (a == b) {
       return lg2_rooted[a] + lg2_rooted[n - a];
-    } else if (a < b) {
-      return lg2_rooted[b] + lg2_rooted[n - a] - lg2_rooted[b - a + 1];
-    } else {
-      return lg2_rooted[a] + lg2_rooted[n - b] - lg2_rooted[a - b + 1];
     }
+    // Unify a<b and a>b via lo/hi: removes an unpredictable branch.
+    const int16 lo = (a < b) ? a : b;
+    const int16 hi = (a < b) ? b : a;
+    return lg2_rooted[hi] + lg2_rooted[n - lo] - lg2_rooted[hi - lo + 1];
   }
   
   [[nodiscard]] inline double one_overlap_notb(const int16 a, const int16 n_minus_b, const int16 n) noexcept {

@@ -1,0 +1,17 @@
+-r
+C:\Users\pjjg18\GitHub\TreeDist\vtune-lap
+--stack-stitching
+--data-limit-mb=1000
+--disk-space-limit=0
+--mrte-type=java,dotnet,python
+--stack-unwind-limit=8388608
+--itt-config=frame
+--itt-config=task,event,counter
+--stackwalk=offline
+--mrte-mode=auto
+--type=cpu:stack
+--interval=10
+--
+C:\Program Files\R\R-4.5.2\bin\x64\Rscript.exe
+-e
+.libPaths(c('C:/Users/pjjg18/GitHub/TreeDist/.vtune-lib', .libPaths())); setwd('C:/Users/pjjg18/GitHub/TreeDist'); source('benchmark/vtune-driver.R')

@@ -1,0 +1,43 @@
+AllSplitPairings        Variation of information for all split pairings
+CompareAll              Distances between each pair of trees
+Entropy                 Entropy in bits
+HPart                   Hierarchical partition structure
+HierarchicalMutualInfo
+                        Hierarchical Mutual Information
+Islands                 Find islands from distance matrix
+JaccardRobinsonFoulds   Jaccard–Robinson–Foulds metric
+KMeansPP                k-means++ clustering
+KendallColijn           Kendall–Colijn distance
+LAPJV                   Solve linear assignment problem using LAPJV
+MASTSize                Maximum Agreement Subtree size
+MSTSegments             Add minimum spanning tree to plot, colouring by
+                        stress
+MapTrees                Graphical user interface for mapping distances
+                        and analysing tree space
+MappingQuality          Faithfulness of mapped distances
+MatchingSplitDistance   Matching Split Distance
+MeilaVariationOfInformation
+                        Use variation of clustering information to
+                        compare pairs of splits
+NNIDist                 Approximate Nearest Neighbour Interchange
+                        distance
+NyeSimilarity           Nye _et al_. (2006) tree comparison
+PathDist                Path distance
+Plot3                   Pseudo-3D plotting
+ReduceTrees             Collapse areas of agreement between two trees
+Robinson-Foulds         Robinson–Foulds distances, with adjustments for
+                        phylogenetic information content
+SPRDist                 Approximate the Subtree Prune and Regraft
+                        distance
+SpectralEigens          Eigenvalues for spectral clustering
+SplitEntropy            Entropy of two splits
+SplitSharedInformation
+                        Shared information content of two splits
+SplitsCompatible        Are splits compatible?
+StartParallel           Calculate distances in parallel
+TreeDistance            Information-based generalized Robinson–Foulds
+                        distances
+TreeInfo                Information content of splits within a tree
+VisualizeMatching       Visualize a matching
+cluster-statistics      Cluster size statistics
+median.multiPhylo       Median of a set of trees

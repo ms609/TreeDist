@@ -462,8 +462,8 @@ of the null device, so snapshot tests are unaffected.
 
 ## Known Optimization Opportunities / TODOs
 
-- `information.h` line 19: comment suggests considering increasing `MAX_FACTORIAL_LOOKUP`
-  beyond 8192 or falling back to runtime calculation for larger values.
+- `information.h` `MAX_FACTORIAL_LOOKUP`: **DONE** — increased from 8192 to 32768;
+  `lgamma()` fallback retained for values beyond the table (negligible memory cost).
 - `information.h` lines 120–122: `log2_factorial_table` is a verbatim copy from
   `TreeSearch/src/expected_mi.cpp`; should be defined once (TreeTools?) and shared.
 - LAP inner loop: the 4× manual unroll works well; investigate whether AVX2 SIMD
@@ -475,5 +475,74 @@ of the null device, so snapshot tests are unaffected.
   (v2.8.0); profiling under VTune may reveal further hot spots.
 - OpenMP for other metrics: **DONE** — see "Completed Optimizations" above.
 - lg2 table working set: **DONE** — shrunk from 32 MB to 16 KB; see above.
-- Large-tree path (`int32` migration, v2.12.0 dev): ensure new code paths are as
-  optimized as the original `int16` paths.
+- Large-tree path (`int32` migration, v2.12.0 dev): **AUDITED** — no issues.
+  Fix applied: `split_size` vector in `calc_consensus_info()` moved outside the
+  Fix applied: `split_size` vector in `calc_consensus_info()` moved outside the
+  per-pair loop to avoid repeated heap allocation for large trees.
+### Dijkstra restructuring in LAP (attempted, reverted)
+
+Replaced the `col_list` permutation in the Dijkstra augment-solution phase with a
+`scanned[]` (`uint8_t`) mask for sequential memory access (enabling hardware prefetch
+and potential auto-vectorization of the `row_i[j] - v_ptr[j] - h` loop).
+
+**A/B benchmark result:** Neutral — within ±3% across all scenarios (CID/MSD,
+50-tip/200-tip trees). The sequential-access benefit is cancelled by the algorithmic
+overhead of visiting all `dim` columns every iteration (vs progressively fewer columns
+with `col_list`). Reverted to avoid adding complexity for no measured gain.
+
+Key lesson: the Dijkstra inner loop bottleneck is not memory access pattern but the
+number of comparisons performed. The `col_list` scheme's progressive shrinkage of the
+unscanned set is the dominant factor at these problem sizes (n ≈ 47–197).
+
+### VTune hotspot analysis (vtune-lap/)
+
+A VTune hotspot collection (`vtune-lap/`) was run on the pre-lg2-shrink build.
+Top TreeDist hotspots (approximate CPU time):
+
+| Function | CPU Time | Notes |
+|---|---|---|
+| `lap` | 0.975s | LAP solver — expected dominant cost |
+| `TreeDist::spi_overlap` | 0.671s | **Surprising — larger than lap on this workload** |
+| `std::vector<cost>::vector` constructor | 0.623s | CostMatrix allocation per pair |
+| `TreeDist::one_overlap` | 0.441s | Called from spi_overlap |
+| `TreeDist::add_ic_element` | 0.252s | Since reduced by lg2 shrink |
+
+**Important caveat**: this profile predates the lg2 table shrink and LapScratch
+optimizations; relative weights have since shifted.
+
+### spi_overlap / one_overlap optimisation (attempted, reverted)
+
+Based on the VTune profile, attempted two changes to `tree_distances.h`:
+
+1. **`one_overlap` branch simplification**: unified the `a < b` and `a > b` cases
+   into a single `lo = min(a,b)` / `hi = max(a,b)` path (retains the `a == b`
+   special case). This removes one unpredictable branch. **Kept** — cleaner code,
+   neutral performance.
+
+2. **`spi_overlap` single-pass accumulation**: replaced the original 4-pass loop
+   structure (3 while-loops with pointer resets + 1 for-loop) with a single pass
+   that accumulates all four bitwise conditions (`a&b`, `~a&b`, `a&~b`, `~(a|b)`)
+   at once, applying the last-bin mask only to `~(a|b)`. Also tried adding an
+   early-exit `if (all four set) return 0` inside the non-last-bin loop.
+
+   **A/B benchmark results (PID = PhylogeneticInfoDistance, release build):**
+
+   | Version | PID 50-tip (ref 112ms) | PID 200-tip (ref 295ms) | CID canary |
+   |---|---|---|---|
+   | Single-pass, no early exit | 101ms (−10%) | 341ms (+16%) | neutral |
+   | Single-pass + early exit | 134ms (+19%) | 431ms (+44%) | neutral |
+
+   Neither version is a net win. The root cause: the per-pass early exits in the
+   original code commonly fire at bin 0 for large trees (n_bins=4), so the original
+   loads bin 0 four times (register-hot after the first access). The single-pass
+   variant always loads ALL n_bins bins, reading more distinct memory locations.
+
+   More importantly, `spi_overlap` cost-matrix filling is a **minority of per-pair
+   time** in the current build — LAP dominates (~70–90% at n≈47), so even a 20%
+   reduction in spi_overlap would yield only 2–6% overall improvement.
+
+   **Reverted** to the original 4-pass logic. `one_overlap` simplification retained.
+
+Key lesson: the spi_overlap VTune profile was representative of the pre-lg2-shrink
+build where the add_ic_element inner loop was slower.  The current LAP is the
+overwhelmingly dominant bottleneck for PID and CID.
