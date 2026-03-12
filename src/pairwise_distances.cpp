@@ -48,7 +48,8 @@ static double mutual_clustering_score(
   const double max_over_tips = static_cast<double>(BIG) * n_tips_rcp;
   const double lg2_n = lg2[n_tips];
 
-  cost_matrix score(most_splits);
+  scratch.score_pool.resize(most_splits);
+  cost_matrix& score = scratch.score_pool;
   double exact_score  = 0.0;
   int16  exact_n      = 0;
 
@@ -124,7 +125,8 @@ static double mutual_clustering_score(
 
   if (exact_n) {
     // Build a reduced cost matrix omitting exact-matched rows/cols
-    cost_matrix small(lap_n);
+    scratch.small_pool.resize(lap_n);
+    cost_matrix& small = scratch.small_pool;
     int16 a_pos = 0;
     for (int16 ai = 0; ai < a.n_splits; ++ai) {
       if (a_match[ai]) continue;
@@ -332,7 +334,8 @@ static double msd_score(
   const int16 half_tips   = n_tips / 2;
   const cost  max_score   = BIG / most_splits;
 
-  cost_matrix score(most_splits);
+  scratch.score_pool.resize(most_splits);
+  cost_matrix& score = scratch.score_pool;
   int16 exact_n = 0;
 
   std::vector<int>  a_match(a.n_splits, 0);
@@ -372,7 +375,8 @@ static double msd_score(
   auto& colsol = scratch.colsol;
 
   if (exact_n) {
-    cost_matrix small(lap_n);
+    scratch.small_pool.resize(lap_n);
+    cost_matrix& small = scratch.small_pool;
     int16 a_pos = 0;
     for (int16 ai = 0; ai < a.n_splits; ++ai) {
       if (a_match[ai]) continue;
@@ -464,7 +468,8 @@ static double msi_score(
   const double score_over_possible = static_cast<double>(max_score) / max_possible;
   const double possible_over_score = max_possible / static_cast<double>(max_score);
 
-  cost_matrix score(most_splits);
+  scratch.score_pool.resize(most_splits);
+  cost_matrix& score = scratch.score_pool;
   double exact_score = 0.0;
   int16  exact_n     = 0;
 
@@ -519,7 +524,8 @@ static double msi_score(
   auto& colsol = scratch.colsol;
 
   if (exact_n) {
-    cost_matrix small(lap_n);
+    scratch.small_pool.resize(lap_n);
+    cost_matrix& small = scratch.small_pool;
     int16 a_pos = 0;
     for (int16 ai = 0; ai < a.n_splits; ++ai) {
       if (a_match[ai]) continue;
@@ -611,7 +617,8 @@ static double shared_phylo_score(
   const double score_over_possible = static_cast<double>(max_score) / max_possible;
   const double possible_over_score = max_possible / static_cast<double>(max_score);
 
-  cost_matrix score(most_splits);
+  scratch.score_pool.resize(most_splits);
+  cost_matrix& score = scratch.score_pool;
   double exact_score = 0.0;
   int16  exact_n     = 0;
 
@@ -659,7 +666,8 @@ static double shared_phylo_score(
   auto& colsol = scratch.colsol;
 
   if (exact_n) {
-    cost_matrix small(lap_n);
+    scratch.small_pool.resize(lap_n);
+    cost_matrix& small = scratch.small_pool;
     int16 a_pos = 0;
     for (int16 ai = 0; ai < a.n_splits; ++ai) {
       if (a_match[ai]) continue;
@@ -748,7 +756,8 @@ static double jaccard_score(
   constexpr cost   max_score  = BIG;
   constexpr double max_scoreL = static_cast<double>(max_score);
 
-  cost_matrix score(most_splits);
+  scratch.score_pool.resize(most_splits);
+  cost_matrix& score = scratch.score_pool;
   int16 exact_n = 0;
 
   std::vector<int> a_match(a.n_splits, 0);
@@ -823,7 +832,8 @@ static double jaccard_score(
   auto& colsol = scratch.colsol;
 
   if (exact_n) {
-    cost_matrix small(lap_n);
+    scratch.small_pool.resize(lap_n);
+    cost_matrix& small = scratch.small_pool;
     int16 a_pos = 0;
     for (int16 ai = 0; ai < a.n_splits; ++ai) {
       if (a_match[ai]) continue;

@@ -32,23 +32,40 @@ constexpr size_t BLOCK_SIZE = 16;
 
 class CostMatrix {
 private:
-  const size_t dim_; // Important not to use int16, which will overflow on *
-  const size_t dim8_;
+  size_t dim_; // Important not to use int16, which will overflow on *
+  size_t dim8_;
   alignas(64) std::vector<cost> data_;
   alignas(64) std::vector<cost> t_data_;
   bool transposed_;
   
-  const size_t block_containing(const size_t x) {
+  static size_t block_containing(const size_t x) {
     return ((x + BLOCK_SIZE - 1) / BLOCK_SIZE) * BLOCK_SIZE;
   }
   
 public:
+  // Default constructor for pooled instances (zero-size, no allocation).
+  CostMatrix() : dim_(0), dim8_(0), transposed_(false) {}
+
   CostMatrix(size_t dim)
     : dim_(dim),
       dim8_(block_containing(dim_)),
       data_(std::vector<cost>(dim8_ * dim8_)),
       t_data_(std::vector<cost>(dim8_ * dim8_)),
       transposed_(false) {}
+
+  // Resize for reuse.  Only reallocates when the new dimension exceeds the
+  // current buffer capacity; otherwise just updates dim_/dim8_ and marks
+  // the transpose as stale.  New elements (if any) are value-initialised.
+  void resize(size_t new_dim) {
+    dim_ = new_dim;
+    dim8_ = block_containing(new_dim);
+    const size_t needed = dim8_ * dim8_;
+    if (data_.size() < needed) {
+      data_.resize(needed);
+      t_data_.resize(needed);
+    }
+    transposed_ = false;
+  }
       
   CostMatrix(const Rcpp::NumericMatrix& src, const double x_max)
     : dim_((std::max(src.nrow(), src.ncol()))),  // or pad here as needed
@@ -169,12 +186,14 @@ public:
   
   void padTrAfterCol(lap_row start_row, cost value) {
     size_t start_index = static_cast<size_t>(start_row) * dim8_;
-    std::fill(t_data_.begin() + start_index, t_data_.end(), value);
+    size_t end_index   = dim_ * dim8_;
+    std::fill(t_data_.begin() + start_index, t_data_.begin() + end_index, value);
   }
   
   void padAfterRow(lap_row start_row, cost value) {
     size_t start_index = static_cast<size_t>(start_row) * dim8_;
-    std::fill(data_.begin() + start_index, data_.end(), value);
+    size_t end_index   = dim_ * dim8_;
+    std::fill(data_.begin() + start_index, data_.begin() + end_index, value);
   }
   
   void padTrColAfterRow(const lap_row r, const lap_col start_col,
@@ -402,6 +421,10 @@ struct LapScratch {
   // solution afterwards can avoid a separate allocation.
   std::vector<lap_col> rowsol;
   std::vector<lap_row> colsol;
+  // Pooled CostMatrix instances — reused across pairs to avoid per-call
+  // heap allocation.  Grown lazily on first use, never shrunk.
+  CostMatrix score_pool;               // main cost matrix
+  CostMatrix small_pool;               // reduced matrix (exact-match path)
 
   void ensure(int dim) noexcept {
     const int padded = static_cast<int>(
