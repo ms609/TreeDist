@@ -1,15 +1,26 @@
-# TreeDist 2.12.0.9001 (2026-03-10)
+# TreeDist 2.12.0.9001 (2026-03-12)
 
-- Pairwise `ClusteringInfoDistance()` / `MutualClusteringInfo()` now uses
-  an OpenMP multi-threaded batch path when the package is compiled with
-  OpenMP support, giving ~7–8× speed-up over the serial path on a 16-core
-  machine.
+## Performance
+
+- All pairwise distance functions (`ClusteringInfoDistance()`,
+  `MutualClusteringInfo()`, `MatchingSplitDistance()`,
+  `MatchingSplitInfoDistance()`, `SharedPhylogeneticInfoSplits()`,
+  `NyeSimilarity()`, `JaccardRobinsonFoulds()`, and
+  `InfoRobinsonFoulds()`) now use an OpenMP multi-threaded batch path when
+  the package is compiled with OpenMP support.
 
 - The number of OpenMP threads is controlled by `options(mc.cores = N)`;
   the default is `1` (single-threaded).  Set `mc.cores` to
   `parallel::detectCores()` or a fixed integer to enable multi-threading.
-  `StartParallel()` / `StopParallel()` are no longer needed for
-  `ClusteringInfoDistance()` when OpenMP is available.
+  `StartParallel()` / `StopParallel()` are no longer needed when OpenMP
+  is available.
+
+- Internal lookup table for log₂ values shrunk from 32 MB to 16 KB,
+  improving cache locality for information-based distance metrics.
+
+- Hardware POPCNT instruction now used on x86-64 via inline assembly
+  (requires TreeTools ≥ 2.2), giving 13–50% speed-up depending on metric
+  and tree size.
 
 
 # TreeDist 2.12.0.9000 (2026-02-19)
