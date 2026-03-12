@@ -673,6 +673,9 @@ Numerically exact (max |ref − dev| = 0).  No regression for random trees.
 MCMC posteriors and bootstrap replicates typically share most splits — the "similar
 trees" scenario is the common real-world case.
 
-**Extension opportunity:** the same exact-match pattern applies to MSI, SPI, and Jaccard
-batch paths (all LAP-based).  The detection logic is identical (XOR popcount = 0 after
-complement flip); only the "exact match contribution" differs per metric.
+Exact-match detection was also applied to the MSI, SPI, and Jaccard batch paths
+(all LAP-based) in the same session.  The detection logic is identical (XOR
+popcount = 0 after complement flip); only the "exact match contribution" differs
+per metric.  Bugs found and fixed during that extension: MSI flip inconsistency,
+SPI consistency cleanup, and Jaccard `allow_conflict=FALSE` guard (see conversation
+summary for details).
