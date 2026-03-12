@@ -323,6 +323,64 @@ allocation overhead is buried in the Dijkstra phase, which dominates throughout.
 The implementation was reverted because it added substantial complexity for
 zero measured benefit.
 
+#### Fused IC calculation in `mutual_clustering_score` (attempted, reverted)
+
+Attempted to reduce integer arithmetic in the `add_ic_element` inner loop by
+replacing the 4 independent `add_ic_element()` calls (8 integer multiplies
+total: `nkK * n_tips` + `nk * nK` per call) with a fused inline block
+requiring only 2 multiplies.  The remaining 6 products were derived via
+addition/subtraction from precomputed `na_n = na * n_tips`, `nA_n`,
+`nb_n_arr[]`, `n_sq`, and `den_ab = na * nb`.  Correctness was verified
+(max |batch − serial| ≈ 1e-14).
+
+**Release-build (`-O2`) benchmarks showed no reliable improvement (−13% to
++10% across scenarios, within run-to-run noise).**  The bottleneck in the IC
+loop is **memory-bound** (random lookups into the `lg2[]` table), not
+compute-bound.  Modern x86 integer multiply has 1-cycle throughput, so
+saving 6 multiplies per split pair (~6 cycles) is invisible next to lg2
+table cache misses (~4 cycles per L1 hit, much more on L2/L3).
+
+Key lesson: `add_ic_element` and the cost-matrix filling loop are dominated
+by `lg2[]` table access, not by integer arithmetic.  Future optimisations
+should target the table's working set size or access pattern rather than
+the surrounding arithmetic.
+
+#### lg2 table shrink: 32 MB → 16 KB via log2 decomposition
+
+The `lg2[]` lookup table stored `log2(i)` for `i = 0..(SL_MAX_TIPS−1)²`,
+requiring 4.2 M doubles = **32 MB**.  `add_ic_element` accessed it with
+product indices `lg2[nkK * n_tips]` and `lg2[nk * nK]`, so the working set
+for 200-tip trees was ~320 KB (indices up to 40 000) — too large for L1.
+
+**Fix:** decompose `log2(a × b) = log2(a) + log2(b)`:
+
+```cpp
+// Before: lg2[nkK * n_tips] - lg2[nk * nK]       (indices up to n²)
+// After:  lg2[nkK] + lg2_n  - lg2[nk] - lg2[nK]  (indices ≤ n_tips)
+```
+
+The table now has only `SL_MAX_TIPS + 1` entries (2 049 doubles = **16 KB**),
+trivially fitting in L1 for any tree size.  `lg2_n = lg2[n_tips]` is
+precomputed once per distance call and passed to `add_ic_element` as a
+new parameter.
+
+**Files changed:**
+- `tree_distances.h`: table declaration shrunk; `add_ic_element` gains
+  `lg2_n` parameter and uses decomposed lookups.
+- `tree_distance_functions.cpp`: `LG2_SIZE` reduced to `SL_MAX_TIPS + 1`.
+- `pairwise_distances.cpp`, `tree_distances.cpp`: callers updated to
+  precompute and pass `lg2_n`.
+
+**A/B benchmark (release build, same-process comparison via `compare-ab.R`):**
+
+| Scenario | ref | dev | Change |
+|---|---|---|---|
+| CID 100 × 50-tip | 75.4 ms | 71.2 ms | **−5.6%** |
+| CID 40 × 200-tip | 278 ms | 265 ms | **−4.7%** |
+| MSD 100 × 50-tip (canary) | 85.0 ms | 85.6 ms | +0.7% |
+| MSD 40 × 200-tip (canary) | 402 ms | 407 ms | +1.2% |
+
+Numerical accuracy unchanged (max |ref − dev| ≈ 5.7 × 10⁻¹⁴).
 
 #### OpenMP rollout to all remaining distance metrics (this dev cycle)
 
@@ -415,6 +473,7 @@ of the null device, so snapshot tests are unaffected.
   bandwidth further.
 - SPR distance (`spr.cpp`, `spr_lookup.cpp`): the algorithm is relatively recent
   (v2.8.0); profiling under VTune may reveal further hot spots.
-- OpenMP for other metrics: **DONE** — see "Completed Optimizations" below.
+- OpenMP for other metrics: **DONE** — see "Completed Optimizations" above.
+- lg2 table working set: **DONE** — shrunk from 32 MB to 16 KB; see above.
 - Large-tree path (`int32` migration, v2.12.0 dev): ensure new code paths are as
   optimized as the original `int16` paths.
