@@ -29,3 +29,6 @@ vignettes/*.R
 *.tar.gz
 *.bak
 codecov.yml
+/.vtune-*
+/benchmark/*_lib
+/vtune-*
