@@ -174,7 +174,7 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
                               cpp_cross_pairs_fn, cpp_entropy_fn) {
   if (is.null(tree2) || reportMatching) return(NULL)
   if (inherits(tree1, c("phylo", "Splits")) || inherits(tree2, c("phylo", "Splits"))) {
-    return(NULL)
+    return(NULL) # nocov
   }
   if (!is.null(getOption("TreeDist-cluster"))) return(NULL)
   

@@ -1064,9 +1064,18 @@ for the cross-pairs case.
   allocation for sort+merge matching in all batch functions (CID, MSD, IRF,
   Jaccard all-pairs and cross-pairs).  Release-build benchmark needed to
   measure impact.
+<<<<<<< posit-optim-9
+- KendallColijn distance: **DONE** — replaced pure-R `KCVector()` with C++
+  `cpp_kc_vector()` in `src/path_vector.cpp` (modelled on existing `path_vector()`).
+  Per-tree vector speedup: **218× for 50-tip, 226× for 200-tip** (debug build).
+  Also optimised `KendallColijn()` all-pairs and cross-pairs Euclidean distance
+  using existing C++ `pair_diff_euclidean()` and `vec_diff_euclidean()`.
+  All existing tests pass.
+=======
 - KendallColijn distance: pure-R MRCA computation is 60× slower than CID;
   `apply(combn(...), intersect(...))` is the bottleneck.  Low priority unless
   users report it.
+>>>>>>> posit-optim-5
 - LAP inner loop: AVX2 SIMD intrinsics assessed and deemed **unpromising** —
   64-bit cost values limit AVX2 to 4-wide (same as existing manual 4× unroll);
   indirect `col_list` indexing prevents efficient vectorisation; platform
