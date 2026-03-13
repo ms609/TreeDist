@@ -176,7 +176,6 @@ inline List matching_split_distance(const RawMatrix &x, const RawMatrix &y,
     }
   }
   
-  // More performat to cleave this out, to keep the previous loop simpler
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
     for (int16 bi = 0; bi < b.n_splits; ++bi) {
       if (score(ai, bi) > half_tips) {

@@ -22,10 +22,15 @@
   (requires TreeTools ≥ 2.2), giving 13–50% speed-up depending on metric
   and tree size.
 
-- `MatchingSplitDistance()` batch path now detects exact split matches and
-  reduces the linear assignment problem dimension accordingly.  For tree
-  sets where most splits are shared (e.g., MCMC posteriors), this gives
-  a 2.5–3× speed-up.
+- Batch paths for `MatchingSplitDistance()`, `MatchingSplitInfoDistance()`,
+  `SharedPhylogeneticInfoSplits()`, `NyeSimilarity()`, and
+  `JaccardRobinsonFoulds()` now detect exact split matches and reduce the
+  linear assignment problem dimension accordingly.  For tree sets where most
+  splits are shared (e.g., MCMC posteriors), this gives a 2.5–3× speed-up.
+
+- Internal cost-matrix storage is now pooled across tree pairs within each
+  thread, eliminating per-pair heap allocation and zero-initialisation
+  overhead (5–24% speed-up depending on metric and tree similarity).
 
 
 # TreeDist 2.12.0.9000 (2026-02-19)

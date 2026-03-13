@@ -48,7 +48,8 @@ static double mutual_clustering_score(
   const double max_over_tips = static_cast<double>(BIG) * n_tips_rcp;
   const double lg2_n = lg2[n_tips];
 
-  cost_matrix score(most_splits);
+  scratch.score_pool.resize(most_splits);
+  cost_matrix& score = scratch.score_pool;
   double exact_score  = 0.0;
   int16  exact_n      = 0;
 
@@ -124,7 +125,8 @@ static double mutual_clustering_score(
 
   if (exact_n) {
     // Build a reduced cost matrix omitting exact-matched rows/cols
-    cost_matrix small(lap_n);
+    scratch.small_pool.resize(lap_n);
+    cost_matrix& small = scratch.small_pool;
     int16 a_pos = 0;
     for (int16 ai = 0; ai < a.n_splits; ++ai) {
       if (a_match[ai]) continue;
@@ -332,7 +334,8 @@ static double msd_score(
   const int16 half_tips   = n_tips / 2;
   const cost  max_score   = BIG / most_splits;
 
-  cost_matrix score(most_splits);
+  scratch.score_pool.resize(most_splits);
+  cost_matrix& score = scratch.score_pool;
   int16 exact_n = 0;
 
   std::vector<int>  a_match(a.n_splits, 0);
@@ -372,7 +375,8 @@ static double msd_score(
   auto& colsol = scratch.colsol;
 
   if (exact_n) {
-    cost_matrix small(lap_n);
+    scratch.small_pool.resize(lap_n);
+    cost_matrix& small = scratch.small_pool;
     int16 a_pos = 0;
     for (int16 ai = 0; ai < a.n_splits; ++ai) {
       if (a_match[ai]) continue;
@@ -453,6 +457,9 @@ static double msi_score(
 ) {
   const int16 most_splits = std::max(a.n_splits, b.n_splits);
   if (most_splits == 0) return 0.0;
+  const bool  a_has_more = (a.n_splits > b.n_splits);
+  const int16 a_extra    = a_has_more ? most_splits - b.n_splits : 0;
+  const int16 b_extra    = a_has_more ? 0 : most_splits - a.n_splits;
 
   constexpr cost max_score = BIG;
   const double max_possible = lg2_unrooted[n_tips]
@@ -461,33 +468,86 @@ static double msi_score(
   const double score_over_possible = static_cast<double>(max_score) / max_possible;
   const double possible_over_score = max_possible / static_cast<double>(max_score);
 
-  cost_matrix score(most_splits);
-  splitbit different[SL_MAX_BINS];
+  scratch.score_pool.resize(most_splits);
+  cost_matrix& score = scratch.score_pool;
+  double exact_score = 0.0;
+  int16  exact_n     = 0;
+
+  std::vector<int> a_match(a.n_splits, 0);
+  auto b_match = std::make_unique<int16[]>(b.n_splits);
+  std::fill(b_match.get(), b_match.get() + b.n_splits, int16(0));
 
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
+    if (a_match[ai]) continue;
+    const int16 na = a.in_split[ai];
+    const int16 nA = n_tips - na;
+
     for (int16 bi = 0; bi < b.n_splits; ++bi) {
-      int16 n_different = 0, n_a_only = 0, n_a_and_b = 0;
+      int16 n_different = 0;
       for (int16 bin = 0; bin < a.n_bins; ++bin) {
-        different[bin]  = a.state[ai][bin] ^ b.state[bi][bin];
-        n_different    += count_bits(different[bin]);
-        n_a_only       += count_bits(a.state[ai][bin] &  different[bin]);
-        n_a_and_b      += count_bits(a.state[ai][bin] & ~different[bin]);
+        n_different += count_bits(a.state[ai][bin] ^ b.state[bi][bin]);
+      }
+      // Exact match: same split or complement
+      if (n_different == 0 || n_different == n_tips) {
+        exact_score += lg2_unrooted[n_tips] - lg2_rooted[na] - lg2_rooted[nA];
+        ++exact_n;
+        a_match[ai] = bi + 1;
+        b_match[bi] = ai + 1;
+        break;
+      }
+
+      // Full overlap stats — pass raw (unflipped) values to mmsi_score,
+      // which handles both orientations internally via max()
+      int16 n_a_only = 0, n_a_and_b = 0;
+      splitbit different;
+      for (int16 bin = 0; bin < a.n_bins; ++bin) {
+        different   = a.state[ai][bin] ^ b.state[bi][bin];
+        n_a_only   += count_bits(a.state[ai][bin] &  different);
+        n_a_and_b  += count_bits(a.state[ai][bin] & ~different);
       }
       const int16 n_same = n_tips - n_different;
       score(ai, bi) = cost(max_score - score_over_possible *
         TreeDist::mmsi_score(n_same, n_a_and_b, n_different, n_a_only));
     }
-    score.padRowAfterCol(ai, b.n_splits, max_score);
+    if (b.n_splits < most_splits) {
+      score.padRowAfterCol(ai, b.n_splits, max_score);
+    }
   }
-  score.padAfterRow(a.n_splits, max_score);
 
+  if (exact_n == b.n_splits || exact_n == a.n_splits) {
+    return exact_score;
+  }
+
+  const int16 lap_n = most_splits - exact_n;
   scratch.ensure(most_splits);
   auto& rowsol = scratch.rowsol;
   auto& colsol = scratch.colsol;
 
-  return static_cast<double>(
-    (max_score * most_splits) - lap(most_splits, score, rowsol, colsol, false, scratch)
-  ) * possible_over_score;
+  if (exact_n) {
+    scratch.small_pool.resize(lap_n);
+    cost_matrix& small = scratch.small_pool;
+    int16 a_pos = 0;
+    for (int16 ai = 0; ai < a.n_splits; ++ai) {
+      if (a_match[ai]) continue;
+      int16 b_pos = 0;
+      for (int16 bi = 0; bi < b.n_splits; ++bi) {
+        if (b_match[bi]) continue;
+        small(a_pos, b_pos) = score(ai, bi);
+        ++b_pos;
+      }
+      small.padRowAfterCol(a_pos, lap_n - a_extra, max_score);
+      ++a_pos;
+    }
+    small.padAfterRow(lap_n - b_extra, max_score);
+    return exact_score + static_cast<double>(
+      (max_score * lap_n) - lap(lap_n, small, rowsol, colsol, false, scratch)
+    ) * possible_over_score;
+  } else {
+    score.padAfterRow(a.n_splits, max_score);
+    return static_cast<double>(
+      (max_score * lap_n) - lap(lap_n, score, rowsol, colsol, false, scratch)
+    ) * possible_over_score;
+  }
 }
 
 //' @keywords internal
@@ -546,6 +606,9 @@ static double shared_phylo_score(
 ) {
   const int16 most_splits = std::max(a.n_splits, b.n_splits);
   if (most_splits == 0) return 0.0;
+  const bool  a_has_more = (a.n_splits > b.n_splits);
+  const int16 a_extra    = a_has_more ? most_splits - b.n_splits : 0;
+  const int16 b_extra    = a_has_more ? 0 : most_splits - a.n_splits;
 
   const int16 overlap_a = int16(n_tips + 1) / 2;
   constexpr cost max_score = BIG;
@@ -554,27 +617,79 @@ static double shared_phylo_score(
   const double score_over_possible = static_cast<double>(max_score) / max_possible;
   const double possible_over_score = max_possible / static_cast<double>(max_score);
 
-  cost_matrix score(most_splits);
+  scratch.score_pool.resize(most_splits);
+  cost_matrix& score = scratch.score_pool;
+  double exact_score = 0.0;
+  int16  exact_n     = 0;
 
-  for (int16 ai = a.n_splits; ai--; ) {
-    for (int16 bi = b.n_splits; bi--; ) {
+  std::vector<int> a_match(a.n_splits, 0);
+  auto b_match = std::make_unique<int16[]>(b.n_splits);
+  std::fill(b_match.get(), b_match.get() + b.n_splits, int16(0));
+
+  for (int16 ai = 0; ai < a.n_splits; ++ai) {
+    if (a_match[ai]) continue;
+    const int16 na = a.in_split[ai];
+    const int16 nA = n_tips - na;
+
+    for (int16 bi = 0; bi < b.n_splits; ++bi) {
+      int16 n_different = 0;
+      for (int16 bin = 0; bin < a.n_bins; ++bin) {
+        n_different += count_bits(a.state[ai][bin] ^ b.state[bi][bin]);
+      }
+      // Exact match: same split or complement
+      if (n_different == 0 || n_different == n_tips) {
+        exact_score += lg2_unrooted[n_tips] - lg2_rooted[na] - lg2_rooted[nA];
+        ++exact_n;
+        a_match[ai] = bi + 1;
+        b_match[bi] = ai + 1;
+        break;
+      }
+
       const double spi = TreeDist::spi_overlap(
         a.state[ai], b.state[bi], n_tips,
         a.in_split[ai], b.in_split[bi], a.n_bins);
       score(ai, bi) = (spi == 0.0) ? max_score
                                    : cost((spi - best_overlap) * score_over_possible);
     }
-    score.padRowAfterCol(ai, b.n_splits, max_score);
+    if (b.n_splits < most_splits) {
+      score.padRowAfterCol(ai, b.n_splits, max_score);
+    }
   }
-  score.padAfterRow(a.n_splits, max_score);
 
+  if (exact_n == b.n_splits || exact_n == a.n_splits) {
+    return exact_score;
+  }
+
+  const int16 lap_n = most_splits - exact_n;
   scratch.ensure(most_splits);
   auto& rowsol = scratch.rowsol;
   auto& colsol = scratch.colsol;
 
-  return static_cast<double>(
-    (max_score * most_splits) - lap(most_splits, score, rowsol, colsol, false, scratch)
-  ) * possible_over_score;
+  if (exact_n) {
+    scratch.small_pool.resize(lap_n);
+    cost_matrix& small = scratch.small_pool;
+    int16 a_pos = 0;
+    for (int16 ai = 0; ai < a.n_splits; ++ai) {
+      if (a_match[ai]) continue;
+      int16 b_pos = 0;
+      for (int16 bi = 0; bi < b.n_splits; ++bi) {
+        if (b_match[bi]) continue;
+        small(a_pos, b_pos) = score(ai, bi);
+        ++b_pos;
+      }
+      small.padRowAfterCol(a_pos, lap_n - a_extra, max_score);
+      ++a_pos;
+    }
+    small.padAfterRow(lap_n - b_extra, max_score);
+    return exact_score + static_cast<double>(
+      (max_score * lap_n) - lap(lap_n, small, rowsol, colsol, false, scratch)
+    ) * possible_over_score;
+  } else {
+    score.padAfterRow(a.n_splits, max_score);
+    return static_cast<double>(
+      (max_score * lap_n) - lap(lap_n, score, rowsol, colsol, false, scratch)
+    ) * possible_over_score;
+  }
 }
 
 //' @keywords internal
@@ -634,13 +749,23 @@ static double jaccard_score(
 ) {
   const int16 most_splits = std::max(a.n_splits, b.n_splits);
   if (most_splits == 0) return 0.0;
+  const bool  a_has_more = (a.n_splits > b.n_splits);
+  const int16 a_extra    = a_has_more ? most_splits - b.n_splits : 0;
+  const int16 b_extra    = a_has_more ? 0 : most_splits - a.n_splits;
 
   constexpr cost   max_score  = BIG;
   constexpr double max_scoreL = static_cast<double>(max_score);
 
-  cost_matrix score(most_splits);
+  scratch.score_pool.resize(most_splits);
+  cost_matrix& score = scratch.score_pool;
+  int16 exact_n = 0;
+
+  std::vector<int> a_match(a.n_splits, 0);
+  auto b_match = std::make_unique<int16[]>(b.n_splits);
+  std::fill(b_match.get(), b_match.get() + b.n_splits, int16(0));
 
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
+    if (a_match[ai]) continue;
     const int16 na = a.in_split[ai];
     const int16 nA = n_tips - na;
 
@@ -654,6 +779,17 @@ static double jaccard_score(
       const int16 a_and_B = na - a_and_b;
       const int16 A_and_b = nb - a_and_b;
       const int16 A_and_B = nB - a_and_B;
+
+      // Exact match: identical or complementary split (cost = 0, similarity = 1)
+      // Skip when allow_conflict=false: the full LAP may reassign non-matching
+      // splits to compatible (non-exact) partners for a better overall score.
+      if (allow_conflict &&
+          ((!a_and_B && !A_and_b) || (!a_and_b && !A_and_B))) {
+        ++exact_n;
+        a_match[ai] = bi + 1;
+        b_match[bi] = ai + 1;
+        break;
+      }
 
       if (!allow_conflict && !(
             a_and_b == na || a_and_B == na ||
@@ -681,17 +817,45 @@ static double jaccard_score(
         }
       }
     }
-    score.padRowAfterCol(ai, b.n_splits, max_score);
+    if (b.n_splits < most_splits) {
+      score.padRowAfterCol(ai, b.n_splits, max_score);
+    }
   }
-  score.padAfterRow(a.n_splits, max_score);
 
+  if (exact_n == b.n_splits || exact_n == a.n_splits) {
+    return static_cast<double>(exact_n);
+  }
+
+  const int16 lap_n = most_splits - exact_n;
   scratch.ensure(most_splits);
   auto& rowsol = scratch.rowsol;
   auto& colsol = scratch.colsol;
 
-  return static_cast<double>(
-    (max_score * most_splits) - lap(most_splits, score, rowsol, colsol, false, scratch)
-  ) / max_scoreL;
+  if (exact_n) {
+    scratch.small_pool.resize(lap_n);
+    cost_matrix& small = scratch.small_pool;
+    int16 a_pos = 0;
+    for (int16 ai = 0; ai < a.n_splits; ++ai) {
+      if (a_match[ai]) continue;
+      int16 b_pos = 0;
+      for (int16 bi = 0; bi < b.n_splits; ++bi) {
+        if (b_match[bi]) continue;
+        small(a_pos, b_pos) = score(ai, bi);
+        ++b_pos;
+      }
+      small.padRowAfterCol(a_pos, lap_n - a_extra, max_score);
+      ++a_pos;
+    }
+    small.padAfterRow(lap_n - b_extra, max_score);
+    return static_cast<double>(exact_n) + static_cast<double>(
+      (max_score * lap_n) - lap(lap_n, small, rowsol, colsol, false, scratch)
+    ) / max_scoreL;
+  } else {
+    score.padAfterRow(a.n_splits, max_score);
+    return static_cast<double>(
+      (max_score * lap_n) - lap(lap_n, score, rowsol, colsol, false, scratch)
+    ) / max_scoreL;
+  }
 }
 
 //' @keywords internal
