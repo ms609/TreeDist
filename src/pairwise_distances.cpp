@@ -63,6 +63,12 @@ static double mutual_clustering_score(
     const int16  nA    = n_tips - na;
     const auto*  a_row = a.state[ai];
 
+    // Hoist lg2 lookups that are constant across all bi for this ai.
+    // lg2[0] = 0 by convention (0 * log2(0) = 0), so the branchless
+    // formulation below is safe for zero overlap counts.
+    const double offset_a = lg2_n - lg2[na];
+    const double offset_A = lg2_n - lg2[nA];
+
     for (int16 bi = 0; bi < b.n_splits; ++bi) {
       int16       a_and_b = 0;
       const auto* b_row   = b.state[bi];
@@ -86,11 +92,17 @@ static double mutual_clustering_score(
       } else if (a_and_b == A_and_b && a_and_b == a_and_B && a_and_b == A_and_B) {
         score(ai, bi) = max_score; // Avoid rounding errors on orthogonal splits
       } else {
-        double ic_sum = 0.0;
-        TreeDist::add_ic_element(ic_sum, a_and_b, na, nb, n_tips, lg2_n);
-        TreeDist::add_ic_element(ic_sum, a_and_B, na, nB, n_tips, lg2_n);
-        TreeDist::add_ic_element(ic_sum, A_and_b, nA, nb, n_tips, lg2_n);
-        TreeDist::add_ic_element(ic_sum, A_and_B, nA, nB, n_tips, lg2_n);
+        // Branchless IC accumulation.  Each add_ic_element(nkK, nk, nK)
+        // contributes nkK * (lg2[nkK] + lg2_n - lg2[nk] - lg2[nK]).
+        // The lg2[nk] and lg2[nK] terms for (na,nA) and (nb,nB) are
+        // hoisted as offset_a/offset_A (per ai) and lg2_nb/lg2_nB (per bi).
+        const double lg2_nb = lg2[nb];
+        const double lg2_nB = lg2[nB];
+        const double ic_sum =
+          a_and_b * (lg2[a_and_b] + offset_a - lg2_nb) +
+          a_and_B * (lg2[a_and_B] + offset_a - lg2_nB) +
+          A_and_b * (lg2[A_and_b] + offset_A - lg2_nb) +
+          A_and_B * (lg2[A_and_B] + offset_A - lg2_nB);
         score(ai, bi) = max_score - static_cast<cost>(ic_sum * max_over_tips);
       }
     }
@@ -314,34 +326,75 @@ static double msd_score(
 ) {
   const int16 most_splits = std::max(a.n_splits, b.n_splits);
   if (most_splits == 0) return 0.0;
-  const int16 split_diff = most_splits - std::min(a.n_splits, b.n_splits);
-  const int16 half_tips  = n_tips / 2;
-  const cost  max_score  = BIG / most_splits;
+  const bool  a_has_more  = (a.n_splits > b.n_splits);
+  const int16 a_extra     = a_has_more ? most_splits - b.n_splits : 0;
+  const int16 b_extra     = a_has_more ? 0 : most_splits - a.n_splits;
+  const int16 half_tips   = n_tips / 2;
+  const cost  max_score   = BIG / most_splits;
 
   cost_matrix score(most_splits);
+  int16 exact_n = 0;
+
+  std::vector<int>  a_match(a.n_splits, 0);
+  auto b_match = std::make_unique<int16[]>(b.n_splits);
+  std::fill(b_match.get(), b_match.get() + b.n_splits, int16(0));
 
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
+    if (a_match[ai]) continue;
+
     for (int16 bi = 0; bi < b.n_splits; ++bi) {
       splitbit total = 0;
       for (int16 bin = 0; bin < a.n_bins; ++bin) {
         total += count_bits(a.state[ai][bin] ^ b.state[bi][bin]);
       }
-      score(ai, bi) = total;
+      cost d = static_cast<cost>(total > static_cast<splitbit>(half_tips)
+                                 ? n_tips - total : total);
+      if (d == 0) {
+        ++exact_n;
+        a_match[ai] = bi + 1;
+        b_match[bi] = ai + 1;
+        break;
+      }
+      score(ai, bi) = d;
     }
-    for (int16 bi = 0; bi < b.n_splits; ++bi) {
-      if (score(ai, bi) > half_tips) score(ai, bi) = n_tips - score(ai, bi);
+    if (b.n_splits < most_splits) {
+      score.padRowAfterCol(ai, b.n_splits, max_score);
     }
-    score.padRowAfterCol(ai, b.n_splits, max_score);
   }
-  score.padAfterRow(a.n_splits, max_score);
 
+  if (exact_n == b.n_splits || exact_n == a.n_splits) {
+    return 0.0;
+  }
+
+  const int16 lap_n = most_splits - exact_n;
   scratch.ensure(most_splits);
   auto& rowsol = scratch.rowsol;
   auto& colsol = scratch.colsol;
 
-  return static_cast<double>(
-    lap(most_splits, score, rowsol, colsol, false, scratch) - max_score * split_diff
-  );
+  if (exact_n) {
+    cost_matrix small(lap_n);
+    int16 a_pos = 0;
+    for (int16 ai = 0; ai < a.n_splits; ++ai) {
+      if (a_match[ai]) continue;
+      int16 b_pos = 0;
+      for (int16 bi = 0; bi < b.n_splits; ++bi) {
+        if (b_match[bi]) continue;
+        small(a_pos, b_pos) = score(ai, bi);
+        ++b_pos;
+      }
+      small.padRowAfterCol(a_pos, lap_n - a_extra, max_score);
+      ++a_pos;
+    }
+    small.padAfterRow(lap_n - b_extra, max_score);
+    const cost split_diff_cost = max_score * (a_extra + b_extra);
+    return static_cast<double>(
+      lap(lap_n, small, rowsol, colsol, false, scratch) - split_diff_cost);
+  } else {
+    score.padAfterRow(a.n_splits, max_score);
+    const cost split_diff_cost = max_score * (a_extra + b_extra);
+    return static_cast<double>(
+      lap(lap_n, score, rowsol, colsol, false, scratch) - split_diff_cost);
+  }
 }
 
 //' @keywords internal

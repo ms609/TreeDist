@@ -5,6 +5,19 @@ using namespace Rcpp;
 
 namespace TreeDist {
 
+// Hardware POPCNT via inline asm (no -mpopcnt flag needed)
+static inline size_t popcnt64(uint64_t x) {
+#if (defined(__GNUC__) || defined(__clang__)) && defined(__x86_64__)
+  uint64_t result;
+  __asm__ ("popcnt %1, %0" : "=r" (result) : "r" (x));
+  return result;
+#elif defined(_MSC_VER) && defined(_M_X64)
+  return __popcnt64(x);
+#else
+  return __builtin_popcountll(x);
+#endif
+}
+
 static inline double x_log_x(size_t x) {
   return x > 1 ? x * std::log(x) : 0.0;
 }
@@ -16,7 +29,7 @@ static inline size_t intersection_size(const std::vector<uint64_t>& A,
   size_t size = A.size();
   
   for (size_t i = 0; i < size; ++i) {
-    count += __builtin_popcountll(A[i] & B[i]);
+    count += popcnt64(A[i] & B[i]);
   }
   return count;
 }

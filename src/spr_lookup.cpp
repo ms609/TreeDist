@@ -9,12 +9,25 @@ using Split7 = uint8_t;          // 7 bits used
 using SplitSet7 = std::array<Split7, 4>;
 using Perm7 = std::array<uint8_t, 7>;
 
+// Hardware POPCNT via inline asm (no -mpopcnt flag needed)
+static inline int popcnt32(uint32_t x) {
+#if (defined(__GNUC__) || defined(__clang__)) && defined(__x86_64__)
+  uint32_t result;
+  __asm__ ("popcnt %1, %0" : "=r" (result) : "r" (x));
+  return static_cast<int>(result);
+#elif defined(_MSC_VER)
+  return __popcnt(x);
+#else
+  return __builtin_popcount(x);
+#endif
+}
+
 inline int popcount7(uint8_t x) {
-  return __builtin_popcount(x & 0x7F);
+  return popcnt32(x & 0x7F);
 }
 
 inline int tips_in_smallest7(uint8_t x) {
-  const int count = __builtin_popcount(x & 0x7F);
+  const int count = popcnt32(x & 0x7F);
   return count < 4 ? count : 7 - count;
 }
 

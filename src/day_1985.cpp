@@ -124,6 +124,11 @@ double calc_consensus_info(const List &trees, const LogicalVector &phylo,
   const bool phylo_info = phylo[0];
   double info = 0;
   
+  // Preallocate split_size outside the loop to avoid repeated heap
+  // allocation for each tree pair (especially significant for large n_tip).
+  std::vector<int32> split_size;
+  split_size.reserve(n_tip);
+  
   const std::size_t ntip_3 = n_tip - 3;
   // All clades in p consensus must occur in first (1-p) of trees.
   for (int32 i = 0; i < must_occur_before; ++i) {
@@ -131,7 +136,7 @@ double calc_consensus_info(const List &trees, const LogicalVector &phylo,
       continue;
     }
     
-    std::vector<int32> split_size(n_tip);
+    split_size.assign(n_tip, 0);
     std::fill(split_count, split_count + n_tip, 1);
     
     for (int32 j = i + 1; j < n_trees; ++j) {

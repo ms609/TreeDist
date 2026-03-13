@@ -120,7 +120,7 @@ double entropy_int(const Rcpp::IntegerVector &n) {
 // TODO This is copied from TreeSearch/src/expected_mi.cpp - double definition
 // is bad practice; define once (here? TreeTools?) and cross-reference.
 // TODO this also somewhat duplicates the above...
-#define MAX_FACTORIAL_LOOKUP 8192
+#define MAX_FACTORIAL_LOOKUP 32768
 static double log2_factorial_table[MAX_FACTORIAL_LOOKUP + 1];
 static const double LOG2_E = 1.4426950408889634;
 

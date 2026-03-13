@@ -462,8 +462,8 @@ of the null device, so snapshot tests are unaffected.
 
 ## Known Optimization Opportunities / TODOs
 
-- `information.h` line 19: comment suggests considering increasing `MAX_FACTORIAL_LOOKUP`
-  beyond 8192 or falling back to runtime calculation for larger values.
+- `information.h` `MAX_FACTORIAL_LOOKUP`: **DONE** — increased from 8192 to 32768;
+  `lgamma()` fallback retained for values beyond the table (negligible memory cost).
 - `information.h` lines 120–122: `log2_factorial_table` is a verbatim copy from
   `TreeSearch/src/expected_mi.cpp`; should be defined once (TreeTools?) and shared.
 - LAP inner loop: the 4× manual unroll works well; investigate whether AVX2 SIMD
@@ -475,5 +475,204 @@ of the null device, so snapshot tests are unaffected.
   (v2.8.0); profiling under VTune may reveal further hot spots.
 - OpenMP for other metrics: **DONE** — see "Completed Optimizations" above.
 - lg2 table working set: **DONE** — shrunk from 32 MB to 16 KB; see above.
-- Large-tree path (`int32` migration, v2.12.0 dev): ensure new code paths are as
-  optimized as the original `int16` paths.
+- Large-tree path (`int32` migration, v2.12.0 dev): **AUDITED** — no issues.
+  Fix applied: `split_size` vector in `calc_consensus_info()` moved outside the
+  per-pair loop to avoid repeated heap allocation for large trees.
+- Hardware POPCNT (`-mpopcnt`): **DONE** — see "Completed Optimizations" below.
+### Dijkstra restructuring in LAP (attempted, reverted)
+
+Replaced the `col_list` permutation in the Dijkstra augment-solution phase with a
+`scanned[]` (`uint8_t`) mask for sequential memory access (enabling hardware prefetch
+and potential auto-vectorization of the `row_i[j] - v_ptr[j] - h` loop).
+
+**A/B benchmark result:** Neutral — within ±3% across all scenarios (CID/MSD,
+50-tip/200-tip trees). The sequential-access benefit is cancelled by the algorithmic
+overhead of visiting all `dim` columns every iteration (vs progressively fewer columns
+with `col_list`). Reverted to avoid adding complexity for no measured gain.
+
+Key lesson: the Dijkstra inner loop bottleneck is not memory access pattern but the
+number of comparisons performed. The `col_list` scheme's progressive shrinkage of the
+unscanned set is the dominant factor at these problem sizes (n ≈ 47–197).
+
+### VTune hotspot analysis (vtune-lap/)
+
+A VTune hotspot collection (`vtune-lap/`) was run on the pre-lg2-shrink build.
+Top TreeDist hotspots (approximate CPU time):
+
+| Function | CPU Time | Notes |
+|---|---|---|
+| `lap` | 0.975s | LAP solver — expected dominant cost |
+| `TreeDist::spi_overlap` | 0.671s | **Surprising — larger than lap on this workload** |
+| `std::vector<cost>::vector` constructor | 0.623s | CostMatrix allocation per pair |
+| `TreeDist::one_overlap` | 0.441s | Called from spi_overlap |
+| `TreeDist::add_ic_element` | 0.252s | Since reduced by lg2 shrink |
+
+**Important caveat**: this profile predates the lg2 table shrink and LapScratch
+optimizations; relative weights have since shifted.
+
+### spi_overlap / one_overlap optimisation (attempted, reverted)
+
+Based on the VTune profile, attempted two changes to `tree_distances.h`:
+
+1. **`one_overlap` branch simplification**: unified the `a < b` and `a > b` cases
+   into a single `lo = min(a,b)` / `hi = max(a,b)` path (retains the `a == b`
+   special case). This removes one unpredictable branch. **Kept** — cleaner code,
+   neutral performance.
+
+2. **`spi_overlap` single-pass accumulation**: replaced the original 4-pass loop
+   structure (3 while-loops with pointer resets + 1 for-loop) with a single pass
+   that accumulates all four bitwise conditions (`a&b`, `~a&b`, `a&~b`, `~(a|b)`)
+   at once, applying the last-bin mask only to `~(a|b)`. Also tried adding an
+   early-exit `if (all four set) return 0` inside the non-last-bin loop.
+
+   **A/B benchmark results (PID = PhylogeneticInfoDistance, release build):**
+
+   | Version | PID 50-tip (ref 112ms) | PID 200-tip (ref 295ms) | CID canary |
+   |---|---|---|---|
+   | Single-pass, no early exit | 101ms (−10%) | 341ms (+16%) | neutral |
+   | Single-pass + early exit | 134ms (+19%) | 431ms (+44%) | neutral |
+
+   Neither version is a net win. The root cause: the per-pass early exits in the
+   original code commonly fire at bin 0 for large trees (n_bins=4), so the original
+   loads bin 0 four times (register-hot after the first access). The single-pass
+   variant always loads ALL n_bins bins, reading more distinct memory locations.
+
+   More importantly, `spi_overlap` cost-matrix filling is a **minority of per-pair
+   time** in the current build — LAP dominates (~70–90% at n≈47), so even a 20%
+   reduction in spi_overlap would yield only 2–6% overall improvement.
+
+   **Reverted** to the original 4-pass logic. `one_overlap` simplification retained.
+
+Key lesson: the spi_overlap VTune profile was representative of the pre-lg2-shrink
+build where the add_ic_element inner loop was slower.  The current LAP is the
+overwhelmingly dominant bottleneck for PID and CID.
+
+---
+
+### VTune hotspot collection workflow (updated)
+
+R's default `DLLFLAGS` includes `-s` (strip-all), which removes all symbols from the
+DLL and makes VTune show addresses like `func@0x340a9ca80` instead of function names.
+To produce a profiling build with full symbols:
+
+1. Ensure `src/Makevars.win` exists with `-fno-omit-frame-pointer` in `PKG_CXXFLAGS`.
+2. Override `DLLFLAGS` via `MAKEFLAGS` when installing to `.vtune-lib/`:
+   ```r
+   old_mf <- Sys.getenv("MAKEFLAGS")
+   Sys.setenv(MAKEFLAGS = "DLLFLAGS=-static-libgcc")
+   install.packages(".", lib = ".vtune-lib", repos = NULL, type = "source",
+                    INSTALL_opts = "--no-multiarch")
+   Sys.setenv(MAKEFLAGS = old_mf)
+   ```
+3. Run the VTune hotspot collection:
+   ```
+   vtune -collect hotspots -result-dir vtune-current \
+         -- Rscript benchmark/vtune-driver.R
+   ```
+   (`benchmark/vtune-driver.R` exercises CID and PID workloads for ~30 s each.)
+
+**Do not** add `DLLFLAGS` to `src/Makevars.win` — it has no effect there because
+R's `Makeconf` sets `DLLFLAGS` after the package Makevars is parsed.  The `MAKEFLAGS`
+environment variable overrides it correctly at the `make` command level.
+
+After profiling, remove `-fno-omit-frame-pointer` from `src/Makevars.win`.
+
+### VTune hotspot profile — current build (vtune-current/, 2026-03-12)
+
+**Workload**: CID 50-tip (100 trees, 30 s) + CID 200-tip (40 trees, 30 s) + PID
+50-tip (100 trees, 30 s).  Build flags: `-O2 -fopenmp -fno-omit-frame-pointer -mpopcnt`.
+
+| Function | CPU Time | % | Notes |
+|---|---|---|---|
+| `mutual_clustering_score` | 40.9s | 44.8% | CID/MCI per-pair kernel |
+| `TreeDist::spi_overlap` | 9.1s | 10.0% | Split overlap (PID/MSD path) |
+| `_popcountdi2` | 8.8s | 9.7% | **Software popcount** — eliminated by `-mpopcnt` |
+| `[TreeDist.dll]` (unresolved) | 6.6s | 7.2% | Likely inlined callees |
+| `lap` | 5.8s | 6.4% | LAP solver |
+
+This profile was collected AFTER adding `-mpopcnt`.  Without `-mpopcnt`, `_popcountdi2`
+accounted for ~9.7% of runtime.  See "Hardware POPCNT" entry below.
+
+Key changes since the `vtune-lap/` profile:
+- `lap` dropped from ~50% to 6.4%: the CID fast-path now uses OpenMP, bypassing LAP.
+  LAP dominance remains for the serial metrics (PID, MSD, etc.) on large matrices.
+- `mutual_clustering_score` is now the top hotspot.  Its inner loop accesses the 16 KB
+  `lg2[]` table (already L1-hot after the table shrink) and calls `count_bits` per bin.
+
+### Branchless IC hoisting in `mutual_clustering_score` (DONE, kept)
+
+The `add_ic_element()` function was called 4× per (ai, bi) split pair in the CID cost
+matrix filling loop.  Each call contained two branches (`nkK && nk && nK` and
+`numerator != denominator`) plus 4 lg2 table lookups — 16 lookups and 8 branches per
+pair total.
+
+**Fix:** algebraically expand the 4 `add_ic_element` calls into a single branchless
+expression.  Key observations:
+- `lg2[na]`, `lg2[nA]` are constant for all `bi` in the inner loop → hoisted per `ai`
+  as `offset_a = lg2_n - lg2[na]`, `offset_A = lg2_n - lg2[nA]`.
+- `lg2[nb]`, `lg2[nB]` are constant for each `bi` → computed once per `bi`.
+- `lg2[0] = 0` by convention (0 * log2(0) = 0), so zero overlap counts contribute 0
+  without branching.
+- The `numerator != denominator` check (independence case) produces `log2(1) = 0`
+  naturally in floating point, making the branch unnecessary.
+
+Result: 16 lg2 lookups → 4 per pair; 8 branches → 0; 12 int multiplies → 0.
+
+**Files changed:** `pairwise_distances.cpp` (OpenMP batch path), `tree_distances.cpp`
+(serial per-pair path).
+
+**A/B benchmark (release build, same-process comparison):**
+
+| Scenario | ref | dev | Change |
+|---|---|---|---|
+| CID 100 × 50-tip | 66.7 ms | 58.9 ms | **−12%** |
+| CID 40 × 200-tip | 176 ms | 154 ms | **−12.5%** |
+| MSD 100 × 50-tip (canary) | 63.3 ms | 63.9 ms | +0.9% (noise) |
+| MSD 40 × 200-tip (canary) | 211 ms | 216 ms | +2.4% (noise) |
+
+Numerical accuracy: max |ref − dev| ≈ 5.7 × 10⁻¹⁴ (unchanged precision).
+
+**Post-optimization observation:** CID is now **faster than MSD** per-pair:
+
+| Metric | 50-tip (μs/pair) | 200-tip (μs/pair) |
+|---|---|---|
+| CID | 11.9 | 197 |
+| MSD | 12.9 | 271 |
+
+This revealed that MSD's cost is dominated by LAP on the full matrix, not matrix filling.
+
+### MSD exact-match detection in batch path (DONE, kept)
+
+CID already had an exact-match shortcut (detecting identical/complementary splits and
+solving a reduced LAP).  MSD lacked this, solving the full n_splits × n_splits LAP
+every time.
+
+**Root cause investigation:** the `as.phylo(0:N, tips)` benchmark trees share ~95% of
+splits (mean RF ≈ 5 for 200-tip trees → ~195 of 197 splits match).  CID's effective
+LAP dimension was ~3 while MSD's was ~197.  For truly random trees (ape::rtree), exact
+matches ≈ 0.
+
+**Fix:** added exact-match detection to `msd_score()` in `pairwise_distances.cpp`:
+- Fused the half_tips complement flip into the popcount loop (eliminates second row pass)
+- When XOR popcount = 0 (after flip), marks both splits as matched and breaks
+- Builds a reduced cost matrix for remaining unmatched splits
+- Solves the smaller LAP
+
+**A/B benchmark (release build, same-process comparison):**
+
+| Scenario | ref | dev | Change |
+|---|---|---|---|
+| MSD similar 50-tip (4 950 pairs) | 64.2 ms | 24.5 ms | **−62%** |
+| MSD similar 200-tip (780 pairs) | 212 ms | 70.9 ms | **−67%** |
+| MSD random 50-tip | 106 ms | 104 ms | −2% (noise) |
+| MSD random 200-tip | 304 ms | 299 ms | −2% (noise) |
+| CID similar 50 (canary) | 57.9 ms | 57.4 ms | −1% (noise) |
+
+Numerically exact (max |ref − dev| = 0).  No regression for random trees.
+
+MCMC posteriors and bootstrap replicates typically share most splits — the "similar
+trees" scenario is the common real-world case.
+
+**Extension opportunity:** the same exact-match pattern applies to MSI, SPI, and Jaccard
+batch paths (all LAP-based).  The detection logic is identical (XOR popcount = 0 after
+complement flip); only the "exact match contribution" differs per metric.
