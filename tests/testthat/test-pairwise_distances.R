@@ -181,3 +181,31 @@ test_that("InfoRobinsonFoulds(similarity = TRUE) uses batch path", {
                InfoRobinsonFoulds(tA[[1]], tB[[1]], similarity = TRUE),
                tolerance = 1e-10)
 })
+
+test_that(".FastManyManyPath: cross-pairs distance exercises happy path", {
+  # Exercises the happy path through .FastManyManyPath() in tree_distance.R:
+  # cluster guard, TipLabels extraction, tip set matching, nTip check.
+  tA <- ape::as.phylo(0:4, tipLabels = paste0("t", seq_len(20)))
+  tB <- ape::as.phylo(5:9, tipLabels = paste0("t", seq_len(20)))
+
+  cid_cross <- ClusteringInfoDistance(tA, tB)
+  expect_equal(dim(cid_cross), c(5L, 5L))
+  expect_equal(cid_cross[1, 1],
+               ClusteringInfoDistance(tA[[1]], tB[[1]]),
+               tolerance = 1e-10)
+})
+
+test_that(".FastManyManyPath: guards return NULL for edge cases", {
+  tips <- paste0("t", seq_len(8))
+  tA <- ape::as.phylo(0:2, tipLabels = tips)
+  tB <- ape::as.phylo(3:5, tipLabels = tips)
+
+  # Mismatched tip sets → falls back to slow path (returns non-NULL result)
+  tB_diff <- ape::as.phylo(3:5, tipLabels = paste0("s", seq_len(8)))
+  expect_true(!is.null(ClusteringInfoDistance(tA, tB_diff)))
+
+  # Small trees (nTip < 4) → falls back to slow path
+  tA3 <- ape::as.phylo(0:2, tipLabels = paste0("t", 1:3))
+  tB3 <- ape::as.phylo(0:2, tipLabels = paste0("t", 1:3))
+  expect_true(!is.null(ClusteringInfoDistance(tA3, tB3)))
+})

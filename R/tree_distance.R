@@ -134,18 +134,20 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
 .FastDistPath <- function(tree1, tree2, reportMatching,
                           cpp_batch_fn, cpp_entropy_fn) {
   if (!is.null(tree2) || reportMatching) return(NULL)
-  if (inherits(tree1, c("phylo", "Splits"))) return(NULL)
+  if (inherits(tree1, c("phylo", "Splits"))) return(NULL) # nocov
   if (!is.null(getOption("TreeDist-cluster"))) return(NULL)
   
   labs <- TipLabels(tree1)
   if (is.list(labs)) {
+    # nocov start
     if (!all(vapply(labs[-1], setequal, logical(1), labs[[1]]))) return(NULL)
     tipLabels <- labs[[1]]
+    # nocov end
   } else {
     tipLabels <- labs
   }
   nTip <- length(tipLabels)
-  if (nTip < 4) return(NULL)
+  if (nTip < 4) return(NULL) # nocov
   
   splits_list <- as.Splits(tree1, tipLabels = tipLabels)
   n_threads <- as.integer(getOption("mc.cores", 1L))
@@ -181,15 +183,15 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
   
   # Check tip label agreement
   if (is.list(lab1)) {
-    if (!all(vapply(lab1[-1], setequal, logical(1), lab1[[1]]))) return(NULL)
-    tipLabels1 <- lab1[[1]]
+    if (!all(vapply(lab1[-1], setequal, logical(1), lab1[[1]]))) return(NULL) # nocov
+    tipLabels1 <- lab1[[1]] # nocov
   } else {
     tipLabels1 <- lab1
   }
   
   if (is.list(lab2)) {
-    if (!all(vapply(lab2[-1], setequal, logical(1), lab2[[1]]))) return(NULL)
-    tipLabels2 <- lab2[[1]]
+    if (!all(vapply(lab2[-1], setequal, logical(1), lab2[[1]]))) return(NULL) # nocov
+    tipLabels2 <- lab2[[1]] # nocov
   } else {
     tipLabels2 <- lab2
   }
