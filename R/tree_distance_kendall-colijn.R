@@ -105,22 +105,22 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
       
       treeVec <- vapply(tree1, Vector, FunValue(length(tree1[[1]][["tip.label"]])))
       nTree <- length(tree1)
-      ret <- matrix(0, nTree, nTree)
-      is <- combn(seq_len(nTree), 2)
       
-      ret <- structure(class = "dist", Size = nTree,
-                       Diag = FALSE, Upper = FALSE,
-                       apply(is, 2, function(i)
-                         .EuclideanDistance(treeVec[, i[[1]]] - treeVec[, i[[2]]])))
-      # Return:
-      ret
+      # C++ pairwise Euclidean distance (returns dist-order vector)
+      structure(class = "dist", Size = nTree,
+                Diag = FALSE, Upper = FALSE,
+                pair_diff_euclidean(treeVec))
     }
       else {
       vector1 <- vapply(tree1, Vector, FunValue(length(tree1[[1]][["tip.label"]])))
       vector2 <- vapply(tree2, Vector, FunValue(length(tree2[[1]][["tip.label"]])))
-      apply(vector2, 2, function(i) 
-        apply(vector1, 2, function(j) 
-          .EuclideanDistance(i - j)))
+      ret <- vec_diff_euclidean(vector1, vector2)
+      n1 <- names(tree1)
+      n2 <- names(tree2)
+      if (!is.null(n1) || !is.null(n2)) {
+        dimnames(ret) <- list(n1, n2)
+      }
+      ret
     }
   }
 }
@@ -130,26 +130,14 @@ KendallColijn <- function(tree1, tree2 = NULL, Vector = KCVector) {
 #' @describeIn KendallColijn Creates a vector that characterises a rooted tree,
 #' as described in \insertCite{Kendall2016;textual}{TreeDist}.
 #' @param tree A tree of class \code{\link[ape:read.tree]{phylo}}.
-#' @importFrom TreeTools AllAncestors Preorder
-#' @importFrom utils combn
+#' @importFrom TreeTools Preorder
 #' @export
 KCVector <- function(tree) {
   tree <- Preorder(tree)
   edge <- tree[["edge"]]
-  parent <- edge[, 1L]
-  child <- edge[, 2L]
-  root <- parent[[1]]
-  nTip <- root - 1L
+  nTip <- edge[1L, 1L] - 1L
   tipOrder <- order(tree[["tip.label"]])
-  is <- combn(tipOrder, 2)
-  
-  ancestors <- AllAncestors(parent, child)
-  
-  mrca <- apply(is, 2, function(i) 
-    max(intersect(ancestors[[i[[1]]]], ancestors[[i[[2]]]])))
-  
-  rootDist <- lengths(ancestors)
-  structure(rootDist[mrca], Size = nTip, class = "dist")
+  structure(cpp_kc_vector(edge, tipOrder), Size = nTip, class = "dist")
 }
 
 #' @describeIn KendallColijn Creates a vector reporting the number of edges

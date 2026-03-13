@@ -164,6 +164,10 @@ path_vector <- function(edge) {
     .Call(`_TreeDist_path_vector`, edge)
 }
 
+cpp_kc_vector <- function(edge, tip_order) {
+    .Call(`_TreeDist_cpp_kc_vector`, edge, tip_order)
+}
+
 vec_diff_euclidean <- function(vec1, vec2) {
     .Call(`_TreeDist_vec_diff_euclidean`, vec1, vec2)
 }

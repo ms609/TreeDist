@@ -70,6 +70,66 @@ IntegerVector path_vector(IntegerMatrix edge) {
   return ret;
 }
 
+// Kendall-Colijn vector: for each pair of tips (in tip_order), return the
+// depth of their MRCA from the root (= number of shared prefix entries in
+// the ancestry arrays).
+// [[Rcpp::export]]
+IntegerVector cpp_kc_vector(IntegerMatrix edge, IntegerVector tip_order) {
+
+  IntegerVector postorder = TreeTools::postorder_order(edge);
+
+  const int n_edge = edge.nrow();
+  const int n_vert = n_edge + 1;
+  const int root_node = PO_PARENT(n_edge - 1);
+  const int n_tip = root_node - 1;
+
+  // Build ancestry matrix (same as path_vector)
+  auto ancestry = std::make_unique<int[]>(n_tip * n_vert);
+  auto n_ancs = std::make_unique<int[]>(n_vert + 1);
+
+  for (int i = n_edge; i--; ) {
+    const int parent = PO_PARENT(i);
+    const int child = PO_CHILD(i);
+    const int parent_ancs = n_ancs[parent];
+
+    const int* anc_parent = &ancestry[n_tip * (parent - 1)];
+    int* anc_child = &ancestry[n_tip * (child - 1)];
+
+    anc_child[parent_ancs] = child;
+    n_ancs[child] = parent_ancs + 1;
+
+    std::copy(anc_parent, anc_parent + parent_ancs, anc_child);
+  }
+
+  // Iterate pairs in tip_order (matching R's combn(tipOrder, 2) column order)
+  const int ret_size = n_tip * (n_tip - 1) / 2;
+  IntegerVector ret(ret_size);
+  int ptr = 0;
+  for (int i = 0; i < n_tip - 1; ++i) {
+    const int tip_i = tip_order[i];
+    const int ancs_i = n_ancs[tip_i];
+    const int* anc_i_base = &ancestry[n_tip * (tip_i - 1)];
+
+    for (int j = i + 1; j < n_tip; ++j) {
+      const int tip_j = tip_order[j];
+      const int ancs_j = n_ancs[tip_j];
+      const int min_ancs = ancs_i > ancs_j ? ancs_j : ancs_i;
+
+      const int* anc_j_base = &ancestry[n_tip * (tip_j - 1)];
+
+      int common = 0;
+      for (; common != min_ancs; ++common) {
+        if (anc_i_base[common] != anc_j_base[common]) {
+          break;
+        }
+      }
+      ret[ptr++] = common;
+    }
+  }
+
+  return ret;
+}
+
 // [[Rcpp::export]]
 NumericMatrix vec_diff_euclidean(const IntegerMatrix vec1,
                                  const IntegerMatrix vec2) {
