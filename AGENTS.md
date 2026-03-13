@@ -257,6 +257,20 @@ source("benchmark/bench-tree-distances.R")
 C++ compilation flags are controlled by `src/Makevars.win` (Windows) / `src/Makevars`.
 The package requires **C++17** (`CXX_STD = CXX17`).
 
+### Code coverage
+
+Check that existing tests cover all new code.  The GHA test suite uses codecov.
+To check locally:
+
+```r
+cov <- covr::package_coverage()
+covr::report(cov)                        # interactive HTML report
+covr::file_coverage(cov, "src/pairwise_distances.cpp")  # per-file summary
+```
+
+Aim for full line coverage of new C++ and R code.  If a new code path is not
+exercised by the existing test suite, add targeted tests in `tests/testthat/`.
+
 ---
 
 ## Completed Optimizations (this dev cycle)
@@ -841,12 +855,297 @@ for ~5.7ms (~8.5% of total).
 
 ---
 
+### R-level fast paths for *Distance functions (DONE, kept)
+
+Added `.FastDistPath()` helper and `.PairwiseSums()` to `tree_distance.R`. These
+pre-compute splits once via `as.Splits()` and use them for both the C++ batch
+distance computation AND per-tree entropy/info computation, avoiding duplicate
+`as.Splits()` calls.
+
+Applied to 4 distance functions:
+- `ClusteringInfoDistance` (`tree_distance_info.R`) — uses `ClusteringEntropy.Splits`
+- `DifferentPhylogeneticInfo` (`tree_distance_info.R`) — uses `SplitwiseInfo.Splits`
+- `MatchingSplitInfoDistance` (`tree_distance_msi.R`) — uses `SplitwiseInfo.Splits`
+- `InfoRobinsonFoulds` (`tree_distance_rf.R`) — uses `SplitwiseInfo.Splits`
+
+The fast path fires when: `tree2` is NULL (all-pairs), `!reportMatching`,
+same tip set, `nTip >= 4`, no R parallel cluster configured.
+
+**devtools::load_all() benchmarks (CID, 100 × 50-tip similar trees):**
+- Fast path: ~50 ms (was ~60 ms with slow path) → ~17% speedup
+- For 200-tip trees: ~144 ms (was ~153 ms) → ~6% speedup
+
+### Cross-pairs (ManyMany) batch path (DONE, kept)
+
+Added 6 C++ `cpp_*_cross_pairs()` functions to `pairwise_distances.cpp`:
+`mutual_clustering`, `rf_info`, `msd`, `msi`, `shared_phylo`, `jaccard`.
+Each accepts two lists of SplitLists and returns an nA × nB matrix.
+OpenMP parallelism, CostMatrix pooling, and `LapScratch` reuse all apply.
+
+R-level batch detection added to `.SplitDistanceManyMany()` in
+`tree_distance_utilities.R`, following the same `identical(Func, ...)` pattern
+as `.SplitDistanceAllPairs()`.
+
+### SPI / MSI exact-match detection bug (FOUND AND FIXED)
+
+**Bug:** The `shared_phylo_score` and `msi_score` batch functions in
+`pairwise_distances.cpp` used greedy exact-match detection (matching identical
+splits before solving the LAP), identical to the MCI and MSD paths. This is
+**incorrect for SPI and MSI** because `spi_overlap(A, B)` where B contains A
+can EXCEED `spi_overlap(A, A)` for the identical split. The full LAP can
+therefore find a better global assignment by NOT matching identical splits.
+
+This produced up to ~1% error (max |batch − serial| ≈ 14 on scores ≈ 1600).
+The bug existed since the exact-match detection was added to SPI/MSI batch
+paths (earlier in this dev cycle).
+
+MCI and MSD exact-match detection is CORRECT and retained: for MCI, identical
+splits provide maximum mutual information; for MSD, identical splits have
+distance 0 (provably optimal).
+
+**Fix:** Removed exact-match detection from `shared_phylo_score` and
+`msi_score`. These now always solve the full LAP. This is a correctness fix
+that costs some performance on similar trees (SPI/MSI now solve the full
+n_splits × n_splits LAP instead of a reduced one). MCI, MSD, and Jaccard
+batch paths are unaffected.
+
+**Verification:** max |batch − serial| = 0 for all metrics across 10 × 8
+cross-pairs and 5 × 5 all-pairs tests.
+
+---
+
+### C++ batch entropy/info functions (DONE, kept)
+
+Replaced per-tree `vapply(splits_list, InfoSplitsFn, double(1L))` in
+`.FastDistPath()` with two C++ batch functions in `pairwise_distances.cpp`:
+
+- **`cpp_clustering_entropy_batch(splits_list, n_tip)`**: computes per-tree
+  clustering entropy (binary entropy of split proportions, sum over splits).
+  Used by `ClusteringInfoDistance`.
+- **`cpp_splitwise_info_batch(splits_list, n_tip)`**: computes per-tree
+  splitwise information (`Log2Unrooted(n) - Log2Rooted(k) - Log2Rooted(n-k)`
+  summed over splits). Uses a precomputed `Log2Rooted` table. Used by
+  `PhylogeneticInfoDistance`, `MatchingSplitInfoDistance`, `InfoRobinsonFoulds`.
+
+**Micro-benchmark (100 trees × 50-tip, debug build):**
+
+| Function | R vapply | C++ batch | Speedup |
+|---|---|---|---|
+| ClusteringEntropy | 2.64 ms | 0.58 ms | 4.6× |
+| SplitwiseInfo | 17.84 ms | 0.40 ms | **45×** |
+
+SplitwiseInfo was especially slow in R because `SplitwiseInfo.Splits` calls
+`vapply(inSplit, Log2Rooted.int, 0)` internally — a nested R dispatch loop.
+
+**Numerical accuracy:** ClusteringEntropy: max |diff| ≈ 1.4e-14 (identical
+precision). SplitwiseInfo: max |diff| ≈ 3.7e-10 for 200-tip trees (cumulative
+log2 summation in the C++ table vs TreeTools' precomputed lookup).
+
+**Files changed:** `src/pairwise_distances.cpp` (new functions),
+`R/tree_distance.R` (`.FastDistPath` parameter change),
+`R/tree_distance_info.R`, `R/tree_distance_msi.R`, `R/tree_distance_rf.R`
+(callers updated).
+
+---
+
+### Sort+merge exact-match pre-scan (DONE, kept)
+
+The fused O(n²) exact-match detection + cost-matrix fill loop in CID, MSD, and
+Jaccard was the dominant per-pair cost for similar trees.  For 200-tip similar
+trees, ~194 of 197 splits match exactly, so 99% of the O(n²) loop iterations
+produced cost-matrix entries that were never used by the LAP.
+
+**Fix:** two-phase approach:
+
+1. **Phase 1 — O(n log n) sort+merge matching**: `find_exact_matches()` helper
+   canonicalises each split (flip if bit 0 is unset), sorts both index arrays by
+   canonical form, then merge-scans to find exact matches.
+2. **Phase 2 — O(k²) cost-matrix fill**: only unmatched splits (k ≪ n for similar
+   trees) enter the cost-matrix fill and LAP.
+
+Applied to `mutual_clustering_score`, `msd_score`, and `jaccard_score`.  Not
+applied to `shared_phylo_score` or `msi_score` (exact-match detection is
+incorrect for SPI/MSI — see earlier bug fix).
+
+**Files changed:** `src/pairwise_distances.cpp` (new `find_exact_matches()` helper
++ refactored score functions).
+
+**A/B benchmark (release build, same-process comparison):**
+
+| Scenario | ref (ms) | dev (ms) | Change |
+|---|---|---|---|
+| CID 100×50-tip | 70.1 | 16.0 | **−77%** |
+| CID 40×200-tip | 178.2 | 17.6 | **−90%** |
+| MSD 100×50-tip | 64.8 | 13.9 | **−79%** |
+| MSD 40×200-tip | 215.8 | 15.9 | **−93%** |
+| PID 100×50-tip | 122.9 | 95.1 | −23% |
+| IRF 100×50-tip | 37.4 | 16.9 | −55% |
+| CID cross 20×30 50-tip | 24.8 | 3.9 | **−84%** |
+| MSD cross 20×30 50-tip | 13.8 | 3.1 | **−77%** |
+| LAPJV 400 (canary) | 2.12 | 1.27 | neutral |
+| LAPJV 1999 (canary) | 95.2 | 95.5 | neutral |
+
+Random trees (no exact matches): no regression (full LAP path unchanged).
+Numerical accuracy: max |ref − dev| ≤ 5.7e-12.
+
+Key insight: for MCMC posteriors and bootstrap replicates (the common real-world
+case), most splits are shared between trees.  The sort+merge pre-scan reduces
+the effective LAP dimension from ~n to ~3, yielding order-of-magnitude speedups.
+
+---
+
+## Combined A/B Benchmark: main vs dev (all optimizations)
+
+**Baseline (ref):** main branch (OpenMP PR #176 only).
+**Dev:** current development branch (all optimizations including sort+merge +
+MatchScratch pooling).
+Release build, same-process comparison via `compare-ab.R`.
+Trees: `as.phylo(0:N, tipLabels = ...)` — similar trees (high split overlap).
+
+| Metric | Scenario | ref (ms) | dev (ms) | Change |
+|---|---|---|---|---|
+| CID | 100×50-tip | 83.5 | 16.0 | **−81%** |
+| CID | 40×200-tip | 210.8 | 18.2 | **−91%** |
+| MSD | 100×50-tip | 82.4 | 12.3 | **−85%** |
+| MSD | 40×200-tip | 253.7 | 23.5 | **−91%** |
+| PID | 100×50-tip | 143 | 112 | −22% |
+| PID | 40×200-tip | 408 | 358 | −12% |
+| MSID | 100×50-tip | 157 | 114 | −27% |
+| MSID | 40×200-tip | 474 | 462 | −3% |
+| IRF | 100×50-tip | 52.1 | 14.3 | **−73%** |
+| IRF | 40×200-tip | 84.4 | 18.1 | **−79%** |
+| CID cross 20×30 | 50-tip | 20.6 | 3.9 | **−81%** |
+| MSD cross 20×30 | 50-tip | 17.5 | 3.8 | **−78%** |
+| LAPJV 400 | (canary) | 1.47 | 1.47 | neutral |
+| LAPJV 1999 | (canary) | 120 | 112 | neutral |
+
+Correctness: all metrics max |ref − dev| ≤ 5.5e-12 (floating-point level).
+LAPJV canary: neutral (no LAP regression).
+
+CID, MSD, IRF benefit most (73–91%) from sort+merge exact-match detection.
+PID and MSID show 3–27% from R-level fast paths, C++ batch entropy, and
+CostMatrix pooling (exact-match detection is incorrect for SPI/MSI — see
+earlier bug fix).
+
+### ManyMany fast paths for *Distance functions (DONE, kept)
+
+Created `.FastManyManyPath()` helper in `tree_distance.R` that reuses
+pre-computed Splits for both pairwise distance computation AND per-tree
+entropy/info calculations. This complements `.FastDistPath()` (all-pairs)
+for the cross-pairs case.
+
+**Pattern**: When `tree1` and `tree2` are both collections with uniform
+(identical) tip sets and `reportMatching=FALSE`:
+- Single `as.Splits()` call per collection with unified tip labels
+- Pass both Splits to C++ batch cross-pairs function (`cpp_*_cross_pairs`)
+- Simultaneously compute per-tree entropies via C++ batch entropy function
+- Compute normalization info via `outer(info1, info2, "+")`
+- Return to calling distance function (e.g., `ClusteringInfoDistance`)
+
+**Applied to:**
+- `ClusteringInfoDistance` (tree_distance_info.R)
+- `DifferentPhylogeneticInfo` (tree_distance_info.R)
+- `MatchingSplitInfoDistance` (tree_distance_msi.R)
+- `InfoRobinsonFoulds` (tree_distance_rf.R)
+
+**Correctness verified**: max |fast − slow| ≤ 2.8e-14 (floating-point level).
+
+---
+
 ## Remaining Optimization Opportunities
 
-- **Duplicate `as.Splits()` elimination** in `ClusteringInfoDistance` normalisation
-  (~5% potential speedup, simple R-level change — see above)
-- **C++ batch entropy function** to replace per-tree R dispatch (~3% potential)
-- **Fresh VTune profile post-pooling** to confirm hotspot distribution changes
-- LAP inner loop: AVX2 SIMD intrinsics investigation (see "Known Optimization
-  Opportunities" above)
-- SPR distance profiling under VTune
+- Sort+merge pre-scan for `rf_info_score`: **DONE** — replaced O(n²) loop with
+  `find_exact_matches()` + O(k) info summation over matches.  No LAP involved,
+  so the entire per-pair cost drops to O(n log n) for the sort+merge step.
+  All tests pass, numerically exact (max |fast − slow| = 0).
+- `MatchScratch` allocation pooling: **DONE** — `find_exact_matches()` internal
+  buffers (canonical forms, sort indices, match arrays) are now pooled via a
+  `MatchScratch` struct, one per OpenMP thread.  Eliminates per-pair heap
+  allocation for sort+merge matching in all batch functions (CID, MSD, IRF,
+  Jaccard all-pairs and cross-pairs).  Release-build benchmark needed to
+  measure impact.
+- KendallColijn distance: pure-R MRCA computation is 60× slower than CID;
+  `apply(combn(...), intersect(...))` is the bottleneck.  Low priority unless
+  users report it.
+- LAP inner loop: AVX2 SIMD intrinsics assessed and deemed **unpromising** —
+  64-bit cost values limit AVX2 to 4-wide (same as existing manual 4× unroll);
+  indirect `col_list` indexing prevents efficient vectorisation; platform
+  independence required for CRAN.  Closed.
+- SPR distance: algorithm-limited (see profiling section below).  Closed.
+
+---
+
+## SPR Distance Profiling (VTune, 2026-03-13)
+
+### Workload
+**vtune-spr-driver-v2.R**: 100 iterations each of:
+- Similar 150 × 50-tip (11,175 pairs/iter)
+- Similar 60 × 200-tip (1,770 pairs/iter)
+- Random 150 × 50-tip (11,175 pairs/iter)
+
+**Total elapsed**: 342 s CPU / 339 s effective  
+**TreeDist.dll contribution**: ~11 s (3.2% of total, rest is R overhead)
+
+### Top TreeDist hotspots (by CPU time)
+
+| Function | CPU Time | % of TreeDist.dll | Notes |
+|---|---|---|---|
+| `func@0x340ae4910` (unnamed) | 3.87s | 36% | Likely inlined merge of multiple functions |
+| `reduce_trees` | 1.35s | 12.5% | Tree reduction logic (core SPR algorithm) |
+| `keep_tip` (TreeTools) | 0.36s | 3.3% | Tip filtering in tree manipulation |
+| `keep_and_reroot` | 0.28s | 2.6% | Root manipulation during reduction |
+| `SplitList::SplitList` | 0.28s | 2.6% | Rcpp conversion overhead |
+| `calc_mismatch_size` | 0.12s | 1.1% | Split mismatch computation (VTune target) |
+
+### Key findings
+
+1. **Tree reduction is the dominant bottleneck** (≈1.35s, 12.5%), not the split comparison
+   (`calc_mismatch_size` is only 1.1%). This is architecturally fundamental to the
+   deOliveira heuristic: the algorithm iteratively reduces trees until convergence.
+
+2. **The main unnamed function (3.87s, 36%)** likely represents inlined code from
+   multiple smaller functions. The DLL was built without `-mpopcnt` in this profile,
+   but that accounts for < 1%.
+
+3. **The SPR algorithm** (`SPRDist` R → `keep_and_reduce` C++ → `reduce_trees` →
+   `keep_and_reroot` → `TreeTools::keep_tip`) involves:
+   - Finding the smallest mismatched split via `mismatch_size`
+   - Computing disagreement split (XOR operation, R-level)
+   - Selecting tips to keep based on disagreement
+   - Recursively reducing both trees via `keep_and_reduce` → `ReduceTrees` (R) →
+     `keep_and_reroot` → `reduce_trees` (C++)
+   - Each reduction is a O(n) tree restructuring pass
+
+4. **The algorithm is inherently iterative**: SPRDist returns the number of reduction
+   iterations performed plus 1. For the benchmark trees (similar 50-tip with high
+   split overlap), the typical iteration count is **low** (~2–3 moves), suggesting
+   the reduction loop terminates quickly — but the per-iteration cost is high.
+
+### No obvious low-hanging fruit
+
+- **Early termination heuristic**: Possible if we could detect "final state" earlier,
+  but this requires algorithmic insight into tree topology constraints.
+- **Parallel reduction**: The outer loop over iterations is inherently sequential
+  (each iteration depends on the previous), so parallelism is not applicable.
+- **SIMD in `reduce_trees`**: The algorithm is not data-parallel (tree pointers,
+  linked-list manipulation, highly branching control flow). SIMD unlikely to help.
+- **Vector<unique_ptr> vs pool**: The array allocations in `reduce_trees` are
+  per-pair, with sizes fixed at call time (n_vert). Could pool them, but the
+  complexity is high for likely < 5% gain (similar to prior CostMatrix pooling).
+
+### Conclusion
+
+The SPR distance computation is fundamentally limited by the iterative tree reduction
+algorithm. The per-pair cost scales with tree size (O(n)) and iteration count, which
+varies by tree similarity. Without changing the algorithm (e.g., using an exact solver
+like TBRDist), significant speedups are unlikely.
+
+**Future optimization paths** (beyond scope of current dev cycle):
+1. **Investigate the Rogue method** (experimental, under development) — may be faster
+2. **Exact solver integration** via TBRDist R package (if performance is critical for user)
+3. **Batch SPR via MCMC** — amortize tree reduction across proposals
+4. **Algorithm literature** — post-2008 SPR heuristics may exist with better constants
+
+**Recommendation**: Close SPR optimization; move to other metrics or accept it as
+algorithmically constrained.
+

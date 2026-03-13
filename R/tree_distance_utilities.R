@@ -249,6 +249,60 @@ CalculateTreeDistance <- function(Func, tree1, tree2 = NULL,
       setNames(double(length(splits2)), names(splits2))
     )
   } else {
+    # Fast path: use OpenMP batch functions when available
+    .n_threads <- as.integer(getOption("mc.cores", 1L))
+    .batch_result <- if (identical(Func, MutualClusteringInfoSplits)) {
+      s1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
+      s2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = FALSE)
+      cpp_mutual_clustering_cross_pairs(s1, s2, as.integer(nTip), .n_threads)
+
+    } else if (identical(Func, InfoRobinsonFouldsSplits)) {
+      s1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
+      s2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = FALSE)
+      cpp_rf_info_cross_pairs(s1, s2, as.integer(nTip), .n_threads)
+
+    } else if (identical(Func, MatchingSplitDistanceSplits)) {
+      s1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
+      s2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = FALSE)
+      cpp_msd_cross_pairs(s1, s2, as.integer(nTip), .n_threads)
+
+    } else if (identical(Func, MatchingSplitInfoSplits)) {
+      s1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
+      s2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = FALSE)
+      cpp_msi_cross_pairs(s1, s2, as.integer(nTip), .n_threads)
+
+    } else if (identical(Func, SharedPhylogeneticInfoSplits)) {
+      s1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
+      s2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = FALSE)
+      cpp_shared_phylo_cross_pairs(s1, s2, as.integer(nTip), .n_threads)
+
+    } else if (identical(Func, NyeSplitSimilarity)) {
+      s1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
+      s2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = FALSE)
+      cpp_jaccard_cross_pairs(s1, s2, as.integer(nTip),
+                              k = 1.0, allow_conflict = TRUE, .n_threads)
+
+    } else if (identical(Func, JaccardSplitSimilarity)) {
+      dots <- list(...)
+      s1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
+      s2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = FALSE)
+      cpp_jaccard_cross_pairs(
+        s1, s2, as.integer(nTip),
+        k = as.double(if ("k" %in% names(dots)) dots[["k"]] else 1L),
+        allow_conflict = as.logical(
+          if ("allowConflict" %in% names(dots)) dots[["allowConflict"]] else TRUE),
+        .n_threads
+      )
+
+    } else {
+      NULL
+    }
+
+    if (!is.null(.batch_result)) {
+      dimnames(.batch_result) <- list(names(splits1), names(splits2))
+      return(.batch_result)
+    }
+
     splits1 <- as.Splits(splits1, tipLabels = tipLabels, asSplits = FALSE)
     splits2 <- as.Splits(splits2, tipLabels = tipLabels, asSplits = FALSE)
     matrix(

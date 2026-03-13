@@ -156,6 +156,7 @@ test_that("Large trees: batch and single-pair paths agree (lg2 table bounds)", {
 
 test_that("Batch path handles asymmetric split counts with exact matches", {
   # Trees with different numbers of splits (polytomies) that share some
+
   # splits exactly.  After exact-match detection removes the shared splits,
   # the reduced LAP matrix is asymmetric (a_unmatched_n != b_unmatched_n),
   # exercising the padAfterRow guard in msd_score and jaccard_score.
@@ -186,7 +187,7 @@ test_that("Batch path handles asymmetric split counts with exact matches", {
 
 test_that("InfoRobinsonFoulds(similarity = TRUE) uses batch path", {
   # similarity = TRUE bypasses .FastDistPath() and falls through to
-  # CalculateTreeDistance -> .SplitDistanceAllPairs / .SplitDistanceManyMany,
+  # CalculateTreeDistance → .SplitDistanceAllPairs / .SplitDistanceManyMany,
   # exercising the IRF dispatch branches in tree_distance_utilities.R.
   trees <- ape::as.phylo(0:9, tipLabels = paste0("t", seq_len(20)))
 
@@ -226,11 +227,11 @@ test_that(".FastManyManyPath: guards return NULL for edge cases", {
   tA <- ape::as.phylo(0:2, tipLabels = tips)
   tB <- ape::as.phylo(3:5, tipLabels = tips)
 
-  # Mismatched tip sets -> falls back to slow path (returns non-NULL result)
+  # Mismatched tip sets → falls back to slow path (returns non-NULL result)
   tB_diff <- ape::as.phylo(3:5, tipLabels = paste0("s", seq_len(8)))
   expect_true(!is.null(ClusteringInfoDistance(tA, tB_diff)))
 
-  # Small trees (nTip < 4) -> falls back to slow path
+  # Small trees (nTip < 4) → falls back to slow path
   tA3 <- ape::as.phylo(0:2, tipLabels = paste0("t", 1:3))
   tB3 <- ape::as.phylo(0:2, tipLabels = paste0("t", 1:3))
   expect_true(!is.null(ClusteringInfoDistance(tA3, tB3)))
