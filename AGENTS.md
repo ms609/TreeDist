@@ -37,8 +37,9 @@ when ready.
 | File | Size | Purpose |
 |------|------|---------|
 | `tree_distances.cpp` | 22 KB | Main distance calculations; calls into CostMatrix / LAP |
-| `tree_distances.h` | 15 KB | **CostMatrix** class; cache-aligned storage; `findRowSubmin` hot path |
-| `lap.cpp` | 10 KB | Jonker-Volgenant LAPJV linear assignment; extensively hand-optimized |
+| `tree_distances.h` | 6 KB | Tree-distance scoring functions (`add_ic_element`, `one_overlap`, `spi_overlap`); includes `lap.h` |
+| `lap.h` | 15 KB | **CostMatrix** class; `LapScratch`; `lap()` declarations; cache-aligned storage; `findRowSubmin` hot path |
+| `lap.cpp` | 10 KB | Jonker-Volgenant LAPJV linear assignment; extensively hand-optimized; includes only `lap.h` |
 | `spr.cpp` | 7 KB | SPR distance approximation |
 | `spr_lookup.cpp` | — | SPR lookup-table implementation |
 | `nni_distance.cpp` | 16 KB | NNI distance approximations; HybridBuffer allocation |
@@ -745,6 +746,62 @@ memset — caused by per-pair allocation and zero-initialisation of CostMatrix
 Numerically exact (max |ref − dev| = 0).  Gains are largest on similar trees
 (where exact-match detection makes per-pair compute cheap, so allocation overhead
 is a larger fraction) but also meaningful on random trees (5–10% for 50-tip).
+
+### Header split: `lap.h` / `tree_distances.h` (DONE, kept)
+
+CI benchmarks for PRs #178 and #180 showed a consistent ~10% regression on the
+standalone `LAPJV()` benchmark across all matrix sizes (40, 400, 2000), despite
+`lap.cpp` being unchanged between branches.
+
+**Root cause:** `lap.cpp` included `tree_distances.h`, which contains
+`namespace TreeDist { ... }` with inline scoring functions (`one_overlap`,
+`spi_overlap`, `add_ic_element`).  Changes to these functions — even though LAP
+never calls them — shifted the instruction layout of the LAP hot loops
+(`findRowSubmin`, Dijkstra inner loop) across alignment boundaries, degrading
+branch prediction and instruction fetch throughput.
+
+Key evidence:
+- PR #178 (posit-optim-2 → main): the **only** `tree_distances.h` change was a
+  5-line refactor of `one_overlap()`, yet LAPJV regressed 8–12%.  CostMatrix
+  and LapScratch were byte-for-byte identical to main.
+- The regression was consistent across 3+ independent CI runs and all matrix sizes.
+- Tree distance metrics improved 20–45% in the same PR, confirming it wasn't an
+  environmental issue.
+
+**Fix:** split `tree_distances.h` into two headers:
+
+| Header | Content | Included by |
+|--------|---------|-------------|
+| `lap.h` | Types, constants, CostMatrix, LapScratch, `lap()` declarations | `lap.cpp`, `tree_distances.h` |
+| `tree_distances.h` | `#include "lap.h"` + scoring functions (`namespace TreeDist`) + tree-specific globals (`lg2[]`, `ALL_ONES`, etc.) | all other `.cpp` files |
+
+`lap.cpp` now includes only `lap.h`.  All other translation units continue to
+include `tree_distances.h` (which pulls in `lap.h` via `#include`), so they see
+identical content.
+
+**Files changed:** `src/lap.h` (new), `src/tree_distances.h` (slimmed),
+`src/lap.cpp` (`#include "lap.h"` instead of `"tree_distances.h"`).
+
+**A/B benchmark (release build, same-process comparison, local Windows machine):**
+
+| Scenario | ref | dev | Change |
+|---|---|---|---|
+| CID 100 × 50-tip | 50.3 ms | 50.5 ms | neutral |
+| CID 40 × 200-tip | 143 ms | 143 ms | neutral |
+| MSD 100 × 50-tip | 19.5 ms | 19.5 ms | neutral |
+| LAPJV 400×400 | 1.24 ms | 1.24 ms | neutral |
+| LAPJV 1999×1999 | 90.6 ms | 93.1 ms | ~3% (noise) |
+
+On the local machine (Windows, GCC 14, `-O2`) the split is performance-neutral.
+The CI regression (Ubuntu, GCC, `-O3`) is alignment-sensitive and
+platform-specific; the split eliminates the mechanism by which future scoring
+function changes can affect LAP code generation.
+
+**Maintenance burden:** minimal.  The split is along a natural boundary — `lap.h`
+contains stable LAP infrastructure that changes rarely; `tree_distances.h`
+contains actively-developed scoring functions.  No code duplication.
+
+---
 
 ### R-level overhead investigation for ClusteringInfoDistance (investigated, not yet optimised)
 
