@@ -988,7 +988,83 @@ for the cross-pairs case.
 
 ## Remaining Optimization Opportunities
 
-- **Fresh VTune profile post-pooling** to confirm hotspot distribution changes
 - LAP inner loop: AVX2 SIMD intrinsics investigation (see "Known Optimization
   Opportunities" above)
-- SPR distance profiling under VTune
+- SPR distance algorithmic improvements (see section below)
+
+---
+
+## SPR Distance Profiling (VTune, 2026-03-13)
+
+### Workload
+**vtune-spr-driver-v2.R**: 100 iterations each of:
+- Similar 150 × 50-tip (11,175 pairs/iter)
+- Similar 60 × 200-tip (1,770 pairs/iter)
+- Random 150 × 50-tip (11,175 pairs/iter)
+
+**Total elapsed**: 342 s CPU / 339 s effective  
+**TreeDist.dll contribution**: ~11 s (3.2% of total, rest is R overhead)
+
+### Top TreeDist hotspots (by CPU time)
+
+| Function | CPU Time | % of TreeDist.dll | Notes |
+|---|---|---|---|
+| `func@0x340ae4910` (unnamed) | 3.87s | 36% | Likely inlined merge of multiple functions |
+| `reduce_trees` | 1.35s | 12.5% | Tree reduction logic (core SPR algorithm) |
+| `keep_tip` (TreeTools) | 0.36s | 3.3% | Tip filtering in tree manipulation |
+| `keep_and_reroot` | 0.28s | 2.6% | Root manipulation during reduction |
+| `SplitList::SplitList` | 0.28s | 2.6% | Rcpp conversion overhead |
+| `calc_mismatch_size` | 0.12s | 1.1% | Split mismatch computation (VTune target) |
+
+### Key findings
+
+1. **Tree reduction is the dominant bottleneck** (≈1.35s, 12.5%), not the split comparison
+   (`calc_mismatch_size` is only 1.1%). This is architecturally fundamental to the
+   deOliveira heuristic: the algorithm iteratively reduces trees until convergence.
+
+2. **The main unnamed function (3.87s, 36%)** likely represents inlined code from
+   multiple smaller functions. The DLL was built without `-mpopcnt` in this profile,
+   but that accounts for < 1%.
+
+3. **The SPR algorithm** (`SPRDist` R → `keep_and_reduce` C++ → `reduce_trees` →
+   `keep_and_reroot` → `TreeTools::keep_tip`) involves:
+   - Finding the smallest mismatched split via `mismatch_size`
+   - Computing disagreement split (XOR operation, R-level)
+   - Selecting tips to keep based on disagreement
+   - Recursively reducing both trees via `keep_and_reduce` → `ReduceTrees` (R) →
+     `keep_and_reroot` → `reduce_trees` (C++)
+   - Each reduction is a O(n) tree restructuring pass
+
+4. **The algorithm is inherently iterative**: SPRDist returns the number of reduction
+   iterations performed plus 1. For the benchmark trees (similar 50-tip with high
+   split overlap), the typical iteration count is **low** (~2–3 moves), suggesting
+   the reduction loop terminates quickly — but the per-iteration cost is high.
+
+### No obvious low-hanging fruit
+
+- **Early termination heuristic**: Possible if we could detect "final state" earlier,
+  but this requires algorithmic insight into tree topology constraints.
+- **Parallel reduction**: The outer loop over iterations is inherently sequential
+  (each iteration depends on the previous), so parallelism is not applicable.
+- **SIMD in `reduce_trees`**: The algorithm is not data-parallel (tree pointers,
+  linked-list manipulation, highly branching control flow). SIMD unlikely to help.
+- **Vector<unique_ptr> vs pool**: The array allocations in `reduce_trees` are
+  per-pair, with sizes fixed at call time (n_vert). Could pool them, but the
+  complexity is high for likely < 5% gain (similar to prior CostMatrix pooling).
+
+### Conclusion
+
+The SPR distance computation is fundamentally limited by the iterative tree reduction
+algorithm. The per-pair cost scales with tree size (O(n)) and iteration count, which
+varies by tree similarity. Without changing the algorithm (e.g., using an exact solver
+like TBRDist), significant speedups are unlikely.
+
+**Future optimization paths** (beyond scope of current dev cycle):
+1. **Investigate the Rogue method** (experimental, under development) — may be faster
+2. **Exact solver integration** via TBRDist R package (if performance is critical for user)
+3. **Batch SPR via MCMC** — amortize tree reduction across proposals
+4. **Algorithm literature** — post-2008 SPR heuristics may exist with better constants
+
+**Recommendation**: Close SPR optimization; move to other metrics or accept it as
+algorithmically constrained.
+
