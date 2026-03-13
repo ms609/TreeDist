@@ -20,6 +20,24 @@ MatchingSplitInfo <- function(tree1, tree2 = NULL, normalize = FALSE,
 MatchingSplitInfoDistance <- function(tree1, tree2 = NULL, 
                                        normalize = FALSE,
                                        reportMatching = FALSE) {
+  
+  # Fast path: all-pairs, same tips, no matching — avoids duplicate as.Splits()
+  fast <- .FastDistPath(tree1, tree2, reportMatching,
+                        cpp_msi_all_pairs,
+                        SplitwiseInfo.Splits)
+  if (!is.null(fast)) {
+    msi <- fast[["info"]]
+    treesIndependentInfo <- .PairwiseSums(fast[["entropies"]])
+    
+    ret <- treesIndependentInfo - msi - msi
+    ret <- NormalizeInfo(ret, tree1, tree2, how = normalize,
+                         infoInBoth = treesIndependentInfo,
+                         InfoInTree = SplitwiseInfo, Combine = "+")
+    ret[ret < .Machine[["double.eps"]] ^ 0.5] <- 0
+    attributes(ret) <- attributes(msi)
+    return(ret)
+  }
+  
   msi <- MatchingSplitInfo(tree1, tree2, normalize = FALSE, diag = FALSE,
                            reportMatching = reportMatching)
   

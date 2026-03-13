@@ -451,15 +451,17 @@ NumericVector cpp_msd_all_pairs(
 // MatchingSplitInfo — LAP-based
 // =============================================================================
 
+// NOTE: msi_score does NOT use exact-match detection.  For the MSI metric,
+// matching a split to its identical copy is NOT necessarily globally optimal —
+// the LAP can find a better assignment where the identical split pairs with
+// a different (compatible, containing) split that has higher mmsi_score.
+// This differs from MCI and MSD where exact matches are provably optimal.
 static double msi_score(
     const SplitList& a, const SplitList& b, const int32 n_tips,
     LapScratch& scratch
 ) {
   const int16 most_splits = std::max(a.n_splits, b.n_splits);
   if (most_splits == 0) return 0.0;
-  const bool  a_has_more = (a.n_splits > b.n_splits);
-  const int16 a_extra    = a_has_more ? most_splits - b.n_splits : 0;
-  const int16 b_extra    = a_has_more ? 0 : most_splits - a.n_splits;
 
   constexpr cost max_score = BIG;
   const double max_possible = lg2_unrooted[n_tips]
@@ -470,38 +472,14 @@ static double msi_score(
 
   scratch.score_pool.resize(most_splits);
   cost_matrix& score = scratch.score_pool;
-  double exact_score = 0.0;
-  int16  exact_n     = 0;
-
-  std::vector<int> a_match(a.n_splits, 0);
-  auto b_match = std::make_unique<int16[]>(b.n_splits);
-  std::fill(b_match.get(), b_match.get() + b.n_splits, int16(0));
 
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
-    if (a_match[ai]) continue;
-    const int16 na = a.in_split[ai];
-    const int16 nA = n_tips - na;
-
     for (int16 bi = 0; bi < b.n_splits; ++bi) {
-      int16 n_different = 0;
-      for (int16 bin = 0; bin < a.n_bins; ++bin) {
-        n_different += count_bits(a.state[ai][bin] ^ b.state[bi][bin]);
-      }
-      // Exact match: same split or complement
-      if (n_different == 0 || n_different == n_tips) {
-        exact_score += lg2_unrooted[n_tips] - lg2_rooted[na] - lg2_rooted[nA];
-        ++exact_n;
-        a_match[ai] = bi + 1;
-        b_match[bi] = ai + 1;
-        break;
-      }
-
-      // Full overlap stats — pass raw (unflipped) values to mmsi_score,
-      // which handles both orientations internally via max()
-      int16 n_a_only = 0, n_a_and_b = 0;
+      int16 n_a_only = 0, n_a_and_b = 0, n_different = 0;
       splitbit different;
       for (int16 bin = 0; bin < a.n_bins; ++bin) {
         different   = a.state[ai][bin] ^ b.state[bi][bin];
+        n_different += count_bits(different);
         n_a_only   += count_bits(a.state[ai][bin] &  different);
         n_a_and_b  += count_bits(a.state[ai][bin] & ~different);
       }
@@ -509,45 +487,17 @@ static double msi_score(
       score(ai, bi) = cost(max_score - score_over_possible *
         TreeDist::mmsi_score(n_same, n_a_and_b, n_different, n_a_only));
     }
-    if (b.n_splits < most_splits) {
-      score.padRowAfterCol(ai, b.n_splits, max_score);
-    }
+    score.padRowAfterCol(ai, b.n_splits, max_score);
   }
+  score.padAfterRow(a.n_splits, max_score);
 
-  if (exact_n == b.n_splits || exact_n == a.n_splits) {
-    return exact_score;
-  }
-
-  const int16 lap_n = most_splits - exact_n;
   scratch.ensure(most_splits);
   auto& rowsol = scratch.rowsol;
   auto& colsol = scratch.colsol;
 
-  if (exact_n) {
-    scratch.small_pool.resize(lap_n);
-    cost_matrix& small = scratch.small_pool;
-    int16 a_pos = 0;
-    for (int16 ai = 0; ai < a.n_splits; ++ai) {
-      if (a_match[ai]) continue;
-      int16 b_pos = 0;
-      for (int16 bi = 0; bi < b.n_splits; ++bi) {
-        if (b_match[bi]) continue;
-        small(a_pos, b_pos) = score(ai, bi);
-        ++b_pos;
-      }
-      small.padRowAfterCol(a_pos, lap_n - a_extra, max_score);
-      ++a_pos;
-    }
-    small.padAfterRow(lap_n - b_extra, max_score);
-    return exact_score + static_cast<double>(
-      (max_score * lap_n) - lap(lap_n, small, rowsol, colsol, false, scratch)
-    ) * possible_over_score;
-  } else {
-    score.padAfterRow(a.n_splits, max_score);
-    return static_cast<double>(
-      (max_score * lap_n) - lap(lap_n, score, rowsol, colsol, false, scratch)
-    ) * possible_over_score;
-  }
+  return static_cast<double>(
+    (max_score * most_splits) - lap(most_splits, score, rowsol, colsol, false, scratch)
+  ) * possible_over_score;
 }
 
 //' @keywords internal
@@ -600,15 +550,16 @@ NumericVector cpp_msi_all_pairs(
 // SharedPhylogeneticInfo — LAP-based
 // =============================================================================
 
+// NOTE: shared_phylo_score does NOT use exact-match detection.  For the SPI
+// metric, spi_overlap(A, B) where B contains A can EXCEED spi_overlap(A, A)
+// for identical splits, so the LAP can find a better global assignment by NOT
+// matching identical splits.  The full LAP is always solved.
 static double shared_phylo_score(
     const SplitList& a, const SplitList& b, const int32 n_tips,
     LapScratch& scratch
 ) {
   const int16 most_splits = std::max(a.n_splits, b.n_splits);
   if (most_splits == 0) return 0.0;
-  const bool  a_has_more = (a.n_splits > b.n_splits);
-  const int16 a_extra    = a_has_more ? most_splits - b.n_splits : 0;
-  const int16 b_extra    = a_has_more ? 0 : most_splits - a.n_splits;
 
   const int16 overlap_a = int16(n_tips + 1) / 2;
   constexpr cost max_score = BIG;
@@ -619,77 +570,26 @@ static double shared_phylo_score(
 
   scratch.score_pool.resize(most_splits);
   cost_matrix& score = scratch.score_pool;
-  double exact_score = 0.0;
-  int16  exact_n     = 0;
-
-  std::vector<int> a_match(a.n_splits, 0);
-  auto b_match = std::make_unique<int16[]>(b.n_splits);
-  std::fill(b_match.get(), b_match.get() + b.n_splits, int16(0));
 
   for (int16 ai = 0; ai < a.n_splits; ++ai) {
-    if (a_match[ai]) continue;
-    const int16 na = a.in_split[ai];
-    const int16 nA = n_tips - na;
-
     for (int16 bi = 0; bi < b.n_splits; ++bi) {
-      int16 n_different = 0;
-      for (int16 bin = 0; bin < a.n_bins; ++bin) {
-        n_different += count_bits(a.state[ai][bin] ^ b.state[bi][bin]);
-      }
-      // Exact match: same split or complement
-      if (n_different == 0 || n_different == n_tips) {
-        exact_score += lg2_unrooted[n_tips] - lg2_rooted[na] - lg2_rooted[nA];
-        ++exact_n;
-        a_match[ai] = bi + 1;
-        b_match[bi] = ai + 1;
-        break;
-      }
-
       const double spi = TreeDist::spi_overlap(
         a.state[ai], b.state[bi], n_tips,
         a.in_split[ai], b.in_split[bi], a.n_bins);
       score(ai, bi) = (spi == 0.0) ? max_score
                                    : cost((spi - best_overlap) * score_over_possible);
     }
-    if (b.n_splits < most_splits) {
-      score.padRowAfterCol(ai, b.n_splits, max_score);
-    }
+    score.padRowAfterCol(ai, b.n_splits, max_score);
   }
+  score.padAfterRow(a.n_splits, max_score);
 
-  if (exact_n == b.n_splits || exact_n == a.n_splits) {
-    return exact_score;
-  }
-
-  const int16 lap_n = most_splits - exact_n;
   scratch.ensure(most_splits);
   auto& rowsol = scratch.rowsol;
   auto& colsol = scratch.colsol;
 
-  if (exact_n) {
-    scratch.small_pool.resize(lap_n);
-    cost_matrix& small = scratch.small_pool;
-    int16 a_pos = 0;
-    for (int16 ai = 0; ai < a.n_splits; ++ai) {
-      if (a_match[ai]) continue;
-      int16 b_pos = 0;
-      for (int16 bi = 0; bi < b.n_splits; ++bi) {
-        if (b_match[bi]) continue;
-        small(a_pos, b_pos) = score(ai, bi);
-        ++b_pos;
-      }
-      small.padRowAfterCol(a_pos, lap_n - a_extra, max_score);
-      ++a_pos;
-    }
-    small.padAfterRow(lap_n - b_extra, max_score);
-    return exact_score + static_cast<double>(
-      (max_score * lap_n) - lap(lap_n, small, rowsol, colsol, false, scratch)
-    ) * possible_over_score;
-  } else {
-    score.padAfterRow(a.n_splits, max_score);
-    return static_cast<double>(
-      (max_score * lap_n) - lap(lap_n, score, rowsol, colsol, false, scratch)
-    ) * possible_over_score;
-  }
+  return static_cast<double>(
+    (max_score * most_splits) - lap(most_splits, score, rowsol, colsol, false, scratch)
+  ) * possible_over_score;
 }
 
 //' @keywords internal
@@ -901,6 +801,263 @@ NumericVector cpp_jaccard_all_pairs(
       const int p = col * (N - 1) - col * (col - 1) / 2 + row - col - 1;
       res[p] = jaccard_score(*splits[col], *splits[row], n_tip, k, allow_conflict, scratch);
     }
+  }
+  return result;
+}
+
+
+// =============================================================================
+// Cross-pairs (ManyMany) batch functions
+// =============================================================================
+//
+// Each function computes the full nA × nB matrix of pairwise distances between
+// two sets of trees.  Like the all_pairs variants, these use OpenMP where
+// available and reuse LapScratch / CostMatrix pools across pairs.
+
+static void parse_split_list(const List& list,
+                             std::vector<std::unique_ptr<SplitList>>& out) {
+  const int n = list.size();
+  out.reserve(n);
+  for (int k = 0; k < n; ++k) {
+    out.push_back(
+      std::make_unique<SplitList>(Rcpp::as<RawMatrix>(list[k]))
+    );
+  }
+}
+
+using Rcpp::NumericMatrix;
+
+//' @keywords internal
+// [[Rcpp::export]]
+NumericMatrix cpp_mutual_clustering_cross_pairs(
+    const List& splits_a, const List& splits_b,
+    const int n_tip, const int n_threads = 1
+) {
+  const int nA = splits_a.size();
+  const int nB = splits_b.size();
+  if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
+
+  std::vector<std::unique_ptr<SplitList>> sa, sb;
+  parse_split_list(splits_a, sa);
+  parse_split_list(splits_b, sb);
+
+  NumericMatrix result(nA, nB);
+  double* res = result.begin();
+
+  const int n_scratch = std::max(1, n_threads);
+  std::vector<LapScratch> scratches(n_scratch);
+  const int total = nA * nB;
+
+#ifdef _OPENMP
+#pragma omp parallel for schedule(dynamic) num_threads(n_threads)
+#endif
+  for (int idx = 0; idx < total; ++idx) {
+#ifndef _OPENMP
+    if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
+#endif
+#ifdef _OPENMP
+    LapScratch& scratch = scratches[omp_get_thread_num()];
+#else
+    LapScratch& scratch = scratches[0];
+#endif
+    const int i = idx % nA;
+    const int j = idx / nA;
+    res[idx] = mutual_clustering_score(*sa[i], *sb[j], n_tip, scratch);
+  }
+  return result;
+}
+
+//' @keywords internal
+// [[Rcpp::export]]
+NumericMatrix cpp_rf_info_cross_pairs(
+    const List& splits_a, const List& splits_b,
+    const int n_tip, const int n_threads = 1
+) {
+  const int nA = splits_a.size();
+  const int nB = splits_b.size();
+  if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
+
+  std::vector<std::unique_ptr<SplitList>> sa, sb;
+  parse_split_list(splits_a, sa);
+  parse_split_list(splits_b, sb);
+
+  NumericMatrix result(nA, nB);
+  double* res = result.begin();
+  const int total = nA * nB;
+
+#ifdef _OPENMP
+#pragma omp parallel for schedule(dynamic) num_threads(n_threads)
+#endif
+  for (int idx = 0; idx < total; ++idx) {
+#ifndef _OPENMP
+    if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
+#endif
+    const int i = idx % nA;
+    const int j = idx / nA;
+    res[idx] = rf_info_score(*sa[i], *sb[j], n_tip);
+  }
+  return result;
+}
+
+//' @keywords internal
+// [[Rcpp::export]]
+NumericMatrix cpp_msd_cross_pairs(
+    const List& splits_a, const List& splits_b,
+    const int n_tip, const int n_threads = 1
+) {
+  const int nA = splits_a.size();
+  const int nB = splits_b.size();
+  if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
+
+  std::vector<std::unique_ptr<SplitList>> sa, sb;
+  parse_split_list(splits_a, sa);
+  parse_split_list(splits_b, sb);
+
+  NumericMatrix result(nA, nB);
+  double* res = result.begin();
+
+  const int n_scratch = std::max(1, n_threads);
+  std::vector<LapScratch> scratches(n_scratch);
+  const int total = nA * nB;
+
+#ifdef _OPENMP
+#pragma omp parallel for schedule(dynamic) num_threads(n_threads)
+#endif
+  for (int idx = 0; idx < total; ++idx) {
+#ifndef _OPENMP
+    if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
+#endif
+#ifdef _OPENMP
+    LapScratch& scratch = scratches[omp_get_thread_num()];
+#else
+    LapScratch& scratch = scratches[0];
+#endif
+    const int i = idx % nA;
+    const int j = idx / nA;
+    res[idx] = msd_score(*sa[i], *sb[j], n_tip, scratch);
+  }
+  return result;
+}
+
+//' @keywords internal
+// [[Rcpp::export]]
+NumericMatrix cpp_msi_cross_pairs(
+    const List& splits_a, const List& splits_b,
+    const int n_tip, const int n_threads = 1
+) {
+  const int nA = splits_a.size();
+  const int nB = splits_b.size();
+  if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
+
+  std::vector<std::unique_ptr<SplitList>> sa, sb;
+  parse_split_list(splits_a, sa);
+  parse_split_list(splits_b, sb);
+
+  NumericMatrix result(nA, nB);
+  double* res = result.begin();
+
+  const int n_scratch = std::max(1, n_threads);
+  std::vector<LapScratch> scratches(n_scratch);
+  const int total = nA * nB;
+
+#ifdef _OPENMP
+#pragma omp parallel for schedule(dynamic) num_threads(n_threads)
+#endif
+  for (int idx = 0; idx < total; ++idx) {
+#ifndef _OPENMP
+    if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
+#endif
+#ifdef _OPENMP
+    LapScratch& scratch = scratches[omp_get_thread_num()];
+#else
+    LapScratch& scratch = scratches[0];
+#endif
+    const int i = idx % nA;
+    const int j = idx / nA;
+    res[idx] = msi_score(*sa[i], *sb[j], n_tip, scratch);
+  }
+  return result;
+}
+
+//' @keywords internal
+// [[Rcpp::export]]
+NumericMatrix cpp_shared_phylo_cross_pairs(
+    const List& splits_a, const List& splits_b,
+    const int n_tip, const int n_threads = 1
+) {
+  const int nA = splits_a.size();
+  const int nB = splits_b.size();
+  if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
+
+  std::vector<std::unique_ptr<SplitList>> sa, sb;
+  parse_split_list(splits_a, sa);
+  parse_split_list(splits_b, sb);
+
+  NumericMatrix result(nA, nB);
+  double* res = result.begin();
+
+  const int n_scratch = std::max(1, n_threads);
+  std::vector<LapScratch> scratches(n_scratch);
+  const int total = nA * nB;
+
+#ifdef _OPENMP
+#pragma omp parallel for schedule(dynamic) num_threads(n_threads)
+#endif
+  for (int idx = 0; idx < total; ++idx) {
+#ifndef _OPENMP
+    if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
+#endif
+#ifdef _OPENMP
+    LapScratch& scratch = scratches[omp_get_thread_num()];
+#else
+    LapScratch& scratch = scratches[0];
+#endif
+    const int i = idx % nA;
+    const int j = idx / nA;
+    res[idx] = shared_phylo_score(*sa[i], *sb[j], n_tip, scratch);
+  }
+  return result;
+}
+
+//' @keywords internal
+// [[Rcpp::export]]
+NumericMatrix cpp_jaccard_cross_pairs(
+    const List& splits_a, const List& splits_b,
+    const int n_tip,
+    const double k = 1.0,
+    const bool allow_conflict = true,
+    const int n_threads = 1
+) {
+  const int nA = splits_a.size();
+  const int nB = splits_b.size();
+  if (nA == 0 || nB == 0) return NumericMatrix(nA, nB);
+
+  std::vector<std::unique_ptr<SplitList>> sa, sb;
+  parse_split_list(splits_a, sa);
+  parse_split_list(splits_b, sb);
+
+  NumericMatrix result(nA, nB);
+  double* res = result.begin();
+
+  const int n_scratch = std::max(1, n_threads);
+  std::vector<LapScratch> scratches(n_scratch);
+  const int total = nA * nB;
+
+#ifdef _OPENMP
+#pragma omp parallel for schedule(dynamic) num_threads(n_threads)
+#endif
+  for (int idx = 0; idx < total; ++idx) {
+#ifndef _OPENMP
+    if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
+#endif
+#ifdef _OPENMP
+    LapScratch& scratch = scratches[omp_get_thread_num()];
+#else
+    LapScratch& scratch = scratches[0];
+#endif
+    const int i = idx % nA;
+    const int j = idx / nA;
+    res[idx] = jaccard_score(*sa[i], *sb[j], n_tip, k, allow_conflict, scratch);
   }
   return result;
 }

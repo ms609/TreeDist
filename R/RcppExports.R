@@ -122,6 +122,36 @@ cpp_jaccard_all_pairs <- function(splits_list, n_tip, k = 1.0, allow_conflict = 
     .Call(`_TreeDist_cpp_jaccard_all_pairs`, splits_list, n_tip, k, allow_conflict, n_threads)
 }
 
+#' @keywords internal
+cpp_mutual_clustering_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_mutual_clustering_cross_pairs`, splits_a, splits_b, n_tip, n_threads)
+}
+
+#' @keywords internal
+cpp_rf_info_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_rf_info_cross_pairs`, splits_a, splits_b, n_tip, n_threads)
+}
+
+#' @keywords internal
+cpp_msd_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_msd_cross_pairs`, splits_a, splits_b, n_tip, n_threads)
+}
+
+#' @keywords internal
+cpp_msi_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_msi_cross_pairs`, splits_a, splits_b, n_tip, n_threads)
+}
+
+#' @keywords internal
+cpp_shared_phylo_cross_pairs <- function(splits_a, splits_b, n_tip, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_shared_phylo_cross_pairs`, splits_a, splits_b, n_tip, n_threads)
+}
+
+#' @keywords internal
+cpp_jaccard_cross_pairs <- function(splits_a, splits_b, n_tip, k = 1.0, allow_conflict = TRUE, n_threads = 1L) {
+    .Call(`_TreeDist_cpp_jaccard_cross_pairs`, splits_a, splits_b, n_tip, k, allow_conflict, n_threads)
+}
+
 path_vector <- function(edge) {
     .Call(`_TreeDist_path_vector`, edge)
 }

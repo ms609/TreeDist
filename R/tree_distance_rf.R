@@ -66,6 +66,23 @@
 #' @rdname Robinson-Foulds
 InfoRobinsonFoulds <- function(tree1, tree2 = NULL, similarity = FALSE,
                                 normalize = FALSE, reportMatching = FALSE) {
+  
+  # Fast path for distance (not similarity): avoids duplicate as.Splits()
+  if (!similarity) {
+    fast <- .FastDistPath(tree1, tree2, reportMatching,
+                          cpp_rf_info_all_pairs,
+                          SplitwiseInfo.Splits)
+    if (!is.null(fast)) {
+      treesIndependentInfo <- .PairwiseSums(fast[["entropies"]])
+      unnormalized <- treesIndependentInfo - fast[["info"]] - fast[["info"]]
+      unnormalized[unnormalized < .Machine[["double.eps"]] ^ 0.5] <- 0
+      ret <- NormalizeInfo(unnormalized, tree1, tree2, how = normalize,
+                           InfoInTree = SplitwiseInfo, Combine = "+")
+      attributes(ret) <- attributes(fast[["info"]])
+      return(ret)
+    }
+  }
+  
   unnormalized <- CalculateTreeDistance(InfoRobinsonFouldsSplits, tree1, tree2, 
                                         reportMatching) * 2
   

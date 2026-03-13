@@ -841,12 +841,73 @@ for ~5.7ms (~8.5% of total).
 
 ---
 
+### R-level fast paths for *Distance functions (DONE, kept)
+
+Added `.FastDistPath()` helper and `.PairwiseSums()` to `tree_distance.R`. These
+pre-compute splits once via `as.Splits()` and use them for both the C++ batch
+distance computation AND per-tree entropy/info computation, avoiding duplicate
+`as.Splits()` calls.
+
+Applied to 4 distance functions:
+- `ClusteringInfoDistance` (`tree_distance_info.R`) — uses `ClusteringEntropy.Splits`
+- `DifferentPhylogeneticInfo` (`tree_distance_info.R`) — uses `SplitwiseInfo.Splits`
+- `MatchingSplitInfoDistance` (`tree_distance_msi.R`) — uses `SplitwiseInfo.Splits`
+- `InfoRobinsonFoulds` (`tree_distance_rf.R`) — uses `SplitwiseInfo.Splits`
+
+The fast path fires when: `tree2` is NULL (all-pairs), `!reportMatching`,
+same tip set, `nTip >= 4`, no R parallel cluster configured.
+
+**devtools::load_all() benchmarks (CID, 100 × 50-tip similar trees):**
+- Fast path: ~50 ms (was ~60 ms with slow path) → ~17% speedup
+- For 200-tip trees: ~144 ms (was ~153 ms) → ~6% speedup
+
+### Cross-pairs (ManyMany) batch path (DONE, kept)
+
+Added 6 C++ `cpp_*_cross_pairs()` functions to `pairwise_distances.cpp`:
+`mutual_clustering`, `rf_info`, `msd`, `msi`, `shared_phylo`, `jaccard`.
+Each accepts two lists of SplitLists and returns an nA × nB matrix.
+OpenMP parallelism, CostMatrix pooling, and `LapScratch` reuse all apply.
+
+R-level batch detection added to `.SplitDistanceManyMany()` in
+`tree_distance_utilities.R`, following the same `identical(Func, ...)` pattern
+as `.SplitDistanceAllPairs()`.
+
+### SPI / MSI exact-match detection bug (FOUND AND FIXED)
+
+**Bug:** The `shared_phylo_score` and `msi_score` batch functions in
+`pairwise_distances.cpp` used greedy exact-match detection (matching identical
+splits before solving the LAP), identical to the MCI and MSD paths. This is
+**incorrect for SPI and MSI** because `spi_overlap(A, B)` where B contains A
+can EXCEED `spi_overlap(A, A)` for the identical split. The full LAP can
+therefore find a better global assignment by NOT matching identical splits.
+
+This produced up to ~1% error (max |batch − serial| ≈ 14 on scores ≈ 1600).
+The bug existed since the exact-match detection was added to SPI/MSI batch
+paths (earlier in this dev cycle).
+
+MCI and MSD exact-match detection is CORRECT and retained: for MCI, identical
+splits provide maximum mutual information; for MSD, identical splits have
+distance 0 (provably optimal).
+
+**Fix:** Removed exact-match detection from `shared_phylo_score` and
+`msi_score`. These now always solve the full LAP. This is a correctness fix
+that costs some performance on similar trees (SPI/MSI now solve the full
+n_splits × n_splits LAP instead of a reduced one). MCI, MSD, and Jaccard
+batch paths are unaffected.
+
+**Verification:** max |batch − serial| = 0 for all metrics across 10 × 8
+cross-pairs and 5 × 5 all-pairs tests.
+
+---
+
 ## Remaining Optimization Opportunities
 
-- **Duplicate `as.Splits()` elimination** in `ClusteringInfoDistance` normalisation
-  (~5% potential speedup, simple R-level change — see above)
 - **C++ batch entropy function** to replace per-tree R dispatch (~3% potential)
 - **Fresh VTune profile post-pooling** to confirm hotspot distribution changes
 - LAP inner loop: AVX2 SIMD intrinsics investigation (see "Known Optimization
   Opportunities" above)
 - SPR distance profiling under VTune
+- **ManyMany batch paths** for *Distance functions: `.FastDistPath` currently
+  only handles the all-pairs case; the ManyMany case goes through
+  `.SplitDistanceManyMany` which has the C++ batch path but still has
+  duplicate `as.Splits()` in the calling distance functions

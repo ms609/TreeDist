@@ -127,6 +127,46 @@ GeneralizedRF <- function(splits1, splits2, nTip, PairScorer,
   }
 }
 
+# Fast path for *Distance() functions: computes pairwise distances and
+# per-tree info in a single as.Splits() conversion.  Returns NULL when the
+# fast path is not applicable.
+#' @importFrom TreeTools as.Splits TipLabels
+.FastDistPath <- function(tree1, tree2, reportMatching,
+                          cpp_batch_fn, InfoSplitsFn) {
+  if (!is.null(tree2) || reportMatching) return(NULL)
+  if (inherits(tree1, c("phylo", "Splits"))) return(NULL)
+  if (!is.null(getOption("TreeDist-cluster"))) return(NULL)
+  
+  labs <- TipLabels(tree1)
+  if (is.list(labs)) {
+    if (!all(vapply(labs[-1], setequal, logical(1), labs[[1]]))) return(NULL)
+    tipLabels <- labs[[1]]
+  } else {
+    tipLabels <- labs
+  }
+  nTip <- length(tipLabels)
+  if (nTip < 4) return(NULL)
+  
+  splits_list <- as.Splits(tree1, tipLabels = tipLabels)
+  n_threads <- as.integer(getOption("mc.cores", 1L))
+  
+  info_vec <- cpp_batch_fn(splits_list, as.integer(nTip), n_threads)
+  entropies <- vapply(splits_list, InfoSplitsFn, double(1L))
+  
+  list(
+    info = structure(info_vec, class = "dist",
+                     Size = length(tree1), Labels = names(tree1),
+                     Diag = FALSE, Upper = FALSE),
+    entropies = entropies
+  )
+}
+
+# Lower-tri pairwise sums: outer(x, x, "+")[lower.tri(.)]
+.PairwiseSums <- function(x) {
+  g <- outer(x, x, "+")
+  g[lower.tri(g)]
+}
+
 .AllTipsSame <- function(x, y) {
   if (is.list(x)) {
     xPrime <- x[[1]]
