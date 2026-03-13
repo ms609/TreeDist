@@ -29,6 +29,20 @@ using TreeTools::count_bits;
 
 
 // ---------------------------------------------------------------------------
+// MatchScratch — reusable buffers for exact-match detection.
+// Allocate one per thread and pass into find_exact_matches() to avoid
+// per-pair heap allocation.  Vectors grow lazily and are never shrunk.
+// ---------------------------------------------------------------------------
+struct MatchScratch {
+  std::vector<splitbit> a_canon;
+  std::vector<splitbit> b_canon;
+  std::vector<int16>    a_order;
+  std::vector<int16>    b_order;
+  std::vector<int16>    a_match;
+  std::vector<int16>    b_match;
+};
+
+// ---------------------------------------------------------------------------
 // O(n log n) exact-match detection for identical bipartitions.
 //
 // Two splits represent the same bipartition when one equals the other or its
@@ -41,13 +55,14 @@ using TreeTools::count_bits;
 //   3. Merge-scan to find matching pairs                  → O(n)
 //
 // Returns the number of exact matches found.
-// a_match[ai] = bi+1 if split ai matched split bi, else 0.
-// b_match[bi] = ai+1 if split bi matched split ai, else 0.
+// Writes results into scratch.a_match / scratch.b_match:
+//   a_match[ai] = bi+1 if split ai matched split bi, else 0.
+//   b_match[bi] = ai+1 if split bi matched split ai, else 0.
 // ---------------------------------------------------------------------------
 static int16 find_exact_matches(
     const SplitList& a, const SplitList& b,
     const int32 n_tips,
-    int16* a_match, int16* b_match
+    MatchScratch& scratch
 ) {
   const int16 n_bins   = a.n_bins;
   const int16 last_bin = n_bins - 1;
@@ -58,16 +73,27 @@ static int16 find_exact_matches(
   const int16 a_n = a.n_splits;
   const int16 b_n = b.n_splits;
 
+  // Ensure buffers are large enough (grow lazily, never shrink)
+  const size_t a_canon_sz = static_cast<size_t>(a_n) * n_bins;
+  const size_t b_canon_sz = static_cast<size_t>(b_n) * n_bins;
+  if (scratch.a_canon.size() < a_canon_sz) scratch.a_canon.resize(a_canon_sz);
+  if (scratch.b_canon.size() < b_canon_sz) scratch.b_canon.resize(b_canon_sz);
+  if (scratch.a_order.size() < static_cast<size_t>(a_n)) scratch.a_order.resize(a_n);
+  if (scratch.b_order.size() < static_cast<size_t>(b_n)) scratch.b_order.resize(b_n);
+  if (scratch.a_match.size() < static_cast<size_t>(a_n)) scratch.a_match.resize(a_n);
+  if (scratch.b_match.size() < static_cast<size_t>(b_n)) scratch.b_match.resize(b_n);
+
+  int16* a_match = scratch.a_match.data();
+  int16* b_match = scratch.b_match.data();
   std::fill(a_match, a_match + a_n, int16(0));
   std::fill(b_match, b_match + b_n, int16(0));
 
   if (a_n == 0 || b_n == 0) return 0;
 
-  // --- 1. Compute canonical forms into flat buffers ---
-  // canonical[i * n_bins + bin] = canonical value for split i in that bin.
-  std::vector<splitbit> a_canon(a_n * n_bins);
-  std::vector<splitbit> b_canon(b_n * n_bins);
+  splitbit* a_canon = scratch.a_canon.data();
+  splitbit* b_canon = scratch.b_canon.data();
 
+  // --- 1. Compute canonical forms into flat buffers ---
   for (int16 i = 0; i < a_n; ++i) {
     const bool flip = !(a.state[i][0] & 1);
     for (int16 bin = 0; bin < n_bins; ++bin) {
@@ -93,21 +119,21 @@ static int16 find_exact_matches(
       if (vi < vj) return true;
       if (vi > vj) return false;
     }
-    return false;
+    return false; // #nocov
   };
 
-  std::vector<int16> a_order(a_n);
-  std::vector<int16> b_order(b_n);
-  std::iota(a_order.begin(), a_order.end(), int16(0));
-  std::iota(b_order.begin(), b_order.end(), int16(0));
+  int16* a_order = scratch.a_order.data();
+  int16* b_order = scratch.b_order.data();
+  std::iota(a_order, a_order + a_n, int16(0));
+  std::iota(b_order, b_order + b_n, int16(0));
 
-  std::sort(a_order.begin(), a_order.end(),
+  std::sort(a_order, a_order + a_n,
             [&](int16 i, int16 j) {
-              return canon_less(a_canon.data(), i, j);
+              return canon_less(a_canon, i, j);
             });
-  std::sort(b_order.begin(), b_order.end(),
+  std::sort(b_order, b_order + b_n,
             [&](int16 i, int16 j) {
-              return canon_less(b_canon.data(), i, j);
+              return canon_less(b_canon, i, j);
             });
 
   // --- 3. Merge-scan to find matches ---
@@ -148,7 +174,7 @@ static int16 find_exact_matches(
 // OpenMP parallel region.
 static double mutual_clustering_score(
     const SplitList& a, const SplitList& b, const int32 n_tips,
-    LapScratch& scratch
+    LapScratch& scratch, MatchScratch& mscratch
 ) {
   if (a.n_splits == 0 || b.n_splits == 0 || n_tips == 0) return 0.0;
 
@@ -161,10 +187,9 @@ static double mutual_clustering_score(
   const double lg2_n = lg2[n_tips];
 
   // --- Phase 1: O(n log n) exact-match detection ---
-  auto a_match = std::make_unique<int16[]>(a.n_splits);
-  auto b_match = std::make_unique<int16[]>(b.n_splits);
-  const int16 exact_n = find_exact_matches(a, b, n_tips,
-                                           a_match.get(), b_match.get());
+  const int16 exact_n = find_exact_matches(a, b, n_tips, mscratch);
+  const int16* a_match = mscratch.a_match.data();
+  const int16* b_match = mscratch.b_match.data();
 
   // Accumulate exact-match score
   double exact_score = 0.0;
@@ -299,10 +324,11 @@ NumericVector cpp_mutual_clustering_all_pairs(
   NumericVector result(n_pairs);
   double* const res = result.begin();
 
-  // One LapScratch per thread — grown lazily on first use, never freed between
+  // One scratch set per thread — grown lazily on first use, never freed between
   // pairs.  Indexed by omp_get_thread_num() (always 0 in the serial path).
   const int n_scratch = std::max(1, n_threads);
   std::vector<LapScratch> scratches(n_scratch);
+  std::vector<MatchScratch> mscratches(n_scratch);
 
   // Iterate over columns of the combn(N,2) lower triangle.
   // Pair (col, row) with col < row maps to dist-vector index:
@@ -315,13 +341,15 @@ NumericVector cpp_mutual_clustering_all_pairs(
     Rcpp::checkUserInterrupt();
 #endif
 #ifdef _OPENMP
-    LapScratch& scratch = scratches[omp_get_thread_num()];
+    const int tid = omp_get_thread_num();
 #else
-    LapScratch& scratch = scratches[0];
+    const int tid = 0;
 #endif
+    LapScratch& scratch = scratches[tid];
+    MatchScratch& mscratch = mscratches[tid];
     for (int row = col + 1; row < N; ++row) {
       const int p = col * (N - 1) - col * (col - 1) / 2 + row - col - 1;
-      res[p] = mutual_clustering_score(*splits[col], *splits[row], n_tip, scratch);
+      res[p] = mutual_clustering_score(*splits[col], *splits[row], n_tip, scratch, mscratch);
     }
   }
 
@@ -334,47 +362,30 @@ NumericVector cpp_mutual_clustering_all_pairs(
 // =============================================================================
 
 static double rf_info_score(
-    const SplitList& a, const SplitList& b, const int32 n_tips
+    const SplitList& a, const SplitList& b, const int32 n_tips,
+    MatchScratch& mscratch
 ) {
-  const int16 last_bin   = a.n_bins - 1;
-  const int16 unset_tips = (n_tips % SL_BIN_SIZE) ?
-    SL_BIN_SIZE - n_tips % SL_BIN_SIZE : 0;
-  const splitbit unset_mask      = ALL_ONES >> unset_tips;
-  const double   lg2_unrooted_n  = lg2_unrooted[n_tips];
+  const int16 a_n = a.n_splits;
+  const int16 b_n = b.n_splits;
+  if (a_n == 0 || b_n == 0) return 0;
+
+  // Use sort+merge to find exact matches in O(n log n)
+  const int16 exact_n = find_exact_matches(a, b, n_tips, mscratch);
+  if (exact_n == 0) return 0;
+
+  // Sum info contribution for each matched split in a
+  const int16* a_match = mscratch.a_match.data();
+  const double lg2_unrooted_n = lg2_unrooted[n_tips];
   double score = 0;
-
-  splitbit b_complement[SL_MAX_SPLITS][SL_MAX_BINS];
-  for (int16 i = 0; i < b.n_splits; ++i) {
-    for (int16 bin = 0; bin < last_bin; ++bin) {
-      b_complement[i][bin] = ~b.state[i][bin];
+  for (int16 ai = 0; ai < a_n; ++ai) {
+    if (a_match[ai] == 0) continue;
+    int16 leaves_in_split = 0;
+    for (int16 bin = 0; bin < a.n_bins; ++bin) {
+      leaves_in_split += count_bits(a.state[ai][bin]);
     }
-    b_complement[i][last_bin] = b.state[i][last_bin] ^ unset_mask;
-  }
-
-  for (int16 ai = 0; ai < a.n_splits; ++ai) {
-    for (int16 bi = 0; bi < b.n_splits; ++bi) {
-      bool all_match = true, all_complement = true;
-      for (int16 bin = 0; bin < a.n_bins; ++bin) {
-        if (a.state[ai][bin] != b.state[bi][bin]) { all_match = false; break; }
-      }
-      if (!all_match) {
-        for (int16 bin = 0; bin < a.n_bins; ++bin) {
-          if (a.state[ai][bin] != b_complement[bi][bin]) {
-            all_complement = false; break;
-          }
-        }
-      }
-      if (all_match || all_complement) {
-        int16 leaves_in_split = 0;
-        for (int16 bin = 0; bin < a.n_bins; ++bin) {
-          leaves_in_split += count_bits(a.state[ai][bin]);
-        }
-        score += lg2_unrooted_n
-               - lg2_rooted[leaves_in_split]
-               - lg2_rooted[n_tips - leaves_in_split];
-        break;
-      }
-    }
+    score += lg2_unrooted_n
+           - lg2_rooted[leaves_in_split]
+           - lg2_rooted[n_tips - leaves_in_split];
   }
   return score;
 }
@@ -401,6 +412,9 @@ NumericVector cpp_rf_info_all_pairs(
   NumericVector result(n_pairs);
   double* const res = result.begin();
 
+  const int n_scratch = std::max(1, n_threads);
+  std::vector<MatchScratch> mscratches(n_scratch);
+
 #ifdef _OPENMP
 #pragma omp parallel for schedule(dynamic) num_threads(n_threads)
 #endif
@@ -408,9 +422,14 @@ NumericVector cpp_rf_info_all_pairs(
 #ifndef _OPENMP
     Rcpp::checkUserInterrupt();
 #endif
+#ifdef _OPENMP
+    MatchScratch& mscratch = mscratches[omp_get_thread_num()];
+#else
+    MatchScratch& mscratch = mscratches[0];
+#endif
     for (int row = col + 1; row < N; ++row) {
       const int p = col * (N - 1) - col * (col - 1) / 2 + row - col - 1;
-      res[p] = rf_info_score(*splits[col], *splits[row], n_tip);
+      res[p] = rf_info_score(*splits[col], *splits[row], n_tip, mscratch);
     }
   }
   return result;
@@ -423,7 +442,7 @@ NumericVector cpp_rf_info_all_pairs(
 
 static double msd_score(
     const SplitList& a, const SplitList& b, const int32 n_tips,
-    LapScratch& scratch
+    LapScratch& scratch, MatchScratch& mscratch
 ) {
   const int16 most_splits = std::max(a.n_splits, b.n_splits);
   if (most_splits == 0) return 0.0;
@@ -434,10 +453,9 @@ static double msd_score(
   const cost  max_score   = BIG / most_splits;
 
   // --- Phase 1: O(n log n) exact-match detection ---
-  auto a_match = std::make_unique<int16[]>(a.n_splits);
-  auto b_match = std::make_unique<int16[]>(b.n_splits);
-  const int16 exact_n = find_exact_matches(a, b, n_tips,
-                                           a_match.get(), b_match.get());
+  const int16 exact_n = find_exact_matches(a, b, n_tips, mscratch);
+  const int16* a_match = mscratch.a_match.data();
+  const int16* b_match = mscratch.b_match.data();
 
   if (exact_n == b.n_splits || exact_n == a.n_splits) {
     return 0.0;
@@ -515,6 +533,7 @@ NumericVector cpp_msd_all_pairs(
 
   const int n_scratch = std::max(1, n_threads);
   std::vector<LapScratch> scratches(n_scratch);
+  std::vector<MatchScratch> mscratches(n_scratch);
 
 #ifdef _OPENMP
 #pragma omp parallel for schedule(dynamic) num_threads(n_threads)
@@ -524,13 +543,15 @@ NumericVector cpp_msd_all_pairs(
     Rcpp::checkUserInterrupt();
 #endif
 #ifdef _OPENMP
-    LapScratch& scratch = scratches[omp_get_thread_num()];
+    const int tid = omp_get_thread_num();
 #else
-    LapScratch& scratch = scratches[0];
+    const int tid = 0;
 #endif
+    LapScratch& scratch = scratches[tid];
+    MatchScratch& mscratch = mscratches[tid];
     for (int row = col + 1; row < N; ++row) {
       const int p = col * (N - 1) - col * (col - 1) / 2 + row - col - 1;
-      res[p] = msd_score(*splits[col], *splits[row], n_tip, scratch);
+      res[p] = msd_score(*splits[col], *splits[row], n_tip, scratch, mscratch);
     }
   }
   return result;
@@ -735,7 +756,7 @@ NumericVector cpp_shared_phylo_all_pairs(
 static double jaccard_score(
     const SplitList& a, const SplitList& b, const int32 n_tips,
     const double exponent, const bool allow_conflict,
-    LapScratch& scratch
+    LapScratch& scratch, MatchScratch& mscratch
 ) {
   const int16 most_splits = std::max(a.n_splits, b.n_splits);
   if (most_splits == 0) return 0.0;
@@ -746,15 +767,20 @@ static double jaccard_score(
   // --- Phase 1: O(n log n) exact-match detection ---
   // Only used when allow_conflict=true; otherwise the full LAP may reassign
   // non-matching splits to compatible (non-exact) partners.
-  auto a_match = std::make_unique<int16[]>(a.n_splits);
-  auto b_match = std::make_unique<int16[]>(b.n_splits);
   int16 exact_n = 0;
   if (allow_conflict) {
-    exact_n = find_exact_matches(a, b, n_tips, a_match.get(), b_match.get());
+    exact_n = find_exact_matches(a, b, n_tips, mscratch);
   } else {
-    std::fill(a_match.get(), a_match.get() + a.n_splits, int16(0));
-    std::fill(b_match.get(), b_match.get() + b.n_splits, int16(0));
+    // Ensure match arrays are sized and zeroed
+    if (mscratch.a_match.size() < static_cast<size_t>(a.n_splits))
+      mscratch.a_match.resize(a.n_splits);
+    if (mscratch.b_match.size() < static_cast<size_t>(b.n_splits))
+      mscratch.b_match.resize(b.n_splits);
+    std::fill(mscratch.a_match.data(), mscratch.a_match.data() + a.n_splits, int16(0));
+    std::fill(mscratch.b_match.data(), mscratch.b_match.data() + b.n_splits, int16(0));
   }
+  const int16* a_match = mscratch.a_match.data();
+  const int16* b_match = mscratch.b_match.data();
 
   if (exact_n == b.n_splits || exact_n == a.n_splits) {
     return static_cast<double>(exact_n);
@@ -866,6 +892,7 @@ NumericVector cpp_jaccard_all_pairs(
 
   const int n_scratch = std::max(1, n_threads);
   std::vector<LapScratch> scratches(n_scratch);
+  std::vector<MatchScratch> mscratches(n_scratch);
 
 #ifdef _OPENMP
 #pragma omp parallel for schedule(dynamic) num_threads(n_threads)
@@ -875,13 +902,15 @@ NumericVector cpp_jaccard_all_pairs(
     Rcpp::checkUserInterrupt();
 #endif
 #ifdef _OPENMP
-    LapScratch& scratch = scratches[omp_get_thread_num()];
+    const int tid = omp_get_thread_num();
 #else
-    LapScratch& scratch = scratches[0];
+    const int tid = 0;
 #endif
+    LapScratch& scratch = scratches[tid];
+    MatchScratch& mscratch = mscratches[tid];
     for (int row = col + 1; row < N; ++row) {
       const int p = col * (N - 1) - col * (col - 1) / 2 + row - col - 1;
-      res[p] = jaccard_score(*splits[col], *splits[row], n_tip, k, allow_conflict, scratch);
+      res[p] = jaccard_score(*splits[col], *splits[row], n_tip, k, allow_conflict, scratch, mscratch);
     }
   }
   return result;
@@ -928,6 +957,7 @@ NumericMatrix cpp_mutual_clustering_cross_pairs(
 
   const int n_scratch = std::max(1, n_threads);
   std::vector<LapScratch> scratches(n_scratch);
+  std::vector<MatchScratch> mscratches(n_scratch);
   const int total = nA * nB;
 
 #ifdef _OPENMP
@@ -938,13 +968,15 @@ NumericMatrix cpp_mutual_clustering_cross_pairs(
     if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
 #endif
 #ifdef _OPENMP
-    LapScratch& scratch = scratches[omp_get_thread_num()];
+    const int tid = omp_get_thread_num();
 #else
-    LapScratch& scratch = scratches[0];
+    const int tid = 0;
 #endif
+    LapScratch& scratch = scratches[tid];
+    MatchScratch& mscratch = mscratches[tid];
     const int i = idx % nA;
     const int j = idx / nA;
-    res[idx] = mutual_clustering_score(*sa[i], *sb[j], n_tip, scratch);
+    res[idx] = mutual_clustering_score(*sa[i], *sb[j], n_tip, scratch, mscratch);
   }
   return result;
 }
@@ -967,6 +999,9 @@ NumericMatrix cpp_rf_info_cross_pairs(
   double* res = result.begin();
   const int total = nA * nB;
 
+  const int n_scratch = std::max(1, n_threads);
+  std::vector<MatchScratch> mscratches(n_scratch);
+
 #ifdef _OPENMP
 #pragma omp parallel for schedule(dynamic) num_threads(n_threads)
 #endif
@@ -974,9 +1009,14 @@ NumericMatrix cpp_rf_info_cross_pairs(
 #ifndef _OPENMP
     if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
 #endif
+#ifdef _OPENMP
+    MatchScratch& mscratch = mscratches[omp_get_thread_num()];
+#else
+    MatchScratch& mscratch = mscratches[0];
+#endif
     const int i = idx % nA;
     const int j = idx / nA;
-    res[idx] = rf_info_score(*sa[i], *sb[j], n_tip);
+    res[idx] = rf_info_score(*sa[i], *sb[j], n_tip, mscratch);
   }
   return result;
 }
@@ -1000,6 +1040,7 @@ NumericMatrix cpp_msd_cross_pairs(
 
   const int n_scratch = std::max(1, n_threads);
   std::vector<LapScratch> scratches(n_scratch);
+  std::vector<MatchScratch> mscratches(n_scratch);
   const int total = nA * nB;
 
 #ifdef _OPENMP
@@ -1010,13 +1051,15 @@ NumericMatrix cpp_msd_cross_pairs(
     if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
 #endif
 #ifdef _OPENMP
-    LapScratch& scratch = scratches[omp_get_thread_num()];
+    const int tid = omp_get_thread_num();
 #else
-    LapScratch& scratch = scratches[0];
+    const int tid = 0;
 #endif
+    LapScratch& scratch = scratches[tid];
+    MatchScratch& mscratch = mscratches[tid];
     const int i = idx % nA;
     const int j = idx / nA;
-    res[idx] = msd_score(*sa[i], *sb[j], n_tip, scratch);
+    res[idx] = msd_score(*sa[i], *sb[j], n_tip, scratch, mscratch);
   }
   return result;
 }
@@ -1123,6 +1166,7 @@ NumericMatrix cpp_jaccard_cross_pairs(
 
   const int n_scratch = std::max(1, n_threads);
   std::vector<LapScratch> scratches(n_scratch);
+  std::vector<MatchScratch> mscratches(n_scratch);
   const int total = nA * nB;
 
 #ifdef _OPENMP
@@ -1133,13 +1177,15 @@ NumericMatrix cpp_jaccard_cross_pairs(
     if ((idx & 0xFF) == 0) Rcpp::checkUserInterrupt();
 #endif
 #ifdef _OPENMP
-    LapScratch& scratch = scratches[omp_get_thread_num()];
+    const int tid = omp_get_thread_num();
 #else
-    LapScratch& scratch = scratches[0];
+    const int tid = 0;
 #endif
+    LapScratch& scratch = scratches[tid];
+    MatchScratch& mscratch = mscratches[tid];
     const int i = idx % nA;
     const int j = idx / nA;
-    res[idx] = jaccard_score(*sa[i], *sb[j], n_tip, k, allow_conflict, scratch);
+    res[idx] = jaccard_score(*sa[i], *sb[j], n_tip, k, allow_conflict, scratch, mscratch);
   }
   return result;
 }

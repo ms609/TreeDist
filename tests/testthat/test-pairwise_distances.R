@@ -126,3 +126,58 @@ test_that("Large trees: batch and single-pair paths agree (lg2 table bounds)", {
     )
   }
 })
+
+test_that("Batch path handles asymmetric split counts with exact matches", {
+  # Trees with different numbers of splits (polytomies) that share some
+
+  # splits exactly.  After exact-match detection removes the shared splits,
+  # the reduced LAP matrix is asymmetric (a_unmatched_n != b_unmatched_n),
+  # exercising the padAfterRow guard in msd_score and jaccard_score.
+  t1 <- ape::read.tree(text = "((t1,t2,t3),(t4,(t5,(t6,(t7,t8)))));")
+  t2 <- ape::read.tree(text = "(((t1,t4),(t2,t3)),((t5,t6),(t7,t8)));")
+  t3 <- ape::read.tree(text = "((t1,(t2,(t3,t4))),(t5,t6,t7,t8));")
+  t4 <- ape::read.tree(text = "(((t1,t2),(t3,t4)),((t5,t7),(t6,t8)));")
+  trees <- structure(list(t1, t2, t3, t4), class = "multiPhylo")
+
+  # MSD batch vs per-pair
+  msd_b <- as.matrix(MatchingSplitDistance(trees))
+  for (i in seq_len(3)) for (j in (i + 1):4) {
+    expect_equal(msd_b[i, j],
+                 MatchingSplitDistance(trees[[i]], trees[[j]]),
+                 tolerance = 1e-10,
+                 label = paste0("MSD(", i, ",", j, ")"))
+  }
+
+  # Jaccard batch vs per-pair
+  jrf_b <- as.matrix(JaccardRobinsonFoulds(trees))
+  for (i in seq_len(3)) for (j in (i + 1):4) {
+    expect_equal(jrf_b[i, j],
+                 JaccardRobinsonFoulds(trees[[i]], trees[[j]]),
+                 tolerance = 1e-10,
+                 label = paste0("JRF(", i, ",", j, ")"))
+  }
+})
+
+test_that("InfoRobinsonFoulds(similarity = TRUE) uses batch path", {
+  # similarity = TRUE bypasses .FastDistPath() and falls through to
+  # CalculateTreeDistance → .SplitDistanceAllPairs / .SplitDistanceManyMany,
+  # exercising the IRF dispatch branches in tree_distance_utilities.R.
+  trees <- ape::as.phylo(0:9, tipLabels = paste0("t", seq_len(20)))
+
+  # All-pairs
+  irf_sim <- InfoRobinsonFoulds(trees, similarity = TRUE)
+  expect_true(inherits(irf_sim, "dist"))
+  irf_mat <- as.matrix(irf_sim)
+  expect_equal(irf_mat[2, 1],
+               InfoRobinsonFoulds(trees[[1]], trees[[2]], similarity = TRUE),
+               tolerance = 1e-10)
+
+  # Cross-pairs
+  tA <- trees[1:4]
+  tB <- trees[5:10]
+  irf_cross <- InfoRobinsonFoulds(tA, tB, similarity = TRUE)
+  expect_equal(dim(irf_cross), c(4L, 6L))
+  expect_equal(irf_cross[1, 1],
+               InfoRobinsonFoulds(tA[[1]], tB[[1]], similarity = TRUE),
+               tolerance = 1e-10)
+})

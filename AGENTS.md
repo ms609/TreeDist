@@ -257,6 +257,20 @@ source("benchmark/bench-tree-distances.R")
 C++ compilation flags are controlled by `src/Makevars.win` (Windows) / `src/Makevars`.
 The package requires **C++17** (`CXX_STD = CXX17`).
 
+### Code coverage
+
+Check that existing tests cover all new code.  The GHA test suite uses codecov.
+To check locally:
+
+```r
+cov <- covr::package_coverage()
+covr::report(cov)                        # interactive HTML report
+covr::file_coverage(cov, "src/pairwise_distances.cpp")  # per-file summary
+```
+
+Aim for full line coverage of new C++ and R code.  If a new code path is not
+exercised by the existing test suite, add targeted tests in `tests/testthat/`.
+
 ---
 
 ## Completed Optimizations (this dev cycle)
@@ -980,32 +994,38 @@ the effective LAP dimension from ~n to ~3, yielding order-of-magnitude speedups.
 
 ---
 
-## Combined A/B Benchmark: main vs dev (all optimizations, pre-sort+merge)
+## Combined A/B Benchmark: main vs dev (all optimizations)
 
 **Baseline (ref):** main branch (OpenMP PR #176 only).
-**Dev:** posit-optim-5 branch (all optimizations except sort+merge).
+**Dev:** current development branch (all optimizations including sort+merge +
+MatchScratch pooling).
 Release build, same-process comparison via `compare-ab.R`.
 Trees: `as.phylo(0:N, tipLabels = ...)` — similar trees (high split overlap).
 
 | Metric | Scenario | ref (ms) | dev (ms) | Change |
 |---|---|---|---|---|
-| CID | 100×50-tip | 69.6 | 47.0 | **−32%** |
-| CID | 40×200-tip | 179 | 140 | **−22%** |
-| MSD | 100×50-tip | 63.1 | 16.9 | **−73%** |
-| MSD | 40×200-tip | 214 | 69.9 | **−67%** |
-| PID | 100×50-tip | 119 | 90.9 | **−24%** |
-| PID | 40×200-tip | 296 | 266 | **−10%** |
-| MSID | 100×50-tip | 110 | 84.1 | **−24%** |
-| MSID | 40×200-tip | 380 | 342 | **−10%** |
-| IRF | 100×50-tip | 37.4 | 16.7 | **−55%** |
-| IRF | 40×200-tip | 62.2 | 32.0 | **−49%** |
-| CID cross 20×30 | 50-tip | 16.6 | 10.1 | **−39%** |
-| MSD cross 20×30 | 50-tip | 13.6 | 3.5 | **−74%** |
-| LAPJV 400 | (canary) | 1.26 | 1.26 | neutral |
-| LAPJV 1999 | (canary) | 89.7 | 90.2 | neutral |
+| CID | 100×50-tip | 83.5 | 16.0 | **−81%** |
+| CID | 40×200-tip | 210.8 | 18.2 | **−91%** |
+| MSD | 100×50-tip | 82.4 | 12.3 | **−85%** |
+| MSD | 40×200-tip | 253.7 | 23.5 | **−91%** |
+| PID | 100×50-tip | 143 | 112 | −22% |
+| PID | 40×200-tip | 408 | 358 | −12% |
+| MSID | 100×50-tip | 157 | 114 | −27% |
+| MSID | 40×200-tip | 474 | 462 | −3% |
+| IRF | 100×50-tip | 52.1 | 14.3 | **−73%** |
+| IRF | 40×200-tip | 84.4 | 18.1 | **−79%** |
+| CID cross 20×30 | 50-tip | 20.6 | 3.9 | **−81%** |
+| MSD cross 20×30 | 50-tip | 17.5 | 3.8 | **−78%** |
+| LAPJV 400 | (canary) | 1.47 | 1.47 | neutral |
+| LAPJV 1999 | (canary) | 120 | 112 | neutral |
 
 Correctness: all metrics max |ref − dev| ≤ 5.5e-12 (floating-point level).
 LAPJV canary: neutral (no LAP regression).
+
+CID, MSD, IRF benefit most (73–91%) from sort+merge exact-match detection.
+PID and MSID show 3–27% from R-level fast paths, C++ batch entropy, and
+CostMatrix pooling (exact-match detection is incorrect for SPI/MSI — see
+earlier bug fix).
 
 ### ManyMany fast paths for *Distance functions (DONE, kept)
 
@@ -1034,9 +1054,16 @@ for the cross-pairs case.
 
 ## Remaining Optimization Opportunities
 
-- Sort+merge pre-scan for `rf_info_score`: uses O(n²) loop but no LAP; could
-  benefit from `find_exact_matches()` since matched splits contribute directly
-  to the score without needing a cost matrix.
+- Sort+merge pre-scan for `rf_info_score`: **DONE** — replaced O(n²) loop with
+  `find_exact_matches()` + O(k) info summation over matches.  No LAP involved,
+  so the entire per-pair cost drops to O(n log n) for the sort+merge step.
+  All tests pass, numerically exact (max |fast − slow| = 0).
+- `MatchScratch` allocation pooling: **DONE** — `find_exact_matches()` internal
+  buffers (canonical forms, sort indices, match arrays) are now pooled via a
+  `MatchScratch` struct, one per OpenMP thread.  Eliminates per-pair heap
+  allocation for sort+merge matching in all batch functions (CID, MSD, IRF,
+  Jaccard all-pairs and cross-pairs).  Release-build benchmark needed to
+  measure impact.
 - KendallColijn distance: pure-R MRCA computation is 60× slower than CID;
   `apply(combn(...), intersect(...))` is the bottleneck.  Low priority unless
   users report it.
