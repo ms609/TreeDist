@@ -102,6 +102,33 @@ test_that("cpp_jaccard_all_pairs: k = Inf and k != 1", {
                tolerance = 1e-10)
 })
 
+test_that("cpp_msd_all_pairs: unequal split counts, no exact matches", {
+  # Three 6-tip trees with different numbers of non-trivial splits:
+  #
+  #   tr_3  — 3 splits: fully resolved
+  #   tr_1a — 1 split:  {t1,t2,t3} | {t4,t5,t6}
+  #   tr_1b — 1 split:  {t1,t4}    | {t2,t3,t5,t6}
+  #
+  # tr_1a and tr_1b share no splits (including complements), so their
+  # comparison with tr_3 exercises:
+  #   - line 361: padRowAfterCol when a.n_splits > b.n_splits
+  #     (pair col=0 [tr_3, 3 splits] > row=1 [tr_1a, 1 split])
+  #   - lines 393–396: the else branch (exact_n == 0) with unequal counts
+  #     (pair col=0 [tr_3] vs row=1 [tr_1a], no shared splits)
+  tr_3  <- ape::read.tree(text = "(((t1,t4),(t2,t5)),(t3,t6));")
+  tr_1a <- ape::read.tree(text = "((t1,t2,t3),(t4,t5,t6));")
+  tr_1b <- ape::read.tree(text = "((t1,t4),(t2,t3,t5,t6));")
+  trees <- structure(list(tr_3, tr_1a, tr_1b), class = "multiPhylo")
+
+  r <- MatchingSplitDistance(trees)
+  m <- as.matrix(r)
+
+  # Cross-validate batch vs single-pair path
+  expect_equal(m[2, 1], MatchingSplitDistance(tr_3,  tr_1a), tolerance = 0)
+  expect_equal(m[3, 1], MatchingSplitDistance(tr_3,  tr_1b), tolerance = 0)
+  expect_equal(m[3, 2], MatchingSplitDistance(tr_1a, tr_1b), tolerance = 0)
+})
+
 test_that("Large trees: batch and single-pair paths agree (lg2 table bounds)", {
   # Exercise the lg2 / lg2_double_factorial / lg2_unrooted tables at indices
 
@@ -125,4 +152,86 @@ test_that("Large trees: batch and single-pair paths agree (lg2 table bounds)", {
       label = paste0("pair (", i, ",", j, ")")
     )
   }
+})
+
+test_that("Batch path handles asymmetric split counts with exact matches", {
+  # Trees with different numbers of splits (polytomies) that share some
+  # splits exactly.  After exact-match detection removes the shared splits,
+  # the reduced LAP matrix is asymmetric (a_unmatched_n != b_unmatched_n),
+  # exercising the padAfterRow guard in msd_score and jaccard_score.
+  t1 <- ape::read.tree(text = "((t1,t2,t3),(t4,(t5,(t6,(t7,t8)))));")
+  t2 <- ape::read.tree(text = "(((t1,t4),(t2,t3)),((t5,t6),(t7,t8)));")
+  t3 <- ape::read.tree(text = "((t1,(t2,(t3,t4))),(t5,t6,t7,t8));")
+  t4 <- ape::read.tree(text = "(((t1,t2),(t3,t4)),((t5,t7),(t6,t8)));")
+  trees <- structure(list(t1, t2, t3, t4), class = "multiPhylo")
+
+  # MSD batch vs per-pair
+  msd_b <- as.matrix(MatchingSplitDistance(trees))
+  for (i in seq_len(3)) for (j in (i + 1):4) {
+    expect_equal(msd_b[i, j],
+                 MatchingSplitDistance(trees[[i]], trees[[j]]),
+                 tolerance = 1e-10,
+                 label = paste0("MSD(", i, ",", j, ")"))
+  }
+
+  # Jaccard batch vs per-pair
+  jrf_b <- as.matrix(JaccardRobinsonFoulds(trees))
+  for (i in seq_len(3)) for (j in (i + 1):4) {
+    expect_equal(jrf_b[i, j],
+                 JaccardRobinsonFoulds(trees[[i]], trees[[j]]),
+                 tolerance = 1e-10,
+                 label = paste0("JRF(", i, ",", j, ")"))
+  }
+})
+
+test_that("InfoRobinsonFoulds(similarity = TRUE) uses batch path", {
+  # similarity = TRUE bypasses .FastDistPath() and falls through to
+  # CalculateTreeDistance -> .SplitDistanceAllPairs / .SplitDistanceManyMany,
+  # exercising the IRF dispatch branches in tree_distance_utilities.R.
+  trees <- ape::as.phylo(0:9, tipLabels = paste0("t", seq_len(20)))
+
+  # All-pairs
+  irf_sim <- InfoRobinsonFoulds(trees, similarity = TRUE)
+  expect_true(inherits(irf_sim, "dist"))
+  irf_mat <- as.matrix(irf_sim)
+  expect_equal(irf_mat[2, 1],
+               InfoRobinsonFoulds(trees[[1]], trees[[2]], similarity = TRUE),
+               tolerance = 1e-10)
+
+  # Cross-pairs
+  tA <- trees[1:4]
+  tB <- trees[5:10]
+  irf_cross <- InfoRobinsonFoulds(tA, tB, similarity = TRUE)
+  expect_equal(dim(irf_cross), c(4L, 6L))
+  expect_equal(irf_cross[1, 1],
+               InfoRobinsonFoulds(tA[[1]], tB[[1]], similarity = TRUE),
+               tolerance = 1e-10)
+})
+
+test_that(".FastManyManyPath: cross-pairs distance exercises happy path", {
+  # Exercises the happy path through .FastManyManyPath() in tree_distance.R:
+  # cluster guard, TipLabels extraction, tip set matching, nTip check.
+  tA <- ape::as.phylo(0:4, tipLabels = paste0("t", seq_len(20)))
+  tB <- ape::as.phylo(5:9, tipLabels = paste0("t", seq_len(20)))
+
+  cid_cross <- ClusteringInfoDistance(tA, tB)
+  expect_equal(dim(cid_cross), c(5L, 5L))
+  expect_equal(cid_cross[1, 1],
+               ClusteringInfoDistance(tA[[1]], tB[[1]]),
+               tolerance = 1e-10)
+})
+
+test_that(".FastManyManyPath: guards return NULL for edge cases", {
+  tips <- paste0("t", seq_len(8))
+  tA <- ape::as.phylo(0:2, tipLabels = tips)
+  tB <- ape::as.phylo(3:5, tipLabels = tips)
+
+  # Mismatched tip sets -> falls back to slow path (returns non-NULL result)
+  tB_diff <- ape::as.phylo(3:5, tipLabels = paste0("s", seq_len(8)))
+  expect_true(!is.null(ClusteringInfoDistance(tA, tB_diff)))
+
+  # Small trees (nTip < 4) -> falls back to slow path
+  tA3 <- ape::as.phylo(0:2, tipLabels = paste0("t", 1:3))
+  tB3 <- ape::as.phylo(0:2, tipLabels = paste0("t", 1:3))
+  expect_true(!is.null(ClusteringInfoDistance(tA3, tB3)))
 })
