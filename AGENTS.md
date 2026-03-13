@@ -37,8 +37,9 @@ when ready.
 | File | Size | Purpose |
 |------|------|---------|
 | `tree_distances.cpp` | 22 KB | Main distance calculations; calls into CostMatrix / LAP |
-| `tree_distances.h` | 15 KB | **CostMatrix** class; cache-aligned storage; `findRowSubmin` hot path |
-| `lap.cpp` | 10 KB | Jonker-Volgenant LAPJV linear assignment; extensively hand-optimized |
+| `tree_distances.h` | 6 KB | Tree-distance scoring functions (`add_ic_element`, `one_overlap`, `spi_overlap`); includes `lap.h` |
+| `lap.h` | 15 KB | **CostMatrix** class; `LapScratch`; `lap()` declarations; cache-aligned storage; `findRowSubmin` hot path |
+| `lap.cpp` | 10 KB | Jonker-Volgenant LAPJV linear assignment; extensively hand-optimized; includes only `lap.h` |
 | `spr.cpp` | 7 KB | SPR distance approximation |
 | `spr_lookup.cpp` | — | SPR lookup-table implementation |
 | `nni_distance.cpp` | 16 KB | NNI distance approximations; HybridBuffer allocation |
@@ -577,7 +578,7 @@ environment variable overrides it correctly at the `make` command level.
 
 After profiling, remove `-fno-omit-frame-pointer` from `src/Makevars.win`.
 
-### VTune hotspot profile — current build (vtune-current/, 2026-03-12)
+### VTune hotspot profile — previous build (vtune-current/, pre-exact-match)
 
 **Workload**: CID 50-tip (100 trees, 30 s) + CID 200-tip (40 trees, 30 s) + PID
 50-tip (100 trees, 30 s).  Build flags: `-O2 -fopenmp -fno-omit-frame-pointer -mpopcnt`.
@@ -590,14 +591,41 @@ After profiling, remove `-fno-omit-frame-pointer` from `src/Makevars.win`.
 | `[TreeDist.dll]` (unresolved) | 6.6s | 7.2% | Likely inlined callees |
 | `lap` | 5.8s | 6.4% | LAP solver |
 
-This profile was collected AFTER adding `-mpopcnt`.  Without `-mpopcnt`, `_popcountdi2`
-accounted for ~9.7% of runtime.  See "Hardware POPCNT" entry below.
+### VTune hotspot profile — current build (vtune-current-post2/, 2026-03-12)
 
-Key changes since the `vtune-lap/` profile:
-- `lap` dropped from ~50% to 6.4%: the CID fast-path now uses OpenMP, bypassing LAP.
-  LAP dominance remains for the serial metrics (PID, MSD, etc.) on large matrices.
-- `mutual_clustering_score` is now the top hotspot.  Its inner loop accesses the 16 KB
-  `lg2[]` table (already L1-hot after the table shrink) and calls `count_bits` per bin.
+**Workload**: CID 50/200-tip + PID 50/200-tip + MSD 50/200-tip, ~20 s each (120 s total).
+Build flags: `-O2 -fopenmp -fno-omit-frame-pointer` (inline asm popcnt, no `-mpopcnt`).
+Trees generated via `as.phylo(0:N, tips)` — high split overlap ("similar trees" scenario).
+
+| Function | CPU Time | % | Notes |
+|---|---|---|---|
+| `mutual_clustering_score` | 31.2s | 25.4% | CID/MCI per-pair kernel |
+| `msd_score` | 27.0s | 22.0% | MSD per-pair kernel (includes LAP) |
+| `shared_phylo_score` | 12.9s | 10.5% | SPI per-pair kernel (includes LAP) |
+| `spi_overlap` | 12.7s | 10.3% | Split overlap bitwise ops (called by SPI, Jaccard) |
+| ucrtbase (memcpy/memset) | 8.1s | 6.6% | CostMatrix / vector init |
+| `malloc_base` | 5.3s | 4.3% | Heap allocation |
+| `free_base` | 5.2s | 4.2% | Heap deallocation |
+| R internals | 8.6s | 7.0% | R evaluator, GC, symbol lookup |
+| `SplitList::SplitList` | 0.8s | 0.7% | Rcpp → SplitList conversion |
+| `lap` | 0.7s | 0.6% | LAP solver (separate symbol; most LAP time is inlined into *_score) |
+| `LapScratch::ensure` | 0.2s | 0.2% | Scratch buffer resize |
+
+**Key observations:**
+1. **`_popcountdi2` no longer appears** — the inline-asm hardware POPCNT fully eliminated it.
+2. **`lap` as a separate symbol is only 0.6%** — but LAP execution time is inlined into
+   `msd_score` and `shared_phylo_score`, which together account for 32.5%.  The LAP solver
+   dominates both of those functions.
+3. **`mutual_clustering_score` dropped from 44.8% to 25.4%** — partly because the workload
+   now includes MSD and PID (diluting CID's share), and partly from the branchless IC hoisting.
+4. **malloc/free together = 8.5%** — this is per-pair CostMatrix and vector allocation.
+   Previous `LapScratch` pooling attempt showed no gain at `-O2`, but the profile confirms
+   allocation is a measurable cost.
+5. **`spi_overlap` at 10.3%** is consistent with the previous profile.  The 4-pass early-exit
+   structure remains optimal (see "spi_overlap optimisation, attempted/reverted" above).
+6. **The "similar trees" workload** means MSD benefits heavily from exact-match detection
+   (solving reduced LAPs of ~3 instead of ~197).  On random trees, `msd_score` would be
+   much larger relative to `mutual_clustering_score`.
 
 ### Branchless IC hoisting in `mutual_clustering_score` (DONE, kept)
 
@@ -679,3 +707,146 @@ popcount = 0 after complement flip); only the "exact match contribution" differs
 per metric.  Bugs found and fixed during that extension: MSI flip inconsistency,
 SPI consistency cleanup, and Jaccard `allow_conflict=FALSE` guard (see conversation
 summary for details).
+
+### CostMatrix pooling in batch path (DONE, kept)
+
+The VTune profile showed 8.5% of CPU time in malloc/free and 6.6% in ucrtbase
+memset — caused by per-pair allocation and zero-initialisation of CostMatrix
+(two `std::vector<cost>` of `dim8² × 8` bytes each; ~692 KB for 200-tip trees).
+
+**Fix:** pool CostMatrix instances in `LapScratch` so they persist across pairs.
+
+- Made `CostMatrix` resizable: removed `const` from `dim_`/`dim8_`, added default
+  constructor and `resize(new_dim)` that only reallocates when the new dimension
+  exceeds the current buffer capacity.
+- Fixed `padAfterRow()` and `padTrAfterCol()` to fill only up to `dim_ * dim8_`
+  (not `data_.end()`), which would overshoot when the pool buffer is oversized
+  from a previous larger dimension.
+- Added `score_pool` and `small_pool` CostMatrix fields to `LapScratch`.
+- Updated all 5 batch score functions (`mutual_clustering_score`, `msd_score`,
+  `msi_score`, `shared_phylo_score`, `jaccard_score`) to use the pooled matrices.
+
+**Files changed:** `tree_distances.h` (CostMatrix + LapScratch), `pairwise_distances.cpp`.
+
+**A/B benchmark (release build, same-process comparison):**
+
+| Scenario | ref (ms) | dev (ms) | Change |
+|---|---|---|---|
+| CID similar 50-tip | 58.7 | 51.7 | **−12%** |
+| CID similar 200-tip | 154.3 | 143.9 | **−7%** |
+| MSD similar 50-tip | 25.4 | 19.3 | **−24%** |
+| MSD similar 200-tip | 79.7 | 66.6 | **−16%** |
+| PID similar 50-tip | 79.0 | 69.0 | **−13%** |
+| PID similar 200-tip | 194.6 | 189.1 | **−3%** |
+| CID random 50-tip | 222.4 | 210.8 | **−5%** |
+| CID random 200-tip | 773.5 | 760.3 | −2% |
+| MSD random 50-tip | 107.6 | 97.3 | **−10%** |
+| MSD random 200-tip | 315.9 | 300.5 | **−5%** |
+
+Numerically exact (max |ref − dev| = 0).  Gains are largest on similar trees
+(where exact-match detection makes per-pair compute cheap, so allocation overhead
+is a larger fraction) but also meaningful on random trees (5–10% for 50-tip).
+
+### Header split: `lap.h` / `tree_distances.h` (DONE, kept)
+
+CI benchmarks for PRs #178 and #180 showed a consistent ~10% regression on the
+standalone `LAPJV()` benchmark across all matrix sizes (40, 400, 2000), despite
+`lap.cpp` being unchanged between branches.
+
+**Root cause:** `lap.cpp` included `tree_distances.h`, which contains
+`namespace TreeDist { ... }` with inline scoring functions (`one_overlap`,
+`spi_overlap`, `add_ic_element`).  Changes to these functions — even though LAP
+never calls them — shifted the instruction layout of the LAP hot loops
+(`findRowSubmin`, Dijkstra inner loop) across alignment boundaries, degrading
+branch prediction and instruction fetch throughput.
+
+Key evidence:
+- PR #178 (posit-optim-2 → main): the **only** `tree_distances.h` change was a
+  5-line refactor of `one_overlap()`, yet LAPJV regressed 8–12%.  CostMatrix
+  and LapScratch were byte-for-byte identical to main.
+- The regression was consistent across 3+ independent CI runs and all matrix sizes.
+- Tree distance metrics improved 20–45% in the same PR, confirming it wasn't an
+  environmental issue.
+
+**Fix:** split `tree_distances.h` into two headers:
+
+| Header | Content | Included by |
+|--------|---------|-------------|
+| `lap.h` | Types, constants, CostMatrix, LapScratch, `lap()` declarations | `lap.cpp`, `tree_distances.h` |
+| `tree_distances.h` | `#include "lap.h"` + scoring functions (`namespace TreeDist`) + tree-specific globals (`lg2[]`, `ALL_ONES`, etc.) | all other `.cpp` files |
+
+`lap.cpp` now includes only `lap.h`.  All other translation units continue to
+include `tree_distances.h` (which pulls in `lap.h` via `#include`), so they see
+identical content.
+
+**Files changed:** `src/lap.h` (new), `src/tree_distances.h` (slimmed),
+`src/lap.cpp` (`#include "lap.h"` instead of `"tree_distances.h"`).
+
+**A/B benchmark (release build, same-process comparison, local Windows machine):**
+
+| Scenario | ref | dev | Change |
+|---|---|---|---|
+| CID 100 × 50-tip | 50.3 ms | 50.5 ms | neutral |
+| CID 40 × 200-tip | 143 ms | 143 ms | neutral |
+| MSD 100 × 50-tip | 19.5 ms | 19.5 ms | neutral |
+| LAPJV 400×400 | 1.24 ms | 1.24 ms | neutral |
+| LAPJV 1999×1999 | 90.6 ms | 93.1 ms | ~3% (noise) |
+
+On the local machine (Windows, GCC 14, `-O2`) the split is performance-neutral.
+The CI regression (Ubuntu, GCC, `-O3`) is alignment-sensitive and
+platform-specific; the split eliminates the mechanism by which future scoring
+function changes can affect LAP code generation.
+
+**Maintenance burden:** minimal.  The split is along a natural boundary — `lap.h`
+contains stable LAP infrastructure that changes rarely; `tree_distances.h`
+contains actively-developed scoring functions.  No code duplication.
+
+---
+
+### R-level overhead investigation for ClusteringInfoDistance (investigated, not yet optimised)
+
+Profiled the R-level overhead in `ClusteringInfoDistance()` (CID) to determine
+whether further gains are available above the C++ layer.
+
+**Breakdown** (CID 100 × 50-tip, ~67ms total):
+
+| Component | Time | Notes |
+|---|---|---|
+| `as.Splits` (batch path) | ~2.1 ms | Necessary — converts trees to SplitList |
+| `as.Splits` (entropy path) | ~3.5 ms | **DUPLICATE** — same trees re-converted |
+| Per-tree R dispatch for `ClusteringEntropy.Splits` | ~2.2 ms | `vapply` over N trees |
+| Other (dispatch, `structure()`, etc.) | ~0.5 ms | General R overhead |
+| **Total R overhead** | **~8.2 ms (12%)** | |
+
+**Root cause:** `ClusteringInfoDistance()` calls two separate paths:
+1. `MutualClusteringInfo()` → `.SplitDistanceAllPairs()` → `as.Splits()` + C++ batch
+2. `.MaxValue(tree1, tree2, ClusteringEntropy)` → `as.Splits()` **again** + per-tree
+   `ClusteringEntropy.Splits` via `vapply`
+
+The duplicate `as.Splits()` (3.5ms) and per-tree R dispatch (2.2ms) together account
+for ~5.7ms (~8.5% of total).
+
+**Potential fixes** (in order of impact/complexity):
+
+1. **Avoid duplicate `as.Splits()`** — pass pre-computed splits from batch path to
+   entropy computation (~5% speedup, simple R-level change)
+2. **Add C++ `cpp_clustering_entropy_batch()`** — compute per-tree entropy in one C++
+   call instead of per-tree R dispatch (~3% additional speedup)
+3. **Fuse into batch function** — return per-tree entropies as attribute alongside
+   pairwise scores (no separate normalisation pass; most complex)
+
+**Cost-benefit note:** the overhead is modest in absolute terms (~6ms for 50-tip,
+~4ms for 200-tip) and scales O(N) rather than O(N²).  It matters most for high N
+(e.g., 1000 × 50-tip trees: ~60ms overhead vs ~500ms compute).
+
+---
+
+## Remaining Optimization Opportunities
+
+- **Duplicate `as.Splits()` elimination** in `ClusteringInfoDistance` normalisation
+  (~5% potential speedup, simple R-level change — see above)
+- **C++ batch entropy function** to replace per-tree R dispatch (~3% potential)
+- **Fresh VTune profile post-pooling** to confirm hotspot distribution changes
+- LAP inner loop: AVX2 SIMD intrinsics investigation (see "Known Optimization
+  Opportunities" above)
+- SPR distance profiling under VTune

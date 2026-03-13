@@ -26,7 +26,7 @@
  https://www.mathworks.com/matlabcentral/fileexchange/26836-lapjv-jonker-volgenant-algorithm-for-linear-assignment-problem-v3-0:
  *
  *************************************************************************/
-#include "tree_distances.h"
+#include "lap.h"
 #include <Rcpp/Lightest>
 
 // [[Rcpp::export]]
